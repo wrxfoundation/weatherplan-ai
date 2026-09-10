@@ -1695,3 +1695,26 @@ Seowoo Park (Logan)
 Head of Partnerships & Operations, wellbian · KWeather Digital Business
 ```
 - **@rvereecke(Ripple Treasury SVP) GSmart 「Treasury-Native AI」 확장 게시물 — 패스(9/10)** — 사실 검증(WebSearch): 리플이 GTreasury 를 10억 달러에 인수(Hg 공시 2025-10-16), 전 CEO Renaat Ver Eecke 가 현 Ripple Treasury SVP, GSmart 는 결정론적 계산 + AI 해석 + 사람 승인 구조. 패스 사유 4: 레인 밖(CFO 오피스 AI 거버넌스) · 제품 발표 글 · 리플 임원(논의 사실 비공개라 공개 접촉이 오해를 만듦) · 우리가 보탤 검증 사실 없음. 소재로만 축적 — 「계산·해석·승인 3층 분리」 ↔ 「원시 데이터 오프체인·지문 온체인·검증 한 번」 형태 대조, BIS WP 1374 과 묶어 원글에 쓰되 리플·GSmart 호명 0. ecosystem-log 9/10 ① 에 기록, 텔레봇 콘솔은 다음 갱신 때 반영.
+- **Odelia 통화 시점 재판정 — 10/3 이후로(9/10 밤, 서우 제기)** — 서우: "당장 미팅은 좀 그렇고 시차를 두는 게 낫지 않아? 우리가 지금 얘기할 게 뭐가 있지." **동의.** 지금 손에 있는 건 전부 예정(판매 미개시 · 배송 미정 · 보상 테스트 중 · 파이프라인 등록 중)이고, Commons 는 기관 채택 사례를 보는 조직이라 계획만 들고 가면 ⓐ "무엇을 원하냐"에 답이 없고 ⓑ 답하려다 보상 비보장 규칙을 넘게 된다. 10/3 이후면 판매 종료(9/16)와 무대 실물 시연이 손에 있어 설명이 아니라 물건으로 말한다. IFC 모자발 투자 화제 리스크도 준다. **단 회신은 오늘** — 미루는 건 통화지 회신이 아니다. 메일 L 로 교체(K 폐기, 시점만 다름): 미루는 이유를 상대 이득으로 제시 · 날짜는 10/3 뒤 우리가 제시 · 끊기지 않게 작은 질문 하나(파이프라인에서 Commons 가 보는 것 + **10월 전 마감 있는지** — 해커톤 신청 마감이 10/3보다 앞설 위험 차단, 참가 요청 아님). 먼저 컨택한 것 자체는 부담이 아니다 — 인사로 열고 "제대로 보여줄 때 얘기하자"로 성격을 정하는 것이 오히려 자기 인식을 보여 준다.
+```
+J (링크드인, 79자): Thanks Odelia — I'll write to you at that address today. Looking forward to it.
+```
+```
+L (메일) 제목: KWeather / wellbian — XRPL device data, and a better time to talk
+
+Hi Odelia,
+
+Thanks for the quick reply, and for the address.
+
+Here's where we are, and why I'd rather put our call a few weeks out.
+
+KWeather has measured Korea's weather for 30 years — instruments, forecasting, and B2B data for 4,000+ enterprise clients. wellbian is the Web3 side, run by Wellbian Labs in Singapore: a certified indoor air monitor that households run in their own space, with each device registered as an NFT and its readings anchored on the XRP Ledger. Raw data stays off-chain; only batch fingerprints go on it. Devices are priced and settled in RLUSD.
+
+Most of that is still a plan with a date on it rather than something you can look at. Our first sale opens on September 15, and on October 3 the device is on stage at XRP SEOUL 2026, where KWeather is a platinum sponsor — measuring and writing to the ledger in front of the room. After that I'd have something working to show you rather than a description of it, which seems a better use of your time. Early or mid-October, whenever suits you? I'll come back with dates once October 3 is behind us.
+
+One thing I would ask now, if it's quick: we're registering through the XRPL builder pipeline. Is there anything Commons looks for in that, and is there anything on your side with a date attached before October, so that waiting doesn't make me miss it?
+
+Best,
+Seowoo Park (Logan)
+Head of Partnerships & Operations, wellbian · KWeather Digital Business
+```
