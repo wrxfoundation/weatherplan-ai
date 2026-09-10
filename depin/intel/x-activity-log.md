@@ -1048,3 +1048,24 @@ D2 (260자): Hey Victoria, I'm Logan — partnerships at wellbian. Came across y
 **패스 사유 4**: ① **레인 밖** — 기업 재무·CFO 오피스의 AI 거버넌스. 우리에게 발화 권위가 없다(「남의 무대」 규칙) ② **제품 발표 글** — Asheesh 건의 「보도자료·면책 딸린 글은 원칙상 무반응」과 동형 ③ **리플 임원** — 리플과의 논의 사실 자체가 비공개 대상이라 공개 접촉은 오해를 만든다 ④ 우리가 보탤 **검증 가능한 사실이 없다**.
 
 **소재 축적(원글용, 답글 아님)**: 「계산은 결정론적으로, 해석은 그 위에, 승인은 사람이」 3층 분리 = 우리 「원시 데이터는 오프체인, 지문만 온체인, 검증은 원장 조회 한 번」과 **같은 모양**. BIS WP 1374 소재와 한 묶음으로 「검증이 가치」 절에 쓴다. ⚠ 원글에서 **리플·GSmart·GTreasury 를 호명하지 않는다** — 호명하면 리플 관계 암시가 된다.
+
+### @KingKaran — "Is there a percentage attached per sale?" 회신 (2026-09-10) → **1차 판매 커미션 없음, 2차에서 연다**
+
+내부 두 안(A 고객 5% 할인코드 / B 판매당 5% 커미션) 판정과 근거는 business-directions 「KOL 커미션·할인 방침 결정(9/10)」. 요지: A 는 **쿠폰 기능 부재(9/8 확인) + 예약자 역차별**로 불가, B 는 **판매 귀속 추적 부재**로 1차엔 실행 불가. 서우의 동기 비대칭 지적은 2차 설계의 기준으로 채택.
+
+문안 규칙: 숫자(5%) 미언급 · 확약 0 · 기대 조장 표현 0 · 광고 표시 의무는 **미리** 말한다(사후 통보가 아니라) · 유럽 건 반복 없음(9/9 이미 전달).
+
+```
+D (1056자)
+Karan — I said I'd come back to you on the percentage, so here's a straight answer rather than a maybe.
+
+There's no commission on this first sale. Two reasons, and neither is about you: referral tracking isn't wired into our checkout yet, and the sale itself is a 24-hour window on Sep 15. I'm not going to attach a number to something I can't measure or pay out cleanly.
+
+What is real right now: your links are tagged, so whatever you drive in the Genesis window gets counted. That's the number I carry internally.
+
+And the direction I'm arguing for: from the second round, proper referral tracking, and that's where a per-sale arrangement belongs. Being the person who already has results on the board from round one is the strongest case I can make for you — stronger than anything I could agree to today.
+
+One thing to plan for rather than retrofit: once money is attached, those posts need to be marked as paid on your side. Better we both know that going in.
+
+We're early. I'd rather under-promise now and come back with something I can stand behind.
+```
