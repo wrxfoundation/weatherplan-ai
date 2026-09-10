@@ -101,12 +101,14 @@ const MSG_TTL_MS = 24 * 60 * 60 * 1000;
 //
 // img 는 public/tiles/*.svg 를 그대로 읽는다 — 아이콘을 바꾸려면 코드가 아니라
 // 그 파일만 갈아 끼우면 된다 (힉스필드 생성본 교체 경로).
-// bg 는 각 아이콘 파일의 배경색과 같은 값이어야 이음매가 보이지 않는다.
+// 2026-09-10 시안("답답하다"): 타일은 파스텔 그라디언트, 아이콘은 투명 배경의
+// 그라디언트 그림. 아이콘 파일 배경이 투명이라 타일 색과 맞출 필요가 없어졌다.
+// 글자색은 파스텔 바탕에서 어르신 대비를 지킨다 (이름 큰 글자 ≥3:1 · 설명 ≥4.5:1).
 const HOME_TILES = [
-  { key: "today", label: "오늘", sub: "일정 · 약", bg: "#EAF0F7", fg: "#0A1F3C", subFg: "#41597C" },
-  { key: "health", label: "건강", sub: "몸 상태 · 기록", bg: "#E7F1EC", fg: "#155C43", subFg: "#3C6B58" },
-  { key: "ask", label: "해주세요", sub: "부탁드릴 일", bg: "#F3EEF6", fg: "#5F3F73", subFg: "#6E5480" },
-  { key: "store", label: "스토어", sub: "생활용품", bg: "#F5EEDF", fg: "#7A5210", subFg: "#7C6434" },
+  { key: "today", label: "오늘", sub: "일정·약", bg: "linear-gradient(160deg, #E3EEFF 0%, #F4F8FF 100%)", fg: "#2F6BE0", subFg: "#3F5F92" },
+  { key: "health", label: "건강", sub: "몸 상태·기록", bg: "linear-gradient(160deg, #E0F5E9 0%, #F2FBF5 100%)", fg: "#1E8F5E", subFg: "#2F6B50" },
+  { key: "ask", label: "해주세요", sub: "부탁드릴 일", bg: "linear-gradient(160deg, #EBE6FF 0%, #F6F3FF 100%)", fg: "#6E4FD8", subFg: "#5F4B9E" },
+  { key: "store", label: "스토어", sub: "생활용품", bg: "linear-gradient(160deg, #FFF0CF 0%, #FFF8E8 100%)", fg: "#B26E00", subFg: "#7A5A1E" },
 ];
 
 // "김순자" → "순자" — 성 포함 호칭 금지 (06 §1 헤더 카피)
@@ -819,7 +821,7 @@ export default function ElderHome() {
 
       <div className="min-h-screen bg-nav">
         {/* break-keep: 한국어 어절 단위 줄바꿈 — 카피 개행(<br/>)과 병용 (06 §6) */}
-        <div className="relative mx-auto flex h-dvh w-full max-w-[430px] flex-col break-keep bg-elder px-4 min-[380px]:px-[22px]">
+        <div className="elder-sky relative mx-auto flex h-dvh w-full max-w-[430px] flex-col break-keep bg-elder px-4 min-[380px]:px-[22px]">
           {/* ── 카드 스택 (유일한 스크롤 영역) ──
               헤더(날짜·인사)도 고정을 풀었다 (2026-08-24 피드백). 이제 화면에
               붙박이는 하단 GNB(도와줘요 · 홈 · 가족)뿐이고, 나머지는 전부 카드와
@@ -848,23 +850,39 @@ export default function ElderHome() {
                   데모 홈
                 </Link>
               </div>
-              <div className="mt-0.5 flex items-start justify-between gap-3">
+              {/* 2026-09-10 시안("지금은 좀 답답하다"): 밝은 하늘 배경 위에 날짜(달력 아이콘) →
+                  인사(둘째 줄 파랑) → 한 줄 덕담. 도와줘요는 그 자리 그대로, 흰 알약으로. */}
+              <div className="mt-1 flex items-start justify-between gap-3">
                 <div className="min-w-0 pt-1">
-                  <div className="text-[19px] font-medium text-muted">{dateLong}</div>
+                  <div className="flex items-center gap-1.5 text-[17px] font-medium" style={{ color: "#5C6478" }}>
+                    <span aria-hidden style={{ color: "#3D7BF7" }}>
+                      <Icon name="calendar" size={18} strokeWidth={2} />
+                    </span>
+                    {dateLong}
+                  </div>
+                  {/* 호칭은 "~~님"으로 통일 — '어르신' 표기 삭제 (2026-08-12 시트 전체 요청 1번). */}
+                  <h1 className="mt-1.5 text-[28px] font-black leading-[1.28] text-navy">
+                    {name} 님,
+                    <br />
+                    <span style={{ color: "#2F6BE0" }}>{greetLine}</span>
+                  </h1>
                   {tab === "home" && (
-                    <p className="mt-0.5 text-[18px] leading-[1.4] text-muted">오늘도 편안한 하루 되세요</p>
+                    <p className="mt-1 text-[18px] leading-[1.4]" style={{ color: "#5C6478" }}>
+                      오늘도 편안한 하루 되세요
+                    </p>
                   )}
                 </div>
                 {/* 도와줘요 — 오른쪽 위 (시트 전체 7번 · 시안). 빨강은 위험 신호 전용인데
-                    도와줘요가 바로 그것이라 옅은 빨강 바탕을 쓴다. 요청 뒤에는 초록 '요청됨'. */}
+                    도와줘요가 바로 그것이라 빨간 글자·종 아이콘을 흰 알약에 얹는다.
+                    요청 뒤에는 초록 '요청됨'. */}
                 <button
                   onClick={askHelp}
                   aria-label={visitAsked ? "방문 요청을 보냈습니다 — 관제 전화 대기" : "도와줘요 — 즉시 방문 요청"}
-                  className="btn-press flex h-[66px] w-[66px] shrink-0 flex-col items-center justify-center gap-0.5 rounded-[18px]"
+                  className="btn-press flex h-[66px] w-[66px] shrink-0 flex-col items-center justify-center gap-0.5 rounded-[20px]"
                   style={
                     visitAsked
-                      ? { background: "rgba(30,122,90,.12)", color: "#1E7A5A" }
-                      : { background: "rgba(192,57,43,.11)", color: "#C0392B", boxShadow: "inset 0 0 0 1px rgba(192,57,43,.22)" }
+                      ? { background: "#E6F6EE", color: "#1E7A5A", boxShadow: "0 10px 24px -16px rgba(30,122,90,.5)" }
+                      : { background: "#FFFFFF", color: "#C0392B", boxShadow: "0 12px 26px -16px rgba(30,60,120,.45), inset 0 0 0 1px rgba(192,57,43,.2)" }
                   }
                 >
                   <span aria-hidden>
@@ -873,61 +891,72 @@ export default function ElderHome() {
                   <span className="text-[15px] font-bold leading-[1.15]">{visitAsked ? "요청됨" : "도와줘요"}</span>
                 </button>
               </div>
-              {/* 호칭은 "~~님"으로 통일 — '어르신' 표기 삭제 (2026-08-12 시트 전체 요청 1번). */}
-              <h1 className="mt-1.5 text-[27px] font-black leading-[1.3] text-navy">
-                {name} 님,
-                <br />
-                {greetLine}
-              </h1>
               {/* 선생님 메시지 배너 — 홈에서만, 안 들은 메시지가 있을 때 (시트 전체 5번
-                  "메시지가 오면 알 수 있게 표시" · 시안의 남색 띠). 누르면 마음사서함.
+                  "메시지가 오면 알 수 있게 표시"). 시안대로 파란 그라디언트 카드에
+                  하트 · 두 줄 · 가장 최근 메시지 제목 한 줄 · 오른쪽 화살표. 누르면 마음사서함.
                   안 들은 것이 없으면 그 자리에 다음 일정 한 줄을 둔다 — 첫 화면에 배너
                   자리가 비지 않게. 일정이 새로 생긴 것은 '오늘' 타일의 점이 따로 알린다. */}
               {tab === "home" &&
                 (unreadMsgs.length > 0 ? (
                   <button
                     onClick={() => setTab("teacher")}
-                    className="btn-press mt-3 flex w-full items-center gap-3 rounded-[18px] px-4 py-3.5 text-left text-white"
-                    style={{ background: "#0A1F3C", boxShadow: "0 16px 30px -22px rgba(10,31,60,.9)" }}
+                    className="btn-press mt-4 flex w-full items-center gap-3 rounded-[22px] px-4 py-3.5 text-left text-white"
+                    style={{
+                      background: "linear-gradient(135deg, #4F8DFF 0%, #7DB6FF 100%)",
+                      boxShadow: "0 18px 34px -22px rgba(63,123,247,.9), inset 0 1px 0 rgba(255,255,255,.35)",
+                    }}
                   >
                     <span
                       aria-hidden
-                      className="flex h-[46px] w-[46px] shrink-0 items-center justify-center rounded-full text-[16px] font-bold"
-                      style={{ background: "#E8DFCB", color: "#7A5C28" }}
+                      className="flex h-[48px] w-[48px] shrink-0 items-center justify-center rounded-full"
+                      style={{ background: "rgba(255,255,255,.28)" }}
                     >
-                      {TEACHER.name.slice(1)}
+                      <Icon name="heart" size={26} strokeWidth={2} />
                     </span>
-                    <span className="min-w-0 flex-1 text-[19px] font-bold leading-[1.35]">
-                      {TEACHER.name} 선생님이
-                      <br />
-                      마음을 보냈어요
+                    <span className="min-w-0 flex-1">
+                      <span className="block text-[19px] font-bold leading-[1.35]">
+                        {TEACHER.name} 선생님이
+                        <br />
+                        마음을 보냈어요
+                      </span>
+                      {/* 최근 메시지 제목 한 줄 — 낮은 화면(≤660px)에서는 숨긴다.
+                          이 한 줄 때문에 360×640 홈이 22px 넘쳤다 (globals .elder-quote) */}
+                      <span className="elder-quote mt-0.5 block truncate text-[16px] leading-[1.35]" style={{ color: "rgba(255,255,255,.9)" }}>
+                        “{unreadMsgs[unreadMsgs.length - 1].text}”
+                      </span>
                     </span>
                     <span
                       aria-hidden
                       className="flex h-[40px] w-[40px] shrink-0 items-center justify-center rounded-full"
-                      style={{ background: "#B08D57", color: "#0A1F3C" }}
+                      style={{ background: "rgba(255,255,255,.3)" }}
                     >
-                      <Icon name="play" size={20} strokeWidth={2} />
+                      <span className="-rotate-90 flex">
+                        <Icon name="chev" size={20} strokeWidth={2.2} />
+                      </span>
                     </span>
                   </button>
                 ) : (
                   next && (
                     <button
                       onClick={() => setTab("today")}
-                      className="btn-press mt-3 flex w-full items-center gap-2 rounded-[16px] px-3.5 py-3 text-left"
-                      style={{ background: "rgba(176,141,87,.13)", boxShadow: "inset 0 0 0 1px rgba(176,141,87,.28)" }}
+                      className="btn-press mt-4 flex w-full items-center gap-2.5 rounded-[20px] px-4 py-3.5 text-left"
+                      style={{ background: "#FFFFFF", boxShadow: "0 14px 30px -22px rgba(30,60,120,.45), inset 0 0 0 1px rgba(63,123,247,.14)" }}
                     >
-                      <span aria-hidden className="shrink-0" style={{ color: "#8A5D12" }}>
+                      <span
+                        aria-hidden
+                        className="flex h-[40px] w-[40px] shrink-0 items-center justify-center rounded-full"
+                        style={{ background: "#E6EFFF", color: "#2F6BE0" }}
+                      >
                         <Icon name="clock" size={22} strokeWidth={2} />
                       </span>
                       <span className="min-w-0 flex-1 truncate text-[19px] font-bold text-navy">
-                        <span style={{ color: "#8A5D12" }}>
+                        <span style={{ color: "#2F6BE0" }}>
                           {shortDay(next.at, now)} {spokenTime(next.at)}
                         </span>{" "}
                         {next.title.replace(/\s*\([^)]*\)\s*$/, "").replace(/^K-CARE\s+/, "")}
                       </span>
-                      <span aria-hidden className="-rotate-90 shrink-0" style={{ color: "#8A5D12" }}>
-                        <Icon name="chev" size={20} strokeWidth={2} />
+                      <span aria-hidden className="-rotate-90 flex shrink-0" style={{ color: "#2F6BE0" }}>
+                        <Icon name="chev" size={20} strokeWidth={2.2} />
                       </span>
                     </button>
                   )
@@ -951,8 +980,11 @@ export default function ElderHome() {
                   key={t.key}
                   onClick={() => setTab(t.key)}
                   aria-label={t.key === "today" && newSchedule ? "오늘 — 새 일정이 있습니다" : undefined}
-                  className="elder-tile btn-press relative flex flex-col items-start justify-between rounded-[22px] p-4 text-left"
-                  style={{ background: t.bg, boxShadow: "inset 0 0 0 1px rgba(10,31,60,.07)" }}
+                  className="elder-tile btn-press relative flex flex-col items-start justify-between overflow-hidden rounded-[24px] p-4 text-left"
+                  style={{
+                    background: t.bg,
+                    boxShadow: "0 16px 32px -24px rgba(30,60,120,.5), inset 0 0 0 1px rgba(255,255,255,.9)",
+                  }}
                 >
                   {/* 새 일정 점 — 오늘 타일 오른쪽 위 (시트 전체 9번 · 시안의 파란 점).
                       빨강은 SOS 전용이라 청색이다. 오늘 탭을 열면 꺼진다. */}
@@ -960,18 +992,30 @@ export default function ElderHome() {
                     <span
                       aria-hidden
                       className="absolute right-4 top-4 h-[14px] w-[14px] rounded-full"
-                      style={{ background: "#3B5C8A", boxShadow: "0 0 0 3px #EAF0F7" }}
+                      style={{ background: "#3D7BF7", boxShadow: "0 0 0 3px #FFFFFF" }}
                     />
                   )}
                   {/* 아이콘 파일만 갈아 끼우면 그림이 바뀐다 (public/tiles/) */}
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={`/tiles/${t.key}.svg`} alt="" aria-hidden width="56" height="56" className="elder-tile-img" />
-                  <span className="mt-2 block">
-                    <span className="block text-[23px] font-black leading-[1.2]" style={{ color: t.fg }}>
+                  <img src={`/tiles/${t.key}.svg`} alt="" aria-hidden width="68" height="68" className="elder-tile-img" />
+                  {/* 360px 폭(타일 160px)에서는 화살표 원을 빼고 글자에 자리를 다 준다 —
+                      "몸 상태·기록"이 두 줄로 꺾이면 낮은 화면에서 타일이 넘친다 (실측) */}
+                  <span className="mt-2 block min-[380px]:pr-9">
+                    <span className="block text-[24px] font-black leading-[1.2]" style={{ color: t.fg }}>
                       {t.label}
                     </span>
-                    <span className="mt-0.5 block text-[17px] leading-[1.3]" style={{ color: t.subFg }}>
+                    <span className="mt-0.5 block text-[17px] font-medium leading-[1.3]" style={{ color: t.subFg }}>
                       {t.sub}
+                    </span>
+                  </span>
+                  {/* 오른쪽 아래 화살표 원 — 시안. 누르는 자리라는 표시일 뿐, 타일 전체가 버튼이다 */}
+                  <span
+                    aria-hidden
+                    className="absolute bottom-3 right-3 hidden h-[36px] w-[36px] items-center justify-center rounded-full min-[380px]:flex"
+                    style={{ background: "rgba(255,255,255,.9)", color: t.fg, boxShadow: "0 6px 14px -8px rgba(30,60,120,.45)" }}
+                  >
+                    <span className="-rotate-90 flex">
+                      <Icon name="chev" size={18} strokeWidth={2.4} />
                     </span>
                   </span>
                 </button>
@@ -1161,7 +1205,7 @@ export default function ElderHome() {
                 display: tab === "teacher" ? undefined : "none",
                 // 위 12px 만 투명→바탕색으로 녹이고, 안내 한 줄부터는 바탕색이 꽉 찬다
                 // (그라디언트를 길게 두면 말풍선 글자 위에 안내 문장이 겹쳐 보였다 · 실측)
-                background: "linear-gradient(180deg, rgba(253,252,249,0) 0, #FDFCF9 12px)",
+                background: "linear-gradient(180deg, rgba(255,255,255,0) 0, #FFFFFF 12px)",
                 marginBottom: -8,
                 paddingBottom: 8,
               }}
@@ -2265,9 +2309,10 @@ export default function ElderHome() {
                 안 들은 메시지는 아이콘 위 작은 점 대신 오른쪽 위 금색 개수 배지로
                 (점은 무엇인지 알기 어렵다는 피드백). 높이는 py 로 만든다 (min-h 는
                 globals 의 .btn-press 에 눌린다). */}
+            {/* 2026-09-10 시안: 흰 막대 위 세 칸, 지금 탭은 옅은 파랑 알약에 파란 글자. */}
             <nav
               className="grid grid-cols-3 gap-1 rounded-[22px] p-1.5"
-              style={{ background: "rgba(10,31,60,.06)" }}
+              style={{ background: "#FFFFFF", boxShadow: "0 -10px 26px -20px rgba(30,60,120,.45), inset 0 0 0 1px rgba(30,60,120,.07)" }}
             >
               {TABS.map((t) => {
                 const active = tab === t.key;
@@ -2279,7 +2324,7 @@ export default function ElderHome() {
                     aria-current={active ? "page" : undefined}
                     aria-label={n ? `${t.label} — 안 들은 메시지 ${n}개` : undefined}
                     className="btn-press relative flex flex-col items-center justify-center gap-[3px] rounded-[17px] py-[7px]"
-                    style={active ? { background: "#0A1F3C", color: "#FFFFFF" } : { color: "#0A1F3C" }}
+                    style={active ? { background: "#E6EFFF", color: "#2F6BE0" } : { color: "#55607A" }}
                   >
                     <span aria-hidden>
                       <Icon name={t.glyph} size={24} strokeWidth={2} />
@@ -2289,7 +2334,7 @@ export default function ElderHome() {
                       <span
                         aria-hidden
                         className="absolute right-2 top-1.5 flex h-[22px] min-w-[22px] items-center justify-center rounded-full px-1 font-num text-[15px] font-bold leading-none text-white"
-                        style={{ background: "#B08D57", boxShadow: "0 0 0 2px #FDFCF9" }}
+                        style={{ background: "#F0A030", boxShadow: "0 0 0 2px #FFFFFF" }}
                       >
                         {n}
                       </span>

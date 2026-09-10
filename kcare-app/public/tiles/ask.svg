@@ -1,18 +1,17 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="해주세요">
-  <g fill="#FFFFFF" stroke="#5F3F73" stroke-width="3" stroke-linejoin="round" stroke-linecap="round">
-    <g transform="rotate(-14 19 40)">
-      <path d="M9.5 38c0-1.4 1.2-2.6 2.6-2.6h17.4V44a10 10 0 0 1-20 0z"/>
-      <rect x="11" y="24" width="5.6" height="14" rx="2.8"/>
-      <rect x="18.2" y="20.5" width="5.6" height="17.5" rx="2.8"/>
-      <rect x="25.4" y="24" width="5.6" height="14" rx="2.8"/>
-    </g>
-    <g transform="translate(64,0) scale(-1,1)">
-      <g transform="rotate(-14 19 40)">
-        <path d="M9.5 38c0-1.4 1.2-2.6 2.6-2.6h17.4V44a10 10 0 0 1-20 0z"/>
-        <rect x="11" y="24" width="5.6" height="14" rx="2.8"/>
-        <rect x="18.2" y="20.5" width="5.6" height="17.5" rx="2.8"/>
-        <rect x="25.4" y="24" width="5.6" height="14" rx="2.8"/>
-      </g>
-    </g>
-  </g>
+  <!-- 호출 벨 — '부탁드릴 일'은 벨을 누르는 것. 보라 그라디언트 · 반짝임 (2026-09-10 시안) -->
+  <defs>
+    <linearGradient id="akDome" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#B9A4FF"/>
+      <stop offset="1" stop-color="#6E4FD8"/>
+    </linearGradient>
+  </defs>
+  <ellipse cx="32" cy="52" rx="24" ry="4" fill="#5A3FC0" opacity=".14"/>
+  <path d="M12 45c0-12 9-21.5 20-21.5S52 33 52 45z" fill="url(#akDome)"/>
+  <rect x="8" y="45" width="48" height="8" rx="4" fill="#5A3FC0"/>
+  <rect x="29" y="15" width="6" height="10" rx="3" fill="#6E4FD8"/>
+  <circle cx="32" cy="13.5" r="4.5" fill="#C9B9FF"/>
+  <ellipse cx="23.5" cy="32" rx="6.5" ry="3" fill="#FFFFFF" opacity=".45" transform="rotate(-32 23.5 32)"/>
+  <path d="M52 12l1.6 3.6 3.6 1.6-3.6 1.6L52 22.4l-1.6-3.6-3.6-1.6 3.6-1.6z" fill="#FFD166"/>
+  <path d="M11 22l1 2.2 2.2 1-2.2 1L11 28.4l-1-2.2-2.2-1 2.2-1z" fill="#FFD166"/>
 </svg>

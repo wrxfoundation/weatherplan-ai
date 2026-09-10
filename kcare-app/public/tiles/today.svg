@@ -1,12 +1,24 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="오늘">
-  <rect x="8" y="15" width="48" height="41" rx="10" fill="#FFFFFF" stroke="#0A1F3C" stroke-width="3"/>
-  <path d="M8 25a10 10 0 0 1 10-10h28a10 10 0 0 1 10 10v2H8z" fill="#0A1F3C"/>
-  <rect x="18" y="8" width="5" height="13" rx="2.5" fill="#0A1F3C"/>
-  <rect x="41" y="8" width="5" height="13" rx="2.5" fill="#0A1F3C"/>
-  <circle cx="22" cy="38" r="4.4" fill="#B08D57"/>
-  <circle cx="32" cy="38" r="3.1" fill="#0A1F3C" opacity=".2"/>
-  <circle cx="42" cy="38" r="3.1" fill="#0A1F3C" opacity=".2"/>
-  <circle cx="22" cy="48" r="3.1" fill="#0A1F3C" opacity=".2"/>
-  <circle cx="32" cy="48" r="3.1" fill="#0A1F3C" opacity=".2"/>
-  <circle cx="42" cy="48" r="3.1" fill="#0A1F3C" opacity=".2"/>
+  <!-- 달력 — 투명 배경 · 파란 그라디언트 머리 · 오늘 날짜 파란 점 (2026-09-10 시안) -->
+  <defs>
+    <linearGradient id="tdHead" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#6AA6FF"/>
+      <stop offset="1" stop-color="#2F6BE0"/>
+    </linearGradient>
+    <linearGradient id="tdBody" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#FFFFFF"/>
+      <stop offset="1" stop-color="#E8F0FF"/>
+    </linearGradient>
+  </defs>
+  <rect x="8" y="16" width="48" height="42" rx="11" fill="#1F4FB0" opacity=".12" transform="translate(0 3)"/>
+  <rect x="8" y="14" width="48" height="42" rx="11" fill="url(#tdBody)" stroke="#C6DAFF" stroke-width="1.5"/>
+  <path d="M8 25a11 11 0 0 1 11-11h26a11 11 0 0 1 11 11v3H8z" fill="url(#tdHead)"/>
+  <rect x="17" y="8" width="6" height="13" rx="3" fill="#1F4FB0"/>
+  <rect x="41" y="8" width="6" height="13" rx="3" fill="#1F4FB0"/>
+  <g fill="#C3D6FA">
+    <circle cx="19" cy="37" r="3.2"/><circle cx="32" cy="37" r="3.2"/><circle cx="45" cy="37" r="3.2"/>
+    <circle cx="19" cy="48" r="3.2"/><circle cx="45" cy="48" r="3.2"/>
+  </g>
+  <circle cx="32" cy="48" r="5" fill="#3D7BF7"/>
+  <ellipse cx="21" cy="19.5" rx="8" ry="2.2" fill="#FFFFFF" opacity=".38"/>
 </svg>

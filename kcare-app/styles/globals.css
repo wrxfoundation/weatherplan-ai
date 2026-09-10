@@ -829,6 +829,16 @@ a.btn-press {
     padding-top: 4px;
     padding-bottom: 4px;
   }
+  /* 선생님 배너의 최근 메시지 한 줄 — 낮은 화면에서는 뺀다 (360×640 실측 22px 초과) */
+  .elder-quote {
+    display: none;
+  }
+  /* 타일 그림도 한 단계 작게 — 타일 한 칸이 120px 일 때 68px 그림은 글자를 밀어낸다
+     (4 + 52 + 8 + 29 + 22 + 4 = 119px 로 딱 맞는다) */
+  .elder-tile img.elder-tile-img {
+    width: 52px;
+    height: 52px;
+  }
 }
 
 /* 어르신 홈 사분면 — 기기와 무관하게 남는 세로 공간을 항상 채운다
@@ -871,9 +881,28 @@ a.btn-press {
     padding-bottom: 12px;
   }
   /* 타일이 커진 만큼 아이콘도 키운다 — 크기만 늘리고 아이콘이 그대로면
-     가운데가 휑해 보인다. SVG 는 width/height 속성으로 그려지므로 CSS 로 덮는다. */
-  .elder-home .elder-tile svg {
-    width: 36px;
-    height: 36px;
+     가운데가 휑해 보인다. img 는 width/height 속성으로 그려지므로 CSS 로 덮는다. */
+  .elder-home .elder-tile img.elder-tile-img {
+    width: 84px;
+    height: 84px;
   }
+}
+
+/* 어르신 화면 배경 — 밝은 하늘 (2026-09-10 시안 "지금은 답답하다").
+   위는 옅은 하늘색, 아래로 갈수록 흰색. 오른쪽 위·왼쪽에 흐린 빛 덩어리 둘로
+   여백에 숨을 넣는다. 카드·타일은 이 위에 흰 테두리로 떠 보인다.
+   ::before 는 z-index -1 + isolation 으로 자기 배경 위·내용 아래에 깔린다. */
+.elder-sky {
+  isolation: isolate;
+  background: linear-gradient(180deg, #E9F2FF 0%, #F7FAFF 40%, #FFFFFF 100%);
+}
+.elder-sky::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(240px 200px at 92% 2%, rgba(125, 182, 255, 0.38), transparent 70%),
+    radial-gradient(200px 170px at 6% 18%, rgba(140, 220, 180, 0.22), transparent 70%);
 }
