@@ -1658,3 +1658,16 @@ One small ask, easy to say no to. We sell a household air-quality device that re
 ```
 G (Katie 가 사내에 그대로 붙이는 소개 문단): Seowoo Park leads partnerships at KWeather, a 30-year weather and air-data company in Seoul, and its hardware project wellbian, which sells household air-quality monitors that record to a public ledger and settle in a dollar stablecoin. The question is about the policy landscape for hardware like this in Korea and the US, not about listings or anything commercial, and 15 minutes would be plenty.
 ```
+- **Mastercard Move 크로스보더 프로덕트 디렉터(런던) 링크드인 검토(9/10 밤)** — 서우 캡처(경력 섹션만, 이름 없음 → 저장소에 이름 미기재). Mastercard Director of Product Management(2026-04~, Move 안 규제 시장 B2B·B2B2C 국경간 상용화) · Tonic 시니어 컨설턴트(유럽 CSD 디지털 담보 전략, 인트라데이 레포) · R3 2년 6개월(중앙은행·금융기관 디지털 화폐·자산 솔루션 PM). **판정: 컨택 진행** — 거래소가 아니라 결제 인프라라 9/30 규칙 비대상, 파트너 경쟁 없음. Paloma·Emily(거래소 결제 BD) 건에서 "2차 판매 해외 결제 설계 때 재검토"로 미뤄 둔 주제의 정공법 상대가 이쪽이다. 후크 = R3 → CSD → Move 세 각도 이력이 우리 지형(싱가포르 발행 주체·온체인 정산·국경간 소비자 판매)과 같다는 점. 금지선: 마스터카드 통합 제안 0 · 요청 0 · 스테이블코인 브랜드·리플·XRPL 미기재(Move 는 크로스보더에서 인접 경쟁 — 물으면 공개 사실로만) · 보상·토큰·상장·판매 목표 0. 내부 참고(대외 미언급): 마스터카드 XRPL 접점 2건(5월 JPM Kinexys 실증 · 8/26 해커톤 NYC 10/24~25)이나 본인 담당 근거 없어 초안 제외. 대면 상향: 해커톤(10/24~25)과 Swell(10/27~29)이 같은 NYC 주간 — 서우 스웰 참석 확정 시 통화 → 대면. 타이밍: 노트는 지금, 통화는 9/16 이후. 초안 2종(노트 296자/300 · 메시지 985자):
+```
+H (1촌 노트): Hi — Seowoo, partnerships at KWeather in Seoul (30 years in weather data) and its hardware project wellbian. R3, then a European CSD, now cross-border product at Mastercard Move: a rare arc. We sell hardware settled in a dollar stablecoin across borders, and I'd value your read. Glad to connect.
+```
+```
+I (수락 후 메시지): Thanks for connecting. Some context, then a small ask.
+
+KWeather has measured Korea's weather for 30 years — instruments, forecasting, and B2B data for 4,000+ enterprise clients. wellbian is our Web3 project: a household air-quality monitor that records what it measures to a public ledger, sold and settled in a dollar stablecoin. Korea first, other markets after that.
+
+What I'd like to learn sits in your lane rather than mine. Selling a physical product to consumers across borders and settling it on-chain runs into questions you've seen from three sides: digital currency with central banks at R3, collateral at a CSD, and now regulated-market cross-border at Move. Where does it actually break — the on-ramp for buyers who have never held a wallet, or the regulated-market side?
+
+There's no proposal attached and nothing I want from Mastercard. If a 20-minute call later in September suits you I'd be glad to listen. If not, even a pointer to what you'd read on this would help.
+```
