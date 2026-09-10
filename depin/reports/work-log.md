@@ -1620,3 +1620,4 @@ Mai Furukawa (Director, XRPL Japan / XRPL Labs) (289자): Hi Mai — Seowoo Park
 Hugo Philion (CEO, Flare) — 플레어 코리아 경유·케이웨더 명의 (231자): Hi Hugo — Seowoo Park, KWeather Digital Business. Thank you for the Flare Korea workshop on Sep 5; the KWeather session was a highlight for us. We'll be at XRP SEOUL on Oct 3 with the device and hope to catch you there or at Swell.
 ```
 - 서우(9/10): "XRPL도 지금 파트너십 등록 중이니 보류" → Commons(David·Thomas)·XRPLF(Brett)·XRPL Japan(Mai) 노트 발송 보류, 등록 결과 후 그 경로로 재개. 진행 유지: Hugo(플레어 코리아 경유 웜 노트)·Gary White(대기 중, 스웰 대면 목표).
+- **Emily Yang(Binance APAC 파트너십 매니저) 링크드인 검토(9/10)** — 결제·온오프램프 BD(상장 아님)지만 거래소 카테고리 3번째 사례 → 보류. 우리는 그가 찾는 라이선스 결제사가 아니고, 바이낸스 진영 신호는 9/30까지 금지. 1촌 요청만 두고 메시지 없음. 2차 판매 해외 결제 수단 검토 시 결제 통합 관점으로만 재검토.
