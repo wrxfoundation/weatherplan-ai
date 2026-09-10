@@ -1021,3 +1021,22 @@ Nice to hear D'CENT has been good to work with. And if you ever make the trip, O
 ```
 E (225자): And one more thing, since you're based in the Netherlands: if the performance is strong, taking the lead on Europe for us is something I'd genuinely want to talk about. No promises yet — but that's the direction I'd push for.
 ```
+
+### @victoriazmei(Victoria Mei) — 아웃바운드 첫 컨택 검토 (2026-09-10, 서우 발견) → **컨택한다 (가볍게, 무요청)**
+
+- **프로필**: 소셜미디어 @MoonPay(핑크 다이아 인증) · 크리에이터 60만+ 팔로워(자기 신고) · 전 ByteDance · UC 버클리·컬럼비아 · 뉴욕 거주 · "AI-Native Finance" 표방.
+  카테고리 접점 — 핀테크·크립토·크리에이터 경제. 유료 인증(파란 체크)이고 이미 상호 팔로우 상태(화면에 "팔로잉").
+- **카란 건과 구조가 다르다**: 그는 우리에게 유료 제휴를 제안해 온 인바운드, 이쪽은 **우리가 먼저 여는 아웃바운드**.
+  9/9 기조(청취 → 관계 → 결정 유보)를 그대로 적용 — 요청·조건·숫자 0, 소개만.
+- **채널**: 개인 계정(Logan)에서 DM. MoonPay 소속이라 회사 대 회사 성격도 있지만, 첫 접촉은 사람 대 사람이 가볍다.
+  카탈라이즈가 "해외 인플루언서 소개는 적극"이라 했으니, 그가 관심을 보이면 그다음부터 카탈라이즈 레인으로 넘기는 것도 고려.
+- **규칙**: 가격·보상·토큰·상장 언급 0. 제품은 "device that measures indoor weather / on XRPL" 까지만 — 기능 소개이지 세일즈 아님.
+  #ad·광고 표시·유료 여부는 그가 관심을 보인 다음 단계에서.
+- 셀럽 사다리에 신규 트랙으로 추가(아래).
+
+```
+D1 (추천, 335자): Hey Victoria — following the AI-native finance stuff you post, and the ByteDance-to-crypto path is a rare one. I'm Logan, I do partnerships for wellbian — early-stage, building a device that measures indoor weather and puts the readings on XRPL. Not pitching anything, just wanted to say hi. Curious what you're building on these days.
+```
+```
+D2 (260자): Hey Victoria, I'm Logan — partnerships at wellbian. Came across your profile and liked the range (fintech, AI, crypto, creator). We're an early-stage team putting real hardware on XRPL — no ask here, just introducing myself. What's caught your interest lately?
+```
