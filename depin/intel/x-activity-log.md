@@ -1069,3 +1069,28 @@ One thing to plan for rather than retrofit: once money is attached, those posts 
 
 We're early. I'd rather under-promise now and come back with something I can stand behind.
 ```
+
+### @KingKaran 회신 **재작성 (2026-09-10 밤)** — 결제 전용 URL 구현 확인 → **1차부터 판매당 5% 커미션**
+
+앞선 초안 D 는 **판매 귀속 추적이 없다**는 전제로 "1차 커미션 없음" 을 말했다. 서우가 **인플루언서별 결제 전용 창구 URL 발급이 구현 완료**임을 확인 → 전제가 사라져 **D 폐기, E 로 대체**. 고객 할인코드는 여전히 하지 않는다(쿠폰 기능 부재·예약자 역차별) — 결제 전용 URL 은 귀속이지 할인이 아니다.
+
+문안이 못박는 것 다섯: 기간(1차 판매창 한정) · 완료·미환불 주문 한정 · **가격 동일, 할인처럼 홍보 금지** · 지급은 정산 후 RLUSD(지갑 주소 필요) · **광고 표시 의무**(협상 대상 아님, 사후가 아니라 지금 고지). 그리고 그가 원했던 고정 계약·월 단가는 아니라는 점을 분명히 한다 — 성과 기반이라 우리 하방 리스크가 0 이고, 그래서 지금 열 수 있다.
+
+```
+E (1278자)
+Karan — I said I'd check on the percentage, so here's the answer.
+
+Yes. We can issue you a dedicated checkout link, and you get 5% of every completed sale that comes through it. That's built and working on our side, not a plan.
+
+The terms, so nothing is ambiguous later:
+
+- It covers the first sale window, Sep 15 12:00 to Sep 16 12:00 KST. Anything after that we agree separately.
+- Completed orders only. If an order is refunded, that one drops out.
+- The price through your link is the same as everywhere else. This is not a discount code, so please don't position it as one — the 5% comes out of our side, not the buyer's.
+- Paid in RLUSD once the window closes and refunds have settled.
+- Once money is attached, the posts need to be marked as paid on your side. That one isn't negotiable for us, and it's better raised now than after the fact.
+
+To be straight about what this isn't: it's not a contract with a monthly fee. We're early, and I won't commit to fixed spend I can't defend internally yet. What I can do is make sure you're paid on what you actually sell. If the numbers from this round are good, that's the argument I take upstairs for something firmer.
+
+I'll send the link over before the 15th. I'll also need an XRPL address for the payout when we get there.
+```
