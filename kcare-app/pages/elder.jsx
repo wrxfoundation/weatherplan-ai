@@ -1031,113 +1031,153 @@ export default function ElderHome() {
                 바뀌어 알린다. SOS 사용법은 첫 안심방문 때 선생님이 직접 알려 드리는
                 것이 원래 동선이라 화면에서 매번 설명하지 않는다. */}
 
-            {/* ── 선생님 메시지함 (GNB '선생님') ── 2026-08-28 요청.
-                담당 컨시어지와 주고받은 목소리만 모아 둔 자리. 홈 인사 옆
-                '메시지 보내기'가 보내는 곳이 바로 여기라, 보낸 것도 같은 목록에
+            {/* ── 마음사서함 (GNB 첫 칸) ── 2026-08-28 요청으로 생긴 자리.
+                담당 컨시어지와 주고받은 목소리만 모아 둔다. 보낸 것도 같은 목록에
                 쌓인다. 글자를 못 읽으셔도 목소리로 오가게 하는 것이 핵심이라
                 타이핑 입력은 두지 않는다. */}
-            <ElderCard
-              show={tab === "teacher"}
-              order={0}
-              style={{
-                background: "#0A1F3C",
-                backgroundImage: "linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,0))",
-                boxShadow: "inset 0 1px 0 rgba(255,255,255,.22), 0 24px 48px -30px rgba(10,31,60,.85)",
-              }}
-              className="text-white"
-            >
+            {/* ── 마음사서함 — 한 화면이 곧 대화다 (2026-09-10 "UX가 어정쩡하다" 피드백).
+                전에는 선생님 소개 카드(보내기 버튼 포함)가 위에, 말풍선 목록 카드가
+                따로 아래에 있었다 — 보내는 자리가 대화의 맨 위에 있고 말풍선마다
+                스피커·상자 버튼이 둘씩 붙어, 채팅도 아니고 목록도 아니었다.
+                이제: 상대 이름 한 줄 → 날짜 구분 → 말풍선(말풍선 자체가 듣기 버튼)
+                → 화면 아래 붙박이 '보내기'(채팅의 입력창 자리). 내려받기는 받은
+                말풍선 밑 작은 글자 링크로 내렸다. 시트 원칙은 그대로: 받은 것 왼쪽
+                옅은 색, 보낸 것 오른쪽 남색, '24시간 보관'은 두 마디, 기능 설명 없음. */}
+            <ElderCard show={tab === "teacher"} order={0} style={LIGHT_CARD}>
               <div className="flex items-center gap-3">
                 <span
                   aria-hidden
-                  className="flex h-[52px] w-[52px] shrink-0 items-center justify-center rounded-full text-[17px] font-bold"
+                  className="flex h-[46px] w-[46px] shrink-0 items-center justify-center rounded-full text-[16px] font-bold"
                   style={{ background: "#E8DFCB", color: "#7A5C28" }}
                 >
                   {TEACHER.name.slice(1)}
                 </span>
-                <div className="min-w-0">
-                  <div className="text-[22px] font-bold leading-[1.3]">{TEACHER.name} 선생님</div>
-                  <div className="mt-[2px] text-[18px] text-white/[.82]">{TEACHER.role}</div>
+                <div className="min-w-0 flex-1">
+                  <div className="text-[20px] font-bold leading-[1.3] text-navy">{TEACHER.name} 선생님</div>
+                  <div className="mt-[1px] text-[17px] leading-[1.35] text-muted">{TEACHER.role}</div>
                 </div>
+                <span className="shrink-0 text-[15px] font-medium text-muted/80">24시간 보관</span>
               </div>
-              {/* 시트 마음사서함 1번 — 보내기 버튼 위 한 줄 */}
-              <p className="mt-4 text-[19px] font-bold leading-[1.45] text-white/[.92]">
-                선생님과 하루의 일상을 나눠보아요
-              </p>
-              <button
-                onClick={openConcMsg}
-                className="btn-press mt-2.5 flex w-full items-center justify-center gap-2 rounded-[18px] py-[19px] text-[20px] font-bold text-white"
-                style={{ background: "#1E7A5A" }}
-              >
-                <span aria-hidden>
-                  <Icon name="mic" size={24} strokeWidth={2} />
-                </span>
-                메시지 보내기
-              </button>
-            </ElderCard>
 
-            {/* 주고받은 목소리 — 카톡처럼 (2026-09-04 시트 마음사서함 2~4번).
-                받은 것은 왼쪽 옅은 말풍선, 보낸 것은 오른쪽 남색. 말풍선 옆 스피커를
-                누르면 듣고, 받은 것에는 내려받기가 하나 더 붙는다. 기능 설명 문단은
-                뺐다 — '24시간 보관'은 제목 옆 두 마디로만 남긴다. */}
-            <ElderCard show={tab === "teacher"} order={1} style={LIGHT_CARD}>
-              <CardHead title="주고받은 목소리" right="24시간 보관" icon="mic" />
               {teacherMsgs.length === 0 ? (
-                <p className="mt-3 text-[19px] leading-[1.6] text-muted">아직 주고받은 목소리가 없습니다.</p>
+                <p className="mt-4 text-[19px] leading-[1.6] text-muted">
+                  아직 주고받은 목소리가 없습니다. 아래 버튼으로 첫 인사를 보내 보세요.
+                </p>
               ) : (
-                <div className="mt-3 flex flex-col gap-3">
-                  {teacherMsgs.map((m) => {
+                <div className="mt-4 flex flex-col gap-2.5">
+                  {teacherMsgs.map((m, i) => {
                     const mine = m.dir === "out";
                     const heard = !!msgPlayed[m.id];
-                    const speaker = (
-                      <button
-                        onClick={() => markPlayed(m.id)}
-                        aria-label={heard ? "다시 듣기" : "듣기"}
-                        className="btn-press flex h-[46px] w-[46px] shrink-0 items-center justify-center rounded-full"
-                        style={heard ? { background: "rgba(10,31,60,.06)", color: "#5C5A54" } : { background: "rgba(176,141,87,.18)", color: "#8A5D12" }}
-                      >
-                        <Icon name="speaker" size={24} strokeWidth={2} />
-                      </button>
-                    );
+                    const fresh = !mine && !heard;
+                    const dayOf = (x) => (isToday(x.at) ? "오늘" : spokenDay(x.at));
+                    const newDay = i === 0 || dayOf(teacherMsgs[i - 1]) !== dayOf(m);
                     return (
-                      <div key={m.id} className={`flex items-end gap-2 ${mine ? "justify-end" : "justify-start"}`}>
-                        {mine && speaker}
-                        <div
-                          className="max-w-[76%] rounded-[20px] px-4 py-3"
-                          style={
-                            mine
-                              ? { background: "#0A1F3C", color: "#FFFFFF", borderBottomRightRadius: 6 }
-                              : { background: "#F3EEE2", color: "#40413F", borderBottomLeftRadius: 6 }
-                          }
-                        >
-                          <p className="text-[19px] leading-[1.5]">{m.text}</p>
-                          <div className="mt-1 font-num text-[15px]" style={{ color: mine ? "rgba(255,255,255,.7)" : "#5C5A54" }}>
-                            {isToday(m.at) ? "" : `${spokenDay(m.at)} `}
-                            {spokenTime(m.at)} · {m.durationSec}초
+                      <div key={m.id} className="flex flex-col gap-2.5">
+                        {newDay && (
+                          <div className="my-1 text-center">
+                            <span
+                              className="rounded-full px-3 py-1 text-[15px] font-bold text-muted"
+                              style={{ background: "rgba(10,31,60,.06)" }}
+                            >
+                              {dayOf(m)}
+                            </span>
                           </div>
-                        </div>
-                        {!mine && (
-                          <div className="flex shrink-0 flex-col gap-1.5">
-                            {speaker}
-                            {/* 내려받기는 받은 메시지에만 — 보낸 것은 어르신이 이미 말씀하신
-                                것이라 되돌려 받을 원본이 없다. 파일명은 ASCII (한글 download
-                                속성은 크롬이 버리고 확장자 없는 파일로 저장한다 · 실측). */}
+                        )}
+                        <div className={`flex flex-col ${mine ? "items-end" : "items-start"}`}>
+                          {/* 말풍선 = 듣기 버튼. 안 들은 것은 금색 테두리와 '새 목소리'. */}
+                          <button
+                            onClick={() => markPlayed(m.id)}
+                            aria-label={`${m.text} · ${heard ? "다시 듣기" : "듣기"}`}
+                            className="btn-press max-w-[92%] rounded-[20px] px-4 py-3 text-left"
+                            style={
+                              mine
+                                ? { background: "#0A1F3C", color: "#FFFFFF", borderBottomRightRadius: 6 }
+                                : fresh
+                                  ? { background: "#F7F0E0", color: "#40413F", borderBottomLeftRadius: 6, boxShadow: "inset 0 0 0 1.5px rgba(176,141,87,.5)" }
+                                  : { background: "#F3EEE2", color: "#40413F", borderBottomLeftRadius: 6 }
+                            }
+                          >
+                            <span className="flex items-start gap-3">
+                              <span
+                                aria-hidden
+                                className="mt-[2px] flex h-[38px] w-[38px] shrink-0 items-center justify-center rounded-full"
+                                style={
+                                  mine
+                                    ? { background: "rgba(255,255,255,.16)", color: "#FFFFFF" }
+                                    : fresh
+                                      ? { background: "#B08D57", color: "#FFFFFF" }
+                                      : { background: "rgba(10,31,60,.08)", color: "#5C5A54" }
+                                }
+                              >
+                                <Icon name={heard ? "speaker" : "play"} size={22} strokeWidth={2} />
+                              </span>
+                              <span className="min-w-0">
+                                {/* '새 목소리'는 시각 뒤에 붙이면 줄이 어색하게 꺾인다 — 위에 한 줄로 */}
+                                {fresh && (
+                                  <span className="mb-[2px] block text-[15px] font-bold" style={{ color: "#8A5D12" }}>
+                                    새 목소리
+                                  </span>
+                                )}
+                                <span className="block text-[19px] leading-[1.5]">{m.text}</span>
+                                <span
+                                  className="mt-1 block font-num text-[15px]"
+                                  style={{ color: mine ? "rgba(255,255,255,.7)" : "#5C5A54" }}
+                                >
+                                  {spokenTime(m.at)} · {m.durationSec}초
+                                </span>
+                              </span>
+                            </span>
+                          </button>
+                          {/* 내려받기는 받은 메시지에만 — 보낸 것은 어르신이 이미 말씀하신
+                              것이라 되돌려 받을 원본이 없다. 파일명은 ASCII (한글 download
+                              속성은 크롬이 버리고 확장자 없는 파일로 저장한다 · 실측). */}
+                          {!mine && (
                             <a
                               href={TEACHER_DEMO_FILE}
                               download={`kcare-voice-${m.id}-demo.wav`}
                               aria-label="내려받기"
-                              className="btn-press flex h-[46px] w-[46px] items-center justify-center rounded-full"
-                              style={{ background: "rgba(30,122,90,.12)", color: "#1E7A5A" }}
+                              className="tap ml-2 mt-0.5 inline-flex items-center gap-1 text-[16px] font-bold text-green"
                             >
-                              <Icon name="box" size={22} strokeWidth={2} />
+                              <Icon name="download" size={17} strokeWidth={2.2} /> 내려받기
                             </a>
-                          </div>
-                        )}
+                          )}
+                        </div>
                       </div>
                     );
                   })}
                 </div>
               )}
             </ElderCard>
+
+            {/* 보내기 — 화면 아래 붙박이 (채팅의 입력창 자리). main 이 유일한 스크롤
+                영역이라 sticky bottom-0 이 GNB 바로 위에 붙는다. 말풍선은 이 아래로
+                스크롤해 들어가고, 위쪽 그라디언트가 경계를 부드럽게 한다.
+                시트 마음사서함 1번의 한 줄("선생님과 하루의 일상을 나눠보아요")은
+                버튼 위 한 줄로 그대로. main 의 pb-2 만큼 아래로 늘려 틈을 막는다. */}
+            <div
+              className="sticky bottom-0 z-10 shrink-0 pt-[18px]"
+              style={{
+                order: 1,
+                display: tab === "teacher" ? undefined : "none",
+                // 위 12px 만 투명→바탕색으로 녹이고, 안내 한 줄부터는 바탕색이 꽉 찬다
+                // (그라디언트를 길게 두면 말풍선 글자 위에 안내 문장이 겹쳐 보였다 · 실측)
+                background: "linear-gradient(180deg, rgba(253,252,249,0) 0, #FDFCF9 12px)",
+                marginBottom: -8,
+                paddingBottom: 8,
+              }}
+            >
+              <p className="mb-2 text-center text-[17px] font-bold text-muted">선생님과 하루의 일상을 나눠보아요</p>
+              <button
+                onClick={openConcMsg}
+                className="btn-press flex w-full items-center justify-center gap-2 rounded-[18px] py-[19px] text-[20px] font-bold text-white"
+                style={{ background: "#1E7A5A", boxShadow: "0 12px 26px -14px rgba(30,122,90,.7)" }}
+              >
+                <span aria-hidden>
+                  <Icon name="mic" size={24} strokeWidth={2} />
+                </span>
+                선생님께 목소리 보내기
+              </button>
+            </div>
 
             {/* order 3 · 다음 일정 — 오늘 탭 세 번째 자리 (2026-08-28 시트
                 "다음일정, 누르면 아래로 캘린더가 펼쳐지게"). 접힌 채로도 그 다음
@@ -2219,35 +2259,41 @@ export default function ElderHome() {
               '선생님께 전화'는 전체 탭에서 삭제 (2026-08-12 시트 전체 요청 2번) —
               전화는 오늘 오시는 분에게만, '오늘 일정' 카드 안에서 연다. */}
           <footer className="shrink-0 pb-2 pt-2">
-            {/* 아이콘+라벨 병행 (아이콘 전용 금지). 마음사서함에 안 들은 것이 있으면
-                아이콘 옆에 금색 점 — 시안의 점이 이것이다. */}
-            <nav className="grid grid-cols-3 gap-2 border-t border-navy/[.12] pt-2.5">
+            {/* 아이콘+라벨 병행 (아이콘 전용 금지).
+                2026-09-10 정돈: 흐릿한 회색 알약 셋이 따로 떠 있던 것을 한 덩어리
+                분절 막대로 — 옅은 남색 트랙 하나 안에서 지금 탭만 남색으로 찬다.
+                안 들은 메시지는 아이콘 위 작은 점 대신 오른쪽 위 금색 개수 배지로
+                (점은 무엇인지 알기 어렵다는 피드백). 높이는 py 로 만든다 (min-h 는
+                globals 의 .btn-press 에 눌린다). */}
+            <nav
+              className="grid grid-cols-3 gap-1 rounded-[22px] p-1.5"
+              style={{ background: "rgba(10,31,60,.06)" }}
+            >
               {TABS.map((t) => {
                 const active = tab === t.key;
-                const dot = t.key === "teacher" && unreadMsgs.length > 0;
+                const n = t.key === "teacher" ? unreadMsgs.length : 0;
                 return (
                   <button
                     key={t.key}
                     onClick={() => setTab(t.key)}
                     aria-current={active ? "page" : undefined}
-                    aria-label={dot ? `${t.label} — 안 들은 메시지 ${unreadMsgs.length}개` : undefined}
-                    className="btn-press flex min-h-[64px] flex-col items-center justify-center gap-1 rounded-[18px]"
-                    style={
-                      active
-                        ? { background: "#0A1F3C", color: "#FFFFFF" }
-                        : { background: "rgba(10,31,60,.05)", color: "#0A1F3C" }
-                    }
+                    aria-label={n ? `${t.label} — 안 들은 메시지 ${n}개` : undefined}
+                    className="btn-press relative flex flex-col items-center justify-center gap-[3px] rounded-[17px] py-[9px]"
+                    style={active ? { background: "#0A1F3C", color: "#FFFFFF" } : { color: "#0A1F3C" }}
                   >
-                    <span aria-hidden className="relative">
+                    <span aria-hidden>
                       <Icon name={t.glyph} size={24} strokeWidth={2} />
-                      {dot && (
-                        <span
-                          className="absolute -right-[7px] -top-[3px] h-[11px] w-[11px] rounded-full"
-                          style={{ background: "#B08D57", boxShadow: `0 0 0 2px ${active ? "#0A1F3C" : "#FDFCF9"}` }}
-                        />
-                      )}
                     </span>
-                    <span className="text-[16px] font-bold">{t.label}</span>
+                    <span className="text-[17px] font-bold leading-[1.25]">{t.label}</span>
+                    {n > 0 && (
+                      <span
+                        aria-hidden
+                        className="absolute right-2 top-1.5 flex h-[22px] min-w-[22px] items-center justify-center rounded-full px-1 font-num text-[15px] font-bold leading-none text-white"
+                        style={{ background: "#B08D57", boxShadow: "0 0 0 2px #FDFCF9" }}
+                      >
+                        {n}
+                      </span>
+                    )}
                   </button>
                 );
               })}
