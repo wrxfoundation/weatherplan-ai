@@ -1562,3 +1562,43 @@
 - **리플 상호 NDA 표준 양식 접수(9/9)** — 요지 검토 전달(상호 · 목적 한정 · 당사자 정보 자체 비밀 · 제3자 공유는 동급 NDA 전제 · best efforts · 반환 10일 · 2년+3년 · 뉴욕 준거법 · 제재 보증). 결정 필요: 서명 법인(웰비안 SG vs 케이웨더, 50% 지배 아니면 상호 커버 안 됨 → 케이웨더-웰비안 NDA 선행 또는 각각 서명) · 발신자 ripple.com 확인 · 이메일 통지 합의. 협상 후보: best→reasonable efforts. 공개 범위 선긋기(법인 구조·세무·원가·목표 내부용). 플레이북 금지 목록에 "리플 논의 사실 자체" 추가. 문서 본문은 저장소 미기입.
 - **@victoriazmei(Victoria Mei) 아웃바운드 첫 컨택** — MoonPay 소셜미디어·크리에이터(60만+) 발견, 서우 "컨택하자". 카란(인바운드)과 반대 방향이라 9/9 기조(청취 → 관계 → 결정 유보) 그대로 적용 — 요청·조건·숫자 없이 소개 DM만. D1/D2 초안 전달, celeb-ladder 에 신규 D 트랙(해외 KOL 후보) 추가.
 - **Tina Lee(BYDFi 선임 BD) 링크드인 1촌 검토(9/10)** — 스크린샷 3장(프로필·자동 연결 메시지·경력: BYDFi·Fairdesk·Bitget BD, "KOL·브로커·고래 트레이더 관리"). 판정: 빅토리아 메이와 달리 **거래소 BD 카테고리 = LBank 와 동형** → 추가 컨택 보류 권고, 자동 연결 메시지 이상 진행 안 함. 그가 먼저 접촉하면 LBank 톤(관계는 열되 상장 논의 없음)으로 대응. business-directions 에 판정 기록.
+- **Water.org 아웃바운드 (9/10)** — 서우: "대표(Gary White)에게 컨택, 무응답이면 Water.org 관련자". 덱의 두 핵심 주장(리플×Water.org RLUSD 2025-03, Get Blue 다보스 2026-01 + AccuWeather 파트너)을 원출처로 검증한 뒤 초안 4종 작성: 1촌 노트(≤300자) · 수락 후 메시지 · COO(Vedika Bhandarkar)용 노트+메시지 · 7일 후속. 후크 = AccuWeather 선례 + "같은 레일의 반대편"(RLUSD/XRPL). 리플 논의 사실 언급 0. business-directions 에 경로·규칙 기록.
+```
+1촌 노트 — Gary (267자): Hi Gary — Seowoo Park, KWeather (Korea's 30-year weather & air-data company). AccuWeather's role in Get Blue caught my eye; we could be that partner for Korea/Asia, and our household devices already settle in RLUSD on the XRP Ledger. Would value a short conversation.
+```
+```
+수락 후 메시지 — Gary (1080자):
+Hi Gary, thanks for connecting.
+
+I lead partnerships at KWeather's digital business division in Seoul. KWeather has run private weather observation in Korea for 30 years and serves 4,000+ business clients. Our new project, wellbian, puts certified indoor climate monitors in people's homes, with readings recorded on the XRP Ledger and purchases settled in RLUSD.
+
+Two reasons I'm reaching out:
+
+1. Get Blue. AccuWeather's participation set a precedent for a weather-data company as a partner. KWeather could play that role for Korea and Asia, including consumer activations through our weather app.
+
+2. Same rail, other end. You move seed capital to lending partners in RLUSD; we settle household devices in it. I'd like to understand whether measured household data could be useful to your climate-resilience work.
+
+Would you be open to a 20-minute call, or could you point me to whoever leads Get Blue partnerships? We present at XRP SEOUL 2026 on Oct 3 and would be glad to share what we're building.
+
+Seowoo Park
+KWeather · Digital Business Division / wellbian · Partnerships
+```
+```
+1촌 노트 — Vedika (271자): Hi Vedika — Seowoo Park, KWeather (Korea's 30-year weather & air-data company). AccuWeather's role in Get Blue suggests a fit for Korea/Asia; our household devices already settle in RLUSD on the XRP Ledger. I'd value a short conversation or a pointer to the right person.
+```
+```
+메시지 — Vedika (1078자):
+Hi Vedika, thanks for connecting.
+
+I lead partnerships at KWeather's digital business division in Seoul. KWeather has run private weather observation in Korea for 30 years and serves 4,000+ business clients. Our new project, wellbian, puts certified indoor climate monitors in people's homes, with readings recorded on the XRP Ledger and purchases settled in RLUSD.
+
+I'm writing about Get Blue. AccuWeather's participation set a precedent for a weather-data company as a partner, and KWeather could play that role for Korea and Asia, including consumer activations through our weather app. There may also be a second thread: you move seed capital to lending partners in RLUSD, and we settle household devices in it, so I'd like to understand whether measured household data could support your climate-resilience work.
+
+Could you point me to whoever leads Get Blue partnerships, or would you have 20 minutes yourself? We present at XRP SEOUL 2026 on Oct 3 and would be glad to share what we're building.
+
+Seowoo Park
+KWeather · Digital Business Division / wellbian · Partnerships
+```
+```
+7일 후속 — Gary (242자): Hi Gary — following up in case this got buried. The short version: KWeather as Get Blue's weather-data partner for Korea/Asia, and household climate data on the same RLUSD/XRPL rail you already use. Happy to send a one-pager if that's easier.
+```
