@@ -1,5 +1,9 @@
 # 백서 v0.3 ↔ 판매 사이트 정합성 점검 (2026-08-26)
 
+> **→ 후속 점검 (2026-09-10)**: 실제 판매 사이트 wellbian.io(/token·/about·/membership·/terms·/launch) ↔ 백서 v0.3 ↔ 약관 v1.0
+> 기준 재점검 12건은 `depin/content/site-canon-0910.md` §7. 우선 3건 = A 발행 권한 소각 주장 · C 보상 출금 시점 4곳 상이 ·
+> E 가치 상승 암시 문구. 이 8/26 문서는 기기 사양(ARC-600DA) 정합 기록으로만 유효.
+
 - 기준 문서: `kw_whitepaper_bysection_20260817.docx` (IAQ/OAQ Data Ecosystem Whitepaper & XRPL Tech Spec v0.3)
 - 대조 대상: wellbian-store 판매 사이트 v2.7 (wellbiansales.vercel.app, 커밋 e380caa 기준)
 - 결론 요약: **치명적 모순 없음.** 사이트의 대외 발화(보상 비보장·수익 무약속·개인정보 무저장)는

@@ -134,7 +134,7 @@ export const FAQS = [
   { q: "RLUSD는 어디서 구하나요?", a: "RLUSD를 지원하는 국내·해외 거래소에서 구매한 뒤 개인 지갑으로 출금하시면 됩니다. 출금 화면에서 네트워크를 반드시 XRPL로 선택하세요. 다른 네트워크를 고르면 자산을 잃을 수 있습니다. 처음이시라면 소액으로 먼저 시험 전송을 해보시는 편이 안전합니다." },
   { q: "국내 거래소에서 지갑으로 바로 보낼 수 있나요?", a: "국내 거래소는 트래블룰 때문에 확인되지 않은 지갑으로 바로 보내지 못하는 경우가 있습니다. 이때는 거래소가 지원하는 외부 지갑을 거쳐 보내시면 됩니다. 해외 거래소는 대개 바로 보낼 수 있습니다. 거래소마다 다르니 출금 화면의 안내를 먼저 확인해 주세요." },
   { q: "지갑이 처음인데 괜찮나요?", a: "예약에는 지갑이 필요 없습니다. 구매도 국내 카드로 하시면 지갑 없이 됩니다. RLUSD로 결제하시거나 인증서를 NFT로 받고 싶으실 때만 XRPL 지갑이 필요하고, D'CENT·Girin·Xaman 같은 외부 지갑으로 로그인하실 수 있습니다." },
-  { q: "보상은 어떻게 지급되나요?", a: "기기가 보낸 측정값이 검증을 통과하면 네트워크 원칙에 따라 WLBN이 쌓입니다. 기기를 받기 전에도 기기 NFT당 일별 보상 토큰이 포인트 형식으로 적립될 예정이며, 수령 후 정산 정책에 따라 전환됩니다. 지급량과 가치는 보장되지 않습니다." },
+  { q: "보상은 어떻게 지급되나요?", a: "기기가 보낸 측정값이 검증을 통과하면 네트워크 원칙에 따라 WLBN이 쌓입니다. 기기를 받기 전에도 기기 NFT당 일별 보상 토큰이 포인트 형식으로 적립될 예정이며, 온체인 전환은 회사가 공지하는 출금 개시 이후 정산 정책에 따라 이루어집니다. 지급량과 가치는 보장되지 않습니다." },
 ];
 
 /* 기본 순서(8/27 서우 확정): 수령 → 블루투스 페어링 → Wi-Fi 연동이 선행, 그다음 리딤·NFT
@@ -385,19 +385,22 @@ export const FAQS_EN = [
   { q: "Where do I get RLUSD?", a: "Buy RLUSD on an exchange that supports it, then withdraw to your own wallet. On the withdrawal screen you must select the XRPL network — choosing another network can lose the funds. If this is your first time, send a small test amount first." },
   { q: "Can I send straight from a Korean exchange to my wallet?", a: "Korean exchanges may block transfers to unverified wallets under travel-rule requirements. In that case, route through an external wallet the exchange supports. Overseas exchanges usually allow it directly. Rules differ by exchange, so check the withdrawal screen first." },
   { q: "I have never used a wallet — is that a problem?", a: "You do not need a wallet to reserve. You can also buy without one, by Korean domestic card. An XRPL wallet is only needed if you pay in RLUSD or want your voucher as an NFT — external wallets such as D'CENT, Girin and Xaman are supported." },
-  { q: "How are rewards paid?", a: "When measurements from your device pass verification, WLBN accrues under network rules. Even before delivery, reward tokens are planned to accrue daily per device NFT as points, converted under the settlement policy once you receive the device. Amounts and value are not guaranteed." },
+  { q: "How are rewards paid?", a: "When measurements from your device pass verification, WLBN accrues under network rules. Even before delivery, reward tokens are planned to accrue daily per device NFT as points; conversion on-chain follows the settlement policy once the company announces that withdrawals are open. Amounts and value are not guaranteed." },
 ];
 
 export const FAQS_EXTRA = [
+  /* 9/10 정정 3건 — WLBN 총 발행량(1,000,000 → 100억, 8/24 구 플랫폼 화면 표기였음)·예산 산정 방식·독식 상한 문구.
+     기본 문항 "보상은 어떻게 지급되나요?" 도 온체인 전환 시점을 '출금 개시 공지 이후' 로 통일했다.
+     근거와 불일치 목록: depin/content/site-canon-0910.md §1·§7 */
   { q: "배송은 언제 되나요? 배송비는 따로 드나요?", a: "출고 일정은 별도로 안내드립니다. 배송 2주 전에 텔레그램과 X 공지로 알려드리고, 배송 정보는 그때 받습니다. 사전예약 단계에서는 배송 정보를 받지 않습니다." },
   { q: "환불되나요?", a: "사전예약으로 저희에게 내신 금액이 없으므로 환불해 드릴 것도 없습니다. 언제든 예약을 하지 않으셔도 됩니다. 구매 후의 환불은 판매 약관에 따르며, 약관은 판매 오픈 전에 공지됩니다." },
   { q: "제네시스 멤버십이 뭔가요?", a: "1차 판매 구매자에게만 부여되는 관측소 라이선스 등급입니다. 계정당 1개이고 양도할 수 없으며, 이후 판매분에는 발급되지 않습니다. 보상 토큰 20% 가산(예정)과 데이터 바운티 우선 배정이 따르고, 제네시스 넘버가 영구 기록되어 이후 판매·신규 서비스에서 우선권을 갖습니다." },
   { q: "라이선스 NFT는 뭔가요?", a: "두 종류가 있습니다. 기기 NFT는 구매하시는 기기 1대당 1개로 양도할 수 있고, 관측소 라이선스는 계정당 1개로 합류 시기를 구분합니다(1차 구매자는 제네시스). 기기 NFT가 있어야 그 기기가 보상 대상이 됩니다." },
   { q: "트러스트라인이 뭔가요?", a: "XRPL에서 내 지갑이 특정 토큰을 받겠다고 여는 통로입니다. RLUSD를 받으려면 필요하고, 결제 단계에서 자동으로 점검해 드립니다. 트러스트라인을 열 때 XRP 준비금이 계정에 잡히는데, 이는 저희에게 오는 돈이 아니라 지갑에 남는 금액입니다." },
   { q: "내 지갑 주소는 어디서 확인하나요?", a: "로그인하시면 화면 오른쪽 위에 지갑 주소가 줄여서 표시됩니다. 눌러서 전체 주소를 복사하실 수 있습니다." },
-  { q: "WLBN은 어떤 토큰인가요?", a: "네트워크의 보상·결제에 쓰이는 XRPL 발행 자산(IOU)입니다. 총 발행량은 1,000,000으로 고정되어 있습니다. 데이터가 팔릴 때마다 결제된 WLBN의 절반이 영구 소각되며, 소각 내역은 온체인 트랜잭션으로 확인하실 수 있습니다." },
-  { q: "보상 예산은 어떻게 정해지나요?", a: "하루 단위(에폭)로 예산을 먼저 고정한 뒤, 각 기기의 품질 점수 기여도에 따라 나눕니다. 기기 수가 늘어도 총 발행량이 늘지 않는 구조입니다." },
-  { q: "한 사람이 보상을 독식할 수 있나요?", a: "그렇게 되지 않도록 기기 하나가 하루 예산의 0.5%를 넘게 가져갈 수 없게 상한을 두고 있습니다." },
+  { q: "WLBN은 어떤 토큰인가요?", a: "네트워크의 보상·결제에 쓰이는 XRPL 발행 자산(IOU)이며 유틸리티 토큰입니다. 지분·증권·예금·법정통화가 아닙니다. 총 발행량은 100억 개로 제네시스에 전량 발행되었고, 공개된 정책상 추가 발행은 없습니다. 배분과 소각 내역은 사이트 토큰 페이지와 백서에 공개되어 있고, 소각은 온체인 트랜잭션으로 확인하실 수 있습니다." },
+  { q: "보상 예산은 어떻게 정해지나요?", a: "하루 단위(에폭)로 활성 관측 지점 수와 현재 단계에 따라 예산을 먼저 정한 뒤, 전송률과 품질 등급을 통과한 기기에 나눕니다. 단계가 올라갈수록 지점당 기준량은 줄어들고, 지급되지 않은 몫은 재분배되거나 소각됩니다. 산식은 백서에 공개되어 있으며, 지급량과 가치는 보장되지 않습니다." },
+  { q: "한 사람이 보상을 독식할 수 있나요?", a: "그렇게 되지 않도록 기기 한 대가 하루에 받을 수 있는 양에 상한을 두고, 상한을 넘는 몫은 다른 기기에 재분배하거나 소각합니다. 구체적인 상한값은 백서의 보상 정책에 있습니다." },
   { q: "내 데이터가 팔리면 개인정보가 새나요?", a: "측정하는 값은 공기질 데이터뿐이고 개인을 식별하는 정보는 수집하지 않습니다. 판매·조회되는 데이터는 위치·시간을 뭉개고 식별자를 돌리는 비식별화 과정을 거치며, 응답에는 개별 기기가 아니라 묶음 통계만 담깁니다." },
   { q: "기기만 쓰고 보상은 안 받아도 되나요?", a: "됩니다. 보상을 빼고 보셔도 CO₂·미세먼지·온습도를 실시간으로 보는 실내 공기질 측정기입니다. 보상은 원하실 때 라이선스 NFT를 발급받으시면 됩니다." },
   { q: "측정 기기는 어떤 제품인가요?", a: "실내 공기질 측정기 ARC-600DA입니다. CO₂·미세먼지·온습도를 측정하고 대한민국 KC 인증과 성능 인증을 받았습니다. 자세한 사양은 사이트의 제품 스펙에서 보실 수 있습니다." },
@@ -407,7 +410,17 @@ export const FAQS_EXTRA = [
   { q: "구글로 만든 지갑을 다른 지갑으로 옮길 수 있나요?", a: "구글 계정으로 만든 지갑은 니모닉이나 개인키를 내보내 다른 지갑으로 옮기실 수 없습니다. 그 지갑에 있는 NFT를 다른 곳으로 두시려면 외부 개인 지갑을 연결하신 뒤 그 지갑으로 전송하시면 됩니다." },
   { q: "카드로 결제할 수 있나요?", a: "네. 9월 15일 판매에서 국내 페이·체크·신용카드와 RLUSD(XRPL 지갑) 결제를 함께 받습니다. 사전예약 단계에서는 결제가 없습니다." },
   { q: "XRP SEOUL 2026 입장권은 어떻게 받나요?", a: "측정기 구매자 중 추첨으로 200명에게 XRP SEOUL 2026 입장권을 드립니다. 1인 1장이며, 카드형 지갑만 단독 구매하신 경우는 추첨 대상이 아닙니다." },
-  { q: "D'CENT 카드형 지갑은 무엇인가요?", a: "선택 구매 품목입니다. 70,000원(정가 80,000원)에 카드 결제로만 구매하실 수 있고, 기기 NFT나 예매 인증서와는 무관하며 입장권 추첨 대상도 아닙니다." },
+  { q: "D'CENT 카드형 지갑은 무엇인가요?", a: "선택 구매 품목입니다. 70,000원(정가 80,000원)에 카드 결제로만 구매하실 수 있고, 기기 NFT나 예매 인증서와는 무관하며 입장권 추첨 대상도 아닙니다." },  /* 9/10 신설 8문항 — 출처: wellbian.io /token·/terms·/membership + 백서 v0.3 정본 스냅샷
+     (depin/content/site-canon-0910.md). 사이트가 이미 공개한 사실만 옮기고, 수량·가치·시세는 약속하지 않는다.
+     상한값·출금 시점처럼 사이트와 백서가 어긋난 자리는 정본 §7 의 수정안 문구를 쓴다. */
+  { q: "WLBN은 어떻게 배분되나요?", a: "총 100억 개 기준으로 노드 보상 1기 28%, 노드 보상 2기 18%(10단계 게이트를 통과할 때만 열리고, 아니면 소각), 소각 예정 25%, 유동성 공급(LP) 8%, 팀 6%(12개월 클리프 뒤 48개월 선형 해제), 생태계 5%, 전략 투자 5%(TGE 시점 해제 0), 유동성·준비금 5%입니다. 조건과 일정은 사이트 토큰 페이지와 백서에 있습니다." },
+  { q: "WLBN 소각은 어떻게 이루어지나요?", a: "여러 갈래로 이루어집니다. 배분표의 소각 예정 물량(총량의 25%)을 네 차례에 나누어 소각하고, 매입한 물량을 소각하며, 데이터 판매로 결제된 WLBN의 절반은 자동으로 소각합니다. 품질 미달로 지급되지 않은 보상과 2기 보상 미개방분도 소각 대상입니다. 모든 소각은 온체인 트랜잭션으로 남습니다." },
+  { q: "거래소 상장은 언제 하나요?", a: "정해진 날짜는 없고, 백서에 공개된 마일스톤 게이트를 따릅니다. 초기 게이트(G1~G3)에서는 거래소 상장을 하지 않으며, 25,000대 완판과 3개월 가동률 80%를 충족하는 G4에서 XRPL DEX가 열립니다. 지역 거래소는 G5, 글로벌 거래소는 G9에서 검토합니다. 상장 시점이나 가격에 대한 약속은 없습니다." },
+  { q: "적립된 WLBN을 바로 출금하거나 보낼 수 있나요?", a: "출금 개시 전까지는 계정에 포인트로 적립되고 온체인으로 이동하지 않습니다. 백서 정책상 DEX 개방(G4) 전에는 온체인 이동이 없으며, 출금 개시일은 회사가 별도로 공지합니다. 개시 이후에는 클레임으로 지갑에 받으실 수 있습니다." },
+  { q: "WLBN 가격이 오르나요?", a: "가격이나 가치에 대한 전망은 드리지 않습니다. WLBN은 네트워크의 보상·결제에 쓰이는 유틸리티 토큰이며, 회사는 가격을 보증하지 않고 투자를 권유하지도 않습니다(이용약관 제7조). 기기 구매는 측정기 자체의 쓸모를 기준으로 결정해 주세요." },
+  { q: "누가 운영하고 판매하나요? 케이웨더와는 어떤 관계인가요?", a: "서비스 운영과 WLBN 발행·보상 정책의 주체는 싱가포르 법인 Wellbian Labs Pte. Ltd.입니다(이용약관 제3조). 주식회사 케이웨더는 기기 파트너로서 측정기 제공·품질 인증·기술 지원을 맡고, 국내 유통·판매·설치·A/S·고객 응대를 위탁받아 수행합니다(제4조). 국내 기기·설치·A/S 문의는 케이웨더가 맡습니다." },
+  { q: "진짜 WLBN인지 어떻게 확인하나요?", a: "XRPL 발행 계정 rDJz8WJhsKgydqJzSZXMpsJot3eRmSkR5 에서 발행된 통화 코드 WLBN(16진 574C424E…)만 진짜입니다. 보상 지급용 핫월렛과 트레저리 주소는 사이트 토큰 페이지에 공개되어 있습니다. 트러스트라인을 열기 전에 익스플로러에서 발행 계정을 확인하세요. 다른 발행 계정의 WLBN은 저희와 무관합니다." },
+  { q: "관측소 라이선스에는 어떤 등급이 있나요?", a: "관측소 라이선스는 계정당 1개이며 기본형(택손 1000), 제네시스(1001, 1차 구매자 전용·재발행 없음), 지역 한정(1002, 권역 캠페인), 사업 한정(1003, 기업 온보딩)이 있습니다. 기기 NFT는 기기당 1개로 실내 스테이션(3026, ARC-600DA는 STANDARD 등급)과 실외 스테이션(2026)이 있고, 이후 기기군은 추후 공개됩니다." },
 ];
 
 export const FAQS_EXTRA_EN = [
@@ -417,9 +430,9 @@ export const FAQS_EXTRA_EN = [
   { q: "What is the license NFT?", a: "There are two kinds. The device NFT comes one per device you buy and is transferable; the observatory license is one per account and marks when you joined (first-sale buyers get Genesis). A device earns rewards only with its device NFT." },
   { q: "What is a trustline?", a: "On the XRPL it is the channel your wallet opens to accept a given token. You need one to receive RLUSD, and we check it automatically during payment. Opening a trustline locks a small XRP reserve in your account — that is not paid to us; it stays in your wallet." },
   { q: "Where do I find my wallet address?", a: "Once signed in, your wallet address appears abbreviated at the top right. Click it to copy the full address." },
-  { q: "What kind of token is WLBN?", a: "An XRPL-issued asset (IOU) used for rewards and payments on the network. Total supply is fixed at 1,000,000. Each time data is sold, half of the WLBN paid is burned permanently, and every burn is verifiable as an on-chain transaction." },
-  { q: "How is the reward budget decided?", a: "The budget is fixed first for each daily epoch, then divided by each device's contribution to quality score. Adding devices does not increase total issuance." },
-  { q: "Can one person take all the rewards?", a: "No. A single device is capped at 0.5% of the daily budget." },
+  { q: "What kind of token is WLBN?", a: "An XRPL-issued asset (IOU) used for rewards and payments on the network, and a utility token: not equity, a security, a deposit or legal tender. Total supply is 10 billion WLBN, all issued at genesis, with no further issuance under the published policy. Allocation and burn details are published on the token page and in the whitepaper, and every burn is verifiable as an on-chain transaction." },
+  { q: "How is the reward budget decided?", a: "For each daily epoch the budget is set first, from the number of active stations and the current phase, then divided among devices that pass the transmission and quality gates. The per-station baseline decreases as phases advance, and any unpaid share is redistributed or burned. The formula is published in the whitepaper; amounts and value are not guaranteed." },
+  { q: "Can one person take all the rewards?", a: "No. There is a cap on what a single device can receive per day; anything above the cap is redistributed to other devices or burned. The exact cap is set out in the reward policy in the whitepaper." },
   { q: "If my data is sold, does my personal information leak?", a: "We measure air quality only and collect nothing that identifies a person. Data that is sold or queried goes through de-identification — location and time are generalized and identifiers rotated — and responses carry cohort statistics rather than individual devices." },
   { q: "Can I use the device without taking rewards?", a: "Yes. Set the rewards aside and it is an indoor air quality monitor showing CO₂, particulates, temperature and humidity in real time. You can mint the license NFT whenever you want to start earning." },
   { q: "What device is it?", a: "The ARC-600DA indoor air quality monitor. It measures CO₂, particulates, temperature and humidity, and carries Korean KC certification and performance certification. Full specifications are on the site." },
@@ -429,7 +442,14 @@ export const FAQS_EXTRA_EN = [
   { q: "Can I move the wallet created with Google to another wallet?", a: "A wallet created with a Google account cannot be exported — there is no mnemonic or private key to move elsewhere. To hold its NFT somewhere else, connect an external personal wallet and transfer the NFT to it." },
   { q: "Can I pay by card?", a: "Yes. The September 15 sale accepts Korean domestic cards (pay, debit and credit) as well as RLUSD from an XRPL wallet. There is no payment at the reservation stage." },
   { q: "How do I get an XRP SEOUL 2026 ticket?", a: "200 device buyers will be drawn to receive an XRP SEOUL 2026 ticket, one per person. Buying only the card-type wallet does not qualify." },
-  { q: "What is the D'CENT card-type wallet?", a: "An optional add-on. It costs KRW 70,000 (list KRW 80,000), card payment only. It is unrelated to the device NFT or the reservation voucher and does not qualify for the ticket draw." },
+  { q: "What is the D'CENT card-type wallet?", a: "An optional add-on. It costs KRW 70,000 (list KRW 80,000), card payment only. It is unrelated to the device NFT or the reservation voucher and does not qualify for the ticket draw." },  { q: "How is WLBN allocated?", a: "Of the 10 billion total: node rewards phase 1 28%, node rewards phase 2 18% (opened only if the phase-10 gate is passed, otherwise burned), scheduled burn 25%, liquidity provision (LP) 8%, team 6% (12-month cliff, then 48-month linear vesting), ecosystem 5%, strategic investors 5% (nothing unlocked at TGE) and liquidity reserve 5%. Conditions and timing are on the token page and in the whitepaper." },
+  { q: "How is WLBN burned?", a: "In several ways. The scheduled-burn allocation (25% of total supply) is burned in four tranches, bought-back tokens are burned, and half of the WLBN paid for data sales is burned automatically. Rewards withheld for quality shortfalls and any unopened phase-2 rewards are also burned. Every burn is recorded as an on-chain transaction." },
+  { q: "When will WLBN be listed on an exchange?", a: "There is no set date; it follows the milestone gates published in the whitepaper. No exchange listing takes place in the early gates (G1 to G3). The XRPL DEX opens at G4, which requires 25,000 devices sold and 80% uptime over three months. Regional exchanges are considered at G5 and global exchanges at G9. Nothing about listing timing or price is promised." },
+  { q: "Can I withdraw or send accrued WLBN right away?", a: "Until withdrawals open, rewards accrue as points in your account and do not move on-chain. Under the whitepaper policy there is no on-chain transfer before the DEX opens (G4), and the withdrawal opening date will be announced separately. After that you can claim them to your wallet." },
+  { q: "Will the WLBN price go up?", a: "We do not give any outlook on price or value. WLBN is a utility token for rewards and payments on the network; the company does not guarantee its price and is not soliciting investment (Terms, Article 7). Please base a purchase decision on the monitor's own usefulness." },
+  { q: "Who operates and sells this, and what is KWeather's role?", a: "The service, and WLBN issuance and reward policy, are run by Wellbian Labs Pte. Ltd., a Singapore company (Terms, Article 3). KWeather Co., Ltd. is the device partner: it supplies the monitors, certifies quality and provides technical support, and handles domestic distribution, sales, installation, after-sales service and customer support on the company's behalf (Article 4). Device, installation and after-sales enquiries in Korea go to KWeather." },
+  { q: "How do I check that WLBN is genuine?", a: "Only WLBN issued by the XRPL account rDJz8WJhsKgydqJzSZXMpsJot3eRmSkR5 (currency code WLBN, hex 574C424E…) is genuine. The hot wallet used for reward payouts and the treasury address are published on the token page. Check the issuer on an explorer before opening a trustline; WLBN from any other issuer has nothing to do with us." },
+  { q: "What observatory license tiers are there?", a: "Observatory licenses are one per account: Standard (taxon 1000), Genesis (1001, first-sale buyers only, never reissued), Regional (1002, area campaigns) and Business (1003, enterprise onboarding). Device NFTs are one per device: Indoor Station (3026; the ARC-600DA is the STANDARD grade) and Outdoor Station (2026), with later device families to be announced." },
 ];
 
 export const LINK_STEPS_EN: { n: string; t: string; d: string; d2?: string }[] = [
