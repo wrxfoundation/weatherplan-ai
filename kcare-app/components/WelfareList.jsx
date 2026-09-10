@@ -132,7 +132,8 @@ export default function WelfareList({
                     )}
                     <div className="text-muted">
                       무료 {p.free === "Y" ? "예" : "조건부"} · 검증 {p.confidence} ({WELFARE_COMMON.verifiedAt}) ·{" "}
-                      <a href={sourceUrl(p)} target="_blank" rel="noreferrer" className="btn-press btn-inline underline underline-offset-2">
+                      {/* .tap — 글자 크기는 두고 누르는 높이만 확보 (QA 실측 33px → 모바일 44px) */}
+                      <a href={sourceUrl(p)} target="_blank" rel="noreferrer" className="tap underline underline-offset-2">
                         공식 출처
                       </a>
                     </div>

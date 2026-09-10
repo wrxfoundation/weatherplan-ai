@@ -839,11 +839,12 @@ export default function ElderHome() {
                 길은 마음사서함 탭, 돌아오는 길은 GNB '홈'이 맡는다. */}
             <div className="shrink-0" style={{ order: -10 }}>
               <div className="flex items-center justify-between pt-2">
-                <span className="font-num text-[12px] font-bold tracking-[.16em] text-gold">
+                {/* 어르신 화면 글자 하한 15px — 브랜드 표기·데모 링크도 예외 없이 (2026-09-10 QA) */}
+                <span className="font-num text-[15px] font-bold tracking-[.16em] text-gold">
                   K-CARE
                 </span>
                 {/* .tap — 글자는 작게 두고 누르는 영역만 44px (QA: 44×28 이었다) */}
-                <Link href="/" className="tap text-[13px] font-bold text-muted/50">
+                <Link href="/" className="tap text-[15px] font-bold text-muted/50">
                   데모 홈
                 </Link>
               </div>

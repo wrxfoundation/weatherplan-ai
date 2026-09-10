@@ -762,7 +762,7 @@ a.btn-press {
 .nps-range {
   -webkit-appearance: none;
   appearance: none;
-  height: 26px; /* 손가락이 닿는 높이 — 보이는 막대는 아래 트랙이다 */
+  height: 40px; /* 손가락이 닿는 높이 — 보이는 막대는 아래 8px 트랙이다 (26px 는 QA 실측에서 40px 미만) */
   background: transparent;
   cursor: pointer;
 }
