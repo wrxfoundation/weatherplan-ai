@@ -1094,3 +1094,22 @@ To be straight about what this isn't: it's not a contract with a monthly fee. We
 
 I'll send the link over before the 15th. I'll also need an XRPL address for the payout when we get there.
 ```
+
+### @KingKaran — **서우 원문 번역본 F 채택 (2026-09-10 밤)**, E 는 2단계로 이월
+
+서우: *"karan 은 처음부터 너무 내용이 많아"* → 조건을 전부 못박은 E 대신, **서우가 직접 쓴 한국어를 그대로 번역한 F** 를 먼저 보낸다. 내용 추가 없음.
+
+**F 가 E 보다 나은 이유 셋**: ① 조건 통보가 아니라 **의견을 묻는다** — 9/9 기조(청취 → 관계 → 결정)와 같은 순서 ② 내부 논의(할인코드 안)를 열어 보이고 *"나는 네 쪽이 낫다고 본다"* 로 서는 것이 관계 자산이 된다 ③ 확정이 아니므로 조건 협상 여지가 남는다.
+
+**E 는 폐기가 아니라 2단계 자료**: 그가 "커미션으로 하자" 고 답하는 **그 답장에서** 조건 다섯을 붙인다 — 기간(1차 판매창 한정) · 완료·미환불 주문 한정 · **가격 동일(할인처럼 홍보 금지)** · 정산 후 RLUSD 지급(지갑 주소 필요) · **광고 표시 의무**. 특히 광고 표시는 **그가 수락하는 즉시** 말한다. 나중에 꺼내면 뒤통수가 된다.
+
+문안 그대로 보내면 앞 맥락과 연결이 없으므로 서우 재량으로 `Karan —` 또는 `On the percentage you asked about:` 한 줄을 앞에 붙일 수 있다(번역 지시를 지키느라 초안에는 넣지 않았다).
+
+```
+F (339자)
+Internally the suggestion was to give you a separate referral URL that hands your audience a 5% discount code.
+
+My own thinking is different: I'd rather you take a 5% commission on each sale. The device isn't cheap, so 5% off is small for the buyer, but 5% per sale is real money for you.
+
+Think it over and let me know which you'd prefer.
+```
