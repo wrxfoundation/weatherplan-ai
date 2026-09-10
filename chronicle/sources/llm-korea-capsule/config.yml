@@ -1,0 +1,62 @@
+# LLM 한국팩트 타임캡슐 — 스펙 v4 #1 (llm-korea-capsule), API 레코드형. 플래그십(★★★★★).
+#
+# 고정 질문셋을 매달 여러 모델에 물어 raw 응답·정오답을 해시체인에 봉인한다.
+# 축적물 = "2026년 X월에 모델 M이 한국 사실 Q를 맞혔나". 모델은 조용히 갱신·폐기되니
+# (The Leaderboard Illusion) 그때 그 정오답은 지금 찍은 자만 소유한다 — 폐기 모델은
+# 재측정 불가(CARFAX/Elias 아날로그). #14 벤더원장의 모델 라이프사이클 테이블의 척추.
+#
+# ── 활성화(2단계) ─────────────────────────────────────────────────────────
+#   무키면 "휴면" — 한 모델도 호출하지 않고 조용히 0건 수집(정상, 장애 아님).
+#   Secret 하나(ANTHROPIC_API_KEY)만 넣으면 아래 anthropic 2모델이 즉시 라이브.
+#   OpenAI·Google은 각 키(OPENAI_API_KEY·GEMINI_API_KEY) 추가 시 주석 해제로 확장.
+#   키는 헤더/쿼리로만 전달되며 원장(sourceUrl)에 절대 저장되지 않는다.
+# ──────────────────────────────────────────────────────────────────────────
+id: llm-korea-capsule
+family: api-records
+title: LLM 한국팩트 타임캡슐 — 모델×질문 정오답 원장
+
+user_agent: "chronicle-llm-korea-capsule/0.1 (+https://github.com/kwangdol-star/aiagentlabs)"
+rate_limit_ms: 200
+
+# 휴면(무키) 회차는 0건 수집이 정상 — 빈 응답을 장애로 보지 않는다.
+allow_empty: true
+# 모델 폐기(대량 소멸)는 이 소스의 정상 신호 — 단, 삭제 판정은 removalScope가
+# "이번에 성공한 모델"로 좁혀 오탐을 막으므로 차단기는 기본값(0.3)으로 충분하다.
+
+request:
+  max_tokens: 256
+
+# vendor: anthropic | openai | google, model = 벤더 모델 ID, key_env = 키 환경변수명
+models:
+  - { id: claude-opus-4-8,  vendor: anthropic, model: claude-opus-4-8,           key_env: ANTHROPIC_API_KEY }
+  - { id: claude-haiku-4-5, vendor: anthropic, model: claude-haiku-4-5-20251001, key_env: ANTHROPIC_API_KEY }
+  # 키 추가 후 주석 해제로 확장 (벤더별 요청·파싱은 어댑터가 이미 지원):
+  # - { id: gpt-4o,       vendor: openai, model: gpt-4o,           key_env: OPENAI_API_KEY }
+  # - { id: gemini-1.5,   vendor: google, model: gemini-1.5-pro,   key_env: GEMINI_API_KEY }
+
+# 씨앗 그라운드트루스 — 표류에 강한 고정 사실만(역사·지리·상수). KoreaAPI 300문항
+# 정본셋 + 비공개 홀드아웃 100문항으로 교체·확장 예정(config 핫에디트). a[] = 정답
+# 후보(정규화 후 부분일치). q 문구를 바꾸면 question 필드 변경 이벤트로 기록된다.
+questions:
+  - { id: capital,          q: "대한민국의 수도는 어디입니까? 도시 이름만 답하세요.",              a: ["서울"] }
+  - { id: first-president,  q: "대한민국의 초대 대통령은 누구입니까? 이름만 답하세요.",             a: ["이승만"] }
+  - { id: joseon-founder,   q: "조선을 건국한 왕(태조)은 누구입니까? 이름만 답하세요.",             a: ["이성계", "태조"] }
+  - { id: hangul-creator,   q: "훈민정음(한글)을 창제한 조선의 왕은 누구입니까?",                   a: ["세종"] }
+  - { id: highest-mountain, q: "남한(대한민국)에서 가장 높은 산은 무엇입니까?",                     a: ["한라산"] }
+  - { id: currency-unit,    q: "대한민국의 공식 화폐 단위는 무엇입니까?",                            a: ["원", "krw"] }
+  - { id: han-river,        q: "서울을 동서로 가로지르는 강의 이름은 무엇입니까?",                   a: ["한강"] }
+  - { id: dokdo-province,   q: "독도는 행정구역상 어느 광역자치단체(도)에 속합니까?",               a: ["경상북도", "경북"] }
+  - { id: national-flower,  q: "대한민국의 나라꽃(국화)은 무엇입니까?",                              a: ["무궁화"] }
+  - { id: korean-war-year,  q: "6·25 전쟁(한국전쟁)이 발발한 연도는 몇 년입니까? 연도만 답하세요.",  a: ["1950"] }
+  - { id: gov-year,         q: "대한민국 정부가 공식 수립된 연도는 몇 년입니까? 연도만 답하세요.",   a: ["1948"] }
+  - { id: largest-island,   q: "대한민국에서 가장 큰 섬은 무엇입니까?",                              a: ["제주도", "제주"] }
+  - { id: second-city,      q: "대한민국에서 인구가 두 번째로 많은 도시는 어디입니까?",             a: ["부산"] }
+  - { id: taegeuk,          q: "태극기 한가운데에 있는 원(음양 무늬)의 이름은 무엇입니까?",         a: ["태극"] }
+  - { id: utc-offset,       q: "대한민국 표준시(KST)는 UTC보다 몇 시간 빠릅니까?",                  a: ["9시간", "utc+9", "9 시간"] }
+  - { id: hangul-day,       q: "한글날은 매년 몇 월 며칠입니까?",                                    a: ["10월 9일", "10월", "시월"] }
+  - { id: assembly-loc,     q: "대한민국 국회의사당이 위치한 서울의 지역(섬)은 어디입니까?",         a: ["여의도"] }
+  - { id: kimchi,           q: "배추 등을 양념해 발효시킨 한국의 대표 음식은 무엇입니까?",           a: ["김치"] }
+  - { id: sungnyemun,       q: "서울의 숭례문을 부르는 다른 이름(속칭)은 무엇입니까?",               a: ["남대문"] }
+  - { id: seoul-olympic,    q: "1988년 하계 올림픽이 개최된 도시는 어디입니까?",                     a: ["서울"] }
+  - { id: main-palace,      q: "조선 왕조의 정궁(법궁)으로, 광화문 뒤에 있는 궁궐은 무엇입니까?",     a: ["경복궁"] }
+  - { id: bill-10000,       q: "대한민국 만원권 지폐 앞면에 그려진 인물은 누구입니까?",              a: ["세종"] }

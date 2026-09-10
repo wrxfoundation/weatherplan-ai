@@ -1,0 +1,64 @@
+# Agent-Web 동의 센서스 — 스펙 v4 #16 (consent-census), 파일/프로브형. "에이전트 웹 관측소" 축.
+#
+# 상위 도메인의 robots.txt·llms.txt를 일간 스냅샷 → AI 크롤러 차단/허용 diff →
+# 월간 "웹의 동의 지형". 법적 최청정(robots.txt 페치 = 용도 그 자체), 저장 최소.
+# domains는 운영 중 확장 가능(→ Tranco 상위로). #19와 같은 크롤 루프 예정.
+id: consent-census
+family: file-probe
+title: Agent-Web 동의 센서스 — robots.txt·llms.txt
+
+scheme: https
+user_agent: "chronicle-consent-census/0.1 (+https://github.com/kwangdol-star/aiagentlabs; robots.txt archival)"
+rate_limit_ms: 400
+
+# 관측 대상 AI 크롤러 (robots.txt 봇 전용 그룹의 차단/허용을 추적)
+bots:
+  - GPTBot          # OpenAI 학습
+  - ChatGPT-User    # OpenAI 브라우징
+  - OAI-SearchBot   # OpenAI 검색
+  - ClaudeBot       # Anthropic
+  - anthropic-ai    # Anthropic(구)
+  - CCBot           # Common Crawl
+  - Google-Extended # Google AI 학습
+  - PerplexityBot   # Perplexity
+  - Bytespider      # ByteDance
+  - Applebot-Extended # Apple AI
+  - meta-externalagent # Meta AI
+  - Amazonbot       # Amazon
+
+# 관측 도메인 (뉴스·플랫폼 — AI 크롤러 정책을 실제로 두는 곳 위주 + 한국)
+domains:
+  - nytimes.com
+  - theguardian.com
+  - bbc.com
+  - cnn.com
+  - reuters.com
+  - washingtonpost.com
+  - wsj.com
+  - forbes.com
+  - bloomberg.com
+  - wired.com
+  - theatlantic.com
+  - arstechnica.com
+  - medium.com
+  - reddit.com
+  - quora.com
+  - stackoverflow.com
+  - substack.com
+  - npr.org
+  - vox.com
+  - businessinsider.com
+  - nature.com
+  - github.com
+  - wikipedia.org
+  - amazon.com
+  - naver.com
+  - daum.net
+  - chosun.com
+  - joongang.co.kr
+  - donga.com
+  - hani.co.kr
+  - khan.co.kr
+  - yna.co.kr
+  - mk.co.kr
+  - hankyung.com

@@ -1,0 +1,64 @@
+# Chronicle #19 에이전트 커머스 센서스 (agent-commerce-census) — standalone 리포용.
+#
+# 주 1회 후보 채택사 도메인 × well-known 매니페스트를 프로브해 x402·AP2·ACP 등
+# 에이전트 커머스 표준의 채택 신호를 봉인한다. 제네시스 창. Secret 불필요.
+# Manual: Actions tab -> "commerce" -> Run workflow.
+name: commerce
+
+on:
+  workflow_dispatch: {}
+  schedule:
+    - cron: "13 20 * * 0" # weekly ~05:13 KST Mon (UTC Sun 20:13)
+
+permissions:
+  contents: write
+
+concurrency:
+  group: chronicle-cron # 전 수집 크론 직렬화 — docs 동시 재생성 경합 방지
+  cancel-in-progress: false
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Install deps
+        run: npm ci
+
+      - name: Collect + seal (변경 없으면 아무것도 쓰지 않음)
+        run: npm run collect -- agent-commerce-census
+
+      - name: Verify hash chain
+        run: npm run verify -- agent-commerce-census
+
+      - name: Anchor chain head to RFC 3161 TSA (best-effort)
+        run: npm run anchor -- agent-commerce-census
+
+      - name: Publish site (docs/)
+        run: |
+          npm run site
+          test -f docs/index.html && test -f docs/.nojekyll  # 산출물 없으면 여기서 실패
+
+      - name: Commit accumulated data
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data docs
+          if git diff --cached --quiet; then
+            echo "no data change"
+          else
+            git commit -m "data(agent-commerce-census): weekly commerce census [skip ci]"
+            n=0
+            until git push; do
+              n=$((n+1))
+              if [ "$n" -ge 3 ]; then echo "push failed after $n attempts" >&2; exit 1; fi
+              git pull --rebase origin "$GITHUB_REF_NAME"
+            done
+          fi
