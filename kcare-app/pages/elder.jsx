@@ -2278,7 +2278,7 @@ export default function ElderHome() {
                     onClick={() => setTab(t.key)}
                     aria-current={active ? "page" : undefined}
                     aria-label={n ? `${t.label} — 안 들은 메시지 ${n}개` : undefined}
-                    className="btn-press relative flex flex-col items-center justify-center gap-[3px] rounded-[17px] py-[9px]"
+                    className="btn-press relative flex flex-col items-center justify-center gap-[3px] rounded-[17px] py-[7px]"
                     style={active ? { background: "#0A1F3C", color: "#FFFFFF" } : { color: "#0A1F3C" }}
                   >
                     <span aria-hidden>
