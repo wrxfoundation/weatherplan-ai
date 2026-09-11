@@ -11,6 +11,18 @@ import { readFileSync, writeFileSync } from 'node:fs'
 
 const P = 'data/art/jobs.json'
 const BASE = 'https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC'
+
+/**
+ * CDN 파일명은 hf_<YYYYMMDD>_<HHMMSS>_<job_id>.png 다.
+ * 날짜를 하드코딩했다가 다음 날 생성분의 URL이 전부 어긋나 404/403이 났다.
+ * stamp는 'YYYYMMDD_HHMMSS' 또는 'HHMMSS'(오늘 날짜로 보정)를 받는다.
+ */
+function urlFor(stamp, job) {
+  const full = /^\d{8}_\d{6}$/.test(stamp)
+    ? stamp
+    : `${new Date().toISOString().slice(0, 10).replace(/-/g, '')}_${stamp}`
+  return `${BASE}/hf_${full}_${job}.png`
+}
 const j = JSON.parse(readFileSync(P, 'utf8'))
 const known = new Set(j.items.map((i) => i.id))
 const bundle = JSON.parse(readFileSync('public/data/yokai.json', 'utf8'))
@@ -24,7 +36,7 @@ for (const arg of process.argv.slice(2)) {
     // 재생성분은 덮어쓴다 — 같은 개체가 두 번 실리면 fetch-art가 뭘 받을지 모호해진다.
     const it = j.items.find((i) => i.id === id)
     it.job_id = job
-    it.url = `${BASE}/hf_20260816_${ts}_${job}.png`
+    it.url = urlFor(ts, job)
     it.review = { result: 'pending', note: '재생성 — 검수 대기' }
     continue
   }
@@ -36,7 +48,7 @@ for (const arg of process.argv.slice(2)) {
     target: `public/img/yokai/${id.replace(/^kr-/, '')}.webp`,
     aspect: '4:5',
     job_id: job,
-    url: `${BASE}/hf_20260816_${ts}_${job}.png`,
+    url: urlFor(ts, job),
     review: { result: 'pending', note: '검수 대기 — docs/ART_REVIEW.md 체크리스트' },
   })
   known.add(id)

@@ -1,6 +1,6 @@
 {
  "version": "0.1.0",
- "generated_at": "2026-08-17",
+ "generated_at": "2026-09-11",
  "license": "CC BY 4.0",
  "attribution": "한국요괴지도 (Korean Yokai Map)",
  "count": 120,
@@ -443,7 +443,7 @@
    "updated_at": "2026-08-16",
    "sensitivity": null,
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
@@ -515,9 +515,9 @@
    "updated_at": "2026-08-16",
    "sensitivity": null,
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/arang.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "4e4f9afd-15e0-47c5-8393-a7a9db843d9d"
    }
@@ -584,9 +584,9 @@
    "updated_at": "2026-08-16",
    "names": {},
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/baekjutto.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "8a08cace-b18e-4306-a429-c29ecf1bec1c"
    }
@@ -653,9 +653,9 @@
    "names": {},
    "sensitivity": null,
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/baeksa.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "578bc7b3-ffa6-4264-9aab-74d0183eb674"
    }
@@ -713,9 +713,9 @@
    "names": {},
    "sensitivity": null,
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/bitjaru-gwisin.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "d3c8c537-cc4c-4b73-9fdd-47cb02c03cc1"
    }
@@ -773,9 +773,9 @@
    "updated_at": "2026-08-16",
    "sensitivity": null,
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/bulgasari.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "00e29afc-e1ce-4c7b-b2cf-cea2ba1be59c"
    }
@@ -826,9 +826,9 @@
    "names": {},
    "sensitivity": null,
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/bunsinsaba.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "c0519c93-c543-451b-af00-2286202eac06"
    }
@@ -907,9 +907,9 @@
    "updated_at": "2026-08-16",
    "sensitivity": null,
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/changgwi.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "3605e5bc-5495-46ba-822b-fea6c3a69953"
    }
@@ -975,9 +975,9 @@
    "updated_at": "2026-08-16",
    "names": {},
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/cheollyung.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "bf29bad7-e465-456a-8345-fb1afd1951b5"
    }
@@ -1038,9 +1038,9 @@
    "names": {},
    "sensitivity": null,
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/cheonggaeguri.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "744442ad-0db4-465e-b607-160f911ba763"
    }
@@ -1106,9 +1106,9 @@
    "updated_at": "2026-08-16",
    "names": {},
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/cheonjiwang.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "0836b4ca-cc0a-4ced-bea3-bc4c54da8cc9"
    }
@@ -1169,9 +1169,9 @@
    "updated_at": "2026-08-16",
    "names": {},
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/cheuksin.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "448edd14-0a43-4665-a05a-31a93c832c09"
    }
@@ -1232,9 +1232,9 @@
    "updated_at": "2026-08-16",
    "sensitivity": null,
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/dalgyal-gwisin.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "5a36e3da-e829-4b87-a1ba-716a45cd8e46"
    }
@@ -1314,9 +1314,9 @@
    "updated_at": "2026-08-16",
    "names": {},
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/dangsan-halmeoni.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "3135779c-9b5b-4890-a714-4646e0262094"
    }
@@ -1374,7 +1374,7 @@
    "names": {},
    "sensitivity": null,
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
@@ -1481,7 +1481,7 @@
    "updated_at": "2026-08-16",
    "sensitivity": null,
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
@@ -1543,9 +1543,9 @@
    "updated_at": "2026-08-16",
    "sensitivity": null,
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/dokkaebi-bangmangi.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "970203f8-8037-4a4a-9f75-48c2e3eb203f"
    }
@@ -1629,9 +1629,9 @@
    "updated_at": "2026-08-16",
    "sensitivity": null,
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/dokkaebi-bul.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "22173bed-4ed6-49f4-9a79-1e4401106e67"
    }
@@ -1683,9 +1683,9 @@
    "names": {},
    "sensitivity": null,
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/dokkaebi-gamtu.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "31d5ea8e-e258-44a4-9738-7f3b17520ac8"
    }
@@ -1745,9 +1745,9 @@
    "names": {},
    "sensitivity": null,
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/dokkaebi-sillang.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "9ba640fd-c9d8-433f-b77e-833ff6ac6de9"
    }
@@ -1809,9 +1809,9 @@
    "names": {},
    "sensitivity": null,
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/dokkaebi-teo.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "6f20ef08-f4a3-4cd8-bc1c-665bc107e1a2"
    }
@@ -1872,9 +1872,9 @@
    "names": {},
    "sensitivity": null,
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/dueoksini.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "396ca41e-bc52-4e44-a776-848a23c8798e"
    }
@@ -1931,9 +1931,9 @@
    "names": {},
    "sensitivity": null,
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/dukkeobi-sillang.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "1c9ac961-4ab0-49b3-ab60-9cce29565528"
    }
@@ -1984,9 +1984,9 @@
    "names": {},
    "sensitivity": null,
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/elevator-goedam.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "6781ae91-c293-4cef-adce-6f72762f1713"
    }
@@ -2053,9 +2053,9 @@
    "updated_at": "2026-08-16",
    "sensitivity": null,
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/eoduksini.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "b42407ba-3960-44c0-9a79-7af45628c0be"
    }
@@ -2118,9 +2118,9 @@
    ],
    "updated_at": "2026-08-16",
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/eop.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "0ea5cc6b-8ce1-44ff-beaa-d300a109038b"
    }
@@ -2170,7 +2170,7 @@
    "names": {},
    "sensitivity": null,
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
@@ -2229,9 +2229,9 @@
    "updated_at": "2026-08-16",
    "names": {},
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/gaekgwi.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "334d1cf3-8407-4499-b31b-8034c079f58d"
    }
@@ -2304,9 +2304,9 @@
    "updated_at": "2026-08-16",
    "names": {},
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/gaeyang-halmi.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "d6015caf-29a0-4f4a-ac53-2c8bebfe9512"
    }
@@ -2361,9 +2361,9 @@
    "names": {},
    "sensitivity": null,
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/gaksi-dokkaebi.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "b2826afb-bed5-4e94-a4ec-2408e3d44b01"
    }
@@ -2431,9 +2431,9 @@
    "updated_at": "2026-08-16",
    "names": {},
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/gameunjang.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "517775bd-6514-49d8-827d-844fbbd6e695"
    }
@@ -2588,7 +2588,7 @@
    ],
    "updated_at": "2026-08-16",
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
@@ -2641,9 +2641,9 @@
    "names": {},
    "sensitivity": null,
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/gangsi.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "8fe57b4d-fc41-4f6e-ab2b-2e70084999a2"
    }
@@ -2704,9 +2704,9 @@
    "names": {},
    "sensitivity": null,
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/gawi.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "3a3701d5-7fd7-4892-9b06-57a5d2b1e306"
    }
@@ -2760,9 +2760,9 @@
    "updated_at": "2026-08-16",
    "names": {},
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/geomeun-bonggo.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "c432df46-0d76-4dbe-a9ae-3b529a96a8fd"
    }
@@ -2828,9 +2828,9 @@
    "names": {},
    "sensitivity": null,
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/geumdwaeji.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "e25424a3-9ba3-4763-923c-153aeaaa347f"
    }
@@ -2885,9 +2885,9 @@
    "names": {},
    "sensitivity": null,
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/geuseundae.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "e810bb89-2d13-4049-abac-bbbd20c88907"
    }
@@ -2956,9 +2956,9 @@
    "updated_at": "2026-08-16",
    "names": {},
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/golmaegi.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "8e276d96-b2a8-4661-b323-5c1cc970144c"
    }
@@ -3010,9 +3010,9 @@
    "updated_at": "2026-08-16",
    "names": {},
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/gu-samseung-halmang.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "1f8683a6-40ec-455e-adee-0bd7f32a00e2"
    }
@@ -3166,9 +3166,9 @@
    "updated_at": "2026-08-16",
    "sensitivity": null,
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/gureongdeongdeong.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "64845365-590f-4247-bdf9-e54f2daadca9"
    }
@@ -3238,9 +3238,9 @@
    "updated_at": "2026-08-16",
    "names": {},
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/gwenegitto.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "a92235aa-4ff9-45a0-b74a-966ceedf82cb"
    }
@@ -3307,9 +3307,9 @@
    "names": {},
    "sensitivity": null,
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/gyeryong.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "9948fe6b-de21-435b-bb0f-d75745c021f8"
    }
@@ -3382,9 +3382,9 @@
    "updated_at": "2026-08-16",
    "names": {},
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/haerang.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "98957f90-d4b7-4e4f-87f0-3e6c3688f886"
    }
@@ -3445,9 +3445,9 @@
    "names": {},
    "sensitivity": null,
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/haeryong.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "82a0db66-5786-4fb7-815a-f96e875d959f"
    }
@@ -3517,9 +3517,9 @@
    "updated_at": "2026-08-16",
    "sensitivity": null,
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/haetae.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "64820136-c5bc-4c1a-b630-8ae378e53965"
    }
@@ -3582,9 +3582,9 @@
    "names": {},
    "sensitivity": null,
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/hoeorib.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "963bdc39-7453-45c2-b887-2d6627fe6ab4"
    }
@@ -3640,9 +3640,9 @@
    "updated_at": "2026-08-16",
    "sensitivity": null,
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/hongkong-halmae.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "f0ea5f07-4e6e-4214-a916-eb0b731615d0"
    }
@@ -3694,9 +3694,9 @@
    "names": {},
    "sensitivity": null,
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/hongyeoksin.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "482872bc-ec25-4586-b6d0-f23a1b0677d4"
    }
@@ -3755,9 +3755,9 @@
    "names": {},
    "sensitivity": null,
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/hwagwang.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "a3ab04d7-204b-46f3-8869-cd3e790bb96c"
    }
@@ -3809,9 +3809,9 @@
    "names": {},
    "sensitivity": null,
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/hwajangsil-gwisin.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "b2d8caf3-6938-40e6-9b23-288111a96cc9"
    }
@@ -3883,9 +3883,9 @@
    "updated_at": "2026-08-16",
    "names": {},
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/imgyeongeop.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "3c00c04d-3173-4198-8284-617817d4e95e"
    }
@@ -4050,9 +4050,9 @@
    ],
    "updated_at": "2026-08-16",
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/jacheongbi.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "af412bce-e49e-459b-b248-e254c7078496"
    }
@@ -4269,9 +4269,9 @@
    "updated_at": "2026-08-16",
    "names": {},
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/jayuro-gwisin.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "bd3b17d7-4c51-4b7a-9276-6df679d3517f"
    }
@@ -4322,9 +4322,9 @@
    "names": {},
    "sensitivity": null,
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/jeolgutgongi.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "5d4793c7-f790-4f81-969d-e3393b3d4c03"
    }
@@ -4383,9 +4383,9 @@
    "updated_at": "2026-08-16",
    "names": {},
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/jeongsin.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "4ce1645f-367c-4627-9dfb-7748648a34e8"
    }
@@ -4447,9 +4447,9 @@
    "updated_at": "2026-08-16",
    "sensitivity": null,
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/jeoseung-saja.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "a8f2aa6b-cdc3-47a9-b880-db9ff9addb15"
    }
@@ -4510,9 +4510,9 @@
    "names": {},
    "sensitivity": null,
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/jeung.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "e274d7ab-b578-4bb8-ae2c-5fb1a02d32c9"
    }
@@ -4583,9 +4583,9 @@
    "names": {},
    "sensitivity": null,
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/jigwi.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "8f513aa1-3817-4d9e-a1ba-269762b1ec94"
    }
@@ -4646,9 +4646,9 @@
    "names": {},
    "sensitivity": null,
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/jihacheol-gwisin.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "2dd9bd07-44ca-4292-80a8-622fc499c071"
    }
@@ -4714,9 +4714,9 @@
    "names": {},
    "sensitivity": null,
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/jinegaksi.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "4e9f1dce-26b4-4841-a6eb-e940e6da407d"
    }
@@ -4770,9 +4770,9 @@
    "names": {},
    "sensitivity": null,
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/jipsin-dokkaebi.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "7f219d11-67fb-4da0-b511-38df261d50a0"
    }
@@ -4836,9 +4836,9 @@
    "updated_at": "2026-08-16",
    "names": {},
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/jisin.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "ec6ee5dd-5794-475f-9e3c-9920c0f54586"
    }
@@ -4897,9 +4897,9 @@
    ],
    "updated_at": "2026-08-16",
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/jowang.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "5a946fc1-d543-4e9d-8905-f238b42f7716"
    }
@@ -4965,7 +4965,7 @@
    "names": {},
    "sensitivity": null,
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
@@ -5020,7 +5020,7 @@
    "names": {},
    "sensitivity": null,
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
@@ -5102,9 +5102,9 @@
    "updated_at": "2026-08-16",
    "sensitivity": null,
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/magohalmi.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "9f25149d-e616-4c5c-a66f-678d62b2e289"
    }
@@ -5165,9 +5165,9 @@
    "names": {},
    "sensitivity": null,
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/mayago.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "305511dd-d5dc-46dd-885c-0a4d88b5869b"
    }
@@ -5236,9 +5236,9 @@
    "updated_at": "2026-08-16",
    "names": {},
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/mireuk.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "8096032a-f29e-4c6c-8db9-807fe134f333"
    }
@@ -5294,9 +5294,9 @@
    "names": {},
    "sensitivity": null,
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/mongdal.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "b311090a-0f4a-48f0-8470-81ad9c8e8c95"
    }
@@ -5369,9 +5369,9 @@
    "names": {},
    "sensitivity": null,
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/mujugohon.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "a4d7b6b8-a48d-45ca-8e7e-5be7f2239e65"
    }
@@ -5450,9 +5450,9 @@
    "names": {},
    "sensitivity": null,
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/mul-dokkaebi.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "8907afb1-4977-452e-ada3-f05b48b85996"
    }
@@ -5522,9 +5522,9 @@
    "updated_at": "2026-08-16",
    "sensitivity": null,
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/mulgwisin.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "9e0f6687-31b8-4838-a073-2671b88ad2a3"
    }
@@ -5600,9 +5600,9 @@
    "updated_at": "2026-08-16",
    "names": {},
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/munjeon.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "0dfb1efe-f815-4e90-b053-f7769a7500b8"
    }
@@ -5663,9 +5663,9 @@
    "names": {},
    "sensitivity": null,
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/myogwi.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "dc07318f-6025-4627-9f99-13b48598bed2"
    }
@@ -5715,9 +5715,9 @@
    "names": {},
    "sensitivity": null,
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/nachal.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "aa85e573-146b-481f-a42f-21cfefda770b"
    }
@@ -5785,9 +5785,9 @@
    "names": {},
    "sensitivity": null,
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/nogu-hwaho.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "ddd0838a-29d4-4737-98b6-7dd2be074181"
    }
@@ -5853,9 +5853,9 @@
    ],
    "updated_at": "2026-08-16",
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/oneuri.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "e9a401be-23e7-422e-9c19-d6811d5e813f"
    }
@@ -5926,9 +5926,9 @@
    "updated_at": "2026-08-16",
    "names": {},
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/palgongsan-sansin.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "4c70b895-45a5-44ee-bf0f-52925d43892c"
    }
@@ -5980,7 +5980,7 @@
    "names": {},
    "sensitivity": null,
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
@@ -6051,9 +6051,9 @@
    "updated_at": "2026-08-16",
    "names": {},
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/sacheonwang.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "e5a0fb81-7e4f-4585-b86a-f6367152939c"
    }
@@ -6105,9 +6105,9 @@
    "names": {},
    "sensitivity": null,
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/samjaesin.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "b83d623e-40ba-4962-9083-ad8a301e58aa"
    }
@@ -6176,9 +6176,9 @@
    "updated_at": "2026-08-16",
    "names": {},
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/samseung-halmang.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "49470cbd-5a2b-4afd-818f-7f742f5bb3af"
    }
@@ -6296,9 +6296,9 @@
    "names": {},
    "sensitivity": null,
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/sangmun.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "12455b70-6e4d-4ffb-bfa9-50796639152b"
    }
@@ -6372,9 +6372,9 @@
    "names": {},
    "sensitivity": null,
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/sangun.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "879162ca-16ca-4df1-bf11-019daf866303"
    }
@@ -6445,9 +6445,9 @@
    "names": {},
    "sensitivity": null,
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/sansam-dongja.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "25a3eb57-d211-48f0-b690-fa8e1fd20840"
    }
@@ -6546,9 +6546,9 @@
    ],
    "updated_at": "2026-08-16",
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/sansillyeong.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "bed477fd-9414-4b2e-92f8-7542ef27ca6b"
    }
@@ -6619,9 +6619,9 @@
    "updated_at": "2026-08-16",
    "sensitivity": null,
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/sapsalgae.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "0b0e6a7a-d2d0-400c-8b37-50e2f8f6043b"
    }
@@ -6783,9 +6783,9 @@
    ],
    "updated_at": "2026-08-16",
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/seonang.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "e74e2571-0483-4aa4-a63a-2d9000ff30b3"
    }
@@ -6856,9 +6856,9 @@
    ],
    "updated_at": "2026-08-16",
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/seongju.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "580b785f-2d7d-4a0b-b2bc-e3dc446d76df"
    }
@@ -6933,7 +6933,7 @@
    "updated_at": "2026-08-16",
    "names": {},
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
@@ -7009,9 +7009,9 @@
    "updated_at": "2026-08-16",
    "sensitivity": null,
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/seonnyeo.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "3c23d07d-2e1f-4ff9-9a4f-57b014b66bc7"
    }
@@ -7083,9 +7083,9 @@
    "names": {},
    "sensitivity": null,
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/sinjikki.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "46661dba-fedb-4b2c-af89-bbf22a572b81"
    }
@@ -7153,9 +7153,9 @@
    "names": {},
    "sensitivity": null,
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/sinrip-wongwi.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "40686751-dea2-4dd8-9a97-97edae8f11e0"
    }
@@ -7222,9 +7222,9 @@
    "updated_at": "2026-08-16",
    "names": {},
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/socheonguk.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "04ccba9b-1a04-4681-8a1c-6437aa77a528"
    }
@@ -7309,9 +7309,9 @@
    "names": {},
    "sensitivity": null,
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/sondol.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "7ad55ae2-af49-431d-9695-d788cd09b739"
    }
@@ -7461,9 +7461,9 @@
    ],
    "updated_at": "2026-08-16",
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/sonnim.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "a98f3a56-b945-46ac-ae8e-a4d4ae11fa00"
    }
@@ -7529,9 +7529,9 @@
    "updated_at": "2026-08-16",
    "sensitivity": null,
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/sotdae.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "7fb2ee18-9bbc-452d-aa15-5699b7bed1f0"
    }
@@ -7590,9 +7590,9 @@
    "updated_at": "2026-08-16",
    "names": {},
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/subu.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "9378b62b-ceda-49ed-8c4d-8fef05b0c1c4"
    }
@@ -7667,9 +7667,9 @@
    "updated_at": "2026-08-16",
    "names": {},
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/taebaek-sansin.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "bb9b2e1e-c9db-4ead-a8ec-c7b73a816c84"
    }
@@ -7730,9 +7730,9 @@
    "updated_at": "2026-08-16",
    "names": {},
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/teoju.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "019a4896-2991-46e5-b6af-107dc2dac870"
    }
@@ -7790,9 +7790,9 @@
    "updated_at": "2026-08-16",
    "names": {},
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/teoneol-goedam.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "56c81209-b5c1-4ee0-a78a-0d7aa6a9b071"
    }
@@ -7862,9 +7862,9 @@
    "updated_at": "2026-08-16",
    "sensitivity": null,
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/ureonggaksi.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "8932bb97-f249-4298-8545-37e2b658ab89"
    }
@@ -7922,9 +7922,9 @@
    "names": {},
    "sensitivity": null,
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/yacha.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "4bbeec77-7697-48d9-84a8-ac4c19bcabf6"
    }
@@ -7992,9 +7992,9 @@
    "names": {},
    "sensitivity": null,
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/yaraeja.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "54b9951e-d485-4890-b894-452ef0493d4b"
    }
@@ -8057,9 +8057,9 @@
    "names": {},
    "sensitivity": null,
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/yeoksin.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "8d14eb8d-47dd-43c0-9b15-d78b1dda9297"
    }
@@ -8118,9 +8118,9 @@
    "updated_at": "2026-08-16",
    "names": {},
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/yeomna.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "9cc78a04-6821-4bcb-8ab5-9e829d696826"
    }
@@ -8269,9 +8269,9 @@
    "updated_at": "2026-08-16",
    "names": {},
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/yeongsan.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "8db9f7c7-d401-4aa4-869d-d0f1b7258e2f"
    }
@@ -8332,7 +8332,7 @@
    "names": {},
    "sensitivity": null,
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
@@ -8397,9 +8397,9 @@
    "names": {},
    "sensitivity": null,
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/yeoubi.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "acbe7b36-46ad-4432-9947-07cdaa72fa56"
    }
@@ -8469,9 +8469,9 @@
    "names": {},
    "sensitivity": null,
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/yongma.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "ecd1a66a-ba9b-4006-bf1e-97fba1423d7a"
    }
@@ -8553,7 +8553,7 @@
    ],
    "updated_at": "2026-08-16",
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
