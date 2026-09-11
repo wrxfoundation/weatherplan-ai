@@ -1222,3 +1222,61 @@ Head of Partnerships & Operations, wellbian · KWeather — a weather measuremen
 - **레이다·위성에 시점·확약 없음** — 4026/5026/6026 은 「추후 공개」다. `extending to` 는 방향 서술이고, 이 표현은 우리 공개 계정이 이미 쓴 문장(9/8 EN-2 "starting indoors, extending to outdoor, radar and satellite")과 같아 새 클레임이 아니다.
 - **1차 판매(9/15~16)를 넣지 않았다** — 오늘 기준 아직 안 일어난 일이다. **9/16 판매 종료 뒤에 한 줄을 더한다.** 프로필도 수첩의 게이트와 같이 움직인다: `sale1` 켤 때 판매 줄, `stage`(10/3) 켤 때 무대 줄. 계획을 실적처럼 적지 않는다는 규칙이 여기도 그대로 적용된다.
 - RLUSD 제외 유지(결제사 컨택 중) · 보상·수량·시세 0 · 「최대·1위」 0 · 리플 0(XRP Ledger 는 기술 명칭으로만) · 코스닥 0 · 싱가포르 법인 앞세우지 않음.
+
+### 서우 링크드인 프로필 — **확정본 (2026-09-11, 서우 3건 삭제 지시)**
+
+서우가 세 대목을 뽑아 *"이건 사족 같아서 빼줘"*. 셋 다 맞는 지적이라 그대로 잘랐다.
+
+1. **`Live on XRP Ledger mainnet since August 2026`** — 본문이 이미 현재형(`is fingerprinted to the XRP Ledger`)으로 살아 있다고 말하므로 사실은 남는다. 끝에 붙은 한 줄은 각주처럼 읽혔다.
+2. **`Partnerships and operations sit with one person by design…` 문단** — **Outward / Inward 구조가 이미 보여 주는 것을 그 아래에서 말로 설명**했다. 문자 그대로 사족. 게다가 한국어로 옮기면 「한 사람이 전담」이 **권한이 아니라 인력 부족**으로 읽힌다(자동 번역본에서 확인). 보여 주는 편이 말하는 편보다 낫다는 원칙이 이 문단에 그대로 적용됐다.
+3. **보도 실적 꼬리** — 불릿 자체는 남기고(대외 커뮤니케이션이 사라지면 서우가 요구한 두 축 중 하나가 없어진다) 꼬리만 잘랐다. `External communications and press`. 이유 둘: 여섯 불릿 중 그것만 자랑이 되고, 한국어로 납작해지면 「홍보」가 된다.
+
+**⚠ 자동 번역이 사실을 바꾼다 — 국내 상대가 보는 건 그쪽이다.** 링크드인 자동 번역이 `Live … since August 2026` 을 **「2026년 8월부터 서비스 제공 예정」**(완료 → 계획)으로 옮겼다. 대응: **프로필 언어 추가로 한국어판을 직접 작성**한다(기계 번역 대신 우리 문장이 나간다). 어느 항목까지 따라오는지는 입력하며 확인. 아래 한국어판을 그 용도로 같이 둔다.
+
+**경력 설명 확정 (영문, 978자)**
+
+```
+Head of Partnerships & Operations
+KWeather · wellbian
+2025년 11월 – 현재
+
+Building a weather measurement network out of instruments people own and run — indoors today, extending to outdoor, radar and satellite.
+
+Weather data has always been produced by a handful of institutions and consumed by everyone else. wellbian inverts that. A certified sensor sits in a home or on a building, measures continuously, and every reading is fingerprinted to the XRP Ledger — so the data can be verified by whoever uses it rather than taken on trust. The instrument is built and certified by KWeather, which has measured Korea's weather for 30 years and supplies 4,000+ enterprise clients; wellbian runs the network.
+
+Outward
+· Partnerships in Korea and abroad — payments, ecosystem, institutional
+· External communications and press
+· The global community
+
+Inward
+· Commercial policy — pricing, refund terms, delivery, support
+· The operations backbone, from sale through fulfillment
+· Regulatory and compliance readiness, with counsel
+```
+
+**경력 설명 확정 (한국어판, 프로필 언어 추가용)**
+
+```
+Head of Partnerships & Operations · 파트너십·운영 총괄
+KWeather · wellbian
+2025년 11월 – 현재
+
+개인이 소유하고 직접 돌리는 계측기로 날씨 관측망을 만듭니다 — 지금은 실내, 이어서 실외·레이다·위성으로.
+
+날씨 데이터는 늘 소수의 기관이 만들고 나머지가 받아 쓰는 것이었습니다. wellbian은 그 방향을 뒤집습니다. 인증받은 센서가 집과 건물에 놓여 계속 측정하고, 측정값마다 지문이 XRP Ledger에 기록됩니다 — 데이터를 믿고 쓰는 것이 아니라 쓰는 쪽이 직접 검증합니다. 기기는 30년간 한국의 날씨를 측정하고 4,000개 이상 기업 고객에 데이터를 공급해 온 케이웨더가 만들고 인증하며, 관측망은 wellbian이 운영합니다.
+
+대외
+· 국내·해외 파트너십 — 결제, 생태계, 기관
+· 대외 커뮤니케이션·언론
+· 글로벌 커뮤니티
+
+대내
+· 사업 정책 — 가격, 환불, 배송, 고객 응대
+· 판매부터 배송까지 운영 체계
+· 법률 자문과 함께 규제·컴플라이언스 대응
+```
+
+헤드라인(131자)은 앞 절 그대로 유지 — 잘린 세 항목과 무관하다.
+
+**9/16 이후 되돌아볼 것**: 판매 줄 추가 여부. 단 메인넷 줄을 「사족」으로 판정한 기준이 여기에도 걸린다 — **실적 한 줄을 꼬리로 붙이지 말고 본문 문장 안에 녹일 것.** 남은 건은 회사 페이지 연결(로고 회색)·`계약직` 표기.
