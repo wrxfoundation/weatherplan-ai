@@ -1166,3 +1166,59 @@ I run partnerships and day-to-day operations end to end.
 ```
 
 선택: `records what it measures to the XRP Ledger` 뒤에 `, priced and settled in RLUSD` 를 붙일 수 있다(사이트 공개 사실). 다만 결제사(마스터카드·비자) 컨택이 진행 중이라 **스테이블코인 브랜드를 프로필에 박아 두면 경쟁 레일을 고른 선언으로 읽힌다** — 지금은 빼 두고, 2차 판매 결제 설계가 끝난 뒤 다시 본다.
+
+### 서우 링크드인 프로필 재작성 (2026-09-11) — **첫 단에 비전 · 대외/대내 두 축 · 실내를 넘는 범위**
+
+서우: *"전문성 있어보여? 이게 대외 대내 관리를 같이 맡고 있어서, 그리고 우리가 실내만 할 건 아니야 위성까지 알아보고 있으니 첫 단에 비전을 보여줘야 해."* 근거로 택손 레지스트리(4026 AI 인프라 · 5026 레이다 · 6026 위성 = **추후 공개**)와 백서 v0.3(IAQ→OAQ 2계층 · PHASE 3 실내외 연동 · 최종 통합 관측망).
+
+**답: 아니다 — 유능해 보이지만 시니어로는 안 읽힌다.** 앞선 수정안의 약점 넷:
+
+1. **`day-to-day operations`** — 이 표현이 직함을 깎는다. 기관 독자는 "day-to-day" 를 권한이 아니라 실행으로 읽는다. 빼야 한다.
+2. **불릿 다섯이 전부 책임 서술**(Set·Own·Built·Build·Work) = 채용공고 형식이다. 시니어 프로필은 담당 범위가 아니라 **내가 오기 전에 없던 것이 지금 있다**를 말한다.
+3. **범위·시점·증거가 한 줄도 없다.** 우리가 가진 가장 강한 것(8/13 XRPL 메인넷 라이브 · 주요 일간·경제지 런칭 보도)이 통째로 빠져 있었다.
+4. 서우 지적대로 **비전이 없다** — `indoor air monitor` 한 줄로 닫혀 제품 소개가 됐다.
+
+**⚠ 앞 수정안의 사실 오류 정정**: `wellbian is its Web3 project`(케이웨더의 Web3 프로젝트)는 약관 제3·4조와 어긋난다 — 운영·발행 주체는 웰비안이고 케이웨더는 기기 제공·품질 인증·국내 수탁이다. 우리가 금지해 온 「케이웨더 토큰」 프레임이 바로 이 문장 형태다. 아래 안에서 **기기는 케이웨더, 네트워크는 웰비안**으로 분리했다.
+
+**「첫 단」은 수사가 아니라 화면 제약이다** — 링크드인 경력 설명은 **2줄 남짓에서 「…더 보기」로 잘린다.** 대부분의 상대는 첫 문장만 본다. 그래서 첫 문장은 그 자체로 완결된 명제여야 하고 150자 안이어야 한다. 서우의 감이 맞았고, 근거는 레이아웃이다.
+
+**대외·대내를 불릿에 섞지 않고 두 묶음으로 갈랐다.** 그리고 **둘을 겸하는 것이 부담이 아니라 협상 자산**이라는 걸 한 문장으로 세운다 — 상대 입장에서 이 사람과 합의하면 가격·결제창·응대까지 바뀐다는 뜻이고, 그게 파트너십을 빨리 닫는 조건이다.
+
+**경력 설명 (확정안, 1,230자)**
+
+```
+Head of Partnerships & Operations
+KWeather · wellbian
+2025년 11월 – 현재
+
+Building a weather measurement network out of instruments people own and run — indoors today, extending to outdoor, radar and satellite.
+
+Weather data has always been produced by a handful of institutions and consumed by everyone else. wellbian inverts that. A certified sensor sits in a home or on a building, measures continuously, and every reading is fingerprinted to the XRP Ledger — so the data can be verified by whoever uses it rather than taken on trust. The instrument is built and certified by KWeather, which has measured Korea's weather for 30 years and supplies 4,000+ enterprise clients; wellbian runs the network.
+
+Partnerships and operations sit with one person by design. When a partner agrees to something, the pricing, the checkout and the support behind it are mine to change — so what gets agreed is what ships.
+
+Outward
+· Partnerships in Korea and abroad — payments, ecosystem, institutional
+· External communications, through a launch covered across Korea's national daily and business press
+· The global community
+
+Inward
+· Commercial policy — pricing, refund terms, delivery, support
+· The operations backbone, from sale through fulfillment
+· Regulatory and compliance readiness, with counsel
+
+Live on XRP Ledger mainnet since August 2026.
+```
+
+**헤드라인도 같이 본다 — 그게 진짜 첫 단이다.** 경력 설명은 프로필을 연 사람만 보지만, 헤드라인은 **DM 목록·댓글·검색 결과에서 이름 옆에 항상 따라다닌다.** 콜드 컨택이 모체인 지금 전략에서 가장 많이 읽히는 한 줄이 여기다. 직함이 앞(결정 권한을 먼저 알려야 답장이 온다), 명제가 뒤.
+
+```
+헤드라인 (131자)
+Head of Partnerships & Operations, wellbian · KWeather — a weather measurement network people own and run, verified on the XRP Ledger
+```
+
+**쓰지 않은 것과 이유**
+- **`AI infrastructure`(택손 4026)** — 레지스트리엔 있지만 첫 줄에 넣으면 물리 계측 서사가 흐려지고, 결제·기관 상대에게는 하이프 신호로 읽힌다. 실물 3계층(실외·레이다·위성)까지만.
+- **레이다·위성에 시점·확약 없음** — 4026/5026/6026 은 「추후 공개」다. `extending to` 는 방향 서술이고, 이 표현은 우리 공개 계정이 이미 쓴 문장(9/8 EN-2 "starting indoors, extending to outdoor, radar and satellite")과 같아 새 클레임이 아니다.
+- **1차 판매(9/15~16)를 넣지 않았다** — 오늘 기준 아직 안 일어난 일이다. **9/16 판매 종료 뒤에 한 줄을 더한다.** 프로필도 수첩의 게이트와 같이 움직인다: `sale1` 켤 때 판매 줄, `stage`(10/3) 켤 때 무대 줄. 계획을 실적처럼 적지 않는다는 규칙이 여기도 그대로 적용된다.
+- RLUSD 제외 유지(결제사 컨택 중) · 보상·수량·시세 0 · 「최대·1위」 0 · 리플 0(XRP Ledger 는 기술 명칭으로만) · 코스닥 0 · 싱가포르 법인 앞세우지 않음.
