@@ -191,6 +191,11 @@ export const STAGES: Stage[] = [
     note: "영국 재무부·영란은행·미 SEC 크립토 태스크포스·JP모건·바클리스·HSBC. 명단은 최상급이지만 전부 은행·자산운용의 토큰화 담당이다. **하드웨어를 파는 우리가 지금 그 방에서 할 말이 없다.** 리플 소속 연사도 있어 규칙상 지도에 올리지 않는다.",
   },
   {
+    key: "futurist", name: "Futurist Conference (토론토·플로리다)", when: "미확인", where: "토론토 / 플로리다",
+    stance: "skip",
+    note: "**정치 인사가 라인업에 섞여 있다** — 미 하원 후보·플로리다/유타 주의원·캐나다 하원의원. 우리는 정치 담론에 무반응이 원칙인데, **그 방에 이름이 같이 실리는 것 자체가 입장 표명으로 읽힌다**. 참가 여부 이전의 문제다. 편성도 리테일·밈 중심이고(밈 토큰 창업자·NFT 커뮤니티·트레이딩 KOL), 토론토판은 기관지향이지만 **TD·BMO·Wealthsimple·캐나다 거래소 — 캐나다 내수 축**이라 우리 시장이 아니다. **명단은 쓴다**: 400명 중 우리 레인에 닿는 셋만 걸렀다(Truflation·CoinDesk·Messari).",
+  },
+  {
     key: "btc26", name: "Bitcoin 2026", when: "4/27~29", where: "미국",
     stance: "skip",
     note: "비트코인 축이라 레인이 다르고 시점도 우리 판매 사이클 밖이다. Kalshi·로빈후드처럼 겹치는 이름은 이미 사람으로 잡혀 있다.",
@@ -567,6 +572,24 @@ export const PEOPLE: Person[] = [
     lane: "market", stance: "hold", meet: "KBW 9/29~10/1",
     why: "모듈형 오라클. 체인링크보다 우리 규모에 말을 걸기 쉬운 상대라 오라클 축의 첫 문은 이쪽이 될 수 있다.",
     next: "9/16 뒤 · 오라클 축 첫 접촉 후보 1번. 기술 통합 클레임은 하지 않는다.",
+  },
+  {
+    id: "sharples", gate: "ship", name: "Betty Sharples", org: "Truflation", role: "Head of Business Development",
+    lane: "market", stance: "hold", via: "Futurist Conference 명단(9/11)",
+    why: "**우리와 구조가 같은 회사다** — 실세계 지표(물가)를 모아 온체인에서 검증 가능한 데이터로 만든다. 오라클 레인에서 체인링크·RedStone 이 「수요처」라면 여기는 **선례**다. 실세계 지표가 예측시장·파생의 언더라잉으로 실제로 들어간 사례.",
+    next: "**컨택은 기기 가동 뒤.** 다만 지금 당장 쓸 데가 있다 — 크립토닷컴 콜에서 「날씨가 언더라잉이 될 수 있나」 에 답할 때 **인용하는 사례**로 쓴다(컨택 없이 사실만).",
+  },
+  {
+    id: "ashraf", gate: "stage", name: "Aoyon Ashraf", org: "CoinDesk", role: "Global Head of News",
+    lane: "voice", stance: "hold", via: "Futurist Conference 명단(9/11)",
+    why: "지도에 The Block·Blockworks·CNBC 는 있었지만 CoinDesk 가 비어 있었다. DePIN·실물 기기는 이 매체의 상시 꼭지다.",
+    next: "**윗선을 먼저 치지 않는다.** 10/3 무대 뒤에 실무 기자 경로로 연다. 이 이름은 그 경로가 맞는지 확인하는 기준으로만 둔다.",
+  },
+  {
+    id: "turner", gate: "data", name: "Eric Turner", org: "Messari", role: "CEO",
+    lane: "market", stance: "hold", via: "Futurist Conference 명단(9/11)",
+    why: "DePIN 섹터 리서치 커버리지. 여기 리포트에 잡히면 기관·자본 대화의 앞단이 짧아진다.",
+    next: "**리서치 회사는 숫자가 있어야 쓴다** — 데이터 판매 실적 뒤. CEO 라 윗선이니 그때도 실무 애널리스트 경로를 먼저 찾는다.",
   },
   {
     id: "vicioso", gate: "ship", name: "Giovanni Vicioso", org: "CME Group", role: "Global Head of Cryptocurrency Products",
