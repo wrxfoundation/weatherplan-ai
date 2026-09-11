@@ -1131,3 +1131,38 @@ Sep 15 isn't the end of it. Another press release is coming, and the direction i
 
 So there's more here than one sale day, if you'd rather pace your coverage across it.
 ```
+
+### 서우 링크드인 경력 프로필 점검 (2026-09-11)
+
+기관 상대(Odelia·Mastercard·Water.org·Katie)가 컨택 전에 반드시 보는 문서다. 지금은 **무엇을 운영하는지만 있고 무엇을 만들었는지가 없다** — KWeather 를 모르는 해외 상대에게는 "어떤 한국 회사의 운영 담당" 이상으로 읽히지 않는다.
+
+**고칠 것 (우선순위)**
+
+1. **회사 로고가 기본 회색 = 링크드인 회사 페이지에 연결되지 않았다.** 이게 가장 큰 손실이다 — 연결되면 로고가 뜨고, 회사 팔로워에게 노출되고, 검색에 걸린다. 표기도 `Kweather` 가 아니라 **`KWeather`**(대문자 W)가 공식이다. 회사 페이지 존재 여부 확인 필요.
+2. **시제 혼재** — 현직인데 `Built the operations backbone` 한 줄만 과거형이다. `Built and run` 으로 붙이면 "만들었고 지금도 돌린다"가 된다.
+3. **배경 한 줄이 없다** — 30년·4,000+ 고객사(허용 범위)와 실물이 XRPL 에 기록된다는 사실. 이 두 줄이 프로필의 값 대부분을 만든다.
+4. **구두점 불일치** — 첫 줄만 마침표가 있고 둘째 줄은 없다.
+5. **`계약직` 표기** — 사실이면 두되, 링크드인에서 고용 형태는 **선택 항목이라 비울 수 있다.** 파트너십 총괄이 계약직으로 표시되면 상대가 결정 권한을 의심할 여지가 생긴다. 사실 관계는 서우 판단.
+6. **보유기술 순서** — 「인공지능, 디지털 마케팅」이 앞이다. Partnerships · Business Development · Web3 · Go-to-Market 이 앞에 와야 직함과 맞는다.
+
+**규칙 점검**: 수익·보상·시세 0 · 「최대·1위」 0 · 리플 관계 암시 0 · 사이트 문구(`Weather Data Becomes an Asset`)와 정합. 유일한 위험은 `Kweather / wellbian` 의 슬래시가 **한 회사처럼 읽히는 것** — 약관상 별개 법인이고 케이웨더는 상장사다. 가운뎃점(`·`)으로 바꾸면 병기로 읽힌다.
+
+**수정안**
+
+```
+Head of Partnerships & Operations
+KWeather · wellbian
+2025년 11월 – 현재
+
+KWeather has measured Korea's weather for 30 years — instruments, forecasting, and B2B data for 4,000+ enterprise clients. wellbian is its Web3 project: a certified indoor air monitor that records what it measures to the XRP Ledger.
+
+I run partnerships and day-to-day operations end to end.
+
+· Set commercial policy — pricing, refund terms, delivery, and the support playbook
+· Own domestic and international partnerships, and external communications
+· Built and run the operations backbone — sales, fulfillment, support
+· Build and run the global community
+· Work with counsel on regulatory and compliance readiness
+```
+
+선택: `records what it measures to the XRP Ledger` 뒤에 `, priced and settled in RLUSD` 를 붙일 수 있다(사이트 공개 사실). 다만 결제사(마스터카드·비자) 컨택이 진행 중이라 **스테이블코인 브랜드를 프로필에 박아 두면 경쟁 레일을 고른 선언으로 읽힌다** — 지금은 빼 두고, 2차 판매 결제 설계가 끝난 뒤 다시 본다.
