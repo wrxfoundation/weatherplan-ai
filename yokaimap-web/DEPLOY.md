@@ -38,24 +38,27 @@ Vercel → Add New → Project → 이 리포 선택.
 > **광고는 지금 켜지 않는다.** `MONETIZATION.md` 기준 광고는 기저 시나리오 매출의 6%인데,
 > 지자체·공공 납품(주력 라인)에서 기관 신뢰도를 깎는 대가가 그보다 크다. S3에서 판단한다.
 
-### `VITE_SITE_ORIGIN` 주의 — 빌드 시점에 구워진다
+### `VITE_SITE_ORIGIN` — 도메인 붙이기 전에는 안 넣어도 된다
 
-이 값은 런타임 설정이 아니다. 프리렌더된 **156페이지의 canonical·og:url·JSON-LD와
+이 값은 런타임 설정이 아니다. 프리렌더된 **157페이지의 canonical·og:url·JSON-LD와
 sitemap.xml·llms.txt에 절대 URL로 박힌다.**
 
-도메인을 나중에 붙이면 그 전에 만들어진 페이지들은 전부 틀린 canonical을 달고 있고,
-이건 AEO/SEO에 직접 손해다. 순서를 지킨다.
+**도메인을 붙이기 전에는 비워 두는 것이 맞다.** 비어 있으면 빌드가 Vercel이 자동으로
+넣어 주는 `VERCEL_PROJECT_PRODUCTION_URL`(= `<project>.vercel.app`)을 쓴다. 설정을
+하나도 안 해도 canonical이 실제로 존재하는 주소를 가리킨다.
 
-1. 도메인을 먼저 정한다
-2. `VITE_SITE_ORIGIN`에 그 도메인을 넣는다 (끝 슬래시 없이, `https://` 포함)
-3. 그 다음에 배포한다
-
-이미 배포한 뒤 도메인을 바꿨다면 **반드시 재배포**한다 (Deployments → Redeploy).
-값이 맞는지는 배포 로그 마지막 줄에서 확인된다:
+빌드 로그 마지막 줄에서 어떤 값이 쓰였는지 확인된다:
 
 ```
-✅ AEO 자산 생성 — 프리렌더 156페이지 · sitemap · robots.txt · llms.txt (origin: https://…)
+   origin: https://yokaimap.vercel.app  ← VERCEL_PROJECT_PRODUCTION_URL
 ```
+
+실제 도메인을 연결한 뒤에는 `VITE_SITE_ORIGIN`에 그 도메인을 넣고(끝 슬래시 없이)
+**재배포**한다. 이 값이 있으면 자동 감지보다 우선한다. 재배포를 빼먹으면 이전
+페이지들이 `.vercel.app` canonical을 그대로 달고 있게 된다.
+
+> `VERCEL_URL`은 배포마다 바뀌는 해시 주소라 canonical로 쓰면 안 된다.
+> 그래서 프로덕션 별칭인 `VERCEL_PROJECT_PRODUCTION_URL`만 쓴다.
 
 ---
 

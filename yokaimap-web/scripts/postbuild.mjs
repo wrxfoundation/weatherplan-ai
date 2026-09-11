@@ -17,7 +17,25 @@ import { fileURLToPath } from 'node:url'
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..')
 const DIST = join(ROOT, 'dist')
 const DEFAULT_ORIGIN = 'https://yokaimap.kr'
-const ORIGIN = (process.env.VITE_SITE_ORIGIN || DEFAULT_ORIGIN).replace(/\/$/, '')
+
+/**
+ * 배포 origin 결정. canonical·og:url·sitemap에 절대 URL로 구워지므로 틀리면
+ * 크롤러가 죽은 주소를 정본으로 인식한다.
+ *
+ *   1) VITE_SITE_ORIGIN   — 실제 도메인을 붙였을 때 쓰는 최종 스위치
+ *   2) VERCEL_PROJECT_PRODUCTION_URL — Vercel이 빌드에 자동으로 넣어 주는
+ *      프로덕션 별칭(<project>.vercel.app). 도메인을 붙이기 전까지는 이게 진짜
+ *      주소이므로, 아무 설정 없이도 canonical이 실제로 존재하는 주소를 가리킨다.
+ *      (VERCEL_URL은 배포마다 바뀌는 해시 주소라 canonical로 쓰면 안 된다.)
+ *   3) DEFAULT_ORIGIN     — 로컬 빌드용 기본값
+ */
+const VERCEL_PROD = process.env.VERCEL_PROJECT_PRODUCTION_URL
+const [ORIGIN_SRC, ORIGIN_RAW] = process.env.VITE_SITE_ORIGIN
+  ? ['VITE_SITE_ORIGIN', process.env.VITE_SITE_ORIGIN]
+  : VERCEL_PROD
+    ? ['VERCEL_PROJECT_PRODUCTION_URL', `https://${VERCEL_PROD}`]
+    : ['기본값', DEFAULT_ORIGIN]
+const ORIGIN = ORIGIN_RAW.replace(/\/$/, '')
 
 const { titleOf, descriptionOf, entryJsonLd, datasetJsonLd, categoryJsonLd, regionJsonLd, slugOf } = await import(
   join(ROOT, 'src/seo.js')
@@ -286,4 +304,5 @@ ${topCategories}
 `,
 )
 
-console.log(`✅ AEO 자산 생성 — 프리렌더 ${urls.length - 1}페이지 · sitemap · robots.txt · llms.txt (origin: ${ORIGIN})`)
+console.log(`✅ AEO 자산 생성 — 프리렌더 ${urls.length - 1}페이지 · sitemap · robots.txt · llms.txt`)
+console.log(`   origin: ${ORIGIN}  ← ${ORIGIN_SRC}`)
