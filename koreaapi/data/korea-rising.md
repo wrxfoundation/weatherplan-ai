@@ -1,6 +1,14 @@
-# Korea Rising — verified K-pop snapshot (2026-09-10)
+# Korea Rising — verified K-pop snapshot (2026-09-11)
 
 Every line is **cross-verified** (≥2 independent sources agree on the canonical name) and carries its source + Skill Score. Full data + Schema.org JSON-LD: <https://aiagentlabs.co.kr/> · via KoreaAPI (MCP).
+
+## 🎬 Latest official releases (YouTube)
+- **CRAVITY** — sonorous : our resonance
+- **Super Junior** — Poster & VCR Shooting | 2026 SUPER JUNIOR-83z FANCON TOUR [1983] in SEOUL Behind Ep.1
+- **Mamamoo** — 마마무(MAMAMOO) 2026 WORLD TOUR [4WARD] - SEOUL Behind
+- **ZEROBASEONE** — POV: The painter became the art itself
+- **ITZY** — DaDa-ITZY EP.03 | Don’t Get Mad~ A Loyalty Game Full of Blame and Boos🔥
+- **aespa** — 🏃‍♀️‍➡️🏔️ #aespa #æspa #에스파 #KARINA #카리나 #WINTER #윈터
 
 ## 🎤 Verified roster (640 acts)
 - **2NE1**: I Am the Best
