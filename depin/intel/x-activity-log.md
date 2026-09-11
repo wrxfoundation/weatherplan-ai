@@ -1385,3 +1385,18 @@ Have a think and come back to me whenever. 🤝
 - **화요일 마감** — *"2차도 시작한다"* 와 정면으로 부딪힌다. 2차가 열린다고 말하는 순간 이번 주는 마지막 기회가 아니다. `whenever` 로 압력을 아예 뺐다.
 
 **`not a one-off for this round` 가 문장 전체를 지탱한다** — 이 한 조각이 "지금은 낮지만 나중엔"의 여지를 닫는다. 정본 방침은 business-directions 「KOL 커미션·할인 정본(9/11)」 그대로.
+
+### @KingKaran — **H4 최종 (2026-09-11, 서우 "고가라 5% 성사되면 크다는 것도 넣어")**
+
+```
+H4 (300자, 최종)
+Karan — just to be clear, 5% and 5% is our policy, not a one-off for this round. The second round will start on the same terms.
+
+One thing though: the device sits at a much higher price than a wallet, so the same percentage is a very different number per sale.
+
+Have a think and come back to me whenever. 🤝
+```
+
+**숫자(22 RLUSD/대)는 넣지 않는다** — 우리가 내밀면 **그 숫자가 평가 대상**이 되고, KOL 눈에는 작아 보일 수도 있다(그가 "낮다"고 한 이유가 바로 그 감각이다). `the same percentage is a very different number per sale` 로 두면 **그가 직접 곱해 보고, 자기 결론이 된다.**
+
+**D'CENT 호명 없음** — `a wallet` 이면 그가 먼저 꺼낸 얘기라 무엇을 가리키는지 안다. 이름을 쓰는 순간 **"우리 파트너보다 우리가 낫다"** 는 발화가 되고, 그 말은 어필리에이트 경로로 옮겨 다닌다.
