@@ -37,6 +37,8 @@ export type Person = {
   via?: string;
   /** 대면으로 만날 수 있는 자리 */
   meet?: string;
+  /** 서우 계정과의 실제 연결 상태. "팔로우 중" 은 메시지가 바로 가지 않는다 — 1촌과 구분해 적는다 */
+  tie?: string;
   /** X 핸들(@ 없이). 없으면 링크를 만들지 않는다 */
   handle?: string;
 };
@@ -72,6 +74,8 @@ export const EXCLUDED: { k: string; v: string }[] = [
   { k: "이름이 캡처에 없던 상대", v: "직함·소속으로만 적었다. 서우가 대상을 안다." },
   { k: "범용 VC·인프라 (Apeiron·DACM·Ethereal·Spartan·Pantera·Primitive·Folius·1kx·Hack VC·Alliance·Maelstrom·Alchemy·DoubleZero 등)", v: "DePIN 특화가 아니면 a16z·Dragonfly·Multicoin 셋으로 대표한다. 같은 질문을 열 곳에 하지 않는다." },
   { k: "스포츠·연예 인사", v: "우리 무대가 아니다." },
+  { k: "빅테크·유명인 팔로우 (엔비디아·구글 CEO, 마크 큐반, 스눕독 등)", v: "팔로우는 정보 소비이지 관계가 아니다. 지도에 올리면 없는 자산이 있는 것처럼 보인다." },
+  { k: "거래소 실무진 팔로우 (Bybit 마케팅·VIP, Coinbase 성장·자산운용 등)", v: "9/30 규칙 그대로. 팔로우는 유지하되 지도에는 회사 대표 카드만 둔다." },
 ];
 
 export const PEOPLE: Person[] = [
@@ -142,16 +146,16 @@ export const PEOPLE: Person[] = [
     next: "1촌 수락 대기. 7일 무응답이면 COO 경로.",
   },
   {
-    id: "sara", name: "Sara Xi", org: "Water.org", role: "이사 (Rubicon Carbon CPO)",
-    lane: "impact", stance: "open", via: "Katie Harries 소개 우선",
-    why: "크립토·핀테크 배경의 이사라 제품 질문이 통한다.",
-    next: "Katie 소개가 열리면 그 경로로, 7일 안에 안 되면 직접 노트.",
+    id: "sara", name: "Sara Xi", org: "Water.org (이사)", role: "Chief Product Officer · 크립토·핀테크·AI 자문",
+    lane: "impact", stance: "linked", tie: "서우 팔로우 중", via: "Katie Harries 공통 1촌",
+    why: "크립토·핀테크 배경의 이사라 제품 질문이 통한다. **이미 팔로우 중** — Katie 소개를 기다리는 전제가 흔들린다.",
+    next: "⚠ 1촌 여부를 먼저 확인한다. 1촌이면 소개 없이 바로 메시지가 가고, Katie 에게는 부탁 대신 인사만 남는다.",
   },
   {
     id: "benjamin", name: "Benjamin Albert", org: "Water.org / Get Blue", role: "Head of Corporate Partnerships",
-    lane: "impact", stance: "open",
-    why: "파트너 접수 실무 책임자. 파트너 기준을 묻는 자리.",
-    next: "질문형 노트 발송. 게리 언급은 하지 않는다.",
+    lane: "impact", stance: "linked", tie: "서우 팔로우 중",
+    why: "파트너 접수 실무 책임자. **이미 팔로우 중이다** — 콜드 노트가 아니라 이어 가는 메시지로 쓴다.",
+    next: "질문형 메시지 발송. 게리 언급은 하지 않는다.",
   },
   {
     id: "victoria", name: "Victoria Mei", org: "MoonPay", role: "소셜미디어·크리에이터",
@@ -160,14 +164,14 @@ export const PEOPLE: Person[] = [
     next: "가벼운 DM 발송분 반응 관찰. 조건·숫자 제시 0.",
   },
   {
-    id: "jansen", name: "Charles Jansen", org: "S&P Global", role: "Head of DeFi Transformation",
-    lane: "capital", stance: "open", meet: "KBW 9/29~10/1",
+    id: "jansen", name: "Charles Jansen", org: "S&P Global", role: "DeFi and Digital Assets",
+    lane: "capital", stance: "linked", tie: "서우 팔로우 중", meet: "KBW 9/29~10/1",
     why: "데이터 회사가 온체인으로 가는 사례. 「30년 데이터 회사의 DePIN」 프레임이 그대로 통하는 상대.",
     next: "1촌 노트. 사업 제안이 아니라 사례 비교로 연다.",
   },
   {
-    id: "pham", name: "Caroline Pham", org: "MoonPay", role: "—",
-    lane: "pay", stance: "open", meet: "KBW 9/29~10/1",
+    id: "pham", name: "Caroline D. Pham", org: "MoonPay", role: "CEO, MoonPay Institutional · CLO & CAO",
+    lane: "pay", stance: "linked", tie: "서우 팔로우 중", meet: "KBW 9/29~10/1",
     why: "해외 구매자 RLUSD 온램프. XRPL 네이티브 온램프를 먼저 본다는 우리 방침과 같은 자리.",
     next: "1촌 노트만. 본 대화는 2차 판매 해외 결제 설계 때.",
   },
@@ -206,8 +210,8 @@ export const PEOPLE: Person[] = [
   /* ── 보류 (기관·자본 — 1차 판매 결과 뒤) ──────────────────── */
   {
     id: "wuollet", name: "Guy Wuollet", org: "a16z crypto", role: "General Partner",
-    lane: "capital", stance: "hold", meet: "KBW · Swell 연사",
-    why: "DePIN 투자 관점. 실적 없이 만나면 한 번뿐인 첫인상을 계획으로 쓴다.",
+    lane: "capital", stance: "linked", tie: "서우 팔로우 중", meet: "KBW · Swell 연사",
+    why: "이미 팔로우 중이라 콜드가 아니다. DePIN 투자 관점. 실적 없이 만나면 한 번뿐인 첫인상을 계획으로 쓴다.",
     next: "1차 판매 결과(9/16) 뒤.",
   },
   {
@@ -235,8 +239,8 @@ export const PEOPLE: Person[] = [
   },
   {
     id: "sharma", name: "Nikhil Sharma", org: "BlackRock", role: "Director, Digital Assets",
-    lane: "capital", stance: "hold", meet: "KBW 9/29~10/1",
-    why: "BUIDL 이 RLUSD 로 24/7 환매되는 건의 회사 쪽. 다만 그 환매는 XRPL 이 아닌 체인에서 일어난다 — 섞어 말하지 않는다.",
+    lane: "capital", stance: "linked", tie: "서우 팔로우 중", meet: "KBW 9/29~10/1",
+    why: "서우가 이미 팔로우 중이다(BlackRock 디지털자산 쪽을 넷 팔로우). BUIDL 이 RLUSD 로 24/7 환매되는 건의 회사 쪽. 다만 그 환매는 XRPL 이 아닌 체인에서 일어난다 — 섞어 말하지 않는다.",
     next: "컨택 없음. 배경 지식으로만.",
   },
   {
@@ -468,5 +472,93 @@ export const PEOPLE: Person[] = [
     lane: "voice", stance: "off", meet: "KBW 9/29~10/1",
     why: "대형 KOL 채널이지만 포맷이 시세·트레이딩 중심이다.",
     next: "열지 않는다. 우리 규칙에서 가격 담론 채널은 무반응이다.",
+  },
+
+  /* ── 9/11 서우 링크드인 팔로우 목록에서 (57명 중 우리 레인) ──────────
+     팔로우는 1촌과 다르다 — 메시지가 바로 가지 않는다. tie 에 그대로 적고,
+     "이미 연결돼 있는데 안 쓰고 있는 관계" 를 드러내는 것이 이 묶음의 값이다. */
+  {
+    id: "ashnathan", name: "Ash Nathan", org: "Chainlink Labs", role: "Strategic Initiatives — Tokenization, Custody & Prediction Markets",
+    lane: "market", stance: "linked", tie: "서우 팔로우 중",
+    why: "★ 직함에 **예측시장**이 직접 들어 있다. 우리 5축(날씨 예측시장 정산엔 조작 불가 실측이 필요)의 정확한 상대이고, 체인링크 기관 담당(McCormick)보다 이쪽이 먼저다.",
+    next: "오라클 축 1순위. 9/16 뒤, 관측 지점이 돌기 시작하면 연다. 기술 통합 클레임은 하지 않는다.",
+  },
+  {
+    id: "samewen", name: "Sam Ewen", org: "Chainlink Labs", role: "VP, Head of Brand and Ecosystem Marketing",
+    lane: "market", stance: "linked", tie: "서우 팔로우 중",
+    why: "같은 회사의 생태계·브랜드 쪽. Ash Nathan 이 먼저이고 이쪽은 그다음이다.",
+    next: "한 회사에 둘을 동시에 열지 않는다.",
+  },
+  {
+    id: "florian", name: "Florian A.", org: "XRPL Commons", role: "Project & Solutions Manager",
+    lane: "xrpl", stance: "linked", tie: "서우 팔로우 중",
+    why: "Commons 실무 담당. Odelia(디지털자산 총괄) 대화가 열려 있으니 실행 단계에서 만나게 될 쪽이다.",
+    next: "Odelia 통화 뒤. 따로 열지 않는다.",
+  },
+  {
+    id: "t54-cmo", name: "Mangirdas P.", org: "t54 Labs", role: "Chief Marketing Officer",
+    lane: "xrpl", stance: "linked", tie: "서우 팔로우 중",
+    why: "x402 촉진자 — XRP·RLUSD 로 에이전트 결제를 붙이는 쪽이다. 우리 기계 고객 테제(5c)의 결제 쪽 상대이고 이미 파트너 후보 로스터에 올려 둔 곳.",
+    next: "APAC 리드 쪽이 먼저. 자체 대시보드 수치는 외부 검증이 안 되므로 인용하지 않는다.",
+  },
+  {
+    id: "t54-apac", name: "Claire Jiyeon J.", org: "t54 Labs", role: "APAC Regional Lead",
+    lane: "xrpl", stance: "linked", tie: "서우 팔로우 중",
+    why: "한국어권으로 보이는 APAC 담당. x402 축에서 가장 열기 쉬운 문이다.",
+    next: "9/16 뒤 가볍게. 우리 판독값이 에이전트 결제의 입력이 될 수 있는지 듣는 자리 — 통합 제안 아님.",
+  },
+  {
+    id: "asheesh", name: "Asheesh Birla", org: "Evernorth", role: "CEO · XRP Digital Asset Treasury",
+    lane: "xrpl", stance: "talking", tie: "구면 · 서우 팔로우 중", handle: "ashgoblue",
+    why: "이미 구면이고 X 에서 답글이 오가는 A 티어다. 지도에서 가장 따뜻한 관계인데 링크드인 쪽으로는 쓰지 않고 있었다.",
+    next: "X 트랙 유지. 10/3 무대 뒤에 링크드인으로 결과를 한 번 전한다 — 부탁 없이.",
+  },
+  {
+    id: "souza", name: "Antônia Souza", org: "Visa", role: "Crypto Product Director, Latam & Caribbean",
+    lane: "pay", stance: "linked", tie: "서우 팔로우 중",
+    why: "카드 네트워크의 크립토 상품. 담당 지역이 중남미라 우리 시장과는 멀지만 Mastercard 건과 같은 질문을 던질 수 있는 자리다.",
+    next: "Mastercard 쪽이 먼저. 같은 질문을 두 네트워크에 동시에 하지 않는다.",
+  },
+  {
+    id: "mounts", name: "Chuck Mounts", org: "S&P Global", role: "Chief DeFi Officer",
+    lane: "capital", stance: "linked", tie: "서우 팔로우 중",
+    why: "S&P Global 의 DeFi 총괄 — Charles Jansen 과 같은 회사의 윗선이다. 「전통 신용과 온체인 시장을 잇는다」 가 그의 소개 문구다.",
+    next: "Jansen 쪽으로 먼저 열고, 대화가 서면 그 안에서 소개받는다. 윗선을 먼저 치지 않는다.",
+  },
+  {
+    id: "sciuto", name: "Riva Sciuto", org: "Kalshi", role: "Head of External Affairs",
+    lane: "market", stance: "linked", tie: "서우 팔로우 중",
+    why: "규제 예측시장의 대외 총괄. Kalshi 축에서 실제로 말이 통하는 문이다(연사 명단의 Head of Crypto 보다 이쪽이 열기 쉽다).",
+    next: "실측 실적 뒤. 날씨 항목의 정산 기준을 어떻게 정하는지 듣는 자리.",
+  },
+  {
+    id: "allaire", name: "Jeremy Allaire", org: "Circle", role: "Co-founder, Chairman & CEO",
+    lane: "capital", stance: "linked", tie: "서우 팔로우 중",
+    why: "USDC 발행사. 우리는 RLUSD 로 정산하므로 발행사 비교 대화는 열지 않는다.",
+    next: "컨택 없음. 팔로우는 정보 소비다.",
+  },
+  {
+    id: "crow", name: "Matthew Crow", org: "Tether", role: "Head of Regional Expansion",
+    lane: "capital", stance: "linked", tie: "서우 팔로우 중",
+    why: "같은 이유 — 스테이블코인 발행사 축.",
+    next: "컨택 없음.",
+  },
+  {
+    id: "lynnmartin", name: "Lynn Martin", org: "NYSE Group / ICE", role: "President · Chair, ICE Fixed Income and Data Services",
+    lane: "capital", stance: "linked", tie: "서우 팔로우 중",
+    why: "거래소보다 **데이터 서비스** 쪽이 우리와 닿는다 — 시장 데이터를 파는 사업의 구조가 우리 B2B 데이터 판매와 같은 모양이다.",
+    next: "컨택 없음. 데이터 사업 구조는 공개 자료로 읽는다.",
+  },
+  {
+    id: "davidpark", name: "Hyuckjae David Park", org: "Base", role: "APAC Ecosystem Lead",
+    lane: "capital", stance: "linked", tie: "서우 팔로우 중",
+    why: "한국어권 APAC 생태계 담당. 다만 Base 는 타 체인이다.",
+    next: "9/30 까지 열지 않는다. 멀티체인 신호 금지 규칙.",
+  },
+  {
+    id: "shinhan", name: "장범진", org: "신한은행", role: "IT본부장",
+    lane: "capital", stance: "linked", tie: "서우 팔로우 중",
+    why: "국내 은행의 IT 총괄. 케이웨더 B2B 축과 닿을 여지가 있고, 국내 결제·원화 경로 질문의 현실 감각을 얻는 자리다.",
+    next: "크립토 프레임으로 열지 않는다. 열게 되면 케이웨더 명의·기업 데이터 문맥으로.",
   },
 ];

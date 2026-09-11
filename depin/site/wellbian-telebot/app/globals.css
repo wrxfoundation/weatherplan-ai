@@ -635,6 +635,7 @@ kbd { font: 600 11px/1.4 var(--mono, ui-monospace, monospace); color: var(--ink-
 .map-badges { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 9px; }
 .map-badge { font-size: 10.5px; color: var(--ink-4); background: var(--chip); border-radius: 5px; padding: 2px 7px; }
 .map-badge.meet { background: var(--w-tint); color: var(--w-main); font-weight: 700; }
+.map-badge.tie { background: var(--ok-bg); color: var(--ok-text); font-weight: 700; }
 .tag.sv-talking { background: var(--w-main); color: #fff; }
 .tag.sv-open    { background: var(--ok-bg); color: var(--ok-text); }
 .tag.sv-linked  { background: var(--chip); color: var(--ink-3); }

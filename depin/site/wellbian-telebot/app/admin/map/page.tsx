@@ -157,8 +157,9 @@ export default async function MapPage({
                     <p className="map-why">{p.why}</p>
                     <div className="map-k">다음 수</div>
                     <p className="map-next">{p.next}</p>
-                    {(p.via || p.meet) && (
+                    {(p.tie || p.via || p.meet) && (
                       <div className="map-badges">
+                        {p.tie && <span className="map-badge tie">{p.tie}</span>}
                         {p.via && <span className="map-badge">경유 {p.via}</span>}
                         {p.meet && <span className="map-badge meet">{p.meet}</span>}
                       </div>
