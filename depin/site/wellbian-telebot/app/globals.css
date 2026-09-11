@@ -704,7 +704,29 @@ kbd { font: 600 11px/1.4 var(--mono, ui-monospace, monospace); color: var(--ink-
 /* 한국어와 라틴 나열이 섞이면 가운뎃점은 줄바꿈 기회가 아니다 — 긴 회사 나열이 화면을 밀어낸다 */
 .notice, .dir-sec-note, .dir-hint { overflow-wrap: anywhere; word-break: keep-all; }
 
+/* 자리(행사) 보기 */
+.dir-stages { display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 12px; align-items: start; }
+.dir-stage { border: 1px solid var(--bd-card); border-left: 3px solid var(--bd-btn); border-radius: 11px; padding: 12px 14px; background: #fff; }
+.dir-stage.ev-ours { border-left-color: var(--w-main); background: var(--w-tint); }
+.dir-stage.ev-going { border-left-color: var(--ok-dot); }
+.dir-stage.ev-watch { border-left-color: var(--arrow); }
+.dir-stage.ev-skip { border-left-color: var(--line); background: var(--panel); }
+.dir-stage > header { display: flex; align-items: baseline; gap: 7px; flex-wrap: wrap; margin-bottom: 6px; }
+.dir-stage > header b { font-size: 14px; color: var(--w-deep); }
+.dir-stage-when { font-size: 11.5px; color: var(--ink-3); font-weight: 700; }
+.dir-stage-where { font-size: 11.5px; color: var(--cap); }
+.dir-stage-note { font-size: 12.5px; line-height: 1.6; color: var(--ink-2); margin: 0 0 8px; }
+.dir-stage-ppl { margin: 0; font-size: 12px; }
+.dir-stage-ppl a { color: var(--w-main); text-decoration: none; font-weight: 700; }
+.dir-stage-ppl a:hover { text-decoration: underline; }
+.dir-stage-ppl.none { color: var(--hint); }
+.tag.ev-ours { background: var(--w-main); color: #fff; }
+.tag.ev-going { background: var(--ok-bg); color: var(--ok-text); }
+.tag.ev-watch { background: var(--chip); color: var(--ink-3); }
+.tag.ev-skip { background: transparent; color: var(--dis); border: 1px solid var(--line); }
+
 @media (max-width: 720px) {
+  .dir-stages { grid-template-columns: 1fr; }
   .dir-role { display: none; }
   .dir-orgs { grid-template-columns: 1fr; }
   .dir-search input { width: 128px; }

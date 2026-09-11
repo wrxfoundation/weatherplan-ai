@@ -18,7 +18,7 @@
 import { isAuthed } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import {
-  PEOPLE, LANES, STANCES, EXCLUDED, NETWORK_UPDATED,
+  PEOPLE, LANES, STANCES, EXCLUDED, NETWORK_UPDATED, STAGES, EVENT_STANCES,
   type Lane, type Stance, type Person,
 } from "@/lib/network";
 import Nav from "../Nav";
@@ -31,18 +31,21 @@ const qs = (o: Record<string, string>) => {
   return `${p}`;
 };
 
-const EVENTS: { key: string; label: string; match: string }[] = [
-  { key: "kbw", label: "KBW", match: "KBW" },
-  { key: "seoul", label: "XRP SEOUL", match: "10/3" },
-  { key: "hack", label: "NYC 해커톤", match: "해커톤" },
-  { key: "swell", label: "Swell", match: "Swell" },
-];
+/* 필터 칩에는 우리 사람이 실제로 있는 자리만 올린다 — 빈 칩은 누를 이유가 없다 */
+const EVENTS = STAGES.filter((e) => e.match).map((e) => ({ key: e.key, label: e.name.replace(/ 20\d\d$/, ""), match: e.match as string }));
 
 /* 뜨거운 순. 회사의 "문" 과 명부 정렬이 같은 기준을 쓴다 */
 const ORDER: Record<Stance, number> = { talking: 0, open: 1, linked: 2, hold: 3, off: 4 };
 const orgOf = (p: Person) => p.group ?? p.org;
 const laneOf = (key: Lane) => LANES.find((l) => l.key === key);
 const stanceOf = (key: Stance) => STANCES.find((s) => s.key === key);
+/* 데이터는 마크다운 습관대로 **강조**를 쓴다. 화면에서는 그대로 보이면 안 되니 여기서 푼다 */
+const rich = (t: string) =>
+  t.split(/(\*\*[^*]+\*\*)/g).map((seg, i) =>
+    seg.startsWith("**") && seg.endsWith("**")
+      ? <b key={i}>{seg.slice(2, -2)}</b>
+      : <span key={i}>{seg}</span>);
+
 const hay = (p: Person) =>
   `${p.name} ${p.org} ${p.group ?? ""} ${p.role} ${p.why} ${p.next} ${p.via ?? ""} ${p.meet ?? ""} ${p.tie ?? ""}`.toLowerCase();
 
@@ -53,7 +56,7 @@ export default async function MapPage({
   if (!(await isAuthed(sp.k))) redirect("/");
   const k = (await isAuthed()) ? "" : (sp.k ?? "");
 
-  const view = sp.view === "org" ? "org" : "people";
+  const view = sp.view === "org" ? "org" : sp.view === "event" ? "event" : "people";
   const lane = LANES.some((l) => l.key === sp.lane) ? (sp.lane as Lane) : "";
   const stance = STANCES.some((s) => s.key === sp.stance) ? (sp.stance as Stance) : "";
   const ev = EVENTS.find((e) => e.key === sp.ev)?.key ?? "";
@@ -123,9 +126,9 @@ export default async function MapPage({
       </summary>
       <div className="dir-body">
         <div className="dir-k">접점</div>
-        <p>{p.why}</p>
+        <p>{rich(p.why)}</p>
         <div className="dir-k">다음 수</div>
-        <p>{p.next}</p>
+        <p>{rich(p.next)}</p>
         {(p.via || p.meet) && (
           <p className="dir-meta">
             {p.via && <>경유 <b>{p.via}</b>{p.meet ? " · " : ""}</>}
@@ -138,9 +141,10 @@ export default async function MapPage({
 
   return (
     <>
-      <Nav k={k} current="map" title="인맥 수첩" sub={<>{PEOPLE.length}명 · {orgs.length}곳 · 로스터 {NETWORK_UPDATED}</>}>
+      <Nav k={k} current="map" title="인맥 수첩" sub={<>{PEOPLE.length}명 · {orgs.length}곳 · 자리 {STAGES.length} · 로스터 {NETWORK_UPDATED}</>}>
         <a className={`chip${view === "people" ? " on" : ""}`} href={link({ view: "people" })}>사람</a>
         <a className={`chip${view === "org" ? " on" : ""}`} href={link({ view: "org" })}>회사</a>
+        <a className={`chip${view === "event" ? " on" : ""}`} href={link({ view: "event" })}>자리</a>
         <form className="dir-search" method="get" action="/admin/map">
           {k && <input type="hidden" name="k" value={k} />}
           <input type="hidden" name="view" value={view} />
@@ -162,7 +166,7 @@ export default async function MapPage({
                 <span className={`dot sv-${p.stance}`} />
                 <b>{p.name}</b>
                 <span className="dir-todo-org">{p.org}</span>
-                <span className="dir-todo-next">{p.next}</span>
+                <span className="dir-todo-next">{rich(p.next)}</span>
               </li>
             ))}
           </ol>
@@ -184,7 +188,7 @@ export default async function MapPage({
           {lane && <a className="chip on" href={link({ lane: "" })}>{laneOf(lane)?.label} ✕</a>}
         </div>
 
-        {!list.length && <p className="rep-empty" style={{ marginTop: 20 }}>조건에 맞는 사람이 없습니다.</p>}
+        {!list.length && view !== "event" && <p className="rep-empty" style={{ marginTop: 20 }}>조건에 맞는 사람이 없습니다.</p>}
 
         {view === "people" && shownLanes.map((l) => {
           const rows = list.filter((p) => p.lane === l.key);
@@ -239,6 +243,41 @@ export default async function MapPage({
                   <Row p={o.ps[0]} showOrg={false} />
                 </div>
               ))}
+            </div>
+          </>
+        )}
+
+        {view === "event" && (
+          <>
+            <p className="dir-hint">
+              실제 질문은 &quot;누가 나오나&quot;가 아니라 <b>어디에 갈 것인가</b>다. 명단을 다 옮기면 수첩이 아니라
+              팸플릿이 된다 — 자리마다 판정을 붙이고, 그 자리에 걸린 우리 사람만 센다.
+            </p>
+            <div className="dir-stages">
+              {STAGES.map((e) => {
+                const ppl = e.match ? PEOPLE.filter((p) => p.meet?.includes(e.match as string)) : [];
+                const hot = ppl.filter((p) => p.stance === "talking" || p.stance === "open").length;
+                return (
+                  <section key={e.key} className={`dir-stage ev-${e.stance}`}>
+                    <header>
+                      <b>{e.name}</b>
+                      <span className={`tag ev-${e.stance}`}>{EVENT_STANCES.find((x) => x.key === e.stance)?.label}</span>
+                      <span className="dir-stage-when mono">{e.when}</span>
+                      <span className="dir-stage-where">{e.where}</span>
+                    </header>
+                    <p className="dir-stage-note">{rich(e.note)}</p>
+                    {ppl.length > 0 ? (
+                      <p className="dir-stage-ppl">
+                        <a href={link({ view: "people", ev: e.key })}>
+                          이 자리에 우리 사람 <b>{ppl.length}</b>명{hot ? <> · 열려 있는 대화 <b>{hot}</b></> : null} →
+                        </a>
+                      </p>
+                    ) : (
+                      <p className="dir-stage-ppl none">아직 걸린 사람 없음</p>
+                    )}
+                  </section>
+                );
+              })}
             </div>
           </>
         )}

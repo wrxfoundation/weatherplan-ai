@@ -80,6 +80,79 @@ export const EXCLUDED: { k: string; v: string }[] = [
   { k: "거래소 실무진 팔로우", v: "9/30 규칙 그대로. 팔로우는 유지하되 지도에는 회사 대표 카드만 둔다." },
 ];
 
+/* ── 자리(행사) ────────────────────────────────────────────────────────
+   서우가 행사 명단을 계속 보내 온다. 실제 질문은 "누가 나오나" 가 아니라 **"어디에 갈 것인가"** 다.
+   그래서 행사도 판정을 붙여 둔다 — 명단을 다 옮기면 수첩이 아니라 팸플릿이 된다.
+
+   `match` 는 사람 카드의 `meet` 문자열과 맞춰 보는 말이다. 비어 있으면 아직 우리 사람이 없는 자리다. */
+export type EventStance = "ours" | "going" | "watch" | "skip";
+
+export type Stage = {
+  key: string;
+  name: string;
+  when: string;
+  where: string;
+  stance: EventStance;
+  note: string;
+  /** 사람의 meet 에 들어 있는 말. 없으면 연결된 사람이 아직 없다 */
+  match?: string;
+};
+
+export const EVENT_STANCES: { key: EventStance; label: string }[] = [
+  { key: "ours", label: "우리 무대" },
+  { key: "going", label: "가는 중" },
+  { key: "watch", label: "관찰" },
+  { key: "skip", label: "이번엔 아님" },
+];
+
+export const STAGES: Stage[] = [
+  {
+    key: "seoul", name: "XRP SEOUL 2026", when: "10/3", where: "그랜드 하얏트 서울",
+    stance: "ours", match: "10/3",
+    note: "케이웨더가 플래티넘 스폰서. 무대에서 기기가 측정하고 원장에 쓰는 것을 보인다. 이 자리 뒤에야 우리는 계획이 아니라 물건으로 말할 수 있다 — 여러 대화의 시점을 여기에 맞춰 두었다.",
+  },
+  {
+    key: "swell", name: "Swell 2026", when: "10/27~29", where: "뉴욕 The Shed",
+    stance: "going", match: "Swell",
+    note: "서우 참석 준비 중. XRPL Apex(개발자 서밋) 통합. 보류해 둔 XRPL 인사 넷이 이 자리에 있어, 빌더 파이프라인 등록 결과가 나오면 대면으로 한 번에 푼다.",
+  },
+  {
+    key: "hack", name: "XRPL 해커톤 (Commons 주관)", when: "10/24~25", where: "뉴욕",
+    stance: "going", match: "해커톤",
+    note: "Swell 과 같은 주다. Odelia 통화를 대면으로 올릴 수 있는 자리이고, 마스터카드도 참여를 공표했다. 뉴욕행이 서면 이틀을 붙여 쓴다.",
+  },
+  {
+    key: "kbw", name: "KBW 2026", when: "9/29~10/1", where: "워커힐 서울",
+    stance: "watch", match: "KBW",
+    note: "우리 부스도 연사도 없다. 업비트 메인 스폰서, 9/29 는 비공개 기관 포럼. **이 방문객이 이틀 뒤 10/3 의 관객**이라는 것이 우리에게 KBW 의 뜻이다. 연사 컨택은 1차 판매 결과(9/16) 뒤에.",
+  },
+  {
+    key: "unbw", name: "UN Blockchain Week 2026", when: "9/10~19 (진행 중)", where: "뉴욕",
+    stance: "skip",
+    note: "UNGA 와 겹치는 열흘. **하필 1차 판매 주간(9/15~16)이라 갈 수 없다.** 연사층도 소형 프로젝트·개인 중심이라 우리 레인과 멀다. 다만 UN 계열 자리가 블록체인에 열려 있다는 신호는 남는다 — 임팩트 축(UNDP·UNICEF)은 사람으로 따로 잡았다.",
+  },
+  {
+    key: "nordic", name: "Nordic Blockchain Association 컨퍼런스", when: "미확인", where: "북유럽",
+    stance: "watch",
+    note: "명단에 **UNDP AltFinLab·UNICEF 블록체인 담당**이 있다 — 우리 임팩트 축과 같은 세계다. 행사 자체보다 그 두 사람이 값이다. 날짜·장소는 확인하지 않았다.",
+  },
+  {
+    key: "daf-ny", name: "EBC Digital Assets Forum New York", when: "미확인", where: "뉴욕",
+    stance: "watch",
+    note: "프랭클린템플턴 디지털자산 총괄·IMF·블랙록·씨티. 기관 토큰화 축이라 우리 단계와는 멀지만, **RLUSD 를 쓰는 이유를 설명할 때 인용하는 사실들이 여기서 나온다**.",
+  },
+  {
+    key: "daweek", name: "Digital Assets Week London 2026", when: "미확인", where: "런던",
+    stance: "skip",
+    note: "영국 재무부·영란은행·미 SEC 크립토 태스크포스·JP모건·바클리스·HSBC. 명단은 최상급이지만 전부 은행·자산운용의 토큰화 담당이다. **하드웨어를 파는 우리가 지금 그 방에서 할 말이 없다.** 리플 소속 연사도 있어 규칙상 지도에 올리지 않는다.",
+  },
+  {
+    key: "btc26", name: "Bitcoin 2026", when: "4/27~29", where: "미국",
+    stance: "skip",
+    note: "비트코인 축이라 레인이 다르고 시점도 우리 판매 사이클 밖이다. Kalshi·로빈후드처럼 겹치는 이름은 이미 사람으로 잡혀 있다.",
+  },
+];
+
 export const PEOPLE: Person[] = [
   /* ── 대화 중 ───────────────────────────────────────────── */
   {
@@ -562,5 +635,43 @@ export const PEOPLE: Person[] = [
     lane: "capital", stance: "linked", tie: "서우 팔로우 중",
     why: "국내 은행의 IT 총괄. 케이웨더 B2B 축과 닿을 여지가 있고, 국내 결제·원화 경로 질문의 현실 감각을 얻는 자리다.",
     next: "크립토 프레임으로 열지 않는다. 열게 되면 케이웨더 명의·기업 데이터 문맥으로.",
+  },
+  /* ── 9/11 행사 명단 4종에서 (UN Blockchain Week · Nordic · EBC NY · DA Week London) ──
+     수백 명 중 우리 레인에 닿는 여섯만 옮겼다. 명단을 다 넣으면 수첩이 아니라 팸플릿이 된다. */
+  {
+    id: "mavis", name: "Burcu Mavis", org: "UNDP AltFinLab", role: "Blockchain Academy and Accelerator Lead",
+    lane: "impact", stance: "hold", meet: "Nordic 컨퍼런스",
+    why: "★ UN 개발계획의 대체금융 랩. 공기질은 공중보건·기후 적응 데이터라 개발금융의 관심사와 바로 닿고, Get Blue·IFC 축과 같은 세계다. 우리 임팩트 레인에서 가장 제도권 쪽 문.",
+    next: "Water.org 경로가 먼저 서야 한다 — 실적 없이 UN 계열을 두 곳 동시에 열면 둘 다 가벼워진다.",
+  },
+  {
+    id: "maharajan", name: "Arun Maharajan", org: "UNICEF", role: "Blockchain Lead",
+    lane: "impact", stance: "hold", meet: "Nordic 컨퍼런스",
+    why: "유니세프의 블록체인 담당. 아동 환경 보건과 실내 공기질은 논거가 이어진다.",
+    next: "UNDP 쪽과 같은 대기. 둘 중 하나가 열리면 그 경로로 나머지를 소개받는다.",
+  },
+  {
+    id: "karwan", name: "Liam Karwan", org: "Chainlink Labs", role: "Head of RWA & Stablecoins",
+    lane: "market", stance: "hold", meet: "Nordic 컨퍼런스",
+    why: "체인링크 세 번째. RWA·스테이블코인 쪽이라 우리 RLUSD 정산과는 닿지만, 오라클 축 1순위는 예측시장을 직함에 단 Ash Nathan 이다.",
+    next: "열지 않는다. 한 회사에 셋을 늘어놓되 문은 하나다.",
+  },
+  {
+    id: "kaul", name: "Sandy Kaul", org: "Franklin Templeton", role: "Global Head of Digital Assets",
+    lane: "capital", stance: "hold", meet: "EBC Digital Assets Forum NY",
+    why: "sgBENJI 발행사의 **실무 총괄**. CEO(Jenny Johnson)보다 이쪽이 말이 통하는 자리다 — 싱가포르 은행 거래소가 그 펀드를 RLUSD 와 나란히 상장한 건이 우리 「왜 RLUSD」 논거의 뿌리다.",
+    next: "컨택하지 않는다. 사례 인용으로만 쓰고, 인용할 때도 기관 이름을 호명하지 않는다.",
+  },
+  {
+    id: "adrian", name: "Tobias Adrian", org: "IMF", role: "Director, Digital Asset",
+    lane: "impact", stance: "hold", meet: "EBC Digital Assets Forum NY",
+    why: "국제통화기금의 디지털자산 총괄. 우리가 말을 걸 자리는 아니지만, 국제기구가 이 레인에 서 있다는 것 자체가 UNDP·IFC 축의 배경이다.",
+    next: "컨택 없음. 발언은 소재로 읽는다.",
+  },
+  {
+    id: "batchelor", name: "Ariane Batchelor", org: "Mastercard", role: "Director, Account Management",
+    lane: "pay", stance: "hold", meet: "Nordic 컨퍼런스",
+    why: "마스터카드 두 번째. 어카운트 관리 쪽이라 Move 프로덕트 디렉터와 직무가 다르다.",
+    next: "열지 않는다. 마스터카드는 Move 쪽 한 문으로 간다.",
   },
 ];
