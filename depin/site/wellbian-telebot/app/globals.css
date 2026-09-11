@@ -704,6 +704,29 @@ kbd { font: 600 11px/1.4 var(--mono, ui-monospace, monospace); color: var(--ink-
 /* 한국어와 라틴 나열이 섞이면 가운뎃점은 줄바꿈 기회가 아니다 — 긴 회사 나열이 화면을 밀어낸다 */
 .notice, .dir-sec-note, .dir-hint { overflow-wrap: anywhere; word-break: keep-all; }
 
+/* 이제 열 때 · 다음 진행 */
+.dir-unlock { margin-top: 10px; padding-top: 9px; border-top: 1px dashed var(--bd-btn); }
+.dir-unlock > b { font-size: 12.5px; color: var(--ok-text); }
+.dir-unlock > span { font-size: 11.5px; color: var(--cap); margin-left: 7px; }
+.dir-unlock ol { list-style: none; margin: 5px 0 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+.dir-unlock li { display: flex; align-items: baseline; gap: 7px; font-size: 12.5px; }
+.dir-unlock li b { color: var(--ink-1); white-space: nowrap; }
+.dir-nextms { margin: 9px 0 0; font-size: 12px; color: var(--ink-3); padding-top: 8px; border-top: 1px dashed var(--bd-btn); }
+.dir-nextms a { color: var(--w-main); font-weight: 700; text-decoration: none; }
+
+/* 단계(급) 보기 — 세로 한 줄로 읽는다. 우리가 어디까지 왔고 다음에 무엇이 열리는가 */
+.dir-steps { display: flex; flex-direction: column; gap: 10px; }
+.dir-step { border: 1px solid var(--bd-card); border-left: 3px solid var(--bd-btn); border-radius: 11px; padding: 11px 13px; background: #fff; }
+.dir-step.done { border-left-color: var(--ok-dot); background: var(--panel); }
+.dir-step > header { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+.dir-step > header b { font-size: 13.5px; color: var(--w-deep); }
+.dir-step-mark { color: var(--dis); font-weight: 800; }
+.dir-step.done .dir-step-mark { color: var(--ok-text); }
+.dir-step-when { font-size: 11.5px; color: var(--ink-3); font-weight: 700; }
+.dir-step-n { font-size: 11px; color: var(--hint); margin-left: auto; font-weight: 700; }
+.dir-step-proof { font-size: 12.5px; line-height: 1.6; color: var(--ink-2); margin: 5px 0 9px; }
+.dir-step .dir-list { border-radius: 9px; }
+
 /* 자리(행사) 보기 */
 .dir-stages { display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 12px; align-items: start; }
 .dir-stage { border: 1px solid var(--bd-card); border-left: 3px solid var(--bd-btn); border-radius: 11px; padding: 12px 14px; background: #fff; }

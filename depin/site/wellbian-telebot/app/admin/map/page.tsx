@@ -18,7 +18,7 @@
 import { isAuthed } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import {
-  PEOPLE, LANES, STANCES, EXCLUDED, NETWORK_UPDATED, STAGES, EVENT_STANCES,
+  PEOPLE, LANES, STANCES, EXCLUDED, NETWORK_UPDATED, STAGES, EVENT_STANCES, MILESTONES,
   type Lane, type Stance, type Person,
 } from "@/lib/network";
 import Nav from "../Nav";
@@ -56,7 +56,7 @@ export default async function MapPage({
   if (!(await isAuthed(sp.k))) redirect("/");
   const k = (await isAuthed()) ? "" : (sp.k ?? "");
 
-  const view = sp.view === "org" ? "org" : sp.view === "event" ? "event" : "people";
+  const view = sp.view === "org" ? "org" : sp.view === "event" ? "event" : sp.view === "step" ? "step" : "people";
   const lane = LANES.some((l) => l.key === sp.lane) ? (sp.lane as Lane) : "";
   const stance = STANCES.some((s) => s.key === sp.stance) ? (sp.stance as Stance) : "";
   const ev = EVENTS.find((e) => e.key === sp.ev)?.key ?? "";
@@ -86,6 +86,15 @@ export default async function MapPage({
   const todo = PEOPLE
     .filter((p) => p.stance === "talking" || p.stance === "open")
     .sort((a, b) => ORDER[a.stance] - ORDER[b.stance] || a.name.localeCompare(b.name, "ko"));
+
+  /* 게이트가 풀린 사람 — 진행이 서면서 "이제 열 때" 가 된 자리.
+     서우가 MILESTONES 의 done 을 켜는 순간 여기로 올라온다. 이 구조가 전략의 실행부다. */
+  const doneKeys = new Set(MILESTONES.filter((m) => m.done).map((m) => m.key));
+  const unlocked = PEOPLE
+    .filter((p) => p.gate && doneKeys.has(p.gate) && p.stance !== "talking" && p.stance !== "open")
+    .sort((a, b) => ORDER[a.stance] - ORDER[b.stance] || a.name.localeCompare(b.name, "ko"));
+  const inbound = PEOPLE.filter((p) => p.inbound).length;
+  const nextMs = MILESTONES.find((m) => !m.done);
 
   /* 회사 보기 — 걸린 사람이 있는 조직만, 뜨거운 순 */
   const orgMap = new Map<string, Person[]>();
@@ -144,6 +153,7 @@ export default async function MapPage({
       <Nav k={k} current="map" title="인맥 수첩" sub={<>{PEOPLE.length}명 · {orgs.length}곳 · 자리 {STAGES.length} · 로스터 {NETWORK_UPDATED}</>}>
         <a className={`chip${view === "people" ? " on" : ""}`} href={link({ view: "people" })}>사람</a>
         <a className={`chip${view === "org" ? " on" : ""}`} href={link({ view: "org" })}>회사</a>
+        <a className={`chip${view === "step" ? " on" : ""}`} href={link({ view: "step" })}>단계</a>
         <a className={`chip${view === "event" ? " on" : ""}`} href={link({ view: "event" })}>자리</a>
         <form className="dir-search" method="get" action="/admin/map">
           {k && <input type="hidden" name="k" value={k} />}
@@ -158,7 +168,10 @@ export default async function MapPage({
         <section className="dir-todo">
           <div className="dir-todo-h">
             <b>먼저 열 순서</b>
-            <span>대화 중 {n("talking")} · 여는 중 {n("open")} · 연결됨 {n("linked")} · 보류 {n("hold")} · 열지 않음 {n("off")}</span>
+            <span>
+              대화 중 {n("talking")} · 여는 중 {n("open")} · 연결됨 {n("linked")} · 보류 {n("hold")} · 열지 않음 {n("off")}
+              {inbound > 0 && <> · <b className="door-k">인바운드 {inbound}</b></>}
+            </span>
           </div>
           <ol>
             {todo.map((p) => (
@@ -170,6 +183,26 @@ export default async function MapPage({
               </li>
             ))}
           </ol>
+          {unlocked.length > 0 && (
+            <div className="dir-unlock">
+              <b>이제 열 때</b>
+              <span>진행이 서면서 조건이 풀린 자리</span>
+              <ol>
+                {unlocked.map((p) => (
+                  <li key={p.id}>
+                    <b>{p.name}</b><span className="dir-todo-org">{p.org}</span>
+                    <span className="dir-todo-next">{rich(p.next)}</span>
+                  </li>
+                ))}
+              </ol>
+            </div>
+          )}
+          {nextMs && (
+            <p className="dir-nextms">
+              다음 진행 <b>{nextMs.label}</b> <span className="mono">{nextMs.when}</span> — 이게 서면{" "}
+              <a href={link({ view: "step" })}>{PEOPLE.filter((p) => p.gate === nextMs.key).length}곳이 열린다 →</a>
+            </p>
+          )}
         </section>
 
         <div className="map-filters">
@@ -247,11 +280,47 @@ export default async function MapPage({
           </>
         )}
 
+        {view === "step" && (
+          <>
+            <p className="dir-hint">
+              모체는 링크드인 컨택이고 행사는 부수다. 지금 안 되는 컨택을 버리지 않고
+              <b> 어떤 진행이 서면 열리는지</b>로 묶어 둔다 — 그러는 동안 우리 급이 올라가면 같은 사람에게
+              다른 대화가 열린다. 진행이 끝나면 <code>lib/network.ts</code> 의 <code>done</code> 한 줄을 켠다.
+            </p>
+            <div className="dir-steps">
+              {MILESTONES.map((m) => {
+                const ppl = PEOPLE.filter((p) => p.gate === m.key);
+                return (
+                  <section key={m.key} className={`dir-step${m.done ? " done" : ""}`}>
+                    <header>
+                      <span className="dir-step-mark">{m.done ? "✓" : "○"}</span>
+                      <b>{m.label}</b>
+                      <span className="dir-step-when mono">{m.when}</span>
+                      <span className="dir-step-n mono">{ppl.length}곳</span>
+                    </header>
+                    <p className="dir-step-proof">{rich(m.proof)}</p>
+                    {ppl.length > 0 && (
+                      <div className="dir-list">{ppl
+                        .sort((a, b) => ORDER[a.stance] - ORDER[b.stance] || a.name.localeCompare(b.name, "ko"))
+                        .map((p) => <Row key={p.id} p={p} />)}</div>
+                    )}
+                  </section>
+                );
+              })}
+            </div>
+            <p className="dir-sec-note" style={{ marginTop: 12 }}>
+              게이트가 없는 {PEOPLE.filter((p) => !p.gate).length}곳은 지금 열 수 있거나, 규칙상 열지 않기로 한
+              자리다 — <a href={link({ view: "people" })}>사람 보기</a>에서 본다.
+            </p>
+          </>
+        )}
+
         {view === "event" && (
           <>
             <p className="dir-hint">
-              실제 질문은 &quot;누가 나오나&quot;가 아니라 <b>어디에 갈 것인가</b>다. 명단을 다 옮기면 수첩이 아니라
-              팸플릿이 된다 — 자리마다 판정을 붙이고, 그 자리에 걸린 우리 사람만 센다.
+              <b>행사는 모체가 아니라 부수다.</b> 컨택을 쌓아 두면 그중 몇이 같은 자리에 있을 뿐이고,
+              그때 대면으로 한 단계 올린다. 그래서 자리마다 판정을 붙이고 그 자리에 걸린 우리 사람만 센다 —
+              명단을 다 옮기면 수첩이 아니라 팸플릿이 된다.
             </p>
             <div className="dir-stages">
               {STAGES.map((e) => {
