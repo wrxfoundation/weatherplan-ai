@@ -168,6 +168,22 @@ prerender('/quiz', {
   ogImage: '/og/quiz.png',
 })
 
+prerender('/hunt', {
+  title: '요괴 탐사 — 한국요괴지도',
+  description:
+    '전승지가 기록된 시군구 권역과 지금의 시간·계절로 오늘 나타날 요괴를 정합니다. 정확한 지점으로 안내하지 않으며 실존 신당·사유지 방문을 권유하지 않습니다.',
+  jsonLd: {
+    '@context': 'https://schema.org',
+    '@type': 'WebApplication',
+    name: '한국요괴 탐사',
+    url: `${ORIGIN}/hunt`,
+    applicationCategory: 'GameApplication',
+    inLanguage: 'ko',
+  },
+  body: '<h1>요괴 탐사</h1><p>시군구 권역과 시간·계절로 오늘 나타날 요괴를 정합니다. 판정은 권역 단위이며 실존 신당·사유지 방문을 권유하지 않습니다.</p>',
+  priority: '0.7',
+})
+
 prerender('/map', {
   title: '전승지 지도 — 한국요괴지도',
   description: `요괴 ${bundle.count}체의 전승지 ${bundle.site_count}곳을 지도 위에. 분류·희귀도로 걸러 보고, 오늘 날씨에 맞는 요괴를 확인할 수 있습니다.`,

@@ -20,6 +20,7 @@ const RegionPage = lazy(() => import('./region/RegionPage.jsx'))
 const QuizPage = lazy(() => import('./quiz/QuizPage.jsx'))
 const BusinessPage = lazy(() => import('./business/BusinessPage.jsx'))
 const AboutPage = lazy(() => import('./about/AboutPage.jsx'))
+const HuntPage = lazy(() => import('./hunt/HuntPage.jsx'))
 
 /* 지도는 어두운 타일 위에 UI가 얹히므로 테마와 무관하게 항상 밤 서피스다. */
 const NIGHT_ROUTES = new Set(['/map'])
@@ -80,6 +81,7 @@ function App() {
           <Route path="/category/:id" element={<CategoryPage />} />
           <Route path="/region/:slug" element={<RegionPage />} />
           <Route path="/quiz" element={<QuizPage />} />
+          <Route path="/hunt" element={<HuntPage />} />
           <Route path="/business" element={<BusinessPage />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="*" element={<DogamPage />} />
