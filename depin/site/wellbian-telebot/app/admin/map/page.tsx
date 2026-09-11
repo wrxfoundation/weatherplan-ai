@@ -1,23 +1,25 @@
-/* 인맥 지도 (9/11 서우 — "인맥지도 vercel 배포 아직 안 했는데 추가해줘")
+/* 인맥 수첩 (9/11 서우 — "좀 복잡한데 디렉토리 구조 그리고 최고의 인맥관리 수첩처럼, 회사별로도")
 
-   셀럽 사다리는 X 계정이 우리 답글을 어디까지 받아줬는지를 센다. 이 화면은 다른 질문에 답한다 —
-   지금 열려 있는 관계가 어디에 몇 개이고, 각각 다음 수가 무엇인가.
+   1차는 레인별 카드 그리드였다. 스무 명일 땐 읽혔지만 일흔이 넘으니 카드가 화면을 덮어
+   "지금 손이 가야 할 곳" 이 보이지 않았다. 카드는 하나를 보여 주는 데 좋고 목록은 훑는 데 좋다.
+   이 화면에서 하는 일은 훑기다 — 그래서 명부(행)로 바꾸고, 자세한 것은 눌러서 편다.
 
-   배치를 레인(가로 성격) × 자세(세로 온도)로 잡은 이유가 있다. 인물 목록은 이름순으로 두면
-   "누구와 이야기하고 있는가" 가 보이지 않는다. 레인으로 묶으면 비어 있는 칸이 드러나고
-   (지금은 결제·데이터 수요가 얇다), 자세로 정렬하면 손이 갈 곳이 맨 위로 온다.
+   보기는 둘이다.
+     사람 — 레인별 명부. 평소에 쓰는 화면.
+     회사 — 한 회사에 우리가 몇 명 걸려 있는지. 열넷이 둘 이상이라 이 보기가 필요해졌다.
+            회사마다 **문**(가장 뜨거운 자세의 한 사람)을 표시한다. "한 하우스에 둘을 동시에
+            열지 않는다" 는 원칙이 목록에서 눈에 보이게 하려는 것이다.
 
-   행사 필터를 따로 둔 것은 10월 때문이다. KBW(9/29~10/1) · XRP SEOUL(10/3) · NYC 해커톤(10/24~25) ·
-   Swell(10/27~29) 이 3주에 몰려 있어서, "그 자리에 누가 있나" 가 곧 준비 목록이 된다.
+   맨 위 「먼저 열 순서」는 대화 중·여는 중만 모은 것이다. 이 화면을 열었을 때 스크롤 없이
+   할 일이 보여야 수첩이지, 명단은 수첩이 아니다.
 
-   ⚠ 이 화면에는 "누구에게 접근하지 않기로 했는가" 가 적혀 있다. 내부 판단이지 대외 입장이 아니다.
-   주소를 외부에 공유하지 말 것. */
+   ⚠ 접근하지 않기로 한 자리가 적혀 있다. 주소를 외부에 공유하지 말 것. */
 
 import { isAuthed } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import {
   PEOPLE, LANES, STANCES, EXCLUDED, NETWORK_UPDATED,
-  type Lane, type Stance,
+  type Lane, type Stance, type Person,
 } from "@/lib/network";
 import Nav from "../Nav";
 
@@ -29,15 +31,20 @@ const qs = (o: Record<string, string>) => {
   return `${p}`;
 };
 
-/* 10월 3주에 몰린 자리들 — meet 문자열에 이 말이 들어 있으면 그 행사로 친다 */
 const EVENTS: { key: string; label: string; match: string }[] = [
-  { key: "kbw", label: "KBW 9/29~10/1", match: "KBW" },
-  { key: "seoul", label: "XRP SEOUL 10/3", match: "10/3" },
-  { key: "hack", label: "NYC 해커톤 10/24~25", match: "해커톤" },
-  { key: "swell", label: "Swell 10/27~29", match: "Swell" },
+  { key: "kbw", label: "KBW", match: "KBW" },
+  { key: "seoul", label: "XRP SEOUL", match: "10/3" },
+  { key: "hack", label: "NYC 해커톤", match: "해커톤" },
+  { key: "swell", label: "Swell", match: "Swell" },
 ];
 
+/* 뜨거운 순. 회사의 "문" 과 명부 정렬이 같은 기준을 쓴다 */
 const ORDER: Record<Stance, number> = { talking: 0, open: 1, linked: 2, hold: 3, off: 4 };
+const orgOf = (p: Person) => p.group ?? p.org;
+const laneOf = (key: Lane) => LANES.find((l) => l.key === key);
+const stanceOf = (key: Stance) => STANCES.find((s) => s.key === key);
+const hay = (p: Person) =>
+  `${p.name} ${p.org} ${p.group ?? ""} ${p.role} ${p.why} ${p.next} ${p.via ?? ""} ${p.meet ?? ""} ${p.tie ?? ""}`.toLowerCase();
 
 export default async function MapPage({
   searchParams,
@@ -46,143 +53,210 @@ export default async function MapPage({
   if (!(await isAuthed(sp.k))) redirect("/");
   const k = (await isAuthed()) ? "" : (sp.k ?? "");
 
+  const view = sp.view === "org" ? "org" : "people";
   const lane = LANES.some((l) => l.key === sp.lane) ? (sp.lane as Lane) : "";
   const stance = STANCES.some((s) => s.key === sp.stance) ? (sp.stance as Stance) : "";
   const ev = EVENTS.find((e) => e.key === sp.ev)?.key ?? "";
-  const link = (o: Record<string, string>) => `/admin/map?${qs({ k, lane, stance, ev, ...o })}`;
+  const q = (sp.q ?? "").trim();
+  const link = (o: Record<string, string>) => `/admin/map?${qs({ k, view, lane, stance, ev, q, ...o })}`;
 
   const evMatch = (meet: string | undefined, key: string) => {
     const e = EVENTS.find((x) => x.key === key);
     return Boolean(e && meet && meet.includes(e.match));
   };
 
+  const ql = q.toLowerCase();
   const list = PEOPLE
     .filter((p) => !lane || p.lane === lane)
     .filter((p) => !stance || p.stance === stance)
     .filter((p) => !ev || evMatch(p.meet, ev))
-    .sort((a, b) => ORDER[a.stance] - ORDER[b.stance] || a.name.localeCompare(b.name, "ko"));
+    .filter((p) => !ql || hay(p).includes(ql))
+    .sort((a, b) =>
+      ORDER[a.stance] - ORDER[b.stance] ||
+      orgOf(a).localeCompare(orgOf(b), "ko") ||
+      a.name.localeCompare(b.name, "ko"));
 
   const n = (s: Stance) => PEOPLE.filter((p) => p.stance === s).length;
-  const laneCount = (l: Lane) => PEOPLE.filter((p) => p.lane === l).length;
   const evCount = (key: string) => PEOPLE.filter((p) => evMatch(p.meet, key)).length;
-  /* 10월 자리에 있고 아직 열지 않은 사람 — 준비가 필요한 수 */
-  const october = PEOPLE.filter(
-    (p) => EVENTS.some((e) => evMatch(p.meet, e.key)) && (p.stance === "open" || p.stance === "hold"),
-  ).length;
 
-  const shownLanes = LANES.filter((l) => (!lane || l.key === lane) && list.some((p) => p.lane === l.key));
-  const heading = [
-    LANES.find((l) => l.key === lane)?.label ?? "전체",
-    STANCES.find((s) => s.key === stance)?.label ?? "",
-    EVENTS.find((e) => e.key === ev)?.label ?? "",
-  ].filter(Boolean).join(" · ");
+  /* 먼저 열 순서 — 이 화면을 열었을 때 스크롤 없이 보여야 할 것 */
+  const todo = PEOPLE
+    .filter((p) => p.stance === "talking" || p.stance === "open")
+    .sort((a, b) => ORDER[a.stance] - ORDER[b.stance] || a.name.localeCompare(b.name, "ko"));
+
+  /* 회사 보기 — 걸린 사람이 있는 조직만, 뜨거운 순 */
+  const orgMap = new Map<string, Person[]>();
+  for (const p of list) {
+    const key = orgOf(p);
+    orgMap.set(key, [...(orgMap.get(key) ?? []), p]);
+  }
+  const orgs = [...orgMap.entries()]
+    .map(([name, ps]) => ({
+      name,
+      ps: [...ps].sort((a, b) => ORDER[a.stance] - ORDER[b.stance] || a.name.localeCompare(b.name, "ko")),
+    }))
+    .sort((a, b) =>
+      ORDER[a.ps[0].stance] - ORDER[b.ps[0].stance] || b.ps.length - a.ps.length ||
+      a.name.localeCompare(b.name, "ko"));
+  /* 둘 이상 걸린 곳만 카드로 편다. 한 명짜리 마흔다섯을 같은 크기로 늘어놓으면 화면을 덮고,
+     정작 "누구부터 여는가" 를 따져야 하는 열넷이 그 안에 묻힌다. */
+  const multiOrgs = orgs.filter((o) => o.ps.length > 1);
+  const soloOrgs = orgs.filter((o) => o.ps.length === 1);
+
+  const shownLanes = LANES.filter((l) => list.some((p) => p.lane === l.key));
+
+  const Row = ({ p, showOrg = true }: { p: Person; showOrg?: boolean }) => (
+    <details className={`dir-row sv-${p.stance}`}>
+      <summary>
+        <span className="dir-name">
+          {p.handle
+            ? <a href={`https://x.com/${p.handle}`} target="_blank" rel="noopener noreferrer">{p.name}</a>
+            : p.name}
+        </span>
+        {showOrg && <span className="dir-org">{p.org}</span>}
+        <span className="dir-role">{p.role && p.role !== "—" ? p.role : ""}</span>
+        <span className="dir-tags">
+          {p.tie && <span className="tag tie">{p.tie}</span>}
+          {p.meet && <span className="tag meet">{p.meet.split(" ")[0]}</span>}
+          <span className={`tag sv-${p.stance}`}>{stanceOf(p.stance)?.label}</span>
+        </span>
+      </summary>
+      <div className="dir-body">
+        <div className="dir-k">접점</div>
+        <p>{p.why}</p>
+        <div className="dir-k">다음 수</div>
+        <p>{p.next}</p>
+        {(p.via || p.meet) && (
+          <p className="dir-meta">
+            {p.via && <>경유 <b>{p.via}</b>{p.meet ? " · " : ""}</>}
+            {p.meet && <>자리 <b>{p.meet}</b></>}
+          </p>
+        )}
+      </div>
+    </details>
+  );
 
   return (
     <>
-      <Nav k={k} current="map" title="인맥 지도" sub={<>{PEOPLE.length}명 · 로스터 {NETWORK_UPDATED}</>}>
-        <span className="flab">레인</span>
-        <a className={`chip${lane ? "" : " on"}`} href={link({ lane: "" })}>전체 <span className="n">{PEOPLE.length}</span></a>
-        {LANES.map((l) => (
-          <a key={l.key} className={`chip${lane === l.key ? " on" : ""}`} href={link({ lane: l.key })}>
-            {l.label} <span className="n">{laneCount(l.key)}</span>
-          </a>
-        ))}
+      <Nav k={k} current="map" title="인맥 수첩" sub={<>{PEOPLE.length}명 · {orgs.length}곳 · 로스터 {NETWORK_UPDATED}</>}>
+        <a className={`chip${view === "people" ? " on" : ""}`} href={link({ view: "people" })}>사람</a>
+        <a className={`chip${view === "org" ? " on" : ""}`} href={link({ view: "org" })}>회사</a>
+        <form className="dir-search" method="get" action="/admin/map">
+          {k && <input type="hidden" name="k" value={k} />}
+          <input type="hidden" name="view" value={view} />
+          <input name="q" defaultValue={q} placeholder="이름 · 회사 · 접점 검색" aria-label="검색" />
+          {q && <a className="dir-clear" href={link({ q: "" })} title="검색 지우기">✕</a>}
+        </form>
       </Nav>
 
       <main className="wrap" style={{ paddingBottom: 72 }}>
-        <section className="now">
-          <div className="now-card lead">
-            <div className="now-k">대화 중</div>
-            <div className="now-v mono">{n("talking")}</div>
-            <div className="now-note">상대가 시간을 냈거나 왕복이 진행 중인 관계</div>
+        {/* 할 일 먼저. 명단은 그 아래 */}
+        <section className="dir-todo">
+          <div className="dir-todo-h">
+            <b>먼저 열 순서</b>
+            <span>대화 중 {n("talking")} · 여는 중 {n("open")} · 연결됨 {n("linked")} · 보류 {n("hold")} · 열지 않음 {n("off")}</span>
           </div>
-          <div className="now-card">
-            <div className="now-k">여는 중</div>
-            <div className="now-v mono">{n("open")}</div>
-            <div className="now-note">초안이 준비됐거나 이미 나간 것</div>
-          </div>
-          <div className="now-card">
-            <div className="now-k">10월 자리에 있는 미개시</div>
-            <div className="now-v mono">{october}</div>
-            <div className="now-note">KBW·XRP SEOUL·해커톤·Swell 에 있는데 아직 안 연 사람</div>
-          </div>
-          <div className="now-card">
-            <div className="now-k">열지 않음</div>
-            <div className="now-v mono">{n("off")}</div>
-            <div className="now-note">규칙상 우리가 먼저 열지 않는 자리</div>
-          </div>
+          <ol>
+            {todo.map((p) => (
+              <li key={p.id}>
+                <span className={`dot sv-${p.stance}`} />
+                <b>{p.name}</b>
+                <span className="dir-todo-org">{p.org}</span>
+                <span className="dir-todo-next">{p.next}</span>
+              </li>
+            ))}
+          </ol>
         </section>
 
         <div className="map-filters">
-          <span className="flab">자세</span>
-          <a className={`chip${stance ? "" : " on"}`} href={link({ stance: "" })}>전체</a>
+          <a className={`chip${stance || ev || lane || q ? "" : " on"}`} href={link({ stance: "", ev: "", lane: "", q: "" })}>전체 <span className="n">{PEOPLE.length}</span></a>
           {STANCES.map((s) => (
-            <a key={s.key} className={`chip sv-${s.key}${stance === s.key ? " on" : ""}`} href={link({ stance: s.key })}>
+            <a key={s.key} className={`chip sv-${s.key}${stance === s.key ? " on" : ""}`} href={link({ stance: stance === s.key ? "" : s.key })}>
               {s.label} <span className="n">{n(s.key)}</span>
             </a>
           ))}
-          <span className="flab" style={{ marginLeft: 10 }}>자리</span>
-          <a className={`chip${ev ? "" : " on"}`} href={link({ ev: "" })}>전체</a>
+          <span className="dir-sep" />
           {EVENTS.map((e) => (
-            <a key={e.key} className={`chip${ev === e.key ? " on" : ""}`} href={link({ ev: e.key })}>
+            <a key={e.key} className={`chip${ev === e.key ? " on" : ""}`} href={link({ ev: ev === e.key ? "" : e.key })}>
               {e.label} <span className="n">{evCount(e.key)}</span>
             </a>
           ))}
+          {lane && <a className="chip on" href={link({ lane: "" })}>{laneOf(lane)?.label} ✕</a>}
         </div>
 
-        <div className="notice">
-          <b>{heading}</b> — {list.length}명. 판정 근거와 문안은 <code>depin/intel/business-directions.md</code>,
-          X 축은 <code>celeb-ladder.md</code> 가 정본이고 이 화면은 그 지도다. 갱신은 <code>lib/network.ts</code> 를
-          고쳐 재배포한다. <b>이 주소를 외부에 공유하지 말 것</b> — 접근하지 않기로 한 자리가 적혀 있다.
-        </div>
+        {!list.length && <p className="rep-empty" style={{ marginTop: 20 }}>조건에 맞는 사람이 없습니다.</p>}
 
-        {shownLanes.map((l) => {
+        {view === "people" && shownLanes.map((l) => {
           const rows = list.filter((p) => p.lane === l.key);
           return (
-            <section key={l.key} style={{ marginTop: 18 }}>
-              <h2 className="map-lane-h">{l.label} <span className="map-lane-n mono">{rows.length}</span></h2>
-              <p className="map-lane-note">{l.note}</p>
-              <div className="map-grid">
-                {rows.map((p) => (
-                  <article key={p.id} className={`map-card sv-${p.stance}`}>
-                    <div className="map-top">
-                      <span className="map-name">
-                        {p.handle
-                          ? <a href={`https://x.com/${p.handle}`} target="_blank" rel="noopener noreferrer">{p.name}</a>
-                          : p.name}
-                      </span>
-                      <span className={`tag sv-${p.stance}`}>{STANCES.find((s) => s.key === p.stance)?.label}</span>
-                    </div>
-                    <div className="map-org">{p.org}{p.role && p.role !== "—" ? ` · ${p.role}` : ""}</div>
-                    <p className="map-why">{p.why}</p>
-                    <div className="map-k">다음 수</div>
-                    <p className="map-next">{p.next}</p>
-                    {(p.tie || p.via || p.meet) && (
-                      <div className="map-badges">
-                        {p.tie && <span className="map-badge tie">{p.tie}</span>}
-                        {p.via && <span className="map-badge">경유 {p.via}</span>}
-                        {p.meet && <span className="map-badge meet">{p.meet}</span>}
-                      </div>
-                    )}
-                  </article>
-                ))}
-              </div>
+            <section key={l.key} className="dir-sec">
+              <h2 className="dir-sec-h">
+                <a href={link({ lane: lane === l.key ? "" : l.key })}>{l.label}</a>
+                <span className="dir-sec-n mono">{rows.length}</span>
+                <span className="dir-sec-note">{l.note}</span>
+              </h2>
+              <div className="dir-list">{rows.map((p) => <Row key={p.id} p={p} />)}</div>
             </section>
           );
         })}
 
-        {!list.length && <p className="rep-empty" style={{ marginTop: 20 }}>이 조건에 해당하는 사람이 없습니다.</p>}
+        {view === "org" && (
+          <>
+            <h2 className="dir-sec-h" style={{ marginTop: 16 }}>
+              둘 이상 걸린 곳 <span className="dir-sec-n mono">{multiOrgs.length}</span>
+              <span className="dir-sec-note">
+                <b className="door-k">문</b> 으로 표시한 사람이 먼저 여는 자리다 — 한 하우스에 둘을 동시에 열지 않는다.
+              </span>
+            </h2>
+            <div className="dir-orgs">
+              {multiOrgs.map((o) => (
+                <section key={o.name} className={`dir-org-card sv-${o.ps[0].stance}`}>
+                  <header>
+                    <b>{o.name}</b>
+                    <span className="dir-org-lane">{laneOf(o.ps[0].lane)?.label}</span>
+                    <span className="dir-org-n mono">{o.ps.length}명</span>
+                  </header>
+                  <div className="dir-list">
+                    {o.ps.map((p, i) => (
+                      <div key={p.id} className="dir-org-row">
+                        {i === 0 && o.ps.length > 1 && <span className="door" title="먼저 여는 자리">문</span>}
+                        <Row p={p} showOrg={false} />
+                      </div>
+                    ))}
+                  </div>
+                </section>
+              ))}
+            </div>
+
+            <h2 className="dir-sec-h" style={{ marginTop: 22 }}>
+              한 명씩 걸린 곳 <span className="dir-sec-n mono">{soloOrgs.length}</span>
+              <span className="dir-sec-note">대부분 보류·열지 않음이다. 한 줄로 둔다.</span>
+            </h2>
+            <div className="dir-list">
+              {soloOrgs.map((o) => (
+                <div key={o.name} className="dir-solo">
+                  <span className="dir-solo-org">{o.name}</span>
+                  <Row p={o.ps[0]} showOrg={false} />
+                </div>
+              ))}
+            </div>
+          </>
+        )}
 
         <section style={{ marginTop: 28 }}>
-          <h2 className="map-lane-h">지도에 올리지 않은 것</h2>
-          <p className="map-lane-note">
-            빠진 것에도 이유가 있다. 목록에 없다고 "아직 못 봤다" 가 아니라 "보고 뺐다" 는 뜻이다.
+          <h2 className="dir-sec-h"><span>지도에 올리지 않은 것</span></h2>
+          <p className="dir-sec-note" style={{ margin: "0 0 8px" }}>
+            빠진 것에도 이유가 있다. 목록에 없다고 &quot;아직 못 봤다&quot;가 아니라 &quot;보고 뺐다&quot;는 뜻이다.
           </p>
-          <div className="notice" style={{ marginTop: 8 }}>
+          <div className="notice">
             {EXCLUDED.map((e, i) => (
               <p key={i} style={{ margin: i ? "6px 0 0" : 0 }}><b>{e.k}</b> — {e.v}</p>
             ))}
           </div>
+          <p className="dir-sec-note" style={{ marginTop: 10 }}>
+            판정 근거와 문안은 <code>depin/intel/business-directions.md</code>, X 축은 <code>celeb-ladder.md</code> 가
+            정본이다. 갱신은 <code>lib/network.ts</code> 를 고쳐 재배포한다. <b>이 주소를 외부에 공유하지 말 것.</b>
+          </p>
         </section>
       </main>
     </>

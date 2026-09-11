@@ -39,6 +39,8 @@ export type Person = {
   meet?: string;
   /** 서우 계정과의 실제 연결 상태. "팔로우 중" 은 메시지가 바로 가지 않는다 — 1촌과 구분해 적는다 */
   tie?: string;
+  /** 회사 보기에서 묶을 상위 조직. 법인이 갈려도 한 회사로 봐야 할 때만 적는다(Coinbase / Coinbase Institutional) */
+  group?: string;
   /** X 핸들(@ 없이). 없으면 링크를 만들지 않는다 */
   handle?: string;
 };
@@ -67,15 +69,15 @@ export const STANCES: { key: Stance; label: string; note: string }[] = [
 /** 지도에 올리지 않은 것과 이유 — 화면 하단에 그대로 보인다 */
 export const EXCLUDED: { k: string; v: string }[] = [
   { k: "리플 소속", v: "이 지도에 올리지 않는다(9/11 라인업에도 있었다). 별도 채널로만 다룬다." },
-  { k: "커스터디 (Anchorage·Fireblocks·BitGo)", v: "디센트가 지갑 파트너다. 대안 비교 대화를 여는 것 자체가 신호가 된다 — BitGo·Fireblocks 만 남기고 명함까지." },
-  { k: "타 체인 (솔라나·트론·NEAR·모나드·카르다노·에이브·커브·에테나·펜들·스타크웨어 등)", v: "9/30 까지 멀티체인 신호 금지. 판매 종료 뒤 역할 정의가 서면 그때 본다." },
+  { k: "커스터디", v: "디센트가 지갑 파트너다. 대안 비교 대화를 여는 것 자체가 신호가 된다 — BitGo·Fireblocks 만 남기고 명함까지." },
+  { k: "타 체인 프로젝트", v: "솔라나·트론·NEAR·모나드 등. 9/30 까지 멀티체인 신호 금지 — 판매 종료 뒤 역할 정의가 서면 그때 본다." },
   { k: "시세·트레이딩 축 (KBW 연사 다수)", v: "가격 레이스는 답글·인용 전부 패스가 우리 판단표다. 지도에 올리면 손이 간다." },
   { k: "정치 인사", v: "정치 담론 무반응 규칙. 행사에서 마주쳐도 우리 계정으로 다루지 않는다." },
   { k: "이름이 캡처에 없던 상대", v: "직함·소속으로만 적었다. 서우가 대상을 안다." },
-  { k: "범용 VC·인프라 (Apeiron·DACM·Ethereal·Spartan·Pantera·Primitive·Folius·1kx·Hack VC·Alliance·Maelstrom·Alchemy·DoubleZero 등)", v: "DePIN 특화가 아니면 a16z·Dragonfly·Multicoin 셋으로 대표한다. 같은 질문을 열 곳에 하지 않는다." },
+  { k: "범용 VC·인프라 다수", v: "DePIN 특화가 아니면 a16z·Dragonfly·Multicoin 셋으로 대표한다. 같은 질문을 열 곳에 하지 않는다." },
   { k: "스포츠·연예 인사", v: "우리 무대가 아니다." },
-  { k: "빅테크·유명인 팔로우 (엔비디아·구글 CEO, 마크 큐반, 스눕독 등)", v: "팔로우는 정보 소비이지 관계가 아니다. 지도에 올리면 없는 자산이 있는 것처럼 보인다." },
-  { k: "거래소 실무진 팔로우 (Bybit 마케팅·VIP, Coinbase 성장·자산운용 등)", v: "9/30 규칙 그대로. 팔로우는 유지하되 지도에는 회사 대표 카드만 둔다." },
+  { k: "빅테크·유명인 팔로우", v: "팔로우는 정보 소비이지 관계가 아니다. 지도에 올리면 없는 자산이 있는 것처럼 보인다." },
+  { k: "거래소 실무진 팔로우", v: "9/30 규칙 그대로. 팔로우는 유지하되 지도에는 회사 대표 카드만 둔다." },
 ];
 
 export const PEOPLE: Person[] = [
@@ -101,7 +103,7 @@ export const PEOPLE: Person[] = [
 
   /* ── 연결됨 ───────────────────────────────────────────── */
   {
-    id: "katie", name: "Katie Harries", org: "Coinbase", role: "Director & Head of Policy, Europe & Americas (ex-US)",
+    id: "katie", name: "Katie Harries", org: "Coinbase", group: "Coinbase", role: "Director & Head of Policy, Europe & Americas (ex-US)",
     lane: "exchange", stance: "linked",
     why: "Sara Xi 와 공통 1촌 = Water.org 소개 경로. 영국 가상자산 협의회 의장이라 유럽 판로에서도 값이 있다.",
     next: "인사 + Sara 소개 부탁 + APAC·미국 정책 카운터파트 문의. 사업 메시지 0, 요청 0.",
@@ -146,7 +148,7 @@ export const PEOPLE: Person[] = [
     next: "1촌 수락 대기. 7일 무응답이면 COO 경로.",
   },
   {
-    id: "sara", name: "Sara Xi", org: "Water.org (이사)", role: "Chief Product Officer · 크립토·핀테크·AI 자문",
+    id: "sara", name: "Sara Xi", org: "Water.org / Get Blue", role: "이사 · Chief Product Officer · 크립토·핀테크·AI 자문",
     lane: "impact", stance: "linked", tie: "서우 팔로우 중", via: "Katie Harries 공통 1촌",
     why: "크립토·핀테크 배경의 이사라 제품 질문이 통한다. **이미 팔로우 중** — Katie 소개를 기다리는 전제가 흔들린다.",
     next: "⚠ 1촌 여부를 먼저 확인한다. 1촌이면 소개 없이 바로 메시지가 가고, Katie 에게는 부탁 대신 인사만 남는다.",
@@ -195,13 +197,13 @@ export const PEOPLE: Person[] = [
     why: "Commons 축.", next: "Odelia 경로로 통합.",
   },
   {
-    id: "mollin", name: "Brett Mollin", org: "XRPL Foundation", role: "—",
+    id: "mollin", name: "Brett Mollin", org: "XRPL Foundation", group: "XRPL 재단·커뮤니티", role: "—",
     lane: "xrpl", stance: "hold", meet: "Swell 10/27~29 연사",
     why: "재단 축. 빌더 파이프라인의 반대편.",
     next: "등록 결과가 나온 뒤 그 경로로 재개.",
   },
   {
-    id: "furukawa", name: "Mai Furukawa", org: "XRPL Japan / XRPL Labs", role: "Director",
+    id: "furukawa", name: "Mai Furukawa", org: "XRPL Japan / XRPL Labs", group: "XRPL 재단·커뮤니티", role: "Director",
     lane: "xrpl", stance: "hold", meet: "Swell 10/27~29 연사",
     why: "일본은 그다음 시장. 다만 지갑 통합 얘기는 꺼내지 않는다(디센트 감수성).",
     next: "등록 결과 뒤. 노트 초안은 준비돼 있다.",
@@ -327,7 +329,7 @@ export const PEOPLE: Person[] = [
     next: "열지 않는다.",
   },
   {
-    id: "sethi", name: "Arjun Sethi", org: "Payward (Kraken)", role: "Co-CEO",
+    id: "sethi", name: "Arjun Sethi", org: "Kraken (Payward)", role: "Co-CEO",
     lane: "exchange", stance: "off", meet: "KBW 9/29~10/1",
     why: "거래소.", next: "열지 않는다.",
   },
@@ -347,7 +349,7 @@ export const PEOPLE: Person[] = [
   /* ── 9/11 2차 라인업 추가 ────────────────────────────────
      우리 레인에 닿는 사람만 옮겼다. 타 체인·DeFi·범용 VC 는 아래 EXCLUDED 규칙대로 뺀다. */
   {
-    id: "lambur", name: "Hart Lambur", org: "Risk Labs (UMA)", role: "Co-founder",
+    id: "lambur", name: "Hart Lambur", org: "Risk Labs · UMA", role: "Co-founder",
     lane: "market", stance: "hold", meet: "KBW 9/29~10/1",
     why: "옵티미스틱 오라클로 예측시장 정산을 붙이는 쪽. 「무엇이 참인지 어떻게 정하는가」 가 곧 그의 문제이고, 날씨 항목에서는 그 답이 실측이다 — 이번 라인업에서 우리 5축과 가장 가까운 자리다.",
     next: "기기가 돌기 시작한 뒤. 그 전에는 우리가 내놓을 관측 실적이 없다.",
@@ -419,7 +421,7 @@ export const PEOPLE: Person[] = [
     next: "열지 않는다.",
   },
   {
-    id: "lizmartin", name: "Liz Martin", org: "Coinbase Institutional", role: "CEO",
+    id: "lizmartin", name: "Liz Martin", org: "Coinbase Institutional", group: "Coinbase", role: "CEO",
     lane: "exchange", stance: "off", meet: "KBW 9/29~10/1",
     why: "기관 브로커리지. Katie 와 같은 회사지만 직무가 다르다 — 정책 쪽은 인사, 이쪽은 열지 않는다.",
     next: "열지 않는다. Katie 경로와 섞지 않는다.",
@@ -444,7 +446,7 @@ export const PEOPLE: Person[] = [
     next: "관측 지점이 실제로 돌기 시작한 뒤. 지금 열면 데이터 없는 데이터 얘기가 된다.",
   },
   {
-    id: "kazmierczak", name: "Marcin Kazmierczak", org: "RedStone / Credora", role: "Co-founder & COO",
+    id: "kazmierczak", name: "Marcin Kazmierczak", org: "RedStone", role: "Co-founder & COO (Credora)",
     lane: "market", stance: "hold", meet: "KBW 9/29~10/1",
     why: "모듈형 오라클. 체인링크보다 우리 규모에 말을 걸기 쉬운 상대라 오라클 축의 첫 문은 이쪽이 될 수 있다.",
     next: "9/16 뒤 · 오라클 축 첫 접촉 후보 1번. 기술 통합 클레임은 하지 않는다.",
@@ -544,7 +546,7 @@ export const PEOPLE: Person[] = [
     next: "컨택 없음.",
   },
   {
-    id: "lynnmartin", name: "Lynn Martin", org: "NYSE Group / ICE", role: "President · Chair, ICE Fixed Income and Data Services",
+    id: "lynnmartin", name: "Lynn Martin", org: "NYSE / ICE", role: "President · Chair, ICE Fixed Income and Data Services",
     lane: "capital", stance: "linked", tie: "서우 팔로우 중",
     why: "거래소보다 **데이터 서비스** 쪽이 우리와 닿는다 — 시장 데이터를 파는 사업의 구조가 우리 B2B 데이터 판매와 같은 모양이다.",
     next: "컨택 없음. 데이터 사업 구조는 공개 자료로 읽는다.",

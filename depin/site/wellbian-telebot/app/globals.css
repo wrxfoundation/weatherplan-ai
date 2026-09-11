@@ -607,35 +607,87 @@ kbd { font: 600 11px/1.4 var(--mono, ui-monospace, monospace); color: var(--ink-
   .tf-tip { min-width: 130px; font-size: 11.5px; }
 }
 
-/* ── 인맥 지도 (9/11) ────────────────────────────────────────────────
-   카드 색은 자세(stance)만 나타낸다 — 레인은 섹션 제목이 이미 말하고 있어서
-   양쪽에 색을 주면 무엇이 신호인지 흐려진다. 왼쪽 띠 하나로 온도만 구분한다. */
-.map-filters { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin: 2px 0 12px; }
-.map-lane-h { font-size: 15px; font-weight: 800; color: var(--w-deep); margin: 0 0 2px; display: flex; align-items: baseline; gap: 7px; }
-.map-lane-n { font-size: 12px; color: var(--hint); font-weight: 700; }
-.map-lane-note { font-size: 12px; color: var(--cap); margin: 0 0 10px; }
-.map-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(268px, 1fr)); gap: 10px; }
-.map-card {
-  border: 1px solid var(--bd-card); border-left-width: 3px; border-radius: 11px;
-  padding: 12px 13px; background: #fff;
+/* ── 인맥 수첩 (9/11, 2차 — 카드 그리드에서 명부로) ────────────────────
+   일흔이 넘으면 카드는 화면을 덮는다. 행은 훑히고, 자세한 것은 눌러서 편다.
+   색은 자세(온도)에만 준다 — 레인은 섹션 제목이 이미 말하고 있다. */
+.dir-search { position: relative; display: flex; align-items: center; margin-left: 6px; }
+.dir-search input {
+  font: 500 12.5px/1 "Pretendard Variable", Pretendard, -apple-system, sans-serif;
+  border: 1px solid var(--bd-input); border-radius: 999px; padding: 7px 26px 7px 11px;
+  width: 190px; color: var(--ink-2); background: #fff;
 }
-.map-card.sv-talking { border-left-color: var(--w-main); }
-.map-card.sv-open    { border-left-color: var(--ok-dot); }
-.map-card.sv-linked  { border-left-color: var(--arrow); }
-.map-card.sv-hold    { border-left-color: var(--bd-btn); }
-.map-card.sv-off     { border-left-color: var(--line); background: var(--panel); }
-.map-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 2px; }
-.map-name { font-size: 14.5px; font-weight: 800; color: var(--ink-1); }
-.map-name a { color: var(--w-main); text-decoration: none; }
-.map-name a:hover { text-decoration: underline; }
-.map-org { font-size: 11.5px; color: var(--cap); margin-bottom: 7px; }
-.map-why { font-size: 12.5px; line-height: 1.55; color: var(--ink-2); margin: 0 0 8px; }
-.map-k { font-size: 10.5px; font-weight: 800; color: var(--hint); letter-spacing: .02em; }
-.map-next { font-size: 12.5px; line-height: 1.5; color: var(--ink-3); margin: 2px 0 0; }
-.map-badges { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 9px; }
-.map-badge { font-size: 10.5px; color: var(--ink-4); background: var(--chip); border-radius: 5px; padding: 2px 7px; }
-.map-badge.meet { background: var(--w-tint); color: var(--w-main); font-weight: 700; }
-.map-badge.tie { background: var(--ok-bg); color: var(--ok-text); font-weight: 700; }
+.dir-search input:focus { outline: none; border-color: var(--w-main); }
+.dir-clear { position: absolute; right: 9px; font-size: 11px; color: var(--hint); text-decoration: none; }
+.dir-sep { width: 1px; height: 16px; background: var(--line); margin: 0 3px; }
+
+/* 할 일 — 스크롤 없이 보이는 자리 */
+.dir-todo { border: 1.5px solid var(--w-main); border-radius: 12px; padding: 13px 15px; margin-bottom: 14px; background: #fff; }
+.dir-todo-h { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; margin-bottom: 7px; }
+.dir-todo-h b { font-size: 13.5px; color: var(--w-deep); }
+.dir-todo-h span { font-size: 11.5px; color: var(--cap); }
+.dir-todo ol { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 5px; }
+.dir-todo li { display: flex; align-items: baseline; gap: 7px; font-size: 12.5px; line-height: 1.45; }
+.dir-todo li b { color: var(--ink-1); white-space: nowrap; }
+.dir-todo-org { color: var(--cap); font-size: 11.5px; white-space: nowrap; }
+.dir-todo-next { color: var(--ink-3); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dot { width: 7px; height: 7px; border-radius: 50%; flex: 0 0 auto; transform: translateY(-1px); }
+.dot.sv-talking { background: var(--w-main); }
+.dot.sv-open { background: var(--ok-dot); }
+
+.dir-sec { margin-top: 20px; }
+.dir-sec-h { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; font-size: 14.5px; font-weight: 800; color: var(--w-deep); margin: 0 0 7px; }
+.dir-sec-h a { color: inherit; text-decoration: none; }
+.dir-sec-h a:hover { color: var(--w-main); }
+.dir-sec-n { font-size: 11.5px; color: var(--hint); font-weight: 700; }
+.dir-sec-note { font-size: 11.5px; color: var(--cap); font-weight: 400; }
+.dir-hint { font-size: 12.5px; color: var(--ink-3); margin: 4px 0 12px; }
+.door-k, .door { background: var(--w-tint); color: var(--w-main); border-radius: 4px; padding: 1px 5px; font-size: 10.5px; font-weight: 800; }
+
+/* 명부 행 */
+.dir-list { border: 1px solid var(--bd-card); border-radius: 10px; overflow: hidden; background: #fff; }
+.dir-row { border-bottom: 1px solid var(--line-2); }
+.dir-row:last-child { border-bottom: 0; }
+.dir-row > summary {
+  display: flex; align-items: center; gap: 9px; padding: 9px 12px 9px 9px;
+  cursor: pointer; list-style: none; border-left: 3px solid transparent;
+}
+.dir-row > summary::-webkit-details-marker { display: none; }
+.dir-row > summary:hover { background: var(--panel); }
+.dir-row[open] > summary { background: var(--panel); }
+.dir-row.sv-talking > summary { border-left-color: var(--w-main); }
+.dir-row.sv-open > summary { border-left-color: var(--ok-dot); }
+.dir-row.sv-linked > summary { border-left-color: var(--arrow); }
+.dir-row.sv-hold > summary { border-left-color: var(--bd-btn); }
+.dir-row.sv-off > summary { border-left-color: var(--line); }
+/* 셋 다 줄어들 수 있어야 한다. min-width 를 풀지 않으면 좁은 카드에서 글자가 서로 올라탄다 */
+.dir-name { font-size: 13px; font-weight: 700; color: var(--ink-1); white-space: nowrap; flex: 0 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.dir-name a { color: var(--w-main); text-decoration: none; }
+.dir-org { font-size: 12px; color: var(--ink-3); white-space: nowrap; flex: 0 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.dir-role { font-size: 11.5px; color: var(--cap); flex: 1 1 0; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dir-tags { display: flex; align-items: center; gap: 4px; flex: 0 0 auto; }
+.dir-body { padding: 2px 14px 12px 21px; font-size: 12.5px; line-height: 1.6; color: var(--ink-2); }
+.dir-body p { margin: 2px 0 8px; }
+.dir-k { font-size: 10.5px; font-weight: 800; color: var(--hint); letter-spacing: .02em; }
+.dir-meta { color: var(--ink-4); font-size: 11.5px; }
+.tag.tie { background: var(--ok-bg); color: var(--ok-text); }
+.tag.meet { background: var(--w-tint); color: var(--w-main); }
+
+/* 회사 보기 */
+.dir-orgs { display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 12px; align-items: start; }
+.dir-org-card { border: 1px solid var(--bd-card); border-top: 3px solid var(--bd-btn); border-radius: 11px; background: #fff; overflow: hidden; }
+.dir-org-card.sv-talking { border-top-color: var(--w-main); }
+.dir-org-card.sv-open { border-top-color: var(--ok-dot); }
+.dir-org-card.sv-linked { border-top-color: var(--arrow); }
+.dir-org-card > header { display: flex; align-items: baseline; gap: 8px; padding: 10px 13px 8px; }
+.dir-org-card > header b { font-size: 13.5px; color: var(--w-deep); }
+.dir-org-lane { font-size: 10.5px; color: var(--cap); background: var(--chip); border-radius: 4px; padding: 1px 6px; }
+.dir-org-n { font-size: 11px; color: var(--hint); margin-left: auto; font-weight: 700; }
+.dir-org-card .dir-list { border: 0; border-top: 1px solid var(--line-2); border-radius: 0; }
+.dir-org-row { position: relative; }
+.dir-org-row .door { position: absolute; left: 9px; top: 10px; z-index: 1; }
+.dir-org-row:has(.door) .dir-row > summary { padding-left: 36px; }
+@media (max-width: 1100px) { .dir-orgs .dir-role { display: none; } }
+
 .tag.sv-talking { background: var(--w-main); color: #fff; }
 .tag.sv-open    { background: var(--ok-bg); color: var(--ok-text); }
 .tag.sv-linked  { background: var(--chip); color: var(--ink-3); }
@@ -643,4 +695,26 @@ kbd { font: 600 11px/1.4 var(--mono, ui-monospace, monospace); color: var(--ink-
 .tag.sv-off     { background: transparent; color: var(--dis); border: 1px solid var(--line); }
 .chip.sv-talking.on { background: var(--w-main); border-color: var(--w-main); }
 .chip.sv-off.on { background: var(--dis); border-color: var(--dis); }
-@media (max-width: 560px) { .map-grid { grid-template-columns: 1fr; } }
+
+/* 한 명짜리 회사 — 카드 대신 한 줄. 회사명을 앞에 붙여 소속만 보이게 한다 */
+.dir-solo { display: flex; align-items: stretch; border-bottom: 1px solid var(--line-2); }
+.dir-solo:last-child { border-bottom: 0; }
+.dir-solo-org { flex: 0 0 150px; font-size: 11.5px; color: var(--ink-4); padding: 10px 0 0 12px; }
+.dir-solo .dir-row { flex: 1 1 auto; border-bottom: 0; min-width: 0; }
+/* 한국어와 라틴 나열이 섞이면 가운뎃점은 줄바꿈 기회가 아니다 — 긴 회사 나열이 화면을 밀어낸다 */
+.notice, .dir-sec-note, .dir-hint { overflow-wrap: anywhere; word-break: keep-all; }
+
+@media (max-width: 720px) {
+  .dir-role { display: none; }
+  .dir-orgs { grid-template-columns: 1fr; }
+  .dir-search input { width: 128px; }
+  /* 좁은 화면에서는 한 줄에 다 넣지 않는다 — 배지를 아랫줄로 내리고 긴 이름은 접는다 */
+  .dir-row > summary { flex-wrap: wrap; gap: 3px 8px; }
+  .dir-tags { width: 100%; flex-wrap: wrap; }
+  .dir-org { white-space: normal; }
+  .dir-todo li { flex-wrap: wrap; }
+  .dir-todo-org { white-space: normal; }
+  .dir-todo-next { white-space: normal; width: 100%; padding-left: 14px; }
+  .dir-solo { flex-direction: column; }
+  .dir-solo-org { flex: none; padding: 8px 0 0 12px; font-weight: 700; }
+}
