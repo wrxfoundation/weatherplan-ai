@@ -1340,3 +1340,30 @@ Good to hear from you 🤝
 2. **사전예약자 역차별이 실재화된다** — 공표가 750,000원으로 예약한 사람이 Karan 링크 구매자보다 비싸게 산다. **9/8에 할인코드를 접었던 바로 그 이유**다. 되돌리자는 게 아니라 그가 수락하면 실제로 생기는 문제.
 
 **다음 라운드 교훈**: **5%+5% 를 한 덩어리로 준 것이 협상에서 불리하게 작동했다.** 상대는 둘을 합쳐 "10%" 로 읽고 그 기준에서 낮다고 느낀다. 하나씩 내면 각각이 양보로 보인다. **다음 KOL 부터는 나눠서 연다.**
+
+### @KingKaran — **H 폐기 → H2 확정 (2026-09-11, 서우 "2차도 5%/5% 유지, 희망회로 돌리게 하지 말자")**
+
+서우: *"2차도 5% 5% 유지하는 건 변함없는데 희망회로 돌리게 하지 말자. 당분간은 해당 기조 유지한다 해줘."*
+
+**H 의 `round two is a different conversation` 이 정확히 희망회로를 돌리는 문장이었다.** 동기를 남기려던 줄인데, 조건이 실제로 안 바뀐다면 그 줄은 **지금 수락하지 않을 이유**까지 만들어 준다(기다리면 좋아진다고 읽히므로). 같은 이유로 H 의 출구 `sit this round out and talk about the second one` 도 **빈 출구**가 된다 — 2차가 같은 조건이면 기다릴 이유가 없다.
+
+**✅ 그에게 2차 조건을 말한 적이 없다.** 발송된 건 서우 원문(5% 커미션 + 5% 할인 의견 묻기) 하나뿐이고 2차 언급이 없었다. E(「round one 실적이 가장 강한 근거」)와 G 는 미발송. **따라서 H2 는 정정이 아니라 2차에 대한 첫 발화**이고, 깨끗하게 닫을 수 있다.
+
+**바꾼 것 셋**
+1. **`I don't expect that to change for the second round either`** — "안 올린다"를 단정하지 않으면서 기대를 닫는다. `I don't expect` 는 **입장**이지 계약이 아니라 나중에 정책이 바뀌어도 말을 뒤집은 게 되지 않는다(서우 지시 "**당분간**"과 정확히 같은 강도). 이어지는 `Better you hear that now than plan around a bigger number` 가 이걸 **배려**로 바꾼다 — 자르는 게 아니라 그의 시간을 아끼는 말이 된다.
+2. **서두를 「일시적 사정」에서 「돈을 어디 쓰는 회사인가」로.** H 의 *"지금은 초기라 여유가 없다"* 는 **이벤트가 끝나면 올려 주겠지**라는 기대를 자동 생성했다. H2 는 예산이 제품과 무대로 간다는 **방침 서술**이라 시간이 지나도 결론이 같다.
+3. **출구 재설계** — `If it's not for you, that's completely fine` 로 진짜 출구를 주고, `let me know either way so I'm not holding a link open` 으로 **화요일 전 답을 요청**한다(압박이 아니라 실무 사정). ⚠ `not into fees` 류는 쓰지 않는다 — 그가 곧 그 fee 라 정면으로 찌른다.
+
+```
+H2 (700자, 확정)
+That's a fair read, Karan — and I'd rather tell you why than talk around it. We're right at the start, and what we have goes into the product and into showing it; this month's budget went to the launch and the Oct 3 stage in Seoul. So I'll be straight: 5% and 5% is what we're doing, and I don't expect that to change for the second round either. Better you hear that now than plan around a bigger number.
+
+Worth having in front of you though: this is a high-ticket device, not a wallet. 5% here works out to roughly 22 RLUSD a unit, so ten sales is around 220. The percentage looks similar to a wallet program; the amount per sale doesn't.
+
+The sale window opens Tuesday, so anything we set up has to be in place before then. If it's not for you, that's completely fine — just let me know either way so I'm not holding a link open.
+
+Good to hear from you 🤝
+```
+
+**정본 방침 (KOL 커미션·할인, 2026-09-11 기준)**: **커미션 5% + 고객 할인 5%, 1차·2차 동일. 당분간 유지.**
+개별 협상에서 이 숫자를 올리지 않는다. 다른 KOL 에게도 같은 숫자를 쓴다 — Karan 건에서 올리면 **그 값이 곧 표준**이 되고, 디센트 어필리에이트 경로로 조건이 옮겨 다닌다. 유지되는 금지 셋: D'CENT 조건 문의 · 숫자 인상 · "너에게만 특별히". 광고 표시 의무는 **그가 수락하는 답장**에서 조건 다섯과 함께.
