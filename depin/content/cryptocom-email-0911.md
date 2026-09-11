@@ -92,3 +92,35 @@ wellbian.io
 1. 예측시장 용도로 **지금 화면에 띄울 수 있는 것**이 무엇인가(실측 스트림 / 과거 데이터 / 케이웨더 B2B 피드).
 2. 링크드인에서 말한 `pilot test` 가 구체적으로 무엇을 가리키는가 — 그가 물으면 답이 있어야 한다.
 3. 없으면 콜 초반에 **"파일럿은 준비 중이고 오늘 보여 드릴 건 이것"** 으로 먼저 정정한다.
+
+## 7. 발송 완료 + 링크드인 DM (9/11 저녁)
+
+메일·캘린더 초대 모두 발송. 초대 검수에서 **잡은 것 둘**: ① **Google Meet 링크 누락** — Vincent 가
+"Google Meet would be perfect" 라고 했고 메일에도 "a calendar invite with a Google Meet link follows"
+라고 썼으므로 링크 없이 가면 되물어야 했다 ② **Gemini 자동 회의록이 켜져 있었다** — 화면 문구 그대로
+"설정에 따라 메모와 스크립트를 공유합니다". 크립토닷컴 GM 이 있는 자리에서 **우리 쪽 4명이 한국어로
+주고받는 말까지 전사되어 상대에게 넘어갈 수 있다.** 리플 관련 논의는 존재 자체를 대외 언급하지 않는다는
+규칙이 있어 실수 한마디가 문서로 남는다. **첫 외부 미팅에 AI 기록은 켜지 않는다.** 둘 다 수정 후 발송.
+그 밖에 확인: 서울 시간대 명시 · 「다른 사용자 초대」 체크 · 「일정 수정」 해제 · 캘린더 PARK SEOWOO.
+
+남은 관찰(서우 판단): **우리 4명 대 저쪽 1~3명** — 서우가 Vincent 에게 쓴 건 "a couple of our
+executives" 였고 couple 은 둘이다. 30분 콜에 우리 4명이면 인사만으로 5분이 날아간다.
+
+**링크드인 DM (도착 알림 + 사과 + 월요일 확인)**
+
+```
+Vincent — the email and the calendar invite are both with you now. Sorry it took until today; our first sale is Tuesday and this week has been all hands.
+
+The Meet link is on the invite and guests can add others, so please pull your GM and colleague in directly.
+
+See you Monday at 11:00 HKT.
+```
+
+**세 가지 규칙을 적용했다**
+1. **사과는 한 번, 변명 없이.** 영어에서 지연 사과에 이유를 길게 붙이면 핑계로 읽힌다. `our first sale is
+   Tuesday` 한 조각만 붙였고 이건 변명이 아니라 **정보** — 콜 다음 날이 판매일임을 알면 월요일 대화의
+   무게가 달라진다.
+2. **시간은 상대 시간대(11:00 HKT)로.** 우리 시간을 쓰면 상대가 환산해야 한다.
+3. **링크·자료 재첨부 0.** 메일에 다 있고, DM 에서 반복하면 **메일을 안 읽어도 된다는 신호**가 된다.
+   이 DM 의 일은 셋뿐 — 도착 알림, 사과, 월요일 확인. `guests can add others` 는 그의 "I'll loop in my
+   colleague too" 에 대한 답이다.
