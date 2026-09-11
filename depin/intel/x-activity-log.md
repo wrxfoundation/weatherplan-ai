@@ -1303,3 +1303,40 @@ The ledger entry is the proof, not the product. What the network is built to sup
 3. **`aggregated so no single home is identifiable`** — 비식별 5단계(geohash5 → 시간 집계 → 식별자 회전 → k≥5 → 속성 버킷)·코호트 최소 25 의 한 줄 요약. **가정 내 센서를 들은 기관·정책 상대가 가장 먼저 떠올리는 반론이 프라이버시**이고, 먼저 짚는 쪽이 강하다.
 
 **규칙 점검**: 수익·보상·시세 0 · 데이터 판매 실적·가격 0 · 「최대·1위」 0 · 리플 0 · RLUSD 0 · 코스닥 0 · 미출시 기능 확약 0(`is built to`).
+
+### @KingKaran — **"a bit low" 회신 (2026-09-11)**, 초안 H
+
+**서우 실제 발송분은 F(의견 묻기)가 아니었다** — `"How about a system where purchases are made using referral codes and new codes are issued? Let me know if you agree to a 5% commission and a 5% discount"` 로 **커미션 5% + 고객 할인 5% 를 함께** 제시했다. Karan 회신: *"Appreciate the offer! I will think about it… It does sounds great since DCENT has the same system and their own dashboard. But the offer is a bit low but I will think about it. And circle back to you."*
+
+**판정: 지금 숫자를 올리지 않는다. 서두르지도 않는다.** 그가 "circle back" 으로 닫았으니 **공은 그에게 있고**, 우리가 먼저 "얼마면 되냐"를 물으면 그가 부르는 값이 기준이 된다. 그는 **"낮다"고만 했지 얼마를 원하는지 말하지 않았다** — 먼저 올리면 부르지도 않은 값을 내는 것이다.
+
+**그의 비교는 성립하지 않는다 — 이게 회신의 핵심 논거다.** 근거로 든 D'CENT 는 **지갑 = 저단가·대량**이고 우리는 **고단가 기기**다. 퍼센트가 같아도 대당 금액이 다르다: **450 RLUSD × 5% ≈ 22.5 RLUSD/대, 10대면 ≈ 225.** 그가 퍼센트만 보고 판단했을 가능성이 높으므로 **숫자를 올리지 않고 인식을 교정**할 수 있다.
+
+**⚠ D'CENT 는 우리 지갑 파트너다 — 세 가지 금지**
+1. **D'CENT 조건을 묻지 않는다.** 물으면 그가 우리 파트너의 조건을 우리에게 흘리는 구조가 되고, **그 길은 양방향**이라 우리 조건도 같은 경로로 디센트에 간다.
+2. **지금 숫자를 올리지 않는다**(위).
+3. **"너에게만 특별히" 를 쓰지 않는다** — 그는 디센트 어필리에이트이기도 하다. 특별 대우를 말하면 그 말이 옮겨 다닌다.
+문안에서도 **D'CENT 를 호명하지 않고 `a wallet` 으로만** 썼다 — 비교는 교정하되 파트너를 깎지 않는다.
+
+**서두(서우 9/11 지시)**: *"우리 프로젝트도 이제 시작이고 굵직한 이벤트를 병행하다 보니 다소 낮게 생각할 수도 있다를 서두에 붙이자."* 방향을 잡되 **"돈이 없다"로 읽히지 않게** 했다 — 예산이 인플루언서 비용이 아니라 **판매와 무대 자체**로 간다는 건 궁색한 게 아니라 물건을 만드는 회사의 선택으로 읽힌다. 서두가 하는 일 셋: ① 그의 반응을 방어하지 않고 받는다 ② 숫자가 그런 이유를 변명이 아니라 사실로 댄다 ③ **같은 제약이 나중의 상승 근거**가 된다. `That's a fair read` 는 그의 **판단**이 아니라 **읽는 방식**을 인정한다(낮은 게 맞다고 하면 다음 문장에서 올려야 한다). `round two is a different conversation` 은 확약이 아니라 구조 서술 — 동기는 남기고 약속은 안 한다.
+
+```
+H (620자)
+That's a fair read, Karan — and I'd rather tell you why than talk around it. We're right at the start, and this month everything is going into the launch itself and the Oct 3 stage in Seoul. That's the honest reason the figure sits where it does, and it's also why round two is a different conversation.
+
+One thing worth having in front of you while you think: this is a high-ticket device, not a wallet. 5% here works out to roughly 22 RLUSD a unit, so ten sales is around 220. The percentage looks similar to a wallet program; the amount per sale doesn't.
+
+The only hard part is timing — the sale window opens Tuesday, so whatever we set up has to be in place before then. If you'd rather sit this round out and talk about the second one instead, that's genuinely fine.
+
+Good to hear from you 🤝
+```
+
+**출구를 준 것이 마감 문장의 핵심이다** — `sit this round out and talk about the second one` 이 있어야 화요일이 압력이 아니라 정보가 된다. 출구 없이 날짜만 말하면 쥐어짜는 걸로 읽힌다.
+
+**광고 표시 의무는 아직 넣지 않는다** — 협상 중에 조건을 늘리면 부담이 된다. **그가 수락하는 그 답장에서** 기간·완료/미환불·가격 동일·RLUSD 지급과 함께 한 번에 고지(E 의 조건 다섯, 기존 판정 유지).
+
+**실행 전 확인 둘 (서우 발송분으로 새로 생긴 건)**
+1. **고객 5% 할인이 실제로 발급되는가** — 쿠폰 기능 부재(9/8)라 임직원 50% 와 같은 **전용 결제 URL 에 할인가를 박는 방식**이어야 한다. 개발 확인 필요.
+2. **사전예약자 역차별이 실재화된다** — 공표가 750,000원으로 예약한 사람이 Karan 링크 구매자보다 비싸게 산다. **9/8에 할인코드를 접었던 바로 그 이유**다. 되돌리자는 게 아니라 그가 수락하면 실제로 생기는 문제.
+
+**다음 라운드 교훈**: **5%+5% 를 한 덩어리로 준 것이 협상에서 불리하게 작동했다.** 상대는 둘을 합쳐 "10%" 로 읽고 그 기준에서 낮다고 느낀다. 하나씩 내면 각각이 양보로 보인다. **다음 KOL 부터는 나눠서 연다.**
