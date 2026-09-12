@@ -9,7 +9,7 @@ export default function YokaiCard({ entry, compact = false }) {
     <Link className="card" to={`/yokai/${slugOf(entry)}`} style={{ '--cat': CAT[entry.category]?.color }}>
       {entry.art?.file && (
         <div style={{ marginBottom: 'var(--sp-3)' }}>
-          <ArtPlate entry={entry} size="sm" ratio="16 / 10" />
+          <ArtPlate entry={entry} size="sm" />
         </div>
       )}
       <div className="card-head">

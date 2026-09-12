@@ -80,6 +80,9 @@ export default function HuntPage() {
             <span className="num">
               {caughtCount} / {YOKAI.length}
             </span>
+            <Link to="/collection" className="small" style={{ marginLeft: 'var(--sp-2)' }}>
+              수집첩 보기 →
+            </Link>
           </div>
           {caughtCount > 0 && (
             <button
@@ -159,7 +162,7 @@ export default function HuntPage() {
               const done = Boolean(caught[entry.id])
               return (
                 <article key={entry.id} className="card" style={{ '--cat': CAT[entry.category]?.color }}>
-                  <ArtPlate entry={entry} size="sm" ratio="4 / 3" />
+                  <ArtPlate entry={entry} size="sm" />
                   <div style={{ padding: 'var(--sp-3)' }}>
                     <h3 style={{ margin: 0 }}>
                       <Link to={`/yokai/${slugOf(entry)}`}>{entry.canonical}</Link>

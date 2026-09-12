@@ -76,7 +76,8 @@ export default function YokaiPage() {
 
       <div className="detail-hero">
         {entry.art?.file ? (
-          <div style={{ width: 168, flex: 'none' }}>
+          /* 도판이 이 페이지의 주인공이다. 168px은 썸네일이지 도판이 아니었다. */
+          <div className="detail-plate">
             <ArtPlate entry={entry} />
           </div>
         ) : (
@@ -94,6 +95,10 @@ export default function YokaiPage() {
       </div>
 
       <p className="lede">{entry.summary}</p>
+
+      {/* 공유는 도판을 본 직후가 가장 누르고 싶은 자리다. 출처 뒤에 두면 아무도 못 본다. */}
+      <ShareRow path={`/yokai/${slugOf(entry)}`} text={`${entry.canonical} — ${entry.summary}`} />
+
       <p className="body-text">{entry.body}</p>
 
       {entry.sensitivity && (
@@ -229,7 +234,6 @@ export default function YokaiPage() {
       </div>
 
       <div className="section">
-        <ShareRow path={`/yokai/${slugOf(entry)}`} text={`${entry.canonical} — ${entry.summary}`} />
       </div>
 
       {related.length > 0 && (

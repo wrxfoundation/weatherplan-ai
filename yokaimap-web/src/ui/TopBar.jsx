@@ -33,6 +33,7 @@ const NAV = [
   { to: '/dogam', label: '도감', icon: 'book' },
   { to: '/quiz', label: '체질진단', icon: 'compass' },
   { to: '/hunt', label: '탐사', icon: 'pin' },
+  { to: '/collection', label: '수집첩', icon: 'badge' },
   { to: '/business', label: '기관·기업', icon: 'building' },
   { to: '/about', label: '데이터 원칙', icon: 'shield' },
 ]

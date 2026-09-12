@@ -202,6 +202,22 @@ prerender('/hunt', {
   priority: '0.7',
 })
 
+prerender('/collection', {
+  title: '수집첩 — 한국요괴지도',
+  description:
+    '탐사에서 만난 요괴가 번호가 붙은 컬렉터 카드로 쌓입니다. 번호는 도감 순서로 고정되어 비어 있는 자리가 그대로 보입니다.',
+  jsonLd: {
+    '@context': 'https://schema.org',
+    '@type': 'WebApplication',
+    name: '한국요괴 수집첩',
+    url: `${ORIGIN}/collection`,
+    applicationCategory: 'GameApplication',
+    inLanguage: 'ko',
+  },
+  body: '<h1>수집첩</h1><p>탐사에서 만난 요괴가 번호가 붙은 컬렉터 카드로 쌓입니다. 수집 기록은 브라우저에만 저장됩니다.</p>',
+  priority: '0.5',
+})
+
 prerender('/map', {
   title: '전승지 지도 — 한국요괴지도',
   description: `요괴 ${bundle.count}체의 전승지 ${bundle.site_count}곳을 지도 위에. 분류·희귀도로 걸러 보고, 오늘 날씨에 맞는 요괴를 확인할 수 있습니다.`,

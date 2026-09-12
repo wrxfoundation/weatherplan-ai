@@ -209,6 +209,10 @@ h3 {
   object-fit: cover;
   display: block;
 }
+/* 원본(4:5)이 아닌 비율에서 잘림 없이 전체를 보여야 할 때 */
+.art-plate[data-fit='contain'] img {
+  object-fit: contain;
+}
 .art-plate figcaption {
   position: absolute;
   left: 0;
@@ -466,8 +470,8 @@ label.field {
 /* ── 카드 ── */
 .card-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(248px, 1fr));
-  gap: var(--sp-3);
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: var(--sp-4);
 }
 .card {
   position: relative;
@@ -1105,4 +1109,129 @@ label.field {
   .quiz-opt {
     min-height: 44px;
   }
+}
+
+
+/* ── 상세 도판 ── */
+.detail-plate {
+  width: 300px;
+  flex: none;
+}
+@media (max-width: 720px) {
+  .detail-plate {
+    width: 100%;
+  }
+  .detail-hero {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+/* ── 컬렉터 카드 ──
+   수집의 재미는 "빈칸이 보이는 것"에서 나온다. 미수집 슬롯을 숨기지 않고
+   번호와 인장만 남겨 두어야 무엇이 비었는지가 눈에 들어온다. */
+.cc-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: var(--sp-3);
+}
+.cc {
+  position: relative;
+  display: block;
+  border-radius: var(--radius);
+  border: 1px solid color-mix(in srgb, var(--cat, var(--seal)) 26%, var(--line));
+  background: var(--surface);
+  overflow: hidden;
+  transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+}
+.cc:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-2);
+  border-color: var(--cat, var(--seal));
+}
+/* 카드 머리띠 — 번호와 희귀도 */
+.cc-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  padding: 6px 9px;
+  background: color-mix(in srgb, var(--cat, var(--seal)) 12%, var(--surface));
+  border-bottom: 1px solid color-mix(in srgb, var(--cat, var(--seal)) 20%, var(--line));
+  font-size: var(--text-xs);
+  color: var(--text-2);
+}
+.cc-no {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.04em;
+}
+.cc-body {
+  padding: var(--sp-3);
+}
+.cc-name {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: var(--text-lg);
+  line-height: 1.25;
+}
+.cc-sub {
+  margin-top: 2px;
+  font-size: var(--text-xs);
+  color: var(--text-3);
+}
+
+/* 미수집 — 도판을 숨기되 자리는 남긴다 */
+.cc.locked {
+  border-style: dashed;
+  border-color: var(--line);
+  background: color-mix(in srgb, var(--cat, var(--seal)) 4%, var(--surface));
+}
+.cc.locked .cc-top {
+  background: transparent;
+  border-bottom-color: var(--line);
+  color: var(--text-3);
+}
+.cc-locked-art {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 4 / 5;
+  background: color-mix(in srgb, var(--cat, var(--seal)) 6%, var(--surface));
+}
+/* 잠긴 칸이 휑하면 "비었다"가 아니라 "망가졌다"로 읽힌다. 인장을 키워 자리를 채운다. */
+.cc-locked-art .seal {
+  width: 62%;
+  height: auto;
+  aspect-ratio: 1;
+  font-size: clamp(34px, 7vw, 56px);
+  border-radius: 8px;
+  opacity: 0.55;
+}
+.cc.locked .cc-name {
+  color: var(--text-3);
+}
+
+/* 분류별 진행도 */
+.cc-progress {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: var(--sp-2);
+}
+.cc-prog {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: var(--sp-2) var(--sp-3);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  font-size: var(--text-sm);
+}
+.cc-prog .done {
+  margin-left: auto;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-3);
+}
+.cc-prog.full .done {
+  color: var(--cat, var(--seal));
+  font-weight: 700;
 }
