@@ -746,10 +746,11 @@
    "updated_at": "2026-09-12",
    "sensitivity": null,
    "art": {
-    "status": "pending",
-    "direction": "minhwa-v1",
+    "status": "generated",
+    "direction": "minhwa-v2",
     "file": null,
-    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
+    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
+    "job_id": "7dc20965-e536-41d1-bc4b-058470420c65"
    }
   },
   {
@@ -888,10 +889,11 @@
    "updated_at": "2026-09-12",
    "sensitivity": null,
    "art": {
-    "status": "pending",
-    "direction": "minhwa-v1",
+    "status": "generated",
+    "direction": "minhwa-v2",
     "file": null,
-    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
+    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
+    "job_id": "ea4fab5d-7aa7-4136-92e3-1c5721fb31ef"
    }
   },
   {
@@ -958,10 +960,11 @@
    "updated_at": "2026-09-12",
    "sensitivity": null,
    "art": {
-    "status": "pending",
-    "direction": "minhwa-v1",
+    "status": "generated",
+    "direction": "minhwa-v2",
     "file": null,
-    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
+    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
+    "job_id": "8893dbf3-3dd0-491f-a4b1-c7102c97189b"
    }
   },
   {
@@ -1144,10 +1147,11 @@
    "updated_at": "2026-09-12",
    "sensitivity": null,
    "art": {
-    "status": "pending",
-    "direction": "minhwa-v1",
+    "status": "generated",
+    "direction": "minhwa-v2",
     "file": null,
-    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
+    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
+    "job_id": "a0a52618-2342-4a70-aef6-e431f9d4fa67"
    }
   },
   {
@@ -1520,10 +1524,11 @@
    "updated_at": "2026-09-12",
    "sensitivity": null,
    "art": {
-    "status": "pending",
-    "direction": "minhwa-v1",
+    "status": "generated",
+    "direction": "minhwa-v2",
     "file": null,
-    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
+    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
+    "job_id": "53e46a24-231d-4586-a010-cf5b255b03a1"
    }
   },
   {
@@ -1658,10 +1663,11 @@
    },
    "updated_at": "2026-09-12",
    "art": {
-    "status": "pending",
-    "direction": "minhwa-v1",
+    "status": "generated",
+    "direction": "minhwa-v2",
     "file": null,
-    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
+    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
+    "job_id": "aa039d97-9083-4d9c-baa6-d19b276576ac"
    }
   },
   {
@@ -1741,10 +1747,11 @@
    },
    "updated_at": "2026-09-12",
    "art": {
-    "status": "pending",
-    "direction": "minhwa-v1",
+    "status": "generated",
+    "direction": "minhwa-v2",
     "file": null,
-    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
+    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
+    "job_id": "cc5998f7-135e-44f7-88b6-c7f76d9fd211"
    }
   },
   {
@@ -3404,10 +3411,11 @@
    "updated_at": "2026-09-12",
    "sensitivity": null,
    "art": {
-    "status": "pending",
-    "direction": "minhwa-v1",
+    "status": "generated",
+    "direction": "minhwa-v2",
     "file": null,
-    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
+    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
+    "job_id": "e175ec3f-0d68-476b-ac8f-2382077b54ac"
    }
   },
   {
@@ -3548,10 +3556,11 @@
    "updated_at": "2026-09-12",
    "sensitivity": null,
    "art": {
-    "status": "pending",
-    "direction": "minhwa-v1",
+    "status": "generated",
+    "direction": "minhwa-v2",
     "file": null,
-    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
+    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
+    "job_id": "5fd3bdcb-c089-40fa-a11e-543b7bc6f794"
    }
   },
   {
@@ -3688,10 +3697,11 @@
    },
    "updated_at": "2026-09-12",
    "art": {
-    "status": "pending",
-    "direction": "minhwa-v1",
+    "status": "generated",
+    "direction": "minhwa-v2",
     "file": null,
-    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
+    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
+    "job_id": "ebd0a626-5268-48ef-af5c-c365d19f2fe2"
    }
   },
   {
@@ -3773,10 +3783,11 @@
    },
    "updated_at": "2026-09-12",
    "art": {
-    "status": "pending",
-    "direction": "minhwa-v1",
+    "status": "generated",
+    "direction": "minhwa-v2",
     "file": null,
-    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
+    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
+    "job_id": "e3de65db-d3c6-4e7e-b4e5-a8662d2c1b07"
    }
   },
   {
@@ -4270,10 +4281,11 @@
    "updated_at": "2026-09-12",
    "sensitivity": null,
    "art": {
-    "status": "pending",
-    "direction": "minhwa-v1",
+    "status": "generated",
+    "direction": "minhwa-v2",
     "file": null,
-    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
+    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
+    "job_id": "5cd128e1-b0de-47ac-8e25-f8e76b77d18f"
    }
   },
   {
