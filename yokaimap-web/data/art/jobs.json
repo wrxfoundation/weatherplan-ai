@@ -1829,8 +1829,9 @@
       "job_id": "ff62f879-0da7-4da4-8ef4-28059690c9eb",
       "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260912_080704_ff62f879-0da7-4da4-8ef4-28059690c9eb.png",
       "review": {
-        "result": "pending",
-        "note": "재생성 — 검수 대기"
+        "by": "프로젝트 오너",
+        "date": "2026-09-12",
+        "result": "pass"
       }
     },
     {
@@ -1898,8 +1899,9 @@
       "job_id": "882d2e15-fb38-4f30-aa41-25781cce2dbe",
       "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260912_080704_882d2e15-fb38-4f30-aa41-25781cce2dbe.png",
       "review": {
-        "result": "pending",
-        "note": "재생성 — 검수 대기"
+        "by": "프로젝트 오너",
+        "date": "2026-09-12",
+        "result": "pass"
       }
     },
     {

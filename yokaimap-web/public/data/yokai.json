@@ -746,9 +746,9 @@
    "updated_at": "2026-09-12",
    "sensitivity": null,
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/bibi.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "ff62f879-0da7-4da4-8ef4-28059690c9eb"
    }
@@ -1663,9 +1663,9 @@
    },
    "updated_at": "2026-09-12",
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/chilseong.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "882d2e15-fb38-4f30-aa41-25781cce2dbe"
    }
