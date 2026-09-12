@@ -1400,3 +1400,59 @@ Have a think and come back to me whenever. 🤝
 **숫자(22 RLUSD/대)는 넣지 않는다** — 우리가 내밀면 **그 숫자가 평가 대상**이 되고, KOL 눈에는 작아 보일 수도 있다(그가 "낮다"고 한 이유가 바로 그 감각이다). `the same percentage is a very different number per sale` 로 두면 **그가 직접 곱해 보고, 자기 결론이 된다.**
 
 **D'CENT 호명 없음** — `a wallet` 이면 그가 먼저 꺼낸 얘기라 무엇을 가리키는지 안다. 이름을 쓰는 순간 **"우리 파트너보다 우리가 낫다"** 는 발화가 되고, 그 말은 어필리에이트 경로로 옮겨 다닌다.
+
+### 원글 「Weather Data Economy」 4층 배너 (2026-09-12) — 국문·영문 2편
+
+서우가 브랜드 배너 전달(헤드라인 `Weather Data Economy / Real-time Weather Data Creates a New Future`,
+4층 Indoor → Outdoor → Radar → Satellite, 하단 가치 4칸) → 「이거에 맞게 X에 글 올리자」.
+
+**⚠ 이미지 지적 2건 (게시 전)**
+1. **🔴 기기 화면 날짜가 `2023. 07. 18.(TUE)`** — 실제로 그날은 화요일이라 진짜 스크린샷인데,
+   **2026년 브랜드 이미지에 3년 전 날짜**가 박혀 있다. **헤드라인이 `Real-time` 인데 화면이 2023 이면
+   정면으로 부딪힌다.** X 에서 이미지를 확대하는 사람은 반드시 있고 회의적 관찰자에게 최적의 재료가 된다.
+   → 현재 날짜로 교체하거나 삭제.
+2. **🟡 Radar 칸이 통신용 접시 안테나로 보인다** — 기상 레이다는 보통 돔(radome)이다. 접시형은 위성통신
+   지구국으로 읽혀 옆 칸 Satellite 와 그림이 겹치고, **기상 쪽 사람이 보면 "저건 레이다가 아니다"** 가 된다.
+
+**작성 원칙 — 이미지가 말하는 것을 글이 되풀이하지 않는다.** 네 층은 이미지에 이미 있다. 글은 이미지가
+못 하는 말을 한다: **왜 실내부터인가.** 답은 「측정의 방향」 — 위성은 넓고 거칠고 방은 좁고 촘촘하다.
+**규모가 커지는 순서가 아니라 해상도가 반대에서 만나는 구조**다. 그래서 `위성은 지구 전체를 봅니다.
+지금 앉아 있는 이 방은 못 봅니다` 한 줄이 네 층이 다 필요한 이유를 만든다.
+
+**최악 해석 하나**: *"센서 하나 파는 회사가 위성까지 한다고?"* — 이미지가 위성을 크게 보여주니 더 그렇다.
+방어는 글 안에 있다: **`그래서 이 층을 먼저 짓습니다`**. **이미지의 야심과 글의 절제가 짝이 된다** —
+이 문장을 빼면 이미지만 남아 과대 포장이 된다. **줄일 때도 이 줄은 남긴다.**
+
+```
+KO (원글)
+날씨는 늘 위에서 아래로 측정됐습니다. 위성, 레이다, 몇 km 떨어진 관측소.
+
+우리는 반대쪽에서 시작합니다. KC 인증 센서 하나가 방 하나에. 그다음 거리, 그다음 위로.
+
+위성은 지구 전체를 봅니다. 지금 앉아 있는 이 방은 못 봅니다. 그래서 이 층을 먼저 짓습니다.
+
+측정값마다 지문이 XRP Ledger에 기록됩니다. 믿는 게 아니라 확인하는 데이터입니다.
+
+사전예약 9월 14일(월) 12시 마감
+🔗 https://wellbian.io/?utm_source=x&utm_medium=owned&utm_campaign=vision0912&utm_content=layers_ko
+```
+```
+EN (원글)
+Weather has always been measured top-down — satellite, radar, a station a few km away.
+
+We start at the other end. One certified sensor in one room, then the street, then up.
+
+Satellites see the planet. They can't see the room you're sitting in. That's the layer we build first.
+
+Every reading fingerprinted to the XRP Ledger — checked, not trusted.
+
+Reservations close Sep 14, 12:00 KST
+🔗 https://wellbian.io/?utm_source=x&utm_medium=owned&utm_campaign=vision0912&utm_content=layers_en
+```
+
+**규칙 점검**: 레이다·위성은 확약형이 아니라 `그다음 위로` — 9/8 EN-2 의 공표 범위
+(`extending to outdoor, radar and satellite`)와 같아 새 클레임이 아니다. 보상·수량·시세 0 ·
+「최대·1위」 0 · 리플 0(XRP Ledger 는 기술 명칭) · **케이웨더 미언급**(이미지에 없으니 글에서도 열지 않는다).
+
+**게시 운영**: 국문·영문을 한 타래에 섞지 않고 각각 독립 원글 → Highlights 에 나란히. 국문 낮,
+**영문 22:00~23:00 KST**(미 동부 오전) — 10시간 간격이라 6시간+ 요건 충족. utm 채널명 표기(번호 코드 아님).
