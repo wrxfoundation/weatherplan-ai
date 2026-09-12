@@ -1456,3 +1456,50 @@ Reservations close Sep 14, 12:00 KST
 
 **게시 운영**: 국문·영문을 한 타래에 섞지 않고 각각 독립 원글 → Highlights 에 나란히. 국문 낮,
 **영문 22:00~23:00 KST**(미 동부 오전) — 10시간 간격이라 6시간+ 요건 충족. utm 채널명 표기(번호 코드 아님).
+
+### 4층 배너 원글 — **쉬운 판으로 교체 (2026-09-12, 서우 "너무 어려워서 다시 직관적으로")**
+
+앞 판이 「측정의 방향」·「해상도가 반대에서 만난다」로 갔다. **생각하게 만드는 문장은 X 에서 넘어간다** —
+논지는 맞았지만 매체가 틀렸다. 교체.
+
+**새 판의 시작점 = 누구나 겪은 일.** 「예보는 도시를 말하는데 우리는 방에 산다」 한 줄이면 실내부터
+시작하는 이유가 설명 없이 선다. 밖은 괜찮은데 집 안이 답답한 날 — 이건 설득이 필요 없다.
+
+**앞 판에서 뒤집은 판단 하나**: 「이미지가 말하는 것을 글이 되풀이하지 않는다」로 네 칸을 일부러
+피했는데, **쉽게 읽히려면 오히려 짚어 주는 편이 낫다.** `방 → 동네 → 레이다 → 위성` 한 줄은 반복이
+아니라 **이미지의 캡션**이다. 원칙이 틀린 게 아니라 이 게시물에서는 우선순위가 다르다.
+
+**과대 포장 방어는 유지** — `방부터 시작합니다` 에 순서가 들어 있어 위성이 지금 하는 일이 아니라는 게
+자동으로 읽힌다(앞 판 `그래서 이 층을 먼저 짓습니다` 와 같은 역할).
+
+```
+KO (확정)
+일기예보는 "서울"을 말합니다. 그런데 우리는 서울에 사는 게 아니라, 방에 삽니다.
+
+밖은 좋은데 방 안은 나쁜 날이 있습니다. 그 숫자는 어디에도 안 나옵니다.
+
+그래서 방부터 시작합니다. 방 → 동네 → 레이다 → 위성.
+
+인증받은 기기가 잰 값은 XRP Ledger에 남습니다. 누구나 확인할 수 있게.
+
+사전예약 9월 14일(월) 12시 마감
+🔗 https://wellbian.io/?utm_source=x&utm_medium=owned&utm_campaign=vision0912&utm_content=layers_ko
+```
+```
+EN (확정)
+The forecast tells you about your city. You don't live in a city — you live in a room.
+
+Some days the air outside is fine and the air in your room isn't. That number shows up nowhere.
+
+So we start with the room. Room → street → radar → satellite.
+
+What a certified sensor measures is written to the XRP Ledger. Anyone can check it.
+
+Reservations close Sep 14, 12:00 KST
+🔗 https://wellbian.io/?utm_source=x&utm_medium=owned&utm_campaign=vision0912&utm_content=layers_en
+```
+
+**표현 점검**: 「아무도 안 재줬다」로 쓰지 않았다(공기청정기 센서가 있으므로 사실이 아니다) →
+**「그 숫자는 어디에도 안 나옵니다」** — 우리 주장은 측정 여부가 아니라 **기록·공개 여부**이고 이 쪽이 사실이다.
+규칙은 앞 절 그대로(보상·시세 0 · 「최대·1위」 0 · 리플 0 · 케이웨더 미언급 · 레이다·위성 확약 아님).
+이미지 지적 2건(2023 날짜 · 레이다 접시)은 그대로 유효 — **날짜는 고치고 올린다.**
