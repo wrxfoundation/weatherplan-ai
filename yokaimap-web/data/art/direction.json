@@ -150,5 +150,14 @@
     "foreign": [
       "architecture"
     ]
+  },
+  "scenes": {
+    "note": "히어로 등 풍경 컷. 개체가 아니라 장면이므로 promptFor가 아니라 scenePrompt를 탄다. 여기 없으면 생성 때마다 손으로 넘기게 되고, 아트디렉션이 바뀌어도 히어로만 옛 버전에 남는다.",
+    "hero-night-pass": {
+      "target": "public/img/hero/night-pass.webp",
+      "aspect": "16:9",
+      "why": "홈 카피가 '밤이 되면 지도 위에 요괴가 선다'인데 기존 히어로는 요괴 없는 대낮 산수였다. 특정 개체를 히어로에 세우면 그 개체만 대표가 되므로, 형체 없는 도깨비불로 '요괴의 기척'만 둔다. 가운데로 모으는 이유는 좁은 화면에서 cover 크롭이 좌우를 잘라내기 때문이다.",
+      "text": "a night mountain pass seen from the path, at the very center a pair of jangseung guardian posts beside a piled-stone seonangdang cairn with five-colour cloth tied to a spirit tree, five or six small pale blue-green wandering flames drifting low along the ridge and just above the path, one distant tile-roofed hanok far below with a single warmly lit paper window, a thin waning moon behind drifting cloud, deep indigo night sky, no human figure, the composition gathered toward the middle third so the sides can be cropped without losing the subject"
+    }
   }
 }

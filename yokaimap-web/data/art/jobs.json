@@ -11,14 +11,13 @@
       "id": "hero-night-pass",
       "target": "public/img/hero/night-pass.webp",
       "aspect": "16:9",
-      "job_id": "6c683965-a9ce-45db-a981-b957bf0bfac8",
-      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_041702_6c683965-a9ce-45db-a981-b957bf0bfac8.png",
+      "job_id": "22a87312-46f9-471d-85b4-9bb53b5564ef",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260912_112354_22a87312-46f9-471d-85b4-9bb53b5564ef.png",
       "review": {
-        "by": "프로젝트 오너",
-        "date": "2026-09-11",
-        "result": "pass",
-        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
-      }
+        "result": "pending",
+        "note": "v1(대낮·요괴 없음)에서 재생성 — 검수 대기"
+      },
+      "scene": "hero-night-pass"
     },
     {
       "index": 1,
@@ -1938,13 +1937,11 @@
       "id": "kr-geumgang-yeoksa",
       "target": "public/img/yokai/geumgang-yeoksa.webp",
       "aspect": "4:5",
-      "job_id": "5fd3bdcb-c089-40fa-a11e-543b7bc6f794",
-      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260912_080045_5fd3bdcb-c089-40fa-a11e-543b7bc6f794.png",
+      "job_id": "e0dd3f6d-66e2-4fdd-84ce-cfc8e6b809ef",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260912_112354_e0dd3f6d-66e2-4fdd-84ce-cfc8e6b809ef.png",
       "review": {
-        "by": "프로젝트 오너",
-        "date": "2026-09-12",
-        "result": "reject",
-        "reason": "주칠 2주 + 곧은 상인방 = 도리이 실루엣. 금강문은 기와 지붕이 얹힌 건물이다"
+        "result": "pending",
+        "note": "재생성 — 검수 대기"
       }
     },
     {

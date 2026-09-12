@@ -52,7 +52,16 @@ export function promptFor(entry) {
     .join('. ')
 }
 
-/** 히어로 등 풍경 컷 프롬프트 — 개체가 아니라 장면이다. */
+/**
+ * 히어로 등 풍경 컷 프롬프트 — 개체가 아니라 장면이다.
+ * 장면 텍스트는 direction.json의 scenes에 있다(sceneById). 인자로 직접 넘기면 재현이 안 된다.
+ */
+export function sceneById(id) {
+  const s = dir.scenes?.[id]
+  if (!s?.text) throw new Error(`direction.json scenes에 없는 장면: ${id}`)
+  return { ...s, prompt: scenePrompt(s.text) }
+}
+
 export function scenePrompt(sceneText) {
   return [
     `Korean folklore night landscape — ${sceneText}`,
@@ -85,6 +94,23 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   const json = args.includes('--json')
   const pending = args.includes('--pending')
   const ids = args.filter((a) => !a.startsWith('--'))
+
+  // node scripts/art-prompts.mjs --scene hero-night-pass
+  if (args.includes('--scene')) {
+    const id = args[args.indexOf('--scene') + 1]
+    const s = sceneById(id)
+    const req = {
+      model: dir.model.id,
+      prompt: s.prompt,
+      aspect_ratio: s.aspect ?? '16:9',
+      resolution: dir.model.resolution,
+      model_type: dir.model.model_type,
+      colors: dir.palette,
+      background_color: dir.background_color,
+    }
+    console.log(json ? JSON.stringify(req, null, 2) : `${id}\t${s.prompt}`)
+    process.exit(0)
+  }
 
   let list = bundle.entries
   if (ids.length) list = list.filter((e) => ids.includes(e.id))

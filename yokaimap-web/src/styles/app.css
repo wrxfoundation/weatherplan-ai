@@ -245,9 +245,26 @@ h3 {
   background-image: url('/img/hero/night-pass.webp');
   background-size: cover;
   background-position: center 38%;
-  opacity: 0.5;
-  mask-image: linear-gradient(100deg, transparent 8%, #000 62%);
-  -webkit-mask-image: linear-gradient(100deg, transparent 8%, #000 62%);
+  /* 0.5에서는 그림이 배경이 아니라 글자와 경쟁하는 전경이 된다. 도판 격자와 같은
+     화면에 있어 보이려면 한지에 배어든 무늬 정도까지 내려야 한다. */
+  opacity: 0.3;
+  mask-image: linear-gradient(100deg, transparent 6%, #000 58%);
+  -webkit-mask-image: linear-gradient(100deg, transparent 6%, #000 58%);
+}
+/* 그림 위에 종이색을 한 겹 덮는다. 그림은 남기되 본문이 이기게 하는 장치다.
+   .hero-art와 같은 z-index 0이지만 트리 순서상 뒤라 위에 깔리고, 본문(z-index 1)보다는 아래다. */
+.hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    95deg,
+    var(--bg) 30%,
+    color-mix(in srgb, var(--bg) 58%, transparent) 70%,
+    transparent
+  );
 }
 .hero > *:not(.hero-art) {
   position: relative;
@@ -1091,6 +1108,29 @@ label.field {
     margin-top: var(--sp-5);
   }
   /* .card-grid·.trust-row·.tier-grid는 auto-fit minmax라 저절로 1단이 된다 — 건드리지 않는다 */
+}
+
+/* 히어로 그림 — 좁은 화면에서는 덮지 말고 아래에 깔아 둔다.
+   1600x914(16:9)를 375x867 영역에 cover로 깔면 좌우가 통째로 잘려 장승 줄기만 남는다.
+   원래 구도(왼쪽 소나무·돌무지 ↔ 오른쪽 한옥)가 사라지고, 리드 문단 위로 그림이 올라와
+   읽기도 어려웠다. 비율을 지켜 아래쪽에 두고 위로 흐리게 뺀다. */
+@media (max-width: 720px) {
+  .hero-art {
+    background-size: 132% auto;
+    background-position: center 78%;
+    background-repeat: no-repeat;
+    opacity: 0.24;
+    mask-image: linear-gradient(to bottom, transparent 12%, #000 52%);
+    -webkit-mask-image: linear-gradient(to bottom, transparent 12%, #000 52%);
+  }
+  .hero::after {
+    background: linear-gradient(
+      to bottom,
+      var(--bg) 30%,
+      color-mix(in srgb, var(--bg) 55%, transparent) 62%,
+      transparent
+    );
+  }
 }
 
 /* 터치 입력에서는 폭이 아니라 포인터 정밀도가 기준이다.
