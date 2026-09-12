@@ -4,7 +4,9 @@
 정본은 depin/content/site-canon-0910.md 하나뿐이다. 이 스크립트는 그 md 를 읽어 docx 를 만들 뿐,
 문장을 따로 갖지 않는다 — md 를 고친 뒤 다시 돌리면 docx 가 따라온다(사본이 갈라지지 않게).
 
-  python3 depin/tools/build-canon-docx.py [src.md] [out.docx]
+  python3 depin/tools/build-canon-docx.py [src.md] [out.docx] [--portrait]
+
+가로(기본)는 표가 넓은 정본 스냅샷용, --portrait 는 본문 위주 검토 문서용이다.
 """
 import re
 import sys
@@ -17,8 +19,10 @@ from docx.oxml import OxmlElement
 from docx.oxml.ns import qn
 from docx.shared import Cm, Pt, RGBColor
 
-SRC = Path(sys.argv[1] if len(sys.argv) > 1 else "depin/content/site-canon-0910.md")
-OUT = Path(sys.argv[2] if len(sys.argv) > 2 else "depin/content/site-canon-0910.docx")
+ARGS = [a for a in sys.argv[1:] if not a.startswith("--")]
+PORTRAIT = "--portrait" in sys.argv[1:]
+SRC = Path(ARGS[0] if len(ARGS) > 0 else "depin/content/site-canon-0910.md")
+OUT = Path(ARGS[1] if len(ARGS) > 1 else "depin/content/site-canon-0910.docx")
 
 KO_FONT = "Malgun Gothic"
 INK = RGBColor(0x1B, 0x1B, 0x48)
@@ -94,8 +98,12 @@ def add_table(doc, rows):
 def build(md_text):
     doc = Document()
     sec = doc.sections[0]
-    sec.orientation = WD_ORIENT.LANDSCAPE
-    sec.page_width, sec.page_height = Cm(29.7), Cm(21.0)
+    if PORTRAIT:
+        sec.orientation = WD_ORIENT.PORTRAIT
+        sec.page_width, sec.page_height = Cm(21.0), Cm(29.7)
+    else:
+        sec.orientation = WD_ORIENT.LANDSCAPE
+        sec.page_width, sec.page_height = Cm(29.7), Cm(21.0)
     for side in ("left_margin", "right_margin", "top_margin", "bottom_margin"):
         setattr(sec, side, Cm(1.8))
     normal = doc.styles["Normal"]
@@ -104,7 +112,7 @@ def build(md_text):
     normal.font.size = Pt(10)
 
     lines = md_text.splitlines()
-    i, table, para = 0, [], []
+    i, table, para, bullet = 0, [], [], []
 
     def flush_para():
         nonlocal para
@@ -112,6 +120,15 @@ def build(md_text):
             p = doc.add_paragraph()
             add_inline(p, " ".join(para), 10)
             para = []
+
+    def flush_bullet():
+        """불릿이 여러 줄로 접혀 있어도 한 항목으로 합친다 —
+        합치지 않으면 줄 경계에서 **강조** 가 갈라져 별표가 그대로 찍힌다."""
+        nonlocal bullet
+        if bullet:
+            p = doc.add_paragraph(style="List Bullet")
+            add_inline(p, " ".join(bullet), 10)
+            bullet = []
 
     def flush_table():
         nonlocal table
@@ -122,11 +139,13 @@ def build(md_text):
     while i < len(lines):
         ln = lines[i]
         if ln.startswith("|"):
+            flush_bullet()
             flush_para()
             table.append(split_row(ln))
         else:
             flush_table()
             if ln.startswith("# "):
+                flush_bullet()
                 flush_para()
                 p = doc.add_paragraph()
                 set_font(p.add_run(ln[2:].strip()), 18, bold=True, color=INK)
@@ -134,19 +153,24 @@ def build(md_text):
                 set_font(p.add_run("생성 문서 — 정본은 md 파일입니다. 이 문서를 고치지 말고 md 를 고친 뒤 다시 생성하세요 "
                                    "(depin/tools/build-canon-docx.py)."), 8.5, color=MUTE)
             elif ln.startswith("## "):
+                flush_bullet()
                 flush_para()
                 p = doc.add_paragraph()
                 p.paragraph_format.space_before = Pt(14)
                 set_font(p.add_run(ln[3:].strip()), 13, bold=True, color=INK)
             elif ln.startswith("- "):
+                flush_bullet()
                 flush_para()
-                p = doc.add_paragraph(style="List Bullet")
-                add_inline(p, ln[2:].strip(), 10)
+                bullet.append(ln[2:].strip())
             elif not ln.strip():
+                flush_bullet()
                 flush_para()
+            elif bullet:
+                bullet.append(ln.strip())
             else:
                 para.append(ln.strip())
         i += 1
+    flush_bullet()
     flush_para()
     flush_table()
     return doc
