@@ -2,6 +2,7 @@ import { useMemo } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { SIDO_BY_SLUG, REGIONS, inSido, PRECISION_LABEL, isApprox, slugOf } from '../data/yokai.js'
 import YokaiCard from '../ui/YokaiCard.jsx'
+import { useLightbox } from '../ui/Lightbox.jsx'
 import OmenPanel from '../map/OmenPanel.jsx'
 import AdSlot from '../ui/AdSlot.jsx'
 import { useHead, SITE_ORIGIN } from '../ui/useHead.js'
@@ -11,6 +12,8 @@ export default function RegionPage() {
   const { slug } = useParams()
   const region = SIDO_BY_SLUG[slug]
   const list = useMemo(() => (region ? inSido(region.name) : []), [region])
+  /* 라이트박스는 목록을 알아야 ←/→로 넘길 수 있다. 카드가 각자 들면 카드마다 하나씩 생긴다. */
+  const { openPlate, lightbox } = useLightbox(list)
 
   useHead(
     region
@@ -73,7 +76,7 @@ export default function RegionPage() {
 
       <div className="card-grid" style={{ marginTop: 'var(--sp-5)' }}>
         {list.map((e) => (
-          <YokaiCard key={e.id} entry={e} />
+          <YokaiCard key={e.id} entry={e} onZoom={openPlate} />
         ))}
       </div>
 
@@ -101,6 +104,7 @@ export default function RegionPage() {
           ))}
         </div>
       </section>
+      {lightbox}
     </main>
   )
 }

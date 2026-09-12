@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { YOKAI, CATEGORIES, CAT } from '../data/yokai.js'
 import { readCollection, clearCollection } from '../hunt/collection.js'
 import CollectorCard from '../ui/CollectorCard.jsx'
+import { useLightbox } from '../ui/Lightbox.jsx'
 import Seal from '../ui/Seal.jsx'
 import Icon from '../ui/Icon.jsx'
 import { useHead } from '../ui/useHead.js'
@@ -53,6 +54,10 @@ export default function CollectionPage() {
       }),
     [caught, filter, cat],
   )
+
+  /* 도판은 수집한 카드에만 있다. 미수집까지 넘기면 ←/→가 빈칸을 건너뛰느라 순서가 튄다. */
+  const owned = useMemo(() => shown.filter((e) => caught[e.id]), [shown, caught])
+  const { openPlate, lightbox } = useLightbox(owned)
 
   return (
     <main className="page">
@@ -141,6 +146,7 @@ export default function CollectionPage() {
             no={NO_OF.get(e.id)}
             total={YOKAI.length}
             owned={Boolean(caught[e.id])}
+            onZoom={openPlate}
           />
         ))}
       </div>
@@ -154,6 +160,7 @@ export default function CollectionPage() {
       <p className="small muted" style={{ marginTop: 'var(--sp-5)' }}>
         수집 기록은 이 브라우저에만 저장됩니다. 기기를 옮기거나 저장소를 지우면 사라집니다.
       </p>
+      {lightbox}
     </main>
   )
 }

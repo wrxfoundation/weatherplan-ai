@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { YOKAI, CATEGORIES, RARITY, REGIONS, applyFilters, countByCategory, META } from '../data/yokai.js'
 import YokaiCard from '../ui/YokaiCard.jsx'
+import { useLightbox } from '../ui/Lightbox.jsx'
 import Seal from '../ui/Seal.jsx'
 import AdSlot from '../ui/AdSlot.jsx'
 import { useHead, SITE_ORIGIN } from '../ui/useHead.js'
@@ -32,6 +33,8 @@ export default function DogamPage() {
     [cats, rarities, sido, q, showLow],
   )
   const counts = useMemo(() => countByCategory(YOKAI), [])
+  /* 라이트박스는 목록을 알아야 ←/→로 넘길 수 있다. 카드가 각자 들면 카드마다 하나씩 생긴다. */
+  const { openPlate, lightbox } = useLightbox(list)
 
   const toggle = (setter) => (id) =>
     setter((prev) => {
@@ -135,7 +138,7 @@ export default function DogamPage() {
 
       <div className="card-grid" style={{ marginTop: 'var(--sp-4)' }}>
         {list.map((e) => (
-          <YokaiCard key={e.id} entry={e} />
+          <YokaiCard key={e.id} entry={e} onZoom={openPlate} />
         ))}
       </div>
 
@@ -176,6 +179,7 @@ export default function DogamPage() {
           ))}
         </div>
       </section>
+      {lightbox}
     </main>
   )
 }

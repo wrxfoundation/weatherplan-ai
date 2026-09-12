@@ -4,14 +4,14 @@ import Seal from './Seal.jsx'
 import ArtPlate from './ArtPlate.jsx'
 import { RarityBadge, VerificationBadge } from './Badges.jsx'
 
-export default function YokaiCard({ entry, compact = false }) {
+export default function YokaiCard({ entry, compact = false, onZoom }) {
   return (
     <Link className="card" to={`/yokai/${slugOf(entry)}`} style={{ '--cat': CAT[entry.category]?.color }}>
-      {entry.art?.file && (
-        <div style={{ marginBottom: 'var(--sp-3)' }}>
-          <ArtPlate entry={entry} size="sm" />
-        </div>
-      )}
+      {/* 도판이 없어도 자리를 비우지 않는다. 인장 폴백이 들어가야 격자 높이가 고르다
+          — 도상은 순차적으로 채워지는 자산이라 '아직 없음'이 정상 상태다. */}
+      <div style={{ marginBottom: 'var(--sp-3)' }}>
+        <ArtPlate entry={entry} size="sm" onZoom={onZoom} />
+      </div>
       <div className="card-head">
         <Seal category={entry.category} />
         <div style={{ minWidth: 0 }}>

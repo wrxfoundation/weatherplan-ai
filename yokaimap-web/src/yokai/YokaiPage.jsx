@@ -14,6 +14,7 @@ import {
 } from '../data/yokai.js'
 import Seal from '../ui/Seal.jsx'
 import ArtPlate from '../ui/ArtPlate.jsx'
+import { useLightbox } from '../ui/Lightbox.jsx'
 import Icon, { WEATHER_ICON, TIME_ICON } from '../ui/Icon.jsx'
 import { RarityBadge, VerificationBadge, DistributionBadge } from '../ui/Badges.jsx'
 import ShareRow from '../ui/ShareRow.jsx'
@@ -50,6 +51,9 @@ export default function YokaiPage() {
     [entry],
   )
 
+  /* 훅은 '찾을 수 없음' 조기 반환보다 위에 있어야 한다. 같은 분류 안에서 ←/→로 넘긴다. */
+  const { openPlate, lightbox } = useLightbox(siblings)
+
   if (!entry) {
     return (
       <main className="page page-narrow">
@@ -78,7 +82,7 @@ export default function YokaiPage() {
         {entry.art?.file ? (
           /* 도판이 이 페이지의 주인공이다. 168px은 썸네일이지 도판이 아니었다. */
           <div className="detail-plate">
-            <ArtPlate entry={entry} />
+            <ArtPlate entry={entry} onZoom={openPlate} zoom="surface" />
           </div>
         ) : (
           <Seal category={entry.category} size="xl" />
@@ -282,6 +286,7 @@ export default function YokaiPage() {
 
       {/* 광고는 본문·출처를 다 읽은 뒤에만 — MONETIZATION.md §1-A 배치 원칙 */}
       <AdSlot slot="yokai-footer" />
+      {lightbox}
     </main>
   )
 }

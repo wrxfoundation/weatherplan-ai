@@ -13,7 +13,7 @@ import Seal from './Seal.jsx'
  * 그게 수집의 동력이다. 다만 이름은 남긴다 — 도감이 공개 자료인데 컬렉션에서만
  * 이름을 가리면 같은 데이터에 두 얼굴이 생긴다.
  */
-export default function CollectorCard({ entry, no, total, owned }) {
+export default function CollectorCard({ entry, no, total, owned, onZoom }) {
   const color = CAT[entry.category]?.color
   const rarity = RAR[entry.rarity]
 
@@ -33,7 +33,7 @@ export default function CollectorCard({ entry, no, total, owned }) {
       </div>
 
       {owned ? (
-        <ArtPlate entry={entry} size="sm" />
+        <ArtPlate entry={entry} size="sm" onZoom={onZoom} />
       ) : (
         <div className="cc-locked-art">
           <Seal category={entry.category} size="xl" />

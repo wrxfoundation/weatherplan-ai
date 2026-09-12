@@ -1235,3 +1235,249 @@ label.field {
   color: var(--cat, var(--seal));
   font-weight: 700;
 }
+
+/* ─── 도판 원본 보기 ──────────────────────────────────────────
+   카드 안에서 열릴 수 있으므로 라이트박스 자체는 body로 포털된다(Lightbox.jsx).
+   여기 있는 값은 전부 화면 기준이라, 어디서 열든 결과가 같다. */
+
+/* 모서리 단추 — 판 전체가 <Link> 안에 있을 때. 판을 통째로 누르게 하면 상세로 가는 길이 막힌다. */
+.art-zoom {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border: 1px solid color-mix(in srgb, var(--surface) 55%, transparent);
+  border-radius: var(--radius-sm);
+  /* 밝은 도판 위에도 어두운 도판 위에도 얹히므로 서피스 토큰을 쓰지 않는다 */
+  background: rgba(22, 18, 14, 0.52);
+  color: #f6f0e4;
+  backdrop-filter: blur(4px);
+  opacity: 0.72;
+  transition: opacity 0.15s, background 0.15s;
+}
+.art-plate:hover .art-zoom,
+.art-zoom:focus-visible {
+  opacity: 1;
+  background: rgba(22, 18, 14, 0.78);
+}
+
+/* 판 전체가 단추 — 상세 페이지처럼 겹치는 링크가 없는 자리 */
+.art-zoom-surface {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  background: transparent;
+  cursor: zoom-in;
+  display: grid;
+  place-items: end center;
+  padding-bottom: 34px;
+}
+.art-zoom-hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 11px;
+  border-radius: 999px;
+  background: rgba(22, 18, 14, 0.62);
+  color: #f6f0e4;
+  font-size: var(--text-xs);
+  font-weight: 600;
+  backdrop-filter: blur(4px);
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity 0.16s, transform 0.16s;
+}
+.art-zoom-surface:hover .art-zoom-hint,
+.art-zoom-surface:focus-visible .art-zoom-hint {
+  opacity: 1;
+  transform: none;
+}
+/* 터치에는 hover가 없다. 눌러 볼 수 있다는 걸 처음부터 보여 줘야 한다. */
+@media (pointer: coarse) {
+  .art-zoom {
+    opacity: 1;
+  }
+  .art-zoom-hint {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.lb {
+  position: fixed;
+  inset: 0;
+  z-index: 1000; /* 지도 컨트롤(500)·상단바(900)보다 위 */
+  display: flex;
+  flex-direction: column;
+  /* 그림을 보는 화면이라 테마와 무관하게 어둡게 둔다 — 밝은 배경은 도판 색을 왜곡한다 */
+  background: rgba(14, 11, 9, 0.94);
+  color: #f2ece0;
+  backdrop-filter: blur(8px);
+}
+.lb .muted {
+  color: rgba(242, 236, 224, 0.62);
+}
+.lb-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  padding: var(--sp-3) var(--sp-4);
+  border-bottom: 1px solid rgba(242, 236, 224, 0.14);
+}
+.lb-title {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+  min-width: 0;
+  flex: 1;
+}
+.lb-title strong {
+  font-family: var(--font-serif);
+  font-size: var(--text-lg);
+  border-bottom: 2px solid var(--cat, var(--seal));
+  padding-bottom: 1px;
+}
+.lb-x {
+  flex: none;
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(242, 236, 224, 0.2);
+  border-radius: var(--radius);
+  background: transparent;
+  color: inherit;
+}
+.lb-x:hover {
+  background: rgba(242, 236, 224, 0.1);
+}
+
+.lb-stage {
+  flex: 1;
+  min-height: 0; /* 없으면 flex 자식이 이미지 높이만큼 부풀어 푸터를 밀어낸다 */
+  position: relative;
+  display: grid;
+  /* auto 트랙이면 행이 그림 높이만큼 늘어나고, 그러면 .lb-img의 max-height:100%가
+     '늘어난 행'을 기준으로 풀려 아무것도 제한하지 못한다(900×1157이 774px 무대를
+     그대로 뚫고 나갔다). 트랙을 minmax(0,1fr)로 못 박아야 100%가 무대 크기가 된다. */
+  grid-template-rows: minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr);
+  place-items: center;
+  padding: var(--sp-4);
+}
+.lb-img {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain; /* 원본을 보자고 연 화면이라 어떤 경우에도 자르지 않는다 */
+  border-radius: var(--radius);
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.5);
+  cursor: zoom-in;
+}
+
+/* 실제 크기(1:1) — 화면에 맞춘 크기는 도판을 900px에서 600px쯤으로 줄인다.
+   원본을 보러 온 사람에게는 그게 답이 아니라서, 눌러서 실제 픽셀로 전환한다. */
+.lb-stage[data-actual='true'] {
+  overflow: auto;
+  place-items: start center;
+  overscroll-behavior: contain;
+}
+.lb-stage[data-actual='true'] .lb-img {
+  max-width: none;
+  max-height: none;
+  cursor: zoom-out;
+}
+
+.lb-size {
+  border: 1px solid rgba(242, 236, 224, 0.22);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: inherit;
+  padding: 3px 8px;
+  font-size: var(--text-xs);
+}
+.lb-size:hover {
+  background: rgba(242, 236, 224, 0.1);
+}
+.lb-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 46px;
+  height: 46px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(242, 236, 224, 0.2);
+  border-radius: 999px;
+  background: rgba(22, 18, 14, 0.6);
+  color: #f2ece0;
+}
+.lb-nav:hover {
+  background: rgba(22, 18, 14, 0.9);
+}
+.lb-nav.prev {
+  left: var(--sp-3);
+}
+.lb-nav.next {
+  right: var(--sp-3);
+}
+
+.lb-foot {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--sp-3);
+  padding: var(--sp-3) var(--sp-4);
+  border-top: 1px solid rgba(242, 236, 224, 0.14);
+}
+.lb-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+  flex: 1;
+  min-width: 0;
+}
+.lb-links {
+  display: flex;
+  gap: var(--sp-2);
+  flex: none;
+}
+.lb-links .btn {
+  border-color: rgba(242, 236, 224, 0.24);
+  color: #f2ece0;
+}
+.lb-links .btn:hover {
+  background: rgba(242, 236, 224, 0.1);
+}
+.btn.sm {
+  padding: 6px 11px;
+  font-size: var(--text-sm);
+}
+
+@media (max-width: 720px) {
+  .lb-stage {
+    padding: var(--sp-2);
+  }
+  /* 46px 단추 둘이 좁은 화면에서 그림 위를 덮는다. 아래로 내려 나란히 둔다. */
+  .lb-nav {
+    top: auto;
+    bottom: var(--sp-2);
+    transform: none;
+  }
+  .lb-foot {
+    padding: var(--sp-3);
+  }
+  .lb-links {
+    flex: 1;
+  }
+  .lb-links .btn {
+    flex: 1;
+    justify-content: center;
+  }
+}
