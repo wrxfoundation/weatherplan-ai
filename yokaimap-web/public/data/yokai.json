@@ -3556,9 +3556,9 @@
    "updated_at": "2026-09-12",
    "sensitivity": null,
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/geumgang-yeoksa.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "e0dd3f6d-66e2-4fdd-84ce-cfc8e6b809ef"
    }

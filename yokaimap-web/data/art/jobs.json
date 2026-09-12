@@ -14,8 +14,10 @@
       "job_id": "22a87312-46f9-471d-85b4-9bb53b5564ef",
       "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260912_112354_22a87312-46f9-471d-85b4-9bb53b5564ef.png",
       "review": {
-        "result": "pending",
-        "note": "v1(대낮·요괴 없음)에서 재생성 — 검수 대기"
+        "by": "검수",
+        "date": "2026-09-12",
+        "result": "pass",
+        "note": "밤·장승·서낭 돌무지·도깨비불 확인. 도리이·석등·벚꽃 없음. 구도 중앙 집중"
       },
       "scene": "hero-night-pass"
     },
@@ -1940,8 +1942,9 @@
       "job_id": "e0dd3f6d-66e2-4fdd-84ce-cfc8e6b809ef",
       "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260912_112354_e0dd3f6d-66e2-4fdd-84ce-cfc8e6b809ef.png",
       "review": {
-        "result": "pending",
-        "note": "재생성 — 검수 대기"
+        "by": "프로젝트 오너",
+        "date": "2026-09-12",
+        "result": "pass"
       }
     },
     {
