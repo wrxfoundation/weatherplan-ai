@@ -1503,3 +1503,71 @@ Reservations close Sep 14, 12:00 KST
 **「그 숫자는 어디에도 안 나옵니다」** — 우리 주장은 측정 여부가 아니라 **기록·공개 여부**이고 이 쪽이 사실이다.
 규칙은 앞 절 그대로(보상·시세 0 · 「최대·1위」 0 · 리플 0 · 케이웨더 미언급 · 레이다·위성 확약 아님).
 이미지 지적 2건(2023 날짜 · 레이다 접시)은 그대로 유효 — **날짜는 고치고 올린다.**
+
+### 4층 배너 원글 — **최종: HOW IT WORKS 4단계 결합 (2026-09-12, 서우 "이 개념도 녹이자")**
+
+서우가 사이트 HOW IT WORKS 전문 전달(측정 → 검증 → 보상 → 서비스).
+
+**두 축을 어떻게 합치는가가 이 판의 전부다.** 4층(공간 확장)과 4단계(작동 방식)를 **둘 다 화살표로 쓰면
+독자가 두 축을 동시에 따라가야 한다** — 직전 판이 어려웠던 이유가 정확히 그거였다.
+
+**해결 둘**
+1. **역할 분담** — **이미지가 층을 보여주니 글은 단계만 쓴다.** `방 → 동네 → 레이다 → 위성` 화살표 줄을
+   빼고 4단계를 목록으로 세웠다. 중복 없고 둘이 합쳐 전체가 된다.
+2. **잇는 문장 하나** — **`층이 달라져도 네 단계는 같습니다`**(EN: `the layer changes, the four steps
+   don't`). 이 한 줄이 확장을 **야심이 아니라 같은 구조의 반복**으로 만든다. 「센서 회사가 위성까지?」라는
+   최악 해석이 여기서 풀린다 — 앞 판의 방어선(`이 층을 먼저 짓습니다`)보다 강하다.
+
+**⚠ 보상을 언급했으므로 붙는 것들**
+- **`$WLBN` 캐시태그 절대 금지** — 트레이딩 신호가 되어 시세 계정이 몰려온다. 사이트 문구대로
+  `Wellbian(WLBN)` 까지만.
+- **비보장 고지 필수** — `※ 보상 수량과 가치는 보장되지 않습니다.` 빼면 규칙 위반이다(launch-post EN-1 선례).
+- coin 으로 지칭 0 · 수량·시세·수익 환산 0.
+- 영문 검증 단계는 `quality and uptime` 으로 썼다(서우 원문 「성실성」의 실제 기준이 백서 전송률 게이트라
+  consistency 보다 정확하다). 국문은 서우 원문 「품질·성실성」 유지.
+
+**길이 판단**: 직전보다 길어졌지만 어려워지진 않았다 — **길이와 난이도는 다른 문제**고 목록은 길어도 읽힌다.
+
+```
+KO (최종)
+일기예보는 "서울"을 말합니다. 그런데 우리는 서울에 사는 게 아니라, 방에 삽니다.
+
+밖은 좋은데 방 안은 나쁜 날이 있습니다. 그 숫자는 어디에도 안 나옵니다.
+
+그래서 방부터 시작합니다. 구조는 단순합니다.
+
+측정 — 내 공간의 기기가 날씨를 기록합니다
+검증 — 품질·성실성 기준으로 데이터를 확인합니다
+보상 — 검증된 데이터에 Wellbian(WLBN)이 적립됩니다
+서비스 — 그 데이터가 예보·건강·에너지 서비스로 쓰입니다
+
+방에서 동네, 레이다, 위성까지 — 층이 달라져도 네 단계는 같습니다.
+
+※ 보상 수량과 가치는 보장되지 않습니다.
+
+사전예약 9월 14일(월) 12시 마감
+🔗 https://wellbian.io/?utm_source=x&utm_medium=owned&utm_campaign=vision0912&utm_content=layers_ko
+```
+```
+EN (최종)
+The forecast tells you about your city. You don't live in a city — you live in a room.
+
+Some days the air outside is fine and the air in your room isn't. That number shows up nowhere.
+
+So we start with the room. The structure is simple:
+
+Measure — a device in your space records the weather
+Verify — the data is checked for quality and uptime
+Reward — verified data accrues Wellbian (WLBN)
+Serve — that data goes into forecasting, health and energy services
+
+Room, street, radar, satellite — the layer changes, the four steps don't.
+
+※ Reward amounts and value are not guaranteed.
+
+Reservations close Sep 14, 12:00 KST
+🔗 https://wellbian.io/?utm_source=x&utm_medium=owned&utm_campaign=vision0912&utm_content=layers_en
+```
+
+이미지 지적 2건(**2023 날짜** · 레이다 접시)은 그대로 유효 — 날짜는 고치고 올린다.
+게시 운영도 앞 절 그대로(국문·영문 분리 원글, 영문 22:00~23:00 KST).
