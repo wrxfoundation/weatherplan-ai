@@ -616,6 +616,227 @@
         "kr-sansillyeong"
       ],
       "updated_at": "2026-08-16"
+    },
+    {
+      "id": "kr-hosikchong",
+      "canonical": "호식총",
+      "aliases": [
+        "호식장",
+        "虎食塚"
+      ],
+      "names": {
+        "en": "Hosikchong",
+        "roman": "hosikchong"
+      },
+      "category": "mountain",
+      "rarity": "uncommon",
+      "distribution": "regional",
+      "summary": "호랑이에게 물려 죽은 이를 태운 자리에 시루를 엎고 쇠꼬챙이를 꽂은 무덤. 창귀가 나오지 못하게 막는 장치다.",
+      "body": "강원 태백·삼척과 경북 북부 산간에 실제로 남아 있는 무덤 형식이다. 호환을 당한 이는 창귀가 되어 다른 사람을 호랑이에게 끌어간다고 보아, 죽은 자리에서 화장한 뒤 돌을 쌓고 그 위에 시루를 엎고 시루 구멍에 쇠꼬챙이를 꽂았다. 시루 구멍은 빠져나갈 길이면서 동시에 꼬챙이에 막히는 길이고, 쇠는 잡귀를 누르는 물건이다. 죽은 이를 벌하려는 것이 아니라 산 사람을 지키려는 조치였으므로 무덤이되 봉분을 쓰지 않는다. 호랑이가 사라진 뒤에도 돌무지와 깨진 시루가 산길에 남아 민속 조사의 대상이 되었다.",
+      "traits": [
+        "시루",
+        "쇠꼬챙이",
+        "화장",
+        "창귀 봉인"
+      ],
+      "art_hint": "a low cairn of grey stones on a steep forested mountain path with an upturned earthenware steamer set on top and an iron spike driven through its hole, fallen leaves banked against the stones, no figure, cold blue mountain light",
+      "art_anchors": [
+        "landscape"
+      ],
+      "habitat": [
+        "산길",
+        "고갯마루",
+        "화전 마을 뒤"
+      ],
+      "omens": {
+        "time": [
+          "dusk"
+        ],
+        "weather": [
+          "fog",
+          "cold"
+        ],
+        "season": [
+          "winter"
+        ]
+      },
+      "sites": [
+        {
+          "name": "태백 산간 호식총 분포지",
+          "sido": "강원",
+          "sigungu": "태백시",
+          "lat": 37.164,
+          "lng": 128.9856,
+          "precision": "sigungu",
+          "note": "태백·삼척 일대 산길에 돌무지와 시루가 남아 조사되었다"
+        }
+      ],
+      "sources": [
+        {
+          "type": "encyclopedia",
+          "title": "한국민속대백과사전",
+          "ref": "호식총"
+        },
+        {
+          "type": "field",
+          "title": "한국구비문학대계",
+          "ref": "호환과 창귀(강원 산간)"
+        }
+      ],
+      "verification": "field_record",
+      "confidence": "medium",
+      "related": [
+        "kr-changgwi",
+        "kr-sangun",
+        "kr-sansillyeong"
+      ],
+      "sensitivity": {
+        "kind": "tragedy_linked",
+        "note": "실제 호환 희생자의 무덤 형식이다. 개별 위치를 특정하거나 방문을 권하지 않는다."
+      },
+      "updated_at": "2026-09-12"
+    },
+    {
+      "id": "kr-godang-halmi",
+      "canonical": "고당할미",
+      "aliases": [
+        "고모할미",
+        "금정산 산신할매"
+      ],
+      "names": {
+        "en": "Godang Halmi",
+        "roman": "godang halmi"
+      },
+      "category": "mountain",
+      "rarity": "uncommon",
+      "distribution": "local",
+      "summary": "부산 금정산 고당봉을 지키는 할미 산신. 산성과 절을 함께 돌본다고 전한다.",
+      "body": "금정산에서 가장 높은 봉우리인 고당봉 아래 고모당(姑母堂)에 모신다. 절에 의탁해 살던 박씨 노파가 죽으며 자신을 산 위에 모셔 주면 산과 절을 지키겠다고 했고, 그 뒤로 당을 세우고 해마다 제를 올렸다는 이야기가 이어진다. 금정산성과 범어사를 함께 지키는 신으로 여겨져 축성·보수와 얽힌 채록이 많다. 지리산 성모천왕, 태백산신처럼 큰 산의 주인을 할미로 두는 한국 산악신앙의 한 갈래이며, 도시 한복판의 산에서 그 형태가 지금까지 이어진다는 점이 드물다. 고당제는 오늘도 열린다.",
+      "traits": [
+        "고당봉",
+        "고모당",
+        "금정산성",
+        "할미 산신"
+      ],
+      "art_hint": "an old woman in white hemp jeogori and a dark skirt seated calmly on a granite outcrop at a mountain summit at dawn, a small tile-roofed shrine behind her among boulders, sea haze filling the valleys below",
+      "art_anchors": [
+        "costume_female",
+        "landscape",
+        "architecture"
+      ],
+      "habitat": [
+        "금정산",
+        "고당봉",
+        "산성"
+      ],
+      "omens": {
+        "time": [
+          "dawn"
+        ],
+        "weather": [
+          "fog"
+        ],
+        "season": []
+      },
+      "sites": [
+        {
+          "name": "부산 금정산 고당봉",
+          "sido": "부산",
+          "sigungu": "금정구",
+          "lat": 35.2769,
+          "lng": 129.0503,
+          "precision": "dong",
+          "note": "봉우리 아래 고모당에서 해마다 고당제를 올린다"
+        }
+      ],
+      "sources": [
+        {
+          "type": "encyclopedia",
+          "title": "한국민속대백과사전",
+          "ref": "고당제"
+        },
+        {
+          "type": "encyclopedia",
+          "title": "한국민족문화대백과사전",
+          "ref": "금정산"
+        }
+      ],
+      "verification": "public_encyclopedia",
+      "confidence": "medium",
+      "related": [
+        "kr-sansillyeong",
+        "kr-seongmo-cheonwang",
+        "kr-taebaek-sansin",
+        "kr-magohalmi"
+      ],
+      "sensitivity": {
+        "kind": "living_faith",
+        "note": "고당제가 지금도 이어진다. 관광 소재로만 다루지 않는다."
+      },
+      "updated_at": "2026-09-12"
+    },
+    {
+      "id": "kr-jihaguk-daejeok",
+      "canonical": "지하국대적",
+      "aliases": [
+        "지하국 도적",
+        "아귀 괴물",
+        "地下國大賊"
+      ],
+      "names": {
+        "en": "The Great Brigand of the Underworld",
+        "roman": "jihaguk daejeok"
+      },
+      "category": "mountain",
+      "rarity": "rare",
+      "distribution": "nationwide",
+      "summary": "땅 밑 나라에 살며 여인을 채어 가는 거대한 괴물. 무사가 굴로 내려가 베고, 올라올 때 배신당한다.",
+      "body": "한국 구전설화에서 가장 널리 채록되는 퇴치담 유형 가운데 하나다. 괴물이 대낮에 사람을 채어 굴속 지하국으로 데려가고, 뒤를 쫓은 무사가 두레박이나 밧줄로 굴에 내려가 여인에게 얻은 꾀로 급소를 알아내 벤다. 올라올 때 함께 갔던 자들이 밧줄을 끊어 홀로 지하에 남았다가 다른 길로 돌아온다는 배신 화소가 자주 붙는다. 괴물의 이름은 지역마다 아귀·야광귀·금돼지 등으로 갈리고, 금돼지 설화도 이 유형의 한 갈래로 다뤄진다. 굴·밧줄·배신이라는 뼈대가 유라시아 여러 곳의 설화와 닮아 비교 연구가 많다. 진짜 위험이 괴물이 아니라 같이 간 사람이라는 결말이 이 유형을 오래 살아남게 했다.",
+      "traits": [
+        "지하국",
+        "납치",
+        "밧줄",
+        "배신 화소",
+        "급소"
+      ],
+      "art_hint": "a huge shaggy hornless beast slumped at the bottom of a vast underground cavern lit by one hanging lamp, a young man in Korean lamellar armour with a straight sword standing over it, a woman in hanbok holding a rope that climbs into darkness",
+      "art_anchors": [
+        "costume_male",
+        "landscape"
+      ],
+      "habitat": [
+        "동굴",
+        "지하국",
+        "깊은 산"
+      ],
+      "omens": {
+        "time": [
+          "day"
+        ],
+        "weather": [],
+        "season": []
+      },
+      "sites": [],
+      "sources": [
+        {
+          "type": "field",
+          "title": "한국구비문학대계",
+          "ref": "지하국대적퇴치 설화군(전국)"
+        },
+        {
+          "type": "encyclopedia",
+          "title": "한국민족문화대백과사전",
+          "ref": "지하국대적퇴치설화"
+        }
+      ],
+      "verification": "field_record",
+      "confidence": "high",
+      "related": [
+        "kr-geumdwaeji",
+        "kr-dueoksini",
+        "kr-yacha"
+      ],
+      "updated_at": "2026-09-12"
     }
   ]
 }

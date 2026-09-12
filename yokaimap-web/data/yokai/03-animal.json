@@ -679,6 +679,218 @@
         "kr-agijangsu"
       ],
       "updated_at": "2026-08-16"
+    },
+    {
+      "id": "kr-osu-uigyeon",
+      "canonical": "오수 의견",
+      "aliases": [
+        "의구",
+        "오수개",
+        "義犬"
+      ],
+      "names": {
+        "en": "The Osu Righteous Dog",
+        "roman": "osu uigyeon"
+      },
+      "category": "animal",
+      "rarity": "uncommon",
+      "distribution": "local",
+      "summary": "취해 잠든 주인이 들불에 휩싸이자 제 몸을 적셔 불을 끄고 죽은 개. 전북 임실 오수라는 지명이 여기서 나왔다.",
+      "body": "고려 문인 최자의 『보한집』에 실린 이야기다. 거령현 사람 김개인이 장에 다녀오다 취해 들에 잠들었는데 들불이 번지자, 따르던 개가 냇물에 몸을 적셔 주위 풀을 적시기를 거듭해 주인을 살리고 지쳐 죽었다. 깨어난 주인이 개를 묻고 지팡이를 꽂았더니 나무가 되었고, 그 자리를 오수(獒樹), 곧 개의 나무라 불렀다. 지금도 전북 임실군 오수면에 의견비와 의견공원이 있고 해마다 의견제를 지낸다. 창귀나 여우누이처럼 짐승이 사람을 해치는 설화군의 정확한 반대편에 놓이는 이야기이며, 한국 전승에서 개가 벽사(辟邪)의 짐승으로 다뤄져 온 흐름과 이어진다.",
+      "traits": [
+        "들불",
+        "보은",
+        "지명 유래",
+        "의견비"
+      ],
+      "art_hint": "a shaggy Korean village dog soaked and steaming, dragging its body across burning dry grass at dusk to beat out a ring of flame around a sleeping man in white hemp clothes, a walking staff fallen beside him, low hills behind",
+      "art_anchors": [
+        "costume_male",
+        "landscape"
+      ],
+      "habitat": [
+        "들",
+        "냇가",
+        "장터길"
+      ],
+      "omens": {
+        "time": [
+          "dusk"
+        ],
+        "weather": [
+          "dry",
+          "wind"
+        ],
+        "season": [
+          "autumn"
+        ]
+      },
+      "sites": [
+        {
+          "name": "임실 오수 의견비",
+          "sido": "전북",
+          "sigungu": "임실군",
+          "lat": 35.5525,
+          "lng": 127.32,
+          "precision": "dong",
+          "note": "오수면 의견공원에 비가 서 있고 의견제가 이어진다"
+        }
+      ],
+      "sources": [
+        {
+          "type": "classic",
+          "title": "보한집",
+          "ref": "김개인과 의견"
+        },
+        {
+          "type": "encyclopedia",
+          "title": "한국민족문화대백과사전",
+          "ref": "오수의견 설화"
+        }
+      ],
+      "verification": "primary_text",
+      "confidence": "high",
+      "related": [
+        "kr-sapsalgae",
+        "kr-changgwi"
+      ],
+      "updated_at": "2026-09-12"
+    },
+    {
+      "id": "kr-samjokgu",
+      "canonical": "삼족구",
+      "aliases": [
+        "세발 개",
+        "三足狗"
+      ],
+      "names": {
+        "en": "Samjokgu",
+        "roman": "samjokgu"
+      },
+      "category": "animal",
+      "rarity": "rare",
+      "distribution": "nationwide",
+      "summary": "다리가 셋인 개. 사람으로 둔갑한 구미호를 알아보고 물어 죽인다고 한다. 다만 옛 문헌 근거는 희박하다.",
+      "body": "구미호가 사람 행세를 할 때 정체를 꿰뚫어 본다는 존재다. 개가 잡귀를 쫓는다는 오래된 관념과 삽살개 전승의 연장선에 있으나, 삼족구라는 이름과 '다리 셋'이라는 형상은 조선 이전 문헌에서 확인되지 않고 구비 채록에서도 안정적으로 잡히지 않는다. 20세기 후반 이후의 방송·소설·게임을 거치며 지금의 형태로 굳어진 것으로 보인다. 이 도감은 근거 등급을 낮춰 싣되 항목에서 빼지는 않는다. 사람들이 실제로 찾는 이름이고, 무엇이 오래된 전승이고 무엇이 근래에 만들어진 것인지 구분해 두는 편이 지우는 것보다 쓸모 있다고 보았다.",
+      "traits": [
+        "구미호 간파",
+        "다리 셋",
+        "근거 희박"
+      ],
+      "art_hint": "a lean three-legged dog with bristling dark fur standing rigid in a moonlit courtyard, hackles raised, staring at a pair of woman's shoes left empty on the stone step, low mist across the ground",
+      "art_anchors": [
+        "landscape",
+        "architecture"
+      ],
+      "habitat": [
+        "집 마당",
+        "고갯길"
+      ],
+      "omens": {
+        "time": [
+          "night"
+        ],
+        "weather": [],
+        "season": []
+      },
+      "sites": [],
+      "sources": [
+        {
+          "type": "encyclopedia",
+          "title": "한국민속대백과사전",
+          "ref": "삽살개 — 벽사하는 개 관념"
+        },
+        {
+          "type": "modern",
+          "title": "근현대 대중매체(방송·소설·게임)",
+          "ref": "삼족구 화소는 이 계열을 거쳐 퍼진 것으로 보인다"
+        }
+      ],
+      "verification": "secondary_compilation",
+      "confidence": "low",
+      "related": [
+        "kr-gumiho",
+        "kr-sapsalgae",
+        "kr-nogu-hwaho"
+      ],
+      "updated_at": "2026-09-12"
+    },
+    {
+      "id": "kr-gimnyeong-daesa",
+      "canonical": "김녕사굴 대사",
+      "aliases": [
+        "김녕굴 큰뱀",
+        "사굴 대사",
+        "大蛇"
+      ],
+      "names": {
+        "en": "The Great Serpent of Gimnyeong Cave",
+        "roman": "gimnyeong sagul daesa"
+      },
+      "category": "animal",
+      "rarity": "rare",
+      "distribution": "local",
+      "summary": "제주 김녕굴에 살며 해마다 처녀를 제물로 받았다는 큰 뱀. 판관 서련이 베었으나 그 자신도 살아 돌아오지 못했다.",
+      "body": "제주 구좌읍 김녕리의 용암동굴에 큰 뱀이 살아, 해마다 열다섯 살 처녀를 바쳐야 마을이 무사했다고 한다. 조선 중종 무렵 제주판관 서련이 부임해 군사를 이끌고 굴에 들어가 뱀을 베었는데, 돌아오는 길에 뒤를 돌아보지 말라는 말을 어기고 붉은 기운을 본 뒤 시름시름 앓다 죽었다는 결말이 붙는다. 뱀을 마을의 신으로 모시던 제주 사신(蛇神) 신앙과, 그것을 음사(淫祀)로 보아 없애려 한 조선 관인의 시각이 한 이야기 안에서 부딪친다. 퇴치자가 함께 죽는 결말은 어느 한쪽 손도 들어 주지 않은 흔적이다. 김녕굴은 만장굴과 이어지는 용암동굴로 지금도 그대로 있다.",
+      "traits": [
+        "용암동굴",
+        "처녀 제물",
+        "서련 판관",
+        "사신 신앙"
+      ],
+      "art_hint": "an enormous pale serpent coiled in the mouth of a black lava tube, its head raised level with a torch held by soldiers in Korean lamellar armour at the entrance, rough volcanic stone walls, a white-clad girl standing apart in the dark",
+      "art_anchors": [
+        "landscape",
+        "costume_male"
+      ],
+      "habitat": [
+        "용암동굴",
+        "해안 마을"
+      ],
+      "omens": {
+        "time": [
+          "night"
+        ],
+        "weather": [],
+        "season": [
+          "spring"
+        ]
+      },
+      "sites": [
+        {
+          "name": "제주 김녕굴",
+          "sido": "제주",
+          "sigungu": "제주시",
+          "lat": 33.5285,
+          "lng": 126.793,
+          "precision": "dong",
+          "note": "구좌읍 김녕리의 용암동굴. 만장굴과 한 계열이다"
+        }
+      ],
+      "sources": [
+        {
+          "type": "encyclopedia",
+          "title": "한국민족문화대백과사전",
+          "ref": "김녕사굴 설화"
+        },
+        {
+          "type": "field",
+          "title": "한국구비문학대계",
+          "ref": "서련 판관과 큰뱀(제주)"
+        }
+      ],
+      "verification": "public_encyclopedia",
+      "confidence": "medium",
+      "related": [
+        "kr-baeksa",
+        "kr-imugi",
+        "kr-baekjutto"
+      ],
+      "sensitivity": {
+        "kind": "living_faith",
+        "note": "제주 뱀 신앙은 일부 마을에서 지금도 이어진다. 퇴치담만 떼어 내 '미신 타파' 서사로 읽지 않는다."
+      },
+      "updated_at": "2026-09-12"
     }
   ]
 }

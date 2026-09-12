@@ -361,6 +361,134 @@
         "kr-gaksi-dokkaebi"
       ],
       "updated_at": "2026-08-16"
+    },
+    {
+      "id": "kr-yaseohon",
+      "canonical": "야서혼",
+      "aliases": [
+        "두더지 혼인",
+        "野鼠婚"
+      ],
+      "names": {
+        "en": "The Mole's Wedding",
+        "roman": "yaseohon"
+      },
+      "category": "hybrid",
+      "rarity": "uncommon",
+      "distribution": "nationwide",
+      "summary": "세상에서 가장 높은 사위를 찾아 해·구름·바람·돌부처를 거쳐 결국 두더지에게 돌아온 두더지의 혼사.",
+      "body": "두더지가 딸을 세상에서 가장 높은 것에게 시집보내려고 해를 찾아가니 해가 구름을 이기지 못한다 하고, 구름은 바람을, 바람은 돌부처를, 돌부처는 제 발밑을 파는 두더지를 이기지 못한다 한다. 결국 두더지에게 시집보낸다. 분수를 알라는 교훈담으로 읽히지만, 이류와의 혼사를 따라가는 구조는 구렁덩덩 신선비나 두꺼비 신랑 같은 이류혼 설화와 한 계열이다. 중국·일본·인도에도 같은 구조의 이야기가 있어 비교설화의 단골 소재이며, 한국에서는 두더지 혼인이라는 속담으로 굳어 쓰인다. 가장 높은 것을 찾아 한 바퀴 돌아 제자리로 온다는 형식 자체가 이야기의 뜻이다.",
+      "traits": [
+        "연쇄 문답",
+        "분수",
+        "이류혼",
+        "속담"
+      ],
+      "art_hint": "a small mole in a tiny hemp coat standing at the foot of a weathered stone buddha in a field at dusk, the sun low behind drifting cloud, wind bending the grass, the buddha's base undermined by fresh earth",
+      "art_anchors": [
+        "landscape"
+      ],
+      "habitat": [
+        "들",
+        "밭",
+        "돌부처 앞"
+      ],
+      "omens": {
+        "time": [
+          "dusk"
+        ],
+        "weather": [
+          "wind"
+        ],
+        "season": [
+          "spring"
+        ]
+      },
+      "sites": [],
+      "sources": [
+        {
+          "type": "encyclopedia",
+          "title": "한국민속대백과사전",
+          "ref": "두더지 혼인 설화"
+        },
+        {
+          "type": "field",
+          "title": "한국구비문학대계",
+          "ref": "야서혼 설화군"
+        }
+      ],
+      "verification": "public_encyclopedia",
+      "confidence": "high",
+      "related": [
+        "kr-gureongdeongdeong",
+        "kr-dukkeobi-sillang",
+        "kr-mireuk"
+      ],
+      "updated_at": "2026-09-12"
+    },
+    {
+      "id": "kr-mokdoryeong",
+      "canonical": "목도령",
+      "aliases": [
+        "나무도령",
+        "대홍수 목도령"
+      ],
+      "names": {
+        "en": "Mokdoryeong",
+        "roman": "mokdoryeong"
+      },
+      "category": "hybrid",
+      "rarity": "rare",
+      "distribution": "nationwide",
+      "summary": "하늘의 선녀와 계수나무 사이에서 난 아이. 대홍수 때 아버지인 나무를 타고 살아남아 사람의 조상이 되었다.",
+      "body": "하늘에서 내려온 선녀가 계수나무의 정기로 아이를 배어 목도령을 낳는다. 큰물이 져 세상이 잠기자 쓰러진 아버지 나무를 타고 떠다니며 개미와 모기를 구해 주고, 마지막으로 또래 소년을 구한다. 산꼭대기 노파의 집에 닿아 노파의 친딸과 종의 딸 가운데 누구와 혼인할지 시험을 받는데, 함께 구한 소년이 거짓말로 목도령을 곤경에 빠뜨리지만 앞서 구해 준 개미가 사실을 일러 준다. 둘이 각각 짝을 얻어 사람의 조상이 되었다. 손진태가 채록해 널리 알려진 한국의 대홍수 설화이며, 짐승을 구한 보은이 사람의 배신보다 크게 작동한다는 데 이야기의 무게중심이 있다.",
+      "traits": [
+        "대홍수",
+        "계수나무",
+        "개미 보은",
+        "인류 시조"
+      ],
+      "art_hint": "a boy clinging to a great fallen tree drifting on a flooded grey world at dusk, only mountain tops showing above the water, a column of ants along the bark beside his hand, a rain-heavy sky",
+      "art_anchors": [
+        "costume_male",
+        "landscape"
+      ],
+      "habitat": [
+        "홍수",
+        "산꼭대기"
+      ],
+      "omens": {
+        "time": [
+          "dusk"
+        ],
+        "weather": [
+          "heavy_rain",
+          "storm"
+        ],
+        "season": [
+          "summer"
+        ]
+      },
+      "sites": [],
+      "sources": [
+        {
+          "type": "field",
+          "title": "손진태 채록 설화",
+          "ref": "목도령과 대홍수"
+        },
+        {
+          "type": "encyclopedia",
+          "title": "한국민족문화대백과사전",
+          "ref": "대홍수 설화"
+        }
+      ],
+      "verification": "field_record",
+      "confidence": "high",
+      "related": [
+        "kr-seonnyeo",
+        "kr-cheonjiwang"
+      ],
+      "updated_at": "2026-09-12"
     }
   ]
 }

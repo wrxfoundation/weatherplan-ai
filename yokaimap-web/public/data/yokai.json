@@ -3,50 +3,50 @@
  "generated_at": "2026-09-12",
  "license": "CC BY 4.0",
  "attribution": "한국요괴지도 (Korean Yokai Map)",
- "count": 120,
- "site_count": 73,
+ "count": 156,
+ "site_count": 91,
  "stats": {
   "byCategory": {
-   "dokkaebi": 10,
-   "gataek": 9,
-   "animal": 11,
-   "water": 10,
-   "mountain": 9,
-   "ghost": 11,
+   "dokkaebi": 11,
+   "gataek": 10,
+   "animal": 14,
+   "water": 14,
+   "mountain": 12,
+   "ghost": 14,
    "plague": 6,
-   "jeju": 12,
-   "village": 7,
-   "sky": 6,
-   "artifact": 5,
-   "hybrid": 6,
-   "modern": 11,
-   "foreign": 7
+   "jeju": 14,
+   "village": 10,
+   "sky": 9,
+   "artifact": 10,
+   "hybrid": 8,
+   "modern": 12,
+   "foreign": 12
   },
   "bySido": {
-   "서울": 3,
-   "부산": 1,
+   "서울": 5,
+   "부산": 2,
    "대구": 1,
    "인천": 3,
    "광주": 2,
    "대전": 1,
-   "울산": 2,
+   "울산": 3,
    "세종": 2,
    "경기": 4,
-   "강원": 8,
+   "강원": 10,
    "충북": 4,
    "충남": 6,
-   "전북": 4,
+   "전북": 5,
    "전남": 6,
-   "경북": 9,
-   "경남": 5,
-   "제주": 11
+   "경북": 12,
+   "경남": 6,
+   "제주": 15
   },
   "byVerification": {
-   "field_record": 37,
-   "public_encyclopedia": 52,
-   "modern_online": 12,
-   "secondary_compilation": 6,
-   "primary_text": 13
+   "field_record": 45,
+   "public_encyclopedia": 68,
+   "modern_online": 13,
+   "primary_text": 23,
+   "secondary_compilation": 7
   }
  },
  "categories": [
@@ -661,6 +661,98 @@
    }
   },
   {
+   "id": "kr-bibi",
+   "canonical": "비비",
+   "aliases": [
+    "오광대 영노",
+    "비비새",
+    "飛飛"
+   ],
+   "names": {
+    "en": "Bibi",
+    "roman": "bibi"
+   },
+   "category": "sky",
+   "rarity": "rare",
+   "distribution": "local",
+   "summary": "하늘에서 내려온 괴물. 양반을 아흔아홉 잡아먹었고 하나만 더 먹으면 하늘로 오른다며 탈판에서 양반을 몬다.",
+   "body": "통영오광대와 고성오광대의 한 과장에 나오는 괴물로, 비비 하는 소리를 내며 등장한다고 해서 붙은 이름이다. 양반을 잡아먹는다며 쫓고, 양반이 자기는 양반이 아니라고 발뺌하다 결국 제 내력을 다 털어놓게 만든다. 지배층을 잡아먹는 괴물을 무대에 올려 웃음으로 처리한 장치라, 괴물이 공포의 대상이 아니라 심판의 대리인으로 쓰인 드문 사례다. 지역에 따라 영노라고도 부르는데 같은 이름이 다른 지역에서는 이무기를 가리키기도 해 혼동하기 쉽다. 이 도감은 이무기 항목에 영노를 이칭으로 두고, 탈놀음의 괴물은 비비로 따로 싣는다. 오광대는 국가무형유산으로 전승된다.",
+   "traits": [
+    "오광대",
+    "양반 잡아먹기",
+    "아흔아홉",
+    "탈"
+   ],
+   "art_hint": "a masked performer in a long shaggy cloth costume of blue and ochre strips playing a sky beast, lunging at a cowering masked nobleman figure on a straw-matted outdoor stage at night, torch light, a village crowd suggested in shadow",
+   "art_anchors": [
+    "costume_male"
+   ],
+   "habitat": [
+    "탈판",
+    "마당"
+   ],
+   "omens": {
+    "time": [
+     "night"
+    ],
+    "weather": [],
+    "season": [
+     "spring"
+    ]
+   },
+   "sites": [
+    {
+     "name": "통영오광대 전승지",
+     "sido": "경남",
+     "sigungu": "통영시",
+     "lat": 34.8544,
+     "lng": 128.4331,
+     "precision": "sigungu",
+     "note": "국가무형유산 통영오광대의 비비 과장"
+    },
+    {
+     "name": "고성오광대 전승지",
+     "sido": "경남",
+     "sigungu": "고성군",
+     "lat": 34.9734,
+     "lng": 128.3223,
+     "precision": "sigungu",
+     "note": "국가무형유산 고성오광대의 비비 과장"
+    }
+   ],
+   "sources": [
+    {
+     "type": "heritage",
+     "title": "통영오광대",
+     "ref": "국가무형유산"
+    },
+    {
+     "type": "heritage",
+     "title": "고성오광대",
+     "ref": "국가무형유산"
+    },
+    {
+     "type": "encyclopedia",
+     "title": "한국민속대백과사전",
+     "ref": "영노"
+    }
+   ],
+   "verification": "public_encyclopedia",
+   "confidence": "high",
+   "related": [
+    "kr-imugi",
+    "kr-dueoksini"
+   ],
+   "updated_at": "2026-09-12",
+   "sensitivity": null,
+   "art": {
+    "status": "pending",
+    "direction": "minhwa-v1",
+    "file": null,
+    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
+   }
+  },
+  {
    "id": "kr-bitjaru-gwisin",
    "canonical": "빗자루귀신",
    "aliases": [
@@ -718,6 +810,158 @@
     "file": "/img/yokai/bitjaru-gwisin.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "d3c8c537-cc4c-4b73-9fdd-47cb02c03cc1"
+   }
+  },
+  {
+   "id": "kr-bugunsin",
+   "canonical": "부군신",
+   "aliases": [
+    "부군당신",
+    "부근신",
+    "府君"
+   ],
+   "names": {
+    "en": "Bugunsin",
+    "roman": "bugunsin"
+   },
+   "category": "village",
+   "rarity": "uncommon",
+   "distribution": "regional",
+   "summary": "관아와 마을을 함께 지키던 신. 서울 한강변 나루 마을마다 부군당을 두고 모셨다.",
+   "body": "조선의 관청에는 부군당(府君堂)이라는 작은 사당이 딸려 있어 아전들이 제를 올렸고, 그 관행이 마을로 내려와 한강변 나루 마을마다 부군당이 섰다. 모시는 신은 곳에 따라 달라 최영·남이 같은 장군신을 두기도 하고, 부부 신상이나 이름 없는 위패만 두기도 한다. 서빙고·이태원·당인동 등지의 부군당이 남아 서울시 민속문화유산으로 지정되었고 일부는 지금도 마을 제를 잇는다. 관청의 신이 마을의 신으로 내려앉은 드문 사례라, 도시화 이전 서울이 어떤 단위로 묶여 있었는지를 읽는 자료로 쓰인다.",
+   "traits": [
+    "부군당",
+    "나루 마을",
+    "아전",
+    "위패"
+   ],
+   "art_hint": "a small tile-roofed shrine hall of weathered timber standing among old zelkova trees above a river bank at dusk, its plank door open to show a bare wooden tablet and two brass candlesticks, city roofs faint beyond the trees",
+   "art_anchors": [
+    "architecture",
+    "landscape"
+   ],
+   "habitat": [
+    "부군당",
+    "나루",
+    "관아"
+   ],
+   "omens": {
+    "time": [
+     "dusk"
+    ],
+    "weather": [],
+    "season": [
+     "spring"
+    ]
+   },
+   "sites": [
+    {
+     "name": "서울 한강변 부군당군",
+     "sido": "서울",
+     "sigungu": "용산구",
+     "lat": 37.52,
+     "lng": 126.988,
+     "precision": "sigungu",
+     "note": "서빙고·이태원 등지에 부군당이 남아 일부는 마을 제를 잇는다"
+    }
+   ],
+   "sources": [
+    {
+     "type": "encyclopedia",
+     "title": "한국민속대백과사전",
+     "ref": "부군당"
+    },
+    {
+     "type": "encyclopedia",
+     "title": "한국민족문화대백과사전",
+     "ref": "부군신앙"
+    }
+   ],
+   "verification": "public_encyclopedia",
+   "confidence": "medium",
+   "related": [
+    "kr-choeyeong",
+    "kr-nami",
+    "kr-seonang",
+    "kr-teoju"
+   ],
+   "updated_at": "2026-09-12",
+   "sensitivity": null,
+   "art": {
+    "status": "pending",
+    "direction": "minhwa-v1",
+    "file": null,
+    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
+   }
+  },
+  {
+   "id": "kr-bulgae",
+   "canonical": "불개",
+   "aliases": [
+    "해 먹는 개",
+    "火狗"
+   ],
+   "names": {
+    "en": "Bulgae",
+    "roman": "bulgae"
+   },
+   "category": "sky",
+   "rarity": "uncommon",
+   "distribution": "nationwide",
+   "summary": "어둠의 나라 임금이 해와 달을 훔쳐 오라고 보낸 개. 뜨거워서 또 차가워서 번번이 뱉는다. 그 순간이 일식과 월식이다.",
+   "body": "빛이 없는 나라의 임금이 해를 가져오라며 개를 보냈으나 너무 뜨거워 물자마자 뱉었고, 달을 가져오라 보냈더니 너무 차가워 또 뱉었다. 임금이 단념하지 않고 계속 개를 보내므로 해와 달이 이지러지는 일은 앞으로도 되풀이된다. 일식과 월식을 설명하는 한국 구전으로 전국에서 채록되며, 개가 반드시 실패하도록 짜인 이야기라는 점이 특징이다. 하늘의 질서는 끝내 망가지지 않는다는 말을 하려고 만든 구조다. 『삼국사기』와 『조선왕조실록』이 일식을 임금의 부덕을 묻는 천변으로 적은 것과 달리, 구전의 불개 이야기에는 두려움보다 웃음이 섞여 있다.",
+   "traits": [
+    "일식",
+    "월식",
+    "어둠의 나라",
+    "무는 순간"
+   ],
+   "art_hint": "a huge black hound leaping across a night sky with the moon half inside its jaws, its body edged in cold blue light, thatched rooftops and a bare winter tree far below in silhouette",
+   "art_anchors": [
+    "landscape"
+   ],
+   "habitat": [
+    "하늘",
+    "해",
+    "달"
+   ],
+   "omens": {
+    "time": [
+     "day",
+     "night"
+    ],
+    "weather": [
+     "clear"
+    ],
+    "season": []
+   },
+   "sites": [],
+   "sources": [
+    {
+     "type": "field",
+     "title": "한국구비문학대계",
+     "ref": "불개와 일월식 설화군(전국)"
+    },
+    {
+     "type": "encyclopedia",
+     "title": "한국민속대백과사전",
+     "ref": "일월식 설화"
+    }
+   ],
+   "verification": "field_record",
+   "confidence": "high",
+   "related": [
+    "kr-hwagwang",
+    "kr-samjogo",
+    "kr-sapsalgae"
+   ],
+   "updated_at": "2026-09-12",
+   "sensitivity": null,
+   "art": {
+    "status": "pending",
+    "direction": "minhwa-v1",
+    "file": null,
+    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
    }
   },
   {
@@ -831,6 +1075,79 @@
     "file": "/img/yokai/bunsinsaba.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "c0519c93-c543-451b-af00-2286202eac06"
+   }
+  },
+  {
+   "id": "kr-byeoljubu",
+   "canonical": "별주부",
+   "aliases": [
+    "자라 주부",
+    "鼈主簿"
+   ],
+   "names": {
+    "en": "Byeoljubu",
+    "roman": "byeoljubu"
+   },
+   "category": "water",
+   "rarity": "common",
+   "distribution": "nationwide",
+   "summary": "병든 용왕을 위해 토끼의 간을 구하러 뭍에 오른 자라. 충신이자 끝내 속은 자다.",
+   "body": "용왕이 병들어 토끼의 간을 먹어야 낫는다 하자 수궁의 신하 가운데 자라가 나서 뭍에 오른다. 토끼를 꾀어 수궁으로 데려오지만 토끼가 간은 빼어 바위에 널고 왔다고 둘러대 도로 뭍으로 나오고, 결국 빈손으로 돌아간다. 판소리 다섯 마당 중 「수궁가」로 불리고 고전소설 『토끼전』으로도 널리 읽혔다. 충(忠)을 말하면서 그 충이 어리석게 쓰이는 모습을 함께 보여 주는 구조라, 조선 후기 청중의 웃음이 어디에 있었는지가 드러난다. 수궁 장면 덕분에 용왕·수부 같은 물 신격이 서민 서사 안으로 들어오는 통로가 되었다.",
+   "traits": [
+    "수궁가",
+    "토끼 간",
+    "충신",
+    "속임수"
+   ],
+   "art_hint": "a large soft-shelled turtle wearing a small black official's hat and a strip of blue court silk, standing upright on a pine-shaded shore addressing a rabbit, the sea behind opening onto a submerged palace roofline",
+   "art_anchors": [
+    "landscape"
+   ],
+   "habitat": [
+    "바닷가",
+    "수궁"
+   ],
+   "omens": {
+    "time": [
+     "day"
+    ],
+    "weather": [
+     "clear"
+    ],
+    "season": []
+   },
+   "sites": [],
+   "sources": [
+    {
+     "type": "classic",
+     "title": "토끼전",
+     "ref": "자라의 육지 행"
+    },
+    {
+     "type": "heritage",
+     "title": "판소리 수궁가",
+     "ref": "국가무형유산"
+    },
+    {
+     "type": "encyclopedia",
+     "title": "한국민속대백과사전",
+     "ref": "수궁가"
+    }
+   ],
+   "verification": "primary_text",
+   "confidence": "high",
+   "related": [
+    "kr-yongwang",
+    "kr-subu",
+    "kr-cheonggaeguri"
+   ],
+   "updated_at": "2026-09-12",
+   "sensitivity": null,
+   "art": {
+    "status": "pending",
+    "direction": "minhwa-v1",
+    "file": null,
+    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
    }
   },
   {
@@ -1114,6 +1431,102 @@
    }
   },
   {
+   "id": "kr-cheoyong",
+   "canonical": "처용",
+   "aliases": [
+    "처용랑",
+    "處容"
+   ],
+   "names": {
+    "en": "Cheoyong",
+    "roman": "cheoyong"
+   },
+   "category": "water",
+   "rarity": "legendary",
+   "distribution": "regional",
+   "summary": "동해 용왕의 아들. 아내를 범한 역신 앞에서 노래하고 물러남으로써 역신을 굴복시켰고, 그 얼굴이 문에 붙는 부적이 되었다.",
+   "body": "『삼국유사』 기이편 '처용랑 망해사'에 실린다. 신라 헌강왕이 개운포에서 놀다 구름과 안개에 길을 잃자 동해 용이 일곱 아들을 데리고 나타났고, 그중 하나인 처용이 왕을 따라 경주로 들어와 벼슬을 받았다. 어느 밤 처용이 돌아와 보니 아내 곁에 다리가 넷이었다. 처용은 노래를 부르며 물러났고, 역신이 모습을 드러내 무릎 꿇고 앞으로는 공의 얼굴을 그린 것만 보아도 그 문에 들지 않겠다고 했다. 그래서 사람들이 처용의 얼굴을 문에 붙였다. 싸워서 이긴 것이 아니라 물러남으로써 이겼다는 점이 이 이야기의 핵심이고, 벽사의 힘이 폭력이 아니라 태도에서 나온다는 드문 사례다. 처용무는 궁중정재로 이어져 지금도 전한다. 처용을 아랍계 상인으로 보는 해석과 지방 호족의 인질로 보는 해석이 함께 있다.",
+   "traits": [
+    "처용가",
+    "역신",
+    "벽사",
+    "처용무",
+    "개운포"
+   ],
+   "art_hint": "a broad-shouldered man in a Korean court robe and a tall flower-crowned hat dancing slowly with both sleeves lifted before a paper-latticed door at night, his painted mask-like face calm, a shrinking shadowy figure kneeling at the threshold",
+   "art_anchors": [
+    "costume_male",
+    "architecture"
+   ],
+   "habitat": [
+    "해안",
+    "문간",
+    "궁중"
+   ],
+   "omens": {
+    "time": [
+     "night"
+    ],
+    "weather": [
+     "fog"
+    ],
+    "season": []
+   },
+   "sites": [
+    {
+     "name": "울산 처용암",
+     "sido": "울산",
+     "sigungu": "남구",
+     "lat": 35.464,
+     "lng": 129.343,
+     "precision": "dong",
+     "note": "개운포 앞바다의 바위. 처용이 나왔다고 전하는 자리다"
+    },
+    {
+     "name": "울주 망해사지",
+     "sido": "울산",
+     "sigungu": "울주군",
+     "lat": 35.5133,
+     "lng": 129.2461,
+     "precision": "dong",
+     "note": "헌강왕이 동해 용을 위해 세웠다는 절터"
+    }
+   ],
+   "sources": [
+    {
+     "type": "classic",
+     "title": "삼국유사",
+     "ref": "기이 처용랑 망해사"
+    },
+    {
+     "type": "encyclopedia",
+     "title": "한국민족문화대백과사전",
+     "ref": "처용설화"
+    },
+    {
+     "type": "heritage",
+     "title": "처용무",
+     "ref": "국가무형유산"
+    }
+   ],
+   "verification": "primary_text",
+   "confidence": "high",
+   "related": [
+    "kr-yeoksin",
+    "kr-yongwang",
+    "kr-jeung",
+    "kr-haeryong"
+   ],
+   "updated_at": "2026-09-12",
+   "sensitivity": null,
+   "art": {
+    "status": "pending",
+    "direction": "minhwa-v1",
+    "file": null,
+    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
+   }
+  },
+  {
    "id": "kr-cheuksin",
    "canonical": "측신",
    "aliases": [
@@ -1174,6 +1587,164 @@
     "file": "/img/yokai/cheuksin.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "448edd14-0a43-4665-a05a-31a93c832c09"
+   }
+  },
+  {
+   "id": "kr-chilseong",
+   "canonical": "칠성신",
+   "aliases": [
+    "칠성님",
+    "북두칠성신",
+    "七星"
+   ],
+   "names": {
+    "en": "Chilseong",
+    "roman": "chilseongsin"
+   },
+   "category": "foreign",
+   "rarity": "common",
+   "distribution": "nationwide",
+   "summary": "북두칠성을 모시는 믿음. 수명과 자손을 맡는다고 보아 장독대와 절 뒤편에서 함께 빌었다.",
+   "body": "도교의 북두 신앙이 들어와 무속과 불교에 각각 자리 잡았다. 민가에서는 장독대나 뒤뜰에 정화수를 떠 놓고 칠성님께 자손과 수명을 빌었고, 절에는 칠성각을 따로 두어 칠성탱화를 걸었다. 부처를 모신 절 안에 별을 모신 전각이 함께 있는 구조는 한국 불교 습합의 대표적인 모습이다. 무속에서는 「칠성풀이」를 구송해 일곱 아들의 내력을 풀고 아이를 점지하고 지켜 준다고 보았다. 삼신할머니가 낳는 일을 맡는다면 칠성은 그 뒤의 수명을 맡는다는 식으로 역할이 갈리며, 정화수 한 그릇으로 성립한다는 점에서 가장 값싸고 가장 널리 퍼진 신앙이었다.",
+   "traits": [
+    "정화수",
+    "칠성각",
+    "수명",
+    "칠성풀이"
+   ],
+   "art_hint": "a brass bowl of clear water set on a large glazed jar in a moonlit backyard, seven faint stars overhead, the edge of a tiled roof and a bare persimmon branch, no figure",
+   "art_anchors": [
+    "architecture",
+    "objects"
+   ],
+   "habitat": [
+    "장독대",
+    "칠성각",
+    "뒤뜰"
+   ],
+   "omens": {
+    "time": [
+     "night",
+     "midnight"
+    ],
+    "weather": [
+     "clear"
+    ],
+    "season": []
+   },
+   "sites": [],
+   "sources": [
+    {
+     "type": "encyclopedia",
+     "title": "한국민속대백과사전",
+     "ref": "칠성신앙"
+    },
+    {
+     "type": "encyclopedia",
+     "title": "한국민족문화대백과사전",
+     "ref": "칠성각"
+    }
+   ],
+   "verification": "public_encyclopedia",
+   "confidence": "high",
+   "related": [
+    "kr-samsin",
+    "kr-samseung-halmang",
+    "kr-cheollyung"
+   ],
+   "sensitivity": {
+    "kind": "living_faith",
+    "note": "지금도 절과 가정에서 이어지는 신앙이다."
+   },
+   "updated_at": "2026-09-12",
+   "art": {
+    "status": "pending",
+    "direction": "minhwa-v1",
+    "file": null,
+    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
+   }
+  },
+  {
+   "id": "kr-choeyeong",
+   "canonical": "최영 장군신",
+   "aliases": [
+    "최장군신",
+    "추자도 최영"
+   ],
+   "names": {
+    "en": "General Choe Yeong Spirit",
+    "roman": "choeyeong janggunsin"
+   },
+   "category": "village",
+   "rarity": "uncommon",
+   "distribution": "regional",
+   "summary": "고려 말 장수 최영을 마을과 뱃길의 수호신으로 모신 신격. 제주 추자도와 서해안 일대에 사당이 있다.",
+   "body": "억울하게 죽은 장수는 힘센 신이 된다는 관념에 따라, 최영은 임경업과 함께 무속에서 가장 널리 모셔지는 장군신이 되었다. 제주 추자도 대서리에는 최영 사당이 있는데, 탐라를 치러 가는 길에 추자도에 머물며 주민에게 그물 짜는 법을 가르쳤다는 이야기가 함께 전한다. 서해안 어촌과 서울·경기의 부군당·군웅당에도 최영을 모신 곳이 많다. 바다와 국경을 지키던 장수를 뱃길과 마을 어귀에 세운다는 배치는, 임경업이 연평도 조기잡이의 신이 된 것과 같은 논리다. 살아서 지키지 못한 자리를 죽어서 지키게 한다는 셈이다.",
+   "traits": [
+    "장군신",
+    "사당",
+    "뱃길",
+    "그물 짜기"
+   ],
+   "art_hint": "a painted shrine portrait of a stern general in Korean lamellar armour and a red official robe holding a straight sword upright, hung on the plank wall of a small tile-roofed island shrine, offerings of rice and dried fish set on the floor before it",
+   "art_anchors": [
+    "costume_male",
+    "architecture",
+    "objects"
+   ],
+   "habitat": [
+    "사당",
+    "섬",
+    "포구"
+   ],
+   "omens": {
+    "time": [],
+    "weather": [
+     "wind",
+     "storm"
+    ],
+    "season": []
+   },
+   "sites": [
+    {
+     "name": "추자도 최영 장군 사당",
+     "sido": "제주",
+     "sigungu": "제주시",
+     "lat": 33.949,
+     "lng": 126.3005,
+     "precision": "dong",
+     "note": "추자면 대서리. 그물 짜는 법을 가르쳤다는 전승과 함께 제를 올린다"
+    }
+   ],
+   "sources": [
+    {
+     "type": "encyclopedia",
+     "title": "한국민속대백과사전",
+     "ref": "최영 장군신"
+    },
+    {
+     "type": "encyclopedia",
+     "title": "한국민족문화대백과사전",
+     "ref": "추자도 최영 사당"
+    }
+   ],
+   "verification": "public_encyclopedia",
+   "confidence": "medium",
+   "related": [
+    "kr-imgyeongeop",
+    "kr-seonang",
+    "kr-dangsan-halmeoni"
+   ],
+   "sensitivity": {
+    "kind": "living_faith",
+    "note": "지금도 제가 이어지는 사당이다."
+   },
+   "updated_at": "2026-09-12",
+   "art": {
+    "status": "pending",
+    "direction": "minhwa-v1",
+    "file": null,
+    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
    }
   },
   {
@@ -2768,6 +3339,78 @@
    }
   },
   {
+   "id": "kr-geumcheok",
+   "canonical": "금척",
+   "aliases": [
+    "몽금척",
+    "금자",
+    "金尺"
+   ],
+   "names": {
+    "en": "Geumcheok",
+    "roman": "geumcheok"
+   },
+   "category": "artifact",
+   "rarity": "legendary",
+   "distribution": "nationwide",
+   "summary": "하늘이 이성계의 꿈에 내렸다는 금 자(尺). 사람을 재어 살리고 나라를 재어 세운다는 물건이다.",
+   "body": "조선 건국 서사에서 이성계가 아직 왕이 아니던 시절 신인이 나타나 금척을 주며 이것으로 나라를 바로잡으라 했다고 한다. 『태조실록』과 『용비어천가』에 실렸고, 이를 소재로 한 궁중정재 「몽금척」이 만들어져 조선 내내 연행되었다. 자는 재는 물건이므로 무력이 아니라 척도로 왕조를 세웠다는 정당화 장치다. 죽은 사람을 재면 살아나고 병든 사람을 재면 낫는다는 신이한 기능도 함께 전한다. 대한제국기에는 금척대훈장의 이름으로 다시 쓰였다. 도깨비방망이가 민간의 요술 도구라면 금척은 왕조의 요술 도구인 셈이고, 둘 다 원하는 것이 나온다는 점은 같으나 나오는 것이 재물이냐 정통성이냐가 다르다.",
+   "traits": [
+    "건국",
+    "꿈",
+    "몽금척",
+    "재어 살림"
+   ],
+   "art_hint": "a long slender golden measuring rod lying on a spread of deep indigo silk on a low lacquered table, faint engraved graduations along its length, a dark palace interior with one paper lantern, no figure",
+   "art_anchors": [
+    "objects",
+    "architecture"
+   ],
+   "habitat": [
+    "궁중",
+    "꿈"
+   ],
+   "omens": {
+    "time": [
+     "night"
+    ],
+    "weather": [],
+    "season": []
+   },
+   "sites": [],
+   "sources": [
+    {
+     "type": "classic",
+     "title": "태조실록",
+     "ref": "금척 수수 기사"
+    },
+    {
+     "type": "classic",
+     "title": "용비어천가",
+     "ref": "금척 관련 장"
+    },
+    {
+     "type": "encyclopedia",
+     "title": "한국민족문화대백과사전",
+     "ref": "몽금척"
+    }
+   ],
+   "verification": "primary_text",
+   "confidence": "high",
+   "related": [
+    "kr-dokkaebi-bangmangi",
+    "kr-manpasikjeok"
+   ],
+   "updated_at": "2026-09-12",
+   "sensitivity": null,
+   "art": {
+    "status": "pending",
+    "direction": "minhwa-v1",
+    "file": null,
+    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
+   }
+  },
+  {
    "id": "kr-geumdwaeji",
    "canonical": "금돼지",
    "aliases": [
@@ -2836,6 +3479,82 @@
    }
   },
   {
+   "id": "kr-geumgang-yeoksa",
+   "canonical": "금강역사",
+   "aliases": [
+    "인왕",
+    "나라연금강",
+    "金剛力士"
+   ],
+   "names": {
+    "en": "Geumgang Yeoksa",
+    "roman": "geumgang yeoksa"
+   },
+   "category": "foreign",
+   "rarity": "uncommon",
+   "distribution": "nationwide",
+   "summary": "절 문 양쪽에서 맨주먹을 쥐고 선 두 역사. 하나는 입을 벌리고 하나는 다문 채 잡것을 막는다.",
+   "body": "불법을 지키는 수호신으로 절의 금강문 좌우에 선다. 입을 벌린 아금강역사와 다문 훔금강역사가 짝을 이루며, 시작과 끝을 함께 막는다는 뜻으로 풀이된다. 석굴암 입구의 금강역사상은 근육의 긴장과 옷자락의 흐름이 뚜렷해 통일신라 조각의 대표작으로 꼽힌다. 사천왕이 갑옷을 입고 무기를 든 무장 신이라면 금강역사는 웃통을 드러내고 맨주먹을 쥔 역사라, 같은 문지기라도 결이 다르다. 인도에서 중국을 거쳐 들어온 도상이지만 한국에서는 금강문이라는 독립된 문으로 자리 잡아 배치 자체가 달라졌고, 그래서 절에 들어서는 사람은 문을 두 번 지나며 두 번 검문받는다.",
+   "traits": [
+    "금강문",
+    "아·훔",
+    "맨주먹",
+    "석굴암"
+   ],
+   "art_hint": "two bare-chested muscular guardian figures in flowing skirts standing on either side of a temple gate passage, one mouth open one closed, fists clenched, carved grey stone texture, a mountain temple courtyard visible through the opening",
+   "art_anchors": [
+    "architecture"
+   ],
+   "habitat": [
+    "금강문",
+    "석굴암",
+    "산사"
+   ],
+   "omens": {
+    "time": [],
+    "weather": [],
+    "season": []
+   },
+   "sites": [
+    {
+     "name": "경주 석굴암",
+     "sido": "경북",
+     "sigungu": "경주시",
+     "lat": 35.795,
+     "lng": 129.3494,
+     "precision": "dong",
+     "note": "입구 좌우의 금강역사상이 남아 있다"
+    }
+   ],
+   "sources": [
+    {
+     "type": "heritage",
+     "title": "경주 석굴암 석굴",
+     "ref": "국보"
+    },
+    {
+     "type": "encyclopedia",
+     "title": "한국민족문화대백과사전",
+     "ref": "금강역사"
+    }
+   ],
+   "verification": "public_encyclopedia",
+   "confidence": "high",
+   "related": [
+    "kr-sacheonwang",
+    "kr-nachal",
+    "kr-yacha"
+   ],
+   "updated_at": "2026-09-12",
+   "sensitivity": null,
+   "art": {
+    "status": "pending",
+    "direction": "minhwa-v1",
+    "file": null,
+    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
+   }
+  },
+  {
    "id": "kr-geuseundae",
    "canonical": "그슨대",
    "aliases": [
@@ -2890,6 +3609,174 @@
     "file": "/img/yokai/geuseundae.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "e810bb89-2d13-4049-abac-bbbd20c88907"
+   }
+  },
+  {
+   "id": "kr-gimnyeong-daesa",
+   "canonical": "김녕사굴 대사",
+   "aliases": [
+    "김녕굴 큰뱀",
+    "사굴 대사",
+    "大蛇"
+   ],
+   "names": {
+    "en": "The Great Serpent of Gimnyeong Cave",
+    "roman": "gimnyeong sagul daesa"
+   },
+   "category": "animal",
+   "rarity": "rare",
+   "distribution": "local",
+   "summary": "제주 김녕굴에 살며 해마다 처녀를 제물로 받았다는 큰 뱀. 판관 서련이 베었으나 그 자신도 살아 돌아오지 못했다.",
+   "body": "제주 구좌읍 김녕리의 용암동굴에 큰 뱀이 살아, 해마다 열다섯 살 처녀를 바쳐야 마을이 무사했다고 한다. 조선 중종 무렵 제주판관 서련이 부임해 군사를 이끌고 굴에 들어가 뱀을 베었는데, 돌아오는 길에 뒤를 돌아보지 말라는 말을 어기고 붉은 기운을 본 뒤 시름시름 앓다 죽었다는 결말이 붙는다. 뱀을 마을의 신으로 모시던 제주 사신(蛇神) 신앙과, 그것을 음사(淫祀)로 보아 없애려 한 조선 관인의 시각이 한 이야기 안에서 부딪친다. 퇴치자가 함께 죽는 결말은 어느 한쪽 손도 들어 주지 않은 흔적이다. 김녕굴은 만장굴과 이어지는 용암동굴로 지금도 그대로 있다.",
+   "traits": [
+    "용암동굴",
+    "처녀 제물",
+    "서련 판관",
+    "사신 신앙"
+   ],
+   "art_hint": "an enormous pale serpent coiled in the mouth of a black lava tube, its head raised level with a torch held by soldiers in Korean lamellar armour at the entrance, rough volcanic stone walls, a white-clad girl standing apart in the dark",
+   "art_anchors": [
+    "landscape",
+    "costume_male"
+   ],
+   "habitat": [
+    "용암동굴",
+    "해안 마을"
+   ],
+   "omens": {
+    "time": [
+     "night"
+    ],
+    "weather": [],
+    "season": [
+     "spring"
+    ]
+   },
+   "sites": [
+    {
+     "name": "제주 김녕굴",
+     "sido": "제주",
+     "sigungu": "제주시",
+     "lat": 33.5285,
+     "lng": 126.793,
+     "precision": "dong",
+     "note": "구좌읍 김녕리의 용암동굴. 만장굴과 한 계열이다"
+    }
+   ],
+   "sources": [
+    {
+     "type": "encyclopedia",
+     "title": "한국민족문화대백과사전",
+     "ref": "김녕사굴 설화"
+    },
+    {
+     "type": "field",
+     "title": "한국구비문학대계",
+     "ref": "서련 판관과 큰뱀(제주)"
+    }
+   ],
+   "verification": "public_encyclopedia",
+   "confidence": "medium",
+   "related": [
+    "kr-baeksa",
+    "kr-imugi",
+    "kr-baekjutto"
+   ],
+   "sensitivity": {
+    "kind": "living_faith",
+    "note": "제주 뱀 신앙은 일부 마을에서 지금도 이어진다. 퇴치담만 떼어 내 '미신 타파' 서사로 읽지 않는다."
+   },
+   "updated_at": "2026-09-12",
+   "art": {
+    "status": "pending",
+    "direction": "minhwa-v1",
+    "file": null,
+    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
+   }
+  },
+  {
+   "id": "kr-godang-halmi",
+   "canonical": "고당할미",
+   "aliases": [
+    "고모할미",
+    "금정산 산신할매"
+   ],
+   "names": {
+    "en": "Godang Halmi",
+    "roman": "godang halmi"
+   },
+   "category": "mountain",
+   "rarity": "uncommon",
+   "distribution": "local",
+   "summary": "부산 금정산 고당봉을 지키는 할미 산신. 산성과 절을 함께 돌본다고 전한다.",
+   "body": "금정산에서 가장 높은 봉우리인 고당봉 아래 고모당(姑母堂)에 모신다. 절에 의탁해 살던 박씨 노파가 죽으며 자신을 산 위에 모셔 주면 산과 절을 지키겠다고 했고, 그 뒤로 당을 세우고 해마다 제를 올렸다는 이야기가 이어진다. 금정산성과 범어사를 함께 지키는 신으로 여겨져 축성·보수와 얽힌 채록이 많다. 지리산 성모천왕, 태백산신처럼 큰 산의 주인을 할미로 두는 한국 산악신앙의 한 갈래이며, 도시 한복판의 산에서 그 형태가 지금까지 이어진다는 점이 드물다. 고당제는 오늘도 열린다.",
+   "traits": [
+    "고당봉",
+    "고모당",
+    "금정산성",
+    "할미 산신"
+   ],
+   "art_hint": "an old woman in white hemp jeogori and a dark skirt seated calmly on a granite outcrop at a mountain summit at dawn, a small tile-roofed shrine behind her among boulders, sea haze filling the valleys below",
+   "art_anchors": [
+    "costume_female",
+    "landscape",
+    "architecture"
+   ],
+   "habitat": [
+    "금정산",
+    "고당봉",
+    "산성"
+   ],
+   "omens": {
+    "time": [
+     "dawn"
+    ],
+    "weather": [
+     "fog"
+    ],
+    "season": []
+   },
+   "sites": [
+    {
+     "name": "부산 금정산 고당봉",
+     "sido": "부산",
+     "sigungu": "금정구",
+     "lat": 35.2769,
+     "lng": 129.0503,
+     "precision": "dong",
+     "note": "봉우리 아래 고모당에서 해마다 고당제를 올린다"
+    }
+   ],
+   "sources": [
+    {
+     "type": "encyclopedia",
+     "title": "한국민속대백과사전",
+     "ref": "고당제"
+    },
+    {
+     "type": "encyclopedia",
+     "title": "한국민족문화대백과사전",
+     "ref": "금정산"
+    }
+   ],
+   "verification": "public_encyclopedia",
+   "confidence": "medium",
+   "related": [
+    "kr-sansillyeong",
+    "kr-seongmo-cheonwang",
+    "kr-taebaek-sansin",
+    "kr-magohalmi"
+   ],
+   "sensitivity": {
+    "kind": "living_faith",
+    "note": "고당제가 지금도 이어진다. 관광 소재로만 다루지 않는다."
+   },
+   "updated_at": "2026-09-12",
+   "art": {
+    "status": "pending",
+    "direction": "minhwa-v1",
+    "file": null,
+    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
    }
   },
   {
@@ -3315,6 +4202,81 @@
    }
   },
   {
+   "id": "kr-habaek",
+   "canonical": "하백",
+   "aliases": [
+    "수신 하백",
+    "河伯"
+   ],
+   "names": {
+    "en": "Habaek",
+    "zh": "河伯",
+    "roman": "habaek"
+   },
+   "category": "water",
+   "rarity": "legendary",
+   "distribution": "nationwide",
+   "summary": "강의 신. 유화의 아버지이자 주몽의 외조부로, 사위를 시험하며 잉어·사슴·꿩으로 모습을 바꿔 겨루었다.",
+   "body": "『삼국사기』와 이규보의 「동명왕편」에 나온다. 천제의 아들 해모수가 하백의 딸 유화를 취하자 하백이 노해 술법으로 겨루자 했고, 하백이 잉어가 되면 해모수는 수달이, 하백이 사슴이 되면 해모수는 승냥이가, 하백이 꿩이 되면 해모수는 매가 되어 잡았다. 물의 신이 변신으로 겨룬다는 설정과 결국 사위를 인정하고 딸을 보낸다는 결말이, 뒤에 오는 용왕·수신 전승의 밑그림이 된다. 유화는 쫓겨나 우발수에서 금와왕에게 거두어지고 거기서 주몽이 태어나므로, 하백은 건국 서사의 물줄기를 여는 자리에 놓인다.",
+   "traits": [
+    "변신 겨루기",
+    "유화",
+    "동명왕편",
+    "큰 강"
+   ],
+   "art_hint": "a stern bearded river god in a dark water-blue Korean robe rising waist-deep from a broad river at dusk, one hand raised, a great carp turning in the current beside him, reed banks and low mountains behind",
+   "art_anchors": [
+    "costume_male",
+    "landscape"
+   ],
+   "habitat": [
+    "큰 강",
+    "물속 궁"
+   ],
+   "omens": {
+    "time": [
+     "dusk"
+    ],
+    "weather": [
+     "rain"
+    ],
+    "season": []
+   },
+   "sites": [],
+   "sources": [
+    {
+     "type": "classic",
+     "title": "삼국사기",
+     "ref": "고구려본기 시조 동명성왕"
+    },
+    {
+     "type": "classic",
+     "title": "동국이상국집",
+     "ref": "동명왕편"
+    },
+    {
+     "type": "encyclopedia",
+     "title": "한국민족문화대백과사전",
+     "ref": "하백"
+    }
+   ],
+   "verification": "primary_text",
+   "confidence": "high",
+   "related": [
+    "kr-yongwang",
+    "kr-yongma",
+    "kr-haeryong"
+   ],
+   "updated_at": "2026-09-12",
+   "sensitivity": null,
+   "art": {
+    "status": "pending",
+    "direction": "minhwa-v1",
+    "file": null,
+    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
+   }
+  },
+  {
    "id": "kr-haerang",
    "canonical": "해랑신",
    "aliases": [
@@ -3525,6 +4487,148 @@
    }
   },
   {
+   "id": "kr-hakgyo-gyedan",
+   "canonical": "학교 계단 괴담",
+   "aliases": [
+    "여우계단",
+    "하나 더 생기는 계단"
+   ],
+   "names": {
+    "en": "The School Stairs",
+    "roman": "hakgyo gyedan goedam"
+   },
+   "category": "modern",
+   "rarity": "common",
+   "distribution": "nationwide",
+   "summary": "계단을 세면서 오르면 한 칸이 더 생긴다. 그 칸에서 빈 소원은 이루어지지만 값을 치러야 한다.",
+   "body": "학교 계단을 오르며 수를 세면 평소보다 한 칸이 많아지고, 그 자리에서 소원을 빌면 이루어진다는 이야기다. 대신 얻은 만큼 다른 것을 잃는다는 조건이 반드시 붙고, 계단 수가 스물여덟이라는 식으로 학교마다 숫자가 달라진다. 1990년대 이후 학교 괴담집과 인터넷 게시판을 통해 전국으로 퍼졌고, 2003년 영화 「여우계단」이 이 화소를 제목으로 쓰면서 그 이름이 굳었다. 화장실 귀신과 함께 학교라는 공간이 만들어 낸 현대 괴담의 대표 유형이며, 정해진 수를 세는 행위가 규칙을 만들고 그 규칙을 어기면 값을 치른다는 구조는 옛 금기담과 그대로 겹친다. 무대만 바뀌었을 뿐이다.",
+   "traits": [
+    "계단 세기",
+    "소원",
+    "대가",
+    "학교"
+   ],
+   "art_hint": "an empty concrete school stairwell at dusk seen from the bottom, worn steps rising into shadow, one step faintly out of alignment with the rest, a single fluorescent tube flickering, no figure",
+   "habitat": [
+    "학교 계단",
+    "별관"
+   ],
+   "omens": {
+    "time": [
+     "dusk",
+     "night"
+    ],
+    "weather": [],
+    "season": []
+   },
+   "sites": [],
+   "sources": [
+    {
+     "type": "modern",
+     "title": "학교 괴담 온라인 유통",
+     "ref": "1990년대 후반 이후 게시판·괴담집"
+    },
+    {
+     "type": "modern",
+     "title": "영화 「여우계단」",
+     "ref": "2003년 — 화소가 이 이름으로 굳는 계기"
+    }
+   ],
+   "verification": "modern_online",
+   "confidence": "medium",
+   "related": [
+    "kr-hwajangsil-gwisin",
+    "kr-kongkong-gwisin",
+    "kr-samjaesin"
+   ],
+   "updated_at": "2026-09-12",
+   "sensitivity": null,
+   "art": {
+    "status": "pending",
+    "direction": "minhwa-v1",
+    "file": null,
+    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
+   }
+  },
+  {
+   "id": "kr-hallakgungi",
+   "canonical": "할락궁이",
+   "aliases": [
+    "신산만산 할락궁이",
+    "이공본풀이 아들"
+   ],
+   "names": {
+    "en": "Hallakgungi",
+    "roman": "hallakgungi"
+   },
+   "category": "jeju",
+   "rarity": "rare",
+   "distribution": "local",
+   "summary": "종살이하던 어머니를 잃고 서천꽃밭을 찾아가 환생꽃을 얻어 온 아들. 꽃을 맡은 신이 되었다.",
+   "body": "제주 「이공본풀이」의 주인공이다. 아버지가 서천꽃밭 꽃감관으로 불려 간 사이 어머니는 자현장자의 집에 종으로 붙잡혀 학대받다 죽어 뼈만 남는다. 할락궁이는 메밀범벅을 싸 들고 달아나 개를 따돌리고 물길을 건너 서천꽃밭에 이르러 아버지를 만나고, 뼈살이꽃·살살이꽃·환생꽃을 얻어 돌아와 어머니를 되살린다. 자현장자에게는 웃음웃을꽃과 싸움싸울꽃을 써서 갚는다. 꽃으로 죽이고 꽃으로 살리는 서천꽃밭의 논리가 가장 또렷하게 드러나는 본풀이이며, 할락궁이는 뒤에 꽃감관을 잇는다. 되살리는 꽃과 해치는 꽃이 같은 밭에서 난다는 설정이 이 신화의 핵심이다.",
+   "traits": [
+    "서천꽃밭",
+    "환생꽃",
+    "메밀범벅",
+    "꽃감관"
+   ],
+   "art_hint": "a young man in coarse hemp clothes kneeling at the edge of a vast flower field under a pale sky, gathering three kinds of blossom into the fold of his jacket, a low stone gate behind him, black volcanic soil at the field's edge",
+   "art_anchors": [
+    "costume_male",
+    "landscape"
+   ],
+   "habitat": [
+    "서천꽃밭",
+    "종살이 집"
+   ],
+   "omens": {
+    "time": [
+     "day"
+    ],
+    "weather": [],
+    "season": [
+     "spring"
+    ]
+   },
+   "sites": [
+    {
+     "name": "제주 이공본풀이 전승권",
+     "sido": "제주",
+     "lat": 33.4996,
+     "lng": 126.5312,
+     "precision": "sido",
+     "note": "이공본풀이는 제주 큰굿에서 구송된다"
+    }
+   ],
+   "sources": [
+    {
+     "type": "field",
+     "title": "제주 이공본풀이",
+     "ref": "큰굿 구송 자료"
+    },
+    {
+     "type": "encyclopedia",
+     "title": "한국민속대백과사전",
+     "ref": "이공본풀이"
+    }
+   ],
+   "verification": "field_record",
+   "confidence": "high",
+   "related": [
+    "kr-gameunjang",
+    "kr-gangnim",
+    "kr-samseung-halmang"
+   ],
+   "updated_at": "2026-09-12",
+   "sensitivity": null,
+   "art": {
+    "status": "pending",
+    "direction": "minhwa-v1",
+    "file": null,
+    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
+   }
+  },
+  {
    "id": "kr-hoeorib",
    "canonical": "도깨비바람",
    "aliases": [
@@ -3702,6 +4806,91 @@
    }
   },
   {
+   "id": "kr-hosikchong",
+   "canonical": "호식총",
+   "aliases": [
+    "호식장",
+    "虎食塚"
+   ],
+   "names": {
+    "en": "Hosikchong",
+    "roman": "hosikchong"
+   },
+   "category": "mountain",
+   "rarity": "uncommon",
+   "distribution": "regional",
+   "summary": "호랑이에게 물려 죽은 이를 태운 자리에 시루를 엎고 쇠꼬챙이를 꽂은 무덤. 창귀가 나오지 못하게 막는 장치다.",
+   "body": "강원 태백·삼척과 경북 북부 산간에 실제로 남아 있는 무덤 형식이다. 호환을 당한 이는 창귀가 되어 다른 사람을 호랑이에게 끌어간다고 보아, 죽은 자리에서 화장한 뒤 돌을 쌓고 그 위에 시루를 엎고 시루 구멍에 쇠꼬챙이를 꽂았다. 시루 구멍은 빠져나갈 길이면서 동시에 꼬챙이에 막히는 길이고, 쇠는 잡귀를 누르는 물건이다. 죽은 이를 벌하려는 것이 아니라 산 사람을 지키려는 조치였으므로 무덤이되 봉분을 쓰지 않는다. 호랑이가 사라진 뒤에도 돌무지와 깨진 시루가 산길에 남아 민속 조사의 대상이 되었다.",
+   "traits": [
+    "시루",
+    "쇠꼬챙이",
+    "화장",
+    "창귀 봉인"
+   ],
+   "art_hint": "a low cairn of grey stones on a steep forested mountain path with an upturned earthenware steamer set on top and an iron spike driven through its hole, fallen leaves banked against the stones, no figure, cold blue mountain light",
+   "art_anchors": [
+    "landscape"
+   ],
+   "habitat": [
+    "산길",
+    "고갯마루",
+    "화전 마을 뒤"
+   ],
+   "omens": {
+    "time": [
+     "dusk"
+    ],
+    "weather": [
+     "fog",
+     "cold"
+    ],
+    "season": [
+     "winter"
+    ]
+   },
+   "sites": [
+    {
+     "name": "태백 산간 호식총 분포지",
+     "sido": "강원",
+     "sigungu": "태백시",
+     "lat": 37.164,
+     "lng": 128.9856,
+     "precision": "sigungu",
+     "note": "태백·삼척 일대 산길에 돌무지와 시루가 남아 조사되었다"
+    }
+   ],
+   "sources": [
+    {
+     "type": "encyclopedia",
+     "title": "한국민속대백과사전",
+     "ref": "호식총"
+    },
+    {
+     "type": "field",
+     "title": "한국구비문학대계",
+     "ref": "호환과 창귀(강원 산간)"
+    }
+   ],
+   "verification": "field_record",
+   "confidence": "medium",
+   "related": [
+    "kr-changgwi",
+    "kr-sangun",
+    "kr-sansillyeong"
+   ],
+   "sensitivity": {
+    "kind": "tragedy_linked",
+    "note": "실제 호환 희생자의 무덤 형식이다. 개별 위치를 특정하거나 방문을 권하지 않는다."
+   },
+   "updated_at": "2026-09-12",
+   "art": {
+    "status": "pending",
+    "direction": "minhwa-v1",
+    "file": null,
+    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
+   }
+  },
+  {
    "id": "kr-hwagwang",
    "canonical": "화광",
    "aliases": [
@@ -3814,6 +5003,72 @@
     "file": "/img/yokai/hwajangsil-gwisin.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "b2d8caf3-6938-40e6-9b23-288111a96cc9"
+   }
+  },
+  {
+   "id": "kr-hwasubun",
+   "canonical": "화수분",
+   "aliases": [
+    "하수분",
+    "복항아리"
+   ],
+   "names": {
+    "en": "Hwasubun",
+    "roman": "hwasubun"
+   },
+   "category": "artifact",
+   "rarity": "uncommon",
+   "distribution": "nationwide",
+   "summary": "넣어 둔 것이 아무리 써도 줄지 않는 그릇. 얻는 과정보다 잃는 과정이 더 길게 전해진다.",
+   "body": "쌀이든 돈이든 한 번 넣으면 퍼내도 퍼내도 그대로인 그릇이다. 도깨비에게 얻거나 산에서 주웠다는 식으로 손에 들어오지만, 욕심을 내어 통째로 쏟아 보거나 남에게 자랑하는 순간 효력이 사라진다는 결말이 거의 빠지지 않는다. 화수분이라는 말 자체가 끝없이 나오는 것을 뜻하는 일상어로 굳었고, 어원을 하수분(河水盆)으로 보는 설이 있으나 확정되지 않았다. 도깨비방망이가 두드려 얻는 물건이라면 화수분은 지키는 물건이라, 두 이야기의 교훈이 정확히 반대 방향을 가리킨다. 얻는 법을 가르치는 이야기보다 잃는 법을 가르치는 이야기가 더 오래 살아남은 셈이다.",
+   "traits": [
+    "줄지 않는 그릇",
+    "금기",
+    "욕심",
+    "일상어"
+   ],
+   "art_hint": "a plain grey earthenware jar on a packed-earth floor overflowing steadily with white rice that heaps around its base, a wooden scoop fallen nearby, a dim storeroom, no figure",
+   "art_anchors": [
+    "objects",
+    "architecture"
+   ],
+   "habitat": [
+    "고방",
+    "부엌",
+    "장독대"
+   ],
+   "omens": {
+    "time": [],
+    "weather": [],
+    "season": []
+   },
+   "sites": [],
+   "sources": [
+    {
+     "type": "encyclopedia",
+     "title": "한국민속대백과사전",
+     "ref": "화수분"
+    },
+    {
+     "type": "field",
+     "title": "한국구비문학대계",
+     "ref": "화수분 설화군"
+    }
+   ],
+   "verification": "public_encyclopedia",
+   "confidence": "medium",
+   "related": [
+    "kr-dokkaebi-bangmangi",
+    "kr-eop",
+    "kr-dokkaebi"
+   ],
+   "updated_at": "2026-09-12",
+   "sensitivity": null,
+   "art": {
+    "status": "pending",
+    "direction": "minhwa-v1",
+    "file": null,
+    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
    }
   },
   {
@@ -3980,6 +5235,87 @@
    }
   },
   {
+   "id": "kr-ineo",
+   "canonical": "인어",
+   "aliases": [
+    "교인",
+    "人魚"
+   ],
+   "names": {
+    "en": "Ineo",
+    "ja": "人魚",
+    "roman": "ineo"
+   },
+   "category": "water",
+   "rarity": "rare",
+   "distribution": "regional",
+   "summary": "동해와 남해에서 잡혔다는 사람 모습의 물짐승. 놓아주면 은혜를 갚고 죽이면 탈이 난다고 했다.",
+   "body": "유몽인의 『어우야담』에 강원도 간성, 지금의 고성 바닷가에서 어부가 인어 여럿을 잡은 이야기가 실린다. 네 살배기 아이만 하고 살결이 희며 눈동자가 검고, 사람처럼 울어 어부가 놓아주자 물속으로 들어가며 돌아보았다고 했다. 다른 기록에는 인어 기름으로 켠 등이 오래간다는 말과, 잡아 죽인 배가 풍랑을 만났다는 말이 함께 전한다. 서구 전승의 반인반어가 유혹하는 존재인 것과 달리 한국 기록의 인어는 어리고 말이 없으며 해치지 않는다. 사람이 시험받는 쪽이라는 점이 다르다. 남해 거문도에서는 신지끼라는 이름으로 따로 전한다.",
+   "traits": [
+    "어우야담",
+    "방생",
+    "울음",
+    "풍랑"
+   ],
+   "art_hint": "a small pale child-like sea creature with smooth skin and dark eyes caught in a fisherman's net on a wet rocky shore at dawn, the fisherman in coarse hemp clothes hesitating with the net half open, grey sea and a pine-covered headland behind",
+   "art_anchors": [
+    "costume_male",
+    "landscape"
+   ],
+   "habitat": [
+    "동해안",
+    "갯바위",
+    "그물"
+   ],
+   "omens": {
+    "time": [
+     "dawn"
+    ],
+    "weather": [
+     "fog"
+    ],
+    "season": []
+   },
+   "sites": [
+    {
+     "name": "고성 간성 해안",
+     "sido": "강원",
+     "sigungu": "고성군",
+     "lat": 38.3806,
+     "lng": 128.4675,
+     "precision": "sigungu",
+     "note": "『어우야담』이 인어를 잡았다고 적은 간성 바닷가"
+    }
+   ],
+   "sources": [
+    {
+     "type": "classic",
+     "title": "어우야담",
+     "ref": "간성 어부와 인어"
+    },
+    {
+     "type": "encyclopedia",
+     "title": "한국민속대백과사전",
+     "ref": "인어"
+    }
+   ],
+   "verification": "primary_text",
+   "confidence": "high",
+   "related": [
+    "kr-sinjikki",
+    "kr-yongwang",
+    "kr-haerang"
+   ],
+   "updated_at": "2026-09-12",
+   "sensitivity": null,
+   "art": {
+    "status": "pending",
+    "direction": "minhwa-v1",
+    "file": null,
+    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
+   }
+  },
+  {
    "id": "kr-jacheongbi",
    "canonical": "자청비",
    "aliases": [
@@ -4055,6 +5391,145 @@
     "file": "/img/yokai/jacheongbi.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "af412bce-e49e-459b-b248-e254c7078496"
+   }
+  },
+  {
+   "id": "kr-jamyeonggo",
+   "canonical": "자명고",
+   "aliases": [
+    "자명고각",
+    "스스로 우는 북",
+    "自鳴鼓"
+   ],
+   "names": {
+    "en": "Jamyeonggo",
+    "roman": "jamyeonggo"
+   },
+   "category": "artifact",
+   "rarity": "legendary",
+   "distribution": "nationwide",
+   "summary": "적이 쳐들어오면 저절로 우는 북. 낙랑공주가 찢어 나라가 무너졌다.",
+   "body": "『삼국사기』 고구려본기에 실린다. 낙랑에는 적병이 오면 저절로 울리는 북과 뿔피리가 있어 침입을 막았는데, 고구려 왕자 호동이 낙랑왕의 딸과 혼인한 뒤 그것을 부수면 맞이하겠다고 청했다. 공주가 무기고에 들어가 북을 찢고 뿔피리를 부수자 고구려군이 들이닥쳤고, 낙랑왕은 딸을 죽인 뒤 항복했다. 호동도 뒤에 계모의 모함으로 스스로 목숨을 끊는다. 경보 장치를 사랑이 무력화한다는 구조라, 물건이 사실상 주인공인 몇 안 되는 고대 기록이다. 만파식적이 소리로 지키는 물건이라면 자명고는 소리로 알리는 물건이고, 둘 다 소리가 끊기는 순간 나라가 위태로워진다.",
+   "traits": [
+    "경보",
+    "낙랑",
+    "호동",
+    "찢김"
+   ],
+   "art_hint": "a large war drum on a wooden stand inside a dim armoury, its hide split open in a long tear, a curved horn trumpet snapped beside it, spears racked along the wall, cold dawn light through a doorway",
+   "art_anchors": [
+    "architecture"
+   ],
+   "habitat": [
+    "무기고",
+    "성"
+   ],
+   "omens": {
+    "time": [
+     "dawn"
+    ],
+    "weather": [],
+    "season": []
+   },
+   "sites": [],
+   "sources": [
+    {
+     "type": "classic",
+     "title": "삼국사기",
+     "ref": "고구려본기 대무신왕"
+    },
+    {
+     "type": "encyclopedia",
+     "title": "한국민족문화대백과사전",
+     "ref": "호동왕자 설화"
+    }
+   ],
+   "verification": "primary_text",
+   "confidence": "high",
+   "related": [
+    "kr-geumcheok",
+    "kr-manpasikjeok"
+   ],
+   "updated_at": "2026-09-12",
+   "sensitivity": null,
+   "art": {
+    "status": "pending",
+    "direction": "minhwa-v1",
+    "file": null,
+    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
+   }
+  },
+  {
+   "id": "kr-janghwa-hongryeon",
+   "canonical": "장화홍련",
+   "aliases": [
+    "장화와 홍련",
+    "薔花紅蓮"
+   ],
+   "names": {
+    "en": "Janghwa and Hongryeon",
+    "roman": "janghwa hongryeon"
+   },
+   "category": "ghost",
+   "rarity": "uncommon",
+   "distribution": "nationwide",
+   "summary": "계모의 모함으로 죽은 자매의 원귀. 부임하는 수령마다 놀라 죽다가, 사연을 끝까지 들어 준 수령에게 억울함을 풀었다.",
+   "body": "고전소설 『장화홍련전』으로 널리 읽혔고, 평안도 철산을 배경으로 한 옥사 기록과 얽혀 전한다. 계모가 낙태한 것처럼 꾸며 맏딸 장화를 연못에 빠뜨려 죽이고, 동생 홍련도 뒤를 따른다. 자매의 원귀가 밤마다 관아에 나타나 부임하는 수령이 잇따라 놀라 죽는데, 한 수령이 달아나지 않고 사연을 끝까지 듣고 재판을 열어 계모를 벌하고 시신을 거두자 원귀가 사라진다. 한국 원귀담의 표준형이다. 해코지가 목적이 아니라 말을 들어 줄 사람을 찾는 것이고, 절차가 끝나면 물러난다. 아랑 설화와 뼈대가 같으며, 두 이야기 모두 원한을 푸는 주체가 무당이 아니라 관리라는 점에서 조선 후기 신원(伸冤) 관념을 그대로 보여 준다.",
+   "traits": [
+    "계모",
+    "연못",
+    "신원",
+    "부임 수령"
+   ],
+   "art_hint": "two young women in white mourning hanbok standing side by side in the dark doorway of a provincial magistrate's hall at night, water still dripping from their sleeves onto the wooden floor, a low desk and a guttering oil lamp before them",
+   "art_anchors": [
+    "costume_female",
+    "architecture"
+   ],
+   "habitat": [
+    "관아",
+    "연못",
+    "안방"
+   ],
+   "omens": {
+    "time": [
+     "midnight"
+    ],
+    "weather": [],
+    "season": []
+   },
+   "sites": [],
+   "sources": [
+    {
+     "type": "classic",
+     "title": "장화홍련전",
+     "ref": "철산 옥사 배경 서사"
+    },
+    {
+     "type": "encyclopedia",
+     "title": "한국민족문화대백과사전",
+     "ref": "장화홍련전"
+    },
+    {
+     "type": "field",
+     "title": "한국구비문학대계",
+     "ref": "장화홍련 설화군"
+    }
+   ],
+   "verification": "primary_text",
+   "confidence": "high",
+   "related": [
+    "kr-arang",
+    "kr-songaksi",
+    "kr-mujugohon"
+   ],
+   "updated_at": "2026-09-12",
+   "sensitivity": null,
+   "art": {
+    "status": "pending",
+    "direction": "minhwa-v1",
+    "file": null,
+    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
    }
   },
   {
@@ -4654,6 +6129,76 @@
    }
   },
   {
+   "id": "kr-jihaguk-daejeok",
+   "canonical": "지하국대적",
+   "aliases": [
+    "지하국 도적",
+    "아귀 괴물",
+    "地下國大賊"
+   ],
+   "names": {
+    "en": "The Great Brigand of the Underworld",
+    "roman": "jihaguk daejeok"
+   },
+   "category": "mountain",
+   "rarity": "rare",
+   "distribution": "nationwide",
+   "summary": "땅 밑 나라에 살며 여인을 채어 가는 거대한 괴물. 무사가 굴로 내려가 베고, 올라올 때 배신당한다.",
+   "body": "한국 구전설화에서 가장 널리 채록되는 퇴치담 유형 가운데 하나다. 괴물이 대낮에 사람을 채어 굴속 지하국으로 데려가고, 뒤를 쫓은 무사가 두레박이나 밧줄로 굴에 내려가 여인에게 얻은 꾀로 급소를 알아내 벤다. 올라올 때 함께 갔던 자들이 밧줄을 끊어 홀로 지하에 남았다가 다른 길로 돌아온다는 배신 화소가 자주 붙는다. 괴물의 이름은 지역마다 아귀·야광귀·금돼지 등으로 갈리고, 금돼지 설화도 이 유형의 한 갈래로 다뤄진다. 굴·밧줄·배신이라는 뼈대가 유라시아 여러 곳의 설화와 닮아 비교 연구가 많다. 진짜 위험이 괴물이 아니라 같이 간 사람이라는 결말이 이 유형을 오래 살아남게 했다.",
+   "traits": [
+    "지하국",
+    "납치",
+    "밧줄",
+    "배신 화소",
+    "급소"
+   ],
+   "art_hint": "a huge shaggy hornless beast slumped at the bottom of a vast underground cavern lit by one hanging lamp, a young man in Korean lamellar armour with a straight sword standing over it, a woman in hanbok holding a rope that climbs into darkness",
+   "art_anchors": [
+    "costume_male",
+    "landscape"
+   ],
+   "habitat": [
+    "동굴",
+    "지하국",
+    "깊은 산"
+   ],
+   "omens": {
+    "time": [
+     "day"
+    ],
+    "weather": [],
+    "season": []
+   },
+   "sites": [],
+   "sources": [
+    {
+     "type": "field",
+     "title": "한국구비문학대계",
+     "ref": "지하국대적퇴치 설화군(전국)"
+    },
+    {
+     "type": "encyclopedia",
+     "title": "한국민족문화대백과사전",
+     "ref": "지하국대적퇴치설화"
+    }
+   ],
+   "verification": "field_record",
+   "confidence": "high",
+   "related": [
+    "kr-geumdwaeji",
+    "kr-dueoksini",
+    "kr-yacha"
+   ],
+   "updated_at": "2026-09-12",
+   "sensitivity": null,
+   "art": {
+    "status": "pending",
+    "direction": "minhwa-v1",
+    "file": null,
+    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
+   }
+  },
+  {
    "id": "kr-jinegaksi",
    "canonical": "지네각시",
    "aliases": [
@@ -5110,6 +6655,96 @@
    }
   },
   {
+   "id": "kr-manpasikjeok",
+   "canonical": "만파식적",
+   "aliases": [
+    "만파식적 피리",
+    "萬波息笛"
+   ],
+   "names": {
+    "en": "Manpasikjeok",
+    "roman": "manpasikjeok"
+   },
+   "category": "artifact",
+   "rarity": "legendary",
+   "distribution": "local",
+   "summary": "불면 적병이 물러가고 병이 낫고 가뭄에 비가 왔다는 신라의 피리. 동해 용이 된 문무왕이 보냈다고 한다.",
+   "body": "『삼국유사』 기이편에 실린다. 신문왕 때 동해에 작은 산이 떠와 그 위의 대나무가 낮에는 둘이고 밤에는 하나로 합쳐지므로, 왕이 배를 타고 가자 용이 나타나 소리로 천하를 다스릴 상서라 하며 그 대나무를 베어 피리를 만들라 했다. 만들어 부니 적병이 물러가고 병이 낫고 가물 때 비가 오고 장마가 그치고 바람이 잦아들어, 만 가지 물결을 잠재우는 피리라는 이름을 얻었다. 문무왕이 동해 용이 되어 나라를 지키겠다 한 유언과 이어지는 이야기이며, 감은사와 이견대가 그 무대다. 무기가 아니라 소리로 평정한다는 발상이 이 이야기의 핵심이고, 도깨비방망이가 두드려 얻는 물건인 것과 달리 만파식적은 불어서 가라앉히는 물건이다.",
+   "traits": [
+    "대나무 피리",
+    "문무왕",
+    "감은사",
+    "이견대"
+   ],
+   "art_hint": "a single node-jointed bamboo flute resting on dark folded silk on a stone terrace above the sea at dawn, mist over the water, the roofline of a temple and a bare stone pagoda behind, no figure",
+   "art_anchors": [
+    "architecture",
+    "landscape"
+   ],
+   "habitat": [
+    "동해",
+    "감은사",
+    "궁중 창고"
+   ],
+   "omens": {
+    "time": [
+     "dawn"
+    ],
+    "weather": [
+     "storm",
+     "wind"
+    ],
+    "season": []
+   },
+   "sites": [
+    {
+     "name": "경주 이견대",
+     "sido": "경북",
+     "sigungu": "경주시",
+     "lat": 35.7255,
+     "lng": 129.479,
+     "precision": "dong",
+     "note": "신문왕이 동해 용을 만났다는 자리"
+    },
+    {
+     "name": "경주 감은사지",
+     "sido": "경북",
+     "sigungu": "경주시",
+     "lat": 35.7278,
+     "lng": 129.4744,
+     "precision": "dong",
+     "note": "문무왕을 위해 세운 절터. 삼층석탑이 남아 있다"
+    }
+   ],
+   "sources": [
+    {
+     "type": "classic",
+     "title": "삼국유사",
+     "ref": "기이 만파식적"
+    },
+    {
+     "type": "encyclopedia",
+     "title": "한국민족문화대백과사전",
+     "ref": "만파식적"
+    }
+   ],
+   "verification": "primary_text",
+   "confidence": "high",
+   "related": [
+    "kr-yongwang",
+    "kr-haeryong",
+    "kr-geumcheok"
+   ],
+   "updated_at": "2026-09-12",
+   "sensitivity": null,
+   "art": {
+    "status": "pending",
+    "direction": "minhwa-v1",
+    "file": null,
+    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
+   }
+  },
+  {
    "id": "kr-mayago",
    "canonical": "마야고",
    "aliases": [
@@ -5241,6 +6876,77 @@
     "file": "/img/yokai/mireuk.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "8096032a-f29e-4c6c-8db9-807fe134f333"
+   }
+  },
+  {
+   "id": "kr-mokdoryeong",
+   "canonical": "목도령",
+   "aliases": [
+    "나무도령",
+    "대홍수 목도령"
+   ],
+   "names": {
+    "en": "Mokdoryeong",
+    "roman": "mokdoryeong"
+   },
+   "category": "hybrid",
+   "rarity": "rare",
+   "distribution": "nationwide",
+   "summary": "하늘의 선녀와 계수나무 사이에서 난 아이. 대홍수 때 아버지인 나무를 타고 살아남아 사람의 조상이 되었다.",
+   "body": "하늘에서 내려온 선녀가 계수나무의 정기로 아이를 배어 목도령을 낳는다. 큰물이 져 세상이 잠기자 쓰러진 아버지 나무를 타고 떠다니며 개미와 모기를 구해 주고, 마지막으로 또래 소년을 구한다. 산꼭대기 노파의 집에 닿아 노파의 친딸과 종의 딸 가운데 누구와 혼인할지 시험을 받는데, 함께 구한 소년이 거짓말로 목도령을 곤경에 빠뜨리지만 앞서 구해 준 개미가 사실을 일러 준다. 둘이 각각 짝을 얻어 사람의 조상이 되었다. 손진태가 채록해 널리 알려진 한국의 대홍수 설화이며, 짐승을 구한 보은이 사람의 배신보다 크게 작동한다는 데 이야기의 무게중심이 있다.",
+   "traits": [
+    "대홍수",
+    "계수나무",
+    "개미 보은",
+    "인류 시조"
+   ],
+   "art_hint": "a boy clinging to a great fallen tree drifting on a flooded grey world at dusk, only mountain tops showing above the water, a column of ants along the bark beside his hand, a rain-heavy sky",
+   "art_anchors": [
+    "costume_male",
+    "landscape"
+   ],
+   "habitat": [
+    "홍수",
+    "산꼭대기"
+   ],
+   "omens": {
+    "time": [
+     "dusk"
+    ],
+    "weather": [
+     "heavy_rain",
+     "storm"
+    ],
+    "season": [
+     "summer"
+    ]
+   },
+   "sites": [],
+   "sources": [
+    {
+     "type": "field",
+     "title": "손진태 채록 설화",
+     "ref": "목도령과 대홍수"
+    },
+    {
+     "type": "encyclopedia",
+     "title": "한국민족문화대백과사전",
+     "ref": "대홍수 설화"
+    }
+   ],
+   "verification": "field_record",
+   "confidence": "high",
+   "related": [
+    "kr-seonnyeo",
+    "kr-cheonjiwang"
+   ],
+   "updated_at": "2026-09-12",
+   "sensitivity": null,
+   "art": {
+    "status": "pending",
+    "direction": "minhwa-v1",
+    "file": null,
+    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
    }
   },
   {
@@ -5530,6 +7236,84 @@
    }
   },
   {
+   "id": "kr-mundoryeong",
+   "canonical": "문도령",
+   "aliases": [
+    "문곡성",
+    "하늘 문선왕 아들"
+   ],
+   "names": {
+    "en": "Mundoryeong",
+    "roman": "mundoryeong"
+   },
+   "category": "jeju",
+   "rarity": "uncommon",
+   "distribution": "local",
+   "summary": "하늘 문선왕의 아들. 자청비와 글공부 동무로 만나 부부가 되고, 함께 내려와 농경신이 되었다.",
+   "body": "제주 「세경본풀이」의 인물이다. 자청비가 남장을 하고 글공부를 하러 갈 때 길에서 만나 삼 년을 함께 배우는데, 문도령은 끝내 자청비가 여자인 줄 몰랐다. 헤어지는 날 물가에서야 알아차리고 인연을 맺지만 하늘로 불려 올라간 뒤 소식이 끊긴다. 자청비가 온갖 시련을 뚫고 하늘에 올라 시험을 이겨 내 다시 만나고, 둘은 오곡 씨앗을 받아 지상으로 내려온다. 자청비가 중세경, 문도령이 상세경, 정수남이 하세경이 되어 농사를 맡는다. 서사의 주도권이 시종 자청비에게 있고 문도령은 기다려지는 쪽이라는 점이 이 본풀이의 특징이며, 신격의 서열과 이야기의 주인공이 어긋나 있는 드문 구조다.",
+   "traits": [
+    "세경본풀이",
+    "글공부",
+    "오곡 씨앗",
+    "상세경"
+   ],
+   "art_hint": "a young man in a pale scholar's robe and horsehair hat standing at a stone-lined spring at dusk, a bundle of books beside him, looking back toward a figure leaving along a path between low volcanic stone walls",
+   "art_anchors": [
+    "costume_male",
+    "landscape"
+   ],
+   "habitat": [
+    "하늘",
+    "물가",
+    "밭"
+   ],
+   "omens": {
+    "time": [
+     "dusk"
+    ],
+    "weather": [],
+    "season": [
+     "spring"
+    ]
+   },
+   "sites": [
+    {
+     "name": "제주 세경본풀이 전승권",
+     "sido": "제주",
+     "lat": 33.4996,
+     "lng": 126.5312,
+     "precision": "sido",
+     "note": "세경본풀이는 제주 전역의 큰굿에서 구송된다"
+    }
+   ],
+   "sources": [
+    {
+     "type": "field",
+     "title": "제주 세경본풀이",
+     "ref": "큰굿 구송 자료"
+    },
+    {
+     "type": "encyclopedia",
+     "title": "한국민속대백과사전",
+     "ref": "세경본풀이"
+    }
+   ],
+   "verification": "field_record",
+   "confidence": "high",
+   "related": [
+    "kr-jacheongbi",
+    "kr-cheonjiwang"
+   ],
+   "updated_at": "2026-09-12",
+   "sensitivity": null,
+   "art": {
+    "status": "pending",
+    "direction": "minhwa-v1",
+    "file": null,
+    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
+   }
+  },
+  {
    "id": "kr-munjeon",
    "canonical": "문전신",
    "aliases": [
@@ -5723,6 +7507,163 @@
    }
   },
   {
+   "id": "kr-nami",
+   "canonical": "남이 장군신",
+   "aliases": [
+    "남이장군 사당신",
+    "용문동 장군"
+   ],
+   "names": {
+    "en": "General Nami Spirit",
+    "roman": "nami janggunsin"
+   },
+   "category": "village",
+   "rarity": "uncommon",
+   "distribution": "local",
+   "summary": "스물여덟에 모반 혐의로 처형된 조선 장수 남이를 모신 마을신. 서울 용산에서 해마다 사당제를 지낸다.",
+   "body": "남이는 세조 때 이시애의 난을 평정하고 병조판서에 올랐으나 유자광의 무고로 처형되었다. 젊고 억울한 죽음이라는 장군신의 조건을 그대로 갖추어, 서울 용산구 용문동에 사당이 서고 지금까지 제가 이어진다. 남이장군사당제는 서울특별시 무형유산으로 지정되어 있으며, 깃발을 앞세운 행렬과 꽃등을 도는 절차가 남아 있다. 농촌의 당산·서낭과 달리 도성 안 마을이 장군을 마을신으로 모신 사례라, 도시 마을굿이 어떤 모습이었는지를 보여 주는 드문 자료다. 아파트가 들어선 골목에서 지금도 행렬이 돈다.",
+   "traits": [
+    "사당제",
+    "용문동",
+    "무고",
+    "깃발 행렬"
+   ],
+   "art_hint": "a night procession of villagers carrying tall coloured flags and paper flower lanterns along a narrow alley toward a small tile-roofed shrine, a general's portrait visible inside the open door, lantern light on plastered walls",
+   "art_anchors": [
+    "costume_male",
+    "architecture",
+    "objects"
+   ],
+   "habitat": [
+    "사당",
+    "골목",
+    "도성 마을"
+   ],
+   "omens": {
+    "time": [
+     "night"
+    ],
+    "weather": [],
+    "season": [
+     "autumn"
+    ]
+   },
+   "sites": [
+    {
+     "name": "서울 남이장군 사당",
+     "sido": "서울",
+     "sigungu": "용산구",
+     "lat": 37.5399,
+     "lng": 126.9614,
+     "precision": "dong",
+     "note": "용문동. 남이장군사당제가 서울특별시 무형유산으로 이어진다"
+    }
+   ],
+   "sources": [
+    {
+     "type": "heritage",
+     "title": "남이장군사당제",
+     "ref": "서울특별시 무형유산"
+    },
+    {
+     "type": "encyclopedia",
+     "title": "한국민속대백과사전",
+     "ref": "남이장군사당제"
+    }
+   ],
+   "verification": "public_encyclopedia",
+   "confidence": "high",
+   "related": [
+    "kr-imgyeongeop",
+    "kr-choeyeong",
+    "kr-seonang"
+   ],
+   "sensitivity": {
+    "kind": "living_faith",
+    "note": "해마다 제가 이어지는 사당이다."
+   },
+   "updated_at": "2026-09-12",
+   "art": {
+    "status": "pending",
+    "direction": "minhwa-v1",
+    "file": null,
+    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
+   }
+  },
+  {
+   "id": "kr-nat-dokkaebi",
+   "canonical": "낮도깨비",
+   "aliases": [
+    "백주도깨비",
+    "대낮 도깨비"
+   ],
+   "names": {
+    "en": "Nat-dokkaebi",
+    "roman": "nat-dokkaebi"
+   },
+   "category": "dokkaebi",
+   "rarity": "uncommon",
+   "distribution": "nationwide",
+   "summary": "대낮에 나타나는 도깨비. 밤에만 다닌다는 규칙을 어긴 존재라, 나타난 것 자체가 어긋난 일의 징조다.",
+   "body": "도깨비는 해가 진 뒤에 다닌다는 것이 전승의 기본 규칙이다. 그래서 낮도깨비는 별개의 종이라기보다 도깨비가 규칙을 벗어난 상태를 부르는 이름에 가깝다. 대낮에 만났다는 채록에는 재물을 잃거나 가던 길을 잃었다는 결말이 붙고, 밤에 만난 도깨비처럼 씨름을 걸거나 거래를 트지 않는다. 규칙이 깨진 자리에서는 주고받을 것도 없다는 뜻이다. 말로는 더 널리 남아, '낮도깨비 같다'는 대낮에 터무니없는 짓을 하는 사람을 가리키는 관용구로 굳었다.",
+   "traits": [
+    "대낮",
+    "길 잃음",
+    "재물 손실",
+    "관용구"
+   ],
+   "art_hint": "a hornless dokkaebi standing brazenly in harsh midday sunlight on a dusty village road, coarse hemp jeogori and baji, unkempt topknot, knotted wooden club over one shoulder, a short hard shadow beneath him, thatched roofs behind",
+   "art_anchors": [
+    "costume_male",
+    "landscape"
+   ],
+   "habitat": [
+    "장터",
+    "들길",
+    "마을 어귀"
+   ],
+   "omens": {
+    "time": [
+     "day"
+    ],
+    "weather": [
+     "clear",
+     "heat"
+    ],
+    "season": [
+     "summer"
+    ]
+   },
+   "sites": [],
+   "sources": [
+    {
+     "type": "encyclopedia",
+     "title": "한국민속대백과사전",
+     "ref": "도깨비 — 출현 시간의 금기"
+    },
+    {
+     "type": "field",
+     "title": "한국구비문학대계",
+     "ref": "낮도깨비 설화군"
+    }
+   ],
+   "verification": "public_encyclopedia",
+   "confidence": "medium",
+   "related": [
+    "kr-dokkaebi",
+    "kr-gae-dokkaebi",
+    "kr-dokkaebi-teo"
+   ],
+   "updated_at": "2026-09-12",
+   "sensitivity": null,
+   "art": {
+    "status": "pending",
+    "direction": "minhwa-v1",
+    "file": null,
+    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
+   }
+  },
+  {
    "id": "kr-nogu-hwaho",
    "canonical": "노구화호",
    "aliases": [
@@ -5858,6 +7799,89 @@
     "file": "/img/yokai/oneuri.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "e9a401be-23e7-422e-9c19-d6811d5e813f"
+   }
+  },
+  {
+   "id": "kr-osu-uigyeon",
+   "canonical": "오수 의견",
+   "aliases": [
+    "의구",
+    "오수개",
+    "義犬"
+   ],
+   "names": {
+    "en": "The Osu Righteous Dog",
+    "roman": "osu uigyeon"
+   },
+   "category": "animal",
+   "rarity": "uncommon",
+   "distribution": "local",
+   "summary": "취해 잠든 주인이 들불에 휩싸이자 제 몸을 적셔 불을 끄고 죽은 개. 전북 임실 오수라는 지명이 여기서 나왔다.",
+   "body": "고려 문인 최자의 『보한집』에 실린 이야기다. 거령현 사람 김개인이 장에 다녀오다 취해 들에 잠들었는데 들불이 번지자, 따르던 개가 냇물에 몸을 적셔 주위 풀을 적시기를 거듭해 주인을 살리고 지쳐 죽었다. 깨어난 주인이 개를 묻고 지팡이를 꽂았더니 나무가 되었고, 그 자리를 오수(獒樹), 곧 개의 나무라 불렀다. 지금도 전북 임실군 오수면에 의견비와 의견공원이 있고 해마다 의견제를 지낸다. 창귀나 여우누이처럼 짐승이 사람을 해치는 설화군의 정확한 반대편에 놓이는 이야기이며, 한국 전승에서 개가 벽사(辟邪)의 짐승으로 다뤄져 온 흐름과 이어진다.",
+   "traits": [
+    "들불",
+    "보은",
+    "지명 유래",
+    "의견비"
+   ],
+   "art_hint": "a shaggy Korean village dog soaked and steaming, dragging its body across burning dry grass at dusk to beat out a ring of flame around a sleeping man in white hemp clothes, a walking staff fallen beside him, low hills behind",
+   "art_anchors": [
+    "costume_male",
+    "landscape"
+   ],
+   "habitat": [
+    "들",
+    "냇가",
+    "장터길"
+   ],
+   "omens": {
+    "time": [
+     "dusk"
+    ],
+    "weather": [
+     "dry",
+     "wind"
+    ],
+    "season": [
+     "autumn"
+    ]
+   },
+   "sites": [
+    {
+     "name": "임실 오수 의견비",
+     "sido": "전북",
+     "sigungu": "임실군",
+     "lat": 35.5525,
+     "lng": 127.32,
+     "precision": "dong",
+     "note": "오수면 의견공원에 비가 서 있고 의견제가 이어진다"
+    }
+   ],
+   "sources": [
+    {
+     "type": "classic",
+     "title": "보한집",
+     "ref": "김개인과 의견"
+    },
+    {
+     "type": "encyclopedia",
+     "title": "한국민족문화대백과사전",
+     "ref": "오수의견 설화"
+    }
+   ],
+   "verification": "primary_text",
+   "confidence": "high",
+   "related": [
+    "kr-sapsalgae",
+    "kr-changgwi"
+   ],
+   "updated_at": "2026-09-12",
+   "sensitivity": null,
+   "art": {
+    "status": "pending",
+    "direction": "minhwa-v1",
+    "file": null,
+    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
    }
   },
   {
@@ -6059,6 +8083,74 @@
    }
   },
   {
+   "id": "kr-samdu-iljokeung",
+   "canonical": "삼두일족응",
+   "aliases": [
+    "삼두매",
+    "세 머리 매",
+    "三頭一足鷹"
+   ],
+   "names": {
+    "en": "Three-headed One-legged Hawk",
+    "roman": "samdu iljokeung"
+   },
+   "category": "foreign",
+   "rarity": "rare",
+   "distribution": "nationwide",
+   "summary": "머리가 셋에 다리가 하나인 매. 정초에 문에 붙여 세 가지 재앙을 한꺼번에 막는 부적 그림이다.",
+   "body": "세화(歲畵)와 부적에 그려지는 벽사 도상이다. 머리 셋은 삼재(三災)를 각각 노려본다는 뜻으로 풀이되고, 매가 잡귀를 채 간다는 관념과 겹쳐 정월에 대문이나 기둥에 붙였다. 삼재가 든 해에 붙인다는 기록이 많아 삼재신·제웅과 같은 액막이 절차 안에서 함께 쓰였다. 도교의 부적 도상이 민화로 내려오며 자리 잡은 형태라 호랑이·닭 그림과 나란히 문에 붙는 계열에 속한다. 매를 그리되 사실적인 새가 아니라 부적의 기호로 그린다는 점이 민화의 매그림과 다르고, 그래서 형태가 기괴할수록 제 기능을 한다고 여겼다.",
+   "traits": [
+    "부적",
+    "세화",
+    "삼재",
+    "대문"
+   ],
+   "art_hint": "a woodblock-style talisman print of a hawk with three heads and a single leg, drawn in flat cinnabar and black ink on coarse yellowed paper, pasted on a weathered wooden gate plank",
+   "art_anchors": [
+    "architecture"
+   ],
+   "habitat": [
+    "대문",
+    "기둥"
+   ],
+   "omens": {
+    "time": [],
+    "weather": [],
+    "season": [
+     "winter",
+     "spring"
+    ]
+   },
+   "sites": [],
+   "sources": [
+    {
+     "type": "encyclopedia",
+     "title": "한국민속대백과사전",
+     "ref": "삼두일족응"
+    },
+    {
+     "type": "encyclopedia",
+     "title": "한국민족문화대백과사전",
+     "ref": "세화(歲畵)"
+    }
+   ],
+   "verification": "public_encyclopedia",
+   "confidence": "medium",
+   "related": [
+    "kr-samjaesin",
+    "kr-jeung",
+    "kr-haetae"
+   ],
+   "updated_at": "2026-09-12",
+   "sensitivity": null,
+   "art": {
+    "status": "pending",
+    "direction": "minhwa-v1",
+    "file": null,
+    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
+   }
+  },
+  {
    "id": "kr-samjaesin",
    "canonical": "삼재신",
    "aliases": [
@@ -6110,6 +8202,140 @@
     "file": "/img/yokai/samjaesin.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "b83d623e-40ba-4962-9083-ad8a301e58aa"
+   }
+  },
+  {
+   "id": "kr-samjogo",
+   "canonical": "삼족오",
+   "aliases": [
+    "세발 까마귀",
+    "금오",
+    "三足烏"
+   ],
+   "names": {
+    "en": "Samjogo",
+    "zh": "三足烏",
+    "roman": "samjogo"
+   },
+   "category": "sky",
+   "rarity": "rare",
+   "distribution": "nationwide",
+   "summary": "해 속에 산다는 다리 셋 달린 까마귀. 고구려 고분 천장에 달의 두꺼비와 짝을 이루어 그려졌다.",
+   "body": "해 안에 까마귀가, 달 안에 두꺼비가 있다는 관념은 동아시아에 널리 퍼져 있었고 고구려 고분벽화에서 가장 뚜렷한 형태로 남았다. 각저총·무용총·오회분 등의 천장 고임에 둥근 해 안의 세 발 까마귀와 둥근 달 안의 두꺼비가 마주 놓인다. 다리가 셋인 것은 양(陽)의 수인 홀수를 갖추기 위함이라는 해석이 일반적이다. 근래 고구려의 상징으로 널리 쓰이지만 도상 자체는 중국 한대 화상석에도 있어 고구려 고유의 것이라 단정하기는 어렵다. 이 도감은 벽화에 실제로 남은 도상과 그것이 놓인 자리를 기준으로 싣고, 상징으로 쓰이는 층위와 구분한다.",
+   "traits": [
+    "고분벽화",
+    "해",
+    "두꺼비와 짝",
+    "세 다리"
+   ],
+   "art_hint": "a three-legged crow inside a large red sun disc painted on a stone tomb ceiling, surrounded by flowing cloud scrolls in mineral pigment, the paint worn and chalky, a smaller moon disc with a toad at the opposite corner",
+   "art_anchors": [],
+   "habitat": [
+    "해",
+    "고분 천장"
+   ],
+   "omens": {
+    "time": [
+     "day"
+    ],
+    "weather": [
+     "clear"
+    ],
+    "season": []
+   },
+   "sites": [],
+   "sources": [
+    {
+     "type": "heritage",
+     "title": "고구려 고분벽화",
+     "ref": "각저총·무용총 천장 일월상"
+    },
+    {
+     "type": "encyclopedia",
+     "title": "한국민족문화대백과사전",
+     "ref": "삼족오"
+    }
+   ],
+   "verification": "public_encyclopedia",
+   "confidence": "high",
+   "related": [
+    "kr-bulgae",
+    "kr-sasin",
+    "kr-hwagwang"
+   ],
+   "updated_at": "2026-09-12",
+   "sensitivity": null,
+   "art": {
+    "status": "pending",
+    "direction": "minhwa-v1",
+    "file": null,
+    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
+   }
+  },
+  {
+   "id": "kr-samjokgu",
+   "canonical": "삼족구",
+   "aliases": [
+    "세발 개",
+    "三足狗"
+   ],
+   "names": {
+    "en": "Samjokgu",
+    "roman": "samjokgu"
+   },
+   "category": "animal",
+   "rarity": "rare",
+   "distribution": "nationwide",
+   "summary": "다리가 셋인 개. 사람으로 둔갑한 구미호를 알아보고 물어 죽인다고 한다. 다만 옛 문헌 근거는 희박하다.",
+   "body": "구미호가 사람 행세를 할 때 정체를 꿰뚫어 본다는 존재다. 개가 잡귀를 쫓는다는 오래된 관념과 삽살개 전승의 연장선에 있으나, 삼족구라는 이름과 '다리 셋'이라는 형상은 조선 이전 문헌에서 확인되지 않고 구비 채록에서도 안정적으로 잡히지 않는다. 20세기 후반 이후의 방송·소설·게임을 거치며 지금의 형태로 굳어진 것으로 보인다. 이 도감은 근거 등급을 낮춰 싣되 항목에서 빼지는 않는다. 사람들이 실제로 찾는 이름이고, 무엇이 오래된 전승이고 무엇이 근래에 만들어진 것인지 구분해 두는 편이 지우는 것보다 쓸모 있다고 보았다.",
+   "traits": [
+    "구미호 간파",
+    "다리 셋",
+    "근거 희박"
+   ],
+   "art_hint": "a lean three-legged dog with bristling dark fur standing rigid in a moonlit courtyard, hackles raised, staring at a pair of woman's shoes left empty on the stone step, low mist across the ground",
+   "art_anchors": [
+    "landscape",
+    "architecture"
+   ],
+   "habitat": [
+    "집 마당",
+    "고갯길"
+   ],
+   "omens": {
+    "time": [
+     "night"
+    ],
+    "weather": [],
+    "season": []
+   },
+   "sites": [],
+   "sources": [
+    {
+     "type": "encyclopedia",
+     "title": "한국민속대백과사전",
+     "ref": "삽살개 — 벽사하는 개 관념"
+    },
+    {
+     "type": "modern",
+     "title": "근현대 대중매체(방송·소설·게임)",
+     "ref": "삼족구 화소는 이 계열을 거쳐 퍼진 것으로 보인다"
+    }
+   ],
+   "verification": "secondary_compilation",
+   "confidence": "low",
+   "related": [
+    "kr-gumiho",
+    "kr-sapsalgae",
+    "kr-nogu-hwaho"
+   ],
+   "updated_at": "2026-09-12",
+   "sensitivity": null,
+   "art": {
+    "status": "pending",
+    "direction": "minhwa-v1",
+    "file": null,
+    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
    }
   },
   {
@@ -6301,6 +8527,78 @@
     "file": "/img/yokai/sangmun.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "12455b70-6e4d-4ffb-bfa9-50796639152b"
+   }
+  },
+  {
+   "id": "kr-sangsabaem",
+   "canonical": "상사뱀",
+   "aliases": [
+    "상사구렁이",
+    "相思蛇"
+   ],
+   "names": {
+    "en": "Sangsabaem",
+    "roman": "sangsabaem"
+   },
+   "category": "ghost",
+   "rarity": "uncommon",
+   "distribution": "nationwide",
+   "summary": "이루지 못한 사랑을 품고 죽은 이가 뱀이 되어 상대의 몸에 감긴다. 떼어 내도 다시 붙는다.",
+   "body": "신분이나 혼처가 막혀 마음을 전하지 못한 사람이 앓다 죽으면 뱀이 되어 상대를 찾아온다. 허리나 다리에 감겨 떼어 내도 다시 붙고, 억지로 죽이면 집안에 더 큰 탈이 난다고 했다. 푸는 길은 폭력이 아니라 응대다. 죽은 이의 사연을 듣고 제를 지내거나 상대가 한 번 마음을 받아 주는 시늉을 하면 뱀이 스스로 떨어져 나간다. 지귀가 불로 타오르는 자리에서 상사뱀은 몸에 감긴다는 점만 다를 뿐, 응답받지 못한 마음이 괴물이 된다는 뼈대는 같다. 전국에서 고르게 채록되고 판소리와 고전소설에도 화소로 들어가 있다.",
+   "traits": [
+    "짝사랑",
+    "감김",
+    "해원",
+    "제"
+   ],
+   "art_hint": "a slender dark snake coiled around the waist of a seated woman in pale hanbok inside a paper-latticed room, her face turned away in weary resignation, an oil lamp casting a long double shadow on the floor",
+   "art_anchors": [
+    "costume_female",
+    "architecture"
+   ],
+   "habitat": [
+    "방",
+    "안채",
+    "무덤가"
+   ],
+   "omens": {
+    "time": [
+     "night"
+    ],
+    "weather": [
+     "humid"
+    ],
+    "season": [
+     "summer"
+    ]
+   },
+   "sites": [],
+   "sources": [
+    {
+     "type": "field",
+     "title": "한국구비문학대계",
+     "ref": "상사뱀 설화군(전국)"
+    },
+    {
+     "type": "encyclopedia",
+     "title": "한국민속대백과사전",
+     "ref": "상사뱀"
+    }
+   ],
+   "verification": "field_record",
+   "confidence": "high",
+   "related": [
+    "kr-jigwi",
+    "kr-baeksa",
+    "kr-songaksi"
+   ],
+   "updated_at": "2026-09-12",
+   "sensitivity": null,
+   "art": {
+    "status": "pending",
+    "direction": "minhwa-v1",
+    "file": null,
+    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
    }
   },
   {
@@ -6627,6 +8925,70 @@
    }
   },
   {
+   "id": "kr-sasin",
+   "canonical": "사신",
+   "aliases": [
+    "사신도",
+    "청룡백호주작현무",
+    "四神"
+   ],
+   "names": {
+    "en": "Four Guardian Beasts",
+    "zh": "四神",
+    "roman": "sasin"
+   },
+   "category": "foreign",
+   "rarity": "rare",
+   "distribution": "nationwide",
+   "summary": "동서남북을 맡은 네 신수. 고구려 고분 널방 네 벽에 하나씩 그려져 죽은 이의 방위를 지켰다.",
+   "body": "동쪽 청룡, 서쪽 백호, 남쪽 주작, 북쪽 현무가 방위를 맡는다. 중국 한대에 정립된 도상이지만 고구려 후기 고분에서는 다른 장식을 모두 덜어 내고 네 벽에 사신만 크게 그리는 단계까지 나아가 독자적인 완성도를 보인다. 강서대묘의 사신도가 대표로 꼽히며, 뱀과 거북이 얽힌 현무의 형상은 특히 밀도가 높다. 무덤 안에서 사신은 장식이 아니라 방위 자체를 세우는 장치라, 벽화의 위치가 곧 기능이다. 조선에 와서는 왕릉 병풍석과 풍수 도상으로 이어지고, 해태나 계룡 같은 한국 고유 신수와 나란히 쓰이며 자리를 나눠 가졌다.",
+   "traits": [
+    "방위",
+    "고분 벽화",
+    "강서대묘",
+    "현무"
+   ],
+   "art_hint": "four mineral-pigment wall paintings shown together — a blue dragon, a white tiger, a red bird, and a tortoise entwined with a snake — each on a dark plastered tomb wall with flowing cloud scrolls between them",
+   "art_anchors": [],
+   "habitat": [
+    "고분 널방",
+    "왕릉"
+   ],
+   "omens": {
+    "time": [],
+    "weather": [],
+    "season": []
+   },
+   "sites": [],
+   "sources": [
+    {
+     "type": "heritage",
+     "title": "고구려 고분벽화",
+     "ref": "강서대묘 사신도"
+    },
+    {
+     "type": "encyclopedia",
+     "title": "한국민족문화대백과사전",
+     "ref": "사신도"
+    }
+   ],
+   "verification": "public_encyclopedia",
+   "confidence": "high",
+   "related": [
+    "kr-samjogo",
+    "kr-haetae",
+    "kr-gyeryong"
+   ],
+   "updated_at": "2026-09-12",
+   "sensitivity": null,
+   "art": {
+    "status": "pending",
+    "direction": "minhwa-v1",
+    "file": null,
+    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
+   }
+  },
+  {
    "id": "kr-seolmundae",
    "canonical": "설문대할망",
    "aliases": [
@@ -6941,6 +9303,90 @@
    }
   },
   {
+   "id": "kr-seonmyo",
+   "canonical": "선묘룡",
+   "aliases": [
+    "선묘 낭자",
+    "善妙"
+   ],
+   "names": {
+    "en": "Seonmyo Dragon",
+    "roman": "seonmyoryong"
+   },
+   "category": "foreign",
+   "rarity": "rare",
+   "distribution": "local",
+   "summary": "의상을 사모하던 당나라 여인이 용이 되어 바다를 건너 따라오고, 바위가 되어 절터를 열었다.",
+   "body": "『송고승전』 의상전과 『삼국유사』에 나온다. 의상이 당에 유학할 때 선묘라는 여인이 사모했으나 뜻을 이루지 못했고, 의상이 돌아가는 배를 뒤늦게 좇아 바다에 몸을 던지며 용이 되어 배를 지키겠다 했다. 신라에 돌아온 의상이 절을 세우려 하자 그 자리를 차지한 무리가 물러나지 않으므로, 선묘가 큰 바위가 되어 공중에 떠올라 위협하니 무리가 흩어졌다. 그래서 절 이름이 부석(浮石), 뜬 돌이다. 영주 부석사에는 지금도 무량수전 뒤에 선묘각이 있고 부석이라 불리는 바위가 남아 있다. 외래 설화의 인물이 한국의 절터 내력으로 완전히 귀화한 사례이며, 이루지 못한 마음이 괴물이 아니라 수호신이 된 드문 결말이기도 하다.",
+   "traits": [
+    "부석사",
+    "뜬 바위",
+    "의상",
+    "용으로 화함"
+   ],
+   "art_hint": "a great flat grey boulder hanging in the air above a mountain temple site at dawn, the coil of a pale dragon faintly suggested within the rock's shadow, small monk figures below, pine ridge and distant peaks",
+   "art_anchors": [
+    "architecture",
+    "landscape"
+   ],
+   "habitat": [
+    "부석사",
+    "바닷길"
+   ],
+   "omens": {
+    "time": [
+     "dawn"
+    ],
+    "weather": [
+     "fog"
+    ],
+    "season": []
+   },
+   "sites": [
+    {
+     "name": "영주 부석사",
+     "sido": "경북",
+     "sigungu": "영주시",
+     "lat": 36.997,
+     "lng": 128.687,
+     "precision": "dong",
+     "note": "무량수전 뒤 선묘각과 부석이라 불리는 바위가 남아 있다"
+    }
+   ],
+   "sources": [
+    {
+     "type": "classic",
+     "title": "송고승전",
+     "ref": "의상전"
+    },
+    {
+     "type": "classic",
+     "title": "삼국유사",
+     "ref": "의해 의상전교"
+    },
+    {
+     "type": "heritage",
+     "title": "영주 부석사 무량수전",
+     "ref": "국보"
+    }
+   ],
+   "verification": "primary_text",
+   "confidence": "high",
+   "related": [
+    "kr-yongwang",
+    "kr-haeryong",
+    "kr-sangsabaem"
+   ],
+   "updated_at": "2026-09-12",
+   "sensitivity": null,
+   "art": {
+    "status": "pending",
+    "direction": "minhwa-v1",
+    "file": null,
+    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
+   }
+  },
+  {
    "id": "kr-seonnyeo",
    "canonical": "선녀",
    "aliases": [
@@ -7020,7 +9466,6 @@
    "id": "kr-sinjikki",
    "canonical": "신지끼",
    "aliases": [
-    "인어",
     "신지께",
     "거문도 인어"
    ],
@@ -7077,7 +9522,8 @@
    "verification": "public_encyclopedia",
    "confidence": "medium",
    "related": [
-    "kr-yongwang"
+    "kr-yongwang",
+    "kr-ineo"
    ],
    "updated_at": "2026-08-16",
    "names": {},
@@ -7675,6 +10121,77 @@
    }
   },
   {
+   "id": "kr-taejagwi",
+   "canonical": "태자귀",
+   "aliases": [
+    "명도",
+    "태주",
+    "胎子鬼"
+   ],
+   "names": {
+    "en": "Taejagwi",
+    "roman": "taejagwi"
+   },
+   "category": "ghost",
+   "rarity": "rare",
+   "distribution": "nationwide",
+   "summary": "어려서 죽은 아이의 넋. 무당이 몸에 지니고 점을 치면 남의 일을 훤히 맞힌다고 했다.",
+   "body": "어린아이가 죽으면 넋이 여물지 못해 떠돈다고 보았고, 그 넋을 불러 부리는 무속을 태자귀 또는 명도라 했다. 태자귀를 부리는 무당은 잃어버린 물건이나 남의 속사정을 잘 맞힌다고 알려졌으나, 그 신통이 오래가지 않고 부리는 사람에게 되돌아온다는 경계담이 반드시 따라붙는다. 조선 문헌에는 아이를 일부러 해쳐 태자귀를 만든다는 소문과 그에 대한 처벌 기록까지 나타나, 당대에도 금기시된 영역이었음을 보여 준다. 삼신할머니가 아이를 점지하는 신이라면 태자귀는 그 아이가 자라지 못했을 때 남는 자리라, 두 항목을 나란히 놓아야 조선의 육아 관념이 보인다.",
+   "traits": [
+    "명도",
+    "점복",
+    "어린 넋",
+    "금기"
+   ],
+   "art_hint": "a small brass hand-bell and a bundle of white paper strips on a low shrine table in a dim room, a child-sized empty cushion beside it, one candle burning, no figure",
+   "art_anchors": [
+    "objects",
+    "architecture"
+   ],
+   "habitat": [
+    "신당",
+    "무당 집"
+   ],
+   "omens": {
+    "time": [
+     "night"
+    ],
+    "weather": [],
+    "season": []
+   },
+   "sites": [],
+   "sources": [
+    {
+     "type": "encyclopedia",
+     "title": "한국민속대백과사전",
+     "ref": "태자귀"
+    },
+    {
+     "type": "encyclopedia",
+     "title": "한국민족문화대백과사전",
+     "ref": "명도(明圖)"
+    }
+   ],
+   "verification": "public_encyclopedia",
+   "confidence": "medium",
+   "related": [
+    "kr-mujugohon",
+    "kr-samsin",
+    "kr-yeongsan"
+   ],
+   "sensitivity": {
+    "kind": "tragedy_linked",
+    "note": "어린아이의 죽음을 다루는 전승이다. 흥밋거리로 각색하지 않는다."
+   },
+   "updated_at": "2026-09-12",
+   "art": {
+    "status": "pending",
+    "direction": "minhwa-v1",
+    "file": null,
+    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
+   }
+  },
+  {
    "id": "kr-teoju",
    "canonical": "터주신",
    "aliases": [
@@ -7870,6 +10387,73 @@
    }
   },
   {
+   "id": "kr-wangsin",
+   "canonical": "왕신",
+   "aliases": [
+    "왕신단지",
+    "처녀단지"
+   ],
+   "names": {
+    "en": "Wangsin",
+    "roman": "wangsin"
+   },
+   "category": "gataek",
+   "rarity": "uncommon",
+   "distribution": "nationwide",
+   "summary": "시집가지 못하고 죽은 집안 처녀의 넋을 단지에 모신 가택신. 지키는 신이 아니라 달래는 신이다.",
+   "body": "혼인하지 못하고 죽은 딸의 넋은 갈 곳이 없다고 보아, 쌀이나 무명을 담은 단지를 안방 구석이나 다락에 두고 왕신으로 모셨다. 성주나 터주가 집을 지키는 쪽이라면 왕신은 달래는 쪽이라, 위하는 집에서는 밥과 옷감을 갈아 올리고 혼사·출산 같은 큰일마다 고했다. 소홀히 하면 집안 사람이 앓는다는 금기가 따라붙어, 한 번 모시면 함부로 치우지 못한다는 이야기가 많다. 손각시와 같은 관념에서 갈라져 나왔으되, 떠도는 원귀가 아니라 집 안에 자리를 받은 신이라는 점이 다르다. 자리를 주면 신이 되고 주지 않으면 귀신이 된다는 한국 신격 체계의 기준선이 여기서 뚜렷하게 보인다.",
+   "traits": [
+    "단지",
+    "안방",
+    "처녀 넋",
+    "금기"
+   ],
+   "art_hint": "a small glazed earthenware jar wrapped in white cloth set on a low shelf in the dark corner of an inner room, a folded length of unbleached hemp beside it, one bowl of white rice, dust motes in a single shaft of light through a paper-latticed door",
+   "art_anchors": [
+    "architecture",
+    "objects"
+   ],
+   "habitat": [
+    "안방",
+    "다락",
+    "고방"
+   ],
+   "omens": {
+    "time": [],
+    "weather": [],
+    "season": []
+   },
+   "sites": [],
+   "sources": [
+    {
+     "type": "encyclopedia",
+     "title": "한국민속대백과사전",
+     "ref": "왕신"
+    },
+    {
+     "type": "field",
+     "title": "한국구비문학대계",
+     "ref": "왕신단지 관련 채록"
+    }
+   ],
+   "verification": "public_encyclopedia",
+   "confidence": "medium",
+   "related": [
+    "kr-songaksi",
+    "kr-seongju",
+    "kr-teoju",
+    "kr-eop"
+   ],
+   "updated_at": "2026-09-12",
+   "sensitivity": null,
+   "art": {
+    "status": "pending",
+    "direction": "minhwa-v1",
+    "file": null,
+    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
+   }
+  },
+  {
    "id": "kr-yacha",
    "canonical": "야차",
    "aliases": [
@@ -7997,6 +10581,77 @@
     "file": "/img/yokai/yaraeja.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "54b9951e-d485-4890-b894-452ef0493d4b"
+   }
+  },
+  {
+   "id": "kr-yaseohon",
+   "canonical": "야서혼",
+   "aliases": [
+    "두더지 혼인",
+    "野鼠婚"
+   ],
+   "names": {
+    "en": "The Mole's Wedding",
+    "roman": "yaseohon"
+   },
+   "category": "hybrid",
+   "rarity": "uncommon",
+   "distribution": "nationwide",
+   "summary": "세상에서 가장 높은 사위를 찾아 해·구름·바람·돌부처를 거쳐 결국 두더지에게 돌아온 두더지의 혼사.",
+   "body": "두더지가 딸을 세상에서 가장 높은 것에게 시집보내려고 해를 찾아가니 해가 구름을 이기지 못한다 하고, 구름은 바람을, 바람은 돌부처를, 돌부처는 제 발밑을 파는 두더지를 이기지 못한다 한다. 결국 두더지에게 시집보낸다. 분수를 알라는 교훈담으로 읽히지만, 이류와의 혼사를 따라가는 구조는 구렁덩덩 신선비나 두꺼비 신랑 같은 이류혼 설화와 한 계열이다. 중국·일본·인도에도 같은 구조의 이야기가 있어 비교설화의 단골 소재이며, 한국에서는 두더지 혼인이라는 속담으로 굳어 쓰인다. 가장 높은 것을 찾아 한 바퀴 돌아 제자리로 온다는 형식 자체가 이야기의 뜻이다.",
+   "traits": [
+    "연쇄 문답",
+    "분수",
+    "이류혼",
+    "속담"
+   ],
+   "art_hint": "a small mole in a tiny hemp coat standing at the foot of a weathered stone buddha in a field at dusk, the sun low behind drifting cloud, wind bending the grass, the buddha's base undermined by fresh earth",
+   "art_anchors": [
+    "landscape"
+   ],
+   "habitat": [
+    "들",
+    "밭",
+    "돌부처 앞"
+   ],
+   "omens": {
+    "time": [
+     "dusk"
+    ],
+    "weather": [
+     "wind"
+    ],
+    "season": [
+     "spring"
+    ]
+   },
+   "sites": [],
+   "sources": [
+    {
+     "type": "encyclopedia",
+     "title": "한국민속대백과사전",
+     "ref": "두더지 혼인 설화"
+    },
+    {
+     "type": "field",
+     "title": "한국구비문학대계",
+     "ref": "야서혼 설화군"
+    }
+   ],
+   "verification": "public_encyclopedia",
+   "confidence": "high",
+   "related": [
+    "kr-gureongdeongdeong",
+    "kr-dukkeobi-sillang",
+    "kr-mireuk"
+   ],
+   "updated_at": "2026-09-12",
+   "sensitivity": null,
+   "art": {
+    "status": "pending",
+    "direction": "minhwa-v1",
+    "file": null,
+    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
    }
   },
   {
@@ -8274,6 +10929,79 @@
     "file": "/img/yokai/yeongsan.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "8db9f7c7-d401-4aa4-869d-d0f1b7258e2f"
+   }
+  },
+  {
+   "id": "kr-yeou-guseul",
+   "canonical": "여우구슬",
+   "aliases": [
+    "호정",
+    "여우의 구슬"
+   ],
+   "names": {
+    "en": "Fox Bead",
+    "roman": "yeou guseul"
+   },
+   "category": "artifact",
+   "rarity": "uncommon",
+   "distribution": "nationwide",
+   "summary": "여우가 입에 물고 사람의 기운을 빨아들이는 구슬. 빼앗아 삼킨 사람은 하늘·땅·사람의 이치 가운데 하나를 얻는다.",
+   "body": "서당에 다니는 아이가 밤마다 만나는 여인과 입을 맞추고 나면 시름시름 앓는다. 훈장이 이르기를 그 여인은 여우이고 입속의 구슬로 기운을 빼앗는 것이니 다음에는 구슬을 삼키고 곧장 하늘과 땅과 사람을 차례로 보라 한다. 아이가 구슬을 삼키고 급히 달아나다 넘어져 땅만 보는 바람에 땅의 이치만 알게 되어 지리에 밝은 사람이 되었다는 결말이 흔하다. 전국에서 채록되는 광포설화이며, 구미호 설화가 사람을 해치는 쪽으로 굳어지기 전의 결이 남아 있다. 이무기의 여의주가 제 몸에서 나는 것이라면 여우구슬은 빼앗아 쓰는 것이라, 같은 구슬이라도 소유의 성격이 다르다.",
+   "traits": [
+    "구슬",
+    "서당길",
+    "기운 빼앗김",
+    "지리"
+   ],
+   "art_hint": "a small luminous pale bead held between two fingertips in darkness, a faint fox-shaped shadow receding behind a stone wall, a boy's ink-stained book bag fallen on a frosted path, moonlight",
+   "art_anchors": [
+    "landscape"
+   ],
+   "habitat": [
+    "서당길",
+    "고갯길",
+    "무덤가"
+   ],
+   "omens": {
+    "time": [
+     "night"
+    ],
+    "weather": [
+     "cold"
+    ],
+    "season": [
+     "autumn",
+     "winter"
+    ]
+   },
+   "sites": [],
+   "sources": [
+    {
+     "type": "field",
+     "title": "한국구비문학대계",
+     "ref": "여우구슬 설화군(전국)"
+    },
+    {
+     "type": "encyclopedia",
+     "title": "한국민속대백과사전",
+     "ref": "여우구슬"
+    }
+   ],
+   "verification": "field_record",
+   "confidence": "high",
+   "related": [
+    "kr-gumiho",
+    "kr-yeou-nui",
+    "kr-nogu-hwaho",
+    "kr-imugi"
+   ],
+   "updated_at": "2026-09-12",
+   "sensitivity": null,
+   "art": {
+    "status": "pending",
+    "direction": "minhwa-v1",
+    "file": null,
+    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
    }
   },
   {

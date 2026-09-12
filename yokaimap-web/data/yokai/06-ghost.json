@@ -662,6 +662,202 @@
         "kr-subu"
       ],
       "updated_at": "2026-08-16"
+    },
+    {
+      "id": "kr-janghwa-hongryeon",
+      "canonical": "장화홍련",
+      "aliases": [
+        "장화와 홍련",
+        "薔花紅蓮"
+      ],
+      "names": {
+        "en": "Janghwa and Hongryeon",
+        "roman": "janghwa hongryeon"
+      },
+      "category": "ghost",
+      "rarity": "uncommon",
+      "distribution": "nationwide",
+      "summary": "계모의 모함으로 죽은 자매의 원귀. 부임하는 수령마다 놀라 죽다가, 사연을 끝까지 들어 준 수령에게 억울함을 풀었다.",
+      "body": "고전소설 『장화홍련전』으로 널리 읽혔고, 평안도 철산을 배경으로 한 옥사 기록과 얽혀 전한다. 계모가 낙태한 것처럼 꾸며 맏딸 장화를 연못에 빠뜨려 죽이고, 동생 홍련도 뒤를 따른다. 자매의 원귀가 밤마다 관아에 나타나 부임하는 수령이 잇따라 놀라 죽는데, 한 수령이 달아나지 않고 사연을 끝까지 듣고 재판을 열어 계모를 벌하고 시신을 거두자 원귀가 사라진다. 한국 원귀담의 표준형이다. 해코지가 목적이 아니라 말을 들어 줄 사람을 찾는 것이고, 절차가 끝나면 물러난다. 아랑 설화와 뼈대가 같으며, 두 이야기 모두 원한을 푸는 주체가 무당이 아니라 관리라는 점에서 조선 후기 신원(伸冤) 관념을 그대로 보여 준다.",
+      "traits": [
+        "계모",
+        "연못",
+        "신원",
+        "부임 수령"
+      ],
+      "art_hint": "two young women in white mourning hanbok standing side by side in the dark doorway of a provincial magistrate's hall at night, water still dripping from their sleeves onto the wooden floor, a low desk and a guttering oil lamp before them",
+      "art_anchors": [
+        "costume_female",
+        "architecture"
+      ],
+      "habitat": [
+        "관아",
+        "연못",
+        "안방"
+      ],
+      "omens": {
+        "time": [
+          "midnight"
+        ],
+        "weather": [],
+        "season": []
+      },
+      "sites": [],
+      "sources": [
+        {
+          "type": "classic",
+          "title": "장화홍련전",
+          "ref": "철산 옥사 배경 서사"
+        },
+        {
+          "type": "encyclopedia",
+          "title": "한국민족문화대백과사전",
+          "ref": "장화홍련전"
+        },
+        {
+          "type": "field",
+          "title": "한국구비문학대계",
+          "ref": "장화홍련 설화군"
+        }
+      ],
+      "verification": "primary_text",
+      "confidence": "high",
+      "related": [
+        "kr-arang",
+        "kr-songaksi",
+        "kr-mujugohon"
+      ],
+      "updated_at": "2026-09-12"
+    },
+    {
+      "id": "kr-taejagwi",
+      "canonical": "태자귀",
+      "aliases": [
+        "명도",
+        "태주",
+        "胎子鬼"
+      ],
+      "names": {
+        "en": "Taejagwi",
+        "roman": "taejagwi"
+      },
+      "category": "ghost",
+      "rarity": "rare",
+      "distribution": "nationwide",
+      "summary": "어려서 죽은 아이의 넋. 무당이 몸에 지니고 점을 치면 남의 일을 훤히 맞힌다고 했다.",
+      "body": "어린아이가 죽으면 넋이 여물지 못해 떠돈다고 보았고, 그 넋을 불러 부리는 무속을 태자귀 또는 명도라 했다. 태자귀를 부리는 무당은 잃어버린 물건이나 남의 속사정을 잘 맞힌다고 알려졌으나, 그 신통이 오래가지 않고 부리는 사람에게 되돌아온다는 경계담이 반드시 따라붙는다. 조선 문헌에는 아이를 일부러 해쳐 태자귀를 만든다는 소문과 그에 대한 처벌 기록까지 나타나, 당대에도 금기시된 영역이었음을 보여 준다. 삼신할머니가 아이를 점지하는 신이라면 태자귀는 그 아이가 자라지 못했을 때 남는 자리라, 두 항목을 나란히 놓아야 조선의 육아 관념이 보인다.",
+      "traits": [
+        "명도",
+        "점복",
+        "어린 넋",
+        "금기"
+      ],
+      "art_hint": "a small brass hand-bell and a bundle of white paper strips on a low shrine table in a dim room, a child-sized empty cushion beside it, one candle burning, no figure",
+      "art_anchors": [
+        "objects",
+        "architecture"
+      ],
+      "habitat": [
+        "신당",
+        "무당 집"
+      ],
+      "omens": {
+        "time": [
+          "night"
+        ],
+        "weather": [],
+        "season": []
+      },
+      "sites": [],
+      "sources": [
+        {
+          "type": "encyclopedia",
+          "title": "한국민속대백과사전",
+          "ref": "태자귀"
+        },
+        {
+          "type": "encyclopedia",
+          "title": "한국민족문화대백과사전",
+          "ref": "명도(明圖)"
+        }
+      ],
+      "verification": "public_encyclopedia",
+      "confidence": "medium",
+      "related": [
+        "kr-mujugohon",
+        "kr-samsin",
+        "kr-yeongsan"
+      ],
+      "sensitivity": {
+        "kind": "tragedy_linked",
+        "note": "어린아이의 죽음을 다루는 전승이다. 흥밋거리로 각색하지 않는다."
+      },
+      "updated_at": "2026-09-12"
+    },
+    {
+      "id": "kr-sangsabaem",
+      "canonical": "상사뱀",
+      "aliases": [
+        "상사구렁이",
+        "相思蛇"
+      ],
+      "names": {
+        "en": "Sangsabaem",
+        "roman": "sangsabaem"
+      },
+      "category": "ghost",
+      "rarity": "uncommon",
+      "distribution": "nationwide",
+      "summary": "이루지 못한 사랑을 품고 죽은 이가 뱀이 되어 상대의 몸에 감긴다. 떼어 내도 다시 붙는다.",
+      "body": "신분이나 혼처가 막혀 마음을 전하지 못한 사람이 앓다 죽으면 뱀이 되어 상대를 찾아온다. 허리나 다리에 감겨 떼어 내도 다시 붙고, 억지로 죽이면 집안에 더 큰 탈이 난다고 했다. 푸는 길은 폭력이 아니라 응대다. 죽은 이의 사연을 듣고 제를 지내거나 상대가 한 번 마음을 받아 주는 시늉을 하면 뱀이 스스로 떨어져 나간다. 지귀가 불로 타오르는 자리에서 상사뱀은 몸에 감긴다는 점만 다를 뿐, 응답받지 못한 마음이 괴물이 된다는 뼈대는 같다. 전국에서 고르게 채록되고 판소리와 고전소설에도 화소로 들어가 있다.",
+      "traits": [
+        "짝사랑",
+        "감김",
+        "해원",
+        "제"
+      ],
+      "art_hint": "a slender dark snake coiled around the waist of a seated woman in pale hanbok inside a paper-latticed room, her face turned away in weary resignation, an oil lamp casting a long double shadow on the floor",
+      "art_anchors": [
+        "costume_female",
+        "architecture"
+      ],
+      "habitat": [
+        "방",
+        "안채",
+        "무덤가"
+      ],
+      "omens": {
+        "time": [
+          "night"
+        ],
+        "weather": [
+          "humid"
+        ],
+        "season": [
+          "summer"
+        ]
+      },
+      "sites": [],
+      "sources": [
+        {
+          "type": "field",
+          "title": "한국구비문학대계",
+          "ref": "상사뱀 설화군(전국)"
+        },
+        {
+          "type": "encyclopedia",
+          "title": "한국민속대백과사전",
+          "ref": "상사뱀"
+        }
+      ],
+      "verification": "field_record",
+      "confidence": "high",
+      "related": [
+        "kr-jigwi",
+        "kr-baeksa",
+        "kr-songaksi"
+      ],
+      "updated_at": "2026-09-12"
     }
   ]
 }

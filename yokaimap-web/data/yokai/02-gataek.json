@@ -534,6 +534,66 @@
         "kr-seonang"
       ],
       "updated_at": "2026-08-16"
+    },
+    {
+      "id": "kr-wangsin",
+      "canonical": "왕신",
+      "aliases": [
+        "왕신단지",
+        "처녀단지"
+      ],
+      "names": {
+        "en": "Wangsin",
+        "roman": "wangsin"
+      },
+      "category": "gataek",
+      "rarity": "uncommon",
+      "distribution": "nationwide",
+      "summary": "시집가지 못하고 죽은 집안 처녀의 넋을 단지에 모신 가택신. 지키는 신이 아니라 달래는 신이다.",
+      "body": "혼인하지 못하고 죽은 딸의 넋은 갈 곳이 없다고 보아, 쌀이나 무명을 담은 단지를 안방 구석이나 다락에 두고 왕신으로 모셨다. 성주나 터주가 집을 지키는 쪽이라면 왕신은 달래는 쪽이라, 위하는 집에서는 밥과 옷감을 갈아 올리고 혼사·출산 같은 큰일마다 고했다. 소홀히 하면 집안 사람이 앓는다는 금기가 따라붙어, 한 번 모시면 함부로 치우지 못한다는 이야기가 많다. 손각시와 같은 관념에서 갈라져 나왔으되, 떠도는 원귀가 아니라 집 안에 자리를 받은 신이라는 점이 다르다. 자리를 주면 신이 되고 주지 않으면 귀신이 된다는 한국 신격 체계의 기준선이 여기서 뚜렷하게 보인다.",
+      "traits": [
+        "단지",
+        "안방",
+        "처녀 넋",
+        "금기"
+      ],
+      "art_hint": "a small glazed earthenware jar wrapped in white cloth set on a low shelf in the dark corner of an inner room, a folded length of unbleached hemp beside it, one bowl of white rice, dust motes in a single shaft of light through a paper-latticed door",
+      "art_anchors": [
+        "architecture",
+        "objects"
+      ],
+      "habitat": [
+        "안방",
+        "다락",
+        "고방"
+      ],
+      "omens": {
+        "time": [],
+        "weather": [],
+        "season": []
+      },
+      "sites": [],
+      "sources": [
+        {
+          "type": "encyclopedia",
+          "title": "한국민속대백과사전",
+          "ref": "왕신"
+        },
+        {
+          "type": "field",
+          "title": "한국구비문학대계",
+          "ref": "왕신단지 관련 채록"
+        }
+      ],
+      "verification": "public_encyclopedia",
+      "confidence": "medium",
+      "related": [
+        "kr-songaksi",
+        "kr-seongju",
+        "kr-teoju",
+        "kr-eop"
+      ],
+      "updated_at": "2026-09-12"
     }
   ]
 }

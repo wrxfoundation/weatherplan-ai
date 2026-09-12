@@ -348,6 +348,215 @@
         "kr-jigwi"
       ],
       "updated_at": "2026-08-16"
+    },
+    {
+      "id": "kr-bulgae",
+      "canonical": "불개",
+      "aliases": [
+        "해 먹는 개",
+        "火狗"
+      ],
+      "names": {
+        "en": "Bulgae",
+        "roman": "bulgae"
+      },
+      "category": "sky",
+      "rarity": "uncommon",
+      "distribution": "nationwide",
+      "summary": "어둠의 나라 임금이 해와 달을 훔쳐 오라고 보낸 개. 뜨거워서 또 차가워서 번번이 뱉는다. 그 순간이 일식과 월식이다.",
+      "body": "빛이 없는 나라의 임금이 해를 가져오라며 개를 보냈으나 너무 뜨거워 물자마자 뱉었고, 달을 가져오라 보냈더니 너무 차가워 또 뱉었다. 임금이 단념하지 않고 계속 개를 보내므로 해와 달이 이지러지는 일은 앞으로도 되풀이된다. 일식과 월식을 설명하는 한국 구전으로 전국에서 채록되며, 개가 반드시 실패하도록 짜인 이야기라는 점이 특징이다. 하늘의 질서는 끝내 망가지지 않는다는 말을 하려고 만든 구조다. 『삼국사기』와 『조선왕조실록』이 일식을 임금의 부덕을 묻는 천변으로 적은 것과 달리, 구전의 불개 이야기에는 두려움보다 웃음이 섞여 있다.",
+      "traits": [
+        "일식",
+        "월식",
+        "어둠의 나라",
+        "무는 순간"
+      ],
+      "art_hint": "a huge black hound leaping across a night sky with the moon half inside its jaws, its body edged in cold blue light, thatched rooftops and a bare winter tree far below in silhouette",
+      "art_anchors": [
+        "landscape"
+      ],
+      "habitat": [
+        "하늘",
+        "해",
+        "달"
+      ],
+      "omens": {
+        "time": [
+          "day",
+          "night"
+        ],
+        "weather": [
+          "clear"
+        ],
+        "season": []
+      },
+      "sites": [],
+      "sources": [
+        {
+          "type": "field",
+          "title": "한국구비문학대계",
+          "ref": "불개와 일월식 설화군(전국)"
+        },
+        {
+          "type": "encyclopedia",
+          "title": "한국민속대백과사전",
+          "ref": "일월식 설화"
+        }
+      ],
+      "verification": "field_record",
+      "confidence": "high",
+      "related": [
+        "kr-hwagwang",
+        "kr-samjogo",
+        "kr-sapsalgae"
+      ],
+      "updated_at": "2026-09-12"
+    },
+    {
+      "id": "kr-samjogo",
+      "canonical": "삼족오",
+      "aliases": [
+        "세발 까마귀",
+        "금오",
+        "三足烏"
+      ],
+      "names": {
+        "en": "Samjogo",
+        "zh": "三足烏",
+        "roman": "samjogo"
+      },
+      "category": "sky",
+      "rarity": "rare",
+      "distribution": "nationwide",
+      "summary": "해 속에 산다는 다리 셋 달린 까마귀. 고구려 고분 천장에 달의 두꺼비와 짝을 이루어 그려졌다.",
+      "body": "해 안에 까마귀가, 달 안에 두꺼비가 있다는 관념은 동아시아에 널리 퍼져 있었고 고구려 고분벽화에서 가장 뚜렷한 형태로 남았다. 각저총·무용총·오회분 등의 천장 고임에 둥근 해 안의 세 발 까마귀와 둥근 달 안의 두꺼비가 마주 놓인다. 다리가 셋인 것은 양(陽)의 수인 홀수를 갖추기 위함이라는 해석이 일반적이다. 근래 고구려의 상징으로 널리 쓰이지만 도상 자체는 중국 한대 화상석에도 있어 고구려 고유의 것이라 단정하기는 어렵다. 이 도감은 벽화에 실제로 남은 도상과 그것이 놓인 자리를 기준으로 싣고, 상징으로 쓰이는 층위와 구분한다.",
+      "traits": [
+        "고분벽화",
+        "해",
+        "두꺼비와 짝",
+        "세 다리"
+      ],
+      "art_hint": "a three-legged crow inside a large red sun disc painted on a stone tomb ceiling, surrounded by flowing cloud scrolls in mineral pigment, the paint worn and chalky, a smaller moon disc with a toad at the opposite corner",
+      "art_anchors": [],
+      "habitat": [
+        "해",
+        "고분 천장"
+      ],
+      "omens": {
+        "time": [
+          "day"
+        ],
+        "weather": [
+          "clear"
+        ],
+        "season": []
+      },
+      "sites": [],
+      "sources": [
+        {
+          "type": "heritage",
+          "title": "고구려 고분벽화",
+          "ref": "각저총·무용총 천장 일월상"
+        },
+        {
+          "type": "encyclopedia",
+          "title": "한국민족문화대백과사전",
+          "ref": "삼족오"
+        }
+      ],
+      "verification": "public_encyclopedia",
+      "confidence": "high",
+      "related": [
+        "kr-bulgae",
+        "kr-sasin",
+        "kr-hwagwang"
+      ],
+      "updated_at": "2026-09-12"
+    },
+    {
+      "id": "kr-bibi",
+      "canonical": "비비",
+      "aliases": [
+        "오광대 영노",
+        "비비새",
+        "飛飛"
+      ],
+      "names": {
+        "en": "Bibi",
+        "roman": "bibi"
+      },
+      "category": "sky",
+      "rarity": "rare",
+      "distribution": "local",
+      "summary": "하늘에서 내려온 괴물. 양반을 아흔아홉 잡아먹었고 하나만 더 먹으면 하늘로 오른다며 탈판에서 양반을 몬다.",
+      "body": "통영오광대와 고성오광대의 한 과장에 나오는 괴물로, 비비 하는 소리를 내며 등장한다고 해서 붙은 이름이다. 양반을 잡아먹는다며 쫓고, 양반이 자기는 양반이 아니라고 발뺌하다 결국 제 내력을 다 털어놓게 만든다. 지배층을 잡아먹는 괴물을 무대에 올려 웃음으로 처리한 장치라, 괴물이 공포의 대상이 아니라 심판의 대리인으로 쓰인 드문 사례다. 지역에 따라 영노라고도 부르는데 같은 이름이 다른 지역에서는 이무기를 가리키기도 해 혼동하기 쉽다. 이 도감은 이무기 항목에 영노를 이칭으로 두고, 탈놀음의 괴물은 비비로 따로 싣는다. 오광대는 국가무형유산으로 전승된다.",
+      "traits": [
+        "오광대",
+        "양반 잡아먹기",
+        "아흔아홉",
+        "탈"
+      ],
+      "art_hint": "a masked performer in a long shaggy cloth costume of blue and ochre strips playing a sky beast, lunging at a cowering masked nobleman figure on a straw-matted outdoor stage at night, torch light, a village crowd suggested in shadow",
+      "art_anchors": [
+        "costume_male"
+      ],
+      "habitat": [
+        "탈판",
+        "마당"
+      ],
+      "omens": {
+        "time": [
+          "night"
+        ],
+        "weather": [],
+        "season": [
+          "spring"
+        ]
+      },
+      "sites": [
+        {
+          "name": "통영오광대 전승지",
+          "sido": "경남",
+          "sigungu": "통영시",
+          "lat": 34.8544,
+          "lng": 128.4331,
+          "precision": "sigungu",
+          "note": "국가무형유산 통영오광대의 비비 과장"
+        },
+        {
+          "name": "고성오광대 전승지",
+          "sido": "경남",
+          "sigungu": "고성군",
+          "lat": 34.9734,
+          "lng": 128.3223,
+          "precision": "sigungu",
+          "note": "국가무형유산 고성오광대의 비비 과장"
+        }
+      ],
+      "sources": [
+        {
+          "type": "heritage",
+          "title": "통영오광대",
+          "ref": "국가무형유산"
+        },
+        {
+          "type": "heritage",
+          "title": "고성오광대",
+          "ref": "국가무형유산"
+        },
+        {
+          "type": "encyclopedia",
+          "title": "한국민속대백과사전",
+          "ref": "영노"
+        }
+      ],
+      "verification": "public_encyclopedia",
+      "confidence": "high",
+      "related": [
+        "kr-imugi",
+        "kr-dueoksini"
+      ],
+      "updated_at": "2026-09-12"
     }
   ]
 }

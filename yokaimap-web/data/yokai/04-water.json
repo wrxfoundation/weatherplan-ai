@@ -228,7 +228,6 @@
       "id": "kr-sinjikki",
       "canonical": "신지끼",
       "aliases": [
-        "인어",
         "신지께",
         "거문도 인어"
       ],
@@ -285,7 +284,8 @@
       "verification": "public_encyclopedia",
       "confidence": "medium",
       "related": [
-        "kr-yongwang"
+        "kr-yongwang",
+        "kr-ineo"
       ],
       "updated_at": "2026-08-16"
     },
@@ -642,6 +642,303 @@
         "kr-mul-dokkaebi"
       ],
       "updated_at": "2026-08-16"
+    },
+    {
+      "id": "kr-cheoyong",
+      "canonical": "처용",
+      "aliases": [
+        "처용랑",
+        "處容"
+      ],
+      "names": {
+        "en": "Cheoyong",
+        "roman": "cheoyong"
+      },
+      "category": "water",
+      "rarity": "legendary",
+      "distribution": "regional",
+      "summary": "동해 용왕의 아들. 아내를 범한 역신 앞에서 노래하고 물러남으로써 역신을 굴복시켰고, 그 얼굴이 문에 붙는 부적이 되었다.",
+      "body": "『삼국유사』 기이편 '처용랑 망해사'에 실린다. 신라 헌강왕이 개운포에서 놀다 구름과 안개에 길을 잃자 동해 용이 일곱 아들을 데리고 나타났고, 그중 하나인 처용이 왕을 따라 경주로 들어와 벼슬을 받았다. 어느 밤 처용이 돌아와 보니 아내 곁에 다리가 넷이었다. 처용은 노래를 부르며 물러났고, 역신이 모습을 드러내 무릎 꿇고 앞으로는 공의 얼굴을 그린 것만 보아도 그 문에 들지 않겠다고 했다. 그래서 사람들이 처용의 얼굴을 문에 붙였다. 싸워서 이긴 것이 아니라 물러남으로써 이겼다는 점이 이 이야기의 핵심이고, 벽사의 힘이 폭력이 아니라 태도에서 나온다는 드문 사례다. 처용무는 궁중정재로 이어져 지금도 전한다. 처용을 아랍계 상인으로 보는 해석과 지방 호족의 인질로 보는 해석이 함께 있다.",
+      "traits": [
+        "처용가",
+        "역신",
+        "벽사",
+        "처용무",
+        "개운포"
+      ],
+      "art_hint": "a broad-shouldered man in a Korean court robe and a tall flower-crowned hat dancing slowly with both sleeves lifted before a paper-latticed door at night, his painted mask-like face calm, a shrinking shadowy figure kneeling at the threshold",
+      "art_anchors": [
+        "costume_male",
+        "architecture"
+      ],
+      "habitat": [
+        "해안",
+        "문간",
+        "궁중"
+      ],
+      "omens": {
+        "time": [
+          "night"
+        ],
+        "weather": [
+          "fog"
+        ],
+        "season": []
+      },
+      "sites": [
+        {
+          "name": "울산 처용암",
+          "sido": "울산",
+          "sigungu": "남구",
+          "lat": 35.464,
+          "lng": 129.343,
+          "precision": "dong",
+          "note": "개운포 앞바다의 바위. 처용이 나왔다고 전하는 자리다"
+        },
+        {
+          "name": "울주 망해사지",
+          "sido": "울산",
+          "sigungu": "울주군",
+          "lat": 35.5133,
+          "lng": 129.2461,
+          "precision": "dong",
+          "note": "헌강왕이 동해 용을 위해 세웠다는 절터"
+        }
+      ],
+      "sources": [
+        {
+          "type": "classic",
+          "title": "삼국유사",
+          "ref": "기이 처용랑 망해사"
+        },
+        {
+          "type": "encyclopedia",
+          "title": "한국민족문화대백과사전",
+          "ref": "처용설화"
+        },
+        {
+          "type": "heritage",
+          "title": "처용무",
+          "ref": "국가무형유산"
+        }
+      ],
+      "verification": "primary_text",
+      "confidence": "high",
+      "related": [
+        "kr-yeoksin",
+        "kr-yongwang",
+        "kr-jeung",
+        "kr-haeryong"
+      ],
+      "updated_at": "2026-09-12"
+    },
+    {
+      "id": "kr-ineo",
+      "canonical": "인어",
+      "aliases": [
+        "교인",
+        "人魚"
+      ],
+      "names": {
+        "en": "Ineo",
+        "ja": "人魚",
+        "roman": "ineo"
+      },
+      "category": "water",
+      "rarity": "rare",
+      "distribution": "regional",
+      "summary": "동해와 남해에서 잡혔다는 사람 모습의 물짐승. 놓아주면 은혜를 갚고 죽이면 탈이 난다고 했다.",
+      "body": "유몽인의 『어우야담』에 강원도 간성, 지금의 고성 바닷가에서 어부가 인어 여럿을 잡은 이야기가 실린다. 네 살배기 아이만 하고 살결이 희며 눈동자가 검고, 사람처럼 울어 어부가 놓아주자 물속으로 들어가며 돌아보았다고 했다. 다른 기록에는 인어 기름으로 켠 등이 오래간다는 말과, 잡아 죽인 배가 풍랑을 만났다는 말이 함께 전한다. 서구 전승의 반인반어가 유혹하는 존재인 것과 달리 한국 기록의 인어는 어리고 말이 없으며 해치지 않는다. 사람이 시험받는 쪽이라는 점이 다르다. 남해 거문도에서는 신지끼라는 이름으로 따로 전한다.",
+      "traits": [
+        "어우야담",
+        "방생",
+        "울음",
+        "풍랑"
+      ],
+      "art_hint": "a small pale child-like sea creature with smooth skin and dark eyes caught in a fisherman's net on a wet rocky shore at dawn, the fisherman in coarse hemp clothes hesitating with the net half open, grey sea and a pine-covered headland behind",
+      "art_anchors": [
+        "costume_male",
+        "landscape"
+      ],
+      "habitat": [
+        "동해안",
+        "갯바위",
+        "그물"
+      ],
+      "omens": {
+        "time": [
+          "dawn"
+        ],
+        "weather": [
+          "fog"
+        ],
+        "season": []
+      },
+      "sites": [
+        {
+          "name": "고성 간성 해안",
+          "sido": "강원",
+          "sigungu": "고성군",
+          "lat": 38.3806,
+          "lng": 128.4675,
+          "precision": "sigungu",
+          "note": "『어우야담』이 인어를 잡았다고 적은 간성 바닷가"
+        }
+      ],
+      "sources": [
+        {
+          "type": "classic",
+          "title": "어우야담",
+          "ref": "간성 어부와 인어"
+        },
+        {
+          "type": "encyclopedia",
+          "title": "한국민속대백과사전",
+          "ref": "인어"
+        }
+      ],
+      "verification": "primary_text",
+      "confidence": "high",
+      "related": [
+        "kr-sinjikki",
+        "kr-yongwang",
+        "kr-haerang"
+      ],
+      "updated_at": "2026-09-12"
+    },
+    {
+      "id": "kr-habaek",
+      "canonical": "하백",
+      "aliases": [
+        "수신 하백",
+        "河伯"
+      ],
+      "names": {
+        "en": "Habaek",
+        "zh": "河伯",
+        "roman": "habaek"
+      },
+      "category": "water",
+      "rarity": "legendary",
+      "distribution": "nationwide",
+      "summary": "강의 신. 유화의 아버지이자 주몽의 외조부로, 사위를 시험하며 잉어·사슴·꿩으로 모습을 바꿔 겨루었다.",
+      "body": "『삼국사기』와 이규보의 「동명왕편」에 나온다. 천제의 아들 해모수가 하백의 딸 유화를 취하자 하백이 노해 술법으로 겨루자 했고, 하백이 잉어가 되면 해모수는 수달이, 하백이 사슴이 되면 해모수는 승냥이가, 하백이 꿩이 되면 해모수는 매가 되어 잡았다. 물의 신이 변신으로 겨룬다는 설정과 결국 사위를 인정하고 딸을 보낸다는 결말이, 뒤에 오는 용왕·수신 전승의 밑그림이 된다. 유화는 쫓겨나 우발수에서 금와왕에게 거두어지고 거기서 주몽이 태어나므로, 하백은 건국 서사의 물줄기를 여는 자리에 놓인다.",
+      "traits": [
+        "변신 겨루기",
+        "유화",
+        "동명왕편",
+        "큰 강"
+      ],
+      "art_hint": "a stern bearded river god in a dark water-blue Korean robe rising waist-deep from a broad river at dusk, one hand raised, a great carp turning in the current beside him, reed banks and low mountains behind",
+      "art_anchors": [
+        "costume_male",
+        "landscape"
+      ],
+      "habitat": [
+        "큰 강",
+        "물속 궁"
+      ],
+      "omens": {
+        "time": [
+          "dusk"
+        ],
+        "weather": [
+          "rain"
+        ],
+        "season": []
+      },
+      "sites": [],
+      "sources": [
+        {
+          "type": "classic",
+          "title": "삼국사기",
+          "ref": "고구려본기 시조 동명성왕"
+        },
+        {
+          "type": "classic",
+          "title": "동국이상국집",
+          "ref": "동명왕편"
+        },
+        {
+          "type": "encyclopedia",
+          "title": "한국민족문화대백과사전",
+          "ref": "하백"
+        }
+      ],
+      "verification": "primary_text",
+      "confidence": "high",
+      "related": [
+        "kr-yongwang",
+        "kr-yongma",
+        "kr-haeryong"
+      ],
+      "updated_at": "2026-09-12"
+    },
+    {
+      "id": "kr-byeoljubu",
+      "canonical": "별주부",
+      "aliases": [
+        "자라 주부",
+        "鼈主簿"
+      ],
+      "names": {
+        "en": "Byeoljubu",
+        "roman": "byeoljubu"
+      },
+      "category": "water",
+      "rarity": "common",
+      "distribution": "nationwide",
+      "summary": "병든 용왕을 위해 토끼의 간을 구하러 뭍에 오른 자라. 충신이자 끝내 속은 자다.",
+      "body": "용왕이 병들어 토끼의 간을 먹어야 낫는다 하자 수궁의 신하 가운데 자라가 나서 뭍에 오른다. 토끼를 꾀어 수궁으로 데려오지만 토끼가 간은 빼어 바위에 널고 왔다고 둘러대 도로 뭍으로 나오고, 결국 빈손으로 돌아간다. 판소리 다섯 마당 중 「수궁가」로 불리고 고전소설 『토끼전』으로도 널리 읽혔다. 충(忠)을 말하면서 그 충이 어리석게 쓰이는 모습을 함께 보여 주는 구조라, 조선 후기 청중의 웃음이 어디에 있었는지가 드러난다. 수궁 장면 덕분에 용왕·수부 같은 물 신격이 서민 서사 안으로 들어오는 통로가 되었다.",
+      "traits": [
+        "수궁가",
+        "토끼 간",
+        "충신",
+        "속임수"
+      ],
+      "art_hint": "a large soft-shelled turtle wearing a small black official's hat and a strip of blue court silk, standing upright on a pine-shaded shore addressing a rabbit, the sea behind opening onto a submerged palace roofline",
+      "art_anchors": [
+        "landscape"
+      ],
+      "habitat": [
+        "바닷가",
+        "수궁"
+      ],
+      "omens": {
+        "time": [
+          "day"
+        ],
+        "weather": [
+          "clear"
+        ],
+        "season": []
+      },
+      "sites": [],
+      "sources": [
+        {
+          "type": "classic",
+          "title": "토끼전",
+          "ref": "자라의 육지 행"
+        },
+        {
+          "type": "heritage",
+          "title": "판소리 수궁가",
+          "ref": "국가무형유산"
+        },
+        {
+          "type": "encyclopedia",
+          "title": "한국민속대백과사전",
+          "ref": "수궁가"
+        }
+      ],
+      "verification": "primary_text",
+      "confidence": "high",
+      "related": [
+        "kr-yongwang",
+        "kr-subu",
+        "kr-cheonggaeguri"
+      ],
+      "updated_at": "2026-09-12"
     }
   ]
 }

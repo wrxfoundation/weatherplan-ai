@@ -473,6 +473,236 @@
         "kr-sacheonwang"
       ],
       "updated_at": "2026-08-16"
+    },
+    {
+      "id": "kr-choeyeong",
+      "canonical": "최영 장군신",
+      "aliases": [
+        "최장군신",
+        "추자도 최영"
+      ],
+      "names": {
+        "en": "General Choe Yeong Spirit",
+        "roman": "choeyeong janggunsin"
+      },
+      "category": "village",
+      "rarity": "uncommon",
+      "distribution": "regional",
+      "summary": "고려 말 장수 최영을 마을과 뱃길의 수호신으로 모신 신격. 제주 추자도와 서해안 일대에 사당이 있다.",
+      "body": "억울하게 죽은 장수는 힘센 신이 된다는 관념에 따라, 최영은 임경업과 함께 무속에서 가장 널리 모셔지는 장군신이 되었다. 제주 추자도 대서리에는 최영 사당이 있는데, 탐라를 치러 가는 길에 추자도에 머물며 주민에게 그물 짜는 법을 가르쳤다는 이야기가 함께 전한다. 서해안 어촌과 서울·경기의 부군당·군웅당에도 최영을 모신 곳이 많다. 바다와 국경을 지키던 장수를 뱃길과 마을 어귀에 세운다는 배치는, 임경업이 연평도 조기잡이의 신이 된 것과 같은 논리다. 살아서 지키지 못한 자리를 죽어서 지키게 한다는 셈이다.",
+      "traits": [
+        "장군신",
+        "사당",
+        "뱃길",
+        "그물 짜기"
+      ],
+      "art_hint": "a painted shrine portrait of a stern general in Korean lamellar armour and a red official robe holding a straight sword upright, hung on the plank wall of a small tile-roofed island shrine, offerings of rice and dried fish set on the floor before it",
+      "art_anchors": [
+        "costume_male",
+        "architecture",
+        "objects"
+      ],
+      "habitat": [
+        "사당",
+        "섬",
+        "포구"
+      ],
+      "omens": {
+        "time": [],
+        "weather": [
+          "wind",
+          "storm"
+        ],
+        "season": []
+      },
+      "sites": [
+        {
+          "name": "추자도 최영 장군 사당",
+          "sido": "제주",
+          "sigungu": "제주시",
+          "lat": 33.949,
+          "lng": 126.3005,
+          "precision": "dong",
+          "note": "추자면 대서리. 그물 짜는 법을 가르쳤다는 전승과 함께 제를 올린다"
+        }
+      ],
+      "sources": [
+        {
+          "type": "encyclopedia",
+          "title": "한국민속대백과사전",
+          "ref": "최영 장군신"
+        },
+        {
+          "type": "encyclopedia",
+          "title": "한국민족문화대백과사전",
+          "ref": "추자도 최영 사당"
+        }
+      ],
+      "verification": "public_encyclopedia",
+      "confidence": "medium",
+      "related": [
+        "kr-imgyeongeop",
+        "kr-seonang",
+        "kr-dangsan-halmeoni"
+      ],
+      "sensitivity": {
+        "kind": "living_faith",
+        "note": "지금도 제가 이어지는 사당이다."
+      },
+      "updated_at": "2026-09-12"
+    },
+    {
+      "id": "kr-nami",
+      "canonical": "남이 장군신",
+      "aliases": [
+        "남이장군 사당신",
+        "용문동 장군"
+      ],
+      "names": {
+        "en": "General Nami Spirit",
+        "roman": "nami janggunsin"
+      },
+      "category": "village",
+      "rarity": "uncommon",
+      "distribution": "local",
+      "summary": "스물여덟에 모반 혐의로 처형된 조선 장수 남이를 모신 마을신. 서울 용산에서 해마다 사당제를 지낸다.",
+      "body": "남이는 세조 때 이시애의 난을 평정하고 병조판서에 올랐으나 유자광의 무고로 처형되었다. 젊고 억울한 죽음이라는 장군신의 조건을 그대로 갖추어, 서울 용산구 용문동에 사당이 서고 지금까지 제가 이어진다. 남이장군사당제는 서울특별시 무형유산으로 지정되어 있으며, 깃발을 앞세운 행렬과 꽃등을 도는 절차가 남아 있다. 농촌의 당산·서낭과 달리 도성 안 마을이 장군을 마을신으로 모신 사례라, 도시 마을굿이 어떤 모습이었는지를 보여 주는 드문 자료다. 아파트가 들어선 골목에서 지금도 행렬이 돈다.",
+      "traits": [
+        "사당제",
+        "용문동",
+        "무고",
+        "깃발 행렬"
+      ],
+      "art_hint": "a night procession of villagers carrying tall coloured flags and paper flower lanterns along a narrow alley toward a small tile-roofed shrine, a general's portrait visible inside the open door, lantern light on plastered walls",
+      "art_anchors": [
+        "costume_male",
+        "architecture",
+        "objects"
+      ],
+      "habitat": [
+        "사당",
+        "골목",
+        "도성 마을"
+      ],
+      "omens": {
+        "time": [
+          "night"
+        ],
+        "weather": [],
+        "season": [
+          "autumn"
+        ]
+      },
+      "sites": [
+        {
+          "name": "서울 남이장군 사당",
+          "sido": "서울",
+          "sigungu": "용산구",
+          "lat": 37.5399,
+          "lng": 126.9614,
+          "precision": "dong",
+          "note": "용문동. 남이장군사당제가 서울특별시 무형유산으로 이어진다"
+        }
+      ],
+      "sources": [
+        {
+          "type": "heritage",
+          "title": "남이장군사당제",
+          "ref": "서울특별시 무형유산"
+        },
+        {
+          "type": "encyclopedia",
+          "title": "한국민속대백과사전",
+          "ref": "남이장군사당제"
+        }
+      ],
+      "verification": "public_encyclopedia",
+      "confidence": "high",
+      "related": [
+        "kr-imgyeongeop",
+        "kr-choeyeong",
+        "kr-seonang"
+      ],
+      "sensitivity": {
+        "kind": "living_faith",
+        "note": "해마다 제가 이어지는 사당이다."
+      },
+      "updated_at": "2026-09-12"
+    },
+    {
+      "id": "kr-bugunsin",
+      "canonical": "부군신",
+      "aliases": [
+        "부군당신",
+        "부근신",
+        "府君"
+      ],
+      "names": {
+        "en": "Bugunsin",
+        "roman": "bugunsin"
+      },
+      "category": "village",
+      "rarity": "uncommon",
+      "distribution": "regional",
+      "summary": "관아와 마을을 함께 지키던 신. 서울 한강변 나루 마을마다 부군당을 두고 모셨다.",
+      "body": "조선의 관청에는 부군당(府君堂)이라는 작은 사당이 딸려 있어 아전들이 제를 올렸고, 그 관행이 마을로 내려와 한강변 나루 마을마다 부군당이 섰다. 모시는 신은 곳에 따라 달라 최영·남이 같은 장군신을 두기도 하고, 부부 신상이나 이름 없는 위패만 두기도 한다. 서빙고·이태원·당인동 등지의 부군당이 남아 서울시 민속문화유산으로 지정되었고 일부는 지금도 마을 제를 잇는다. 관청의 신이 마을의 신으로 내려앉은 드문 사례라, 도시화 이전 서울이 어떤 단위로 묶여 있었는지를 읽는 자료로 쓰인다.",
+      "traits": [
+        "부군당",
+        "나루 마을",
+        "아전",
+        "위패"
+      ],
+      "art_hint": "a small tile-roofed shrine hall of weathered timber standing among old zelkova trees above a river bank at dusk, its plank door open to show a bare wooden tablet and two brass candlesticks, city roofs faint beyond the trees",
+      "art_anchors": [
+        "architecture",
+        "landscape"
+      ],
+      "habitat": [
+        "부군당",
+        "나루",
+        "관아"
+      ],
+      "omens": {
+        "time": [
+          "dusk"
+        ],
+        "weather": [],
+        "season": [
+          "spring"
+        ]
+      },
+      "sites": [
+        {
+          "name": "서울 한강변 부군당군",
+          "sido": "서울",
+          "sigungu": "용산구",
+          "lat": 37.52,
+          "lng": 126.988,
+          "precision": "sigungu",
+          "note": "서빙고·이태원 등지에 부군당이 남아 일부는 마을 제를 잇는다"
+        }
+      ],
+      "sources": [
+        {
+          "type": "encyclopedia",
+          "title": "한국민속대백과사전",
+          "ref": "부군당"
+        },
+        {
+          "type": "encyclopedia",
+          "title": "한국민족문화대백과사전",
+          "ref": "부군신앙"
+        }
+      ],
+      "verification": "public_encyclopedia",
+      "confidence": "medium",
+      "related": [
+        "kr-choeyeong",
+        "kr-nami",
+        "kr-seonang",
+        "kr-teoju"
+      ],
+      "updated_at": "2026-09-12"
     }
   ]
 }

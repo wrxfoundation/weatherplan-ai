@@ -610,6 +610,72 @@
         "kr-dokkaebi"
       ],
       "updated_at": "2026-08-16"
+    },
+    {
+      "id": "kr-nat-dokkaebi",
+      "canonical": "낮도깨비",
+      "aliases": [
+        "백주도깨비",
+        "대낮 도깨비"
+      ],
+      "names": {
+        "en": "Nat-dokkaebi",
+        "roman": "nat-dokkaebi"
+      },
+      "category": "dokkaebi",
+      "rarity": "uncommon",
+      "distribution": "nationwide",
+      "summary": "대낮에 나타나는 도깨비. 밤에만 다닌다는 규칙을 어긴 존재라, 나타난 것 자체가 어긋난 일의 징조다.",
+      "body": "도깨비는 해가 진 뒤에 다닌다는 것이 전승의 기본 규칙이다. 그래서 낮도깨비는 별개의 종이라기보다 도깨비가 규칙을 벗어난 상태를 부르는 이름에 가깝다. 대낮에 만났다는 채록에는 재물을 잃거나 가던 길을 잃었다는 결말이 붙고, 밤에 만난 도깨비처럼 씨름을 걸거나 거래를 트지 않는다. 규칙이 깨진 자리에서는 주고받을 것도 없다는 뜻이다. 말로는 더 널리 남아, '낮도깨비 같다'는 대낮에 터무니없는 짓을 하는 사람을 가리키는 관용구로 굳었다.",
+      "traits": [
+        "대낮",
+        "길 잃음",
+        "재물 손실",
+        "관용구"
+      ],
+      "art_hint": "a hornless dokkaebi standing brazenly in harsh midday sunlight on a dusty village road, coarse hemp jeogori and baji, unkempt topknot, knotted wooden club over one shoulder, a short hard shadow beneath him, thatched roofs behind",
+      "art_anchors": [
+        "costume_male",
+        "landscape"
+      ],
+      "habitat": [
+        "장터",
+        "들길",
+        "마을 어귀"
+      ],
+      "omens": {
+        "time": [
+          "day"
+        ],
+        "weather": [
+          "clear",
+          "heat"
+        ],
+        "season": [
+          "summer"
+        ]
+      },
+      "sites": [],
+      "sources": [
+        {
+          "type": "encyclopedia",
+          "title": "한국민속대백과사전",
+          "ref": "도깨비 — 출현 시간의 금기"
+        },
+        {
+          "type": "field",
+          "title": "한국구비문학대계",
+          "ref": "낮도깨비 설화군"
+        }
+      ],
+      "verification": "public_encyclopedia",
+      "confidence": "medium",
+      "related": [
+        "kr-dokkaebi",
+        "kr-gae-dokkaebi",
+        "kr-dokkaebi-teo"
+      ],
+      "updated_at": "2026-09-12"
     }
   ]
 }

@@ -551,6 +551,63 @@
         "kr-jayuro-gwisin"
       ],
       "updated_at": "2026-08-16"
+    },
+    {
+      "id": "kr-hakgyo-gyedan",
+      "canonical": "학교 계단 괴담",
+      "aliases": [
+        "여우계단",
+        "하나 더 생기는 계단"
+      ],
+      "names": {
+        "en": "The School Stairs",
+        "roman": "hakgyo gyedan goedam"
+      },
+      "category": "modern",
+      "rarity": "common",
+      "distribution": "nationwide",
+      "summary": "계단을 세면서 오르면 한 칸이 더 생긴다. 그 칸에서 빈 소원은 이루어지지만 값을 치러야 한다.",
+      "body": "학교 계단을 오르며 수를 세면 평소보다 한 칸이 많아지고, 그 자리에서 소원을 빌면 이루어진다는 이야기다. 대신 얻은 만큼 다른 것을 잃는다는 조건이 반드시 붙고, 계단 수가 스물여덟이라는 식으로 학교마다 숫자가 달라진다. 1990년대 이후 학교 괴담집과 인터넷 게시판을 통해 전국으로 퍼졌고, 2003년 영화 「여우계단」이 이 화소를 제목으로 쓰면서 그 이름이 굳었다. 화장실 귀신과 함께 학교라는 공간이 만들어 낸 현대 괴담의 대표 유형이며, 정해진 수를 세는 행위가 규칙을 만들고 그 규칙을 어기면 값을 치른다는 구조는 옛 금기담과 그대로 겹친다. 무대만 바뀌었을 뿐이다.",
+      "traits": [
+        "계단 세기",
+        "소원",
+        "대가",
+        "학교"
+      ],
+      "art_hint": "an empty concrete school stairwell at dusk seen from the bottom, worn steps rising into shadow, one step faintly out of alignment with the rest, a single fluorescent tube flickering, no figure",
+      "habitat": [
+        "학교 계단",
+        "별관"
+      ],
+      "omens": {
+        "time": [
+          "dusk",
+          "night"
+        ],
+        "weather": [],
+        "season": []
+      },
+      "sites": [],
+      "sources": [
+        {
+          "type": "modern",
+          "title": "학교 괴담 온라인 유통",
+          "ref": "1990년대 후반 이후 게시판·괴담집"
+        },
+        {
+          "type": "modern",
+          "title": "영화 「여우계단」",
+          "ref": "2003년 — 화소가 이 이름으로 굳는 계기"
+        }
+      ],
+      "verification": "modern_online",
+      "confidence": "medium",
+      "related": [
+        "kr-hwajangsil-gwisin",
+        "kr-kongkong-gwisin",
+        "kr-samjaesin"
+      ],
+      "updated_at": "2026-09-12"
     }
   ]
 }

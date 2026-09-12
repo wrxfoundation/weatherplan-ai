@@ -773,6 +773,148 @@
         "kr-gangnim"
       ],
       "updated_at": "2026-08-16"
+    },
+    {
+      "id": "kr-mundoryeong",
+      "canonical": "문도령",
+      "aliases": [
+        "문곡성",
+        "하늘 문선왕 아들"
+      ],
+      "names": {
+        "en": "Mundoryeong",
+        "roman": "mundoryeong"
+      },
+      "category": "jeju",
+      "rarity": "uncommon",
+      "distribution": "local",
+      "summary": "하늘 문선왕의 아들. 자청비와 글공부 동무로 만나 부부가 되고, 함께 내려와 농경신이 되었다.",
+      "body": "제주 「세경본풀이」의 인물이다. 자청비가 남장을 하고 글공부를 하러 갈 때 길에서 만나 삼 년을 함께 배우는데, 문도령은 끝내 자청비가 여자인 줄 몰랐다. 헤어지는 날 물가에서야 알아차리고 인연을 맺지만 하늘로 불려 올라간 뒤 소식이 끊긴다. 자청비가 온갖 시련을 뚫고 하늘에 올라 시험을 이겨 내 다시 만나고, 둘은 오곡 씨앗을 받아 지상으로 내려온다. 자청비가 중세경, 문도령이 상세경, 정수남이 하세경이 되어 농사를 맡는다. 서사의 주도권이 시종 자청비에게 있고 문도령은 기다려지는 쪽이라는 점이 이 본풀이의 특징이며, 신격의 서열과 이야기의 주인공이 어긋나 있는 드문 구조다.",
+      "traits": [
+        "세경본풀이",
+        "글공부",
+        "오곡 씨앗",
+        "상세경"
+      ],
+      "art_hint": "a young man in a pale scholar's robe and horsehair hat standing at a stone-lined spring at dusk, a bundle of books beside him, looking back toward a figure leaving along a path between low volcanic stone walls",
+      "art_anchors": [
+        "costume_male",
+        "landscape"
+      ],
+      "habitat": [
+        "하늘",
+        "물가",
+        "밭"
+      ],
+      "omens": {
+        "time": [
+          "dusk"
+        ],
+        "weather": [],
+        "season": [
+          "spring"
+        ]
+      },
+      "sites": [
+        {
+          "name": "제주 세경본풀이 전승권",
+          "sido": "제주",
+          "lat": 33.4996,
+          "lng": 126.5312,
+          "precision": "sido",
+          "note": "세경본풀이는 제주 전역의 큰굿에서 구송된다"
+        }
+      ],
+      "sources": [
+        {
+          "type": "field",
+          "title": "제주 세경본풀이",
+          "ref": "큰굿 구송 자료"
+        },
+        {
+          "type": "encyclopedia",
+          "title": "한국민속대백과사전",
+          "ref": "세경본풀이"
+        }
+      ],
+      "verification": "field_record",
+      "confidence": "high",
+      "related": [
+        "kr-jacheongbi",
+        "kr-cheonjiwang"
+      ],
+      "updated_at": "2026-09-12"
+    },
+    {
+      "id": "kr-hallakgungi",
+      "canonical": "할락궁이",
+      "aliases": [
+        "신산만산 할락궁이",
+        "이공본풀이 아들"
+      ],
+      "names": {
+        "en": "Hallakgungi",
+        "roman": "hallakgungi"
+      },
+      "category": "jeju",
+      "rarity": "rare",
+      "distribution": "local",
+      "summary": "종살이하던 어머니를 잃고 서천꽃밭을 찾아가 환생꽃을 얻어 온 아들. 꽃을 맡은 신이 되었다.",
+      "body": "제주 「이공본풀이」의 주인공이다. 아버지가 서천꽃밭 꽃감관으로 불려 간 사이 어머니는 자현장자의 집에 종으로 붙잡혀 학대받다 죽어 뼈만 남는다. 할락궁이는 메밀범벅을 싸 들고 달아나 개를 따돌리고 물길을 건너 서천꽃밭에 이르러 아버지를 만나고, 뼈살이꽃·살살이꽃·환생꽃을 얻어 돌아와 어머니를 되살린다. 자현장자에게는 웃음웃을꽃과 싸움싸울꽃을 써서 갚는다. 꽃으로 죽이고 꽃으로 살리는 서천꽃밭의 논리가 가장 또렷하게 드러나는 본풀이이며, 할락궁이는 뒤에 꽃감관을 잇는다. 되살리는 꽃과 해치는 꽃이 같은 밭에서 난다는 설정이 이 신화의 핵심이다.",
+      "traits": [
+        "서천꽃밭",
+        "환생꽃",
+        "메밀범벅",
+        "꽃감관"
+      ],
+      "art_hint": "a young man in coarse hemp clothes kneeling at the edge of a vast flower field under a pale sky, gathering three kinds of blossom into the fold of his jacket, a low stone gate behind him, black volcanic soil at the field's edge",
+      "art_anchors": [
+        "costume_male",
+        "landscape"
+      ],
+      "habitat": [
+        "서천꽃밭",
+        "종살이 집"
+      ],
+      "omens": {
+        "time": [
+          "day"
+        ],
+        "weather": [],
+        "season": [
+          "spring"
+        ]
+      },
+      "sites": [
+        {
+          "name": "제주 이공본풀이 전승권",
+          "sido": "제주",
+          "lat": 33.4996,
+          "lng": 126.5312,
+          "precision": "sido",
+          "note": "이공본풀이는 제주 큰굿에서 구송된다"
+        }
+      ],
+      "sources": [
+        {
+          "type": "field",
+          "title": "제주 이공본풀이",
+          "ref": "큰굿 구송 자료"
+        },
+        {
+          "type": "encyclopedia",
+          "title": "한국민속대백과사전",
+          "ref": "이공본풀이"
+        }
+      ],
+      "verification": "field_record",
+      "confidence": "high",
+      "related": [
+        "kr-gameunjang",
+        "kr-gangnim",
+        "kr-samseung-halmang"
+      ],
+      "updated_at": "2026-09-12"
     }
   ]
 }
