@@ -1571,3 +1571,85 @@ Reservations close Sep 14, 12:00 KST
 
 이미지 지적 2건(**2023 날짜** · 레이다 접시)은 그대로 유효 — 날짜는 고치고 올린다.
 게시 운영도 앞 절 그대로(국문·영문 분리 원글, 영문 22:00~23:00 KST).
+
+### 4층 배너 원글 — **최종판 v2: 서우 링크드인 소개서 인용 결합 (2026-09-12)**
+
+서우가 링크드인 About 전문 전달 → 「인용할 거리를 녹여봐」. **소개서 문장이 우리 초안보다 좋다.**
+두 줄이 앞 판들이 두 번에 걸쳐 설명하려던 것을 한 줄로 한다 — 골격으로 채택.
+
+**채택한 인용 넷**
+- **`The weather map stops at the front door.`** ★ 훅. 「예보는 도시를 말하는데 우리는 방에 산다」보다
+  짧고 그림이 그려진다. → 국문 **「일기예보는 현관 앞에서 멈춥니다.」**
+- **`Indoors is the beginning, not the boundary.`** ★ 4층 이미지의 정확한 캡션. 앞 판의
+  「층이 달라져도 네 단계는 같습니다」를 대체 — 아포리즘이라 더 강하다. → **「실내는 시작이지 경계가 아닙니다.」**
+- **`the alley, the rooftop, the road between two official stations`** ★ **해상도 격차를 설명 없이 보여준다.**
+  「관측소 두 곳 사이의 도로」 하나로 기존 관측망의 빈틈이 눈에 보인다.
+- **`Nobody had priced the air in a room, because nobody had measured it.`** ★ 클로저.
+  → **「방 안의 공기에 값이 붙은 적이 없습니다. 아무도 재지 않았으니까요.」**
+
+**번역 판단 하나**: `the resolution people live and drive in` 을 **「해상도」로 옮기지 않았다** —
+서우가 직전에 어렵다고 지적한 그 단어다. **「사람이 실제로 사는 자리, 실제로 달리는 도로의 공기」** 로 풀었다.
+
+**구조**: 소개서 인용이 훅·브리지·클로저를 맡고, HOW IT WORKS 4단계가 가운데 목록으로 기전을 맡는다.
+소개서의 `verified, valued, and rewarded` 는 4단계의 3박자 압축판이라 목록과 중복되므로 산문에서는 뺐다.
+
+**⚠ 소개서 자체의 문제 넷 (서우 전달)**
+1. **🔴 `On September 15 we ship Wellbian`** — 9/15는 **판매**일이고 **배송은 별도 공지**다(사이트 정책).
+   `ship` 은 배송으로 읽혀 **9/15에 물건이 나간다는 기대**를 만든다. 구매자 기대와 직결 →
+   **`we open the first sale`** 로 교체 권고. X 원글은 `First sale Sep 15` 로 썼다.
+2. **🟡 `A DePIN, from the company that has measured Korea's outdoors since 1997`** — 약관 제3·4조와
+   어긋난다(운영·발행 주체는 웰비안, 케이웨더는 기기 제공·품질 인증·국내 수탁). **경력 섹션에서 고친
+   `wellbian is its Web3 project` 와 같은 문장 형태**다. X 원글에 재현하지 않았다.
+3. **🟡 `since 1997` vs 우리 정본 `30년`** — 2026−1997 = **29년**. 한 문서에 둘을 같이 쓰지 않는다.
+   어느 쪽이 정본인지 확정 필요.
+4. **🟡 `4,300 cities`** — **정본에 없는 숫자**이고 `4,000+ 고객사`(기업 고객)와 **다른 것**이다.
+   나란히 쓰면 같은 숫자로 읽힌다. X 원글에 넣지 않았다 — **케이웨더 역량을 wellbian 글로 끌어오면
+   프레임이 흐려진다.**
+
+```
+EN (최종 v2)
+The weather map stops at the front door.
+
+We spend almost all our lives indoors, and almost none of that air is measured.
+
+So we measure it:
+
+Measure — a certified monitor in the room: temperature, humidity, fine dust, CO₂, VOCs
+Verify — every reading checked for quality and uptime
+Reward — verified data rewarded back to the household, on the XRP Ledger
+Serve — the data goes into forecasting, health and energy services
+
+Indoors is the beginning, not the boundary. The same network walks out the door — the alley, the rooftop, the road between two official stations — because weather AI and autonomous vehicles need the air at the resolution people live and drive in.
+
+Nobody had priced the air in a room, because nobody had measured it.
+
+※ Reward amounts and value are not guaranteed.
+
+First sale Sep 15 · reservations close Sep 14, 12:00 KST
+🔗 https://wellbian.io/?utm_source=x&utm_medium=owned&utm_campaign=vision0912&utm_content=layers_en
+```
+```
+KO (최종 v2)
+일기예보는 현관 앞에서 멈춥니다.
+
+우리는 하루의 거의 전부를 실내에서 보냅니다. 그런데 그 공기는 거의 측정되지 않습니다.
+
+그래서 우리가 잽니다.
+
+측정 — 방 안의 인증받은 기기: 온도, 습도, 미세먼지, CO₂, VOCs
+검증 — 품질·성실성 기준으로 모든 측정값을 확인
+보상 — 검증된 데이터가 가정으로 돌아옵니다. XRP Ledger에 기록되어
+서비스 — 그 데이터가 예보·건강·에너지 서비스로 쓰입니다
+
+실내는 시작이지 경계가 아닙니다. 같은 관측망이 문밖으로 걸어 나갑니다 — 골목, 옥상, 관측소 두 곳 사이의 도로. 날씨 AI와 자율주행에는 사람이 실제로 사는 자리, 실제로 달리는 도로의 공기가 필요하니까요.
+
+방 안의 공기에 값이 붙은 적이 없습니다. 아무도 재지 않았으니까요.
+
+※ 보상 수량과 가치는 보장되지 않습니다.
+
+1차 판매 9월 15일 · 사전예약 9월 14일(월) 12시 마감
+🔗 https://wellbian.io/?utm_source=x&utm_medium=owned&utm_campaign=vision0912&utm_content=layers_ko
+```
+
+규칙·게시 운영은 앞 절 그대로(`$WLBN` 캐시태그 금지 · 비보장 고지 필수 · 국문·영문 분리 원글 ·
+영문 22:00~23:00 KST). 이미지 지적 2건(**2023 날짜** · 레이다 접시)도 유효.
