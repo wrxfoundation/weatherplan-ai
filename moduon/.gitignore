@@ -1,0 +1,13 @@
+node_modules
+dist
+# 빌드 시 scripts/fetch-assets.mjs 가 자동 다운로드하는 브랜드 에셋(카테고리·오브제 webp)
+public/assets/*.webp
+# 히어로 영상·포스터는 자체 호스팅(레포에 커밋) — fetch 목록에서 제외
+.env
+.env.local
+.vercel
+.DS_Store
+# QA 합격 도장(로컬 전용) — .claude/hooks/guard.cjs 가 읽는다
+.qa-pass
+# 제휴사 차량 이미지 — 빌드 시 scripts/fetch-car-images.mjs 가 내려받는다(커밋 대상 아님)
+public/assets/cars/
