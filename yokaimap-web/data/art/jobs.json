@@ -1826,11 +1826,11 @@
       "id": "kr-bibi",
       "target": "public/img/yokai/bibi.webp",
       "aspect": "4:5",
-      "job_id": "7dc20965-e536-41d1-bc4b-058470420c65",
-      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260912_075833_7dc20965-e536-41d1-bc4b-058470420c65.png",
+      "job_id": "ff62f879-0da7-4da4-8ef4-28059690c9eb",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260912_080704_ff62f879-0da7-4da4-8ef4-28059690c9eb.png",
       "review": {
         "result": "pending",
-        "note": "검수 대기 — docs/ART_REVIEW.md 체크리스트"
+        "note": "재생성 — 검수 대기"
       }
     },
     {
@@ -1842,8 +1842,9 @@
       "job_id": "ea4fab5d-7aa7-4136-92e3-1c5721fb31ef",
       "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260912_075832_ea4fab5d-7aa7-4136-92e3-1c5721fb31ef.png",
       "review": {
-        "result": "pending",
-        "note": "검수 대기 — docs/ART_REVIEW.md 체크리스트"
+        "by": "프로젝트 오너",
+        "date": "2026-09-12",
+        "result": "pass"
       }
     },
     {
@@ -1855,8 +1856,9 @@
       "job_id": "8893dbf3-3dd0-491f-a4b1-c7102c97189b",
       "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260912_075832_8893dbf3-3dd0-491f-a4b1-c7102c97189b.png",
       "review": {
-        "result": "pending",
-        "note": "검수 대기 — docs/ART_REVIEW.md 체크리스트"
+        "by": "프로젝트 오너",
+        "date": "2026-09-12",
+        "result": "pass"
       }
     },
     {
@@ -1868,8 +1870,9 @@
       "job_id": "a0a52618-2342-4a70-aef6-e431f9d4fa67",
       "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260912_075832_a0a52618-2342-4a70-aef6-e431f9d4fa67.png",
       "review": {
-        "result": "pending",
-        "note": "검수 대기 — docs/ART_REVIEW.md 체크리스트"
+        "by": "프로젝트 오너",
+        "date": "2026-09-12",
+        "result": "pass"
       }
     },
     {
@@ -1881,8 +1884,9 @@
       "job_id": "53e46a24-231d-4586-a010-cf5b255b03a1",
       "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260912_075832_53e46a24-231d-4586-a010-cf5b255b03a1.png",
       "review": {
-        "result": "pending",
-        "note": "검수 대기 — docs/ART_REVIEW.md 체크리스트"
+        "by": "프로젝트 오너",
+        "date": "2026-09-12",
+        "result": "pass"
       }
     },
     {
@@ -1891,11 +1895,11 @@
       "id": "kr-chilseong",
       "target": "public/img/yokai/chilseong.webp",
       "aspect": "4:5",
-      "job_id": "aa039d97-9083-4d9c-baa6-d19b276576ac",
-      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260912_075832_aa039d97-9083-4d9c-baa6-d19b276576ac.png",
+      "job_id": "882d2e15-fb38-4f30-aa41-25781cce2dbe",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260912_080704_882d2e15-fb38-4f30-aa41-25781cce2dbe.png",
       "review": {
         "result": "pending",
-        "note": "검수 대기 — docs/ART_REVIEW.md 체크리스트"
+        "note": "재생성 — 검수 대기"
       }
     },
     {
@@ -1907,8 +1911,9 @@
       "job_id": "cc5998f7-135e-44f7-88b6-c7f76d9fd211",
       "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260912_080043_cc5998f7-135e-44f7-88b6-c7f76d9fd211.png",
       "review": {
-        "result": "pending",
-        "note": "검수 대기 — docs/ART_REVIEW.md 체크리스트"
+        "by": "프로젝트 오너",
+        "date": "2026-09-12",
+        "result": "pass"
       }
     },
     {
@@ -1920,8 +1925,9 @@
       "job_id": "e175ec3f-0d68-476b-ac8f-2382077b54ac",
       "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260912_080043_e175ec3f-0d68-476b-ac8f-2382077b54ac.png",
       "review": {
-        "result": "pending",
-        "note": "검수 대기 — docs/ART_REVIEW.md 체크리스트"
+        "by": "프로젝트 오너",
+        "date": "2026-09-12",
+        "result": "pass"
       }
     },
     {
@@ -1933,8 +1939,10 @@
       "job_id": "5fd3bdcb-c089-40fa-a11e-543b7bc6f794",
       "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260912_080045_5fd3bdcb-c089-40fa-a11e-543b7bc6f794.png",
       "review": {
-        "result": "pending",
-        "note": "검수 대기 — docs/ART_REVIEW.md 체크리스트"
+        "by": "프로젝트 오너",
+        "date": "2026-09-12",
+        "result": "reject",
+        "reason": "주칠 2주 + 곧은 상인방 = 도리이 실루엣. 금강문은 기와 지붕이 얹힌 건물이다"
       }
     },
     {
@@ -1946,8 +1954,9 @@
       "job_id": "ebd0a626-5268-48ef-af5c-c365d19f2fe2",
       "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260912_080043_ebd0a626-5268-48ef-af5c-c365d19f2fe2.png",
       "review": {
-        "result": "pending",
-        "note": "검수 대기 — docs/ART_REVIEW.md 체크리스트"
+        "by": "프로젝트 오너",
+        "date": "2026-09-12",
+        "result": "pass"
       }
     },
     {
@@ -1959,8 +1968,9 @@
       "job_id": "e3de65db-d3c6-4e7e-b4e5-a8662d2c1b07",
       "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260912_080043_e3de65db-d3c6-4e7e-b4e5-a8662d2c1b07.png",
       "review": {
-        "result": "pending",
-        "note": "검수 대기 — docs/ART_REVIEW.md 체크리스트"
+        "by": "프로젝트 오너",
+        "date": "2026-09-12",
+        "result": "pass"
       }
     },
     {
@@ -1972,8 +1982,9 @@
       "job_id": "5cd128e1-b0de-47ac-8e25-f8e76b77d18f",
       "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260912_080043_5cd128e1-b0de-47ac-8e25-f8e76b77d18f.png",
       "review": {
-        "result": "pending",
-        "note": "검수 대기 — docs/ART_REVIEW.md 체크리스트"
+        "by": "프로젝트 오너",
+        "date": "2026-09-12",
+        "result": "pass"
       }
     }
   ],

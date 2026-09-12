@@ -5,7 +5,7 @@ yokai.jp의 4축 구조(도감·지도·진단·다국어 SEO)를 한국 자료 
 
 - 전략과 배경: **[STRATEGY.md](./STRATEGY.md)**
 - 수익 모델: **[MONETIZATION.md](./MONETIZATION.md)**
-- 데이터 v0.1.0 — **120체 / 전승지 73곳 / 17개 시도 전체 커버**
+- 데이터 v0.1.0 — **156체 / 전승지 91곳 / 17개 시도 전체 커버**
 
 ## 이 프로젝트의 규칙
 
@@ -18,7 +18,7 @@ yokai.jp의 4축 구조(도감·지도·진단·다국어 SEO)를 한국 자료 
 ## 배포
 
 Vercel. **Root Directory를 `yokaimap-web`으로 설정**해야 한다(리포 루트는 다른 앱이다).
-`VITE_SITE_ORIGIN`은 빌드 시점에 프리렌더 156페이지의 canonical에 구워지므로
+`VITE_SITE_ORIGIN`은 빌드 시점에 프리렌더 194페이지의 canonical에 구워지므로
 **도메인을 먼저 정하고 넣은 뒤 배포한다.** 전체 절차: **[DEPLOY.md](./DEPLOY.md)**
 
 ## 로컬 실행
@@ -98,7 +98,7 @@ data/yokai/*.json           개체별 art_hint(영문 시각 서술) ← 프롬�
      .github/workflows/yokai-art.yml — 생성 세션은 CDN이 막혀 있어 GitHub 러너에서 돌린다
 ```
 
-**현황: 120체 생성 완료 · 검수 통과 10 / 대기 110 · 파일 반입 대기.**
+**현황: 120체 반입·검수 완료 · 12체 생성분 검수 대기 · 24체 미생성(인장 폴백).**
 반입과 검수 절차는 [DEPLOY.md](./DEPLOY.md) 3절 참고.
 
 `art.status`는 시드가 아니라 `jobs.json`에서 계산된다(`scripts/build-data.mjs`).
@@ -140,7 +140,7 @@ yokaimap-web/
 │   ├── schema/yokai.schema.json   # 레코드 스키마(JSON Schema 2020-12) — 진실 원천
 │   ├── categories.json            # 14개 대분류(색·인장 글자) · 희귀도 · 검증등급
 │   ├── regions.json               # 17개 시도 슬러그·중심점
-│   └── yokai/01~14-*.json         # 시드 120체 (카테고리별 분할)
+│   └── yokai/01~14-*.json         # 시드 156체 (카테고리별 분할)
 ├── scripts/
 │   ├── validate.mjs               # 스키마 검증기(의존성 0) + 도메인 무결성 8종
 │   ├── build-data.mjs             # 병합 → public/data/yokai.json

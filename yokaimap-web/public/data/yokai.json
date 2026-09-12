@@ -683,7 +683,7 @@
     "아흔아홉",
     "탈"
    ],
-   "art_hint": "a masked performer in a long shaggy cloth costume of blue and ochre strips playing a sky beast, lunging at a cowering masked nobleman figure on a straw-matted outdoor stage at night, torch light, a village crowd suggested in shadow",
+   "art_hint": "a masked performer playing a sky beast, his whole face hidden behind a carved and lacquered Korean wooden mask with a fixed fierce expression, no face paint and no visible skin on the face, a long shaggy cloth costume of blue and ochre strips, lunging at a cowering masked nobleman figure on a straw-matted outdoor stage at night, torch light, a village crowd suggested in shadow",
    "art_anchors": [
     "costume_male"
    ],
@@ -750,7 +750,7 @@
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
-    "job_id": "7dc20965-e536-41d1-bc4b-058470420c65"
+    "job_id": "ff62f879-0da7-4da4-8ef4-28059690c9eb"
    }
   },
   {
@@ -889,9 +889,9 @@
    "updated_at": "2026-09-12",
    "sensitivity": null,
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/bugunsin.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "ea4fab5d-7aa7-4136-92e3-1c5721fb31ef"
    }
@@ -960,9 +960,9 @@
    "updated_at": "2026-09-12",
    "sensitivity": null,
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/bulgae.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "8893dbf3-3dd0-491f-a4b1-c7102c97189b"
    }
@@ -1147,9 +1147,9 @@
    "updated_at": "2026-09-12",
    "sensitivity": null,
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/byeoljubu.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "a0a52618-2342-4a70-aef6-e431f9d4fa67"
    }
@@ -1524,9 +1524,9 @@
    "updated_at": "2026-09-12",
    "sensitivity": null,
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/cheoyong.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "53e46a24-231d-4586-a010-cf5b255b03a1"
    }
@@ -1617,7 +1617,7 @@
     "수명",
     "칠성풀이"
    ],
-   "art_hint": "a brass bowl of clear water set on a large glazed jar in a moonlit backyard, seven faint stars overhead, the edge of a tiled roof and a bare persimmon branch, no figure",
+   "art_hint": "the seven stars of the Big Dipper arranged clearly across a black night sky, no moon, a brass bowl of clear water set on a large glazed jar in a moonless backyard below, the edge of a tiled roof and a bare persimmon branch, no figure",
    "art_anchors": [
     "architecture",
     "objects"
@@ -1667,7 +1667,7 @@
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
-    "job_id": "aa039d97-9083-4d9c-baa6-d19b276576ac"
+    "job_id": "882d2e15-fb38-4f30-aa41-25781cce2dbe"
    }
   },
   {
@@ -1747,9 +1747,9 @@
    },
    "updated_at": "2026-09-12",
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/choeyeong.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "cc5998f7-135e-44f7-88b6-c7f76d9fd211"
    }
@@ -3411,9 +3411,9 @@
    "updated_at": "2026-09-12",
    "sensitivity": null,
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/geumcheok.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "e175ec3f-0d68-476b-ac8f-2382077b54ac"
    }
@@ -3509,7 +3509,7 @@
     "맨주먹",
     "석굴암"
    ],
-   "art_hint": "two bare-chested muscular guardian figures in flowing skirts standing on either side of a temple gate passage, one mouth open one closed, fists clenched, carved grey stone texture, a mountain temple courtyard visible through the opening",
+   "art_hint": "two bare-chested muscular guardian figures in flowing skirts standing inside the two side bays of a roofed timber temple gatehouse, the gatehouse covered by a tiled Korean hip roof on bracket sets, one guardian's mouth open one closed, fists clenched, carved grey stone texture, a mountain temple courtyard seen through the central opening",
    "art_anchors": [
     "architecture"
    ],
@@ -3697,9 +3697,9 @@
    },
    "updated_at": "2026-09-12",
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/gimnyeong-daesa.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "ebd0a626-5268-48ef-af5c-c365d19f2fe2"
    }
@@ -3783,9 +3783,9 @@
    },
    "updated_at": "2026-09-12",
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/godang-halmi.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "e3de65db-d3c6-4e7e-b4e5-a8662d2c1b07"
    }
@@ -4281,9 +4281,9 @@
    "updated_at": "2026-09-12",
    "sensitivity": null,
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/habaek.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "5cd128e1-b0de-47ac-8e25-f8e76b77d18f"
    }

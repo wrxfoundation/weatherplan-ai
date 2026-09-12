@@ -43,7 +43,7 @@
   "constraints_general": "no text, no letters, no calligraphy, no signature, no seal stamp, no watermark, no border frame, no Greco-Roman columns or pediment, no pegasus, not photorealistic, not 3d render, not anime",
   "exclude_japanese": {
     "note": "왜색 배제 — 일본 요괴 도상이 한국 도깨비 이미지를 오염시킨 역사가 실제로 있다(근대 학습물의 뿔 달린 도깨비). 되풀이하지 않는다.",
-    "prompt": "NOT Japanese: no kimono or obi sash, no circular family crest on sleeve or chest, no conical sedge hat, no two-horned oni with tiger-skin loincloth, no thonged zori or geta sandals, no split-toe tabi socks, no torii gate, no vermilion two-post gate with a straight lintel, no shimenawa paper streamers, no ukiyo-e woodblock look, no shoji or tatami, no upturned pagoda eaves, no cherry blossom, no Japanese stone lantern",
+    "prompt": "NOT Japanese: no kimono or obi sash, no circular family crest on sleeve or chest, no conical sedge hat, no two-horned oni with tiger-skin loincloth, no thonged zori or geta sandals, no split-toe tabi socks, no torii gate, no vermilion two-post gate with a straight lintel, no shimenawa paper streamers, no ukiyo-e woodblock look, no shoji or tatami, no upturned pagoda eaves, no cherry blossom, no Japanese stone lantern, no kabuki kumadori red stripe face paint on a bare face",
     "checklist": [
       "뿔 2개 + 호피 무늬 하의 = 일본 오니. 도깨비에 절대 금지",
       "가나보(철퇴 방망이) 형태 금지 — 도깨비방망이는 옹이 있는 나무 방망이",
@@ -57,7 +57,8 @@
       "발가락이 갈라진 버선(다비) 금지 — 한국 버선은 코가 하나로 모인다",
       "주칠 기둥 2개 + 곧은 상인방 = 도리이. 홍살문은 상단에 화살 모양 살이 서 있고 태극이 붙는다 — 살이 없으면 그리지 말 것",
       "소매·가슴의 원형 문장(가몬) 금지 — 강림도령에서 실제로 나왔다",
-      "삿갓형 원뿔 밀짚모자 금지 — 현대괴이에 마쓰리 복장으로 나왔다(콩콩귀신)"
+      "삿갓형 원뿔 밀짚모자 금지 — 현대괴이에 마쓰리 복장으로 나왔다(콩콩귀신)",
+      "가부키 구마도리(隈取) — 맨 얼굴에 붉은 곡선 줄무늬 분장. 한국 탈놀음은 조각한 탈을 쓰지 분장하지 않는다. 비비 초안이 여기 걸렸다."
     ]
   },
   "exclude_chinese": {
