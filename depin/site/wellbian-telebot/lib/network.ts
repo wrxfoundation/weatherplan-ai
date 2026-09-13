@@ -689,7 +689,7 @@ export const PEOPLE: Person[] = [
     id: "lynnmartin", gate: "data", name: "Lynn Martin", org: "NYSE / ICE", role: "President · Chair, ICE Fixed Income and Data Services",
     lane: "capital", stance: "linked", tie: "**1촌**(9/13 수락) · 공통 1촌 Katie·Hazel",
     why: "거래소보다 **데이터 서비스** 쪽이 우리와 닿는다 — 시장 데이터를 파는 사업의 구조가 우리 B2B 데이터 판매와 같은 모양이다. 그가 의장인 부문이 reference data·indices·pricing, 즉 **데이터가 값이 되는 구조** 그 자체다. 컬럼비아 통계 석사라 측정·품질을 이해하는 쪽이기도 하다.",
-    next: "**인사만 보냈다(9/13)** — 우리 소개 한 줄 + 관심의 이유(데이터 서비스) 한 줄, 제품 설명·링크·요청 0. **사업 대화는 데이터 실적 뒤.** ⚠ 공통 1촌 Katie 는 언급하지 않았다 — 그쪽 관계가 아직 얕아 이름을 팔면 안 된다. 첫 인사에 XRP Ledger 대신 `a public ledger` 로 쓴 이유도 같다(NYSE·ICE 임원에게 첫마디부터 특정 체인을 말하면 「크립토 사람」으로 분류된다).",
+    next: "**인사만 보냈다(9/13)** — 케이웨더 소개(30년·약 3만 센서·기업 고객 4,000+·코스닥 상장) → wellbian 한 줄 → 관심의 이유(데이터 서비스) 순. 제품 설명·링크·요청 0. ⚠ **「국내 최대」 는 넣지 않았다** — 기관 상대는 회사 자료를 직업으로 읽는 쪽이라 근거 없는 최상급 한 단어가 나머지 문장의 신뢰까지 깎는다(판정표: wellbian-kweather-relationship 「케이웨더 소개 수치」). **사업 대화는 데이터 실적 뒤.** ⚠ 공통 1촌 Katie 는 언급하지 않았다 — 그쪽 관계가 아직 얕아 이름을 팔면 안 된다. 첫 인사에 XRP Ledger 대신 `a public ledger` 로 쓴 이유도 같다(NYSE·ICE 임원에게 첫마디부터 특정 체인을 말하면 「크립토 사람」으로 분류된다).",
   },
   {
     id: "davidpark", gate: "saleend", name: "Hyuckjae David Park", org: "Base", role: "APAC Ecosystem Lead",
