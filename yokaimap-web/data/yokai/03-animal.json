@@ -891,6 +891,135 @@
         "note": "제주 뱀 신앙은 일부 마을에서 지금도 이어진다. 퇴치담만 떼어 내 '미신 타파' 서사로 읽지 않는다."
       },
       "updated_at": "2026-09-12"
+    },
+    {
+      "id": "kr-maegu",
+      "canonical": "매구",
+      "aliases": [
+        "매귀",
+        "천년 묵은 여우"
+      ],
+      "names": {
+        "en": "Maegu",
+        "roman": "maegu"
+      },
+      "category": "animal",
+      "rarity": "rare",
+      "distribution": "nationwide",
+      "summary": "천 년을 묵은 여우가 변한 것. 사람의 집에 들어앉아 식구를 하나씩 없애며, 개가 먼저 알아본다.",
+      "body": "여우가 오래 묵으면 매구가 된다고 했다. 구미호가 사람으로 둔갑해 홀리는 쪽이라면 매구는 집 안에 눌러앉아 소리 없이 해를 끼치는 쪽이라, 밤마다 외양간의 소가 한 마리씩 죽거나 식구가 시름시름 앓는 식으로 정체가 드러난다. 사람은 알아보지 못하고 개가 먼저 짖어 알린다는 화소가 반복되며, 삽살개나 흰 개가 매구를 물어 죽이는 결말이 많다. 지역에 따라 매귀(埋鬼)로 적고 정월 지신밟기의 '매구굿'과 이름이 겹치는데, 굿의 매구는 잡귀를 묻는다는 뜻이라 어원이 같은지는 분명하지 않다. 구비문학대계에 전국적으로 채록되지만 형상 묘사는 지역차가 크다.",
+      "traits": [
+        "천년 여우",
+        "집 안 잠입",
+        "개가 알아봄",
+        "가축 폐사"
+      ],
+      "art_hint": "an old fox with dull grey-tipped fur crouched low inside a dark cattle byre at night, eyes catching the light, a village dog with raised hackles blocking the doorway, straw and a wooden trough",
+      "art_anchors": [
+        "landscape",
+        "architecture"
+      ],
+      "habitat": [
+        "외양간",
+        "집 안",
+        "무덤가"
+      ],
+      "omens": {
+        "time": [
+          "night",
+          "midnight"
+        ],
+        "weather": [],
+        "season": [
+          "winter"
+        ]
+      },
+      "sites": [],
+      "sources": [
+        {
+          "type": "field",
+          "title": "한국구비문학대계",
+          "ref": "매구 설화군(전국)"
+        },
+        {
+          "type": "encyclopedia",
+          "title": "한국민속대백과사전",
+          "ref": "매구"
+        }
+      ],
+      "verification": "field_record",
+      "confidence": "medium",
+      "related": [
+        "kr-gumiho",
+        "kr-nogu-hwaho",
+        "kr-sapsalgae",
+        "kr-samjokgu"
+      ],
+      "updated_at": "2026-09-13"
+    },
+    {
+      "id": "kr-datbal-goemul",
+      "canonical": "닷발괴물",
+      "aliases": [
+        "닷발 주둥이",
+        "닷발 새"
+      ],
+      "names": {
+        "en": "Datbal Goemul",
+        "roman": "datbal goemul"
+      },
+      "category": "animal",
+      "rarity": "rare",
+      "distribution": "nationwide",
+      "summary": "주둥이가 닷 발, 꼬리가 닷 발이라는 거대한 새. 어머니를 잡아먹고 아이들을 노린다.",
+      "body": "'닷발 주둥이 닷발 꼬리'라는 되풀이되는 말로 불린다. 발은 두 팔을 벌린 길이이니 닷 발이면 부리만 팔 미터가 넘는 셈으로, 크기를 수치로 못 박아 부르는 것이 이 괴물의 이름이자 공포의 장치다. 산 너머로 일 나간 어머니가 돌아오지 않고 대신 이 새가 찾아와 남매를 노리는 이야기가 흔하며, 남매가 꾀를 내어 물리치거나 하늘에서 내린 줄을 타고 달아난다. '해와 달이 된 오누이'의 호랑이 자리에 새가 들어앉은 형태여서 같은 유형의 변이로 다뤄지고, 짐승이 아니라 새라는 점 때문에 도망칠 곳이 하늘밖에 없다는 긴장이 더 크다. 구비문학대계에 채록되며 형상은 조사자마다 다르게 적힌다.",
+      "traits": [
+        "닷 발",
+        "거대한 부리",
+        "남매",
+        "어머니 잡아먹기"
+      ],
+      "art_hint": "an enormous dark bird with an impossibly long straight beak and a long trailing tail perched on the ridge of a thatched roof at dusk, two small children peering from the gap of a wooden door below, bare autumn hills behind",
+      "art_anchors": [
+        "landscape",
+        "architecture"
+      ],
+      "habitat": [
+        "산길",
+        "초가지붕",
+        "고개"
+      ],
+      "omens": {
+        "time": [
+          "dusk"
+        ],
+        "weather": [
+          "wind"
+        ],
+        "season": [
+          "autumn"
+        ]
+      },
+      "sites": [],
+      "sources": [
+        {
+          "type": "field",
+          "title": "한국구비문학대계",
+          "ref": "닷발 주둥이 닷발 꼬리 설화군"
+        },
+        {
+          "type": "encyclopedia",
+          "title": "한국민속대백과사전",
+          "ref": "닷발괴물"
+        }
+      ],
+      "verification": "field_record",
+      "confidence": "medium",
+      "related": [
+        "kr-sangun",
+        "kr-bulgasari"
+      ],
+      "updated_at": "2026-09-13"
     }
   ]
 }

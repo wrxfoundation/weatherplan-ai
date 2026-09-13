@@ -858,6 +858,73 @@
         "kr-songaksi"
       ],
       "updated_at": "2026-09-12"
+    },
+    {
+      "id": "kr-deokdaegol-sicheong",
+      "canonical": "덕대골 시체",
+      "aliases": [
+        "내 다리 내놔",
+        "다리 없는 송장"
+      ],
+      "names": {
+        "en": "The Corpse of Deokdaegol",
+        "roman": "deokdaegol siche"
+      },
+      "category": "ghost",
+      "rarity": "uncommon",
+      "distribution": "nationwide",
+      "summary": "약으로 쓰려고 시체의 다리를 잘라 온 남자를 밤새 쫓아오며 '내 다리 내놔' 하고 부른다.",
+      "body": "병든 아내에게 사람 고기를 먹여야 낫는다는 말을 듣고, 남자가 초분이나 무덤 구덩이가 모인 덕대골에 들어가 시체의 다리를 잘라 온다. 돌아오는 길 내내 뒤에서 '내 다리 내놔' 하는 소리가 따라붙고, 집에 들어와 문을 걸어도 문밖에서 밤새 부른다. 날이 새자 소리가 그치고 아내는 낫는다는 결말이 흔하지만, 그 뒤로 그 집에 탈이 났다는 판본도 있다. 죽은 이가 원한 때문이 아니라 제 것을 돌려받으려고 온다는 점이 한국 원귀담과 결이 다르고, 무섭기보다 끈질기다. 학교와 군대를 거치며 지금도 구전되는 몇 안 되는 옛 괴담이라, 전승이 끊기지 않은 사례로 자주 언급된다.",
+      "traits": [
+        "덕대골",
+        "다리",
+        "밤새 따라옴",
+        "문밖의 소리"
+      ],
+      "art_hint": "a moonlit country path between burial mounds, a man hurrying away with a wrapped bundle under his arm, a pale figure dragging itself along the path far behind him, low mist, bare trees, no faces visible",
+      "art_anchors": [
+        "costume_male",
+        "landscape"
+      ],
+      "habitat": [
+        "덕대골",
+        "무덤가",
+        "밤길"
+      ],
+      "omens": {
+        "time": [
+          "midnight"
+        ],
+        "weather": [
+          "fog"
+        ],
+        "season": []
+      },
+      "sites": [],
+      "sources": [
+        {
+          "type": "field",
+          "title": "한국구비문학대계",
+          "ref": "내 다리 내놔 설화군(전국)"
+        },
+        {
+          "type": "encyclopedia",
+          "title": "한국민속대백과사전",
+          "ref": "덕대골 설화"
+        }
+      ],
+      "verification": "field_record",
+      "confidence": "high",
+      "related": [
+        "kr-mujugohon",
+        "kr-yeongsan",
+        "kr-gaekgwi"
+      ],
+      "sensitivity": {
+        "kind": "tragedy_linked",
+        "note": "시신 훼손을 소재로 한다. 실제 장묘 시설이나 특정 장소를 지목하지 않는다."
+      },
+      "updated_at": "2026-09-13"
     }
   ]
 }

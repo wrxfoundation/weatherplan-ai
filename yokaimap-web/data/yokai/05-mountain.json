@@ -837,6 +837,85 @@
         "kr-yacha"
       ],
       "updated_at": "2026-09-12"
+    },
+    {
+      "id": "kr-dajagu-halmi",
+      "canonical": "다자구 할머니",
+      "aliases": [
+        "죽령 산신",
+        "다자구 할멈"
+      ],
+      "names": {
+        "en": "Dajagu Halmi",
+        "roman": "dajagu halmi"
+      },
+      "category": "mountain",
+      "rarity": "uncommon",
+      "distribution": "local",
+      "summary": "죽령의 도적 소굴에 홀로 들어가 '다자구야' 하는 암호로 관군을 불러들인 노파. 죽은 뒤 죽령 산신이 되었다.",
+      "body": "죽령 고개에 도적 떼가 웅거해 길이 끊기자, 한 노파가 잃어버린 아들을 찾는다며 소굴로 들어가 밥을 지어 주며 지냈다. 도적들이 깨어 있으면 '들자구야', 모두 잠들면 '다자구야' 하고 외치기로 관군과 약속해 두었고, 두목의 생일에 다들 취해 잠들자 다자구야를 외쳐 관군이 들이닥쳐 소탕했다. 노파는 그 자리에서 죽었고 사람들이 죽령산신당을 세워 모셨다. 지금도 충북 단양 죽령에 산신당이 있고 제를 올린다. 무력이 아니라 말 한마디로 고개를 되찾았다는 점, 그리고 그 공을 신격으로 갚았다는 점에서 마고할미·고당할미 같은 할미 산신 계열 가운데 내력이 가장 또렷하다.",
+      "traits": [
+        "죽령",
+        "암호",
+        "도적 소탕",
+        "산신당"
+      ],
+      "art_hint": "an old woman in white hemp clothes standing alone at the mouth of a mountain pass at dawn, calling out with one hand raised, a tile-roofed shrine among pines behind her, the pass road winding down into mist",
+      "art_anchors": [
+        "costume_female",
+        "landscape",
+        "architecture"
+      ],
+      "habitat": [
+        "죽령",
+        "고갯마루",
+        "산신당"
+      ],
+      "omens": {
+        "time": [
+          "dawn"
+        ],
+        "weather": [
+          "fog"
+        ],
+        "season": []
+      },
+      "sites": [
+        {
+          "name": "단양 죽령산신당",
+          "sido": "충북",
+          "sigungu": "단양군",
+          "lat": 36.9536,
+          "lng": 128.4394,
+          "precision": "dong",
+          "note": "죽령 고갯마루의 산신당. 다자구 할머니를 모시고 제를 올린다"
+        }
+      ],
+      "sources": [
+        {
+          "type": "encyclopedia",
+          "title": "한국민속대백과사전",
+          "ref": "죽령산신제"
+        },
+        {
+          "type": "field",
+          "title": "한국구비문학대계",
+          "ref": "다자구 할머니 설화(충북 단양)"
+        }
+      ],
+      "verification": "public_encyclopedia",
+      "confidence": "high",
+      "related": [
+        "kr-sansillyeong",
+        "kr-godang-halmi",
+        "kr-magohalmi",
+        "kr-seonang"
+      ],
+      "sensitivity": {
+        "kind": "living_faith",
+        "note": "죽령산신제가 지금도 이어진다."
+      },
+      "updated_at": "2026-09-13"
     }
   ]
 }

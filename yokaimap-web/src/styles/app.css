@@ -1521,3 +1521,121 @@ label.field {
     justify-content: center;
   }
 }
+
+/* ─── 설화 ────────────────────────────────────────────────
+   요괴 카드와 일부러 다르게 생겼다. 도판이 없고(이야기는 초상이 없다) 대신
+   분류 띠와 화소가 앞에 온다. 같은 격자에 섞여도 무엇이 개체이고 무엇이
+   이야기인지 눈으로 구분되어야 한다. */
+.tale-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--sp-4);
+}
+.tale-card {
+  position: relative;
+  display: block;
+  padding: var(--sp-4);
+  padding-left: calc(var(--sp-4) + 4px);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  transition: border-color 0.15s, transform 0.15s, box-shadow 0.15s;
+}
+/* 왼쪽 띠 하나로 신화·전설·민담을 구분한다 — 분류가 셋뿐이라 색으로 충분하다 */
+.tale-card::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  border-radius: var(--radius) 0 0 var(--radius);
+  background: var(--kind, var(--seal));
+}
+.tale-card[data-kind='myth'],
+.tale-kind[data-kind='myth'],
+.tale-kind-note[data-kind='myth'],
+.page[data-kind='myth'] {
+  --kind: var(--violet, #6b5b95);
+}
+.tale-card[data-kind='legend'],
+.tale-kind[data-kind='legend'],
+.tale-kind-note[data-kind='legend'],
+.page[data-kind='legend'] {
+  --kind: var(--jade, #4a7a5c);
+}
+.tale-card[data-kind='folktale'],
+.tale-kind[data-kind='folktale'],
+.tale-kind-note[data-kind='folktale'],
+.page[data-kind='folktale'] {
+  --kind: var(--gold, #c2922f);
+}
+.tale-card:hover {
+  border-color: color-mix(in srgb, var(--kind) 55%, var(--line));
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-1);
+}
+.tale-card h3 {
+  margin: 6px 0 2px;
+  font-family: var(--font-serif);
+  font-size: var(--text-md);
+}
+.tale-card p {
+  margin: var(--sp-2) 0 0;
+  color: var(--text-2);
+  font-size: var(--text-sm);
+  line-height: 1.6;
+}
+.tale-card-top {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  flex-wrap: wrap;
+}
+.tale-kind {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: var(--text-xs);
+  font-weight: 700;
+  color: var(--kind, var(--seal));
+  background: color-mix(in srgb, var(--kind, var(--seal)) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--kind, var(--seal)) 30%, transparent);
+}
+/* 유입 경로가 논쟁 중인 항목. 지우지 않고 표시한다 */
+.tale-flag {
+  display: inline-flex;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: var(--text-xs);
+  font-weight: 700;
+  color: var(--seal);
+  background: color-mix(in srgb, var(--seal) 10%, transparent);
+  border: 1px dashed color-mix(in srgb, var(--seal) 40%, transparent);
+}
+.tale-kinds {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--sp-3);
+}
+.tale-kind-note {
+  padding: var(--sp-3);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--kind, var(--seal));
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+}
+.tale-kind-note b {
+  color: var(--kind, var(--seal));
+}
+.tale-kind-note p {
+  margin: 4px 0 0;
+}
+
+/* 지도에서 설화 배경지는 요괴 전승지와 모양이 달라야 한다 —
+   같은 원으로 찍으면 '여기 요괴가 있다'로 읽힌다. 마름모로 구분한다. */
+.yk-marker.tale {
+  border-radius: 3px;
+  transform: rotate(45deg);
+}

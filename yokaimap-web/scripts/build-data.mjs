@@ -14,7 +14,7 @@ const DATA_VERSION = '0.1.0'
 const LICENSE = 'CC BY 4.0'
 const ART_DEFAULT = { status: 'pending', direction: 'minhwa-v1', file: null, license: 'CC BY 4.0 (AI 생성 · 원본 도상 없음)' }
 
-const { entries, errors, warnings, stats } = runValidation()
+const { entries, tales, errors, warnings, stats } = runValidation()
 for (const w of warnings) console.warn(`⚠️  ${w}`)
 if (errors.length) {
   for (const e of errors) console.error(`❌ ${e}`)
@@ -98,13 +98,57 @@ const bundle = {
   entries: normalized,
 }
 
+/* ─── 설화 번들 ────────────────────────────────────────────
+   요괴 번들과 파일을 나눈다. 오픈데이터로 배포하는 yokai.json은 개체 데이터셋으로
+   두고, 이야기는 tales.json으로 따로 받아 갈 수 있게 한다. 스키마가 다르므로
+   한 파일에 섞으면 소비하는 쪽이 매번 분기해야 한다. */
+const TALE_KIND = {
+  myth: { id: 'myth', name: '신화', blurb: '신성하다고 믿어지고 태초·건국을 다룬다. 증거물보다 믿음이 기준이다.' },
+  legend: { id: 'legend', name: '전설', blurb: '장소·물건·인물에 고정되고 증거물이 남는다. 그래서 좌표가 붙는다.' },
+  folktale: { id: 'folktale', name: '민담', blurb: '때와 곳이 특정되지 않는다. 좌표가 없는 것이 정상이다.' },
+}
+
+const talesOut = tales
+  .map(({ _file, _declared, ...t }) => ({
+    ...t,
+    aliases: t.aliases ?? [],
+    motifs: t.motifs ?? [],
+    characters: t.characters ?? [],
+    sites: t.sites ?? [],
+    related: t.related ?? [],
+    sensitivity: t.sensitivity ?? null,
+    foreign_origin: t.foreign_origin ?? null,
+  }))
+  .sort((a, b) => a.id.localeCompare(b.id))
+
+const taleSiteCount = talesOut.reduce((n, t) => n + t.sites.length, 0)
+const byKind = Object.fromEntries(Object.keys(TALE_KIND).map((k) => [k, talesOut.filter((t) => t.kind === k).length]))
+const taleByVerification = talesOut.reduce((a, t) => ({ ...a, [t.verification]: (a[t.verification] ?? 0) + 1 }), {})
+
+const taleBundle = {
+  version: DATA_VERSION,
+  generated_at: new Date().toISOString().slice(0, 10),
+  license: LICENSE,
+  attribution: '한국요괴지도 (Korean Yokai Map)',
+  count: talesOut.length,
+  site_count: taleSiteCount,
+  stats: { byKind, byVerification: taleByVerification },
+  kinds: Object.values(TALE_KIND),
+  tales: talesOut,
+}
+
 mkdirSync(join(ROOT, 'public/data'), { recursive: true })
 writeFileSync(join(ROOT, 'public/data/yokai.json'), JSON.stringify(bundle, null, 1))
 writeFileSync(join(ROOT, 'public/data/yokai.min.json'), JSON.stringify(bundle))
+writeFileSync(join(ROOT, 'public/data/tales.json'), JSON.stringify(taleBundle, null, 1))
 
 console.log(`✅ 빌드 완료 — ${normalized.length}체 / 전승지 ${siteCount}곳 / 시도 커버리지 ${stats.sidoCovered}/17`)
 console.log(`   카테고리: ${Object.entries(byCategory).map(([k, v]) => `${k}:${v}`).join(' ')}`)
 console.log(`   검증등급: ${Object.entries(byVerification).map(([k, v]) => `${k}:${v}`).join(' ')}`)
+console.log(
+  `   설화: ${talesOut.length}편 (${Object.entries(byKind).map(([k, v]) => `${TALE_KIND[k].name} ${v}`).join(' · ')})` +
+    ` / 배경지 ${taleSiteCount}곳`,
+)
 
 const artStat = normalized.reduce((a, e) => ({ ...a, [e.art.status]: (a[e.art.status] ?? 0) + 1 }), {})
 console.log(

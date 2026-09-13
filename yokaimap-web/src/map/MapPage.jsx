@@ -4,6 +4,7 @@ import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import 'leaflet.markercluster'
 import 'leaflet.markercluster/dist/MarkerCluster.css'
+import { TALE_SITES, KIND, taleSlug } from '../data/tales.js'
 import {
   SITES,
   CATEGORIES,
@@ -53,6 +54,33 @@ function markerIcon(site) {
 
 const esc = (s) => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;')
 
+const KIND_COLOR = { myth: '#6b5b95', legend: '#4a7a5c', folktale: '#c2922f' }
+
+/* 설화 배경지는 요괴 전승지와 모양을 달리한다 — 같은 원으로 찍으면
+   '여기 요괴가 나온다'로 읽힌다. 마름모로 두고 색은 분류(신화·전설·민담)를 쓴다. */
+function taleIcon(site) {
+  const size = 12
+  const approx = isApprox(site.precision) ? ' approx' : ''
+  return L.divIcon({
+    className: '',
+    html: `<span class="yk-marker tale${approx}" style="width:${size}px;height:${size}px;background:${KIND_COLOR[site.tale.kind] ?? '#6b5b95'}"></span>`,
+    iconSize: [size, size],
+    iconAnchor: [size / 2, size / 2],
+  })
+}
+
+function talePopupHtml(site) {
+  const t = site.tale
+  return `<div class="hovercard">
+    <div style="display:flex;align-items:center;gap:8px">
+      <span class="tale-kind" data-kind="${t.kind}" style="--kind:${KIND_COLOR[t.kind]}">${esc(KIND[t.kind]?.name ?? t.kind)}</span>
+      <strong>${esc(t.title)}</strong>
+    </div>
+    <p>${esc(t.summary)}</p>
+    <div class="small muted">${esc(site.name)} · ${esc(site.sido)}${site.sigungu ? ' ' + esc(site.sigungu) : ''}</div>
+  </div>`
+}
+
 function popupHtml(site) {
   const e = site.yokai
   const c = CAT[e.category]
@@ -81,6 +109,7 @@ export default function MapPage() {
   const [cats, setCats] = useState(() => new Set(params.get('cat') ? params.get('cat').split(',') : []))
   const [rarities, setRarities] = useState(() => new Set())
   const [q, setQ] = useState(params.get('q') ?? '')
+  const [showTales, setShowTales] = useState(true)
   const [showLow, setShowLow] = useState(params.get('low') === '1')
 
   const entries = useMemo(
@@ -145,7 +174,19 @@ export default function MapPage() {
       })
       cluster.addLayer(m)
     }
-  }, [filteredSites, navigate])
+    if (showTales) {
+      for (const site of TALE_SITES) {
+        const m = L.marker([site.lat, site.lng], { icon: taleIcon(site), title: site.tale.title })
+        m.bindPopup(talePopupHtml(site), { closeButton: false })
+        m.on('popupopen', (ev) => {
+          ev.popup
+            .getElement()
+            ?.addEventListener('click', () => navigate(`/seolhwa/${taleSlug(site.tale)}`), { once: true })
+        })
+        cluster.addLayer(m)
+      }
+    }
+  }, [filteredSites, showTales, navigate])
 
   const flyTo = (r) => mapRef.current?.flyTo([r.lat, r.lng], 10, { duration: 0.8 })
   const toggle = (setter) => (id) =>
@@ -154,7 +195,7 @@ export default function MapPage() {
       next.has(id) ? next.delete(id) : next.add(id)
       return next
     })
-  const activeCount = cats.size + rarities.size + (showLow ? 1 : 0)
+  const activeCount = cats.size + rarities.size + (showLow ? 1 : 0) + (showTales ? 0 : 1)
 
   return (
     <div className="map-shell">
@@ -217,11 +258,17 @@ export default function MapPage() {
 
             <section>
               <h3>표시 옵션</h3>
-              <button className={`chip${showLow ? ' on' : ''}`} onClick={() => setShowLow((v) => !v)}>
-                이설·미검증 포함
-              </button>
+              <div className="row">
+                <button className={`chip${showLow ? ' on' : ''}`} onClick={() => setShowLow((v) => !v)}>
+                  이설·미검증 포함
+                </button>
+                <button className={`chip${showTales ? ' on' : ''}`} onClick={() => setShowTales((v) => !v)}>
+                  설화 배경지 <span className="num">{TALE_SITES.length}</span>
+                </button>
+              </div>
               <p className="small muted" style={{ margin: '8px 0 0' }}>
-                근거가 약해 검증등급을 낮춘 항목입니다. 기본적으로 숨깁니다.
+                근거가 약해 검증등급을 낮춘 항목은 기본적으로 숨깁니다. 설화 배경지는 요괴 전승지와 구분하려고
+                마름모로 찍습니다 — 개체가 나타나는 곳이 아니라 이야기의 무대입니다.
               </p>
             </section>
 

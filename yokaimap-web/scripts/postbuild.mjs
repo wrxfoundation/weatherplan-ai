@@ -42,6 +42,10 @@ const { titleOf, descriptionOf, entryJsonLd, datasetJsonLd, categoryJsonLd, regi
 )
 
 const bundle = JSON.parse(readFileSync(join(ROOT, 'public/data/yokai.json'), 'utf8'))
+const taleBundle = JSON.parse(readFileSync(join(ROOT, 'public/data/tales.json'), 'utf8'))
+const tales = taleBundle.tales
+const taleKind = Object.fromEntries(taleBundle.kinds.map((k) => [k.id, k]))
+const taleSlug = (t) => t.id.replace(/^tale-/, '')
 const { entries, categories, regions } = bundle
 
 const shellRaw = readFileSync(join(DIST, 'index.html'), 'utf8')
@@ -243,6 +247,73 @@ prerender('/business', {
   priority: '0.7',
 })
 
+/* ─── 설화 ───
+   요괴와 스키마가 다르므로 프리렌더 본문도 다르다. 도판이 없고 화소·등장 개체가 들어간다.
+   설화 제목은 검색량이 큰 말들이라(선녀와 나무꾼·삼년고개) AEO 관점에서 개체보다 값이 크다. */
+prerender('/seolhwa', {
+  title: `한국 설화 — 신화·전설·민담 ${taleBundle.count}편`,
+  description: `원전과 채록에 근거가 있는 한국 설화 ${taleBundle.count}편. 신화·전설·민담으로 나누고 배경지 좌표와 등장 요괴를 함께 정리했습니다.`,
+  jsonLd: {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: '한국 설화 — 신화·전설·민담',
+    url: `${ORIGIN}/seolhwa`,
+    numberOfItems: taleBundle.count,
+    isPartOf: { '@type': 'WebSite', name: '한국요괴지도', url: ORIGIN },
+  },
+  body: `<h1>한국 설화 ${taleBundle.count}편</h1><ul>${tales
+    .map((t) => `<li><a href="/seolhwa/${taleSlug(t)}">${esc(t.title)}</a> (${esc(taleKind[t.kind]?.name ?? t.kind)}) — ${esc(t.summary)}</li>`)
+    .join('')}</ul>`,
+  priority: '0.9',
+})
+
+for (const t of tales) {
+  const cast = t.characters.map((id) => entries.find((e) => e.id === id)).filter(Boolean)
+  const sites = t.sites.map((s) => `${s.name}(${s.sido}${s.sigungu ? ' ' + s.sigungu : ''})`).join(', ')
+  const body = [
+    `<h1>${esc(t.title)}</h1>`,
+    `<p>${esc(taleKind[t.kind]?.name ?? t.kind)}</p>`,
+    `<p>${esc(t.summary)}</p>`,
+    `<p>${esc(t.body)}</p>`,
+    t.aliases.length ? `<p>이표기: ${esc(t.aliases.join(', '))}</p>` : '',
+    t.motifs.length ? `<p>화소: ${esc(t.motifs.join(', '))}</p>` : '',
+    cast.length
+      ? `<p>등장 개체: ${cast.map((e) => `<a href="/yokai/${slugOf(e)}">${esc(e.canonical)}</a>`).join(', ')}</p>`
+      : '',
+    sites ? `<p>배경지: ${esc(sites)}</p>` : '',
+    t.foreign_origin ? `<p>유입 경로 논쟁: ${esc(t.foreign_origin.note)}</p>` : '',
+    `<p>출처: ${esc(t.sources.map((s) => [s.title, s.ref].filter(Boolean).join(' ')).join(' / '))}</p>`,
+  ].join('')
+  prerender(`/seolhwa/${taleSlug(t)}`, {
+    title: `${t.title} — 한국 설화 | 한국요괴지도`,
+    description: `${t.summary} ${taleKind[t.kind]?.name} · 출처와 검증등급을 함께 싣습니다.`,
+    jsonLd: {
+      '@context': 'https://schema.org',
+      '@type': 'CreativeWork',
+      name: t.title,
+      alternateName: t.aliases,
+      genre: taleKind[t.kind]?.name,
+      abstract: t.summary,
+      inLanguage: 'ko',
+      url: `${ORIGIN}/seolhwa/${taleSlug(t)}`,
+      keywords: t.motifs.join(', '),
+      citation: t.sources.map((s) => [s.title, s.ref].filter(Boolean).join(' — ')),
+      ...(t.sites.length > 0 && {
+        contentLocation: t.sites.map((s) => ({
+          '@type': 'Place',
+          name: s.name,
+          address: { '@type': 'PostalAddress', addressRegion: s.sido, addressLocality: s.sigungu },
+          geo: { '@type': 'GeoCoordinates', latitude: s.lat, longitude: s.lng },
+        })),
+      }),
+      isPartOf: { '@type': 'WebSite', name: '한국요괴지도', url: ORIGIN },
+    },
+    body,
+    priority: '0.8',
+    ogImage: '/og/default.png',
+  })
+}
+
 /* ─── sitemap · robots ─── */
 writeFileSync(
   join(DIST, 'sitemap.xml'),
@@ -285,7 +356,7 @@ writeFileSync(
   `# 한국요괴지도 (Korean Yokai Map)
 > 한국 구비전승·문헌 기록의 요괴·신격을 출처와 검증등급을 붙여 정리한 공개 데이터셋과 전승지 지도.
 
-수록 ${bundle.count}체 / 전승지 ${bundle.site_count}곳 / 데이터 v${bundle.version} (${bundle.generated_at}) / 라이선스 ${bundle.license}
+수록 요괴·신격 ${bundle.count}체 / 설화 ${taleBundle.count}편 / 전승지·배경지 ${bundle.site_count + taleBundle.site_count}곳 / 데이터 v${bundle.version} (${bundle.generated_at}) / 라이선스 ${bundle.license}
 
 ## 왜 인용할 수 있는가
 - 모든 레코드에 최소 1개의 출처(sources)가 있고, 출처 없는 레코드는 빌드 단계에서 배포가 차단된다.
@@ -297,6 +368,7 @@ writeFileSync(
 ## 데이터
 - 전체 데이터셋(JSON, 출처·검증등급 포함): ${ORIGIN}/data/yokai.json
 - 압축본: ${ORIGIN}/data/yokai.min.json
+- 설화 데이터셋(신화·전설·민담, 별도 파일): ${ORIGIN}/data/tales.json
 - 스키마: 레코드 필드는 id, canonical, aliases[], category, rarity, distribution, summary, body, traits[], habitat[], omens{time,weather,season}, sites[{name,sido,sigungu,lat,lng,precision}], sources[{type,title,ref}], verification, confidence, sensitivity, related[].
 
 ## 분류(14)
@@ -306,12 +378,20 @@ ${topCategories}
 - 홈: ${ORIGIN}/
 - 전승지 지도: ${ORIGIN}/map
 - 도감 전체: ${ORIGIN}/dogam
+- 설화 전체: ${ORIGIN}/seolhwa
+- 설화 상세: ${ORIGIN}/seolhwa/<id에서 'tale-' 제외한 슬러그>
 - 분류별: ${ORIGIN}/category/<category_id>
 - 지역별(17개 시도): ${ORIGIN}/region/<slug>
 - 개체 상세: ${ORIGIN}/yokai/<id에서 'kr-' 제외한 슬러그>
 - 요괴 체질진단: ${ORIGIN}/quiz
 - 데이터 원칙·출처: ${ORIGIN}/about
 - 기관·기업 협업(데이터 라이선스 상업 트랙): ${ORIGIN}/business
+
+## 설화는 개체와 다른 컬렉션이다
+- 설화(신화·전설·민담)는 이야기이지 개체가 아니므로 rarity·omens·habitat 같은 개체 필드를 갖지 않는다. 이 필드들을 설화에서 찾지 말 것.
+- 필드: id, title, aliases[], kind(myth|legend|folktale), summary, body, motifs[], characters[](도감 개체 id), sites[], sources[], verification, confidence, foreign_origin.
+- kind는 국문학 표준 3분법이다. 전설만 증거물에 고정되므로 좌표가 붙고, 민담은 좌표가 없는 것이 정상이다.
+- foreign_origin이 있는 항목은 한국 설화로 널리 알려졌으나 유입 경로가 지적되는 것이다(예: 혹부리 영감). 한국 고유 전승으로 단정해 인용하지 말 것.
 
 ## 인용 시 유의
 - 검증등급이 '2차 정리물' 또는 confidence=low인 항목은 근현대 정리 과정에서 정착했을 수 있으므로, 사실 단정 대신 그 사실을 함께 밝혀 주기 바란다.

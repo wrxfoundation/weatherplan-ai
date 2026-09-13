@@ -20,6 +20,7 @@ import { RarityBadge, VerificationBadge, DistributionBadge } from '../ui/Badges.
 import ShareRow from '../ui/ShareRow.jsx'
 import AdSlot from '../ui/AdSlot.jsx'
 import { useHead, SITE_ORIGIN } from '../ui/useHead.js'
+import { talesOf, taleSlug, KIND } from '../data/tales.js'
 import { titleOf, descriptionOf, entryJsonLd } from '../seo.js'
 import { WEATHER_LABEL, TIME_LABEL, SEASON_LABEL } from '../engine/omen.js'
 
@@ -68,6 +69,7 @@ export default function YokaiPage() {
   const cat = CAT[entry.category]
   const ver = VER[entry.verification]
   const related = entry.related.map(byId).filter(Boolean)
+  const inTales = talesOf(entry.id)
   const idx = siblings.findIndex((e) => e.id === entry.id)
   const prev = siblings[idx - 1]
   const next = siblings[idx + 1]
@@ -253,6 +255,25 @@ export default function YokaiPage() {
                   <h3>{r.canonical}</h3>
                 </div>
                 <p>{r.summary}</p>
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* 도감과 설화는 별도 컬렉션이지만 서로를 찾을 수 있어야 한다.
+          개체 → 이야기 방향이 없으면 설화는 목록에서만 닿는 죽은 가지가 된다. */}
+      {inTales.length > 0 && (
+        <div className="section">
+          <div className="section-head">
+            <Icon name="quote" size={17} />
+            <h2>이 개체가 나오는 설화</h2>
+          </div>
+          <div className="row">
+            {inTales.map((t) => (
+              <Link key={t.id} className="chip" to={`/seolhwa/${taleSlug(t)}`}>
+                {t.title}
+                <span className="muted small"> {KIND[t.kind]?.name}</span>
               </Link>
             ))}
           </div>

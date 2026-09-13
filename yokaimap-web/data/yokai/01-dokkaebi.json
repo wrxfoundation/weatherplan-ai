@@ -676,6 +676,153 @@
         "kr-dokkaebi-teo"
       ],
       "updated_at": "2026-09-12"
+    },
+    {
+      "id": "kr-bihyeongnang",
+      "canonical": "비형랑",
+      "aliases": [
+        "비형",
+        "鼻荊郎"
+      ],
+      "names": {
+        "en": "Bihyeongnang",
+        "roman": "bihyeongnang"
+      },
+      "category": "dokkaebi",
+      "rarity": "legendary",
+      "distribution": "local",
+      "summary": "죽은 진지왕의 혼과 도화녀 사이에서 난 아들. 밤마다 귀신 무리를 거느리고 놀았고, 그의 이름을 적어 붙이면 귀신이 물러갔다.",
+      "body": "『삼국유사』 기이편 '도화녀 비형랑'에 실린다. 진지왕이 도화녀를 탐했으나 남편이 있어 뜻을 이루지 못했고, 왕이 죽고 남편도 죽은 뒤 혼령이 되어 찾아와 이레를 머물렀다. 그렇게 태어난 비형은 밤마다 담을 넘어 나가 귀신들과 놀았고, 진평왕이 이를 알고 귀신을 부려 다리를 놓게 하니 하룻밤에 이루어져 귀교(鬼橋)라 했다. 사람들이 노래를 지어 '비형랑의 집이니 날뛰는 귀신은 여기 머물지 말라' 하고 이 글을 문에 붙여 귀신을 쫓았다. 문에 이름을 붙여 잡귀를 막는다는 한국 벽사 관습의 가장 이른 문헌 기록이며, 처용의 얼굴을 문에 붙였다는 기사와 같은 구조다. 귀신을 부리는 존재가 곧 귀신을 막는 부적이 된다는 역설이 이 이야기의 핵심이고, 비형이 거느린 '귀중(鬼衆)'은 한국 도깨비 담론의 출발점으로 자주 다뤄진다.",
+      "traits": [
+        "귀신 부리기",
+        "귀교",
+        "문에 붙이는 이름",
+        "진지왕의 혼"
+      ],
+      "art_hint": "a young man in Silla court dress standing calmly on a newly built stone bridge at dawn, a crowd of small indistinct shadowy figures dispersing into the mist behind him, a strip of paper with writing pasted on a wooden gate post in the foreground",
+      "art_anchors": [
+        "costume_male",
+        "architecture"
+      ],
+      "habitat": [
+        "다리",
+        "문간",
+        "밤거리"
+      ],
+      "omens": {
+        "time": [
+          "midnight",
+          "dawn"
+        ],
+        "weather": [
+          "fog"
+        ],
+        "season": []
+      },
+      "sites": [
+        {
+          "name": "경주 흥륜사지",
+          "sido": "경북",
+          "sigungu": "경주시",
+          "lat": 35.8317,
+          "lng": 129.2144,
+          "precision": "dong",
+          "note": "비형이 길달을 데려와 누문을 세웠다는 절. 지금은 터가 남아 있다"
+        }
+      ],
+      "sources": [
+        {
+          "type": "classic",
+          "title": "삼국유사",
+          "ref": "기이 도화녀 비형랑"
+        },
+        {
+          "type": "encyclopedia",
+          "title": "한국민족문화대백과사전",
+          "ref": "비형랑 설화"
+        }
+      ],
+      "verification": "primary_text",
+      "confidence": "high",
+      "related": [
+        "kr-gildal",
+        "kr-cheoyong",
+        "kr-dokkaebi",
+        "kr-samdu-iljokeung"
+      ],
+      "updated_at": "2026-09-13"
+    },
+    {
+      "id": "kr-gildal",
+      "canonical": "길달",
+      "aliases": [
+        "吉達",
+        "길달문의 귀신"
+      ],
+      "names": {
+        "en": "Gildal",
+        "roman": "gildal"
+      },
+      "category": "dokkaebi",
+      "rarity": "rare",
+      "distribution": "local",
+      "summary": "비형랑이 조정에 천거한 귀신. 하룻밤에 누문을 세웠으나 여우로 변해 달아나다 잡혀 죽었다.",
+      "body": "『삼국유사』 도화녀 비형랑조에 함께 나온다. 진평왕이 비형에게 '네 무리 가운데 나랏일을 맡을 만한 자가 있느냐' 묻자 비형이 길달을 천거했고, 길달은 충직하게 일했다. 각간 임종의 아들로 삼게 하니 임종이 흥륜사 남쪽에 누문을 세우라 명했고, 길달이 하룻밤에 지어 사람들이 길달문이라 불렀다. 그런데 길달이 여우로 둔갑해 달아나자 비형이 귀신을 시켜 잡아 죽였고, 그 뒤로 귀신들이 비형의 이름만 들어도 달아났다. 귀신이 관직을 받아 토목을 맡는다는 설정이 특이하며, 하룻밤 만에 다리와 문을 세운다는 화소는 뒤에 오는 도깨비의 축조담과 그대로 이어진다. 끝내 여우로 돌아간다는 결말은 귀신과 여우 변화가 한 계열로 묶여 있던 당대의 인식을 보여 준다.",
+      "traits": [
+        "하룻밤 축조",
+        "길달문",
+        "여우 둔갑",
+        "배신"
+      ],
+      "art_hint": "a two-storey timber gate tower newly raised at night beside a temple wall, scaffolding still standing, a fox slipping away along the base of the wall into darkness, lantern light on fresh-cut timber, no crowd",
+      "art_anchors": [
+        "architecture",
+        "landscape"
+      ],
+      "habitat": [
+        "절 어귀",
+        "누문",
+        "밤"
+      ],
+      "omens": {
+        "time": [
+          "midnight"
+        ],
+        "weather": [],
+        "season": []
+      },
+      "sites": [
+        {
+          "name": "경주 흥륜사지 남쪽",
+          "sido": "경북",
+          "sigungu": "경주시",
+          "lat": 35.8312,
+          "lng": 129.2148,
+          "precision": "dong",
+          "note": "길달이 하룻밤에 세웠다는 길달문 자리로 전한다"
+        }
+      ],
+      "sources": [
+        {
+          "type": "classic",
+          "title": "삼국유사",
+          "ref": "기이 도화녀 비형랑"
+        },
+        {
+          "type": "encyclopedia",
+          "title": "한국민족문화대백과사전",
+          "ref": "길달"
+        }
+      ],
+      "verification": "primary_text",
+      "confidence": "high",
+      "related": [
+        "kr-bihyeongnang",
+        "kr-gumiho",
+        "kr-nogu-hwaho",
+        "kr-dokkaebi"
+      ],
+      "updated_at": "2026-09-13"
     }
   ]
 }

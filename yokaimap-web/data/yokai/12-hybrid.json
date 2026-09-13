@@ -489,6 +489,66 @@
         "kr-cheonjiwang"
       ],
       "updated_at": "2026-09-12"
+    },
+    {
+      "id": "kr-banjjogi",
+      "canonical": "반쪽이",
+      "aliases": [
+        "반신",
+        "외쪽이"
+      ],
+      "names": {
+        "en": "Banjjogi",
+        "roman": "banjjogi"
+      },
+      "category": "hybrid",
+      "rarity": "uncommon",
+      "distribution": "nationwide",
+      "summary": "눈도 팔도 다리도 하나뿐인 채로 태어난 셋째. 온전한 형들보다 힘이 세고 꾀가 밝아 끝내 제 몫을 찾는다.",
+      "body": "아이를 얻지 못한 부부가 중에게 잉어 세 마리를 받아 먹는데, 한 마리를 반만 먹거나 고양이가 반을 채 가는 바람에 셋째가 몸의 반쪽만 갖고 태어난다. 형들은 반쪽이를 부끄러워해 없애려 하지만 반쪽이는 힘이 장사이고 꾀가 밝아 번번이 살아남고, 부잣집 딸을 걸고 내기를 해 이겨 혼인한다. 결말에서 온전한 몸이 되기도 하고 반쪽인 채로 잘 사는 판본도 있다. 결핍을 지닌 막내가 오히려 이기는 구조라 아기장수처럼 좌절하는 이야기와 정반대 방향이며, 이류 출생 설화 가운데 드물게 밝게 끝난다. 전국에서 고르게 채록된다.",
+      "traits": [
+        "반쪽 몸",
+        "잉어",
+        "막내",
+        "내기"
+      ],
+      "art_hint": "a young man whose body is only the left half — one eye, one arm, one leg — standing upright and steady on a village path with a heavy grain sack over his shoulder, two ordinary brothers looking back at him, low hills and thatched roofs",
+      "art_anchors": [
+        "costume_male",
+        "landscape"
+      ],
+      "habitat": [
+        "마을",
+        "장터",
+        "부잣집"
+      ],
+      "omens": {
+        "time": [
+          "day"
+        ],
+        "weather": [],
+        "season": []
+      },
+      "sites": [],
+      "sources": [
+        {
+          "type": "field",
+          "title": "한국구비문학대계",
+          "ref": "반쪽이 설화군(전국)"
+        },
+        {
+          "type": "encyclopedia",
+          "title": "한국민속대백과사전",
+          "ref": "반쪽이"
+        }
+      ],
+      "verification": "field_record",
+      "confidence": "high",
+      "related": [
+        "kr-agijangsu",
+        "kr-yaseohon"
+      ],
+      "updated_at": "2026-09-13"
     }
   ]
 }
