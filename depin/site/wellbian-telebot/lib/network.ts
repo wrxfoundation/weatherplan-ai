@@ -191,6 +191,11 @@ export const STAGES: Stage[] = [
     note: "영국 재무부·영란은행·미 SEC 크립토 태스크포스·JP모건·바클리스·HSBC. 명단은 최상급이지만 전부 은행·자산운용의 토큰화 담당이다. **하드웨어를 파는 우리가 지금 그 방에서 할 말이 없다.** 리플 소속 연사도 있어 규칙상 지도에 올리지 않는다.",
   },
   {
+    key: "pbw", name: "Paris Blockchain Week", when: "직전 회차 2026-04-15~16 (종료) · 차기 ~2027-04", where: "카루젤 뒤 루브르, 파리",
+    stance: "watch",
+    note: "**붙여 온 명단은 이미 끝난 회차다**(사이트가 티켓 버튼을 안 내렸을 뿐). 그래도 **Futurist 와 정반대로 우리가 가야 할 유형**이다 — 70%+ C-suite·정책 결정자, 기관 축 전원(BlackRock·JPM·Morgan Stanley·BNY·Invesco·Euroclear·LSEG·Citi·Deutsche Bank·BofA). **결정적인 것 둘: Odelia(XRPL Commons)가 연사고, Crypto.com 사장 Eric Anziani 도 연사다** — 우리가 이미 대화 중인 두 라인이 같은 방에 있다. 차기 회차는 우리 게이트(데이터 실적)와 시점이 맞는다. 10/3(우리 무대) → 10월 뉴욕 → **유럽** 순서에서 그 유럽 칸. ⚠ **정치 인사 기준 정교화**: 「연사에 정치 인사가 있으면 제외」를 그대로 적용하면 여기도 잘린다(프랑스 장관·ESMA·EU 집행위). **차이는 정치 인사 유무가 아니라 편성이다** — 밈·리테일 편성에 정치 인사가 섞인 것(Futurist)과 정책 컨퍼런스에 규제 당국이 오는 것(PBW)은 다르다.",
+  },
+  {
     key: "futurist", name: "Futurist Conference (토론토·플로리다)", when: "미확인", where: "토론토 / 플로리다",
     stance: "skip",
     note: "**정치 인사가 라인업에 섞여 있다** — 미 하원 후보·플로리다/유타 주의원·캐나다 하원의원. 우리는 정치 담론에 무반응이 원칙인데, **그 방에 이름이 같이 실리는 것 자체가 입장 표명으로 읽힌다**. 참가 여부 이전의 문제다. 편성도 리테일·밈 중심이고(밈 토큰 창업자·NFT 커뮤니티·트레이딩 KOL), 토론토판은 기관지향이지만 **TD·BMO·Wealthsimple·캐나다 거래소 — 캐나다 내수 축**이라 우리 시장이 아니다. **명단은 쓴다**: 400명 중 우리 레인에 닿는 셋만 걸렀다(Truflation·CoinDesk·Messari).",
@@ -207,7 +212,7 @@ export const PEOPLE: Person[] = [
   {
     id: "odelia", inbound: true, name: "Odelia Torteman", org: "XRPL Commons", role: "Head of Digital Assets",
     lane: "xrpl", stance: "talking", via: "Katie Harries 와 공통 1촌", meet: "NYC 해커톤 10/24~25",
-    why: "그가 먼저 시간을 청했다. Commons 기관 사례에서 비어 있는 칸 = 비금융 실물이고, 전 직함(Corporate Adoption)이 곧 우리 유형이다.",
+    why: "그가 먼저 시간을 청했다. Commons 기관 사례에서 비어 있는 칸 = 비금융 실물이고, 전 직함(Corporate Adoption)이 곧 우리 유형이다. **Paris Blockchain Week 연사**(9/13 확인) — 유럽 기관 무대에서의 위치를 보여 준다. 그가 열어 둔 「유럽 소개는 나중」 축의 실체이기도 하다.",
     next: "메일 발송 → 통화는 10/3 무대 뒤. 준비 문서 content/xrpl-commons-call-prep.md",
   },
   {
@@ -584,6 +589,24 @@ export const PEOPLE: Person[] = [
     lane: "voice", stance: "hold", via: "Futurist Conference 명단(9/11)",
     why: "지도에 The Block·Blockworks·CNBC 는 있었지만 CoinDesk 가 비어 있었다. DePIN·실물 기기는 이 매체의 상시 꼭지다.",
     next: "**윗선을 먼저 치지 않는다.** 10/3 무대 뒤에 실무 기자 경로로 연다. 이 이름은 그 경로가 맞는지 확인하는 기준으로만 둔다.",
+  },
+  {
+    id: "allison", gate: "stage", name: "Ian Allison", org: "CoinDesk", role: "Senior Reporter",
+    lane: "voice", stance: "hold", via: "Paris Blockchain Week 명단(9/13)", meet: "PBW",
+    why: "**어제 비워 둔 칸이 정확히 이 사람이다** — CoinDesk 를 넣으면서 「윗선을 먼저 치지 않는다 → 실무 기자 경로」로 남겨 뒀다. 시니어 기자라 DePIN·실물 기기 꼭지가 실제로 그의 손을 지난다.",
+    next: "10/3 무대 뒤. **Ashraf(총괄)가 아니라 이쪽으로 먼저 연다.** 보도자료가 아니라 무대 영상·트랜잭션 링크를 들고 간다.",
+  },
+  {
+    id: "anziani", gate: "sale2", name: "Eric Anziani", org: "Crypto.com", role: "President & COO",
+    lane: "exchange", stance: "off", via: "Paris Blockchain Week 명단(9/13)", meet: "PBW",
+    why: "Vincent 라인의 윗선. 같은 회사의 사장이 유럽 기관 무대에 선다는 사실은 **그 대화의 급을 말해 준다** — 우리가 열고 있는 채널이 작은 창구가 아니라는 뜻.",
+    next: "**열지 않는다.** Vincent 라인이 살아 있는데 사장을 먼저 치면 그 라인이 망가진다. 이 카드는 접근 금지선을 눈에 보이게 두려고 만든 것이다 — Vincent 대화가 끝나거나 그가 소개할 때만 의미가 생긴다.",
+  },
+  {
+    id: "omkar", gate: "data", name: "Krishna Omkar", org: "LSEG", role: "Head of Product, Digital Markets Infrastructure",
+    lane: "capital", stance: "hold", via: "Paris Blockchain Week 명단(9/13)", meet: "PBW",
+    why: "Lynn Martin(NYSE·ICE)과 같은 **시장 데이터 인프라 축**. 데이터가 값이 되는 구조를 파는 쪽이라 우리 B2B 판매와 모양이 같다.",
+    next: "데이터 판매 실적 뒤. **LSEG 는 한 명만 연다** — 같은 부문 Head 가 둘이지만 제품 쪽이 실무에 가깝다.",
   },
   {
     id: "turner", gate: "data", name: "Eric Turner", org: "Messari", role: "CEO",
