@@ -147,6 +147,8 @@ const SONG_GENRE = {
   goryeo: { id: 'goryeo', name: '고려가요', blurb: '고려의 노래. 한글 창제 뒤 악서에 실려 전한다.' },
   hansi: { id: 'hansi', name: '한시', blurb: '한문 시. 문헌에 그대로 실려 원문이 확실하다.' },
   muga: { id: 'muga', name: '무가', blurb: '굿에서 구송하는 노래. 정본이 없고 무당마다 달라진다.' },
+  bonpuri: { id: 'bonpuri', name: '본풀이', blurb: '신의 내력을 처음부터 푸는 제주 무가. 신을 소개하는 것이 아니라 어떻게 신이 되었는지를 말한다.' },
+  pansori: { id: 'pansori', name: '판소리', blurb: '소리꾼 하나와 고수 하나로 몇 시간을 끌고 가는 서사 음악. 설화를 받아 다시 짠 것이 많다.' },
   minyo: { id: 'minyo', name: '민요', blurb: '마을에서 부르던 노래. 의례와 노동에 붙어 전한다.' },
   chamyo: { id: 'chamyo', name: '참요', blurb: '앞일을 예언한다고 여겨진 노래. 대개 이긴 쪽의 기록으로 남는다.' },
 }
