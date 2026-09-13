@@ -14,7 +14,7 @@ const DATA_VERSION = '0.1.0'
 const LICENSE = 'CC BY 4.0'
 const ART_DEFAULT = { status: 'pending', direction: 'minhwa-v1', file: null, license: 'CC BY 4.0 (AI 생성 · 원본 도상 없음)' }
 
-const { entries, tales, errors, warnings, stats } = runValidation()
+const { entries, tales, songs, errors, warnings, stats } = runValidation()
 for (const w of warnings) console.warn(`⚠️  ${w}`)
 if (errors.length) {
   for (const e of errors) console.error(`❌ ${e}`)
@@ -137,10 +137,59 @@ const taleBundle = {
   tales: talesOut,
 }
 
+/* ─── 시가 번들 ────────────────────────────────────────────
+   세 번째 컬렉션. 개체도 이야기도 아닌 '텍스트'다. 원문이 남아 있어 인용 가치가
+   가장 크지만, 그래서 저작권 경계도 가장 까다롭다 — 향찰·한문 원문은 퍼블릭
+   도메인이고 gloss는 우리가 직접 쓴 산문 풀이다. 특정 학자의 해독안은 옮기지 않는다. */
+const SONG_GENRE = {
+  hyangga: { id: 'hyangga', name: '향가', blurb: '신라·고려 초의 우리말 노래. 향찰로 표기되어 해독안이 학자마다 갈린다.' },
+  goga: { id: 'goga', name: '고대가요', blurb: '삼국 이전까지 거슬러 전하는 짧은 노래. 배경 설화와 함께 실려 있다.' },
+  goryeo: { id: 'goryeo', name: '고려가요', blurb: '고려의 노래. 한글 창제 뒤 악서에 실려 전한다.' },
+  hansi: { id: 'hansi', name: '한시', blurb: '한문 시. 문헌에 그대로 실려 원문이 확실하다.' },
+  muga: { id: 'muga', name: '무가', blurb: '굿에서 구송하는 노래. 정본이 없고 무당마다 달라진다.' },
+  minyo: { id: 'minyo', name: '민요', blurb: '마을에서 부르던 노래. 의례와 노동에 붙어 전한다.' },
+  chamyo: { id: 'chamyo', name: '참요', blurb: '앞일을 예언한다고 여겨진 노래. 대개 이긴 쪽의 기록으로 남는다.' },
+}
+
+const songsOut = songs
+  .map(({ _file, ...g }) => ({
+    ...g,
+    aliases: g.aliases ?? [],
+    original: g.original ?? null,
+    function: g.function ?? [],
+    characters: g.characters ?? [],
+    tales: g.tales ?? [],
+    sites: g.sites ?? [],
+    related: g.related ?? [],
+    sensitivity: g.sensitivity ?? null,
+  }))
+  .sort((a, b) => a.id.localeCompare(b.id))
+
+const songSiteCount = songsOut.reduce((n, g) => n + g.sites.length, 0)
+const byGenre = Object.fromEntries(
+  Object.keys(SONG_GENRE).map((k) => [k, songsOut.filter((g) => g.genre === k).length]),
+)
+const withOriginal = songsOut.filter((g) => g.original).length
+
+const songBundle = {
+  version: DATA_VERSION,
+  generated_at: new Date().toISOString().slice(0, 10),
+  license: LICENSE,
+  attribution: '한국요괴지도 (Korean Yokai Map)',
+  note: '원문(original)은 향찰·한문 퍼블릭 도메인 텍스트다. 뜻풀이(gloss)는 이 프로젝트가 직접 쓴 산문 풀이이며 특정 학자의 해독안이나 번역이 아니다.',
+  count: songsOut.length,
+  site_count: songSiteCount,
+  with_original: withOriginal,
+  stats: { byGenre },
+  genres: Object.values(SONG_GENRE),
+  songs: songsOut,
+}
+
 mkdirSync(join(ROOT, 'public/data'), { recursive: true })
 writeFileSync(join(ROOT, 'public/data/yokai.json'), JSON.stringify(bundle, null, 1))
 writeFileSync(join(ROOT, 'public/data/yokai.min.json'), JSON.stringify(bundle))
 writeFileSync(join(ROOT, 'public/data/tales.json'), JSON.stringify(taleBundle, null, 1))
+writeFileSync(join(ROOT, 'public/data/songs.json'), JSON.stringify(songBundle, null, 1))
 
 console.log(`✅ 빌드 완료 — ${normalized.length}체 / 전승지 ${siteCount}곳 / 시도 커버리지 ${stats.sidoCovered}/17`)
 console.log(`   카테고리: ${Object.entries(byCategory).map(([k, v]) => `${k}:${v}`).join(' ')}`)
@@ -148,6 +197,10 @@ console.log(`   검증등급: ${Object.entries(byVerification).map(([k, v]) => `
 console.log(
   `   설화: ${talesOut.length}편 (${Object.entries(byKind).map(([k, v]) => `${TALE_KIND[k].name} ${v}`).join(' · ')})` +
     ` / 배경지 ${taleSiteCount}곳`,
+)
+console.log(
+  `   시가: ${songsOut.length}편 (${Object.entries(byGenre).filter(([, v]) => v).map(([k, v]) => `${SONG_GENRE[k].name} ${v}`).join(' · ')})` +
+    ` / 원문 수록 ${withOriginal}편`,
 )
 
 const artStat = normalized.reduce((a, e) => ({ ...a, [e.art.status]: (a[e.art.status] ?? 0) + 1 }), {})

@@ -21,6 +21,7 @@ import ShareRow from '../ui/ShareRow.jsx'
 import AdSlot from '../ui/AdSlot.jsx'
 import { useHead, SITE_ORIGIN } from '../ui/useHead.js'
 import { talesOf, taleSlug, KIND } from '../data/tales.js'
+import { songsOf, songSlug, GENRE } from '../data/songs.js'
 import { titleOf, descriptionOf, entryJsonLd } from '../seo.js'
 import { WEATHER_LABEL, TIME_LABEL, SEASON_LABEL } from '../engine/omen.js'
 
@@ -70,6 +71,7 @@ export default function YokaiPage() {
   const ver = VER[entry.verification]
   const related = entry.related.map(byId).filter(Boolean)
   const inTales = talesOf(entry.id)
+  const inSongs = songsOf(entry.id)
   const idx = siblings.findIndex((e) => e.id === entry.id)
   const prev = siblings[idx - 1]
   const next = siblings[idx + 1]
@@ -274,6 +276,24 @@ export default function YokaiPage() {
               <Link key={t.id} className="chip" to={`/seolhwa/${taleSlug(t)}`}>
                 {t.title}
                 <span className="muted small"> {KIND[t.kind]?.name}</span>
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* 노래는 그 개체를 향해 실제로 사람들이 낸 소리다. 개체 페이지에서 닿아야 한다. */}
+      {inSongs.length > 0 && (
+        <div className="section">
+          <div className="section-head">
+            <Icon name="flame" size={17} />
+            <h2>이 개체에 걸린 노래</h2>
+          </div>
+          <div className="row">
+            {inSongs.map((g) => (
+              <Link key={g.id} className="chip" to={`/norae/${songSlug(g)}`}>
+                {g.title}
+                <span className="muted small"> {GENRE[g.genre]?.name}</span>
               </Link>
             ))}
           </div>

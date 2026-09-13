@@ -40,7 +40,7 @@ Vercel → Add New → Project → 이 리포 선택.
 
 ### `VITE_SITE_ORIGIN` — 도메인 붙이기 전에는 안 넣어도 된다
 
-이 값은 런타임 설정이 아니다. 프리렌더된 **231페이지의 canonical·og:url·JSON-LD와
+이 값은 런타임 설정이 아니다. 프리렌더된 **248페이지의 canonical·og:url·JSON-LD와
 sitemap.xml·llms.txt에 절대 URL로 박힌다.**
 
 **도메인을 붙이기 전에는 비워 두는 것이 맞다.** 비어 있으면 빌드가 Vercel이 자동으로
@@ -120,9 +120,9 @@ npm run data                                          # 반영
 |---|---|
 | 프리렌더 메타 | `curl -s <도메인>/yokai/dokkaebi \| grep -o '<title>[^<]*'` — 도깨비 제목이 나와야 한다 |
 | canonical 도메인 | 같은 페이지에서 `rel="canonical"`이 실제 도메인인지 |
-| sitemap | `<도메인>/sitemap.xml` — 232개 URL |
+| sitemap | `<도메인>/sitemap.xml` — 249개 URL |
 | AI 크롤러 허용 | `<도메인>/robots.txt` — GPTBot·ClaudeBot·PerplexityBot Allow |
-| 오픈데이터셋 | `<도메인>/data/yokai.min.json` · `<도메인>/data/tales.json` — CC BY 4.0 |
+| 오픈데이터셋 | `<도메인>/data/yokai.min.json` · `<도메인>/data/tales.json` · `<도메인>/data/songs.json` — CC BY 4.0 |
 | 지도 타일 | `/map`에서 한글 기본도가 뜨는지 (안 뜨면 `VITE_VWORLD_KEY` 또는 vworld 도메인 등록 확인) |
 | 날씨 | 미설정이면 위젯이 "제공 안 함"으로 뜨는 게 정상 — 가짜 값이 뜨면 안 된다 |
 | 도판 | 상세 페이지에 그림이 뜨는지 (안 뜨면 인장 폴백 — 파일 누락) |

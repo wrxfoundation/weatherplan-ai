@@ -9,6 +9,7 @@ import ArtPlate from '../ui/ArtPlate.jsx'
 import Icon from '../ui/Icon.jsx'
 import { useHead, SITE_ORIGIN } from '../ui/useHead.js'
 import { TALE_META } from '../data/tales.js'
+import { SONG_META } from '../data/songs.js'
 
 /* 날짜 기반 결정론 선택 — 하루 동안 모두에게 같은 '오늘의 요괴'가 보인다(공유 가능). */
 function pickOfDay(list, date, offset = 0) {
@@ -76,6 +77,10 @@ export default function HomePage() {
           <Link className="btn ghost lg" to="/seolhwa">
             <Icon name="quote" size={17} />
             설화 {TALE_META.count}편
+          </Link>
+          <Link className="btn ghost lg" to="/norae">
+            <Icon name="flame" size={17} />
+            노래 {SONG_META.count}편
           </Link>
         </div>
 

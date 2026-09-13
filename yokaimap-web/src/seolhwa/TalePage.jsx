@@ -8,6 +8,7 @@ import { VerificationBadge } from '../ui/Badges.jsx'
 import ShareRow from '../ui/ShareRow.jsx'
 import AdSlot from '../ui/AdSlot.jsx'
 import { useHead, SITE_ORIGIN } from '../ui/useHead.js'
+import { songsOfTale, songSlug, GENRE } from '../data/songs.js'
 
 const SENSITIVITY_TEXT = {
   living_faith:
@@ -76,6 +77,7 @@ export default function TalePage() {
   const ver = VER[tale.verification]
   const cast = charactersOf(tale)
   const related = tale.related.map(taleById).filter(Boolean)
+  const songs = songsOfTale(tale.id)
   const idx = siblings.findIndex((t) => t.id === tale.id)
   const prev = siblings[idx - 1]
   const next = siblings[idx + 1]
@@ -229,6 +231,23 @@ export default function TalePage() {
             {related.map((t) => (
               <Link key={t.id} className="chip" to={`/seolhwa/${taleSlug(t)}`}>
                 {t.title}
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {songs.length > 0 && (
+        <div className="section">
+          <div className="section-head">
+            <Icon name="flame" size={17} />
+            <h2>이 이야기에 딸린 노래</h2>
+          </div>
+          <div className="row">
+            {songs.map((g) => (
+              <Link key={g.id} className="chip" to={`/norae/${songSlug(g)}`}>
+                {g.title}
+                <span className="muted small"> {GENRE[g.genre]?.name}</span>
               </Link>
             ))}
           </div>

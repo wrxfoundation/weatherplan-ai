@@ -101,6 +101,19 @@ export function loadTales() {
   return tales
 }
 
+/** 시가 로더. 설화와 달리 파일이 분류를 선언하지 않는다(장르가 레코드마다 섞여 있다). */
+export function loadSongs() {
+  const dir = join(ROOT, 'data/songs')
+  if (!existsSync(dir)) return []
+  const files = readdirSync(dir).filter((f) => f.endsWith('.json')).sort()
+  const songs = []
+  for (const f of files) {
+    const doc = JSON.parse(readFileSync(join(dir, f), 'utf8'))
+    for (const g of doc.songs) songs.push({ ...g, _file: f })
+  }
+  return songs
+}
+
 /* ─── 도메인 무결성 ───────────────────────────────────────── */
 export function checkIntegrity(entries) {
   const errors = []
@@ -185,6 +198,53 @@ export function checkTaleIntegrity(tales, yokaiIds) {
   return { errors, warnings, stats: { total: tales.length } }
 }
 
+/**
+ * 시가 무결성.
+ *  - 구전(oral)에 original이 있으면 모순이다. 구전에는 원문이라 부를 것이 없고,
+ *    한 판본을 원문으로 적으면 나머지를 지우는 셈이 된다.
+ *  - original을 실었으면 reading_note로 표기 체계·해독 사정을 밝혀야 한다.
+ *    향찰·한문 원문은 퍼블릭 도메인이지만 해독안은 학자의 저작이라 경계가 필요하다.
+ */
+export function checkSongIntegrity(songs, yokaiIds, taleIds) {
+  const errors = []
+  const warnings = []
+  const ids = new Map()
+  const titles = new Map()
+
+  for (const g of songs) {
+    if (ids.has(g.id)) errors.push(`시가 id 중복: ${g.id} (${ids.get(g.id)} · ${g._file})`)
+    ids.set(g.id, g._file)
+    if (titles.has(g.title)) errors.push(`시가 제목 중복: ${g.title} (${titles.get(g.title)} · ${g._file})`)
+    titles.set(g.title, g._file)
+  }
+
+  for (const g of songs) {
+    if (g.original_script === 'oral' && g.original) {
+      errors.push(`구전인데 원문이 있다 — 한 판본을 정본으로 세우게 된다: ${g.id}`)
+    }
+    if (g.original && !g.reading_note) {
+      errors.push(`원문을 실었으면 reading_note로 표기·해독 사정을 밝혀야 한다: ${g.id}`)
+    }
+    for (const c of g.characters ?? []) {
+      if (!yokaiIds.has(c)) errors.push(`시가 characters 참조 깨짐: ${g.id} → ${c}`)
+    }
+    for (const t of g.tales ?? []) {
+      if (!taleIds.has(t)) errors.push(`시가 tales 참조 깨짐: ${g.id} → ${t}`)
+    }
+    for (const r of g.related ?? []) {
+      if (!ids.has(r)) errors.push(`시가 related 참조 깨짐: ${g.id} → ${r}`)
+      if (r === g.id) errors.push(`시가 related 자기참조: ${g.id}`)
+    }
+    if (!(g.sources?.length > 0)) errors.push(`출처 없는 시가는 배포 금지: ${g.id}`)
+    // 개체에도 설화에도 걸리지 않으면 목록에서만 닿는 죽은 가지가 된다
+    if (!(g.characters?.length || g.tales?.length || g.related?.length)) {
+      warnings.push(`어느 개체·설화·시가에도 연결되지 않았다: ${g.id}`)
+    }
+  }
+
+  return { errors, warnings, stats: { total: songs.length } }
+}
+
 export function runValidation() {
   const schema = JSON.parse(readFileSync(join(ROOT, 'data/schema/yokai.schema.json'), 'utf8'))
   const entries = loadSeed()
@@ -204,12 +264,33 @@ export function runValidation() {
   }
   const taleIntegrity = checkTaleIntegrity(tales, new Set(entries.map((e) => e.id)))
 
+  const songSchema = JSON.parse(readFileSync(join(ROOT, 'data/schema/song.schema.json'), 'utf8'))
+  const songs = loadSongs()
+  const songErrors = []
+  for (const g of songs) {
+    const { _file, ...rec } = g
+    validateSchema(songSchema, rec, `${_file}:${rec.id}`, songErrors)
+  }
+  const songIntegrity = checkSongIntegrity(
+    songs,
+    new Set(entries.map((e) => e.id)),
+    new Set(tales.map((t) => t.id)),
+  )
+
   return {
     entries,
     tales,
-    errors: [...errors, ...integrity.errors, ...taleErrors, ...taleIntegrity.errors],
-    warnings: [...integrity.warnings, ...taleIntegrity.warnings],
-    stats: { ...integrity.stats, tales: taleIntegrity.stats.total },
+    songs,
+    errors: [
+      ...errors,
+      ...integrity.errors,
+      ...taleErrors,
+      ...taleIntegrity.errors,
+      ...songErrors,
+      ...songIntegrity.errors,
+    ],
+    warnings: [...integrity.warnings, ...taleIntegrity.warnings, ...songIntegrity.warnings],
+    stats: { ...integrity.stats, tales: taleIntegrity.stats.total, songs: songIntegrity.stats.total },
   }
 }
 
@@ -221,5 +302,5 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     console.error(`\n검증 실패 — 오류 ${errors.length}건`)
     process.exit(1)
   }
-  console.log(`✅ 검증 통과 — ${stats.total}체 · 설화 ${stats.tales}편 · 시도 커버리지 ${stats.sidoCovered}/17 · 경고 ${warnings.length}건`)
+  console.log(`✅ 검증 통과 — ${stats.total}체 · 설화 ${stats.tales}편 · 시가 ${stats.songs}편 · 시도 커버리지 ${stats.sidoCovered}/17 · 경고 ${warnings.length}건`)
 }

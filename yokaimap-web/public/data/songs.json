@@ -1,0 +1,852 @@
+{
+ "version": "0.1.0",
+ "generated_at": "2026-09-13",
+ "license": "CC BY 4.0",
+ "attribution": "한국요괴지도 (Korean Yokai Map)",
+ "note": "원문(original)은 향찰·한문 퍼블릭 도메인 텍스트다. 뜻풀이(gloss)는 이 프로젝트가 직접 쓴 산문 풀이이며 특정 학자의 해독안이나 번역이 아니다.",
+ "count": 16,
+ "site_count": 4,
+ "with_original": 7,
+ "stats": {
+  "byGenre": {
+   "hyangga": 5,
+   "goga": 3,
+   "goryeo": 1,
+   "hansi": 1,
+   "muga": 2,
+   "minyo": 3,
+   "chamyo": 1
+  }
+ },
+ "genres": [
+  {
+   "id": "hyangga",
+   "name": "향가",
+   "blurb": "신라·고려 초의 우리말 노래. 향찰로 표기되어 해독안이 학자마다 갈린다."
+  },
+  {
+   "id": "goga",
+   "name": "고대가요",
+   "blurb": "삼국 이전까지 거슬러 전하는 짧은 노래. 배경 설화와 함께 실려 있다."
+  },
+  {
+   "id": "goryeo",
+   "name": "고려가요",
+   "blurb": "고려의 노래. 한글 창제 뒤 악서에 실려 전한다."
+  },
+  {
+   "id": "hansi",
+   "name": "한시",
+   "blurb": "한문 시. 문헌에 그대로 실려 원문이 확실하다."
+  },
+  {
+   "id": "muga",
+   "name": "무가",
+   "blurb": "굿에서 구송하는 노래. 정본이 없고 무당마다 달라진다."
+  },
+  {
+   "id": "minyo",
+   "name": "민요",
+   "blurb": "마을에서 부르던 노래. 의례와 노동에 붙어 전한다."
+  },
+  {
+   "id": "chamyo",
+   "name": "참요",
+   "blurb": "앞일을 예언한다고 여겨진 노래. 대개 이긴 쪽의 기록으로 남는다."
+  }
+ ],
+ "songs": [
+  {
+   "id": "song-aengmagi",
+   "title": "액막이타령",
+   "aliases": [
+    "액맥이타령",
+    "액풀이"
+   ],
+   "genre": "minyo",
+   "era": "구전 · 정월 세시",
+   "summary": "정월부터 섣달까지 달마다 드는 액을 하나씩 불러 세우고 막아 내는 노래.",
+   "original": null,
+   "original_script": "oral",
+   "reading_note": "경기·서도 소리로 널리 불리며 사설이 여럿이다. 정본이 없어 원문을 싣지 않는다.",
+   "gloss": "정월에 드는 액은 이월 영등에 막아 내고, 이월에 드는 액은 삼월 삼짇에 막아 낸다는 식으로 열두 달을 차례로 넘긴다. 액을 없앤다고 하지 않고 다음 달로 넘겨 막는다는 점이 이 노래의 논리이며, 삼재가 든 해에 제웅을 만들어 길에 버리거나 삼두일족응 부적을 문에 붙이는 절차와 같은 자리에 놓인다. 두려움을 부정하지 않고 달력에 배치해 관리 가능한 것으로 만든다 — 한국 액막이 관념의 뼈대가 여기 그대로 있다.",
+   "function": [
+    "축귀",
+    "액막이",
+    "세시"
+   ],
+   "characters": [
+    "kr-samjaesin",
+    "kr-jeung",
+    "kr-sangmun",
+    "kr-yeongdeung-halmang"
+   ],
+   "tales": [],
+   "sites": [],
+   "sources": [
+    {
+     "type": "encyclopedia",
+     "title": "한국민속대백과사전",
+     "ref": "액막이타령"
+    },
+    {
+     "type": "field",
+     "title": "한국구비문학대계",
+     "ref": "액막이 소리 채록"
+    }
+   ],
+   "verification": "field_record",
+   "confidence": "high",
+   "related": [
+    "song-jisin-balpgi"
+   ],
+   "updated_at": "2026-09-13",
+   "sensitivity": null
+  },
+  {
+   "id": "song-bari",
+   "title": "바리공주",
+   "aliases": [
+    "바리데기",
+    "오구굿 무가",
+    "칠공주"
+   ],
+   "genre": "muga",
+   "era": "구전 · 전국 채록",
+   "summary": "일곱째 딸이라 버려진 아이가 저승에 가서 약수를 구해 와 부모를 살리고 죽은 이를 인도하는 신이 된다.",
+   "original": null,
+   "original_script": "oral",
+   "reading_note": "죽은 이를 천도하는 오구굿·씻김굿·진오기굿에서 구송된다. 지역마다 이름과 사설이 크게 달라 정본이 없다.",
+   "gloss": "아들을 바라던 왕이 일곱째도 딸이라 내다 버린다. 뒤에 왕과 왕비가 병들어 저승의 약수라야 낫는다는 말을 듣지만 여섯 딸이 모두 마다하고, 버려졌던 바리가 나선다. 저승길에서 무장승의 물을 긷고 불을 때고 아이 일곱을 낳아 주는 아홉 해를 치른 뒤 약수를 얻어 돌아오는데, 이미 상여가 나가고 있었다. 약수로 부모를 살린 바리는 상을 마다하고 죽은 이를 저승으로 인도하는 신이 되기를 청한다. 가장 밀려난 자가 가장 먼 길을 다녀와 신이 된다는 구조이며, 무당의 조상신인 무조신(巫祖神)의 내력담이라 굿판에서 가장 길고 무겁게 불린다.",
+   "function": [
+    "천도",
+    "해원",
+    "의례"
+   ],
+   "characters": [
+    "kr-jeoseung-saja",
+    "kr-yeomna",
+    "kr-gangnim",
+    "kr-mujugohon"
+   ],
+   "tales": [],
+   "sites": [],
+   "sources": [
+    {
+     "type": "encyclopedia",
+     "title": "한국민속대백과사전",
+     "ref": "바리공주"
+    },
+    {
+     "type": "field",
+     "title": "한국구비문학대계",
+     "ref": "오구굿 바리공주 무가 채록"
+    }
+   ],
+   "verification": "field_record",
+   "confidence": "high",
+   "related": [
+    "song-sangyeo"
+   ],
+   "sensitivity": {
+    "kind": "living_faith",
+    "note": "지금도 천도굿에서 구송되는 무가다. 상례와 직결되므로 가볍게 다루지 않는다."
+   },
+   "updated_at": "2026-09-13"
+  },
+  {
+   "id": "song-bihyeong-chuksa",
+   "title": "비형랑 축사",
+   "aliases": [
+    "비형랑 노래",
+    "귀신 쫓는 글"
+   ],
+   "genre": "hansi",
+   "era": "신라 진평왕대(6~7세기)",
+   "summary": "비형랑의 이름을 적어 문에 붙이면 귀신이 물러갔다. 한국 벽사 부적의 가장 이른 문헌 기록이다.",
+   "original": "聖帝魂生子\n鼻荊郎室亭\n飛馳諸鬼衆\n此處莫留停",
+   "original_script": "hanmun",
+   "reading_note": "『삼국유사』 도화녀 비형랑조에 한문 4구로 실려 있다. 사람들이 이 글을 지어 문에 붙였다고 적혀 있어, 노래이자 곧 부적이다.",
+   "gloss": "거룩한 임금의 혼이 낳은 아들, 비형랑이 머무는 집이다. 날뛰는 귀신 무리야, 이곳에 머물지 말라. — 네 구 가운데 앞의 두 구가 신분 증명이고 뒤의 두 구가 명령이다. 부적의 문법이 이미 완성되어 있다. 귀신을 부리는 자의 이름이 곧 귀신을 막는 물건이 된다는 역설이 핵심이며, 처용의 얼굴을 문에 붙였다는 기사와 정확히 짝을 이룬다. 오늘날 대문에 붙이는 삼두일족응 부적까지 이 계보가 이어진다.",
+   "function": [
+    "벽사",
+    "부적"
+   ],
+   "characters": [
+    "kr-bihyeongnang",
+    "kr-gildal",
+    "kr-samdu-iljokeung"
+   ],
+   "tales": [
+    "tale-dohwanyeo"
+   ],
+   "sites": [
+    {
+     "name": "경주 흥륜사지",
+     "sido": "경북",
+     "sigungu": "경주시",
+     "lat": 35.8317,
+     "lng": 129.2144,
+     "precision": "dong",
+     "note": "길달이 누문을 세웠다는 절터"
+    }
+   ],
+   "sources": [
+    {
+     "type": "classic",
+     "title": "삼국유사",
+     "ref": "기이 도화녀 비형랑"
+    },
+    {
+     "type": "encyclopedia",
+     "title": "한국민족문화대백과사전",
+     "ref": "비형랑 설화"
+    }
+   ],
+   "verification": "primary_text",
+   "confidence": "high",
+   "related": [
+    "song-cheoyongga"
+   ],
+   "updated_at": "2026-09-13",
+   "sensitivity": null
+  },
+  {
+   "id": "song-cheoyongga",
+   "title": "처용가",
+   "aliases": [
+    "處容歌",
+    "신라 처용가"
+   ],
+   "genre": "hyangga",
+   "era": "신라 헌강왕대(9세기 말)",
+   "summary": "아내 곁에 다리가 넷인 것을 보고도 처용이 부른 노래. 싸우지 않고 물러남으로써 역신을 굴복시켰다.",
+   "original": "東京明期月良\n夜入伊遊行如可\n入良沙寢矣見昆\n脚烏伊四是良羅\n二肹隱吾下於叱古\n二肹隱誰支下焉古\n本矣吾下是如馬於隱\n奪叱良乙何如爲理古",
+   "original_script": "hyangchal",
+   "reading_note": "향찰 표기라 해독안이 학자마다 갈린다. 특히 마지막 두 구를 체념으로 읽느냐 항의로 읽느냐에 따라 노래의 성격이 달라진다. 이 도감은 특정 해독안을 옮기지 않고 뜻만 풀어 적는다.",
+   "gloss": "서울 밝은 달빛 아래 밤늦도록 노닐다가 들어와 잠자리를 보니 다리가 넷이다. 둘은 내 것인데 둘은 누구의 것인가. 본디 내 것이었다마는 빼앗긴 것을 어찌하리. — 마지막 구가 이 노래의 전부다. 빼앗긴 것을 인정하고 물러나는 그 태도 앞에서 역신이 무릎을 꿇고, 앞으로는 처용의 얼굴을 그린 것만 보아도 그 문에 들지 않겠다고 맹세한다. 그래서 이 노래는 신라 최초의 벽사 노래이자, 폭력이 아닌 태도로 재앙을 물린 드문 기록이 되었다.",
+   "function": [
+    "벽사",
+    "축역"
+   ],
+   "characters": [
+    "kr-cheoyong",
+    "kr-yeoksin",
+    "kr-jeung"
+   ],
+   "tales": [],
+   "sites": [
+    {
+     "name": "울산 처용암",
+     "sido": "울산",
+     "sigungu": "남구",
+     "lat": 35.464,
+     "lng": 129.343,
+     "precision": "dong",
+     "note": "처용이 나왔다고 전하는 개운포 앞바다의 바위"
+    }
+   ],
+   "sources": [
+    {
+     "type": "classic",
+     "title": "삼국유사",
+     "ref": "기이 처용랑 망해사"
+    },
+    {
+     "type": "heritage",
+     "title": "처용무",
+     "ref": "국가무형유산"
+    }
+   ],
+   "verification": "primary_text",
+   "confidence": "high",
+   "related": [
+    "song-cheoyongga-goryeo",
+    "song-bihyeong-chuksa"
+   ],
+   "updated_at": "2026-09-13",
+   "sensitivity": null
+  },
+  {
+   "id": "song-cheoyongga-goryeo",
+   "title": "처용가 (고려)",
+   "aliases": [
+    "고려 처용가",
+    "처용희 노랫말"
+   ],
+   "genre": "goryeo",
+   "era": "고려 후기 ~ 조선 초 기록",
+   "summary": "신라 향가 처용가가 고려에 와서 훨씬 길고 사나운 축역 노래로 바뀐다. 물러나던 처용이 여기서는 역신을 꾸짖는다.",
+   "original": null,
+   "original_script": "hangul",
+   "reading_note": "『악학궤범』과 『악장가사』에 한글로 실려 전한다. 분량이 길어 이 도감에서는 원문을 싣지 않고 성격만 적는다.",
+   "gloss": "신라 향가가 여덟 구인 데 비해 고려 처용가는 처용의 생김새를 머리부터 발끝까지 길게 늘어놓고, 역신을 향해 어디에 숨었느냐 꾸짖으며 열병신을 회 쳐 먹겠다고까지 말한다. 같은 인물의 같은 사건인데 태도가 정반대다. 신라의 처용은 물러남으로써 이겼고 고려의 처용은 위협으로 이긴다. 궁중 나례(儺禮)에서 잡귀를 쫓는 처용희의 노랫말로 쓰이면서 의례의 요구에 맞춰 사나워진 것으로 본다. 같은 노래가 쓰임에 따라 어떻게 변하는지 보여 주는 가장 뚜렷한 사례다.",
+   "function": [
+    "벽사",
+    "축역",
+    "궁중 나례"
+   ],
+   "characters": [
+    "kr-cheoyong",
+    "kr-yeoksin",
+    "kr-hongyeoksin"
+   ],
+   "tales": [],
+   "sites": [],
+   "sources": [
+    {
+     "type": "classic",
+     "title": "악학궤범",
+     "ref": "처용가"
+    },
+    {
+     "type": "classic",
+     "title": "악장가사",
+     "ref": "처용가"
+    },
+    {
+     "type": "heritage",
+     "title": "처용무",
+     "ref": "국가무형유산"
+    }
+   ],
+   "verification": "primary_text",
+   "confidence": "high",
+   "related": [
+    "song-cheoyongga"
+   ],
+   "updated_at": "2026-09-13",
+   "sensitivity": null
+  },
+  {
+   "id": "song-dosolga",
+   "title": "도솔가",
+   "aliases": [
+    "兜率歌",
+    "월명사 도솔가"
+   ],
+   "genre": "hyangga",
+   "era": "신라 경덕왕대(8세기 중엽)",
+   "summary": "해가 둘 나타나 열흘이 되도록 사라지지 않자 월명사가 꽃을 뿌리며 부른 노래.",
+   "original": null,
+   "original_script": "hyangchal",
+   "reading_note": "『삼국유사』에 향찰 4구체로 실려 있으나, 확인한 판본만 원문으로 싣는 원칙에 따라 비워 둔다. 원문은 삼국유사 감통편 월명사 도솔가조에 있다.",
+   "gloss": "오늘 여기 꽃을 뿌리며 노래하니, 뿌려진 꽃아 너는 곧은 마음의 명을 받들어 미륵좌주를 모셔 오라는 뜻이다. 노래를 마치자 두 해 가운데 하나가 사라졌다. 해가 둘 뜨는 변괴는 창세가와 천지왕본풀이에서 활로 쏘아 떨어뜨리던 사건인데, 여기서는 활 대신 꽃과 노래로 처리한다. 같은 변괴를 신화는 무력으로, 향가는 의례로 푸는 셈이라 두 갈래를 나란히 놓고 볼 만하다.",
+   "function": [
+    "산화공덕",
+    "천변 진정"
+   ],
+   "characters": [
+    "kr-bulgae",
+    "kr-hwagwang"
+   ],
+   "tales": [
+    "tale-changsega",
+    "tale-cheonjiwang"
+   ],
+   "sites": [],
+   "sources": [
+    {
+     "type": "classic",
+     "title": "삼국유사",
+     "ref": "감통 월명사 도솔가"
+    },
+    {
+     "type": "encyclopedia",
+     "title": "한국민족문화대백과사전",
+     "ref": "도솔가"
+    }
+   ],
+   "verification": "primary_text",
+   "confidence": "high",
+   "related": [
+    "song-hyeseongga"
+   ],
+   "updated_at": "2026-09-13",
+   "sensitivity": null
+  },
+  {
+   "id": "song-gongmudohaga",
+   "title": "공무도하가",
+   "aliases": [
+    "公無渡河歌",
+    "공후인"
+   ],
+   "genre": "goga",
+   "era": "고조선 무렵으로 전함",
+   "summary": "머리 흰 미친 사람이 물에 뛰어들어 죽자 그 아내가 공후를 타며 부른 노래. 네 구뿐이다.",
+   "original": "公無渡河\n公竟渡河\n墮河而死\n當奈公何",
+   "original_script": "hanmun",
+   "reading_note": "중국 문헌을 거쳐 전하며, 배경 설화와 함께 실린 형태로 남았다. 창작 시기와 국적을 두고 오래된 논쟁이 있다.",
+   "gloss": "임이여 물을 건너지 마오. 임은 끝내 물을 건너셨네. 물에 빠져 죽으셨으니 임을 어이할꼬. — 만류하고, 어기고, 죽고, 남는다. 네 구가 각각 한 단계씩이라 더 줄일 수 없다. 물에 빠져 죽은 이가 물귀신이 되어 다른 사람을 부른다는 뒷날의 관념과 달리, 여기에는 원한도 저주도 없고 남은 자의 물음만 있다. 아내도 뒤따라 물에 들어가 죽었다고 전한다.",
+   "function": [
+    "만가",
+    "애도"
+   ],
+   "characters": [
+    "kr-mulgwisin",
+    "kr-subu"
+   ],
+   "tales": [],
+   "sites": [],
+   "sources": [
+    {
+     "type": "classic",
+     "title": "해동역사",
+     "ref": "공후인 인용"
+    },
+    {
+     "type": "encyclopedia",
+     "title": "한국민족문화대백과사전",
+     "ref": "공무도하가"
+    }
+   ],
+   "verification": "primary_text",
+   "confidence": "medium",
+   "related": [
+    "song-sangyeo"
+   ],
+   "sensitivity": {
+    "kind": "tragedy_linked",
+    "note": "익사와 자살을 다룬다. 흥밋거리로 각색하지 않는다."
+   },
+   "updated_at": "2026-09-13"
+  },
+  {
+   "id": "song-guji",
+   "title": "구지가",
+   "aliases": [
+    "龜旨歌",
+    "영신군가"
+   ],
+   "genre": "goga",
+   "era": "가락국 건국기(전하는 바로 1세기)",
+   "summary": "구지봉에 모인 사람들이 거북을 위협하며 부른 노래. 노래를 마치자 하늘에서 여섯 알이 내려왔다.",
+   "original": "龜何龜何\n首其現也\n若不現也\n燔灼而喫也",
+   "original_script": "hanmun",
+   "reading_note": "『삼국유사』 가락국기에 한문 4구로 실려 있다. 본래 우리말 노래를 한문으로 옮긴 것으로 보는 견해가 일반적이다.",
+   "gloss": "거북아 거북아, 머리를 내어라. 내놓지 않으면 구워서 먹으리. — 네 구가 전부이고, 그 네 구가 전부 명령과 협박이다. 비는 것이 아니라 위협해서 얻어 낸다. 현전하는 가장 오래된 집단 노래이자 주술요의 원형으로 다뤄지며, 같은 구조가 「해가」에 거의 그대로 되풀이된다. 신이 내려오기를 기다리는 것이 아니라 사람들이 노래와 춤으로 불러내린다는 점에서, 한국 건국 신화 가운데 가장 능동적인 장면이다.",
+   "function": [
+    "주술",
+    "기원",
+    "집단 의례"
+   ],
+   "characters": [],
+   "tales": [
+    "tale-guji"
+   ],
+   "sites": [
+    {
+     "name": "김해 구지봉",
+     "sido": "경남",
+     "sigungu": "김해시",
+     "lat": 35.2377,
+     "lng": 128.8756,
+     "precision": "dong",
+     "note": "노래를 부르며 흙을 팠다는 봉우리. 사적으로 지정되어 있다"
+    }
+   ],
+   "sources": [
+    {
+     "type": "classic",
+     "title": "삼국유사",
+     "ref": "가락국기"
+    },
+    {
+     "type": "heritage",
+     "title": "김해 구지봉",
+     "ref": "사적"
+    }
+   ],
+   "verification": "primary_text",
+   "confidence": "high",
+   "related": [
+    "song-haega"
+   ],
+   "updated_at": "2026-09-13",
+   "sensitivity": null
+  },
+  {
+   "id": "song-haega",
+   "title": "해가",
+   "aliases": [
+    "海歌",
+    "해가사"
+   ],
+   "genre": "goga",
+   "era": "신라 성덕왕대(8세기 초)",
+   "summary": "용에게 끌려간 수로부인을 되찾으려고 사람들이 막대로 언덕을 두드리며 부른 노래.",
+   "original": "龜乎龜乎出水路\n掠人婦女罪何極\n汝若悖逆不出獻\n入網捕掠燔之喫",
+   "original_script": "hanmun",
+   "reading_note": "『삼국유사』 수로부인조에 한문 4구로 실려 있다. 「구지가」와 뼈대가 같아 같은 주술요 계통으로 묶인다.",
+   "gloss": "거북아 거북아 수로를 내어라. 남의 아내를 앗아 간 죄가 얼마나 큰가. 네가 거스르고 내놓지 않으면 그물로 잡아 구워서 먹으리. — 「구지가」와 마지막 구가 사실상 같다. 칠백 년 뒤에도 같은 협박이 유효했다는 뜻이다. 이 장면에서 노인이 한 말이 노래보다 유명하다. '뭇 사람의 말은 쇠도 녹인다.' 한 사람이 아니라 여럿이 함께 불러야 힘이 생긴다는 것이 이 노래의 전제이고, 실제로 백성을 모아 부르자 용이 부인을 받들고 나왔다.",
+   "function": [
+    "주술",
+    "위협",
+    "집단 의례"
+   ],
+   "characters": [
+    "kr-haeryong",
+    "kr-yongwang"
+   ],
+   "tales": [
+    "tale-suro-buin"
+   ],
+   "sites": [
+    {
+     "name": "삼척 임해정 터",
+     "sido": "강원",
+     "sigungu": "삼척시",
+     "lat": 37.44,
+     "lng": 129.175,
+     "precision": "sigungu",
+     "note": "용이 수로부인을 끌고 갔다는 바닷가로 전하는 자리"
+    }
+   ],
+   "sources": [
+    {
+     "type": "classic",
+     "title": "삼국유사",
+     "ref": "기이 수로부인"
+    },
+    {
+     "type": "encyclopedia",
+     "title": "한국민족문화대백과사전",
+     "ref": "해가"
+    }
+   ],
+   "verification": "primary_text",
+   "confidence": "high",
+   "related": [
+    "song-guji",
+    "song-heonhwaga"
+   ],
+   "updated_at": "2026-09-13",
+   "sensitivity": null
+  },
+  {
+   "id": "song-heonhwaga",
+   "title": "헌화가",
+   "aliases": [
+    "獻花歌"
+   ],
+   "genre": "hyangga",
+   "era": "신라 성덕왕대(8세기 초)",
+   "summary": "천 길 벼랑의 철쭉을 꺾어 바치며 늙은이가 부른 노래. 아무도 나서지 못한 자리에서 이름 없는 노인이 나섰다.",
+   "original": "紫布岩乎邊希\n執音乎手母牛放教遣\n吾肹不喩慚肹伊賜等\n花肹折叱可獻乎理音如",
+   "original_script": "hyangchal",
+   "reading_note": "향찰 4구체. 노인의 정체를 두고 지나가던 촌로로 보는 견해와 신이한 존재로 보는 견해가 갈린다. 해독안도 학자마다 다르므로 특정 안을 옮기지 않는다.",
+   "gloss": "자줏빛 바위 가에 잡고 있던 암소를 놓게 하시고, 나를 부끄러워하지 않으신다면 꽃을 꺾어 바치겠나이다. — 조건이 붙은 헌사다. '나를 부끄러워하지 않으신다면'이라는 한 구절에 늙고 초라한 자와 귀한 부인 사이의 거리가 통째로 들어 있다. 천 길 벼랑을 오르는 것보다 그 거리를 넘는 일을 더 어렵게 적었다는 점이 이 짧은 노래의 자리다. 「해가」와 같은 조에 실려 있어 함께 읽힌다.",
+   "function": [
+    "헌사",
+    "구애"
+   ],
+   "characters": [],
+   "tales": [
+    "tale-suro-buin"
+   ],
+   "sites": [],
+   "sources": [
+    {
+     "type": "classic",
+     "title": "삼국유사",
+     "ref": "기이 수로부인"
+    },
+    {
+     "type": "encyclopedia",
+     "title": "한국민족문화대백과사전",
+     "ref": "헌화가"
+    }
+   ],
+   "verification": "primary_text",
+   "confidence": "high",
+   "related": [
+    "song-haega"
+   ],
+   "updated_at": "2026-09-13",
+   "sensitivity": null
+  },
+  {
+   "id": "song-hyeseongga",
+   "title": "혜성가",
+   "aliases": [
+    "彗星歌"
+   ],
+   "genre": "hyangga",
+   "era": "신라 진평왕대(6~7세기)",
+   "summary": "혜성이 나타나 화랑들의 출정이 멈추자 융천사가 노래를 지어 부르니 혜성이 사라졌다.",
+   "original": null,
+   "original_script": "hyangchal",
+   "reading_note": "『삼국유사』에 향찰 10구체로 실려 있으나, 이 도감은 확인한 판본만 원문으로 싣는 원칙이라 여기서는 비워 둔다. 원문은 삼국유사 감통편 융천사 혜성가조에서 볼 수 있다.",
+   "gloss": "동해 물가의 신기루를 두고 왜군이 왔다고 봉화를 올린 일이 있었는데, 이번에 혜성이 나타난 것도 그와 같은 헛것이라는 뜻을 노래에 담았다. 무섭다고 여기니 무서운 것이지 실은 아무 일도 아니라는 말이다. 노래를 부르자 혜성이 사라지고 왜병도 물러갔다. 천체의 변괴를 무기가 아니라 해석으로 물린다는 점에서 한국 시가 가운데 가장 이례적이며, 「도솔가」와 함께 노래로 하늘을 다스린 두 사례로 나란히 놓인다.",
+   "function": [
+    "진호",
+    "천변 진정"
+   ],
+   "characters": [
+    "kr-hwagwang"
+   ],
+   "tales": [],
+   "sites": [],
+   "sources": [
+    {
+     "type": "classic",
+     "title": "삼국유사",
+     "ref": "감통 융천사 혜성가"
+    },
+    {
+     "type": "encyclopedia",
+     "title": "한국민족문화대백과사전",
+     "ref": "혜성가"
+    }
+   ],
+   "verification": "primary_text",
+   "confidence": "high",
+   "related": [
+    "song-dosolga"
+   ],
+   "updated_at": "2026-09-13",
+   "sensitivity": null
+  },
+  {
+   "id": "song-jisin-balpgi",
+   "title": "지신밟기 고사소리",
+   "aliases": [
+    "지신밟기",
+    "매구굿 소리",
+    "고사반"
+   ],
+   "genre": "minyo",
+   "era": "구전 · 정월 세시",
+   "summary": "정월에 풍물패가 집집을 돌며 마당·부엌·장독대·우물을 차례로 밟고 부르는 노래.",
+   "original": null,
+   "original_script": "oral",
+   "reading_note": "'지신아 지신아 눌러라' 같은 후렴이 널리 쓰이지만 사설은 마을마다 다르다. 정본이 없어 원문을 싣지 않는다.",
+   "gloss": "풍물을 앞세우고 집집을 돌며 땅의 신을 밟아 눌러 잡귀를 몰아내고 복을 부른다. 대문에서 시작해 마당·성주(대청)·조왕(부엌)·철륭(장독대)·우물·측간까지 집 안의 신이 있는 자리를 차례로 도는데, 그 순서가 곧 가택신의 배치도다. 이 도감의 가택신 항목들이 실제로 어디에 있었는지 알려면 이 노래의 동선을 따라가면 된다. 눌러 없애는 것이 아니라 눌러 자리에 앉힌다는 뜻이라, 쫓는 의례가 아니라 다스리는 의례에 가깝다.",
+   "function": [
+    "의례",
+    "축귀",
+    "기복",
+    "세시"
+   ],
+   "characters": [
+    "kr-jisin",
+    "kr-seongju",
+    "kr-jowang",
+    "kr-cheollyung",
+    "kr-cheuksin",
+    "kr-teoju"
+   ],
+   "tales": [],
+   "sites": [],
+   "sources": [
+    {
+     "type": "encyclopedia",
+     "title": "한국민속대백과사전",
+     "ref": "지신밟기"
+    },
+    {
+     "type": "field",
+     "title": "한국구비문학대계",
+     "ref": "고사소리 채록(전국)"
+    }
+   ],
+   "verification": "field_record",
+   "confidence": "high",
+   "related": [
+    "song-seongju-puri",
+    "song-aengmagi"
+   ],
+   "sensitivity": {
+    "kind": "living_faith",
+    "note": "정월 세시 의례로 지금도 이어지는 마을이 있다."
+   },
+   "updated_at": "2026-09-13"
+  },
+  {
+   "id": "song-mokja",
+   "title": "목자요",
+   "aliases": [
+    "木子得國",
+    "목자득국 참요"
+   ],
+   "genre": "chamyo",
+   "era": "고려 말(14세기)",
+   "summary": "'목자가 나라를 얻는다'는 여섯 자가 아이들 입으로 퍼졌다. 목자(木子)를 합치면 이(李)가 된다.",
+   "original": null,
+   "original_script": "hanmun",
+   "reading_note": "구절 자체는 짧게 전하지만 노래의 전문이라 할 만한 것이 남아 있지 않다. 여러 문헌이 조금씩 다르게 인용하므로 원문을 확정해 싣지 않는다.",
+   "gloss": "나무 목(木)과 아들 자(子)를 위아래로 합치면 오얏 이(李)가 된다. 글자를 쪼개 뜻을 감추는 파자(破字)의 방식으로, 이씨가 나라를 얻는다는 말을 아이들 노래에 실어 퍼뜨린 것이다. 왕조 교체기에는 이런 참요가 거의 빠짐없이 등장하는데, 뒤에 이긴 쪽이 기록을 남기므로 노래가 앞일을 맞혔다는 형태로만 전해진다. 조선 건국 설화에서 하늘이 이성계에게 금척을 내렸다는 이야기와 같은 일을 한다 — 무력으로 얻은 것을 하늘이 정한 일로 바꾸는 장치다.",
+   "function": [
+    "참요",
+    "예언",
+    "정당화"
+   ],
+   "characters": [
+    "kr-geumcheok"
+   ],
+   "tales": [],
+   "sites": [],
+   "sources": [
+    {
+     "type": "encyclopedia",
+     "title": "한국민족문화대백과사전",
+     "ref": "참요"
+    },
+    {
+     "type": "encyclopedia",
+     "title": "한국민속대백과사전",
+     "ref": "동요와 참요"
+    }
+   ],
+   "verification": "public_encyclopedia",
+   "confidence": "medium",
+   "related": [
+    "song-seodongyo"
+   ],
+   "updated_at": "2026-09-13",
+   "sensitivity": null
+  },
+  {
+   "id": "song-sangyeo",
+   "title": "상여소리",
+   "aliases": [
+    "만가",
+    "향두가",
+    "회다지소리"
+   ],
+   "genre": "minyo",
+   "era": "구전 · 전국",
+   "summary": "상여를 메고 가며 선소리꾼과 상여꾼이 주고받는 노래. 죽은 이가 산 사람에게 건네는 말로 부른다.",
+   "original": null,
+   "original_script": "oral",
+   "reading_note": "'어허 넘차 어허' 같은 후렴이 널리 쓰이나 사설은 마을과 선소리꾼마다 다르다. 정본이 없어 원문을 싣지 않는다.",
+   "gloss": "선소리꾼이 앞서 메기고 상여꾼들이 뒤를 받는다. 사설은 대개 죽은 이의 목소리로 되어 있어, 가는 사람이 남는 사람에게 잘 있으라고 말하는 형식을 띤다. 북망산천이 멀다더니 대문 밖이 북망이라는 구절처럼 죽음의 거리를 좁혀 말하는 대목이 많다. 무덤을 다지며 부르는 회다지소리로 이어지고, 그 사이에 상주를 웃기는 익살이 섞이기도 한다. 슬픔을 눌러 두지 않고 여럿이 소리 내어 나눠 지는 장치이며, 저승사자·무주고혼 같은 항목이 실제로 어떤 자리에서 이야기되었는지를 이 노래가 알려 준다.",
+   "function": [
+    "만가",
+    "천도",
+    "상례"
+   ],
+   "characters": [
+    "kr-jeoseung-saja",
+    "kr-mujugohon",
+    "kr-yeongsan"
+   ],
+   "tales": [],
+   "sites": [],
+   "sources": [
+    {
+     "type": "encyclopedia",
+     "title": "한국민속대백과사전",
+     "ref": "상여소리"
+    },
+    {
+     "type": "field",
+     "title": "한국구비문학대계",
+     "ref": "만가·회다지소리 채록(전국)"
+    }
+   ],
+   "verification": "field_record",
+   "confidence": "high",
+   "related": [
+    "song-bari",
+    "song-gongmudohaga"
+   ],
+   "sensitivity": {
+    "kind": "tragedy_linked",
+    "note": "실제 상례에서 부르는 노래다. 오락 소재로 각색하지 않는다."
+   },
+   "updated_at": "2026-09-13"
+  },
+  {
+   "id": "song-seodongyo",
+   "title": "서동요",
+   "aliases": [
+    "薯童謠"
+   ],
+   "genre": "hyangga",
+   "era": "신라 진평왕대(6~7세기)",
+   "summary": "아이들에게 부르게 한 거짓 노래가 소문이 되고, 소문이 사실이 되어 공주를 얻는다.",
+   "original": "善化公主主隱\n他密只嫁良置古\n薯童房乙\n夜矣卯乙抱遣去如",
+   "original_script": "hyangchal",
+   "reading_note": "향찰 4구체. 마지막 구의 해독이 특히 갈리며, 그에 따라 노래의 노골적인 정도가 달라진다. 특정 해독안을 옮기지 않는다.",
+   "gloss": "선화공주님은 남몰래 정을 통해 두고, 서동방을 밤에 몰래 안고 간다. — 없는 일을 지어내 아이들에게 마를 주며 부르게 했고, 노래가 서울에 퍼져 공주가 궁에서 쫓겨나자 서동이 나타나 맞이한다. 거짓이 노래가 되고 노래가 소문이 되고 소문이 사실을 만드는 3단 구조라, 참요(讖謠)가 어떻게 작동하는지 보여 주는 표본으로 다뤄진다. 「구지가」가 위협으로 신을 움직였다면 이 노래는 소문으로 사람을 움직인다.",
+   "function": [
+    "참요",
+    "여론 조작"
+   ],
+   "characters": [],
+   "tales": [],
+   "sites": [],
+   "sources": [
+    {
+     "type": "classic",
+     "title": "삼국유사",
+     "ref": "기이 무왕"
+    },
+    {
+     "type": "encyclopedia",
+     "title": "한국민족문화대백과사전",
+     "ref": "서동요"
+    }
+   ],
+   "verification": "primary_text",
+   "confidence": "high",
+   "related": [
+    "song-mokja",
+    "song-guji"
+   ],
+   "updated_at": "2026-09-13",
+   "sensitivity": null
+  },
+  {
+   "id": "song-seongju-puri",
+   "title": "성주풀이",
+   "aliases": [
+    "성주굿 무가",
+    "황제풀이"
+   ],
+   "genre": "muga",
+   "era": "구전 · 20세기 채록",
+   "summary": "집을 지키는 성주신의 내력을 풀어 부르는 무가. 집을 짓는 과정 자체가 노래의 뼈대다.",
+   "original": null,
+   "original_script": "oral",
+   "reading_note": "지역마다 사설이 크게 다르고 부르는 무당마다 달라진다. 정본이 없으므로 원문을 싣지 않고 구조만 적는다.",
+   "gloss": "성주신이 어디서 태어나 어떤 시련을 겪고 어떻게 집의 신이 되었는지를 처음부터 끝까지 풀어 나간다. 솔씨를 심어 재목이 자라기까지, 나무를 베어 다듬고 기둥을 세우고 상량을 올리기까지의 과정이 그대로 노랫말이 되므로, 신의 내력을 읊는 일과 집을 짓는 일이 한 몸이다. 남부에서는 「성주풀이」가 굿을 떠나 민요로도 널리 불렸다. 새집에 들거나 집을 고친 뒤 성주를 새로 모실 때 부르며, 상량문을 써 붙이는 관습과 짝을 이룬다.",
+   "function": [
+    "의례",
+    "기원",
+    "가택 봉안"
+   ],
+   "characters": [
+    "kr-seongju",
+    "kr-teoju",
+    "kr-jisin"
+   ],
+   "tales": [],
+   "sites": [],
+   "sources": [
+    {
+     "type": "encyclopedia",
+     "title": "한국민속대백과사전",
+     "ref": "성주풀이"
+    },
+    {
+     "type": "field",
+     "title": "한국구비문학대계",
+     "ref": "성주굿 무가 채록"
+    }
+   ],
+   "verification": "field_record",
+   "confidence": "high",
+   "related": [
+    "song-jisin-balpgi"
+   ],
+   "sensitivity": {
+    "kind": "living_faith",
+    "note": "지금도 굿에서 구송되는 무가다."
+   },
+   "updated_at": "2026-09-13"
+  }
+ ]
+}

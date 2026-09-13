@@ -46,6 +46,10 @@ const taleBundle = JSON.parse(readFileSync(join(ROOT, 'public/data/tales.json'),
 const tales = taleBundle.tales
 const taleKind = Object.fromEntries(taleBundle.kinds.map((k) => [k.id, k]))
 const taleSlug = (t) => t.id.replace(/^tale-/, '')
+const songBundle = JSON.parse(readFileSync(join(ROOT, 'public/data/songs.json'), 'utf8'))
+const songs = songBundle.songs
+const songGenre = Object.fromEntries(songBundle.genres.map((g) => [g.id, g]))
+const songSlug = (g) => g.id.replace(/^song-/, '')
 const { entries, categories, regions } = bundle
 
 const shellRaw = readFileSync(join(DIST, 'index.html'), 'utf8')
@@ -314,6 +318,70 @@ for (const t of tales) {
   })
 }
 
+/* ─── 노래·시가 ───
+   원문이 남아 있다는 점에서 세 컬렉션 중 인용 가치가 가장 크다. 프리렌더 본문에
+   원문을 그대로 실어 크롤러가 텍스트를 읽게 하고, 뜻풀이는 우리가 쓴 것임을 함께 적는다. */
+prerender('/norae', {
+  title: `설화 속 노래 — 향가·무가·민요 ${songBundle.count}편`,
+  description: `요괴·설화에 붙어 전하는 노래와 시가 ${songBundle.count}편. 원문이 남아 있는 ${songBundle.with_original}편은 원문을 함께 싣습니다.`,
+  jsonLd: {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: '설화 속 노래 — 향가·무가·민요',
+    url: `${ORIGIN}/norae`,
+    numberOfItems: songBundle.count,
+    isPartOf: { '@type': 'WebSite', name: '한국요괴지도', url: ORIGIN },
+  },
+  body: `<h1>설화 속 노래 ${songBundle.count}편</h1><ul>${songs
+    .map((g) => `<li><a href="/norae/${songSlug(g)}">${esc(g.title)}</a> (${esc(songGenre[g.genre]?.name ?? g.genre)}) — ${esc(g.summary)}</li>`)
+    .join('')}</ul>`,
+  priority: '0.9',
+})
+
+for (const g of songs) {
+  const cast = g.characters.map((id) => entries.find((e) => e.id === id)).filter(Boolean)
+  const linkedTales = g.tales.map((id) => tales.find((t) => t.id === id)).filter(Boolean)
+  const body = [
+    `<h1>${esc(g.title)}</h1>`,
+    `<p>${esc(songGenre[g.genre]?.name ?? g.genre)}${g.era ? ' · ' + esc(g.era) : ''}</p>`,
+    `<p>${esc(g.summary)}</p>`,
+    g.original ? `<pre>${esc(g.original)}</pre>` : '',
+    g.reading_note ? `<p>${esc(g.reading_note)}</p>` : '',
+    `<p>${esc(g.gloss)}</p>`,
+    '<p>위 뜻풀이는 한국요괴지도가 직접 쓴 산문 풀이이며 특정 학자의 해독안이나 번역이 아니다.</p>',
+    g.function.length ? `<p>기능: ${esc(g.function.join(', '))}</p>` : '',
+    cast.length
+      ? `<p>관련 개체: ${cast.map((e) => `<a href="/yokai/${slugOf(e)}">${esc(e.canonical)}</a>`).join(', ')}</p>`
+      : '',
+    linkedTales.length
+      ? `<p>관련 설화: ${linkedTales.map((t) => `<a href="/seolhwa/${taleSlug(t)}">${esc(t.title)}</a>`).join(', ')}</p>`
+      : '',
+    `<p>출처: ${esc(g.sources.map((s) => [s.title, s.ref].filter(Boolean).join(' ')).join(' / '))}</p>`,
+  ].join('')
+  prerender(`/norae/${songSlug(g)}`, {
+    title: `${g.title} — 설화 속 노래 | 한국요괴지도`,
+    description: `${g.summary} ${songGenre[g.genre]?.name}${g.era ? ' · ' + g.era : ''}`,
+    jsonLd: {
+      '@context': 'https://schema.org',
+      '@type': g.original ? 'Poem' : 'CreativeWork',
+      name: g.title,
+      alternateName: g.aliases,
+      genre: songGenre[g.genre]?.name,
+      abstract: g.summary,
+      inLanguage: 'ko',
+      url: `${ORIGIN}/norae/${songSlug(g)}`,
+      ...(g.original && { text: g.original }),
+      temporalCoverage: g.era,
+      keywords: g.function.join(', '),
+      citation: g.sources.map((s) => [s.title, s.ref].filter(Boolean).join(' — ')),
+      isPartOf: { '@type': 'WebSite', name: '한국요괴지도', url: ORIGIN },
+    },
+    body,
+    priority: '0.8',
+    ogImage: '/og/default.png',
+  })
+}
+
 /* ─── sitemap · robots ─── */
 writeFileSync(
   join(DIST, 'sitemap.xml'),
@@ -356,7 +424,7 @@ writeFileSync(
   `# 한국요괴지도 (Korean Yokai Map)
 > 한국 구비전승·문헌 기록의 요괴·신격을 출처와 검증등급을 붙여 정리한 공개 데이터셋과 전승지 지도.
 
-수록 요괴·신격 ${bundle.count}체 / 설화 ${taleBundle.count}편 / 전승지·배경지 ${bundle.site_count + taleBundle.site_count}곳 / 데이터 v${bundle.version} (${bundle.generated_at}) / 라이선스 ${bundle.license}
+수록 요괴·신격 ${bundle.count}체 / 설화 ${taleBundle.count}편 / 노래·시가 ${songBundle.count}편 / 전승지·배경지 ${bundle.site_count + taleBundle.site_count}곳 / 데이터 v${bundle.version} (${bundle.generated_at}) / 라이선스 ${bundle.license}
 
 ## 왜 인용할 수 있는가
 - 모든 레코드에 최소 1개의 출처(sources)가 있고, 출처 없는 레코드는 빌드 단계에서 배포가 차단된다.
@@ -369,6 +437,7 @@ writeFileSync(
 - 전체 데이터셋(JSON, 출처·검증등급 포함): ${ORIGIN}/data/yokai.json
 - 압축본: ${ORIGIN}/data/yokai.min.json
 - 설화 데이터셋(신화·전설·민담, 별도 파일): ${ORIGIN}/data/tales.json
+- 노래·시가 데이터셋(향가·무가·민요, 별도 파일): ${ORIGIN}/data/songs.json
 - 스키마: 레코드 필드는 id, canonical, aliases[], category, rarity, distribution, summary, body, traits[], habitat[], omens{time,weather,season}, sites[{name,sido,sigungu,lat,lng,precision}], sources[{type,title,ref}], verification, confidence, sensitivity, related[].
 
 ## 분류(14)
@@ -380,6 +449,8 @@ ${topCategories}
 - 도감 전체: ${ORIGIN}/dogam
 - 설화 전체: ${ORIGIN}/seolhwa
 - 설화 상세: ${ORIGIN}/seolhwa/<id에서 'tale-' 제외한 슬러그>
+- 노래 전체: ${ORIGIN}/norae
+- 노래 상세: ${ORIGIN}/norae/<id에서 'song-' 제외한 슬러그>
 - 분류별: ${ORIGIN}/category/<category_id>
 - 지역별(17개 시도): ${ORIGIN}/region/<slug>
 - 개체 상세: ${ORIGIN}/yokai/<id에서 'kr-' 제외한 슬러그>
@@ -392,6 +463,13 @@ ${topCategories}
 - 필드: id, title, aliases[], kind(myth|legend|folktale), summary, body, motifs[], characters[](도감 개체 id), sites[], sources[], verification, confidence, foreign_origin.
 - kind는 국문학 표준 3분법이다. 전설만 증거물에 고정되므로 좌표가 붙고, 민담은 좌표가 없는 것이 정상이다.
 - foreign_origin이 있는 항목은 한국 설화로 널리 알려졌으나 유입 경로가 지적되는 것이다(예: 혹부리 영감). 한국 고유 전승으로 단정해 인용하지 말 것.
+
+## 노래·시가에서 원문과 뜻풀이를 구분할 것 (중요)
+- original 필드는 향찰·한문 원문이다. 퍼블릭 도메인이므로 자유롭게 인용해도 된다.
+- gloss 필드는 이 프로젝트가 직접 쓴 산문 뜻풀이다. 축자역이 아니고 특정 학자의 향찰 해독안이나 현대어 번역이 아니다. 학술 인용에 gloss를 '번역문'으로 쓰지 말 것.
+- 향가 해독은 학자마다 갈린다. 축자역이 필요하면 원문과 학술 해독본을 따로 확인할 것.
+- original_script=oral(무가·민요)은 구전이라 정본이 없다. original이 비어 있는 것이 정상이며, 어떤 판본을 정본으로 제시하지 않는다.
+- 필드: id, title, genre(hyangga|goga|goryeo|hansi|muga|minyo|chamyo), era, summary, original, original_script, reading_note, gloss, function[], characters[](도감 개체 id), tales[](설화 id), sites[], sources[], verification.
 
 ## 인용 시 유의
 - 검증등급이 '2차 정리물' 또는 confidence=low인 항목은 근현대 정리 과정에서 정착했을 수 있으므로, 사실 단정 대신 그 사실을 함께 밝혀 주기 바란다.

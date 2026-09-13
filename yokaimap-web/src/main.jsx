@@ -24,6 +24,8 @@ const HuntPage = lazy(() => import('./hunt/HuntPage.jsx'))
 const CollectionPage = lazy(() => import('./collection/CollectionPage.jsx'))
 const SeolhwaPage = lazy(() => import('./seolhwa/SeolhwaPage.jsx'))
 const TalePage = lazy(() => import('./seolhwa/TalePage.jsx'))
+const NoraePage = lazy(() => import('./norae/NoraePage.jsx'))
+const SongPage = lazy(() => import('./norae/SongPage.jsx'))
 
 /* 지도는 어두운 타일 위에 UI가 얹히므로 테마와 무관하게 항상 밤 서피스다. */
 const NIGHT_ROUTES = new Set(['/map'])
@@ -82,6 +84,8 @@ function App() {
           <Route path="/dogam" element={<DogamPage />} />
           <Route path="/seolhwa" element={<SeolhwaPage />} />
           <Route path="/seolhwa/:slug" element={<TalePage />} />
+          <Route path="/norae" element={<NoraePage />} />
+          <Route path="/norae/:slug" element={<SongPage />} />
           <Route path="/yokai/:slug" element={<YokaiPage />} />
           <Route path="/category/:id" element={<CategoryPage />} />
           <Route path="/region/:slug" element={<RegionPage />} />
