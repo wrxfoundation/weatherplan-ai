@@ -248,10 +248,10 @@ export const PEOPLE: Person[] = [
     next: "인사만. 그가 먼저 열면 듣는다.",
   },
   {
-    id: "emily", gate: "sale2", name: "Emily Yang", org: "Binance", role: "APAC 파트너십",
-    lane: "exchange", stance: "hold",
-    why: "결제·온오프램프 BD. 우리는 그가 찾는 라이선스 결제사가 아니다.",
-    next: "1촌 요청만 두고 메시지 없음. 2차 판매 해외 결제 검토 때 재판단.",
+    id: "emily", gate: "sale2", name: "Emily Yang", org: "Binance", role: "Business Partnerships Manager",
+    lane: "exchange", stance: "linked", tie: "**1촌** · 서우 1차 DM 9/11(목) — 무응답",
+    why: "결제·온오프램프 BD. 해외 구매자의 피아트 레일·온오프램프가 그의 본업 트랙이고, 그게 1차 판매에서 우리가 가장 얇은 지점이다.",
+    next: "**2차 DM(9/14) — 재촉이 아니라 update.** 1차 판매 개시(9/15)를 새 정보로 들고 간다. ⚠ **상장·리스팅 단어 0** — 거래소 소속 1촌 규칙 9/30 까지 유지, 바이낸스라 특히. 한 번 섞이면 그 뒤 결제 대화가 전부 「상장 노리는 프로젝트」로 재분류된다. 「본인 성과」 설계 = ① 크립토 네이티브가 아닌 **산업 이름** ② 투기가 아닌 **결제 거래량** ③ 아직 아무도 잡지 않은 **시점** — 셋을 말하지 않고 보여준다. 데이터 공급처는 **우회 화법**(주어 없이 `the settlement side` 까지만). 초안: x-activity-log 「링크드인 2차 DM」.",
   },
   {
     id: "tina", gate: "saleend", name: "Tina Lee", org: "BYDFi", role: "BD",
@@ -712,7 +712,7 @@ export const PEOPLE: Person[] = [
     id: "lynnmartin", gate: "data", name: "Lynn Martin", org: "NYSE / ICE", role: "President · Chair, ICE Fixed Income and Data Services",
     lane: "capital", stance: "linked", tie: "**1촌**(9/13 수락) · 공통 1촌 Katie·Hazel",
     why: "거래소보다 **데이터 서비스** 쪽이 우리와 닿는다 — 시장 데이터를 파는 사업의 구조가 우리 B2B 데이터 판매와 같은 모양이다. 그가 의장인 부문이 reference data·indices·pricing, 즉 **데이터가 값이 되는 구조** 그 자체다. 컬럼비아 통계 석사라 측정·품질을 이해하는 쪽이기도 하다.",
-    next: "**인사만 보냈다(9/13)** — 케이웨더 소개(30년·약 3만 센서·기업 고객 4,000+·코스닥 상장) → wellbian 한 줄 → 관심의 이유(데이터 서비스) 순. 제품 설명·링크·요청 0. ⚠ **「국내 최대」 는 넣지 않았다** — 기관 상대는 회사 자료를 직업으로 읽는 쪽이라 근거 없는 최상급 한 단어가 나머지 문장의 신뢰까지 깎는다(판정표: wellbian-kweather-relationship 「케이웨더 소개 수치」). **사업 대화는 데이터 실적 뒤.** ⚠ 공통 1촌 Katie 는 언급하지 않았다 — 그쪽 관계가 아직 얕아 이름을 팔면 안 된다. 첫 인사에 XRP Ledger 대신 `a public ledger` 로 쓴 이유도 같다(NYSE·ICE 임원에게 첫마디부터 특정 체인을 말하면 「크립토 사람」으로 분류된다).",
+    next: "**인사만 보냈다(9/13)** — 케이웨더 소개(30년·약 3만 센서·기업 고객 4,000+·코스닥 상장) → wellbian 한 줄 → 관심의 이유(데이터 서비스) 순. 제품 설명·링크·요청 0. ⚠ **「국내 최대」 는 넣지 않았다** — 기관 상대는 회사 자료를 직업으로 읽는 쪽이라 근거 없는 최상급 한 단어가 나머지 문장의 신뢰까지 깎는다(판정표: wellbian-kweather-relationship 「케이웨더 소개 수치」). **사업 대화는 데이터 실적 뒤.** ⚠ 공통 1촌 Katie 는 언급하지 않았다 — 그쪽 관계가 아직 얕아 이름을 팔면 안 된다. 첫 인사에 XRP Ledger 대신 `a public ledger` 로 쓴 이유도 같다(NYSE·ICE 임원에게 첫마디부터 특정 체인을 말하면 「크립토 사람」으로 분류된다). **2차 DM(9/14) — 요청 0 유지.** 던지는 것은 방법론 한 덩어리다: 복수 독립 소스 → 이상치 제거 → 합의 지수 = 그가 의장인 부문(ICE Benchmark Administration)의 **기여형 벤치마크** 구조 그 자체이고, 기여자가 기관이 아니라 계측기일 뿐이다. 여기에 입력값 원장 지문이 붙으면 「이상치 제거 단계를 사후 감사 가능」이 되는데 기존 벤치마크 행정이 갖지 못한 조각이다. ⚠ **숫자 반복 금지** — 「약 3만 센서·4,000+」는 1차에서 이미 나갔고 3만은 출처 미확정 조건부다. 한 번은 소개, 두 번은 주장이 된다. ⚠ **1차 메시지 말미가 깨져 있다**(`Good to be connected.e connected.onnected.`) — 2차 발송 전에 1차를 편집해 꼬리를 정리할 것.",
   },
   {
     id: "davidpark", gate: "saleend", name: "Hyuckjae David Park", org: "Base", role: "APAC Ecosystem Lead",

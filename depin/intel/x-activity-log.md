@@ -1653,3 +1653,104 @@ KO (최종 v2)
 
 규칙·게시 운영은 앞 절 그대로(`$WLBN` 캐시태그 금지 · 비보장 고지 필수 · 국문·영문 분리 원글 ·
 영문 22:00~23:00 KST). 이미지 지적 2건(**2023 날짜** · 레이다 접시)도 유효.
+
+---
+
+## 링크드인 2차 DM 2건 (9/14) — Emily Yang(Binance) · Lynn Martin(NYSE·ICE)
+
+두 사람 모두 **1차 인사는 이미 나갔고 답이 없다.** 그래서 이 2차는 "follow-up" 이면 안 된다 —
+답을 재촉하는 두 번째 DM 은 관계를 깎는다. **새 정보를 들고 가는 update** 로만 성립한다.
+Emily 는 1차 판매(9/15) 개시가, Lynn 은 방법론 한 덩어리가 그 새 정보다.
+
+### 공통 규칙 — 데이터 공급처 우회 화법 (서우 지시 9/14, 이후 모든 대외 발화에 적용)
+
+어제 콜 상대(예측시장 정산 데이터 건)를 **이름으로도, 특정 가능한 업태로도 밝히지 않는다.**
+MDA 미서명 상태이고, 상대가 규제 거래소라 "누구와 얘기 중"이 새는 순간 그쪽 컴플라이언스가 먼저 닫는다.
+
+| | 쓰지 않는다 | 쓴다 |
+|---|---|---|
+| 상대 | 회사명 · `a CFTC-regulated DCM` · `미국 규제 파생 거래소` · `상장 거래소 그룹` | (주어를 쓰지 않는다) |
+| 사실 | "NDA 진행 중" · "계약 협의" · 수익 배분 구조 · 단계 일정 | — |
+| 허용 | | **우리 능력** 서술: `a resolution feed for weather-linked contracts` / 예측시장 정산용 판정 데이터 |
+| 허용 | | **수요의 방향**만: `the pull is coming from the settlement side` |
+
+원칙 한 줄: **「누가 원하는가」가 아니라 「무엇이 지어져 있는가」만 말한다.**
+전자는 상대의 정보이고 후자는 우리 자산이다.
+
+### A. Emily Yang — Binance, Business Partnerships Manager
+
+1차(목 15:41)에서 이미 나간 것: 케이웨더 30년 · XRPL DePIN · 스테이블코인 판매 ·
+XRP SEOUL 2026 플래티넘 · **"fiat rails and on/off-ramps are where a project like ours lives or dies"**.
+레인은 **결제·온오프램프**로 이미 깔렸다. 2차는 그 레인 안에서만 움직인다.
+
+⚠ **상장·리스팅 단어 0** — 거래소 소속 1촌에 9/30 까지 유지. 바이낸스라서 특히 그렇다.
+한 번 리스팅 뉘앙스가 섞이면 그 뒤 결제 대화가 전부 「상장 노리는 프로젝트」로 재분류된다.
+
+**「본인 성과」 설계** — 파트너십 매니저가 사내에서 인정받는 것은 셋이다:
+① 크립토 네이티브가 아닌 **산업 이름**, ② 투기가 아닌 **결제 거래량**, ③ 아직 아무도 잡지 않은 **시점**.
+우리는 셋 다 해당한다. 그래서 "당신 실적이 된다"고 **말하지 않고 그 셋을 보여준다** —
+말하는 순간 거래 제안이 되고, 보여주면 그가 스스로 계산한다.
+
+```
+EN (발송안)
+Emily — an update rather than a follow-up.
+
+Our first node sale opens tomorrow, 15 Sept, priced in stablecoin. Korea we can handle. The overseas half is where we're thinnest, which is the gap I mentioned.
+
+Two things that might be useful on your side. First, this is a 30-year KOSDAQ-listed company's first move into Web3, not a crypto-native launch — the name reads as industry rather than crypto, and the payment is for a physical instrument with a real cost base, so what flows through is commerce, not speculation. Second, the measurement layer underneath now has a resolution feed built for weather-linked contracts, and that side is drawing more interest than the hardware did.
+
+We're early enough that whoever helps shape the rails shapes what gets built on them. I'd rather have that conversation now than after we've wired in something worse.
+
+Either way, I'll keep you posted.
+```
+
+문장별 의도: ① `an update rather than a follow-up` — 재촉이 아님을 첫 줄에 못박는다.
+② `Korea we can handle` — 우리가 무능해서 묻는 게 아니라는 선. ③ `the name reads as industry
+rather than crypto` — 그가 사내에 들고 갈 수 있는 한 문장을 완성해서 준다.
+④ `a resolution feed ... weather-linked contracts` — 우회 화법(위 표). 주어 없음.
+⑤ `shapes what gets built on them` — 시점 소유권. 압박이 아니라 기회의 형태.
+⑥ `Either way, I'll keep you posted` — 답이 없어도 관계가 유지되는 출구.
+
+**그가 리스팅을 물으면** (가능성 있음): "That's a separate conversation and not one I'm carrying
+right now — the sale and the rails are." 이상 덧붙이지 않는다.
+
+### B. Lynn Martin — President, NYSE Group; Chair, ICE Fixed Income and Data Services
+
+1차(일 12:12)는 인사만. 요청 0 이었고 그게 옳았다. 2차도 **요청 0** 을 유지한다 —
+이 자리의 사람에게 두 번째 메시지가 부탁이면 첫 인사의 절제까지 소급해서 무효가 된다.
+
+**던지는 것: 방법론 한 덩어리.** 우리 도시 값은 단일 관측이 아니라 **복수 독립 소스 → 이상치 제거 →
+합의 지수**다. 이건 그가 의장인 부문(ICE Benchmark Administration)이 매일 하는 일 —
+**기여형 벤치마크(contributed-rate benchmark)** 의 구조 그 자체다. 기여자가 기관이 아니라 계측기일 뿐.
+여기에 **입력값의 원장 지문**이 붙으면 「이상치 제거 단계를 사후 감사할 수 있다」가 되는데,
+그건 기존 벤치마크 행정이 끝내 갖지 못한 조각이다. 그가 직업으로 아는 문제다.
+
+```
+EN (발송안)
+Lynn — a thought, not an ask.
+
+The longer I work on this, the more it rhymes with benchmark administration. Our city-level values aren't a single reading — they're a consensus across eleven independent sources, outliers screened, under a fixed method. Structurally that's a contributed-rate benchmark; the contributors just happen to be instruments rather than institutions.
+
+What's new is that each input is fingerprinted to a public ledger before it enters the calculation, so the screening step can be audited afterwards instead of taken on trust. That's the part physical measurement never had.
+
+The pull is starting to come from the settlement side — contracts that need a weather value somebody will stand behind.
+
+Familiar problem, unfamiliar clothes.
+```
+
+⚠ **숫자 반복 없음** — 1차에서 이미 「약 3만 센서·4,000+」가 나갔다. 3만은 아직 출처 미확정
+조건부 수치(판정표: `wellbian-kweather-relationship.md`)이므로 **두 번 말하지 않는다.**
+한 번은 소개, 두 번은 주장이 된다.
+
+⚠ `eleven independent sources` 는 케이웨더 데이터 운영 **방법 서술**이다. 대외 공개 가능 여부를
+본부장 확인 후 발송. 막히면 `a consensus across several independent sources` 로 바꿔도
+문장은 그대로 선다(설득력만 조금 내려간다).
+
+⚠ `contributed-rate benchmark` 는 ICE Benchmark Administration 의 본업을 정확히 가리키는 용어다.
+그가 이 단어에 반응해 되물을 수 있으니, **워터폴 방법론·기여자 스크리닝**이 무슨 뜻인지는
+발송 전에 서우가 한 번 읽어 두는 편이 안전하다.
+
+⚠ **1차 메시지 말미가 깨져 있다** — `Good to be connected.e connected.onnected.` (수정 표시까지 붙어
+있다). 2차를 보내면 그가 스레드를 위로 훑으면서 반드시 본다. **2차 발송 전에 1차를 한 번 더 편집해
+꼬리를 정리할 것.** 그래서 이 2차 초안은 `Good to be connected` 로 끝내지 않았다 — 깨진 줄을
+두 번 부르는 꼴이 된다.
