@@ -1873,3 +1873,64 @@ sale is 15 Sept.
 
 ⚠ **Lynn 1차 메시지 말미가 깨져 있다**(`Good to be connected.e connected.onnected.`).
 2차 발송 전에 1차를 편집해 꼬리부터 정리할 것.
+
+---
+
+## Max Z (Binance, Affiliate Manager · Partnerships & Growth) — 1촌 수락 후 첫 메시지 (9/14)
+
+1촌 요청은 나갔고 **수락 대기 중**(2촌이라 그 전에는 DM 이 안 간다). 아래는 수락되면 보낼 것.
+
+### ⚠ 먼저 — Emily Yang 과 같은 회사다
+
+**같은 회사 두 사람에게 같은 제안을 하면 「여기저기 찔러본다」가 된다.** 사내에서 얘기가 오간다는
+전제로 써야 한다. 다행히 **레인이 실제로 다르다**:
+
+| | Emily Yang | Max Z |
+|---|---|---|
+| 자리 | Business Partnerships Manager | **Affiliate Manager**(경력란 기준) · Partnerships & Growth |
+| 우리 대화 | 결제 레일 → **데이터 공급·정결성** | **어필리에이트·KOL 생태계 설계** |
+| 지역 | — | UAE |
+
+**규칙 셋**: ① 서로를 언급하지 않는다 ② 같은 제안을 양쪽에 하지 않는다 ③ 상장·리스팅 단어 0
+(거래소 소속 1촌 규칙, 9/30 까지).
+
+### 왜 이 사람인가 — 우리 문제의 정답을 가진 사람
+
+경력란이 그의 본업을 직접 말한다: *"Designed and optimized **commission structures and incentive
+mechanisms** to balance partner earnings with platform ROI."* 4년간 15개 시장, 1,000+ 크리에이터·
+브로커·미디어. 전직 impact.com(파트너십 관리 플랫폼) CS.
+
+**우리가 지금 Karan 건에서 풀고 있는 문제**(5%+5%가 적정한가, 2차를 어떻게 걸까)를 **세계에서
+가장 많이 풀어 본 축**이다. 그리고 이건 바이낸스에서 무언가를 받는 게 아니라 **그의 전문성을
+묻는 것**이라 거절 비용이 거의 없고, 그에게도 기분 좋은 질문이다.
+
+⚠ **우리 커미션 숫자는 말하지 않는다.** 구조만 묻는다 — 유료 KOL 단가는 기밀이고, 한 번 나가면
+KOL 쪽으로도 되돌아온다.
+
+### 훅 — 그의 1주 전 글
+
+「From 0 to 1000+ Partners: 3 Lessons From Building a Global Affiliate Ecosystem」(반응 53).
+**그가 쓴 글을 읽고 말을 거는 것이 가장 값싼 진심이다.** 그리고 우리 위치를 **그 곡선의 반대쪽
+끝**에 놓으면, 우리가 작다는 사실이 약점이 아니라 그가 답하고 싶어지는 자리가 된다.
+
+```
+EN (수락 후 발송)
+Max — thanks for connecting.
+
+I read your piece on going from 0 to 1000+ partners. I'm at the opposite end of
+that curve. I run partnerships at wellbian — a sensor network built by KWeather, a
+30-year weather-data company in Seoul — and we're signing our first handful of
+creators and resellers this month. Commission shape, who gets onboarded first,
+what the incentive actually rewards: you've run those decisions a thousand times
+and I'm running them for the fifth.
+
+No ask here. But if you ever have a view on what the first five partners should
+look like versus the first five hundred, I'd genuinely like to hear it.
+```
+
+### 하지 않는 것
+
+- **공통 1촌 Ken·Daria 이름을 팔지 않는다.** 특히 Daria 는 **Bybit 소속**이고 우리와 관계도 얕다 —
+  바이낸스 사람에게 경쟁 거래소 인맥을 대는 건 최악이다(Lynn 건에서 Katie 를 뺀 것과 같은 이유).
+- **대면 제안 없음** — UAE 라 KBW·XRP SEOUL·NYC 어느 일정과도 겹치지 않는다.
+- 토큰·보상·가격·판매 목표 0.
