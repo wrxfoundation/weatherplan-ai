@@ -1914,28 +1914,50 @@ KOL 쪽으로도 되돌아온다.
 끝**에 놓으면, 우리가 작다는 사실이 약점이 아니라 그가 답하고 싶어지는 자리가 된다.
 
 ```
-EN (수락 후 발송 — v2, 회사 소개 + 도움 요청)
+EN (수락 후 발송 — v3, 데이터·검증 축 결합)
 Max — thanks for connecting. Your piece on going from 0 to 1000+ partners is what
 made me want to.
 
-Context: I run partnerships at wellbian. KWeather has measured weather in Seoul
-for 30 years and supplies 4,000+ enterprise clients — they're our device partner.
-wellbian runs the network and the sale: a certified air sensor people buy, own and
-run in their own space, settled in stablecoin. First sale is this month.
+Context: I run partnerships at wellbian. KWeather has measured weather in South
+Korea for 30 years and supplies 4,000+ enterprise clients — they're our device
+partner. wellbian runs the network and the sale: a certified air sensor people
+buy, own and run in their own space, settled in stablecoin. First sale is this
+month.
 
-So I'm standing where your article starts. We're building the partner layer from
-zero — commission shape, who to onboard first, what the incentive actually
-rewards.
+There's a second half to it. The same measurement layer supplies city-level
+weather across 90 countries, and every input is now fingerprinted to a public
+ledger so it can be verified rather than trusted — which is drawing more interest
+from trading venues than the hardware is. So a referred device isn't only a
+hardware margin; it also adds a measurement point to a network we sell into.
 
-One thing I can't find a good answer to, and you would know: how does an affiliate
-program change when what you're selling is physical hardware at a real unit price,
-rather than a signup? The economics and the partner profile both look different to
-me, and I'd rather learn that from someone who's run it than find out at partner
-#50.
+Which is where I get stuck, and you would know: how does an affiliate program
+change when what you're selling is physical hardware at a real unit price rather
+than a signup — and when the referred unit keeps earning after the sale? The
+economics and the partner profile both look different to me, and I'd rather learn
+that from someone who's run it than find out at partner #50.
 
 Happy to take 20 minutes at whatever hour suits you, or just a reply if that's
 easier. Either way — good piece.
 ```
+
+**v2 → v3 (서우 지시: 세계 날씨·검증 사례를 넣되 상대는 밝히지 않는다)**
+
+들어간 문단은 **자랑이 아니라 그의 질문을 바꾸는 자리**에 놓였다. 연결이 실제로 있다 —
+**기기가 팔린 뒤에도 데이터망에 계속 기여하면 우리가 감당할 수 있는 커미션이 달라진다.**
+어필리에이트 설계자에게 이건 실제 퍼즐이다(일회성 수수료냐, 지속 귀속이냐).
+그래서 마지막 질문에 **`and when the referred unit keeps earning after the sale?`** 를 덧붙였다.
+**질문이 더 어려워졌고, 어려운 질문은 전문가가 답하고 싶어 한다.**
+
+부수 효과 둘:
+- **급이 올라간다.** 「조언 구하는 작은 하드웨어 회사」에서 「거래 플랫폼이 찾는 데이터를 가진
+  회사」로 바뀐다. 답장 확률이 오른다.
+- **상대는 여전히 이름이 없다** — `trading venues` 복수형으로만. 우회 화법 그대로.
+
+⚠ **`eleven independent sources` 는 뺐다.** Max 에게는 그 디테일이 길이값을 못 하고,
+**본부장 확인 대기 항목이기도 하다 → 이 버전은 승인 없이 오늘 보낼 수 있다.**
+(`90개국` 도 같은 계열이라 막히면 `across dozens of countries` 로 바꾼다.)
+
+⚠ 여전히 **토큰·보상·상장·커미션 숫자 0**. 우리가 파는 것은 기기이고 커미션도 기기에 붙는다.
 
 **v1 → v2 (서우 지시)**: ① **회사 소개를 기존 형식대로 넣었다** ② **막연한 호감이 아니라
 도움을 요청한다.**
