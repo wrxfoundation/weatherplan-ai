@@ -1914,19 +1914,46 @@ KOL 쪽으로도 되돌아온다.
 끝**에 놓으면, 우리가 작다는 사실이 약점이 아니라 그가 답하고 싶어지는 자리가 된다.
 
 ```
-EN (수락 후 발송)
-Max — thanks for connecting.
+EN (수락 후 발송 — v2, 회사 소개 + 도움 요청)
+Max — thanks for connecting. Your piece on going from 0 to 1000+ partners is what
+made me want to.
 
-I read your piece on going from 0 to 1000+ partners. I'm at the opposite end of
-that curve. I run partnerships at wellbian — a sensor network built by KWeather, a
-30-year weather-data company in Seoul — and we're signing our first handful of
-creators and resellers this month. Commission shape, who gets onboarded first,
-what the incentive actually rewards: you've run those decisions a thousand times
-and I'm running them for the fifth.
+Context: I run partnerships at wellbian. KWeather has measured weather in Seoul
+for 30 years and supplies 4,000+ enterprise clients — they're our device partner.
+wellbian runs the network and the sale: a certified air sensor people buy, own and
+run in their own space, settled in stablecoin. First sale is this month.
 
-No ask here. But if you ever have a view on what the first five partners should
-look like versus the first five hundred, I'd genuinely like to hear it.
+So I'm standing where your article starts. We're building the partner layer from
+zero — commission shape, who to onboard first, what the incentive actually
+rewards.
+
+One thing I can't find a good answer to, and you would know: how does an affiliate
+program change when what you're selling is physical hardware at a real unit price,
+rather than a signup? The economics and the partner profile both look different to
+me, and I'd rather learn that from someone who's run it than find out at partner
+#50.
+
+Happy to take 20 minutes at whatever hour suits you, or just a reply if that's
+easier. Either way — good piece.
 ```
+
+**v1 → v2 (서우 지시)**: ① **회사 소개를 기존 형식대로 넣었다** ② **막연한 호감이 아니라
+도움을 요청한다.**
+
+**요청은 「도와달라」가 아니라 질문 하나다.** 「우리 좀 도와주세요」는 무엇을 해야 할지 상대가
+설계해야 해서 가장 답하기 어려운 부탁이다. **구체적인 질문 하나는 그가 아는 것을 말하기만 하면
+되고, 우리가 이미 고민했다는 증거도 된다.**
+
+그 질문을 **「실물 하드웨어·고단가 제휴는 계정 가입 제휴와 무엇이 다른가」** 로 고른 이유:
+ⓐ 우리가 **진짜로 모르는 것**이고 ⓑ **그가 확실히 아는 것**(브로커·앱까지 다룬 4년)이며
+ⓒ **우리 숫자를 하나도 말하지 않고** 물을 수 있다.
+
+부담을 둘로 갈랐다 — **20분 통화 또는 답장 한 줄.** 그리고 `at whatever hour suits you` 로
+시차를 우리가 떠안는다(그는 UAE).
+
+⚠ **토큰·보상은 한 구절도 넣지 않았다.** 어필리에이트 대화에 토큰이 섞이면 **「토큰 팔이」로
+재분류된다.** 여기서 우리가 파는 것은 **기기**이고 커미션도 기기 판매에 붙는다.
+⚠ 케이웨더는 **`our device partner`** 로만 — 「자회사·모회사」 표현 금지(정본 프레임).
 
 ### 하지 않는 것
 
