@@ -1,0 +1,44 @@
+# 에이전트 커머스 센서스 — 스펙 v4 #19 (agent-commerce-census), 파일/프로브형. 제네시스 창.
+#
+# x402(Coinbase)·AP2(Google)·ACP(OpenAI/Stripe) 등 에이전트 결제·커머스 표준의
+# 채택 신호를 주간 센서스. 표준이 2025년에 막 태어나 지금 시작하면 채택 곡선을
+# 제네시스부터 완전 보유한다 — 파도가 커진 뒤엔 아무도 소급 생성 못 함.
+# #16과 같은 크롤 루프에 피기백(한계비용 ~0). KoreaAPI.dev(x402 베팅)의 조기경보.
+#
+# 프로브 방법론 (스펙 §7 검증 플래그): 도메인 × well-known 매니페스트 경로를
+# 프로브. 200(JSON) = 채택 신호, 404 = 미채택(제네시스 베이스라인), SPA
+# catch-all(HTML 200)은 non_manifest로 표시해 오탐·churn 배제. 표준이 굳으면
+# paths·domains를 config에서 갱신 — 경로는 아직 유동적이므로 넓게 잡는다.
+id: agent-commerce-census
+family: file-probe
+title: 에이전트 커머스 센서스 — x402·AP2·ACP well-known 매니페스트
+
+scheme: https
+user_agent: "chronicle-agent-commerce-census/0.1 (+https://github.com/kwangdol-star/aiagentlabs)"
+rate_limit_ms: 400
+
+# 후보 well-known 경로 (유동적 — 표준 확정 시 갱신)
+paths:
+  - /.well-known/ai-plugin.json      # 레거시 플러그인 매니페스트
+  - /.well-known/agent.json          # 에이전트 매니페스트
+  - /.well-known/x402                 # x402 (Coinbase 에이전트 결제)
+  - /.well-known/x402.json
+  - /.well-known/ap2.json             # AP2 (Google Agent Payments Protocol)
+  - /.well-known/agentic-commerce.json # ACP (OpenAI/Stripe)
+  - /.well-known/mcp.json             # MCP 서버 매니페스트
+  - /.well-known/agent-payments.json
+
+# 후보 채택사 (에이전트 결제·커머스 관련 + 베이스라인)
+domains:
+  - coinbase.com
+  - stripe.com
+  - openai.com
+  - anthropic.com
+  - cloudflare.com
+  - shopify.com
+  - vercel.com
+  - replit.com
+  - perplexity.ai
+  - google.com
+  - microsoft.com
+  - paypal.com
