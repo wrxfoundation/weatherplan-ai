@@ -266,6 +266,12 @@ export const PEOPLE: Person[] = [
     next: "**1촌은 맺되 메시지는 보류.** 보낼 내용이 없다 — 억지로 만들면 그게 티가 난다. **게이트 = 기기 배송·가동.** 그때 「해외 고객지원을 어떻게 짜야 하나」로 열면 그의 본업 한가운데다. ⚠ **바이낸스 계열 세 번째 사람이다**(Emily=Binance, Max=Binance, 본인=Binance.US). 법인은 달라도 밖에서는 같은 브랜드로 보인다 — **셋에게 동시에 말을 걸면 「바이낸스에 어떻게든 뚫으려 한다」로 읽힌다.** 서우가 지금 보내기로 하면 **인사만**(요청 0) — 초안은 x-activity-log.",
   },
   {
+    id: "hazel", gate: "saleend", name: "Hazel Teo", org: "Binance", role: "Global ASO & Performance Marketing",
+    lane: "exchange", stance: "hold", tie: "1촌 요청 대기 · 싱가포르 · 공통 1촌 Daria·Vincent",
+    why: "**레인이 맞지 않는다.** ASO = 앱스토어 최적화인데 **우리는 앱이 없다**(웹 스토어 + 텔레봇). 퍼포먼스 마케팅(유료 광고)도 우리 기조와 반대다 — 콘텐츠·관계로 간다. NUS 2023-12 졸업, 바이낸스 2년 8개월(CRM → ASO)로 **결정 권한이 있는 자리가 아니다**. 나쁜 게 아니라 레버리지가 낮다.",
+    next: "**1촌은 그대로 두고 메시지 없음.** 미래 접점은 **우리가 모바일 앱을 낼 때** — 지금은 먼 얘기다. ⚠ **바이낸스 계열 네 번째 사람**(Emily·Max·Emile·본인) — 한 회사에 동시 대화 2개 상한 규칙 적용(playbook 「한 회사 동시 대화 상한」). 공통 1촌 **Daria(Bybit)·Vincent 이름을 팔지 않는다.**",
+  },
+  {
     id: "tina", gate: "saleend", name: "Tina Lee", org: "BYDFi", role: "BD",
     lane: "exchange", stance: "hold",
     why: "거래소 BD 카테고리 첫 사례.",
@@ -719,6 +725,12 @@ export const PEOPLE: Person[] = [
     lane: "capital", stance: "linked", tie: "서우 팔로우 중",
     why: "같은 이유 — 스테이블코인 발행사 축.",
     next: "컨택 없음.",
+  },
+  {
+    id: "ellazhang", gate: "data", name: "Ling (Ella) Zhang", org: "YZi Labs", role: "Managing Partner · Head",
+    lane: "capital", stance: "linked", tie: "서우 팔로우 중 · 2촌 · 싱가포르 · 공통 1촌 Ken",
+    why: "**앞의 바이낸스 4명과 급이 다르다 — 거래소 사람이 아니라 투자자다.** YZi Labs(구 Binance Labs) = **$10bn 투자 비히클**(Web3·AI·바이오). 그가 **Binance Labs 를 창업**했고(2018~2019, Injective·Polygon·Trust Wallet·CoinMarketCap), 그 전 **Kleiner Perkins 투자 프린시펄 4년 10개월**, 그 사이 Trendsi 공동창업 CEO(시리즈 A $25M, Lightspeed 리드). 스탠퍼드 GSB. ⚠ **「한 회사 동시 대화 2개 상한」을 기계적으로 적용하지 않는다** — 그 규칙은 거래소 레인이고 이 사람은 capital 레인이다.",
+    next: "**1촌·팔로우는 유지, 메시지 0.** 게이트는 기존 배정대로 **데이터 판매 실적**이다. 이유 셋: ① 지금 우리 손에 든 것이 전부 예정이라 **투자자에게 계획을 들고 가면 그게 첫인상이 되고 첫인상은 한 번뿐이다** ② **한 번 「아직 이르다」를 받은 투자자에게 다시 가는 건 처음 가는 것보다 어렵다** — 실적을 들고 처음 가는 편이 압도적으로 낫다 ③ 케이웨더가 상장사라 **자금 경로가 내부에서도 확정 전**이다(녹취 9/14). 우리가 먼저 투자자를 열면 안에서 정리 안 된 것을 밖에서 말하게 된다. **지금 할 수 있는 것은 그의 글에 의미 있는 관찰을 남기는 것** — 요청이 아니고, 투자자는 자기 글에 좋은 답글을 다는 사람을 기억한다. ⚠ 프로필에 업무 메일이 공개돼 있으나 **저장소에 기재하지 않는다.**",
   },
   {
     id: "lynnmartin", gate: "data", name: "Lynn Martin", org: "NYSE / ICE", role: "President · Chair, ICE Fixed Income and Data Services",
