@@ -2075,38 +2075,41 @@ CoinDesk 전원 동일)인데 이미 넘었다. 다만 **방식은 규칙의 취
 **복구 경로는 하나뿐이다 — 그가 쓰기 전에 우리가 먼저 좁힌다.** 기자에게 자진 정정은 손해가 아니라
 **신뢰 자산**이다. 「이 사람은 나를 태우지 않겠구나」가 다음 취재의 근거가 된다.
 
-### 답장 초안 (짧게, 밀지 않는다)
+### 답장 — 선제 정정은 하지 않는다 (서우 판정 9/14)
+
+**서우: "이제사 건드리면 더 이상하지."** 맞다. 상대가 **쓰겠다고 한 것도 아닌데** 선제 정정을 하면
+**없던 문제를 우리가 만들어 보이는** 꼴이 된다. 새벽 한 줄에 정정 문단 셋으로 답하는 무게도 맞지 않다.
+→ **정정은 그가 「쓰겠다」고 할 때 확인해서 준다.** 위 ⚠ 표는 폐기가 아니라 **그 시점의 체크리스트**로 남긴다.
+
+대신 **새 수치를 하나도 얹지 않는다.** 위험이 커지지 않는 유일한 길이다.
 
 ```
-EN
+EN (발송안 — 가볍게, 요청 0)
 Thanks Brian.
 
-Two things before they'd matter to you.
+The sale closes 16 Sept — that's when there's an actual number instead of a
+thesis. I'll come back to you with it either way, good or bad.
 
-The 3,400 figure is KWeather's own deployed base. I want to confirm the exact
-split and the go-live date before you'd quote it — I'll send the confirmed
-number rather than the one I had in my head at midnight.
-
-And the WeatherXM point is my reading of their public disclosures, not something
-they've said. Worth putting to them directly if you use it.
-
-The date that matters is 16 Sept: the first public sale closes, and it's the
-first time anyone can see whether people pay for a sensor whose data they don't
-keep. I'll send you what happened either way — including if it's a bad number.
-
-No need to reply.
+Nothing to chase until then. Worth half an eye, maybe.
 ```
 
 **설계**
-- `before they'd matter to you` — 정정을 **그의 이익**으로 놓는다. 사과가 아니라 실무다.
-- `the one I had in my head at midnight` — 실수를 인간적으로 만들되 **변명하지 않는다.**
-- `not something they've said` — WeatherXM 단정을 **사실에서 내 해석으로** 내린다. 철회가 아니라 귀속 조정이라 논지는 살아 있다.
-- **`including if it's a bad number`** — 이 한 줄이 기자를 붙잡는다. **나쁜 결과도 주겠다는 약속은 홍보하는 쪽이 절대 안 하는 말**이고, 그래서 다음 연락이 열린다.
-- `No need to reply` — 부담 0. 새벽에 한 줄 보낸 사람에게 숙제를 주지 않는다.
+- `an actual number instead of a thesis` — **지금까지 준 것이 논지였음을 인정**하면서, 다음에 줄 것은
+  사실이라고 예고한다. 기자에게 이 구분은 중요하다.
+- `either way, good or bad` — 정정 없이도 **신뢰 신호**를 남기는 압축판. 나쁜 결과도 주겠다는 말은
+  홍보하는 쪽이 하지 않는다.
+- `Nothing to chase until then` — **부담 0.** 새벽에 한 줄 보낸 사람에게 숙제를 주지 않는다.
+- `Worth half an eye, maybe` — 「관심 가져 달라」의 가장 가벼운 형태. 요청이 아니라 제안이다.
+- **날짜 하나만 남긴다(9/16).** 기자에게 날짜는 기억할 이유이고, 우리에게는 다시 말 걸 명분이다.
 
-### 발송 전 필수
+⚠ `first / exclusive` 류의 독점 뉘앙스는 쓰지 않았다 — CoinDesk·The Block 등이 같은 게이트에
+걸려 있어 **나중에 말이 갈린다.**
 
-1. ⚠ **매체 확인** — 어디에 쓰는 기자인지 모른 채 다음 자료를 주면 안 된다. 매체에 따라 줄 것이 다르다.
-2. ⚠ **3,400 의 실체 확인**(본부장) — 관측 지점인가 센서인가, 실내인가 전체인가, 언제 가동인가.
-   **9/16 전에 확정**해야 이 답장의 약속을 지킨다.
-3. 보도자료 일정은 어제 회의에서 **9/16 판매 종료 뒤**로 정해져 있다 — 기자에게 준 날짜와 일치한다.
+### 그가 「쓰겠다」고 하면 그때의 체크리스트
+
+1. **매체 확인** — 어디에 쓰는지에 따라 줄 것이 다르다.
+2. **3,400 의 실체**(본부장) — 관측 지점인가 센서인가, 실내인가 전체인가, 언제 가동인가.
+   링크드인의 「센서 약 3만」과 충돌하므로 **한 숫자로 정리해서 준다.**
+3. **WeatherXM 대목은 우리 해석으로 귀속** — "my reading of their public disclosures,
+   not something they've said. Worth putting to them directly."
+4. 보도자료 일정은 어제 회의에서 **9/16 판매 종료 뒤** — 기자에게 준 날짜와 일치한다.
