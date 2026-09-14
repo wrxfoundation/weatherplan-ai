@@ -2196,7 +2196,36 @@ Rewards are planned, not guaranteed.
 문의 support@wellbianlabs.io
 
 ※ 보상은 예정 사항이며, 수량과 가치는 보장되지 않습니다.
+
+━━━━━━━━━━━━━━━
+🌐 In brief
+
+First sale is live — closes 16 Sept, 12:00 KST.
+Open to everyone now; no pre-registration needed.
+
+Device NFT licence — 450 RLUSD (list 650)
+· 1 NFT per device · up to 10 per person · transferable
+· Includes one Weather Data Token Generator™
+  (shipping announced separately)
+· Card/Pay (Korea) or RLUSD (international / Web3 wallet)
+
+Genesis — first-sale buyers only
+· One per account · non-transferable · never reissued
+· Not available in later sales
+· Permanent Genesis number · priority on future
+  sales and new services
+
+🎟 200 buyers drawn for an XRP SEOUL 2026 ticket (1 each)
+
+🔗 https://wellbian.io
+support@wellbianlabs.io
+
+※ Rewards are planned. Amounts and value are not guaranteed.
 ```
+
+**영문 간략본 설계** — 전체 번역이 아니라 **판단에 필요한 것만**이다.
+**원화 가격을 빼고 RLUSD 만 남겼다** — 해외 구매자에게 750,000원은 환산 부담만 준다.
+비보장 고지는 국·영문 **양쪽에 각각** 붙인다(한쪽만 있으면 고지가 아니라 장식이 된다).
 
 ### 운영
 
