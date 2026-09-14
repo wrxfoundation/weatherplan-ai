@@ -213,7 +213,7 @@ export const PEOPLE: Person[] = [
     id: "odelia", inbound: true, name: "Odelia Torteman", org: "XRPL Commons", role: "Head of Digital Assets",
     lane: "xrpl", stance: "talking", via: "Katie Harries 와 공통 1촌", meet: "NYC 해커톤 10/24~25",
     why: "그가 먼저 시간을 청했다. Commons 기관 사례에서 비어 있는 칸 = 비금융 실물이고, 전 직함(Corporate Adoption)이 곧 우리 유형이다. **Paris Blockchain Week 연사**(9/13 확인) — 유럽 기관 무대에서의 위치를 보여 준다. 그가 열어 둔 「유럽 소개는 나중」 축의 실체이기도 하다.",
-    next: "메일 발송 → 통화는 10/3 무대 뒤. 준비 문서 content/xrpl-commons-call-prep.md",
+    next: "**메일 L 미발송 — 오늘 나가야 한다.** 그가 먼저 시간을 청했고 우리가 보내겠다고 답한 상태의 침묵은 「말만 하는 쪽」으로 분류된다. 통화는 10/3 무대 뒤 그대로. **9/14 재판정: 리플 계약 가능성은 미루는 이유가 아니라 내용 필터다** — Commons 는 리플과 별개 법인이고, 오히려 Commons 가 아는 상태가 리플 대화에서 우리 위치를 올린다. 유일한 실제 금지선은 **Commons 에게 리플 쪽 소개를 청하지 않는 것**. 새 접점: 합의 지수 + 입력값 원장 지문(그의 「신뢰가 아니라 검증」 논지와 같은 모양이고 리플과 무관하다). 준비 문서 content/xrpl-commons-call-prep.md",
   },
   {
     id: "karan", name: "Karan", org: "독립 KOL", role: "X · YouTube", handle: "KingKaran",
