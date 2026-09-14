@@ -426,7 +426,13 @@ export const PEOPLE: Person[] = [
     id: "wang", gate: "ship", name: "John Wang", org: "Kalshi", role: "Head of Crypto",
     lane: "market", stance: "hold", meet: "KBW 9/29~10/1",
     why: "규제 시장 쪽 예측시장. 같은 논리이고 정산 기준 요구가 더 엄격하다.",
-    next: "동일 — 실측 실적 뒤.",
+    next: "동일 — 실측 실적 뒤. **Kalshi 의 첫 문은 이 사람이다**(Edward King 보다 먼저). KBW 대면이 잡혀 있다.",
+  },
+  {
+    id: "edking", gate: "ship", name: "Edward King", org: "Kalshi", role: "Trade Surveillance, Kalshi Prime",
+    lane: "market", stance: "hold", tie: "1촌 요청 대기 · 뉴욕 · 공통 1촌 Nicole",
+    why: "**구매 결정자가 아니다** — Trade Surveillance = 불공정거래·조작 탐지이지 데이터 벤더 선정이 아니다(전직 나스닥 Options Market Surveillance Analyst 1년 7개월, Kalshi 7개월). **다만 자리가 우리 논지와 정확히 겹친다**: 예측시장에서 정산값이 조작되면 그게 그의 문제다. 즉 **「검증 가능성」을 가장 잘 이해할 사람**이고, 구매자가 아니라 **내부 옹호자**가 될 수 있는 카드다. 와튼·창업 2회·뉴욕.",
+    next: "**1촌만, 메시지 없음 — 순서가 뒤집히면 안 된다.** 같은 회사에 **John Wang(Head of Crypto)** 가 이미 잡혀 있고 **KBW 9/29~10/1 대면**이 예정돼 있다. 윗선 대화가 열리기 전에 아랫자리에 먼저 DM 을 보내면, 사내에서 얘기가 오갈 때 **Wang 쪽 대화가 「이미 우리 회사에 찔러봤던 곳」으로 시작된다.** 게이트 = Wang 대화가 열린 뒤 + 기기 가동. 그때도 **데이터 판매 제안이 아니라 감시 관점**으로 연다. ⚠⚠ **Kalshi 사람에게 다른 거래소와 얘기 중이라는 신호 절대 금지** — 직접 경쟁사이고 규제 거래소끼리는 업계가 좁다. 우회 화법(주어 없음)이 여기서 가장 엄격하게 적용된다.",
   },
 
   /* ── 보류·열지 않음 (미디어·사상가) ──────────────────────── */
