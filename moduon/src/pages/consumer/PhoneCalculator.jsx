@@ -6,6 +6,7 @@ import { PHONE_DEVICES, PHONE_PLANS, JOIN_TYPES, INSTALLMENT_MONTHS, calcPhoneQu
 import { won, copyText } from '../../lib/engine'
 import { LEGAL } from '../../lib/constants'
 import { IcShare, IcCheck } from '../../components/icons'
+import RbPanel from '../../components/RbPanel'
 
 export default function PhoneCalculator() {
   const nav = useNavigate()
@@ -44,6 +45,11 @@ export default function PhoneCalculator() {
         <CalcTabs active="phone" />
         <h1 className="mt-4 text-[24px] font-extrabold tracking-[-0.6px] text-ink sm:text-[26px]">휴대폰 견적 계산기</h1>
         <p className="mt-1.5 text-[14px] text-muted sm:text-[15px]">단말 할부금(A)과 요금(B)을 나눠 보여드려요 — 공시지원금과 선택약정 중 유리한 쪽도 자동 비교!</p>
+      </div>
+
+      {/* 사업자 전용 R/B — 개인회원·비로그인에게는 렌더되지 않는다(org.bizIdentity) */}
+      <div className="mt-5">
+        <RbPanel kind="phone" deviceId={deviceId} join={join} support={q.extraSupport} />
       </div>
 
       <div className="mt-7 grid items-start gap-6 lg:grid-cols-[1fr_400px]">

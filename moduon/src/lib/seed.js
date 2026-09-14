@@ -5,26 +5,58 @@ const now = () => Date.now()
 const minAgo = (m) => now() - m * 60000
 const dayAgo = (d) => now() - d * 86400000
 const dayAfter = (d) => now() + d * 86400000
+// 이번 달 안에 반드시 떨어지는 과거 시각 — 월초에 시드를 받아도 정산 월 귀속이 어긋나지 않는다
+const thisMonth = (day, hour = 11) => { const d = new Date(); d.setDate(Math.min(day, d.getDate())); d.setHours(hour, 0, 0, 0); return d.getTime() }
 import { BENEFIT_TOTAL, REVIEWS } from './constants'
 
-export const SEED_VERSION = 13 // 13: 히어로 배너 4장을 브랜드 톤 21:9 장면(GPT Image 2)으로 통일
+export const SEED_VERSION = 14 // 14: 조직 3계층(권역 총판·지역 대리점·셀러) + 개인식별번호 + 회원(개인/사업자)
 
 export function buildSeed() {
   const tenants = [
-    { id: 'T1', slug: 'happynet', name: '해피넷 통신', owner: '박정우', unit: 'SD2', sigungu: '서울 강남구', status: '활성', brand: 'blue',   greeting: '강남 최다 개통, 해피넷이 다 해드려요!', cats: ['phone', 'internet', 'water', 'rental'], openedAt: dayAgo(142), monthlySales: 12400000, leadCount: 0, phone: '010-2311-4821' },
-    { id: 'T2', slug: 'onlife',   name: '온라이프몰',   owner: '김서연', unit: 'SD1', sigungu: '서울 노원구', status: '활성', brand: 'coral',  greeting: '생활서비스, 온라이프에서 한 번에!', cats: ['internet', 'water', 'rental', 'move'], openedAt: dayAgo(96),  monthlySales: 10000000, leadCount: 0, phone: '010-8842-1030' },
-    { id: 'T3', slug: 'smartin',  name: '스마트인 인천', owner: '이도현', unit: 'SD3', sigungu: '인천 부평구', status: '활성', brand: 'teal',   greeting: '인천·부천 전 지역 당일 상담!', cats: ['phone', 'internet', 'appliance'], openedAt: dayAgo(70),  monthlySales: 8200000,  leadCount: 0, phone: '010-5567-2214' },
-    { id: 'T4', slug: 'busanjeil', name: '부산제일통신', owner: '최민준', unit: 'GN',  sigungu: '부산 해운대구', status: '활성', brand: 'navy', greeting: '부산·경남 1등 생활서비스 파트너', cats: ['phone', 'internet', 'move', 'insurance'], openedAt: dayAgo(55), monthlySales: 6900000, leadCount: 0, phone: '010-9210-7745' },
-    { id: 'T5', slug: 'daejeonon', name: '대전온', owner: '정수빈', unit: 'CC2', sigungu: '대전 서구', status: '활성', brand: 'green', greeting: '충청권 생활비 절감 전문가', cats: ['internet', 'water', 'rental'], openedAt: dayAgo(33), monthlySales: 4100000, leadCount: 0, phone: '010-3345-8890' },
-    { id: 'T6', slug: 'jejuhome',  name: '제주홈케어', owner: '강지은', unit: 'JJ', sigungu: '제주 제주시', status: '정지', brand: 'purple', greeting: '제주 전 지역 홈서비스', cats: ['water', 'rental', 'etc'], openedAt: dayAgo(120), monthlySales: 0, leadCount: 0, phone: '010-7788-1123' },
+    { id: 'T1', slug: 'happynet', name: '해피넷 통신', owner: '박정우', unit: 'SD2', sigungu: '서울 강남구', status: '활성', brand: 'blue',   greeting: '강남 최다 개통, 해피넷이 다 해드려요!', cats: ['phone', 'internet', 'water', 'rental'], openedAt: dayAgo(142), monthlySales: 12400000, leadCount: 0, agencyId: 'AG3', sellerCode: 'K2580', phone: '010-2311-4821' },
+    { id: 'T2', slug: 'onlife',   name: '온라이프몰',   owner: '김서연', unit: 'SD1', sigungu: '서울 노원구', status: '활성', brand: 'coral',  greeting: '생활서비스, 온라이프에서 한 번에!', cats: ['internet', 'water', 'rental', 'move'], openedAt: dayAgo(96),  monthlySales: 10000000, leadCount: 0, agencyId: 'AG1', sellerCode: 'J1234', phone: '010-8842-1030' },
+    { id: 'T3', slug: 'smartin',  name: '스마트인 인천', owner: '이도현', unit: 'SD3', sigungu: '인천 부평구', status: '활성', brand: 'teal',   greeting: '인천·부천 전 지역 당일 상담!', cats: ['phone', 'internet', 'appliance'], openedAt: dayAgo(70),  monthlySales: 8200000,  leadCount: 0, agencyId: null, sellerCode: null, phone: '010-5567-2214' },
+    { id: 'T4', slug: 'busanjeil', name: '부산제일통신', owner: '최민준', unit: 'GN',  sigungu: '부산 해운대구', status: '활성', brand: 'navy', greeting: '부산·경남 1등 생활서비스 파트너', cats: ['phone', 'internet', 'move', 'insurance'], openedAt: dayAgo(55), monthlySales: 6900000, leadCount: 0, agencyId: 'AG7', sellerCode: 'X9043', phone: '010-9210-7745' },
+    { id: 'T5', slug: 'daejeonon', name: '대전온', owner: '정수빈', unit: 'CC2', sigungu: '대전 서구', status: '활성', brand: 'green', greeting: '충청권 생활비 절감 전문가', cats: ['internet', 'water', 'rental'], openedAt: dayAgo(33), monthlySales: 4100000, leadCount: 0, agencyId: 'AG6', sellerCode: 'W5567', phone: '010-3345-8890' },
+    { id: 'T6', slug: 'jejuhome',  name: '제주홈케어', owner: '강지은', unit: 'JJ', sigungu: '제주 제주시', status: '정지', brand: 'purple', greeting: '제주 전 지역 홈서비스', cats: ['water', 'rental', 'etc'], openedAt: dayAgo(120), monthlySales: 0, leadCount: 0, agencyId: null, sellerCode: null, phone: '010-7788-1123' },
+    { id: 'T7',  slug: 'goyanglife',  name: '고양라이프',   owner: '한지웅', unit: 'SD1', sigungu: '경기 고양시',   status: '활성', brand: 'sky',    greeting: '고양·파주 생활비 절감 파트너', cats: ['internet', 'phone', 'rental'], openedAt: dayAgo(64), monthlySales: 5600000, leadCount: 0, agencyId: 'AG1', sellerCode: 'M2071', phone: '010-4410-2277' },
+    { id: 'T8',  slug: 'namyangjuon', name: '남양주온',     owner: '서지안', unit: 'SD1', sigungu: '경기 남양주시', status: '활성', brand: 'coral',  greeting: '남양주·의정부 당일 상담', cats: ['internet', 'water', 'rental'], openedAt: dayAgo(41), monthlySales: 3800000, leadCount: 0, agencyId: 'AG2', sellerCode: 'P4419', phone: '010-6621-8834' },
+    { id: 'T9',  slug: 'gangnamplus', name: '강남플러스',   owner: '노아름', unit: 'SD2', sigungu: '서울 강남구',   status: '활성', brand: 'navy',   greeting: '강남 직장인 통신비 설계 전문', cats: ['phone', 'internet'], openedAt: dayAgo(88), monthlySales: 9300000, leadCount: 0, agencyId: 'AG3', sellerCode: 'R8802', phone: '010-3390-5512' },
+    { id: 'T10', slug: 'songpaon',    name: '송파온',       owner: '배도윤', unit: 'SD2', sigungu: '서울 송파구',   status: '활성', brand: 'green',  greeting: '송파·강동 렌탈 최저가', cats: ['rental', 'water', 'appliance'], openedAt: dayAgo(52), monthlySales: 7100000, leadCount: 0, agencyId: 'AG4', sellerCode: 'T3350', phone: '010-2245-9071' },
+    { id: 'T11', slug: 'suwonlife',   name: '수원라이프',   owner: '문가율', unit: 'SD2', sigungu: '경기 수원시',   status: '활성', brand: 'purple', greeting: '수원·용인 인터넷 결합 설계', cats: ['internet', 'phone', 'water'], openedAt: dayAgo(29), monthlySales: 4400000, leadCount: 0, agencyId: 'AG5', sellerCode: 'V6128', phone: '010-8817-3360' },
+    { id: 'T12', slug: 'haeundaeon',  name: '해운대온',     owner: '표성민', unit: 'GN',  sigungu: '부산 해운대구', status: '활성', brand: 'teal',   greeting: '해운대·수영 생활서비스', cats: ['phone', 'internet', 'move'], openedAt: dayAgo(37), monthlySales: 5200000, leadCount: 0, agencyId: 'AG7', sellerCode: 'Y2286', phone: '010-7734-2208' },
   ]
 
   // 총판(영업단 사업권) 계약 현황 — 오픈맵·경영전략 화면의 실데이터 소스
   // fee = 사업권 분양가(engine.SAUP_TIERS 기준), sharePct = 권역 매출 배분율
   const distributors = [
-    { id: 'D1', unit: 'SD2', name: '수도2단 총판', owner: '김태성', fee: 15000000, sharePct: 0.03, openedAt: dayAgo(120), phone: '010-5551-2001' },
-    { id: 'D2', unit: 'CC2', name: '충청2단 총판', owner: '박미란', fee: 15000000, sharePct: 0.03, openedAt: dayAgo(85), phone: '010-5551-2002' },
-    { id: 'D3', unit: 'GN', name: '경남단 총판', owner: '조성필', fee: 50000000, sharePct: 0.03, openedAt: dayAgo(60), phone: '010-5551-2003', note: '지방 8개 단 일괄 보유자' },
+    { id: 'D1', unit: 'SD2', code: 'B', name: '수도2단 총판', owner: '김태성', fee: 15000000, sharePct: 0.03, openedAt: dayAgo(120), phone: '010-5551-2001' },
+    { id: 'D2', unit: 'CC2', code: 'F', name: '충청2단 총판', owner: '박미란', fee: 15000000, sharePct: 0.03, openedAt: dayAgo(85), phone: '010-5551-2002' },
+    { id: 'D3', unit: 'GN',  code: 'K', name: '경남단 총판', owner: '조성필', fee: 50000000, sharePct: 0.03, openedAt: dayAgo(60), phone: '010-5551-2003', note: '지방 8개 단 일괄 보유자' },
+    { id: 'D4', unit: 'SD1', code: 'A', name: '수도1단 총판', owner: '한동엽', fee: 15000000, sharePct: 0.03, openedAt: dayAgo(150), phone: '010-5551-2004' },
+  ]
+
+  // ─── 지역 대리점 — 권역(총판) 아래 1~9. 코드는 총판 코드 + 숫자 1자리(A1, B2 …) ──
+  // 셀러 식별번호 A1J1234 의 앞 두 자리가 곧 이 대리점 코드다(접두사 규칙 — org.js).
+  const agencies = [
+    { id: 'AG1', code: 'A1', distributorId: 'D4', name: '노원·고양지역 대리점', owner: '차민석', sigungu: '서울 노원구', openedAt: dayAgo(140), phone: '010-6610-3301', status: '활성' },
+    { id: 'AG2', code: 'A2', distributorId: 'D4', name: '남양주·의정부지역 대리점', owner: '유하진', sigungu: '경기 남양주시', openedAt: dayAgo(48), phone: '010-6610-3302', status: '활성' },
+    { id: 'AG3', code: 'B1', distributorId: 'D1', name: '강남지역 대리점', owner: '오현석', sigungu: '서울 강남구', openedAt: dayAgo(118), phone: '010-6610-3303', status: '활성' },
+    { id: 'AG4', code: 'B2', distributorId: 'D1', name: '송파·강동지역 대리점', owner: '문지호', sigungu: '서울 송파구', openedAt: dayAgo(74), phone: '010-6610-3304', status: '활성' },
+    { id: 'AG5', code: 'B3', distributorId: 'D1', name: '수원·용인지역 대리점', owner: '배수아', sigungu: '경기 수원시', openedAt: dayAgo(35), phone: '010-6610-3305', status: '활성' },
+    { id: 'AG6', code: 'F1', distributorId: 'D2', name: '대전지역 대리점', owner: '신영호', sigungu: '대전 서구', openedAt: dayAgo(80), phone: '010-6610-3306', status: '활성' },
+    { id: 'AG7', code: 'K1', distributorId: 'D3', name: '부산지역 대리점', owner: '류가온', sigungu: '부산 해운대구', openedAt: dayAgo(58), phone: '010-6610-3307', status: '활성' },
+    { id: 'AG8', code: 'K2', distributorId: 'D3', name: '창원·김해지역 대리점', owner: '진세빈', sigungu: '경남 창원시', openedAt: dayAgo(12), phone: '010-6610-3308', status: '모집중' },
+  ]
+
+  // ─── 회원 — 개인/사업자 구분. 사업자만 식별번호를 갖는다(개인은 code: null) ──
+  const members = [
+    { id: 'MB1', type: '개인',   name: '김하늘', phone: '010-2201-3345', code: null, tier: null, distributorId: null, agencyId: null, status: '승인', joinedAt: dayAgo(18) },
+    { id: 'MB2', type: '개인',   name: '이준호', phone: '010-7781-2290', code: null, tier: null, distributorId: null, agencyId: null, status: '승인', joinedAt: dayAgo(6) },
+    { id: 'MB3', type: '사업자', name: '윤도경', phone: '010-3345-7788', code: 'A1N7742', tier: 'seller',      distributorId: 'D4', agencyId: 'AG1', status: '승인', joinedAt: dayAgo(22), tenantId: null },
+    { id: 'MB4', type: '사업자', name: '문지호', phone: '010-6610-3304', code: 'B2',      tier: 'agency',      distributorId: 'D1', agencyId: 'AG4', status: '승인', joinedAt: dayAgo(74) },
+    { id: 'MB5', type: '사업자', name: '조성필', phone: '010-5551-2003', code: 'K',       tier: 'distributor', distributorId: 'D3', agencyId: null,  status: '승인', joinedAt: dayAgo(60) },
+    { id: 'MB6', type: '사업자', name: '서지안', phone: '010-9902-4417', code: 'K1Q3318', tier: 'seller',      distributorId: 'D3', agencyId: 'AG7', status: '대기', joinedAt: dayAgo(2), tenantId: null },
   ]
 
   const applications = [
@@ -51,6 +83,17 @@ export function buildSeed() {
     { id: 'L13', name: '노유나', phone: '010-4432-2214', sigungu: '강원 춘천시', cat: 'internet', wish: '지금 바로', status: '접수', tenantId: null, source: 'main', createdAt: minAgo(9), read: false, memo: '', via: '관리단 폴백(GW)', history: [{ at: minAgo(9), to: '접수', by: 'system', note: '관리단 폴백(GW) — 권역 파트너 공석' }] },
     { id: 'L14', name: '홍석천', phone: '010-6673-8842', sigungu: '서울 강남구', cat: 'appliance', wish: '오후(12~18시)', status: '완료', tenantId: 'T1', source: 'happynet', createdAt: dayAgo(6), completedAt: dayAgo(5), read: true, memo: 'TV 75인치 제휴가 구매', history: [{ at: dayAgo(6), to: '접수', by: 'system' }, { at: dayAgo(5), to: '완료', by: 'T1' }] },
     { id: 'L15', name: '임수정', phone: '010-1123-4432', sigungu: '서울 강남구', cat: 'insurance', wish: '오전(9~12시)', status: '상담대기', tenantId: 'T1', source: 'main', createdAt: minAgo(140), read: true, memo: '실손 전환 검토', history: [{ at: minAgo(140), to: '접수', by: 'system' }, { at: minAgo(120), to: '상담대기', by: 'T1' }] },
+    { id: 'L40', name: '홍서준', phone: '010-3311-2204', sigungu: '경기 고양시', cat: 'internet', wish: '지금 바로', status: '완료', tenantId: 'T7', source: 'main', createdAt: dayAgo(12), completedAt: thisMonth(5), read: true, memo: '', history: [{ at: dayAgo(12), to: '접수', by: 'system' }, { at: thisMonth(5), to: '완료', by: 'T7' }] },
+    { id: 'L41', name: '정유나', phone: '010-4422-9987', sigungu: '경기 고양시', cat: 'phone', wish: '오전(9~12시)', status: '완료', tenantId: 'T7', source: 'main', createdAt: dayAgo(10), completedAt: thisMonth(7), read: true, memo: '', history: [{ at: dayAgo(10), to: '접수', by: 'system' }, { at: thisMonth(7), to: '완료', by: 'T7' }] },
+    { id: 'L42', name: '배정훈', phone: '010-8890-1123', sigungu: '경기 남양주시', cat: 'rental', wish: '오후(12~18시)', status: '완료', tenantId: 'T8', source: 'main', createdAt: dayAgo(9), completedAt: thisMonth(6), read: true, memo: '', history: [{ at: dayAgo(9), to: '접수', by: 'system' }, { at: thisMonth(6), to: '완료', by: 'T8' }] },
+    { id: 'L43', name: '송하린', phone: '010-2277-4410', sigungu: '경기 남양주시', cat: 'water', wish: '지금 바로', status: '완료', tenantId: 'T8', source: 'main', createdAt: dayAgo(7), completedAt: thisMonth(9), read: true, memo: '', history: [{ at: dayAgo(7), to: '접수', by: 'system' }, { at: thisMonth(9), to: '완료', by: 'T8' }] },
+    { id: 'L44', name: '임도현', phone: '010-5512-3390', sigungu: '서울 강남구', cat: 'phone', wish: '저녁(18~21시)', status: '완료', tenantId: 'T9', source: 'main', createdAt: dayAgo(11), completedAt: thisMonth(4), read: true, memo: '', history: [{ at: dayAgo(11), to: '접수', by: 'system' }, { at: thisMonth(4), to: '완료', by: 'T9' }] },
+    { id: 'L45', name: '권나윤', phone: '010-9071-2245', sigungu: '서울 강남구', cat: 'phone', wish: '지금 바로', status: '완료', tenantId: 'T9', source: 'main', createdAt: dayAgo(8), completedAt: thisMonth(8), read: true, memo: '', history: [{ at: dayAgo(8), to: '접수', by: 'system' }, { at: thisMonth(8), to: '완료', by: 'T9' }] },
+    { id: 'L46', name: '차은성', phone: '010-3360-8817', sigungu: '서울 송파구', cat: 'rental', wish: '오후(12~18시)', status: '완료', tenantId: 'T10', source: 'main', createdAt: dayAgo(13), completedAt: thisMonth(3), read: true, memo: '', history: [{ at: dayAgo(13), to: '접수', by: 'system' }, { at: thisMonth(3), to: '완료', by: 'T10' }] },
+    { id: 'L47', name: '남기훈', phone: '010-4417-9902', sigungu: '서울 송파구', cat: 'water', wish: '오전(9~12시)', status: '완료', tenantId: 'T10', source: 'main', createdAt: dayAgo(6), completedAt: thisMonth(10), read: true, memo: '', history: [{ at: dayAgo(6), to: '접수', by: 'system' }, { at: thisMonth(10), to: '완료', by: 'T10' }] },
+    { id: 'L48', name: '오세린', phone: '010-2208-7734', sigungu: '경기 수원시', cat: 'internet', wish: '지금 바로', status: '완료', tenantId: 'T11', source: 'main', createdAt: dayAgo(10), completedAt: thisMonth(6), read: true, memo: '', history: [{ at: dayAgo(10), to: '접수', by: 'system' }, { at: thisMonth(6), to: '완료', by: 'T11' }] },
+    { id: 'L49', name: '백지우', phone: '010-7788-3345', sigungu: '부산 해운대구', cat: 'phone', wish: '저녁(18~21시)', status: '완료', tenantId: 'T12', source: 'main', createdAt: dayAgo(9), completedAt: thisMonth(5), read: true, memo: '', history: [{ at: dayAgo(9), to: '접수', by: 'system' }, { at: thisMonth(5), to: '완료', by: 'T12' }] },
+    { id: 'L50', name: '한서우', phone: '010-1123-8890', sigungu: '부산 해운대구', cat: 'internet', wish: '지금 바로', status: '완료', tenantId: 'T12', source: 'main', createdAt: dayAgo(5), completedAt: thisMonth(11), read: true, memo: '', history: [{ at: dayAgo(5), to: '접수', by: 'system' }, { at: thisMonth(11), to: '완료', by: 'T12' }] },
   ]
 
   // 계약(만기 D-day 관리용) — T1 중심
@@ -145,6 +188,7 @@ export function buildSeed() {
       joinFee: 2000000,        // 대리점 분양몰 가입비(초기 세팅비) — 사업기획서 v4 축③(30개=초기 6,000만)
       monthlyFee: 300000,      // 월 이용료 (30개=월 900만)
       feeRate: 0.1,            // 운영 수수료율(몰 매출 기준)
+      opexLabel: '영업비',      // 셀러 판매 건당 상위 계층에 붙는 +@ 의 정산서 표기 명칭
       version: 4,
       appliedAt: dayAgo(7),
       history: [
@@ -156,6 +200,8 @@ export function buildSeed() {
     },
     tenants,
     distributors,
+    agencies,
+    members,
     applications,
     leads,
     contracts,

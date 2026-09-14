@@ -23,6 +23,7 @@ import CarDetail from './pages/consumer/CarDetail'
 import Board from './pages/consumer/Board'
 import BoardPost from './pages/consumer/BoardPost'
 import Benefits from './pages/consumer/Benefits'
+import Signup from './pages/consumer/Signup'
 import TenantMall from './pages/consumer/TenantMall'
 import PartnerLanding from './pages/partner/Landing'
 import PartnerApply from './pages/partner/Apply'
@@ -39,6 +40,7 @@ import OfficeResources from './pages/office/Resources'
 import OfficeSetup from './pages/office/Setup'
 import AdminDashboard from './pages/admin/Dashboard'
 import RegionalDashboard from './pages/regional/Dashboard'
+import AgencyDashboard from './pages/agency/Dashboard'
 import AdminBiz from './pages/admin/Biz'
 import AdminTenants from './pages/admin/Tenants'
 import AdminProducts from './pages/admin/Products'
@@ -53,6 +55,7 @@ import AdminBanners from './pages/admin/Banners'
 import AdminBoards from './pages/admin/Boards'
 import AdminComplaints from './pages/admin/Complaints'
 import AdminBenefits from './pages/admin/Benefits'
+import AdminOrg from './pages/admin/Org'
 
 function ScrollTop() {
   const { pathname } = useLocation()
@@ -114,6 +117,8 @@ export default function App() {
           {/* 렌트/리스 — 자동차 장기렌터카·오토리스 */}
           <Route path="/cars" element={<Cars />} />
           <Route path="/cars/:model" element={<CarDetail />} />
+          {/* 회원가입 — 개인/사업자 분기. 사업자는 추천인(권역)을 골라 개인식별번호를 받는다 */}
+          <Route path="/signup" element={<Signup />} />
           {/* 아정당식 개편 — 모두온혜택 허브 · 게시판 6종(후기·질문/답변·꿀팁·이벤트·불편접수·공지사항) */}
           <Route path="/benefits" element={<Benefits />} />
           <Route path="/benefits/:section" element={<Benefits />} />
@@ -148,8 +153,9 @@ export default function App() {
           <Route path="setup" element={<OfficeSetup />} />
         </Route>
 
-        {/* 트랙 B' — 총판(관리단) 콘솔 */}
+        {/* 트랙 B' — 총판(권역) · 대리점(지역) 콘솔 */}
         <Route path="/regional" element={<RegionalDashboard />} />
+        <Route path="/agency" element={<AgencyDashboard />} />
 
         {/* 트랙 B — 본사 어드민(관제) */}
         <Route path="/admin" element={<AdminLayout />}>
@@ -170,6 +176,8 @@ export default function App() {
           <Route path="boards/:board" element={<AdminBoards />} />
           <Route path="complaints" element={<AdminComplaints />} />
           <Route path="benefits" element={<AdminBenefits />} />
+          {/* 조직 3계층 — 권역·지역·셀러 코드와 회원(개인/사업자) */}
+          <Route path="org" element={<AdminOrg />} />
         </Route>
 
         <Route path="*" element={<Navigate to="/" replace />} />

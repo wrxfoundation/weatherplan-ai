@@ -15,7 +15,7 @@ function load() {
     if (raw) {
       const db = JSON.parse(raw)
       // localStorage는 신뢰할 수 없는 입력 — 핵심 컬렉션이 배열이 아니면 재시드 (흰 화면 사고 방지)
-      const sane = ['leads', 'tenants', 'applications', 'products', 'auditLog', 'banners', 'posts'].every((k) => Array.isArray(db?.[k]))
+      const sane = ['leads', 'tenants', 'applications', 'products', 'auditLog', 'banners', 'posts', 'agencies', 'members'].every((k) => Array.isArray(db?.[k]))
       if (db.seedVersion === SEED_VERSION && sane) return db
     }
   } catch { /* 손상 시 재시드 */ }
@@ -322,6 +322,70 @@ function reducer(db, action) {
       }
     }
 
+    // ── 조직 3계층(권역 총판 → 지역 대리점 → 셀러) · 회원 ─────────────
+    // 식별번호(code)는 화면에서 org.issueSellerCode 로 미리 뽑아 payload 에 담아 온다 —
+    // 리듀서 안에서 난수를 굴리면 같은 액션을 재생(replay)했을 때 다른 코드가 나온다.
+    case 'MEMBER_SIGNUP': {
+      const m = { id: uid('MB'), status: '승인', joinedAt: Date.now(), ...action.payload }
+      return {
+        ...db,
+        members: [m, ...(db.members ?? [])],
+        // 개인 가입은 운영 행위가 아니므로 감사에 남기지 않는다. 사업자는 조직에 붙으므로 남긴다.
+        auditLog: m.type === '사업자'
+          ? log({ actor: '가입 신청', action: '사업자 회원가입', target: `${m.name}(${m.code ?? '코드 미발급'})`, detail: `${m.tier ?? '-'} · ${m.status}` })
+          : db.auditLog,
+      }
+    }
+    case 'MEMBER_UPDATE': {
+      const { id, patch } = action.payload
+      const t = (db.members ?? []).find((x) => x.id === id)
+      return {
+        ...db,
+        members: (db.members ?? []).map((x) => (x.id === id ? { ...x, ...patch } : x)),
+        auditLog: log({ actor: '본사 관리자', action: '회원 정보 변경', target: t?.name ?? id, detail: Object.keys(patch).join(', ') }),
+      }
+    }
+    case 'MEMBER_STATUS': {
+      const { id, status } = action.payload
+      const t = (db.members ?? []).find((x) => x.id === id)
+      return {
+        ...db,
+        members: (db.members ?? []).map((x) => (x.id === id ? { ...x, status } : x)),
+        auditLog: log({ actor: '본사 관리자', action: '회원 상태 변경', target: `${t?.name ?? id}(${t?.code ?? '-'})`, detail: `${t?.status} → ${status}` }),
+      }
+    }
+    case 'AGENCY_UPSERT': {
+      const a = action.payload
+      const exists = (db.agencies ?? []).some((x) => x.id === a.id)
+      return {
+        ...db,
+        agencies: exists
+          ? (db.agencies ?? []).map((x) => (x.id === a.id ? { ...x, ...a } : x))
+          : [...(db.agencies ?? []), { id: uid('AG'), status: '활성', openedAt: Date.now(), ...a }],
+        auditLog: log({ actor: '본사 관리자', action: exists ? '대리점 수정' : '대리점 등록', target: `${a.name ?? a.id}(${a.code ?? '-'})`, detail: exists ? Object.keys(a).filter((k) => k !== 'id').join(', ') : '신규' }),
+      }
+    }
+    // 셀러(분양몰)의 소속 대리점·셀러코드 지정 — 식별번호는 대리점 코드 + 셀러코드로 파생된다
+    case 'SELLER_ORG': {
+      const { id, agencyId, sellerCode } = action.payload
+      const t = db.tenants.find((x) => x.id === id)
+      return {
+        ...db,
+        tenants: db.tenants.map((x) => (x.id === id ? { ...x, agencyId: agencyId || null, sellerCode: sellerCode || null } : x)),
+        auditLog: log({ actor: '본사 관리자', action: '셀러 소속 변경', target: t?.name ?? id, detail: agencyId ? `${(db.agencies ?? []).find((a) => a.id === agencyId)?.code ?? ''}${sellerCode ?? ''}` : '본사 직할' }),
+      }
+    }
+    // +@ 표기 명칭 — 정산서·CSV·드릴다운이 전부 policies.opexLabel 하나를 읽는다
+    case 'POLICY_OPEX': {
+      const label = String(action.label ?? '').trim() || '영업비'
+      if (label === (db.policies.opexLabel ?? '영업비')) return db
+      return {
+        ...db,
+        policies: { ...db.policies, opexLabel: label },
+        auditLog: log({ actor: '본사 관리자', action: '정산 표기 변경', target: '영업비 명칭', detail: `${db.policies.opexLabel ?? '영업비'} → ${label}` }),
+      }
+    }
+
     // ── 기타 ─────────────────────────────────────────
     case 'AI_EVENT':
       return { ...db, aiEvents: [{ id: uid('AI'), at: Date.now(), ...action.payload }, ...db.aiEvents].slice(0, 100) }
@@ -378,7 +442,7 @@ export function tenantLeads(db, tenantId) {
 const CAT_AMOUNT = { phone: 1450000, internet: 990000, move: 1200000, water: 1188000, rental: 890000, insurance: 600000, appliance: 1890000, etc: 450000 }
 export const leadAmount = (cat) => CAT_AMOUNT[cat] ?? 500000
 
-export function tenantSettlement(db, tenantId) {
+export function tenantSettlement(db, tenantId, period = monthKey()) {
   const t = db.tenants.find((x) => x.id === tenantId)
   // 이중계상 방지: monthlySales는 시드 기준치(몰 자체 매출), 리드 완료분은 leadGross로만 가산.
   // 월 귀속은 완료 시각(completedAt) 기준 — 리드를 완료 처리하는 즉시 이번 달 정산에 반영된다.
@@ -388,7 +452,7 @@ export function tenantSettlement(db, tenantId) {
     const p = db.products.find((x) => x.cat === cat)
     return p ? p.commission : Math.round(amount * db.policies.feeRate)
   }
-  const done = tenantLeads(db, tenantId).filter((l) => l.status === '완료' && monthKey(l.completedAt ?? l.createdAt) === monthKey())
+  const done = tenantLeads(db, tenantId).filter((l) => l.status === '완료' && monthKey(l.completedAt ?? l.createdAt) === period)
   const leadGross = done.reduce((s, l) => s + leadAmount(l.cat), 0)
   const gross = (t?.monthlySales ?? 0) + leadGross
   const lines = done.map((l) => ({ id: l.id, name: l.name, cat: l.cat, amount: leadAmount(l.cat), fee: commissionOf(l.cat, leadAmount(l.cat)), at: l.completedAt ?? l.createdAt }))

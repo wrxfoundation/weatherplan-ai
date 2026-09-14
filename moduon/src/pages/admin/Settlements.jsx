@@ -2,6 +2,8 @@
 import { useMemo } from 'react'
 import { useStore, tenantSettlement, distributorSettlement } from '../../lib/store'
 import { won, downloadCSV, monthKey } from '../../lib/engine'
+import { settleView, treeRows, opexLabel } from '../../lib/settle'
+import SettleDrill from '../../components/SettleDrill'
 import { unitName } from '../../lib/constants'
 import { Card, Btn, KpiCard, useToast } from '../../components/ui'
 
@@ -19,6 +21,9 @@ export default function AdminSettlements() {
   [db])
   // 총판 배분 — 본사 수수료 수입에서 지급 (셀러 순지급액 불변, 3계층 수익 구조)
   const dists = useMemo(() => distributorSettlement(db), [db])
+  // 계층 정산서 — 본사는 셀러 실명까지 전 계층을 연다(reveal Infinity)
+  const hqView = useMemo(() => settleView(db, { viewer: { tier: 'hq', reveal: Infinity }, period, settleFn: tenantSettlement }), [db, period])
+  const opex = opexLabel(db)
   const distTotal = dists.reduce((s, d) => s + d.share, 0)
 
   // 음수 정산(이용료 미달 = 미수)은 숨기지 않는다 — 지급 합계(양수)와 미수 합계(음수)를 분리 집계
@@ -111,6 +116,24 @@ export default function AdminSettlements() {
             <span className="tnum text-[13px] font-extrabold text-danger">{won(-totals.owed)}</span>
           </div>
         )}
+      </Card>
+
+      {/* 계층 정산 명세 — 본사만 셀러 실명까지 내려간다(총판은 대리점, 대리점은 셀러까지) */}
+      <Card track="b" className="mt-4 overflow-hidden">
+        <div className="flex flex-wrap items-center justify-between gap-2 px-5 pt-4">
+          <h2 className="text-[15.5px] font-extrabold text-bink">계층 정산 명세 <span className="text-[12px] font-semibold text-bmuted">· 총판 → 대리점 → 셀러</span></h2>
+          <Btn variant="boutline" size="sm" onClick={() => {
+            downloadCSV(`모두온_계층정산_${period}.csv`, [
+              ['※ 실연동 전 검증용 파일입니다 — 실제 이체 아님', '', '', '', ''],
+              ['구분', '코드', '계층', '완료건', '금액(원)'],
+              ...treeRows(hqView.root, opex),
+            ])
+            toast('계층 정산 명세 CSV를 내려받았어요')
+          }}>계층 CSV</Btn>
+        </div>
+        <div className="px-5 pb-4 pt-3">
+          <SettleDrill view={hqView} title={`${period} 전 계층 명세`} caption={`상위 금액 = 하부 합계 + ${opex}. 본사 화면에서만 셀러 실명이 보입니다`} />
+        </div>
       </Card>
 
       {/* 총판 배분 — 3계층 수익 구조의 가운데 층 */}

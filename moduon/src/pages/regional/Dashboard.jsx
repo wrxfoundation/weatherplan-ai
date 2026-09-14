@@ -4,15 +4,19 @@
 import { useEffect, useMemo } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useStore, getSession, tenantSettlement, distributorSettlement } from '../../lib/store'
-import { won, num, maskName, timeAgo } from '../../lib/engine'
+import { bizIdentity, agenciesOf } from '../../lib/org'
+import { settleView, treeRows, opexLabel } from '../../lib/settle'
+import { won, num, maskName, timeAgo, monthKey, downloadCSV } from '../../lib/engine'
 import { UNITS, unitBySigungu, catBySlug } from '../../lib/constants'
-import { KpiCard, Card, Logo, StatusChip, LiveDot } from '../../components/ui'
+import { KpiCard, Card, Logo, StatusChip, LiveDot, Btn, useToast } from '../../components/ui'
+import SettleDrill from '../../components/SettleDrill'
 import { AiInsight } from '../../components/AiPanel'
 import { distributorBrief } from '../../lib/ai'
 
 export default function RegionalDashboard() {
   const { db } = useStore()
   const nav = useNavigate()
+  const toast = useToast()
   const session = getSession()
 
   useEffect(() => {
@@ -24,6 +28,11 @@ export default function RegionalDashboard() {
   if (!dist) return null
   const unit = UNITS.find((u) => u.code === dist.unit)
   const settle = distributorSettlement(db).find((d) => d.id === dist.id)
+  // 계층 정산서 — 총판은 하부 1대(대리점)까지만 실명으로 열람한다. 셀러는 *** (settle.maskTree)
+  const period = monthKey()
+  const view = useMemo(() => settleView(db, { viewer: bizIdentity(db, session) ?? { tier: 'distributor', id: dist.id, reveal: 1 }, period, settleFn: tenantSettlement }), [db, dist.id, period]) // eslint-disable-line
+  const opex = opexLabel(db)
+  const myAgencies = agenciesOf(db, dist.id)
 
   // 권역 데이터 집계 — 리드는 고객 주소지(unitBySigungu) 기준 귀속 (오픈맵과 동일 규칙)
   const sellers = db.tenants.filter((t) => t.unit === dist.unit)
@@ -69,6 +78,39 @@ export default function RegionalDashboard() {
           <KpiCard label="이번 달 권역 매출" value={settle?.gross ?? 0} suffix="원" caption="활성 셀러 매출 합산" />
           <KpiCard label={`내 배분 수익 (${((dist.sharePct ?? 0) * 100).toFixed(0)}%)`} value={settle?.share ?? 0} suffix="원" accent="text-primary-text" caption="본사 수수료에서 지급 — 셀러 순지급 불변" />
           <KpiCard label="권역 유입 리드" value={regionLeads.length} suffix="건" accent={unassigned.length ? 'text-warn' : undefined} caption={unassigned.length ? `⚠ 미배정 ${unassigned.length}건 — 분양 필요` : '전량 배정 중'} />
+        </div>
+
+        {/* 계층 정산 — 금액을 누르면 대리점이 펼쳐지고, 그 아래 셀러는 본사만 열람한다 */}
+        <div className="mt-4 grid items-start gap-4 lg:grid-cols-[3fr_2fr]">
+          <SettleDrill view={view} title={`${period} 권역 정산 명세`} caption={`금액을 누르면 대리점별로 펼쳐집니다 · 하부 셀러는 ***(본사 열람)`} />
+          <Card track="b" className="overflow-hidden">
+            <div className="flex items-center justify-between px-5 pt-5">
+              <h2 className="text-[15.5px] font-extrabold text-bink">소속 대리점</h2>
+              <Btn variant="boutline" size="sm" onClick={() => {
+                downloadCSV(`모두온_총판정산_${dist.code}_${period}.csv`, [
+                  ['※ 실연동 전 검증용 파일입니다 — 실제 이체 아님', '', '', '', ''],
+                  ['구분', '코드', '계층', '완료건', '금액(원)'],
+                  ...treeRows(view.root, opex),
+                ])
+                toast('권역 정산 명세 CSV를 내려받았어요')
+              }}>CSV</Btn>
+            </div>
+            <div className="mt-3 border-t border-brow">
+              {myAgencies.map((a) => (
+                <div key={a.id} data-t="dist-agency" className="flex items-center gap-3 border-b border-brow px-5 py-3">
+                  <span className="tnum shrink-0 rounded-md bg-primary/10 px-1.5 py-0.5 text-[11.5px] font-extrabold text-primary-text">{a.code}</span>
+                  <div className="min-w-0 flex-1">
+                    <div className="truncate text-[13px] font-bold text-bink">{a.name}</div>
+                    <div className="pii text-[11.5px] text-bfaint">{a.owner} · {a.sigungu}</div>
+                  </div>
+                  {a.status === '모집중'
+                    ? <span className="shrink-0 rounded-full bg-warn/10 px-2 py-0.5 text-[10.5px] font-bold text-warn">모집중</span>
+                    : <span className="tnum shrink-0 text-[12.5px] font-extrabold text-primary-text">{won(view.root.children?.find((c) => c.id === a.id)?.amount ?? 0)}</span>}
+                </div>
+              ))}
+              {myAgencies.length === 0 && <div className="px-5 py-8 text-center text-[12.5px] text-bfaint">등록된 지역 대리점이 없어요<br /><span className="text-[11.5px]">본사 어드민 &gt; 조직·회원에서 등록합니다</span></div>}
+            </div>
+          </Card>
         </div>
 
         {/* 총판 AI 브리핑 (기획서 TABLE 2 "총판 지역수요 예측" — 운영중) */}

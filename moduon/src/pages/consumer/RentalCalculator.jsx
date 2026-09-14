@@ -8,6 +8,7 @@ import { won, copyText } from '../../lib/engine'
 import { LEGAL } from '../../lib/constants'
 import { IcShare, IcCheck } from '../../components/icons'
 import { CalcTabs } from './PhoneCalculator'
+import RbPanel from '../../components/RbPanel'
 
 export default function RentalCalculator() {
   const nav = useNavigate()
@@ -39,6 +40,11 @@ export default function RentalCalculator() {
         <CalcTabs active="rental" />
         <h1 className="mt-4 text-[24px] font-extrabold tracking-[-0.6px] text-ink sm:text-[26px]">렌탈 견적 계산기</h1>
         <p className="mt-1.5 text-[14px] text-muted sm:text-[15px]">방문형/셀프형·약정 기간·제휴카드까지 넣어 <b className="text-ink">진짜 내는 돈</b>을 계산해요.</p>
+      </div>
+
+      {/* 사업자 전용 R/B — 개인회원·비로그인에게는 렌더되지 않는다(org.bizIdentity) */}
+      <div className="mt-5">
+        <RbPanel kind="rental" itemId={itemId} />
       </div>
 
       <div className="mt-7 grid items-start gap-6 lg:grid-cols-[1fr_400px]">

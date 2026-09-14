@@ -1,17 +1,24 @@
 // ─── P-05 정산 대시보드 — "월말이 아니라 매일 보인다" ─────────────
 import { useMemo } from 'react'
 import { useOutletContext } from 'react-router-dom'
-import { useStore, tenantSettlement } from '../../lib/store'
+import { useStore, tenantSettlement, getSession } from '../../lib/store'
+import { bizIdentity, sellerCode, agencyOfSeller } from '../../lib/org'
+import { settleView } from '../../lib/settle'
 import { won, fmtDateTime, downloadCSV, monthKey } from '../../lib/engine'
 import { catBySlug } from '../../lib/constants'
 import { Card, KpiCard, Btn, useToast } from '../../components/ui'
 import { LineChart } from '../../components/charts'
+import SettleDrill from '../../components/SettleDrill'
 
 export default function OfficeSettlement() {
   const { tenant } = useOutletContext()
   const { db } = useStore()
   const toast = useToast()
   const s = useMemo(() => tenantSettlement(db, tenant.id), [db, tenant.id])
+  // 계층 정산서의 셀러 뷰 — 같은 숫자를 3계층이 공유한다(settle.js 단일 소스)
+  const code = sellerCode(db, tenant)
+  const agency = agencyOfSeller(db, tenant)
+  const view = useMemo(() => settleView(db, { viewer: bizIdentity(db, getSession()) ?? { tier: 'seller', id: tenant.id, reveal: 0 }, settleFn: tenantSettlement }), [db, tenant.id])
 
   // 최근 7일 일별 확정 수익(데모 곡선 + 실데이터 가중)
   const daily = useMemo(() => {
@@ -44,6 +51,12 @@ export default function OfficeSettlement() {
         <div>
           <h1 className="text-[20px] font-extrabold text-bink">정산 대시보드</h1>
           <p className="mt-0.5 text-[12.5px] text-bmuted">{monthKey()} 집계 · 익월 20일 지급 · 어드민 집계와 원단위 일치</p>
+          {code && (
+            <p data-t="seller-code" className="mt-1 flex flex-wrap items-center gap-1.5 text-[11.5px] text-bfaint">
+              <span className="tnum rounded-full bg-tint px-2 py-0.5 font-extrabold text-primary-text">{code}</span>
+              소속 {agency?.name} · 내 화면에는 내 영업이익만 표시됩니다
+            </p>
+          )}
         </div>
         <Btn variant="boutline" size="sm" onClick={exportCsv}>CSV 내보내기</Btn>
       </div>
@@ -54,6 +67,8 @@ export default function OfficeSettlement() {
         <KpiCard label="월 이용료" value={s.monthlyFee} format={(n) => `−${n.toLocaleString('ko-KR')}`} suffix="원" accent="text-danger" />
         <KpiCard label="파트너 순수익" value={Math.max(0, s.net)} suffix="원" accent="text-primary-text" caption="매출 − 수수료 − 이용료" />
       </div>
+
+      <div className="mt-4"><SettleDrill view={view} title={`${monthKey()} 내 정산 명세`} caption="셀러 화면은 본인 영업이익만 표시됩니다 — 상위 계층 몫은 노출되지 않습니다" /></div>
 
       <div className="mt-4 grid items-start gap-4 lg:grid-cols-[3fr_2fr]">
         <Card track="b" className="p-5">

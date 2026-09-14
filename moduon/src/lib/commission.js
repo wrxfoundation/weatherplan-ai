@@ -60,6 +60,11 @@ export const RATE_CARD = [
   },
 ]
 
+// 가입 유형별 단가 조정 — 정책 단가표의 일부다(번호이동 기준 단가에 곱한다).
+// 번호이동 1.0 을 기준선으로 두었으므로 기존 계산(수당 설계기)의 숫자는 그대로다.
+export const JOIN_ADJ = { mnp: 1, chg: 0.55, new: 0.8 }
+export const JOIN_ADJ_LABEL = { mnp: '번호이동', chg: '기기변경', new: '신규가입' }
+
 export const rateItem = (id) => RATE_CARD.find((r) => r.id === id) ?? RATE_CARD[0]
 export const RATE_GROUPS = [...new Set(RATE_CARD.map((r) => r.group))]
 

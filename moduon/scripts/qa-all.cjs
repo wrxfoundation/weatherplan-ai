@@ -41,6 +41,7 @@ const step = (name, fn) => {
   step('스모크: 렌트/리스(자동차)', () => run('node scripts/qa-cars-smoke.cjs'))
   step('스모크: 게시판·모두온혜택', () => run('node scripts/qa-boards-smoke.cjs'))
   step('스모크: 어드민 콘텐츠·고객소통', () => run('node scripts/qa-admin-content-smoke.cjs'))
+  step('스모크: 조직 3계층·R/B·계층정산', () => run('node scripts/qa-org-smoke.cjs'))
 
   if (preview) { try { process.kill(-preview.pid) } catch { /* 이미 종료 */ } }
 

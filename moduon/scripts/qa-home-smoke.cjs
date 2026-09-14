@@ -66,8 +66,14 @@ const BASE = process.env.QA_BASE ?? 'http://localhost:4173'
   await page.keyboard.press('Escape'); await page.waitForTimeout(200)
   check((await count('[data-t="cnotif-panel"]')) === 0, 'Escape → 알림 패널 닫힘')
 
-  await page.locator('header button', { hasText: '로그인/회원가입' }).click(); await page.waitForTimeout(500)
-  check(pathOf() === '/login', `로그인/회원가입 → /login (${pathOf()})`)
+  // 로그인과 회원가입은 별도 동선 — 가입은 개인/사업자 분기가 있어 /signup 으로 간다
+  await page.locator('[data-t="gnb-login"]').click(); await page.waitForTimeout(500)
+  check(pathOf() === '/login', `로그인 → /login (${pathOf()})`)
+  await goto('/')
+  check(await visible('[data-t="gnb-signup"]'), '헤더에 회원가입 버튼(sm 이상)')
+  await page.locator('[data-t="gnb-signup"]').click(); await page.waitForTimeout(500)
+  check(pathOf() === '/signup', `회원가입 → /signup (${pathOf()})`)
+  check((await count('[data-t="signup-type"] button')) === 2, `회원 구분 개인·사업자 2종 (${await count('[data-t="signup-type"] button')})`)
 
   // ───────────────────────────── ② 햄버거 패널 ─────────────────────────────
   await goto('/')
@@ -88,6 +94,8 @@ const BASE = process.env.QA_BASE ?? 'http://localhost:4173'
   check((await textOf('[data-t="hamburger-panel"] a[href="/benefits/invite"]')).includes('친구초대하기'), '혜택: 친구초대하기 → /benefits/invite')
   const boardLinks = await page.locator('[data-t="hamburger-panel"] a[href^="/board/"]').evaluateAll((as) => as.map((a) => a.getAttribute('href')))
   check(boardLinks.length === 6 && ['review', 'qna', 'tip', 'event', 'complaint', 'notice'].every((k) => boardLinks.includes(`/board/${k}`)), `게시판 링크 6종 (${boardLinks.join(' ')})`)
+  // 모바일은 헤더 가입 버튼이 숨겨지므로 햄버거가 유일한 가입 통로다
+  check((await textOf('[data-t="menu-signup"]')).includes('회원가입'), '햄버거: 회원가입(개인·사업자) 통로')
   await page.keyboard.press('Escape'); await page.waitForTimeout(250)
   check((await count('[data-t="hamburger-panel"]')) === 0, 'Escape → 햄버거 패널 닫힘')
   await page.locator('[data-t="hamburger"]').click(); await page.waitForTimeout(300)

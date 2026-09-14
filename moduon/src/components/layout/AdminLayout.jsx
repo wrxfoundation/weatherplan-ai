@@ -158,6 +158,7 @@ const GROUPS = [
     { to: '/admin/press', label: '프레스룸', icon: IcMegaphone },
   ] },
   { label: '서비스 관리', items: [
+    { to: '/admin/org', label: '조직 · 회원', icon: IcUsers },
     { to: '/admin/tenants', label: '분양몰 관리', icon: IcStore },
     { to: '/admin/products', label: '상품 관리', icon: IcBox },
     { to: '/admin/policies', label: '정책 관리', icon: IcClipboard },

@@ -177,7 +177,11 @@ function MenuPanel({ onClose, membershipOn }) {
         })}
       </div>
       {/* 고객센터 — 옛 NAV 의 숨김 항목. GNB 에서 빠졌어도 여기서 계속 닿아야 한다(숨김 ≠ 삭제) */}
+      {/* 회원가입 — 헤더의 가입 버튼은 sm 이상에서만 보이므로 모바일 동선은 여기로 잇는다 */}
       <div className="border-t border-line-card py-1.5">
+        <Link data-t="menu-signup" to="/signup" onClick={onClose} className={rowCls}>
+          <IcGift size={16} className="text-label" /><span className="flex-1">회원가입 (개인 · 사업자)</span><span className="text-[15px] text-faint">›</span>
+        </Link>
         <Link to="/support" onClick={onClose} className={rowCls}>
           <IcHeadset size={16} className="text-label" /><span className="flex-1">고객센터</span><span className="text-[15px] text-faint">›</span>
         </Link>
@@ -251,8 +255,12 @@ export function ConsumerHeader({ tenant }) {
         ) : (
           <div className="flex shrink-0 items-center gap-1 sm:gap-2">
             <NotifBell />
-            <button onClick={() => nav('/login')} className="glass-btn h-8 whitespace-nowrap rounded-full bg-[#EEF0F3] px-3 text-[12px] font-semibold text-label transition-colors hover:bg-line-soft hover:text-ink sm:px-3.5 sm:text-[12.5px]">
-              로그인/회원가입
+            {/* 회원가입은 개인/사업자 분기가 있어 별도 동선 — 로그인은 데모 롤 전환 화면 */}
+            <button data-t="gnb-login" onClick={() => nav('/login')} className="glass-btn h-8 whitespace-nowrap rounded-full bg-[#EEF0F3] px-3 text-[12px] font-semibold text-label transition-colors hover:bg-line-soft hover:text-ink sm:px-3.5 sm:text-[12.5px]">
+              로그인
+            </button>
+            <button data-t="gnb-signup" onClick={() => nav('/signup')} className="glass-btn-cta hidden h-8 whitespace-nowrap rounded-full bg-primary px-3.5 text-[12.5px] font-bold text-white transition-colors hover:bg-primary-hover sm:inline-flex sm:items-center">
+              회원가입
             </button>
           </div>
         )}

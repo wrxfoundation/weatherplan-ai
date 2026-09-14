@@ -94,18 +94,19 @@ export const STATUS_COLOR = {
 }
 
 // ─── 권역 체계 (사업기획서 v4 — 11개 영업단) ───────────────────
+// region = 개인식별번호 A1J1234 의 첫 글자(권역 코드). 혼동 문자 I·O 는 쓰지 않는다 — org.js CODE_LETTERS 와 같은 규칙.
 export const UNITS = [
-  { code: 'SD1', name: '수도1단', cover: '서울 동북 + 경기 북부' },
-  { code: 'SD2', name: '수도2단', cover: '서울 서남 + 경기 남부' },
-  { code: 'SD3', name: '수도3단', cover: '인천 + 경기 서부' },
-  { code: 'GW',  name: '강원단',  cover: '강원 전체' },
-  { code: 'CC1', name: '충청1단', cover: '충남 + 세종' },
-  { code: 'CC2', name: '충청2단', cover: '충북 + 대전' },
-  { code: 'JB',  name: '전북단',  cover: '전북 전체' },
-  { code: 'JN',  name: '전남단',  cover: '전남 + 광주' },
-  { code: 'GB',  name: '경북단',  cover: '경북 + 대구' },
-  { code: 'GN',  name: '경남단',  cover: '경남 + 부산' },
-  { code: 'JJ',  name: '제주단',  cover: '제주 + 울릉' },
+  { code: 'SD1', region: 'A', name: '수도1단', cover: '서울 동북 + 경기 북부' },
+  { code: 'SD2', region: 'B', name: '수도2단', cover: '서울 서남 + 경기 남부' },
+  { code: 'SD3', region: 'C', name: '수도3단', cover: '인천 + 경기 서부' },
+  { code: 'GW', region: 'D',  name: '강원단',  cover: '강원 전체' },
+  { code: 'CC1', region: 'E', name: '충청1단', cover: '충남 + 세종' },
+  { code: 'CC2', region: 'F', name: '충청2단', cover: '충북 + 대전' },
+  { code: 'JB', region: 'G',  name: '전북단',  cover: '전북 전체' },
+  { code: 'JN', region: 'H',  name: '전남단',  cover: '전남 + 광주' },
+  { code: 'GB', region: 'J',  name: '경북단',  cover: '경북 + 대구' },
+  { code: 'GN', region: 'K',  name: '경남단',  cover: '경남 + 부산' },
+  { code: 'JJ', region: 'L',  name: '제주단',  cover: '제주 + 울릉' },
 ]
 
 // 시·군·구 → 영업단 매핑(대표 지역만 — 실서비스는 전체 행정구역 테이블로 확장)
@@ -130,6 +131,9 @@ export const REGIONS = [
 
 export const unitBySigungu = (sigungu) => REGIONS.find((r) => r.sigungu === sigungu)?.unit ?? null
 export const unitName = (code) => UNITS.find((u) => u.code === code)?.name ?? '본사 직할'
+// 권역 코드 ↔ 영업단 — 조직 코드 체계(org.js)와 리드 라우팅(unit)이 만나는 유일한 지점
+export const regionOfUnit = (code) => UNITS.find((u) => u.code === code)?.region ?? null
+export const unitOfRegion = (region) => UNITS.find((u) => u.region === region)?.code ?? null
 
 // ─── 파트너몰 브랜딩 컬러 프리셋 8종 ───────────────────────────
 export const BRAND_PRESETS = [
