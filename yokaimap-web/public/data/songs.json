@@ -1,0 +1,1876 @@
+{
+ "version": "0.1.0",
+ "generated_at": "2026-09-13",
+ "license": "CC BY 4.0",
+ "attribution": "한국요괴지도 (Korean Yokai Map)",
+ "note": "원문(original)은 향찰·한문 퍼블릭 도메인 텍스트다. 뜻풀이(gloss)는 이 프로젝트가 직접 쓴 산문 풀이이며 특정 학자의 해독안이나 번역이 아니다.",
+ "count": 34,
+ "site_count": 16,
+ "with_original": 7,
+ "stats": {
+  "byGenre": {
+   "hyangga": 5,
+   "goga": 3,
+   "goryeo": 1,
+   "hansi": 1,
+   "muga": 2,
+   "bonpuri": 12,
+   "pansori": 6,
+   "minyo": 3,
+   "chamyo": 1
+  }
+ },
+ "genres": [
+  {
+   "id": "hyangga",
+   "name": "향가",
+   "blurb": "신라·고려 초의 우리말 노래. 향찰로 표기되어 해독안이 학자마다 갈린다."
+  },
+  {
+   "id": "goga",
+   "name": "고대가요",
+   "blurb": "삼국 이전까지 거슬러 전하는 짧은 노래. 배경 설화와 함께 실려 있다."
+  },
+  {
+   "id": "goryeo",
+   "name": "고려가요",
+   "blurb": "고려의 노래. 한글 창제 뒤 악서에 실려 전한다."
+  },
+  {
+   "id": "hansi",
+   "name": "한시",
+   "blurb": "한문 시. 문헌에 그대로 실려 원문이 확실하다."
+  },
+  {
+   "id": "muga",
+   "name": "무가",
+   "blurb": "굿에서 구송하는 노래. 정본이 없고 무당마다 달라진다."
+  },
+  {
+   "id": "bonpuri",
+   "name": "본풀이",
+   "blurb": "신의 내력을 처음부터 푸는 제주 무가. 신을 소개하는 것이 아니라 어떻게 신이 되었는지를 말한다."
+  },
+  {
+   "id": "pansori",
+   "name": "판소리",
+   "blurb": "소리꾼 하나와 고수 하나로 몇 시간을 끌고 가는 서사 음악. 설화를 받아 다시 짠 것이 많다."
+  },
+  {
+   "id": "minyo",
+   "name": "민요",
+   "blurb": "마을에서 부르던 노래. 의례와 노동에 붙어 전한다."
+  },
+  {
+   "id": "chamyo",
+   "name": "참요",
+   "blurb": "앞일을 예언한다고 여겨진 노래. 대개 이긴 쪽의 기록으로 남는다."
+  }
+ ],
+ "songs": [
+  {
+   "id": "song-aengmagi",
+   "title": "액막이타령",
+   "aliases": [
+    "액맥이타령",
+    "액풀이"
+   ],
+   "genre": "minyo",
+   "era": "구전 · 정월 세시",
+   "summary": "정월부터 섣달까지 달마다 드는 액을 하나씩 불러 세우고 막아 내는 노래.",
+   "original": null,
+   "original_script": "oral",
+   "reading_note": "경기·서도 소리로 널리 불리며 사설이 여럿이다. 정본이 없어 원문을 싣지 않는다.",
+   "gloss": "정월에 드는 액은 이월 영등에 막아 내고, 이월에 드는 액은 삼월 삼짇에 막아 낸다는 식으로 열두 달을 차례로 넘긴다. 액을 없앤다고 하지 않고 다음 달로 넘겨 막는다는 점이 이 노래의 논리이며, 삼재가 든 해에 제웅을 만들어 길에 버리거나 삼두일족응 부적을 문에 붙이는 절차와 같은 자리에 놓인다. 두려움을 부정하지 않고 달력에 배치해 관리 가능한 것으로 만든다 — 한국 액막이 관념의 뼈대가 여기 그대로 있다.",
+   "function": [
+    "축귀",
+    "액막이",
+    "세시"
+   ],
+   "characters": [
+    "kr-samjaesin",
+    "kr-jeung",
+    "kr-sangmun",
+    "kr-yeongdeung-halmang"
+   ],
+   "tales": [],
+   "sites": [],
+   "sources": [
+    {
+     "type": "encyclopedia",
+     "title": "한국민속대백과사전",
+     "ref": "액막이타령"
+    },
+    {
+     "type": "field",
+     "title": "한국구비문학대계",
+     "ref": "액막이 소리 채록"
+    }
+   ],
+   "verification": "field_record",
+   "confidence": "high",
+   "related": [
+    "song-jisin-balpgi"
+   ],
+   "updated_at": "2026-09-13",
+   "sensitivity": null
+  },
+  {
+   "id": "song-bari",
+   "title": "바리공주",
+   "aliases": [
+    "바리데기",
+    "오구굿 무가",
+    "칠공주"
+   ],
+   "genre": "muga",
+   "era": "구전 · 전국 채록",
+   "summary": "일곱째 딸이라 버려진 아이가 저승에 가서 약수를 구해 와 부모를 살리고 죽은 이를 인도하는 신이 된다.",
+   "original": null,
+   "original_script": "oral",
+   "reading_note": "죽은 이를 천도하는 오구굿·씻김굿·진오기굿에서 구송된다. 지역마다 이름과 사설이 크게 달라 정본이 없다.",
+   "gloss": "아들을 바라던 왕이 일곱째도 딸이라 내다 버린다. 뒤에 왕과 왕비가 병들어 저승의 약수라야 낫는다는 말을 듣지만 여섯 딸이 모두 마다하고, 버려졌던 바리가 나선다. 저승길에서 무장승의 물을 긷고 불을 때고 아이 일곱을 낳아 주는 아홉 해를 치른 뒤 약수를 얻어 돌아오는데, 이미 상여가 나가고 있었다. 약수로 부모를 살린 바리는 상을 마다하고 죽은 이를 저승으로 인도하는 신이 되기를 청한다. 가장 밀려난 자가 가장 먼 길을 다녀와 신이 된다는 구조이며, 무당의 조상신인 무조신(巫祖神)의 내력담이라 굿판에서 가장 길고 무겁게 불린다.",
+   "function": [
+    "천도",
+    "해원",
+    "의례"
+   ],
+   "characters": [
+    "kr-jeoseung-saja",
+    "kr-yeomna",
+    "kr-gangnim",
+    "kr-mujugohon"
+   ],
+   "tales": [],
+   "sites": [],
+   "sources": [
+    {
+     "type": "encyclopedia",
+     "title": "한국민속대백과사전",
+     "ref": "바리공주"
+    },
+    {
+     "type": "field",
+     "title": "한국구비문학대계",
+     "ref": "오구굿 바리공주 무가 채록"
+    }
+   ],
+   "verification": "field_record",
+   "confidence": "high",
+   "related": [
+    "song-sangyeo"
+   ],
+   "sensitivity": {
+    "kind": "living_faith",
+    "note": "지금도 천도굿에서 구송되는 무가다. 상례와 직결되므로 가볍게 다루지 않는다."
+   },
+   "updated_at": "2026-09-13"
+  },
+  {
+   "id": "song-bihyeong-chuksa",
+   "title": "비형랑 축사",
+   "aliases": [
+    "비형랑 노래",
+    "귀신 쫓는 글"
+   ],
+   "genre": "hansi",
+   "era": "신라 진평왕대(6~7세기)",
+   "summary": "비형랑의 이름을 적어 문에 붙이면 귀신이 물러갔다. 한국 벽사 부적의 가장 이른 문헌 기록이다.",
+   "original": "聖帝魂生子\n鼻荊郎室亭\n飛馳諸鬼衆\n此處莫留停",
+   "original_script": "hanmun",
+   "reading_note": "『삼국유사』 도화녀 비형랑조에 한문 4구로 실려 있다. 사람들이 이 글을 지어 문에 붙였다고 적혀 있어, 노래이자 곧 부적이다.",
+   "gloss": "거룩한 임금의 혼이 낳은 아들, 비형랑이 머무는 집이다. 날뛰는 귀신 무리야, 이곳에 머물지 말라. — 네 구 가운데 앞의 두 구가 신분 증명이고 뒤의 두 구가 명령이다. 부적의 문법이 이미 완성되어 있다. 귀신을 부리는 자의 이름이 곧 귀신을 막는 물건이 된다는 역설이 핵심이며, 처용의 얼굴을 문에 붙였다는 기사와 정확히 짝을 이룬다. 오늘날 대문에 붙이는 삼두일족응 부적까지 이 계보가 이어진다.",
+   "function": [
+    "벽사",
+    "부적"
+   ],
+   "characters": [
+    "kr-bihyeongnang",
+    "kr-gildal",
+    "kr-samdu-iljokeung"
+   ],
+   "tales": [
+    "tale-dohwanyeo"
+   ],
+   "sites": [
+    {
+     "name": "경주 흥륜사지",
+     "sido": "경북",
+     "sigungu": "경주시",
+     "lat": 35.8317,
+     "lng": 129.2144,
+     "precision": "dong",
+     "note": "길달이 누문을 세웠다는 절터"
+    }
+   ],
+   "sources": [
+    {
+     "type": "classic",
+     "title": "삼국유사",
+     "ref": "기이 도화녀 비형랑"
+    },
+    {
+     "type": "encyclopedia",
+     "title": "한국민족문화대백과사전",
+     "ref": "비형랑 설화"
+    }
+   ],
+   "verification": "primary_text",
+   "confidence": "high",
+   "related": [
+    "song-cheoyongga"
+   ],
+   "updated_at": "2026-09-13",
+   "sensitivity": null
+  },
+  {
+   "id": "song-byeongangsoe",
+   "title": "변강쇠타령",
+   "aliases": [
+    "가루지기타령",
+    "횡부가"
+   ],
+   "genre": "pansori",
+   "era": "조선 후기 · 실전 마당(신재효 정리본 전함)",
+   "summary": "땔감이 없다고 장승을 뽑아 때자 팔도의 장승이 모여 회의를 열고, 변강쇠에게 온갖 병을 한꺼번에 내린다.",
+   "original": null,
+   "original_script": "oral",
+   "reading_note": "소리로는 전승이 끊긴 실전 마당이다. 신재효가 정리한 사설로 내용이 전한다.",
+   "gloss": "이 도감에 실린 장승 항목이 실제로 어떤 힘을 가진 것으로 여겨졌는지를 가장 뚜렷하게 보여 주는 자료다. 변강쇠가 지리산 자락에서 땔감 대신 장승을 뽑아 쪼개 때자, 그 장승이 대방(우두머리) 장승에게 호소하고 팔도의 장승들이 모여 회의를 연다. 결론은 변강쇠 한 사람에게 온갖 병을 나누어 지운다는 것이고, 변강쇠는 앉은 채로 굳어 죽는다. 시체가 붙어 떨어지지 않아 치우려던 사람들까지 붙어 버린다. 마을 어귀에 서 있는 나무 기둥이 함부로 건드리면 동티가 나는 것이라는 믿음이, 여기서는 관료제 회의라는 우스운 형식으로 나타난다. 성적인 소재가 노골적이어서 조선 후기에도 논란이 있었고 그것이 실전의 한 이유로 꼽힌다.",
+   "function": [
+    "동티",
+    "금기 위반",
+    "풍자"
+   ],
+   "characters": [
+    "kr-jangseung",
+    "kr-teoju",
+    "kr-sotdae"
+   ],
+   "tales": [],
+   "sites": [],
+   "sources": [
+    {
+     "type": "classic",
+     "title": "신재효 판소리 사설",
+     "ref": "변강쇠가(가루지기타령)"
+    },
+    {
+     "type": "encyclopedia",
+     "title": "한국민속대백과사전",
+     "ref": "변강쇠타령"
+    }
+   ],
+   "verification": "primary_text",
+   "confidence": "high",
+   "related": [
+    "song-onggojip",
+    "song-jisin-balpgi"
+   ],
+   "sensitivity": {
+    "kind": "tragedy_linked",
+    "note": "성적 표현이 노골적인 작품이다. 이 도감은 장승 동티 화소만 다루고 원사설을 옮기지 않는다."
+   },
+   "updated_at": "2026-09-13"
+  },
+  {
+   "id": "song-chasa-bonpuri",
+   "title": "차사본풀이",
+   "aliases": [
+    "강림 본풀이",
+    "저승차사 본"
+   ],
+   "genre": "bonpuri",
+   "era": "구전 · 제주 큰굿",
+   "summary": "산 사람이 저승에 내려가 염라대왕을 잡아 온다. 그 대가로 저승차사가 되었다.",
+   "original": null,
+   "original_script": "oral",
+   "reading_note": "죽은 이를 천도하는 굿에서 구송된다. 본토의 「바리공주」와 함께 한국 저승 서사의 두 기둥으로 다뤄진다.",
+   "gloss": "과양생이 각시가 세 아들을 한날한시에 잃고 원님에게 억울함을 호소하자, 원님이 하인 강림에게 염라대왕을 잡아 오라 명한다. 강림은 아내가 마련해 준 떡과 옷을 지니고 저승길에 올라 문을 지나고 차사를 만나 끝내 염라를 데려오고, 사건의 진상이 밝혀진다. 그 공으로 강림은 저승차사가 된다. 저승을 다녀오는 이야기이면서 동시에 재판 이야기라, 죽음이 운명이 아니라 절차의 대상으로 놓인다. 억울한 죽음은 반드시 밝혀진다는 이 전제가 아랑·장화홍련 같은 본토 원귀담과 같은 자리에 있다.",
+   "function": [
+    "천도",
+    "해원",
+    "의례"
+   ],
+   "characters": [
+    "kr-gangnim",
+    "kr-yeomna",
+    "kr-jeoseung-saja"
+   ],
+   "tales": [],
+   "sites": [
+    {
+     "name": "제주 큰굿 전승권",
+     "sido": "제주",
+     "lat": 33.4996,
+     "lng": 126.5312,
+     "precision": "sido",
+     "note": "천도굿에서 구송된다"
+    }
+   ],
+   "sources": [
+    {
+     "type": "field",
+     "title": "제주 차사본풀이",
+     "ref": "큰굿 구송 자료"
+    },
+    {
+     "type": "encyclopedia",
+     "title": "한국민속대백과사전",
+     "ref": "차사본풀이"
+    }
+   ],
+   "verification": "field_record",
+   "confidence": "high",
+   "related": [
+    "song-bari",
+    "song-sangyeo"
+   ],
+   "sensitivity": {
+    "kind": "living_faith",
+    "note": "상례·천도굿에서 구송되는 무가다. 가볍게 다루지 않는다."
+   },
+   "updated_at": "2026-09-13"
+  },
+  {
+   "id": "song-cheonjiwang-bonpuri",
+   "title": "천지왕본풀이",
+   "aliases": [
+    "초감제 본풀이",
+    "천지왕 본"
+   ],
+   "genre": "bonpuri",
+   "era": "구전 · 제주 큰굿",
+   "summary": "큰굿 맨 앞에서 부른다. 하늘과 땅이 갈라지고 이승과 저승이 나뉘기까지를 풀어 놓아야 그다음 굿이 성립한다.",
+   "original": null,
+   "original_script": "oral",
+   "reading_note": "제주 큰굿의 첫 제차인 초감제에서 구송된다. 심방마다 사설이 달라 정본이 없다.",
+   "gloss": "굿을 시작하려면 먼저 세상이 어떻게 생겼는지부터 말해야 한다. 그래서 이 본풀이가 맨 앞에 온다. 하늘과 땅이 갈라지고, 해와 달이 둘씩 떠 사람이 타 죽고 얼어 죽던 것을 활로 쏘아 하나씩 떨어뜨리고, 형제가 겨루어 이승과 저승이 나뉜다. 신을 부르기 전에 신이 있을 자리를 먼저 만드는 셈이라, 초감제에서 이 본을 풀지 않으면 그다음 제차가 놓일 곳이 없다. 이야기 자체는 설화 항목에서 따로 다루고, 여기서는 그것이 굿의 어느 자리에서 어떤 일을 하는지를 적는다.",
+   "function": [
+    "의례",
+    "청신",
+    "우주 개창"
+   ],
+   "characters": [
+    "kr-cheonjiwang",
+    "kr-bulgae"
+   ],
+   "tales": [
+    "tale-cheonjiwang",
+    "tale-changsega"
+   ],
+   "sites": [
+    {
+     "name": "제주 큰굿 전승권",
+     "sido": "제주",
+     "lat": 33.4996,
+     "lng": 126.5312,
+     "precision": "sido",
+     "note": "제주 전역의 큰굿 초감제에서 구송된다"
+    }
+   ],
+   "sources": [
+    {
+     "type": "field",
+     "title": "제주 천지왕본풀이",
+     "ref": "큰굿 초감제 구송 자료"
+    },
+    {
+     "type": "encyclopedia",
+     "title": "한국민속대백과사전",
+     "ref": "천지왕본풀이"
+    },
+    {
+     "type": "heritage",
+     "title": "제주큰굿",
+     "ref": "제주특별자치도 무형유산"
+    }
+   ],
+   "verification": "field_record",
+   "confidence": "high",
+   "related": [
+    "song-chogong-bonpuri",
+    "song-igong-bonpuri"
+   ],
+   "sensitivity": {
+    "kind": "living_faith",
+    "note": "지금도 큰굿에서 구송되는 무가다."
+   },
+   "updated_at": "2026-09-13"
+  },
+  {
+   "id": "song-cheoyongga",
+   "title": "처용가",
+   "aliases": [
+    "處容歌",
+    "신라 처용가"
+   ],
+   "genre": "hyangga",
+   "era": "신라 헌강왕대(9세기 말)",
+   "summary": "아내 곁에 다리가 넷인 것을 보고도 처용이 부른 노래. 싸우지 않고 물러남으로써 역신을 굴복시켰다.",
+   "original": "東京明期月良\n夜入伊遊行如可\n入良沙寢矣見昆\n脚烏伊四是良羅\n二肹隱吾下於叱古\n二肹隱誰支下焉古\n本矣吾下是如馬於隱\n奪叱良乙何如爲理古",
+   "original_script": "hyangchal",
+   "reading_note": "향찰 표기라 해독안이 학자마다 갈린다. 특히 마지막 두 구를 체념으로 읽느냐 항의로 읽느냐에 따라 노래의 성격이 달라진다. 이 도감은 특정 해독안을 옮기지 않고 뜻만 풀어 적는다.",
+   "gloss": "서울 밝은 달빛 아래 밤늦도록 노닐다가 들어와 잠자리를 보니 다리가 넷이다. 둘은 내 것인데 둘은 누구의 것인가. 본디 내 것이었다마는 빼앗긴 것을 어찌하리. — 마지막 구가 이 노래의 전부다. 빼앗긴 것을 인정하고 물러나는 그 태도 앞에서 역신이 무릎을 꿇고, 앞으로는 처용의 얼굴을 그린 것만 보아도 그 문에 들지 않겠다고 맹세한다. 그래서 이 노래는 신라 최초의 벽사 노래이자, 폭력이 아닌 태도로 재앙을 물린 드문 기록이 되었다.",
+   "function": [
+    "벽사",
+    "축역"
+   ],
+   "characters": [
+    "kr-cheoyong",
+    "kr-yeoksin",
+    "kr-jeung"
+   ],
+   "tales": [],
+   "sites": [
+    {
+     "name": "울산 처용암",
+     "sido": "울산",
+     "sigungu": "남구",
+     "lat": 35.464,
+     "lng": 129.343,
+     "precision": "dong",
+     "note": "처용이 나왔다고 전하는 개운포 앞바다의 바위"
+    }
+   ],
+   "sources": [
+    {
+     "type": "classic",
+     "title": "삼국유사",
+     "ref": "기이 처용랑 망해사"
+    },
+    {
+     "type": "heritage",
+     "title": "처용무",
+     "ref": "국가무형유산"
+    }
+   ],
+   "verification": "primary_text",
+   "confidence": "high",
+   "related": [
+    "song-cheoyongga-goryeo",
+    "song-bihyeong-chuksa"
+   ],
+   "updated_at": "2026-09-13",
+   "sensitivity": null
+  },
+  {
+   "id": "song-cheoyongga-goryeo",
+   "title": "처용가 (고려)",
+   "aliases": [
+    "고려 처용가",
+    "처용희 노랫말"
+   ],
+   "genre": "goryeo",
+   "era": "고려 후기 ~ 조선 초 기록",
+   "summary": "신라 향가 처용가가 고려에 와서 훨씬 길고 사나운 축역 노래로 바뀐다. 물러나던 처용이 여기서는 역신을 꾸짖는다.",
+   "original": null,
+   "original_script": "hangul",
+   "reading_note": "『악학궤범』과 『악장가사』에 한글로 실려 전한다. 분량이 길어 이 도감에서는 원문을 싣지 않고 성격만 적는다.",
+   "gloss": "신라 향가가 여덟 구인 데 비해 고려 처용가는 처용의 생김새를 머리부터 발끝까지 길게 늘어놓고, 역신을 향해 어디에 숨었느냐 꾸짖으며 열병신을 회 쳐 먹겠다고까지 말한다. 같은 인물의 같은 사건인데 태도가 정반대다. 신라의 처용은 물러남으로써 이겼고 고려의 처용은 위협으로 이긴다. 궁중 나례(儺禮)에서 잡귀를 쫓는 처용희의 노랫말로 쓰이면서 의례의 요구에 맞춰 사나워진 것으로 본다. 같은 노래가 쓰임에 따라 어떻게 변하는지 보여 주는 가장 뚜렷한 사례다.",
+   "function": [
+    "벽사",
+    "축역",
+    "궁중 나례"
+   ],
+   "characters": [
+    "kr-cheoyong",
+    "kr-yeoksin",
+    "kr-hongyeoksin"
+   ],
+   "tales": [],
+   "sites": [],
+   "sources": [
+    {
+     "type": "classic",
+     "title": "악학궤범",
+     "ref": "처용가"
+    },
+    {
+     "type": "classic",
+     "title": "악장가사",
+     "ref": "처용가"
+    },
+    {
+     "type": "heritage",
+     "title": "처용무",
+     "ref": "국가무형유산"
+    }
+   ],
+   "verification": "primary_text",
+   "confidence": "high",
+   "related": [
+    "song-cheoyongga"
+   ],
+   "updated_at": "2026-09-13",
+   "sensitivity": null
+  },
+  {
+   "id": "song-chogong-bonpuri",
+   "title": "초공본풀이",
+   "aliases": [
+    "젯부기 삼형제",
+    "무조 본풀이"
+   ],
+   "genre": "bonpuri",
+   "era": "구전 · 제주 큰굿",
+   "summary": "심방의 조상이 어떻게 무당이 되었는지를 푼다. 굿을 하는 사람이 스스로의 내력을 밝히는 노래다.",
+   "original": null,
+   "original_script": "oral",
+   "reading_note": "제주 심방(무당)의 조상신 내력담. 본토의 「바리공주」에 해당하는 무조(巫祖) 본풀이다.",
+   "gloss": "글공부하러 간 아버지와 홀로 남은 어머니 사이에서 삼형제가 태어난다. 아비 없는 자식이라 하여 과거에 급제하고도 낙방당하고, 어머니마저 갇히자 삼형제는 아버지를 찾아가 묻는다. 아버지는 어머니를 살리려면 무당이 되라 하고, 삼형제는 북과 장구와 징을 만들어 굿을 해 어머니를 구해 낸다. 그래서 이들이 심방의 조상이 되었다. 굿을 하는 사람이 굿판에서 자기 조상의 내력을 푸는 구조라, 이 본풀이를 부르는 행위 자체가 무당 자격의 증명이 된다. 밀려난 자가 밀려났기 때문에 신이 된다는 뼈대는 바리공주와 같다.",
+   "function": [
+    "의례",
+    "무조 내력",
+    "자격 증명"
+   ],
+   "characters": [
+    "kr-cheonjiwang"
+   ],
+   "tales": [],
+   "sites": [
+    {
+     "name": "제주 큰굿 전승권",
+     "sido": "제주",
+     "lat": 33.4996,
+     "lng": 126.5312,
+     "precision": "sido",
+     "note": "큰굿에서 구송되며 심방의 내력을 밝히는 자리다"
+    }
+   ],
+   "sources": [
+    {
+     "type": "field",
+     "title": "제주 초공본풀이",
+     "ref": "큰굿 구송 자료"
+    },
+    {
+     "type": "encyclopedia",
+     "title": "한국민속대백과사전",
+     "ref": "초공본풀이"
+    }
+   ],
+   "verification": "field_record",
+   "confidence": "high",
+   "related": [
+    "song-bari",
+    "song-cheonjiwang-bonpuri"
+   ],
+   "sensitivity": {
+    "kind": "living_faith",
+    "note": "심방의 조상 내력을 다루는 무가다."
+   },
+   "updated_at": "2026-09-13"
+  },
+  {
+   "id": "song-dosolga",
+   "title": "도솔가",
+   "aliases": [
+    "兜率歌",
+    "월명사 도솔가"
+   ],
+   "genre": "hyangga",
+   "era": "신라 경덕왕대(8세기 중엽)",
+   "summary": "해가 둘 나타나 열흘이 되도록 사라지지 않자 월명사가 꽃을 뿌리며 부른 노래.",
+   "original": null,
+   "original_script": "hyangchal",
+   "reading_note": "『삼국유사』에 향찰 4구체로 실려 있으나, 확인한 판본만 원문으로 싣는 원칙에 따라 비워 둔다. 원문은 삼국유사 감통편 월명사 도솔가조에 있다.",
+   "gloss": "오늘 여기 꽃을 뿌리며 노래하니, 뿌려진 꽃아 너는 곧은 마음의 명을 받들어 미륵좌주를 모셔 오라는 뜻이다. 노래를 마치자 두 해 가운데 하나가 사라졌다. 해가 둘 뜨는 변괴는 창세가와 천지왕본풀이에서 활로 쏘아 떨어뜨리던 사건인데, 여기서는 활 대신 꽃과 노래로 처리한다. 같은 변괴를 신화는 무력으로, 향가는 의례로 푸는 셈이라 두 갈래를 나란히 놓고 볼 만하다.",
+   "function": [
+    "산화공덕",
+    "천변 진정"
+   ],
+   "characters": [
+    "kr-bulgae",
+    "kr-hwagwang"
+   ],
+   "tales": [
+    "tale-changsega",
+    "tale-cheonjiwang"
+   ],
+   "sites": [],
+   "sources": [
+    {
+     "type": "classic",
+     "title": "삼국유사",
+     "ref": "감통 월명사 도솔가"
+    },
+    {
+     "type": "encyclopedia",
+     "title": "한국민족문화대백과사전",
+     "ref": "도솔가"
+    }
+   ],
+   "verification": "primary_text",
+   "confidence": "high",
+   "related": [
+    "song-hyeseongga"
+   ],
+   "updated_at": "2026-09-13",
+   "sensitivity": null
+  },
+  {
+   "id": "song-gangneung-maehwa",
+   "title": "강릉매화타령",
+   "aliases": [
+    "매화가",
+    "골생원 타령"
+   ],
+   "genre": "pansori",
+   "era": "조선 후기 · 실전 마당",
+   "summary": "죽었다는 기생이 귀신 행세를 하고, 그것을 곧이곧대로 믿은 선비가 벌거벗은 채 망신을 당한다.",
+   "original": null,
+   "original_script": "oral",
+   "reading_note": "실전 마당 가운데 전하는 자료가 특히 적어 줄거리 전승에도 판본차가 크다. 세부는 확정된 것으로 보지 않는다.",
+   "gloss": "강릉 기생 매화와 정을 나누던 선비 골생원이 과거를 보러 서울에 갔다가, 매화가 죽었다는 기별을 받고 돌아온다. 실은 산 매화가 사람들과 짜고 벌인 일인데, 골생원은 나타난 매화를 귀신으로 믿고 시키는 대로 옷을 벗고 따라가다 사람들 앞에서 망신을 당한다. 이 마당이 성립하려면 처녀·기생이 죽어 귀신이 되어 찾아온다는 관념이 청중에게 당연해야 한다. 웃음의 재료가 되었다는 사실 자체가 그 믿음이 얼마나 단단했는지를 보여 주는 셈이라, 손각시·영산 같은 원귀 항목의 사회적 배경 자료로 쓸 만하다.",
+   "function": [
+    "귀신 행세",
+    "골계",
+    "풍자"
+   ],
+   "characters": [
+    "kr-songaksi",
+    "kr-yeongsan"
+   ],
+   "tales": [],
+   "sites": [],
+   "sources": [
+    {
+     "type": "encyclopedia",
+     "title": "한국민속대백과사전",
+     "ref": "강릉매화타령"
+    },
+    {
+     "type": "encyclopedia",
+     "title": "한국민족문화대백과사전",
+     "ref": "실전 판소리 일곱 마당"
+    }
+   ],
+   "verification": "secondary_compilation",
+   "confidence": "medium",
+   "related": [
+    "song-onggojip"
+   ],
+   "updated_at": "2026-09-13",
+   "sensitivity": null
+  },
+  {
+   "id": "song-gongmudohaga",
+   "title": "공무도하가",
+   "aliases": [
+    "公無渡河歌",
+    "공후인"
+   ],
+   "genre": "goga",
+   "era": "고조선 무렵으로 전함",
+   "summary": "머리 흰 미친 사람이 물에 뛰어들어 죽자 그 아내가 공후를 타며 부른 노래. 네 구뿐이다.",
+   "original": "公無渡河\n公竟渡河\n墮河而死\n當奈公何",
+   "original_script": "hanmun",
+   "reading_note": "중국 문헌을 거쳐 전하며, 배경 설화와 함께 실린 형태로 남았다. 창작 시기와 국적을 두고 오래된 논쟁이 있다.",
+   "gloss": "임이여 물을 건너지 마오. 임은 끝내 물을 건너셨네. 물에 빠져 죽으셨으니 임을 어이할꼬. — 만류하고, 어기고, 죽고, 남는다. 네 구가 각각 한 단계씩이라 더 줄일 수 없다. 물에 빠져 죽은 이가 물귀신이 되어 다른 사람을 부른다는 뒷날의 관념과 달리, 여기에는 원한도 저주도 없고 남은 자의 물음만 있다. 아내도 뒤따라 물에 들어가 죽었다고 전한다.",
+   "function": [
+    "만가",
+    "애도"
+   ],
+   "characters": [
+    "kr-mulgwisin",
+    "kr-subu"
+   ],
+   "tales": [],
+   "sites": [],
+   "sources": [
+    {
+     "type": "classic",
+     "title": "해동역사",
+     "ref": "공후인 인용"
+    },
+    {
+     "type": "encyclopedia",
+     "title": "한국민족문화대백과사전",
+     "ref": "공무도하가"
+    }
+   ],
+   "verification": "primary_text",
+   "confidence": "medium",
+   "related": [
+    "song-sangyeo"
+   ],
+   "sensitivity": {
+    "kind": "tragedy_linked",
+    "note": "익사와 자살을 다룬다. 흥밋거리로 각색하지 않는다."
+   },
+   "updated_at": "2026-09-13"
+  },
+  {
+   "id": "song-guji",
+   "title": "구지가",
+   "aliases": [
+    "龜旨歌",
+    "영신군가"
+   ],
+   "genre": "goga",
+   "era": "가락국 건국기(전하는 바로 1세기)",
+   "summary": "구지봉에 모인 사람들이 거북을 위협하며 부른 노래. 노래를 마치자 하늘에서 여섯 알이 내려왔다.",
+   "original": "龜何龜何\n首其現也\n若不現也\n燔灼而喫也",
+   "original_script": "hanmun",
+   "reading_note": "『삼국유사』 가락국기에 한문 4구로 실려 있다. 본래 우리말 노래를 한문으로 옮긴 것으로 보는 견해가 일반적이다.",
+   "gloss": "거북아 거북아, 머리를 내어라. 내놓지 않으면 구워서 먹으리. — 네 구가 전부이고, 그 네 구가 전부 명령과 협박이다. 비는 것이 아니라 위협해서 얻어 낸다. 현전하는 가장 오래된 집단 노래이자 주술요의 원형으로 다뤄지며, 같은 구조가 「해가」에 거의 그대로 되풀이된다. 신이 내려오기를 기다리는 것이 아니라 사람들이 노래와 춤으로 불러내린다는 점에서, 한국 건국 신화 가운데 가장 능동적인 장면이다.",
+   "function": [
+    "주술",
+    "기원",
+    "집단 의례"
+   ],
+   "characters": [],
+   "tales": [
+    "tale-guji"
+   ],
+   "sites": [
+    {
+     "name": "김해 구지봉",
+     "sido": "경남",
+     "sigungu": "김해시",
+     "lat": 35.2377,
+     "lng": 128.8756,
+     "precision": "dong",
+     "note": "노래를 부르며 흙을 팠다는 봉우리. 사적으로 지정되어 있다"
+    }
+   ],
+   "sources": [
+    {
+     "type": "classic",
+     "title": "삼국유사",
+     "ref": "가락국기"
+    },
+    {
+     "type": "heritage",
+     "title": "김해 구지봉",
+     "ref": "사적"
+    }
+   ],
+   "verification": "primary_text",
+   "confidence": "high",
+   "related": [
+    "song-haega"
+   ],
+   "updated_at": "2026-09-13",
+   "sensitivity": null
+  },
+  {
+   "id": "song-gwenegit-bonpuri",
+   "title": "궤네깃당본풀이",
+   "aliases": [
+    "궤네깃또 본풀이"
+   ],
+   "genre": "bonpuri",
+   "era": "구전 · 제주 구좌읍 김녕리",
+   "summary": "아버지에게 버려져 바다로 띄워진 아들이 낯선 나라에서 장수가 되어 돌아와 제 당을 얻는다.",
+   "original": null,
+   "original_script": "oral",
+   "reading_note": "김녕 궤네깃당에서 모시는 신의 내력. 송당본풀이에서 갈라져 나온 갈래다.",
+   "gloss": "소천국과 백주또의 아들이 어려서 아버지의 수염을 잡아당기는 등 버릇이 없다 하여 무쇠 상자에 담겨 바다에 버려진다. 상자는 용왕국에 닿고, 아들은 그곳에서 셋째 딸과 혼인하지만 먹성이 커 다시 쫓겨나 강남천자국으로 가 난리를 평정하고 장수가 된다. 제주로 돌아와 부모를 뵙고 김녕에 좌정해 궤네깃또가 되었다. 버려진 자식이 밖에서 힘을 얻어 돌아와 제 자리를 얻는 구조라, 제주 당신 계보가 어떻게 뻗어 나가는지를 보여 준다. 이 신에게는 돼지고기를 올리는 육식 제의가 따라붙어, 제물을 가리는 다른 당과 뚜렷이 구분된다.",
+   "function": [
+    "의례",
+    "좌정",
+    "당신 내력"
+   ],
+   "characters": [
+    "kr-gwenegitto",
+    "kr-socheonguk",
+    "kr-baekjutto",
+    "kr-yongwang"
+   ],
+   "tales": [],
+   "sites": [
+    {
+     "name": "제주 김녕 궤네깃당",
+     "sido": "제주",
+     "sigungu": "제주시",
+     "lat": 33.5556,
+     "lng": 126.7583,
+     "precision": "dong",
+     "note": "구좌읍 김녕리. 궤네깃또를 모시는 당"
+    }
+   ],
+   "sources": [
+    {
+     "type": "field",
+     "title": "제주 궤네깃당본풀이",
+     "ref": "당 구송 자료"
+    },
+    {
+     "type": "encyclopedia",
+     "title": "한국민속대백과사전",
+     "ref": "궤네깃당본풀이"
+    }
+   ],
+   "verification": "field_record",
+   "confidence": "high",
+   "related": [
+    "song-songdang-bonpuri"
+   ],
+   "sensitivity": {
+    "kind": "living_faith",
+    "note": "지금도 제를 올리는 당의 신이다."
+   },
+   "updated_at": "2026-09-13"
+  },
+  {
+   "id": "song-haega",
+   "title": "해가",
+   "aliases": [
+    "海歌",
+    "해가사"
+   ],
+   "genre": "goga",
+   "era": "신라 성덕왕대(8세기 초)",
+   "summary": "용에게 끌려간 수로부인을 되찾으려고 사람들이 막대로 언덕을 두드리며 부른 노래.",
+   "original": "龜乎龜乎出水路\n掠人婦女罪何極\n汝若悖逆不出獻\n入網捕掠燔之喫",
+   "original_script": "hanmun",
+   "reading_note": "『삼국유사』 수로부인조에 한문 4구로 실려 있다. 「구지가」와 뼈대가 같아 같은 주술요 계통으로 묶인다.",
+   "gloss": "거북아 거북아 수로를 내어라. 남의 아내를 앗아 간 죄가 얼마나 큰가. 네가 거스르고 내놓지 않으면 그물로 잡아 구워서 먹으리. — 「구지가」와 마지막 구가 사실상 같다. 칠백 년 뒤에도 같은 협박이 유효했다는 뜻이다. 이 장면에서 노인이 한 말이 노래보다 유명하다. '뭇 사람의 말은 쇠도 녹인다.' 한 사람이 아니라 여럿이 함께 불러야 힘이 생긴다는 것이 이 노래의 전제이고, 실제로 백성을 모아 부르자 용이 부인을 받들고 나왔다.",
+   "function": [
+    "주술",
+    "위협",
+    "집단 의례"
+   ],
+   "characters": [
+    "kr-haeryong",
+    "kr-yongwang"
+   ],
+   "tales": [
+    "tale-suro-buin"
+   ],
+   "sites": [
+    {
+     "name": "삼척 임해정 터",
+     "sido": "강원",
+     "sigungu": "삼척시",
+     "lat": 37.44,
+     "lng": 129.175,
+     "precision": "sigungu",
+     "note": "용이 수로부인을 끌고 갔다는 바닷가로 전하는 자리"
+    }
+   ],
+   "sources": [
+    {
+     "type": "classic",
+     "title": "삼국유사",
+     "ref": "기이 수로부인"
+    },
+    {
+     "type": "encyclopedia",
+     "title": "한국민족문화대백과사전",
+     "ref": "해가"
+    }
+   ],
+   "verification": "primary_text",
+   "confidence": "high",
+   "related": [
+    "song-guji",
+    "song-heonhwaga"
+   ],
+   "updated_at": "2026-09-13",
+   "sensitivity": null
+  },
+  {
+   "id": "song-heonhwaga",
+   "title": "헌화가",
+   "aliases": [
+    "獻花歌"
+   ],
+   "genre": "hyangga",
+   "era": "신라 성덕왕대(8세기 초)",
+   "summary": "천 길 벼랑의 철쭉을 꺾어 바치며 늙은이가 부른 노래. 아무도 나서지 못한 자리에서 이름 없는 노인이 나섰다.",
+   "original": "紫布岩乎邊希\n執音乎手母牛放教遣\n吾肹不喩慚肹伊賜等\n花肹折叱可獻乎理音如",
+   "original_script": "hyangchal",
+   "reading_note": "향찰 4구체. 노인의 정체를 두고 지나가던 촌로로 보는 견해와 신이한 존재로 보는 견해가 갈린다. 해독안도 학자마다 다르므로 특정 안을 옮기지 않는다.",
+   "gloss": "자줏빛 바위 가에 잡고 있던 암소를 놓게 하시고, 나를 부끄러워하지 않으신다면 꽃을 꺾어 바치겠나이다. — 조건이 붙은 헌사다. '나를 부끄러워하지 않으신다면'이라는 한 구절에 늙고 초라한 자와 귀한 부인 사이의 거리가 통째로 들어 있다. 천 길 벼랑을 오르는 것보다 그 거리를 넘는 일을 더 어렵게 적었다는 점이 이 짧은 노래의 자리다. 「해가」와 같은 조에 실려 있어 함께 읽힌다.",
+   "function": [
+    "헌사",
+    "구애"
+   ],
+   "characters": [],
+   "tales": [
+    "tale-suro-buin"
+   ],
+   "sites": [],
+   "sources": [
+    {
+     "type": "classic",
+     "title": "삼국유사",
+     "ref": "기이 수로부인"
+    },
+    {
+     "type": "encyclopedia",
+     "title": "한국민족문화대백과사전",
+     "ref": "헌화가"
+    }
+   ],
+   "verification": "primary_text",
+   "confidence": "high",
+   "related": [
+    "song-haega"
+   ],
+   "updated_at": "2026-09-13",
+   "sensitivity": null
+  },
+  {
+   "id": "song-heungboga",
+   "title": "흥보가",
+   "aliases": [
+    "박타령",
+    "흥부전"
+   ],
+   "genre": "pansori",
+   "era": "조선 후기 · 전승 다섯 마당",
+   "summary": "제비 다리를 고쳐 준 아우는 박에서 보물을 얻고, 일부러 부러뜨린 형은 박에서 재앙을 얻는다.",
+   "original": null,
+   "original_script": "oral",
+   "reading_note": "유파마다 사설이 다르고 박 타는 대목의 목록이 특히 크게 갈린다.",
+   "gloss": "이 마당의 값은 박을 타는 대목에 있다. 흥보의 박에서는 쌀·비단·집·종이 나오고, 놀보의 박에서는 상여꾼·사당패·똥·도깨비가 나온다. 두 목록을 나란히 놓으면 조선 후기 서민이 갖고 싶어 하던 것과 두려워하던 것이 그대로 장부가 되므로, 서사보다 이 열거가 자료로 더 자주 인용된다. 놀보의 박에서 나오는 도깨비는 재물을 주는 도깨비의 정확한 뒤집기다 — 도깨비방망이가 두드려 얻는 물건이라면 놀보의 박은 열어서 잃는 물건이다.",
+   "function": [
+    "선악 보응",
+    "오락",
+    "서사"
+   ],
+   "characters": [
+    "kr-dokkaebi",
+    "kr-dokkaebi-bangmangi"
+   ],
+   "tales": [
+    "tale-heungbu"
+   ],
+   "sites": [],
+   "sources": [
+    {
+     "type": "heritage",
+     "title": "판소리",
+     "ref": "국가무형유산 · 유네스코 인류무형문화유산"
+    },
+    {
+     "type": "classic",
+     "title": "흥부전",
+     "ref": "고전소설 이본군"
+    },
+    {
+     "type": "encyclopedia",
+     "title": "한국민속대백과사전",
+     "ref": "흥보가"
+    }
+   ],
+   "verification": "primary_text",
+   "confidence": "high",
+   "related": [
+    "song-sugungga",
+    "song-onggojip"
+   ],
+   "updated_at": "2026-09-13",
+   "sensitivity": null
+  },
+  {
+   "id": "song-hyeseongga",
+   "title": "혜성가",
+   "aliases": [
+    "彗星歌"
+   ],
+   "genre": "hyangga",
+   "era": "신라 진평왕대(6~7세기)",
+   "summary": "혜성이 나타나 화랑들의 출정이 멈추자 융천사가 노래를 지어 부르니 혜성이 사라졌다.",
+   "original": null,
+   "original_script": "hyangchal",
+   "reading_note": "『삼국유사』에 향찰 10구체로 실려 있으나, 이 도감은 확인한 판본만 원문으로 싣는 원칙이라 여기서는 비워 둔다. 원문은 삼국유사 감통편 융천사 혜성가조에서 볼 수 있다.",
+   "gloss": "동해 물가의 신기루를 두고 왜군이 왔다고 봉화를 올린 일이 있었는데, 이번에 혜성이 나타난 것도 그와 같은 헛것이라는 뜻을 노래에 담았다. 무섭다고 여기니 무서운 것이지 실은 아무 일도 아니라는 말이다. 노래를 부르자 혜성이 사라지고 왜병도 물러갔다. 천체의 변괴를 무기가 아니라 해석으로 물린다는 점에서 한국 시가 가운데 가장 이례적이며, 「도솔가」와 함께 노래로 하늘을 다스린 두 사례로 나란히 놓인다.",
+   "function": [
+    "진호",
+    "천변 진정"
+   ],
+   "characters": [
+    "kr-hwagwang"
+   ],
+   "tales": [],
+   "sites": [],
+   "sources": [
+    {
+     "type": "classic",
+     "title": "삼국유사",
+     "ref": "감통 융천사 혜성가"
+    },
+    {
+     "type": "encyclopedia",
+     "title": "한국민족문화대백과사전",
+     "ref": "혜성가"
+    }
+   ],
+   "verification": "primary_text",
+   "confidence": "high",
+   "related": [
+    "song-dosolga"
+   ],
+   "updated_at": "2026-09-13",
+   "sensitivity": null
+  },
+  {
+   "id": "song-igong-bonpuri",
+   "title": "이공본풀이",
+   "aliases": [
+    "할락궁이 본풀이",
+    "서천꽃밭 본"
+   ],
+   "genre": "bonpuri",
+   "era": "구전 · 제주 큰굿",
+   "summary": "죽이는 꽃과 살리는 꽃이 한 밭에서 난다. 서천꽃밭의 내력을 푸는 본풀이다.",
+   "original": null,
+   "original_script": "oral",
+   "reading_note": "제주 무속의 저승관에서 서천꽃밭이 어떤 곳인지를 정하는 본풀이다. 심방마다 사설이 다르다.",
+   "gloss": "아버지가 서천꽃밭 꽃감관으로 불려 간 사이 어머니가 종으로 붙잡혀 죽고, 아들 할락궁이가 달아나 아버지를 찾아가 환생꽃을 얻어 와 어머니를 살린다. 이 본풀이의 핵심은 줄거리가 아니라 서천꽃밭이라는 장소를 세운다는 데 있다. 뼈살이꽃·살살이꽃·환생꽃으로 죽은 이를 되살리고, 웃음웃을꽃·싸움싸울꽃으로 산 사람을 무너뜨린다. 살리는 꽃과 해치는 꽃이 같은 밭에서 나고 같은 사람이 관리한다는 설정이라, 제주 무속에서 삶과 죽음이 대립이 아니라 한 밭의 두 이랑으로 놓인다.",
+   "function": [
+    "의례",
+    "저승관 확립",
+    "치유"
+   ],
+   "characters": [
+    "kr-hallakgungi",
+    "kr-gameunjang",
+    "kr-samseung-halmang"
+   ],
+   "tales": [],
+   "sites": [
+    {
+     "name": "제주 큰굿 전승권",
+     "sido": "제주",
+     "lat": 33.4996,
+     "lng": 126.5312,
+     "precision": "sido",
+     "note": "큰굿에서 구송된다"
+    }
+   ],
+   "sources": [
+    {
+     "type": "field",
+     "title": "제주 이공본풀이",
+     "ref": "큰굿 구송 자료"
+    },
+    {
+     "type": "encyclopedia",
+     "title": "한국민속대백과사전",
+     "ref": "이공본풀이"
+    }
+   ],
+   "verification": "field_record",
+   "confidence": "high",
+   "related": [
+    "song-samgong-bonpuri",
+    "song-chasa-bonpuri"
+   ],
+   "sensitivity": {
+    "kind": "living_faith",
+    "note": "지금도 큰굿에서 구송되는 무가다."
+   },
+   "updated_at": "2026-09-13"
+  },
+  {
+   "id": "song-jisin-balpgi",
+   "title": "지신밟기 고사소리",
+   "aliases": [
+    "지신밟기",
+    "매구굿 소리",
+    "고사반"
+   ],
+   "genre": "minyo",
+   "era": "구전 · 정월 세시",
+   "summary": "정월에 풍물패가 집집을 돌며 마당·부엌·장독대·우물을 차례로 밟고 부르는 노래.",
+   "original": null,
+   "original_script": "oral",
+   "reading_note": "'지신아 지신아 눌러라' 같은 후렴이 널리 쓰이지만 사설은 마을마다 다르다. 정본이 없어 원문을 싣지 않는다.",
+   "gloss": "풍물을 앞세우고 집집을 돌며 땅의 신을 밟아 눌러 잡귀를 몰아내고 복을 부른다. 대문에서 시작해 마당·성주(대청)·조왕(부엌)·철륭(장독대)·우물·측간까지 집 안의 신이 있는 자리를 차례로 도는데, 그 순서가 곧 가택신의 배치도다. 이 도감의 가택신 항목들이 실제로 어디에 있었는지 알려면 이 노래의 동선을 따라가면 된다. 눌러 없애는 것이 아니라 눌러 자리에 앉힌다는 뜻이라, 쫓는 의례가 아니라 다스리는 의례에 가깝다.",
+   "function": [
+    "의례",
+    "축귀",
+    "기복",
+    "세시"
+   ],
+   "characters": [
+    "kr-jisin",
+    "kr-seongju",
+    "kr-jowang",
+    "kr-cheollyung",
+    "kr-cheuksin",
+    "kr-teoju"
+   ],
+   "tales": [],
+   "sites": [],
+   "sources": [
+    {
+     "type": "encyclopedia",
+     "title": "한국민속대백과사전",
+     "ref": "지신밟기"
+    },
+    {
+     "type": "field",
+     "title": "한국구비문학대계",
+     "ref": "고사소리 채록(전국)"
+    }
+   ],
+   "verification": "field_record",
+   "confidence": "high",
+   "related": [
+    "song-seongju-puri",
+    "song-aengmagi"
+   ],
+   "sensitivity": {
+    "kind": "living_faith",
+    "note": "정월 세시 의례로 지금도 이어지는 마을이 있다."
+   },
+   "updated_at": "2026-09-13"
+  },
+  {
+   "id": "song-mokja",
+   "title": "목자요",
+   "aliases": [
+    "木子得國",
+    "목자득국 참요"
+   ],
+   "genre": "chamyo",
+   "era": "고려 말(14세기)",
+   "summary": "'목자가 나라를 얻는다'는 여섯 자가 아이들 입으로 퍼졌다. 목자(木子)를 합치면 이(李)가 된다.",
+   "original": null,
+   "original_script": "hanmun",
+   "reading_note": "구절 자체는 짧게 전하지만 노래의 전문이라 할 만한 것이 남아 있지 않다. 여러 문헌이 조금씩 다르게 인용하므로 원문을 확정해 싣지 않는다.",
+   "gloss": "나무 목(木)과 아들 자(子)를 위아래로 합치면 오얏 이(李)가 된다. 글자를 쪼개 뜻을 감추는 파자(破字)의 방식으로, 이씨가 나라를 얻는다는 말을 아이들 노래에 실어 퍼뜨린 것이다. 왕조 교체기에는 이런 참요가 거의 빠짐없이 등장하는데, 뒤에 이긴 쪽이 기록을 남기므로 노래가 앞일을 맞혔다는 형태로만 전해진다. 조선 건국 설화에서 하늘이 이성계에게 금척을 내렸다는 이야기와 같은 일을 한다 — 무력으로 얻은 것을 하늘이 정한 일로 바꾸는 장치다.",
+   "function": [
+    "참요",
+    "예언",
+    "정당화"
+   ],
+   "characters": [
+    "kr-geumcheok"
+   ],
+   "tales": [],
+   "sites": [],
+   "sources": [
+    {
+     "type": "encyclopedia",
+     "title": "한국민족문화대백과사전",
+     "ref": "참요"
+    },
+    {
+     "type": "encyclopedia",
+     "title": "한국민속대백과사전",
+     "ref": "동요와 참요"
+    }
+   ],
+   "verification": "public_encyclopedia",
+   "confidence": "medium",
+   "related": [
+    "song-seodongyo"
+   ],
+   "updated_at": "2026-09-13",
+   "sensitivity": null
+  },
+  {
+   "id": "song-munjeon-bonpuri",
+   "title": "문전본풀이",
+   "aliases": [
+    "남선비 본풀이",
+    "가택신 본"
+   ],
+   "genre": "bonpuri",
+   "era": "구전 · 제주 큰굿",
+   "summary": "한 집안의 파국이 끝나고 나면 식구들이 저마다 집 안의 신이 되어 있다. 부엌과 뒷간이 멀어야 하는 이유가 여기서 나온다.",
+   "original": null,
+   "original_script": "oral",
+   "reading_note": "제주 가택신 신앙의 근거가 되는 본풀이. 집 안 어느 자리에 어떤 신이 있는지가 이 노래의 결말로 정해진다.",
+   "gloss": "장사를 나간 남선비가 노일제대귀일의 딸에게 홀려 재산을 잃고, 찾아온 본처 여산부인은 계략에 빠져 물에 빠져 죽는다. 일곱 아들 가운데 막내 녹디생인이 계모의 정체를 밝혀내고 어머니를 되살리는데, 쫓긴 계모는 뒷간에서 목을 매 죽는다. 그 뒤 어머니는 부엌의 조왕신이 되고 계모는 뒷간의 측신이 되었으며, 녹디생인은 문을 지키는 문전신이 되었다. 그래서 부엌과 뒷간은 사이가 나빠 멀리 두어야 하고, 뒷간의 물건을 부엌에 들이지 않는다. 이 도감의 가택신 항목들이 왜 그 자리에 있는지를 한 노래가 통째로 설명한다.",
+   "function": [
+    "의례",
+    "가택 봉안",
+    "금기 설명"
+   ],
+   "characters": [
+    "kr-munjeon",
+    "kr-jowang",
+    "kr-cheuksin",
+    "kr-seongju"
+   ],
+   "tales": [],
+   "sites": [
+    {
+     "name": "제주 큰굿 전승권",
+     "sido": "제주",
+     "lat": 33.4996,
+     "lng": 126.5312,
+     "precision": "sido",
+     "note": "집안 굿에서 구송되며 가택신의 자리를 정한다"
+    }
+   ],
+   "sources": [
+    {
+     "type": "field",
+     "title": "제주 문전본풀이",
+     "ref": "큰굿 구송 자료"
+    },
+    {
+     "type": "encyclopedia",
+     "title": "한국민속대백과사전",
+     "ref": "문전본풀이"
+    }
+   ],
+   "verification": "field_record",
+   "confidence": "high",
+   "related": [
+    "song-seongju-puri",
+    "song-jisin-balpgi"
+   ],
+   "sensitivity": {
+    "kind": "living_faith",
+    "note": "지금도 집안 굿에서 구송되는 무가다."
+   },
+   "updated_at": "2026-09-13"
+  },
+  {
+   "id": "song-onggojip",
+   "title": "옹고집타령",
+   "aliases": [
+    "옹고집전",
+    "가짜 옹고집"
+   ],
+   "genre": "pansori",
+   "era": "조선 후기 · 실전 마당(고전소설로 전함)",
+   "summary": "인색한 옹고집을 벌하려고 도승이 짚으로 가짜를 만들어 보낸다. 진짜가 집에서 쫓겨난다.",
+   "original": null,
+   "original_script": "oral",
+   "reading_note": "소리로는 전승이 끊긴 실전 마당이며 고전소설 『옹고집전』으로 내용이 전한다.",
+   "gloss": "시주 온 중을 매질해 보낸 옹고집에게, 도승이 짚으로 사람을 만들어 부적을 붙여 보낸다. 가짜가 집에 들어앉아 진짜보다 집안 사정을 더 잘 알고 있으므로 식구도 관가도 진짜를 가려내지 못하고, 진짜 옹고집이 쫓겨나 걸식하다 뉘우친 뒤에야 돌아온다. 손톱을 먹은 들쥐가 사람으로 둔갑해 주인 행세를 한다는 쥐둔갑 설화와 같은 유형이며, 이 도감의 쥐둔갑 항목이 '가짜 주인'을 이칭으로 갖는 이유가 여기 있다. 내가 나임을 증명하지 못한다는 공포가 조선 후기 서사에서 반복되는데, 그 증명의 기준이 언제나 '집안 내력을 얼마나 아느냐'라는 점이 눈여겨볼 자리다.",
+   "function": [
+    "징치",
+    "정체 혼동",
+    "풍자"
+   ],
+   "characters": [
+    "kr-jwi-dungap",
+    "kr-dokkaebi"
+   ],
+   "tales": [],
+   "sites": [],
+   "sources": [
+    {
+     "type": "classic",
+     "title": "옹고집전",
+     "ref": "고전소설"
+    },
+    {
+     "type": "encyclopedia",
+     "title": "한국민속대백과사전",
+     "ref": "옹고집타령"
+    }
+   ],
+   "verification": "primary_text",
+   "confidence": "high",
+   "related": [
+    "song-byeongangsoe",
+    "song-heungboga"
+   ],
+   "updated_at": "2026-09-13",
+   "sensitivity": null
+  },
+  {
+   "id": "song-samgong-bonpuri",
+   "title": "삼공본풀이",
+   "aliases": [
+    "감은장아기 본풀이",
+    "전상 본"
+   ],
+   "genre": "bonpuri",
+   "era": "구전 · 제주 큰굿",
+   "summary": "'내 복에 산다'고 대답해 쫓겨난 셋째 딸이 제 복으로 일어서고, 눈먼 부모의 눈을 뜨게 한다.",
+   "original": null,
+   "original_script": "oral",
+   "reading_note": "전상(前上)은 사람의 팔자·인연을 뜻하는 제주말이다. 굿에서 나쁜 전상을 내보내는 제차와 짝을 이룬다.",
+   "gloss": "부모가 세 딸에게 누구 덕에 사느냐 묻자 위의 둘은 부모 덕이라 하고 막내 감은장아기는 제 배꼽 아래 선그믓 덕, 곧 제 복에 산다고 답해 쫓겨난다. 막내는 마 파는 집에 들어가 마밭에서 금덩이를 찾아 부자가 되고, 거지가 된 부모를 위해 잔치를 열어 다시 만나며 그 자리에서 눈먼 부모가 눈을 뜬다. 복이 주어지는 것이 아니라 제 안에서 나온다는 말을 신화의 형식으로 한 것이고, 그래서 이 본풀이는 운명을 다루는 신 삼공의 내력이 된다. 굿판에서는 이 본을 풀어 나쁜 전상을 내보낸다.",
+   "function": [
+    "의례",
+    "운명 전환",
+    "전상 내보내기"
+   ],
+   "characters": [
+    "kr-gameunjang"
+   ],
+   "tales": [],
+   "sites": [
+    {
+     "name": "제주 큰굿 전승권",
+     "sido": "제주",
+     "lat": 33.4996,
+     "lng": 126.5312,
+     "precision": "sido",
+     "note": "큰굿에서 구송된다"
+    }
+   ],
+   "sources": [
+    {
+     "type": "field",
+     "title": "제주 삼공본풀이",
+     "ref": "큰굿 구송 자료"
+    },
+    {
+     "type": "encyclopedia",
+     "title": "한국민속대백과사전",
+     "ref": "삼공본풀이"
+    }
+   ],
+   "verification": "field_record",
+   "confidence": "high",
+   "related": [
+    "song-igong-bonpuri"
+   ],
+   "sensitivity": {
+    "kind": "living_faith",
+    "note": "지금도 큰굿에서 구송되는 무가다."
+   },
+   "updated_at": "2026-09-13"
+  },
+  {
+   "id": "song-samseung-bonpuri",
+   "title": "삼승할망본풀이",
+   "aliases": [
+    "생불할망 본풀이",
+    "명진국따님 본"
+   ],
+   "genre": "bonpuri",
+   "era": "구전 · 제주 큰굿",
+   "summary": "두 여신이 꽃 피우기로 겨루어 아이를 점지하는 자리를 정한다. 진 쪽은 저승에서 아이를 데려가는 신이 되었다.",
+   "original": null,
+   "original_script": "oral",
+   "reading_note": "산육(産育)을 비는 불도맞이 굿에서 구송된다. 이긴 신과 진 신이 함께 모셔진다는 점이 특이하다.",
+   "gloss": "동해용궁따님아기가 산육을 맡았으나 서툴러 산모를 상하게 하자, 명진국따님아기가 새로 내려온다. 둘이 꽃 피우기로 겨루어 명진국따님이 이겨 이승의 삼승할망이 되고, 진 동해용궁따님은 저승할망이 되어 아이를 데려가는 자리를 맡는다. 이긴 쪽만 모시는 것이 아니라 진 쪽도 함께 대접한다는 점이 이 본풀이의 핵심이다. 아이가 나는 일과 아이를 잃는 일이 서로 다른 신의 일이지만 같은 판에 있다는 뜻이고, 그래서 산육 굿에서는 삼승할망에게 빌면서 구삼승할망에게도 몫을 떼어 준다. 꽃 피우기로 겨룬다는 화소는 천지왕본풀이·창세가와 같은 계열이다.",
+   "function": [
+    "의례",
+    "산육 기원",
+    "달래기"
+   ],
+   "characters": [
+    "kr-samseung-halmang",
+    "kr-gu-samseung-halmang",
+    "kr-samsin"
+   ],
+   "tales": [],
+   "sites": [
+    {
+     "name": "제주 큰굿 전승권",
+     "sido": "제주",
+     "lat": 33.4996,
+     "lng": 126.5312,
+     "precision": "sido",
+     "note": "불도맞이 등 산육 관련 굿에서 구송된다"
+    }
+   ],
+   "sources": [
+    {
+     "type": "field",
+     "title": "제주 삼승할망본풀이",
+     "ref": "큰굿 구송 자료"
+    },
+    {
+     "type": "encyclopedia",
+     "title": "한국민속대백과사전",
+     "ref": "삼승할망본풀이"
+    }
+   ],
+   "verification": "field_record",
+   "confidence": "high",
+   "related": [
+    "song-cheonjiwang-bonpuri",
+    "song-igong-bonpuri"
+   ],
+   "sensitivity": {
+    "kind": "living_faith",
+    "note": "산육과 영아 사망을 다루는 무가다. 지금도 굿에서 구송된다."
+   },
+   "updated_at": "2026-09-13"
+  },
+  {
+   "id": "song-sangyeo",
+   "title": "상여소리",
+   "aliases": [
+    "만가",
+    "향두가",
+    "회다지소리"
+   ],
+   "genre": "minyo",
+   "era": "구전 · 전국",
+   "summary": "상여를 메고 가며 선소리꾼과 상여꾼이 주고받는 노래. 죽은 이가 산 사람에게 건네는 말로 부른다.",
+   "original": null,
+   "original_script": "oral",
+   "reading_note": "'어허 넘차 어허' 같은 후렴이 널리 쓰이나 사설은 마을과 선소리꾼마다 다르다. 정본이 없어 원문을 싣지 않는다.",
+   "gloss": "선소리꾼이 앞서 메기고 상여꾼들이 뒤를 받는다. 사설은 대개 죽은 이의 목소리로 되어 있어, 가는 사람이 남는 사람에게 잘 있으라고 말하는 형식을 띤다. 북망산천이 멀다더니 대문 밖이 북망이라는 구절처럼 죽음의 거리를 좁혀 말하는 대목이 많다. 무덤을 다지며 부르는 회다지소리로 이어지고, 그 사이에 상주를 웃기는 익살이 섞이기도 한다. 슬픔을 눌러 두지 않고 여럿이 소리 내어 나눠 지는 장치이며, 저승사자·무주고혼 같은 항목이 실제로 어떤 자리에서 이야기되었는지를 이 노래가 알려 준다.",
+   "function": [
+    "만가",
+    "천도",
+    "상례"
+   ],
+   "characters": [
+    "kr-jeoseung-saja",
+    "kr-mujugohon",
+    "kr-yeongsan"
+   ],
+   "tales": [],
+   "sites": [],
+   "sources": [
+    {
+     "type": "encyclopedia",
+     "title": "한국민속대백과사전",
+     "ref": "상여소리"
+    },
+    {
+     "type": "field",
+     "title": "한국구비문학대계",
+     "ref": "만가·회다지소리 채록(전국)"
+    }
+   ],
+   "verification": "field_record",
+   "confidence": "high",
+   "related": [
+    "song-bari",
+    "song-gongmudohaga"
+   ],
+   "sensitivity": {
+    "kind": "tragedy_linked",
+    "note": "실제 상례에서 부르는 노래다. 오락 소재로 각색하지 않는다."
+   },
+   "updated_at": "2026-09-13"
+  },
+  {
+   "id": "song-segyeong-bonpuri",
+   "title": "세경본풀이",
+   "aliases": [
+    "자청비 본풀이",
+    "농경 본"
+   ],
+   "genre": "bonpuri",
+   "era": "구전 · 제주 큰굿",
+   "summary": "제주 본풀이 가운데 가장 길다. 자청비가 하늘까지 올라가 시험을 이겨 내고 오곡 씨앗을 받아 내려온다.",
+   "original": null,
+   "original_script": "oral",
+   "reading_note": "제주 본풀이 중 분량이 가장 큰 축에 든다. 심방과 지역에 따라 삽화가 크게 늘거나 준다.",
+   "gloss": "자청비가 남장을 하고 글공부를 가 문도령과 삼 년을 함께 배우고, 헤어진 뒤 하늘로 불려 간 문도령을 찾아 온갖 시련을 뚫고 올라간다. 불붙은 칼날 위를 걷는 시험까지 이겨 내고 오곡 씨앗을 받아 지상으로 내려와, 자청비가 중세경, 문도령이 상세경, 정수남이 하세경이 되어 농사를 맡는다. 농경의 시작을 여자가 하늘에서 받아 온 것으로 놓는다는 점이 이 본풀이의 자리이며, 서사의 주도권이 처음부터 끝까지 자청비에게 있고 문도령은 기다려지는 쪽이다. 신격의 서열과 이야기의 주인공이 어긋나 있다.",
+   "function": [
+    "의례",
+    "농경 기원",
+    "풍농"
+   ],
+   "characters": [
+    "kr-jacheongbi",
+    "kr-mundoryeong"
+   ],
+   "tales": [],
+   "sites": [
+    {
+     "name": "제주 큰굿 전승권",
+     "sido": "제주",
+     "lat": 33.4996,
+     "lng": 126.5312,
+     "precision": "sido",
+     "note": "큰굿에서 구송되며 농사와 관련된 굿에서 특히 길게 풀린다"
+    }
+   ],
+   "sources": [
+    {
+     "type": "field",
+     "title": "제주 세경본풀이",
+     "ref": "큰굿 구송 자료"
+    },
+    {
+     "type": "encyclopedia",
+     "title": "한국민속대백과사전",
+     "ref": "세경본풀이"
+    }
+   ],
+   "verification": "field_record",
+   "confidence": "high",
+   "related": [
+    "song-samgong-bonpuri",
+    "song-songdang-bonpuri"
+   ],
+   "sensitivity": {
+    "kind": "living_faith",
+    "note": "지금도 큰굿에서 구송되는 무가다."
+   },
+   "updated_at": "2026-09-13"
+  },
+  {
+   "id": "song-seodongyo",
+   "title": "서동요",
+   "aliases": [
+    "薯童謠"
+   ],
+   "genre": "hyangga",
+   "era": "신라 진평왕대(6~7세기)",
+   "summary": "아이들에게 부르게 한 거짓 노래가 소문이 되고, 소문이 사실이 되어 공주를 얻는다.",
+   "original": "善化公主主隱\n他密只嫁良置古\n薯童房乙\n夜矣卯乙抱遣去如",
+   "original_script": "hyangchal",
+   "reading_note": "향찰 4구체. 마지막 구의 해독이 특히 갈리며, 그에 따라 노래의 노골적인 정도가 달라진다. 특정 해독안을 옮기지 않는다.",
+   "gloss": "선화공주님은 남몰래 정을 통해 두고, 서동방을 밤에 몰래 안고 간다. — 없는 일을 지어내 아이들에게 마를 주며 부르게 했고, 노래가 서울에 퍼져 공주가 궁에서 쫓겨나자 서동이 나타나 맞이한다. 거짓이 노래가 되고 노래가 소문이 되고 소문이 사실을 만드는 3단 구조라, 참요(讖謠)가 어떻게 작동하는지 보여 주는 표본으로 다뤄진다. 「구지가」가 위협으로 신을 움직였다면 이 노래는 소문으로 사람을 움직인다.",
+   "function": [
+    "참요",
+    "여론 조작"
+   ],
+   "characters": [],
+   "tales": [],
+   "sites": [],
+   "sources": [
+    {
+     "type": "classic",
+     "title": "삼국유사",
+     "ref": "기이 무왕"
+    },
+    {
+     "type": "encyclopedia",
+     "title": "한국민족문화대백과사전",
+     "ref": "서동요"
+    }
+   ],
+   "verification": "primary_text",
+   "confidence": "high",
+   "related": [
+    "song-mokja",
+    "song-guji"
+   ],
+   "updated_at": "2026-09-13",
+   "sensitivity": null
+  },
+  {
+   "id": "song-seongju-puri",
+   "title": "성주풀이",
+   "aliases": [
+    "성주굿 무가",
+    "황제풀이"
+   ],
+   "genre": "muga",
+   "era": "구전 · 20세기 채록",
+   "summary": "집을 지키는 성주신의 내력을 풀어 부르는 무가. 집을 짓는 과정 자체가 노래의 뼈대다.",
+   "original": null,
+   "original_script": "oral",
+   "reading_note": "지역마다 사설이 크게 다르고 부르는 무당마다 달라진다. 정본이 없으므로 원문을 싣지 않고 구조만 적는다.",
+   "gloss": "성주신이 어디서 태어나 어떤 시련을 겪고 어떻게 집의 신이 되었는지를 처음부터 끝까지 풀어 나간다. 솔씨를 심어 재목이 자라기까지, 나무를 베어 다듬고 기둥을 세우고 상량을 올리기까지의 과정이 그대로 노랫말이 되므로, 신의 내력을 읊는 일과 집을 짓는 일이 한 몸이다. 남부에서는 「성주풀이」가 굿을 떠나 민요로도 널리 불렸다. 새집에 들거나 집을 고친 뒤 성주를 새로 모실 때 부르며, 상량문을 써 붙이는 관습과 짝을 이룬다.",
+   "function": [
+    "의례",
+    "기원",
+    "가택 봉안"
+   ],
+   "characters": [
+    "kr-seongju",
+    "kr-teoju",
+    "kr-jisin"
+   ],
+   "tales": [],
+   "sites": [],
+   "sources": [
+    {
+     "type": "encyclopedia",
+     "title": "한국민속대백과사전",
+     "ref": "성주풀이"
+    },
+    {
+     "type": "field",
+     "title": "한국구비문학대계",
+     "ref": "성주굿 무가 채록"
+    }
+   ],
+   "verification": "field_record",
+   "confidence": "high",
+   "related": [
+    "song-jisin-balpgi"
+   ],
+   "sensitivity": {
+    "kind": "living_faith",
+    "note": "지금도 굿에서 구송되는 무가다."
+   },
+   "updated_at": "2026-09-13"
+  },
+  {
+   "id": "song-simcheongga",
+   "title": "심청가",
+   "aliases": [
+    "심청전",
+    "인당수"
+   ],
+   "genre": "pansori",
+   "era": "조선 후기 · 전승 다섯 마당",
+   "summary": "눈먼 아버지의 눈을 뜨게 하려고 딸이 뱃사람들에게 몸을 팔아 인당수에 뛰어들고, 용궁을 거쳐 연꽃으로 돌아온다.",
+   "original": null,
+   "original_script": "oral",
+   "reading_note": "유파마다 사설이 다르다. 정본이 없어 원문을 싣지 않는다.",
+   "gloss": "이 마당의 한복판에 인신공희가 있다. 뱃길의 안전을 위해 처녀를 사서 물에 빠뜨린다는 설정은 김녕사굴의 처녀 제물, 백일홍 전설의 이무기 제물과 같은 뿌리이며, 뱃사람들이 수부에게 고사를 지내던 관행이 서사가 된 것이다. 심청은 물에 빠져 죽지만 용궁에서 대접을 받고 연꽃에 실려 돌아온다 — 제물이 원귀가 되지 않고 신적 대우를 받는 드문 결말이다. 맹인 잔치에서 아버지가 눈을 뜨는 대목은 삼공본풀이에서 감은장아기가 눈먼 부모를 만나 눈뜨게 하는 장면과 뼈대가 같아, 제주 본풀이와 본토 판소리가 만나는 자리로 자주 함께 읽힌다.",
+   "function": [
+    "인신공희",
+    "효",
+    "서사"
+   ],
+   "characters": [
+    "kr-yongwang",
+    "kr-haeryong",
+    "kr-subu",
+    "kr-mulgwisin"
+   ],
+   "tales": [],
+   "sites": [],
+   "sources": [
+    {
+     "type": "heritage",
+     "title": "판소리",
+     "ref": "국가무형유산 · 유네스코 인류무형문화유산"
+    },
+    {
+     "type": "classic",
+     "title": "심청전",
+     "ref": "고전소설 이본군"
+    },
+    {
+     "type": "encyclopedia",
+     "title": "한국민속대백과사전",
+     "ref": "심청가"
+    }
+   ],
+   "verification": "primary_text",
+   "confidence": "high",
+   "related": [
+    "song-sugungga",
+    "song-samgong-bonpuri"
+   ],
+   "sensitivity": {
+    "kind": "tragedy_linked",
+    "note": "인신공희를 다룬다. 실제 제물 관행이 있었던 것처럼 단정해 옮기지 않는다."
+   },
+   "updated_at": "2026-09-13"
+  },
+  {
+   "id": "song-songdang-bonpuri",
+   "title": "송당본풀이",
+   "aliases": [
+    "소천국과 백주또",
+    "송당 본향당 본풀이"
+   ],
+   "genre": "bonpuri",
+   "era": "구전 · 제주 구좌읍 송당리",
+   "summary": "사냥으로 살던 소천국과 농사를 권한 백주또가 끝내 갈라선다. 제주 당신(堂神)들의 뿌리가 되는 본풀이다.",
+   "original": null,
+   "original_script": "oral",
+   "reading_note": "제주 각 마을 본향당 신들의 계보가 대체로 이 부부에게서 갈라져 나온다고 하여 '당신의 뿌리 본풀이'로 다뤄진다. 마을마다 이어지는 갈래가 다르다.",
+   "gloss": "사냥으로 살던 소천국에게 강남천자국에서 온 백주또가 시집와 농사를 권한다. 밭을 갈던 소가 배고픔에 소천국에게 잡아먹히고, 남의 소까지 먹은 일이 드러나자 백주또가 도둑질한 사람과는 못 산다며 살림을 가른다. 갈라선 뒤 백주또는 송당에, 소천국은 알송당에 좌정한다. 수렵과 농경이 부부의 불화로 갈라지는 이야기라, 제주에 농경이 들어오던 시기의 사정을 신화가 기억하는 방식으로 읽힌다. 두 사람 사이에서 난 아들 궤네깃또가 다시 자기 당을 얻으면서 제주 마을신들의 계보가 뻗어 나간다.",
+   "function": [
+    "의례",
+    "당신 계보",
+    "마을 좌정"
+   ],
+   "characters": [
+    "kr-baekjutto",
+    "kr-socheonguk",
+    "kr-gwenegitto"
+   ],
+   "tales": [
+    "tale-samseonghyeol"
+   ],
+   "sites": [
+    {
+     "name": "제주 송당 본향당",
+     "sido": "제주",
+     "sigungu": "제주시",
+     "lat": 33.4737,
+     "lng": 126.7548,
+     "precision": "dong",
+     "note": "구좌읍 송당리. 백주또를 모시는 본향당으로 제주 당신 계보의 중심으로 다뤄진다"
+    }
+   ],
+   "sources": [
+    {
+     "type": "field",
+     "title": "제주 송당본풀이",
+     "ref": "본향당 구송 자료"
+    },
+    {
+     "type": "encyclopedia",
+     "title": "한국민속대백과사전",
+     "ref": "송당본풀이"
+    }
+   ],
+   "verification": "field_record",
+   "confidence": "high",
+   "related": [
+    "song-gwenegit-bonpuri",
+    "song-segyeong-bonpuri"
+   ],
+   "sensitivity": {
+    "kind": "living_faith",
+    "note": "송당 본향당은 지금도 제를 올리는 당이다."
+   },
+   "updated_at": "2026-09-13"
+  },
+  {
+   "id": "song-sugungga",
+   "title": "수궁가",
+   "aliases": [
+    "토별가",
+    "토끼타령",
+    "별주부전"
+   ],
+   "genre": "pansori",
+   "era": "조선 후기 · 전승 다섯 마당",
+   "summary": "병든 용왕을 위해 자라가 뭍에 올라 토끼를 꾀어 오지만, 토끼가 간을 바위에 널고 왔다고 둘러대 빠져나간다.",
+   "original": null,
+   "original_script": "oral",
+   "reading_note": "소리꾼과 유파마다 사설이 다르고 신재효 정리본 등 여러 이본이 있다. 정본이 없어 원문을 싣지 않는다.",
+   "gloss": "수궁 대목에서 용왕과 신하들이 늘어서는 장면이 이 마당의 볼거리다. 도미·병어·꼴뚜기까지 벼슬 이름을 붙여 조정을 흉내 내는데, 그 자체가 조선 관료제에 대한 풍자로 읽힌다. 자라는 충신이지만 그 충성이 어리석게 쓰이고, 토끼는 비겁하지만 말로 살아남는다. 어느 쪽도 편들지 않는 결말이라 청중이 웃을 자리가 여럿이다. 이 마당 덕분에 용왕과 수부 같은 물 신격이 서민 서사 안으로 들어왔고, 이 도감의 별주부·용왕 항목이 그 통로로 남은 것이다.",
+   "function": [
+    "풍자",
+    "오락",
+    "서사"
+   ],
+   "characters": [
+    "kr-byeoljubu",
+    "kr-yongwang",
+    "kr-subu"
+   ],
+   "tales": [],
+   "sites": [],
+   "sources": [
+    {
+     "type": "heritage",
+     "title": "판소리",
+     "ref": "국가무형유산 · 유네스코 인류무형문화유산"
+    },
+    {
+     "type": "classic",
+     "title": "토끼전",
+     "ref": "고전소설 이본군"
+    },
+    {
+     "type": "encyclopedia",
+     "title": "한국민속대백과사전",
+     "ref": "수궁가"
+    }
+   ],
+   "verification": "primary_text",
+   "confidence": "high",
+   "related": [
+    "song-simcheongga",
+    "song-heungboga"
+   ],
+   "updated_at": "2026-09-13",
+   "sensitivity": null
+  },
+  {
+   "id": "song-woncheongang-bonpuri",
+   "title": "원천강본풀이",
+   "aliases": [
+    "오늘이 본풀이"
+   ],
+   "genre": "bonpuri",
+   "era": "구전 · 제주",
+   "summary": "제 이름도 부모도 모르는 아이가 원천강을 찾아가는 길에서, 만나는 이마다 자기 사정을 묻어 보낸다.",
+   "original": null,
+   "original_script": "oral",
+   "reading_note": "다른 본풀이에 비해 신을 모시는 제차와의 결합이 느슨해 이야기 자체로 전하는 성격이 강하다.",
+   "gloss": "들에서 홀로 자란 아이가 '오늘이'라는 이름을 얻고 부모가 있다는 원천강을 찾아 길을 떠난다. 가는 길에 글만 읽는 도령, 꽃이 한 가지만 피는 연꽃, 여의주를 셋이나 물었는데 승천하지 못하는 이무기, 물을 푸기만 하는 선녀를 차례로 만나고 저마다 제 사정을 풀어 달라 부탁한다. 원천강에 이르러 부모를 만나고 답을 얻어 돌아오는 길에 하나씩 일러 주니 모두 뜻을 이루고, 오늘이 자신은 원천강의 사철을 관장하는 신이 된다. 여정에서 만난 이들의 부탁이 곧 답이 되어 돌아온다는 구조라, 제주 본풀이 가운데 가장 짜임이 정갈하다.",
+   "function": [
+    "의례",
+    "여정",
+    "시간 관장"
+   ],
+   "characters": [
+    "kr-oneuri",
+    "kr-imugi",
+    "kr-seonnyeo"
+   ],
+   "tales": [],
+   "sites": [
+    {
+     "name": "제주 전승권",
+     "sido": "제주",
+     "lat": 33.4996,
+     "lng": 126.5312,
+     "precision": "sido",
+     "note": "제주에서 채록된 본풀이"
+    }
+   ],
+   "sources": [
+    {
+     "type": "field",
+     "title": "제주 원천강본풀이",
+     "ref": "구송 채록 자료"
+    },
+    {
+     "type": "encyclopedia",
+     "title": "한국민속대백과사전",
+     "ref": "원천강본풀이"
+    }
+   ],
+   "verification": "field_record",
+   "confidence": "high",
+   "related": [
+    "song-samgong-bonpuri"
+   ],
+   "updated_at": "2026-09-13",
+   "sensitivity": null
+  },
+  {
+   "id": "song-yeongdeung-gut",
+   "title": "영등굿 노래",
+   "aliases": [
+    "칠머리당영등굿",
+    "영등손맞이"
+   ],
+   "genre": "bonpuri",
+   "era": "구전 · 음력 2월",
+   "summary": "음력 이월에 왔다 가는 바람의 신 영등할망을 맞고 보내는 굿. 그 사이 바다에 씨를 뿌린다.",
+   "original": null,
+   "original_script": "oral",
+   "reading_note": "제주칠머리당영등굿은 국가무형유산이자 유네스코 인류무형문화유산이다. 영등환영제와 영등송별제로 나뉘어 열린다.",
+   "gloss": "음력 이월 초하루에 영등할망이 제주에 들어와 보름께 나간다. 그 사이 바다에 미역·소라·전복 씨를 뿌리고 간다고 하여, 해녀와 어부들이 굿을 열어 맞이하고 보낸다. 영등이 들어와 있는 동안에는 바다에 나가지 않고 빨래도 널지 않는다는 금기가 따른다. 신을 모셔 두고 비는 것이 아니라 왔다 가는 손님으로 맞아 대접해 보낸다는 점이 이 굿의 성격이며, 이 도감의 손님네·역병 계열이 역신을 '손님'으로 부르며 대접해 보내는 것과 같은 문법이다. 바람과 물때에 목숨이 걸린 섬에서 계절의 변화를 신의 방문으로 다룬 셈이다.",
+   "function": [
+    "의례",
+    "풍어 기원",
+    "송신"
+   ],
+   "characters": [
+    "kr-yeongdeung-halmang",
+    "kr-sonnim",
+    "kr-yongwang"
+   ],
+   "tales": [],
+   "sites": [
+    {
+     "name": "제주 칠머리당",
+     "sido": "제주",
+     "sigungu": "제주시",
+     "lat": 33.5185,
+     "lng": 126.5386,
+     "precision": "dong",
+     "note": "건입동. 제주칠머리당영등굿이 열리는 당"
+    }
+   ],
+   "sources": [
+    {
+     "type": "heritage",
+     "title": "제주칠머리당영등굿",
+     "ref": "국가무형유산 · 유네스코 인류무형문화유산"
+    },
+    {
+     "type": "encyclopedia",
+     "title": "한국민속대백과사전",
+     "ref": "영등굿"
+    }
+   ],
+   "verification": "public_encyclopedia",
+   "confidence": "high",
+   "related": [
+    "song-songdang-bonpuri",
+    "song-aengmagi"
+   ],
+   "sensitivity": {
+    "kind": "living_faith",
+    "note": "해마다 실제로 열리는 굿이다."
+   },
+   "updated_at": "2026-09-13"
+  }
+ ]
+}
