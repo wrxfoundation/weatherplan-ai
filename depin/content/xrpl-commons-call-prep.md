@@ -246,3 +246,42 @@ XRP 생태계에서 기업·기관 도입을 담당하는 곳이고,
 - **「세계은행 현역」** — 미확인(위 정정표). 넣으면 「자금 얘기 해봐」가 내려온다.
 - **리플 관련 일체** — 내부 카톡은 그대로 전달된다는 전제.
 - **구체 요청·기대치** — 「사례로 뽑힌다」를 약속처럼 쓰지 않았다. *들어가면* 생긴다로 조건절 유지.
+
+---
+
+## 8. 그의 직함 범위 — 파리 한정인가, 전체인가 (9/14 서우 질문)
+
+**지역 책임자가 아니다. 기능 총괄이다. 다만 조직 대표는 아니다.**
+
+### ① 「파리 조직」은 소재지이지 관할이 아니다
+
+XRPL Commons 는 **파리 소재 비영리 협회(association)** 다 — 글로벌 본부의 파리 지부가 아니라
+**조직 자체가 파리에 있다.** 지역 지부 구조가 없다. 파리에 상주 레지던시(Aquarium)를 운영한다.
+
+### ② 그의 직함에 지역 한정어가 없다
+
+- 본인 기술: *"orchestrate our efforts **across the full spectrum** of digital assets on the XRP Ledger"*
+- 임명 보도자료: *"she leads initiatives with financial institutions and Web3 industry players to
+  accelerate XRP Ledger adoption **across DeFi, tokenization, and payments**"*
+
+둘 다 **자른 축이 지역이 아니라 주제**다. → **우리 한국 건이 「그의 관할 밖」일 걱정은 없다.**
+
+### ③ 다만 조직 대표는 아니다
+
+**창업자 겸 President = David Bchiri.** 그 아래 기능별 디렉터가 몇 명 있는 구조다 —
+Strategic Initiatives Director(Melanie Damour) · Content Director(Cassie Hirsh) ·
+Technical Partner(Thomas Hussenet) · **Head of Digital Assets(Odelia)**.
+
+**내부 보고에서 「책임자」가 조직 대표로 오해되면 곤란하다** — 임원이 「그럼 대표를 만나야지」로
+간다. 표현은 **「디지털자산 총괄」** 로 고정한다. (David Bchiri 는 이미 수첩에 있고 NYC 해커톤
+공동 주최자다. 다만 XRPL 생태계 아웃바운드는 빌더 파이프라인 등록 뒤로 보류된 상태 — 9/10 결정.)
+
+### 실무 함의 둘
+
+- **조직이 작다는 게 좋은 소식이다.** 기능별 디렉터 몇 명짜리 협회라면 위원회를 거치지 않는다 —
+  **그가 「사례를 고른다」는 우리 판단이 더 맞다.** 반대로 **자원도 작다**: 자금·대규모 지원을
+  기대할 자리가 아니다. 얻는 것은 **무대와 레퍼런스**다.
+- **(추론) 아시아 실물 사례가 비어 있을 가능성.** 파리 레지던시·파리 행사 중심이라 유럽 편중이
+  자연스럽다. 확인된 사실은 아니므로 **통화에서 물어보되 우리가 단정해 말하지 않는다.**
+
+세 조직을 혼동하지 않는다: **리플(기업) ≠ XRPL 재단 XRPLF ≠ XRPL Commons(파리 비영리).**
