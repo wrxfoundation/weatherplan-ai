@@ -1754,3 +1754,104 @@ Familiar problem, unfamiliar clothes.
 있다). 2차를 보내면 그가 스레드를 위로 훑으면서 반드시 본다. **2차 발송 전에 1차를 한 번 더 편집해
 꼬리를 정리할 것.** 그래서 이 2차 초안은 `Good to be connected` 로 끝내지 않았다 — 깨진 줄을
 두 번 부르는 꼴이 된다.
+
+---
+
+## 링크드인 2차 DM — 재작성 (9/14, 서우 지시로 전면 교체)
+
+**지시**: 크립토·토큰을 앞세우지 말고 **① 세계 도시 날씨 데이터 공급 ② 그 정결성(integrity) 기술
+③ 수요처(대형거래소) 반응** 순으로. Emily·Lynn **동일 본문**.
+
+앞 절의 2차 DM 초안 2건은 **폐기**한다. 레인 자체가 바뀌었다 —
+앞 안은 Emily=결제레일 / Lynn=벤치마크로 갈라져 있었는데, 새 안은 **둘 다 "데이터 회사"** 다.
+
+### 우회 화법 완화 (어제 규칙의 수정)
+
+| | 어제 (9/14 낮) | 오늘 (9/14 밤, 서우 지시) |
+|---|---|---|
+| 상대 | 주어를 쓰지 않는다 | **업태까지 허용** — `a large trading venue` |
+| 이름 | 금지 | **금지 (유지)** |
+| 거래 사실 | 금지 | **금지 (유지)** — NDA·계약·수익배분·단계 일정 |
+
+⚠ Emily 는 거래소 소속이라 "어디냐"를 되물을 가능성이 높다. **답: "Not one I can name."** 한 줄로 닫고
+더 보태지 않는다. 되묻는 것 자체가 지렛대라 감수한다.
+
+### 「세계 최초」 처리
+
+서우 지시는 "정결성 기술을 세계 최초로 확보"다. **그대로 쓰지 않았다.**
+Lynn 판정 행에 이미 적어둔 이유가 그대로 적용된다 — 기관 상대는 회사 자료를 직업으로 읽는 쪽이라
+**근거 없는 최상급 한 단어가 나머지 문장의 신뢰까지 깎는다.** 어제 녹취 점검에서 "세계 최초이고
+유일"을 반복 금지 목록에 올린 것과도 충돌한다.
+
+- **채택(약)**: `As far as we can find, no one else has put those two together on weather data.`
+  → 1인칭 관찰이라 되물어도 방어된다. 뜻은 같다.
+- **대안(강)**: `We're the first to put those two together on weather data.`
+  → 서우가 고르면 사용. 단 **Lynn 쪽에는 권하지 않는다.**
+
+원칙: **최상급을 주장하지 말고 구조를 정확히 서술한다.** 「11개 소스 합의 + 입력값 원장 지문」이
+정말 드문 조합이면, 그 조합을 정확히 말하는 것 자체가 이미 주장이다.
+
+### 본문 (Emily·Lynn 공통 — 첫 줄·끝 줄만 다름)
+
+```
+EN (공통 본문)
+A fuller picture than my last note gave — I led with the wrong half.
+
+KWeather has measured weather in Seoul for 30 years: instruments, forecasting,
+and B2B data for 4,000+ enterprise clients. wellbian is the Singapore entity
+that runs the network, the sale and the token. Old company, new territory.
+
+What we actually supply is city-level weather across 90 countries and 167 cities.
+Our value for a city isn't one reading — it's a consensus across eleven
+independent sources, paid and free, with outliers screened out under a fixed
+method. Most providers publish a single observation point per city.
+
+On top of that, every input is fingerprinted to a public ledger before it enters
+the calculation, so the screening step can be audited after the fact rather than
+taken on trust. As far as we can find, no one else has put those two together on
+weather data.
+
+That turns out to matter most to trading venues. Settlement doesn't need the most
+accurate number — it needs a number nobody can dispute afterwards, and a single
+source structurally can't be that. The strongest pull so far has come from a
+large venue on that side, which is not where we expected it.
+
+The hardware is the other half: a KC-certified indoor air instrument — CO₂,
+PM2.5/PM10, TVOC, temperature, humidity — that people own and run in their own
+space, settled in RLUSD, with a device NFT and a genesis tier for first buyers.
+First sale is 15 Sept.
+```
+
+**첫 줄 / 끝 줄**
+
+| | 첫 줄 | 끝 줄 |
+|---|---|---|
+| Emily | `Emily — ` | `I'll keep you posted either way.` |
+| Lynn | `Lynn — ` | `Familiar problem, unfamiliar clothes.` |
+
+### 문장 설계
+
+- `I led with the wrong half` — **답이 없는 상대에게 두 번째 DM 을 보낼 명분.** 재촉이 아니라 정정이다.
+  1차에서 Emily 에겐 결제, Lynn 에겐 벤치마크로 갔는데 둘 다 절반이었다는 게 사실이기도 하다.
+- 순서가 전부다: **회사 → 데이터 → 정결성 → 수요 → 기기.** 기기가 맨 뒤인 이유는,
+  앞의 넷을 읽은 사람에게 기기는 「하드웨어 장사」가 아니라 **그 데이터의 공급원**으로 읽히기 때문이다.
+  기기를 먼저 말하면 순서가 뒤집혀 그냥 IoT 회사가 된다.
+- `runs the network, the sale and the token` — 토큰은 **한 구절로, 뒤에.** 크립토를 앞세우지 않는다는
+  지시와 발행 주체 명시(약관 공개 사항)를 동시에 만족시키는 자리다.
+- `Settlement doesn't need the most accurate number — it needs a number nobody can dispute afterwards`
+  — 이 한 문장이 콜에서 실제로 먹힌 것이고, 이후 모든 기관 대화의 재사용 단위다.
+- `which is not where we expected it` — 자랑이 아니라 발견으로 읽히게 한다. 자랑은 검증 대상이 되고
+  발견은 대화 소재가 된다.
+
+### 발송 전 확인
+
+⚠ **`90개국 167개 도시` · `11개 소스` 는 케이웨더 데이터 운영 방법 서술이다.** 대외 공개 가능 여부를
+본부장에게 확인한 뒤 발송. 막히면 `across dozens of countries` / `several independent sources` 로
+낮춰도 문장 구조는 그대로 선다(설득력만 내려간다).
+
+⚠ **기업 고객 수는 `4,000+` 로 고정했다** — 두 사람 모두 1차 메시지에서 이미 그 숫자를 받았다.
+콜에서 나간 "3,500 이상"과 어긋나지만, **한 상대에게 두 숫자를 말하는 것이 더 나쁘다.**
+전사 정본 확정은 별건으로 남는다.
+
+⚠ **Lynn 1차 메시지 말미가 깨져 있다**(`Good to be connected.e connected.onnected.`).
+2차 발송 전에 1차를 편집해 꼬리부터 정리할 것.
