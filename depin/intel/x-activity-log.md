@@ -2111,3 +2111,97 @@ More to show before long. Worth keeping half an eye on us.
 3. **WeatherXM 대목은 우리 해석으로 귀속** — "my reading of their public disclosures,
    not something they've said. Worth putting to them directly."
 4. 보도자료 일정은 어제 회의에서 **9/16 판매 종료 뒤** — 기자에게 준 날짜와 일치한다.
+
+---
+
+## 1차 판매 일반 구간 공지 — X · 텔레그램 (9/15 저녁~9/16 12:00 마감)
+
+사전예약자 우선(9/15 12:00~17:59:59)이 끝나고 **누구나 살 수 있는 구간**이다. 마감은 **9/16(수) 12:00 KST**.
+공지의 일은 설명이 아니라 **① 지금 열려 있다 ② 언제 닫힌다 ③ 사전예약 없어도 된다** 셋뿐이다.
+
+### ⚠ 기존 공지문에서 반드시 빼는 문구
+
+| 원문 | 왜 |
+|---|---|
+| **"기기 NFT당 **일별 일정한** 보상 토큰 제공 예정"** | **우리 금지 규칙 정면.** 「일정한 지급」은 수익 약속이다. 비보장 고지를 붙여도 앞 문장이 약속이면 고지가 무력하다 |
+| **"보상 토큰 20% 가산 혜택(예정)"** | 비보장 고지가 있어도 **수익 프레임을 세운다.** 텔레그램 상세에서도 뺐다 — 넣으려면 서우 판단 |
+| "코인" 류 표기 | **token** 으로 고정 |
+
+### X 국문 원글
+
+```
+판매가 열려 있습니다. 내일(9/16) 낮 12시에 닫힙니다.
+
+Weather Data Token Generator — 인증받은 실내 공기질 측정기입니다.
+집에 두고, 직접 운영하고, 측정값은 XRP Ledger에 기록됩니다.
+
+사전예약을 하지 않으셨어도 지금 바로 구매하실 수 있습니다.
+카드 또는 RLUSD.
+
+※ 보상 수량과 가치는 보장되지 않습니다.
+
+🔗 https://wellbian.io/?utm_source=x&utm_medium=owned&utm_campaign=sale1&utm_content=open_ko
+```
+
+### X 영문 원글 (280자 이내 · 22:00~23:00 KST)
+
+```
+The sale is open. It closes tomorrow, 16 Sept, 12:00 KST.
+
+A certified indoor air sensor you own and run in your own space. Every reading recorded to the XRP Ledger.
+
+No pre-registration needed — card or RLUSD.
+
+Rewards are planned, not guaranteed.
+
+🔗 https://wellbian.io/?utm_source=x&utm_medium=owned&utm_campaign=sale1&utm_content=open_en
+```
+
+### 텔레그램
+
+```
+⚡️ 1차 판매 진행 중 — 내일(9/16) 낮 12시 마감
+
+지금은 누구나 구매할 수 있는 일반 판매 구간입니다.
+사전예약을 하지 않으셨어도 바로 구매 가능합니다.
+
+🔗 https://wellbian.io
+
+━━━━━━━━━━━━━━━
+🔥 기기 NFT 라이선스
+
+750,000원 / 450 RLUSD
+(정상가 1,083,000원 · 650 RLUSD)
+
+결제: 카드·페이·체크(국내) 또는 RLUSD(해외·Web3 지갑)
+
+· 기기 1대당 NFT 1개 · 1인 최대 10개 · 양도 가능
+· Weather Data Token Generator™ 1대 포함 (출고 일정 별도 안내)
+
+━━━━━━━━━━━━━━━
+🎫 1차 구매자 한정 — 제네시스
+
+· 관측소 라이선스 '제네시스' 등급
+· 계정당 1개 · 양도 불가 · 재발행 없음
+· 이후 판매분에는 없습니다
+· 제네시스 넘버 영구 기록
+· 이후 판매·신규 서비스 우선권
+
+🎟 구매자 중 추첨 200명에게
+'XRP SEOUL 2026' 입장권 증정 (1인 1장)
+
+━━━━━━━━━━━━━━━
+⏰ 마감: 9월 16일(수) 낮 12시
+
+문의 support@wellbianlabs.io
+
+※ 보상은 예정 사항이며, 수량과 가치는 보장되지 않습니다.
+```
+
+### 운영
+
+- **국문·영문 분리 원글**(같은 글 안에 섞지 않는다) · 영문은 **22:00~23:00 KST**
+- 마감일은 **판매 종료일이라 2/일 예외 적용 가능** — 단 **6시간 이상 간격**
+- **`$WLBN` 캐시태그 금지** · 시세·수익 발화 0 · 「최대·1위」 0
+- 마감 임박(9/16 오전) 한 번 더 올릴 경우: **새 정보 없이 반복하지 않는다.** 남은 시간만 바꾸고
+  나머지는 줄인다 — 같은 글을 두 번 올리면 타임라인에서 광고가 된다.
