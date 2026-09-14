@@ -1794,33 +1794,42 @@ Lynn 판정 행에 이미 적어둔 이유가 그대로 적용된다 — 기관 
 ### 본문 (Emily·Lynn 공통 — 첫 줄·끝 줄만 다름)
 
 ```
-EN (공통 본문)
+EN (공통 본문 — v2 압축, 9/14)
 A fuller picture than my last note gave — I led with the wrong half.
 
-KWeather has measured weather in Seoul for 30 years: instruments, forecasting,
-and B2B data for 4,000+ enterprise clients. wellbian is the Singapore entity
-that runs the network, the sale and the token. Old company, new territory.
+KWeather has measured weather in Seoul for 30 years, supplying 4,000+ enterprise
+clients. wellbian is the Singapore entity running the network, the sale and the
+token. Old company, new territory.
 
-What we actually supply is city-level weather across 90 countries and 167 cities.
-Our value for a city isn't one reading — it's a consensus across eleven
-independent sources, paid and free, with outliers screened out under a fixed
-method. Most providers publish a single observation point per city.
+We supply city-level weather across 90 countries and 167 cities. A city's value
+isn't one reading — it's a consensus across eleven independent sources with
+outliers screened out. Most providers publish one observation point per city.
+And every input is fingerprinted to a public ledger before it enters the
+calculation, so the screening is auditable rather than trusted. As far as we can
+find, no one else has put those two together on weather data.
 
-On top of that, every input is fingerprinted to a public ledger before it enters
-the calculation, so the screening step can be audited after the fact rather than
-taken on trust. As far as we can find, no one else has put those two together on
-weather data.
+That matters most to trading venues. Settlement doesn't need the most accurate
+number — it needs one nobody can dispute afterwards, and a single source can't
+structurally be that. The strongest pull so far has come from a large venue on
+that side, which isn't where we expected it.
 
-That turns out to matter most to trading venues. Settlement doesn't need the most
-accurate number — it needs a number nobody can dispute afterwards, and a single
-source structurally can't be that. The strongest pull so far has come from a
-large venue on that side, which is not where we expected it.
-
-The hardware is the other half: a KC-certified indoor air instrument — CO₂,
-PM2.5/PM10, TVOC, temperature, humidity — that people own and run in their own
-space, settled in RLUSD, with a device NFT and a genesis tier for first buyers.
-First sale is 15 Sept.
+The other half is hardware — a certified indoor air sensor people own and run,
+settled in RLUSD, with a device NFT and a genesis tier for first buyers. First
+sale is 15 Sept.
 ```
+
+**v1 → v2 에서 자른 것** (약 230 → 185 단어)
+
+| 뺀 것 | 왜 |
+|---|---|
+| **KC 인증** | 국내 인증이라 두 사람 다 뜻을 모른다. 설명을 붙이면 문장이 더 늘어난다. `certified` 한 단어만 남겼다 |
+| 센서 항목 나열(CO₂·PM2.5/PM10·TVOC·온습도) | 이 대화의 판단에 쓰이지 않는 사양이다. 물으면 그때 준다 |
+| `instruments, forecasting, and B2B data` | `supplying 4,000+ enterprise clients` 하나로 충분하다 |
+| `paid and free` · `under a fixed method` | 합의 지수라는 말 안에 이미 들어 있다 |
+
+**남긴 것** — 「11개 소스 합의」 · 「도시당 1개 포인트」 대조 · 「원장 지문」 · 「정산은 정확한 값이
+아니라 시비 못 걸 값을 필요로 한다」 · `which isn't where we expected it`.
+이 다섯이 이 메시지가 존재하는 이유다. 나머지는 사양이다.
 
 **첫 줄 / 끝 줄**
 
