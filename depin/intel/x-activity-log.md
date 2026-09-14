@@ -1961,3 +1961,66 @@ easier. Either way — good piece.
   바이낸스 사람에게 경쟁 거래소 인맥을 대는 건 최악이다(Lynn 건에서 Katie 를 뺀 것과 같은 이유).
 - **대면 제안 없음** — UAE 라 KBW·XRP SEOUL·NYC 어느 일정과도 겹치지 않는다.
 - 토큰·보상·가격·판매 목표 0.
+
+---
+
+## Emile Anthony E. N. (Binance.US) — 판정: 1촌만, 메시지는 배송 뒤 (9/14)
+
+서우 제안은 「Lynn·Emily 처럼 컨택」. **결이 다르다는 것을 먼저 적는다.**
+
+### 왜 다른가 — 그의 「Partner」는 우리가 생각하는 파트너가 아니다
+
+경력이 **TaskUs · TELUS International · Ten Lifestyle** — 전부 **콜센터 워크포스 매니지먼트**다.
+현재 일도 *"vendor partnerships… supplier engagements… frontline, customer-facing teams"* —
+**고객지원 외주(BPO) 운영**이지 사업 제휴가 아니다. 소개문의 키워드도 forecasting · scheduling ·
+intraday · adherence · capacity planning 으로 전부 콜센터 인력 운영 용어다.
+
+그리고 **Binance.US 는 글로벌 Binance 와 별개 법인**이다(미국 규제 하 별도 회사).
+Emily·Max 와 같은 회사도 아니다.
+
+→ **지금 우리 레인(결제·데이터·KOL)과 접점 0.** 억지로 만들면 그게 티가 난다.
+
+### 그러나 미래 접점은 진짜다
+
+기기를 여러 나라에 팔기 시작하면 **다국어 CS · RMA(반품·교환) · 지원 인력 용량 설계**가
+반드시 터진다. 하드웨어를 파는 회사가 소프트웨어 회사보다 먼저 무너지는 지점이 여기다.
+그리고 **그걸 크립토 회사 안에서 해본 사람은 드물다.**
+
+→ **게이트 = 기기 배송·가동.** 그때 「해외 고객지원을 어떻게 짜야 하나」로 열면 그의 본업
+한가운데이고, 우리는 실제로 답이 필요한 상태다. **지금 여는 것보다 그때가 훨씬 세다.**
+
+### ⚠ 바이낸스 계열 세 번째 사람이다
+
+Emily(Binance) · Max(Binance) · Emile(Binance.US). 법인은 달라도 **밖에서는 같은 브랜드로 보인다.**
+셋에게 동시에 말을 걸면 **「바이낸스에 어떻게든 뚫으려 한다」**로 읽힌다.
+Max 건에서 세운 규칙(같은 회사 중복 접촉)의 연장이다.
+
+**권고: 1촌 요청만 보내고 메시지는 보류.** 연결 자체는 비용 0 이고, 수첩 원칙
+(「컨택이 모체」 · 「시간이 우리 편」)대로 **진행이 서면 같은 사람에게 다른 대화가 열린다.**
+
+### 그래도 지금 인사를 보낸다면 (요청 0 · Lynn 형식)
+
+```
+EN (인사만 — 수락 후)
+Emile — thanks for connecting.
+
+I run partnerships at wellbian. KWeather has measured weather in Seoul for 30
+years and supplies 4,000+ enterprise clients; wellbian is the sensor network built
+on that, and we start shipping hardware to buyers in several countries shortly.
+
+Which is why your background caught my eye rather than the usual reasons. Support
+capacity, vendor governance, multi-site workforce planning — that's the part of
+selling a physical product internationally that I suspect we'll get wrong first,
+and you've run it inside a crypto business.
+
+Nothing to ask today. Just wanted to say hello to someone whose problem we're
+about to inherit.
+```
+
+**설계**: ① `rather than the usual reasons` — **거래소라서 연락한 게 아니라는 선을 먼저 긋는다.**
+거래소 소속 사람은 「또 상장 얘기겠지」로 읽는 데 익숙하다. ② 그의 레인을 **정확한 용어로**
+되짚는다(support capacity · vendor governance · multi-site workforce) — 프로필을 실제로 읽었다는
+유일한 증거다. ③ `we'll get wrong first` — 우리가 모른다는 것을 먼저 인정한다.
+④ `someone whose problem we're about to inherit` — 요청 없이 **다음 대화의 예약**만 걸어 둔다.
+
+⚠ 상장·토큰·보상 0. 공통 1촌 **Katie 이름을 팔지 않는다**(Lynn 건과 같은 이유).

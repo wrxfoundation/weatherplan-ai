@@ -260,6 +260,12 @@ export const PEOPLE: Person[] = [
     next: "**수락되면 보낼 첫 메시지**(2촌이라 수락 전엔 DM 불가). 훅은 그의 1주 전 글 「From 0 to 1000+ Partners」. 우리 위치를 **곡선의 반대쪽 끝**(파트너 5명째)으로 놓고, 요청 없이 질문 하나만 남긴다. ⚠⚠ **Emily Yang 과 같은 회사다 — 메시지 레인이 겹치면 안 된다.** Emily=기업 파트너십(결제·데이터), Max=어필리에이트. 팀도 KPI도 다르지만 사내에서 얘기가 오가면 「여기저기 찔러본다」로 읽힌다. **서로를 언급하지 않고, 같은 제안을 양쪽에 하지 않는다.** ⚠ **유료 KOL 단가·커미션 숫자 발설 금지** — 구조만 묻고 우리 수치는 말하지 않는다(Karan 건 기밀). ⚠ **상장·리스팅 단어 0**(거래소 1촌 규칙). ⚠ **공통 1촌 Ken·Daria 이름을 팔지 않는다** — 특히 Daria 는 Bybit 소속이고 우리와 관계도 얕다. 바이낸스 사람에게 경쟁 거래소 인맥을 대는 건 최악이다(Lynn 건에서 Katie 를 뺀 것과 같은 이유). 대면 기회 없음(UAE — KBW·XRP SEOUL·NYC 어디와도 안 겹친다).",
   },
   {
+    id: "emile", gate: "ship", name: "Emile Anthony E. N.", org: "Binance.US", role: "Senior Manager, Partner & Workforce Performance",
+    lane: "exchange", stance: "linked", tie: "**1촌 요청 단계** · 미국 · 공통 1촌 Katie",
+    why: "⚠ **직함이 헷갈리는 자리다.** 그의 「Partner」는 사업 파트너십이 아니라 **벤더·BPO 파트너**(고객지원 외주 업체)다 — 경력이 TaskUs·TELUS 등 **콜센터 워크포스 매니지먼트** 일색이고, 현재 일도 vendor governance · capacity planning · frontline 지원팀 운영이다. **Binance.US 는 글로벌 Binance 와 별개 법인**이라 Emily·Max 와도 다른 회사다. 지금 우리 레인(결제·데이터·KOL)과 접점 0. **다만 미래 접점은 진짜다** — 기기를 여러 나라에 팔면 다국어 CS·RMA·지원 인력 설계가 반드시 터지고, 그걸 크립토 회사 안에서 해본 사람은 드물다.",
+    next: "**1촌은 맺되 메시지는 보류.** 보낼 내용이 없다 — 억지로 만들면 그게 티가 난다. **게이트 = 기기 배송·가동.** 그때 「해외 고객지원을 어떻게 짜야 하나」로 열면 그의 본업 한가운데다. ⚠ **바이낸스 계열 세 번째 사람이다**(Emily=Binance, Max=Binance, 본인=Binance.US). 법인은 달라도 밖에서는 같은 브랜드로 보인다 — **셋에게 동시에 말을 걸면 「바이낸스에 어떻게든 뚫으려 한다」로 읽힌다.** 서우가 지금 보내기로 하면 **인사만**(요청 0) — 초안은 x-activity-log.",
+  },
+  {
     id: "tina", gate: "saleend", name: "Tina Lee", org: "BYDFi", role: "BD",
     lane: "exchange", stance: "hold",
     why: "거래소 BD 카테고리 첫 사례.",
