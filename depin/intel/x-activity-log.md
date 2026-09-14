@@ -2084,26 +2084,24 @@ CoinDesk 전원 동일)인데 이미 넘었다. 다만 **방식은 규칙의 취
 대신 **새 수치를 하나도 얹지 않는다.** 위험이 커지지 않는 유일한 길이다.
 
 ```
-EN (발송안 — 가볍게, 요청 0)
-Thanks Brian.
+EN (발송안 v2 — 서우: "판매고 뭐고 그냥 가볍게")
+Thanks Brian — glad it landed.
 
-The sale closes 16 Sept — that's when there's an actual number instead of a
-thesis. I'll come back to you with it either way, good or bad.
-
-Nothing to chase until then. Worth half an eye, maybe.
+More to show before long. Worth keeping half an eye on us.
 ```
 
-**설계**
-- `an actual number instead of a thesis` — **지금까지 준 것이 논지였음을 인정**하면서, 다음에 줄 것은
-  사실이라고 예고한다. 기자에게 이 구분은 중요하다.
-- `either way, good or bad` — 정정 없이도 **신뢰 신호**를 남기는 압축판. 나쁜 결과도 주겠다는 말은
-  홍보하는 쪽이 하지 않는다.
-- `Nothing to chase until then` — **부담 0.** 새벽에 한 줄 보낸 사람에게 숙제를 주지 않는다.
-- `Worth half an eye, maybe` — 「관심 가져 달라」의 가장 가벼운 형태. 요청이 아니라 제안이다.
-- **날짜 하나만 남긴다(9/16).** 기자에게 날짜는 기억할 이유이고, 우리에게는 다시 말 걸 명분이다.
+**v1 에서 9/16 날짜까지 뺐다.** 서우 판단이 맞다 — **한 줄에는 한 줄로 받는 것이 대칭**이고,
+날짜를 걸면 그 날짜가 약속이 되어 **가벼운 인사가 아니라 일정 통보**가 된다.
+「Very interesting」 한 줄에 우리가 숙제를 얹을 이유가 없다.
 
-⚠ `first / exclusive` 류의 독점 뉘앙스는 쓰지 않았다 — CoinDesk·The Block 등이 같은 게이트에
-걸려 있어 **나중에 말이 갈린다.**
+**설계 (셋 다 한 단어씩만 한다)**
+- `glad it landed` — 「Very interesting」에 대한 **정확한 크기의 응답**. 감사가 과하지 않다.
+- `More to show before long` — **시점을 말하지 않는다.** 약속이 아니라 예고라 지킬 것이 없다.
+- `Worth keeping half an eye on us` — 「관심·기대 가져 달라」의 가장 가벼운 형태.
+  요청이 아니라 제안이다.
+
+**빠진 것이 곧 설계다**: 날짜 0 · 숫자 0 · 링크 0 · 요청 0 · 독점 뉘앙스 0.
+`first`·`exclusive` 류는 CoinDesk·The Block 이 같은 게이트에 걸려 있어 **나중에 말이 갈린다.**
 
 ### 그가 「쓰겠다」고 하면 그때의 체크리스트
 
