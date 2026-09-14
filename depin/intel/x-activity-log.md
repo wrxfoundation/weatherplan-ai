@@ -1831,12 +1831,35 @@ sale is 15 Sept.
 아니라 시비 못 걸 값을 필요로 한다」 · `which isn't where we expected it`.
 이 다섯이 이 메시지가 존재하는 이유다. 나머지는 사양이다.
 
-**첫 줄 / 끝 줄**
+**첫 줄 / 맺음말 — 여기만 다르다**
 
-| | 첫 줄 | 끝 줄 |
+앞 판까지 맺음말이 사실상 없었다. 읽고 나서 **「그래서 뭘 하라는 건가」** 로 끝나면
+좋은 본문도 아무 일도 일으키지 못한다. 그래서 **요청을 하나씩 붙인다 — 단 둘이 다르다.**
+줄 수 있는 것이 다르기 때문이다.
+
+```
+Emily (첫 줄: "Emily — ")
+Two things I could put in front of you — the overseas payment side of the sale,
+which is live now, and the data feed, which is the longer conversation. A
+one-pager on either, or 20 minutes next week; whichever is less work for you.
+```
+
+```
+Lynn (첫 줄: "Lynn — ")
+I'm not asking for your time. But if there's someone on the ICE data side who
+looks at climate or alternative data, I'd value the pointer — I'd send them the
+methodology, not a pitch.
+```
+
+**왜 요청이 다른가**
+
+| | Emily (Binance BD) | Lynn (NYSE 사장) |
 |---|---|---|
-| Emily | `Emily — ` | `I'll keep you posted either way.` |
-| Lynn | `Lynn — ` | `Familiar problem, unfamiliar clothes.` |
+| 요청 | **미팅 또는 자료** | **사람 한 명 짚어주기** |
+| 이유 | 파트너십 매니저의 본업이 이 대화다. 미팅 요청은 그의 KPI 와 같은 방향이다 | 그 자리의 사람에게 미팅을 청하면 **세상 물정 모르는 걸로 읽힌다.** 그에게 싸고 우리에게 비싼 것은 소개다 |
+| 설계 | 선택지 둘(결제·데이터) × 부담 둘(원페이저·20분) — **네 갈래 중 하나만 고르면 된다.** `whichever is less work` 로 마찰을 지운다 | `I'm not asking for your time` 를 **먼저** 둬서 방어를 내린 뒤 묻는다. `the methodology, not a pitch` 는 소개받은 사람의 시간도 안 버리겠다는 보증이다 |
+
+요청의 크기는 **상대가 거절해도 관계가 남는 선**까지다. 둘 다 거절이 한 단어로 가능하게 썼다.
 
 ### 문장 설계
 
