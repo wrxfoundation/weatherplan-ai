@@ -2046,3 +2046,67 @@ about to inherit.
 ④ `someone whose problem we're about to inherit` — 요청 없이 **다음 대화의 예약**만 걸어 둔다.
 
 ⚠ 상장·토큰·보상 0. 공통 1촌 **Katie 이름을 팔지 않는다**(Lynn 건과 같은 이유).
+
+---
+
+## Brian McGleenon (기자) — 「Very interesting」 뒤에 할 일 (9/14 02:21)
+
+서우가 콜드 DM 을 보냈고 **답이 왔다.** 미디어는 원래 **「10/3 무대 뒤」 게이트**(The Block·Blockworks·
+CoinDesk 전원 동일)인데 이미 넘었다. 다만 **방식은 규칙의 취지를 지켰다** —
+서우가 판 것은 계획이 아니라 **문제**였고, 마지막 한 줄이 전부다:
+
+> *"Whether that actually solves the problem or just moves it, I genuinely don't know yet."*
+
+**기자는 확신에 찬 홍보를 매일 받는다. 모른다고 말하는 쪽이 드물어서 답이 왔다.**
+
+### 판정 — 「Very interesting」은 예스가 아니다
+
+새벽 2시 21분, 한 줄. **폰에서 예의로 문을 열어 둔 것**이다. 여기서 밀면 닫힌다.
+지금 필요한 건 설득이 아니라 **그가 검증할 수 있는 것 하나**다.
+
+### ⚠⚠ 이미 나간 수치 셋 — 기자가 쓰기 전에 우리가 먼저 정정해야 한다
+
+| 나간 말 | 문제 |
+|---|---|
+| **"3,400 indoor air quality sensors"** | 3,400 은 어제 회의에서 **관측망·관측 지점** 수로 나왔고 **「보도 전 근거 확정」** 이 붙어 있다(`exec-meeting-0914` §5). **「실내 공기질 센서」로 성격을 바꿔 말했다.** 별도로 링크드인에는 「센서 약 3만」이 나가 있어 **3,400 / 30,000 이 한 회사 설명 안에서 충돌한다** |
+| **"go live across Korea this week"** | **시점을 못박았다.** 이번 주에 실제로 그렇게 되지 않으면 기자에게 한 거짓말이 된다. **기자는 이걸 검증한다** |
+| **"WeatherXM ... couldn't sell the data"** | 경쟁 프로젝트에 대한 **부정 단정**이다. 그가 인용하면 **우리가 출처**가 된다. 외부 집계·단정은 원출처 확인 전 인용 금지 규칙 대상 |
+
+**복구 경로는 하나뿐이다 — 그가 쓰기 전에 우리가 먼저 좁힌다.** 기자에게 자진 정정은 손해가 아니라
+**신뢰 자산**이다. 「이 사람은 나를 태우지 않겠구나」가 다음 취재의 근거가 된다.
+
+### 답장 초안 (짧게, 밀지 않는다)
+
+```
+EN
+Thanks Brian.
+
+Two things before they'd matter to you.
+
+The 3,400 figure is KWeather's own deployed base. I want to confirm the exact
+split and the go-live date before you'd quote it — I'll send the confirmed
+number rather than the one I had in my head at midnight.
+
+And the WeatherXM point is my reading of their public disclosures, not something
+they've said. Worth putting to them directly if you use it.
+
+The date that matters is 16 Sept: the first public sale closes, and it's the
+first time anyone can see whether people pay for a sensor whose data they don't
+keep. I'll send you what happened either way — including if it's a bad number.
+
+No need to reply.
+```
+
+**설계**
+- `before they'd matter to you` — 정정을 **그의 이익**으로 놓는다. 사과가 아니라 실무다.
+- `the one I had in my head at midnight` — 실수를 인간적으로 만들되 **변명하지 않는다.**
+- `not something they've said` — WeatherXM 단정을 **사실에서 내 해석으로** 내린다. 철회가 아니라 귀속 조정이라 논지는 살아 있다.
+- **`including if it's a bad number`** — 이 한 줄이 기자를 붙잡는다. **나쁜 결과도 주겠다는 약속은 홍보하는 쪽이 절대 안 하는 말**이고, 그래서 다음 연락이 열린다.
+- `No need to reply` — 부담 0. 새벽에 한 줄 보낸 사람에게 숙제를 주지 않는다.
+
+### 발송 전 필수
+
+1. ⚠ **매체 확인** — 어디에 쓰는 기자인지 모른 채 다음 자료를 주면 안 된다. 매체에 따라 줄 것이 다르다.
+2. ⚠ **3,400 의 실체 확인**(본부장) — 관측 지점인가 센서인가, 실내인가 전체인가, 언제 가동인가.
+   **9/16 전에 확정**해야 이 답장의 약속을 지킨다.
+3. 보도자료 일정은 어제 회의에서 **9/16 판매 종료 뒤**로 정해져 있다 — 기자에게 준 날짜와 일치한다.

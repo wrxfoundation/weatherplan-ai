@@ -431,6 +431,12 @@ export const PEOPLE: Person[] = [
 
   /* ── 보류·열지 않음 (미디어·사상가) ──────────────────────── */
   {
+    id: "mcgleenon", gate: "stage", name: "Brian McGleenon", org: "(매체 미확인 — 확인 필요)", role: "기자",
+    lane: "voice", stance: "talking", tie: "**콜드 DM → 답장 받음**(9/14 02:21 \"Very interesting Seowoo\") · 1촌 요청 발송",
+    why: "**미디어 게이트(10/3 무대 뒤)를 넘어섰지만 방식은 규칙의 취지를 지켰다.** 서우가 판 것은 계획이 아니라 **문제**였다 — WeatherXM 이 80개국에 깔고도 밀도가 안 나와 데이터를 못 팔았다 / 우리는 거꾸로 간다 / **그게 문제를 푸는 건지 옮기는 건지 나도 모르겠다.** 마지막 한 줄이 이 메시지의 전부다. 기자는 확신에 찬 홍보를 매일 받는다 — **모른다고 말하는 쪽이 드물어서 답이 왔다.**",
+    next: "**「Very interesting」은 예의이자 문을 열어 둔 것이지 예스가 아니다**(새벽 2시 21분 회신 = 폰에서 한 줄). 밀지 않는다. ⚠⚠ **이미 나간 수치를 우리가 먼저 정정해야 한다** — 초안·상세는 x-activity-log 「Brian McGleenon」. 다음 메시지 전에 **매체 확인 필수**(어디에 쓰는지에 따라 줄 것이 달라진다).",
+  },
+  {
     id: "cermak", gate: "stage", name: "Larry Cermak", org: "The Block", role: "President",
     lane: "voice", stance: "hold", meet: "KBW 9/29~10/1",
     why: "영문 리서치·미디어. 10/3 실물 시연 뒤에 커버리지 후보.",
