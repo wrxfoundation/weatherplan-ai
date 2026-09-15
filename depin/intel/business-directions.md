@@ -280,3 +280,44 @@ If any of it is of interest, just let me know.
   말했지만 **Asa 는 둘 다 필요한 자리**다(Advisor to CEO).
 - `you'd judge better than I would` — 공통 장치 유지.
 - 회사명·다른 플랫폼 언급 0 · 토큰·상장 0 · Ayazhan·Forrest 언급 0.
+
+## 9/15 추가 3인 — Chantal Bradford · Alexander Royle · Jones Leung
+
+| 인물 | 공개 경력 | 레인 |
+|---|---|---|
+| **Chantal Bradford** | **Coinbase Head of EMEA Markets Sales**(2026-02~, 기관 세일즈 — 크립토 현물·파생) · 그 전 **Deribit Head of BD & Institutional Sales EMEA**(2022-02~, Deribit 는 2025-08 코인베이스 피인수) · **LSEG CurveGlobal BD**(2020-02~2022-02, 금리 파생 벤처 — BoA·Barclays·BNP·Citi·Goldman 딜러 컨소시엄) · KRM22 BD · **FCA 공인 회계사** · UAE · 공통 1촌 Katie·Marco | 기관 파생 세일즈 |
+| **Alexander Royle** | **Binance Head of Market Supervision**(2026-07~, 아부다비) · **Cor Prime 공동창업 · Chief Regulatory Officer · MLRO**(2024-09~2026-06) · QCIC Advisory 창업 · **Galaxy 3년**(EMEA 컴플라이언스·규제 총괄 → 정부·규제 담당 → 국제 규제 자문) · **Montis Digital CCO**(2020-03~2022-01) · 팔로워 4,048 · 공통 1촌 Katie | **감시·규제** |
+| **Jones Leung** | **Binance Product Owner & Growth Lead**(2023-10~, 4년차) · **전 Crypto.com Associate PM**(2022-06~08, NFT 트레이딩 플랫폼) · UNSW 공학 · 호주 · 공통 1촌 Ken·Niki | 프로덕트·그로스 |
+
+### 판정 — **셋 다 1촌만. 지금 메시지 0.**
+
+**① 바이낸스가 여섯 명째다.** Emily · Max · Emile(US) · Hazel · **Jones · Alexander**.
+**「한 회사 동시 대화 2개 상한」**(playbook, 오늘 신설)에 정면으로 걸린다. 현재 Emily·Max 둘이
+열려 있고 **둘 다 답이 없다.** 셋째·넷째를 열면 **진행 중인 둘까지 싸구려가 된다.**
+
+**② Alexander 는 아깝지만 지금이 아니다.** **Edward(Kalshi Trade Surveillance)와 같은 레인이고
+훨씬 윗자리**다 — Galaxy EMEA 규제 총괄 3년 + Montis CCO + Cor Prime CRO/MLRO.
+**규제·감시 축에서 우리가 만날 수 있는 가장 높은 자리 중 하나**다. 그래서 더더욱 **아껴야 한다**:
+그에게 값진 대화는 **기기가 돌고 데이터가 팔린 뒤**이고, 지금 열면 계획을 파는 게 된다.
+(⚠ 참고: 9/14 녹취에 「비덱스 대표가 **Galaxy** 건으로 면담 요청」이 있었다. 접점 가능성은
+**추론일 뿐** — 확인 전에는 어느 쪽에도 말하지 않는다.)
+
+**③ Chantal 은 회사가 달라 상한에 안 걸린다**(Coinbase). 그리고 이력이 좋다 —
+**LSEG CurveGlobal(금리 파생 지수 상품) + FCA 공인 회계사 + 크립토 파생 기관 세일즈**.
+**Lynn Martin 과 같은 축(지수·레퍼런스)인데 훨씬 실무에 가깝다.** 다만 **거래소 소속**이라
+9/30 규칙(멀티체인·상장 신호 금지)이 걸리고, **지금 우리 데이터가 그의 상품에 닿는 지점이 없다.**
+→ **게이트 = 데이터 실적.** 그때 「파생 상품의 기초 지수」로 열면 정확히 그의 언어다.
+
+**④ Jones 는 접점이 약하다.** 프로덕트·그로스이고 Hazel 과 같은 급이다. 1촌만.
+
+### ★ 지금의 진짜 문제 — 컨택이 아니라 응답이다
+
+9/14~15 이틀 동안 컨택 후보가 **11명** 늘었다(Emily 2차·Lynn 2차·Max·Emile·Hazel·Ella·Brian·
+Edward·Ayazhan·Asa·Chantal·Alexander·Jones). **그중 답이 온 것은 Brian 하나다.**
+그리고 **Odelia 메일은 닷새째 안 나갔다** — 그가 먼저 시간을 청했고 우리가 보내겠다고 한 건이다.
+
+**수집은 자산이 아니다. 열린 대화가 자산이다.** 오늘 해야 할 순서:
+1. **Odelia 메일**(가장 오래 밀렸고, 상대가 먼저 청했다)
+2. **1차 판매 마감 공지**(9/16 12:00)
+3. Emily·Lynn 2차 발송
+4. 나머지는 **1촌만 걸어두고 판매 종료 뒤에 본다**
