@@ -89,3 +89,80 @@ MDA 미서명이다. **회사명도, 특정 가능한 업태 서술도 쓰지 �
 - **기업 고객 수가 자료마다 다르다 — 3,500 / 4,000 / 4,300.** 콜에서는 "국내 3,500개 이상"으로 나갔고
   링크드인 자료는 "4,000+"다. 대외 숫자가 두 개면 둘 다 신뢰를 잃는다. 정본 하나로 고정할 것.
 - OG.com 클라이메이트 카테고리 공백 · Interactive Brokers 컨택 — 우리가 먼저 말할 사안인지 판단 필요.
+---
+
+# MNDA 진행 + 체험 계정 공유 (2026-09-15)
+
+## 진행
+
+| 시각 | 무엇 |
+|---|---|
+| 9/14 18:38 | Vincent 가 MNDA 템플릿 송부 + 법인 4개 항목 요청. **「MNDA 실행 후 supporting documentation 공유」 · 회사 소개 덱 · data catalog 요청** |
+| 9/15 10:40 | 서우 회신 — Wellbian Labs Pte. Ltd. · 111 Somerset Road #06-01W (238164) · 서명자 김성환 · ceo@wellbianlabs.io |
+| 9/15 13:54 | Vincent: Legal 로 넘겨 **DocuSign 준비 중** |
+| 9/15 밤 | 서우, **weathermarket.ai 체험 계정 선공유** 결정 — MNDA 실행 전이지만 「기다리는 동안 볼 것」으로 |
+
+체험 계정 자격증명은 저장소에 두지 않는다.
+
+## 체험 계정을 먼저 주는 것의 값
+
+콜에서 합의한 순서는 **MDA → 테스트 계정 → 계약**이었다. MNDA 가 Legal 로 간 지금이 테스트 계정 차례이고,
+서명 전에 먼저 주는 것은 선의의 선행이라 관계에 플러스다. 더 큰 값은 **Vincent 가 요청한 data catalog 를
+사이트가 대신한다**는 것 — `City Catalog` · `Developer Docs` · `Anchored Snapshots` · `Technical Proof` 가
+이미 라이브다. 정식 문서가 없는 상태에서 「없습니다」 대신 「살아 있는 형태로 지금 보세요」가 된다.
+
+## ⚠ 발견 1 — MNDA 당사자와 데이터 계약 당사자가 다르다
+
+weathermarket.ai 는 푸터에서 스스로 이렇게 밝힌다:
+
+> Weather Data Market is the official Web3 weather oracle of **KWeather Co., Ltd.** …
+> **the provider of the data and the contracting party.** The platform is developed and operated
+> under delegation by **Wellbian Labs Pte. Ltd.** …, a separate company that is **not a party to your contract**.
+
+그런데 **지금 DocuSign 으로 나가는 MNDA 의 당사자는 Wellbian Labs Pte. Ltd.** 다.
+Vincent 가 실제로 사려는 것(도시 단위 합의 지수)의 계약 상대는 **KWeather** 인데, NDA 는 다른 법인과 맺는다.
+
+- 본계약 단계에서 「이 NDA 는 우리 거래 상대가 아닌 법인과 맺은 것」이 될 수 있다.
+- 미해결 항목 **「케이웨더 데이터를 웰비안 SG 가 제3자에게 제공할 법적 근거」** 가 바로 여기서 터진다.
+- **DocuSign 이 나가기 전이 고칠 수 있는 유일한 타이밍.** 선택지: ① 당사자를 KWeather 로 바꾼다
+  ② 양 법인 공동 당사자로 한다 ③ Wellbian Labs 로 두되 위임 범위를 소명할 문서를 준비한다.
+  법무 판단이 필요하다 — 우리 권한 밖이므로 올린다.
+
+## ⚠ 발견 2 — Vincent 가 받은 그림과 사이트의 그림이 다르다
+
+9/11 메일에서 우리가 준 프레임은 **「readings … anchored on mainnet」(XRPL)** 이었다.
+사이트에 들어가면 **BNB Chain 정산 · Flare 연산**이 보이고 wellbian 은 전면에 없다.
+**「XRPL 이라며?」가 나온다.** 메일에서 한 줄로 미리 갈라 둔다 — 레이어가 둘이다:
+
+| | wellbian 기기 네트워크 | Weather Data Market |
+|---|---|---|
+| 무엇 | 개인이 소유·운영하는 실내 공기 센서 | KWeather 의 도시 단위 합의 지수 상품 |
+| 기록 | 측정값 지문을 XRP Ledger 에 앵커 | 자체 레일(결제·정산) |
+| 소스 | 기기 자체 | 11개 소스 — KWeather 관측망은 그중 하나 |
+
+## ⚠ 발견 3 — 도박법 문구에서 멈출 수 있다
+
+사이트 푸터: *「Operating an activity that requires a licence under Korean gambling law without holding one
+is prohibited by the terms.」* 실제 뜻은 「한국법상 면허가 필요한 활동을 면허 없이 하지 마라」이지
+예측시장 일반 금지가 아니다. 다만 **Vincent 의 용도가 정확히 prediction-market settlement** 이라
+이 줄에서 멈춰 물어올 수 있다. 선제 해명은 하지 않는다(없던 문제를 만든다) — **물으면 답할 준비만** 해 둔다.
+
+## 메일에서 체인 이름을 쓰지 않는 이유
+
+Crypto.com 은 Cronos 생태계다. BNB Chain 은 이 사이트에서 **API 크레딧 결제 레일**일 뿐 전략적 체인 선택이
+아닌데, 메일에 굳이 적으면 「BNB 쪽 회사」로 각인된다. 사이트에 들어가면 보이는 것이므로 숨기는 것도 아니다.
+대신 **「purchases are real」** 은 반드시 쓴다 — 라이브 결제창을 예고 없이 만나게 하지 않는다.
+물으면 그때 평범하게 답한다.
+
+## 상태 고지를 먼저 하는 이유
+
+사이트가 스스로 *「Public beta … the Flare FCC attestation path is still on a testnet. Buy in small amounts」*
+라고 띄운다. **상대가 반드시 발견할 사실**이고 실거래가 걸린 B2B 상대라, 우리가 먼저 말하면 신뢰가 쌓이고
+나중에 발견되면 「왜 말 안 했나」가 된다. 9/14 Brian(기자) 건의 「선제 정정 금지」와 방향이 반대로 보이지만
+결이 다르다 — 그쪽은 **없던 문제를 만드는 정정**이었고, 이쪽은 **제품 상태 고지**다.
+
+## 이 메일 이후 남는 것
+
+- 회사 소개 덱 — MNDA 실행 후 전달 약속. **아직 없다**
+- 정식 data catalog — 사이트가 임시로 대신하지만 문서본은 여전히 없음
+- 법인 당사자 정리(발견 1) — DocuSign 전
