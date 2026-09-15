@@ -442,6 +442,43 @@ with context than as a link.
 신호가 된다. 그가 Head of Digital Assets 라 어차피 묻는다 — 그때는 맥락을 붙여 주거나,
 그 무렵 A·D·E 가 고쳐져 있으면 그냥 링크로 준다.
 
+### 9-3. 최종 — 「급하지 않다」로 귀결 (서우 지시 9/15 밤)
+
+서우: 「당장 급한 사안이 아니니 충분히 지금처럼 논의했으면 한다로 귀결하자」.
+Swell 문단을 `we're working on being there` 에서 끊고, 만남을 마감선으로 쓰지 않는다.
+
+**왜 이쪽이 낫나** — 그는 바쁘고 우리는 아직 그에게 아무것도 아니다. 「만나자」는 압박이고
+「급하지 않다」는 압박을 빼는 것이다. 그리고 **급하지 않다고 말하는 쪽이 오히려 진지해 보인다**
+— 팔려는 사람은 급하다. 서면으로 주고받으면 우리가 문장을 통제할 수 있다는 실익도 있다(즉흥 통화보다 안전).
+
+**⚠ 잘못 쓰면 「우리한테 중요하지 않다」로 읽힌다** — 그러면 그도 우선순위를 내린다.
+급한 것은 **일정**이지 **관심**이 아니라는 걸 갈라야 한다. 그리고 **그가 먼저 시간을 청한 쪽**
+(*「Looking forward to setting some time to further discuss」*)이라 문을 닫으면 두 번 미루는 셈이다.
+→ 「우리가 재촉하지 않겠다 + 당신이 원하면 언제든 우리가 맞추겠다」 형태로.
+
+```
+And Swell — we're working on being there, so our paths may cross anyway.
+
+Nothing here is urgent on our side, and I'd rather it didn't read that
+way. I'd sooner keep it going like this, at whatever pace suits you —
+a real conversation rather than a quick one. Whenever you'd like to put
+time in the calendar, just say and I'll work around you.
+```
+
+| 구절 | 하는 일 |
+|---|---|
+| `so our paths may cross anyway` | Swell 줄에 목적을 준다. 약속이 아니고 「그때 만나자」 압박도 없다 |
+| `I'd rather it didn't read that way` | 「급한 놈」으로 안 보이겠다는 **의도를 명시** — 이게 있어야 「관심 없다」가 아니라 「재촉 안 한다」로 읽힌다 |
+| `keep it going like this, at whatever pace suits you` | 서우 지시 그대로 — **지금처럼 계속 논의** |
+| `a real conversation rather than a quick one` | 급하지 않은 이유가 **무관심이 아니라 제대로 하려는 것**임을 가른다 |
+| `just say and I'll work around you` | 그가 먼저 청한 미팅을 **그의 손에 돌려준다**. 닫지 않는다 |
+
+### 서우 결정 — `/token` 링크 유지
+
+`/token` 의 A·D·E 위험을 한 번 올렸고(9-2), 서우가 링크를 그대로 둔 채 재확인했다. **서우 결정으로 진행.**
+판단 시점을 남겨 둔다 — A(「발행 권한 소각」)는 사실과 다른 상태이고, **Odelia 메일과 별개로 1차 판매가
+도는 중이라 구매자 중 XRPL 을 아는 사람에게도 똑같이 보인다.** 개발·법무 진행 상태 확인이 여전히 열려 있다.
+
 ### ⚠ 발신 주소 — 이번 건을 넘어서는 문제
 
 `support@wellbianlabs.io` 로 나간다. **세계은행·XRPL Commons 임원에게 고객지원 주소는 격이 안 맞는다.**
