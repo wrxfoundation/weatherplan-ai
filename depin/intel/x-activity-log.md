@@ -2560,3 +2560,56 @@ If any of it is of interest, just let me know.
 - **「정산 데이터를 판다」는 말 0** — `building around` 까지만.
 - 상장·토큰·보상·가격 0 · 공통 1촌 **Nicole 이름 팔지 않는다**(Lynn 건에서 Katie 를 뺀 것과 같다).
 - **John Wang 을 이 메시지에서 언급하지 않는다** — 「당신 윗사람도 알아봤다」로 읽힌다.
+
+---
+
+## Benjamin Albert (Water.org, Head of Corporate Partnerships) — 댓글 (9/15)
+
+서우 첫 DM(9/11)에 답 없음. 서우: *"dm 체크해달라 댓글 달아보자."*
+
+### ⚠ 답이 없는 이유는 안 봐서가 아닐 가능성이 크다
+
+서우 DM: *"there's a Korea/Asia weather-data partner role we could fill... Could I ask about
+your partner criteria?"* — ① **첫 메시지에 요청**이 있고(그가 하루에 수십 번 받는 질문)
+② **우리가 자리를 정해서 들어간다**는 프레임 ③ **AccuWeather 언급**이 맥락상 「그 자리를 대체하겠다」로
+읽힌다. **봤는데 답할 이유가 없었을 수 있다.**
+
+### 공개 댓글에서 DM 을 말하는 법
+
+**❌ 「DM 확인해주세요」** — 그게 스팸의 정확한 패턴이고, 팔로워 4,186명 앞에서 **우리가 무시당했다는
+걸 공개하는 것**이다. 캡처되고 회수가 안 된다.
+**✅ 형태를 뒤집는다** — 사실만 평서문으로, **괄호 안에, 가운데에.** 요청이 없으면 구걸이 아니다.
+
+### 확정 댓글 (그의 브라질 현장 방문 글에)
+
+```
+"Getting lost in big numbers is an occupational hazard" — that line lands hard
+from the measurement side too. I'm at KWeather in Seoul: 30 years measuring
+Korea's weather, and city-level data across 90 countries now. The honest part is
+that a number reaching someone is a completely separate problem from the number
+being right.
+
+(Sent you a note last week on the Korea and Asia side of Get Blue.)
+
+Stockholm to a project site in one week is probably the only cure.
+```
+
+**설계**
+- **그의 문장을 인용**한 것이 실제로 읽었다는 유일한 증거다.
+- `a number reaching someone is a completely separate problem from the number being right`
+  — **우리 일에서 나온 진짜 공명.** 그의 글 구조(이론 → 현장)와 같은 모양이라 억지가 아니다.
+- **DM 언급은 괄호 · 평서문 · 가운데.** 마지막에 두면 그게 목적으로 보인다.
+- 회사 소개는 한 줄(한국 30년 + 세계 90개국). 더 넣으면 댓글이 아니라 광고가 된다.
+- **링크 0 · 요청 0 · 우리 숫자 자랑 0**(그의 「95 million」도 인용하지 않았다).
+
+### 보류한 것
+
+- **RLUSD 댓글** — 확인 완료(리플이 Get Blue 의 독점 디지털자산·결제 파트너, RLUSD 로 신흥시장
+  대출 파트너에 시드 자금 이동, 2026-01 다보스 출범). **접점은 진짜다 — 우리도 RLUSD 로 결제받는다.**
+  다만 **이 글은 브라질 현장 방문기라 자리가 아니다.** Get Blue·RLUSD 글이 올라오면 그때.
+  ⚠ 같은 사람 글에 연달아 두 번 달지 않는다 — 한 번은 관심, 두 번은 따라다니는 것이다.
+- **맷 데이먼·Swell(10/27~29)** — **지금 쓰면 카드를 버린다.** 뉴욕행이 확정된 뒤
+  「그 주에 뉴욕에 있습니다」로 쓰면 **대면 제안**이 된다. 그리고 서우 뉴욕행은 아직 미확정이라
+  공개 글에 쓰면 못 지켰을 때 부채가 된다.
+- ⚠ **공개 댓글은 리플 사람들도 본다.** 위 문안에 「우리도 리플과 한다」로 읽힐 표현은 없다 —
+  **두 사실을 나란히 놓을 뿐**이라는 선을 지킨다.
