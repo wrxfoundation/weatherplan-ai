@@ -223,3 +223,60 @@ If any of it is of interest, just let me know.
 - `Whether that's actually a growth lever or just an easy story` — **Edward 안과 같은 장치**(서우가
   「동일 논조」로 원한 부분). 우리가 단정하지 않고 **그에게 판단을 돌린다.**
 - **회사명·다른 플랫폼 언급 0** · 토큰·보상·상장 0 · Daria 이름 0.
+
+### ★ 순서 정정 (9/15) — Asa L. 이 먼저다, Ayazhan 은 보류
+
+| 인물 | 공개 경력 |
+|---|---|
+| **Asa L.** | **Opinion Labs — Head of Marketing & Growth, Advisor to the CEO**(2023-09~현재, **시간제**, BVI·재택. 2023-09~2025-11 Growth Advisor to the CEO → 2025-11~ 현직) · **io.net Head of APAC**(2024-02~2025-11, 홍콩 — GPU 클라우드 APAC GTM 전략·운영) · **Maverick Crypto Research Partner**(2021-07~2024-02, $20M 토큰 펀드 junior co-founder & Research Lead) · RegentEdu 공동창업(중국 청두, 교육) |
+| **Forrest L.** | CEO & Co-founder · 홍콩 · 컬럼비아 · 전 **CMB International Investment Banking Associate**(2018-07~2022-03) · **3촌** · 팔로워 600 · 최근 게시물 없음 |
+
+**Asa 가 실질적으로 가장 중요하다.**
+- **`Advisor to the CEO` = CEO 로 가는 문이 이미 그에게 있다.** 우리 단계에서 CEO 콜드보다 실효적이다.
+  (Kalshi 에서 Wang→Edward 순서를 따진 것과 논리가 반대다. 거기서는 Wang 이 우리 레인의
+  결정자였고, 여기서는 **Asa 가 통로**다.)
+- **io.net Head of APAC** — **GPU 클라우드라는 인프라 상품을 팔아본 사람**이다. 우리 얘기를 알아듣고,
+  아무도 그의 이력에서 이 부분을 짚지 않는다.
+- ⚠ **시간제**다. 결정 속도가 느릴 수 있고 여러 일을 겸한다 — 재촉하지 않는다.
+
+**⚠ Ayazhan 은 보류한다.** 둘 다 Growth 이고 Ayazhan 은 **현재 소속 미확인**이라 **Asa 의 팀원일
+가능성**이 있다. **아랫사람과 윗사람에게 동시에 같은 얘기를 하지 않는다**
+(playbook 「한 회사 동시 대화 상한」의 취지). Asa 대화가 열리거나 닫힌 뒤 재판단.
+
+**Forrest(CEO)는 아직 이르다** — 3촌이고, 우리가 손에 든 게 아직 계획이다. Asa 를 통해 자연히 열린다.
+
+```
+EN (Asa — 수락 후 발송)
+Asa — thanks for connecting.
+
+I run partnerships at wellbian. KWeather has measured weather in South Korea for
+30 years and supplies 4,000+ enterprise clients; we build the measurement layer
+underneath, and city-level weather across 90 countries is where most of my time
+goes.
+
+Your io.net years are why I wanted to say hello. Selling infrastructure into a
+market that doesn't yet know it needs it is a specific kind of work, and it's the
+same shape of problem on our side.
+
+Here's the version I can't resolve on my own. Macro and geopolitics are the
+markets that work, and they're also the ones a user has to already care about
+before they can trade. Weather needs no explaining — but it only becomes a market
+if the settlement number is one nobody can dispute afterwards, and a single
+weather source structurally can't be that. Ours is a consensus across independent
+sources, fingerprinted to a public ledger before it enters the calculation.
+
+Whether that's a growth lever or just an easy story is something you'd judge
+better than I would.
+
+If any of it is of interest, just let me know.
+```
+
+**설계**
+- **`Your io.net years`** — 그의 이력에서 **우리와 가장 가까운 부분을 짚는다.** 대부분 Opinion Labs
+  직함만 보고 말을 건다. 앞 회사를 짚으면 프로필을 읽었다는 증거가 된다.
+- `Selling infrastructure into a market that doesn't yet know it needs it` — **그의 일을 규정해 주고
+  우리를 같은 처지에 놓는다.** 파는 쪽이 아니라 같은 일을 하는 쪽.
+- **그로스 훅 + 정산 훅을 한 단락에 묶었다** — Ayazhan 에게는 그로스만, Edward 에게는 정산만
+  말했지만 **Asa 는 둘 다 필요한 자리**다(Advisor to CEO).
+- `you'd judge better than I would` — 공통 장치 유지.
+- 회사명·다른 플랫폼 언급 0 · 토큰·상장 0 · Ayazhan·Forrest 언급 0.
