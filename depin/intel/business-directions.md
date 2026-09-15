@@ -154,3 +154,72 @@
 
 - 시세·홀더 정서 편승 · 쉴링 글 관여 · FAssets 인센티브(DeFi 유동성 — 성격 불일치)
 - 경품 이벤트(폐기 → 예비 10대 전환) · 협의 전 파트너십 자처
+
+## opinion.trade (Opinion Labs) — 조사 + 인물 (2026-09-15)
+
+서우: *"검색이 어렵네, 오피니언이라는 게 너무 대명사라."* → **회사명이 `Opinion Labs`, 서비스가
+`opinion.trade`** 다. 링크드인에서 「opinion」으로 찾지 말고 **`Opinion Labs`** 로 찾는다.
+
+| | |
+|---|---|
+| 회사 | **Opinion Labs** (서비스 opinion.trade) · 홍콩 · 2023 설립 |
+| 무엇 | **온체인 예측시장** — 매크로·CPI·지정학·프리TGE·컬처. 폴리마켓 계열(온체인 정산) |
+| 자금 | **$20M pre-Series A**(Hack VC · Jump Crypto 리드 / Primitive Ventures · Decasonic 참여), 누적 $25M |
+| 창업자 | **Forrest Liu** — CEO & Founder. 컬럼비아대, 전 CMB International Capital(기업금융·투자) |
+| 팀 | 창업 멤버가 퀀트 트레이딩·대규모 시스템. 일부 코어가 JPMorgan·McKinsey·Amazon 출신(회사 발표) |
+| 계획 | 엔지니어링 50% 증원 · 주요 체인 생태계와 통합 파트너십 |
+
+⚠ **「전 세계 예측시장 물량의 3분의 1을 취급한다」는 회사 자체 주장**이다. 원출처 확인 전 인용 금지.
+
+**우리 레인과의 관계** — 정산 판정 데이터를 필요로 하는 쪽이라 **Kalshi·Polymarket 과 같은 칸**이다.
+따라서 **게이트도 같다: 기기 가동 뒤.** 그리고 **이들 사이에서 서로의 이름을 흘리지 않는다** —
+Edward(Kalshi) 건에 세운 금지선이 여기에도 그대로 적용된다.
+
+### Ayazhan Y. — Growth (전 BitMEX·OKX·Binance)
+
+공개 경력: **BitMEX Senior Growth Marketing Manager**(2025-12~2026-08) · **OKX** Growth Manager
+(2025-04~11) / Integrated Marketing Specialist, CIS(2023-11~2025-04) · **Binance** Marketing &
+Community Specialist, CIS(2022-05~2023-04) · CUHK BBA Marketing(2023-07 졸업) · 홍콩 ·
+공통 1촌 Morty·**Daria**.
+
+⚠ **현재 소속이 경력란에 없다.** BitMEX 가 2026-08 종료이고 헤드라인에만 `Prediction Markets` 다.
+**opinion.trade 인지 확인되지 않았다 → 우리가 회사명을 먼저 말하지 않는다.**
+⚠ 공통 1촌 **Daria = Bybit CIS 마케팅 헤드**(수첩 hold). 같은 CIS 마케팅 축이라 아는 사이가
+자연스럽다. **이름 팔지 않는다.**
+
+**★ Edward 논조를 그대로 쓰면 안 된다.** Edward 안의 훅은 *"정산값이 다투어지면 당신에게 온다"* —
+**감시 담당의 고통**이다. 이 사람은 **그로스·마케팅**이라 정산 무결성이 그의 일이 아니다.
+말하면 **「왜 나한테?」**가 된다. **같은 산업이라도 자리가 다르면 다른 문장이다**(Emily·Max 에서
+이미 배운 것).
+
+**맞는 훅 = 유입 소재.** 그로스 담당의 실제 문제는 **「어떤 마켓이 신규 유저를 데려오는가」**이고,
+매크로·CPI·지정학은 **이미 관심 있는 사람만 거래한다.** 날씨는 설명이 필요 없다.
+
+```
+EN (수락 후 발송)
+Ayazhan — thanks for connecting.
+
+I run partnerships at wellbian. KWeather has measured weather in South Korea for
+30 years and supplies 4,000+ enterprise clients; we build the measurement layer
+underneath, and city-level weather across 90 countries is the part that keeps
+finding new homes.
+
+Your side of prediction markets is the one I find harder. Macro, CPI, geopolitics
+— they're the markets that work, and they're also the ones a new user has to
+already care about before they can trade. Weather doesn't need explaining. Everyone
+has an opinion about tomorrow, and almost nobody needs onboarding to form it.
+
+Whether that's actually a growth lever or just an easy story is something you'd
+know better than I would.
+
+If any of it is of interest, just let me know.
+```
+
+**설계**
+- `Your side of prediction markets is the one I find harder` — 그의 자리를 **어려운 쪽**으로 인정한다.
+  마케팅 담당은 보통 뒤로 밀리는 대접을 받는다.
+- `the ones a new user has to already care about before they can trade` — **그의 실제 병목.**
+  외부인이 이걸 정확히 말하면 관심이 간다.
+- `Whether that's actually a growth lever or just an easy story` — **Edward 안과 같은 장치**(서우가
+  「동일 논조」로 원한 부분). 우리가 단정하지 않고 **그에게 판단을 돌린다.**
+- **회사명·다른 플랫폼 언급 0** · 토큰·보상·상장 0 · Daria 이름 0.
