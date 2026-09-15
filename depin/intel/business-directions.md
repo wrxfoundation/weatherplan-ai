@@ -425,3 +425,58 @@ No rush on either. Just rare to find someone who's already run the second one.
 - `Just rare to find someone who's already run the second one` — 칭찬으로 닫되 요청은 남기지 않는다.
 
 ⚠ NFT·토큰·보상·판매·상장 단어 0 · 다른 플랫폼 언급 0 · Ayazhan·Forrest 언급 0.
+
+#### Asa L. v3 (확정) — GPU 제외, Lynn·Edward 형식
+
+서우: *"어설퍼서 gpu건은 빼고, 기상에서 우리가 솔루션을 가지고 있고 대형 레퍼런스 준비 중인 것만."*
+**맞는 판단이다** — io.net 을 판 사람에게 설익은 구상은 즉시 들킨다. v2 폐기.
+
+**「대형 레퍼런스」를 말하는 안전한 형태** — Opinion Labs 도 예측시장이라 **Edward(Kalshi) 금지선이
+그대로 걸린다.** 다만 **주체를 우리로 두면 넘지 않는다:**
+
+| 금지 | 허용 |
+|---|---|
+| `a large venue is pulling on this` — **누가 우리를 원하나**(상대 지목) | **`The first large reference deployment is what this quarter is about for us`** — **우리가 무엇을 하고 있나**(우리 우선순위) |
+
+⚠ 후자는 **계약을 주장하지 않는다.** MDA 서명 전이므로 「준비 중인 계약」이라고 쓰면 과장이다.
+**우리 분기 우선순위**까지만이 사실이고, GTM 하는 사람에게는 그걸로 충분히 읽힌다 —
+**인프라 판매에서 첫 레퍼런스가 전부라는 걸 그는 안다.**
+
+```
+EN (수락 후 발송 — v3 확정)
+Asa — thanks for connecting.
+
+I run partnerships at wellbian. KWeather has measured weather in South Korea for
+30 years and supplies 4,000+ enterprise clients; we build the measurement layer
+underneath, and city-level weather across 90 countries is where most of my time
+goes.
+
+Your io.net years are why I wanted to say hello. Selling infrastructure into a
+market that doesn't yet know it needs it is a specific kind of work, and it's the
+same shape of problem on our side.
+
+What we've actually built is a settlement-grade weather value. A city's number
+isn't one reading — it's a consensus across independent sources with outliers
+screened out, and every input is fingerprinted to a public ledger before it enters
+the calculation, so the screening can be audited rather than trusted.
+
+That distinction only matters in one place. Settlement doesn't need the most
+accurate number; it needs one nobody can dispute afterwards, and a single source
+structurally can't be that. The first large reference deployment is what this
+quarter is about for us.
+
+Whether that's useful to where you sit is something you'd judge better than I
+would. Either way, good to be connected.
+```
+
+**설계**
+- **`settlement-grade weather value`** — 「솔루션이 있다」를 한 마디로 압축. 서우 지시의 핵심.
+- `That distinction only matters in one place` — **우리 자랑이 아니라 적용 범위를 스스로 좁힌다.**
+  좁히는 사람이 더 믿긴다.
+- `The first large reference deployment is what this quarter is about for us`
+  — 상대 지목 0 · 계약 주장 0 · **우리 우선순위 서술.** 사실이고 과장이 아니다.
+- `you'd judge better than I would` — Edward·Ayazhan 과 공통 장치 유지.
+
+⚠ **GPU·컴퓨트·NFT·토큰·보상·판매·상장 0** · 다른 플랫폼 지목 0 · Ayazhan·Forrest 언급 0.
+⚠ **`90개국`은 본부장 확인 대기** — 막히면 `across dozens of countries`.
+  (`11개 소스`는 이 판에서 이미 빠져 있다 — `independent sources` 로만 썼다.)
