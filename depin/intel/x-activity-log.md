@@ -2337,3 +2337,149 @@ Genesis exists only in this sale.
 - 판매일이라 **2/일 예외 적용 가능** — 단 9/16 오전 마감 글은 **남은 시간만 바꾸고 나머지는 줄인다.**
   같은 글이 두 번 뜨면 타임라인에서 광고가 된다
 - `$WLBN` 캐시태그 0 · 시세·수익 발화 0 · 「최대·1위」 0
+
+---
+
+## 1차 판매 X 타래 (9/15) — 원글 대신 타래로
+
+서우: **"너무 생략된 게 많아서."** 맞다. 280자 원글에 담으면 **가격·제네시스·결제 수단이 전부
+빠지고**, 그건 구매 판단에 실제로 필요한 것들이다. **타래로 바꾼다 — 텔레그램 정보량 그대로.**
+
+**타래 원칙**: ① **1번 칸이 전부다**(나머지는 안 읽힐 수 있으니 열림·마감·링크를 1번에)
+② 한 칸에 한 가지만 ③ 링크는 **1번과 마지막에만**
+
+### 국문 타래
+
+```
+1/5
+1차 판매가 열렸습니다. 마감은 내일(9/16) 낮 12시입니다.
+
+Weather Data Token Generator — 인증받은 실내 공기질 측정기입니다.
+집에 두고, 직접 운영하고, 측정값은 XRP Ledger에 기록됩니다.
+
+사전예약자 먼저, 이후 누구나 구매 가능합니다.
+
+🔗 https://wellbian.io/?utm_source=x&utm_medium=owned&utm_campaign=sale1&utm_content=thread_ko
+```
+```
+2/5
+무엇을 재느냐면,
+
+CO₂ · 미세먼지(PM2.5/PM10) · 총휘발성유기화합물 · 온도 · 습도.
+
+일기예보는 현관 앞에서 멈춥니다. 우리는 하루의 대부분을 실내에서 보내는데, 그 공기는 거의 측정되지 않습니다.
+
+방 안의 공기에 값이 붙은 적이 없습니다. 아무도 재지 않았으니까요.
+```
+```
+3/5
+기기 NFT 라이선스
+
+750,000원 / 450 RLUSD
+(정상가 1,083,000원 · 650 RLUSD)
+
+· 기기 1대당 NFT 1개 · 1인 최대 10개 · 양도 가능
+· 실물 기기 1대 포함 (출고 일정 별도 안내)
+
+결제는 카드·페이·체크(국내) 또는 RLUSD(해외·Web3 지갑).
+```
+```
+4/5
+1차 구매자에게만 제네시스가 있습니다.
+
+· 관측소 라이선스 '제네시스' 등급
+· 계정당 1개 · 양도 불가 · 재발행 없음
+· 제네시스 넘버 영구 기록
+· 이후 판매·신규 서비스 우선권
+
+이후 판매분에는 없습니다.
+```
+```
+5/5
+구매자 중 추첨 200명에게 'XRP SEOUL 2026' 입장권을 드립니다. 1인 1장.
+
+1차 제네시스 한정판 마감
+9월 16일(수) 낮 12시
+
+문의 support@wellbianlabs.io
+
+※ 보상은 예정 사항이며 수량과 가치는 보장되지 않습니다.
+
+🔗 https://wellbian.io/?utm_source=x&utm_medium=owned&utm_campaign=sale1&utm_content=thread_ko
+```
+
+### 영문 타래 (22:00~23:00 KST)
+
+```
+1/5
+The first sale is open. It closes tomorrow, 16 Sept, 12:00 KST.
+
+Weather Data Token Generator — a certified indoor air sensor you own and run in your own space. Every reading recorded to the XRP Ledger.
+
+Pre-registered buyers first, then everyone.
+
+🔗 https://wellbian.io/?utm_source=x&utm_medium=owned&utm_campaign=sale1&utm_content=thread_en
+```
+```
+2/5
+What it measures:
+
+CO₂ · PM2.5/PM10 · TVOC · temperature · humidity.
+
+The forecast stops at your front door. We spend almost all day indoors, and that air is barely measured at all.
+
+Nobody had priced the air in a room, because nobody had measured it.
+```
+```
+3/5
+Device NFT licence
+
+450 RLUSD / KRW 750,000
+(list 650 RLUSD · KRW 1,083,000)
+
+· 1 NFT per device · up to 10 per person · transferable
+· Includes one physical device (shipping announced separately)
+
+Payment: RLUSD (international / Web3 wallet) or card·pay·debit (Korea).
+```
+```
+4/5
+Genesis exists only in this sale.
+
+· Station licence, Genesis tier
+· One per account · non-transferable · never reissued
+· Permanent Genesis number
+· Priority on future sales and new services
+
+Not included in any later sale.
+```
+```
+5/5
+200 buyers drawn for an 'XRP SEOUL 2026' ticket, one each.
+
+Genesis Edition first sale closes
+16 Sept (Wed), 12:00 noon KST
+
+support@wellbianlabs.io
+
+Rewards are planned. Amounts and value are not guaranteed.
+
+🔗 https://wellbian.io/?utm_source=x&utm_medium=owned&utm_campaign=sale1&utm_content=thread_en
+```
+
+### 칸 배치 이유
+
+| 칸 | 맡은 일 |
+|---|---|
+| 1 | **판단에 필요한 전부** — 열렸다 · 언제 닫힌다 · 무엇이다 · 링크. 여기서 끊겨도 성립해야 한다 |
+| 2 | **왜 사는가.** 사양 나열이 아니라 **빈자리**를 보여준다. 기존 시그니처 재사용(새로 쓰지 않았다) |
+| 3 | 가격·결제 — **원글에서 통째로 빠졌던 것** |
+| 4 | 제네시스 — **이번만 있다는 사실.** 「지금 사야 이득」으로 넘어가지 않는다 |
+| 5 | 마감·문의·고지. **비보장 고지는 마지막 칸에** — 인용·캡처가 가장 많이 걸리는 칸이다 |
+
+### 운영
+
+- **타래 1개 = 원글 1개**로 센다(1일 1원글 규칙). 국문·영문은 **분리 타래**, 6시간+ 간격
+- 판매일이라 2/일 예외 적용 가능 · 영문은 22:00~23:00 KST
+- 9/16 오전 마감 글은 **타래로 반복하지 않는다** — 짧은 원글 한 줄로 남은 시간만
+- `$WLBN` 캐시태그 0 · 시세·수익 발화 0
