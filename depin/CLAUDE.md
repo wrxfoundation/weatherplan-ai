@@ -18,6 +18,7 @@
 | 텔레그램 채널·톡방 공지 템플릿 | `intel/telegram-ops.md` | |
 | 생태계 사실 기록(원출처 확인분) | `intel/ecosystem-log.md` | 2차 자료면 표시 |
 | KOL·셀럽 사다리 | `intel/celeb-ladder.md` | |
+| 국내 텔레그램 채널 22곳(Catalyze 연결) 운영 표·발화 문안 | `intel/kol-channels.md` | **초대 링크는 저장소 금지** — 구글 시트에만 |
 | 런치 포스트·UTM 규칙·발급 목록 | `content/launch-post-0907.md` | utm_source = 채널명 소문자 |
 | 구 플랫폼(wlbn.wellbianlabs.io, 8/24) 팩트시트 | `intel/wlbn-platform.md` | 토큰·약관은 정본이 우선 |
 | 작업 일지(모든 판정·결정의 시간순 기록) | `reports/work-log.md` | 매 작업 끝에 한 항목 |
