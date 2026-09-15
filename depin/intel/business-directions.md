@@ -644,7 +644,7 @@ Bitget 경력 언급 0(거래소 신호 + 과거 직장 들먹이면 스토킹 �
 | 자리 | **OKX Product Director**(2025-05~, 1년 5개월) · 홍콩 · Growth product(activity products·localization growth) + trading experience product |
 | 이력 | **Temu** Country PM leader(2024-09~2025-05, 상하이, 유럽 GMV) · **TikTok** Senior Global PM(2021-09~2024-09, LA) · **Tencent** PM |
 | 레인 | exchange — **현직** |
-| 게이트 | **열지 않는다.** 아래 세 조건이 다 맞을 때까지 |
+| 게이트 | ~~열지 않는다~~ → **서우 결정(9/15): Lynn 형식 회사 소개까지 연다.** 소개는 제안이 아니라 「사업 메시지를 먼저 열지 않는다」에 걸리지 않고, Ayazhan 과 성격이 달라 비교 대상도 아니다. 문안·금지선은 `x-activity-log.md` 해당 절. 아래 세 조건은 **제안 단계**에 계속 적용 |
 
 **① 규칙이 정면으로 걸린다** — `CLAUDE.md` 핵심 금지: **「거래소 소속 1촌에는 인사만, 사업 메시지는
 먼저 열지 않는다」** + 「멀티체인·상장 신호 9/30 까지 금지」. 오늘 9/15.

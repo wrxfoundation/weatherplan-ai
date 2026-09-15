@@ -2657,3 +2657,64 @@ like this lands in your markets, I'd value hearing it.
 
 **A판을 권하는 이유** — 서우 의도가 「호감」이다. 청취 요청이 붙으면 아주 작더라도 **요청**이 되고,
 첫 인사에서 요청은 호감보다 먼저 읽힌다. **B판은 그가 답을 주면 그때 쓴다.**
+---
+
+## Morty Ma (OKX Product Director) — Lynn 형식 회사 소개 (9/15, 서우 결정)
+
+앞 판정은 **「보류 — 인사만」**이었다(현직 거래소 · Ayazhan 공통 1촌 · 9/30 게이트).
+**서우가 「Lynn 처럼 걍 우리 회사 소개」로 정했고, 그러면 두 우려가 실제로 해소된다.**
+
+| 우려 | 왜 해소되나 |
+|---|---|
+| 「사업 메시지를 먼저 열지 않는다」 | **소개는 사업 메시지가 아니다** — 제안 0·요청 0. 「우리가 무엇을 하고 있나」이지 「누가 우리를 원하나」가 아니다 |
+| Ayazhan 클러스터와 충돌 | **소개는 제안이 아니라 비교 대상이 아니다.** Ayazhan 에게 간 건 「유입 소재」 제안, Morty 에게 가는 건 소개 — 둘이 봐도 성격이 다르다. 오히려 소개만 하는 쪽이 「뭘 팔려는 게 아니구나」가 된다 |
+
+Edward 건과 같은 논리다: **인사는 사내 보고 대상이 아니다.**
+
+### 긴 판 — 데이터까지
+
+```
+Morty — thanks for connecting.
+
+I run partnerships at wellbian, and I'll keep this to an introduction rather
+than the usual reasons someone in your seat gets messaged.
+
+KWeather has measured weather in South Korea for thirty years — instruments,
+forecasting, and data for 4,000+ enterprise clients. wellbian is the network
+built on top of that: certified air-quality sensors that people own and run in
+their own rooms, with every reading fingerprinted to a public ledger before it
+goes anywhere. On the data side we supply city-level weather across 90 countries
+and 167 cities, where a city's value is a consensus across eleven independent
+sources rather than a single observation point.
+
+That's the whole message — nothing to ask. Good to be connected.
+```
+
+### 짧은 판 — 회사만
+
+```
+Morty — thanks for connecting.
+
+I run partnerships at wellbian, and this is just an introduction rather than
+the usual reasons someone in your seat gets messaged.
+
+KWeather has measured weather in South Korea for thirty years and supplies
+4,000+ enterprise clients. wellbian is the network built on top of it —
+air-quality sensors people own and run in their own rooms, every reading
+fingerprinted to a public ledger.
+
+That's the whole message. Nothing to ask.
+```
+
+### 거래소 자리라서 달라진 셋
+
+| | 처리 |
+|---|---|
+| `rather than the usual reasons someone in your seat gets messaged` | Edward 장치 차용인데 **거래소 자리에는 더 필요하다.** 그 자리는 모르는 DM 을 「또 뭘 팔겠지」로 읽는 게 기본값이라, **선을 먼저 긋지 않으면 뒷문장을 안 읽는다** |
+| **체인 이름 0 — `a public ledger`** | 종합 거래소 임원에게 「XRPL」은 정보가 아니라 **진영 신호**이고 곧바로 「XRP 프로젝트가 상장하러 왔구나」로 접힌다. **XRP SEOUL 스폰서도 같은 이유로 뺀다** — 소개에 필수가 아니다 |
+| `nothing to ask` 로 닫고 **그 뒤에 아무것도 붙이지 않는다** | Edward 정리표대로 `If any of it is of interest` 를 뒤에 붙이면 앞말과 모순. **거래소 자리에서는 요청이 없다는 걸 끝까지 지키는 쪽**이 값지다 |
+
+### 금지선
+
+토큰·상장·멀티체인·WLBN 0 · 판매·가격 0 · **「대형 수요처 반응」류 0**(그 자리에서는 곧 상장 수요
+암시다) · 다른 거래소·플랫폼 지목 0 · 공통 1촌(Ayazhan) 이름 0 · 도움 요청 0.
