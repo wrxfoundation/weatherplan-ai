@@ -2234,3 +2234,106 @@ support@wellbianlabs.io
 - **`$WLBN` 캐시태그 금지** · 시세·수익 발화 0 · 「최대·1위」 0
 - 마감 임박(9/16 오전) 한 번 더 올릴 경우: **새 정보 없이 반복하지 않는다.** 남은 시간만 바꾸고
   나머지는 줄인다 — 같은 글을 두 번 올리면 타임라인에서 광고가 된다.
+
+---
+
+## 1차 판매 개시 공지 v2 (9/15, 서우 확정본 기준) — 영문 텔레그램 + X 재편
+
+서우 확정본은 **일정 안내** 성격이다(사전예약자 먼저 → 일반 → 9/16 12:00 전체 마감).
+앞 판(일반 구간 공지)은 폐기하고 이쪽에 맞춘다.
+
+⚠ **링크 UTM 이 `prereg0907` 로 남아 있다** — 사전예약 캠페인 값이다.
+이 공지의 성과가 사전예약 집계에 섞이니 **`sale1` 로 바꾼다.**
+
+⚠ **확정본에서 보상 문구가 전부 빠졌다 — 잘한 선택이다.** 다만 「제네시스 등급」·「우선권」은
+구매자가 보상 기대로 읽는다. **한 줄 고지는 남기기를 권한다**(비용 0, 나중에 분쟁의 유일한 방패).
+
+### 텔레그램 — 영문 (국문 아래에 붙이거나 별도 발송)
+
+```
+⚡️ Weather Data Token Generator™ — First Sale (Genesis Edition)
+
+Pre-registered buyers can purchase from
+15 Sept (Tue), 12:00 noon KST.
+
+General buyers (no pre-registration) follow in order after that.
+
+The first sale closes in full on
+16 Sept (Wed), 12:00 noon KST.
+
+🔗 https://wellbian.io
+
+━━━━━━━━━━━━━━━
+🔥 Weather Data Token Generator™ NFT licence
+
+450 RLUSD / KRW 750,000
+(list 650 RLUSD · KRW 1,083,000)
+
+Payment: RLUSD (international / Web3 wallet)
+or card·pay·debit (Korea)
+
+· 1 NFT per device · up to 10 per person · transferable
+· Includes one physical device
+  (shipping announced separately)
+
+━━━━━━━━━━━━━━━
+🎫 First-sale buyers only — Genesis
+
+· Station licence, Genesis tier
+· One per account · non-transferable · never reissued
+· Not included in any later sale
+· Permanent Genesis number
+· Priority on future sales and new services
+
+🎟 200 buyers drawn for an
+'XRP SEOUL 2026' ticket (1 each)
+
+━━━━━━━━━━━━━━━
+Genesis Edition first sale closes
+16 Sept (Wed), 12:00 noon KST
+
+support@wellbianlabs.io
+```
+
+**국문과 다르게 한 것 하나** — **결제 수단 순서를 뒤집었다**(RLUSD 먼저). 영문 독자는 대부분
+해외이고, 국내 카드 얘기를 먼저 읽으면 「나는 대상이 아니구나」가 된다.
+
+### X 국문 원글
+
+텔레그램은 상세, **X 는 판단 하나**다. 정보를 나열하면 공지가 아니라 전단이 된다.
+
+```
+1차 판매가 오늘 정오 열립니다.
+
+사전예약자가 먼저, 이후 누구나.
+전체 마감은 내일(9/16) 낮 12시.
+
+Weather Data Token Generator™ — 인증받은 실내 공기질 측정기입니다.
+집에 두고, 직접 운영하고, 측정값은 XRP Ledger에 기록됩니다.
+
+제네시스는 이번 판매에만 있습니다.
+
+🔗 https://wellbian.io/?utm_source=x&utm_medium=owned&utm_campaign=sale1&utm_content=open_ko
+```
+
+`제네시스는 이번 판매에만 있습니다` — **희소성을 약속이 아니라 사실로만** 말한다.
+「지금 사야 이득」이 아니라 「이번에만 있다」까지. 그 선을 넘으면 수익 프레임이 된다.
+
+### X 영문 원글 (280자 이내 · 22:00~23:00 KST)
+
+```
+The first sale opens today at 12:00 KST. Pre-registered buyers first, then everyone. It closes tomorrow, 16 Sept, 12:00 KST.
+
+A certified indoor air sensor you own and run. Readings recorded to the XRP Ledger.
+
+Genesis exists only in this sale.
+
+🔗 https://wellbian.io/?utm_source=x&utm_medium=owned&utm_campaign=sale1&utm_content=open_en
+```
+
+### 운영
+
+- 국문·영문 **분리 원글** · 영문 22:00~23:00 KST · 6시간+ 간격
+- 판매일이라 **2/일 예외 적용 가능** — 단 9/16 오전 마감 글은 **남은 시간만 바꾸고 나머지는 줄인다.**
+  같은 글이 두 번 뜨면 타임라인에서 광고가 된다
+- `$WLBN` 캐시태그 0 · 시세·수익 발화 0 · 「최대·1위」 0
