@@ -2483,3 +2483,56 @@ Rewards are planned. Amounts and value are not guaranteed.
 - 판매일이라 2/일 예외 적용 가능 · 영문은 22:00~23:00 KST
 - 9/16 오전 마감 글은 **타래로 반복하지 않는다** — 짧은 원글 한 줄로 남은 시간만
 - `$WLBN` 캐시태그 0 · 시세·수익 발화 0
+
+---
+
+## Edward King (Kalshi) — Lynn 형식 인사 (9/15, 서우 결정)
+
+앞 판정은 **「1촌만, 메시지 없음」**이었다. 근거는 순서 — 같은 회사에 John Wang(Head of Crypto)이
+있고 그가 먼저 열릴 문이라는 것. **서우가 「Lynn 처럼 인사만」으로 정했고, 그러면 문제가 대부분
+해소된다: 인사는 사내 보고 대상이 아니다.** 제안이면 Wang 쪽이 「찔러봤던 곳」으로 시작되지만,
+인사는 그렇게 읽히지 않는다.
+
+### 접점 — 그의 자리를 정확히 짚는다
+
+**Surveillance 는 정산값을 사후에 떠안는 유일한 자리다.** 값이 다투어지면 그 부담이 데이터를
+가져온 쪽이 아니라 **그에게** 간다. 그리고 우리가 지은 것이 정확히 그 문제를 겨냥한다 —
+**계산에 들어가기 전에 원장에 지문을 남겨, 걸러내는 단계를 사후 감사 가능하게.**
+
+**그래서 파는 게 아니라 같은 문제를 보는 쪽으로 선다.** 이 자리 선택이 이 메시지의 전부다.
+
+```
+EN (수락 후 발송)
+Edward — thanks for connecting.
+
+I run partnerships at wellbian. KWeather has measured weather in South Korea for
+30 years and supplies 4,000+ enterprise clients; wellbian is the sensor network
+built on top of that, and the data side is where most of my time goes.
+
+Your background is why I wanted to say hello rather than the usual reasons.
+Surveillance is the only seat that has to live with a settlement value after the
+fact — if the number is disputed, it lands on you, not on whoever sourced it.
+That's the problem we've been building around: readings fingerprinted to a public
+ledger before they enter a calculation, so the screening step can be audited
+rather than trusted.
+
+Nothing to ask. Just rare to find someone who'd read that as a real problem
+rather than a feature list.
+```
+
+**설계**
+- `rather than the usual reasons` — 거래소 소속은 「또 뭘 팔겠지」로 읽는 데 익숙하다. **먼저 선을 긋는다.**
+- `the only seat that has to live with a settlement value after the fact` — 그의 자리를 **그의 용어로**
+  짚는다. 프로필을 실제로 읽었다는 유일한 증거다.
+- `it lands on you, not on whoever sourced it` — 공감이 아니라 **이해**다. 그가 매일 아는 사실을
+  외부인이 정확히 말하면 대화가 시작된다.
+- `the problem we've been building around` — **판매자가 아니라 같은 문제를 보는 쪽.**
+- 마지막 줄은 칭찬이자 문 — 요청 없이 관계만 남긴다.
+
+### 금지선 (이 건에서 가장 엄격하다)
+
+- **다른 거래소·플랫폼 언급 0.** Emily 에게 쓴 `a large venue` 도 **여기서는 금지**다 —
+  Kalshi 는 그 직접 경쟁사이고, 규제 거래소끼리는 업계가 좁다.
+- **「정산 데이터를 판다」는 말 0** — `building around` 까지만.
+- 상장·토큰·보상·가격 0 · 공통 1촌 **Nicole 이름 팔지 않는다**(Lynn 건에서 Katie 를 뺀 것과 같다).
+- **John Wang 을 이 메시지에서 언급하지 않는다** — 「당신 윗사람도 알아봤다」로 읽힌다.
