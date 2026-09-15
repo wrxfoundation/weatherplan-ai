@@ -480,3 +480,110 @@ would. Either way, good to be connected.
 ⚠ **GPU·컴퓨트·NFT·토큰·보상·판매·상장 0** · 다른 플랫폼 지목 0 · Ayazhan·Forrest 언급 0.
 ✅ **`90개국`·`11개 소스` 대외 사용 확정**(서우 확인 9/15 — 판정표 등재).
   (`11개 소스`는 이 판에서 이미 빠져 있다 — `independent sources` 로만 썼다.)
+
+## ★ 게이트 재판정 (9/15) — 사람이 아니라 논거에 건다
+
+서우: *"여긴 왜 우선순위가 아님."* **지적이 맞다. 내 게이트 배정에 오류가 있었다.**
+
+**「기기 가동 뒤」 게이트는 9/10 에 만들었고 전제는 「손에 든 게 전부 예정」이었다.**
+그 전제가 이미 바뀌었다 — 9/14 콜에서 **합의 지수 방법론이 실제로 먹혔고**,
+9/15 서우 확인으로 **90개국 167개 도시·11개 소스가 대외 사용 확정**됐다.
+**기기는 아직이지만 데이터와 방법론은 이미 돌아간다.** 그런데 게이트를 **사람 단위**로 걸어 두고
+갱신하지 않았다.
+
+**정정 ① — 게이트는 논거 단위다.**
+
+| 논거 | 게이트 |
+|---|---|
+| **기기가 논거** — DePIN 사례 · 하드웨어 · 커버리지 밀도 | **기기 가동 뒤** (유지) |
+| **방법론이 논거** — 합의 지수 · 검증 · 정산 · 지수 설계 | **지금 연다** — 이미 돌아가는 것이다 |
+
+→ **Alexander(감시) · Chantal(파생 지수) · Edward(정산) · Asa(GTM)는 전부 방법론 레인**이다.
+게이트가 잘못 걸려 있었다.
+
+**정정 ② — 「한 회사 동시 대화 2개 상한」은 *같은 제안*에만 적용한다.**
+규칙의 취지는 「같은 말을 여러 명에게 뿌리지 마라」였다. **Alexander 의 레인(Market Supervision)은
+Emily(기업 파트너십)·Max(어필리에이트)와 부서도 목적도 다르고, 바이낸스는 수천 명 회사다.**
+기계적으로 적용한 것이 틀렸다.
+
+**유지되는 보류** — Wilson·Jones·Hazel(레인 불일치가 실제 이유) · Ella(**투자 대화는 실적이
+필요하다** — 이건 게이트가 맞다).
+
+### Alexander Royle (Binance, Head of Market Supervision)
+
+Edward 와 같은 레인이지만 **한 층 위다.** 그는 감시 실무가 아니라 **규제 체계를 설계해 본 사람**이다
+— Galaxy EMEA 컴플라이언스·규제 총괄 3년, Montis Digital 에서 *"legislative and regulatory pathway
+to deliver the required novel market infrastructure"*, Cor Prime CRO/MLRO.
+**규칙 만드는 쪽과 데스크 쪽을 다 본 사람**이 흔하지 않다 — 그게 훅이다.
+
+```
+EN (수락 후 발송)
+Alexander — thanks for connecting.
+
+I run partnerships at wellbian. KWeather has measured weather in South Korea for
+30 years and supplies 4,000+ enterprise clients; we build the measurement layer
+underneath, and city-level weather across 90 countries and 167 cities is where
+most of my time goes.
+
+Your path is why I wanted to say hello — compliance and regulatory affairs at
+Galaxy, then building the pathway for novel market infrastructure at Montis, now
+supervision. Not many people have seen the same problem from the rulemaking side
+and the desk side.
+
+Here's ours. A city's weather value isn't one reading; it's a consensus across
+eleven independent sources with outliers screened out, and every input is
+fingerprinted to a public ledger before it enters the calculation — so the
+screening step can be audited after the fact rather than taken on trust. Most
+providers publish a single observation point per city.
+
+The question I can't answer myself is whether auditability of a non-financial
+reference input is something supervisors actually reach for, or whether the
+frameworks just aren't shaped that way yet. You'd know that far better than I
+would.
+
+Nothing to ask. Good to be connected.
+```
+
+**설계** — `from the rulemaking side and the desk side` 가 그의 경력 전체를 한 줄로 요약한다.
+마지막 질문은 **우리 자랑이 아니라 규제 현실을 묻는 것**이고, 그가 **직업적으로 답할 수 있는
+유일한 종류의 질문**이다.
+
+### Chantal Bradford (Coinbase, Head of EMEA Markets Sales)
+
+**훅은 Coinbase 가 아니라 CurveGlobal 이다.** 딜러 컨소시엄(BoA·Barclays·BNP·Citi·Goldman)과
+금리 파생 벤처를 세운 사람은 **「기초 참조값이 무엇인가」라는 논쟁을 이미 해봤다.**
+그게 지금 우리가 하는 논쟁이다. **아무도 그의 이력에서 이 부분을 짚지 않는다.**
+
+```
+EN (1촌 수락 후 발송)
+Chantal — thanks for connecting.
+
+I run partnerships at wellbian. KWeather has measured weather in South Korea for
+30 years and supplies 4,000+ enterprise clients; we build the measurement layer
+underneath, and city-level weather across 90 countries and 167 cities is where
+most of my time goes.
+
+CurveGlobal is why I wanted to say hello, rather than the usual reasons. Standing
+up a derivatives venture with a dealer consortium means you've already had the
+argument about what the underlying reference actually is — which is the argument
+we're having now.
+
+A city's weather value isn't one reading. It's a consensus across eleven
+independent sources with outliers screened out, and every input is fingerprinted
+to a public ledger before it enters the calculation, so the screening can be
+audited rather than trusted. Most providers publish a single observation point
+per city.
+
+Weather contracts exist, but from the outside the reference has always looked
+like the weak joint. Whether that's the binding constraint or just one of
+several is something you'd judge better than I would.
+
+Nothing to ask today. Good to be connected.
+```
+
+**설계** — `you've already had the argument about what the underlying reference actually is`
+이 한 줄이 전부다. ⚠ `the reference has always looked like the weak joint` 은 **단정이 아니라
+우리 관찰**로 낮췄다(`from the outside`) — 날씨 파생은 이미 존재하고 기상 당국 데이터로 정산된다.
+
+⚠ 둘 다: 다른 거래소·플랫폼 지목 0 · 토큰·보상·상장·판매 0 · 공통 1촌(Katie·Marco) 이름 0 ·
+거래소 소속이므로 **9/30 멀티체인·상장 신호 금지** 유지.
