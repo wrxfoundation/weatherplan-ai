@@ -478,5 +478,5 @@ would. Either way, good to be connected.
 - `you'd judge better than I would` — Edward·Ayazhan 과 공통 장치 유지.
 
 ⚠ **GPU·컴퓨트·NFT·토큰·보상·판매·상장 0** · 다른 플랫폼 지목 0 · Ayazhan·Forrest 언급 0.
-⚠ **`90개국`은 본부장 확인 대기** — 막히면 `across dozens of countries`.
+✅ **`90개국`·`11개 소스` 대외 사용 확정**(서우 확인 9/15 — 판정표 등재).
   (`11개 소스`는 이 판에서 이미 빠져 있다 — `independent sources` 로만 썼다.)

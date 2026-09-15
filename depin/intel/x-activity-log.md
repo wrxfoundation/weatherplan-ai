@@ -1743,7 +1743,7 @@ Familiar problem, unfamiliar clothes.
 한 번은 소개, 두 번은 주장이 된다.
 
 ⚠ `eleven independent sources` 는 케이웨더 데이터 운영 **방법 서술**이다. 대외 공개 가능 여부를
-본부장 확인 후 발송. 막히면 `a consensus across several independent sources` 로 바꿔도
+✅ **대외 사용 확정**(서우 확인 9/15). 참고로 낮춘 판은 `a consensus across several independent sources` 인데
 문장은 그대로 선다(설득력만 조금 내려간다).
 
 ⚠ `contributed-rate benchmark` 는 ICE Benchmark Administration 의 본업을 정확히 가리키는 용어다.
@@ -1864,7 +1864,7 @@ sale is 15 Sept.
 ### 발송 전 확인
 
 ⚠ **`90개국 167개 도시` · `11개 소스` 는 케이웨더 데이터 운영 방법 서술이다.** 대외 공개 가능 여부를
-본부장에게 확인한 뒤 발송. 막히면 `across dozens of countries` / `several independent sources` 로
+✅ **대외 사용 확정**(서우 확인 9/15). 참고로 낮춘 판은 `across dozens of countries` / `several independent sources` 인데
 낮춰도 문장 구조는 그대로 선다(설득력만 내려간다).
 
 ⚠ **기업 고객 수는 `4,000+` 로 고정했다** — 두 사람 모두 1차 메시지에서 이미 그 숫자를 받았다.
@@ -1954,7 +1954,7 @@ easier. Either way — good piece.
 - **상대는 여전히 이름이 없다** — `trading venues` 복수형으로만. 우회 화법 그대로.
 
 ⚠ **`eleven independent sources` 는 뺐다.** Max 에게는 그 디테일이 길이값을 못 하고,
-**본부장 확인 대기 항목이기도 하다 → 이 버전은 승인 없이 오늘 보낼 수 있다.**
+(9/15 대외 사용이 확정됐으므로 넣어도 되지만, **Max 에게는 여전히 길이값을 못 한다 — 빼 둔다.**)
 (`90개국` 도 같은 계열이라 막히면 `across dozens of countries` 로 바꾼다.)
 
 ⚠ 여전히 **토큰·보상·상장·커미션 숫자 0**. 우리가 파는 것은 기기이고 커미션도 기기에 붙는다.
@@ -2541,7 +2541,7 @@ If any of it is of interest, just let me know.
 ⓒ 틀려도 우리가 틀린 게 아니다. Brian 건에서 답장을 끌어낸 수법과 같다
 (*"I genuinely don't know yet"*).
 
-⚠ **`90개국 167개 도시`·`11개 소스` 는 여전히 본부장 확인 대기다.** 막히면
+✅ **`90개국 167개 도시`·`11개 소스` 대외 사용 확정**(서우 확인 9/15). 낮춘 판은
 `across dozens of countries` / `several independent sources` 로 낮춘다 — 문장 구조는 그대로 선다.
 
 **설계**
