@@ -365,3 +365,63 @@ Chantal 보다 **우리에게 가까운 점 셋** — ⓐ **APAC**(Chantal 은 E
 
 **1촌 자체는 비용 0이다** — ②는 **맺되 말을 걸지 않는 것**이지 버리는 게 아니다.
 수첩 원칙 그대로: **진행이 서면 같은 사람에게 다른 대화가 열린다.**
+
+### Asa L. 메시지 v2 (9/15 서우 지시) — 정산 논조 + 컴퓨트 방향 결합
+
+서우: *"edward 주요 논조랑 ai datacenter gpu 노드까지 만들 거란 얘기도 곁들여줘."*
+
+⚠ **GPU·AI 팩토리는 9/14 회의에서 「구상 — 대외 발화 금지」로 기록한 항목**이다
+(`exec-meeting-0914.md` §2: 원가에 5년치 토큰 지급분이 비용으로 들어가 보상 비보장 원칙과
+충돌 지점이 있고, 출시 시점도 미정). **서우 지시로 열되 선을 긋는다:**
+
+| 쓰지 않는다 | 쓴다 |
+|---|---|
+| 「AI 팩토리 NFT 를 출시한다」 · 「GPU 노드를 판다」 · 시점 · 가격 · 분할 소유 | **`compute is the obvious second`** — 방향 서술. 상품도 일정도 약속하지 않는다 |
+
+**★ 그리고 자랑이 아니라 질문으로 놓는다.** 그는 **io.net Head of APAC** 이었다 — 분산 GPU 클라우드를
+**실제로 판 사람**이다. 그런 사람에게 설익은 구상을 자랑하면 **「그래서 어디에 두고 누가 쓰나」가
+즉시 온다.** 반대로 **묻는 형태로 놓으면**: ⓐ 설익은 게 들켜도 손해가 없고(우리가 모른다고 이미
+말했다) ⓑ **그가 답할 이유가 생기고** ⓒ 그건 실제로 우리가 알아야 할 것이다.
+
+```
+EN (수락 후 발송 — v2)
+Asa — thanks for connecting.
+
+I run partnerships at wellbian. KWeather has measured weather in South Korea for
+30 years and supplies 4,000+ enterprise clients; we build the measurement layer
+underneath, and city-level weather across 90 countries is where most of my time
+goes.
+
+Your io.net years are why I wanted to say hello. Selling infrastructure into a
+market that doesn't yet know it needs it is a specific kind of work, and it's the
+same shape of problem on our side.
+
+Two things I can't resolve on my own.
+
+The first is settlement. Macro and geopolitics are the markets that work, and
+they're also the ones a user has to already care about before they can trade.
+Weather needs no explaining — but it only becomes a market if there's a number
+nobody can dispute afterwards, and a single weather source structurally can't be
+that. Ours is a consensus across independent sources, fingerprinted to a public
+ledger before it enters the calculation.
+
+The second is further out. A measurement node is the first thing people own on
+our network; compute is the obvious second, and that's exactly where you've
+already been. What broke first at io.net — utilisation, demand matching,
+something else? I'd rather hear it from you than find it out ourselves.
+
+No rush on either. Just rare to find someone who's already run the second one.
+```
+
+**설계**
+- **두 축을 「내가 풀지 못하는 것 둘」로 묶었다.** 자랑 두 개가 아니라 **질문 두 개**가 된다.
+- `there's a number nobody can dispute afterwards` — Edward 논조의 핵심 문장. Asa 는
+  Advisor to CEO 라 이 각도가 필요하다.
+- **`compute is the obvious second`** — 방향까지만. **`obvious`** 가 겸손 장치다
+  (우리가 대단한 걸 발견한 게 아니라 당연한 순서라는 뜻).
+- **`What broke first at io.net — utilisation, demand matching, something else?`**
+  — 이 한 줄이 메시지의 심장이다. **그가 아는 것을 묻고, 우리가 모른다는 걸 인정한다.**
+  분산 GPU 의 실제 난점(활용률·수요 매칭·대역폭·냉각)을 아는 사람에게 던지는 정확한 질문.
+- `Just rare to find someone who's already run the second one` — 칭찬으로 닫되 요청은 남기지 않는다.
+
+⚠ NFT·토큰·보상·판매·상장 단어 0 · 다른 플랫폼 언급 0 · Ayazhan·Forrest 언급 0.
