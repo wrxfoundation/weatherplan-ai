@@ -587,3 +587,51 @@ Nothing to ask today. Good to be connected.
 
 ⚠ 둘 다: 다른 거래소·플랫폼 지목 0 · 토큰·보상·상장·판매 0 · 공통 1촌(Katie·Marco) 이름 0 ·
 거래소 소속이므로 **9/30 멀티체인·상장 신호 금지** 유지.
+---
+
+## Boonyavee (Ply) Phlayphan — Tether, Thailand/Indochina Country Manager (9/15, 1촌 수락)
+
+| | |
+|---|---|
+| 자리 | **Tether.io** · Thailand/Indochina Country Manager (Expansion – APAC), 2023.8~ (3년 2개월). 태국·라오스·캄보디아·미얀마 + 일부 APAC |
+| 이력 | Relatance Regional Manager PR/Marketing (SEA) · **Bitget** Marketing Manager(싱가포르) · S N L Cooperate EA to CMO(두바이) · VISION THAI Marketing Comms(방콕) |
+| 학력 | Mahidol University International College — Hospitality Administration |
+| 강점(본인 기재) | Negotiation · Strategic Partnerships · Partnership Marketing · Business Strategy · Partner Relationship Management |
+| 거주 | 방콕 · 공통 1촌 2명 |
+| 레인 | **pay**(스테이블코인 발행사) — 거래소 아님. 다만 직전 이력이 Bitget |
+| 게이트 | **지금 연다** — 논거가 기기가 아니라 **지역 문제**라서(게이트는 논거 단위) |
+
+### ⚠ 이 상대의 특수성 — 통화 진영
+
+| | 우리 | 그쪽 |
+|---|---|---|
+| wellbian 기기 판매 | **RLUSD** | — |
+| Weather Data Market | **USDT (BEP-20)** | **USDT 발행사** |
+
+**RLUSD 는 USDT 의 직접 경쟁 통화다.** 「예측시장·거래소 상대에게 다른 플랫폼 지목 0」과 같은 원리로
+**테더 상대에게 RLUSD 를 먼저 꺼내지 않는다.** 숨기는 것이 아니라 순서 — wellbian.io 에 들어가면
+바로 보이고, 물으면 「XRPL 위에서 시작했고 결제 수단은 확장 중」으로 답한다.
+
+**USDT 를 카드로 쓰지도 않는다.** weathermarket.ai 가 USDT 결제인 것은 사실이지만,
+테더 입장에서 **USDT 쓰는 회사는 수십만 개**라 아무 임팩트가 없다. 게다가 그 사이트는 아직
+public beta(FCC 테스트넷)라 내밀 상태가 아니다. 첫 인사에서는 **체인·통화 이름을 쓰지 않고
+`recorded on-chain` 으로만** 둔다 — 첫 접촉에서 체인 이름은 정보가 아니라 **진영 신호**다.
+XRP SEOUL 스폰서도 같은 이유로 뺀다(그는 10/3 과 무관하다).
+
+### 진짜 카드 — 그의 시장에서 공기질은 뉴스거리다
+
+그의 KPI 는 **그 지역의 USDT 채택**이고, 그가 찾는 것은 **현지 실물 경제와 붙는 유스케이스**다.
+또 하나의 크립토 프로젝트가 아니다.
+
+**태국·인도차이나는 실내 공기가 계절성 비상사태인 지역이다** — 방콕의 건기 PM2.5,
+북부·인도차이나 소각철 연무. **그의 시장에서 공기질은 사회 이슈**이고, 그게 정확히 우리 기기가
+측정하는 것이다. 우리는 **실물 기기를 크립토 결제로 파는 쪽**이라 「토큰 놀이」에서 분리된다.
+
+⚠ **불행 마케팅으로 쓰지 않는다** — 「너희 공기 나쁘죠」는 무례하다.
+**「이건 계절성 비상사태다 · 그게 우리가 측정하는 것」** 이라는 중립 서술로만.
+숫자는 쓰지 않는다(외부 집계 수치 원출처 확인 전 인용 금지).
+
+### 금지 재확인
+
+Bitget 경력 언급 0(거래소 신호 + 과거 직장 들먹이면 스토킹 느낌) · 공통 1촌 이름 0 ·
+토큰·보상·상장·판매 0 · 제안 0(첫 인사는 호감이지 제안이 아니다).

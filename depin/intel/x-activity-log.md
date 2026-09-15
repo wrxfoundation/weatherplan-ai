@@ -2613,3 +2613,47 @@ Stockholm to a project site in one week is probably the only cure.
   공개 글에 쓰면 못 지켰을 때 부채가 된다.
 - ⚠ **공개 댓글은 리플 사람들도 본다.** 위 문안에 「우리도 리플과 한다」로 읽힐 표현은 없다 —
   **두 사실을 나란히 놓을 뿐**이라는 선을 지킨다.
+---
+
+## Ply Phlayphan (Tether · Thailand/Indochina Country Manager) 첫 인사 DM — 9/15
+
+판정·금지는 `business-directions.md` 의 해당 절. **체인·통화 이름 0 · 제안 0.**
+
+### A판 — 호감만 (454자) ★ 권장
+
+```
+Hi Ply, thanks for connecting.
+
+I'm Seowoo at KWeather — thirty years measuring Korea's weather. wellbian is the
+sensor network we built on top of it: air-quality devices people run in their own
+rooms, readings recorded on-chain.
+
+Your region is the one I keep coming back to. Indoor air is a seasonal emergency
+across Thailand and Indochina in a way it isn't most places, and that's exactly
+what the device measures.
+
+Nothing to propose — just glad to be connected.
+```
+
+### B판 — 호감 + 가벼운 청취 요청 (536자)
+
+마지막 문단만 교체:
+
+```
+Nothing to propose yet. But if you ever have a view on how something physical
+like this lands in your markets, I'd value hearing it.
+```
+
+### 설계
+
+| 구절 | 하는 일 |
+|---|---|
+| `Your region is the one I keep coming back to` | **호감의 축.** 립서비스가 아닌 이유가 바로 뒤에 붙는다 |
+| `a seasonal emergency … in a way it isn't most places` | 그의 시장을 안다는 신호. **중립 서술** — 「너희 공기 나쁘죠」가 아니다 |
+| `that's exactly what the device measures` | 관심 표명에서 끝내지 않고 **우리와 연결**. 단 제안은 아니다 |
+| `readings recorded on-chain` | **체인 이름 없음** — 테더 상대에게 첫 접촉의 체인 이름은 정보가 아니라 진영 신호 |
+| `something physical` (B판) | 「또 하나의 토큰 프로젝트」에서 우리를 분리 |
+| `Nothing to propose` | 방어를 내리게 한다. **호감 사기의 핵심** |
+
+**A판을 권하는 이유** — 서우 의도가 「호감」이다. 청취 요청이 붙으면 아주 작더라도 **요청**이 되고,
+첫 인사에서 요청은 호감보다 먼저 읽힌다. **B판은 그가 답을 주면 그때 쓴다.**
