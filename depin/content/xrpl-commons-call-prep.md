@@ -405,6 +405,43 @@ Best regards,
 Seowoo
 ```
 
+### 9-2. 서우 수정 (9/15 밤) — 링크 4개 + Swell 전·중·후, 해커톤 삭제
+
+서우 지시: 「swell행사 전중후라 하자 다른거 빼고 그전에 아래 사이트 보라 하고」 + 링크 4개.
+
+- **해커톤 삭제** — 뉴욕행이 미확정인데 그의 주최 행사까지 둘을 벌여놓는 것보다 **Swell 하나로 좁히고
+  전·중·후로 폭을 주는 쪽**이 지킬 수 있는 약속이다. 서우 판단이 맞다.
+  다만 「당신 조직 행사에 갈 생각」이라는 관계 카드는 잃는다 — 뉴욕이 확정되면 그때 따로 연다.
+- **`On timing —` 문장이 서우 판에서 빠지면서** 3문단 끝과 Swell 사이 연결이 끊겼다.
+  링크 문단(`In the meantime, these will tell you more than I can here:`)이 그 자리를 메운다.
+- `before, during or after would all suit **if meeting in person is easier than a call**` —
+  대면을 기본으로 두되 선택은 남긴다. 그가 먼저 시간을 청한 쪽이라 완전히 닫으면 안 된다.
+
+### ⚠⚠ `wellbian.io/token` 은 지금 이 사람에게 보낼 수 없다
+
+`site-canon-0910.md` §7 의 **우선 처리 A·C·E** 가 개발자·법무로 간 뒤 수정 기록이 없는데,
+그중 **셋이 전부 /token 페이지**이고 **하필 Odelia 가 가장 잘 아는 두 영역에 정확히 걸린다.**
+
+| | /token 현재 문구 | 이 사람에게 특히 위험한 이유 |
+|---|---|---|
+| **A** | 「발행 권한은 소각되었습니다 · issuance authority burned — no further issuance is possible」 | **사실이 아니다.** XRPL IOU 는 발행 계정을 블랙홀하지 않으면 추가 발행 가능, 우리 Issuer 는 마스터키가 살아 있다. **그는 XRPL Commons 임원** — 익스플로러에서 계정 하나 열면 1분 |
+| **E** | 「소각 ↑ → 유통량 ↓ → 보상·보유 가치 ↑」 · 「매출의 50%는 보유자 전체의 가치로 환원」 | **세계은행 Digital Finance Specialist · Institutional DeFi** 에게 「가치 환원」은 증권성 신호. **그걸 판별하는 게 그의 업** |
+| **D** | 「XLS-30 AMM 에서 RLUSD 와 **상시** 교환」 | 출금 잠금 중에는 불가 |
+
+첫 메일에서 **상대의 전문 영역 두 곳에 동시에 걸리는 페이지**를 건네는 것은 지연 사과보다 비싼
+첫인상이다. 게이트 G1~G3 까지 시간이 있어 서두를 이유도 없다.
+
+**판 B(권장) — 링크에서 /token 만 빼고 한 줄로 대체:**
+
+```
+Happy to walk you through the token side separately — that one's easier
+with context than as a link.
+```
+
+**빼는 것이 아니라 뒤로 미루는 형태**라 숨기는 것으로 읽히지 않고, 오히려 「따로 시간 내서 설명하겠다」는
+신호가 된다. 그가 Head of Digital Assets 라 어차피 묻는다 — 그때는 맥락을 붙여 주거나,
+그 무렵 A·D·E 가 고쳐져 있으면 그냥 링크로 준다.
+
 ### ⚠ 발신 주소 — 이번 건을 넘어서는 문제
 
 `support@wellbianlabs.io` 로 나간다. **세계은행·XRPL Commons 임원에게 고객지원 주소는 격이 안 맞는다.**
