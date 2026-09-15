@@ -317,3 +317,97 @@ Technical Partner(Thomas Hussenet) · **Head of Digital Assets(Odelia)**.
   자연스럽다. 확인된 사실은 아니므로 **통화에서 물어보되 우리가 단정해 말하지 않는다.**
 
 세 조직을 혼동하지 않는다: **리플(기업) ≠ XRPL 재단 XRPLF ≠ XRPL Commons(파리 비영리).**
+---
+
+## 9. 메일 확정본 — 9/15 밤 발송
+
+### 경위
+
+| 시각 | 무엇 |
+|---|---|
+| 9/9 20:26 | 서우 첫 DM. ⚠ **「Korea's largest private weather company」** — 「최대·1위」 금지 위반. 이미 나감 |
+| 9/12 05:22 | Odelia 회신 + 메일 주소. *「Looking forward to setting some time to further discuss」* — **그가 먼저 시간을 청했다** |
+| 9/12 08:26 | 서우 「writing to you at that address」 — 그리고 보내지 않았다 |
+| 9/15 21:20 | Odelia: *「did not see any mail.. pls resend. merci」* — **그는 스팸함에 갔다고 믿는다** |
+
+### 지연 사유를 쓰는 법
+
+두 갈래가 다 나쁘다 — 「스팸 갔나 보네요」는 **거짓말**(안 보냈다), 길게 사과하면 *보내겠다고 해놓고
+안 보냈다* 를 크게 만든다. **`sat in my drafts` 한 마디**로 정직하게 인정하고 바로 본문으로 넘긴다.
+그가 `merci` 를 섞었으니 그 온도는 **한 번만** 받는다(XRPL Commons = 파리).
+
+**지연 사유와 콜을 미루는 사유를 하나로 묶었다** — 둘 다 10/3 이다. 변명이 둘이면 변명으로 들리고
+하나면 상황이 된다.
+
+### 콜 → 대면으로 돌린 형태 (서우 지시 9/15)
+
+「통화·컨콜은 잠깐 미루고 Swell·해커톤 전후 또는 그때 만나자」. 다만 **그가 먼저 시간을 청한 쪽**이라
+우리가 닫으면 뒷걸음이다. 거절이 아니라 **「제대로 하자」로 뒤집는다**:
+
+- `I'd rather do this in person than squeeze a call in` — 미루는 것이 회피가 아니라 **선호**임을 명시.
+  이 줄이 없으면 「바빠서 못 하겠다」로 읽힌다.
+- `the hackathon your side is running` — **XRPL Commons 주관이라 그의 행사**다(마스터카드 파트너, NYC).
+  「당신 행사에 갈 생각」이 관계 신호가 되고 일정도 그가 제일 잘 안다.
+- **`we're working on being at both`** — Swell·뉴욕 둘 다 참석 미확정. 확정형 금지(9/10 Karan 건과 동일).
+  **그의 주최 행사에 「갑니다」 해놓고 안 가면 그게 최악이다.**
+- **Swell 날짜를 쓰지 않는다** — 그가 XRPL Commons 임원이라 우리보다 정확히 안다. 박았다가 어긋나면
+  그것만 눈에 띈다.
+- `either side of the day would suit` = 서우가 말한 「전후」. `If something needs an answer sooner,
+  just say` 로 **문은 열되 우리가 먼저 일정을 잡자고는 하지 않는다.**
+
+### 내용 설계
+
+- **세 단어로 그의 두 정체성을 동시에** — `Parametric cover, climate risk, a settlement figure that has
+  to hold up to a counterparty`. 앞 둘 = 세계은행 축, 뒤 하나 = 기관 DeFi 축.
+- **접점을 제안하지 않고 묻는다** — `you'd see it faster than I would`. 첫 메일에 제안을 얹으면 무거워진다.
+- **「largest」를 숫자로 덮는다** — 9/9 위반을 지금 정정하면 없던 문제를 만든다(9/14 Brian 건 원칙).
+  **30년 · 4,000+ 고객사**로 자연스럽게 덮는다. 검증 가능한 숫자가 최상급보다 무겁다.
+- **BNB·Flare·weathermarket.ai 는 한 글자도 쓰지 않는다** — XRPL Commons 사람에게 다른 체인을 먼저
+  꺼낼 자리가 아니다.
+- 리플과의 논의·NDA, 크립토닷컴은 당연히 0.
+
+### 본문
+
+```
+Subject: wellbian — the note I owed you
+
+Hi Odelia,
+
+My fault entirely — it sat in my drafts while we were heads-down on
+3 October. Here it is, and thank you for the nudge.
+
+Short version of who we are. KWeather has measured Korea's weather for
+thirty years — instruments, forecasting, and data for more than four
+thousand enterprise clients. wellbian is the network built on top of
+that: certified air-quality sensors that people own and run in their own
+rooms, with every reading fingerprinted to the XRP Ledger, so a figure
+can be verified after the fact rather than taken on trust. The first
+devices went on sale this week, and we're a platinum sponsor at
+XRP SEOUL 2026 on 3 October.
+
+The reason I wanted to reach you rather than anyone else: the part we
+find hardest isn't the hardware, it's what a verified measurement is
+worth once it exists. Parametric cover, climate risk, a settlement
+figure that has to hold up to a counterparty — that sits closer to your
+two worlds than to ours, and I'd rather ask than assume. If there's an
+overlap with what XRPL Commons is building, you'd see it faster than I
+would.
+
+On timing — we're not much use for scheduling until 3 October is behind
+us, and honestly I'd rather do this in person than squeeze a call in
+before it. Swell, or the hackathon your side is running: we're working
+on being at both, and either side of the day would suit. If something
+needs an answer sooner, just say.
+
+Merci for the patience.
+
+Best regards,
+Seowoo
+```
+
+### ⚠ 발신 주소 — 이번 건을 넘어서는 문제
+
+`support@wellbianlabs.io` 로 나간다. **세계은행·XRPL Commons 임원에게 고객지원 주소는 격이 안 맞는다.**
+Vincent(크립토닷컴)에게도 같은 주소로 나갔고 MNDA 서명자는 `ceo@` 라, 개인 업무 주소 체계가 아직 없다.
+`seowoo@` 또는 `logan@` 하나가 **남은 대외 메일 전부**에 영향을 준다.
+이번 건은 support@ 로 보내고 다음부터 교체.
