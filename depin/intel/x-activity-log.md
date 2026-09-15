@@ -2502,23 +2502,47 @@ Rewards are planned. Amounts and value are not guaranteed.
 **그래서 파는 게 아니라 같은 문제를 보는 쪽으로 선다.** 이 자리 선택이 이 메시지의 전부다.
 
 ```
-EN (수락 후 발송)
+EN (수락 후 발송 — v2, 서우 융합본 정리)
 Edward — thanks for connecting.
 
 I run partnerships at wellbian. KWeather has measured weather in South Korea for
-30 years and supplies 4,000+ enterprise clients; wellbian is the sensor network
-built on top of that, and the data side is where most of my time goes.
+30 years and supplies 4,000+ enterprise clients; wellbian is the network built on
+top of that, and the data side is where most of my time goes.
 
 Your background is why I wanted to say hello rather than the usual reasons.
 Surveillance is the only seat that has to live with a settlement value after the
 fact — if the number is disputed, it lands on you, not on whoever sourced it.
-That's the problem we've been building around: readings fingerprinted to a public
-ledger before they enter a calculation, so the screening step can be audited
-rather than trusted.
 
-Nothing to ask. Just rare to find someone who'd read that as a real problem
-rather than a feature list.
+That's the problem we've been building around. We supply city-level weather across
+90 countries and 167 cities, and a city's value isn't one reading — it's a
+consensus across eleven independent sources with outliers screened out, where most
+providers publish a single observation point. On top of that, every input is
+fingerprinted to a public ledger before it enters the calculation, so the
+screening step can be audited after the fact rather than taken on trust.
+
+As far as we can find, no one else has put those two together on weather data.
+Whether that actually matters at settlement is something you'd judge better than I
+would.
+
+If any of it is of interest, just let me know.
 ```
+
+**서우 융합본에서 고친 넷**
+
+| 문제 | 처리 |
+|---|---|
+| ⚠⚠ **`The strongest pull... from a large venue on that side`** | **삭제.** Edward 는 예측시장 거래소 소속이다 — **직접 경쟁사 신호**다. Emily·Lynn 본문이 딸려 온 것으로 보이며, 그가 사내에 한마디만 해도 문제가 된다. 이 건의 1순위 금지선(수첩 기재분) |
+| **원장 지문 문장이 두 번** | 한 번만. 앞 단락의 `readings fingerprinted...` 를 지우고 뒤 단락으로 합쳤다 |
+| **`Nothing to ask` 뒤에 계속 판다** | 삭제. 마지막에 `If any of it is of interest` 가 있으면 **앞말과 모순**이다. 겸손은 다른 방식으로 살렸다(아래) |
+| **`That matters most to trading venues`** | **그가 trading venue 사람이다.** 남 얘기하듯 말하면 어색하다 → **`something you'd judge better than I would`** 로 **그에게 돌려준다** |
+
+**마지막 교체가 이 메시지에서 가장 큰 개선이다.** 우리가 「중요하다」고 단정하는 대신
+**감시 전문가에게 판단을 구하는 형태**가 되면, ⓐ 우리가 겸손해 보이고 ⓑ 그가 답할 이유가 생기고
+ⓒ 틀려도 우리가 틀린 게 아니다. Brian 건에서 답장을 끌어낸 수법과 같다
+(*"I genuinely don't know yet"*).
+
+⚠ **`90개국 167개 도시`·`11개 소스` 는 여전히 본부장 확인 대기다.** 막히면
+`across dozens of countries` / `several independent sources` 로 낮춘다 — 문장 구조는 그대로 선다.
 
 **설계**
 - `rather than the usual reasons` — 거래소 소속은 「또 뭘 팔겠지」로 읽는 데 익숙하다. **먼저 선을 긋는다.**
