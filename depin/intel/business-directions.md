@@ -635,3 +635,51 @@ XRP SEOUL 스폰서도 같은 이유로 뺀다(그는 10/3 과 무관하다).
 
 Bitget 경력 언급 0(거래소 신호 + 과거 직장 들먹이면 스토킹 느낌) · 공통 1촌 이름 0 ·
 토큰·보상·상장·판매 0 · 제안 0(첫 인사는 호감이지 제안이 아니다).
+---
+
+### Morty Ma — OKX Product Director (Growth) · 9/15 판정: **보류, 인사만**
+
+| | |
+|---|---|
+| 자리 | **OKX Product Director**(2025-05~, 1년 5개월) · 홍콩 · Growth product(activity products·localization growth) + trading experience product |
+| 이력 | **Temu** Country PM leader(2024-09~2025-05, 상하이, 유럽 GMV) · **TikTok** Senior Global PM(2021-09~2024-09, LA) · **Tencent** PM |
+| 레인 | exchange — **현직** |
+| 게이트 | **열지 않는다.** 아래 세 조건이 다 맞을 때까지 |
+
+**① 규칙이 정면으로 걸린다** — `CLAUDE.md` 핵심 금지: **「거래소 소속 1촌에는 인사만, 사업 메시지는
+먼저 열지 않는다」** + 「멀티체인·상장 신호 9/30 까지 금지」. 오늘 9/15.
+
+Ayazhan 때는 안 걸렸다 — 그는 **BitMEX 가 2026-08 종료라 현재 거래소 소속이 아니었고** 예측시장
+쪽이라 「유입 소재」 논조를 열 수 있었다. **Morty 는 현직이다.**
+
+**② ⚠ 그는 Ayazhan 의 공통 1촌이다** — 위 Ayazhan 절에 「공통 1촌 Morty·Daria」. 홍콩 거주 +
+**OKX 재직 시기가 겹친다**(Ayazhan Growth Manager 2025-04~11 / Morty Product Director 2025-05~).
+동일인으로 보인다(서우 확인 가능).
+
+**지금 Morty 를 열면 Ayazhan 건이 상한다.** Ayazhan DM 이 아직 발송 대기인데 같은 클러스터에
+이틀 안에 두 번째 문을 열면 두 사람이 문장을 비교할 수 있고, 그러면 **「우리에게 관심이 있는 게
+아니라 뿌리는 중」**이 된다. **「한 회사 동시 대화 2개 상한」의 취지가 정확히 이것**이다.
+→ **Ayazhan 이 답을 주거나 닫힌 뒤가 순서.**
+
+**③ 자리로 봐도 지금이 아니다** — 그는 상장 담당이 아니라 그로스 프로덕트다. 그런데 **현직 거래소
+임원에게 우리가 먼저** 사업을 꺼내면 내용과 무관하게 분류는 하나다: **「OKX 에 뭔가 얹으려는 한국
+토큰 프로젝트」** — 그 자리가 하루에 열 번 받는 DM. 게다가 케이웨더가 코스닥 상장사라
+**그 대화 기록이 링크드인에 남는 것 자체가 부담**이다.
+
+**인사 문구 (1촌만 맺을 때)**
+
+```
+Morty — thanks for connecting. Seowoo from KWeather in Seoul, thirty years of
+weather measurement; I look after partnerships. Nothing to ask — just good to
+be connected.
+```
+
+`Nothing to ask` 가 핵심 — 그 자리 사람에게 **아무것도 원하지 않는다고 먼저 말하는 것**이 유일하게
+기억에 남는 방식이다.
+
+**언제 열리나** — ① Ayazhan 건 정리 후 ② 9/30 이후 ③ 논거가 상장이 아닌 것이 문장에서 명확할 때.
+셋이 다 맞아야 한다. 또는 **그가 먼저 물으면** 그때는 답하는 자리라 게이트가 걸리지 않는다.
+
+**나중의 접점 후보(지금 쓰지 않는다)** — `ecosystem-log` 에 **OKX·한투가 코인원 지분 각 20%**
+기록(Tiger Research 요약, **미검증**). 사실이면 그의 `localization growth` 가 한국과 닿아 진짜
+접점이 된다. **원출처 확인 전에는 논거로 쓰지 않는다.**
