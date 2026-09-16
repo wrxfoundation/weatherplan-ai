@@ -17,7 +17,7 @@
    · 이메일 주소·전화번호 — 공개 직함과 소속까지만 적는다.
    · 개인 신상(국적·나이·가족) — 판정에 쓰지 않는 정보는 적지 않는다. */
 
-export type Lane = "xrpl" | "pay" | "capital" | "market" | "peer" | "impact" | "voice" | "exchange";
+export type Lane = "xrpl" | "pay" | "capital" | "market" | "peer" | "impact" | "voice" | "exchange" | "compute";
 export type Stance = "talking" | "linked" | "open" | "hold" | "off";
 
 export type Person = {
@@ -49,7 +49,7 @@ export type Person = {
   handle?: string;
 };
 
-export const NETWORK_UPDATED = "2026-09-11";
+export const NETWORK_UPDATED = "2026-09-16";
 
 export const LANES: { key: Lane; label: string; note: string }[] = [
   { key: "xrpl",     label: "XRPL 생태계",   note: "빌더 파이프라인·재단·지역 커뮤니티. 우리 무대가 여기다" },
@@ -60,6 +60,7 @@ export const LANES: { key: Lane; label: string; note: string }[] = [
   { key: "impact",   label: "임팩트·데이터", note: "Get Blue·개발금융. 날씨 데이터가 공공 문제에 붙는 자리" },
   { key: "voice",    label: "미디어·KOL",    note: "커버리지와 사상가. 규칙은 답글 수칙 그대로" },
   { key: "exchange", label: "거래소",        note: "9/30 까지 사업 메시지를 먼저 열지 않는다. 인사는 허용" },
+  { key: "compute",  label: "AI·컴퓨트",     note: "AI 데이터센터·GPU. 9/14 내부 회의의 AI 팩토리 구상이 실제 과제가 되는 자리 (9/16 신설)" },
 ];
 
 export const STANCES: { key: Stance; label: string; note: string }[] = [
@@ -222,7 +223,7 @@ export const PEOPLE: Person[] = [
     next: "할인코드 대신 판매당 커미션 여부를 그에게 묻는다(F). 그가 택하면 조건 다섯을 붙인다(E).",
   },
   {
-    id: "cryptocom", inbound: true, name: "(이름 미기재)", org: "Crypto.com", role: "홍콩 측 담당자",
+    id: "cryptocom", inbound: true, name: "Vincent Chan", org: "Crypto.com", role: "VP, Strategic Partnerships (홍콩)",
     lane: "exchange", stance: "talking",
     why: "인바운드. 거래소 카테고리지만 청취는 기조(9/9)대로 진행한다.",
     next: "9/11 임원 동석 콜. 상장·유료·독점·물량 전부 유보. 미팅 사실은 공개 채널에 올리지 않는다.",
@@ -437,10 +438,10 @@ export const PEOPLE: Person[] = [
 
   /* ── 보류·열지 않음 (미디어·사상가) ──────────────────────── */
   {
-    id: "mcgleenon", gate: "stage", name: "Brian McGleenon", org: "(매체 미확인 — 확인 필요)", role: "기자",
+    id: "mcgleenon", name: "Brian McGleenon", org: "BeInCrypto", role: "Global Head of News · Yahoo Finance 「Future Focus」 호스트 · 전 The Independent 탐사보도 · 「Degens」 다큐 공동제작",
     lane: "voice", stance: "talking", tie: "**콜드 DM → 답장 받음**(9/14 02:21 \"Very interesting Seowoo\") · 1촌 요청 발송",
     why: "**미디어 게이트(10/3 무대 뒤)를 넘어섰지만 방식은 규칙의 취지를 지켰다.** 서우가 판 것은 계획이 아니라 **문제**였다 — WeatherXM 이 80개국에 깔고도 밀도가 안 나와 데이터를 못 팔았다 / 우리는 거꾸로 간다 / **그게 문제를 푸는 건지 옮기는 건지 나도 모르겠다.** 마지막 한 줄이 이 메시지의 전부다. 기자는 확신에 찬 홍보를 매일 받는다 — **모른다고 말하는 쪽이 드물어서 답이 왔다.**",
-    next: "**「Very interesting」은 예의이자 문을 열어 둔 것이지 예스가 아니다**(새벽 2시 21분 회신 = 폰에서 한 줄). 밀지 않는다. ⚠⚠ **이미 나간 수치를 우리가 먼저 정정해야 한다** — 초안·상세는 x-activity-log 「Brian McGleenon」. 다음 메시지 전에 **매체 확인 필수**(어디에 쓰는지에 따라 줄 것이 달라진다).",
+    next: "**★ 9/16 매체 확정 — 우리가 몰랐던 것이 컸다.** 「매체 미확인」으로 두고 게이트를 10/3 에 걸어놨었는데 실제로는 **대형 크립토 매체의 뉴스 총괄이자 야후 파이낸스 프로그램 진행자**다. **답장까지 받은 관계이고 이 지도에서 가장 값비싼 미디어 자산**이라 게이트를 푼다 — 10/3 을 기다릴 이유가 없다. **「Very interesting」은 예의이지 예스가 아니므로**(새벽 2:21 회신 = 폰에서 한 줄) 밀지는 않되, **그가 쓰는 지면이 확정됐으니 줄 것을 거기에 맞춰 고른다.** 초안은 x-activity-log 「Brian McGleenon」.",
   },
   {
     id: "cermak", gate: "stage", name: "Larry Cermak", org: "The Block", role: "President",
@@ -799,5 +800,132 @@ export const PEOPLE: Person[] = [
     lane: "pay", stance: "hold", meet: "Nordic 컨퍼런스",
     why: "마스터카드 두 번째. 어카운트 관리 쪽이라 Move 프로덕트 디렉터와 직무가 다르다.",
     next: "열지 않는다. 마스터카드는 Move 쪽 한 문으로 간다.",
+  },
+  /* ── 9/16 추가 — 1촌 57명과 대조해 지도에 없던 사람들 ────────────────────
+     지도 95명 중 실제 1촌은 17명뿐이었고, 1촌 57명 중 40명이 지도 밖이었다.
+     아래는 그중 우리 레인에 닿는 사람만. 내부 인원·비크립토 지인은 올리지 않는다.
+     ⚠ Takuya Sugiyama(SBI) 는 SBI Ripple Asia 이사 겸직이라 「리플 소속은 올리지 않는다」
+        규칙을 넓게 적용해 제외했다. 판정은 business-directions 에만 남긴다. */
+  {
+    id: "mcdonough", name: "Michael McDonough", org: "Bloomberg",
+    role: "Global Head of Market Innovation (2026-01~) · 전 Chief Economist, Financial Product (7년 10개월) · 블룸버그 16년 6개월 · FTV Capital 자문위원",
+    lane: "market", stance: "linked", tie: "1촌(9/16) · 공통 1촌 Nicole(Kalshi)",
+    why: "**이 지도에서 우리 소재에 가장 가까운 사람이다.** ⓐ 그가 만든 **ECAN 이 블룸버그의 경제·대체 데이터 분석기**이고 **예측시장을 터미널에 처음 통합한 것도 그**다 — 우리가 파는 것이 정확히 **대체 데이터**이고 우리 논거가 **정산 기준값**이다. ⓑ 현재 자리는 토큰화·스테이블코인·온체인 시장구조·예측시장 전략을 정의하는 그룹의 공동 리드이고 **터미널 제품·데이터·기관 쪽을 만든다** — **터미널에 데이터가 들어가는 경로가 이 사람이다.** ⓒ 홍콩에서 아시아 이코노미스트를 3년 했다.",
+    next: "기기 가동 전에는 **방법론만으로 선다** — 11개 소스 합의·이상치 선별·계산 전 원장 지문. 전 수석이코노미스트라 **지표가 무엇으로 만들어지는가**를 직업으로 따진 사람이니 숫자보다 **구성 방식**이 통한다. ⚠ 예측시장 담당이라 **다른 거래소·플랫폼 지목 0**. ⚠ **공통 1촌이 Nicole(Kalshi)** 이라 Kalshi 건(Edward·Nicole)과 **동시에 열지 않는다.**",
+  },
+  {
+    id: "jansen2", name: "Charles Jansen", org: "S&P Global", role: "DeFi and Digital Assets",
+    lane: "market", stance: "linked", tie: "1촌(9/16)",
+    why: "지수·평가 기관. 기초 참조값의 출처를 심사하는 쪽이라 합의 지수 방법론이 그대로 얹힌다.",
+    next: "Michael 과 같은 논조라 **한 주에 둘을 같이 열지 않는다.** Michael 이 먼저다 — 자리가 우리에게 더 가깝다.",
+  },
+  {
+    id: "tokenpost", name: "David Jiho Kim", org: "TOKENPOST", role: "CEO",
+    lane: "voice", stance: "linked", tie: "1촌(9/7) — 메시지 0",
+    why: "**국내 크립토 매체 대표.** 10/3 국내 보도의 가장 짧은 경로인데 아홉 날 동안 열지 않았다.",
+    next: "10/3 전에 연다. **보도 요청이 아니라 소개부터** — 대표에게 기사 부탁으로 시작하면 광고 문의로 접힌다.",
+  },
+  {
+    id: "rajk", name: "Raj Kushwaha", org: "독립 (Web3 Growth·Branding·Community)", role: "11K+ 팔로워",
+    lane: "voice", stance: "linked", tie: "1촌(9/14)",
+    why: "인플루언서 본인이자 커뮤니티 빌더. **실물 기기는 그쪽 소재로 드물다.**",
+    next: "우선순위 아래. **Tina 쪽이 먼저다** — 한 명씩 찾는 것보다 KOL 판을 아는 사람에게 한 번 묻는 게 빠르다.",
+  },
+  {
+    id: "marcodl", name: "Marco Dal Lago", org: "Tether", role: "Chief Expansion Officer (CXO)",
+    lane: "pay", stance: "hold", tie: "1촌(9/10)", group: "Tether", gate: "saleend",
+    why: "테더 확장 총괄. **Ply(태국·인도차이나 Country Manager)의 상사 라인**이다.",
+    next: "⚠⚠ **열지 않는다.** Ply 에게 첫 인사를 보내는 중인데 **같은 회사 위아래로 동시에 들어가면 사내에서 겹친다.** Ply 가 답하거나 닫힌 뒤에 본다. 테더 상대에게 **RLUSD 를 먼저 꺼내지 않는다**(직접 경쟁 통화).",
+  },
+  {
+    id: "shawnma", name: "Shawn Ma", org: "OKX", role: "Head of OKX DEX · ex Crypto.com & Tencent",
+    lane: "exchange", stance: "hold", tie: "1촌(9/11)", group: "OKX", gate: "saleend",
+    why: "**Morty 보다 높은 자리**이고 DEX 총괄이다. ex 크립토닷컴이라 우리 현재 대화와도 스친다.",
+    next: "⚠ **OKX 두 번째다.** 현직 거래소라 인사만이고, 제안 단계에서는 Morty 와 둘 중 하나만 간다 — **자리로 보면 Shawn 쪽**. 9/30 뒤 재판정.",
+  },
+  {
+    id: "kagan", name: "Nicole Kagan", org: "Kalshi", role: "Markets + Research",
+    lane: "market", stance: "hold", tie: "1촌(9/10)", group: "Kalshi", gate: "ship",
+    why: "Kalshi 리서치. Edward(감시)와 자리가 다르다 — 그는 사후 분쟁, 이쪽은 **시장 설계**다. **Michael(Bloomberg)의 공통 1촌**이기도 하다.",
+    next: "⚠ **Kalshi 두 번째.** Edward 건이 끝나기 전에는 열지 않는다.",
+  },
+  {
+    id: "niki", name: "Niki Ariyasinghe", org: "Chainlink", role: "Growing the onchain economy",
+    lane: "market", stance: "linked", tie: "1촌(9/10)", group: "Chainlink",
+    why: "체인링크 네 번째 접점. 오라클 판의 표준을 쥔 쪽이라 **경쟁이자 유통 경로**다.",
+    next: "체인링크는 이미 넷이다. **한 문으로 좁히지 않으면 뿌리는 것으로 보인다** — 누구로 갈지 먼저 정한다.",
+  },
+  {
+    id: "kenlee", name: "Ken Lee", org: "Binance", role: "VIP & Institutional Sales",
+    lane: "exchange", stance: "off", tie: "1촌(9/10)", group: "Binance",
+    why: "바이낸스 기관 세일즈. 우리는 그의 고객이 아니다.",
+    next: "열지 않는다. **바이낸스만 1촌이 셋**(Emily·Ken·Lauren)이라 이미 상한을 넘었다 — Emily 한 문으로 간다.",
+  },
+  {
+    id: "laurenlee", name: "Lauren Lee", org: "Binance", role: "Web3 Wallet BD · pre-PhD in Metaverse Business",
+    lane: "exchange", stance: "off", tie: "1촌(9/15)", group: "Binance",
+    why: "Web3 지갑 BD. 지갑 연동은 먼 얘기다.",
+    next: "열지 않는다(바이낸스 상한).",
+  },
+  {
+    id: "natalielau", name: "Natalie Lau", org: "BitMEX", role: "Head of Institutions",
+    lane: "exchange", stance: "off", tie: "1촌(9/10)",
+    why: "기관 총괄. 우리 단계와 맞지 않는다.",
+    next: "열지 않는다.",
+  },
+  {
+    id: "henrykey", name: "Henry Key", org: "Hashed", role: "Business Development Manager (Abu Dhabi)",
+    lane: "capital", stance: "linked", tie: "1촌(9/8) — 메시지 0",
+    why: "**한국 최상위 크립토 VC.** 아부다비 거점이라 중동 축도 같이 본다.",
+    next: "투자로 열지 않는다 — 우리 게이트는 data 다. **10/3 전 소개 정도**가 맞고, 국내 생태계 안에서 우리를 아는 사람이 느는 것 자체가 값이다.",
+  },
+  {
+    id: "dsrv", name: "Byeongyun Seo", org: "DSRV", role: "Co-CEO",
+    lane: "xrpl", stance: "linked", tie: "1촌(9/6) — 메시지 0",
+    why: "**한국 블록체인 인프라 대표 기업**(밸리데이터·노드). 기기 네트워크의 운영 문제를 이미 푼 쪽이다.",
+    next: "Henry 와 같은 결 — 국내 생태계 소개. 기술 질문이 자연스러운 상대라 **묻는 형태**가 맞다.",
+  },
+  {
+    id: "katiewheeler", name: "Katie Wheeler", org: "Ondo Finance", role: "MD, Global Partnerships · ex BlackRock + Circle",
+    lane: "capital", stance: "hold", tie: "1촌(9/9)", gate: "data",
+    why: "토큰화 RWA 파트너십 총괄. 이력(블랙록·서클)이 기관 쪽 신뢰 축이다.",
+    next: "게이트 = 데이터 실적. 지금은 우리가 팔 것이 없다.",
+  },
+  {
+    id: "heejinshin", name: "Heejin Shin", org: "교보증권 · 교보생명그룹",
+    role: "Director, Head of New Business Development — Digital Assets/Fintech & Ventures",
+    lane: "capital", stance: "linked", tie: "1촌(9/2) — 메시지 0",
+    why: "**국내 기관 신사업.** 케이웨더가 코스닥 상장사라 국내 금융권과의 대화는 결이 다르다 — 여기선 상장 사실이 자연스러운 신뢰 신호다.",
+    next: "10/3 뒤. 국내 기관은 **실물과 무대를 보고 판단**한다.",
+  },
+  {
+    id: "nahyunkang", name: "Nahyun Kang", org: "J.P. Morgan", role: "F&O · Bridging TradFi and On-Chain Finance",
+    lane: "capital", stance: "hold", tie: "1촌(9/7)", gate: "ship",
+    why: "선물·옵션. 파생 기초 참조값 논조가 닿는 자리다.",
+    next: "Chantal·Michael 과 같은 논조라 **셋을 동시에 열지 않는다.**",
+  },
+  {
+    id: "hazelxu", name: "Hazel Xu", org: "ICE", role: "Quant analyst · Columbia MFE",
+    lane: "capital", stance: "hold", tie: "1촌(9/10)", group: "ICE",
+    why: "ICE 퀀트. **Lynn Martin(NYSE Group President · ICE Fixed Income and Data Services 의장)과 같은 그룹**이다.",
+    next: "⚠ **Lynn 2차 DM 이 발송 대기 중**이다. 같은 그룹에 동시에 들어가지 않는다 — Lynn 이 먼저다.",
+  },
+  {
+    id: "liaq", name: "Lia Q", org: "(비공개)", role: "AI Compute · AIDC Partnerships · Digital Assets",
+    lane: "compute", stance: "linked", tie: "1촌(9/10) — 메시지 0",
+    why: "**AI 데이터센터 파트너십 + 디지털자산**이 한 사람에 있다. 9/14 내부 회의의 AI 팩토리 구상과 같은 축이다.",
+    next: "⚠ 내부에서 **AI 팩토리 NFT 원가에 5년치 토큰 지급분이 비용으로 들어가 보상 비보장 원칙과 충돌**하는 문제가 아직 안 풀렸다. **설계가 정리되기 전에 대외로 열지 않는다.**",
+  },
+  {
+    id: "ktcloud", name: "Seungyeon Song", org: "kt cloud", role: "AI Data Center Business Development & Strategy",
+    lane: "compute", stance: "linked", tie: "1촌(9/2) — 메시지 0",
+    why: "**국내 AI 데이터센터.** GPU 노드 구상이 실제가 되려면 국내에서 가장 먼저 닿아야 할 자리다.",
+    next: "Lia Q 와 같다 — 내부 설계 정리 뒤. 다만 **국내라 만나기 쉽다**는 점은 별개 값이다.",
+  },
+  {
+    id: "jimilee", name: "Jimi Lee", org: "Google Cloud", role: "Scaling Web3 & AI (서울)",
+    lane: "compute", stance: "linked", tie: "1촌(9/8) — 메시지 0",
+    why: "구글 클라우드 서울의 Web3·AI 축. 크레딧·기술 지원 프로그램이 스타트업에 열려 있는 통로다.",
+    next: "판매·토큰 얘기 0으로 **인프라 대화만** 연다. 이 레인은 대외 리스크가 가장 낮다.",
   },
 ];
