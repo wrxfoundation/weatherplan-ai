@@ -2860,6 +2860,53 @@ need to double up on the intro. Still keen on TermMax whenever you have a moment
 ⚠ **대명사를 쓰지 않았다**(`your good word`) — Eri 의 성별을 프로필에서 확정할 수 없다.
 9/14 사내 메시지의 `his hands` 는 착오. 우리 문안에서는 성별 표현이 애초에 필요 없다.
 
+### 9-2. 서우 수정 (9/16) — 세계 도시 + FCC + 콜 제안
+
+서우: 「lynn 맥락처럼 한국만 아니라 세계도시측정 하고있고 FCC검증레이어도 활발하게 사용하려한다하고
+또 서울에서 만나면 너무 늦으니 빠르게 콜미팅을 하는게 어떤지」.
+
+```
+Eri — Seowoo from KWeather / wellbian in Seoul.
+
+Ami at Flare spoke highly of you, and then I saw your post about wanting to learn
+more about us ahead of 3 October. Thank you for that — early attention is the kind
+that's hardest to earn.
+
+One thing worth knowing: it isn't only the Korea story. We supply city-level
+weather across 90 countries and 167 cities, where a city's value is a consensus
+across eleven independent sources rather than a single observation point. On the
+data side we're building the verification layer on Flare's FCC — still on testnet,
+so I'd rather flag that myself than have you find it later.
+
+You know this space far better than we do, and you build media for it. So rather
+than arriving with a pitch: would you be open to starting something light on the
+media side?
+
+Seoul on 3 October feels late to begin. Could we do a quick call instead, whenever
+works on your side?
+```
+
+### ⚠⚠ FCC 를 쓰는 방식 — 세 군데를 막았다
+
+**그는 미디어다. 우리가 준 말을 그대로 옮긴다 — 틀리면 그 책임이 그에게 간다.**
+
+| 장치 | 막는 것 |
+|---|---|
+| **`On the data side`** | **기기와 FCC 를 분리.** FCC 를 쓰는 것은 KWeather 쪽 데이터 오라클이지 **wellbian 기기가 아니다** — `CLAUDE.md` 「웰비안 × Flare 직접 통합 클레임 금지」. Eri 가 이미 「KWeather partnered with FlareNetworks」라고 썼으므로 그의 문장과도 맞는다 |
+| **`we're building`** (≠ `actively using`) | 서우의 「사용**하려** 한다」를 영어에서도 지킨다. **`actively using` 으로 쓰면 거짓**이다 |
+| **`still on testnet, so I'd rather flag that myself than have you find it later`** | weathermarket.ai 가 스스로 *「the Flare FCC attestation path is still on a testnet」* 을 띄운다. **2018년부터 블록체인 리서치를 한 사람이라 반드시 확인하고**, 그가 확인 없이 「FCC 로 검증한다」고 썼다가 지적당하면 **우리가 그를 그렇게 만든 게 된다.** Karan 「hype 를 주문하지 않는다」가 정확히 이 상황 — **미디어에게 주는 사실은 그가 그대로 써도 안전한 형태여야 한다.** 역설적으로 이 줄이 **신뢰를 산다**: 리서처에게 「제가 먼저 말씀드립니다」는 가장 비싼 신호다 |
+
+### 콜 제안 — Odelia 와 정반대로 가는 이유
+
+`Seoul on 3 October feels late to begin` — 재촉이 아니라 **타이밍 논리**다.
+**미디어 협력은 행사 전에 해야 값이 있고 당일에 시작하면 늦다.**
+`whenever works on your side` 로 **시간은 못 박지 않는다** — 그는 지금 뉴욕에 있어 보이는데
+(`Finance is flowing. #NYC`) 그걸 우리가 안다고 티내면 부담스럽다.
+
+⚠ Odelia 에게는 「급하지 않다」로 갔는데 여기서 반대로 가는 것이 맞다 —
+**Odelia 는 우리가 아무것도 아닌 상대**였고, **Eri 는 이미 우리를 공개 언급하고 참석까지 밝힌
+사람**이다. 같은 속도로 대하면 오히려 이상하다. **속도는 상대가 어디 서 있는지로 정한다.**
+
 ### 금지 확인
 
 기기 증정 0(서우 지시) · 토큰·보상·WLBN 0 · 판매·가격 0 · **웰비안 × Flare 통합 클레임 0**
