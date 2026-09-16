@@ -312,10 +312,10 @@ export const PEOPLE: Person[] = [
     next: "가벼운 DM 발송분 반응 관찰. 조건·숫자 제시 0.",
   },
   {
-    id: "jansen", gate: "sale1", name: "Charles Jansen", org: "S&P Global", role: "DeFi and Digital Assets",
-    lane: "capital", stance: "linked", tie: "서우 팔로우 중", meet: "KBW 9/29~10/1",
-    why: "데이터 회사가 온체인으로 가는 사례. 「30년 데이터 회사의 DePIN」 프레임이 그대로 통하는 상대.",
-    next: "1촌 노트. 사업 제안이 아니라 사례 비교로 연다.",
+    id: "jansen", name: "Charles Jansen", org: "S&P Global", role: "DeFi and Digital Assets",
+    lane: "market", stance: "linked", tie: "**1촌(9/16)** — 팔로우에서 1촌으로", meet: "KBW 9/29~10/1",
+    why: "데이터 회사가 온체인으로 가는 사례이자 **지수·평가 기관**이다. 기초 참조값의 출처를 심사하는 쪽이라 **합의 지수 방법론이 그대로 얹힌다** — 「30년 데이터 회사의 DePIN」 프레임도 같이 통한다.",
+    next: "9/16 1촌이 됐으므로 판매 게이트를 푼다. 다만 **Michael(Bloomberg)과 논조가 같아 한 주에 둘을 같이 열지 않는다** — 자리로 보면 Michael 이 먼저다. 사업 제안이 아니라 사례 비교로 연다.",
   },
   {
     id: "pham", gate: "sale2", name: "Caroline D. Pham", org: "MoonPay", role: "CEO, MoonPay Institutional · CLO & CAO",
@@ -814,10 +814,11 @@ export const PEOPLE: Person[] = [
     next: "기기 가동 전에는 **방법론만으로 선다** — 11개 소스 합의·이상치 선별·계산 전 원장 지문. 전 수석이코노미스트라 **지표가 무엇으로 만들어지는가**를 직업으로 따진 사람이니 숫자보다 **구성 방식**이 통한다. ⚠ 예측시장 담당이라 **다른 거래소·플랫폼 지목 0**. ⚠ **공통 1촌이 Nicole(Kalshi)** 이라 Kalshi 건(Edward·Nicole)과 **동시에 열지 않는다.**",
   },
   {
-    id: "jansen2", name: "Charles Jansen", org: "S&P Global", role: "DeFi and Digital Assets",
-    lane: "market", stance: "linked", tie: "1촌(9/16)",
-    why: "지수·평가 기관. 기초 참조값의 출처를 심사하는 쪽이라 합의 지수 방법론이 그대로 얹힌다.",
-    next: "Michael 과 같은 논조라 **한 주에 둘을 같이 열지 않는다.** Michael 이 먼저다 — 자리가 우리에게 더 가깝다.",
+    id: "parkinson", name: "Matthew Parkinson", org: "Bloomberg",
+    role: "Digital Assets & Market Innovation (2026-03~) · 전 Product Manager · 전 Team Leader: FX, IRD, CDS & Price Discovery · 블룸버그 14년 9개월",
+    lane: "market", stance: "hold", tie: "2촌 · 1촌 신청 대기 · 공통 1촌 Michael", group: "Bloomberg",
+    why: "**Michael 의 팀으로 보인다** — 부서명이 같고(Digital Assets & Market Innovation) Michael 이 2026-01 그 그룹 공동리드로 간 뒤 그가 2026-03 에 그 부서로 옮겼다. **둘 다 Rutgers 경제학**이다. **FX·금리파생·CDS 의 가격 발견(price discovery)을 팀으로 이끈 이력** — Michael 이 「왜 중요한가」를 보는 자리라면 **이쪽은 그 값을 어떻게 만드는가를 보는 자리**이고, 그게 정확히 우리가 파는 것이다.",
+    next: "⚠ **Michael 이 먼저다.** 블룸버그 두 번째이고 **위아래로 동시에 들어가는 형태**라 Tether(Marco·Ply)와 같은 문제다. 1촌은 받아두되 **따로 제안하지 않는다** — Michael 과 대화가 열리면 그 안에서 팀으로 넓힌다.",
   },
   {
     id: "tokenpost", name: "David Jiho Kim", org: "TOKENPOST", role: "CEO",
