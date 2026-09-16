@@ -2999,3 +2999,130 @@ If it's of interest, just let me know.
 - ⚠ **Michael 은 예측시장 담당** — 다른 거래소·플랫폼 지목 0(Kalshi·Polymarket·크립토닷컴 전부).
   **공통 1촌이 Nicole(Kalshi)** 이라 Kalshi 건과 동시에 열지 않는다.
 - 블룸버그는 매체이자 데이터 벤더다 — **판매 압박 0**. 토큰·보상·WLBN·가격 0.
+---
+
+## Crypto Eri 답신 — 무상 협업으로 열렸다 (9/16 새벽)
+
+### 그가 보낸 것
+
+- `I'm so happy you reached out!!!!!`
+- NYC 24시간 더 · **private Canton Summit** 직후
+- **월요일 도쿄 복귀 → `let's set some light media plan! No charge.`**
+- 이유: **`I support Flare out of my love for the team.`**
+- `Can't wait to learn more.`
+
+### ★ 판정 — 좋은 소식이지만 뿌리를 정확히 봐야 한다
+
+**29만 규모가 유료 없이 열리는 것은 이례적**이고, KOL 단가를 쓰지 않고 10/3 전 대외 노출을
+만들 수 있다. 다만 **이 호의의 뿌리는 우리가 아니라 Flare 관계**다 — 본인이 그렇게 말했다.
+**Flare 쪽이 흔들리면 이 라인도 같이 간다.** 팀에도 이 점을 그대로 전한다(미화하지 않는다).
+
+그리고 **Ami 를 건너뛰지 않은 판단이 여기서 값을 했다** — Ami 이름을 쓴 것이 이 답의 문을 열었다.
+
+### 답장 — 배려는 말이 아니라 일정 양보다
+
+```
+Eri — that's very kind, and I'm not going to pretend it isn't a big help.
+
+The flight back is a rough one, and a summit right before it doesn't make it easier.
+Monday works on our end, but please don't feel you have to make it Monday — anytime
+that week is fine, and later is better than tired. We're on Tokyo's clock anyway, so
+the hour is yours to pick.
+
+Between now and then I'll put together what we can actually hand you — the device,
+the data side, and what's real versus what's still testnet, so you're not guessing.
+
+Enjoy the last day in NYC.
+```
+
+| 구절 | 하는 일 |
+|---|---|
+| `I'm not going to pretend it isn't a big help` | 무상을 당연하게 받지 않되 굽신거리지도 않는다. 한 줄로 끝낸다 |
+| `The flight back is a rough one, and a summit right before it…` | **「푹 쉬세요」류는 누구나 쓰는 말이라 읽히지 않는다.** 그의 실제 일정(NYC→도쿄 13시간 시차 + 직전 서밋)을 **구체적으로** 짚어야 같은 문장이 다르게 도착한다. 감탄사·이모지 0 |
+| **`later is better than tired`** | **배려의 실체.** 그가 월요일이라 먼저 말했는데 **우리가 늦춰주는 쪽**이라 말이 아니라 **양보**가 된다. 짧아서 느끼해질 틈이 없다 |
+| `the hour is yours to pick` | 시차 0 사실 + **결정권 이양**. 무상으로 해주는 사람에게 우리가 시간을 지정하지 않는다 |
+| **`what's real versus what's still testnet, so you're not guessing`** | **그는 우리가 준 말을 그대로 옮긴다 — 틀리면 그에게 돌아간다.** 첫 DM 의 테스트넷 선고지와 일관되고, **리서처에게 가장 비싼 신호**다 |
+
+Canton Summit 은 받지 않았다 — 우리가 아는 게 없어 어설퍼지고, 다른 체인 진영이라 끌어올 자리가 아니다.
+그 주 안(9/21~26)이면 10/3 전에 미디어 플랜이 돌 시간은 남는다.
+
+### 팀 카톡 보고본
+
+```
+[대외] Crypto Eri 미디어 협업 — 무상으로 열렸습니다
+
+■ 누구
+Crypto Eri (@sentosumosaba) · X 팔로워 29만 · 도쿄
+2018년부터 XRP·XRPL 씬을 다뤄온 크리에이터이고,
+onamipress / 3 Big Waves Media 공동창업자입니다. 본인이 미디어를 만듭니다.
+9/13에 본인 계정으로 저희를 먼저 언급했고, 10/3 XRP SEOUL 참석 의사도 밝혔습니다.
+
+■ 경과
+어제 제가 DM으로 미디어 쪽 협업이 가능한지 물었고 오늘 새벽 답이 왔습니다.
+- 월요일 도쿄 복귀하면 light media plan 짜자
+- 비용은 받지 않겠다 (No charge)
+- 이유는 Flare 팀에 대한 애정
+
+■ 판단
+29만 규모가 유료 없이 열리는 건 이례적입니다.
+KOL 단가를 쓰지 않고 10/3 전에 대외 노출을 만들 수 있습니다.
+다만 이 호의의 뿌리가 저희가 아니라 Flare 관계라는 점은 정확히 알고 있어야 합니다.
+Flare 쪽이 흔들리면 이 라인도 같이 갑니다.
+
+■ 다음
+9/21(월) 이후 그 주 안으로 컨퍼런스콜 잡겠습니다. 도쿄라 시차가 없어 일정은 쉽습니다.
+10/3까지 보름이 안 남아 미디어 플랜은 행사 전에 돌아야 값이 있습니다.
+
+■ 콜 전에 정해야 할 것
+1. 실제로 드릴 수 있는 것 — 기기 실물 / 데모 / 데이터 접근 중 어디까지
+2. 기기 해외 배송 가능 여부 (도쿄, 통관·전원 규격)
+3. 소개 자료 — 아직 없습니다
+
+■ 발화 주의 (그는 미디어라 저희가 준 말을 그대로 씁니다)
+- Flare는 「케이웨더 × Flare」까지입니다. 「웰비안 × Flare 통합」으로 말하면 안 됩니다
+- FCC 검증 레이어는 아직 테스트넷입니다. 제가 먼저 밝혔고 이 선을 유지해야 합니다
+- 보상은 「예정·비보장」입니다. 지급 주기나 수익을 확정형으로 쓰면
+  그 책임이 올린 사람에게 돌아갑니다
+```
+
+⚠ 그의 개인 X 계정은 **저장소·팀 카톡 어디에도 적지 않는다**(PII).
+
+---
+
+## Kyuyoung Kim (OKX Growth Lead) — 답장 + OKX 문 확정 (9/16)
+
+9/10 서우 첫 인사(한국어 장문) → **9/16 00:58 「안녕하세요 반갑습니다」** 한 줄.
+
+**Brian 의 `Very interesting` 과 같은 계열** — 문을 닫지 않았지만 열지도 않았다. 6일 만에 새벽 1시에
+온 한 줄이면 폰에서 밀린 알림을 정리하다 누른 것이다. **밀면 끝나고, 아무 말도 안 하면 멈춘다.**
+
+```
+답 주셔서 감사합니다.
+
+지난번에 제가 말이 너무 길었는데, 지금 뭘 부탁드리려는 건 아닙니다.
+LG에서 오래 계시다 이쪽으로 건너오신 분이라 그 얘기를 한번 듣고 싶었을 뿐이에요.
+저희도 30년 된 회사가 늦게 들어온 쪽이라서요.
+
+편하실 때 커피 한 잔이면 충분합니다. 급한 건 전혀 아닙니다.
+```
+
+- **`제가 말이 너무 길었는데`** — 첫 메시지가 길었던 것을 먼저 인정하면 상대가 편해진다.
+- **`뭘 부탁드리려는 건 아닙니다`** — **거래소 소속**은 모르는 DM 을 「뭔가 얹으려는 프로젝트」로 읽는 게
+  기본값이다. **두 번째 메시지가 또 사업이면 그 분류가 굳는다.**
+- 질문을 **그의 이력**으로 돌린다(LG 12년 → Web3). 자기 얘기라 답하기 쉽고,
+  **「저희도 늦게 들어온 쪽」**으로 대칭을 만들면 위아래가 없어진다.
+- 커피 = 서울 거주자끼리 가능한 **가장 낮은 요청**. `급한 건 전혀 아닙니다` 가 부담을 푼다.
+
+### ⚠ 9/10 첫 메시지의 문제 — 정정하지 않고 다음부터만
+
+- **「1차 5,000대」** — 내부 계획 수치(1차 5,000 → 2차 10,000)를 대외에 말했다.
+  판매 숫자는 대외 비공개 항목이다. **다른 데 쓰지 않는다.**
+- **「플래티넘 파트너」** — 정본 표기는 **「플래티넘 스폰서」**.
+- **거래소 소속에게 사업 메시지를 먼저 열었다**(9/30 까지 인사만 규칙에서 벗어남).
+  6일 전 것을 지금 정정하면 없던 문제를 만든다 — **이번 답장을 가볍게 가는 것이 그 균형을 되돌린다.**
+
+### ★ OKX 의 문은 Kyuyoung 이다
+
+OKX 1촌이 셋이 됐다 — Morty Ma(Product Director) · Shawn Ma(Head of OKX DEX) · **Kyuyoung Kim(Growth Lead)**.
+어제 「Morty 냐 Shawn 이냐」를 **자리**로 고민했는데, **답이 온 사람이 문이다. 자세가 직함보다 우선한다.**
+나머지 둘은 닫고 **OKX 는 Kyuyoung 한 문**으로 간다 — Binance·Bybit 처럼 셋을 벌여놓으면 사내에서 겹친다.
