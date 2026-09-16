@@ -2718,3 +2718,72 @@ That's the whole message. Nothing to ask.
 
 토큰·상장·멀티체인·WLBN 0 · 판매·가격 0 · **「대형 수요처 반응」류 0**(그 자리에서는 곧 상장 수요
 암시다) · 다른 거래소·플랫폼 지목 0 · 공통 1촌(Ayazhan) 이름 0 · 도움 요청 0.
+---
+
+## Crypto Eri (@sentosumosaba) — 직접 X DM (9/16, 서우 결정)
+
+Ami(Flare)가 9/14 에 「Eri 도 우호적이다」며 링크를 줬고 서우가 소개를 청했으나 진전이 없다
+(9/15 18:04 재촉). 서우: 「컨택이 너무 느려서 답답해 그냥 내가 eri x친구니까 컨택해서 제안할래」.
+
+### Ami 라인을 끊지 않는다
+
+소개를 부탁해놓고 **말없이** 건너뛰면 Ami 가 나중에 알았을 때 「내가 하겠다는데」가 된다.
+Flare 파트너십 담당자와의 관계 자산이 걸려 있고 **TermMax 건이 아직 그 손에 있다.**
+→ 한 줄 던져 중복을 막고 관계를 살린다.
+
+```
+Ami — no rush on the intro, I reached out to Eri directly since we already
+follow each other. Wanted you to know so we're not doubling up. Still keen on
+TermMax whenever you have a moment.
+```
+
+### 본 DM (A판)
+
+```
+Eri — Seowoo from Seoul, we follow each other here.
+
+Quick one. I run partnerships at wellbian. KWeather has measured Korea's weather
+for thirty years — instruments, forecasting, data for 4,000+ enterprise clients.
+wellbian is the network we built on top: an air-quality sensor people run in
+their own room, with every reading fingerprinted to the XRP Ledger.
+
+It's a physical thing, which is rarer on XRPL than it should be. I'd like to send
+you one from the first batch — no strings, no brief, nothing you have to post. If
+you do end up saying something about it, I'd want you to disclose we sent it;
+that protects you more than it protects us.
+
+We're a platinum sponsor at XRP SEOUL 2026 on 3 October if you'd rather see it in
+person first.
+
+Where should I send it?
+```
+
+**B판(짧은 것)** — 회사 소개·행사 줄을 줄여 3문단. `Where should I send it?` 로 동일 마감.
+
+### 설계
+
+| 구절 | 하는 일 |
+|---|---|
+| `we follow each other here` | 접점 명시 — 스팸이 아님을 첫 줄에 |
+| **`a physical thing, which is rarer on XRPL than it should be`** | **훅.** XRPL 콘텐츠 판에서 만질 수 있는 물건은 드물고, 그는 매일 로드맵·파트너십 발표를 받는다. **그가 이미 아는 사실을 우리가 말하면** 대화가 시작된다 |
+| `no strings, no brief, nothing you have to post` | **hype 주문 금지**(9/10 Karan 원칙) — 제품이 걸린 상대에게 과장 유인을 주면 책임이 우리에게 돌아온다. 요구하지 않는 쪽이 이 사람에게 더 먹힌다 |
+| **`I'd want you to disclose we sent it; that protects you more than it protects us`** | 무상 제공 리뷰는 어차피 공개 의무가 따른다. **우리가 먼저 말하면 배려, 나중에 말하면 조건**이다. 「수락 즉시 고지」를 **상대 보호 프레임으로 뒤집었다** |
+| `Where should I send it?` | 결정 하나만 남긴다. 싫으면 답을 안 하면 된다 |
+
+### 금지 확인
+
+- **Flare 0** — Ami 는 「Kweather x Flare」 프레임으로 말하지만 **Eri 의 청중은 XRP** 이고,
+  우리는 웰비안 × Flare 직접 통합을 주장할 수 없다(`CLAUDE.md` 핵심 금지).
+- **XRPL 은 쓴다** — Morty·Ply 와 정반대 판단이고 그게 맞다. 여기선 체인 이름이 진영 신호가 아니라
+  **그의 청중의 언어**다.
+- 토큰·보상·WLBN 0 · 판매·가격 0. **오늘 정오가 1차 판매 마감이지만 KOL 에게 마감 재촉은 하지
+  않는다** — 그는 고객이 아니다.
+- Ami·Jake Ku 이름 0(이름 팔지 않기) · 리플 협력 표현 0 · 성별 표현 0.
+
+### ⚠ 보내기 전 확인 — 「first batch 로 보내겠다」는 약속이다
+
+못 지키면 이 접촉이 그대로 부채가 된다.
+
+- **해외 배송 가능 여부** — 통관 · 전원 규격. KC 인증 중심 설계라면 해외용 유닛이 따로 필요할 수 있다
+- **first batch 실제 출고 시점** — 9/16 정오 판매 마감 뒤 언제인가
+- 못 보내면 **10/3 에 직접 건네는 쪽**으로 문안을 바꾼다. **그림은 오히려 그쪽이 낫다**
