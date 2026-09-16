@@ -169,22 +169,20 @@ value proposition · technicalities) · 시간 2개 제시.
 
 **서우 선택: Friday 2:30–3:00 PM HKT = 3:30–4:00 PM KST.**
 
-### 회신 본문
+### 회신 본문 (확정 — 서우 수정 반영)
 
 ```
 Hi Vincent,
 
-Friday works — 2:30–3:00 PM HKT (3:30–4:00 PM KST). I'll take the lead on the
-walkthrough: how the data is constructed, where it's verifiable, and what it's for.
-Happy to go as deep as your product team wants on any part of it.
+Friday works — 2:30–3:00 PM HKT (3:30–4:00 PM KST). We'll take your product team
+through the data construct, where it's verifiable, and what it's built for, and go
+as deep as they'd like on any part of it.
 
-Two things before then.
+Rather than send material ahead, we'd rather do it live — happy to follow up in
+writing afterwards with whatever your team finds most useful.
 
-I'll send a deck and a short note on the data construct ahead of the call, so your
-team has something to read alongside the account.
-
-And one small thing on the MNDA: could Legal reissue it with the company name in
-full caps — WELLBIAN LABS PTE. LTD.? Everything else is unchanged.
+One small thing on the MNDA in the meantime: could Legal reissue it with the
+company name in full caps — WELLBIAN LABS PTE. LTD.? Everything else is unchanged.
 
 Looking forward to meeting the team.
 
@@ -195,21 +193,10 @@ Seowoo
 | 처리 | 이유 |
 |---|---|
 | **KST 병기** | 9/11 메일과 같은 형식. HKT/KST 한 시간 차이는 실제로 자주 어긋난다 |
-| **그의 세 단어를 앵무새로 받지 않는다** — `how the data is constructed, where it's verifiable, and what it's for` | 그대로 복창하면 받아적은 티가 나고, **재진술하면 이미 준비 중이라는 신호**가 된다 |
+| **주체를 특정하지 않는다 — `We'll take your team through`** | 서우 지시. 실제로는 **이창민 CSO 가 리드**하지만 지금 이름을 박지 않는다. Vincent 가 「you to lead」로 개인 지목했는데 **`we` 로 받으면 팀이 온다는 뜻**이 되어 오히려 격이 오르고, 당일 CSO 소개해도 모순이 없다 |
+| **그의 세 단어를 앵무새로 받지 않는다** — `how the data is constructed, where it's verifiable, and what it's built for` | 그대로 복창하면 받아적은 티가 나고, **재진술하면 이미 준비 중이라는 신호**가 된다 |
+| **덱 선발송 거절을 「선택」으로 제시** | 서우 결정(미리 안 보낸다). **무시하면 안 된다** — product team 이 cc 된 자리에서 명시적 요청이 무시된 게 보인다. `Rather than send material ahead, we'd rather do it live` 로 **거절이 아니라 방식 선택**으로 두고, `follow up in writing afterwards with whatever your team finds most useful` 로 **문을 닫지 않는다.** 범용 덱보다 **그들이 원하는 것을 맞춤으로** 주는 쪽이 실제로 낫고, 우리도 콜에서 듣고 만들면 된다 |
 | **MNDA 요청에 이유를 붙이지 않는다** | 등기부 표기를 확인하지 못했다 — 「등기와 일치시키려고」는 **사실 주장**이 된다. 요청만 하고 `Everything else is unchanged` 로 법무가 다른 데를 건드릴 걱정을 지운다 |
-
-### ⚠ 덱 — 「보내겠다」는 약속이다
-
-9/14 에 요청받고 아직 없는 항목이다. 못 보내면 **product team 앞에서 첫 약속을 못 지킨 게 된다.**
-안 되면 해당 문단을 교체:
-
-```
-I'll send a short note on the data construct ahead of the call — the live account
-plus City Catalog and Developer Docs already cover most of it, so the note will
-fill the gaps rather than repeat them.
-```
-
-1~2장 노트는 이틀이면 만들 수 있다.
 
 ### ★ 금요일 콜은 9/14 콜과 성격이 다르다
 
