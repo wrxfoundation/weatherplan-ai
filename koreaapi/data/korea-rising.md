@@ -1,10 +1,14 @@
-# Korea Rising — verified K-pop snapshot (2026-09-15)
+# Korea Rising — verified K-pop snapshot (2026-09-16)
 
 Every line is **cross-verified** (≥2 independent sources agree on the canonical name) and carries its source + Skill Score. Full data + Schema.org JSON-LD: <https://aiagentlabs.co.kr/> · via KoreaAPI (MCP).
 
 ## 🎬 Latest official releases (YouTube)
-- **TWICE** — SANA ‘사나의 냉터뷰 시즌 3’ First Filming Behind The Scenes
-- **2NE1** — 2025 2NE1 CONCERT [WELCOME BACK] ENCORE IN SEOUL - MESSAGE VIDEO
+- **BoA** — You still our No.1 BoA
+- **NCT Dream** — Zootopia in MACAU🦊ིྀི🐾 그리고 시상식까지🏆 | RENJUN TMEA 2026 Behind
+- **BOYNEXTDOOR** — BOYNEXTDOOR [HOME: DELUXE] Concept Film : OVERDRIVE ver. #BOYNEXTDOOR #보이넥스트도어 #BND #HOME_DELUXE
+- **ZICO** — WATERBOMB? Yeah, absolutely. Absolutely. Easy. No problem.
+- **Oh My Girl** — 저 정말 바라는 거 없어요 💜
+- **VIVIZ** — [VIVI.Zip] 항저우 팬미팅 Spring Whisper 포스터 촬영💙 Highlight #2
 
 ## 🎤 Verified roster (640 acts)
 - **2NE1**: I Am the Best
