@@ -161,6 +161,73 @@ Crypto.com 은 Cronos 생태계다. BNB Chain 은 이 사이트에서 **API 크�
 나중에 발견되면 「왜 말 안 했나」가 된다. 9/14 Brian(기자) 건의 「선제 정정 금지」와 방향이 반대로 보이지만
 결이 다르다 — 그쪽은 **없던 문제를 만드는 정정**이었고, 이쪽은 **제품 상태 고지**다.
 
+## 9/16 — product team 합류 + 금요일 콜 확정
+
+Vincent 회신: 자격증명 감사 + **product team 을 cc** · **덱·추가 문서 요청(재차)** ·
+**「product team buy-in 이 필수」라며 서우가 리드하는 딥다이브 콜** 요청(data construct ·
+value proposition · technicalities) · 시간 2개 제시.
+
+**서우 선택: Friday 2:30–3:00 PM HKT = 3:30–4:00 PM KST.**
+
+### 회신 본문
+
+```
+Hi Vincent,
+
+Friday works — 2:30–3:00 PM HKT (3:30–4:00 PM KST). I'll take the lead on the
+walkthrough: how the data is constructed, where it's verifiable, and what it's for.
+Happy to go as deep as your product team wants on any part of it.
+
+Two things before then.
+
+I'll send a deck and a short note on the data construct ahead of the call, so your
+team has something to read alongside the account.
+
+And one small thing on the MNDA: could Legal reissue it with the company name in
+full caps — WELLBIAN LABS PTE. LTD.? Everything else is unchanged.
+
+Looking forward to meeting the team.
+
+Best regards,
+Seowoo
+```
+
+| 처리 | 이유 |
+|---|---|
+| **KST 병기** | 9/11 메일과 같은 형식. HKT/KST 한 시간 차이는 실제로 자주 어긋난다 |
+| **그의 세 단어를 앵무새로 받지 않는다** — `how the data is constructed, where it's verifiable, and what it's for` | 그대로 복창하면 받아적은 티가 나고, **재진술하면 이미 준비 중이라는 신호**가 된다 |
+| **MNDA 요청에 이유를 붙이지 않는다** | 등기부 표기를 확인하지 못했다 — 「등기와 일치시키려고」는 **사실 주장**이 된다. 요청만 하고 `Everything else is unchanged` 로 법무가 다른 데를 건드릴 걱정을 지운다 |
+
+### ⚠ 덱 — 「보내겠다」는 약속이다
+
+9/14 에 요청받고 아직 없는 항목이다. 못 보내면 **product team 앞에서 첫 약속을 못 지킨 게 된다.**
+안 되면 해당 문단을 교체:
+
+```
+I'll send a short note on the data construct ahead of the call — the live account
+plus City Catalog and Developer Docs already cover most of it, so the note will
+fill the gaps rather than repeat them.
+```
+
+1~2장 노트는 이틀이면 만들 수 있다.
+
+### ★ 금요일 콜은 9/14 콜과 성격이 다르다
+
+> Getting our **product team's buy-in** is essential for us
+
+**Vincent 는 이미 우리 편이다.** 이 자리는 그가 **사내에서 통과시키기 위한** 것이고 실제 심사관은
+cc 된 product team 이다. 9/14(=Vincent 설득)와 준비 초점이 다르다 — 그들이 물을 것은
+**「이 데이터로 무엇을 정산할 수 있나 · 커버리지는 언제 채워지나」** 쪽이다.
+
+### ⚠ 법인 문제가 새 국면으로 — 이제 심사관들이 사이트를 본다
+
+어제(9/15) 올린 **MNDA 당사자 ≠ 데이터 계약 당사자** 건이 달라졌다.
+어제는 Legal 만 보는 문제였는데, **오늘 product team 이 weathermarket.ai 에 로그인한다.**
+푸터에 **「Wellbian Labs … is not a party to your contract」** 가 그대로 적혀 있고,
+지금 MNDA 는 Wellbian Labs 와 맺는 중이다.
+
+**그들이 먼저 발견하면 콜에서 질문이 된다.** 금요일 전에 답을 준비해야 한다.
+
 ## 이 메일 이후 남는 것
 
 - 회사 소개 덱 — MNDA 실행 후 전달 약속. **아직 없다**
