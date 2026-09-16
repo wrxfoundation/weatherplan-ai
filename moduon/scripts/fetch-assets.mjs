@@ -44,10 +44,9 @@ const ASSETS = [
   // (아정당식 개편 이후 Home 에서 참조하지 않음 — 현재 미참조(보관), 파일은 유지)
 
   // ── 아정당식 초기화면 개편(2026-09-09) — GPT Image 2 로 한 세트 생성 ──
-  // 롤링 배너 장면 21:9 · 2k. 왼쪽 55% 는 텍스트용 빈 파란 그라디언트라 DOM 글자가 그 위에 얹힌다.
-  ['banner-support.png', 'https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260909_204855_32697576-178b-4d20-9099-c652d0c586c8.png'], // 지원금 — 돈주머니·코인·선물상자
-  ['banner-car.png',     'https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260909_204245_90b0cc96-63da-4e4f-a873-e06e4a47151b.png'], // 렌트/리스 — 흰 SUV·키
-  ['banner-home.png',    'https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260909_204245_b4e33f45-61ba-498b-8346-9f817da7dfde.png'], // 가전렌탈·인터넷 — 정수기·공기청정기·공유기·폰
+  // [삭제 2026-09-16] 21:9 장면형 배너 7종(banner-mobi/benefit/subscribe/finder/support/car/home)은
+  //   생성 CDN 에서 원본이 사라져 빌드가 HTTP 403 을 받았다. 히어로가 빈 그라디언트로 배포되는 사고가 나서
+  //   시드를 컷아웃·뉴스형으로 되돌리고 여기서도 뺐다. 다시 장면형을 쓰려면 새로 생성해 CRITICAL 에 넣을 것.
   // 모비 AI 비서 인물(배경 제거) — 배너 1 과 우측 플로팅 패널이 같이 쓴다
   ['mobi-agent.png',     'https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260909_204904_5b38d67a-6f7b-4733-973d-b7b29d7656e0.png'],
   // 1차 동선 아이콘 6종(배경 제거) — 유리질 3D · 콘플라워 블루 + 코랄. 아정당의 파스텔 3D 와 소재·구도가 다른 별도 세트.
@@ -58,12 +57,6 @@ const ASSETS = [
   ['tile-car.png',      'https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260909_204859_4b9f9a99-5633-4bb5-8888-6df3c6d75349.png'], // 렌트/리스 — 키 + 세단
   ['tile-package.png',  'https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260909_204900_cb03ca73-f833-411b-8d04-86dae644756f.png'], // 매장패키지 — 어닝 달린 상점
   ['tile-benefit.png',  'https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260909_204903_9c52e903-65c4-412b-b431-96ad0e7a56d0.png'], // 모두온혜택 — 선물상자 + 코인 + % 배지
-  // 히어로 롤링 배너 4장 — 2026-09-10 브랜드 톤(콘플라워 블루·크림·코랄, 소프트 3D)으로 한 세트 생성. 21:9 · 2k.
-  // 피사체는 한쪽 40% 안에만 두고 반대쪽 60% 는 빈 그라디언트(텍스트는 DOM). 손볼 땐 4장을 한 세트로 다시 뽑을 것.
-  ['banner-mobi.png',      'https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260910_001039_debdaaa6-5a3b-41e7-87e2-3ee5a3a7b1f7.png'], // 1 모비 — 파랑, 인물+홀로그램 오른쪽
-  ['banner-benefit.png',   'https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260910_001039_5b400768-9407-4a0f-bb09-a64bbc572064.png'], // 2 혜택 — 크림, 코랄 저금통 오른쪽
-  ['banner-subscribe.png', 'https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260910_001039_e98dab13-257e-48e6-b131-0d8d791e1c75.png'], // 3 구독경제 — 연파랑, 신문·달력·박스 왼쪽
-  ['banner-finder.png',    'https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260910_001038_0595ab4b-f01c-45f1-b152-72fa93dbac1a.png'], // 4 혜택 찾기 — 파랑, 과녁·돋보기 왼쪽
   // 목업 랜딩페이지 2·4 오브제(배경 제거) — 저금통(노랑 배너), 과녁(라벤더 배너). 3(뉴스)은 DOM 카드라 이미지 없음
   ['banner-piggy.png',  'https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260909_233952_83a97fd6-941a-416d-a171-25ff9b9e9a0e.png'],
   ['banner-target.png', 'https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260909_233953_51f9e63c-9be0-40c9-b893-e679713f0a34.png'],
@@ -76,7 +69,18 @@ const root = dirname(dirname(fileURLToPath(import.meta.url)))
 const dir = join(root, 'public', 'assets')
 mkdirSync(dir, { recursive: true })
 
+// 홈 첫 화면이 이것 없이는 완성되지 않는 에셋 — 하나라도 빠지면 배포에서 빌드를 세운다.
+// 지난번 사고(배너 7종 403)가 "경고만 남기고 통과"했기 때문에 며칠간 빈 히어로가 서비스됐다.
+// 로컬·컨테이너는 egress 가 막힐 수 있으므로 경고만, CI/배포(VERCEL)에서는 실패로 본다.
+// 빠져나갈 구멍: ASSETS_STRICT=0 으로 끄고, ASSETS_STRICT=1 로 어디서든 켤 수 있다.
+const CRITICAL = new Set([
+  'tile-phone.png', 'tile-rental.png', 'tile-internet.png', 'tile-car.png', 'tile-package.png', 'tile-benefit.png',
+  'mobi-agent.png', 'banner-piggy.png', 'banner-target.png', 'ill-ai.png', 'ill-thinking.png', 'obj-moneybag.png',
+])
+const strict = process.env.ASSETS_STRICT === '1' || (process.env.ASSETS_STRICT !== '0' && !!process.env.VERCEL)
+
 let ok = 0, skip = 0, fail = 0
+const missing = []
 await Promise.all(ASSETS.map(async ([name, url]) => {
   const dest = join(dir, name)
   if (existsSync(dest)) { skip++; return }
@@ -87,7 +91,26 @@ await Promise.all(ASSETS.map(async ([name, url]) => {
     ok++
   } catch (e) {
     fail++
+    if (CRITICAL.has(name)) missing.push(`${name} (${e.message})`)
     console.warn(`[assets] ${name} 다운로드 실패 (${e.message}) — 배포 환경에서는 자동으로 받아집니다`)
   }
 }))
 console.log(`[assets] 완료: 신규 ${ok} · 보유 ${skip} · 실패 ${fail} / ${ASSETS.length}`)
+
+if (missing.length) {
+  const box = [
+    '',
+    '════════════════════════════════════════════════════════════',
+    ` [assets] 필수 에셋 ${missing.length}개를 받지 못했습니다`,
+    ...missing.map((m) => `   · ${m}`),
+    '',
+    ' 이대로 배포하면 해당 이미지 자리가 빈 채로 서비스됩니다.',
+    ' 원본이 사라졌다면 새로 생성해 scripts/fetch-assets.mjs 의 URL 을 교체하세요.',
+    ' 한 번 받아 두고 레포에 커밋하면(=자체 호스팅) 다시는 외부 CDN 에 흔들리지 않습니다:',
+    '   npm run fetch-assets && git add public/assets && git commit -m "chore: 에셋 자체 호스팅"',
+    '════════════════════════════════════════════════════════════',
+    '',
+  ].join('\n')
+  console.error(box)
+  if (strict) { console.error('[assets] ASSETS_STRICT — 빌드를 중단합니다 (끄려면 ASSETS_STRICT=0)'); process.exit(1) }
+}

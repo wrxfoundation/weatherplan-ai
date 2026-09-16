@@ -147,6 +147,11 @@ const BASE = process.env.QA_BASE ?? 'http://localhost:4173'
   const dbBanners = await page.evaluate(() => { try { return JSON.parse(localStorage.getItem('moduon_db_v1')).banners.map((b) => ({ id: b.id, active: b.active, image: b.image })) } catch { return [] } })
   // 뉴스형(B3)은 DOM 카드라 이미지가 없다 — 이미지가 있는 배너만 경로를 본다
   check(dbBanners.filter((b) => b.active).length === 4 && dbBanners.filter((b) => b.image).every((b) => /^\/assets\/[\w.-]+$/.test(b.image)), `스토어 배너 이미지 전부 /assets/ 경로 (${dbBanners.map((b) => b.image || '(뉴스형)').join(' ')})`)
+  // 히어로 종류 — 컷아웃(mobi)·뉴스형만 쓴다. 장면형(scene)은 이미지가 배경 전체라
+  // CDN 이 죽으면 배너가 통째로 빈 판이 된다(2026-09 사고). 기본 시드에서는 쓰지 않는다.
+  const kinds = await page.evaluate(() => { try { return JSON.parse(localStorage.getItem('moduon_db_v1')).banners.map((b) => b.kind) } catch { return [] } })
+  check(kinds.length > 0 && kinds.every((k) => k === 'mobi' || k === 'news'), `배너 종류 전부 컷아웃·뉴스형 (${kinds.join(',')})`)
+  check(kinds.includes('news'), '뉴스형 1장 이상 — 이미지 없이도 서는 배너')
   const html = await page.content()
   check(!html.includes('cloudfront'), '페이지에 cloudfront 없음')
   // 자동 롤링 — 호버·포커스가 멈추게 하므로 마우스를 여백으로 빼고 새로 연다

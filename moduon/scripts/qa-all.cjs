@@ -28,6 +28,8 @@ const step = (name, fn) => {
   })
   await boot()
 
+  // 정적 검사 — 브라우저가 필요 없어 preview 기동 전에 돌린다(에셋 참조 ↔ 공급원 정합성)
+  step('검사: 에셋 참조 정합성', () => run('node scripts/qa-assets-check.cjs'))
   step('스모크: 소비자 홈·GNB', () => run('node scripts/qa-home-smoke.cjs'))
   step('스모크: 온보딩 위저드', () => run('node scripts/qa-onboard-smoke.cjs'))
   step('스모크: 어드민 4-아레나', () => run('node scripts/qa-arena-smoke.cjs'))

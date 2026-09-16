@@ -9,7 +9,7 @@ const dayAfter = (d) => now() + d * 86400000
 const thisMonth = (day, hour = 11) => { const d = new Date(); d.setDate(Math.min(day, d.getDate())); d.setHours(hour, 0, 0, 0); return d.getTime() }
 import { BENEFIT_TOTAL, REVIEWS } from './constants'
 
-export const SEED_VERSION = 14 // 14: 조직 3계층(권역 총판·지역 대리점·셀러) + 개인식별번호 + 회원(개인/사업자)
+export const SEED_VERSION = 15 // 15: 히어로 배너를 컷아웃·뉴스형으로 — 외부 CDN 에서 사라진 21:9 장면 의존 제거
 
 export function buildSeed() {
   const tenants = [
@@ -130,17 +130,22 @@ export function buildSeed() {
   // kind 'mobi' 는 파란 그라디언트 위에 인물 컷아웃 + DOM 텍스트, 'scene' 은 21:9 장면 이미지 위에 텍스트.
   // 이미지는 fetch-assets.mjs 가 내려받는 자체 호스팅 경로. 문구·순서·노출은 어드민 배너 관리에서 바꾼다.
   const banners = [
-    // 히어로 4장 — 목업 덱 랜딩페이지 1~4 를 브랜드 톤(콘플라워 블루·크림·코랄, 소프트 3D)의 21:9 장면으로 통일.
-    // 장면의 한쪽 55~60% 는 비어 있고 텍스트는 DOM(어드민에서 수정) — 파랑(흰 글씨) → 크림(잉크) → 연파랑(잉크) → 파랑(흰 글씨) 리듬.
-    // bg 는 장면과 같은 그라디언트라 이미지를 못 받아와도 톤이 유지된다.
-    { id: 'B1', kind: 'scene', tone: 'light', order: 0, active: true, eyebrow: '모두온 플랫폼의 AI비서 모비를 소개합니다', title: '“상담원 기다리지 말고,\n모비에게 바로 물어보세요.”', desc: '인터넷·휴대폰·정수기… 흩어진 생활 구독서비스를 한곳에서 비교하고\n남들은 몰라서 못 받은 지원금까지 왕창 돌려받으세요.', note: '24시간 언제든, 모비와 상담하세요.', image: '/assets/banner-mobi.png', bg: 'linear-gradient(90deg,#5377D6 0%,#7D9BE8 100%)', cta: { label: '모비와 상담하기', action: 'chat' } },
-    { id: 'B2', kind: 'scene', tone: 'dark', order: 1, active: true, eyebrow: '모두온 혜택', title: '“보고, 초대하고,\n쌓고, 쓰세요.”', desc: '- on포인트 : 보고, 초대하고, 적립하고\n- 복지몰 : 적립한 포인트로 쇼핑하고', image: '/assets/banner-benefit.png', bg: 'linear-gradient(90deg,#F7F2EE 0%,#EDF1FB 100%)', cta: { label: '혜택 보러가기', to: '/benefits' } },
-    { id: 'B3', kind: 'scene', side: 'left', tone: 'dark', order: 2, active: true, eyebrow: '구독경제 전성시대 · 100조원 시장 개막!', title: '합리적인 구독서비스 소비는\n“모두온”과 함께', desc: '구독경제는 매달 일정한 금액을 내고 필요한 물건이나\n서비스를 주기적으로 받는 경제 활동입니다.', image: '/assets/banner-subscribe.png', bg: 'linear-gradient(90deg,#EDF1FB 0%,#D6E0FA 100%)', cta: { label: '모비에게 물어보기', action: 'chat' } },
-    { id: 'B4', kind: 'scene', side: 'left', tone: 'light', order: 3, active: true, eyebrow: '비교는 간편하고 편리하게, 혜택은 통 크게 씁니다.', title: '몰라서 놓친 혜택\n찾아 주는 서비스', image: '/assets/banner-finder.png', bg: 'linear-gradient(90deg,#4467C8 0%,#5377D6 100%)', cta: { label: '내 혜택 찾기', to: '/diagnosis' } },
-    // 예비 — 장면형 3종(어드민에서 켜면 롤링에 합류)
-    { id: 'B5', kind: 'scene', order: 4, active: false, eyebrow: '남들 받는 그 이상, 모두온이 돌려드려요', title: `몰라서 못 받은 지원금,\n최대 ${BENEFIT_TOTAL}만원+ 왕창 돌려드려요`, desc: '유통 단계를 줄인 직접 판매 구조 — 조건이 맞으면\n다른 곳에선 처음 보는 혜택까지 그대로 돌려드립니다.', image: '/assets/banner-support.png', bg: 'linear-gradient(135deg,#2F6BFF 0%,#4F8BFF 100%)', cta: { label: '내 지원금 확인하기', to: '/consult' } },
-    { id: 'B6', kind: 'scene', order: 5, active: false, eyebrow: '렌트/리스 신규 오픈', title: '국내 모든 리스·렌트사 견적 비교,\n캐피탈사보다 3~5% 더 저렴하게', desc: '취등록세·보험료까지 넣은 진짜 월 납입금으로 안내해요.\n국산 6개 · 수입 16개 제조사, 58차종.', image: '/assets/banner-car.png', bg: 'linear-gradient(135deg,#2F6BFF 0%,#4F8BFF 100%)', cta: { label: '차종 보러가기', to: '/cars' } },
-    { id: 'B7', kind: 'scene', order: 6, active: false, eyebrow: '가전렌탈 · 인터넷', title: '정수기·공기청정기·인터넷,\n한 번에 비교하고 한 번에 설치', desc: '9개 렌탈 브랜드와 통신 3사를 한 화면에서 골라요.', image: '/assets/banner-home.png', bg: 'linear-gradient(135deg,#2F6BFF 0%,#4F8BFF 100%)', cta: { label: '브랜드로 찾기', to: '/category/rental' } },
+    // 히어로 4장 — 컷아웃형(배경 제거 PNG) + 뉴스형(이미지 없음).
+    //
+    // [사고 기록 2026-09-16] 이전에는 4장 모두 21:9 '장면형'이었는데, 생성 CDN 에서 원본이 삭제돼
+    // 빌드가 HTTP 403 을 받았고(에셋 스크립트는 경고만 남기고 통과) 히어로가 빈 그라디언트로 배포됐다.
+    // 장면형은 이미지가 배경 전체라 실패하면 화면이 통째로 비지만, 컷아웃형·뉴스형은 텍스트 컬럼과 bg 로
+    // 화면이 완성되므로 같은 일이 또 나도 "사람만 안 보이는" 정도로 끝난다. 그래서 기본값을 이쪽으로 되돌린다.
+    // 쓰는 이미지는 전부 배경 제거(투명 PNG) 산출물 — 현재 배포에서 정상 수신이 확인된 것들이다.
+    { id: 'B1', kind: 'mobi', tone: 'light', order: 0, active: true, eyebrow: '모두온 플랫폼의 AI비서 모비를 소개합니다', title: '“상담원 기다리지 말고,\n모비에게 바로 물어보세요.”', desc: '인터넷·휴대폰·정수기… 흩어진 생활 구독서비스를 한곳에서 비교하고\n남들은 몰라서 못 받은 지원금까지 왕창 돌려받으세요.', note: '24시간 언제든, 모비와 상담하세요.', image: '/assets/mobi-agent.png', bg: 'linear-gradient(90deg,#5377D6 0%,#7D9BE8 100%)', cta: { label: '모비와 상담하기', action: 'chat' } },
+    { id: 'B2', kind: 'mobi', tone: 'dark', order: 1, active: true, eyebrow: '모두온 혜택', title: '“보고, 초대하고,\n쌓고, 쓰세요.”', desc: '- on포인트 : 보고, 초대하고, 적립하고\n- 복지몰 : 적립한 포인트로 쇼핑하고', image: '/assets/banner-piggy.png', bg: 'linear-gradient(90deg,#F7F2EE 0%,#EDF1FB 100%)', cta: { label: '혜택 보러가기', to: '/benefits' } },
+    // 뉴스형 — 목업 랜딩페이지3 의 신문 1면. 카드가 DOM 이라 이미지가 아예 필요 없다(가장 안전한 종류).
+    { id: 'B3', kind: 'news', side: 'left', tone: 'dark', order: 2, active: true, eyebrow: '구독경제 전성시대 · 100조원 시장 개막!', title: '합리적인 구독서비스 소비는\n“모두온”과 함께', desc: '구독경제는 매달 일정한 금액을 내고 필요한 물건이나\n서비스를 주기적으로 받는 경제 활동입니다.', news: { kicker: 'SPECIAL NEWS', vol: 'VOL 01', date: '', headline: '구독경제 시대', big: '100조원 시장 개막!' }, bg: 'linear-gradient(90deg,#EDF1FB 0%,#D6E0FA 100%)', cta: { label: '모비에게 물어보기', action: 'chat' } },
+    { id: 'B4', kind: 'mobi', side: 'left', tone: 'light', order: 3, active: true, eyebrow: '비교는 간편하고 편리하게, 혜택은 통 크게 씁니다.', title: '몰라서 놓친 혜택\n찾아 주는 서비스', image: '/assets/banner-target.png', bg: 'linear-gradient(90deg,#4467C8 0%,#5377D6 100%)', cta: { label: '내 혜택 찾기', to: '/diagnosis' } },
+    // 예비 3종 — 어드민에서 켜면 롤링에 합류. 이미지도 전부 수신 확인된 오브제 컷아웃.
+    { id: 'B5', kind: 'mobi', order: 4, active: false, eyebrow: '남들 받는 그 이상, 모두온이 돌려드려요', title: `몰라서 못 받은 지원금,\n최대 ${BENEFIT_TOTAL}만원+ 왕창 돌려드려요`, desc: '유통 단계를 줄인 직접 판매 구조 — 조건이 맞으면\n다른 곳에선 처음 보는 혜택까지 그대로 돌려드립니다.', image: '/assets/obj-moneybag.png', bg: 'linear-gradient(135deg,#2F6BFF 0%,#4F8BFF 100%)', cta: { label: '내 지원금 확인하기', to: '/consult' } },
+    { id: 'B6', kind: 'mobi', order: 5, active: false, eyebrow: '렌트/리스 신규 오픈', title: '국내 모든 리스·렌트사 견적 비교,\n캐피탈사보다 3~5% 더 저렴하게', desc: '취등록세·보험료까지 넣은 진짜 월 납입금으로 안내해요.\n국산 6개 · 수입 16개 제조사, 58차종.', image: '/assets/cat-car.png', bg: 'linear-gradient(135deg,#2F6BFF 0%,#4F8BFF 100%)', cta: { label: '차종 보러가기', to: '/cars' } },
+    { id: 'B7', kind: 'mobi', order: 6, active: false, eyebrow: '가전렌탈 · 인터넷', title: '정수기·공기청정기·인터넷,\n한 번에 비교하고 한 번에 설치', desc: '9개 렌탈 브랜드와 통신 3사를 한 화면에서 골라요.', image: '/assets/obj-purifier.webp', bg: 'linear-gradient(135deg,#2F6BFF 0%,#4F8BFF 100%)', cta: { label: '브랜드로 찾기', to: '/category/rental' } },
   ]
 
   // ── 게시판 6종 — posts 한 컬렉션, board 로 구분 ──

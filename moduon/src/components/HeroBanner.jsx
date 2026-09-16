@@ -147,6 +147,18 @@ export default function HeroBanner({ banners = [], tenant, consultTo = '/consult
                 className="relative h-full w-full shrink-0 overflow-hidden"
                 style={{ background: b.bg }}
               >
+                {/* 장식 레이어 — 이미지가 없거나 못 받아왔을 때 배너가 "빈 판"으로 보이지 않게 한다.
+                    이미지가 뜨면 그 아래 깔려 보이지 않는다. 2026-09 에 장면 이미지 7종이 CDN 에서 사라져
+                    히어로가 통째로 빈 그라디언트로 배포된 적이 있다 — 그때 이 레이어가 없었다. */}
+                {b.kind !== 'news' && (
+                  <span
+                    aria-hidden
+                    className="pointer-events-none absolute inset-0"
+                    style={{
+                      background: `radial-gradient(60% 80% at ${left ? '22%' : '78%'} 62%, ${dark ? 'rgba(83,119,214,0.18)' : 'rgba(255,255,255,0.22)'} 0%, transparent 70%)`,
+                    }}
+                  />
+                )}
                 {b.kind === 'scene' ? (
                   <>
                     <SafeImg src={b.image} aria-hidden className={`absolute inset-0 h-full w-full object-cover ${left ? 'object-left' : 'object-right'}`} loading={i === 0 ? 'eager' : 'lazy'} />
