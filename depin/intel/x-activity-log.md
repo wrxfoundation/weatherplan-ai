@@ -2911,3 +2911,91 @@ works on your side?
 
 기기 증정 0(서우 지시) · 토큰·보상·WLBN 0 · 판매·가격 0 · **웰비안 × Flare 통합 클레임 0**
 (`Ami at Flare` 는 **사람 지칭**이라 안전) · 리플 0 · Jake Ku 이름 0 · 성별 표현 0.
+---
+
+## Bloomberg 두 사람 — Michael McDonough · Matthew Parkinson (9/16, 서우 「둘 다」 결정)
+
+앞 판정은 **「Michael 이 먼저, Matthew 는 따로 제안하지 않는다」**(위아래 동시 진입 우려)였다.
+서우가 **둘 다** 로 정했다. **우려는 문장을 다르게 쓰면 해소된다** — 문제는 두 사람에게 가는 것이
+아니라 **같은 제안이 두 번 가는 것**이었다. 자리가 실제로 다르므로 묻는 것을 다르게 한다.
+
+| | Michael | Matthew |
+|---|---|---|
+| 자리 | Global Head of Market Innovation · ECAN(경제·대체 데이터 분석기) 제작 · 예측시장 터미널 첫 통합 | FX·금리파생·CDS **가격 발견** 팀 리더 → 현 Digital Assets & Market Innovation |
+| **묻는 것** | 이 값이 **기관 화면에 들어갈 만한가** | 이 구성이 **스트레스를 견디는가** |
+| 성격 | **왜 중요한가**를 정하는 쪽 | **어떻게 만드는가**를 아는 쪽 |
+| 마지막 줄 | `you'd judge better than I would` | `the part I can't answer myself` |
+
+같은 사실(90개국·167도시·11소스 + 계산 전 원장 지문)을 쓰되 **질문이 다르다.**
+둘이 대조해도 「각자 다른 걸 물었네」가 되지 「같은 메일을 돌렸네」가 되지 않는다.
+
+### Michael McDonough (1촌 · 오늘)
+
+```
+Michael — thanks for connecting.
+
+I run partnerships at wellbian. KWeather has measured weather in South Korea for
+thirty years and supplies 4,000+ enterprise clients; wellbian is the network built on
+top of that, and the data side is where most of my time goes.
+
+Your seat is why I wanted to say hello rather than the usual reasons. Alternative data
+tends to fail the same test twice — a desk can't check where the number came from, and
+it can't check it again after the fact. That's the part we built first.
+
+We supply city-level weather across 90 countries and 167 cities. A city's value isn't
+one reading; it's a consensus across eleven independent sources with outliers screened
+out, where most providers publish a single observation point. And every input is
+fingerprinted to a public ledger before it enters the calculation, so the screening step
+can be audited later rather than taken on trust.
+
+Whether that clears the bar for an institutional screen is something you'd judge better
+than I would. What's still ahead of us rather than behind us is coverage density — our
+own devices ship after this month.
+
+If any of it is of interest, just let me know.
+```
+
+- **`Alternative data tends to fail the same test twice`** — **ECAN 을 직접 거론하지 않고 그가 매일
+  내리는 판단을 말한다.** 이력을 읊으면 프로필 훑은 티가 나고, **그 자리의 문제**를 말하면
+  「이 사람이 내 일을 안다」가 된다(Edward 의 `the only seat that has to live with…` 과 같은 장치).
+- **커버리지를 정직하게 둔다** — `still ahead of us rather than behind us`. **Vincent 에게 쓴 것과
+  같은 어법**이라 두 대화가 나중에 만나도 말이 맞는다. 전 수석이코노미스트에게 숨기면 그가 먼저 묻는다.
+
+### Matthew Parkinson (2촌 · **1촌 수락 뒤**, Michael 발송에서 최소 하루 뒤)
+
+```
+Matthew — thanks for connecting.
+
+I run partnerships at wellbian. KWeather has measured weather in South Korea for thirty
+years and supplies 4,000+ enterprise clients; wellbian is the measurement layer
+underneath.
+
+I came to say hello because of the price discovery work rather than the digital assets
+line. Weather is one of the few references that gets used for settlement while almost
+nobody looks at how the figure is actually constructed — usually a single observation
+point per city, taken on trust.
+
+Ours is built differently. A city's value is a consensus across eleven independent
+sources with outliers screened out, and every input is fingerprinted to a public ledger
+before it enters the calculation, so the screening step itself can be checked after the
+fact. 90 countries, 167 cities.
+
+Whether that construction holds up to the way you'd stress a reference is the part I
+can't answer myself.
+
+If it's of interest, just let me know.
+```
+
+- **`because of the price discovery work rather than the digital assets line`** — 한 줄이 둘을 한다.
+  그의 이력에서 **우리와 닿는 진짜 지점**을 짚고, 동시에 **「디지털자산이라서 왔다」를 부정**한다.
+  그 자리에 오는 DM 의 대부분이 후자라 **먼저 선을 그어야 뒷문장을 읽는다.**
+- **Michael 이름을 쓰지 않는다** — 공통 1촌이라 투명하게 밝힐까 싶지만, 그러면
+  **「위에 갔다가 아래로 내려온 사람」**이 된다. 주제가 다르면 언급할 이유가 없다.
+
+### 순서와 금지
+
+- **Michael 오늘 → Matthew 는 수락 뒤 최소 하루.** 같은 날 같은 시간에 둘이 도착하면 내용이 달라도
+  **타이밍만으로 「돌리는 중」**이 된다. Matthew 는 아직 1촌 신청 대기라 수락 전에는 보낼 수 없다.
+- ⚠ **Michael 은 예측시장 담당** — 다른 거래소·플랫폼 지목 0(Kalshi·Polymarket·크립토닷컴 전부).
+  **공통 1촌이 Nicole(Kalshi)** 이라 Kalshi 건과 동시에 열지 않는다.
+- 블룸버그는 매체이자 데이터 벤더다 — **판매 압박 0**. 토큰·보상·WLBN·가격 0.
