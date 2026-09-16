@@ -2720,7 +2720,7 @@ That's the whole message. Nothing to ask.
 암시다) · 다른 거래소·플랫폼 지목 0 · 공통 1촌(Ayazhan) 이름 0 · 도움 요청 0.
 ---
 
-## Crypto Eri (@sentosumosaba) — 직접 X DM (9/16, 서우 결정)
+## ~~Crypto Eri (@sentosumosaba) — 기기 증정 DM (9/16)~~ — **폐기, 아래 절로 교체**
 
 Ami(Flare)가 9/14 에 「Eri 도 우호적이다」며 링크를 줬고 서우가 소개를 청했으나 진전이 없다
 (9/15 18:04 재촉). 서우: 「컨택이 너무 느려서 답답해 그냥 내가 eri x친구니까 컨택해서 제안할래」.
@@ -2787,3 +2787,80 @@ Where should I send it?
 - **해외 배송 가능 여부** — 통관 · 전원 규격. KC 인증 중심 설계라면 해외용 유닛이 따로 필요할 수 있다
 - **first batch 실제 출고 시점** — 9/16 정오 판매 마감 뒤 언제인가
 - 못 보내면 **10/3 에 직접 건네는 쪽**으로 문안을 바꾼다. **그림은 오히려 그쪽이 낫다**
+---
+
+## Crypto Eri (@sentosumosaba) — 미디어 협력 DM (9/16 확정)
+
+서우 지시: 「제품 제안 말고 우선 flare ami 에게 eri님 명망은 들었다. eri님이 우리 프로젝트에
+관심가져주셔서 감사하고 우선 가볍게 미디어 협력을 시작해보는게 어떻겠냐를 물어보자」.
+→ **기기 증정 판 폐기.** Ami 이름은 **서우 결정으로 사용**한다(평소 「이름 팔지 않기」의 예외).
+
+### ★ 판이 바뀐 이유 — 그가 먼저 열었다
+
+**9/13 그의 글**(XRP SEOUL 의 김성환 연사 발표 인용):
+
+> Can't wait to learn more about KWeather, which recently partnered with @FlareNetworks!
+> All happening at @XRPSEOUL on October 3. **See you there.** 🇰🇷🎉
+
+- 우리가 답글 하나 단 적 없는데 **그가 먼저 우리를 공개 언급했다** → 사다리 **칸 5(먼저 언급)**.
+  10/3 에 오면 6. **해외 KOL 중 가장 앞선 칸.**
+- 차가운 DM 이 아니라 **답례**다. 설계 전체가 달라진다.
+- 그가 쓴 **「KWeather partnered with FlareNetworks」는 정확하다** — wellbian × Flare 가 아니다.
+  건드리지 않는다.
+
+### 그의 프로필에서 쓴 것
+
+| 사실 | 쓰임 |
+|---|---|
+| **onamipress.com · 3 Big Waves Media 공동창업자** | 「미디어 협력」이 막연하지 않다 — **그는 미디어를 만드는 사람**이다. 서우 판단이 정확했다 |
+| 290.4K 팔로워 · 2017 가입 · 2018~ 블록체인 · **도쿄** | 미국 아님. 영어로 활동 |
+| **Pinned = XRP SEOUL 2026 홍보** | 그는 행사 자체를 밀고 있다 |
+| wellbian 이 이미 그를 팔로우 | 접점 존재 |
+
+### 본 DM
+
+```
+Eri — Seowoo from KWeather / wellbian in Seoul.
+
+Ami at Flare spoke highly of you, and then I saw your post about wanting to learn
+more about us ahead of 3 October. Thank you for that — early attention is the kind
+that's hardest to earn.
+
+You know this space far better than we do, and you build media for it. So rather
+than arriving with a pitch: would you be open to starting something light on the
+media side, whatever shape makes sense to you?
+
+Happy to leave it until Seoul if that's easier.
+```
+
+### 설계
+
+| 구절 | 하는 일 |
+|---|---|
+| `your post about wanting to learn more about us ahead of 3 October` | **감사를 막연히 두지 않고 그 글을 지목.** 그는 하루에 여러 개 올린다 — 내용으로 특정해야 **진짜 봤다**가 전달된다. 막연한 `thanks for the interest` 는 자동 발송처럼 읽힌다 |
+| **`early attention is the kind that's hardest to earn`** | 감사의 이유를 **이른 시점**에 둔다. 「저희가 아직 별 거 없는데 봐주셔서」로 쓰면 자기비하이고 **그가 다룰 게 없다**는 뜻이 된다. 대신 **그의 행동에 값을 매긴다** |
+| `you build media for it` | 그가 미디어 회사 공동창업자임을 안다는 신호. 한 줄로 |
+| `rather than arriving with a pitch` | 제안이 아님을 명시 |
+| **`whatever shape makes sense to you`** | **포맷을 우리가 정하지 않는다.** 형식을 들이밀면 「또 광고 의뢰」, 물어보면 **그의 전문성을 인정하는 자리**가 된다 |
+| `light` · `whatever shape` · `leave it until Seoul` | 서우의 「가볍게」를 **세 겹**으로 |
+
+**광고 표시는 이번엔 뺀다** — Karan 원칙은 「수락 즉시」인데 지금은 **조건 얘기 전**이다.
+지금 꺼내면 무겁다. 조건이 오갈 때 꺼낸다.
+
+### Ami 에게 (더 필요해졌다)
+
+Eri 에게 **Ami 이름을 쓰므로** Eri 가 Ami 에게 확인할 수 있다.
+
+```
+Ami — thanks again for the pointer on Eri. We already follow each other, so I
+reached out directly and mentioned your good word — hope that's alright, and no
+need to double up on the intro. Still keen on TermMax whenever you have a moment.
+```
+
+⚠ **대명사를 쓰지 않았다**(`your good word`) — Eri 의 성별을 프로필에서 확정할 수 없다.
+9/14 사내 메시지의 `his hands` 는 착오. 우리 문안에서는 성별 표현이 애초에 필요 없다.
+
+### 금지 확인
+
+기기 증정 0(서우 지시) · 토큰·보상·WLBN 0 · 판매·가격 0 · **웰비안 × Flare 통합 클레임 0**
+(`Ami at Flare` 는 **사람 지칭**이라 안전) · 리플 0 · Jake Ku 이름 0 · 성별 표현 0.
