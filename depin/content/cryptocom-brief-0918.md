@@ -1,4 +1,4 @@
-# 크립토닷컴 딥다이브 콜 브리프 — 2026-09-19(금) 15:30–16:00 KST
+# 크립토닷컴 딥다이브 콜 브리프 — 2026-09-18(금) 15:30–16:00 KST
 
 **상대**: Vincent Chan (VP, Strategic Partnerships · 홍콩) **+ product team**. Vincent 가 「product team buy-in 이
 필수」라 했으므로 **이 콜의 실제 청중은 Vincent 가 아니라 그의 상품·개발 담당자들**이다. 30분.
