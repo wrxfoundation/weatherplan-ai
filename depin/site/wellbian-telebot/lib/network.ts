@@ -893,6 +893,12 @@ export const PEOPLE: Person[] = [
     next: "열지 않는다.",
   },
   {
+    id: "royle", name: "Alexander Royle", org: "Binance", role: "Head of Market Supervision (아부다비) — 前 Cor Prime 공동창업·CRO/MLRO · Galaxy EMEA 규제 총괄 3년 · Montis Digital CCO",
+    lane: "exchange", stance: "open", tie: "2촌 — 1촌 요청 발송, 수락 대기", group: "Binance",
+    why: "**시장 감시는 정산값 분쟁이 떨어지는 유일한 자리다.** 9/17 에 확정한 우리 정체(데이터가 아니라 **판정**을 판다)의 **최종 소비자**가 정확히 이 자리 — 9/15 판정 때는 우리가 「데이터 공급자」였으나 그 사이 제품 정의가 바뀌었다. 규제·감시 축에서 만날 수 있는 가장 높은 자리 중 하나.",
+    next: "**Lynn 형식 회사 소개까지만**(9/15 서우 결정 — 소개는 제안이 아니다). **수락 후** 발송. ⚠ 바이낸스 **세 번째 열린 문**(Emily·Max 무응답 2개) — 자리가 겹치지 않고 하는 말이 달라 진행하되, 셋이 문장을 비교해도 각자 다른 말을 받았다는 게 보여야 한다. 거래소 가드 전면 적용: **상장·토큰·멀티체인·체인 이름 0**(XRPL 대신 `public ledger`), **다른 거래소·플랫폼 지목 0**(Lynn 판의 `a large venue` 문장을 뺀 이유). 제안은 **기기 가동 + 데이터 실적** 뒤.",
+  },
+  {
     id: "henrykey", name: "Henry Key", org: "Hashed", role: "Business Development Manager (아부다비 상주) — LP·포트폴리오사의 UAE 진출 주도 · 前 삼성전자 재무",
     lane: "capital", stance: "talking", tie: "1촌(9/8) · 공통 1촌 4명",
     why: "**★ 새 각도(9/17 서우)**: 투자가 아니라 **시장**이다. 케이웨더가 몇 해 전 두바이를 에이전시 경로로 봤을 때 **실외 대기질보다 실내 공기질 문의가 훨씬 많았다** — 더위로 실내 체류가 긴 지역이라 억지 논리가 아니고 **이미 현장에서 확인된 수요**다. **계속 눈여겨보고 있는 시장으로 말한다(현재형).**",

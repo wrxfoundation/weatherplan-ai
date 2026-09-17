@@ -295,7 +295,11 @@ If any of it is of interest, just let me know.
 **「한 회사 동시 대화 2개 상한」**(playbook, 오늘 신설)에 정면으로 걸린다. 현재 Emily·Max 둘이
 열려 있고 **둘 다 답이 없다.** 셋째·넷째를 열면 **진행 중인 둘까지 싸구려가 된다.**
 
-**② Alexander 는 아깝지만 지금이 아니다.** **Edward(Kalshi Trade Surveillance)와 같은 레인이고
+**② Alexander 는 아깝지만 지금이 아니다.** → **★ 9/17 서우 결정: 소개는 연다.** 아래 판정은
+**제안**에 대한 것이고, 9/15 에 이미 선 「Lynn 형식 회사 소개까지는 연다」가 여기에도 적용된다.
+그리고 **그 사이 두 가지가 바뀌어 오히려 지금이 낫다**: ⓐ **제품 정의가 「데이터」에서 「판정」으로
+확정됐고(9/17 백서), Market Supervision 이 그 판정의 최종 소비자다** ⓑ **1차 판매가 끝나** 「계획을
+판다」는 우려가 절반 해소됐다(기기는 아직 배송 전). 문안·금지선은 아래 9/17 절. **Edward(Kalshi Trade Surveillance)와 같은 레인이고
 훨씬 윗자리**다 — Galaxy EMEA 규제 총괄 3년 + Montis CCO + Cor Prime CRO/MLRO.
 **규제·감시 축에서 우리가 만날 수 있는 가장 높은 자리 중 하나**다. 그래서 더더욱 **아껴야 한다**:
 그에게 값진 대화는 **기기가 돌고 데이터가 팔린 뒤**이고, 지금 열면 계획을 파는 게 된다.
@@ -926,3 +930,56 @@ CEO=법률·정책 / Development=펀드레이징 / 정책분석가=인허가 / �
 
 - 케이웨더 B2B 고객군의 업종 분포 — 철강·석유화학·발전·해운 비중. **대외 자료에 고객 사례를 쓰기 전에 필요.**
 - 손은지 소속 팀.
+
+---
+
+## Alexander Royle (Binance, Head of Market Supervision) — 소개 발송 (2026-09-17, 서우 「컨택하자」)
+
+**9/15 판정과 충돌하지 않는다.** 그날 판정은 **제안**에 대한 것이었고, 같은 날 서우가 세운
+「**Lynn 형식 회사 소개까지는 연다** — 소개는 제안이 아니다」가 그대로 적용된다.
+
+**★ 그 사이 바뀐 것 둘 — 오히려 지금이 낫다**
+
+| | 9/15 | 9/17 |
+|---|---|---|
+| 우리 정체 | 「날씨 데이터 공급자」 | **「판정을 판다」**(백서 확정) |
+| 그의 자리 | 규제·감시 — 언젠가 | **판정의 최종 소비자** |
+| 판매 | 시작 전 | **1차 완료**(기기는 배송 전) |
+
+**시장 감시는 정산값 분쟁이 떨어지는 유일한 자리다.** Lynn Martin 에게 썼던 문장이
+**NYSE 사장보다 Head of Market Supervision 에게 훨씬 정확하다** — 경영이 아니라 실제로 분쟁을 받는 자리다.
+
+### DM 확정본 (수락 후 발송)
+
+```
+Alexander — good to be connected. A short introduction to what we do.
+
+KWeather has measured weather in Seoul for 30 years, supplying 4,000+ enterprise
+clients. wellbian is the Singapore entity running the network built on top of it.
+Old company, new territory.
+
+What we supply is city-level weather across 90 countries and 167 cities. A city's
+value isn't one reading — it's a consensus across eleven independent sources with
+outliers screened out, and every input is fingerprinted to a public ledger before
+it enters the calculation. Most providers publish one observation point per city.
+
+Your seat is why I thought it was worth introducing. Market supervision is the one
+place that has to live with a settlement value after the fact — if the number is
+disputed, it lands on you, not on whoever sourced it. A single source can't
+structurally survive that, however accurate it is.
+```
+
+### 뺀 것과 이유
+
+| 뺀 것 | 이유 |
+|---|---|
+| **`Nothing to ask for today. Just thought the shape might be familiar.`**(9/17 서우) | **부정을 통해 요청을 환기시킨다** — 「오늘은 없다」는 「나중엔 있다」로 읽힌다. 그리고 `the shape might be familiar` 는 영리한 척하는 결이 남는다. **말하지 않는 것이 더 깨끗하다** — 첫 줄의 「인사 겸 소개」가 이미 성격을 밝힌다 |
+| `The strongest pull has come from a large venue on that side`(Lynn 판) | **그가 Binance 다.** 「large venue」가 경쟁사로 읽히고 **「다른 거래소·플랫폼 지목 0」** 에 걸린다 |
+| 하드웨어·기기 절반(Lynn 판) | 그의 자리와 무관하다. 짧을수록 강하다 |
+| **XRPL 이름** | `public ledger` 로만. **거래소 상대에게 체인 이름을 박으면 진영으로 읽힌다** |
+
+### ⚠ 운영 조건 둘
+
+- **2촌이고 1촌 요청이 발송돼 대기 중이다. 수락 후 보낸다** — 지금 InMail 로 보내면 콜드가 된다.
+- **바이낸스 세 번째 열린 문**이다(Emily·Max 무응답 2개). 자리가 겹치지 않고(성장·거래 vs 감시)
+  하는 말이 달라 진행하되, **셋이 문장을 비교해도 각자 다른 말을 받았다는 것이 보여야** 한다.
