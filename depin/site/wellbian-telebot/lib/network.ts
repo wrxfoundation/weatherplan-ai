@@ -905,6 +905,12 @@ export const PEOPLE: Person[] = [
     next: "**1촌만. 메시지 0.** ① 지금 유료 집행 단계가 아니다(판매 직후·배송 전·마케팅 예산 미확정) ② **Eri 무상 협업이 방금 성사됐다 — 무상을 굴려보지도 않고 유료 영업을 여는 것은 순서가 거꾸로** ③ 편집 라인(Brian)이 이미 있고 **편집이 광고보다 값이 크다**. **게이트: 마케팅 예산이 서고 유료 미디어 집행을 결정한 뒤, 또는 CoinDesk 행사 참가를 결정한 뒤.** 부수: 수상 이력·Mentor/Advisor/Speaker 로 **소개 경로 값**이 있으나 그것을 노리고 지금 열면 티가 난다.",
   },
   {
+    id: "ivyzhang", name: "Ivy Zhang", org: "(현 소속 미기재)", role: "KOL·어필리에이트 운영 — 前 BitMEX APAC retail growth(Head of Growth 직속, ~2026-08) · 前 bloXroute Labs BD·마케팅 · 홍콩",
+    lane: "voice", stance: "talking", tie: "1촌 성사(9/17) · 공통 1촌 5명",
+    why: "**오늘 본 프로필 중 유일하게 「지금 열 명분이 있는」 상대.** ① **거래소 가드 해당 없음** — BitMEX 경력이 2026-08 종료라 현재 거래소 소속이 아니다(Ayazhan 건과 같은 구조) ② **★ 직무가 우리가 지금 실제로 하는 일과 정확히 겹친다** — 헤드라인이 「KOL affiliates management」이고 BitMEX 에서 APAC 어필리에이트·VIP 성장을 굴렸다. 우리는 **9/17 GA 분석에서 바로 그 영역이 망가져 있음을 확인**했다(프로모코드를 utm_source 에 넣어 소스 무한 증식 · 전환 0 · 채널 26개인데 측정 불가).",
+    next: "**소개 + 진짜 문제 한 줄 + 대등한 제안.** 어트리뷰션 문제는 **오늘 실제로 확인한 것**이라 지어낸 티가 없고 **「계획이 아니라 이미 굴리고 있다」는 증거**가 된다(약점 노출이 아니라 같은 자리에 서 본 사람만 아는 얘기라 신뢰가 된다). `comparing notes` 는 부탁이 아니라 대등한 제안 — **Alexander·Jenny 와 달리 Ivy 에게는 요청해도 되는 관계**다(1촌 + 같은 실무 영역 + 가드 없음). ⚠ **현 소속 상태·전 직장을 언급하지 않는다**(경력에 현 직장이 없다 — 모르는 척이 아니라 예의다). ⚠ **유료 KOL 단가 얘기 금지.**",
+  },
+  {
     id: "jennyk", name: "Jenny K.", org: "Binance", role: "Content Manager · Binance Square 콘텐츠 파트너십·3개국어(CN/EN/KR) 호스트 — APAC 커뮤니티·마케팅·오프라인 이벤트 (싱가포르)",
     lane: "exchange", stance: "open", tie: "2촌 — 1촌 요청 대기 · 수락 후 소개 DM", group: "Binance", via: "공통 1촌 Lauren·Ken",
     why: "조건은 좋다 — **1촌 105명·팔로워 109명의 작은 계정이라 우리 메시지가 묻히지 않고**, **CN/EN/KR 3개국어라 통역이 필요 없으며**, Binance Square 에서 실제로 인터뷰를 진행한다(영업만 하는 자리가 아니다). APAC 오프라인 이벤트 담당이라 행사 축이 닿는다.",
