@@ -906,9 +906,9 @@ export const PEOPLE: Person[] = [
   },
   {
     id: "jennyk", name: "Jenny K.", org: "Binance", role: "Content Manager · Binance Square 콘텐츠 파트너십·3개국어(CN/EN/KR) 호스트 — APAC 커뮤니티·마케팅·오프라인 이벤트 (싱가포르)",
-    lane: "exchange", stance: "hold", tie: "2촌 — 1촌 요청 대기", group: "Binance", via: "공통 1촌 Lauren·Ken",
+    lane: "exchange", stance: "open", tie: "2촌 — 1촌 요청 대기 · 수락 후 소개 DM", group: "Binance", via: "공통 1촌 Lauren·Ken",
     why: "조건은 좋다 — **1촌 105명·팔로워 109명의 작은 계정이라 우리 메시지가 묻히지 않고**, **CN/EN/KR 3개국어라 통역이 필요 없으며**, Binance Square 에서 실제로 인터뷰를 진행한다(영업만 하는 자리가 아니다). APAC 오프라인 이벤트 담당이라 행사 축이 닿는다.",
-    next: "**1촌만. 메시지 0.** ⚠ **바이낸스 네 번째 문**이고 **Alexander 를 오늘 열었다** — 같은 날 같은 회사에 넷째를 여는 것은 9/15 상한 규칙이 막으려던 바로 그것이고, 더 나쁜 것은 **위(Head of Market Supervision)와 아래(Content Manager 7개월차)를 동시에 두드리는 모양**이다. 사내에서 겹치면 **아무나 찌르고 다니는 회사**가 된다. **게이트: 9/30 거래소 신호 해제 + 10/3 XRP SEOUL 무대** — 그 뒤에야 「무대에서 실물을 보여준 회사」가 되어 오프라인 이벤트 담당에게 말이 된다. 지금은 계획을 파는 대화밖에 안 된다. ⚠ 「Content Partnership」이 **Soledad(CoinDesk)와 같은 유료 콘텐츠 영업**일 가능성 — 확인 전에는 열지 않는다.",
+    next: "**★ 판정 수정(9/17 서우) — 지금 보낸다, 「알림」까지만.** 내가 「10/3 뒤에」로 걸었으나 **타이밍이 거꾸로였다**: **행사는 알릴 명분이지 알린 뒤의 결과물이 아니다.** 끝난 뒤의 「우리 거기 나왔어요」는 뉴스가 아니고, **전에 알려야 그가 그 행사를 인지해 끝난 뒤 「어땠어요」가 이어진다 — 그게 2depth 고 그 문은 지금만 열린다.** 플래티넘 스폰서는 **지금 이미 사실**이라 기다릴 이유가 없다. **무게는 Alexander 보다 가볍게** — 회사 2문장, 구조 설명(11소스·median·원장) 전부 제외. **콘텐츠 협업을 우리가 제안하지 않는다**(그러면 유료 영업 프레임에 걸린다) — 관심 있으면 **그가 먼저 묻고 그게 훨씬 강한 자리**다. 바이낸스 네 번째 문이지만 **Alexander 는 감시·규제, 이쪽은 콘텐츠·이벤트로 하는 말이 완전히 다르고 무게도 다르다.**",
   },
   {
     id: "royle", name: "Alexander Royle", org: "Binance", role: "Head of Market Supervision (아부다비) — 前 Cor Prime 공동창업·CRO/MLRO · Galaxy EMEA 규제 총괄 3년 · Montis Digital CCO",
