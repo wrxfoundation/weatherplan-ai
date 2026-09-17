@@ -893,10 +893,10 @@ export const PEOPLE: Person[] = [
     next: "열지 않는다.",
   },
   {
-    id: "henrykey", name: "Henry Key", org: "Hashed", role: "Business Development Manager (Abu Dhabi)",
-    lane: "capital", stance: "linked", tie: "1촌(9/8) — 메시지 0",
-    why: "**한국 최상위 크립토 VC.** 아부다비 거점이라 중동 축도 같이 본다.",
-    next: "투자로 열지 않는다 — 우리 게이트는 data 다. **10/3 전 소개 정도**가 맞고, 국내 생태계 안에서 우리를 아는 사람이 느는 것 자체가 값이다.",
+    id: "henrykey", name: "Henry Key", org: "Hashed", role: "Business Development Manager (아부다비 상주) — LP·포트폴리오사의 UAE 진출 주도 · 前 삼성전자 재무",
+    lane: "capital", stance: "talking", tie: "1촌(9/8) · 공통 1촌 4명",
+    why: "**★ 새 각도(9/17 서우)**: 투자가 아니라 **시장**이다. 케이웨더가 몇 해 전 두바이를 에이전시 경로로 타진했을 때 **실외 대기질보다 실내 공기질 문의가 훨씬 많았다** — 더위로 실내 체류가 긴 지역이라 억지 논리가 아니고 **이미 현장에서 확인된 수요**다. 그때는 web2 였고 시기가 안 맞아 접었다.",
+    next: "**정보를 주는 것으로 연다 — 요청 0.** ⚠ 우리는 Hashed 포트폴리오사가 아니라 **그에게 뭘 요청하면 「왜 내가」가 되고 자동으로 「투자받고 싶다」로 읽힌다**(투자로 열지 않는다는 판정을 우리가 깨게 된다). 두바이 관찰을 건네고 **서울에 있는지만 묻는다**. ⚠ 타이밍: 4개월 준비한 **아부다비 투자 포럼이 9/16 서울 개최 중** — 이번 주가 그의 최대 바쁜 주라 **답은 늦을 것을 전제**한다. 지금 UAE 진출은 실체가 없다(배송 전·10/3·크립토닷컴 진행 중) — **「진출하고 싶다」를 말하지 않는다.**",
   },
   {
     id: "dsrv", name: "Byeongyun Seo", org: "DSRV", role: "Co-CEO",
