@@ -1,14 +1,14 @@
-# Korea Rising — verified K-pop snapshot (2026-09-16)
+# Korea Rising — verified K-pop snapshot (2026-09-17)
 
 Every line is **cross-verified** (≥2 independent sources agree on the canonical name) and carries its source + Skill Score. Full data + Schema.org JSON-LD: <https://aiagentlabs.co.kr/> · via KoreaAPI (MCP).
 
 ## 🎬 Latest official releases (YouTube)
-- **BoA** — You still our No.1 BoA
-- **NCT Dream** — Zootopia in MACAU🦊ིྀི🐾 그리고 시상식까지🏆 | RENJUN TMEA 2026 Behind
-- **BOYNEXTDOOR** — BOYNEXTDOOR [HOME: DELUXE] Concept Film : OVERDRIVE ver. #BOYNEXTDOOR #보이넥스트도어 #BND #HOME_DELUXE
-- **ZICO** — WATERBOMB? Yeah, absolutely. Absolutely. Easy. No problem.
-- **Oh My Girl** — 저 정말 바라는 거 없어요 💜
-- **VIVIZ** — [VIVI.Zip] 항저우 팬미팅 Spring Whisper 포스터 촬영💙 Highlight #2
+- **BoA** — 16 de setembro de 2026
+- **QWER** — Mountain Dew = 100%🔋지금 바로 칠성몰에서 QWER x 마운틴듀 한정판을 만나보세요! 🎸
+- **Xdinary Heroes** — Welcome to Villains 4th Birthday Party 🎂
+- **tripleS** — Depan Naik 5 CM, Belakang Nggak! Jomplang? 😳
+- **NCT Dream** — [Replay] OUR SUMMER DREAM : NCT DREAM 10TH ANNIVERSARY
+- **AKMU** — 'Paradise of Rumors... begins...'
 
 ## 🎤 Verified roster (640 acts)
 - **2NE1**: I Am the Best
