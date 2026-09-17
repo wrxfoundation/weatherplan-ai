@@ -905,6 +905,12 @@ export const PEOPLE: Person[] = [
     next: "**1촌만. 메시지 0.** ① 지금 유료 집행 단계가 아니다(판매 직후·배송 전·마케팅 예산 미확정) ② **Eri 무상 협업이 방금 성사됐다 — 무상을 굴려보지도 않고 유료 영업을 여는 것은 순서가 거꾸로** ③ 편집 라인(Brian)이 이미 있고 **편집이 광고보다 값이 크다**. **게이트: 마케팅 예산이 서고 유료 미디어 집행을 결정한 뒤, 또는 CoinDesk 행사 참가를 결정한 뒤.** 부수: 수상 이력·Mentor/Advisor/Speaker 로 **소개 경로 값**이 있으나 그것을 노리고 지금 열면 티가 난다.",
   },
   {
+    id: "jennyk", name: "Jenny K.", org: "Binance", role: "Content Manager · Binance Square 콘텐츠 파트너십·3개국어(CN/EN/KR) 호스트 — APAC 커뮤니티·마케팅·오프라인 이벤트 (싱가포르)",
+    lane: "exchange", stance: "hold", tie: "2촌 — 1촌 요청 대기", group: "Binance", via: "공통 1촌 Lauren·Ken",
+    why: "조건은 좋다 — **1촌 105명·팔로워 109명의 작은 계정이라 우리 메시지가 묻히지 않고**, **CN/EN/KR 3개국어라 통역이 필요 없으며**, Binance Square 에서 실제로 인터뷰를 진행한다(영업만 하는 자리가 아니다). APAC 오프라인 이벤트 담당이라 행사 축이 닿는다.",
+    next: "**1촌만. 메시지 0.** ⚠ **바이낸스 네 번째 문**이고 **Alexander 를 오늘 열었다** — 같은 날 같은 회사에 넷째를 여는 것은 9/15 상한 규칙이 막으려던 바로 그것이고, 더 나쁜 것은 **위(Head of Market Supervision)와 아래(Content Manager 7개월차)를 동시에 두드리는 모양**이다. 사내에서 겹치면 **아무나 찌르고 다니는 회사**가 된다. **게이트: 9/30 거래소 신호 해제 + 10/3 XRP SEOUL 무대** — 그 뒤에야 「무대에서 실물을 보여준 회사」가 되어 오프라인 이벤트 담당에게 말이 된다. 지금은 계획을 파는 대화밖에 안 된다. ⚠ 「Content Partnership」이 **Soledad(CoinDesk)와 같은 유료 콘텐츠 영업**일 가능성 — 확인 전에는 열지 않는다.",
+  },
+  {
     id: "royle", name: "Alexander Royle", org: "Binance", role: "Head of Market Supervision (아부다비) — 前 Cor Prime 공동창업·CRO/MLRO · Galaxy EMEA 규제 총괄 3년 · Montis Digital CCO",
     lane: "exchange", stance: "talking", tie: "1촌 · 소개 DM 발송(9/17)", group: "Binance",
     why: "**시장 감시는 정산값 분쟁이 떨어지는 유일한 자리다.** 9/17 에 확정한 우리 정체(데이터가 아니라 **판정**을 판다)의 **최종 소비자**가 정확히 이 자리 — 9/15 판정 때는 우리가 「데이터 공급자」였으나 그 사이 제품 정의가 바뀌었다. 규제·감시 축에서 만날 수 있는 가장 높은 자리 중 하나.",
