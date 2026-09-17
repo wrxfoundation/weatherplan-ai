@@ -908,7 +908,7 @@ export const PEOPLE: Person[] = [
     id: "ivyzhang", name: "Ivy Zhang", org: "(현 소속 미기재)", role: "KOL·어필리에이트 운영 — 前 BitMEX APAC retail growth(Head of Growth 직속, ~2026-08) · 前 bloXroute Labs BD·마케팅 · 홍콩",
     lane: "voice", stance: "talking", tie: "1촌 성사(9/17) · 공통 1촌 5명",
     why: "**오늘 본 프로필 중 유일하게 「지금 열 명분이 있는」 상대.** ① **거래소 가드 해당 없음** — BitMEX 경력이 2026-08 종료라 현재 거래소 소속이 아니다(Ayazhan 건과 같은 구조) ② **★ 직무가 우리가 지금 실제로 하는 일과 정확히 겹친다** — 헤드라인이 「KOL affiliates management」이고 BitMEX 에서 APAC 어필리에이트·VIP 성장을 굴렸다. 우리는 **9/17 GA 분석에서 바로 그 영역이 망가져 있음을 확인**했다(프로모코드를 utm_source 에 넣어 소스 무한 증식 · 전환 0 · 채널 26개인데 측정 불가).",
-    next: "**소개 + 진짜 문제 한 줄 + 대등한 제안.** 어트리뷰션 문제는 **오늘 실제로 확인한 것**이라 지어낸 티가 없고 **「계획이 아니라 이미 굴리고 있다」는 증거**가 된다(약점 노출이 아니라 같은 자리에 서 본 사람만 아는 얘기라 신뢰가 된다). `comparing notes` 는 부탁이 아니라 대등한 제안 — **Alexander·Jenny 와 달리 Ivy 에게는 요청해도 되는 관계**다(1촌 + 같은 실무 영역 + 가드 없음). ⚠ **현 소속 상태·전 직장을 언급하지 않는다**(경력에 현 직장이 없다 — 모르는 척이 아니라 예의다). ⚠ **유료 KOL 단가 얘기 금지.**",
+    next: "**★ 소개 + 「고민 중」까지만. 던지고 끝낸다(9/17 서우).** 처음 안은 어트리뷰션 문제를 구체적으로 깔았으나 **그러면 그가 답을 해줘야 하는 모양 = 첫 메시지에 무료 컨설팅 요청**이 된다. **「still working out how to do it properly」 까지만 두면 궁금한 쪽이 묻는다.** 마지막 요청 문장(`Would enjoy comparing notes`)도 뺐다 — 있으면 **던지는 것이 아니라 청하는 것**이 된다. **열린 채로 끝내면 그가 물을 때 대화가 시작되고, 안 물어도 잃는 것이 없다.** ⚠ 현 소속 상태·BitMEX 를 언급하지 않는다(경력에 현 직장이 없다 — 예의). ⚠ 유료 KOL 단가 금지.",
   },
   {
     id: "jennyk", name: "Jenny K.", org: "Binance", role: "Content Manager · Binance Square 콘텐츠 파트너십·3개국어(CN/EN/KR) 호스트 — APAC 커뮤니티·마케팅·오프라인 이벤트 (싱가포르)",
