@@ -983,3 +983,53 @@ structurally survive that, however accurate it is.
 - **2촌이고 1촌 요청이 발송돼 대기 중이다. 수락 후 보낸다** — 지금 InMail 로 보내면 콜드가 된다.
 - **바이낸스 세 번째 열린 문**이다(Emily·Max 무응답 2개). 자리가 겹치지 않고(성장·거래 vs 감시)
   하는 말이 달라 진행하되, **셋이 문장을 비교해도 각자 다른 말을 받았다는 것이 보여야** 한다.
+
+---
+
+## Takafumi Shimoyama (SBI Ripple Asia, GM / Head of BD) — 1촌 인사 (2026-09-17, 서우 지시)
+
+⚠ **인맥 수첩에 올리지 않는다 — 선례 적용.** 9/16 에 **Takuya Sugiyama(SBI)** 를 「SBI Ripple Asia 이사
+**겸직**이라 「리플 소속은 올리지 않는다」 규칙을 넓게 적용해 제외」했다. Shimoyama 는 **겸직이 아니라
+SBI Ripple Asia 본직 Head of BD** 이므로 더 명백히 해당한다. **판정은 여기에만 남긴다.**
+
+**자리**: SBI Ripple Asia GM / Head of Business Development(2024-09~, 도쿄) — **XRPL 위에 규제 준수
+토큰화 결제 인프라를 구축**(시스템 설계·규제 구조화·GTM, 일본 선불 시장 대상) · 전 Search Fund 창업 CEO
+(일본 중소기업 인수·운영) · **전 Nomura 9년 10개월**(VP, Alliance planning — 미국 금융 모델 리서치 기반
+증권사·지방은행 제휴) · WASEDA MBA · 오카야마대 화학공학 · 팔로워 2,619 · 1촌 성사 · 공통 1촌 5명.
+
+### DM (1촌 인사 — 확정)
+
+```
+Takafumi — good to be connected.
+
+KWeather has measured weather in Seoul for 30 years, and wellbian is the network
+built on top of it — certified indoor air sensors people own and run, with each
+reading fingerprinted to the XRP Ledger.
+
+Saying hello now rather than later for a reason: KWeather is a platinum sponsor
+at XRP SEOUL 2026 on 3 October and the device will be on stage. You're building
+on XRPL from the Japan side, so it felt worth putting on your radar before the
+fact rather than after.
+```
+
+| 처리 | 이유 |
+|---|---|
+| **「리플」·「SBI」 단어 0 — `XRPL` 만** | 그가 XRPL 빌더라 자연스럽고 **진영 표현이 되지 않는다**. 회사명을 쓰면 우리가 리플 계열을 겨냥한 모양이 된다 |
+| **`You're building on XRPL from the Japan side`** | 그의 일을 인정하되 회사를 특정하지 않는다 |
+| **행사를 「전에」 알린다** | 9/17 신설 원칙 — **행사는 알릴 명분이지 알린 뒤의 결과물이 아니다**(Jenny 건과 동일 구조) |
+| 제안·요청 0 | 1촌 인사다 |
+
+### ★ 아껴둔 카드 — 답이 오면 쓴다 (첫 인사에는 넣지 않았다)
+
+- **그의 게시물 「AI agents will not use only stablecoins」** — 우리 제품의 **402 Payment Required
+  자가 충전**이 정확히 그 영역이다. **그가 이미 그 문제를 생각하고 있다.**
+- **`leading tokenized payment initiatives across Japan and Korea`** — **한국을 본다.** 우리가 한국이라는
+  사실 자체가 그에게 의미가 있다.
+- **전 Nomura 9년 10개월** — 전통 금융 언어가 통한다. **「판정(determination)」 프레임**이 먹힐 사람이다.
+
+### ⚠ 서우 판단 사항
+
+우리가 **리플과 진행 중인 건**이 있는 상태에서 **리플 합작법인 인물에게 우리가 먼저** 간다.
+DM 내용은 공개 사실(회사 소개 + 행사 참가)뿐이고 리플을 언급하지 않으므로 **규칙 위반은 아니다.**
+다만 **본사 쪽 진행과 겹치는지는 서우만 안다** — 알고 보내는 것과 모르고 보내는 것은 다르다.
+
