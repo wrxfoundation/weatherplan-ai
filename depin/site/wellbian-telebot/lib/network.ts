@@ -49,7 +49,7 @@ export type Person = {
   handle?: string;
 };
 
-export const NETWORK_UPDATED = "2026-09-16";
+export const NETWORK_UPDATED = "2026-09-17";
 
 export const LANES: { key: Lane; label: string; note: string }[] = [
   { key: "xrpl",     label: "XRPL 생태계",   note: "빌더 파이프라인·재단·지역 커뮤니티. 우리 무대가 여기다" },
@@ -304,6 +304,12 @@ export const PEOPLE: Person[] = [
     lane: "impact", stance: "linked", tie: "서우 팔로우 중",
     why: "파트너 접수 실무 책임자. **이미 팔로우 중이다** — 콜드 노트가 아니라 이어 가는 메시지로 쓴다.",
     next: "질문형 메시지 발송. 게리 언급은 하지 않는다.",
+  },
+  {
+    id: "sonej", name: "Eunji Son", org: "기후솔루션(SFOC)", role: "(직함 미확인 — 팀 페이지 133명에 없다. 최근 합류)",
+    lane: "impact", stance: "talking", tie: "1촌 · 인사 왕복",
+    why: "기후소송은 우리 판정 구조와 요구 조건이 같은 유일한 분야다 — **진 쪽이 뒤집을 수 없어야 한다**는 것, 그리고 withheld 는 법정에서 더 강하다. 다만 **조직은 고객이 아니다**(9/17 결산공시 딥리서치).",
+    next: "**개인 관계만 유지.** 데이터 제안·기기 증정·조직 소개 요청 전부 금지 — 영리법인 기부금이 연 50만원인 조직이고 예산 179억이 전액 지정 그랜트다. 다음 대화에서 소속 팀을 자연스럽게 확인. 소송 접점은 **FCC 프로덕션 전환 + 배출 축 소스** 뒤에 연다.",
   },
   {
     id: "victoria", name: "Victoria Mei", org: "MoonPay", role: "소셜미디어·크리에이터",
