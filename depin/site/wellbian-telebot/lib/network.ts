@@ -893,6 +893,12 @@ export const PEOPLE: Person[] = [
     next: "열지 않는다.",
   },
   {
+    id: "soledad", name: "Soledad Contreras", org: "CoinDesk", role: "Head of Partnerships, EMEA & APAC (런던) — CoinDesk 5년 7개월 · 前 Euromoney·Global Capital Publisher 15년",
+    lane: "voice", stance: "hold", tie: "2촌 — 1촌 요청 대기", via: "공통 1촌 Katie",
+    why: "⚠ **Partnerships 가 파트너십이 아니라 「media and sponsorship sales」다**(프로필 원문). Euromoney 에서도 15년을 Publisher(광고·세일즈 총괄)로 있었다. **열면 자동으로 우리가 사는 대화**가 된다 — Brian(편집)·Eri(무상 KOL)와 성격이 정반대다.",
+    next: "**1촌만. 메시지 0.** ① 지금 유료 집행 단계가 아니다(판매 직후·배송 전·마케팅 예산 미확정) ② **Eri 무상 협업이 방금 성사됐다 — 무상을 굴려보지도 않고 유료 영업을 여는 것은 순서가 거꾸로** ③ 편집 라인(Brian)이 이미 있고 **편집이 광고보다 값이 크다**. **게이트: 마케팅 예산이 서고 유료 미디어 집행을 결정한 뒤, 또는 CoinDesk 행사 참가를 결정한 뒤.** 부수: 수상 이력·Mentor/Advisor/Speaker 로 **소개 경로 값**이 있으나 그것을 노리고 지금 열면 티가 난다.",
+  },
+  {
     id: "royle", name: "Alexander Royle", org: "Binance", role: "Head of Market Supervision (아부다비) — 前 Cor Prime 공동창업·CRO/MLRO · Galaxy EMEA 규제 총괄 3년 · Montis Digital CCO",
     lane: "exchange", stance: "open", tie: "2촌 — 1촌 요청 발송, 수락 대기", group: "Binance",
     why: "**시장 감시는 정산값 분쟁이 떨어지는 유일한 자리다.** 9/17 에 확정한 우리 정체(데이터가 아니라 **판정**을 판다)의 **최종 소비자**가 정확히 이 자리 — 9/15 판정 때는 우리가 「데이터 공급자」였으나 그 사이 제품 정의가 바뀌었다. 규제·감시 축에서 만날 수 있는 가장 높은 자리 중 하나.",
