@@ -3001,6 +3001,36 @@ If it's of interest, just let me know.
 - 블룸버그는 매체이자 데이터 벤더다 — **판매 압박 0**. 토큰·보상·WLBN·가격 0.
 ---
 
+## Crypto Eri — 화요일(9/22) 제안 DM (9/18)
+
+9/16 답장 이후 회신이 없다. **다만 무응답이 아니다** — 그가 말한 도쿄 복귀일(월요일)이 **9/21 이라 아직 오지 않았고**,
+우리가 `anytime that week is fine · the hour is yours to pick` 으로 닫았으므로 **그의 차례가 시작 전**이다.
+
+**그래도 지금 보낸다** — 도착한 뒤에 물으면 그 주 일정이 이미 차 있다. **도착 전에 들어가 있어야
+그가 주간 일정을 짤 때 우리가 그 안에 있다.** 이것이 이 DM 의 유일한 근거이고, 10/3 이 가깝다는 것은 근거가 아니다.
+
+```
+Eri — what I said I'd put together is ready when you are: the device, the data
+side, and a clear line between what's live and what's still testnet.
+
+You mentioned Monday for the return, so Tuesday might be the gentler landing —
+does that work? Still your call on the hour, and on the day if another one
+suits you better.
+```
+
+| 구절 | 하는 일 |
+|---|---|
+| `what I said I'd put together is ready` | **재촉이 아니라 이행이 발송 이유가 된다.** 9/16 DM 의 `I'll put together what we can actually hand you` 를 그대로 이어받았고 실제로 자료가 생겼다 |
+| `a clear line between what's live and what's still testnet` | 9/16 의 `so you're not guessing` 과 같은 값. **그는 우리 말을 그대로 옮기므로 틀리면 그에게 돌아간다** |
+| **`Tuesday might be the gentler landing`** | **날짜 제안의 이유를 우리 사정이 아니라 그의 회복으로 둔다.** 월요일 복귀이므로 하루 더 쉬는 날이고, **우리가 원하는 날짜가 마침 그를 배려하는 날짜**다 — `later is better than tired` 를 취소하지 않는다 |
+| `Still your call on the hour, and on the day` | **넘긴 결정권을 도로 가져오지 않는다.** 이 줄이 빠지면 이틀 만에 양보를 뒤집는 메시지가 된다 |
+
+**넣지 않은 것 둘**
+
+- **오늘 Flare 콜 0.** 그의 호의 뿌리가 Flare 관계라 솔깃하지만 **Flare 의 런칭 시점과 XRP SEOUL 계획은
+  아직 그쪽 미공개 정보**다. 우리가 KOL 에게 먼저 흘릴 자리가 아니다.
+- **10/3 임박 0.** 우리 마감이지 그의 마감이 아니고, 무상으로 열어 준 상대에게 쓸 지렛대가 아니다.
+
 ## Crypto Eri 답신 — 무상 협업으로 열렸다 (9/16 새벽)
 
 ### 그가 보낸 것
