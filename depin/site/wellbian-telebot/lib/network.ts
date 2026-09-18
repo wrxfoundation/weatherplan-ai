@@ -661,7 +661,7 @@ export const PEOPLE: Person[] = [
     id: "algeo", gate: "sale2", name: "Kevin Algeo", org: "Crypto.com", role: "SVP, Capital Markets — International",
     lane: "exchange", stance: "off", tie: "2촌 · 공통 1촌 Vincent·SungJun Hong",
     why: "**Anziani 와 같은 칸인데 근거가 하나 더 있다** — 사장이 예측시장 파트너십을 공개하자 이 사람이 곧바로 공유했다. 직함(자본시장)만으로는 예측시장 상품 라인인지 알 수 없지만, **사내에서 그 방향에 서 있다는 관측 사실**은 남는다. 직전 IG Group 10년 10개월(APAC·아프리카 CEO 5년 3개월) — 온라인 트레이딩 상장사에서 지역 전체를 맡던 자리라 **정산 기준값이 왜 문제가 되는지 설명할 필요가 없는 유형**이다. 케이프타운.",
-    next: "**열지 않는다.** Anziani 와 같은 이유이고 하나 더 있다 — **Vincent 와 직접 1촌**이라 이쪽을 건드리면 Vincent 가 즉시 안다. Vincent(VP) 위·Anziani(President) 아래 층이라 순서를 건너뛴 티가 가장 잘 나는 자리다. **1촌만 걸어 두고**, Vincent 건이 계약 단계로 가거나 막힐 때 **그가 소개하는 경로로만** 의미가 생긴다. ⚠ 크립토닷컴 상대에게 다른 거래소·플랫폼 이름을 우리가 먼저 꺼내지 않는다 — 로빈후드 건은 **내부 인지까지만**이다.",
+    next: "**서우 결정(9/18): 그대로 둔다** — 실질 계약이 진행 중이라 다른 소개 경로를 찾을 이유가 없다. SungJun Hong 도 확인하지 않는다. **열지 않는다.** Anziani 와 같은 이유이고 하나 더 있다 — **Vincent 와 직접 1촌**이라 이쪽을 건드리면 Vincent 가 즉시 안다. Vincent(VP) 위·Anziani(President) 아래 층이라 순서를 건너뛴 티가 가장 잘 나는 자리다. **1촌만 걸어 두고**, Vincent 건이 계약 단계로 가거나 막힐 때 **그가 소개하는 경로로만** 의미가 생긴다. ⚠ 크립토닷컴 상대에게 다른 거래소·플랫폼 이름을 우리가 먼저 꺼내지 않는다 — 로빈후드 건은 **내부 인지까지만**이다.",
   },
   {
     id: "omkar", gate: "data", name: "Krishna Omkar", org: "LSEG", role: "Head of Product, Digital Markets Infrastructure",
