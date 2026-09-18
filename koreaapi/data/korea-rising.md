@@ -1,12 +1,12 @@
-# Korea Rising — verified K-pop snapshot (2026-09-17)
+# Korea Rising — verified K-pop snapshot (2026-09-18)
 
 Every line is **cross-verified** (≥2 independent sources agree on the canonical name) and carries its source + Skill Score. Full data + Schema.org JSON-LD: <https://aiagentlabs.co.kr/> · via KoreaAPI (MCP).
 
 ## 🎬 Latest official releases (YouTube)
-- **BoA** — 16 de setembro de 2026
-- **QWER** — Mountain Dew = 100%🔋지금 바로 칠성몰에서 QWER x 마운틴듀 한정판을 만나보세요! 🎸
-- **Xdinary Heroes** — Welcome to Villains 4th Birthday Party 🎂
-- **tripleS** — Depan Naik 5 CM, Belakang Nggak! Jomplang? 😳
+- **BoA** — You still our No.1 BoA
+- **PLAVE** — Plave - PORNSTAR
+- **QWER** — 🐶 : ATTENTION, EVERYONE!!!🥁
+- **Xdinary Heroes** — 고려대와 엑디즈🎸가 이토록🌀뜨거울 줄이야
 - **NCT Dream** — [Replay] OUR SUMMER DREAM : NCT DREAM 10TH ANNIVERSARY
 - **AKMU** — 'Paradise of Rumors... begins...'
 
