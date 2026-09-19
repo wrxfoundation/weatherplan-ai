@@ -2659,47 +2659,54 @@ like this lands in your markets, I'd value hearing it.
 첫 인사에서 요청은 호감보다 먼저 읽힌다. **B판은 그가 답을 주면 그때 쓴다.**
 ---
 
-## Kritda Netprapa (Bitkub · Partnerships) — Lynn 형식 회사 소개 (9/19)
+## Kritda Netprapa (Bitkub · Partnerships) — 업계 신입 톤 인사 (9/19, 서우 지시)
 
 1촌 수락 완료. 태국 최대 라이선스 거래소이므로 **거래소 게이트가 그대로 걸린다**(9/30 까지 사업 메시지 0).
-**Morty(OKX) 판을 그대로 쓰되 한 곳을 바꿨다.**
+
+**1차 초안은 Morty(OKX) 판을 그대로 썼다가 서우가 물렀다** — 「먼저 선 긋는 것도 더 어색해서,
+그냥 업계 신입이라 관심 가져달라 정도로」. **맞는 지적이고 9/18 Alexander 건과 같은 문제다**:
+「이건 흔한 그 DM 이 아니다」로 시작하는 것은 결국 **부정을 통해 요청을 환기시키는 것**이고,
+그때 서우가 `Nothing to ask for today` 를 뺀 이유와 정확히 같다. → **선 긋는 첫 줄과 `nothing to ask` 를 함께 뺐다.**
 
 ```
 Kritda — thanks for connecting.
 
-I run partnerships at wellbian, so I know what your inbox looks like. This is
-an introduction, not one of those.
+I look after partnerships at wellbian. I came to this industry fairly recently,
+after a long stretch on the traditional side, so I'm still learning how things
+work here.
 
-KWeather has measured weather in South Korea for thirty years — instruments,
-forecasting, and data for 4,000+ enterprise clients. wellbian is the network
+Briefly, in case it's useful — KWeather has measured weather in South Korea for
+thirty years and supplies 4,000+ enterprise clients. wellbian is the network
 built on top of it: certified air-quality sensors that people own and run in
-their own rooms, with every reading fingerprinted to a public ledger before it
-goes anywhere. On the data side we cover 167 cities across 90 countries, where
-a city's value is a consensus across eleven independent sources rather than a
-single observation point.
+their own rooms, every reading fingerprinted to a public ledger before it goes
+anywhere.
 
-That's the whole message — nothing to ask. Good to be connected.
+You've been at this far longer than I have, so I'd be glad if you kept half an
+eye on what we're building. Good to be connected.
 ```
 
-### Morty 판과 달라진 한 곳
-
-| | 처리 |
+| 구절 | 하는 일 |
 |---|---|
-| **`I run partnerships at wellbian, so I know what your inbox looks like`** | Morty 에게 쓴 `rather than the usual reasons someone in your seat gets messaged` 를 대체한다. **그가 서우와 같은 직무**라서 이것은 장치가 아니라 사실이고, 파트너십 담당끼리는 이 한 줄이 가장 빨리 통한다. 짧아진 것도 이득이다 |
+| **`I came to this industry fairly recently, after a long stretch on the traditional side`** | **낮추되 빈손이 아니다.** 그는 Bitkub 4년 8개월이라 **크립토에서는 실제로 선배**이고, 긴 경력을 가진 사람이 새 판에서 배우겠다는 구도는 꾸민 것이 아니어서 읽힌다 |
+| `Briefly, in case it's useful` | 회사 소개를 **얹는 것이 아니라 곁들이는** 형태로 만든다. 신입 톤에 회사 자랑이 붙으면 어긋난다 |
+| **`I'd be glad if you kept half an eye on what we're building`** | **유일한 요청이고 사업 요청이 아니다.** 미팅·제안·소개 0 이라 9/30 게이트에 걸리지 않는데 관계는 연다 |
+
+**짧은 판으로 간다** — 167개 도시·90개국은 뺐다. 가볍게 가는 자리에 스펙이 붙으면 무거워지고,
+**물으면 그때가 두 번째 메시지**가 된다.
 
 ### ★ 태국을 일부러 뺐다
 
-Ply(테더) 건에서 세운 **「태국·인도차이나는 실내 공기가 계절성 비상사태인 지역」** 논거가 여기에도 그대로 붙는다.
-그런데 **첫 DM 에 넣으면 「왜 나한테 왔는지」가 생기고, 이유가 있으면 요청이 따라올 것으로 읽힌다.**
-`nothing to ask` 가 강한 이유는 **이유조차 없어서**다. 태국은 **그가 답하면 그때 쓸 카드**로 남긴다 —
-첫 메시지에 다 쓰면 두 번째에 쓸 것이 없다(Ivy 건 「처음부터 깊은 얘기 말고」와 같은 원리).
+Ply(테더) 건에서 세운 **「태국·인도차이나는 실내 공기가 계절성 비상사태인 지역」** 논거가 여기에도 그대로 붙지만,
+첫 DM 에 넣으면 **「왜 나한테 왔는지」가 생기고 이유가 있으면 요청이 따라올 것으로 읽힌다.**
+그가 답하면 그때 쓸 카드로 남긴다(Ivy 건 「처음부터 깊은 얘기 말고」와 같은 원리).
+⚠ 그때도 **불행 마케팅 금지** — 「너희 공기 나쁘죠」가 아니라 중립 서술, 숫자 0.
 
 ### 금지선
 
 토큰·상장·멀티체인·WLBN 0 · 판매·가격 0 · **체인 이름 0**(`a public ledger`) · **XRP SEOUL 스폰서 0**
 (거래소 자리에서는 소개에 필수가 아니다 — Morty 선례) · **다른 거래소·플랫폼 지목 0** ·
 **크립토닷컴·Flare 진전 0**(「대형 수요처 반응」류는 그 자리에서 곧 상장 수요 암시다) ·
-공통 1촌(Jihye Kim·Takuya Sugiyama) 이름 0 · 도움 요청 0 · 「최대·1위」 0.
+공통 1촌(Jihye Kim·Takuya Sugiyama) 이름 0 · 미팅·제안 0 · 「최대·1위」 0.
 
 ---
 

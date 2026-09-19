@@ -661,7 +661,7 @@ export const PEOPLE: Person[] = [
     id: "kritda", gate: "ship", name: "Kritda Netprapa", org: "Bitkub", role: "Assistant Business Partnerships Manager",
     lane: "exchange", stance: "open", tie: "1촌 수락(9/19) · 공통 1촌 6인",
     why: "태국 최대 라이선스 디지털자산 거래소의 파트너십 담당이고 **서우와 같은 직무**다 — 그 동질성이 이 라인의 유일한 카드이자 가장 빠른 통로다(Bitkub 4년 8개월, 탐마삿대 국제관계). **진짜 값은 시장 쪽에 있다**: Ply(테더) 건에서 세운 「태국·인도차이나는 실내 공기가 계절성 비상사태인 지역」 논거가 그대로 붙는다. 다만 그는 발행사가 아니라 거래소라 **그 논거를 첫 DM 에 쓰지 않는다.**",
-    next: "**Lynn 형식 회사 소개까지만**(9/19 초안, `x-activity-log` 해당 절). Morty(OKX) 판을 쓰되 선 긋는 첫 줄을 **같은 직무라는 사실**로 바꿨다. ⚠ **태국은 다음 카드로 남긴다** — 첫 메시지에 이유를 주면 `nothing to ask` 가 무너진다. ⚠ 거래소 게이트 유지: 9/30 까지 사업 메시지 0, 체인 이름 0, XRP SEOUL 0, 크립토닷컴·Flare 진전 0.",
+    next: "**업계 신입 톤 인사**(9/19 초안, `x-activity-log` 해당 절). **서우 지시로 Morty 판의 선 긋는 첫 줄과 `nothing to ask` 를 함께 뺐다** — 「이건 흔한 그 DM 이 아니다」는 결국 부정을 통해 요청을 환기시키는 것이고, 9/18 Alexander 건에서 `Nothing to ask for today` 를 뺀 이유와 같다. 닫는 말은 **「지켜봐 달라」 하나** — 사업 요청이 아니라 9/30 게이트에 걸리지 않는다. ⚠ **태국은 다음 카드로 남긴다** — 첫 메시지에 이유를 주면 `nothing to ask` 가 무너진다. ⚠ 거래소 게이트 유지: 9/30 까지 사업 메시지 0, 체인 이름 0, XRP SEOUL 0, 크립토닷컴·Flare 진전 0.",
   },
   {
     id: "algeo", gate: "sale2", name: "Kevin Algeo", org: "Crypto.com", role: "SVP, Capital Markets — International",
