@@ -658,6 +658,12 @@ export const PEOPLE: Person[] = [
     next: "**열지 않는다.** Vincent 라인이 살아 있는데 사장을 먼저 치면 그 라인이 망가진다. 이 카드는 접근 금지선을 눈에 보이게 두려고 만든 것이다 — Vincent 대화가 끝나거나 그가 소개할 때만 의미가 생긴다.",
   },
   {
+    id: "kritda", gate: "ship", name: "Kritda Netprapa", org: "Bitkub", role: "Assistant Business Partnerships Manager",
+    lane: "exchange", stance: "open", tie: "1촌 수락(9/19) · 공통 1촌 6인",
+    why: "태국 최대 라이선스 디지털자산 거래소의 파트너십 담당이고 **서우와 같은 직무**다 — 그 동질성이 이 라인의 유일한 카드이자 가장 빠른 통로다(Bitkub 4년 8개월, 탐마삿대 국제관계). **진짜 값은 시장 쪽에 있다**: Ply(테더) 건에서 세운 「태국·인도차이나는 실내 공기가 계절성 비상사태인 지역」 논거가 그대로 붙는다. 다만 그는 발행사가 아니라 거래소라 **그 논거를 첫 DM 에 쓰지 않는다.**",
+    next: "**Lynn 형식 회사 소개까지만**(9/19 초안, `x-activity-log` 해당 절). Morty(OKX) 판을 쓰되 선 긋는 첫 줄을 **같은 직무라는 사실**로 바꿨다. ⚠ **태국은 다음 카드로 남긴다** — 첫 메시지에 이유를 주면 `nothing to ask` 가 무너진다. ⚠ 거래소 게이트 유지: 9/30 까지 사업 메시지 0, 체인 이름 0, XRP SEOUL 0, 크립토닷컴·Flare 진전 0.",
+  },
+  {
     id: "algeo", gate: "sale2", name: "Kevin Algeo", org: "Crypto.com", role: "SVP, Capital Markets — International",
     lane: "exchange", stance: "off", tie: "2촌 · 공통 1촌 Vincent·SungJun Hong",
     why: "**Anziani 와 같은 칸인데 근거가 하나 더 있다** — 사장이 예측시장 파트너십을 공개하자 이 사람이 곧바로 공유했다. 직함(자본시장)만으로는 예측시장 상품 라인인지 알 수 없지만, **사내에서 그 방향에 서 있다는 관측 사실**은 남는다. 직전 IG Group 10년 10개월(APAC·아프리카 CEO 5년 3개월) — 온라인 트레이딩 상장사에서 지역 전체를 맡던 자리라 **정산 기준값이 왜 문제가 되는지 설명할 필요가 없는 유형**이다. 케이프타운.",

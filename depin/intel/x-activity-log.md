@@ -2659,6 +2659,50 @@ like this lands in your markets, I'd value hearing it.
 첫 인사에서 요청은 호감보다 먼저 읽힌다. **B판은 그가 답을 주면 그때 쓴다.**
 ---
 
+## Kritda Netprapa (Bitkub · Partnerships) — Lynn 형식 회사 소개 (9/19)
+
+1촌 수락 완료. 태국 최대 라이선스 거래소이므로 **거래소 게이트가 그대로 걸린다**(9/30 까지 사업 메시지 0).
+**Morty(OKX) 판을 그대로 쓰되 한 곳을 바꿨다.**
+
+```
+Kritda — thanks for connecting.
+
+I run partnerships at wellbian, so I know what your inbox looks like. This is
+an introduction, not one of those.
+
+KWeather has measured weather in South Korea for thirty years — instruments,
+forecasting, and data for 4,000+ enterprise clients. wellbian is the network
+built on top of it: certified air-quality sensors that people own and run in
+their own rooms, with every reading fingerprinted to a public ledger before it
+goes anywhere. On the data side we cover 167 cities across 90 countries, where
+a city's value is a consensus across eleven independent sources rather than a
+single observation point.
+
+That's the whole message — nothing to ask. Good to be connected.
+```
+
+### Morty 판과 달라진 한 곳
+
+| | 처리 |
+|---|---|
+| **`I run partnerships at wellbian, so I know what your inbox looks like`** | Morty 에게 쓴 `rather than the usual reasons someone in your seat gets messaged` 를 대체한다. **그가 서우와 같은 직무**라서 이것은 장치가 아니라 사실이고, 파트너십 담당끼리는 이 한 줄이 가장 빨리 통한다. 짧아진 것도 이득이다 |
+
+### ★ 태국을 일부러 뺐다
+
+Ply(테더) 건에서 세운 **「태국·인도차이나는 실내 공기가 계절성 비상사태인 지역」** 논거가 여기에도 그대로 붙는다.
+그런데 **첫 DM 에 넣으면 「왜 나한테 왔는지」가 생기고, 이유가 있으면 요청이 따라올 것으로 읽힌다.**
+`nothing to ask` 가 강한 이유는 **이유조차 없어서**다. 태국은 **그가 답하면 그때 쓸 카드**로 남긴다 —
+첫 메시지에 다 쓰면 두 번째에 쓸 것이 없다(Ivy 건 「처음부터 깊은 얘기 말고」와 같은 원리).
+
+### 금지선
+
+토큰·상장·멀티체인·WLBN 0 · 판매·가격 0 · **체인 이름 0**(`a public ledger`) · **XRP SEOUL 스폰서 0**
+(거래소 자리에서는 소개에 필수가 아니다 — Morty 선례) · **다른 거래소·플랫폼 지목 0** ·
+**크립토닷컴·Flare 진전 0**(「대형 수요처 반응」류는 그 자리에서 곧 상장 수요 암시다) ·
+공통 1촌(Jihye Kim·Takuya Sugiyama) 이름 0 · 도움 요청 0 · 「최대·1위」 0.
+
+---
+
 ## Morty Ma (OKX Product Director) — Lynn 형식 회사 소개 (9/15, 서우 결정)
 
 앞 판정은 **「보류 — 인사만」**이었다(현직 거래소 · Ayazhan 공통 1촌 · 9/30 게이트).
