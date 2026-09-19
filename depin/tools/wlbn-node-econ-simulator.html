@@ -1,0 +1,959 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WLBN Node Econ Lab</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<style>
+:root{
+  --bg:#F4F7FC; --surface:#FFFFFF; --panel:#EDF1F8;
+  --ink:#16233B; --muted:#5A6A85; --faint:#8B98AF;
+  --line:#D8DFEA; --hairline:#E4E9F2;
+  --accent:#2457E6; --accent-ink:#FFFFFF;
+  --c1:#2457E6; --c2:#C13D8C; --c3:#4E63BD; --c4:#0AA08C;
+  --good:#178A50; --warn:#8A6116; --crit:#C2413B;
+  --crit-bg:#FBEDEC; --grid:#EBEFF5; --tip-bg:#16233B; --tip-ink:#F2F6FC;
+  --bgfx:radial-gradient(1000px 560px at 12% -8%,#DCE7FA 0%,rgba(220,231,250,0) 62%),
+         radial-gradient(880px 520px at 108% 14%,#DDEBF9 0%,rgba(221,235,249,0) 58%),
+         radial-gradient(760px 480px at 50% 115%,#E7E4F8 0%,rgba(231,228,248,0) 55%),#F4F7FC;
+  --glass:rgba(255,255,255,.6); --glass-panel:rgba(244,247,252,.55);
+  --glass-brd:rgba(116,140,180,.26); --glass-hi:rgba(255,255,255,.9);
+  --shadow:0 10px 26px rgba(27,42,74,.08);
+  --tint:rgba(219,232,250,.55);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0D1526; --surface:#16223A; --panel:#121C31;
+    --ink:#E8EEF9; --muted:#9AA8C2; --faint:#6E7E99;
+    --line:#2A3A58; --hairline:#22304B;
+    --accent:#4E7FF2; --accent-ink:#0D1526;
+    --c1:#4E7FF2; --c2:#D45BA4; --c3:#6D86DD; --c4:#10A48F;
+    --good:#3FBF7F; --warn:#D9A544; --crit:#E4726A;
+    --crit-bg:#3A2226; --grid:#1D2A44; --tip-bg:#E8EEF9; --tip-ink:#16233B;
+    --bgfx:radial-gradient(1000px 560px at 12% -8%,#16294F 0%,rgba(22,41,79,0) 62%),
+           radial-gradient(880px 520px at 108% 14%,#132E4A 0%,rgba(19,46,74,0) 58%),
+           radial-gradient(760px 480px at 50% 115%,#221E45 0%,rgba(34,30,69,0) 55%),#0D1526;
+    --glass:rgba(23,35,60,.55); --glass-panel:rgba(17,26,45,.5);
+    --glass-brd:rgba(140,168,220,.16); --glass-hi:rgba(255,255,255,.06);
+    --shadow:0 12px 30px rgba(0,0,0,.4);
+    --tint:rgba(78,127,242,.12);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0D1526; --surface:#16223A; --panel:#121C31;
+  --ink:#E8EEF9; --muted:#9AA8C2; --faint:#6E7E99;
+  --line:#2A3A58; --hairline:#22304B;
+  --accent:#4E7FF2; --accent-ink:#0D1526;
+  --c1:#4E7FF2; --c2:#D45BA4; --c3:#6D86DD; --c4:#10A48F;
+  --good:#3FBF7F; --warn:#D9A544; --crit:#E4726A;
+  --crit-bg:#3A2226; --grid:#1D2A44; --tip-bg:#E8EEF9; --tip-ink:#16233B;
+  --bgfx:radial-gradient(1000px 560px at 12% -8%,#16294F 0%,rgba(22,41,79,0) 62%),
+         radial-gradient(880px 520px at 108% 14%,#132E4A 0%,rgba(19,46,74,0) 58%),
+         radial-gradient(760px 480px at 50% 115%,#221E45 0%,rgba(34,30,69,0) 55%),#0D1526;
+  --glass:rgba(23,35,60,.55); --glass-panel:rgba(17,26,45,.5);
+  --glass-brd:rgba(140,168,220,.16); --glass-hi:rgba(255,255,255,.06);
+  --shadow:0 12px 30px rgba(0,0,0,.4);
+  --tint:rgba(78,127,242,.12);
+}
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font-family:"Pretendard Variable",Pretendard,-apple-system,"Malgun Gothic","Apple SD Gothic Neo",sans-serif;
+  font-size:14px; line-height:1.55;
+}
+.mono{font-variant-numeric:tabular-nums; letter-spacing:.01em}
+header.top{
+  display:flex; align-items:center; gap:14px; flex-wrap:wrap;
+  padding:14px 22px; border-bottom:1px solid var(--line); background:var(--surface);
+}
+.wordmark{font-weight:800; font-size:18px; letter-spacing:-.02em}
+.wordmark small{font-weight:500; color:var(--muted); margin-left:8px; letter-spacing:0}
+.badge-internal{
+  font-size:11.5px; font-weight:700; letter-spacing:.08em;
+  color:var(--crit); border:1.5px solid var(--crit); background:var(--crit-bg);
+  padding:4px 10px; border-radius:2px; text-transform:uppercase;
+}
+.theme-btn{
+  margin-left:auto; width:36px; height:36px; border-radius:50%; cursor:pointer;
+  font-size:16px; line-height:1; color:var(--ink);
+  border:1px solid var(--glass-brd); background:var(--glass);
+  backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
+}
+.wrap{display:grid; grid-template-columns:330px 1fr; gap:0; max-width:1240px; margin:0 auto}
+@media(max-width:920px){ .wrap{grid-template-columns:1fr} aside.panel{border-right:none; border-bottom:1px solid var(--line)} }
+aside.panel{
+  border-right:1px solid var(--line); background:var(--panel);
+  padding:18px 20px 40px; align-self:start;
+}
+@media(min-width:921px){ aside.panel{position:sticky; top:0; max-height:100vh; overflow-y:auto} }
+.results{padding:20px 22px 60px; min-width:0}
+
+.scenarios{display:flex; gap:8px; margin-bottom:6px}
+.chip{
+  flex:1; padding:7px 4px; text-align:center; cursor:pointer; border-radius:2px;
+  border:1px solid var(--line); background:var(--surface); color:var(--muted);
+  font:inherit; font-size:13px; font-weight:500;
+}
+.chip.on{background:var(--accent); border-color:var(--accent); color:var(--accent-ink); font-weight:700}
+.chip:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+.scen-note{font-size:12px; color:var(--faint); margin:6px 0 14px}
+
+fieldset{border:none; margin:0 0 4px; padding:14px 0 10px; border-top:1px solid var(--hairline)}
+legend{
+  font-size:11px; font-weight:700; letter-spacing:.12em; text-transform:uppercase;
+  color:var(--muted); padding:0 0 6px;
+}
+.ctl{margin-bottom:11px}
+.ctl-head{display:flex; justify-content:space-between; align-items:baseline; gap:8px}
+.ctl-head label{font-size:13px; color:var(--ink)}
+.ctl-head .val{font-size:13px; font-weight:600}
+.ctl input[type=range]{width:100%; accent-color:var(--accent); margin:4px 0 0; display:block}
+.ctl select,.ctl input[type=number]{
+  width:100%; margin-top:4px; padding:6px 8px; font:inherit; border-radius:2px;
+  border:1px solid var(--line); background:var(--surface); color:var(--ink);
+}
+.ctl .hint{font-size:11.5px; color:var(--faint); margin-top:2px}
+.panel-foot{margin-top:14px; display:flex; gap:8px}
+.btn{
+  font:inherit; font-size:13px; padding:7px 12px; border-radius:2px; cursor:pointer;
+  border:1px solid var(--line); background:var(--surface); color:var(--ink);
+}
+
+.kpis{display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:10px; margin-bottom:14px}
+.kpi{background:var(--surface); border:1px solid var(--line); border-radius:2px; padding:12px 14px 10px}
+.kpi .k-label{font-size:12.5px; font-weight:600; color:var(--muted)}
+.kpi .k-val{font-size:30px; font-weight:800; margin-top:6px; letter-spacing:-.02em}
+.kpi .k-sub{font-size:12px; color:var(--muted); margin-top:2px}
+.kpi .k-chip{display:inline-block; font-size:11px; font-weight:700; padding:1px 7px; border-radius:9px; margin-top:5px}
+.k-good{color:var(--good); border:1px solid var(--good)}
+.k-warn{color:var(--warn); border:1px solid var(--warn)}
+.k-crit{color:var(--crit); border:1px solid var(--crit)}
+
+.principles{
+  display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:0;
+  border:1px solid var(--line); border-radius:2px; background:var(--surface); margin-bottom:16px;
+}
+.pr{padding:10px 14px; border-left:1px solid var(--hairline); font-size:12.5px; color:var(--muted)}
+.pr:first-child{border-left:none}
+.pr b{display:block; color:var(--ink); font-size:12.5px; margin-bottom:2px}
+
+.card{background:var(--surface); border:1px solid var(--line); border-radius:2px; padding:16px 18px 12px; margin-bottom:14px; position:relative}
+.card h2{font-size:16.5px; margin:0 0 2px; font-weight:700; letter-spacing:-.01em}
+.card .sub{font-size:12.5px; color:var(--muted); margin:0 0 10px}
+.legend{display:flex; gap:16px; flex-wrap:wrap; font-size:12.5px; color:var(--muted); margin:2px 0 6px}
+.legend .sw{display:inline-block; width:14px; height:0; border-top:2.5px solid; vertical-align:middle; margin-right:6px; border-radius:2px}
+.legend .sw.dash{border-top-style:dashed}
+.legend .sw.fill{height:10px; border:none; border-radius:2px; opacity:.85}
+.chart-box{position:relative}
+.chart-box svg{display:block; width:100%; height:auto}
+.axis text{font-family:"Pretendard Variable",Pretendard,sans-serif; font-variant-numeric:tabular-nums; font-size:10.5px; fill:var(--faint)}
+.gridline{stroke:var(--grid); stroke-width:1}
+.zeroline{stroke:var(--faint); stroke-width:1}
+.dlabel{font-family:"Pretendard Variable",Pretendard,sans-serif; font-size:11px; font-weight:700}
+.anno{font-family:"Pretendard Variable",Pretendard,sans-serif; font-size:11px; fill:var(--muted)}
+.tip{
+  position:fixed; pointer-events:none; z-index:5; display:none;
+  background:var(--tip-bg); color:var(--tip-ink); border-radius:3px;
+  padding:7px 10px; font-size:12px; line-height:1.5; min-width:150px;
+  box-shadow:0 2px 10px rgba(10,20,40,.25);
+}
+.tip .t-h{font-weight:700; margin-bottom:2px}
+.tip .row{display:flex; justify-content:space-between; gap:12px}
+.crosshair{stroke:var(--faint); stroke-width:1; stroke-dasharray:3 3}
+
+details.tbl{margin:4px 0 16px}
+details.tbl summary{cursor:pointer; font-size:13px; font-weight:600; color:var(--muted); padding:6px 0}
+.tbl-scroll{overflow-x:auto; border:1px solid var(--line); border-radius:2px; background:var(--surface)}
+table{border-collapse:collapse; width:100%; font-size:12.5px; min-width:720px}
+th,td{padding:6px 10px; text-align:right; border-bottom:1px solid var(--hairline); white-space:nowrap}
+th{font-size:11px; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); text-align:right; background:var(--panel)}
+th:first-child,td:first-child{text-align:left}
+td{font-variant-numeric:tabular-nums}
+
+.notice{border:1px solid var(--line); border-left:3px solid var(--crit); border-radius:2px; background:var(--surface); padding:12px 16px; font-size:12.5px; color:var(--muted)}
+.notice b{color:var(--ink)}
+.notice ul{margin:6px 0 0; padding-left:18px}
+.notice li{margin:2px 0}
+@media (prefers-reduced-motion: no-preference){
+  .chip,.btn,.qchip,.mode-btn{transition:background .15s,color .15s,border-color .15s}
+}
+
+/* ---- mode bar & simple view ---- */
+.modebar{display:flex; gap:8px; max-width:1240px; margin:0 auto; padding:14px 22px 0}
+.mode-btn{
+  font:inherit; font-size:13px; font-weight:600; padding:7px 16px; cursor:pointer;
+  border:1px solid var(--line); background:var(--surface); color:var(--muted); border-radius:2px;
+}
+.mode-btn.on{background:var(--ink); color:var(--bg); border-color:var(--ink)}
+body.simple .wrap{display:none}
+body:not(.simple) .simpleview{display:none}
+.simpleview{max-width:820px; margin:0 auto; padding:10px 22px 60px}
+.simpleview h1{font-size:25px; font-weight:800; margin:18px 0 4px; letter-spacing:-.02em}
+.simpleview .lead{font-size:13.5px; color:var(--muted); margin:0 0 20px}
+.qrow{margin-bottom:16px}
+.qrow .q-label{font-size:13.5px; font-weight:700; margin-bottom:8px}
+.qchips{display:flex; gap:8px; flex-wrap:wrap}
+.qchip{
+  font:inherit; font-size:14px; font-weight:600; padding:10px 18px; cursor:pointer; border-radius:2px;
+  border:1px solid var(--line); background:var(--surface); color:var(--ink);
+}
+.qchip small{display:block; font-size:11px; color:var(--muted)}
+.qchip.on{background:var(--accent); border-color:var(--accent); color:var(--accent-ink)}
+.qchip.on small{color:var(--accent-ink); opacity:.75}
+.s-how{
+  border:1px solid var(--line); border-radius:2px; background:var(--surface);
+  padding:12px 16px; font-size:12.5px; color:var(--muted); margin:16px 0;
+}
+.s-how b{color:var(--ink)}
+.s-note{font-size:12px; color:var(--faint); margin-top:14px}
+details.fold{padding:0 16px; margin:10px 0}
+details.fold>summary{
+  cursor:pointer; padding:13px 0; font-size:14px; font-weight:700; color:var(--ink);
+  list-style:none; display:flex; align-items:center; gap:8px;
+}
+details.fold>summary::-webkit-details-marker{display:none}
+details.fold>summary::before{content:"▸"; color:var(--accent); font-size:13px}
+details.fold[open]>summary::before{content:"▾"}
+details.fold>summary .sum-sub{font-weight:400; font-size:12.5px; color:var(--muted)}
+details.fold>.fold-body{padding:2px 0 16px}
+.s-verdict{
+  margin:-2px 0 16px; padding:10px 14px; font-size:13.5px; font-weight:500; line-height:1.6; color:var(--ink);
+  border-left:3px solid var(--accent) !important;
+}
+.s-verdict .v-tag{font-weight:800; color:var(--accent); margin-right:6px}
+
+/* ---- glass layer (subtle) ---- */
+body{background:var(--bgfx); background-attachment:fixed}
+header.top{
+  background:var(--glass); border-bottom:1px solid var(--glass-brd);
+  backdrop-filter:blur(14px) saturate(1.25); -webkit-backdrop-filter:blur(14px) saturate(1.25);
+}
+.card,.kpi,.s-how,.principles,.notice,.tbl-scroll,.s-verdict,details.fold{
+  background:var(--glass); border:1px solid var(--glass-brd); border-radius:16px;
+  backdrop-filter:blur(12px) saturate(1.25); -webkit-backdrop-filter:blur(12px) saturate(1.25);
+  box-shadow:inset 0 1px 0 var(--glass-hi), var(--shadow);
+}
+.kpis .kpi:first-child{background:var(--tint)}
+.notice{border-left:3px solid var(--crit)}
+aside.panel{
+  background:var(--glass-panel); border-right:1px solid var(--glass-brd);
+  backdrop-filter:blur(14px) saturate(1.2); -webkit-backdrop-filter:blur(14px) saturate(1.2);
+}
+.qchip,.chip,.btn,.mode-btn{
+  background:var(--glass); border-color:var(--glass-brd); border-radius:12px;
+  backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
+  box-shadow:inset 0 1px 0 var(--glass-hi);
+}
+.qchip.on,.chip.on{background:var(--accent); border-color:var(--accent); box-shadow:none}
+.mode-btn.on{background:var(--ink); border-color:var(--ink); box-shadow:none}
+.ctl select,.ctl input[type=number]{border-radius:8px}
+th{background:var(--glass-panel)}
+@supports not (backdrop-filter: blur(1px)){
+  header.top,.card,.kpi,.s-how,.principles,.notice,.tbl-scroll,.qchip,.chip,.btn,.mode-btn,.s-verdict{background:var(--surface)}
+  aside.panel{background:var(--panel)}
+}
+@media (prefers-reduced-transparency: reduce){
+  header.top,.card,.kpi,.s-how,.principles,.notice,.tbl-scroll,.qchip,.chip,.btn,.mode-btn,.s-verdict{background:var(--surface); backdrop-filter:none; -webkit-backdrop-filter:none}
+  aside.panel{background:var(--panel); backdrop-filter:none; -webkit-backdrop-filter:none}
+}
+
+/* ---- mobile ---- */
+@media(max-width:640px){
+  header.top{padding:10px 14px; gap:10px}
+  .wordmark{font-size:16px}
+  .wordmark small{display:block; margin-left:0; font-size:11px}
+  .theme-btn{width:32px; height:32px; font-size:14px}
+  .badge-internal{font-size:9.5px; padding:3px 7px; letter-spacing:.04em}
+  .modebar{padding:10px 14px 0}
+  .mode-btn{flex:1; padding:9px 6px; font-size:12.5px}
+  .simpleview{padding:4px 14px 48px}
+  .simpleview h1{font-size:22px}
+  .simpleview .lead{font-size:13px}
+  .results{padding:16px 14px 48px}
+  .qchips{display:grid; grid-template-columns:1fr 1fr; gap:8px}
+  .qchip{padding:10px 8px; font-size:13.5px}
+  .kpis{grid-template-columns:1fr; gap:8px}
+  .kpi .k-val{font-size:26px}
+  .card{padding:14px 14px 10px; border-radius:14px}
+  .legend{gap:10px; font-size:12px}
+  .ctl select,.ctl input[type=number]{font-size:16px}
+  .s-how{padding:11px 13px}
+}
+</style>
+
+<header class="top">
+  <div class="wordmark">WLBN Node Econ Lab <small>노드 경제성 시뮬레이터 · v0</small></div>
+  <button class="theme-btn" id="themeToggle" aria-label="라이트/다크 전환">☾</button>
+  <div class="badge-internal">Internal — 보상 설계 검증용 · 대외 공유 금지</div>
+</header>
+
+<div class="modebar">
+  <button class="mode-btn on" id="m-simple">간단 모드 — 구매자 화면</button>
+  <button class="mode-btn" id="m-design">설계 모드 — 전체 변수</button>
+</div>
+
+<section class="simpleview">
+  <h1>내 노드, 켜두면 얼마나 쌓일까</h1>
+  <div class="s-how" style="border:1.5px solid var(--accent); margin:8px 0 18px; font-size:13.5px; color:var(--ink)">
+    <b>한 줄 요약</b> — 수익은 세 가지가 정합니다: <b>기기값 · 켜둔 기간 · 데이터를 사가는 기업 수요</b>.
+    수요가 커질수록 내 몫도 커집니다. 아래에서 골라 확인해 보세요.
+  </div>
+
+  <div class="qrow"><div class="q-label">① 기기를 얼마에 샀나요?</div>
+    <div class="qchips" id="sq-price">
+      <button class="qchip" data-v="450">450 RLUSD<small>얼리버드 #0101~1000</small></button>
+      <button class="qchip on" data-v="650">650 RLUSD<small>기본 #1001~5000</small></button>
+    </div></div>
+
+  <div class="qrow"><div class="q-label">② 얼마나 계속 켜둘 건가요? <span style="font-weight:400;color:var(--muted)">(계속 연결·정상 관리 가정)</span></div>
+    <div class="qchips" id="sq-months">
+      <button class="qchip" data-v="6">6개월</button>
+      <button class="qchip" data-v="12">12개월</button>
+      <button class="qchip on" data-v="24">24개월</button>
+      <button class="qchip" data-v="36">36개월</button>
+    </div></div>
+
+  <div class="qrow"><div class="q-label">③ 데이터 수요 — 시장 확장 단계</div>
+    <div class="qchips" id="sq-demand">
+      <button class="qchip" data-v="none">아직 없음<small>초기 운영 예산만</small></button>
+      <button class="qchip on" data-v="kr">1단계 · 한국<small>4개월차 공고 시작 · 연 ~67억</small></button>
+      <button class="qchip" data-v="usjp">2단계 · +미국·일본<small>13개월차 진출 · 연 ~300억</small></button>
+      <button class="qchip" data-v="glb">3단계 · 전세계<small>25개월차 확장 · 연 ~600억</small></button>
+    </div>
+    <details class="fold" style="margin-top:12px">
+      <summary>수요 규모 직접 조정 <span class="sum-sub" id="sq-ecap-v"></span></summary>
+      <div class="fold-body">
+        <input type="range" id="sq-ecap" min="0" max="3600000" step="50000" value="400000" style="width:100%;accent-color:var(--accent)" aria-label="월 기업 예치 상한">
+        <div class="hint" id="sq-ecap-y"></div>
+      </div>
+    </details></div>
+
+  <div class="kpis" style="margin-top:20px">
+    <div class="kpi"><div class="k-label">이 기간 총 보상</div><div class="k-val mono" id="s-total">–</div><div class="k-sub" id="s-total-w">–</div></div>
+    <div class="kpi"><div class="k-label">기업 수요 효과 — 월평균 보상</div><div class="k-val mono" id="s-month">–</div><div class="k-sub" id="s-month-w">–</div></div>
+    <div class="kpi"><div class="k-label">기기값 대비 배수</div><div class="k-val mono" id="s-payback">–</div><div class="k-sub" id="s-payback-sub">–</div></div>
+  </div>
+
+  <div class="s-verdict" id="s-verdict"></div>
+
+  <div class="card">
+    <h2>누적 보상 곡선</h2>
+    <p class="sub">가로 점선 = 기기값. 세로선 = 확장 단계 진입(가정). 실선과 점선 비교선의 벌어짐이 곧 기업 수요의 효과입니다.</p>
+    <div class="legend" id="s-legend"></div>
+    <div class="chart-box" id="chartS"></div>
+  </div>
+
+  <details class="fold">
+    <summary>목표 역산 <span class="sum-sub">— 몇 배를 주려면 얼마가 팔려야 하나</span></summary>
+    <div class="fold-body">
+      <p class="sub" id="s-goal-sub">선택 기간 기준, 공고 시작 후 월 기업 예치가 평균 이 수준으로 유지된다는 가정.</p>
+      <div id="s-goal-body" style="font-size:13.5px;line-height:2"></div>
+      <p class="sub" id="s-goal-note" style="margin-top:6px"></p>
+    </div>
+  </details>
+
+  <details class="fold">
+    <summary>WLBN 보유 시나리오 <span class="sum-sub" style="color:var(--crit);font-weight:700">가정 실험 — 예측 아님</span></summary>
+    <div class="fold-body">
+      <p class="sub">보상 일부를 WLBN으로 바꿔 기간 끝까지 보유한다고 가정할 때의 실현 가치.
+        배율은 임의 가정이며 <b>하락도 동일하게 가능</b>합니다 — 그래서 0.5×를 항상 함께 표시합니다.</p>
+      <div class="ctl-head"><label for="sh-pct" style="font-size:13px">보상 중 WLBN 보유 비율 (나머지는 즉시 RLUSD 스왑)</label><span class="val mono" id="sh-pct-v"></span></div>
+      <input type="range" id="sh-pct" min="0" max="100" step="5" value="50" style="width:100%;accent-color:var(--accent)" aria-label="WLBN 보유 비율">
+      <div class="ctl-head" style="margin-top:8px"><label for="sh-mult" style="font-size:13px">기간 말 가치 배율 — 임의 가정</label><span class="val mono" id="sh-mult-v"></span></div>
+      <input type="range" id="sh-mult" min="0.25" max="5" step="0.25" value="1" style="width:100%;accent-color:var(--accent)" aria-label="가치 배율 가정">
+      <div id="sh-body" style="font-size:13.5px;line-height:2;margin-top:8px"></div>
+      <p class="sub" style="margin-top:6px">토큰 가치는 수요·유동성·설계에 따라 오르내리며 이 도구는 예측하지 않습니다.
+        구조적 사실은 하나: 매입-분배 확정 시 데이터 매출이 매달 WLBN 매수 유입이 된다는 것.</p>
+    </div>
+  </details>
+
+  <details class="fold">
+    <summary>보상 구조 설명 <span class="sum-sub">— 어디서 나오고, 무엇이 빠져 있나</span></summary>
+    <div class="fold-body" style="font-size:12.5px;color:var(--muted);line-height:1.7">
+      <b style="color:var(--ink)">보상이 나오는 방식 (백서 구조)</b><br>
+      ① 데이터가 필요한 기업이 돈을 <b>먼저 예치</b>하면 그것이 보상 예산이 됩니다.
+      ② 예산을 그달의 참여자들이 나눠 갖습니다 — 참여자가 늘면 1대 몫은 줄고, 사가는 기업이 늘면 예산이 커집니다.
+      ③ 제대로 켜두고 보내야 받습니다 (연속성·정합성 등 품질 기준). 같은 공간의 여러 대는 1대로 칩니다.
+      <br><br><b style="color:var(--ink)">이 계산에 안 들어간 것</b><br>
+      ① <b>WLBN 토큰의 가치</b> — 전 항목 RLUSD 고정. 매입-분배형 확정 시 지금 가정 기준
+      <b>월평균 <span class="mono" id="s-buyflow">–</span></b>이 매달 WLBN 매수 유입이 됩니다(구조 지표일 뿐, 가치 예측 아님).
+      ② <b>기기 자체의 가치</b> — 성능인증 1등급 측정기, 보상과 무관하게 남는 실물.
+      ③ <b>초기 참여 우위</b> — 초기일수록 같은 예산에서 1대 몫이 큼. 제네시스 넘버링 희소성 별도.
+    </div>
+  </details>
+
+  <div class="s-note">모든 수치는 가정값 기반 시뮬레이션이며 확정·약속이 아닙니다 · 전기료(월 2~3천 원 수준)는 별도 · <b style="color:var(--crit)">내부 검토용 — 대외 공유 금지</b></div>
+</section>
+
+<div class="wrap">
+<aside class="panel">
+  <fieldset style="border-top:none; padding-top:2px">
+    <legend>시나리오 (기업 수요)</legend>
+    <div class="scenarios" role="group" aria-label="기업 수요 시나리오">
+      <button class="chip" data-scen="cons">보수</button>
+      <button class="chip on" data-scen="base">기본</button>
+      <button class="chip" data-scen="opt">낙관</button>
+    </div>
+    <div class="scen-note">칩은 아래 「기업 데이터 수요」·네트워크 성장 값을 프리셋으로 바꿉니다. 이후 개별 조정 가능.</div>
+  </fieldset>
+
+  <fieldset>
+    <legend>① 구매 · 품질 (내 노드)</legend>
+    <div class="ctl">
+      <div class="ctl-head"><label for="price">구매 구간</label></div>
+      <select id="price">
+        <option value="650" selected>기본 650 RLUSD (#1001~5000)</option>
+        <option value="450">얼리버드 450 RLUSD (#0101~1000)</option>
+      </select>
+      <div class="hint">보상은 서로 다른 공간 1곳 = 노드 1대 기준 (같은 공간 중복분은 무보상 — 백서)</div>
+    </div>
+    <div id="g-quality"></div>
+    <div class="ctl">
+      <div class="ctl-head"><label>비교선 · 방치 노드</label><span class="val mono" style="color:var(--c2)">Q 0.65 고정</span></div>
+      <div class="hint">가동 70 · 정합 80 · 이웃 70 · 교정 40 — 켜두기만 하고 관리 안 한 경우</div>
+    </div>
+  </fieldset>
+
+  <fieldset><legend>② 네트워크</legend><div id="g-network"></div></fieldset>
+
+  <fieldset><legend>③ 재원 — 시드 · 기업 예치</legend><div id="g-budget"></div>
+    <div class="hint" style="font-size:11.5px;color:var(--faint)">백서: 보상 재원 = 기업이 먼저 예치한 금액 (온체인 확인 공고만 공개). 시드 예산은 공고 열리기 전 운영 재원 가정.</div>
+  </fieldset>
+
+  <fieldset><legend>④ 비용 · 표시</legend><div id="g-cost"></div></fieldset>
+
+  <div class="panel-foot">
+    <button class="btn" id="reset">기본값 재설정</button>
+  </div>
+</aside>
+
+<section class="results">
+  <div class="kpis">
+    <div class="kpi"><div class="k-label">월 보상 · 12개월 평균</div><div class="k-val mono" id="k-reward">–</div><div class="k-sub" id="k-reward-w">–</div></div>
+    <div class="kpi"><div class="k-label">월 순수익 · 12개월 평균</div><div class="k-val mono" id="k-net">–</div><div class="k-sub" id="k-net-w">–</div></div>
+    <div class="kpi"><div class="k-label">구매가 회수 시점</div><div class="k-val mono" id="k-payback">–</div><div class="k-sub" id="k-payback-sub">–</div></div>
+    <div class="kpi"><div class="k-label">재원 자립 시점</div><div class="k-val mono" id="k-selfrun">–</div><div class="k-sub">기업 예치분이 시드 월액을 대체하는 달</div></div>
+  </div>
+
+  <div class="principles">
+    <div class="pr"><b>정해진 예산을 나눈다</b>노드↑ 몫↓ · 매출↑ 예산↑ (발행형 아님)</div>
+    <div class="pr"><b>먼저 들어오고, 그다음에 나눈다</b>재원 = 기업 선예치 (온체인 확인)</div>
+    <div class="pr"><b>제대로 보내야 받는다</b>연속성 · 정합성 · 이웃 일치 · 교정 4요소</div>
+    <div class="pr"><b>줄어도 바닥이 있다</b>발급(판매) 상한 — 더 팔고 싶어도 못 판다</div>
+  </div>
+
+  <div class="card">
+    <h2>월별 순수익 — 품질 유지의 값</h2>
+    <p class="sub">보상(예산 × 내 품질 몫) − 유지비. 초반은 시드 예산, 이후는 기업 예치가 끌고 간다.</p>
+    <div class="legend">
+      <span><span class="sw" style="border-color:var(--c1)"></span>내 노드 (품질 유지)</span>
+      <span><span class="sw dash" style="border-color:var(--c2)"></span>방치 노드 (Q 0.65)</span>
+    </div>
+    <div class="chart-box" id="chartA"></div>
+  </div>
+
+  <div class="card">
+    <h2>누적 순수익 — 채산성 (구매가 회수)</h2>
+    <p class="sub">누적 순수익이 구매가 선을 넘는 달 = 회수 시점. <b>내부 검토 지표 — 대외 사용 금지 표현.</b></p>
+    <div class="legend">
+      <span><span class="sw" style="border-color:var(--c1)"></span>내 노드 누적</span>
+      <span><span class="sw dash" style="border-color:var(--c2)"></span>방치 노드 누적</span>
+      <span><span class="sw dash" style="border-color:var(--faint)"></span>구매가</span>
+    </div>
+    <div class="chart-box" id="chartB"></div>
+  </div>
+
+  <div class="card">
+    <h2>보상 재원 구성 — 수익 지속성</h2>
+    <p class="sub">시드가 끝나기 전에 기업 예치가 올라와야 구조가 자립한다. 이 교차가 이 사업의 진짜 그래프.</p>
+    <div class="legend">
+      <span><span class="sw fill" style="background:var(--c3)"></span>시드 예산 (운영 재원)</span>
+      <span><span class="sw fill" style="background:var(--c4)"></span>기업 예치 × 노드 분배율</span>
+    </div>
+    <div class="chart-box" id="chartC"></div>
+  </div>
+
+  <details class="tbl">
+    <summary>월별 상세 표 (36개월)</summary>
+    <div class="tbl-scroll"><table id="dtable"></table></div>
+  </details>
+
+  <div class="notice">
+    <b>이 도구의 모든 수치는 조정 가능한 가정값이며, 백서 확정치가 아닙니다.</b> 구조(예산 분배·선예치 재원·품질 가중·공간 단위 보상)만 백서 FAQ를 따릅니다. 토큰 시세는 반영하지 않습니다 — 전 항목 RLUSD 기준.
+    <ul>
+      <li><b>대외 공유 금지</b> — 회수 시점 · 월 순수익 표기는 금지표현(수익 약속 · 회수기간)에 해당합니다.</li>
+      <li>공개용 「백서 계산기」(FAQ 약속분)로 전환 시 제거: 회수 KPI · 순수익 표현 · 기본 시나리오 프리셋. 남기는 것: 분배 공식 구조 · "노드가 늘면 몫이 줄고, 매출이 늘면 예산이 커집니다" 문구.</li>
+    </ul>
+  </div>
+</section>
+</div>
+
+<div class="tip" id="tip"></div>
+
+<script>
+"use strict";
+const CTRLS=[
+ {g:"g-quality",id:"q1",label:"가동 · 연속성",min:50,max:100,step:1,def:95,unit:""},
+ {g:"g-quality",id:"q2",label:"데이터 정합성",min:50,max:100,step:1,def:95,unit:""},
+ {g:"g-quality",id:"q3",label:"이웃 노드 일치도",min:50,max:100,step:1,def:90,unit:""},
+ {g:"g-quality",id:"q4",label:"교정 최신성",min:0,max:100,step:1,def:90,unit:""},
+ {g:"g-quality",id:"qmin",label:"보상 자격선 (Q×100)",min:0,max:80,step:5,def:40,unit:"",hint:"이 아래는 보상 0 — \"많이\"가 아니라 \"제대로\""},
+ {g:"g-network",id:"n0",label:"참여 노드 — 시작",min:500,max:15000,step:100,def:3200,unit:"대",hint:"1차 판매분 중 설치·가동 추정"},
+ {g:"g-network",id:"n24",label:"참여 노드 — 24개월 후",min:500,max:20000,step:100,def:8000,unit:"대",hint:"2차(10,000대) 흡수 가정, 선형 증가"},
+ {g:"g-network",id:"qavg",label:"네트워크 평균 품질 (×100)",min:50,max:100,step:1,def:80,unit:""},
+ {g:"g-budget",id:"seed",label:"시드 예산 (월)",min:0,max:100000,step:1000,def:30000,unit:"RLUSD"},
+ {g:"g-budget",id:"seedm",label:"시드 지속 기간",min:0,max:36,step:1,def:12,unit:"개월"},
+ {g:"g-budget",id:"estart",label:"첫 기업 공고 시점",min:1,max:24,step:1,def:4,unit:"개월차"},
+ {g:"g-budget",id:"e0",label:"초기 기업 예치 (월)",min:0,max:50000,step:500,def:5000,unit:"RLUSD"},
+ {g:"g-budget",id:"eg",label:"기업 예치 월 성장률",min:0,max:40,step:1,def:15,unit:"%"},
+ {g:"g-budget",id:"ecap",label:"기업 예치 상한 (월)",min:0,max:500000,step:5000,def:80000,unit:"RLUSD"},
+ {g:"g-budget",id:"rho",label:"노드 분배율",min:30,max:90,step:5,def:70,unit:"%",hint:"기업 예치 중 노드 몫 (잔여 = 검증·운영)"},
+ {g:"g-cost",id:"cost",label:"월 유지비",min:0,max:20,step:0.5,def:2.5,unit:"RLUSD",hint:"전기 ~1.1 + 통신 0 + 교정 적립 ~1.4 가정"},
+ {g:"g-cost",id:"fx",label:"환율 (₩/RLUSD)",min:1000,max:2000,step:10,def:1390,unit:""},
+];
+const SCEN={
+ cons:{estart:8,e0:3000,eg:8,ecap:30000,n24:6000},
+ base:{estart:4,e0:5000,eg:15,ecap:80000,n24:8000},
+ opt:{estart:3,e0:10000,eg:22,ecap:150000,n24:12000},
+};
+const MONTHS=36, QNEG=0.65;
+const $=id=>document.getElementById(id);
+
+for(const c of CTRLS){
+  const d=document.createElement("div"); d.className="ctl";
+  d.innerHTML=`<div class="ctl-head"><label for="${c.id}">${c.label}</label>`+
+    `<span class="val mono" id="${c.id}-v"></span></div>`+
+    `<input type="range" id="${c.id}" min="${c.min}" max="${c.max}" step="${c.step}" value="${c.def}" aria-label="${c.label}">`+
+    (c.hint?`<div class="hint">${c.hint}</div>`:"");
+  $(c.g).appendChild(d);
+}
+
+function val(id){ return parseFloat($(id).value); }
+function setVal(id,v){ $(id).value=v; }
+function readInputs(){
+  const o={price:parseFloat($("price").value)};
+  for(const c of CTRLS) o[c.id]=val(c.id);
+  return o;
+}
+const fmt0=n=>Math.round(n).toLocaleString("ko-KR");
+const fmt1=n=>(Math.round(n*10)/10).toLocaleString("ko-KR",{minimumFractionDigits:Math.abs(n)<100?1:0,maximumFractionDigits:Math.abs(n)<100?1:0});
+const fmtW=n=>"₩"+Math.round(n).toLocaleString("ko-KR");
+
+function simulate(p){
+  const Qme=(p.q1+p.q2+p.q3+p.q4)/400;
+  const eligible=Qme*100>=p.qmin, negEligible=QNEG*100>=p.qmin;
+  const rows=[];
+  let cum=0, cumNeg=0, cumR=0, payback=null, selfrun=null;
+  for(let t=1;t<=MONTHS;t++){
+    const N=Math.max(1,p.n0+(p.n24-p.n0)*Math.min(t,24)/24);
+    const seed=t<=p.seedm?p.seed:0;
+    const ent=p.stages
+      ?p.stages.reduce((s,st)=>t>=st.start?s+Math.min(st.e0*Math.pow(1+st.g/100,t-st.start),st.cap):s,0)
+      :(t>=p.estart?Math.min(p.e0*Math.pow(1+p.eg/100,t-p.estart),p.ecap):0);
+    const entNode=ent*p.rho/100;
+    const budget=seed+entNode;
+    const denom=N*(p.qavg/100);
+    const R=eligible?budget*Qme/denom:0;
+    const Rneg=negEligible?budget*QNEG/denom:0;
+    const net=R-p.cost, netNeg=Rneg-p.cost;
+    cum+=net; cumNeg+=netNeg; cumR+=R;
+    if(payback===null&&p.price>0&&cum>=p.price) payback=t;
+    if(selfrun===null&&entNode>0&&entNode>=p.seed) selfrun=t;
+    rows.push({t,N,seed,entNode,budget,R,net,cum,cumR,Rneg,netNeg,cumNeg});
+  }
+  return {rows,Qme,eligible,payback,selfrun};
+}
+
+/* ---------- SVG chart helpers ---------- */
+const NS="http://www.w3.org/2000/svg";
+function el(n,at){ const e=document.createElementNS(NS,n); for(const k in at)e.setAttribute(k,at[k]); return e; }
+function niceMax(v){ if(v<=0)return 1; const p=Math.pow(10,Math.floor(Math.log10(v))); const d=v/p;
+  const s=d<=1?1:d<=2?2:d<=2.5?2.5:d<=5?5:10; return s*p; }
+const mq640=window.matchMedia("(max-width:640px)");
+function chDims(){ return mq640.matches?{W:440,H:260,L:46,R:16,T:14,B:26}:{W:860,H:270,L:58,R:96,T:14,B:30}; }
+let CH=chDims();
+
+function baseChart(box,ymin,ymax,fmt,nm){
+  nm=nm||MONTHS;
+  box.innerHTML="";
+  const svg=el("svg",{viewBox:`0 0 ${CH.W} ${CH.H}`,role:"img"});
+  const iw=CH.W-CH.L-CH.R, ih=CH.H-CH.T-CH.B;
+  const x=t=>CH.L+iw*(t-1)/Math.max(1,nm-1);
+  const y=v=>CH.T+ih*(1-(v-ymin)/(ymax-ymin));
+  const g=el("g",{class:"axis"});
+  const steps=4;
+  for(let i=0;i<=steps;i++){
+    const v=ymin+(ymax-ymin)*i/steps, yy=y(v);
+    g.appendChild(el("line",{x1:CH.L,x2:CH.W-CH.R,y1:yy,y2:yy,class:"gridline"}));
+    const tx=el("text",{x:CH.L-8,y:yy+3.5,"text-anchor":"end"}); tx.textContent=fmt(v); g.appendChild(tx);
+  }
+  const tickStep=nm<=12?3:(mq640.matches?12:6);
+  for(let m=tickStep;m<=nm;m+=tickStep){
+    const tx=el("text",{x:x(m),y:CH.H-10,"text-anchor":"middle"}); tx.textContent=m+"개월"; g.appendChild(tx);
+  }
+  if(ymin<0&&ymax>0) g.appendChild(el("line",{x1:CH.L,x2:CH.W-CH.R,y1:y(0),y2:y(0),class:"zeroline"}));
+  svg.appendChild(g); box.appendChild(svg);
+  return {svg,x,y};
+}
+function linePath(rows,x,y,key){ return rows.map((r,i)=>(i?"L":"M")+x(r.t).toFixed(1)+" "+y(r[key]).toFixed(1)).join(" "); }
+function endLabel(svg,x,y,rows,key,text,color){
+  if(mq640.matches) return;
+  const last=rows[rows.length-1];
+  const t=el("text",{x:x(last.t)+8,y:y(last[key])+4,class:"dlabel",style:`fill:${color}`});
+  t.textContent=text; svg.appendChild(t);
+}
+
+const tip=$("tip");
+function attachHover(box,chart,rows,build){
+  const {svg,x}=chart;
+  const cross=el("line",{class:"crosshair",y1:CH.T,y2:CH.H-CH.B,x1:-9,x2:-9}); svg.appendChild(cross);
+  function move(ev){
+    const r=svg.getBoundingClientRect();
+    const px=(ev.clientX-r.left)*CH.W/r.width;
+    let m=Math.round(1+(px-CH.L)*(rows.length-1)/(CH.W-CH.L-CH.R));
+    m=Math.max(1,Math.min(rows.length,m));
+    const row=rows[m-1], cx=x(m);
+    cross.setAttribute("x1",cx); cross.setAttribute("x2",cx);
+    tip.innerHTML=build(row);
+    tip.style.display="block";
+    let left=ev.clientX+14; if(left+180>window.innerWidth) left=ev.clientX-194;
+    tip.style.left=left+"px";
+    tip.style.top=(ev.clientY-10)+"px";
+  }
+  function leave(ev){ if(ev&&ev.pointerType==="touch") return;
+    tip.style.display="none"; cross.setAttribute("x1",-9); cross.setAttribute("x2",-9); }
+  svg.addEventListener("pointermove",move); svg.addEventListener("pointerdown",move);
+  svg.addEventListener("pointerleave",leave);
+}
+document.addEventListener("pointerdown",ev=>{
+  if(!ev.target.closest(".chart-box")) tip.style.display="none";
+});
+
+function render(){
+  const p=readInputs();
+  for(const c of CTRLS){
+    const v=val(c.id);
+    $(c.id+"-v").textContent=(c.step<1?v.toFixed(1):fmt0(v))+(c.unit?" "+c.unit:"");
+  }
+  const sim=simulate(p), rows=sim.rows;
+
+  const avg12=rows.slice(0,12);
+  const mR=avg12.reduce((s,r)=>s+r.R,0)/12, mN=avg12.reduce((s,r)=>s+r.net,0)/12;
+  $("k-reward").textContent=fmt1(mR)+" RLUSD";
+  $("k-reward-w").textContent=fmtW(mR*p.fx)+" · Q "+sim.Qme.toFixed(2)+(sim.eligible?"":" (자격 미달!)");
+  $("k-net").textContent=fmt1(mN)+" RLUSD";
+  $("k-net-w").textContent=fmtW(mN*p.fx)+" · 유지비 "+fmt1(p.cost)+" 차감";
+  const pb=$("k-payback"), pbs=$("k-payback-sub");
+  if(sim.payback){ const cls=sim.payback<=18?"k-good":"k-warn";
+    pb.textContent=sim.payback+"개월";
+    pbs.innerHTML=`구매가 ${fmt0(p.price)} RLUSD <span class="k-chip ${cls}">${sim.payback<=18?"양호":"장기"}</span>`; }
+  else { pb.textContent="36개월+"; pbs.innerHTML='<span class="k-chip k-crit">기간 내 미회수</span> 예산·수요 가정 재검토'; }
+  $("k-selfrun").textContent=sim.selfrun?sim.selfrun+"개월차":"36개월 내 미도달";
+
+  /* chart A — monthly net */
+  const aVals=rows.flatMap(r=>[r.net,r.netNeg]);
+  const aMax=niceMax(Math.max(...aVals,1)), aMin=Math.min(0,Math.floor(Math.min(...aVals)));
+  const A=baseChart($("chartA"),aMin,aMax,v=>fmt0(v));
+  A.svg.appendChild(el("path",{d:linePath(rows,A.x,A.y,"netNeg"),fill:"none",style:"stroke:var(--c2)","stroke-width":2,"stroke-dasharray":"6 5"}));
+  A.svg.appendChild(el("path",{d:linePath(rows,A.x,A.y,"net"),fill:"none",style:"stroke:var(--c1)","stroke-width":2.5}));
+  endLabel(A.svg,A.x,A.y,rows,"net","내 노드","var(--c1)");
+  endLabel(A.svg,A.x,A.y,rows,"netNeg","방치","var(--c2)");
+  attachHover($("chartA"),A,rows,r=>`<div class="t-h">${r.t}개월차</div>
+    <div class="row"><span>내 순수익</span><b>${fmt1(r.net)} RLUSD</b></div>
+    <div class="row"><span>방치 노드</span><b>${fmt1(r.netNeg)} RLUSD</b></div>
+    <div class="row"><span>참여 노드</span><b>${fmt0(r.N)}대</b></div>`);
+
+  /* chart B — cumulative + payback */
+  const bMax=niceMax(Math.max(rows[MONTHS-1].cum,p.price,10));
+  const bMin=Math.min(0,Math.floor(Math.min(...rows.map(r=>Math.min(r.cum,r.cumNeg)))));
+  const B=baseChart($("chartB"),bMin,bMax,v=>fmt0(v));
+  if(p.price>0){
+    const yy=B.y(p.price);
+    B.svg.appendChild(el("line",{x1:CH.L,x2:CH.W-CH.R,y1:yy,y2:yy,stroke:"var(--faint)","stroke-width":1.2,"stroke-dasharray":"7 5"}));
+    const t=el("text",{x:CH.W-CH.R-4,y:yy-5,"text-anchor":"end",class:"anno"}); t.textContent="구매가 "+fmt0(p.price); B.svg.appendChild(t);
+  }
+  const area=linePath(rows,B.x,B.y,"cum")+`L ${B.x(MONTHS)} ${B.y(Math.max(bMin,0))} L ${B.x(1)} ${B.y(Math.max(bMin,0))} Z`;
+  B.svg.appendChild(el("path",{d:area,style:"fill:var(--c1)",opacity:.08,stroke:"none"}));
+  B.svg.appendChild(el("path",{d:linePath(rows,B.x,B.y,"cumNeg"),fill:"none",style:"stroke:var(--c2)","stroke-width":2,"stroke-dasharray":"6 5"}));
+  B.svg.appendChild(el("path",{d:linePath(rows,B.x,B.y,"cum"),fill:"none",style:"stroke:var(--c1)","stroke-width":2.5}));
+  if(sim.payback){
+    const r=rows[sim.payback-1];
+    B.svg.appendChild(el("circle",{cx:B.x(r.t),cy:B.y(r.cum),r:5,style:"fill:var(--surface);stroke:var(--c1)","stroke-width":2.5}));
+    const t=el("text",{x:B.x(r.t),y:B.y(r.cum)-12,"text-anchor":"middle",class:"dlabel",style:"fill:var(--c1)"});
+    t.textContent="회수 "+sim.payback+"개월"; B.svg.appendChild(t);
+  }
+  endLabel(B.svg,B.x,B.y,rows,"cum","내 노드","var(--c1)");
+  endLabel(B.svg,B.x,B.y,rows,"cumNeg","방치","var(--c2)");
+  attachHover($("chartB"),B,rows,r=>`<div class="t-h">${r.t}개월차 누적</div>
+    <div class="row"><span>내 노드</span><b>${fmt0(r.cum)} RLUSD</b></div>
+    <div class="row"><span>방치 노드</span><b>${fmt0(r.cumNeg)} RLUSD</b></div>`);
+
+  /* chart C — budget stack (seed + enterprise) */
+  const cMax=niceMax(Math.max(...rows.map(r=>r.budget),1));
+  const C=baseChart($("chartC"),0,cMax,v=>fmt0(v/1000)+"k");
+  const seedTop=rows.map((r,i)=>(i?"L":"M")+C.x(r.t).toFixed(1)+" "+C.y(r.seed).toFixed(1)).join(" ");
+  const seedArea=seedTop+`L ${C.x(MONTHS)} ${C.y(0)} L ${C.x(1)} ${C.y(0)} Z`;
+  C.svg.appendChild(el("path",{d:seedArea,style:"fill:var(--c3)",opacity:.75,stroke:"var(--surface)","stroke-width":2}));
+  const stackTop=rows.map((r,i)=>(i?"L":"M")+C.x(r.t).toFixed(1)+" "+C.y(r.seed+r.entNode).toFixed(1)).join(" ");
+  const entArea=stackTop+" "+rows.slice().reverse().map(r=>"L"+C.x(r.t).toFixed(1)+" "+C.y(r.seed).toFixed(1)).join(" ")+" Z";
+  C.svg.appendChild(el("path",{d:entArea,style:"fill:var(--c4)",opacity:.75,stroke:"var(--surface)","stroke-width":2}));
+  if(sim.selfrun){
+    const xx=C.x(sim.selfrun);
+    C.svg.appendChild(el("line",{x1:xx,x2:xx,y1:CH.T,y2:CH.H-CH.B,stroke:"var(--faint)","stroke-width":1,"stroke-dasharray":"3 3"}));
+    const t=el("text",{x:xx+5,y:CH.T+12,class:"anno"}); t.textContent="자립 교차 "+sim.selfrun+"개월"; C.svg.appendChild(t);
+  }
+  attachHover($("chartC"),C,rows,r=>`<div class="t-h">${r.t}개월차 예산</div>
+    <div class="row"><span>시드</span><b>${fmt0(r.seed)} RLUSD</b></div>
+    <div class="row"><span>기업 예치분</span><b>${fmt0(r.entNode)} RLUSD</b></div>
+    <div class="row"><span>대당 평균</span><b>${fmt1(r.budget/r.N)} RLUSD</b></div>`);
+
+  /* table */
+  const tb=$("dtable");
+  tb.innerHTML="<thead><tr><th>개월</th><th>참여 노드</th><th>시드</th><th>기업 예치분</th><th>총예산</th><th>내 보상</th><th>내 순수익</th><th>누적</th><th>누적(₩)</th></tr></thead>"+
+   "<tbody>"+rows.map(r=>`<tr><td>${r.t}</td><td>${fmt0(r.N)}</td><td>${fmt0(r.seed)}</td><td>${fmt0(r.entNode)}</td><td>${fmt0(r.budget)}</td><td>${fmt1(r.R)}</td><td>${fmt1(r.net)}</td><td>${fmt0(r.cum)}</td><td>${fmtW(r.cum*p.fx)}</td></tr>`).join("")+"</tbody>";
+
+  try{ localStorage.setItem("wlbn-econ", JSON.stringify(p)); }catch(e){}
+}
+
+/* ---------- simple mode ---------- */
+const mkStage=(name,start,cap,g)=>({name,start,cap,g,e0:Math.max(2000,Math.round(cap*0.08))});
+const STG_KR=mkStage("한국 공고",4,400000,15),
+      STG_USJP=mkStage("미·일 진출",13,1400000,18),
+      STG_GLB=mkStage("전세계 확장",25,1800000,20);
+const SIMPLE={price:650,months:24,demand:"kr",estart:4,eg:15,ecap:400000,stages:[STG_KR]};
+function stageStart(){ return SIMPLE.stages&&SIMPLE.stages.length?SIMPLE.stages[0].start:(SIMPLE.estart<900?SIMPLE.estart:4); }
+function simpleParams(){
+  const p={};
+  for(const c of CTRLS) p[c.id]=c.def;
+  p.price=SIMPLE.price;
+  if(SIMPLE.stages&&SIMPLE.stages.length){
+    p.stages=SIMPLE.stages; p.estart=SIMPLE.stages[0].start;
+    p.ecap=SIMPLE.stages.reduce((s,st)=>s+st.cap,0);
+  }else if(SIMPLE.ecap<=0){ p.e0=0; p.estart=999; p.ecap=0; }
+  else{
+    p.estart=SIMPLE.estart; p.eg=SIMPLE.eg; p.ecap=SIMPLE.ecap;
+    p.e0=Math.max(2000,Math.round(SIMPLE.ecap*0.08));
+  }
+  return p;
+}
+function goalNeeds(p0){
+  function tot(U){
+    const p={...p0}; p.stages=null;
+    if(U<=0){ p.e0=0; p.estart=999; p.ecap=0; }
+    else{ p.e0=U; p.eg=0; p.ecap=U; p.estart=stageStart(); }
+    return simulate(p).rows[SIMPLE.months-1].cumR;
+  }
+  const t0=tot(0), slope=(tot(10000)-t0)/10000;
+  return k=>{ const need=(k*p0.price-t0)/slope; return need>0?need:0; };
+}
+function renderSimple(){
+  const p=simpleParams();
+  const rows=simulate(p).rows.slice(0,SIMPLE.months);
+  const pNone={...p,e0:0,estart:999,ecap:0,stages:null};
+  const rowsNone=simulate(pNone).rows.slice(0,SIMPLE.months);
+  const tot=rows[rows.length-1].cumR, totNone=rowsNone[rowsNone.length-1].cumR;
+  $("s-total").textContent=fmt0(tot)+" RLUSD";
+  $("s-total-w").textContent=fmtW(tot*p.fx)+" · "+SIMPLE.months+"개월 합계";
+
+  const staged=!!(SIMPLE.stages&&SIMPLE.stages.length);
+  const capSum=staged?SIMPLE.stages.reduce((s,st)=>s+st.cap,0):SIMPLE.ecap;
+  $("sq-ecap").value=capSum;
+  $("sq-ecap-v").textContent=fmt0(capSum)+" RLUSD/월";
+  $("sq-ecap-y").textContent=capSum>0
+    ?"연 데이터 매출 환산(도달 시) ≈ "+(capSum*12*p.fx/1e8).toFixed(1)+"억 원"
+      +(staged?" — "+SIMPLE.stages.map(st=>st.name+" "+st.start+"개월차").join(" · ")+" 누적 확장 가정":" — 이 수준까지 성장한다는 가정")
+    :"0 — 기업 수요 없음 (운영 예산만)";
+
+  const hasDemand=capSum>0;
+  const avgBudget=rows.reduce((s,r)=>s+r.budget,0)/rows.length;
+  $("s-buyflow").textContent=fmt0(avgBudget)+" RLUSD";
+  const avgSel=tot/SIMPLE.months, avgNone=totNone/SIMPLE.months;
+  if(!hasDemand){
+    $("s-month").textContent=fmt1(avgSel);
+    $("s-month-w").textContent="RLUSD/월 · "+fmtW(avgSel*p.fx)+" · 기업 공고가 열리면 여기서 올라갑니다";
+  }else{
+    const up=avgNone>0?Math.round((avgSel/avgNone-1)*100):0;
+    $("s-month").textContent=fmt1(avgNone)+" → "+fmt1(avgSel);
+    $("s-month-w").textContent="RLUSD/월 · 수요 없음 → 선택 시나리오 (+"+up+"%) · "+fmtW(avgSel*p.fx);
+  }
+
+  const hit=rows.find(r=>r.cumR>=p.price);
+  const mult=tot/p.price;
+  const disp=(!hit&&+mult.toFixed(1)>=1)?mult.toFixed(2):(mult>=10?mult.toFixed(0):mult.toFixed(1));
+  $("s-payback").textContent=disp+"배";
+  $("s-payback-sub").textContent=hit
+    ?hit.t+"개월차에 1배(기기값 "+fmt0(p.price)+" RLUSD) 도달"
+    :"이 가정으로는 기간 내 1배(기기값) 미도달";
+
+  /* one-line verdict on the final numbers */
+  const annual=capSum*12*p.fx/1e8;
+  const STGNAME={kr:"1단계(한국)",usjp:"2단계(한국+미·일)",glb:"3단계(전세계)",custom:"직접 설정 수요",none:"수요 없음"};
+  const sn=STGNAME[SIMPLE.demand]||"선택 수요";
+  let v;
+  if(capSum<=0)
+    v="수요 0의 기준선 — 운영 예산만으로는 "+SIMPLE.months+"개월에 "+disp+"배. 이 구조에서 보상의 엔진이 기업 수요라는 걸 보여주는 대조군입니다.";
+  else if(!hit)
+    v=sn+" 가정으로 "+SIMPLE.months+"개월에 기기값의 "+Math.round(mult*100)+"% — 아직 측정기 실사용 가치가 중심인 구간이고, 배수는 다음 확장 단계가 열어줍니다.";
+  else if(mult<2)
+    v=hit.t+"개월차에 기기값을 회복하고 "+SIMPLE.months+"개월 "+disp+"배 — 완만하지만 자생 구간에 들어선 그림입니다 (연 ~"+annual.toFixed(0)+"억 원 매출 이행 전제).";
+  else if(mult<4)
+    v=hit.t+"개월차 회복 후 "+SIMPLE.months+"개월 "+disp+"배 — 매력적인 구간이지만, 연 ~"+annual.toFixed(0)+"억 원 데이터 매출("+sn+")이 실제로 이행돼야 나오는 숫자입니다.";
+  else
+    v=SIMPLE.months+"개월 "+disp+"배 — 숫자가 큰 만큼 전제도 큽니다: "+sn+" 확장과 연 ~"+annual.toFixed(0)+"억 원 매출이 실현될 때의 상단 시나리오입니다.";
+  $("s-verdict").innerHTML='<span class="v-tag">해석</span>'+v;
+
+  /* goal inversion */
+  {
+    const need=goalNeeds(p);
+    $("s-goal-sub").textContent="선택 기간 "+SIMPLE.months+"개월 · 공고 시작 "+stageStart()+"개월차 · 노드 분배율 70% 가정.";
+    $("s-goal-body").innerHTML=[2,3,4].map(k=>{
+      const U=Math.round(need(k)/1000)*1000;
+      return "<b>기기값 "+k+"배</b> ("+fmt0(k*p.price)+" RLUSD) → 월 평균 기업 예치 <b class='mono'>"
+        +fmt0(U)+" RLUSD</b> <span style='color:var(--muted)'>· 연 데이터 매출 환산 ~"
+        +(U*12*p.fx/1e8).toFixed(1)+"억 원</span>";
+    }).join("<br>");
+    $("s-goal-note").textContent="예산을 나누는 구조라 참여 노드 수와 필요액이 정비례합니다 — 노드 가정(3,200→8,000대)이 절반이면 필요액도 대략 절반. 반대로 노드가 늘면 같은 배수에 더 큰 매출이 필요합니다.";
+  }
+
+  const mxRaw=Math.max(tot,totNone,p.price,10);
+  const unit=mxRaw>400?200:mxRaw>100?50:10;
+  const mx=Math.ceil(mxRaw*1.05/unit)*unit;
+  const S=baseChart($("chartS"),0,mx,v=>fmt0(v),SIMPLE.months);
+  if(p.price>0){
+    const yy=S.y(p.price);
+    S.svg.appendChild(el("line",{x1:CH.L,x2:CH.W-CH.R,y1:yy,y2:yy,stroke:"var(--faint)","stroke-width":1.2,"stroke-dasharray":"7 5"}));
+    const t=el("text",{x:CH.W-CH.R-4,y:yy-5,"text-anchor":"end",class:"anno"}); t.textContent="기기값 "+fmt0(p.price); S.svg.appendChild(t);
+  }
+  const marks=staged
+    ?SIMPLE.stages.filter(st=>st.start<=SIMPLE.months).map(st=>({at:st.start,label:st.name}))
+    :(capSum>0&&p.estart<=SIMPLE.months?[{at:p.estart,label:"기업 수요 시작"}]:[]);
+  marks.forEach(mk2=>{
+    const xx=S.x(mk2.at);
+    S.svg.appendChild(el("line",{x1:xx,x2:xx,y1:CH.T,y2:CH.H-CH.B,stroke:"var(--faint)","stroke-width":1.1,"stroke-dasharray":"3 3"}));
+    const t=el("text",{x:xx+5,y:CH.T+12,class:"anno"}); t.textContent=mk2.label; S.svg.appendChild(t);
+  });
+  const area=linePath(rows,S.x,S.y,"cumR")+`L ${S.x(rows.length)} ${S.y(0)} L ${S.x(1)} ${S.y(0)} Z`;
+  S.svg.appendChild(el("path",{d:area,style:"fill:var(--c1)",opacity:.08,stroke:"none"}));
+  const showNone=hasDemand;
+  if(showNone)
+    S.svg.appendChild(el("path",{d:linePath(rowsNone,S.x,S.y,"cumR"),fill:"none",style:"stroke:var(--c2)","stroke-width":2,"stroke-dasharray":"6 5"}));
+  S.svg.appendChild(el("path",{d:linePath(rows,S.x,S.y,"cumR"),fill:"none",style:"stroke:var(--c1)","stroke-width":2.5}));
+  if(hit){
+    S.svg.appendChild(el("circle",{cx:S.x(hit.t),cy:S.y(hit.cumR),r:5,style:"fill:var(--surface);stroke:var(--c1)","stroke-width":2.5}));
+  }
+  endLabel(S.svg,S.x,S.y,rows,"cumR","선택 시나리오","var(--c1)");
+  if(showNone) endLabel(S.svg,S.x,S.y,rowsNone,"cumR","수요 없음","var(--c2)");
+  $("s-legend").innerHTML='<span><span class="sw" style="border-color:var(--c1)"></span>선택 시나리오 누적 보상</span>'+
+    (showNone?'<span><span class="sw dash" style="border-color:var(--c2)"></span>기업 수요가 없다면 (비교선)</span>':'');
+  attachHover($("chartS"),S,rows,r=>`<div class="t-h">${r.t}개월차</div>
+    <div class="row"><span>그달 보상</span><b>${fmt1(r.R)} RLUSD</b></div>
+    <div class="row"><span>누적</span><b>${fmt0(r.cumR)} RLUSD</b></div>`+
+    (showNone?`<div class="row"><span>수요 없음 누적</span><b>${fmt0(rowsNone[r.t-1].cumR)} RLUSD</b></div>`:""));
+
+  /* hold-scenario lab (assumption experiment — always shows downside) */
+  {
+    const pct=SIMPLE.shPct??50, mult=SIMPLE.shMult??1;
+    $("sh-pct").value=pct; $("sh-mult").value=mult;
+    $("sh-pct-v").textContent=pct+"%";
+    $("sh-mult-v").textContent="×"+mult.toFixed(2);
+    const held=tot*pct/100, liquid=tot-held;
+    const cases=[...new Set([0.5,1,mult])].sort((a,b)=>a-b);
+    $("sh-body").innerHTML=cases.map(k=>{
+      const total=liquid+held*k;
+      const tag=k===mult?" <span style='color:var(--accent);font-weight:700'>← 선택 가정</span>":"";
+      const multDev=p.price>0?" · 기기값 대비 "+(total/p.price).toFixed(1)+"배":"";
+      return "배율 <b class='mono'>×"+k.toFixed(2)+"</b> → 실현 가치 <b class='mono'>"+fmt0(total)+" RLUSD</b>"
+        +" <span style='color:var(--muted)'>("+fmtW(total*p.fx)+multDev+")</span>"+tag;
+    }).join("<br>");
+  }
+
+  try{ localStorage.setItem("wlbn-econ-simple", JSON.stringify(SIMPLE)); }catch(e){}
+}
+function wireQ(id,key,parse){
+  document.querySelectorAll("#"+id+" .qchip").forEach(b=>b.addEventListener("click",()=>{
+    document.querySelectorAll("#"+id+" .qchip").forEach(c=>c.classList.remove("on")); b.classList.add("on");
+    SIMPLE[key]=parse(b.dataset.v); renderSimple();
+  }));
+}
+wireQ("sq-price","price",v=>parseFloat(v));
+wireQ("sq-months","months",v=>parseInt(v,10));
+const DPRE={
+  none:{ecap:0,stages:null,estart:4,eg:15},
+  kr:{stages:[STG_KR],ecap:400000},
+  usjp:{stages:[STG_KR,STG_USJP],ecap:1800000},
+  glb:{stages:[STG_KR,STG_USJP,STG_GLB],ecap:3600000},
+};
+document.querySelectorAll("#sq-demand .qchip").forEach(b=>b.addEventListener("click",()=>{
+  document.querySelectorAll("#sq-demand .qchip").forEach(c=>c.classList.remove("on")); b.classList.add("on");
+  SIMPLE.demand=b.dataset.v; Object.assign(SIMPLE,DPRE[b.dataset.v]); renderSimple();
+}));
+$("sq-ecap").addEventListener("input",()=>{
+  SIMPLE.ecap=parseFloat($("sq-ecap").value);
+  SIMPLE.stages=null;
+  SIMPLE.demand=SIMPLE.ecap<=0?"none":"custom";
+  document.querySelectorAll("#sq-demand .qchip").forEach(c=>c.classList.toggle("on",SIMPLE.ecap<=0&&c.dataset.v==="none"));
+  renderSimple();
+});
+$("sh-pct").addEventListener("input",()=>{ SIMPLE.shPct=parseFloat($("sh-pct").value); renderSimple(); });
+$("sh-mult").addEventListener("input",()=>{ SIMPLE.shMult=parseFloat($("sh-mult").value); renderSimple(); });
+
+/* ---------- mode switch & wiring ---------- */
+function setMode(m){
+  document.body.classList.toggle("simple",m==="simple");
+  $("m-simple").classList.toggle("on",m==="simple");
+  $("m-design").classList.toggle("on",m!=="simple");
+  try{ localStorage.setItem("wlbn-econ-mode",m); }catch(e){}
+  if(m==="simple") renderSimple(); else render();
+}
+$("m-simple").addEventListener("click",()=>setMode("simple"));
+$("m-design").addEventListener("click",()=>setMode("design"));
+
+document.querySelectorAll("input[type=range]").forEach(i=>i.addEventListener("input",render));
+$("price").addEventListener("change",render);
+document.querySelectorAll(".chip").forEach(ch=>ch.addEventListener("click",()=>{
+  document.querySelectorAll(".chip").forEach(c=>c.classList.remove("on")); ch.classList.add("on");
+  const s=SCEN[ch.dataset.scen]; for(const k in s) setVal(k,s[k]); render();
+}));
+$("reset").addEventListener("click",()=>{
+  for(const c of CTRLS) setVal(c.id,c.def);
+  $("price").value="650";
+  document.querySelectorAll(".chip").forEach(c=>c.classList.toggle("on",c.dataset.scen==="base"));
+  try{ localStorage.removeItem("wlbn-econ"); }catch(e){}
+  render();
+});
+try{
+  const saved=JSON.parse(localStorage.getItem("wlbn-econ")||"null");
+  if(saved){ for(const c of CTRLS) if(saved[c.id]!=null) setVal(c.id,saved[c.id]);
+    if(saved.price==450||saved.price==650) $("price").value=String(saved.price); }
+}catch(e){}
+try{
+  const ss=JSON.parse(localStorage.getItem("wlbn-econ-simple")||"null");
+  if(ss){ Object.assign(SIMPLE,ss);
+    if(SIMPLE.price!==450&&SIMPLE.price!==650) SIMPLE.price=650;
+    if(SIMPLE.demand!=="custom"&&!DPRE[SIMPLE.demand]){ SIMPLE.demand="kr"; Object.assign(SIMPLE,DPRE.kr); }
+    for(const [id,key] of [["sq-price","price"],["sq-months","months"],["sq-demand","demand"]])
+      document.querySelectorAll("#"+id+" .qchip").forEach(c=>c.classList.toggle("on",String(c.dataset.v)===String(SIMPLE[key])));
+  }
+}catch(e){}
+/* theme toggle (manual override; remembers) */
+const rootEl=document.documentElement;
+function curDark(){ const a=rootEl.getAttribute("data-theme");
+  return a? a==="dark" : window.matchMedia("(prefers-color-scheme: dark)").matches; }
+function applyTheme(t){ if(t) rootEl.setAttribute("data-theme",t); else rootEl.removeAttribute("data-theme");
+  $("themeToggle").textContent=curDark()?"☀":"☾"; }
+$("themeToggle").addEventListener("click",()=>{
+  const next=curDark()?"light":"dark";
+  try{ localStorage.setItem("wlbn-econ-theme",next); }catch(e){}
+  applyTheme(next);
+});
+let savedTheme=null; try{ savedTheme=localStorage.getItem("wlbn-econ-theme"); }catch(e){}
+applyTheme(savedTheme);
+
+/* responsive chart dims */
+mq640.addEventListener("change",()=>{ CH=chDims();
+  if(document.body.classList.contains("simple")) renderSimple(); else render(); });
+
+let initMode="simple";
+try{ initMode=localStorage.getItem("wlbn-econ-mode")||"simple"; }catch(e){}
+render();
+setMode(initMode);
+</script>

@@ -45,3 +45,9 @@ pages/
 
 ## 배포 작업 시
 `CLAUDE_CODE_DEPLOY.md` 파일의 단계를 따르세요.
+
+## wellbian DePIN 운영 기록 (`depin/`)
+이 저장소에는 wellbian(케이웨더가 기기 파트너인 실내 공기질 DePIN)의 파트너십·대외 커뮤니케이션 운영 기록이
+`depin/` 아래에 함께 있다. `depin/` 작업을 시작할 때는 **`depin/CLAUDE.md`** 를 먼저 읽는다(정본 지도·갱신 순서·핵심 금지).
+- 사이트 공개 사실(토큰·배분·게이트·판매·약관·택손·지갑) 정본: `depin/content/site-canon-0910.md`
+- 발화 규칙: `depin/intel/playbook.md` · 텔레봇·판매 사이트 FAQ 정본: `depin/site/wellbian-store/lib/data.ts`

@@ -1,0 +1,70 @@
+{
+  "bot_id": 609517172,
+  "data": {
+    "admin": { "admin_error_disable": false, "anon_admin": false, "legacy_admin": false },
+    "antiflood": { "action": "mute", "action_duration": 0, "flood_clear": false, "flood_limit": 8, "flood_timer": 0, "flood_timer_limit": 0 },
+    "blocklists": { "action": "nothing", "action_duration": 0, "default_reason": "", "filters": null, "should_delete": true },
+    "clean_command": { "command_types": { "admin": { "clean": false }, "all": { "clean": false }, "other": { "clean": false }, "user": { "clean": false } } },
+    "clean_service": { "service_types": { "all": { "clean": true }, "join": { "clean": true }, "leave": { "clean": true }, "other": { "clean": true }, "photo": { "clean": true }, "pin": { "clean": true }, "title": { "clean": true }, "videochat": { "clean": true } } },
+    "disabled": { "disable_admin": false, "disabled": null, "should_delete": false },
+    "filters": { "filters": null },
+    "greetings": {
+      "captcha_rules": true,
+      "goodbye": { "data_id": "", "text": "", "type": 0 },
+      "kick_after": 3600,
+      "mute_for": 0,
+      "mute_mode": "math",
+      "mute_text": "눌러서 인증하기 · Verify",
+      "should_clean": true,
+      "should_goodbye": false,
+      "should_kick": true,
+      "should_mute": true,
+      "should_welcome": true,
+      "welcome": { "data_id": "", "text": "{first}님, 환영합니다 👋\n\n먼저 위 인증을 완료해 주세요. 완료 전에는 메시지를 보내실 수 없습니다.\n\n· 자주 묻는 질문과 판매 일정 → @wellbian_faq_bot\n· 공지는 공지 채널에만 올라갑니다\n\n⚠️ 운영진은 먼저 DM을 보내지 않습니다.\n지갑 복구 문구를 묻는 사람은 사칭입니다.\n\nWelcome! Please complete the verification above before posting.\nStaff never DM you first — never share your seed phrase.", "type": 0 }
+    },
+    "locks": {
+      "allowlisted_url": null,
+      "lock_warns": false,
+      "locks": {
+        "album": { "locked": false, "reason": "" }, "all": { "locked": false, "reason": "" },
+        "anonchannel": { "locked": false, "reason": "" }, "audio": { "locked": false, "reason": "" },
+        "bot": { "locked": true, "reason": "" }, "botlink": { "locked": false, "reason": "" },
+        "button": { "locked": false, "reason": "" }, "cashtag": { "locked": false, "reason": "" },
+        "checklist": { "locked": false, "reason": "" }, "cjk": { "locked": false, "reason": "" },
+        "collage": { "locked": false, "reason": "" }, "command": { "locked": false, "reason": "" },
+        "comment": { "locked": false, "reason": "" }, "contact": { "locked": false, "reason": "" },
+        "cyrillic": { "locked": false, "reason": "" }, "document": { "locked": false, "reason": "" },
+        "email": { "locked": false, "reason": "" }, "emoji": { "locked": false, "reason": "" },
+        "emojicustom": { "locked": false, "reason": "" }, "emojigame": { "locked": false, "reason": "" },
+        "emojionly": { "locked": false, "reason": "" }, "externalreply": { "locked": false, "reason": "" },
+        "forward": { "locked": false, "reason": "" }, "forwardbot": { "locked": false, "reason": "" },
+        "forwardchannel": { "locked": false, "reason": "" }, "forwardstory": { "locked": false, "reason": "" },
+        "forwarduser": { "locked": false, "reason": "" }, "game": { "locked": false, "reason": "" },
+        "gif": { "locked": false, "reason": "" }, "guestbot": { "locked": false, "reason": "" },
+        "inline": { "locked": false, "reason": "" }, "invitelink": { "locked": true, "reason": "" },
+        "location": { "locked": false, "reason": "" }, "outsidereaction": { "locked": false, "reason": "" },
+        "phone": { "locked": false, "reason": "" }, "photo": { "locked": false, "reason": "" },
+        "poll": { "locked": false, "reason": "" }, "reaction": { "locked": false, "reason": "" },
+        "richmessage": { "locked": false, "reason": "" }, "rtl": { "locked": false, "reason": "" },
+        "slideshow": { "locked": false, "reason": "" }, "spoiler": { "locked": false, "reason": "" },
+        "sticker": { "locked": false, "reason": "" }, "stickeranimated": { "locked": false, "reason": "" },
+        "stickerpremium": { "locked": false, "reason": "" }, "text": { "locked": false, "reason": "" },
+        "url": { "locked": false, "reason": "" }, "video": { "locked": false, "reason": "" },
+        "videonote": { "locked": false, "reason": "" }, "voice": { "locked": false, "reason": "" },
+        "zalgo": { "locked": false, "reason": "" }
+      }
+    },
+    "notes": { "notes": null, "private_notes": false },
+    "pins": { "antichannelpin": false, "cleanlinked": false },
+    "raids": { "raid_mode_action_duration": 3600, "raid_mode_auto_limit": 0, "raid_mode_duration": 21600 },
+    "reports": { "disable_reports": false },
+    "rules": {
+      "button_name": "",
+      "content": "📌 wellbian :: talk 규칙\n\n1. 운영진은 먼저 DM을 보내지 않습니다. 먼저 온 DM은 사칭입니다.\n2. 지갑 복구 문구·개인키는 누구에게도 알려주지 마세요. 운영진도 묻지 않습니다.\n3. 시세·수익 예측 이야기는 삼가 주세요.\n4. 홍보·초대링크는 삭제됩니다.\n5. 궁금한 점은 @wellbian_faq_bot 에게 물어보세요.\n\nStaff never DM you first. Never share your seed phrase.",
+      "send_to_chat": false
+    },
+    "translations": { "lang": "ko" },
+    "warns": { "action": "mute", "action_duration": 0, "warn_for": 0, "warn_limit": 3 }
+  },
+  "version": 2
+}
