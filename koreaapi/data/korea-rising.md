@@ -1,13 +1,13 @@
-# Korea Rising — verified K-pop snapshot (2026-09-19)
+# Korea Rising — verified K-pop snapshot (2026-09-20)
 
 Every line is **cross-verified** (≥2 independent sources agree on the canonical name) and carries its source + Skill Score. Full data + Schema.org JSON-LD: <https://aiagentlabs.co.kr/> · via KoreaAPI (MCP).
 
 ## 🎬 Latest official releases (YouTube)
 - **BoA** — You still our No.1 BoA
-- **QWER** — Blind 8 beat challenge👏
+- **PLAVE** — Plave - PORNSTAR
+- **QWER** — 타이틀곡 '소년만화' 최초 공개! l 당신의 QWER에 투표하세요
 - **Xdinary Heroes** — 고려대와 엑디즈🎸가 이토록🌀뜨거울 줄이야
-- **tripleS** — Waduh...
-- **NCT Dream** — [Replay] OUR SUMMER DREAM : NCT DREAM 10TH ANNIVERSARY
+- **NCT Dream** — 🦀천러 고향에서 런쥔이와 놀아보는 하루 in 상하이🍜 | 드림 바이 드림 | DREAM x DREAM
 - **AKMU** — 'Paradise of Rumors... begins...'
 
 ## 🎤 Verified roster (640 acts)
