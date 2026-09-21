@@ -3052,6 +3052,52 @@ If it's of interest, just let me know.
 - 블룸버그는 매체이자 데이터 벤더다 — **판매 압박 0**. 토큰·보상·WLBN·가격 0.
 ---
 
+## Crypto Eri — 9/23(수) 10:00 콜 확정 + 캘린더 초대 문안 (9/21)
+
+**흐름**: 9/19(토) 19:22 Eri 「Tuesday I'm going to be out all day. Can we try for Wednesday?」 + 19:23 「I have Flare (Hugo)
+as part of my panel at XRP Seoul!」 → 9/21 06:53 서우 「Wednesday works. How about 10:00 AM on the 23rd — same hour in
+Tokyo and Seoul. Google Meet, video on. Send me your email and I'll put a calendar invite on it with the link.」 → 06:55 Eri
+「Perfect.」 + 이메일(저장소 미기재).
+
+**확정**: **2026-09-23(수) 10:00 KST/JST · Google Meet · video on · 30분**(초대 기준, 늘어나도 됨). 초대는 **서우가 캘린더에서
+직접 발송**(계정 연동 안 씀 — 서우 지시. 연동은 캘린더 스코프 부족으로 어차피 불가였다).
+
+⚠ **그의 패널에 Flare(Hugo) 참여** — 그가 DM 으로 알려준 것이지 주최 공개분이 아니다. **주최가 공개하기 전까지 외부 언급 0**,
+우리 콜에서도 먼저 꺼내지 않는다(Flare 미공개 계획 규칙의 연장).
+
+**초대 제목**: `wellbian × Eri — media plan call`
+
+**초대 본문(정본)**:
+```
+Eri — thanks for making the time.
+
+Wed, Sept 23 · 10:00–10:30 AM Tokyo / Seoul (same hour)
+Google Meet, video on — the link is in this invite.
+
+What I'll bring:
+• The device — the certified indoor air monitor: what it measures, and how each reading is fingerprinted before it goes anywhere
+• The data side — where the readings go and who uses them
+• A clear line between what's live today and what's still on testnet
+
+Then the part I'm looking forward to: a light media plan ahead of XRP SEOUL 2026 on Oct 3. You steer; I'll bring the material.
+
+If 30 minutes runs short we can keep going, and if the hour stops working for you, say so and I'll move it.
+
+Logan
+Head of Partnerships & Operations, wellbian
+```
+
+| 구절 | 하는 일 |
+|---|---|
+| `What I'll bring` 세 줄 | 9/18 DM 의 약속(기기 · 데이터 · live/testnet 경계)을 **그대로 옮긴 것**. 그는 우리 말을 그대로 옮기므로 세 줄 밖으로 늘리지 않는다 |
+| `You steer; I'll bring the material` | 무상으로 열어 준 상대에게 **주도권을 둔다** — 「우리가 원하는 노출 목록」을 먼저 내밀지 않는다 |
+| `if the hour stops working for you, say so` | 9/16·9/18 의 「시간은 그의 것」을 초대에서도 유지 |
+
+**넣지 않은 것**: Flare·Hugo 언급 0 · 10/3 임박 0 · 첨부 0(콜에서 화면으로 보여주고, 그가 옮길 자료는 콜 뒤에 정리해 보낸다 —
+문서가 먼저 가면 틀린 문장이 그대로 그의 글이 된다).
+
+**DM 한 줄(초대 발송 뒤, 선택)**: `Sent — Wednesday 10:00, Meet link in the invite. Your panel sounds like a good one. See you Wednesday.`
+
 ## Crypto Eri — 화요일(9/22) 제안 DM (9/18)
 
 9/16 답장 이후 회신이 없다. **다만 무응답이 아니다** — 그가 말한 도쿄 복귀일(월요일)이 **9/21 이라 아직 오지 않았고**,
