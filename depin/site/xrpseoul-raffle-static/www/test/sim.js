@@ -5,7 +5,7 @@
    ═══════════════════════════════════════════════════════════════════════ */
 (function () {
   'use strict';
-  var KEY = 'xrpseoul_sim_v1', MY = 'xrpseoul_raffle_v1';
+  var KEY = 'xrpseoul_sim_v1', MY = 'xrpseoul_raffle_v1', SES = 'xrpseoul_session_v1';
   var Q = new URLSearchParams(location.search);
   var KST = 9 * 3600000, WD = ['일', '월', '화', '수', '목', '금', '토'];
   var pad = function (n) { return (n < 10 ? '0' : '') + n; };
@@ -25,6 +25,16 @@
   function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) { } }
   save();
   function myEntry() { try { return JSON.parse(localStorage.getItem(MY) || 'null'); } catch (e) { return null; } }
+  function mySes() { try { return JSON.parse(localStorage.getItem(SES) || 'null'); } catch (e) { return null; } }
+  /* 가짜 Google 로그인 — 실제 Google 창 대신 이메일만 묻는다 (본 페이지의 「Google로 계속하기」가 이 훅을 쓴다) */
+  window.__RAFFLE_GOOGLE_MOCK = function (cb) { var e = prompt('테스트 모드: 가짜 Google 계정 이메일을 입력하세요 (실제 Google 창은 뜨지 않습니다)', 'hong@gmail.com'); if (e) cb({ email: e }); };
+  function setSes(kind) {
+    try {
+      if (kind === 'none') localStorage.removeItem(SES);
+      else localStorage.setItem(SES, JSON.stringify({ kind: kind, email: kind === 'google' ? 'hong@gmail.com' : kind === 'email' ? 'hong@naver.com' : '', at: Date.now() }));
+    } catch (e) { }
+    nav({});
+  }
 
   /* ── 가짜 원장 ── */
   function hashOf(seed) {   // 시드 → 64자리 16진수 (글자당 2자리라 서로 다른 시드는 다른 해시)
@@ -81,7 +91,7 @@
     render();
   }
   function reset() {
-    try { localStorage.removeItem(MY); localStorage.removeItem(KEY); } catch (e) { }
+    try { localStorage.removeItem(MY); localStorage.removeItem(KEY); localStorage.removeItem(SES); } catch (e) { }
     nav({ now: null });
   }
   function copy(t, btn) { var done = function () { var o = btn.textContent; btn.textContent = '복사됨'; setTimeout(function () { btn.textContent = o; }, 1000); };
@@ -110,6 +120,8 @@
       '<input id="sim-paid" type="number" min="0" max="2000"><button id="sim-paid-go">적용</button></div>' +
       '<div class="sim-r"><span class="sim-k">입금 시뮬레이션 (결제 단계에서 누르면 몇 초 안에 확인됨)</span>' +
       '<button data-x="mine">내 태그로 5 XRP 입금</button><button data-x="short" class="warn">4 XRP (부족)</button><button data-x="notag" class="warn">태그 없는 입금</button><button data-x="other">다른 지갑 +1</button></div>' +
+      '<div class="sim-r"><span class="sim-k">로그인 세션 (정본 규칙: Google·이메일은 이메일 있음 → 안 묻고, 외부 지갑은 없음 → 물음)</span>' +
+      '<button data-ses="none">비로그인</button><button data-ses="google">Google 로그인</button><button data-ses="email">이메일 로그인</button><button data-ses="xaman">Xaman 외부 지갑</button><button data-ses="dcent">D\'CENT</button></div>' +
       '<div class="sim-s" id="sim-my"></div>' +
       '<div class="sim-r"><button id="sim-reset" class="warn">내 응모·시뮬 상태 초기화</button></div>' +
       '<div class="sim-s">문의·등록 메일: <b>support@wellbianlabs.io</b> — 완료 화면의 「등록 메일 보내기」도 이 주소로 열립니다.</div>' +
@@ -121,6 +133,7 @@
     el.querySelector('#sim-paid-go').addEventListener('click', function () { var v = +el.querySelector('#sim-paid').value; if (isNaN(v)) return; state.paid = Math.max(0, Math.min(2000, v)); state.extra = []; save(); nav({}); });
     Array.prototype.forEach.call(el.querySelectorAll('[data-x]'), function (b) { b.addEventListener('click', function () { addExtra(b.getAttribute('data-x')); }); });
     el.querySelector('#sim-reset').addEventListener('click', reset);
+    Array.prototype.forEach.call(el.querySelectorAll('[data-ses]'), function (b) { b.addEventListener('click', function () { setSes(b.getAttribute('data-ses')); }); });
     el.querySelector('#sim-paid').value = state.paid;
     render(); setInterval(render, 1000);
   }
@@ -132,11 +145,14 @@
     var nowKey = Q.get('now') || '';
     Array.prototype.forEach.call(el.querySelectorAll('[data-now]'), function (b) { b.classList.toggle('on', b.getAttribute('data-now') === nowKey); });
     Array.prototype.forEach.call(el.querySelectorAll('[data-paid]'), function (b) { b.classList.toggle('on', +b.getAttribute('data-paid') === state.paid && !state.extra.length); });
+    var sesNow = mySes(), sk = sesNow ? sesNow.kind : 'none';
+    Array.prototype.forEach.call(el.querySelectorAll('[data-ses]'), function (b) { b.classList.toggle('on', b.getAttribute('data-ses') === sk); });
     var me = myEntry(), s;
-    if (!me) s = '내 응모: 없음 — 본 페이지의 「5 XRP 로 참여하기」로 시작';
-    else if (me.state === 'PAID') s = '내 응모: <b>확정 No. ' + pad3(me.no) + '</b> · 태그 <span class="mono">' + me.tag + '</span>';
-    else if (me.state === 'OVERFLOW') s = '내 응모: <b>정원 초과</b> (' + me.no + '번째) · 태그 <span class="mono">' + me.tag + '</span>';
-    else s = '내 응모: <b>결제 대기</b> · 태그 <span class="mono">' + me.tag + '</span> · 이메일 ' + (me.email || '');
+    s = '세션: ' + (!sesNow ? '<b>비로그인</b> — 참여 버튼을 누르면 로그인 모달이 먼저 뜹니다' : sesNow.email ? '<b>' + sesNow.kind + '</b> · ' + sesNow.email + ' (이메일 자동)' : '<b>' + sesNow.kind + '</b> 외부 지갑 · 이메일 없음 → 응모 때 물음') + '<br>';
+    if (!me) s += '내 응모: 없음 — 본 페이지의 「5 XRP 로 참여하기」로 시작';
+    else if (me.state === 'PAID') s += '내 응모: <b>확정 No. ' + pad3(me.no) + '</b> · 태그 <span class="mono">' + me.tag + '</span>';
+    else if (me.state === 'OVERFLOW') s += '내 응모: <b>정원 초과</b> (' + me.no + '번째) · 태그 <span class="mono">' + me.tag + '</span>';
+    else s += '내 응모: <b>결제 대기</b> · 태그 <span class="mono">' + me.tag + '</span> · 이메일 ' + (me.email || '');
     if (state.lastHash) s += '<br>마지막 가짜 거래 해시 <span class="mono">' + state.lastHash.slice(0, 12) + '…</span> <button id="sim-copy" style="padding:2px 7px">복사</button> — 「거래 해시로 확인」 입력용';
     el.querySelector('#sim-my').innerHTML = s;
     var cb = el.querySelector('#sim-copy'); if (cb) cb.addEventListener('click', function () { copy(state.lastHash, cb); });

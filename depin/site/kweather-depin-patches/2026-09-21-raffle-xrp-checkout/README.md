@@ -139,3 +139,15 @@ kweather-depin(모체) 저장소에 적용하는 변경분(누적). 판매 페�
   단독 앱의 `/api/raffle/state` 는 시간만 보고 페이즈를 계산한다(참여 현황 0). 로그인·결제 버튼은 정본 사이트(`NEXT_PUBLIC_CANONICAL_URL`, 기본 wellbian.io/event/xrpl-seoul)로 보낸다. `/preview` 에 결제창 10개 화면.
 - 카운트다운 표기를 D-day 로: 시작 전 「시작까지 D-1 05:12:33」, 당일 「D-DAY 05:12:33」(`RafflePage.tsx` useCountdown). 시작 전에는 히어로 버튼이 「9.22(화) 18:00 응모 시작」으로 비활성이다(기존 동작).
 
+## v9 (2026-09-22 새벽 — 로그인 먼저 · 이메일은 외부 지갑 로그인에만 묻는다 · 문의 메일 support@)
+서우 지시(9/22): 「기본은 Gmail 가입. 비로그인이면 로그인 모달이 먼저, 로그인했어도 외부 지갑으로만 로그인했으면 이메일을 물어야 한다」.
+- **로그인 먼저**는 v4 부터 그대로(RafflePage `cta()` · 모달 ①→② 에서 `openLogin()`, 로그인 뒤 `wantOpen` 으로 이어짐). 바뀐 것은 ② 단계의 이메일 처리.
+- `GET /api/account/contact` — 연락처(AccountContact)가 없으면 **로그인 계정의 이메일(SocialAccount.handle, Google·이메일 계정)** 로 폴백해 `{email, source:"contact"|"login"|null, provider}` 를 돌려준다.
+  외부 지갑(Xaman·D'CENT·Girin) 로그인은 둘 다 없어 `null`. 마이페이지의 기존 호출은 `email` 만 읽으므로 영향 없음.
+- `RaffleCheckoutModal` ② — `source` 가 있으면 이메일을 **읽기 전용으로 보여만 주고**(출처 문구: 로그인 계정 / 계정 연락처) 「다른 이메일로 받기」로만 입력창을 연다.
+  없으면(외부 지갑) 입력창 + 「외부 지갑 로그인은 이메일이 없어 여기서 받습니다」. 동의 2건은 그대로 필수. `CheckoutPreview.emailSource` 추가(미리보기용).
+- `POST /api/raffle/enter` — 응모 때 적은 이메일을 **연락처가 없을 때만** `AccountContact` 에 저장(`createMany skipDuplicates`). 외부 지갑 사용자도 다음부터는 묻지 않는다. 저장 실패는 응모를 막지 않음.
+- 래플 문구의 문의 메일 `admin@` → **`support@wellbianlabs.io`** (raffle.ts OVERFLOW 문구 · RaffleCheckoutModal · RafflePage 의 5개 언어). 모체의 다른 화면(약관 등)은 손대지 않았다 — 사이트 전체 기준이 support@ 면 그쪽도 맞출 것.
+- 검증: `npx tsc --noEmit` 통과. 패치는 `patch -p1 --dry-run` 으로 원본에 깨끗이 적용됨(24 파일).
+- 같은 규칙을 정적 시안(`depin/site/xrpseoul-raffle-static/`)에도 넣었다: 정본 로그인 모달과 같은 선택지의 로그인 모달 → Google·이메일은 이메일 자동, 외부 지갑은 응모 때 입력. 정적본의 Google 은 정본과 같은 리다이렉트(id_token) 방식이며 공개 클라이언트 ID 한 줄(`googleClientId`)로 켠다.
+

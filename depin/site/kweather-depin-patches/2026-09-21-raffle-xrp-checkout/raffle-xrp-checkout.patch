@@ -56,6 +56,23 @@ diff -ruN a/src/app/admin/raffle-check/page.tsx b/src/app/admin/raffle-check/pag
              <button className="btn-primary" disabled={busy || !secret} onClick={() => lookup(input)}>조회</button>
            </div>
            <button className="btn-ghost" onClick={() => setCam((c) => !c)} style={{ alignSelf: "flex-start" }}>{cam ? "카메라 끄기" : "카메라로 QR 읽기"}</button>
+diff -ruN a/src/app/api/account/contact/route.ts b/src/app/api/account/contact/route.ts
+--- a/src/app/api/account/contact/route.ts	2026-09-21 10:52:41.136997599 +0000
++++ b/src/app/api/account/contact/route.ts	2026-09-21 21:00:57.986737821 +0000
+@@ -13,7 +13,12 @@
+   const wallet = await getSessionWallet();
+   if (!wallet) return NextResponse.json({ error: "지갑을 먼저 연결해주세요" }, { status: 401 });
+   const row = await prisma.accountContact.findUnique({ where: { address: wallet } });
+-  return NextResponse.json({ email: row?.email ?? null });
++  if (row) return NextResponse.json({ email: row.email, source: "contact" });
++  /* 연락처가 없으면 로그인 계정(Google·이메일 = SocialAccount.handle)의 주소를 돌려준다.
++     외부 지갑(Xaman·D'CENT·Girin) 로그인은 둘 다 없어 null - 래플 응모 때 이메일을 묻는다(2026-09-22 결정). */
++  const social = await prisma.socialAccount.findFirst({ where: { address: wallet, handle: { not: null } }, select: { handle: true, provider: true } });
++  const login = social?.handle && social.handle.includes("@") ? social.handle : null;
++  return NextResponse.json({ email: login, source: login ? "login" : null, provider: login ? social?.provider ?? null : null });
+ }
+ 
+ export async function POST(req: Request) {
 diff -ruN a/src/app/api/admin/raffle/route.ts b/src/app/api/admin/raffle/route.ts
 --- a/src/app/api/admin/raffle/route.ts	2026-09-21 10:52:41.137973373 +0000
 +++ b/src/app/api/admin/raffle/route.ts	2026-09-21 12:31:30.543159775 +0000
@@ -187,12 +204,13 @@ diff -ruN a/src/app/api/raffle/card/[code]/route.ts b/src/app/api/raffle/card/[c
  }
 diff -ruN a/src/app/api/raffle/enter/route.ts b/src/app/api/raffle/enter/route.ts
 --- a/src/app/api/raffle/enter/route.ts	2026-09-21 10:52:41.141897978 +0000
-+++ b/src/app/api/raffle/enter/route.ts	2026-09-21 12:10:25.268312867 +0000
-@@ -2,24 +2,26 @@
++++ b/src/app/api/raffle/enter/route.ts	2026-09-21 21:00:57.986873401 +0000
+@@ -2,24 +2,30 @@
  import { z } from "zod";
  import { guard } from "@/lib/ratelimit";
  import { getVerifiedWallet } from "@/lib/auth/session";
 -import { createRaffleEntry, type RaffleMode } from "@/lib/raffle";
++import { prisma } from "@/lib/db";
 +import { createRaffleEntry, holdUntilOf, type RaffleMode } from "@/lib/raffle";
  import { hotWalletAddress } from "@/lib/xrpl/outbox";
  
@@ -214,8 +232,11 @@ diff -ruN a/src/app/api/raffle/enter/route.ts b/src/app/api/raffle/enter/route.t
    if (!wallet) return NextResponse.json({ error: "로그인이 필요합니다." }, { status: 401 });
 -  const r = await createRaffleEntry(wallet, mode);
 -  if (!r.ok) return NextResponse.json({ error: r.error }, { status: 409 });
-+  const r = await createRaffleEntry(wallet, mode, body.data.email?.trim().toLowerCase());
++  const email = body.data.email?.trim().toLowerCase();
++  const r = await createRaffleEntry(wallet, mode, email);
 +  if (!r.ok) return NextResponse.json({ error: r.error, code: r.code }, { status: 409 });
++  /* 외부 지갑 로그인처럼 계정에 이메일이 없던 경우, 응모 때 적은 주소를 연락처로 남겨 다음부터 묻지 않는다(있으면 그대로) */
++  if (email) { try { await prisma.accountContact.createMany({ data: [{ address: wallet, email }], skipDuplicates: true }); } catch { /* 연락처 저장 실패는 응모를 막지 않는다 */ } }
    return NextResponse.json({
      ok: true,
 -    entry: { status: r.entry.status, destTag: r.entry.destTag, entryNo: r.entry.entryNo, amountXrp: Number(r.entry.amountXrp) },
@@ -529,8 +550,8 @@ diff -ruN a/src/components/admin/RafflePanel.tsx b/src/components/admin/RafflePa
 +}
 diff -ruN a/src/components/raffle/RaffleCheckoutModal.tsx b/src/components/raffle/RaffleCheckoutModal.tsx
 --- a/src/components/raffle/RaffleCheckoutModal.tsx	1970-01-01 00:00:00.000000000 +0000
-+++ b/src/components/raffle/RaffleCheckoutModal.tsx	2026-09-21 12:31:30.545056026 +0000
-@@ -0,0 +1,600 @@
++++ b/src/components/raffle/RaffleCheckoutModal.tsx	2026-09-21 21:00:57.990082170 +0000
+@@ -0,0 +1,616 @@
 +"use client";
 +/* 래플 응모 결제창 (2026-09-21 지시: "기존 페이지 결제창 내용 체크해서 XRP 결제할 수 있게 갖춰라. 기존 흐름을 따르되
 +   카드결제는 없고 순전히 XRP 로만").
@@ -578,7 +599,9 @@ diff -ruN a/src/components/raffle/RaffleCheckoutModal.tsx b/src/components/raffl
 +};
 +
 +/** 미리보기 전용(스크린샷·SSR 확인) - 실제 화면은 넘기지 않는다. 넘기면 첫 상태를 그 값으로 시작한다. */
-+export interface CheckoutPreview { step?: 1 | 2 | 3 | 4; bal?: Bal | null; entry?: Entry | null; mine?: RaffleMine | null; qr?: string; payStatus?: PayStatus; terms?: boolean; email?: string; holdUntil?: string | null; holdLost?: boolean }
++export interface CheckoutPreview { step?: 1 | 2 | 3 | 4; bal?: Bal | null; entry?: Entry | null; mine?: RaffleMine | null; qr?: string; payStatus?: PayStatus; terms?: boolean; email?: string; emailSource?: EmailSource; holdUntil?: string | null; holdLost?: boolean }
++/** 당첨 안내 이메일의 출처 - contact: 계정 연락처 · login: Google/이메일 로그인 계정 · null: 없음(외부 지갑 로그인) → 응모 때 묻는다 */
++export type EmailSource = "contact" | "login" | null;
 +const fmtLeft = (ms: number | null) => { const s = Math.max(0, Math.floor((ms ?? 0) / 1000)); return `${String(Math.floor(s / 60)).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}`; };
 +
 +export default function RaffleCheckoutModal({ mode, st, onClose, onChange }: {
@@ -622,6 +645,9 @@ diff -ruN a/src/components/raffle/RaffleCheckoutModal.tsx b/src/components/raffl
 +  /* 당첨 안내 이메일(초대권 발송) - 계정 연락처(AccountContact)에서 미리 채우고, 동의 단계에서 확인받아 저장한다 */
 +  const [email, setEmail] = useState(preview?.email ?? "");
 +  const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email.trim());
++  /* 이메일 출처 - Google·이메일 로그인(또는 저장된 연락처)이면 묻지 않고 보여만 주고, 외부 지갑 로그인이면 입력받는다 (2026-09-22 서우 결정) */
++  const [emailSource, setEmailSource] = useState<EmailSource>(preview?.emailSource ?? (preview?.email ? "login" : null));
++  const [editEmail, setEditEmail] = useState(false);
 +  const prefilledRef = useRef(false);
 +  /* 예약(자리 확보) - 결제 대기 행의 예약 만료 시각. 결제 화면에 있는 동안 5분마다, 결제 직전에 연장한다(2026-09-21 결정: 정원이 차면 결제를 막는다) */
 +  const [holdUntil, setHoldUntil] = useState<string | null>(preview?.holdUntil !== undefined ? preview.holdUntil : (st.mine?.holdUntil ?? null));
@@ -706,7 +732,7 @@ diff -ruN a/src/components/raffle/RaffleCheckoutModal.tsx b/src/components/raffl
 +  useEffect(() => {
 +    if (preview || !address || prefilledRef.current) return;
 +    prefilledRef.current = true;
-+    fetch("/api/account/contact", { cache: "no-store" }).then((r) => (r.ok ? r.json() : null)).then((d) => { if (d?.email) setEmail((e) => e || d.email); }).catch(() => {});
++    fetch("/api/account/contact", { cache: "no-store" }).then((r) => (r.ok ? r.json() : null)).then((d) => { if (d?.email) { setEmail((e) => e || d.email); setEmailSource(d.source === "login" ? "login" : "contact"); } }).catch(() => {});
 +  }, [address, preview]);
 +  /* 내 주소 QR - 거래소·다른 지갑에서 입금할 때 쓴다 */
 +  useEffect(() => {
@@ -800,7 +826,7 @@ diff -ruN a/src/components/raffle/RaffleCheckoutModal.tsx b/src/components/raffl
 +  const stepBody = (() => {
 +    if (blocked) {
 +      const why = mine?.status === "OVERFLOW"
-+        ? t({ ko: "정원·기간 마감 뒤 확인된 입금이라 응모가 확정되지 않았습니다. 입금액은 환불해 드립니다 - admin@wellbianlabs.io 로 지갑 주소와 트랜잭션 해시를 보내 주세요.", en: "The payment was confirmed after entries closed, so the entry was not confirmed. The deposit will be refunded - email admin@wellbianlabs.io with your wallet address and transaction hash.", ja: "定員・期間の締切後に確認された入金のため、応募は確定していません。入金は返金します - admin@wellbianlabs.io へウォレットアドレスとハッシュをお送りください。", zh: "该笔款项在报名截止后确认，参与未生效。款项将退还 - 请将钱包地址与交易哈希发送至 admin@wellbianlabs.io。", es: "El pago se confirmó tras el cierre, así que la participación no se confirmó. Se devolverá el depósito: escriba a admin@wellbianlabs.io con su dirección y el hash." })
++        ? t({ ko: "정원·기간 마감 뒤 확인된 입금이라 응모가 확정되지 않았습니다. 입금액은 환불해 드립니다 - support@wellbianlabs.io 로 지갑 주소와 트랜잭션 해시를 보내 주세요.", en: "The payment was confirmed after entries closed, so the entry was not confirmed. The deposit will be refunded - email support@wellbianlabs.io with your wallet address and transaction hash.", ja: "定員・期間の締切後に確認された入金のため、応募は確定していません。入金は返金します - support@wellbianlabs.io へウォレットアドレスとハッシュをお送りください。", zh: "该笔款项在报名截止后确认，参与未生效。款项将退还 - 请将钱包地址与交易哈希发送至 support@wellbianlabs.io。", es: "El pago se confirmó tras el cierre, así que la participación no se confirmó. Se devolverá el depósito: escriba a support@wellbianlabs.io con su dirección y el hash." })
 +        : holdLost && holdLostMsg ? holdLostMsg
 +        : st.phase === "SOLD_OUT" || holdLost ? t({ ko: `선착순 ${st.config.maxEntries}명이 모두 찼습니다. 결제 전 응모는 확정되지 않으니 XRP 를 보내지 마세요.`, en: `All ${st.config.maxEntries} spots are filled. An unpaid entry can no longer be confirmed - please do not send XRP.`, ja: `先着${st.config.maxEntries}名が埋まりました。未決済の応募は確定できませんので、XRPを送らないでください。`, zh: `${st.config.maxEntries} 个名额已满。未支付的参与无法再确认，请勿发送 XRP。`, es: `Las ${st.config.maxEntries} plazas están completas. Una entrada sin pagar ya no puede confirmarse: no envíe XRP.` })
 +        : st.phase === "BEFORE" ? t({ ko: "아직 응모가 열리지 않았습니다.", en: "Entries are not open yet.", ja: "まだ応募は始まっていません。", zh: "报名尚未开始。", es: "Las inscripciones aún no están abiertas." })
@@ -864,11 +890,22 @@ diff -ruN a/src/components/raffle/RaffleCheckoutModal.tsx b/src/components/raffl
 +      case 2: return (
 +        <>
 +          <h3 style={h3}>{t({ ko: "환불·수령 안내를 확인해 주세요", en: "Review the refund & collection notices", ja: "返金・受取のご案内をご確認ください", zh: "请确认退款与领取须知", es: "Revise los avisos de reembolso y recogida" })}</h3>
-+          <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
++          {emailSource && !editEmail ? (
++            <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
++              <span style={{ fontSize: 15, fontWeight: 700, color: "var(--w-deep)" }}>{t({ ko: "당첨 안내 이메일", en: "Email for prize notices", ja: "当選案内メール", zh: "中奖通知邮箱", es: "Correo para avisos de premio" })}</span>
++              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
++                <span style={{ fontSize: 16, fontWeight: 700, color: "var(--w-deep)", wordBreak: "break-all" }}>{email}</span>
++                <button type="button" className="btn-outline-deep" style={{ padding: "8px 14px", fontSize: 14, borderRadius: 10 }} onClick={() => setEditEmail(true)}>{t({ ko: "다른 이메일로 받기", en: "Use a different email", ja: "別のメールで受け取る", zh: "使用其他邮箱", es: "Usar otro correo" })}</button>
++              </div>
++              <span style={{ fontSize: 13.5, color: "var(--cap)", lineHeight: 1.5 }}>{emailSource === "login" ? t({ ko: "로그인한 계정(Google·이메일)의 주소입니다. 초대권에 당첨되면 이 주소로 보냅니다.", en: "The address of the account you signed in with (Google/email). Invitations are sent here.", ja: "ログインした（Google・メール）アカウントのアドレスです。招待券はここへ送ります。", zh: "这是您登录账号（Google/邮箱）的地址，邀请函将发送至此。", es: "Es la dirección de la cuenta con la que inició sesión (Google/correo). Las invitaciones se envían aquí." }) : t({ ko: "계정에 등록된 연락처 이메일입니다. 초대권에 당첨되면 이 주소로 보냅니다.", en: "Your account's contact email. Invitations are sent here.", ja: "アカウントに登録された連絡先メールです。招待券はここへ送ります。", zh: "这是您账号的联系邮箱，邀请函将发送至此。", es: "Es el correo de contacto de su cuenta. Las invitaciones se envían aquí." })}</span>
++            </div>
++          ) : (
++            <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
 +            <label style={{ fontSize: 15, fontWeight: 700, color: "var(--w-deep)" }}>{t({ ko: "당첨 안내 이메일", en: "Email for prize notices", ja: "当選案内メール", zh: "中奖通知邮箱", es: "Correo para avisos de premio" })}</label>
 +            <input className="field-input" type="email" autoComplete="email" inputMode="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="name@example.com" />
-+            <span style={{ fontSize: 13.5, color: "var(--cap)", lineHeight: 1.5 }}>{t({ ko: "초대권에 당첨되면 이 주소로 초대권을 보냅니다. 실물 경품 안내에도 씁니다.", en: "If you win an invitation it is sent to this address. Also used for prize notices.", ja: "招待券に当選した場合、この宛先へ送付します。実物賞品のご案内にも使います。", zh: "若中奖邀请函，将发送至此邮箱；实物奖品通知亦使用此邮箱。", es: "Si gana una invitación se enviará a esta dirección. También para avisos de premios." })}</span>
-+          </div>
++            <span style={{ fontSize: 13.5, color: "var(--cap)", lineHeight: 1.5 }}>{!emailSource && walletKind && walletKind !== "embedded" ? t({ ko: "외부 지갑 로그인은 이메일이 없어 여기서 받습니다. ", en: "External-wallet sign-ins have no email on file, so we ask here. ", ja: "外部ウォレットのログインにはメールがないためここで伺います。", zh: "外部钱包登录没有邮箱记录，因此在此填写。", es: "El inicio con billetera externa no tiene correo, así que lo pedimos aquí. " }) : ""}{t({ ko: "초대권에 당첨되면 이 주소로 초대권을 보냅니다. 실물 경품 안내에도 씁니다.", en: "If you win an invitation it is sent to this address. Also used for prize notices.", ja: "招待券に当選した場合、この宛先へ送付します。実物賞品のご案内にも使います。", zh: "若中奖邀请函，将发送至此邮箱；实物奖品通知亦使用此邮箱。", es: "Si gana una invitación se enviará a esta dirección. También para avisos de premios." })}</span>
++            </div>
++          )}
 +          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
 +            <TermCard checked={terms1} onToggle={() => setTerms1(!terms1)}
 +              title={t({ ko: "[필수] 환불 불가 고지", en: "[Required] No-refund notice", ja: "【必須】返金不可のご案内", zh: "[必读] 不可退款告知", es: "[Obligatorio] Aviso de no reembolso" })}
@@ -1068,7 +1105,7 @@ diff -ruN a/src/components/raffle/RaffleCheckoutModal.tsx b/src/components/raffl
 +    return t({ ko: "지갑이 아직 활성화되지 않았습니다. 위 안내대로 XRP 를 먼저 입금해 주세요.", en: "The wallet isn't activated yet. Please deposit XRP first as described above.", ja: "ウォレットがまだ有効化されていません。上の案内に従って先にXRPを入金してください。", zh: "钱包尚未激活，请先按上方说明充值 XRP。", es: "La billetera aún no está activada. Deposite XRP primero como se indica." });
 +  }
 +  if (/tecNO_DST|tecDST_TAG_NEEDED|temBAD_/.test(m)) {
-+    return t({ ko: "받는 주소 설정에 문제가 있습니다. admin@wellbianlabs.io 로 알려 주세요.", en: "There is a problem with the destination. Please contact admin@wellbianlabs.io.", ja: "受取アドレスの設定に問題があります。admin@wellbianlabs.io までご連絡ください。", zh: "收款地址设置有问题，请联系 admin@wellbianlabs.io。", es: "Hay un problema con el destino. Escriba a admin@wellbianlabs.io." });
++    return t({ ko: "받는 주소 설정에 문제가 있습니다. support@wellbianlabs.io 로 알려 주세요.", en: "There is a problem with the destination. Please contact support@wellbianlabs.io.", ja: "受取アドレスの設定に問題があります。support@wellbianlabs.io までご連絡ください。", zh: "收款地址设置有问题，请联系 support@wellbianlabs.io。", es: "Hay un problema con el destino. Escriba a support@wellbianlabs.io." });
 +  }
 +  if (/tecOBJECT_NOT_FOUND/.test(m)) {
 +    return t({ ko: "이 NFT 오퍼는 이미 처리되었습니다. 잠시 후 상태가 갱신됩니다.", en: "This NFT offer was already handled. The status will refresh shortly.", ja: "このNFTオファーはすでに処理済みです。まもなく状態が更新されます。", zh: "此 NFT 报价已处理，状态稍后更新。", es: "Esta oferta de NFT ya se procesó. El estado se actualizará en breve." });
@@ -1280,7 +1317,7 @@ diff -ruN a/src/components/raffle/RaffleHero.tsx b/src/components/raffle/RaffleH
 +
 diff -ruN a/src/components/raffle/RafflePage.tsx b/src/components/raffle/RafflePage.tsx
 --- a/src/components/raffle/RafflePage.tsx	2026-09-21 10:52:41.146635470 +0000
-+++ b/src/components/raffle/RafflePage.tsx	2026-09-21 13:00:45.560327499 +0000
++++ b/src/components/raffle/RafflePage.tsx	2026-09-21 21:00:57.990431961 +0000
 @@ -2,29 +2,18 @@
  /* XRP SEOUL 2026 래플 페이지 (2026-09-16 지시). 5 XRP 응모 → 래플 NFT → 블라인드 추첨.
     판매 페이지(/launch)와 코드·데이터를 공유하지 않는다 - 지갑·로그인·아웃박스만 같이 쓴다.
@@ -1529,7 +1566,7 @@ diff -ruN a/src/components/raffle/RafflePage.tsx b/src/components/raffle/RaffleP
                      ? t({ ko: "NFT 발행 완료 · 지갑에서 수락해 주세요", en: "NFT minted · please accept it in your wallet", ja: "NFT発行完了 · ウォレットで承認してください", zh: "NFT 已发行 · 请在钱包中接受", es: "NFT emitido · acéptelo en su billetera" })
                      : t({ ko: "래플 NFT 발행 중 (약 1~3분 소요)", en: "Minting raffle NFT (about 1-3 min)", ja: "ラッフルNFT発行中（約1〜3分）", zh: "正在发行抽奖 NFT（约 1-3 分钟）", es: "Emitiendo NFT (1-3 min aprox.)" }))}
 -                {!done && mine && t({ ko: `${price} XRP 결제 확인 후 응모가 확정됩니다`, en: `Entry is confirmed once ${price} XRP is received`, ja: `${price} XRPの決済確認後に応募が確定します`, zh: `确认收到 ${price} XRP 后即确认参与`, es: `La participación se confirma al recibir ${price} XRP` })}
-+                {!done && mine?.status === "OVERFLOW" && t({ ko: "정원·기간 마감 뒤 확인된 입금이라 응모가 확정되지 않았습니다. 입금액은 환불해 드립니다 - admin@wellbianlabs.io 로 지갑 주소와 트랜잭션 해시를 보내 주세요.", en: "The payment was confirmed after entries closed, so the entry was not confirmed. The deposit will be refunded - email admin@wellbianlabs.io with your wallet address and transaction hash.", ja: "定員・期間の締切後に確認された入金のため、応募は確定していません。入金は返金します - admin@wellbianlabs.io へウォレットアドレスとハッシュをお送りください。", zh: "该笔款项在报名截止后确认，参与未生效。款项将退还 - 请将钱包地址与交易哈希发送至 admin@wellbianlabs.io。", es: "El pago se confirmó tras el cierre, así que la participación no se confirmó. Se devolverá el depósito: escriba a admin@wellbianlabs.io con su dirección y el hash." })}
++                {!done && mine?.status === "OVERFLOW" && t({ ko: "정원·기간 마감 뒤 확인된 입금이라 응모가 확정되지 않았습니다. 입금액은 환불해 드립니다 - support@wellbianlabs.io 로 지갑 주소와 트랜잭션 해시를 보내 주세요.", en: "The payment was confirmed after entries closed, so the entry was not confirmed. The deposit will be refunded - email support@wellbianlabs.io with your wallet address and transaction hash.", ja: "定員・期間の締切後に確認された入金のため、応募は確定していません。入金は返金します - support@wellbianlabs.io へウォレットアドレスとハッシュをお送りください。", zh: "该笔款项在报名截止后确认，参与未生效。款项将退还 - 请将钱包地址与交易哈希发送至 support@wellbianlabs.io。", es: "El pago se confirmó tras el cierre, así que la participación no se confirmó. Se devolverá el depósito: escriba a support@wellbianlabs.io con su dirección y el hash." })}
 +                {!done && mine && mine.status !== "OVERFLOW" && (phase === "OPEN" || mine.holdLive
 +                  ? t({ ko: `${price} XRP 결제 확인 후 응모가 확정됩니다`, en: `Entry is confirmed once ${price} XRP is received`, ja: `${price} XRPの決済確認後に応募が確定します`, zh: `确认收到 ${price} XRP 后即确认参与`, es: `La participación se confirma al recibir ${price} XRP` })
 +                  : t({ ko: "정원 또는 기간이 마감되어 결제 전 응모는 확정되지 않습니다. XRP 를 보내지 마세요.", en: "Entries have closed (capacity or deadline), so an unpaid entry can no longer be confirmed. Please do not send XRP.", ja: "定員または期間が締め切られたため、未決済の応募は確定できません。XRPを送らないでください。", zh: "名额已满或报名已截止，未支付的参与无法再确认。请勿再发送 XRP。", es: "Las inscripciones han cerrado (aforo o plazo); una entrada sin pagar ya no puede confirmarse. No envíe XRP." }))}
@@ -1584,8 +1621,12 @@ diff -ruN a/src/components/raffle/RafflePage.tsx b/src/components/raffle/RaffleP
            t({ ko: ["QR 코드를 다른 사람에게 보여 줘도 되나요?", "QR 코드는 본인 확인용이므로 타인과 공유하거나 외부에 노출하지 마시기 바랍니다. 공유·노출로 인해 타인이 먼저 수령하는 등의 피해는 보상하지 않습니다."], en: ["Can I show my QR code to others?", "The QR code is for identity verification; please do not share it or expose it publicly. Losses caused by sharing or exposure, such as collection by another person, will not be compensated."], ja: ["QRコードを他の人に見せてもよいですか？", "QRコードは本人確認用のため、他人と共有したり外部に露出したりしないでください。共有・露出により第三者が先に受け取るなどの被害は補償いたしません。"], zh: ["可以把二维码给别人看吗？", "二维码用于本人核验，请勿与他人分享或对外泄露。因分享或泄露导致被他人先行领取等损失，不予赔偿。"], es: ["¿Puedo mostrar mi código QR a otras personas?", "El código QR sirve para verificar su identidad; no lo comparta ni lo exponga públicamente. No se compensarán los perjuicios derivados de compartirlo o exponerlo, como que otra persona recoja el premio."] }),
            t({ ko: ["환불이 가능한가요?", "응모 확정 후에는 환불이 불가합니다. 결제 전 금액과 조건을 확인해 주시기 바랍니다."], en: ["Are refunds available?", "Entries cannot be refunded once confirmed. Please check the amount and terms before paying."], ja: ["返金は可能ですか？", "応募確定後の返金はできません。お支払い前に金額と条件をご確認ください。"], zh: ["可以退款吗？", "参与确认后不可退款。请在支付前确认金额与条款。"], es: ["¿Se admiten reembolsos?", "Una vez confirmada la participación no se puede reembolsar. Revise el importe y las condiciones antes de pagar."] }),
          ].map(([q, a], i) => (
-@@ -293,188 +226,7 @@
-         <p className="dim" style={{ fontSize: 13.5, marginTop: 14 }}>{t({ ko: "문의: admin@wellbianlabs.io", en: "Contact: admin@wellbianlabs.io", ja: "お問い合わせ: admin@wellbianlabs.io", zh: "联系方式: admin@wellbianlabs.io", es: "Contacto: admin@wellbianlabs.io" })}</p>
+@@ -290,191 +223,10 @@
+             <p style={{ margin: "10px 0 0", fontSize: 15, lineHeight: 1.7, color: "var(--ink-dim)" }}>{a}</p>
+           </details>
+         ))}
+-        <p className="dim" style={{ fontSize: 13.5, marginTop: 14 }}>{t({ ko: "문의: admin@wellbianlabs.io", en: "Contact: admin@wellbianlabs.io", ja: "お問い合わせ: admin@wellbianlabs.io", zh: "联系方式: admin@wellbianlabs.io", es: "Contacto: admin@wellbianlabs.io" })}</p>
++        <p className="dim" style={{ fontSize: 13.5, marginTop: 14 }}>{t({ ko: "문의: support@wellbianlabs.io", en: "Contact: support@wellbianlabs.io", ja: "お問い合わせ: support@wellbianlabs.io", zh: "联系方式: support@wellbianlabs.io", es: "Contacto: support@wellbianlabs.io" })}</p>
        </div></section>
  
 -      {modal && st && <EntryModal mode={mode} st={st} onClose={() => { setModal(false); load(); }} onChange={load} signAndSubmit={signAndSubmit} />}
@@ -2068,7 +2109,7 @@ diff -ruN a/src/lib/raffle-prizes.ts b/src/lib/raffle-prizes.ts
 +}
 diff -ruN a/src/lib/raffle.ts b/src/lib/raffle.ts
 --- a/src/lib/raffle.ts	2026-09-21 10:52:41.147910100 +0000
-+++ b/src/lib/raffle.ts	2026-09-21 12:31:30.542539310 +0000
++++ b/src/lib/raffle.ts	2026-09-21 21:00:57.989239445 +0000
 @@ -1,6 +1,7 @@
  import { convertStringToHex } from "xrpl";
  import type { AccountNFToken } from "xrpl";
@@ -2085,7 +2126,7 @@ diff -ruN a/src/lib/raffle.ts b/src/lib/raffle.ts
 +   못한다 - 그래서 마감(정원·기간) 뒤에 확인된 입금은 PAID 로 만들지 않고 OVERFLOW 로 남겨 관리자 콘솔 › 래플에서 환불 대상으로 본다.
 +   마감 직전에 보낸 송금이 원장 반영·확인까지 걸리는 시간을 생각해 기간 마감은 10분을 받아 준다. */
 +export const CLOSE_GRACE_MS = 10 * 60_000;
-+const OVERFLOW_MSG = "정원 또는 기간이 마감되어 결제를 확정할 수 없습니다. 입금액은 환불해 드립니다 - admin@wellbianlabs.io 로 지갑 주소와 트랜잭션 해시를 보내 주세요.";
++const OVERFLOW_MSG = "정원 또는 기간이 마감되어 결제를 확정할 수 없습니다. 입금액은 환불해 드립니다 - support@wellbianlabs.io 로 지갑 주소와 트랜잭션 해시를 보내 주세요.";
 +async function markOverflow(entryId: string, hash: string) {
 +  await prisma.raffleEntry.updateMany({ where: { id: entryId, status: "PENDING" }, data: { status: "OVERFLOW", txHash: hash } }).catch(() => {});
 +}
@@ -2298,7 +2339,7 @@ diff -ruN a/src/lib/raffle.ts b/src/lib/raffle.ts
 -  const hash = txHash.toUpperCase();
 +  if (entry.status === "OVERFLOW") return { ok: false as const, error: OVERFLOW_MSG, pending: false };
 +  const hash = txHash ? txHash.toUpperCase() : await findPaymentByTag(entry.destTag, Number(entry.amountXrp));
-+  if (!hash) return { ok: false as const, error: "아직 입금이 확인되지 않았습니다. 거래소 출금은 몇 분 걸릴 수 있습니다 - 잠시 후 다시 확인해 주세요. 태그 없이 보냈다면 admin@wellbianlabs.io 로 알려 주세요.", pending: true };
++  if (!hash) return { ok: false as const, error: "아직 입금이 확인되지 않았습니다. 거래소 출금은 몇 분 걸릴 수 있습니다 - 잠시 후 다시 확인해 주세요. 태그 없이 보냈다면 support@wellbianlabs.io 로 알려 주세요.", pending: true };
    const dup = await prisma.raffleEntry.findUnique({ where: { txHash: hash } });
    if (dup && dup.id !== entry.id) return { ok: false as const, error: "이미 다른 응모에 사용된 트랜잭션입니다." };
    const v = await verifyXrpPayment(hash, Number(entry.amountXrp), entry.destTag);

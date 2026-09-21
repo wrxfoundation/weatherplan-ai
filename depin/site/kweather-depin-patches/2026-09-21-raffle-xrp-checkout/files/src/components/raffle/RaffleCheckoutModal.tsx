@@ -45,7 +45,9 @@ const fmtDate = (iso: string | undefined, lang: string) => {
 };
 
 /** 미리보기 전용(스크린샷·SSR 확인) - 실제 화면은 넘기지 않는다. 넘기면 첫 상태를 그 값으로 시작한다. */
-export interface CheckoutPreview { step?: 1 | 2 | 3 | 4; bal?: Bal | null; entry?: Entry | null; mine?: RaffleMine | null; qr?: string; payStatus?: PayStatus; terms?: boolean; email?: string; holdUntil?: string | null; holdLost?: boolean }
+export interface CheckoutPreview { step?: 1 | 2 | 3 | 4; bal?: Bal | null; entry?: Entry | null; mine?: RaffleMine | null; qr?: string; payStatus?: PayStatus; terms?: boolean; email?: string; emailSource?: EmailSource; holdUntil?: string | null; holdLost?: boolean }
+/** 당첨 안내 이메일의 출처 - contact: 계정 연락처 · login: Google/이메일 로그인 계정 · null: 없음(외부 지갑 로그인) → 응모 때 묻는다 */
+export type EmailSource = "contact" | "login" | null;
 const fmtLeft = (ms: number | null) => { const s = Math.max(0, Math.floor((ms ?? 0) / 1000)); return `${String(Math.floor(s / 60)).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}`; };
 
 export default function RaffleCheckoutModal({ mode, st, onClose, onChange }: {
@@ -89,6 +91,9 @@ export function RaffleCheckoutCard({ mode, st, onClose, onChange, preview }: {
   /* 당첨 안내 이메일(초대권 발송) - 계정 연락처(AccountContact)에서 미리 채우고, 동의 단계에서 확인받아 저장한다 */
   const [email, setEmail] = useState(preview?.email ?? "");
   const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email.trim());
+  /* 이메일 출처 - Google·이메일 로그인(또는 저장된 연락처)이면 묻지 않고 보여만 주고, 외부 지갑 로그인이면 입력받는다 (2026-09-22 서우 결정) */
+  const [emailSource, setEmailSource] = useState<EmailSource>(preview?.emailSource ?? (preview?.email ? "login" : null));
+  const [editEmail, setEditEmail] = useState(false);
   const prefilledRef = useRef(false);
   /* 예약(자리 확보) - 결제 대기 행의 예약 만료 시각. 결제 화면에 있는 동안 5분마다, 결제 직전에 연장한다(2026-09-21 결정: 정원이 차면 결제를 막는다) */
   const [holdUntil, setHoldUntil] = useState<string | null>(preview?.holdUntil !== undefined ? preview.holdUntil : (st.mine?.holdUntil ?? null));
@@ -173,7 +178,7 @@ export function RaffleCheckoutCard({ mode, st, onClose, onChange, preview }: {
   useEffect(() => {
     if (preview || !address || prefilledRef.current) return;
     prefilledRef.current = true;
-    fetch("/api/account/contact", { cache: "no-store" }).then((r) => (r.ok ? r.json() : null)).then((d) => { if (d?.email) setEmail((e) => e || d.email); }).catch(() => {});
+    fetch("/api/account/contact", { cache: "no-store" }).then((r) => (r.ok ? r.json() : null)).then((d) => { if (d?.email) { setEmail((e) => e || d.email); setEmailSource(d.source === "login" ? "login" : "contact"); } }).catch(() => {});
   }, [address, preview]);
   /* 내 주소 QR - 거래소·다른 지갑에서 입금할 때 쓴다 */
   useEffect(() => {
@@ -267,7 +272,7 @@ export function RaffleCheckoutCard({ mode, st, onClose, onChange, preview }: {
   const stepBody = (() => {
     if (blocked) {
       const why = mine?.status === "OVERFLOW"
-        ? t({ ko: "정원·기간 마감 뒤 확인된 입금이라 응모가 확정되지 않았습니다. 입금액은 환불해 드립니다 - admin@wellbianlabs.io 로 지갑 주소와 트랜잭션 해시를 보내 주세요.", en: "The payment was confirmed after entries closed, so the entry was not confirmed. The deposit will be refunded - email admin@wellbianlabs.io with your wallet address and transaction hash.", ja: "定員・期間の締切後に確認された入金のため、応募は確定していません。入金は返金します - admin@wellbianlabs.io へウォレットアドレスとハッシュをお送りください。", zh: "该笔款项在报名截止后确认，参与未生效。款项将退还 - 请将钱包地址与交易哈希发送至 admin@wellbianlabs.io。", es: "El pago se confirmó tras el cierre, así que la participación no se confirmó. Se devolverá el depósito: escriba a admin@wellbianlabs.io con su dirección y el hash." })
+        ? t({ ko: "정원·기간 마감 뒤 확인된 입금이라 응모가 확정되지 않았습니다. 입금액은 환불해 드립니다 - support@wellbianlabs.io 로 지갑 주소와 트랜잭션 해시를 보내 주세요.", en: "The payment was confirmed after entries closed, so the entry was not confirmed. The deposit will be refunded - email support@wellbianlabs.io with your wallet address and transaction hash.", ja: "定員・期間の締切後に確認された入金のため、応募は確定していません。入金は返金します - support@wellbianlabs.io へウォレットアドレスとハッシュをお送りください。", zh: "该笔款项在报名截止后确认，参与未生效。款项将退还 - 请将钱包地址与交易哈希发送至 support@wellbianlabs.io。", es: "El pago se confirmó tras el cierre, así que la participación no se confirmó. Se devolverá el depósito: escriba a support@wellbianlabs.io con su dirección y el hash." })
         : holdLost && holdLostMsg ? holdLostMsg
         : st.phase === "SOLD_OUT" || holdLost ? t({ ko: `선착순 ${st.config.maxEntries}명이 모두 찼습니다. 결제 전 응모는 확정되지 않으니 XRP 를 보내지 마세요.`, en: `All ${st.config.maxEntries} spots are filled. An unpaid entry can no longer be confirmed - please do not send XRP.`, ja: `先着${st.config.maxEntries}名が埋まりました。未決済の応募は確定できませんので、XRPを送らないでください。`, zh: `${st.config.maxEntries} 个名额已满。未支付的参与无法再确认，请勿发送 XRP。`, es: `Las ${st.config.maxEntries} plazas están completas. Una entrada sin pagar ya no puede confirmarse: no envíe XRP.` })
         : st.phase === "BEFORE" ? t({ ko: "아직 응모가 열리지 않았습니다.", en: "Entries are not open yet.", ja: "まだ応募は始まっていません。", zh: "报名尚未开始。", es: "Las inscripciones aún no están abiertas." })
@@ -331,11 +336,22 @@ export function RaffleCheckoutCard({ mode, st, onClose, onChange, preview }: {
       case 2: return (
         <>
           <h3 style={h3}>{t({ ko: "환불·수령 안내를 확인해 주세요", en: "Review the refund & collection notices", ja: "返金・受取のご案内をご確認ください", zh: "请确认退款与领取须知", es: "Revise los avisos de reembolso y recogida" })}</h3>
-          <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+          {emailSource && !editEmail ? (
+            <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+              <span style={{ fontSize: 15, fontWeight: 700, color: "var(--w-deep)" }}>{t({ ko: "당첨 안내 이메일", en: "Email for prize notices", ja: "当選案内メール", zh: "中奖通知邮箱", es: "Correo para avisos de premio" })}</span>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
+                <span style={{ fontSize: 16, fontWeight: 700, color: "var(--w-deep)", wordBreak: "break-all" }}>{email}</span>
+                <button type="button" className="btn-outline-deep" style={{ padding: "8px 14px", fontSize: 14, borderRadius: 10 }} onClick={() => setEditEmail(true)}>{t({ ko: "다른 이메일로 받기", en: "Use a different email", ja: "別のメールで受け取る", zh: "使用其他邮箱", es: "Usar otro correo" })}</button>
+              </div>
+              <span style={{ fontSize: 13.5, color: "var(--cap)", lineHeight: 1.5 }}>{emailSource === "login" ? t({ ko: "로그인한 계정(Google·이메일)의 주소입니다. 초대권에 당첨되면 이 주소로 보냅니다.", en: "The address of the account you signed in with (Google/email). Invitations are sent here.", ja: "ログインした（Google・メール）アカウントのアドレスです。招待券はここへ送ります。", zh: "这是您登录账号（Google/邮箱）的地址，邀请函将发送至此。", es: "Es la dirección de la cuenta con la que inició sesión (Google/correo). Las invitaciones se envían aquí." }) : t({ ko: "계정에 등록된 연락처 이메일입니다. 초대권에 당첨되면 이 주소로 보냅니다.", en: "Your account's contact email. Invitations are sent here.", ja: "アカウントに登録された連絡先メールです。招待券はここへ送ります。", zh: "这是您账号的联系邮箱，邀请函将发送至此。", es: "Es el correo de contacto de su cuenta. Las invitaciones se envían aquí." })}</span>
+            </div>
+          ) : (
+            <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
             <label style={{ fontSize: 15, fontWeight: 700, color: "var(--w-deep)" }}>{t({ ko: "당첨 안내 이메일", en: "Email for prize notices", ja: "当選案内メール", zh: "中奖通知邮箱", es: "Correo para avisos de premio" })}</label>
             <input className="field-input" type="email" autoComplete="email" inputMode="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="name@example.com" />
-            <span style={{ fontSize: 13.5, color: "var(--cap)", lineHeight: 1.5 }}>{t({ ko: "초대권에 당첨되면 이 주소로 초대권을 보냅니다. 실물 경품 안내에도 씁니다.", en: "If you win an invitation it is sent to this address. Also used for prize notices.", ja: "招待券に当選した場合、この宛先へ送付します。実物賞品のご案内にも使います。", zh: "若中奖邀请函，将发送至此邮箱；实物奖品通知亦使用此邮箱。", es: "Si gana una invitación se enviará a esta dirección. También para avisos de premios." })}</span>
-          </div>
+            <span style={{ fontSize: 13.5, color: "var(--cap)", lineHeight: 1.5 }}>{!emailSource && walletKind && walletKind !== "embedded" ? t({ ko: "외부 지갑 로그인은 이메일이 없어 여기서 받습니다. ", en: "External-wallet sign-ins have no email on file, so we ask here. ", ja: "外部ウォレットのログインにはメールがないためここで伺います。", zh: "外部钱包登录没有邮箱记录，因此在此填写。", es: "El inicio con billetera externa no tiene correo, así que lo pedimos aquí. " }) : ""}{t({ ko: "초대권에 당첨되면 이 주소로 초대권을 보냅니다. 실물 경품 안내에도 씁니다.", en: "If you win an invitation it is sent to this address. Also used for prize notices.", ja: "招待券に当選した場合、この宛先へ送付します。実物賞品のご案内にも使います。", zh: "若中奖邀请函，将发送至此邮箱；实物奖品通知亦使用此邮箱。", es: "Si gana una invitación se enviará a esta dirección. También para avisos de premios." })}</span>
+            </div>
+          )}
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
             <TermCard checked={terms1} onToggle={() => setTerms1(!terms1)}
               title={t({ ko: "[필수] 환불 불가 고지", en: "[Required] No-refund notice", ja: "【必須】返金不可のご案内", zh: "[必读] 不可退款告知", es: "[Obligatorio] Aviso de no reembolso" })}
@@ -535,7 +551,7 @@ function friendlyXrpError(msg: string, t: ReturnType<typeof useI18n>["t"]): stri
     return t({ ko: "지갑이 아직 활성화되지 않았습니다. 위 안내대로 XRP 를 먼저 입금해 주세요.", en: "The wallet isn't activated yet. Please deposit XRP first as described above.", ja: "ウォレットがまだ有効化されていません。上の案内に従って先にXRPを入金してください。", zh: "钱包尚未激活，请先按上方说明充值 XRP。", es: "La billetera aún no está activada. Deposite XRP primero como se indica." });
   }
   if (/tecNO_DST|tecDST_TAG_NEEDED|temBAD_/.test(m)) {
-    return t({ ko: "받는 주소 설정에 문제가 있습니다. admin@wellbianlabs.io 로 알려 주세요.", en: "There is a problem with the destination. Please contact admin@wellbianlabs.io.", ja: "受取アドレスの設定に問題があります。admin@wellbianlabs.io までご連絡ください。", zh: "收款地址设置有问题，请联系 admin@wellbianlabs.io。", es: "Hay un problema con el destino. Escriba a admin@wellbianlabs.io." });
+    return t({ ko: "받는 주소 설정에 문제가 있습니다. support@wellbianlabs.io 로 알려 주세요.", en: "There is a problem with the destination. Please contact support@wellbianlabs.io.", ja: "受取アドレスの設定に問題があります。support@wellbianlabs.io までご連絡ください。", zh: "收款地址设置有问题，请联系 support@wellbianlabs.io。", es: "Hay un problema con el destino. Escriba a support@wellbianlabs.io." });
   }
   if (/tecOBJECT_NOT_FOUND/.test(m)) {
     return t({ ko: "이 NFT 오퍼는 이미 처리되었습니다. 잠시 후 상태가 갱신됩니다.", en: "This NFT offer was already handled. The status will refresh shortly.", ja: "このNFTオファーはすでに処理済みです。まもなく状態が更新されます。", zh: "此 NFT 报价已处理，状态稍后更新。", es: "Esta oferta de NFT ya se procesó. El estado se actualizará en breve." });

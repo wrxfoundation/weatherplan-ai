@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { guard } from "@/lib/ratelimit";
 import { getVerifiedWallet } from "@/lib/auth/session";
+import { prisma } from "@/lib/db";
 import { createRaffleEntry, holdUntilOf, type RaffleMode } from "@/lib/raffle";
 import { hotWalletAddress } from "@/lib/xrpl/outbox";
 
@@ -17,8 +18,11 @@ export async function POST(req: Request) {
   const mode: RaffleMode = body.data.mode === "test" ? "test" : "prod";
   const wallet = await getVerifiedWallet();
   if (!wallet) return NextResponse.json({ error: "로그인이 필요합니다." }, { status: 401 });
-  const r = await createRaffleEntry(wallet, mode, body.data.email?.trim().toLowerCase());
+  const email = body.data.email?.trim().toLowerCase();
+  const r = await createRaffleEntry(wallet, mode, email);
   if (!r.ok) return NextResponse.json({ error: r.error, code: r.code }, { status: 409 });
+  /* 외부 지갑 로그인처럼 계정에 이메일이 없던 경우, 응모 때 적은 주소를 연락처로 남겨 다음부터 묻지 않는다(있으면 그대로) */
+  if (email) { try { await prisma.accountContact.createMany({ data: [{ address: wallet, email }], skipDuplicates: true }); } catch { /* 연락처 저장 실패는 응모를 막지 않는다 */ } }
   return NextResponse.json({
     ok: true,
     entry: { status: r.entry.status, destTag: r.entry.destTag, entryNo: r.entry.entryNo, amountXrp: Number(r.entry.amountXrp), holdUntil: holdUntilOf(r.entry, r.config)?.toISOString() ?? null },

@@ -66,9 +66,11 @@ async function main() {
   const fails = [];
   const check = (cond, msg) => { console.log((cond ? '  ok  ' : '  FAIL') + ' ' + msg); if (!cond) fails.push(msg); };
 
-  async function open(url, { txs = [], mobile = false, ls = null, nomock = false } = {}) {
+  async function open(url, { txs = [], mobile = false, ls = null, nomock = false, ses = null, gmock = null } = {}) {
     const ctx = await b.newContext({ viewport: mobile ? { width: 390, height: 844 } : { width: 1280, height: 900 }, deviceScaleFactor: mobile ? 2 : 1, locale: 'ko-KR' });
     if (!nomock) await ctx.addInitScript(MOCK + `\nwindow.__mockTxs = ${JSON.stringify(txs)};` + (ls ? `\ntry{localStorage.setItem('xrpseoul_raffle_v1', ${JSON.stringify(JSON.stringify(ls))});}catch(e){}` : ''));
+    if (ses) await ctx.addInitScript(`try{localStorage.setItem('xrpseoul_session_v1', ${JSON.stringify(JSON.stringify(ses))});}catch(e){}`);
+    if (gmock) await ctx.addInitScript(`window.__RAFFLE_GOOGLE_MOCK = function (cb) { cb({ email: ${JSON.stringify(gmock)} }); };`);
     const page = await ctx.newPage();
     page.on('pageerror', (e) => fails.push('pageerror: ' + e.message));
     page.on('response', (r) => { if (r.status() === 404) console.log('  404:', r.url()); });
@@ -121,14 +123,25 @@ async function main() {
     check(/남은 자리 483명 · 9\.27\(일\) 18:00 마감/.test(await page.locator('.js-cd').textContent()), 'hero cd open');
     await page.screenshot({ path: OUT + '/2-open-desk.png', clip: { x: 0, y: 0, width: 1280, height: 760 } });
 
+    check((await page.locator('.js-login').textContent()) === '로그인', 'nav pill 로그인 when signed out');
     await cta(page).click();
+    await page.waitForSelector('#lg:not([hidden])');
+    await page.waitForTimeout(400);
+    check(await page.locator('#ov').isHidden(), 'checkout NOT opened before login');
+    const lgTxt = await page.locator('#lg').textContent();
+    check(/로그인 또는 회원가입/.test(lgTxt) && /Google로 계속하기/.test(lgTxt) && /또는 이메일로/.test(lgTxt) && /아이디·비밀번호 지갑으로 로그인 \(고급\)/.test(lgTxt) && /D'CENT 앱으로 열기/.test(lgTxt) && /Girin Wallet으로 연결/.test(lgTxt) && /Xaman으로 연결/.test(lgTxt), 'login modal mirrors canonical options');
+    await page.screenshot({ path: OUT + '/2b-login-modal.png' });
+    await page.click('#lg .lg-opt[data-kind="xaman"]');
     await page.waitForSelector('#ov:not([hidden])');
     await page.waitForTimeout(400);
+    check(await page.locator('#lg').isHidden(), 'login modal closed after wallet login');
+    check((await page.locator('.js-login').textContent()) === 'Xaman 연결됨', 'nav pill shows wallet session');
     check(await page.locator('#mbody .js-m-soldwarn').isHidden(), 'soldout warning hidden in step1');
     check(/남은 자리/.test(await page.locator('#mbody').textContent()) && /483명/.test(await page.locator('.js-m-remain').textContent()), 'step1 shows remaining');
     await page.screenshot({ path: OUT + '/3-step1.png' });
     await page.click('#m-next');
     await page.waitForSelector('#m-email');
+    check(/Xaman 로그인은 이메일이 없어 여기서 받습니다/.test(await page.locator('#mbody').textContent()), 'external wallet → email asked with reason');
     await page.click('#m-next');                                   // 이메일 없이 → 오류
     check(/이메일 형식/.test(await page.locator('#mbody .alert').textContent()), 'email validation');
     await page.fill('#m-email', 'seowoo@example.com');
@@ -168,12 +181,58 @@ async function main() {
     await ctx.close();
   }
 
+  // ── 2c. Google 로그인(가짜 훅) → 이메일 자동 · 「다른 이메일로 받기」 · 로그아웃 ──
+  console.log('[2c] Google login → email known');
+  {
+    const { ctx, page } = await open(base + '?now=2026-09-22T10:00:00Z&poll=700', { txs: payments(17), gmock: 'hong@gmail.com' });
+    await page.waitForFunction(() => document.querySelector('.js-count').textContent === '17', null, { timeout: 8000 }).catch(() => {});
+    await cta(page).click();
+    await page.waitForSelector('#lg:not([hidden])');
+    await page.click('#lg-google');
+    await page.waitForSelector('#ov:not([hidden])');
+    await page.waitForTimeout(400);
+    check((await page.locator('.js-login').textContent()) === 'hong@gmail.com', 'nav pill shows google email');
+    const pb = await page.locator('.js-login').boundingBox();
+    check(pb && pb.x + pb.width <= 1280 && pb.width >= 60, 'nav pill stays inside the viewport (' + Math.round(pb.x + pb.width) + 'px)');
+    await page.click('#m-next');
+    await page.waitForTimeout(200);
+    const s2 = await page.locator('#mbody').textContent();
+    check((await page.locator('#m-email').count()) === 0 && /hong@gmail\.com/.test(s2) && /Google 계정으로 로그인해 이메일이 채워졌습니다/.test(s2), 'google → email shown read-only, no input');
+    check(/^동의해 주세요/.test((await page.locator('#mbody h3').textContent()).trim()), 'step2 title = 동의해 주세요');
+    await page.screenshot({ path: OUT + '/2c-google-step2.png' });
+    await page.click('#m-email-edit');
+    await page.waitForSelector('#m-email');
+    check((await page.inputValue('#m-email')) === 'hong@gmail.com', 'edit reveals input prefilled');
+    await page.fill('#m-email', 'other@example.com');
+    await page.click('.term[data-t="0"]'); await page.click('.term[data-t="1"]'); await page.click('#m-next');
+    await page.waitForSelector('#m-qr img');
+    const my = JSON.parse(await page.evaluate(() => localStorage.getItem('xrpseoul_raffle_v1')));
+    check(my.state === 'PAYING' && my.email === 'other@example.com', 'overridden email saved');
+    await page.click('#mcx'); await page.waitForTimeout(200);
+    page.once('dialog', (d) => d.accept());
+    await page.click('.js-login'); await page.waitForTimeout(300);
+    check((await page.locator('.js-login').textContent()) === '로그인', 'logout via nav pill');
+    await cta(page).click();
+    await page.waitForSelector('#lg:not([hidden])');
+    check(await page.locator('#ov').isHidden(), 'after logout the login modal comes first again');
+    await page.fill('#lg-email', 'me@naver.com'); await page.click('#lg-next');
+    await page.waitForSelector('#ov:not([hidden])');
+    await page.waitForTimeout(300);
+    check((await page.locator('.js-login').textContent()) === 'me@naver.com' && /1746|결제|보내 주세요|Destination Tag/.test(await page.locator('#mbody').textContent()), 'email login → resumes PAYING at step 3');
+    await ctx.close();
+    // Google 미설정 배포본: 훅도 clientId 도 없으면 이메일 안내
+    const u = await open(base + '?now=2026-09-22T10:00:00Z&poll=700', { txs: payments(3) });
+    await cta(u.page).click(); await u.page.waitForSelector('#lg:not([hidden])'); await u.page.click('#lg-google'); await u.page.waitForTimeout(200);
+    check(/Google 로그인이 아직 연결되어 있지 않습니다/.test(await u.page.locator('#lg').textContent()), 'google unset → guided to email');
+    await u.ctx.close();
+  }
+
   // ── 3. 해시 직접 입력 경로 + 재방문(PAYING 복원) ──
   console.log('[3] hash path + resume');
   {
     const txs = payments(17);
     const myTag = 1234567890;
-    const { ctx, page } = await open(base + '?now=2026-09-22T10:00:00Z&poll=700', { txs, ls: { state: 'PAYING', tag: myTag, email: 'a@b.co', at: 1 } });
+    const { ctx, page } = await open(base + '?now=2026-09-22T10:00:00Z&poll=700', { txs, ls: { state: 'PAYING', tag: myTag, email: 'a@b.co', at: 1 }, ses: { kind: 'xaman', email: '', at: 1 } });
     await page.waitForTimeout(1200);
     check((await cta(page).textContent()) === '결제 이어서 하기', 'resume label');
     await cta(page).click();
@@ -217,7 +276,7 @@ async function main() {
     check(pages >= 3, 'paged account_tx (' + pages + ' calls)');
     await page.screenshot({ path: OUT + '/7-soldout-desk.png', clip: { x: 0, y: 0, width: 1280, height: 760 } });
     await ctx.close();
-    const o = await open(base + '?now=2026-09-23T00:00:00Z&poll=700', { txs, ls: { state: 'PAYING', tag: lateTag, email: 'late@x.io', at: 1 } });
+    const o = await open(base + '?now=2026-09-23T00:00:00Z&poll=700', { txs, ls: { state: 'PAYING', tag: lateTag, email: 'late@x.io', at: 1 }, ses: { kind: 'girin', email: '', at: 1 } });
     await o.page.waitForTimeout(1500);
     check((await cta(o.page).textContent()) === '결제 확인하기' && !(await cta(o.page).isDisabled()), 'late payer can check');
     await cta(o.page).click();
@@ -232,7 +291,7 @@ async function main() {
   // ── 4b. 남은 자리 3 → 결제창 경고 표시 ──
   console.log('[4b] low remaining warning');
   {
-    const { ctx, page } = await open(base + '?now=2026-09-23T00:00:00Z&poll=700', { txs: payments(497), ls: { state: 'PAYING', tag: 1888888888, email: 'l@x.io', at: 1 } });
+    const { ctx, page } = await open(base + '?now=2026-09-23T00:00:00Z&poll=700', { txs: payments(497), ls: { state: 'PAYING', tag: 1888888888, email: 'l@x.io', at: 1 }, ses: { kind: 'xaman', email: '', at: 1 } });
     await page.waitForFunction(() => document.querySelector('.js-count').textContent === '497', null, { timeout: 8000 }).catch(() => {});
     await cta(page).click();
     await page.waitForSelector('#m-qr img');
@@ -267,7 +326,7 @@ async function main() {
   // ── 6. 모바일 결제 화면 캡처 ──
   console.log('[6] mobile checkout shot');
   {
-    const { ctx, page } = await open(base + '?now=2026-09-22T10:00:00Z&poll=700', { txs: payments(17), mobile: true, ls: { state: 'PAYING', tag: 1777777777, email: 'm@x.io', at: 1 } });
+    const { ctx, page } = await open(base + '?now=2026-09-22T10:00:00Z&poll=700', { txs: payments(17), mobile: true, ls: { state: 'PAYING', tag: 1777777777, email: 'm@x.io', at: 1 }, ses: { kind: 'dcent', email: '', at: 1 } });
     await page.waitForTimeout(1000);
     await cta(page).click();
     await page.waitForSelector('#m-qr img');
@@ -298,6 +357,8 @@ async function main() {
     check(/오픈 전/.test(await page.locator('#sim-clock').textContent()), 'panel shows 오픈 전');
     await simNav('#sim [data-now="2026-09-22T09:00:05Z"]');
     await simNav('#sim [data-paid="497"]');
+    await simNav('#sim [data-ses="xaman"]');
+    check(/Xaman 연결됨/.test(await page.locator('.js-login').textContent()) && /xaman/.test(await page.locator('#sim-my').textContent()), 'sim session preset xaman');
     await page.waitForFunction(() => document.querySelector('.js-count') && document.querySelector('.js-count').textContent === '497', null, { timeout: 8000 }).catch(() => {});
     check((await page.locator('.js-count').textContent()) === '497', 'sim paid 497');
     await cta(page).click(); await page.waitForSelector('#ov:not([hidden])'); await page.waitForTimeout(300);
@@ -313,8 +374,17 @@ async function main() {
     check(/^mailto:support@wellbianlabs\.io\?/.test(mail), 'mailto goes to support@');
     await page.waitForTimeout(1300);   // 제어판은 1초마다 갱신
     check(/확정 No\. 498/.test(await page.locator('#sim-my').textContent()), 'panel shows my confirmed entry');
+    await page.click('#m-close'); await page.waitForTimeout(200);
+    await simNav('#sim-reset');
+    await simNav('#sim [data-now="2026-09-22T09:00:05Z"]');
+    page.once('dialog', (d) => d.accept('seowoo@gmail.com'));
+    await cta(page).click(); await page.waitForSelector('#lg:not([hidden])'); await page.click('#lg-google');
+    await page.waitForSelector('#ov:not([hidden])'); await page.waitForTimeout(300);
+    check((await page.locator('.js-login').textContent()) === 'seowoo@gmail.com', 'sim fake google prompt → session');
+    await page.click('#m-next'); await page.waitForTimeout(200);
+    check((await page.locator('#m-email').count()) === 0 && /seowoo@gmail\.com/.test(await page.locator('#mbody').textContent()), 'sim google → email not asked');
     await page.screenshot({ path: OUT + '/10-test-page.png' });
-    await page.click('#m-close'); await page.waitForTimeout(300);
+    await page.click('#mcx'); await page.waitForTimeout(300);   // ② 단계라 닫기(X)로
     await page.screenshot({ path: OUT + '/11-test-page-panel.png', clip: { x: 0, y: 0, width: 1280, height: 900 } });
     await simNav('#sim-reset');
     await page.waitForTimeout(800);

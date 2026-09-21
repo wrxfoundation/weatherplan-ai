@@ -31,7 +31,7 @@ export const modeOfEvent = (event: string): RaffleMode => (event.endsWith("-test
    못한다 - 그래서 마감(정원·기간) 뒤에 확인된 입금은 PAID 로 만들지 않고 OVERFLOW 로 남겨 관리자 콘솔 › 래플에서 환불 대상으로 본다.
    마감 직전에 보낸 송금이 원장 반영·확인까지 걸리는 시간을 생각해 기간 마감은 10분을 받아 준다. */
 export const CLOSE_GRACE_MS = 10 * 60_000;
-const OVERFLOW_MSG = "정원 또는 기간이 마감되어 결제를 확정할 수 없습니다. 입금액은 환불해 드립니다 - admin@wellbianlabs.io 로 지갑 주소와 트랜잭션 해시를 보내 주세요.";
+const OVERFLOW_MSG = "정원 또는 기간이 마감되어 결제를 확정할 수 없습니다. 입금액은 환불해 드립니다 - support@wellbianlabs.io 로 지갑 주소와 트랜잭션 해시를 보내 주세요.";
 async function markOverflow(entryId: string, hash: string) {
   await prisma.raffleEntry.updateMany({ where: { id: entryId, status: "PENDING" }, data: { status: "OVERFLOW", txHash: hash } }).catch(() => {});
 }
@@ -209,7 +209,7 @@ export async function verifyRaffleEntry(wallet: string, txHash: string | null, o
   if (entry.status === "PAID") return { ok: true as const, entry, already: true };
   if (entry.status === "OVERFLOW") return { ok: false as const, error: OVERFLOW_MSG, pending: false };
   const hash = txHash ? txHash.toUpperCase() : await findPaymentByTag(entry.destTag, Number(entry.amountXrp));
-  if (!hash) return { ok: false as const, error: "아직 입금이 확인되지 않았습니다. 거래소 출금은 몇 분 걸릴 수 있습니다 - 잠시 후 다시 확인해 주세요. 태그 없이 보냈다면 admin@wellbianlabs.io 로 알려 주세요.", pending: true };
+  if (!hash) return { ok: false as const, error: "아직 입금이 확인되지 않았습니다. 거래소 출금은 몇 분 걸릴 수 있습니다 - 잠시 후 다시 확인해 주세요. 태그 없이 보냈다면 support@wellbianlabs.io 로 알려 주세요.", pending: true };
   const dup = await prisma.raffleEntry.findUnique({ where: { txHash: hash } });
   if (dup && dup.id !== entry.id) return { ok: false as const, error: "이미 다른 응모에 사용된 트랜잭션입니다." };
   const v = await verifyXrpPayment(hash, Number(entry.amountXrp), entry.destTag);

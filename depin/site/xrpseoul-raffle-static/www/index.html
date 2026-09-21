@@ -42,11 +42,11 @@ h1,h2,h3{font-family:var(--display);letter-spacing:-.02em;text-wrap:balance;marg
 
 /* ─────────── 네비 — 모체 그대로 ─────────── */
 .nav{position:sticky;top:0;z-index:50;background:#111135}
-.nav-in{display:flex;align-items:center;gap:clamp(20px,4vw,80px);height:66px;max-width:1344px}
+.nav-in{display:flex;align-items:center;gap:clamp(20px,3vw,80px);height:66px;max-width:1344px}   /* 4vw→3vw: 로그인 뒤 이메일 필이 들어갈 자리 */
 .nav-logo{display:flex;align-items:center;flex:none}
 .nav-logo img{width:133px;height:auto}
 .nav-links{display:flex;align-items:center;gap:4px}
-.nav-links a{position:relative;display:inline-flex;align-items:center;height:40px;padding:0 16px;
+.nav-links a{position:relative;display:inline-flex;align-items:center;height:40px;padding:0 14px;
   border-radius:var(--radius-full);font-size:16px;font-weight:600;color:#fff;white-space:nowrap;
   transition:background .15s ease}
 .nav-links a:hover{background:rgba(255,255,255,.07)}
@@ -439,6 +439,24 @@ section.band{padding:clamp(60px,7.5vw,96px) 0}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 .tick{display:inline-flex;gap:8px;align-items:center;font-size:14.5px;color:var(--ink-dim)}
 
+/* ─────────── 로그인 모달 (정본 「로그인 또는 회원가입」과 같은 선택지) ─────────── */
+.lg-or{display:flex;align-items:center;gap:12px;font-size:13.5px;color:var(--ink-faint)}
+.lg-or span{flex:1;height:1px;background:var(--line-2)}
+.lg-t{font-size:19px;font-weight:800;color:var(--ink);margin-bottom:4px}
+.lg-sec{font-size:14px;font-weight:800;color:var(--brand);margin-top:4px}
+.lg-opt{display:flex;align-items:center;justify-content:center;width:100%;min-height:58px;padding:12px 16px;border-radius:14px;border:1px solid var(--line-2);
+  background:#fff;color:var(--navy);font-size:17px;font-weight:800;cursor:pointer;font-family:var(--sans)}
+.lg-opt:hover{background:var(--bg-2)}
+.lg-hint{border:1px solid var(--line);border-left:3px solid var(--brand);background:var(--bg-2);border-radius:12px;padding:12px 16px;font-size:14.5px;line-height:1.6;color:var(--ink-dim);margin-top:-6px}
+.lg-adv summary{font-size:13px;color:var(--ink-faint);cursor:pointer;list-style:none;display:flex;align-items:center;gap:6px}
+.lg-adv summary::before{content:"▶";font-size:10px}.lg-adv[open] summary::before{content:"▼"}
+.lg-advbody{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+.mc h3.lg-h{font-size:26px}
+.nav-right{min-width:0}
+.nav-pill.js-login{cursor:pointer;display:inline-block;line-height:34px;text-align:center;min-width:110px;max-width:min(170px,40vw);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+@media (max-width:960px){.nav-pill.js-login{line-height:30px}}
+.nav-pill.js-login.on{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.3)}
+
 /* 리빌 */
 .rv{opacity:0;transform:translateY(14px);transition:opacity .55s ease,transform .55s ease}
 .rv.in{opacity:1;transform:none}
@@ -536,7 +554,7 @@ section.band{padding:clamp(60px,7.5vw,96px) 0}
     <div class="nav-right">
       <a class="nav-pill" href="#">마이페이지</a>
       <span class="nav-pill">KO <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></span>
-      <a class="nav-pill fill" href="#">로그인</a>
+      <a class="nav-pill fill js-login" href="#" role="button">로그인</a>
       <span class="nav-burger" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></span>
     </div>
   </div>
@@ -634,9 +652,9 @@ section.band{padding:clamp(60px,7.5vw,96px) 0}
     <div class="steps">
       <article class="card rv">
         <div class="card-top"><div class="art"><svg class="ico"><use href="#i-signup"/></svg></div><span class="num">01</span></div>
-        <div class="lbl">STEP 1</div><h3>이메일 입력 · 동의</h3>
+        <div class="lbl">STEP 1</div><h3>로그인 · 동의</h3>
         <div class="rule"></div>
-        <p>당첨 안내(초대권 발송)를 받을 이메일을 적고 환불·수령 안내에 동의하면 나만의 결제 정보(받는 주소 + Destination Tag)가 만들어집니다.</p>
+        <p>Google·이메일로 로그인하면 당첨 안내(초대권 발송) 이메일이 자동으로 채워지고, 외부 지갑(Xaman·D'CENT·Girin)으로 로그인하면 이메일을 적습니다. 환불·수령 안내에 동의하면 나만의 결제 정보(받는 주소 + Destination Tag)가 만들어집니다.</p>
       </article>
       <article class="card rv">
         <div class="card-top"><div class="art"><svg class="ico"><use href="#i-pay"/></svg></div><span class="num">02</span></div>
@@ -756,6 +774,15 @@ section.band{padding:clamp(60px,7.5vw,96px) 0}
   </div>
 </section>
 
+<!-- ══════════ 로그인 — 정본 「로그인 또는 회원가입」 모달과 같은 선택지 (이 배포본은 세션을 브라우저에만 저장) ══════════ -->
+<div class="ov" id="lg" hidden>
+  <div class="mc" id="lgmc" role="dialog" aria-modal="true" aria-label="로그인 또는 회원가입" tabindex="-1">
+    <div class="mc-handle" aria-hidden="true"></div>
+    <div class="mc-top"><h3 class="lg-h">로그인 또는 회원가입</h3><button class="mc-x" id="lgx" aria-label="닫기">✕</button></div>
+    <div id="lgbody" style="display:flex;flex-direction:column;gap:14px"></div>
+  </div>
+</div>
+
 <!-- ══════════ 결제창 ══════════ -->
 <div class="ov" id="ov" hidden>
   <div class="mc" id="mc" role="dialog" aria-modal="true" aria-label="래플 응모" tabindex="-1">
@@ -830,6 +857,9 @@ section.band{padding:clamp(60px,7.5vw,96px) 0}
     pollMs: 30000,                                 // 참여 현황 갱신 주기
     payPollMs: 10000,                              // 결제창 입금 확인 주기
     contact: 'support@wellbianlabs.io',
+    // (선택) Google 로그인 — OAuth 클라이언트 ID(공개 값, 비밀 아님). 비어 있으면 「Google로 계속하기」가 이메일 입력을 안내합니다.
+    // Google Cloud Console › 사용자 인증 정보 › 웹 클라이언트 › 승인된 리디렉션 URI 에 이 사이트 주소 + '/' 를 등록해야 합니다.
+    googleClientId: '',
     explorer: 'https://xrpscan.com/tx/',
     // (선택) Google Form 으로 이메일 자동 등록 — action 과 entry 번호를 채우면 완료 화면에서 자동 전송.
     // 비어 있으면 완료 화면의 「등록 메일 보내기」(mailto) 로 대체됩니다.
@@ -1004,6 +1034,109 @@ section.band{padding:clamp(60px,7.5vw,96px) 0}
     if (M.open) renderModalLive();
   }
 
+  /* ───────── 로그인 세션 — 정본과 같은 규칙: 비로그인이면 로그인 모달 먼저, Google·이메일은 이메일이 있고 외부 지갑은 없다 ───────── */
+  var SES_KEY = 'xrpseoul_session_v1';
+  var ses = null;
+  try { ses = JSON.parse(localStorage.getItem(SES_KEY) || 'null'); } catch (e) { ses = null; }
+  if (ses && (typeof ses !== 'object' || !ses.kind)) ses = null;
+  var KIND_NAMES = { google: 'Google 계정', email: '이메일 계정', embedded: '아이디·비밀번호 지갑', dcent: "D'CENT", girin: 'Girin Wallet', xaman: 'Xaman' };
+  function saveSes() { try { if (ses) localStorage.setItem(SES_KEY, JSON.stringify(ses)); else localStorage.removeItem(SES_KEY); } catch (e) { } }
+  function setSession(kind, email) { ses = { kind: kind, email: email ? String(email).trim().toLowerCase() : '', at: now() }; saveSes(); renderNav(); }
+  function logout() { ses = null; saveSes(); renderNav(); render(); }
+  function sesLabel() { return !ses ? '' : ses.email ? ses.email : (KIND_NAMES[ses.kind] || '지갑') + ' 연결됨'; }
+  function renderNav() {
+    $$('.js-login').forEach(function (p) {
+      p.textContent = ses ? sesLabel() : '로그인';
+      p.classList.toggle('on', !!ses);
+      p.title = ses ? '로그아웃' : '';
+    });
+  }
+  window.RAFFLE_SESSION = function () { return ses; };   // 읽기 전용 참조 (테스트 모드)
+
+  var lg = $('#lg'), lgBody = $('#lgbody');
+  var LG = { open: false, then: null, email: '', msg: '' };
+  function openLogin(then) {
+    if (!lg) return;
+    LG.open = true; LG.then = then || null; LG.msg = ''; LG.email = '';
+    lg.hidden = false; document.body.style.overflow = 'hidden';
+    renderLogin();
+    setTimeout(function () { var m = $('#lgmc'); if (m) m.focus(); }, 30);
+  }
+  function closeLogin() {
+    if (!LG.open) return;
+    LG.open = false; lg.hidden = true;
+    if (!M.open) document.body.style.overflow = '';
+  }
+  function loginDone(kind, email) {
+    setSession(kind, email);
+    closeLogin(); render();
+    if (LG.then === 'checkout') openModal();   // 정본의 wantOpen 과 같음: 로그인 뒤 하던 일(응모)을 이어 간다
+  }
+  function renderLogin() {
+    lgBody.innerHTML =
+      '<div style="font-size:15px;color:var(--ink-dim);line-height:1.6">이메일 하나면 됩니다. 설치할 앱도, 준비할 것도 없습니다.</div>' +
+      '<button type="button" class="btn-main" id="lg-google">Google로 계속하기</button>' +
+      (LG.msg === 'GOOGLE_UNSET' ? '<div class="alert">이 배포본에는 Google 로그인이 아직 연결되어 있지 않습니다(설정 googleClientId 비어 있음). 아래에서 이메일로 계속해 주세요.</div>' : '') +
+      (LG.msg === 'GOOGLE_ERR' ? '<div class="alert">Google 로그인을 마치지 못했습니다. 다시 시도하거나 이메일로 계속해 주세요.</div>' : '') +
+      '<div class="lg-or"><span></span>또는 이메일로<span></span></div>' +
+      '<div><div class="lg-t">이메일 주소를 입력해 주세요</div>' +
+      '<div class="hint2" style="font-size:15px">처음이든 다시 오셨든 이메일 하나면 됩니다. 다음 화면에서 안내해 드립니다.</div>' +
+      '<input class="field" id="lg-email" type="email" inputmode="email" autocomplete="email" placeholder="예: hong@naver.com" value="' + esc(LG.email) + '" style="margin-top:10px">' +
+      (LG.msg === 'BAD_EMAIL' ? '<div class="alert" style="margin-top:8px">이메일 주소를 다시 확인해 주세요. (예: hong@naver.com)</div>' : '') +
+      '<button type="button" class="btn-main" id="lg-next" disabled style="margin-top:10px">다음</button></div>' +
+      '<details class="lg-adv"><summary>아이디·비밀번호 지갑으로 로그인 (고급)</summary><div class="lg-advbody">' +
+      '<input class="field" id="lg-id" placeholder="아이디" autocomplete="username"><input class="field" id="lg-pw" type="password" placeholder="비밀번호" autocomplete="current-password">' +
+      '<button type="button" class="btn-sub" id="lg-emb">로그인</button>' +
+      '<div class="hint2">이 지갑은 이메일이 없어 응모 때 당첨 안내 이메일을 따로 받습니다.</div></div></details>' +
+      '<div class="lg-sec">모바일</div>' +
+      '<button type="button" class="lg-opt" data-kind="dcent">D\'CENT 앱으로 열기</button>' +
+      '<div class="lg-hint">탭하면 D\'CENT 앱이 열리고, 그 안에서 이 사이트가 지갑과 자동 연결됩니다</div>' +
+      '<button type="button" class="lg-opt" data-kind="girin">Girin Wallet으로 연결</button>' +
+      '<div class="lg-hint">QR 코드를 스캔하거나 모바일에서 앱이 열립니다</div>' +
+      '<button type="button" class="lg-opt" data-kind="xaman">Xaman으로 연결</button>' +
+      '<div class="hint2">외부 지갑으로 로그인하면 이메일이 없어 응모 때 당첨 안내 이메일을 받습니다. 결제는 어느 경우든 본인 지갑에서 ' + RAFFLE.priceXrp + ' XRP 송금으로 확인됩니다.</div>';
+    var em = $('#lg-email', lgBody), nx = $('#lg-next', lgBody);
+    $('#lg-google', lgBody).addEventListener('click', startGoogle);
+    em.addEventListener('input', function () { LG.email = em.value.trim(); nx.disabled = !emailOk(LG.email); });
+    em.addEventListener('keydown', function (e) { if (e.key === 'Enter' && !nx.disabled) nx.click(); });
+    nx.disabled = !emailOk(LG.email);
+    nx.addEventListener('click', function () { LG.email = em.value.trim(); if (!emailOk(LG.email)) { LG.msg = 'BAD_EMAIL'; renderLogin(); return; } loginDone('email', LG.email); });
+    $('#lg-emb', lgBody).addEventListener('click', function () {
+      var id = $('#lg-id', lgBody).value.trim(), pw = $('#lg-pw', lgBody).value;
+      if (!id || !pw) { $('#lg-id', lgBody).focus(); return; }
+      loginDone('embedded', '');
+    });
+    $$('.lg-opt', lgBody).forEach(function (b) { b.addEventListener('click', function () { loginDone(b.getAttribute('data-kind'), ''); }); });
+    if (LG.msg === 'GOOGLE_UNSET') setTimeout(function () { em.focus(); }, 30);
+  }
+  /* Google — 정본과 같은 리다이렉트(id_token) 방식. 서버 없이 토큰의 email 만 읽는다(연락처 용도, 인증 수단 아님). */
+  var G_STATE = 'xrpseoul_g_state', G_RETURN = 'xrpseoul_g_return';
+  function startGoogle() {
+    if (typeof window.__RAFFLE_GOOGLE_MOCK === 'function') { window.__RAFFLE_GOOGLE_MOCK(function (acc) { if (acc && acc.email) loginDone('google', acc.email); }); return; }
+    if (!RAFFLE.googleClientId) { LG.msg = 'GOOGLE_UNSET'; renderLogin(); return; }
+    var state = Math.random().toString(36).slice(2) + Date.now().toString(36);
+    try { localStorage.setItem(G_STATE, state); localStorage.setItem(G_RETURN, LG.then || ''); } catch (e) { }
+    var u = new URL('https://accounts.google.com/o/oauth2/v2/auth');
+    u.searchParams.set('response_type', 'id_token'); u.searchParams.set('client_id', RAFFLE.googleClientId);
+    u.searchParams.set('redirect_uri', location.origin + '/'); u.searchParams.set('scope', 'openid email');
+    u.searchParams.set('nonce', Math.random().toString(36).slice(2)); u.searchParams.set('state', state); u.searchParams.set('prompt', 'select_account');
+    location.href = u.toString();
+  }
+  function resumeGoogle() {
+    if (!/id_token=|error=/.test(location.hash)) return;
+    var p = new URLSearchParams(location.hash.slice(1)), st = null, ret = '';
+    try { st = localStorage.getItem(G_STATE); ret = localStorage.getItem(G_RETURN) || ''; localStorage.removeItem(G_STATE); localStorage.removeItem(G_RETURN); } catch (e) { }
+    history.replaceState(null, '', location.pathname + location.search);
+    var tok = p.get('id_token');
+    if (!tok || !st || p.get('state') !== st) { openLogin(ret || null); LG.msg = 'GOOGLE_ERR'; renderLogin(); return; }
+    try {
+      var b = tok.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
+      var payload = JSON.parse(decodeURIComponent(Array.prototype.map.call(atob(b), function (c) { return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2); }).join('')));
+      if (payload && payload.email) { setSession('google', payload.email); render(); if (ret === 'checkout') setTimeout(openModal, 200); return; }
+    } catch (e) { }
+    openLogin(ret || null); LG.msg = 'GOOGLE_ERR'; renderLogin();
+  }
+
   /* ───────── 결제창 ───────── */
   var ov = $('#ov'), mc = $('#mc'), body = $('#mbody'), sind = $('#sind'), mcx = $('#mcx');
   var M = { open: false, step: 1, email: (my && my.email) || '', terms: [false, false], payTimer: null, verifying: false, msg: '', hashMsg: '', formSent: false, lastFocus: null };
@@ -1011,8 +1144,10 @@ section.band{padding:clamp(60px,7.5vw,96px) 0}
 
   function openModal() {
     if (!ov) return;
+    if (!ses && !(my && (my.state === 'PAID' || my.state === 'OVERFLOW'))) { openLogin('checkout'); return; }   // 정본과 같음: 비로그인이면 로그인 모달 먼저
     M.lastFocus = document.activeElement;
-    M.open = true; M.msg = ''; M.hashMsg = '';
+    M.open = true; M.msg = ''; M.hashMsg = ''; M.editEmail = false;
+    if (ses && ses.email && !(my && my.email)) M.email = ses.email;   // Google·이메일 로그인 → 이메일 자동
     if (my && (my.state === 'PAID' || my.state === 'OVERFLOW')) M.step = 4;
     else if (my && my.state === 'PAYING') { M.email = my.email || M.email; M.terms = [true, true]; M.step = 3; }
     else M.step = 1;
@@ -1081,10 +1216,15 @@ section.band{padding:clamp(60px,7.5vw,96px) 0}
       '<button class="btn-main" id="m-next">다음</button>';
   }
   function tplEmail() {
-    return '<h3>이메일과 동의</h3>' +
-      '<div><label class="lab" for="m-email">이메일</label>' +
-      '<input class="field" id="m-email" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com" value="' + esc(M.email) + '" style="margin-top:8px">' +
-      '<div class="hint2" style="margin-top:6px">당첨 안내와 초대권이 이 주소로 갑니다. 오타를 한 번 더 확인해 주세요.</div></div>' +
+    var known = !!(ses && ses.email), showInput = !known || M.editEmail;
+    var emailBlock = showInput
+      ? '<div><label class="lab" for="m-email">당첨 안내 이메일</label>' +
+        '<input class="field" id="m-email" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com" value="' + esc(M.email) + '" style="margin-top:8px">' +
+        '<div class="hint2" style="margin-top:6px">' + (known ? '로그인 이메일(' + esc(ses.email) + ') 대신 이 주소로 받습니다.' : (ses && KIND_NAMES[ses.kind] ? KIND_NAMES[ses.kind] + ' 로그인은 이메일이 없어 여기서 받습니다. ' : '') + '초대권과 당첨 안내가 이 주소로 갑니다. 오타를 한 번 더 확인해 주세요.') + '</div></div>'
+      : '<div><div class="lab">당첨 안내 이메일</div>' +
+        '<div class="row" style="margin-top:8px"><span class="v" style="font-size:16px;word-break:break-all">' + esc(ses.email) + '</span><button type="button" class="btn-sub" id="m-email-edit">다른 이메일로 받기</button></div>' +
+        '<div class="hint2" style="margin-top:6px">' + esc(KIND_NAMES[ses.kind] || '로그인') + '으로 로그인해 이메일이 채워졌습니다. 초대권과 당첨 안내가 이 주소로 갑니다.</div></div>';
+    return '<h3>' + (known ? '동의해 주세요' : '이메일과 동의') + '</h3>' + emailBlock +
       '<button type="button" class="term' + (M.terms[0] ? ' on' : '') + '" data-t="0"><span class="ck">✓</span><span><b>응모 조건에 동의합니다</b><span>지갑 1개당 1회 · ' + RAFFLE.priceXrp + ' XRP 결제 후 환불 불가 · Destination Tag 누락·거래소 직접 출금은 응모로 인정되지 않음 · 실물 경품은 10월 3일 행사장 수령(미수령 시 소멸)</span></span></button>' +
       '<button type="button" class="term' + (M.terms[1] ? ' on' : '') + '" data-t="1"><span class="ck">✓</span><span><b>이메일 수집·이용에 동의합니다</b><span>당첨 안내와 초대권 발송에만 쓰며, 행사 종료 후 파기합니다. 이메일은 XRPL 원장에 기록되지 않습니다.</span></span></button>' +
       (M.msg ? '<div class="alert">' + esc(M.msg) + '</div>' : '') +
@@ -1176,12 +1316,13 @@ section.band{padding:clamp(60px,7.5vw,96px) 0}
       go(2);
     });
     if (M.step === 2) {
-      var em = $('#m-email', body);
-      em.addEventListener('input', function () { M.email = em.value.trim(); });
+      var em = $('#m-email', body), ed = $('#m-email-edit', body);
+      if (em) em.addEventListener('input', function () { M.email = em.value.trim(); });
+      if (ed) ed.addEventListener('click', function () { M.editEmail = true; M.email = ses.email; renderModal(); $('#m-email', body).focus(); });
       $$('.term', body).forEach(function (t) { t.addEventListener('click', function () { var i = +t.getAttribute('data-t'); M.terms[i] = !M.terms[i]; t.classList.toggle('on', M.terms[i]); }); });
       next.addEventListener('click', function () {
-        M.email = em.value.trim();
-        if (!emailOk(M.email)) { M.msg = '이메일 형식을 확인해 주세요.'; renderModal(); $('#m-email', body).focus(); return; }
+        if (em) M.email = em.value.trim(); else M.email = ses.email;
+        if (!emailOk(M.email)) { M.msg = '이메일 형식을 확인해 주세요.'; renderModal(); var f = $('#m-email', body); if (f) f.focus(); return; }
         if (!M.terms[0] || !M.terms[1]) { M.msg = '두 항목 모두 동의해야 결제로 이동할 수 있습니다.'; renderModal(); return; }
         var ph = phase();
         if (ph !== 'OPEN') { M.msg = ph === 'BEFORE' ? '아직 응모 시작 전입니다.' : '지금은 응모할 수 없습니다 — 정원이 찼거나 마감되었습니다.'; renderModal(); return; }
@@ -1191,7 +1332,7 @@ section.band{padding:clamp(60px,7.5vw,96px) 0}
         saveMy();
         go(3);
       });
-      setTimeout(function () { em.focus(); }, 30);
+      if (em && !M.editEmail) setTimeout(function () { em.focus(); }, 30);
     }
     if (M.step === 3) {
       drawQR();
@@ -1281,7 +1422,12 @@ section.band{padding:clamp(60px,7.5vw,96px) 0}
   $$('.js-cta').forEach(function (b) { b.addEventListener('click', function () { if (!b.disabled) openModal(); }); });
   if (mcx) mcx.addEventListener('click', closeModal);
   if (ov) ov.addEventListener('click', function (e) { if (e.target === ov) closeModal(); });
-  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && M.open) closeModal(); });
+  var lgx = $('#lgx'); if (lgx) lgx.addEventListener('click', closeLogin);
+  if (lg) lg.addEventListener('click', function (e) { if (e.target === lg) closeLogin(); });
+  document.addEventListener('keydown', function (e) { if (e.key !== 'Escape') return; if (LG.open) closeLogin(); else if (M.open) closeModal(); });
+  $$('.js-login').forEach(function (p) { p.addEventListener('click', function (e) { e.preventDefault(); if (!ses) openLogin(null); else if (confirm(sesLabel() + ' — 로그아웃할까요?')) logout(); }); });
+  renderNav();
+  resumeGoogle();
 
   var lastPhase = null;
   function tick() {
