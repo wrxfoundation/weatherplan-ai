@@ -1,4 +1,4 @@
-# XRP SEOUL 2026 래플 — XRP 전용 결제창 + 히어로 이식 + 카운팅·추첨 점검 + 대점검 v4 + 예약 정원·초대권 이메일 v5 + 남은 결정 4건 v6 + Hobby 배포 v7 (2026-09-21)
+# XRP SEOUL 2026 래플 — XRP 전용 결제창 + 히어로 이식 + 카운팅·추첨 점검 + 대점검 v4 + 예약 정원·초대권 이메일 v5 + 남은 결정 4건 v6 + Hobby 배포 v7 + 단독 미리보기 앱 v8 (2026-09-21)
 
 kweather-depin(모체) 저장소에 적용하는 변경분(누적). 판매 페이지 구매 모달(BuyModal)의 흐름을 따르되 결제는 XRP 뿐이고,
 래플 페이지 히어로·스탯 줄은 정적 시안(xrpseoul-raffle)을 그대로 옮겼다. 결제 카운팅·추첨 경로를 점검해 아래를 고쳤다.
@@ -133,4 +133,9 @@ kweather-depin(모체) 저장소에 적용하는 변경분(누적). 판매 페�
 3. **Deployment Protection**: 프로젝트가 「Vercel Authentication — all except custom domains」라 `*.vercel.app` 주소는 Vercel 에 로그인한 사람만 본다. 공개하려면 Settings › Deployment Protection 에서 끄거나 커스텀 도메인(예: raffle.wellbian.io)을 붙인다.
 4. Hobby 는 함수 지역이 iad1(미국 동부)로 잡힌다(vercel.json 의 icn1 은 무시됨). DB·XRPL 왕복이 조금 길지만 래플에는 문제 없다.
 5. 같은 DB 를 두 배포(wellbian.io + xrpseoul-raffle.vercel.app)가 함께 써도 핫월렛 드레인은 리스로 하나만 돌아 안전하다.
+
+## v8 (2026-09-21 밤 — 「사이트 전체 말고 래플만」: 단독 미리보기 앱 + D-day 카운트다운)
+- 서우가 개인 Vercel 에 올리는 것은 **`depin/site/xrpseoul-raffle/` 단독 Next.js 앱**이다(정본 백엔드 없이 래플 페이지·결제창 화면만). 정본에 붙이는 사람은 이 패치(`files/`)를 쓴다 - 두 곳의 래플 컴포넌트는 같은 파일이다.
+  단독 앱의 `/api/raffle/state` 는 시간만 보고 페이즈를 계산한다(참여 현황 0). 로그인·결제 버튼은 정본 사이트(`NEXT_PUBLIC_CANONICAL_URL`, 기본 wellbian.io/event/xrpl-seoul)로 보낸다. `/preview` 에 결제창 10개 화면.
+- 카운트다운 표기를 D-day 로: 시작 전 「시작까지 D-1 05:12:33」, 당일 「D-DAY 05:12:33」(`RafflePage.tsx` useCountdown). 시작 전에는 히어로 버튼이 「9.22(화) 18:00 응모 시작」으로 비활성이다(기존 동작).
 
