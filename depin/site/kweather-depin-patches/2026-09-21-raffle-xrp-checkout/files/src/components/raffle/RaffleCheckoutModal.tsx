@@ -22,6 +22,7 @@ import { useWallet } from "@/lib/wallet/WalletContext";
 import { toast } from "@/components/Toast";
 import { TicketCard } from "./TicketCard";
 import { raffleQs, type RaffleMine, type RaffleMode, type RaffleStateView } from "./types";
+import { prizeLabel } from "@/lib/raffle-prizes";
 
 interface Bal { address: string; xrp: number; activated: boolean; reserve: number }
 interface Entry { destTag: number; status: string }
@@ -53,10 +54,8 @@ export default function RaffleCheckoutModal({ mode, st, onClose, onChange }: {
   useEffect(() => { setMounted(true); }, []);
   useEffect(() => {
     document.body.style.overflow = "hidden";
-    const esc = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
-    addEventListener("keydown", esc);
-    return () => { document.body.style.overflow = ""; removeEventListener("keydown", esc); };
-  }, [onClose]);
+    return () => { document.body.style.overflow = ""; };
+  }, []);
   if (!mounted) return null;
   /* 구매 모달과 같은 .wb-store 스타일을 쓰려고 포털로 body 에 붙인다(래플 페이지는 .wb-page 스코프라 변수·모달 규칙이 없다) */
   return createPortal(
@@ -93,6 +92,19 @@ export function RaffleCheckoutCard({ mode, st, onClose, onChange, preview }: {
   const need = needXrp(price, bal);
   const enough = !!bal && bal.activated && bal.xrp >= need;
   const no = String(mine?.entryNo ?? 0).padStart(4, "0");
+  /* 서명·원장 확인·응모 생성·NFT 수락 중에는 창을 닫지 않는다(바탕 클릭·ESC·✕) - 닫히면 진행 상황을 잃고 해시로 다시 확인해야 한다 (2026-09-21 점검) */
+  const locked = payStatus === "signing" || payStatus === "verifying" || busy;
+  const dialogRef = useRef<HTMLDivElement | null>(null);
+  useEffect(() => { if (!preview) dialogRef.current?.focus(); }, [preview]);
+  useEffect(() => {
+    if (preview) return;
+    const esc = (e: KeyboardEvent) => { if (e.key === "Escape" && !locked) onClose(); };
+    addEventListener("keydown", esc);
+    return () => removeEventListener("keydown", esc);
+  }, [locked, onClose, preview]);
+  /* 결제 전인데 응모가 열려 있지 않으면(정원·기간 마감, 정원 초과로 확정되지 않은 입금) 결제 화면을 보여 주지 않는다 -
+     마감 뒤 보낸 입금은 확정되지 않고 환불 대상이 된다(2026-09-21 점검). st 는 페이지가 20초마다 새로 읽어 내려 준다. */
+  const blocked = !done && (mine?.status === "OVERFLOW" || st.phase !== "OPEN");
 
   const stepNames = t<string[]>({
     ko: ["응모 내용", "동의", "XRP 결제", "NFT 수령"], en: ["Entry", "Consent", "Pay XRP", "Get NFT"],
@@ -159,7 +171,7 @@ export function RaffleCheckoutCard({ mode, st, onClose, onChange, preview }: {
           toast.ok(t({ ko: "결제가 확인되었습니다", en: "Payment confirmed", ja: "決済を確認しました", zh: "支付已确认", es: "Pago confirmado" }));
           setPayStatus("done"); await refreshMine(); await onChange(); setStep(4); return;
         }
-        if (r.status !== 202) { const m = d.error || t({ ko: "결제 확인에 실패했습니다.", en: "Payment could not be verified.", ja: "決済を確認できませんでした。", zh: "支付验证失败。", es: "No se pudo verificar el pago." }); setErr(m); toast.err(m); setPayStatus("idle"); return; }
+        if (r.status !== 202) { const m = d.error || t({ ko: "결제 확인에 실패했습니다.", en: "Payment could not be verified.", ja: "決済を確認できませんでした。", zh: "支付验证失败。", es: "No se pudo verificar el pago." }); setErr(m); toast.err(m); setPayStatus("idle"); await refreshMine().catch(() => null); await onChange(); return; }
         await new Promise((res) => setTimeout(res, 4000));
       }
       setErr(notConfirmed); toast.err(notConfirmed); setPayStatus("idle");
@@ -200,6 +212,20 @@ export function RaffleCheckoutCard({ mode, st, onClose, onChange, preview }: {
   const copyLabel = (which: "addr" | "dest" | "tag") => copied === which ? t({ ko: "복사됨 ✓", en: "Copied ✓", ja: "コピー済み ✓", zh: "已复制 ✓", es: "Copiado ✓" }) : t({ ko: "복사", en: "Copy", ja: "コピー", zh: "复制", es: "Copiar" });
 
   const stepBody = (() => {
+    if (blocked) {
+      const why = mine?.status === "OVERFLOW"
+        ? t({ ko: "정원·기간 마감 뒤 확인된 입금이라 응모가 확정되지 않았습니다. 입금액은 환불해 드립니다 - admin@wellbianlabs.io 로 지갑 주소와 트랜잭션 해시를 보내 주세요.", en: "The payment was confirmed after entries closed, so the entry was not confirmed. The deposit will be refunded - email admin@wellbianlabs.io with your wallet address and transaction hash.", ja: "定員・期間の締切後に確認された入金のため、応募は確定していません。入金は返金します - admin@wellbianlabs.io へウォレットアドレスとハッシュをお送りください。", zh: "该笔款项在报名截止后确认，参与未生效。款项将退还 - 请将钱包地址与交易哈希发送至 admin@wellbianlabs.io。", es: "El pago se confirmó tras el cierre, así que la participación no se confirmó. Se devolverá el depósito: escriba a admin@wellbianlabs.io con su dirección y el hash." })
+        : st.phase === "SOLD_OUT" ? t({ ko: `선착순 ${st.config.maxEntries}명이 모두 찼습니다. 결제 전 응모는 확정되지 않으니 XRP 를 보내지 마세요.`, en: `All ${st.config.maxEntries} spots are filled. An unpaid entry can no longer be confirmed - please do not send XRP.`, ja: `先着${st.config.maxEntries}名が埋まりました。未決済の応募は確定できませんので、XRPを送らないでください。`, zh: `${st.config.maxEntries} 个名额已满。未支付的参与无法再确认，请勿发送 XRP。`, es: `Las ${st.config.maxEntries} plazas están completas. Una entrada sin pagar ya no puede confirmarse: no envíe XRP.` })
+        : st.phase === "BEFORE" ? t({ ko: "아직 응모가 열리지 않았습니다.", en: "Entries are not open yet.", ja: "まだ応募は始まっていません。", zh: "报名尚未开始。", es: "Las inscripciones aún no están abiertas." })
+        : t({ ko: "응모가 마감되었습니다. 결제 전 응모는 확정되지 않으니 XRP 를 보내지 마세요.", en: "Entries are closed. An unpaid entry can no longer be confirmed - please do not send XRP.", ja: "応募は締め切りました。未決済の応募は確定できませんので、XRPを送らないでください。", zh: "报名已截止。未支付的参与无法再确认，请勿发送 XRP。", es: "Las inscripciones han cerrado. Una entrada sin pagar ya no puede confirmarse: no envíe XRP." });
+      return (
+        <>
+          <h3 style={h3}>{t({ ko: "응모를 진행할 수 없습니다", en: "Entry unavailable", ja: "応募できません", zh: "无法参与", es: "No se puede participar" })}</h3>
+          <Alert>{why}</Alert>
+          <button className="btn-main" style={cta} onClick={onClose}>{t({ ko: "닫기", en: "Close", ja: "閉じる", zh: "关闭", es: "Cerrar" })}</button>
+        </>
+      );
+    }
     switch (step) {
       /* ── ① 응모 내용 (구매 모달의 '수량' 자리 - 계정당 1회라 확인만 한다) + 수령 안내 ('배송 정보' 자리 - 현장 수령뿐) ── */
       case 1: return (
@@ -216,7 +242,7 @@ export function RaffleCheckoutCard({ mode, st, onClose, onChange, preview }: {
             <span style={{ fontSize: 12.5, fontWeight: 800, letterSpacing: ".1em", color: "var(--w-main)" }}>{t({ ko: "경품 · 전원 당첨, 종류만 추첨", en: "PRIZES · EVERYONE WINS, THE DRAW DECIDES WHICH", ja: "賞品・全員当選、種類のみ抽選", zh: "奖品 · 人人有奖，仅抽种类", es: "PREMIOS · TODOS GANAN, EL SORTEO DECIDE CUÁL" })}</span>
             {st.config.prizes.map((p, i) => (
               <div key={i} style={{ display: "flex", justifyContent: "space-between", gap: 12, fontSize: 15.5, color: "var(--ink-2)" }}>
-                <span>{p.name}</span><span className="mono" style={{ color: "var(--ink-4)" }}>{p.qty}</span>
+                <span>{prizeLabel(p.name, lang)}</span><span className="mono" style={{ color: "var(--ink-4)" }}>{p.qty}</span>
               </div>
             ))}
           </div>
@@ -277,6 +303,9 @@ export function RaffleCheckoutCard({ mode, st, onClose, onChange, preview }: {
             <div style={{ fontSize: 14, color: "#b45309", background: "#fff7ed", border: "1px solid #fed7aa", borderRadius: 10, padding: "9px 12px" }}>
               {t({ ko: `래플 리허설 모드 - 응모 기록은 테스트 장부에 저장됩니다. 응모 금액은 실제와 같은 ${price} XRP 이며, 리허설 입금은 종료 후 반환됩니다.`, en: `Raffle rehearsal - entries go to the test ledger. The amount is the real ${price} XRP; rehearsal deposits are returned afterwards.`, ja: `ラッフルリハーサル - 応募記録はテスト台帳に保存されます。金額は実際と同じ${price} XRPで、リハーサルの入金は終了後に返還します。`, zh: `抽奖彩排模式 - 参与记录保存在测试账本。金额与实际相同（${price} XRP），彩排入金将在结束后退还。`, es: `Ensayo del sorteo: las entradas van al libro de prueba. El importe es el real (${price} XRP); los depósitos del ensayo se devuelven después.` })}
             </div>
+          )}
+          {st.phase === "OPEN" && st.remaining > 0 && st.remaining <= 20 && (
+            <Alert>{t({ ko: `남은 자리 ${st.remaining}. 결제 확정 순서로 반영되며, 확정 전에 정원이 차면 응모는 확정되지 않고 입금액은 환불됩니다.`, en: `${st.remaining} spots left. Entries are confirmed in payment order; if capacity fills before yours is confirmed, the entry is not confirmed and the deposit is refunded.`, ja: `残り${st.remaining}枠。決済確定順に反映され、確定前に定員に達した場合は応募が確定せず入金は返金されます。`, zh: `仅剩 ${st.remaining} 个名额。按支付确认顺序生效；若在确认前满员，参与不生效，款项将退还。`, es: `Quedan ${st.remaining} plazas. Se confirman por orden de pago; si se completa antes de confirmar la suya, la entrada no se confirma y se devuelve el depósito.` })}</Alert>
           )}
           <Alert>
             {t({ ko: "외부 지갑에서 보낼 때는 Destination Tag 를 반드시 입력하세요. 태그가 없으면 응모와 연결되지 않습니다. XRP 만 인정됩니다 - RLUSD·다른 토큰은 받지 않습니다.", en: "If you send from an external wallet you must include the Destination Tag - without it the payment can't be matched to your entry. XRP only: RLUSD and other tokens are not accepted.", ja: "外部ウォレットから送る場合は必ずDestination Tagを入力してください。タグがないと応募と紐付きません。XRPのみ有効で、RLUSD・他のトークンは受け付けません。", zh: "从外部钱包转账时务必填写 Destination Tag，否则无法匹配到您的参与记录。仅接受 XRP，不接受 RLUSD 或其他代币。", es: "Si envía desde una billetera externa, incluya el Destination Tag; sin él no se puede vincular el pago. Solo XRP: no se acepta RLUSD ni otros tokens." })}
@@ -345,7 +374,7 @@ export function RaffleCheckoutCard({ mode, st, onClose, onChange, preview }: {
           <p style={{ fontSize: 16, lineHeight: 1.65, color: "var(--ink-2)", margin: 0 }}>
             {t({ ko: `래플 NFT 가 지갑으로 전송되었습니다. 당첨 경품은 ${fmtDate(st.config.drawAt, lang)} 본 페이지와 X·텔레그램에서 발표되고 NFT 카드에 표시됩니다.`, en: `The raffle NFT is in your wallet. Prizes are announced ${fmtDate(st.config.drawAt, lang)} on this page, X and Telegram, and shown on the NFT card.`, ja: `ラッフルNFTがウォレットへ転送されました。当選賞品は${fmtDate(st.config.drawAt, lang)}に本ページとX・Telegramで発表され、NFTカードに表示されます。`, zh: `抽奖 NFT 已转入您的钱包。中奖奖品将于 ${fmtDate(st.config.drawAt, lang)} 在本页及 X、Telegram 公布，并显示在 NFT 卡上。`, es: `El NFT del sorteo está en su billetera. Los premios se anuncian el ${fmtDate(st.config.drawAt, lang)} en esta página, X y Telegram, y se muestran en la tarjeta NFT.` })}
           </p>
-          <TicketCard mine={mine} t={t} />
+          <TicketCard mine={mine} t={t} lang={lang} />
           {mine.pass?.nftTokenId && <div className="mono" style={{ fontSize: 12, color: "var(--cap)", wordBreak: "break-all", fontWeight: 400 }}>NFT {mine.pass.nftTokenId}</div>}
           <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
             <a href={`https://x.com/intent/post?text=${encodeURIComponent(`XRP SEOUL 2026 raffle - I'm in with ticket #${no} 🎟️ @wellbianlabs`)}&url=${encodeURIComponent("https://wellbian.io/event/xrpl-seoul")}`} target="_blank" rel="noopener" className="btn-ghost" style={{ padding: "0 18px" }}>
@@ -378,8 +407,8 @@ export function RaffleCheckoutCard({ mode, st, onClose, onChange, preview }: {
   })();
 
   return (
-    <div className="overlay" style={{ zIndex: 1000 }} onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
-      <div className="modal-card easy" role="dialog" aria-modal="true" aria-label={t({ ko: "래플 응모", en: "Raffle entry", ja: "ラッフル応募", zh: "抽奖参与", es: "Participar en el sorteo" })}>
+    <div className="overlay" style={{ zIndex: 1000 }} onClick={(e) => { if (e.target === e.currentTarget && !locked) onClose(); }}>
+      <div className="modal-card easy" role="dialog" aria-modal="true" aria-label={t({ ko: "래플 응모", en: "Raffle entry", ja: "ラッフル応募", zh: "抽奖参与", es: "Participar en el sorteo" })} ref={dialogRef} tabIndex={-1} style={{ outline: "none" }}>
         <div className="sheet-handle" />
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <div className="mstep-ind">
@@ -393,7 +422,7 @@ export function RaffleCheckoutCard({ mode, st, onClose, onChange, preview }: {
               </span>
             ))}
           </div>
-          <button onClick={onClose} aria-label={t({ ko: "닫기", en: "Close", ja: "閉じる", zh: "关闭", es: "Cerrar" })} style={{ color: "var(--dis)", fontSize: 23.5, lineHeight: 1 }}>✕</button>
+          <button onClick={onClose} disabled={locked} aria-label={t({ ko: "닫기", en: "Close", ja: "閉じる", zh: "关闭", es: "Cerrar" })} style={{ color: "var(--dis)", fontSize: 23.5, lineHeight: 1 }}>✕</button>
         </div>
         {/* 결제 방법 표시 - 구매 모달의 방법 배지 자리. 래플은 XRP 하나뿐이라 고르는 화면 없이 배지만 둔다 */}
         <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
@@ -464,7 +493,7 @@ function Alert({ children }: { children: React.ReactNode }) {
 
 function TermCard({ checked, onToggle, title, desc }: { checked: boolean; onToggle: () => void; title: string; desc: string }) {
   return (
-    <button onClick={onToggle} style={{ display: "flex", gap: 12, border: checked ? "1px solid var(--w-main)" : "1px solid var(--bd-card)", background: checked ? "var(--panel)" : "#fff", borderRadius: 14, padding: "16px 18px", alignItems: "flex-start", textAlign: "left" }}>
+    <button onClick={onToggle} role="checkbox" aria-checked={checked} style={{ display: "flex", gap: 12, border: checked ? "1px solid var(--w-main)" : "1px solid var(--bd-card)", background: checked ? "var(--panel)" : "#fff", borderRadius: 14, padding: "16px 18px", alignItems: "flex-start", textAlign: "left" }}>
       <span style={{ width: 22, height: 22, borderRadius: 7, background: checked ? "var(--w-main)" : "#fff", border: checked ? "none" : "1.5px solid var(--bd-input)", display: "inline-flex", alignItems: "center", justifyContent: "center", flex: "none", marginTop: 1 }}>
         {checked && <svg width={13} height={13} viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth={3.5} strokeLinecap="round" strokeLinejoin="round"><path d="M5 12l4 4L19 6" /></svg>}
       </span>

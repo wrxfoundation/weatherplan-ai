@@ -19,11 +19,12 @@ const SORT: SortSpec<Row> = {
 
 export default function RafflePanel({ secret }: { secret: string }) {
   const [mode, setMode] = useState<"prod" | "test">("prod");
-  const [status, setStatus] = useState<"" | "PAID" | "PENDING">("");
+  const [status, setStatus] = useState<"" | "PAID" | "PENDING" | "OVERFLOW">("");
   const [q, setQ] = useState("");
   const [rows, setRows] = useState<Row[]>([]);
   const [summary, setSummary] = useState<Summary | null>(null);
   const [msg, setMsg] = useState("");
+  const overflow = rows.filter((r) => r.status === "OVERFLOW").length;   // 정원·기간 마감 뒤 확인된 입금 - 환불 대상
   const filtered = rows.filter((r) => (!status || r.status === status) && (!q || r.wallet.includes(q) || (r.ticketCode ?? "").includes(q.toUpperCase()) || (r.txHash ?? "").includes(q.toUpperCase())));
   const sort = useSort(filtered, SORT, { key: "no", dir: "asc" });
   const pager = usePager(sort.sorted);
@@ -49,10 +50,11 @@ export default function RafflePanel({ secret }: { secret: string }) {
           <option value="prod">실제 (xrpseoul-2026)</option>
           <option value="test">리허설 (xrpseoul-2026-test)</option>
         </select>
-        <select className="field-select" value={status} onChange={(e) => setStatus(e.target.value as "" | "PAID" | "PENDING")} style={{ width: 160 }}>
+        <select className="field-select" value={status} onChange={(e) => setStatus(e.target.value as "" | "PAID" | "PENDING" | "OVERFLOW")} style={{ width: 200 }}>
           <option value="">전체 상태</option>
           <option value="PAID">결제 확정</option>
           <option value="PENDING">결제 대기</option>
+          <option value="OVERFLOW">정원 초과 · 환불 대상</option>
         </select>
         <input className="field-input" placeholder="지갑 · 티켓 코드 · 해시" value={q} onChange={(e) => setQ(e.target.value)} style={{ width: 260 }} />
         <button className="btn-ghost" onClick={load} style={{ padding: "6px 14px" }}>새로고침</button>
@@ -61,7 +63,7 @@ export default function RafflePanel({ secret }: { secret: string }) {
 
       {summary && (
         <>
-          <div className="stat-cell span-3"><div className="stat-cell-k"><span>결제 확정 (참여 현황)</span></div><div className="stat-cell-v">{summary.paid.toLocaleString()}</div><div className="stat-cell-delta">응모 행 {summary.total.toLocaleString()} · 대기 {(summary.total - summary.paid).toLocaleString()}</div></div>
+          <div className="stat-cell span-3"><div className="stat-cell-k"><span>결제 확정 (참여 현황)</span></div><div className="stat-cell-v">{summary.paid.toLocaleString()}</div><div className="stat-cell-delta">응모 행 {summary.total.toLocaleString()} · 대기 {(summary.total - summary.paid - overflow).toLocaleString()}{overflow ? <> · <b style={{ color: "var(--red)" }}>환불 대상 {overflow}</b></> : null}</div></div>
           <div className="stat-cell span-3"><div className="stat-cell-k"><span>경품 배정</span></div><div className="stat-cell-v">{summary.assigned.toLocaleString()}</div><div className="stat-cell-delta">{summary.assigned ? "추첨 완료" : "추첨 전 - 블라인드 추첨 탭 › 래플 경품 배정"}</div></div>
           <div className="stat-cell span-3"><div className="stat-cell-k"><span>현장 수령</span></div><div className="stat-cell-v">{summary.redeemed.toLocaleString()}</div><div className="stat-cell-delta">/admin/raffle-check 스캐너</div></div>
           <div className="stat-cell span-3"><div className="stat-cell-k"><span>경품별 배정</span></div><div style={{ fontSize: 13, lineHeight: 1.6 }}>{summary.byPrize.length ? summary.byPrize.map(([k, v]) => <div key={k}>{k} <b>{v}</b></div>) : <span className="dim">-</span>}</div></div>
@@ -83,7 +85,7 @@ export default function RafflePanel({ secret }: { secret: string }) {
                 <tr key={r.id}>
                   <td className="num mono">{r.entryNo != null ? `#${String(r.entryNo).padStart(4, "0")}` : "-"}</td>
                   <td className="mono" title={r.wallet} style={{ fontSize: 12 }}>{short(r.wallet, 12)}</td>
-                  <td className={r.status === "PAID" ? "ok" : "warn"}>{r.status === "PAID" ? "결제 확정" : r.status === "PENDING" ? "대기" : r.status}</td>
+                  <td className={r.status === "PAID" ? "ok" : "warn"}>{r.status === "PAID" ? "결제 확정" : r.status === "PENDING" ? "대기" : r.status === "OVERFLOW" ? "정원 초과 · 환불" : r.status}</td>
                   <td className="dim">{when(r.paidAt)}</td>
                   <td>{r.prize ?? <span className="dim">-</span>}</td>
                   <td className="dim">{r.redeemedAt ? `${when(r.redeemedAt)} · ${r.redeemedBy ?? ""}` : "-"}</td>

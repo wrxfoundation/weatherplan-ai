@@ -35,6 +35,27 @@ diff -ruN a/src/app/admin/page.tsx b/src/app/admin/page.tsx
        {tab === "시스템·용량" && <SystemPanel secret={secret} />}
        {tab === "회원" && <MembersPanel secret={secret} />}
  
+diff -ruN a/src/app/admin/raffle-check/page.tsx b/src/app/admin/raffle-check/page.tsx
+--- a/src/app/admin/raffle-check/page.tsx	2026-09-21 10:52:41.136820103 +0000
++++ b/src/app/admin/raffle-check/page.tsx	2026-09-21 11:56:22.065209764 +0000
+@@ -49,7 +49,7 @@
+       if (!r.ok) { setMsg({ tone: "bad", text: d.error || "처리 실패" }); if (d.ticket) setTicket(d.ticket); return; }
+       setTicket(d.ticket);
+       setMsg({ tone: "ok", text: `수령 처리 완료 · #${String(d.ticket.entryNo).padStart(4, "0")} · ${d.ticket.prize ?? "경품 미배정"}` });
+-    } finally { setBusy(false); }
++    } finally { setBusy(false); lastRef.current = ""; /* 같은 QR 을 다시 읽으면 "이미 수령 처리됨" 이 뜨도록 연속 읽기 잠금을 푼다 */ }
+   }, [H, staff, ticket]);
+ 
+   /* 카메라: BarcodeDetector 가 있는 브라우저(Chrome/Android 등)에서만. 같은 코드는 연속으로 다시 읽지 않는다. */
+@@ -91,7 +91,7 @@
+           <input className="field-input" type="password" placeholder="관리자 시크릿" value={secret} onChange={(e) => setSecret(e.target.value)} />
+           <input className="field-input" placeholder="스태프 이름(처리자 표시)" value={staff} onChange={(e) => setStaff(e.target.value)} />
+           <div style={{ display: "flex", gap: 8 }}>
+-            <input className="field-input" placeholder="WBR-0001-XXXXXXXXXX 또는 QR 주소 붙여넣기" value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter") lookup(input); }} style={{ flex: 1, fontFamily: "monospace" }} autoFocus />
++            <input className="field-input" placeholder="WBR-0001-XXXXXXXXXX 또는 QR 주소 붙여넣기" value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter" && secret) lookup(input); }} style={{ flex: 1, fontFamily: "monospace" }} autoFocus />
+             <button className="btn-primary" disabled={busy || !secret} onClick={() => lookup(input)}>조회</button>
+           </div>
+           <button className="btn-ghost" onClick={() => setCam((c) => !c)} style={{ alignSelf: "flex-start" }}>{cam ? "카메라 끄기" : "카메라로 QR 읽기"}</button>
 diff -ruN a/src/app/api/admin/raffle/route.ts b/src/app/api/admin/raffle/route.ts
 --- a/src/app/api/admin/raffle/route.ts	2026-09-21 10:52:41.137973373 +0000
 +++ b/src/app/api/admin/raffle/route.ts	2026-09-21 11:27:33.947537457 +0000
@@ -88,10 +109,86 @@ diff -ruN a/src/app/api/admin/raffle/route.ts b/src/app/api/admin/raffle/route.t
  }
  
  function view(e: { id: string; event: string; wallet: string; status: string; entryNo: number | null; ticketCode: string | null; prize: string | null; redeemedAt: Date | null; redeemedBy: string | null; paidAt: Date | null; txHash: string | null; amountXrp: unknown; createdAt: Date }) {
+diff -ruN a/src/app/api/raffle/card/[code]/route.ts b/src/app/api/raffle/card/[code]/route.ts
+--- a/src/app/api/raffle/card/[code]/route.ts	2026-09-21 10:52:41.141853278 +0000
++++ b/src/app/api/raffle/card/[code]/route.ts	2026-09-21 11:56:22.064653079 +0000
+@@ -2,6 +2,7 @@
+ import QRCode from "qrcode";
+ import sharp from "sharp";
+ import { findTicket, ticketUrl } from "@/lib/raffle";
++import { prizeLabel } from "@/lib/raffle-prizes";
+ 
+ export const dynamic = "force-dynamic";
+ export const maxDuration = 30;
+@@ -17,6 +18,8 @@
+   const origin = new URL(req.url).origin;
+   const no = String(entry.entryNo).padStart(4, "0");
+   const test = entry.event.endsWith("-test");
++  /* 추첨 뒤에는 배정된 경품을 카드에 적는다(영문 - 서버 렌더러에 한글 글꼴이 없다) */
++  const prize = entry.prize ? prizeLabel(entry.prize, "en").toUpperCase() : null;
+   const qr = await QRCode.toDataURL(ticketUrl(origin, entry.ticketCode!), { margin: 1, width: 360, errorCorrectionLevel: "M", color: { dark: "#1b1b48", light: "#ffffff" } });
+ 
+   const svg = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="600" height="1000" viewBox="0 0 600 1000">
+@@ -33,7 +36,7 @@
+   <text x="48" y="172" font-family="Arial, Helvetica, sans-serif" font-size="18" fill="#c8c8f0" letter-spacing="4">RAFFLE TICKET${test ? "  ·  TEST" : ""}</text>
+   <text x="48" y="300" font-family="Arial, Helvetica, sans-serif" font-size="108" font-weight="800" fill="#ffffff">#${no}</text>
+   <text x="48" y="346" font-family="Arial, Helvetica, sans-serif" font-size="18" fill="#c8c8f0">2026.10.03  ·  SEOUL  ·  5 XRP ENTRY</text>
+-  <rect x="100" y="400" width="400" height="400" rx="24" fill="#ffffff"/>
++${prize ? `  <text x="48" y="382" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="700" fill="#ffd166" letter-spacing="1">PRIZE  ·  ${prize}</text>\n` : ""}  <rect x="100" y="400" width="400" height="400" rx="24" fill="#ffffff"/>
+   <image x="120" y="420" width="360" height="360" xlink:href="${qr}"/>
+   <text x="300" y="850" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="700" fill="#ffffff">Present this QR at the venue to collect your prize</text>
+   <text x="300" y="882" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#f5b8b8">Valid once. Do not share or expose this QR.</text>
+@@ -41,5 +44,5 @@
+   <text x="300" y="960" text-anchor="middle" font-family="Courier New, monospace" font-size="16" fill="#9a9ad0">${entry.ticketCode}</text>
+ </svg>`;
+   const png = await sharp(Buffer.from(svg)).png().toBuffer();
+-  return new NextResponse(new Uint8Array(png), { headers: { "Content-Type": "image/png", "Cache-Control": "public, s-maxage=86400, stale-while-revalidate=604800" } });
++  return new NextResponse(new Uint8Array(png), { headers: { "Content-Type": "image/png", "Cache-Control": "public, s-maxage=3600, stale-while-revalidate=86400" } });
+ }
+diff -ruN a/src/app/api/raffle/enter/route.ts b/src/app/api/raffle/enter/route.ts
+--- a/src/app/api/raffle/enter/route.ts	2026-09-21 10:52:41.141897978 +0000
++++ b/src/app/api/raffle/enter/route.ts	2026-09-21 11:56:22.064545301 +0000
+@@ -9,7 +9,7 @@
+ 
+ /** 응모 시작 - 결제를 기다리는 응모 행(태그)을 만들고 입금 정보를 돌려준다. 계정당 1회, 이미 있으면 그 행. */
+ export async function POST(req: Request) {
+-  const limited = await guard(req, "raffle-enter", 20);
++  const limited = await guard(req, "raffle-enter", 60);
+   if (limited) return NextResponse.json(limited.body, { status: limited.status });
+   const body = z.object({ mode: z.enum(["prod", "test"]).optional() }).safeParse(await req.json().catch(() => ({})));
+   const mode: RaffleMode = body.success && body.data.mode === "test" ? "test" : "prod";
+diff -ruN a/src/app/api/raffle/meta/[code]/route.ts b/src/app/api/raffle/meta/[code]/route.ts
+--- a/src/app/api/raffle/meta/[code]/route.ts	2026-09-21 10:52:41.141971214 +0000
++++ b/src/app/api/raffle/meta/[code]/route.ts	2026-09-21 11:56:22.064725376 +0000
+@@ -1,5 +1,6 @@
+ import { NextRequest, NextResponse } from "next/server";
+ import { findTicket } from "@/lib/raffle";
++import { prizeLabel } from "@/lib/raffle-prizes";
+ 
+ export const dynamic = "force-dynamic";
+ 
+@@ -22,6 +23,7 @@
+       { trait_type: "Ticket No.", value: no },
+       { trait_type: "Event", value: "XRP SEOUL 2026" },
+       { trait_type: "Date", value: "2026-10-03" },
++      ...(entry.prize ? [{ trait_type: "Prize", value: prizeLabel(entry.prize, "en") }] : []),
+     ],
+   }, { headers: { "Cache-Control": "public, s-maxage=3600, stale-while-revalidate=86400" } });
+ }
 diff -ruN a/src/app/api/raffle/verify/route.ts b/src/app/api/raffle/verify/route.ts
 --- a/src/app/api/raffle/verify/route.ts	2026-09-21 10:52:41.142017749 +0000
-+++ b/src/app/api/raffle/verify/route.ts	2026-09-21 11:26:23.511250984 +0000
-@@ -17,7 +17,13 @@
++++ b/src/app/api/raffle/verify/route.ts	2026-09-21 11:56:22.064418563 +0000
+@@ -9,7 +9,8 @@
+ 
+ /** 결제 확정 - XRP 입금 해시로 응모를 PAID 처리하고 래플 NFT 발행을 큐에 넣는다. 재호출은 멱등. */
+ export async function POST(req: Request) {
+-  const limited = await guard(req, "raffle-verify", 30);
++  /* IP 당 분당 한도 - 통신사 NAT 뒤의 여러 사용자가 같은 IP 로 보이므로 오픈 러시 때 30 은 좁다(확인 폴링이 한 사람당 최대 8회) */
++  const limited = await guard(req, "raffle-verify", 90);
+   if (limited) return NextResponse.json(limited.body, { status: limited.status });
+   const body = z.object({ txHash: z.string().max(64), mode: z.enum(["prod", "test"]).optional() }).safeParse(await req.json().catch(() => null));
+   if (!body.success) return NextResponse.json({ error: "잘못된 요청" }, { status: 400 });
+@@ -17,7 +18,13 @@
    const wallet = await getVerifiedWallet();
    if (!wallet) return NextResponse.json({ error: "로그인이 필요합니다." }, { status: 401 });
    const origin = new URL(req.url).origin;
@@ -108,6 +205,26 @@ diff -ruN a/src/app/api/raffle/verify/route.ts b/src/app/api/raffle/verify/route
 +    return NextResponse.json({ error: "결제 확인 중 오류가 났습니다. 잠시 후 같은 해시로 다시 확인해 주세요.", pending: true }, { status: 202 });
 +  }
  }
+diff -ruN a/src/app/event/xrpl-seoul/page.tsx b/src/app/event/xrpl-seoul/page.tsx
+--- a/src/app/event/xrpl-seoul/page.tsx	2026-09-21 10:52:41.143170019 +0000
++++ b/src/app/event/xrpl-seoul/page.tsx	2026-09-21 11:56:22.064988719 +0000
+@@ -1,9 +1,14 @@
+ import { Suspense } from "react";
+ import RafflePage from "@/components/raffle/RafflePage";
+ 
++const TITLE = "XRP SEOUL 2026 래플 · 5 XRP 응모 - Wellbian";
++const DESC = "5 XRP 로 응모하고 XRP SEOUL 2026(10/3 서울) 초대권·Weather Data Token Generator™·굿즈를 받아 가세요. 응모하면 래플 NFT 가 지갑으로 발급됩니다.";
+ export const metadata = {
+-  title: "XRP SEOUL 2026 래플 · 5 XRP 응모 - Wellbian",
+-  description: "5 XRP 로 응모하고 XRP SEOUL 2026(10/3 서울) 초대권·Weather Data Token Generator™·굿즈를 받아 가세요. 응모하면 래플 NFT 가 지갑으로 발급됩니다.",
++  title: TITLE,
++  description: DESC,
++  /* 링크 카드(X 공유 버튼·텔레그램) - 히어로의 경품 예상도를 쓴다. metadataBase(layout) 가 wellbian.io 라 상대 경로면 된다. */
++  openGraph: { title: TITLE, description: DESC, type: "website", images: [{ url: "/assets/raffle/hero.webp", width: 2000, height: 1131 }] },
++  twitter: { card: "summary_large_image", title: TITLE, description: DESC, images: ["/assets/raffle/hero.webp"] },
+ };
+ 
+ /* /event/xrpl-seoul - 9/17 12:00 KST 시작. 판매 페이지와 완전히 분리된 이벤트 페이지(2026-09-16 지시).
 diff -ruN a/src/app/event/xrpl-seoul/test/page.tsx b/src/app/event/xrpl-seoul/test/page.tsx
 --- a/src/app/event/xrpl-seoul/test/page.tsx	2026-09-21 10:52:41.143192147 +0000
 +++ b/src/app/event/xrpl-seoul/test/page.tsx	2026-09-21 11:02:30.570150378 +0000
@@ -120,6 +237,28 @@ diff -ruN a/src/app/event/xrpl-seoul/test/page.tsx b/src/app/event/xrpl-seoul/te
        </div>
        <Suspense>
          <RafflePage mode="test" />
+diff -ruN a/src/app/event/xrpl-seoul/ticket/[code]/page.tsx b/src/app/event/xrpl-seoul/ticket/[code]/page.tsx
+--- a/src/app/event/xrpl-seoul/ticket/[code]/page.tsx	2026-09-21 10:52:41.143245070 +0000
++++ b/src/app/event/xrpl-seoul/ticket/[code]/page.tsx	2026-09-21 11:56:22.065091326 +0000
+@@ -1,5 +1,6 @@
+ import "@/app/wb-page.css";
+ import { findTicket, loadRaffleConfig, modeOfEvent } from "@/lib/raffle";
++import { prizeLabel } from "@/lib/raffle-prizes";
+ 
+ export const dynamic = "force-dynamic";
+ export const metadata = { title: "XRP SEOUL 2026 래플 티켓 확인 - Wellbian", robots: { index: false, follow: false } };
+@@ -34,6 +35,11 @@
+                 <div className="dim" style={{ fontSize: 13 }}>행사 {cfg ? new Date(cfg.eventAt).toLocaleDateString("ko-KR", { timeZone: "Asia/Seoul" }) : "2026. 10. 3."} · 행사장에서 QR 코드 확인 후 경품이 지급됩니다</div>
+               </div>
+             </div>
++            {/* 해외 참가자용 영문 요약 - QR 을 자기 폰으로 찍으면 이 페이지가 뜬다(카드 이미지는 영문뿐) */}
++            <div className="panel" style={{ marginTop: 12, fontSize: 14, lineHeight: 1.65, color: "var(--ink-3)" }}>
++              <b>Ticket {no}</b> · {entry.status === "PAID" ? "Valid" : "Payment not confirmed"} · Prize: <b>{drawDone && entry.prize ? prizeLabel(entry.prize, "en") : "not drawn yet"}</b> · {entry.redeemedAt ? "Collected" : "Not collected yet"}.
++              {" "}Prizes are handed out at the XRP SEOUL 2026 venue on 3 October after QR verification. The QR code is valid once - do not share or expose it; prizes collected by others will not be compensated.
++            </div>
+             <div className="note warn" style={{ marginTop: 12 }}>
+               <b>QR 코드 관리 안내</b> QR 코드는 본인 확인 및 경품 수령에 사용되며 1회만 유효합니다. QR 코드를 타인과 공유하거나 외부에 노출하여 발생한 피해(타인의 선수령 등)는 보상하지 않으니, 캡처·전달 없이 안전하게 보관해 주시기 바랍니다.
+             </div>
 diff -ruN a/src/components/admin/BlindDrawPanel.tsx b/src/components/admin/BlindDrawPanel.tsx
 --- a/src/components/admin/BlindDrawPanel.tsx	2026-09-21 10:52:41.145361902 +0000
 +++ b/src/components/admin/BlindDrawPanel.tsx	2026-09-21 11:26:23.511387410 +0000
@@ -157,8 +296,8 @@ diff -ruN a/src/components/admin/BlindDrawPanel.tsx b/src/components/admin/Blind
                ))}
 diff -ruN a/src/components/admin/RafflePanel.tsx b/src/components/admin/RafflePanel.tsx
 --- a/src/components/admin/RafflePanel.tsx	1970-01-01 00:00:00.000000000 +0000
-+++ b/src/components/admin/RafflePanel.tsx	2026-09-21 11:26:50.433476402 +0000
-@@ -0,0 +1,102 @@
++++ b/src/components/admin/RafflePanel.tsx	2026-09-21 11:56:22.064845606 +0000
+@@ -0,0 +1,104 @@
 +"use client";
 +/* 관리자 콘솔 "래플" 탭 (2026-09-21) - XRPL SEOUL 2026 래플 응모 현황. 결제 확정 수(=참여 현황 카운트)·경품 배정·현장 수령을
 +   한 표로 본다. 데이터는 /api/admin/raffle?mode= (읽기 전용). 경품 배정은 블라인드 추첨 탭의 「래플 경품 배정」, 수령 처리는
@@ -180,11 +319,12 @@ diff -ruN a/src/components/admin/RafflePanel.tsx b/src/components/admin/RafflePa
 +
 +export default function RafflePanel({ secret }: { secret: string }) {
 +  const [mode, setMode] = useState<"prod" | "test">("prod");
-+  const [status, setStatus] = useState<"" | "PAID" | "PENDING">("");
++  const [status, setStatus] = useState<"" | "PAID" | "PENDING" | "OVERFLOW">("");
 +  const [q, setQ] = useState("");
 +  const [rows, setRows] = useState<Row[]>([]);
 +  const [summary, setSummary] = useState<Summary | null>(null);
 +  const [msg, setMsg] = useState("");
++  const overflow = rows.filter((r) => r.status === "OVERFLOW").length;   // 정원·기간 마감 뒤 확인된 입금 - 환불 대상
 +  const filtered = rows.filter((r) => (!status || r.status === status) && (!q || r.wallet.includes(q) || (r.ticketCode ?? "").includes(q.toUpperCase()) || (r.txHash ?? "").includes(q.toUpperCase())));
 +  const sort = useSort(filtered, SORT, { key: "no", dir: "asc" });
 +  const pager = usePager(sort.sorted);
@@ -210,10 +350,11 @@ diff -ruN a/src/components/admin/RafflePanel.tsx b/src/components/admin/RafflePa
 +          <option value="prod">실제 (xrpseoul-2026)</option>
 +          <option value="test">리허설 (xrpseoul-2026-test)</option>
 +        </select>
-+        <select className="field-select" value={status} onChange={(e) => setStatus(e.target.value as "" | "PAID" | "PENDING")} style={{ width: 160 }}>
++        <select className="field-select" value={status} onChange={(e) => setStatus(e.target.value as "" | "PAID" | "PENDING" | "OVERFLOW")} style={{ width: 200 }}>
 +          <option value="">전체 상태</option>
 +          <option value="PAID">결제 확정</option>
 +          <option value="PENDING">결제 대기</option>
++          <option value="OVERFLOW">정원 초과 · 환불 대상</option>
 +        </select>
 +        <input className="field-input" placeholder="지갑 · 티켓 코드 · 해시" value={q} onChange={(e) => setQ(e.target.value)} style={{ width: 260 }} />
 +        <button className="btn-ghost" onClick={load} style={{ padding: "6px 14px" }}>새로고침</button>
@@ -222,7 +363,7 @@ diff -ruN a/src/components/admin/RafflePanel.tsx b/src/components/admin/RafflePa
 +
 +      {summary && (
 +        <>
-+          <div className="stat-cell span-3"><div className="stat-cell-k"><span>결제 확정 (참여 현황)</span></div><div className="stat-cell-v">{summary.paid.toLocaleString()}</div><div className="stat-cell-delta">응모 행 {summary.total.toLocaleString()} · 대기 {(summary.total - summary.paid).toLocaleString()}</div></div>
++          <div className="stat-cell span-3"><div className="stat-cell-k"><span>결제 확정 (참여 현황)</span></div><div className="stat-cell-v">{summary.paid.toLocaleString()}</div><div className="stat-cell-delta">응모 행 {summary.total.toLocaleString()} · 대기 {(summary.total - summary.paid - overflow).toLocaleString()}{overflow ? <> · <b style={{ color: "var(--red)" }}>환불 대상 {overflow}</b></> : null}</div></div>
 +          <div className="stat-cell span-3"><div className="stat-cell-k"><span>경품 배정</span></div><div className="stat-cell-v">{summary.assigned.toLocaleString()}</div><div className="stat-cell-delta">{summary.assigned ? "추첨 완료" : "추첨 전 - 블라인드 추첨 탭 › 래플 경품 배정"}</div></div>
 +          <div className="stat-cell span-3"><div className="stat-cell-k"><span>현장 수령</span></div><div className="stat-cell-v">{summary.redeemed.toLocaleString()}</div><div className="stat-cell-delta">/admin/raffle-check 스캐너</div></div>
 +          <div className="stat-cell span-3"><div className="stat-cell-k"><span>경품별 배정</span></div><div style={{ fontSize: 13, lineHeight: 1.6 }}>{summary.byPrize.length ? summary.byPrize.map(([k, v]) => <div key={k}>{k} <b>{v}</b></div>) : <span className="dim">-</span>}</div></div>
@@ -244,7 +385,7 @@ diff -ruN a/src/components/admin/RafflePanel.tsx b/src/components/admin/RafflePa
 +                <tr key={r.id}>
 +                  <td className="num mono">{r.entryNo != null ? `#${String(r.entryNo).padStart(4, "0")}` : "-"}</td>
 +                  <td className="mono" title={r.wallet} style={{ fontSize: 12 }}>{short(r.wallet, 12)}</td>
-+                  <td className={r.status === "PAID" ? "ok" : "warn"}>{r.status === "PAID" ? "결제 확정" : r.status === "PENDING" ? "대기" : r.status}</td>
++                  <td className={r.status === "PAID" ? "ok" : "warn"}>{r.status === "PAID" ? "결제 확정" : r.status === "PENDING" ? "대기" : r.status === "OVERFLOW" ? "정원 초과 · 환불" : r.status}</td>
 +                  <td className="dim">{when(r.paidAt)}</td>
 +                  <td>{r.prize ?? <span className="dim">-</span>}</td>
 +                  <td className="dim">{r.redeemedAt ? `${when(r.redeemedAt)} · ${r.redeemedBy ?? ""}` : "-"}</td>
@@ -263,8 +404,8 @@ diff -ruN a/src/components/admin/RafflePanel.tsx b/src/components/admin/RafflePa
 +}
 diff -ruN a/src/components/raffle/RaffleCheckoutModal.tsx b/src/components/raffle/RaffleCheckoutModal.tsx
 --- a/src/components/raffle/RaffleCheckoutModal.tsx	1970-01-01 00:00:00.000000000 +0000
-+++ b/src/components/raffle/RaffleCheckoutModal.tsx	2026-09-21 11:05:23.168035840 +0000
-@@ -0,0 +1,489 @@
++++ b/src/components/raffle/RaffleCheckoutModal.tsx	2026-09-21 11:56:22.063853382 +0000
+@@ -0,0 +1,518 @@
 +"use client";
 +/* 래플 응모 결제창 (2026-09-21 지시: "기존 페이지 결제창 내용 체크해서 XRP 결제할 수 있게 갖춰라. 기존 흐름을 따르되
 +   카드결제는 없고 순전히 XRP 로만").
@@ -289,6 +430,7 @@ diff -ruN a/src/components/raffle/RaffleCheckoutModal.tsx b/src/components/raffl
 +import { toast } from "@/components/Toast";
 +import { TicketCard } from "./TicketCard";
 +import { raffleQs, type RaffleMine, type RaffleMode, type RaffleStateView } from "./types";
++import { prizeLabel } from "@/lib/raffle-prizes";
 +
 +interface Bal { address: string; xrp: number; activated: boolean; reserve: number }
 +interface Entry { destTag: number; status: string }
@@ -320,10 +462,8 @@ diff -ruN a/src/components/raffle/RaffleCheckoutModal.tsx b/src/components/raffl
 +  useEffect(() => { setMounted(true); }, []);
 +  useEffect(() => {
 +    document.body.style.overflow = "hidden";
-+    const esc = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
-+    addEventListener("keydown", esc);
-+    return () => { document.body.style.overflow = ""; removeEventListener("keydown", esc); };
-+  }, [onClose]);
++    return () => { document.body.style.overflow = ""; };
++  }, []);
 +  if (!mounted) return null;
 +  /* 구매 모달과 같은 .wb-store 스타일을 쓰려고 포털로 body 에 붙인다(래플 페이지는 .wb-page 스코프라 변수·모달 규칙이 없다) */
 +  return createPortal(
@@ -360,6 +500,19 @@ diff -ruN a/src/components/raffle/RaffleCheckoutModal.tsx b/src/components/raffl
 +  const need = needXrp(price, bal);
 +  const enough = !!bal && bal.activated && bal.xrp >= need;
 +  const no = String(mine?.entryNo ?? 0).padStart(4, "0");
++  /* 서명·원장 확인·응모 생성·NFT 수락 중에는 창을 닫지 않는다(바탕 클릭·ESC·✕) - 닫히면 진행 상황을 잃고 해시로 다시 확인해야 한다 (2026-09-21 점검) */
++  const locked = payStatus === "signing" || payStatus === "verifying" || busy;
++  const dialogRef = useRef<HTMLDivElement | null>(null);
++  useEffect(() => { if (!preview) dialogRef.current?.focus(); }, [preview]);
++  useEffect(() => {
++    if (preview) return;
++    const esc = (e: KeyboardEvent) => { if (e.key === "Escape" && !locked) onClose(); };
++    addEventListener("keydown", esc);
++    return () => removeEventListener("keydown", esc);
++  }, [locked, onClose, preview]);
++  /* 결제 전인데 응모가 열려 있지 않으면(정원·기간 마감, 정원 초과로 확정되지 않은 입금) 결제 화면을 보여 주지 않는다 -
++     마감 뒤 보낸 입금은 확정되지 않고 환불 대상이 된다(2026-09-21 점검). st 는 페이지가 20초마다 새로 읽어 내려 준다. */
++  const blocked = !done && (mine?.status === "OVERFLOW" || st.phase !== "OPEN");
 +
 +  const stepNames = t<string[]>({
 +    ko: ["응모 내용", "동의", "XRP 결제", "NFT 수령"], en: ["Entry", "Consent", "Pay XRP", "Get NFT"],
@@ -426,7 +579,7 @@ diff -ruN a/src/components/raffle/RaffleCheckoutModal.tsx b/src/components/raffl
 +          toast.ok(t({ ko: "결제가 확인되었습니다", en: "Payment confirmed", ja: "決済を確認しました", zh: "支付已确认", es: "Pago confirmado" }));
 +          setPayStatus("done"); await refreshMine(); await onChange(); setStep(4); return;
 +        }
-+        if (r.status !== 202) { const m = d.error || t({ ko: "결제 확인에 실패했습니다.", en: "Payment could not be verified.", ja: "決済を確認できませんでした。", zh: "支付验证失败。", es: "No se pudo verificar el pago." }); setErr(m); toast.err(m); setPayStatus("idle"); return; }
++        if (r.status !== 202) { const m = d.error || t({ ko: "결제 확인에 실패했습니다.", en: "Payment could not be verified.", ja: "決済を確認できませんでした。", zh: "支付验证失败。", es: "No se pudo verificar el pago." }); setErr(m); toast.err(m); setPayStatus("idle"); await refreshMine().catch(() => null); await onChange(); return; }
 +        await new Promise((res) => setTimeout(res, 4000));
 +      }
 +      setErr(notConfirmed); toast.err(notConfirmed); setPayStatus("idle");
@@ -467,6 +620,20 @@ diff -ruN a/src/components/raffle/RaffleCheckoutModal.tsx b/src/components/raffl
 +  const copyLabel = (which: "addr" | "dest" | "tag") => copied === which ? t({ ko: "복사됨 ✓", en: "Copied ✓", ja: "コピー済み ✓", zh: "已复制 ✓", es: "Copiado ✓" }) : t({ ko: "복사", en: "Copy", ja: "コピー", zh: "复制", es: "Copiar" });
 +
 +  const stepBody = (() => {
++    if (blocked) {
++      const why = mine?.status === "OVERFLOW"
++        ? t({ ko: "정원·기간 마감 뒤 확인된 입금이라 응모가 확정되지 않았습니다. 입금액은 환불해 드립니다 - admin@wellbianlabs.io 로 지갑 주소와 트랜잭션 해시를 보내 주세요.", en: "The payment was confirmed after entries closed, so the entry was not confirmed. The deposit will be refunded - email admin@wellbianlabs.io with your wallet address and transaction hash.", ja: "定員・期間の締切後に確認された入金のため、応募は確定していません。入金は返金します - admin@wellbianlabs.io へウォレットアドレスとハッシュをお送りください。", zh: "该笔款项在报名截止后确认，参与未生效。款项将退还 - 请将钱包地址与交易哈希发送至 admin@wellbianlabs.io。", es: "El pago se confirmó tras el cierre, así que la participación no se confirmó. Se devolverá el depósito: escriba a admin@wellbianlabs.io con su dirección y el hash." })
++        : st.phase === "SOLD_OUT" ? t({ ko: `선착순 ${st.config.maxEntries}명이 모두 찼습니다. 결제 전 응모는 확정되지 않으니 XRP 를 보내지 마세요.`, en: `All ${st.config.maxEntries} spots are filled. An unpaid entry can no longer be confirmed - please do not send XRP.`, ja: `先着${st.config.maxEntries}名が埋まりました。未決済の応募は確定できませんので、XRPを送らないでください。`, zh: `${st.config.maxEntries} 个名额已满。未支付的参与无法再确认，请勿发送 XRP。`, es: `Las ${st.config.maxEntries} plazas están completas. Una entrada sin pagar ya no puede confirmarse: no envíe XRP.` })
++        : st.phase === "BEFORE" ? t({ ko: "아직 응모가 열리지 않았습니다.", en: "Entries are not open yet.", ja: "まだ応募は始まっていません。", zh: "报名尚未开始。", es: "Las inscripciones aún no están abiertas." })
++        : t({ ko: "응모가 마감되었습니다. 결제 전 응모는 확정되지 않으니 XRP 를 보내지 마세요.", en: "Entries are closed. An unpaid entry can no longer be confirmed - please do not send XRP.", ja: "応募は締め切りました。未決済の応募は確定できませんので、XRPを送らないでください。", zh: "报名已截止。未支付的参与无法再确认，请勿发送 XRP。", es: "Las inscripciones han cerrado. Una entrada sin pagar ya no puede confirmarse: no envíe XRP." });
++      return (
++        <>
++          <h3 style={h3}>{t({ ko: "응모를 진행할 수 없습니다", en: "Entry unavailable", ja: "応募できません", zh: "无法参与", es: "No se puede participar" })}</h3>
++          <Alert>{why}</Alert>
++          <button className="btn-main" style={cta} onClick={onClose}>{t({ ko: "닫기", en: "Close", ja: "閉じる", zh: "关闭", es: "Cerrar" })}</button>
++        </>
++      );
++    }
 +    switch (step) {
 +      /* ── ① 응모 내용 (구매 모달의 '수량' 자리 - 계정당 1회라 확인만 한다) + 수령 안내 ('배송 정보' 자리 - 현장 수령뿐) ── */
 +      case 1: return (
@@ -483,7 +650,7 @@ diff -ruN a/src/components/raffle/RaffleCheckoutModal.tsx b/src/components/raffl
 +            <span style={{ fontSize: 12.5, fontWeight: 800, letterSpacing: ".1em", color: "var(--w-main)" }}>{t({ ko: "경품 · 전원 당첨, 종류만 추첨", en: "PRIZES · EVERYONE WINS, THE DRAW DECIDES WHICH", ja: "賞品・全員当選、種類のみ抽選", zh: "奖品 · 人人有奖，仅抽种类", es: "PREMIOS · TODOS GANAN, EL SORTEO DECIDE CUÁL" })}</span>
 +            {st.config.prizes.map((p, i) => (
 +              <div key={i} style={{ display: "flex", justifyContent: "space-between", gap: 12, fontSize: 15.5, color: "var(--ink-2)" }}>
-+                <span>{p.name}</span><span className="mono" style={{ color: "var(--ink-4)" }}>{p.qty}</span>
++                <span>{prizeLabel(p.name, lang)}</span><span className="mono" style={{ color: "var(--ink-4)" }}>{p.qty}</span>
 +              </div>
 +            ))}
 +          </div>
@@ -544,6 +711,9 @@ diff -ruN a/src/components/raffle/RaffleCheckoutModal.tsx b/src/components/raffl
 +            <div style={{ fontSize: 14, color: "#b45309", background: "#fff7ed", border: "1px solid #fed7aa", borderRadius: 10, padding: "9px 12px" }}>
 +              {t({ ko: `래플 리허설 모드 - 응모 기록은 테스트 장부에 저장됩니다. 응모 금액은 실제와 같은 ${price} XRP 이며, 리허설 입금은 종료 후 반환됩니다.`, en: `Raffle rehearsal - entries go to the test ledger. The amount is the real ${price} XRP; rehearsal deposits are returned afterwards.`, ja: `ラッフルリハーサル - 応募記録はテスト台帳に保存されます。金額は実際と同じ${price} XRPで、リハーサルの入金は終了後に返還します。`, zh: `抽奖彩排模式 - 参与记录保存在测试账本。金额与实际相同（${price} XRP），彩排入金将在结束后退还。`, es: `Ensayo del sorteo: las entradas van al libro de prueba. El importe es el real (${price} XRP); los depósitos del ensayo se devuelven después.` })}
 +            </div>
++          )}
++          {st.phase === "OPEN" && st.remaining > 0 && st.remaining <= 20 && (
++            <Alert>{t({ ko: `남은 자리 ${st.remaining}. 결제 확정 순서로 반영되며, 확정 전에 정원이 차면 응모는 확정되지 않고 입금액은 환불됩니다.`, en: `${st.remaining} spots left. Entries are confirmed in payment order; if capacity fills before yours is confirmed, the entry is not confirmed and the deposit is refunded.`, ja: `残り${st.remaining}枠。決済確定順に反映され、確定前に定員に達した場合は応募が確定せず入金は返金されます。`, zh: `仅剩 ${st.remaining} 个名额。按支付确认顺序生效；若在确认前满员，参与不生效，款项将退还。`, es: `Quedan ${st.remaining} plazas. Se confirman por orden de pago; si se completa antes de confirmar la suya, la entrada no se confirma y se devuelve el depósito.` })}</Alert>
 +          )}
 +          <Alert>
 +            {t({ ko: "외부 지갑에서 보낼 때는 Destination Tag 를 반드시 입력하세요. 태그가 없으면 응모와 연결되지 않습니다. XRP 만 인정됩니다 - RLUSD·다른 토큰은 받지 않습니다.", en: "If you send from an external wallet you must include the Destination Tag - without it the payment can't be matched to your entry. XRP only: RLUSD and other tokens are not accepted.", ja: "外部ウォレットから送る場合は必ずDestination Tagを入力してください。タグがないと応募と紐付きません。XRPのみ有効で、RLUSD・他のトークンは受け付けません。", zh: "从外部钱包转账时务必填写 Destination Tag，否则无法匹配到您的参与记录。仅接受 XRP，不接受 RLUSD 或其他代币。", es: "Si envía desde una billetera externa, incluya el Destination Tag; sin él no se puede vincular el pago. Solo XRP: no se acepta RLUSD ni otros tokens." })}
@@ -612,7 +782,7 @@ diff -ruN a/src/components/raffle/RaffleCheckoutModal.tsx b/src/components/raffl
 +          <p style={{ fontSize: 16, lineHeight: 1.65, color: "var(--ink-2)", margin: 0 }}>
 +            {t({ ko: `래플 NFT 가 지갑으로 전송되었습니다. 당첨 경품은 ${fmtDate(st.config.drawAt, lang)} 본 페이지와 X·텔레그램에서 발표되고 NFT 카드에 표시됩니다.`, en: `The raffle NFT is in your wallet. Prizes are announced ${fmtDate(st.config.drawAt, lang)} on this page, X and Telegram, and shown on the NFT card.`, ja: `ラッフルNFTがウォレットへ転送されました。当選賞品は${fmtDate(st.config.drawAt, lang)}に本ページとX・Telegramで発表され、NFTカードに表示されます。`, zh: `抽奖 NFT 已转入您的钱包。中奖奖品将于 ${fmtDate(st.config.drawAt, lang)} 在本页及 X、Telegram 公布，并显示在 NFT 卡上。`, es: `El NFT del sorteo está en su billetera. Los premios se anuncian el ${fmtDate(st.config.drawAt, lang)} en esta página, X y Telegram, y se muestran en la tarjeta NFT.` })}
 +          </p>
-+          <TicketCard mine={mine} t={t} />
++          <TicketCard mine={mine} t={t} lang={lang} />
 +          {mine.pass?.nftTokenId && <div className="mono" style={{ fontSize: 12, color: "var(--cap)", wordBreak: "break-all", fontWeight: 400 }}>NFT {mine.pass.nftTokenId}</div>}
 +          <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
 +            <a href={`https://x.com/intent/post?text=${encodeURIComponent(`XRP SEOUL 2026 raffle - I'm in with ticket #${no} 🎟️ @wellbianlabs`)}&url=${encodeURIComponent("https://wellbian.io/event/xrpl-seoul")}`} target="_blank" rel="noopener" className="btn-ghost" style={{ padding: "0 18px" }}>
@@ -645,8 +815,8 @@ diff -ruN a/src/components/raffle/RaffleCheckoutModal.tsx b/src/components/raffl
 +  })();
 +
 +  return (
-+    <div className="overlay" style={{ zIndex: 1000 }} onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
-+      <div className="modal-card easy" role="dialog" aria-modal="true" aria-label={t({ ko: "래플 응모", en: "Raffle entry", ja: "ラッフル応募", zh: "抽奖参与", es: "Participar en el sorteo" })}>
++    <div className="overlay" style={{ zIndex: 1000 }} onClick={(e) => { if (e.target === e.currentTarget && !locked) onClose(); }}>
++      <div className="modal-card easy" role="dialog" aria-modal="true" aria-label={t({ ko: "래플 응모", en: "Raffle entry", ja: "ラッフル応募", zh: "抽奖参与", es: "Participar en el sorteo" })} ref={dialogRef} tabIndex={-1} style={{ outline: "none" }}>
 +        <div className="sheet-handle" />
 +        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
 +          <div className="mstep-ind">
@@ -660,7 +830,7 @@ diff -ruN a/src/components/raffle/RaffleCheckoutModal.tsx b/src/components/raffl
 +              </span>
 +            ))}
 +          </div>
-+          <button onClick={onClose} aria-label={t({ ko: "닫기", en: "Close", ja: "閉じる", zh: "关闭", es: "Cerrar" })} style={{ color: "var(--dis)", fontSize: 23.5, lineHeight: 1 }}>✕</button>
++          <button onClick={onClose} disabled={locked} aria-label={t({ ko: "닫기", en: "Close", ja: "閉じる", zh: "关闭", es: "Cerrar" })} style={{ color: "var(--dis)", fontSize: 23.5, lineHeight: 1 }}>✕</button>
 +        </div>
 +        {/* 결제 방법 표시 - 구매 모달의 방법 배지 자리. 래플은 XRP 하나뿐이라 고르는 화면 없이 배지만 둔다 */}
 +        <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
@@ -731,7 +901,7 @@ diff -ruN a/src/components/raffle/RaffleCheckoutModal.tsx b/src/components/raffl
 +
 +function TermCard({ checked, onToggle, title, desc }: { checked: boolean; onToggle: () => void; title: string; desc: string }) {
 +  return (
-+    <button onClick={onToggle} style={{ display: "flex", gap: 12, border: checked ? "1px solid var(--w-main)" : "1px solid var(--bd-card)", background: checked ? "var(--panel)" : "#fff", borderRadius: 14, padding: "16px 18px", alignItems: "flex-start", textAlign: "left" }}>
++    <button onClick={onToggle} role="checkbox" aria-checked={checked} style={{ display: "flex", gap: 12, border: checked ? "1px solid var(--w-main)" : "1px solid var(--bd-card)", background: checked ? "var(--panel)" : "#fff", borderRadius: 14, padding: "16px 18px", alignItems: "flex-start", textAlign: "left" }}>
 +      <span style={{ width: 22, height: 22, borderRadius: 7, background: checked ? "var(--w-main)" : "#fff", border: checked ? "none" : "1.5px solid var(--bd-input)", display: "inline-flex", alignItems: "center", justifyContent: "center", flex: "none", marginTop: 1 }}>
 +        {checked && <svg width={13} height={13} viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth={3.5} strokeLinecap="round" strokeLinejoin="round"><path d="M5 12l4 4L19 6" /></svg>}
 +      </span>
@@ -756,8 +926,8 @@ diff -ruN a/src/components/raffle/RaffleCheckoutModal.tsx b/src/components/raffl
 +const cta: React.CSSProperties = { fontSize: 20, padding: 18, width: "100%", minHeight: 60 };
 diff -ruN a/src/components/raffle/RaffleHero.tsx b/src/components/raffle/RaffleHero.tsx
 --- a/src/components/raffle/RaffleHero.tsx	1970-01-01 00:00:00.000000000 +0000
-+++ b/src/components/raffle/RaffleHero.tsx	2026-09-21 11:16:01.536264032 +0000
-@@ -0,0 +1,144 @@
++++ b/src/components/raffle/RaffleHero.tsx	2026-09-21 11:54:09.336765184 +0000
+@@ -0,0 +1,138 @@
 +"use client";
 +/* XRP SEOUL 2026 래플 - 히어로 + 스탯 줄 (2026-09-21, 정적 시안 xrpseoul-raffle 이식).
 +   시안: 좌측 텍스트(락업 로고 · 제목 두 줄 · 알약 3개 · 경품 한 줄 · 버튼 2 · 행사 링크) + 우측 경품 예상도, 아래 흰 카드 5칸.
@@ -765,7 +935,8 @@ diff -ruN a/src/components/raffle/RaffleHero.tsx b/src/components/raffle/RaffleH
 +   모바일(≤920px)은 다크 배경 + 이미지가 텍스트 아래로 내려간다(2026-09-19 지시: PC 기준 배경색). */
 +import "./raffle-hero.css";
 +import { useI18n, type Lang, type Msg } from "@/lib/launch/i18n";
-+import type { RaffleMine, RafflePrizeView, RaffleStateView } from "./types";
++import type { RaffleMine, RaffleStateView } from "./types";
++import { prizeWord } from "@/lib/raffle-prizes";
 +
 +type Phase = RaffleStateView["phase"];
 +
@@ -783,17 +954,6 @@ diff -ruN a/src/components/raffle/RaffleHero.tsx b/src/components/raffle/RaffleH
 +export const fmtDay = (iso: string | undefined, lang: Lang) => { const p = kstParts(iso); return p ? `${p.M}.${String(p.D).padStart(2, "0")}(${WD[lang][p.wd]})` : ""; };
 +export const fmtHm = (iso: string | undefined) => kstParts(iso)?.hm ?? "";
 +
-+/* 경품 한 줄 - 설정의 이름을 언어별 짧은 표기로. 모르는 이름은 그대로 쓴다 */
-+function prizeWord(p: RafflePrizeView, lang: Lang): string {
-+  const n = p.name; const q = p.qty;
-+  const is = (k: string) => n.includes(k);
-+  if (lang === "ko") return is("초대권") ? `초대권 ${q}매` : is("Generator") ? `Weather Data Token Generator™ ${q}대` : is("우산") ? `우산 ${q}개` : is("에코백") ? `에코백 ${q}개` : `${n} ${q}`;
-+  if (lang === "ja") return is("초대권") ? `招待券${q}枚` : is("Generator") ? `Weather Data Token Generator™ ${q}台` : is("우산") ? `傘${q}本` : is("에코백") ? `エコバッグ${q}個` : `${n} ${q}`;
-+  if (lang === "zh") return is("초대권") ? `邀请函 ${q} 张` : is("Generator") ? `Weather Data Token Generator™ ${q} 台` : is("우산") ? `雨伞 ${q} 把` : is("에코백") ? `环保袋 ${q} 个` : `${n} ${q}`;
-+  if (lang === "es") return is("초대권") ? `${q} invitaciones` : is("Generator") ? `${q} Weather Data Token Generator™` : is("우산") ? `${q} paraguas` : is("에코백") ? `${q} bolsas ecológicas` : `${q} ${n}`;
-+  return is("초대권") ? `${q} invitations` : is("Generator") ? `${q} Weather Data Token Generator™` : is("우산") ? `${q} umbrellas` : is("에코백") ? `${q} eco bags` : `${q} ${n}`;
-+}
-+
 +const VENUE: Msg<string> = { ko: "서울 하얏트 호텔", en: "Hyatt Hotel, Seoul", ja: "ソウル ハイアットホテル", zh: "首尔凯悦酒店", es: "Hotel Hyatt, Seúl" };
 +const EVENT_TIME = "10:00~";
 +
@@ -808,14 +968,18 @@ diff -ruN a/src/components/raffle/RaffleHero.tsx b/src/components/raffle/RaffleH
 +  const no = String(mine?.entryNo ?? 0).padStart(4, "0");
 +  const prizes = cfg?.prizes ?? [];
 +  const sep = " · ";
-+  const whenChip = onHold ? tba
++  /* 상태를 아직 못 읽은 첫 화면 - 빈 날짜("  시작")가 잠깐 보이지 않게 자리표시자를 둔다 (2026-09-21 점검) */
++  const loading = !st;
++  const whenChip = loading ? "…" : onHold ? tba
 +    : phase === "BEFORE" ? t({ ko: `${fmtDay(cfg?.open, lang)} ${fmtHm(cfg?.open)} 시작`, en: `Opens ${fmtDay(cfg?.open, lang)} ${fmtHm(cfg?.open)}`, ja: `${fmtDay(cfg?.open, lang)} ${fmtHm(cfg?.open)} 開始`, zh: `${fmtDay(cfg?.open, lang)} ${fmtHm(cfg?.open)} 开始`, es: `Abre ${fmtDay(cfg?.open, lang)} ${fmtHm(cfg?.open)}` })
 +    : phase === "OPEN" ? t({ ko: `${fmtDay(cfg?.close, lang)} ${fmtHm(cfg?.close)} 마감`, en: `Closes ${fmtDay(cfg?.close, lang)} ${fmtHm(cfg?.close)}`, ja: `${fmtDay(cfg?.close, lang)} ${fmtHm(cfg?.close)} 締切`, zh: `${fmtDay(cfg?.close, lang)} ${fmtHm(cfg?.close)} 截止`, es: `Cierra ${fmtDay(cfg?.close, lang)} ${fmtHm(cfg?.close)}` })
 +    : t({ ko: "응모 마감", en: "Entries closed", ja: "応募締切", zh: "报名已截止", es: "Cerrado" });
 +
 +  /* 주 버튼 - 페이즈·내 응모 상태에 따라 (기존 페이지의 분기 그대로) */
 +  let primary: { label: string; onClick?: () => void; disabled?: boolean; shine?: boolean; done?: boolean };
-+  if (done && (phase === "OPEN" || phase === "SOLD_OUT" || phase === "CLOSED")) {
++  if (loading) {
++    primary = { label: t({ ko: "불러오는 중…", en: "Loading…", ja: "読み込み中…", zh: "加载中…", es: "Cargando…" }), disabled: true };
++  } else if (done && (phase === "OPEN" || phase === "SOLD_OUT" || phase === "CLOSED")) {
 +    primary = { label: held ? t({ ko: `응모 완료 · 래플 번호 #${no}`, en: `Entered · Ticket #${no}`, ja: `応募完了 · No.${no}`, zh: `已参与 · 编号 #${no}`, es: `Inscrito · N.º ${no}` }) : t({ ko: "결제 완료 · NFT 수령", en: "Paid · collect NFT", ja: "決済完了 · NFT受取", zh: "已支付 · 领取 NFT", es: "Pagado · recibir NFT" }), onClick: onOpen, done: held };
 +  } else if (phase === "OPEN") {
 +    primary = { label: t({ ko: `${price} XRP 로 참여하기`, en: `Enter with ${price} XRP`, ja: `${price} XRPで参加する`, zh: `用 ${price} XRP 参与`, es: `Participar con ${price} XRP` }), onClick: onCta, shine: true };
@@ -883,10 +1047,10 @@ diff -ruN a/src/components/raffle/RaffleHero.tsx b/src/components/raffle/RaffleH
 +    <div className="rf-wrap">
 +      <dl className="rf-stats">
 +        <Stat accent k={t({ ko: "참여 금액", en: "Entry", ja: "応募金額", zh: "参与金额", es: "Entrada" })} v={String(price)} unit="XRP" sub={t({ ko: "XRP 결제만 지원", en: "XRP only", ja: "XRP決済のみ", zh: "仅支持 XRP 支付", es: "Solo XRP" })} />
-+        <Stat k={t({ ko: "참여 현황", en: "Entries", ja: "応募数", zh: "已参与", es: "Inscritos" })} v={count.toLocaleString()} unit={`/ ${max.toLocaleString()}`} sub={t({ ko: "선착순 마감", en: "first come, first served", ja: "先着順で締切", zh: "先到先得", es: "por orden de llegada" })} />
++        <Stat k={t({ ko: "참여 현황", en: "Entries", ja: "応募数", zh: "已参与", es: "Inscritos" })} v={st ? count.toLocaleString() : "…"} unit={`/ ${max.toLocaleString()}`} sub={t({ ko: "선착순 마감", en: "first come, first served", ja: "先着順で締切", zh: "先到先得", es: "por orden de llegada" })} />
 +        <Stat k={t({ ko: "당첨 확률", en: "Win rate", ja: "当選確率", zh: "中奖率", es: "Probabilidad" })} v="100" unit="%" sub={t({ ko: "참여하면 경품 중 100% 당첨", en: "everyone wins one prize", ja: "参加者全員に賞品", zh: "参与即 100% 中奖", es: "todos ganan un premio" })} />
-+        <Stat k={t({ ko: "참여 마감", en: "Closes", ja: "応募締切", zh: "参与截止", es: "Cierre" })} v={onHold ? tba : fmtDay(cfg?.close, lang)} unit={onHold ? "" : fmtHm(cfg?.close)} sub={t({ ko: `${max}명 도달 시 조기 종료`, en: `ends early at ${max} entries`, ja: `${max}名到達で早期終了`, zh: `满 ${max} 人提前结束`, es: `termina antes al llegar a ${max}` })} />
-+        <Stat k={t({ ko: "행사일", en: "Event", ja: "開催日", zh: "活动日期", es: "Evento" })} v={fmtDay(cfg?.eventAt, lang) || "10.03"} unit={EVENT_TIME} sub={t(VENUE)} />
++        <Stat k={t({ ko: "참여 마감", en: "Closes", ja: "応募締切", zh: "参与截止", es: "Cierre" })} v={!st ? "…" : onHold ? tba : fmtDay(cfg?.close, lang)} unit={!st || onHold ? "" : fmtHm(cfg?.close)} sub={t({ ko: `${max}명 도달 시 조기 종료`, en: `ends early at ${max} entries`, ja: `${max}名到達で早期終了`, zh: `满 ${max} 人提前结束`, es: `termina antes al llegar a ${max}` })} />
++        <Stat k={t({ ko: "행사일", en: "Event", ja: "開催日", zh: "活动日期", es: "Evento" })} v={st ? fmtDay(cfg?.eventAt, lang) || "10.03" : "…"} unit={st ? EVENT_TIME : ""} sub={t(VENUE)} />
 +      </dl>
 +    </div>
 +  );
@@ -904,8 +1068,8 @@ diff -ruN a/src/components/raffle/RaffleHero.tsx b/src/components/raffle/RaffleH
 +
 diff -ruN a/src/components/raffle/RafflePage.tsx b/src/components/raffle/RafflePage.tsx
 --- a/src/components/raffle/RafflePage.tsx	2026-09-21 10:52:41.146635470 +0000
-+++ b/src/components/raffle/RafflePage.tsx	2026-09-21 11:16:01.536668151 +0000
-@@ -2,29 +2,17 @@
++++ b/src/components/raffle/RafflePage.tsx	2026-09-21 11:54:09.337350130 +0000
+@@ -2,29 +2,18 @@
  /* XRP SEOUL 2026 래플 페이지 (2026-09-16 지시). 5 XRP 응모 → 래플 NFT → 블라인드 추첨.
     판매 페이지(/launch)와 코드·데이터를 공유하지 않는다 - 지갑·로그인·아웃박스만 같이 쓴다.
     mode="test" 는 리허설: 격리된 장부·NFT taxon, 금액은 실제와 같은 5 XRP.
@@ -920,7 +1084,8 @@ diff -ruN a/src/components/raffle/RafflePage.tsx b/src/components/raffle/RaffleP
  import { useWallet } from "@/lib/wallet/WalletContext";
 -import { toast } from "@/components/Toast";
 +import RaffleCheckoutModal from "./RaffleCheckoutModal";
-+import { RaffleHero, RaffleStats } from "./RaffleHero";
++import { RaffleHero, RaffleStats, fmtDay } from "./RaffleHero";
++import { prizeLabel, prizeNote, prizeWord } from "@/lib/raffle-prizes";
 +import { TicketCard } from "./TicketCard";
 +import { RESERVE_XRP, raffleQs as qs, type RaffleMode as Mode, type RaffleStateView as State } from "./types";
  
@@ -943,7 +1108,7 @@ diff -ruN a/src/components/raffle/RafflePage.tsx b/src/components/raffle/RaffleP
  const kst = (iso?: string) => (iso ? new Date(Date.parse(iso) + 9 * 3600_000) : null);
  const fmtDate = (iso: string | undefined, lang: string) => {
    const d = kst(iso); if (!d) return "";
-@@ -36,38 +24,6 @@
+@@ -36,38 +25,6 @@
    return lang === "es" ? `${D} ${mon}, ${String(H).padStart(2, "0")}:00` : `${mon} ${D}, ${String(H).padStart(2, "0")}:00`;
  };
  
@@ -982,16 +1147,61 @@ diff -ruN a/src/components/raffle/RafflePage.tsx b/src/components/raffle/RaffleP
  function useCountdown(target: string | null) {
    const [left, setLeft] = useState("");
    useEffect(() => {
-@@ -85,7 +41,7 @@
+@@ -83,103 +40,60 @@
+   return left;
+ }
  
- export default function RafflePage({ mode }: { mode: Mode }) {
+-export default function RafflePage({ mode }: { mode: Mode }) {
++/** 미리보기 전용(스크린샷·SSR 확인) - 실제 화면은 넘기지 않는다. 넘기면 상태 요청 없이 그 값으로 그린다. */
++export interface RafflePreview { st: State | null; cd?: string }
++
++export default function RafflePage({ mode, preview }: { mode: Mode; preview?: RafflePreview }) {
    const { lang, t } = useI18n();
 -  const { address, sessionVerified, openLogin, signAndSubmit } = useWallet();
+-  const [st, setSt] = useState<State | null>(null);
 +  const { address, sessionVerified, openLogin } = useWallet();
-   const [st, setSt] = useState<State | null>(null);
++  const [st, setSt] = useState<State | null>(preview?.st ?? null);
    const [modal, setModal] = useState(false);
++  const [wantOpen, setWantOpen] = useState(false);
  
-@@ -114,72 +70,12 @@
+   const load = useCallback(async () => {
+     try { const r = await fetch(`/api/raffle/state${qs(mode)}`, { cache: "no-store" }); if (r.ok) setSt(await r.json()); } catch { /* 다음 주기 */ }
+   }, [mode]);
+-  useEffect(() => { load(); const id = setInterval(load, 20000); return () => clearInterval(id); }, [load, address]);
++  useEffect(() => { if (preview) return; load(); const id = setInterval(load, 20000); return () => clearInterval(id); }, [load, address, preview]);
+ 
+   const cfg = st?.config;
+   const phase = st?.phase ?? "BEFORE";
+   const target = phase === "BEFORE" ? cfg?.open : phase === "OPEN" ? cfg?.close : null;
+   /* 보류 상태(2026-09-17): 관리자 설정 open 이 1년 이상 뒤면 일정 미정으로 본다 - 날짜 대신 "추후 공지", 카운트다운 없음 */
+   const onHold = !!cfg && Date.parse(cfg.open) > Date.now() + 365 * 86400_000;
+-  const cd = useCountdown(onHold ? null : (target ?? null));
++  const cdLive = useCountdown(onHold || preview ? null : (target ?? null));
++  const cd = preview?.cd ?? cdLive;
+   const tba = t({ ko: "추후 공지", en: "TBA", ja: "後日発表", zh: "另行通知", es: "Por anunciar" });
+   const mine = st?.mine ?? null;
+   const done = !!mine && mine.status === "PAID";
+   const held = done && mine?.pass?.state === "CLAIMED";
+ 
+   const cta = () => {
+-    if (!address || !sessionVerified) { openLogin(); return; }
++    if (!address || !sessionVerified) { setWantOpen(true); openLogin(); return; }
+     setModal(true);
+   };
++  /* 참여 버튼을 눌렀다가 로그인한 경우 - 내 응모 상태를 새로 읽은 뒤 결제창을 바로 연다(버튼을 다시 누르게 하지 않는다, 2026-09-21 점검) */
++  useEffect(() => {
++    if (!wantOpen || !address || !sessionVerified || preview) return;
++    let live = true;
++    load().then(() => { if (live) { setWantOpen(false); setModal(true); } });
++    return () => { live = false; };
++  }, [wantOpen, address, sessionVerified, load, preview]);
++  /* 카운트다운이 0 이 되면 20초 주기를 기다리지 않고 바로 상태를 읽는다(시작·마감 순간) */
++  useEffect(() => { if (cd === "00:00:00" && !preview) load(); }, [cd, load, preview]);
++  /* FAQ "전원 당첨" 의 경품 목록 - 설정값에서 만든다(예전엔 290/10/50/150 을 글에 박아 두어 설정과 어긋날 수 있었다) */
++  const prizeList = (cfg?.prizes ?? []).map((p) => prizeWord(p, lang)).join(" · ") || "…";
++  const prizeSum = (cfg?.prizes ?? []).reduce((a, p) => a + p.qty, 0) || (cfg?.maxEntries ?? 500);
+ 
+   const price = cfg?.priceXrp ?? 5;
  
    return (
      <div className="wb-page full-bleed">
@@ -1068,16 +1278,77 @@ diff -ruN a/src/components/raffle/RafflePage.tsx b/src/components/raffle/RaffleP
          <div className="section-header">
            <h2>{t({ ko: "경품", en: "Prizes", ja: "賞品", zh: "奖品", es: "Premios" })}</h2>
            <div className="section-coord"><div>{t({ ko: `총 ${cfg?.maxEntries ?? 500}명 · 전원 당첨 · 경품 종류만 추첨`, en: `${cfg?.maxEntries ?? 500} entrants · everyone wins · the draw decides the prize`, ja: `計${cfg?.maxEntries ?? 500}名・全員当選・賞品の種類のみ抽選`, zh: `共 ${cfg?.maxEntries ?? 500} 名 · 人人有奖 · 仅抽奖决定奖品种类`, es: `${cfg?.maxEntries ?? 500} participantes · todos ganan · el sorteo decide el premio` })} · COMMIT-REVEAL</div></div>
-@@ -280,7 +176,7 @@
+@@ -188,8 +102,8 @@
+           {(cfg?.prizes ?? []).map((p, i) => (
+             <div key={i} className="panel" style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+               <span className="badge cyan" style={{ alignSelf: "flex-start" }}>{t({ ko: `${p.qty}명`, en: `${p.qty} winners`, ja: `${p.qty}名`, zh: `${p.qty} 名`, es: `${p.qty} ganadores` })}</span>
+-              <div style={{ fontSize: 19, fontWeight: 800 }}>{p.name}</div>
+-              {p.note && <div className="dim" style={{ fontSize: 14.5 }}>{p.note}</div>}
++              <div style={{ fontSize: 19, fontWeight: 800 }}>{prizeLabel(p.name, lang)}</div>
++              {prizeNote(p, lang) && <div className="dim" style={{ fontSize: 14.5 }}>{prizeNote(p, lang)}</div>}
+             </div>
+           ))}
+         </div>
+@@ -227,6 +141,7 @@
+             <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+               <div style={{ fontSize: 19, fontWeight: 800 }}>
+                 {!mine ? t({ ko: "응모 내역이 없습니다", en: "No entry yet", ja: "応募履歴がありません", zh: "暂无参与记录", es: "Sin participación" })
++                  : mine.status === "OVERFLOW" ? t({ ko: "확정되지 않은 결제 · 환불 대상", en: "Payment not confirmed · refund due", ja: "未確定の決済・返金対象", zh: "未确认的支付 · 待退款", es: "Pago no confirmado · reembolso pendiente" })
+                   : mine.status !== "PAID" ? t({ ko: "결제 대기 중", en: "Awaiting payment", ja: "決済待ち", zh: "待支付", es: "Pago pendiente" })
+                   : t({ ko: `래플 번호 #${String(mine.entryNo ?? 0).padStart(4, "0")}`, en: `Ticket #${String(mine.entryNo ?? 0).padStart(4, "0")}`, ja: `ラッフル番号 #${String(mine.entryNo ?? 0).padStart(4, "0")}`, zh: `编号 #${String(mine.entryNo ?? 0).padStart(4, "0")}`, es: `N.º ${String(mine.entryNo ?? 0).padStart(4, "0")}` })}
+               </div>
+@@ -236,10 +151,18 @@
+                   : mine!.pass?.offerIndex
+                     ? t({ ko: "NFT 발행 완료 · 지갑에서 수락해 주세요", en: "NFT minted · please accept it in your wallet", ja: "NFT発行完了 · ウォレットで承認してください", zh: "NFT 已发行 · 请在钱包中接受", es: "NFT emitido · acéptelo en su billetera" })
+                     : t({ ko: "래플 NFT 발행 중 (약 1~3분 소요)", en: "Minting raffle NFT (about 1-3 min)", ja: "ラッフルNFT発行中（約1〜3分）", zh: "正在发行抽奖 NFT（约 1-3 分钟）", es: "Emitiendo NFT (1-3 min aprox.)" }))}
+-                {!done && mine && t({ ko: `${price} XRP 결제 확인 후 응모가 확정됩니다`, en: `Entry is confirmed once ${price} XRP is received`, ja: `${price} XRPの決済確認後に応募が確定します`, zh: `确认收到 ${price} XRP 后即确认参与`, es: `La participación se confirma al recibir ${price} XRP` })}
++                {!done && mine?.status === "OVERFLOW" && t({ ko: "정원·기간 마감 뒤 확인된 입금이라 응모가 확정되지 않았습니다. 입금액은 환불해 드립니다 - admin@wellbianlabs.io 로 지갑 주소와 트랜잭션 해시를 보내 주세요.", en: "The payment was confirmed after entries closed, so the entry was not confirmed. The deposit will be refunded - email admin@wellbianlabs.io with your wallet address and transaction hash.", ja: "定員・期間の締切後に確認された入金のため、応募は確定していません。入金は返金します - admin@wellbianlabs.io へウォレットアドレスとハッシュをお送りください。", zh: "该笔款项在报名截止后确认，参与未生效。款项将退还 - 请将钱包地址与交易哈希发送至 admin@wellbianlabs.io。", es: "El pago se confirmó tras el cierre, así que la participación no se confirmó. Se devolverá el depósito: escriba a admin@wellbianlabs.io con su dirección y el hash." })}
++                {!done && mine && mine.status !== "OVERFLOW" && (phase === "OPEN"
++                  ? t({ ko: `${price} XRP 결제 확인 후 응모가 확정됩니다`, en: `Entry is confirmed once ${price} XRP is received`, ja: `${price} XRPの決済確認後に応募が確定します`, zh: `确认收到 ${price} XRP 后即确认参与`, es: `La participación se confirma al recibir ${price} XRP` })
++                  : t({ ko: "정원 또는 기간이 마감되어 결제 전 응모는 확정되지 않습니다. XRP 를 보내지 마세요.", en: "Entries have closed (capacity or deadline), so an unpaid entry can no longer be confirmed. Please do not send XRP.", ja: "定員または期間が締め切られたため、未決済の応募は確定できません。XRPを送らないでください。", zh: "名额已满或报名已截止，未支付的参与无法再确认。请勿再发送 XRP。", es: "Las inscripciones han cerrado (aforo o plazo); una entrada sin pagar ya no puede confirmarse. No envíe XRP." }))}
+               </div>
+             </div>
+-            {(phase === "OPEN" || (phase === "SOLD_OUT" && !!mine)) && !held && (
++            {/* 결제 확정(PAID) 은 페이즈와 무관하게 NFT 수령을 이어 간다. 결제 전(PENDING) 은 응모가 열려 있을 때만 결제로 보낸다 -
++                정원·기간 마감 뒤 입금은 확정되지 않고 환불 대상이 되므로(2026-09-21 점검) 버튼을 내린다. */}
++            {done && !held && (
++              <button type="button" className="btn-primary" onClick={cta}>{t({ ko: "래플 NFT 받기", en: "Collect raffle NFT", ja: "ラッフルNFTを受け取る", zh: "领取抽奖 NFT", es: "Recibir el NFT" })}</button>
++            )}
++            {!done && phase === "OPEN" && mine?.status !== "OVERFLOW" && (
+               <button type="button" className="btn-primary" onClick={cta}>
+                 {!mine ? t({ ko: "응모하기", en: "Enter", ja: "応募する", zh: "参与", es: "Participar" }) : t({ ko: "계속 진행", en: "Continue", ja: "続ける", zh: "继续", es: "Continuar" })}
+               </button>
+@@ -247,7 +170,7 @@
+           </div>
+           {done && mine?.ticketCode && (
+             <div className="panel" style={{ marginTop: 12 }}>
+-              <TicketCard mine={mine} t={t} />
++              <TicketCard mine={mine} t={t} lang={lang} />
+             </div>
+           )}
+         </div></section>
+@@ -264,7 +187,7 @@
+             <li><b>{onHold ? tba : fmtDate(cfg?.open, lang)}</b> {t({ ko: "응모 시작", en: "entries open", ja: "応募開始", zh: "开始报名", es: "inicio de inscripciones" })}</li>
+             <li><b>{onHold ? tba : fmtDate(cfg?.close, lang)}</b> {t({ ko: `응모 마감 · 기본 모집 기간 1주일, 선착순 ${cfg?.maxEntries ?? 500}명 모집 완료 시 조기 종료`, en: `entries close · 1-week period by default; ends early once ${cfg?.maxEntries ?? 500} entries are filled`, ja: `応募締切・基本募集期間1週間、先着${cfg?.maxEntries ?? 500}名に達した時点で早期終了`, zh: `报名截止 · 默认招募 1 周，${cfg?.maxEntries ?? 500} 名额满即提前结束`, es: `cierre · periodo de 1 semana; termina antes al completarse ${cfg?.maxEntries ?? 500} participantes` })}</li>
+             <li><b>{onHold ? tba : fmtDate(cfg?.drawAt, lang)}</b> {t({ ko: "당첨자 발표 · 응모 마감 후 24시간 이내 공식 페이지(본 페이지)를 통해 안내, 당첨 경품은 NFT 카드에 표시", en: "results · announced on the official page (this page) within 24 hours of close; your prize is shown on the NFT card", ja: "当選発表・応募締切後24時間以内に公式ページ（本ページ）でご案内、当選賞品はNFTカードに表示", zh: "公布中奖结果 · 报名截止后 24 小时内通过官方页面（本页）公布，中奖奖品显示在 NFT 卡上", es: "resultados · se anuncian en la página oficial (esta página) en 24 h desde el cierre; el premio se muestra en la tarjeta NFT" })}</li>
+-            <li><b>2026.10.03</b> {t({ ko: "경품 지급 · 10월 3일 행사 당일 XRP SEOUL 2026 행사장에서 QR 코드 확인 후 지급, 현장 수령만 가능", en: "prize collection · at the XRP SEOUL 2026 venue on 3 October after QR verification; on-site collection only", ja: "賞品お渡し・10月3日イベント当日、XRP SEOUL 2026会場でQRコード確認後にお渡し、現地受取のみ", zh: "奖品发放 · 10 月 3 日活动当天在 XRP SEOUL 2026 会场核验二维码后发放，仅限现场领取", es: "entrega de premios · el 3 de octubre en el recinto de XRP SEOUL 2026 tras verificar el QR; solo recogida presencial" })}</li>
++            <li><b>{cfg ? fmtDay(cfg.eventAt, lang) : "10.03"}</b> {t({ ko: "경품 지급 · 10월 3일 행사 당일 XRP SEOUL 2026 행사장에서 QR 코드 확인 후 지급, 현장 수령만 가능", en: "prize collection · at the XRP SEOUL 2026 venue on 3 October after QR verification; on-site collection only", ja: "賞品お渡し・10月3日イベント当日、XRP SEOUL 2026会場でQRコード確認後にお渡し、現地受取のみ", zh: "奖品发放 · 10 月 3 日活动当天在 XRP SEOUL 2026 会场核验二维码后发放，仅限现场领取", es: "entrega de premios · el 3 de octubre en el recinto de XRP SEOUL 2026 tras verificar el QR; solo recogida presencial" })}</li>
+           </ul>
+         </div>
+       </div></section>
+@@ -278,9 +201,9 @@
+         {[
+           t({ ko: ["결제 수단은 XRP 만 가능한가요?", "네. 본 이벤트는 XRPL 커뮤니티 행사 참여를 위한 이벤트로, 결제 수단은 XRP 만 지원합니다."], en: ["Is XRP the only payment method?", "Yes. This event is for participation in the XRPL community event, and XRP is the only supported payment method."], ja: ["決済はXRPのみですか？", "はい。本イベントはXRPLコミュニティイベントへの参加を目的としており、決済手段はXRPのみ対応しています。"], zh: ["只能用 XRP 支付吗？", "是的。本活动旨在参与 XRPL 社区活动，仅支持 XRP 支付。"], es: ["¿Solo se puede pagar con XRP?", "Sí. Este evento está orientado a la participación en la comunidad XRPL y solo admite pagos en XRP."] }),
            t({ ko: ["지갑에 XRP 가 얼마나 필요한가요?", `응모 금액 ${price} XRP 와 계정·NFT 예치금, 수수료를 포함하여 약 ${(price + RESERVE_XRP).toFixed(1)} XRP 가 필요합니다. 신규 지갑은 첫 입금 시 자동으로 활성화됩니다.`], en: ["How much XRP is required?", `About ${(price + RESERVE_XRP).toFixed(1)} XRP in total: the ${price} XRP entry plus account and NFT reserves and fees. A new wallet is activated automatically with its first deposit.`], ja: ["XRPはいくら必要ですか？", `応募金額${price} XRPにアカウント・NFTの準備金と手数料を含め、約${(price + RESERVE_XRP).toFixed(1)} XRPが必要です。新規ウォレットは初回入金時に自動で有効化されます。`], zh: ["需要多少 XRP？", `包含 ${price} XRP 参与费、账户与 NFT 储备金及手续费，约需 ${(price + RESERVE_XRP).toFixed(1)} XRP。新钱包在首次入金时自动激活。`], es: ["¿Cuánto XRP se necesita?", `Unos ${(price + RESERVE_XRP).toFixed(1)} XRP en total: la entrada de ${price} XRP más las reservas de cuenta y NFT y las comisiones. Una billetera nueva se activa automáticamente con el primer depósito.`] }),
-           t({ ko: ["래플 NFT 는 무엇인가요?", "응모 자격을 증명하는 XRPL NFT(XLS-20)이며, 행사장에서 경품을 수령할 때 사용됩니다. 계정당 1장 발급되며 추첨은 NFT 를 보유한 계정을 대상으로 진행됩니다. 행사 초대권은 당첨자에게 별도 안내됩니다."], en: ["What is the raffle NFT?", "An XRPL NFT (XLS-20) that proves your entry and is used to collect your prize at the venue. One is issued per account, and the draw is held among accounts holding the NFT. Event invitations are sent separately to winners."], ja: ["ラッフルNFTとは？", "応募資格を証明するXRPL NFT（XLS-20）で、会場での賞品受取に使用します。1アカウントにつき1枚発行され、抽選はNFTを保有するアカウントを対象に行います。招待券は当選者に別途ご案内します。"], zh: ["什么是抽奖 NFT？", "证明参与资格的 XRPL NFT（XLS-20），用于在会场领取奖品。每账户发放一张，抽奖在持有 NFT 的账户中进行。活动邀请函将另行通知中奖者。"], es: ["¿Qué es el NFT del sorteo?", "Un NFT de XRPL (XLS-20) que acredita su participación y se usa para recoger el premio en el recinto. Se emite uno por cuenta y el sorteo se realiza entre las cuentas que lo poseen. Las invitaciones se comunican por separado a los ganadores."] }),
+-          t({ ko: ["래플 NFT 는 무엇인가요?", "응모 자격을 증명하는 XRPL NFT(XLS-20)이며, 행사장에서 경품을 수령할 때 사용됩니다. 계정당 1장 발급되며 추첨은 NFT 를 보유한 계정을 대상으로 진행됩니다. 행사 초대권은 당첨자에게 별도 안내됩니다."], en: ["What is the raffle NFT?", "An XRPL NFT (XLS-20) that proves your entry and is used to collect your prize at the venue. One is issued per account, and the draw is held among accounts holding the NFT. Event invitations are sent separately to winners."], ja: ["ラッフルNFTとは？", "応募資格を証明するXRPL NFT（XLS-20）で、会場での賞品受取に使用します。1アカウントにつき1枚発行され、抽選はNFTを保有するアカウントを対象に行います。招待券は当選者に別途ご案内します。"], zh: ["什么是抽奖 NFT？", "证明参与资格的 XRPL NFT（XLS-20），用于在会场领取奖品。每账户发放一张，抽奖在持有 NFT 的账户中进行。活动邀请函将另行通知中奖者。"], es: ["¿Qué es el NFT del sorteo?", "Un NFT de XRPL (XLS-20) que acredita su participación y se usa para recoger el premio en el recinto. Se emite uno por cuenta y el sorteo se realiza entre las cuentas que lo poseen. Las invitaciones se comunican por separado a los ganadores."] }),
++          t({ ko: ["래플 NFT 는 무엇인가요?", "응모 자격을 증명하는 XRPL NFT(XLS-20)이며, 행사장에서 경품을 수령할 때 사용됩니다. 계정당 1장 발급되며 추첨은 결제가 확정된 응모 전원을 대상으로 진행됩니다. 행사 초대권은 당첨자에게 별도 안내됩니다."], en: ["What is the raffle NFT?", "An XRPL NFT (XLS-20) that proves your entry and is used to collect your prize at the venue. One is issued per account, and the draw covers every confirmed entry. Event invitations are sent separately to winners."], ja: ["ラッフルNFTとは？", "応募資格を証明するXRPL NFT（XLS-20）で、会場での賞品受取に使用します。1アカウントにつき1枚発行され、抽選は決済が確定した応募全員を対象に行います。招待券は当選者に別途ご案内します。"], zh: ["什么是抽奖 NFT？", "证明参与资格的 XRPL NFT（XLS-20），用于在会场领取奖品。每账户发放一张，抽奖面向所有已确认支付的参与者。活动邀请函将另行通知中奖者。"], es: ["¿Qué es el NFT del sorteo?", "Un NFT de XRPL (XLS-20) que acredita su participación y se usa para recoger el premio en el recinto. Se emite uno por cuenta y el sorteo incluye a todas las participaciones confirmadas. Las invitaciones se comunican por separado a los ganadores."] }),
            t({ ko: ["추첨은 어떻게 진행되나요?", "응모 마감 시점에 참가자 목록과 무작위 시드를 봉인하여 공개하고, 발표일에 시드를 공개(리빌)합니다. 누구나 동일한 결과를 재계산하여 검증할 수 있으며, 운영진도 결과를 사전에 확인하거나 변경할 수 없습니다."], en: ["How is the draw conducted?", "At close, the participant list and a random seed are sealed and published; on the announcement date the seed is revealed. Anyone can recompute and verify the same result, and the organisers cannot view or alter it in advance."], ja: ["抽選はどのように行われますか？", "応募締切時に参加者リストと乱数シードを封印して公開し、発表日にシードを開示します。誰でも同じ結果を再計算して検証でき、運営側も事前に確認・変更することはできません。"], zh: ["抽奖如何进行？", "截止时封存并公开参与名单与随机种子，公布日揭示种子。任何人都可复算验证同一结果，主办方亦无法提前查看或更改。"], es: ["¿Cómo se realiza el sorteo?", "Al cierre se sellan y publican la lista de participantes y una semilla aleatoria; el día del anuncio se revela la semilla. Cualquiera puede recalcular y verificar el mismo resultado, y la organización no puede verlo ni modificarlo de antemano."] }),
 -          t({ ko: ["전원 당첨이 맞나요?", "네. 선착순 정원과 경품 수량이 동일합니다(초대권 290 · Weather Data Token Generator™ 10 · 우산 100 · 에코백 100 = 총 500). 응모가 확정된 분은 반드시 한 가지 경품을 받으며, 경품 종류만 추첨으로 결정됩니다."], en: ["Does everyone win?", "Yes. The number of spots equals the number of prizes (290 invitations · 10 Weather Data Token Generator™ · 100 umbrellas · 100 eco bags = 500). Every confirmed entrant receives one prize; only the type of prize is decided by draw."], ja: ["全員当選ですか？", "はい。先着定員と賞品数が同数です（招待券290・Weather Data Token Generator™ 10・傘100・エコバッグ100＝計500）。応募が確定した方は必ず1点を受け取り、賞品の種類のみ抽選で決まります。"], zh: ["真的人人有奖吗？", "是的。名额与奖品数量相同（邀请函 290 · Weather Data Token Generator™ 10 · 雨伞 100 · 环保袋 100 = 共 500）。确认参与者必获一份奖品，仅奖品种类由抽奖决定。"], es: ["¿Todos ganan?", "Sí. El número de plazas coincide con el de premios (290 invitaciones · 10 Weather Data Token Generator™ · 100 paraguas · 100 bolsas = 500). Cada participante confirmado recibe un premio; el sorteo solo decide el tipo."] }),
-+          t({ ko: ["전원 당첨이 맞나요?", "네. 선착순 정원과 경품 수량이 동일합니다(초대권 290 · Weather Data Token Generator™ 10 · 우산 50 · 에코백 150 = 총 500). 응모가 확정된 분은 반드시 한 가지 경품을 받으며, 경품 종류만 추첨으로 결정됩니다."], en: ["Does everyone win?", "Yes. The number of spots equals the number of prizes (290 invitations · 10 Weather Data Token Generator™ · 50 umbrellas · 150 eco bags = 500). Every confirmed entrant receives one prize; only the type of prize is decided by draw."], ja: ["全員当選ですか？", "はい。先着定員と賞品数が同数です（招待券290・Weather Data Token Generator™ 10・傘50・エコバッグ150＝計500）。応募が確定した方は必ず1点を受け取り、賞品の種類のみ抽選で決まります。"], zh: ["真的人人有奖吗？", "是的。名额与奖品数量相同（邀请函 290 · Weather Data Token Generator™ 10 · 雨伞 50 · 环保袋 150 = 共 500）。确认参与者必获一份奖品，仅奖品种类由抽奖决定。"], es: ["¿Todos ganan?", "Sí. El número de plazas coincide con el de premios (290 invitaciones · 10 Weather Data Token Generator™ · 50 paraguas · 150 bolsas = 500). Cada participante confirmado recibe un premio; el sorteo solo decide el tipo."] }),
++          t({ ko: ["전원 당첨이 맞나요?", `네. 선착순 정원과 경품 수량이 동일합니다(${prizeList} = 총 ${prizeSum}). 응모가 확정된 분은 반드시 한 가지 경품을 받으며, 경품 종류만 추첨으로 결정됩니다.`], en: ["Does everyone win?", `Yes. The number of spots equals the number of prizes (${prizeList} = ${prizeSum}). Every confirmed entrant receives one prize; only the type of prize is decided by draw.`], ja: ["全員当選ですか？", `はい。先着定員と賞品数が同数です（${prizeList}＝計${prizeSum}）。応募が確定した方は必ず1点を受け取り、賞品の種類のみ抽選で決まります。`], zh: ["真的人人有奖吗？", `是的。名额与奖品数量相同（${prizeList} = 共 ${prizeSum}）。确认参与者必获一份奖品，仅奖品种类由抽奖决定。`], es: ["¿Todos ganan?", `Sí. El número de plazas coincide con el de premios (${prizeList} = ${prizeSum}). Cada participante confirmado recibe un premio; el sorteo solo decide el tipo.`] }),
            t({ ko: ["경품은 어떻게 수령하나요?", "10월 3일 XRP SEOUL 2026 행사장에서 수령합니다. 지갑에 보관된 래플 NFT 카드의 QR 코드를 현장 스태프에게 제시하면 확인 후 배정된 경품을 지급합니다. 확인된 QR 코드는 재사용할 수 없으며, 현장 수령 외 별도 배송은 지원하지 않습니다."], en: ["How do I collect my prize?", "At the XRP SEOUL 2026 venue on 3 October. Present the QR code on the raffle NFT card in your wallet to on-site staff; after verification, the assigned prize is handed over. A verified QR code cannot be reused, and shipping is not available: on-site collection only."], ja: ["賞品はどのように受け取りますか？", "10月3日、XRP SEOUL 2026の会場でお受け取りください。ウォレット内のラッフルNFTカードのQRコードを現地スタッフに提示いただくと、確認後に賞品をお渡しします。確認済みのQRコードは再使用できず、現地受取以外の配送は行いません。"], zh: ["如何领取奖品？", "10 月 3 日在 XRP SEOUL 2026 会场领取。向现场工作人员出示钱包中抽奖 NFT 卡的二维码，核验后发放所分配的奖品。已核验的二维码不可重复使用，不提供邮寄，仅限现场领取。"], es: ["¿Cómo recojo el premio?", "En el recinto de XRP SEOUL 2026, el 3 de octubre. Presente al personal el código QR de la tarjeta NFT que tiene en su billetera; tras la verificación se entrega el premio asignado. Un QR verificado no puede reutilizarse y no hay envíos: solo recogida presencial."] }),
            t({ ko: ["QR 코드를 다른 사람에게 보여 줘도 되나요?", "QR 코드는 본인 확인용이므로 타인과 공유하거나 외부에 노출하지 마시기 바랍니다. 공유·노출로 인해 타인이 먼저 수령하는 등의 피해는 보상하지 않습니다."], en: ["Can I show my QR code to others?", "The QR code is for identity verification; please do not share it or expose it publicly. Losses caused by sharing or exposure, such as collection by another person, will not be compensated."], ja: ["QRコードを他の人に見せてもよいですか？", "QRコードは本人確認用のため、他人と共有したり外部に露出したりしないでください。共有・露出により第三者が先に受け取るなどの被害は補償いたしません。"], zh: ["可以把二维码给别人看吗？", "二维码用于本人核验，请勿与他人分享或对外泄露。因分享或泄露导致被他人先行领取等损失，不予赔偿。"], es: ["¿Puedo mostrar mi código QR a otras personas?", "El código QR sirve para verificar su identidad; no lo comparta ni lo exponga públicamente. No se compensarán los perjuicios derivados de compartirlo o exponerlo, como que otra persona recoja el premio."] }),
            t({ ko: ["환불이 가능한가요?", "응모 확정 후에는 환불이 불가합니다. 결제 전 금액과 조건을 확인해 주시기 바랍니다."], en: ["Are refunds available?", "Entries cannot be refunded once confirmed. Please check the amount and terms before paying."], ja: ["返金は可能ですか？", "応募確定後の返金はできません。お支払い前に金額と条件をご確認ください。"], zh: ["可以退款吗？", "参与确认后不可退款。请在支付前确认金额与条款。"], es: ["¿Se admiten reembolsos?", "Una vez confirmada la participación no se puede reembolsar. Revise el importe y las condiciones antes de pagar."] }),
-@@ -293,188 +189,7 @@
+@@ -293,188 +216,7 @@
          <p className="dim" style={{ fontSize: 13.5, marginTop: 14 }}>{t({ ko: "문의: admin@wellbianlabs.io", en: "Contact: admin@wellbianlabs.io", ja: "お問い合わせ: admin@wellbianlabs.io", zh: "联系方式: admin@wellbianlabs.io", es: "Contacto: admin@wellbianlabs.io" })}</p>
        </div></section>
  
@@ -1269,11 +1540,12 @@ diff -ruN a/src/components/raffle/RafflePage.tsx b/src/components/raffle/RaffleP
  }
 diff -ruN a/src/components/raffle/TicketCard.tsx b/src/components/raffle/TicketCard.tsx
 --- a/src/components/raffle/TicketCard.tsx	1970-01-01 00:00:00.000000000 +0000
-+++ b/src/components/raffle/TicketCard.tsx	2026-09-21 11:01:23.431837640 +0000
-@@ -0,0 +1,39 @@
++++ b/src/components/raffle/TicketCard.tsx	2026-09-21 11:54:09.336949306 +0000
+@@ -0,0 +1,40 @@
 +"use client";
 +/* 래플 NFT 카드 + QR 관리 경고 - 페이지(내 응모)와 결제창(완료 화면)이 같이 쓴다 (2026-09-21 분리). */
-+import type { Msg } from "@/lib/launch/i18n";
++import type { Lang, Msg } from "@/lib/launch/i18n";
++import { prizeLabel } from "@/lib/raffle-prizes";
 +import type { RaffleMine } from "./types";
 +
 +type T = <V>(m: Msg<V>) => V;
@@ -1293,7 +1565,7 @@ diff -ruN a/src/components/raffle/TicketCard.tsx b/src/components/raffle/TicketC
 +  );
 +}
 +
-+export function TicketCard({ mine, t }: { mine: RaffleMine; t: T }) {
++export function TicketCard({ mine, t, lang }: { mine: RaffleMine; t: T; lang: Lang }) {
 +  if (!mine.ticketCode) return null;
 +  return (
 +    <div style={{ display: "flex", gap: 16, alignItems: "flex-start", flexWrap: "wrap" }}>
@@ -1303,7 +1575,7 @@ diff -ruN a/src/components/raffle/TicketCard.tsx b/src/components/raffle/TicketC
 +        <div style={{ fontSize: 14.5, lineHeight: 1.6, color: "var(--ink-dim, var(--ink-3))" }}>
 +          {t({ ko: "래플 NFT 카드입니다. 행사 당일(10월 3일) 행사장에서 QR 코드 확인 후 경품이 지급됩니다.", en: "This is your raffle NFT card. Prizes are handed out at the venue on 3 October after the QR code is verified.", ja: "ラッフルNFTカードです。イベント当日（10月3日）に会場でQRコードを確認後、賞品をお渡しします。", zh: "这是您的抽奖 NFT 卡。活动当天（10 月 3 日）在会场核验二维码后发放奖品。", es: "Esta es su tarjeta NFT del sorteo. Los premios se entregan en el recinto el 3 de octubre tras verificar el código QR." })}
 +        </div>
-+        {mine.prize && <div style={{ fontSize: 15 }}>{t({ ko: "당첨 경품", en: "Prize", ja: "当選賞品", zh: "中奖奖品", es: "Premio" })}: <b>{mine.prize}</b></div>}
++        {mine.prize && <div style={{ fontSize: 15 }}>{t({ ko: "당첨 경품", en: "Prize", ja: "当選賞品", zh: "中奖奖品", es: "Premio" })}: <b>{prizeLabel(mine.prize, lang)}</b></div>}
 +        {mine.redeemedAt && <div style={{ fontSize: 14, color: "#b42318", fontWeight: 700 }}>{t({ ko: "수령 완료", en: "Collected", ja: "受取済み", zh: "已领取", es: "Recogido" })} · {new Date(mine.redeemedAt).toLocaleString()}</div>}
 +        <QrWarning t={t} />
 +      </div>
@@ -1461,10 +1733,93 @@ diff -ruN a/src/components/raffle/types.ts b/src/components/raffle/types.ts
 +export const RESERVE_XRP = 1.3;
 +
 +export const raffleQs = (mode: RaffleMode) => (mode === "test" ? "?mode=test" : "");
+diff -ruN a/src/lib/raffle-prizes.ts b/src/lib/raffle-prizes.ts
+--- a/src/lib/raffle-prizes.ts	1970-01-01 00:00:00.000000000 +0000
++++ b/src/lib/raffle-prizes.ts	2026-09-21 11:54:09.319452146 +0000
+@@ -0,0 +1,63 @@
++/* XRP SEOUL 2026 래플 - 경품 이름·설명의 언어별 표기 (2026-09-21 점검).
++   설정(raffleState.config.prizes)의 이름은 한국어 정본이고, 화면(경품 카드·결제창·내 응모)·NFT 카드 이미지·티켓 페이지는
++   이 표를 거쳐 언어별로 보여 준다. 표에 없는 이름은 그대로 쓴다. React 를 쓰지 않으므로 서버 라우트에서도 부른다.
++   설명(note)은 한국어는 설정값을 그대로, 다른 언어는 같은 경품의 표 번역을 쓴다(자유 문장은 번역할 수 없다). */
++export type PrizeLang = "ko" | "en" | "ja" | "zh" | "es";
++export type PrizeKey = "invite" | "generator" | "umbrella" | "ecobag";
++
++export function prizeKey(name: string): PrizeKey | null {
++  if (name.includes("초대권") || /invit/i.test(name)) return "invite";
++  if (/generator/i.test(name)) return "generator";
++  if (name.includes("우산") || /umbrella/i.test(name)) return "umbrella";
++  if (name.includes("에코백") || /eco ?bag/i.test(name)) return "ecobag";
++  return null;
++}
++
++const LABEL: Record<PrizeKey, Record<PrizeLang, string>> = {
++  invite: { ko: "XRP SEOUL 2026 초대권", en: "XRP SEOUL 2026 invitation", ja: "XRP SEOUL 2026 招待券", zh: "XRP SEOUL 2026 邀请函", es: "Invitación a XRP SEOUL 2026" },
++  generator: { ko: "Weather Data Token Generator™", en: "Weather Data Token Generator™", ja: "Weather Data Token Generator™", zh: "Weather Data Token Generator™", es: "Weather Data Token Generator™" },
++  umbrella: { ko: "wellbian 우산", en: "wellbian umbrella", ja: "wellbian 傘", zh: "wellbian 雨伞", es: "Paraguas wellbian" },
++  ecobag: { ko: "wellbian 에코백", en: "wellbian eco bag", ja: "wellbian エコバッグ", zh: "wellbian 环保袋", es: "Bolsa ecológica wellbian" },
++};
++const BOOTH: Record<PrizeLang, string> = {
++  ko: "행사 당일 'wellbian 플래티넘 부스' 현장수령", en: "Collected at the wellbian Platinum booth on the event day",
++  ja: "イベント当日、wellbianプラチナブースで受取", zh: "活动当天于 wellbian 白金展位领取", es: "Se recoge en el stand Platinum de wellbian el día del evento",
++};
++const NOTE: Record<PrizeKey, Record<PrizeLang, string>> = {
++  invite: { ko: "10월 3일 서울 · 행사장 입장권", en: "3 October, Seoul · venue admission", ja: "10月3日 ソウル・会場入場券", zh: "10 月 3 日 首尔 · 会场入场券", es: "3 de octubre, Seúl · entrada al recinto" },
++  generator: {
++    ko: "제네시스 한정판, 실물 날씨데이터 토큰 생성기 1대 · 행사 당일 'wellbian 플래티넘 부스' 현장수령",
++    en: "Genesis limited edition, one physical weather-data token generator · collected at the wellbian Platinum booth on the event day",
++    ja: "ジェネシス限定版、実物の気象データトークン生成機1台・イベント当日、wellbianプラチナブースで受取",
++    zh: "创世限定版，实物天气数据代币生成器 1 台 · 活动当天于 wellbian 白金展位领取",
++    es: "Edición limitada Genesis, un generador físico de tokens de datos meteorológicos · se recoge en el stand Platinum de wellbian el día del evento",
++  },
++  umbrella: BOOTH,
++  ecobag: BOOTH,
++};
++
++/** 경품 이름 - 언어별. 표에 없는 이름은 설정값 그대로. */
++export function prizeLabel(name: string, lang: PrizeLang): string {
++  const k = prizeKey(name);
++  return k ? LABEL[k][lang] : name;
++}
++
++/** 경품 설명 - 한국어는 설정의 note 를 그대로, 다른 언어는 표 번역. 표에 없는 경품은 설정의 note(한국어) 를 그대로 보여 준다. */
++export function prizeNote(p: { name: string; note?: string }, lang: PrizeLang): string | undefined {
++  const k = prizeKey(p.name);
++  if (lang === "ko") return p.note ?? (k ? NOTE[k].ko : undefined);
++  return k ? NOTE[k][lang] : p.note;
++}
++
++/** 히어로·FAQ 의 한 줄 요약용 짧은 표기 - "초대권 290매" · "290 invitations". 모르는 이름은 "이름 수량". */
++export function prizeWord(p: { name: string; qty: number }, lang: PrizeLang): string {
++  const k = prizeKey(p.name); const q = p.qty; const n = p.name;
++  if (!k) return lang === "ko" || lang === "ja" || lang === "zh" ? `${n} ${q}` : `${q} ${n}`;
++  const W: Record<PrizeKey, Record<PrizeLang, string>> = {
++    invite: { ko: `초대권 ${q}매`, en: `${q} invitations`, ja: `招待券${q}枚`, zh: `邀请函 ${q} 张`, es: `${q} invitaciones` },
++    generator: { ko: `Weather Data Token Generator™ ${q}대`, en: `${q} Weather Data Token Generator™`, ja: `Weather Data Token Generator™ ${q}台`, zh: `Weather Data Token Generator™ ${q} 台`, es: `${q} Weather Data Token Generator™` },
++    umbrella: { ko: `우산 ${q}개`, en: `${q} umbrellas`, ja: `傘${q}本`, zh: `雨伞 ${q} 把`, es: `${q} paraguas` },
++    ecobag: { ko: `에코백 ${q}개`, en: `${q} eco bags`, ja: `エコバッグ${q}個`, zh: `环保袋 ${q} 个`, es: `${q} bolsas ecológicas` },
++  };
++  return W[k][lang];
++}
 diff -ruN a/src/lib/raffle.ts b/src/lib/raffle.ts
 --- a/src/lib/raffle.ts	2026-09-21 10:52:41.147910100 +0000
-+++ b/src/lib/raffle.ts	2026-09-21 11:27:33.947281708 +0000
-@@ -37,19 +37,20 @@
++++ b/src/lib/raffle.ts	2026-09-21 11:56:22.064267331 +0000
+@@ -26,6 +26,15 @@
+ const configKey = (m: RaffleMode) => (m === "test" ? "raffle_xrpseoul_test" : "raffle_xrpseoul");
+ export const modeOfEvent = (event: string): RaffleMode => (event.endsWith("-test") ? "test" : "prod");
+ 
++/* 마감 뒤 확인된 입금 (2026-09-21 점검). 추첨 명단은 마감 시점의 결제 확정 응모로 봉인되므로 늦게 확정된 응모는 추첨에 들어가지
++   못한다 - 그래서 마감(정원·기간) 뒤에 확인된 입금은 PAID 로 만들지 않고 OVERFLOW 로 남겨 관리자 콘솔 › 래플에서 환불 대상으로 본다.
++   마감 직전에 보낸 송금이 원장 반영·확인까지 걸리는 시간을 생각해 기간 마감은 10분을 받아 준다. */
++export const CLOSE_GRACE_MS = 10 * 60_000;
++const OVERFLOW_MSG = "정원 또는 기간이 마감되어 결제를 확정할 수 없습니다. 입금액은 환불해 드립니다 - admin@wellbianlabs.io 로 지갑 주소와 트랜잭션 해시를 보내 주세요.";
++async function markOverflow(entryId: string, hash: string) {
++  await prisma.raffleEntry.updateMany({ where: { id: entryId, status: "PENDING" }, data: { status: "OVERFLOW", txHash: hash } }).catch(() => {});
++}
++
+ export interface RafflePrize { name: string; qty: number; note?: string }
+ export interface RaffleConfig {
+   open: string;       // 응모 시작 (ISO)
+@@ -37,19 +46,20 @@
    prizes: RafflePrize[];
  }
  
@@ -1492,7 +1847,15 @@ diff -ruN a/src/lib/raffle.ts b/src/lib/raffle.ts
    ],
  };
  const DEFAULT_TEST: RaffleConfig = { ...DEFAULT, open: "2026-09-16T00:00:00Z" };   // 리허설은 지금 열려 있고 나머지는 실제와 같다
-@@ -144,34 +145,59 @@
+@@ -136,6 +146,7 @@
+   const entry = await prisma.raffleEntry.findUnique({ where: { event_wallet: { event, wallet } } });
+   if (!entry) return { ok: false as const, error: "응모 내역이 없습니다. 먼저 응모를 시작해 주세요." };
+   if (entry.status === "PAID") return { ok: true as const, entry, already: true };
++  if (entry.status === "OVERFLOW") return { ok: false as const, error: OVERFLOW_MSG, pending: false };
+   const hash = txHash.toUpperCase();
+   const dup = await prisma.raffleEntry.findUnique({ where: { txHash: hash } });
+   if (dup && dup.id !== entry.id) return { ok: false as const, error: "이미 다른 응모에 사용된 트랜잭션입니다." };
+@@ -144,34 +155,65 @@
  
    const kind = raffleKind(mode);
    const config = await loadRaffleConfig(mode);
@@ -1509,6 +1872,14 @@ diff -ruN a/src/lib/raffle.ts b/src/lib/raffle.ts
 -      where: { wallet_kind: { wallet, kind } },
 -      create: { wallet, kind, qty: 1, taxonValue: raffleTaxon(mode), metadataUri, state: "MINT_QUEUED", destination: wallet },
 -      update: {},
+-    });
+-    const u = await tx.raffleEntry.update({
+-      where: { id: entry.id },
+-      data: { status: "PAID", txHash: hash, paidAt: new Date(), entryNo, ticketCode, passId: pass.id },
++  if (Date.now() >= Date.parse(config.close) + CLOSE_GRACE_MS) {
++    await markOverflow(entry.id, hash);
++    return { ok: false as const, error: OVERFLOW_MSG, pending: false };
++  }
 +  /* 래플 번호 = 결제 확정 순번. 같은 순간 여러 명이 확정되면 둘 다 같은 max+1 을 계산해 (event, entryNo) 유일 제약에
 +     걸린다(2026-09-21 점검 - 18:00 오픈 러시에서 실제로 날 수 있는 경우). 그때는 번호를 다시 세어 재시도한다(최대 6회).
 +     같은 응모의 중복 호출(확인 버튼 두 번)은 status=PENDING 조건으로 한 번만 통과시킨다 - 예전에는 두 번째 호출이
@@ -1544,19 +1915,17 @@ diff -ruN a/src/lib/raffle.ts b/src/lib/raffle.ts
 +      if (e.code === "P2002") return "RACE";   // (event, entryNo) 충돌 - 다시 센다
 +      throw e;
      });
--    const u = await tx.raffleEntry.update({
--      where: { id: entry.id },
--      data: { status: "PAID", txHash: hash, paidAt: new Date(), entryNo, ticketCode, passId: pass.id },
--    });
 -    return { entry: u, pass, metadataUri };
 -  }).catch((e: Error) => { if (e.message === "SOLD_OUT") return null; throw e; });
+-  if (!paid) return { ok: false as const, error: "선착순 정원이 모두 찼습니다. 입금액은 환불해 드립니다 - admin@wellbianlabs.io 로 알려 주세요.", pending: false };
 +  }
 +  if (paid === "ALREADY") {
 +    const again = await prisma.raffleEntry.findUniqueOrThrow({ where: { id: entry.id } });
++    if (again.status !== "PAID") return { ok: false as const, error: OVERFLOW_MSG, pending: false };   // 그 사이 OVERFLOW 로 남은 행
 +    return { ok: true as const, entry: again, already: true };
 +  }
 +  if (paid === "RACE") return { ok: false as const, error: "확정이 몰려 번호를 매기지 못했습니다. 잠시 후 해시로 다시 확인해 주세요.", pending: true };
-   if (!paid) return { ok: false as const, error: "선착순 정원이 모두 찼습니다. 입금액은 환불해 드립니다 - admin@wellbianlabs.io 로 알려 주세요.", pending: false };
++  if (!paid) { await markOverflow(entry.id, hash); return { ok: false as const, error: OVERFLOW_MSG, pending: false }; }
    if (paid.pass.state === "MINT_QUEUED" && !paid.pass.mintTxId) {
 -    await enqueueTx(
 -      "NFT_MINT",
@@ -1572,12 +1941,13 @@ diff -ruN a/src/lib/raffle.ts b/src/lib/raffle.ts
 +        { TransactionType: "NFTokenMint", Issuer: ISSUER_ADDRESS, NFTokenTaxon: raffleTaxon(mode), Flags: 8, URI: convertStringToHex(paid.metadataUri) },
 +        { type: "GenesisPass", id: paid.pass.id },
 +      );
-+      await drainOutbox().catch(() => {});
++      /* 짧게만 민다 - 기본 40초 예산을 verify(maxDuration 30초) 안에서 기다리면 오픈 러시 때 응답이 끊긴다. 나머지는 매분 크론(/api/cron/drain)이 잇는다. */
++      await drainOutbox(8_000).catch(() => {});
 +    }
    }
    return { ok: true as const, entry: paid.entry, already: false };
  }
-@@ -217,16 +243,29 @@
+@@ -217,16 +259,29 @@
    return { ok: true as const, entry: u };
  }
  

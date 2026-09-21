@@ -5,7 +5,8 @@
    모바일(≤920px)은 다크 배경 + 이미지가 텍스트 아래로 내려간다(2026-09-19 지시: PC 기준 배경색). */
 import "./raffle-hero.css";
 import { useI18n, type Lang, type Msg } from "@/lib/launch/i18n";
-import type { RaffleMine, RafflePrizeView, RaffleStateView } from "./types";
+import type { RaffleMine, RaffleStateView } from "./types";
+import { prizeWord } from "@/lib/raffle-prizes";
 
 type Phase = RaffleStateView["phase"];
 
@@ -23,17 +24,6 @@ const kstParts = (iso?: string) => {
 export const fmtDay = (iso: string | undefined, lang: Lang) => { const p = kstParts(iso); return p ? `${p.M}.${String(p.D).padStart(2, "0")}(${WD[lang][p.wd]})` : ""; };
 export const fmtHm = (iso: string | undefined) => kstParts(iso)?.hm ?? "";
 
-/* 경품 한 줄 - 설정의 이름을 언어별 짧은 표기로. 모르는 이름은 그대로 쓴다 */
-function prizeWord(p: RafflePrizeView, lang: Lang): string {
-  const n = p.name; const q = p.qty;
-  const is = (k: string) => n.includes(k);
-  if (lang === "ko") return is("초대권") ? `초대권 ${q}매` : is("Generator") ? `Weather Data Token Generator™ ${q}대` : is("우산") ? `우산 ${q}개` : is("에코백") ? `에코백 ${q}개` : `${n} ${q}`;
-  if (lang === "ja") return is("초대권") ? `招待券${q}枚` : is("Generator") ? `Weather Data Token Generator™ ${q}台` : is("우산") ? `傘${q}本` : is("에코백") ? `エコバッグ${q}個` : `${n} ${q}`;
-  if (lang === "zh") return is("초대권") ? `邀请函 ${q} 张` : is("Generator") ? `Weather Data Token Generator™ ${q} 台` : is("우산") ? `雨伞 ${q} 把` : is("에코백") ? `环保袋 ${q} 个` : `${n} ${q}`;
-  if (lang === "es") return is("초대권") ? `${q} invitaciones` : is("Generator") ? `${q} Weather Data Token Generator™` : is("우산") ? `${q} paraguas` : is("에코백") ? `${q} bolsas ecológicas` : `${q} ${n}`;
-  return is("초대권") ? `${q} invitations` : is("Generator") ? `${q} Weather Data Token Generator™` : is("우산") ? `${q} umbrellas` : is("에코백") ? `${q} eco bags` : `${q} ${n}`;
-}
-
 const VENUE: Msg<string> = { ko: "서울 하얏트 호텔", en: "Hyatt Hotel, Seoul", ja: "ソウル ハイアットホテル", zh: "首尔凯悦酒店", es: "Hotel Hyatt, Seúl" };
 const EVENT_TIME = "10:00~";
 
@@ -48,14 +38,18 @@ export function RaffleHero({ st, phase, done, held, mine, onHold, tba, cd, onCta
   const no = String(mine?.entryNo ?? 0).padStart(4, "0");
   const prizes = cfg?.prizes ?? [];
   const sep = " · ";
-  const whenChip = onHold ? tba
+  /* 상태를 아직 못 읽은 첫 화면 - 빈 날짜("  시작")가 잠깐 보이지 않게 자리표시자를 둔다 (2026-09-21 점검) */
+  const loading = !st;
+  const whenChip = loading ? "…" : onHold ? tba
     : phase === "BEFORE" ? t({ ko: `${fmtDay(cfg?.open, lang)} ${fmtHm(cfg?.open)} 시작`, en: `Opens ${fmtDay(cfg?.open, lang)} ${fmtHm(cfg?.open)}`, ja: `${fmtDay(cfg?.open, lang)} ${fmtHm(cfg?.open)} 開始`, zh: `${fmtDay(cfg?.open, lang)} ${fmtHm(cfg?.open)} 开始`, es: `Abre ${fmtDay(cfg?.open, lang)} ${fmtHm(cfg?.open)}` })
     : phase === "OPEN" ? t({ ko: `${fmtDay(cfg?.close, lang)} ${fmtHm(cfg?.close)} 마감`, en: `Closes ${fmtDay(cfg?.close, lang)} ${fmtHm(cfg?.close)}`, ja: `${fmtDay(cfg?.close, lang)} ${fmtHm(cfg?.close)} 締切`, zh: `${fmtDay(cfg?.close, lang)} ${fmtHm(cfg?.close)} 截止`, es: `Cierra ${fmtDay(cfg?.close, lang)} ${fmtHm(cfg?.close)}` })
     : t({ ko: "응모 마감", en: "Entries closed", ja: "応募締切", zh: "报名已截止", es: "Cerrado" });
 
   /* 주 버튼 - 페이즈·내 응모 상태에 따라 (기존 페이지의 분기 그대로) */
   let primary: { label: string; onClick?: () => void; disabled?: boolean; shine?: boolean; done?: boolean };
-  if (done && (phase === "OPEN" || phase === "SOLD_OUT" || phase === "CLOSED")) {
+  if (loading) {
+    primary = { label: t({ ko: "불러오는 중…", en: "Loading…", ja: "読み込み中…", zh: "加载中…", es: "Cargando…" }), disabled: true };
+  } else if (done && (phase === "OPEN" || phase === "SOLD_OUT" || phase === "CLOSED")) {
     primary = { label: held ? t({ ko: `응모 완료 · 래플 번호 #${no}`, en: `Entered · Ticket #${no}`, ja: `応募完了 · No.${no}`, zh: `已参与 · 编号 #${no}`, es: `Inscrito · N.º ${no}` }) : t({ ko: "결제 완료 · NFT 수령", en: "Paid · collect NFT", ja: "決済完了 · NFT受取", zh: "已支付 · 领取 NFT", es: "Pagado · recibir NFT" }), onClick: onOpen, done: held };
   } else if (phase === "OPEN") {
     primary = { label: t({ ko: `${price} XRP 로 참여하기`, en: `Enter with ${price} XRP`, ja: `${price} XRPで参加する`, zh: `用 ${price} XRP 参与`, es: `Participar con ${price} XRP` }), onClick: onCta, shine: true };
@@ -123,10 +117,10 @@ export function RaffleStats({ st, onHold, tba }: { st: RaffleStateView | null; o
     <div className="rf-wrap">
       <dl className="rf-stats">
         <Stat accent k={t({ ko: "참여 금액", en: "Entry", ja: "応募金額", zh: "参与金额", es: "Entrada" })} v={String(price)} unit="XRP" sub={t({ ko: "XRP 결제만 지원", en: "XRP only", ja: "XRP決済のみ", zh: "仅支持 XRP 支付", es: "Solo XRP" })} />
-        <Stat k={t({ ko: "참여 현황", en: "Entries", ja: "応募数", zh: "已参与", es: "Inscritos" })} v={count.toLocaleString()} unit={`/ ${max.toLocaleString()}`} sub={t({ ko: "선착순 마감", en: "first come, first served", ja: "先着順で締切", zh: "先到先得", es: "por orden de llegada" })} />
+        <Stat k={t({ ko: "참여 현황", en: "Entries", ja: "応募数", zh: "已参与", es: "Inscritos" })} v={st ? count.toLocaleString() : "…"} unit={`/ ${max.toLocaleString()}`} sub={t({ ko: "선착순 마감", en: "first come, first served", ja: "先着順で締切", zh: "先到先得", es: "por orden de llegada" })} />
         <Stat k={t({ ko: "당첨 확률", en: "Win rate", ja: "当選確率", zh: "中奖率", es: "Probabilidad" })} v="100" unit="%" sub={t({ ko: "참여하면 경품 중 100% 당첨", en: "everyone wins one prize", ja: "参加者全員に賞品", zh: "参与即 100% 中奖", es: "todos ganan un premio" })} />
-        <Stat k={t({ ko: "참여 마감", en: "Closes", ja: "応募締切", zh: "参与截止", es: "Cierre" })} v={onHold ? tba : fmtDay(cfg?.close, lang)} unit={onHold ? "" : fmtHm(cfg?.close)} sub={t({ ko: `${max}명 도달 시 조기 종료`, en: `ends early at ${max} entries`, ja: `${max}名到達で早期終了`, zh: `满 ${max} 人提前结束`, es: `termina antes al llegar a ${max}` })} />
-        <Stat k={t({ ko: "행사일", en: "Event", ja: "開催日", zh: "活动日期", es: "Evento" })} v={fmtDay(cfg?.eventAt, lang) || "10.03"} unit={EVENT_TIME} sub={t(VENUE)} />
+        <Stat k={t({ ko: "참여 마감", en: "Closes", ja: "応募締切", zh: "参与截止", es: "Cierre" })} v={!st ? "…" : onHold ? tba : fmtDay(cfg?.close, lang)} unit={!st || onHold ? "" : fmtHm(cfg?.close)} sub={t({ ko: `${max}명 도달 시 조기 종료`, en: `ends early at ${max} entries`, ja: `${max}名到達で早期終了`, zh: `满 ${max} 人提前结束`, es: `termina antes al llegar a ${max}` })} />
+        <Stat k={t({ ko: "행사일", en: "Event", ja: "開催日", zh: "活动日期", es: "Evento" })} v={st ? fmtDay(cfg?.eventAt, lang) || "10.03" : "…"} unit={st ? EVENT_TIME : ""} sub={t(VENUE)} />
       </dl>
     </div>
   );

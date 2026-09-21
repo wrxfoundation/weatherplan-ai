@@ -9,7 +9,8 @@ export const maxDuration = 30;
 
 /** 결제 확정 - XRP 입금 해시로 응모를 PAID 처리하고 래플 NFT 발행을 큐에 넣는다. 재호출은 멱등. */
 export async function POST(req: Request) {
-  const limited = await guard(req, "raffle-verify", 30);
+  /* IP 당 분당 한도 - 통신사 NAT 뒤의 여러 사용자가 같은 IP 로 보이므로 오픈 러시 때 30 은 좁다(확인 폴링이 한 사람당 최대 8회) */
+  const limited = await guard(req, "raffle-verify", 90);
   if (limited) return NextResponse.json(limited.body, { status: limited.status });
   const body = z.object({ txHash: z.string().max(64), mode: z.enum(["prod", "test"]).optional() }).safeParse(await req.json().catch(() => null));
   if (!body.success) return NextResponse.json({ error: "잘못된 요청" }, { status: 400 });

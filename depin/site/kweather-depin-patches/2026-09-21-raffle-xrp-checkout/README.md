@@ -1,15 +1,13 @@
-# XRP SEOUL 2026 래플 — XRP 전용 결제창 + 히어로 이식 + 카운팅·추첨 점검 수정 (2026-09-21)
+# XRP SEOUL 2026 래플 — XRP 전용 결제창 + 히어로 이식 + 카운팅·추첨 점검 + 대점검 v4 (2026-09-21)
 
 kweather-depin(모체) 저장소에 적용하는 변경분(누적). 판매 페이지 구매 모달(BuyModal)의 흐름을 따르되 결제는 XRP 뿐이고,
 래플 페이지 히어로·스탯 줄은 정적 시안(xrpseoul-raffle)을 그대로 옮겼다. 결제 카운팅·추첨 경로를 점검해 아래를 고쳤다.
 
 ## 적용
 - `git apply raffle-xrp-checkout.patch` (저장소 루트에서) **+ `files/public/assets/raffle/hero.webp` 를 같은 경로에 복사**(패치는 소스만 담는다).
-  또는 `files/` 아래 14개 파일을 같은 경로에 덮어쓴다. DB 스키마·마이그레이션 변경 없음.
-- 새 파일: src/components/raffle/RaffleCheckoutModal.tsx · RaffleHero.tsx · raffle-hero.css · TicketCard.tsx · types.ts ·
-  src/components/admin/RafflePanel.tsx · public/assets/raffle/hero.webp
-- 수정: src/components/raffle/RafflePage.tsx · src/lib/raffle.ts · src/app/api/raffle/verify/route.ts · src/app/api/admin/raffle/route.ts ·
-  src/components/admin/BlindDrawPanel.tsx · src/app/admin/page.tsx · src/app/event/xrpl-seoul/test/page.tsx
+  또는 `files/` 아래 21개 파일을 같은 경로에 덮어쓴다. DB 스키마·마이그레이션 변경 없음(`RaffleEntry.status` 는 문자열 컬럼이라 새 값 OVERFLOW 는 그대로 들어간다).
+- 새 파일(8): public/assets/raffle/hero.webp · src/components/admin/RafflePanel.tsx · src/components/raffle/RaffleCheckoutModal.tsx · src/components/raffle/RaffleHero.tsx · src/components/raffle/TicketCard.tsx · src/components/raffle/raffle-hero.css · src/components/raffle/types.ts · src/lib/raffle-prizes.ts
+- 수정(13): src/app/admin/page.tsx · src/app/admin/raffle-check/page.tsx · src/app/api/admin/raffle/route.ts · src/app/api/raffle/card/[code]/route.ts · src/app/api/raffle/enter/route.ts · src/app/api/raffle/meta/[code]/route.ts · src/app/api/raffle/verify/route.ts · src/app/event/xrpl-seoul/page.tsx · src/app/event/xrpl-seoul/test/page.tsx · src/app/event/xrpl-seoul/ticket/[code]/page.tsx · src/components/admin/BlindDrawPanel.tsx · src/components/raffle/RafflePage.tsx · src/lib/raffle.ts
 
 ## 결제창 흐름 (구매 모달과 같은 순서, 래플에 없는 단계는 접음)
 ① 응모 내용(계정당 1회 · 5 XRP · 경품 · 현장 수령 안내) → ② 동의(환불 불가 · 현장 수령/QR 관리) → ③ XRP 결제(연결 지갑 서명 또는 외부 지갑 송금 + 해시) → ④ 래플 NFT 수락 → 완료(티켓 카드)
@@ -32,3 +30,42 @@ kweather-depin(모체) 저장소에 적용하는 변경분(누적). 판매 페�
 ## 확인
 - `tsc --noEmit` · `eslint` 통과. 단계별·히어로 SSR 렌더 스크린샷(preview/). 순수 로직 테스트: computeDraw 결과 형태 → 배정 슬라이스(500/380/501명) · 장부 추론 · 페이즈 전이(9/22 18:00 OPEN · 500명 SOLD_OUT · 9/27 18:00 CLOSED).
 - 실기기 확인은 /event/xrpl-seoul/test (리허설 장부, 실제 5 XRP) 에서 결제 → NFT 수락 → 리허설 추첨 → 배정 → 스캐너까지 한 바퀴.
+
+## 대점검 v4 (2026-09-21 — 코드 QA · UX · 사용자 관점)
+`tsc --noEmit` · `eslint` 통과 · 로직 테스트 2종 통과(`logic-test.js` 추첨·배정·페이즈, `logic-test-verify.js` 결제 확정 규칙) ·
+페이지 10개 상태(로딩·시작 전·오픈·결제 대기·NFT 발행 중·보유·매진+대기·마감+당첨, ko/en) × PC/모바일 SSR 렌더와 결제창 10개 화면 확인(가로 넘침 0).
+
+### 고친 것
+1. **[돈] 매진·마감 뒤에도 결제할 수 있던 경로** — 정원(결제 확정 500)이 찬 뒤에도 결제 대기(PENDING) 사용자에게 「내 응모」의 「계속 진행」 버튼이 떠서 5 XRP 를 보낼 수 있었고,
+   서버는 그 입금을 확정하지 않으면서 해시도 남기지 않아 환불 대상을 찾을 수 없었다.
+   - 페이지: 결제 전 응모는 OPEN 일 때만 결제로 보낸다. 매진·마감이면 「XRP 를 보내지 마세요」 안내. 결제 확정(PAID)은 페이즈와 무관하게 「래플 NFT 받기」.
+   - 결제창: 결제 전인데 OPEN 이 아니면(매진·마감·정원 초과 입금) 결제 화면 대신 차단 안내 + 닫기(페이지가 20초마다 내려 주는 상태를 따른다). 남은 자리 20 이하이면 「확정 순서로 반영, 정원이 차면 환불」 경고.
+   - 서버 `verifyRaffleEntry`: 정원 초과 입금과 **기간 마감 + 10분 유예** 이후 입금은 PAID 로 만들지 않고 `status=OVERFLOW` 로 해시를 남긴다(같은 해시 재호출 멱등, 다른 응모가 쓴 해시 거부, PAID 재호출은 already).
+     관리자 콘솔 › 래플: 「정원 초과 · 환불 대상」 필터·건수. 결제 확정 수(참여 현황)는 PAID 만 센다(OVERFLOW 미포함).
+2. **[오픈 러시] 결제 확정 API 응답 끊김** — verify 가 아웃박스를 기본 40초 예산으로 밀어 Vercel 함수 30초 한도를 넘길 수 있었다 → 8초 예산(나머지는 매분 크론 `/api/cron/drain`).
+   IP 당 분당 한도 enter 20→60 · verify 30→90(통신사 NAT 뒤 여러 사용자가 같은 IP 로 보인다. 확인 폴링은 한 사람당 최대 8회).
+3. **[UX] 첫 화면의 빈 날짜** — 상태를 읽기 전 히어로에 「 시작」·「 응모 시작」(날짜 없음)이 잠깐 보였다 → 「…」·「불러오는 중…」 자리표시자(스탯 줄도).
+4. **[i18n] 경품 이름·설명이 모든 언어에서 한국어** — 경품 카드·결제창 ①·내 응모·티켓 페이지·NFT 카드가 새 `src/lib/raffle-prizes.ts` 표를 거쳐 5개 언어로 나온다(표에 없는 이름은 설정값 그대로).
+   FAQ 「전원 당첨」의 290/10/50/150 도 설정값에서 만든다. 일정의 행사일도 설정값(`eventAt`).
+5. **[UX] 결제창** — 서명·원장 확인·NFT 수락 중에는 바탕 클릭·ESC·✕ 로 닫히지 않는다(닫히면 진행 상황을 잃고 해시로 다시 확인해야 했다). 「참여」→로그인 뒤 결제창이 저절로 열린다.
+   카운트다운이 0 이 되면 20초를 기다리지 않고 바로 상태를 읽는다(18:00 시작 순간). 동의 카드 `role=checkbox`, 대화상자 초기 포커스. 확정 실패(400) 뒤 내 응모 상태를 새로 읽는다.
+6. **[정합] FAQ 「추첨은 NFT 를 보유한 계정 대상」 → 「결제가 확정된 응모 전원 대상」** — 서버의 추첨 참가자 = PAID 지갑(NFT 수락 여부 무관)과 맞춘다.
+7. **[카드] 추첨 뒤 NFT 카드 이미지·메타데이터에 배정 경품 표시**(영문 - 렌더러에 한글 글꼴 없음). 카드 캐시 1일 → 1시간.
+8. **[공유] 이벤트 페이지 OG/트위터 카드 이미지**(히어로 경품 예상도) — 완료 화면의 「X 에 공유」 링크 미리보기.
+9. **[현장] 스캐너** — 수령 처리 뒤 같은 QR 을 다시 읽으면 안내문대로 「이미 수령 처리됨」이 뜬다(연속 읽기 잠금 해제). 시크릿 없이 Enter 조회 방지. 티켓 페이지(QR 랜딩, 한국어뿐)에 영문 요약 한 단락.
+
+### 운영 메모
+- 추첨 봉인(커밋)은 **마감 시각 + 15분 뒤**에 한다 - 유예 10분 안에 확정되는 입금까지 명단에 들어가야 한다. 봉인 뒤 확정된 응모는 추첨에 없다(배정 결과 「미배정」).
+- OVERFLOW 행은 사람이 환불한다(관리자 콘솔 › 래플 › 「정원 초과 · 환불 대상」 - 지갑·해시가 행에 있다). 사용자 화면·결제창은 admin@wellbianlabs.io 로 지갑 주소·해시를 보내라고 안내한다.
+- 핫월렛 예치금: 미수락 NFT 오퍼 1건당 0.2 XRP 가 잠긴다(500명 전원 미수락이면 100 XRP) - 응모 입금(5 XRP × 500)으로 충분하다.
+
+### 결정이 필요한 것 (코드로 고치지 않았다)
+1. **초대권 수령 방식(문구 모순)** — 초대권 290매의 설명은 「10월 3일 서울 · 행사장 입장권」인데 히어로·결제창 동의·FAQ·일정은 모두 「경품은 행사 당일 현장(wellbian 플래티넘 부스)에서 QR 확인 후 수령, 배송 없음」이다.
+   입장권을 행사장 안 부스에서 받는 구조는 성립하지 않는다(FAQ 는 「초대권은 당첨자에게 별도 안내」라고만 한다). 초대권의 실제 전달 방식(이메일·입장 명단·입구 데스크)을 정해 네 곳 문구를 맞춰야 한다.
+2. **정원 초과 응모 설계** — 응모 행(태그)은 무제한이고 정원은 「결제 확정 500」이다. 18:00 러시에서 500 을 넘긴 입금은 전부 환불 대상이 된다(이번에 경고·차단·기록은 넣었다).
+   근본 해결은 결제 대기 예약에 만료(예: 30분)를 두고 「예약 + 확정」 합계로 정원을 세는 설계 변경(스키마·크론 필요).
+3. **추첨 검증 링크 노출** — FAQ 가 「누구나 재계산 검증」을 약속하지만 페이지에 `/api/draw/<id>` 링크가 없다. 설정(`raffle_xrpseoul`)에 drawId 를 넣고 일정 섹션에 링크 한 줄이면 된다.
+4. **해시 없이 태그로 자동 확인** — 거래소에서 바로 보낸 사용자는 해시를 찾기 어렵다. 핫월렛 account_tx 를 Destination Tag 로 훑어 확인하는 「입금 확인」 버튼(P2).
+5. **페이지 진입 경로** — 메인·내비·사이트맵 어디에도 `/event/xrpl-seoul` 링크가 없다(페이지 주석: 「확인 뒤 메인·내비에 연결」). 지금은 X·텔레그램 등 외부 링크로만 들어온다.
+6. 행사장 표기 「서울 하얏트 호텔」 확인(그랜드 하얏트 서울?) · 리허설 입금 반환은 수동 · 통신사 NAT 한도는 90/분으로 올렸으나 러시 때 429 가 보이면 더 올린다.
+

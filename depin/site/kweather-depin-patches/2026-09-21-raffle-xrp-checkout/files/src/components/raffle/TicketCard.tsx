@@ -1,6 +1,7 @@
 "use client";
 /* 래플 NFT 카드 + QR 관리 경고 - 페이지(내 응모)와 결제창(완료 화면)이 같이 쓴다 (2026-09-21 분리). */
-import type { Msg } from "@/lib/launch/i18n";
+import type { Lang, Msg } from "@/lib/launch/i18n";
+import { prizeLabel } from "@/lib/raffle-prizes";
 import type { RaffleMine } from "./types";
 
 type T = <V>(m: Msg<V>) => V;
@@ -20,7 +21,7 @@ export function QrWarning({ t }: { t: T }) {
   );
 }
 
-export function TicketCard({ mine, t }: { mine: RaffleMine; t: T }) {
+export function TicketCard({ mine, t, lang }: { mine: RaffleMine; t: T; lang: Lang }) {
   if (!mine.ticketCode) return null;
   return (
     <div style={{ display: "flex", gap: 16, alignItems: "flex-start", flexWrap: "wrap" }}>
@@ -30,7 +31,7 @@ export function TicketCard({ mine, t }: { mine: RaffleMine; t: T }) {
         <div style={{ fontSize: 14.5, lineHeight: 1.6, color: "var(--ink-dim, var(--ink-3))" }}>
           {t({ ko: "래플 NFT 카드입니다. 행사 당일(10월 3일) 행사장에서 QR 코드 확인 후 경품이 지급됩니다.", en: "This is your raffle NFT card. Prizes are handed out at the venue on 3 October after the QR code is verified.", ja: "ラッフルNFTカードです。イベント当日（10月3日）に会場でQRコードを確認後、賞品をお渡しします。", zh: "这是您的抽奖 NFT 卡。活动当天（10 月 3 日）在会场核验二维码后发放奖品。", es: "Esta es su tarjeta NFT del sorteo. Los premios se entregan en el recinto el 3 de octubre tras verificar el código QR." })}
         </div>
-        {mine.prize && <div style={{ fontSize: 15 }}>{t({ ko: "당첨 경품", en: "Prize", ja: "当選賞品", zh: "中奖奖品", es: "Premio" })}: <b>{mine.prize}</b></div>}
+        {mine.prize && <div style={{ fontSize: 15 }}>{t({ ko: "당첨 경품", en: "Prize", ja: "当選賞品", zh: "中奖奖品", es: "Premio" })}: <b>{prizeLabel(mine.prize, lang)}</b></div>}
         {mine.redeemedAt && <div style={{ fontSize: 14, color: "#b42318", fontWeight: 700 }}>{t({ ko: "수령 완료", en: "Collected", ja: "受取済み", zh: "已领取", es: "Recogido" })} · {new Date(mine.redeemedAt).toLocaleString()}</div>}
         <QrWarning t={t} />
       </div>

@@ -26,6 +26,15 @@ export const raffleTaxon = (m: RaffleMode) => (m === "test" ? 900014 : 1004);
 const configKey = (m: RaffleMode) => (m === "test" ? "raffle_xrpseoul_test" : "raffle_xrpseoul");
 export const modeOfEvent = (event: string): RaffleMode => (event.endsWith("-test") ? "test" : "prod");
 
+/* 마감 뒤 확인된 입금 (2026-09-21 점검). 추첨 명단은 마감 시점의 결제 확정 응모로 봉인되므로 늦게 확정된 응모는 추첨에 들어가지
+   못한다 - 그래서 마감(정원·기간) 뒤에 확인된 입금은 PAID 로 만들지 않고 OVERFLOW 로 남겨 관리자 콘솔 › 래플에서 환불 대상으로 본다.
+   마감 직전에 보낸 송금이 원장 반영·확인까지 걸리는 시간을 생각해 기간 마감은 10분을 받아 준다. */
+export const CLOSE_GRACE_MS = 10 * 60_000;
+const OVERFLOW_MSG = "정원 또는 기간이 마감되어 결제를 확정할 수 없습니다. 입금액은 환불해 드립니다 - admin@wellbianlabs.io 로 지갑 주소와 트랜잭션 해시를 보내 주세요.";
+async function markOverflow(entryId: string, hash: string) {
+  await prisma.raffleEntry.updateMany({ where: { id: entryId, status: "PENDING" }, data: { status: "OVERFLOW", txHash: hash } }).catch(() => {});
+}
+
 export interface RafflePrize { name: string; qty: number; note?: string }
 export interface RaffleConfig {
   open: string;       // 응모 시작 (ISO)
@@ -137,6 +146,7 @@ export async function verifyRaffleEntry(wallet: string, txHash: string, origin: 
   const entry = await prisma.raffleEntry.findUnique({ where: { event_wallet: { event, wallet } } });
   if (!entry) return { ok: false as const, error: "응모 내역이 없습니다. 먼저 응모를 시작해 주세요." };
   if (entry.status === "PAID") return { ok: true as const, entry, already: true };
+  if (entry.status === "OVERFLOW") return { ok: false as const, error: OVERFLOW_MSG, pending: false };
   const hash = txHash.toUpperCase();
   const dup = await prisma.raffleEntry.findUnique({ where: { txHash: hash } });
   if (dup && dup.id !== entry.id) return { ok: false as const, error: "이미 다른 응모에 사용된 트랜잭션입니다." };
@@ -145,6 +155,10 @@ export async function verifyRaffleEntry(wallet: string, txHash: string, origin: 
 
   const kind = raffleKind(mode);
   const config = await loadRaffleConfig(mode);
+  if (Date.now() >= Date.parse(config.close) + CLOSE_GRACE_MS) {
+    await markOverflow(entry.id, hash);
+    return { ok: false as const, error: OVERFLOW_MSG, pending: false };
+  }
   /* 래플 번호 = 결제 확정 순번. 같은 순간 여러 명이 확정되면 둘 다 같은 max+1 을 계산해 (event, entryNo) 유일 제약에
      걸린다(2026-09-21 점검 - 18:00 오픈 러시에서 실제로 날 수 있는 경우). 그때는 번호를 다시 세어 재시도한다(최대 6회).
      같은 응모의 중복 호출(확인 버튼 두 번)은 status=PENDING 조건으로 한 번만 통과시킨다 - 예전에는 두 번째 호출이
@@ -183,10 +197,11 @@ export async function verifyRaffleEntry(wallet: string, txHash: string, origin: 
   }
   if (paid === "ALREADY") {
     const again = await prisma.raffleEntry.findUniqueOrThrow({ where: { id: entry.id } });
+    if (again.status !== "PAID") return { ok: false as const, error: OVERFLOW_MSG, pending: false };   // 그 사이 OVERFLOW 로 남은 행
     return { ok: true as const, entry: again, already: true };
   }
   if (paid === "RACE") return { ok: false as const, error: "확정이 몰려 번호를 매기지 못했습니다. 잠시 후 해시로 다시 확인해 주세요.", pending: true };
-  if (!paid) return { ok: false as const, error: "선착순 정원이 모두 찼습니다. 입금액은 환불해 드립니다 - admin@wellbianlabs.io 로 알려 주세요.", pending: false };
+  if (!paid) { await markOverflow(entry.id, hash); return { ok: false as const, error: OVERFLOW_MSG, pending: false }; }
   if (paid.pass.state === "MINT_QUEUED" && !paid.pass.mintTxId) {
     /* 이 NFT 의 발행 작업이 이미 큐에 있으면 다시 넣지 않는다 */
     const queued = await prisma.xrplTransaction.findFirst({ where: { refType: "GenesisPass", refId: paid.pass.id, purpose: "NFT_MINT" }, select: { id: true } });
@@ -196,7 +211,8 @@ export async function verifyRaffleEntry(wallet: string, txHash: string, origin: 
         { TransactionType: "NFTokenMint", Issuer: ISSUER_ADDRESS, NFTokenTaxon: raffleTaxon(mode), Flags: 8, URI: convertStringToHex(paid.metadataUri) },
         { type: "GenesisPass", id: paid.pass.id },
       );
-      await drainOutbox().catch(() => {});
+      /* 짧게만 민다 - 기본 40초 예산을 verify(maxDuration 30초) 안에서 기다리면 오픈 러시 때 응답이 끊긴다. 나머지는 매분 크론(/api/cron/drain)이 잇는다. */
+      await drainOutbox(8_000).catch(() => {});
     }
   }
   return { ok: true as const, entry: paid.entry, already: false };
