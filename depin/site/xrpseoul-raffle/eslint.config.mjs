@@ -18,6 +18,7 @@ const eslintConfig = [
       "out/**",
       "build/**",
       "next-env.d.ts",
+      "mother-patch/**",   // 정본에 붙이는 재료 - 이 앱의 검사 대상이 아니다
     ],
   },
 ];

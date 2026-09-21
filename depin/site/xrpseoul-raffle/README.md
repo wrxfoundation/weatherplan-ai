@@ -19,6 +19,7 @@
 3. 크론·지역 설정 없음(Hobby 제한에 걸릴 것이 없다).
 
 ## 정본에 붙이기
+- `mother-patch/` 는 tsconfig·eslint 검사에서 제외돼 있다(안에 정본용 .tsx 가 있어 검사에 걸리면 빌드가 실패한다).
 - `mother-patch/README.md` 의 「적용」 절대로: `git apply raffle-xrp-checkout.patch` + `hero.webp` 복사, 또는 `files/` 를 같은 경로에 덮어쓰기. DB 스키마 변경 없음.
 - 이 앱에만 있는 파일(정본에는 넣지 않는다): `src/lib/raffle-config.ts` · `src/lib/launch/i18n.tsx`(정본은 메인 i18n 을 구독하는 원본이 있다) · `src/lib/wallet/WalletContext.tsx`(정본은 실제 지갑) ·
   `src/components/TopBar.tsx` · `src/app/preview/*` · `src/app/api/raffle/card/[code]/route.ts`(정본은 번호·QR 을 넣은 PNG) · `src/app/api/raffle/state/route.ts`(정본은 DB 를 읽는다) · `src/app/page.tsx`(정본은 /event/xrpl-seoul).
