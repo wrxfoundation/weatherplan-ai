@@ -1,14 +1,14 @@
-# Korea Rising — verified K-pop snapshot (2026-09-20)
+# Korea Rising — verified K-pop snapshot (2026-09-21)
 
 Every line is **cross-verified** (≥2 independent sources agree on the canonical name) and carries its source + Skill Score. Full data + Schema.org JSON-LD: <https://aiagentlabs.co.kr/> · via KoreaAPI (MCP).
 
 ## 🎬 Latest official releases (YouTube)
-- **BoA** — You still our No.1 BoA
-- **PLAVE** — Plave - PORNSTAR
-- **QWER** — 타이틀곡 '소년만화' 최초 공개! l 당신의 QWER에 투표하세요
 - **Xdinary Heroes** — 고려대와 엑디즈🎸가 이토록🌀뜨거울 줄이야
-- **NCT Dream** — 🦀천러 고향에서 런쥔이와 놀아보는 하루 in 상하이🍜 | 드림 바이 드림 | DREAM x DREAM
-- **AKMU** — 'Paradise of Rumors... begins...'
+- **ZICO** — WATERBOMB? Yeah, absolutely. Absolutely. Easy. No problem.
+- **EVERGLOW** — Kingdom Hearts IV - Extended D23 2026 Trailer
+- **Oh My Girl** — 저 정말 바라는 거 없어요 💜
+- **Kiss of Life** — Youuuu💗#KISSOFLIFE #키스오브라이프 #KIOF #JULIE #쥴리 #NATTY #나띠 #HANEUL #하늘 #Shorts
+- **VIVIZ** — [VIVI.Zip] 항저우 팬미팅 Spring Whisper 포스터 촬영💙 Highlight #2
 
 ## 🎤 Verified roster (640 acts)
 - **2NE1**: I Am the Best
