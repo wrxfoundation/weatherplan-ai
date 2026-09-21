@@ -3249,3 +3249,72 @@ LG에서 오래 계시다 이쪽으로 건너오신 분이라 그 얘기를 한�
 OKX 1촌이 셋이 됐다 — Morty Ma(Product Director) · Shawn Ma(Head of OKX DEX) · **Kyuyoung Kim(Growth Lead)**.
 어제 「Morty 냐 Shawn 이냐」를 **자리**로 고민했는데, **답이 온 사람이 문이다. 자세가 직함보다 우선한다.**
 나머지 둘은 닫고 **OKX 는 Kyuyoung 한 문**으로 간다 — Binance·Bybit 처럼 셋을 벌여놓으면 사내에서 겹친다.
+
+## Alessandro Borgogna (Abu Dhabi Investment Office · Advisor to the DG / Chief Clusters Development Officer) — 1촌 요청 뒤 첫 메시지 (9/21)
+
+**누구인가(링크드인 캡처 5장 + 공개 보도)**: ADIO 총괄 자문 겸 **클러스터 개발 총괄**(2024-04~, 계약직) — 투자 전문가 30+ 명의
+클러스터 기획·개발 조직을 이끈다. 前 **Mubadala** Executive Director(UAE Clusters Unit 신규 사업 — 국제 파트너 소싱·구조화, 2023~24) ·
+前 **Strategy& 중동** VP/Partner 10년(산업·제조·자동차, 방산·항공·인프라 20년+) · Serviis 공동창업(사우디, 2017~19) ·
+SDA Bocconi MBA · UCLA Anderson 교환. 아부다비 거주. 팔로워 1.16만. **3촌 — Henry Key(Hashed)·Junsoo(누군지 확인)가 팔로우.**
+**서우가 9/21 1촌 요청 발송(대기중)** — 메시지는 수락 뒤.
+
+**왜 지금인가**: 그의 5일 전 글 — 「Advancing the partnerships with Korea companies across finance and entertainment ....
+More to come in the near future」 + MOU 체결식 사진(태극기·UAE기). 공개 보도로 맞춰 보면 **9/16 ADIF Seoul(JW 메리어트,
+ADIO 주최 · ADDED·ADGM 협력)** 이다. 같은 자리에서 **Hashed × ADIO MOU** — Hashed 가 「아부다비 진출을 검토하는 한국 기업·기관·
+투자자에 대한 ADIO 의 접촉을 지원」하는 장기 파트너십(공개 보도자료). 한화금융 등 금융·디지털자산·모빌리티·게임 딜(2차 매체).
+**한국이 그의 지금 파이프라인이고, 「More to come」이라고 스스로 썼다** — 우리가 그 열에 들어갈 시점은 지금이다.
+
+**ADIO 클러스터(2차, 공식 페이지 미열람)**: SAVI(자율 모빌리티) · AGWA(농식품·물) · HELM(헬스·장수) · FIDA(자산운용, 2025 ADFW 신설).
+**우리가 정확히 들어가는 칸은 없다** — 가까운 것은 HELM(실내 공기 ↔ 건강)과 AGWA(기상 데이터 ↔ 농식품·물). 그래서 첫 메시지는
+**칸을 우리가 고르지 않고 그에게 묻는다**(「Where this sits among your clusters is something I'd rather hear from you than guess」).
+
+### ★ 판정 — Henry 판정(9/17)의 연장이자 한 칸 위
+
+- **각도는 같다: 투자가 아니라 시장.** 두바이 관찰(실외보다 실내 공기 문의가 압도적)을 그대로 쓴다 — Henry 에게 건넨 것과 **같은 문장**이어야
+  한다(둘은 서로 아는 사이라 말이 다르면 바로 드러난다).
+- **Henry 와 다른 점 하나 — 요청이 그의 일이다.** Henry 는 「우리는 포트폴리오사가 아니다 → 왜 내가」가 걸렸지만, **ADIO 는 한국 기업을
+  아부다비로 끌어오는 것이 존재 이유**다. 짧은 콜 요청은 「투자받고 싶다」로 읽히지 않는다. 다만 **한 줄**로 — 문제·계획·「진출하고 싶다」는
+  여전히 0(9/17 가드 유지). 「그때 왜 본격적으로 안 했는지」는 공백.
+- **★ Henry 판정도 갱신된다.** Hashed × ADIO MOU 로 **한국 기업의 아부다비 진출 지원이 Henry 의 공식 역할**이 됐다 → 9/17 의 「왜 내가」
+  문제가 사라진다. **순서**: Henry 가 9/17 DM 에 답하면 Alessandro 소개를 한 줄로 청한다(아래). **답 전에는 Henry 에게 새 메시지 0**(9/17
+  「답은 늦다」 전제 유지). Henry 소개가 있으면 첫 메시지에 그 이름을 쓰고, 없으면 그대로 직접 간다 — **동의 없이 이름 안 쓴다.**
+- **케이웨더를 앞세운다.** 정부 투자청이 보는 것은 30년·4,000+ 고객사·코스닥 상장사다(교보 Heejin Shin 판정과 같은 결 — 국내·기관 대화에서
+  상장 사실은 자연스러운 신뢰 신호). 토큰·보상·XRPL 이름은 0, 「public ledger」까지. 케이웨더는 **기기 파트너 프레임 그대로**(「the network
+  built on top of it」 — Kritda DM 과 같은 문장).
+- **XRP SEOUL 한 줄**은 넣는다 — Hashed·ADIO 딜이 디지털자산 축이라 「우리가 그 씬의 실물 플레이어」라는 신호가 값하고, 「행사는 알릴
+  명분」 원칙(9/17)에 맞다. 플래티넘 스폰서 주어는 케이웨더.
+
+### 첫 메시지 (수락 뒤 · 링크드인 메시지)
+
+```
+Alessandro — thank you for connecting. Your note on the Korea partnerships after ADIF Seoul caught my eye, so I'll introduce myself briefly.
+
+I look after partnerships at wellbian and sit in KWeather's digital business division. KWeather has measured weather in Korea for thirty years and supplies 4,000+ enterprise clients; it is listed on KOSDAQ. wellbian is the network built on top of it: certified indoor air-quality sensors that people run in their own rooms, each reading fingerprinted to a public ledger before it goes anywhere. KWeather is platinum sponsor of XRP SEOUL 2026 on 3 October, where we present it.
+
+One observation that may be useful to you: when KWeather looked at Dubai a few years ago, the inquiries were overwhelmingly about indoor air rather than outdoor. The Gulf is a market we've kept watching since.
+
+Where this sits among your clusters is something I'd rather hear from you than guess. If a short call makes sense once your Korea trip settles, I'd welcome it.
+
+Logan
+```
+
+| 구절 | 하는 일 |
+|---|---|
+| `Your note on the Korea partnerships after ADIF Seoul` | **그의 글을 읽었다**는 것 — 콜드가 아니라 맥락이 있는 접촉. 포럼 이름은 공개 보도 기준 |
+| `sit in KWeather's digital business division` | 서우의 이중 소속을 **케이웨더 쪽으로 먼저** 보인다 — 투자청이 보는 실체는 케이웨더다 |
+| `it is listed on KOSDAQ` | 기관 대화의 신뢰 신호(교보 판정과 같은 결). **토큰 마케팅에는 쓰지 않는 문장** |
+| `the inquiries were overwhelmingly about indoor air rather than outdoor` | Henry 에게 건넨 두바이 관찰과 **같은 사실** — 그가 모를 수 있는 현장 데이터 |
+| `a market we've kept watching since` | 9/17 규칙 — 「접었다」 금지, 현재형. 왜 본격적으로 안 했는지는 공백 |
+| `something I'd rather hear from you than guess` | 클러스터 칸을 **그가 고르게** 한다 — 우리가 억지로 HELM·AGWA 를 대지 않는다 |
+| `If a short call makes sense once your Korea trip settles` | 요청 한 줄. **ADIO 의 일이라 허용**, 시점을 그의 사정에 맞춘다 |
+
+**넣지 않은 것**: 토큰·보상·XRPL 이름 · 「진출하고 싶다」 · 인센티브·그랜트 질문(첫 메시지에 돈 얘기가 나오면 「지원금 전제 등판」이 된다 —
+XRP KOREA 조언 8/25) · 문제 상세(무료 컨설팅 요청이 된다, 9/17) · Henry 이름(동의 전).
+
+### Henry 에게 — 그가 9/17 DM 에 답한 뒤에만
+
+```
+Henry — I've sent Alessandro Borgogna a connection request after his Korea note. If a one-line word from you is easy, it would help; either way I'll follow up with him directly.
+```
+
+**발송 여부는 Claude 가 관리하지 않는다** — 수락·발송·회신은 서우 통보 시 갱신.

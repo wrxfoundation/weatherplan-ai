@@ -55,7 +55,7 @@ export type Person = {
   handle?: string;
 };
 
-export const NETWORK_UPDATED = "2026-09-17";
+export const NETWORK_UPDATED = "2026-09-21";
 
 export const LANES: { key: Lane; label: string; note: string }[] = [
   { key: "xrpl",     label: "XRPL 생태계",   note: "빌더 파이프라인·재단·지역 커뮤니티. 우리 무대가 여기다" },
@@ -938,7 +938,14 @@ export const PEOPLE: Person[] = [
     id: "henrykey", name: "Henry Key", org: "Hashed", role: "Business Development Manager (아부다비 상주) — LP·포트폴리오사의 UAE 진출 주도 · 前 삼성전자 재무",
     lane: "capital", stance: "talking", tie: "1촌(9/8) · 공통 1촌 4명 · DM 발송(9/17)",
     why: "**★ 새 각도(9/17 서우)**: 투자가 아니라 **시장**이다. 케이웨더가 몇 해 전 두바이를 에이전시 경로로 봤을 때 **실외 대기질보다 실내 공기질 문의가 훨씬 많았다** — 더위로 실내 체류가 긴 지역이라 억지 논리가 아니고 **이미 현장에서 확인된 수요**다. **계속 눈여겨보고 있는 시장으로 말한다(현재형).**",
-    next: "**정보를 주는 것으로 연다 — 요청 0.** ⚠ 우리는 Hashed 포트폴리오사가 아니라 **그에게 뭘 요청하면 「왜 내가」가 되고 자동으로 「투자받고 싶다」로 읽힌다**(투자로 열지 않는다는 판정을 우리가 깨게 된다). 두바이 관찰을 건네고 **서울에 있는지만 묻는다**. **⚠ 「접었다」를 쓰지 않는다(9/17 서우)** — 우리를 포기한 쪽으로 만들고 상대가 「그럼 지금도 안 되겠네」로 받는다. **「그 이후로도 계속 눈여겨보고 있는 시장」으로 현재형**을 쓴다. 그때 왜 본격적으로 안 했는지는 **공백으로 둔다** — 물으면 답하고, 먼저 꺼내면 없던 문제를 만든다. ⚠ 타이밍: 4개월 준비한 **아부다비 투자 포럼이 9/16 서울 개최 중** — 이번 주가 그의 최대 바쁜 주라 **답은 늦을 것을 전제**한다. 지금 UAE 진출은 실체가 없다(배송 전·10/3·크립토닷컴 진행 중) — **「진출하고 싶다」를 말하지 않는다.**",
+    next: "**정보를 주는 것으로 연다 — 요청 0.** ⚠ 우리는 Hashed 포트폴리오사가 아니라 **그에게 뭘 요청하면 「왜 내가」가 되고 자동으로 「투자받고 싶다」로 읽힌다**(투자로 열지 않는다는 판정을 우리가 깨게 된다). 두바이 관찰을 건네고 **서울에 있는지만 묻는다**. **⚠ 「접었다」를 쓰지 않는다(9/17 서우)** — 우리를 포기한 쪽으로 만들고 상대가 「그럼 지금도 안 되겠네」로 받는다. **「그 이후로도 계속 눈여겨보고 있는 시장」으로 현재형**을 쓴다. 그때 왜 본격적으로 안 했는지는 **공백으로 둔다** — 물으면 답하고, 먼저 꺼내면 없던 문제를 만든다. ⚠ 타이밍: 4개월 준비한 **아부다비 투자 포럼이 9/16 서울 개최 중** — 이번 주가 그의 최대 바쁜 주라 **답은 늦을 것을 전제**한다. 지금 UAE 진출은 실체가 없다(배송 전·10/3·크립토닷컴 진행 중) — **「진출하고 싶다」를 말하지 않는다.** **9/21 갱신**: **Hashed × ADIO MOU(9/16 ADIF Seoul, 공개 보도)** — 아부다비 진출을 검토하는 한국 기업 지원이 **그의 공식 역할**이 됐다 → 「왜 내가」 문제가 사라진다. **답이 오면 Alessandro Borgogna(ADIO) 소개를 한 줄로 청한다**(`x-activity-log.md` Alessandro 절). 답 전에는 새 메시지 0.",
+  },
+  {
+    id: "borgogna", name: "Alessandro Borgogna", org: "Abu Dhabi Investment Office (ADIO)", role: "Advisor to the DG / Chief Clusters Development Officer (2024-04~, 계약직) — 클러스터 기획·개발 조직(투자 전문가 30+) 총괄 · 前 Mubadala Executive Director(UAE Clusters Unit 신규 사업) · 前 Strategy& 중동 Partner 10년",
+    lane: "capital", stance: "open", tie: "3촌 · 1촌 요청 발송(9/21, 대기중) · Henry Key·Junsoo 가 팔로우",
+    via: "Henry Key(Hashed — 9/16 ADIO MOU 로 한국 기업 창구) · ADIF Seoul 9/16", meet: "ADIF(다음 서울 개최 시) · 아부다비 현지",
+    why: "**정부 투자청의 클러스터 총괄이 지금 한국 파이프라인을 짜고 있다** — 9/16 ADIF Seoul 뒤 「Korea partnerships … More to come」을 스스로 썼다. 각도는 Henry 와 같다(투자가 아니라 **시장** — 두바이 실내 공기 문의). 다른 점은 **요청이 그의 일**이라 짧은 콜 요청이 「투자받고 싶다」로 읽히지 않는다. 클러스터(SAVI·AGWA·HELM·FIDA)에 우리 칸은 없다 — 가까운 것은 HELM(실내 공기 ↔ 건강)·AGWA(기상 ↔ 농식품·물), **칸은 그에게 묻는다.**",
+    next: "**수락 뒤 첫 메시지 초안 완료**(`x-activity-log.md`) — 케이웨더(30년·4,000+·코스닥)를 앞세우고 두바이 관찰은 Henry 에게 건넨 것과 **같은 문장**, XRP SEOUL 한 줄, 콜 요청 한 줄. 토큰·보상·XRPL 이름·인센티브 질문·「진출하고 싶다」 0. **Henry 가 답하면 소개 한 줄을 청하고 그 뒤에 이름을 쓴다 — 동의 전 이름 0.**",
   },
   {
     id: "dsrv", name: "Byeongyun Seo", org: "DSRV", role: "Co-CEO",
