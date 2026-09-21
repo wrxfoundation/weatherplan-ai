@@ -3074,7 +3074,7 @@ Eri — thanks for making the time.
 Wed, Sept 23 · 10:00–10:30 AM Tokyo / Seoul (same hour)
 Google Meet, video on — the link is in this invite.
 
-Since it's our first time talking properly, I'll keep it simple: a short introduction to wellbian — the project and the product — and then the light media plan you mentioned, ahead of XRP SEOUL 2026 on Oct 3. You steer; I'll bring the material.
+Since it's our first time talking properly, I'll keep it simple: a short introduction to wellbian — the project and the product — and then the light media plan you so generously offered, ahead of XRP SEOUL 2026 on Oct 3. Thank you for that; it means a great deal to us. You steer; I'll bring the material.
 
 If 30 minutes runs short we can keep going, and if the hour stops working for you, say so and I'll move it.
 
@@ -3085,7 +3085,7 @@ Head of Partnerships & Operations, wellbian
 | 구절 | 하는 일 |
 |---|---|
 | `a short introduction to wellbian — the project and the product` | **서우 수정(9/21)**: 기기·데이터·live/testnet 세 줄 의제를 버리고 **프로젝트·프로덕트 소개**로 — 첫 미팅이라 의제를 세우면 브리핑이 되고, 소개면 대화가 된다. 세 줄의 내용은 콜에서 말로 한다 |
-| `the light media plan you mentioned` | 9/16 그의 제안(`let's set some light media plan`)을 **그의 것으로 되돌려 준다** — 우리가 요구한 게 아니라 그가 연 문 |
+| `the light media plan you so generously offered` · `Thank you for that; it means a great deal to us` | **서우 추가(9/21)**: 무상 지원을 논의해 주는 데 대한 감사. `generously` 한 단어로 「No charge」를 받되 **돈·무료라는 말은 쓰지 않는다** — 호의를 거래로 바꾸지 않기 위해. 미디어 협력은 우리가 먼저 청했고 **무상은 그가 얹은 것**이라 감사의 대상을 「offered」에 둔다 |
 | `You steer; I'll bring the material` | 무상으로 열어 준 상대에게 **주도권을 둔다** — 「우리가 원하는 노출 목록」을 먼저 내밀지 않는다 |
 | `if the hour stops working for you, say so` | 9/16·9/18 의 「시간은 그의 것」을 초대에서도 유지 |
 
