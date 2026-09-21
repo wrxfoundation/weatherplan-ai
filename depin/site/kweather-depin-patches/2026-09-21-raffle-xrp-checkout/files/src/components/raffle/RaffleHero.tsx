@@ -55,6 +55,9 @@ export function RaffleHero({ st, phase, done, held, mine, onHold, tba, cd, onCta
     primary = { label: t({ ko: `${price} XRP 로 참여하기`, en: `Enter with ${price} XRP`, ja: `${price} XRPで参加する`, zh: `用 ${price} XRP 参与`, es: `Participar con ${price} XRP` }), onClick: onCta, shine: true };
   } else if (phase === "BEFORE") {
     primary = { label: onHold ? t({ ko: "응모 일정은 추후 공지됩니다", en: "Entry schedule to be announced", ja: "応募日程は後日発表します", zh: "报名时间另行通知", es: "Fechas por anunciar" }) : t({ ko: `${fmtDay(cfg?.open, lang)} ${fmtHm(cfg?.open)} 응모 시작`, en: `Opens ${fmtDay(cfg?.open, lang)} ${fmtHm(cfg?.open)}`, ja: `${fmtDay(cfg?.open, lang)} ${fmtHm(cfg?.open)} 応募開始`, zh: `${fmtDay(cfg?.open, lang)} ${fmtHm(cfg?.open)} 开始参与`, es: `Abre el ${fmtDay(cfg?.open, lang)} ${fmtHm(cfg?.open)}` }), disabled: true };
+  } else if (phase === "SOLD_OUT" && mine?.status === "PENDING" && mine.holdLive) {
+    /* 정원(확정 + 예약)이 찼지만 내 예약이 살아 있으면 결제를 이어 갈 수 있다 */
+    primary = { label: t({ ko: "결제 이어서 하기 · 자리 확보 중", en: "Continue payment · spot held", ja: "決済を続ける・席を確保中", zh: "继续支付 · 名额已保留", es: "Continuar el pago · plaza reservada" }), onClick: onCta, shine: true };
   } else if (phase === "SOLD_OUT") {
     primary = { label: t({ ko: `선착순 ${max}명 마감`, en: `All ${max} spots filled`, ja: `先着${max}名 締切`, zh: `${max} 个名额已满`, es: `${max} plazas completas` }), disabled: true };
   } else {
@@ -84,7 +87,7 @@ export function RaffleHero({ st, phase, done, held, mine, onHold, tba, cd, onCta
             {prizes.slice(2).map((p) => prizeWord(p, lang)).join(sep)}{" "}
             <b>{t({ ko: "— 참여하면 이 중 하나는 반드시 당첨.", en: "— enter and one of these is yours, guaranteed.", ja: "— 参加すればこのうち1つが必ず当たります。", zh: "— 参与即必得其中一份。", es: "— participe y uno de ellos es suyo, garantizado." })}</b>
           </p>
-          <p className="rf-hero-sub">{t({ ko: "경품은 10월 3일 XRP SEOUL 2026 현장에서 수령합니다", en: "Prizes are collected at XRP SEOUL 2026 on 3 October", ja: "賞品は10月3日、XRP SEOUL 2026会場でお受け取りください", zh: "奖品于 10 月 3 日在 XRP SEOUL 2026 现场领取", es: "Los premios se recogen en XRP SEOUL 2026 el 3 de octubre" })}</p>
+          <p className="rf-hero-sub">{t({ ko: "초대권은 이메일로, 실물 경품은 10월 3일 XRP SEOUL 2026 현장에서 수령합니다", en: "Invitations by email; physical prizes are collected at XRP SEOUL 2026 on 3 October", ja: "招待券はメールで、実物の賞品は10月3日、XRP SEOUL 2026会場でお受け取りください", zh: "邀请函通过邮件发送，实物奖品于 10 月 3 日在 XRP SEOUL 2026 现场领取", es: "Invitaciones por correo; los premios físicos se recogen en XRP SEOUL 2026 el 3 de octubre" })}</p>
           <div className="rf-hero-cta">
             <button type="button" className={`rf-btn fill${primary.shine ? " shine" : ""}${primary.done ? " done" : ""}`} disabled={primary.disabled} onClick={primary.onClick}>{primary.label}</button>
             <a className="rf-btn ghost" href="#prizes">{t({ ko: "경품 보기", en: "See prizes", ja: "賞品を見る", zh: "查看奖品", es: "Ver premios" })}</a>
@@ -113,11 +116,12 @@ export function RaffleStats({ st, onHold, tba }: { st: RaffleStateView | null; o
   const price = cfg?.priceXrp ?? 5;
   const max = cfg?.maxEntries ?? 500;
   const count = st?.count ?? 0;
+  const holds = st?.holds ?? 0;
   return (
     <div className="rf-wrap">
       <dl className="rf-stats">
         <Stat accent k={t({ ko: "참여 금액", en: "Entry", ja: "応募金額", zh: "参与金额", es: "Entrada" })} v={String(price)} unit="XRP" sub={t({ ko: "XRP 결제만 지원", en: "XRP only", ja: "XRP決済のみ", zh: "仅支持 XRP 支付", es: "Solo XRP" })} />
-        <Stat k={t({ ko: "참여 현황", en: "Entries", ja: "応募数", zh: "已参与", es: "Inscritos" })} v={st ? count.toLocaleString() : "…"} unit={`/ ${max.toLocaleString()}`} sub={t({ ko: "선착순 마감", en: "first come, first served", ja: "先着順で締切", zh: "先到先得", es: "por orden de llegada" })} />
+        <Stat k={t({ ko: "참여 현황", en: "Entries", ja: "応募数", zh: "已参与", es: "Inscritos" })} v={st ? count.toLocaleString() : "…"} unit={`/ ${max.toLocaleString()}`} sub={holds > 0 ? t({ ko: `예약 중 ${holds} · 선착순 마감`, en: `${holds} reserving · first come, first served`, ja: `予約中${holds}・先着順で締切`, zh: `${holds} 人预约中 · 先到先得`, es: `${holds} reservando · por orden de llegada` }) : t({ ko: "선착순 마감", en: "first come, first served", ja: "先着順で締切", zh: "先到先得", es: "por orden de llegada" })} />
         <Stat k={t({ ko: "당첨 확률", en: "Win rate", ja: "当選確率", zh: "中奖率", es: "Probabilidad" })} v="100" unit="%" sub={t({ ko: "참여하면 경품 중 100% 당첨", en: "everyone wins one prize", ja: "参加者全員に賞品", zh: "参与即 100% 中奖", es: "todos ganan un premio" })} />
         <Stat k={t({ ko: "참여 마감", en: "Closes", ja: "応募締切", zh: "参与截止", es: "Cierre" })} v={!st ? "…" : onHold ? tba : fmtDay(cfg?.close, lang)} unit={!st || onHold ? "" : fmtHm(cfg?.close)} sub={t({ ko: `${max}명 도달 시 조기 종료`, en: `ends early at ${max} entries`, ja: `${max}名到達で早期終了`, zh: `满 ${max} 人提前结束`, es: `termina antes al llegar a ${max}` })} />
         <Stat k={t({ ko: "행사일", en: "Event", ja: "開催日", zh: "活动日期", es: "Evento" })} v={st ? fmtDay(cfg?.eventAt, lang) || "10.03" : "…"} unit={st ? EVENT_TIME : ""} sub={t(VENUE)} />

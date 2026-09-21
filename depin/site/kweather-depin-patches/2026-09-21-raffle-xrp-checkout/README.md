@@ -1,11 +1,12 @@
-# XRP SEOUL 2026 래플 — XRP 전용 결제창 + 히어로 이식 + 카운팅·추첨 점검 + 대점검 v4 (2026-09-21)
+# XRP SEOUL 2026 래플 — XRP 전용 결제창 + 히어로 이식 + 카운팅·추첨 점검 + 대점검 v4 + 예약 정원·초대권 이메일 v5 (2026-09-21)
 
 kweather-depin(모체) 저장소에 적용하는 변경분(누적). 판매 페이지 구매 모달(BuyModal)의 흐름을 따르되 결제는 XRP 뿐이고,
 래플 페이지 히어로·스탯 줄은 정적 시안(xrpseoul-raffle)을 그대로 옮겼다. 결제 카운팅·추첨 경로를 점검해 아래를 고쳤다.
 
 ## 적용
 - `git apply raffle-xrp-checkout.patch` (저장소 루트에서) **+ `files/public/assets/raffle/hero.webp` 를 같은 경로에 복사**(패치는 소스만 담는다).
-  또는 `files/` 아래 21개 파일을 같은 경로에 덮어쓴다. DB 스키마·마이그레이션 변경 없음(`RaffleEntry.status` 는 문자열 컬럼이라 새 값 OVERFLOW 는 그대로 들어간다).
+  또는 `files/` 아래 21개 파일을 같은 경로에 덮어쓴다. DB 스키마·마이그레이션 변경 없음(`RaffleEntry.status` 는 문자열 컬럼이라 새 값 OVERFLOW 는 그대로 들어가고,
+  예약은 `createdAt` 을, 당첨 안내 이메일은 기존 `AccountContact` 를 쓴다).
 - 새 파일(8): public/assets/raffle/hero.webp · src/components/admin/RafflePanel.tsx · src/components/raffle/RaffleCheckoutModal.tsx · src/components/raffle/RaffleHero.tsx · src/components/raffle/TicketCard.tsx · src/components/raffle/raffle-hero.css · src/components/raffle/types.ts · src/lib/raffle-prizes.ts
 - 수정(13): src/app/admin/page.tsx · src/app/admin/raffle-check/page.tsx · src/app/api/admin/raffle/route.ts · src/app/api/raffle/card/[code]/route.ts · src/app/api/raffle/enter/route.ts · src/app/api/raffle/meta/[code]/route.ts · src/app/api/raffle/verify/route.ts · src/app/event/xrpl-seoul/page.tsx · src/app/event/xrpl-seoul/test/page.tsx · src/app/event/xrpl-seoul/ticket/[code]/page.tsx · src/components/admin/BlindDrawPanel.tsx · src/components/raffle/RafflePage.tsx · src/lib/raffle.ts
 
@@ -60,12 +61,38 @@ kweather-depin(모체) 저장소에 적용하는 변경분(누적). 판매 페�
 - 핫월렛 예치금: 미수락 NFT 오퍼 1건당 0.2 XRP 가 잠긴다(500명 전원 미수락이면 100 XRP) - 응모 입금(5 XRP × 500)으로 충분하다.
 
 ### 결정이 필요한 것 (코드로 고치지 않았다)
-1. **초대권 수령 방식(문구 모순)** — 초대권 290매의 설명은 「10월 3일 서울 · 행사장 입장권」인데 히어로·결제창 동의·FAQ·일정은 모두 「경품은 행사 당일 현장(wellbian 플래티넘 부스)에서 QR 확인 후 수령, 배송 없음」이다.
+1. ~~**초대권 수령 방식(문구 모순)**~~ → **v5 에서 반영: 초대권은 이메일 발송**(아래) — 초대권 290매의 설명은 「10월 3일 서울 · 행사장 입장권」인데 히어로·결제창 동의·FAQ·일정은 모두 「경품은 행사 당일 현장(wellbian 플래티넘 부스)에서 QR 확인 후 수령, 배송 없음」이다.
    입장권을 행사장 안 부스에서 받는 구조는 성립하지 않는다(FAQ 는 「초대권은 당첨자에게 별도 안내」라고만 한다). 초대권의 실제 전달 방식(이메일·입장 명단·입구 데스크)을 정해 네 곳 문구를 맞춰야 한다.
-2. **정원 초과 응모 설계** — 응모 행(태그)은 무제한이고 정원은 「결제 확정 500」이다. 18:00 러시에서 500 을 넘긴 입금은 전부 환불 대상이 된다(이번에 경고·차단·기록은 넣었다).
+2. ~~**정원 초과 응모 설계**~~ → **v5 에서 반영: 정원 = 결제 확정 + 유효 예약**(아래) — 응모 행(태그)은 무제한이고 정원은 「결제 확정 500」이다. 18:00 러시에서 500 을 넘긴 입금은 전부 환불 대상이 된다(이번에 경고·차단·기록은 넣었다).
    근본 해결은 결제 대기 예약에 만료(예: 30분)를 두고 「예약 + 확정」 합계로 정원을 세는 설계 변경(스키마·크론 필요).
 3. **추첨 검증 링크 노출** — FAQ 가 「누구나 재계산 검증」을 약속하지만 페이지에 `/api/draw/<id>` 링크가 없다. 설정(`raffle_xrpseoul`)에 drawId 를 넣고 일정 섹션에 링크 한 줄이면 된다.
 4. **해시 없이 태그로 자동 확인** — 거래소에서 바로 보낸 사용자는 해시를 찾기 어렵다. 핫월렛 account_tx 를 Destination Tag 로 훑어 확인하는 「입금 확인」 버튼(P2).
 5. **페이지 진입 경로** — 메인·내비·사이트맵 어디에도 `/event/xrpl-seoul` 링크가 없다(페이지 주석: 「확인 뒤 메인·내비에 연결」). 지금은 X·텔레그램 등 외부 링크로만 들어온다.
 6. 행사장 표기 「서울 하얏트 호텔」 확인(그랜드 하얏트 서울?) · 리허설 입금 반환은 수동 · 통신사 NAT 한도는 90/분으로 올렸으나 러시 때 429 가 보이면 더 올린다.
+
+## v5 (2026-09-21 저녁 — 서우 결정 반영: 「500 이 되면 결제를 막는다」 · 「초대권 전달은 이메일」)
+
+### 정원 = 결제 확정 + 유효 예약 (500 이 되면 결제를 막는다)
+- 응모 시작(동의 버튼)이 곧 **예약**이다. 정원 500 = 결제 확정(PAID) + 유효 예약(PENDING 가운데 최근 `holdMinutes`(기본 30분) 안에 시작·연장된 행).
+  정원이 차면 새 응모를 시작할 수 없고(SOLD_OUT), 결제 화면에 들어간 사람은 예약이 살아 있는 동안 자리가 있다. 결제 없이 30분이 지나면 자리가 풀려 다음 사람이 들어온다.
+- 예약은 결제 화면에 들어올 때·5분마다·결제 버튼을 누르기 직전에 자동 연장된다(`POST /api/raffle/enter` 재호출 = 연장, 정원이 차 있으면 409 `code:"SOLD_OUT"`).
+  예약 시작 시각은 `RaffleEntry.createdAt`(연장하면 갱신 - 관리자 콘솔 「예약(시작)」 열).
+- 같은 순간의 응모 시작이 정원을 넘기지 않게 이벤트별 Postgres 조언 잠금(`pg_advisory_xact_lock`) 안에서 세고 만든다.
+- 서버 결제 확정(`verifyRaffleEntry`): **예약이 살아 있으면 그대로 확정**. 예약이 만료된 응모의 입금은 남은 자리(정원 - 확정 - 유효 예약)가 없으면 OVERFLOW(환불 대상, 해시 보존).
+  정원 초과 경쟁은 트랜잭션의 (event, entryNo) 유일 제약이 마지막으로 막는다.
+- 화면: 스탯 「참여 현황 N/500 · 예약 중 M」, 결제 화면 「자리 확보 중 · 남은 시간 mm:ss(창을 열어 두면 자동 연장)」, 정원이 찼는데 내 예약이 살아 있으면 히어로 버튼
+  「결제 이어서 하기 · 자리 확보 중」·내 응모 「계속 진행」. 예약이 만료된 채 정원이 찬 사람에게는 차단 화면 + 「이미 보냈다면 해시 입력」(자리가 남았으면 확정, 없으면 환불 대상으로 기록).
+- 설정: `raffle_xrpseoul.holdMinutes`(기본 30). 거래소 출금 지연으로 만료가 잦으면 45~60 으로 올린다(결제창을 열어 두면 어차피 연장된다).
+
+### 초대권 = 이메일 발송
+- 동의 단계에 「당첨 안내 이메일」 필수 입력 - 계정 연락처(`AccountContact`)에서 미리 채우고(이메일 로그인·구매 때 적은 주소), 동의 버튼에서 저장한다. 스키마 변경 없음.
+  외부 지갑(Xaman·D'CENT·Girin) 사용자는 여기서 처음 적는다.
+- 문구 통일(5개 언어): 히어로 부제 · 경품 설명(초대권: 「당첨자 이메일로 발송」) · 결제창 ① 안내 · 동의 카드 · FAQ(래플 NFT·수령 방법) · 일정 · 내 응모 카드 →
+  「초대권은 이메일로, 실물 경품(Weather Data Token Generator™·우산·에코백)은 10/3 행사장 wellbian 플래티넘 부스에서 QR 확인 후 수령, 택배 없음」.
+- 관리자 콘솔 › 래플: 「이메일」 열(연락처, 없으면 이메일 로그인 계정 주소) + 「CSV 내보내기」(번호·지갑·이메일·상태·경품·확정·수령·티켓·해시, 현재 필터·정렬 그대로).
+  초대권 발송: 추첨 배정 뒤 경품 「초대권」 으로 필터 → CSV → 메일 도구. (관리자 콘솔 › 메일 발송 도구는 지갑 목록으로 같은 연락처를 찾는다.)
+
+### 검증
+`tsc --noEmit` · `eslint` 통과 · `logic-test-verify.js` 7개 시나리오 통과(정원 3: 예약 3 → 4번째 차단 → 확정 2 → 예약 만료 → 자리 인계 → 만료자 입금 OVERFLOW(해시 보존)·멱등 · 마감 유예 10분 ·
+중복 해시 거부 · 참여 현황 = PAID 만 · 예약만으로 정원 도달 · 만료 예약 자리 풀림 · 만료 예약도 자리가 남으면 확정) · 결제창 12개 화면(이메일 입력·자리 확보 카운트다운·차단+해시) + 페이지 11개 상태 렌더 확인.
 

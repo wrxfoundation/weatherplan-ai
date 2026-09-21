@@ -24,7 +24,7 @@ const BOOTH: Record<PrizeLang, string> = {
   ja: "イベント当日、wellbianプラチナブースで受取", zh: "活动当天于 wellbian 白金展位领取", es: "Se recoge en el stand Platinum de wellbian el día del evento",
 };
 const NOTE: Record<PrizeKey, Record<PrizeLang, string>> = {
-  invite: { ko: "10월 3일 서울 · 행사장 입장권", en: "3 October, Seoul · venue admission", ja: "10月3日 ソウル・会場入場券", zh: "10 月 3 日 首尔 · 会场入场券", es: "3 de octubre, Seúl · entrada al recinto" },
+  invite: { ko: "10월 3일 서울 · 행사장 입장권 · 당첨자 이메일로 발송", en: "3 October, Seoul · venue admission · sent to winners by email", ja: "10月3日 ソウル・会場入場券・当選者にメールで送付", zh: "10 月 3 日 首尔 · 会场入场券 · 通过邮件发送给中奖者", es: "3 de octubre, Seúl · entrada al recinto · se envía por correo a los ganadores" },
   generator: {
     ko: "제네시스 한정판, 실물 날씨데이터 토큰 생성기 1대 · 행사 당일 'wellbian 플래티넘 부스' 현장수령",
     en: "Genesis limited edition, one physical weather-data token generator · collected at the wellbian Platinum booth on the event day",

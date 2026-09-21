@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/db";
 import { checkAdminSecret } from "@/lib/auth/session";
-import { findTicket, redeemTicket, assignPrizes, raffleEvent, inferRaffleMode } from "@/lib/raffle";
+import { findTicket, redeemTicket, assignPrizes, raffleEvent, inferRaffleMode, loadRaffleConfig, holdMsOf } from "@/lib/raffle";
 
 export const dynamic = "force-dynamic";
 
@@ -25,11 +25,23 @@ export async function GET(req: NextRequest) {
   const mode = q.get("mode") === "test" ? "test" : "prod";
   const rows = await prisma.raffleEntry.findMany({ where: { event: raffleEvent(mode) }, orderBy: [{ entryNo: "asc" }, { createdAt: "desc" }] });
   const paid = rows.filter((r) => r.status === "PAID");
+  const config = await loadRaffleConfig(mode);
+  const holds = rows.filter((r) => r.status === "PENDING" && r.createdAt.getTime() > Date.now() - holdMsOf(config)).length;
+  /* 당첨 안내 이메일(초대권 발송) - 계정 연락처, 없으면 이메일 로그인 계정의 주소 */
+  const wallets = rows.map((r) => r.wallet);
+  const [contacts, socials] = await Promise.all([
+    prisma.accountContact.findMany({ where: { address: { in: wallets } }, select: { address: true, email: true } }),
+    prisma.socialAccount.findMany({ where: { address: { in: wallets }, provider: "email" }, select: { address: true, handle: true } }),
+  ]);
+  const emailOf = new Map<string, string>();
+  for (const s of socials) if (s.address && s.handle) emailOf.set(s.address, s.handle);
+  for (const c of contacts) emailOf.set(c.address, c.email);
   return NextResponse.json({
     ok: true, mode,
-    summary: { total: rows.length, paid: paid.length, redeemed: paid.filter((r) => r.redeemedAt).length, assigned: paid.filter((r) => r.prize).length,
+    summary: { total: rows.length, paid: paid.length, holds, overflow: rows.filter((r) => r.status === "OVERFLOW").length,
+      redeemed: paid.filter((r) => r.redeemedAt).length, assigned: paid.filter((r) => r.prize).length,
       byPrize: Object.entries(paid.reduce<Record<string, number>>((m, r) => { if (r.prize) m[r.prize] = (m[r.prize] ?? 0) + 1; return m; }, {})) },
-    entries: rows.map(view),
+    entries: rows.map((r) => ({ ...view(r), email: emailOf.get(r.wallet) ?? null })),
   });
 }
 

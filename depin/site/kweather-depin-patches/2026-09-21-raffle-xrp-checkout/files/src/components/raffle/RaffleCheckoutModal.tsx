@@ -45,7 +45,8 @@ const fmtDate = (iso: string | undefined, lang: string) => {
 };
 
 /** 미리보기 전용(스크린샷·SSR 확인) - 실제 화면은 넘기지 않는다. 넘기면 첫 상태를 그 값으로 시작한다. */
-export interface CheckoutPreview { step?: 1 | 2 | 3 | 4; bal?: Bal | null; entry?: Entry | null; mine?: RaffleMine | null; qr?: string; payStatus?: PayStatus; terms?: boolean }
+export interface CheckoutPreview { step?: 1 | 2 | 3 | 4; bal?: Bal | null; entry?: Entry | null; mine?: RaffleMine | null; qr?: string; payStatus?: PayStatus; terms?: boolean; email?: string; holdUntil?: string | null; holdLost?: boolean }
+const fmtLeft = (ms: number | null) => { const s = Math.max(0, Math.floor((ms ?? 0) / 1000)); return `${String(Math.floor(s / 60)).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}`; };
 
 export default function RaffleCheckoutModal({ mode, st, onClose, onChange }: {
   mode: RaffleMode; st: RaffleStateView; onClose: () => void; onChange: () => Promise<void> | void;
@@ -85,6 +86,16 @@ export function RaffleCheckoutCard({ mode, st, onClose, onChange, preview }: {
   const [hash, setHash] = useState("");
   const [copied, setCopied] = useState<"" | "addr" | "dest" | "tag">("");
   const [qr, setQr] = useState(preview?.qr ?? "");
+  /* 당첨 안내 이메일(초대권 발송) - 계정 연락처(AccountContact)에서 미리 채우고, 동의 단계에서 확인받아 저장한다 */
+  const [email, setEmail] = useState(preview?.email ?? "");
+  const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email.trim());
+  const prefilledRef = useRef(false);
+  /* 예약(자리 확보) - 결제 대기 행의 예약 만료 시각. 결제 화면에 있는 동안 5분마다, 결제 직전에 연장한다(2026-09-21 결정: 정원이 차면 결제를 막는다) */
+  const [holdUntil, setHoldUntil] = useState<string | null>(preview?.holdUntil !== undefined ? preview.holdUntil : (st.mine?.holdUntil ?? null));
+  const [holdLost, setHoldLost] = useState(!!preview?.holdLost);
+  const [holdLostMsg, setHoldLostMsg] = useState("");
+  const [nowTick, setNowTick] = useState(() => Date.now());
+  const lastRenewRef = useRef(0);
   const pollRef = useRef<number | null>(null);
 
   const done = !!mine && mine.status === "PAID";
@@ -104,7 +115,9 @@ export function RaffleCheckoutCard({ mode, st, onClose, onChange, preview }: {
   }, [locked, onClose, preview]);
   /* 결제 전인데 응모가 열려 있지 않으면(정원·기간 마감, 정원 초과로 확정되지 않은 입금) 결제 화면을 보여 주지 않는다 -
      마감 뒤 보낸 입금은 확정되지 않고 환불 대상이 된다(2026-09-21 점검). st 는 페이지가 20초마다 새로 읽어 내려 준다. */
-  const blocked = !done && (mine?.status === "OVERFLOW" || st.phase !== "OPEN");
+  const holdLive = !!holdUntil && Date.parse(holdUntil) > nowTick;
+  const holdLeft = holdUntil ? Math.max(0, Date.parse(holdUntil) - nowTick) : null;
+  const blocked = !done && (mine?.status === "OVERFLOW" || holdLost || st.phase === "BEFORE" || st.phase === "CLOSED" || (st.phase === "SOLD_OUT" && !holdLive));
 
   const stepNames = t<string[]>({
     ko: ["응모 내용", "동의", "XRP 결제", "NFT 수령"], en: ["Entry", "Consent", "Pay XRP", "Get NFT"],
@@ -124,6 +137,17 @@ export function RaffleCheckoutCard({ mode, st, onClose, onChange, preview }: {
       if (r.ok) setBal({ address: d.address, xrp: Number(d.xrp ?? 0), activated: d.activated !== false, reserve: Number(d.reserve ?? 1) });
     } catch { /* 다음 주기 */ }
   }, []);
+  /* 예약 연장 - /api/raffle/enter 는 이미 있는 행의 예약을 연장해 돌려준다. 정원이 차서 연장이 안 되면(409) 결제 화면을 닫는다 */
+  const renewHold = useCallback(async (force = false): Promise<boolean> => {
+    if (!force && Date.now() - lastRenewRef.current < 60_000) return true;
+    try {
+      const r = await fetch("/api/raffle/enter", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ mode }) });
+      const d = await r.json().catch(() => ({}));
+      if (r.ok) { lastRenewRef.current = Date.now(); setHoldUntil(d.entry?.holdUntil ?? null); if (d.entry) setEntry({ destTag: d.entry.destTag, status: d.entry.status }); setHoldLost(false); return true; }
+      if (r.status === 409) { setHoldLost(true); setHoldLostMsg(d.error || ""); return false; }
+      return true;   // 일시 오류(429 등)는 막지 않는다 - 서버가 확정 때 다시 본다
+    } catch { return true; }
+  }, [mode]);
 
   /* ③ 결제 화면: 지갑 잔고를 읽고, 부족한 동안 8초마다 다시 읽는다(입금이 들어오면 버튼이 저절로 열린다).
      ④ NFT 화면: 발행·오퍼 상태를 5초마다 다시 읽는다. */
@@ -138,6 +162,19 @@ export function RaffleCheckoutCard({ mode, st, onClose, onChange, preview }: {
     if (step === 4 && !held) pollRef.current = window.setInterval(refreshMine, 5000);
     return () => { if (pollRef.current) window.clearInterval(pollRef.current); };
   }, [step, enough, held, refreshBal, refreshMine, preview]);
+  /* ③ 결제 화면에 있는 동안: 들어올 때 + 5분마다 예약 연장, 1초마다 남은 시간 표시 */
+  useEffect(() => {
+    if (preview || step !== 3 || done) return;
+    renewHold();
+    const id = window.setInterval(() => { setNowTick(Date.now()); if (Date.now() - lastRenewRef.current > 5 * 60_000) renewHold(); }, 1000);
+    return () => window.clearInterval(id);
+  }, [step, done, preview, renewHold]);
+  /* 이메일 미리 채우기 - 계정 연락처(이메일 로그인·구매 때 적은 주소) */
+  useEffect(() => {
+    if (preview || !address || prefilledRef.current) return;
+    prefilledRef.current = true;
+    fetch("/api/account/contact", { cache: "no-store" }).then((r) => (r.ok ? r.json() : null)).then((d) => { if (d?.email) setEmail((e) => e || d.email); }).catch(() => {});
+  }, [address, preview]);
   /* 내 주소 QR - 거래소·다른 지갑에서 입금할 때 쓴다 */
   useEffect(() => {
     if (preview || !bal?.address || qr) return;
@@ -149,16 +186,17 @@ export function RaffleCheckoutCard({ mode, st, onClose, onChange, preview }: {
     if (!address || !sessionVerified) { openLogin(); return; }
     setErr(""); setBusy(true);
     try {
-      const r = await fetch("/api/raffle/enter", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ mode }) });
+      const r = await fetch("/api/raffle/enter", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ mode, email: email.trim().toLowerCase() }) });
       const d = await r.json().catch(() => ({}));
       if (!r.ok) { const m = d.error || t({ ko: "응모를 시작할 수 없습니다.", en: "Could not start the entry.", ja: "応募を開始できません。", zh: "无法开始参与。", es: "No se pudo iniciar la participación." }); setErr(m); toast.err(m); return; }
       setEntry({ destTag: d.entry.destTag, status: d.entry.status });
+      setHoldUntil(d.entry.holdUntil ?? null); setHoldLost(false); lastRenewRef.current = Date.now();
       setStep(3);
     } catch {
       const m = t({ ko: "응모를 시작할 수 없습니다. 잠시 후 다시 시도해 주세요.", en: "Could not start the entry. Please try again shortly.", ja: "応募を開始できません。しばらくしてからお試しください。", zh: "无法开始参与，请稍后重试。", es: "No se pudo iniciar. Inténtelo de nuevo en breve." });
       setErr(m); toast.err(m);
     } finally { setBusy(false); }
-  }, [address, sessionVerified, openLogin, mode, t]);
+  }, [address, sessionVerified, openLogin, mode, t, email]);
 
   /* ③ 결제 확정 - 해시로 서버 검증(원장 반영까지 4초 간격 8회) */
   const verify = useCallback(async (h: string) => {
@@ -183,6 +221,8 @@ export function RaffleCheckoutCard({ mode, st, onClose, onChange, preview }: {
     if (!entry) return;
     setErr(""); setPayStatus("signing");
     try {
+      /* 결제 직전에 예약을 확인·연장한다 - 정원이 찼으면 지갑 서명 전에 멈춘다(돈이 움직이지 않는다) */
+      if (!(await renewHold(true))) { setPayStatus("idle"); return; }
       const res = await signAndSubmit({ TransactionType: "Payment", Destination: st.destination, DestinationTag: entry.destTag, Amount: String(Math.round(price * 1e6)) });
       if (!res.hash) throw new Error(t({ ko: "지갑이 트랜잭션 해시를 돌려주지 않았습니다 - 아래에 해시를 직접 입력해 주세요.", en: "The wallet did not return a hash - paste it below.", ja: "ウォレットからハッシュが返りませんでした - 下に入力してください。", zh: "钱包未返回哈希，请在下方输入。", es: "La billetera no devolvió el hash: péguelo abajo." }));
       setHash(res.hash);
@@ -190,7 +230,7 @@ export function RaffleCheckoutCard({ mode, st, onClose, onChange, preview }: {
     } catch (e) {
       const m = friendlyXrpError((e as Error).message, t); setErr(m); toast.err(m); setPayStatus("idle");
     }
-  }, [entry, signAndSubmit, st.destination, price, verify, t]);
+  }, [entry, signAndSubmit, st.destination, price, verify, t, renewHold]);
 
   /* ④ 래플 NFT 오퍼 수락 → 온체인 보유 확인 */
   const accept = useCallback(async () => {
@@ -215,13 +255,25 @@ export function RaffleCheckoutCard({ mode, st, onClose, onChange, preview }: {
     if (blocked) {
       const why = mine?.status === "OVERFLOW"
         ? t({ ko: "정원·기간 마감 뒤 확인된 입금이라 응모가 확정되지 않았습니다. 입금액은 환불해 드립니다 - admin@wellbianlabs.io 로 지갑 주소와 트랜잭션 해시를 보내 주세요.", en: "The payment was confirmed after entries closed, so the entry was not confirmed. The deposit will be refunded - email admin@wellbianlabs.io with your wallet address and transaction hash.", ja: "定員・期間の締切後に確認された入金のため、応募は確定していません。入金は返金します - admin@wellbianlabs.io へウォレットアドレスとハッシュをお送りください。", zh: "该笔款项在报名截止后确认，参与未生效。款项将退还 - 请将钱包地址与交易哈希发送至 admin@wellbianlabs.io。", es: "El pago se confirmó tras el cierre, así que la participación no se confirmó. Se devolverá el depósito: escriba a admin@wellbianlabs.io con su dirección y el hash." })
-        : st.phase === "SOLD_OUT" ? t({ ko: `선착순 ${st.config.maxEntries}명이 모두 찼습니다. 결제 전 응모는 확정되지 않으니 XRP 를 보내지 마세요.`, en: `All ${st.config.maxEntries} spots are filled. An unpaid entry can no longer be confirmed - please do not send XRP.`, ja: `先着${st.config.maxEntries}名が埋まりました。未決済の応募は確定できませんので、XRPを送らないでください。`, zh: `${st.config.maxEntries} 个名额已满。未支付的参与无法再确认，请勿发送 XRP。`, es: `Las ${st.config.maxEntries} plazas están completas. Una entrada sin pagar ya no puede confirmarse: no envíe XRP.` })
+        : holdLost && holdLostMsg ? holdLostMsg
+        : st.phase === "SOLD_OUT" || holdLost ? t({ ko: `선착순 ${st.config.maxEntries}명이 모두 찼습니다. 결제 전 응모는 확정되지 않으니 XRP 를 보내지 마세요.`, en: `All ${st.config.maxEntries} spots are filled. An unpaid entry can no longer be confirmed - please do not send XRP.`, ja: `先着${st.config.maxEntries}名が埋まりました。未決済の応募は確定できませんので、XRPを送らないでください。`, zh: `${st.config.maxEntries} 个名额已满。未支付的参与无法再确认，请勿发送 XRP。`, es: `Las ${st.config.maxEntries} plazas están completas. Una entrada sin pagar ya no puede confirmarse: no envíe XRP.` })
         : st.phase === "BEFORE" ? t({ ko: "아직 응모가 열리지 않았습니다.", en: "Entries are not open yet.", ja: "まだ応募は始まっていません。", zh: "报名尚未开始。", es: "Las inscripciones aún no están abiertas." })
         : t({ ko: "응모가 마감되었습니다. 결제 전 응모는 확정되지 않으니 XRP 를 보내지 마세요.", en: "Entries are closed. An unpaid entry can no longer be confirmed - please do not send XRP.", ja: "応募は締め切りました。未決済の応募は確定できませんので、XRPを送らないでください。", zh: "报名已截止。未支付的参与无法再确认，请勿发送 XRP。", es: "Las inscripciones han cerrado. Una entrada sin pagar ya no puede confirmarse: no envíe XRP." });
       return (
         <>
           <h3 style={h3}>{t({ ko: "응모를 진행할 수 없습니다", en: "Entry unavailable", ja: "応募できません", zh: "无法参与", es: "No se puede participar" })}</h3>
           <Alert>{why}</Alert>
+          {/* 이미 보낸 입금이 있으면 해시로 확인한다 - 자리가 남았으면 확정, 없으면 OVERFLOW(환불 대상)로 기록된다 */}
+          {mine?.status === "PENDING" && st.phase !== "BEFORE" && (
+            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+              <label style={{ fontSize: 14.5, color: "var(--ink-4)", lineHeight: 1.5 }}>{t({ ko: "이미 XRP 를 보냈다면 트랜잭션 해시를 입력해 주세요. 자리가 남아 있으면 확정되고, 없으면 환불 대상으로 기록됩니다.", en: "If you already sent XRP, paste the transaction hash. It is confirmed if a spot remains; otherwise it is recorded for refund.", ja: "すでにXRPを送った場合はハッシュを入力してください。枠が残っていれば確定、なければ返金対象として記録されます。", zh: "若已发送 XRP，请输入交易哈希。仍有名额则确认参与，否则记录为待退款。", es: "Si ya envió XRP, pegue el hash. Se confirma si queda plaza; si no, se registra para reembolso." })}</label>
+              <div style={{ display: "flex", gap: 8 }}>
+                <input className="field-input" value={hash} onChange={(e) => setHash(e.target.value.trim())} placeholder="A1B2C3…" style={{ flex: 1, fontFamily: "monospace" }} />
+                <button className="btn-ghost" disabled={payStatus !== "idle" || !/^[0-9A-Fa-f]{64}$/.test(hash)} onClick={() => verify(hash.toUpperCase())} style={{ padding: "0 16px", whiteSpace: "nowrap" }}>{t({ ko: "확인", en: "Verify", ja: "確認", zh: "确认", es: "Verificar" })}</button>
+              </div>
+              {err && <Alert>{err}</Alert>}
+            </div>
+          )}
           <button className="btn-main" style={cta} onClick={onClose}>{t({ ko: "닫기", en: "Close", ja: "閉じる", zh: "关闭", es: "Cerrar" })}</button>
         </>
       );
@@ -254,7 +306,7 @@ export function RaffleCheckoutCard({ mode, st, onClose, onChange, preview }: {
             <span>· {t({ ko: "계정당 1회 응모할 수 있습니다. 응모하신 분 전원에게 경품 중 한 가지가 추첨으로 지급됩니다.", en: "One entry per account. Every entrant receives one of the prizes, decided by draw.", ja: "1アカウントにつき1回応募できます。応募者全員に賞品のいずれか1点を抽選でお渡しします。", zh: "每账户可参与一次。所有参与者均通过抽奖获得一份奖品。", es: "Una entrada por cuenta. Todos los participantes reciben uno de los premios, decidido por sorteo." })}</span>
             <span>· {t({ ko: "마지막 단계에서 XRPL 지갑에서 XRP 를 보내면 끝입니다. 간편 지갑(이메일·구글), D'CENT, Girin Wallet, Xaman 모두 됩니다.", en: "At the last step you send XRP from your XRPL wallet - the built-in wallet (email/Google), D'CENT, Girin Wallet, Xaman, etc.", ja: "最後のステップでXRPLウォレットからXRPを送るだけです。かんたんウォレット（メール・Google）・D'CENT・Girin Wallet・Xamanに対応。", zh: "最后一步从 XRPL 钱包发送 XRP 即可，支持内置钱包（邮箱/Google）、D'CENT、Girin Wallet、Xaman 等。", es: "En el último paso envía XRP desde su billetera XRPL: la billetera integrada (correo/Google), D'CENT, Girin Wallet, Xaman, etc." })}</span>
             <span>· {t({ ko: "결제는 XRP 만 가능합니다. 카드·RLUSD 는 받지 않습니다.", en: "Payment in XRP only. Cards and RLUSD are not accepted.", ja: "決済はXRPのみです。カード・RLUSDは使えません。", zh: "仅支持 XRP 支付，不接受银行卡或 RLUSD。", es: "Pago solo en XRP. No se aceptan tarjetas ni RLUSD." })}</span>
-            <span style={{ color: "var(--warn-text)" }}>· {t({ ko: "경품은 10월 3일 XRP SEOUL 2026 행사장 wellbian 플래티넘 부스에서 래플 NFT 의 QR 코드 확인 후 수령합니다. 배송은 하지 않습니다.", en: "Prizes are collected at the wellbian Platinum booth, XRP SEOUL 2026 venue, on 3 October after the raffle NFT's QR code is verified. No shipping.", ja: "賞品は10月3日、XRP SEOUL 2026会場のwellbianプラチナブースでラッフルNFTのQRコード確認後にお受け取りください。配送はありません。", zh: "奖品于 10 月 3 日在 XRP SEOUL 2026 会场 wellbian 白金展位核验抽奖 NFT 二维码后领取，不提供邮寄。", es: "Los premios se recogen en el stand Platinum de wellbian, en el recinto de XRP SEOUL 2026, el 3 de octubre tras verificar el QR del NFT. Sin envíos." })}</span>
+            <span style={{ color: "var(--warn-text)" }}>· {t({ ko: "초대권은 당첨자 이메일로 발송됩니다. 실물 경품(Weather Data Token Generator™·우산·에코백)은 10월 3일 XRP SEOUL 2026 행사장 wellbian 플래티넘 부스에서 래플 NFT 의 QR 코드 확인 후 수령하며, 택배 배송은 하지 않습니다.", en: "Invitations are emailed to winners. Physical prizes (Weather Data Token Generator™, umbrella, eco bag) are collected at the wellbian Platinum booth, XRP SEOUL 2026 venue, on 3 October after the raffle NFT's QR code is verified. No shipping.", ja: "招待券は当選者へメールで送付します。実物の賞品（Weather Data Token Generator™・傘・エコバッグ）は10月3日、XRP SEOUL 2026会場のwellbianプラチナブースでラッフルNFTのQRコード確認後にお受け取りください。配送はありません。", zh: "邀请函将通过邮件发送给中奖者。实物奖品（Weather Data Token Generator™、雨伞、环保袋）于 10 月 3 日在 XRP SEOUL 2026 会场 wellbian 白金展位核验抽奖 NFT 二维码后领取，不提供邮寄。", es: "Las invitaciones se envían por correo a los ganadores. Los premios físicos (Weather Data Token Generator™, paraguas, bolsa) se recogen en el stand Platinum de wellbian, en XRP SEOUL 2026, el 3 de octubre tras verificar el QR del NFT. Sin envíos." })}</span>
           </div>
           <button className="btn-main" style={cta} onClick={() => { if (!address || !sessionVerified) { openLogin(); return; } setStep(2); }}>
             {t({ ko: "다음 - 동의", en: "Next - consent", ja: "次へ - 同意", zh: "下一步 - 同意", es: "Siguiente: acuerdo" })}
@@ -265,16 +317,21 @@ export function RaffleCheckoutCard({ mode, st, onClose, onChange, preview }: {
       case 2: return (
         <>
           <h3 style={h3}>{t({ ko: "환불·수령 안내를 확인해 주세요", en: "Review the refund & collection notices", ja: "返金・受取のご案内をご確認ください", zh: "请确认退款与领取须知", es: "Revise los avisos de reembolso y recogida" })}</h3>
+          <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+            <label style={{ fontSize: 15, fontWeight: 700, color: "var(--w-deep)" }}>{t({ ko: "당첨 안내 이메일", en: "Email for prize notices", ja: "当選案内メール", zh: "中奖通知邮箱", es: "Correo para avisos de premio" })}</label>
+            <input className="field-input" type="email" autoComplete="email" inputMode="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="name@example.com" />
+            <span style={{ fontSize: 13.5, color: "var(--cap)", lineHeight: 1.5 }}>{t({ ko: "초대권에 당첨되면 이 주소로 초대권을 보냅니다. 실물 경품 안내에도 씁니다.", en: "If you win an invitation it is sent to this address. Also used for prize notices.", ja: "招待券に当選した場合、この宛先へ送付します。実物賞品のご案内にも使います。", zh: "若中奖邀请函，将发送至此邮箱；实物奖品通知亦使用此邮箱。", es: "Si gana una invitación se enviará a esta dirección. También para avisos de premios." })}</span>
+          </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
             <TermCard checked={terms1} onToggle={() => setTerms1(!terms1)}
               title={t({ ko: "[필수] 환불 불가 고지", en: "[Required] No-refund notice", ja: "【必須】返金不可のご案内", zh: "[必读] 不可退款告知", es: "[Obligatorio] Aviso de no reembolso" })}
               desc={t({ ko: `응모가 확정(결제 확인)된 뒤에는 환불이 불가합니다. 결제 전 금액(${price} XRP)과 조건을 확인해 주세요.`, en: `Once the entry is confirmed (payment verified) it cannot be refunded. Please check the amount (${price} XRP) and terms before paying.`, ja: `応募確定（決済確認）後の返金はできません。お支払い前に金額（${price} XRP）と条件をご確認ください。`, zh: `参与确认（支付核验）后不可退款。请在支付前确认金额（${price} XRP）与条款。`, es: `Una vez confirmada la participación (pago verificado) no hay reembolso. Revise el importe (${price} XRP) y las condiciones antes de pagar.` })} />
             <TermCard checked={terms2} onToggle={() => setTerms2(!terms2)}
               title={t({ ko: "[필수] 현장 수령·QR 코드 관리 확인", en: "[Required] On-site collection & QR code notice", ja: "【必須】現地受取・QRコード管理の確認", zh: "[必读] 现场领取与二维码管理确认", es: "[Obligatorio] Recogida presencial y aviso QR" })}
-              desc={t({ ko: "경품은 행사 당일 현장 수령만 가능하며 별도 배송은 없습니다. 래플 NFT 의 QR 코드는 본인 확인용으로 1회만 유효하고, 공유·노출로 인한 피해(타인의 선수령 등)는 보상하지 않습니다.", en: "Prizes are collected on site on the event day only; there is no shipping. The raffle NFT's QR code is for identity verification and valid once; losses from sharing or exposing it (e.g. collection by another person) are not compensated.", ja: "賞品はイベント当日の現地受取のみで、配送はありません。ラッフルNFTのQRコードは本人確認用で1回のみ有効、共有・露出による被害（第三者の先受取など）は補償しません。", zh: "奖品仅限活动当天现场领取，不提供邮寄。抽奖 NFT 二维码用于本人核验且仅可使用一次，因分享或泄露造成的损失（如被他人先行领取）不予赔偿。", es: "Los premios se recogen solo en el recinto el día del evento; no hay envíos. El QR del NFT sirve para verificar su identidad y vale una sola vez; no se compensan pérdidas por compartirlo o exponerlo." })} />
+              desc={t({ ko: "초대권은 응모 때 적은 이메일로 발송되며, 실물 경품은 행사 당일 현장 수령만 가능하고 별도 배송은 없습니다. 래플 NFT 의 QR 코드는 본인 확인용으로 1회만 유효하고, 공유·노출로 인한 피해(타인의 선수령 등)는 보상하지 않습니다.", en: "Invitations are sent to the email given at entry; physical prizes are collected on site on the event day only, with no shipping. The raffle NFT's QR code is for identity verification and valid once; losses from sharing or exposing it (e.g. collection by another person) are not compensated.", ja: "招待券は応募時に入力したメールへ送付し、実物の賞品はイベント当日の現地受取のみで配送はありません。ラッフルNFTのQRコードは本人確認用で1回のみ有効、共有・露出による被害（第三者の先受取など）は補償しません。", zh: "邀请函将发送至参与时填写的邮箱；实物奖品仅限活动当天现场领取，不提供邮寄。抽奖 NFT 二维码用于本人核验且仅可使用一次，因分享或泄露造成的损失（如被他人先行领取）不予赔偿。", es: "Las invitaciones se envían al correo indicado al participar; los premios físicos se recogen solo en el recinto el día del evento, sin envíos. El QR del NFT sirve para verificar su identidad y vale una sola vez; no se compensan pérdidas por compartirlo o exponerlo." })} />
           </div>
           {err && <Alert>{err}</Alert>}
-          <button className={`btn-main${busy ? " is-busy" : ""}`} style={cta} disabled={!(terms1 && terms2) || busy} onClick={startEntry}>
+          <button className={`btn-main${busy ? " is-busy" : ""}`} style={cta} disabled={!(terms1 && terms2 && emailOk) || busy} onClick={startEntry}>
             {busy ? t({ ko: "연결 중…", en: "Connecting…", ja: "接続中…", zh: "连接中…", es: "Conectando…" }) : t({ ko: `동의하고 XRP 결제로 (${price} XRP)`, en: `Agree & pay in XRP (${price} XRP)`, ja: `同意してXRP決済へ (${price} XRP)`, zh: `同意并用 XRP 付款 (${price} XRP)`, es: `Aceptar y pagar en XRP (${price} XRP)` })}
           </button>
         </>
@@ -285,6 +342,11 @@ export function RaffleCheckoutCard({ mode, st, onClose, onChange, preview }: {
           <h3 style={h3}>{t({ ko: "XRP 를 보내 주세요", en: "Send the XRP", ja: "XRPを送ってください", zh: "请发送 XRP", es: "Envíe el XRP" })}</h3>
           <PayProgress cur={payStatus === "done" ? 2 : payStatus === "verifying" ? 1 : 0}
             items={t<string[]>({ ko: ["XRP 보내기", "원장 확인", "응모 확정"], en: ["Send XRP", "Ledger check", "Entry confirmed"], ja: ["XRP送金", "台帳確認", "応募確定"], zh: ["发送 XRP", "账本确认", "参与确认"], es: ["Enviar XRP", "Verificar", "Confirmada"] })} />
+          {holdUntil && !done && (
+            <div style={{ fontSize: 14.5, lineHeight: 1.5, color: holdLeft !== null && holdLeft < 5 * 60_000 ? "var(--warn-text)" : "var(--ink-2)", background: "var(--sec-alt)", borderRadius: 10, padding: "9px 12px" }}>
+              {t({ ko: `자리 확보 중 · 남은 시간 ${fmtLeft(holdLeft)} — 이 시간 안에 입금이 확인되어야 하며, 창을 열어 두면 자동으로 연장됩니다.`, en: `Your spot is held · ${fmtLeft(holdLeft)} left — the payment must be confirmed within this time; keeping this window open extends it automatically.`, ja: `席を確保中・残り${fmtLeft(holdLeft)} — この時間内に入金が確認される必要があります。ウィンドウを開いたままにすると自動延長されます。`, zh: `已为您保留名额 · 剩余 ${fmtLeft(holdLeft)} — 需在此时间内确认到账；保持窗口打开会自动延长。`, es: `Plaza reservada · quedan ${fmtLeft(holdLeft)} — el pago debe confirmarse en este tiempo; mantener la ventana abierta lo prolonga automáticamente.` })}
+            </div>
+          )}
           <div style={{ display: "flex", flexDirection: "column", border: "1px solid var(--bd-card)", borderRadius: 14, overflow: "hidden" }}>
             <PayRow k={t({ ko: "응모", en: "Entry", ja: "応募", zh: "参与", es: "Entrada" })} v={<b style={{ color: "var(--w-deep)" }}>{ticketName}{"\u00a0"}×{"\u00a0"}1</b>} />
             <PayRow k={t({ ko: "결제 금액", en: "Amount", ja: "金額", zh: "金额", es: "Importe" })} v={<b style={{ fontSize: 21, color: "var(--w-deep)" }}>{price} XRP</b>} />

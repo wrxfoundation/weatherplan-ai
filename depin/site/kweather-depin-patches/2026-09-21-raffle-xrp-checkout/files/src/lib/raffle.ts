@@ -1,6 +1,7 @@
 import { convertStringToHex } from "xrpl";
 import type { AccountNFToken } from "xrpl";
 import { createHmac } from "node:crypto";
+import type { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/db";
 import { enqueueTx, drainOutbox, hotWalletAddress } from "@/lib/xrpl/outbox";
 import { xrplRead } from "@/lib/xrpl/client";
@@ -42,7 +43,8 @@ export interface RaffleConfig {
   drawAt: string;     // 추첨 공개 - 마감 후 24시간 이내
   eventAt: string;    // 행사일 - 상품은 이날 행사장에서 QR 확인 후 지급
   priceXrp: number;   // 응모 금액 (XRP)
-  maxEntries: number; // 선착순 정원 - 경품 수 합계와 같아 전원이 하나는 받는다
+  maxEntries: number; // 선착순 정원 - 경품 수 합계와 같아 전원이 하나는 받는다. 정원 = 결제 확정 + 유효 예약(아래 holdMinutes)
+  holdMinutes: number; // 결제 대기 예약(응모 시작)이 자리를 잡아 두는 시간(분). 만료되면 자리가 풀리고, 결제창을 열어 두면 자동 연장된다
   prizes: RafflePrize[];
 }
 
@@ -55,8 +57,9 @@ const DEFAULT: RaffleConfig = {
   eventAt: "2026-10-03T00:00:00Z",
   priceXrp: 5,
   maxEntries: 500,
+  holdMinutes: 30,
   prizes: [
-    { name: "XRP SEOUL 2026 초대권", qty: 290, note: "10월 3일 서울 · 행사장 입장권" },
+    { name: "XRP SEOUL 2026 초대권", qty: 290, note: "10월 3일 서울 · 행사장 입장권 · 당첨자 이메일로 발송" },
     { name: "Weather Data Token Generator™", qty: 10, note: "제네시스 한정판, 실물 날씨데이터 토큰 생성기 1대 · 행사 당일 'wellbian 플래티넘 부스' 현장수령" },
     { name: "wellbian 우산", qty: 50, note: "행사 당일 'wellbian 플래티넘 부스' 현장수령" },
     { name: "wellbian 에코백", qty: 150, note: "행사 당일 'wellbian 플래티넘 부스' 현장수령" },
@@ -71,13 +74,21 @@ export async function loadRaffleConfig(mode: RaffleMode = "prod"): Promise<Raffl
 }
 
 export type RafflePhase = "BEFORE" | "OPEN" | "SOLD_OUT" | "CLOSED";
-/** 시간 + 정원. 정원(결제 확정 수)이 차면 마감 시각 전이라도 SOLD_OUT. */
-export function rafflePhaseAt(c: RaffleConfig, paidCount: number, now = new Date()): RafflePhase {
+/** 시간 + 정원. 정원(결제 확정 + 유효 예약)이 차면 마감 시각 전이라도 SOLD_OUT - 새 응모를 시작할 수 없다.
+ *  유효 예약이 만료되면(결제 없이 holdMinutes 경과) 자리가 풀려 다시 OPEN 이 된다. 2026-09-21 결정: 500 이 되면 결제를 막는다. */
+export function rafflePhaseAt(c: RaffleConfig, paidCount: number, now = new Date(), liveHolds = 0): RafflePhase {
   const t = now.getTime();
   if (t < Date.parse(c.open)) return "BEFORE";
   if (t >= Date.parse(c.close)) return "CLOSED";
-  if (paidCount >= c.maxEntries) return "SOLD_OUT";
+  if (paidCount + liveHolds >= c.maxEntries) return "SOLD_OUT";
   return "OPEN";
+}
+export const holdMsOf = (c: RaffleConfig) => Math.max(1, c.holdMinutes ?? 30) * 60_000;
+/** 예약 만료 시각 - 결제 대기 행만. createdAt 이 예약 시작(연장하면 갱신된다) */
+export const holdUntilOf = (entry: { status: string; createdAt: Date }, c: RaffleConfig) => (entry.status === "PENDING" ? new Date(entry.createdAt.getTime() + holdMsOf(c)) : null);
+/** 유효 예약 수 - 결제 대기 가운데 예약이 살아 있는 행. excludeId 는 자기 자신(연장할 때) */
+async function liveHolds(event: string, c: RaffleConfig, excludeId?: string, db: Pick<Prisma.TransactionClient, "raffleEntry"> = prisma) {
+  return db.raffleEntry.count({ where: { event, status: "PENDING", createdAt: { gt: new Date(Date.now() - holdMsOf(c)) }, ...(excludeId ? { id: { not: excludeId } } : {}) } });
 }
 
 /* ── 티켓 코드 (QR 내용) ──
@@ -89,12 +100,13 @@ export function ticketCodeFor(event: string, entryId: string, entryNo: number): 
 }
 export const ticketUrl = (origin: string, code: string) => `${origin}/event/xrpl-seoul/ticket/${code}`;
 
-type EntryRow = { status: string; destTag: number; entryNo: number | null; txHash: string | null; amountXrp: unknown; ticketCode: string | null; prize: string | null; redeemedAt: Date | null };
+type EntryRow = { status: string; destTag: number; entryNo: number | null; txHash: string | null; amountXrp: unknown; ticketCode: string | null; prize: string | null; redeemedAt: Date | null; createdAt: Date };
 type PassRow = { state: string; offerIndex: string | null; nftTokenId: string | null };
-const mineView = (entry: EntryRow | null, pass: PassRow | null) =>
+const mineView = (entry: EntryRow | null, pass: PassRow | null, config: RaffleConfig) =>
   entry ? {
     status: entry.status, destTag: entry.destTag, entryNo: entry.entryNo, txHash: entry.txHash, amountXrp: Number(entry.amountXrp),
     ticketCode: entry.ticketCode, prize: entry.prize, redeemedAt: entry.redeemedAt ? entry.redeemedAt.toISOString() : null,
+    holdUntil: holdUntilOf(entry, config)?.toISOString() ?? null, holdLive: (holdUntilOf(entry, config)?.getTime() ?? 0) > Date.now(),
     pass: pass ? { state: pass.state, offerIndex: pass.offerIndex, nftTokenId: pass.nftTokenId } : null,
   } : null;
 
@@ -103,39 +115,50 @@ export async function raffleState(wallet: string | null, mode: RaffleMode = "pro
   const config = await loadRaffleConfig(mode);
   const event = raffleEvent(mode);
   const count = await prisma.raffleEntry.count({ where: { event, status: "PAID" } });
-  const phase = rafflePhaseAt(config, count);
+  const holds = await liveHolds(event, config);
+  const phase = rafflePhaseAt(config, count, new Date(), holds);
   let mine = null;
   if (wallet) {
     const entry = await prisma.raffleEntry.findUnique({ where: { event_wallet: { event, wallet } } });
     const pass = await prisma.genesisPass.findUnique({ where: { wallet_kind: { wallet, kind: raffleKind(mode) } } });
-    mine = mineView(entry, pass);
+    mine = mineView(entry, pass, config);
   }
-  return { mode, phase, config, count, remaining: Math.max(0, config.maxEntries - count), destination: hotWalletAddress(), mine };
+  return { mode, phase, config, count, holds, remaining: Math.max(0, config.maxEntries - count - holds), destination: hotWalletAddress(), mine };
 }
 
-/** 응모 시작 - 결제를 기다리는 행을 만든다(태그 발급). 이미 있으면 그 행을 돌려준다. */
-export async function createRaffleEntry(wallet: string, mode: RaffleMode = "prod") {
+/** 응모 시작(예약) - 결제를 기다리는 행을 만든다(태그 발급). 이미 있으면 예약을 연장해 그 행을 돌려준다.
+ *  정원 = 결제 확정 + 유효 예약. 정원이 차면 새 예약도 연장도 거절한다 - 그래서 결제 화면에 들어간 사람은 예약이 살아 있는 동안 자리가 있다
+ *  (2026-09-21 결정: 500 이 되면 결제를 막는다). 같은 순간의 요청이 정원을 넘기지 않게 이벤트별 조언 잠금 안에서 세고 만든다.
+ *  email 은 당첨 안내(초대권 발송) 연락처 - 계정 연락처(AccountContact)에 넣는다. */
+export async function createRaffleEntry(wallet: string, mode: RaffleMode = "prod", email?: string) {
   const config = await loadRaffleConfig(mode);
   const event = raffleEvent(mode);
-  const existing = await prisma.raffleEntry.findUnique({ where: { event_wallet: { event, wallet } } });
-  if (existing) return { ok: true as const, entry: existing, config };
-  const paid = await prisma.raffleEntry.count({ where: { event, status: "PAID" } });
-  const phase = rafflePhaseAt(config, paid);
-  if (phase !== "OPEN") {
-    return { ok: false as const, error: phase === "BEFORE" ? "아직 응모가 열리지 않았습니다." : phase === "SOLD_OUT" ? "선착순 정원이 모두 찼습니다." : "응모가 마감되었습니다." };
-  }
-  try {
-    const entry = await prisma.raffleEntry.create({
-      data: { event, wallet, destTag: newDestTag(), amountXrp: config.priceXrp, status: "PENDING" },
-    });
-    return { ok: true as const, entry, config };
-  } catch (e) {
-    // 같은 지갑이 동시에 두 번 눌렀거나(React 개발 모드의 이중 effect 포함) 태그가 겹친 경우 - 이미 생긴 행을 돌려준다
-    const code = (e as { code?: string }).code;
-    if (code === "P2002") {
-      const again = await prisma.raffleEntry.findUnique({ where: { event_wallet: { event, wallet } } });
-      if (again) return { ok: true as const, entry: again, config };
+  if (email) await prisma.accountContact.upsert({ where: { address: wallet }, create: { address: wallet, email }, update: { email, updatedAt: new Date() } }).catch(() => {});
+  const timePhase = rafflePhaseAt(config, 0);   // 시간만 본다 - 정원은 아래 잠금 안에서 센다
+  const run = () => prisma.$transaction(async (tx) => {
+    await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtext(${"raffle-hold:" + event}))`;
+    const existing = await tx.raffleEntry.findUnique({ where: { event_wallet: { event, wallet } } });
+    if (existing?.status === "PAID") return { ok: true as const, entry: existing, config };
+    if (existing?.status === "OVERFLOW") return { ok: false as const, error: OVERFLOW_MSG, code: "OVERFLOW" as const };
+    if (timePhase === "BEFORE") return { ok: false as const, error: "아직 응모가 열리지 않았습니다.", code: "BEFORE" as const };
+    if (timePhase === "CLOSED") return { ok: false as const, error: "응모가 마감되었습니다.", code: "CLOSED" as const };
+    const paid = await tx.raffleEntry.count({ where: { event, status: "PAID" } });
+    const holds = await liveHolds(event, config, existing?.id, tx);
+    if (paid + holds >= config.maxEntries) {
+      return { ok: false as const, error: existing ? "예약이 만료된 사이 선착순 정원이 모두 찼습니다. XRP 를 보내지 마세요." : "선착순 정원이 모두 찼습니다.", code: "SOLD_OUT" as const };
     }
+    if (existing) {
+      const entry = await tx.raffleEntry.update({ where: { id: existing.id }, data: { createdAt: new Date() } });   // 예약 연장
+      return { ok: true as const, entry, config };
+    }
+    const entry = await tx.raffleEntry.create({ data: { event, wallet, destTag: newDestTag(), amountXrp: config.priceXrp, status: "PENDING" } });
+    return { ok: true as const, entry, config };
+  });
+  try {
+    return await run();
+  } catch (e) {
+    // 무작위 태그가 겹친 경우(P2002) - 한 번 더
+    if ((e as { code?: string }).code === "P2002") return await run();
     throw e;
   }
 }
@@ -158,6 +181,16 @@ export async function verifyRaffleEntry(wallet: string, txHash: string, origin: 
   if (Date.now() >= Date.parse(config.close) + CLOSE_GRACE_MS) {
     await markOverflow(entry.id, hash);
     return { ok: false as const, error: OVERFLOW_MSG, pending: false };
+  }
+  /* 예약이 만료된 응모의 입금: 남은 자리(정원 - 확정 - 유효 예약)가 없으면 확정하지 않는다 - 예약이 살아 있는 사람의 자리를 지킨다.
+     결제창을 열어 둔 사람은 예약이 자동 연장되므로 여기 걸리지 않는다. */
+  if ((holdUntilOf(entry, config)?.getTime() ?? 0) <= Date.now()) {
+    const paidNow = await prisma.raffleEntry.count({ where: { event, status: "PAID" } });
+    const holds = await liveHolds(event, config, entry.id);
+    if (paidNow + holds >= config.maxEntries) {
+      await markOverflow(entry.id, hash);
+      return { ok: false as const, error: OVERFLOW_MSG, pending: false };
+    }
   }
   /* 래플 번호 = 결제 확정 순번. 같은 순간 여러 명이 확정되면 둘 다 같은 max+1 을 계산해 (event, entryNo) 유일 제약에
      걸린다(2026-09-21 점검 - 18:00 오픈 러시에서 실제로 날 수 있는 경우). 그때는 번호를 다시 세어 재시도한다(최대 6회).
