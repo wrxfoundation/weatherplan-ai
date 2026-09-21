@@ -127,7 +127,7 @@ kweather-depin(모체) 저장소에 적용하는 변경분(누적). 판매 페�
 
 ### Hobby 프로젝트(xrpseoul-raffle)에 올리기
 1. 전체 zip 을 풀어 **`kweather-depin-master` 폴더 자체를 드롭**(폴더 안에 package.json 이 보이는 층). 부분본 zip 은 올리지 않는다.
-2. 환경 변수(Settings › Environment Variables). 빌드에는 필요 없지만 실행에 필수: `DATABASE_URL` · `SESSION_SECRET` · `ADMIN_SECRET` · `XRPL_HOT_SEED` · `XRPL_ISSUER_ADDRESS` · `XRPL_NETWORK`(mainnet) · `DEVICE_KEY_ENC_SECRET`(추첨 봉인 시드) · `CRON_SECRET` · `NEXT_PUBLIC_SITE_URL`.
+2. 환경 변수(Settings › Environment Variables). 빌드에는 필요 없지만 실행에 필수: `DATABASE_URL`(PgBouncer 풀) · `DIRECT_URL`(직접 연결, Prisma directUrl) · `SESSION_SECRET` · `ADMIN_SECRET` · `XRPL_HOT_SEED` · `XRPL_ISSUER_ADDRESS` · `XRPL_NETWORK`(mainnet) · `DEVICE_KEY_ENC_SECRET`(추첨 봉인 시드) · `CRON_SECRET` · `NEXT_PUBLIC_SITE_URL`.
    로그인·지갑: `GOOGLE_CLIENT_ID` · `GOOGLE_REDIRECT_ORIGINS` · `XUMM_API_KEY` · `XUMM_API_SECRET` · `NEXT_PUBLIC_WC_PROJECT_ID`. 나머지(`RLUSD_*`·`WLBN_CURRENCY`·`NEXT_PUBLIC_MAPBOX_TOKEN`·`KW_API_KEY`·`IOT_INGEST_TOKEN`·`FACTORY_SECRET`·`NFT_PARTNER_API_KEY`)는 다른 페이지용.
    **값은 운영(wellbian.io) 배포와 같아야 같은 장부·핫월렛을 본다.** (연결된 Vercel 토큰에는 환경 변수 조회 권한이 없어 현재 설정 여부는 확인하지 못했다.)
 3. **Deployment Protection**: 프로젝트가 「Vercel Authentication — all except custom domains」라 `*.vercel.app` 주소는 Vercel 에 로그인한 사람만 본다. 공개하려면 Settings › Deployment Protection 에서 끄거나 커스텀 도메인(예: raffle.wellbian.io)을 붙인다.
