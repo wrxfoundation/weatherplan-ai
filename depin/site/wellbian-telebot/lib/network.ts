@@ -232,7 +232,7 @@ export const PEOPLE: Person[] = [
     id: "cryptocom", inbound: true, name: "Vincent Chan", org: "Crypto.com", role: "VP, Strategic Partnerships (홍콩)",
     lane: "exchange", stance: "talking",
     why: "인바운드. 거래소 카테고리지만 청취는 기조(9/9)대로 진행한다.",
-    next: "9/11 임원 동석 콜. 상장·유료·독점·물량 전부 유보. 미팅 사실은 공개 채널에 올리지 않는다.",
+    next: "9/11 임원 동석 콜 → 9/14 MNDA(Legal) → 9/15 체험 계정 선공유 → **9/18 딥다이브 콜(product team 6명)** → 답신 메일 정본(`cryptocom-call-0911.md`). **9/21**: 그가 9/22~23 두바이 Forex Expo — 답은 9/24 이후 전제, 재촉 0. 링크드인 글(OG.com·Robinhood 예측시장 인프라)에는 **좋아요만, 댓글 0**. 미결 관문 = **11개 소스 재배포 권리 확인**(독점 질문의 답). 상장·유료·독점·물량 유보 유지 · Robinhood·타 플랫폼 호명 0 · 미팅 사실 비공개.",
   },
 
   /* ── 연결됨 ───────────────────────────────────────────── */

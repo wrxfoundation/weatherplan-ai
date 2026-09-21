@@ -101,6 +101,11 @@ MDA 미서명이다. **회사명도, 특정 가능한 업태 서술도 쓰지 �
 | 9/15 10:40 | 서우 회신 — Wellbian Labs Pte. Ltd. · 111 Somerset Road #06-01W (238164) · 서명자 김성환 · ceo@wellbianlabs.io |
 | 9/15 13:54 | Vincent: Legal 로 넘겨 **DocuSign 준비 중** |
 | 9/15 밤 | 서우, **weathermarket.ai 체험 계정 선공유** 결정 — MNDA 실행 전이지만 「기다리는 동안 볼 것」으로 |
+| 9/16 | Vincent 회신 — 자격증명 감사 · **product team cc** · 덱·추가 문서 재요청 · 「product team buy-in 이 필수」 → 서우 리드 딥다이브 콜 요청 |
+| 9/17 오전 | **Vincent 가 먼저 캘린더 초대** — 9/18(금) 15:30–16:00 KST, 그쪽 6명(+Kevin Algeo 선택). 덱(영문 8장) 선발송 |
+| 9/18 15:30 | **딥다이브 콜** — 아래 「9/18 딥다이브 콜 — 기록」 |
+| 9/18 | 답신 메일 정본 확정 — 첨부 4 + 링크 2, **Vincent 단일 수신(Kevin 미호명)**. 발송 여부는 서우 통보 시 갱신 |
+| 9/21 | Vincent 링크드인 공개 글 — **9/22~23 두바이 Forex Expo** 참가, OG.com 예측시장 인프라 홍보 → 아래 「9/21」 절 |
 
 체험 계정 자격증명은 저장소에 두지 않는다.
 
@@ -302,3 +307,93 @@ Seowoo
   그대로 터진 것**이다.
 - **처리**: 덱을 보내는 메일에서 **한 줄로 같이 처리**한다 — 따로 보내면 재촉이 두 번이 된다.
 
+## 9/18 딥다이브 콜 — 기록 (사후 정리 9/21)
+
+**자리**: Vincent 주최, 그쪽 product team 포함 6명 예정(+Kevin Algeo 선택) · 우리 쪽 서우 리드. 형식 미팅이 아니라 **실사**였다.
+
+**그쪽이 꺼낸 것**
+- **케이스 스터디** 요청 — 이유를 붙였다: *「this product is not free at all」*. 값을 내는 물건이니 남이 값을 낸 사례를 보자는 것.
+- **마켓 종류(미국·한국 등)·데이터 종류·재배포 권리** — 「if you have an Excel」(**조건부**, 형식 지정 아님). → 사이트가 덮는다
+  (City Catalog · Developer Docs/openapi.json · 라이브 가격 · `/determinations`). 남는 것은 **재배포 권리 한 줄**뿐.
+- **★ 재배포 권리 = 독점 질문** — *「if we launch prediction markets using your data, we need to know if you're selling it to someone
+  else at the same time」*. 제품 페이지가 아니라 **계약 조건**이라 메일 본문 한 문단으로.
+- **co-creation 모델** — 볼륨 기반 구조의 pack 언급. 상업 구조는 **Vincent 손을 거쳐** 받는다(그가 사내에서 이 건의 주인으로 서게).
+- **US team 검토 뒤 재소집.** 체험 계정은 US team 에 넘기거나 좌석을 따로 낸다(돌려쓰면 누가 봤는지 구분이 안 된다).
+
+**답신 메일 정본(9/18, Vincent 단일 수신)** — 자격증명·사이트 링크 외 첨부물은 서우가 넣는다. `[ ]` 는 서우가 채우는 자리.
+
+```
+Subject: KWeather × Crypto.com — materials following today's call
+
+Vincent,
+
+Thank you for the time today.
+
+Most of what you asked for is already live on weathermarket.ai, and the test
+account we shared earlier still works — please pass it to your US team, or tell
+us how many seats you need and we will issue separate ones.
+
+On the site
+· City Catalog — every market we cover, 167 cities across 90 countries
+· Developer Docs and openapi.json — the data types available per market
+· Live pricing — subscription, metered credits, and per-determination, each
+  with a working purchase flow
+· /determinations — the market examples we put on screen today
+
+Attached
+· Technical overview — today's deck, English
+· Weather-indexed insurance built with [Samsung ___ Insurance]: press coverage,
+  English translation, and a one-page note on how the settlement reference was
+  defined and how disputes were closed
+· Our forecasting licence — in Korea a private company needs this to publish a
+  forecast at all
+· NVIDIA Earth-2 AI forecasting — the testing I mentioned: press release and
+  translation
+
+Also [private map link] — the typhoon simulation and the other risk layers.
+
+On redistribution rights. You asked whether we would be selling the same data
+to someone else while you run markets on it. Our eleven sources include both
+direct observation and national model outputs, and the redistribution terms
+differ across them — we are confirming each one now and will come back with a
+clear answer rather than a provisional one. Exclusivity is a commercial
+question and we are open to it; it belongs in the same conversation as the
+co-creation model.
+
+On the co-creation model — a pack was mentioned on the call. Please send it
+through and we will come back on the volume-based structure.
+
+Happy to reconvene once your US team has had a look.
+
+Best regards,
+```
+
+**9/21 발송 시 손볼 곳 셋(아직 안 보냈다면)**: ① 제목·첫 줄의 `today's call` → `Friday's call` · `Thank you for the time on Friday.`
+② 첫 문단 뒤에 한 줄 — `I saw you're at Forex Expo in Dubai this week — this will keep until you're back.` (두바이를 안다는 것 +
+답 재촉 아님을 **긍정형**으로) ③ 「Kevin 호명 0 · 다른 거래소·플랫폼 이름 0」 그대로 — **Robinhood 도 쓰지 않는다**(아래).
+
+## 9/21 — Vincent 의 공개 글이 말해주는 것
+
+**글(9/21, 링크드인 · 2시간 전)**: 「Robinhood 가 **OG.com** 을 인프라·클리어링 파트너로 선택, Citadel Securities 와 나란히 지분 참여 —
+CFTC 규제 예측시장 인프라의 대규모 검증 · 플랫폼에 기관 유동성과 **trusted B2B engine** 제공」 + **9/22~23 두바이 Forex Expo**(Dubai
+World Trade Center)에서 브로커·프롭펌·테크 파트너와 만나자는 CTA. 해시태그 #PredictionMarkets #EventContracts.
+
+**공개 사실(보도자료·복수 매체, 9/8)**: OG.com = **Crypto.com 에서 스핀오프한 예측시장 플랫폼**(독립 가치 약 $50억), Robinhood 가 리테일
+이벤트 컨트랙트 물량을 **OG.com 의 CFTC 규제 파생상품 거래소·청산소 아키텍처**로 라우팅, 9/8 부터 단계적 출시. Robinhood 는
+Crypto.com 과 OG.com 에 초기 지분 — 가격은 **Citadel Securities 의 Crypto.com 투자($200억 밸류에이션)** 기준.
+
+**우리 읽기**
+- **9/18 의 문장이 어디서 온 말인지 확정됐다.** *「if we launch prediction markets using your data」* 는 가정이 아니라 **지금 그 회사의
+  1순위 사업**이다. 「US team」은 CFTC 규제 거래소 쪽(OG.com 축)일 가능성이 크다 — 미국 규제 이벤트 컨트랙트의 **정산 기준값**이
+  우리 판정의 자리다. 크립토닷컴 브리프의 「데이터가 아니라 판정을 판다」가 **그의 이번 주 언어(trusted B2B engine)와 같은 층**이다.
+- **재배포·독점 답의 무게가 올라갔다.** 그가 「같은 데이터를 남에게도 파느냐」를 물은 이유가 Robinhood 물량이 실리는 청산 인프라라면,
+  우리 11개 소스의 재배포 조건 확인(미결)은 **다음 대화의 관문**이다. 「provisional 이 아니라 clear 한 답」 약속을 지킨다.
+- **그가 이번 주 없다.** 9/22~23 두바이 → 답은 **9/24 이후** 전제. 메일은 지금 보내고(월요일이 정상 리듬) 재촉 0.
+
+**행동**
+- **링크드인: 좋아요만, 댓글 0.** 이 건은 비공개(MNDA·「미팅 사실은 공개 채널에 올리지 않는다」)이고, 댓글은 거래소 관계 신호(9/30
+  규칙)다. 그 글에 남는 우리 이름은 「좋아요」까지.
+- **Robinhood 호명 0** — 「내부 인지까지만」(9/18 Kevin 판정) + 「크립토닷컴 상대에게 다른 거래소·플랫폼 이름 0」. 그의 글을 우리 메일에
+  끌어오지 않는다. OG.com 도 **그가 먼저 꺼내기 전까지** 우리가 쓰지 않는다.
+- **두바이 DM 0** — 그 CTA 는 현지 브로커·프롭펌용이다. Henry·Alessandro 의 UAE 축과 **연결하지 않는다**(층이 다르다).
+- 케이스 스터디(삼성 보험 날씨보험)·예보사업자 등록증·Earth-2 자료는 첨부 그대로 — 「not free at all」에 대한 답이 그 첨부다.
