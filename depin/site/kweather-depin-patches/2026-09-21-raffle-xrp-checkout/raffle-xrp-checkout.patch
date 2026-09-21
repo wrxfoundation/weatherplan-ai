@@ -241,6 +241,27 @@ diff -ruN a/src/app/api/raffle/meta/[code]/route.ts b/src/app/api/raffle/meta/[c
      ],
    }, { headers: { "Cache-Control": "public, s-maxage=3600, stale-while-revalidate=86400" } });
  }
+diff -ruN a/src/app/api/raffle/state/route.ts b/src/app/api/raffle/state/route.ts
+--- a/src/app/api/raffle/state/route.ts	2026-09-21 10:52:41.141994734 +0000
++++ b/src/app/api/raffle/state/route.ts	2026-09-21 12:47:10.746698401 +0000
+@@ -1,12 +1,16 @@
+ import { NextRequest, NextResponse } from "next/server";
+ import { getSessionWallet } from "@/lib/auth/session";
+ import { raffleState, type RaffleMode } from "@/lib/raffle";
++import { nudgeRaffleOutbox } from "@/lib/raffle-keepalive";
+ 
+ export const dynamic = "force-dynamic";
++export const maxDuration = 30;
+ 
+-/** XRPL SEOUL 2026 래플 - 화면 상태 한 번에. ?mode=test 는 리허설(격리된 event·kind·설정). */
++/** XRPL SEOUL 2026 래플 - 화면 상태 한 번에. ?mode=test 는 리허설(격리된 event·kind·설정).
++ *  상태를 읽기 전에 아웃박스를 살짝 민다(인스턴스당 20초에 한 번) - 크론이 없는 배포에서도 NFT 발행→오퍼가 이어진다. */
+ export async function GET(req: NextRequest) {
+   const mode: RaffleMode = req.nextUrl.searchParams.get("mode") === "test" ? "test" : "prod";
++  await nudgeRaffleOutbox();
+   const wallet = await getSessionWallet();
+   return NextResponse.json(await raffleState(wallet, mode));
+ }
 diff -ruN a/src/app/api/raffle/verify/route.ts b/src/app/api/raffle/verify/route.ts
 --- a/src/app/api/raffle/verify/route.ts	2026-09-21 10:52:41.142017749 +0000
 +++ b/src/app/api/raffle/verify/route.ts	2026-09-21 12:31:30.542985639 +0000
@@ -1938,6 +1959,31 @@ diff -ruN a/src/components/raffle/types.ts b/src/components/raffle/types.ts
 +export const RESERVE_XRP = 1.3;
 +
 +export const raffleQs = (mode: RaffleMode) => (mode === "test" ? "?mode=test" : "");
+diff -ruN a/src/lib/raffle-keepalive.ts b/src/lib/raffle-keepalive.ts
+--- a/src/lib/raffle-keepalive.ts	1970-01-01 00:00:00.000000000 +0000
++++ b/src/lib/raffle-keepalive.ts	2026-09-21 12:47:10.723751145 +0000
+@@ -0,0 +1,21 @@
++import { drainOutbox, reconcileOutbox } from "@/lib/xrpl/outbox";
++
++/* 크론 없이도 래플 NFT 발행 → 오퍼 체인이 흐르게 한다 (2026-09-21).
++   Vercel Hobby 계정은 크론이 하루 1회뿐이라 매분 도는 /api/cron/drain·reconcile 이 없다. 그러면 발행 결과 정산(reconcile)이 안 되어
++   NFTokenCreateOffer 가 큐에 들어가지 않고, 사용자는 「NFT 발행 중」에서 멈춘다.
++   그래서 상태 조회(/api/raffle/state - 페이지가 20초, 결제창 ④ 가 5초마다 부른다) 때 인스턴스당 20초에 한 번, 정산 3초 + 드레인 3초 예산으로 민다.
++   Pro(매분 크론) 에서 겹쳐 돌아도 무해하다 - 드레인은 리스로 하나만 돌고 정산은 멱등이다. RAFFLE_SELF_DRAIN=0 이면 끈다. */
++let last = 0;
++let running: Promise<void> | null = null;
++
++export async function nudgeRaffleOutbox(): Promise<void> {
++  if (process.env.RAFFLE_SELF_DRAIN === "0") return;
++  if (running) return running;
++  if (Date.now() - last < 20_000) return;
++  last = Date.now();
++  running = (async () => {
++    try { await reconcileOutbox(3_000); } catch { /* 다음 기회 */ }
++    try { await drainOutbox(3_000); } catch { /* 다음 기회 */ }
++  })().finally(() => { running = null; });
++  return running;
++}
 diff -ruN a/src/lib/raffle-prizes.ts b/src/lib/raffle-prizes.ts
 --- a/src/lib/raffle-prizes.ts	1970-01-01 00:00:00.000000000 +0000
 +++ b/src/lib/raffle-prizes.ts	2026-09-21 12:10:25.267930721 +0000

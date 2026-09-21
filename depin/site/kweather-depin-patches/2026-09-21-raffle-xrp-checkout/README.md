@@ -1,15 +1,16 @@
-# XRP SEOUL 2026 래플 — XRP 전용 결제창 + 히어로 이식 + 카운팅·추첨 점검 + 대점검 v4 + 예약 정원·초대권 이메일 v5 + 남은 결정 4건 v6 (2026-09-21)
+# XRP SEOUL 2026 래플 — XRP 전용 결제창 + 히어로 이식 + 카운팅·추첨 점검 + 대점검 v4 + 예약 정원·초대권 이메일 v5 + 남은 결정 4건 v6 + Hobby 배포 v7 (2026-09-21)
 
 kweather-depin(모체) 저장소에 적용하는 변경분(누적). 판매 페이지 구매 모달(BuyModal)의 흐름을 따르되 결제는 XRP 뿐이고,
 래플 페이지 히어로·스탯 줄은 정적 시안(xrpseoul-raffle)을 그대로 옮겼다. 결제 카운팅·추첨 경로를 점검해 아래를 고쳤다.
 
 ## 적용
 - `git apply raffle-xrp-checkout.patch` (저장소 루트에서) **+ `files/public/assets/raffle/hero.webp` 를 같은 경로에 복사**(패치는 소스만 담는다).
-  또는 `files/` 아래 22개 파일을 같은 경로에 덮어쓴다. DB 스키마·마이그레이션 변경 없음(`RaffleEntry.status` 는 문자열 컬럼이라 새 값 OVERFLOW 는 그대로 들어가고,
+  또는 `files/` 아래 24개 파일을 같은 경로에 덮어쓴다. DB 스키마·마이그레이션 변경 없음(`RaffleEntry.status` 는 문자열 컬럼이라 새 값 OVERFLOW 는 그대로 들어가고,
   예약은 `createdAt` 을, 당첨 안내 이메일은 기존 `AccountContact` 를, 추첨 링크는 AdminConfig `raffle_xrpseoul.drawId` 를 쓴다).
-- **Vercel 배포용 전체 zip**: 모체 전체에 이 패치를 적용한 트리(node_modules·.next·.env 제외)를 서우에게 별도 전달(`kweather-depin-master-raffle-v6.zip`, 루트에 `RAFFLE-2026-09-21-NOTES.md` = 이 README).
-- 새 파일(8): public/assets/raffle/hero.webp · src/components/admin/RafflePanel.tsx · src/components/raffle/RaffleCheckoutModal.tsx · src/components/raffle/RaffleHero.tsx · src/components/raffle/TicketCard.tsx · src/components/raffle/raffle-hero.css · src/components/raffle/types.ts · src/lib/raffle-prizes.ts
-- 수정(14): src/app/admin/page.tsx · src/app/admin/raffle-check/page.tsx · src/app/api/admin/raffle/route.ts · src/app/api/raffle/card/[code]/route.ts · src/app/api/raffle/enter/route.ts · src/app/api/raffle/meta/[code]/route.ts · src/app/api/raffle/verify/route.ts · src/app/event/xrpl-seoul/page.tsx · src/app/event/xrpl-seoul/test/page.tsx · src/app/event/xrpl-seoul/ticket/[code]/page.tsx · src/components/Nav.tsx · src/components/admin/BlindDrawPanel.tsx · src/components/raffle/RafflePage.tsx · src/lib/raffle.ts
+- **Vercel 배포용 전체 zip**: 모체 전체에 이 패치를 적용한 트리(node_modules·.next·.env 제외)를 서우에게 별도 전달(`kweather-depin-master-raffle-v7.zip`, 루트에 `RAFFLE-2026-09-21-NOTES.md` = 이 README).
+  **개인(Hobby) 계정용이라 `vercel.json` 은 크론 2개(하루 1회) 판이고 원본은 `vercel.pro.json`** - 아래 v7 절.
+- 새 파일(9): public/assets/raffle/hero.webp · src/components/admin/RafflePanel.tsx · src/components/raffle/RaffleCheckoutModal.tsx · src/components/raffle/RaffleHero.tsx · src/components/raffle/TicketCard.tsx · src/components/raffle/raffle-hero.css · src/components/raffle/types.ts · src/lib/raffle-keepalive.ts · src/lib/raffle-prizes.ts
+- 수정(15): src/app/admin/page.tsx · src/app/admin/raffle-check/page.tsx · src/app/api/admin/raffle/route.ts · src/app/api/raffle/card/[code]/route.ts · src/app/api/raffle/enter/route.ts · src/app/api/raffle/meta/[code]/route.ts · src/app/api/raffle/state/route.ts · src/app/api/raffle/verify/route.ts · src/app/event/xrpl-seoul/page.tsx · src/app/event/xrpl-seoul/test/page.tsx · src/app/event/xrpl-seoul/ticket/[code]/page.tsx · src/components/Nav.tsx · src/components/admin/BlindDrawPanel.tsx · src/components/raffle/RafflePage.tsx · src/lib/raffle.ts
 
 ## 결제창 흐름 (구매 모달과 같은 순서, 래플에 없는 단계는 접음)
 ① 응모 내용(계정당 1회 · 5 XRP · 경품 · 현장 수령 안내) → ② 동의(환불 불가 · 현장 수령/QR 관리) → ③ XRP 결제(연결 지갑 서명 또는 외부 지갑 송금 + 해시) → ④ 래플 NFT 수락 → 완료(티켓 카드)
@@ -111,4 +112,25 @@ kweather-depin(모체) 저장소에 적용하는 변경분(누적). 판매 페�
 1. zip 을 풀어 기존 프로젝트 자리에 두고 `npm install`. 환경 변수는 기존 그대로(추가 없음). `npx prisma db push` 는 스키마 변경이 없어 no-op.
 2. 배포 뒤 확인: /event/xrpl-seoul/test 에서 응모 시작(예약 30분 표시) → 결제 → NFT 수락 → 관리자 콘솔 › 래플(이메일·유효 예약) → 블라인드 추첨 봉인(참가자 「래플 리허설」) → 일정 섹션에 봉인 링크 → 공개 → 경품 배정 → 티켓 페이지·스캐너.
 3. AdminConfig `raffle_xrpseoul` 이 `prizes` 를 덮어쓰고 있으면 초대권 note 를 「10월 3일 서울 · 행사장 입장권 · 당첨자 이메일로 발송」 으로 맞춘다. `holdMinutes`(기본 30) 는 필요하면 조정.
+
+## v7 (2026-09-21 밤 — 서우 개인 Vercel(Hobby) 배포 지원)
+
+### 왜 404 였나 (Vercel 프로젝트 `xrpseoul-raffle` 배포 기록으로 확인)
+- 21:37 전체 zip 드롭 배포: `next build` 는 성공(3분)했지만 마지막 단계에서 **`cron_jobs_limits_reached`** — Hobby 계정은 크론이 하루 1회·최대 2개인데 `vercel.json` 에 매분·5분·10분 크론 7개가 있다.
+- 21:40 래플 부분본 zip 드롭: 앱이 아니라 파일 묶음(README·patch·files/)이라 정적 배포가 됐고 루트에 index.html 이 없어 404. **부분본은 모체 저장소에 적용하는 재료이지 그 자체로 사이트가 아니다.**
+- 빌드 로그의 `src/app/api/v1/device/route.ts` 줄은 경고(미사용 변수) 2건이지 오류가 아니다.
+
+### 고친 것
+- `vercel.hobby.json`(크론 2개 · 하루 1회: reconcile 03:00 UTC, prune 02:30 UTC) — 전체 zip 에는 이것이 `vercel.json` 으로 들어가고 원본은 `vercel.pro.json`. 모체(Pro) 저장소의 vercel.json 은 손대지 않는다(부분본에도 없다).
+- 크론이 없어도 래플 NFT 발행 → 오퍼가 이어지도록 `/api/raffle/state` 가 **인스턴스당 20초에 한 번 정산 3초 + 드레인 3초**를 민다(`src/lib/raffle-keepalive.ts`).
+  발행 결과 정산(reconcile)이 없으면 NFTokenCreateOffer 가 큐에 들어가지 않아 「NFT 발행 중」에서 멈춘다. Pro 에서 매분 크론과 겹쳐도 무해(드레인은 리스, 정산은 멱등). `RAFFLE_SELF_DRAIN=0` 이면 끈다.
+
+### Hobby 프로젝트(xrpseoul-raffle)에 올리기
+1. 전체 zip 을 풀어 **`kweather-depin-master` 폴더 자체를 드롭**(폴더 안에 package.json 이 보이는 층). 부분본 zip 은 올리지 않는다.
+2. 환경 변수(Settings › Environment Variables). 빌드에는 필요 없지만 실행에 필수: `DATABASE_URL` · `SESSION_SECRET` · `ADMIN_SECRET` · `XRPL_HOT_SEED` · `XRPL_ISSUER_ADDRESS` · `XRPL_NETWORK`(mainnet) · `DEVICE_KEY_ENC_SECRET`(추첨 봉인 시드) · `CRON_SECRET` · `NEXT_PUBLIC_SITE_URL`.
+   로그인·지갑: `GOOGLE_CLIENT_ID` · `GOOGLE_REDIRECT_ORIGINS` · `XUMM_API_KEY` · `XUMM_API_SECRET` · `NEXT_PUBLIC_WC_PROJECT_ID`. 나머지(`RLUSD_*`·`WLBN_CURRENCY`·`NEXT_PUBLIC_MAPBOX_TOKEN`·`KW_API_KEY`·`IOT_INGEST_TOKEN`·`FACTORY_SECRET`·`NFT_PARTNER_API_KEY`)는 다른 페이지용.
+   **값은 운영(wellbian.io) 배포와 같아야 같은 장부·핫월렛을 본다.** (연결된 Vercel 토큰에는 환경 변수 조회 권한이 없어 현재 설정 여부는 확인하지 못했다.)
+3. **Deployment Protection**: 프로젝트가 「Vercel Authentication — all except custom domains」라 `*.vercel.app` 주소는 Vercel 에 로그인한 사람만 본다. 공개하려면 Settings › Deployment Protection 에서 끄거나 커스텀 도메인(예: raffle.wellbian.io)을 붙인다.
+4. Hobby 는 함수 지역이 iad1(미국 동부)로 잡힌다(vercel.json 의 icn1 은 무시됨). DB·XRPL 왕복이 조금 길지만 래플에는 문제 없다.
+5. 같은 DB 를 두 배포(wellbian.io + xrpseoul-raffle.vercel.app)가 함께 써도 핫월렛 드레인은 리스로 하나만 돌아 안전하다.
 
