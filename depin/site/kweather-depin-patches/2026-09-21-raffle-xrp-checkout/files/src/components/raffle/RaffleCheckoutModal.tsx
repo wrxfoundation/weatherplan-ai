@@ -216,6 +216,19 @@ export function RaffleCheckoutCard({ mode, st, onClose, onChange, preview }: {
     } catch (e) { setErr((e as Error).message); setPayStatus("idle"); }
   }, [mode, onChange, refreshMine, t, notConfirmed]);
 
+  /* ③ 해시 없이 입금 확인 - 서버가 핫월렛 거래에서 내 Destination Tag 로 들어온 입금을 찾는다(거래소에서 보내 해시를 모르는 경우) */
+  const checkByTag = useCallback(async () => {
+    setPayStatus("verifying"); setErr("");
+    try {
+      const r = await fetch("/api/raffle/verify", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ mode }) });
+      const d = await r.json().catch(() => ({}));
+      if (r.ok) { toast.ok(t({ ko: "결제가 확인되었습니다", en: "Payment confirmed", ja: "決済を確認しました", zh: "支付已确认", es: "Pago confirmado" })); setPayStatus("done"); await refreshMine(); await onChange(); setStep(4); return; }
+      const m = d.error || (r.status === 202 ? notConfirmed : t({ ko: "결제 확인에 실패했습니다.", en: "Payment could not be verified.", ja: "決済を確認できませんでした。", zh: "支付验证失败。", es: "No se pudo verificar el pago." }));
+      setErr(m); setPayStatus("idle");
+      if (r.status !== 202) { await refreshMine().catch(() => null); await onChange(); }
+    } catch (e) { setErr((e as Error).message); setPayStatus("idle"); }
+  }, [mode, onChange, refreshMine, t, notConfirmed]);
+
   /* ③ 연결된 지갑(간편·D'CENT·Girin·Xaman)에서 XRP Payment 서명 → 해시로 검증 */
   const pay = useCallback(async () => {
     if (!entry) return;
@@ -271,6 +284,7 @@ export function RaffleCheckoutCard({ mode, st, onClose, onChange, preview }: {
                 <input className="field-input" value={hash} onChange={(e) => setHash(e.target.value.trim())} placeholder="A1B2C3…" style={{ flex: 1, fontFamily: "monospace" }} />
                 <button className="btn-ghost" disabled={payStatus !== "idle" || !/^[0-9A-Fa-f]{64}$/.test(hash)} onClick={() => verify(hash.toUpperCase())} style={{ padding: "0 16px", whiteSpace: "nowrap" }}>{t({ ko: "확인", en: "Verify", ja: "確認", zh: "确认", es: "Verificar" })}</button>
               </div>
+              <button className="btn-ghost" disabled={payStatus !== "idle"} onClick={checkByTag} style={{ padding: "9px 14px", fontSize: 14.5, borderRadius: 10, alignSelf: "flex-start" }}>{t({ ko: "해시 없이 입금 확인 (태그로 찾기)", en: "Check deposit without a hash (by tag)", ja: "ハッシュなしで入金確認（タグで検索）", zh: "无需哈希确认到账（按标签查找）", es: "Comprobar el depósito sin hash (por tag)" })}</button>
               {err && <Alert>{err}</Alert>}
             </div>
           )}
@@ -423,6 +437,12 @@ export function RaffleCheckoutCard({ mode, st, onClose, onChange, preview }: {
               <button className="btn-ghost" disabled={payStatus !== "idle" || !/^[0-9A-Fa-f]{64}$/.test(hash)} onClick={() => verify(hash.toUpperCase())} style={{ padding: "0 16px", whiteSpace: "nowrap" }}>
                 {t({ ko: "확인", en: "Verify", ja: "確認", zh: "确认", es: "Verificar" })}
               </button>
+            </div>
+            <div style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
+              <button className="btn-ghost" disabled={payStatus !== "idle" || !entry} onClick={checkByTag} style={{ padding: "9px 14px", fontSize: 14.5, borderRadius: 10 }}>
+                {t({ ko: "해시 없이 입금 확인 (태그로 찾기)", en: "Check deposit without a hash (by tag)", ja: "ハッシュなしで入金確認（タグで検索）", zh: "无需哈希确认到账（按标签查找）", es: "Comprobar el depósito sin hash (por tag)" })}
+              </button>
+              <span style={{ fontSize: 13.5, color: "var(--cap)", lineHeight: 1.5 }}>{t({ ko: "거래소에서 보내 해시를 모르면 입금이 반영된 뒤(거래소 출금은 몇 분) 이 버튼을 누르세요.", en: "Sent from an exchange and don't have the hash? Press this once the deposit has landed (exchange withdrawals take minutes).", ja: "取引所から送りハッシュが分からない場合は、入金反映後（取引所出金は数分）にこのボタンを押してください。", zh: "从交易所汇款且不知道哈希时，待到账后（交易所提现需几分钟）点击此按钮。", es: "¿Envió desde un exchange sin hash? Pulse aquí cuando el depósito haya llegado (tarda minutos)." })}</span>
             </div>
           </div>
           {err && <Alert>{err}</Alert>}

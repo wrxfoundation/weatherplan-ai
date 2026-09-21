@@ -45,6 +45,7 @@ export interface RaffleConfig {
   priceXrp: number;   // 응모 금액 (XRP)
   maxEntries: number; // 선착순 정원 - 경품 수 합계와 같아 전원이 하나는 받는다. 정원 = 결제 확정 + 유효 예약(아래 holdMinutes)
   holdMinutes: number; // 결제 대기 예약(응모 시작)이 자리를 잡아 두는 시간(분). 만료되면 자리가 풀리고, 결제창을 열어 두면 자동 연장된다
+  drawId?: string;    // 블라인드 추첨 id - 봉인(커밋)하면 관리자 콘솔이 넣고, 페이지 일정 섹션에 검증 링크(/api/draw/<id>)가 뜬다
   prizes: RafflePrize[];
 }
 
@@ -66,6 +67,16 @@ const DEFAULT: RaffleConfig = {
   ],
 };
 const DEFAULT_TEST: RaffleConfig = { ...DEFAULT, open: "2026-09-16T00:00:00Z" };   // 리허설은 지금 열려 있고 나머지는 실제와 같다
+
+/** 관리자 설정(raffle_xrpseoul[_test]) 부분 갱신 - undefined 값은 키를 지운다 */
+export async function saveRaffleConfig(mode: RaffleMode, patch: Partial<RaffleConfig>) {
+  const key = configKey(mode);
+  const row = await prisma.adminConfig.findUnique({ where: { key } }).catch(() => null);
+  const value: Record<string, unknown> = { ...((row?.value as Record<string, unknown> | null) ?? {}) };
+  for (const [k, v] of Object.entries(patch)) { if (v === undefined) delete value[k]; else value[k] = v; }
+  await prisma.adminConfig.upsert({ where: { key }, create: { key, value: value as never, updatedBy: "admin" }, update: { value: value as never, updatedBy: "admin" } });
+  return value;
+}
 
 export async function loadRaffleConfig(mode: RaffleMode = "prod"): Promise<RaffleConfig> {
   const row = await prisma.adminConfig.findUnique({ where: { key: configKey(mode) } }).catch(() => null);
@@ -123,7 +134,10 @@ export async function raffleState(wallet: string | null, mode: RaffleMode = "pro
     const pass = await prisma.genesisPass.findUnique({ where: { wallet_kind: { wallet, kind: raffleKind(mode) } } });
     mine = mineView(entry, pass, config);
   }
-  return { mode, phase, config, count, holds, remaining: Math.max(0, config.maxEntries - count - holds), destination: hotWalletAddress(), mine };
+  /* 봉인된 블라인드 추첨 - 커밋은 즉시, 시드·결과는 공개 뒤 /api/draw/<id> 에서 누구나 검증한다 */
+  const d = config.drawId ? await prisma.blindDraw.findUnique({ where: { id: config.drawId }, select: { id: true, status: true, commitment: true, participantsHash: true, createdAt: true, revealedAt: true, revealAfter: true } }).catch(() => null) : null;
+  const draw = d ? { id: d.id, status: d.status, commitment: d.commitment, participantsHash: d.participantsHash, createdAt: d.createdAt.toISOString(), revealedAt: d.revealedAt?.toISOString() ?? null, revealAfter: d.revealAfter?.toISOString() ?? null } : null;
+  return { mode, phase, config, count, holds, remaining: Math.max(0, config.maxEntries - count - holds), destination: hotWalletAddress(), mine, draw };
 }
 
 /** 응모 시작(예약) - 결제를 기다리는 행을 만든다(태그 발급). 이미 있으면 예약을 연장해 그 행을 돌려준다.
@@ -163,14 +177,39 @@ export async function createRaffleEntry(wallet: string, mode: RaffleMode = "prod
   }
 }
 
-/** 결제 확정 - 해시를 검증해 PAID 로 만들고 래플 번호·티켓 코드를 매기고 NFT 발행을 큐에 넣는다. 같은 해시 재호출은 멱등. */
-export async function verifyRaffleEntry(wallet: string, txHash: string, origin: string, mode: RaffleMode = "prod") {
+/** 해시 없이 입금 찾기 - 핫월렛의 최근 거래에서 이 응모의 Destination Tag 로 들어온 XRP Payment(검증 완료·성공·금액 충족)의 해시를 돌려준다.
+ *  거래소에서 보낸 사람은 해시를 찾기 어렵다(2026-09-21 결정). 최근 것부터 최대 5쪽(쪽당 200건)만 본다. */
+export async function findPaymentByTag(destTag: number, minXrp: number): Promise<string | null> {
+  const hot = hotWalletAddress();
+  let marker: unknown = undefined;
+  for (let page = 0; page < 5; page++) {
+    const res = await xrplRead<{ transactions?: unknown[]; marker?: unknown }>("account_tx", { account: hot, limit: 200, ledger_index_min: -1, ledger_index_max: -1, ...(marker ? { marker } : {}) });
+    for (const entry of res.result.transactions ?? []) {
+      const e = entry as { tx_json?: Record<string, unknown>; tx?: Record<string, unknown>; meta?: { TransactionResult?: string; delivered_amount?: unknown }; hash?: string; validated?: boolean };
+      const tx = e.tx_json ?? e.tx;
+      if (!tx || e.validated === false) continue;
+      if (tx.TransactionType !== "Payment" || tx.Destination !== hot || Number(tx.DestinationTag) !== destTag) continue;
+      if (e.meta?.TransactionResult !== "tesSUCCESS" || typeof e.meta.delivered_amount !== "string") continue;
+      if (Number(e.meta.delivered_amount) / 1e6 + 1e-9 < minXrp) continue;
+      const hash = String(e.hash ?? tx.hash ?? "");
+      if (/^[0-9A-F]{64}$/i.test(hash)) return hash.toUpperCase();
+    }
+    marker = res.result.marker;
+    if (!marker) break;
+  }
+  return null;
+}
+
+/** 결제 확정 - 해시를 검증해 PAID 로 만들고 래플 번호·티켓 코드를 매기고 NFT 발행을 큐에 넣는다. 같은 해시 재호출은 멱등.
+ *  txHash 가 null 이면 핫월렛 거래에서 이 응모의 태그로 입금을 찾는다(해시 없이 확인). */
+export async function verifyRaffleEntry(wallet: string, txHash: string | null, origin: string, mode: RaffleMode = "prod") {
   const event = raffleEvent(mode);
   const entry = await prisma.raffleEntry.findUnique({ where: { event_wallet: { event, wallet } } });
   if (!entry) return { ok: false as const, error: "응모 내역이 없습니다. 먼저 응모를 시작해 주세요." };
   if (entry.status === "PAID") return { ok: true as const, entry, already: true };
   if (entry.status === "OVERFLOW") return { ok: false as const, error: OVERFLOW_MSG, pending: false };
-  const hash = txHash.toUpperCase();
+  const hash = txHash ? txHash.toUpperCase() : await findPaymentByTag(entry.destTag, Number(entry.amountXrp));
+  if (!hash) return { ok: false as const, error: "아직 입금이 확인되지 않았습니다. 거래소 출금은 몇 분 걸릴 수 있습니다 - 잠시 후 다시 확인해 주세요. 태그 없이 보냈다면 admin@wellbianlabs.io 로 알려 주세요.", pending: true };
   const dup = await prisma.raffleEntry.findUnique({ where: { txHash: hash } });
   if (dup && dup.id !== entry.id) return { ok: false as const, error: "이미 다른 응모에 사용된 트랜잭션입니다." };
   const v = await verifyXrpPayment(hash, Number(entry.amountXrp), entry.destTag);

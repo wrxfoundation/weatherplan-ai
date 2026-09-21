@@ -7,19 +7,19 @@ import { verifyRaffleEntry, type RaffleMode } from "@/lib/raffle";
 export const dynamic = "force-dynamic";
 export const maxDuration = 30;
 
-/** 결제 확정 - XRP 입금 해시로 응모를 PAID 처리하고 래플 NFT 발행을 큐에 넣는다. 재호출은 멱등. */
+/** 결제 확정 - XRP 입금 해시로 응모를 PAID 처리하고 래플 NFT 발행을 큐에 넣는다. 재호출은 멱등. txHash 없이 부르면 태그로 입금을 찾는다. */
 export async function POST(req: Request) {
   /* IP 당 분당 한도 - 통신사 NAT 뒤의 여러 사용자가 같은 IP 로 보이므로 오픈 러시 때 30 은 좁다(확인 폴링이 한 사람당 최대 8회) */
   const limited = await guard(req, "raffle-verify", 90);
   if (limited) return NextResponse.json(limited.body, { status: limited.status });
-  const body = z.object({ txHash: z.string().max(64), mode: z.enum(["prod", "test"]).optional() }).safeParse(await req.json().catch(() => null));
+  const body = z.object({ txHash: z.string().max(64).optional(), mode: z.enum(["prod", "test"]).optional() }).safeParse(await req.json().catch(() => null));
   if (!body.success) return NextResponse.json({ error: "잘못된 요청" }, { status: 400 });
   const mode: RaffleMode = body.data.mode === "test" ? "test" : "prod";
   const wallet = await getVerifiedWallet();
   if (!wallet) return NextResponse.json({ error: "로그인이 필요합니다." }, { status: 401 });
   const origin = new URL(req.url).origin;
   try {
-    const r = await verifyRaffleEntry(wallet, body.data.txHash, origin, mode);
+    const r = await verifyRaffleEntry(wallet, body.data.txHash ?? null, origin, mode);
     if (!r.ok) return NextResponse.json({ error: r.error, pending: r.pending ?? false }, { status: r.pending ? 202 : 400 });
     return NextResponse.json({ ok: true, entryNo: r.entry.entryNo, already: r.already });
   } catch (e) {

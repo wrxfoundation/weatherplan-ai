@@ -52,6 +52,12 @@ export default function BlindDrawPanel({ secret }: { secret: string }) {
       if (!r.ok) { setMsg(d.error || "생성 실패"); toast.err(d.error || "생성 실패"); return; }
       setMsg(`봉인 완료 · 커밋 ${d.draw.commitment.slice(0, 16)}… (공개 링크 /api/draw/${d.draw.id})`); toast.ok(`봉인 완료 · 커밋 ${d.draw.commitment.slice(0, 16)}… (공개 링크 /api/draw/${d.draw.id})`);
       await load();
+      /* XRPL SEOUL 래플: 봉인한 추첨을 래플 페이지 일정 섹션의 검증 링크로 연결한다(2026-09-21) */
+      if (body.participantsFrom === "raffle" || body.participantsFrom === "raffle-test") {
+        const mode = body.participantsFrom === "raffle" ? "prod" : "test";
+        const p = await fetch("/api/admin/raffle", { method: "PATCH", headers: hdr, body: JSON.stringify({ mode, drawId: d.draw.id }) });
+        if (p.ok) toast.ok(`래플 페이지(${mode})에 추첨 검증 링크를 연결했습니다`); else toast.err("래플 페이지 연결 실패 - PATCH /api/admin/raffle {drawId} 로 다시 연결하세요");
+      }
     } finally { setBusy(false); }
   };
   /* XRPL SEOUL 래플 (2026-09-21): 공개된 추첨의 지갑 순서로 경품을 배정한다 - 앞에서부터 초대권 → 측정기 → 우산 → 에코백.

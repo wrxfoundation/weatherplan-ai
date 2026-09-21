@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/db";
 import { checkAdminSecret } from "@/lib/auth/session";
-import { findTicket, redeemTicket, assignPrizes, raffleEvent, inferRaffleMode, loadRaffleConfig, holdMsOf } from "@/lib/raffle";
+import { findTicket, redeemTicket, assignPrizes, raffleEvent, inferRaffleMode, loadRaffleConfig, holdMsOf, saveRaffleConfig } from "@/lib/raffle";
 
 export const dynamic = "force-dynamic";
 
@@ -12,6 +12,7 @@ export const dynamic = "force-dynamic";
  *  GET  ?mode=prod|test      응모 목록·집계
  *  POST {code, staff?}        현장 수령 처리 - 한 번만. 두 번째부터는 언제 이미 썼는지 돌려준다
  *  PUT  {drawId, mode?}       공개된 블라인드 추첨 결과(지갑 순서)로 경품 배정 - 전원 하나씩. mode 없으면 전원이 속한 장부를 찾는다
+ *  PATCH {drawId|null, mode?} 래플 페이지에 보일 추첨(봉인 링크) 연결 - 블라인드 추첨 탭이 봉인 직후 자동으로 부른다
  */
 export async function GET(req: NextRequest) {
   if (!checkAdminSecret(req)) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
@@ -73,7 +74,20 @@ export async function PUT(req: NextRequest) {
   if (inMode !== ordered.length) return NextResponse.json({ error: `참가자 ${ordered.length}명 중 ${inMode}명만 ${mode} 장부의 결제 확정 응모자입니다.` }, { status: 409 });
   const r = await assignPrizes(mode, ordered);
   if (!r.ok) return NextResponse.json({ error: r.error }, { status: 409 });
+  await saveRaffleConfig(mode, { drawId: d.id }).catch(() => {});   // 페이지 일정 섹션의 검증 링크가 이 추첨을 가리키게
   return NextResponse.json({ ok: true, assigned: r.assigned, total: r.total, byPrize: r.byPrize, mode: r.mode });
+}
+
+export async function PATCH(req: NextRequest) {
+  if (!checkAdminSecret(req)) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+  const b = z.object({ drawId: z.string().max(64).nullable(), mode: z.enum(["prod", "test"]).optional() }).safeParse(await req.json().catch(() => null));
+  if (!b.success) return NextResponse.json({ error: "잘못된 요청" }, { status: 400 });
+  if (b.data.drawId) {
+    const d = await prisma.blindDraw.findUnique({ where: { id: b.data.drawId }, select: { id: true } });
+    if (!d) return NextResponse.json({ error: "추첨을 찾을 수 없습니다." }, { status: 404 });
+  }
+  const value = await saveRaffleConfig(b.data.mode ?? "prod", { drawId: b.data.drawId ?? undefined });
+  return NextResponse.json({ ok: true, drawId: (value.drawId as string | undefined) ?? null });
 }
 
 function view(e: { id: string; event: string; wallet: string; status: string; entryNo: number | null; ticketCode: string | null; prize: string | null; redeemedAt: Date | null; redeemedBy: string | null; paidAt: Date | null; txHash: string | null; amountXrp: unknown; createdAt: Date }) {

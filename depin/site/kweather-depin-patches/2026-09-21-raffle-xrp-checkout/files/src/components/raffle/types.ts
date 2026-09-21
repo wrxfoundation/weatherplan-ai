@@ -14,9 +14,11 @@ export interface RaffleMine {
 
 export interface RaffleStateView {
   mode: RaffleMode; phase: "BEFORE" | "OPEN" | "SOLD_OUT" | "CLOSED";
-  config: { open: string; close: string; drawAt: string; eventAt: string; priceXrp: number; maxEntries: number; holdMinutes: number; prizes: RafflePrizeView[] };
+  config: { open: string; close: string; drawAt: string; eventAt: string; priceXrp: number; maxEntries: number; holdMinutes: number; drawId?: string; prizes: RafflePrizeView[] };
   /** count = 결제 확정 수(참여 현황) · holds = 유효 예약(결제 대기) 수 · remaining = 정원 - 확정 - 유효 예약 */
   count: number; holds: number; remaining: number; destination: string; mine: RaffleMine | null;
+  /** 봉인된 블라인드 추첨 - 커밋은 봉인 즉시, 시드·결과는 공개 뒤 /api/draw/<id> */
+  draw: { id: string; status: string; commitment: string; participantsHash: string; createdAt: string; revealedAt: string | null; revealAfter: string | null } | null;
 }
 
 /** 응모에 필요한 지갑 잔고 = 응모 금액 + 계정 예치금 1 + NFT 한 장 예치금 0.2 + 수수료 여유 */

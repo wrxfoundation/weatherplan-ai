@@ -1,14 +1,15 @@
-# XRP SEOUL 2026 래플 — XRP 전용 결제창 + 히어로 이식 + 카운팅·추첨 점검 + 대점검 v4 + 예약 정원·초대권 이메일 v5 (2026-09-21)
+# XRP SEOUL 2026 래플 — XRP 전용 결제창 + 히어로 이식 + 카운팅·추첨 점검 + 대점검 v4 + 예약 정원·초대권 이메일 v5 + 남은 결정 4건 v6 (2026-09-21)
 
 kweather-depin(모체) 저장소에 적용하는 변경분(누적). 판매 페이지 구매 모달(BuyModal)의 흐름을 따르되 결제는 XRP 뿐이고,
 래플 페이지 히어로·스탯 줄은 정적 시안(xrpseoul-raffle)을 그대로 옮겼다. 결제 카운팅·추첨 경로를 점검해 아래를 고쳤다.
 
 ## 적용
 - `git apply raffle-xrp-checkout.patch` (저장소 루트에서) **+ `files/public/assets/raffle/hero.webp` 를 같은 경로에 복사**(패치는 소스만 담는다).
-  또는 `files/` 아래 21개 파일을 같은 경로에 덮어쓴다. DB 스키마·마이그레이션 변경 없음(`RaffleEntry.status` 는 문자열 컬럼이라 새 값 OVERFLOW 는 그대로 들어가고,
-  예약은 `createdAt` 을, 당첨 안내 이메일은 기존 `AccountContact` 를 쓴다).
+  또는 `files/` 아래 22개 파일을 같은 경로에 덮어쓴다. DB 스키마·마이그레이션 변경 없음(`RaffleEntry.status` 는 문자열 컬럼이라 새 값 OVERFLOW 는 그대로 들어가고,
+  예약은 `createdAt` 을, 당첨 안내 이메일은 기존 `AccountContact` 를, 추첨 링크는 AdminConfig `raffle_xrpseoul.drawId` 를 쓴다).
+- **Vercel 배포용 전체 zip**: 모체 전체에 이 패치를 적용한 트리(node_modules·.next·.env 제외)를 서우에게 별도 전달(`kweather-depin-master-raffle-v6.zip`, 루트에 `RAFFLE-2026-09-21-NOTES.md` = 이 README).
 - 새 파일(8): public/assets/raffle/hero.webp · src/components/admin/RafflePanel.tsx · src/components/raffle/RaffleCheckoutModal.tsx · src/components/raffle/RaffleHero.tsx · src/components/raffle/TicketCard.tsx · src/components/raffle/raffle-hero.css · src/components/raffle/types.ts · src/lib/raffle-prizes.ts
-- 수정(13): src/app/admin/page.tsx · src/app/admin/raffle-check/page.tsx · src/app/api/admin/raffle/route.ts · src/app/api/raffle/card/[code]/route.ts · src/app/api/raffle/enter/route.ts · src/app/api/raffle/meta/[code]/route.ts · src/app/api/raffle/verify/route.ts · src/app/event/xrpl-seoul/page.tsx · src/app/event/xrpl-seoul/test/page.tsx · src/app/event/xrpl-seoul/ticket/[code]/page.tsx · src/components/admin/BlindDrawPanel.tsx · src/components/raffle/RafflePage.tsx · src/lib/raffle.ts
+- 수정(14): src/app/admin/page.tsx · src/app/admin/raffle-check/page.tsx · src/app/api/admin/raffle/route.ts · src/app/api/raffle/card/[code]/route.ts · src/app/api/raffle/enter/route.ts · src/app/api/raffle/meta/[code]/route.ts · src/app/api/raffle/verify/route.ts · src/app/event/xrpl-seoul/page.tsx · src/app/event/xrpl-seoul/test/page.tsx · src/app/event/xrpl-seoul/ticket/[code]/page.tsx · src/components/Nav.tsx · src/components/admin/BlindDrawPanel.tsx · src/components/raffle/RafflePage.tsx · src/lib/raffle.ts
 
 ## 결제창 흐름 (구매 모달과 같은 순서, 래플에 없는 단계는 접음)
 ① 응모 내용(계정당 1회 · 5 XRP · 경품 · 현장 수령 안내) → ② 동의(환불 불가 · 현장 수령/QR 관리) → ③ XRP 결제(연결 지갑 서명 또는 외부 지갑 송금 + 해시) → ④ 래플 NFT 수락 → 완료(티켓 카드)
@@ -65,10 +66,10 @@ kweather-depin(모체) 저장소에 적용하는 변경분(누적). 판매 페�
    입장권을 행사장 안 부스에서 받는 구조는 성립하지 않는다(FAQ 는 「초대권은 당첨자에게 별도 안내」라고만 한다). 초대권의 실제 전달 방식(이메일·입장 명단·입구 데스크)을 정해 네 곳 문구를 맞춰야 한다.
 2. ~~**정원 초과 응모 설계**~~ → **v5 에서 반영: 정원 = 결제 확정 + 유효 예약**(아래) — 응모 행(태그)은 무제한이고 정원은 「결제 확정 500」이다. 18:00 러시에서 500 을 넘긴 입금은 전부 환불 대상이 된다(이번에 경고·차단·기록은 넣었다).
    근본 해결은 결제 대기 예약에 만료(예: 30분)를 두고 「예약 + 확정」 합계로 정원을 세는 설계 변경(스키마·크론 필요).
-3. **추첨 검증 링크 노출** — FAQ 가 「누구나 재계산 검증」을 약속하지만 페이지에 `/api/draw/<id>` 링크가 없다. 설정(`raffle_xrpseoul`)에 drawId 를 넣고 일정 섹션에 링크 한 줄이면 된다.
-4. **해시 없이 태그로 자동 확인** — 거래소에서 바로 보낸 사용자는 해시를 찾기 어렵다. 핫월렛 account_tx 를 Destination Tag 로 훑어 확인하는 「입금 확인」 버튼(P2).
-5. **페이지 진입 경로** — 메인·내비·사이트맵 어디에도 `/event/xrpl-seoul` 링크가 없다(페이지 주석: 「확인 뒤 메인·내비에 연결」). 지금은 X·텔레그램 등 외부 링크로만 들어온다.
-6. 행사장 표기 「서울 하얏트 호텔」 확인(그랜드 하얏트 서울?) · 리허설 입금 반환은 수동 · 통신사 NAT 한도는 90/분으로 올렸으나 러시 때 429 가 보이면 더 올린다.
+3. ~~**추첨 검증 링크 노출**~~ → v6 반영 — FAQ 가 「누구나 재계산 검증」을 약속하지만 페이지에 `/api/draw/<id>` 링크가 없다. 설정(`raffle_xrpseoul`)에 drawId 를 넣고 일정 섹션에 링크 한 줄이면 된다.
+4. ~~**해시 없이 태그로 자동 확인**~~ → v6 반영 — 거래소에서 바로 보낸 사용자는 해시를 찾기 어렵다. 핫월렛 account_tx 를 Destination Tag 로 훑어 확인하는 「입금 확인」 버튼(P2).
+5. ~~**페이지 진입 경로**~~ → v6 반영(헤더 메뉴) — 메인·내비·사이트맵 어디에도 `/event/xrpl-seoul` 링크가 없다(페이지 주석: 「확인 뒤 메인·내비에 연결」). 지금은 X·텔레그램 등 외부 링크로만 들어온다.
+6. ~~행사장 표기~~ → v6 「그랜드 하얏트 서울」로 확정(보도·텔레그램 정본) · 리허설 입금 반환은 수동 · 통신사 NAT 한도는 90/분으로 올렸으나 러시 때 429 가 보이면 더 올린다.
 
 ## v5 (2026-09-21 저녁 — 서우 결정 반영: 「500 이 되면 결제를 막는다」 · 「초대권 전달은 이메일」)
 
@@ -95,4 +96,19 @@ kweather-depin(모체) 저장소에 적용하는 변경분(누적). 판매 페�
 ### 검증
 `tsc --noEmit` · `eslint` 통과 · `logic-test-verify.js` 7개 시나리오 통과(정원 3: 예약 3 → 4번째 차단 → 확정 2 → 예약 만료 → 자리 인계 → 만료자 입금 OVERFLOW(해시 보존)·멱등 · 마감 유예 10분 ·
 중복 해시 거부 · 참여 현황 = PAID 만 · 예약만으로 정원 도달 · 만료 예약 자리 풀림 · 만료 예약도 자리가 남으면 확정) · 결제창 12개 화면(이메일 입력·자리 확보 카운트다운·차단+해시) + 페이지 11개 상태 렌더 확인.
+
+## v6 (2026-09-21 밤 — 남은 결정 4건 반영 + Vercel 배포용 zip)
+1. **추첨 검증 링크** — 블라인드 추첨 탭에서 참가자를 「래플 응모(결제 완료)」/「래플 리허설」로 봉인하면 자동으로 래플 설정 `drawId` 에 연결된다(`PATCH /api/admin/raffle {mode, drawId}`; 경품 배정 PUT 도 연결).
+   페이지 일정 섹션에 봉인 뒤 「추첨 봉인 완료 · 커밋 … · 공개 링크(봉인 확인)」, 공개 뒤 「추첨 공개 완료 · 시드·결과 검증」(/api/draw/<id>). FAQ 추첨 답변에 「봉인·공개 링크는 일정 섹션에 표시」 한 문장.
+2. **해시 없이 입금 확인** — 결제창 ③ 과 차단 화면에 「해시 없이 입금 확인 (태그로 찾기)」. `POST /api/raffle/verify` 를 txHash 없이 부르면 서버가 핫월렛 account_tx(최근 최대 1,000건)에서
+   내 Destination Tag 로 들어온 성공한 XRP Payment(금액 충족)를 찾아 그 해시로 확정한다(`findPaymentByTag`). 없으면 202 「아직 입금이 확인되지 않았습니다」.
+3. **헤더 메뉴** — Launch 다음에 「XRP SEOUL 래플」(5개 언어). 나브를 투명하게 두는 목록(DARK_HERO_PATHS)에는 넣지 않았다(래플 히어로는 헤더 아래에서 시작한다).
+4. **행사장 표기** — 「서울 하얏트 호텔」 → 「그랜드 하얏트 서울」(5개 언어, 보도·텔레그램 정본).
+
+검증: `tsc` · `eslint` 통과 · `logic-test-verify.js` 8개 시나리오 통과(7: 태그 검색 - 거래 없음→대기 · 다른 태그/금액 부족/실패 tx 무시 · 일치→확정(해시 보존) · 재호출→already) · 결제창·일정 렌더 확인.
+
+### Vercel 배포 (zip)
+1. zip 을 풀어 기존 프로젝트 자리에 두고 `npm install`. 환경 변수는 기존 그대로(추가 없음). `npx prisma db push` 는 스키마 변경이 없어 no-op.
+2. 배포 뒤 확인: /event/xrpl-seoul/test 에서 응모 시작(예약 30분 표시) → 결제 → NFT 수락 → 관리자 콘솔 › 래플(이메일·유효 예약) → 블라인드 추첨 봉인(참가자 「래플 리허설」) → 일정 섹션에 봉인 링크 → 공개 → 경품 배정 → 티켓 페이지·스캐너.
+3. AdminConfig `raffle_xrpseoul` 이 `prizes` 를 덮어쓰고 있으면 초대권 note 를 「10월 3일 서울 · 행사장 입장권 · 당첨자 이메일로 발송」 으로 맞춘다. `holdMinutes`(기본 30) 는 필요하면 조정.
 

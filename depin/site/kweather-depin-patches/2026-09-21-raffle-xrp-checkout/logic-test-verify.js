@@ -32,7 +32,7 @@ const prisma = { raffleEntry, genesisPass, xrplTransaction: { findFirst: async (
 const reset = () => { db.entries.length = 0; db.passes.length = 0; db.contacts = {}; };
 const MOCKS = {
   "@/lib/db": { prisma }, "@/lib/xrpl/outbox": { enqueueTx: async () => ({}), drainOutbox: async () => ({ processed: 0 }), hotWalletAddress: () => "rHOT" },
-  "@/lib/xrpl/client": { xrplRead: async () => ({ result: {} }) }, "@/lib/xrpl/config": { ISSUER_ADDRESS: "rISS" },
+  "@/lib/xrpl/client": { xrplRead: async (cmd) => (cmd === "account_tx" ? { result: { transactions: global.__TXS || [] } } : { result: {} }) }, "@/lib/xrpl/config": { ISSUER_ADDRESS: "rISS" },
   "@/lib/launch/xrpl-pay": { newDestTag: () => 1000 + db.entries.length, verifyXrpPayment: async () => ({ ok: true, amount: 5, sender: "rX" }) },
 };
 const origResolve = Module._resolveFilename;
@@ -100,5 +100,18 @@ const min = (n) => new Date(Date.now() + n * 60_000).toISOString();
   db.entries.find((r) => r.wallet === "rE").createdAt = new Date(Date.now() - 31 * 60_000);
   const vE = await raffle.verifyRaffleEntry("rE", H("4"), "http://x"); assert.ok(vE.ok && vE.entry.entryNo === 1, "expired hold still confirms when a slot remains");
   console.log("6c) expired hold + free slot → still PAID  ✓");
+
+  /* 7) 해시 없이 태그로 입금 찾기 - 핫월렛 account_tx 에서 내 태그의 성공한 XRP Payment 를 찾아 확정한다 */
+  reset(); CONFIG_ROW = { value: { maxEntries: 10, holdMinutes: 30, open: min(-60), close: min(60) } };
+  const hH = await raffle.createRaffleEntry("rH"); assert.ok(hH.ok); const tag = hH.entry.destTag;
+  global.__TXS = [];
+  const n0 = await raffle.verifyRaffleEntry("rH", null, "http://x"); assert.ok(!n0.ok && n0.pending === true, "no tx yet → pending: " + JSON.stringify(n0));
+  const pay = (t, drops, ok = true, hash = "7") => ({ validated: true, hash: H(hash), tx_json: { TransactionType: "Payment", Destination: "rHOT", DestinationTag: t, Account: "rEXCHANGE" }, meta: { TransactionResult: ok ? "tesSUCCESS" : "tecPATH_DRY", delivered_amount: String(drops) } });
+  global.__TXS = [pay(tag + 1, 5_000_000, true, "8"), pay(tag, 4_000_000, true, "9"), pay(tag, 5_000_000, false, "A")];   // 다른 태그 · 금액 부족 · 실패 tx
+  const n1 = await raffle.verifyRaffleEntry("rH", null, "http://x"); assert.ok(!n1.ok && n1.pending === true, "other tag / short / failed → still pending");
+  global.__TXS = [pay(tag, 5_000_000, true, "B"), ...global.__TXS];
+  const n2 = await raffle.verifyRaffleEntry("rH", null, "http://x"); assert.ok(n2.ok && n2.entry.entryNo === 1 && n2.entry.txHash === H("B"), "matching payment found by tag → PAID with its hash: " + JSON.stringify(n2.entry && n2.entry.txHash));
+  const n3 = await raffle.verifyRaffleEntry("rH", null, "http://x"); assert.ok(n3.ok && n3.already === true, "repeat → already");
+  console.log("7) hash-free check by tag: none → pending; wrong tag/short/failed ignored; match → PAID(#1, hash kept); repeat → already  ✓");
   console.log("ALL PASS");
 })().catch((err) => { console.error("FAIL", err); process.exit(1); });

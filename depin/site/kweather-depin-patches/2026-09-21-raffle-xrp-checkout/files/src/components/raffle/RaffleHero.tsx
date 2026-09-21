@@ -24,7 +24,8 @@ const kstParts = (iso?: string) => {
 export const fmtDay = (iso: string | undefined, lang: Lang) => { const p = kstParts(iso); return p ? `${p.M}.${String(p.D).padStart(2, "0")}(${WD[lang][p.wd]})` : ""; };
 export const fmtHm = (iso: string | undefined) => kstParts(iso)?.hm ?? "";
 
-const VENUE: Msg<string> = { ko: "서울 하얏트 호텔", en: "Hyatt Hotel, Seoul", ja: "ソウル ハイアットホテル", zh: "首尔凯悦酒店", es: "Hotel Hyatt, Seúl" };
+/* 행사장 - 보도·텔레그램 정본 표기 「그랜드 하얏트 서울」(2026-09-21 확인) */
+const VENUE: Msg<string> = { ko: "그랜드 하얏트 서울", en: "Grand Hyatt Seoul", ja: "グランド ハイアット ソウル", zh: "首尔君悦酒店", es: "Grand Hyatt Seúl" };
 const EVENT_TIME = "10:00~";
 
 export function RaffleHero({ st, phase, done, held, mine, onHold, tba, cd, onCta, onOpen }: {
