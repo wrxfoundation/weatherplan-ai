@@ -503,10 +503,158 @@ diff -ruN a/src/components/raffle/RaffleCheckoutModal.tsx b/src/components/raffl
 +
 +const h3: React.CSSProperties = { fontSize: 27, fontWeight: 800, color: "var(--w-deep)", lineHeight: 1.3 };
 +const cta: React.CSSProperties = { fontSize: 20, padding: 18, width: "100%", minHeight: 60 };
+diff -ruN a/src/components/raffle/RaffleHero.tsx b/src/components/raffle/RaffleHero.tsx
+--- a/src/components/raffle/RaffleHero.tsx	1970-01-01 00:00:00.000000000 +0000
++++ b/src/components/raffle/RaffleHero.tsx	2026-09-21 11:16:01.536264032 +0000
+@@ -0,0 +1,144 @@
++"use client";
++/* XRP SEOUL 2026 래플 - 히어로 + 스탯 줄 (2026-09-21, 정적 시안 xrpseoul-raffle 이식).
++   시안: 좌측 텍스트(락업 로고 · 제목 두 줄 · 알약 3개 · 경품 한 줄 · 버튼 2 · 행사 링크) + 우측 경품 예상도, 아래 흰 카드 5칸.
++   문구·숫자는 서버 설정(raffleState.config)에서 읽는다 - 시안의 하드코딩(500명·9.22·9.27·경품 수)은 전부 설정값이다.
++   모바일(≤920px)은 다크 배경 + 이미지가 텍스트 아래로 내려간다(2026-09-19 지시: PC 기준 배경색). */
++import "./raffle-hero.css";
++import { useI18n, type Lang, type Msg } from "@/lib/launch/i18n";
++import type { RaffleMine, RafflePrizeView, RaffleStateView } from "./types";
++
++type Phase = RaffleStateView["phase"];
++
++/* 시안 표기 "9.22(화) 18:00" - 요일은 언어별 */
++const WD: Record<Lang, string[]> = {
++  ko: ["일", "월", "화", "수", "목", "금", "토"], en: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
++  ja: ["日", "月", "火", "水", "木", "金", "土"], zh: ["日", "一", "二", "三", "四", "五", "六"], es: ["dom", "lun", "mar", "mié", "jue", "vie", "sáb"],
++};
++const kstParts = (iso?: string) => {
++  if (!iso) return null;
++  const d = new Date(Date.parse(iso) + 9 * 3600_000);
++  return { M: d.getUTCMonth() + 1, D: d.getUTCDate(), wd: d.getUTCDay(), hm: `${String(d.getUTCHours()).padStart(2, "0")}:${String(d.getUTCMinutes()).padStart(2, "0")}` };
++};
++/** "9.22(화)" · "18:00" */
++export const fmtDay = (iso: string | undefined, lang: Lang) => { const p = kstParts(iso); return p ? `${p.M}.${String(p.D).padStart(2, "0")}(${WD[lang][p.wd]})` : ""; };
++export const fmtHm = (iso: string | undefined) => kstParts(iso)?.hm ?? "";
++
++/* 경품 한 줄 - 설정의 이름을 언어별 짧은 표기로. 모르는 이름은 그대로 쓴다 */
++function prizeWord(p: RafflePrizeView, lang: Lang): string {
++  const n = p.name; const q = p.qty;
++  const is = (k: string) => n.includes(k);
++  if (lang === "ko") return is("초대권") ? `초대권 ${q}매` : is("Generator") ? `Weather Data Token Generator™ ${q}대` : is("우산") ? `우산 ${q}개` : is("에코백") ? `에코백 ${q}개` : `${n} ${q}`;
++  if (lang === "ja") return is("초대권") ? `招待券${q}枚` : is("Generator") ? `Weather Data Token Generator™ ${q}台` : is("우산") ? `傘${q}本` : is("에코백") ? `エコバッグ${q}個` : `${n} ${q}`;
++  if (lang === "zh") return is("초대권") ? `邀请函 ${q} 张` : is("Generator") ? `Weather Data Token Generator™ ${q} 台` : is("우산") ? `雨伞 ${q} 把` : is("에코백") ? `环保袋 ${q} 个` : `${n} ${q}`;
++  if (lang === "es") return is("초대권") ? `${q} invitaciones` : is("Generator") ? `${q} Weather Data Token Generator™` : is("우산") ? `${q} paraguas` : is("에코백") ? `${q} bolsas ecológicas` : `${q} ${n}`;
++  return is("초대권") ? `${q} invitations` : is("Generator") ? `${q} Weather Data Token Generator™` : is("우산") ? `${q} umbrellas` : is("에코백") ? `${q} eco bags` : `${q} ${n}`;
++}
++
++const VENUE: Msg<string> = { ko: "서울 하얏트 호텔", en: "Hyatt Hotel, Seoul", ja: "ソウル ハイアットホテル", zh: "首尔凯悦酒店", es: "Hotel Hyatt, Seúl" };
++const EVENT_TIME = "10:00~";
++
++export function RaffleHero({ st, phase, done, held, mine, onHold, tba, cd, onCta, onOpen }: {
++  st: RaffleStateView | null; phase: Phase; done: boolean; held: boolean; mine: RaffleMine | null;
++  onHold: boolean; tba: string; cd: string; onCta: () => void; onOpen: () => void;
++}) {
++  const { lang, t } = useI18n();
++  const cfg = st?.config;
++  const price = cfg?.priceXrp ?? 5;
++  const max = cfg?.maxEntries ?? 500;
++  const no = String(mine?.entryNo ?? 0).padStart(4, "0");
++  const prizes = cfg?.prizes ?? [];
++  const sep = " · ";
++  const whenChip = onHold ? tba
++    : phase === "BEFORE" ? t({ ko: `${fmtDay(cfg?.open, lang)} ${fmtHm(cfg?.open)} 시작`, en: `Opens ${fmtDay(cfg?.open, lang)} ${fmtHm(cfg?.open)}`, ja: `${fmtDay(cfg?.open, lang)} ${fmtHm(cfg?.open)} 開始`, zh: `${fmtDay(cfg?.open, lang)} ${fmtHm(cfg?.open)} 开始`, es: `Abre ${fmtDay(cfg?.open, lang)} ${fmtHm(cfg?.open)}` })
++    : phase === "OPEN" ? t({ ko: `${fmtDay(cfg?.close, lang)} ${fmtHm(cfg?.close)} 마감`, en: `Closes ${fmtDay(cfg?.close, lang)} ${fmtHm(cfg?.close)}`, ja: `${fmtDay(cfg?.close, lang)} ${fmtHm(cfg?.close)} 締切`, zh: `${fmtDay(cfg?.close, lang)} ${fmtHm(cfg?.close)} 截止`, es: `Cierra ${fmtDay(cfg?.close, lang)} ${fmtHm(cfg?.close)}` })
++    : t({ ko: "응모 마감", en: "Entries closed", ja: "応募締切", zh: "报名已截止", es: "Cerrado" });
++
++  /* 주 버튼 - 페이즈·내 응모 상태에 따라 (기존 페이지의 분기 그대로) */
++  let primary: { label: string; onClick?: () => void; disabled?: boolean; shine?: boolean; done?: boolean };
++  if (done && (phase === "OPEN" || phase === "SOLD_OUT" || phase === "CLOSED")) {
++    primary = { label: held ? t({ ko: `응모 완료 · 래플 번호 #${no}`, en: `Entered · Ticket #${no}`, ja: `応募完了 · No.${no}`, zh: `已参与 · 编号 #${no}`, es: `Inscrito · N.º ${no}` }) : t({ ko: "결제 완료 · NFT 수령", en: "Paid · collect NFT", ja: "決済完了 · NFT受取", zh: "已支付 · 领取 NFT", es: "Pagado · recibir NFT" }), onClick: onOpen, done: held };
++  } else if (phase === "OPEN") {
++    primary = { label: t({ ko: `${price} XRP 로 참여하기`, en: `Enter with ${price} XRP`, ja: `${price} XRPで参加する`, zh: `用 ${price} XRP 参与`, es: `Participar con ${price} XRP` }), onClick: onCta, shine: true };
++  } else if (phase === "BEFORE") {
++    primary = { label: onHold ? t({ ko: "응모 일정은 추후 공지됩니다", en: "Entry schedule to be announced", ja: "応募日程は後日発表します", zh: "报名时间另行通知", es: "Fechas por anunciar" }) : t({ ko: `${fmtDay(cfg?.open, lang)} ${fmtHm(cfg?.open)} 응모 시작`, en: `Opens ${fmtDay(cfg?.open, lang)} ${fmtHm(cfg?.open)}`, ja: `${fmtDay(cfg?.open, lang)} ${fmtHm(cfg?.open)} 応募開始`, zh: `${fmtDay(cfg?.open, lang)} ${fmtHm(cfg?.open)} 开始参与`, es: `Abre el ${fmtDay(cfg?.open, lang)} ${fmtHm(cfg?.open)}` }), disabled: true };
++  } else if (phase === "SOLD_OUT") {
++    primary = { label: t({ ko: `선착순 ${max}명 마감`, en: `All ${max} spots filled`, ja: `先着${max}名 締切`, zh: `${max} 个名额已满`, es: `${max} plazas completas` }), disabled: true };
++  } else {
++    primary = { label: t({ ko: "응모가 마감되었습니다", en: "Entries are closed", ja: "応募は締め切りました", zh: "报名已截止", es: "Inscripciones cerradas" }), disabled: true };
++  }
++
++  return (
++    <header className="rf-hero">
++      <div className="rf-hero-veil" aria-hidden="true" />
++      <div className="rf-wrap rf-hero-grid">
++        <div>
++          <div className="rf-lockup">
++            {/* eslint-disable-next-line @next/next/no-img-element */}
++            <img src="/brand/logo_w_medium.svg" alt="wellbian × XRP Ledger" />
++          </div>
++          <h1>
++            XRP SEOUL 2026
++            <span className="rf-sub">{t({ ko: <><em>플래티넘 스폰서</em> 래플 이벤트</>, en: <><em>Platinum Sponsor</em> Raffle Event</>, ja: <><em>プラチナスポンサー</em> ラッフルイベント</>, zh: <><em>白金赞助商</em> 抽奖活动</>, es: <>Sorteo del <em>Patrocinador Platinum</em></> })}</span>
++          </h1>
++          <div className="rf-hero-facts">
++            <span className="rf-fact">{t({ ko: `선착순 ${max}명`, en: `First ${max}`, ja: `先着${max}名`, zh: `限前 ${max} 名`, es: `Primeros ${max}` })}</span>
++            <span className="rf-fact">{t({ ko: "100% 당첨", en: "Everyone wins", ja: "全員当選", zh: "100% 中奖", es: "Todos ganan" })}</span>
++            <span className="rf-fact when">{whenChip}</span>
++          </div>
++          <p className="rf-hero-lead">
++            {prizes.slice(0, 2).map((p) => prizeWord(p, lang)).join(sep)}{prizes.length > 2 && sep}{prizes.length > 2 && <br />}
++            {prizes.slice(2).map((p) => prizeWord(p, lang)).join(sep)}{" "}
++            <b>{t({ ko: "— 참여하면 이 중 하나는 반드시 당첨.", en: "— enter and one of these is yours, guaranteed.", ja: "— 参加すればこのうち1つが必ず当たります。", zh: "— 参与即必得其中一份。", es: "— participe y uno de ellos es suyo, garantizado." })}</b>
++          </p>
++          <p className="rf-hero-sub">{t({ ko: "경품은 10월 3일 XRP SEOUL 2026 현장에서 수령합니다", en: "Prizes are collected at XRP SEOUL 2026 on 3 October", ja: "賞品は10月3日、XRP SEOUL 2026会場でお受け取りください", zh: "奖品于 10 月 3 日在 XRP SEOUL 2026 现场领取", es: "Los premios se recogen en XRP SEOUL 2026 el 3 de octubre" })}</p>
++          <div className="rf-hero-cta">
++            <button type="button" className={`rf-btn fill${primary.shine ? " shine" : ""}${primary.done ? " done" : ""}`} disabled={primary.disabled} onClick={primary.onClick}>{primary.label}</button>
++            <a className="rf-btn ghost" href="#prizes">{t({ ko: "경품 보기", en: "See prizes", ja: "賞品を見る", zh: "查看奖品", es: "Ver premios" })}</a>
++            {cd && (phase === "BEFORE" || phase === "OPEN") && !onHold && (
++              <span className="rf-hero-cd">{phase === "BEFORE" ? t({ ko: "시작까지", en: "starts in", ja: "開始まで", zh: "距开始", es: "empieza en" }) : t({ ko: "마감까지", en: "closes in", ja: "締切まで", zh: "距截止", es: "cierra en" })} {cd}</span>
++            )}
++          </div>
++          <a className="rf-hero-link" href="https://xrpseoul.com" target="_blank" rel="noopener">
++            {t({ ko: "XRP SEOUL 2026 바로가기", en: "Go to XRP SEOUL 2026", ja: "XRP SEOUL 2026 公式サイトへ", zh: "前往 XRP SEOUL 2026", es: "Ir a XRP SEOUL 2026" })}
++            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" /></svg>
++          </a>
++        </div>
++      </div>
++      <div className="rf-hero-bg" aria-hidden="true">
++        {/* eslint-disable-next-line @next/next/no-img-element */}
++        <img src="/assets/raffle/hero.webp" alt="" />
++      </div>
++      <span className="rf-hero-cap">{t({ ko: "*경품 예상도이며, 실물과 다를 수 있습니다", en: "*Illustrative image; actual prizes may differ", ja: "*イメージです。実物とは異なる場合があります", zh: "*示意图，实物可能有所不同", es: "*Imagen ilustrativa; los premios reales pueden variar" })}</span>
++    </header>
++  );
++}
++
++export function RaffleStats({ st, onHold, tba }: { st: RaffleStateView | null; onHold: boolean; tba: string }) {
++  const { lang, t } = useI18n();
++  const cfg = st?.config;
++  const price = cfg?.priceXrp ?? 5;
++  const max = cfg?.maxEntries ?? 500;
++  const count = st?.count ?? 0;
++  return (
++    <div className="rf-wrap">
++      <dl className="rf-stats">
++        <Stat accent k={t({ ko: "참여 금액", en: "Entry", ja: "応募金額", zh: "参与金额", es: "Entrada" })} v={String(price)} unit="XRP" sub={t({ ko: "XRP 결제만 지원", en: "XRP only", ja: "XRP決済のみ", zh: "仅支持 XRP 支付", es: "Solo XRP" })} />
++        <Stat k={t({ ko: "참여 현황", en: "Entries", ja: "応募数", zh: "已参与", es: "Inscritos" })} v={count.toLocaleString()} unit={`/ ${max.toLocaleString()}`} sub={t({ ko: "선착순 마감", en: "first come, first served", ja: "先着順で締切", zh: "先到先得", es: "por orden de llegada" })} />
++        <Stat k={t({ ko: "당첨 확률", en: "Win rate", ja: "当選確率", zh: "中奖率", es: "Probabilidad" })} v="100" unit="%" sub={t({ ko: "참여하면 경품 중 100% 당첨", en: "everyone wins one prize", ja: "参加者全員に賞品", zh: "参与即 100% 中奖", es: "todos ganan un premio" })} />
++        <Stat k={t({ ko: "참여 마감", en: "Closes", ja: "応募締切", zh: "参与截止", es: "Cierre" })} v={onHold ? tba : fmtDay(cfg?.close, lang)} unit={onHold ? "" : fmtHm(cfg?.close)} sub={t({ ko: `${max}명 도달 시 조기 종료`, en: `ends early at ${max} entries`, ja: `${max}名到達で早期終了`, zh: `满 ${max} 人提前结束`, es: `termina antes al llegar a ${max}` })} />
++        <Stat k={t({ ko: "행사일", en: "Event", ja: "開催日", zh: "活动日期", es: "Evento" })} v={fmtDay(cfg?.eventAt, lang) || "10.03"} unit={EVENT_TIME} sub={t(VENUE)} />
++      </dl>
++    </div>
++  );
++}
++
++function Stat({ k, v, unit, sub, accent }: { k: string; v: string; unit: string; sub: string; accent?: boolean }) {
++  return (
++    <div className={`rf-stat${accent ? " accent" : ""}`}>
++      <dt>{k}</dt>
++      <dd className="rf-tnum">{v}{unit && <small>{unit}</small>}</dd>
++      <div className="rf-stat-sub">{sub}</div>
++    </div>
++  );
++}
++
 diff -ruN a/src/components/raffle/RafflePage.tsx b/src/components/raffle/RafflePage.tsx
 --- a/src/components/raffle/RafflePage.tsx	2026-09-21 10:52:41.146635470 +0000
-+++ b/src/components/raffle/RafflePage.tsx	2026-09-21 11:02:30.570026002 +0000
-@@ -2,29 +2,16 @@
++++ b/src/components/raffle/RafflePage.tsx	2026-09-21 11:16:01.536668151 +0000
+@@ -2,29 +2,17 @@
  /* XRP SEOUL 2026 래플 페이지 (2026-09-16 지시). 5 XRP 응모 → 래플 NFT → 블라인드 추첨.
     판매 페이지(/launch)와 코드·데이터를 공유하지 않는다 - 지갑·로그인·아웃박스만 같이 쓴다.
     mode="test" 는 리허설: 격리된 장부·NFT taxon, 금액은 실제와 같은 5 XRP.
@@ -521,6 +669,7 @@ diff -ruN a/src/components/raffle/RafflePage.tsx b/src/components/raffle/RaffleP
  import { useWallet } from "@/lib/wallet/WalletContext";
 -import { toast } from "@/components/Toast";
 +import RaffleCheckoutModal from "./RaffleCheckoutModal";
++import { RaffleHero, RaffleStats } from "./RaffleHero";
 +import { TicketCard } from "./TicketCard";
 +import { RESERVE_XRP, raffleQs as qs, type RaffleMode as Mode, type RaffleStateView as State } from "./types";
  
@@ -543,7 +692,7 @@ diff -ruN a/src/components/raffle/RafflePage.tsx b/src/components/raffle/RaffleP
  const kst = (iso?: string) => (iso ? new Date(Date.parse(iso) + 9 * 3600_000) : null);
  const fmtDate = (iso: string | undefined, lang: string) => {
    const d = kst(iso); if (!d) return "";
-@@ -36,38 +23,6 @@
+@@ -36,38 +24,6 @@
    return lang === "es" ? `${D} ${mon}, ${String(H).padStart(2, "0")}:00` : `${mon} ${D}, ${String(H).padStart(2, "0")}:00`;
  };
  
@@ -582,7 +731,7 @@ diff -ruN a/src/components/raffle/RafflePage.tsx b/src/components/raffle/RaffleP
  function useCountdown(target: string | null) {
    const [left, setLeft] = useState("");
    useEffect(() => {
-@@ -85,7 +40,7 @@
+@@ -85,7 +41,7 @@
  
  export default function RafflePage({ mode }: { mode: Mode }) {
    const { lang, t } = useI18n();
@@ -591,7 +740,84 @@ diff -ruN a/src/components/raffle/RafflePage.tsx b/src/components/raffle/RaffleP
    const [st, setSt] = useState<State | null>(null);
    const [modal, setModal] = useState(false);
  
-@@ -280,7 +235,7 @@
+@@ -114,72 +70,12 @@
+ 
+   return (
+     <div className="wb-page full-bleed">
+-      {/* ── 히어로 ── */}
+-      <section style={{ background: "radial-gradient(1200px 600px at 70% -10%, #4d4dce 0%, #1b1b48 55%, #12122f 100%)", color: "#fff", padding: "clamp(56px, 9vw, 110px) 0 clamp(44px, 6vw, 72px)" }}>
+-        <div className="wrap" style={{ maxWidth: 1080, margin: "0 auto", padding: "0 clamp(16px, 4vw, 32px)" }}>
+-          <div style={{ display: "inline-flex", gap: 8, alignItems: "center", background: "rgba(255,255,255,.12)", border: "1px solid rgba(255,255,255,.25)", borderRadius: 999, padding: "6px 14px", fontSize: 13.5, fontWeight: 700, letterSpacing: ".06em" }}>
+-            XRP SEOUL 2026 · 10.03 SEOUL · {t({ ko: "래플 이벤트", en: "RAFFLE EVENT", ja: "ラッフルイベント", zh: "抽奖活动", es: "SORTEO" })}
+-          </div>
+-          <h1 style={{ fontSize: "clamp(30px, 5vw, 54px)", lineHeight: 1.15, margin: "18px 0 14px", fontWeight: 800, letterSpacing: "-.02em", textWrap: "balance" }}>
+-            {t({ ko: "XRP SEOUL 2026 래플 이벤트", en: "XRP SEOUL 2026 Raffle Event", ja: "XRP SEOUL 2026 ラッフルイベント", zh: "XRP SEOUL 2026 抽奖活动", es: "Sorteo XRP SEOUL 2026" })}
+-          </h1>
+-          <p style={{ fontSize: "clamp(16px, 2vw, 19px)", lineHeight: 1.65, color: "#d7d7f5", maxWidth: 680, margin: 0, textWrap: "balance" }}>
+-            {t({
+-              ko: `응모 금액 ${price} XRP · 선착순 ${cfg?.maxEntries ?? 500}명 · 1인 1회. 응모하신 분 전원에게 XRP SEOUL 2026 초대권, Weather Data Token Generator™, 우산, 에코백 중 한 가지가 추첨을 통해 지급됩니다. 결제는 XRP 만 가능합니다.`,
+-              en: `Entry ${price} XRP · first ${cfg?.maxEntries ?? 500} · one entry per person. Every entrant receives one prize decided by draw: an XRP SEOUL 2026 invitation, a Weather Data Token Generator™, an umbrella or an eco bag. Payment in XRP only.`,
+-              ja: `応募金額 ${price} XRP・先着${cfg?.maxEntries ?? 500}名・お一人さま1回。応募者全員に、XRP SEOUL 2026招待券、Weather Data Token Generator™、傘、エコバッグのいずれか1点を抽選で進呈します。決済はXRPのみ。`,
+-              zh: `参与金额 ${price} XRP · 限前 ${cfg?.maxEntries ?? 500} 名 · 每人一次。所有参与者均可通过抽奖获得 XRP SEOUL 2026 邀请函、Weather Data Token Generator™、雨伞或环保袋之一。仅支持 XRP 支付。`,
+-              es: `Entrada ${price} XRP · primeros ${cfg?.maxEntries ?? 500} · una por persona. Todos los participantes reciben un premio decidido por sorteo: invitación a XRP SEOUL 2026, Weather Data Token Generator™, paraguas o bolsa ecológica. Pago solo en XRP.`,
+-            })}
+-          </p>
+-          <div style={{ display: "flex", flexWrap: "wrap", gap: 12, alignItems: "center", marginTop: 30 }}>
+-            {phase === "OPEN" && !done && (
+-              <button type="button" onClick={cta} className="btn-primary" style={{ fontSize: 18, padding: "14px 26px", borderRadius: 12, background: "#fff", color: "#1b1b48", border: "none", fontWeight: 800 }}>
+-                {t({ ko: `응모하기 (${price} XRP)`, en: `Enter (${price} XRP)`, ja: `応募する（${price} XRP）`, zh: `参与（${price} XRP）`, es: `Participar (${price} XRP)` })}
+-              </button>
+-            )}
+-            {(phase === "OPEN" || phase === "SOLD_OUT") && done && (
+-              <button type="button" onClick={() => setModal(true)} className="btn-primary" style={{ fontSize: 18, padding: "14px 26px", borderRadius: 12, background: held ? "#16a34a" : "#fff", color: held ? "#fff" : "#1b1b48", border: "none", fontWeight: 800 }}>
+-                {held
+-                  ? t({ ko: `응모 완료 · 래플 번호 #${String(mine!.entryNo ?? 0).padStart(4, "0")}`, en: `Entered · Ticket #${String(mine!.entryNo ?? 0).padStart(4, "0")}`, ja: `応募完了 · No.${String(mine!.entryNo ?? 0).padStart(4, "0")}`, zh: `已参与 · 编号 #${String(mine!.entryNo ?? 0).padStart(4, "0")}`, es: `Inscrito · N.º ${String(mine!.entryNo ?? 0).padStart(4, "0")}` })
+-                  : t({ ko: "결제 완료 · NFT 수령", en: "Paid · collect NFT", ja: "決済完了 · NFT受取", zh: "已支付 · 领取 NFT", es: "Pagado · recibir NFT" })}
+-              </button>
+-            )}
+-            {phase === "BEFORE" && (
+-              <span style={{ fontSize: 17, fontWeight: 700, background: "rgba(255,255,255,.12)", padding: "12px 18px", borderRadius: 12 }}>
+-                {onHold
+-                  ? t({ ko: "응모 일정은 추후 공지됩니다", en: "Entry schedule to be announced", ja: "応募日程は後日発表します", zh: "报名时间另行通知", es: "Fechas por anunciar" })
+-                  : t({ ko: `${fmtDate(cfg?.open, lang)} 응모 시작`, en: `Opens ${fmtDate(cfg?.open, lang)}`, ja: `${fmtDate(cfg?.open, lang)} 応募開始`, zh: `${fmtDate(cfg?.open, lang)} 开始参与`, es: `Abre el ${fmtDate(cfg?.open, lang)}` })}
+-              </span>
+-            )}
+-            {phase === "CLOSED" && (
+-              <span style={{ fontSize: 17, fontWeight: 700, background: "rgba(255,255,255,.12)", padding: "12px 18px", borderRadius: 12 }}>
+-                {t({ ko: "응모가 마감되었습니다", en: "Entries are closed", ja: "応募は締め切りました", zh: "报名已截止", es: "Inscripciones cerradas" })}
+-              </span>
+-            )}
+-            {phase === "SOLD_OUT" && !done && (
+-              <span style={{ fontSize: 17, fontWeight: 700, background: "rgba(255,255,255,.12)", padding: "12px 18px", borderRadius: 12 }}>
+-                {t({ ko: `선착순 ${cfg?.maxEntries ?? 500}명 마감`, en: `All ${cfg?.maxEntries ?? 500} spots filled`, ja: `先着${cfg?.maxEntries ?? 500}名 締切`, zh: `${cfg?.maxEntries ?? 500} 个名额已满`, es: `${cfg?.maxEntries ?? 500} plazas completas` })}
+-              </span>
+-            )}
+-            {cd && phase !== "CLOSED" && phase !== "SOLD_OUT" && (
+-              <span className="mono" style={{ fontSize: 15, color: "#c8c8f0" }}>
+-                {phase === "BEFORE" ? t({ ko: "시작까지", en: "starts in", ja: "開始まで", zh: "距开始", es: "empieza en" }) : t({ ko: "마감까지", en: "closes in", ja: "締切まで", zh: "距截止", es: "cierra en" })} {cd}
+-              </span>
+-            )}
+-          </div>
+-          <div style={{ display: "flex", flexWrap: "wrap", gap: "10px 28px", marginTop: 34, fontSize: 14.5, color: "#c8c8f0" }}>
+-            <span>{t({ ko: "응모 금액", en: "Entry", ja: "応募金額", zh: "参与金额", es: "Entrada" })} <b style={{ color: "#fff" }}>{price} XRP</b></span>
+-            <span>{t({ ko: "응모 현황", en: "Entries", ja: "応募数", zh: "已参与", es: "Inscritos" })} <b style={{ color: "#fff" }}>{(st?.count ?? 0).toLocaleString()} / {(cfg?.maxEntries ?? 500).toLocaleString()}</b></span>
+-            <span>{t({ ko: "당첨 확률", en: "Win rate", ja: "当選確率", zh: "中奖率", es: "Probabilidad" })} <b style={{ color: "#fff" }}>100%</b></span>
+-            <span>{t({ ko: "당첨자 발표", en: "Results", ja: "当選発表", zh: "开奖", es: "Resultados" })} <b style={{ color: "#fff" }}>{onHold ? tba : fmtDate(cfg?.drawAt, lang)}</b> <span style={{ color: "#9a9ad0" }}>({t({ ko: "마감 후 24시간 이내", en: "within 24h of close", ja: "締切後24時間以内", zh: "截止后 24 小时内", es: "en 24 h tras el cierre" })})</span></span>
+-            <span>{t({ ko: "행사일", en: "Event", ja: "開催日", zh: "活动日期", es: "Evento" })} <b style={{ color: "#fff" }}>2026.10.03 · Seoul</b></span>
+-          </div>
+-        </div>
+-      </section>
++      {/* ── 히어로 + 스탯 줄 (2026-09-21 정적 시안 이식 - RaffleHero.tsx) ── */}
++      <RaffleHero st={st} phase={phase} done={done} held={held} mine={mine} onHold={onHold} tba={tba} cd={cd} onCta={cta} onOpen={() => setModal(true)} />
++      <RaffleStats st={st} onHold={onHold} tba={tba} />
+ 
+       {/* ── 경품 ── */}
+-      <section className="sec-pad"><div className="wrap">
++      <section className="sec-pad" id="prizes"><div className="wrap">
+         <div className="section-header">
+           <h2>{t({ ko: "경품", en: "Prizes", ja: "賞品", zh: "奖品", es: "Premios" })}</h2>
+           <div className="section-coord"><div>{t({ ko: `총 ${cfg?.maxEntries ?? 500}명 · 전원 당첨 · 경품 종류만 추첨`, en: `${cfg?.maxEntries ?? 500} entrants · everyone wins · the draw decides the prize`, ja: `計${cfg?.maxEntries ?? 500}名・全員当選・賞品の種類のみ抽選`, zh: `共 ${cfg?.maxEntries ?? 500} 名 · 人人有奖 · 仅抽奖决定奖品种类`, es: `${cfg?.maxEntries ?? 500} participantes · todos ganan · el sorteo decide el premio` })} · COMMIT-REVEAL</div></div>
+@@ -280,7 +176,7 @@
            t({ ko: ["지갑에 XRP 가 얼마나 필요한가요?", `응모 금액 ${price} XRP 와 계정·NFT 예치금, 수수료를 포함하여 약 ${(price + RESERVE_XRP).toFixed(1)} XRP 가 필요합니다. 신규 지갑은 첫 입금 시 자동으로 활성화됩니다.`], en: ["How much XRP is required?", `About ${(price + RESERVE_XRP).toFixed(1)} XRP in total: the ${price} XRP entry plus account and NFT reserves and fees. A new wallet is activated automatically with its first deposit.`], ja: ["XRPはいくら必要ですか？", `応募金額${price} XRPにアカウント・NFTの準備金と手数料を含め、約${(price + RESERVE_XRP).toFixed(1)} XRPが必要です。新規ウォレットは初回入金時に自動で有効化されます。`], zh: ["需要多少 XRP？", `包含 ${price} XRP 参与费、账户与 NFT 储备金及手续费，约需 ${(price + RESERVE_XRP).toFixed(1)} XRP。新钱包在首次入金时自动激活。`], es: ["¿Cuánto XRP se necesita?", `Unos ${(price + RESERVE_XRP).toFixed(1)} XRP en total: la entrada de ${price} XRP más las reservas de cuenta y NFT y las comisiones. Una billetera nueva se activa automáticamente con el primer depósito.`] }),
            t({ ko: ["래플 NFT 는 무엇인가요?", "응모 자격을 증명하는 XRPL NFT(XLS-20)이며, 행사장에서 경품을 수령할 때 사용됩니다. 계정당 1장 발급되며 추첨은 NFT 를 보유한 계정을 대상으로 진행됩니다. 행사 초대권은 당첨자에게 별도 안내됩니다."], en: ["What is the raffle NFT?", "An XRPL NFT (XLS-20) that proves your entry and is used to collect your prize at the venue. One is issued per account, and the draw is held among accounts holding the NFT. Event invitations are sent separately to winners."], ja: ["ラッフルNFTとは？", "応募資格を証明するXRPL NFT（XLS-20）で、会場での賞品受取に使用します。1アカウントにつき1枚発行され、抽選はNFTを保有するアカウントを対象に行います。招待券は当選者に別途ご案内します。"], zh: ["什么是抽奖 NFT？", "证明参与资格的 XRPL NFT（XLS-20），用于在会场领取奖品。每账户发放一张，抽奖在持有 NFT 的账户中进行。活动邀请函将另行通知中奖者。"], es: ["¿Qué es el NFT del sorteo?", "Un NFT de XRPL (XLS-20) que acredita su participación y se usa para recoger el premio en el recinto. Se emite uno por cuenta y el sorteo se realiza entre las cuentas que lo poseen. Las invitaciones se comunican por separado a los ganadores."] }),
            t({ ko: ["추첨은 어떻게 진행되나요?", "응모 마감 시점에 참가자 목록과 무작위 시드를 봉인하여 공개하고, 발표일에 시드를 공개(리빌)합니다. 누구나 동일한 결과를 재계산하여 검증할 수 있으며, 운영진도 결과를 사전에 확인하거나 변경할 수 없습니다."], en: ["How is the draw conducted?", "At close, the participant list and a random seed are sealed and published; on the announcement date the seed is revealed. Anyone can recompute and verify the same result, and the organisers cannot view or alter it in advance."], ja: ["抽選はどのように行われますか？", "応募締切時に参加者リストと乱数シードを封印して公開し、発表日にシードを開示します。誰でも同じ結果を再計算して検証でき、運営側も事前に確認・変更することはできません。"], zh: ["抽奖如何进行？", "截止时封存并公开参与名单与随机种子，公布日揭示种子。任何人都可复算验证同一结果，主办方亦无法提前查看或更改。"], es: ["¿Cómo se realiza el sorteo?", "Al cierre se sellan y publican la lista de participantes y una semilla aleatoria; el día del anuncio se revela la semilla. Cualquiera puede recalcular y verificar el mismo resultado, y la organización no puede verlo ni modificarlo de antemano."] }),
@@ -600,7 +826,7 @@ diff -ruN a/src/components/raffle/RafflePage.tsx b/src/components/raffle/RaffleP
            t({ ko: ["경품은 어떻게 수령하나요?", "10월 3일 XRP SEOUL 2026 행사장에서 수령합니다. 지갑에 보관된 래플 NFT 카드의 QR 코드를 현장 스태프에게 제시하면 확인 후 배정된 경품을 지급합니다. 확인된 QR 코드는 재사용할 수 없으며, 현장 수령 외 별도 배송은 지원하지 않습니다."], en: ["How do I collect my prize?", "At the XRP SEOUL 2026 venue on 3 October. Present the QR code on the raffle NFT card in your wallet to on-site staff; after verification, the assigned prize is handed over. A verified QR code cannot be reused, and shipping is not available: on-site collection only."], ja: ["賞品はどのように受け取りますか？", "10月3日、XRP SEOUL 2026の会場でお受け取りください。ウォレット内のラッフルNFTカードのQRコードを現地スタッフに提示いただくと、確認後に賞品をお渡しします。確認済みのQRコードは再使用できず、現地受取以外の配送は行いません。"], zh: ["如何领取奖品？", "10 月 3 日在 XRP SEOUL 2026 会场领取。向现场工作人员出示钱包中抽奖 NFT 卡的二维码，核验后发放所分配的奖品。已核验的二维码不可重复使用，不提供邮寄，仅限现场领取。"], es: ["¿Cómo recojo el premio?", "En el recinto de XRP SEOUL 2026, el 3 de octubre. Presente al personal el código QR de la tarjeta NFT que tiene en su billetera; tras la verificación se entrega el premio asignado. Un QR verificado no puede reutilizarse y no hay envíos: solo recogida presencial."] }),
            t({ ko: ["QR 코드를 다른 사람에게 보여 줘도 되나요?", "QR 코드는 본인 확인용이므로 타인과 공유하거나 외부에 노출하지 마시기 바랍니다. 공유·노출로 인해 타인이 먼저 수령하는 등의 피해는 보상하지 않습니다."], en: ["Can I show my QR code to others?", "The QR code is for identity verification; please do not share it or expose it publicly. Losses caused by sharing or exposure, such as collection by another person, will not be compensated."], ja: ["QRコードを他の人に見せてもよいですか？", "QRコードは本人確認用のため、他人と共有したり外部に露出したりしないでください。共有・露出により第三者が先に受け取るなどの被害は補償いたしません。"], zh: ["可以把二维码给别人看吗？", "二维码用于本人核验，请勿与他人分享或对外泄露。因分享或泄露导致被他人先行领取等损失，不予赔偿。"], es: ["¿Puedo mostrar mi código QR a otras personas?", "El código QR sirve para verificar su identidad; no lo comparta ni lo exponga públicamente. No se compensarán los perjuicios derivados de compartirlo o exponerlo, como que otra persona recoja el premio."] }),
            t({ ko: ["환불이 가능한가요?", "응모 확정 후에는 환불이 불가합니다. 결제 전 금액과 조건을 확인해 주시기 바랍니다."], en: ["Are refunds available?", "Entries cannot be refunded once confirmed. Please check the amount and terms before paying."], ja: ["返金は可能ですか？", "応募確定後の返金はできません。お支払い前に金額と条件をご確認ください。"], zh: ["可以退款吗？", "参与确认后不可退款。请在支付前确认金额与条款。"], es: ["¿Se admiten reembolsos?", "Una vez confirmada la participación no se puede reembolsar. Revise el importe y las condiciones antes de pagar."] }),
-@@ -293,188 +248,7 @@
+@@ -293,188 +189,7 @@
          <p className="dim" style={{ fontSize: 13.5, marginTop: 14 }}>{t({ ko: "문의: admin@wellbianlabs.io", en: "Contact: admin@wellbianlabs.io", ja: "お問い合わせ: admin@wellbianlabs.io", zh: "联系方式: admin@wellbianlabs.io", es: "Contacto: admin@wellbianlabs.io" })}</p>
        </div></section>
  
@@ -832,6 +1058,131 @@ diff -ruN a/src/components/raffle/TicketCard.tsx b/src/components/raffle/TicketC
 +      </div>
 +    </div>
 +  );
++}
+diff -ruN a/src/components/raffle/raffle-hero.css b/src/components/raffle/raffle-hero.css
+--- a/src/components/raffle/raffle-hero.css	1970-01-01 00:00:00.000000000 +0000
++++ b/src/components/raffle/raffle-hero.css	2026-09-21 11:14:32.949432563 +0000
+@@ -0,0 +1,121 @@
++/* XRP SEOUL 2026 래플 - 히어로 + 스탯 줄 (2026-09-21, 정적 시안 xrpseoul-raffle/index.html 이식).
++   시안의 토큰은 사이트 globals.css 값 그대로였으므로 여기서는 사이트 변수를 읽고(--amber = 브랜드 보라, --navy, --serif = Paperlogy)
++   없을 때만 같은 값으로 떨어진다. 클래스는 rf- 접두로 스코프해 .wb-page/.wb-store 의 .btn·.wrap 과 섞이지 않게 한다. */
++.rf-hero, .rf-stats {
++  --rf-brand: var(--amber, #4d4dce); --rf-brand-dim: #6c6cd7; --rf-navy: var(--navy, #1b1b48);
++  --rf-ink-faint: var(--ink-faint, #7d82a8); --rf-line: var(--line, #e3e4f0); --rf-bg-1: var(--bg-1, #ffffff);
++  --rf-display: var(--serif, "Paperlogy", "Pretendard Variable", Pretendard, system-ui, sans-serif);
++  --rf-sans: var(--sans, "Pretendard Variable", Pretendard, system-ui, sans-serif);
++  --rf-wrap: 1180px;
++}
++.rf-wrap { max-width: var(--rf-wrap); margin: 0 auto; padding: 0 clamp(16px, 4vw, 40px); }
++.rf-tnum { font-variant-numeric: tabular-nums; }
++
++/* ── 히어로 ── */
++.rf-hero {
++  position: relative; color: #fff; overflow: hidden; display: flex; align-items: center;
++  min-height: clamp(520px, 40vw, 690px);
++  /* 이미지 좌측 가장자리 표본색(상·중·하) - 이미지가 끝난 뒤에도 같은 색으로 이어진다 */
++  background: linear-gradient(180deg, #4c2bbf 0%, #472fc1 34%, #472eb4 66%, #4b3ac9 100%);
++}
++.rf-hero-bg { position: absolute; inset: 0; z-index: 0; display: flex; justify-content: flex-end; pointer-events: none; }
++/* 세로를 기준으로 통째로 넣는다 - 위아래가 잘리지 않는다 */
++.rf-hero-bg img {
++  height: 100%; width: auto; max-width: none; display: block;
++  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 7%); mask-image: linear-gradient(90deg, transparent 0, #000 7%);
++}
++/* 텍스트 뒤 어두운 그라데이션 - 좌측 60% 까지 진하게 */
++.rf-hero-veil {
++  position: absolute; inset: 0; z-index: 1; pointer-events: none;
++  background: linear-gradient(90deg, rgba(10,4,44,.94) 0%, rgba(10,4,44,.9) 26%, rgba(12,5,50,.68) 44%, rgba(14,6,56,.3) 56%, rgba(0,0,0,0) 66%);
++}
++.rf-hero-grid {
++  position: relative; z-index: 2; width: 100%; display: grid;
++  grid-template-columns: minmax(0, .55fr) minmax(0, .45fr);
++  padding-top: clamp(44px, 5.5vw, 76px); padding-bottom: clamp(44px, 5.5vw, 76px);
++}
++.rf-hero h1 { font-family: var(--rf-display); font-size: clamp(32px, 4.6vw, 58px); font-weight: 800; line-height: 1.1; letter-spacing: -.02em; margin: 0 0 20px; color: #fff; text-wrap: balance; }
++.rf-hero h1 .rf-sub { display: block; font-size: .6em; line-height: 1.28; margin-top: 10px; font-weight: 700; letter-spacing: -.015em; color: #efeaff; }
++.rf-hero h1 em { font-style: normal; color: #c4a6ff; }
++.rf-hero-lead { font-size: clamp(15.5px, 1.45vw, 17.5px); line-height: 1.65; color: #e8e4fb; max-width: 36em; margin: 0; font-weight: 500; }
++.rf-hero-lead b { color: #fff; font-weight: 800; }
++.rf-lockup { margin: 0 0 22px; }
++.rf-lockup img { height: clamp(30px, 2.4vw, 42px); width: auto; display: block; }
++.rf-hero-facts { display: flex; flex-wrap: wrap; gap: 10px; margin: 0 0 20px; align-items: center; }
++.rf-fact {
++  display: inline-flex; align-items: center; border-radius: 9999px; padding: 10px 18px;
++  font-size: clamp(15px, 1.25vw, 17px); font-weight: 800; color: #fff; letter-spacing: -.01em;
++  background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.28); backdrop-filter: blur(6px);
++}
++.rf-fact.when { font-weight: 700; color: #efeaff; }
++.rf-hero-cta { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-top: 26px; }
++.rf-hero-sub { margin: 12px 0 0; font-size: 14px; color: #c9c3ee; font-weight: 600; }
++.rf-hero-cd { font-family: var(--rf-sans); font-size: 14.5px; font-weight: 700; color: #c8c8f0; font-variant-numeric: tabular-nums; }
++.rf-hero-link {
++  display: inline-flex; align-items: center; gap: 6px; margin-top: 18px; font-size: 14.5px; font-weight: 700;
++  color: rgba(255,255,255,.86); text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1.5px;
++}
++.rf-hero-link svg { width: 15px; height: 15px; }
++.rf-hero-link:hover { color: #fff; }
++.rf-btn {
++  display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-family: var(--rf-sans);
++  font-size: 15.5px; font-weight: 700; line-height: 1; border-radius: 12px; height: 52px; padding: 0 28px;
++  border: 1px solid transparent; cursor: pointer; box-sizing: border-box; background: none; color: inherit; text-decoration: none;
++  transition: transform .16s ease, background .16s ease;
++}
++.rf-btn.fill { background: var(--rf-brand); border-color: var(--rf-brand); color: #fff; box-shadow: 0 8px 24px rgba(20,8,70,.35); }
++.rf-btn.fill:hover { background: var(--rf-brand-dim); transform: translateY(-2px); }
++.rf-btn.fill:disabled { background: rgba(255,255,255,.14); color: rgba(255,255,255,.66); border: 1px solid rgba(255,255,255,.26); box-shadow: none; cursor: not-allowed; transform: none; }
++.rf-btn.done { background: #16a34a; border-color: #16a34a; }
++.rf-btn.ghost { background: rgba(255,255,255,.06); color: #fff; border-color: rgba(255,255,255,.36); }
++.rf-btn.ghost:hover { background: rgba(255,255,255,.14); }
++/* 참여 유도 - 빛띠 스윕 하나만 (2026-09-19 지시: 효과는 한 가지만) */
++.rf-btn.shine { position: relative; overflow: hidden; }
++.rf-btn.shine::after {
++  content: ""; position: absolute; top: -60%; bottom: -60%; left: -80%; width: 45%;
++  background: linear-gradient(105deg, rgba(255,255,255,0) 0%, rgba(255,255,255,.7) 50%, rgba(255,255,255,0) 100%);
++  transform: skewX(-22deg); animation: rfBtnSheen 2.4s ease-in-out infinite; pointer-events: none;
++}
++@keyframes rfBtnSheen { 0% { left: -80%; } 50%, 100% { left: 150%; } }
++@media (prefers-reduced-motion: reduce) { .rf-btn.shine::after { animation: none; display: none; } }
++.rf-hero-cap { position: absolute; right: clamp(16px, 4vw, 40px); bottom: 12px; z-index: 2; font-size: 11.5px; font-weight: 700; letter-spacing: .06em; color: rgba(255,255,255,.62); }
++@media (max-width: 920px) {
++  .rf-hero { display: block; min-height: 0; background: linear-gradient(180deg, #0b0430 0%, #120a46 60%, #1a0e5a 100%); }
++  .rf-hero-bg { position: relative; inset: auto; justify-content: center; margin-top: 6px; }
++  .rf-hero-bg img { height: auto; width: 100%; -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 26%); mask-image: linear-gradient(180deg, transparent 0, #000 26%); }
++  .rf-hero-veil { display: none; }
++  .rf-btn.ghost { background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.4); }
++  .rf-hero-grid { grid-template-columns: minmax(0, 1fr); padding-top: clamp(34px, 8vw, 56px); padding-bottom: 8px; }
++  .rf-hero-cap { position: static; display: block; text-align: center; padding: 8px 0 12px; }
++}
++@media (max-width: 640px) {
++  .rf-hero-grid { padding-top: 28px; padding-bottom: 4px; }
++  .rf-hero h1 { font-size: 30px; }
++  .rf-hero-lead br { display: none; }
++  .rf-hero-facts { gap: 8px; }
++  .rf-fact { padding: 9px 14px; font-size: 14px; }
++  .rf-hero-cta { flex-direction: column; align-items: stretch; gap: 10px; margin-top: 20px; }
++  .rf-hero-cta .rf-btn { width: 100%; padding: 0 20px; }
++  .rf-hero-cap { font-size: 11px; padding: 6px 0 10px; }
++}
++
++/* ── 스탯 줄 (히어로 바로 아래, 흰 카드 5칸) ── */
++.rf-stats {
++  display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: clamp(10px, 1.4vw, 16px);
++  margin: clamp(28px, 3.6vw, 44px) 0 0; position: relative; z-index: 3; padding: 0;
++}
++.rf-stat { background: var(--rf-bg-1); border: 1px solid var(--rf-line); border-radius: 20px; padding: 20px 22px; box-shadow: 0 2px 6px rgba(13,15,25,.06), 0 18px 44px rgba(27,27,72,.13); }
++.rf-stat dt { font-family: var(--rf-sans); font-size: 12.5px; font-weight: 700; letter-spacing: .05em; color: var(--rf-ink-faint); margin: 0 0 6px; }
++.rf-stat dd { margin: 0; font-family: var(--rf-display); font-weight: 800; font-size: clamp(21px, 2.1vw, 27px); white-space: nowrap; line-height: 1.1; color: var(--rf-navy); letter-spacing: -.02em; }
++.rf-stat dd small { font-family: var(--rf-sans); font-size: 13px; font-weight: 700; color: var(--rf-ink-faint); margin-left: 4px; }
++.rf-stat .rf-stat-sub { font-family: var(--rf-sans); font-size: 12.5px; color: var(--rf-ink-faint); font-weight: 500; margin-top: 6px; line-height: 1.4; }
++.rf-stat.accent dd { color: var(--rf-brand); }
++@media (max-width: 1000px) { .rf-stats { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
++@media (max-width: 760px) { .rf-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); margin-top: 20px; } .rf-stat:nth-child(5) { grid-column: 1 / -1; } }
++@media (max-width: 480px) {
++  .rf-stats { gap: 10px; }
++  .rf-stat { padding: 14px 14px 13px; border-radius: 14px; }
++  .rf-stat dt { font-size: 11.5px; margin-bottom: 4px; }
++  .rf-stat dd { font-size: 21px; }
++  .rf-stat dd small { font-size: 12px; margin-left: 3px; }
 +}
 diff -ruN a/src/components/raffle/types.ts b/src/components/raffle/types.ts
 --- a/src/components/raffle/types.ts	1970-01-01 00:00:00.000000000 +0000

@@ -1,0 +1,144 @@
+"use client";
+/* XRP SEOUL 2026 래플 - 히어로 + 스탯 줄 (2026-09-21, 정적 시안 xrpseoul-raffle 이식).
+   시안: 좌측 텍스트(락업 로고 · 제목 두 줄 · 알약 3개 · 경품 한 줄 · 버튼 2 · 행사 링크) + 우측 경품 예상도, 아래 흰 카드 5칸.
+   문구·숫자는 서버 설정(raffleState.config)에서 읽는다 - 시안의 하드코딩(500명·9.22·9.27·경품 수)은 전부 설정값이다.
+   모바일(≤920px)은 다크 배경 + 이미지가 텍스트 아래로 내려간다(2026-09-19 지시: PC 기준 배경색). */
+import "./raffle-hero.css";
+import { useI18n, type Lang, type Msg } from "@/lib/launch/i18n";
+import type { RaffleMine, RafflePrizeView, RaffleStateView } from "./types";
+
+type Phase = RaffleStateView["phase"];
+
+/* 시안 표기 "9.22(화) 18:00" - 요일은 언어별 */
+const WD: Record<Lang, string[]> = {
+  ko: ["일", "월", "화", "수", "목", "금", "토"], en: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
+  ja: ["日", "月", "火", "水", "木", "金", "土"], zh: ["日", "一", "二", "三", "四", "五", "六"], es: ["dom", "lun", "mar", "mié", "jue", "vie", "sáb"],
+};
+const kstParts = (iso?: string) => {
+  if (!iso) return null;
+  const d = new Date(Date.parse(iso) + 9 * 3600_000);
+  return { M: d.getUTCMonth() + 1, D: d.getUTCDate(), wd: d.getUTCDay(), hm: `${String(d.getUTCHours()).padStart(2, "0")}:${String(d.getUTCMinutes()).padStart(2, "0")}` };
+};
+/** "9.22(화)" · "18:00" */
+export const fmtDay = (iso: string | undefined, lang: Lang) => { const p = kstParts(iso); return p ? `${p.M}.${String(p.D).padStart(2, "0")}(${WD[lang][p.wd]})` : ""; };
+export const fmtHm = (iso: string | undefined) => kstParts(iso)?.hm ?? "";
+
+/* 경품 한 줄 - 설정의 이름을 언어별 짧은 표기로. 모르는 이름은 그대로 쓴다 */
+function prizeWord(p: RafflePrizeView, lang: Lang): string {
+  const n = p.name; const q = p.qty;
+  const is = (k: string) => n.includes(k);
+  if (lang === "ko") return is("초대권") ? `초대권 ${q}매` : is("Generator") ? `Weather Data Token Generator™ ${q}대` : is("우산") ? `우산 ${q}개` : is("에코백") ? `에코백 ${q}개` : `${n} ${q}`;
+  if (lang === "ja") return is("초대권") ? `招待券${q}枚` : is("Generator") ? `Weather Data Token Generator™ ${q}台` : is("우산") ? `傘${q}本` : is("에코백") ? `エコバッグ${q}個` : `${n} ${q}`;
+  if (lang === "zh") return is("초대권") ? `邀请函 ${q} 张` : is("Generator") ? `Weather Data Token Generator™ ${q} 台` : is("우산") ? `雨伞 ${q} 把` : is("에코백") ? `环保袋 ${q} 个` : `${n} ${q}`;
+  if (lang === "es") return is("초대권") ? `${q} invitaciones` : is("Generator") ? `${q} Weather Data Token Generator™` : is("우산") ? `${q} paraguas` : is("에코백") ? `${q} bolsas ecológicas` : `${q} ${n}`;
+  return is("초대권") ? `${q} invitations` : is("Generator") ? `${q} Weather Data Token Generator™` : is("우산") ? `${q} umbrellas` : is("에코백") ? `${q} eco bags` : `${q} ${n}`;
+}
+
+const VENUE: Msg<string> = { ko: "서울 하얏트 호텔", en: "Hyatt Hotel, Seoul", ja: "ソウル ハイアットホテル", zh: "首尔凯悦酒店", es: "Hotel Hyatt, Seúl" };
+const EVENT_TIME = "10:00~";
+
+export function RaffleHero({ st, phase, done, held, mine, onHold, tba, cd, onCta, onOpen }: {
+  st: RaffleStateView | null; phase: Phase; done: boolean; held: boolean; mine: RaffleMine | null;
+  onHold: boolean; tba: string; cd: string; onCta: () => void; onOpen: () => void;
+}) {
+  const { lang, t } = useI18n();
+  const cfg = st?.config;
+  const price = cfg?.priceXrp ?? 5;
+  const max = cfg?.maxEntries ?? 500;
+  const no = String(mine?.entryNo ?? 0).padStart(4, "0");
+  const prizes = cfg?.prizes ?? [];
+  const sep = " · ";
+  const whenChip = onHold ? tba
+    : phase === "BEFORE" ? t({ ko: `${fmtDay(cfg?.open, lang)} ${fmtHm(cfg?.open)} 시작`, en: `Opens ${fmtDay(cfg?.open, lang)} ${fmtHm(cfg?.open)}`, ja: `${fmtDay(cfg?.open, lang)} ${fmtHm(cfg?.open)} 開始`, zh: `${fmtDay(cfg?.open, lang)} ${fmtHm(cfg?.open)} 开始`, es: `Abre ${fmtDay(cfg?.open, lang)} ${fmtHm(cfg?.open)}` })
+    : phase === "OPEN" ? t({ ko: `${fmtDay(cfg?.close, lang)} ${fmtHm(cfg?.close)} 마감`, en: `Closes ${fmtDay(cfg?.close, lang)} ${fmtHm(cfg?.close)}`, ja: `${fmtDay(cfg?.close, lang)} ${fmtHm(cfg?.close)} 締切`, zh: `${fmtDay(cfg?.close, lang)} ${fmtHm(cfg?.close)} 截止`, es: `Cierra ${fmtDay(cfg?.close, lang)} ${fmtHm(cfg?.close)}` })
+    : t({ ko: "응모 마감", en: "Entries closed", ja: "応募締切", zh: "报名已截止", es: "Cerrado" });
+
+  /* 주 버튼 - 페이즈·내 응모 상태에 따라 (기존 페이지의 분기 그대로) */
+  let primary: { label: string; onClick?: () => void; disabled?: boolean; shine?: boolean; done?: boolean };
+  if (done && (phase === "OPEN" || phase === "SOLD_OUT" || phase === "CLOSED")) {
+    primary = { label: held ? t({ ko: `응모 완료 · 래플 번호 #${no}`, en: `Entered · Ticket #${no}`, ja: `応募完了 · No.${no}`, zh: `已参与 · 编号 #${no}`, es: `Inscrito · N.º ${no}` }) : t({ ko: "결제 완료 · NFT 수령", en: "Paid · collect NFT", ja: "決済完了 · NFT受取", zh: "已支付 · 领取 NFT", es: "Pagado · recibir NFT" }), onClick: onOpen, done: held };
+  } else if (phase === "OPEN") {
+    primary = { label: t({ ko: `${price} XRP 로 참여하기`, en: `Enter with ${price} XRP`, ja: `${price} XRPで参加する`, zh: `用 ${price} XRP 参与`, es: `Participar con ${price} XRP` }), onClick: onCta, shine: true };
+  } else if (phase === "BEFORE") {
+    primary = { label: onHold ? t({ ko: "응모 일정은 추후 공지됩니다", en: "Entry schedule to be announced", ja: "応募日程は後日発表します", zh: "报名时间另行通知", es: "Fechas por anunciar" }) : t({ ko: `${fmtDay(cfg?.open, lang)} ${fmtHm(cfg?.open)} 응모 시작`, en: `Opens ${fmtDay(cfg?.open, lang)} ${fmtHm(cfg?.open)}`, ja: `${fmtDay(cfg?.open, lang)} ${fmtHm(cfg?.open)} 応募開始`, zh: `${fmtDay(cfg?.open, lang)} ${fmtHm(cfg?.open)} 开始参与`, es: `Abre el ${fmtDay(cfg?.open, lang)} ${fmtHm(cfg?.open)}` }), disabled: true };
+  } else if (phase === "SOLD_OUT") {
+    primary = { label: t({ ko: `선착순 ${max}명 마감`, en: `All ${max} spots filled`, ja: `先着${max}名 締切`, zh: `${max} 个名额已满`, es: `${max} plazas completas` }), disabled: true };
+  } else {
+    primary = { label: t({ ko: "응모가 마감되었습니다", en: "Entries are closed", ja: "応募は締め切りました", zh: "报名已截止", es: "Inscripciones cerradas" }), disabled: true };
+  }
+
+  return (
+    <header className="rf-hero">
+      <div className="rf-hero-veil" aria-hidden="true" />
+      <div className="rf-wrap rf-hero-grid">
+        <div>
+          <div className="rf-lockup">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/brand/logo_w_medium.svg" alt="wellbian × XRP Ledger" />
+          </div>
+          <h1>
+            XRP SEOUL 2026
+            <span className="rf-sub">{t({ ko: <><em>플래티넘 스폰서</em> 래플 이벤트</>, en: <><em>Platinum Sponsor</em> Raffle Event</>, ja: <><em>プラチナスポンサー</em> ラッフルイベント</>, zh: <><em>白金赞助商</em> 抽奖活动</>, es: <>Sorteo del <em>Patrocinador Platinum</em></> })}</span>
+          </h1>
+          <div className="rf-hero-facts">
+            <span className="rf-fact">{t({ ko: `선착순 ${max}명`, en: `First ${max}`, ja: `先着${max}名`, zh: `限前 ${max} 名`, es: `Primeros ${max}` })}</span>
+            <span className="rf-fact">{t({ ko: "100% 당첨", en: "Everyone wins", ja: "全員当選", zh: "100% 中奖", es: "Todos ganan" })}</span>
+            <span className="rf-fact when">{whenChip}</span>
+          </div>
+          <p className="rf-hero-lead">
+            {prizes.slice(0, 2).map((p) => prizeWord(p, lang)).join(sep)}{prizes.length > 2 && sep}{prizes.length > 2 && <br />}
+            {prizes.slice(2).map((p) => prizeWord(p, lang)).join(sep)}{" "}
+            <b>{t({ ko: "— 참여하면 이 중 하나는 반드시 당첨.", en: "— enter and one of these is yours, guaranteed.", ja: "— 参加すればこのうち1つが必ず当たります。", zh: "— 参与即必得其中一份。", es: "— participe y uno de ellos es suyo, garantizado." })}</b>
+          </p>
+          <p className="rf-hero-sub">{t({ ko: "경품은 10월 3일 XRP SEOUL 2026 현장에서 수령합니다", en: "Prizes are collected at XRP SEOUL 2026 on 3 October", ja: "賞品は10月3日、XRP SEOUL 2026会場でお受け取りください", zh: "奖品于 10 月 3 日在 XRP SEOUL 2026 现场领取", es: "Los premios se recogen en XRP SEOUL 2026 el 3 de octubre" })}</p>
+          <div className="rf-hero-cta">
+            <button type="button" className={`rf-btn fill${primary.shine ? " shine" : ""}${primary.done ? " done" : ""}`} disabled={primary.disabled} onClick={primary.onClick}>{primary.label}</button>
+            <a className="rf-btn ghost" href="#prizes">{t({ ko: "경품 보기", en: "See prizes", ja: "賞品を見る", zh: "查看奖品", es: "Ver premios" })}</a>
+            {cd && (phase === "BEFORE" || phase === "OPEN") && !onHold && (
+              <span className="rf-hero-cd">{phase === "BEFORE" ? t({ ko: "시작까지", en: "starts in", ja: "開始まで", zh: "距开始", es: "empieza en" }) : t({ ko: "마감까지", en: "closes in", ja: "締切まで", zh: "距截止", es: "cierra en" })} {cd}</span>
+            )}
+          </div>
+          <a className="rf-hero-link" href="https://xrpseoul.com" target="_blank" rel="noopener">
+            {t({ ko: "XRP SEOUL 2026 바로가기", en: "Go to XRP SEOUL 2026", ja: "XRP SEOUL 2026 公式サイトへ", zh: "前往 XRP SEOUL 2026", es: "Ir a XRP SEOUL 2026" })}
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" /></svg>
+          </a>
+        </div>
+      </div>
+      <div className="rf-hero-bg" aria-hidden="true">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/assets/raffle/hero.webp" alt="" />
+      </div>
+      <span className="rf-hero-cap">{t({ ko: "*경품 예상도이며, 실물과 다를 수 있습니다", en: "*Illustrative image; actual prizes may differ", ja: "*イメージです。実物とは異なる場合があります", zh: "*示意图，实物可能有所不同", es: "*Imagen ilustrativa; los premios reales pueden variar" })}</span>
+    </header>
+  );
+}
+
+export function RaffleStats({ st, onHold, tba }: { st: RaffleStateView | null; onHold: boolean; tba: string }) {
+  const { lang, t } = useI18n();
+  const cfg = st?.config;
+  const price = cfg?.priceXrp ?? 5;
+  const max = cfg?.maxEntries ?? 500;
+  const count = st?.count ?? 0;
+  return (
+    <div className="rf-wrap">
+      <dl className="rf-stats">
+        <Stat accent k={t({ ko: "참여 금액", en: "Entry", ja: "応募金額", zh: "参与金额", es: "Entrada" })} v={String(price)} unit="XRP" sub={t({ ko: "XRP 결제만 지원", en: "XRP only", ja: "XRP決済のみ", zh: "仅支持 XRP 支付", es: "Solo XRP" })} />
+        <Stat k={t({ ko: "참여 현황", en: "Entries", ja: "応募数", zh: "已参与", es: "Inscritos" })} v={count.toLocaleString()} unit={`/ ${max.toLocaleString()}`} sub={t({ ko: "선착순 마감", en: "first come, first served", ja: "先着順で締切", zh: "先到先得", es: "por orden de llegada" })} />
+        <Stat k={t({ ko: "당첨 확률", en: "Win rate", ja: "当選確率", zh: "中奖率", es: "Probabilidad" })} v="100" unit="%" sub={t({ ko: "참여하면 경품 중 100% 당첨", en: "everyone wins one prize", ja: "参加者全員に賞品", zh: "参与即 100% 中奖", es: "todos ganan un premio" })} />
+        <Stat k={t({ ko: "참여 마감", en: "Closes", ja: "応募締切", zh: "参与截止", es: "Cierre" })} v={onHold ? tba : fmtDay(cfg?.close, lang)} unit={onHold ? "" : fmtHm(cfg?.close)} sub={t({ ko: `${max}명 도달 시 조기 종료`, en: `ends early at ${max} entries`, ja: `${max}名到達で早期終了`, zh: `满 ${max} 人提前结束`, es: `termina antes al llegar a ${max}` })} />
+        <Stat k={t({ ko: "행사일", en: "Event", ja: "開催日", zh: "活动日期", es: "Evento" })} v={fmtDay(cfg?.eventAt, lang) || "10.03"} unit={EVENT_TIME} sub={t(VENUE)} />
+      </dl>
+    </div>
+  );
+}
+
+function Stat({ k, v, unit, sub, accent }: { k: string; v: string; unit: string; sub: string; accent?: boolean }) {
+  return (
+    <div className={`rf-stat${accent ? " accent" : ""}`}>
+      <dt>{k}</dt>
+      <dd className="rf-tnum">{v}{unit && <small>{unit}</small>}</dd>
+      <div className="rf-stat-sub">{sub}</div>
+    </div>
+  );
+}
+

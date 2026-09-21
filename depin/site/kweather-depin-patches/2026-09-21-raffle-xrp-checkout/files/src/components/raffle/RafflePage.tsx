@@ -9,6 +9,7 @@ import "@/app/wb-page.css";
 import { useI18n } from "@/lib/launch/i18n";
 import { useWallet } from "@/lib/wallet/WalletContext";
 import RaffleCheckoutModal from "./RaffleCheckoutModal";
+import { RaffleHero, RaffleStats } from "./RaffleHero";
 import { TicketCard } from "./TicketCard";
 import { RESERVE_XRP, raffleQs as qs, type RaffleMode as Mode, type RaffleStateView as State } from "./types";
 
@@ -69,72 +70,12 @@ export default function RafflePage({ mode }: { mode: Mode }) {
 
   return (
     <div className="wb-page full-bleed">
-      {/* ── 히어로 ── */}
-      <section style={{ background: "radial-gradient(1200px 600px at 70% -10%, #4d4dce 0%, #1b1b48 55%, #12122f 100%)", color: "#fff", padding: "clamp(56px, 9vw, 110px) 0 clamp(44px, 6vw, 72px)" }}>
-        <div className="wrap" style={{ maxWidth: 1080, margin: "0 auto", padding: "0 clamp(16px, 4vw, 32px)" }}>
-          <div style={{ display: "inline-flex", gap: 8, alignItems: "center", background: "rgba(255,255,255,.12)", border: "1px solid rgba(255,255,255,.25)", borderRadius: 999, padding: "6px 14px", fontSize: 13.5, fontWeight: 700, letterSpacing: ".06em" }}>
-            XRP SEOUL 2026 · 10.03 SEOUL · {t({ ko: "래플 이벤트", en: "RAFFLE EVENT", ja: "ラッフルイベント", zh: "抽奖活动", es: "SORTEO" })}
-          </div>
-          <h1 style={{ fontSize: "clamp(30px, 5vw, 54px)", lineHeight: 1.15, margin: "18px 0 14px", fontWeight: 800, letterSpacing: "-.02em", textWrap: "balance" }}>
-            {t({ ko: "XRP SEOUL 2026 래플 이벤트", en: "XRP SEOUL 2026 Raffle Event", ja: "XRP SEOUL 2026 ラッフルイベント", zh: "XRP SEOUL 2026 抽奖活动", es: "Sorteo XRP SEOUL 2026" })}
-          </h1>
-          <p style={{ fontSize: "clamp(16px, 2vw, 19px)", lineHeight: 1.65, color: "#d7d7f5", maxWidth: 680, margin: 0, textWrap: "balance" }}>
-            {t({
-              ko: `응모 금액 ${price} XRP · 선착순 ${cfg?.maxEntries ?? 500}명 · 1인 1회. 응모하신 분 전원에게 XRP SEOUL 2026 초대권, Weather Data Token Generator™, 우산, 에코백 중 한 가지가 추첨을 통해 지급됩니다. 결제는 XRP 만 가능합니다.`,
-              en: `Entry ${price} XRP · first ${cfg?.maxEntries ?? 500} · one entry per person. Every entrant receives one prize decided by draw: an XRP SEOUL 2026 invitation, a Weather Data Token Generator™, an umbrella or an eco bag. Payment in XRP only.`,
-              ja: `応募金額 ${price} XRP・先着${cfg?.maxEntries ?? 500}名・お一人さま1回。応募者全員に、XRP SEOUL 2026招待券、Weather Data Token Generator™、傘、エコバッグのいずれか1点を抽選で進呈します。決済はXRPのみ。`,
-              zh: `参与金额 ${price} XRP · 限前 ${cfg?.maxEntries ?? 500} 名 · 每人一次。所有参与者均可通过抽奖获得 XRP SEOUL 2026 邀请函、Weather Data Token Generator™、雨伞或环保袋之一。仅支持 XRP 支付。`,
-              es: `Entrada ${price} XRP · primeros ${cfg?.maxEntries ?? 500} · una por persona. Todos los participantes reciben un premio decidido por sorteo: invitación a XRP SEOUL 2026, Weather Data Token Generator™, paraguas o bolsa ecológica. Pago solo en XRP.`,
-            })}
-          </p>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: 12, alignItems: "center", marginTop: 30 }}>
-            {phase === "OPEN" && !done && (
-              <button type="button" onClick={cta} className="btn-primary" style={{ fontSize: 18, padding: "14px 26px", borderRadius: 12, background: "#fff", color: "#1b1b48", border: "none", fontWeight: 800 }}>
-                {t({ ko: `응모하기 (${price} XRP)`, en: `Enter (${price} XRP)`, ja: `応募する（${price} XRP）`, zh: `参与（${price} XRP）`, es: `Participar (${price} XRP)` })}
-              </button>
-            )}
-            {(phase === "OPEN" || phase === "SOLD_OUT") && done && (
-              <button type="button" onClick={() => setModal(true)} className="btn-primary" style={{ fontSize: 18, padding: "14px 26px", borderRadius: 12, background: held ? "#16a34a" : "#fff", color: held ? "#fff" : "#1b1b48", border: "none", fontWeight: 800 }}>
-                {held
-                  ? t({ ko: `응모 완료 · 래플 번호 #${String(mine!.entryNo ?? 0).padStart(4, "0")}`, en: `Entered · Ticket #${String(mine!.entryNo ?? 0).padStart(4, "0")}`, ja: `応募完了 · No.${String(mine!.entryNo ?? 0).padStart(4, "0")}`, zh: `已参与 · 编号 #${String(mine!.entryNo ?? 0).padStart(4, "0")}`, es: `Inscrito · N.º ${String(mine!.entryNo ?? 0).padStart(4, "0")}` })
-                  : t({ ko: "결제 완료 · NFT 수령", en: "Paid · collect NFT", ja: "決済完了 · NFT受取", zh: "已支付 · 领取 NFT", es: "Pagado · recibir NFT" })}
-              </button>
-            )}
-            {phase === "BEFORE" && (
-              <span style={{ fontSize: 17, fontWeight: 700, background: "rgba(255,255,255,.12)", padding: "12px 18px", borderRadius: 12 }}>
-                {onHold
-                  ? t({ ko: "응모 일정은 추후 공지됩니다", en: "Entry schedule to be announced", ja: "応募日程は後日発表します", zh: "报名时间另行通知", es: "Fechas por anunciar" })
-                  : t({ ko: `${fmtDate(cfg?.open, lang)} 응모 시작`, en: `Opens ${fmtDate(cfg?.open, lang)}`, ja: `${fmtDate(cfg?.open, lang)} 応募開始`, zh: `${fmtDate(cfg?.open, lang)} 开始参与`, es: `Abre el ${fmtDate(cfg?.open, lang)}` })}
-              </span>
-            )}
-            {phase === "CLOSED" && (
-              <span style={{ fontSize: 17, fontWeight: 700, background: "rgba(255,255,255,.12)", padding: "12px 18px", borderRadius: 12 }}>
-                {t({ ko: "응모가 마감되었습니다", en: "Entries are closed", ja: "応募は締め切りました", zh: "报名已截止", es: "Inscripciones cerradas" })}
-              </span>
-            )}
-            {phase === "SOLD_OUT" && !done && (
-              <span style={{ fontSize: 17, fontWeight: 700, background: "rgba(255,255,255,.12)", padding: "12px 18px", borderRadius: 12 }}>
-                {t({ ko: `선착순 ${cfg?.maxEntries ?? 500}명 마감`, en: `All ${cfg?.maxEntries ?? 500} spots filled`, ja: `先着${cfg?.maxEntries ?? 500}名 締切`, zh: `${cfg?.maxEntries ?? 500} 个名额已满`, es: `${cfg?.maxEntries ?? 500} plazas completas` })}
-              </span>
-            )}
-            {cd && phase !== "CLOSED" && phase !== "SOLD_OUT" && (
-              <span className="mono" style={{ fontSize: 15, color: "#c8c8f0" }}>
-                {phase === "BEFORE" ? t({ ko: "시작까지", en: "starts in", ja: "開始まで", zh: "距开始", es: "empieza en" }) : t({ ko: "마감까지", en: "closes in", ja: "締切まで", zh: "距截止", es: "cierra en" })} {cd}
-              </span>
-            )}
-          </div>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: "10px 28px", marginTop: 34, fontSize: 14.5, color: "#c8c8f0" }}>
-            <span>{t({ ko: "응모 금액", en: "Entry", ja: "応募金額", zh: "参与金额", es: "Entrada" })} <b style={{ color: "#fff" }}>{price} XRP</b></span>
-            <span>{t({ ko: "응모 현황", en: "Entries", ja: "応募数", zh: "已参与", es: "Inscritos" })} <b style={{ color: "#fff" }}>{(st?.count ?? 0).toLocaleString()} / {(cfg?.maxEntries ?? 500).toLocaleString()}</b></span>
-            <span>{t({ ko: "당첨 확률", en: "Win rate", ja: "当選確率", zh: "中奖率", es: "Probabilidad" })} <b style={{ color: "#fff" }}>100%</b></span>
-            <span>{t({ ko: "당첨자 발표", en: "Results", ja: "当選発表", zh: "开奖", es: "Resultados" })} <b style={{ color: "#fff" }}>{onHold ? tba : fmtDate(cfg?.drawAt, lang)}</b> <span style={{ color: "#9a9ad0" }}>({t({ ko: "마감 후 24시간 이내", en: "within 24h of close", ja: "締切後24時間以内", zh: "截止后 24 小时内", es: "en 24 h tras el cierre" })})</span></span>
-            <span>{t({ ko: "행사일", en: "Event", ja: "開催日", zh: "活动日期", es: "Evento" })} <b style={{ color: "#fff" }}>2026.10.03 · Seoul</b></span>
-          </div>
-        </div>
-      </section>
+      {/* ── 히어로 + 스탯 줄 (2026-09-21 정적 시안 이식 - RaffleHero.tsx) ── */}
+      <RaffleHero st={st} phase={phase} done={done} held={held} mine={mine} onHold={onHold} tba={tba} cd={cd} onCta={cta} onOpen={() => setModal(true)} />
+      <RaffleStats st={st} onHold={onHold} tba={tba} />
 
       {/* ── 경품 ── */}
-      <section className="sec-pad"><div className="wrap">
+      <section className="sec-pad" id="prizes"><div className="wrap">
         <div className="section-header">
           <h2>{t({ ko: "경품", en: "Prizes", ja: "賞品", zh: "奖品", es: "Premios" })}</h2>
           <div className="section-coord"><div>{t({ ko: `총 ${cfg?.maxEntries ?? 500}명 · 전원 당첨 · 경품 종류만 추첨`, en: `${cfg?.maxEntries ?? 500} entrants · everyone wins · the draw decides the prize`, ja: `計${cfg?.maxEntries ?? 500}名・全員当選・賞品の種類のみ抽選`, zh: `共 ${cfg?.maxEntries ?? 500} 名 · 人人有奖 · 仅抽奖决定奖品种类`, es: `${cfg?.maxEntries ?? 500} participantes · todos ganan · el sorteo decide el premio` })} · COMMIT-REVEAL</div></div>
