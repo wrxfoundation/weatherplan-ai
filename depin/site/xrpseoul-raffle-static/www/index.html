@@ -694,7 +694,7 @@ section.band{padding:clamp(60px,7.5vw,96px) 0}
   <div class="wrap">
     <div class="sec-head rv">
       <div><h2>자주 묻는 질문</h2></div>
-      <div class="sec-side"><span class="k">FAQ</span><span class="v">문의 admin@wellbianlabs.io</span></div>
+      <div class="sec-side"><span class="k">FAQ</span><span class="v">문의 support@wellbianlabs.io</span></div>
     </div>
     <div class="faq-top rv">
       <div class="qa">
@@ -720,7 +720,7 @@ section.band{padding:clamp(60px,7.5vw,96px) 0}
       <details><summary><span class="m">Q</span>환불이 가능한가요?</summary>
         <p class="a">참여 확정 후에는 환불이 불가합니다. 결제 전 금액과 조건을 확인해 주시기 바랍니다.</p></details>
     </div>
-    <div class="faq-contact">문의: admin@wellbianlabs.io</div>
+    <div class="faq-contact">문의: support@wellbianlabs.io</div>
   </div>
 </section>
 
@@ -749,7 +749,7 @@ section.band{padding:clamp(60px,7.5vw,96px) 0}
       <div class="cta-veil" aria-hidden="true"></div>
       <div>
         <h2>9.22(화) 18:00, 5 XRP 로 참여</h2>
-        <p>선착순 500명 · 100% 당첨. 500명이 채워지면 조기 종료됩니다.<br>문의는 admin@wellbianlabs.io 로 보내 주세요.</p>
+        <p>선착순 500명 · 100% 당첨. 500명이 채워지면 조기 종료됩니다.<br>문의는 support@wellbianlabs.io 로 보내 주세요.</p>
       </div>
       <button class="btn btn-fill btn-shine js-cta" disabled>불러오는 중…</button>
     </div>
@@ -829,12 +829,13 @@ section.band{padding:clamp(60px,7.5vw,96px) 0}
     rpc: ['https://xrplcluster.com/', 'https://s1.ripple.com:51234/', 'https://s2.ripple.com:51234/'],
     pollMs: 30000,                                 // 참여 현황 갱신 주기
     payPollMs: 10000,                              // 결제창 입금 확인 주기
-    contact: 'admin@wellbianlabs.io',
+    contact: 'support@wellbianlabs.io',
     explorer: 'https://xrpscan.com/tx/',
     // (선택) Google Form 으로 이메일 자동 등록 — action 과 entry 번호를 채우면 완료 화면에서 자동 전송.
     // 비어 있으면 완료 화면의 「등록 메일 보내기」(mailto) 로 대체됩니다.
     emailForm: { action: '', fields: { email: '', no: '', tag: '', account: '', tx: '' } }
   };
+  window.RAFFLE_CONFIG = RAFFLE;   // 읽기 전용 참조 (테스트 모드 /test/ 가 가짜 원장을 만들 때 씀)
 
   /* ───────── 유틸 ───────── */
   var $ = function (s, r) { return (r || document).querySelector(s); };

@@ -13,9 +13,10 @@ const MIME = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.
 function serve() {
   return new Promise((res) => {
     const srv = http.createServer((req, r) => {
-      let p = decodeURIComponent(req.url.split('?')[0]); if (p === '/') p = '/index.html';
-      const f = path.join(ROOT, p);
-      if (!f.startsWith(ROOT) || !fs.existsSync(f) || fs.statSync(f).isDirectory()) { r.writeHead(404); r.end('nf'); return; }
+      let p = decodeURIComponent(req.url.split('?')[0]); if (p.endsWith('/')) p += 'index.html';
+      let f = path.join(ROOT, p);
+      if (fs.existsSync(f) && fs.statSync(f).isDirectory()) f = path.join(f, 'index.html');
+      if (!f.startsWith(ROOT) || !fs.existsSync(f)) { r.writeHead(404); r.end('nf'); return; }
       r.writeHead(200, { 'Content-Type': MIME[path.extname(f)] || 'application/octet-stream' }); r.end(fs.readFileSync(f));
     });
     srv.listen(0, '127.0.0.1', () => res(srv));
@@ -65,16 +66,17 @@ async function main() {
   const fails = [];
   const check = (cond, msg) => { console.log((cond ? '  ok  ' : '  FAIL') + ' ' + msg); if (!cond) fails.push(msg); };
 
-  async function open(url, { txs = [], mobile = false, ls = null } = {}) {
+  async function open(url, { txs = [], mobile = false, ls = null, nomock = false } = {}) {
     const ctx = await b.newContext({ viewport: mobile ? { width: 390, height: 844 } : { width: 1280, height: 900 }, deviceScaleFactor: mobile ? 2 : 1, locale: 'ko-KR' });
-    await ctx.addInitScript(MOCK + `\nwindow.__mockTxs = ${JSON.stringify(txs)};` + (ls ? `\ntry{localStorage.setItem('xrpseoul_raffle_v1', ${JSON.stringify(JSON.stringify(ls))});}catch(e){}` : ''));
+    if (!nomock) await ctx.addInitScript(MOCK + `\nwindow.__mockTxs = ${JSON.stringify(txs)};` + (ls ? `\ntry{localStorage.setItem('xrpseoul_raffle_v1', ${JSON.stringify(JSON.stringify(ls))});}catch(e){}` : ''));
     const page = await ctx.newPage();
     page.on('pageerror', (e) => fails.push('pageerror: ' + e.message));
     page.on('response', (r) => { if (r.status() === 404) console.log('  404:', r.url()); });
     page.on('console', (m) => { if (m.type() === 'error' && !/qrcode|pretendard|ERR_/.test(m.text())) console.log('  console.error:', m.text()); });
     await page.goto(url, { waitUntil: 'load' });
-    await page.addStyleTag({ content: '.rv{opacity:1!important;transform:none!important}' });
-    return { ctx, page };
+    const noAnim = async () => { try { await page.addStyleTag({ content: '.rv{opacity:1!important;transform:none!important}' }); } catch (e) { } };  // /test/ 는 로더가 곧바로 리다이렉트·재작성하므로 실패해도 무시
+    await noAnim();
+    return { ctx, page, noAnim };
   }
   const cta = (page) => page.locator('.hero .js-cta');
 
@@ -154,7 +156,7 @@ async function main() {
     check(/No\. 018/.test(done), 'raffle number No. 018');
     check(/등록 메일 보내기/.test(done), 'mailto fallback shown (no Google Form)');
     const mail = await page.locator('#mbody a.btn-main').getAttribute('href');
-    check(/^mailto:admin@wellbianlabs\.io\?subject=/.test(mail) && decodeURIComponent(mail).includes('No. 018') && decodeURIComponent(mail).includes(hashOf(777)), 'mailto prefilled');
+    check(/^mailto:support@wellbianlabs\.io\?subject=/.test(mail) && decodeURIComponent(mail).includes('No. 018') && decodeURIComponent(mail).includes(hashOf(777)), 'mailto prefilled');
     await page.screenshot({ path: OUT + '/6-step4-done.png' });
     await page.click('#m-close');
     await page.waitForTimeout(300);
@@ -275,6 +277,54 @@ async function main() {
     await page.waitForTimeout(200);
     await page.screenshot({ path: OUT + '/9b-step3-mob-scrolled.png' });
     await ctx.close();
+  }
+
+  // ── 7. /test/ 시뮬레이터 (본 페이지를 불러와 sim.js 를 끼움 · 제어판) ──
+  console.log('[7] /test simulator');
+  {
+    const { ctx, page, noAnim } = await open(base.replace('index.html', 'test/') + '?now=2026-09-22T09:00:05Z', { nomock: true });
+    await page.waitForSelector('#sim', { timeout: 10000 }); await noAnim();
+    await page.waitForFunction(() => document.querySelector('.js-count') && document.querySelector('.js-count').textContent === '17', null, { timeout: 8000 }).catch(() => {});
+    check(await page.locator('#sim').isVisible(), 'sim panel visible');
+    check(/poll=3000/.test(page.url()) && /\/test\//.test(page.url()) && /now=/.test(page.url()), 'redirected to /test/?now=…&poll=3000 (' + page.url() + ')');
+    check((await page.locator('.js-count').textContent()) === '17', 'default fake count 17');
+    check(/support@wellbianlabs\.io/.test(await page.locator('.cta-band').textContent()), 'contact email support@ on page');
+    check((await page.locator('img[src="/images/hero.webp"]').count()) === 1 && (await page.locator('script[src="/js/qrcode.js"]').count()) === 1, 'asset paths rewritten to root');
+    check(/테스트\]/.test(await page.title()), 'title marked as test');
+    const simNav = async (sel) => { await Promise.all([page.waitForNavigation(), page.click(sel)]); await page.waitForSelector('#sim', { timeout: 10000 }); };
+    await simNav('#sim [data-now="2026-09-21T14:00:00Z"]');
+    await page.waitForTimeout(1200);
+    check(await cta(page).isDisabled() && /응모 시작/.test(await cta(page).textContent()), 'sim clock BEFORE → CTA disabled');
+    check(/오픈 전/.test(await page.locator('#sim-clock').textContent()), 'panel shows 오픈 전');
+    await simNav('#sim [data-now="2026-09-22T09:00:05Z"]');
+    await simNav('#sim [data-paid="497"]');
+    await page.waitForFunction(() => document.querySelector('.js-count') && document.querySelector('.js-count').textContent === '497', null, { timeout: 8000 }).catch(() => {});
+    check((await page.locator('.js-count').textContent()) === '497', 'sim paid 497');
+    await cta(page).click(); await page.waitForSelector('#ov:not([hidden])'); await page.waitForTimeout(300);
+    await page.click('#m-next'); await page.waitForSelector('#m-email');
+    await page.fill('#m-email', 'sim@example.com'); await page.click('.term[data-t="0"]'); await page.click('.term[data-t="1"]'); await page.click('#m-next');
+    await page.waitForSelector('#m-qr img');
+    check(await page.locator('#mbody .js-m-low').isVisible(), 'low-remaining warning at 497');
+    await page.click('#sim [data-x="mine"]');
+    await page.waitForFunction(() => /응모가 확정되었습니다/.test(document.querySelector('#mbody').textContent), null, { timeout: 12000 }).catch(() => {});
+    const done = await page.locator('#mbody').textContent();
+    check(/No\. 498/.test(done), 'sim payment confirmed No. 498');
+    const mail = await page.locator('#mbody a.btn-main').getAttribute('href');
+    check(/^mailto:support@wellbianlabs\.io\?/.test(mail), 'mailto goes to support@');
+    await page.waitForTimeout(1300);   // 제어판은 1초마다 갱신
+    check(/확정 No\. 498/.test(await page.locator('#sim-my').textContent()), 'panel shows my confirmed entry');
+    await page.screenshot({ path: OUT + '/10-test-page.png' });
+    await page.click('#m-close'); await page.waitForTimeout(300);
+    await page.screenshot({ path: OUT + '/11-test-page-panel.png', clip: { x: 0, y: 0, width: 1280, height: 900 } });
+    await simNav('#sim-reset');
+    await page.waitForTimeout(800);
+    check((await page.evaluate(() => localStorage.getItem('xrpseoul_raffle_v1'))) === null && !/now=/.test(page.url()), 'reset cleared my entry and clock');
+    await ctx.close();
+    const m = await open(base.replace('index.html', 'test/'), { nomock: true, mobile: true });
+    await m.page.waitForSelector('#sim', { timeout: 10000 }); await m.page.waitForTimeout(1200);
+    check(await m.page.locator('#sim').evaluate((e) => e.classList.contains('min')), 'panel starts collapsed on mobile');
+    await m.page.screenshot({ path: OUT + '/12-test-page-mob.png' });
+    await m.ctx.close();
   }
 
   await b.close(); srv.close();
