@@ -145,34 +145,59 @@ export async function verifyRaffleEntry(wallet: string, txHash: string, origin: 
 
   const kind = raffleKind(mode);
   const config = await loadRaffleConfig(mode);
-  const paid = await prisma.$transaction(async (tx) => {
-    const last = await tx.raffleEntry.aggregate({ where: { event, status: "PAID" }, _max: { entryNo: true } });
-    const entryNo = (last._max.entryNo ?? 0) + 1;
-    /* 선착순 정원: 결제 확정 순서로 센다. 정원을 넘긴 입금은 확정하지 않고 알린다(운영자가 환불) - 응모 시작 때 이미 막으므로 드물다 */
-    if (entryNo > config.maxEntries) throw new Error("SOLD_OUT");
-    const ticketCode = ticketCodeFor(event, entry.id, entryNo);
-    // NFT 메타데이터·카드 이미지는 티켓 코드별로 만든다(번호·QR 이 그림에 들어간다)
-    const metadataUri = `${origin}/api/raffle/meta/${ticketCode}`;
-    // 래플 NFT - 계정당 1장. 발행·오퍼 체인은 아웃박스(applyOutcome, refType GenesisPass)가 이어 간다.
-    const pass = await tx.genesisPass.upsert({
-      where: { wallet_kind: { wallet, kind } },
-      create: { wallet, kind, qty: 1, taxonValue: raffleTaxon(mode), metadataUri, state: "MINT_QUEUED", destination: wallet },
-      update: {},
+  /* 래플 번호 = 결제 확정 순번. 같은 순간 여러 명이 확정되면 둘 다 같은 max+1 을 계산해 (event, entryNo) 유일 제약에
+     걸린다(2026-09-21 점검 - 18:00 오픈 러시에서 실제로 날 수 있는 경우). 그때는 번호를 다시 세어 재시도한다(최대 6회).
+     같은 응모의 중복 호출(확인 버튼 두 번)은 status=PENDING 조건으로 한 번만 통과시킨다 - 예전에는 두 번째 호출이
+     번호를 덮어써 구멍을 내고 NFT 발행을 한 번 더 큐에 넣을 수 있었다. */
+  type Paid = { entry: typeof entry; pass: { id: string; state: string; mintTxId: string | null }; metadataUri: string };
+  let paid: Paid | null | "RACE" | "ALREADY" = "RACE";
+  for (let attempt = 0; attempt < 6 && paid === "RACE"; attempt++) {
+    if (attempt) await new Promise((r) => setTimeout(r, 60 + Math.random() * 140));
+    paid = await prisma.$transaction(async (tx): Promise<Paid> => {
+      const last = await tx.raffleEntry.aggregate({ where: { event, status: "PAID" }, _max: { entryNo: true } });
+      const entryNo = (last._max.entryNo ?? 0) + 1;
+      /* 선착순 정원: 결제 확정 순서로 센다. 정원을 넘긴 입금은 확정하지 않고 알린다(운영자가 환불) - 응모 시작 때 이미 막으므로 드물다 */
+      if (entryNo > config.maxEntries) throw new Error("SOLD_OUT");
+      const ticketCode = ticketCodeFor(event, entry.id, entryNo);
+      // NFT 메타데이터·카드 이미지는 티켓 코드별로 만든다(번호·QR 이 그림에 들어간다)
+      const metadataUri = `${origin}/api/raffle/meta/${ticketCode}`;
+      // 래플 NFT - 계정당 1장. 발행·오퍼 체인은 아웃박스(applyOutcome, refType GenesisPass)가 이어 간다.
+      const pass = await tx.genesisPass.upsert({
+        where: { wallet_kind: { wallet, kind } },
+        create: { wallet, kind, qty: 1, taxonValue: raffleTaxon(mode), metadataUri, state: "MINT_QUEUED", destination: wallet },
+        update: {},
+      });
+      const r = await tx.raffleEntry.updateMany({
+        where: { id: entry.id, status: "PENDING" },
+        data: { status: "PAID", txHash: hash, paidAt: new Date(), entryNo, ticketCode, passId: pass.id },
+      });
+      if (r.count === 0) throw new Error("ALREADY_PAID");
+      const u = await tx.raffleEntry.findUniqueOrThrow({ where: { id: entry.id } });
+      return { entry: u, pass, metadataUri };
+    }).catch((e: Error & { code?: string }): Paid | null | "RACE" | "ALREADY" => {
+      if (e.message === "SOLD_OUT") return null;
+      if (e.message === "ALREADY_PAID") return "ALREADY";
+      if (e.code === "P2002") return "RACE";   // (event, entryNo) 충돌 - 다시 센다
+      throw e;
     });
-    const u = await tx.raffleEntry.update({
-      where: { id: entry.id },
-      data: { status: "PAID", txHash: hash, paidAt: new Date(), entryNo, ticketCode, passId: pass.id },
-    });
-    return { entry: u, pass, metadataUri };
-  }).catch((e: Error) => { if (e.message === "SOLD_OUT") return null; throw e; });
+  }
+  if (paid === "ALREADY") {
+    const again = await prisma.raffleEntry.findUniqueOrThrow({ where: { id: entry.id } });
+    return { ok: true as const, entry: again, already: true };
+  }
+  if (paid === "RACE") return { ok: false as const, error: "확정이 몰려 번호를 매기지 못했습니다. 잠시 후 해시로 다시 확인해 주세요.", pending: true };
   if (!paid) return { ok: false as const, error: "선착순 정원이 모두 찼습니다. 입금액은 환불해 드립니다 - admin@wellbianlabs.io 로 알려 주세요.", pending: false };
   if (paid.pass.state === "MINT_QUEUED" && !paid.pass.mintTxId) {
-    await enqueueTx(
-      "NFT_MINT",
-      { TransactionType: "NFTokenMint", Issuer: ISSUER_ADDRESS, NFTokenTaxon: raffleTaxon(mode), Flags: 8, URI: convertStringToHex(paid.metadataUri) },
-      { type: "GenesisPass", id: paid.pass.id },
-    );
-    await drainOutbox().catch(() => {});
+    /* 이 NFT 의 발행 작업이 이미 큐에 있으면 다시 넣지 않는다 */
+    const queued = await prisma.xrplTransaction.findFirst({ where: { refType: "GenesisPass", refId: paid.pass.id, purpose: "NFT_MINT" }, select: { id: true } });
+    if (!queued) {
+      await enqueueTx(
+        "NFT_MINT",
+        { TransactionType: "NFTokenMint", Issuer: ISSUER_ADDRESS, NFTokenTaxon: raffleTaxon(mode), Flags: 8, URI: convertStringToHex(paid.metadataUri) },
+        { type: "GenesisPass", id: paid.pass.id },
+      );
+      await drainOutbox().catch(() => {});
+    }
   }
   return { ok: true as const, entry: paid.entry, already: false };
 }
@@ -218,16 +243,29 @@ export async function redeemTicket(code: string, staff: string) {
   return { ok: true as const, entry: u };
 }
 
-/** 추첨 결과(ordered: 지갑 순서)로 경품을 배정한다 - 앞에서부터 경품 수만큼 끊는다. 전원이 하나는 받는다. */
+/** 추첨 결과의 지갑들이 어느 장부(실제/리허설)의 결제 확정 응모인지 - 전원이 한 장부에 있어야 한다. 둘 다 아니면 null. */
+export async function inferRaffleMode(wallets: string[]): Promise<RaffleMode | null> {
+  if (!wallets.length) return null;
+  for (const mode of ["prod", "test"] as RaffleMode[]) {
+    const n = await prisma.raffleEntry.count({ where: { event: raffleEvent(mode), status: "PAID", wallet: { in: wallets } } });
+    if (n === wallets.length) return mode;
+  }
+  return null;
+}
+
+/** 추첨 결과(ordered: 지갑 순서)로 경품을 배정한다 - 앞에서부터 경품 수만큼 끊는다. 전원이 하나는 받는다.
+ *  참가자가 경품 수 합계보다 많으면 배정하지 않고 알린다(정원·경품 수를 관리자 설정에서 다르게 바꿨을 때). */
 export async function assignPrizes(mode: RaffleMode, ordered: string[]) {
   const config = await loadRaffleConfig(mode);
   const event = raffleEvent(mode);
-  let i = 0; let assigned = 0;
+  const capacity = config.prizes.reduce((a, p) => a + p.qty, 0);
+  if (ordered.length > capacity) return { ok: false as const, error: `참가자 ${ordered.length}명이 경품 수 합계 ${capacity}보다 많습니다 - 설정(raffle_xrpseoul)의 경품 수량을 먼저 맞춰 주세요.` };
+  let i = 0; let assigned = 0; const byPrize: Record<string, number> = {};
   for (const p of config.prizes) {
     const slice = ordered.slice(i, i + p.qty); i += p.qty;
     if (!slice.length) continue;
     const r = await prisma.raffleEntry.updateMany({ where: { event, status: "PAID", wallet: { in: slice } }, data: { prize: p.name } });
-    assigned += r.count;
+    assigned += r.count; byPrize[p.name] = r.count;
   }
-  return { assigned, total: ordered.length };
+  return { ok: true as const, assigned, total: ordered.length, byPrize, mode };
 }

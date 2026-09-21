@@ -1,3 +1,113 @@
+diff -ruN a/src/app/admin/page.tsx b/src/app/admin/page.tsx
+--- a/src/app/admin/page.tsx	2026-09-21 10:52:41.136635872 +0000
++++ b/src/app/admin/page.tsx	2026-09-21 11:27:10.167791700 +0000
+@@ -7,6 +7,7 @@
+ import SystemPanel from "@/components/admin/SystemPanel";
+ import MembersPanel from "@/components/admin/MembersPanel";
+ import BlindDrawPanel from "@/components/admin/BlindDrawPanel";
++import RafflePanel from "@/components/admin/RafflePanel";
+ import PromoPanel from "@/components/admin/PromoPanel";
+ import AffiliatePanel from "@/components/admin/AffiliatePanel";
+ import dynamic from "next/dynamic";
+@@ -150,7 +151,7 @@
+   const [payoutDraft, setPayoutDraft] = useState("");
+   // 서버가 마지막으로 준 economic 원본. payoutOpenAt 만 바꿔 저장할 때 쓴다.
+   const [economicBase, setEconomicBase] = useState<Record<string, unknown>>({});
+-  const [tab, setTab] = useState<"개요" | "스테이션 현황" | "기기·코드" | "NFT" | "토큰" | "보상·클레임" | "정산" | "주문·배송" | "프로모션" | "어필리에이트" | "연동 설정" | "블라인드 추첨" | "시스템·용량" | "회원">("개요");
++  const [tab, setTab] = useState<"개요" | "스테이션 현황" | "기기·코드" | "NFT" | "토큰" | "보상·클레임" | "정산" | "주문·배송" | "프로모션" | "어필리에이트" | "연동 설정" | "블라인드 추첨" | "래플" | "시스템·용량" | "회원">("개요");
+   const [nodes, setNodes] = useState<NodesResp | null>(null);
+   const [rw, setRw] = useState<RewardsResp | null>(null);
+   const [issue, setIssue] = useState({ count: 10, expiresInDays: 365 });
+@@ -590,7 +591,7 @@
+       )}
+ 
+       <div style={{ display: "flex", gap: 4, marginBottom: 24, flexWrap: "wrap" }}>
+-        {(["개요", "스테이션 현황", "기기·코드", "NFT", "토큰", "보상·클레임", "정산", "주문·배송", "프로모션", "어필리에이트", "연동 설정", "블라인드 추첨", "시스템·용량", "회원"] as const).map((name) => (
++        {(["개요", "스테이션 현황", "기기·코드", "NFT", "토큰", "보상·클레임", "정산", "주문·배송", "프로모션", "어필리에이트", "연동 설정", "블라인드 추첨", "래플", "시스템·용량", "회원"] as const).map((name) => (
+           <button
+             key={name}
+             onClick={() => {
+@@ -1202,6 +1203,7 @@
+       {tab === "프로모션" && <PromoPanel secret={secret} />}
+       {tab === "어필리에이트" && <AffiliatePanel secret={secret} />}
+       {tab === "블라인드 추첨" && <BlindDrawPanel secret={secret} />}
++      {tab === "래플" && <RafflePanel secret={secret} />}
+       {tab === "시스템·용량" && <SystemPanel secret={secret} />}
+       {tab === "회원" && <MembersPanel secret={secret} />}
+ 
+diff -ruN a/src/app/api/admin/raffle/route.ts b/src/app/api/admin/raffle/route.ts
+--- a/src/app/api/admin/raffle/route.ts	2026-09-21 10:52:41.137973373 +0000
++++ b/src/app/api/admin/raffle/route.ts	2026-09-21 11:27:33.947537457 +0000
+@@ -2,7 +2,7 @@
+ import { z } from "zod";
+ import { prisma } from "@/lib/db";
+ import { checkAdminSecret } from "@/lib/auth/session";
+-import { findTicket, redeemTicket, assignPrizes, raffleEvent, modeOfEvent } from "@/lib/raffle";
++import { findTicket, redeemTicket, assignPrizes, raffleEvent, inferRaffleMode } from "@/lib/raffle";
+ 
+ export const dynamic = "force-dynamic";
+ 
+@@ -11,7 +11,7 @@
+  *  GET  ?code=WBR-0001-…     티켓 조회(수령 처리 없음) - 스캐너가 먼저 보여 주는 용도
+  *  GET  ?mode=prod|test      응모 목록·집계
+  *  POST {code, staff?}        현장 수령 처리 - 한 번만. 두 번째부터는 언제 이미 썼는지 돌려준다
+- *  PUT  {drawId}              공개된 블라인드 추첨 결과(지갑 순서)로 경품 배정 - 전원 하나씩
++ *  PUT  {drawId, mode?}       공개된 블라인드 추첨 결과(지갑 순서)로 경품 배정 - 전원 하나씩. mode 없으면 전원이 속한 장부를 찾는다
+  */
+ export async function GET(req: NextRequest) {
+   if (!checkAdminSecret(req)) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+@@ -44,17 +44,24 @@
+ 
+ export async function PUT(req: NextRequest) {
+   if (!checkAdminSecret(req)) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+-  const b = z.object({ drawId: z.string() }).safeParse(await req.json().catch(() => null));
++  const b = z.object({ drawId: z.string(), mode: z.enum(["prod", "test"]).optional() }).safeParse(await req.json().catch(() => null));
+   if (!b.success) return NextResponse.json({ error: "잘못된 요청" }, { status: 400 });
+   const d = await prisma.blindDraw.findUnique({ where: { id: b.data.drawId } });
+   if (!d || d.status !== "REVEALED") return NextResponse.json({ error: "공개(리빌)된 추첨이 아닙니다." }, { status: 409 });
+-  const ordered = ((d.result as { ordered?: { id: string }[] } | null)?.ordered ?? []).map((x) => x.id);
++  /* computeDraw 의 result.ordered 는 지갑 문자열 배열이다(예전 코드는 {id} 객체로 읽어 전부 undefined 가 됐다 - 2026-09-21 점검에서 수정).
++     혹시 다른 형태로 저장된 결과도 받을 수 있게 둘 다 읽는다. */
++  const raw = ((d.result as { ordered?: unknown[] } | null)?.ordered ?? []);
++  const ordered = raw.map((x) => (typeof x === "string" ? x : (x as { id?: string })?.id ?? "")).filter(Boolean);
+   if (!ordered.length) return NextResponse.json({ error: "추첨 결과에 참가자 순서가 없습니다." }, { status: 409 });
+-  // 참가자가 어느 장부(실제/리허설)인지는 첫 지갑의 응모 행으로 판단한다
+-  const first = await prisma.raffleEntry.findFirst({ where: { wallet: ordered[0], status: "PAID" }, orderBy: { paidAt: "desc" } });
+-  if (!first) return NextResponse.json({ error: "추첨 참가자가 래플 응모자가 아닙니다." }, { status: 409 });
+-  const r = await assignPrizes(modeOfEvent(first.event), ordered);
+-  return NextResponse.json({ ok: true, ...r });
++  /* 어느 장부(실제/리허설)인지 - 요청이 지정하면 그것, 아니면 전원이 결제 확정된 장부를 찾는다(첫 지갑 하나로 판단하지 않는다:
++     리허설과 실제 양쪽에 응모한 팀 지갑이 첫 자리에 오면 엉뚱한 장부로 갈 수 있다) */
++  const mode = b.data.mode ?? (await inferRaffleMode(ordered));
++  if (!mode) return NextResponse.json({ error: "추첨 참가자 전원이 한 장부(실제 또는 리허설)의 결제 확정 응모자가 아닙니다." }, { status: 409 });
++  const inMode = await prisma.raffleEntry.count({ where: { event: raffleEvent(mode), status: "PAID", wallet: { in: ordered } } });
++  if (inMode !== ordered.length) return NextResponse.json({ error: `참가자 ${ordered.length}명 중 ${inMode}명만 ${mode} 장부의 결제 확정 응모자입니다.` }, { status: 409 });
++  const r = await assignPrizes(mode, ordered);
++  if (!r.ok) return NextResponse.json({ error: r.error }, { status: 409 });
++  return NextResponse.json({ ok: true, assigned: r.assigned, total: r.total, byPrize: r.byPrize, mode: r.mode });
+ }
+ 
+ function view(e: { id: string; event: string; wallet: string; status: string; entryNo: number | null; ticketCode: string | null; prize: string | null; redeemedAt: Date | null; redeemedBy: string | null; paidAt: Date | null; txHash: string | null; amountXrp: unknown; createdAt: Date }) {
+diff -ruN a/src/app/api/raffle/verify/route.ts b/src/app/api/raffle/verify/route.ts
+--- a/src/app/api/raffle/verify/route.ts	2026-09-21 10:52:41.142017749 +0000
++++ b/src/app/api/raffle/verify/route.ts	2026-09-21 11:26:23.511250984 +0000
+@@ -17,7 +17,13 @@
+   const wallet = await getVerifiedWallet();
+   if (!wallet) return NextResponse.json({ error: "로그인이 필요합니다." }, { status: 401 });
+   const origin = new URL(req.url).origin;
+-  const r = await verifyRaffleEntry(wallet, body.data.txHash, origin, mode);
+-  if (!r.ok) return NextResponse.json({ error: r.error, pending: r.pending ?? false }, { status: r.pending ? 202 : 400 });
+-  return NextResponse.json({ ok: true, entryNo: r.entry.entryNo, already: r.already });
++  try {
++    const r = await verifyRaffleEntry(wallet, body.data.txHash, origin, mode);
++    if (!r.ok) return NextResponse.json({ error: r.error, pending: r.pending ?? false }, { status: r.pending ? 202 : 400 });
++    return NextResponse.json({ ok: true, entryNo: r.entry.entryNo, already: r.already });
++  } catch (e) {
++    /* 원장 조회·DB 오류 - 입금은 살아 있으므로 실패로 굳히지 않고 같은 해시로 다시 확인하게 안내한다(202) */
++    console.error("raffle verify", (e as Error).message);
++    return NextResponse.json({ error: "결제 확인 중 오류가 났습니다. 잠시 후 같은 해시로 다시 확인해 주세요.", pending: true }, { status: 202 });
++  }
+ }
 diff -ruN a/src/app/event/xrpl-seoul/test/page.tsx b/src/app/event/xrpl-seoul/test/page.tsx
 --- a/src/app/event/xrpl-seoul/test/page.tsx	2026-09-21 10:52:41.143192147 +0000
 +++ b/src/app/event/xrpl-seoul/test/page.tsx	2026-09-21 11:02:30.570150378 +0000
@@ -10,6 +120,147 @@ diff -ruN a/src/app/event/xrpl-seoul/test/page.tsx b/src/app/event/xrpl-seoul/te
        </div>
        <Suspense>
          <RafflePage mode="test" />
+diff -ruN a/src/components/admin/BlindDrawPanel.tsx b/src/components/admin/BlindDrawPanel.tsx
+--- a/src/components/admin/BlindDrawPanel.tsx	2026-09-21 10:52:41.145361902 +0000
++++ b/src/components/admin/BlindDrawPanel.tsx	2026-09-21 11:26:23.511387410 +0000
+@@ -54,6 +54,19 @@
+       await load();
+     } finally { setBusy(false); }
+   };
++  /* XRPL SEOUL 래플 (2026-09-21): 공개된 추첨의 지갑 순서로 경품을 배정한다 - 앞에서부터 초대권 → 측정기 → 우산 → 에코백.
++     서버가 참가자 전원이 속한 장부(실제/리허설)를 찾아 그쪽에 적는다. 다시 눌러도 같은 순서로 같은 결과(멱등). */
++  const assignRaffle = async (id: string) => {
++    if (!confirm("이 추첨의 공개된 순서로 래플 경품을 배정합니다(전원 하나씩). 진행할까요?")) return;
++    setBusy(true); setMsg("");
++    try {
++      const r = await fetch("/api/admin/raffle", { method: "PUT", headers: hdr, body: JSON.stringify({ drawId: id }) });
++      const d = await r.json();
++      if (!r.ok) { setMsg(d.error || "배정 실패"); toast.err(d.error || "배정 실패"); return; }
++      const by = Object.entries((d.byPrize ?? {}) as Record<string, number>).map(([k, v]) => `${k} ${v}`).join(" · ");
++      setMsg(`경품 배정 완료 (${d.mode}) · ${d.assigned}/${d.total}명 · ${by}`); toast.ok(`경품 배정 완료 · ${d.assigned}/${d.total}명`);
++    } finally { setBusy(false); }
++  };
+   const reveal = async (id: string) => {
+     if (!confirm("공개(리빌)하면 되돌릴 수 없습니다. 진행할까요?")) return;
+     setBusy(true); setMsg("");
+@@ -150,7 +163,10 @@
+                     <a href={`/api/draw/${d.id}`} target="_blank" rel="noreferrer" style={{ marginRight: 8 }}>공개 링크</a>
+                     {d.status === "COMMITTED"
+                       ? <button className={`btn-ghost${busy ? " is-busy" : ""}`} disabled={busy} onClick={() => reveal(d.id)} style={{ padding: "4px 10px", fontSize: 12 }}>공개</button>
+-                      : <button className="btn-ghost" onClick={() => setOpen(open === d.id ? null : d.id)} style={{ padding: "4px 10px", fontSize: 12 }}>{open === d.id ? "접기" : "결과"}</button>}
++                      : <>
++                          <button className="btn-ghost" onClick={() => setOpen(open === d.id ? null : d.id)} style={{ padding: "4px 10px", fontSize: 12, marginRight: 6 }}>{open === d.id ? "접기" : "결과"}</button>
++                          <button className={`btn-ghost${busy ? " is-busy" : ""}`} disabled={busy} onClick={() => assignRaffle(d.id)} title="XRPL SEOUL 래플 - 공개된 순서대로 경품을 배정한다(전원 하나씩)" style={{ padding: "4px 10px", fontSize: 12 }}>래플 경품 배정</button>
++                        </>}
+                   </td>
+                 </tr>
+               ))}
+diff -ruN a/src/components/admin/RafflePanel.tsx b/src/components/admin/RafflePanel.tsx
+--- a/src/components/admin/RafflePanel.tsx	1970-01-01 00:00:00.000000000 +0000
++++ b/src/components/admin/RafflePanel.tsx	2026-09-21 11:26:50.433476402 +0000
+@@ -0,0 +1,102 @@
++"use client";
++/* 관리자 콘솔 "래플" 탭 (2026-09-21) - XRPL SEOUL 2026 래플 응모 현황. 결제 확정 수(=참여 현황 카운트)·경품 배정·현장 수령을
++   한 표로 본다. 데이터는 /api/admin/raffle?mode= (읽기 전용). 경품 배정은 블라인드 추첨 탭의 「래플 경품 배정」, 수령 처리는
++   /admin/raffle-check 스캐너에서 한다. */
++import { useCallback, useEffect, useState } from "react";
++import { toast } from "@/components/Toast";
++import { Pager, SortTh, usePager, useSort, type SortSpec } from "@/components/admin/sortable";
++
++interface Row {
++  id: string; event: string; wallet: string; status: string; entryNo: number | null; ticketCode: string | null; prize: string | null;
++  redeemedAt: string | null; redeemedBy: string | null; paidAt: string | null; txHash: string | null; amountXrp: number; createdAt: string;
++}
++interface Summary { total: number; paid: number; redeemed: number; assigned: number; byPrize: [string, number][] }
++
++const SORT: SortSpec<Row> = {
++  no: (r) => r.entryNo, wallet: (r) => r.wallet, status: (r) => r.status, paid: (r) => (r.paidAt ? new Date(r.paidAt).getTime() : null),
++  prize: (r) => r.prize, redeemed: (r) => (r.redeemedAt ? new Date(r.redeemedAt).getTime() : null), created: (r) => new Date(r.createdAt).getTime(),
++};
++
++export default function RafflePanel({ secret }: { secret: string }) {
++  const [mode, setMode] = useState<"prod" | "test">("prod");
++  const [status, setStatus] = useState<"" | "PAID" | "PENDING">("");
++  const [q, setQ] = useState("");
++  const [rows, setRows] = useState<Row[]>([]);
++  const [summary, setSummary] = useState<Summary | null>(null);
++  const [msg, setMsg] = useState("");
++  const filtered = rows.filter((r) => (!status || r.status === status) && (!q || r.wallet.includes(q) || (r.ticketCode ?? "").includes(q.toUpperCase()) || (r.txHash ?? "").includes(q.toUpperCase())));
++  const sort = useSort(filtered, SORT, { key: "no", dir: "asc" });
++  const pager = usePager(sort.sorted);
++
++  const load = useCallback(async () => {
++    setMsg("");
++    try {
++      const r = await fetch(`/api/admin/raffle?mode=${mode}`, { headers: { "x-admin-secret": secret }, cache: "no-store" });
++      const d = await r.json();
++      if (!r.ok) { setMsg(d.error || "조회 실패"); return; }
++      setRows(d.entries); setSummary(d.summary);
++    } catch (e) { setMsg((e as Error).message); toast.err((e as Error).message); }
++  }, [mode, secret]);
++  useEffect(() => { load(); }, [load]);
++
++  const short = (s: string | null, n = 10) => (s ? `${s.slice(0, n)}…` : "-");
++  const when = (iso: string | null) => (iso ? new Date(iso).toLocaleString("ko-KR", { timeZone: "Asia/Seoul" }) : "-");
++
++  return (
++    <div className="stats-grid">
++      <div className="stat-cell span-12" style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
++        <select className="field-select" value={mode} onChange={(e) => setMode(e.target.value as "prod" | "test")} style={{ width: 200 }}>
++          <option value="prod">실제 (xrpseoul-2026)</option>
++          <option value="test">리허설 (xrpseoul-2026-test)</option>
++        </select>
++        <select className="field-select" value={status} onChange={(e) => setStatus(e.target.value as "" | "PAID" | "PENDING")} style={{ width: 160 }}>
++          <option value="">전체 상태</option>
++          <option value="PAID">결제 확정</option>
++          <option value="PENDING">결제 대기</option>
++        </select>
++        <input className="field-input" placeholder="지갑 · 티켓 코드 · 해시" value={q} onChange={(e) => setQ(e.target.value)} style={{ width: 260 }} />
++        <button className="btn-ghost" onClick={load} style={{ padding: "6px 14px" }}>새로고침</button>
++        {msg && <span className="warn" style={{ fontSize: 13 }}>{msg}</span>}
++      </div>
++
++      {summary && (
++        <>
++          <div className="stat-cell span-3"><div className="stat-cell-k"><span>결제 확정 (참여 현황)</span></div><div className="stat-cell-v">{summary.paid.toLocaleString()}</div><div className="stat-cell-delta">응모 행 {summary.total.toLocaleString()} · 대기 {(summary.total - summary.paid).toLocaleString()}</div></div>
++          <div className="stat-cell span-3"><div className="stat-cell-k"><span>경품 배정</span></div><div className="stat-cell-v">{summary.assigned.toLocaleString()}</div><div className="stat-cell-delta">{summary.assigned ? "추첨 완료" : "추첨 전 - 블라인드 추첨 탭 › 래플 경품 배정"}</div></div>
++          <div className="stat-cell span-3"><div className="stat-cell-k"><span>현장 수령</span></div><div className="stat-cell-v">{summary.redeemed.toLocaleString()}</div><div className="stat-cell-delta">/admin/raffle-check 스캐너</div></div>
++          <div className="stat-cell span-3"><div className="stat-cell-k"><span>경품별 배정</span></div><div style={{ fontSize: 13, lineHeight: 1.6 }}>{summary.byPrize.length ? summary.byPrize.map(([k, v]) => <div key={k}>{k} <b>{v}</b></div>) : <span className="dim">-</span>}</div></div>
++        </>
++      )}
++
++      <div className="stat-cell span-12">
++        <div className="stat-cell-k"><span>응모 목록</span><span>{filtered.length.toLocaleString()}건</span></div>
++        <div className="feed-table-scroll">
++          <table className="feed-table compact">
++            <thead><tr>
++              {([["no", "번호"], ["wallet", "지갑"], ["status", "상태"], ["paid", "결제 확정"], ["prize", "경품"], ["redeemed", "수령"], ["created", "응모 시작"]] as [string, string][]).map(([k, label]) => (
++                <SortTh key={k} k={k} sortKey={sort.sortKey} dir={sort.dir} onToggle={sort.toggle}>{label}</SortTh>
++              ))}
++              <th>티켓 · 해시</th>
++            </tr></thead>
++            <tbody>
++              {pager.slice.map((r) => (
++                <tr key={r.id}>
++                  <td className="num mono">{r.entryNo != null ? `#${String(r.entryNo).padStart(4, "0")}` : "-"}</td>
++                  <td className="mono" title={r.wallet} style={{ fontSize: 12 }}>{short(r.wallet, 12)}</td>
++                  <td className={r.status === "PAID" ? "ok" : "warn"}>{r.status === "PAID" ? "결제 확정" : r.status === "PENDING" ? "대기" : r.status}</td>
++                  <td className="dim">{when(r.paidAt)}</td>
++                  <td>{r.prize ?? <span className="dim">-</span>}</td>
++                  <td className="dim">{r.redeemedAt ? `${when(r.redeemedAt)} · ${r.redeemedBy ?? ""}` : "-"}</td>
++                  <td className="dim">{when(r.createdAt)}</td>
++                  <td className="mono" style={{ fontSize: 11 }}>{r.ticketCode ? <a href={`/event/xrpl-seoul/ticket/${r.ticketCode}`} target="_blank" rel="noreferrer">{r.ticketCode}</a> : "-"}{r.txHash ? <span className="dim"> · {short(r.txHash, 8)}</span> : null}</td>
++                </tr>
++              ))}
++              {!filtered.length && <tr><td colSpan={8} className="dim">응모가 없습니다</td></tr>}
++            </tbody>
++          </table>
++        </div>
++        <Pager p={pager} />
++      </div>
++    </div>
++  );
++}
 diff -ruN a/src/components/raffle/RaffleCheckoutModal.tsx b/src/components/raffle/RaffleCheckoutModal.tsx
 --- a/src/components/raffle/RaffleCheckoutModal.tsx	1970-01-01 00:00:00.000000000 +0000
 +++ b/src/components/raffle/RaffleCheckoutModal.tsx	2026-09-21 11:05:23.168035840 +0000
@@ -1212,7 +1463,7 @@ diff -ruN a/src/components/raffle/types.ts b/src/components/raffle/types.ts
 +export const raffleQs = (mode: RaffleMode) => (mode === "test" ? "?mode=test" : "");
 diff -ruN a/src/lib/raffle.ts b/src/lib/raffle.ts
 --- a/src/lib/raffle.ts	2026-09-21 10:52:41.147910100 +0000
-+++ b/src/lib/raffle.ts	2026-09-21 11:02:30.569619461 +0000
++++ b/src/lib/raffle.ts	2026-09-21 11:27:33.947281708 +0000
 @@ -37,19 +37,20 @@
    prizes: RafflePrize[];
  }
@@ -1241,3 +1492,122 @@ diff -ruN a/src/lib/raffle.ts b/src/lib/raffle.ts
    ],
  };
  const DEFAULT_TEST: RaffleConfig = { ...DEFAULT, open: "2026-09-16T00:00:00Z" };   // 리허설은 지금 열려 있고 나머지는 실제와 같다
+@@ -144,34 +145,59 @@
+ 
+   const kind = raffleKind(mode);
+   const config = await loadRaffleConfig(mode);
+-  const paid = await prisma.$transaction(async (tx) => {
+-    const last = await tx.raffleEntry.aggregate({ where: { event, status: "PAID" }, _max: { entryNo: true } });
+-    const entryNo = (last._max.entryNo ?? 0) + 1;
+-    /* 선착순 정원: 결제 확정 순서로 센다. 정원을 넘긴 입금은 확정하지 않고 알린다(운영자가 환불) - 응모 시작 때 이미 막으므로 드물다 */
+-    if (entryNo > config.maxEntries) throw new Error("SOLD_OUT");
+-    const ticketCode = ticketCodeFor(event, entry.id, entryNo);
+-    // NFT 메타데이터·카드 이미지는 티켓 코드별로 만든다(번호·QR 이 그림에 들어간다)
+-    const metadataUri = `${origin}/api/raffle/meta/${ticketCode}`;
+-    // 래플 NFT - 계정당 1장. 발행·오퍼 체인은 아웃박스(applyOutcome, refType GenesisPass)가 이어 간다.
+-    const pass = await tx.genesisPass.upsert({
+-      where: { wallet_kind: { wallet, kind } },
+-      create: { wallet, kind, qty: 1, taxonValue: raffleTaxon(mode), metadataUri, state: "MINT_QUEUED", destination: wallet },
+-      update: {},
++  /* 래플 번호 = 결제 확정 순번. 같은 순간 여러 명이 확정되면 둘 다 같은 max+1 을 계산해 (event, entryNo) 유일 제약에
++     걸린다(2026-09-21 점검 - 18:00 오픈 러시에서 실제로 날 수 있는 경우). 그때는 번호를 다시 세어 재시도한다(최대 6회).
++     같은 응모의 중복 호출(확인 버튼 두 번)은 status=PENDING 조건으로 한 번만 통과시킨다 - 예전에는 두 번째 호출이
++     번호를 덮어써 구멍을 내고 NFT 발행을 한 번 더 큐에 넣을 수 있었다. */
++  type Paid = { entry: typeof entry; pass: { id: string; state: string; mintTxId: string | null }; metadataUri: string };
++  let paid: Paid | null | "RACE" | "ALREADY" = "RACE";
++  for (let attempt = 0; attempt < 6 && paid === "RACE"; attempt++) {
++    if (attempt) await new Promise((r) => setTimeout(r, 60 + Math.random() * 140));
++    paid = await prisma.$transaction(async (tx): Promise<Paid> => {
++      const last = await tx.raffleEntry.aggregate({ where: { event, status: "PAID" }, _max: { entryNo: true } });
++      const entryNo = (last._max.entryNo ?? 0) + 1;
++      /* 선착순 정원: 결제 확정 순서로 센다. 정원을 넘긴 입금은 확정하지 않고 알린다(운영자가 환불) - 응모 시작 때 이미 막으므로 드물다 */
++      if (entryNo > config.maxEntries) throw new Error("SOLD_OUT");
++      const ticketCode = ticketCodeFor(event, entry.id, entryNo);
++      // NFT 메타데이터·카드 이미지는 티켓 코드별로 만든다(번호·QR 이 그림에 들어간다)
++      const metadataUri = `${origin}/api/raffle/meta/${ticketCode}`;
++      // 래플 NFT - 계정당 1장. 발행·오퍼 체인은 아웃박스(applyOutcome, refType GenesisPass)가 이어 간다.
++      const pass = await tx.genesisPass.upsert({
++        where: { wallet_kind: { wallet, kind } },
++        create: { wallet, kind, qty: 1, taxonValue: raffleTaxon(mode), metadataUri, state: "MINT_QUEUED", destination: wallet },
++        update: {},
++      });
++      const r = await tx.raffleEntry.updateMany({
++        where: { id: entry.id, status: "PENDING" },
++        data: { status: "PAID", txHash: hash, paidAt: new Date(), entryNo, ticketCode, passId: pass.id },
++      });
++      if (r.count === 0) throw new Error("ALREADY_PAID");
++      const u = await tx.raffleEntry.findUniqueOrThrow({ where: { id: entry.id } });
++      return { entry: u, pass, metadataUri };
++    }).catch((e: Error & { code?: string }): Paid | null | "RACE" | "ALREADY" => {
++      if (e.message === "SOLD_OUT") return null;
++      if (e.message === "ALREADY_PAID") return "ALREADY";
++      if (e.code === "P2002") return "RACE";   // (event, entryNo) 충돌 - 다시 센다
++      throw e;
+     });
+-    const u = await tx.raffleEntry.update({
+-      where: { id: entry.id },
+-      data: { status: "PAID", txHash: hash, paidAt: new Date(), entryNo, ticketCode, passId: pass.id },
+-    });
+-    return { entry: u, pass, metadataUri };
+-  }).catch((e: Error) => { if (e.message === "SOLD_OUT") return null; throw e; });
++  }
++  if (paid === "ALREADY") {
++    const again = await prisma.raffleEntry.findUniqueOrThrow({ where: { id: entry.id } });
++    return { ok: true as const, entry: again, already: true };
++  }
++  if (paid === "RACE") return { ok: false as const, error: "확정이 몰려 번호를 매기지 못했습니다. 잠시 후 해시로 다시 확인해 주세요.", pending: true };
+   if (!paid) return { ok: false as const, error: "선착순 정원이 모두 찼습니다. 입금액은 환불해 드립니다 - admin@wellbianlabs.io 로 알려 주세요.", pending: false };
+   if (paid.pass.state === "MINT_QUEUED" && !paid.pass.mintTxId) {
+-    await enqueueTx(
+-      "NFT_MINT",
+-      { TransactionType: "NFTokenMint", Issuer: ISSUER_ADDRESS, NFTokenTaxon: raffleTaxon(mode), Flags: 8, URI: convertStringToHex(paid.metadataUri) },
+-      { type: "GenesisPass", id: paid.pass.id },
+-    );
+-    await drainOutbox().catch(() => {});
++    /* 이 NFT 의 발행 작업이 이미 큐에 있으면 다시 넣지 않는다 */
++    const queued = await prisma.xrplTransaction.findFirst({ where: { refType: "GenesisPass", refId: paid.pass.id, purpose: "NFT_MINT" }, select: { id: true } });
++    if (!queued) {
++      await enqueueTx(
++        "NFT_MINT",
++        { TransactionType: "NFTokenMint", Issuer: ISSUER_ADDRESS, NFTokenTaxon: raffleTaxon(mode), Flags: 8, URI: convertStringToHex(paid.metadataUri) },
++        { type: "GenesisPass", id: paid.pass.id },
++      );
++      await drainOutbox().catch(() => {});
++    }
+   }
+   return { ok: true as const, entry: paid.entry, already: false };
+ }
+@@ -217,16 +243,29 @@
+   return { ok: true as const, entry: u };
+ }
+ 
+-/** 추첨 결과(ordered: 지갑 순서)로 경품을 배정한다 - 앞에서부터 경품 수만큼 끊는다. 전원이 하나는 받는다. */
++/** 추첨 결과의 지갑들이 어느 장부(실제/리허설)의 결제 확정 응모인지 - 전원이 한 장부에 있어야 한다. 둘 다 아니면 null. */
++export async function inferRaffleMode(wallets: string[]): Promise<RaffleMode | null> {
++  if (!wallets.length) return null;
++  for (const mode of ["prod", "test"] as RaffleMode[]) {
++    const n = await prisma.raffleEntry.count({ where: { event: raffleEvent(mode), status: "PAID", wallet: { in: wallets } } });
++    if (n === wallets.length) return mode;
++  }
++  return null;
++}
++
++/** 추첨 결과(ordered: 지갑 순서)로 경품을 배정한다 - 앞에서부터 경품 수만큼 끊는다. 전원이 하나는 받는다.
++ *  참가자가 경품 수 합계보다 많으면 배정하지 않고 알린다(정원·경품 수를 관리자 설정에서 다르게 바꿨을 때). */
+ export async function assignPrizes(mode: RaffleMode, ordered: string[]) {
+   const config = await loadRaffleConfig(mode);
+   const event = raffleEvent(mode);
+-  let i = 0; let assigned = 0;
++  const capacity = config.prizes.reduce((a, p) => a + p.qty, 0);
++  if (ordered.length > capacity) return { ok: false as const, error: `참가자 ${ordered.length}명이 경품 수 합계 ${capacity}보다 많습니다 - 설정(raffle_xrpseoul)의 경품 수량을 먼저 맞춰 주세요.` };
++  let i = 0; let assigned = 0; const byPrize: Record<string, number> = {};
+   for (const p of config.prizes) {
+     const slice = ordered.slice(i, i + p.qty); i += p.qty;
+     if (!slice.length) continue;
+     const r = await prisma.raffleEntry.updateMany({ where: { event, status: "PAID", wallet: { in: slice } }, data: { prize: p.name } });
+-    assigned += r.count;
++    assigned += r.count; byPrize[p.name] = r.count;
+   }
+-  return { assigned, total: ordered.length };
++  return { ok: true as const, assigned, total: ordered.length, byPrize, mode };
+ }
