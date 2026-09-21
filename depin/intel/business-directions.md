@@ -1033,3 +1033,52 @@ fact rather than after.
 DM 내용은 공개 사실(회사 소개 + 행사 참가)뿐이고 리플을 언급하지 않으므로 **규칙 위반은 아니다.**
 다만 **본사 쪽 진행과 겹치는지는 서우만 안다** — 알고 보내는 것과 모르고 보내는 것은 다르다.
 
+---
+
+## Jenny Kim (Binance Square · Content Partnership & Trilingual Host) — 1촌 성사 → 「알림」 DM (2026-09-21)
+
+**상태**: 9/17 1촌 요청 → **9/21 수락(새 1촌)**. 1촌 109 · 팔로워 113 — 작은 계정이라 메시지가 묻히지 않는다(9/17 판정 유지).
+헤드라인은 「Content Partnership and Trilingual Host at Binance Square | CN/EN/KR | APAC Community & Marketing | Web3 User
+Activation & Offline Events」, 경력상 **Binance Content Manager 2026-03~(7개월)** · 前 Merkle Trade Head of Growth · GaeaVentures·
+AVCO KOREA BD · UWA 마케팅. 활동: Binance Square 인터뷰 진행(「On the People Behind Binance」 · @crypto_birb 편) · KOL 파트너십
+리더의 「콘텐츠 내재화」 글 퍼감. 공통 1촌 Ken·Lauren.
+
+**판정 — 9/17 설계 그대로 실행한다: 「알리되 요청하지 않는다」.** 바뀐 것은 셋이고 전부 유리하다.
+- **9/18 3차 연사 발표로 키노트가 공식**이 됐다 — 「전에 알린다」의 알릴 거리가 하나 더 생겼다.
+- 그의 축(APAC 오프라인 이벤트)에 **KBW 주간(9/29~10/1) + 10/3** 이 정확히 걸린다 — 서울에 올 가능성이 있는 사람이다.
+- Alexander(감시·규제, 9/17 발송)와 **하는 말이 완전히 다르다** — 이 DM 에는 구조 설명(11소스·median·원장·판정) 0.
+  셋(Emily·Alexander·Jenny)이 문장을 비교해도 각자 다른 말을 받았다는 것이 보인다.
+
+### DM (1촌 인사 · 알림 — 확정)
+
+```
+Jenny — good to be connected.
+
+I look after partnerships at wellbian. KWeather has measured weather in Korea for thirty years and supplies 4,000+ enterprise clients; wellbian is the indoor air-quality network built on top of it — certified sensors people own and run in their own rooms.
+
+The reason for saying hello this week rather than next month: KWeather is a platinum sponsor of XRP SEOUL 2026 on 3 October, the keynote went on the programme last week, and the device itself will be on stage. Since you run APAC offline events, it seemed better to have it on your radar before the day than after.
+
+If you're in Seoul that week, the booth is an easy stop. Either way, glad to be connected.
+
+Logan
+```
+
+| 구절 | 하는 일 |
+|---|---|
+| `certified sensors people own and run in their own rooms` | 회사 2문장 안에서 실물을 한 번만 보인다 — Binance Square 호스트에게 「인터뷰 거리가 되는 실물」이라는 인상은 이 한 줄이면 충분하다 |
+| `The reason for saying hello this week rather than next month` | 9/17 설계의 「왜 지금인지를 밝히는 문장」. Takafumi 판(`Saying hello now rather than later for a reason`)과 **같은 장치, 다른 문장** |
+| `the keynote went on the programme last week` | 9/18 3차 연사 발표 — 새 사실이라 알림이 뉴스가 된다 |
+| `Since you run APAC offline events` | 그의 일을 읽었다는 것. **콘텐츠 파트너십은 언급하지 않는다** — 그쪽을 건드리면 유료 영업 프레임(Soledad)에 걸린다 |
+| `the booth is an easy stop` | 초대이지 요청이 아니다 — 그가 오든 안 오든 우리 쪽 부담 0 |
+| `Either way, glad to be connected` | 담백한 맺음. 「Nothing needed from you」류의 부정형 대신 **긍정형으로 닫는다** |
+
+**넣지 않은 것**: 콘텐츠 협업·인터뷰 제안(그가 먼저 묻는 쪽이 훨씬 강하다) · 토큰·상장·판매 목표·리플·체인 이름(`XRPL` 도 0 —
+거래소 상대 가드) · 구조 설명 · 「Nothing needed」 · 한국어(그의 링크드인 전체가 영어이고 9/17 설계가 영어 — 답이 한국어로 오면
+그때 바꾼다).
+
+**언어 판단**: CN/EN/KR 3개국어이고 한국 이름이지만 **공개 페르소나가 영어**다. 첫 메시지는 영어, **그가 한국어로 답하면 한국어로**.
+
+**⚠ 바이낸스 동시 대화**: Emily·Max(무응답) · Alexander(9/17 발송, 회신 여부 서우만 앎) · Jenny(이 DM). **레인이 다른 2명 상한**은
+「대화가 열린 것」 기준이라 지금 위반은 아니지만, **Alexander 와 Jenny 가 둘 다 답하면 그때 Emily·Max 는 닫는다**(재접촉 0).
+
+**발송 여부는 Claude 가 관리하지 않는다** — 서우 통보 시 갱신.
