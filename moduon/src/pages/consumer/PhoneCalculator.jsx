@@ -51,7 +51,7 @@ export default function PhoneCalculator() {
 
       {/* 사업자 전용 R/B — 개인회원·비로그인에게는 렌더되지 않는다(org.bizIdentity) */}
       <div className="mt-5">
-        <RbPanel kind="phone" deviceId={deviceId} join={join} support={q.extraSupport} />
+        <RbPanel kind="phone" deviceId={deviceId} join={join} support={q.extraSupport} planMonthly={q.plan.monthly} />
       </div>
 
       <div className="mt-7 grid items-start gap-6 lg:grid-cols-[1fr_400px]">

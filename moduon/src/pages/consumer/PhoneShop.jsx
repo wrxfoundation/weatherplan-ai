@@ -6,6 +6,8 @@
 import { useMemo, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { PHONE_DEVICES, PHONE_BRANDS, STORAGES, bestOffer, JOIN_TYPES } from '../../lib/phones'
+import { useStore } from '../../lib/store'
+import { selfMarginOf } from '../../lib/ratecard'
 import { PHONE_CARRIERS } from '../../lib/onboard'
 import { won } from '../../lib/engine'
 import { LEGAL } from '../../lib/constants'
@@ -15,6 +17,8 @@ const MARK = Object.fromEntries(PHONE_CARRIERS.map((c) => [c.key, c]))
 const FOLD_AT = 6 // 브랜드당 이 개수를 넘으면 접는다(아정당 "접기 ∧")
 
 export default function PhoneShop() {
+  const { db } = useStore()
+  const margin = selfMarginOf(db) // 셀프개통 고정 마진(어드민 정책)
   const [sp, setSp] = useSearchParams()
   const cur = sp.get('cur') ?? ''
   const [picked, setPicked] = useState([]) // 선택 기종 id — 비어 있으면 전체
@@ -33,7 +37,7 @@ export default function PhoneShop() {
   const list = useMemo(() => PHONE_DEVICES
     .filter((d) => picked.length === 0 || picked.includes(d.id))
     .filter((d) => !storage || d.storages.some((s) => s.key === storage))
-    .map((d) => ({ d, offer: bestOffer({ deviceId: d.id, cur: cur === 'mvno' ? '' : cur, storage: storage || null }) })), [picked, storage, cur])
+    .map((d) => ({ d, offer: bestOffer({ deviceId: d.id, cur: cur === 'mvno' ? '' : cur, storage: storage || null, margin }) })), [picked, storage, cur, margin])
 
   return (
     <main className="mx-auto max-w-6xl px-5 sm:px-10">

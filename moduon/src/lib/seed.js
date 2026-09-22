@@ -9,7 +9,7 @@ const dayAfter = (d) => now() + d * 86400000
 const thisMonth = (day, hour = 11) => { const d = new Date(); d.setDate(Math.min(day, d.getDate())); d.setHours(hour, 0, 0, 0); return d.getTime() }
 import { BENEFIT_TOTAL, REVIEWS } from './constants'
 
-export const SEED_VERSION = 16 // 16: 히어로 장면 4장 재생성(2026-09-22) — 장면형 복귀 + 빌드 가드로 보호
+export const SEED_VERSION = 17 // 17: KT 정책 단가표(K1) 연결 + 셀프개통 고정 마진
 
 export function buildSeed() {
   const tenants = [
@@ -194,6 +194,7 @@ export function buildSeed() {
       monthlyFee: 300000,      // 월 이용료 (30개=월 900만)
       feeRate: 0.1,            // 운영 수수료율(몰 매출 기준)
       opexLabel: '영업비',      // 셀러 판매 건당 상위 계층에 붙는 +@ 의 정산서 표기 명칭
+      selfMargin: 100000,      // 셀프개통 회사 고정 마진(원) — 정책 단가표 리베이트에서 이만큼만 남기고 전부 고객 지원금으로
       version: 4,
       appliedAt: dayAgo(7),
       history: [

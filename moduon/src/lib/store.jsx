@@ -375,6 +375,17 @@ function reducer(db, action) {
         auditLog: log({ actor: '본사 관리자', action: '셀러 소속 변경', target: t?.name ?? id, detail: agencyId ? `${(db.agencies ?? []).find((a) => a.id === agencyId)?.code ?? ''}${sellerCode ?? ''}` : '본사 직할' }),
       }
     }
+    // 셀프개통 고정 마진 — 온라인구매 가격과 사업자 R/B 가 같은 값을 읽는다(화면마다 다르면 안 된다)
+    case 'POLICY_SELF_MARGIN': {
+      const margin = Math.max(0, Math.round(Number(action.margin) || 0))
+      if (margin === (db.policies.selfMargin ?? 100000)) return db
+      return {
+        ...db,
+        policies: { ...db.policies, selfMargin: margin },
+        auditLog: log({ actor: '본사 관리자', action: '셀프개통 마진 변경', target: '고정 마진', detail: `${(db.policies.selfMargin ?? 100000).toLocaleString()}원 → ${margin.toLocaleString()}원` }),
+      }
+    }
+
     // +@ 표기 명칭 — 정산서·CSV·드릴다운이 전부 policies.opexLabel 하나를 읽는다
     case 'POLICY_OPEX': {
       const label = String(action.label ?? '').trim() || '영업비'

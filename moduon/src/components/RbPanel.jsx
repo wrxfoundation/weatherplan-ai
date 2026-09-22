@@ -7,12 +7,12 @@ import { bizIdentity } from '../lib/org'
 import { rbFor } from '../lib/rb'
 import { won } from '../lib/engine'
 
-export default function RbPanel({ kind = 'phone', deviceId, itemId, mvno = false, join = 'mnp', support = 0, note }) {
+export default function RbPanel({ kind = 'phone', deviceId, itemId, mvno = false, join = 'mnp', support = 0, planMonthly = 0, note }) {
   const { db } = useStore()
   const viewer = bizIdentity(db, getSession())
   if (!viewer) return null // 개인회원·비로그인 — R/B 자체를 노출하지 않는다
 
-  const rb = rbFor({ kind, deviceId, itemId, mvno, join, support, viewer })
+  const rb = rbFor({ kind, deviceId, itemId, mvno, join, support, planMonthly, viewer })
 
   return (
     <section data-t="rb-panel" data-tier={viewer.tier} className="animate-rise rounded-card border border-bindigo/25 bg-bindigo/[0.04] p-4 sm:p-5">
@@ -39,8 +39,10 @@ export default function RbPanel({ kind = 'phone', deviceId, itemId, mvno = false
       </dl>
 
       <p className="mt-2.5 text-[11px] leading-[1.55] text-bfaint">
-        {rb.item.name} 기준{rb.joinLabel ? ` · ${rb.joinLabel}` : ''}
-        {rb.adjusted ? ' (번호이동 단가 대비 조정 적용)' : ''} · 정책 단가표 기준값이며 최종 지급은 개통 확정 후 정산서로 확정됩니다.
+        {rb.card
+          ? `${rb.card.cardName} (${rb.card.effectiveFrom}~) · ${rb.card.group.label} · ${rb.card.tier?.label ?? '구간 없음'} · ${rb.joinLabel}`
+          : `${rb.item.name} 기준${rb.joinLabel ? ` · ${rb.joinLabel}` : ''}${rb.adjusted ? ' (번호이동 단가 대비 조정 적용)' : ''}`}
+        {' · '}최종 지급은 개통 확정 후 정산서로 확정됩니다.
         {note ? ` ${note}` : ''}
       </p>
     </section>

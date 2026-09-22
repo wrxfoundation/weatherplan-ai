@@ -5,6 +5,8 @@ import { won, fmtDate, SAUP_TIERS } from '../../lib/engine'
 import { Card, Btn, Modal, Field, binputCls, useToast } from '../../components/ui'
 import { AiInsight } from '../../components/AiPanel'
 import { policyPanel } from '../../lib/ai'
+import { selfMarginOf, RATE_CARD, rebateDetail } from '../../lib/ratecard'
+import { calcPhoneQuote } from '../../lib/phones'
 
 export default function AdminPolicies() {
   const { db, dispatch } = useStore()
@@ -15,6 +17,8 @@ export default function AdminPolicies() {
   const [monthlyFee, setMonthlyFee] = useState(p.monthlyFee)
   const [feeRate, setFeeRate] = useState(Math.round(p.feeRate * 100))
   const [note, setNote] = useState('')
+  const margin = selfMarginOf(db)
+  const [marginIn, setMarginIn] = useState(margin)
 
   const apply = () => {
     dispatch({ type: 'UPDATE_POLICIES', payload: { joinFee: +joinFee, monthlyFee: +monthlyFee, feeRate: +feeRate / 100, note: note.trim() || '정책 조정' } })
@@ -40,6 +44,60 @@ export default function AdminPolicies() {
           </Card>
         ))}
       </div>
+
+      {/* 셀프개통 고정 마진 — 정책 단가표 리베이트에서 회사가 남길 금액.
+          온라인구매 가격과 사업자 R/B 가 같은 값을 읽으므로 여기 하나만 바꾸면 전 화면이 따라온다. */}
+      <Card track="b" className="mt-4 p-5" data-t="self-margin">
+        <div className="flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <h2 className="text-[15.5px] font-extrabold text-bink">셀프개통 고정 마진</h2>
+            <p className="mt-1 text-[12.5px] text-bmuted">
+              {RATE_CARD.name} ({RATE_CARD.effectiveFrom}~) 리베이트에서 이 금액만 남기고 <b className="text-bink">전부 고객 지원금</b>으로 풉니다.
+              온라인구매 가격과 사업자 R/B 가 같은 값을 읽습니다.
+            </p>
+          </div>
+          <div className="flex items-center gap-2">
+            <input type="number" step="10000" className={`${binputCls} w-36`} value={marginIn} onChange={(e) => setMarginIn(e.target.value)} data-t="self-margin-input" />
+            <Btn size="sm" data-t="self-margin-save" disabled={+marginIn === margin}
+              onClick={() => { dispatch({ type: 'POLICY_SELF_MARGIN', margin: +marginIn }); toast(`셀프개통 마진 ${won(+marginIn)} 적용 — 온라인구매·R/B 즉시 반영`) }}>
+              적용
+            </Btn>
+          </div>
+        </div>
+        {/* 지금 마진으로 실제 얼마가 되는지 — 대표 조합 3개를 바로 보여 준다(설정과 결과가 따로 놀지 않게) */}
+        <div className="mt-4 overflow-x-auto">
+          <table className="w-full min-w-[620px] text-[12.5px]" data-t="self-margin-preview">
+            <thead>
+              <tr className="border-b border-brow text-[11.5px] text-bmuted">
+                <th className="px-2 py-2 text-left font-semibold">대표 조합</th>
+                <th className="px-2 py-2 text-right font-semibold">정책 리베이트</th>
+                <th className="px-2 py-2 text-right font-semibold">회사 마진</th>
+                <th className="px-2 py-2 text-right font-semibold">고객 지원금</th>
+                <th className="px-2 py-2 text-right font-semibold">월 납부금</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-brow">
+              {[['fold8', 'choice110', 'mnp'], ['s26', 'choice90', 'mnp'], ['ip17p', 'choice110', 'chg']].map(([d, pid, j]) => {
+                const q = calcPhoneQuote({ deviceId: d, planId: pid, join: j, months: 24, policyMargin: margin })
+                const x = rebateDetail({ deviceId: d, planMonthly: q.plan.monthly, join: j })
+                return (
+                  <tr key={`${d}${pid}${j}`} data-t="self-margin-row">
+                    <td className="px-2 py-2.5 font-bold text-bink">{q.device.short} · {x.joinLabel}<span className="ml-1.5 font-semibold text-bfaint">{x.tier?.label}</span></td>
+                    <td className="tnum px-2 py-2.5 text-right text-bbody">{won(q.rebate)}</td>
+                    <td className="tnum px-2 py-2.5 text-right text-bfaint">−{won(q.margin)}</td>
+                    <td className="tnum px-2 py-2.5 text-right font-extrabold text-ok">{won(q.extraSupport)}</td>
+                    <td className="tnum px-2 py-2.5 text-right font-extrabold text-primary-text">{won(q.total)}</td>
+                  </tr>
+                )
+              })}
+            </tbody>
+          </table>
+        </div>
+        <p className="mt-2 text-[11px] leading-4 text-bfaint">
+          리베이트가 마진보다 작으면 고객 지원금은 0원이고 마진도 리베이트까지만 남습니다(마이너스 마진을 만들지 않습니다).
+          24개월 할부·공시지원금 포함 기준이며 {RATE_CARD.notes.length}개 환수 조건은 단가표 고지를 따릅니다.
+        </p>
+      </Card>
 
       <Card track="b" className="mt-4 p-5">
         <div className="flex flex-wrap items-center justify-between gap-2">

@@ -37,3 +37,4 @@ npm run dev           # 개발 서버
 > 상세한 반사신경 매핑과 실패 교훈 로그: `docs/DEV_REFLEXES.md`
 > 수당 정책의 근거: `docs/COMMISSION_POLICY.md`
 > 조직 3계층·식별번호·R/B·계층 정산: `docs/ORG_SETTLEMENT.md`
+> 통신사 정책 단가표·셀프개통 마진: `docs/RATECARD.md`

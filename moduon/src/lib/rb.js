@@ -6,6 +6,7 @@
 //   계층별 몫만 각자 화면에서 가산된다 — 상위는 하위의 최종 마진을, 하위는 상위 몫을 몰라도 된다.
 //   그래서 rows 는 "내 등급이 볼 자격이 있는 줄"만 담아 돌려준다. 화면은 판단하지 않는다.
 import { rateItem, supportRange, JOIN_ADJ, JOIN_ADJ_LABEL } from './commission'
+import { rebateDetail } from './ratecard'
 
 // 계산기 선택값 → 정책 단가표 상품. 단가의 단일 소스는 commission.RATE_CARD.
 const DEVICE_RATE = { fold8: 'mno-fold', flip8: 'mno-fold', s26u: 'mno-fold', s26: 'mno-fold', a56: 'mno-fold', ip17p: 'mno-air', ip17pm: 'mno-air', ip17: 'mno-air' }
@@ -20,10 +21,13 @@ export const rbRateIdFor = ({ kind, deviceId, itemId, mvno }) =>
  * @param support 매장이 고객에게 얹어 주는 추가지원금(셀러 재량). 통신사 공시지원금은 여기 들어오면 안 된다 —
  *                그건 통신사가 내는 돈이라 R/B 와 무관하고, 넣으면 셀러 수당이 늘 0 으로 깎인다.
  */
-export function rbFor({ kind = 'phone', deviceId, itemId, mvno = false, join = 'mnp', support = 0, viewer }) {
+export function rbFor({ kind = 'phone', deviceId, itemId, mvno = false, join = 'mnp', support = 0, planMonthly = 0, viewer }) {
   const item = rateItem(rbRateIdFor({ kind, deviceId, itemId, mvno }))
+  // 휴대폰(알뜰폰 제외)은 실제 수령한 통신사 정책 단가표를 쓴다 — 셀프개통 화면과 같은 숫자여야 한다.
+  // 단가표에 없는 조합이면 0 이 되므로, 그때만 기존 데모 단가표로 받친다.
+  const card = kind === 'phone' && !mvno ? rebateDetail({ deviceId, planMonthly, join }) : null
   const adj = kind === 'phone' ? (JOIN_ADJ[join] ?? 1) : 1
-  const rebate = Math.round(item.rebate * adj)
+  const rebate = card?.rebate ? card.rebate : Math.round(item.rebate * adj)
   const hidden = {
     agency: Math.round(item.hidden.agency * adj),
     distributor: Math.round(item.hidden.distributor * adj),
@@ -49,7 +53,8 @@ export function rbFor({ kind = 'phone', deviceId, itemId, mvno = false, join = '
 
   return {
     item, rebate, customer, seller, hidden, range, mine, mineLabel, rows, tier,
-    joinLabel: kind === 'phone' ? (JOIN_ADJ_LABEL[join] ?? '') : '',
-    adjusted: adj !== 1,
+    joinLabel: card ? card.joinLabel : (kind === 'phone' ? (JOIN_ADJ_LABEL[join] ?? '') : ''),
+    adjusted: !card && adj !== 1,
+    card, // 정책 단가표 근거(기기군·구간·단가표명) — 화면이 출처를 밝힌다
   }
 }

@@ -3,6 +3,8 @@
 
 export const ANNUAL_RATE = 0.059
 
+import { selfSupport, SELF_MARGIN_DEFAULT } from './ratecard'
+
 export const JOIN_TYPES = [
   { key: 'mnp', label: '번호이동' },
   { key: 'chg', label: '기기변경' },
@@ -89,7 +91,10 @@ export const bundleEligible = (plan) => (plan?.monthly ?? 0) >= BUNDLE.minPlan
  * extra15: 매장 추가지원금(공시의 15% 법정 한도) 적용 여부
  * bundle: 가족결합(인터넷+2회선) 적용 여부 — 조건 미충족 요금제면 무시된다
  */
-export function calcPhoneQuote({ deviceId = 'fold8', planId = 'choice110', join = 'mnp', method = 'support', months = 24, extra15 = true, bundle = false, storage = null, carrier = null, insurance = false, addon = false } = {}) {
+// policyMargin 을 숫자로 주면 '셀프개통 모드' 다 — 추가지원금을 공시의 15% 로 잡는 대신
+// 정책 단가표(ratecard.js)의 리베이트에서 회사 고정 마진만 떼고 전부 고객 지원금으로 돌린다.
+// 두 방식을 겹쳐 쓰지 않는다(이중 계상 방지). null 이면 기존 15% 규칙 그대로.
+export function calcPhoneQuote({ deviceId = 'fold8', planId = 'choice110', join = 'mnp', method = 'support', months = 24, extra15 = true, bundle = false, storage = null, carrier = null, insurance = false, addon = false, policyMargin = null } = {}) {
   const device = phoneDevice(deviceId)
   const plan = PHONE_PLANS.find((p) => p.id === planId) ?? PHONE_PLANS[0]
   // 용량이 지정되면 그 출고가, 아니면 기본(price). 통신사가 지정되면 지원금 보정.
@@ -98,7 +103,11 @@ export function calcPhoneQuote({ deviceId = 'fold8', planId = 'choice110', join 
   const baseSupport = Math.floor(((device.support[join] ?? 0) * adj) / 1000) * 1000
 
   const publicSupport = method === 'support' ? baseSupport : 0
-  const extraSupport = method === 'support' && extra15 ? Math.floor(baseSupport * 0.15 / 10) * 10 : 0
+  // 셀프개통 모드: 단가표 리베이트 − 고정 마진 = 고객 지원금. 아니면 기존 추가지원금(공시의 15%).
+  const policy = policyMargin == null ? null : selfSupport({ deviceId, planMonthly: plan.monthly, join, margin: policyMargin })
+  const extraSupport = method !== 'support' ? 0
+    : policy ? policy.customer
+      : (extra15 ? Math.floor(baseSupport * 0.15 / 10) * 10 : 0)
   const principal = Math.max(0, price - publicSupport - extraSupport)
 
   const { monthly: deviceMonthly, interest } = pmt(principal, months)
@@ -115,6 +124,8 @@ export function calcPhoneQuote({ deviceId = 'fold8', planId = 'choice110', join 
     principal, deviceMonthly, interest, planMonthly, planDiscount,
     bundleOn, bundleDiscount, upfront, total,
     price, storage: storage ?? device.storages?.[0]?.key ?? null, carrier,
+    // 셀프개통 모드에서만 채워진다 — 화면이 "리베이트 − 마진 = 고객 지원금" 을 그대로 보여 줄 수 있게
+    policy, rebate: policy?.rebate ?? 0, margin: policy?.margin ?? 0,
     insurance, insuranceOnce: insurance ? INSURANCE.once : 0, insuranceWaived: insurance, // 면제 → 실부담 0
     addonFee,
   }
@@ -124,13 +135,14 @@ export function calcPhoneQuote({ deviceId = 'fold8', planId = 'choice110', join 
 // 3사 각각에 대해: 지금 쓰는 통신사면 기기변경, 아니면 번호이동으로 견적을 내고 월 납부금 최저를 고른다.
 // 알뜰폰·미선택이면 3사 모두 번호이동 후보. 결과에는 "지금 통신사에서 기변" 대안과 차액도 담아
 // 왜 그 추천인지 화면이 설명할 수 있게 한다.
-export function bestOffer({ deviceId, cur = '', planId = 'choice90', months = 24, storage = null }) {
+export function bestOffer({ deviceId, cur = '', planId = 'choice90', months = 24, storage = null, margin = SELF_MARGIN_DEFAULT }) {
   const offers = MNO.map((carrier) => {
     const join = cur === carrier ? 'chg' : 'mnp'
-    const q = calcPhoneQuote({ deviceId, planId, join, method: 'support', months, storage, carrier })
+    const q = calcPhoneQuote({ deviceId, planId, join, method: 'support', months, storage, carrier, policyMargin: margin })
     const support = q.publicSupport + q.extraSupport
     return {
       carrier, join, total: q.total, support, q,
+      rebate: q.rebate, margin: q.margin,   // 정책 단가표 근거 — 화면이 출처를 밝힐 수 있게
       price: q.price,                  // 출고가(정가) — 카드에 취소선으로 표기
       principal: q.principal,          // 지원금 뺀 실구매가
       discountPct: q.price > 0 ? Math.round((support / q.price) * 100) : 0,

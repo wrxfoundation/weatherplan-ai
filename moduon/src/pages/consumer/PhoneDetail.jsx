@@ -5,6 +5,8 @@
 import { useMemo, useState } from 'react'
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { phoneDevice, PHONE_PLANS, JOIN_TYPES, INSTALLMENT_MONTHS, INSURANCE, ADDONS, MNO, calcPhoneQuote, compareMethods, bestOffer } from '../../lib/phones'
+import { useStore } from '../../lib/store'
+import { selfMarginOf } from '../../lib/ratecard'
 import { PHONE_CARRIERS } from '../../lib/onboard'
 import { won } from '../../lib/engine'
 import { LEGAL } from '../../lib/constants'
@@ -27,7 +29,9 @@ function PhoneDetailInner() {
   const curMno = MNO.includes(cur) ? cur : ''
 
   // 기본값은 AI 추천(현 통신사 기준 최저) — 사용자가 통신사를 바꾸면 가입유형이 따라 바뀐다
-  const rec = useMemo(() => bestOffer({ deviceId: device.id, cur: curMno, storage: sp.get('storage') }), [device.id, curMno]) // eslint-disable-line react-hooks/exhaustive-deps
+  const { db } = useStore()
+  const margin = selfMarginOf(db) // 셀프개통 고정 마진 — 온라인구매 전 화면이 같은 값을 쓴다
+  const rec = useMemo(() => bestOffer({ deviceId: device.id, cur: curMno, storage: sp.get('storage'), margin }), [device.id, curMno, margin]) // eslint-disable-line react-hooks/exhaustive-deps
   // 카드에서 특정 통신사 줄을 눌러 들어오면 그 조건으로 연다. 없으면 AI 추천(최저)이 기본.
   const qCarrier = MNO.includes(sp.get('carrier')) ? sp.get('carrier') : null
   const qJoin = JOIN_TYPES.some((j) => j.key === sp.get('join')) ? sp.get('join') : null
@@ -44,8 +48,8 @@ function PhoneDetailInner() {
 
   const pickCarrier = (c) => { setCarrier(c); setJoin(curMno ? (curMno === c ? 'chg' : 'mnp') : 'mnp') }
 
-  const q = useMemo(() => calcPhoneQuote({ deviceId: device.id, planId, join, method, months, extra15: true, storage, carrier, insurance, addon }),
-    [device.id, planId, join, method, months, storage, carrier, insurance, addon])
+  const q = useMemo(() => calcPhoneQuote({ deviceId: device.id, planId, join, method, months, extra15: true, storage, carrier, insurance, addon, policyMargin: margin }),
+    [device.id, planId, join, method, months, storage, carrier, insurance, addon, margin])
   const cmp = useMemo(() => compareMethods({ deviceId: device.id, planId, join, months, extra15: true }), [device.id, planId, join, months])
   const joinLabel = JOIN_TYPES.find((j) => j.key === join)?.label
   const label = `${device.short} ${storage} ${color} · ${carrier} ${joinLabel} · ${q.plan.name} · ${months ? `${months}개월` : '일시불'}${method === 'select' ? ' · 선택약정' : ' · 공통지원금'}`
