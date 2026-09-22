@@ -33,11 +33,11 @@ const num = (s) => Number(String(s).replace(/[^0-9]/g, '')) || 0
     return { heads, cells }
   })
   const totals = table.cells.map(num)
-  check(totals.length === 4 && totals.every((v) => v > 0), `비교표 4개 요금제 금액 산출 (${totals.join(' / ')})`)
+  check(totals.length === 3 && totals.every((v) => v > 0), `비교표 3개 요금제(단가표 열) 금액 산출 (${totals.join(' / ')})`)
   const minIdx = totals.indexOf(Math.min(...totals))
   check(table.heads[minIdx].includes('최저'), `최저가 배지가 실제 최소값 열에 붙음 (${table.heads[minIdx].split('\n')[0]})`)
 
-  // 가족결합 토글 — 기본 요금제(초이스110, 11만원)는 대상이므로 켜면 총액이 내려가야 한다
+  // 가족결합 토글 — 기본 요금제(초이스 110, 11만원)는 대상이므로 켜면 총액이 내려가야 한다
   const before = num(await page.locator('aside .tnum.text-\\[32px\\]').first().innerText())
   await page.click('text=프리미엄 가족결합')
   await page.waitForTimeout(400)
@@ -46,8 +46,8 @@ const num = (s) => Number(String(s).replace(/[^0-9]/g, '')) || 0
   text = await page.evaluate(() => document.body.innerText)
   check(text.includes('추가 절감'), '결합 절감액 안내 노출')
 
-  // 비대상 요금제(슬림55, 5.5만)로 바꾸면 토글이 비활성 + 사유 노출
-  await page.click('text=5G 슬림 55')
+  // 비대상 요금제(베이직 4GB, 3.7만)로 바꾸면 토글이 비활성 + 사유 노출
+  await page.click('[data-t="calc-plan"][data-id="basic4g"]')
   await page.waitForTimeout(400)
   text = await page.evaluate(() => document.body.innerText)
   check(text.includes('이 요금제는 대상이 아니에요'), '비대상 요금제 사유 안내')

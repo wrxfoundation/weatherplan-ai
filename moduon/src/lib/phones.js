@@ -3,7 +3,7 @@
 
 export const ANNUAL_RATE = 0.059
 
-import { selfSupport, SELF_MARGIN_DEFAULT } from './ratecard'
+import { RATE_CARD, selfSupport, SELF_MARGIN_DEFAULT } from './ratecard'
 
 export const JOIN_TYPES = [
   { key: 'mnp', label: '번호이동' },
@@ -57,12 +57,15 @@ export const INSURANCE = { once: 50000, label: '파손보험', waivedLabel: '모
 // 부가서비스(선택) — 기본 꺼짐. 켜면 요금제에 더해진다.
 export const ADDONS = [{ id: 'care', name: '안심케어 부가서비스', monthly: 3500, keep: '3개월 유지' }]
 
-export const PHONE_PLANS = [
-  { id: 'choice110', name: '초이스110 폰케어', monthly: 110000, desc: '무제한 · 폰케어 보험 포함' },
-  { id: 'choice90', name: '초이스90', monthly: 90000, desc: '데이터 완전 무제한' },
-  { id: 'basic69', name: '5G 베이직 69', monthly: 69000, desc: '110GB + 테더링 40GB' },
-  { id: 'slim55', name: '5G 슬림 55', monthly: 55000, desc: '35GB + 밀리언트 1Mbps' },
-]
+// 요금제 목록은 정책 단가표가 정한다 — 표에 열이 없는 요금제를 화면에서 고를 수 있으면 안 된다.
+// 단가표(ratecard.js)를 갈아끼우면 이 목록도 같이 바뀐다.
+export const PHONE_PLANS = RATE_CARD.plans.map((p) => ({
+  id: p.key,
+  name: p.sub ? `${p.name} ${p.sub}` : p.name,
+  monthly: p.monthly,
+  desc: p.desc,
+  assumed: p.assumed === true, // 월정액이 단가표에 없어 임시로 채운 값
+}))
 
 export const INSTALLMENT_MONTHS = [
   { key: 0, label: '일시불' },
@@ -104,7 +107,7 @@ export function calcPhoneQuote({ deviceId = 'fold8', planId = 'choice110', join 
 
   const publicSupport = method === 'support' ? baseSupport : 0
   // 셀프개통 모드: 단가표 리베이트 − 고정 마진 = 고객 지원금. 아니면 기존 추가지원금(공시의 15%).
-  const policy = policyMargin == null ? null : selfSupport({ deviceId, planMonthly: plan.monthly, join, margin: policyMargin })
+  const policy = policyMargin == null ? null : selfSupport({ deviceId, planId: plan.id, join, margin: policyMargin })
   const extraSupport = method !== 'support' ? 0
     : policy ? policy.customer
       : (extra15 ? Math.floor(baseSupport * 0.15 / 10) * 10 : 0)

@@ -51,7 +51,7 @@ export default function PhoneCalculator() {
 
       {/* 사업자 전용 R/B — 개인회원·비로그인에게는 렌더되지 않는다(org.bizIdentity) */}
       <div className="mt-5">
-        <RbPanel kind="phone" deviceId={deviceId} join={join} support={q.extraSupport} planMonthly={q.plan.monthly} />
+        <RbPanel kind="phone" deviceId={deviceId} join={join} support={q.extraSupport} planId={q.plan.id} />
       </div>
 
       <div className="mt-7 grid items-start gap-6 lg:grid-cols-[1fr_400px]">
@@ -67,6 +67,7 @@ export default function PhoneCalculator() {
               {PHONE_DEVICES.map((d) => (
                 <button
                   key={d.id}
+                  data-t="calc-device" data-id={d.id}
                   onClick={() => setDeviceId(d.id)}
                   className={`relative flex flex-col rounded-btn border p-3.5 text-left transition-all ${deviceId === d.id ? 'border-[1.5px] border-primary bg-tint' : 'border-line bg-white hover:border-primary/50'}`}
                 >
@@ -82,7 +83,7 @@ export default function PhoneCalculator() {
             {/* 가입 유형 */}
             <div className="mt-5 grid grid-cols-3 gap-2">
               {JOIN_TYPES.map((j) => (
-                <button key={j.key} onClick={() => setJoin(j.key)} className={`h-11 rounded-field border text-[13.5px] font-bold transition-colors ${join === j.key ? 'border-primary bg-primary text-white' : 'border-line bg-white text-label hover:border-primary/50'}`}>
+                <button key={j.key} data-t="calc-join" data-id={j.key} onClick={() => setJoin(j.key)} className={`h-11 rounded-field border text-[13.5px] font-bold transition-colors ${join === j.key ? 'border-primary bg-primary text-white' : 'border-line bg-white text-label hover:border-primary/50'}`}>
                   {j.label}
                 </button>
               ))}
@@ -139,6 +140,7 @@ export default function PhoneCalculator() {
               {PHONE_PLANS.map((p) => (
                 <button
                   key={p.id}
+                  data-t="calc-plan" data-id={p.id}
                   onClick={() => setPlanId(p.id)}
                   className={`flex items-center justify-between rounded-btn border p-4 text-left transition-all ${planId === p.id ? 'border-[1.5px] border-primary bg-tint' : 'border-line bg-white hover:border-primary/50'}`}
                 >

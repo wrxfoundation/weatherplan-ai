@@ -5,8 +5,8 @@ import { won, fmtDate, SAUP_TIERS } from '../../lib/engine'
 import { Card, Btn, Modal, Field, binputCls, useToast } from '../../components/ui'
 import { AiInsight } from '../../components/AiPanel'
 import { policyPanel } from '../../lib/ai'
-import { selfMarginOf, RATE_CARD, rebateDetail } from '../../lib/ratecard'
-import { calcPhoneQuote } from '../../lib/phones'
+import { selfMarginOf, RATE_CARD, rebateDetail, DEVICE_ROW, ETC_ROW, isListed } from '../../lib/ratecard'
+import { calcPhoneQuote, PHONE_DEVICES, PHONE_PLANS } from '../../lib/phones'
 
 export default function AdminPolicies() {
   const { db, dispatch } = useStore()
@@ -77,14 +77,17 @@ export default function AdminPolicies() {
               </tr>
             </thead>
             <tbody className="divide-y divide-brow">
-              {[['fold8', 'choice110', 'mnp'], ['s26', 'choice90', 'mnp'], ['ip17p', 'choice110', 'chg']].map(([d, pid, j]) => {
+              {[['fold8', 'choice110', 'mnp'], ['s26', 'choice90', 'mnp'], ['ip17p', 'choice110', 'chg'], ['flip8', 'basic4g', 'new']].map(([d, pid, j]) => {
                 const q = calcPhoneQuote({ deviceId: d, planId: pid, join: j, months: 24, policyMargin: margin })
-                const x = rebateDetail({ deviceId: d, planMonthly: q.plan.monthly, join: j })
+                const x = rebateDetail({ deviceId: d, planId: pid, join: j })
                 return (
                   <tr key={`${d}${pid}${j}`} data-t="self-margin-row">
-                    <td className="px-2 py-2.5 font-bold text-bink">{q.device.short} · {x.joinLabel}<span className="ml-1.5 font-semibold text-bfaint">{x.tier?.label}</span></td>
+                    <td className="px-2 py-2.5 font-bold text-bink">{q.device.short} · {x.joinLabel}
+                      <span className="ml-1.5 font-semibold text-bfaint">{x.plan?.name}</span>
+                      {!x.listed && <span className="ml-1.5 rounded bg-warn/15 px-1.5 py-0.5 text-[10.5px] font-bold text-warn">그 외</span>}
+                    </td>
                     <td className="tnum px-2 py-2.5 text-right text-bbody">{won(q.rebate)}</td>
-                    <td className="tnum px-2 py-2.5 text-right text-bfaint">−{won(q.margin)}</td>
+                    <td className="tnum px-2 py-2.5 text-right text-bfaint">{q.margin > 0 ? `−${won(q.margin)}` : won(0)}</td>
                     <td className="tnum px-2 py-2.5 text-right font-extrabold text-ok">{won(q.extraSupport)}</td>
                     <td className="tnum px-2 py-2.5 text-right font-extrabold text-primary-text">{won(q.total)}</td>
                   </tr>
@@ -97,6 +100,84 @@ export default function AdminPolicies() {
           리베이트가 마진보다 작으면 고객 지원금은 0원이고 마진도 리베이트까지만 남습니다(마이너스 마진을 만들지 않습니다).
           24개월 할부·공시지원금 포함 기준이며 {RATE_CARD.notes.length}개 환수 조건은 단가표 고지를 따릅니다.
         </p>
+      </Card>
+
+      {/* 정책 단가표 전문 — 시트를 그대로 화면에 올린다.
+          "홈페이지에 적용됐는지" 를 눈으로 대조하는 자리라, 시트와 같은 단위(만원)·같은 행 순서로 둔다. */}
+      <Card track="b" className="mt-4 p-5" data-t="rate-card">
+        <div className="flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <h2 className="text-[15.5px] font-extrabold text-bink">{RATE_CARD.name} <span className="text-[12.5px] font-semibold text-bmuted">· {RATE_CARD.effectiveFrom}~ · {RATE_CARD.carrier}</span></h2>
+            <p className="mt-1 text-[12.5px] text-bmuted">
+              이 표가 <b className="text-bink">요금제 목록까지</b> 정합니다 — 온라인구매 화면의 요금제 선택지가 아래 열에서 나옵니다.
+              단가표를 갈아끼우면 요금제·셀프개통 가격·사업자 R/B 가 함께 바뀝니다.
+            </p>
+          </div>
+          <span className="rounded-full bg-tint px-2.5 py-0.5 text-[11px] font-bold text-primary-text">단위: 만원</span>
+        </div>
+
+        <div className="mt-3.5 overflow-x-auto">
+          <table className="w-full min-w-[700px] text-[12.5px]" data-t="rate-card-table">
+            <thead>
+              <tr className="border-b border-brow text-[11.5px] text-bmuted">
+                <th rowSpan={2} className="px-2 py-2 text-left align-bottom font-semibold">단말</th>
+                {RATE_CARD.plans.map((pl) => (
+                  <th key={pl.key} colSpan={RATE_CARD.joins.length} className="border-l border-brow px-2 py-2 text-center font-semibold">
+                    {pl.name}{pl.sub ? <span className="block text-[10.5px] font-medium text-bfaint">{pl.sub}</span> : null}
+                  </th>
+                ))}
+              </tr>
+              <tr className="border-b border-brow text-[11px] text-bfaint">
+                {RATE_CARD.plans.flatMap((pl) => RATE_CARD.joins.map((j, i) => (
+                  <th key={`${pl.key}${j.key}`} className={`px-2 py-1.5 text-right font-semibold ${i === 0 ? 'border-l border-brow' : ''}`}>{j.label.replace('010 신규', '010')}</th>
+                )))}
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-brow">
+              {RATE_CARD.devices.map((d) => (
+                <tr key={d.key} data-t="rate-card-row" data-row={d.key} className={d.fallback ? 'bg-warn/[0.06]' : ''}>
+                  <td className="px-2 py-2 font-bold text-bink">
+                    {d.label}{d.capacity ? <span className="ml-1 font-semibold text-bfaint">{d.capacity}</span> : null}
+                    {d.assumed && <span className="ml-1.5 rounded bg-warn/15 px-1.5 py-0.5 text-[10.5px] font-bold text-warn">확인 필요</span>}
+                  </td>
+                  {RATE_CARD.plans.flatMap((pl) => (d.rows[pl.key] ?? []).map((v, i) => (
+                    <td key={`${pl.key}${i}`} className={`tnum px-2 py-2 text-right ${v === 0 ? 'text-bfaint' : 'text-bbody'} ${i === 0 ? 'border-l border-brow' : ''}`}>{v}</td>
+                  )))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        {/* 우리 상품 단말이 어느 줄로 잡히는지 — 매핑이 틀리면 여기서 바로 보인다 */}
+        <div className="mt-4 rounded-card bg-bbg px-4 py-3">
+          <div className="text-[12.5px] font-extrabold text-bink">판매 단말 → 단가표 행 매핑</div>
+          <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1.5" data-t="rate-card-map">
+            {PHONE_DEVICES.map((dev) => {
+              const listed = isListed(dev.id)
+              return (
+                <span key={dev.id} data-t="rate-map-item" data-listed={listed ? '1' : '0'} className="text-[12px]">
+                  <b className="font-bold text-bbody">{dev.short}</b>
+                  <span className="mx-1 text-bfaint">→</span>
+                  <span className={listed ? 'font-semibold text-ok' : 'font-semibold text-warn'}>
+                    {RATE_CARD.devices.find((x) => x.key === (DEVICE_ROW[dev.id] ?? ETC_ROW))?.label}
+                  </span>
+                </span>
+              )
+            })}
+          </div>
+          <p className="mt-2 text-[11px] leading-4 text-bfaint">
+            단가표에 이름이 없는 단말은 <b className="text-warn">그 외</b> 줄을 씁니다. 시트에 그 외 행이 없어
+            각 칸의 최솟값(= 아이폰18 P/PM 줄)으로 임시 설정했습니다 — 높게 잡으면 고객 지원금을 과다 약속하게 되므로 낮은 쪽으로 두었습니다.
+            확정값을 주시면 그 줄만 교체합니다. 요금제 {PHONE_PLANS.filter((x) => x.assumed).map((x) => x.name).join(' · ') || '없음'}
+            {PHONE_PLANS.some((x) => x.assumed) ? ' 의 월정액도 시트에 없어 임시값입니다.' : ''}
+          </p>
+        </div>
+
+        <ul className="mt-3 space-y-1 text-[11px] leading-[1.6] text-bfaint">
+          {RATE_CARD.excludes.map((x) => <li key={x}>· <b className="text-bmuted">미반영</b> — {x}</li>)}
+          {RATE_CARD.notes.map((n) => <li key={n}>· {n}</li>)}
+        </ul>
       </Card>
 
       <Card track="b" className="mt-4 p-5">
