@@ -68,7 +68,16 @@ check(unguarded.length === 0, unguarded.length === 0
   ? `장면형 배너 이미지 ${new Set(sceneImgs).size}종 전부 빌드 가드 안에 있음`
   : `빌드 가드에 없는 장면형 이미지 ${unguarded.length}건 — ${unguarded.join(' ')} (fetch-assets 의 CRITICAL 에 넣을 것)`)
 
-// ⑥ 아무도 안 쓰는 다운로드 = 빌드 시간 낭비 (경고만 — 예비 에셋일 수 있다)
+// ⑥ 히어로 장면 이미지는 '위 기준'으로 붙어야 한다.
+//    object-cover 로 남는 세로 잘림을 아래에서 가져가야 인물 머리·떠 있는 오브제가 살아난다.
+//    (이미지가 안 뜨는 환경에서는 DOM 으로 못 읽으므로 소스에서 본다)
+const hero = readFileSync(join(root, 'src/components/HeroBanner.jsx'), 'utf8')
+const sceneImg = hero.match(/kind === 'scene' \?[\s\S]{0,800}?object-cover[^`]*`/)?.[0] ?? ''
+check(/object-(left|right)-top/.test(sceneImg), sceneImg
+  ? `장면 이미지가 위 기준(object-*-top)으로 붙음`
+  : '히어로의 장면 이미지 클래스를 찾지 못함')
+
+// ⑦ 아무도 안 쓰는 다운로드 = 빌드 시간 낭비 (경고만 — 예비 에셋일 수 있다)
 const unused = [...fetched].filter((f) => !refs.has(f))
 if (unused.length) console.log(`INFO  참조되지 않는 다운로드 ${unused.length}종 (예비 가능): ${unused.join(' ')}`)
 

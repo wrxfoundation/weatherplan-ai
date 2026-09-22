@@ -2,6 +2,7 @@
 // db.banners 중 active 를 order 순으로 돌린다. 문구·이미지·순서는 어드민 배너 관리에서 바꾼다.
 // kind 'mobi'  : bg 위에 컷아웃 이미지(기본 우하단, side 'left' 면 좌측) + DOM 텍스트 — 인물·오브제 공용
 // kind 'scene' : 21:9 장면 이미지를 배경으로 깔고(한쪽 55%는 비어 있음) 그 위에 텍스트 — side 'left' 면 피사체가 왼쪽, 텍스트 오른쪽
+//                배너 높이는 21:9 에 가깝게 잡는다(lg 440px) — 낮으면 object-cover 가 세로를 잘라 머리·떠 있는 오브제가 날아간다
 //                텍스트 컬럼 뒤에는 배경색과 같은 계열의 옅은 스크림을 깔아 장면이 조금 침범해도 글이 읽힌다
 // kind 'news'  : 이미지 대신 신문 1면 카드(news: kicker·vol·date·headline·big)를 왼쪽에 — 글자가 흐려지지 않게 DOM 으로
 // tone 'dark'  : 노랑·연두·라벤더처럼 밝은 배경엔 잉크색 글씨(기본 'light' 는 흰 글씨)
@@ -120,7 +121,7 @@ export default function HeroBanner({ banners = [], tenant, consultTo = '/consult
       onKeyDown={onKeyDown}
     >
       <div
-        className="relative h-[300px] overflow-hidden rounded-section shadow-card touch-pan-y select-none sm:h-[340px]"
+        className="relative h-[320px] overflow-hidden rounded-section shadow-card touch-pan-y select-none sm:h-[400px] lg:h-[440px]"
         onPointerDown={onPointerDown}
         onPointerUp={onPointerUp}
         onPointerCancel={() => { drag.current = null }}
@@ -161,9 +162,12 @@ export default function HeroBanner({ banners = [], tenant, consultTo = '/consult
                 )}
                 {b.kind === 'scene' ? (
                   <>
-                    <SafeImg src={b.image} aria-hidden className={`absolute inset-0 h-full w-full object-cover ${left ? 'object-left' : 'object-right'}`} loading={i === 0 ? 'eager' : 'lazy'} />
-                    {/* 텍스트 쪽 스크림 — 톤에 맞춰 잉크 글씨엔 크림, 흰 글씨엔 진파랑을 옅게 */}
-                    <span aria-hidden className="absolute inset-0" style={{ background: `linear-gradient(${left ? 270 : 90}deg, ${scrim} 0%, ${scrim}B3 32%, ${scrim}00 58%)` }} />
+                    <SafeImg src={b.image} aria-hidden className={`absolute inset-0 h-full w-full object-cover ${left ? 'object-left-top' : 'object-right-top'}`} loading={i === 0 ? 'eager' : 'lazy'} />
+                    {/* 텍스트 쪽 스크림 — 톤에 맞춰 잉크 글씨엔 크림, 흰 글씨엔 진파랑을 옅게.
+                        모바일은 폭이 좁아 object-cover 가 가로를 크게 잘라 피사체가 화면을 거의 덮는다.
+                        그래서 sm 미만에서는 스크림을 더 길고 진하게 깔아 글이 피사체 위에서도 읽히게 한다. */}
+                    <span aria-hidden className="absolute inset-0 sm:hidden" style={{ background: `linear-gradient(${left ? 270 : 90}deg, ${scrim} 0%, ${scrim}E6 58%, ${scrim}00 92%)` }} />
+                    <span aria-hidden className="absolute inset-0 hidden sm:block" style={{ background: `linear-gradient(${left ? 270 : 90}deg, ${scrim} 0%, ${scrim}B3 32%, ${scrim}00 58%)` }} />
                   </>
                 ) : b.kind === 'news' ? (
                   // 신문 카드는 왼쪽 컬럼(모바일은 텍스트 아래로 숨김) — 목업 랜딩페이지3

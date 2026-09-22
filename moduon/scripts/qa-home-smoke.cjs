@@ -147,6 +147,14 @@ const BASE = process.env.QA_BASE ?? 'http://localhost:4173'
   const dbBanners = await page.evaluate(() => { try { return JSON.parse(localStorage.getItem('moduon_db_v1')).banners.map((b) => ({ id: b.id, active: b.active, image: b.image })) } catch { return [] } })
   // 뉴스형(B3)은 DOM 카드라 이미지가 없다 — 이미지가 있는 배너만 경로를 본다
   check(dbBanners.filter((b) => b.active).length === 4 && dbBanners.filter((b) => b.image).every((b) => /^\/assets\/[\w.-]+$/.test(b.image)), `스토어 배너 이미지 전부 /assets/ 경로 (${dbBanners.map((b) => b.image || '(뉴스형)').join(' ')})`)
+  // 배너가 이미지를 얼마나 잘라먹는가 — 21:9(2688x1152) 를 낮은 상자에 object-cover 로 넣으면
+  // 세로가 잘려 인물 머리·떠 있는 오브제가 날아간다(2026-09-22: 340px 일 때 26% 가 잘렸다).
+  // 컨테이너 비율로 잘림률을 계산해 10% 아래인지 본다 — 높이를 다시 낮추면 여기서 걸린다.
+  const heroBox = await page.locator('[data-t="hero-banner"] > div').first().boundingBox().catch(() => null)
+  if (heroBox) {
+    const cropFrac = 1 - (heroBox.height * 2688) / (1152 * heroBox.width)
+    check(cropFrac < 0.10, `1440: 히어로 세로 잘림 ${(cropFrac * 100).toFixed(1)}% < 10% (${Math.round(heroBox.width)}x${Math.round(heroBox.height)})`)
+  } else check(false, '히어로 상자 크기를 읽지 못함')
   // 히어로 종류 — 장면형(scene)도 쓰되, 그 이미지는 빌드 가드(CRITICAL)에 들어 있어야 한다.
   // 종류 자체를 금지하기보다 "못 받아오면 배포가 멈춘다"를 보장하는 쪽이 맞다(정합성 검사가 본다).
   const kinds = await page.evaluate(() => { try { return JSON.parse(localStorage.getItem('moduon_db_v1')).banners.map((b) => b.kind) } catch { return [] } })
