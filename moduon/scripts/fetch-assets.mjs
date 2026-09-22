@@ -60,7 +60,12 @@ const ASSETS = [
   // 히어로 롤링 배너 장면 4장 — 2026-09-22 재생성(이전 세트는 CDN 에서 원본이 사라져 403).
   // 21:9 · 2k · 피사체는 한쪽 40% 안에만, 반대쪽 60% 는 글 자리(빈 그라디언트). 글자는 굽지 않는다.
   // 넷 다 CRITICAL 이라 하나라도 못 받으면 배포 빌드가 멈춘다 — 빈 히어로가 조용히 나가지 않게.
-  ['banner-mobi.png',       'https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260922_045533_259be1fe-fe6c-4cd7-a957-7195fc55c4e3.png'],
+  // 1번 배너만 실사다 — 3D 캐릭터 대신 분위기 있는 상담사 사진(2026-09-22 재생성).
+  // 나머지 3장은 클레이 3D 오브제 — 인물만 실사인 구성은 아정당도 쓰는 방식이라 섞여도 튀지 않는다.
+  // 같은 세트의 대안 2컷(바꾸려면 아래 URL 로 교체):
+  //   단정·신뢰형  https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260922_061058_1a385bb9-1169-4d80-81f9-1dea219c4a4b.png
+  //   밝고 친근형  https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260922_061058_d8abd6d4-ec22-4665-8ebc-35af4941a269.png
+  ['banner-mobi.png',      'https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260922_061058_801f9b3a-cef6-44f5-926d-94b82ceab14b.png'], // 채택: 시네마틱 무드 — 로우번·골드 이어링·쿨 림라이트
   ['banner-benefit.png',    'https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260922_045533_ce4b4b7f-ce06-4ffd-9042-ba213114dcea.png'],
   ['banner-subscribe.png',  'https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260922_045533_bf9c1012-db0e-45f2-8d2b-132c719bf6f1.png'],
   ['banner-finder.png',     'https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260922_045533_4bd8b8b7-b98e-4bcf-9d7c-d03716afe69d.png'],
