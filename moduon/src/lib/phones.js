@@ -3,7 +3,7 @@
 
 export const ANNUAL_RATE = 0.059
 
-import { RATE_CARD, selfSupport, SELF_MARGIN_DEFAULT } from './ratecard'
+import { PRICE_CARD, priceDetail, selfSupport, SELF_MARGIN_DEFAULT } from './ratecard'
 
 export const JOIN_TYPES = [
   { key: 'mnp', label: '번호이동' },
@@ -57,9 +57,9 @@ export const INSURANCE = { once: 50000, label: '파손보험', waivedLabel: '모
 // 부가서비스(선택) — 기본 꺼짐. 켜면 요금제에 더해진다.
 export const ADDONS = [{ id: 'care', name: '안심케어 부가서비스', monthly: 3500, keep: '3개월 유지' }]
 
-// 요금제 목록은 정책 단가표가 정한다 — 표에 열이 없는 요금제를 화면에서 고를 수 있으면 안 된다.
-// 단가표(ratecard.js)를 갈아끼우면 이 목록도 같이 바뀐다.
-export const PHONE_PLANS = RATE_CARD.plans.map((p) => ({
+// 요금제 목록은 가격표가 정한다 — 표에 열이 없는 요금제를 화면에서 고를 수 있으면 안 된다.
+// 가격표(ratecard.js PRICE_CARD)를 갈아끼우면 이 목록도 같이 바뀐다.
+export const PHONE_PLANS = PRICE_CARD.plans.map((p) => ({
   id: p.key,
   name: p.sub ? `${p.name} ${p.sub}` : p.name,
   monthly: p.monthly,
@@ -105,13 +105,18 @@ export function calcPhoneQuote({ deviceId = 'fold8', planId = 'choice110', join 
   const adj = carrier ? (CARRIER_SUPPORT_ADJ[carrier] ?? 1) : 1
   const baseSupport = Math.floor(((device.support[join] ?? 0) * adj) / 1000) * 1000
 
-  const publicSupport = method === 'support' ? baseSupport : 0
-  // 셀프개통 모드: 단가표 리베이트 − 고정 마진 = 고객 지원금. 아니면 기존 추가지원금(공시의 15%).
-  const policy = policyMargin == null ? null : selfSupport({ deviceId, planId: plan.id, join, margin: policyMargin })
-  const extraSupport = method !== 'support' ? 0
+  // 가격표에 값이 있으면 그 값이 곧 할부원금이다 — 지원금을 따로 빼지 않는다(마진은 가격에 이미 반영).
+  // 화면의 지원금 줄은 표시용으로 출고가 − 판매가 를 역산해 채운다(출고가 − 지원금 = 할부원금이 유지되게).
+  const card = priceDetail({ deviceId, planId: plan.id, join, method, carrier })
+  const priced = card.state === 'covered'
+
+  // 셀프개통 모드: 리베이트 − 고정 마진 = 고객 지원금. 가격표가 값을 주면 이 경로를 타지 않는다.
+  const policy = priced || policyMargin == null ? null : selfSupport({ deviceId, planId: plan.id, join, margin: policyMargin })
+  const publicSupport = priced ? Math.max(0, price - card.price) : (method === 'support' ? baseSupport : 0)
+  const extraSupport = priced || method !== 'support' ? 0
     : policy ? policy.customer
       : (extra15 ? Math.floor(baseSupport * 0.15 / 10) * 10 : 0)
-  const principal = Math.max(0, price - publicSupport - extraSupport)
+  const principal = priced ? card.price : Math.max(0, price - publicSupport - extraSupport)
 
   const { monthly: deviceMonthly, interest } = pmt(principal, months)
   const planDiscount = method === 'select' ? Math.round(plan.monthly * 0.25) : 0
@@ -127,7 +132,9 @@ export function calcPhoneQuote({ deviceId = 'fold8', planId = 'choice110', join 
     principal, deviceMonthly, interest, planMonthly, planDiscount,
     bundleOn, bundleDiscount, upfront, total,
     price, storage: storage ?? device.storages?.[0]?.key ?? null, carrier,
-    // 셀프개통 모드에서만 채워진다 — 화면이 "리베이트 − 마진 = 고객 지원금" 을 그대로 보여 줄 수 있게
+    // 가격표 근거 — 화면이 "이 가격은 어디서 왔나" 를 밝힐 수 있게
+    card, priced, blocked: card.state === 'blocked',
+    // 셀프개통 모드(가격표 미수록 조합)에서만 채워진다 — "리베이트 − 마진 = 고객 지원금"
     policy, rebate: policy?.rebate ?? 0, margin: policy?.margin ?? 0,
     insurance, insuranceOnce: insurance ? INSURANCE.once : 0, insuranceWaived: insurance, // 면제 → 실부담 0
     addonFee,
@@ -138,7 +145,7 @@ export function calcPhoneQuote({ deviceId = 'fold8', planId = 'choice110', join 
 // 3사 각각에 대해: 지금 쓰는 통신사면 기기변경, 아니면 번호이동으로 견적을 내고 월 납부금 최저를 고른다.
 // 알뜰폰·미선택이면 3사 모두 번호이동 후보. 결과에는 "지금 통신사에서 기변" 대안과 차액도 담아
 // 왜 그 추천인지 화면이 설명할 수 있게 한다.
-export function bestOffer({ deviceId, cur = '', planId = 'choice90', months = 24, storage = null, margin = SELF_MARGIN_DEFAULT }) {
+export function bestOffer({ deviceId, cur = '', planId = 'choice110', months = 24, storage = null, margin = SELF_MARGIN_DEFAULT }) {
   const offers = MNO.map((carrier) => {
     const join = cur === carrier ? 'chg' : 'mnp'
     const q = calcPhoneQuote({ deviceId, planId, join, method: 'support', months, storage, carrier, policyMargin: margin })

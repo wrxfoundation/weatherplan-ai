@@ -33,7 +33,7 @@ const num = (s) => Number(String(s).replace(/[^0-9]/g, '')) || 0
     return { heads, cells }
   })
   const totals = table.cells.map(num)
-  check(totals.length === 3 && totals.every((v) => v > 0), `비교표 3개 요금제(단가표 열) 금액 산출 (${totals.join(' / ')})`)
+  check(totals.length === 2 && totals.every((v) => v > 0), `비교표 2개 요금제(가격표 열) 금액 산출 (${totals.join(' / ')})`)
   const minIdx = totals.indexOf(Math.min(...totals))
   check(table.heads[minIdx].includes('최저'), `최저가 배지가 실제 최소값 열에 붙음 (${table.heads[minIdx].split('\n')[0]})`)
 

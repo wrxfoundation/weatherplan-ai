@@ -1,6 +1,6 @@
 // ─── S-03b 휴대폰 견적 계산기 (주다식 A+B) ───────────────────────
 // 단말기 할부정보(A) + 요금정보(B) → 월 납부요금(A+B). 단말지원 vs 선택약정 자동 비교.
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { PHONE_DEVICES, PHONE_PLANS, JOIN_TYPES, INSTALLMENT_MONTHS, calcPhoneQuote, compareMethods, planMatrix, BUNDLE, bundleEligible } from '../../lib/phones'
 import { won, copyText } from '../../lib/engine'
@@ -8,6 +8,7 @@ import { LEGAL } from '../../lib/constants'
 import { IcShare, IcCheck } from '../../components/icons'
 import RbPanel from '../../components/RbPanel'
 import { useStore, getSession } from '../../lib/store'
+import { PRICE_CARD, priceDetail, isPriced } from '../../lib/ratecard'
 import { bizIdentity } from '../../lib/org'
 
 export default function PhoneCalculator() {
@@ -24,6 +25,22 @@ export default function PhoneCalculator() {
   const q = useMemo(() => calcPhoneQuote({ deviceId, planId, join, method, months, extra15, bundle }), [deviceId, planId, join, method, months, extra15, bundle])
   const cmp = useMemo(() => compareMethods({ deviceId, planId, join, months, extra15 }), [deviceId, planId, join, months, extra15])
   const matrix = useMemo(() => planMatrix({ deviceId, join, method, months, extra15, bundle }), [deviceId, join, method, months, extra15, bundle])
+
+  // 가격표가 다루는 단말이면 표에 값이 있는 조합만 고를 수 있다 — 'X' 칸은 버튼 자체를 끈다.
+  // 미수록 단말은 기존 계산 경로라 제한이 없다(ok 가 전부 true).
+  const priceLocked = isPriced(deviceId)
+  const cellOk = (j, m) => !priceLocked || priceDetail({ deviceId, planId, join: j, method: m }).state === 'covered'
+  const joinOk = (j) => !priceLocked || PRICE_CARD.methods.some((m) => cellOk(j, m.key))
+  const firstOk = useMemo(() => {
+    if (!priceLocked) return null
+    for (const j of PRICE_CARD.joins) for (const m of PRICE_CARD.methods) if (cellOk(j.key, m.key)) return { join: j.key, method: m.key }
+    return null
+  }, [deviceId, planId, priceLocked]) // eslint-disable-line react-hooks/exhaustive-deps
+  // 단말·요금제를 바꿔 현재 조합이 불가가 되면 고를 수 있는 첫 조합으로 옮긴다(빈 화면 방지)
+  useEffect(() => {
+    if (!priceLocked || cellOk(join, method) || !firstOk) return
+    setJoin(firstOk.join); setMethod(firstOk.method)
+  }, [deviceId, planId, join, method, priceLocked, firstOk]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const goConsult = () => nav('/consult?cat=phone', {
     state: { quote: {
@@ -79,11 +96,21 @@ export default function PhoneCalculator() {
               ))}
             </div>
             <p className="mt-2 text-[11.5px] text-faint">{q.device.name} — {q.device.spec}</p>
+            {/* 이 가격이 어디서 왔는지 — 가격표 적용가인지, 표에 없어 계산한 값인지 밝힌다 */}
+            <p className="mt-1 text-[11.5px] font-semibold" data-t="price-source">
+              {q.priced
+                ? <span className="text-primary-text">{q.card.cardName} 적용가 · {q.card.effectiveFrom}~ · {q.card.joinLabel} · {q.card.methodLabel} · {q.plan.name}</span>
+                : q.blocked
+                  ? <span className="text-danger">{q.plan.name} · {q.card.joinLabel} · {q.card.methodLabel} — 가격표에서 취급하지 않는 조합입니다</span>
+                  : <span className="text-faint">가격표 미수록 단말 — 출고가·공시지원금 기준 계산값입니다</span>}
+            </p>
 
             {/* 가입 유형 */}
             <div className="mt-5 grid grid-cols-3 gap-2">
               {JOIN_TYPES.map((j) => (
-                <button key={j.key} data-t="calc-join" data-id={j.key} onClick={() => setJoin(j.key)} className={`h-11 rounded-field border text-[13.5px] font-bold transition-colors ${join === j.key ? 'border-primary bg-primary text-white' : 'border-line bg-white text-label hover:border-primary/50'}`}>
+                <button key={j.key} data-t="calc-join" data-id={j.key} disabled={!joinOk(j.key)} title={joinOk(j.key) ? undefined : '가격표에 없는 조합입니다'}
+                  onClick={() => setJoin(j.key)}
+                  className={`h-11 rounded-field border text-[13.5px] font-bold transition-colors disabled:cursor-not-allowed disabled:opacity-35 ${join === j.key ? 'border-primary bg-primary text-white' : 'border-line bg-white text-label hover:border-primary/50'}`}>
                   {j.label}
                 </button>
               ))}
@@ -92,7 +119,9 @@ export default function PhoneCalculator() {
             {/* 단말지원 vs 선택약정 */}
             <div className="mt-3 grid grid-cols-2 gap-2">
               {[{ k: 'support', l: '단말지원 (공시지원금)' }, { k: 'select', l: '선택약정 (요금 25%↓)' }].map((m) => (
-                <button key={m.k} onClick={() => setMethod(m.k)} className={`relative h-12 rounded-field border text-[13.5px] font-bold transition-colors ${method === m.k ? 'border-primary bg-tint text-primary-text' : 'border-line bg-white text-label hover:border-primary/50'}`}>
+                <button key={m.k} data-t="calc-method" data-id={m.k} disabled={!cellOk(join, m.k)} title={cellOk(join, m.k) ? undefined : '가격표에 없는 조합입니다'}
+                  onClick={() => setMethod(m.k)}
+                  className={`relative h-12 rounded-field border text-[13.5px] font-bold transition-colors disabled:cursor-not-allowed disabled:opacity-35 ${method === m.k ? 'border-primary bg-tint text-primary-text' : 'border-line bg-white text-label hover:border-primary/50'}`}>
                   {m.l}
                   {cmp.better === m.k && (
                     <span className="absolute -top-2 right-2 rounded-full bg-ok px-2 py-0.5 text-[10px] font-extrabold text-white">유리 ✓</span>
@@ -117,15 +146,16 @@ export default function PhoneCalculator() {
                 </div>
               </div>
               <button
+                data-t="calc-extra15"
                 onClick={() => setExtra15(!extra15)}
-                disabled={method !== 'support'}
+                disabled={method !== 'support' || q.priced}
                 className={`flex items-center justify-between rounded-field border px-4 py-2.5 text-left transition-colors disabled:opacity-40 ${extra15 && method === 'support' ? 'border-primary bg-tint' : 'border-line bg-white'}`}
               >
                 <div>
                   <div className="text-[13px] font-bold text-ink">매장 추가지원금 적용</div>
-                  <div className="text-[11px] text-faint">공시지원금의 15% (법정 한도)</div>
+                  <div className="text-[11px] text-faint">{q.priced ? '가격표 적용가에는 해당 없음' : '공시지원금의 15% (법정 한도)'}</div>
                 </div>
-                <span className={`flex h-[22px] w-[22px] items-center justify-center rounded-md border text-[13px] text-white ${extra15 && method === 'support' ? 'border-primary bg-primary' : 'border-line bg-white'}`}>✓</span>
+                <span className={`flex h-[22px] w-[22px] items-center justify-center rounded-md border text-[13px] text-white ${extra15 && method === 'support' && !q.priced ? 'border-primary bg-primary' : 'border-line bg-white'}`}>✓</span>
               </button>
             </div>
           </section>
@@ -251,12 +281,11 @@ export default function PhoneCalculator() {
               <span className="text-[13px] font-bold text-ink">월 납부요금정보 (A+B)</span>
               <span className="rounded-full bg-brow px-2 py-0.5 text-[10.5px] font-bold text-bmuted">VAT 포함</span>
             </div>
-            <div className="mt-3 rounded-field bg-cream/70 p-3.5 text-[13px]">
+            <div className="mt-3 rounded-field bg-cream/70 p-3.5 text-[13px]" data-t="calc-breakdown">
               <div className="mb-1 text-[11.5px] font-extrabold text-primary-text">A. 단말 할부금</div>
               <Row l="출고가" v={won(q.device.price)} />
-              <Row l="공통지원금" v={q.publicSupport ? `−${won(q.publicSupport)}` : '미적용'} accent={q.publicSupport ? 'text-ok' : 'text-disabled'} />
-              <Row l="추가지원금(15%)" v={q.extraSupport ? `−${won(q.extraSupport)}` : '미적용'} accent={q.extraSupport ? 'text-ok' : 'text-disabled'} />
-              <Row l="할부원금" v={won(q.principal)} bold />
+              <SupportRows q={q} />
+              <Row l="할부원금" v={won(q.principal)} bold t="calc-principal" />
               {q.months > 0 && <Row l={`할부수수료(${q.months}개월)`} v={`+${won(q.interest)}`} accent="text-orange-text" />}
               {q.upfront > 0 && <Row l="일시불 결제액" v={won(q.upfront)} bold />}
               <div className="mt-1.5 flex justify-between border-t border-line pt-1.5">
@@ -286,12 +315,11 @@ export default function PhoneCalculator() {
           </div>
           <div className="mt-1 text-[15px] font-bold text-ink">{q.device.short} · {JOIN_TYPES.find((j) => j.key === join)?.label}</div>
 
-          <div className="mt-4 rounded-field bg-cream/70 p-3.5 text-[13px]">
+          <div className="mt-4 rounded-field bg-cream/70 p-3.5 text-[13px]" data-t="calc-breakdown">
             <div className="mb-1 text-[11.5px] font-extrabold text-primary-text">A. 단말 할부금</div>
             <Row l="출고가" v={won(q.device.price)} />
-            <Row l="공통지원금" v={q.publicSupport ? `−${won(q.publicSupport)}` : '미적용'} accent={q.publicSupport ? 'text-ok' : 'text-disabled'} />
-            <Row l="추가지원금(15%)" v={q.extraSupport ? `−${won(q.extraSupport)}` : '미적용'} accent={q.extraSupport ? 'text-ok' : 'text-disabled'} />
-            <Row l="할부원금" v={won(q.principal)} bold />
+            <SupportRows q={q} />
+            <Row l="할부원금" v={won(q.principal)} bold t="calc-principal" />
             {q.months > 0 && <Row l={`할부수수료(${q.months}개월)`} v={`+${won(q.interest)}`} accent="text-orange-text" />}
             <div className="mt-1.5 flex justify-between border-t border-line pt-1.5">
               <span className="font-bold text-ink">월 단말 할부금</span>
@@ -381,9 +409,21 @@ function MatrixRow({ label, cells, accent = 'text-ink', bold }) {
   )
 }
 
-function Row({ l, v, accent = 'text-ink', bold }) {
+// 지원금 줄 — 가격표 적용가면 '가격표 반영 할인' 한 줄, 아니면 공시지원금 + 추가지원금(15%) 두 줄.
+// 데스크톱 aside 와 모바일 시트가 같은 걸 써야 해서 컴포넌트로 뽑았다(한쪽만 고쳐지는 사고 방지).
+function SupportRows({ q }) {
+  if (q.priced) return <Row l="가격표 반영 할인" v={q.publicSupport ? `−${won(q.publicSupport)}` : '없음'} accent={q.publicSupport ? 'text-ok' : 'text-disabled'} />
   return (
-    <div className="flex items-center justify-between py-0.5">
+    <>
+      <Row l="공통지원금" v={q.publicSupport ? `−${won(q.publicSupport)}` : '미적용'} accent={q.publicSupport ? 'text-ok' : 'text-disabled'} />
+      <Row l="추가지원금(15%)" v={q.extraSupport ? `−${won(q.extraSupport)}` : '미적용'} accent={q.extraSupport ? 'text-ok' : 'text-disabled'} />
+    </>
+  )
+}
+
+function Row({ l, v, accent = 'text-ink', bold, t }) {
+  return (
+    <div className="flex items-center justify-between py-0.5" data-t={t}>
       <span className={bold ? 'font-bold text-label' : 'text-label'}>{l}</span>
       <span className={`tnum ${bold ? 'font-extrabold' : 'font-bold'} ${accent}`}>{v}</span>
     </div>

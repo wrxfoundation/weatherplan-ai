@@ -42,7 +42,7 @@ function PhoneDetailInner() {
   const [method, setMethod] = useState('support')
   const [months, setMonths] = useState(24)
   const [insurance, setInsurance] = useState(true)
-  const [planId, setPlanId] = useState('choice90')
+  const [planId, setPlanId] = useState('choice110')
   const [addon, setAddon] = useState(false)
   const [ask, setAsk] = useState(false)
 
