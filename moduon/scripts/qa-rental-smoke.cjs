@@ -61,6 +61,18 @@ const num = (s) => Number(String(s).replace(/[^0-9]/g, '')) || 0
   check(!(await heads()).includes('정가 월'), `카드할인 OFF — 정가 월 컬럼 없음 (${(await heads()).join('/')})`)
   const asideOff = await page.locator('aside').innerText().catch(() => '')
   check(!asideOff.includes('정가 월 렌탈료'), '카드할인 OFF — 요약 카드에도 정가 줄 없음')
+  // 정가·할인 줄이 하나도 없으면 내역 박스를 아예 그리지 않는다 — 합계 한 줄만 남으면 아래 큰 숫자와 중복이다.
+  // 앞 단계에서 동시렌탈 대수가 바뀐 채로 올 수 있어 1대로 되돌린 뒤 본다(2대 이상이면 할인 줄이 남는다).
+  await page.locator('button', { hasText: /^1대$/ }).first().click().catch(() => {})
+  await page.waitForTimeout(400)
+  const creamBoxes = async () => page.locator('aside [class*="bg-cream"]').count().catch(() => -1)
+  const asideNow = () => page.locator('aside').first().innerText().catch(() => '')
+  check((await creamBoxes()) === 0, `카드할인 OFF · 1대 — 내역 박스 없음 (${await creamBoxes()})`)
+  const dupOff = ((await asideNow()).match(/월 실부담/g) ?? []).length
+  check(dupOff === 2, `카드할인 OFF — '월 실부담' 은 라벨·합계 2회뿐 (${dupOff}회)`)
+  await cardBtn.click(); await page.waitForTimeout(400)
+  check((await creamBoxes()) === 1, `카드할인 ON — 내역 박스 복귀 (${await creamBoxes()})`)
+  await cardBtn.click(); await page.waitForTimeout(400)
   await cardBtn.click(); await page.waitForTimeout(400)
   check((await heads()).includes('정가 월'), '카드할인 다시 ON — 정가 월 컬럼 복귀')
 

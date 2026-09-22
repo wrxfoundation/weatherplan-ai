@@ -50,37 +50,18 @@ export default function Home({ tenant }) {
       <SiteTiles tiles={tiles} />
       </Band>
 
-      {/* ── 2칸 · 옅은 회청 배경 — 모두온 혜택(지원금) + 바로 상담하기 ── */}
+      {/* ── 2칸 · 옅은 회청 배경 — 주장(혜택) 다음에 곧바로 근거(실질 부담 비교) ──
+          전환 요청은 이 칸에 두지 않는다. 아직 안 믿는 사람에게 먼저 요청이 가면 안 된다. */}
       <Band tone="zone" pad="py-11 sm:py-14">
-        <SupportSection consultTo={consultTo} />
+        <SupportSection />
+        <div className="mt-10 sm:mt-12"><RealCostTeaser /></div>
       </Band>
 
-      {/* ── 3칸 · 흰 배경 — 실질 부담 비교 · 상담 CTA · 신뢰 지표 · 후기 ── */}
+      {/* ── 3칸 · 흰 배경 — 신뢰(지표·후기) 쌓고 맨 끝에서 한 번만 전환 요청 ── */}
       <Band pad="pb-12 pt-11 sm:pb-16 sm:pt-14">
-      <RealCostTeaser />
-
-      {/* ── CTA 밴드 (파스텔 그린 · 좌상단 진한 엣지 + 유리 두께감) ── */}
-      <section className="relative mt-6 overflow-hidden rounded-section" style={{ background: 'linear-gradient(135deg,#DFF3E8 0%,#C2E7D2 100%)', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.6), inset 0 -1px 1px rgba(23,120,70,0.10), 0 12px 34px rgba(23,178,106,0.20)' }}>
-        {/* 좌상단 진한 동색 엣지(시선 유도) + 유리 엣지 하이라이트 */}
-        <span aria-hidden className="pointer-events-none absolute inset-0 z-0 rounded-section" style={{ background: 'linear-gradient(135deg, rgba(17,138,80,0.62) 0%, rgba(17,138,80,0.18) 26%, transparent 50%)', boxShadow: 'inset 1px 1px 0 rgba(255,255,255,0.38)' }} />
-        <div className="relative z-10 flex flex-col items-center gap-5 px-6 py-9 text-center sm:flex-row sm:justify-between sm:px-10 sm:text-left">
-          <div className="flex flex-col items-center gap-4 sm:flex-row">
-            <SafeImg src="/assets/cta-chat.webp" className="h-[88px] w-[88px] object-contain sm:h-[112px] sm:w-[112px]" />
-            <div>
-              <div className="break-keep text-[19px] font-extrabold leading-7 text-[#15613D] sm:text-[21px]">
-                지금 신청하면, 이번 달부터 아낍니다
-              </div>
-              <div className="mt-1 break-keep text-[14px] font-medium text-[#37694F]">30초면 끝 · 평균 10분 안에 전문 컨설턴트가 전화드려요</div>
-            </div>
-          </div>
-          <Link to={consultTo} className="shimmer-cta shimmer-green glass-btn inline-flex h-[52px] shrink-0 items-center rounded-btn bg-white px-7 text-[15px] font-bold text-[#0C7D48] transition-transform hover:-translate-y-px">
-            전문컨설턴트 상담하기 →
-          </Link>
-        </div>
-      </section>
 
       {/* ── 신뢰 지표 바 4 — 소형 아이콘은 SVG 라인으로 단순화 ── */}
-      <section className="surface-soft mt-6 grid grid-cols-2 rounded-section py-2 ring-1 ring-black/[0.04] lg:grid-cols-4">
+      <section className="surface-soft grid grid-cols-2 rounded-section py-2 ring-1 ring-black/[0.04] lg:grid-cols-4">
         <TrustItem kind="thumb" label="누적 고객 만족도" value={98} suffix="%" />
         <TrustItem kind="shield" label="제휴 브랜드" value={250} suffix="+" divider />
         <TrustItem kind="gift" label="연간 혜택 금액" value={120} suffix="억원+" divider="lg" />
@@ -89,6 +70,25 @@ export default function Home({ tenant }) {
 
       {/* 후기 — 카드·후기쓰기·더보기가 본진 /board/review* 로 이어지므로 파트너몰(리드 귀속)에서는 뺀다 */}
       {!tenant && <Reviews />}
+
+      {/* ── 마지막 전환 — 초록 밴드 하나에 문구와 분기 버튼을 같이 담는다.
+          전에는 초록 밴드(전문컨설턴트)와 '바로 상담하기' 분기가 따로 있어 같은 요청을 두 번 했다. ── */}
+      <section className="relative mt-10 overflow-hidden rounded-section sm:mt-12" style={{ background: 'linear-gradient(135deg,#DFF3E8 0%,#C2E7D2 100%)', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.6), inset 0 -1px 1px rgba(23,120,70,0.10), 0 12px 34px rgba(23,178,106,0.20)' }}>
+        {/* 좌상단 진한 동색 엣지(시선 유도) + 유리 엣지 하이라이트 */}
+        <span aria-hidden className="pointer-events-none absolute inset-0 z-0 rounded-section" style={{ background: 'linear-gradient(135deg, rgba(17,138,80,0.62) 0%, rgba(17,138,80,0.18) 26%, transparent 50%)', boxShadow: 'inset 1px 1px 0 rgba(255,255,255,0.38)' }} />
+        <div className="relative z-10 flex flex-col items-center gap-6 px-6 py-9 text-center sm:px-10">
+          <div className="flex flex-col items-center gap-4 sm:flex-row sm:text-left">
+            <SafeImg src="/assets/cta-chat.webp" className="h-[88px] w-[88px] object-contain sm:h-[104px] sm:w-[104px]" />
+            <div>
+              <div className="break-keep text-[19px] font-extrabold leading-7 text-[#15613D] sm:text-[21px]">
+                지금 신청하면, 이번 달부터 아낍니다
+              </div>
+              <div className="mt-1 break-keep text-[14px] font-medium text-[#37694F]">30초면 끝 · 평균 10분 안에 전문 컨설턴트가 전화드려요</div>
+            </div>
+          </div>
+          <ConsultSplit consultTo={consultTo} />
+        </div>
+      </section>
       </Band>
     </main>
   )
@@ -132,7 +132,7 @@ function SiteTiles({ tiles }) {
 
 // ─── 지원금 섹션 — "몰라서 못 받은 지원금, 최대 152만원+" + 3카드 + 바로 상담하기 분기 ───
 // 합계는 BENEFIT_TOTAL, 칩 4개는 BENEFIT_MAX(직접 판매 구조·조건부·표시광고법 안전 문구 유지).
-function SupportSection({ consultTo }) {
+function SupportSection() {
   // 카드① 칩 — 돈주머니 위·아래 두 띠에 흐름 배치(절대 좌표 아님 → 폭이 좁아도 겹치거나 카드 밖으로 안 나간다).
   // 띠 안에서는 가운데 모이고(안 들어가면 줄바꿈), 컨테이너 폭이 최대(≥ xl · 카드 299px)일 때 양 끝으로 벌려 목업의 네 귀퉁이가 된다.
   // 칩 한 쌍은 약 290px — lg(카드 256~281px)에서는 세로로 쌓이고, 375px 폰(295px)부터 나란히 들어간다.
@@ -207,9 +207,7 @@ function SupportSection({ consultTo }) {
         </SupportCard>
       </div>
 
-      <ConsultSplit consultTo={consultTo} />
-
-      <div className="mt-6 flex flex-col items-center gap-2 text-center">
+      <div className="mt-8 flex flex-col items-center gap-2 text-center">
         <Link to="/payouts" className="text-[13.5px] font-bold text-primary-text hover:underline">실제 지급내역 보기 →</Link>
         <p className="max-w-2xl break-keep text-[11px] leading-4 text-label">{LEGAL.policy} 지원금·사은품의 최대 금액은 조건 충족 시 기준이며 심사 결과에 따라 달라질 수 있습니다.</p>
       </div>
@@ -233,7 +231,7 @@ function ConsultSplit({ consultTo }) {
   const [open, setOpen] = useState(false)
   const openMobi = () => window.dispatchEvent(new CustomEvent('moduon:chat-open', { detail: { seed: '우리집 생활비 아낄 수 있는지 봐주세요' } }))
   return (
-    <div data-t="cta-split" className="mt-8 flex flex-col items-center">
+    <div data-t="cta-split" className="flex w-full flex-col items-center">
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}

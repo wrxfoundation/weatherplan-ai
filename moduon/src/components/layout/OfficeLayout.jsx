@@ -3,7 +3,7 @@ import { NavLink, Outlet, useNavigate, Link } from 'react-router-dom'
 import { useEffect, useMemo, useState } from 'react'
 import { useStore, getSession, tenantLeads } from '../../lib/store'
 import { unitName, BRAND_PRESETS } from '../../lib/constants'
-import { IcGrid, IcBolt, IcUsers, IcCoins, IcFolder, IcGear, IcRobot, IcBell, IcClock, IcCalendar, IcMegaphone, IcChart } from '../icons'
+import { IcGrid, IcBolt, IcUsers, IcCoins, IcFolder, IcGear, IcRobot, IcBell, IcClock, IcCalendar, IcMegaphone, IcChart, IcPhone } from '../icons'
 
 // 파생 알림(셀러) — AdminLayout의 NotifBell과 동일 패턴: 저장 없이 현재 상태에서 매번 계산,
 // 읽음 처리는 내용 시그니처를 localStorage(moduon_office_notif_sig)에 비교 저장.
@@ -71,6 +71,9 @@ const MENU = [
   { to: '/office/leads', label: '리드', icon: IcBolt, badge: true },
   { to: '/office/customers', label: '고객', icon: IcUsers },
   { to: '/office/design', label: '수당 설계', icon: IcChart },
+  // 휴대폰 견적 계산기는 소비자 메뉴에서 빠졌다(개인 고객은 온라인구매로 간다).
+  // R/B 는 사업자 핵심 기능이라 진입로를 여기 둔다 — 소비자 레이아웃으로 나가는 유일한 항목.
+  { to: '/calculator/phone', label: '휴대폰 R/B', icon: IcPhone, external: true },
   { to: '/office/marketing', label: '마케팅', icon: IcMegaphone },
   { to: '/office/settlement', label: '정산', icon: IcCoins },
   { to: '/office/resources', label: '자료실', icon: IcFolder },

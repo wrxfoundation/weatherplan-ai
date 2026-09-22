@@ -174,16 +174,21 @@ export default function RentalCalculator() {
           <div className="text-[12.5px] font-semibold text-faint">월 실부담</div>
           <div className="mt-0.5 text-[15px] font-bold text-ink">{label}</div>
 
-          <div className="mt-4 rounded-field bg-cream/70 p-3.5 text-[13px]">
-            {card && <Row l="정가 월 렌탈료" v={won(q.base)} />}
-            {q.comboDc > 0 && <Row l={`동시렌탈 할인(${combo}대)`} v={`−${won(q.comboDc)}`} accent="text-ok" />}
-            {q.cardDc > 0 && <Row l="제휴카드 청구할인" v={`−${won(q.cardDc)}`} accent="text-ok" />}
-            <div className="mt-1.5 flex justify-between border-t border-line pt-1.5">
-              <span className="font-bold text-ink">월 실부담</span>
-              <span className="tnum font-extrabold text-ink">{won(q.real)}</span>
+          {/* 내역 박스 — "정가 → 할인 → 실부담" 계산 과정을 보여주는 자리.
+              보여줄 줄(정가·할인)이 하나도 없으면 합계 한 줄만 남아 아래 큰 숫자와 같은 값을 두 번 찍는다.
+              그럴 때는 박스를 아예 그리지 않는다. */}
+          {(card || q.comboDc > 0) && (
+            <div className="mt-4 rounded-field bg-cream/70 p-3.5 text-[13px]">
+              {card && <Row l="정가 월 렌탈료" v={won(q.base)} />}
+              {q.comboDc > 0 && <Row l={`동시렌탈 할인(${combo}대)`} v={`−${won(q.comboDc)}`} accent="text-ok" />}
+              {q.cardDc > 0 && <Row l="제휴카드 청구할인" v={`−${won(q.cardDc)}`} accent="text-ok" />}
+              <div className="mt-1.5 flex justify-between border-t border-line pt-1.5">
+                <span className="font-bold text-ink">월 실부담</span>
+                <span className="tnum font-extrabold text-ink">{won(q.real)}</span>
+              </div>
+              {q.floored && <div className="mt-1.5 text-[11px] leading-4 text-faint">할인 중복 시 월 최소 부담금({won(MIN_REAL)})까지만 적용돼요 — 남은 할인은 중복되지 않습니다.</div>}
             </div>
-            {q.floored && <div className="mt-1.5 text-[11px] leading-4 text-faint">할인 중복 시 월 최소 부담금({won(MIN_REAL)})까지만 적용돼요 — 남은 할인은 중복되지 않습니다.</div>}
-          </div>
+          )}
 
           <div className="mt-4 flex items-baseline justify-between">
             <span className="text-[14px] font-bold text-ink">월 실부담</span>

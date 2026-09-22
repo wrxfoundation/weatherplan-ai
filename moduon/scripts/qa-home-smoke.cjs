@@ -156,6 +156,16 @@ const BASE = process.env.QA_BASE ?? 'http://localhost:4173'
   const bands = await page.locator('main > section').evaluateAll((els) => els.map((e) => getComputedStyle(e).backgroundColor))
   check(bands.length === 3, `홈 3칸 (${bands.length})`)
   check(bands[0] !== bands[1] && bands[1] !== bands[2], `가운데 칸 배경이 위아래와 다름 (${bands.join(' / ')})`)
+  // 설득 순서 — 주장(혜택) 다음에 근거(비교표)가 같은 칸에 오고, 전환 요청은 마지막 칸에서 한 번만.
+  // 근거·신뢰보다 요청이 먼저 오면 아직 안 믿는 사람이 요청을 먼저 받는다.
+  const zone = await page.locator('main > section').nth(1).innerText().catch(() => '')
+  check(zone.includes('152만원') && zone.includes('돌려받는 돈'), '2칸: 혜택 주장 + 실질부담 비교(근거) 한 칸')
+  check(!/바로 상담하기|전문컨설턴트 상담하기/.test(zone), '2칸에 전환 요청 없음')
+  const last = await page.locator('main > section').nth(2).innerText().catch(() => '')
+  check(last.includes('먼저 바꾼 분들의 후기') && last.includes('지금 신청하면'), '3칸: 신뢰·후기 뒤에 전환')
+  check((await count('[data-t="cta-split"]')) === 1, `상담 CTA 한 번만 (${await count('[data-t="cta-split"]')})`)
+  const closing = await page.locator('main > section').nth(2).locator('[data-t="cta-split"]').count().catch(() => 0)
+  check(closing === 1, '상담 CTA 가 마지막 칸 안에 있음')
   // 개인 고객 동선은 휴대폰 견적 계산기로 가지 않는다 — 온라인 구매(/phone/shop)가 종착지
   check((await count('a[href="/calculator/phone"]')) === 0, '홈에 휴대폰 견적 계산기 링크 없음(사업자 도구)')
   const html = await page.content()

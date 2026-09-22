@@ -70,6 +70,20 @@ const BASE = process.env.QA_BASE ?? 'http://localhost:4173'
   check(text.includes('어느 통신사를 쓰실 건가요?'), '휴대폰 Q1 별도 스키마')
   check(text.includes('알뜰폰은 통화 품질'), '휴대폰 전용 팁')
 
+  // 3문항을 끝까지 답하면 온라인구매(/phone/shop)로 간다 — 휴대폰 견적 계산기는 사업자 도구다.
+  // 도착만 보면 안 된다: 예전엔 carrier= 로 보내 화면이 못 읽고 답 3개가 통째로 버려졌다.
+  for (let i = 0; i < 3; i += 1) {
+    await page.locator('button[aria-pressed]').first().click().catch(() => {})
+    await page.waitForTimeout(220)
+    const nx = page.locator('button:has-text("결과보기"), button:has-text("다음")').first()
+    if (await nx.count()) { await nx.click().catch(() => {}); await page.waitForTimeout(500) }
+  }
+  const pUrl = page.url()
+  check(pUrl.includes('/phone/shop'), `휴대폰 결과 → 온라인구매 (${pUrl.split('?')[0].split('/').slice(-2).join('/')})`)
+  check(pUrl.includes('cur=') && pUrl.includes('from=onboard'), `답변이 cur= 로 전달 (${pUrl.split('?')[1] ?? ''})`)
+  const curOn = await page.locator('[data-t="shop-cur"] button[aria-pressed="true"]').count().catch(() => 0)
+  check(curOn === 1, `온라인구매 화면에 답한 통신사가 선택돼 있음 (${curOn}개)`)
+
   // ── 카테고리 진입 동선 ──
   await page.goto(BASE + '/category/internet', { waitUntil: 'networkidle' })
   await page.waitForTimeout(500)

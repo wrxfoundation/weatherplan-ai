@@ -133,7 +133,9 @@ export function answersToQuery(slug, a) {
     if (a.speed) p.set('speed', first(a.speed))
     if (a.extras?.length) p.set('extras', a.extras.join(','))
   } else {
-    if (a.carriers?.length) p.set('carrier', first(a.carriers))
+    // 휴대폰은 온라인구매(/phone/shop)로 떨어진다 — 그 화면이 읽는 이름은 'cur' 다.
+    // 'carrier' 로 보내면 3문항 답이 통째로 버려진다(통신사 칩이 하나도 안 켜진 빈 화면).
+    if (a.carriers?.length) p.set('cur', first(a.carriers))
     if (a.join) p.set('join', first(a.join))
     if (a.usage) p.set('usage', first(a.usage))
   }
