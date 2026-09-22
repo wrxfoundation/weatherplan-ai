@@ -3318,3 +3318,10 @@ Henry — I've sent Alessandro Borgogna a connection request after his Korea not
 ```
 
 **발송 여부는 Claude 가 관리하지 않는다** — 수락·발송·회신은 서우 통보 시 갱신.
+
+
+## XRP SEOUL 래플 공식 X 타래 (9/22) — 초안, 미게시
+
+서우가 커뮤니티 공지문(DYOR 링크판)을 주며 「공식 X 포스팅용 타래 스크립트」 요청. 9/15 판매 타래 원칙 그대로 국문 6칸·영문 6칸,
+가중 글자수 280 이내 확인. 전문·게시 운영·규칙 게이트·최악 해석·확인 사항은 **`depin/content/xrpl-seoul-raffle-thread-0922.md`**.
+게시 시각 안: 국문 16:00 KST(오픈 2시간 전) · 영문 22:00~23:00 KST. 발송 여부는 서우가 알려줄 때만 갱신.
