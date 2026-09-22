@@ -90,6 +90,13 @@ const DEFAULT = {
   orders: SEED_ORDERS.map((o) => ({ ...o, at: Date.now() - o.daysAgo * 86400000 })),
   // 기존에 다니시던 병원 — 제휴 병원이 아니어도 등록해 둔다 (2026-08-12 시트 예약 3번)
   myHospitals: [],
+  // 토스페이먼츠 결제 (2026-09-23) — 승인이 끝난 건만 쌓인다.
+  //   payments: [{ id, kind, ref, orderId, orderName, amount, method, card, approvedAt, receiptUrl, status }]
+  //   billing:  월 구독 자동결제로 등록한 카드 표기 정보. billingKey 원본은 서버 보관 대상이라 여기 없다.
+  payments: [],
+  billing: null,
+  // 결제창으로 넘어가기 전에 담아 둔 스토어 주문. 승인이 끝나야 orders·requests 로 선다.
+  pendingOrder: null,
 };
 
 // 저장된 일정 중 씨앗(INITIAL_EVENTS)에서 온 것을 손본다 —
@@ -155,6 +162,9 @@ function reducer(state, action) {
         reviews: arr(p.reviews, state.reviews),
         orders: arr(p.orders, state.orders),
         myHospitals: arr(p.myHospitals, state.myHospitals),
+        payments: arr(p.payments, state.payments),
+        billing: p.billing ?? state.billing,
+        pendingOrder: p.pendingOrder ?? state.pendingOrder,
       };
     }
     case "completeOnboarding":
@@ -241,6 +251,55 @@ function reducer(state, action) {
             : e
         ),
       };
+    // 결제 승인이 끝난 건만 들어온다 (pages/pay/result.jsx). 같은 주문번호는 한 번만 쌓는다 —
+    // 결과 화면을 새로고침해도 내역이 겹치지 않게.
+    case "addPayment": {
+      const list = state.payments || [];
+      if (action.payload.orderId && list.some((p) => p.orderId === action.payload.orderId)) return state;
+      return { ...state, payments: [{ id: `pay${Date.now()}`, at: Date.now(), ...action.payload }, ...list].slice(0, 30) };
+    }
+    case "setBilling":
+      return { ...state, billing: action.payload };
+    case "setPendingOrder":
+      return { ...state, pendingOrder: action.payload };
+    // 스토어 결제 승인 완료 → 주문·구매내역·배송 요청을 한 번에 세우고 담아 둔 것을 비운다.
+    // 결제가 끝나야 주문이 선다는 규칙이 이 한 곳에 있다.
+    case "commitPendingOrder": {
+      const po = state.pendingOrder;
+      if (!po) return state;
+      const now = Date.now();
+      const pay = action.payload || {};
+      return {
+        ...state,
+        pendingOrder: null,
+        demo: { ...state.demo, cart: true, safetyCart: [] },
+        orders: [
+          { id: `od${now}`, at: now, by: "김민수", channel: po.channel, items: po.items, ship: po.ship, status: "preparing", receipt: pay.receiptUrl || null, note: "" },
+          ...state.orders,
+        ],
+        requests: [
+          {
+            id: `rq-${now}`,
+            dir: "fromGuardian",
+            type: "물품 전달해 주세요",
+            detail: `보호자 주문: ${po.items.map((i) => i.name).join(", ")} — 다음 배송일에 전달해 주세요.`,
+            amount: po.total,
+            preferredDate: null,
+            urgency: "normal",
+            assignee: "박지현",
+            photos: [],
+            status: "inProgress",
+            history: [
+              { at: now, status: "requested", note: "스토어 주문" },
+              { at: now, status: "confirmed", note: "" },
+              { at: now, status: "inProgress", note: `보호자 결제 완료 · ${pay.method || "카드"}` },
+            ],
+            proof: null,
+          },
+          ...state.requests,
+        ],
+      };
+    }
     case "addVoice":
       return { ...state, voices: [{ id: `vo${Date.now()}`, at: Date.now(), ...action.payload }, ...state.voices].slice(0, 30) };
     case "addReview":

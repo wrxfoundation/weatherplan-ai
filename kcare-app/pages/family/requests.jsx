@@ -1,5 +1,7 @@
 import Head from "next/head";
+import { useRouter } from "next/router";
 import { useState } from "react";
+import { payHref } from "../../lib/payments";
 import FamilyLayout from "../../components/FamilyLayout";
 import { Card, SectionLabel, PrimaryButton, GhostButton, Badge, Collapse } from "../../components/ui";
 import { STATUS, GUARDIAN_PRESETS, SERVICE_MENU, SERVICE_PLUS, URGENCY } from "../../lib/requests";
@@ -297,6 +299,7 @@ const STEP_ORDER = ["requested", "confirmed", "awaitingPayment", "inProgress", "
 const STEP_LABELS = ["접수", "확정", "결제", "진행", "완료"];
 
 function RequestCard({ req, open, onToggle, onboarding, dispatch, isPrimary }) {
+  const router = useRouter();
   const honor = honorific(onboarding); // 고객 호칭 — 전부 "~~님" (2026-08-12 시트)
   const [notified, setNotified] = useState(false); // 부 보호자 → 주 보호자 승인 알림
   const st = STATUS[req.status];
@@ -434,18 +437,12 @@ function RequestCard({ req, open, onToggle, onboarding, dispatch, isPrimary }) {
                   >
                     금액 문의
                   </GhostButton>
+                  {/* 토스페이먼츠 결제창으로 — 승인이 끝나야 '진행'으로 넘어간다 (/pay/result) */}
                   <PrimaryButton
                     className="flex-[2]"
-                    onClick={() =>
-                      dispatch({
-                        type: "transitionRequest",
-                        id: req.id,
-                        to: "inProgress",
-                        note: `보호자 승인 · ${fmtWon(req.amount)} (결제 연동 대기 · 데모)`,
-                      })
-                    }
+                    onClick={() => router.push(payHref({ kind: "request", amount: req.amount, orderName: req.type, ref: req.id }))}
                   >
-                    승인하고 결제 (데모)
+                    {fmtWon(req.amount)} 결제하기
                   </PrimaryButton>
                 </div>
               ) : (

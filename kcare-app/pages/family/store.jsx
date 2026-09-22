@@ -1,5 +1,7 @@
 import Head from "next/head";
+import { useRouter } from "next/router";
 import { useState } from "react";
+import { payHref } from "../../lib/payments";
 import FamilyLayout from "../../components/FamilyLayout";
 import { Card, SectionLabel, PrimaryButton, Badge } from "../../components/ui";
 import Icon from "../../components/icons";
@@ -21,13 +23,13 @@ import { honorific } from "../../lib/tracks";
 
 export default function StorePage() {
   const { state, dispatch } = useAppState();
+  const router = useRouter();
   const images = state.productImages || {};
   // 첫 방문 안전진단(컨시어지)이 담아 둔 생활안전용품 — 자동으로 선택된 채 시작
   const safetyCart = state.demo.safetyCart || [];
   const [sel, setSel] = useState(() => Object.fromEntries(safetyCart.map((id) => [id, true])));
   const [cat, setCat] = useState(safetyCart.length > 0 ? "safety" : "vitamin");
   const [groupIdx, setGroupIdx] = useState(0);
-  const [ordered, setOrdered] = useState(false);
   const [tab, setTab] = useState("shop"); // shop | orders — 구매내역 조회 (2026-08-12 시트)
   // 상품 상세 시트 — 카드를 누르면 바로 담기지 않고 상세를 먼저 본다 (2026-09-22 상담실장 확인)
   const [detail, setDetail] = useState(null);
@@ -42,49 +44,25 @@ export default function StorePage() {
   const active = STORE_CATALOG.find((c) => c.id === cat);
   const group = active.groups[Math.min(groupIdx, active.groups.length - 1)];
 
-  const order = () => {
-    if (items.length === 0 || ordered) return;
-    setOrdered(true);
-    dispatch({ type: "demo", payload: { cart: true, safetyCart: [] } }); // 어르신 배송 카드 갱신 · 진단 장바구니 소진
+  // 결제 — 토스페이먼츠 결제창으로 보낸다 (2026-09-23). 승인이 끝나야 주문이 선다.
+  // 여기서는 무엇을 살지만 정하고, 돈이 오가는 자리는 /pay 한 곳이다.
+  const payNow = () => {
+    if (items.length === 0) return;
+    const name = items.length === 1 ? items[0].name : `${items[0].name} 외 ${items.length - 1}건`;
+    // 결제 성공 뒤에 주문을 세우려면 무엇을 담았는지가 남아 있어야 한다 (/pay/result 가 이걸 본다)
     dispatch({
-      type: "addRequest",
+      type: "setPendingOrder",
       payload: {
-        id: `rq-${Date.now()}`,
-        dir: "fromGuardian",
-        type: "물품 전달해 주세요",
-        detail: `보호자 주문: ${items.map((i) => i.name).join(", ")} — 다음 배송일에 전달해 주세요.`,
-        amount: total,
-        preferredDate: null,
-        urgency: "normal",
-        assignee: "박지현",
-        photos: [],
-        status: "inProgress",
-        history: [
-          { at: Date.now(), status: "requested", note: "스토어 주문" },
-          { at: Date.now(), status: "confirmed", note: "" },
-          { at: Date.now(), status: "inProgress", note: `보호자 결제 ${fmtWon(total)} (결제 연동 대기 · 데모)` },
-        ],
-        proof: null,
-      },
-    });
-    dispatch({
-      type: "pushEvent",
-      payload: { kind: "스토어", text: `보호자 주문 ${items.length}건 · ${fmtWon(total)}`, color: "#B08D57" },
-    });
-    // 구매내역에도 같은 주문이 남는다 — 조회 탭이 별도 데이터를 보면 안 된다
-    dispatch({
-      type: "addOrder",
-      payload: {
-        by: "김민수",
-        channel: safetyCart.length > 0 ? "안전진단 자동 담기" : "보호자 스토어",
         items: items.map((i) => ({ id: i.id, name: i.name, qty: 1, price: i.price })),
         ship: items.reduce((s, i) => s + (i.ship || 0), 0),
-        status: "preparing",
-        receipt: null,
-        note: "",
+        total,
+        channel: safetyCart.length > 0 ? "안전진단 자동 담기" : "보호자 스토어",
+        orderName: name,
       },
     });
+    router.push(payHref({ kind: "store", amount: total, orderName: name }));
   };
+
 
   const ORDER_STATUS = {
     preparing: { label: "준비 중", fg: "#8A5D12", bg: "rgba(138,93,18,.12)" },
@@ -129,7 +107,7 @@ export default function StorePage() {
         </p>
 
         {/* 안전진단 자동 담기 — 컨시어지 첫 방문 진단과 연동 (실무자 요청) */}
-        {safetyCart.length > 0 && !ordered && (
+        {safetyCart.length > 0 && (
           <Card className="border-gold/40 p-4" style={{ background: "linear-gradient(180deg,#FBF6EC,#F6EFDE)" }}>
             <div className="text-[12px] font-bold text-gold">첫 방문 홈 안전진단 결과</div>
             <p className="mt-1 text-[14px] leading-[1.65] text-ink">
@@ -224,7 +202,7 @@ export default function StorePage() {
                 <li key={i.id}>
                   <button
                     aria-label={`${i.name} 상품 정보 보기`}
-                    onClick={() => !ordered && setDetail(i)}
+                    onClick={() => setDetail(i)}
                     className={`btn-press w-full overflow-hidden rounded-2xl border text-left ${
                       disabled
                         ? "border-dashed border-navy/15 opacity-80"
@@ -291,7 +269,7 @@ export default function StorePage() {
           onClose={() => setDetail(null)}
         />
 
-        {items.length > 0 && !ordered && (
+        {items.length > 0 && (
           <Card className="p-4">
             <div className="flex items-baseline justify-between">
               <span className="text-[15px] font-bold text-navy">담은 물품 {items.length}건</span>
@@ -301,16 +279,10 @@ export default function StorePage() {
           </Card>
         )}
 
-        {ordered ? (
-          <Card className="border-green/30 bg-[#F1FAF6] p-4 text-[15px] font-bold text-green">
-            주문이 접수되었습니다 — 다음 배송일에 전달됩니다. 구매내역 조회에서 진행 상태를 볼 수
-            있습니다.
-          </Card>
-        ) : (
-          <PrimaryButton disabled={items.length === 0} onClick={order}>
-            {items.length === 0 ? "물품을 선택해 주세요" : `바로 결제 (보호자) · ${fmtWon(total)}`}
-          </PrimaryButton>
-        )}
+        {/* 결제 — 승인이 끝나야 주문이 선다. 완료 안내는 결제 결과 화면과 구매내역 조회가 맡는다. */}
+        <PrimaryButton disabled={items.length === 0} onClick={payNow}>
+          {items.length === 0 ? "물품을 선택해 주세요" : `${fmtWon(total)} 결제하기`}
+        </PrimaryButton>
           </>
         )}
       </FamilyLayout>

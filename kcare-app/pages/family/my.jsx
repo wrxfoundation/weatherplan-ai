@@ -20,6 +20,7 @@ import {
 } from "../../lib/mock";
 import { VIDEO_POLICY, VIDEO_SEGMENTS } from "../../lib/console";
 import { HOUSEHOLD, PAYMENT_MODES, PRICING, fmtWon } from "../../lib/config";
+import { fmtCard, payHref } from "../../lib/payments";
 
 // 월 구독료 표기 — 가입 때 고른 가구 구성(한 분 / 부부)에 따라 갈린다. 2급지는 확정 전.
 const monthlyLabel = (ob) =>
@@ -190,6 +191,7 @@ export default function MyPage() {
           <div className="mt-3 space-y-2 text-[15px]">
             <Row k="서비스 지역" v={ob ? `${ob.district} · ${ob.tier === 2 ? "2급지" : "1급지"}` : `${ELDER.district} · 1급지 (데모)`} />
             <Row k="월 구독료" v={monthlyLabel(ob)} />
+            <Row k="결제수단" v={state.billing ? fmtCard(state.billing) : <PendingTag>미등록</PendingTag>} />
             <Row k="결제권한" v={payLabel(ob, honor)} />
             <Row k="방문기록 영상 동의" v={ob?.videoConsent ? "동의함" : ob ? "미동의 (가입 시 선택)" : "동의함 (데모)"} />
           </div>
@@ -295,6 +297,8 @@ export default function MyPage() {
             ob={ob}
             honor={honor}
             isPrimary={isPrimary}
+            billing={state.billing}
+            payments={state.payments || []}
             onClose={() => setPayOpen(false)}
             onSave={(patch) => {
               dispatch({ type: "onboardingPatch", patch });
@@ -499,7 +503,7 @@ function EscortReportSheet({ onClose }) {
 
 // ── 결제 관리 — 타일 3 ──
 // 결제권한은 가입 때 정하고 뒤에 보호자가 바꾼다 (온보딩 문구). 결제수단 등록은 PG 연동 전.
-function PaySheet({ ob, honor, isPrimary, onClose, onSave }) {
+function PaySheet({ ob, honor, isPrimary, onClose, onSave, billing, payments = [] }) {
   const [mode, setMode] = useState(ob?.paymentMode || "limit");
   const [limit, setLimit] = useState(ob?.limitAmount ?? PRICING.paymentLimitDefault);
   const nextBill = ob?.joinedAt
@@ -511,9 +515,81 @@ function PaySheet({ ob, honor, isPrimary, onClose, onSave }) {
       <div className="mt-3 space-y-2 text-[14px]">
         <Row k="월 구독료" v={monthlyLabel(ob)} />
         <Row k="다음 결제" v={nextBill} />
-        <Row k="결제수단" v={<PendingTag>등록 연동 대기</PendingTag>} />
+        <Row k="결제수단" v={billing ? fmtCard(billing) : <PendingTag>미등록</PendingTag>} />
         <Row k="지금 결제권한" v={payLabel(ob, honor)} />
       </div>
+
+      {/* 자동결제 카드 등록 — 토스페이먼츠 (2026-09-23). 등록만 하고 청구는 매월 결제일에. */}
+      <div className="mt-4">
+        <SectionLabel>{billing ? "결제수단" : "결제수단 등록"}</SectionLabel>
+        <Link href={payHref({ kind: "billing", orderName: "월 구독료 자동결제" })} className="block">
+          <div className="btn-press mt-2 flex items-center gap-3 rounded-xl border border-navy/15 bg-white/70 p-3.5">
+            <span aria-hidden className="flex h-[36px] w-[36px] shrink-0 items-center justify-center rounded-[10px] bg-navy/[.06] text-navy">
+              <Icon name="card" size={18} />
+            </span>
+            <span className="min-w-0 flex-1">
+              <span className="block text-[14px] font-bold text-navy">
+                {billing ? "등록된 카드 변경" : "카드 등록하고 자동결제 시작"}
+              </span>
+              <span className="block text-[12px] leading-[1.5] text-muted">
+                {billing ? `${fmtCard(billing)} · 매월 자동 청구` : "토스페이먼츠 · 카드정보는 K-CARE 서버에 저장되지 않습니다"}
+              </span>
+            </span>
+            <span aria-hidden className="shrink-0 text-muted">›</span>
+          </div>
+        </Link>
+      </div>
+
+      {/* 가입·설치비 — 최초 1회. 결제 기록이 없을 때만 보인다 (상담 뒤 결제하는 흐름) */}
+      {!payments.some((p) => p.kind === "entry") && (
+        <div className="mt-4">
+          <SectionLabel>가입 및 설치비</SectionLabel>
+          <Link
+            href={payHref({ kind: "entry", amount: PRICING.entryFee.total, orderName: "K-CARE 가입 및 설치비" })}
+            className="block"
+          >
+            <div className="btn-press mt-2 flex items-center gap-3 rounded-xl border border-navy/15 bg-white/70 p-3.5">
+              <span aria-hidden className="flex h-[36px] w-[36px] shrink-0 items-center justify-center rounded-[10px] bg-gold/15 text-gold">
+                <Icon name="gift" size={18} />
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className="block text-[14px] font-bold text-navy">{fmtWon(PRICING.entryFee.total)} 결제하기</span>
+                <span className="block text-[12px] leading-[1.5] text-muted">
+                  갤럭시 Fit3 · 케어박스 · 최초 21항목 점검 · 앱 설치 (최초 1회)
+                </span>
+              </span>
+              <span aria-hidden className="shrink-0 text-muted">›</span>
+            </div>
+          </Link>
+        </div>
+      )}
+
+      {/* 결제 내역 — 승인이 끝난 건만 */}
+      {payments.length > 0 && (
+        <div className="mt-4">
+          <SectionLabel>최근 결제 내역</SectionLabel>
+          <div className="mt-2 divide-y divide-navy/[.07]">
+            {payments.slice(0, 5).map((p) => (
+              <div key={p.id} className="flex items-center gap-2 py-2.5">
+                <span className="min-w-0 flex-1">
+                  <span className="block text-[13.5px] font-bold text-ink">{p.orderName}</span>
+                  <span className="block font-num text-[11.5px] text-muted">
+                    {new Date(p.at).toLocaleDateString("ko-KR", { month: "long", day: "numeric" })} · {p.easyPay || p.method || "카드"}
+                  </span>
+                </span>
+                <span className="shrink-0 text-right">
+                  <span className="block font-num text-[14px] font-bold text-navy">{fmtWon(p.amount)}</span>
+                  {p.receiptUrl && (
+                    <a href={p.receiptUrl} target="_blank" rel="noreferrer" className="tap text-[11.5px] font-bold text-green underline underline-offset-2">
+                      영수증
+                    </a>
+                  )}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
       <div className="mt-4">
         <SectionLabel>결제권한 변경</SectionLabel>
         <div className="mt-2 space-y-2">
