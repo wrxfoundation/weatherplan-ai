@@ -1,14 +1,14 @@
-# Korea Rising — verified K-pop snapshot (2026-09-21)
+# Korea Rising — verified K-pop snapshot (2026-09-22)
 
 Every line is **cross-verified** (≥2 independent sources agree on the canonical name) and carries its source + Skill Score. Full data + Schema.org JSON-LD: <https://aiagentlabs.co.kr/> · via KoreaAPI (MCP).
 
 ## 🎬 Latest official releases (YouTube)
+- **PLAVE** — Plave - PORNSTAR
 - **Xdinary Heroes** — 고려대와 엑디즈🎸가 이토록🌀뜨거울 줄이야
-- **ZICO** — WATERBOMB? Yeah, absolutely. Absolutely. Easy. No problem.
-- **EVERGLOW** — Kingdom Hearts IV - Extended D23 2026 Trailer
-- **Oh My Girl** — 저 정말 바라는 거 없어요 💜
-- **Kiss of Life** — Youuuu💗#KISSOFLIFE #키스오브라이프 #KIOF #JULIE #쥴리 #NATTY #나띠 #HANEUL #하늘 #Shorts
+- **AKMU** — 'Paradise of Rumors... begins...'
+- **Kiss of Life** — 말하고 싶어🤗 #KISSOFLIFE #키스오브라이프 #KIOF #JULIE #쥴리 #NATTY #나띠 #HANEUL #하늘 #Shorts
 - **VIVIZ** — [VIVI.Zip] 항저우 팬미팅 Spring Whisper 포스터 촬영💙 Highlight #2
+- **SUNMI** — 𝐒𝐦𝐚𝐫𝐭 𝐊𝐢𝐭𝐜𝐡𝐞𝐧. 𝐒𝐦𝐨𝐨𝐭𝐡 𝐒𝐞𝐫𝐯𝐢𝐜𝐞｜𝐒𝐔𝐍𝐌𝐈 𝐅𝐋𝐄𝐗 𝟑 𝐊𝐃𝐒
 
 ## 🎤 Verified roster (640 acts)
 - **2NE1**: I Am the Best
