@@ -2,14 +2,11 @@ import Head from "next/head";
 import Logo from "../components/Logo";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   ELDER,
   JOBS,
-  MOU_HOSPITALS,
   CRM_TIMELINE,
-  HOSPITAL_PARTNERS,
-  OPTION_SERVICES,
   ELDER_TAGS,
   TAG_TONE,
 } from "../lib/mock";
@@ -28,34 +25,10 @@ import {
   SCORE_FACTORS,
   CRM_STAGE,
   COMMS_TRACKING,
-  INSURANCE_PARTNER,
   MORNING_BRIEF,
-  PARTNER_STATUS,
-  WATCH_BOARD,
-  WEAR_KPIS,
   WEAR_DEVICES,
-  WEAR_RULES,
-  WEAR_ACTIONS,
-  WEAR_PIPELINE,
-  FALL_CHAIN,
-  FALL_SCOPE,
-  FALL_SMS,
-  FALL_READY,
-  FALL_PLAN,
-  FALL_METRICS,
-  SOS_119,
-  SOS_CONSENT,
-  WEAR_CONSENT,
   HANDOFF_CHAIN,
   HANDOFF_STUCK,
-  SOS_SUBJECT,
-  SOS_TEAM,
-  SOS_FAMILY,
-  SOS_GOLDEN,
-  SOS_LEVELS,
-  SOS_HISTORY,
-  SOS_KPIS,
-  SOS_AFTER,
   DIRECTORY_ALL,
   AI_STAGE_NOW,
   AI_EVIDENCE,
@@ -78,13 +51,28 @@ import AiChat from "../components/AiChat";
 import HelpTip from "../components/HelpTip";
 import Icon from "../components/icons";
 import MapDialog, { distanceM, prettyDistance } from "../components/MapDialog";
-import RosterTable from "../components/RosterTable";
 import VisitFlow from "../components/VisitFlow";
 import MobileSectionNav from "../components/MobileSectionNav";
 import StaggerIn from "../components/StaggerIn";
 import { ROSTERS } from "../lib/rosters";
 import { CREW_RULES } from "../lib/dispatch-policy";
-import { SERVICE_PLUS, STATUS } from "../lib/requests";
+// 관제 콘솔 재구성 — 2026-09-22 관제 개선 요청서(19절) · 시안 8장 (components/ops/*)
+import OpsDashboard from "../components/ops/OpsDashboard";
+import SosCenter from "../components/ops/SosCenter";
+import Thresholds from "../components/ops/Thresholds";
+import Devices from "../components/ops/Devices";
+import Visits from "../components/ops/Visits";
+import ElderMgmt from "../components/ops/ElderMgmt";
+import GuardianMgmt from "../components/ops/GuardianMgmt";
+import ConciergeMgmt from "../components/ops/ConciergeMgmt";
+import RequestsMgmt from "../components/ops/RequestsMgmt";
+import TogetherMgmt from "../components/ops/TogetherMgmt";
+import CommsMgmt from "../components/ops/CommsMgmt";
+import HospitalsMgmt from "../components/ops/HospitalsMgmt";
+import Accounts from "../components/ops/Accounts";
+import AuditLog from "../components/ops/AuditLog";
+import Integrations from "../components/ops/Integrations";
+import { SosBanner, useIncidents } from "../lib/ops-sos";
 
 // 배치관리자(관제) — 핸드오프 09 상세 명세 + REQ-04(긴급 대응 범위, 회의 확정 우선).
 // 데스크톱 전용 · 정보 밀도가 정당한 유일한 화면 (10~13px 활자가 정답 — 09 §0).
@@ -175,16 +163,26 @@ function useElapsed(active) {
 }
 
 // 관제 좌측 GNB — 업무 단위 분리 (경영 콘솔과 동일 구조)
+// 관제 좌측 GNB — 2026-09-22 관제 개선 요청서 1절 순서. 대시보드는 '통합 알림센터'로,
+// 방문관리 · 해주세요 관리 · 함께해요 관리 · 관제기준 설정 · 계정·권한 · 감사로그 ·
+// 시스템 연동상태를 새로 넣었다. 날씨는 요청서에 없지만 기존 기능이라 아래쪽에 둔다.
 const DISPATCH_MENUS = [
-  ["dash", "대시보드", "home"],
+  ["dash", "통합 알림센터", "home"],
   ["sos", "SOS 대응", "alert"],
-  ["elder", "어르신", "user"],
-  ["guardian", "보호자", "users"],
-  ["concierge", "컨시어지", "heart"],
-  ["hospital", "병원", "plus"],
-  ["wearable", "웨어러블", "watch"],
-  ["weather", "날씨", "drop"],
+  ["thresholds", "관제기준 설정", "shield"],
+  ["elder", "어르신 관리", "user"],
+  ["guardian", "보호자 관리", "users"],
+  ["concierge", "컨시어지 관리", "heart"],
+  ["wearable", "웨어러블·센서", "watch"],
+  ["visits", "방문관리", "calendar"],
+  ["requests", "해주세요 관리", "hand"],
+  ["together", "함께해요 관리", "sun"],
   ["comms", "커뮤니케이션", "megaphone"],
+  ["hospital", "병원", "hospital"],
+  ["weather", "날씨", "drop"],
+  ["accounts", "계정·권한", "unlock"],
+  ["audit", "감사로그", "list"],
+  ["integrations", "시스템 연동상태", "repeat"],
 ];
 
 // 관제 맵 — Leaflet · 실측 좌표 (09 §4) · 타일 라이트(OSM)/다크(CARTO) 선택
@@ -205,9 +203,91 @@ const MAP_TILES = {
   },
 };
 
-function ControlMap({ sos, mode = "light", onSelect }) {
+// 지도 팝업에 보이는 인물 정보 — 관제 개선 요청서(2026-09-22) 5절.
+// 어르신: 이름·나이 · 현재 건강상태 · 이상징후 · 현재/마지막 위치 · 마지막 위치 수신 시각 ·
+//         담당 컨시어지 · 긴급연락처 · 진행 중인 서비스.
+// 컨시어지: 이름 · 근무상태 · 현재/마지막 위치 · 수신 시각 · 수행 중 업무 · 담당 고객 ·
+//           출동 가능 · 고객까지 거리 · 예상 이동시간.
+// '실시간 위치'와 '마지막 수신 위치'를 글자로 구분한다 (같은 절 마지막 줄).
+const MAP_PEOPLE_INFO = {
+  김순자: {
+    kind: "elder",
+    rows: [
+      ["나이", "78세"],
+      ["건강상태", "주의 — 심박 기준 초과 확인 중"],
+      ["이상징후", "심박 132 bpm · 기준 120"],
+      ["위치", "실시간 · 강남구 대치동 자택"],
+      ["위치 수신", "17:43 (1분 전)"],
+      ["담당 컨시어지", "박지현"],
+      ["긴급연락", "김민수 (아들 · 주보호자)"],
+      ["진행 중 서비스", "병원 동행 13:50–18:00 예정"],
+    ],
+  },
+  박지현: {
+    kind: "concierge",
+    rows: [
+      ["근무상태", "동행 중"],
+      ["위치", "실시간 · 서울아산병원 인근"],
+      ["위치 수신", "17:44 (방금)"],
+      ["수행 중 업무", "김순자 · 서울아산 순환기내과 동행"],
+      ["담당 고객", "김순자 외 4명"],
+      ["출동 가능", "가능 (동행 종료 후)"],
+      ["다음 고객까지", "4.2 km · 약 16분"],
+    ],
+  },
+  정민호: {
+    kind: "concierge",
+    rows: [
+      ["근무상태", "수행 중"],
+      ["위치", "실시간 · 강서구"],
+      ["위치 수신", "17:41"],
+      ["수행 중 업무", "안심방문 · 강필순"],
+      ["담당 고객", "강필순 외 3명"],
+      ["출동 가능", "불가 (방문 중)"],
+    ],
+  },
+  한서연: {
+    kind: "concierge",
+    rows: [
+      ["근무상태", "대기"],
+      ["위치", "마지막 수신 위치 · 용산구"],
+      ["위치 수신", "17:20 (24분 전 · 지연)"],
+      ["수행 중 업무", "없음"],
+      ["담당 고객", "오태식 외 2명"],
+      ["출동 가능", "가능 · 1인"],
+      ["김순자까지", "6.8 km · 약 25분"],
+    ],
+  },
+};
+
+function popupHtml(name, label) {
+  const info = MAP_PEOPLE_INFO[name];
+  if (!info) return label;
+  const rows = info.rows
+    .map(([k, v]) => `<div style="display:flex;gap:8px;font-size:11px;line-height:1.5"><span style="color:#5C5A54;min-width:76px">${k}</span><span style="color:#0A1F3C;font-weight:600">${v}</span></div>`)
+    .join("");
+  return `<div style="min-width:220px"><div style="font-weight:700;font-size:13px;color:#0A1F3C;margin-bottom:4px">${label}</div>${rows}</div>`;
+}
+
+// focus: 이름 검색 결과 — 그 인물 위치로 지도가 즉시 이동하고 마커가 강조된다 (요청서 5절)
+function ControlMap({ sos, mode = "light", onSelect, focus, focusKey }) {
   const nodeRef = useRef(null);
   const mapRef = useRef(null);
+  const markersRef = useRef({});
+
+  // 이름 검색 → 해당 마커로 이동 · 강조 · 팝업
+  useEffect(() => {
+    const map = mapRef.current;
+    const m = focus && markersRef.current[focus];
+    if (!map || !m) return;
+    map.flyTo(m.getLatLng(), 15, { duration: 0.8 });
+    m.setStyle({ radius: 12, weight: 4 });
+    m.openPopup();
+    const t = setTimeout(() => m.setStyle({ radius: 7, weight: 2 }), 4000);
+    return () => clearTimeout(t);
+    // focusKey 는 같은 이름을 다시 찾아도 다시 이동하게 하는 열쇠다
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [focus, focusKey]);
 
   useEffect(() => {
     let cancelled = false;
@@ -237,8 +317,9 @@ function ControlMap({ sos, mode = "light", onSelect }) {
           fillColor: color,
           fillOpacity: 0.5,
         });
-        m.addTo(map).bindPopup(label, { className: "kcare-popup" });
+        m.addTo(map).bindPopup(sel ? popupHtml(sel, label) : label, { className: "kcare-popup" });
         if (sel && onSelect) m.on("click", () => onSelect(sel)); // 마커 → 플로팅 프로필
+        if (sel) markersRef.current[sel] = m; // 이름 검색용
       };
       const tileTheme = MAP_TILES[mode] || MAP_TILES.light;
       MAP_DISTRICTS.forEach((d) => add(d.lat, d.lng, d.name, tileTheme.district, 4));
@@ -279,13 +360,6 @@ function ControlMap({ sos, mode = "light", onSelect }) {
 
 // 날씨 지도 — 관제 맵과 같은 Leaflet · 권역 마커에 기온·미세먼지를 상시 라벨로 표시.
 // 데이터는 단일 출처를 쓴다 (WEATHER_DISTRICTS ↔ MAP_DISTRICTS 이름 매칭).
-// 공용 톤 — 낙상 대응 · 준비 상태 표기
-const TONE = {
-  ok: { fg: "#1E7A5A", bg: "rgba(30,122,90,.1)" },
-  warn: { fg: "#8A5D12", bg: "rgba(138,93,18,.12)" },
-  bad: { fg: "#C0392B", bg: "rgba(192,57,43,.1)" },
-  info: { fg: "#5C5A54", bg: "rgba(10,31,60,.06)" },
-};
 
 const WEATHER_TONE = {
   bad: "#C0392B",
@@ -372,33 +446,28 @@ export default function DispatchConsole() {
   const [range, setRange] = useState("7");
   const [briefed, setBriefed] = useState(false);
   const [mapMode, setMapMode] = useState("light"); // 맵 타일 라이트/다크
+  const [mapFocus, setMapFocus] = useState(null); // 지도 이름 검색 — 그 위치로 이동·강조 (요청서 5절)
+  const [mapQuery, setMapQuery] = useState("");
+  const [mapFocusName, setMapFocusName] = useState(null);
+  const [sosFocus, setSosFocus] = useState(null); // 대시보드에서 넘어온 SOS 사건 id
   const [query, setQuery] = useState(""); // 통합 검색
   const [menu, setMenu] = useState("dash"); // GNB — 대시보드 외 관리 메뉴
   // 딥링크 — /dispatch?menu=comms 등 (시연 동선에서 감사 로그를 관제와 구분 진입)
   const router = useRouter();
   useEffect(() => {
     const m = router.query.menu;
-    if (typeof m === "string" && ["dash", "sos", "elder", "guardian", "concierge", "hospital", "wearable", "weather", "comms"].includes(m)) {
+    if (typeof m === "string" && DISPATCH_MENUS.some(([k]) => k === m)) {
       setMenu(m);
     }
   }, [router.query.menu]);
   const [sent, setSent] = useState({}); // 발송 센터 원샷
   const [briefRead, setBriefRead] = useState(false); // 아침 브리핑 읽음
-  const [wearDone, setWearDone] = useState({}); // 웨어러블 기기 액션 원샷
   const [hoStage, setHoStage] = useState("accept"); // 핸드오프 정체 — 선택 단계 (기본: 최대 정체)
   const [hoDone, setHoDone] = useState({}); // 정체 건 처리 원샷
-  const [sosNotified, setSosNotified] = useState({}); // SOS 인력·가족 통보 원샷
-  const elders = DIRECTORY_ALL.filter((d) => d.type === "elder");
-  const guardians = DIRECTORY_ALL.filter((d) => d.type === "guardian");
-  // 해주세요 PLUS 요청 — 보호자 화면이 상품명을 type 에 넣어 저장하므로 이름으로 잇는다.
-  // 종결된 건(완료·취소·처리불가)은 관제가 더 할 일이 없어 뺀다.
-  const PLUS_NAMES = new Set(SERVICE_PLUS.map((x) => x.name));
-  const plusJobs = (state.requests || []).filter(
-    (r) => PLUS_NAMES.has(r.type) && !["done", "cancelled", "rejected"].includes(r.status)
-  );
-  const concierges = DIRECTORY_ALL.filter((d) => d.type === "concierge");
   // 사이드바 배지 카운트 — 메뉴별 관리 대상 수 (명부가 단일 출처 · 상세 프로필 보유 수와 다름)
+  const { open: sosOpen } = useIncidents(); // 진행 중 SOS 사건 — 사이드바 배지 (요청서 6-6)
   const MENU_COUNTS = {
+    sos: sosOpen.length,
     elder: ROSTERS.elders.rows.length,
     guardian: ROSTERS.guardians.rows.length,
     concierge: ROSTERS.concierges.rows.length,
@@ -416,7 +485,6 @@ export default function DispatchConsole() {
     return () => window.removeEventListener("pointerdown", h);
   }, []);
 
-  const profileNames = useMemo(() => new Set(DIRECTORY_ALL.map((d) => d.name)), []);
   // 좌측 메뉴로 화면을 바꾸면 본문은 항상 맨 위에서 시작한다
   const scrollFirst = useRef(true);
   useEffect(() => {
@@ -653,6 +721,83 @@ export default function DispatchConsole() {
   );
 
   const forecast = range === "3" ? WEEK_FORECAST.slice(0, 3) : WEEK_FORECAST;
+
+  // 관제 맵 — 통합 알림센터 오른쪽 열에 들어간다 (OpsDashboard mapSlot). 이름 검색은 요청서 5절.
+  const mapPanel = (
+    <>
+          {/* ── 관제 맵 (09 §4) ── */}
+          <section className="card-navy mt-[18px] rounded-[14px] p-[18px]" style={{ background: NAVY }}>
+            <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+              <div className="flex flex-wrap items-center gap-3">
+                <h2 className="text-[15px] font-bold text-white">관제 맵</h2>
+                {/* 어르신·컨시어지 이름 검색 — 일치하면 지도가 그 위치로 즉시 이동하고 마커가 강조된다 (요청서 5절) */}
+                <form
+                  className="flex items-center gap-1.5"
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    const q = mapQuery.trim();
+                    const hit = Object.keys(MAP_PEOPLE_INFO).find((n) => n.includes(q));
+                    setMapFocus(hit ? `${hit}-${Date.now()}` : null);
+                    setMapFocusName(hit || null);
+                  }}
+                >
+                  <label htmlFor="map-search" className="sr-only">지도에서 어르신·컨시어지 이름 검색</label>
+                  <input
+                    id="map-search"
+                    list="map-search-names"
+                    value={mapQuery}
+                    onChange={(e) => setMapQuery(e.target.value)}
+                    placeholder="어르신 · 컨시어지 이름"
+                    className="w-[168px] rounded-lg border border-white/20 bg-white/10 px-2.5 py-1.5 text-[12px] font-medium text-white outline-none placeholder:text-white/40 focus:border-gold"
+                  />
+                  <datalist id="map-search-names">
+                    {Object.keys(MAP_PEOPLE_INFO).map((n) => (
+                      <option key={n} value={n} />
+                    ))}
+                  </datalist>
+                  <button type="submit" className="btn-press rounded-lg border border-white/20 px-2.5 py-1.5 text-[12px] font-bold text-white/85">
+                    찾기
+                  </button>
+                  {mapQuery.trim() && mapFocus === null && (
+                    <span className="text-[11px] font-bold text-white/60">지도에 없는 이름</span>
+                  )}
+                </form>
+              </div>
+              <div className="flex flex-wrap items-center gap-3 text-[11px] font-bold text-white/70">
+                {[
+                  ["#4ADE80", "이동·수행중"],
+                  ["#8FA9CC", "대기"],
+                  ["#FF6B5B", "SOS"],
+                  ["#B08D57", "제휴 병원"],
+                ].map(([c, l]) => (
+                  <span key={l} className="flex items-center gap-1.5">
+                    <span className="h-[7px] w-[7px] rounded-full" style={{ background: c }} />
+                    {l}
+                  </span>
+                ))}
+                <span className="font-medium text-white/45">OpenStreetMap 기반 실측 좌표</span>
+                <span className="ml-2 flex overflow-hidden rounded-lg border border-white/20">
+                  {[
+                    ["light", "라이트"],
+                    ["dark", "다크"],
+                  ].map(([m, label]) => (
+                    <button
+                      key={m}
+                      onClick={() => setMapMode(m)}
+                      className={`btn-press px-3 py-2.5 text-[11px] font-bold ${
+                        mapMode === m ? "bg-white/90 text-navy" : "text-white/60"
+                      }`}
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </span>
+              </div>
+            </div>
+            <ControlMap sos={sos} mode={mapMode} onSelect={openProfile} focus={mapFocusName} focusKey={mapFocus} />
+          </section>
+    </>
+  );
 
   return (
     <>
@@ -932,9 +1077,27 @@ export default function DispatchConsole() {
 
           {/* ▼ 대시보드 — 운영 상황판 (menu) */}
           {/* 섹션 본문 — 좌측 메뉴로 바꾸면 스르르 올라오며 들어온다 */}
+          {menu !== "sos" && (
+            <SosBanner
+              onOpen={(id) => {
+                setSosFocus(id || null);
+                setMenu("sos");
+              }}
+            />
+          )}
           <StaggerIn trigger={menu}>
           {menu === "dash" && (
-            <>
+            <OpsDashboard
+              onStartSos={(_name, id) => {
+                setSosFocus(id || null);
+                setMenu("sos");
+              }}
+              onOpenSos={(id) => {
+                setSosFocus(id || null);
+                setMenu("sos");
+              }}
+              mapSlot={mapPanel}
+              opsSlot={<>
           {/* ── 방문 업무흐름 8단계 — 일정 수립 알람이 여기로 온다 (2026-08-13 미팅) ── */}
           <section className="mt-[18px]">
             <VisitFlow role="ops" />
@@ -1192,44 +1355,6 @@ export default function DispatchConsole() {
               <span className="text-[12px] text-[#4A6B5E]">승인 이력은 감사 로그에 기록됩니다</span>
             </section>
           )}
-
-          {/* ── 관제 맵 (09 §4) ── */}
-          <section className="card-navy mt-[18px] rounded-[14px] p-[18px]" style={{ background: NAVY }}>
-            <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-              <h2 className="text-[15px] font-bold text-white">관제 맵</h2>
-              <div className="flex flex-wrap items-center gap-3 text-[11px] font-bold text-white/70">
-                {[
-                  ["#4ADE80", "이동·수행중"],
-                  ["#8FA9CC", "대기"],
-                  ["#FF6B5B", "SOS"],
-                  ["#B08D57", "제휴 병원"],
-                ].map(([c, l]) => (
-                  <span key={l} className="flex items-center gap-1.5">
-                    <span className="h-[7px] w-[7px] rounded-full" style={{ background: c }} />
-                    {l}
-                  </span>
-                ))}
-                <span className="font-medium text-white/45">OpenStreetMap 기반 실측 좌표</span>
-                <span className="ml-2 flex overflow-hidden rounded-lg border border-white/20">
-                  {[
-                    ["light", "라이트"],
-                    ["dark", "다크"],
-                  ].map(([m, label]) => (
-                    <button
-                      key={m}
-                      onClick={() => setMapMode(m)}
-                      className={`btn-press px-3 py-2.5 text-[11px] font-bold ${
-                        mapMode === m ? "bg-white/90 text-navy" : "text-white/60"
-                      }`}
-                    >
-                      {label}
-                    </button>
-                  ))}
-                </span>
-              </div>
-            </div>
-            <ControlMap sos={sos} mode={mapMode} onSelect={openProfile} />
-          </section>
 
           {/* ── 탭 3개 — 아웃라인 버튼형, 언마운트 전환 (09 §5) ── */}
           <div id="disp-tabs" className="mt-[18px] flex flex-wrap gap-2">
@@ -1753,1199 +1878,33 @@ export default function DispatchConsole() {
               </div>
             </div>
           )}
-            </>
+            </>}
+            />
           )}
 
-          {/* ════ 어르신 관리 — 명부 + 리스크 워치 ════ */}
-          {menu === "elder" && (
-            <div className="mt-4 grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(360px, 100%), 1fr))" }}>
-              <Panel className="min-w-0">
-                <PanelHead
-                  title="오늘 챙길 어르신"
-                  right={`상세 프로필 ${elders.length}명 · 위험 ${RISK_WATCH.filter((r) => r.level === "높음").length}명 · 전체는 아래 명부`}
-                />
-                <div className="mt-3 space-y-2">
-                  {elders.map((d) => (
-                    <div
-                      key={d.name}
-                      className="flex items-center gap-3 rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2.5"
-                    >
-                      <button onClick={() => openProfile(d.name)} className="min-w-0 flex-1 text-left hover:opacity-75">
-                        <div className="flex items-center gap-2">
-                          <span className="text-[15px] font-bold text-navy underline decoration-navy/20 underline-offset-2">
-                            {d.name}
-                          </span>
-                          <span className="font-num text-[12px] text-muted">{d.tag}세</span>
-                          {d.alert && (
-                            <span className="rounded-full border border-amber/30 bg-[#FFF7E8] px-2 py-0.5 text-[10px] font-bold text-amber">
-                              챙길 것
-                            </span>
-                          )}
-                        </div>
-                        <div className="mt-0.5 truncate text-[12px] text-muted">{d.summary}</div>
-                      </button>
-                      <button
-                        onClick={() => push("대응", `${d.name} 안부 확인 콜 접수 — 담당 컨시어지 배정`, "#8FA9CC")}
-                        className="btn-press shrink-0 rounded-[10px] border border-navy/20 px-3 py-1.5 text-[12px] font-bold text-navy"
-                      >
-                        안부 콜
-                      </button>
-                    </div>
-                  ))}
-                </div>
-                <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[11px] leading-[1.6] text-muted">
-                  상세 주소는 담당 확정 후에만 노출됩니다 · 명부 클릭 시 담당·일정·챙길 것 프로필
-                </p>
-              </Panel>
+          {/* ════ 어르신 관리 — 요청서 7절 (components/ops/ElderMgmt) ════ */}
+          {menu === "elder" && <ElderMgmt openProfile={openProfile} />}
 
-              <Panel className="min-w-0">
-                <PanelHead title="오늘 리스크 워치" right="환경 × 건강 이력 교차 · 단일 지표 판정 금지" />
-                <div className="mt-3 space-y-2.5">
-                  {RISK_WATCH.map((r) => (
-                    <div key={r.name} className="rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2.5">
-                      <div className="flex items-center gap-2">
-                        <span
-                          className="rounded-full px-2 py-0.5 text-[11px] font-bold"
-                          style={{ color: RISK_LEVEL[r.level].fg, background: RISK_LEVEL[r.level].bg }}
-                        >
-                          {r.level}
-                        </span>
-                        <button
-                          onClick={() => openProfile(r.name.split(" (")[0])}
-                          className="text-[13px] font-bold text-navy underline decoration-navy/20 underline-offset-2"
-                        >
-                          {r.name}
-                        </button>
-                      </div>
-                      <div className="mt-1 text-[12px] leading-[1.55] text-muted">{r.why}</div>
-                      <div className="mt-1 text-[12px] font-bold leading-[1.55] text-ink">조치 — {r.action}</div>
-                    </div>
-                  ))}
-                </div>
-              </Panel>
-            </div>
-          )}
 
-          {menu === "elder" && (
-            <Panel className="mt-4 min-w-0">
-              <RosterTable
-                roster={ROSTERS.elders}
-                onRowClick={openProfile}
-                clickableNames={profileNames}
-                onExport={(t) => push("설정", `${t} 엑셀 다운로드 — 접근 기록 저장`, "#8FA9CC")}
-              />
-            </Panel>
-          )}
+          {/* ════ 보호자 관리 — 요청서 8절 · 시안 (components/ops/GuardianMgmt) ════ */}
+          {menu === "guardian" && <GuardianMgmt />}
 
-          {/* ════ 보호자 관리 — 주/부 보호자 · 시차 가구 ════ */}
-          {menu === "guardian" && (
-            <>
-              <p className="mt-4 rounded-xl border border-navy/[.08] bg-white/50 px-4 py-2.5 text-[12px] leading-[1.6] text-muted">
-                가입 정책 — 주 보호자 가입 후 초대 링크로 부 보호자 참여 · 결제 승인 권한은 주 보호자에게만
-              </p>
 
-              {/* 해주세요 PLUS 외주 연계 — 관제가 호출 주체다 (개편안 V2).
-                  보호자가 PLUS 를 요청하면 state.requests 에 상품명으로 들어오므로
-                  여기서 같은 건을 본다. 지어낸 실적이 아니라 실제 요청을 잇는다. */}
-              <Panel className="mt-3">
-                <PanelHead
-                  title="해주세요 PLUS — 외주 연계"
-                  right={<span className="font-num text-[12px] text-muted">{plusJobs.length}건 진행</span>}
-                />
-                <p className="mt-2 text-[12px] leading-[1.7] text-muted">
-                  공사·수리의 책임은 시공 업체에 있고, 관제는 업체를 붙이고 진행 상황을 보호자에게
-                  보고합니다. 이 경계를 흐리면 시공 하자까지 우리가 뒤집어씁니다.
-                </p>
-                {plusJobs.length === 0 ? (
-                  <div className="mt-3 rounded-xl bg-navy/[.04] px-4 py-3 text-[13px] text-muted">
-                    지금 진행 중인 외주 연계가 없습니다. 보호자가 아래 항목을 요청하면 여기로 옵니다.
-                  </div>
-                ) : (
-                  <div className="mt-3 space-y-2">
-                    {plusJobs.map((r) => {
-                      const st = STATUS[r.status] || STATUS.requested;
-                      return (
-                        <div
-                          key={r.id}
-                          className="flex flex-wrap items-center gap-3 rounded-xl border border-navy/[.08] bg-white/60 px-3.5 py-3"
-                        >
-                          <span
-                            className="shrink-0 rounded-full px-2.5 py-1 text-[11px] font-bold"
-                            style={{ color: st.fg, background: st.bg }}
-                          >
-                            {st.label}
-                          </span>
-                          <div className="min-w-[180px] flex-1">
-                            <div className="text-[14px] font-bold text-navy">{r.type}</div>
-                            <div className="text-[12px] leading-[1.6] text-muted">{r.detail}</div>
-                          </div>
-                          <span className="shrink-0 text-[12px] font-bold text-amber">
-                            {r.status === "requested" ? "업체 호출 필요" : "진행 보고 필요"}
-                          </span>
-                        </div>
-                      );
-                    })}
-                  </div>
-                )}
-                <div className="mt-3 grid gap-2 border-t border-navy/[.08] pt-3" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(240px, 100%), 1fr))" }}>
-                  {SERVICE_PLUS.map((x) => (
-                    <div key={x.key} className="rounded-xl bg-navy/[.03] px-3 py-2.5">
-                      <div className="text-[13px] font-bold text-navy">{x.name}</div>
-                      <div className={`mt-0.5 font-num text-[12px] font-bold ${x.confirmed ? "text-gold" : "text-muted"}`}>
-                        {x.priceLabel}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </Panel>
-              <div className="mt-3 grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(300px, 100%), 1fr))" }}>
-                {guardians.map((d) => (
-                  <Panel key={d.name} className="min-w-0">
-                    <div className="flex items-center gap-2">
-                      <button
-                        onClick={() => openProfile(d.name)}
-                        className="text-[16px] font-bold text-navy underline decoration-navy/20 underline-offset-2"
-                      >
-                        {d.name}
-                      </button>
-                      <span className="text-[12px] text-muted">{d.tag}</span>
-                      {d.summary.includes("주 보호자") && (
-                        <span className="ml-auto rounded-full bg-gold/15 px-2 py-0.5 text-[10px] font-bold text-[#7A5C28]">
-                          주 보호자
-                        </span>
-                      )}
-                    </div>
-                    <p className="mt-1 text-[12px] leading-[1.55] text-muted">{d.summary}</p>
-                    <div className="mt-2.5 space-y-1.5 border-t border-navy/[.08] pt-2.5">
-                      {d.rows.map(([k, v]) => (
-                        <div key={k} className="flex gap-2 text-[12px]">
-                          <span className="w-[44px] shrink-0 font-bold text-gold">{k}</span>
-                          <span className="flex-1 leading-[1.55] text-ink">{v}</span>
-                        </div>
-                      ))}
-                    </div>
-                    <div className="mt-3 flex gap-2">
-                      <button
-                        onClick={() => push("리포트", `${d.name}에게 최신 케어 리포트 재발송`, "#8FE3C0")}
-                        className="btn-press rounded-[10px] border border-navy/20 px-3 py-1.5 text-[12px] font-bold text-navy"
-                      >
-                        리포트 재발송
-                      </button>
-                      <button
-                        onClick={() => push("메시지", `${d.name}에게 상황 확인 알림 발송`, "#8FA9CC")}
-                        className="btn-press rounded-[10px] border border-navy/20 px-3 py-1.5 text-[12px] font-bold text-navy"
-                      >
-                        상황 알림
-                      </button>
-                    </div>
-                  </Panel>
-                ))}
-              </div>
-            </>
-          )}
+          {/* ════ 컨시어지 관리 — 요청서 9절 · 시안 (components/ops/ConciergeMgmt) ════ */}
+          {menu === "concierge" && <ConciergeMgmt />}
 
-          {menu === "guardian" && (
-            <Panel className="mt-4 min-w-0">
-              <RosterTable
-                roster={ROSTERS.guardians}
-                onRowClick={openProfile}
-                clickableNames={profileNames}
-                onExport={(t) => push("설정", `${t} 엑셀 다운로드 — 접근 기록 저장`, "#8FA9CC")}
-              />
-            </Panel>
-          )}
 
-          {/* ════ 컨시어지 관리 — 명부 + 피로도 게이트 ════ */}
-          {menu === "concierge" && (
-            <div className="mt-4 grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(360px, 100%), 1fr))" }}>
-              <Panel className="min-w-0">
-                <PanelHead title="오늘 가동 컨시어지" right={`상세 프로필 ${concierges.length}명 · 평점 출처: 가족 만족도 · 전체는 아래 명부`} />
-                <div className="mt-3 space-y-2">
-                  {concierges.map((d) => (
-                    <div
-                      key={d.name}
-                      className="flex items-center gap-3 rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2.5"
-                    >
-                      <button onClick={() => openProfile(d.name)} className="min-w-0 flex-1 text-left hover:opacity-75">
-                        <div className="flex items-center gap-2">
-                          <span className="text-[15px] font-bold text-navy underline decoration-navy/20 underline-offset-2">
-                            {d.name}
-                          </span>
-                          <span className="rounded-full bg-navy/[.06] px-2 py-0.5 text-[10px] font-bold text-navy">
-                            {d.tag}
-                          </span>
-                        </div>
-                        <div className="mt-0.5 truncate text-[12px] text-muted">{d.summary}</div>
-                      </button>
-                      <button
-                        onClick={() => push("브리핑", `${d.name}에게 내일 배차 브리핑 재발송`, "#F0D9A8")}
-                        className="btn-press shrink-0 rounded-[10px] border border-navy/20 px-3 py-1.5 text-[12px] font-bold text-navy"
-                      >
-                        브리핑
-                      </button>
-                    </div>
-                  ))}
-                </div>
-                <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[11px] leading-[1.6] text-muted">
-                  판매액·업셀 지표는 평가에서 제외 — 평점·케어 품질만 표시 (원칙 1)
-                </p>
-              </Panel>
-              <Panel className="min-w-0">
-                <PanelHead title="근무 시간 · 피로도 상한" right="일 10시간 · 주 52시간 상한" />
-                <div className="mt-3 space-y-2.5">
-                  {FATIGUE.map((f) => (
-                    <div key={f.name} className="rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2.5">
-                      <div className="flex items-baseline justify-between">
-                        <button
-                          onClick={() => openProfile(f.name)}
-                          className="text-[13px] font-bold text-navy underline decoration-navy/20 underline-offset-2"
-                        >
-                          {f.name}
-                        </button>
-                        <span className="font-num text-[12px] font-bold" style={{ color: f.color }}>
-                          {f.hours} · {f.state}
-                        </span>
-                      </div>
-                      <div className="mt-1.5 h-[6px] overflow-hidden rounded-full bg-navy/[.08]">
-                        <span className="block h-full rounded-full" style={{ width: `${f.w}%`, background: f.color }} />
-                      </div>
-                      <div className="mt-1 text-[11px] text-muted">{f.jobs}</div>
-                    </div>
-                  ))}
-                </div>
-                <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[11px] leading-[1.6] text-muted">
-                  피로도는 표시가 아니라 게이트 — 90% 이상은 AI 배정 후보에서 자동 제외
-                </p>
-              </Panel>
-            </div>
-          )}
+          {/* ════ 병원 관리 — 요청서 15절 · 입력/수정 가능 (components/ops/HospitalsMgmt) ════ */}
+          {menu === "hospital" && <HospitalsMgmt />}
 
-          {menu === "concierge" && (
-            <Panel className="mt-4 min-w-0">
-              <RosterTable
-                roster={ROSTERS.concierges}
-                onRowClick={openProfile}
-                clickableNames={profileNames}
-                onExport={(t) => push("설정", `${t} 엑셀 다운로드 — 접근 기록 저장`, "#8FA9CC")}
-              />
-            </Panel>
-          )}
 
-          {/* ════ 병원 관리 — MOU 제휴 현황 ════ */}
-          {menu === "hospital" && (
-            <Panel className="mt-4">
-              <PanelHead title="제휴 (MOU) 병원" right="진료 과목마다 한 곳 이상 · 회의 8" />
-              <div className="mt-3 grid gap-2.5" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(300px, 100%), 1fr))" }}>
-                {MOU_HOSPITALS.map((h) => (
-                  <div key={h.name} className="rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-3">
-                    <div className="flex items-center gap-2">
-                      <span className="rounded-full bg-navy/[.06] px-2 py-0.5 text-[10px] font-bold text-navy">
-                        {h.dept}
-                      </span>
-                      <button
-                        onClick={() => openProfile(h.name)}
-                        className="text-[15px] font-bold text-navy underline decoration-navy/20 underline-offset-2"
-                      >
-                        {h.name}
-                      </button>
-                      {h.fast && (
-                        <span className="ml-auto rounded-full bg-gold/15 px-2 py-0.5 text-[10px] font-bold text-[#7A5C28]">
-                          패스트트랙
-                        </span>
-                      )}
-                    </div>
-                    <div className="mt-1 text-[12px] leading-[1.55] text-muted">{h.note}</div>
-                    {/* 파트너 레코드 — 관계도 관리 대상 (담당 · 최근 접점 · 실적 · 슬롯) */}
-                    {HOSPITAL_PARTNERS[h.name] && (
-                      <div className="mt-2 space-y-1 border-t border-navy/[.06] pt-2 text-[11px] leading-[1.6]">
-                        <div className="flex items-center gap-2">
-                          <span
-                            className="rounded-full px-2 py-0.5 text-[10px] font-bold text-white"
-                            style={{ background: PARTNER_STATUS[HOSPITAL_PARTNERS[h.name].status] }}
-                          >
-                            {HOSPITAL_PARTNERS[h.name].status}
-                          </span>
-                          <span className="text-muted">담당 {HOSPITAL_PARTNERS[h.name].contact}</span>
-                        </div>
-                        <div className="text-muted">
-                          최근 접점 {HOSPITAL_PARTNERS[h.name].last} · 이번 달 동행{" "}
-                          <span className="font-num font-bold text-ink">{HOSPITAL_PARTNERS[h.name].trips}건</span> ·
-                          가용 슬롯 <span className="font-bold text-ink">{HOSPITAL_PARTNERS[h.name].slots}</span>
-                        </div>
-                      </div>
-                    )}
-                    <button
-                      onClick={() => push("예약", `${h.name} ${h.dept} 예약 슬롯 조회 — 응답 대기`, "#8FA9CC")}
-                      className="btn-press mt-2 rounded-[10px] border border-navy/20 px-3 py-1.5 text-[12px] font-bold text-navy"
-                    >
-                      슬롯 조회
-                    </button>
-                  </div>
-                ))}
-              </div>
-              {/* 보험 GA — 파트너 파이프라인 (H4: 등록 전 모집 금지) */}
-              <div className="mt-3 rounded-xl border border-navy/[.06] bg-white/60 px-4 py-3">
-                <div className="flex flex-wrap items-center gap-2">
-                  <span className="text-[13px] font-bold text-navy">{INSURANCE_PARTNER.name}</span>
-                  <div className="ml-auto flex flex-wrap gap-1.5">
-                    {INSURANCE_PARTNER.stage.map(([st, done]) => (
-                      <span
-                        key={st}
-                        className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${
-                          done ? "bg-green/10 text-green" : "border border-navy/15 text-muted"
-                        }`}
-                      >
-                        {done ? `✓ ${st}` : st}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-                <p className="mt-1.5 text-[11px] leading-[1.6] text-muted">{INSURANCE_PARTNER.note}</p>
-              </div>
-            </Panel>
-          )}
+          {/* ════ SOS 대응 — 요청서 6절 실행형 콘솔 · 시안 (components/ops/SosCenter) ════ */}
+          {menu === "sos" && <SosCenter focusId={sosFocus} />}
 
-          {menu === "hospital" && (
-            <Panel className="mt-4 min-w-0">
-              <RosterTable
-                roster={ROSTERS.hospitals}
-                onRowClick={openProfile}
-                clickableNames={profileNames}
-                onExport={(t) => push("설정", `${t} 엑셀 다운로드 — 접근 기록 저장`, "#8FA9CC")}
-              />
-            </Panel>
-          )}
 
-          {/* ════ SOS 대응 — 당사자 · 대응 인력 · 가족 연락을 한 화면에서 (골든타임) ════ */}
-          {menu === "sos" && (
-            <div className="mt-4 space-y-4">
-              <div>
-                <div className="text-[11px] font-bold tracking-[.14em] text-muted">현장 / 긴급 대응</div>
-                <h2 className="mt-0.5 text-[17px] font-bold text-navy">SOS 대응 센터</h2>
-                <p className="mt-1 text-[13px] leading-[1.7] text-muted">
-                  현황 파악과 빠른 조치가 전부입니다 — 당사자 · 대응 인력 · 가족 연락을 한 화면에서 봅니다.
-                  경과는 관제만 봅니다 (가족 화면 비노출).
-                </p>
-              </div>
+          {/* ════ 웨어러블·센서 관리 — 요청서 10절 · 시안 (components/ops/Devices) ════ */}
+          {menu === "wearable" && <Devices />}
 
-              {/* ── 보증 범위와 그 밖의 옵션 — REQ-04 ──
-                  기본 상품이 어디까지 책임지는지를 관제가 먼저 알아야 한다. 야간 출동은
-                  가입 가구에서만 조치로 뜨므로, 가입 상태를 여기서 바꿔 보여 준다. */}
-              <Panel className="min-w-0">
-                <PanelHead
-                  title="보증 범위 · 옵션 상품"
-                  right={<span className="text-[12px] text-muted">기본은 접수 + 119 연계까지</span>}
-                />
-                <p className="mt-2.5 rounded-xl border border-navy/[.08] bg-white/50 px-4 py-2.5 text-[12px] leading-[1.7] text-muted">
-                  기본 상품의 보증 범위는 <b className="text-navy">긴급신호 접수와 119 연계</b>까지입니다.
-                  컨시어지 급파는 주간·가용 시에 한하고, 현장 도착 시각을 약속하지 않습니다 —
-                  60초는 접수·연계 목표이지 도착 SLA가 아닙니다.
-                </p>
-                <div
-                  className="mt-3 grid gap-2"
-                  style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(280px, 100%), 1fr))" }}
-                >
-                  {OPTION_SERVICES.map((o) => {
-                    const on = o.key === "night" && nightOption;
-                    return (
-                      <div key={o.key} className="min-w-0 rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-3">
-                        <div className="flex flex-wrap items-center gap-2">
-                          <span className="text-[13px] font-bold text-navy">{o.name}</span>
-                          <span
-                            className="ml-auto shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold"
-                            style={
-                              o.locked
-                                ? { color: "#5C5A54", background: "rgba(10,31,60,.06)" }
-                                : on
-                                ? { color: "#1E7A5A", background: "rgba(30,122,90,.1)" }
-                                : { color: "#8A5D12", background: "rgba(138,93,18,.12)" }
-                            }
-                          >
-                            {o.locked ? "잠금" : on ? "가입" : "미가입"}
-                          </span>
-                        </div>
-                        <p className="mt-1 text-[12px] leading-[1.6] text-muted">{o.desc}</p>
-                        <div className="mt-1.5 font-num text-[12px] font-bold text-muted">{o.price}</div>
-                        {o.lockNote && (
-                          <p className="mt-1.5 border-t border-navy/[.08] pt-1.5 text-[11px] leading-[1.6] text-muted">
-                            {o.lockNote}
-                          </p>
-                        )}
-                        {o.gatesDispatch && (
-                          <button
-                            onClick={() => dispatch({ type: "demo", payload: { nightOption: !nightOption } })}
-                            className="btn-press mt-2.5 w-full rounded-[10px] border border-navy/20 px-3 py-1.5 text-[12px] font-bold text-navy"
-                          >
-                            {on ? "미가입 가구로 보기" : "가입 가구로 보기"}
-                          </button>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-                <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[11px] leading-[1.7] text-muted">
-                  가입 여부가 조치 버튼을 바꿉니다 — 아래 대응 섹션과 다른 메뉴의 SOS 배너 양쪽에서,
-                  미가입 가구에는 야간 출동 버튼이 뜨지 않습니다. 없는 자원을 부르지 않기 위해서입니다.
-                  단가가 확정된 상품은 해주세요 카탈로그가 유일한 출처입니다.
-                </p>
-              </Panel>
-
-              {/* ── 119 신고 프로토콜 (2026-08-01 회의 확정) ── */}
-              <Panel className="min-w-0">
-                <PanelHead
-                  title="119 신고 프로토콜"
-                  right={<span className="text-[12px] text-muted">신고는 하되 흔적을 남긴다</span>}
-                />
-                <div className="mt-3 grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(232px, 100%), 1fr))" }}>
-                  {SOS_119.map((x) => (
-                    <div
-                      key={x.s}
-                      className="rounded-xl border px-3.5 py-3"
-                      style={{ borderColor: `${TONE[x.tone].fg}30`, background: TONE[x.tone].bg }}
-                    >
-                      <div className="flex items-center gap-2">
-                        <span className="font-num text-[11px] font-bold text-muted">{x.s}</span>
-                        <span className="min-w-0 flex-1 text-[13px] font-bold text-navy">{x.k}</span>
-                        <span className="shrink-0 font-num text-[10px] font-bold" style={{ color: TONE[x.tone].fg }}>{x.t}</span>
-                      </div>
-                      <p className="mt-1.5 text-[11px] leading-[1.6] text-muted">{x.body}</p>
-                    </div>
-                  ))}
-                </div>
-                <div className="mt-3 rounded-xl border border-navy/[.08] bg-white/50 p-3.5">
-                  <div className="text-[12px] font-bold text-navy">{SOS_CONSENT.head}</div>
-                  <ul className="mt-1.5 space-y-1">
-                    {SOS_CONSENT.items.map((x) => (
-                      <li key={x} className="flex gap-1.5 text-[12px] leading-[1.6] text-ink">
-                        <span className="shrink-0 text-gold">·</span>
-                        <span>{x}</span>
-                      </li>
-                    ))}
-                  </ul>
-                  <p className="mt-2 text-[11px] leading-[1.7] text-muted">{SOS_CONSENT.note}</p>
-                </div>
-              </Panel>
-
-              {/* 현재 상황 배너 */}
-              {sos ? (
-                <section className="rounded-[14px] border border-danger/30 bg-danger/[.07] px-5 py-4">
-                  <div className="flex flex-wrap items-center gap-2.5">
-                    <span className="animate-sosPulse rounded-full bg-danger px-3 py-1 text-[12px] font-bold text-white">SOS 진행 중</span>
-                    <span className="text-[17px] font-bold text-navy">{SOS_SUBJECT.name}</span>
-                    <span className="font-num text-[15px] font-bold text-danger">경과 {elapsed}</span>
-                    <span className="text-[12px] font-bold text-muted">
-                      {sosDispatched ? "급파 중" : "급파 대기"} · {sos119 ? "119 연계 완료" : "119 연계 대기"}
-                    </span>
-                  </div>
-                  <div className="mt-2 grid gap-1.5 sm:grid-cols-2">
-                    {[["위치", SOS_SUBJECT.where], ["출입", SOS_SUBJECT.key], ["의료 특이", SOS_SUBJECT.alert], ["워치", SOS_SUBJECT.watch]].map(([k, v]) => (
-                      <div key={k} className="rounded-lg bg-white/70 px-3 py-2">
-                        <span className="text-[11px] font-bold text-muted">{k}</span>{" "}
-                        <span className="text-[12px] font-bold text-navy">{v}</span>
-                      </div>
-                    ))}
-                  </div>
-                  <div className="mt-2.5 flex flex-wrap gap-2">
-                    <button
-                      onClick={() => {
-                        if (sosDispatched) return;
-                        dispatch({ type: "opsPatch", patch: { sosDispatched: true } });
-                        push("긴급", "SOS 급파 지시 — 박지현 · 서다인 (2인)", "#FF8D7E");
-                      }}
-                      disabled={sosDispatched}
-                      className="btn-press rounded-[10px] px-4 py-2 text-[13px] font-bold text-white disabled:opacity-60"
-                      style={{ background: "#C0392B" }}
-                    >
-                      {sosDispatched ? "급파 중 · 박지현 + 서다인" : "급파 지시 (응급 2인)"}
-                    </button>
-                    <button
-                      onClick={() => {
-                        if (sos119) return;
-                        dispatch({ type: "opsPatch", patch: { sos119: true } });
-                        push("긴급", "119 연계 — 심부전 이력 · 3층 계단 진입 고지", "#FF8D7E");
-                      }}
-                      disabled={sos119}
-                      className="btn-press rounded-[10px] border border-danger/40 px-4 py-2 text-[13px] font-bold text-danger disabled:opacity-50"
-                    >
-                      {sos119 ? "119 연계 기록됨" : "119 연계"}
-                    </button>
-                    {/* REQ-04 — 야간 출동은 기본 보증 범위 밖. 가입 가구에서만 조치가 된다.
-                        가입 상태는 이 화면 위 "보증 범위 · 옵션 상품" 패널에서 바꾼다. */}
-                    {nightOption && (
-                      <button
-                        onClick={() => {
-                          if (nightCalled) return;
-                          setNightCalled(true);
-                          push("긴급", "야간 출동(외주) 파트너 호출 — 옵션 가입 가구", "#F0D9A8");
-                        }}
-                        disabled={nightCalled}
-                        className="btn-press rounded-[10px] border border-navy/25 px-4 py-2 text-[13px] font-bold text-navy disabled:opacity-50"
-                      >
-                        {nightCalled ? "야간 출동 요청됨" : "야간 출동 요청 (외주)"}
-                      </button>
-                    )}
-                    <button
-                      onClick={() => {
-                        dispatch({ type: "ackSos" });
-                        push("긴급", "SOS 해제 — 관제 확인 · 상황 리포트 작성 대기", "#8FE3C0");
-                      }}
-                      className="btn-press ml-auto rounded-[10px] border border-navy/25 px-4 py-2 text-[13px] font-bold text-navy"
-                    >
-                      SOS 해제 (관제 전용)
-                    </button>
-                  </div>
-                </section>
-              ) : (
-                <section className="rounded-[14px] border border-green/25 bg-green/[.05] px-5 py-4">
-                  <div className="flex flex-wrap items-center gap-2.5">
-                    <span className="rounded-full bg-green/15 px-3 py-1 text-[12px] font-bold text-green">진행 중 SOS 없음</span>
-                    <span className="text-[13px] text-muted">최근 발생 — {SOS_HISTORY[0].at} · {SOS_HISTORY[0].who} · {SOS_HISTORY[0].result}</span>
-                  </div>
-                  <p className="mt-1.5 text-[12px] leading-[1.6] text-muted">
-                    대응 인력 · 가족 연락 체계는 아래에서 상시 관리합니다 — 발생 시 이 화면이 즉시 대응 콘솔로 바뀝니다.
-                  </p>
-                </section>
-              )}
-
-              {/* KPI */}
-              <div className="grid gap-3" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(180px, 100%), 1fr))" }}>
-                {SOS_KPIS.map((k) => (
-                  <div key={k.k} className="card-glass rounded-[14px] p-4">
-                    <div className="text-[11px] font-bold text-muted">{k.k}</div>
-                    <div className="mt-1 font-num text-[24px] font-bold" style={{ color: k.color }}>{k.v}</div>
-                    <div className="mt-0.5 text-[11px] text-muted">{k.note}</div>
-                  </div>
-                ))}
-              </div>
-
-              <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(400px, 100%), 1fr))" }}>
-                {/* 대응 인력 */}
-                <Panel className="min-w-0">
-                  <PanelHead title="대응 인력" right="누가 어디까지 됐는지 — 공백과 중복을 동시에 막는다" />
-                  <div className="mt-3 space-y-2">
-                    {SOS_TEAM.map((t) => (
-                      <div key={t.role} className="rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2.5">
-                        <div className="flex flex-wrap items-center gap-2">
-                          <span className="rounded-full bg-navy/[.06] px-2 py-0.5 text-[10px] font-bold text-navy">{t.role}</span>
-                          <button
-                            onClick={() => openProfile(t.name)}
-                            className="text-[13px] font-bold text-navy underline decoration-navy/20 underline-offset-2"
-                          >
-                            {t.name}
-                          </button>
-                          <span
-                            className="ml-auto rounded-full px-2 py-0.5 text-[10px] font-bold"
-                            style={
-                          t.tone === "bad" ? { color: "#C0392B", background: "rgba(192,57,43,.1)" }
-                          : t.tone === "warn" ? { color: "#8A5D12", background: "rgba(138,93,18,.12)" }
-                          : t.tone === "ok" ? { color: "#1E7A5A", background: "rgba(30,122,90,.1)" }
-                          : { color: "#5C5A54", background: "rgba(10,31,60,.06)" }
-                            }
-                          >
-                            {sosDispatched && t.role.includes("컨시어지") ? "출동 중" : sos119 && t.role.includes("119") ? "연계 완료" : t.state}
-                          </span>
-                        </div>
-                        <div className="mt-1 text-[12px] leading-[1.55] text-muted">{t.detail}</div>
-                        {t.action && (
-                          <button
-                            onClick={() => {
-                              if (sosNotified[t.role]) return;
-                              setSosNotified((v) => ({ ...v, [t.role]: true }));
-                              push("긴급", `SOS ${t.action} — ${t.name}`, "#FF8D7E");
-                            }}
-                            disabled={!!sosNotified[t.role]}
-                            className="btn-press mt-2 rounded-[10px] border border-navy/20 px-3 py-1.5 text-[12px] font-bold text-navy disabled:opacity-50"
-                          >
-                            {sosNotified[t.role] ? `${t.action} 완료 ✓` : t.action}
-                          </button>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                </Panel>
-
-                {/* 가족 연락 */}
-                <Panel className="min-w-0">
-                  <PanelHead title="가족 연락 — 우선순위" right="시차 가구 포함 · 중복 연락 방지" />
-                  <div className="mt-3 space-y-2">
-                    {SOS_FAMILY.map((f) => (
-                      <div key={f.name} className="rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2.5">
-                        <div className="flex flex-wrap items-center gap-2">
-                          <span className="rounded-full bg-gold/15 px-2 py-0.5 text-[10px] font-bold text-[#7A5C28]">{f.rank}</span>
-                          <span className="text-[13px] font-bold text-navy">{f.name}</span>
-                          <span className="text-[11px] text-muted">{f.where}</span>
-                          <span
-                            className="ml-auto rounded-full px-2 py-0.5 text-[10px] font-bold"
-                            style={
-                              f.tone === "ok" ? { color: "#1E7A5A", background: "rgba(30,122,90,.1)" }
-                              : f.tone === "warn" ? { color: "#8A5D12", background: "rgba(138,93,18,.12)" }
-                              : { color: "#5C5A54", background: "rgba(10,31,60,.06)" }
-                            }
-                          >
-                            {f.state}
-                          </span>
-                        </div>
-                        <div className="mt-1 text-[12px] leading-[1.55] text-muted">{f.detail}</div>
-                        <button
-                          onClick={() => {
-                            if (sosNotified[f.name]) return;
-                            setSosNotified((v) => ({ ...v, [f.name]: true }));
-                            push("긴급", `SOS 가족 통보 — ${f.name} (${f.rank})`, "#FF8D7E");
-                          }}
-                          disabled={!!sosNotified[f.name]}
-                          className="btn-press mt-2 rounded-[10px] border border-navy/20 px-3 py-1.5 text-[12px] font-bold text-navy disabled:opacity-50"
-                        >
-                          {sosNotified[f.name] ? "통보 기록됨 ✓" : "통보 · 콜"}
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                  <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[11px] leading-[1.7] text-muted">
-                    1순위 응답이 확인되면 하위 순위 콜은 보류하고 요약 통보로 전환합니다 — 새벽 시차 가구에 불필요한 공포를 만들지 않습니다.
-                  </p>
-                </Panel>
-
-                {/* 골든타임 */}
-                <Panel className="min-w-0">
-                  <PanelHead title="골든타임 체크" right="경과별 목표 — 관제 내부용" />
-                  <div className="mt-3 space-y-2">
-                    {SOS_GOLDEN.map(([t, what, who], i) => {
-                      const done = sos ? (i === 0 || (i === 1 && sosDispatched) || (i === 2 && sos119)) : false;
-                      return (
-                        <div key={t} className="flex items-start gap-2.5 rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2.5">
-                          <span
-                            className="mt-[1px] flex h-[20px] w-[20px] shrink-0 items-center justify-center rounded-full font-num text-[10px] font-bold"
-                            style={done ? { background: "#1E7A5A", color: "#fff" } : { background: "rgba(10,31,60,.08)", color: "#0A1F3C" }}
-                          >
-                            {done ? "✓" : i + 1}
-                          </span>
-                          <div className="min-w-0 flex-1">
-                            <div className="text-[12px] font-bold text-navy">{t}</div>
-                            <div className="text-[12px] leading-[1.55] text-muted">{what}</div>
-                          </div>
-                          <span className="shrink-0 text-[10px] font-bold text-muted">{who}</span>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </Panel>
-
-                {/* 등급 · 프로토콜 */}
-                <Panel className="min-w-0">
-                  <PanelHead title="SOS 등급 · 대응 프로토콜" right="판단은 사람 (L4) · 자동 해제 없음" />
-                  <div className="mt-3 space-y-2">
-                    {SOS_LEVELS.map((l) => (
-                      <div key={l.k} className="rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2.5">
-                        <div className="flex items-center gap-2">
-                          <span
-                            className="rounded-full px-2 py-0.5 text-[10px] font-bold"
-                            style={
-                              l.tone === "bad" ? { color: "#C0392B", background: "rgba(192,57,43,.1)" }
-                              : l.tone === "warn" ? { color: "#8A5D12", background: "rgba(138,93,18,.12)" }
-                              : { color: "#5C5A54", background: "rgba(10,31,60,.06)" }
-                            }
-                          >
-                            {l.k}
-                          </span>
-                        </div>
-                        <div className="mt-1 text-[12px] text-muted">{l.desc}</div>
-                        <div className="mt-0.5 text-[12px] font-bold leading-[1.55] text-ink">경로 — {l.route}</div>
-                      </div>
-                    ))}
-                  </div>
-                  <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[11px] leading-[1.7] text-muted">
-                    해제는 관제만 할 수 있습니다 — 어르신·가족·컨시어지 화면에는 해제 버튼이 없습니다.
-                  </p>
-                </Panel>
-
-                {/* 이력 */}
-                <Panel className="min-w-0">
-                  <PanelHead title="SOS 이력" right="최근 4건 · 개별 사건은 관제 소관" />
-                  <div className="mt-3 overflow-x-auto">
-                    <table className="w-full min-w-[520px] text-left text-[12px]">
-                      <thead>
-                        <tr className="whitespace-nowrap border-b border-navy/15 text-[11px] font-bold text-muted">
-                          <th className="py-1.5 pr-3">발생</th>
-                          <th className="py-1.5 pr-3">당사자</th>
-                          <th className="py-1.5 pr-3">등급</th>
-                          <th className="py-1.5 pr-3">원인</th>
-                          <th className="py-1.5 pr-3">응답</th>
-                          <th className="py-1.5">결과</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {SOS_HISTORY.map((h) => (
-                          <tr key={h.at} className="border-b border-navy/[.06]">
-                            <td className="whitespace-nowrap py-2 pr-3 font-num text-muted">{h.at}</td>
-                            <td className="whitespace-nowrap py-2 pr-3">
-                              <button onClick={() => openProfile(h.who.split(" (")[0])} className="font-bold text-navy underline decoration-navy/20 underline-offset-2">
-                                {h.who}
-                              </button>
-                            </td>
-                            <td className="whitespace-nowrap py-2 pr-3">
-                              <span
-                                className="rounded-full px-2 py-0.5 text-[10px] font-bold"
-                                style={
-                                  h.tone === "bad" ? { color: "#C0392B", background: "rgba(192,57,43,.1)" }
-                                  : h.tone === "warn" ? { color: "#8A5D12", background: "rgba(138,93,18,.12)" }
-                                  : { color: "#5C5A54", background: "rgba(10,31,60,.06)" }
-                                }
-                              >
-                                {h.level}
-                              </span>
-                            </td>
-                            <td className="py-2 pr-3 text-ink">{h.cause}</td>
-                            <td className="whitespace-nowrap py-2 pr-3 font-num font-bold text-green">{h.resp}</td>
-                            <td className="py-2 text-muted">{h.result}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </Panel>
-
-                {/* 사후 조치 */}
-                <Panel className="min-w-0">
-                  <PanelHead title="사후 조치 — 해제 다음이 더 중요하다" right="숨기지 않는 것이 신뢰" />
-                  <ol className="mt-3 space-y-2">
-                    {SOS_AFTER.map(([k, v, who], i) => (
-                      <li key={k} className="flex items-start gap-2.5 rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2.5">
-                        <span className="mt-[1px] flex h-[20px] w-[20px] shrink-0 items-center justify-center rounded-full bg-gold font-num text-[10px] font-bold text-navy">{i + 1}</span>
-                        <div className="min-w-0 flex-1">
-                          <div className="text-[12px] font-bold text-navy">{k}</div>
-                          <div className="text-[12px] leading-[1.55] text-muted">{v}</div>
-                        </div>
-                        <span className="shrink-0 text-[10px] font-bold text-muted">{who}</span>
-                      </li>
-                    ))}
-                  </ol>
-                </Panel>
-              </div>
-            </div>
-          )}
-
-          {/* ════ 웨어러블 — 기기 자산 · 알림 규칙 · 액션 큐 · 연동 상태 (갤럭시 Fit3) ════ */}
-          {menu === "wearable" && (
-            <div className="mt-4 space-y-4">
-              <div>
-                <div className="text-[11px] font-bold tracking-[.14em] text-muted">현장 / 기기 · 알림 · 연동</div>
-                <h2 className="mt-0.5 text-[17px] font-bold text-navy">웨어러블 운영 — 갤럭시 Fit3</h2>
-                <p className="mt-1 text-[13px] leading-[1.7] text-muted">
-                  단일 지표로 판정하지 않습니다 — 알림은 복합 조건. 낙상은 <b className="text-navy">기기가 감지하고 우리가 대응합니다</b>
-                  (밴드에 앱을 올릴 수 없어 감지는 우리 영역이 아닙니다).
-                </p>
-              </div>
-              <div className="grid gap-3" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(150px, 100%), 1fr))" }}>
-                {WEAR_KPIS.map((k) => (
-                  <div key={k.k} className="card-glass rounded-[14px] p-4">
-                    <div className="text-[11px] font-bold text-muted">{k.k}</div>
-                    <div className="mt-1 font-num text-[24px] font-bold" style={{ color: k.color }}>{k.v}</div>
-                    <div className="mt-0.5 text-[11px] text-muted">{k.note}</div>
-                  </div>
-                ))}
-              </div>
-
-              {/* 오늘의 기기 액션 큐 */}
-              <Panel className="min-w-0">
-                <PanelHead title="오늘의 기기 액션 큐" right="기기 단위 업무 — 사람 배차와 분리 관리" />
-                <div className="mt-3 space-y-2">
-                  {WEAR_ACTIONS.map((a, i) => (
-                    <div key={a.serial + i} className="flex flex-wrap items-center gap-2.5 rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2.5">
-                      <span
-                        className="rounded-full px-2 py-0.5 text-[10px] font-bold"
-                        style={
-                          a.tone === "bad" ? { color: "#C0392B", background: "rgba(192,57,43,.1)" }
-                          : a.tone === "warn" ? { color: "#8A5D12", background: "rgba(138,93,18,.12)" }
-                          : { color: "#5C5A54", background: "rgba(10,31,60,.06)" }
-                        }
-                      >
-                        {a.level}
-                      </span>
-                      <span className="font-num text-[11px] font-bold text-navy">{a.serial}</span>
-                      <button onClick={() => openProfile(a.who.split(" (")[0])} className="text-[13px] font-bold text-navy underline decoration-navy/20 underline-offset-2">
-                        {a.who}
-                      </button>
-                      <span className="min-w-0 flex-1 text-[12px] text-muted">{a.text}</span>
-                      <button
-                        onClick={() => {
-                          if (wearDone[a.serial + i]) return;
-                          setWearDone((v) => ({ ...v, [a.serial + i]: true }));
-                          push("설정", `웨어러블 ${a.act} — ${a.serial} · ${a.who}`, "#8FA9CC");
-                        }}
-                        disabled={!!wearDone[a.serial + i]}
-                        className="btn-press shrink-0 rounded-[10px] border border-navy/20 px-3 py-1.5 text-[12px] font-bold text-navy disabled:opacity-50"
-                      >
-                        {wearDone[a.serial + i] ? "처리됨 ✓" : a.act}
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              </Panel>
-
-              <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(470px, 100%), 1fr))" }}>
-              <Panel className="min-w-0">
-                <PanelHead
-                  title="실시간 수신 보드"
-                  right={<span className="text-[12px] text-muted">5분 주기 동기화 (준실시간)</span>}
-                />
-                <div className="mt-3 overflow-x-auto">
-                  <table className="w-full min-w-[420px] text-left text-[12px]">
-                    <thead>
-                      <tr className="whitespace-nowrap border-b border-navy/15 text-[11px] font-bold text-muted">
-                        <th className="py-1.5 pr-3">어르신</th>
-                        <th className="py-1.5 pr-3">착용</th>
-                        <th className="py-1.5 pr-3">수신</th>
-                        <th className="py-1.5 pr-3">심박</th>
-                        <th className="py-1.5 pr-3">SpO₂</th>
-                        <th className="py-1.5">특이</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {WATCH_BOARD.map((w) => (
-                        <tr key={w.name} className="border-b border-navy/[.06]">
-                          <td className="py-2 pr-3">
-                            <button
-                              onClick={() => openProfile(w.name)}
-                              className="font-bold text-navy underline decoration-navy/20 underline-offset-2"
-                            >
-                              {w.name}
-                            </button>
-                          </td>
-                          <td className="whitespace-nowrap py-2 pr-3">
-                            <span
-                              className="rounded-full px-2 py-0.5 text-[10px] font-bold"
-                              style={
-                                w.level === "warn"
-                                  ? { color: "#C0392B", background: "rgba(192,57,43,.1)" }
-                                  : { color: "#1E7A5A", background: "rgba(30,122,90,.1)" }
-                              }
-                            >
-                              {w.wear}
-                            </span>
-                          </td>
-                          <td className="whitespace-nowrap py-2 pr-3 font-num">{w.sync}</td>
-                          <td className="whitespace-nowrap py-2 pr-3 font-num">{w.hr}</td>
-                          <td className="whitespace-nowrap py-2 pr-3 font-num">{w.spo2}</td>
-                          <td className="py-2 text-muted">{w.note}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-                <p className="mt-2.5 border-t border-navy/[.08] pt-2 text-[11px] leading-[1.7] text-muted">
-                  Samsung Health → Health Connect → 컴패니언 경유 — 실시간 스트리밍이 아닌 준실시간 ·
-                  단일 지표로 판정하지 않습니다
-                </p>
-              </Panel>
-
-                {/* 기기 자산 대장 */}
-                <Panel className="min-w-0">
-                  <PanelHead title="기기 자산 대장" right={<span className="text-[12px] text-muted">시리얼 · 배터리 · 펌웨어 · 배포일</span>} />
-                  <div className="mt-3 overflow-x-auto">
-                    <table className="w-full min-w-[520px] text-left text-[12px]">
-                      <thead>
-                        <tr className="whitespace-nowrap border-b border-navy/15 text-[11px] font-bold text-muted">
-                          <th className="py-1.5 pr-3">시리얼</th>
-                          <th className="py-1.5 pr-3">사용자</th>
-                          <th className="py-1.5 pr-3">지점</th>
-                          <th className="py-1.5 pr-3">배터리</th>
-                          <th className="py-1.5 pr-3">펌웨어</th>
-                          <th className="py-1.5">상태</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {WEAR_DEVICES.map((d) => (
-                          <tr key={d.serial} className="border-b border-navy/[.06]">
-                            <td className="whitespace-nowrap py-2 pr-3 font-num font-bold text-navy">{d.serial}</td>
-                            <td className="whitespace-nowrap py-2 pr-3 text-ink">{d.owner}</td>
-                            <td className="whitespace-nowrap py-2 pr-3 text-muted">{d.branch}</td>
-                            <td className="whitespace-nowrap py-2 pr-3">
-                              <span className="font-num font-bold" style={{ color: d.batt <= 20 ? "#C0392B" : d.batt <= 50 ? "#8A5D12" : "#1E7A5A" }}>
-                                {d.batt}%
-                              </span>
-                            </td>
-                            <td className="whitespace-nowrap py-2 pr-3 text-muted">{d.fw}</td>
-                            <td className="whitespace-nowrap py-2">
-                              <span
-                                className="rounded-full px-2 py-0.5 text-[10px] font-bold"
-                                style={
-                                  d.tone === "bad" ? { color: "#C0392B", background: "rgba(192,57,43,.1)" }
-                                  : d.tone === "warn" ? { color: "#8A5D12", background: "rgba(138,93,18,.12)" }
-                                  : d.tone === "ok" ? { color: "#1E7A5A", background: "rgba(30,122,90,.1)" }
-                                  : { color: "#5C5A54", background: "rgba(10,31,60,.06)" }
-                                }
-                              >
-                                {d.state}
-                              </span>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                  <p className="mt-2.5 border-t border-navy/[.08] pt-2 text-[11px] leading-[1.7] text-muted">
-                    분실 · 파손 · 반납은 기기 대장에서 관리합니다 — 어르신 명부(사람)와 기기 대장(자산)은 분리 운영.
-                  </p>
-                </Panel>
-
-                {/* ── 낙상 대응 — 감지는 기기가, 대응은 우리가 ── */}
-                <Panel className="col-span-full min-w-0">
-                  <PanelHead
-                    title="낙상 대응 체계"
-                    right={<span className="text-[12px] text-muted">감지는 기기 · 대응은 우리 — 경계가 어디인지 먼저 못 박는다</span>}
-                  />
-                  <p className="mt-2 max-w-[92ch] text-[12px] leading-[1.75] text-muted">
-                    Fit3에는 우리 앱을 올릴 수 없어 <b className="text-navy">낙상 감지를 우리가 만들 방법이 없습니다</b>.
-                    수신 API도 없습니다. 실현 가능한 유일한 경로는 폰의 긴급 SOS가 우리에게 닿게 하는 것이고,
-                    거기서부터 30초 안에 티켓을 만들어 대응하는 것이 우리 서비스입니다.
-                  </p>
-                  <div className="mt-3 grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(232px, 100%), 1fr))" }}>
-                    {FALL_CHAIN.map((c) => {
-                      const ours = c.who === "K-CARE";
-                      return (
-                        <div
-                          key={c.s}
-                          className="rounded-xl border px-3.5 py-3"
-                          style={
-                            ours
-                              ? { borderColor: "rgba(176,141,87,.45)", background: "rgba(176,141,87,.08)" }
-                              : { borderColor: "rgba(10,31,60,.08)", background: "rgba(255,255,255,.6)" }
-                          }
-                        >
-                          <div className="flex items-center gap-2">
-                            <span className="font-num text-[11px] font-bold text-muted">{c.s}</span>
-                            <span
-                              className="rounded-full px-2 py-0.5 text-[10px] font-bold"
-                              style={ours ? { background: "#B08D57", color: "#0A1F3C" } : { background: "rgba(10,31,60,.07)", color: "#5C5A54" }}
-                            >
-                              {c.who}
-                            </span>
-                            <span className="ml-auto font-num text-[10px] text-muted">{c.t}</span>
-                          </div>
-                          <div className="mt-1.5 text-[13px] font-bold text-navy">{c.k}</div>
-                          <p className="mt-1 text-[11px] leading-[1.6] text-muted">{c.body}</p>
-                        </div>
-                      );
-                    })}
-                  </div>
-
-                  <div className="mt-3 grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(300px, 100%), 1fr))" }}>
-                    <div className="rounded-xl border border-green/25 bg-green/[.06] px-3.5 py-3">
-                      <div className="text-[12px] font-bold text-green">우리가 할 수 있는 것</div>
-                      <ul className="mt-1.5 space-y-1">
-                        {FALL_SCOPE.can.map((x) => (
-                          <li key={x} className="flex gap-1.5 text-[12px] leading-[1.6] text-ink">
-                            <span className="shrink-0 text-green">✓</span>
-                            <span>{x}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                    <div className="rounded-xl border border-danger/25 bg-danger/[.05] px-3.5 py-3">
-                      <div className="text-[12px] font-bold text-danger">못 하는 것 — 약속하면 안 되는 것</div>
-                      <ul className="mt-1.5 space-y-1">
-                        {FALL_SCOPE.cant.map((x) => (
-                          <li key={x} className="flex gap-1.5 text-[12px] leading-[1.6] text-ink">
-                            <span className="shrink-0 text-danger">✕</span>
-                            <span>{x}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  </div>
-                </Panel>
-
-                {/* 가구별 준비 상태 — 미등록이 곧 사각지대 */}
-                <Panel className="min-w-0">
-                  <PanelHead
-                    title="가구별 낙상 경로 준비"
-                    right={
-                      <span className="text-[12px] font-bold text-danger">
-                        미준비 {FALL_READY.filter((r) => r.tone === "bad").length}가구 — 낙상이 나도 우리에게 안 온다
-                      </span>
-                    }
-                  />
-                  <div className="mt-3 space-y-1.5">
-                    {FALL_READY.map((r) => (
-                      <div key={r.who} className="rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2.5">
-                        <div className="flex flex-wrap items-center gap-2">
-                          <span className="text-[13px] font-bold text-navy">{r.who}</span>
-                          <span
-                            className="ml-auto shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold"
-                            style={{ background: TONE[r.tone].bg, color: TONE[r.tone].fg }}
-                          >
-                            {r.tone === "ok" ? "준비됨" : "미준비"}
-                          </span>
-                        </div>
-                        <div className="mt-1 flex flex-wrap gap-x-3 gap-y-0.5 text-[11px] text-muted">
-                          <span>폰 <b className="text-ink">{r.phone}</b></span>
-                          <span>1순위 <b className="text-ink">{r.sos1}</b></span>
-                          <span>2순위 <b className="text-ink">{r.sos2}</b></span>
-                          <span>낙상 감지 <b className="text-ink">{r.fall}</b></span>
-                        </div>
-                        <div className="mt-1 text-[12px] font-bold leading-[1.55]" style={{ color: TONE[r.tone].fg }}>
-                          {r.state}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                  <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[11px] leading-[1.7] text-muted">
-                    긴급 연락처 1순위가 관제 게이트웨이가 아니면 낙상은 보호자에게만 갑니다 —
-                    해외 거주 보호자라면 사실상 아무에게도 안 가는 것과 같습니다. 방문 설정 대상으로 큐에 올립니다.
-                  </p>
-                </Panel>
-
-                {/* 문자 파싱 규격 */}
-                <Panel className="min-w-0">
-                  <PanelHead title="긴급 SOS 문자에서 뽑는 것" right={<span className="text-[12px] text-muted">실물 실측 후 확정</span>} />
-                  <div className="mt-3 space-y-1.5">
-                    {FALL_SMS.map((f) => (
-                      <div key={f.f} className="flex items-start gap-2.5 rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2">
-                        <span className="w-[74px] shrink-0 text-[12px] font-bold text-navy">{f.f}</span>
-                        <span className="min-w-0 flex-1">
-                          <span className="block font-num text-[12px] font-bold" style={{ color: TONE[f.tone].fg }}>{f.v}</span>
-                          <span className="mt-0.5 block text-[11px] leading-[1.6] text-muted">{f.use}</span>
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                  <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[11px] leading-[1.7] text-muted">
-                    발신 번호가 매칭 키입니다 — 어르신 폰 번호가 사전 등록돼 있지 않으면 문자가 와도 티켓이 안 만들어집니다.
-                  </p>
-                </Panel>
-
-                {/* 2주 실증 + 측정 지표 */}
-                <Panel className="col-span-full min-w-0">
-                  <PanelHead title="2주 실증 계획" right={<span className="text-[12px] text-muted">문서로는 안 나오는 것부터 실물로</span>} />
-                  <div className="mt-3 grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(280px, 100%), 1fr))" }}>
-                    {FALL_PLAN.map((x) => (
-                      <div key={x.d} className="rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2.5">
-                        <div className="flex items-baseline gap-2">
-                          <span className="font-num text-[11px] font-bold text-gold">{x.d}</span>
-                          <span className="min-w-0 flex-1 text-[12px] font-bold text-navy">{x.k}</span>
-                          <span className="shrink-0 text-[10px] font-bold text-muted">{x.who}</span>
-                        </div>
-                        <p className="mt-1 text-[11px] leading-[1.6] text-muted">{x.body}</p>
-                      </div>
-                    ))}
-                  </div>
-                  <div className="mt-3.5 border-t border-navy/[.08] pt-3">
-                    <div className="text-[12px] font-bold text-navy">무엇을 측정하고, 무엇을 계약서에 쓸 것인가</div>
-                    <div className="mt-2 overflow-x-auto">
-                      <table className="w-full min-w-[560px] text-left text-[12px]">
-                        <thead>
-                          <tr className="whitespace-nowrap border-b-2 border-navy/20 text-[11px] font-bold text-muted">
-                            <th className="py-2 pr-3">지표</th>
-                            <th className="py-2 pr-3">목표</th>
-                            <th className="py-2 pr-3">측정 방법</th>
-                            <th className="py-2">해석</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {FALL_METRICS.map((m) => (
-                            <tr key={m.k} className="border-b border-navy/[.06] align-top">
-                              <td className="whitespace-nowrap py-2 pr-3 font-bold text-navy">{m.k}</td>
-                              <td className="whitespace-nowrap py-2 pr-3 font-num font-bold text-green">{m.target}</td>
-                              <td className="py-2 pr-3 text-[11px] leading-[1.6] text-ink">{m.how}</td>
-                              <td className="py-2 text-[11px] leading-[1.6] text-muted">{m.note}</td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                    <p className="mt-2.5 text-[11px] leading-[1.7] text-muted">
-                      감지율 · 오탐률은 <b className="text-navy">기기 성능</b>이라 우리가 못 고칩니다 — 90%에 못 미치면
-                      Fit3 단독을 포기하고 LTE 응급버튼을 병행할지 판단하는 기준으로 씁니다.
-                      반대로 <b className="text-navy">도달 30초 · 첫 접촉 60초 · 현장 20분</b>은 우리 책임 구간이라 계약서에 쓸 수 있습니다.
-                    </p>
-                  </div>
-                </Panel>
-
-                {/* 알림 규칙 성능 */}
-                <Panel className="min-w-0">
-                  <PanelHead title="알림 규칙 · 오탐률" right={<span className="text-[12px] font-bold text-danger">오탐 30% 초과는 단독 발송 금지</span>} />
-                  <div className="mt-3 space-y-2.5">
-                    {WEAR_RULES.map((r) => (
-                      <div key={r.k} className="rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2.5">
-                        <div className="flex flex-wrap items-center gap-2">
-                          <span className="text-[13px] font-bold text-navy">{r.k}</span>
-                          <span
-                            className="ml-auto rounded-full px-2 py-0.5 text-[10px] font-bold"
-                            style={
-                              r.tone === "bad" ? { color: "#C0392B", background: "rgba(192,57,43,.1)" }
-                              : r.tone === "warn" ? { color: "#8A5D12", background: "rgba(138,93,18,.12)" }
-                              : { color: "#1E7A5A", background: "rgba(30,122,90,.1)" }
-                            }
-                          >
-                            오탐 {r.falseRate}
-                          </span>
-                        </div>
-                        <div className="mt-1 text-[12px] leading-[1.6] text-muted">조건 — {r.cond}</div>
-                        <div className="mt-0.5 flex flex-wrap gap-x-3 text-[11px] text-muted">
-                          <span>발동 <span className="font-num font-bold text-ink">{r.fired}</span></span>
-                          <span>실제 <span className="font-num font-bold text-ink">{r.real}</span></span>
-                        </div>
-                        <div className="mt-1 text-[12px] font-bold leading-[1.55] text-ink">경로 — {r.route}</div>
-                      </div>
-                    ))}
-                  </div>
-                </Panel>
-
-                {/* 연동 파이프라인 */}
-                <Panel className="min-w-0">
-                  <PanelHead title="연동 상태" right={<span className="text-[12px] text-muted">Fit3 → Samsung Health → Health Connect → 컴패니언</span>} />
-                  <div className="mt-3 space-y-2">
-                    {WEAR_PIPELINE.map(([k, st, note, tone], i) => (
-                      <div key={k} className="flex items-start gap-2.5 rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2.5">
-                        <span className="mt-[1px] flex h-[20px] w-[20px] shrink-0 items-center justify-center rounded-full bg-navy/[.08] font-num text-[10px] font-bold text-navy">{i + 1}</span>
-                        <div className="min-w-0 flex-1">
-                          <div className="text-[13px] font-bold text-navy">{k}</div>
-                          <div className="text-[11px] leading-[1.6] text-muted">{note}</div>
-                        </div>
-                        <span
-                          className="shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold"
-                          style={
-                            tone === "ok" ? { color: "#1E7A5A", background: "rgba(30,122,90,.1)" }
-                            : tone === "warn" ? { color: "#8A5D12", background: "rgba(138,93,18,.12)" }
-                            : { color: "#5C5A54", background: "rgba(10,31,60,.06)" }
-                          }
-                        >
-                          {st}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                  <p className="mt-2.5 border-t border-navy/[.08] pt-2 text-[11px] leading-[1.7] text-muted">
-                    스트레스 지표는 파트너 SDK 조건부 — 삼성 제휴 협의 대상입니다. 위치는 워치 단독 GPS가 없어 폰 경유로 수집합니다.
-                  </p>
-                </Panel>
-
-                {/* 동의 · 데이터 */}
-                <Panel className="min-w-0">
-                  <PanelHead title="동의 · 데이터 관리" right={<span className="text-[12px] text-muted">생체정보 = S1 민감 등급</span>} />
-                  <div className="mt-3 space-y-2.5">
-                    {WEAR_CONSENT.map((c) => (
-                      <div key={c.k} className="flex items-baseline gap-3 border-t border-navy/[.06] pt-2.5 first:border-t-0 first:pt-0">
-                        <div className="min-w-0">
-                          <div className="text-[13px] font-bold text-navy">{c.k}</div>
-                          <div className="text-[11px] text-muted">{c.note}</div>
-                        </div>
-                        <span
-                          className="ml-auto shrink-0 font-num text-[13px] font-bold"
-                          style={{ color: c.tone === "warn" ? "#8A5D12" : c.tone === "ok" ? "#1E7A5A" : "#0A1F3C" }}
-                        >
-                          {c.v}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                  <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[11px] leading-[1.7] text-muted">
-                    낙상 직통 미동의 3가구는 관제 경유로만 통보됩니다 — 동의 없이 경로를 바꾸지 않습니다.
-                  </p>
-                </Panel>
-              </div>
-            </div>
-          )}
 
           {/* ════ 날씨 — 현재 기상 · 대기질 · 권역 지도 · 이슈 → 케어 연계 ════ */}
           {menu === "weather" && (
@@ -3079,6 +2038,9 @@ export default function DispatchConsole() {
             </div>
           )}
 
+          {/* ════ 커뮤니케이션 관리 — 요청서 14절 (고객별 통합 이력 · 후속조치). 아래 발송 센터는 유지 ════ */}
+          {menu === "comms" && <CommsMgmt />}
+
           {/* ════ 커뮤니케이션 — 발송 센터 + 감사 로그 ════ */}
           {menu === "comms" && (
             <div className="mt-4 grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(360px, 100%), 1fr))" }}>
@@ -3139,6 +2101,13 @@ export default function DispatchConsole() {
               </Panel>
             </div>
           )}
+          {menu === "thresholds" && <Thresholds />}
+          {menu === "visits" && <Visits openProfile={openProfile} />}
+          {menu === "requests" && <RequestsMgmt />}
+          {menu === "together" && <TogetherMgmt />}
+          {menu === "accounts" && <Accounts />}
+          {menu === "audit" && <AuditLog />}
+          {menu === "integrations" && <Integrations />}
           </StaggerIn>
         </div>
 

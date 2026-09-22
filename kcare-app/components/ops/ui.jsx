@@ -44,9 +44,11 @@ export const FEED_STATE = {
   battery: { label: "배터리 방전", tone: "device" },
 };
 
+// min-w-0: 그리드·플렉스 칸 안에서 표(min-width 560px)가 칸을 밀어 넓히지 않게 한다 —
+// 안쪽 overflow-x-auto 가 대신 스크롤한다 (1024px 감사로그에서 93px 넘침 실측 · 2026-09-22).
 export function Panel({ children, className = "", style, id }) {
   return (
-    <section id={id} className={`card-glass rounded-[14px] p-[18px] ${className}`} style={style}>
+    <section id={id} className={`card-glass min-w-0 rounded-[14px] p-[18px] ${className}`} style={style}>
       {children}
     </section>
   );
