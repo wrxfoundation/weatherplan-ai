@@ -19,7 +19,11 @@ import {
   WEATHER_FACTORS,
 } from "../../lib/mock";
 import { VIDEO_POLICY, VIDEO_SEGMENTS } from "../../lib/console";
-import { PAYMENT_MODES, PRICING, fmtWon } from "../../lib/config";
+import { HOUSEHOLD, PAYMENT_MODES, PRICING, fmtWon } from "../../lib/config";
+
+// 월 구독료 표기 — 가입 때 고른 가구 구성(한 분 / 부부)에 따라 갈린다. 2급지는 확정 전.
+const monthlyLabel = (ob) =>
+  ob?.tier === 2 ? "별도 산정" : ob?.household === "couple" ? `${fmtWon(HOUSEHOLD.monthly)} · 부부 가구` : fmtWon(PRICING.subscription.monthly);
 import { useAppState } from "../../lib/state";
 import { honorific } from "../../lib/tracks";
 
@@ -185,7 +189,7 @@ export default function MyPage() {
           <SectionLabel>멤버십</SectionLabel>
           <div className="mt-3 space-y-2 text-[15px]">
             <Row k="서비스 지역" v={ob ? `${ob.district} · ${ob.tier === 2 ? "2급지" : "1급지"}` : `${ELDER.district} · 1급지 (데모)`} />
-            <Row k="월 구독료" v={ob?.tier === 2 ? "별도 산정" : fmtWon(PRICING.subscription.monthly)} />
+            <Row k="월 구독료" v={monthlyLabel(ob)} />
             <Row k="결제권한" v={payLabel(ob, honor)} />
             <Row k="방문기록 영상 동의" v={ob?.videoConsent ? "동의함" : ob ? "미동의 (가입 시 선택)" : "동의함 (데모)"} />
           </div>
@@ -505,7 +509,7 @@ function PaySheet({ ob, honor, isPrimary, onClose, onSave }) {
     <Sheet label="결제 관리" onClose={onClose}>
       <div className="text-[19px] font-black text-navy">결제 관리</div>
       <div className="mt-3 space-y-2 text-[14px]">
-        <Row k="월 구독료" v={ob?.tier === 2 ? "별도 산정" : fmtWon(PRICING.subscription.monthly)} />
+        <Row k="월 구독료" v={monthlyLabel(ob)} />
         <Row k="다음 결제" v={nextBill} />
         <Row k="결제수단" v={<PendingTag>등록 연동 대기</PendingTag>} />
         <Row k="지금 결제권한" v={payLabel(ob, honor)} />

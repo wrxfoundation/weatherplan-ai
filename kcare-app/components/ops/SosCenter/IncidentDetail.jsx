@@ -71,6 +71,13 @@ export default function IncidentDetail({ inc, now, api, role, onClosePopup }) {
               {inc.controller ? <Pill tone="info">관제사 {inc.controller}</Pill> : <Pill tone="warn">담당자 없음</Pill>}
               {(inc.alerts || 0) > 1 && <Pill tone="muted">반복 알림 {inc.alerts}건 병합</Pill>}
             </div>
+            {/* 병합된 최근 신호 — 어르신 SOS 버튼 발신처럼 사건 제목(첫 이상징후)과 다른 신호가 접힌 로그에만 있으면 안 된다 */}
+            {inc.signals?.length > 1 && (
+              <div className="mt-1 text-[12px] font-semibold text-ink">
+                최근 신호 <span className="font-num text-muted">{fmtTime(inc.signals[inc.signals.length - 1].at)}</span> ·{" "}
+                {inc.signals[inc.signals.length - 1].text}
+              </div>
+            )}
           </div>
         </div>
         <div className="rounded-xl px-4 py-2 text-center" style={{ background: closed ? TONE.muted.bg : TONE[sevTone].fg, color: closed ? TONE.muted.fg : "#fff" }}>

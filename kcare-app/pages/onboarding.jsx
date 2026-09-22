@@ -3,7 +3,13 @@ import { useRouter } from "next/router";
 import { useState } from "react";
 import { Card, SectionLabel, PrimaryButton, GhostButton, Badge } from "../components/ui";
 import Icon from "../components/icons";
-import { PRICING, BASE_BENEFITS, HOSPITAL_BENEFITS, CARE_LOCATIONS, PAYMENT_MODES, fmtWon } from "../lib/config";
+import { PRICING, HOUSEHOLD, BASE_BENEFITS, HOSPITAL_BENEFITS, CARE_LOCATIONS, PAYMENT_MODES, fmtWon } from "../lib/config";
+
+// 가구 구성 — 한 분 / 부부 두 분. 2026-09-11 실무진 결정 3번: 부부 가구 월 77,000원 (lib/config.js HOUSEHOLD)
+const HOUSEHOLDS = [
+  { key: "single", label: "한 분", desc: "어르신 한 분이 이용하세요" },
+  { key: "couple", label: "두 분 함께 (부부)", desc: "같은 댁에 두 분이 계세요" },
+];
 import { TIER1_DISTRICTS, TIER2_DISTRICTS, SCREENING_ITEMS, screenRegion } from "../lib/region";
 import { CORE, CORE_NOTE, TRACKS, STEP_LABELS, trackOf } from "../lib/tracks";
 import { useAppState } from "../lib/state";
@@ -34,6 +40,7 @@ export default function Onboarding() {
     address: "", // 신청자(고객) 주소 — 2026-09-11 실무진 결정 5번
     elderPhone: "", // 어르신 전화번호 — 2026-09-11 실무진 결정 5번 (대신 신청일 때)
     elderName: "",
+    household: "single", // 가구 구성 — 한 분 / 부부 (정기 케어만 · 월 구독료가 갈린다)
     district: null,
     paymentMode: "limit",
     limitAmount: PRICING.paymentLimitDefault,
@@ -64,6 +71,9 @@ export default function Onboarding() {
   const who = track?.subject || "이용하실 분";
   const priced = track?.billing?.confirmed;
   const hospital = form.careLocation === "hospital";
+  // 부부 가구 — 월 구독료만 확정(77,000). 가입·설치비는 결정에 없어 확정 전으로 안내한다.
+  const couple = !!track?.needsRelation && form.household === "couple";
+  const monthlyFee = couple ? HOUSEHOLD.monthly : track?.billing?.monthly;
   // 거주 형태에 따라 기본상품이 갈린다 — 실무자 피드백 시트의 표 그대로
   const benefits = hospital ? HOSPITAL_BENEFITS : BASE_BENEFITS;
 
@@ -75,6 +85,7 @@ export default function Onboarding() {
         track: form.track,
         forSelf: form.forSelf,
         careLocation: track?.needsRelation ? form.careLocation : null, // DB: care_location_type
+        household: track?.needsRelation ? form.household : null, // single / couple — 마이 탭 월 구독료 표기
         rel: form.rel,
         relDetail: form.rel === "기타" ? form.relDetail.trim() : null,
         phone: form.phone,
@@ -320,6 +331,36 @@ export default function Onboarding() {
                         </p>
                       )}
                     </div>
+                    {/* 가구 구성 — 한 분 / 부부. 요금 단계·마이 탭 월 구독료가 여기서 갈린다 */}
+                    <div className="mt-5">
+                      <SectionLabel>몇 분이 이용하세요?</SectionLabel>
+                      <div className="mt-3 grid grid-cols-2 gap-2">
+                        {HOUSEHOLDS.map((h) => {
+                          const on = form.household === h.key;
+                          return (
+                            <button
+                              key={h.key}
+                              onClick={() => set({ household: h.key })}
+                              className={`btn-press rounded-xl border px-2 py-3 text-left ${
+                                on ? "border-gold bg-gold/10" : "border-navy/15"
+                              }`}
+                            >
+                              <span className={`block text-[15.5px] font-bold leading-[1.35] ${on ? "text-navy" : "text-ink"}`}>
+                                {h.label}
+                              </span>
+                              <span className="block text-[12px] leading-[1.5] text-muted">{h.desc}</span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                      {couple && (
+                        <p className="animate-tickIn mt-2.5 rounded-xl bg-navy/5 p-3 text-[13px] leading-[1.7] text-muted">
+                          부부 가구는 월 <b className="text-navy">{fmtWon(HOUSEHOLD.monthly)}</b> —{" "}
+                          {HOUSEHOLD.conditions.join(" · ")}. 부부 가구 가입·설치비는 확정 전이라 배정
+                          상담에서 안내드립니다.
+                        </p>
+                      )}
+                    </div>
                     <div className="mt-5">
                       <SectionLabel>보호자 거주지</SectionLabel>
                       <div className="mt-3 grid grid-cols-2 gap-2">
@@ -494,9 +535,8 @@ export default function Onboarding() {
                   {result.tier === 1 && priced && (
                     <div className="mt-3 rounded-xl bg-navy p-3.5 text-white">
                       <span className="text-[13px] opacity-75">월 구독료 </span>
-                      <span className="font-num text-[22px] font-bold">
-                        {fmtWon(track.billing.monthly)}
-                      </span>
+                      <span className="font-num text-[22px] font-bold">{fmtWon(monthlyFee)}</span>
+                      {couple && <span className="ml-1.5 text-[12px] opacity-75">부부 가구</span>}
                     </div>
                   )}
                   {result.tier === 2 && (
@@ -644,15 +684,35 @@ export default function Onboarding() {
                     </SectionLabel>
                     <div className="mt-2 flex items-baseline gap-1.5">
                       <span className="font-num text-[34px] font-bold">
-                        {result?.tier === 2 ? "별도 산정" : fmtWon(track.billing.monthly)}
+                        {result?.tier === 2 ? "별도 산정" : fmtWon(monthlyFee)}
                       </span>
-                      {result?.tier !== 2 && <span className="text-[13px] opacity-70">/ 월 · 1급지</span>}
+                      {result?.tier !== 2 && (
+                        <span className="text-[13px] opacity-70">/ 월 · 1급지{couple ? " · 부부 가구" : ""}</span>
+                      )}
                     </div>
                     <div className="mt-1.5 text-[12px] leading-[1.7] opacity-70">
-                      최초 1회 가입·설치비 {fmtWon(PRICING.entryFee.amount)} (부가세 별도 · 합계{" "}
-                      {fmtWon(track.billing.entry)}) · 최소 약정 {track.billing.term}개월 ·{" "}
-                      {track.billing.note}
+                      {couple ? (
+                        <>
+                          부부 가구 가입·설치비는 확정 전 — 배정 상담에서 안내 (한 분 기준{" "}
+                          {fmtWon(track.billing.entry)}) · 최소 약정 {track.billing.term}개월 · {track.billing.note}
+                        </>
+                      ) : (
+                        <>
+                          최초 1회 가입·설치비 {fmtWon(PRICING.entryFee.amount)} (부가세 별도 · 합계{" "}
+                          {fmtWon(track.billing.entry)}) · 최소 약정 {track.billing.term}개월 ·{" "}
+                          {track.billing.note}
+                        </>
+                      )}
                     </div>
+                    {couple && (
+                      <div className="mt-2 flex flex-wrap gap-1.5">
+                        {HOUSEHOLD.conditions.map((c) => (
+                          <span key={c} className="rounded-full bg-white/[.14] px-2.5 py-1 text-[12px] font-semibold">
+                            {c}
+                          </span>
+                        ))}
+                      </div>
+                    )}
                   </div>
                   <ul className="space-y-2.5 p-5">
                     {benefits.map((b) => (
@@ -807,7 +867,10 @@ export default function Onboarding() {
                     ["신청 서비스", track.short],
                     ...(form.auth ? [["가입 방식", `${form.auth === "kakao" ? "카카오" : "네이버"} 간편가입 (데모)`]] : []),
                     ...(track.needsRelation
-                      ? [["거주 형태", hospital ? "요양병원" : "자택"]]
+                      ? [
+                          ["거주 형태", hospital ? "요양병원" : "자택"],
+                          ["가구 구성", couple ? `부부 두 분 · 월 ${fmtWon(HOUSEHOLD.monthly)}` : "한 분"],
+                        ]
                       : []),
                     [who, `${form.elderName || (track.needsRelation ? "김순자" : "본인")}님 · ${form.district}`],
                     track.needsRelation

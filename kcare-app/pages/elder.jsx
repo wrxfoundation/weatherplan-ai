@@ -2478,7 +2478,8 @@ export default function ElderHome() {
           phase={sosPhase}
           setPhase={setSosPhase}
           onDispatch={() => {
-            dispatch({ type: "demo", payload: { sos: true } });
+            // sosAt — 관제가 이 발신을 사건 저장소에 한 번만 잇기 위한 표식 (pages/dispatch.jsx)
+            dispatch({ type: "demo", payload: { sos: true, sosAt: Date.now() } });
             dispatch({
               type: "pushEvent",
               payload: {

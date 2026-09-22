@@ -6,6 +6,7 @@ import Icon from "../icons";
 import { ROSTERS } from "../../lib/rosters";
 import { ELDER_TABS, SERVICE_STATE, elderDetail, feedOf, sevOf, logEntry, TODAY } from "../../lib/ops-mgmt";
 import { GUARDIANS } from "../../lib/ops-mgmt-people";
+import { TOTAL_ELDERS } from "../../lib/ops-health";
 import ElderTabs from "./mgmt/ElderTabs";
 import { EditDrawer } from "./mgmt/EditLog";
 
@@ -49,8 +50,9 @@ export default function ElderMgmt() {
   const update = (name, fn) => setElders((es) => es.map((e) => (e.name === name ? fn(e) : e)));
   const log = (e, field, before, after, reason) => ({ ...e, history: [logEntry({ field, before, after, reason }), ...e.history] });
 
+  // 전체 수는 대시보드·사이드바 배지와 같은 출처(TOTAL_ELDERS). 명단에는 상세 프로필이 있는 인원만 올라온다.
   const stats = [
-    { k: "all", label: "전체 관리 어르신", value: elders.length, tone: "navy" },
+    { k: "all", label: "전체 관리 어르신", value: TOTAL_ELDERS, tone: "navy", sub: `명단 표시 ${elders.length}명 · 상세 프로필 보유` },
     { k: "risk", label: "위험 높음", value: elders.filter(VIEWS.risk).length, tone: "danger" },
     { k: "watch", label: "워치 이상", value: elders.filter(VIEWS.watch).length, tone: "device" },
     { k: "nosub", label: "부 담당 없음", value: elders.filter(VIEWS.nosub).length, tone: "warn" },
@@ -147,7 +149,7 @@ export default function ElderMgmt() {
       </div>
 
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
-        {stats.map((s) => <Stat key={s.k} label={s.label} value={s.value} unit="명" tone={s.tone} active={view === s.k} onClick={() => setView(view === s.k && s.k !== "all" ? "all" : s.k)} />)}
+        {stats.map((s) => <Stat key={s.k} label={s.label} value={s.value} unit="명" sub={s.sub} tone={s.tone} active={view === s.k} onClick={() => setView(view === s.k && s.k !== "all" ? "all" : s.k)} />)}
       </div>
 
       <Panel className="!p-3">

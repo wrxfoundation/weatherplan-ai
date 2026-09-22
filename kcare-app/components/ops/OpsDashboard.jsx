@@ -27,7 +27,8 @@ function tileSub(k, n, ctx) {
   }
 }
 
-export default function OpsDashboard({ onStartSos, onOpenSos, mapSlot, opsSlot }) {
+// opsCount: 운영현황 안 '지금 처리할 일' 건수 — 접혀 있어도 숫자는 보인다. opsOpen: 어르신 부탁·긴급 건이 있으면 펼친 채로 시작.
+export default function OpsDashboard({ onStartSos, onOpenSos, mapSlot, opsSlot, opsCount = null, opsOpen = false }) {
   const { open, start } = useIncidents();
   const now = useNow(1000);
   const [tile, setTile] = useState("all");
@@ -134,7 +135,8 @@ export default function OpsDashboard({ onStartSos, onOpenSos, mapSlot, opsSlot }
                     </button>
                     <div className="min-w-0 flex-1">
                       <div className="flex flex-wrap items-center gap-2">
-                        <button type="button" onClick={() => setDetail(r.name)} className="btn-press btn-inline text-[15px] font-bold text-navy">{r.name}</button>
+                        {/* 단독 버튼 — .btn-inline(문장 속 링크 예외)을 붙이면 23px 로 남아 터치 타깃 24px 를 못 넘는다 */}
+                        <button type="button" onClick={() => setDetail(r.name)} className="btn-press rounded-md text-[15px] font-bold text-navy">{r.name}</button>
                         <span className="text-[12px] text-muted">{r.age}세</span>
                         <SevPill sev={r.sev} />
                         <StatePill state={r.state} />
@@ -247,9 +249,15 @@ export default function OpsDashboard({ onStartSos, onOpenSos, mapSlot, opsSlot }
       </div>
 
       {/* 2-3 기존 운영관리 영역 — 삭제하지 않고 하단 접이식으로 */}
-      <details className="card-glass rounded-[14px] px-[18px] py-3">
+      <details className="card-glass rounded-[14px] px-[18px] py-3" open={opsOpen || undefined}>
         <summary className="cursor-pointer text-[15px] font-bold text-navy">
-          운영현황 <span className="text-[12px] font-semibold text-muted">— 건강관제 이후 처리할 업무 (방문 업무흐름 · 복지 매칭 · AI 배정 · 배차 그리드 · 핸드오프 · 수락 지연 · 아침 브리핑)</span>
+          운영현황{" "}
+          {opsCount != null && (
+            <Pill tone={opsCount > 0 ? (opsOpen ? "danger" : "warn") : "muted"} className="mr-1 align-middle">
+              지금 처리할 일 {opsCount}건
+            </Pill>
+          )}{" "}
+          <span className="text-[12px] font-semibold text-muted">— 건강관제 이후 처리할 업무 (방문 업무흐름 · 복지 매칭 · AI 배정 · 배차 그리드 · 핸드오프 · 수락 지연 · 아침 브리핑)</span>
         </summary>
         <div className="mt-3">{opsSlot || <Empty>운영관리 모듈이 이 자리에 들어옵니다.</Empty>}</div>
       </details>

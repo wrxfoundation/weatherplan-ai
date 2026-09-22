@@ -26,7 +26,6 @@ import {
   CRM_STAGE,
   COMMS_TRACKING,
   MORNING_BRIEF,
-  WEAR_DEVICES,
   HANDOFF_CHAIN,
   HANDOFF_STUCK,
   DIRECTORY_ALL,
@@ -54,8 +53,14 @@ import MapDialog, { distanceM, prettyDistance } from "../components/MapDialog";
 import VisitFlow from "../components/VisitFlow";
 import MobileSectionNav from "../components/MobileSectionNav";
 import StaggerIn from "../components/StaggerIn";
-import { ROSTERS } from "../lib/rosters";
 import { CREW_RULES } from "../lib/dispatch-policy";
+// 사이드바 배지 — 각 관리 화면의 머릿수 Stat 과 같은 출처를 쓴다 (화면 200명 · 배지 20명처럼 어긋나지 않게)
+import { TOTAL_ELDERS } from "../lib/ops-health";
+import { FLEET } from "../lib/ops-devices";
+import { GUARDIAN_STATS, STAFF_STATS } from "../lib/ops-mgmt-people";
+import { HOSPITALS_SEED } from "../lib/ops-admin-sys";
+// 어르신 SOS 버튼을 관제 사건으로 이은 시각 — 같은 발신을 두 번 사건화하지 않기 위한 표식
+const SOS_LINK_KEY = "kcare-ops-sos-link-v1";
 // 관제 콘솔 재구성 — 2026-09-22 관제 개선 요청서(19절) · 시안 8장 (components/ops/*)
 import OpsDashboard from "../components/ops/OpsDashboard";
 import SosCenter from "../components/ops/SosCenter";
@@ -464,16 +469,55 @@ export default function DispatchConsole() {
   const [briefRead, setBriefRead] = useState(false); // 아침 브리핑 읽음
   const [hoStage, setHoStage] = useState("accept"); // 핸드오프 정체 — 선택 단계 (기본: 최대 정체)
   const [hoDone, setHoDone] = useState({}); // 정체 건 처리 원샷
-  // 사이드바 배지 카운트 — 메뉴별 관리 대상 수 (명부가 단일 출처 · 상세 프로필 보유 수와 다름)
-  const { open: sosOpen } = useIncidents(); // 진행 중 SOS 사건 — 사이드바 배지 (요청서 6-6)
+  // 사이드바 배지 카운트 — 각 화면 첫 Stat 과 같은 숫자 (어르신 200 · 보호자 218 · 컨시어지 42 · 제휴 병원 · 점검 필요 기기)
+  const { open: sosOpen, hydrated: sosHydrated, start: startIncident } = useIncidents(); // 진행 중 SOS 사건 (요청서 6-6)
   const MENU_COUNTS = {
     sos: sosOpen.length,
-    elder: ROSTERS.elders.rows.length,
-    guardian: ROSTERS.guardians.rows.length,
-    concierge: ROSTERS.concierges.rows.length,
-    hospital: ROSTERS.hospitals.rows.length,
-    wearable: WEAR_DEVICES.length,
+    elder: TOTAL_ELDERS,
+    guardian: GUARDIAN_STATS.total,
+    concierge: STAFF_STATS.total,
+    hospital: HOSPITALS_SEED.filter((h) => h.partner).length,
+    wearable: FLEET.needsCheck,
   };
+  const sosUnread = sosOpen.some((i) => i.state === "new"); // 미확인 사건 — 사이드바 점등
+
+  // 어르신 SOS 버튼(state.demo.sos) → 관제 사건 저장소. 어르신·가족 앱이 켠 SOS 가 관제에서는
+  // 사건으로 보여야 숫자가 한 출처가 된다. 같은 고객의 진행 중 사건이 있으면 새 사건 대신
+  // 신호로 병합된다 (6-6). sosAt 으로 한 번만 잇고, 새로고침·메뉴 이동에서 중복 생성하지 않는다.
+  const linkedSosAt = useRef(0);
+  const sosAt = state.demo.sosAt || 0;
+  useEffect(() => {
+    if (!sos || !sosHydrated) return;
+    let last = linkedSosAt.current;
+    if (!last) {
+      try {
+        last = Number(window.localStorage.getItem(SOS_LINK_KEY)) || 0;
+      } catch {
+        last = 0;
+      }
+    }
+    if (sosAt && sosAt === last) return;
+    const existing = sosOpen.find((i) => i.customer === ELDER.name);
+    if (!sosAt && existing?.signals?.some((s) => /SOS 버튼/.test(s.text))) return;
+    const id = startIncident(
+      {
+        name: ELDER.name,
+        age: ELDER.age,
+        sev: "sev1",
+        value: "SOS 버튼 발신 · 가족 앱 동시 점등",
+        threshold: "어르신 SOS 버튼 — 즉시 SEV1",
+        controller: null,
+      },
+      "어르신 SOS 버튼 발신"
+    );
+    linkedSosAt.current = sosAt || Date.now();
+    try {
+      window.localStorage.setItem(SOS_LINK_KEY, String(linkedSosAt.current));
+    } catch {
+      /* 저장이 막힌 브라우저 — 메모리 ref 로만 중복을 막는다 */
+    }
+    setSosFocus(id);
+  }, [sos, sosAt, sosHydrated, sosOpen, startIncident]);
   const [profile, setProfile] = useState(null); // 플로팅 프로필 카드
   const [profilePos, setProfilePos] = useState({ x: 0, y: 0 }); // 클릭 지점 — 카드가 근처에 뜬다
   const lastPointer = useRef({ x: 0, y: 0 });
@@ -582,7 +626,8 @@ export default function DispatchConsole() {
     { k: "오늘 배차", v: String(jobs.length), color: "#0A1F3C", tab: "live" },
     { k: "가동률", v: "82%", color: "#1E7A5A", tab: "plan" },
     { k: "미매칭", v: String(unmatchedCount), color: unmatchedCount > 0 ? "#C0392B" : "#5C5A54", tab: "pair" },
-    { k: "SOS", v: sos ? "1" : "0", color: sos ? "#C0392B" : "#5C5A54", jump: "sos-banner" },
+    // 진행 중 사건 수 — 긴급 배너·사이드바 배지·SOS 센터와 같은 출처 (lib/ops-sos)
+    { k: "SOS", v: String(sosOpen.length), color: sosOpen.length ? "#C0392B" : "#5C5A54", menu: "sos" },
   ];
 
   // ── 액션 큐 — 지금 관제가 처리할 일. 우선순위·마감을 한 줄로 (상황파악 → 적시 대응) ──
@@ -653,8 +698,8 @@ export default function DispatchConsole() {
   actions.sort((a, b) => LEVEL_ORDER[a.level] - LEVEL_ORDER[b.level]);
 
   // 헤더 상태 필 — 한눈에 관제 상황 등급
-  const status = sos
-    ? { label: "SOS 대응 중", cls: "animate-sosPulse bg-danger text-white" }
+  const status = sosOpen.length > 0 || sos
+    ? { label: `SOS 대응 중 ${Math.max(sosOpen.length, 1)}건`, cls: "animate-sosPulse bg-danger text-white" }
     : actions.length > 0
     ? { label: `주의 · 처리 대기 ${actions.length}건`, cls: "border border-amber/30 bg-[#FFF7E8] text-amber" }
     : { label: "정상 운영", cls: "bg-[rgba(30,122,90,.12)] text-green" };
@@ -828,7 +873,7 @@ export default function DispatchConsole() {
                 >
                   <Icon name={icon} size={16} />
                   <span className="min-w-0 flex-1 truncate">{label}</span>
-                  {k === "sos" && sos && (
+                  {k === "sos" && (sos || sosUnread) && (
                     <span className="h-[7px] w-[7px] shrink-0 animate-livePing rounded-full bg-danger" />
                   )}
                   {n != null && <span className="shrink-0 font-num text-[11px] text-white/40">{n}</span>}
@@ -888,6 +933,11 @@ export default function DispatchConsole() {
                 <button
                   key={k.k}
                   onClick={() => {
+                    if (k.menu) {
+                      setSosFocus(null);
+                      setMenu(k.menu);
+                      return;
+                    }
                     setMenu("dash");
                     if (k.jump)
                       setTimeout(
@@ -915,7 +965,7 @@ export default function DispatchConsole() {
               current={menu}
               onSelect={setMenu}
               badges={MENU_COUNTS}
-              dots={{ sos: !!sos }}
+              dots={{ sos: !!sos || sosUnread }}
               className="w-full"
             />
             <div className="relative ml-auto w-full min-w-[240px] sm:w-[320px]">
@@ -966,7 +1016,14 @@ export default function DispatchConsole() {
               </span>
               <div className="min-w-[240px] flex-1">
                 <div className="text-[17px] font-bold">
-                  김순자 (78) · 강남구 대치동 — 최근접 컨시어지 박지현 (1.2km)
+                  어르신 SOS 버튼 발신 · 김순자 (78) · 강남구 대치동 — 최근접 컨시어지 박지현 (1.2km)
+                </div>
+                {/* 같은 사건이 SOS 센터에도 있다 — 여기는 급파·119 즉시 조치, 13단계 절차·종료는 센터에서 */}
+                <div className="mt-0.5 font-num text-[12px] opacity-[.88]">
+                  {(() => {
+                    const inc = sosOpen.find((i) => i.customer === "김순자");
+                    return inc ? `사건 ${inc.id} 에 병합 · 대응 절차·종료는 SOS 긴급대응 센터` : "사건 등록 중";
+                  })()}
                 </div>
                 <div className="mt-0.5 font-num text-[13px] opacity-[.88]">
                   경과 {elapsed} · 목표 응답 60초 이내 · {sos119 ? "119 연계 완료" : "119 연계 대기"}
@@ -1020,12 +1077,22 @@ export default function DispatchConsole() {
                 </button>
                 <button
                   onClick={() => {
-                    dispatch({ type: "ackSos" });
-                    push("대응", "SOS 확인 처리 — 알림 상태 해제", "#8FA9CC");
+                    setSosFocus(sosOpen.find((i) => i.customer === "김순자")?.id || null);
+                    setMenu("sos");
                   }}
+                  className="btn-press rounded-xl border border-white/70 px-4 py-2.5 text-[15px] font-bold"
+                >
+                  SOS 센터에서 대응 절차
+                </button>
+                <button
+                  onClick={() => {
+                    dispatch({ type: "ackSos" });
+                    push("대응", "SOS 알림 해제 — 어르신·가족 앱 점등 종료 (사건은 SOS 센터에서 종료)", "#8FA9CC");
+                  }}
+                  title="어르신·가족 앱의 SOS 알림만 해제합니다. 사건 종료는 SOS 센터의 종료 절차(결과·사유 필수)로 합니다."
                   className="btn-press rounded-xl border border-white/40 px-4 py-2.5 text-[15px] font-medium"
                 >
-                  해제
+                  알림 해제
                 </button>
                 <button
                   onClick={() => {
@@ -1097,6 +1164,9 @@ export default function DispatchConsole() {
                 setMenu("sos");
               }}
               mapSlot={mapPanel}
+              opsCount={actions.length}
+              // 어르신 앱은 "관제센터에서 확인 전화를 드립니다"라고 약속한다 — 그 부탁이 들어와 있으면 접어 두지 않는다
+              opsOpen={actions.some((a) => a.level === "critical" || a.id.startsWith("elder-"))}
               opsSlot={<>
           {/* ── 방문 업무흐름 8단계 — 일정 수립 알람이 여기로 온다 (2026-08-13 미팅) ── */}
           <section className="mt-[18px]">

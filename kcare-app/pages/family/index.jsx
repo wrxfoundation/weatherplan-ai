@@ -603,7 +603,9 @@ export default function FamilyHome() {
           {demoOpen && (
             <div className="mt-2 flex justify-center gap-2">
               <button
-                onClick={() => dispatch({ type: "demo", payload: { sos: !state.demo.sos } })}
+                onClick={() =>
+                  dispatch({ type: "demo", payload: state.demo.sos ? { sos: false } : { sos: true, sosAt: Date.now() } })
+                }
                 className="btn-press rounded-lg border border-navy/20 px-3 py-1.5 text-[12px] font-bold text-muted"
               >
                 SOS {state.demo.sos ? "해제" : "발생"}
