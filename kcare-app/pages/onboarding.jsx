@@ -31,6 +31,8 @@ export default function Onboarding() {
     relDetail: "", // 관계 '기타' 상세 — 누구인지 기재
     res: null,
     phone: "", // 연락처 — 배정 상담·대기 안내에 필수
+    address: "", // 신청자(고객) 주소 — 2026-09-11 실무진 결정 5번
+    elderPhone: "", // 어르신 전화번호 — 2026-09-11 실무진 결정 5번 (대신 신청일 때)
     elderName: "",
     district: null,
     paymentMode: "limit",
@@ -76,6 +78,8 @@ export default function Onboarding() {
         rel: form.rel,
         relDetail: form.rel === "기타" ? form.relDetail.trim() : null,
         phone: form.phone,
+        address: form.address.trim(),
+        elderPhone: form.elderPhone.trim(),
         res: form.res,
         elderName: form.elderName || (track?.needsRelation ? "김순자" : "본인"),
         district: form.district,
@@ -383,6 +387,44 @@ export default function Onboarding() {
                     않습니다.
                   </p>
                 </div>
+
+                {/* 주소 · 어르신 전화 — 2026-09-11 실무진 결정 5번 "가입 상담 신청에서 고객의
+                    주소와 전화번호, 그리고 어르신 전화번호를 적을 수 있게". 주소는 방문
+                    권역·첫 방문 동선에, 어르신 번호는 첫 방문 전 인사 전화에 쓴다. */}
+                <div className="mt-5">
+                  <SectionLabel>{track.needsRelation ? "보호자 주소" : "주소"}</SectionLabel>
+                  <input
+                    id="ob-address"
+                    value={form.address}
+                    onChange={(e) => set({ address: e.target.value })}
+                    type="text"
+                    autoComplete="street-address"
+                    placeholder="시 · 구 · 동 · 상세 주소"
+                    className="mt-2 w-full rounded-xl border border-navy/15 bg-white px-3.5 py-3 text-[16px] outline-none focus:border-gold"
+                  />
+                  <p className="mt-1.5 text-[12px] leading-[1.6] text-muted">
+                    상담 안내문 발송과 방문 동선 확인에 씁니다. 어르신 주소는 다음 단계에서 지역으로
+                    확인합니다.
+                  </p>
+                </div>
+                {track.needsRelation && (
+                  <div className="mt-5">
+                    <SectionLabel>어르신 전화번호</SectionLabel>
+                    <input
+                      id="ob-elder-phone"
+                      value={form.elderPhone}
+                      onChange={(e) => set({ elderPhone: e.target.value })}
+                      type="tel"
+                      inputMode="tel"
+                      placeholder="어르신 휴대전화 (없으면 비워 두세요)"
+                      className="mt-2 w-full rounded-xl border border-navy/15 bg-white px-3.5 py-3 font-num text-[16px] outline-none focus:border-gold"
+                    />
+                    <p className="mt-1.5 text-[12px] leading-[1.6] text-muted">
+                      첫 방문 전에 컨시어지가 인사 전화를 드립니다. 어르신이 전화를 어려워하시면
+                      비워 두셔도 됩니다 — 보호자 번호로 연락합니다.
+                    </p>
+                  </div>
+                )}
               </Card>
 
               <div className="flex gap-2">
@@ -607,7 +649,7 @@ export default function Onboarding() {
                       {result?.tier !== 2 && <span className="text-[13px] opacity-70">/ 월 · 1급지</span>}
                     </div>
                     <div className="mt-1.5 text-[12px] leading-[1.7] opacity-70">
-                      최초 1회 진입비 {fmtWon(PRICING.entryFee.amount)} (부가세 별도 · 합계{" "}
+                      최초 1회 가입·설치비 {fmtWon(PRICING.entryFee.amount)} (부가세 별도 · 합계{" "}
                       {fmtWon(track.billing.entry)}) · 최소 약정 {track.billing.term}개월 ·{" "}
                       {track.billing.note}
                     </div>
@@ -774,6 +816,8 @@ export default function Onboarding() {
                           `${form.rel === "기타" ? form.relDetail || "기타" : form.rel} · ${form.phone || "연락처 미입력"}`,
                         ]
                       : ["신청자", `${form.forSelf ? "본인" : "대신 신청"} · ${form.phone || "연락처 미입력"}`],
+                    ...(form.address.trim() ? [["주소", form.address.trim()]] : []),
+                    ...(track.needsRelation && form.elderPhone.trim() ? [["어르신 전화", form.elderPhone.trim()]] : []),
                     ["서비스 지역", result?.tier === 2 ? "2급지 (별도 산정)" : "1급지"],
                     priced
                       ? [

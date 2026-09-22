@@ -18,6 +18,7 @@ import {
 } from "../lib/mock";
 import { PRICING, fmtWon } from "../lib/config";
 import { STORE_CATALOG } from "../lib/store";
+import ProductSheet from "../components/ProductSheet";
 import { SERVICE_MENU, SERVICE_PLUS } from "../lib/requests";
 import { MED_PLAN, MED_STREAK, SUPPLEMENTS, daysLeft, medProgress, needsReorder, slotHour } from "../lib/meds";
 import { VERDICT, matchWelfare, profileFor, welfareCounts } from "../lib/welfare";
@@ -61,21 +62,20 @@ const SUB_CARD = {
 // 누르면 상세 시트가 열린다. 타일 12개 = SERVICE_MENU 12개 그대로 — 시안에만 있는
 // 서비스를 새로 만들지 않았다. 시안의 장보기·말벗·산책은 생활 대행(no6)의 범위라
 // 그 타일의 작은 글씨로 보여준다. 아이콘은 우리 라인 아이콘 체계(3D 아님)를 쓴다.
+// 2026-09-11 시트 어르신 해주세요 1~3번: 집수리 · 요양보호사 · 방문 간호 · 약국 심부름 ·
+// 자녀 동행 타일을 뺐고(보호자 메뉴에는 남는다), '생활 대행'은 '함께 해요'로,
+// 컨시어지 2명과 근교 나들이를 가는 '함께가요'(no15)를 새로 넣었다. 9타일 3열.
 const ASK_TILES = [
   { no: 1, label: "병원 예약", icon: "calendar" },
   { no: 2, label: "병원 동행", sub: "2인 1조", icon: "users" },
   { no: 3, label: "병원 동행", sub: "1인", icon: "user" },
   { no: 4, label: "요양병원", sub: "안심케어", icon: "hospital" },
   { no: 5, label: "안심방문", sub: "추가 방문", icon: "home" },
-  { no: 6, label: "생활 대행", sub: "장보기 · 말벗", icon: "bag" },
+  { no: 6, label: "함께 해요", sub: "장보기 · 말벗", icon: "bag" },
+  { no: 15, label: "함께가요", sub: "근교 나들이", icon: "sun" },
   { no: 7, label: "청소", icon: "sparkle" },
-  { no: 8, label: "집수리", icon: "wrench" },
   { no: 9, label: "복지 혜택", icon: "doc" },
-  { no: 10, label: "요양보호사", icon: "hand" },
-  { no: 11, label: "방문 간호", icon: "plus" },
   { no: 12, label: "응급 대응", icon: "alert" },
-  { no: 13, label: "약국 심부름", sub: "받아다 드림", icon: "pill" },
-  { no: 14, label: "자녀 동행", sub: "손주 등하원", icon: "users" },
 ];
 
 // GNB — 2026-09-04 시트 어르신 전체 7·8번: 하단은 마음사서함 · 홈 · 가족 셋뿐이다.
@@ -317,6 +317,7 @@ export default function ElderHome() {
   };
   const [storeSel, setStoreSel] = useState({});
   const [storeSent, setStoreSent] = useState(null); // 'approval' | 'ordered'
+  const [storeDetail, setStoreDetail] = useState(null); // 상품 상세 시트 — 담기 전 설명을 먼저 본다 (2026-09-22)
   const [storeCat, setStoreCat] = useState("vitamin"); // 스토어 탭 분류 (약국 분류는 삭제 — lib/store.js)
   const [storeGroup, setStoreGroup] = useState(0); // 소분류 — 분류를 바꾸면 첫 칸으로 돌아간다
   // askOpen(해주세요 아코디언)은 타일 그리드 + 시트로 바뀌면서 없앴다 (2026-08-24)
@@ -529,7 +530,7 @@ export default function ElderHome() {
   // 지난 때(아침·점심) 중 첫 것 하나만 띄우고 나머지는 띄운 것으로 친다.
   // 다른 창(녹음·도와줘요·부탁 시트)이 떠 있으면 그 창을 닫을 때까지 기다린다.
   const medPopShown = state.elder.medPopShown || { date: "", slots: {} };
-  const otherModal = !!medPop || concMsg != null || helpPop || !!askSel || eventSheet || welfareOpen;
+  const otherModal = !!medPop || concMsg != null || helpPop || !!askSel || eventSheet || welfareOpen || !!storeDetail;
   useEffect(() => {
     const check = () => {
       if (otherModal) return;
@@ -2045,12 +2046,13 @@ export default function ElderHome() {
                     return (
                       <button
                         key={i.id}
-                        disabled={off}
+                        aria-label={`${i.name} 상품 정보 보기`}
                         onClick={() => {
+                          // 바로 담지 않는다 — 상세 시트에서 설명을 보고 담는다 (2026-09-22 상담실장 확인)
                           setStoreSent(null);
-                          setStoreSel((s) => ({ ...s, [i.id]: !s[i.id] }));
+                          setStoreDetail(i);
                         }}
-                        className="btn-press w-full overflow-hidden rounded-[18px] bg-white text-left disabled:opacity-60"
+                        className="btn-press w-full overflow-hidden rounded-[18px] bg-white text-left"
                         style={{
                           outline: on ? "3px solid #B08D57" : "1px solid rgba(10,31,60,.1)",
                           border: off ? "1px dashed rgba(10,31,60,.25)" : undefined,
@@ -2364,6 +2366,15 @@ export default function ElderHome() {
         {/* 해주세요 상세 시트 — 타일을 누르면 열린다 (2026-08-24 참고 시안).
             보내기 로직은 예전 '이렇게 부탁할까요' 카드에서 그대로 옮겨 왔다 —
             결제권한(REQ-07)에 따라 본인 결제 / 보호자 승인으로 갈리는 부분 포함. */}
+        <ProductSheet
+          elder
+          item={storeDetail}
+          image={storeDetail ? storeImages[storeDetail.id] : null}
+          category={storeCatalog}
+          selected={storeDetail ? !!storeSel[storeDetail.id] : false}
+          onToggle={(it) => setStoreSel((s) => ({ ...s, [it.id]: !s[it.id] }))}
+          onClose={() => setStoreDetail(null)}
+        />
         {askSel && (
           <ElderAskSheet
             item={askSel}

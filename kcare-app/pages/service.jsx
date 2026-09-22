@@ -3,7 +3,7 @@ import Logo from "../components/Logo";
 import Link from "next/link";
 import { useId, useState } from "react";
 import { FAQ, FAQ_NOTE, LANDING, LANDING_AI_QA } from "../lib/faq";
-import { PRICING, BASE_BENEFITS, HOSPITAL_BENEFITS, fmtWon } from "../lib/config";
+import { PRICING, BASE_BENEFITS, HOSPITAL_BENEFITS, fmtWon, HOUSEHOLD } from "../lib/config";
 import { WITHDRAWAL } from "../lib/lifecycle";
 import { TRUST, FIT_FOR, PARTNERS, PARTNERS_NOTE } from "../lib/trust";
 import { CHECKUP, CHECKUP_HEAD, CHECKUP_RULE, CHECKUP_CASE } from "../lib/checkup";
@@ -494,7 +494,7 @@ export default function ServiceLanding({ heroArt, heroVideo }) {
         <Section
           id="pricing"
           eyebrow="요금"
-          title={`진입비 ${entry}, 이후 매월 ${monthly}`}
+          title={`가입·설치비 ${entry}, 이후 매월 ${monthly}`}
           desc="표기 금액은 부가세 포함입니다. 생활 요청은 건별 실비가 따로 붙습니다."
         >
           <div className="grid gap-3.5 sm:grid-cols-2">
@@ -534,14 +534,15 @@ export default function ServiceLanding({ heroArt, heroVideo }) {
             </div>
           </div>
 
-          {/* 부부 가구 — 미확정이므로 확정값처럼 보이게 쓰지 않는다 */}
+          {/* 부부 가구 — 2026-09-11 실무진 결정 3번으로 월 77,000원 확정 (lib/config.js HOUSEHOLD) */}
           <div className="mt-4 rounded-[16px] border border-gold/30 bg-gold/[.05] px-5 py-5">
             <div className="flex flex-wrap items-baseline gap-2">
               <h3 className="text-[17px] font-bold text-navy">두 분이 함께 계신 경우</h3>
-              <span className="rounded-full border border-amber/35 px-2 py-0.5 text-[11px] font-bold text-amber">
-                요금 확정 전
+              <span className="rounded-full border border-green/35 px-2 py-0.5 text-[11px] font-bold text-green">
+                월 {fmtWon(HOUSEHOLD.monthly)} · 부부 가구
               </span>
             </div>
+            <p className="mt-2 text-[13px] leading-[1.7] text-muted">{HOUSEHOLD.conditions.join(" · ")}</p>
             <p className="mt-2.5 max-w-[640px] text-[14.5px] leading-[1.85] text-ink">
               방문은 가구 단위로 한 번 가고, 점검은 두 분이 각각 받으십니다. 몸 7가지와 마음
               7가지는 각자 보고, 집 7가지는 함께 봅니다. 웨어러블은 두 분께 각각, 케어박스는
@@ -762,13 +763,13 @@ export default function ServiceLanding({ heroArt, heroVideo }) {
           subtitle="요금 · 이용 방법 · 해지 규정"
           qa={LANDING_AI_QA}
           context={
-            `진입비 ${entry}(부가세 포함) · 월 ${monthly}. ` +
+            `가입·설치비 ${entry}(부가세 포함) · 월 ${monthly}. ` +
             "포함: 갤럭시 Fit3, 케어박스, 최초 21항목 점검, 앱 설치, 안심방문 월 1회, " +
             "병원 동행 연 1회, 보호자 알림·공유 캘린더, 월간 리포트, 24시간 긴급 접수. " +
             "점검 21가지 = 몸 7 · 마음 7 · 집 7. 마음 항목은 진단하지 않고 지난달 대비 변화만 기록. " +
             "첫 방문 · 종합평가는 2인 배차. 중도 해지 위약금 없음, 잔여분 일할 환급. 청약철회 14일. " +
             "운영 지역: 서울 강남·송파·서초, 마포·강서 확대 중. " +
-            "부부 가구 요금은 설계 중이며 미확정. 의료행위·상시 위치추적·대리 인출은 하지 않음."
+            "부부 가구는 월 77,000원(동일 방문지 1곳 · 동일 날짜 방문 · 웨어러블 2대 · 리포트 개별 발송). 의료행위·상시 위치추적·대리 인출은 하지 않음."
           }
           intro="요금, 이용 방법, 해지 규정을 물어보세요. 아래 질문을 눌러 보셔도 됩니다."
           note="가입 상담은 별도로 담당자가 연락드립니다. 이 창은 안내용입니다."

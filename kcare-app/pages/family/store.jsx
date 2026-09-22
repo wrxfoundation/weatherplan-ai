@@ -4,6 +4,7 @@ import FamilyLayout from "../../components/FamilyLayout";
 import { Card, SectionLabel, PrimaryButton, Badge } from "../../components/ui";
 import Icon from "../../components/icons";
 import { STORE_CATALOG, STORE_INDEX } from "../../lib/store";
+import ProductSheet from "../../components/ProductSheet";
 import { fmtWon } from "../../lib/config";
 import { useAppState } from "../../lib/state";
 import { honorific } from "../../lib/tracks";
@@ -28,6 +29,8 @@ export default function StorePage() {
   const [groupIdx, setGroupIdx] = useState(0);
   const [ordered, setOrdered] = useState(false);
   const [tab, setTab] = useState("shop"); // shop | orders — 구매내역 조회 (2026-08-12 시트)
+  // 상품 상세 시트 — 카드를 누르면 바로 담기지 않고 상세를 먼저 본다 (2026-09-22 상담실장 확인)
+  const [detail, setDetail] = useState(null);
   const honor = honorific(state.onboarding); // 온보딩에서 받은 성함을 쓴다 — 인자 없이 부르면 기본값(김순자)으로 굳는다
   const orders = state.orders || [];
 
@@ -220,11 +223,11 @@ export default function StorePage() {
               return (
                 <li key={i.id}>
                   <button
-                    disabled={disabled}
-                    onClick={() => !ordered && setSel((s) => ({ ...s, [i.id]: !s[i.id] }))}
+                    aria-label={`${i.name} 상품 정보 보기`}
+                    onClick={() => !ordered && setDetail(i)}
                     className={`btn-press w-full overflow-hidden rounded-2xl border text-left ${
                       disabled
-                        ? "cursor-not-allowed border-dashed border-navy/15 opacity-70"
+                        ? "border-dashed border-navy/15 opacity-80"
                         : on
                         ? "border-gold ring-2 ring-gold/50"
                         : "border-navy/12"
@@ -278,6 +281,15 @@ export default function StorePage() {
             })}
           </ul>
         </div>
+
+        <ProductSheet
+          item={detail}
+          image={detail ? images[detail.id] : null}
+          category={active}
+          selected={detail ? !!sel[detail.id] : false}
+          onToggle={(it) => setSel((s) => ({ ...s, [it.id]: !s[it.id] }))}
+          onClose={() => setDetail(null)}
+        />
 
         {items.length > 0 && !ordered && (
           <Card className="p-4">
