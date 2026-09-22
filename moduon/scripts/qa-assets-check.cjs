@@ -57,7 +57,18 @@ check(orphans.length === 0, orphans.length === 0
   ? '모든 참조에 공급원 있음 (다운로드 목록 또는 커밋된 파일)'
   : `공급원 없는 참조 ${orphans.length}건 — ${orphans.map(([f, w]) => `${f} ← ${w[0]}`).join(' / ')}`)
 
-// ⑤ 아무도 안 쓰는 다운로드 = 빌드 시간 낭비 (경고만 — 예비 에셋일 수 있다)
+// ⑤ 장면형 배너의 이미지는 빌드 가드(CRITICAL) 안에 있어야 한다.
+//    장면형은 이미지가 배경 전체라 못 받아오면 배너가 통째로 빈 판이 된다(2026-09 사고).
+//    가드에 있으면 배포 빌드가 멈추므로 빈 히어로가 조용히 나가지 않는다.
+const seed = readFileSync(join(root, 'src/lib/seed.js'), 'utf8')
+const critical = new Set([...(fetchSrc.match(/const CRITICAL = new Set\(\[([\s\S]*?)\]\)/)?.[1] ?? '').matchAll(/'([\w.-]+)'/g)].map((m) => m[1]))
+const sceneImgs = [...seed.matchAll(/kind: 'scene'[^}]*?image: '\/assets\/([\w.-]+)'/g)].map((m) => m[1])
+const unguarded = [...new Set(sceneImgs)].filter((f) => !critical.has(f))
+check(unguarded.length === 0, unguarded.length === 0
+  ? `장면형 배너 이미지 ${new Set(sceneImgs).size}종 전부 빌드 가드 안에 있음`
+  : `빌드 가드에 없는 장면형 이미지 ${unguarded.length}건 — ${unguarded.join(' ')} (fetch-assets 의 CRITICAL 에 넣을 것)`)
+
+// ⑥ 아무도 안 쓰는 다운로드 = 빌드 시간 낭비 (경고만 — 예비 에셋일 수 있다)
 const unused = [...fetched].filter((f) => !refs.has(f))
 if (unused.length) console.log(`INFO  참조되지 않는 다운로드 ${unused.length}종 (예비 가능): ${unused.join(' ')}`)
 

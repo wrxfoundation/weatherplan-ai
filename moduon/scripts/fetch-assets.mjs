@@ -57,6 +57,13 @@ const ASSETS = [
   ['tile-car.png',      'https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260909_204859_4b9f9a99-5633-4bb5-8888-6df3c6d75349.png'], // 렌트/리스 — 키 + 세단
   ['tile-package.png',  'https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260909_204900_cb03ca73-f833-411b-8d04-86dae644756f.png'], // 매장패키지 — 어닝 달린 상점
   ['tile-benefit.png',  'https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260909_204903_9c52e903-65c4-412b-b431-96ad0e7a56d0.png'], // 모두온혜택 — 선물상자 + 코인 + % 배지
+  // 히어로 롤링 배너 장면 4장 — 2026-09-22 재생성(이전 세트는 CDN 에서 원본이 사라져 403).
+  // 21:9 · 2k · 피사체는 한쪽 40% 안에만, 반대쪽 60% 는 글 자리(빈 그라디언트). 글자는 굽지 않는다.
+  // 넷 다 CRITICAL 이라 하나라도 못 받으면 배포 빌드가 멈춘다 — 빈 히어로가 조용히 나가지 않게.
+  ['banner-mobi.png',       'https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260922_045533_259be1fe-fe6c-4cd7-a957-7195fc55c4e3.png'],
+  ['banner-benefit.png',    'https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260922_045533_ce4b4b7f-ce06-4ffd-9042-ba213114dcea.png'],
+  ['banner-subscribe.png',  'https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260922_045533_bf9c1012-db0e-45f2-8d2b-132c719bf6f1.png'],
+  ['banner-finder.png',     'https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260922_045533_4bd8b8b7-b98e-4bcf-9d7c-d03716afe69d.png'],
   // 목업 랜딩페이지 2·4 오브제(배경 제거) — 저금통(노랑 배너), 과녁(라벤더 배너). 3(뉴스)은 DOM 카드라 이미지 없음
   ['banner-piggy.png',  'https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260909_233952_83a97fd6-941a-416d-a171-25ff9b9e9a0e.png'],
   ['banner-target.png', 'https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260909_233953_51f9e63c-9be0-40c9-b893-e679713f0a34.png'],
@@ -76,6 +83,7 @@ mkdirSync(dir, { recursive: true })
 const CRITICAL = new Set([
   'tile-phone.png', 'tile-rental.png', 'tile-internet.png', 'tile-car.png', 'tile-package.png', 'tile-benefit.png',
   'mobi-agent.png', 'banner-piggy.png', 'banner-target.png', 'ill-ai.png', 'ill-thinking.png', 'obj-moneybag.png',
+  'banner-mobi.png', 'banner-benefit.png', 'banner-subscribe.png', 'banner-finder.png',
 ])
 const strict = process.env.ASSETS_STRICT === '1' || (process.env.ASSETS_STRICT !== '0' && !!process.env.VERCEL)
 

@@ -147,11 +147,10 @@ const BASE = process.env.QA_BASE ?? 'http://localhost:4173'
   const dbBanners = await page.evaluate(() => { try { return JSON.parse(localStorage.getItem('moduon_db_v1')).banners.map((b) => ({ id: b.id, active: b.active, image: b.image })) } catch { return [] } })
   // 뉴스형(B3)은 DOM 카드라 이미지가 없다 — 이미지가 있는 배너만 경로를 본다
   check(dbBanners.filter((b) => b.active).length === 4 && dbBanners.filter((b) => b.image).every((b) => /^\/assets\/[\w.-]+$/.test(b.image)), `스토어 배너 이미지 전부 /assets/ 경로 (${dbBanners.map((b) => b.image || '(뉴스형)').join(' ')})`)
-  // 히어로 종류 — 컷아웃(mobi)·뉴스형만 쓴다. 장면형(scene)은 이미지가 배경 전체라
-  // CDN 이 죽으면 배너가 통째로 빈 판이 된다(2026-09 사고). 기본 시드에서는 쓰지 않는다.
+  // 히어로 종류 — 장면형(scene)도 쓰되, 그 이미지는 빌드 가드(CRITICAL)에 들어 있어야 한다.
+  // 종류 자체를 금지하기보다 "못 받아오면 배포가 멈춘다"를 보장하는 쪽이 맞다(정합성 검사가 본다).
   const kinds = await page.evaluate(() => { try { return JSON.parse(localStorage.getItem('moduon_db_v1')).banners.map((b) => b.kind) } catch { return [] } })
-  check(kinds.length > 0 && kinds.every((k) => k === 'mobi' || k === 'news'), `배너 종류 전부 컷아웃·뉴스형 (${kinds.join(',')})`)
-  check(kinds.includes('news'), '뉴스형 1장 이상 — 이미지 없이도 서는 배너')
+  check(kinds.length > 0 && kinds.every((k) => ['mobi', 'scene', 'news'].includes(k)), `배너 종류가 정의된 3종 안 (${kinds.join(',')})`)
   // 칸(밴드) — 흰 → 옅은 회청 → 흰 3칸으로 섹션을 나눈다(배경색이 실제로 다른지 계산된 값으로 본다)
   const bands = await page.locator('main > section').evaluateAll((els) => els.map((e) => getComputedStyle(e).backgroundColor))
   check(bands.length === 3, `홈 3칸 (${bands.length})`)
