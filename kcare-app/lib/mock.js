@@ -244,6 +244,15 @@ export const TEACHER = { name: "박지현", role: "담당 컨시어지" };
 // 목록에서 어느 것을 다시 들을지 고르는 데만 쓴다 — 내용은 듣기로 듣는다.
 // STT 를 붙일지는 미정이라 받아쓴 것처럼 길게 쓰지 않는다 (2026-08-28).
 export const TEACHER_INBOX = [
+  // 오늘 아침 어르신이 보낸 것 — 컨시어지 마음사서함에는 '받은 음성 · 미청취'로 뜬다
+  // (같은 메시지를 두 화면이 본다 · lib/mailbox.js).
+  {
+    id: "t5",
+    dir: "out",
+    minsAgo: 20,
+    durationSec: 36,
+    text: "선생님께 보낸 목소리",
+  },
   {
     id: "t1",
     dir: "in",

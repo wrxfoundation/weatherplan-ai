@@ -263,16 +263,57 @@ export const VIDEO_MODES = [
 //     "이분께 제안이 맞았는가"를 보는 값이다 (평가 지표로 쓰지 않는다 · 원칙 1).
 //   referredBy: 누가 소개했는지. 소개로 들어온 가구는 관계가 이미 있어서
 //     첫 방문의 경계심이 낮다 — 배차와 인사말이 달라진다.
+// 박지현이 담당하는 고객 — 주 담당 5 · 부 담당 7 (2026-09-22 마음사서함 명세로 12명으로 늘림).
+// 주 담당 셋(김순자 · 오태식 · 안병철)은 관제 어르신 명부(lib/rosters.js)와 같다. 나머지는
+// 명부 20명 밖의 고객이다 (명부는 상세 프로필 보유분만 싣는다 · 전체 200명).
+// 고객 탭 목록 · 마음사서함 소통 대상이 이 배열 하나를 본다.
 export const MY_CLIENTS = [
-  { name: "김순자", age: 78, where: "대치동", loc: "자택", note: "이번 달 방문 8/22 · 12번째",
-    proposed: 6, accepted: 5, referredBy: null },
-  { name: "오태식", age: 77, where: "역삼동", loc: "자택", note: "이번 달 방문 8/25 · 5번째",
-    proposed: 4, accepted: 1, referredBy: null },
-  { name: "정말순", age: 84, where: "청담동", loc: "요양병원", note: "면회 8/24 · 3번째",
-    proposed: 3, accepted: 2, referredBy: "김순자 (같은 성당)" },
-  { name: "박영자", age: 81, where: "삼성동", loc: "자택", note: "첫 방문 예정 8/28",
-    proposed: 0, accepted: 0, referredBy: "김순자 (이웃)" },
+  { name: "김순자", age: 78, where: "대치동", loc: "자택", note: "이번 달 방문 9/9 · 12번째",
+    proposed: 6, accepted: 5, referredBy: null, role: "주" },
+  { name: "오태식", age: 77, where: "역삼동", loc: "자택", note: "이번 달 방문 9/3 · 5번째",
+    proposed: 4, accepted: 1, referredBy: null, role: "주" },
+  { name: "안병철", age: 85, where: "대치동", loc: "자택", note: "이번 달 방문 9/16 · 8번째",
+    proposed: 2, accepted: 2, referredBy: null, role: "주" },
+  { name: "정말순", age: 84, where: "청담동", loc: "요양병원", note: "면회 9/12 · 3번째",
+    proposed: 3, accepted: 2, referredBy: "김순자 (같은 성당)", role: "주" },
+  { name: "박영자", age: 81, where: "삼성동", loc: "자택", note: "첫 방문 예정 9/24",
+    proposed: 0, accepted: 0, referredBy: "김순자 (이웃)", role: "주" },
+  { name: "윤정례", age: 80, where: "도곡동", loc: "자택", note: "이번 달 방문 9/18 · 4번째",
+    proposed: 2, accepted: 1, referredBy: null, role: "부" },
+  { name: "배기태", age: 79, where: "삼성동", loc: "자택", note: "이번 달 방문 9/4 · 6번째",
+    proposed: 3, accepted: 3, referredBy: null, role: "부" },
+  { name: "손말자", age: 86, where: "청담동", loc: "자택", note: "이번 달 방문 9/11 · 9번째",
+    proposed: 5, accepted: 3, referredBy: null, role: "부" },
+  { name: "전옥희", age: 82, where: "역삼동", loc: "자택", note: "이번 달 방문 9/15 · 2번째",
+    proposed: 1, accepted: 0, referredBy: "오태식 (경로당)", role: "부" },
+  { name: "한동식", age: 83, where: "대치동", loc: "자택", note: "이번 달 방문 9/8 · 7번째",
+    proposed: 2, accepted: 2, referredBy: null, role: "부" },
+  { name: "김복남", age: 88, where: "개포동", loc: "요양병원", note: "면회 9/19 · 5번째",
+    proposed: 1, accepted: 1, referredBy: null, role: "부" },
+  { name: "이순례", age: 76, where: "도곡동", loc: "자택", note: "이번 달 방문 9/20 · 1번째",
+    proposed: 0, accepted: 0, referredBy: null, role: "부" },
 ];
+
+// 관제 → 컨시어지 긴급확인 요청 (2026-09-22 컨시어지 오늘 시안 · '긴급확인' 배너).
+// 안병철 어르신은 명부에서 워치 '3시간 무수집' · 위험 높음 · 박지현 주 담당이다 — 그 사실에서
+// 나온 요청이라 이름을 바꾸면 명부(lib/rosters.js)·관제 기기 화면과 어긋난다.
+export const CONCIERGE_URGENT = {
+  id: "ug-0922-1",
+  client: "안병철",
+  age: 85,
+  where: "강남구 대치동 자택",
+  title: "워치 3시간 무수집 · 어르신 통화 미연결",
+  requestedAt: "08:42",
+  by: "관제 김태영",
+  facts: ["관제 요청 08:42", "고객 통화 2회 미연결", "보호자 연락 전"],
+  guardian: "주 보호자 (아들)",
+  // 컨시어지가 밟는 순서 — 결과는 관제로 돌아간다 (무감지 대응정책)
+  steps: [
+    { k: "call", label: "고객 전화", done: false, note: "3차 시도 · 연결되면 상태 확인" },
+    { k: "guardian", label: "보호자 연락", done: false, note: "최근 통화 여부 · 댁 방문 가능 여부" },
+    { k: "report", label: "결과 관제 보고", done: false, note: "정상 확인 / 방문 필요 / 관제 이관 중 하나" },
+  ],
+};
 
 // 컨시어지 캘린더 — 어르신·보호자가 함께 보는 캘린더와 별개다 (2026-08-28 전체 요청 3번).
 // 여기엔 컨시어지가 실제로 나가는 업무 4종만 담긴다: 병원동행 · 일상동행 ·
@@ -300,10 +341,21 @@ export const CONCIERGE_CAL = [
     detail: "일상 동행 — 은행 · 장보기", crew: "서다인 1인", memo: "통장 정리 · 반찬 구매" },
   { id: "cc6", day: 19, kind: "escort", client: "정말순", age: 84, time: "오전 9:30", where: "강남세브란스",
     detail: "정형외과 외래 동행 (베이직 · 1인)", crew: "박지현 1인", memo: "현장에서 만나 접수부터" },
-  { id: "cc7", day: 22, kind: "visit", client: "박영자", age: 81, time: "오후 2:00", where: "삼성동 자택",
-    detail: "첫 안심방문 — 홈 안전진단 30항목", crew: "박지현 · 서다인 (2인)", memo: "첫 대면이라 2인 배차" },
-  { id: "cc8", day: 22, kind: "request", client: "김순자", age: 78, time: "오후 5:00", where: "대치동 자택",
+  // ── 오늘(22일) — 컨시어지 오늘 탭 '오늘의 일정'이 이 네 건을 그대로 쓴다 (2026-09-22 시안).
+  // 관제 배차 그리드(lib/mock.js JOBS j1·j2)와 같은 두 동행 + 명부의 안병철 야간 안부 확인.
+  // start/end 는 오늘 건에만 있다 — 진행 순서·예상 종료 계산용.
+  { id: "ct1", day: 22, kind: "escort", client: "오태식", age: 77, time: "오전 9:00", start: "09:00", end: "11:30", where: "KMI 검진센터 (강남)",
+    detail: "KMI 종합검진 · 수면내시경 보호자 동행 (2인)", crew: "박지현 · 오하늘", memo: "검진 대행 자격 · 동성 페어 · 결과지는 보호자 앱으로", seed: "done", report: false },
+  { id: "ct2", day: 22, kind: "request", client: "정말순", age: 84, time: "오전 11:40", start: "11:40", end: "12:30", where: "청담 요양병원",
+    detail: "해주세요 — 요양병원 안심케어 · 자녀 영상 메시지 전달", crew: "박지현 1인", memo: "면회실 예약 11:40 · 태블릿 지참", seed: "planned" },
+  { id: "ct3", day: 22, kind: "escort", client: "김순자", age: 78, time: "오후 1:50", start: "13:50", end: "18:00", where: "서울아산병원",
+    detail: "순환기내과 외래 동행 (프리미엄 · 2인) · 차량 · 휠체어", crew: "박지현 · 서다인", memo: "픽업 13:10 대치동 103동 정문 · 지하주차 B2", seed: "planned", main: true },
+  { id: "ct4", day: 22, kind: "visit", client: "안병철", age: 85, time: "오후 7:00", start: "19:00", end: "19:30", where: "대치동 자택",
+    detail: "야간 안부 확인 — 워치 무수집 후속 · 복약 확인", crew: "박지현 1인", memo: "관제 긴급확인 요청과 같은 건 · 정기 재방문이라 1인", seed: "planned" },
+  { id: "cc8", day: 23, kind: "request", client: "김순자", age: 78, time: "오후 5:00", where: "대치동 자택",
     detail: "해주세요 — 약국 심부름 (처방약 수령)", crew: "서다인 1인", memo: "약값은 현장 카드 결제" },
+  { id: "cc7", day: 24, kind: "visit", client: "박영자", age: 81, time: "오후 2:00", where: "삼성동 자택",
+    detail: "첫 안심방문 — 홈 안전진단 30항목", crew: "박지현 · 서다인 (2인)", memo: "첫 대면이라 2인 배차" },
   { id: "cc9", day: 26, kind: "daily", client: "김순자", age: 78, time: "오전 10:30", where: "대치동 주민센터",
     detail: "일상 동행 — 관공서 서류 발급", crew: "서다인 1인", memo: "등본 · 인감 발급" },
 ];

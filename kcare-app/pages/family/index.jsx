@@ -303,9 +303,10 @@ export default function FamilyHome() {
               });
             }}
           />
-          {state.voices.length > 0 && (
+          {/* 보호자가 보낸 것 + 컨시어지가 '보호자 동시 공유'로 보낸 것만 — 공유 안 한 컨시어지 음성은 어르신·컨시어지 사이에 남는다 */}
+          {state.voices.filter((v) => v.from === "보호자" || v.shareGuardian).length > 0 && (
             <div className="mt-3 space-y-1.5 border-t border-navy/[.08] pt-3">
-              {state.voices.slice(0, 3).map((v) => (
+              {state.voices.filter((v) => v.from === "보호자" || v.shareGuardian).slice(0, 3).map((v) => (
                 <div key={v.id} className="flex items-center gap-2 text-[12px]">
                   <span className="font-num font-bold text-navy">
                     {new Date(v.at).toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit", hour12: false })}

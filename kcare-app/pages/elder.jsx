@@ -517,6 +517,10 @@ export default function ElderHome() {
   const teacherMsgs = [
     ...sentMsgs,
     ...TEACHER_INBOX.map((m) => ({ ...m, at: nowMs - m.minsAgo * 60000 })),
+    // 컨시어지 앱 마음사서함에서 보낸 것 — 제목은 컨시어지가 보낼 때 적은 한 줄 (STT 아님)
+    ...(state.voices || [])
+      .filter((v) => v.from === "컨시어지" && v.to === ELDER.name)
+      .map((v) => ({ id: v.id, dir: "in", at: v.at, durationSec: v.secs, text: v.title || "선생님이 보낸 목소리" })),
   ]
     .filter((m) => nowMs - m.at < MSG_TTL_MS)
     .sort((a, b) => a.at - b.at);

@@ -32,8 +32,20 @@ import {
   CALL_CHECKS,
   CONCIERGE_CAL,
   CONCIERGE_JOB_KINDS,
+  CONCIERGE_URGENT,
   OPS_MESSAGE_PRESETS,
 } from "../lib/console";
+import Mailbox from "../components/Mailbox";
+import { useMailbox } from "../lib/mailbox";
+import {
+  NowCard,
+  TodayHeader,
+  TodaySchedule,
+  UrgentBanner,
+  UrgentSheet,
+  WrapUp,
+  useToday,
+} from "../components/ConciergeToday";
 import { checkupFor, REPORT_HEADLINE } from "../lib/checkup";
 import { STORE_CATALOG } from "../lib/store";
 import { SERVICE_MENU, STATUS } from "../lib/requests";
@@ -52,9 +64,12 @@ import Splash from "../components/Splash";
 // 3개였을 때는 오늘 3.8화면 · 리포트 3.7화면이 몰려 있었고 GNB 는 휑했다.
 // 방문과 리포트를 한 탭으로 합쳤다 (2026-08-21 시트 컨시어지 전체 1번).
 // 한 번의 방문에서 수행과 리포트 작성이 이어지는데 탭이 갈려 있으면 오가야 했다.
+// 2026-09-22 강도완 요청: 마음사서함을 고객과 방문·리포트 사이에 새로 만든다.
+// 담당 고객과 하루의 안부를 음성으로 주고받는 자리 — 어르신 화면 마음사서함의 짝이다.
 const TABS = [
   { key: "today", label: "오늘", icon: "home" },
   { key: "client", label: "고객", icon: "user" },
+  { key: "mailbox", label: "마음사서함", icon: "chat" },
   { key: "visit", label: "방문 · 리포트", icon: "door" },
   { key: "suggest", label: "제안", icon: "diamond" },
   // 정산 탭은 숨겼다 (2026-08-12 실무진 "내용 숨기기") — 수익 정보가 시연 화면에
@@ -160,6 +175,34 @@ export default function ConciergePage() {
     return cells;
   })();
   const calDayJobs = calDay == null ? [] : calCells.find((c) => c && c.day === calDay)?.jobs || [];
+
+  // ── 오늘 앞단 (2026-09-22 시안 1) ──
+  // 오늘 일정은 달력과 같은 출처(CONCIERGE_CAL)를 쓴다 — 두 곳이 다른 말을 하지 않게.
+  const todayJobs = CONCIERGE_CAL.filter((j) => j.day === cNow.getDate() && j.start);
+  const today = useToday(todayJobs, cNow);
+  const [urgentOpen, setUrgentOpen] = useState(false);
+  const [urgentSteps, setUrgentSteps] = useState({});
+  const urgentDone = CONCIERGE_URGENT.steps.every((s) => urgentSteps[s.k]);
+  // 진행 중인 건에 붙는 주의 칩 — 케어 프로필에서 온다 (방문 전 30초와 같은 값)
+  const nowJob = today.focus
+    ? {
+        ...today.focus,
+        chips: [
+          ["주의", "청력 저하", "#8A5D12"],
+          ["장비", today.focus.kind === "escort" ? "휠체어 · 차량" : "욕실 센서 점검", "#3B5C8A"],
+          ["환경", "반려견 1마리", "#7A4C8A"],
+        ],
+      }
+    : null;
+  // 21항목 점검 진행률 — 방문 탭 체크와 같은 상태를 본다
+  const checkList = checkupFor(careLoc);
+  const checkTotal = checkList.reduce((n, g) => n + g.items.length, 0);
+  const checkCount = Object.values(checkDone).filter(Boolean).length;
+  // 마무리 필요 — 오늘 끝난 건 중 리포트가 아직 안 나간 것
+  const wrapUp = today.rows.find((r) => r.state === "done" && !v.reportSent)?.client || null;
+
+  // ── 마음사서함 (2026-09-22 명세) ──
+  const mb = useMailbox();
   // 확인전화 — 아직 안 한 것 (시트 오늘 3번)
   const callsLeft = CALL_CHECKS.reduce(
     (n, c) => n + c.steps.filter((s) => !(callDone[`${c.id}-${s.k}`] ?? s.done)).length,
@@ -214,7 +257,41 @@ export default function ConciergePage() {
             {/* ════ 오늘 — 출근해서 제일 먼저 보는 것 ════ */}
             {tab === "today" && (
               <>
-                {/* 일정 달력 — 오늘 탭 최상단 (2026-08-21 시트 컨시어지 오늘 1번).
+                {/* ── 앞단 재구성 (2026-09-22 시안 1) ──
+                    출근해서 보는 순서: 인사 → 오늘 업무 요약 → 긴급확인 → 현재 진행 중 →
+                    오늘의 일정 → 마무리 필요. 기존 카드(짝·컨디션·확인전화·부탁)는 그 아래로. */}
+                <TodayHeader
+                  name="박지현"
+                  now={cNow}
+                  today={today}
+                  urgentCount={urgentDone ? 0 : 1}
+                  reportDue={wrapUp ? `${wrapUp} 고객` : null}
+                />
+
+                <UrgentBanner u={CONCIERGE_URGENT} done={urgentDone} onOpen={() => setUrgentOpen(true)} />
+
+                {nowJob ? (
+                  <NowCard
+                    job={nowJob}
+                    checkDone={checkCount}
+                    checkTotal={checkTotal}
+                    onOps={() => setOpsMsgOpen(true)}
+                    onGo={() => setTab("visit")}
+                  />
+                ) : (
+                  <Card className="p-4">
+                    <div className="text-[15px] font-black text-navy">지금 진행 중인 업무가 없습니다</div>
+                    <p className="mt-1 text-[12.5px] leading-[1.6] text-muted">
+                      다음 일정은 아래 목록에서 확인하세요. 이동 준비는 출발 90분 전부터 표시됩니다.
+                    </p>
+                  </Card>
+                )}
+
+                <TodaySchedule rows={today.rows} activeId={today.focus?.id} onOpen={(id) => { setCalDay(cNow.getDate()); setCalJob(id); }} />
+
+                <WrapUp client={wrapUp} onWrite={() => setTab("visit")} />
+
+                {/* 일정 달력 — 2026-08-21 시트 컨시어지 오늘 1번.
                     접었다 펴고, 날짜를 누르면 그 날 일정이 시트로 뜬다. */}
                 <Card className="p-4">
                   <button
@@ -364,19 +441,18 @@ export default function ConciergePage() {
                 )}
 
 
-                {/* 오늘 동행 — 디자인 콘솔 (시간범위 · 케어 메타 · 짝 · 컨디션 · 출근 체크인) */}
+                {/* 동행 준비 — 짝 · 컨디션 · 준비물 · 출근 체크인.
+                    고객·시간은 위 '오늘의 중심 업무' 카드가 이미 말하므로 여기서는 반복하지 않는다
+                    (2026-09-22 재구성 전에는 같은 동행이 두 카드에 두 번 떴다). */}
                 <Card className="p-[18px]">
                   <div className="flex items-center justify-between">
-                    <span className="font-num text-[18px] font-bold text-navy">{a1.timeRange}</span>
+                    <span className="text-[15px] font-black text-navy">동행 준비</span>
                     <Badge fg="#FFFFFF" bg="#0A1F3C">
                       {v.checkedIn ? "수행중" : "예정"}
                     </Badge>
                   </div>
-                  <div className="mt-2 text-[20px] font-black text-navy">
-                    {a1.customer} · {a1.hospital}
-                  </div>
-                  <div className="mt-1 text-[13px] leading-[1.7] text-muted">
-                    {a1.meta1}
+                  <div className="mt-1 text-[12.5px] leading-[1.6] text-muted">
+                    {a1.customer} · {a1.hospital} · {a1.timeRange}
                     <br />
                     {a1.meta2}
                   </div>
@@ -756,6 +832,28 @@ export default function ConciergePage() {
                 </Card>
 
               </>
+            )}
+
+            {/* ════ 마음사서함 — 담당 고객과 오늘의 안부를 음성으로 (2026-09-22 명세) ════ */}
+            {tab === "mailbox" && (
+              <Mailbox
+                mb={mb}
+                onEvent={push}
+                onSent={(name, payload) => {
+                  // 정상 발송이 확인된 것만 고객 화면으로 간다 — 어르신 마음사서함 말풍선이 된다.
+                  dispatch({
+                    type: "addVoice",
+                    payload: {
+                      from: "컨시어지",
+                      to: name,
+                      secs: payload.secs,
+                      context: payload.category,
+                      title: payload.title,
+                      shareGuardian: payload.shareGuardian,
+                    },
+                  });
+                }}
+              />
             )}
 
             {/* ════ 방문 — 현장에서 누르는 것들 ════ */}
@@ -2078,16 +2176,30 @@ export default function ConciergePage() {
             <div className="grid" style={{ gridTemplateColumns: `repeat(${TABS.length}, minmax(0, 1fr))` }}>
               {TABS.map((t) => {
                 const active = tab === t.key;
+                // 마음사서함에 답장 필요가 남아 있으면 숫자를 띄운다 (명세 2절 · 미처리 우선)
+                const badge = t.key === "mailbox" ? mb.counts.needReply : 0;
                 return (
                   <button
                     key={t.key}
                     onClick={() => setTab(t.key)}
-                    className={`flex min-h-[56px] flex-col items-center justify-center gap-0.5 text-[12px] font-bold ${
+                    className={`relative flex min-h-[56px] flex-col items-center justify-center gap-0.5 px-1 text-[11.5px] font-bold ${
                       active ? "text-navy" : "text-muted"
                     }`}
                   >
-                    <Icon name={t.icon} size={19} />
-                    <span>{t.label}</span>
+                    <span className="relative">
+                      <Icon name={t.icon} size={19} />
+                      {badge > 0 && (
+                        <span
+                          aria-hidden
+                          className="absolute -right-[9px] -top-[5px] flex h-[16px] min-w-[16px] items-center justify-center rounded-full px-[4px] font-num text-[10px] font-bold text-white"
+                          style={{ background: "#8A5D12" }}
+                        >
+                          {badge}
+                        </span>
+                      )}
+                    </span>
+                    <span className="whitespace-nowrap">{t.label}</span>
+                    {badge > 0 && <span className="sr-only">답장 필요 {badge}건</span>}
                     {active && <span className="mt-0.5 h-[3px] w-5 rounded-full bg-gold" />}
                   </button>
                 );
@@ -2151,6 +2263,21 @@ export default function ConciergePage() {
                 고객 탭에서 이름을 눌러 보십시오.
               </p>
             </Sheet>
+          )}
+
+          {/* 긴급확인 — 관제가 넘긴 확인 요청 (2026-09-22 시안 1) */}
+          {urgentOpen && (
+            <UrgentSheet
+              u={CONCIERGE_URGENT}
+              steps={urgentSteps}
+              onClose={() => setUrgentOpen(false)}
+              onStep={(k) => {
+                if (urgentSteps[k]) return;
+                setUrgentSteps((s) => ({ ...s, [k]: true }));
+                const step = CONCIERGE_URGENT.steps.find((x) => x.k === k);
+                push("대응", `${CONCIERGE_URGENT.client} 긴급확인 · ${step.label} 완료 — 관제 전달`, "#FF8A80");
+              }}
+            />
           )}
 
           {/* 관제에 알리기 (2026-08-21 시트 오늘 2번) */}
