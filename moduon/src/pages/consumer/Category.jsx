@@ -182,7 +182,7 @@ export default function Category() {
         )}
         {slug === 'phone' && (
           <div className="mt-4 text-center">
-            <Link to="/calculator/phone" className="text-[13.5px] font-bold text-primary-text underline underline-offset-4">단말 할부금 + 요금까지 직접 계산해 보려면 → 휴대폰 견적 계산기</Link>
+            <Link to="/phone/shop" className="text-[13.5px] font-bold text-primary-text underline underline-offset-4">색상·할부개월·요금제를 직접 고르고 싶다면 → 휴대폰 온라인구매</Link>
           </div>
         )}
         <p className="mt-6 text-[11.5px] text-disabled">{LEGAL.policy}</p>

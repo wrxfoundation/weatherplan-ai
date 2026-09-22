@@ -152,6 +152,12 @@ const BASE = process.env.QA_BASE ?? 'http://localhost:4173'
   const kinds = await page.evaluate(() => { try { return JSON.parse(localStorage.getItem('moduon_db_v1')).banners.map((b) => b.kind) } catch { return [] } })
   check(kinds.length > 0 && kinds.every((k) => k === 'mobi' || k === 'news'), `배너 종류 전부 컷아웃·뉴스형 (${kinds.join(',')})`)
   check(kinds.includes('news'), '뉴스형 1장 이상 — 이미지 없이도 서는 배너')
+  // 칸(밴드) — 흰 → 옅은 회청 → 흰 3칸으로 섹션을 나눈다(배경색이 실제로 다른지 계산된 값으로 본다)
+  const bands = await page.locator('main > section').evaluateAll((els) => els.map((e) => getComputedStyle(e).backgroundColor))
+  check(bands.length === 3, `홈 3칸 (${bands.length})`)
+  check(bands[0] !== bands[1] && bands[1] !== bands[2], `가운데 칸 배경이 위아래와 다름 (${bands.join(' / ')})`)
+  // 개인 고객 동선은 휴대폰 견적 계산기로 가지 않는다 — 온라인 구매(/phone/shop)가 종착지
+  check((await count('a[href="/calculator/phone"]')) === 0, '홈에 휴대폰 견적 계산기 링크 없음(사업자 도구)')
   const html = await page.content()
   check(!html.includes('cloudfront'), '페이지에 cloudfront 없음')
   // 자동 롤링 — 호버·포커스가 멈추게 하므로 마우스를 여백으로 빼고 새로 연다

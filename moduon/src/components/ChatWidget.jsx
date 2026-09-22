@@ -97,7 +97,7 @@ export default function ChatWidget({ tenant }) {
   // 컨텍스트 바로가기 — 직전 질문 키워드와 매칭될 때만 최대 2개 노출(매칭 필수 룰)
   const CTX_LINKS = [
     { k: ['인터넷', '와이파이', 'tv', '결합'], label: '인터넷 견적 계산기 →', to: '/calculator' },
-    { k: ['휴대폰', '폰', '번호이동', '요금제'], label: '휴대폰 계산기 →', to: '/calculator/phone' },
+    { k: ['휴대폰', '폰', '번호이동', '요금제'], label: '휴대폰 온라인구매 →', to: '/phone/shop' },
     { k: ['정수기', '렌탈'], label: '정수기 렌탈 보기 →', to: '/category/water' },
     { k: ['이사'], label: '이사 서비스 →', to: '/category/move' },
     { k: ['사은품', '지급', '현금'], label: '사은품 지급 명단 →', to: '/payouts' },

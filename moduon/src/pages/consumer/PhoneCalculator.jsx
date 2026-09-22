@@ -7,6 +7,8 @@ import { won, copyText } from '../../lib/engine'
 import { LEGAL } from '../../lib/constants'
 import { IcShare, IcCheck } from '../../components/icons'
 import RbPanel from '../../components/RbPanel'
+import { useStore, getSession } from '../../lib/store'
+import { bizIdentity } from '../../lib/org'
 
 export default function PhoneCalculator() {
   const nav = useNavigate()
@@ -345,12 +347,16 @@ export default function PhoneCalculator() {
   )
 }
 
+// 휴대폰 탭은 사업자에게만 보인다 — 개인 고객의 휴대폰 동선은 온라인 구매(/phone/shop)다.
+// 직접 URL 로 들어와 지금 보고 있는 탭이면 숨기지 않는다(현재 위치를 잃어버리지 않게).
 export function CalcTabs({ active }) {
+  const { db } = useStore()
+  const biz = !!bizIdentity(db, getSession())
   const tabs = [
     { to: '/calculator', key: 'internet', label: '인터넷/TV' },
-    { to: '/calculator/phone', key: 'phone', label: '휴대폰' },
+    { to: '/calculator/phone', key: 'phone', label: '휴대폰', bizOnly: true },
     { to: '/calculator/rental', key: 'rental', label: '렌탈' },
-  ]
+  ].filter((t) => !t.bizOnly || biz || active === t.key)
   return (
     <div className="inline-flex rounded-full bg-white p-1 shadow-card">
       {tabs.map((t) => (

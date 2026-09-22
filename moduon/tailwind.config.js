@@ -13,6 +13,9 @@ export default {
         'orange-text': '#F2662D',
         'orange-tint': '#FFF0E8',
         cream: '#F7F2EE',
+        // 홈에서 칸(섹션)을 나누는 배경 — 흰색과 살짝 다른 회청. 흰 칸과 번갈아 깔린다
+        // (band 는 이미 파란 브랜드 색이라 이름을 zone 으로 쓴다)
+        zone: '#F4F6FB',
         warm: '#F6F2EF',
         band: '#5176CE',
         ink: '#24272E',

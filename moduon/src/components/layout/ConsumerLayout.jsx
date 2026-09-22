@@ -31,7 +31,7 @@ const MEGA = {
     items: [
       { key: 'shop', label: '온라인 구매', sub: '셀프가입 · 기종별 월 납부금 계산', to: '/phone/shop' },
       { key: 'mvno', label: '알뜰폰 요금제', sub: '대표 요금제 · 브랜드별 혜택 · 전체 목록', to: '/phone/mvno' },
-      { key: 'calc', label: '휴대폰 견적 계산기', sub: '단말 할부(A) + 요금(B)', to: '/calculator/phone' },
+      // 휴대폰 견적 계산기(/calculator/phone)는 사업자 도구라 소비자 메뉴에서 뺐다 — 라우트는 살아 있다(숨김 ≠ 삭제)
     ],
   },
   '/category/rental': { title: '렌탈 제품전체', brands: RENTAL_BRANDS },
@@ -219,7 +219,7 @@ export function ConsumerHeader({ tenant }) {
   const tel = telOf(tenant)
   return (
     // 배경은 거의 불투명하게(95%) — 60% 였을 때 히어로의 흰 CTA·제목이 GNB 뒤로 비쳐 호버 상태처럼 오독됐다. 블러는 남은 5% 몫.
-    <header className="sticky top-0 z-40 border-b border-line-card/50 bg-cream/95 backdrop-blur-md" onMouseLeave={() => setMega(null)}>
+    <header className="sticky top-0 z-40 border-b border-line-card bg-white/95 backdrop-blur-md" onMouseLeave={() => setMega(null)}>
       {/* 1행 · 유틸 — 로고 · 게시판 5종 · 알림 · 로그인/회원가입 (파트너몰은 로고 + 배지 + 매장 직통 전화 + 무료 상담) */}
       <div className="mx-auto flex h-[56px] max-w-6xl items-center justify-between gap-3 px-5 sm:px-10">
         <div className="flex min-w-0 items-center gap-7">
@@ -370,7 +370,7 @@ export function ConsumerFooter({ tenant }) {
   const col = 'flex flex-col gap-2'
   const lnk = 'hover:text-primary-text'
   return (
-    <footer className="mt-16 border-t border-line-card bg-cream pb-24 pt-10">
+    <footer className="border-t border-line-card bg-cream pb-24 pt-12">
       <div className="mx-auto max-w-6xl px-5 sm:px-10">
         <div className="flex flex-col justify-between gap-8 lg:flex-row">
           <div>

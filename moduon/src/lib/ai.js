@@ -84,8 +84,9 @@ function localBrain(history, ctx) {
     const join = has('기기변경', '기변') ? 'chg' : has('신규') ? 'new' : 'mnp'
     const pq = calcPhoneQuote({ deviceId, join, planId: 'choice110', method: 'support', months: 24, extra15: true })
     return {
-      text: `${pq.device.name}, ${join === 'mnp' ? '번호이동' : join === 'chg' ? '기기변경' : '010신규'} 기준으로 바로 계산해 드렸어요!\n\n· 출고가 ${won(pq.device.price)}\n· 공통지원금 −${won(pq.publicSupport)} + 추가지원금 −${won(pq.extraSupport)}\n· 월 단말 할부금(24개월) ${won(pq.deviceMonthly)}\n· ${pq.plan.name} ${won(pq.planMonthly)}\n· 월 납부금(A+B) **${won(pq.total)}**\n\n요금제·할부개월·선택약정까지 직접 바꿔보시겠어요? AI 견적은 참고용이며 최종 조건은 상담에서 확정됩니다.\n\n근거 — 모두온 단말·요금 기준표(할부수수료 연 5.9% 원리금균등)`,
-      action: { type: 'link', label: '휴대폰 견적 계산기 열기', to: '/calculator/phone' },
+      text: `${pq.device.name}, ${join === 'mnp' ? '번호이동' : join === 'chg' ? '기기변경' : '010신규'} 기준으로 바로 계산해 드렸어요!\n\n· 출고가 ${won(pq.device.price)}\n· 공통지원금 −${won(pq.publicSupport)} + 추가지원금 −${won(pq.extraSupport)}\n· 월 단말 할부금(24개월) ${won(pq.deviceMonthly)}\n· ${pq.plan.name} ${won(pq.planMonthly)}\n· 월 납부금(A+B) **${won(pq.total)}**\n\n색상·할부개월·요금제를 직접 고르고 바로 가입까지 하실 수 있어요. AI 견적은 참고용이며 최종 조건은 상담에서 확정됩니다.\n\n근거 — 모두온 단말·요금 기준표(할부수수료 연 5.9% 원리금균등)`,
+      // 개인 고객 동선은 온라인 구매(셀프가입)로 — 휴대폰 견적 계산기는 사업자 도구다(R/B 포함)
+      action: { type: 'link', label: '휴대폰 온라인구매 열기', to: '/phone/shop' },
     }
   }
   if (has('분양', '파트너', '창업', '건물주')) {

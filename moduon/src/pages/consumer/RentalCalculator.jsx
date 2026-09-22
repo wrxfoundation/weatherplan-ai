@@ -30,7 +30,7 @@ export default function RentalCalculator() {
   })
 
   const share = async () => {
-    const text = `[모두온 렌탈 견적]\n${label}\n월 실부담 ${won(q.real)} (정가 ${won(q.base)})\n약정 총 부담 ${won(q.totalReal)}\n직접 계산해 보기 → ${window.location.origin}/calculator/rental\n※ 예상 견적이며 최종 조건은 상담 시 확정됩니다.`
+    const text = `[모두온 렌탈 견적]\n${label}\n월 실부담 ${won(q.real)}${card ? ` (정가 ${won(q.base)})` : ''}\n약정 총 부담 ${won(q.totalReal)}\n직접 계산해 보기 → ${window.location.origin}/calculator/rental\n※ 예상 견적이며 최종 조건은 상담 시 확정됩니다.`
     if (await copyText(text)) { setCopied(true); setTimeout(() => setCopied(false), 1600) }
   }
 
@@ -122,11 +122,11 @@ export default function RentalCalculator() {
               <span className="text-[11.5px] text-faint">{q.item.brand} {q.item.short} · {card ? '카드할인 적용' : '카드할인 미적용'}{combo > 1 ? ` · ${combo}대` : ''}</span>
             </div>
             <div className="mt-3 overflow-x-auto">
-              <table className="w-full min-w-[520px] text-[12.5px]">
+              <table className={`w-full ${card ? 'min-w-[520px]' : 'min-w-[440px]'} text-[12.5px]`}>
                 <thead>
                   <tr className="border-b border-line text-[11.5px] text-faint">
                     <th className="px-2 py-2 text-left font-semibold">조합</th>
-                    <th className="px-2 py-2 text-right font-semibold">정가 월</th>
+                    {card && <th className="px-2 py-2 text-right font-semibold">정가 월</th>}
                     <th className="px-2 py-2 text-right font-semibold">실부담 월</th>
                     <th className="px-2 py-2 text-right font-semibold">약정 총 부담</th>
                     <th className="px-2 py-2 text-right font-semibold">소유권</th>
@@ -142,7 +142,7 @@ export default function RentalCalculator() {
                           {r.cheapest && <span className="ml-1.5 rounded-full bg-ok px-1.5 py-0.5 text-[9.5px] font-extrabold text-white">총액 최저</span>}
                           {on && <span className="ml-1.5 text-[10.5px] font-bold text-primary-text">선택중</span>}
                         </td>
-                        <td className="tnum px-2 py-2.5 text-right text-faint line-through">{won(r.base)}</td>
+                        {card && <td className="tnum px-2 py-2.5 text-right text-faint line-through">{won(r.base)}</td>}
                         <td className="tnum px-2 py-2.5 text-right font-extrabold text-ink">{won(r.real)}</td>
                         <td className="tnum px-2 py-2.5 text-right font-semibold text-label">{won(r.totalReal)}</td>
                         <td className="px-2 py-2.5 text-right text-[11.5px] font-semibold text-label">{r.ownership ? '이전 ✓' : '—'}</td>
@@ -175,7 +175,7 @@ export default function RentalCalculator() {
           <div className="mt-0.5 text-[15px] font-bold text-ink">{label}</div>
 
           <div className="mt-4 rounded-field bg-cream/70 p-3.5 text-[13px]">
-            <Row l="정가 월 렌탈료" v={won(q.base)} />
+            {card && <Row l="정가 월 렌탈료" v={won(q.base)} />}
             {q.comboDc > 0 && <Row l={`동시렌탈 할인(${combo}대)`} v={`−${won(q.comboDc)}`} accent="text-ok" />}
             {q.cardDc > 0 && <Row l="제휴카드 청구할인" v={`−${won(q.cardDc)}`} accent="text-ok" />}
             <div className="mt-1.5 flex justify-between border-t border-line pt-1.5">
@@ -212,7 +212,7 @@ export default function RentalCalculator() {
             <div className="tnum text-[24px] font-extrabold tracking-tight text-primary-text">{won(q.real)}</div>
           </div>
           <div className="text-right text-[11px] leading-4 text-faint">
-            정가 {won(q.base)}<br />총 {won(q.totalReal)}
+            {card && <>정가 {won(q.base)}<br /></>}총 {won(q.totalReal)}
           </div>
         </div>
         <div className="mt-3 flex gap-2">

@@ -19,9 +19,18 @@ export default function Home({ tenant }) {
     ? SITE_NAV.filter((n) => n.cat && tenant.cats.includes(n.cat)).map((n) => ({ ...n, to: `${consultTo}&cat=${n.cat}` }))
     : SITE_NAV
 
+  // 칸(밴드) — 배경색을 번갈아 깔아 섹션을 나눈다: 흰 → 옅은 회청(zone) → 흰.
+  // 화면 폭 전체를 덮으므로 레이아웃의 크림 배경은 홈에서 보이지 않는다(다른 페이지 톤은 그대로).
+  const Band = ({ tone = 'white', pad, children }) => (
+    <section className={tone === 'zone' ? 'bg-zone' : 'bg-white'}>
+      <div className={`mx-auto max-w-6xl px-5 sm:px-10 ${pad}`}>{children}</div>
+    </section>
+  )
+
   return (
     <main>
-      <div className="mx-auto max-w-6xl px-5 pt-4 sm:px-10 sm:pt-6">
+      {/* ── 1칸 · 흰 배경 — 롤링 배너 · 지급 티커 · 1차 동선 아이콘 ── */}
+      <Band pad="pb-9 pt-4 sm:pb-12 sm:pt-6">
 
       {/* 파트너몰 — 배너 위에 파트너 신원 한 줄(본진 배너를 같이 쓰므로 여기서 구분) */}
       {tenant && (
@@ -39,9 +48,15 @@ export default function Home({ tenant }) {
       <PayoutTicker />
 
       <SiteTiles tiles={tiles} />
+      </Band>
 
-      <SupportSection consultTo={consultTo} />
+      {/* ── 2칸 · 옅은 회청 배경 — 모두온 혜택(지원금) + 바로 상담하기 ── */}
+      <Band tone="zone" pad="py-11 sm:py-14">
+        <SupportSection consultTo={consultTo} />
+      </Band>
 
+      {/* ── 3칸 · 흰 배경 — 실질 부담 비교 · 상담 CTA · 신뢰 지표 · 후기 ── */}
+      <Band pad="pb-12 pt-11 sm:pb-16 sm:pt-14">
       <RealCostTeaser />
 
       {/* ── CTA 밴드 (파스텔 그린 · 좌상단 진한 엣지 + 유리 두께감) ── */}
@@ -65,7 +80,7 @@ export default function Home({ tenant }) {
       </section>
 
       {/* ── 신뢰 지표 바 4 — 소형 아이콘은 SVG 라인으로 단순화 ── */}
-      <section className="mt-6 grid grid-cols-2 rounded-section bg-white py-2 shadow-card lg:grid-cols-4">
+      <section className="surface-soft mt-6 grid grid-cols-2 rounded-section py-2 ring-1 ring-black/[0.04] lg:grid-cols-4">
         <TrustItem kind="thumb" label="누적 고객 만족도" value={98} suffix="%" />
         <TrustItem kind="shield" label="제휴 브랜드" value={250} suffix="+" divider />
         <TrustItem kind="gift" label="연간 혜택 금액" value={120} suffix="억원+" divider="lg" />
@@ -74,7 +89,7 @@ export default function Home({ tenant }) {
 
       {/* 후기 — 카드·후기쓰기·더보기가 본진 /board/review* 로 이어지므로 파트너몰(리드 귀속)에서는 뺀다 */}
       {!tenant && <Reviews />}
-      </div>
+      </Band>
     </main>
   )
 }
@@ -84,7 +99,7 @@ export default function Home({ tenant }) {
 function TileIcon({ src, label }) {
   const [err, setErr] = useState(false)
   return (
-    <span className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-full bg-white shadow-card transition-transform duration-200 group-hover:-translate-y-[3px] sm:h-[72px] sm:w-[72px]">
+    <span className="surface-soft flex h-16 w-16 items-center justify-center overflow-hidden rounded-full ring-1 ring-black/[0.04] transition-transform duration-200 group-hover:-translate-y-[3px] sm:h-[72px] sm:w-[72px]">
       {err
         ? <span className="text-[24px] font-extrabold text-primary-text">{label[0]}</span>
         : <img src={src} alt="" className="h-[74%] w-[74%] object-contain" loading="lazy" onError={() => setErr(true)} />}
@@ -137,7 +152,7 @@ function SupportSection({ consultTo }) {
     { t: '…..?', cls: 'right-6 bottom-3', delay: '2.2s' },
   ]
   return (
-    <section data-t="support-section" className="mt-10 sm:mt-14">
+    <section data-t="support-section">
       <div className="text-center">
         <h2 className="inline-block break-keep rounded-card bg-tint px-5 py-3 text-[20px] font-extrabold leading-[1.35] tracking-[-0.5px] text-ink sm:px-8 sm:py-4 sm:text-[28px]">
           몰라서 못 받은 지원금,<br className="sm:hidden" /> 최대 <span className="tnum text-primary-text">{BENEFIT_TOTAL}만원+</span> 왕창 돌려드려요
@@ -205,7 +220,7 @@ function SupportSection({ consultTo }) {
 // 지원금 카드 공통 틀 — 연회색 둥근 카드, 제목/부제 위·비주얼 아래
 function SupportCard({ title, sub, children }) {
   return (
-    <div className="flex flex-col rounded-card bg-[#F4F6FA] p-5 sm:p-6">
+    <div className="surface-soft flex flex-col rounded-card p-5 ring-1 ring-black/[0.04] sm:p-6">
       <h3 className="break-keep text-[16px] font-extrabold leading-6 tracking-[-0.3px] text-ink sm:text-[17px]">{title}</h3>
       <p className="mt-1.5 break-keep text-[13px] leading-5 text-muted">{sub}</p>
       <div className="mt-4 flex-1">{children}</div>
@@ -279,7 +294,7 @@ function RealCostTeaser() {
     .map((c) => calcQuote({ carrier: c, speed: '500M', bundle: 'water', promo: false }, db.products))
     .sort((a, b) => a.real36 - b.real36)
   return (
-    <section className="mt-6 rounded-section bg-white p-5 shadow-card sm:p-9">
+    <section className="surface-soft rounded-section p-5 ring-1 ring-black/[0.04] sm:p-9">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <h2 className="break-keep text-[20px] font-extrabold tracking-[-0.5px] text-ink sm:text-[24px]">월 요금이 같아도, <span className="text-primary-text">돌려받는 돈</span>은 다릅니다</h2>

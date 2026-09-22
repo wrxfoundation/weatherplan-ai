@@ -43,9 +43,9 @@ export default function Login() {
         <Card track="b" className="p-6 text-center">
           <div className="flex justify-center text-primary-text"><IcUsers size={34} sw={1.6} /></div>
           <div className="mt-2 text-[16px] font-extrabold text-bink">회원 (개인 · 사업자)</div>
-          <p className="mt-1 text-[12px] leading-5 text-bmuted">개인은 R/B 비노출<br />사업자는 식별번호 · R/B 열람</p>
+          <p className="mt-1 text-[12px] leading-5 text-bmuted">개인은 온라인 구매 화면으로<br />사업자는 식별번호 · R/B 열람</p>
           <div className="mt-3 flex flex-col gap-1.5">
-            <button data-t="login-personal" onClick={() => { setSession({ role: 'member', memberId: personal?.id, type: '개인' }); toast(`${personal?.name ?? '개인'} 개인회원으로 로그인했어요`); nav('/calculator/phone') }} className={pill}>
+            <button data-t="login-personal" onClick={() => { setSession({ role: 'member', memberId: personal?.id, type: '개인' }); toast(`${personal?.name ?? '개인'} 개인회원으로 로그인했어요`); nav('/phone/shop') }} className={pill}>
               개인회원 <span className="pii text-bfaint">· {personal?.name ?? '데모'}</span>
             </button>
             <button data-t="login-biz" onClick={() => { setSession({ role: 'member', memberId: bizMember?.id, type: '사업자', tier: bizMember?.tier, code: bizMember?.code }); toast(`${bizMember?.name} 사업자회원(${bizMember?.code})으로 로그인했어요`); nav('/calculator/phone') }} className={pill}>

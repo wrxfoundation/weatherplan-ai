@@ -53,8 +53,20 @@ const num = (s) => Number(String(s).replace(/[^0-9]/g, '')) || 0
   const minIdx = totals.indexOf(Math.min(...totals))
   check(rows[minIdx].label.includes('총액 최저'), `총액 최저 배지가 실제 최소 행 (${rows[minIdx].label.split('\n')[0]})`)
 
-  // 탭 3분할
+  // 정가 표기 — 카드할인을 켰을 때만. 껐을 때는 정가 = 실부담이라 취소선이 같은 숫자를 두 번 보여 준다.
+  const heads = async () => page.locator('table thead th').allInnerTexts()
+  const cardBtn = page.getByRole('button', { name: /제휴카드 청구할인/ })
+  check((await heads()).includes('정가 월'), `카드할인 ON — 비교표에 정가 월 컬럼 (${(await heads()).join('/')})`)
+  await cardBtn.click(); await page.waitForTimeout(400)
+  check(!(await heads()).includes('정가 월'), `카드할인 OFF — 정가 월 컬럼 없음 (${(await heads()).join('/')})`)
+  const asideOff = await page.locator('aside').innerText().catch(() => '')
+  check(!asideOff.includes('정가 월 렌탈료'), '카드할인 OFF — 요약 카드에도 정가 줄 없음')
+  await cardBtn.click(); await page.waitForTimeout(400)
+  check((await heads()).includes('정가 월'), '카드할인 다시 ON — 정가 월 컬럼 복귀')
+
+  // 탭 — 렌탈은 있고, 휴대폰은 사업자 전용이라 비로그인 소비자에게 보이지 않는다
   check((await page.locator('a[href="/calculator/rental"]').count()) > 0, '계산기 탭에 렌탈 추가')
+  check((await page.locator('a[href="/calculator/phone"]').count()) === 0, '비로그인 — 계산기 탭에 휴대폰 없음(사업자 전용)')
 
   // ── 오피스 가망고객 TOP5 ──
   await page.addInitScript(() => localStorage.setItem('moduon_session_v1', JSON.stringify({ role: 'partner', tenantId: 'T1' })))

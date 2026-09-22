@@ -111,7 +111,7 @@ export const FLOWS = {
   },
   phone: {
     slug: 'phone', title: '휴대폰', steps: PHONE_STEPS,
-    resultTo: '/calculator/phone', cta: '내게 맞는 휴대폰 요금 찾기',
+    resultTo: '/phone/shop', cta: '내게 맞는 휴대폰 요금 찾기', // 개인 고객은 온라인 구매로 — 견적 계산기는 사업자 도구
   },
 }
 

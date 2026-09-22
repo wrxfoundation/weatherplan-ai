@@ -115,6 +115,16 @@
 /* ─── 버튼 유리 두께감 — 모든 버튼요소 공용 (약간의 glassmorphism) ───
    상단 하이라이트 림(유리 윗면) + 하단 인셋(단면 두께) + 은은한 외부 그림자.
    단일 box-shadow라 적용 시 기존 shadow-* 유틸을 대체한다(중복 지정 금지). */
+/* 흰 박스·아이콘 받침 — 순백 대신 위에서 아래로 아주 옅게 떨어지는 그라데이션.
+   흰 배경 칸 위에 올라가도 경계가 보이고, 색을 더 쓰지 않아 톤이 흐트러지지 않는다. */
+.surface-soft {
+  background: linear-gradient(180deg, #FFFFFF 0%, #F6F8FC 100%);
+  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 8px 24px rgba(16, 24, 40, 0.05);
+}
+.surface-soft-tint {
+  background: linear-gradient(180deg, #FFFFFF 0%, #EEF2FB 100%);
+}
+
 .glass-btn {
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.55),
