@@ -1082,3 +1082,20 @@ Logan
 「대화가 열린 것」 기준이라 지금 위반은 아니지만, **Alexander 와 Jenny 가 둘 다 답하면 그때 Emily·Max 는 닫는다**(재접촉 0).
 
 **발송 여부는 Claude 가 관리하지 않는다** — 서우 통보 시 갱신.
+
+## Hazel Teo (Binance, Global ASO & Performance Marketing) — 프로필 재확인 (2026-09-23) → 판정 유지: 1촌만, 메시지 0
+
+서우가 프로필 캡처 공유. 새로 보인 것: Binance 2년 8개월(CRM 캠페인 → ASO → ASO·퍼포먼스 마케팅, 재택 글로벌) · 전 Shopee 파트너·어필리에이트
+마케팅 인턴(싱가포르) · NUS · 음악 스타트업 공동창업 이력. **9/14 판정을 바꿀 사실은 없다.**
+
+- **바이낸스 쪽 발신이 이미 넷**이다 — Emily · Max(무응답) · Alexander(9/17) · Jenny(9/21). 다섯째는 「뿌린다」가 된다(한 회사 동시 대화 상한).
+- **레인이 없다** — ASO·유료 퍼포먼스 마케팅인데 **우리는 앱이 없고 유료 광고도 안 한다**(유형 기본값 표 「거래소 마케팅·그로스·ASO」 ②).
+  어필리에이트 경력은 Max 레인과 겹친다 — 같은 질문을 두 사람에게 하지 않는다.
+- 거래소 소속 1촌 규칙(9/30 까지 인사만)도 그대로.
+- **그가 먼저 말을 걸면** 인사로만 답한다(아래). **열리는 시점**: 우리 앱 출시 또는 유료 획득 채널 개시, 혹은 Jenny(Binance Square) 대화가 마케팅
+  협업으로 자라 사내 소개로 이어질 때 — 콜드 DM 이 아니라 소개로.
+
+```
+Hi Hazel, thanks for connecting. I look after partnerships at wellbian, a network of certified air sensors people run in their own homes, with KWeather as our device partner. Good to be connected.
+```
+
