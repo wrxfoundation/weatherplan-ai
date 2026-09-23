@@ -54,7 +54,7 @@ export default function InternetBuilder() {
         <span className="text-[11.5px] text-faint">3년 약정 · VAT 포함 · 대표 단가</span>
       </div>
 
-      <div className="mt-5 grid items-start gap-5 lg:grid-cols-[2fr_1fr]">
+      <div className="mt-5 grid grid-cols-1 items-start gap-5 lg:grid-cols-[2fr_1fr]">
         {/* ── 좌: 필터 4 ── */}
         <div className="flex flex-col gap-4">
           <Filter no={1} title="통신사" sub="어디로 하실지 아직이면 비교해 드릴게요">

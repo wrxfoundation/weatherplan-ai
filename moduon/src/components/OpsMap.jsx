@@ -63,7 +63,7 @@ export default function OpsMap() {
         </div>
       </div>
 
-      <div className="mt-4 grid gap-4 lg:grid-cols-[1fr_260px]">
+      <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-[1fr_260px]">
         {/* ── 지도 ── */}
         <div className="relative aspect-[4/5] w-full overflow-hidden rounded-section border border-bline bg-gradient-to-b from-[#EEF2FB] to-[#F5F7FC] sm:aspect-[5/4]">
           <span className="pointer-events-none absolute left-3 top-2.5 text-[11px] font-bold text-bfaint">대한민국 영업권역도</span>

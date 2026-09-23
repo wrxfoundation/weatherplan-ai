@@ -69,7 +69,7 @@ export default function OfficeCustomers() {
                 <button onClick={() => { dispatch({ type: 'CONTRACT_TOUCH', payload: { id: c.id, kind: '재상담 제안', by: tenant.id } }); toast(`${c.customer} 고객에게 재상담 알림톡을 보냈어요`) }} className="h-8 flex-1 rounded-full bg-tint px-3 text-[11.5px] font-bold text-primary-text hover:bg-primary hover:text-white lg:flex-none">
                   재상담 제안
                 </button>
-                <a href={`tel:${c.phone}`} className="pii flex h-8 w-8 items-center justify-center rounded-full bg-brow text-bbody hover:bg-bline"><IcPhone size={14} /></a>
+                <a href={`tel:${c.phone}`} aria-label={`${c.name} 고객에게 전화`} className="pii flex h-10 w-10 items-center justify-center rounded-full bg-brow text-bbody hover:bg-bline"><IcPhone size={14} /></a>
               </div>
             </div>
           )

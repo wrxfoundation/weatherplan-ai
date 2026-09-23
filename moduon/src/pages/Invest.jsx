@@ -55,7 +55,7 @@ export default function Invest() {
 
       <main className="mx-auto max-w-6xl px-5 sm:px-10">
         {/* ── 히어로 ── */}
-        <section className="grid items-center gap-10 pb-12 pt-10 sm:pt-16 lg:grid-cols-[1.1fr_400px]">
+        <section className="grid grid-cols-1 items-center gap-10 pb-12 pt-10 sm:pt-16 lg:grid-cols-[1.1fr_400px]">
           <div>
             <span className="inline-flex items-center gap-2 rounded-full bg-white px-3.5 py-1.5 text-[12.5px] font-bold text-ink shadow-card">
               <LiveDot /> 지금 {stats.active.length}개 분양몰 운영 중 — 화면 전부가 실제로 동작합니다
@@ -90,7 +90,7 @@ export default function Invest() {
         {/* ── 문제 → 해법 ── */}
         <section className="mt-10 rounded-section bg-white p-6 shadow-card sm:p-9">
           <h2 className="text-[24px] font-extrabold tracking-[-0.6px] text-ink sm:text-[26px]">파편화된 시장, 검증된 답</h2>
-          <div className="mt-6 grid gap-4 lg:grid-cols-3">
+          <div className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-3">
             <div className="rounded-card border border-line p-5">
               <div className="text-[13px] font-extrabold text-danger">문제</div>
               <p className="mt-2 text-[13.5px] leading-[22px] text-muted">생활서비스는 업종마다 유통이 조각나 있고, 리베이트 구조가 불투명해 소비자는 <strong className="font-bold text-ink">받을 수 있는 혜택을 모른 채</strong> 가입합니다. 판매자는 모객·상담·정산을 각자 수작업으로 버팁니다.</p>
@@ -112,7 +112,7 @@ export default function Invest() {
             <h2 className="text-[24px] font-extrabold tracking-[-0.6px] text-ink sm:text-[26px]">한 번 팔고, 매달 쌓이고,<br className="sm:hidden" /> 같이 커지는 수익</h2>
             <SafeImg src="/assets/obj-moneybag.png" className="h-[72px] w-[72px] object-contain" />
           </div>
-          <div className="mt-6 grid gap-4 lg:grid-cols-3">
+          <div className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-3">
             {REVENUE.map((r) => (
               <div key={r.t} className="glass-tile rounded-card p-5">
                 <div className="text-[13px] font-bold text-muted">{r.t}</div>
@@ -121,7 +121,7 @@ export default function Invest() {
               </div>
             ))}
           </div>
-          <div className="mt-4 grid gap-3 lg:grid-cols-2">
+          <div className="mt-4 grid grid-cols-1 gap-3 lg:grid-cols-2">
             <div className="rounded-card bg-brow/60 p-5">
               <div className="text-[13px] font-extrabold text-ink">파트너 단위 경제 (몰 1개, 하루 1건 페이스)</div>
               <p className="tnum mt-2 text-[13.5px] leading-[24px] text-body">월 24건 × 건당 수수료 36만원 = 수수료 매출 864만원<br />→ 파트너 순수익 약 <strong className="font-extrabold text-primary-text">747만원</strong> · 본사 몫 약 <strong className="font-extrabold text-ok">116만원/몰/월</strong></p>
@@ -139,7 +139,7 @@ export default function Invest() {
             <h2 className="text-[24px] font-extrabold tracking-[-0.6px] text-ink sm:text-[26px]">운영 전체에 스며든 AI</h2>
             <span className="text-[13px] font-semibold text-faint">"이긴 구조만 자동화한다" — 피드백 플라이휠</span>
           </div>
-          <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {MOAT.map((m) => (
               <div key={m.t} className="glass-tile rounded-card p-5">
                 <span className="flex h-[52px] w-[52px] items-center justify-center rounded-xl bg-white text-primary-text shadow-card"><m.icon size={26} sw={1.7} /></span>
@@ -155,7 +155,7 @@ export default function Invest() {
         <section className="mt-6 rounded-section bg-white p-6 shadow-card sm:p-9">
           <h2 className="text-[24px] font-extrabold tracking-[-0.6px] text-ink sm:text-[26px]">다음 시장은 이미 점수화되어 있습니다</h2>
           <p className="mt-2 max-w-2xl text-[13.5px] leading-[22px] text-muted">시장 규모 × 전환 용이성 × 자산 재활용률 × 페인 강도로 진출 후보를 상시 랭킹하고, 파일럿 게이트(90일 KPI)를 통과한 시장만 확장합니다.</p>
-          <div className="mt-5 grid gap-3 lg:grid-cols-3">
+          <div className="mt-5 grid grid-cols-1 gap-3 lg:grid-cols-3">
             {EXPAND.map((e, i) => (
               <div key={e.name} className={`rounded-card border p-5 ${i === 0 ? 'border-[1.5px] border-primary/40 bg-tint/30' : 'border-line'}`}>
                 <div className="flex items-center justify-between">

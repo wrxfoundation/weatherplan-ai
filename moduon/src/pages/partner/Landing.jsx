@@ -42,7 +42,7 @@ export default function PartnerLanding() {
 
       <main className="mx-auto max-w-6xl px-5 sm:px-10">
         {/* ── 히어로 ── */}
-        <section id="profit" className="grid items-center gap-10 pb-12 pt-10 sm:pt-16 lg:grid-cols-[1fr_440px]">
+        <section id="profit" className="grid grid-cols-1 items-center gap-10 pb-12 pt-10 sm:pt-16 lg:grid-cols-[1fr_440px]">
           <div>
             <span className="inline-flex items-center gap-2 rounded-full bg-white px-3.5 py-1.5 text-[12.5px] font-bold text-ink shadow-card">
               <LiveDot /> 지금 {stats.active.length}개 몰 운영 중 · 신규 파트너 모집
@@ -96,7 +96,7 @@ export default function PartnerLanding() {
         {/* ── 제공 가치 4카드 ── */}
         <section id="benefit" className="rounded-section bg-white p-6 shadow-card sm:p-9">
           <h2 className="text-[24px] font-extrabold tracking-[-0.6px] text-ink sm:text-[26px]">개설만 하세요,<br className="sm:hidden" /> 운영은 모두온이 합니다</h2>
-          <div className="mt-7 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="mt-7 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {[
               { icon: 'store', t: '내 브랜드 몰', d: '로고·컬러·인사말을 입힌 나만의 비교판매 사이트. 상품·가격·콘텐츠는 본사가 중앙 관리해요.' },
               { icon: 'bolt', t: '권역 오토매칭', d: '내 몰 유입은 물론, 본진 유입 고객도 주소지 권역 기준으로 실시간 자동 배정됩니다.' },
@@ -121,7 +121,7 @@ export default function PartnerLanding() {
             <span className="text-[13px] font-bold text-orange-text">권역 분양 수익의 20%를 정착지원 기금으로 재투자</span>
           </div>
           <p className="mt-2 max-w-2xl text-[13.5px] leading-[22px] text-muted">분양몰은 로컬 사업입니다 — 그래서 지원도 지역 안에서 쓰이게 설계했어요. 개설 후 90일, 몰당 <strong className="font-bold text-ink">최대 500만원 상당</strong> 정착 패키지가 성과 연동으로 제공됩니다.</p>
-          <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {[
               { t: '개설 정착금 100만원', d: '첫 30일 내 개통 5건 달성 시 지급 — 오픈 프로모션 사은품 재원으로 쓰세요.' },
               { t: '로컬 마케팅 50% 매칭', d: '당근·지역 맘카페·아파트 게시판·전단 집행액의 절반을 본사가 부담 (월 50만 × 3개월).' },
@@ -144,7 +144,7 @@ export default function PartnerLanding() {
             <h2 className="text-[24px] font-extrabold tracking-[-0.6px] text-ink sm:text-[26px]">시작 절차</h2>
             <span className="text-[13px] font-semibold text-faint">신청부터 판매 시작까지 최단 1주</span>
           </div>
-          <div className="mt-7 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="mt-7 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {[
               { t: '분양 신청', d: '소재지 기준 권역이 자동 판정돼요. 신청은 1분이면 충분해요.' },
               { t: '심사 · 계약', d: '본사가 신청 내용을 검토하고 공동사업 계약을 안내해 드려요.' },

@@ -33,7 +33,7 @@ export default function OfficeSetup() {
 
       <div className="mt-5"><Steps items={STEP_LABELS} current={step} /></div>
 
-      <div className="mt-5 grid items-start gap-4 lg:grid-cols-[1fr_380px]">
+      <div className="mt-5 grid grid-cols-1 items-start gap-4 lg:grid-cols-[1fr_380px]">
         {/* 좌: 스텝 폼 */}
         <Card track="b" className="p-5 sm:p-6">
           {step === 0 && (

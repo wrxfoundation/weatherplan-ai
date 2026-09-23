@@ -30,7 +30,7 @@ export default function MvnoPlans() {
       {/* 대표 요금제 2 */}
       <section className="mt-6" data-t="mvno-featured">
         <h2 className="text-[16px] font-bold text-ink">지금 가장 많이 고르는 요금제</h2>
-        <div className="mt-3 grid gap-3 sm:grid-cols-2">
+        <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
           {FEATURED.map((p) => <PlanCard key={p.id} p={p} big />)}
         </div>
       </section>
@@ -39,7 +39,7 @@ export default function MvnoPlans() {
       <section className="mt-8" data-t="mvno-brands">
         <h2 className="text-[16px] font-bold text-ink">브랜드별 혜택 요금제</h2>
         <p className="mt-0.5 text-[12.5px] text-muted">브랜드마다 프로모션 할인폭이 가장 큰 요금제 하나씩</p>
-        <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {BY_BRAND.map(({ brand, plan, count }) => <PlanCard key={plan.id} p={plan} perk={brand.perk} count={count} />)}
         </div>
       </section>

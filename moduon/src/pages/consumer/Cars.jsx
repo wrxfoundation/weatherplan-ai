@@ -76,7 +76,7 @@ export default function Cars() {
       <section className="mt-10" data-t="car-specials">
         <h2 className="text-center text-[22px] font-extrabold tracking-[-0.5px] text-primary-text">금주의 특가차량</h2>
         <p className="mt-1 text-center text-[13px] text-muted">오직 모두온에서만 만날 수 있는 금주의 특가</p>
-        <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {SPECIALS.map(({ model, lease, trim }) => (
             <div key={model.id} className="flex flex-col rounded-card bg-tint/50 p-4 shadow-card">
               <div className="flex gap-1.5">

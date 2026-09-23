@@ -70,7 +70,7 @@ export default function BillScan() {
 
       {state === 'done' && bill && (
         <div className="mt-4">
-          <div className="grid gap-2.5 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
             <div className="rounded-btn border border-line p-3.5">
               <div className="text-[11px] font-bold text-faint">인식된 현재 요금</div>
               <div className="mt-1 text-[13.5px] font-bold text-ink">{bill.carrier} · {bill.plan}</div>

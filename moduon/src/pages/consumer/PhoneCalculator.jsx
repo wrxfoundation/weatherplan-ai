@@ -71,7 +71,7 @@ export default function PhoneCalculator() {
         <RbPanel kind="phone" deviceId={deviceId} join={join} support={q.extraSupport} planId={q.plan.id} />
       </div>
 
-      <div className="mt-7 grid items-start gap-6 lg:grid-cols-[1fr_400px]">
+      <div className="mt-7 grid grid-cols-1 items-start gap-6 lg:grid-cols-[1fr_400px]">
         <div className="flex flex-col gap-4">
           {/* A. 단말기 */}
           <section className="rounded-card bg-white p-5 shadow-card sm:p-6 animate-rise">
@@ -134,7 +134,7 @@ export default function PhoneCalculator() {
             </p>
 
             {/* 할부개월 + 추가지원 */}
-            <div className="mt-4 grid gap-3 sm:grid-cols-2">
+            <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
               <div>
                 <div className="mb-1.5 text-[12.5px] font-semibold text-label">할부개월 <span className="text-faint">(연 5.9% 원리금균등)</span></div>
                 <div className="grid grid-cols-4 gap-1.5">
@@ -356,7 +356,7 @@ export default function PhoneCalculator() {
       </div>
 
       {/* 모바일 하단 고정 바 */}
-      <div className="safe-b fixed inset-x-0 bottom-0 z-40 rounded-t-card bg-white px-5 pb-4 pt-4 shadow-bottombar lg:hidden">
+      <div data-bottom-bar className="safe-b fixed inset-x-0 bottom-0 z-40 rounded-t-card bg-white px-5 pb-4 pt-4 shadow-bottombar lg:hidden">
         <div className="flex items-center justify-between">
           <div>
             <div className="text-[11px] font-semibold text-faint">월 납부금 (A+B)</div>

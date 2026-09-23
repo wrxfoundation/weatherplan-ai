@@ -87,7 +87,7 @@ export default function PhoneQuickStart({ consultTo = '/consult?cat=phone' }) {
         </Link>
       )}
 
-      <div className="mt-5 grid gap-3 sm:grid-cols-2">
+      <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2">
         <div>
           <button
             onClick={() => window.dispatchEvent(new CustomEvent('moduon:chat-open', { detail: { seed: aiSeed } }))}

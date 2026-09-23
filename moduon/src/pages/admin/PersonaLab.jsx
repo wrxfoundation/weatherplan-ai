@@ -38,7 +38,7 @@ export default function AdminPersonaLab() {
       </div>
       <p className="mt-0.5 text-[12.5px] text-bmuted">속성을 조합해 한국인 가상 패널을 만들고, 카피·오퍼·정책 어떤 텍스트든 반응을 사전 탐색하세요 — 실측을 대체하지 않는 탐색 도구입니다.</p>
 
-      <div className="mt-4 grid items-start gap-4 lg:grid-cols-[2fr_3fr]">
+      <div className="mt-4 grid grid-cols-1 items-start gap-4 lg:grid-cols-[2fr_3fr]">
         {/* ── 좌: 패널 구성 ── */}
         <Card track="b" className="p-5">
           <div className="flex items-center justify-between">
@@ -82,7 +82,7 @@ export default function AdminPersonaLab() {
             ))}
           </div>
           <textarea
-            value={text}
+ aria-label="패널에 보여줄 광고 문구"            value={text}
             onChange={(e) => setText(e.target.value)}
             placeholder="예) (광고) 인터넷 갈아타면 최대 152만원+ 돌려받으세요…"
             className="mt-2.5 min-h-[110px] w-full rounded-field border border-bline p-3 text-[13px] leading-5 focus:border-primary"

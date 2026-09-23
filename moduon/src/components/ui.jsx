@@ -194,7 +194,7 @@ export function Modal({ open, onClose, title, children, wide = false }) {
         {title && (
           <div className="mb-4 flex items-center justify-between">
             <h3 className="text-[17px] font-extrabold text-ink">{title}</h3>
-            <button onClick={onClose} aria-label="닫기" className="text-[20px] leading-none text-faint hover:text-ink">×</button>
+            <button onClick={onClose} aria-label="닫기" className="hit text-[20px] leading-none text-faint hover:text-ink">×</button>
           </div>
         )}
         {children}
@@ -216,7 +216,7 @@ export function Drawer({ open, onClose, title, children }) {
       >
         <div className="sticky top-0 z-10 flex items-center justify-between border-b border-bline bg-white px-5 py-4">
           <h3 className="text-[16px] font-extrabold text-bink">{title}</h3>
-          <button onClick={onClose} aria-label="닫기" className="text-[22px] leading-none text-bfaint hover:text-bink">×</button>
+          <button onClick={onClose} aria-label="닫기" className="hit text-[22px] leading-none text-bfaint hover:text-bink">×</button>
         </div>
         <div className="p-5">{children}</div>
       </aside>

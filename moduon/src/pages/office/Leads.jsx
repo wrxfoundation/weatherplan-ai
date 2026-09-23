@@ -47,7 +47,7 @@ export default function OfficeLeads() {
               )
             })}
           </div>
-          <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="이름·지역·연락처 검색" className={`${binputCls} sm:w-56`} />
+          <input aria-label="리드 검색" value={q} onChange={(e) => setQ(e.target.value)} placeholder="이름·지역·연락처 검색" className={`${binputCls} sm:w-56`} />
         </div>
         <div className="border-t border-brow">
           {filtered.map((l) => <LeadRow key={l.id} lead={l} onOpen={() => setOpenLead(l)} />)}

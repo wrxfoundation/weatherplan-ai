@@ -104,7 +104,7 @@ export default function InvestDeck() {
             <span className="text-[18px] font-black text-ink sm:text-[22px]">구독경제 = <span className="text-[#1B8BEA]">통신 및 렌탈서비스</span></span>
           </div>
           {/* 언론 보도 인용 — 원문 헤드라인 텍스트 */}
-          <div className="mt-8 grid gap-3 sm:grid-cols-2">
+          <div className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-2">
             <blockquote className="rounded-card border border-line bg-cream/60 p-5 text-left">
               <p className="text-[15px] font-extrabold leading-6 text-ink">"구독경제 전성시대, 10명 중 9명 이용 경험" …생활밀착형 수요 ↑</p>
               <footer className="mt-2 text-[11.5px] text-faint">— 경제·산업 언론 보도</footer>
@@ -123,7 +123,7 @@ export default function InvestDeck() {
           </h2>
           <div className="mt-7">
             <div className="mb-3 inline-flex items-center rounded-full bg-bink px-3.5 py-1.5 text-[12.5px] font-bold text-white">사업자 기준</div>
-            <div className="grid gap-3 sm:grid-cols-2">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               {BIZ_POINTS.map((p) => (
                 <div key={p.n} className="rounded-card border border-line p-5">
                   <div className="flex items-center gap-2.5">
@@ -137,7 +137,7 @@ export default function InvestDeck() {
           </div>
           <div className="mt-7">
             <div className="mb-3 inline-flex items-center rounded-full bg-[#1B8BEA] px-3.5 py-1.5 text-[12.5px] font-bold text-white">소비자 기준</div>
-            <div className="grid gap-3 sm:grid-cols-2">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               {CONSUMER_POINTS.map((p) => (
                 <div key={p.n} className="rounded-card border border-line p-5">
                   <div className="flex items-center gap-2.5">
@@ -172,7 +172,7 @@ export default function InvestDeck() {
         {/* ── 4. 상품 구조 ── */}
         <section className="mt-14">
           <h2 className="text-center text-[22px] font-extrabold tracking-[-0.6px] text-ink sm:text-[26px]">파트너 상품 구조</h2>
-          <div className="mt-7 grid gap-4 lg:grid-cols-3">
+          <div className="mt-7 grid grid-cols-1 gap-4 lg:grid-cols-3">
             {PLANS.map((pl) => (
               <div key={pl.name} className={`rounded-card border p-6 ${pl.hot ? 'border-[2px] border-[#1B8BEA] shadow-panel' : 'border-line'}`}>
                 {pl.hot && <span className="mb-2 inline-block rounded-full bg-[#1B8BEA] px-2.5 py-1 text-[10.5px] font-bold text-white">권역 대표</span>}

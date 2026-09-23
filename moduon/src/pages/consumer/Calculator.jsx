@@ -69,7 +69,7 @@ export default function Calculator() {
         }} />
       </div>
 
-      <div className="mt-6 grid items-start gap-6 lg:grid-cols-[1fr_400px]">
+      <div className="mt-6 grid grid-cols-1 items-start gap-6 lg:grid-cols-[1fr_400px]">
         {/* ── 좌: 스텝 카드 4 ── */}
         <div className="flex flex-col gap-4">
           <StepCard no={1} title="통신사를 선택하세요">
@@ -273,7 +273,7 @@ export default function Calculator() {
       </div>
 
       {/* ── 모바일 하단 고정 바 ── */}
-      <div className="safe-b fixed inset-x-0 bottom-0 z-40 rounded-t-card bg-white px-5 pb-4 pt-4 shadow-bottombar lg:hidden">
+      <div data-bottom-bar className="safe-b fixed inset-x-0 bottom-0 z-40 rounded-t-card bg-white px-5 pb-4 pt-4 shadow-bottombar lg:hidden">
         <div className="flex items-center justify-between">
           <div>
             <div className="text-[11px] font-semibold text-faint">월 납부금 <span className="tnum font-bold text-orange-text">하루 {won(Math.round(q.total / 30))}꼴</span></div>

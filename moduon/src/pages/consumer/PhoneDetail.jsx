@@ -67,7 +67,7 @@ function PhoneDetailInner() {
         <p className="mt-1 text-[13px] text-muted">{device.spec}</p>
       </div>
 
-      <div className="mt-6 grid items-start gap-6 lg:grid-cols-[1fr_400px]">
+      <div className="mt-6 grid grid-cols-1 items-start gap-6 lg:grid-cols-[1fr_400px]">
         <div className="flex flex-col gap-4">
           {/* 이용할 통신사 + 가입유형 */}
           <Sec title="이용할 통신사" sub={curMno ? `${curMno} 사용 중 기준` : cur === 'mvno' ? '알뜰폰 사용 중 → 3사 모두 번호이동' : '지금 쓰는 통신사를 고르면 추천이 정확해져요'}>
@@ -130,7 +130,7 @@ function PhoneDetailInner() {
 
           {/* 할인방법 */}
           <Sec title="할인방법" sub={`지금 조건에선 ${cmp.better === 'support' ? '공통지원금' : '선택약정'}이 ${cmp.months}개월 총액 기준 약 ${won(cmp.diff)} 유리해요`}>
-            <div className="grid gap-2 sm:grid-cols-2" data-t="detail-method">
+            <div className="grid grid-cols-1 gap-2 sm:grid-cols-2" data-t="detail-method">
               {[{ k: 'support', t: '공통지원금', d: '단말기 기기값을 할인받아요 (구 공시지원금)' }, { k: 'select', t: '선택약정', d: '요금제에서 25% 할인 받아요' }].map((m) => (
                 <button key={m.k} onClick={() => setMethod(m.k)} aria-pressed={method === m.k}
                   className={`relative rounded-btn border p-3.5 text-left transition-colors ${method === m.k ? 'border-[1.5px] border-primary bg-tint' : 'border-line bg-white hover:border-primary/50'}`}>
@@ -192,7 +192,7 @@ function PhoneDetailInner() {
       <section className="mt-4 rounded-section bg-white p-5 shadow-panel lg:hidden">
         <PriceCard device={device} storage={storage} setStorage={setStorage} q={q} months={months} onApply={() => setAsk(true)} compact />
       </section>
-      <div className="safe-b fixed inset-x-0 bottom-0 z-40 rounded-t-card bg-white px-5 pb-4 pt-3 shadow-bottombar lg:hidden">
+      <div data-bottom-bar className="safe-b fixed inset-x-0 bottom-0 z-40 rounded-t-card bg-white px-5 pb-4 pt-3 shadow-bottombar lg:hidden">
         <div className="flex items-center justify-between">
           <div><div className="text-[11px] font-semibold text-faint">월 납부 예상 <span className="rounded bg-brow px-1.5 text-[10px] font-bold text-bmuted">VAT 포함</span></div><div className="tnum text-[24px] font-extrabold tracking-tight text-primary-text">{won(q.total)}</div></div>
           <button onClick={() => setAsk(true)} className="h-12 rounded-btn bg-primary px-8 text-[15px] font-extrabold text-white">신청하기</button>

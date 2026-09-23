@@ -45,7 +45,7 @@ export default function OfficeDesign() {
         <span className="hidden rounded-card bg-tint p-3.5 text-primary-text lg:block"><IcCoins size={30} sw={1.6} /></span>
       </div>
 
-      <div className="mt-4 grid items-start gap-4 lg:grid-cols-[1fr_380px]">
+      <div className="mt-4 grid grid-cols-1 items-start gap-4 lg:grid-cols-[1fr_380px]">
         <div className="flex flex-col gap-4">
           {/* 상품 — 정책 단가표 */}
           <Card track="b" className="p-5">
@@ -56,7 +56,7 @@ export default function OfficeDesign() {
             {RATE_GROUPS.map((g) => (
               <div key={g} className="mt-3">
                 <div className="text-[11.5px] font-bold text-bfaint">{g}</div>
-                <div className="mt-1.5 grid gap-2 sm:grid-cols-2">
+                <div className="mt-1.5 grid grid-cols-1 gap-2 sm:grid-cols-2">
                   {RATE_CARD.filter((r) => r.group === g).map((r) => (
                     <button
                       key={r.id}

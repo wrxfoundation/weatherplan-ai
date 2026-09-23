@@ -115,7 +115,7 @@ export default function OfficeMarketing() {
         <Card track="b" className="p-4"><div className="text-[12px] text-bmuted">만기 캠페인 대상</div><div className="tnum mt-1 text-[22px] font-extrabold text-warn">{stats.expiring}<span className="text-[13px]">명</span></div><div className="text-[11px] text-bfaint">90일 내 만기 — 재상담 골든타임</div></Card>
       </div>
 
-      <div className="mt-4 grid items-start gap-4 lg:grid-cols-[3fr_2fr]">
+      <div className="mt-4 grid grid-cols-1 items-start gap-4 lg:grid-cols-[3fr_2fr]">
         {/* ── 좌: AI 카피 생성기 ── */}
         <Card track="b" className="p-5">
           <div className="flex items-center gap-2">
@@ -180,7 +180,7 @@ export default function OfficeMarketing() {
       </div>
 
       {/* ── 저항력 스코어카드 + 만기 캠페인 A/B 실험실 ── */}
-      <div className="mt-4 grid items-start gap-4 lg:grid-cols-2">
+      <div className="mt-4 grid grid-cols-1 items-start gap-4 lg:grid-cols-2">
         <ResistanceCard />
         <AbLab tenant={tenant} auto={auto} dispatch={dispatch} toast={toast} />
       </div>
@@ -194,7 +194,7 @@ export default function OfficeMarketing() {
           </div>
           <span className="text-[11.5px] text-bfaint">"누구에게"만큼 "언제"가 전환을 가릅니다 — 날씨 영향 업종 70%+</span>
         </div>
-        <div className="mt-3 grid gap-3 lg:grid-cols-2">
+        <div className="mt-3 grid grid-cols-1 gap-3 lg:grid-cols-2">
           {WEATHER_RULES.map((r) => {
             const on = isOn(r.key)
             const gate = r.score >= 90 ? '자동 실행' : '승인 후 실행'
@@ -258,13 +258,13 @@ function ResistanceCard() {
       </div>
       <p className="mt-1 text-[12px] text-bmuted">카피를 붙여넣으면 6가지 구매 저항(가격·시즌·품질·구매·마케팅비·타깃) 극복 여부를 진단해요.</p>
       <textarea
-        value={text}
+ aria-label="진단할 상품 소개문"        value={text}
         onChange={(e) => setText(e.target.value)}
         placeholder="진단할 상품 소개문·카피를 붙여넣으세요 (10자 이상)"
         className="mt-3 min-h-[76px] w-full rounded-field border border-bline p-3 text-[13px] leading-5 focus:border-primary"
       />
       {!hasText && (
-        <button onClick={() => setText(RESIST_SAMPLE)} className="mt-2 text-[12px] font-bold text-primary-text hover:underline">예시 문구로 체험하기 →</button>
+        <button onClick={() => setText(RESIST_SAMPLE)} className="hit mt-2 text-[12px] font-bold text-primary-text hover:underline">예시 문구로 체험하기 →</button>
       )}
       {hasText && (
         <>

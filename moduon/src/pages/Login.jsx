@@ -28,9 +28,10 @@ export default function Login() {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-bbg px-5 py-10">
       <Link to="/"><Logo size="lg" /></Link>
+      <h1 className="sr-only">모두온 데모 로그인</h1>
       <p className="mt-2 text-[14px] text-bmuted">데모 계정으로 소비자 · 3계층 사업자 · 본사를 체험해 보세요</p>
 
-      <div className="mt-8 grid w-full max-w-5xl gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="mt-8 grid grid-cols-1 w-full max-w-5xl gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {/* 소비자 — 비로그인 둘러보기 */}
         <Card track="b" hover role="button" tabIndex={0} onKeyDown={keyAct(goConsumer)} className="cursor-pointer p-6 text-center outline-none focus-visible:ring-2 ring-primary/40" onClick={goConsumer}>
           <div className="flex justify-center text-primary-text"><IcCart size={34} sw={1.6} /></div>
@@ -51,7 +52,7 @@ export default function Login() {
             <button data-t="login-biz" onClick={() => { setSession({ role: 'member', memberId: bizMember?.id, type: '사업자', tier: bizMember?.tier, code: bizMember?.code }); toast(`${bizMember?.name} 사업자회원(${bizMember?.code})으로 로그인했어요`); nav('/calculator/phone') }} className={pill}>
               사업자회원 <span className="tnum text-bfaint">· {bizMember?.code ?? '-'}</span>
             </button>
-            <Link to="/signup" className="mt-0.5 text-[12px] font-bold text-primary-text">새로 가입하기 →</Link>
+            <Link to="/signup" className="hit mt-0.5 text-[12px] font-bold text-primary-text">새로 가입하기 →</Link>
           </div>
         </Card>
 
@@ -120,11 +121,11 @@ export default function Login() {
       </div>
 
       <div className="mt-8 flex items-center gap-4 text-[12px] text-bfaint">
-        <Link to="/partner" className="font-semibold text-primary-text">분양 신청은 여기서 →</Link>
+        <Link to="/partner" className="hit font-semibold text-primary-text">분양 신청은 여기서 →</Link>
         <span>·</span>
         <button
           onClick={() => { dispatch({ type: 'RESET' }); toast('데모 데이터를 초기화했어요') }}
-          className="underline hover:text-bink"
+          className="hit underline hover:text-bink"
         >
           데모 데이터 초기화
         </button>

@@ -81,7 +81,7 @@ export default function RegionalDashboard() {
         </div>
 
         {/* 계층 정산 — 금액을 누르면 대리점이 펼쳐지고, 그 아래 셀러는 본사만 열람한다 */}
-        <div className="mt-4 grid items-start gap-4 lg:grid-cols-[3fr_2fr]">
+        <div className="mt-4 grid grid-cols-1 items-start gap-4 lg:grid-cols-[3fr_2fr]">
           <SettleDrill view={view} title={`${period} 권역 정산 명세`} caption={`금액을 누르면 대리점별로 펼쳐집니다 · 하부 셀러는 ***(본사 열람)`} />
           <Card track="b" className="overflow-hidden">
             <div className="flex items-center justify-between px-5 pt-5">
@@ -128,7 +128,7 @@ export default function RegionalDashboard() {
           />
         </div>
 
-        <div className="mt-4 grid items-start gap-4 lg:grid-cols-[7fr_5fr]">
+        <div className="mt-4 grid grid-cols-1 items-start gap-4 lg:grid-cols-[7fr_5fr]">
           {/* 셀러 목록 */}
           <Card track="b" className="overflow-hidden">
             <div className="flex items-center justify-between px-5 pt-4">

@@ -88,7 +88,7 @@ export default function AdminBenefits() {
         {dirty && <span className="tnum rounded-full bg-warn/10 px-3 py-1 text-[11.5px] font-bold text-warn">저장 안 된 변경 {Object.keys(patch).length}건</span>}
       </div>
 
-      <div className="mt-4 grid items-start gap-4 lg:grid-cols-2">
+      <div className="mt-4 grid grid-cols-1 items-start gap-4 lg:grid-cols-2">
         {/* (a) 포인트 정책 */}
         <Card track="b" className="p-5">
           <div className="flex items-center gap-2">
@@ -119,7 +119,7 @@ export default function AdminBenefits() {
             <h2 className="text-[15.5px] font-extrabold text-bink">플로팅 패널 <span className="text-[12px] font-semibold text-bmuted">"MODUON 알아보기"</span></h2>
           </div>
           <p className="mt-1 text-[11.5px] text-bfaint">데스크톱 우측에 상주하는 상담 패널. 대표번호는 {HQ_TEL}(공통 상수)로 고정돼요.</p>
-          <div className="mt-4 grid gap-4 sm:grid-cols-[1fr_200px]">
+          <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-[1fr_200px]">
             <div className="flex flex-col gap-3">
               <Field label="패널 제목"><input name="floatingTitle" className={binputCls} value={form.title} onChange={set('title')} placeholder={DEFAULT_FLOAT.title} /></Field>
               <Field label="상담 안내 문구" hint="줄바꿈이 그대로 들어가요 (3~4줄 권장)">
@@ -143,7 +143,7 @@ export default function AdminBenefits() {
           <div className="text-[13px] font-semibold text-primary-text">
             {dirty ? <>바뀐 항목: <strong className="font-extrabold">{Object.keys(patch).map((k) => KEY_LABEL[k] ?? k).join(' · ')}</strong></> : '변경된 항목이 없어요'}
           </div>
-          <input name="note" className={`${binputCls} mt-2 bg-white`} placeholder="변경 사유 (예: 9월 가입 프로모션)" value={note} onChange={(e) => setNote(e.target.value)} />
+          <input name="note" aria-label="변경 사유" className={`${binputCls} mt-2 bg-white`} placeholder="변경 사유 (예: 9월 가입 프로모션)" value={note} onChange={(e) => setNote(e.target.value)} />
         </div>
         <div className="flex shrink-0 gap-2">
           <Btn variant="boutline" size="sm" disabled={!dirty} onClick={reset}>되돌리기</Btn>

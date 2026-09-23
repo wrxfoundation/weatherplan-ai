@@ -48,7 +48,7 @@ function MvnoDetailInner() {
         <p className="mt-1 text-[13px] text-muted">{brand.network}망 · 데이터 {plan.data}GB + {plan.after} · 통화 {plan.call} · {brand.perk}</p>
       </div>
 
-      <div className="mt-6 grid items-start gap-6 lg:grid-cols-[1fr_380px]">
+      <div className="mt-6 grid grid-cols-1 items-start gap-6 lg:grid-cols-[1fr_380px]">
         <div className="flex flex-col gap-4">
           <Opt title="가입유형" testId="mvno-join" options={JOIN} value={join} onChange={setJoin}
             disabledKey={!plan.newJoin ? 'new' : null} disabledNote="이 요금제는 신규 개통이 불가능해요" />
@@ -84,7 +84,7 @@ function MvnoDetailInner() {
         </aside>
       </div>
 
-      <div className="safe-b fixed inset-x-0 bottom-0 z-40 rounded-t-card bg-white px-5 pb-4 pt-3 shadow-bottombar lg:hidden">
+      <div data-bottom-bar className="safe-b fixed inset-x-0 bottom-0 z-40 rounded-t-card bg-white px-5 pb-4 pt-3 shadow-bottombar lg:hidden">
         <div className="flex items-center justify-between">
           <div><div className="text-[11px] font-semibold text-faint">월 납부</div><div className="tnum text-[24px] font-extrabold tracking-tight text-primary-text">{won(order.monthly)}</div></div>
           <button onClick={() => setAsk(true)} disabled={!order.ok} className="h-12 rounded-btn bg-primary px-6 text-[15px] font-extrabold text-white disabled:opacity-40">온라인 신청하기</button>

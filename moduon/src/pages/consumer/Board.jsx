@@ -231,7 +231,7 @@ function ComplaintBoard({ meta }) {
         <p className="mt-1 text-[13.5px] text-muted">{meta.desc} 접수 내용은 공개되지 않고 담당자만 확인해요.</p>
       </div>
 
-      <div className="mt-5 grid gap-4 lg:grid-cols-[1fr_320px]">
+      <div className="mt-5 grid grid-cols-1 gap-4 lg:grid-cols-[1fr_320px]">
         {/* 접수 직후 — 폼 자리에 확인 카드(제목·유형·시각·다음 안내). 토스트만으론 막다른 화면이라 조회 동선까지 이어준다 */}
         {submitted ? (
           <section data-t="complaint-done" className="rounded-section bg-white p-5 shadow-card sm:p-7" aria-live="polite">
@@ -273,7 +273,7 @@ function ComplaintBoard({ meta }) {
             <Field label="내용" required hint="언제·어디서·무슨 일이 있었는지 적어주시면 더 빨리 처리돼요">
               <textarea className={textareaCls} placeholder="불편했던 내용을 자세히 적어주세요" value={form.body} onChange={set('body')} maxLength={1000} />
             </Field>
-            <div className="grid gap-4 sm:grid-cols-2">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <Field label="이름" required>
                 <input className={inputCls} placeholder="홍길동" value={form.name} onChange={set('name')} maxLength={20} autoComplete="name" />
               </Field>
@@ -358,7 +358,7 @@ export default function Board() {
         <section className="mt-6 rounded-section bg-white p-5 shadow-card">
           <EmptyState icon={IcAlert} text="없는 게시판이에요" sub="주소를 다시 확인해 주세요" />
           <div className="flex justify-center pb-2">
-            <Link to="/board/notice" className="text-[13.5px] font-bold text-primary-text hover:underline">공지사항으로 가기 →</Link>
+            <Link to="/board/notice" className="hit text-[13.5px] font-bold text-primary-text hover:underline">공지사항으로 가기 →</Link>
           </div>
         </section>
       </main>

@@ -89,7 +89,7 @@ export default function AdminBiz() {
       {/* 1. 3계층 사업 구조 */}
       <Card track="b" className="mt-4 p-5 sm:p-6">
         <h2 className="text-[15.5px] font-extrabold text-bink">3계층 사업 구조 <span className="text-[12.5px] font-semibold text-bmuted">· 본사 → 총판 → 셀러</span></h2>
-        <div className="mt-4 grid items-stretch gap-3 lg:grid-cols-[1fr_auto_1fr_auto_1fr]">
+        <div className="mt-4 grid grid-cols-1 items-stretch gap-3 lg:grid-cols-[1fr_auto_1fr_auto_1fr]">
           <Layer title="본사 (플랫폼)" tone="text-primary-text" lines={['상품 공급 · AI 운영 · 마케팅 · 정산', '리드 배정 엔진 · 관제']} foot={`수익: 사업권 분양 + 수수료 ${Math.round(p.feeRate * 100)}% + 월 이용료`} />
           <Arrow />
           <Layer title="총판 (영업단)" tone="text-bindigo" lines={['권역 총괄 · 셀러 모집 · 1차 배정', `전국 ${UNITS.length}개 영업단`]} foot={`현황: ${distributors.length}개 권역 총판 계약 · 나머지 모집 중`} badge={`${distributors.length}/${UNITS.length}`} />
@@ -148,7 +148,7 @@ export default function AdminBiz() {
       {/* 3. 수익 다각화 로드맵 */}
       <div className="mt-4">
         <h2 className="text-[16px] font-extrabold text-bink">수익 다각화 로드맵</h2>
-        <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {REVENUE.map((r) => (
             <Card key={r.t} track="b" className="flex flex-col p-4">
               <div className="flex items-start justify-between gap-2">
@@ -168,7 +168,7 @@ export default function AdminBiz() {
           <h2 className="text-[15.5px] font-extrabold text-bink">포트폴리오 재배치 관제 <span className="text-[12.5px] font-semibold text-bmuted">· 4-아레나 자본 배치</span></h2>
           <span className="text-[11.5px] text-bfaint">투자 과제는 규모가 아니라 방향 — 어디에 더 쓰고, 어디서 뺄 것인가</span>
         </div>
-        <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {ARENAS.map((a) => (
             <div key={a.en} className={`flex flex-col rounded-field border p-3.5 ${a.hot ? 'border-orange/40 bg-orange-tint/30' : 'border-bline'}`}>
               <div className="flex items-center justify-between">
@@ -259,7 +259,7 @@ export default function AdminBiz() {
       {/* 5. 운영 알고리즘 — 5단계: 의심→삭제→단순화→가속→자동화 (순서가 규율) */}
       <Card track="b" className="mt-4 p-5 sm:p-6">
         <h2 className="text-[15.5px] font-extrabold text-bink">운영 알고리즘 <span className="text-[12.5px] font-semibold text-bmuted">· 다섯 번 묻고, 자동화는 마지막에</span></h2>
-        <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+        <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-5">
           {[
             { n: '요구사항을 의심한다', d: '상담 신청은 이름·연락처·지역 3필드뿐. "더 받을까"가 아니라 "왜 받는가"부터 묻는다.' },
             { n: '과감히 삭제한다', d: '지점·재고·직영 영업조직 없이 분양몰 네트워크로 대체 — 최고의 비용은 없는 비용이다.' },

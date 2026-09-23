@@ -54,7 +54,7 @@ export default function PartnerApply() {
   return (
     <div className="min-h-screen bg-cream pb-16">
       <header className="mx-auto flex h-[64px] max-w-md items-center justify-between px-5">
-        <button onClick={() => nav(-1)} className="text-[20px] text-label" aria-label="뒤로">←</button>
+        <button onClick={() => nav(-1)} className="-ml-2 flex h-10 w-10 items-center justify-center rounded-full text-[20px] text-label hover:bg-cream" aria-label="뒤로">←</button>
         <Logo size="sm" />
         <span className="w-5" />
       </header>

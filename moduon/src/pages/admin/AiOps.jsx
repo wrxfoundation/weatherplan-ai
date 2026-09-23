@@ -69,7 +69,7 @@ export default function AdminAiOps() {
         <KpiCard label="고객 만족도" value={4.8} format={() => '4.8'} suffix="점" caption="상담 후 설문 기준" />
       </div>
 
-      <div className="mt-4 grid items-start gap-4 lg:grid-cols-[3fr_2fr]">
+      <div className="mt-4 grid grid-cols-1 items-start gap-4 lg:grid-cols-[3fr_2fr]">
         <div className="flex flex-col gap-4">
           {/* 실시간 서비스 상황 */}
           <Card track="b" className="p-5">
@@ -218,7 +218,7 @@ export default function AdminAiOps() {
       </Card>
 
       {/* 인사이트 3카드 */}
-      <div className="mt-4 grid gap-3 lg:grid-cols-3">
+      <div className="mt-4 grid grid-cols-1 gap-3 lg:grid-cols-3">
         {[
           { t: '인기 상품 메인 노출', d: '인기 상품 TOP5를 소비자몰 메인에 노출하면 매출 +15% 추정', ref: '최근 30일 클릭·전환 데이터' },
           { t: '이사+인터넷 번들 강화', d: '이사 리드의 41%가 인터넷을 함께 문의 — 번들 CTA 추가 권장', ref: '리드 카테고리 동시 발생 분석' },
@@ -228,7 +228,7 @@ export default function AdminAiOps() {
             <div className="flex items-center gap-2 text-[12px] font-bold text-primary-text"><IcBulb size={14} />AI 추천 인사이트</div>
             <div className="mt-2 text-[14.5px] font-bold text-bink">{c.t}</div>
             <p className="mt-1 text-[12.5px] leading-5 text-bbody">{c.d}</p>
-            <button className="mt-2.5 text-[11.5px] font-bold text-primary-text underline underline-offset-2">근거 데이터: {c.ref} →</button>
+            <button className="hit mt-2.5 text-[11.5px] font-bold text-primary-text underline underline-offset-2">근거 데이터: {c.ref} →</button>
           </Card>
         ))}
       </div>

@@ -107,7 +107,7 @@ export default function OfficeDashboard() {
         />
       </div>
 
-      <div className="mt-4 grid items-start gap-4 lg:grid-cols-[7fr_5fr]">
+      <div className="mt-4 grid grid-cols-1 items-start gap-4 lg:grid-cols-[7fr_5fr]">
         {/* ── 리드 인박스 ── */}
         <Card track="b" className="overflow-hidden">
           <div className="flex items-center justify-between px-4 pt-4 sm:px-5">
@@ -115,7 +115,7 @@ export default function OfficeDashboard() {
               <h2 className="text-[15.5px] font-extrabold text-bink">리드 인박스</h2>
               <span className="flex items-center gap-1.5 text-[11.5px] font-bold text-ok"><LiveDot /> 실시간</span>
             </div>
-            <Link to="/office/leads" className="text-[12.5px] font-bold text-primary-text">전체 보기 →</Link>
+            <Link to="/office/leads" className="hit text-[12.5px] font-bold text-primary-text">전체 보기 →</Link>
           </div>
           {/* 필터 탭 */}
           <div className="scrollbar-none mt-3 flex gap-1.5 overflow-x-auto px-4 pb-3 sm:px-5">
@@ -170,7 +170,7 @@ export default function OfficeDashboard() {
           <Card track="b" className="p-5">
             <div className="flex items-center justify-between">
               <h2 className="text-[15.5px] font-extrabold text-bink">가망고객 TOP5</h2>
-              <Link to="/office/customers" className="text-[12.5px] font-bold text-primary-text">고객 관리 →</Link>
+              <Link to="/office/customers" className="hit text-[12.5px] font-bold text-primary-text">고객 관리 →</Link>
             </div>
             <div className="mt-2.5 inline-flex rounded-full bg-brow p-0.5">
               {[{ k: 'dday', l: '잔여개월수 기준' }, { k: 'penalty', l: '위약금 기준' }].map((t) => (

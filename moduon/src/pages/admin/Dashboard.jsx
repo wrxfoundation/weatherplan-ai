@@ -119,7 +119,7 @@ export default function AdminDashboard() {
       </div>
 
       {/* 분양 및 운영 현황 */}
-      <div className="mt-4 grid items-start gap-4 lg:grid-cols-[3fr_2fr]">
+      <div className="mt-4 grid grid-cols-1 items-start gap-4 lg:grid-cols-[3fr_2fr]">
         <Card track="b" className="p-5">
           <h2 className="text-[15.5px] font-extrabold text-bink">분양 및 운영 현황 — 권역별</h2>
           <div className="mt-4">
@@ -182,7 +182,7 @@ export default function AdminDashboard() {
           <Card track="b" className="p-5" data-t="dash-comms">
             <div className="flex items-center justify-between">
               <h2 className="text-[15.5px] font-extrabold text-bink">고객소통</h2>
-              <Link to="/admin/boards" className="text-[12px] font-bold text-primary-text">게시판 관리 →</Link>
+              <Link to="/admin/boards" className="hit text-[12px] font-bold text-primary-text">게시판 관리 →</Link>
             </div>
             <div className="mt-3 grid grid-cols-2 gap-2">
               {[
@@ -202,7 +202,7 @@ export default function AdminDashboard() {
       </div>
 
       {/* 몰 운영 및 매출 현황 */}
-      <div className="mt-4 grid items-start gap-4 lg:grid-cols-[3fr_2fr]">
+      <div className="mt-4 grid grid-cols-1 items-start gap-4 lg:grid-cols-[3fr_2fr]">
         <Card track="b" className="p-5">
           <h2 className="text-[15.5px] font-extrabold text-bink">몰 운영 및 매출 현황</h2>
           <div className="mt-3 grid grid-cols-2 gap-2.5 sm:grid-cols-4">
@@ -246,7 +246,7 @@ export default function AdminDashboard() {
           <Card track="b" className="p-5">
             <div className="flex items-center justify-between">
               <h2 className="text-[15.5px] font-extrabold text-bink">파트너 지급 현황</h2>
-              <Link to="/admin/settlements" className="text-[12px] font-bold text-primary-text">지급 관리 →</Link>
+              <Link to="/admin/settlements" className="hit text-[12px] font-bold text-primary-text">지급 관리 →</Link>
             </div>
             <div className="mt-3 flex items-center gap-4">
               <Donut size={96} thickness={14} data={[
@@ -268,7 +268,7 @@ export default function AdminDashboard() {
       <div className="mt-4">
         <div className="flex items-center justify-between">
           <h2 className="text-[16px] font-extrabold text-bink">AI 운영 현황</h2>
-          <Link to="/admin/ai" className="text-[12.5px] font-bold text-primary-text">상세 보기 →</Link>
+          <Link to="/admin/ai" className="hit text-[12.5px] font-bold text-primary-text">상세 보기 →</Link>
         </div>
         <div className="mt-3 grid grid-cols-2 gap-3 lg:grid-cols-4">
           <Card track="b" className="p-4">
@@ -293,7 +293,7 @@ export default function AdminDashboard() {
           <Card track="b" className="p-4">
             <div className="text-[12.5px] font-bold text-bmuted">AI 추천 인사이트</div>
             <p className="mt-2 text-[12px] leading-[18px] text-bbody">"인기 상품 TOP5를 메인에 노출하면 매출 <strong className="text-ok">+15%</strong> 추정" 외 2건</p>
-            <Link to="/admin/ai" className="mt-1.5 inline-block text-[11.5px] font-bold text-primary-text">근거 데이터 →</Link>
+            <Link to="/admin/ai" className="hit mt-1.5 inline-block text-[11.5px] font-bold text-primary-text">근거 데이터 →</Link>
           </Card>
         </div>
       </div>
@@ -301,7 +301,7 @@ export default function AdminDashboard() {
       {/* 분양 & 수익 구조 다이어그램 */}
       <Card track="b" className="mt-4 p-5 sm:p-6">
         <h2 className="text-[15.5px] font-extrabold text-bink">분양 & 수익 구조</h2>
-        <div className="mt-4 grid items-stretch gap-3 lg:grid-cols-[1fr_auto_1.3fr_auto_1fr]">
+        <div className="mt-4 grid grid-cols-1 items-stretch gap-3 lg:grid-cols-[1fr_auto_1.3fr_auto_1fr]">
           <div className="rounded-card border border-bline p-4">
             <div className="text-[12px] font-bold text-bmuted">사업자 (파트너)</div>
             <div className="tnum mt-1.5 text-[14px] font-extrabold text-bink">초기 {won(db.policies.joinFee)}</div>

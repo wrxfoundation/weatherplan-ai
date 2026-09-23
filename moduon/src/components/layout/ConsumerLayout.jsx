@@ -368,8 +368,8 @@ export function ConsumerHeader({ tenant }) {
 
 export function ConsumerFooter({ tenant }) {
   const tel = telOf(tenant)
-  const col = 'flex flex-col gap-2'
-  const lnk = 'hover:text-primary-text'
+  const col = 'flex flex-col'
+  const lnk = 'py-1 hover:text-primary-text' // 20px 글줄 + 위아래 4px = 28px 터치 영역(간격은 예전 gap-2 와 같다)
   return (
     <footer className="border-t border-line-card bg-cream pb-24 pt-12">
       <div className="mx-auto max-w-6xl px-5 sm:px-10">
@@ -382,7 +382,7 @@ export function ConsumerFooter({ tenant }) {
           </div>
           <div className="grid grid-cols-2 gap-x-8 gap-y-6 text-[13px] text-label sm:flex sm:gap-10">
             <div className={col}>
-              <span className="font-bold text-ink">서비스</span>
+              <span className="mb-1 font-bold text-ink">서비스</span>
               <Link to="/calculator" className={lnk}>견적 계산기</Link>
               <Link to="/diagnosis" className={lnk}>AI 생활비 진단</Link>
               <Link to="/payouts" className={lnk}>사은품 지급 명단</Link>
@@ -391,17 +391,17 @@ export function ConsumerFooter({ tenant }) {
               <a href={tel.href} className={`tnum ${lnk}`}>{tenant?.phone ? `매장 직통 ${tel.num}` : `대표번호 ${tel.num}`}</a>
             </div>
             <div className={col}>
-              <span className="font-bold text-ink">게시판</span>
+              <span className="mb-1 font-bold text-ink">게시판</span>
               {BOARDS.map((b) => <Link key={b.key} to={`/board/${b.key}`} className={lnk}>{b.name}</Link>)}
             </div>
             <div className={col}>
-              <span className="font-bold text-ink">혜택</span>
+              <span className="mb-1 font-bold text-ink">혜택</span>
               <Link to="/benefits" className={lnk}>모두온혜택</Link>
               <Link to="/benefits/invite" className={lnk}>친구초대</Link>
               <Link to="/benefits/ads" className={lnk}>광고보기</Link>
             </div>
             <div className={col}>
-              <span className="font-bold text-ink">파트너</span>
+              <span className="mb-1 font-bold text-ink">파트너</span>
               <Link to="/partner" className={lnk}>분양 안내</Link>
               <Link to="/partner/apply" className={lnk}>분양 신청</Link>
               <Link to="/login" className={lnk}>마이오피스</Link>

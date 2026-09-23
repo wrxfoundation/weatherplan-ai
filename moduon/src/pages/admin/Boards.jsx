@@ -114,7 +114,7 @@ export default function AdminBoards() {
           <h1 className="text-[20px] font-extrabold text-bink">게시판 관리</h1>
           <p className="mt-0.5 text-[12.5px] text-bmuted">후기·질문/답변·꿀팁·이벤트·공지 — 답변·고정·숨김이 소비자 게시판에 즉시 반영됩니다.</p>
         </div>
-        <Link to="/admin/complaints" className="flex items-center gap-1.5 text-[12.5px] font-bold text-primary-text hover:underline"><IcInbox size={14} />불편접수는 인박스에서 →</Link>
+        <Link to="/admin/complaints" className="hit flex items-center gap-1.5 text-[12.5px] font-bold text-primary-text hover:underline"><IcInbox size={14} />불편접수는 인박스에서 →</Link>
       </div>
 
       {/* 게시판 탭 — 라우트(/admin/boards/:board)와 동기화 */}
@@ -143,7 +143,7 @@ export default function AdminBoards() {
       <Card track="b" className="mt-4 flex flex-wrap items-center gap-2 p-3.5">
         <div className="flex h-9 min-w-[200px] flex-1 items-center gap-2 rounded-full border border-bline bg-white px-3.5">
           <IcSearch size={14} className="shrink-0 text-bfaint" />
-          <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="제목·본문·작성자 검색…" aria-label="게시글 검색" className="w-full bg-transparent text-[13px] font-semibold text-bink outline-none placeholder:text-bfaint" />
+          <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="제목·본문·작성자 검색…" aria-label="게시글 검색" className="h-full w-full bg-transparent text-[13px] font-semibold text-bink outline-none placeholder:text-bfaint" />
         </div>
         <div className="scrollbar-none flex gap-1.5 overflow-x-auto">
           {['전체', ...(STATUS_BY_BOARD[board] ?? [])].map((s) => (

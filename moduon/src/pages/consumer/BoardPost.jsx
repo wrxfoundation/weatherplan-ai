@@ -47,7 +47,7 @@ function PostForm({ meta }) {
       <main className="mx-auto max-w-3xl px-5 pb-16 sm:px-10">
         <section className="mt-6 rounded-section bg-white p-5 shadow-card">
           <EmptyState icon={IcMegaphone} text="이 게시판은 직접 글을 쓸 수 없어요" sub="이벤트·공지사항은 모두온이 올려요" />
-          <div className="flex justify-center pb-2"><Link to={`/board/${board}`} className="text-[13.5px] font-bold text-primary-text hover:underline">{meta.name} 목록으로 →</Link></div>
+          <div className="flex justify-center pb-2"><Link to={`/board/${board}`} className="hit text-[13.5px] font-bold text-primary-text hover:underline">{meta.name} 목록으로 →</Link></div>
         </section>
       </main>
     )
@@ -89,7 +89,7 @@ function PostForm({ meta }) {
 
         <div className="mt-5 space-y-4">
           {board === 'review' && (
-            <div className="grid gap-4 sm:grid-cols-2">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div>
                 <span className="mb-1.5 block text-[13px] font-semibold text-label">별점 <em className="not-italic text-primary-text">*</em></span>
                 <div className="flex items-center gap-1" role="radiogroup" aria-label="별점">
@@ -113,7 +113,7 @@ function PostForm({ meta }) {
             <textarea className={textareaCls} placeholder="내용을 입력해 주세요" value={body} onChange={(e) => setBody(e.target.value)} maxLength={2000} />
           </Field>
           {board === 'review' && (
-            <div className="grid gap-4 sm:grid-cols-2">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <Field label="한 줄 혜택 태그" required hint="카드에 배지로 보여요">
                 <input className={inputCls} placeholder="예) 현금 35만원" value={tag} onChange={(e) => setTag(e.target.value)} maxLength={16} />
               </Field>
@@ -127,7 +127,7 @@ function PostForm({ meta }) {
               <input className={inputCls} placeholder="예) 인터넷, 약정" value={tags} onChange={(e) => setTags(e.target.value)} maxLength={60} />
             </Field>
           )}
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <Field label="이름" required hint="화면에는 가운데를 가려서 보여요">
               <input className={inputCls} placeholder="홍길동" value={name} onChange={(e) => setName(e.target.value)} maxLength={20} autoComplete="name" />
             </Field>
@@ -175,7 +175,7 @@ function PostDetail({ meta, id }) {
       <main className="mx-auto max-w-3xl px-5 pb-16 sm:px-10">
         <section className="mt-6 rounded-section bg-white p-5 shadow-card">
           <EmptyState icon={IcAlert} text="글을 찾을 수 없어요" sub="삭제되었거나 주소가 잘못됐어요" />
-          <div className="flex justify-center pb-2"><Link to={`/board/${board}`} className="text-[13.5px] font-bold text-primary-text hover:underline">{meta.name} 목록으로 →</Link></div>
+          <div className="flex justify-center pb-2"><Link to={`/board/${board}`} className="hit text-[13.5px] font-bold text-primary-text hover:underline">{meta.name} 목록으로 →</Link></div>
         </section>
       </main>
     )
@@ -244,7 +244,7 @@ function PostDetail({ meta, id }) {
         {[{ k: '이전 글', p: prev }, { k: '다음 글', p: next }].map(({ k, p }) => (
           <div key={k} className="flex items-center gap-3 px-4 py-3 text-[13.5px]">
             <span className="w-12 shrink-0 text-[12px] font-bold text-faint">{k}</span>
-            {p ? <Link to={`/board/${board}/${p.id}`} className="truncate font-semibold text-ink hover:text-primary-text">{p.title}</Link> : <span className="text-faint">{k}이 없어요</span>}
+            {p ? <Link to={`/board/${board}/${p.id}`} className="hit truncate font-semibold text-ink hover:text-primary-text">{p.title}</Link> : <span className="text-faint">{k}이 없어요</span>}
           </div>
         ))}
       </nav>
@@ -267,7 +267,7 @@ export default function BoardPost() {
       <main className="mx-auto max-w-3xl px-5 pb-16 sm:px-10">
         <section className="mt-6 rounded-section bg-white p-5 shadow-card">
           <EmptyState icon={IcAlert} text="없는 게시판이에요" sub="주소를 다시 확인해 주세요" />
-          <div className="flex justify-center pb-2"><Link to="/board/notice" className="text-[13.5px] font-bold text-primary-text hover:underline">공지사항으로 가기 →</Link></div>
+          <div className="flex justify-center pb-2"><Link to="/board/notice" className="hit text-[13.5px] font-bold text-primary-text hover:underline">공지사항으로 가기 →</Link></div>
         </section>
       </main>
     )

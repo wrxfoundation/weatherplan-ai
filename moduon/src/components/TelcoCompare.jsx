@@ -87,7 +87,7 @@ export default function TelcoCompare() {
       {/* ── 가입 → 지급 절차 ── */}
       <section className="mt-10">
         <h2 className="text-[19px] font-extrabold text-ink">신청부터 사은품까지</h2>
-        <div className="mt-4 grid gap-3 sm:grid-cols-4">
+        <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-4">
           {INSTALL_STEPS.map((st, i) => (
             <div key={st.t} className="relative rounded-card bg-white p-4 shadow-card">
               <span className="flex h-7 w-7 items-center justify-center rounded-full bg-tint text-[12.5px] font-extrabold text-primary-text">{i + 1}</span>

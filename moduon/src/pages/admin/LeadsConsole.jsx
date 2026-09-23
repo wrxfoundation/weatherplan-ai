@@ -61,7 +61,7 @@ export default function AdminLeadsConsole() {
         <Card track="b" className="p-4"><div className="text-[12px] text-bmuted">누적 전환율</div><div className="tnum mt-1 text-[24px] font-extrabold text-ok">{conv}%</div><div className="text-[11px] text-bfaint">완료 {done.length} / 전체 {leads.length}</div></Card>
       </div>
 
-      <div className="mt-4 grid items-start gap-4 lg:grid-cols-[2fr_5fr]">
+      <div className="mt-4 grid grid-cols-1 items-start gap-4 lg:grid-cols-[2fr_5fr]">
         {/* 상태 퍼널 */}
         <Card track="b" className="p-5">
           <h2 className="text-[14.5px] font-extrabold text-bink">상태 퍼널</h2>
@@ -82,7 +82,7 @@ export default function AdminLeadsConsole() {
                 )
               })}
             </div>
-            <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="이름·지역 검색" className={`${binputCls} sm:w-44`} />
+            <input aria-label="리드 검색" value={q} onChange={(e) => setQ(e.target.value)} placeholder="이름·지역 검색" className={`${binputCls} sm:w-44`} />
           </div>
           <div className="border-t border-brow">
             {filtered.slice(0, 14).map((l) => (

@@ -8,6 +8,10 @@
     @apply font-sans text-body antialiased;
     letter-spacing: -0.01em;
     -webkit-tap-highlight-color: transparent;
+    /* 한글은 기본값(break-all 에 가까운 음절 단위)이면 '아이폰 17 프로 맥 / 스' 처럼 단어 중간에서 끊긴다.
+       어절 단위로 끊고(keep-all), 한 어절이 칸보다 길 때만 예외로 쪼갠다(break-word) — URL·긴 코드가 넘치지 않게. */
+    word-break: keep-all;
+    overflow-wrap: break-word;
   }
   button, a, select, input[type='checkbox'] { touch-action: manipulation; }
   button { @apply cursor-pointer; }
@@ -22,11 +26,19 @@
   .safe-b { padding-bottom: max(env(safe-area-inset-bottom), 0px); }
   /* 홀로 선 소형 링크의 터치 타깃 확보 — WCAG 2.2 권장 44px, 줄 흐름을 밀지 않게 inline-flex */
   .tap { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; }
+  /* 작은 단독 링크·버튼의 '누르는 영역'만 넓힌다(WCAG 2.5.8 최소 24px). 보이는 크기·줄 간격은 그대로 두고
+     투명한 ::after 로 판정 영역을 위아래 8px·좌우 6px 키운다 — 패딩을 쓰면 mt-* 와 충돌하고 줄이 밀린다.
+     스모크(qa-ux-smoke)는 .hit 이 붙은 요소를 이 확장분만큼 더해 잰다. */
+  .hit { position: relative; }
+  .hit::after { content: ''; position: absolute; inset: -8px -6px; }
 }
 
-/* iOS 사파리: 입력 폰트가 16px 미만이면 포커스 시 화면이 자동 확대된다 */
+/* iOS 사파리: 입력 폰트가 16px 미만이면 포커스 시 화면이 자동 확대된다.
+   !important 가 필요하다 — 'input' 은 타입 선택자(0,0,1)라 Tailwind 의 text-[13px] 같은 클래스(0,1,0)에 진다.
+   이게 없던 동안 글자 크기 클래스가 붙은 입력칸(지급명단 검색·용량 선택·분양 신청 등)은 전부 여전히 확대됐다.
+   iOS 에서만 켠다 — 데스크톱 관리 화면의 촘촘한 13px 입력은 그대로 둔다(안드로이드 크롬은 확대하지 않는다). */
 @supports (-webkit-touch-callout: none) {
-  input, select, textarea { font-size: max(16px, 1em); }
+  input:not([type='checkbox']):not([type='radio']):not([type='range']), select, textarea { font-size: max(16px, 1em) !important; }
 }
 
 /* 히어로 절약 칩 부유 애니메이션 */

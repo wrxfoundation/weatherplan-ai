@@ -100,7 +100,7 @@ export default function Signup() {
             본사 승인 후 정산 대상이 됩니다. 승인 전에도 식별번호와 R/B 조회는 사용할 수 있어요.<br />
             로그인 화면에서 언제든 역할을 전환할 수 있습니다.
           </p>
-          <Link to="/login" className="mt-3 inline-block text-[12.5px] font-bold text-primary-text">로그인 화면으로 →</Link>
+          <Link to="/login" className="hit mt-3 inline-block text-[12.5px] font-bold text-primary-text">로그인 화면으로 →</Link>
         </div>
       </main>
     )
@@ -114,7 +114,7 @@ export default function Signup() {
       <div className="mt-5"><Steps items={['회원 구분', '정보 입력', '가입 완료']} current={type ? 1 : 0} /></div>
 
       {/* 1. 회원 구분 */}
-      <section data-t="signup-type" className="mt-5 grid gap-3 sm:grid-cols-2">
+      <section data-t="signup-type" className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2">
         {MEMBER_TYPES.map((t) => (
           <button
             key={t.key}
@@ -201,7 +201,7 @@ export default function Signup() {
       )}
 
       <p className="mt-5 text-center text-[12.5px] text-faint">
-        이미 계정이 있나요? <Link to="/login" className="font-bold text-primary-text">로그인 →</Link>
+        이미 계정이 있나요? <Link to="/login" className="hit font-bold text-primary-text">로그인 →</Link>
       </p>
     </main>
   )

@@ -51,7 +51,7 @@ function CarDetailInner() {
         </div>
       </div>
 
-      <div className="mt-6 grid items-start gap-6 lg:grid-cols-[1fr_400px]">
+      <div className="mt-6 grid grid-cols-1 items-start gap-6 lg:grid-cols-[1fr_400px]">
         <div className="flex flex-col gap-4">
           {/* 트림 */}
           <Sec title="트림" sub={`${trims.length}종`}>
@@ -72,7 +72,7 @@ function CarDetailInner() {
 
           {/* 선택옵션 */}
           <Sec title="선택옵션 + 계약선택사항" sub="옵션·보증금·계약기간을 고르면 실시간으로 월납입액이 바뀝니다">
-            <div className="grid gap-1.5 sm:grid-cols-2" data-t="car-options">
+            <div className="grid grid-cols-1 gap-1.5 sm:grid-cols-2" data-t="car-options">
               {optionsOf(model.id).map((o) => {
                 const on = options.includes(o.id)
                 return (
@@ -87,7 +87,7 @@ function CarDetailInner() {
                 )
               })}
             </div>
-            <div className="mt-4 grid gap-2 border-t border-line pt-3 sm:grid-cols-3">
+            <div className="mt-4 grid grid-cols-1 gap-2 border-t border-line pt-3 sm:grid-cols-3">
               <Money l="실제차량가격" v={q.carPrice} />
               <Money l="선택옵션가격" v={q.optionPrice} />
               <Money l="총차량가격" v={q.total} big />
@@ -96,7 +96,7 @@ function CarDetailInner() {
 
           {/* 계약 조건 */}
           <Sec title="계약 조건">
-            <div className="grid gap-3 sm:grid-cols-2">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <div>
                 <div className="text-[12.5px] font-bold text-label">초기부담금</div>
                 <div className="mt-1.5 grid grid-cols-3 gap-1.5" data-t="car-down">
@@ -162,7 +162,7 @@ function CarDetailInner() {
       <section className="mt-4 rounded-section bg-white p-5 shadow-panel lg:hidden">
         <Summary q={q} model={model} onApply={setAsk} compact />
       </section>
-      <div className="safe-b fixed inset-x-0 bottom-0 z-40 rounded-t-card bg-white px-5 pb-4 pt-3 shadow-bottombar lg:hidden">
+      <div data-bottom-bar className="safe-b fixed inset-x-0 bottom-0 z-40 rounded-t-card bg-white px-5 pb-4 pt-3 shadow-bottombar lg:hidden">
         <div className="flex items-center justify-between">
           <div><div className="text-[11px] font-semibold text-faint">리스 월</div><div className="tnum text-[22px] font-extrabold tracking-tight text-primary-text">{won(q.lease)}</div></div>
           <div className="flex gap-2">

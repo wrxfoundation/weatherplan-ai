@@ -33,7 +33,7 @@ export default function Shop() {
           제휴 특가 상품은 소싱이 끝나는 대로 이곳에 올라갑니다.
         </p>
 
-        <div className="mx-auto mt-8 grid max-w-3xl gap-3 text-left sm:grid-cols-3">
+        <div className="mx-auto mt-8 grid grid-cols-1 max-w-3xl gap-3 text-left sm:grid-cols-3">
           {PLANNED.map((p) => (
             <div key={p.t} className="rounded-card border border-line-card bg-cream/60 p-4">
               <div className="text-[14px] font-bold text-ink">{p.t}</div>
@@ -49,7 +49,7 @@ export default function Shop() {
           </button>
           <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-1 text-[13px] font-bold text-primary-text">
             {VISIBLE_CATEGORIES.map((c) => (
-              <Link key={c.slug} to={`/category/${c.slug}`} className="hover:underline">{c.name} 보러가기 →</Link>
+              <Link key={c.slug} to={`/category/${c.slug}`} className="hit hover:underline">{c.name} 보러가기 →</Link>
             ))}
           </div>
         </div>

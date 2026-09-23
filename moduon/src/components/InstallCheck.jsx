@@ -33,7 +33,7 @@ export default function InstallCheck({ onPrefill }) {
 
       <div className="mt-3.5 flex gap-2">
         <input
-          value={q}
+ aria-label="설치 주소(시·군·구)"          value={q}
           onChange={(e) => { setQ(e.target.value); setRes(null) }}
           onKeyDown={(e) => e.key === 'Enter' && run()}
           placeholder="예) 서울 강남구, 부산 해운대구"

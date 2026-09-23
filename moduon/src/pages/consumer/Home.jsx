@@ -29,6 +29,9 @@ export default function Home({ tenant }) {
 
   return (
     <main>
+      {/* 페이지 제목 — 화면 첫머리가 롤링 배너(h2 네 개)라 보이는 h1 이 없다. 검색엔진·스크린리더용으로만 둔다.
+          파트너몰(/m/:slug)도 이 컴포넌트를 쓰므로 몰 이름을 반영한다. */}
+      <h1 className="sr-only">{tenant ? `${tenant.name} — 모두온 공식 파트너몰` : '모두온 — 인터넷·휴대폰·렌탈 생활서비스 비교와 지원금'}</h1>
       {/* ── 1칸 · 흰 배경 — 롤링 배너 · 지급 티커 · 1차 동선 아이콘 ── */}
       <Band pad="pb-9 pt-4 sm:pb-12 sm:pt-6">
 
@@ -159,7 +162,7 @@ function SupportSection() {
         </h2>
       </div>
 
-      <div className="mt-6 grid gap-4 lg:grid-cols-3">
+      <div className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-3">
         {/* ① 숨은 혜택 — 돈주머니 + 점선 커넥터 + 카테고리 칩 */}
         <SupportCard title="가만히 있으면 우리집만 손해예요." sub="3년~6년 마다 가구당 최대 100만원 상당 혜택이 숨어 있는걸 아시나요?">
           <div className="relative mx-auto w-full max-w-[360px]">
@@ -208,7 +211,7 @@ function SupportSection() {
       </div>
 
       <div className="mt-8 flex flex-col items-center gap-2 text-center">
-        <Link to="/payouts" className="text-[13.5px] font-bold text-primary-text hover:underline">실제 지급내역 보기 →</Link>
+        <Link to="/payouts" className="hit text-[13.5px] font-bold text-primary-text hover:underline">실제 지급내역 보기 →</Link>
         <p className="max-w-2xl break-keep text-[11px] leading-4 text-label">{LEGAL.policy} 지원금·사은품의 최대 금액은 조건 충족 시 기준이며 심사 결과에 따라 달라질 수 있습니다.</p>
       </div>
     </section>
@@ -245,7 +248,7 @@ function ConsultSplit({ consultTo }) {
         <div id="cta-split-menu" className="relative mt-4 w-full max-w-xl animate-rise">
           {/* 말풍선 꼬리 — 위 버튼을 향한 작은 삼각형 */}
           <span aria-hidden className="absolute -top-2 left-1/2 h-4 w-4 -translate-x-1/2 rotate-45 rounded-[3px] bg-white" />
-          <div className="relative grid gap-3 rounded-card bg-white p-3 shadow-panel sm:grid-cols-2">
+          <div className="relative grid grid-cols-1 gap-3 rounded-card bg-white p-3 shadow-panel sm:grid-cols-2">
             <button
               type="button"
               data-t="cta-mobi"
@@ -280,7 +283,7 @@ function PayoutTicker() {
         <LiveDot /> 오늘 사은품 지급 <span className="tnum text-orange-text">{n}건 · {won(total)}</span>
         <span className="hidden text-[12px] font-semibold text-muted sm:inline">— 설치 확인 후 영업일 7일 내 계좌 입금</span>
       </span>
-      <Link to="/payouts" className="text-[12.5px] font-bold text-primary-text hover:underline">실명(마스킹) 명단 확인 →</Link>
+      <Link to="/payouts" className="hit text-[12.5px] font-bold text-primary-text hover:underline">실명(마스킹) 명단 확인 →</Link>
     </section>
   )
 }
@@ -298,9 +301,9 @@ function RealCostTeaser() {
           <h2 className="break-keep text-[20px] font-extrabold tracking-[-0.5px] text-ink sm:text-[24px]">월 요금이 같아도, <span className="text-primary-text">돌려받는 돈</span>은 다릅니다</h2>
           <p className="mt-1 break-keep text-[13px] text-muted sm:text-[14px]">인기 구성(500M + 정수기 결합) 기준 — 3년 실질 부담 = 납부 총액 − 돌려받는 돈</p>
         </div>
-        <Link to="/calculator" className="text-[13.5px] font-bold text-primary-text hover:underline">내 조건으로 비교하기 →</Link>
+        <Link to="/calculator" className="hit text-[13.5px] font-bold text-primary-text hover:underline">내 조건으로 비교하기 →</Link>
       </div>
-      <div className="mt-4 grid gap-3 sm:grid-cols-3">
+      <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
         {rows.map((r, i) => (
           <Link
             key={r.carrier}

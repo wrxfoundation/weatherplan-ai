@@ -21,13 +21,13 @@ export const PHONE_BRANDS = [
 export const STORAGES = ['128GB', '256GB', '512GB', '1TB']
 
 export const PHONE_DEVICES = [
-  { id: 'fold8', brand: 'samsung', name: '갤럭시 Z 폴드8 1TB', short: 'Z 폴드8', price: 3152600, support: { mnp: 500000, chg: 400000, new: 450000 }, tag: '최신 폴더블', spec: '스냅드래곤 8 Elite 5세대 · 7.6" · 16GB · 4,800mAh',
+  { id: 'fold8', brand: 'samsung', name: '갤럭시 Z 폴드8 256GB', short: 'Z 폴드8', price: 2577300, support: { mnp: 500000, chg: 400000, new: 450000 }, tag: '최신 폴더블', spec: '스냅드래곤 8 Elite 5세대 · 7.6" · 16GB · 4,800mAh',
     storages: [{ key: '256GB', price: 2577300 }, { key: '512GB', price: 2745600 }, { key: '1TB', price: 3152600 }],
     colors: [{ name: '제트블랙', hex: '#2B2B2E' }, { name: '실버섀도', hex: '#C9CBD1' }, { name: '블루섀도', hex: '#5D7AA8' }] },
   { id: 'flip8', brand: 'samsung', name: '갤럭시 Z 플립8 256GB', short: 'Z 플립8', price: 1485000, support: { mnp: 450000, chg: 380000, new: 420000 }, tag: '폴더블', spec: '3.4" 외부 화면 · 6.7" · 12GB',
     storages: [{ key: '256GB', price: 1485000 }, { key: '512GB', price: 1628000 }],
     colors: [{ name: '코랄레드', hex: '#D9534F' }, { name: '제트블랙', hex: '#2B2B2E' }, { name: '블루섀도', hex: '#5D7AA8' }] },
-  { id: 's26u', brand: 'samsung', name: '갤럭시 S26 울트라 512GB', short: 'S26 울트라', price: 1969000, support: { mnp: 450000, chg: 350000, new: 400000 }, tag: '플래그십', spec: '2억 화소 카메라 · 6.9" · 12GB',
+  { id: 's26u', brand: 'samsung', name: '갤럭시 S26 울트라 256GB', short: 'S26 울트라', price: 1826000, support: { mnp: 450000, chg: 350000, new: 400000 }, tag: '플래그십', spec: '2억 화소 카메라 · 6.9" · 12GB',
     storages: [{ key: '256GB', price: 1826000 }, { key: '512GB', price: 1969000 }, { key: '1TB', price: 2255000 }],
     colors: [{ name: '티타늄블랙', hex: '#2E2E33' }, { name: '티타늄실버', hex: '#BFC3CA' }, { name: '티타늄네이비', hex: '#3F4C6B' }] },
   { id: 's26', brand: 'samsung', name: '갤럭시 S26 256GB', short: 'S26', price: 1155000, support: { mnp: 380000, chg: 300000, new: 340000 }, tag: '인기', spec: '6.2" · 12GB · 콤팩트 플래그십',
@@ -100,8 +100,10 @@ export const bundleEligible = (plan) => (plan?.monthly ?? 0) >= BUNDLE.minPlan
 export function calcPhoneQuote({ deviceId = 'fold8', planId = 'choice110', join = 'mnp', method = 'support', months = 24, extra15 = true, bundle = false, storage = null, carrier = null, insurance = false, addon = false, policyMargin = null } = {}) {
   const device = phoneDevice(deviceId)
   const plan = PHONE_PLANS.find((p) => p.id === planId) ?? PHONE_PLANS[0]
-  // 용량이 지정되면 그 출고가, 아니면 기본(price). 통신사가 지정되면 지원금 보정.
-  const price = device.storages?.find((s) => s.key === storage)?.price ?? device.price
+  // 용량이 지정되면 그 용량, 아니면 첫 용량. 화면에 찍는 용량과 출고가를 반드시 같은 항목에서 꺼낸다 —
+  // 예전엔 라벨은 storages[0](256GB), 가격은 device.price(1TB)라 폴드8 이 '256GB · 출고가 315만'으로 떴다.
+  const st = device.storages?.find((s) => s.key === storage) ?? device.storages?.[0] ?? null
+  const price = st?.price ?? device.price
   const adj = carrier ? (CARRIER_SUPPORT_ADJ[carrier] ?? 1) : 1
   const baseSupport = Math.floor(((device.support[join] ?? 0) * adj) / 1000) * 1000
 
@@ -131,7 +133,7 @@ export function calcPhoneQuote({ deviceId = 'fold8', planId = 'choice110', join 
     device, plan, join, method, months, publicSupport, extraSupport,
     principal, deviceMonthly, interest, planMonthly, planDiscount,
     bundleOn, bundleDiscount, upfront, total,
-    price, storage: storage ?? device.storages?.[0]?.key ?? null, carrier,
+    price, storage: st?.key ?? null, carrier,
     // 가격표 근거 — 화면이 "이 가격은 어디서 왔나" 를 밝힐 수 있게
     card, priced, blocked: card.state === 'blocked',
     // 셀프개통 모드(가격표 미수록 조합)에서만 채워진다 — "리베이트 − 마진 = 고객 지원금"

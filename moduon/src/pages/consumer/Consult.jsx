@@ -74,7 +74,7 @@ export default function Consult() {
     return (
       <main className="mx-auto max-w-md px-5 pb-16">
         <div className="flex justify-end pt-4">
-          <button onClick={() => nav(tenant ? `/m/${tenant.slug}` : '/')} className="text-[24px] text-faint hover:text-ink" aria-label="닫기">×</button>
+          <button onClick={() => nav(tenant ? `/m/${tenant.slug}` : '/')} className="hit text-[24px] text-faint hover:text-ink" aria-label="닫기">×</button>
         </div>
         <div className="mt-4 flex flex-col items-center text-center">
           <div className="relative">
@@ -256,11 +256,11 @@ export default function Consult() {
 function Consent({ checked, onChange, label, onDetail }) {
   return (
     <div className="flex items-center justify-between">
-      <button type="button" onClick={() => onChange(!checked)} className="flex items-center gap-3 text-left">
+      <button type="button" role="checkbox" aria-checked={checked} onClick={() => onChange(!checked)} className="hit flex items-center gap-3 text-left">
         <span className={`flex h-[22px] w-[22px] shrink-0 items-center justify-center rounded-md border text-[13px] text-white transition-colors ${checked ? 'border-primary bg-primary' : 'border-line bg-white'}`}>✓</span>
         <span className="text-[13.5px] text-body">{label}</span>
       </button>
-      <button type="button" onClick={onDetail} className="text-[12px] text-faint underline hover:text-label">전문 보기</button>
+      <button type="button" onClick={onDetail} className="hit text-[12px] text-faint underline hover:text-label">전문 보기</button>
     </div>
   )
 }

@@ -63,7 +63,7 @@ export default function Category() {
 
       {/* 휴대폰: 온라인 구매 / 알뜰폰 요금제 두 갈래가 카테고리 1 */}
       {slug === 'phone' && (
-        <section className="mt-8 grid gap-3 sm:grid-cols-2" data-t="phone-entries">
+        <section className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-2" data-t="phone-entries">
           <Link to="/phone/shop" className="group flex items-center gap-4 rounded-card bg-white p-5 shadow-card transition-all hover:-translate-y-[2px] hover:shadow-panel">
             <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-tint text-primary-text"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><rect x="7" y="2" width="10" height="20" rx="2" /><path d="M11 18h2" /></svg></span>
             <span className="min-w-0 flex-1">
@@ -111,7 +111,7 @@ export default function Category() {
       )}
 
       {/* 비교 포인트 */}
-      <section className="mt-8 grid gap-3 sm:grid-cols-3">
+      <section className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-3">
         {[
           { t: '조건 비교', d: '통신사·브랜드별 조건을 한 번에 비교해요' },
           { t: '숨은 혜택', d: '결합·프로모션·카드 할인까지 전부 반영해요' },
@@ -140,7 +140,7 @@ export default function Category() {
             <Btn className="mx-auto flex" onClick={() => nav(`/consult?cat=${slug}`)}>무료 상담으로 견적 받기</Btn>
           </Card>
         ) : (
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {products.map((p) => (
               <Card key={p.id} hover className="flex flex-col p-5">
                 <div className="flex items-start justify-between gap-2">

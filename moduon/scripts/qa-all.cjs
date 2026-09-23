@@ -18,7 +18,18 @@ const step = (name, fn) => {
 }
 
 ;(async () => {
-  step('빌드', () => run('npm run build'))
+  step('빌드', () => {
+    // 경고도 본다 — JSX 속성이 두 번 들어가면(style 두 번 등) 에러 없이 뒤의 값이 앞을 덮어써서 기능이 조용히 죽는다.
+    // (2026-09-23: FAB 에 style 이 두 번 들어가 '하단 바 위로 띄우기'가 통째로 무시됐다 — 빌드는 초록불이었다)
+    const out = execSync('npm run build 2>&1', { cwd: root, encoding: 'utf8' })
+    process.stdout.write(out)
+    const dup = out.split('\n').filter((l) => /Duplicate (key|"[^"]+" attribute)/.test(l))
+    if (dup.length) {
+      console.log(`\n✘ 빌드 경고 ${dup.length}건 — 중복 속성/키는 뒤의 값이 앞을 덮어쓴다:`)
+      dup.forEach((l) => console.log('   ' + l.trim()))
+      throw new Error('duplicate')
+    }
+  })
 
   // preview 기동 (외부 preview를 쓰는 스모크용) — 기존 프로세스가 있으면 재사용
   let preview = null
@@ -30,6 +41,7 @@ const step = (name, fn) => {
 
   // 정적 검사 — 브라우저가 필요 없어 preview 기동 전에 돌린다(에셋 참조 ↔ 공급원 정합성)
   step('검사: 에셋 참조 정합성', () => run('node scripts/qa-assets-check.cjs'))
+  step('검사: 가격 데이터 무결성', () => run('node scripts/qa-data-check.cjs'))
   step('스모크: 소비자 홈·GNB', () => run('node scripts/qa-home-smoke.cjs'))
   step('스모크: 온보딩 위저드', () => run('node scripts/qa-onboard-smoke.cjs'))
   step('스모크: 어드민 4-아레나', () => run('node scripts/qa-arena-smoke.cjs'))
@@ -45,6 +57,7 @@ const step = (name, fn) => {
   step('스모크: 어드민 콘텐츠·고객소통', () => run('node scripts/qa-admin-content-smoke.cjs'))
   step('스모크: 조직 3계층·R/B·계층정산', () => run('node scripts/qa-org-smoke.cjs'))
   step('스모크: 정책 단가표·셀프개통 마진', () => run('node scripts/qa-ratecard-smoke.cjs'))
+  step('스모크: 전 라우트 UX(넘침·터치·iOS·a11y)', () => run('node scripts/qa-ux-smoke.cjs'))
 
   if (preview) { try { process.kill(-preview.pid) } catch { /* 이미 종료 */ } }
 

@@ -105,7 +105,7 @@ export default function RentalBrowser() {
           <EmptyState icon={IcSearch} text="이 조합의 품목은 상담으로 안내해 드려요" sub="브랜드·카테고리를 바꾸거나 상담을 신청해 주세요" />
         </div>
       ) : (
-        <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3" data-t="rental-items">
+        <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3" data-t="rental-items">
           {priced.map(({ it, q }) => (
             <div key={it.id} className="flex flex-col rounded-card bg-white p-4 shadow-card transition-all hover:-translate-y-[2px] hover:shadow-panel">
               <div className="flex items-start justify-between gap-2">

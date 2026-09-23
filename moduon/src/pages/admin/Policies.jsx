@@ -31,7 +31,7 @@ export default function AdminPolicies() {
       <h1 className="text-[20px] font-extrabold text-bink">정책 관리</h1>
       <p className="mt-0.5 text-[12.5px] text-bmuted">정책값은 코드 하드코딩 없이 이 테이블이 단일 소스 — 파트너 랜딩·분양 신청·정산 로직이 실시간 참조합니다.</p>
 
-      <div className="mt-4 grid gap-3 sm:grid-cols-3">
+      <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
         {[
           { label: '대리점 가입비', value: won(p.joinFee), sub: '분양몰 개설 1회 (정액)' },
           { label: '월 이용료', value: won(p.monthlyFee), sub: '매월 정산 시 차감' },

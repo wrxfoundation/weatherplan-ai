@@ -81,7 +81,7 @@ export default function AdminComplaints() {
         <KpiCard label="평균 처리시간" value={`${avgHours.toFixed(1)}시간`} caption={done.length ? `완료 ${done.length}건 기준 (접수→답변)` : '완료 건이 쌓이면 계산돼요'} />
       </div>
 
-      <div className="mt-4 grid items-start gap-4 lg:grid-cols-[1fr_1.15fr]">
+      <div className="mt-4 grid grid-cols-1 items-start gap-4 lg:grid-cols-[1fr_1.15fr]">
         {/* 좌: 목록 */}
         <Card track="b" className="overflow-hidden">
           <div className="flex flex-wrap items-center justify-between gap-2 px-4 pt-4 sm:px-5">

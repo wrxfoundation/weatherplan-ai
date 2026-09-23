@@ -70,7 +70,7 @@ export default function OfficeSettlement() {
 
       <div className="mt-4"><SettleDrill view={view} title={`${monthKey()} 내 정산 명세`} caption="셀러 화면은 본인 영업이익만 표시됩니다 — 상위 계층 몫은 노출되지 않습니다" /></div>
 
-      <div className="mt-4 grid items-start gap-4 lg:grid-cols-[3fr_2fr]">
+      <div className="mt-4 grid grid-cols-1 items-start gap-4 lg:grid-cols-[3fr_2fr]">
         <Card track="b" className="p-5">
           <h2 className="text-[15.5px] font-extrabold text-bink">최근 7일 일별 확정 수익</h2>
           <div className="mt-4">

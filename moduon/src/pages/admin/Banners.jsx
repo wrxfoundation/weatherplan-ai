@@ -129,7 +129,7 @@ export default function AdminBanners() {
       </div>
 
       {/* KPI — 노출 상태와 실제 롤링 순서를 표 위에서 먼저 확인 */}
-      <div className="mt-4 grid gap-3 sm:grid-cols-[220px_1fr]">
+      <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-[220px_1fr]">
         <KpiCard label="노출 중 배너" value={active.length} suffix="개" caption={`전체 ${banners.length}개 중 · 5초 자동 롤링`} accent={active.length === 0 ? 'text-danger' : undefined} />
         <Card track="b" className="p-4 sm:p-5 animate-rise">
           <div className="text-[12px] font-medium text-bmuted sm:text-[13px]">현재 롤링 순서</div>

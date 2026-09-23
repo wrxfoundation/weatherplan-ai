@@ -47,7 +47,7 @@ export default function RentalCalculator() {
         <RbPanel kind="rental" itemId={itemId} />
       </div>
 
-      <div className="mt-7 grid items-start gap-6 lg:grid-cols-[1fr_400px]">
+      <div className="mt-7 grid grid-cols-1 items-start gap-6 lg:grid-cols-[1fr_400px]">
         <div className="flex flex-col gap-4">
           {/* 상품 */}
           <section className="rounded-card bg-white p-5 shadow-card sm:p-6 animate-rise">
@@ -76,7 +76,7 @@ export default function RentalCalculator() {
           {/* 관리 방식 · 기간 */}
           <section className="rounded-card bg-white p-5 shadow-card sm:p-6 animate-rise">
             <h2 className="text-[16px] font-bold text-ink">관리 방식과 약정 기간</h2>
-            <div className="mt-3 grid gap-2 sm:grid-cols-2">
+            <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
               {CARE_TYPES.map((c) => (
                 <button key={c.key} onClick={() => setCare(c.key)} className={`rounded-field border p-3.5 text-left transition-colors ${care === c.key ? 'border-primary bg-tint' : 'border-line bg-white hover:border-primary/50'}`}>
                   <div className={`text-[14px] font-bold ${care === c.key ? 'text-primary-text' : 'text-ink'}`}>{c.label}</div>
@@ -94,7 +94,7 @@ export default function RentalCalculator() {
             </div>
 
             {/* 할인 옵션 */}
-            <div className="mt-4 grid gap-2 sm:grid-cols-2">
+            <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2">
               <button onClick={() => setCard(!card)} className={`flex items-center justify-between rounded-field border px-4 py-3 text-left transition-colors ${card ? 'border-primary bg-tint' : 'border-line bg-white'}`}>
                 <div>
                   <div className="text-[13px] font-bold text-ink">제휴카드 청구할인</div>
@@ -210,7 +210,7 @@ export default function RentalCalculator() {
       </div>
 
       {/* 모바일 하단 고정 바 */}
-      <div className="safe-b fixed inset-x-0 bottom-0 z-40 rounded-t-card bg-white px-5 pb-4 pt-4 shadow-bottombar lg:hidden">
+      <div data-bottom-bar className="safe-b fixed inset-x-0 bottom-0 z-40 rounded-t-card bg-white px-5 pb-4 pt-4 shadow-bottombar lg:hidden">
         <div className="flex items-center justify-between">
           <div>
             <div className="text-[11px] font-semibold text-faint">월 실부담</div>

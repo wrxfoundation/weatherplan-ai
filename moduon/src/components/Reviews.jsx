@@ -60,7 +60,7 @@ export default function Reviews({ cat, title = '먼저 바꾼 분들의 후기' 
       {items.length === 0 ? (
         <p className="mt-6 text-[13.5px] text-faint">아직 후기가 없어요 — <Link to="/board/review/new" className="font-bold text-primary-text hover:underline">첫 후기</Link>를 남겨주세요.</p>
       ) : (
-        <div className={`${noCatMatch ? 'mt-3' : 'mt-6'} grid gap-4 sm:grid-cols-2 lg:grid-cols-3`}>
+        <div className={`${noCatMatch ? 'mt-3' : 'mt-6'} grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3`}>
           {items.map((r) => (
             <Link key={r.id} to={`/board/review/${r.id}`} className="glass-tile flex flex-col rounded-card p-5">
               <div className="flex items-center justify-between">

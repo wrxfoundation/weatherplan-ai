@@ -211,7 +211,7 @@ export default function Benefits() {
         </div>
       </section>
 
-      <div className="mt-4 grid gap-4 sm:grid-cols-2">
+      <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
         {/* ① 무료회원가입 혜택 */}
         <BenefitCard k="signup" icon={IcGift} tone="bg-orange-tint text-orange-text" title="무료회원가입 혜택" desc="가입만 해도 포인트를 드려요. 상담 이력과 만기 알림도 한곳에서." hl={hl === 'signup'} cardRef={(el) => { refs.current.signup = el }}>
           <div className="flex items-baseline gap-1.5">
@@ -223,7 +223,7 @@ export default function Benefits() {
             <Btn size="sm" className="h-11" onClick={claimSignup} disabled={claimed} data-t="signup-claim">
               {claimed ? <><IcCheck size={14} /> 받기 완료</> : '가입 혜택 받기 (데모)'}
             </Btn>
-            <Link to="/login" className="text-[12.5px] font-bold text-primary-text hover:underline">데모 로그인 화면 보기 →</Link>
+            <Link to="/login" className="hit text-[12.5px] font-bold text-primary-text hover:underline">데모 로그인 화면 보기 →</Link>
           </div>
           <p className="mt-2 text-[11.5px] leading-4 text-faint">실서비스에서는 카카오·이메일로 가입하는 즉시 적립돼요. 데모에서는 위 버튼으로 적립을 체험할 수 있어요.</p>
         </BenefitCard>
@@ -244,7 +244,7 @@ export default function Benefits() {
             <div className="text-[11.5px] font-semibold text-label">내 초대 코드</div>
             <div className="mt-0.5 flex flex-wrap items-center justify-between gap-2">
               <span data-t="ref-code" className="tnum text-[18px] font-extrabold tracking-wider text-ink">{code}</span>
-              <button type="button" onClick={copyLink} className="text-[12.5px] font-bold text-primary-text hover:underline">링크 복사</button>
+              <button type="button" onClick={copyLink} className="hit text-[12.5px] font-bold text-primary-text hover:underline">링크 복사</button>
             </div>
             <div className="mt-1 truncate text-[12px] text-faint">{link}</div>
           </div>
@@ -254,7 +254,7 @@ export default function Benefits() {
           </div>
           <div className="mt-3 flex flex-wrap items-center justify-between gap-2 text-[12.5px] text-label">
             <span>초대 현황 <span className="text-faint">(데모)</span> — 보낸 초대 <b className="tnum text-ink">{invites.sent}</b> · 가입한 친구 <b className="tnum text-ink">{invites.joined}</b></span>
-            <button type="button" onClick={demoJoin} className="text-[12px] font-bold text-primary-text hover:underline">친구 가입 시뮬레이션</button>
+            <button type="button" onClick={demoJoin} className="hit text-[12px] font-bold text-primary-text hover:underline">친구 가입 시뮬레이션</button>
           </div>
         </BenefitCard>
 
@@ -297,7 +297,7 @@ export default function Benefits() {
       <section data-t="benefits-events" className="mt-6 rounded-section bg-white p-5 shadow-card sm:p-7">
         <div className="flex items-center justify-between">
           <h2 className="text-[17px] font-extrabold text-ink">진행 중인 이벤트</h2>
-          <Link to="/board/event" className="text-[13px] font-bold text-primary-text hover:underline">전체 보기 →</Link>
+          <Link to="/board/event" className="hit text-[13px] font-bold text-primary-text hover:underline">전체 보기 →</Link>
         </div>
         {events.length ? (
           <ul className="mt-3 divide-y divide-line-card">

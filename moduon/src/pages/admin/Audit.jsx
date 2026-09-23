@@ -59,7 +59,7 @@ export default function AdminAudit() {
       <p className="mt-0.5 text-[12.5px] text-bmuted">정책 변경·지급·재배정 등 주요 행위는 전부 기록됩니다. 실서비스는 Supabase RLS + audit_logs 테이블.</p>
 
       {/* RBAC 롤 */}
-      <div className="mt-4 grid gap-2.5 sm:grid-cols-2 lg:grid-cols-5">
+      <div className="mt-4 grid grid-cols-1 gap-2.5 sm:grid-cols-2 lg:grid-cols-5">
         {ROLES.map((r) => (
           <Card key={r.role} track="b" className="p-4">
             <span className="rounded-md px-2 py-1 font-mono text-[11px] font-bold text-white" style={{ backgroundColor: r.color }}>{r.role}</span>
@@ -78,7 +78,7 @@ export default function AdminAudit() {
             onChange={(e) => setQ(e.target.value)}
             placeholder="행위자·대상·상세 검색…"
             aria-label="감사 로그 검색"
-            className="w-full bg-transparent text-[13px] font-semibold text-bink outline-none placeholder:text-bfaint"
+            className="h-full w-full bg-transparent text-[13px] font-semibold text-bink outline-none placeholder:text-bfaint"
           />
         </div>
         <div className="scrollbar-none flex gap-1.5 overflow-x-auto">

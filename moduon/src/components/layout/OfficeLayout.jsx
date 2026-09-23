@@ -138,7 +138,7 @@ export default function OfficeLayout() {
         <div className="m-3 rounded-card bg-brow p-4">
           <div className="text-[12px] font-bold text-bink"><IcRobot size={14} className="inline -mt-0.5 mr-1" />AI 비서 모비</div>
           <p className="mt-1 text-[11px] leading-4 text-bmuted">스크립트 작성·리드 요약을 도와드려요. 소비자몰 챗봇에서 만나보세요.</p>
-          <Link to="/" className="mt-2 inline-block text-[11px] font-bold text-primary-text">내 몰 보기 →</Link>
+          <Link to="/" className="hit mt-2 inline-block text-[11px] font-bold text-primary-text">내 몰 보기 →</Link>
         </div>
         <button onClick={() => { nav('/login') }} className="mx-3 mb-4 rounded-field border border-bline py-2 text-[12px] font-semibold text-bmuted hover:text-bink">
           역할 전환 / 로그아웃

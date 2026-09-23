@@ -121,14 +121,19 @@ export default function ChatWidget({ tenant }) {
   // 최신 클로저를 가리키도록 ref로 넘겨준다(옛 msgs로 대화가 시작되는 것 방지).
   sendRef.current = send
 
-  // 계산기 화면은 모바일 하단 고정 합계 바가 있어 FAB를 그 위로 올린다
-  const hasBottomBar = loc.pathname.startsWith('/calculator')
+  // 하단 고정 바(전환 CTA)가 있으면 FAB·티저를 그 위로 띄운다.
+  // 예전엔 '/calculator' 로 시작하는 경로만 하드코딩해서, 바가 있는 폰·자동차·알뜰폰 상세에서는
+  // FAB 가 '신청하기' 버튼을 덮었다(스크롤로도 못 피한다). 이제 [data-bottom-bar] 를 찾아 실제 높이를 잰다 —
+  // 데스크톱에서 바가 lg:hidden 이면 높이가 0 이라 저절로 기본 위치로 돌아온다.
+  const barH = useBottomBarHeight(loc.pathname)
+  const fabBottom = barH ? barH + 16 : undefined
+  const teaserBottom = barH ? barH + 16 + 66 : undefined
 
   return (
     <>
       {/* 선제 넛지 — 세션 1회, 클릭 시 챗 오픈 */}
       {nudge && !open && !engaged && (
-        <div className={`fixed right-4 z-50 flex items-center gap-2 rounded-2xl rounded-br-md border border-line-card bg-white py-2.5 pl-4 pr-2 shadow-panel animate-rise sm:right-5 ${hasBottomBar ? 'bottom-[218px] lg:bottom-[86px]' : 'bottom-[86px]'}`}>
+        <div className="fixed bottom-[86px] right-4 z-50 flex items-center gap-2 rounded-2xl rounded-br-md border border-line-card bg-white py-2.5 pl-4 pr-2 shadow-panel animate-rise sm:right-5" style={{ bottom: teaserBottom }} data-t="chat-teaser">
           <button onClick={() => { dismissNudge(); setOpen(true) }} className="text-left text-[12.5px] font-bold text-ink">
             인터넷 견적, 30초면 계산해드려요 <span className="text-primary-text">→</span>
           </button>
@@ -141,8 +146,8 @@ export default function ChatWidget({ tenant }) {
         onClick={() => { dismissNudge(); setOpen(!open) }}
         aria-label="AI 상담"
         aria-expanded={open}
-        className={`glass-fab fixed right-4 z-50 flex h-14 w-14 items-center justify-center rounded-full text-white transition-transform hover:scale-105 sm:right-5 ${hasBottomBar ? 'bottom-[152px] lg:bottom-5' : 'bottom-5'}`}
-        style={{ marginBottom: 'env(safe-area-inset-bottom)' }}
+        className="glass-fab fixed bottom-5 right-4 z-50 flex h-14 w-14 items-center justify-center rounded-full text-white transition-transform hover:scale-105 sm:right-5"
+        style={{ bottom: fabBottom, marginBottom: 'env(safe-area-inset-bottom)' }}
       >
         <span aria-hidden className="pointer-events-none absolute inset-0 rounded-full" style={{ background: 'radial-gradient(58% 42% at 34% 24%, rgba(255,255,255,0.62), rgba(255,255,255,0) 62%)' }} />
         <span className="relative z-10 flex">{open ? <CloseIcon /> : <AiStarsIcon />}</span>
@@ -293,4 +298,31 @@ function QuoteCard({ quote }) {
       <div className="mt-1 text-[11px] text-faint">약정 3년 · 설치비 무료</div>
     </div>
   )
+}
+
+// 화면에 떠 있는 하단 고정 바([data-bottom-bar])의 높이(px). 없거나 숨겨져 있으면 0.
+// 바는 페이지가 그려진 뒤 조건부로 뜨기도 해서 DOM 변화를 지켜보되, 바 요소가 바뀔 때만 다시 잰다.
+function useBottomBarHeight(pathname) {
+  const [h, setH] = useState(0)
+  useEffect(() => {
+    let bar = null
+    let ro = null
+    let raf = 0
+    const measure = () => setH(bar ? Math.round(bar.getBoundingClientRect().height) : 0)
+    const find = () => {
+      const next = document.querySelector('[data-bottom-bar]')
+      if (next === bar) return
+      ro?.disconnect()
+      bar = next
+      if (bar && typeof ResizeObserver !== 'undefined') { ro = new ResizeObserver(measure); ro.observe(bar) }
+      measure()
+    }
+    raf = requestAnimationFrame(find)
+    const mo = new MutationObserver(() => { cancelAnimationFrame(raf); raf = requestAnimationFrame(find) })
+    mo.observe(document.body, { childList: true, subtree: true })
+    const onResize = () => measure()
+    window.addEventListener('resize', onResize)
+    return () => { cancelAnimationFrame(raf); ro?.disconnect(); mo.disconnect(); window.removeEventListener('resize', onResize) }
+  }, [pathname])
+  return h
 }

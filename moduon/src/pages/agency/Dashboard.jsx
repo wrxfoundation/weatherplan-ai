@@ -80,7 +80,7 @@ function AgencyConsole({ agency, session }) {
           <KpiCard label="내 정산 총액" value={view?.root.amount ?? 0} suffix="원" accent="text-primary-text" caption={`셀러 합계 + ${label}`} />
         </div>
 
-        <div className="mt-4 grid items-start gap-4 lg:grid-cols-[3fr_2fr]">
+        <div className="mt-4 grid grid-cols-1 items-start gap-4 lg:grid-cols-[3fr_2fr]">
           <SettleDrill view={view} title={`${period} 대리점 정산 명세`} caption="금액을 누르면 소속 셀러별 내역이 펼쳐집니다" />
 
           <Card track="b" className="overflow-hidden">

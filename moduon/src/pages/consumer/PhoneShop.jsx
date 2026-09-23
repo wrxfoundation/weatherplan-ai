@@ -24,6 +24,9 @@ export default function PhoneShop() {
   const [picked, setPicked] = useState([]) // 선택 기종 id — 비어 있으면 전체
   const [storage, setStorage] = useState('')
   const [folded, setFolded] = useState({})
+  // 모바일 필터 — 접어 둔다. 예전엔 기종·용량 목록 전체(약 600px)가 첫 상품보다 위에 깔려
+  // 폰을 보려면 필터를 통째로 스크롤해 지나가야 했다. 데스크톱(lg+)은 항상 펼친 사이드바.
+  const [filterOpen, setFilterOpen] = useState(false)
   const setCur = (k) => { const n = new URLSearchParams(sp); if (k) n.set('cur', k); else n.delete('cur'); setSp(n, { replace: true }) }
 
   const byBrand = useMemo(() => PHONE_BRANDS.map((b) => ({ ...b, models: PHONE_DEVICES.filter((d) => d.brand === b.key) })), [])
@@ -60,9 +63,21 @@ export default function PhoneShop() {
         </div>
       </div>
 
-      <div className="mt-6 grid items-start gap-5 lg:grid-cols-[230px_1fr]">
+      <div className="mt-6 grid grid-cols-1 items-start gap-5 lg:grid-cols-[230px_1fr]">
         {/* ── 좌: 기종 트리 ── */}
         <aside className="rounded-card bg-white p-4 shadow-card lg:sticky lg:top-24" data-t="shop-filters">
+          <button type="button" onClick={() => setFilterOpen((v) => !v)} aria-expanded={filterOpen} aria-controls="shop-filter-body" data-t="shop-filter-toggle"
+            className="flex min-h-[40px] w-full items-center justify-between gap-3 text-left lg:hidden">
+            <span className="flex items-center gap-1.5 text-[14px] font-extrabold text-ink">
+              필터
+              {picked.length + (storage ? 1 : 0) > 0 && <span className="tnum rounded-full bg-primary px-1.5 text-[11px] font-bold leading-[18px] text-white">{picked.length + (storage ? 1 : 0)}</span>}
+            </span>
+            <span className="min-w-0 truncate text-[12.5px] font-semibold text-label">
+              {picked.length ? `${PHONE_DEVICES.find((d) => d.id === picked[0])?.short}${picked.length > 1 ? ` 외 ${picked.length - 1}` : ''}` : '전체 기종'} · {storage || '전체 용량'}
+              <span aria-hidden className="ml-1.5 inline-block text-faint">{filterOpen ? '∧' : '∨'}</span>
+            </span>
+          </button>
+          <div id="shop-filter-body" className={`${filterOpen ? 'mt-3 block' : 'hidden'} lg:mt-0 lg:block`}>
           <div className="flex items-baseline justify-between">
             <div className="text-[13.5px] font-extrabold text-ink">기종</div>
             {picked.length > 0 && <button onClick={() => setPicked([])} className="text-[11.5px] font-bold text-primary-text hover:underline">초기화</button>}
@@ -97,6 +112,7 @@ export default function PhoneShop() {
             <Pill on={storage === ''} onClick={() => setStorage('')}>전체</Pill>
             {STORAGES.map((s) => <Pill key={s} on={storage === s} onClick={() => setStorage(s)}>{s}</Pill>)}
           </div>
+          </div>
         </aside>
 
         {/* ── 우: 기종 그리드 ── */}
@@ -105,7 +121,7 @@ export default function PhoneShop() {
             <h2 className="text-[16px] font-bold text-ink">기종 <span className="tnum text-primary-text">{list.length}</span></h2>
             <span className="text-[11.5px] text-faint">{cur ? `${CUR_OPTIONS.find((c) => c.key === cur)?.label} 사용 기준` : '통신사를 고르면 번호이동·기기변경이 갈립니다'}</span>
           </div>
-          <div className="grid gap-4 sm:grid-cols-2" data-t="shop-grid">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2" data-t="shop-grid">
             {list.map(({ d, offer }) => {
               const st = storage && d.storages.some((s) => s.key === storage) ? storage : d.storages[0].key
               const qs = (o) => new URLSearchParams({ ...(cur ? { cur } : {}), storage: st, carrier: o.carrier, join: o.join }).toString()

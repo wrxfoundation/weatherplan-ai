@@ -110,7 +110,7 @@ export default function AdminPress() {
         <Card track="b" className="p-4"><div className="text-[12px] text-bmuted">{monthLabel} 자동 소재</div><div className="tnum mt-1 text-[22px] font-extrabold text-ok">{s.done.length}<span className="text-[13px]">건 완료</span></div><div className="text-[11px] text-bfaint">활성 몰 {s.active.length} · 리드 {db.leads.length}</div></Card>
       </div>
 
-      <div className="mt-4 grid items-start gap-4 lg:grid-cols-[3fr_2fr]">
+      <div className="mt-4 grid grid-cols-1 items-start gap-4 lg:grid-cols-[3fr_2fr]">
         {/* ── 좌: AI 보도자료 생성기 ── */}
         <Card track="b" className="p-5">
           <div className="flex items-center gap-1.5 text-[15.5px] font-extrabold text-bink"><AiSpark /> AI 보도자료 생성기</div>

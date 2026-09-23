@@ -30,7 +30,7 @@ export default function Support() {
       </div>
 
       {/* 연락 채널 3 */}
-      <div className="mt-5 grid gap-3 sm:grid-cols-3">
+      <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-3">
         <a href={TEL_HREF} className="glass-btn rounded-card border border-line-soft bg-white p-4 transition-colors hover:border-primary">
           <span className="flex h-9 w-9 items-center justify-center rounded-full bg-tint text-primary-text"><IcPhone size={16} /></span>
           <div className="mt-2.5 text-[14.5px] font-extrabold text-ink">전화 상담</div>
