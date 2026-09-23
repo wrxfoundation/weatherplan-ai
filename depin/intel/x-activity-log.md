@@ -3325,3 +3325,37 @@ Henry — I've sent Alessandro Borgogna a connection request after his Korea not
 서우가 커뮤니티 공지문(DYOR 링크판)을 주며 「공식 X 포스팅용 타래 스크립트」 요청. 9/15 판매 타래 원칙 그대로 국문 6칸·영문 6칸,
 가중 글자수 280 이내 확인. 전문·게시 운영·규칙 게이트·최악 해석·확인 사항은 **`depin/content/xrpl-seoul-raffle-thread-0922.md`**.
 게시 시각 안: 국문 16:00 KST(오픈 2시간 전) · 영문 22:00~23:00 KST. 발송 여부는 서우가 알려줄 때만 갱신.
+
+## Claire Chen (Trip.com Group, BD Manager · 「Looking Traffic For CPS」) — 인바운드 (9/23 20:15)
+
+**들어온 것**: 1촌 뒤 첫 메시지 — Trip.com 어필리에이트 프로그램의 **CPS(판매당 수수료) 트래픽 파트너** 모집. 첨부 「Trip.com Affiliate
+Platform User Guide 2026」 PDF. 프로필 헤드라인 자체가 「Looking Traffic For CPS」 = **대량 콜드 아웃리치**(우리를 골라 온 것이 아니다).
+서우: 「여기는 웹2라 우리 접점이 있을까」.
+
+**판정 — wellbian 접점 없음. 인사 + 데이터 쪽 문 하나만 열어 둔다.**
+
+| 축 | 판단 |
+|---|---|
+| 그가 원하는 것 | **트래픽**(예약 유도 → 수수료). 미디어·앱·커뮤니티가 파트너 |
+| wellbian 이 가진 것 | 기기·데이터. 사이트 트래픽은 작고 목적형, 커뮤니티는 여행 의도 0. 어필리에이트 링크는 **쉴링 규칙(무관 CTA·상품 링크 0)** 과 충돌 |
+| KWeather 쪽 | 소비자 앱(날씨·공기질)은 여행 인접 트래픽이 **있다** → 「주말 날씨 + 예약」류 모듈은 가능한 웹2 수익선. 단 **KWeather 디지털사업본부의 제품·광고 결정**이고 wellbian 계정으로 끌어오지 않는다(케이웨더 자산을 wellbian 대화에 섞지 않는 규칙) |
+| 역방향(데이터) | Trip.com 이 **데이터 고객**이 되는 그림(날씨·공기질 인지 여행 상품, 날씨 연동 보장·보험)은 우리 레인이지만 **어필리에이트 BD 가 그 문이 아니다**. 한 줄만 열어 두고 밀지 않는다 |
+| Max Z(9/14)와 다른 점 | Max 는 **프로그램 설계자**라 우리 커미션 구조를 묻는 값이 있었다. Claire 는 **트래픽 모집자** — 물을 것이 없다 |
+
+**규칙**: 부정형으로 선 긋는 문장 0(「못 한다」 대신 「우리가 줄 수 있는 것은 데이터」) · 거래소·다른 플랫폼 이름 0 · 토큰·보상 0 ·
+케이웨더 앱 얘기는 이 답장에 넣지 않는다(별건이면 KWeather 이름으로 따로).
+
+### 답장 (EN, 짧게)
+
+```
+Hi Claire — thanks for reaching out, and for the guide.
+
+Quick picture so you can place us: wellbian is a device-and-data network — certified air sensors people run in their own space, with the readings verified on a public ledger — rather than a media or traffic property. So what we can bring a partner is measurement data, not booking traffic.
+
+Where that might meet Trip.com is on the product side: if your team ever works on weather- or air-quality-aware travel (destination conditions, weather-linked guarantees or cover), that's our lane and I'd be glad to connect you with the right people. Until then, good luck with the program.
+
+Logan
+```
+
+발송 여부·그의 답은 서우 통보 시 갱신.
+

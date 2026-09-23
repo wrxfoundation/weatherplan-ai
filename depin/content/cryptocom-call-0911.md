@@ -106,6 +106,7 @@ MDA 미서명이다. **회사명도, 특정 가능한 업태 서술도 쓰지 �
 | 9/18 15:30 | **딥다이브 콜** — 아래 「9/18 딥다이브 콜 — 기록」 |
 | 9/18 | 답신 메일 정본 확정 — 첨부 4 + 링크 2, **Vincent 단일 수신(Kevin 미호명)**. 발송 여부는 서우 통보 시 갱신 |
 | 9/21 | Vincent 링크드인 공개 글 — **9/22~23 두바이 Forex Expo** 참가, OG.com 예측시장 인프라 홍보 → 아래 「9/21」 절 |
+| 9/23 | **MNDA 작성 완료(서우)** · 텔레그램 초대 의사 확인 링크드인 DM 발송 → 아래 「9/23」 절 |
 
 체험 계정 자격증명은 저장소에 두지 않는다.
 
@@ -427,5 +428,5 @@ Logan
 One practical thing: as this moves to the working level with your product and US teams, would you be comfortable joining a small Telegram group with the wellbian team? Day-to-day questions and scheduling go faster there; email stays for documents and anything formal. If yes, send me your Telegram handle or I'll send an invite link, and add anyone from your side you'd like in.
 ```
 
-발송 여부·그의 답은 서우 통보 시 갱신. (Gmail 커넥터는 읽기 권한 범위가 없어 스레드 확인·임시저장은 못 했다.)
+**9/23 서우 통보: 링크드인 DM 발송 완료. MNDA 작성(체결) 완료.** 그의 답(텔레그램 핸들 또는 수락)은 오면 갱신. (Gmail 커넥터는 읽기 권한 범위가 없어 스레드 확인·임시저장은 못 했다.)
 
