@@ -68,14 +68,21 @@ check(unguarded.length === 0, unguarded.length === 0
   ? `장면형 배너 이미지 ${new Set(sceneImgs).size}종 전부 빌드 가드 안에 있음`
   : `빌드 가드에 없는 장면형 이미지 ${unguarded.length}건 — ${unguarded.join(' ')} (fetch-assets 의 CRITICAL 에 넣을 것)`)
 
-// ⑥ 히어로 장면 이미지는 '위 기준'으로 붙어야 한다.
-//    object-cover 로 남는 세로 잘림을 아래에서 가져가야 인물 머리·떠 있는 오브제가 살아난다.
+// ⑥ 히어로 장면 이미지의 두 가지 붙이는 법 — 폭에 따라 다르다.
+//    데스크톱: 전면에 깔고 남는 세로 잘림을 아래에서 가져간다(object-*-top) — 인물 머리·떠 있는 오브제가 살아난다.
+//    모바일:   21:9 를 1.1:1 카드에 겹쳐 깔면 가로의 절반이 날아간다(2026-09-23 제보: 53% 잘림).
+//              그래서 겹치지 않고 원본 비율 띠(aspect-[21/9])로 통째 보여 주고 글은 아래로 내린다.
 //    (이미지가 안 뜨는 환경에서는 DOM 으로 못 읽으므로 소스에서 본다)
 const hero = readFileSync(join(root, 'src/components/HeroBanner.jsx'), 'utf8')
-const sceneImg = hero.match(/kind === 'scene' \?[\s\S]{0,800}?object-cover[^`]*`/)?.[0] ?? ''
-check(/object-(left|right)-top/.test(sceneImg), sceneImg
-  ? `장면 이미지가 위 기준(object-*-top)으로 붙음`
-  : '히어로의 장면 이미지 클래스를 찾지 못함')
+const sceneBlock = hero.match(/kind === 'scene' \?[\s\S]{0,2600}?\) : b\.kind === 'news'/)?.[0] ?? ''
+check(!!sceneBlock, sceneBlock ? '히어로 장면형 분기를 찾음' : '히어로의 장면형 분기를 찾지 못함')
+check(/object-(left|right)-top/.test(sceneBlock), '데스크톱 장면 이미지가 위 기준(object-*-top)으로 붙음')
+check(/data-t="hero-band"/.test(sceneBlock) && /aspect-\[21\/9\]/.test(sceneBlock),
+  '모바일 장면 이미지가 원본 비율 띠(aspect-[21/9])로 통째 노출')
+// 띠의 aspect 는 img 가 아니라 래퍼에 걸려야 한다 — 이미지를 못 받아오면 SafeImg 가 <img> 를 지우므로
+// img 에 걸면 띠가 0 높이로 무너지고 배너가 글만 남는다(CDN 이 죽었던 2026-09 의 재발 방지).
+check(/aspect-\[21\/9\][^>]*>[\s\S]{0,600}?<SafeImg/.test(sceneBlock),
+  '띠의 비율이 <img> 가 아니라 래퍼에 걸림(이미지 실패해도 띠 유지)')
 
 // ⑦ 아무도 안 쓰는 다운로드 = 빌드 시간 낭비 (경고만 — 예비 에셋일 수 있다)
 const unused = [...fetched].filter((f) => !refs.has(f))

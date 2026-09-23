@@ -121,7 +121,7 @@ export default function HeroBanner({ banners = [], tenant, consultTo = '/consult
       onKeyDown={onKeyDown}
     >
       <div
-        className="relative h-[320px] overflow-hidden rounded-section shadow-card touch-pan-y select-none sm:h-[400px] lg:h-[440px]"
+        className="relative h-[352px] overflow-hidden rounded-section shadow-card touch-pan-y select-none sm:h-[400px] lg:h-[440px]"
         onPointerDown={onPointerDown}
         onPointerUp={onPointerUp}
         onPointerCancel={() => { drag.current = null }}
@@ -136,6 +136,8 @@ export default function HeroBanner({ banners = [], tenant, consultTo = '/consult
             const cta = b.cta
             const chat = cta?.action === 'chat'
             const left = b.side === 'left' || b.kind === 'news'
+            // 21:9 장면만 모바일에서 '띠 + 글' 로 쌓는다. mobi(컷아웃)·news 는 object-contain 이라 잘린 적이 없다.
+            const stacked = b.kind === 'scene'
             const dark = b.tone === 'dark'
             const scrim = b.scrim ?? (dark ? '#F7F2EE' : '#3F63C7')
             return (
@@ -145,7 +147,7 @@ export default function HeroBanner({ banners = [], tenant, consultTo = '/consult
                 data-id={b.id}
                 aria-hidden={!active}
                 inert={!active}
-                className="relative h-full w-full shrink-0 overflow-hidden"
+                className="relative flex h-full w-full shrink-0 flex-col overflow-hidden sm:block"
                 style={{ background: b.bg }}
               >
                 {/* 장식 레이어 — 이미지가 없거나 못 받아왔을 때 배너가 "빈 판"으로 보이지 않게 한다.
@@ -154,7 +156,7 @@ export default function HeroBanner({ banners = [], tenant, consultTo = '/consult
                 {b.kind !== 'news' && (
                   <span
                     aria-hidden
-                    className="pointer-events-none absolute inset-0"
+                    className="pointer-events-none absolute inset-0 hidden sm:block"
                     style={{
                       background: `radial-gradient(60% 80% at ${left ? '22%' : '78%'} 62%, ${dark ? 'rgba(83,119,214,0.18)' : 'rgba(255,255,255,0.22)'} 0%, transparent 70%)`,
                     }}
@@ -162,11 +164,24 @@ export default function HeroBanner({ banners = [], tenant, consultTo = '/consult
                 )}
                 {b.kind === 'scene' ? (
                   <>
-                    <SafeImg src={b.image} aria-hidden className={`absolute inset-0 h-full w-full object-cover ${left ? 'object-left-top' : 'object-right-top'}`} loading={i === 0 ? 'eager' : 'lazy'} />
-                    {/* 텍스트 쪽 스크림 — 톤에 맞춰 잉크 글씨엔 크림, 흰 글씨엔 진파랑을 옅게.
-                        모바일은 폭이 좁아 object-cover 가 가로를 크게 잘라 피사체가 화면을 거의 덮는다.
-                        그래서 sm 미만에서는 스크림을 더 길고 진하게 깔아 글이 피사체 위에서도 읽히게 한다. */}
-                    <span aria-hidden className="absolute inset-0 sm:hidden" style={{ background: `linear-gradient(${left ? 270 : 90}deg, ${scrim} 0%, ${scrim}E6 58%, ${scrim}00 92%)` }} />
+                    {/* 모바일 — 21:9 장면을 1.1:1 카드에 겹쳐 깔면 가로의 절반이 잘린다(이미지 중앙조차 안 보인다).
+                        그래서 sm 미만에서는 겹치지 않고 원본 비율 그대로의 띠로 통째 보여 주고, 글은 아래 칸으로 내린다.
+                        aspect 는 img 가 아니라 래퍼에 건다 — 이미지를 못 받아와도 띠가 무너지지 않아야 한다. */}
+                    <div
+                      data-t="hero-band"
+                      className="relative aspect-[21/9] max-h-[152px] w-full shrink-0 overflow-hidden sm:hidden"
+                      style={{ background: b.bg }}
+                    >
+                      <span
+                        aria-hidden
+                        className="pointer-events-none absolute inset-0"
+                        style={{ background: `radial-gradient(60% 80% at ${left ? '22%' : '78%'} 62%, ${dark ? 'rgba(83,119,214,0.18)' : 'rgba(255,255,255,0.22)'} 0%, transparent 70%)` }}
+                      />
+                      <SafeImg src={b.image} aria-hidden className="absolute inset-0 h-full w-full object-cover object-center" loading={i === 0 ? 'eager' : 'lazy'} />
+                    </div>
+                    {/* 데스크톱 — 가로가 넉넉해 장면을 전면에 깔고 글을 얹는다(기존 구성 유지) */}
+                    <SafeImg src={b.image} aria-hidden className={`absolute inset-0 hidden h-full w-full object-cover sm:block ${left ? 'object-left-top' : 'object-right-top'}`} loading={i === 0 ? 'eager' : 'lazy'} />
+                    {/* 텍스트 쪽 스크림 — 톤에 맞춰 잉크 글씨엔 크림, 흰 글씨엔 진파랑을 옅게. 글이 이미지 위에 얹히는 데스크톱에만 필요하다. */}
                     <span aria-hidden className="absolute inset-0 hidden sm:block" style={{ background: `linear-gradient(${left ? 270 : 90}deg, ${scrim} 0%, ${scrim}B3 32%, ${scrim}00 58%)` }} />
                   </>
                 ) : b.kind === 'news' ? (
@@ -181,24 +196,24 @@ export default function HeroBanner({ banners = [], tenant, consultTo = '/consult
                 {/* 텍스트 컬럼 — 장면 왼쪽(55%)이 비어 있어 스크림 없이 글씨를 얹는다(tone 에 따라 흰/잉크).
                     이미지·뉴스 카드가 왼쪽이면 컬럼을 오른쪽으로 민다. 고정 높이(300/340px) 안에 들어와야 하므로
                     제목 크기·컬럼 폭·desc 노출을 sm → lg 로 단계별로 켠다 */}
-                <div className={`relative z-10 flex h-full flex-col justify-center px-6 py-6 ${dark ? 'text-ink' : 'text-white'} ${left ? 'w-full sm:ml-[46%] sm:w-[54%] sm:px-6 lg:px-10' : 'w-[78%] sm:w-[62%] sm:px-8 lg:w-[58%] lg:px-12'}`}>
+                <div data-t="hero-text" className={`relative z-10 flex min-h-0 flex-1 flex-col justify-center px-5 pb-9 pt-4 sm:h-full sm:flex-none sm:px-6 sm:pb-6 sm:pt-6 ${dark ? 'text-ink' : 'text-white'} ${stacked || left ? 'w-full' : 'w-[78%]'} ${left ? 'sm:ml-[46%] sm:w-[54%] lg:px-10' : 'sm:w-[62%] sm:px-8 lg:w-[58%] lg:px-12'}`}>
                   {b.eyebrow && <div className={`break-keep text-[12.5px] font-semibold sm:text-[14px] ${dark ? 'text-ink/70' : 'text-white/85'}`}>{b.eyebrow}</div>}
-                  <h2 className="mt-2 break-keep text-[20px] font-extrabold leading-[1.25] tracking-[-0.6px] sm:text-[28px] sm:leading-[1.3] sm:tracking-[-0.8px] lg:text-[34px] lg:tracking-[-1px]">{nl2br(b.title)}</h2>
+                  <h2 className="mt-1.5 break-keep text-[19px] font-extrabold leading-[1.28] sm:mt-2 tracking-[-0.6px] sm:text-[28px] sm:leading-[1.3] sm:tracking-[-0.8px] lg:text-[34px] lg:tracking-[-1px]">{nl2br(b.title)}</h2>
                   {b.desc && descBlock(b.desc, `mt-3 hidden break-keep text-[14.5px] leading-[24px] lg:block ${dark ? 'text-ink/75' : 'text-white/85'}`)}
-                  {b.note && <p className="mt-2 break-keep text-[12.5px] font-bold sm:mt-3 sm:text-[15px]">{b.note}</p>}
+                  {b.note && <p className="mt-2 hidden break-keep text-[12.5px] font-bold sm:mt-3 sm:block sm:text-[15px]">{b.note}</p>}
                   {cta?.label && (
                     chat && !tenant ? (
                       <button
                         type="button"
                         onClick={() => window.dispatchEvent(new CustomEvent('moduon:chat-open'))}
-                        className={`glass-btn mt-4 inline-flex h-11 w-fit shrink-0 items-center rounded-btn px-5 text-[14px] font-bold transition-colors sm:mt-5 ${dark ? 'bg-ink text-white hover:bg-body' : 'bg-white text-primary-text hover:bg-tint'}`}
+                        className={`glass-btn mt-3 inline-flex h-11 w-fit shrink-0 sm:mt-4 items-center rounded-btn px-5 text-[14px] font-bold transition-colors sm:mt-5 ${dark ? 'bg-ink text-white hover:bg-body' : 'bg-white text-primary-text hover:bg-tint'}`}
                       >
                         {cta.label}
                       </button>
                     ) : (
                       <Link
                         to={chat ? consultTo : ctaTo(cta)}
-                        className={`glass-btn mt-4 inline-flex h-11 w-fit shrink-0 items-center rounded-btn px-5 text-[14px] font-bold transition-colors sm:mt-5 ${dark ? 'bg-ink text-white hover:bg-body' : 'bg-white text-primary-text hover:bg-tint'}`}
+                        className={`glass-btn mt-3 inline-flex h-11 w-fit shrink-0 sm:mt-4 items-center rounded-btn px-5 text-[14px] font-bold transition-colors sm:mt-5 ${dark ? 'bg-ink text-white hover:bg-body' : 'bg-white text-primary-text hover:bg-tint'}`}
                       >
                         {cta.label}
                       </Link>

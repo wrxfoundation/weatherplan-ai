@@ -269,7 +269,7 @@ export function ConsumerHeader({ tenant }) {
       {/* 2행 · 본 GNB — SITE_NAV 6종 굵게 + 우측 끝 ☰(데스크톱·모바일 공통). 모바일은 가로 스크롤 */}
       {!tenant && (
         <div className="relative mx-auto flex h-[46px] max-w-6xl items-center justify-between gap-3 px-5 sm:px-10 md:h-[54px]">
-          <nav data-t="main-nav" aria-label="주요 메뉴" className="scrollbar-none flex h-full min-w-0 items-center gap-5 overflow-x-auto md:gap-8 md:overflow-visible">
+          <nav data-t="main-nav" aria-label="주요 메뉴" className="scrollbar-none flex h-full min-w-0 items-center gap-[18px] overflow-x-auto pr-3 md:gap-8 md:overflow-visible md:pr-0">
             {SITE_NAV.map((n) => (
               <NavLink key={n.key} to={n.to} onMouseEnter={() => hoverMega(n.to)} onFocus={() => hoverMega(n.to)} onClick={() => setMega(null)}
                 aria-haspopup={MEGA[n.to] ? 'true' : undefined} aria-expanded={MEGA[n.to] ? mega === n.to : undefined}
@@ -279,8 +279,9 @@ export function ConsumerHeader({ tenant }) {
               </NavLink>
             ))}
           </nav>
-          {/* 모바일은 6종이 한 화면에 안 들어간다 — 오른쪽 끝을 크림으로 녹여 스크롤 힌트를 준다 */}
-          <span aria-hidden className="pointer-events-none absolute right-[56px] top-0 h-full w-10 bg-gradient-to-l from-cream via-cream/80 to-transparent md:hidden" />
+          {/* 모바일은 6종이 한 화면에 안 들어간다 — 오른쪽 끝을 헤더 배경색으로 녹여 스크롤 힌트를 준다.
+              헤더가 bg-white/95 이므로 페이드도 흰색이어야 한다 — 크림으로 두면 베이지 네모가 얹힌 것처럼 보인다. */}
+          <span aria-hidden className="pointer-events-none absolute right-[52px] top-0 h-full w-12 bg-gradient-to-l from-white via-white/85 to-transparent md:hidden" />
           <button ref={btnRef} data-t="hamburger" onClick={() => { setOpen(!open); setMega(null) }} aria-label="전체 메뉴" aria-expanded={open} aria-controls="hamburger-panel"
             className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition-colors hover:bg-white ${open ? 'bg-white text-primary-text' : 'text-ink'}`}>
             <IcMenu size={24} />

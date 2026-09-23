@@ -286,7 +286,28 @@ const BASE = process.env.QA_BASE ?? 'http://localhost:4173'
   check((await count('[data-t="main-nav"] a')) === 6, `390: 본 GNB 링크 6개 (${await count('[data-t="main-nav"] a')})`)
   const scroll = await page.locator('[data-t="main-nav"]').evaluate((el) => ({ sw: el.scrollWidth, cw: el.clientWidth, ox: getComputedStyle(el).overflowX }))
   check(scroll.sw > scroll.cw && /auto|scroll/.test(scroll.ox), `390: 본 GNB 가로 스크롤 (${scroll.sw} > ${scroll.cw}, ${scroll.ox})`)
+  // 스크롤 힌트 페이드는 헤더 배경(흰색)과 같은 색이어야 한다 — 크림이면 베이지 네모가 얹힌 것처럼 보인다
+  const fadeFrom = await page.locator('[data-t="main-nav"] ~ span[aria-hidden]').first()
+    .evaluate((el) => getComputedStyle(el).backgroundImage).catch(() => '')
+  check(/rgba?\(255,\s*255,\s*255/.test(fadeFrom), `390: GNB 스크롤 페이드가 헤더 배경(흰색)과 같은 색 (${fadeFrom.slice(0, 60)})`)
   check((await count('[data-t="hero-banner"]')) === 1, '390: 배너 존재')
+  // 모바일 배너 — 21:9 장면을 1.1:1 카드에 겹쳐 깔면 가로의 절반이 날아간다(2026-09-23 제보: 53% 잘림).
+  // 그래서 모바일은 겹치지 않고 '이미지 띠 + 글' 로 쌓는다. 띠 비율이 원본과 같아야 잘림이 0 이다.
+  const bandBox = await page.locator('[data-t="hero-slide"][data-id="B1"] [data-t="hero-band"]').boundingBox().catch(() => null)
+  if (bandBox) {
+    const crop = Math.abs(1 - (bandBox.width / bandBox.height) / (2688 / 1152))
+    check(crop < 0.05, `390: 배너 이미지 띠가 원본 비율(21:9) — 잘림 ${(crop * 100).toFixed(1)}% < 5% (${Math.round(bandBox.width)}x${Math.round(bandBox.height)})`)
+    // 띠와 글이 겹치면 다시 오버레이로 돌아간 것이다
+    const txtBox = await page.locator('[data-t="hero-slide"][data-id="B1"] [data-t="hero-text"]').boundingBox().catch(() => null)
+    check(!!txtBox && txtBox.y >= bandBox.y + bandBox.height - 1, `390: 글이 이미지 띠 아래로 내려옴(겹침 없음) (띠 ${Math.round(bandBox.y + bandBox.height)} ≤ 글 ${Math.round(txtBox?.y ?? -1)})`)
+  } else check(false, '390: 배너 이미지 띠를 찾지 못함')
+  // 카드 높이가 내용보다 작으면 CTA·제목이 잘린다 — 슬라이드 4장 모두 내용이 카드 안에 들어와야 한다
+  const fits = await page.locator('[data-t="hero-slide"]').evaluateAll((sls) => sls.map((sl) => {
+    const t = sl.querySelector('[data-t="hero-text"]')
+    if (!t) return true
+    return t.scrollHeight <= t.clientHeight + 1
+  }))
+  check(fits.every(Boolean), `390: 배너 글 칸이 안 잘림 (${fits.map((f) => (f ? 'o' : 'x')).join('')})`)
   // 배너 CTA 가 31px 로 찌그러지던 회귀 — 슬라이드 4장의 CTA(button/a) 높이 전부 ≥ 40
   const ctaH = await page.locator('[data-t="hero-slide"] :is(button, a)').evaluateAll((els) => els.map((e) => Math.round(e.getBoundingClientRect().height)))
   check(ctaH.length === 4 && ctaH.every((h) => h >= 40), `390: 배너 CTA 4개 높이 ≥ 40 (${ctaH.join('/')})`)
