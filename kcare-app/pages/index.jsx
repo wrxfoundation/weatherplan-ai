@@ -26,7 +26,7 @@ const T = {
     sosChip: (d) => (d ? "SOS · 급파 중" : "SOS 진행 중"),
     visitChip: "동행 중 (체크인)",
     npsChip: "NPS 회복 콜 대기",
-    roles: [["/service", "서비스 소개 (대외)"], ["/family", "가족 앱"], ["/elder", "어르신 화면"], ["/concierge-onboarding", "컨시어지 등록"], ["/concierge", "컨시어지"], ["/dispatch", "관제 콘솔"], ["/admin", "경영 콘솔"], ["/care-profile", "케어 프로필"]],
+    roles: [["/service", "서비스 소개 (대외)"], ["/family", "가족 앱"], ["/elder", "어르신 화면"], ["/concierge-onboarding", "컨시어지 등록"], ["/concierge", "컨시어지"], ["/sales", "영업자"], ["/dispatch", "관제 콘솔"], ["/admin", "경영 콘솔"], ["/care-profile", "케어 프로필"]],
     steps: [
       { n: "01", role: "어르신", href: "/elder", text: "즉시 방문 요청 · 오늘 나는(어제 비교) · 복약 진행바 — SOS 는 바탕화면 바로가기로" },
       { n: "02", role: "보호자", href: "/family", text: "시연 컨트롤로 SOS 발생 → 배너 확인 · NPS 4점 제출 (회복 플로우)" },
@@ -52,7 +52,7 @@ const T = {
     sosChip: (d) => (d ? "SOS · dispatching" : "SOS active"),
     visitChip: "Visit in progress",
     npsChip: "NPS recovery call queued",
-    roles: [["/service", "Service site"], ["/family", "Family app"], ["/elder", "Elder screen"], ["/concierge-onboarding", "Concierge signup"], ["/concierge", "Concierge"], ["/dispatch", "Dispatch console"], ["/admin", "Executive console"], ["/care-profile", "Care profile"]],
+    roles: [["/service", "Service site"], ["/family", "Family app"], ["/elder", "Elder screen"], ["/concierge-onboarding", "Concierge signup"], ["/concierge", "Concierge"], ["/sales", "Sales rep"], ["/dispatch", "Dispatch console"], ["/admin", "Executive console"], ["/care-profile", "Care profile"]],
     steps: [
       { n: "01", role: "Elder", href: "/elder", text: "Immediate visit request · today-vs-yesterday · medication progress — SOS lives on the home-screen shortcut" },
       { n: "02", role: "Family", href: "/family", text: "Trigger SOS from demo controls → banner · submit NPS 4 (recovery flow)" },

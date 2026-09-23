@@ -1,6 +1,6 @@
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Card, SectionLabel, PrimaryButton, GhostButton, Badge } from "../components/ui";
 import Icon from "../components/icons";
 import { PRICING, HOUSEHOLD, BASE_BENEFITS, HOSPITAL_BENEFITS, CARE_LOCATIONS, PAYMENT_MODES, fmtWon } from "../lib/config";
@@ -12,6 +12,7 @@ const HOUSEHOLDS = [
 ];
 import { TIER1_DISTRICTS, TIER2_DISTRICTS, SCREENING_ITEMS, screenRegion } from "../lib/region";
 import { CORE, CORE_NOTE, TRACKS, STEP_LABELS, trackOf } from "../lib/tracks";
+import { SALES_REP, isRepCode } from "../lib/sales";
 import { useAppState } from "../lib/state";
 
 // 온보딩 — REQ-05 상품 · REQ-07 결제권한 · REQ-15 이용적합성 심사
@@ -39,6 +40,7 @@ export default function Onboarding() {
     phone: "", // 연락처 — 배정 상담·대기 안내에 필수
     address: "", // 신청자(고객) 주소 — 2026-09-11 실무진 결정 5번
     elderPhone: "", // 어르신 전화번호 — 2026-09-11 실무진 결정 5번 (대신 신청일 때)
+    salesRef: "", // 추천 영업자 코드 — 영업자 링크(?ref=S-0012)로 들어오면 채워진다 (2026-09-23)
     elderName: "",
     household: "single", // 가구 구성 — 한 분 / 부부 (정기 케어만 · 월 구독료가 갈린다)
     district: null,
@@ -50,6 +52,14 @@ export default function Onboarding() {
   });
   const [waitlisted, setWaitlisted] = useState(false);
   const set = (patch) => setForm((f) => ({ ...f, ...patch }));
+  // 영업자 링크(/onboarding?ref=S-0012)로 들어오면 추천 코드를 미리 채운다
+  useEffect(() => {
+    const ref = router.query.ref;
+    if (typeof ref === "string" && isRepCode(ref)) setForm((f) => ({ ...f, salesRef: ref.trim().toUpperCase() }));
+  }, [router.query.ref]);
+  const salesRef = isRepCode(form.salesRef) ? form.salesRef.trim().toUpperCase() : null;
+  // 데모 영업자는 한 명이다 — 코드가 맞으면 이름을 보여 주고, 모르는 코드는 코드만 남긴다
+  const salesRefLabel = salesRef ? (salesRef === SALES_REP.code ? `${SALES_REP.name} (${salesRef})` : salesRef) : null;
 
   const track = form.track ? trackOf(form.track) : null;
   // 트랙을 고르기 전에도 진행 막대를 그려야 해서 기본 흐름을 빌려 쓴다
@@ -98,6 +108,7 @@ export default function Onboarding() {
         paymentMode: form.paymentMode,
         limitAmount: form.limitAmount,
         videoConsent: form.videoConsent,
+        salesRef, // 추천 영업자 — 영업자 화면 '내가 모집한 고객'이 이 값을 본다
         joinedAt: Date.now(),
       },
     });
@@ -105,7 +116,7 @@ export default function Onboarding() {
       type: "pushEvent",
       payload: {
         kind: "가입",
-        text: `신규 접수 — ${track?.short} · ${form.elderName || (track?.needsRelation ? "김순자" : "본인")} (${form.district})`,
+        text: `신규 접수 — ${track?.short} · ${form.elderName || (track?.needsRelation ? "김순자" : "본인")} (${form.district})${salesRef ? ` · 추천 ${salesRef}` : ""}`,
         color: "#8FE3C0",
       },
     });
@@ -145,6 +156,15 @@ export default function Onboarding() {
               <p className="text-[13px] leading-[1.7] text-muted">
                 고르신 것에 따라 이후 화면과 요금이 달라집니다. 나중에 바꾸실 수 있습니다.
               </p>
+              {/* 영업자 링크로 들어온 경우 — 누가 안내했는지 고객도 볼 수 있게 한다 */}
+              {salesRefLabel && (
+                <div className="flex items-center gap-2 rounded-xl border border-gold/40 bg-[#FBF6EC] px-3.5 py-2.5">
+                  <Icon name="user" size={16} />
+                  <span className="text-[13px] text-ink">
+                    안내 영업자 <b className="text-navy">{salesRefLabel}</b>
+                  </span>
+                </div>
+              )}
 
               {/* 간편가입 — 카카오 · 네이버 (2026-09-04 시트 앱 전체 4번).
                   데모는 '연결됨'까지만 — 실제 로그인은 카카오 디벨로퍼스·네이버 개발자센터에
@@ -466,6 +486,25 @@ export default function Onboarding() {
                     </p>
                   </div>
                 )}
+                {/* 영업자 추천 코드 (선택) — 영업자 링크로 들어오면 이미 채워져 있다 (2026-09-23).
+                    이 코드로 들어온 신청은 영업자 화면(/sales) '내가 모집한 고객'에 잡힌다. */}
+                <div className="mt-5">
+                  <label htmlFor="ob-sales-ref" className="text-[12px] font-bold uppercase tracking-[.14em] text-muted/90">
+                    추천 영업자 코드 (선택)
+                  </label>
+                  <input
+                    id="ob-sales-ref"
+                    value={form.salesRef}
+                    onChange={(e) => set({ salesRef: e.target.value.toUpperCase() })}
+                    placeholder="예: S-0012 · 없으면 비워 두세요"
+                    className="mt-2 w-full rounded-xl border border-navy/15 bg-white px-3.5 py-3 font-num text-[16px] outline-none focus:border-gold"
+                  />
+                  {form.salesRef.trim() && !isRepCode(form.salesRef) && (
+                    <p className="mt-1.5 text-[12px] font-bold leading-[1.6] text-amber">
+                      코드 형식은 S-0000 입니다. 받으신 코드를 다시 확인해 주세요.
+                    </p>
+                  )}
+                </div>
               </Card>
 
               <div className="flex gap-2">
@@ -894,6 +933,7 @@ export default function Onboarding() {
                         ]
                       : ["요금", "상담 후 확정 (아직 청구 없음)"],
                     ["방문기록 영상", form.videoConsent ? "동의" : "미동의 (언제든 변경 가능)"],
+                    ...(salesRefLabel ? [["추천 영업자", salesRefLabel]] : []),
                   ].map(([k, v]) => (
                     <div
                       key={k}

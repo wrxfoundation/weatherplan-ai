@@ -10,7 +10,9 @@ export const PRICING = {
   subscription: { monthly: 55000, term: 12, confirmed: true }, // 1인 월 구독료 · 최소 약정 12개월
   paymentLimitDefault: 50000, // 권장 기본값: 5만원 이하 사용자 직접 결제
 
-  // 유통 경로별 수당 — 회사 실입금이 갈린다
+  // 유통 경로별 수당 — 회사 실입금이 갈린다 (2026-08-01 회의 가정치).
+  // 2026-09-23 이성준 님: 직판으로 결정, 수수료 제도는 별도 문서로 전달 예정 → lib/sales.js SALES_COMMISSION.
+  // 아래 35% 는 가정치라 영업자 화면 수당 계산에 쓰지 않는다.
   channel: {
     ddm: { commission: 0.6, note: "대리점망 경유 — 수당 60% · 회사 40%" },
     direct: { commission: 0.35, note: "직판 — 구독 · 매칭 보너스 포함 35%" },

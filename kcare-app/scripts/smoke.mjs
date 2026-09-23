@@ -29,6 +29,8 @@ const ROUTES = [
   "/family", "/family/calendar", "/family/requests", "/family/my",
   "/family/store", "/family/watch", "/family/hospitals",
   "/concierge", "/concierge-onboarding", "/safety-check", "/dispatch", "/admin",
+  // 영업자 (회원 유치) — 2026-09-23 신설. 보호자·어르신처럼 별도 역할 화면이다.
+  "/sales",
   // 리포트 3종은 고객에게 나가는 문서다 — 화면보다 오히려 더 봐야 한다.
   // 그동안 verify 만 돌고 있어서 본문 리포트의 회귀를 못 잡았다.
   "/report/verify", "/report/care", "/report/visit", "/report/exec",
