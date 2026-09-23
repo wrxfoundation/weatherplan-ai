@@ -13,6 +13,10 @@
 //                        져서 무력화돼 있었다 → 그 @supports 블록을 강제로 켠 상태에서 전 입력이 16px 이상인지 본다
 //  ⑧ FAB ↔ 하단 바     — 하단 고정 바가 있는 페이지에서 챗 FAB 가 바(전환 버튼)를 덮지 않는다
 //  ⑨ alt 없는 img 0
+//  ⑩ 이미지 부분 잘림 0 — overflow:hidden 카드가 이미지를 일부만 보여 주면 안 된다(완전히 안/밖은 괜찮다).
+//                        혜택 배너 선물상자가 카드 모서리 밖에 걸쳐 위쪽 코인이 잘렸다(2026-09-23 두 번째 이미지 잘림 신고).
+//                        의도된 걸침은 data-bleed 로 표시한다. 이 컨테이너는 CDN 이 막혀 이미지가 안 뜨므로,
+//                        없는 /assets 요청은 1x1 자리표시로 채워 CSS 크기대로 박스가 생기게 한 뒤 잰다.
 let pw
 try { pw = require('/opt/node22/lib/node_modules/playwright') } catch { pw = require('playwright') }
 const BASE = process.env.QA_BASE ?? 'http://localhost:4173'
@@ -45,6 +49,9 @@ const ROUTES = [
   ['/admin/press', 'admin'], ['/admin/audit', 'admin'], ['/admin/banners', 'admin'], ['/admin/boards', 'admin'],
   ['/admin/complaints', 'admin'], ['/admin/benefits', 'admin'], ['/admin/org', 'admin'],
 ]
+// ONLY=/benefits 처럼 일부 라우트만 — 원인 좁힐 때
+const ONLY_RE = process.env.ONLY ? new RegExp(process.env.ONLY) : null
+const PNG_1x1 = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=', 'base64')
 const NOISE = /Failed to load resource|net::ERR|cloudfront|fonts\.(googleapis|gstatic)|cdn\.jsdelivr|favicon/i
 
 // 페이지 안에서 도는 검사 — 결과는 사람이 읽을 수 있는 문자열 목록
@@ -60,7 +67,7 @@ function inPage(mobile) {
     const x = (el.innerText || el.getAttribute('aria-label') || el.getAttribute('placeholder') || '').trim().replace(/\s+/g, ' ').slice(0, 22)
     return `${el.tagName.toLowerCase()}${x ? `「${x}」` : ''}`
   }
-  const out = { overflow: 0, overflowers: [], h1: 0, noName: [], small: [], zoom: [], imgNoAlt: 0, fabOverBar: '' }
+  const out = { overflow: 0, overflowers: [], h1: 0, noName: [], small: [], zoom: [], imgNoAlt: 0, fabOverBar: '', clipped: [] }
   // ① 가로 넘침 — 조상이 가로를 자르지 않는 말단 원인까지
   out.overflow = document.documentElement.scrollWidth - W
   if (out.overflow > 1) {
@@ -121,6 +128,23 @@ function inPage(mobile) {
   }
   // ⑨ alt
   out.imgNoAlt = document.querySelectorAll('img:not([alt])').length
+  // ⑩ 이미지 부분 잘림 — 가장 가까운 '잘라내는' 조상(overflow hidden/clip)과 겹치되 다 들어가지 못한 이미지.
+  //    스크롤 컨테이너(auto/scroll)의 가장자리 걸침은 스크롤로 보이므로 정상, 캐러셀의 다른 장처럼 완전히 밖이면 안 보이므로 제외.
+  for (const img of document.querySelectorAll('img')) {
+    if (!vis(img) || img.closest('[data-bleed]')) continue
+    const r = img.getBoundingClientRect()
+    for (let a = img.parentElement; a && a !== document.body; a = a.parentElement) {
+      const cs = getComputedStyle(a)
+      if (cs.overflowX === 'visible' && cs.overflowY === 'visible') continue
+      if (/auto|scroll/.test(cs.overflowX + cs.overflowY)) break
+      const c = a.getBoundingClientRect()
+      if (r.right <= c.left || r.left >= c.right || r.bottom <= c.top || r.top >= c.bottom) break
+      const cut = { 위: c.top - r.top, 오른쪽: r.right - c.right, 아래: r.bottom - c.bottom, 왼쪽: c.left - r.left }
+      const over = Object.entries(cut).filter(([, v]) => v > 2)
+      if (over.length) out.clipped.push(`${(img.getAttribute('src') || '').split('/').pop()} ${over.map(([k, v]) => `${k} ${Math.round(v)}px`).join('·')}`)
+      break
+    }
+  }
   return out
 }
 
@@ -135,13 +159,21 @@ function inPage(mobile) {
   ]
   for (const [vp, opt, mode] of PASSES) {
     const ctx = await browser.newContext({ ...opt, deviceScaleFactor: 1 })
+    // 로컬에 없는 에셋(CDN 에서 받아 오는 것)은 자리표시로 — 이미지가 실제처럼 CSS 크기로 자리 잡게
+    await ctx.route(/\/assets\/.+\.(png|webp|jpe?g)(\?.*)?$/, async (route) => {
+      const res = await route.fetch().catch(() => null)
+      // preview 서버는 없는 파일에도 SPA 폴백(index.html)을 200 으로 준다 — 상태 코드가 아니라 내용 형식으로 판단한다.
+      // (처음엔 res.ok() 로 봤다가, HTML 을 이미지로 넘겨 로드 실패 → 숨김 → 검사에서 빠져 옛 버그를 못 잡았다)
+      if (res && res.ok() && /^image\//.test(res.headers()['content-type'] ?? '')) return route.fulfill({ response: res })
+      return route.fulfill({ status: 200, contentType: 'image/png', body: PNG_1x1 })
+    })
     const page = await ctx.newPage()
     let errs = []
     page.on('pageerror', (e) => errs.push(String(e).slice(0, 140)))
     page.on('console', (m) => { if (m.type() === 'error' && !NOISE.test(m.text())) errs.push(m.text().slice(0, 140)) })
     await page.goto(BASE + '/login', { waitUntil: 'domcontentloaded' })
     await page.evaluate(() => { try { localStorage.clear(); sessionStorage.clear() } catch {} })
-    for (const [path, sk] of ROUTES) {
+    for (const [path, sk] of ROUTES.filter(([p]) => !ONLY_RE || ONLY_RE.test(p))) {
       errs = []
       await page.evaluate((s) => { try { s ? localStorage.setItem('moduon_session_v1', JSON.stringify(s)) : localStorage.removeItem('moduon_session_v1') } catch {} }, S[sk])
       await page.goto(BASE + path, { waitUntil: 'load', timeout: 20000 }).catch(() => {})
@@ -159,6 +191,7 @@ function inPage(mobile) {
       if (r.zoom.length) bad(vp, path, `iOS 확대 유발 입력 ${r.zoom.length}: ${r.zoom.slice(0, 2).join(', ')}`)
       if (r.fabOverBar) bad(vp, path, r.fabOverBar)
       if (r.imgNoAlt) bad(vp, path, `alt 없는 img ${r.imgNoAlt}`)
+      if (r.clipped.length) bad(vp, path, `이미지 부분 잘림 ${r.clipped.length}: ${r.clipped.slice(0, 3).join(' | ')}`)
     }
     await ctx.close()
   }

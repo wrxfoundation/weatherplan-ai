@@ -198,7 +198,7 @@ function FloatingPreview({ f }) {
                     <span className="inline-flex rounded-full bg-white px-2 py-0.5 text-[9.5px] font-bold text-primary-text shadow-card">모비 24시간 무료상담</span>
                     <span className="inline-flex rounded-full bg-white px-2 py-0.5 text-[9.5px] font-bold text-primary-text shadow-card">전화 {HQ_HOURS_SHORT}</span>
                   </span>
-          {!imgErr && <img src="/assets/mobi-agent.png" alt="" onError={() => setImgErr(true)} className="pointer-events-none absolute -right-1 bottom-0 h-[84px] w-auto object-contain object-bottom" loading="lazy" />}
+          {!imgErr && <img src="/assets/mobi-agent.png" alt="" onError={() => setImgErr(true)} className="pointer-events-none absolute bottom-0 right-0 h-[84px] w-auto object-contain object-bottom" loading="lazy" />}
         </div>
       </div>
     </div>

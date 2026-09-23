@@ -171,9 +171,8 @@ export default function Benefits() {
   return (
     <main className="mx-auto max-w-5xl px-5 pb-16 sm:px-10">
       {/* 허브 히어로 */}
-      <section data-t="benefits-hero" className="relative mt-6 overflow-hidden rounded-section p-6 text-white sm:p-9" style={{ background: 'linear-gradient(135deg,#2F6BFF 0%,#4F8BFF 100%)' }}>
-        <img src="/assets/tile-benefit.png" alt="" aria-hidden className="pointer-events-none absolute -right-4 -top-4 hidden h-40 w-40 object-contain opacity-90 animate-floaty sm:block" onError={hideImg} />
-        <div className="relative">
+      <section data-t="benefits-hero" className="relative mt-6 flex items-center gap-6 overflow-hidden rounded-section p-6 text-white sm:p-9" style={{ background: 'linear-gradient(135deg,#2F6BFF 0%,#4F8BFF 100%)' }}>
+        <div className="relative min-w-0 flex-1">
           <div className="text-[12.5px] font-bold text-white/80">MODUON BENEFIT</div>
           <h1 className="mt-1 text-[26px] font-extrabold tracking-[-0.5px] sm:text-[32px]">모두온혜택</h1>
           <p className="mt-2 max-w-xl text-[14px] leading-[22px] text-white/90">가입만 해도, 친구를 불러도, 광고 한 편만 봐도 포인트가 쌓여요. 쌓인 포인트는 멤버십몰이 열리면 바로 쓸 수 있어요.</p>
@@ -183,6 +182,10 @@ export default function Benefits() {
             ))}
           </div>
         </div>
+        {/* 선물상자 — 예전엔 카드 모서리 밖(-right-4 -top-4)에 걸쳐 두어 overflow-hidden 에 위쪽 코인이 잘렸고
+            (떠오르는 애니메이션까지 더해 최대 25px), 모서리에 박혀 오른쪽 절반이 비어 보였다.
+            이제 글과 나란히 카드 안 오른쪽 세로 가운데 — 떠오르는 9px 도 패딩(36px) 안에서 논다. 글과 겹치지 않도록 md 부터 보인다. */}
+        <img src="/assets/tile-benefit.png" alt="" aria-hidden data-t="benefits-hero-img" className="pointer-events-none hidden h-40 w-40 shrink-0 object-contain opacity-90 animate-floaty md:block lg:mr-2 lg:h-48 lg:w-48" onError={hideImg} />
       </section>
 
       {/* 내 포인트 */}
