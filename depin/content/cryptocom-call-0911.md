@@ -397,3 +397,35 @@ Crypto.com 과 OG.com 에 초기 지분 — 가격은 **Citadel Securities 의 C
   끌어오지 않는다. OG.com 도 **그가 먼저 꺼내기 전까지** 우리가 쓰지 않는다.
 - **두바이 DM 0** — 그 CTA 는 현지 브로커·프롭펌용이다. Henry·Alessandro 의 UAE 축과 **연결하지 않는다**(층이 다르다).
 - 케이스 스터디(삼성 보험 날씨보험)·예보사업자 등록증·Earth-2 자료는 첨부 그대로 — 「not free at all」에 대한 답이 그 첨부다.
+
+## 9/23 — 텔레그램 초대 의사 확인 (초안, 미발송)
+
+서우: 「빈센트에게 업무상 협력·소통을 위해 웰비안팀과 얘기하는 텔레그램에 초대해도 되냐 물어봐줘」.
+
+**판정 — 링크드인 DM 으로, 메일 스레드는 건드리지 않는다.** 9/18 자료 메일에 대한 답이 아직 없고(9/21 판정: 답은 두바이 뒤 9/24 이후 전제 ·
+재촉 0), 같은 스레드에 이틀 만에 한 통을 더 얹으면 **재촉으로 읽힌다.** 텔레그램 초대는 자료 답과 무관한 실무 제안이라 **별도 채널(링크드인 DM,
+관계가 시작된 곳)** 이 맞다. 그가 먼저 답하면 그 답장 끝에 한 줄로 붙이는 것이 두 번째 선택.
+
+**지킨 것**: 다른 거래소·플랫폼 이름 0(Robinhood·OG.com) · Kevin 호명 0 · MNDA·미팅 사실 언급 0 · 우리 쪽 인원 이름 0(「주체를 특정하지
+않는다」) · 「no rush」는 긍정형(두바이를 안다는 것 + 돌아오면) · CTA 는 「핸들 주거나 초대 링크」 하나. 초대 링크(`t.me/+…`)는 저장소에 두지 않는다.
+
+### 링크드인 DM (권장)
+
+```
+Hi Vincent — hope Dubai went well.
+
+Quick one, no rush until you're back: as this moves to the working level with your product and US teams (questions, materials, scheduling), would you be comfortable joining a small Telegram group with the wellbian team? Day-to-day goes faster there, and email stays for documents and anything formal.
+
+If that works, send me your Telegram handle or I'll pass you an invite link — and add anyone from your side you'd like in.
+
+Logan
+```
+
+### 메일 판 (그가 먼저 답해 스레드가 살아났을 때, 답장 끝에)
+
+```
+One practical thing: as this moves to the working level with your product and US teams, would you be comfortable joining a small Telegram group with the wellbian team? Day-to-day questions and scheduling go faster there; email stays for documents and anything formal. If yes, send me your Telegram handle or I'll send an invite link, and add anyone from your side you'd like in.
+```
+
+발송 여부·그의 답은 서우 통보 시 갱신. (Gmail 커넥터는 읽기 권한 범위가 없어 스레드 확인·임시저장은 못 했다.)
+
