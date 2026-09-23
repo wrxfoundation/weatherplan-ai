@@ -1,4 +1,6 @@
-// 스모크 — 전 라우트 UX 기계 검사 (모바일 390 터치 · 데스크톱 1440)
+// 스모크 — 전 라우트 UX 기계 검사 (모바일 360 터치 · 좁은 폰 320 · 데스크톱 1440)
+// 폭을 고른 이유: 안드로이드 표준이 360, 갤럭시 폴드 커버·화면 확대 설정이 320~344 까지 내려간다.
+// 2026-09-23 에 390(아이폰)만 봤다가, 인터넷 페이지가 폴드 커버(344)에서 옆으로 밀리는 걸 사용자가 먼저 찾았다.
 // 사람이 페이지마다 확인하던 걸 매 커밋 자동으로 본다. 2026-09-23 전수 점검에서 실제로 나온 것들만 담았다.
 //
 //  ① 가로 넘침 0      — 그리드 아이템 min-width:auto 가 표(420px)·긴 단어에 부풀어 페이지가 옆으로 밀렸다(3곳)
@@ -62,7 +64,8 @@ function inPage(mobile) {
   // ① 가로 넘침 — 조상이 가로를 자르지 않는 말단 원인까지
   out.overflow = document.documentElement.scrollWidth - W
   if (out.overflow > 1) {
-    const over = (el) => { const r = el.getBoundingClientRect(); return r.width > 0 && (r.right > W + 1 || r.left < -1) && getComputedStyle(el).position !== 'fixed' }
+    const inFixed = (el) => { for (let a = el; a && a !== document.body; a = a.parentElement) if (getComputedStyle(a).position === 'fixed') return true; return false }
+    const over = (el) => { const r = el.getBoundingClientRect(); return r.width > 0 && (r.right > W + 1 || r.left < -1) && !inFixed(el) }
     for (const el of document.querySelectorAll('body *')) {
       if (!over(el) || [...el.children].some(over)) continue
       let clipped = false
@@ -125,7 +128,12 @@ function inPage(mobile) {
   const browser = await pw.chromium.launch()
   let fail = 0, checked = 0
   const bad = (vp, path, msg) => { fail++; console.log(`FAIL  ${vp} ${path}  ${msg}`) }
-  for (const [vp, opt] of [['390', { viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true }], ['1440', { viewport: { width: 1440, height: 900 } }]]) {
+  const PASSES = [
+    ['360', { viewport: { width: 360, height: 800 }, isMobile: true, hasTouch: true }, 'full'],
+    ['320', { viewport: { width: 320, height: 720 }, isMobile: true, hasTouch: true }, 'overflow'], // 넘침·에러만(나머지는 폭과 무관)
+    ['1440', { viewport: { width: 1440, height: 900 } }, 'full'],
+  ]
+  for (const [vp, opt, mode] of PASSES) {
     const ctx = await browser.newContext({ ...opt, deviceScaleFactor: 1 })
     const page = await ctx.newPage()
     let errs = []
@@ -138,12 +146,13 @@ function inPage(mobile) {
       await page.evaluate((s) => { try { s ? localStorage.setItem('moduon_session_v1', JSON.stringify(s)) : localStorage.removeItem('moduon_session_v1') } catch {} }, S[sk])
       await page.goto(BASE + path, { waitUntil: 'load', timeout: 20000 }).catch(() => {})
       await page.waitForTimeout(450)
-      const r = await page.evaluate(inPage, vp === '390')
+      const r = await page.evaluate(inPage, vp !== '1440')
       checked++
       const final = new URL(page.url()).pathname
       if (final !== path) bad(vp, path, `리다이렉트 → ${final}`)
       if (r.overflow > 1) bad(vp, path, `가로 넘침 +${r.overflow}px ← ${r.overflowers.join(' | ')}`)
       if (errs.length) bad(vp, path, `에러 ${errs.length}: ${errs[0]}`)
+      if (mode === 'overflow') continue
       if (r.h1 !== 1) bad(vp, path, `h1 ${r.h1}개 (1개여야 함)`)
       if (r.noName.length) bad(vp, path, `이름 없는 컨트롤: ${r.noName.join(', ')}`)
       if (r.small.length) bad(vp, path, `24px 미만 터치 타깃 ${r.small.length}: ${r.small.slice(0, 3).join(', ')}`)
@@ -154,7 +163,7 @@ function inPage(mobile) {
     await ctx.close()
   }
   await browser.close()
-  console.log(`\n${checked}페이지 (${ROUTES.length} 라우트 × 390·1440) 점검`)
+  console.log(`\n${checked}페이지 (${ROUTES.length} 라우트 × 360·320·1440) 점검`)
   console.log(fail === 0 ? 'SMOKE: ALL PASS' : `SMOKE: ${fail} FAIL`)
   process.exit(fail === 0 ? 0 : 1)
 })()

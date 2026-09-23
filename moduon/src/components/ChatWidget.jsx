@@ -236,7 +236,7 @@ export default function ChatWidget({ tenant }) {
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && send()}
                 placeholder="궁금한 서비스를 물어보세요"
-                className="h-11 flex-1 rounded-full border border-white/70 bg-white/70 px-4 text-[13.5px] placeholder:text-disabled focus:border-primary"
+                className="h-11 min-w-0 flex-1 rounded-full border border-white/70 bg-white/70 px-4 text-[13.5px] placeholder:text-disabled focus:border-primary"
               />
               <button onClick={() => send()} disabled={busy} className="glass-btn-cta flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-primary text-white transition-colors hover:bg-primary-hover disabled:opacity-40" aria-label="전송">
                 <SendIcon />

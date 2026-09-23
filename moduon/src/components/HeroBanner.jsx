@@ -48,6 +48,15 @@ function NewsCard({ news = {} }) {
 // 배너 CTA 가 가리키는 카테고리(/cars → car, /category/:slug → slug). 상담·혜택 링크는 undefined
 const ctaCat = (to = '') => (to.startsWith('/cars') ? 'car' : to.match(/^\/category\/([\w-]+)/)?.[1])
 
+// 모바일 이미지 띠 → 글 칸 페이드 마스크. 위쪽 42% 는 거의 손대지 않고 아래로 갈수록 빨리 덮는다(이징 곡선).
+const FADE_DOWN = 'linear-gradient(to bottom, transparent 0%, rgba(0,0,0,.10) 24%, rgba(0,0,0,.38) 48%, rgba(0,0,0,.72) 72%, #000 100%)'
+
+// 데스크톱 글 쪽 색막 — 단색 구간 없이 72% 까지 부드럽게 옅어진다. 글 끝(≈58%)에서도 ~20% 가 남아 가독성은 예전 이상.
+// 알파는 16진 2자리(F0=94%, C7=78%, 85=52%, 3D=24%, 12=7%)
+function scrimGradient(color, deg) {
+  return `linear-gradient(${deg}deg, ${color} 0%, ${color}F0 18%, ${color}C7 32%, ${color}85 44%, ${color}3D 55%, ${color}12 64%, ${color}00 72%)`
+}
+
 export default function HeroBanner({ banners = [], tenant, consultTo = '/consult' }) {
   // 파트너몰은 취급하지 않는 카테고리의 배너를 뺀다(아이콘 행과 같은 기준) — 본진 /cars 등으로 새지 않게
   const items = banners
@@ -178,11 +187,19 @@ export default function HeroBanner({ banners = [], tenant, consultTo = '/consult
                         style={{ background: `radial-gradient(60% 80% at ${left ? '22%' : '78%'} 62%, ${dark ? 'rgba(83,119,214,0.18)' : 'rgba(255,255,255,0.22)'} 0%, transparent 70%)` }}
                       />
                       <SafeImg src={b.image} aria-hidden className="absolute inset-0 h-full w-full object-cover object-center" loading={i === 0 ? 'eager' : 'lazy'} />
+                      {/* 띠 아래쪽을 글 칸 배경(b.bg)으로 녹인다 — 이미지와 색 칸이 가로선 하나로 딱 잘려 이질감이 든다는 피드백.
+                          같은 배경을 세로 마스크로 서서히 드러내므로 배너마다 색이 달라도 경계가 저절로 맞는다. */}
+                      <span
+                        aria-hidden
+                        data-t="hero-band-fade"
+                        className="pointer-events-none absolute inset-x-0 bottom-0 h-[58%]"
+                        style={{ background: b.bg, WebkitMaskImage: FADE_DOWN, maskImage: FADE_DOWN }}
+                      />
                     </div>
                     {/* 데스크톱 — 가로가 넉넉해 장면을 전면에 깔고 글을 얹는다(기존 구성 유지) */}
                     <SafeImg src={b.image} aria-hidden className={`absolute inset-0 hidden h-full w-full object-cover sm:block ${left ? 'object-left-top' : 'object-right-top'}`} loading={i === 0 ? 'eager' : 'lazy'} />
                     {/* 텍스트 쪽 스크림 — 톤에 맞춰 잉크 글씨엔 크림, 흰 글씨엔 진파랑을 옅게. 글이 이미지 위에 얹히는 데스크톱에만 필요하다. */}
-                    <span aria-hidden className="absolute inset-0 hidden sm:block" style={{ background: `linear-gradient(${left ? 270 : 90}deg, ${scrim} 0%, ${scrim}B3 32%, ${scrim}00 58%)` }} />
+                    <span aria-hidden data-t="hero-scrim" className="absolute inset-0 hidden sm:block" style={{ background: scrimGradient(scrim, left ? 270 : 90) }} />
                   </>
                 ) : b.kind === 'news' ? (
                   // 신문 카드는 왼쪽 컬럼(모바일은 텍스트 아래로 숨김) — 목업 랜딩페이지3

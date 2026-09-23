@@ -60,14 +60,14 @@ export default function AdminDashboard() {
       </div>
 
       {/* KPI 4 */}
-      <div className="mt-5 grid grid-cols-2 gap-3 lg:grid-cols-4">
+      <div className="mt-5 grid grid-cols-1 gap-3 min-[360px]:grid-cols-2 lg:grid-cols-4">
         <KpiCard label="총 분양몰" value={1248} suffix="개" delta={18.7} caption={`실 데모 테넌트 ${db.tenants.length}개 연동`} />
         <Card track="b" className="p-5 animate-rise">
           <div className="flex items-center justify-between">
             <span className="text-[13px] font-medium text-bmuted">분양 완료 · 분양률</span>
             <DeltaChip value={4.2} />
           </div>
-          <div className="mt-2 flex items-center justify-between gap-2">
+          <div className="mt-2 flex flex-wrap items-center justify-between gap-2">
             <div>
               <div className="tnum text-[26px] font-extrabold text-bink">1,063<span className="text-[15px]">개</span></div>
               <div className="tnum mt-1 text-[12px] text-bfaint">분양률 85.3%</div>

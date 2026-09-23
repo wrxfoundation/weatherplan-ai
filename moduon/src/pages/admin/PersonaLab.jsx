@@ -82,7 +82,8 @@ export default function AdminPersonaLab() {
             ))}
           </div>
           <textarea
- aria-label="패널에 보여줄 광고 문구"            value={text}
+            aria-label="패널에 보여줄 광고 문구"
+            value={text}
             onChange={(e) => setText(e.target.value)}
             placeholder="예) (광고) 인터넷 갈아타면 최대 152만원+ 돌려받으세요…"
             className="mt-2.5 min-h-[110px] w-full rounded-field border border-bline p-3 text-[13px] leading-5 focus:border-primary"

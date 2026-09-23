@@ -154,6 +154,9 @@ const BASE = process.env.QA_BASE ?? 'http://localhost:4173'
   if (heroBox) {
     const cropFrac = 1 - (heroBox.height * 2688) / (1152 * heroBox.width)
     check(cropFrac < 0.10, `1440: 히어로 세로 잘림 ${(cropFrac * 100).toFixed(1)}% < 10% (${Math.round(heroBox.width)}x${Math.round(heroBox.height)})`)
+    // 글 쪽 색막 — 두세 단계짜리 그라데이션은 중간에 꺾이는 지점이 '색 판' 경계로 보인다. 여러 단계로 완만해야 한다.
+    const stops = await page.locator('[data-t="hero-slide"][data-id="B1"] [data-t="hero-scrim"]').evaluate((el) => (getComputedStyle(el).backgroundImage.match(/\d+(?:\.\d+)?%/g) ?? []).length).catch(() => 0)
+    check(stops >= 6, `1440: 히어로 글 쪽 색막이 완만한 다단계 그라데이션 (${stops}단계 ≥ 6)`)
   } else check(false, '히어로 상자 크기를 읽지 못함')
   // 히어로 종류 — 장면형(scene)도 쓰되, 그 이미지는 빌드 가드(CRITICAL)에 들어 있어야 한다.
   // 종류 자체를 금지하기보다 "못 받아오면 배포가 멈춘다"를 보장하는 쪽이 맞다(정합성 검사가 본다).
@@ -308,6 +311,14 @@ const BASE = process.env.QA_BASE ?? 'http://localhost:4173'
     return t.scrollHeight <= t.clientHeight + 1
   }))
   check(fits.every(Boolean), `390: 배너 글 칸이 안 잘림 (${fits.map((f) => (f ? 'o' : 'x')).join('')})`)
+  // 이미지 띠 ↔ 글 칸 경계 — 가로선 하나로 딱 잘리면 이질감이 든다는 피드백(2026-09-23).
+  // 띠 하단에 글 칸과 같은 배경을 세로 마스크로 녹이는 층이 있고, 그 층이 띠 바닥까지 닿아야 이음매가 안 보인다.
+  const fade = await page.locator('[data-t="hero-slide"][data-id="B1"] [data-t="hero-band-fade"]').evaluate((el) => {
+    const band = el.closest('[data-t="hero-band"]').getBoundingClientRect(), r = el.getBoundingClientRect(), cs = getComputedStyle(el)
+    return { mask: cs.maskImage || cs.webkitMaskImage || 'none', gap: Math.round(band.bottom - r.bottom), share: r.height / band.height }
+  }).catch(() => null)
+  check(!!fade && fade.mask !== 'none' && fade.gap === 0 && fade.share >= 0.4,
+    `390: 이미지 띠 하단이 글 칸 배경으로 녹아듦(마스크 · 띠 바닥까지 · 높이 ${Math.round((fade?.share ?? 0) * 100)}%)`)
   // 배너 CTA 가 31px 로 찌그러지던 회귀 — 슬라이드 4장의 CTA(button/a) 높이 전부 ≥ 40
   const ctaH = await page.locator('[data-t="hero-slide"] :is(button, a)').evaluateAll((els) => els.map((e) => Math.round(e.getBoundingClientRect().height)))
   check(ctaH.length === 4 && ctaH.every((h) => h >= 40), `390: 배너 CTA 4개 높이 ≥ 40 (${ctaH.join('/')})`)

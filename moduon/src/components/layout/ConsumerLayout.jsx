@@ -223,9 +223,9 @@ export function ConsumerHeader({ tenant }) {
       {/* 1행 · 유틸 — 로고 · 게시판 5종 · 알림 · 로그인/회원가입 (파트너몰은 로고 + 배지 + 매장 직통 전화 + 무료 상담) */}
       <div className="mx-auto flex h-[56px] max-w-6xl items-center justify-between gap-3 px-5 sm:px-10">
         <div className="flex min-w-0 items-center gap-7">
-          <Link to={tenant ? `/m/${tenant.slug}` : '/'} className="flex shrink-0 items-center gap-2">
+          <Link to={tenant ? `/m/${tenant.slug}` : '/'} className="flex min-w-0 items-center gap-2">
             <Logo name={tenant ? tenant.name : '모두온'} />
-            {tenant && <span className="rounded-full bg-tint px-2 py-0.5 text-[11px] font-bold text-primary-text">파트너몰</span>}
+            {tenant && <span className="shrink-0 rounded-full bg-tint px-2 py-0.5 text-[11px] font-bold text-primary-text">파트너몰</span>}
           </Link>
           {!tenant && (
             <nav data-t="util-nav" aria-label="게시판 바로가기" className="hidden items-center gap-4 md:flex">

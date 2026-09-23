@@ -27,11 +27,11 @@ export function Donut({ data, size = 118, thickness = 18, centerTop, centerSub }
 export function Legend({ data, total, className = '' }) {
   const sum = total ?? data.reduce((s, d) => s + d.value, 0)
   return (
-    <div className={`flex flex-col gap-1.5 ${className}`}>
+    <div className={`flex min-w-0 flex-col gap-1.5 ${className}`}>
       {data.map((d) => (
         <div key={d.label} className="flex items-center gap-2 text-[12px]">
           <span className="h-2 w-2 shrink-0 rounded-full" style={{ backgroundColor: d.color }} />
-          <span className="text-bbody">{d.label}</span>
+          <span className="min-w-0 truncate text-bbody">{d.label}</span>
           <span className="tnum ml-auto font-bold text-bink">{d.render ? d.render(d.value) : d.value.toLocaleString('ko-KR')}</span>
           {sum > 0 && d.pct !== false && <span className="tnum w-10 text-right text-bfaint">{Math.round((d.value / sum) * 100)}%</span>}
         </div>

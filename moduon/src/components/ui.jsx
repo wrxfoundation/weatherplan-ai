@@ -267,7 +267,7 @@ export function Logo({ size = 'md', dark = false, name = '모두온' }) {
   const [full, setFull] = useState(true)
   const [markOk, setMarkOk] = useState(true)
   const isMain = name === '모두온'
-  const s = size === 'lg' ? 'text-[40px]' : size === 'sm' ? 'text-[31px]' : 'text-[35px]'
+  const s = size === 'lg' ? 'text-[40px]' : size === 'sm' ? 'text-[31px]' : 'text-[26px] sm:text-[35px]'
   const markH = size === 'lg' ? 'h-[55px] w-[55px]' : size === 'sm' ? 'h-[44px] w-[44px]' : 'h-[48px] w-[48px]'
   const logoH = size === 'lg' ? 'h-[56px]' : size === 'sm' ? 'h-[38px]' : 'h-[44px]'
   if (isMain && full) {
@@ -278,9 +278,9 @@ export function Logo({ size = 'md', dark = false, name = '모두온' }) {
     )
   }
   return (
-    <span className="inline-flex items-center gap-2 select-none">
+    <span className="inline-flex min-w-0 items-center gap-2 select-none">
       {markOk && <img src="/assets/brand/logo-mark.png" alt="" aria-hidden className={`${markH} shrink-0 object-contain`} onError={() => setMarkOk(false)} />}
-      <span className={`font-extrabold tracking-tight ${dark ? 'text-white' : 'text-ink'} ${s}`}>{name}</span>
+      <span className={`min-w-0 truncate font-extrabold tracking-tight ${dark ? 'text-white' : 'text-ink'} ${s}`}>{name}</span>
     </span>
   )
 }

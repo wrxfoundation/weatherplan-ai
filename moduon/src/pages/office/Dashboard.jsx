@@ -63,11 +63,11 @@ export default function OfficeDashboard() {
           <h1 className="text-[22px] font-extrabold tracking-[-0.4px] text-bink">안녕하세요, {tenant.name} 사장님 👋</h1>
           <p className="mt-1 text-[13px] text-bmuted">{d.getMonth() + 1}월 {d.getDate()}일 · 정산은 <strong className="font-bold text-bink">월말이 아니라, 매일 보입니다</strong></p>
         </div>
-        <div className="flex items-center gap-2">
-          <button onClick={copyUrl} className="flex h-9 items-center gap-2 rounded-full border border-bline bg-white px-3.5 text-[12.5px] font-semibold text-bbody hover:border-primary hover:text-primary-text">
-            <LiveDot /> moduon.com/m/{tenant.slug} <span className="text-bfaint">⧉</span>
+        <div className="flex min-w-0 max-w-full items-center gap-2">
+          <button onClick={copyUrl} className="flex h-9 min-w-0 items-center gap-2 rounded-full border border-bline bg-white px-3.5 text-[12.5px] font-semibold text-bbody hover:border-primary hover:text-primary-text">
+            <LiveDot /> <span className="min-w-0 truncate">moduon.com/m/{tenant.slug}</span> <span className="shrink-0 text-bfaint">⧉</span>
           </button>
-          <Link to={`/m/${tenant.slug}`} className="flex h-9 items-center rounded-full bg-bink px-4 text-[12.5px] font-bold text-white hover:opacity-90">내 몰 보기</Link>
+          <Link to={`/m/${tenant.slug}`} className="flex h-9 shrink-0 items-center rounded-full bg-bink px-4 text-[12.5px] font-bold text-white hover:opacity-90">내 몰 보기</Link>
         </div>
       </div>
 

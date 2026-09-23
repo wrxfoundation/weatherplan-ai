@@ -33,11 +33,12 @@ export default function InstallCheck({ onPrefill }) {
 
       <div className="mt-3.5 flex gap-2">
         <input
- aria-label="설치 주소(시·군·구)"          value={q}
+          aria-label="설치 주소(시·군·구)"
+          value={q}
           onChange={(e) => { setQ(e.target.value); setRes(null) }}
           onKeyDown={(e) => e.key === 'Enter' && run()}
           placeholder="예) 서울 강남구, 부산 해운대구"
-          className="h-12 flex-1 rounded-field border border-line bg-white px-4 text-[16px] placeholder:text-disabled focus:border-primary sm:text-[15px]"
+          className="h-12 min-w-0 flex-1 rounded-field border border-line bg-white px-4 text-[16px] placeholder:text-disabled focus:border-primary sm:text-[15px]"
         />
         <button onClick={() => run()} className="glass-btn-cta h-12 shrink-0 rounded-field bg-primary px-5 text-[14px] font-bold text-white transition-colors hover:bg-primary-hover">
           조회

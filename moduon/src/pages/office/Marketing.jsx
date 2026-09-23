@@ -258,7 +258,8 @@ function ResistanceCard() {
       </div>
       <p className="mt-1 text-[12px] text-bmuted">카피를 붙여넣으면 6가지 구매 저항(가격·시즌·품질·구매·마케팅비·타깃) 극복 여부를 진단해요.</p>
       <textarea
- aria-label="진단할 상품 소개문"        value={text}
+        aria-label="진단할 상품 소개문"
+        value={text}
         onChange={(e) => setText(e.target.value)}
         placeholder="진단할 상품 소개문·카피를 붙여넣으세요 (10자 이상)"
         className="mt-3 min-h-[76px] w-full rounded-field border border-bline p-3 text-[13px] leading-5 focus:border-primary"
