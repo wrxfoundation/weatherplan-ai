@@ -1095,8 +1095,15 @@ Logan
 - **그가 먼저 말을 걸면** 인사로만 답한다(아래). **열리는 시점**: 우리 앱 출시 또는 유료 획득 채널 개시, 혹은 Jenny(Binance Square) 대화가 마케팅
   협업으로 자라 사내 소개로 이어질 때 — 콜드 DM 이 아니라 소개로.
 
+(9/24 교체 — 1촌 인사 기본값, Lynn 형식. 초판은 기기만 말해 기기 판매로 읽혔다.)
 ```
-Hi Hazel, thanks for connecting. I look after partnerships at wellbian, a network of certified air sensors people run in their own homes, with KWeather as our device partner. Good to be connected.
+Hazel — thanks for connecting.
+
+I run partnerships at wellbian. KWeather has measured weather in South Korea for thirty years and supplies data to 4,000+ enterprise clients; wellbian is the network built on top of that.
+
+We work on two layers: certified air-quality sensors that people run in their own rooms, and city-level weather across 90 countries and 167 cities, where each value is a consensus across eleven independent sources rather than a single reading. Every input is fingerprinted to a public ledger before it goes anywhere.
+
+Good to be connected.
 ```
 
 ## Paola Morán Rodríguez (Binance, VIP & Institutional) — 프로필 판정 (2026-09-24) → 1촌만, 메시지 0
@@ -1114,9 +1121,16 @@ Hi Hazel, thanks for connecting. I look after partnerships at wellbian, a networ
 - **레인이 없다** — 거래 고객(기관·VIP) 유치 자리이고, 우리는 거래 고객이 아니다.
 - **이력은 우리와 가깝다**(토큰 생태계·통신사 Web3·연사/모더레이터). **그래서 더 조심한다** — 토큰 총괄 이력에 거래소 직함이 겹치면 어떤 대화든
   상장 쪽으로 읽힌다(거래소 1촌 인사만 · 9/30 규칙).
-- **먼저 말을 걸면** 인사로만(Hazel 문안과 같은 결). 게시글에 댓글을 달면 그 스레드에서 감사 한 줄. 사업 이야기는 우리가 먼저 열지 않는다.
+- **먼저 말을 걸면** 인사로만(1촌 인사 기본값 — Lynn 형식, 아래). 게시글에 댓글을 달면 그 스레드에서 감사 한 줄. 사업 이야기는 우리가 먼저 열지 않는다.
 - **열리는 시점**: 연사·모더레이터 자리(행사)로 소개가 오갈 때, 또는 Jenny 대화가 사내 소개로 이어질 때 — 콜드 DM 이 아니라 소개로.
 
+(9/24 교체 — 1촌 인사 기본값, Lynn 형식. 초판은 기기만 말해 기기 판매로 읽혔다.)
 ```
-Hi Paola, thanks for connecting. I look after partnerships at wellbian, a network of certified air sensors people run in their own homes, with KWeather as our device partner. Good to be connected.
+Paola — thanks for connecting.
+
+I run partnerships at wellbian. KWeather has measured weather in South Korea for thirty years and supplies data to 4,000+ enterprise clients; wellbian is the network built on top of that.
+
+We work on two layers: certified air-quality sensors that people run in their own rooms, and city-level weather across 90 countries and 167 cities, where each value is a consensus across eleven independent sources rather than a single reading. Every input is fingerprinted to a public ledger before it goes anywhere.
+
+Good to be connected.
 ```

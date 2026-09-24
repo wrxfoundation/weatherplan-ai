@@ -579,3 +579,55 @@ RWA·발행 제안은 우리 레인이 아니다.
 |---|---|---|---|---|
 | 9/2 | @ifureJack 디센트 MOU 인용(KOL) | 정정 답글: 하드웨어 실물 · 보상 in testing · `Wallet first, rewards later. That's the order.` | KOL `Noted` · 답글 14(팟) · 우리 문장 되받기 1 · 조회 385 | 쉬운 문장은 6시간 안에 되받아진다. 수익 프레임 에코는 원글 1회 정정으로 끝내고 에코는 둔다. **반응 원문은 `reaction-log.md` 에 축적** |
 | (기입) | | | | |
+
+## 링크드인 1촌 인사 기본값 — Lynn 형식 (2026-09-24 신설)
+
+서우(9/24): 「자꾸 기기 판매만으로 읽혀지게 되는 인사여서 lynn 정도의 인사말을 기본값을 박아」. Hazel(9/23)·Paola(9/24) 인사가
+「집에서 돌리는 인증 공기 센서 + 케이웨더 기기 파트너」 한 줄이라 **기기 파는 회사로 읽혔다.** 앞으로 1촌 인사는 이 기본값에서 시작한다.
+
+**구조** (Lynn·Edward·Morty·Kritda 에서 굳은 형식)
+1. 감사 한 줄 — `{Name} — thanks for connecting.`
+2. 누구인지 — 케이웨더(30년 · 기업 고객 4,000+) → wellbian 은 그 위에 지은 네트워크. **케이웨더 먼저**(무명 프로젝트로 읽히지 않게, 9/13 소개 순서).
+3. **두 층** — 측정기(집에서 돌리는 인증 공기질 센서) **+ 데이터**(90개국 167개 도시, 한 지점이 아니라 11개 독립 출처의 합의값) + 원장 지문.
+   **데이터 층을 빼면 기기 판매로 읽힌다 — 빼지 않는다.**
+4. (선택) 상대 자리와 닿는 한 줄 — 요청·제안 0. 거래소·레인 없는 자리는 생략.
+5. 맺음 — `Good to be connected.` 긍정형으로 닫는다(「nothing to ask」류 부정형 선 긋기 0 — 9/18 Alexander · 9/19 Kritda 교훈).
+
+### 기본값 — 영문 (1촌 수락 뒤 메시지, 561자)
+```
+{Name} — thanks for connecting.
+
+I run partnerships at wellbian. KWeather has measured weather in South Korea for thirty years and supplies data to 4,000+ enterprise clients; wellbian is the network built on top of that.
+
+We work on two layers: certified air-quality sensors that people run in their own rooms, and city-level weather across 90 countries and 167 cities, where each value is a consensus across eleven independent sources rather than a single reading. Every input is fingerprinted to a public ledger before it goes anywhere.
+
+Good to be connected.
+```
+
+### 1촌 요청 메모판 (링크드인 상한 300자 — 250자)
+```
+Hi {Name}, I run partnerships at wellbian. KWeather has measured weather in Korea for 30 years; wellbian builds on it: home air sensors plus city-level weather from 11 independent sources, every input fingerprinted to a public ledger. Glad to connect.
+```
+
+### 국문 기본값 (한국어 상대, 274자)
+```
+{이름}님, 1촌 감사합니다.
+
+케이웨더 디지털사업본부에서 wellbian 파트너십을 맡고 있는 박서우입니다. 케이웨더가 30년 동안 날씨를 재 오며 기업 고객 4,000곳 이상에 데이터를 공급해 왔고, wellbian은 그 위에 지은 네트워크입니다.
+
+두 층으로 일합니다. 각자 집에서 돌리는 인증 공기질 측정기, 그리고 90개국 167개 도시의 날씨를 한 지점이 아니라 11개 독립 출처의 합의값으로 내는 데이터입니다. 모든 값은 쓰이기 전에 공개 원장에 지문을 남깁니다.
+
+반갑습니다.
+```
+
+**금지선** — 기본값 그대로면 이미 지켜져 있다. 고칠 때 다시 확인한다.
+- 체인 이름 0(`a public ledger` / 「공개 원장」) · 토큰·상장·멀티체인·WLBN·보상 0 · 판매·가격 0.
+- 「최대·1위·first·only」 0 · 「약 3만 센서」는 쓰지 않는다(조건부 수치) · 기업 고객은 4,000+ 로 고정(한 상대에게 두 숫자 금지).
+- 거래소 자리: XRP SEOUL 스폰서 0 · 다른 거래소·플랫폼 0 · 크립토닷컴·Flare 진전 0 · 선택 줄(관심의 이유)도 0.
+- 공통 1촌 이름 0 · 미팅·제안 0.
+- **기기만 말하는 한 줄 인사 금지** — Hazel·Paola 초판(9/23·9/24)이 반례.
+
+**줄이는 법**: 가벼운 자리(업계 신입 톤 등)는 두 층 문단을 한 문장으로 —
+`wellbian is the network built on top of that, turning weather and indoor-air readings into data anyone can check, with every input fingerprinted to a public ledger.`
+스펙 숫자는 빼도 **데이터 층은 남긴다**(Kritda 판).
+
