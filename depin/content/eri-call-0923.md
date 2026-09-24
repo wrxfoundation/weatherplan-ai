@@ -101,7 +101,8 @@
      `Wittgenstein said that whereof one cannot speak, thereof one must be silent. This oracle stays silent when it cannot judge, and it puts that silence on the record.`
      명제 7(『논리철학논고』 마지막 명제)은 원래 언어의 한계(윤리·형이상학) 이야기라 「원래 뜻 그대로」라고 하지 않는다 — 비유로만.
      「모르는 건 모른다고」를 글자 그대로 말한 출처는 공자(『논어』 위정편 知之爲知之 不知爲不知 是知也) — 서울 무대용 대안.
-     「침묵까지 기록」 = 9/22 문서 「prove that it did not know at the time」. 링크드인 글에는 넣지 않고 무대용으로 아낀다(Eri 「무대에서 인용할 만한 말」).
+     「침묵까지 기록」 = 9/22 문서 「prove that it did not know at the time」. **9/24 서우 결정: 링크드인에도 공자·비트겐슈타인 둘 다 인용**(`linkedin-0924-settlement-oracle.md` v3) —
+     무대에서 한 번 더 쓰는 것은 Eri 조언 「인지는 3~5회 반복」과 맞는다.
 
 ## 이 미팅으로 바뀐 규칙
 

@@ -1,4 +1,4 @@
-# 링크드인 — 「'모른다'고 말할 수 있는 오라클」 (서우 개인 · 초안 9/24 · v2 · **게시 10/1 이후**)
+# 링크드인 — 「'모른다'고 말할 수 있는 오라클」 (서우 개인 · 초안 9/24 · v3 · **게시 10/1 이후**)
 
 원본: 9/22 「Weather as Settlement Infrastructure」 해설(9/24 docx, 저장소 밖). 서우 지시(9/24): **Flare 와의 계약·공동 추진 내용은 걷어내고,
 Flare 이름도 빼되, 아는 사람은 Flare 와 하고 있다는 걸 알아보게.**
@@ -22,7 +22,7 @@ Flare 이름도 빼되, 아는 사람은 Flare 와 하고 있다는 걸 알아�
 - **658 은 게시 당일 숫자로 갱신**(매시간 한 건씩 늘어난다) — 날짜도 같이 바꾼다.
 - 행사 표기 「XRP SEOUL 2026」. 키노트 내용은 약속하지 않고 「더 이야기 나누겠습니다」까지.
 
-## 본문 v2 (국문 주, 9/24 서우 「친근한 비유 + 20% 줄이기」) — 886자 (v1 1,228자 대비 72%)
+## 본문 v3 (국문 주, 9/24 서우 「링크드인에도 써먹자 비트겐슈타인, 공자 예시 둘다 인용」) — 1028자 (v1 대비 84%)
 
 ```
 축제 날 오후 2~3시, 서울에 비가 5mm 넘게 오면 보험금이 나가는 계약이 있다고 해 봅시다.
@@ -37,7 +37,11 @@ Flare 이름도 빼되, 아는 사람은 Flare 와 하고 있다는 걸 알아�
 이 기록은 누구든 요청하면 '데이터를 위한 블록체인'이 한 번 더 확인해 줍니다.
 
 제가 가장 좋아하는 부분은 따로 있습니다. 이 오라클은 "모른다"고 말할 수 있습니다.
-관측값이 크게 갈리면 억지로 판정하지 않고 '보류'합니다. 모를 때 모른다고 말하는 숫자여야 진 쪽도 받아들입니다.
+관측값이 크게 갈리면 억지로 판정하지 않고 '보류'하고, 그 보류까지 기록에 남깁니다.
+
+공자는 "아는 것을 안다 하고 모르는 것을 모른다 하는 것, 이것이 아는 것"이라 했습니다.
+비트겐슈타인은 "말할 수 없는 것에 대해서는 침묵해야 한다"고 했습니다.
+사람에게는 오래된 미덕이, 오라클에게는 새 기능입니다. 모를 때 모른다고 말하는 숫자여야 진 쪽도 받아들이니까요.
 
 다음 숙제는 코카콜라 레시피 같은 문제입니다.
 판정 규칙은 영업비밀이라 공개하면 사업이 끝나고, 숨기면 아무도 결과를 믿지 않습니다.
@@ -52,7 +56,7 @@ Flare 이름도 빼되, 아는 사람은 Flare 와 하고 있다는 걸 알아�
 #XRPL #RLUSD #오라클 #날씨데이터 #XRPSEOUL2026
 ```
 
-## 영문판 v2 — 1653자 (v1 2,193자 대비 75%)
+## 영문판 v3 — 1921자 (v1 대비 88%)
 
 ```
 Say a festival buys a policy: if more than 5mm of rain falls in Seoul between 2 and 3pm on the day, it pays out.
@@ -67,7 +71,11 @@ Think of it as mailing the weather a sealed letter: the postmark proves when, th
 Anyone can then ask the blockchain for data to confirm that record.
 
 The part I like most: this oracle is allowed to say "I don't know."
-When observations split, it doesn't force a call. It withholds. The losing side needs a number that admits uncertainty before it accepts any number at all.
+When observations split, it doesn't force a call. It withholds, and the withholding goes on the record too.
+
+Confucius: "To say you know when you know, and to say you don't when you don't. That is knowledge."
+Wittgenstein: "Whereof one cannot speak, thereof one must be silent."
+An old virtue for people, a new feature for oracles. The losing side needs a number that admits uncertainty before it accepts any number at all.
 
 Next up is a Coca-Cola problem.
 The rule behind a determination is a trade secret. Publish it and the business is gone; hide it and nobody trusts the output.
@@ -82,7 +90,12 @@ More at XRP SEOUL 2026 on 3 October.
 #XRPL #RLUSD #Oracles #WeatherData #XRPSEOUL2026
 ```
 
-v1(비유 없음, 국문 1,228자 · 영문 2,193자)은 커밋 `00d55fa` 에 있다.
+**인용 두 줄 규칙(v3)**: 공자 = 『논어』 위정편 知之爲知之 不知爲不知 是知也(국문은 통용 번역, 영문은 원문 구조대로 「say you know / say you don't」).
+비트겐슈타인 = 『논리철학논고』 명제 7, 영문은 Ogden 번역 「Whereof one cannot speak, thereof one must be silent.」 — 명제 7 은 원래 언어의 한계
+이야기라 **나란히 놓기만 하고 「같은 뜻」이라고 쓰지 않는다**(「사람에게는 오래된 미덕이, 오라클에게는 새 기능」으로 잇는다).
+「그 보류까지 기록에 남긴다」 = 9/22 문서 「prove that it did not know at the time」. 키노트에서 한 번 더 써도 된다 — Eri 조언 「인지는 3~5회 반복」.
+
+v2(인용 없음, 국문 886자 · 영문 1,653자)는 커밋 `2a3fa43`, v1(비유 없음, 국문 1,228자 · 영문 2,193자)은 커밋 `00d55fa` 에 있다.
 
 ## 첫 댓글 (선택)
 
