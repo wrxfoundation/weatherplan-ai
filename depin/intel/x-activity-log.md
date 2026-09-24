@@ -3567,5 +3567,40 @@ Happy Chuseok from Seoul 🌕
 용 짧은 공개 자료로 대체 ② 그대로 두고 환영 인사 뒤에 한 줄 —
 `One note on the doc above: it's background on our data side. We'll send you a short wellbian piece you can quote from.`
 
-발송 여부는 서우 통보 시 갱신.
+**발송 (9/24 서우 통보)**: 환영 인사 발송. 서우가 문서 원문을 채팅에 붙여 줬다(이해용) → 아래 재판정. **② 문안은 폐기**(보내지 않는다).
+
+### 그룹 내 문서 재판정 — 원문 확인 후 (9/24)
+
+**판정: ② 한 줄로는 부족 → ① 올린 사람이 삭제 + Eri 에게 off the record 한 줄.** 위 메모는 이 문서를 케이웨더 데이터 쪽 배경(9/5 공개 LOI)으로
+짐작했으나, 원문은 **Wellbian Labs · Weather Data Market 명의의 Flare 공동 발표 제안서**(「Weather as Settlement Infrastructure」, 9/22)다.
+Flare 앞으로는 잘 쓴 문서다(문제 정의·라이브/테스트 구분이 정확하다). 문제는 받는 쪽이 팔로워 29만 미디어라는 것 하나.
+원문 본문·지갑/컨트랙트 주소·구독 단가는 저장소에 옮기지 않는다(아래는 섹션 이름만).
+
+| 순위 | 문서 속 위치 | 미디어 손에 있을 때 |
+|---|---|---|
+| 1 | 「What we propose doing together」 표의 **「Three-way with Ripple」** 행(Flare 가 소개·공동 프레이밍을 맡는 구도) | 리플 규칙 정면 — 웰비안 × 리플 협력 표현. 기사 한 줄이면 9/9~ 리플 건이 우리 쪽에서 샌 것으로 읽힌다. **최고 위험** |
+| 2 | 「Roadmap in three phases」(Depends on 열 = Flare) · 같은 표의 공동 이니셔티브 6개 · **「First beat, already scheduled」**(10/2 D'CENT XRPFi Night · 「four weeks before most of this would otherwise be public」) · 「What we ask of a joint announcement」 · 「Speaker notes」 | 문서가 스스로 발표문이라 부르고 공개 4주 전이라고 적었다 → 미디어는 보도 자료로 읽는다. 제안 단계의 공동 발표가 먼저 나가면 **Flare 미공개 계획 누설**. Eri 의 호의 뿌리가 Flare(9/16)라 그 경로로 Flare 에 되돌아갈 수 있다 |
+| 3 | 머리글 「Wellbian Labs」 + 「This is running on mainnet today」 표(Flare 14 · XRPL · **BNB 56** · Coston2) | 「웰비안 × Flare 직접 통합」 클레임 금지와 부딪힘 · 체인 셋 목록은 9/30 까지 막아 둔 멀티체인 신호 · 발행 주체명이 앞에 선다. Eri 가 써 온 「KWeather partnered with FlareNetworks」(규칙과 맞는 문장)를 이 문서가 바꿔 놓을 수 있다 |
+
+**올린 분(「디지털사업」 계정)께 — 서우 전달용**:
+```
+Eri 방에 올려 주신 Flare 제안서, 내려 주실 수 있을까요? Eri 가 팔로워 29만 미디어라 받은 자료가 그대로 글이 될 수 있어서요.
+안에 리플 3자 협력 항목, 10/2 디센트 행사 첫 공개 일정, 플레어 공동 발표 제안이 있어서 먼저 기사로 나가면 리플·플레어 양쪽에 부담이 됩니다.
+지우실 때 「모두에게서 삭제」로 부탁드리고, Eri 에게는 제가 한 줄 남기고 인용용 wellbian 자료를 따로 드리겠습니다.
+```
+- 추석이라 답이 늦으면: 서우가 방 관리자면 직접 지우고 올린 분께 사후에 알린다.
+
+**Eri 에게 (삭제 뒤, 서우)**:
+```
+Eri, quick note: we've taken down the file that was up here earlier. It was written for a partner conversation, so please keep it off the record. We'll send you a short wellbian piece that's yours to quote.
+```
+- 못 지우게 되면 앞 두 문장을 `Eri, quick note on the file above: it was written for a partner conversation, so please keep it off the record.` 로.
+- **「background」 → 「off the record」**: 기자 관행에서 on background 는 「출처를 밝히지 않고 써도 된다」는 뜻 — 우리가 원하는 뜻(게재 불가)과 반대로 읽힐 수 있다.
+- 긍정형(「keep it off the record」「yours to quote」) · Flare 이름 0(「a partner conversation」) · 성별 표현 0 · 날짜 약속 0.
+- 텔레그램은 지운 메시지 자리에 흔적이 남지 않는다. 그래도 Eri 가 이미 열었거나 내려받았을 수 있으므로 한 줄은 삭제와 별개로 보낸다.
+- **대체 자료** = wellbian 인용용 1장(기기·XRPL·XRP SEOUL 2026, 실측/테스트 구분) — 이 문서를 잘라낸 판이 아니다(Eri 에게 Flare 0).
+- **나중 몫**: 문제 정의(「The fact is the bottleneck, not the contract」) · XRPL = 가치 / Flare = 증명 · 메인넷 라이브 사실 · 「an oracle that is allowed to decline」 ·
+  「Where this honestly stands」는 **Flare 와 공동 발표가 난 뒤** 공개분으로 Eri 에게 주면 된다. 발표 전까지 웰비안 × Flare 규칙 유지, 발표가 나면 규칙 문장을 발표 문장에 맞춰 갱신.
+
+삭제·발송 여부는 서우 통보 시 갱신.
 
