@@ -22,9 +22,11 @@ Flare 이름도 빼되, 아는 사람은 Flare 와 하고 있다는 걸 알아�
 - **658 은 게시 당일 숫자로 갱신**(매시간 한 건씩 늘어난다) — 날짜도 같이 바꾼다.
 - 행사 표기 「XRP SEOUL 2026」. 키노트 내용은 약속하지 않고 「더 이야기 나누겠습니다」까지.
 
-## 본문 v3 (국문 주, 9/24 서우 「링크드인에도 써먹자 비트겐슈타인, 공자 예시 둘다 인용」) — 1028자 (v1 대비 84%)
+## 본문 v3 (국문 주, 9/24 서우 「링크드인에도 써먹자 비트겐슈타인, 공자 예시 둘다 인용」) — 제목 포함 1049자 (v1 대비 84%)
 
 ```
+모른다고 말할 수 있는 날씨 오라클
+
 축제 날 오후 2~3시, 서울에 비가 5mm 넘게 오면 보험금이 나가는 계약이 있다고 해 봅시다.
 계약은 한 줄입니다. 어려운 건 따로 있습니다. 그 "5mm"는 누가 정할까요?
 
@@ -56,9 +58,11 @@ Flare 이름도 빼되, 아는 사람은 Flare 와 하고 있다는 걸 알아�
 #XRPL #RLUSD #오라클 #날씨데이터 #XRPSEOUL2026
 ```
 
-## 영문판 v3 — 1921자 (v1 대비 88%)
+## 영문판 v3 — 제목 포함 1967자 (v1 대비 88%)
 
 ```
+A weather oracle that can say “I don’t know”
+
 Say a festival buys a policy: if more than 5mm of rain falls in Seoul between 2 and 3pm on the day, it pays out.
 The contract is one line. The hard part is elsewhere. Who decides it was 5mm?
 
@@ -89,6 +93,11 @@ More at XRP SEOUL 2026 on 3 October.
 
 #XRPL #RLUSD #Oracles #WeatherData #XRPSEOUL2026
 ```
+
+**제목(9/24 서우 「제목을 넣어줘」)**: 국문 「모른다고 말할 수 있는 날씨 오라클」 · 영문 「A weather oracle that can say “I don’t know”」. 링크드인 일반 게시물엔 제목 칸·굵은 글씨가 없으니
+**첫 줄을 짧게 두고 한 줄 띄워** 제목처럼 보이게 한다(유니코드 굵은 글자는 쓰지 않는다 — 화면 낭독기가 못 읽는다). 「날씨」를 넣은 이유: 첫 줄의
+「오라클」만으로는 DB 회사로 읽힐 수 있다. 대안 — 「공자와 비트겐슈타인이 오라클을 만든다면」(호기심형) / 「날씨판 내용증명」(짧은 비유형) ·
+영문 「If Confucius and Wittgenstein built an oracle」 / 「A postmark for the weather」.
 
 **인용 두 줄 규칙(v3)**: 공자 = 『논어』 위정편 知之爲知之 不知爲不知 是知也(국문은 통용 번역, 영문은 원문 구조대로 「say you know / say you don't」).
 비트겐슈타인 = 『논리철학논고』 명제 7, 영문은 Ogden 번역 「Whereof one cannot speak, thereof one must be silent.」 — 명제 7 은 원래 언어의 한계
