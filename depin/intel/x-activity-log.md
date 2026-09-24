@@ -3545,3 +3545,27 @@ give back 글도 잘 봤습니다. 더더더, 저희도 해 보겠습니다. 좋
 **내부 메모 한 줄**: 스테이블코인이 결제 수단에서 **기관 대차대조표 자산·담보**로 올라가는 흐름 — 「1막 금융 → 2막 실물 데이터」 서사의 1막이 두꺼워지는 사례.
 대외(키노트·덱)에 쓸 때도 Galaxy·Sky 이름과 금액은 넣지 않는다(타 체인 · 원출처 미확인 수치).
 
+## Crypto Eri — 텔레그램 그룹 「Kweather(wellbian)<>Eri」 합류 → 환영 인사 (9/24)
+
+**흐름**: 9/23 그룹 개설(참가자 4) · 9/23 17:38 「디지털사업」 계정이 `Weather_as_Settlement_Infrastructure_EN.docx` 공유 + 「This is the information we
+shared with Flare.」 · 9/24 12:04 Eri 초대 링크로 합류 「Hello. Thank you for the invite.」 (초대 링크는 저장소에 두지 않는다.)
+
+**환영 인사 (서우 지시: 한국은 지금 추석, 그래도 대화는 가능)**:
+```
+Welcome, Eri! Really glad to have you here.
+
+Quick heads-up: Korea is in the middle of Chuseok, our harvest holiday, so it's a little quiet on our side this week. Same full moon as your tsukimi in Tokyo. We're still around, though, so drop anything here anytime and we'll get back to you.
+
+Happy Chuseok from Seoul 🌕
+```
+- 추석 = 음력 8월 15일, 일본 十五夜(츠키미)와 같은 보름달(2026 둘 다 9/25) — 도쿄 사람에게 한 줄로 번역되는 비유.
+- 추석 날짜·연휴 길이는 쓰지 않았다(틀릴 여지 제거). 9/23 콜 언급 0(성사 여부 기록 없음). 성별 표현 0.
+
+**⚠ 위 문서 한 줄 점검 필요**: 「shared with Flare」 문구가 Eri 앞에 있다. 9/16·9/21 규칙 — **Eri 에게 Flare 0**(청중은 XRP, 웰비안×Flare 직접 통합
+클레임 금지) · **그의 패널의 Flare(Hugo)는 비공개** · **문서가 먼저 가면 그 문장이 그대로 그의 글이 된다.** 케이웨더×플레어 LOI 자체는 9/5 공개라
+존재 언급은 누설이 아니지만, 미디어 계획의 재료로 읽히면 「wellbian × Flare」 기사가 나올 수 있다. 선택지: ① 문서 메시지를 올린 사람이 지우고 wellbian
+용 짧은 공개 자료로 대체 ② 그대로 두고 환영 인사 뒤에 한 줄 —
+`One note on the doc above: it's background on our data side. We'll send you a short wellbian piece you can quote from.`
+
+발송 여부는 서우 통보 시 갱신.
+
