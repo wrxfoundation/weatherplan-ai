@@ -3571,6 +3571,10 @@ Happy Chuseok from Seoul 🌕
 
 ### 그룹 내 문서 재판정 — 원문 확인 후 (9/24)
 
+**❌ 철회 (9/24 서우 정정 — 「미팅에서 사전협의한거라 eri랑 이미 미팅을했어」)**: 이 문서는 9/23 Eri 미팅에서 「문서로 보내기로 함」 한
+후속 자료였다(`content/eri-call-0923.md`). **아래 삭제 권고와 동료·Eri 문안은 보내지 않는다** — 판단 경위 기록으로만 둔다. 「Eri 에게 Flare 0」도
+미팅으로 종료. 회신 문서·키노트에 남기는 것 둘: 「Three-way with Ripple」 행 재사용 0 · 「매시간 Flare 증명」은 「매시간 XRPL 고정, Flare 증명은 요청 시」로.
+
 **판정: ② 한 줄로는 부족 → ① 올린 사람이 삭제 + Eri 에게 off the record 한 줄.** 위 메모는 이 문서를 케이웨더 데이터 쪽 배경(9/5 공개 LOI)으로
 짐작했으나, 원문은 **Wellbian Labs · Weather Data Market 명의의 Flare 공동 발표 제안서**(「Weather as Settlement Infrastructure」, 9/22)다.
 Flare 앞으로는 잘 쓴 문서다(문제 정의·라이브/테스트 구분이 정확하다). 문제는 받는 쪽이 팔로워 29만 미디어라는 것 하나.
@@ -3602,5 +3606,5 @@ Eri, quick note: we've taken down the file that was up here earlier. It was writ
 - **나중 몫**: 문제 정의(「The fact is the bottleneck, not the contract」) · XRPL = 가치 / Flare = 증명 · 메인넷 라이브 사실 · 「an oracle that is allowed to decline」 ·
   「Where this honestly stands」는 **Flare 와 공동 발표가 난 뒤** 공개분으로 Eri 에게 주면 된다. 발표 전까지 웰비안 × Flare 규칙 유지, 발표가 나면 규칙 문장을 발표 문장에 맞춰 갱신.
 
-삭제·발송 여부는 서우 통보 시 갱신.
+삭제·발송 없음(위 ❌ 철회).
 
