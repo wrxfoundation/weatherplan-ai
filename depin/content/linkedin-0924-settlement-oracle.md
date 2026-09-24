@@ -118,6 +118,15 @@ If you'd rather check than trust → weathermarket.ai (the verification steps ar
 
 ## 게시 뒤
 
+- **⚠ 9/24 Flare 공동 마케팅 계획서의 「함께 지키는 선」과 어긋나는 곳**(`flare-comarketing-1003.md`) — 9/23 부터 FDC 를 쓰지 않고, 지문은 Flare 메인넷
+  SnapshotAnchor 에 직접, 구독료는 RLUSD 가 아니라 네이티브 XRP(FTSO 가격)라고 적혀 있다. **KJ 확인되면 아래로 편집**(링크드인 게시물은 수정 가능):
+  - 국문 「그 지문을 XRP Ledger에 남깁니다」 → 「그 지문을 '데이터를 위한 블록체인'에 남깁니다」
+  - 국문 「이 기록은 누구든 요청하면 '데이터를 위한 블록체인'이 한 번 더 확인해 줍니다」 → 「판정은 어떤 정산 계약이든 읽어 갈 수 있는 공개 게시판에 올라갑니다」
+  - 국문 「지금 메인넷에서 도는 건 XRPL의 RLUSD 결제와 기록, 그 확인과 판정 게시입니다(9월 22일 기준 658건)」 → 「지금 메인넷에서 도는 건 매시간의 지문 기록과 판정 게시, 그리고 XRP Ledger에서 XRP로 받는 구독 결제입니다」
+  - 영문 `its fingerprint goes onto the XRP Ledger` → `its fingerprint is written to the blockchain for data`
+  - 영문 `Anyone can then ask the blockchain for data to confirm that record.` → `The verdict lands in a public registry any settlement contract can read.`
+  - 영문 `Live on mainnet today: RLUSD payments and records on XRPL, the confirmations, and the verdict registry (658 records as of 22 September).` → `Live on mainnet today: the hourly records, the verdict registry, and subscriptions paid in XRP on the XRP Ledger.`
+  - 해시태그 `#RLUSD` 삭제. 「돈은 XRPL이 옮기고, 사실은 데이터를 위한 체인이 증명합니다」는 그대로 맞는다.
 - **게시: 9/24 (서우 통보)** — 권고 시점(10/1 이후)보다 이르게 올라갔다. 그래서 **9/30 까지 거래소 쪽 DM(Jenny·Alexander·Emily·Max·Hazel·Paola)에서
   이 글의 「다른 체인」 부분을 우리가 먼저 꺼내지 않는다.** 658 을 게시일 숫자로 바꿨는지는 미확인.
 - 게시 여부·시각·반응은 서우 통보 시 갱신(`reaction-log.md`).
