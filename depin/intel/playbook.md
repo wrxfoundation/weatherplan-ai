@@ -627,6 +627,9 @@ Hi {Name}, I run partnerships at wellbian. KWeather has measured weather in Kore
 - 공통 1촌 이름 0 · 미팅·제안 0.
 - **기기만 말하는 한 줄 인사 금지** — Hazel·Paola 초판(9/23·9/24)이 반례.
 
+⚠ **9/24 확인 — 11개 피드 중 8개는 Open-Meteo 경유**(WeatherMarket.io 문서). `eleven independent sources` 는 반박 여지가 있다 →
+`eleven weather feeds` 로 바꿀지 **서우 결정 대기**(바꾸기 전까지 기본값 문안은 그대로).
+
 **줄이는 법**: 가벼운 자리(업계 신입 톤 등)는 두 층 문단을 한 문장으로 —
 `wellbian is the network built on top of that, turning weather and indoor-air readings into data anyone can check, with every input fingerprinted to a public ledger.`
 스펙 숫자는 빼도 **데이터 층은 남긴다**(Kritda 판).

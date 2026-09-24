@@ -137,3 +137,16 @@ One thing that would help us set the time: when is Hugo's keynote slot on the 3r
 4. **예측시장 시뮬레이션(가상 USDT, 규제로 실거래 불가)** — Flare 의 「함께 지키는 선」에는 없다. **10/3 공개 문구에 넣지 않거나,
    넣으면 「시뮬레이션·가상 자산」을 명시**. 코스닥 상장사 + 예측시장 조합은 규제 질문을 부른다 — 대외 노출 전 법무 확인.
 
+## WeatherMarket.io 문서에서 확인한 사실 (9/24 밤, 서우가 화면·Docs 전문 붙여 넣음)
+
+- **도메인 정리**: `weathermarket.io` = **시뮬레이터**(예측시장·파라메트릭 보험, 가상 sUSDT, 「SIMULATION · VIRTUAL SUSDT ONLY」) ·
+  `weathermarket.ai` = **오라클(Weather Data Market)**. 디지털사업 계정 링크는 오타가 아니었다 — Flare 문안의 `.ai/docs` 도 맞다.
+- **앵커**: 각 실행을 직렬화·SHA-256 → **Flare 메인넷 SnapshotAnchor = 9/23 부터 기록의 정본**. 그 전 실행은 BNB 체인 1세대 앵커도 있다. (XRPL 앵커 언급 없음.)
+- **피드**: 도시당 매시간 **11개 = 직접 3(KWeather · METAR · MET Norway) + Open-Meteo 경유 8** → 지표별 합의값(중앙값 + MAD 이상치 제거, 파라미터는 비공개).
+  ⚠ **「eleven independent sources」 표현 재검토** — 8개가 한 API(Open-Meteo)를 거친다. 「11 feeds」가 문서와 같은 말이다(1촌 인사 기본값 문구, 서우 결정 대기).
+- **검증 등급**: verified · single_source · mixed · mismatch · unverified. 정산 가능 여부는 오라클이 판단. 판정 = met / not met / withheld(보류 → 무효·환불).
+- **정산 신뢰도**: 공식 정산 첫날, 기준선(최근 70%) 위 도시는 판정의 29% 보류, 아래 도시는 56~59% 보류(문서 기재). 화면: 39/167 도시가 안정적으로 정산.
+- **요금(공개 문서)**: metered 호출당 0.04 USD, 구독 도시당 25 USD/30일·200 USD/년 — **XRP 결제**.
+- **주체**: 데이터 제공 = KWeather Co., Ltd. · **오라클 플랫폼·시뮬레이터 운영 = Wellbian Labs Pte. Ltd.(케이웨더 위임)** — Eri 의 구조 질문 회신에 쓸 수 있는 공개 문장.
+- 시뮬레이터 푸터: 「한국 도박 관련 법상 허가가 필요한 활동을 허가 없이 운영하는 것은 금지된다. 이 시뮬레이터는 실제 돈을 쓰지 않는다」 — 대외 노출 시 이 선을 벗어나지 않는다.
+

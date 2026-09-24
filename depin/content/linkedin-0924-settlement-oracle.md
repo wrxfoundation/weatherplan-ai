@@ -132,3 +132,78 @@ If you'd rather check than trust → weathermarket.ai (the verification steps ar
   이 글의 「다른 체인」 부분을 우리가 먼저 꺼내지 않는다.** 658 을 게시일 숫자로 바꿨는지는 미확인.
 - 게시 여부·시각·반응은 서우 통보 시 갱신(`reaction-log.md`).
 - Eri 는 Flare 를 이름으로 말할 수 있다(9/23 미팅) — 우리 글은 암시로, 사실은 같게.
+
+## 본문 v4 — 게시본 편집용 (9/24 밤, 구조 변경 확정 반영 · 서우 「링크드인 수정본 전체 다시 줘」)
+
+WeatherMarket.io 문서(9/24 서우 붙여 넣음)로 확정: **9/23 부터 기록의 정본(anchor of record)은 Flare 메인넷 SnapshotAnchor**, 구독료는 **XRP**.
+v3 에서 바뀐 곳: 지문 → 「데이터를 위한 블록체인」에 · FDC 요청 확인 문장 → 공개 게시판(판정 레지스트리) · 현황 문단(RLUSD·XRPL 기록·658 삭제 → 지문 기록·판정 게시·XRP 구독 결제) · #RLUSD 삭제.
+「내용증명」·코카콜라·공자·비트겐슈타인·맺음 문장은 그대로 맞다. 국문 1042자 · 영문 1955자.
+
+```
+모른다고 말할 수 있는 날씨 오라클
+
+축제 날 오후 2~3시, 서울에 비가 5mm 넘게 오면 보험금이 나가는 계약이 있다고 해 봅시다.
+계약은 한 줄입니다. 어려운 건 따로 있습니다. 그 "5mm"는 누가 정할까요?
+
+날씨로 돈이 오가는 계약은 많습니다. 농작물 보험, 에너지 헤지, 행사 취소.
+그런데 기준 숫자는 대개 한 회사의 API에서 옵니다. 그 숫자가 틀려도 돈을 내주는 쪽은 확인할 방법이 없습니다.
+
+저희 웨더 데이터 마켓은 이렇게 풉니다.
+매시간 11개 출처에서 167개 도시의 날씨를 모아 판정을 내리고, 그 지문을 '데이터를 위한 블록체인'에 남깁니다.
+날씨판 '내용증명'입니다. 언제 무엇이라고 판정했는지가 분쟁 전에 기록되고, 나중에 누구도 고칠 수 없습니다.
+판정은 어떤 정산 계약이든 읽어 갈 수 있는 공개 게시판에 올라갑니다.
+
+제가 가장 좋아하는 부분은 따로 있습니다. 이 오라클은 "모른다"고 말할 수 있습니다.
+관측값이 크게 갈리면 억지로 판정하지 않고 '보류'하고, 그 보류까지 기록에 남깁니다.
+
+공자는 "아는 것을 안다 하고 모르는 것을 모른다 하는 것, 이것이 아는 것"이라 했습니다.
+비트겐슈타인은 "말할 수 없는 것에 대해서는 침묵해야 한다"고 했습니다.
+사람에게는 오래된 미덕이, 오라클에게는 새 기능입니다. 모를 때 모른다고 말하는 숫자여야 진 쪽도 받아들이니까요.
+
+다음 숙제는 코카콜라 레시피 같은 문제입니다.
+판정 규칙은 영업비밀이라 공개하면 사업이 끝나고, 숨기면 아무도 결과를 믿지 않습니다.
+레시피는 금고에 둔 채 "오늘도 그 레시피 그대로 만들었다"는 것만 증명할 수 있다면요? 이 부분은 테스트넷에서 시험 중입니다.
+
+지금 메인넷에서 도는 건 매시간의 지문 기록과 판정 게시, 그리고 XRP Ledger에서 XRP로 받는 구독 결제입니다. 그 아래에는 30년 날씨를 재 온 케이웨더의 관측망이 있습니다.
+
+돈은 XRPL이 옮기고, 사실은 데이터를 위한 체인이 증명합니다.
+
+10월 3일 XRP SEOUL 2026에서 더 이야기 나누겠습니다.
+
+#XRPL #오라클 #날씨데이터 #XRPSEOUL2026
+```
+
+```
+A weather oracle that can say “I don’t know”
+
+Say a festival buys a policy: if more than 5mm of rain falls in Seoul between 2 and 3pm on the day, it pays out.
+The contract is one line. The hard part is elsewhere. Who decides it was 5mm?
+
+Plenty of money already settles on weather: crop cover, energy hedges, event cancellations.
+But the number usually comes from one provider's API. If it is wrong, the side that pays has no way to check.
+
+Here is how our Weather Data Market solves it.
+Every hour, 11 sources across 167 cities are reduced to one determination, and its fingerprint is written to the blockchain for data.
+Think of it as mailing the weather a sealed letter: the postmark proves when, the seal proves what, and nobody can change either later.
+The verdict lands in a public registry any settlement contract can read.
+
+The part I like most: this oracle is allowed to say "I don't know."
+When observations split, it doesn't force a call. It withholds, and the withholding goes on the record too.
+
+Confucius: "To say you know when you know, and to say you don't when you don't. That is knowledge."
+Wittgenstein: "Whereof one cannot speak, thereof one must be silent."
+An old virtue for people, a new feature for oracles. The losing side needs a number that admits uncertainty before it accepts any number at all.
+
+Next up is a Coca-Cola problem.
+The rule behind a determination is a trade secret. Publish it and the business is gone; hide it and nobody trusts the output.
+What if the recipe stayed in the vault and you could still prove today's batch came from exactly that recipe? That part is on testnet.
+
+Live on mainnet today: the hourly records, the verdict registry, and subscriptions paid in XRP on the XRP Ledger. Underneath it all is KWeather's own observation network, built over 30 years.
+
+XRPL moves the money. The blockchain for data proves the fact.
+
+More at XRP SEOUL 2026 on 3 October.
+
+#XRPL #Oracles #WeatherData #XRPSEOUL2026
+```
+
