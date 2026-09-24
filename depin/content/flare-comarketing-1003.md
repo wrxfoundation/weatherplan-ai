@@ -109,3 +109,14 @@ KBW·XRP Seoul 주간 공동 마케팅 계획을 보내왔습니다.
 ```
 Ami 메시지 번역은 채팅으로만 전달(상대 메시지 원문은 저장소에 두지 않는다 — 요청 셋은 위 「Ami 의 요청 셋」).
 
+## Ami 에게 짧은 회신 (9/24 초안 — 서우 발송용, 발송 여부는 서우 통보 시 갱신)
+
+```
+Thanks Ami, and thanks for the kind wishes!
+We'll go through the plan with the team and come back with our comments and the Oct 3 announcement timing by Tue 29 Sep.
+One thing that would help us set the time: when is Hugo's keynote slot on the 3rd?
+```
+- 마감(9/29 화)을 우리 입으로 받아 준다 — 연휴 중에도 일정은 지킨다는 신호.
+- 질문 하나만: **Hugo 키노트 시각** — 10/3 발표 시각을 정하는 데 필요한 유일한 외부 정보(위 「10/3 발표 시각」).
+- 계획 내용에 대한 평가는 아직 하지 않는다(검토 전 동의로 읽히지 않게) · 팀 복귀 날짜도 약속하지 않는다.
+
