@@ -118,5 +118,7 @@ If you'd rather check than trust → weathermarket.ai (the verification steps ar
 
 ## 게시 뒤
 
+- **게시: 9/24 (서우 통보)** — 권고 시점(10/1 이후)보다 이르게 올라갔다. 그래서 **9/30 까지 거래소 쪽 DM(Jenny·Alexander·Emily·Max·Hazel·Paola)에서
+  이 글의 「다른 체인」 부분을 우리가 먼저 꺼내지 않는다.** 658 을 게시일 숫자로 바꿨는지는 미확인.
 - 게시 여부·시각·반응은 서우 통보 시 갱신(`reaction-log.md`).
 - Eri 는 Flare 를 이름으로 말할 수 있다(9/23 미팅) — 우리 글은 암시로, 사실은 같게.

@@ -1099,3 +1099,24 @@ Logan
 Hi Hazel, thanks for connecting. I look after partnerships at wellbian, a network of certified air sensors people run in their own homes, with KWeather as our device partner. Good to be connected.
 ```
 
+## Paola Morán Rodríguez (Binance, VIP & Institutional) — 프로필 판정 (2026-09-24) → 1촌만, 메시지 0
+
+서우가 링크드인 게시(「모른다고 말할 수 있는 날씨 오라클」, 9/24) 직후 프로필 캡처 2장 공유(맥락 설명 없음 — 반응·1촌 제안 여부 미확인).
+
+- **자리**: Binance VIP & Institutional(2025-09~, 두바이) — 기관·VIP 고객 성장(HFT·프롭 트레이딩·마켓메이커·패밀리오피스·IB·기업·핀테크).
+  헤드라인 「Top Fintech Woman Spain · Top 100 Women in Web3 · Speaker & Moderator」.
+- **이력**: Telefónica Innovación Digital 디지털자산·Web3 매니저(2023-01~2025-09, 토큰화·NFT 마켓·지갑) · IE Business School 객원강사·스타트업
+  어드바이저(2022-05~2025-09) · alldefi 자문(2023-06~2024-06) · Bit2Me 파트너십·생태계·토큰 총괄(2022-01~2023-02, 「B2M 토큰 유틸리티 5+ ·
+  첫해 보유자 80K+」 본인 기재).
+
+**판정**
+- **바이낸스 여섯째** — 발신 넷(Emily · Max · Alexander · Jenny) + Hazel(1촌만). 다섯째부터 「뿌린다」(playbook 한 회사 동시 대화 상한) — Hazel 과 같은 자리.
+- **레인이 없다** — 거래 고객(기관·VIP) 유치 자리이고, 우리는 거래 고객이 아니다.
+- **이력은 우리와 가깝다**(토큰 생태계·통신사 Web3·연사/모더레이터). **그래서 더 조심한다** — 토큰 총괄 이력에 거래소 직함이 겹치면 어떤 대화든
+  상장 쪽으로 읽힌다(거래소 1촌 인사만 · 9/30 규칙).
+- **먼저 말을 걸면** 인사로만(Hazel 문안과 같은 결). 게시글에 댓글을 달면 그 스레드에서 감사 한 줄. 사업 이야기는 우리가 먼저 열지 않는다.
+- **열리는 시점**: 연사·모더레이터 자리(행사)로 소개가 오갈 때, 또는 Jenny 대화가 사내 소개로 이어질 때 — 콜드 DM 이 아니라 소개로.
+
+```
+Hi Paola, thanks for connecting. I look after partnerships at wellbian, a network of certified air sensors people run in their own homes, with KWeather as our device partner. Good to be connected.
+```
