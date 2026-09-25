@@ -55,6 +55,8 @@ KJ 확인 전에는 고치지 않는다 — 확인되면 그 수정안으로 편
 - **개발자 스레드 날짜** — 제목 「Oct 3」 ↔ 본문·일정표 「4 Oct」. 10/4 로 맞추자고 요청.
 - **「Reference repo: [link to confirm]」** — 공개할 저장소 링크를 우리가 줄지, 줄을 뺄지 결정.
 - 「Weather Data Market, the official oracle of KWeather」 — weathermarket.ai 푸터 문구와 같다. 그대로 둔다.
+- **(9/25 추가) 고객·수요 언급** — 공개 문안(Hugo 대본·메인/개발자 스레드·유튜브)에 **고객 수·계약 상태·「예측시장」을 넣지 말아 달라.**
+  쓰려면 `settlement data for weather-linked contracts` 로. 근거는 아래 「그룹 경과 (9/25 오후)」.
 
 ## 10/3 발표 시각 — 정할 때의 논리
 
@@ -136,6 +138,69 @@ One thing that would help us set the time: when is Hugo's keynote slot on the 3r
 3. **「I absolutely agree」** — Flare 는 계획 전체 승인으로 읽을 수 있다. 9/29 코멘트는 반대가 아니라 **다듬기**(표현·날짜·링크)로 보낸다.
 4. **예측시장 시뮬레이션(가상 USDT, 규제로 실거래 불가)** — Flare 의 「함께 지키는 선」에는 없다. **10/3 공개 문구에 넣지 않거나,
    넣으면 「시뮬레이션·가상 자산」을 명시**. 코스닥 상장사 + 예측시장 조합은 규제 질문을 부른다 — 대외 노출 전 법무 확인.
+
+## 그룹 경과 (9/25 오후) — Kristaps(Flare) 리뷰 + 우리 답신
+
+> 원문·텔레그램 핸들 저장소 비기재(요지만). Kristaps Grinbergs = Flare Network(공개 이름·소속).
+> **Flare 미공개 계획 — 대외 언급 0**: RLUSD 를 Flare 에 들여 x402 에 쓰는 방안 검토 · Coston2 USDT0 의 EIP-3009 업그레이드 ·
+> Google Confidential Computing 배포 가이드와 FCC 라이브러리.
+
+**17:34 Kristaps — 문서·저장소 검토, 「방향 좋다」 + 기술 네 가지 + 질문 하나**
+1. **x402**: 아직 진행 중으로 안다. Flare 가 **EIP-3009** 지원을 단순화 중이다. 퍼실리테이터가 사용자 대신 트랜잭션을 실행해 가스비가 없다.
+   Coston2 USDT0 를 업그레이드할 예정이고, 그 전엔 **우리 목(mock) 토큰 + 자체 퍼실리테이터**로 해도 된다.
+2. **FCC 는 Coston2 에서 시험** — 메인넷 출시 없이 테스트 가능. 그가 GCC 배포 가이드·보일러플레이트를 숨기는 FCC 라이브러리를
+   준비 중이고, **KWeather 샘플을 그걸로 갱신해 알려 주겠다.**
+3. **FETCH·CONSENSUS 호출을 봉인(seal)** — 요청자만 열고 다른 사람은 암호문만 보게.
+4. RLUSD on Flare 는 검토 중 — 지금은 **목 ERC-20** 이 최선.
+- **질문**: 첫 고객 후보는? 날씨 데이터를 **어떻게 소비**하나? **얼마나 자주**? **과거 데이터**? **예보**?
+
+**17:44 「디지털사업」 계정 답신(요지)**: 예상보다 빨리 필요한 고객을 **확보(secured)** 했고 **최소 두 곳과 논의 중** ·
+모두 **예측시장**에 필요한 데이터를 구하는 기관, 별도 계약으로 공급 · 중소 플랫폼엔 직접 결제 채널 · 결제는 처음엔 XRP 만,
+Flare 기술로 RLUSD 도 가능해 보인다 · 핵심 고객은 실시간 관측·합의 지수·**prediction data** 를 원한다.
+
+**판정 — 짚을 것 넷**
+1. **「확보했다」와 「논의 중」이 한 문장 안에서 부딪힌다.** 사실은 논의 중·미계약이다. 이 그룹에는 Flare 마케팅(Ami)도 있어,
+   10/3 Hugo 키노트·X 스레드에 「KWeather 가 고객을 확보했다」로 실릴 수 있다. 공개되면 되돌릴 수 없는 사실 주장이 된다 → 「논의 중(미계약)」으로 바로잡는다.
+2. **업태를 밝혔다 — 9/14 공통 규칙 위반.** 「예측시장 정산 데이터 건 상대를 이름으로도, **특정 가능한 업태로도** 밝히지 않는다」.
+   「예측시장 · 두 곳」은 크립토닷컴 담당자의 공개 글(OG.com 예측시장 인프라)과 겹쳐 상대가 특정될 수 있다. 크립토닷컴과는 MNDA 가 끝났다(9/23) —
+   **논의 사실 자체가 MNDA 비밀 범위인지** 확인 필요(조항 미확인). 대외엔 허용 문장만: `the pull is coming from the settlement side`.
+3. **예측시장 × 코스닥 상장사** — 9/24 판정 4(시뮬레이터는 10/3 공개 문구에서 빼거나 「시뮬레이션」 명시·법무 확인)의 연장이다.
+   이제 「고객 = 예측시장」이 Flare 손에 있다 → 9/29 코멘트에 「공개 문안에 예측시장·고객 수 금지」를 넣는다(위 코멘트 초안에 추가함).
+4. **Kristaps 의 실제 질문(소비 방식·빈도·과거·예보)에는 답이 안 됐다.** 그는 빌더라 이 답으로 FCC 샘플을 우리 쓰임에 맞춘다.
+   「prediction data」는 「예측시장 데이터」로도 읽혀 `forecast data` 가 정확하다. 결제(XRP 만) 문장은 공개 문서와 같아 문제없다.
+   리플 규칙도 걸리지 않는다(RLUSD 는 Flare 가 먼저 꺼낸 통화, 협력 표현 없음).
+
+**기술팀(KJ) 할 일 — Kristaps 네 가지에서**
+- **x402 가 풀린다**: 9/18 브리프의 막힌 곳이 「BSC-USDT 에 EIP-3009 이 없어 진짜 x402 불가 → 선불 크레딧 + txHash」였다.
+  Flare 의 EIP-3009 경로면 퍼실리테이터 방식 x402 가 가능하다 → Coston2 에서 목 ERC-20 + 자체 퍼실리테이터로 먼저 시험.
+- FCC — Kristaps 의 GCC 가이드·라이브러리·KWeather 샘플 갱신을 기다린다(메인넷 불필요, 「함께 지키는 선」의 「시험 중」과 같다).
+- **봉인 설계 결정**: 무엇을 공개로 두고(매시간 지문·판정 — 「누구나 읽는 공개 게시판」이 상품의 핵심) 무엇을 요청자에게 봉인할지(요청별 FETCH·CONSENSUS
+  결과값 — 유료 데이터가 온체인에서 공짜로 새지 않고, 비공개 파라미터도 지킨다). 이 선을 KJ 가 정한다.
+
+**보강 답신 초안 (EN)** — 같은 「디지털사업」 계정이 이어서 보내면 가장 자연스럽다. `[ ]` 는 KJ 가 채우고, 봉인 문단은 KJ 확인 뒤에 넣는다.
+
+```
+Thanks Kristaps, this is very helpful. The FCC library and the Google Confidential Computing guide will save us a lot of boilerplate.
+
+To add the detail you asked for:
+- Prospects: at least two data clients in active discussion, nothing signed yet, both on the settlement side. They need a value nobody can dispute after a contract closes. Please keep this internal for now.
+- How they consume: hourly consensus runs across 167 cities, 11 feeds each, pulled by API, either per call or as a per-city subscription. For settlement, the contract reads the verdict (met / not met / withheld) from the DeterminationRegistry on Flare mainnet.
+- Historical: [depth we can offer for backtesting]
+- Forecast: [horizon and variables, or not in scope yet]
+
+On sealing: agreed. We'd keep the hourly fingerprint and the verdict public, and seal the FETCH and CONSENSUS payloads to the requester. We'll test it on Coston2 with a mock ERC-20 and our own facilitator.
+```
+- 넣지 않은 것: 고객 이름·업태(예측시장)·국가 · 계약 형태·금액 · RLUSD(Flare 가 검토 중인 걸 우리가 되받지 않는다) · 「secured」.
+- `nothing signed yet` 이 앞 메시지의 「secured」를 따지지 않고 조용히 바로잡는다. `Please keep this internal for now` 는 10/3 문안 방어.
+- 공개 문서 사실만 썼다: 167개 도시 · 11개 피드 · 매시간 · 호출당/도시 구독 · DeterminationRegistry(weathermarket.ai 문서).
+
+**팀 카톡(서우 → 본부장·팀) 초안**
+```
+[Flare 그룹 — Kristaps 리뷰에 대한 우리 답신, 두 가지만 바로잡으면 좋겠습니다]
+1) "고객을 확보(secured)" — 실제로는 논의 중이라, 10/3 Flare 키노트·X 스레드에 "케이웨더가 고객 확보"로 실릴 수 있습니다. "논의 중·미계약"으로 두는 게 안전합니다.
+2) "예측시장 고객" — 논의 상대가 업태만으로도 특정될 수 있어(9/14부터 이름·업태 비공개 원칙), 밖에는 "정산용 데이터"로만 말하면 좋겠습니다.
+Kristaps가 물은 소비 방식·빈도·과거 데이터·예보는 아직 답이 안 나갔습니다. 보강 답신 초안을 만들어 두었으니, KJ님이 과거·예보 두 칸만 채워 주시면 같은 계정으로 이어서 보내겠습니다.
+```
 
 ## WeatherMarket.io 문서에서 확인한 사실 (9/24 밤, 서우가 화면·Docs 전문 붙여 넣음)
 
