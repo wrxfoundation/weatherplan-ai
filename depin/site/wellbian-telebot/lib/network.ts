@@ -979,6 +979,12 @@ export const PEOPLE: Person[] = [
     next: "⚠ **Lynn 2차 DM 이 발송 대기 중**이다. 같은 그룹에 동시에 들어가지 않는다 — Lynn 이 먼저다.",
   },
   {
+    id: "christyice", gate: "data", name: "Christy", org: "ICE", role: "Head of Client Development, Asia Pacific (홍콩)",
+    lane: "capital", stance: "hold", tie: "프로필 공유(9/25) — 1촌 여부 서우 확인", group: "ICE",
+    why: "**17년 내내 금융 데이터를 기관에 파는 쪽** — ICE 9년 9개월(계정관리 → RM 총괄 → 고객 개발 총괄 2025.7~) · Interactive Data · FactSet · Thomson Reuters · **FISD 자격**. 구매 결정자가 아니라 **외부 데이터가 ICE 배포 목록에 오르는 길을 아는 사람**. Lynn 과 같은 데이터 축인데 더 실무·아시아(서울과 1시간).",
+    next: "**Lynn 형식 인사만**(Lynn 이 먼저 — 인사는 사내 보고 대상이 아니다). 사업 이야기는 Lynn 쪽이 열리거나 기기 가동 + 데이터 실적 뒤. ⚠ Lynn·Hazel·공통 1촌 이름 0 · 체인 이름 0 · 토큰·상장 0 · **예측시장·다른 거래소·플랫폼 지목 0** · 선택 줄 0. ★ FISD 자격자라 `eleven independent sources` 대신 **`eleven weather feeds`**(8개가 한 공급원 경유). 문안: business-directions 「Christy (ICE)」.",
+  },
+  {
     id: "liaq", name: "Lia Q", org: "(비공개)", role: "AI Compute · AIDC Partnerships · Digital Assets",
     lane: "compute", stance: "linked", tie: "1촌(9/10) — 메시지 0",
     why: "**AI 데이터센터 파트너십 + 디지털자산**이 한 사람에 있다. 9/14 내부 회의의 AI 팩토리 구상과 같은 축이다.",

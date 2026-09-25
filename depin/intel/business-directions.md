@@ -1134,3 +1134,44 @@ We work on two layers: certified air-quality sensors that people run in their ow
 
 Good to be connected.
 ```
+
+## Christy (ICE, Head of Client Development, Asia Pacific) — 프로필 판정 (2026-09-25) → Lynn 형식 인사만, 사업 이야기는 Lynn 다음
+
+서우가 링크드인 프로필 캡처 3장(경력·학력·기술)을 공유. 이름은 추천서 칸의 「Christy」까지만 보인다(성 미확인).
+
+**누구** — 17년 내내 **금융 데이터를 기관 고객에게 파는 쪽**.
+- ICE 9년 9개월(홍콩, 대면): 아태 계정관리 총괄(2017) → RM 총괄 → Senior Director·RM 총괄(2022) → **고객 개발 총괄(2025.7~)**.
+- 그 전: Interactive Data(북아시아 RM, 2013~16 — ICE 가 인수한 시장 데이터 회사) · FactSet(브로커 관계) · Thomson Reuters(상장 상품 커뮤니티).
+- **FISD 전문 자격**(SIIA 산하 금융정보 업계 협회) · Henley(ICMA Centre) 헤지펀드 과정 · 토론토대 도시경제·지리.
+
+**레인 — 데이터(Lynn Martin 과 같은 축, 더 실무·아시아)**
+- 구매 결정자가 아니라 **ICE 데이터를 아태 기관에 파는 영업·고객 개발**이다. 외부 데이터가 ICE 배포 목록에 오르는 길을 아는 쪽이다.
+  (공개 보도: 2025 가을 ICE 가 예측시장 회사에 투자하고 그 데이터를 기관에 배포 — 원출처 미확인, **대외 인용·언급 금지**.)
+- 홍콩이라 시간대가 같다(서울과 1시간).
+
+**순서 — 같은 그룹**
+- ICE 에는 **Lynn Martin**(9/13 인사, 2차 DM 발송 여부는 서우 확인)과 **Hazel Xu**(1촌, 보류)가 있다. **Lynn 이 먼저다.**
+- Christy 에게는 **인사만** 보낸다. 인사는 사내 보고 대상이 아니다(9/15 Edward 판정과 같은 논리).
+- 사업 이야기는 Lynn 쪽이 열리거나 기기 가동 + 데이터 실적 뒤. 그가 답하면 ICE 동시 대화가 둘이 되어 상한에 닿으니, Hazel 은 계속 보류한다.
+
+**가드**
+- Lynn·Hazel·공통 1촌 이름 0 · 체인 이름 0(`a public ledger`) · 토큰·상장·보상·가격 0.
+- **예측시장·그 회사·다른 거래소·플랫폼 지목 0** · 크립토닷컴·Flare 진전 0.
+- 선택 줄(관심의 이유) 0 — 거래소 그룹 자리.
+- ★ **`eleven independent sources` → `eleven weather feeds`**: FISD 자격자는 데이터 출처의 독립성을 직업으로 따진다. 11개 중 8개가 한 공급원(Open-Meteo)을 거치니, 이 사람에게는 「independent」가 가장 먼저 반박될 단어다(기본값 문구 결정은 서우 대기, 이 건은 feeds 권고).
+
+**1촌 수락 뒤 메시지(556자)**
+```
+Christy — thanks for connecting.
+
+I run partnerships at wellbian. KWeather has measured weather in South Korea for thirty years and supplies data to 4,000+ enterprise clients; wellbian is the network built on top of that.
+
+We work on two layers: certified air-quality sensors that people run in their own rooms, and city-level weather across 90 countries and 167 cities, where each value is a consensus across eleven weather feeds rather than a single reading. Every input is fingerprinted to a public ledger before it goes anywhere.
+
+Good to be connected.
+```
+
+**아직 1촌 전이면 — 요청 메모(246자, 상한 300)**
+```
+Hi Christy, I run partnerships at wellbian. KWeather has measured weather in Korea for 30 years; wellbian builds on it: home air sensors plus city-level weather from 11 weather feeds, every input fingerprinted to a public ledger. Glad to connect.
+```
