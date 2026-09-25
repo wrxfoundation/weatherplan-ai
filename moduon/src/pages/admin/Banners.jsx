@@ -20,7 +20,7 @@ const BG_PRESETS = [
 // 배너에 쓸 수 있는 자체 호스팅 에셋 — fetch-assets.mjs 가 내려받는 경로와 일치
 // 자체 호스팅(public/assets)으로 실제 수신이 확인된 컷아웃 에셋만 제시한다.
 // 21:9 장면 이미지 7종은 원본이 사라져(403) 목록에서 뺐다 — 새로 만들면 여기와 fetch-assets 에 같이 추가할 것.
-const ASSETS = ['/assets/banner-mobi.png', '/assets/banner-benefit.png', '/assets/banner-subscribe.png', '/assets/banner-finder.png', '/assets/mobi-agent.png', '/assets/banner-piggy.png', '/assets/banner-target.png', '/assets/obj-moneybag.png', '/assets/obj-purifier.webp', '/assets/obj-phone.png', '/assets/obj-wifi.webp', '/assets/cat-car.png', '/assets/ill-ai.png', '/assets/ill-thinking.png']
+const ASSETS = ['/assets/banner-mobi.webp', '/assets/banner-benefit.png', '/assets/banner-subscribe.png', '/assets/banner-finder.png', '/assets/mobi-agent.png', '/assets/banner-piggy.png', '/assets/banner-target.png', '/assets/obj-moneybag.png', '/assets/obj-purifier.webp', '/assets/obj-phone.png', '/assets/obj-wifi.webp', '/assets/cat-car.png', '/assets/ill-ai.png', '/assets/ill-thinking.png']
 const LINKS = [...new Set([...SITE_NAV.map((n) => n.to), '/consult', '/diagnosis', '/benefits/signup', '/benefits/invite', '/benefits/ads', '/board/event'])]
 
 const firstLine = (s = '') => s.split('\n')[0]

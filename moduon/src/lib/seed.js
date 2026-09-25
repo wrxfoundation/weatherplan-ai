@@ -9,7 +9,7 @@ const dayAfter = (d) => now() + d * 86400000
 const thisMonth = (day, hour = 11) => { const d = new Date(); d.setDate(Math.min(day, d.getDate())); d.setHours(hour, 0, 0, 0); return d.getTime() }
 import { BENEFIT_TOTAL, REVIEWS } from './constants'
 
-export const SEED_VERSION = 17 // 17: KT 정책 단가표(K1) 연결 + 셀프개통 고정 마진
+export const SEED_VERSION = 18 // 18: 히어로 1번 인물 사진 교체(자체 호스팅 webp) + 색 영역을 사진 배경색에 맞춤
 
 export function buildSeed() {
   const tenants = [
@@ -137,7 +137,7 @@ export function buildSeed() {
     // 장면형은 이미지가 배경 전체라 실패하면 화면이 통째로 비지만, 컷아웃형·뉴스형은 텍스트 컬럼과 bg 로
     // 화면이 완성되므로 같은 일이 또 나도 "사람만 안 보이는" 정도로 끝난다. 그래서 기본값을 이쪽으로 되돌린다.
     // 쓰는 이미지는 전부 배경 제거(투명 PNG) 산출물 — 현재 배포에서 정상 수신이 확인된 것들이다.
-    { id: 'B1', kind: 'scene', tone: 'light', order: 0, active: true, eyebrow: '모두온 플랫폼의 AI비서 모비를 소개합니다', title: '“상담원 기다리지 말고,\n모비에게 바로 물어보세요.”', desc: '인터넷·휴대폰·정수기… 흩어진 생활 구독서비스를 한곳에서 비교하고\n남들은 몰라서 못 받은 지원금까지 왕창 돌려받으세요.', note: '24시간 언제든, 모비와 상담하세요.', image: '/assets/banner-mobi.png', bg: 'linear-gradient(90deg,#5377D6 0%,#7D9BE8 100%)', cta: { label: '모비와 상담하기', action: 'chat' } },
+    { id: 'B1', kind: 'scene', tone: 'light', order: 0, active: true, eyebrow: '모두온 플랫폼의 AI비서 모비를 소개합니다', title: '“상담원 기다리지 말고,\n모비에게 바로 물어보세요.”', desc: '인터넷·휴대폰·정수기… 흩어진 생활 구독서비스를 한곳에서 비교하고\n남들은 몰라서 못 받은 지원금까지 왕창 돌려받으세요.', note: '24시간 언제든, 모비와 상담하세요.', image: '/assets/banner-mobi.webp', bg: 'linear-gradient(90deg,#336CC4 0%,#4380D5 30%,#4A8ADC 60%,#4C8DDF 100%)', scrim: '#3569C6', cta: { label: '모비와 상담하기', action: 'chat' } },
     { id: 'B2', kind: 'scene', tone: 'dark', order: 1, active: true, eyebrow: '모두온 혜택', title: '“보고, 초대하고,\n쌓고, 쓰세요.”', desc: '- on포인트 : 보고, 초대하고, 적립하고\n- 복지몰 : 적립한 포인트로 쇼핑하고', image: '/assets/banner-benefit.png', bg: 'linear-gradient(90deg,#F7F2EE 0%,#EDF1FB 100%)', cta: { label: '혜택 보러가기', to: '/benefits' } },
     // 뉴스형 — 목업 랜딩페이지3 의 신문 1면. 카드가 DOM 이라 이미지가 아예 필요 없다(가장 안전한 종류).
     { id: 'B3', kind: 'scene', side: 'left', tone: 'dark', order: 2, active: true, eyebrow: '구독경제 전성시대 · 100조원 시장 개막!', title: '합리적인 구독서비스 소비는\n“모두온”과 함께', desc: '구독경제는 매달 일정한 금액을 내고 필요한 물건이나\n서비스를 주기적으로 받는 경제 활동입니다.', image: '/assets/banner-subscribe.png', bg: 'linear-gradient(90deg,#EDF1FB 0%,#D6E0FA 100%)', cta: { label: '모비에게 물어보기', action: 'chat' } },

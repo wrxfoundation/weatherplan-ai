@@ -18,15 +18,26 @@ const fetched = new Set([...fetchSrc.matchAll(/^\s*\['([\w.-]+)',/gm)].map((m) =
 check(fetched.size > 0, `fetch-assets 목록 ${fetched.size}종`)
 
 // ② 레포에 커밋된 파일 (public/assets 이하 전부, cars/ 는 별도 스크립트 소관이라 제외)
-const committed = new Set()
+const onDisk = new Set()
 const walk = (dir, prefix = '') => {
   if (!existsSync(dir)) return
   for (const name of readdirSync(dir)) {
     const p = join(dir, name)
-    if (statSync(p).isDirectory()) { if (name !== 'cars') walk(p, `${prefix}${name}/`) } else committed.add(`${prefix}${name}`)
+    if (statSync(p).isDirectory()) { if (name !== 'cars') walk(p, `${prefix}${name}/`) } else onDisk.add(`${prefix}${name}`)
   }
 }
 walk(join(root, 'public/assets'))
+
+// '커밋된 파일' = 디스크에 있고 git 이 무시하지 않는 것. 디스크만 보면 무시 목록(public/assets/*.webp)에 걸린 파일도
+// 공급원으로 쳐서, 배포본에서 사라질 이미지를 통과시킨다(2026-09-25 banner-mobi.webp 가 그랬다).
+const { execSync } = require('node:child_process')
+let ignored = new Set()
+try {
+  const out = execSync('git check-ignore --stdin', { cwd: join(root, 'public/assets'), input: [...onDisk].join('\n'), encoding: 'utf8' })
+  ignored = new Set(out.split('\n').filter(Boolean))
+} catch (e) { if (e.stdout) ignored = new Set(String(e.stdout).split('\n').filter(Boolean)) } // 무시 대상이 하나도 없으면 종료코드 1
+const committed = new Set([...onDisk].filter((f) => !ignored.has(f)))
+if (ignored.size) console.log(`INFO  디스크엔 있지만 git 이 무시하는 에셋 ${ignored.size}종 — 배포본에 안 들어가므로 공급원으로 치지 않음: ${[...ignored].slice(0, 5).join(' ')}`)
 
 // ③ 소스가 가리키는 /assets/ 경로 — 차량 이미지(cars/)는 제휴사 스크립트가 따로 채운다
 const refs = new Map() // path → [where]
@@ -63,9 +74,10 @@ check(orphans.length === 0, orphans.length === 0
 const seed = readFileSync(join(root, 'src/lib/seed.js'), 'utf8')
 const critical = new Set([...(fetchSrc.match(/const CRITICAL = new Set\(\[([\s\S]*?)\]\)/)?.[1] ?? '').matchAll(/'([\w.-]+)'/g)].map((m) => m[1]))
 const sceneImgs = [...seed.matchAll(/kind: 'scene'[^}]*?image: '\/assets\/([\w.-]+)'/g)].map((m) => m[1])
-const unguarded = [...new Set(sceneImgs)].filter((f) => !critical.has(f))
+// 커밋된 파일은 다운로드 자체가 없어 '못 받아와서 빈 히어로' 가 될 수 없다 — 가드를 만족한 것으로 본다
+const unguarded = [...new Set(sceneImgs)].filter((f) => !critical.has(f) && !committed.has(f))
 check(unguarded.length === 0, unguarded.length === 0
-  ? `장면형 배너 이미지 ${new Set(sceneImgs).size}종 전부 빌드 가드 안에 있음`
+  ? `장면형 배너 이미지 ${new Set(sceneImgs).size}종 전부 빌드 가드 안 또는 커밋됨`
   : `빌드 가드에 없는 장면형 이미지 ${unguarded.length}건 — ${unguarded.join(' ')} (fetch-assets 의 CRITICAL 에 넣을 것)`)
 
 // ⑥ 히어로 장면 이미지의 두 가지 붙이는 법 — 폭에 따라 다르다.

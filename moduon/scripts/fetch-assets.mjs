@@ -66,7 +66,7 @@ const ASSETS = [
   // 같은 세트의 대안 2컷(바꾸려면 아래 URL 로 교체):
   //   아이보리·안말음 단발   https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260922_062904_cac19b66-41ae-46be-9f43-9c931f7c932b.png
   //   라이트그레이·귀뒤 넘김 https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260922_062904_3a6443d4-b4eb-40fe-b12f-61f8a310903c.png
-  ['banner-mobi.png',      'https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260922_062904_b21b1450-3e62-4b35-a92f-a5aa0d6c9b59.png'], // 채택: 차콜네이비 블레이저 · 블런트 단발 · 단정한 정면
+  // banner-mobi — 2026-09-25 사용자 제공 사진으로 교체하며 public/assets/banner-mobi.webp 로 커밋(자체 호스팅). 여기서 받지 않는다.
   ['banner-benefit.png',    'https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260922_045533_ce4b4b7f-ce06-4ffd-9042-ba213114dcea.png'],
   ['banner-subscribe.png',  'https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260922_045533_bf9c1012-db0e-45f2-8d2b-132c719bf6f1.png'],
   ['banner-finder.png',     'https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260922_045533_4bd8b8b7-b98e-4bcf-9d7c-d03716afe69d.png'],
@@ -89,7 +89,7 @@ mkdirSync(dir, { recursive: true })
 const CRITICAL = new Set([
   'tile-phone.png', 'tile-rental.png', 'tile-internet.png', 'tile-car.png', 'tile-package.png', 'tile-benefit.png',
   'mobi-agent.png', 'banner-piggy.png', 'banner-target.png', 'ill-ai.png', 'ill-thinking.png', 'obj-moneybag.png',
-  'banner-mobi.png', 'banner-benefit.png', 'banner-subscribe.png', 'banner-finder.png',
+  'banner-benefit.png', 'banner-subscribe.png', 'banner-finder.png',
 ])
 const strict = process.env.ASSETS_STRICT === '1' || (process.env.ASSETS_STRICT !== '0' && !!process.env.VERCEL)
 
