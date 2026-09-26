@@ -20,6 +20,7 @@
 | 생태계 사실 기록(원출처 확인분) | `intel/ecosystem-log.md` | 2차 자료면 표시 |
 | KOL·셀럽 사다리 | `intel/celeb-ladder.md` | |
 | DePIN 커뮤니티 선행 사례 — GEODNET 디스코드 4년치(팀 · 인센티브 · 규칙 · 위기 · 유통) | `reports/geodnet-community-study-0918.html` | 9/18 내부 분석, 9/26 저장 |
+| XRP · XRPL 인플루언서 리스트 + 외부 조사(DePIN 기기 고객 확보 · 공기질 데이터 수요 · KOL 효과 · 홍보 규제 · XRPL 생태계 · 행사) | 저장소 루트 `reports/XRPL 인플루언서와 DePIN 고객 확보.md` · 노트 `research_notes/XRPL 인플루언서와 DePIN 고객 확보/` | 9/26. 원문 차단으로 검색 요약 기반 — 명단 · 수치는 원출처 확인 전 대외 인용 금지. 요약은 `intel/celeb-ladder.md` D |
 | 국내 텔레그램 채널 22곳(Catalyze 연결) 운영 표·발화 문안 | `intel/kol-channels.md` | **초대 링크는 저장소 금지** — 구글 시트에만 |
 | 런치 포스트·UTM 규칙·발급 목록 | `content/launch-post-0907.md` | utm_source = 채널명 소문자 |
 | 구 플랫폼(wlbn.wellbianlabs.io, 8/24) 팩트시트 | `intel/wlbn-platform.md` | 토큰·약관은 정본이 우선 |

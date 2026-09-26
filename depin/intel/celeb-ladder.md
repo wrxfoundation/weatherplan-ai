@@ -24,8 +24,8 @@
 
 | 계정 | 접점 이력 | 현재 칸 | 이번 주 목표 | 다음 수 |
 |---|---|---|---|---|
-| @victoriazmei (Victoria Mei, MoonPay 소셜미디어·크리에이터 60만+) | 9/10 서우 발견, 컨택 예정 | — | 1 (DM 발송) | 반응 오면 관심사 듣기, 조건·숫자 제시 없음 — 9/9 기조 |
-| **@sentosumosaba (Crypto Eri, 290.4K · onamipress·3 Big Waves Media 공동창업자 · 도쿄)** | **9/13 그가 먼저 우리를 공개 언급**(XRP SEOUL 김성환 연사 발표 인용, 「See you there」) — 우리 답글 0 | **5 (먼저 언급)** | 6 (10/3 현장) | 9/16 미디어 협력 DM → **그가 회신(무상 미디어 협력 · 도쿄 복귀 후 플랜)** · 9/18 화요일 제안 → **9/21 9/23(수) 10:00 KST/JST Google Meet 콜 확정**(캘린더 초대, 서우 직접 발송). **해외 KOL 중 가장 앞선 칸** — 우리가 연 문이 아니라 그가 연 문이라 설계가 다르다(`x-activity-log.md` 해당 절) |
+| @victoriazmei (Victoria Mei, MoonPay 소셜미디어·크리에이터 60만+) | 9/10 서우 발견, 컨택 예정 | — | 1 (DM 발송) | 반응 오면 관심사 듣기, 조건·숫자 제시 없음 — 9/9 기조 · 9/26 외부 조사: XRPL 글 근거 없음 → 「인사만」 권고(보고서) |
+| **@sentosumosaba (Crypto Eri, 290.4K · onamipress·3 Big Waves Media 공동창업자 · 도쿄)** | **9/13 Eri 가 먼저 우리를 공개 언급**(XRP SEOUL 김성환 연사 발표 인용, 「See you there」) — 우리 답글 0 | **5 (먼저 언급)** | 6 (10/3 현장) | 9/16 미디어 협력 DM → **Eri 가 회신(무상 미디어 협력 · 도쿄 복귀 후 플랜)** · 9/18 화요일 제안 → **9/21 9/23(수) 10:00 KST/JST Google Meet 콜 확정**(캘린더 초대, 서우 직접 발송). **해외 KOL 중 가장 앞선 칸** — 우리가 연 문이 아니라 Eri 가 연 문이라 설계가 다르다(`x-activity-log.md` 해당 절) |
 
 
 ### 해외 XRP·XRPL 인플루언서 리스트업 기준 (9/26, 서우 「당장은 xrpl xrp 인플루언서 리스트업 해보겠습니다」)
@@ -44,12 +44,32 @@
 열: 계정 · 이름/소속(공개) · 다루는 주제 · 10/3 참석 · 접점 이력 · 첫 수 · 현재 칸. **단가 · 연락처 · 조건은 시트에만.**
 첫 수 순서: 팔로우 → 그들 글에 우리 레인 답글(링크 · CTA 0) → 10/3 현장 초대 → 기기 · 데이터 데모. 협업 제안은 그쪽이 먼저 열 때(Eri 가 그랬다).
 
+### 외부 조사 리스트업 결과 (9/26) — 보고서 `reports/XRPL 인플루언서와 DePIN 고객 확보.md`(저장소 루트) · 노트 `research_notes/XRPL 인플루언서와 DePIN 고객 확보/`
+
+서우 9/26 「xrpl xrp 인플루언서 리스트업 해줘 그리고 내 생각 말고 크립토, xrpl , depin 외부조사도 총동원해봐」 → 7갈래 외부 조사.
+**원문 사이트가 모두 막혀(GitHub 만 열림) 인용 대부분이 검색 요약이다 — 명단 · 직함 · 수치는 원출처 확인 전 대외 인용 금지.** 팔로워 수는 넣지 않았다.
+외부 근거로는 XRPL DePIN 을 이미 말하는 개인 증폭자가 없다(XRP SEOUL 2026 공식 연사 1~3차에 독립 크리에이터 0) — 순서는 증명 → 증언 → 확산.
+
+| 순서 | 대상 | 첫 수 | 메모 |
+|---|---|---|---|
+| 10/3 현장 (E → D) | @sentosumosaba(Eri) · Chandler Fang(t54 창업자, **전 리플**, 핸들 미확인) · Hugo Philion(Flare, 직접 통합 표현 금지) · @ashgoblue · Rocks Park(Doppler Finance, 핸들 미확인) | 인사 → 기기 · 데이터 시연 | t54 「결제 전 검증」과 우리 「기록 전 판독값 검증」이 같은 문법 — 데모 적합도 1순위. 대화에서 리플은 꺼내지 않음 |
+| 10월 중순~ (R → D) | @mrcauliman · @Vet_X0 · Panos Mekras(Anodos, 핸들 미확인) · @WietseWind(기술 주제만) · @dazzlingxrpl · @rootveg444(PermissionDelegation 활성 뒤) · @Magne_Ai(「센서가 현장에 있었나」를 물은 계정 — 데모 먼저) | 레인 답글 → 데모 | @RichardXRPL 은 팔로우만(XRPL Labs 그룹 동시 2개 한도) |
+| 조직 | @xrpl_commons(Odelia 인바운드가 창구, 그룹 동시 2개) · @XRPLF(팔로우 · Town Hall) · @xrplkorea(오피스아워 · 그랜트 — 티켓 · 모객 축과 분리) · @XRPLJapan(Community Day · 해커톤 DID 트랙 데모) | 데모 · 기고 | 보여 줄 것 = 가동 기기 수 · 앵커 트랜잭션 · 검증 링크. xrpl.org 블로그 PR 기고는 트랙션 생긴 뒤 |
+| 인사만 | @victoriazmei(MoonPay — XRPL 글 근거 없음) · Robinhood · Bitstamp · Biconomy(확인 전 거래소 취급) · 업비트 · Lambda256 · Monex · Rakuten Wallet | 인사 | 다른 거래소 · 플랫폼 이름을 꺼내지 않음 |
+| 제외 · 답글 안 함 | Jake Claver(명예훼손 소송 기각 · 문서 조작 인정 보도) · Dom Kwok(장기 가격 목표 반복) · John Deaton(정치 인사 — 이력 출처 확인 필요) · @BankXRP · @Trensik_com · 한 · 일 가격 레인 채널 | — | Zach Rector 는 보류(분쟁 소음). 전체 사유는 보고서 「제외」 표 |
+
+한 · 일(XRPL Korea · XRPL Japan · 타임레버리지(조건부, 광고 표기 전제) · 블록미디어 · 토큰포스트 · 블루밍비트 · Tiger Research)은 보고서 「한국·일본」 · 「조직·매체」 표.
+외부에서 찾은 한 · 일 후보 중 텔레그램 22곳과 겹친 곳은 0 — 「부재」의 증명은 아니다(검색 한도 소진).
+
+서우 확인: ① @WrathofKahneman 의 실제 핸들이 @WKahneman 인지(같은 표시명 사칭 가능성) ② 핸들 미확인 6명(Fang · Philion · Rocks Park · Mekras · Ferran Prat · Julian Leitloff)
+③ XRP SEOUL 2026 공식 페이지의 연사 차수 · 철자(Fang/Pang · Asheesh/Ashish) ④ 1 · 2순위 13개 계정 답글 구성(실명 빌더인지, 상투구 · 티커인지).
+
 ## C 분석가·빌더
 
 | 계정 | 접점 이력 | 현재 칸 | 이번 주 목표 | 다음 수 |
 |---|---|---|---|---|
 | @mrcauliman (MONOLITH) | 시그니처 크레딧 인용 · 9/2 답글 초안(게시 여부 미확인) | (확인) | 2 | 답 오면 이어가기 — 빌더 대 빌더 |
-| @WrathofKahneman | 8/22 신용딜 · Fordefi 답글 · 8/26 Xago 초안 | (확인) | 2 | 기관 유동성 글 등장 시 시퀀싱 지목형 |
+| @WrathofKahneman | 8/22 신용딜 · Fordefi 답글 · 8/26 Xago 초안 | (확인) | 2 | 기관 유동성 글 등장 시 시퀀싱 지목형 · 9/26 외부 조사: 실제 핸들이 @WKahneman 일 가능성 — 서우가 X 에서 확인하기 전까지 표기 유지 |
 | @rootveg444 | 8/23 PD 질문형 답글 | (확인) | 2 | 답 왔는지 확인 — 왔으면 이미 2 |
 | @alina_creates | 8/24 Virtuals 답글 | (확인) | 1 | 에이전트 결제 글 재등장 시 5c 연결 |
 | XRPL 온체인 분석가 (8/30 핸들 미기입) | 8/30 답글(내용 미확인) | (확인) | 2 | 핸들 기입 필요 |
