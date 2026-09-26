@@ -1,0 +1,29 @@
+{
+  "name": "K-CARE",
+  "short_name": "K-CARE",
+  "description": "시니어 케어 멤버십 — 안심방문 · 해주세요 · 가족 공유",
+  "start_url": "/elder",
+  "display": "standalone",
+  "background_color": "#F1EFE8",
+  "theme_color": "#0A1F3C",
+  "lang": "ko",
+  "icons": [
+    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ],
+  "shortcuts": [
+    {
+      "name": "SOS 도움 요청",
+      "short_name": "SOS",
+      "description": "바로 도움을 부릅니다 (5초 안에 취소할 수 있습니다)",
+      "url": "/elder?sos=1",
+      "icons": [{ "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" }]
+    },
+    {
+      "name": "지금 와 주세요",
+      "short_name": "즉시방문",
+      "description": "즉시 방문을 요청합니다",
+      "url": "/elder",
+      "icons": [{ "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" }]
+    }
+  ]
+}
