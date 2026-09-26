@@ -1,10 +1,13 @@
-/* 유입 화면 본문 — 관리자(/admin/traffic)와 공개(/traffic)가 같은 것을 본다
-   (9/8 서우 — "이해하기 쉽게 일목요연하게 정리해줘, 그래프도 넣어서, 별도 키값 없이 접속 가능하게")
+/* 개요(/) 본문 — 텔레봇 /traffic 의 본문을 떼어 온 것 (9/8 서우 — "이해하기 쉽게 일목요연하게 정리해줘,
+   그래프도 넣어서, 별도 키값 없이 접속 가능하게" → 9/26 "텔레봇 말고 그냥 스핀오프해서 하위 페이지 만들어서")
+
+   텔레봇 판과 다른 것: AI 종합 코멘트가 없다(Anthropic 키·KV 를 이 사이트에 들이지 않는다). 세션 소스 × 날짜
+   표는 하위 페이지 /sources 로 뺐고, 여기에는 그리로 가는 카드만 둔다.
 
    순서가 위계다.
      ① 지금 얼마나 — 숫자 넷(지난 30분 · 오늘 · 이번 주 · 런치 이후)
      ② 언제 들어왔나 — 일·주·월 추이(채널 색으로 쌓은 막대)
-     ③ 어디서 들어왔나 — 채널 비중. 그 아래 소스/매체 원문은 접어 둔다
+     ③ 어디서 들어왔나 — 채널 비중. 그 아래 소스/매체 원문은 접어 둔다 → 날짜별로는 /sources
      ④ 상세 — 어느 링크(utm_content) · 캠페인 · 많이 본 페이지
      ⑤ 읽는 법 — (direct)·출처 미확인·구글 로그인 복귀가 무엇인지
 
@@ -12,10 +15,10 @@
    PII 는 없다 — GA 가 주는 것은 집계 숫자뿐이다. */
 
 import type { ReactNode } from "react";
+import Link from "next/link";
 import Charts from "./Charts";
 import { CHANNEL, channelOf, dayLong, weekLong, type Channel } from "@/lib/traffic";
 import type { TrafficSnapshot } from "@/lib/ga";
-import { aiComment, aiReady } from "@/lib/ai-comment";
 import { CSV_TABLES } from "@/lib/traffic-csv";
 
 const n = (v: string | undefined) => Number(v ?? 0) || 0;
@@ -50,14 +53,13 @@ const Table = ({ head, rows, cols }: { head: string[]; rows: (ReactNode | number
   </div>
 );
 
-export default async function TrafficView({ snap, variant }: { snap: TrafficSnapshot; variant: "public" | "admin" }) {
+export default function Overview({ snap }: { snap: TrafficSnapshot }) {
   const d = snap.data;
-  /* 숫자 넷 아래 한 문단 — 데이터가 바뀔 때만 새로 만든다(lib/ai-comment.ts). 키가 없으면 칸이 없다. */
-  const ai = await aiComment(snap);
   const k = d.kpi;
   const ago = Math.max(0, Math.round((Date.now() - snap.fetchedAt) / 60000));
   const unset = d.channels.find((c) => c.key === "unset");
   const googleBack = d.sources.find((s) => s.source === "accounts.google.com");
+  const payBack = d.sources.filter((s) => s.source.includes("tosspayments")).reduce((a, s) => a + s.sessions, 0);
   const noUtm = snap.byContent.filter((r) => r.sessionManualAdContent === "(not set)").reduce((a, r) => a + n(r.sessions), 0);
 
   return (
@@ -86,23 +88,13 @@ export default async function TrafficView({ snap, variant }: { snap: TrafficSnap
         </div>
       </section>
 
-      {/* ①-2 종합 코멘트 (9/8 서우 — "종합적 분석 코멘트도 AI 가, 숫자 넷 하단에") */}
-      {ai ? (
-        <section className="tf-ai" aria-label="AI 종합 코멘트">
-          <div className="tf-ai-k">AI 종합 코멘트 <span>자동 생성 · 위 숫자와 아래 표만 근거로 씁니다 · {Math.max(0, Math.round((Date.now() - ai.at) / 60000)) === 0 ? "방금" : `${Math.round((Date.now() - ai.at) / 60000)}분 전`} 작성</span></div>
-          <p className="tf-ai-t">{ai.text}</p>
-        </section>
-      ) : variant === "admin" && !aiReady() ? (
-        <p className="tf-foot" style={{ marginTop: 6 }}>Vercel 에 <span className="mono">ANTHROPIC_API_KEY</span> 를 넣으면 이 자리에 AI 종합 코멘트가 붙습니다(README · AI 코멘트).</p>
-      ) : null}
-
       {/* CSV (9/8 서우 — "csv로도 export할 수 있게") — 아래 표들을 그대로 파일로. 엑셀에서 바로 열린다(BOM). */}
       <div className="tf-dl" aria-label="내려받기">
         <span className="tf-dl-k">내려받기</span>
-        <a className="xl" href="/traffic/export?f=xlsx" download>엑셀 파일(.xlsx) — 표 전부</a>
+        <a className="xl" href="/export?f=xlsx" download>엑셀 파일(.xlsx) — 표 전부</a>
         <span className="tf-dl-k" style={{ marginLeft: 6 }}>CSV</span>
-        {CSV_TABLES.map((t) => <a key={t.key} href={`/traffic/export?t=${t.key}`} download>{t.label}</a>)}
-        <span className="tf-dl-n">한글이 깨져 보이면 엑셀 파일을 쓰세요. CSV 는 UTF-8(BOM)이고, 그래도 깨지는 프로그램에는 <a href="/traffic/export?t=all&f=csv16" download>유니코드 CSV</a>가 있습니다 · 화면과 같은 5분 캐시 데이터</span>
+        {CSV_TABLES.map((t) => <a key={t.key} href={`/export?t=${t.key}`} download>{t.label}</a>)}
+        <span className="tf-dl-n">한글이 깨져 보이면 엑셀 파일을 쓰세요. CSV 는 UTF-8(BOM)이고, 그래도 깨지는 프로그램에는 <a href="/export?t=all&f=csv16" download>유니코드 CSV</a>가 있습니다 · 화면과 같은 5분 캐시 데이터</span>
       </div>
 
       {/* ② 언제 */}
@@ -151,7 +143,7 @@ export default async function TrafficView({ snap, variant }: { snap: TrafficSnap
           </p>
         )}
 
-        <details className="tf-details" open={variant === "admin"}>
+        <details className="tf-details">
           <summary>소스 / 매체 원문 그대로 보기 — UTM 값이 어느 채널로 묶였는지</summary>
           <Table head={["소스 / 매체", "채널", "세션", "사용자", "참여"]} cols="1.9fr 1fr 0.8fr 0.8fr 0.8fr"
             rows={d.sources.map((s) => [
@@ -161,6 +153,13 @@ export default async function TrafficView({ snap, variant }: { snap: TrafficSnap
             ])} />
         </details>
       </div>
+
+      {/* ③ → 하위 페이지 (9/26 서우 — "일자별 세션 소스 별로 보고싶은데") */}
+      <Link href="/sources" className="tf-go">
+        <span className="tf-go-k">소스별 일자</span>
+        <span className="tf-go-t">세션 소스를 날짜마다 펼쳐 보기 — 「9/16 에 어디서 왔나」 · 「pixie 는 언제 들어왔나」 · 원자료 내려받기</span>
+        <span className="tf-go-a" aria-hidden="true">→</span>
+      </Link>
 
       {/* ④ 상세 */}
       <h2 className="rep-h">어느 링크인가 — utm_content</h2>
@@ -202,6 +201,9 @@ export default async function TrafficView({ snap, variant }: { snap: TrafficSnap
           <li><b>직접</b>은 출처가 안 넘어온 방문입니다 — 주소를 직접 쳤거나, 텔레그램·카카오톡 앱 안 브라우저처럼 리퍼러를 안 보내는 곳에서 눌렀거나. UTM 을 붙인 링크만 채널로 잡힙니다. 그래서 링크는 항상 UTM 붙은 것을 씁니다.</li>
           {googleBack && (
             <li><b>구글 로그인 복귀</b>(accounts.google.com {fmt(googleBack.sessions)} 세션)는 사이트에서 구글 로그인을 하고 돌아온 것이라 직접에 넣었습니다. GA 관리 › 데이터 스트림 › 태그 설정 › <b>원치 않는 리퍼럴</b>에 accounts.google.com 을 넣으면 원래 세션에 이어집니다.</li>
+          )}
+          {payBack > 0 && (
+            <li><b>결제창 복귀</b>(tosspayments {fmt(payBack)} 세션)는 토스 결제창에 다녀온 방문이 새 세션으로 끊긴 것이라 직접에 넣었습니다. 이대로면 결제한 사람이 어느 채널에서 왔는지가 결제창으로 덮입니다. 같은 자리(원치 않는 리퍼럴)에 <b>tosspayments.com</b> 을 넣습니다.</li>
           )}
           {unset && (
             <li><b>출처 미확인</b>({unset.share}%)은 방문은 집계됐는데 경로만 비어 있는 세션입니다. 위 채널 표 아래에 원인 넷을 적어 두었습니다. 오늘 것은 처리가 덜 끝나서 그렇고 하루 지나면 대개 줄어듭니다. 며칠이 지나도 크면 개발자에게 "페이지뷰(config) 태그가 커스텀 이벤트보다 먼저 실행되는지, 로그인 리다이렉트 뒤 세션이 끊기지 않는지" 확인을 요청합니다.</li>

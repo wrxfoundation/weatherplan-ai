@@ -25,11 +25,11 @@ export const CHANNELS: ChannelMeta[] = [
   { key: "x",        label: "X",          color: "#4d4dce", hint: "x · x_out · t.co" },
   { key: "telegram", label: "텔레그램",    color: "#cf6a10", hint: "telegram · t.me" },
   { key: "linktree", label: "링크트리",    color: "#8a5fd9", hint: "linktree · linktr.ee" },
-  { key: "kol",      label: "KOL",        color: "#2e9e5b", hint: "utm_medium=kol" },
+  { key: "kol",      label: "KOL",        color: "#2e9e5b", hint: "utm_medium=kol · 채널 핸들 · 프로모 코드" },
   { key: "sns",      label: "다른 SNS",    color: "#d1489a", hint: "링크드인 · 인스타그램 · 유튜브 · 페이스북" },
   { key: "press",    label: "언론",        color: "#1f8fcc", hint: "언론사 도메인 · 네이버/다음 뉴스" },
   { key: "search",   label: "검색",        color: "#a8792a", hint: "구글 · 네이버 · 빙" },
-  { key: "direct",   label: "직접",        color: "#8a8aa3", hint: "(direct) · 구글 로그인 복귀" },
+  { key: "direct",   label: "직접",        color: "#8a8aa3", hint: "(direct) · 구글 로그인·결제창 복귀" },
   { key: "other",    label: "기타 리퍼럴", color: "#c3c3d2", hint: "목록에 없는 사이트" },
   { key: "unset",    label: "출처 미확인",  color: "#e4e4ee", hatch: true, hint: "(not set) — 방문은 잡혔고 출처만 비어 있음" },
 ];
@@ -40,7 +40,23 @@ const ORDER = Object.fromEntries(CHANNELS.map((c, i) => [c.key, i])) as Record<C
 const X = new Set(["x", "x_out", "xpurchase", "x.com", "t.co", "twitter", "twitter.com", "mobile.twitter.com"]);
 const TG = new Set(["telegram", "tg", "t.me", "telegram.org", "telegram.me", "web.telegram.org", "org.telegram.messenger"]);
 const LT = new Set(["linktree", "linktr.ee"]);
-const DIRECT = new Set(["(direct)", "accounts.google.com", "tagassistant.google.com", "localhost"]);
+/* 직접 — 출처가 안 넘어온 방문, 그리고 사이트 밖에 잠깐 나갔다 돌아온 것(구글 로그인 · 토스 결제창).
+   돌아온 것은 GA 가 새 세션으로 끊어 리퍼럴로 적지만 들어온 경로가 아니다(9/26 결제창 34세션).
+   구글 로그인은 나라 도메인으로도 온다(accounts.google.co.kr).
+   localhost 는 포트가 붙어 온다(localhost:3000 — 개발 PC). */
+const DIRECT = new Set([
+  "(direct)", "accounts.google.com", "tagassistant.google.com",
+  "payment-gateway.tosspayments.com", "tosspayments.com",
+]);
+/* KOL — 텔레그램 채널 22곳의 utm_source 핸들(intel/kol-channels.md §5). 링크 규약이 utm_source 만 붙이고
+   utm_medium 은 안 붙여 매체가 (not set) 으로 온다 — 매체로는 KOL 이 안 잡혀 기타 리퍼럴로 새고 있었다(9/26).
+   9/15 부터는 채널 전용 프로모 코드를 utm_source 에 그대로 넣은 링크(PIXIE-F811 · BINYL-1B33 …)도 돈다 —
+   「이름-16진 네 자리」 모양이면 KOL 로 본다. kol1·kol2·kol3 은 KOL 번호 코드(kol3 = 네이버 블로그). */
+const KOL = new Set([
+  "gemhive", "tvi", "cek", "panda", "manbull", "koso", "rowna", "magic", "chukapi", "yangmal", "dyor",
+  "tacrypto", "owl", "yeonwoo", "made", "kosaeng", "havro", "kkyu", "binyl", "pixie", "jammin", "kwondol",
+]);
+const PROMO = /^[a-z0-9]+-[0-9a-f]{4}$/;
 const SEARCH = new Set([
   "google", "google.com", "www.google.com", "google.co.kr", "naver", "naver.com", "search.naver.com",
   "m.search.naver.com", "bing", "bing.com", "daum", "daum.net", "search.daum.net", "duckduckgo",
@@ -65,13 +81,14 @@ const endsWithDomain = (host: string, d: string) => host === d || host.endsWith(
 export const channelOf = (source: string, medium: string): Channel => {
   const s = (source ?? "").trim().toLowerCase();
   const m = (medium ?? "").trim().toLowerCase();
-  if (s === "(not set)" || s === "") return "unset";
+  if (s === "(not set)" || s === "" || s === "(data not available)") return "unset";
   if (m === "kol") return "kol";
   if (m === "press") return "press";
+  if (KOL.has(s) || PROMO.test(s) || /^kol\d+$/.test(s)) return "kol";
   if (X.has(s)) return "x";
   if (TG.has(s)) return "telegram";
   if (LT.has(s)) return "linktree";
-  if (DIRECT.has(s)) return "direct";
+  if (DIRECT.has(s) || s.startsWith("accounts.google.") || s === "localhost" || s.startsWith("localhost:")) return "direct";
   if (m === "organic" || SEARCH.has(s)) return "search";
   if (SNS.some((k) => s.includes(k))) return "sns";
   if (PRESS.some((d) => endsWithDomain(s, d))) return "press";

@@ -1,31 +1,33 @@
-/* GA4 유입 (9/8 서우 — "GA 분석 대시보드도 같이 연동 못 붙이나")
+/* GA4 유입 — 텔레봇(depin/site/wellbian-telebot, 9/8)에서 떼어 낸 사본 (9/26 서우 — "텔레봇 말고 그냥
+   스핀오프해서 하위 페이지 만들어서 배포하게끔 해줘")
 
-   붙는다. 다만 GA 화면을 iframe 으로 끼우는 방식은 쓰지 않는다 — 구글 로그인이 있어야
-   보이고, 공유 설정을 열면 속성 전체가 새어 나간다. 대신 GA4 Data API 를 서버에서 부른다.
-   서비스 계정 하나를 GA4 속성에 뷰어로 넣고, 그 키로 서명한 JWT 를 토큰으로 바꿔 쓴다.
+   GA 화면을 iframe 으로 끼우는 방식은 쓰지 않는다 — 구글 로그인이 있어야 보이고, 공유 설정을 열면
+   속성 전체가 새어 나간다. 대신 GA4 Data API 를 서버에서 부른다.
 
-   SDK 를 쓰지 않는다. 이 프로젝트는 텔레그램·정본·KV 를 전부 fetch 하나로 다루고 있고,
-   구글 SDK 는 의존성이 수십 개다. 서명은 node:crypto 로 충분하다.
+   SDK 를 쓰지 않는다. 구글 SDK 는 의존성이 수십 개고, 토큰 교환과 서명은 fetch 와 node:crypto 로 충분하다.
+   인증 값은 텔레봇 Vercel 프로젝트에 넣어 둔 것과 같은 것을 그대로 쓰면 된다(같은 GA 속성).
 
    인증은 두 길 중 하나. 둘 다 있으면 OAuth 를 먼저 쓴다.
      A. 서비스 계정 키 — GA_SA_EMAIL + GA_SA_PRIVATE_KEY
      B. OAuth 리프레시 토큰 — GA_OAUTH_CLIENT_ID + GA_OAUTH_CLIENT_SECRET + GA_OAUTH_REFRESH_TOKEN
         (9/8) Workspace 조직은 iam.disableServiceAccountKeyCreation 정책이 기본으로 걸려
         서비스 계정 키를 못 만든다. 그때는 B — 관리자 계정(GA 속성 소유자)의 리프레시 토큰으로
-        같은 API 를 부른다. 키 파일이 없으니 정책과 부딪히지 않는다. 토큰은 tools/ga-oauth.mts 로 받는다.
+        같은 API 를 부른다. 키 파일이 없으니 정책과 부딪히지 않는다. 토큰 발급 절차는 텔레봇 README 「GA4 유입」.
 
    공통:
      GA_PROPERTY_ID     GA4 속성 ID (숫자). 측정 ID(G-…)도 컨테이너 ID(GTM-…)도 아니다.
      GA_SINCE           (선택) 집계 시작일. 기본 2026-09-07 — 사전예약 오픈일(태그를 붙인 날).
-                        이 파일이 가진 유일한 날짜다.
+     GA_RAW_SINCE       (선택) 「세션 소스 × 날짜」 표와 원자료 파일의 시작일. 기본 2026-08-01 —
+                        9/26 서우가 GA 화면에서 본 기간(8/1~)과 맞췄다. 화면 위쪽 숫자·그래프는 GA_SINCE 그대로.
    ※ NEXT_PUBLIC_ 접두사를 절대 붙이지 않는다.
 
-   호출량: 한 화면이 보고서 6개를 부른다. 5분 캐시를 두므로 하루 종일 새로고침해도
-   속성 일일 토큰 한도(수만 단위)에 닿지 않는다. */
+   호출량: 개요(/)가 보고서 6개, 소스별 일자(/sources)가 1개를 부른다. 5분 캐시를 두므로 하루 종일
+   새로고침해도 속성 일일 토큰 한도(수만 단위)에 닿지 않는다. */
 
 import { createSign } from "node:crypto";
 import { build, kstToday, type Raw, type TrafficData } from "./traffic";
-import { fixture } from "./ga-fixture";
+import { fixture, fixtureSourceDaily } from "./ga-fixture";
+import type { SourceDaily, SrcRaw } from "./source-daily";
 
 const PROP = process.env.GA_PROPERTY_ID ?? "";
 const EMAIL = process.env.GA_SA_EMAIL ?? "";
@@ -36,6 +38,7 @@ const OA = {
   refresh: process.env.GA_OAUTH_REFRESH_TOKEN ?? "",
 };
 const SINCE = process.env.GA_SINCE || "2026-09-07";
+const RAW_SINCE = process.env.GA_RAW_SINCE || "2026-08-01";
 
 const saReady = () => Boolean(EMAIL && KEY);
 const oauthReady = () => Boolean(OA.id && OA.secret && OA.refresh);
@@ -75,7 +78,7 @@ const token = async (): Promise<string> => {
     const j = (await r.json()) as { access_token?: string; expires_in?: number; error?: string; error_description?: string };
     if (!r.ok || !j.access_token) {
       /* invalid_grant = 리프레시 토큰이 취소됐거나(비밀번호 변경·앱 접근 철회) 외부 앱 테스트 모드의
-         7일 만료. 동의 화면을 "내부"로 두면 만료가 없다 — tools/ga-oauth.mts 로 다시 받는다. */
+         7일 만료. 동의 화면을 "내부"로 두면 만료가 없다 — 텔레봇의 tools/ga-oauth.mts 로 다시 받는다. */
       const why = j.error === "unauthorized_client"
         ? " — 리프레시 토큰을 발급한 클라이언트와 GA_OAUTH_CLIENT_ID/SECRET 이 다름. Playground ⚙ 에 웹 클라이언트를 다시 넣고(새로고침하면 지워진다) 재발급한 뒤, Vercel 세 값을 같은 클라이언트로 맞출 것"
         : j.error === "invalid_grant"
@@ -118,10 +121,16 @@ type Api = {
   dimensionHeaders?: { name: string }[];
   metricHeaders?: { name: string }[];
   rows?: { dimensionValues: { value: string }[]; metricValues: { value: string }[] }[];
+  rowCount?: number;
   error?: { message?: string };
 };
 
-const call = async (method: "runReport" | "runRealtimeReport", body: unknown): Promise<GaRow[]> => {
+type Page = { rows: GaRow[]; rowCount: number };
+
+const call = async (method: "runReport" | "runRealtimeReport", body: unknown): Promise<GaRow[]> =>
+  (await callPage(method, body)).rows;
+
+const callPage = async (method: "runReport" | "runRealtimeReport", body: unknown): Promise<Page> => {
   const t = await token();
   const r = await fetch(`https://analyticsdata.googleapis.com/v1beta/properties/${PROP}:${method}`, {
     method: "POST",
@@ -150,10 +159,11 @@ const call = async (method: "runReport" | "runRealtimeReport", body: unknown): P
   }
   const dims = (j.dimensionHeaders ?? []).map((h) => h.name);
   const mets = (j.metricHeaders ?? []).map((h) => h.name);
-  return (j.rows ?? []).map((row) => ({
+  const rows = (j.rows ?? []).map((row) => ({
     ...Object.fromEntries(dims.map((d, i) => [d, row.dimensionValues[i]?.value ?? ""])),
     ...Object.fromEntries(mets.map((m, i) => [m, row.metricValues[i]?.value ?? "0"])),
   }));
+  return { rows, rowCount: j.rowCount ?? rows.length };
 };
 
 /* ── 유입 스냅샷 ─────────────────────────────────────────────────────
@@ -184,8 +194,6 @@ export type TrafficSnapshot = {
   error?: string;
 };
 
-/* 공개 화면(/traffic)은 기본으로 열려 있다. 닫아야 할 일이 생기면 TRAFFIC_PUBLIC=off — Redeploy 없이 다음 요청부터. */
-export const trafficPublic = () => process.env.TRAFFIC_PUBLIC !== "off";
 
 let cached: { at: number; v: TrafficSnapshot } | null = null;
 const TTL = 5 * 60_000;
@@ -212,7 +220,7 @@ export const gaTraffic = async (): Promise<TrafficSnapshot> => {
       call("runRealtimeReport", { metrics: [{ name: "activeUsers" }] }),
       call("runReport", { dateRanges: RANGE, metrics: ["sessions", "activeUsers", "engagedSessions", "newUsers"].map((name) => ({ name })) }),
       /* 날짜 × 소스/매체 — 이 한 표에서 일·주·월·채널이 다 나온다. 하루 소스 수십 개 × 몇 달이라도 수천 행이다. */
-      report(["date", "sessionSource", "sessionMedium"], ["sessions", "activeUsers", "newUsers", "engagedSessions"], "sessions", 5000),
+      report(["date", "sessionSource", "sessionMedium"], ["sessions", "activeUsers", "newUsers", "engagedSessions"], "sessions", 50000),
       report(["sessionSource", "sessionMedium", "sessionManualAdContent"], ["sessions", "activeUsers"], "sessions", 30),
       report(["sessionCampaignName"], ["sessions", "activeUsers"], "sessions", 10),
       report(["pagePath"], ["screenPageViews", "activeUsers"], "screenPageViews", 12),
@@ -233,4 +241,70 @@ export const gaTraffic = async (): Promise<TrafficSnapshot> => {
   } catch (e) {
     return { ...base, error: e instanceof Error ? e.message : String(e) };
   }
+};
+
+/* ── 세션 소스 × 날짜 원자료 (9/26 서우 — "일자별 세션 소스 별로 보고싶은데 아니면 rawdata 다운로드 가능하게") ──
+   GA 가 API 로 주는 가장 잘게 쪼갠 집계: 날짜 × 소스 × 매체 × 캠페인 한 줄에 지표 여덟.
+   GA 화면 「트래픽 획득」의 열(세션 · 참여 세션 · 이벤트 · 참여 시간 · 주요 이벤트 · 수익)을 다 담는다 — 비율은
+   합에서 다시 계산한다(lib/source-daily.ts). 위 유입 스냅샷과 따로 부르고 따로 실패한다 — 이 표가 안 읽혀도
+   나머지 화면은 그대로 뜬다.
+
+   주요 이벤트·수익(keyEvents · totalRevenue)을 GA 가 400 으로 거부하면(속성 설정 · API 판 차이) 그 둘을 빼고
+   다시 읽는다. 화면과 파일은 그 두 열을 빈칸으로 두고 까닭을 적는다. 행이 많으면 5만 줄씩 넘겨 가며 읽는다. */
+
+const RAW_DIMS = ["date", "sessionSource", "sessionMedium", "sessionCampaignName"];
+const RAW_METS = ["sessions", "engagedSessions", "activeUsers", "newUsers", "eventCount", "userEngagementDuration"];
+const RAW_FULL = [...RAW_METS, "keyEvents", "totalRevenue"];
+const PAGE = 50000;
+
+const rawAll = async (metrics: string[]): Promise<GaRow[]> => {
+  const out: GaRow[] = [];
+  for (let offset = 0, n = 0; n < 10; n++) {
+    const p = await callPage("runReport", {
+      dateRanges: [{ startDate: RAW_SINCE, endDate: "today" }],
+      dimensions: RAW_DIMS.map((name) => ({ name })),
+      metrics: metrics.map((name) => ({ name })),
+      orderBys: [{ dimension: { dimensionName: "date" } }, { metric: { metricName: "sessions" }, desc: true }],
+      limit: PAGE, offset,
+    });
+    out.push(...p.rows);
+    offset += p.rows.length;
+    if (!p.rows.length || offset >= p.rowCount) break;
+  }
+  return out;
+};
+
+let rawCached: { at: number; v: SourceDaily } | null = null;
+
+export const gaSourceDaily = async (): Promise<SourceDaily> => {
+  if (rawCached && Date.now() - rawCached.at < TTL) return rawCached.v;
+  const today = kstToday();
+  const base: SourceDaily = { since: RAW_SINCE, today, fetchedAt: Date.now(), rows: [], full: true };
+  if (process.env.GA_FIXTURE) return { ...base, rows: fixtureSourceDaily(RAW_SINCE, today) };
+  if (!gaConfigured()) return { ...base, error: `미연결 — ${gaMissing()}` };
+
+  let full = true, note: string | undefined;
+  let got: GaRow[];
+  try {
+    try {
+      got = await rawAll(RAW_FULL);
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : String(e);
+      if (!/ 400 /.test(msg)) throw e;
+      full = false;
+      note = `GA 가 주요 이벤트·수익 지표를 받지 않아 그 두 열을 뺐습니다 — ${msg.split(" — ")[0]}`;
+      got = await rawAll(RAW_METS);
+    }
+  } catch (e) {
+    return { ...base, error: e instanceof Error ? e.message : String(e) };
+  }
+  const rows: SrcRaw[] = got.map((r) => ({
+    date: r.date, source: r.sessionSource, medium: r.sessionMedium, campaign: r.sessionCampaignName,
+    sessions: num(r.sessions), engaged: num(r.engagedSessions), users: num(r.activeUsers), newUsers: num(r.newUsers),
+    events: num(r.eventCount), engageSec: num(r.userEngagementDuration),
+    keyEvents: full ? num(r.keyEvents) : 0, revenue: full ? num(r.totalRevenue) : 0,
+  }));
+  const v: SourceDaily = { ...base, rows, full, note };
+  rawCached = { at: Date.now(), v };
+  return v;
 };
