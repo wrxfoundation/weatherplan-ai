@@ -1,6 +1,6 @@
-/* 내려받기 — /export?t=daily|weekly|monthly|channels|sources|srcdaily|raw|content|campaigns|pages|all&f=csv|csv16|xlsx
+/* 내려받기 — /export?t=daily|weekly|monthly|channels|sources|srcusers|srcdaily|raw|content|campaigns|pages|all&f=csv|csv16|xlsx
    f=xlsx 는 표 전부를 시트로 담은 엑셀 파일(t 무시). f=csv16 은 UTF-16LE+탭 — BOM 을 무시하는 프로그램용.
-   srcdaily(소스×일자)·raw(원자료)는 gaSourceDaily, 나머지는 gaTraffic — 둘 다 화면과 같은 5분 캐시라 GA 를 더 부르지 않는다.
+   srcusers(소스×일자 사용자)·srcdaily(소스×일자 세션)·raw(원자료)는 gaSourceDaily, 나머지는 gaTraffic — 둘 다 화면과 같은 5분 캐시라 GA 를 더 부르지 않는다.
    잠가 둔 사이트(TRAFFIC_KEY)면 쿠키나 ?k= 가 있어야 한다 — 없으면 404. */
 import type { NextRequest } from "next/server";
 import { gaTraffic, gaSourceDaily } from "@/lib/ga";
@@ -18,7 +18,7 @@ export async function GET(req: NextRequest) {
   const f = sp.get("f");
   const fmt = isExportFormat(f) ? f : "csv";
   /* 원자료 두 표만 받을 때는 개요 스냅샷이 실패해도 내보낸다 — 파일명 날짜만 거기서 빌린다 */
-  const rawOnly = fmt !== "xlsx" && (table === "srcdaily" || table === "raw");
+  const rawOnly = fmt !== "xlsx" && (table === "srcusers" || table === "srcdaily" || table === "raw");
   const [snap, sd] = await Promise.all([gaTraffic(), needsRaw(table, fmt) ? gaSourceDaily() : undefined]);
   const busy = (msg: string, why?: string) => {
     if (why) console.error("[export]", why);

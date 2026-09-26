@@ -26,8 +26,8 @@
 
 import { createSign } from "node:crypto";
 import { build, kstToday, type Raw, type TrafficData } from "./traffic";
-import { fixture, fixtureSourceDaily } from "./ga-fixture";
-import type { SourceDaily, SrcRaw } from "./source-daily";
+import { fixture, fixtureSourceDaily, fixtureUsers } from "./ga-fixture";
+import { isoWeekMonday, type SdUsers, type SourceDaily, type SrcRaw } from "./source-daily";
 
 const PROP = process.env.GA_PROPERTY_ID ?? "";
 const EMAIL = process.env.GA_SA_EMAIL ?? "";
@@ -274,15 +274,51 @@ const rawAll = async (metrics: string[]): Promise<GaRow[]> => {
   return out;
 };
 
+/* 사용자 — 칸(날짜 × 소스)과, 중복을 뺀 합계(소스별 기간 · 날짜별 · 전체)를 따로 묻는다(lib/source-daily.ts 「사용자」).
+   주별(ISO 주 × 소스, ISO 주별)은 따로 실패한다 — 못 읽으면 주별 사용자만 빠진다. 세션 표와도 따로 실패한다. */
+const usersQ = (dims: string[]) => call("runReport", {
+  dateRanges: [{ startDate: RAW_SINCE, endDate: "today" }],
+  dimensions: dims.map((name) => ({ name })),
+  metrics: [{ name: "activeUsers" }],
+  limit: 100000,
+});
+const why = (e: unknown) => (e instanceof Error ? e.message : String(e)).split(" — ")[0];
+
+const readUsers = async (): Promise<{ users?: SdUsers; note?: string }> => {
+  const [d, w] = await Promise.allSettled([
+    Promise.all([usersQ(["date", "sessionSource"]), usersQ(["sessionSource"]), usersQ(["date"]), usersQ([])]),
+    Promise.all([usersQ(["isoYearIsoWeek", "sessionSource"]), usersQ(["isoYearIsoWeek"])]),
+  ]);
+  if (d.status === "rejected") return { note: `사용자를 읽지 못함 — ${why(d.reason)}` };
+  const [cells, bySource, byDay, total] = d.value;
+  const users: SdUsers = {
+    cells: cells.map((r) => ({ date: r.date, source: r.sessionSource, users: num(r.activeUsers) })),
+    bySource: Object.fromEntries(bySource.map((r) => [r.sessionSource, num(r.activeUsers)])),
+    byDay: Object.fromEntries(byDay.map((r) => [r.date, num(r.activeUsers)])),
+    total: num(total[0]?.activeUsers),
+  };
+  if (w.status === "rejected") return { users, note: `주별 사용자를 읽지 못함 — ${why(w.reason)}` };
+  const [wc, bw] = w.value;
+  users.week = {
+    cells: wc.map((r) => ({ week: isoWeekMonday(r.isoYearIsoWeek), source: r.sessionSource, users: num(r.activeUsers) })),
+    byWeek: Object.fromEntries(bw.map((r) => [isoWeekMonday(r.isoYearIsoWeek), num(r.activeUsers)])),
+  };
+  return { users };
+};
+
 let rawCached: { at: number; v: SourceDaily } | null = null;
 
 export const gaSourceDaily = async (): Promise<SourceDaily> => {
   if (rawCached && Date.now() - rawCached.at < TTL) return rawCached.v;
   const today = kstToday();
   const base: SourceDaily = { since: RAW_SINCE, today, fetchedAt: Date.now(), rows: [], full: true };
-  if (process.env.GA_FIXTURE) return { ...base, rows: fixtureSourceDaily(RAW_SINCE, today) };
+  if (process.env.GA_FIXTURE) {
+    const rows = fixtureSourceDaily(RAW_SINCE, today);
+    return { ...base, rows, users: fixtureUsers(rows) };
+  }
   if (!gaConfigured()) return { ...base, error: `미연결 — ${gaMissing()}` };
 
+  const usersP = readUsers();   // 세션 원자료와 나란히 — 실패해도 세션 표는 뜬다
   let full = true, note: string | undefined;
   let got: GaRow[];
   try {
@@ -304,7 +340,8 @@ export const gaSourceDaily = async (): Promise<SourceDaily> => {
     events: num(r.eventCount), engageSec: num(r.userEngagementDuration),
     keyEvents: full ? num(r.keyEvents) : 0, revenue: full ? num(r.totalRevenue) : 0,
   }));
-  const v: SourceDaily = { ...base, rows, full, note };
+  const u = await usersP;
+  const v: SourceDaily = { ...base, rows, full, note, users: u.users, usersNote: u.note };
   rawCached = { at: Date.now(), v };
   return v;
 };

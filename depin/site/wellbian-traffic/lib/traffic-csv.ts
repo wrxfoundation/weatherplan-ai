@@ -11,17 +11,19 @@
 
 import { CHANNELS, CHANNEL, channelOf, dayLong, type Bucket } from "./traffic";
 import type { TrafficSnapshot } from "./ga";
-import { pivotSources, pivotRows, rawRows, type SourceDaily } from "./source-daily";
+import { pivotSources, pivotRows, pivotUsers, pivotUsersRows, rawRows, type SourceDaily } from "./source-daily";
 import { xlsx, type Sheet } from "./xlsx";
 
-export type CsvTable = "daily" | "weekly" | "monthly" | "channels" | "sources" | "srcdaily" | "raw" | "content" | "campaigns" | "pages" | "all";
+export type CsvTable = "daily" | "weekly" | "monthly" | "channels" | "sources" | "srcusers" | "srcdaily" | "raw" | "content" | "campaigns" | "pages" | "all";
 export const CSV_TABLES: { key: CsvTable; label: string }[] = [
   { key: "daily", label: "일별" },
   { key: "weekly", label: "주별" },
   { key: "monthly", label: "월별" },
   { key: "channels", label: "채널" },
   { key: "sources", label: "소스/매체" },
-  { key: "srcdaily", label: "소스×일자" },
+  /* 사용자가 앞 — 9/26 서우 "사용자수 기준이야" */
+  { key: "srcusers", label: "소스×일자(사용자)" },
+  { key: "srcdaily", label: "소스×일자(세션)" },
   { key: "raw", label: "원자료" },
   { key: "content", label: "utm_content" },
   { key: "campaigns", label: "캠페인" },
@@ -42,14 +44,17 @@ const CH = CHANNELS.map((c) => c.label);
 const byCh = (b: Bucket) => CHANNELS.map((c) => b.by[c.key] ?? 0);
 
 /* 원자료가 필요한 표인가 — 내보내기 경로가 GA 원자료를 더 부를지 정한다 */
-export const needsRaw = (t: CsvTable, f: ExportFormat) => f === "xlsx" || t === "srcdaily" || t === "raw" || t === "all";
+export const needsRaw = (t: CsvTable, f: ExportFormat) => f === "xlsx" || t === "srcusers" || t === "srcdaily" || t === "raw" || t === "all";
 
 export const csvTables = (s: TrafficSnapshot, sd?: SourceDaily): Record<Exclude<CsvTable, "all">, Row[]> => {
   const d = s.data;
   const ok = sd && !sd.error ? sd : null;
   const miss: Row[] = [["GA 원자료를 읽지 못했습니다 — 잠시 뒤 다시 내려받아 주세요"]];
+  const day = ok ? pivotSources(ok.rows, ok.since, ok.today) : null;
+  const users = day && ok?.users ? pivotUsers(day, ok.users) : null;
   return {
-    srcdaily: ok ? pivotRows(pivotSources(ok.rows, ok.since, ok.today)) : miss,
+    srcusers: users ? pivotUsersRows(users) : [[`GA 사용자 수를 읽지 못했습니다${ok?.usersNote ? ` — ${ok.usersNote}` : ""} — 잠시 뒤 다시 내려받아 주세요`]],
+    srcdaily: day ? pivotRows(day) : miss,
     raw: ok ? rawRows(ok.rows, ok.full) : miss,
     daily: [["날짜", "요일", "세션", ...CH], ...d.daily.map((b) => [ymd(b.key), dayLong(b.key).slice(-2, -1), b.total, ...byCh(b)])],
     weekly: [["주 시작(월)", "주", "세션", ...CH], ...d.weekly.map((b) => [ymd(b.key), b.long, b.total, ...byCh(b)])],
@@ -106,6 +111,7 @@ export const trafficXlsx = (s: TrafficSnapshot, sd?: SourceDaily): { name: strin
       ["오늘 세션", s.data.kpi.today], ["이번 주 세션", s.data.kpi.week], ["런치 이후 세션", s.data.kpi.total],
       ["사용자", s.data.kpi.users], ["신규 사용자", s.data.kpi.newUsers], ["참여 세션", s.data.kpi.engaged],
       ["원자료·소스×일자 조회 시작", sd ? sd.since : ""],
+      ["소스×일자(사용자) 읽는 법", "날짜 칸 = 그날 그 소스의 사용자. 합계 열(기간) · 합계 줄(날짜별)은 GA 가 중복을 뺀 값이라 칸을 더한 값보다 작다 — 여러 날 온 사람은 한 번만 센다"],
       ["원자료 주요 이벤트·총수익", !sd || sd.error ? "원자료를 읽지 못함" : sd.full ? "포함" : "빠짐 — GA 가 두 지표를 거부"]] },
     ...CSV_TABLES.filter((x) => x.key !== "all").map(({ key, label }) => ({ name: label, rows: all[key as Exclude<CsvTable, "all">] })),
   ];

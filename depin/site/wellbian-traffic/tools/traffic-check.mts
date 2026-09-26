@@ -10,7 +10,7 @@ import {
   channelOf, weekStart, monthKey, build, niceMax, kstToday, dayLong, weekLong, monthLong,
 } from "../lib/traffic.ts";
 import { trafficCsv, trafficCsv16, trafficXlsx, csvLines } from "../lib/traffic-csv.ts";
-import { pivotSources, rollWeeks, rawRows, pivotRows, RAW_HEAD } from "../lib/source-daily.ts";
+import { pivotSources, rollWeeks, rawRows, pivotRows, RAW_HEAD, isoWeekMonday, pivotUsers, pivotUsersRows } from "../lib/source-daily.ts";
 
 let fail = 0;
 const eq = (name: string, got: unknown, want: unknown) => {
@@ -52,6 +52,7 @@ eq("개발 PC 포트", channelOf("localhost:3000", "referral"), "direct");
 eq("data not available", channelOf("(data not available)", "(data not available)"), "unset");
 eq("링크 틀 자리표시는 기타", channelOf("채널명지정가능(예:XRPKOREA)", "(not set)"), "other");
 eq("모르는 코드는 기타", channelOf("gpa", "(not set)"), "other");
+eq("매체 community 는 KOL(9/22~ 커뮤니티 링크)", channelOf("yunlog", "community"), "kol");
 
 /* 날짜 */
 eq("weekStart 화요일 → 월요일", weekStart("20260908"), "20260907");
@@ -126,7 +127,7 @@ eq("csv 일별 9/7 행", daily.csv.slice(1).split("\r\n")[1], "2026-09-07,월,16
 eq("csv 따옴표 이스케이프", csvLines([["a,b", 'say "hi"', 3]]), '"a,b","say ""hi""",3');
 eq("csv utm_content 빈 값", trafficCsv(snap, "content").csv.slice(1).split("\r\n")[2], "직접,(direct),(none),,100,70");
 const all = trafficCsv(snap, "all").csv;
-eq("csv 전체 구역 수", (all.match(/^## /gm) ?? []).length, 10);
+eq("csv 전체 구역 수", (all.match(/^## /gm) ?? []).length, 11);
 eq("csv 전체 첫 줄", all.slice(1).split("\r\n")[0], "wellbian.io 유입 · GA4");
 
 const u16 = trafficCsv16(snap, "daily");
@@ -137,7 +138,7 @@ const xl = trafficXlsx(snap);
 eq("xlsx 파일명", xl.name, "wellbian-traffic-20260915.xlsx");
 eq("xlsx ZIP 서명", [xl.data[0], xl.data[1]], [0x50, 0x4b]);
 eq("xlsx 끝 서명(중앙 디렉터리 끝)", xl.data.readUInt32LE(xl.data.length - 22), 0x06054b50);
-eq("xlsx 항목 수(시트 11 + 부속 5 — 원자료 없이도 자리는 있다)", xl.data.readUInt16LE(xl.data.length - 12), 16);
+eq("xlsx 항목 수(시트 12 + 부속 5 — 원자료 없이도 자리는 있다)", xl.data.readUInt16LE(xl.data.length - 12), 17);
 
 /* 세션 소스 × 날짜 (9/26) — 8/20(목) 첫 유입 · 8/22(토) pixie 두 매체 · 8/24(월) 다음 주 */
 const R = (date: string, source: string, medium: string, sessions: number, engaged: number, campaign = "(not set)") =>
@@ -180,10 +181,39 @@ const sd = { since: "2026-08-01", today: "20260825", fetchedAt: 0, rows: sraw, f
 eq("csv 원자료 파일명", trafficCsv(snap, "raw", sd).name, "wellbian-traffic-raw-20260915.csv");
 eq("csv 원자료 첫 줄", trafficCsv(snap, "raw", sd).csv.slice(1).split("\r\n")[0].split(",").slice(0, 3), ["날짜", "요일", "세션 소스"]);
 eq("csv 소스×일자 둘째 줄", trafficCsv(snap, "srcdaily", sd).csv.slice(1).split("\r\n")[1], "(direct),(none),직접,12,41.7,5,0,0,0,7,0");
-eq("csv 전체 구역 수(원자료 포함)", (trafficCsv(snap, "all", sd).csv.match(/^## /gm) ?? []).length, 10);
+eq("csv 전체 구역 수(원자료 포함)", (trafficCsv(snap, "all", sd).csv.match(/^## /gm) ?? []).length, 11);
 eq("csv 전체 — 원자료 못 읽으면 한 줄", trafficCsv(snap, "all", { ...sd, error: "x" }).csv.includes("GA 원자료를 읽지 못했습니다"), true);
 const xl2 = trafficXlsx(snap, sd);
-eq("xlsx 항목 수(시트 11 + 부속 5)", xl2.data.readUInt16LE(xl2.data.length - 12), 16);
+eq("xlsx 항목 수(시트 12 + 부속 5)", xl2.data.readUInt16LE(xl2.data.length - 12), 17);
+
+/* 사용자 (9/26 — "사용자수 기준이야") — 칸은 날짜 × 소스, 합계는 GA 중복 제거 값 */
+eq("ISO 주 → 월요일 2026-37", isoWeekMonday("202637"), "20260907");
+eq("ISO 주 → 월요일 2026-01(전해 12/29)", isoWeekMonday("202601"), "20251229");
+eq("ISO 주 → 월요일 2020-53", isoWeekMonday("202053"), "20201228");
+const su = {
+  cells: [
+    { date: "20260820", source: "(direct)", users: 4 }, { date: "20260824", source: "(direct)", users: 6 },
+    { date: "20260822", source: "pixie", users: 4 }, { date: "20260819", source: "pixie", users: 9 },   // 표 앞날 — 버린다
+  ],
+  bySource: { "(direct)": 8, pixie: 4 },
+  byDay: { "20260820": 4, "20260822": 4, "20260824": 6 },
+  total: 11,
+  week: { cells: [{ week: "20260817", source: "(direct)", users: 4 }, { week: "20260817", source: "pixie", users: 4 }, { week: "20260824", source: "(direct)", users: 5 }],
+          byWeek: { "20260817": 7, "20260824": 5 } },
+};
+const pu = pivotUsers(sp, su)!;
+eq("사용자 줄 = 기간 사용자(중복 제거)순", pu.rows.map((r) => [r.source, r.total, r.channel]), [["(direct)", 8, "direct"], ["pixie", 4, "kol"]]);
+eq("사용자 칸", pu.rows.map((r) => r.cells), [[4, 0, 0, 0, 6, 0], [0, 0, 4, 0, 0, 0]]);
+eq("사용자 합계 줄·총계 = GA 중복 제거", [pu.colTotals, pu.total], [[4, 0, 4, 0, 6, 0], 11]);
+eq("사용자 매체는 세션 표에서", pu.rows[1].mediums, ["kol", "(not set)"]);
+const puw = pivotUsers(rollWeeks(sp), su)!;
+eq("사용자 주별 칸·합계", [puw.rows.map((r) => r.cells), puw.colTotals], [[[4, 5], [4, 0]], [7, 5]]);
+eq("주별 사용자 없으면 주 단위 null", pivotUsers(rollWeeks(sp), { ...su, week: undefined }), null);
+const pur = pivotUsersRows(pu);
+eq("사용자 파일 머리", pur[0].slice(0, 5), ["세션 소스", "매체", "채널", "사용자(기간·중복 제거)", "2026-08-20"]);
+eq("사용자 파일 합계 줄", pur.at(-1), ["합계(날짜별 중복 제거)", "", "", 11, 4, 0, 4, 0, 6, 0]);
+eq("csv 사용자 표", trafficCsv(snap, "srcusers", { ...sd, users: su }).csv.slice(1).split("\r\n")[1], "(direct),(none),직접,8,4,0,0,0,6,0");
+eq("csv 사용자 못 읽으면 한 줄", trafficCsv(snap, "srcusers", { ...sd, usersNote: "x" }).csv.includes("GA 사용자 수를 읽지 못했습니다 — x"), true);
 
 console.log(fail ? `\n${fail} 개 실패` : "\n모두 통과");
 process.exit(fail ? 1 : 0);

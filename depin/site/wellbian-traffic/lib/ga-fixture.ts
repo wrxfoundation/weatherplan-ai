@@ -6,7 +6,7 @@
 
 import type { GaRow } from "./ga";
 import type { Raw } from "./traffic";
-import type { SrcRaw } from "./source-daily";
+import type { SdUsers, SrcRaw } from "./source-daily";
 
 const SOURCES: [string, string, number][] = [
   ["(direct)", "(none)", 0.44],
@@ -135,4 +135,31 @@ export const fixtureSourceDaily = (sinceIso: string, today: string): SrcRaw[] =>
     }
   }
   return out;
+};
+
+/* 사용자 가짜 자료 — 칸은 원자료의 사용자를 날짜 × 소스로 더한 값, 합계는 중복을 뺀 것처럼 줄인다(재방문 흉내). */
+const mondayOf = (k: string) => {
+  const d = new Date(Date.UTC(+k.slice(0, 4), +k.slice(4, 6) - 1, +k.slice(6, 8)));
+  d.setUTCDate(d.getUTCDate() - ((d.getUTCDay() + 6) % 7));
+  return d.toISOString().slice(0, 10).replace(/-/g, "");
+};
+export const fixtureUsers = (rows: SrcRaw[]): SdUsers => {
+  const cell = new Map<string, number>(), src = new Map<string, number>(), day = new Map<string, number>();
+  const wcell = new Map<string, number>(), wk = new Map<string, number>();
+  let all = 0;
+  const add = (m: Map<string, number>, k: string, n: number) => m.set(k, (m.get(k) ?? 0) + n);
+  for (const r of rows) {
+    const w = mondayOf(r.date);
+    add(cell, `${r.date}\t${r.source}`, r.users); add(src, r.source, r.users); add(day, r.date, r.users);
+    add(wcell, `${w}\t${r.source}`, r.users); add(wk, w, r.users); all += r.users;
+  }
+  const f = (m: Map<string, number>, k: number) => Object.fromEntries([...m].map(([a, n]) => [a, Math.max(1, Math.round(n * k))]));
+  return {
+    cells: [...cell].map(([k, users]) => { const [date, source] = k.split("\t"); return { date, source, users }; }),
+    bySource: f(src, 0.72), byDay: f(day, 0.97), total: Math.round(all * 0.62),
+    week: {
+      cells: [...wcell].map(([k, n]) => { const [week, source] = k.split("\t"); return { week, source, users: Math.max(1, Math.round(n * 0.86)) }; }),
+      byWeek: f(wk, 0.83),
+    },
+  };
 };

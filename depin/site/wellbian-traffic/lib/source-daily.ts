@@ -26,6 +26,18 @@ export type SrcRaw = {
   keyEvents: number; revenue: number;
 };
 
+/* 사용자 (9/26 서우 — "엑셀 소스일자에서 사용자수로 볼 수 있는 탭을 추가하면 좋을 듯, 사용자수 기준이야")
+   사용자는 세션과 달리 더할 수 없다 — 사흘 온 한 사람을 날짜별로 더하면 3명이 된다. 그래서 칸(그날 · 그 소스)은 GA 값 그대로,
+   합계 열(그 소스의 기간 사용자) · 합계 줄(그날 전체 사용자) · 총계는 GA 에 따로 물어 중복을 뺀 값을 쓴다 — 칸을 더한 값보다
+   작은 것이 정상이다. 주별도 같은 이유로 GA 의 ISO 주(월요일 시작) 값을 따로 받는다(week = 그 주 월요일 YYYYMMDD). */
+export type SdUsers = {
+  cells: { date: string; source: string; users: number }[];
+  bySource: Record<string, number>;
+  byDay: Record<string, number>;
+  total: number;
+  week?: { cells: { week: string; source: string; users: number }[]; byWeek: Record<string, number> };
+};
+
 export type SourceDaily = {
   since: string;       // GA_RAW_SINCE 원문 (YYYY-MM-DD)
   today: string;       // YYYYMMDD
@@ -33,6 +45,8 @@ export type SourceDaily = {
   rows: SrcRaw[];
   full: boolean;       // 주요 이벤트·수익 열까지 읽었는가 — GA 가 그 두 지표를 거부하면 빼고 다시 읽는다
   note?: string;       // full=false 인 까닭
+  users?: SdUsers;     // 사용자 — 못 읽었으면 없다(세션 표는 그대로)
+  usersNote?: string;  // 사용자(또는 주별 사용자)를 못 읽은 까닭
   error?: string;
 };
 
@@ -99,6 +113,40 @@ export const rollWeeks = (p: SdPivot): SdPivot => {
   return { gran: "week", cols, rows: p.rows.map((r) => ({ ...r, cells: roll(r.cells) })), colTotals: roll(p.colTotals), total: p.total };
 };
 
+/* GA isoYearIsoWeek("202637") → 그 ISO 주의 월요일("20260907"). 1주 = 1월 4일이 든 주. */
+export const isoWeekMonday = (yw: string) => {
+  const y = +yw.slice(0, 4), w = +yw.slice(4);
+  const jan4 = new Date(Date.UTC(y, 0, 4));
+  const d = new Date(Date.UTC(y, 0, 4 - ((jan4.getUTCDay() + 6) % 7) + (w - 1) * 7));
+  return d.toISOString().slice(0, 10).replace(/-/g, "");
+};
+
+/* 세션 표(일 또는 주)와 같은 열로 사용자 표를 만든다. 줄은 사용자 기간 합계(중복 제거) 많은 순.
+   매체·채널은 세션 표의 같은 소스에서 빌린다. 주별 사용자를 못 읽었으면 주 단위는 null. */
+export const pivotUsers = (p: SdPivot, u: SdUsers): SdPivot | null => {
+  const week = p.gran === "week";
+  if (week && !u.week) return null;
+  const ix = new Map(p.cols.map((c, i) => [c.key, i]));
+  const base = new Map(p.rows.map((r) => [r.source, r]));
+  const acc = new Map<string, number[]>();
+  const cells = week
+    ? (u.week?.cells ?? []).map((c) => ({ key: c.week, source: c.source, n: c.users }))
+    : u.cells.map((c) => ({ key: c.date, source: c.source, n: c.users }));
+  for (const c of cells) {
+    const i = ix.get(c.key);
+    if (i === undefined || !c.n) continue;
+    let a = acc.get(c.source);
+    if (!a) { a = p.cols.map(() => 0); acc.set(c.source, a); }
+    a[i] += c.n;
+  }
+  const rows: SdRow[] = [...acc.entries()].map(([source, cs]) => {
+    const b = base.get(source);
+    return { source, mediums: b?.mediums ?? [], channel: b?.channel ?? channelOf(source, ""), total: u.bySource[source] ?? Math.max(...cs), engaged: 0, cells: cs };
+  }).sort((x, y) => y.total - x.total || (x.source < y.source ? -1 : x.source > y.source ? 1 : 0));
+  const tot = week ? u.week?.byWeek ?? {} : u.byDay;
+  return { gran: p.gran, cols: p.cols, rows, colTotals: p.cols.map((c) => tot[c.key] ?? 0), total: u.total };
+};
+
 /* ── 내려받기 행 ─────────────────────────────────────────────────── */
 type Row = (string | number)[];
 const rate = (a: number, b: number, digits: number) => (b ? Math.round((a / b) * 100 * 10 ** digits) / 10 ** digits : "");
@@ -124,6 +172,13 @@ export const rawRows = (raw: SrcRaw[], full: boolean): Row[] => [
       r.users, r.newUsers, r.events, per(r.events, r.sessions, 2), per(r.engageSec, r.sessions, 0),
       full ? r.keyEvents : "", full ? Math.round(r.revenue * 100) / 100 : "",
     ]),
+];
+
+/* 사용자 표 — 합계 열·합계 줄은 GA 가 중복을 뺀 값(칸을 더한 값과 다르다) */
+export const pivotUsersRows = (p: SdPivot): Row[] => [
+  ["세션 소스", "매체", "채널", "사용자(기간·중복 제거)", ...p.cols.map((c) => ymd(c.key))],
+  ...p.rows.map((r) => [r.source, r.mediums.join(" · "), CHANNEL[r.channel].label, r.total, ...r.cells]),
+  ["합계(날짜별 중복 제거)", "", "", p.total, ...p.colTotals],
 ];
 
 /* 화면 표 그대로 — 소스가 행, 날짜(또는 주)가 열. 맨 아래 합계 줄. */

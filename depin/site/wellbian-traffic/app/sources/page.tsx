@@ -11,7 +11,7 @@ import { NotConnected, ReadError } from "../Problem";
 import { gaSourceDaily, gaReady } from "@/lib/ga";
 import { passed, gated } from "@/lib/gate";
 import { dayLabel } from "@/lib/traffic";
-import { pivotSources } from "@/lib/source-daily";
+import { pivotSources, pivotUsers, rollWeeks } from "@/lib/source-daily";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "소스별 일자" };
@@ -23,6 +23,9 @@ export default async function Sources({ searchParams }: { searchParams: Promise<
 
   const sd = await gaSourceDaily();
   const day = sd.error ? null : pivotSources(sd.rows, sd.since, sd.today);
+  /* 사용자(9/26 서우 "사용자수 기준이야") — 칸은 날짜 × 소스, 합계는 GA 가 중복을 뺀 값. 못 읽었으면 세션만 */
+  const usersDay = day && sd.users ? pivotUsers(day, sd.users) : null;
+  const users = day && usersDay && sd.users ? { day: usersDay, week: pivotUsers(rollWeeks(day), sd.users) } : null;
   const first = day?.cols[0]?.key;
   const ago = Math.max(0, Math.round((Date.now() - sd.fetchedAt) / 60000));
 
@@ -32,22 +35,28 @@ export default async function Sources({ searchParams }: { searchParams: Promise<
       <main className="wrap" style={{ paddingBottom: 72 }}>
         <h1 className="rep-h" style={{ marginTop: 4 }}>소스별 일자 — 세션 소스 × 날짜</h1>
         <p className="rep-sub">
-          GA 「트래픽 획득: 세션 소스」 표를 날짜로 펼쳤습니다. 줄이 세션 소스(GA 화면과 같은 이름)이고, 칸의 숫자가 그날 그 소스에서
-          시작된 세션입니다. 조회는 {sd.since} 부터{first ? <>이고 첫 유입이 {dayLabel(first)} 이라 표는 그날부터 그립니다</> : null}.
-          날짜별 합은 GA 화면 합계보다 조금 클 수 있습니다(자정을 넘긴 세션은 이틀에 한 번씩 셉니다).
+          GA 「트래픽 획득: 세션 소스」 표를 날짜로 펼쳤습니다. 줄이 세션 소스(GA 화면과 같은 이름)이고, 칸의 숫자가 그날 그 소스로 들어온
+          <b> 사용자</b>(또는 세션)입니다. 조회는 {sd.since} 부터{first ? <>이고 첫 유입이 {dayLabel(first)} 이라 표는 그날부터 그립니다</> : null}.
+          사용자는 날짜끼리 더하지 않습니다 — 합계 열·합계 줄은 GA 가 중복을 뺀 값입니다. 세션의 날짜별 합은 GA 화면 합계보다 조금 클 수 있습니다(자정을 넘긴 세션은 이틀에 한 번씩 셉니다).
         </p>
 
         <div className="tf-dl" aria-label="내려받기">
           <span className="tf-dl-k">원자료</span>
           <a className="xl" href="/export?f=xlsx" download>엑셀 파일(.xlsx) — 원자료 · 이 표 · 개요 표 전부</a>
           <a href="/export?t=raw" download>원자료 CSV</a>
-          <a href="/export?t=srcdaily" download>이 표 CSV(일별)</a>
+          <a href="/export?t=srcusers" download>이 표 CSV(사용자)</a>
+          <a href="/export?t=srcdaily" download>이 표 CSV(세션)</a>
           <span className="tf-dl-n">원자료 = 날짜 × 소스 × 매체 × 캠페인 한 줄에 세션 · 참여 세션 · 참여율 · 사용자 · 신규 · 이벤트 · 세션당 이벤트 · 평균 참여 시간 · 주요 이벤트 · 총수익. 한글이 깨지면 엑셀 파일이나 <a href="/export?t=raw&f=csv16" download>유니코드 CSV</a></span>
         </div>
 
         <div style={{ marginTop: 12 }}>
-          {!gaReady() ? <NotConnected /> : sd.error || !day ? <ReadError msg={sd.error ?? "empty"} /> : <SourceDays day={day} today={sd.today} />}
+          {!gaReady() ? <NotConnected /> : sd.error || !day ? <ReadError msg={sd.error ?? "empty"} /> : <SourceDays day={day} users={users} today={sd.today} />}
         </div>
+        {!sd.error && sd.usersNote && (
+          <p className="tf-foot" style={{ marginTop: 8 }}>
+            {sd.users ? "주별 사용자는 지금 읽지 못해 주별은 세션으로만 보입니다" : "사용자 수를 지금 읽지 못해 세션으로만 보입니다"}{gated() ? <> — <span className="mono">{sd.usersNote}</span></> : "."}
+          </p>
+        )}
         {!sd.error && !sd.full && (
           <p className="tf-foot" style={{ marginTop: 8 }}>
             주요 이벤트 · 총수익 열은 비어 있습니다{gated() && sd.note ? <> — <span className="mono">{sd.note}</span></> : "."}

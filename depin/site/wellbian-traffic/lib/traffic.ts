@@ -25,7 +25,7 @@ export const CHANNELS: ChannelMeta[] = [
   { key: "x",        label: "X",          color: "#4d4dce", hint: "x · x_out · t.co" },
   { key: "telegram", label: "텔레그램",    color: "#cf6a10", hint: "telegram · t.me" },
   { key: "linktree", label: "링크트리",    color: "#8a5fd9", hint: "linktree · linktr.ee" },
-  { key: "kol",      label: "KOL",        color: "#2e9e5b", hint: "utm_medium=kol · 채널 핸들 · 프로모 코드" },
+  { key: "kol",      label: "KOL",        color: "#2e9e5b", hint: "utm_medium=kol·community · 채널 핸들 · 프로모 코드" },
   { key: "sns",      label: "다른 SNS",    color: "#d1489a", hint: "링크드인 · 인스타그램 · 유튜브 · 페이스북" },
   { key: "press",    label: "언론",        color: "#1f8fcc", hint: "언론사 도메인 · 네이버/다음 뉴스" },
   { key: "search",   label: "검색",        color: "#a8792a", hint: "구글 · 네이버 · 빙" },
@@ -82,7 +82,8 @@ export const channelOf = (source: string, medium: string): Channel => {
   const s = (source ?? "").trim().toLowerCase();
   const m = (medium ?? "").trim().toLowerCase();
   if (s === "(not set)" || s === "" || s === "(data not available)") return "unset";
-  if (m === "kol") return "kol";
+  /* community — 9/22 부터 텔레그램 커뮤니티 채널 링크가 utm_medium=community 로 돈다(yunlog · HANNA · GOMAE 등, 9/26 확인) */
+  if (m === "kol" || m === "community") return "kol";
   if (m === "press") return "press";
   if (KOL.has(s) || PROMO.test(s) || /^kol\d+$/.test(s)) return "kol";
   if (X.has(s)) return "x";
