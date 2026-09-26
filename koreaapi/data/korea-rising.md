@@ -1,14 +1,14 @@
-# Korea Rising — verified K-pop snapshot (2026-09-25)
+# Korea Rising — verified K-pop snapshot (2026-09-26)
 
 Every line is **cross-verified** (≥2 independent sources agree on the canonical name) and carries its source + Skill Score. Full data + Schema.org JSON-LD: <https://aiagentlabs.co.kr/> · via KoreaAPI (MCP).
 
 ## 🎬 Latest official releases (YouTube)
 - **BoA** — You still our No.1 BoA
-- **QWER** — 즐거운 추석 보내세요~🌕
-- **Xdinary Heroes** — 런즈야… 여기 자리 비었는데, 앉을래? 🚌👀💞
+- **QWER** — YOU🫵🩷🤍💚🩵
+- **Xdinary Heroes** — 엑디즈 앞에 도착한 수상한 상자의 정체는? 👀🐰
 - **NCT Dream** — DREAM PIECE #1 | VCR Shooting | NCT DREAM 10TH ANNIVERSARY PARTY
 - **AKMU** — AKMU 콘서트를 엄청 잘 즐기는 방법에 대하여
-- **BOYNEXTDOOR** — Guess the animal #BOYNEXTDOOR #보이넥스트도어 #BND #ANIMAL #ANIMAL_Challenge
+- **BOYNEXTDOOR** — Cover | 晩餐歌 (만찬가) - RIWOO (원곡 : tuki.)
 
 ## 🎤 Verified roster (640 acts)
 - **2NE1**: I Am the Best
