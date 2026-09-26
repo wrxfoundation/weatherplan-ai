@@ -1,0 +1,828 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex">
+<title>태풍의 눈</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="기압계를 끌어다 놓아 태풍이 가는 길을 바꾸는 날씨 미니게임">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap">
+<style>
+  /* 한 가지 세계만 쓴다: 밤의 위성 일기도. 배경·글자색을 전부 명시해 호스트 테마와 무관하게 유지 */
+  :root {
+    --bg: #070E15; --panel: #0C1620; --panel-2: #111E2A; --line: rgba(190, 215, 235, 0.10); --line-2: rgba(190, 215, 235, 0.18);
+    --ink: #E6EDF2; --ink-2: #9AAEBD; --ink-3: #62768A;
+    --amber: #F2B33D; --hi: #5AA9E6; --lo: #F0645A; --st: #62DDB8; --hit: #FF5A4E;
+    --f-display: 'Black Han Sans', 'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+    --f-body: 'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
+    --f-mono: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--bg); color: var(--ink); }
+  body { font-family: var(--f-body); font-size: 15px; line-height: 1.55; -webkit-font-smoothing: antialiased; }
+  button { font: inherit; color: inherit; }
+  button:focus-visible, summary:focus-visible, a:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
+  .app { max-width: 1240px; margin: 0 auto; padding: 14px 16px 28px; display: flex; flex-direction: column; gap: 14px; }
+
+  /* 머리 */
+  .top { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px 20px; flex-wrap: wrap; }
+  .brand h1 { margin: 0; font-family: var(--f-display); font-weight: 400; font-size: clamp(30px, 6vw, 44px); line-height: 1; letter-spacing: 0.01em; }
+  .brand h1 .eye { color: var(--amber); }
+  .brand p { margin: 6px 0 0; color: var(--ink-2); font-size: 14px; }
+  .levels { display: flex; gap: 6px; flex-wrap: wrap; }
+  .lvbtn { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 6px 10px 5px; min-width: 64px; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 1px; }
+  .lvbtn .c { font-family: var(--f-mono); font-size: 12px; color: var(--ink-2); letter-spacing: 0.04em; }
+  .lvbtn .s { font-size: 11px; letter-spacing: 1px; color: var(--ink-3); }
+  .lvbtn .s b { color: var(--amber); font-weight: 400; }
+  .lvbtn[aria-current="true"] { border-color: var(--amber); background: var(--panel-2); }
+  .lvbtn[aria-current="true"] .c { color: var(--ink); }
+
+  /* 무대 */
+  .stage { display: grid; grid-template-columns: 1fr; gap: 14px; align-items: start; }
+  @media (min-width: 920px) { .stage { grid-template-columns: minmax(0, 1fr) 340px; } }
+  @media (max-width: 919px) { .panel .result { order: -3; } .panel .tray { order: -2; } .panel .risk { order: -1; } .brand h1 { font-size: 32px; } .brand p { font-size: 13px; } }
+  .mapwrap { display: flex; justify-content: center; min-width: 0; }
+  .map { position: relative; width: 100%; aspect-ratio: 1000 / 1239; height: auto; border-radius: 12px; overflow: hidden; background: #0A1826; border: 1px solid var(--line); touch-action: none; user-select: none; -webkit-user-select: none; }
+  @media (min-width: 920px) { .map { width: min(100%, calc(min(84vh, 860px) * 0.807)); } }
+  #cTop:focus-visible { outline: 2px solid var(--amber); outline-offset: -2px; }
+  .map canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  .map canvas:not(#cTop) { pointer-events: none; }
+  #cTop { cursor: default; }
+  #cTop.can-grab { cursor: grab; }
+  #cTop.grabbing { cursor: grabbing; }
+  #cTop.armed { cursor: crosshair; }
+
+  .hud { position: absolute; left: 8px; top: 8px; max-width: calc(100% - 84px); background: rgba(7, 14, 21, 0.8); border: 1px solid var(--line); border-radius: 7px; padding: 4px 9px; font-family: var(--f-mono); font-size: 12px; line-height: 1.5; color: var(--ink); pointer-events: none; backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); font-variant-numeric: tabular-nums; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  @media (max-width: 519px) { .hud { font-size: 10.5px; padding: 3px 7px; } }
+  .hud .k { color: var(--ink-3); }
+  .hud .code { color: var(--amber); }
+  .hud .hitc { color: var(--hit); }
+  .legbtn { position: absolute; right: 8px; top: 8px; background: rgba(7, 14, 21, 0.78); border: 1px solid var(--line); border-radius: 8px; padding: 5px 10px; font-size: 12px; color: var(--ink-2); cursor: pointer; }
+  .legend { position: absolute; right: 10px; top: 44px; width: 214px; background: rgba(7, 14, 21, 0.9); border: 1px solid var(--line-2); border-radius: 10px; padding: 10px 12px; font-size: 12px; color: var(--ink-2); display: none; flex-direction: column; gap: 7px; }
+  .legend.open { display: flex; }
+  .legend .row { display: flex; align-items: center; gap: 9px; }
+  .legend svg { flex: none; }
+
+  .toast { position: absolute; left: 50%; top: 42px; transform: translate(-50%, -8px); width: max-content; max-width: calc(100% - 32px); background: rgba(7, 14, 21, 0.94); border: 1px solid var(--line-2); border-radius: 12px; padding: 7px 14px; font-size: 13px; text-align: center; text-wrap: balance; opacity: 0; transition: opacity .2s, transform .2s; pointer-events: none; }
+  .toast b { color: var(--amber); font-weight: 600; }
+  .toast.on { opacity: 1; transform: translate(-50%, 0); }
+
+  .result { display: none; flex-direction: column; gap: 8px; background: var(--panel-2); border-color: rgba(242, 179, 61, 0.35); }
+  .result.on { display: flex; }
+  .result .stars { font-size: 26px; letter-spacing: 4px; line-height: 1; color: var(--ink-3); }
+  .result .stars b { color: var(--amber); font-weight: 400; }
+  .result h2 { margin: 0; font-size: 18px; font-weight: 600; text-wrap: balance; }
+  .result p { margin: 0; color: var(--ink-2); font-size: 13.5px; }
+  .result .row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
+
+  /* 패널 */
+  .panel { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; }
+  .lvhead .code { font-family: var(--f-mono); font-size: 12px; color: var(--amber); letter-spacing: 0.06em; }
+  .lvhead h2 { margin: 2px 0 6px; font-size: 22px; font-weight: 600; line-height: 1.25; text-wrap: balance; }
+  .lvhead .meta { display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 13px; color: var(--ink-2); }
+  .lvhead .meta b { color: var(--amber); font-weight: 400; letter-spacing: 1px; }
+
+  .tray { display: flex; flex-direction: column; gap: 10px; }
+  .tray .lbl, .risk .lbl, .hint .lbl { font-size: 11.5px; color: var(--ink-3); letter-spacing: 0.08em; }
+  .chips { display: flex; gap: 8px; flex-wrap: wrap; }
+  .chip { display: inline-flex; align-items: center; gap: 8px; background: var(--panel-2); border: 1px solid var(--line-2); border-radius: 10px; padding: 7px 11px 7px 8px; cursor: grab; touch-action: none; user-select: none; -webkit-user-select: none; font-size: 14px; }
+  .chip .sym { width: 26px; height: 26px; display: grid; place-items: center; font-family: var(--f-display); font-size: 15px; border-radius: 50%; border: 1.5px solid currentColor; }
+  .chip.H .sym { color: var(--hi); } .chip.L .sym { color: var(--lo); } .chip.S .sym { color: var(--st); border-radius: 6px; }
+  .chip .n { font-family: var(--f-mono); font-size: 12px; color: var(--ink-2); }
+  .chip[aria-pressed="true"] { border-color: var(--amber); box-shadow: 0 0 0 1px var(--amber) inset; }
+  .chip:disabled { opacity: 0.38; cursor: default; }
+  .actions { display: flex; gap: 8px; flex-wrap: wrap; }
+  .btn { border-radius: 10px; padding: 10px 16px; font-size: 15px; font-weight: 600; cursor: pointer; border: 1px solid var(--line-2); background: var(--panel-2); color: var(--ink); }
+  .btn.primary { background: var(--amber); border-color: var(--amber); color: #1B1406; }
+  .btn.primary:hover { filter: brightness(1.06); }
+  .btn.ghost { background: transparent; color: var(--ink-2); font-weight: 500; }
+  .btn:disabled { opacity: 0.4; cursor: default; }
+  .btn.sm { padding: 7px 12px; font-size: 13.5px; }
+
+  .risk .big { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin: 2px 0 2px; }
+  .risk .big .v { font-family: var(--f-mono); font-size: 30px; font-weight: 500; font-variant-numeric: tabular-nums; }
+  .risk .big .v.good { color: var(--st); }
+  .risk .sub { font-size: 13px; color: var(--ink-2); margin: 0 0 10px; }
+  .risk ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+  .risk li { display: grid; grid-template-columns: 64px 1fr 40px; align-items: center; gap: 10px; font-size: 13.5px; }
+  .risk .bar { height: 6px; background: rgba(255, 255, 255, 0.06); border-radius: 3px; overflow: hidden; }
+  .risk .bar i { display: block; height: 100%; background: var(--lo); border-radius: 3px; }
+  .risk .pct { font-family: var(--f-mono); font-size: 12.5px; text-align: right; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+  .risk .none { font-size: 13.5px; color: var(--st); }
+
+  .hint p { margin: 4px 0 0; font-size: 14.5px; }
+  details.howto { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 12px 16px; }
+  details.howto summary { cursor: pointer; font-weight: 600; font-size: 14px; }
+  details.howto h3 { margin: 12px 0 6px; font-size: 13px; color: var(--ink-3); font-weight: 500; letter-spacing: 0.06em; }
+  details.howto ol, details.howto ul { margin: 0; padding-left: 18px; font-size: 13.5px; color: var(--ink-2); display: flex; flex-direction: column; gap: 5px; }
+  footer { color: var(--ink-3); font-size: 12.5px; text-align: center; padding-top: 4px; text-wrap: balance; }
+  @media (prefers-reduced-motion: reduce) { .toast { transition: none; } }
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <div class="brand">
+      <h1>태풍의 <span class="eye">눈</span></h1>
+      <p>기압계를 끌어다 놓아 태풍이 가는 길을 바꾸세요</p>
+    </div>
+    <nav class="levels" id="levels" aria-label="레벨 선택"></nav>
+  </header>
+
+  <main class="stage">
+    <section class="mapwrap">
+      <div class="map" id="map">
+        <canvas id="cBase" aria-hidden="true"></canvas>
+        <canvas id="cLines" aria-hidden="true"></canvas>
+        <canvas id="cGL" aria-hidden="true"></canvas>
+        <canvas id="cTop" role="img" aria-label="동아시아 지도. 태풍, 예보 선, 도시, 놓은 기압계가 표시됩니다."></canvas>
+        <div class="hud" id="hud"></div>
+        <button class="legbtn" id="legbtn" type="button" aria-expanded="false" aria-controls="legend">범례</button>
+        <div class="legend" id="legend">
+          <div class="row"><svg width="28" height="10" aria-hidden="true"><line x1="1" y1="5" x2="27" y2="5" stroke="#F2B33D" stroke-width="2" stroke-dasharray="6 4"/></svg>중심 예보(24시간 간격 점)</div>
+          <div class="row"><svg width="28" height="10" aria-hidden="true"><line x1="1" y1="3" x2="27" y2="4" stroke="#AAC8E1" stroke-opacity=".6"/><line x1="1" y1="7" x2="27" y2="6" stroke="#AAC8E1" stroke-opacity=".6"/></svg>예보 앙상블 30개</div>
+          <div class="row"><svg width="28" height="10" aria-hidden="true"><rect x="1" y="1" width="26" height="8" rx="4" fill="#F2B33D" fill-opacity=".25"/></svg>강풍 반경(중심 예보)</div>
+          <div class="row"><svg width="28" height="10" aria-hidden="true"><line x1="1" y1="5" x2="27" y2="5" stroke="#F2B33D" stroke-opacity=".5" stroke-dasharray="2 3"/></svg>26℃ 등온선 — 이보다 따뜻한 바다에서 태풍이 커짐</div>
+          <div class="row"><svg width="28" height="16" aria-hidden="true"><circle cx="8" cy="8" r="6" fill="none" stroke="#5AA9E6" stroke-width="1.5"/><circle cx="21" cy="8" r="6" fill="none" stroke="#F0645A" stroke-width="1.5"/></svg>고기압 · 저기압</div>
+          <div class="row"><svg width="28" height="16" aria-hidden="true"><rect x="8" y="2" width="12" height="12" rx="3" fill="none" stroke="#62DDB8" stroke-width="1.5"/></svg>관측소</div>
+        </div>
+        <div class="toast" id="toast" role="status" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <aside class="panel">
+      <div class="card result" id="result" role="region" aria-live="polite" aria-label="결과"></div>
+      <div class="card lvhead" id="lvhead"></div>
+      <div class="card tray">
+        <div class="lbl">도구 — 지도 위로 끌어다 놓기</div>
+        <div class="chips" id="chips"></div>
+        <div class="actions">
+          <button class="btn primary" id="go" type="button">▶ 태풍 출발</button>
+          <button class="btn ghost" id="clear" type="button">도구 모두 거두기</button>
+        </div>
+      </div>
+      <div class="card risk" id="risk" aria-live="polite"></div>
+      <div class="card hint"><div class="lbl">힌트</div><p id="hint"></p></div>
+      <details class="howto" id="howto">
+        <summary>게임 방법 · 알아 두기</summary>
+        <h3>게임 방법</h3>
+        <ol>
+          <li>도구를 지도 위로 끌어다 놓으세요. 놓는 순간 예보가 다시 계산됩니다.</li>
+          <li>노란 점선은 중심 예보, 가는 선 30개는 예보 앙상블입니다. 도시 옆 숫자는 그 도시가 강풍 반경에 드는 예보의 비율입니다.</li>
+          <li>준비되면 태풍을 출발시키세요. 예보 선 30개 가운데 하나가 실제 진로가 됩니다.</li>
+          <li>놓은 도구를 한 번 누르면 ✕가 나옵니다. ✕를 누르면 도구를 거둡니다. 키보드로는 도구를 고른 뒤 방향키로 옮기고 Delete로 거둡니다.</li>
+        </ol>
+        <h3>알아 두기</h3>
+        <ul>
+          <li>고기압 둘레의 바람은 시계 방향, 저기압 둘레는 반시계 방향으로 돕니다. 태풍은 그 흐름을 타고 움직입니다.</li>
+          <li>태풍이 저기압에 닿으면 그 저기압을 흡수합니다.</li>
+          <li>26℃보다 따뜻한 바다에서는 태풍이 강해지고, 찬 바다와 육지에서는 약해집니다.</li>
+          <li>강한 태풍이 육지에 닿으면 가장 가까운 도시가 피해를 입습니다.</li>
+          <li>놓은 기압계는 60시간이 지나면 약해지기 시작해 100시간에 흩어집니다. 관측소는 끝까지 남습니다.</li>
+          <li>관측소 반경 안에서는 예보 선들이 중심 예보 쪽으로 모입니다.</li>
+        </ul>
+      </details>
+    </aside>
+  </main>
+
+  <footer>wellbian 날씨 미니게임 · 프로토타입 — 교육용으로 단순화한 모형 날씨이며 실제 예보가 아닙니다.</footer>
+</div>
+
+<script>
+// 태풍의 눈 — 시뮬레이션 핵심(브라우저·Node 공용). 단위: 경위도(°), 시간(h), 속도(°/h)
+(function (root) {
+  const clamp = (x, a, b) => Math.max(a, Math.min(b, x));
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const smooth = (a, b, x) => { const t = clamp((x - a) / (b - a), 0, 1); return t * t * (3 - 2 * t); };
+  const D2R = Math.PI / 180;
+  const BOUNDS = { lon0: 116.0, lon1: 139.5, lat0: 17.0, lat1: 42.0 };
+  const CITIES = [
+    { id: 'seoul', name: '서울', lon: 126.98, lat: 37.57 , side: 'l' }, { id: 'gangneung', name: '강릉', lon: 128.90, lat: 37.75 , side: 'r' },
+    { id: 'gwangju', name: '광주', lon: 126.85, lat: 35.16 , side: 'l' }, { id: 'busan', name: '부산', lon: 129.08, lat: 35.18 , side: 'r' },
+    { id: 'jeju', name: '제주', lon: 126.53, lat: 33.50 , side: 'l' }, { id: 'fukuoka', name: '후쿠오카', lon: 130.40, lat: 33.59 , side: 'r' },
+    { id: 'kagoshima', name: '가고시마', lon: 130.56, lat: 31.60 , side: 'r' }, { id: 'osaka', name: '오사카', lon: 135.50, lat: 34.69 , side: 'r' },
+    { id: 'naha', name: '나하', lon: 127.68, lat: 26.21 , side: 'r' }, { id: 'shanghai', name: '상하이', lon: 121.47, lat: 31.23 , side: 'l' },
+    { id: 'wenzhou', name: '원저우', lon: 120.70, lat: 28.00 , side: 'l' }, { id: 'fuzhou', name: '푸저우', lon: 119.30, lat: 26.08 , side: 'l' },
+    { id: 'qingdao', name: '칭다오', lon: 120.38, lat: 36.07 , side: 'l' }, { id: 'taipei', name: '타이베이', lon: 121.56, lat: 25.03 , side: 'r' },
+    { id: 'kaohsiung', name: '가오슝', lon: 120.30, lat: 22.63 , side: 'l' },
+    { id: 'aparri', name: '아파리', lon: 121.64, lat: 18.36 , side: 'r' },
+    { id: 'pyongyang', name: '평양', lon: 125.75, lat: 39.03 , side: 'l' },
+  ];
+  const TOOL = {
+    H: { A: 0.28, R: 5.0, push: 0.7, swirl: 0.7 },
+    L: { A: 0.25, R: 6.5, push: -0.85, swirl: -0.45, absorb: 1.4 },
+    S: { R: 3.0, cut: 0.85 },
+  };
+  let MASK = null;
+  function loadMask(m) { const a = new Uint8Array(m.w * m.h); let v = 0, k = 0; for (const n of m.rle) { if (v) a.fill(1, k, k + n); k += n; v ^= 1; } MASK = { ...m, a }; }
+  function isLand(lon, lat) { if (!MASK) return 0; const i = Math.floor((MASK.lat1 - lat) / MASK.res), j = Math.floor((lon - MASK.lon0) / MASK.res); if (i < 0 || j < 0 || i >= MASK.h || j >= MASK.w) return 0; return MASK.a[i * MASK.w + j]; }
+  // 해수면 온도(°C): 위도 경도 + 쿠로시오 난류 띠
+  function sst(lon, lat) { let t = 30.4 - 0.47 * (lat - 20); const axis = 28.6 + (lon - 124) * 0.36; if (lon > 122.5 && lon < 141) t += 1.7 * Math.exp(-((lat - axis) ** 2) / (2 * 1.1 ** 2)); return t; }
+  // 배경 지향류: 저위도 북서진 → 전향 → 중위도 북동진
+  const FLOW = { u0: -0.11, u1: 0.30, v0: 0.15, v1: 0.20, a: 24, b: 32.5 };
+  let F = FLOW;
+  function baseFlow(lon, lat) { const s = smooth(F.a, F.b, lat); return [lerp(F.u0, F.u1, s), lerp(F.v0, F.v1, s)]; }
+  const kx = lat => Math.cos(lat * D2R);
+  function dist(a, b) { const c = kx((a.lat + b.lat) / 2); return Math.hypot((a.lon - b.lon) * c, a.lat - b.lat); }
+  const params = t => (t.p ? { ...TOOL[t.type], ...t.p } : TOOL[t.type]);
+  const LIFE = { hold: 60, fade: 40 };
+  const life = t => (t < LIFE.hold ? 1 : Math.max(0, 1 - (t - LIFE.hold) / LIFE.fade));
+  function steer(lon, lat, tools, time = 0) {
+    let [u, v] = baseFlow(lon, lat); const g = life(time);
+    for (const t of tools) {
+      if (t.type === 'S' || t.gone) continue;
+      const P = params(t); const c = kx(lat);
+      let dx = (lon - t.lon) * c, dy = lat - t.lat; let r = Math.hypot(dx, dy);
+      if (r < 0.35) { dx *= 0.35 / (r || 1); dy *= 0.35 / (r || 1); r = 0.35; }
+      const w = Math.exp(-((r / P.R) ** 2)) * P.A * (t.fixed ? 1 : g); const ux = dx / r, uy = dy / r;
+      u += w * (P.push * ux + P.swirl * uy); v += w * (P.push * uy - P.swirl * ux);
+    }
+    return [u, v];
+  }
+  function noiseFactor(lon, lat, tools) { let best = 0; for (const t of tools) if (t.type === 'S') best = Math.max(best, Math.exp(-((dist({ lon, lat }, t) / TOOL.S.R) ** 2))); return 1 - TOOL.S.cut * best; }
+  function rng(seed) { let s = (seed >>> 0) || 1; return () => { s ^= s << 13; s ^= s >>> 17; s ^= s << 5; return ((s >>> 0) % 1e6) / 1e6; }; }
+  // 앙상블 교란: 멤버마다 일정한 편향(오차가 시간에 따라 커짐) + 느린 흔들림
+  function makeNoise(seed) {
+    const r = rng(seed); r(); r();
+    const ang = r() * 6.2832, mag = Math.sqrt(r()) * 0.9; const bx = Math.cos(ang) * mag, by = Math.sin(ang) * mag;
+    const comp = () => [0, 1].map(() => ({ f: (2 * Math.PI) / lerp(20, 60, r()), p: r() * 6.283, a: lerp(0.3, 0.6, r()) }));
+    const cx = comp(), cy = comp(); const f = (cs, t) => cs.reduce((s, c) => s + c.a * Math.sin(c.f * t + c.p), 0);
+    return t => [bx + f(cx, t), by + f(cy, t)];
+  }
+  const windRadius = I => 0.5 + 1.1 * I; const maxWind = I => Math.round(17 + 45 * I); const pressure = I => Math.round(1008 - 88 * I);
+  function grade(I) { const w = maxWind(I); return w >= 54 ? '초강력' : w >= 44 ? '매우 강' : w >= 33 ? '강' : w >= 25 ? '중' : '약'; }
+  function simulate(level, placed, opt = {}) {
+    const dt = opt.dt || 1, maxH = opt.maxH || 180;
+    const tools = [...(level.fixed || []).map(t => ({ ...t, fixed: true })), ...placed].map(t => ({ ...t, gone: false }));
+    F = level.flow ? { ...FLOW, ...level.flow } : FLOW;
+    const nz = opt.seed ? makeNoise(opt.seed) : null; const amp = level.noise || 0.04;
+    let lon = level.start.lon, lat = level.start.lat, I = level.I0;
+    let [u, v] = baseFlow(lon, lat); if (level.v0) [u, v] = level.v0;
+    const track = [{ t: 0, lon, lat, I, land: 0 }]; const hit = new Set(); let end = 'time'; const events = []; let landfall = 0;
+    for (let t = dt; t <= maxH; t += dt) {
+      let [tu, tv] = steer(lon, lat, tools, t);
+      if (nz) { const [a, b] = nz(t); const f = amp * noiseFactor(lon, lat, tools); tu += a * f; tv += b * f; }
+      const k = 1 - Math.exp(-dt / 5); u += (tu - u) * k; v += (tv - v) * k;
+      const sp = Math.hypot(u, v); if (sp > 0.46) { u *= 0.46 / sp; v *= 0.46 / sp; }
+      lon += (u / kx(lat)) * dt; lat += v * dt;
+      if (opt.ref) { const w = 1 - noiseFactor(lon, lat, tools); const q = opt.ref[Math.min(t, opt.ref.length - 1)]; if (w > 0 && q) { const k = Math.min(1, 0.25 * w * dt); lon += (q.lon - lon) * k; lat += (q.lat - lat) * k; } }
+      if (lat < BOUNDS.lat0) { lat = BOUNDS.lat0; if (v < 0) v = 0; } // 적도 쪽 가장자리는 벽
+      const land = isLand(lon, lat);
+      // 상륙: 강도가 남아 있으면 상륙 지점에서 가장 가까운 도시가 피해를 입는다(도시 사이 빈 해안으로 빼돌리기 방지)
+      if (land && !landfall) { landfall = t; if (I >= 0.15) { let nc = null, nd = 1e9; for (const c of CITIES) { const d = dist({ lon, lat }, c); if (d < nd) { nd = d; nc = c; } } if (nc && !hit.has(nc.id)) { hit.add(nc.id); events.push({ t, kind: 'hit', city: nc.id, landfall: true }); } } }
+      const dI = land ? -0.035 : 0.008 * clamp((sst(lon, lat) - 26.4) / 2.6, -1.3, 1) - (lat > 35 ? 0.004 * (lat - 35) : 0);
+      I = clamp(I + dI * dt, 0, 1);
+      for (const tl of tools) if (tl.type === 'L' && !tl.fixed && !tl.gone && dist({ lon, lat }, tl) < TOOL.L.absorb) { tl.gone = true; events.push({ t, kind: 'absorb', tool: tl }); }
+      if (I >= 0.15) { const R = windRadius(I); for (const c of CITIES) if (!hit.has(c.id) && dist({ lon, lat }, c) <= R) { hit.add(c.id); events.push({ t, kind: 'hit', city: c.id }); } }
+      track.push({ t, lon, lat, I, land });
+      if (I < 0.08) { end = 'dissipate'; break; }
+      if (lon < BOUNDS.lon0 || lon > BOUNDS.lon1 || lat > BOUNDS.lat1) { end = 'exit'; break; }
+    }
+    return { track, hit: [...hit], end, events, landfall };
+  }
+  const ENS = 30;
+  function seeds(level) { return Array.from({ length: ENS }, (_, k) => ((level.id * 104729 + (k + 1) * 7919) >>> 0)); }
+  function forecast(level, placed) {
+    const central = simulate(level, placed);
+    const members = seeds(level).map(s => simulate(level, placed, { seed: s, ref: central.track }));
+    const prob = {}; for (const c of CITIES) prob[c.id] = 0;
+    let clean = 0; for (const m of members) { for (const id of m.hit) prob[id] += 1 / ENS; if (!m.hit.length) clean++; }
+    return { central, members, prob, clean: clean / ENS };
+  }
+  // 별: 피해 도시 0곳 ★★★ · 1곳 ★★ · 2곳 ★ · 3곳 이상 실패. level.pass(최소 별)가 있으면 그보다 적은 별은 실패
+  function stars(nHit, level) { const s = nHit === 0 ? 3 : nHit === 1 ? 2 : nHit === 2 ? 1 : 0; return level && level.pass && s < level.pass ? 0 : s; }
+  const NPH = (lon, lat, A, R) => ({ type: 'H', lon, lat, name: '북태평양 고기압', p: { A, R } });
+  const LEVELS = [
+    { id: 1, code: 'T-01', title: '빈 바다로', tools: { H: 0, L: 1, S: 0 }, start: { lon: 133.0, lat: 21.0 }, I0: 0.55, noise: 0.02,
+      hint: '저기압은 태풍을 끌어당깁니다. 태풍이 가 줬으면 하는 빈 바다에 놓으세요.' },
+    { id: 2, code: 'T-02', title: '첫 번째 곡선', tools: { H: 1, L: 0, S: 0 }, start: { lon: 131.0, lat: 21.5 }, I0: 0.40, noise: 0.015,
+      hint: '고기압 둘레의 바람은 시계 방향으로 돕니다. 태풍 서쪽에 바짝 붙여 두면 동쪽 바다로 휘어 나갑니다.' },
+    { id: 3, code: 'T-03', title: '따뜻한 바다', tools: { H: 1, L: 0, S: 1 }, pass: 2, start: { lon: 132.0, lat: 20.0 }, I0: 0.55, noise: 0.04,
+      flow: { u0: -0.2, v0: 0.08, a: 27, b: 34 },
+      hint: '난류 위에서는 예보 선이 크게 흩어집니다. 관측소를 진로 위에 두면 선들이 모입니다.' },
+    { id: 4, code: 'T-04', title: '한반도 관통', tools: { H: 2, L: 1, S: 1 }, start: { lon: 127.2, lat: 21.0 }, I0: 0.45, noise: 0.03,
+      flow: { u0: -0.01, v0: 0.17, a: 32, b: 39 }, fixed: [NPH(136.0, 30.0, 0.2, 6.0)],
+      hint: '북태평양 고기압이 태풍을 곧장 북쪽으로 올려 보냅니다. 찬 서해에서 힘을 빼거나 동쪽 먼바다로 끌어내 보세요.' },
+    { id: 5, code: 'T-05', title: '초강력 태풍', tools: { H: 2, L: 1, S: 1 }, start: { lon: 134.2, lat: 18.5 }, I0: 0.95, noise: 0.035,
+      flow: { u0: -0.04, v0: 0.17, a: 30, b: 37 }, fixed: [NPH(139.5, 29.0, 0.22, 6.5)],
+      hint: '바람 반경이 넓어 스치기만 해도 피해가 납니다. 일본 남쪽 먼바다로 크게 돌려 내보내 보세요.' },
+  ];
+  const API = { BOUNDS, CITIES, TOOL, FLOW, LIFE, life, LEVELS, ENS, loadMask, isLand, sst, baseFlow, steer, simulate, forecast, seeds, stars, windRadius, maxWind, pressure, grade, dist, makeNoise, noiseFactor };
+  if (typeof module !== 'undefined') module.exports = API; else root.SIM = API;
+})(this);
+
+</script>
+<script>
+(() => {
+  'use strict';
+  const COAST_DATA = [{"h":0,"d":[12110,1862,49,-24,26,-9,10,0,9,4,11,16,7,1,8,-10,0,-17,-12,-17,-3,-40,9,-22,15,-13,2,-13,11,-6,-10,-30,-16,-32,-195,0,1,26,9,20,1,13,0,35,-6,20,23,73,1,14,22,9,10,-2,18,4]},{"h":0,"d":[14000,4250,0,-94,0,56,-17,16,1,22]},{"h":0,"d":[14000,3498,-8,-8,-12,6,4,5,-1,29,17,16,-1,21,-16,-1,-4,-5,-2,-12,-12,-8,2,-9,7,-7,-6,-10,-4,-1,-8,10,-9,6,-22,-2,-9,-7,-5,-11,1,-14,-3,-12,-19,-21,-6,-1,-8,8,4,27,10,5,-8,8,-10,2,-14,-3,-33,-36,-6,-13,-21,4,-44,2,-48,-8,2,4,21,8,-2,7,-24,0,-7,7,-2,-12,-3,-1,-4,2,-2,25,5,5,-10,2,-11,-7,-16,-30,9,-9,26,-16,-3,-11,-52,-14,-41,-62,-23,-7,-24,6,-27,35,-5,11,1,17,-4,11,21,13,10,13,1,7,-6,3,-32,-2,-30,14,-49,-6,-28,-18,-53,-10,-30,-13,-12,3,-36,-8,-24,10,-11,-3,-7,-9,-10,-39,-40,21,-51,-10,-16,7,-15,-4,-3,28,11,13,35,2,26,20,25,12,40,29,36,29,8,11,22,9,35,5,11,-10,24,5,36,0,23,3,25,9,42,3,30,9,9,-3,-4,-13,10,-6,35,-3,12,5,29,22,-7,10,-1,12,6,13,9,10,20,14,34,38,5,21,-3,25,12,18,48,14,2,-8,-19,-16,-22,-11,-3,-5,9,-9,3,-19,10,-7,13,-2,9,2,17,18,81,27,31,25,25,37,37,17,15,13,12,36,28,38,11,35,9,11,0,51,-5,4,-14,-1,-7,4,2,4,11,3,10,15,3,20,-8,26,8,10]},{"h":0,"d":[13436,3426,14,-4,14,1,0,-19,5,-11,-1,-8,6,-3,-36,-21,-14,-17,-6,-19,-22,20,-11,4,-22,2,-34,-15,-14,-28,-13,-10,-4,-14,-11,-9,-7,0,-16,1,7,14,-22,2,0,9,-6,5,8,23,-11,4,1,10,-38,-9,61,35,15,30,15,11,5,-1,14,-16,6,0,39,9,6,11,-4,11,11,0,24,11,12,1,29,-10]},{"h":0,"d":[13118,3360,19,-3,21,8,11,-5,2,-10,-17,-23,36,-2,-5,-13,10,-7,-4,-8,10,-5,-35,-45,-20,-59,0,-21,-12,-27,-27,4,-3,-6,6,-12,-20,-15,-21,-10,10,26,-9,31,9,4,-1,9,-13,1,-9,-16,-2,-16,10,-13,-5,-9,-39,11,-5,12,14,4,3,15,-13,17,2,8,-2,24,13,5,8,8,24,40,-14,4,7,7,-2,10,-11,12,-6,14,-14,9,-11,-8,4,-9,1,-16,15,0,3,-9,-2,-6,-10,-2,-9,7,-10,2,-28,-20,6,16,-14,15,-1,18,10,-8,5,-9,16,-4,-9,17,-32,22,3,10,5,2,18,-4,2,6,-3,6,24,8,10,8,20,3,12,21,23,9,23,-6,11,-20,12,-7]},{"h":0,"d":[12101,2262,-11,-24,-6,-46,-10,4,-16,40,-26,19,-24,54,0,12,6,19,-1,25,50,83,41,55,33,13,8,9,14,3,10,-10,22,-12,2,-9,-11,-15,1,-29,-22,-48,-21,-88,-24,-39,-15,-16]},{"h":0,"d":[13082,4250,-9,-17,-9,-6,-18,3,-22,-12,-6,-8,-17,-11,-13,-18,-12,-10,-7,-11,-1,-11,8,-10,1,-9,-6,-18,3,-19,-3,-7,-37,-13,-23,-24,-41,-17,-19,-19,-21,-9,-33,-4,-10,-10,-30,-12,-4,-8,2,-24,-3,-8,-6,2,-4,-3,-4,-7,2,-9,39,-13,18,-18,36,-22,29,-50,43,-50,29,-41,8,-21,5,-32,-4,-10,1,-17,-5,-15,2,-27,5,-4,11,4,-15,-55,-21,-32,-23,-8,-47,0,-9,-8,2,-15,-35,6,-5,9,-17,-5,-16,-1,-7,-7,10,-11,-2,-6,-9,-3,-11,15,-12,-2,-1,-8,9,-11,-16,-17,-15,9,9,11,-1,10,-22,-15,-13,-17,-14,7,-15,-11,-3,-8,-5,-1,-5,18,-21,18,3,5,23,-2,-6,6,12,6,-17,0,-13,33,7,7,13,28,13,7,-13,4,0,4,23,12,3,10,-10,5,4,9,-15,16,1,31,-6,21,-10,-4,-21,4,-2,8,6,10,27,14,9,1,20,-7,9,-13,11,12,-11,4,-13,21,5,11,-14,15,1,10,-10,17,7,6,-26,10,-17,-5,-8,-9,-7,13,-11,0,-17,12,-8,-3,-11,-15,-13,-8,-9,-1,-5,12,-32,9,26,13,-4,2,-21,0,-31,5,19,10,0,11,19,22,24,10,24,3,-38,12,-1,6,25,42,-5,24,-26,6,-32,17,-4,-2,-1,-9,-9,-4,-8,18,-21,12,3,9,-3,1,-8,-9,-16,-8,-35,-2,-11,6,-7,-9,-23,-3,-12,-7,-20,-2,-7,-5,-12,-2,-51,-23,-35,-32,-12,-5,-18,0,-5,-5,4,-6,-2,-3,-33,-5,-16,-8,-5,19,57,19,-5,11,19,17,-54,0,2,6,-3,10,14,7,11,2,-5,12,5,9,28,10,39,41,7,14,1,4,-9,6,-4,9,-28,15,-3,13,-10,-12,-55,5,-41,-31,-29,-36,-89,-33,-20,-15,-13,-19,-4,-15,-24,-23,-35,0,-33,-11,-15,12,-11,4,-17,-4,-9,-6,-23,-44,10,-27,12,-11,24,-13,53,-8,26,3,14,-9,9,-14,1,-12,5,-8,-10,-6,-4,-31,16,-13,18,-6,16,-1,31,2,13,10,-1,10,28,14,15,13,-5,6,49,15,30,-10,17,-13,17,-2,25,-12,32,-2,10,9,28,-13,26,3,7,-3,-10,-8,2,-14,-14,-11,7,-7,0,-5,-18,-12,-10,2,-8,11,-23,0,-88,-35,-24,2,-1,-2,8,-7,1,-10,-4,-1,-7,3,-7,-5,-3,-24,-4,-4,-25,-8,-6,6,0,12,-15,-3,-8,-8,8,-10,11,-4,-23,-12,-8,-12,-12,-10,-14,-5,-19,-23,-10,-6,-8,-19,-13,-10,-5,-16,3,-10,15,0,23,-17,38,-13,31,-18,24,-63,36,-62,3,-18,-5,-8,1,-10,13,-9,35,-14,6,-6,0,-16,9,-9,26,-13,8,-9,3,-8,1,-12,-19,1,-33,15,-20,-2,-18,3,-18,16,-27,8,-33,-14,-9,1,-7,-4,16,-3,31,11,21,-4,8,-16,27,-10,29,-24,31,-16,13,-16,9,-24,-46,-13,-11,-9,-31,-14,-10,-17,-8,-4,-37,4,-25,-15,15,1,15,5,13,-17,28,3,25,14,10,0,17,-7,25,-25,40,-11,-17,-9,-40,-30,18,3,20,12,5,-2,3,-12,-5,-36,-7,0,-6,10,-7,3,-18,-2,-9,-11,7,-1,15,-11,1,-6,-4,-3,-10,1,12,-8,-3,-8,-11,-6,-5,-7,14,-35,-10,3,-15,-9,-9,-1,-5,13,-7,-2,-19,-29,-7,-4,-14,1,8,-7,0,-5,-14,-14,-3,-11,-7,-6,4,-10,-2,-7,-23,-25,-10,-6,-14,-21,-5,-22,-12,-8,-9,2,0,7,-6,6,1,11,-12,-12,-12,6,5,-17,8,-1,7,-6,9,-22,-19,-9,-23,-19,-32,7,12,-15,7,-2,9,0,8,6,12,-1,3,-8,-10,-22,-1,-11,8,-20,-3,-2,-17,9,-24,-1,-4,-4,3,-6,12,-12,-6,-2,-25,0,-7,-8,4,-13,-4,-7,-27,-9,8,-9,-6,-13,-10,-4,-15,2,-11,-3,-11,6,-10,0,-8,-7,0,-8,-17,-1,4,-7,15,-2,3,-13,-22,-24,-10,0,-11,-17,-16,0,-4,-5,3,-5,-4,-12,-5,-3,-4,12,-4,0,-21,-13,-5,4,-12,3,-5,-20,-15,-9,-8,-1,7,-7,-3,-5,-13,-5,-2,-17,-5,-6,-13,-1,-9,4,-9,-9,-31,-9,-21,5,-8,-3,-6,-10,-12,0,-18,10,-20,-11,0,1979]},{"h":0,"d":[12192,1890,-6,-8,-4,2,7,15,5,2,5,-5,-7,-6]},{"h":0,"d":[12152,1936,1,-9,-6,0,-10,9,2,4,13,-4]},{"h":0,"d":[12429,2452,-5,-16,-11,-1,-5,9,4,3,9,-1,9,13,3,-2,-4,-5]},{"h":0,"d":[12389,2428,-21,1,0,3,7,3,2,6,17,-5,-5,-8]},{"h":0,"d":[12545,2474,-18,-1,1,14,17,-13]},{"h":0,"d":[12826,2665,-31,-19,-8,-2,3,-11,-11,-7,1,-11,-7,-5,-8,-1,1,11,7,11,0,12,9,4,13,12,-6,4,2,6,14,-5,5,3,16,21,7,-7,-7,-16]},{"h":0,"d":[12900,2772,-4,-2,-6,3,-2,11,3,6,4,1,7,-14,-2,-5]},{"h":0,"d":[12945,2821,-8,-8,-21,12,16,11,19,4,18,12,2,-9,-25,-16,-1,-6]},{"h":0,"d":[13062,3026,-17,0,-6,13,11,8,14,-8,3,-2,-5,-11]},{"h":0,"d":[13096,3040,-9,-1,0,5,7,14,1,9,11,16,2,-4,-2,-15,-10,-24]},{"h":0,"d":[12867,3278,17,-2,5,-11,-10,-1,-4,-5,-6,1,-4,6,2,12]},{"h":0,"d":[13008,3223,-8,-4,-4,5,6,5,-4,6,3,17,16,2,3,-20,-12,-11]},{"h":0,"d":[13038,3242,-9,0,-5,4,13,7,9,-1,-8,-10]},{"h":0,"d":[13337,3620,-4,-3,-9,1,-5,5,2,6,9,5,8,-9,-1,-5]},{"h":0,"d":[13834,3782,-11,1,5,2,4,12,-7,2,0,9,25,24,-5,-24,12,-1,-7,-17,-16,-8]},{"h":0,"d":[13948,4208,-5,0,0,12,13,4,-8,-16]},{"h":0,"d":[13493,3429,-11,-9,-9,1,-6,8,16,18,17,7,-9,-14,2,-11]},{"h":0,"d":[12908,3284,-3,-1,-5,12,11,18,7,-14,-7,-6,-3,-9]},{"h":0,"d":[12949,3322,-12,-4,9,15,11,3,-8,-14]},{"h":0,"d":[12928,3412,-7,-4,-2,6,2,18,13,-4,-6,-16]},{"h":0,"d":[12939,3435,-2,-4,-10,6,6,15,0,9,12,8,3,-4,0,-11,-10,-12,1,-7]},{"h":0,"d":[13227,3394,4,-3,13,0,-8,-6,-15,2,0,8,6,-1]},{"h":0,"d":[12874,3480,-9,-6,-16,12,18,15,5,0,2,-21]},{"h":0,"d":[12807,3481,-1,-10,-8,-1,-4,7,-6,-4,-5,15,8,4,13,-4,3,-7]},{"h":0,"d":[12633,3322,-9,0,-7,9,17,15,42,9,14,-3,3,-8,-6,-10,-16,-7,-38,-5]},{"h":0,"d":[12623,3437,-6,-2,-6,5,1,4,13,12,10,-1,3,-5,-5,-7,-10,-6]},{"h":0,"d":[12652,3774,-1,-14,-5,1,-5,4,-4,12,4,5,11,-8]},{"h":0,"d":[12186,3149,-8,-3,-26,9,-18,9,-13,17,25,-5,3,-7,9,-5,23,-9,5,-6]},{"h":0,"d":[12230,2996,-2,-2,-12,6,-13,1,-5,5,-1,8,14,0,17,-7,4,-4,-2,-7]},{"h":0,"d":[11982,2546,-7,-5,-5,2,2,21,6,1,6,-6,-2,-13]},{"h":0,"d":[12125,2809,-12,-3,0,8,7,6,5,-11]},{"h":0,"d":[12617,3473,-6,-2,-10,16,7,5,9,-9,0,-10]}];
+  const MASK_DATA = {"lon0":115,"lat1":42.5,"res":0.1,"w":250,"h":260,"rle":[0,158,90,159,91,156,95,153,92,1,5,151,99,150,100,149,101,148,102,147,103,147,103,147,103,148,102,147,103,147,103,147,103,147,103,61,5,1,2,78,103,60,10,74,106,58,14,70,108,57,16,69,107,58,15,68,110,56,16,66,112,55,16,66,113,52,18,65,115,50,19,64,116,48,21,25,1,35,119,47,20,21,1,4,3,33,123,44,21,18,13,30,124,43,22,15,16,1,3,25,125,43,20,14,21,1,4,22,125,42,21,12,29,21,125,42,26,5,31,20,126,41,26,5,32,20,125,29,4,4,31,4,32,23,123,28,38,5,33,25,121,28,35,4,36,27,119,28,35,5,36,29,117,28,77,29,115,29,77,31,112,30,75,33,111,31,74,35,110,32,72,36,110,34,70,37,98,1,9,38,65,39,97,2,9,45,63,35,95,4,7,47,56,1,3,7,1,30,95,2,6,49,63,3,5,2,1,25,94,1,5,52,14,5,44,1,9,1,1,24,98,52,13,9,52,1,1,25,97,52,12,12,53,24,96,53,11,18,1,2,45,25,79,2,13,54,9,27,41,26,75,4,13,55,9,27,42,25,75,3,13,59,4,28,43,26,73,2,12,94,43,26,73,3,9,90,3,3,38,5,2,24,73,3,5,92,5,2,38,6,1,25,73,3,4,90,48,33,72,94,54,29,72,93,54,1,1,29,71,94,56,29,70,93,58,29,69,94,59,28,38,2,28,89,2,4,59,28,67,91,65,27,66,92,65,29,64,91,66,28,65,90,67,28,66,88,66,30,52,6,7,38,2,47,69,28,37,2,9,11,5,40,2,46,69,29,33,70,3,45,69,29,34,70,2,45,70,29,32,67,4,1,1,46,69,28,33,67,5,1,1,45,70,21,39,45,1,16,4,2,7,44,72,13,4,3,2,1,34,46,2,16,3,3,7,44,68,1,3,13,1,2,5,2,33,46,3,15,4,3,9,42,1,1,67,1,3,7,1,1,2,1,3,1,5,1,32,26,3,18,7,10,5,2,10,45,68,8,1,3,19,1,22,24,9,2,2,12,6,2,3,1,1,3,6,1,11,47,65,1,1,6,2,2,19,2,20,25,14,13,33,50,61,2,2,2,1,1,24,1,20,21,7,1,5,1,4,16,31,52,63,2,26,1,16,22,8,1,6,2,3,17,31,53,89,1,16,14,3,1,10,7,3,2,2,14,35,53,89,1,16,13,3,1,10,10,5,12,37,54,105,13,7,1,6,10,5,11,38,54,115,3,6,3,1,15,5,10,38,54,101,5,17,20,5,9,39,55,92,1,6,6,17,19,7,8,39,55,99,7,15,18,10,6,40,56,61,1,33,16,7,19,12,4,41,56,57,6,30,18,5,13,5,3,57,57,55,7,26,2,2,17,4,1,3,9,8,1,58,57,55,4,28,1,1,23,6,7,68,58,89,5,1,16,6,7,68,58,91,3,2,15,5,7,69,59,81,2,5,1,1,3,2,16,5,5,70,59,81,1,6,6,2,15,7,3,70,59,78,1,10,2,1,3,2,13,81,59,78,2,9,1,6,13,82,60,96,11,83,63,87,4,2,11,83,64,86,2,3,11,84,64,86,1,3,12,84,65,88,12,85,54,3,10,85,13,85,51,2,4,2,9,84,13,85,58,3,1,2,4,84,13,85,59,3,3,1,3,78,1,4,13,85,62,1,3,87,3,2,7,85,63,2,3,85,3,1,7,86,64,89,2,2,7,86,66,86,4,2,2,90,67,87,2,2,3,89,68,90,2,90,68,89,1,92,69,181,66,184,64,96,1,89,62,97,2,89,60,99,1,90,59,100,1,90,54,100,3,93,53,1,1,6,3,91,1,94,56,2,7,185,66,4,3,177,68,5,1,176,70,180,69,1,1,179,68,182,66,1,3,180,70,180,69,181,69,181,65,3,1,181,66,184,67,183,67,183,66,184,65,185,65,185,66,80,1,103,66,77,3,104,61,2,1,78,2,106,60,1,1,80,2,106,60,190,58,192,58,81,1,110,57,82,1,110,57,193,56,194,56,194,56,194,55,195,54,196,52,198,52,198,51,81,1,117,47,1,3,81,1,117,46,3,2,78,1,1,2,117,48,81,2,119,48,80,1,121,49,78,2,121,47,80,1,122,46,80,2,122,42,208,43,1,2,204,46,204,46,204,45,205,46,1,1,202,42,1,3,1,1,202,42,208,43,22,1,184,39,24,4,183,39,22,8,181,39,21,9,181,37,22,9,182,37,22,9,35,1,146,37,21,10,182,30,27,11,182,28,3,1,1,1,22,12,23,2,157,30,26,12,20,1,2,1,158,31,24,12,183,30,24,13,183,29,25,12,184,27,26,13,184,25,27,14,184,25,27,13,185,22,1,1,27,14,185,19,32,14,185,19,32,14,185,16,35,14,185,17,34,13,186,15,36,13,186,15,36,12,187,12,1,2,37,11,187,6,1,3,42,10,188,1,2,2,47,9,242,7,243,7,245,4,247,3,247,3,248,2,248,2,3259,1,750,1,2744,1,1004,1,248,1,738,6,243,9,6,2,233,11,4,2,232,18,232,17,233,17,232,18,232,18,232,18,232,18,232,18,232,18,232,20,230,20,230,21,229,21,229,21,229,20,229,21,229,20,230,20,177]};
+  const SIM = window.SIM; SIM.loadMask(MASK_DATA);
+  const B = SIM.BOUNDS, D2R = Math.PI / 180, ENS = SIM.ENS;
+  const $ = s => document.querySelector(s);
+  const clamp = (x, a, b) => Math.max(a, Math.min(b, x));
+  const reduceMotion = (() => { try { return matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) { return false; } })();
+  const COL = { amber: '#F2B33D', hi: '#5AA9E6', lo: '#F0645A', st: '#62DDB8', hit: '#FF5A4E', ink: '#E6EDF2', ink2: '#9AAEBD', ink3: '#62768A', halo: 'rgba(5,10,16,0.88)' };
+  const NAME = { H: '고기압', L: '저기압', S: '관측소' }, SYM = { H: '고', L: '저', S: '관' };
+
+  // ── 저장(최고 별) — 저장이 막혀도 게임은 돈다
+  const KEY = 'stormeye.v1';
+  let best = {};
+  try { const v = JSON.parse(localStorage.getItem(KEY) || '{}'); if (v && typeof v === 'object') best = v; } catch (e) { best = {}; }
+  const saveBest = () => { try { localStorage.setItem(KEY, JSON.stringify(best)); } catch (e) { /* 저장 불가 환경 */ } };
+
+  // ── 해안선 복원
+  const RINGS = COAST_DATA.map(r => { const pts = []; let x = 0, y = 0; for (let i = 0; i < r.d.length; i += 2) { x += r.d[i]; y += r.d[i + 1]; pts.push([x / 100, y / 100]); } return pts; });
+
+  // ── 캔버스
+  const mapEl = $('#map');
+  const cv = { base: $('#cBase'), lines: $('#cLines'), gl: $('#cGL'), top: $('#cTop') };
+  const cx = { base: cv.base.getContext('2d'), lines: cv.lines.getContext('2d'), top: cv.top.getContext('2d') };
+  let W = 0, H = 0, DPR = 1;
+
+  // ── 메르카토르 투영
+  const MY = lat => Math.log(Math.tan(Math.PI / 4 + (lat * D2R) / 2));
+  const Y0 = MY(B.lat0), Y1 = MY(B.lat1);
+  mapEl.style.aspectRatio = `${((B.lon1 - B.lon0) * D2R).toFixed(5)} / ${(Y1 - Y0).toFixed(5)}`;
+  const P = (lon, lat) => [((lon - B.lon0) / (B.lon1 - B.lon0)) * W, ((Y1 - MY(lat)) / (Y1 - Y0)) * H];
+  const LL = (x, y) => { const lon = B.lon0 + (x / W) * (B.lon1 - B.lon0); const my = Y1 - (y / H) * (Y1 - Y0); return [lon, (2 * Math.atan(Math.exp(my)) - Math.PI / 2) / D2R]; };
+  const kpx = () => W / (B.lon1 - B.lon0);
+  const PR = (deg, lat) => (deg * kpx()) / Math.cos(lat * D2R); // 위도 환산 거리(°) → 픽셀
+
+  // ── 상태
+  const S = { lv: 0, placed: [], armed: null, sel: null, drag: null, newDrag: null, ghost: null, fc: null, dirty: true, phase: 'plan', run: null, speed: 1, uid: 1 };
+  const level = () => SIM.LEVELS[S.lv];
+
+  // ── WebGL 태풍(실패 시 2D 대체)
+  const GL = (() => {
+    const canvas = cv.gl; let gl = null, ok = false, loc = {}, scale = 1;
+    const VS = 'attribute vec2 p; void main(){ gl_Position = vec4(p, 0.0, 1.0); }';
+    const FS = `precision mediump float;
+uniform vec2 uC; uniform float uR; uniform float uI; uniform float uT; uniform float uA;
+float h(vec2 p){ p = fract(p * vec2(233.34, 851.73)); p += dot(p, p + 23.45); return fract(p.x * p.y); }
+float n2(vec2 p){ vec2 i = floor(p), f = fract(p); vec2 u = f * f * (3.0 - 2.0 * f);
+  return mix(mix(h(i), h(i + vec2(1.0, 0.0)), u.x), mix(h(i + vec2(0.0, 1.0)), h(i + vec2(1.0, 1.0)), u.x), u.y); }
+float fbm(vec2 p){ float s = 0.0, a = 0.5; for (int i = 0; i < 5; i++){ s += a * n2(p); p = mat2(1.6, 1.2, -1.2, 1.6) * p + 7.3; a *= 0.5; } return s; }
+void main(){
+  vec2 d = (gl_FragCoord.xy - uC) / uR; float r = length(d);
+  if (r > 1.75) discard;
+  float th = atan(d.y, d.x);
+  float ang = uT - 2.6 * log(r + 0.04);
+  float ca = cos(ang), sa = sin(ang);
+  vec2 q = vec2(ca * d.x + sa * d.y, -sa * d.x + ca * d.y);
+  float tex = fbm(q * 2.4 + 11.0);
+  float tex2 = fbm(q * 6.5 + 3.0);
+  float arms = 0.5 + 0.5 * sin(2.0 * (th - ang) + tex * 2.6);
+  float env = smoothstep(1.7, 0.35, r);
+  float core = smoothstep(0.95, 0.1, r);
+  float bands = smoothstep(0.42, 0.95, arms * 0.75 + tex * 0.5) * env;
+  float dens = max(core * (0.62 + 0.38 * tex2), bands * (0.5 + 0.5 * tex2));
+  float org = smoothstep(0.25, 0.85, uI);
+  float eyeR = 0.075 * org;
+  float eye = smoothstep(eyeR * 0.55, eyeR + 0.035, r);
+  float wall = exp(-pow((r - eyeR - 0.05) / 0.045, 2.0)) * org;
+  dens = dens * mix(1.0, eye, org) + wall * 0.5;
+  dens *= mix(0.5, 1.0, clamp(uI, 0.0, 1.0));
+  float a = clamp(smoothstep(0.08, 0.85, dens), 0.0, 1.0) * uA;
+  vec3 col = mix(vec3(0.58, 0.66, 0.75), vec3(0.98, 0.99, 1.0), clamp(dens * 1.15, 0.0, 1.0));
+  gl_FragColor = vec4(col * a, a);
+}`;
+    try {
+      gl = canvas.getContext('webgl', { premultipliedAlpha: true, alpha: true, antialias: false });
+      if (gl) {
+        const sh = (type, src) => { const s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s); if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(s)); return s; };
+        const prog = gl.createProgram(); gl.attachShader(prog, sh(gl.VERTEX_SHADER, VS)); gl.attachShader(prog, sh(gl.FRAGMENT_SHADER, FS)); gl.linkProgram(prog);
+        if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) throw new Error('link');
+        gl.useProgram(prog);
+        const buf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, buf); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
+        const ap = gl.getAttribLocation(prog, 'p'); gl.enableVertexAttribArray(ap); gl.vertexAttribPointer(ap, 2, gl.FLOAT, false, 0, 0);
+        for (const k of ['uC', 'uR', 'uI', 'uT', 'uA']) loc[k] = gl.getUniformLocation(prog, k);
+        ok = true;
+      }
+    } catch (e) { ok = false; }
+    if (!ok) canvas.style.display = 'none';
+    return {
+      get ok() { return ok; },
+      resize() { scale = Math.min(1.5, window.devicePixelRatio || 1); canvas.width = Math.max(1, Math.round(W * scale)); canvas.height = Math.max(1, Math.round(H * scale)); if (ok) gl.viewport(0, 0, canvas.width, canvas.height); },
+      draw(x, y, R, I, t, a) {
+        if (!ok) return;
+        gl.disable(gl.SCISSOR_TEST); gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT);
+        if (a <= 0.01) return;
+        const X = x * scale, Y = canvas.height - y * scale, r = R * scale, e = r * 1.8;
+        const x0 = Math.max(0, Math.floor(X - e)), y0 = Math.max(0, Math.floor(Y - e));
+        const x1 = Math.min(canvas.width, Math.ceil(X + e)), y1 = Math.min(canvas.height, Math.ceil(Y + e));
+        if (x1 <= x0 || y1 <= y0) return;
+        gl.enable(gl.SCISSOR_TEST); gl.scissor(x0, y0, x1 - x0, y1 - y0);
+        gl.uniform2f(loc.uC, X, Y); gl.uniform1f(loc.uR, r); gl.uniform1f(loc.uI, I); gl.uniform1f(loc.uT, t); gl.uniform1f(loc.uA, a);
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+      },
+    };
+  })();
+
+  function isoSegments(level) {
+    const st = 0.25, nx = Math.round((B.lon1 - B.lon0) / st) + 1, ny = Math.round((B.lat1 - B.lat0) / st) + 1; const v = new Float32Array(nx * ny);
+    for (let j = 0; j < ny; j++) for (let i = 0; i < nx; i++) v[j * nx + i] = SIM.sst(B.lon0 + i * st, B.lat0 + j * st) - level;
+    const f = (p, q, vp, vq) => p + (q - p) * (vp / (vp - vq)); const segs = [];
+    for (let j = 0; j < ny - 1; j++) for (let i = 0; i < nx - 1; i++) {
+      const x0 = B.lon0 + i * st, y0 = B.lat0 + j * st, x1 = x0 + st, y1 = y0 + st;
+      const a = v[j * nx + i], b = v[j * nx + i + 1], c = v[(j + 1) * nx + i + 1], d = v[(j + 1) * nx + i]; const pts = [];
+      if ((a > 0) !== (b > 0)) pts.push([f(x0, x1, a, b), y0]);
+      if ((b > 0) !== (c > 0)) pts.push([x1, f(y0, y1, b, c)]);
+      if ((c > 0) !== (d > 0)) pts.push([f(x1, x0, c, d), y1]);
+      if ((d > 0) !== (a > 0)) pts.push([x0, f(y1, y0, d, a)]);
+      if (pts.length >= 2) segs.push([pts[0], pts[1]]); if (pts.length === 4) segs.push([pts[2], pts[3]]);
+    }
+    return segs;
+  }
+
+  // ── 바탕 지도: 해수면 온도 색, 경위선, 26℃ 경계, 육지
+  function drawBase() {
+    const c = cx.base; c.clearRect(0, 0, W, H);
+    const gw = 110, gh = Math.max(2, Math.round((110 * H) / W));
+    const off = document.createElement('canvas'); off.width = gw; off.height = gh;
+    const oc = off.getContext('2d'); const img = oc.createImageData(gw, gh);
+    const cool = [9, 22, 36], warm = [17, 46, 62], hot = [27, 62, 76];
+    for (let j = 0; j < gh; j++) for (let i = 0; i < gw; i++) {
+      const [lon, lat] = LL(((i + 0.5) / gw) * W, ((j + 0.5) / gh) * H);
+      const t = SIM.sst(lon, lat); const a = clamp((t - 21) / 7, 0, 1), b = clamp((t - 28.5) / 2.2, 0, 1);
+      const k = (j * gw + i) * 4;
+      for (let ch = 0; ch < 3; ch++) img.data[k + ch] = cool[ch] + (warm[ch] - cool[ch]) * a + (hot[ch] - warm[ch]) * b;
+      img.data[k + 3] = 255;
+    }
+    oc.putImageData(img, 0, 0); c.imageSmoothingEnabled = true; c.drawImage(off, 0, 0, W, H);
+    // 경위선
+    c.strokeStyle = 'rgba(200,225,245,0.07)'; c.lineWidth = 1; c.beginPath();
+    for (let lon = 120; lon < B.lon1; lon += 5) { const [x] = P(lon, 0); c.moveTo(Math.round(x) + 0.5, 0); c.lineTo(Math.round(x) + 0.5, H); }
+    for (let lat = 20; lat < B.lat1; lat += 5) { const [, y] = P(B.lon0, lat); c.moveTo(0, Math.round(y) + 0.5); c.lineTo(W, Math.round(y) + 0.5); }
+    c.stroke();
+    // 26℃ 경계(태풍 발달 한계) — 해수면 온도 격자의 등온선
+    const iso = isoSegments(26); let tag = null;
+    c.save(); c.setLineDash([2, 3.5]); c.strokeStyle = 'rgba(242,179,61,0.42)'; c.lineWidth = 1.2; c.beginPath();
+    for (const [a, b] of iso) { const pa = P(a[0], a[1]), pb = P(b[0], b[1]); c.moveTo(pa[0], pa[1]); c.lineTo(pb[0], pb[1]); if (!tag || pb[0] > tag[0]) tag = pb; }
+    c.stroke(); c.restore();
+    // 육지
+    c.beginPath();
+    for (const r of RINGS) { r.forEach(([lo, la], i) => { const [x, y] = P(lo, la); i ? c.lineTo(x, y) : c.moveTo(x, y); }); c.closePath(); }
+    c.fillStyle = '#1A231F'; c.fill('evenodd');
+    c.strokeStyle = 'rgba(160,182,160,0.55)'; c.lineWidth = 0.9; c.stroke();
+    // 26℃ 라벨·경위도 라벨
+    const fs = W < 480 ? 9 : 10;
+    c.font = `500 ${fs}px ${getComputedStyle(document.body).getPropertyValue('--f-mono') || 'monospace'}`;
+    c.fillStyle = 'rgba(160,185,205,0.55)'; c.textBaseline = 'bottom';
+    for (let lon = 120; lon < B.lon1; lon += 5) { const [x] = P(lon, 0); c.fillText(`${lon}°E`, x + 3, H - 3); }
+    c.textBaseline = 'top';
+    for (let lat = 20; lat < B.lat1; lat += 5) { const [, y] = P(B.lon0, lat); c.fillText(`${lat}°N`, 4, y + 3); }
+    if (tag) { c.fillStyle = 'rgba(242,179,61,0.75)'; c.textBaseline = 'bottom'; c.textAlign = 'right'; c.fillText('26℃', tag[0] - 4, tag[1] - 3); c.textAlign = 'left'; }
+  }
+
+  // ── 예보 층: 강풍 반경 띠, 앙상블, 중심 예보
+  function trackPath(c, tr, upto) {
+    c.beginPath(); const n = upto == null ? tr.length : Math.min(tr.length, upto);
+    for (let i = 0; i < n; i++) { const [x, y] = P(tr[i].lon, tr[i].lat); i ? c.lineTo(x, y) : c.moveTo(x, y); }
+  }
+  let swathCanvas = null;
+  function drawSwath(c, tr, color, alpha) {
+    if (!swathCanvas) swathCanvas = document.createElement('canvas');
+    swathCanvas.width = cv.lines.width; swathCanvas.height = cv.lines.height;
+    const s = swathCanvas.getContext('2d'); s.setTransform(DPR, 0, 0, DPR, 0, 0); s.fillStyle = color;
+    for (const p of tr) { if (p.I < 0.15) continue; const [x, y] = P(p.lon, p.lat); s.beginPath(); s.arc(x, y, PR(SIM.windRadius(p.I), p.lat), 0, Math.PI * 2); s.fill(); }
+    c.save(); c.setTransform(1, 0, 0, 1, 0, 0); c.globalAlpha = alpha; c.drawImage(swathCanvas, 0, 0); c.restore();
+  }
+  function drawLines() {
+    const c = cx.lines; c.clearRect(0, 0, W, H); const fc = S.fc; if (!fc) return;
+    const plan = S.phase === 'plan';
+    if (plan) drawSwath(c, fc.central.track, COL.amber, 0.14);
+    c.lineWidth = 1; c.lineJoin = 'round'; c.strokeStyle = plan ? 'rgba(170,200,225,0.30)' : 'rgba(170,200,225,0.12)';
+    for (const m of fc.members) { trackPath(c, m.track); c.stroke(); }
+    if (!plan) return;
+    c.save(); c.setLineDash([7, 5]); c.lineWidth = 2; c.strokeStyle = COL.amber; trackPath(c, fc.central.track); c.stroke(); c.restore();
+    const fs = W < 480 ? 10 : 11; c.font = `500 ${fs}px IBM Plex Mono, monospace`; c.textBaseline = 'middle';
+    let lx = -1e9, ly = -1e9;
+    for (const p of fc.central.track) {
+      if (!p.t || p.t % 24) continue; const [x, y] = P(p.lon, p.lat);
+      c.fillStyle = COL.amber; c.beginPath(); c.arc(x, y, 3.2, 0, Math.PI * 2); c.fill();
+      if (Math.hypot(x - lx, y - ly) < 30) continue; lx = x; ly = y;
+      c.lineWidth = 3; c.strokeStyle = COL.halo; c.strokeText(`+${p.t}h`, x + 7, y); c.fillStyle = 'rgba(242,179,61,0.95)'; c.fillText(`+${p.t}h`, x + 7, y);
+    }
+  }
+
+  // ── 위층: 도시, 기압계, 관측소, 실제 진로, 피해 표시
+  function toolParams(t) { return t.p ? { ...SIM.TOOL[t.type], ...t.p } : SIM.TOOL[t.type]; }
+  function toolAlpha(t) {
+    if (S.phase === 'plan' || t.fixed || t.type === 'S') return 1;
+    const r = S.run; if (r.absorbed.has(t.id)) return Math.max(0, 1 - (r.t - r.absorbed.get(t.id)) / 6);
+    return Math.max(0.12, SIM.life(r.t));
+  }
+  function label(c, text, x, y, color, align) {
+    c.textAlign = align; c.lineWidth = 3.2; c.strokeStyle = COL.halo; c.strokeText(text, x, y); c.fillStyle = color; c.fillText(text, x, y);
+  }
+  function drawPressure(c, t, now, alpha, ghost) {
+    const [x, y] = P(t.lon, t.lat); const Pm = toolParams(t); const col = t.type === 'H' ? COL.hi : COL.lo;
+    const dir = t.type === 'H' ? 1 : -1; // 화면 좌표: +는 시계 방향
+    c.save(); c.globalAlpha = alpha * (ghost ? 0.7 : 1);
+    const rs = [0.3, 0.55, 0.82].map(f => PR(Pm.R * f, t.lat));
+    c.strokeStyle = col; c.lineWidth = 1;
+    rs.forEach((r, i) => { c.globalAlpha = alpha * (0.42 - i * 0.1); c.setLineDash(i ? [4, 5] : []); c.beginPath(); c.arc(x, y, r, 0, Math.PI * 2); c.stroke(); });
+    c.setLineDash([]); c.globalAlpha = alpha * 0.8; c.fillStyle = col;
+    const rot = reduceMotion ? 0 : (now / 1000) * 0.35 * dir, ro = rs[1];
+    for (let k = 0; k < 3; k++) {
+      const a = rot + (k * Math.PI * 2) / 3; const ax = x + Math.cos(a) * ro, ay = y + Math.sin(a) * ro;
+      const tx = -Math.sin(a) * dir, ty = Math.cos(a) * dir; const nx = Math.cos(a), ny = Math.sin(a);
+      c.beginPath(); c.moveTo(ax + tx * 6, ay + ty * 6); c.lineTo(ax - tx * 4 + nx * 4, ay - ty * 4 + ny * 4); c.lineTo(ax - tx * 4 - nx * 4, ay - ty * 4 - ny * 4); c.closePath(); c.fill();
+    }
+    const R0 = t.fixed ? 17 : 15;
+    c.globalAlpha = alpha; c.fillStyle = t.type === 'H' ? '#0F2A42' : '#3A1414'; c.strokeStyle = col; c.lineWidth = t.fixed ? 1.5 : 2;
+    c.beginPath(); c.arc(x, y, R0, 0, Math.PI * 2); c.fill(); if (t.fixed) c.setLineDash([3, 3]); c.stroke(); c.setLineDash([]);
+    c.fillStyle = t.type === 'H' ? '#D5ECFF' : '#FFD9D5'; c.font = `${t.fixed ? 17 : 16}px 'Black Han Sans', sans-serif`; c.textAlign = 'center'; c.textBaseline = 'middle';
+    c.fillText(SYM[t.type], x, y + 1);
+    if (t.fixed && t.name) {
+      c.font = `500 ${W < 480 ? 10.5 : 11.5}px 'IBM Plex Sans KR', sans-serif`; c.textBaseline = 'top';
+      const tw = c.measureText(t.name).width; const lx = clamp(x, tw / 2 + 6, W - tw / 2 - 6); label(c, t.name, lx, y + R0 + 4, '#BFE0FA', 'center');
+    }
+    c.restore();
+  }
+  function drawStation(c, t, alpha, ghost) {
+    const [x, y] = P(t.lon, t.lat); const r = PR(SIM.TOOL.S.R, t.lat);
+    c.save(); c.globalAlpha = alpha * (ghost ? 0.7 : 1);
+    const g = c.createRadialGradient(x, y, 0, x, y, r); g.addColorStop(0, 'rgba(98,221,184,0.16)'); g.addColorStop(1, 'rgba(98,221,184,0)');
+    c.fillStyle = g; c.beginPath(); c.arc(x, y, r, 0, Math.PI * 2); c.fill();
+    c.strokeStyle = 'rgba(98,221,184,0.45)'; c.setLineDash([3, 5]); c.lineWidth = 1; c.beginPath(); c.arc(x, y, r * 0.75, 0, Math.PI * 2); c.stroke(); c.setLineDash([]);
+    c.fillStyle = '#0E2C27'; c.strokeStyle = COL.st; c.lineWidth = 2; const s = 13;
+    c.beginPath(); c.roundRect ? c.roundRect(x - s, y - s, s * 2, s * 2, 5) : c.rect(x - s, y - s, s * 2, s * 2); c.fill(); c.stroke();
+    c.fillStyle = '#CFF7EA'; c.font = "15px 'Black Han Sans', sans-serif"; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText('관', x, y + 1);
+    c.restore();
+  }
+  function drawBadge(c, t) {
+    const [x, y] = P(t.lon, t.lat); const bx = x + 16, by = y - 16;
+    c.save(); c.fillStyle = COL.hit; c.beginPath(); c.arc(bx, by, 10, 0, Math.PI * 2); c.fill();
+    c.strokeStyle = '#fff'; c.lineWidth = 2; c.beginPath(); c.moveTo(bx - 4, by - 4); c.lineTo(bx + 4, by + 4); c.moveTo(bx + 4, by - 4); c.lineTo(bx - 4, by + 4); c.stroke();
+    c.strokeStyle = COL.amber; c.lineWidth = 1.5; c.setLineDash([3, 3]); c.beginPath(); c.arc(x, y, 21, 0, Math.PI * 2); c.stroke(); c.restore();
+  }
+  function drawCities(c, now) {
+    const plan = S.phase === 'plan'; const fs = W < 480 ? 11 : 12.5;
+    const hits = S.run ? S.run.shown : null;
+    c.font = `500 ${fs}px 'IBM Plex Sans KR', sans-serif`; c.textBaseline = 'middle';
+    for (const ct of SIM.CITIES) {
+      const [x, y] = P(ct.lon, ct.lat); const p = plan && S.fc ? S.fc.prob[ct.id] : 0; const hit = hits && hits.has(ct.id);
+      c.fillStyle = hit ? COL.hit : p > 0 ? COL.amber : '#F4F7F9';
+      c.beginPath(); c.arc(x, y, hit ? 4.5 : 3, 0, Math.PI * 2); c.fill();
+      c.lineWidth = 1.2; c.strokeStyle = COL.halo; c.stroke();
+      const txt = ct.name + (p > 0 ? ` ${Math.round(p * 100)}%` : '');
+      const dx = ct.side === 'l' ? -7 : 7;
+      label(c, txt, x + dx, y, hit ? COL.hit : p > 0 ? COL.amber : '#C9D6E0', ct.side === 'l' ? 'right' : 'left');
+    }
+    if (S.run) for (const pu of S.run.pulses) {
+      const age = (now - pu.at) / 1000; if (age > 1.6) continue; const [x, y] = P(pu.lon, pu.lat);
+      c.save(); c.globalAlpha = Math.max(0, 1 - age / 1.6); c.strokeStyle = COL.hit; c.lineWidth = 2; c.beginPath(); c.arc(x, y, 6 + age * 26, 0, Math.PI * 2); c.stroke(); c.restore();
+    }
+  }
+  function drawRunTrack(c) {
+    const r = S.run; if (!r) return; const tr = r.sim.track; const n = Math.min(tr.length, Math.floor(r.t) + 1);
+    c.save(); c.lineWidth = 2.4; c.lineJoin = 'round'; c.strokeStyle = 'rgba(245,248,250,0.92)'; trackPath(c, tr, n);
+    const [sx, sy] = stormXY(); c.lineTo(sx, sy); c.stroke(); c.restore();
+  }
+  function stormState() {
+    const L = level();
+    if (!S.run) return { lon: L.start.lon, lat: L.start.lat, I: L.I0 };
+    const tr = S.run.sim.track; const t = Math.min(S.run.t, tr.length - 1); const i = Math.floor(t), f = t - i; const a = tr[i], b = tr[Math.min(i + 1, tr.length - 1)];
+    return { lon: a.lon + (b.lon - a.lon) * f, lat: a.lat + (b.lat - a.lat) * f, I: a.I + (b.I - a.I) * f };
+  }
+  const stormXY = () => { const s = stormState(); return P(s.lon, s.lat); };
+  function drawStorm2D(c, x, y, R, I, alpha, t) {
+    c.save(); c.globalAlpha = alpha; const g = c.createRadialGradient(x, y, R * 0.05, x, y, R * 1.3);
+    g.addColorStop(0, 'rgba(250,252,255,0.95)'); g.addColorStop(0.5, 'rgba(210,222,232,0.55)'); g.addColorStop(1, 'rgba(180,195,210,0)');
+    c.fillStyle = g; c.beginPath(); c.arc(x, y, R * 1.3, 0, Math.PI * 2); c.fill();
+    c.strokeStyle = 'rgba(240,245,250,0.32)'; c.lineWidth = Math.max(2, R * 0.07); c.lineCap = 'round';
+    for (let k = 0; k < 2; k++) { c.beginPath(); for (let s = 0; s <= 36; s++) { const r = R * (0.15 + (0.95 * s) / 36); const a = t + k * Math.PI - Math.log(r / R + 0.04) * 2.6; const px = x + Math.cos(a) * r, py = y - Math.sin(a) * r; s ? c.lineTo(px, py) : c.moveTo(px, py); } c.stroke(); }
+    if (I > 0.5) { c.fillStyle = 'rgba(10,24,38,0.9)'; c.beginPath(); c.arc(x, y, R * 0.07, 0, Math.PI * 2); c.fill(); }
+    c.restore();
+  }
+  function drawTop(now) {
+    const c = cx.top; c.clearRect(0, 0, W, H); const L = level();
+    for (const t of L.fixed || []) drawPressure(c, { ...t, fixed: true }, now, 1);
+    drawRunTrack(c);
+    for (const t of S.placed) { const a = toolAlpha(t); if (a <= 0.01) continue; t.type === 'S' ? drawStation(c, t, a) : drawPressure(c, t, now, a); }
+    if (S.ghost) { const [lon, lat] = LL(S.ghost.x, S.ghost.y); const g = { type: S.ghost.type, lon, lat }; g.type === 'S' ? drawStation(c, g, 1, true) : drawPressure(c, g, now, 1, true); }
+    if (S.sel && S.phase === 'plan') drawBadge(c, S.sel);
+    // 태풍(2D 대체)
+    const st = stormState(); const [sx, sy] = P(st.lon, st.lat); const Rv = Math.max(14, PR(SIM.windRadius(st.I) * 1.15, st.lat));
+    const al = S.phase === 'done' && S.run ? Math.max(S.run.sim.end === 'time' ? 1 : 0, 1 - (now - S.run.doneAt) / 1400) : 1;
+    const tt = reduceMotion ? now / 9000 : now / 1400;
+    if (GL.ok) GL.draw(sx, sy, Rv, st.I, tt, al * (0.35 + 0.65 * clamp(st.I / 0.4, 0, 1))); else drawStorm2D(c, sx, sy, Rv, st.I, al, tt);
+    drawCities(c, now);
+  }
+
+  // ── HUD·패널
+  const hud = $('#hud'); let hudHtml = '';
+  function updateHud() {
+    const L = level(); const st = stormState(); const t = S.run ? Math.min(Math.floor(S.run.t), S.run.sim.track.length - 1) : 0;
+    const hitN = S.run ? S.run.shown.size : 0;
+    const html = `<span class="code">${L.code}</span> <span class="k">${S.run ? '+' + t + 'h' : '출발 전'}</span> · ${SIM.pressure(st.I)}hPa · ${SIM.maxWind(st.I)}m/s · ${SIM.grade(st.I)}` + (S.run ? ` · <span class="hitc">피해 ${hitN}</span>` : '');
+    if (html !== hudHtml) { hud.innerHTML = html; hudHtml = html; }
+  }
+  function starsStr(n) { let s = ''; for (let i = 0; i < 3; i++) s += i < n ? '<b>★</b>' : '☆'; return s; }
+  function renderLevels() {
+    const nav = $('#levels'); nav.innerHTML = '';
+    SIM.LEVELS.forEach((L, i) => {
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'lvbtn'; b.setAttribute('aria-current', i === S.lv ? 'true' : 'false');
+      const got = best[L.id] || 0; b.setAttribute('aria-label', `${L.code} ${L.title}, 최고 ${got}별`);
+      b.innerHTML = `<span class="c">${L.code}</span><span class="s">${starsStr(got)}</span>`;
+      b.addEventListener('click', () => { if (S.phase === 'run') return; loadLevel(i); });
+      nav.appendChild(b);
+    });
+  }
+  function passText(L) { return L.pass === 2 ? '통과 — 피해 도시 1곳 이하' : '통과 — 피해 도시 2곳 이하'; }
+  function renderHead() {
+    const L = level(); const got = best[L.id] || 0;
+    $('#lvhead').innerHTML = `<div class="code">${L.code} · ${L.id}/${SIM.LEVELS.length}</div><h2>${L.title}</h2>` +
+      `<div class="meta"><span>${passText(L)}</span><span>★★★ — 모든 도시 무사</span><span>최고 <b>${'★'.repeat(got) || '—'}</b></span></div>`;
+    $('#hint').textContent = L.hint;
+  }
+  function counts() { const L = level(); const o = {}; for (const k of ['H', 'L', 'S']) o[k] = L.tools[k] - S.placed.filter(t => t.type === k).length; return o; }
+  function renderChips() {
+    const L = level(); const el = $('#chips'); el.innerHTML = ''; const n = counts();
+    for (const k of ['H', 'L', 'S']) {
+      if (!L.tools[k]) continue;
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'chip ' + k; b.dataset.type = k;
+      b.disabled = n[k] <= 0 || S.phase !== 'plan'; b.setAttribute('aria-pressed', S.armed === k ? 'true' : 'false');
+      b.innerHTML = `<span class="sym" aria-hidden="true">${SYM[k]}</span>${NAME[k]}<span class="n">×${n[k]}</span>`;
+      b.setAttribute('aria-label', `${NAME[k]} ${n[k]}개 남음`);
+      bindChip(b, k); el.appendChild(b);
+    }
+    $('#go').disabled = S.phase !== 'plan';
+    $('#clear').disabled = S.phase !== 'plan' || !S.placed.length;
+  }
+  function renderRisk() {
+    const el = $('#risk'); const fc = S.fc; if (!fc) return;
+    const clean = Math.round(fc.clean * 100); const cleanN = Math.round(fc.clean * ENS);
+    const rows = SIM.CITIES.map(c => ({ c, p: fc.prob[c.id] })).filter(r => r.p > 0).sort((a, b) => b.p - a.p);
+    el.innerHTML = `<div class="lbl">모든 도시 무사 확률</div><div class="big"><span class="v ${clean >= 90 ? 'good' : ''}">${clean}%</span></div>` +
+      `<p class="sub">예보 선 ${ENS}개 가운데 ${cleanN}개가 모든 도시를 비켜 갑니다.</p>` +
+      (rows.length ? `<ul>${rows.slice(0, 8).map(r => `<li><span>${r.c.name}</span><span class="bar"><i style="width:${Math.round(r.p * 100)}%"></i></span><span class="pct">${Math.round(r.p * 100)}%</span></li>`).join('')}</ul>`
+        : `<div class="none">모든 예보 선이 도시를 비켜 갑니다. 출발해 보세요.</div>`);
+  }
+  let toastT = 0;
+  function toast(msg, ms, html) { const t = $('#toast'); if (html) t.innerHTML = msg; else t.textContent = msg; t.classList.add('on'); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('on'), ms || 1600); }
+
+  // ── 레벨·도구
+  function loadLevel(i) {
+    S.lv = clamp(i, 0, SIM.LEVELS.length - 1); S.placed = []; S.armed = null; S.sel = null; S.run = null; S.phase = 'plan';
+    $('#result').classList.remove('on'); S.dirty = true; renderLevels(); renderHead(); renderChips(); updateHud();
+    const L = level(); toast(`<b>${L.code} ${L.title}</b><br>${L.hint}`, 5200, true);
+  }
+  function addTool(type, lon, lat) {
+    if (counts()[type] <= 0) return null;
+    const t = { type, lon: clamp(lon, B.lon0 + 0.2, B.lon1 - 0.2), lat: clamp(lat, B.lat0 + 0.2, B.lat1 - 0.2), id: 't' + S.uid++ };
+    S.placed.push(t); S.dirty = true; renderChips(); return t;
+  }
+  function removeTool(t) { S.placed = S.placed.filter(x => x !== t); if (S.sel === t) S.sel = null; S.dirty = true; renderChips(); toast(`${NAME[t.type]}를 거뒀습니다`); }
+  function pickTool(x, y) {
+    let best = null, bd = 26;
+    for (const t of S.placed) { const [tx, ty] = P(t.lon, t.lat); const d = Math.hypot(tx - x, ty - y); if (d < bd) { bd = d; best = t; } }
+    return best;
+  }
+  function onBadge(t, x, y) { const [tx, ty] = P(t.lon, t.lat); return Math.hypot(tx + 16 - x, ty - 16 - y) < 14; }
+  function localXY(e) { const r = cv.top.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top, r]; }
+  function defaultSpot(type) { const L = level(); const off = { H: [-3.2, 1.2], L: [4, 4], S: [-1.5, 3] }[type]; return [L.start.lon + off[0], L.start.lat + off[1]]; }
+
+  function bindChip(b, type) {
+    b.addEventListener('pointerdown', e => {
+      if (b.disabled) return; e.preventDefault();
+      S.newDrag = { type, x0: e.clientX, y0: e.clientY, moved: false, id: e.pointerId }; try { b.setPointerCapture(e.pointerId); } catch (err) { /* 무시 */ }
+    });
+    b.addEventListener('pointermove', e => {
+      const d = S.newDrag; if (!d || d.id !== e.pointerId) return;
+      if (Math.hypot(e.clientX - d.x0, e.clientY - d.y0) > 6) d.moved = true;
+      const [x, y, r] = localXY(e); S.ghost = d.moved && x >= 0 && y >= 0 && x <= r.width && y <= r.height ? { type, x, y } : null;
+    });
+    const end = e => {
+      const d = S.newDrag; if (!d || d.id !== e.pointerId) return; S.newDrag = null; const g = S.ghost; S.ghost = null;
+      if (!d.moved) { S.armed = S.armed === type ? null : type; cv.top.classList.toggle('armed', !!S.armed); renderChips(); if (S.armed) toast(`지도를 눌러 ${NAME[type]}를 놓으세요`); return; }
+      if (g) { const [lon, lat] = LL(g.x, g.y); const t = addTool(type, lon, lat); if (t) { S.armed = null; cv.top.classList.remove('armed'); } }
+    };
+    b.addEventListener('pointerup', end); b.addEventListener('pointercancel', e => { S.newDrag = null; S.ghost = null; });
+    b.addEventListener('click', e => {
+      if (e.detail !== 0) return; // 키보드로 누른 경우만: 기본 위치에 놓고 선택
+      const [lon, lat] = defaultSpot(type); const t = addTool(type, lon, lat); if (t) { S.sel = t; toast(`${NAME[type]}를 놓았습니다 — 방향키로 옮기세요`); cv.top.focus(); }
+    });
+  }
+
+  cv.top.tabIndex = 0;
+  cv.top.addEventListener('pointerdown', e => {
+    if (S.phase !== 'plan') return; const [x, y] = localXY(e);
+    if (S.sel && onBadge(S.sel, x, y)) { removeTool(S.sel); return; }
+    const t = pickTool(x, y);
+    if (t) { S.drag = { tool: t, x0: x, y0: y, moved: false, id: e.pointerId, ox: 0, oy: 0 }; const [tx, ty] = P(t.lon, t.lat); S.drag.ox = tx - x; S.drag.oy = ty - y; try { cv.top.setPointerCapture(e.pointerId); } catch (err) { /* 무시 */ } cv.top.classList.add('grabbing'); e.preventDefault(); return; }
+    if (S.armed) { const [lon, lat] = LL(x, y); addTool(S.armed, lon, lat); S.armed = null; cv.top.classList.remove('armed'); renderChips(); return; }
+    S.sel = null;
+  });
+  cv.top.addEventListener('pointermove', e => {
+    const [x, y] = localXY(e); const d = S.drag;
+    if (d && d.id === e.pointerId) {
+      if (Math.hypot(x - d.x0, y - d.y0) > 5) d.moved = true;
+      if (d.moved) { const [lon, lat] = LL(clamp(x + d.ox, 0, W), clamp(y + d.oy, 0, H)); d.tool.lon = clamp(lon, B.lon0 + 0.2, B.lon1 - 0.2); d.tool.lat = clamp(lat, B.lat0 + 0.2, B.lat1 - 0.2); S.sel = null; S.dirty = true; }
+      return;
+    }
+    if (S.phase === 'plan' && !S.armed) cv.top.classList.toggle('can-grab', !!pickTool(x, y));
+  });
+  const endDrag = e => { const d = S.drag; if (!d || d.id !== e.pointerId) return; S.drag = null; cv.top.classList.remove('grabbing'); if (!d.moved) S.sel = S.sel === d.tool ? null : d.tool; };
+  cv.top.addEventListener('pointerup', endDrag); cv.top.addEventListener('pointercancel', endDrag);
+  cv.top.addEventListener('keydown', e => {
+    if (S.phase !== 'plan') return;
+    if (!S.sel && S.placed.length && e.key.startsWith('Arrow')) S.sel = S.placed[S.placed.length - 1];
+    const t = S.sel; if (!t) return;
+    const step = e.shiftKey ? 1.5 : 0.5; const mv = { ArrowLeft: [-step, 0], ArrowRight: [step, 0], ArrowUp: [0, step], ArrowDown: [0, -step] }[e.key];
+    if (mv) { t.lon = clamp(t.lon + mv[0], B.lon0 + 0.2, B.lon1 - 0.2); t.lat = clamp(t.lat + mv[1], B.lat0 + 0.2, B.lat1 - 0.2); S.dirty = true; e.preventDefault(); }
+    else if (e.key === 'Delete' || e.key === 'Backspace') { removeTool(t); e.preventDefault(); }
+    else if (e.key === 'Escape') { S.sel = null; }
+  });
+
+  $('#clear').addEventListener('click', () => { if (S.phase !== 'plan') return; S.placed = []; S.sel = null; S.dirty = true; renderChips(); toast('도구를 모두 거뒀습니다'); });
+  $('#legbtn').addEventListener('click', () => { const lg = $('#legend'); const on = !lg.classList.contains('open'); lg.classList.toggle('open', on); $('#legbtn').setAttribute('aria-expanded', on ? 'true' : 'false'); });
+
+  // ── 실행
+  const HOUR_MS = 58;
+  $('#go').addEventListener('click', () => startRun());
+  function startRun() {
+    if (S.phase !== 'plan' || !S.fc) return;
+    const m = Math.floor(Math.random() * S.fc.members.length);
+    S.run = { m, sim: S.fc.members[m], t: 0, shown: new Set(), pulses: [], absorbed: new Map(), ev: 0, clean: S.fc.clean };
+    S.phase = 'run'; S.sel = null; S.armed = null; S.speed = 1; cv.top.classList.remove('armed', 'can-grab');
+    drawLines(); renderChips(); showRunControls();
+  }
+  function showRunControls() {
+    const res = $('#result'); res.classList.remove('on');
+    const acts = $('.actions'); acts.querySelector('#go').textContent = '▶ 진행 중…';
+    let ff = $('#ff'); if (!ff) { ff = document.createElement('button'); ff.id = 'ff'; ff.type = 'button'; ff.className = 'btn sm'; acts.appendChild(ff); ff.addEventListener('click', () => { S.speed = S.speed === 1 ? 4 : 1; ff.textContent = S.speed === 1 ? '빨리 감기 ×4' : '보통 속도'; }); }
+    ff.textContent = '빨리 감기 ×4'; ff.hidden = false;
+  }
+  function stepRun(dtMs, now) {
+    const r = S.run; const tr = r.sim.track; r.t = Math.min(tr.length - 1, r.t + (dtMs / HOUR_MS) * S.speed);
+    const evs = r.sim.events;
+    while (r.ev < evs.length && evs[r.ev].t <= r.t) {
+      const ev = evs[r.ev++];
+      if (ev.kind === 'hit') { r.shown.add(ev.city); const c = SIM.CITIES.find(x => x.id === ev.city); r.pulses.push({ lon: c.lon, lat: c.lat, at: now }); toast(`${c.name}${ev.landfall ? ' — 상륙' : ''} 피해`); }
+      else if (ev.kind === 'absorb') { r.absorbed.set(ev.tool.id, ev.t); toast('태풍이 저기압을 흡수했습니다'); }
+    }
+    if (r.t >= tr.length - 1) finish();
+  }
+  function endReason(sim) {
+    const p = sim.track[sim.track.length - 1];
+    if (sim.end === 'exit') return p.lon > B.lon1 ? '동쪽 먼바다로 빠져나갔습니다.' : p.lon < B.lon0 ? '서쪽으로 빠져나갔습니다.' : '북쪽으로 빠져나갔습니다.';
+    if (sim.end === 'dissipate') return p.land ? '육지에서 힘을 잃고 소멸했습니다.' : '찬 바다에서 힘을 잃고 소멸했습니다.';
+    return '바다 위에 머문 채 180시간이 지났습니다.';
+  }
+  function finish() {
+    const r = S.run; const L = level(); S.phase = 'done'; r.doneAt = performance.now(); const n = r.sim.hit.length; const st = SIM.stars(n, L);
+    for (const id of r.sim.hit) r.shown.add(id);
+    if (st > (best[L.id] || 0)) { best[L.id] = st; saveBest(); }
+    const names = r.sim.hit.map(id => SIM.CITIES.find(c => c.id === id).name);
+    const title = n === 0 ? '모든 도시를 지켰습니다' : st > 0 ? `피해 도시 ${n}곳 — 통과` : `피해 도시 ${n}곳 — 다시 배치해 보세요`;
+    const saved = SIM.CITIES.length - n; const next = S.lv < SIM.LEVELS.length - 1 && st > 0;
+    const res = $('#result');
+    res.innerHTML = `<div class="stars" aria-label="별 ${st}개">${starsStr(st)}</div><h2>${title}</h2>` +
+      `<p>${endReason(r.sim)} 지킨 도시 ${saved}/${SIM.CITIES.length}${names.length ? ` · 피해: ${names.join(', ')}` : ''}</p>` +
+      `<p>이 배치의 무사 확률은 ${Math.round(r.clean * 100)}%였고, 실제 진로는 예보 선 ${ENS}개 중 ${r.m + 1}번이었습니다.</p>` +
+      `<div class="row"><button class="btn sm" id="again" type="button">한 번 더 출발</button><button class="btn sm" id="edit" type="button">배치 고치기</button>` +
+      (next ? `<button class="btn sm primary" id="next" type="button">다음 레벨 →</button>` : '') + `<button class="btn sm ghost" id="copy" type="button">결과 복사</button></div>`;
+    res.classList.add('on');
+    try { res.scrollIntoView({ block: 'nearest', behavior: reduceMotion ? 'auto' : 'smooth' }); } catch (e) { /* 무시 */ }
+    $('#again').addEventListener('click', () => { S.phase = 'plan'; startRun(); });
+    $('#edit').addEventListener('click', () => { S.phase = 'plan'; S.run = null; res.classList.remove('on'); S.dirty = true; renderChips(); resetRunControls(); });
+    if (next) $('#next').addEventListener('click', () => { resetRunControls(); loadLevel(S.lv + 1); });
+    $('#copy').addEventListener('click', async () => {
+      const text = `태풍의 눈 · ${L.code} ${L.title} ${'★'.repeat(st)}${'☆'.repeat(3 - st)} — ${n === 0 ? `${SIM.CITIES.length}개 도시 모두 무사` : `피해 도시 ${n}곳`}`;
+      try { await navigator.clipboard.writeText(text); toast('결과를 복사했습니다'); } catch (e) { toast(text); }
+    });
+    renderLevels(); renderHead(); renderChips(); resetRunControls(true);
+  }
+  function resetRunControls(keepHidden) { $('#go').textContent = '▶ 태풍 출발'; const ff = $('#ff'); if (ff) ff.hidden = true; if (!keepHidden) $('#result').classList.remove('on'); }
+
+  // ── 루프
+  let last = performance.now();
+  function frame(now) {
+    const dt = Math.min(80, now - last); last = now;
+    if (S.dirty && S.phase === 'plan') { S.fc = SIM.forecast(level(), S.placed); S.dirty = false; drawLines(); renderRisk(); }
+    if (S.phase === 'run') stepRun(dt, now);
+    drawTop(now); updateHud();
+    requestAnimationFrame(frame);
+  }
+  function resize() {
+    const r = mapEl.getBoundingClientRect(); if (!r.width || !r.height) return;
+    W = r.width; H = r.height; DPR = Math.min(2, window.devicePixelRatio || 1);
+    for (const k of ['base', 'lines', 'top']) { cv[k].width = Math.round(W * DPR); cv[k].height = Math.round(H * DPR); cx[k].setTransform(DPR, 0, 0, DPR, 0, 0); }
+    GL.resize(); drawBase(); drawLines();
+  }
+  try { new ResizeObserver(() => resize()).observe(mapEl); } catch (e) { window.addEventListener('resize', resize); }
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { drawBase(); drawLines(); });
+  if (matchMedia('(min-width: 920px)').matches) $('#howto').open = true;
+  loadLevel(0); resize(); requestAnimationFrame(frame);
+  window.__stormeye = { S, SIM, place: (type, lon, lat) => addTool(type, lon, lat), speed: v => { S.speed = v; } };
+})();
+</script>
+</body>
+</html>

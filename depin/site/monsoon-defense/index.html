@@ -1,0 +1,534 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex">
+<title>장마 디펜스</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="닷새 동안 지나가는 장마전선에서 펌프·제방·우량계로 강가 마을을 지키는 날씨 미니게임">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Do+Hyeon&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap">
+<style>
+  /* 한 가지 세계: 장마철 강가 마을의 방재 상황판. 배경·글자색을 전부 명시 */
+  :root {
+    --bg: #0A1316; --panel: #101C20; --panel-2: #15252A; --line: rgba(200, 230, 235, 0.10); --line-2: rgba(200, 230, 235, 0.18);
+    --ink: #E7EEF0; --ink-2: #9DB2B8; --ink-3: #62797F;
+    --rain: #58A6FF; --roof: #D5573B; --levee: #B08A5A; --pump: #4FD1C5; --gauge: #F3F6F7; --warn: #F2B33D; --bad: #F0645A; --ok: #6FDC9C;
+    --f-display: 'Do Hyeon', 'IBM Plex Sans KR', sans-serif;
+    --f-body: 'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
+    --f-mono: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--bg); color: var(--ink); }
+  body { font-family: var(--f-body); font-size: 15px; line-height: 1.55; -webkit-font-smoothing: antialiased; }
+  button { font: inherit; color: inherit; }
+  button:focus-visible, summary:focus-visible { outline: 2px solid var(--warn); outline-offset: 2px; }
+  .app { max-width: 1180px; margin: 0 auto; padding: 14px 16px 28px; display: flex; flex-direction: column; gap: 14px; }
+  .top { display: flex; align-items: flex-end; justify-content: space-between; gap: 10px 20px; flex-wrap: wrap; }
+  .brand h1 { margin: 0; font-family: var(--f-display); font-weight: 400; font-size: clamp(34px, 6vw, 48px); line-height: 1; letter-spacing: 0.01em; }
+  .brand h1 span { color: var(--rain); }
+  .brand p { margin: 6px 0 0; color: var(--ink-2); font-size: 14px; max-width: 60ch; }
+  .days { display: flex; gap: 6px; flex-wrap: wrap; }
+  .dchip { min-width: 58px; padding: 5px 8px; border-radius: 8px; border: 1px solid var(--line); background: var(--panel); text-align: center; font-size: 12px; color: var(--ink-3); }
+  .dchip b { display: block; font-family: var(--f-mono); font-weight: 500; font-size: 12.5px; color: var(--ink-2); }
+  .dchip.now { border-color: var(--rain); color: var(--ink); } .dchip.done b { color: var(--ink); }
+  @media (max-width: 599px) { .days { width: 100%; flex-wrap: nowrap; } .dchip { flex: 1 1 0; min-width: 0; padding: 5px 4px; } .dchip b { font-size: 11.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } }
+
+  .stage { display: grid; grid-template-columns: 1fr; gap: 14px; align-items: start; }
+  @media (min-width: 940px) { .stage { grid-template-columns: minmax(0, 1fr) 360px; } }
+  .mapwrap { display: flex; justify-content: center; min-width: 0; }
+  .map { position: relative; width: 100%; aspect-ratio: 3 / 4; border-radius: 12px; overflow: hidden; border: 1px solid var(--line); background: #1B2A24; touch-action: manipulation; user-select: none; -webkit-user-select: none; }
+  @media (min-width: 940px) { .map { width: min(100%, calc(min(84vh, 880px) * 0.75)); } }
+  .map canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  .hud { position: absolute; left: 8px; right: 8px; top: 8px; display: flex; justify-content: space-between; gap: 8px; pointer-events: none; }
+  .hud .box { background: rgba(8, 14, 16, 0.78); border: 1px solid var(--line); border-radius: 8px; padding: 4px 9px; font-family: var(--f-mono); font-size: 12px; font-variant-numeric: tabular-nums; backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
+  .hud .river { display: flex; align-items: center; gap: 7px; }
+  .hud .bar { width: 70px; height: 7px; border-radius: 4px; background: rgba(255, 255, 255, 0.08); overflow: hidden; position: relative; }
+  .hud .bar i { position: absolute; left: 0; top: 0; bottom: 0; background: var(--rain); border-radius: 4px; }
+  .hud .bar u { position: absolute; top: -2px; bottom: -2px; width: 2px; background: var(--bad); }
+  .toast { position: absolute; left: 50%; bottom: 12px; transform: translate(-50%, 8px); max-width: calc(100% - 24px); background: rgba(8, 14, 16, 0.94); border: 1px solid var(--line-2); border-radius: 999px; padding: 6px 14px; font-size: 13px; opacity: 0; transition: opacity .2s, transform .2s; pointer-events: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .toast.on { opacity: 1; transform: translate(-50%, 0); }
+
+  .panel { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+  @media (max-width: 939px) { .panel .tools { order: -2; } .panel .report { order: -3; } }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; }
+  .card h2 { margin: 0 0 6px; font-size: 18px; font-weight: 600; text-wrap: balance; }
+  .card p { margin: 0; color: var(--ink-2); font-size: 14px; }
+  .lbl { font-size: 11.5px; color: var(--ink-3); letter-spacing: 0.08em; margin-bottom: 6px; }
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .stat { background: var(--panel-2); border-radius: 10px; padding: 8px 10px; }
+  .stat .k { font-size: 11.5px; color: var(--ink-3); } .stat .v { font-family: var(--f-mono); font-size: 20px; font-weight: 500; font-variant-numeric: tabular-nums; }
+  .stat .v.coin { color: var(--warn); }
+  .palette { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+  .tool { display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 8px 4px; border-radius: 10px; border: 1px solid var(--line-2); background: var(--panel-2); cursor: pointer; font-size: 13px; }
+  .tool svg { width: 26px; height: 26px; }
+  .tool .c { font-family: var(--f-mono); font-size: 11.5px; color: var(--warn); }
+  .tool[aria-pressed="true"] { border-color: var(--rain); box-shadow: 0 0 0 1px var(--rain) inset; background: #16303A; }
+  .tool:disabled { opacity: 0.4; cursor: default; }
+  .tip { margin-top: 8px; font-size: 13px; color: var(--ink-2); min-height: 20px; }
+  .ins { display: flex; align-items: flex-start; gap: 10px; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--line); }
+  .switch { flex: none; width: 44px; height: 26px; border-radius: 999px; border: 1px solid var(--line-2); background: var(--panel-2); position: relative; cursor: pointer; }
+  .switch::after { content: ''; position: absolute; left: 3px; top: 3px; width: 18px; height: 18px; border-radius: 50%; background: var(--ink-3); transition: transform .15s; }
+  .switch[aria-checked="true"] { background: #1D4A3A; border-color: var(--ok); } .switch[aria-checked="true"]::after { transform: translateX(18px); background: var(--ok); }
+  .ins .t { font-size: 13.5px; } .ins .t b { font-weight: 600; } .ins .t small { display: block; color: var(--ink-3); font-size: 12.5px; margin-top: 2px; }
+  .actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+  .btn { border-radius: 10px; padding: 10px 16px; font-size: 15px; font-weight: 600; cursor: pointer; border: 1px solid var(--line-2); background: var(--panel-2); color: var(--ink); }
+  .btn.primary { background: var(--rain); border-color: var(--rain); color: #06131F; }
+  .btn.sm { padding: 7px 12px; font-size: 13.5px; font-weight: 500; }
+  .btn:disabled { opacity: 0.4; cursor: default; }
+  .fc { display: grid; grid-template-columns: auto 1fr; gap: 3px 12px; font-size: 13.5px; margin-top: 8px; }
+  .fc dt { color: var(--ink-3); } .fc dd { margin: 0; font-variant-numeric: tabular-nums; }
+  .scale { display: flex; gap: 0; margin-top: 10px; border-radius: 4px; overflow: hidden; }
+  .scale span { flex: 1; height: 8px; } .scalelbl { display: flex; justify-content: space-between; font-family: var(--f-mono); font-size: 10.5px; color: var(--ink-3); margin-top: 3px; }
+  .report { border-color: rgba(88, 166, 255, 0.35); background: var(--panel-2); display: none; }
+  .report.on { display: block; }
+  .report .big { font-family: var(--f-mono); font-size: 26px; font-weight: 500; }
+  .report ul { margin: 8px 0 0; padding-left: 18px; font-size: 13.5px; color: var(--ink-2); display: flex; flex-direction: column; gap: 4px; }
+  .report .stars { font-size: 26px; letter-spacing: 4px; color: var(--ink-3); } .report .stars b { color: var(--warn); font-weight: 400; }
+  .good { color: var(--ok); } .badc { color: var(--bad); } .warnc { color: var(--warn); }
+  details.howto { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 12px 16px; }
+  details.howto summary { cursor: pointer; font-weight: 600; font-size: 14px; }
+  details.howto ul { margin: 10px 0 0; padding-left: 18px; font-size: 13.5px; color: var(--ink-2); display: flex; flex-direction: column; gap: 5px; }
+  footer { color: var(--ink-3); font-size: 12.5px; text-align: center; text-wrap: balance; }
+  @media (prefers-reduced-motion: reduce) { .toast, .switch::after { transition: none; } }
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <div class="brand">
+      <h1>장마 <span>디펜스</span></h1>
+      <p>닷새 동안 장마전선이 강가 마을을 지나갑니다. 펌프·제방·우량계로 집 20채를 지키세요.</p>
+    </div>
+    <div class="days" id="days" aria-label="닷새 진행"></div>
+  </header>
+  <main class="stage">
+    <section class="mapwrap">
+      <div class="map" id="map">
+        <canvas id="cv" role="img" aria-label="강가 마을 지도. 칸을 눌러 고른 시설을 짓습니다."></canvas>
+        <div class="hud"><div class="box" id="clock"></div><div class="box river"><span>강 수위</span><span class="bar"><i id="rbar"></i><u id="rline"></u></span><span id="rtxt"></span></div></div>
+        <div class="toast" id="toast" role="status" aria-live="polite"></div>
+      </div>
+    </section>
+    <aside class="panel">
+      <div class="card report" id="report" aria-live="polite"></div>
+      <div class="card tools">
+        <div class="stats">
+          <div class="stat"><div class="k">코인</div><div class="v coin" id="coins"></div></div>
+          <div class="stat"><div class="k">지킨 집</div><div class="v" id="houses"></div></div>
+          <div class="stat"><div class="k">오늘</div><div class="v" id="dayv"></div></div>
+        </div>
+        <div class="lbl" style="margin-top:12px">시설 — 고른 뒤 지도의 칸을 누르기</div>
+        <div class="palette" id="palette">
+          <button class="tool" type="button" data-t="pump" aria-pressed="false"><svg viewBox="0 0 26 26" aria-hidden="true"><circle cx="13" cy="13" r="10" fill="#0F3A3A" stroke="#4FD1C5" stroke-width="2"/><path d="M8 13h8m-3-4 4 4-4 4" stroke="#E7EEF0" stroke-width="2" fill="none" stroke-linecap="round"/></svg>펌프<span class="c">40</span></button>
+          <button class="tool" type="button" data-t="levee" aria-pressed="false"><svg viewBox="0 0 26 26" aria-hidden="true"><path d="M3 19 8 9h10l5 10z" fill="#B08A5A"/><path d="M3 19h20" stroke="#E7EEF0" stroke-width="1.5"/></svg>제방<span class="c">12</span></button>
+          <button class="tool" type="button" data-t="gauge" aria-pressed="false"><svg viewBox="0 0 26 26" aria-hidden="true"><rect x="8" y="4" width="10" height="18" rx="2" fill="none" stroke="#F3F6F7" stroke-width="2"/><rect x="10" y="13" width="6" height="7" fill="#58A6FF"/></svg>우량계<span class="c">15</span></button>
+          <button class="tool" type="button" data-t="remove" aria-pressed="false"><svg viewBox="0 0 26 26" aria-hidden="true"><path d="M7 7l12 12M19 7 7 19" stroke="#F0645A" stroke-width="2.4" stroke-linecap="round"/></svg>철거<span class="c">반값 환급</span></button>
+        </div>
+        <div class="tip" id="tip"></div>
+        <div class="ins">
+          <button class="switch" id="insw" type="button" role="switch" aria-checked="false" aria-labelledby="inst"></button>
+          <div class="t" id="inst"><b>비 보험</b> · 보험료 20 → 지급 60<small>오늘 비가 예보보다 10% 넘게 더 오면 지급합니다. 판정은 내 우량계 값으로 합니다. 우량계가 없으면 판정 보류(보험료 환급).</small></div>
+        </div>
+        <div class="actions"><button class="btn primary" id="go" type="button"></button><button class="btn sm" id="speed" type="button" hidden>빨리 ×3</button></div>
+      </div>
+      <div class="card" id="fcard">
+        <div class="lbl">오늘 예보</div>
+        <h2 id="fname"></h2><p id="fnote"></p>
+        <dl class="fc" id="fc"></dl>
+        <div class="scale" id="scale"></div><div class="scalelbl" id="scalelbl"></div>
+      </div>
+      <details class="howto" id="howto">
+        <summary>물이 움직이는 규칙</summary>
+        <ul>
+          <li>빗물은 높은 칸에서 낮은 칸으로 흐르고, 강으로 빠집니다. 사방이 높은 오목한 칸에는 물이 고입니다.</li>
+          <li>집이 있는 칸에 물이 30cm 넘게 차면 그 집은 잠깁니다.</li>
+          <li>펌프는 둘레 9칸의 물을 퍼서 가장 가까운 강으로 보냅니다. 강이 불어나면 하류가 넘칠 수 있습니다.</li>
+          <li>강물이 둑을 넘으면 옆 칸으로 넘칩니다. 제방을 쌓은 칸으로는 넘치지 않습니다. 이어서 쌓아야 막힙니다.</li>
+          <li>북쪽 언덕에 내린 비는 조금 늦게 강 상류로 들어옵니다.</li>
+          <li>우량계는 그 칸에 내린 비를 잽니다. 비 보험은 우량계 값을 그 자리의 예보와 비교해 정산합니다. 우량계가 비구름을 비껴간 곳에 있으면, 마을에 비가 많이 와도 보험이 나가지 않을 수 있습니다.</li>
+          <li>밤이 되면 고인 물 절반쯤이 빠지고 강도 내려갑니다. 집 한 채가 하루 5코인을 법니다.</li>
+        </ul>
+      </details>
+    </aside>
+  </main>
+  <footer>wellbian 날씨 미니게임 · 프로토타입 — 교육용 모형입니다. 게임 속 코인·보험은 점수일 뿐 실제 돈·토큰과 관계없습니다.</footer>
+</div>
+
+<script>
+// 장마 디펜스 — 물 모형(브라우저·Node 공용). 격자 12×16, 칸 = 100m. 높이·수심 m, 시간 h, 강수 mm/h
+(function (root) {
+  const W = 12, H = 16, N = W * H;
+  const clamp = (x, a, b) => Math.max(a, Math.min(b, x));
+  const id = (x, y) => y * W + x;
+  // 강 경로(북서 → 남동). 강바닥은 하류로 갈수록 낮다
+  const RIVER = [[1, 0], [1, 1], [2, 2], [3, 3], [3, 4], [4, 5], [5, 6], [5, 7], [6, 8], [7, 9], [7, 10], [8, 11], [9, 12], [9, 13], [10, 14], [11, 15]];
+  const HOUSES = [[2, 9], [2, 8], [3, 9], [3, 8], [1, 10], [9, 7], [8, 8], [9, 8], [6, 10], [5, 10], [8, 10], [6, 5], [7, 5], [7, 12], [8, 13], [7, 13], [9, 11], [4, 7], [10, 10], [5, 13]];
+  const BANK = 0.95; // 강둑 높이(강바닥 위)
+  const COST = { pump: 40, levee: 12, gauge: 15 };
+  const PUMP_RATE = 0.16; // m/h — 펌프 한 대가 3×3 칸에서 퍼내는 총량(칸당 환산)
+  const LEVEE_H = 0.9;    // 제방이 더해 주는 높이
+  const HOUSE_FLOOD = 0.3; // 집이 잠기는 수심(m)
+
+  function hash(x, y, s) { let h = (x * 374761393 + y * 668265263 + s * 2246822519) >>> 0; h = (h ^ (h >>> 13)) * 1274126177 >>> 0; return ((h ^ (h >>> 16)) >>> 0) / 4294967296; }
+  function buildTerrain() {
+    const h = new Float32Array(N), river = new Int16Array(N).fill(-1), bed = new Float32Array(N);
+    RIVER.forEach(([x, y], k) => { river[id(x, y)] = k; bed[id(x, y)] = 3.2 * (1 - k / (RIVER.length - 1)); });
+    for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+      const i = id(x, y); if (river[i] >= 0) { h[i] = bed[i]; continue; }
+      let dmin = 1e9, kb = 0; RIVER.forEach(([rx, ry], k) => { const d = Math.hypot(rx - x, ry - y); if (d < dmin) { dmin = d; kb = k; } });
+      const b = 3.2 * (1 - kb / (RIVER.length - 1));
+      const hill = Math.max(0, 3.5 - y) * 1.8 + Math.max(0, x - 8) * 0.25;
+      h[i] = b + BANK - 0.2 + dmin * 0.2 + hill + (hash(x, y, 7) - 0.5) * 0.3;
+    }
+    // 마을 안 오목한 곳 두 군데(배수가 안 되는 저지대)
+    for (const [cx, cy, dep] of [[2, 9, 1.1], [8, 12, 1.0], [9, 7, 0.9]]) for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) { const i = id(x, y); if (river[i] >= 0) continue; const d = Math.hypot(x - cx, y - cy); if (d < 2.2) h[i] -= dep * (1 - d / 2.2); }
+    return { h, river, bed };
+  }
+
+  // 하루치 비: 장마전선(띠) + 집중호우 칸. p = 진행률 0..1
+  const DAYS = [
+    { name: '첫 비', front: { y0: -2, y1: 18, width: 3.2, rate: 5.5 }, cells: [], note: '약한 비가 북쪽에서 남쪽으로 지나갑니다.' },
+    { name: '굵어지는 빗줄기', front: { y0: -2, y1: 18, width: 3.0, rate: 7 }, cells: [{ x0: -2, y0: 5, x1: 14, y1: 9, r: 1.8, rate: 30, t0: 0.25, t1: 0.7 }], note: '비구름 하나가 마을 한가운데를 가로지릅니다.' },
+    { name: '정체전선', front: { y0: 2, y1: 11, width: 3.5, rate: 9 }, cells: [{ x0: 14, y0: 3, x1: -2, y1: 8, r: 1.8, rate: 34, t0: 0.15, t1: 0.55 }, { x0: -2, y0: 9, x1: 14, y1: 12, r: 1.7, rate: 32, t0: 0.5, t1: 0.9 }], note: '전선이 마을 위에 오래 머뭅니다. 강 위쪽 언덕에 내린 비가 늦게 불어납니다.' },
+    { name: '밤사이 폭우', front: { y0: 6, y1: 9, width: 4.0, rate: 11 }, cells: [{ x0: -2, y0: 11, x1: 14, y1: 7, r: 2.0, rate: 42, t0: 0.1, t1: 0.45 }, { x0: 6, y0: -2, x1: 7, y1: 18, r: 1.8, rate: 40, t0: 0.55, t1: 0.95 }], note: '강한 비구름 두 개가 연달아 지납니다. 강 수위를 지켜보세요.' },
+    { name: '집중호우', front: { y0: 4, y1: 12, width: 4.5, rate: 13 }, cells: [{ x0: -2, y0: 6, x1: 14, y1: 10, r: 2.2, rate: 55, t0: 0.05, t1: 0.4 }, { x0: 14, y0: 12, x1: -2, y1: 6, r: 2.0, rate: 52, t0: 0.35, t1: 0.7 }, { x0: 3, y0: -2, x1: 9, y1: 18, r: 2.2, rate: 58, t0: 0.62, t1: 0.98 }], note: '장마의 고비. 시간당 50mm가 넘는 비구름 셋이 지나갑니다.' },
+  ];
+  // 실제 날씨: 예보에서 조금 비틀린다(비구름 경로 ±1.5칸, 세기 ±15%)
+  function realize(day, seed) {
+    const r = k => hash(day * 31 + k, seed, 3);
+    const D = DAYS[day];
+    if (seed == null) return { front: { ...D.front }, cells: D.cells.map(c => ({ ...c })) }; // 예보(교란 없음)
+    return { front: { ...D.front, rate: D.front.rate * (0.85 + 0.3 * r(1)), y0: D.front.y0 + (r(2) - 0.5) * 3, y1: D.front.y1 + (r(3) - 0.5) * 3 },
+      cells: D.cells.map((c, k) => ({ ...c, y0: c.y0 + (r(10 + k) - 0.5) * 4, y1: c.y1 + (r(20 + k) - 0.5) * 4, x0: c.x0 + (r(30 + k) - 0.5) * 3, x1: c.x1 + (r(40 + k) - 0.5) * 3, rate: c.rate * (0.8 + 0.4 * r(50 + k)) })) };
+  }
+  function rainAt(w, x, y, p) { // mm/h at tile center
+    const f = w.front; const fy = f.y0 + (f.y1 - f.y0) * p; let r = f.rate * Math.exp(-(((y - fy) / f.width) ** 2));
+    for (const c of w.cells) { if (p < c.t0 || p > c.t1) continue; const q = (p - c.t0) / (c.t1 - c.t0); const cx = c.x0 + (c.x1 - c.x0) * q, cy = c.y0 + (c.y1 - c.y0) * q; const env = Math.sin(Math.PI * q) ** 0.6; r += c.rate * env * Math.exp(-((x - cx) ** 2 + (y - cy) ** 2) / (c.r * c.r)); }
+    return r;
+  }
+
+  function forecastTotals(day, steps = 96) { const wx = realize(day, null); const F = new Float32Array(N); for (let s = 0; s < steps; s++) { const p = (s + 0.5) / steps; for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) F[id(x, y)] += rainAt(wx, x, y, p) * 24 / steps; } return F; }
+  function newWorld() {
+    const T = buildTerrain();
+    return { ...T, d: new Float32Array(N), L: new Float32Array(RIVER.length).fill(0.35), build: new Array(N).fill(null), houses: HOUSES.map(([x, y]) => ({ x, y, i: id(x, y), ok: true })), coins: 100, day: 0 };
+  }
+  const NB = [[1, 0], [-1, 0], [0, 1], [0, -1]];
+  function leveeAt(w, i) { return w.build[i] === 'levee' ? LEVEE_H : 0; }
+  // 하루 진행: dt(h) 한 걸음. w.rain(현재 실현 날씨), p(진행률)
+  function step(w, wx, p, dt, acc) {
+    const { h, d, river, bed, L } = w;
+    // 1) 비 + 침투
+    for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+      const i = id(x, y); const r = rainAt(wx, x, y, p) / 1000; // m/h
+      acc.rain[i] += r * 1000 * dt;
+      if (river[i] >= 0) L[river[i]] += r * dt; else d[i] = Math.max(0, d[i] + r * dt - 0.004 * dt);
+    }
+    // 2) 북쪽 언덕 유역 → 강 상류 유입(늦게 도착)
+    let hill = 0; for (let y = 0; y < 4; y++) for (let x = 0; x < W; x++) hill += rainAt(wx, x, y, Math.max(0, p - 0.12));
+    L[0] += (0.03 + hill / (W * 4) * 0.02) * dt * 3;
+    // 3) 땅 위 물 흐름(높은 곳 → 낮은 곳), 강가 칸은 강으로
+    const out = new Float32Array(N);
+    const flows = [];
+    for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+      const i = id(x, y); if (river[i] >= 0 || d[i] <= 1e-5) continue; const s = h[i] + d[i]; let tot = 0; const f = [];
+      for (const [dx, dy] of NB) {
+        const X = x + dx, Y = y + dy; if (X < 0 || Y < 0 || X >= W || Y >= H) continue; const j = id(X, Y);
+        const sj = river[j] >= 0 ? bed[j] + L[river[j]] : h[j] + d[j]; // 강으로는 강 수면보다 높을 때만(제방 배수문)
+        const dh = s - sj; if (dh > 0) { const q = dh * 2.2 * dt; f.push([j, q]); tot += q; }
+      }
+      if (!tot) continue; const scale = Math.min(1, (d[i] * 0.5) / tot);
+      for (const [j, q] of f) flows.push([i, j, q * scale]);
+    }
+    for (const [i, j, q] of flows) { d[i] -= q; if (river[j] >= 0) L[river[j]] += q; else d[j] += q; }
+    // 4) 펌프: 3×3 칸의 물을 가장 가까운 강 칸으로
+    for (let i = 0; i < N; i++) {
+      if (w.build[i] !== 'pump') continue; const x = i % W, y = (i / W) | 0; let cap = PUMP_RATE * dt * 9, moved = 0;
+      for (let yy = y - 1; yy <= y + 1; yy++) for (let xx = x - 1; xx <= x + 1; xx++) { if (xx < 0 || yy < 0 || xx >= W || yy >= H) continue; const j = id(xx, yy); if (river[j] >= 0) continue; const q = Math.min(d[j], PUMP_RATE * dt * 1.5, cap - moved); if (q > 0) { d[j] -= q; moved += q; } }
+      let best = 0, bd = 1e9; RIVER.forEach(([rx, ry], k) => { const dd = Math.hypot(rx - x, ry - y); if (dd < bd) { bd = dd; best = k; } }); L[best] += moved; acc.pumped += moved;
+    }
+    // 5) 강: 하류로 흐르고, 둑을 넘으면 넘친다
+    for (let k = 0; k < RIVER.length; k++) {
+      const [x, y] = RIVER[k]; const i = id(x, y);
+      if (k < RIVER.length - 1) { const j = id(...RIVER[k + 1]); const s1 = bed[i] + L[k], s2 = bed[j] + L[k + 1]; const q = clamp((s1 - s2) * 1.6 * dt, 0, L[k] * 0.6) + Math.min(L[k] * 0.6, 0.55 * L[k] * dt); L[k] -= q; L[k + 1] += q; }
+      else { const q = Math.min(L[k], (0.7 * L[k] ** 1.3 + 0.05) * dt); L[k] -= q; acc.out += q; }
+      // 넘침: 둑(+제방)보다 높으면 옆 땅으로
+      const over = L[k] - BANK; if (over <= 0) continue;
+      for (const [dx, dy] of NB) {
+        const X = x + dx, Y = y + dy; if (X < 0 || Y < 0 || X >= W || Y >= H) continue; const j = id(X, Y); if (river[j] >= 0) continue;
+        const wall = bed[i] + BANK + leveeAt(w, j); const s = bed[i] + L[k]; const ex = s - Math.max(wall, h[j] + d[j]); if (ex <= 0) continue;
+        const q = Math.min(ex * 0.8 * dt, (L[k] - BANK) * 0.25); L[k] -= q; d[j] += q; acc.spill += q;
+      }
+    }
+    // 6) 집 잠김
+    for (const hs of w.houses) if (hs.ok && d[hs.i] >= HOUSE_FLOOD) { hs.ok = false; acc.lost.push(hs); }
+  }
+  // 하루 전체(빠른 계산): 전략 점검용
+  function runDay(w, dayIdx, seed, steps = 480) {
+    const wx = realize(dayIdx, seed); const acc = { rain: new Float32Array(N), pumped: 0, out: 0, spill: 0, lost: [] }; const dt = 24 / steps;
+    for (let s = 0; s < steps; s++) step(w, wx, (s + 0.5) / steps, dt, acc);
+    // 하루가 끝나면 고인 물 일부가 빠진다(밤사이 배수)
+    for (let i = 0; i < N; i++) w.d[i] *= 0.45;
+    for (let k = 0; k < w.L.length; k++) w.L[k] = Math.min(w.L[k], 0.35 + (w.L[k] - 0.35) * 0.4);
+    return acc;
+  }
+  // 비 보험: 「예보보다 10% 넘게 더 온 날」 지급. 판정은 우량계 — 우량계마다 (측정 ÷ 그 자리 예보)의 평균. 우량계가 없으면 보류(보험료 환급)
+  const INS = { premium: 20, payout: 60, ratio: 1.1 };
+  function settle(w, acc, dayIdx, insured, F) {
+    F = F || forecastTotals(dayIdx); const gauges = []; for (let i = 0; i < N; i++) if (w.build[i] === 'gauge') gauges.push({ i, m: acc.rain[i], f: F[i] });
+    let town = 0, ftown = 0; for (const hs of w.houses) { town += acc.rain[hs.i]; ftown += F[hs.i]; } town /= w.houses.length; ftown /= w.houses.length;
+    const ratio = gauges.length ? gauges.reduce((a, g) => a + g.m / Math.max(1, g.f), 0) / gauges.length : null;
+    let ins = null; if (insured) ins = ratio == null ? 'hold' : ratio >= INS.ratio ? 'paid' : 'unpaid';
+    const intact = w.houses.filter(h => h.ok).length;
+    return { gauges, ratio, town, ftown, ins, intact, income: intact * 5 };
+  }
+  const API = { W, H, N, id, RIVER, HOUSES, BANK, COST, LEVEE_H, HOUSE_FLOOD, DAYS, INS, newWorld, realize, rainAt, step, runDay, settle, forecastTotals, hash };
+  if (typeof module !== 'undefined') module.exports = API; else root.MSIM = API;
+})(this);
+
+</script>
+<script>
+(() => {
+  'use strict';
+  const M = window.MSIM; const $ = s => document.querySelector(s);
+  const clamp = (x, a, b) => Math.max(a, Math.min(b, x));
+  const reduceMotion = (() => { try { return matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) { return false; } })();
+  const KEY = 'monsoon.v1'; let best = {};
+  try { const v = JSON.parse(localStorage.getItem(KEY) || '{}'); if (v && typeof v === 'object') best = v; } catch (e) { best = {}; }
+  const save = () => { try { localStorage.setItem(KEY, JSON.stringify(best)); } catch (e) { /* 저장 불가 환경 */ } };
+  const STEPS = 480, DAY_SEC = 38; // 하루 = 480걸음, 보통 속도로 약 38초
+  const NAMES = { pump: '펌프', levee: '제방', gauge: '우량계' };
+
+  // ── 상태
+  let G;
+  function newGame() {
+    G = { w: M.newWorld(), day: 0, phase: 'plan', tool: null, insured: false, seed: (Math.random() * 1e9) | 0, speed: 1, p: 0, acc: null, wx: null, F: M.forecastTotals(0), reports: [], pulses: [], drops: [], stepCarry: 0, lostSeen: 0, peak: 0 };
+    G.w.coins = 100; $('#report').classList.remove('on'); renderAll();
+  }
+
+  // ── 캔버스
+  const cv = $('#cv'), ctx = cv.getContext('2d'); let Wp = 0, Hp = 0, T = 0, DPR = 1;
+  const low = document.createElement('canvas'); low.width = M.W; low.height = M.H; const lctx = low.getContext('2d');
+  function resize() {
+    const r = $('#map').getBoundingClientRect(); if (!r.width) return; DPR = Math.min(2, window.devicePixelRatio || 1);
+    Wp = r.width; Hp = r.height; T = Wp / M.W; cv.width = Math.round(Wp * DPR); cv.height = Math.round(Hp * DPR); ctx.setTransform(DPR, 0, 0, DPR, 0, 0); terrainCache = null;
+  }
+  // 지형 색(높이 + 언덕 그림자)
+  const TER = [[0, [62, 104, 64]], [1.8, [82, 126, 72]], [3.5, [108, 138, 80]], [6, [138, 140, 90]], [9, [150, 138, 104]], [13, [160, 150, 128]]];
+  function terColor(h) { for (let k = 1; k < TER.length; k++) if (h <= TER[k][0]) { const [h0, c0] = TER[k - 1], [h1, c1] = TER[k]; const t = (h - h0) / (h1 - h0); return c0.map((v, i) => v + (c1[i] - v) * t); } return TER[TER.length - 1][1]; }
+  let terrainCache = null;
+  function terrain() {
+    if (terrainCache) return terrainCache; const c = document.createElement('canvas'); c.width = cv.width; c.height = cv.height; const x = c.getContext('2d'); x.setTransform(DPR, 0, 0, DPR, 0, 0);
+    const { h, river } = G.w; const H_ = (X, Y) => h[M.id(clamp(X, 0, M.W - 1), clamp(Y, 0, M.H - 1))];
+    for (let y = 0; y < M.H; y++) for (let X = 0; X < M.W; X++) {
+      const i = M.id(X, y); if (river[i] >= 0) continue;
+      const sx = (H_(X + 1, y) - H_(X - 1, y)) / 2, sy = (H_(X, y + 1) - H_(X, y - 1)) / 2; const n = [-sx, -sy, 1.4]; const L = [-0.62, -0.62, 0.48];
+      const shade = clamp((n[0] * L[0] + n[1] * L[1] + n[2] * L[2]) / Math.hypot(...n) / Math.hypot(...L), 0.3, 1.2);
+      const col = terColor(h[i]).map(v => clamp(v * (0.55 + 0.5 * shade), 0, 255)); x.fillStyle = `rgb(${col.map(Math.round).join(',')})`; x.fillRect(X * T, y * T, T + 0.5, T + 0.5);
+      const g = M.hash(X, y, 11); if (g > 0.55 && h[i] > 4) { x.fillStyle = 'rgba(30,50,34,0.35)'; for (let k = 0; k < 3; k++) { const a = M.hash(X, y, 20 + k), b = M.hash(X, y, 30 + k); x.beginPath(); x.arc(X * T + (0.2 + 0.6 * a) * T, y * T + (0.2 + 0.6 * b) * T, T * 0.09, 0, 6.3); x.fill(); } }
+    }
+    x.strokeStyle = 'rgba(0,0,0,0.10)'; x.lineWidth = 1; for (let k = 1; k < M.W; k++) { x.beginPath(); x.moveTo(k * T + 0.5, 0); x.lineTo(k * T + 0.5, Hp); x.stroke(); } for (let k = 1; k < M.H; k++) { x.beginPath(); x.moveTo(0, k * T + 0.5); x.lineTo(Wp, k * T + 0.5); x.stroke(); }
+    terrainCache = c; return c;
+  }
+  // 레이더 색(시간당 강수)·하루 강수 색
+  const RADAR = [[0.5, [140, 200, 255]], [5, [63, 155, 255]], [10, [63, 203, 95]], [20, [242, 227, 75]], [30, [243, 156, 51]], [50, [232, 69, 60]], [70, [166, 74, 209]]];
+  function radar(v) { if (v < RADAR[0][0]) return null; for (let k = RADAR.length - 1; k >= 0; k--) if (v >= RADAR[k][0]) return RADAR[k][1]; return null; }
+  const DAILY = [10, 40, 80, 120, 160, 220, 300];
+  function dailyCol(mm) { let k = -1; for (let i = 0; i < DAILY.length; i++) if (mm >= DAILY[i]) k = i; return k < 0 ? null : RADAR[k][1]; }
+
+  function nearestRiver(x, y) { let best = 0, bd = 1e9; M.RIVER.forEach(([rx, ry], k) => { const d = Math.hypot(rx - x, ry - y); if (d < bd) { bd = d; best = k; } }); return M.RIVER[best]; }
+  function draw(now) {
+    if (!T) return; const c = ctx; const w = G.w; c.clearRect(0, 0, Wp, Hp);
+    c.save(); c.setTransform(1, 0, 0, 1, 0, 0); c.drawImage(terrain(), 0, 0); c.restore();
+    // 강
+    for (const [x, y] of M.RIVER) { c.fillStyle = '#4C6B4A'; c.fillRect(x * T, y * T, T + 0.5, T + 0.5); }
+    const pts = [[M.RIVER[0][0] + 0.5, -0.3], ...M.RIVER.map(([x, y]) => [x + 0.5, y + 0.5]), [M.RIVER[M.RIVER.length - 1][0] + 0.9, M.H + 0.3]];
+    const riverPath = () => { c.beginPath(); c.moveTo(pts[0][0] * T, pts[0][1] * T); for (let k = 1; k < pts.length - 1; k++) { const mx = (pts[k][0] + pts[k + 1][0]) / 2, my = (pts[k][1] + pts[k + 1][1]) / 2; c.quadraticCurveTo(pts[k][0] * T, pts[k][1] * T, mx * T, my * T); } c.lineTo(pts[pts.length - 1][0] * T, pts[pts.length - 1][1] * T); };
+    const Lm = Math.max(...w.L); const lv = clamp(Lm / 2, 0, 1); const over = Lm > M.BANK;
+    c.save(); c.lineCap = 'round'; c.lineJoin = 'round';
+    riverPath(); c.strokeStyle = over ? 'rgba(240,100,90,0.55)' : 'rgba(20,40,34,0.45)'; c.lineWidth = T * (0.72 + 0.32 * lv) + 4; c.stroke();
+    riverPath(); c.strokeStyle = `rgb(${Math.round(38 + 60 * lv)},${Math.round(104 + 50 * lv)},${Math.round(128 + 55 * lv)})`; c.lineWidth = T * (0.72 + 0.32 * lv); c.stroke();
+    if (!reduceMotion) { riverPath(); c.setLineDash([T * 0.18, T * 0.55]); c.lineDashOffset = -now / 40; c.strokeStyle = 'rgba(220,240,255,0.22)'; c.lineWidth = Math.max(1, T * 0.06); c.stroke(); c.setLineDash([]); }
+    c.restore();
+    // 땅 위 물
+    for (let i = 0; i < M.N; i++) { if (w.river[i] >= 0) continue; const d = w.d[i]; if (d < 0.01) continue; const x = i % M.W, y = (i / M.W) | 0; c.fillStyle = `rgba(70,150,232,${Math.min(0.85, 0.18 + (d / 0.45) * 0.67).toFixed(3)})`; c.fillRect(x * T, y * T, T + 0.5, T + 0.5); }
+    // 예보(준비 단계) 또는 레이더(비 단계)
+    const img = lctx.createImageData(M.W, M.H); let any = false;
+    for (let y = 0; y < M.H; y++) for (let x = 0; x < M.W; x++) {
+      const i = M.id(x, y); const col = G.phase === 'rain' ? radar(M.rainAt(G.wx, x, y, G.p)) : G.phase === 'plan' ? dailyCol(G.F[i]) : null; if (!col) continue; any = true;
+      img.data.set([...col, G.phase === 'rain' ? 96 : Math.round(clamp((G.F[i] - 20) / 220, 0, 0.6) * 255)], i * 4);
+    }
+    if (any) { lctx.putImageData(img, 0, 0); c.save(); c.imageSmoothingEnabled = true; c.drawImage(low, 0, 0, Wp, Hp); c.restore(); }
+    if (G.phase === 'plan') for (const cl of M.DAYS[G.day].cells) {
+      const ax = (cl.x0 + 0.5) * T, ay = (cl.y0 + 0.5) * T, bx = (cl.x1 + 0.5) * T, by = (cl.y1 + 0.5) * T;
+      c.save(); c.setLineDash([6, 5]); c.strokeStyle = 'rgba(255,255,255,0.8)'; c.lineWidth = 2; c.beginPath(); c.moveTo(ax, ay); c.lineTo(bx, by); c.stroke(); c.setLineDash([]);
+      const a = Math.atan2(by - ay, bx - ax); const mx = ax + (bx - ax) * 0.62, my = ay + (by - ay) * 0.62; c.fillStyle = 'rgba(255,255,255,0.9)'; c.beginPath(); c.moveTo(mx + Math.cos(a) * 9, my + Math.sin(a) * 9); c.lineTo(mx + Math.cos(a + 2.5) * 8, my + Math.sin(a + 2.5) * 8); c.lineTo(mx + Math.cos(a - 2.5) * 8, my + Math.sin(a - 2.5) * 8); c.fill(); c.restore();
+    }
+    // 비구름·빗줄기
+    if (G.phase === 'rain') {
+      for (const cl of G.wx.cells) { if (G.p < cl.t0 || G.p > cl.t1) continue; const q = (G.p - cl.t0) / (cl.t1 - cl.t0); const cx = (cl.x0 + (cl.x1 - cl.x0) * q + 0.5) * T, cy = (cl.y0 + (cl.y1 - cl.y0) * q + 0.5) * T; const R = cl.r * T * 2.3; const g = c.createRadialGradient(cx, cy, 0, cx, cy, R); g.addColorStop(0, 'rgba(200,210,220,0.34)'); g.addColorStop(1, 'rgba(200,210,220,0)'); c.fillStyle = g; c.beginPath(); c.arc(cx, cy, R, 0, 6.3); c.fill(); }
+      if (!reduceMotion) { c.strokeStyle = 'rgba(210,230,255,0.42)'; c.lineWidth = 1; c.beginPath(); for (const d of G.drops) { c.moveTo(d.x, d.y); c.lineTo(d.x - 2.5, d.y + 9); } c.stroke(); }
+    }
+    // 시설
+    for (let i = 0; i < M.N; i++) {
+      const b = w.build[i]; if (!b) continue; const x = i % M.W, y = (i / M.W) | 0; const cx = (x + 0.5) * T, cy = (y + 0.5) * T;
+      if (b === 'levee') {
+        c.save(); c.strokeStyle = '#B08A5A'; c.lineWidth = Math.max(3, T * 0.16); c.lineCap = 'round'; let edged = false;
+        for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) { const X = x + dx, Y = y + dy; if (X < 0 || Y < 0 || X >= M.W || Y >= M.H || w.river[M.id(X, Y)] < 0) continue; edged = true; const ex = dx === 1 ? (x + 1) * T : dx === -1 ? x * T : null, ey = dy === 1 ? (y + 1) * T : dy === -1 ? y * T : null; c.beginPath(); if (ex != null) { c.moveTo(ex - dx * 3, y * T + 3); c.lineTo(ex - dx * 3, (y + 1) * T - 3); } else { c.moveTo(x * T + 3, ey - dy * 3); c.lineTo((x + 1) * T - 3, ey - dy * 3); } c.stroke(); }
+        if (!edged) { c.fillStyle = '#B08A5A'; c.beginPath(); c.moveTo(cx - T * 0.3, cy + T * 0.18); c.lineTo(cx - T * 0.12, cy - T * 0.16); c.lineTo(cx + T * 0.12, cy - T * 0.16); c.lineTo(cx + T * 0.3, cy + T * 0.18); c.fill(); }
+        c.restore();
+      } else if (b === 'pump') {
+        const [rx, ry] = nearestRiver(x, y); const a = Math.atan2(ry - y, rx - x); const R = T * 0.3;
+        c.save(); c.fillStyle = '#0F3A3A'; c.strokeStyle = '#4FD1C5'; c.lineWidth = 2; c.beginPath(); c.arc(cx, cy, R, 0, 6.3); c.fill(); c.stroke();
+        c.strokeStyle = '#E7EEF0'; c.lineWidth = 2; c.lineCap = 'round'; c.beginPath(); c.moveTo(cx - Math.cos(a) * R * 0.5, cy - Math.sin(a) * R * 0.5); c.lineTo(cx + Math.cos(a) * R * 0.55, cy + Math.sin(a) * R * 0.55); c.stroke();
+        c.beginPath(); c.moveTo(cx + Math.cos(a) * R * 0.55, cy + Math.sin(a) * R * 0.55); c.lineTo(cx + Math.cos(a + 2.4) * R * 0.3 + Math.cos(a) * R * 0.3, cy + Math.sin(a + 2.4) * R * 0.3 + Math.sin(a) * R * 0.3); c.moveTo(cx + Math.cos(a) * R * 0.55, cy + Math.sin(a) * R * 0.55); c.lineTo(cx + Math.cos(a - 2.4) * R * 0.3 + Math.cos(a) * R * 0.3, cy + Math.sin(a - 2.4) * R * 0.3 + Math.sin(a) * R * 0.3); c.stroke();
+        if (G.phase === 'rain' && !reduceMotion) { let wet = 0; for (let yy = y - 1; yy <= y + 1; yy++) for (let xx = x - 1; xx <= x + 1; xx++) if (xx >= 0 && yy >= 0 && xx < M.W && yy < M.H) wet += w.d[M.id(xx, yy)]; if (wet > 0.02) { c.strokeStyle = 'rgba(79,209,197,0.55)'; c.setLineDash([3, 4]); c.lineDashOffset = -now / 60; c.beginPath(); c.arc(cx, cy, R + 4, 0, 6.3); c.stroke(); } }
+        c.restore();
+      } else if (b === 'gauge') {
+        const mm = G.acc ? G.acc.rain[i] : 0; const f = G.F[i] || 1; const fill = clamp(mm / Math.max(1, f * 1.3), 0, 1);
+        c.save(); const gw = T * 0.26, gh = T * 0.58; c.fillStyle = 'rgba(10,18,22,0.85)'; c.strokeStyle = '#F3F6F7'; c.lineWidth = 1.6; c.beginPath(); c.rect(cx - gw / 2, cy - gh / 2, gw, gh); c.fill(); c.stroke();
+        c.fillStyle = '#58A6FF'; c.fillRect(cx - gw / 2 + 2, cy + gh / 2 - 2 - (gh - 4) * fill, gw - 4, (gh - 4) * fill);
+        const fy = cy + gh / 2 - 2 - (gh - 4) * clamp(1 / 1.3, 0, 1); c.strokeStyle = '#F2B33D'; c.lineWidth = 1.2; c.beginPath(); c.moveTo(cx - gw / 2 - 2, fy); c.lineTo(cx + gw / 2 + 2, fy); c.stroke();
+        if (T >= 26 && G.acc) { c.font = `500 ${Math.max(9, T * 0.24)}px 'IBM Plex Mono', monospace`; c.textAlign = 'center'; c.textBaseline = 'top'; c.lineWidth = 3; c.strokeStyle = 'rgba(8,14,16,0.9)'; c.strokeText(Math.round(mm), cx, cy + gh / 2 + 1); c.fillStyle = '#F3F6F7'; c.fillText(Math.round(mm), cx, cy + gh / 2 + 1); }
+        c.restore();
+      }
+    }
+    // 집
+    for (const hs of w.houses) {
+      const cx = (hs.x + 0.5) * T, cy = (hs.y + 0.55) * T; const s = T * 0.24;
+      c.save(); c.fillStyle = hs.ok ? '#EDE6D6' : '#7E7A73'; c.fillRect(cx - s, cy - s * 0.2, s * 2, s * 1.1);
+      c.fillStyle = hs.ok ? '#D5573B' : '#5B4F4B'; c.beginPath(); c.moveTo(cx - s * 1.25, cy - s * 0.15); c.lineTo(cx, cy - s * 1.2); c.lineTo(cx + s * 1.25, cy - s * 0.15); c.closePath(); c.fill();
+      c.fillStyle = hs.ok ? '#3B4A52' : '#4E5A60'; c.fillRect(cx - s * 0.28, cy + s * 0.35, s * 0.56, s * 0.55);
+      if (!hs.ok) { c.strokeStyle = '#8CCBFF'; c.lineWidth = 1.6; c.beginPath(); for (let k = 0; k <= 8; k++) { const px = cx - s * 1.2 + (k / 8) * s * 2.4, py = cy + s * 1.0 + Math.sin(k * 1.6) * 2; k ? c.lineTo(px, py) : c.moveTo(px, py); } c.stroke(); }
+      const wd = w.d[hs.i]; if (hs.ok && wd > 0.12) { c.strokeStyle = wd > 0.22 ? '#F0645A' : '#F2B33D'; c.lineWidth = 2; c.strokeRect(hs.x * T + 2, hs.y * T + 2, T - 4, T - 4); }
+      c.restore();
+    }
+    for (const pu of G.pulses) { const age = (now - pu.at) / 1000; if (age > 1.5) continue; c.save(); c.globalAlpha = 1 - age / 1.5; c.strokeStyle = '#F0645A'; c.lineWidth = 2.5; c.beginPath(); c.arc((pu.x + 0.5) * T, (pu.y + 0.5) * T, T * 0.4 + age * T * 1.2, 0, 6.3); c.stroke(); c.restore(); }
+    if (G.hover && G.phase !== 'report' && G.phase !== 'final') { c.save(); c.strokeStyle = G.tool ? '#58A6FF' : 'rgba(255,255,255,0.4)'; c.lineWidth = 2; c.strokeRect(G.hover.x * T + 1, G.hover.y * T + 1, T - 2, T - 2); c.restore(); }
+  }
+  function tickDrops(dt) {
+    if (reduceMotion || G.phase !== 'rain') { G.drops.length = 0; return; }
+    for (const d of G.drops) { d.y += d.v * dt; d.x -= d.v * 0.28 * dt; }
+    G.drops = G.drops.filter(d => d.y < d.y1 && d.x > -10);
+    let budget = 26; while (budget-- > 0 && G.drops.length < 520) { const x = Math.random() * M.W, y = Math.random() * M.H; const r = M.rainAt(G.wx, Math.floor(x), Math.floor(y), G.p); if (Math.random() * 60 < r) G.drops.push({ x: x * T, y: y * T - 20, y1: y * T + T * 0.8, v: 520 + Math.random() * 180 }); }
+  }
+
+  // ── 조작
+  function tileAt(e) { const r = cv.getBoundingClientRect(); const x = Math.floor(((e.clientX - r.left) / r.width) * M.W), y = Math.floor(((e.clientY - r.top) / r.height) * M.H); return x >= 0 && y >= 0 && x < M.W && y < M.H ? { x, y } : null; }
+  cv.addEventListener('pointermove', e => { G.hover = tileAt(e); });
+  cv.addEventListener('pointerleave', () => { G.hover = null; });
+  cv.addEventListener('click', e => { const t = tileAt(e); if (t) act(t.x, t.y); });
+  function act(x, y) {
+    if (G.phase === 'report' || G.phase === 'final') return; const w = G.w; const i = M.id(x, y); const house = w.houses.some(h => h.i === i); const b = w.build[i];
+    if (!G.tool) { tip(`(${x + 1}, ${y + 1}) 높이 ${w.h[i].toFixed(1)}m${w.river[i] >= 0 ? ` · 강 수위 ${w.L[w.river[i]].toFixed(2)}m` : ` · 물 ${Math.round(w.d[i] * 100)}cm`}${house ? ' · 집' : ''}${b ? ' · ' + NAMES[b] : ''}${G.phase === 'plan' ? ` · 오늘 예보 ${Math.round(G.F[i])}mm` : ''}`); return; }
+    if (G.tool === 'remove') { if (!b) return tip('여기에는 철거할 시설이 없습니다.'); const back = Math.floor(M.COST[b] / 2); w.build[i] = null; w.coins += back; tip(`${NAMES[b]}를 철거하고 ${back}코인을 돌려받았습니다.`); renderStats(); return; }
+    if (w.river[i] >= 0) return tip('강 위에는 지을 수 없습니다.');
+    if (b) return tip(`이미 ${NAMES[b]}가 있습니다. 철거하려면 「철거」를 고르세요.`);
+    if (house && G.tool !== 'levee') return tip('집이 있는 칸에는 제방만 쌓을 수 있습니다.');
+    const cost = M.COST[G.tool]; if (w.coins < cost) return tip(`코인이 모자랍니다. ${NAMES[G.tool]}는 ${cost}코인입니다.`);
+    w.build[i] = G.tool; w.coins -= cost; renderStats();
+    tip(G.tool === 'levee' ? (edgeRiver(x, y) ? '제방을 쌓았습니다. 강 쪽 둑이 0.9m 높아집니다. 이웃 칸도 이어서 쌓아야 물이 돌아 들어오지 않습니다.' : '제방을 쌓았습니다. 다만 강과 맞닿지 않은 칸이라 강물을 막지는 못합니다.') : G.tool === 'pump' ? '펌프를 놓았습니다. 둘레 9칸의 물을 가장 가까운 강으로 퍼냅니다.' : '우량계를 놓았습니다. 이 칸에 내린 비를 재고, 비 보험 판정에 쓰입니다.');
+  }
+  const edgeRiver = (x, y) => [[1, 0], [-1, 0], [0, 1], [0, -1]].some(([dx, dy]) => { const X = x + dx, Y = y + dy; return X >= 0 && Y >= 0 && X < M.W && Y < M.H && G.w.river[M.id(X, Y)] >= 0; });
+  document.querySelectorAll('.tool').forEach(b => b.addEventListener('click', () => { const t = b.dataset.t; G.tool = G.tool === t ? null : t; renderTools(); tip(G.tool ? (G.tool === 'remove' ? '철거할 시설을 누르세요. 값의 절반을 돌려받습니다.' : `지도에서 ${NAMES[G.tool]}를 지을 칸을 누르세요.`) : '칸을 누르면 높이·물·예보를 보여 줍니다.'); }));
+  $('#insw').addEventListener('click', () => { if (G.phase !== 'plan') return; if (!G.insured && G.w.coins < M.INS.premium) return tip('보험료 20코인이 모자랍니다.'); G.insured = !G.insured; renderIns(); });
+  $('#go').addEventListener('click', () => { if (G.phase === 'plan') startDay(); else if (G.phase === 'report') nextDay(); else if (G.phase === 'final') newGame(); });
+  $('#speed').addEventListener('click', () => { G.speed = G.speed === 1 ? 3 : 1; $('#speed').textContent = G.speed === 1 ? '빨리 ×3' : '보통 속도'; });
+
+  // ── 하루 진행
+  function startDay() {
+    if (G.insured) G.w.coins -= M.INS.premium;
+    G.phase = 'rain'; G.wx = M.realize(G.day, G.seed); G.acc = { rain: new Float32Array(M.N), pumped: 0, out: 0, spill: 0, lost: [] }; G.p = 0; G.stepCarry = 0; G.lostSeen = 0; G.peak = 0; G.speed = 1;
+    $('#speed').hidden = false; $('#speed').textContent = '빨리 ×3'; renderAll(); toast(`${G.day + 1}일째 비가 시작됩니다`);
+  }
+  function stepDay(dtSec, now) {
+    G.stepCarry += (dtSec * STEPS / DAY_SEC) * G.speed; const dtH = 24 / STEPS;
+    while (G.stepCarry >= 1 && G.p < 1) {
+      G.stepCarry -= 1; M.step(G.w, G.wx, G.p + 0.5 / STEPS, dtH, G.acc); G.p = Math.min(1, G.p + 1 / STEPS);
+      for (const L of G.w.L) G.peak = Math.max(G.peak, L);
+      while (G.lostSeen < G.acc.lost.length) { const hs = G.acc.lost[G.lostSeen++]; G.pulses.push({ x: hs.x, y: hs.y, at: now }); toast(`집 한 채가 물에 잠겼습니다 (${hs.x + 1}, ${hs.y + 1})`); renderStats(); }
+    }
+    if (G.p >= 1) endDay();
+  }
+  function endDay() {
+    const w = G.w; const st = M.settle(w, G.acc, G.day, G.insured, G.F); let insTxt = '';
+    if (G.insured) {
+      const pct = st.ratio == null ? null : Math.round(st.ratio * 100);
+      if (st.ins === 'hold') { w.coins += M.INS.premium; insTxt = `<li>비 보험: <b class="warnc">판정 보류</b> — 우량계가 없어 잴 수 없었습니다. 보험료 20코인 환급.</li>`; }
+      else if (st.ins === 'paid') { w.coins += M.INS.payout; insTxt = `<li>비 보험: <b class="good">지급 +${M.INS.payout}</b> — 우량계 ${st.gauges.length}곳이 예보의 ${pct}%를 쟀습니다(기준 110%).</li>`; }
+      else { const townPct = Math.round((st.town / Math.max(1, st.ftown)) * 100); insTxt = `<li>비 보험: <b class="badc">지급 없음</b> — 우량계는 예보의 ${pct}%(기준 110%).${townPct >= 110 ? ` 마을 전체로는 예보의 ${townPct}%가 왔는데, 우량계 자리는 비구름을 비껴갔습니다. 측정 지점이 정산을 바꿉니다.` : ''}</li>`; }
+    }
+    w.coins += st.income;
+    const lost = G.acc.lost.length;
+    G.reports[G.day] = { intact: st.intact, lost, town: st.town };
+    for (let i = 0; i < M.N; i++) w.d[i] *= 0.45; for (let k = 0; k < w.L.length; k++) w.L[k] = Math.min(w.L[k], 0.35 + (w.L[k] - 0.35) * 0.4);
+    const last = G.day >= M.DAYS.length - 1;
+    G.phase = last ? 'final' : 'report'; $('#speed').hidden = true;
+    const rep = $('#report');
+    const dayHtml = `<div class="lbl">${G.day + 1}일째 · ${M.DAYS[G.day].name} — 끝</div>` +
+      `<div class="big">${lost ? `<span class="badc">집 ${lost}채 침수</span>` : '<span class="good">침수 0</span>'}</div>` +
+      `<ul><li>마을 평균 강수 ${Math.round(st.town)}mm (예보 ${Math.round(st.ftown)}mm) · 강 최고 수위 ${G.peak.toFixed(2)}m${G.peak > M.BANK ? ' <b class="badc">범람</b>' : ''}</li>${insTxt}` +
+      `<li>수입 +${st.income}코인 (집 ${st.intact}채 × 5)</li><li>밤사이 고인 물이 절반쯤 빠지고 강이 내려갑니다.</li></ul>`;
+    if (!last) rep.innerHTML = dayHtml;
+    else {
+      const n = st.intact; const stars = n >= 18 ? 3 : n >= 15 ? 2 : n >= 12 ? 1 : 0;
+      const prev = best.stars || 0; if (stars > prev || (stars === prev && n > (best.intact || 0))) { best = { stars, intact: n }; save(); }
+      rep.innerHTML = dayHtml + `<div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--line)"><div class="stars" aria-label="별 ${stars}개">${[0, 1, 2].map(k => (k < stars ? '<b>★</b>' : '☆')).join('')}</div>` +
+        `<h2 style="margin-top:6px">장마가 끝났습니다 — 집 ${n}/20채를 지켰습니다</h2><p>★★★ 18채 이상 · ★★ 15채 · ★ 12채. 최고 기록 ${'★'.repeat(best.stars || 0) || '—'} (${best.intact || 0}채).</p>` +
+        `<div class="actions"><button class="btn sm" id="share" type="button">결과 복사</button></div></div>`;
+      $('#share').addEventListener('click', async () => { const text = `장마 디펜스 ${'★'.repeat(stars)}${'☆'.repeat(3 - stars)} — 닷새 장마에서 집 ${n}/20채를 지켰습니다`; try { await navigator.clipboard.writeText(text); toast('결과를 복사했습니다'); } catch (e) { toast(text); } });
+    }
+    rep.classList.add('on'); try { rep.scrollIntoView({ block: 'nearest', behavior: reduceMotion ? 'auto' : 'smooth' }); } catch (e) { /* 무시 */ }
+    renderAll();
+  }
+  function nextDay() { G.day++; G.phase = 'plan'; G.insured = false; G.acc = null; G.F = M.forecastTotals(G.day); $('#report').classList.remove('on'); renderAll(); }
+
+  // ── 패널
+  let toastT = 0;
+  function toast(m) { const t = $('#toast'); t.textContent = m; t.classList.add('on'); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('on'), 1800); }
+  function tip(m) { $('#tip').textContent = m; }
+  function renderStats() { const w = G.w; $('#coins').textContent = w.coins; $('#houses').textContent = `${w.houses.filter(h => h.ok).length}/20`; $('#dayv').textContent = `${Math.min(G.day + 1, 5)}/5`; }
+  function renderTools() { document.querySelectorAll('.tool').forEach(b => { b.setAttribute('aria-pressed', G.tool === b.dataset.t ? 'true' : 'false'); b.disabled = G.phase === 'report' || G.phase === 'final'; }); }
+  function renderIns() { const s = $('#insw'); s.setAttribute('aria-checked', G.insured ? 'true' : 'false'); s.disabled = G.phase !== 'plan'; }
+  function renderDays() {
+    const el = $('#days'); el.innerHTML = '';
+    M.DAYS.forEach((d, k) => { const r = G.reports[k]; const e = document.createElement('div'); e.className = 'dchip' + (k === G.day && G.phase !== 'final' ? ' now' : '') + (r ? ' done' : ''); e.innerHTML = `${k + 1}일<b>${r ? (r.lost ? `−${r.lost}채` : '무사') : d.name.length > 5 ? d.name.slice(0, 5) : d.name}</b>`; el.appendChild(e); });
+  }
+  function renderForecast() {
+    const D = M.DAYS[Math.min(G.day, 4)]; const F = G.F; let town = 0; for (const h of G.w.houses) town += F[h.i]; town /= G.w.houses.length; let fmax = 0; for (let i = 0; i < M.N; i++) fmax = Math.max(fmax, F[i]);
+    const peak = Math.max(D.front.rate, ...D.cells.map(c => c.rate + D.front.rate * 0.5));
+    $('#fname').textContent = `${Math.min(G.day + 1, 5)}일째 · ${D.name}`; $('#fnote').textContent = D.note;
+    $('#fc').innerHTML = `<dt>마을 평균</dt><dd>약 ${Math.round(town)}mm</dd><dt>가장 많은 곳</dt><dd>약 ${Math.round(fmax)}mm</dd><dt>시간당 최대</dt><dd>약 ${Math.round(peak)}mm/h · 비구름 ${D.cells.length}개</dd><dt>불확실성</dt><dd>비구름 길 ±2칸 · 세기 ±20%</dd>`;
+    const rain = G.phase === 'rain'; $('#scale').innerHTML = RADAR.map(([, c]) => `<span style="background:rgb(${c.join(',')})"></span>`).join('');
+    $('#scalelbl').innerHTML = (rain ? RADAR.map(([v]) => v) : DAILY).map(v => `<span>${v}</span>`).join('') + `<span>${rain ? 'mm/h' : 'mm/일'}</span>`;
+  }
+  function renderGo() {
+    const b = $('#go'); b.textContent = G.phase === 'plan' ? `▶ ${G.day + 1}일째 비 시작` : G.phase === 'rain' ? '비가 내리는 중…' : G.phase === 'report' ? `다음 날 준비 →` : '새 장마 시작'; b.disabled = G.phase === 'rain';
+  }
+  function renderAll() { renderStats(); renderTools(); renderIns(); renderDays(); renderForecast(); renderGo(); tip(G.phase === 'plan' ? '색칠은 오늘 예보 강수량, 흰 점선은 비구름이 지나갈 길입니다. 시설을 고르고 칸을 누르세요.' : G.phase === 'rain' ? '비가 오는 동안에도 지을 수 있습니다.' : ''); }
+  function hud() {
+    const w = G.w; const hr = Math.floor(G.p * 24); const Lmax = Math.max(...w.L);
+    $('#clock').textContent = G.phase === 'rain' ? `${G.day + 1}일째 ${String(hr).padStart(2, '0')}:00` : G.phase === 'plan' ? `${G.day + 1}일째 · 준비` : `${G.day + 1}일째 · 밤`;
+    $('#rbar').style.width = `${clamp(Lmax / 2, 0, 1) * 100}%`; $('#rbar').style.background = Lmax > M.BANK ? '#F0645A' : Lmax > M.BANK * 0.8 ? '#F2B33D' : '#58A6FF';
+    $('#rline').style.left = `${(M.BANK / 2) * 100}%`; $('#rtxt').textContent = `${Lmax.toFixed(2)}m`;
+  }
+
+  // ── 루프
+  let last = performance.now();
+  function frame(now) {
+    const dt = Math.min(0.1, (now - last) / 1000); last = now;
+    if (G.phase === 'rain') stepDay(dt, now);
+    tickDrops(dt); draw(now); hud();
+    requestAnimationFrame(frame);
+  }
+  try { new ResizeObserver(() => resize()).observe($('#map')); } catch (e) { window.addEventListener('resize', resize); }
+  if (matchMedia('(min-width: 940px)').matches) $('#howto').open = true;
+  newGame(); resize(); requestAnimationFrame(frame);
+  window.__md = { get G() { return G; }, M, act: (x, y) => act(x, y), tool: t => { G.tool = t; renderTools(); }, speed: v => { G.speed = v; }, start: () => startDay(), next: () => nextDay() };
+})();
+
+</script>
+</body>
+</html>
