@@ -3608,3 +3608,36 @@ Eri, quick note: we've taken down the file that was up here earlier. It was writ
 
 삭제·발송 없음(위 ❌ 철회).
 
+
+
+## Steve Quirk (Robinhood · Chief Brokerage Officer) — 1촌 인사 시점 판정 (9/26, 서우 「크립토닷컴 체결하면 인사할까 아님 지금할까」)
+
+1촌 수락 완료. 브로커·거래소 소속이라 **거래소 게이트가 그대로 걸린다**(인사만 · 사업 메시지 0 · 9/30 까지 거래소 신호 0).
+
+**판정: 지금은 보내지 않는다. 크립토닷컴 체결 뒤, 정확히는 계약서의 재배포·독점 조항을 확인한 뒤 보낸다.**
+- Robinhood 는 리테일 이벤트 컨트랙트 물량을 OG.com(크립토닷컴 스핀오프 예측시장)의 CFTC 규제 거래소·청산 구조로 보내고,
+  크립토닷컴·OG.com 에 초기 지분이 있다(공개 사실 9/8 — `content/cryptocom-call-0911.md` 「9/21 — Vincent 의 공개 글」).
+  크립토닷컴 건은 바로 그 예측시장의 **정산용 데이터**이고, 그쪽은 「같은 데이터를 남에게도 파느냐」를 물었다.
+- 체결 전(MNDA 9/23 → 미국 팀 검토 중)에 그 하류 파트너의 임원과 대화를 열면, 인사 한 줄이라도 드러나는 순간
+  **「우회」로 읽힌다** — 가장 민감한 때에 가장 불필요한 질문을 부른다.
+- Robinhood 는 크립토닷컴 쪽 문서에서 「호명 0 · 내부 인지까지만」으로 다뤄 왔다(`cryptocom-call-0911.md`,
+  `linkedin-0921-xrpseoul-press.md`). 체결 전에 우리가 먼저 그 선을 넘을 이유가 없다.
+- **기다리는 비용은 거의 없다.** 1촌 수락은 만료되지 않고, Lynn 형식은 「방금 수락」 답장이 아니라 소개문이라 몇 주 뒤에도 그대로 읽힌다.
+- 체결이 10월 중순을 넘기면 다시 판정한다(인사 자체는 무해하고, 문제는 시점뿐이다).
+
+**그 사이** — 메시지 0 · 댓글 0. 10/3 XRP SEOUL 2026 에 Robinhood · Bitstamp 연사가 온다(3차 발표). 현장에서 마주치면
+인사는 한다 — 명함까지, 사업 이야기 0, 우리 스폰서십 언급 0. Robinhood · Bitstamp 는 한 계열이라 **동시 대화 2개 상한에 같이 센다.**
+
+**체결 뒤 보낼 판 — Lynn 기본값 그대로(560자), 선택 줄 없음(거래소 자리)**
+```
+Steve — thanks for connecting.
+
+I run partnerships at wellbian. KWeather has measured weather in South Korea for thirty years and supplies data to 4,000+ enterprise clients; wellbian is the network built on top of that.
+
+We work on two layers: certified air-quality sensors that people run in their own rooms, and city-level weather across 90 countries and 167 cities, where each value is a consensus across eleven independent sources rather than a single reading. Every input is fingerprinted to a public ledger before it goes anywhere.
+
+Good to be connected.
+```
+
+금지선 재확인 — 크립토닷컴 · OG.com · 예측시장 · 정산 · 계약 사실 0(MNDA), 다른 거래소·플랫폼 0, XRP SEOUL 스폰서 0,
+Flare 진전 0, 토큰 · 상장 · WLBN 0. 체결 뒤에도 크립토닷컴 이름은 그에게 쓰지 않는다. 발송 여부는 서우가 알려줄 때 갱신.
