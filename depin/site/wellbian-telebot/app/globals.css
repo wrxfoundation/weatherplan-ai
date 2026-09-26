@@ -214,6 +214,8 @@ summary { cursor: pointer; }
   .top-in { position: relative; }
   .top-in::after { content: ""; position: absolute; right: -13px; top: 0; bottom: 0; width: 34px; pointer-events: none;
     background: linear-gradient(to right, rgba(255,255,255,0), #fff 70%); }
+  /* 안개가 오른쪽으로 13px 삐져나가 휴대폰에서 화면 전체가 옆으로 밀렸다(9/26 확인) — 헤더 밖은 자른다 */
+  .top { overflow-x: clip; }
   .brand-sub { display: none; }
   .flab { width: auto; min-width: 34px; }
 
@@ -587,6 +589,8 @@ kbd { font: 600 11px/1.4 var(--mono, ui-monospace, monospace); color: var(--ink-
 .tf-details .rep-table { margin-top: 8px; }
 .tf-src { display: inline-flex; align-items: center; gap: 7px; }
 .tf-two { display: grid; grid-template-columns: 1fr 1fr; gap: 0 16px; }
+/* 격자 칸은 기본 min-width:auto 라 안의 표(휴대폰 460px)만큼 늘어나 화면 밖으로 밀린다 — 칸을 줄이고 표가 가로로 넘기게 */
+.tf-two > * { min-width: 0; }
 .tf-note { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 12px 16px;
   font-size: 12.5px; line-height: 1.75; color: var(--ink-3); margin-top: 22px; }
 .tf-note b { color: var(--ink-1); }
@@ -605,6 +609,83 @@ kbd { font: 600 11px/1.4 var(--mono, ui-monospace, monospace); color: var(--ink-
   .tf-share .m-hide { display: none; }
   .tf-two { grid-template-columns: 1fr; }
   .tf-tip { min-width: 130px; font-size: 11.5px; }
+}
+
+/* ── 세션 소스 × 날짜 (9/26 서우 — "일자별 세션 소스 별로 보고싶은데") ───────────────
+   칸 색은 남색 한 가지의 다섯 단계(1–2 · 3–9 · 10–29 · 30–99 · 100+). 넷째 단계까지 진한 글씨, 다섯째만 흰 글씨 —
+   어느 단계든 글자 대비 4.5 이상. 소스 이름·합계 두 열은 가로 스크롤해도 제자리에 있다. 주말은 빈 칸만 옅게 깐다. */
+.sd .sd-h1 { background-color: #eeeefb; }
+.sd .sd-h2 { background-color: #dfdff7; }
+.sd .sd-h3 { background-color: #c4c4ef; }
+.sd .sd-h4 { background-color: #9d9de3; }
+.sd .sd-h5 { background-color: #4d4dce; color: #fff; }
+.sd-bar { display: flex; flex-wrap: wrap; gap: 8px 10px; align-items: center; }
+.sd-q { flex: 1 1 200px; max-width: 300px; min-width: 0; padding: 6px 11px; font-size: 13px; color: var(--ink-1);
+  border: 1px solid var(--bd-input); border-radius: 9px; background: #fff; }
+.sd-q:focus { outline: 2px solid var(--w-tint); border-color: var(--w-main); }
+.sd-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.sd-chips .chip { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; }
+.sd-chips .chip.on .tf-sw { box-shadow: 0 0 0 1.5px #fff; }
+.sd-pick { margin: 10px 0 8px; font-size: 12.5px; color: var(--hint); line-height: 1.55; min-height: 20px; }
+.sd-pick b { color: var(--ink-1); font-weight: 700; }
+.sd-pick button { color: var(--cap); padding: 0 4px; font-size: 12px; }
+.sd-scroll { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; background: #fff; }
+.sd-t { border-collapse: separate; border-spacing: 0; font-size: 12px; width: max-content; min-width: 100%; }
+.sd-cap { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.sd-t th, .sd-t td { padding: 0; height: 30px; border-bottom: 1px solid var(--line-2); }
+.sd-t thead th { background: var(--chip); color: var(--cap); font-size: 11px; font-weight: 700; border-bottom: 1px solid var(--line); }
+.sd-t tfoot th, .sd-t tfoot td { background: var(--panel); color: var(--ink-2); border-top: 1px solid var(--line); border-bottom: 0; }
+.sd-t .sd-s { position: sticky; left: 0; z-index: 2; width: 172px; min-width: 172px; max-width: 172px;
+  padding: 3px 10px; text-align: left; background: #fff; }
+.sd-t .sd-n { position: sticky; left: 172px; z-index: 2; min-width: 58px; padding: 0 10px 0 4px; text-align: right;
+  background: #fff; border-right: 1px solid var(--line); color: var(--ink-1); }
+.sd-t thead .sd-s, .sd-t thead .sd-n { background: var(--chip); }
+.sd-t tfoot .sd-s, .sd-t tfoot .sd-n { background: var(--panel); font-weight: 800; }
+.sd-t thead .sd-s { color: var(--cap); }
+.sd-t thead .sd-n button { font: inherit; color: inherit; width: 100%; text-align: right; }
+.sd-src { display: flex; align-items: center; gap: 6px; min-width: 0; font-size: 12.5px; font-weight: 700; color: var(--ink-1); }
+.sd-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sd-med { display: block; padding-left: 16px; font-size: 10.5px; font-weight: 500; color: var(--hint);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sd-t thead .sd-med, .sd-t tfoot .sd-med { display: inline; padding-left: 4px; }
+.sd-d button { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px;
+  width: 100%; min-width: 42px; height: 100%; padding: 4px 3px; font: inherit; color: inherit; }
+.sd-d button:hover { color: var(--w-main); }
+.sd-d small { font-size: 10px; font-weight: 600; color: var(--hint); }
+.sd-d[aria-sort="descending"] button { color: var(--w-deep); }
+.sd-d[aria-sort="descending"] small::after { content: " ▼"; }
+.sd-d.sd-off { color: var(--hint); }
+.sd-d.sd-now small { color: var(--attn-text); }
+.sd-t td[data-c] { min-width: 42px; text-align: center; font-family: var(--mono); font-weight: 700;
+  font-variant-numeric: tabular-nums; color: var(--ink-2); }
+.sd-t td.sd-h5[data-c] { color: #fff; }
+.sd-t tbody td[data-c]:not(.sd-h0) { cursor: pointer; }
+.sd-t td.sd-h0::after { content: "·"; color: var(--bd-input); }
+.sd-t tfoot td.sd-h0::after, .sd-t tfoot td:empty::after { content: ""; }
+.sd-t td.sd-h0.sd-off { background-color: #f9f9fc; }
+.sd-t td.sd-now, .sd-t th.sd-now { border-left: 1px dashed var(--attn-bd); }
+.sd-t td.sd-on { outline: 2px solid var(--w-deep); outline-offset: -2px; }
+.sd-t tbody tr:hover > * { box-shadow: inset 0 0 0 99px rgba(77,77,206,.05); }
+.sd-t button:focus-visible, .sd-chips .chip:focus-visible, .sd-bar .chip:focus-visible, .sd-foot .btn:focus-visible {
+  outline: 2px solid var(--w-main); outline-offset: 1px; }
+.sd-foot { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; margin-top: 10px; }
+.sd-key { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; margin-left: auto;
+  font-size: 11.5px; color: var(--cap); }
+.sd-key span { display: inline-flex; align-items: center; gap: 4px; }
+.sd-key i { display: inline-block; width: 14px; height: 10px; border-radius: 2px; }
+@media (max-width: 720px) {
+  .sd-t .sd-s { width: 118px; min-width: 118px; max-width: 118px; padding: 3px 7px; }
+  .sd-t .sd-n { left: 118px; min-width: 48px; padding: 0 7px 0 3px; }
+  .sd-src { font-size: 12px; gap: 5px; }
+  .sd-med { padding-left: 15px; }
+  .sd-t thead .sd-med { display: none; }
+  .sd-q { max-width: none; flex-basis: 100%; }
+  .sd-key { margin-left: 0; }
+  /* 채널 칩은 한 줄로 밀어 본다 — 다섯 줄로 쌓이면 표가 화면 아래로 밀려난다(상단 메뉴와 같은 방식) */
+  .sd-chips { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+  .sd-chips::-webkit-scrollbar { display: none; }
+  .sd-chips .chip { flex: none; white-space: nowrap; }
+  .sd-d button, .sd-t td[data-c] { min-width: 38px; }
 }
 
 /* ── 인맥 수첩 (9/11, 2차 — 카드 그리드에서 명부로) ────────────────────

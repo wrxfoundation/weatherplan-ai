@@ -6,6 +6,7 @@
 
 import type { GaRow } from "./ga";
 import type { Raw } from "./traffic";
+import type { SrcRaw } from "./source-daily";
 
 const SOURCES: [string, string, number][] = [
   ["(direct)", "(none)", 0.44],
@@ -71,4 +72,67 @@ export const fixture = (sinceIso: string, today: string) => {
     row({ pagePath: "/membership", screenPageViews: 16, activeUsers: 13 }),
   ];
   return { raw, totals, byContent, byCampaign, byPage, realtime: 7 };
+};
+
+/* 「세션 소스 × 날짜」 표용 (9/26). 소스 이름은 실제로 보인 모양을 흉내 냈다 — X 네 갈래(x · x_out · t.co · xpurchase),
+   KOL 핸들과 대문자 프로모 코드(9/15~), 결제창 복귀, 구글 로그인 복귀, 개발 PC, 링크 틀 자리표시 문구가 그대로 배포된 것.
+   숫자는 가짜다. 주요 이벤트·수익은 0 — 지금 GA 가 실제로 그렇다(구매가 주요 이벤트로 표시되지 않음). */
+const SRC: { source: string; medium: string; campaign: string; w: number; from?: string; to?: string }[] = [
+  { source: "(direct)", medium: "(none)", campaign: "(direct)", w: 0.46 },
+  { source: "(not set)", medium: "(not set)", campaign: "(not set)", w: 0.1 },
+  { source: "accounts.google.com", medium: "referral", campaign: "(referral)", w: 0.07, from: "20260907" },
+  { source: "kol3", medium: "(not set)", campaign: "(not set)", w: 0.05, from: "20260910" },
+  { source: "xrpkorea", medium: "kol", campaign: "prereg0907", w: 0.04, from: "20260907" },
+  { source: "linktree", medium: "owned", campaign: "prereg0907", w: 0.03, from: "20260907" },
+  { source: "telegram", medium: "owned", campaign: "prereg0907", w: 0.025, from: "20260907" },
+  { source: "gpa", medium: "(not set)", campaign: "(not set)", w: 0.05, from: "20260916", to: "20260919" },
+  { source: "x", medium: "owned", campaign: "prereg0907", w: 0.012, from: "20260907" },
+  { source: "x_out", medium: "owned", campaign: "prereg0907", w: 0.01, from: "20260908" },
+  { source: "t.co", medium: "referral", campaign: "(referral)", w: 0.006 },
+  { source: "xpurchase", medium: "owned", campaign: "prereg0907", w: 0.005, from: "20260915" },
+  { source: "sw", medium: "(not set)", campaign: "(not set)", w: 0.012, from: "20260913" },
+  { source: "psw", medium: "(not set)", campaign: "(not set)", w: 0.012, from: "20260913" },
+  { source: "PIXIE-F811", medium: "(not set)", campaign: "(not set)", w: 0.02, from: "20260915" },
+  { source: "BINYL-1B33", medium: "(not set)", campaign: "(not set)", w: 0.012, from: "20260915" },
+  { source: "HONEYBAG-9086", medium: "(not set)", campaign: "(not set)", w: 0.008, from: "20260915" },
+  { source: "KOSO-3BEA", medium: "(not set)", campaign: "(not set)", w: 0.006, from: "20260916" },
+  { source: "pixie", medium: "(not set)", campaign: "(not set)", w: 0.01, from: "20260918" },
+  { source: "koso", medium: "(not set)", campaign: "(not set)", w: 0.008, from: "20260918" },
+  { source: "payment-gateway.tosspayments.com", medium: "referral", campaign: "(referral)", w: 0.012, from: "20260915" },
+  { source: "kakao", medium: "owned", campaign: "(not set)", w: 0.008, from: "20260909" },
+  { source: "google", medium: "organic", campaign: "(organic)", w: 0.012 },
+  { source: "naver", medium: "organic", campaign: "(organic)", w: 0.006 },
+  { source: "kweather", medium: "(not set)", campaign: "(not set)", w: 0.005, from: "20260907" },
+  { source: "localhost:3000", medium: "referral", campaign: "(referral)", w: 0.004, from: "20260905", to: "20260912" },
+  { source: "채널명지정가능(예:XRPKOREA)", medium: "(not set)", campaign: "(not set)", w: 0.004, from: "20260908", to: "20260912" },
+];
+
+export const fixtureSourceDaily = (sinceIso: string, today: string): SrcRaw[] => {
+  let seed = 11;
+  const rnd = () => { seed = (seed * 1103515245 + 12345) & 0x7fffffff; return seed / 0x7fffffff; };
+  const out: SrcRaw[] = [];
+  let i = 0;
+  /* 8/20 전에는 방문이 없었던 것으로 — 표가 첫 유입일부터 열을 자르는지 보인다 */
+  for (let k = sinceIso.replace(/-/g, ""); k <= today; k = addDays(k, 1)) {
+    if (k < "20260820") continue;
+    const pre = k < "20260907";
+    const dow = new Date(Date.UTC(+k.slice(0, 4), +k.slice(4, 6) - 1, +k.slice(6, 8))).getUTCDay();
+    const base = pre ? 3 + rnd() * 4 : Math.round((i === 0 ? 190 : 150 + 70 * Math.exp(-i / 5)) * (dow === 0 || dow === 6 ? 0.85 : 1) + rnd() * 30);
+    if (!pre) i++;
+    for (const s of SRC) {
+      if ((s.from && k < s.from) || (s.to && k > s.to)) continue;
+      if (pre && s.source !== "(direct)" && s.source !== "(not set)" && s.source !== "localhost:3000") continue;
+      const sessions = Math.round(base * s.w * (0.5 + rnd()));
+      if (!sessions) continue;
+      const engaged = Math.round(sessions * (0.35 + rnd() * 0.45));
+      const users = Math.max(1, Math.round(sessions * (0.7 + rnd() * 0.25)));
+      out.push({
+        date: k, source: s.source, medium: s.medium, campaign: s.campaign,
+        sessions, engaged, users, newUsers: Math.round(users * 0.75),
+        events: Math.round(sessions * (4 + rnd() * 4)), engageSec: Math.round(sessions * (30 + rnd() * 90)),
+        keyEvents: 0, revenue: 0,
+      });
+    }
+  }
+  return out;
 };

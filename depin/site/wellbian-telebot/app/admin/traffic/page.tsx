@@ -11,7 +11,7 @@ import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 import { isAuthed } from "@/lib/auth";
 import Nav from "../Nav";
-import { gaTraffic, gaReady, gaMissing, trafficPublic } from "@/lib/ga";
+import { gaTraffic, gaSourceDaily, gaReady, gaMissing, trafficPublic } from "@/lib/ga";
 import TrafficView from "../../traffic/TrafficView";
 
 export const dynamic = "force-dynamic";
@@ -23,7 +23,7 @@ export default async function Traffic({
   if (!(await isAuthed(sp.k))) redirect("/");
   const k = (await isAuthed()) ? "" : (sp.k ?? "");
 
-  const snap = await gaTraffic();
+  const [snap, sd] = await Promise.all([gaTraffic(), gaSourceDaily()]);
   const host = (await headers()).get("host") ?? "";
   const pub = host ? `${host.startsWith("localhost") ? "http" : "https"}://${host}/traffic` : "/traffic";
 
@@ -57,7 +57,7 @@ export default async function Traffic({
             ) : (
               <div className="tf-pub">공개 주소(/traffic)는 <span className="mono">TRAFFIC_PUBLIC=off</span> 로 닫혀 있습니다.</div>
             )}
-            <TrafficView snap={snap} variant="admin" />
+            <TrafficView snap={snap} sd={sd} variant="admin" />
           </>
         )}
       </main>

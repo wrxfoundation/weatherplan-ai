@@ -10,6 +10,7 @@ import {
   channelOf, weekStart, monthKey, build, niceMax, kstToday, dayLong, weekLong, monthLong,
 } from "../lib/traffic.ts";
 import { trafficCsv, trafficCsv16, trafficXlsx, csvLines } from "../lib/traffic-csv.ts";
+import { pivotSources, rollWeeks, rawRows, pivotRows, RAW_HEAD } from "../lib/source-daily.ts";
 
 let fail = 0;
 const eq = (name: string, got: unknown, want: unknown) => {
@@ -38,6 +39,19 @@ eq("tag assistant", channelOf("tagassistant.google.com", "referral"), "direct");
 eq("not set", channelOf("(not set)", "(not set)"), "unset");
 eq("unknown site", channelOf("example.org", "referral"), "other");
 eq("case/space", channelOf(" Telegram ", "OWNED"), "telegram");
+/* 9/26 — 링크 규약(utm_source=핸들, 매체 없음)과 프로모 코드 소스가 기타 리퍼럴로 새던 것 */
+eq("KOL 핸들(매체 없음)", channelOf("pixie", "(not set)"), "kol");
+eq("KOL 핸들 대문자", channelOf("KOSO", "(not set)"), "kol");
+eq("프로모 코드 소스", channelOf("PIXIE-F811", "(not set)"), "kol");
+eq("프로모 코드 소스 2", channelOf("HONEYBAG-9086", "(not set)"), "kol");
+eq("kol 번호 코드(매체 없음)", channelOf("kol3", "(not set)"), "kol");
+eq("하이픈 도메인은 프로모 아님", channelOf("my-site.co.kr", "referral"), "other");
+eq("결제창 복귀", channelOf("payment-gateway.tosspayments.com", "referral"), "direct");
+eq("구글 로그인 복귀(.co.kr)", channelOf("accounts.google.co.kr", "referral"), "direct");
+eq("개발 PC 포트", channelOf("localhost:3000", "referral"), "direct");
+eq("data not available", channelOf("(data not available)", "(data not available)"), "unset");
+eq("링크 틀 자리표시는 기타", channelOf("채널명지정가능(예:XRPKOREA)", "(not set)"), "other");
+eq("모르는 코드는 기타", channelOf("gpa", "(not set)"), "other");
 
 /* 날짜 */
 eq("weekStart 화요일 → 월요일", weekStart("20260908"), "20260907");
@@ -112,7 +126,7 @@ eq("csv 일별 9/7 행", daily.csv.slice(1).split("\r\n")[1], "2026-09-07,월,16
 eq("csv 따옴표 이스케이프", csvLines([["a,b", 'say "hi"', 3]]), '"a,b","say ""hi""",3');
 eq("csv utm_content 빈 값", trafficCsv(snap, "content").csv.slice(1).split("\r\n")[2], "직접,(direct),(none),,100,70");
 const all = trafficCsv(snap, "all").csv;
-eq("csv 전체 구역 수", (all.match(/^## /gm) ?? []).length, 8);
+eq("csv 전체 구역 수", (all.match(/^## /gm) ?? []).length, 10);
 eq("csv 전체 첫 줄", all.slice(1).split("\r\n")[0], "wellbian.io 유입 · GA4");
 
 const u16 = trafficCsv16(snap, "daily");
@@ -123,7 +137,53 @@ const xl = trafficXlsx(snap);
 eq("xlsx 파일명", xl.name, "wellbian-traffic-20260915.xlsx");
 eq("xlsx ZIP 서명", [xl.data[0], xl.data[1]], [0x50, 0x4b]);
 eq("xlsx 끝 서명(중앙 디렉터리 끝)", xl.data.readUInt32LE(xl.data.length - 22), 0x06054b50);
-eq("xlsx 항목 수(시트 9 + 부속 5)", xl.data.readUInt16LE(xl.data.length - 12), 14);
+eq("xlsx 항목 수(시트 11 + 부속 5 — 원자료 없이도 자리는 있다)", xl.data.readUInt16LE(xl.data.length - 12), 16);
+
+/* 세션 소스 × 날짜 (9/26) — 8/20(목) 첫 유입 · 8/22(토) pixie 두 매체 · 8/24(월) 다음 주 */
+const R = (date: string, source: string, medium: string, sessions: number, engaged: number, campaign = "(not set)") =>
+  ({ date, source, medium, campaign, sessions, engaged, users: sessions, newUsers: 0, events: sessions * 5, engageSec: sessions * 60, keyEvents: 0, revenue: 0 });
+const sraw = [
+  R("20260805", "(direct)", "(none)", 0, 0),                  // 0 세션 — 첫 유입일 계산에서 빠진다
+  R("20260820", "(direct)", "(none)", 5, 3, "(direct)"),
+  R("20260822", "pixie", "(not set)", 2, 1),
+  R("20260822", "pixie", "kol", 3, 3, "prereg0907"),
+  R("20260824", "(direct)", "(none)", 7, 2, "(direct)"),
+  R("20260826", "x", "owned", 4, 4),                          // 오늘 뒤 — 버린다
+];
+const sp = pivotSources(sraw, "2026-08-01", "20260825");
+eq("sd 열 = 첫 유입일~오늘", sp.cols.map((c) => c.key), ["20260820", "20260821", "20260822", "20260823", "20260824", "20260825"]);
+eq("sd 주말 표시", sp.cols.map((c) => c.off), [false, false, true, true, false, false]);
+eq("sd 행 = 합계순", sp.rows.map((r) => [r.source, r.total, r.channel]), [["(direct)", 12, "direct"], ["pixie", 5, "kol"]]);
+eq("sd 칸", sp.rows.map((r) => r.cells), [[5, 0, 0, 0, 7, 0], [0, 0, 5, 0, 0, 0]]);
+eq("sd 매체 = 세션 많은 순", sp.rows[1].mediums, ["kol", "(not set)"]);
+eq("sd 열 합 · 전체", [sp.colTotals, sp.total], [[5, 0, 5, 0, 7, 0], 17]);
+const sw = rollWeeks(sp);
+eq("sd 주별 열", sw.cols.map((c) => [c.key, c.label]), [["20260817", "8/17~"], ["20260824", "8/24~"]]);
+eq("sd 주별 칸", sw.rows.map((r) => r.cells), [[5, 7], [5, 0]]);
+eq("sd 주별 열 합", [sw.colTotals, sw.total], [[10, 7], 17]);
+eq("sd 빈 입력", (() => { const e = pivotSources([], "2026-08-01", "20260825"); return [e.cols.length, e.rows.length, e.total]; })(), [1, 0, 0]);
+const rr = rawRows(sraw, true);
+eq("원자료 머리 열 수", rr[0].length, 16);
+eq("원자료 줄 수(0 세션 포함, 기간 거르기 없음)", rr.length - 1, 6);
+eq("원자료 날짜순→세션순", rr.slice(1, 5).map((r) => `${r[0]}:${r[2]}:${r[3]}`),
+  ["2026-08-05:(direct):(none)", "2026-08-20:(direct):(none)", "2026-08-22:pixie:kol", "2026-08-22:pixie:(not set)"]);
+eq("원자료 한 줄", rr[3], ["2026-08-22", "토", "pixie", "kol", "prereg0907", "KOL", 3, 3, 100, 3, 0, 15, 5, 60, 0, 0]);
+eq("원자료 0 세션 줄 비율은 빈칸", [rr[1][8], rr[1][12], rr[1][13]], ["", "", ""]);
+eq("원자료 full=false 면 주요 이벤트·수익 빈칸", rawRows(sraw, false)[3].slice(-2), ["", ""]);
+eq("원자료 머리", RAW_HEAD.slice(0, 6), ["날짜", "요일", "세션 소스", "세션 매체", "세션 캠페인", "채널"]);
+const pr = pivotRows(sp);
+eq("소스×일자 머리", pr[0], ["세션 소스", "매체", "채널", "합계", "참여율(%)", "2026-08-20", "2026-08-21", "2026-08-22", "2026-08-23", "2026-08-24", "2026-08-25"]);
+eq("소스×일자 pixie", pr[2], ["pixie", "kol · (not set)", "KOL", 5, 80, 0, 0, 5, 0, 0, 0]);
+eq("소스×일자 합계 줄", pr[3], ["합계", "", "", 17, 52.9, 5, 0, 5, 0, 7, 0]);
+
+const sd = { since: "2026-08-01", today: "20260825", fetchedAt: 0, rows: sraw, full: true };
+eq("csv 원자료 파일명", trafficCsv(snap, "raw", sd).name, "wellbian-traffic-raw-20260915.csv");
+eq("csv 원자료 첫 줄", trafficCsv(snap, "raw", sd).csv.slice(1).split("\r\n")[0].split(",").slice(0, 3), ["날짜", "요일", "세션 소스"]);
+eq("csv 소스×일자 둘째 줄", trafficCsv(snap, "srcdaily", sd).csv.slice(1).split("\r\n")[1], "(direct),(none),직접,12,41.7,5,0,0,0,7,0");
+eq("csv 전체 구역 수(원자료 포함)", (trafficCsv(snap, "all", sd).csv.match(/^## /gm) ?? []).length, 10);
+eq("csv 전체 — 원자료 못 읽으면 한 줄", trafficCsv(snap, "all", { ...sd, error: "x" }).csv.includes("GA 원자료를 읽지 못했습니다"), true);
+const xl2 = trafficXlsx(snap, sd);
+eq("xlsx 항목 수(시트 11 + 부속 5)", xl2.data.readUInt16LE(xl2.data.length - 12), 16);
 
 console.log(fail ? `\n${fail} 개 실패` : "\n모두 통과");
 process.exit(fail ? 1 : 0);

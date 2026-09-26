@@ -10,7 +10,7 @@
    닫아야 하면 Vercel 에 TRAFFIC_PUBLIC=off. */
 
 import { notFound } from "next/navigation";
-import { gaTraffic, gaReady, trafficPublic } from "@/lib/ga";
+import { gaTraffic, gaSourceDaily, gaReady, trafficPublic } from "@/lib/ga";
 import TrafficView from "./TrafficView";
 
 export const dynamic = "force-dynamic";
@@ -22,7 +22,7 @@ export const metadata = {
 
 export default async function PublicTraffic() {
   if (!trafficPublic()) notFound();
-  const snap = await gaTraffic();
+  const [snap, sd] = await Promise.all([gaTraffic(), gaSourceDaily()]);
 
   return (
     <>
@@ -38,7 +38,7 @@ export default async function PublicTraffic() {
         ) : snap.error ? (
           <div className="notice" style={{ marginTop: 18 }}>지금은 GA4 를 읽을 수 없습니다. 몇 분 뒤 다시 열어 주세요.</div>
         ) : (
-          <TrafficView snap={snap} variant="public" />
+          <TrafficView snap={snap} sd={sd} variant="public" />
         )}
       </main>
     </>

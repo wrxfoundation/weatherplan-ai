@@ -3,19 +3,26 @@
    화면의 표를 그대로 파일로 낸다. 표별로 한 파일씩, 또는 전체를 구역으로 나눈 한 파일.
    일·주·월은 채널을 열로 펼친다 — 엑셀에서 바로 피벗 없이 누적 막대를 그릴 수 있게.
    맨 앞 BOM — 없으면 엑셀이 UTF-8 을 못 알아채 한글이 깨진다(인박스 내보내기와 같은 규칙).
-   순수 계산이라 tools/traffic-check.mts 가 값을 고정해 둔다. */
+   순수 계산이라 tools/traffic-check.mts 가 값을 고정해 둔다.
+
+   (9/26 서우 — "일자별 세션 소스 별로 … rawdata 다운로드") 표 둘을 더한다 — 소스×일자(화면 표 그대로, 소스가 행 ·
+   날짜가 열)와 원자료(날짜 × 소스 × 매체 × 캠페인 한 줄씩, lib/source-daily.ts). 이 둘은 유입 스냅샷이 아니라
+   GA 원자료(gaSourceDaily)에서 나온다 — 못 읽었으면 「전체」·엑셀에는 그 사실 한 줄만 들어간다. */
 
 import { CHANNELS, CHANNEL, channelOf, dayLong, type Bucket } from "./traffic";
 import type { TrafficSnapshot } from "./ga";
+import { pivotSources, pivotRows, rawRows, type SourceDaily } from "./source-daily";
 import { xlsx, type Sheet } from "./xlsx";
 
-export type CsvTable = "daily" | "weekly" | "monthly" | "channels" | "sources" | "content" | "campaigns" | "pages" | "all";
+export type CsvTable = "daily" | "weekly" | "monthly" | "channels" | "sources" | "srcdaily" | "raw" | "content" | "campaigns" | "pages" | "all";
 export const CSV_TABLES: { key: CsvTable; label: string }[] = [
   { key: "daily", label: "일별" },
   { key: "weekly", label: "주별" },
   { key: "monthly", label: "월별" },
   { key: "channels", label: "채널" },
   { key: "sources", label: "소스/매체" },
+  { key: "srcdaily", label: "소스×일자" },
+  { key: "raw", label: "원자료" },
   { key: "content", label: "utm_content" },
   { key: "campaigns", label: "캠페인" },
   { key: "pages", label: "페이지" },
@@ -34,9 +41,16 @@ const ymd = (k: string) => `${k.slice(0, 4)}-${k.slice(4, 6)}-${k.slice(6, 8)}`;
 const CH = CHANNELS.map((c) => c.label);
 const byCh = (b: Bucket) => CHANNELS.map((c) => b.by[c.key] ?? 0);
 
-export const csvTables = (s: TrafficSnapshot): Record<Exclude<CsvTable, "all">, Row[]> => {
+/* 원자료가 필요한 표인가 — 내보내기 경로가 GA 원자료를 더 부를지 정한다 */
+export const needsRaw = (t: CsvTable, f: ExportFormat) => f === "xlsx" || t === "srcdaily" || t === "raw" || t === "all";
+
+export const csvTables = (s: TrafficSnapshot, sd?: SourceDaily): Record<Exclude<CsvTable, "all">, Row[]> => {
   const d = s.data;
+  const ok = sd && !sd.error ? sd : null;
+  const miss: Row[] = [["GA 원자료를 읽지 못했습니다 — 잠시 뒤 다시 내려받아 주세요"]];
   return {
+    srcdaily: ok ? pivotRows(pivotSources(ok.rows, ok.since, ok.today)) : miss,
+    raw: ok ? rawRows(ok.rows, ok.full) : miss,
     daily: [["날짜", "요일", "세션", ...CH], ...d.daily.map((b) => [ymd(b.key), dayLong(b.key).slice(-2, -1), b.total, ...byCh(b)])],
     weekly: [["주 시작(월)", "주", "세션", ...CH], ...d.weekly.map((b) => [ymd(b.key), b.long, b.total, ...byCh(b)])],
     monthly: [["월", "세션", ...CH], ...d.monthly.map((b) => [`${b.key.slice(0, 4)}-${b.key.slice(4, 6)}`, b.total, ...byCh(b)])],
@@ -52,8 +66,8 @@ export const csvTables = (s: TrafficSnapshot): Record<Exclude<CsvTable, "all">, 
   };
 };
 
-export const trafficCsv = (s: TrafficSnapshot, t: CsvTable): { name: string; csv: string } => {
-  const all = csvTables(s);
+export const trafficCsv = (s: TrafficSnapshot, t: CsvTable, sd?: SourceDaily): { name: string; csv: string } => {
+  const all = csvTables(s, sd);
   const name = `wellbian-traffic-${t}-${s.data.today}.csv`;
   if (t !== "all") return { name, csv: "﻿" + csvLines(all[t]) };
   /* 전체 — 구역마다 제목 행 하나, 구역 사이 빈 줄. 맨 위에 기준 시각. */
@@ -76,8 +90,8 @@ export const isExportFormat = (v: string | null): v is ExportFormat => v === "cs
 
 const tsvLines = (rows: Row[]) => rows.map((r) => r.map((v) => String(v ?? "").replace(/[\t\r\n]/g, " ")).join("\t")).join("\r\n");
 
-export const trafficCsv16 = (s: TrafficSnapshot, t: CsvTable): { name: string; data: Buffer } => {
-  const all = csvTables(s);
+export const trafficCsv16 = (s: TrafficSnapshot, t: CsvTable, sd?: SourceDaily): { name: string; data: Buffer } => {
+  const all = csvTables(s, sd);
   const text = t !== "all"
     ? tsvLines(all[t])
     : [tsvLines([["wellbian.io 유입 · GA4"], ["집계 시작", s.since], ["기준일", ymd(s.data.today)], ["지난 30분 활성 사용자", s.realtime]]),
@@ -85,12 +99,14 @@ export const trafficCsv16 = (s: TrafficSnapshot, t: CsvTable): { name: string; d
   return { name: `wellbian-traffic-${t}-${s.data.today}-unicode.csv`, data: Buffer.concat([Buffer.from([0xff, 0xfe]), Buffer.from(text, "utf16le")]) };
 };
 
-export const trafficXlsx = (s: TrafficSnapshot): { name: string; data: Buffer } => {
-  const all = csvTables(s);
+export const trafficXlsx = (s: TrafficSnapshot, sd?: SourceDaily): { name: string; data: Buffer } => {
+  const all = csvTables(s, sd);
   const sheets: Sheet[] = [
     { name: "요약", rows: [["항목", "값"], ["집계 시작", s.since], ["기준일", ymd(s.data.today)], ["지난 30분 활성 사용자", s.realtime],
       ["오늘 세션", s.data.kpi.today], ["이번 주 세션", s.data.kpi.week], ["런치 이후 세션", s.data.kpi.total],
-      ["사용자", s.data.kpi.users], ["신규 사용자", s.data.kpi.newUsers], ["참여 세션", s.data.kpi.engaged]] },
+      ["사용자", s.data.kpi.users], ["신규 사용자", s.data.kpi.newUsers], ["참여 세션", s.data.kpi.engaged],
+      ["원자료·소스×일자 조회 시작", sd ? sd.since : ""],
+      ["원자료 주요 이벤트·총수익", !sd || sd.error ? "원자료를 읽지 못함" : sd.full ? "포함" : "빠짐 — GA 가 두 지표를 거부"]] },
     ...CSV_TABLES.filter((x) => x.key !== "all").map(({ key, label }) => ({ name: label, rows: all[key as Exclude<CsvTable, "all">] })),
   ];
   return { name: `wellbian-traffic-${s.data.today}.xlsx`, data: xlsx(sheets) };

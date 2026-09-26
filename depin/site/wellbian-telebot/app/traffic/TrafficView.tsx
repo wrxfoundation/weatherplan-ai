@@ -5,6 +5,7 @@
      ① 지금 얼마나 — 숫자 넷(지난 30분 · 오늘 · 이번 주 · 런치 이후)
      ② 언제 들어왔나 — 일·주·월 추이(채널 색으로 쌓은 막대)
      ③ 어디서 들어왔나 — 채널 비중. 그 아래 소스/매체 원문은 접어 둔다
+     ③-2 소스별 일자 — 세션 소스 × 날짜 표와 원자료 내려받기(9/26)
      ④ 상세 — 어느 링크(utm_content) · 캠페인 · 많이 본 페이지
      ⑤ 읽는 법 — (direct)·출처 미확인·구글 로그인 복귀가 무엇인지
 
@@ -13,7 +14,9 @@
 
 import type { ReactNode } from "react";
 import Charts from "./Charts";
-import { CHANNEL, channelOf, dayLong, weekLong, type Channel } from "@/lib/traffic";
+import SourceDays from "./SourceDays";
+import { CHANNEL, channelOf, dayLabel, dayLong, weekLong, type Channel } from "@/lib/traffic";
+import { pivotSources, type SourceDaily } from "@/lib/source-daily";
 import type { TrafficSnapshot } from "@/lib/ga";
 import { aiComment, aiReady } from "@/lib/ai-comment";
 import { CSV_TABLES } from "@/lib/traffic-csv";
@@ -50,14 +53,17 @@ const Table = ({ head, rows, cols }: { head: string[]; rows: (ReactNode | number
   </div>
 );
 
-export default async function TrafficView({ snap, variant }: { snap: TrafficSnapshot; variant: "public" | "admin" }) {
+export default async function TrafficView({ snap, sd, variant }: { snap: TrafficSnapshot; sd: SourceDaily; variant: "public" | "admin" }) {
   const d = snap.data;
+  const sdDay = sd.error ? null : pivotSources(sd.rows, sd.since, sd.today);
+  const sdFirst = sdDay?.cols[0]?.key;
   /* 숫자 넷 아래 한 문단 — 데이터가 바뀔 때만 새로 만든다(lib/ai-comment.ts). 키가 없으면 칸이 없다. */
   const ai = await aiComment(snap);
   const k = d.kpi;
   const ago = Math.max(0, Math.round((Date.now() - snap.fetchedAt) / 60000));
   const unset = d.channels.find((c) => c.key === "unset");
   const googleBack = d.sources.find((s) => s.source === "accounts.google.com");
+  const payBack = d.sources.filter((s) => s.source.includes("tosspayments")).reduce((a, s) => a + s.sessions, 0);
   const noUtm = snap.byContent.filter((r) => r.sessionManualAdContent === "(not set)").reduce((a, r) => a + n(r.sessions), 0);
 
   return (
@@ -162,6 +168,39 @@ export default async function TrafficView({ snap, variant }: { snap: TrafficSnap
         </details>
       </div>
 
+      {/* ③-2 소스 × 날짜 (9/26 서우 — "일자별 세션 소스 별로 보고싶은데 아니면 rawdata 다운로드 가능하게 해줄래") */}
+      <h2 className="rep-h">소스별 일자 — 세션 소스 × 날짜</h2>
+      <p className="rep-sub">
+        GA 「트래픽 획득: 세션 소스」 표를 날짜로 펼쳤습니다. 줄이 세션 소스(GA 화면과 같은 이름)이고, 칸의 숫자가 그날 그 소스에서
+        시작된 세션입니다. 조회는 {sd.since} 부터{sdFirst ? <>이고 첫 유입이 {dayLabel(sdFirst)} 이라 표는 그날부터 그립니다</> : null} — 위쪽
+        「런치 이후」 숫자와 기간이 다릅니다. 날짜별 합은 GA 화면 합계보다 조금 클 수 있습니다(자정을 넘긴 세션은 이틀에 한 번씩 셉니다).
+      </p>
+      <div className="tf-dl" aria-label="소스 × 날짜 내려받기">
+        <span className="tf-dl-k">원자료</span>
+        <a className="xl" href="/traffic/export?f=xlsx" download>엑셀 파일(.xlsx) — 원자료 · 이 표 포함</a>
+        <a href="/traffic/export?t=raw" download>원자료 CSV</a>
+        <a href="/traffic/export?t=srcdaily" download>이 표 CSV(일별)</a>
+        <span className="tf-dl-n">원자료 = 날짜 × 소스 × 매체 × 캠페인 한 줄에 세션 · 참여 세션 · 참여율 · 사용자 · 신규 · 이벤트 · 세션당 이벤트 · 평균 참여 시간 · 주요 이벤트 · 총수익. 한글이 깨지면 <a href="/traffic/export?t=raw&f=csv16" download>유니코드 CSV</a></span>
+      </div>
+      {sd.error || !sdDay ? (
+        <div className="notice" style={{ marginTop: 10 }}>
+          {variant === "admin" ? <>이 표를 읽지 못했습니다 — <span className="mono">{sd.error}</span></> : "지금은 이 표를 읽을 수 없습니다. 몇 분 뒤 다시 열어 주세요."}
+        </div>
+      ) : (
+        <div style={{ marginTop: 10 }}>
+          <SourceDays day={sdDay} today={sd.today} />
+        </div>
+      )}
+      {!sd.error && !sd.full && (
+        <p className="tf-foot" style={{ marginTop: 8 }}>
+          주요 이벤트 · 총수익 열은 비어 있습니다{variant === "admin" && sd.note ? <> — <span className="mono">{sd.note}</span></> : "."}
+        </p>
+      )}
+      <p className="tf-foot" style={{ marginTop: 8 }}>
+        방문 한 건 한 건의 기록(이벤트 로그)은 GA 가 API 로 내주지 않습니다. 그게 필요하면 GA 관리 › 제품 링크 › BigQuery 에 연결하면
+        그날부터 매일 쌓입니다(지난 기간은 채워지지 않습니다). 날짜 × 소스 × 매체 × 캠페인까지는 위 원자료가 GA 가 줄 수 있는 가장 잘게 쪼갠 값입니다.
+      </p>
+
       {/* ④ 상세 */}
       <h2 className="rep-h">어느 링크인가 — utm_content</h2>
       <p className="rep-sub">
@@ -202,6 +241,9 @@ export default async function TrafficView({ snap, variant }: { snap: TrafficSnap
           <li><b>직접</b>은 출처가 안 넘어온 방문입니다 — 주소를 직접 쳤거나, 텔레그램·카카오톡 앱 안 브라우저처럼 리퍼러를 안 보내는 곳에서 눌렀거나. UTM 을 붙인 링크만 채널로 잡힙니다. 그래서 링크는 항상 UTM 붙은 것을 씁니다.</li>
           {googleBack && (
             <li><b>구글 로그인 복귀</b>(accounts.google.com {fmt(googleBack.sessions)} 세션)는 사이트에서 구글 로그인을 하고 돌아온 것이라 직접에 넣었습니다. GA 관리 › 데이터 스트림 › 태그 설정 › <b>원치 않는 리퍼럴</b>에 accounts.google.com 을 넣으면 원래 세션에 이어집니다.</li>
+          )}
+          {payBack > 0 && (
+            <li><b>결제창 복귀</b>(tosspayments {fmt(payBack)} 세션)는 토스 결제창에 다녀온 방문이 새 세션으로 끊긴 것이라 직접에 넣었습니다. 이대로면 결제한 사람이 어느 채널에서 왔는지가 결제창으로 덮입니다. 같은 자리(원치 않는 리퍼럴)에 <b>tosspayments.com</b> 을 넣습니다.</li>
           )}
           {unset && (
             <li><b>출처 미확인</b>({unset.share}%)은 방문은 집계됐는데 경로만 비어 있는 세션입니다. 위 채널 표 아래에 원인 넷을 적어 두었습니다. 오늘 것은 처리가 덜 끝나서 그렇고 하루 지나면 대개 줄어듭니다. 며칠이 지나도 크면 개발자에게 "페이지뷰(config) 태그가 커스텀 이벤트보다 먼저 실행되는지, 로그인 리다이렉트 뒤 세션이 끊기지 않는지" 확인을 요청합니다.</li>
