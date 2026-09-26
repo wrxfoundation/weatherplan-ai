@@ -1,0 +1,264 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://yokaimap.kr/schema/song.schema.json",
+  "title": "설화 속 노래·시가 레코드",
+  "description": "요괴·설화에 붙어 전하는 노래와 시가. 개체도 이야기도 아니고 '텍스트'다. 원문이 남아 있다는 점에서 세 컬렉션 중 인용 가치가 가장 크지만, 바로 그래서 저작권 경계가 까다롭다. 향찰·한문 원문은 퍼블릭 도메인이지만 향찰 해독안과 현대어 번역은 학자의 저작물이다. 그래서 이 스키마는 original(원문)과 gloss(우리가 직접 쓴 산문 뜻풀이)를 분리하고, 특정 해독안을 옮기지 않는다.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "title",
+    "genre",
+    "summary",
+    "gloss",
+    "original_script",
+    "sources",
+    "verification",
+    "confidence",
+    "updated_at"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^song-[a-z0-9-]+$"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 40
+    },
+    "aliases": {
+      "type": "array",
+      "default": [],
+      "items": {
+        "type": "string"
+      }
+    },
+    "genre": {
+      "enum": [
+        "hyangga",
+        "goga",
+        "goryeo",
+        "hansi",
+        "muga",
+        "bonpuri",
+        "pansori",
+        "minyo",
+        "chamyo"
+      ],
+      "description": "hyangga=향가 · goga=고대가요 · goryeo=고려가요 · hansi=한시 · muga=무가(굿에서 구송) · bonpuri=본풀이(신의 내력을 푸는 제주 무가 형식) · pansori=판소리 · minyo=민요 · chamyo=참요(예언 노래)"
+    },
+    "era": {
+      "type": "string",
+      "description": "전하는 시기. '신라 헌강왕대'처럼 문헌이 말하는 대로 적고, 추정이면 추정이라 적는다."
+    },
+    "summary": {
+      "type": "string",
+      "minLength": 10,
+      "maxLength": 200
+    },
+    "original": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "default": null,
+      "description": "원문. 향찰·한문 원문은 퍼블릭 도메인이므로 그대로 싣는다. 정확히 아는 것만 싣고, 확실하지 않으면 null로 두고 gloss로만 설명한다 — 원문을 반쯤 맞게 싣는 것이 제일 나쁘다."
+    },
+    "original_script": {
+      "enum": [
+        "hyangchal",
+        "hanmun",
+        "hangul",
+        "oral"
+      ],
+      "description": "hyangchal=향찰 표기 · hanmun=한문 · hangul=한글 기록 · oral=구전(정본 없음). oral이면 original은 null이어야 한다 — 구전에는 원문이라 부를 것이 없다."
+    },
+    "reading_note": {
+      "type": "string",
+      "description": "해독·이본에 관한 주의. 향가는 해독안이 학자마다 갈리므로 그 사실을 적는다."
+    },
+    "gloss": {
+      "type": "string",
+      "minLength": 20,
+      "description": "우리가 직접 쓴 산문 뜻풀이. 특정 학자의 해독안이나 번역을 옮기지 않는다. 축자역이 아니라 뜻을 풀어 쓴 것임을 페이지에 명시한다."
+    },
+    "function": {
+      "type": "array",
+      "default": [],
+      "description": "노래가 하는 일. 벽사·기원·주술·예언·해원·의례",
+      "items": {
+        "type": "string"
+      }
+    },
+    "characters": {
+      "type": "array",
+      "default": [],
+      "description": "관련 도감 개체 id. 참조 무결성을 검사한다.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "tales": {
+      "type": "array",
+      "default": [],
+      "description": "관련 설화 id. 참조 무결성을 검사한다.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "sites": {
+      "type": "array",
+      "default": [],
+      "items": {
+        "type": "object",
+        "required": [
+          "name",
+          "sido",
+          "lat",
+          "lng",
+          "precision"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "sido": {
+            "enum": [
+              "서울",
+              "부산",
+              "대구",
+              "인천",
+              "광주",
+              "대전",
+              "울산",
+              "세종",
+              "경기",
+              "강원",
+              "충북",
+              "충남",
+              "전북",
+              "전남",
+              "경북",
+              "경남",
+              "제주"
+            ]
+          },
+          "sigungu": {
+            "type": "string"
+          },
+          "lat": {
+            "type": "number",
+            "minimum": 33,
+            "maximum": 38.65
+          },
+          "lng": {
+            "type": "number",
+            "minimum": 124.6,
+            "maximum": 131
+          },
+          "precision": {
+            "enum": [
+              "parcel",
+              "dong",
+              "sigungu",
+              "sido"
+            ]
+          },
+          "note": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "sources": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "type",
+          "title"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "type": {
+            "enum": [
+              "classic",
+              "field",
+              "encyclopedia",
+              "heritage",
+              "press",
+              "modern"
+            ]
+          },
+          "title": {
+            "type": "string"
+          },
+          "ref": {
+            "type": "string"
+          },
+          "url": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      }
+    },
+    "verification": {
+      "enum": [
+        "primary_text",
+        "field_record",
+        "public_encyclopedia",
+        "secondary_compilation",
+        "modern_online"
+      ]
+    },
+    "confidence": {
+      "enum": [
+        "high",
+        "medium",
+        "low"
+      ]
+    },
+    "sensitivity": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "default": null,
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "note"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "living_faith",
+            "private_property",
+            "tragedy_linked",
+            "ethnic_slur_risk"
+          ]
+        },
+        "note": {
+          "type": "string"
+        }
+      }
+    },
+    "related": {
+      "type": "array",
+      "default": [],
+      "items": {
+        "type": "string"
+      }
+    },
+    "updated_at": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+    }
+  }
+}

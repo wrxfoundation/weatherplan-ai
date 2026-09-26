@@ -1,0 +1,713 @@
+{
+  "category": "foreign",
+  "note": "외래·습합. 불교·도교에서 들어와 한국식으로 굳은 존재 — 계보를 숨기지 않고 유입 경로를 함께 표기한다.",
+  "entries": [
+    {
+      "id": "kr-jeoseung-saja",
+      "canonical": "저승사자",
+      "aliases": [
+        "사자",
+        "차사",
+        "검은 갓 사자"
+      ],
+      "names": {
+        "en": "Jeoseung Saja",
+        "roman": "jeoseungsaja"
+      },
+      "category": "foreign",
+      "rarity": "common",
+      "distribution": "nationwide",
+      "summary": "죽은 이를 저승으로 데려가는 관리. 검은 도포에 갓을 쓴 모습으로 정착했다.",
+      "body": "불교의 명부(冥府) 관념과 도교의 사자(使者) 관념이 들어와, 조선의 관리 복식을 입은 한국형 이미지로 굳었다. 대개 셋이 한 조로 오며, 사잣밥을 문밖에 차려 대접하면 망자를 험하게 다루지 않는다고 했다. 제주 차사본풀이의 강림도령이 이 관념의 서사적 원형에 해당한다.",
+      "traits": [
+        "사잣밥",
+        "검은 도포",
+        "셋"
+      ],
+      "art_hint": "three messengers in black Korean robes and black gat hats standing at a house gate at night, a small table of rice bowls set outside for them",
+      "habitat": [
+        "문밖",
+        "상가"
+      ],
+      "omens": {
+        "time": [
+          "midnight",
+          "dawn"
+        ],
+        "weather": [],
+        "season": []
+      },
+      "sites": [],
+      "sources": [
+        {
+          "type": "encyclopedia",
+          "title": "한국민속대백과사전",
+          "ref": "저승사자·사잣밥"
+        },
+        {
+          "type": "field",
+          "title": "차사본풀이",
+          "ref": "제주 무가"
+        }
+      ],
+      "verification": "public_encyclopedia",
+      "confidence": "high",
+      "related": [
+        "kr-gangnim",
+        "kr-yeomna"
+      ],
+      "updated_at": "2026-08-16"
+    },
+    {
+      "id": "kr-yeomna",
+      "canonical": "염라대왕",
+      "aliases": [
+        "염라",
+        "시왕",
+        "閻羅"
+      ],
+      "category": "foreign",
+      "rarity": "common",
+      "distribution": "nationwide",
+      "summary": "저승에서 죄를 심판하는 왕. 시왕(十王) 가운데 다섯째로 가장 널리 알려졌다.",
+      "body": "인도 야마(Yama)에서 출발해 중국을 거쳐 들어왔고, 한국에서는 사찰의 명부전·시왕도로 시각화돼 도상 근거가 남아 있다. 업경(業鏡)에 생전의 행실이 비친다는 설정이 널리 알려져 있다. 명부전은 전국 사찰에 실재해 좌표 확보가 가능하다.",
+      "traits": [
+        "심판",
+        "업경",
+        "시왕"
+      ],
+      "art_hint": "a judge king enthroned in a Korean temple underworld hall, Korean official robes and crown, a karma mirror at his side showing a scene, scribes below",
+      "habitat": [
+        "명부전",
+        "저승"
+      ],
+      "omens": {
+        "time": [],
+        "weather": [],
+        "season": []
+      },
+      "sites": [],
+      "sources": [
+        {
+          "type": "encyclopedia",
+          "title": "한국민속대백과사전",
+          "ref": "시왕·명부신앙"
+        },
+        {
+          "type": "heritage",
+          "title": "국가유산포털",
+          "ref": "시왕도·명부전 지정 종목"
+        }
+      ],
+      "verification": "public_encyclopedia",
+      "confidence": "high",
+      "sensitivity": {
+        "kind": "living_faith",
+        "note": "현행 불교 신앙의 대상"
+      },
+      "related": [
+        "kr-jeoseung-saja",
+        "kr-gangnim"
+      ],
+      "updated_at": "2026-08-16"
+    },
+    {
+      "id": "kr-yacha",
+      "canonical": "야차",
+      "aliases": [
+        "약차",
+        "夜叉"
+      ],
+      "category": "foreign",
+      "rarity": "uncommon",
+      "distribution": "nationwide",
+      "summary": "사납고 빠른 귀신. 불법을 지키는 수호신이 되기도 하고 사람을 해치기도 한다.",
+      "body": "인도 야크샤(Yakṣa)에서 유래해 불교와 함께 들어왔으며, 우리말 '두억시니'로도 옮겨졌다. 사찰 조각과 탱화에 형상이 남아 있어 한국 요괴 가운데 드물게 도상 근거가 확보된다. 선악이 고정되지 않은 존재라 분류 설계의 참고가 된다.",
+      "traits": [
+        "사나움",
+        "수호",
+        "속도"
+      ],
+      "art_hint": "a fierce guardian spirit with bulging eyes and a muscular frame in the manner of Korean temple wall painting, standing among rocks",
+      "habitat": [
+        "사찰",
+        "산"
+      ],
+      "omens": {
+        "time": [
+          "night"
+        ],
+        "weather": [],
+        "season": []
+      },
+      "sites": [],
+      "sources": [
+        {
+          "type": "encyclopedia",
+          "title": "한국민속대백과사전",
+          "ref": "야차"
+        },
+        {
+          "type": "heritage",
+          "title": "국가유산포털",
+          "ref": "팔부중상 관련 지정 종목"
+        }
+      ],
+      "verification": "public_encyclopedia",
+      "confidence": "high",
+      "related": [
+        "kr-dueoksini",
+        "kr-nachal",
+        "kr-sacheonwang"
+      ],
+      "updated_at": "2026-08-16"
+    },
+    {
+      "id": "kr-nachal",
+      "canonical": "나찰",
+      "aliases": [
+        "나찰귀",
+        "羅刹"
+      ],
+      "category": "foreign",
+      "rarity": "rare",
+      "distribution": "nationwide",
+      "summary": "사람을 잡아먹는다는 귀신. 불교 설화에서 야차와 짝으로 등장한다.",
+      "body": "라크샤사(Rākṣasa)의 음차로, 경전 설화를 통해 들어와 지옥도와 변상도에 형상이 그려졌다. 한국 민간 설화에서는 독립 항목으로 자라지 못하고 주로 불교 서사 안에 머물렀다. 외래 요괴가 토착화에 실패한 사례로서 비교 가치가 있다.",
+      "traits": [
+        "식인",
+        "지옥도"
+      ],
+      "art_hint": "a devouring demon figure from a Korean temple hell mural, ochre and vermilion, among flames with small figures fleeing",
+      "habitat": [
+        "지옥",
+        "사찰 벽화"
+      ],
+      "omens": {
+        "time": [
+          "night"
+        ],
+        "weather": [],
+        "season": []
+      },
+      "sites": [],
+      "sources": [
+        {
+          "type": "encyclopedia",
+          "title": "한국민속대백과사전",
+          "ref": "나찰"
+        }
+      ],
+      "verification": "public_encyclopedia",
+      "confidence": "medium",
+      "related": [
+        "kr-yacha"
+      ],
+      "updated_at": "2026-08-16"
+    },
+    {
+      "id": "kr-haetae",
+      "canonical": "해태",
+      "aliases": [
+        "해치",
+        "獬豸"
+      ],
+      "names": {
+        "en": "Haetae",
+        "roman": "haetae"
+      },
+      "category": "foreign",
+      "rarity": "uncommon",
+      "distribution": "nationwide",
+      "summary": "옳고 그름을 가리는 상상의 짐승. 불을 막는다고 하여 궁궐 앞에 세웠다.",
+      "body": "중국 문헌의 해치 관념이 들어와 조선에서는 사헌부의 상징이자 화재를 막는 벽사 동물로 쓰였다. 광화문 앞 해치 석상은 실물 좌표가 있고 서울시 상징으로도 채택돼 현대적 활용 선례가 뚜렷하다. 요괴를 막는 쪽에 선 항목으로 도감의 방어 축을 이룬다.",
+      "traits": [
+        "시비 판별",
+        "벽사",
+        "화재"
+      ],
+      "art_hint": "a maned lion-like beast with a single horn and scaled body carved in granite, seated before a palace gate, Korean stone-sculpture proportions",
+      "habitat": [
+        "궁궐",
+        "관아"
+      ],
+      "omens": {
+        "time": [],
+        "weather": [
+          "dry"
+        ],
+        "season": []
+      },
+      "sites": [
+        {
+          "name": "광화문 해치 석상",
+          "sido": "서울",
+          "sigungu": "종로구",
+          "lat": 37.5759,
+          "lng": 126.9769,
+          "precision": "dong",
+          "note": "경복궁 광화문 앞"
+        }
+      ],
+      "sources": [
+        {
+          "type": "heritage",
+          "title": "국가유산포털",
+          "ref": "경복궁 해치상"
+        },
+        {
+          "type": "encyclopedia",
+          "title": "한국민속대백과사전",
+          "ref": "해치"
+        }
+      ],
+      "verification": "public_encyclopedia",
+      "confidence": "high",
+      "related": [
+        "kr-sacheonwang",
+        "kr-jangseung"
+      ],
+      "updated_at": "2026-08-16"
+    },
+    {
+      "id": "kr-gangsi",
+      "canonical": "강시",
+      "aliases": [
+        "殭屍",
+        "뻣뻣한 시체"
+      ],
+      "category": "foreign",
+      "rarity": "rare",
+      "distribution": "online",
+      "summary": "굳은 채 뛰어다니는 시체. 중국에서 들어와 1980년대 홍콩 영화로 한국에 널리 알려졌다.",
+      "body": "부적을 이마에 붙여 멈추게 한다는 설정까지 통째로 수입된 사례로, 한국 전통 전승에는 대응 항목이 희박하다. 매체를 통한 요괴 유입이 얼마나 빠른지 보여 주는 근거라 계보를 명시해 등재한다. 한국 고유 항목과 섞이지 않도록 카테고리를 분리했다.",
+      "traits": [
+        "부적",
+        "도약",
+        "시체"
+      ],
+      "art_hint": "a stiff corpse figure with a paper charm on its forehead, arms extended, moving in hops through a night graveyard, plain dark robe",
+      "habitat": [
+        "무덤",
+        "폐가"
+      ],
+      "omens": {
+        "time": [
+          "midnight"
+        ],
+        "weather": [],
+        "season": []
+      },
+      "sites": [],
+      "sources": [
+        {
+          "type": "modern",
+          "title": "1980년대 홍콩 영화 유입",
+          "ref": "강시 소재 확산"
+        }
+      ],
+      "verification": "modern_online",
+      "confidence": "high",
+      "related": [
+        "kr-myogwi"
+      ],
+      "updated_at": "2026-08-16"
+    },
+    {
+      "id": "kr-sacheonwang",
+      "canonical": "사천왕",
+      "aliases": [
+        "사대천왕",
+        "천왕문 신장",
+        "四天王"
+      ],
+      "category": "foreign",
+      "rarity": "uncommon",
+      "distribution": "nationwide",
+      "summary": "사찰 천왕문을 지키는 네 수호신. 발밑에 잡귀를 밟고 서 있다.",
+      "body": "동서남북을 각각 맡아 절 안으로 들어오는 잡귀와 악을 막으며, 비파·검·용·탑을 든 모습으로 정형화됐다. 전국 사찰의 천왕문에 실물이 있어 좌표와 지정정보가 확보되는 항목이다. 장승이 마을 입구를 지킨다면 사천왕은 절 입구를 지킨다는 대비로 읽으면 좋다.",
+      "traits": [
+        "수호",
+        "천왕문",
+        "네 방위"
+      ],
+      "art_hint": "four temple gate guardian kings in Korean temple sculpture manner holding a lute, a sword, a dragon and a pagoda, small demons trodden underfoot",
+      "habitat": [
+        "사찰 천왕문"
+      ],
+      "omens": {
+        "time": [],
+        "weather": [],
+        "season": []
+      },
+      "sites": [
+        {
+          "name": "보은 법주사 천왕문",
+          "sido": "충북",
+          "sigungu": "보은군",
+          "lat": 36.5417,
+          "lng": 127.8339,
+          "precision": "dong",
+          "note": "사찰 천왕문 사례 — 전국 사찰로 확장 예정"
+        }
+      ],
+      "sources": [
+        {
+          "type": "heritage",
+          "title": "국가유산포털",
+          "ref": "사천왕상 지정 종목"
+        },
+        {
+          "type": "encyclopedia",
+          "title": "한국민속대백과사전",
+          "ref": "사천왕"
+        }
+      ],
+      "verification": "public_encyclopedia",
+      "confidence": "high",
+      "sensitivity": {
+        "kind": "living_faith",
+        "note": "현행 불교 신앙의 대상"
+      },
+      "related": [
+        "kr-yacha",
+        "kr-jangseung",
+        "kr-mireuk"
+      ],
+      "updated_at": "2026-08-16"
+    },
+    {
+      "id": "kr-chilseong",
+      "canonical": "칠성신",
+      "aliases": [
+        "칠성님",
+        "북두칠성신",
+        "七星"
+      ],
+      "names": {
+        "en": "Chilseong",
+        "roman": "chilseongsin"
+      },
+      "category": "foreign",
+      "rarity": "common",
+      "distribution": "nationwide",
+      "summary": "북두칠성을 모시는 믿음. 수명과 자손을 맡는다고 보아 장독대와 절 뒤편에서 함께 빌었다.",
+      "body": "도교의 북두 신앙이 들어와 무속과 불교에 각각 자리 잡았다. 민가에서는 장독대나 뒤뜰에 정화수를 떠 놓고 칠성님께 자손과 수명을 빌었고, 절에는 칠성각을 따로 두어 칠성탱화를 걸었다. 부처를 모신 절 안에 별을 모신 전각이 함께 있는 구조는 한국 불교 습합의 대표적인 모습이다. 무속에서는 「칠성풀이」를 구송해 일곱 아들의 내력을 풀고 아이를 점지하고 지켜 준다고 보았다. 삼신할머니가 낳는 일을 맡는다면 칠성은 그 뒤의 수명을 맡는다는 식으로 역할이 갈리며, 정화수 한 그릇으로 성립한다는 점에서 가장 값싸고 가장 널리 퍼진 신앙이었다.",
+      "traits": [
+        "정화수",
+        "칠성각",
+        "수명",
+        "칠성풀이"
+      ],
+      "art_hint": "the seven stars of the Big Dipper arranged clearly across a black night sky, no moon, a brass bowl of clear water set on a large glazed jar in a moonless backyard below, the edge of a tiled roof and a bare persimmon branch, no figure",
+      "art_anchors": [
+        "architecture",
+        "objects"
+      ],
+      "habitat": [
+        "장독대",
+        "칠성각",
+        "뒤뜰"
+      ],
+      "omens": {
+        "time": [
+          "night",
+          "midnight"
+        ],
+        "weather": [
+          "clear"
+        ],
+        "season": []
+      },
+      "sites": [],
+      "sources": [
+        {
+          "type": "encyclopedia",
+          "title": "한국민속대백과사전",
+          "ref": "칠성신앙"
+        },
+        {
+          "type": "encyclopedia",
+          "title": "한국민족문화대백과사전",
+          "ref": "칠성각"
+        }
+      ],
+      "verification": "public_encyclopedia",
+      "confidence": "high",
+      "related": [
+        "kr-samsin",
+        "kr-samseung-halmang",
+        "kr-cheollyung"
+      ],
+      "sensitivity": {
+        "kind": "living_faith",
+        "note": "지금도 절과 가정에서 이어지는 신앙이다."
+      },
+      "updated_at": "2026-09-12"
+    },
+    {
+      "id": "kr-geumgang-yeoksa",
+      "canonical": "금강역사",
+      "aliases": [
+        "인왕",
+        "나라연금강",
+        "金剛力士"
+      ],
+      "names": {
+        "en": "Geumgang Yeoksa",
+        "roman": "geumgang yeoksa"
+      },
+      "category": "foreign",
+      "rarity": "uncommon",
+      "distribution": "nationwide",
+      "summary": "절 문 양쪽에서 맨주먹을 쥐고 선 두 역사. 하나는 입을 벌리고 하나는 다문 채 잡것을 막는다.",
+      "body": "불법을 지키는 수호신으로 절의 금강문 좌우에 선다. 입을 벌린 아금강역사와 다문 훔금강역사가 짝을 이루며, 시작과 끝을 함께 막는다는 뜻으로 풀이된다. 석굴암 입구의 금강역사상은 근육의 긴장과 옷자락의 흐름이 뚜렷해 통일신라 조각의 대표작으로 꼽힌다. 사천왕이 갑옷을 입고 무기를 든 무장 신이라면 금강역사는 웃통을 드러내고 맨주먹을 쥔 역사라, 같은 문지기라도 결이 다르다. 인도에서 중국을 거쳐 들어온 도상이지만 한국에서는 금강문이라는 독립된 문으로 자리 잡아 배치 자체가 달라졌고, 그래서 절에 들어서는 사람은 문을 두 번 지나며 두 번 검문받는다.",
+      "traits": [
+        "금강문",
+        "아·훔",
+        "맨주먹",
+        "석굴암"
+      ],
+      "art_hint": "two bare-chested muscular guardian figures in flowing skirts standing inside the two side bays of a roofed timber temple gatehouse, the gatehouse covered by a tiled Korean hip roof on bracket sets, one guardian's mouth open one closed, fists clenched, carved grey stone texture, a mountain temple courtyard seen through the central opening",
+      "art_anchors": [
+        "architecture"
+      ],
+      "habitat": [
+        "금강문",
+        "석굴암",
+        "산사"
+      ],
+      "omens": {
+        "time": [],
+        "weather": [],
+        "season": []
+      },
+      "sites": [
+        {
+          "name": "경주 석굴암",
+          "sido": "경북",
+          "sigungu": "경주시",
+          "lat": 35.795,
+          "lng": 129.3494,
+          "precision": "dong",
+          "note": "입구 좌우의 금강역사상이 남아 있다"
+        }
+      ],
+      "sources": [
+        {
+          "type": "heritage",
+          "title": "경주 석굴암 석굴",
+          "ref": "국보"
+        },
+        {
+          "type": "encyclopedia",
+          "title": "한국민족문화대백과사전",
+          "ref": "금강역사"
+        }
+      ],
+      "verification": "public_encyclopedia",
+      "confidence": "high",
+      "related": [
+        "kr-sacheonwang",
+        "kr-nachal",
+        "kr-yacha"
+      ],
+      "updated_at": "2026-09-12"
+    },
+    {
+      "id": "kr-seonmyo",
+      "canonical": "선묘룡",
+      "aliases": [
+        "선묘 낭자",
+        "善妙"
+      ],
+      "names": {
+        "en": "Seonmyo Dragon",
+        "roman": "seonmyoryong"
+      },
+      "category": "foreign",
+      "rarity": "rare",
+      "distribution": "local",
+      "summary": "의상을 사모하던 당나라 여인이 용이 되어 바다를 건너 따라오고, 바위가 되어 절터를 열었다.",
+      "body": "『송고승전』 의상전과 『삼국유사』에 나온다. 의상이 당에 유학할 때 선묘라는 여인이 사모했으나 뜻을 이루지 못했고, 의상이 돌아가는 배를 뒤늦게 좇아 바다에 몸을 던지며 용이 되어 배를 지키겠다 했다. 신라에 돌아온 의상이 절을 세우려 하자 그 자리를 차지한 무리가 물러나지 않으므로, 선묘가 큰 바위가 되어 공중에 떠올라 위협하니 무리가 흩어졌다. 그래서 절 이름이 부석(浮石), 뜬 돌이다. 영주 부석사에는 지금도 무량수전 뒤에 선묘각이 있고 부석이라 불리는 바위가 남아 있다. 외래 설화의 인물이 한국의 절터 내력으로 완전히 귀화한 사례이며, 이루지 못한 마음이 괴물이 아니라 수호신이 된 드문 결말이기도 하다.",
+      "traits": [
+        "부석사",
+        "뜬 바위",
+        "의상",
+        "용으로 화함"
+      ],
+      "art_hint": "a great flat grey boulder hanging in the air above a mountain temple site at dawn, the coil of a pale dragon faintly suggested within the rock's shadow, small monk figures below, pine ridge and distant peaks",
+      "art_anchors": [
+        "architecture",
+        "landscape"
+      ],
+      "habitat": [
+        "부석사",
+        "바닷길"
+      ],
+      "omens": {
+        "time": [
+          "dawn"
+        ],
+        "weather": [
+          "fog"
+        ],
+        "season": []
+      },
+      "sites": [
+        {
+          "name": "영주 부석사",
+          "sido": "경북",
+          "sigungu": "영주시",
+          "lat": 36.997,
+          "lng": 128.687,
+          "precision": "dong",
+          "note": "무량수전 뒤 선묘각과 부석이라 불리는 바위가 남아 있다"
+        }
+      ],
+      "sources": [
+        {
+          "type": "classic",
+          "title": "송고승전",
+          "ref": "의상전"
+        },
+        {
+          "type": "classic",
+          "title": "삼국유사",
+          "ref": "의해 의상전교"
+        },
+        {
+          "type": "heritage",
+          "title": "영주 부석사 무량수전",
+          "ref": "국보"
+        }
+      ],
+      "verification": "primary_text",
+      "confidence": "high",
+      "related": [
+        "kr-yongwang",
+        "kr-haeryong",
+        "kr-sangsabaem"
+      ],
+      "updated_at": "2026-09-12"
+    },
+    {
+      "id": "kr-samdu-iljokeung",
+      "canonical": "삼두일족응",
+      "aliases": [
+        "삼두매",
+        "세 머리 매",
+        "三頭一足鷹"
+      ],
+      "names": {
+        "en": "Three-headed One-legged Hawk",
+        "roman": "samdu iljokeung"
+      },
+      "category": "foreign",
+      "rarity": "rare",
+      "distribution": "nationwide",
+      "summary": "머리가 셋에 다리가 하나인 매. 정초에 문에 붙여 세 가지 재앙을 한꺼번에 막는 부적 그림이다.",
+      "body": "세화(歲畵)와 부적에 그려지는 벽사 도상이다. 머리 셋은 삼재(三災)를 각각 노려본다는 뜻으로 풀이되고, 매가 잡귀를 채 간다는 관념과 겹쳐 정월에 대문이나 기둥에 붙였다. 삼재가 든 해에 붙인다는 기록이 많아 삼재신·제웅과 같은 액막이 절차 안에서 함께 쓰였다. 도교의 부적 도상이 민화로 내려오며 자리 잡은 형태라 호랑이·닭 그림과 나란히 문에 붙는 계열에 속한다. 매를 그리되 사실적인 새가 아니라 부적의 기호로 그린다는 점이 민화의 매그림과 다르고, 그래서 형태가 기괴할수록 제 기능을 한다고 여겼다.",
+      "traits": [
+        "부적",
+        "세화",
+        "삼재",
+        "대문"
+      ],
+      "art_hint": "a woodblock-style talisman print of a hawk with three heads and a single leg, drawn in flat cinnabar and black ink on coarse yellowed paper, pasted on a weathered wooden gate plank",
+      "art_anchors": [
+        "architecture"
+      ],
+      "habitat": [
+        "대문",
+        "기둥"
+      ],
+      "omens": {
+        "time": [],
+        "weather": [],
+        "season": [
+          "winter",
+          "spring"
+        ]
+      },
+      "sites": [],
+      "sources": [
+        {
+          "type": "encyclopedia",
+          "title": "한국민속대백과사전",
+          "ref": "삼두일족응"
+        },
+        {
+          "type": "encyclopedia",
+          "title": "한국민족문화대백과사전",
+          "ref": "세화(歲畵)"
+        }
+      ],
+      "verification": "public_encyclopedia",
+      "confidence": "medium",
+      "related": [
+        "kr-samjaesin",
+        "kr-jeung",
+        "kr-haetae"
+      ],
+      "updated_at": "2026-09-12"
+    },
+    {
+      "id": "kr-sasin",
+      "canonical": "사신",
+      "aliases": [
+        "사신도",
+        "청룡백호주작현무",
+        "四神"
+      ],
+      "names": {
+        "en": "Four Guardian Beasts",
+        "zh": "四神",
+        "roman": "sasin"
+      },
+      "category": "foreign",
+      "rarity": "rare",
+      "distribution": "nationwide",
+      "summary": "동서남북을 맡은 네 신수. 고구려 고분 널방 네 벽에 하나씩 그려져 죽은 이의 방위를 지켰다.",
+      "body": "동쪽 청룡, 서쪽 백호, 남쪽 주작, 북쪽 현무가 방위를 맡는다. 중국 한대에 정립된 도상이지만 고구려 후기 고분에서는 다른 장식을 모두 덜어 내고 네 벽에 사신만 크게 그리는 단계까지 나아가 독자적인 완성도를 보인다. 강서대묘의 사신도가 대표로 꼽히며, 뱀과 거북이 얽힌 현무의 형상은 특히 밀도가 높다. 무덤 안에서 사신은 장식이 아니라 방위 자체를 세우는 장치라, 벽화의 위치가 곧 기능이다. 조선에 와서는 왕릉 병풍석과 풍수 도상으로 이어지고, 해태나 계룡 같은 한국 고유 신수와 나란히 쓰이며 자리를 나눠 가졌다.",
+      "traits": [
+        "방위",
+        "고분 벽화",
+        "강서대묘",
+        "현무"
+      ],
+      "art_hint": "four mineral-pigment wall paintings shown together — a blue dragon, a white tiger, a red bird, and a tortoise entwined with a snake — each on a dark plastered tomb wall with flowing cloud scrolls between them",
+      "art_anchors": [],
+      "habitat": [
+        "고분 널방",
+        "왕릉"
+      ],
+      "omens": {
+        "time": [],
+        "weather": [],
+        "season": []
+      },
+      "sites": [],
+      "sources": [
+        {
+          "type": "heritage",
+          "title": "고구려 고분벽화",
+          "ref": "강서대묘 사신도"
+        },
+        {
+          "type": "encyclopedia",
+          "title": "한국민족문화대백과사전",
+          "ref": "사신도"
+        }
+      ],
+      "verification": "public_encyclopedia",
+      "confidence": "high",
+      "related": [
+        "kr-samjogo",
+        "kr-haetae",
+        "kr-gyeryong"
+      ],
+      "updated_at": "2026-09-12"
+    }
+  ]
+}
