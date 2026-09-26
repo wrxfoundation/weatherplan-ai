@@ -82,7 +82,7 @@
   - 봇이 공유한 초대 링크의 93%가 텔레그램 펌프앤덤프 채널로 향했다.
 - [매체] CNBC(2023-08-02)가 FTX 상장 알트코인 연구를 보도했다. 상장 후 일부 코인에서 봇성 댓글이 전체 대화의 약 50%로 늘었다. The Sandbox·Gala·Gods Unchained·LooksRare 등에서 봇 활동이 가치를 증폭했고, 분석 대상의 절반에서 가격 영향 신호가 나타났다 — [CNBC](https://www.cnbc.com/2023/08/02/elon-musk-tweets-twitter-bots-boosted-ftx-listed-crypto-researchers.html). 2021–22 데이터라 stale 가능.
 - [플랫폼 공지] X는 2026-01에 '게시에 대가를 지급하는 앱'을 금지하면서 "a tremendous amount of AI slop and reply spam"을 이유로 들었다 — [BlockEden 블로그](https://blockeden.xyz/blog/2026/04/18/kaito-yaps-attention-economy-infofi-meritocratic-influence/); [BeInCrypto](https://beincrypto.com/x-kills-kaito-infofi-tokens-crash/) (4번 항목)
-- [벤더 주장] Kaito는 자사 리더보드가 "swayed too far into allowing noise and farming"이었다고 보고 봇·AI 슬롭 대응 개편을 했다(2025-07~08) — [blocmates](https://www.blocmates.com/news-posts/kaito-ai-just-declared-war-on-bots-and-low-effort-content-here-how) (4번 항목)
+- [벤더 주장] Kaito는 자사 리더보드가 "swayed too far into allowing noise and farming"이었다고 보고 봇·AI 슬롭 대응 개편을 했다(2025년 여름, 2025-08-08 공지 포함) — [blocmates](https://www.blocmates.com/news-posts/kaito-ai-just-declared-war-on-bots-and-low-effort-content-here-how) (4번 항목)
 
 #### 탐지 방법(실무에서 쓰이는 것 — 효과 검증은 없음)
 - 팔로워·노출 대비 참여계수가 비정상적으로 높으면 봇 신호로 본다. PLOS ONE 연구의 방법론이다 — [PLOS ONE](https://journals.plos.org/plosone/article?id=10.1371%2Fjournal.pone.0284501)
@@ -105,7 +105,7 @@
 ## 3. KOL 외 전술 중 시빌 파머가 아닌 '잔존하는 실사용자'를 만든 근거가 있는 것은? (물리 제품·오프체인 행동 중심)
 
 ### Takeaway
-보상형 확보 전술(에어드랍·포인트·탭투언·보상형 하드웨어 배치)의 근거는 한 방향으로 모인다. **보상이 끝나거나 줄면 대부분 떠난다.** 에어드랍 토큰은 최대 66%가 즉시 매도되었고, 햄스터 컴뱃 사용자는 수억 명에서 수천만 명으로 줄었으며, 헬륨 핫스팟은 급감했다. 레퍼럴·앰배서더·콘텐츠/SEO·파트너십이 잔존 실사용자를 만든다는 크립토 특화 엄밀 근거는 찾지 못했다. DePIN 업계 리서치는 '보조금 기반 성장에서 실사용 매출로의 전환'을 강조한다.
+보상형 확보 전술(에어드랍·포인트·탭투언·보상형 하드웨어 배치)의 근거는 한 방향으로 모인다. **보상이 끝나거나 줄면 대부분 떠난다.** 에어드랍 토큰은 최대 66%가 즉시 매도되었고(학술 프리프린트), 햄스터 컴뱃 사용자는 수억 명에서 수천만 명으로 줄었으며(게임 측 발표 수치 기반 보도, 독립 검증 없음), 헬륨 핫스팟은 급감했다(블로그·애그리게이터 수치 기준). 레퍼럴·앰배서더·콘텐츠/SEO·파트너십이 잔존 실사용자를 만든다는 크립토 특화 엄밀 근거는 찾지 못했다. DePIN 업계 리서치는 '보조금 기반 성장에서 실사용 매출로의 전환'을 강조한다.
 
 ### Cited Findings
 #### 에어드랍·포인트·시빌
@@ -170,7 +170,7 @@
 ## 4. 2025–2026년 InfoFi/야프투언(yap-to-earn)과 퀘스트 플랫폼 캠페인에 무슨 일이 있었나? (품질·시빌·플랫폼 정책)
 
 ### Takeaway
-InfoFi는 2025년 중반에 이미 봇·AI 슬롭·파밍으로 신호가 무너져 있었고, Kaito는 리더보드를 개편했다(2025-07~08). 이어 2026-01 중순 X가 '게시에 대가를 지급하는 앱'을 API 정책으로 금지하자 Kaito는 Yaps를 종료하고 선별형 크리에이터 마케팅(Kaito Studio)으로 전환했다. 퀘스트 플랫폼(Galxe·Zealy·Layer3)의 잔존 효과는 독립 측정 없이 벤더 주장만 있다.
+InfoFi는 2025년 중반에 이미 봇·AI 슬롭·파밍으로 신호가 무너져 있었고, Kaito는 리더보드를 개편했다(2025년 여름, 2025-08-08 공지 포함). 이어 2026-01 중순 X가 '게시에 대가를 지급하는 앱'을 API 정책으로 금지하자 Kaito는 Yaps를 종료하고 선별형 크리에이터 마케팅(Kaito Studio)으로 전환했다. 퀘스트 플랫폼(Galxe·Zealy·Layer3)의 잔존 효과는 독립 측정 없이 벤더 주장만 있다.
 
 ### Cited Findings
 - [플랫폼 공지·매체] 2026-01 중순, X가 개발자 정책을 개정해 사용자에게 게시 대가를 지급하는 앱('InfoFi')을 금지했다. X 제품 책임자 Nikita Bier는 AI 생성 스팸 급증을 이유로 들었고("a tremendous amount of AI slop and reply spam"), 해당 개발자들의 API 접근을 이미 회수했다고 밝혔다 — [CoinDesk, 2026-01-15](https://www.coindesk.com/business/2026/01/15/kaito-to-sunset-yaps-as-x-cracks-down-on-infofi-apps-token-falls-17); [BeInCrypto](https://beincrypto.com/x-kills-kaito-infofi-tokens-crash/); [Cryptonews](https://cryptonews.com/news/x-bans-infofi-projects-kaito-plummets-20/); [BlockEden 블로그, 2026-04-18](https://blockeden.xyz/blog/2026/04/18/kaito-yaps-attention-economy-infofi-meritocratic-influence/)
