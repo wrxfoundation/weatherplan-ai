@@ -1487,3 +1487,28 @@ If weather markets are on your roadmap, I'd be glad to walk you through how it w
 ```
 답장 감사합니다. 괜찮으시다면 케이웨더 경영진과 함께 30분 정도 찾아뵙고, 현장 날씨·공기질 데이터가 고객 현장에서 어떻게 쓰일 수 있을지 짧게 보여드리고 싶습니다. 편하신 때를 알려주시면 맞추겠습니다.
 ```
+
+### Thomas C.(Tom Chippas) — Rothera CEO (2025-11~) · 9/28 서우 「이분도 고고」
+공개 경력(서우 캡처): Rothera CEO · TS Imagine 이사(2021-10~) · Argo Blockchain CEO & Director(2023-11~2025-03) · Cboe Clear Digital
+이사회(2018-08~2023-03) · ErisX CEO(2018-08~2022-07 — 팀 · 상품 · 투자 유치 · 규제 대응 · 매각까지). 헤드라인 「Prediction Markets · Digital
+Assets · Capital Markets」. Rothera = 로빈후드 · SIG 합작 CFTC 거래소 · 청산소.
+**⚠ 시점 — 9/26 판정(로빈후드 계열은 진행 중 라인 체결 뒤)과 겹친다.** 로빈후드 물량은 Rothera 와 진행 중 라인 양쪽으로 간다. 서우 「고고」에
+따라 **1촌 요청 · 소개는 보내되 요청 · 제안 0**(되돌릴 게 없는 문안), **데이터 제안은 진행 중 계약의 재배포 · 독점 조항을 본 뒤.**
+로빈후드 계열 상한: Thomas + Steve Quirk(보류) = 2.
+**금지**: 로빈후드 · SIG · ErisX · Cboe · 다른 거래소 이름 0(전 직장은 「청산소를 만들어 본 사람」으로만), 스포츠 · 월드컵 상품 언급 0.
+요청 메모(244자)
+```
+Hi Thomas, I run partnerships at wellbian. KWeather has measured weather in Korea for 30 years; we publish city-level weather built for final settlement: a consensus of eleven feeds, each input fingerprinted to a public ledger. Glad to connect.
+```
+수락 뒤 — Paul(한 센서) · Megan(기록) · Forrest(내부자 정보)와 다른 각도: **청산소가 떠안는 최종 정산값.**
+```
+Thomas — thanks for connecting.
+
+I run partnerships at wellbian. KWeather has measured weather in South Korea for thirty years and supplies data to 4,000+ enterprise clients; wellbian is the network built on top of that.
+
+We publish city-level weather across 90 countries and 167 cities. A city's value is a consensus across eleven weather feeds rather than a single reading, and every input is fingerprinted to a public ledger before it enters the calculation.
+
+You've built a clearinghouse before, which is why I wanted to say hello. A clearinghouse ends up standing behind the final settlement value, and for a weather contract that value usually comes down to one publication from one station. We built the version of that number anyone can re-check after the fact.
+
+Good to be connected.
+```
