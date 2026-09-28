@@ -42,8 +42,19 @@ A            1            J1234
 
 ## 3. R/B (사업자 전용)
 
-계산기 **상부**에 소비자 월 납부금과 완전히 분리된 카드로 얹는다(`components/RbPanel.jsx`).
+소비자 월 납부금과 완전히 분리된 카드다(`components/RbPanel.jsx`).
 `bizIdentity` 가 null 이면 컴포넌트 자체가 렌더되지 않는다 — 개인회원·비로그인은 DOM 에도 없다.
+
+**휴대폰은 판매자 설계 화면에 있다(2026-09-28 운영팀 요청).** 사업자가 `/phone/shop/:model` 이나
+`/calculator/phone` 에 들어오면 소비자 화면 대신 `components/phone/SellerDesigner.jsx`(제로노트식 A·B 설계)가 열리고,
+R/B 는 오른쪽 칸 **월 납부요금정보(A+B) 바로 위**에 붙는다. 같은 주소에 `?view=customer` 를 붙이면 고객 화면 미리보기.
+
+- 판매자가 넣는 **추가지원금 = rbFor 의 support** — 넣은 만큼 할부원금과 내 수당이 같이 준다.
+  상한은 내 수당 한도(`supportRange.max`)이고 넘기면 잘린 값으로 가격을 계산한다(두 칸 숫자가 늘 맞게)
+- 포인트·선할인카드·고객선입금은 할부원금에서, 청구할인카드·복지·프로모션은 월요금에서 빠진다(수당과 무관)
+- **인쇄·고객용 견적 복사에는 R/B 를 싣지 않는다** — 수당 블록은 `print:hidden`, 복사 문구는 수당 줄이 없는 별도 함수
+- 계산은 `phones.designPhoneQuote()` 한 곳. 설계 저장은 브라우저(`moduon_seller_designs_v1`, 사업자 코드별 30건)
+- 가드: `scripts/qa-seller-smoke.cjs`
 
 | 등급 | 보이는 줄 |
 |---|---|

@@ -7,7 +7,8 @@ import { bizIdentity } from '../lib/org'
 import { rbFor } from '../lib/rb'
 import { won } from '../lib/engine'
 
-export default function RbPanel({ kind = 'phone', deviceId, itemId, mvno = false, join = 'mnp', support = 0, planId = null, note }) {
+// compact — 판매자 설계 화면의 오른쪽 좁은 칸(월 납부요금정보 바로 위)에 얹을 때: 안내 문단을 한 줄로 줄인다
+export default function RbPanel({ kind = 'phone', deviceId, itemId, mvno = false, join = 'mnp', support = 0, planId = null, note, compact = false }) {
   const { db } = useStore()
   const viewer = bizIdentity(db, getSession())
   if (!viewer) return null // 개인회원·비로그인 — R/B 자체를 노출하지 않는다
@@ -24,7 +25,9 @@ export default function RbPanel({ kind = 'phone', deviceId, itemId, mvno = false
         </span>
       </div>
       <p className="mt-1.5 text-[12px] leading-[1.5] text-bmuted">
-        고객에게 안내하는 월 납부금과는 별개의 값입니다. 아래 금액은 <b className="text-bink">{viewer.label} 화면에서만</b> 보입니다.
+        {compact
+          ? <>고객에게 보이지 않는 값 · <b className="text-bink">{viewer.label} 전용</b></>
+          : <>고객에게 안내하는 월 납부금과는 별개의 값입니다. 아래 금액은 <b className="text-bink">{viewer.label} 화면에서만</b> 보입니다.</>}
       </p>
 
       <dl data-t="rb-rows" className="mt-3 overflow-hidden rounded-btn bg-white shadow-card">

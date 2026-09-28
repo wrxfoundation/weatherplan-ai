@@ -6,12 +6,21 @@ import { PHONE_DEVICES, PHONE_PLANS, JOIN_TYPES, INSTALLMENT_MONTHS, calcPhoneQu
 import { won, copyText } from '../../lib/engine'
 import { LEGAL } from '../../lib/constants'
 import { IcShare, IcCheck } from '../../components/icons'
-import RbPanel from '../../components/RbPanel'
+import SellerDesigner from '../../components/phone/SellerDesigner'
 import { useStore, getSession } from '../../lib/store'
 import { PRICE_CARD, priceDetail, isPriced } from '../../lib/ratecard'
 import { bizIdentity } from '../../lib/org'
 
+// 사업자는 판매자 설계(온라인구매 상세와 같은 화면), 그 밖에는 기존 계산기.
+// R/B 는 이제 설계 화면의 '월 납부요금정보 바로 위'에 있다 — 여기 상단 R/B 블록은 없앴다(사업자가 이 화면을 보지 않으므로).
 export default function PhoneCalculator() {
+  const { db } = useStore()
+  const viewer = bizIdentity(db, getSession())
+  if (viewer) return <SellerDesigner viewer={viewer} />
+  return <PhoneCalculatorInner />
+}
+
+function PhoneCalculatorInner() {
   const nav = useNavigate()
   const [deviceId, setDeviceId] = useState('fold8')
   const [planId, setPlanId] = useState('choice110')
@@ -64,11 +73,6 @@ export default function PhoneCalculator() {
         <CalcTabs active="phone" />
         <h1 className="mt-4 text-[24px] font-extrabold tracking-[-0.6px] text-ink sm:text-[26px]">휴대폰 견적 계산기</h1>
         <p className="mt-1.5 text-[14px] text-muted sm:text-[15px]">단말 할부금(A)과 요금(B)을 나눠 보여드려요 — 공시지원금과 선택약정 중 유리한 쪽도 자동 비교!</p>
-      </div>
-
-      {/* 사업자 전용 R/B — 개인회원·비로그인에게는 렌더되지 않는다(org.bizIdentity) */}
-      <div className="mt-5">
-        <RbPanel kind="phone" deviceId={deviceId} join={join} support={q.extraSupport} planId={q.plan.id} />
       </div>
 
       <div className="mt-7 grid grid-cols-1 items-start gap-6 lg:grid-cols-[1fr_400px]">

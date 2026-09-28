@@ -219,7 +219,7 @@ export function ConsumerHeader({ tenant }) {
   const tel = telOf(tenant)
   return (
     // 배경은 거의 불투명하게(95%) — 60% 였을 때 히어로의 흰 CTA·제목이 GNB 뒤로 비쳐 호버 상태처럼 오독됐다. 블러는 남은 5% 몫.
-    <header className="sticky top-0 z-40 border-b border-line-card bg-white/95 backdrop-blur-md" onMouseLeave={() => setMega(null)}>
+    <header className="sticky top-0 z-40 border-b border-line-card bg-white/95 backdrop-blur-md print:hidden" onMouseLeave={() => setMega(null)}>
       {/* 1행 · 유틸 — 로고 · 게시판 5종 · 알림 · 로그인/회원가입 (파트너몰은 로고 + 배지 + 매장 직통 전화 + 무료 상담) */}
       <div className="mx-auto flex h-[56px] max-w-6xl items-center justify-between gap-3 px-5 sm:px-10">
         <div className="flex min-w-0 items-center gap-7">
@@ -371,7 +371,7 @@ export function ConsumerFooter({ tenant }) {
   const col = 'flex flex-col'
   const lnk = 'py-1 hover:text-primary-text' // 20px 글줄 + 위아래 4px = 28px 터치 영역(간격은 예전 gap-2 와 같다)
   return (
-    <footer className="border-t border-line-card bg-cream pb-24 pt-12">
+    <footer className="border-t border-line-card bg-cream pb-24 pt-12 print:hidden">
       <div className="mx-auto max-w-6xl px-5 sm:px-10">
         <div className="flex flex-col justify-between gap-8 lg:flex-row">
           <div>

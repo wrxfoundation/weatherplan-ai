@@ -133,7 +133,7 @@ export default function ChatWidget({ tenant }) {
     <>
       {/* 선제 넛지 — 세션 1회, 클릭 시 챗 오픈 */}
       {nudge && !open && !engaged && (
-        <div className="fixed bottom-[86px] right-4 z-50 flex items-center gap-2 rounded-2xl rounded-br-md border border-line-card bg-white py-2.5 pl-4 pr-2 shadow-panel animate-rise sm:right-5" style={{ bottom: teaserBottom }} data-t="chat-teaser">
+        <div className="fixed bottom-[86px] right-4 z-50 flex items-center gap-2 rounded-2xl rounded-br-md border border-line-card bg-white py-2.5 pl-4 pr-2 shadow-panel animate-rise sm:right-5 print:hidden" style={{ bottom: teaserBottom }} data-t="chat-teaser">
           <button onClick={() => { dismissNudge(); setOpen(true) }} className="text-left text-[12.5px] font-bold text-ink">
             인터넷 견적, 30초면 계산해드려요 <span className="text-primary-text">→</span>
           </button>
@@ -146,7 +146,7 @@ export default function ChatWidget({ tenant }) {
         onClick={() => { dismissNudge(); setOpen(!open) }}
         aria-label="AI 상담"
         aria-expanded={open}
-        className="glass-fab fixed bottom-5 right-4 z-50 flex h-14 w-14 items-center justify-center rounded-full text-white transition-transform hover:scale-105 sm:right-5"
+        className="glass-fab fixed bottom-5 right-4 z-50 flex h-14 w-14 items-center justify-center rounded-full text-white transition-transform hover:scale-105 sm:right-5 print:hidden"
         style={{ bottom: fabBottom, marginBottom: 'env(safe-area-inset-bottom)' }}
       >
         <span aria-hidden className="pointer-events-none absolute inset-0 rounded-full" style={{ background: 'radial-gradient(58% 42% at 34% 24%, rgba(255,255,255,0.62), rgba(255,255,255,0) 62%)' }} />

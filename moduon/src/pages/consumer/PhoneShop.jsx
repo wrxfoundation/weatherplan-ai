@@ -6,8 +6,9 @@
 import { useMemo, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { PHONE_DEVICES, PHONE_BRANDS, STORAGES, bestOffer, JOIN_TYPES } from '../../lib/phones'
-import { useStore } from '../../lib/store'
+import { useStore, getSession } from '../../lib/store'
 import { selfMarginOf } from '../../lib/ratecard'
+import { bizIdentity } from '../../lib/org'
 import { PHONE_CARRIERS } from '../../lib/onboard'
 import { won } from '../../lib/engine'
 import { LEGAL } from '../../lib/constants'
@@ -19,6 +20,8 @@ const FOLD_AT = 6 // 브랜드당 이 개수를 넘으면 접는다(아정당 "�
 export default function PhoneShop() {
   const { db } = useStore()
   const margin = selfMarginOf(db) // 셀프개통 고정 마진(어드민 정책)
+  // 사업자는 기종을 누르면 판매자 설계 화면이 열린다(상세 주소는 같다) — 목록 위에서 미리 알려 준다
+  const biz = bizIdentity(db, getSession())
   const [sp, setSp] = useSearchParams()
   const cur = sp.get('cur') ?? ''
   const [picked, setPicked] = useState([]) // 선택 기종 id — 비어 있으면 전체
@@ -48,6 +51,12 @@ export default function PhoneShop() {
         <div>
           <nav className="text-[12px] text-faint"><Link to="/category/phone" className="hover:text-primary-text">휴대폰</Link> › 온라인 구매</nav>
           <h1 className="mt-1 text-[24px] font-extrabold tracking-[-0.6px] text-ink sm:text-[26px]">온라인 구매 · 셀프가입</h1>
+          {biz && (
+            <div className="mt-3 flex flex-wrap items-center gap-2 rounded-field border border-bindigo/30 bg-bindigo/[0.06] px-3.5 py-2.5 text-[12.5px] text-bbody" data-t="shop-biz-notice">
+              <span className="rounded-md bg-bindigo px-2 py-0.5 text-[11px] font-extrabold text-white">사업자 설계 모드</span>
+              <span>기종을 누르면 <b className="text-bink">판매자 설계 화면</b>이 열려요 — 추가지원금·할인을 넣으면 <b className="text-bink">내 수당</b>이 함께 계산돼요.</span>
+            </div>
+          )}
           <p className="mt-1.5 text-[14px] text-muted">기종마다 <b className="text-ink">3사를 모두</b> 계산해 보여드려요. 지금 쓰는 통신사를 고르면 번호이동·기기변경이 자동으로 갈립니다.</p>
         </div>
         <div className="rounded-card bg-white p-3 shadow-card" data-t="shop-cur">

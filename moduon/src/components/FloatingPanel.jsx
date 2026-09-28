@@ -80,7 +80,7 @@ export default function FloatingPanel() {
   if (!open) {
     return (
       <button data-t="floating-tab" onClick={toggle} aria-label={`${title} 패널 열기`} aria-expanded={false}
-        className="fixed right-0 top-[176px] z-30 hidden w-9 flex-col items-center gap-2 rounded-l-xl bg-primary py-3.5 text-white shadow-cta transition-colors hover:bg-primary-hover lg:flex">
+        className="fixed right-0 top-[176px] z-30 hidden w-9 flex-col items-center gap-2 rounded-l-xl bg-primary py-3.5 text-white shadow-cta transition-colors hover:bg-primary-hover lg:flex print:hidden">
         <span className="text-[12.5px] font-bold tracking-wide" style={{ writingMode: 'vertical-rl' }}>상담하기</span>
         <span className="text-[14px] leading-none" aria-hidden>‹</span>
       </button>
@@ -89,7 +89,7 @@ export default function FloatingPanel() {
 
   return (
     <aside ref={ref} data-t="floating-panel" aria-label={title}
-      className={`fixed right-2.5 top-[128px] z-30 hidden w-[228px] rounded-card border border-line-card bg-white shadow-panel animate-rise lg:block ${wide ? '' : 'ring-4 ring-primary/10'}`}>
+      className={`fixed right-2.5 top-[128px] z-30 hidden w-[228px] rounded-card border border-line-card bg-white shadow-panel animate-rise lg:block print:hidden ${wide ? '' : 'ring-4 ring-primary/10'}`}>
       {/* 접기 탭 — 패널 왼쪽 가장자리에 붙는 작은 › 탭(아정당식) */}
       <button onClick={toggle} aria-label="패널 접기" aria-expanded={true}
         className="absolute -left-[22px] top-4 flex h-12 w-[22px] items-center justify-center rounded-l-lg border border-r-0 border-line-card bg-white text-[15px] text-faint shadow-card transition-colors hover:text-ink">

@@ -74,6 +74,8 @@ const num = (s) => Number(String(s).replace(/[^0-9]/g, '')) || 0
 
   // ───────────── ② 요금제 목록 = 가격표 열 ─────────────
   console.log('\n── ② 요금제 목록이 가격표에서 나온다 ──')
+  // ②~⑤ 는 고객이 보는 계산기의 가격표 동작 — 사업자(관리자 포함)는 이제 판매자 설계 화면이 열리므로 비로그인으로 본다
+  await session(null)
   await go('/calculator/phone')
   const planIds = await page.locator('[data-t="calc-plan"]').evaluateAll((bs) => bs.map((b) => b.dataset.id))
   check(planIds.join(',') === 'choice110,basic4g', `요금제 선택지가 가격표 열 2개와 일치 (${planIds.join(',') || '-'})`)

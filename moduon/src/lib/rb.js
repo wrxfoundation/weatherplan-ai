@@ -46,7 +46,8 @@ export function rbFor({ kind = 'phone', deviceId, itemId, mvno = false, join = '
 
   // 내 등급이 볼 자격이 있는 줄만 — 셀러는 고객 지원금 재량이 있으니 그 줄을 본다.
   const rows = [{ key: 'rebate', label: 'R/B 단가', value: rebate, tone: 'ink' }]
-  if (tier === 'seller' || tier === 'hq') rows.push({ key: 'customer', label: '고객 추가지원 (매장 부담)', value: -customer, tone: 'minus' })
+  // -0 은 toLocaleString 에서 '-0' 으로 찍힌다 — 지원금이 없으면 그냥 0
+  if (tier === 'seller' || tier === 'hq') rows.push({ key: 'customer', label: '고객 추가지원 (매장 부담)', value: customer ? -customer : 0, tone: 'minus' })
   if (tier === 'hq') {
     rows.push({ key: 'seller', label: '셀러 수당', value: seller, tone: 'ink' })
     rows.push({ key: 'agency', label: '대리점 영업비', value: hidden.agency, tone: 'ink' })

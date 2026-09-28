@@ -4,7 +4,7 @@
 // 품목·단가는 lib/rentals.js 한 곳. 리스 보정도 거기서 계산한다(화면은 숫자를 만들지 않는다).
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
-import { RENTAL_BRANDS, WATER_TYPES, isWaterCat, browseRentals, calcRental } from '../lib/rentals'
+import { RENTAL_BRANDS, WATER_TYPES, isWaterCat, browseRentals, calcRental, rentalModel, rentalLabel } from '../lib/rentals'
 import { won } from '../lib/engine'
 import { LEGAL } from '../lib/constants'
 import { EmptyState } from './ui'
@@ -112,6 +112,7 @@ export default function RentalBrowser() {
                 <div>
                   <div className="text-[11.5px] font-semibold text-faint">{it.brand} · {it.category}</div>
                   <div className="mt-0.5 text-[15px] font-bold leading-5 text-ink">{it.name}</div>
+                  {rentalModel(it) && <div className="tnum mt-0.5 text-[12px] font-semibold tracking-wide text-faint" data-t="rental-model">{rentalModel(it)}</div>}
                 </div>
                 {it.waterType && <span className="shrink-0 rounded-full bg-tint px-2 py-0.5 text-[10.5px] font-bold text-primary-text">{WATER_TYPES.find((w) => w.key === it.waterType)?.label}</span>}
               </div>
@@ -127,7 +128,7 @@ export default function RentalBrowser() {
               </div>
               <div className="mt-3 grid grid-cols-2 gap-1.5">
                 <Link to={`/calculator/rental?item=${it.id}`} className="flex h-10 items-center justify-center rounded-field bg-tint text-[13px] font-bold text-primary-text transition-colors hover:bg-primary hover:text-white">자세히 계산</Link>
-                <button onClick={() => nav(`/consult?cat=${it.cat}`, { state: { quote: { type: 'rental', label: `${it.brand} ${it.name}`, total: q.base, gift: 0 } } })}
+                <button onClick={() => nav(`/consult?cat=${it.cat}`, { state: { quote: { type: 'rental', label: rentalLabel(it), total: q.base, gift: 0 } } })}
                   className="h-10 rounded-field border border-line bg-white text-[13px] font-bold text-label transition-colors hover:border-primary hover:text-primary-text">상담</button>
               </div>
             </div>

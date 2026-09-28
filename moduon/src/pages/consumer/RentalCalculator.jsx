@@ -3,7 +3,7 @@
 // 모두 반영한 "카드할인 후 실부담"과 "약정 총 부담"을 함께 보여준다.
 import { useMemo, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { RENTAL_ITEMS, CARE_TYPES, TERMS, COMBO_DC, OWNERSHIP_TERM, MIN_REAL, calcRental, rentalMatrix } from '../../lib/rentals'
+import { RENTAL_ITEMS, CARE_TYPES, TERMS, COMBO_DC, OWNERSHIP_TERM, MIN_REAL, calcRental, rentalMatrix, rentalModel, rentalLabel } from '../../lib/rentals'
 import { won, copyText } from '../../lib/engine'
 import { LEGAL } from '../../lib/constants'
 import { IcShare, IcCheck } from '../../components/icons'
@@ -23,14 +23,17 @@ export default function RentalCalculator() {
   const q = useMemo(() => calcRental({ itemId, care, term, card, combo }), [itemId, care, term, card, combo])
   const matrix = useMemo(() => rentalMatrix({ itemId, card, combo }), [itemId, card, combo])
 
-  const label = `${q.item.brand} ${q.item.short} · ${CARE_TYPES.find((c) => c.key === care)?.label} ${term}개월${combo > 1 ? ` · ${combo}대 동시` : ''}`
+  // 접수 기록(리드 라벨)에는 모델명을 꼭 싣는다 — 처리 담당자가 계약·설치를 그 모델로 진행한다(없으면 '미등록'이 남는다)
+  const label = `${rentalLabel(q.item)} · ${CARE_TYPES.find((c) => c.key === care)?.label} ${term}개월${combo > 1 ? ` · ${combo}대 동시` : ''}`
 
   const goConsult = () => nav('/consult?cat=' + q.item.cat, {
     state: { quote: { type: 'rental', total: q.real, gift: q.saved, label: `${label} → 월 ${won(q.real)}` } },
   })
 
   const share = async () => {
-    const text = `[모두온 렌탈 견적]\n${label}\n월 실부담 ${won(q.real)}${card ? ` (정가 ${won(q.base)})` : ''}\n약정 총 부담 ${won(q.totalReal)}\n직접 계산해 보기 → ${window.location.origin}/calculator/rental\n※ 예상 견적이며 최종 조건은 상담 시 확정됩니다.`
+    // 고객에게 가는 문구 — 모델명이 있으면 싣되 '미등록' 같은 내부 표시는 넣지 않는다
+    const custName = `${q.item.brand} ${q.item.name}${rentalModel(q.item) ? ` (${rentalModel(q.item)})` : ''}`
+    const text = `[모두온 렌탈 견적]\n${custName} · ${CARE_TYPES.find((c) => c.key === care)?.label} ${term}개월${combo > 1 ? ` · ${combo}대 동시` : ''}\n월 실부담 ${won(q.real)}${card ? ` (정가 ${won(q.base)})` : ''}\n약정 총 부담 ${won(q.totalReal)}\n직접 계산해 보기 → ${window.location.origin}/calculator/rental\n※ 예상 견적이며 최종 조건은 상담 시 확정됩니다.`
     if (await copyText(text)) { setCopied(true); setTimeout(() => setCopied(false), 1600) }
   }
 
@@ -62,6 +65,7 @@ export default function RentalCalculator() {
                   <span className={`absolute right-3 top-3 h-[18px] w-[18px] rounded-full ${itemId === r.id ? 'border-[6px] border-primary bg-white' : 'border border-line bg-white'}`} />
                   <span className="w-fit rounded-full bg-brow px-2 py-0.5 text-[10px] font-bold text-bmuted">{r.brand}</span>
                   <span className="mt-2 text-[13.5px] font-bold leading-5 text-ink">{r.short}</span>
+                  {rentalModel(r) && <span className="tnum mt-0.5 text-[11px] font-semibold tracking-wide text-faint" data-t="rental-model">{rentalModel(r)}</span>}
                   <span className="tnum mt-1 text-[11.5px] text-faint">월 {won(r.monthly.self[60])}~</span>
                 </button>
               ))}
@@ -119,7 +123,7 @@ export default function RentalCalculator() {
           <section className="rounded-card bg-white p-5 shadow-card sm:p-6">
             <div className="flex flex-wrap items-baseline justify-between gap-2">
               <h2 className="text-[16px] font-bold text-ink">관리 방식 × 기간 비교</h2>
-              <span className="text-[11.5px] text-faint">{q.item.brand} {q.item.short} · {card ? '카드할인 적용' : '카드할인 미적용'}{combo > 1 ? ` · ${combo}대` : ''}</span>
+              <span className="text-[11.5px] text-faint">{q.item.brand} {q.item.short}{rentalModel(q.item) ? ` · ${rentalModel(q.item)}` : ''} · {card ? '카드할인 적용' : '카드할인 미적용'}{combo > 1 ? ` · ${combo}대` : ''}</span>
             </div>
             <div className="mt-3 overflow-x-auto">
               <table className={`w-full ${card ? 'min-w-[520px]' : 'min-w-[440px]'} text-[12.5px]`}>

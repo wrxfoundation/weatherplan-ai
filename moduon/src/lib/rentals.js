@@ -99,6 +99,18 @@ export const OWNERSHIP_TERM = 60 // 이 기간 이상 사용 시 소유권 이�
 //  견적 전체의 신뢰를 깎는다.)
 export const MIN_REAL = 2900
 
+// ─── 모델명 — 계약서·설치 요청서에 그대로 옮겨 적는 식별자 ─────────────────
+// 운영팀 요청(2026-09-28): 미니렌탈샵처럼 상품마다 모델명이 있어야 접수·설치 처리가 깔끔하다.
+// **확인된 것만 넣는다** — 틀린 모델명은 빈칸보다 위험하다(엉뚱한 기기가 설치된다).
+// 비어 있으면 고객 화면에선 줄을 숨기고, 상담 접수 기록(리드 라벨)에는 '모델명 미등록'이 남아 처리 담당자가 알 수 있다.
+// 목록을 받으면 이 표만 채우면 된다 — 카드·계산기·접수 기록이 전부 여기서 읽는다.
+export const RENTAL_MODELS = {
+  'coway-ice': 'CHPI-7410N', // 미니렌탈샵 캡처 '아이콘 스탠다드 얼음 냉온정수기' — 표준형으로 매칭(확인 필요)
+}
+export const rentalModel = (itemOrId) => RENTAL_MODELS[typeof itemOrId === 'string' ? itemOrId : itemOrId?.id] ?? null
+// 접수 기록용 이름 — 모델명이 있으면 괄호로, 없으면 미등록 표시(처리 담당자가 확인하도록)
+export const rentalLabel = (it) => `${it.brand} ${it.name} (${rentalModel(it) ?? '모델명 미등록'})`
+
 export const rentalItem = (id) => RENTAL_ITEMS.find((r) => r.id === id) ?? RENTAL_ITEMS[0]
 // 브랜드·카테고리·정수기타입으로 걸러 목록을 만든다. 카테고리 미지정이면 브랜드 전체.
 export function browseRentals({ brand, category, waterType } = {}) {

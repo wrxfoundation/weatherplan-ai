@@ -191,3 +191,47 @@ export function compareMethods({ deviceId, planId, join, months = 24, extra15 = 
   const diff = Math.abs(tcoA - tcoB)
   return { better: tcoA <= tcoB ? 'support' : 'select', diff, months: m }
 }
+
+// ─── 판매자 설계(사업자 전용) — 제로노트식 A · B · A+B 에 판매자 입력을 얹는다 ───────────────
+// 기준값(출고가 · 공시지원금 또는 가격표 적용가 · 요금제 · 선택약정 · 결합)은 calcPhoneQuote 그대로 쓰고,
+// 판매자가 직접 넣는 금액만 그 위에서 뺀다. 소비자 화면의 '추가지원금 15%' 자동 규칙은 여기서 쓰지 않는다 —
+// 판매자 설계의 추가지원금은 판매자 부담(내 수당에서 나간다)이라 금액을 판매자가 정하고, 상한(내 수당 한도)
+// 클램프는 호출부가 rbFor 결과로 한다. 이 함수는 순수 계산만 한다.
+// 통신사는 KT 고정 — 현재 요금제·가격표가 모두 KT(K1) 기준이다.
+export const DESIGN_DEFAULTS = {
+  deviceId: 'fold8', storage: null, planId: 'choice110', join: 'mnp', method: 'support', months: 24, bundle: false, addon: false,
+  extraSupport: 0, pointDc: 0, preCard: 0, prepay: 0, // A — 한 번에 빠지는 금액(원)
+  cardDc: 0, welfareDc: 0, promoDc: 0, // B — 매달 빠지는 금액(원/월)
+  joinFee: 0, usimFee: 0, // 별도 청구 — 개통 때 한 번(원)
+}
+
+const money = (v) => Math.max(0, Math.round(Number(String(v ?? '').replace(/[^0-9.-]/g, '')) || 0))
+
+export function designPhoneQuote(input = {}) {
+  const d = { ...DESIGN_DEFAULTS, ...input }
+  const base = calcPhoneQuote({
+    deviceId: d.deviceId, planId: d.planId, join: d.join, method: d.method, months: d.months,
+    extra15: false, bundle: d.bundle, storage: d.storage, carrier: 'KT', addon: d.addon,
+  })
+  // A — 할부원금에서 한 번에 빠지는 판매자 입력
+  const a = { extra: money(d.extraSupport), point: money(d.pointDc), preCard: money(d.preCard), prepay: money(d.prepay) }
+  const aSum = a.extra + a.point + a.preCard + a.prepay
+  const principal = Math.max(0, base.principal - aSum)
+  const { monthly: deviceMonthly, interest } = pmt(principal, d.months)
+  // B — 월 요금에서 매달 빠지는 판매자 입력(선택약정·결합 할인 뒤에 뺀다)
+  const b = { card: money(d.cardDc), welfare: money(d.welfareDc), promo: money(d.promoDc) }
+  const planMonthly = Math.max(0, base.planMonthly - b.card - b.welfare - b.promo)
+  const total = deviceMonthly + planMonthly + base.addonFee
+  const joinFee = money(d.joinFee), usimFee = money(d.usimFee)
+  const upfront = d.months === 0 ? principal : 0
+  return {
+    ...base,
+    input: d, a, b, aSum,
+    principalBase: base.principal, // 판매자 입력 전 할부원금(가격표 적용가 또는 출고가 − 공시지원금)
+    principal, deviceMonthly, interest,
+    planMonthlyBase: base.planMonthly, planMonthly,
+    total, joinFee, usimFee, upfront,
+    oneTime: joinFee + usimFee + upfront, // 별도 청구(개통 때 한 번)
+    total24: total * 24 + joinFee + usimFee + upfront, // 24개월 총 납부(비교용)
+  }
+}

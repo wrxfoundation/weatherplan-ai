@@ -57,6 +57,7 @@ const step = (name, fn) => {
   step('스모크: 어드민 콘텐츠·고객소통', () => run('node scripts/qa-admin-content-smoke.cjs'))
   step('스모크: 조직 3계층·R/B·계층정산', () => run('node scripts/qa-org-smoke.cjs'))
   step('스모크: 정책 단가표·셀프개통 마진', () => run('node scripts/qa-ratecard-smoke.cjs'))
+  step('스모크: 사업자 판매 설계·렌탈 모델명', () => run('node scripts/qa-seller-smoke.cjs'))
   step('스모크: 전 라우트 UX(넘침·터치·iOS·a11y)', () => run('node scripts/qa-ux-smoke.cjs'))
 
   if (preview) { try { process.kill(-preview.pid) } catch { /* 이미 종료 */ } }

@@ -90,19 +90,19 @@ const BASE = process.env.QA_BASE ?? 'http://localhost:4173'
   // ───────────────────────────── ② R/B — 등급별 노출 ─────────────────────────────
   console.log('\n── ② R/B (사업자 전용) ──')
   await go('/calculator/phone')
-  check((await count('[data-t="rb-panel"]')) === 1, '사업자회원 — 휴대폰 계산기 상부에 R/B 노출')
+  check((await count('[data-t="rb-panel"]')) === 1, '사업자회원 — 휴대폰 판매 설계에 R/B 노출')
   check((await attr('[data-t="rb-panel"]', 'data-tier')) === 'seller', `R/B 등급 seller (${await attr('[data-t="rb-panel"]', 'data-tier')})`)
   check((await count('[data-t="rb-rebate"]')) === 1 && (await count('[data-t="rb-mine"]')) === 1, '셀러: R/B 단가 + 내 수당 행')
   check((await count('[data-t="rb-customer"]')) === 1, '셀러: 고객 지원금 행(재량 있음)')
   check((await count('[data-t="rb-distributor"]')) === 0, '셀러: 총판 몫은 보이지 않음')
-  // R/B 블록이 소비자 월 납부금보다 위(상부)에 있어야 한다
+  // R/B 블록은 '월 납부요금정보(A+B)' 칸 바로 위 — 운영팀 요청(2026-09-28). 예전 규칙은 '계산기 전체 상부'였다.
   const order = await page.evaluate(() => {
     const rb = document.querySelector('[data-t="rb-panel"]')
-    const calc = document.querySelector('main .grid.items-start')
-    if (!rb || !calc) return null
-    return rb.compareDocumentPosition(calc) & Node.DOCUMENT_POSITION_FOLLOWING ? 'rb-first' : 'calc-first'
+    const sum = document.querySelector('[data-t="seller-summary"]')
+    if (!rb || !sum) return null
+    return rb.compareDocumentPosition(sum) & Node.DOCUMENT_POSITION_FOLLOWING ? 'rb-first' : 'summary-first'
   }).catch(() => null)
-  check(order === 'rb-first', `R/B 블록이 계산 결과보다 상부 (${order})`)
+  check(order === 'rb-first', `R/B 블록이 월 납부요금정보(A+B) 위 (${order})`)
 
   await session({ role: 'agency', agencyId: 'AG3' })
   await go('/calculator/rental')

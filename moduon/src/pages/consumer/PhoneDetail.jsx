@@ -5,7 +5,9 @@
 import { useMemo, useState } from 'react'
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { phoneDevice, PHONE_PLANS, JOIN_TYPES, INSTALLMENT_MONTHS, INSURANCE, ADDONS, MNO, calcPhoneQuote, compareMethods, bestOffer } from '../../lib/phones'
-import { useStore } from '../../lib/store'
+import { useStore, getSession } from '../../lib/store'
+import { bizIdentity } from '../../lib/org'
+import SellerDesigner from '../../components/phone/SellerDesigner'
 import { selfMarginOf } from '../../lib/ratecard'
 import { PHONE_CARRIERS } from '../../lib/onboard'
 import { won } from '../../lib/engine'
@@ -15,9 +17,27 @@ import { PhoneArt, CUR_OPTIONS } from './PhoneShop'
 
 const MARK = Object.fromEntries(PHONE_CARRIERS.map((c) => [c.key, c]))
 
+// 같은 주소라도 보는 사람에 따라 화면이 다르다 — 고객은 온라인구매 상세, 사업자는 판매자 설계(제로노트식).
+// 사업자는 '?view=customer' 로 고객이 보는 화면을 그대로 미리 볼 수 있다(설계 화면의 '고객 화면 보기').
 export default function PhoneDetail() {
   const { model } = useParams()
-  return <PhoneDetailInner key={model} />
+  const [sp] = useSearchParams()
+  const { db } = useStore()
+  const viewer = bizIdentity(db, getSession())
+  if (viewer && sp.get('view') !== 'customer') return <SellerDesigner key={model} viewer={viewer} initialDeviceId={model} />
+  return (
+    <>
+      {viewer && (
+        <div className="bg-bink text-white" data-t="customer-preview-strip">
+          <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-2 px-5 py-2 text-[12.5px] sm:px-10">
+            <span><b>고객 화면 미리보기</b> — 고객에게는 이렇게 보여요(수당 정보 없음)</span>
+            <Link to={`/phone/shop/${model}`} className="inline-flex min-h-[32px] items-center rounded-full bg-white/15 px-3 font-bold hover:bg-white/25">설계 화면으로 →</Link>
+          </div>
+        </div>
+      )}
+      <PhoneDetailInner key={model} />
+    </>
+  )
 }
 
 function PhoneDetailInner() {

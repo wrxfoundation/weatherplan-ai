@@ -32,10 +32,11 @@ const S = {
 // 라우트 전수 — App.jsx 에 라우트를 추가하면 여기에도 넣는다(동적 파라미터는 시드에 있는 값)
 const ROUTES = [
   ['/', 'none'], ['/category/phone', 'none'], ['/category/rental', 'none'], ['/category/internet', 'none'],
-  ['/calculator', 'none'], ['/calculator/phone', 'biz'], ['/calculator/rental', 'none'],
+  ['/calculator', 'none'], ['/calculator/phone', 'biz'], ['/calculator/phone', 'none'], ['/calculator/rental', 'none'],
   ['/consult', 'none'], ['/diagnosis', 'none'], ['/payouts', 'none'], ['/support', 'none'], ['/shop', 'none'],
   ['/onboard/phone', 'none'], ['/onboard/internet', 'none'],
   ['/phone/shop', 'none'], ['/phone/shop/fold8', 'none'], ['/phone/mvno', 'none'], ['/phone/mvno/ktm-11g', 'none'],
+  ['/phone/shop', 'biz'], ['/phone/shop/fold8', 'biz'], // 사업자 — 설계 모드 안내 · 판매자 설계 화면(같은 주소, 다른 화면)
   ['/cars', 'none'], ['/cars/palisade', 'none'], ['/signup', 'none'],
   ['/benefits', 'none'], ['/benefits/ads', 'none'], ['/benefits/invite', 'none'], ['/benefits/signup', 'none'],
   ['/board/review', 'none'], ['/board/qna', 'none'], ['/board/qna/PQ1', 'none'], ['/board/tip', 'none'], ['/board/event', 'none'],
