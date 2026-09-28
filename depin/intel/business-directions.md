@@ -1819,3 +1819,32 @@ Hi Stephanie, I'm with KWeather; we've measured weather in Korea for 30 years. W
   재판매사로 돌려보낼 구조라 따로 두드리지 않는다(추론).
 - **발화**: 「스타링크 파트너」 대외 표현 0 — 계약 전이고, 정부가 2035 국산 저궤도망(K-Starlink)을 추진 중이라 국내에선 한 외국 망에
   기대는 인상이 부담일 수 있다(추론). 제안서 표현은 「저궤도 광대역 선박용 기상 데이터」.
+
+### KJ 견적 요청(RFQ) 발송 뒤 — 항목별 창구 · 인물 (9/28, 서우 「kj가 보냈어서 유사한 직군 부서 인물 찾아봐」)
+KJ(케이웨더 Head of Product)가 9/28 스타링크 팀에 견적 요청을 보냈다 — 세 항목(Direct to Cell IoT 모듈 · Flat High Performance 단말 + 기업
+요금 · 소형위성 라이드셰어 1건). **수량 · 원문은 저장소 밖**(제안 메일 원문 금지). **세 항목이 SpaceX 안 세 조직으로 갈린다** — 답이 쪼개지거나
+일부만 온다. (검색 요약 2차 · 원문 미열람)
+
+| 항목 | 담당 조직 | 사람(공개 직함) | 현실 |
+|---|---|---|---|
+| D2C IoT | Starlink Direct to Cell — 통신사 도매 파트너십 | 개인 BD 공개 안 됨(공동 리드 Sara Spangelo 는 2025-02 퇴사) | SpaceX 는 모듈을 팔지 않는다 — 기성 LTE Cat-1 · 1bis · 4 모뎀 + 나라별 통신사. **한국 통신사 파트너 없음**(확인 범위), 일본은 **KDDI 「au Starlink Direct for IoT」(2026-04-23 개시 · 법인용)** |
+| 평판 단말 + 기업 요금 | Starlink Business Operations · Enterprise Sales | **Lauren Dreyer** — VP Starlink Business Operations(신규 시장 판매 개시 · 기업 고객 · 라이선스), 스타링크코리아 유한책임회사 업무집행자(2023 설립 등기 기준) · Jason Fritch — VP Starlink Enterprise Sales(집계 사이트) · Director, APAC Enterprise Sales(2026-01 싱가포르 채용 공고, 이름 미확인) | 한국 기업 고객은 SK텔링크 · KT SAT 로 돌려보낼 구조 |
+| 라이드셰어 | **SpaceX Commercial Sales(발사) — 스타링크 아님** | Stephanie Bednarek — VP Commercial Sales · Jarrod McLachlan — 라이드셰어 영업(자료마다 직함이 달라 현직 확인) | Falcon 9 라이드셰어 신규 판매 중단 |
+
+**정정**: 위 「스타링크 쪽」의 VP Business Operations 는 **Lauren Dreyer** 가 복수 보도로 확인된다 — Samuel(Chad) Gibbs IV 표기(집계 사이트)는 쓰지 않는다.
+
+**진행**
+- **SpaceX 는 KJ 스레드 하나로 일원화** — 위 영업 메일 초안과 Stephanie 메모는 보내지 않는다(같은 회사에 케이웨더 두 사람이 겹치는 요청을
+  다른 말로 보내는 셈). 발사 질문은 KJ 스레드 후속으로 붙인다.
+- 2주 무응답이면 **Lauren Dreyer 한 명에게 KJ 계정으로 1촌 요청**(한국과 직접 이어진 유일한 윗선 · 서우 계정은 웰비안 프로필이라 케이웨더
+  스레드와 결이 갈린다). SpaceX 상한 2 = KJ 스레드 + Lauren.
+- 답이 오기 전 맞춰 둘 것 ① D2C: 나라별 배치 계획(한국은 지금 불가 · 일본은 KDDI 경유) · 모뎀 사양 · 센서당 데이터량 ② 단말: SK텔링크 · KT SAT 에
+  먼저 말해 두기(재판매사로 넘어올 때 우리가 먼저 와 있게) ③ 라이드셰어: 위성 무게 · 궤도 · 시점(없으면 답이 없다) ④ 메일 속 「world's largest」 ·
+  「leading」 · 「within NVIDIA」 근거 질문 대비 — NVIDIA 문구는 관계로 읽힐 수 있어 실제 범위를 한 줄로 준비 ⑤ 후속 메일은 케이웨더만 — 웰비안
+  링크는 수출통제 심사에서 토큰 질문을 부를 수 있다(추론).
+- **대외 발화 0** — 대규모 조달 견적은 상장사 공시 사안이 될 수 있다(IR 과 맞춤).
+
+**2주 무응답일 때 — Lauren Dreyer 1촌 요청 메모(KJ 계정, 235자)**
+```
+Hi Lauren, I'm KJ Lee, Head of Product at KWeather; we've measured weather in Korea for 30 years. I sent your Starlink team an RFQ this week for enterprise terminals and IoT connectivity across our observation network. Glad to connect.
+```
