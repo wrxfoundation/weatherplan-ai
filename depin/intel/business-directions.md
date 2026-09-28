@@ -1749,3 +1749,54 @@ Institutional risk transfer, which you've been making the case for, is why I wan
 
 Good to be connected.
 ```
+
+## SpaceX — 위성 구매 제안 창구 (2026-09-28, 서우 Alex Wisner 프로필 캡처 3장 + 「스페이스x에 위성구매 제안도 실제로 해야해서 담당자나 부서」)
+
+**Alex Wisner — 연락하지 않는다(1촌도 X).** Insider Threat — SpaceX(2026-04~) · SpaceXAI(2025-08~) · X(2025-03~) 공통 보안 조직.
+전 Amazon 보안 · 분석 「Insider Threat」(2021-12~2025-03) · Equitable 사이버보안 내부자 위협 · 사고 대응 · CMU SEI 내부자 위협 프로그램
+매니저 자격. 2촌 · 공통 1촌 1. **영업이 아니라 내부 보안** — 외부인이 직원에게 접근하는 것을 살피는 자리라, 해외 회사의 콜드 제안은
+잘못 온 문이자 경계 신호로 읽힌다.
+
+**SpaceX 에서 「위성」으로 살 수 있는 것 — 세 갈래(검색 요약 2차 · 원문 미열람)**
+1. **위성 자체** — 상업 고객 대상 공개 판매를 찾지 못했다. 위성 버스를 남에게 만들어 주는 건 Starshield(미국 정부 · 안보 전용).
+   → 위성은 제작사에서, SpaceX 에서는 아래 둘을 산다(메일 3번 질문으로 확인만).
+2. **발사** — Commercial Sales. **VP Stephanie Bednarek**(상업 · 라이드셰어 · 화물 · 유인 발사 영업 총괄). 창구 = 공식 영업 메일(사이트 공개)
+   · 라이드셰어 예약 포털. **⚠ Falcon 9 새 예약이 멈췄다** — 라이드셰어 판매 중단(WSJ) · 2028 이후 전용 발사 거절(Bloomberg 7/23) ·
+   9/16 Avio 「Falcon 9 신규 주문 동결로 수요 이동」. 새 고객 줄은 **Starship**(첫 상업 궤도 발사 준비 중, 9/28 CNBC) — 일정이 가장 큰 변수.
+3. **Plug and Plaser(Starlink 미니 레이저 단말)** — 남의 위성이 Starlink 레이저망으로 관측 데이터를 바로 내려보내게 하는 판매 제품.
+   첫 외부 고객 **Muon Space(기상 · 기후 관측 위성, 2027 첫 탑재)** · Starcloud(궤도 데이터센터). 공개 주문 창구 없음 → 영업 창구로.
+
+**진행**
+- **보내는 쪽 = 케이웨더(케이웨더 도메인 메일)** — 발사 · 위성 거래는 수출통제(ITAR · EAR) 심사를 거치고 상대가 먼저 보는 건 최종 사용자다.
+  상장 기상회사가 토큰 프로젝트보다 문이 쉽게 열린다(추론). 메일에 웰비안 · 토큰 0.
+- **첫 연락은 공식 영업 메일 한 곳.** 2주 무응답이면 Stephanie 1촌 요청(아래 메모) — SpaceX 상한 2(메일 + Stephanie).
+- 기술 자료는 NDA · 수출통제 절차 안에서만 — 사양 파일을 먼저 보내지 않는다.
+- **대외 발화 0** — 위성(택손 6026)은 「추후 공개」, 케이웨더 상장사라 위성 구매는 공시 사안이 될 수 있다(IR 과 맞춤).
+- 메일의 [ ] 세 칸(무게 · 궤도 · 시점)은 위성 사양을 정한 뒤 채운다 — 비워서 보내지 않는다.
+
+**영업 창구 메일 (EN)**
+```
+Subject: Launch and data relay for a small Earth-observation satellite — KWeather
+
+Hi SpaceX Commercial Sales team,
+
+I'm Seowoo Park from KWeather. We have measured weather in South Korea for 30 years and supply weather data to 4,000+ enterprise clients.
+
+We're exploring a small Earth-observation satellite for weather and air-quality monitoring: roughly [XX] kg, [sun-synchronous] orbit, launch around [year]. Three questions:
+
+1. Launch: what options would there be for a satellite like this, including Starship, and on what timeline?
+2. Data relay: could it carry a Plug and Plaser terminal, and what does integration involve?
+3. Platform: do you offer a satellite platform to commercial customers, or should we plan on a third-party bus?
+
+Happy to share more detail under NDA, or to set up a call, whichever is easier.
+
+Best,
+Seowoo Park (Logan)
+[Title], Digital Business Division
+KWeather
+[email] · kweather.co.kr
+```
+**2주 무응답일 때 — Stephanie Bednarek 1촌 요청 메모(205자)**
+```
+Hi Stephanie, I'm with KWeather; we've measured weather in Korea for 30 years. We're exploring a small Earth-observation satellite and wrote to your sales team about launch and data relay. Glad to connect.
+```
