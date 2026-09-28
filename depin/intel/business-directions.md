@@ -1928,3 +1928,39 @@ Given your role in bringing Starlink to new markets: who on your team is the rig
 Thank you,
 KJ
 ```
+
+### Tye Bragg (Starlink Director, Global Enterprise Sales & Channel) — 9/28 서우 프로필 캡처(+ Sean 재확인) → **단말 · 한국 계정 레인의 실무 주인. Jason 자리를 대신한다**
+- **Sean 재확인**: Starlink Partnerships Director **2023-05~**(3년 5개월, 로스앤젤레스). 판정 · 문안 그대로.
+- **Tye 자리**: SpaceX Director, Global Enterprise Sales & Channel(**2024-06~**, 텍사스 배스트럽). 소개 「엔터프라이즈 · 공공(SLED) · 통신사 영업 · 채널
+  20년+, 스타트업 5곳(인수 2 · 상장 2)」. 3촌 · 팔로워 7,458 · 「메시지」 바로 열림.
+- **이력**: Juniper Networks 8년(미국 엔터프라이즈 중부 총괄 — 2억 달러+ 신설 권역 · 중서부 8개 주 대형 고객 · Motorola Solutions 글로벌 계정) ·
+  BTI Systems 북미 통신사 영업 VP(Juniper 에 인수) · Veraz Networks(상장) · Tekelec. **Jason Fritch 도 전 Juniper — 같은 줄의 사람**(둘 중 하나만).
+- 최근 글: AutoNation(미국 자동차 딜러) 스타링크 도입 사례 공유 — **고정 사이트 기업 연결**이 그가 파는 것. 우리 레이다 · 관측 지점과 같은 형태.
+- **판정**: 한국 기업 고객은 재판매사(SK텔링크 · KT SAT) 경유 = **채널이 그의 일**. 「한국 기업 계정은 어디로」라는 우리 질문에 답할 바로 그 사람이고,
+  VP 보다 답할 가능성이 크다.
+- **순서(레인 A 상한 = KJ 스레드 + 한 사람)**: **Lauren 1촌 메모를 아직 안 보냈다면 Tye 먼저(바로 메시지)** → 1주 무응답이면 Lauren → Jason 은 마지막.
+  **이미 보냈다면** Lauren 그대로, Tye 가 Jason 자리(1주 무응답 예비). 어느 쪽이든 같은 질문을 동시에 두 사람에게 하지 않는다.
+- 레인 정리(갱신): 단말 · 한국 기업 계정 = Tye / Lauren(→ Jason) · D2C IoT = Sean · 라이드셰어 = KJ 스레드.
+- 뺀 것: 날씨가 나빠도 끊기지 않는다는 식의 성능 주장(비 오는 날 신호 감쇠가 있다 — 우리가 장담할 일이 아니다), 우리 지점 위치에 대한 단정(「레이다
+  지점은 대개 산 위 · 해안에 있다」는 일반론으로만), 수량 · 웰비안 · NVIDIA.
+
+**바로 보낼 메시지(InMail 제목 포함, 784자)**
+```
+Subject: Starlink for weather radar sites in Korea — KWeather
+
+Hi Tye,
+
+I'm KJ Lee, Head of Product at KWeather. We've measured weather in South Korea for 30 years and supply weather data to 4,000+ enterprise clients. Earlier this week I sent your Starlink team an RFQ that includes enterprise terminals with data plans for our weather radar sites.
+
+It's a fixed-site network, a bit like the AutoNation rollout you shared. Weather radar sites tend to sit on hilltops and coastlines, where terrestrial links are thin, and they matter most when the weather turns.
+
+I understand enterprise accounts in Korea go through your authorized resellers. Which path would you suggest for an account like ours, and who on the channel side covers Korea?
+
+Thank you,
+KJ Lee
+Head of Product, KWeather
+```
+**메시지 버튼이 없을 때 — 1촌 요청 메모(213자)**
+```
+Hi Tye, I'm KJ Lee, Head of Product at KWeather; we've measured weather in Korea for 30 years. I sent your Starlink team an RFQ this week for enterprise terminals across our weather radar network. Glad to connect.
+```
