@@ -1622,7 +1622,7 @@ Good to be connected.
 - **카드 하나**: Newscooper 의 「출처 검증」은 우리 합의값 논리와 결이 같다. 그가 먼저 말을 걸거나 소개가 오갈 때만 꺼낸다(Lynn 형식 인사 +
   이 한 줄). 거래소 1촌 규칙대로 사업 이야기는 우리가 먼저 열지 않는다.
 
-## Anna Irrera (Bloomberg News, Senior Editor — Digital Finance) — 판정 (2026-09-28) → 지금 메시지 0, 10/3 공개 뒤 한 번
+## Anna Irrera (Bloomberg News, Senior Editor — Digital Finance) — 판정 (2026-09-28) → **서우 결정: 지금 Lynn 형식 소개 + 조선일보 영문 기사**, 10/3 뒤 후속
 
 서우가 프로필 캡처 4장 공유. **이미 1촌**(팔로워 17,461 · 공통 1촌 셋).
 
@@ -1637,6 +1637,31 @@ Good to be connected.
   「정산이 온체인으로 옮겨 가면 그 밑의 기준 데이터가 약한 고리가 된다」는 주제의 출처가 되겠다고.
 - 예측시장 · 고객 · 토큰 · 가격 · 크립토닷컴 0. 「9/23 부터 가동」이 사실이라 **「10/3 에 가동」이 아니라 「10/3 에 발표」**로 쓴다.
 
+**★ 9/28 서우 결정 — 「군불을 떼워놔야 10/3 에도 자연스럽게 말을 걸지」** → 위 「지금 메시지 0」을 바꾼다. 막으려던 두 가지(10/3 전 Flare 누설 ·
+공개 전 정보)는 **이미 공개된 기사(조선일보 영문, 9/8)만 건네는 Lynn 형식 소개**면 걸리지 않는다. Flare · 10/3 · 예측시장 · 토큰 0.
+기사 본문은 이 세션에서 열어 보지 못했다(접속 차단) — 9/11 크립토닷컴 메일에 이미 쓴 링크.
+
+**지금 보낼 소개 (EN)**
+```
+Hi Anna — a quick introduction.
+
+I run partnerships at wellbian. KWeather has measured weather in South Korea for thirty years and supplies data to 4,000+ enterprise clients; wellbian is the network built on top of that.
+
+We work on two layers: certified air-quality sensors that people run in their own rooms, and city-level weather across 90 countries and 167 cities, where each value is a consensus across eleven weather feeds rather than a single reading. Every input is fingerprinted to a public ledger before it goes anywhere.
+
+The Chosun Daily wrote about it earlier this month, if useful as background: https://www.chosun.com/english/national-en/2026/09/08/BBHTLDU2XZBUNMR5MT2VA3VIXE/
+
+Good to be connected.
+```
+
+**10/3 공개 뒤 후속 (EN, 소개가 나간 뒤라 자기소개 생략)**
+```
+Hi Anna, a quick follow-up to my note last week: on Oct 3 we announced that KWeather's Weather Data Market is live on Flare mainnet. Hourly weather for 167 cities, each value a consensus across 11 feeds, recorded on-chain before any contract settles on it, and paid for in XRP. [link to our Oct 3 post]
+
+As more settlement moves on-chain, the reference data underneath becomes the weak point. Happy to be a source on that whenever it's useful.
+```
+
+(이하 9/28 첫 판정 원안 — 참고로 남김)
 **10/3 공개 뒤 DM (EN)**
 ```
 Hi Anna, I run partnerships at wellbian, the network built on KWeather, which has measured weather in South Korea for 30 years and supplies data to 4,000+ enterprise clients.
