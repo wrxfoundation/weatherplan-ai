@@ -82,9 +82,10 @@ Hugo 슬라이드는 KWeather 2장 · 60초(35초+25초)이고 범위가 「Flar
 - 시뮬레이터(weathermarket.io)를 보여준다면 「SIMULATION」 표시 + 한국 도시 · 베팅 화면 0(8/18 방미심위 결정 — 9/24 판정 4 법무 확인 유지).
 - 9/29 코멘트에 넣을 것: 위 표의 Hugo 줄 + 스레드 줄(인용 · 안내). 기존 코멘트 초안(숫자 표현 · 고객 · 예측시장 0 · 날짜)과 함께.
 
-**Ami 회신 (EN, 서우 발송용 — 13:00 은 확정 전 제안)**
+**Ami 회신 (EN, 서우 발송용) — 9/28 서우 수정: 「너무 앞서나간다」** → 요청(마지막 줄 안내 · 발표 시각)은 빼고,
+Hugo 가 어느 부분을 발표하는지만 알려 달라고 한다. 위 표는 내부 참고로만 둔다.
 ```
-Thanks Ami! Since Hugo is on before us (we're at 14:50), a small request for his KWeather slides: could they close with a pointer to our keynote, something like "See it live: KWeather keynote, 14:50"? We'd like to keep the live walkthrough and the device for our own session, so the slides can stay on the infrastructure story. We'll post our announcement before Hugo goes on stage, by 13:00 KST, so the Flare thread can quote it. Full comments on the script by Tuesday as promised.
+Thanks Ami! Since Hugo's slot is before ours (14:50–15:05), could you let us know which parts he'll cover once it's settled? We'll use it as a reference for our own presentation.
 ```
 
 ## 우리 쪽 규칙 — 10/3 전에 바꿔야 할 것
