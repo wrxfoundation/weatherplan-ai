@@ -1848,3 +1848,41 @@ KJ(케이웨더 Head of Product)가 9/28 스타링크 팀에 견적 요청을 �
 ```
 Hi Lauren, I'm KJ Lee, Head of Product at KWeather; we've measured weather in Korea for 30 years. I sent your Starlink team an RFQ this week for enterprise terminals and IoT connectivity across our observation network. Glad to connect.
 ```
+
+### 서우 결정(9/28 「이쪽 먼저 해보자그람」) — 스타링크 기업 쪽(Lauren · Jason · APAC 디렉터) 먼저, 지금
+- **Jason Fritch 확인** — VP Worldwide Enterprise Sales(스타링크 기업영업 총괄, 약 2년 · 전 Juniper 글로벌 SVP). ZIPAIR 「아시아 첫 전 기단
+  스타링크」(2026-03) · Comcast Business 협업을 직접 발표 — 집계 사이트 표기에서 보도 확인으로 올린다.
+- **APAC 디렉터** — 여전히 이름 미확인(2026-01-07 싱가포르 공고). 링크드인 사람 검색: 회사 SpaceX · 「Starlink Enterprise」 + 「APAC」 또는
+  「Asia-Pacific」 · 지역 싱가포르 · 직함 Director.
+- **순서(상한 2 = KJ 스레드 + 한 사람)**: **Lauren 지금** — 한국 시장 · 인허가 · 기업 고객 · 전략 연결 사업을 한 사람이 쥔다(D2C 한국 질문까지
+  그의 영역) → **1주 무응답이면 Jason**(단말 = 그의 조직) → APAC 디렉터는 이름이 나오면 Jason 자리와 바꾼다(같은 조직이라 둘 다는 X).
+  앞 절 「2주 무응답이면 Lauren」은 이 결정으로 「지금」이 된다.
+- **보내는 계정 = KJ**(견적 요청 발신자 · 케이웨더 명의). 서우 계정으로 보내면 메모 둘째 문장을 「My colleague KJ Lee sent your Starlink team an RFQ
+  this week …」로, 수락 뒤 메시지의 「I sent」도 같이 바꾼다.
+- 뺀 것: 「world's largest」 · 「leading」 · NVIDIA · 웰비안 · 수량 · 라이드셰어(스타링크 조직 밖 — KJ 스레드가 돌린다).
+
+**Lauren — 1촌 요청 메모(위와 같음, 235자) · 수락 뒤(649자)**
+```
+Lauren, thanks for connecting.
+
+KWeather has measured weather in South Korea for 30 years and supplies weather data to 4,000+ enterprise clients. Earlier this week I sent your Starlink team an RFQ for our observation network: enterprise terminals for our weather radar sites, and satellite IoT connectivity for outdoor air-quality sensors across East Asia.
+
+Given your role in bringing Starlink to new markets, two questions: who on your team is the right contact for a Korean enterprise account, and is Direct to Cell IoT on the roadmap for Korea? If the path runs through your authorized resellers here, we're glad to work that way.
+
+Thank you,
+KJ
+```
+**Jason — 1주 무응답일 때, 1촌 요청 메모(215자) · 수락 뒤(473자)**
+```
+Hi Jason, I'm KJ Lee, Head of Product at KWeather; we've measured weather in Korea for 30 years. I sent your Starlink team an RFQ this week for enterprise terminals across our weather radar network. Glad to connect.
+```
+```
+Jason, thanks for connecting.
+
+KWeather has measured weather in South Korea for 30 years and supplies weather data to 4,000+ enterprise clients. Earlier this week I sent your Starlink team an RFQ that includes enterprise terminals with data plans for our weather radar sites.
+
+Who on your team covers Korean enterprise accounts? If it runs through your authorized resellers here, we're glad to work that way; we just want the request to reach the right desk.
+
+Thank you,
+KJ
+```
