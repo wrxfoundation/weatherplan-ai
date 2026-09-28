@@ -1621,3 +1621,27 @@ Good to be connected.
 - 겸직이 많은 네트워커형(들어오는 요청 거름 신호 중 「같은 기간 중복 직함」 1개 — 바이낸스 재직이 실체라 거를 대상은 아니다).
 - **카드 하나**: Newscooper 의 「출처 검증」은 우리 합의값 논리와 결이 같다. 그가 먼저 말을 걸거나 소개가 오갈 때만 꺼낸다(Lynn 형식 인사 +
   이 한 줄). 거래소 1촌 규칙대로 사업 이야기는 우리가 먼저 열지 않는다.
+
+## Anna Irrera (Bloomberg News, Senior Editor — Digital Finance) — 판정 (2026-09-28) → 지금 메시지 0, 10/3 공개 뒤 한 번
+
+서우가 프로필 캡처 4장 공유. **이미 1촌**(팔로워 17,461 · 공통 1촌 셋).
+
+- **자리**: Bloomberg 크립토 · 디지털 결제 팀 Senior Editor(2022-07~, 런던) — 디지털 금융(크립토 · 디지털 자산 · 결제) 기사 편집 · 취재.
+  전 Reuters 핀테크 수석 특파원(런던 · 뉴욕, 2016~2022) · Dow Jones Financial News(2012~2016). 컬럼비아 저널리즘 석사 · 이탈리아 법학.
+  최근 글: 달러 스테이블코인 해외 보급 검토 · 월가 13조 달러 레포 시장의 블록체인 · 유럽의 디지털 화폐 경쟁.
+
+**판정 — 기자 기본값(윗선 ②, 「10/3 무대 뒤」)대로**
+- **지금 메시지 0.** 10/3 09:00 공개 전에 Flare 건을 기자에게 먼저 말하면 「소식은 웰비안에게서 먼저」가 깨진다. 그리고 **케이웨더는 상장사** —
+  공개 전 사업 정보를 언론에 먼저 주면 공정공시 문제가 될 수 있다(추론 — 케이웨더 IR · 홍보와 먼저 맞춘다). **기자에게는 이미 공개된 것만.**
+- **10/3 공개 뒤 한 번**: 우리 공개 글을 근거로 「기사 제안」이 아니라 **취재원 자리**를 연다 — 그의 담당(온체인 정산 · 스테이블코인 · 토큰화)에서
+  「정산이 온체인으로 옮겨 가면 그 밑의 기준 데이터가 약한 고리가 된다」는 주제의 출처가 되겠다고.
+- 예측시장 · 고객 · 토큰 · 가격 · 크립토닷컴 0. 「9/23 부터 가동」이 사실이라 **「10/3 에 가동」이 아니라 「10/3 에 발표」**로 쓴다.
+
+**10/3 공개 뒤 DM (EN)**
+```
+Hi Anna, I run partnerships at wellbian, the network built on KWeather, which has measured weather in South Korea for 30 years and supplies data to 4,000+ enterprise clients.
+
+In case it's useful for your coverage: on Oct 3 we announced that KWeather's Weather Data Market is live on Flare mainnet. Hourly weather for 167 cities, each value a consensus across 11 feeds, recorded on-chain before any contract settles on it, and paid for in XRP. [link to our Oct 3 post]
+
+As more settlement moves on-chain, the reference data underneath becomes the weak point. Happy to be a source on that whenever it's useful.
+```
