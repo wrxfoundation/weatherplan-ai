@@ -95,6 +95,28 @@ RLUSD 의 FDC 결제 증명 통합. 9/23 에 BSC 앵커 폐기 · Flare 직행 �
 - 9/24 링크드인 글 3문장 수정 — **9/23 그룹 대화로 FDC 제외 · Flare 직행 앵커 · XRP 결제가 확인됐다** → 준비된 수정안(`linkedin-0924-settlement-oracle.md`)으로 편집 가능
 - 10/12 유튜브 — Flare 가 녹화 전 대본을 보내면 검토(지금 할 일 없음)
 
+## 10/3 우리 발표안 (9/28, 서우 「발표 시점은 09:00 어때 · 우리가 뭘 발표해야 하는 거지?」)
+
+**시각 09:00 KST — 좋다.** Hugo(13:30)보다 4시간 반 앞서 「소식은 웰비안에게서 먼저」가 넉넉히 선다. = 10/2 20:00 ET(미국 XRP 커뮤니티
+저녁 황금시간) · 10/3 02:00 CEST(Flare 팀은 유럽 아침에 보고 Hugo 시각 13:30 KST = 06:30 CEST 전후로 스레드를 올릴 여유). 서울 참석자는
+행사장 가는 길에 본다. 10/3 은 개천절 — X 는 상관없고, 국문 보도자료를 낸다면 휴일 편집국 사정은 케이웨더 홍보가 따로 판단.
+
+**무엇을 — 「첫 층이 메인넷에서 돌고 있다」는 소식 하나.** Flare 스레드 1/ · Hugo 1장이 이 소식을 받아 쓰는 구조라, 우리 글이 그 원문이 된다.
+「함께 지키는 선」의 「메인넷 가동」 칸만 쓴다 — 매시간 11개 출처 → 도시별 합의값 · 167개 도시 · 매 실행을 Flare 메인넷에 기록 ·
+누구나 읽는 판정 · XRP 결제. **빼는 것**: 기기 상세(키노트 몫) · FCC(시험 중 — 쓰면 「next layer」로만) · 보험 지급 · 고객 · 예측시장 · 토큰 · 가격.
+「XRP 로 결제」를 넣어 XRPL 커뮤니티에 「Flare 로 옮겼다」가 아니라 **XRP 생태계 안의 결합**으로 읽히게 한다.
+
+**X 원글(258자 — 원글 280자 · 1일 1원글 규칙: 10/3 원글 자리는 이 글, 래플 · 부스 안내는 이 글의 답글이나 전날로)**
+```
+KWeather's Weather Data Market is live on Flare mainnet. Every hour: 11 sources, one consensus value for each of 167 cities, each run recorded on Flare, verdicts any contract can read, paid in XRP. The full walk-through: our keynote, 14:50 at XRP SEOUL 2026.
+```
+대안(258자, 문장형 첫 줄)
+```
+Weather you can settle on. Every hour, KWeather's Weather Data Market turns 11 sources into one consensus value for each of 167 cities, records the run on Flare mainnet and publishes verdicts any contract can read. Paid in XRP. Keynote 14:50, XRP SEOUL 2026.
+```
+**선행 조건**: `depin/CLAUDE.md` 「웰비안 × Flare 직접 통합 클레임 금지」를 아래 제안 문장으로 개정(서우 확인) — 이 글은 그 문장 범위 안이다.
+**순서**: 9/29 Ami 에 「10/3 09:00 KST, 우리 X」 → 9/30 초안 공유(Flare 관련 문장 확인) → 10/1 확정.
+
 ## 10/3 발표 시각 — 정할 때의 논리
 
 - 우리 키노트 **14:50~15:05**(9/23 Eri 미팅 기록). **Hugo 키노트 시각을 Ami 에게 먼저 받는다.**
