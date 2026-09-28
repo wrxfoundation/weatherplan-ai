@@ -1,14 +1,14 @@
-# Korea Rising — verified K-pop snapshot (2026-09-27)
+# Korea Rising — verified K-pop snapshot (2026-09-28)
 
 Every line is **cross-verified** (≥2 independent sources agree on the canonical name) and carries its source + Skill Score. Full data + Schema.org JSON-LD: <https://aiagentlabs.co.kr/> · via KoreaAPI (MCP).
 
 ## 🎬 Latest official releases (YouTube)
 - **BoA** — You still our No.1 BoA
-- **QWER** — 기적 같이 내린 별빛 아래 품었던 꿈들💫
-- **Xdinary Heroes** — 정수, 주연의 추석 XH Playlist 💿 | 추석에 잔소리로 스트레스 받을 때… 𝕮𝖆𝖓'𝖙 𝖞𝖔𝖚 𝖘𝖊𝖊 𝖙𝖍𝖆𝖙!!!
-- **NCT Dream** — DREAM PIECE #1 | VCR Shooting | NCT DREAM 10TH ANNIVERSARY PARTY
-- **AKMU** — AKMU 콘서트를 엄청 잘 즐기는 방법에 대하여
-- **BOYNEXTDOOR** — MOVE LIKE #JIHOON #KYUNGMIN 🐾 #TWS #ANIMAL #ANIMAL_Challenge
+- **BOYNEXTDOOR** — 좋다 #BOYNEXTDOOR #보이넥스트도어 #BND #SUNGHO #TAESAN
+- **EVERGLOW** — Kingdom Hearts IV - Extended D23 2026 Trailer
+- **Oh My Girl** — 2026 오마이걸이 전하는 추석 인사 메시지
+- **Kiss of Life** — [추석특집📺] 키씨야 나 한번 믿어봐 ~ #KISSOFLIFE #키스오브라이프 #KIOF #JULIE #쥴리 #Shorts
+- **SUNMI** — 𝐒𝐦𝐚𝐫𝐭 𝐊𝐢𝐭𝐜𝐡𝐞𝐧. 𝐒𝐦𝐨𝐨𝐭𝐡 𝐒𝐞𝐫𝐯𝐢𝐜𝐞｜𝐒𝐔𝐍𝐌𝐈 𝐅𝐋𝐄𝐗 𝟑 𝐊𝐃𝐒
 
 ## 🎤 Verified roster (640 acts)
 - **2NE1**: I Am the Best
