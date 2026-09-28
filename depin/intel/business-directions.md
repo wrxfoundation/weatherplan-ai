@@ -1604,3 +1604,20 @@ You've built a clearinghouse before, which is why I wanted to say hello. A clear
 
 Good to be connected.
 ```
+
+## Ilie (Elijah) Puscas (Binance, Regional Manager) — 프로필 판정 (2026-09-28) → 1촌만, 메시지 0
+
+서우가 프로필 캡처 2장 공유(Charlotte Burns 「비슷한 사람」 추천에 뜬 인물, 공통 1촌 6명).
+
+- **자리**: Binance 4년 4개월 — Operations Manager(2022-06~2024-06) → **Regional Manager(2024-06~, 재택)**. 헤드라인 「Commercial & Growth
+  Leader · Multi-Market Growth · Partnerships, P&L, Market Expansion」. 담당 지역 미기재.
+- **겸직**: **Newscooper 창업(2026-07~, 런던)** — 「속보 하나를 출처 검증된 한 건으로, 몇 분 안에」, 규제 기업 홍보팀용 도구 · CEOWORLD 매거진
+  칼럼니스트(2020~) · Asteroid Mining Corporation IR 총괄 → 이사(2018~2026-01, 주주) · International Trade Council 지부장(2022~2026-01).
+  바베스-보요이대(루마니아) 경영 석사 중퇴.
+
+**판정**
+- **바이낸스 일곱째** — 발신 넷(Emily · Max · Alexander · Jenny) + 1촌만 둘(Hazel · Paola). 레인도 Emily(기업 파트너십) · Max(어필리에이트)와 겹친다 →
+  한 회사 동시 대화 상한. 1촌 요청은 비용 0 이라 해도 되지만 **메시지 0.**
+- 겸직이 많은 네트워커형(들어오는 요청 거름 신호 중 「같은 기간 중복 직함」 1개 — 바이낸스 재직이 실체라 거를 대상은 아니다).
+- **카드 하나**: Newscooper 의 「출처 검증」은 우리 합의값 논리와 결이 같다. 그가 먼저 말을 걸거나 소개가 오갈 때만 꺼낸다(Lynn 형식 인사 +
+  이 한 줄). 거래소 1촌 규칙대로 사업 이야기는 우리가 먼저 열지 않는다.
