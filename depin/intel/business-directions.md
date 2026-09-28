@@ -1531,6 +1531,27 @@ KWeather · wellbian
 wellbian.io
 ```
 
+### Predict.fun — 회사 메일판 (9/28, 서우 공개 문의 메일 확보) — 위 Predict.fun X DM 을 대체
+**메일 하나만 보낸다** — 같은 회사 인박스 두 곳에 같은 말이면 뿌린 것이 된다. X DM 은 1주 무응답일 때의 예비.
+각도는 X 판 그대로(한 관측소 대신 누구나 다시 확인하는 값), 제목은 Opinion 메일과 다르게(같은 BNB · YZi 권역).
+```
+Subject: Weather settlement data anyone can re-check — KWeather · wellbian
+
+Hi Predict.fun team,
+
+I'm Seowoo Park, and I run partnerships at wellbian. It's built on KWeather, which has measured weather in South Korea for 30 years and supplies data to 4,000+ enterprise clients.
+
+A weather market is only as good as the number it settles on, and most settle on a single station. We publish city-level weather for 90 countries and 167 cities as a consensus across eleven weather feeds, and every input is fingerprinted to a public ledger before it's used, so the settled number can be re-checked by anyone afterwards, not just taken on trust.
+
+If weather is on your roadmap, could you point me to the right person? Happy to send a short overview or set up a call, whichever is easier.
+
+Best,
+Seowoo Park (Logan)
+Head of Partnerships & Operations
+KWeather · wellbian
+wellbian.io
+```
+
 ### Thomas C.(Tom Chippas) — Rothera CEO (2025-11~) · 9/28 서우 「이분도 고고」
 공개 경력(서우 캡처): Rothera CEO · TS Imagine 이사(2021-10~) · Argo Blockchain CEO & Director(2023-11~2025-03) · Cboe Clear Digital
 이사회(2018-08~2023-03) · ErisX CEO(2018-08~2022-07 — 팀 · 상품 · 투자 유치 · 규제 대응 · 매각까지). 헤드라인 「Prediction Markets · Digital
