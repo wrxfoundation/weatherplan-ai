@@ -95,6 +95,24 @@ RLUSD 의 FDC 결제 증명 통합. 9/23 에 BSC 앵커 폐기 · Flare 직행 �
 - 9/24 링크드인 글 3문장 수정 — **9/23 그룹 대화로 FDC 제외 · Flare 직행 앵커 · XRP 결제가 확인됐다** → 준비된 수정안(`linkedin-0924-settlement-oracle.md`)으로 편집 가능
 - 10/12 유튜브 — Flare 가 녹화 전 대본을 보내면 검토(지금 할 일 없음)
 
+## 9/28 17:06 Ami 회신 — Hugo 키노트 범위 바뀜 · 스레드 09:00 제안 · 「함께 정하자」 수락
+
+- **Hugo 키노트**: 케이웨더는 **FCC 절의 사용 사례 카드 1장**으로만 나온다 — 「Weather Insurance · In Development」(파라메트릭 강우 보험이
+  TEE 안에서 처리된 날씨 데이터로 자동 정산 · 수작업 청구 대신 검증 가능한 결과), 케이웨더 로고. **Weather Data Market 언급 없음.**
+  → 계획서의 KWeather 2장(메인넷 가동 · FCC) 구성이 바뀌었다. **우리 걱정(Hugo 가 먼저 다 말한다)은 사라졌다** — 「메인넷 가동」 이야기는
+  우리 09:00 발표와 14:50 키노트 몫으로 남는다. 슬라이드 1이 빠졌다면 「customers pay in XRP」 문제도 같이 없어진다(문서에서 확인).
+- **카드 코멘트**: 오타 「Developement」 → 「Development」 · 개발 중이니 「settles」 → 「can settle」(「함께 지키는 선」: 보험 지급 미구축).
+  (선택) 제목 「Weather Insurance」 + 케이웨더 로고는 케이웨더가 보험을 파는 것으로 읽힐 수 있다 → 「Weather insurance use case」.
+- **Flare 메인 스레드**: WDM 과 FCC 를 함께 다루고, Ami 가 **09:00 KST 게시**를 제안. 「소식은 웰비안에게서 먼저」 → 우리 09:00, Flare 는 조금 뒤(예: 09:30) 우리 글 인용.
+- **함께 정하기 수락** — 초안은 구글 문서에 있고 우리가 검토 · 코멘트 · 편집.
+
+**Ami 회신 (EN, 서우 발송용)**
+```
+Thanks Ami, that's helpful. The FCC card works for us. Two small things: "Developement" → "Development", and since it's still in development, "can settle" rather than "settles" in the description. Weather Data Market not being in the keynote is fine; we'll cover it in our own session at 14:50.
+
+For Oct 3, 09:00 KST works well for us. If the Flare thread could follow a little after ours, say around 09:30, that keeps the order in the plan. We'll go through the thread draft in the doc and leave our comments there.
+```
+
 ## 10/3 우리 발표안 (9/28, 서우 「발표 시점은 09:00 어때 · 우리가 뭘 발표해야 하는 거지?」)
 
 **시각 09:00 KST — 좋다.** Hugo(13:30)보다 4시간 반 앞서 「소식은 웰비안에게서 먼저」가 넉넉히 선다. = 10/2 20:00 ET(미국 XRP 커뮤니티
