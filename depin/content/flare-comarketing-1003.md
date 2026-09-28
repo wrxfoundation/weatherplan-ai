@@ -58,6 +58,40 @@ KJ 확인 전에는 고치지 않는다 — 확인되면 그 수정안으로 편
 - **(9/25 추가) 고객·수요 언급** — 공개 문안(Hugo 대본·메인/개발자 스레드·유튜브)에 **고객 수·계약 상태·「예측시장」을 넣지 말아 달라.**
   쓰려면 `settlement data for weather-linked contracts` 로. 근거는 아래 「그룹 경과 (9/25 오후)」.
 
+## ★ 우리 몫 체크리스트 (9/28, 서우 「우리가 챙겨줘야 할 게 있었어? 스트럭처 파일도 줬고」)
+
+전달 끝난 것: 「Weather as Settlement Infrastructure」 문서(9/23) — Ami 가 KBW 마케팅 소재의 바탕으로 쓰는 중.
+
+**A. 9/29(화)까지 — 9/24 에 약속한 답 셋**
+1. 계획 · 항목 6개 확정 회신 + **10/2 비공개 오찬 참석자 회신**(Flare BD 가 초대장 보냄)
+2. 문안 코멘트(아래 B) — Hugo 대본 · 메인 스레드 · 개발자 스레드
+3. **10/3 발표 여부 · 시각** — Flare 메인 스레드가 「웰비안 발표 뒤」에 묶여 있어 이게 없으면 그쪽 일정이 못 선다.
+   Hugo 13:30 보다 앞서야 「소식은 웰비안에게서 먼저」가 선다. 결정: Kurt 대표 · 이창민 본부장
+
+**B. 문안 코멘트 — 고칠 것**
+- Hugo 1장 「one of Korea's leading weather data companies」 → `a Korean weather company with 30 years of observation and 4,000+ enterprise clients`
+- ★ Hugo 1장 **「customers pay in XRP」 → 「subscriptions are paid in XRP」** — 계약 고객이 아직 없다. 「함께 지키는 선」 문구(Subscriptions are paid…)와도 맞춘다 (9/28 새로 발견)
+- 메인 스레드 1/ · Hugo 1장 「In July … LOI」 — 우리 기록은 공개 9/5. 체결 월 내부 확인
+- 개발자 스레드 제목 「Oct 3」 ↔ 본문 「4 Oct」 → 10/4 로
+- 개발자 스레드 「Reference repo: [link to confirm]」 — 공개 저장소 링크를 줄지 뺄지 결정(Flare 쪽 저장소 검토가 끝나야 함)
+- 공개 문안 전체: 고객 수 · 계약 상태 · 「예측시장」 0 — 9/23 · 9/25 그룹 메시지에 예측시장 언급이 있어 문안으로 번질 수 있다
+- (선택) Hugo 2장 「the consensus rule is their trade secret」 → 문서 표현(파라미터 비공개)에 맞춰 `the consensus parameters are proprietary`
+
+**C. 기술팀(KJ) — Flare 에 답 · 조치가 남은 것**
+- Kristaps 9/25 질문(소비 방식 · 빈도 · 과거 데이터 · 예보) 보강 답신 — 아래 초안의 빈칸 둘만 채우면 발송
+- FETCH · CONSENSUS 봉인 설계 결정
+- 9/23 「GitHub 에 추가하겠다」 한 Flare 개발자 저장소 초대가 끝났는지 확인(저장소 검토 → 개발자 스레드 전제)
+
+**D. KBW(9/29~10/1) — Filip(Flare) 과 대면 약속(9/23 그룹, 우리 수락)** — 시간 · 장소 잡기. 안건: 요청 시 증명 정책
+(FDC 증명은 최근 14일까지만 — 연장 방법 있음), XRP · RLUSD 결제 조합, FCC 조기 접근 · 클라우드 배포 지원, 케이스 스터디 · 마케팅,
+RLUSD 의 FDC 결제 증명 통합. 9/23 에 BSC 앵커 폐기 · Flare 직행 앵커 · XRP 결제에 이미 합의했다.
+
+**E. 우리 내부 — 10/3 전**
+- 우리 10/3 발표 문안 자체(「함께 지키는 선」 그대로)
+- `depin/CLAUDE.md` 「웰비안 × Flare 직접 통합 클레임 금지」 개정 — 아래 「우리 쪽 규칙」 제안 문장, 서우 확인 대기
+- 9/24 링크드인 글 3문장 수정 — **9/23 그룹 대화로 FDC 제외 · Flare 직행 앵커 · XRP 결제가 확인됐다** → 준비된 수정안(`linkedin-0924-settlement-oracle.md`)으로 편집 가능
+- 10/12 유튜브 — Flare 가 녹화 전 대본을 보내면 검토(지금 할 일 없음)
+
 ## 10/3 발표 시각 — 정할 때의 논리
 
 - 우리 키노트 **14:50~15:05**(9/23 Eri 미팅 기록). **Hugo 키노트 시각을 Ami 에게 먼저 받는다.**
