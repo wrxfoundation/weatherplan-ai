@@ -1510,6 +1510,27 @@ Weather is one of the few categories where nobody holds inside information: the 
 If weather is on your list, who would be the right person to talk to?
 ```
 
+### Opinion — 회사 메일판 (9/28, 서우 「opinion은 메일주소를 찾았어」) — 위 Opinion X DM 을 대체
+**메일을 보내면 X DM 은 보내지 않는다**(Asa + 메일 = 상한 2). 주소는 저장소에 적지 않는다. 각도는 X 판 그대로(내부자 정보 없는 범주),
+서명은 9/11 크립토닷컴 메일과 같은 형식. 체인 이름 대신 `a public ledger`.
+```
+Subject: Weather data built for settlement — KWeather · wellbian
+
+Hi Opinion team,
+
+I'm Seowoo Park, and I run partnerships at wellbian. It's built on KWeather, which has measured weather in South Korea for 30 years and supplies data to 4,000+ enterprise clients.
+
+Weather is one of the few categories where nobody holds inside information: the outcome is measured, not announced. That leaves one weak point, the measurement itself, and that's the layer we work on. We publish city-level weather for 90 countries and 167 cities as a consensus across eleven weather feeds rather than a single station, and every input is fingerprinted to a public ledger before it's used, so a settled number can be re-checked by anyone afterwards.
+
+If weather is on your list, could you point me to the right person? Happy to send a short overview or set up a call, whichever is easier.
+
+Best,
+Seowoo Park (Logan)
+Head of Partnerships & Operations
+KWeather · wellbian
+wellbian.io
+```
+
 ### Thomas C.(Tom Chippas) — Rothera CEO (2025-11~) · 9/28 서우 「이분도 고고」
 공개 경력(서우 캡처): Rothera CEO · TS Imagine 이사(2021-10~) · Argo Blockchain CEO & Director(2023-11~2025-03) · Cboe Clear Digital
 이사회(2018-08~2023-03) · ErisX CEO(2018-08~2022-07 — 팀 · 상품 · 투자 유치 · 규제 대응 · 매각까지). 헤드라인 「Prediction Markets · Digital
