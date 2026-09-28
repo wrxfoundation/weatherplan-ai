@@ -1886,3 +1886,45 @@ Who on your team covers Korean enterprise accounts? If it runs through your auth
 Thank you,
 KJ
 ```
+
+### Sean Taylor (Starlink Partnerships Director — Direct to Cell 글로벌 영업) — 9/28 서우 프로필 캡처 3장 → **D2C 항목의 주인. 지금 보낸다**
+- **자리**: Starlink Partnerships Director(로스앤젤레스) — 본인 기술: 「Direct to Cell 중심으로 스타링크 제품 성장, **글로벌 Direct to Cell 영업**
+  (기술 · 규제 · 가격 · 계약 협상), 고객 발굴과 피드백으로 엔지니어링 로드맵에 방향을 준다」. 3촌 · 팔로워 8,019.
+- **이력**: Intelsat VP 제품관리(2021-10~2023-04, 상업 항공 약 4억 달러 포트폴리오) · Motorola Solutions 10년 6개월(제품관리 디렉터 — P25 공공안전
+  무선 인프라 · 차량 영상 M500) · Motorola 시스템 엔지니어 · 가격 분석 · Kelley MBA(2016). 최근 글: 「구조대원이 어디서든 위성에 연결되는 미래」.
+- **판정**: 앞 표의 D2C 행 「개인 BD 공개 안 됨」을 채우는 사람 — **견적 요청에서 가장 큰 항목(D2C IoT)의 주인이고, 한국 문제(통신사 파트너 ·
+  규제)가 그의 협상 범위다.** 그의 팀이 「고객 발굴 → 로드맵」을 한다고 스스로 쓰므로, 우리 안은 판매 요청이 아니라 **동아시아 실수요 신호**로 간다.
+- **레인 정리(같은 질문을 두 사람에게 하지 않는다)**: 단말 · 한국 기업 계정 = Lauren(→ Jason 예비) / **D2C IoT = Sean** / 라이드셰어 = KJ 스레드만.
+  견적 요청은 한 통이지만 항목별 주인이 달라 항목마다 한 명 — **Lauren 수락 뒤 메시지에서 D2C 질문을 뺐다**(아래 개정본).
+- **보내는 법**: 서우 화면에 「메시지」가 바로 떠 있다(오픈 프로필이거나 InMail) — 1촌 없이 보낼 수 있다. **KJ 계정에서도 뜨면 KJ 로 바로 메시지**,
+  안 뜨면 1촌 요청 메모로. 수량은 「tens of thousands」로만(정확한 수는 견적 요청 안에만). 웰비안 · NVIDIA · 최상급 표현 0.
+
+**바로 보낼 메시지(InMail 제목 포함, 817자)**
+```
+Subject: Direct to Cell IoT for outdoor sensors in East Asia — KWeather
+
+Hi Sean,
+
+I'm KJ Lee, Head of Product at KWeather. We've measured weather in South Korea for 30 years and supply weather data to 4,000+ enterprise clients. Earlier this week I sent your Starlink team an RFQ that includes Direct to Cell IoT for tens of thousands of outdoor air-quality sensors across East Asia. A lot of what matters for weather and air quality happens where coverage runs out: mountains, coastlines, islands.
+
+I know Direct to Cell runs through mobile operator partners, so two questions: which partner path fits a deployment like ours in Japan and Korea, and is Korea on the roadmap for IoT? If it helps your team's customer discovery, we're happy to walk you through the use case.
+
+Thank you,
+KJ Lee
+Head of Product, KWeather
+```
+**메시지 버튼이 없을 때 — 1촌 요청 메모(238자)**
+```
+Hi Sean, I'm KJ Lee, Head of Product at KWeather; we've measured weather in Korea for 30 years. I sent your Starlink team an RFQ this week that includes Direct to Cell IoT for outdoor air-quality sensors across East Asia. Glad to connect.
+```
+**Lauren 수락 뒤 메시지 — 개정본(511자, D2C 질문은 Sean 쪽으로 옮김 · 1촌 메모는 그대로)**
+```
+Lauren, thanks for connecting.
+
+KWeather has measured weather in South Korea for 30 years and supplies weather data to 4,000+ enterprise clients. Earlier this week I sent your Starlink team an RFQ for our observation network, including enterprise terminals for our weather radar sites.
+
+Given your role in bringing Starlink to new markets: who on your team is the right contact for a Korean enterprise account? If the path runs through your authorized resellers here, we're glad to work that way.
+
+Thank you,
+KJ
+```
