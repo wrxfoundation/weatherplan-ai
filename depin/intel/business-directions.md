@@ -1488,6 +1488,28 @@ If weather markets are on your roadmap, I'd be glad to walk you through how it w
 답장 감사합니다. 괜찮으시다면 케이웨더 경영진과 함께 30분 정도 찾아뵙고, 현장 날씨·공기질 데이터가 고객 현장에서 어떻게 쓰일 수 있을지 짧게 보여드리고 싶습니다. 편하신 때를 알려주시면 맞추겠습니다.
 ```
 
+### 공식 X 계정 DM — Predict.fun · Opinion (9/28, 서우 「여기다 보내자 익명이라 어디 대상자가 없어서 · opinion도 마찬가지」)
+창업자가 가명이라 사람 대신 **공식 계정 인박스**로 간다. 회사 인박스라 **라우팅 질문 한 줄**(「누구와 얘기하면 되나」)은 허용 —
+링크드인 개인 인사의 「요청 0」과 다른 자리다. 체인 이름 · 토큰 · 다른 플랫폼 · 한국 도시 0. 두 곳은 같은 BNB · YZi 권역이라
+서로 다른 각도로(Predict.fun = 한 관측소 대신 다시 확인 가능한 값 / Opinion = 내부자 정보가 없는 범주).
+**Opinion 상한**: Asa(9/15 링크드인) + 공식 계정 = 2 → **Forrest 링크드인 안은 보류.** 위 Predict.fun 문의 창구 안은 이 X 판으로 대체.
+Predict.fun (497자)
+```
+Hi Predict.fun team — I run partnerships at wellbian (built on KWeather, 30 years of weather measurement in South Korea, 4,000+ enterprise clients).
+
+We publish city-level weather for 90 countries and 167 cities as a consensus across eleven weather feeds, with every input fingerprinted to a public ledger before it's used. So a weather market can settle on a number anyone can re-check afterwards, not on a single station.
+
+If weather is on your roadmap, who would be the right person to talk to?
+```
+Opinion (553자)
+```
+Hi Opinion team — I run partnerships at wellbian (built on KWeather, 30 years of weather measurement in South Korea, 4,000+ enterprise clients).
+
+Weather is one of the few categories where nobody holds inside information: the outcome is measured, not announced. That leaves one weak point, the measurement itself. We publish city-level weather for 90 countries and 167 cities as a consensus across eleven weather feeds, every input fingerprinted to a public ledger before it's used.
+
+If weather is on your list, who would be the right person to talk to?
+```
+
 ### Thomas C.(Tom Chippas) — Rothera CEO (2025-11~) · 9/28 서우 「이분도 고고」
 공개 경력(서우 캡처): Rothera CEO · TS Imagine 이사(2021-10~) · Argo Blockchain CEO & Director(2023-11~2025-03) · Cboe Clear Digital
 이사회(2018-08~2023-03) · ErisX CEO(2018-08~2022-07 — 팀 · 상품 · 투자 유치 · 규제 대응 · 매각까지). 헤드라인 「Prediction Markets · Digital
