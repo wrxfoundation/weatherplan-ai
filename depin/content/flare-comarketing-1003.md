@@ -122,10 +122,11 @@ Hugo 슬라이드는 KWeather 2장 · 60초(35초+25초)이고 범위가 「Flar
 **Ami 회신 (EN, 서우 발송용) — 9/28 서우 수정: 「너무 앞서나간다」** → 요청(마지막 줄 안내 · 발표 시각)은 빼고,
 Hugo 가 어느 부분을 발표하는지만 알려 달라고 한다. 위 표는 내부 참고로만 둔다.
 ```
-Thanks Ami! Since Hugo's slot is before ours (14:50–15:05), could you let us know which parts he'll cover once it's settled? We'll use it as a reference for our own presentation.
+Thanks Ami! Since Hugo's slot is before ours (14:50–15:05), it would help to know which parts he'll cover, so we can use it as a reference for our own presentation. Would you have a rough sense of when that, and the rest of the plan, might be settled?
 
-Also, could you share where things stand on the plan you sent: the items, the main thread and Hugo's script, and the dev account content? We'll get our comments and the Oct 3 announcement timing to you by Tuesday as planned.
+On our side, we'll send our comments and the Oct 3 announcement timing by Tuesday as planned.
 ```
+- (9/28 서우 재수정 「너무 재촉하는 것 같으니 언제 확인이 가능한지 부드럽게」) 진행 상황 목록 질문 → 「대략 언제쯤 정해질지」 한 문장으로.
 - (9/28 서우 추가) 9/24 Ami 요청 셋의 진행 상황을 묻는 단락. 발표 시각은 **우리가 줄 몫**이라 묻지 않고 「화요일까지 드린다」로 다시 약속만.
 
 ## 우리 쪽 규칙 — 10/3 전에 바꿔야 할 것
