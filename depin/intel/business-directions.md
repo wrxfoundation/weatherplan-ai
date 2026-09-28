@@ -1670,3 +1670,37 @@ In case it's useful for your coverage: on Oct 3 we announced that KWeather's Wea
 
 As more settlement moves on-chain, the reference data underneath becomes the weak point. Happy to be a source on that whenever it's useful.
 ```
+
+## Daria Han (Varha) (Limitless Labs, Head of Growth Korea & Japan) — 판정 (2026-09-28) → 1촌 + Lynn 형식 인사, 사업 이야기는 「Limitless Research」 데이터 레인으로만
+
+서우가 프로필 캡처 3장 공유. 2촌 · 팔로워 10,153 · 공통 1촌 8. **9/10 의 Daria Vasiuta(Bybit CIS)와 다른 사람.**
+
+- **자리**: Limitless Labs **Head of Growth Korea & Japan**(2026-04~, 한국 재택) — 「Limitless Research」(예측시장 데이터를 연구하는
+  공개 예측 분석 데스크)를 세우는 중. 본인 글: 지난 3개월 한국 · 일본 전담 신규 조직을 스텔스로 구축.
+- **이력**: NDA 계약 마케팅 헤드(2025-10~2026-04) · TRN Labs 마케팅 헤드(2025) · **CUDOS 재단 마케팅 · 커뮤니티 리드(2022~2025, 탈중앙 클라우드)** ·
+  Web3 12년+(L1 · SocialFi · iGaming). 경력 17개.
+- **Limitless** = Base 체인 예측시장(조사 노트: 2025 말 시드 1,000만 달러, LMTS 토큰) — 보고서 민감도 표의 「역외 온체인 · 상」 그룹.
+  **한국 성장 전담을 둔다 = 한국 이용자를 적극 모은다**는 뜻이라, 그 그룹 안에서도 가장 민감한 자리다(8/18 방미심위 결정의 논리 정면).
+
+**판정**
+- 서우 결정(9/28 「역외 온체인 먼저 두드리자」)과 같은 그룹 → **1촌 요청 + Lynn 형식 인사.** Limitless 첫 사람이라 회사 상한 여유 있음.
+- **각도는 그의 성장 업무가 아니라 「Limitless Research」** — 데이터 레인. 한국 이용자 대상 협업(한국 도시 날씨 마켓 · 한국 마케팅 · 케이웨더 이름을 건 현지 캠페인)이
+  오면 **카운슬 의견 전까지 받지 않는다** — 긍정형으로 「데이터 쪽부터 보자」로 돌린다.
+- 공통 1촌(Heejin · Alexey 등) 이름을 팔지 않는다 · 체인 이름 · 토큰 · 다른 플랫폼 이름 0.
+
+**1촌 요청 메모(236자)**
+```
+Hi Daria, I run partnerships at wellbian. KWeather has measured weather in Korea for 30 years; wellbian builds on it: home air sensors plus city-level weather from 11 feeds, every input fingerprinted to a public ledger. Glad to connect.
+```
+**수락 뒤(726자 — Lynn 기본값 두 층 + Limitless Research 한 줄)**
+```
+Daria — thanks for connecting.
+
+I run partnerships at wellbian. KWeather has measured weather in South Korea for thirty years and supplies data to 4,000+ enterprise clients; wellbian is the network built on top of that.
+
+We work on two layers: certified air-quality sensors that people run in their own rooms, and city-level weather across 90 countries and 167 cities, where each value is a consensus across eleven weather feeds rather than a single reading. Every input is fingerprinted to a public ledger before it goes anywhere.
+
+Limitless Research is why I wanted to say hello: a desk that studies how forecasts resolve ends up caring about the data they resolve on, and that's the layer we work on.
+
+Good to be connected.
+```
