@@ -64,6 +64,29 @@ KJ 확인 전에는 고치지 않는다 — 확인되면 그 수정안으로 편
 - 「웰비안이 먼저」 원칙이 서려면 **우리 발표가 Hugo 슬라이드·Flare 스레드보다 앞서야 한다** → 발표 시각 = Hugo 키노트와 우리 키노트 중 **이른 쪽의 30분 전 이상**.
 - 결정은 Kurt 대표·이창민 본부장.
 
+### ★ 9/28 확정 — Hugo 키노트 10/3 **13:30~13:45 KST**(Ami 회신) · 우리 14:50~15:05
+
+**Hugo 가 80분 먼저다.** 서우: 「우리 거를 Hugo 에서 다 발표하면 김샌다」. → **Hugo = 예고편(오라클 한 층), 우리 = 본편(측정기에서 정산까지 전부).**
+Hugo 슬라이드는 KWeather 2장 · 60초(35초+25초)이고 범위가 「Flare 메인넷에 매시간 기록 · 판정」이다. 측정기는 Flare 에 없다 — 기기와
+처음부터 끝까지의 흐름은 애초에 우리 무대의 것이다.
+
+| 시각(10/3) | 무엇 | 담을 것 / 뺄 것 |
+|---|---|---|
+| **~12:30**(늦어도 13:00) | 우리 공식 발표(X 원글 · 보도자료) | 헤드라인만 — 「매시간 Flare 메인넷에 기록 · 판정」 + 「14:50 키노트에서 직접」. 데모 · 기기 상세는 뺀다. 시각은 Kurt 대표 · 이창민 본부장 확정 |
+| 13:30~13:45 | Hugo 키노트 KWeather 2장 | 오라클 층까지. **마지막 줄 「See it live: KWeather keynote, 14:50」** · 데모 화면 · 기기 · 고객 · 예측시장 · 「live on FCC」 0 |
+| Hugo 직후 | Flare 메인 스레드 | 합의대로 우리 발표 뒤 — **우리 글을 인용**하고 14:50 키노트로 안내 |
+| 13:45~14:50 | 부스(65분) | Hugo 를 듣고 온 사람에게 기기 실물 → 「전체는 14:50」으로 키노트에 모은다 |
+| **14:50~15:05** | 우리 키노트 | 측정기 → 11개 피드 합의 → 매시간 지문(Flare 메인넷) → 판정 → **무대에서 누구나 다시 확인(라이브 검증)** → 다음 60일. 처음 공개할 것 1~2개는 Hugo · 스레드에서 뺀다 |
+
+- 우리 키노트도 「함께 지키는 선」 그대로(메인넷 가동분만 「가동」, FCC 는 시험 중, 보험 지급 · 블라인드 정산은 미구축).
+- 시뮬레이터(weathermarket.io)를 보여준다면 「SIMULATION」 표시 + 한국 도시 · 베팅 화면 0(8/18 방미심위 결정 — 9/24 판정 4 법무 확인 유지).
+- 9/29 코멘트에 넣을 것: 위 표의 Hugo 줄 + 스레드 줄(인용 · 안내). 기존 코멘트 초안(숫자 표현 · 고객 · 예측시장 0 · 날짜)과 함께.
+
+**Ami 회신 (EN, 서우 발송용 — 13:00 은 확정 전 제안)**
+```
+Thanks Ami! Since Hugo is on before us (we're at 14:50), a small request for his KWeather slides: could they close with a pointer to our keynote, something like "See it live: KWeather keynote, 14:50"? We'd like to keep the live walkthrough and the device for our own session, so the slides can stay on the infrastructure story. We'll post our announcement before Hugo goes on stage, by 13:00 KST, so the Flare thread can quote it. Full comments on the script by Tuesday as promised.
+```
+
 ## 우리 쪽 규칙 — 10/3 전에 바꿔야 할 것
 
 `depin/CLAUDE.md` 「웰비안 × Flare 직접 통합 클레임 금지」는 10/3 공동 발표와 정면으로 부딪힌다(9/23 미팅 기록에서 이미 「확인 대기」).
@@ -124,7 +147,7 @@ One thing that would help us set the time: when is Hugo's keynote slot on the 3r
 
 ## 그룹 경과 (9/24 저녁)
 
-- **20:09 서우 → Ami 회신 발송**(위 초안 그대로, 서우 통보). Hugo 키노트 시각 답 대기.
+- **20:09 서우 → Ami 회신 발송**(위 초안 그대로, 서우 통보). Hugo 키노트 시각 답 대기 → **9/28 답: 10/3 13:30~13:45 KST**(아래 「9/28 확정」).
 - **20:42 「디지털사업」 계정 → Flare 측 5명 태그 메시지**(요지, 원문 저장소 비기재):
   계획에 전면 동의 · **실제 XRP 결제와 Flare 체인 앵커 기록까지 전체 흐름 완료** · 우리 날씨 데이터로 만든 예측시장·보험 상품
   **시뮬레이션 페이지** 완성(링크 `weathermarket.io`) · 규제 문제로 실거래는 안 하고 **가상 USDT** 로 동작 · 「Weather Fi」 ·
