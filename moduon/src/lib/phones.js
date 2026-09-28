@@ -4,6 +4,7 @@
 export const ANNUAL_RATE = 0.059
 
 import { PRICE_CARD, priceDetail, selfSupport, SELF_MARGIN_DEFAULT } from './ratecard'
+import { specLine } from './phoneSpecs'
 
 export const JOIN_TYPES = [
   { key: 'mnp', label: '번호이동' },
@@ -13,7 +14,10 @@ export const JOIN_TYPES = [
 
 // 브랜드·용량·색상은 온라인구매(/phone/shop) 브라우저용. price 는 기본 용량 출고가(구 계산기 호환),
 // storages 에 용량별 출고가를 따로 둔다. 지원금은 가입유형별(번호이동·기변·신규) 기준값 — 통신사 보정은 CARRIER_SUPPORT_ADJ.
-// ※ 출고가·지원금은 대표값. 통신사 공시 갱신 시 이 표만 바꾸면 계산기·샵·상세·GNB 전부에 반영된다.
+// ※ 출고가는 제조사 국내 출고가(2026-09-28 확인 — 폴드8·플립8 2026-07 발표, S26 시리즈 2026-02 발표, 아이폰 17 2025-09 발표).
+//   근거는 docs/PHONE_SPECS.md. 지원금은 대표값. 통신사 공시 갱신 시 이 표만 바꾸면 계산기·샵·상세·GNB 전부에 반영된다.
+//   (2026-09-28 교정: 폴드8 256·512GB 에 폴드8 '울트라' 출고가가, S26·플립8 에 전작 출고가가 들어가 있었다)
+// 설명(사양·특징·구성품)은 phoneSpecs.js — spec 한 줄 요약도 거기서 가져온다.
 export const PHONE_BRANDS = [
   { key: 'samsung', label: '삼성' },
   { key: 'apple', label: '애플' },
@@ -21,32 +25,34 @@ export const PHONE_BRANDS = [
 export const STORAGES = ['128GB', '256GB', '512GB', '1TB']
 
 export const PHONE_DEVICES = [
-  { id: 'fold8', brand: 'samsung', name: '갤럭시 Z 폴드8 256GB', short: 'Z 폴드8', price: 2577300, support: { mnp: 500000, chg: 400000, new: 450000 }, tag: '최신 폴더블', spec: '스냅드래곤 8 Elite 5세대 · 7.6" · 16GB · 4,800mAh',
-    storages: [{ key: '256GB', price: 2577300 }, { key: '512GB', price: 2745600 }, { key: '1TB', price: 3152600 }],
-    colors: [{ name: '제트블랙', hex: '#2B2B2E' }, { name: '실버섀도', hex: '#C9CBD1' }, { name: '블루섀도', hex: '#5D7AA8' }] },
-  { id: 'flip8', brand: 'samsung', name: '갤럭시 Z 플립8 256GB', short: 'Z 플립8', price: 1485000, support: { mnp: 450000, chg: 380000, new: 420000 }, tag: '폴더블', spec: '3.4" 외부 화면 · 6.7" · 12GB',
-    storages: [{ key: '256GB', price: 1485000 }, { key: '512GB', price: 1628000 }],
-    colors: [{ name: '코랄레드', hex: '#D9534F' }, { name: '제트블랙', hex: '#2B2B2E' }, { name: '블루섀도', hex: '#5D7AA8' }] },
-  { id: 's26u', brand: 'samsung', name: '갤럭시 S26 울트라 256GB', short: 'S26 울트라', price: 1826000, support: { mnp: 450000, chg: 350000, new: 400000 }, tag: '플래그십', spec: '2억 화소 카메라 · 6.9" · 12GB',
-    storages: [{ key: '256GB', price: 1826000 }, { key: '512GB', price: 1969000 }, { key: '1TB', price: 2255000 }],
-    colors: [{ name: '티타늄블랙', hex: '#2E2E33' }, { name: '티타늄실버', hex: '#BFC3CA' }, { name: '티타늄네이비', hex: '#3F4C6B' }] },
-  { id: 's26', brand: 'samsung', name: '갤럭시 S26 256GB', short: 'S26', price: 1155000, support: { mnp: 380000, chg: 300000, new: 340000 }, tag: '인기', spec: '6.2" · 12GB · 콤팩트 플래그십',
-    storages: [{ key: '256GB', price: 1155000 }, { key: '512GB', price: 1298000 }],
-    colors: [{ name: '아이시블루', hex: '#A9C6E8' }, { name: '네이비', hex: '#2F3A5A' }, { name: '민트', hex: '#9ED9C5' }] },
-  { id: 'a56', brand: 'samsung', name: '갤럭시 A56 128GB', short: 'A56', price: 598400, support: { mnp: 400000, chg: 350000, new: 380000 }, tag: '가성비 0원폰', spec: '5G · 6.7" · 대화면 실속형',
+  { id: 'fold8', brand: 'samsung', name: '갤럭시 Z 폴드8 256GB', short: 'Z 폴드8', price: 2278100, support: { mnp: 500000, chg: 400000, new: 450000 }, tag: '최신 폴더블', spec: specLine('fold8'),
+    storages: [{ key: '256GB', price: 2278100 }, { key: '512GB', price: 2531100 }, { key: '1TB', price: 3152600 }],
+    colors: [{ name: '라벤더', hex: '#CFC6E4' }, { name: '그라파이트', hex: '#5B5C60' }, { name: '크림', hex: '#EEEAE2' }] },
+  { id: 'flip8', brand: 'samsung', name: '갤럭시 Z 플립8 256GB', short: 'Z 플립8', price: 1683000, support: { mnp: 450000, chg: 380000, new: 420000 }, tag: '폴더블', spec: specLine('flip8'),
+    storages: [{ key: '256GB', price: 1683000 }, { key: '512GB', price: 1936000 }],
+    colors: [{ name: '핑크', hex: '#F1C9D3' }, { name: '그라파이트', hex: '#5B5C60' }, { name: '크림', hex: '#EEEAE2' }] },
+  { id: 's26u', brand: 'samsung', name: '갤럭시 S26 울트라 256GB', short: 'S26 울트라', price: 1797400, support: { mnp: 450000, chg: 350000, new: 400000 }, tag: '플래그십', spec: specLine('s26u'),
+    storages: [{ key: '256GB', price: 1797400 }, { key: '512GB', price: 2050400 }, { key: '1TB', price: 2545400 }],
+    colors: [{ name: '코발트 바이올렛', hex: '#6B5E9C' }, { name: '블랙', hex: '#2B2B2E' }, { name: '화이트', hex: '#F1F1F3' }, { name: '스카이 블루', hex: '#A9C8E6' }] },
+  { id: 's26', brand: 'samsung', name: '갤럭시 S26 256GB', short: 'S26', price: 1254000, support: { mnp: 380000, chg: 300000, new: 340000 }, tag: '인기', spec: specLine('s26'),
+    storages: [{ key: '256GB', price: 1254000 }, { key: '512GB', price: 1507000 }],
+    colors: [{ name: '코발트 바이올렛', hex: '#6B5E9C' }, { name: '스카이 블루', hex: '#A9C8E6' }, { name: '블랙', hex: '#2B2B2E' }, { name: '화이트', hex: '#F1F1F3' }] },
+  { id: 'a56', brand: 'samsung', name: '갤럭시 A56 128GB', short: 'A56', price: 598400, support: { mnp: 400000, chg: 350000, new: 380000 }, tag: '가성비 0원폰', spec: specLine('a56'),
     storages: [{ key: '128GB', price: 598400 }, { key: '256GB', price: 648400 }],
     colors: [{ name: '어썸그라파이트', hex: '#3A3A3F' }, { name: '어썸라이트그레이', hex: '#D7D8DC' }, { name: '어썸올리브', hex: '#8A9A6B' }] },
-  { id: 'ip17p', brand: 'apple', name: '아이폰 17 프로 256GB', short: '아이폰 17 프로', price: 1750000, support: { mnp: 280000, chg: 220000, new: 250000 }, tag: '인기', spec: 'A19 Pro · 6.3" ProMotion',
-    storages: [{ key: '256GB', price: 1750000 }, { key: '512GB', price: 2050000 }, { key: '1TB', price: 2350000 }],
-    colors: [{ name: '코스믹오렌지', hex: '#E2733A' }, { name: '딥블루', hex: '#2E4A7A' }, { name: '실버', hex: '#D9D9DE' }] },
-  { id: 'ip17pm', brand: 'apple', name: '아이폰 17 프로 맥스 256GB', short: '아이폰 17 프로 맥스', price: 1990000, support: { mnp: 280000, chg: 220000, new: 250000 }, tag: '최대 화면', spec: 'A19 Pro · 6.9" · 최장 배터리',
+  { id: 'ip17p', brand: 'apple', name: '아이폰 17 프로 256GB', short: '아이폰 17 프로', price: 1790000, support: { mnp: 280000, chg: 220000, new: 250000 }, tag: '인기', spec: specLine('ip17p'),
+    storages: [{ key: '256GB', price: 1790000 }, { key: '512GB', price: 2090000 }, { key: '1TB', price: 2390000 }],
+    colors: [{ name: '코스믹 오렌지', hex: '#E2733A' }, { name: '딥 블루', hex: '#2E4A7A' }, { name: '실버', hex: '#D9D9DE' }] },
+  { id: 'ip17pm', brand: 'apple', name: '아이폰 17 프로 맥스 256GB', short: '아이폰 17 프로 맥스', price: 1990000, support: { mnp: 280000, chg: 220000, new: 250000 }, tag: '최대 화면', spec: specLine('ip17pm'),
     storages: [{ key: '256GB', price: 1990000 }, { key: '512GB', price: 2290000 }, { key: '1TB', price: 2590000 }],
-    colors: [{ name: '코스믹오렌지', hex: '#E2733A' }, { name: '딥블루', hex: '#2E4A7A' }, { name: '실버', hex: '#D9D9DE' }] },
-  { id: 'ip17', brand: 'apple', name: '아이폰 17 256GB', short: '아이폰 17', price: 1290000, support: { mnp: 300000, chg: 240000, new: 270000 }, tag: '표준', spec: 'A19 · 6.3" · 120Hz',
+    colors: [{ name: '코스믹 오렌지', hex: '#E2733A' }, { name: '딥 블루', hex: '#2E4A7A' }, { name: '실버', hex: '#D9D9DE' }] },
+  { id: 'ip17', brand: 'apple', name: '아이폰 17 256GB', short: '아이폰 17', price: 1290000, support: { mnp: 300000, chg: 240000, new: 270000 }, tag: '표준', spec: specLine('ip17'),
     storages: [{ key: '256GB', price: 1290000 }, { key: '512GB', price: 1590000 }],
-    colors: [{ name: '라벤더', hex: '#B9A7D6' }, { name: '세이지', hex: '#9BB59C' }, { name: '블랙', hex: '#2B2B2E' }, { name: '화이트', hex: '#EDEDEF' }] },
+    colors: [{ name: '라벤더', hex: '#B9A7D6' }, { name: '미스트 블루', hex: '#A7BCD3' }, { name: '세이지', hex: '#9BB59C' }, { name: '블랙', hex: '#2B2B2E' }, { name: '화이트', hex: '#EDEDEF' }] },
 ]
 export const phoneDevice = (id) => PHONE_DEVICES.find((d) => d.id === id) ?? PHONE_DEVICES[0]
+// 이름의 기본 용량 꼬리('… 256GB')를 떼고 고른 용량을 붙인 표시 이름 — 512GB 를 골랐는데 견적에 256GB 로 찍히지 않게
+export const deviceTitle = (device, storage) => `${device.name.replace(/\s*\d+(GB|TB)$/, '')}${storage ? ` ${storage}` : ''}`
 
 // 통신사별 지원금 보정(대표값) — 온보딩 태그와 같은 방향: LG U+ '#지원금강세', KT 보수적.
 export const MNO = ['SKT', 'KT', 'LG U+']
@@ -199,7 +205,7 @@ export function compareMethods({ deviceId, planId, join, months = 24, extra15 = 
 // 클램프는 호출부가 rbFor 결과로 한다. 이 함수는 순수 계산만 한다.
 // 통신사는 KT 고정 — 현재 요금제·가격표가 모두 KT(K1) 기준이다.
 export const DESIGN_DEFAULTS = {
-  deviceId: 'fold8', storage: null, planId: 'choice110', join: 'mnp', method: 'support', months: 24, bundle: false, addon: false,
+  deviceId: 'fold8', storage: null, color: null, planId: 'choice110', join: 'mnp', method: 'support', months: 24, bundle: false, addon: false,
   extraSupport: 0, pointDc: 0, preCard: 0, prepay: 0, // A — 한 번에 빠지는 금액(원)
   cardDc: 0, welfareDc: 0, promoDc: 0, // B — 매달 빠지는 금액(원/월)
   joinFee: 0, usimFee: 0, // 별도 청구 — 개통 때 한 번(원)

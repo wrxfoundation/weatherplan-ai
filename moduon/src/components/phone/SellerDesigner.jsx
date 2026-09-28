@@ -6,18 +6,21 @@
 //   A 단말기 할부정보 — 출고가 · 공시지원금(또는 가격표 적용가) · 추가지원금 · 포인트 · 선할인카드 · 선입금 · 할부
 //   B 요금정보       — 요금제 · 선택약정 · 결합 · 청구할인카드 · 복지 · 프로모션 · 부가서비스
 //   오른쪽           — 수당(R/B) → 그 아래 월 납부요금정보(A+B)  ← "월 납부요금정보칸 위쪽으로 수당" 요청
+//   맨 위            — 제품 정보(제로노트식: 모델명·OS·출시일·사양·특징·구성품 + 단말변경)  ← "핸드폰 설명 누락" 요청
 //
 // 추가지원금은 판매자 부담이라 수당과 연동된다(rbFor support). 상한은 '내 수당 한도'이고 넘기면 잘린다.
 // 인쇄·고객용 견적 복사에는 수당을 절대 싣지 않는다 — 고객에게 가는 문서다.
 import { useEffect, useId, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { PHONE_DEVICES, PHONE_PLANS, JOIN_TYPES, INSTALLMENT_MONTHS, ADDONS, BUNDLE, bundleEligible, phoneDevice, designPhoneQuote, DESIGN_DEFAULTS } from '../../lib/phones'
-import { PRICE_CARD, PRICE_ROW, priceDetail, isPriced } from '../../lib/ratecard'
+import { PHONE_DEVICES, PHONE_PLANS, JOIN_TYPES, INSTALLMENT_MONTHS, ADDONS, BUNDLE, bundleEligible, phoneDevice, designPhoneQuote, DESIGN_DEFAULTS, deviceTitle } from '../../lib/phones'
+import { PRICE_CARD, priceDetail, isPriced } from '../../lib/ratecard'
+import { phoneSpec } from '../../lib/phoneSpecs'
 import { rbFor } from '../../lib/rb'
 import { won, copyText } from '../../lib/engine'
 import { LEGAL } from '../../lib/constants'
 import { useToast } from '../ui'
 import RbPanel from '../RbPanel'
+import PhoneSpecSheet, { DeviceSwitch } from './PhoneSpecSheet'
 
 const SAVE_KEY = 'moduon_seller_designs_v1'
 const readSaved = () => { try { return JSON.parse(localStorage.getItem(SAVE_KEY)) ?? [] } catch { return [] } }
@@ -31,7 +34,9 @@ export default function SellerDesigner({ viewer, initialDeviceId }) {
   const [saved, setSaved] = useState(() => readSaved().filter((s) => s.owner === owner))
 
   // 경로의 기종이 바뀌면(목록에서 다른 기종으로 들어오면) 설계 기종도 맞춘다
-  useEffect(() => { if (initialDeviceId) setD((x) => ({ ...x, deviceId: phoneDevice(initialDeviceId).id, storage: null })) }, [initialDeviceId])
+  useEffect(() => { if (initialDeviceId) setD((x) => ({ ...x, deviceId: phoneDevice(initialDeviceId).id, storage: null, color: null })) }, [initialDeviceId])
+  // 기종을 바꾸면 용량·색상은 그 기종의 기본값으로(앞 기종의 색 이름이 남지 않게)
+  const pickDevice = (v) => setD((x) => ({ ...x, deviceId: v, storage: null, color: null }))
 
   // 가격표(KT K1)가 다루는 기종이면 표에 값이 있는 조합만 고를 수 있다 — 'X' 칸은 버튼을 끈다(소비자 계산기와 같은 규칙)
   const locked = isPriced(d.deviceId)
@@ -61,7 +66,8 @@ export default function SellerDesigner({ viewer, initialDeviceId }) {
   }, [d, q.total24, rb.customer]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const device = q.device
-  const code = PRICE_CARD.devices.find((x) => x.key === PRICE_ROW[d.deviceId])?.code
+  const colorName = (device.colors.find((c) => c.name === d.color) ?? device.colors[0]).name
+  const model = phoneSpec(device.id).model
   const joinLabel = JOIN_TYPES.find((j) => j.key === d.join)?.label
   const methodLabel = d.method === 'support' ? '단말지원' : '선택약정'
 
@@ -78,7 +84,8 @@ export default function SellerDesigner({ viewer, initialDeviceId }) {
   // 고객에게 보내는 견적 — 수당·R/B 는 절대 넣지 않는다
   const customerText = () => [
     `[모두온 휴대폰 견적 · KT]`,
-    `${device.name} · ${joinLabel} · ${methodLabel}`,
+    `${deviceTitle(device, q.storage)} ${colorName}${model ? ` (${model})` : ''}`,
+    `${joinLabel} · ${methodLabel}`,
     `요금제 ${q.plan.name} (월 ${won(q.plan.monthly)})`,
     `출고가 ${won(q.price)} → 할부원금 ${won(q.principal)}${q.months ? ` (${q.months}개월)` : ' (일시불)'}`,
     `월 단말 할부금 ${q.months ? won(q.deviceMonthly) : '일시불'} + 월 요금 ${won(q.planMonthly)}${q.addonFee ? ` + 부가서비스 ${won(q.addonFee)}` : ''}`,
@@ -99,7 +106,7 @@ export default function SellerDesigner({ viewer, initialDeviceId }) {
           </div>
           <h1 className="mt-1.5 text-[22px] font-extrabold tracking-[-0.5px] text-bink sm:text-[24px]">휴대폰 판매 설계</h1>
           <p className="mt-0.5 text-[12.5px] text-bmuted">
-            {device.name}{code ? ` · 모델 ${code}` : ''} · KT · 고객 조건을 넣으면 월 납부금과 <b className="text-bink">내 수당</b>이 함께 움직여요
+            KT · 고객 조건을 넣으면 월 납부금과 <b className="text-bink">내 수당</b>이 함께 움직여요
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2 print:hidden" data-t="seller-toolbar">
@@ -118,12 +125,18 @@ export default function SellerDesigner({ viewer, initialDeviceId }) {
         </div>
       </div>
 
-      <div className="mt-5 grid grid-cols-1 items-start gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_340px]">
+      {/* 제품 정보 — 제로노트처럼 설계 위에. 단말변경으로 기종을 바로 바꾼다 */}
+      <div className="mt-5">
+        <PhoneSpecSheet device={device} storage={q.storage} color={d.color} onColor={set('color')} foldKey="moduon_seller_spec_folded"
+          action={<DeviceSwitch value={d.deviceId} onChange={pickDevice} />} />
+      </div>
+
+      <div className="mt-4 grid grid-cols-1 items-start gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_340px]">
         {/* ── A. 단말기 할부정보 ── */}
         <Panel title="단말기 할부정보" tag="A" t="seller-a"
           foot={<FootRow label="단말 할부금" value={q.months ? `${won(q.deviceMonthly)}/월` : '일시불'} t="seller-device-monthly" />}>
           <Row label="단말기" stack>
-            <Select value={d.deviceId} onChange={(v) => setD((x) => ({ ...x, deviceId: v, storage: null }))} t="seller-device" label="단말기"
+            <Select value={d.deviceId} onChange={pickDevice} t="seller-device" label="단말기"
               options={PHONE_DEVICES.map((x) => ({ value: x.id, label: x.name }))} />
           </Row>
           {device.storages?.length > 1 && (
@@ -131,7 +144,7 @@ export default function SellerDesigner({ viewer, initialDeviceId }) {
               <Seg t="seller-storage" value={q.storage} onChange={set('storage')} options={device.storages.map((s) => ({ key: s.key, label: s.key }))} />
             </Row>
           )}
-          <Row label="출고가"><Value>{won(q.price)}</Value></Row>
+          <Row label="출고가"><Value t="seller-price">{won(q.price)}</Value></Row>
           <Row label="할인 방식" stack>
             <Seg t="calc-method" value={d.method} onChange={set('method')}
               options={[{ key: 'support', label: '단말지원' }, { key: 'select', label: '선택약정' }].map((o) => ({ ...o, disabled: !cellOk(d.join, o.key) }))} />
@@ -140,7 +153,7 @@ export default function SellerDesigner({ viewer, initialDeviceId }) {
             <Seg t="calc-join" value={d.join} onChange={set('join')} options={JOIN_TYPES.map((j) => ({ key: j.key, label: j.label, disabled: !joinOk(j.key) }))} />
           </Row>
           <Row label={q.priced ? '가격표 반영 할인' : '공통지원금'} hint={q.priced ? `${PRICE_CARD.name} 적용가` : d.method === 'select' ? '선택약정은 공시지원금 없음' : '통신사 공시지원금'}>
-            <Value tone="ok">{q.publicSupport ? `−${won(q.publicSupport)}` : '0원'}</Value>
+            <Value tone="ok" t="seller-public">{q.publicSupport ? `−${won(q.publicSupport)}` : '0원'}</Value>
           </Row>
           {q.blocked && <p className="py-2 text-[11.5px] font-bold leading-4 text-danger" data-t="seller-blocked">가격표에서 취급하지 않는 조합이에요 — 금액은 참고용 계산값입니다</p>}
           <Row label="추가지원금" hint={clipped ? `내 수당 한도 ${won(rb.range.max)}까지만 적용됐어요` : `내 수당에서 나가요 · 최대 ${won(rb.range.max)}`} warn={clipped}>
@@ -217,7 +230,7 @@ export default function SellerDesigner({ viewer, initialDeviceId }) {
               </p>
             )}
             <div className="mt-3 grid grid-cols-1 gap-2 print:hidden">
-              <Link to="/consult?cat=phone" state={{ quote: { type: 'phone', total: q.total, gift: q.publicSupport + q.aSum, label: `${device.short}${q.storage ? ` ${q.storage}` : ''} · ${joinLabel} · ${methodLabel} · ${q.plan.name}${q.months ? ` · ${q.months}개월` : ' · 일시불'} → 월 ${won(q.total)}` } }}
+              <Link to="/consult?cat=phone" state={{ quote: { type: 'phone', total: q.total, gift: q.publicSupport + q.aSum, label: `${device.short}${q.storage ? ` ${q.storage}` : ''} ${colorName} · ${joinLabel} · ${methodLabel} · ${q.plan.name}${q.months ? ` · ${q.months}개월` : ' · 일시불'} → 월 ${won(q.total)}` } }}
                 className="inline-flex h-11 items-center justify-center rounded-btn bg-primary text-[14px] font-bold text-white hover:bg-primary-hover" data-t="seller-submit">
                 이 설계로 가입 접수
               </Link>

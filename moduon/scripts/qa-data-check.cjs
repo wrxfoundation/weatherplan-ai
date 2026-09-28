@@ -6,6 +6,10 @@
 //     '256GB · 출고가 315만 · 할인 56%' 로 떠서 할인율이 부풀려 보였다(실제 256GB 는 257만 → 46%).
 //  ② 견적의 용량 라벨과 출고가가 같은 항목에서 나온다 — 전 단말 × 용량 전수
 //  ③ 가격표·리베이트 표가 가리키는 단말·요금제가 실제로 존재한다
+//  ④ 제품 정보(phoneSpecs) — 전 단말에 설명이 있고, 한 줄 요약(device.spec)이 같은 곳에서 나오며,
+//     용량별 RAM 은 그 단말의 용량 키만 쓴다. 가격표가 있는 단말(KT)은 KT 모델명(…NK)이 있어야 한다.
+//  ⑤ 출고가 기준점 — 제조사 국내 출고가(docs/PHONE_SPECS.md). 2026-09-28 에 폴드8 256GB 가 폴드8 '울트라' 값(257만)
+//     으로 들어가 있던 사고를 다시 막는다. 바꿀 땐 문서의 근거와 이 표를 같이 고친다.
 const esbuild = require('esbuild')
 const { join } = require('node:path')
 
@@ -50,6 +54,47 @@ const ghostPrice = Object.keys(card.PRICE_ROW).filter((k) => !ids.has(k))
 const ghostRebate = Object.keys(card.REBATE_ROW).filter((k) => !ids.has(k))
 check(ghostPrice.length === 0 && ghostRebate.length === 0, `가격표·리베이트 매핑이 실제 단말만 가리킴${ghostPrice.length + ghostRebate.length ? ` ← ${[...ghostPrice, ...ghostRebate].join(',')}` : ''}`)
 check(card.PRICE_CARD.plans.every((p) => planIds.has(p.key)), `가격표 요금제 ${card.PRICE_CARD.plans.length}종이 화면 요금제 목록에 존재`)
+
+// ④
+const specs = load('src/lib/phoneSpecs.js')
+const noSpec = PHONE_DEVICES.filter((d) => !specs.PHONE_SPECS[d.id]).map((d) => d.id)
+check(noSpec.length === 0, `제품 정보 — 단말 ${PHONE_DEVICES.length}종 전부 설명 있음${noSpec.length ? ` ← 없음: ${noSpec.join(',')}` : ''}`)
+const lineBad = PHONE_DEVICES.filter((d) => !d.spec || d.spec !== specs.specLine(d.id)).map((d) => d.id)
+check(lineBad.length === 0, `한 줄 요약(device.spec) = phoneSpecs.line${lineBad.length ? ` ← ${lineBad.join(',')}` : ''}`)
+const ramBad = []
+for (const d of PHONE_DEVICES) {
+  const ram = specs.PHONE_SPECS[d.id]?.spec?.ram
+  if (ram && typeof ram === 'object') {
+    const keys = (d.storages ?? []).map((s) => s.key)
+    const extra = Object.keys(ram).filter((k) => !keys.includes(k)), missing = keys.filter((k) => !(k in ram))
+    if (extra.length || missing.length) ramBad.push(`${d.id}(없는 용량 ${extra.join('/') || '-'} · 빠진 용량 ${missing.join('/') || '-'})`)
+  }
+}
+check(ramBad.length === 0, `용량별 RAM 은 그 단말의 용량과 1:1${ramBad.length ? ` ← ${ramBad.join(', ')}` : ''}`)
+const ktBad = Object.keys(card.PRICE_ROW).filter((id) => !/^SM-\w+NK$/.test(specs.PHONE_SPECS[id]?.model ?? ''))
+check(ktBad.length === 0, `KT 가격표 단말은 KT 모델명(SM-…NK) 표기${ktBad.length ? ` ← ${ktBad.join(',')}` : ''}`)
+const keyBad = Object.entries(specs.PHONE_SPECS).flatMap(([id, x]) => [
+  ...Object.keys(x.spec ?? {}).filter((k) => !specs.SPEC_KEYS.some((s) => s.key === k)).map((k) => `${id}.spec.${k}`),
+  ...Object.keys(x.attrs ?? {}).filter((k) => !specs.ATTR_KEYS.some((s) => s.key === k)).map((k) => `${id}.attrs.${k}`),
+])
+check(keyBad.length === 0, `사양·속성 칸 이름이 표 머리(SPEC_KEYS·ATTR_KEYS)에 있는 것만${keyBad.length ? ` ← 오타? ${keyBad.join(',')}` : ''}`)
+
+// ⑤
+const MSRP = {
+  fold8: { '256GB': 2278100, '512GB': 2531100, '1TB': 3152600 },
+  flip8: { '256GB': 1683000, '512GB': 1936000 },
+  s26u: { '256GB': 1797400, '512GB': 2050400, '1TB': 2545400 },
+  s26: { '256GB': 1254000, '512GB': 1507000 },
+}
+const msrpBad = []
+for (const [id, want] of Object.entries(MSRP)) {
+  const d = PHONE_DEVICES.find((x) => x.id === id)
+  for (const [k, v] of Object.entries(want)) {
+    const got = d?.storages?.find((s) => s.key === k)?.price
+    if (got !== v) msrpBad.push(`${id} ${k} ${got?.toLocaleString() ?? '없음'}(기준 ${v.toLocaleString()})`)
+  }
+}
+check(msrpBad.length === 0, `출고가 = 제조사 국내 출고가 (${Object.keys(MSRP).length}종)${msrpBad.length ? ` ← ${msrpBad.join(', ')}` : ''}`)
 
 console.log(fail === 0 ? '\nSMOKE: ALL PASS' : `\nSMOKE: ${fail} FAIL`)
 process.exit(fail === 0 ? 0 : 1)

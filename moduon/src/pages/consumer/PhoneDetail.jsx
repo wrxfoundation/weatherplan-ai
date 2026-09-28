@@ -8,6 +8,7 @@ import { phoneDevice, PHONE_PLANS, JOIN_TYPES, INSTALLMENT_MONTHS, INSURANCE, AD
 import { useStore, getSession } from '../../lib/store'
 import { bizIdentity } from '../../lib/org'
 import SellerDesigner from '../../components/phone/SellerDesigner'
+import PhoneSpecSheet, { DeviceSwitch } from '../../components/phone/PhoneSpecSheet'
 import { selfMarginOf } from '../../lib/ratecard'
 import { PHONE_CARRIERS } from '../../lib/onboard'
 import { won } from '../../lib/engine'
@@ -212,6 +213,12 @@ function PhoneDetailInner() {
       <section className="mt-4 rounded-section bg-white p-5 shadow-panel lg:hidden">
         <PriceCard device={device} storage={storage} setStorage={setStorage} q={q} months={months} onApply={() => setAsk(true)} compact />
       </section>
+
+      {/* 제품 정보(제로노트식) — 모델명·OS·출시일·사양·특징·구성품. 구매 설정·가격 카드 아래 */}
+      <div className="mt-6 lg:mb-12">
+        <PhoneSpecSheet device={device} storage={storage} color={color} onColor={setColor}
+          action={<DeviceSwitch value={device.id} onChange={(id) => nav(`/phone/shop/${id}${cur ? `?cur=${cur}` : ''}`)} />} />
+      </div>
       <div data-bottom-bar className="safe-b fixed inset-x-0 bottom-0 z-40 rounded-t-card bg-white px-5 pb-4 pt-3 shadow-bottombar lg:hidden">
         <div className="flex items-center justify-between">
           <div><div className="text-[11px] font-semibold text-faint">월 납부 예상 <span className="rounded bg-brow px-1.5 text-[10px] font-bold text-bmuted">VAT 포함</span></div><div className="tnum text-[24px] font-extrabold tracking-tight text-primary-text">{won(q.total)}</div></div>

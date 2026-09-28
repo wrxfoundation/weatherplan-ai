@@ -25,7 +25,7 @@ npm run dev           # 개발 서버
   패턴 리터럴을 문서에 적으면 스캔이 자기 자신을 오탐하므로 여기 적지 않는다
 - **Vercel 배포는 사용자 액션** — 이 컨테이너는 egress가 막혀 있다.
   변경 후 루틴: 커밋 → 푸시 → zip 전달 → 사용자가 로컬에서 `vercel --prod`
-- **가격·수수료·사은품 숫자는 단일 소스** — `src/lib/engine.js` · `commission.js` · `rentals.js`.
+- **가격·수수료·사은품 숫자는 단일 소스** — `src/lib/engine.js` · `commission.js` · `rentals.js` · `phones.js`(휴대폰 설명은 `phoneSpecs.js`).
   화면마다 다른 숫자가 나오면 안 된다
 - **숨김 ≠ 삭제** — GNB·카테고리의 `hidden: true`는 노출만 끈다. 라우트와 페이지는 살아 있어야 하고,
   스모크가 직접 URL 접근으로 이를 검증한다
@@ -38,3 +38,4 @@ npm run dev           # 개발 서버
 > 수당 정책의 근거: `docs/COMMISSION_POLICY.md`
 > 조직 3계층·식별번호·R/B·계층 정산: `docs/ORG_SETTLEMENT.md`
 > 통신사 정책 단가표·셀프개통 마진: `docs/RATECARD.md`
+> 휴대폰 제품 정보·출고가 근거(확인된 값만): `docs/PHONE_SPECS.md`

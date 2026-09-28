@@ -8,6 +8,9 @@
 // ⑦ 고객 화면 미리보기에는 R/B 가 없고, 고객용 견적 복사 문구에 수당이 없다
 // ⑧ /calculator/phone 도 사업자면 같은 설계 화면, 목록에 '사업자 설계 모드' 안내(개인에겐 없음)
 // ⑨ 렌탈 모델명 — 카드·계산기에 표시, 상담 접수 라벨에 모델명(없으면 '모델명 미등록')
+// ⑩ 제품 정보(제로노트식, 2026-09-28 '핸드폰 설명 누락') — 설계 화면 맨 위 · 고객 상세 둘 다.
+//    폴드8 은 운영팀이 보낸 제로노트 화면 값 그대로, 용량·색상·단말변경에 따라 제목·RAM·출고가가 같이 바뀐다.
+//    출고가는 제조사 국내 출고가(폴드8 256GB 2,278,100 — 예전엔 폴드8 '울트라' 값 2,577,300 이 들어가 있었다)
 let pw
 try { pw = require('/opt/node22/lib/node_modules/playwright') } catch { pw = require('playwright') }
 const BASE = process.env.QA_BASE ?? 'http://localhost:4173'
@@ -145,6 +148,59 @@ const PERSONAL = { role: 'member', memberId: 'MB1', type: '개인' }
   check((await page.locator('main').innerText()).includes('모델명 미등록'), '모델명 없는 품목은 접수 라벨에 "모델명 미등록" — 처리 담당자가 확인')
   await go('/calculator/rental?item=coway-ice')
   check((await page.locator('[data-t="rental-model"]').allInnerTexts()).includes('CHPI-7410N'), '렌탈 계산기 상품 카드에 모델명')
+
+  // ───────── ⑩ 제품 정보(제로노트식) ─────────
+  console.log('\n── ⑩ 제품 정보(휴대폰 설명) ──')
+  const txt = (t) => page.locator(`[data-t="${t}"]`).first().innerText().catch(() => '')
+  const dd = (k) => page.locator(`[data-t="spec-${k}"] dd`).first().innerText().catch(() => '')
+  await session(SELLER); await go('/phone/shop/fold8')
+  const specFirst = await page.evaluate(() => {
+    const a = document.querySelector('[data-t="spec-sheet"]'), b = document.querySelector('[data-t="seller-a"]')
+    return !!a && !!b && !!(a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING)
+  })
+  check(specFirst, '설계 화면 — 제품 정보가 A·B 설계 칸보다 위')
+  check((await txt('spec-title')) === '갤럭시 Z 폴드8 256GB', `제목 = 갤럭시 Z 폴드8 256GB (${await txt('spec-title')})`)
+  const meta = await txt('spec-meta')
+  check(['SM-F971NK', '안드로이드 17', '2026-08-07'].every((x) => meta.includes(x)), `모델명·OS·출시일 (${meta.replace(/\s+/g, ' ')})`)
+  check((await dd('cpu')).includes('4.74GHz+3.6GHz') && (await dd('body')).includes('123.9X161.4X4.5mm') && (await dd('body')).includes('201g') && (await dd('battery')).includes('4,800mAh'),
+    '사양 칸 — 제로노트 값(CPU 클럭·제원·무게·배터리)')
+  check((await dd('ram')) === '12GB' && (await dd('storage')) === '256GB', `RAM 12GB · 내장메모리 256GB (${await dd('ram')} · ${await dd('storage')})`)
+  const attrs = await page.locator('[data-t="spec-attrs"] dd').allInnerTexts()
+  check(JSON.stringify(attrs) === JSON.stringify(['삼성월렛', 'IP48', '온스크린', '지원', '미부착', '미지원', '나노+eSIM']), `부가 속성 7종 (${attrs.join('·')})`)
+  const feats = await page.locator('[data-t="spec-features"] li').count()
+  check(feats === 20 && (await txt('spec-features')).includes('Now nudge'), `특징 목록 20줄(하위 5줄 포함) (${feats})`)
+  check((await txt('spec-box')).includes('CtoC케이블'), '구성품')
+  check((await val('[data-t="seller-price"]')) === 2278100 && (await val('[data-t="seller-public"]')) === 878100,
+    `출고가 2,278,100 · 가격표 반영 할인 878,100 (${(await val('[data-t="seller-price"]')).toLocaleString()} · ${(await val('[data-t="seller-public"]')).toLocaleString()})`)
+  // 용량 → 제목·RAM·출고가
+  await page.locator('[data-t="seller-storage"][data-id="1TB"]').click(); await wait(300)
+  check((await txt('spec-title')) === '갤럭시 Z 폴드8 1TB' && (await dd('ram')) === '16GB' && (await dd('storage')) === '1TB' && (await val('[data-t="seller-price"]')) === 3152600,
+    `1TB → 제목·RAM 16GB·출고가 3,152,600 (${await txt('spec-title')} · ${await dd('ram')})`)
+  // 색상 → 이름·고객용 견적
+  await page.locator('[data-t="spec-colors"] button[aria-label="그라파이트"]').click(); await wait(250)
+  await page.evaluate(() => { window.__copied = ''; navigator.clipboard.writeText = async (t) => { window.__copied = t } })
+  await page.locator('[data-t="seller-copy"]').click(); await wait(250)
+  const copied2 = await page.evaluate(() => window.__copied)
+  check((await txt('spec-color')) === '그라파이트' && copied2.includes('갤럭시 Z 폴드8 1TB 그라파이트 (SM-F971NK)'), `색상 그라파이트 → 고객용 견적 첫 줄 (${copied2.split('\n')[1] ?? '-'})`)
+  // 단말변경
+  await page.locator('[data-t="spec-change"]').selectOption('s26u'); await wait(400)
+  check((await txt('spec-title')) === '갤럭시 S26 울트라 256GB' && (await txt('spec-meta')).includes('SM-S948NK') && (await page.locator('[data-t="seller-device"]').inputValue()) === 's26u',
+    `단말변경 → S26 울트라 · SM-S948NK · 설계 기종도 s26u (${await txt('spec-title')})`)
+  check((await txt('spec-color')) === '코발트 바이올렛', `기종을 바꾸면 색상은 그 기종 기본값 (${await txt('spec-color')})`)
+  // 접기 — 기억
+  await page.locator('[data-t="spec-fold"]').click(); await wait(200)
+  const hiddenNow = !(await page.locator('[data-t="spec-main"]').isVisible())
+  await go('/phone/shop/fold8')
+  const hiddenAfter = !(await page.locator('[data-t="spec-main"]').isVisible())
+  await page.locator('[data-t="spec-fold"]').click(); await wait(200)
+  check(hiddenNow && hiddenAfter && (await page.locator('[data-t="spec-main"]').isVisible()), '접기 → 다시 열어도 접힌 채(기억) → 펼치기')
+  // 고객 상세
+  await session(null); await go('/phone/shop/fold8')
+  check((await count('[data-t="spec-sheet"]')) === 1 && (await txt('spec-title')) === '갤럭시 Z 폴드8 256GB', '고객 상세에도 제품 정보')
+  await page.locator('[data-t="spec-colors"] button[aria-label="크림"]').click(); await wait(250)
+  check((await page.locator('[data-t="detail-colors"] button[aria-label="크림"]').getAttribute('aria-pressed')) === 'true', '제품 정보에서 고른 색상 = 구매 설정 색상(같은 상태)')
+  await page.locator('[data-t="spec-change"]').selectOption('ip17p'); await wait(600)
+  check(new URL(page.url()).pathname === '/phone/shop/ip17p' && (await txt('spec-title')) === '아이폰 17 프로 256GB', `고객 상세 단말변경 → 해당 기종 주소로 이동 (${new URL(page.url()).pathname})`)
 
   check(errors.length === 0, `pageerror 0 (${errors.length}${errors[0] ? ` — ${errors[0].slice(0, 100)}` : ''})`)
   await browser.close()
