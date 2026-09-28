@@ -1552,6 +1552,34 @@ KWeather · wellbian
 wellbian.io
 ```
 
+### Polymarket US — 공식 메일 창구 (9/28, 서우 「폴리마켓 공식 컨택메일 어디로 하지」)
+- **공식 도메인 확인**: `polymarketexchange.com` = QCX LLC d/b/a Polymarket US(CFTC DCM)의 공식 사이트 — 거래소 규정 제출 문서를
+  이 도메인에 올리고 CFTC 제출 문서와 이어진다. 메일 도메인은 `polymarket.us`. (폴리마켓 글로벌 `polymarket.com` 은 CFTC 밖 · 한국 차단 — 대상 아님)
+- **보낼 곳 = 연락처 페이지의 「Institutional」 창구**(파트너 연동 문의도 같은 창구 — US 문서 「Partner Integration」). Support 는 이용자 지원,
+  Data 는 시장 데이터 배포 쪽일 가능성이 커서 예비. 주소는 저장소에 적지 않는다(연락처 페이지에 공개).
+- **상장 담당**: CFTC 상품 제출 문서의 문의처가 **Nick Rice — Head of Markets(QCX)**. 계약 조건(정산 출처 포함)을 올리는 자리라
+  우리 제안의 실제 주인에 가깝다. 제출 문서에 적힌 개인 주소로 영업 메일은 보내지 않는다 — 링크드인에서 찾아지면 그때.
+- **상한 재조정**: 메일(Institutional) + Paul(링크드인) = 2 → **Megan 링크드인은 보류**, 대신 Megan 안의 「기록」 각도를 메일로 옮긴다
+  (Paul 은 「한 센서」 각도 — 같은 회사 두 곳이 다른 말을 받게). Nick 을 열게 되면 Paul 과 바꾼다(3명 X).
+- ⚠ 폴리마켓 사칭 메일 신고가 많다 — 답장이 오면 `polymarket.us` · `qcex.com` · `polymarket.com` 도메인인지 먼저 본다. 이메일 형식 추정(집계 사이트)은 쓰지 않는다.
+```
+Subject: Weather settlement data with a record behind every value — KWeather · wellbian
+
+Hi Polymarket US team,
+
+I'm Seowoo Park, and I run partnerships at wellbian. It's built on KWeather, which has measured weather in South Korea for 30 years and supplies data to 4,000+ enterprise clients.
+
+For a settlement source, accuracy is only half of it. The other half is being able to show, months later, where a number came from, what was first published and that nothing changed after. We publish city-level weather for 90 countries and 167 cities as a consensus across eleven weather feeds rather than a single station, and every input is fingerprinted to a public ledger before it's used, so that record comes with every value.
+
+If this fits how you think about settlement sources, could you point me to the right person? Happy to send a short overview or set up a call, whichever is easier.
+
+Best,
+Seowoo Park (Logan)
+Head of Partnerships & Operations
+KWeather · wellbian
+wellbian.io
+```
+
 ### Thomas C.(Tom Chippas) — Rothera CEO (2025-11~) · 9/28 서우 「이분도 고고」
 공개 경력(서우 캡처): Rothera CEO · TS Imagine 이사(2021-10~) · Argo Blockchain CEO & Director(2023-11~2025-03) · Cboe Clear Digital
 이사회(2018-08~2023-03) · ErisX CEO(2018-08~2022-07 — 팀 · 상품 · 투자 유치 · 규제 대응 · 매각까지). 헤드라인 「Prediction Markets · Digital
