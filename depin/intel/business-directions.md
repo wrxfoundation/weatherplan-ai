@@ -1687,6 +1687,7 @@ As more settlement moves on-chain, the reference data underneath becomes the wea
 - **각도는 그의 성장 업무가 아니라 「Limitless Research」** — 데이터 레인. 한국 이용자 대상 협업(한국 도시 날씨 마켓 · 한국 마케팅 · 케이웨더 이름을 건 현지 캠페인)이
   오면 **카운슬 의견 전까지 받지 않는다** — 긍정형으로 「데이터 쪽부터 보자」로 돌린다.
 - 공통 1촌(Heejin · Alexey 등) 이름을 팔지 않는다 · 체인 이름 · 토큰 · 다른 플랫폼 이름 0.
+- **⚠ 9/28 CJ 판정으로 순서 변경** — Limitless 는 **CJ 먼저, Daria 는 CJ 1주 무응답일 때만**(이미 보냈으면 그대로 두고 CJ 가 두 번째이자 마지막). 아래 CJ 절.
 
 **1촌 요청 메모(236자)**
 ```
@@ -1701,6 +1702,50 @@ I run partnerships at wellbian. KWeather has measured weather in South Korea for
 We work on two layers: certified air-quality sensors that people run in their own rooms, and city-level weather across 90 countries and 167 cities, where each value is a consensus across eleven weather feeds rather than a single reading. Every input is fingerprinted to a public ledger before it goes anywhere.
 
 Limitless Research is why I wanted to say hello: a desk that studies how forecasts resolve ends up caring about the data they resolve on, and that's the layer we work on.
+
+Good to be connected.
+```
+
+## CJ Hetherington (Limitless 공동창업자 · CEO / Limitless Markets US 그룹 CEO) — 판정 (2026-09-28) → **Limitless 는 이 사람 먼저. 1촌 + Lynn 인사, 각도는 「기관 리스크 이전」 · 미국 거래소 레인**
+
+서우가 프로필 캡처 공유(글 없음). 2촌 · 팔로워 3,357 · 공통 1촌 둘(이름 팔지 않음). 9/28 글: KBW 로 서울에 왔고 이야기 나눌 사람을 찾는다.
+
+- **자리**: Limitless Labs 공동창업자 · CEO(2023-11~, 예측시장) · **Limitless Markets US 그룹 CEO(2026-02~, 뉴욕)**. 전 TA Ventures 벤처 파트너 ·
+  Atlantis World 공동창업 · Gigawatt CEO. 체인 공공재 펀딩 심사위원 이력(문안엔 0 — 체인 이름).
+- **새로 확인(검색 요약 2차 · 원문 미열람)**
+  - Limitless Markets US, LLC — **CFTC 지정계약시장(DCM) 신청**, 5/1 CFTC 가 「실질적으로 완비」로 접수(승인 여부 미확인). 5분 만기 디지털자산
+    이벤트 계약안 제출(publicgaming · Dan Bernstein X).
+  - **9/28 EastPoint: Seoul 2026 발표**: 한국엔 **기관 전용(스포츠 · 개인 제외)** 예측시장을 제안 · 미국 거래소는 **기관 리스크 관리 · 리스크 이전 상품**
+    중심 · 한국엔 판돈 없는 예측 플랫폼으로 리스크 모니터링 도구(bloomingbit).
+  - Bernstein 에 「기관 리스크 이전 시장은 미국 스포츠 베팅의 약 10배」 · 「한 플랫폼이 절반 넘게 갖지 못한다」(The Block).
+
+**판정**
+- **예측마켓 컨택 중 각도가 가장 잘 맞는 사람.** 그가 미는 「기관 리스크 이전」은 기업이 이미 돈 내고 헤지하는 날씨가 오래 있던 자리이고, 기관이
+  끝내 따지는 건 정산값이다 — 우리 레인 정중앙.
+- **레인 = 미국 거래소(DCM 신청) · 비한국 도시** — 폴리마켓 US 와 같은 줄. 조사 보고서 표의 「역외 온체인 · 상 · 보류」(이 정보 전)보다 한 단계 낮다.
+  데이터 공급 계약 전 카운슬 · 한국 도시 계약 제외 · 한국 거주자 배제 조항 선행은 그대로.
+- **한국 쪽은 0** — 기관 전용 제안 · 판돈 없는 플랫폼 · 한국 성장 조직 모두 카운슬 전 0. **그의 한국 정책 제안에 동조 · 논평도 0**(케이웨더는 상장사 —
+  규제 논쟁에 이름이 엮이지 않게).
+- **순서 · 상한**: Limitless = CJ + Daria = 2. **CJ 먼저**(서울은 이번 주뿐 · 결정권자 · 각도가 가장 맞음). **Daria 는 CJ 1주 무응답일 때만** — 한국 성장
+  자리가 그룹 안에서 가장 민감하고, CJ 가 답하면 미국 거래소 쪽 사람에게 넘길 것이라 그 스레드를 따른다. Daria 요청이 이미 나갔으면 CJ 가 두 번째이자 마지막.
+- **대면**: 서우 KBW 불참(9/14 확정) — 「서울」은 훅으로만, 만나자는 말은 먼저 하지 않는다(첫 메시지는 소개). 그가 먼저 청하면 서우 판단, 받으면
+  ① 사진 · 게시 0 ② 미국 · 비한국 도시 데이터 이야기만 ③ 한국 이용자 · 한국 도시 · 케이웨더 이름을 건 현지 협업 0 ④ 약속 0.
+- **금지**: 체인 · 토큰 이름, 다른 거래소 · 플랫폼 이름, 그의 수치(10배 · 거래량) 인용, 10/3 · Flare · 행사 이름(9/30 멀티체인 금지 · Flare 미공개),
+  스포츠, 파라메트릭 보험 지급(아직 만들지 않은 것). 측정기 절반은 뺀다(예측시장 공통 규칙).
+
+**1촌 요청 메모(247자 — 그가 서울에 있는 10/1 까지. 그 뒤면 「welcome to Seoul.」을 뺀다)**
+```
+Hi CJ, welcome to Seoul. I run partnerships at wellbian; KWeather has measured weather in Korea for 30 years. We publish city-level weather for settlement: a consensus of eleven feeds, every input fingerprinted to a public ledger. Glad to connect.
+```
+**수락 뒤(809자 — 10/1 전에 수락하면 첫 줄을 「CJ — thanks for connecting, and I hope Seoul has been good to you this week.」로)**
+```
+CJ — thanks for connecting.
+
+I run partnerships at wellbian. KWeather has measured weather in South Korea for thirty years and supplies data to 4,000+ enterprise clients; wellbian is the network built on top of that.
+
+We publish city-level weather across 90 countries and 167 cities. Each value is a consensus across eleven weather feeds rather than a single reading, and every input is fingerprinted to a public ledger before it enters the calculation.
+
+Institutional risk transfer, which you've been making the case for, is why I wanted to say hello. Weather is a risk companies already pay to hedge, and once institutions trade it, what they end up scrutinizing is the settlement number: where it came from, and whether anyone can re-check it afterwards. That's the layer we work on.
 
 Good to be connected.
 ```
