@@ -86,7 +86,10 @@ Hugo 슬라이드는 KWeather 2장 · 60초(35초+25초)이고 범위가 「Flar
 Hugo 가 어느 부분을 발표하는지만 알려 달라고 한다. 위 표는 내부 참고로만 둔다.
 ```
 Thanks Ami! Since Hugo's slot is before ours (14:50–15:05), could you let us know which parts he'll cover once it's settled? We'll use it as a reference for our own presentation.
+
+Also, could you share where things stand on the plan you sent: the items, the main thread and Hugo's script, and the dev account content? We'll get our comments and the Oct 3 announcement timing to you by Tuesday as planned.
 ```
+- (9/28 서우 추가) 9/24 Ami 요청 셋의 진행 상황을 묻는 단락. 발표 시각은 **우리가 줄 몫**이라 묻지 않고 「화요일까지 드린다」로 다시 약속만.
 
 ## 우리 쪽 규칙 — 10/3 전에 바꿔야 할 것
 
