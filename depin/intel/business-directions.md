@@ -1384,3 +1384,104 @@ HD현대(조선)와 현대자동차(케이웨더 38개 시설 고객)는 **다�
 - 체인 이름 · 토큰 · WLBN · 보상 0(`a public ledger` / 「공개 원장」). 국방 · 정부 계약사라 크립토 프레임은 감점이다.
 - ⚠ **가정 실내 원자료는 제안에서 뺀다**(집계 · 익명만). 팔란티어는 「감시」 이미지가 있어, 「집 안 공기 데이터가 팔란티어로」는
   커뮤니티 반발 소지 — 대외 공개 문구도 이 기준으로 검토.
+
+## 먼저 두드릴 곳 — 폴리마켓 US · 역외 온체인 · 팔란티어 코리아 DM 문안 (2026-09-28, 서우)
+
+**서우 결정(9/28)**: 「예측마켓은 여기 먼저 두들기자」(폴리마켓 US · 역외 온체인) · 「팔란티어 코리아가 제일 빠르겠네」.
+조사 보고서의 「법률 검토 뒤 · 연락 안 함」 순서를 서우가 앞당겼다. **첫 메시지는 소개라 부담이 없고, 데이터 공급 계약 전에는
+카운슬 의견 + 한국 도시 계약 제외 · 한국 거주자 배제 조항**이 선행한다 — 그래서 문안에 한국 도시 이름 0.
+
+**공통 규칙** — Lynn 형식(케이웨더 먼저 · 체인 이름 0 · 토큰 · 상장 · 가격 0 · 선택 줄은 요청 0 · 긍정형 맺음). 예측시장 상대에는
+**다른 거래소 · 플랫폼 · 전 직장(나스닥 · 로빈후드) 이름 0**, 센서 절반은 뺀다(Alexander 선례 — 자리와 무관). 「independent sources」 →
+**「eleven weather feeds」**(리스크 · 컴플라이언스는 「독립」부터 반박한다 — Christy 선례). 문장은 사람마다 다르게(둘이 비교해도 각자 받은 말).
+
+**순서 · 상한**
+- 폴리마켓 US: **Paul(리스크) 먼저 → Megan(컴플라이언스) 3~5일 뒤.** 폴리마켓 계열은 이 둘로 상한.
+- Opinion Labs: 9/15 Asa 안이 있다. **Asa 가 답했으면 Forrest 대신 Asa 스레드**, 무응답이면 Forrest 가 두 번째이자 마지막.
+- Predict.fun: 링크드인 담당자 미확인(창업자 「Dingaling」 가명) → 공식 X 계정 DM · 사이트 문의 창구.
+- 팔란티어 코리아: **박진철 현직을 링크드인으로 확인한 뒤** 발송. Charlotte(인사만)와 합쳐 팔란티어 2명 상한.
+
+### Paul Jordan — Polymarket US, Chief Risk Officer (2026-08~)
+요청 메모(245자)
+```
+Hi Paul, I run partnerships at wellbian. KWeather has measured weather in Korea for 30 years; we publish city-level weather built to be settled on: a consensus of eleven feeds, every input fingerprinted to a public ledger first. Glad to connect.
+```
+수락 뒤
+```
+Paul — thanks for connecting.
+
+I run partnerships at wellbian. KWeather has measured weather in South Korea for thirty years and supplies data to 4,000+ enterprise clients; wellbian is the network built on top of that.
+
+We publish city-level weather across 90 countries and 167 cities. A city's value isn't one reading; it's a consensus across eleven weather feeds with outliers screened out, and every input is fingerprinted to a public ledger before it enters the calculation.
+
+Your seat is why I wanted to say hello. When a weather contract settles on a single airport sensor, one reading that no nearby station saw can decide the market, and it's the risk function that has to live with it afterwards. A consensus with a fixed first record is the part we built for exactly that moment.
+
+Good to be connected.
+```
+
+### Megan McGrath — Polymarket US, Chief Compliance Officer (2026-04~)
+요청 메모(239자)
+```
+Hi Megan, I run partnerships at wellbian. KWeather has measured weather in Korea for 30 years; every weather value we publish can be traced back later: its sources, its first published version, and proof it hasn't changed. Glad to connect.
+```
+수락 뒤
+```
+Megan — thanks for connecting.
+
+I run partnerships at wellbian. KWeather has measured weather in South Korea for thirty years and supplies data to 4,000+ enterprise clients; wellbian is the network built on top of that.
+
+We publish city-level weather across 90 countries and 167 cities. Each value is a consensus across eleven weather feeds rather than a single reading, and every input is fingerprinted to a public ledger before it enters the calculation.
+
+Your seat is why I wanted to say hello. For a settlement source, accuracy is only half of what compliance has to stand behind. The other half is being able to show, months later, where a number came from, what was first published and that nothing changed after. That record is built into every value we publish.
+
+Good to be connected.
+```
+
+### Forrest L. — Opinion Labs, CEO & Co-founder (Asa 무응답일 때만)
+요청 메모(238자)
+```
+Hi Forrest, I run partnerships at wellbian. KWeather has measured weather in Korea for 30 years; we publish city-level weather as a consensus of eleven feeds, every input fingerprinted to a public ledger before it's used. Glad to connect.
+```
+수락 뒤 — Asa 안(그로스 · 「설명이 필요 없다」)과 겹치지 않게 **내부자 정보가 없는 범주**로 연다.
+```
+Forrest — thanks for connecting.
+
+I run partnerships at wellbian. KWeather has measured weather in South Korea for thirty years and supplies data to 4,000+ enterprise clients; wellbian is the network built on top of that.
+
+We publish city-level weather across 90 countries and 167 cities, each value a consensus across eleven weather feeds, every input fingerprinted to a public ledger before it enters the calculation.
+
+Why I wanted to say hello: weather is one of the few categories where nobody holds inside information. The outcome is measured, not announced. That leaves one weak point, the measurement itself, and that is the layer we work on.
+
+Good to be connected.
+```
+
+### Predict.fun — 공식 X 계정 DM · 사이트 문의 (회사 창구라 가벼운 제안 한 줄 허용)
+```
+Hi Predict.fun team — I run partnerships at wellbian. KWeather has measured weather in South Korea for thirty years and supplies data to 4,000+ enterprise clients; wellbian is the network built on top of it.
+
+We publish city-level weather across 90 countries as a consensus across eleven weather feeds, with every input fingerprinted to a public ledger before it's used, so any settlement can be re-checked by anyone afterwards.
+
+If weather markets are on your roadmap, I'd be glad to walk you through how it works.
+```
+
+### 박진철 — 팔란티어 코리아 지사장 (국문 · 가정 원자료 언급 0)
+요청 메모(161자)
+```
+박진철 지사장님, 케이웨더 디지털사업본부에서 wellbian 파트너십을 맡고 있는 박서우입니다. 케이웨더는 30년간 날씨를 재 기업 고객 4,000곳 이상에 데이터를 공급해 왔고, wellbian은 그 위에서 날씨·공기질 데이터를 검증 가능한 형태로 냅니다. 인사드리고 싶어 요청드립니다.
+```
+수락 뒤
+```
+박진철 지사장님, 1촌 감사합니다.
+
+케이웨더 디지털사업본부에서 wellbian 파트너십을 맡고 있는 박서우입니다. 케이웨더가 30년 동안 날씨를 재 오며 기업 고객 4,000곳 이상에 데이터를 공급해 왔고, wellbian은 그 위에 지은 네트워크입니다.
+
+두 층으로 일합니다. 인증 공기질 측정기로 이루어진 측정망, 그리고 90개국 167개 도시의 날씨를 한 지점이 아니라 11개 날씨 출처의 합의값으로 내는 데이터입니다. 모든 값은 쓰이기 전에 공개 원장에 지문을 남겨, 나중에 누구든 다시 확인할 수 있습니다.
+
+지사장님께 인사드리고 싶었던 이유가 있습니다. 건설·조선·에너지처럼 날씨가 공정 변수인 현장이 팔란티어 위에서 돌아가는 것을 보면서, 그 데이터 모델에 현장 단위로 검증된 날씨와 공기질이 하나의 객체로 들어가면 쓰임이 달라지겠다고 생각해 왔습니다.
+
+반갑습니다.
+```
+답이 오면(회사 대 회사로 올린다)
+```
+답장 감사합니다. 괜찮으시다면 케이웨더 경영진과 함께 30분 정도 찾아뵙고, 현장 날씨·공기질 데이터가 고객 현장에서 어떻게 쓰일 수 있을지 짧게 보여드리고 싶습니다. 편하신 때를 알려주시면 맞추겠습니다.
+```
