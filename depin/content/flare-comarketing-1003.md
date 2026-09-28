@@ -67,6 +67,9 @@ KJ 확인 전에는 고치지 않는다 — 확인되면 그 수정안으로 편
 2. 문안 코멘트(아래 B) — Hugo 대본 · 메인 스레드 · 개발자 스레드
 3. **10/3 발표 여부 · 시각** — Flare 메인 스레드가 「웰비안 발표 뒤」에 묶여 있어 이게 없으면 그쪽 일정이 못 선다.
    Hugo 13:30 보다 앞서야 「소식은 웰비안에게서 먼저」가 선다. 결정: Kurt 대표 · 이창민 본부장
+   - (9/28 서우 질문 「X 얘기지? 뭘 발표할지도 Flare 와 협의해야 하지 않나」) — 맞다. 「Flare 메인 스레드」 = Flare 메인 **X 계정** 스레드,
+     「웰비안 발표」 = 우리 채널(최소 @wellbianlabs X). **9/29 에 줄 것은 「한다 · 몇 시」까지**, 내용은 우리가 쓰되 「함께 지키는 선」 안에서 쓰고
+     Flare 관련 문장은 Ami 확인을 받는다 → **초안 9/30 공유 → 10/1 전체 확정**(계획서의 문안 확정일과 같다).
 
 **B. 문안 코멘트 — 고칠 것**
 - Hugo 1장 「one of Korea's leading weather data companies」 → `a Korean weather company with 30 years of observation and 4,000+ enterprise clients`
