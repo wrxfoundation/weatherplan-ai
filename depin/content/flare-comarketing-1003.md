@@ -115,9 +115,14 @@ KWeather's Weather Data Market is live on Flare mainnet. Every hour: 11 sources,
 Weather you can settle on. Every hour, KWeather's Weather Data Market turns 11 sources into one consensus value for each of 167 cities, records the run on Flare mainnet and publishes verdicts any contract can read. Paid in XRP. Keynote 14:50, XRP SEOUL 2026.
 ```
 **선행 조건**: `depin/CLAUDE.md` 「웰비안 × Flare 직접 통합 클레임 금지」를 아래 제안 문장으로 개정(서우 확인) — 이 글은 그 문장 범위 안이다.
-**순서 (9/28 서우 「10/2 어차피 만나니 그때 정하면?」 반영)**: 9/29 Ami 에 **시각(09:00 KST, 우리 X)과 Hugo 대본 코멘트**는 먼저 준다 —
-Flare 문안이 10/1 에 잠기고 그쪽 스레드가 우리 글 시각에 묶여 있다. **우리 글 문안은 참고로만 같이 보내고, 10/2 오찬에서 최종 확인.**
-(오찬은 다른 생태계 파트너가 함께 있는 자리이고 문안 결재자인 Flare 마케팅 · 데브렐이 온다는 보장이 없다 — 오찬은 손보기만.)
+**순서 (9/28 서우 최종 — 「아예 같이 정하는 쪽으로」)**: 우리 단독 초안을 보내 확인받는 방식이 아니라 **함께 정한다.**
+9/29~30 경 합의 내용이 확인되면 **그것을 토대로 10/3 09:00 KST 에 우리 X 로 발표.** Hugo 대본 코멘트는 대본 확정(10/1) 전에 따로 준다.
+10/2 오찬은 마지막 확인 자리.
+
+**Ami 에게 (EN)**
+```
+We plan to announce on X on Oct 3 at 09:00 KST. Rather than sending a separate draft, we'd like to settle the content together: once what we've agreed is confirmed around Sep 29–30, we'll make the announcement on that basis.
+```
 
 ## 10/3 발표 시각 — 정할 때의 논리
 
