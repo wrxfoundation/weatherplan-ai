@@ -63,7 +63,16 @@
 외부에서 찾은 한 · 일 후보 중 텔레그램 22곳과 겹친 곳은 0 — 「부재」의 증명은 아니다(검색 한도 소진).
 
 서우 확인: ① @WrathofKahneman 의 실제 핸들이 @WKahneman 인지(같은 표시명 사칭 가능성) ② 핸들 미확인 6명(Fang · Philion · Rocks Park · Mekras · Ferran Prat · Julian Leitloff)
-③ XRP SEOUL 2026 공식 페이지의 연사 차수 · 철자(Fang/Pang · Asheesh/Ashish) ④ 1 · 2순위 13개 계정 답글 구성(실명 빌더인지, 상투구 · 티커인지).
+③ XRP SEOUL 2026 공식 페이지의 연사 차수 · 철자(Fang/Pang · Asheesh/Ashish)(9/28 주간 스캔: 2차 보도는 「Chandler Pang」 · 「Ashish Birla」 — 주최 원문 확인 전까지 두 안 병기) ④ 1 · 2순위 13개 계정 답글 구성(실명 빌더인지, 상투구 · 티커인지).
+
+### 9/28 주간 스캔 — 로스터 추가 후보 · 시점
+
+| 대상 | 근거 | 판정 |
+|---|---|---|
+| XRPL Intel (디센트 피해 주소 집계 계정, 온체인 포렌식) | 디센트 앱 지갑 사고 피해 규모를 집계한 계정(2차) | **핸들 미확인 → 등재 보류.** 실계정 확인 뒤 C층(분석가) 후보. 사고 주간 접촉 0 |
+| @Vet_X0 (Vet) | Batch 재정렬 조율(9/25) · 「$1,000 보다 TradFi 활용」 발언(9/21, 2차) | 기존 R→D 유지. **첫 답글은 Batch 활성(10/9) 뒤 기술 글에** |
+| @rootveg444 | PermissionDelegation 80% 도달 · 가장 빠른 활성 10/5 | 기존 「PermissionDelegation 활성 뒤」 첫 수 → **10/5 활성 확인 뒤** |
+| Mason Versluis · David Schwartz | 시세 숏폼 / 리플 CTO 명예직 | 제외(가격 레인 / 리플 소속 규칙) |
 
 ## C 분석가·빌더
 
