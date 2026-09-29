@@ -300,6 +300,7 @@ XS_WHY = {
     "Johnny Youn": "XRPL 구조화상품(KFIP 2026 1위) — 검증된 데이터가 기준값이 되는 상품 설계",
     "Asheesh Birla": "기존 연결 — 이전 XRP 컨퍼런스 인연. 에버노스(XRP 트레저리)",
 }
+XS_CO_DROP = [r"\s*·\s*코스닥 상장"]  # 케이웨더 대외 표현은 「30년 · 4,000+」까지 — 상장 여부는 공개 판에 싣지 않는다
 XS_PE_DROP = [r"\s*휴고와 2019년부터 구면 · 이번 KBW 미디어 파트너\(9/23 미팅\)", r"\s*Eri 와 2019년부터 구면\(9/23 미팅\)", r"\(서우 9/29\)",
               r"\.\s*$"]
 
@@ -609,6 +610,9 @@ def marks(people):
         p["note"] = PNOTE.get(k, "")
         p["net"] = False  # 비밀번호 없는 페이지 — 우리 수첩(1촌 · 판정 기록) 여부는 드러내지 않는다
         p["ev"] = sorted(p["ev"])
+        if "co" in p:
+            for rx in XS_CO_DROP:
+                p["co"] = [re.sub(rx, "", x) for x in p["co"]]
         if "pe" in p:
             for rx in XS_PE_DROP:
                 p["pe"] = [re.sub(rx, "", x) for x in p["pe"]]
@@ -662,7 +666,7 @@ PUBLIC_BAN = [
     r"보험 레인", r"보험 ?/ ?지수", r"파라메트릭", r"(?i)parametric", r"보험 지급",
     r"업비트 트랙", r"11월 트랙", r"상장 트랙", r"리플 채널", r"별도 채널", r"\bNDA\b", r"크립토닷컴", r"(?i)(?<![a-z0-9])crypto\.com", r"(?i)(?<![a-z0-9])og\.com",
     r"1촌", r"수첩", r"멀티체인", r"판매 목표", r"5,000대", r"초기 바운티", r"(?i)connectx402", r"3만\+?\s*(?:개\s*)?(?:IoT|센서)",
-    r"상장사(?:가|의)? ?(?:뒷받침|B2B)", r"케이웨더 토큰", r"자회사", r"국내 ?(?:최대|1위)", r"(?i)WLBN\s*(?:코인|coin)",
+    r"상장사(?:가|의)? ?(?:뒷받침|B2B)", r"코스닥", r"케이웨더 토큰", r"자회사", r"국내 ?(?:최대|1위)", r"(?i)WLBN\s*(?:코인|coin)",
     r"리플(?:과|와)? ?(?:협력|제휴|파트너)", r"(?i)ripple\s+(?:partnership|partner of)", r"(?:디센트|D'CENT)", r"타임레버리지(?:와|와의)? ?(?:파트너|제휴)",
     r"서우", r"주노", r"9/23", r"그녀", r"그는 ", r"그의 ",
     # 날씨 데이터 × x402 · 날씨 데이터의 XRPL 기록은 미공개 계획 · 미확정 — x402 는 측정 데이터(정본 단가)만
@@ -695,9 +699,13 @@ def prof_gate(people):
         sys.exit("인물 상세에 성별 표현: " + ", ".join(hits))
 
 
+HANJA = str.maketrans({"前": "전", "美": "미", "韓": "한", "人": "인", "中": "중", "日": "일", "北": "북", "英": "영", "新": "신", "大": "대"})
+
+
 def main():
     d = data()
-    payload = json.dumps(d, ensure_ascii=False, separators=(",", ":"))
+    payload = json.dumps(d, ensure_ascii=False, separators=(",", ":")).translate(HANJA)
+    assert not re.search(r"[\u3400-\u4dbf\u4e00-\u9fff]", payload), ("한자 남음", re.findall(r".{12}[\u4e00-\u9fff].{12}", payload)[:5])
     n_s = sum(1 for s in d["sessions"] if s["kind"] != "break")
     n_p = len(d["people"])
     marked = {m: sum(1 for p in d["people"].values() if p["mark"] == m) for m in ("fit", "strat", "line", "ours")}

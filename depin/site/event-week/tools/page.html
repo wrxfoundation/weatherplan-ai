@@ -275,6 +275,10 @@ ul.sp { list-style: none; margin: 12px 0 0; padding: 0; display: grid; gap: 6px;
 .pwhere a b { font-variant-numeric: tabular-nums; margin-right: 6px; color: var(--ink); }
 body.nodesc .pr .desc { display: none; }
 
+/* 한눈에 목록 속 이름 — 누르면 인물 패널 */
+.nml { background: none; border: 0; padding: 0; font: inherit; font-weight: 700; color: inherit; cursor: pointer; text-decoration: underline dotted; text-underline-offset: 3px; }
+.nml:hover { color: var(--accent-ink); }
+
 /* ── 인물 상세 패널 ── */
 .dbg { position: fixed; inset: 0; background: rgba(12, 12, 32, .38); z-index: 40; }
 .drawer { position: fixed; top: 0; right: 0; bottom: 0; width: min(580px, 100vw); background: var(--surface); z-index: 41; overflow-y: auto; overscroll-behavior: contain; box-shadow: -12px 0 40px rgba(12, 12, 32, .16); }
@@ -654,14 +658,14 @@ function glanceView() {
     const groups = {};
     for (const p of lines) (groups[D.people[p].why || "규칙"] ||= []).push(p);
     html += `<h2 class="sec">선 — 말할 때 조심<small>우리가 먼저 열지 않거나 표현을 줄이는 사람</small></h2><div class="panel plain"><ul>`;
-    for (const [why, ps] of Object.entries(groups)) html += `<li><b>${ps.map((p) => esc(nameOf(p))).join(" · ")}</b> — ${esc(why)}</li>`;
+    for (const [why, ps] of Object.entries(groups)) html += `<li><b>${ps.map((p) => `<button class="nml" data-open="${esc(p)}">${esc(nameOf(p))}</button>`).join(" · ")}</b> — ${esc(why)}</li>`;
     html += `</ul></div>`;
   }
   if (D.both.length) {
     html += `<h2 class="sec">두 행사에 다 나오는 사람<small>KBW 에서 먼저 볼 수 있다</small></h2><div class="panel plain"><ul>`;
     for (const p of D.both) {
       const w = whereOf(p).map((s) => `${DEV[s.day]} ${DSHORT[s.day]} ${s.start}`).join(" → ");
-      html += `<li><b>${esc(nameOf(p))}</b> ${esc(D.people[p].xorg || D.people[p].org)} — <span class="num">${esc(w)}</span></li>`;
+      html += `<li><b><button class="nml" data-open="${esc(p)}">${esc(nameOf(p))}</button></b> ${esc(D.people[p].xorg || D.people[p].org)} — <span class="num">${esc(w)}</span></li>`;
     }
     html += `</ul></div>`;
   }
