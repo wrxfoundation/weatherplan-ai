@@ -2046,3 +2046,49 @@ Tarek — enjoyed the Crosier paper. Markets price tomorrow's high; the other ha
 - 이 글에 공개 댓글은 달지 않습니다 — 케이웨더 이름이 국내 예측시장(도박) 논쟁에 엮이면 안 됩니다.
 - 수락되면 Lynn 형식 인사(데이터 층만, 측정기 절반 제외 — 예측시장 공통 규칙).
 ```
+
+## Lacey-Ann Wisdom (PL Capital, General Partner) — XRP SEOUL 전 소개 인사 (2026-09-29, 서우 프로필 캡처 3장 + 「xrp seoul 에서 보기 전에 가볍게 소개 인사 하자」)
+
+**이미 1촌**(팔로워 4,182). 10/3 XRP SEOUL 18:10 「스테이블코인, 일상 금융 속으로」 연사 — 연사 지도 1순위(DePIN).
+
+- **자리**(캡처 기준): PL Capital GP(2024-08~, 뉴욕 · 「early-stage frontier tech」) · Protocol Labs Operating Partner(2024-08~, 투자 관리 · 제품 전략) ·
+  Protocol Labs Principal(2022-07~2024-08, 초기 블록체인 투자 · 포트폴리오) · Eniac Ventures Investor(2021-06~2022-06) · **Cointelegraph Advisor(2026-05~)** ·
+  Princeton. 연사 지도 인물 상세(공개 자료)에 없는 Protocol Labs · Cointelegraph 줄은 링크드인에서만 본 것 — 공개 판에는 싣지 않는다(인물 DB 출처 금지).
+- **최근 글**: 4일 전 「PL Capital Rails: The Computing Primitives Thesis」 — 크립토의 도구(verify · encrypt · route · pay · coordinate)가
+  AI · 기업 소프트웨어 · 기계의 인프라가 된다 · 1주 전 Primary Venture Summit(뉴욕) 후기.
+
+**판정 — Lynn 형식 소개 + 테제 한 줄 + 행사 인사 한 줄, 요청 · 제안 0**
+- 이미 1촌이라 「thanks for connecting」 대신 Anna(9/28) 판처럼 「a quick introduction/hello」로 연다.
+- 선택 줄 = 그의 Computing Primitives 테제(검증 쪽)와 닿는 한 줄. 「pay」 쪽(에이전트가 데이터를 산다)은 판매로 읽혀 뺐다(기본값 금지선 「판매 · 가격 0」).
+- 기본값과 다른 곳은 **XRP SEOUL 인사 한 줄**뿐(서우 요청 — 행사에서 보기 전 인사). 미팅 · 시간 요청은 아니다.
+- 10/3 09:00 공개 전이라 Flare · 날씨 데이터 마켓 · 발표 0(Anna 판 규칙). 체인 이름 0 · 토큰 · 판매 · 가격 0 · 공통 1촌 0.
+  「eleven weather feeds」는 9/28 · 9/29 판과 같게(playbook ⚠ 9/24 보류 건).
+- **보낸 뒤**: 10/3 18:10 세션 뒤 인사 · X 맞팔 · 텔레그램 추가(연사 지도 현장 칸). 후속 메일은 연사 지도 「후속」 칸대로.
+
+**가벼운 판 (EN, 558자 — 추천)**
+```
+Hi Lacey-Ann — a quick hello before XRP SEOUL, where I hope to catch you after your session on the 3rd.
+
+I run partnerships at wellbian. KWeather has measured weather in South Korea for thirty years and supplies data to 4,000+ enterprise clients; wellbian is the network built on top of that, turning weather and indoor-air readings into data anyone can check, with every input fingerprinted to a public ledger.
+
+Your Computing Primitives thesis, crypto's tools becoming infrastructure for AI and machines, reads close to where we sit.
+
+Good to be connected.
+```
+
+**긴 판 (EN, 844자 — 두 층 문단 그대로)**
+```
+Hi Lacey-Ann — a quick introduction ahead of XRP SEOUL.
+
+I run partnerships at wellbian. KWeather has measured weather in South Korea for thirty years and supplies data to 4,000+ enterprise clients; wellbian is the network built on top of that.
+
+We work on two layers: certified air-quality sensors that people run in their own rooms, and city-level weather across 90 countries and 167 cities, where each value is a consensus across eleven weather feeds rather than a single reading. Every input is fingerprinted to a public ledger before it goes anywhere.
+
+Your Computing Primitives thesis, crypto's tools becoming infrastructure for AI and machines, is close to where we sit: a reading is worth using when anyone can check where it came from.
+
+I'll be at XRP SEOUL on October 3 and hope to say hello after your session.
+
+Good to be connected.
+```
+
+**발송 여부는 Claude 가 관리하지 않는다** — 서우 통보 시 갱신.

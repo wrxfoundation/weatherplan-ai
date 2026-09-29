@@ -342,6 +342,22 @@ XS_WHY = {
                     "송금 흐름을 여는 실무자. 10/3 13:45",
     "Changhoon Moon": "기존 연결 — 9/5 Flare 워크숍 같은 무대. XRP 유튜브 · 저서(『리플 빅뱅』)로 국내 XRP 장기 보유자 청중에 닿는 창구",
 }
+# 시간대별 칸(세션 카드) 한 줄 — 9/29 밤 서우 「시간대별로 나오는 패널들 내용이 너무 장황하다, 읽기 쉽게」.
+# 세션 카드에는 사람마다 이 한 줄 + 회사 · 인물 첫 줄만 싣고, 긴 근거 · 할 일은 관련자 표 · 인물 패널에 둔다.
+# 위 근거(XS_WHY · XS_RIPPLE · PMARK)에서 줄인 말만 — 새 사실을 넣지 않는다. 없으면 순위 근거(TIERS) → 근거 순으로 쓴다.
+BRIEF = {  # 회사 · 인물 첫 줄과 겹치지 않게 「우리에게 왜」 쪽으로. 리플 · 우리는 한 줄 없이(색 표시 · 회사 · 인물로 충분)
+    "Lacey Wisdom": "측정기 DePIN(WeatherXM) · 에이전트 결제(t54) 둘 다 투자",
+    "Nathaniel T. Bradley": "센서 데이터에 값을 매기는 선례 — 농업 센서 제휴(2026.4)",
+    "Chandler Fang": "XRPL x402 촉진자 — 우리 데이터도 에이전트가 x402 로 산다",
+    "John Lilic": "해외 구매자가 크립토 카드로 결제하는 경로",
+    "Connor Sullivan": "Flare 생태계 — 케이웨더 × Flare 공개 파트너십과 같은 판",
+    "Jaehyuk Choi": "국내 은행 쪽 스테이블코인 · 송금 실무자",
+    "Johnny Youn": "국내에서 XRPL 실사용을 먼저 만든 빌더",
+    "Hugo Philion": "케이웨더 × Flare 파트너 — 데이터 증명(FDC) · 오라클(FTSO)",
+    "Crypto Eri": "기존 연결 — 이 패널 좌장 · 영상 · X 확산 창구",
+    "Asheesh Birla": "기존 연결 — 이전 XRP 컨퍼런스 인연",
+    "Changhoon Moon": "기존 연결 — 9/5 Flare 워크숍 같은 무대",
+}
 XS_CO_DROP = [r"\s*·\s*코스닥 상장"]  # 케이웨더 대외 표현은 「30년 · 4,000+」까지 — 상장 여부는 공개 판에 싣지 않는다
 XS_PE_DROP = [r"\s*휴고와 2019년부터 구면 · 이번 KBW 미디어 파트너\(9/23 미팅\)", r"\s*Eri 와 2019년부터 구면\(9/23 미팅\)", r"\(서우 9/29\)",
               r"\.\s*$"]
@@ -390,15 +406,17 @@ TIERS = [
     ("pay", [("Caroline D. Pham", "해외 구매 온램프(MoonPay)"),
              ("John Lilic", "크립토 네오뱅크 · 카드 · 10/3 두 세션"),
              ("Tianwei Liu", "XRPL 위 XSGD · 동남아 결제(조사 관련도 3)"),
-             ("Jaehyuk Choi", "케이뱅크 디지털자산TF · 해외송금 PoC · 10/3"),
-             ("Jan-Oliver Sell", "유로 스테이블코인 · 유로 → 원화 정산(조사 관련도 3)"),
-             ("SungGuan Yun", "한국은행 디지털화폐 — 원화 결제 방향")]),
+             ("Jan-Oliver Sell", "유로 스테이블코인 · 유로 → 원화 정산(조사 관련도 3)")]),
     ("ref", [("Charles Jansen", "지수 · 평가 기관 · KBW 10/1"),
              ("Ambre Soubiran", "시장 데이터 회사"),
-             ("Johnny Youn", "XRPL 구조화상품 · KFIP 1위"),
              ("Connor Sullivan", "Flare 생태계"),
              ("Michael Ippolito", "데이터 · 리서치 미디어"),
              ("Frank Chaparro", "미디어")]),
+    # 국내 = 한국 회사 · 기관 소속 — 분야가 겹쳐도 번호는 새 관계 끝(9/29 밤 서우 「한국 사람은 중요도 안에 있어도 후순위로」).
+    # 묶음 안은 분야 순서(결제 → 그 밖), 할 일은 「현장」 칸만(같은 날 「이건 빼」 — 최재혁 · 조니 윤의 후속 칸)
+    ("kr", [("Jaehyuk Choi", "케이뱅크 디지털자산TF · 해외송금 PoC · 10/3"),
+            ("SungGuan Yun", "한국은행 디지털화폐 — 원화 결제 방향"),
+            ("Johnny Youn", "XRPL 구조화상품 · KFIP 1위")]),
     ("ripple", [("Monica Long", "리플 사장 · 두 행사"),
                 ("Christina Chan", "생태계 성장 · 두 세션"),
                 ("Sabrina Tachdjian", "XRP Asia"),
@@ -413,9 +431,11 @@ TIERS = [
                ("Jongwook Oh", "기존 접촉 · 9/30 x402 패널")]),
     ("ours", [("Sunghwan Kim", "우리 키노트 14:50")]),
 ]
-NEW_TIERS = ("depin", "agent", "pay", "ref")  # 번호를 1부터 잇는 새 관계
-LINE_ORDER = ["Kyoungsuk Oh", "SeonJoo Yoon", "Johann Kerbrat", "Leonard Hoh", "Arjun Sethi", "John D'Agostino", "Mike Belshe",
-              "Adam Oozeer", "Fig", "Aniket Jindal"]
+NEW_TIERS = ("depin", "agent", "pay", "ref", "kr")  # 번호를 1부터 잇는 새 관계(국내는 끝)
+KR_FIELD = {"Jaehyuk Choi": "pay", "SungGuan Yun": "pay", "Johnny Youn": "ref"}  # 국내 묶음 사람의 분야(표 · 패널에 「국내 · 결제」)
+ONLY_MEET = ("kr",)  # 할 일이 「현장」 칸만인 묶음
+LINE_ORDER = ["Johann Kerbrat", "Leonard Hoh", "Arjun Sethi", "John D'Agostino", "Mike Belshe",
+              "Adam Oozeer", "Fig", "Aniket Jindal", "Kyoungsuk Oh", "SeonJoo Yoon"]  # 국내(두나무 · 업비트)는 끝
 # 번호는 새 관계(DePIN → AI 에이전트 → 결제 → 그 밖)만 1부터 잇고, 리플 · 기존 연결 · 우리 · 선은 묶음 번호대(표에는 번호를 안 쓴다)
 BASE = {"ripple": 30, "known": 50, "ours": 80}
 _n = 1
@@ -457,6 +477,7 @@ POOL_SESS = {
 #    현장 = 만남까지: 어디서 만나나 · 인사 · X 맞팔 · 텔레그램 추가. 메모 · 발표 · 제안 · 시연 준비는 하지 않는다.
 #    후속 = 행사 뒤 메일 · 미팅에서 여는 일(무엇을 보내고 무엇을 묻나).
 # 리플 · 기존 연결 묶음은 할 일 없음(9/29 밤 서우 「리플 쪽은 현장 · 후속 빼 — 의미 없다」 → 「기존 연결도 현장 · 후속 빼」) — 근거 한 줄만.
+# 국내(한국 회사 · 기관) 묶음은 「현장」 칸만 — 후속 칸 없음(9/29 밤 서우 「이건 빼」).
 # 거래소 · 인프라(선) · 한국은행은 X · 텔레그램 없이 인사 · 명함까지(공개 신호가 되지 않게).
 # 공개 사실 · 공개 레인(x402 측정 데이터 정본 단가 · 데이터셋 협의 · 기기 NFT · 원장 지문 · 11개 출처 합의 · 케이웨더 × Flare 공개 파트너십)만.
 MEET = "인사 · X 맞팔 · 텔레그램 추가"
@@ -488,19 +509,16 @@ ACT = {
                    "메일 — 해외 구매자가 Tria 카드 · 지갑으로 RLUSD 결제에 들어오는 경로(XRPL 지원 여부부터) 문의 → 미팅"),
     "Tianwei Liu": (f"KBW 10/1 15:00 패널 뒤 {MEET}",
                     "메일 — 동남아 구매자가 XRPL 위 XSGD 로 결제하는 경로 문의 → 미팅"),
-    "Jaehyuk Choi": ("10/3 13:45 세션 뒤 인사 · 명함",
-                     "메일 — 해외 구매자 대금의 국내 수취 · 원화 정산 경로(스테이블코인 · 블록체인 송금)를 묻는 미팅 요청"),
+    "Jaehyuk Choi": ("10/3 13:45 세션 뒤 인사 · 명함",),  # 국내 — 현장만(9/29 밤 서우 「이건 빼」)
     "Jan-Oliver Sell": (f"KBW 10/1 15:00 패널 뒤 {MEET}(StraitsX 창업자와 같은 패널)",
                         "메일 — 유로 매출을 원화로 정산하는 Pangea 경로의 참여 조건 문의"),
-    "SungGuan Yun": ("KBW 9/30 12:00 세션을 듣고 인사 · 명함까지",
-                     "따로 연락하지 않는다 — 발언(예금토큰 · 스테이블코인 역할 분담)은 내부 메모로"),
+    "SungGuan Yun": ("KBW 9/30 12:00 세션을 듣고 인사 · 명함까지",),  # 국내 — 현장만
     # 그 밖 새 관계
     "Charles Jansen": (f"KBW 10/1 10:40 패널 뒤 {MEET}",
                        "메일 — 날씨 데이터 11개 출처 합의 방법론 요약을 보내고, 데이터 공급자 품질 평가(SSA 같은 틀) 가능성으로 미팅 요청"),
     "Ambre Soubiran": (f"KBW 10/1 10:40 패널 뒤 {MEET}(찰스 얀센과 같은 패널)",
                        "메일 — 다출처 합의값(11개 출처)의 방법론 공개 · 관리를 Kaiko 레퍼런스 레이트 사례에 비춰 묻는 미팅 요청"),
-    "Johnny Youn": (f"10/3 15:20 세션 뒤 {MEET} — 국내 XRPL 빌더끼리",
-                    "커피 미팅 — 국내 XRPL 실사용 두 팀으로 밋업 · 기사에 함께 서는 방안, Xaman xApp 배포 경험 공유"),
+    "Johnny Youn": (f"10/3 15:20 세션 뒤 {MEET}",),  # 국내 — 현장만(9/29 밤 서우 「이건 빼」)
     "Connor Sullivan": (f"10/3 12:05 패널 뒤 {MEET}",
                         "근황 메일까지 — Flare 생태계 소식을 주고받는 관계로"),
     "Michael Ippolito": (f"KBW 10/1 12:15 세션 뒤 {MEET}",
@@ -622,7 +640,7 @@ NOTES = [
     "하는 회사 · 전략 = 도와줄 사람 — 투자 · 정책 · 미디어 · 커뮤니티 · 리플 = RLUSD · XRPL 을 만든 회사, 한 번은 인사(공개 직함 기준) · "
     "선 = 말할 때 조심 — 거래소 · 인프라, 인사만 · 우리 = 김성환 대표 키노트.",
     "사람마다 — 위는 왜 봐야 하나(무엇을 하는 곳 → 우리에게 왜), 아래 할 일은 두 칸. 「현장」 = 만남까지(어디서 만나 인사 · X 맞팔 · 텔레그램 추가 — "
-    "메모할 시간은 없고, 발표 · 제안 · 협력을 그 자리에서 만들지 않는다) · 「후속」 = 행사 뒤 메일 · 미팅에서 여는 일. 리플 · 기존 연결 묶음은 할 일 칸 없이 근거만.",
+    "메모할 시간은 없고, 발표 · 제안 · 협력을 그 자리에서 만들지 않는다) · 「후속」 = 행사 뒤 메일 · 미팅에서 여는 일. 리플 · 기존 연결 묶음은 할 일 칸 없이 근거만, 국내 묶음은 「현장」 칸만.",
 ]
 FOOT = [
     "출처 — __SRC__XRP SEOUL 2026 주최 프로그램 이미지 + 9/29 공개 자료 검색 요약"
@@ -795,6 +813,9 @@ def marks(people):
             p["rank"], p["tier"], p["rwhy"] = RANK[k]
         else:
             p["tier"] = ""
+        if m:  # 시간대별 칸 한 줄(리플 · 우리는 없음)
+            p["brief"] = BRIEF[k] if k in BRIEF else "" if m in ("ripple", "ours") else \
+                (re.sub(r"\s*\(조사 관련도 \d\)", "", p.get("rwhy", "")).strip() or why)
         if k in PROF:
             p["prof"] = {**PROF[k], "fit": FIT.get(k, [])}
     both = [k for k, p in people.items() if len(p["ev"]) > 1 and k not in NOT_TARGET]
@@ -809,6 +830,8 @@ def data():
         assert k in people, ("이름 불일치", k)
     for k in list(PROF) + list(FIT):
         assert k in people, ("상세 이름 불일치", k)
+    for k in BRIEF:
+        assert k in people and people[k]["mark"], ("한 줄(BRIEF) 이름 불일치 · 표시 없음", k)
     unranked = [k for k, p in people.items() if p["mark"] and "rank" not in p]
     assert not unranked, ("표시됐는데 순위 없음", unranked)
     for k in NOT_TARGET:
@@ -850,8 +873,13 @@ def data():
     NO_ACT = ("ripple", "known")  # 할 일 칸 없는 묶음
     extra_act = [k for k, p in people.items() if p["tier"] in NO_ACT and p["act"]]
     assert not extra_act, ("리플 · 기존 연결은 할 일 없음", extra_act)
-    noact = [k for k, p in people.items() if p["mark"] and p["tier"] not in NO_ACT and not (len(p["act"]) == 2 and all(p["act"]))]
-    assert not noact, ("표시됐는데 할 일(현장 · 후속) 없음", noact)
+    noact = [k for k, p in people.items() if p["mark"] and p["tier"] not in NO_ACT
+             and not (len(p["act"]) == (1 if p["tier"] in ONLY_MEET else 2) and all(p["act"]))]
+    assert not noact, ("표시됐는데 할 일(현장 · 후속, 국내는 현장만)이 어긋남", noact)
+    assert set(KR_FIELD) == {k for k, p in people.items() if p["tier"] == "kr"}, "국내 묶음 분야 표 불일치"
+    for k, f in KR_FIELD.items():
+        assert f in NEW_TIERS and f != "kr"
+        people[k]["field"] = f
     odd = [k for k, p in people.items() if (p["mark"] == "ripple") != (p["tier"] == "ripple")]
     assert not odd, ("리플 표시와 리플 묶음이 어긋남", odd)
     blocks = []
@@ -879,9 +907,10 @@ def data():
     vis = sorted((k for k, p in people.items() if p.get("tier") in NEW_TIERS), key=lambda k: (NEW_TIERS.index(people[k]["tier"]), people[k]["rank"]))
     for i, k in enumerate(vis, 1):
         people[k]["rank"] = i
-    cnt = {t: sum(1 for p in people.values() if p.get("tier") == t) for t in ("depin", "agent", "pay", "ref", "ripple", "known", "line", "depin_s", "agent_s", "pay_s")}
+    cnt = {t: sum(1 for p in people.values() if p.get("tier") == t) for t in ("depin", "agent", "pay", "ref", "kr", "ripple", "known", "line", "depin_s", "agent_s", "pay_s")}
     lanes = " → ".join(f"{lb} {cnt[t]}" for t, lb in (("depin", "DePIN"), ("agent", "AI 에이전트"), ("pay", "결제")) if cnt[t])
-    rank_note = (f"중요도 = 제안 순위 — 우리에게 제일 중요한 세 분야 순서로 먼저: {lanes}, 그 밖 새 관계 {cnt['ref']}(번호 1~{len(vis)}). "
+    kr_note = f", 그다음 국내 {cnt['kr']}(한국 회사 · 기관 — 분야가 겹쳐도 번호는 뒤)" if cnt["kr"] else ""
+    rank_note = (f"중요도 = 제안 순위 — 우리에게 제일 중요한 세 분야 순서로 먼저: {lanes}, 그 밖 새 관계 {cnt['ref']}{kr_note}(번호 1~{len(vis)}). "
                  f"리플 {cnt['ripple']}은 따로 묶고, 기존 연결 {cnt['known']} · 우리 · 선 {cnt['line']}은 뒤. "
                  "그다음 분야 세션의 다른 연사(9/29 조사, 표시 전)를 분야별로 관련도 높은 순으로 묶었다.")
     notes = (NOTES_KBW if "KBW" in SHOW_EVENTS else []) + [rank_note if n == "__RANK_NOTE__" else n for n in NOTES]
@@ -958,7 +987,7 @@ def main():
     n_s = sum(1 for s in d["sessions"] if s["kind"] != "break")
     n_p = len(d["people"])
     marked = {m: sum(1 for p in d["people"].values() if p["mark"] == m) for m in ("fit", "strat", "ripple", "line", "ours")}
-    tiers = {t: sum(1 for p in d["people"].values() if p.get("tier") == t) for t in ("depin", "agent", "pay", "ref", "ripple", "known", "ours", "line", "depin_s", "agent_s", "pay_s")}
+    tiers = {t: sum(1 for p in d["people"].values() if p.get("tier") == t) for t in ("depin", "agent", "pay", "ref", "kr", "ripple", "known", "ours", "line", "depin_s", "agent_s", "pay_s")}
     print(f"events {d['events']} · sessions {n_s} · people {n_p} · marks {marked} · tiers {tiers} · both {d['both']}")
     args = sys.argv[1:]
     tpl = (HERE / "page.html").read_text(encoding="utf-8")
