@@ -15,6 +15,7 @@
   --strat: #a5520a; --strat-bg: #fcefdf; --strat-line: #f0c48f;
   --rule: #55556e; --rule-bg: #ececf2; --rule-line: #cfcfdc;
   --ours: #5f4c00; --ours-bg: #fff1a6; --ours-line: #e8d46a;
+  --link: #1f5fbf; --head: #e8e8f4;
   --shadow: 0 1px 2px rgba(27, 27, 72, .06);
   color-scheme: light;
 }
@@ -26,6 +27,7 @@
     --strat: #f4b26a; --strat-bg: #33230e; --strat-line: #6b4a1b;
     --rule: #bdbdd2; --rule-bg: #24253b; --rule-line: #3b3d58;
     --ours: #ffe680; --ours-bg: #3d3510; --ours-line: #6a5c1c;
+    --link: #8fb4ff; --head: #22243d;
     --shadow: none;
     color-scheme: dark;
   }
@@ -37,6 +39,7 @@
   --strat: #f4b26a; --strat-bg: #33230e; --strat-line: #6b4a1b;
   --rule: #bdbdd2; --rule-bg: #24253b; --rule-line: #3b3d58;
   --ours: #ffe680; --ours-bg: #3d3510; --ours-line: #6a5c1c;
+  --link: #8fb4ff; --head: #22243d;
   --shadow: none;
   color-scheme: dark;
 }
@@ -183,8 +186,57 @@ footer p { margin: 4px 0; }
   ul.sp { grid-template-columns: 1fr 1fr; }
   .sess.xs ul.sp { grid-template-columns: 1fr; }
 }
+/* 관련자 표 */
+main.wide, header.wide, footer.wide, .bar .wrap.wide { max-width: 1400px; }
+.ctl { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; margin: 0 0 12px; }
+.seg { display: inline-flex; align-items: center; gap: 4px; flex-wrap: wrap; }
+.seg .lbl { font-size: 12px; color: var(--muted); font-weight: 700; margin-right: 4px; }
+.seg button { border: 1px solid var(--line); background: var(--surface); border-radius: 8px; padding: 6px 10px; font-size: 13.5px; font-weight: 600; }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.rt { width: 100%; border-collapse: separate; border-spacing: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; font-size: 13.5px; line-height: 1.55; }
+.rt th { background: var(--head); text-align: left; font-size: 12.5px; font-weight: 800; padding: 10px 12px; color: var(--ink); white-space: nowrap; }
+.rt td { vertical-align: top; padding: 11px 12px; border-top: 1px solid var(--line); }
+.rt tr.m-fit td { background: var(--fit-bg); } .rt tr.m-strat td { background: var(--strat-bg); } .rt tr.m-ours td { background: var(--ours-bg); }
+.rt tr.m-line td { color: var(--ink2); }
+.rt .c-rank { width: 10%; } .rt .c-who { width: 14%; } .rt .c-ses { width: 14%; } .rt .c-co, .rt .c-pe { width: 21%; } .rt .c-why { width: 20%; }
+.rt .c-who b { font-size: 14.5px; }
+.rt .c-who .en { color: var(--muted); font-size: 12.5px; margin-left: 4px; }
+.rt .c-who .org { display: block; margin-top: 2px; color: var(--ink2); }
+.rt .c-ses a { display: block; color: var(--link); text-decoration: none; font-weight: 600; margin-bottom: 4px; }
+.rt .c-ses a:hover { text-decoration: underline; }
+.rt .c-co p, .rt .c-pe p { margin: 0 0 4px; }
+.rt .c-why .why { font-weight: 700; margin: 0; }
+.rt .c-why .note { color: var(--muted); margin: 4px 0 0; font-size: 12.5px; }
+.rt tr.m-fit .why { color: var(--fit); } .rt tr.m-strat .why { color: var(--strat); } .rt tr.m-ours .why { color: var(--ours); } .rt tr.m-line .why { color: var(--rule); }
+.rt .c-why .mk { float: right; margin: 0 0 4px 8px; }
+.tier { display: inline-block; font-size: 11.5px; font-weight: 800; padding: 1px 7px; border-radius: 6px; white-space: nowrap; }
+.t-top { background: var(--ink); color: var(--bg); } .t-high { border: 1px solid var(--ink2); color: var(--ink2); }
+.t-ref { border: 1px solid var(--line); color: var(--muted); } .t-line { background: var(--rule-bg); color: var(--rule); }
+.t-ours { background: var(--ours-bg); color: var(--ours); border: 1px solid var(--ours-line); } .t-none { color: var(--muted); }
+.rk { font-variant-numeric: tabular-nums; font-size: 15px; margin-left: 6px; }
+small.rw { display: block; color: var(--muted); font-size: 12px; margin-top: 4px; line-height: 1.45; }
+body.nocolor .rt tr td { background: var(--surface) !important; }
+body.nodesc .rt .c-co, body.nodesc .rt .c-pe { display: none; }
+@media (max-width: 860px) {
+  .rt, .rt tbody, .rt tr, .rt td { display: block; width: 100% !important; }
+  .rt { border: 0; background: transparent; }
+  .rt thead { display: none; }
+  .rt tr { border: 1px solid var(--line); border-radius: 12px; margin: 0 0 10px; overflow: hidden; background: var(--surface); }
+  .rt td { border: 0; padding: 4px 12px; }
+  .rt td:first-child { padding-top: 10px; } .rt td:last-child { padding-bottom: 12px; }
+  .rt td[data-l]::before { content: attr(data-l); display: block; font-size: 11.5px; color: var(--muted); font-weight: 700; letter-spacing: .02em; }
+  .rt td.c-rank::before, .rt td.c-who::before { display: none; }
+  .rt td.c-rank small.rw { display: inline; margin-left: 6px; }
+}
 @media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
-@media print { .bar { position: static; } .mk { display: none; } }
+@media print {
+  @page { size: A4 landscape; margin: 10mm; }
+  * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  body { background: #fff; }
+  .bar, .ctl, .mk, footer, header .sub, .noprint { display: none !important; }
+  .rt { font-size: 10px; } .rt tr { break-inside: avoid; }
+  main.wide, header.wide { max-width: none; padding: 0; }
+}
 </style>
 </head>
 <body>
@@ -266,6 +318,7 @@ async function unseal(pass) {
 
 let D, S;
 const TABS = [
+  { k: "table", label: "관련자 표", short: "관련자" },
   { k: "glance", label: "한눈에" },
   { k: "d0930", label: "KBW 9/30" },
   { k: "d1001", label: "KBW 10/1" },
@@ -275,10 +328,13 @@ const TABS = [
 
 function initState() {
   const u = new URLSearchParams(location.search);
-  const pref = store.get("evw.prefs", {});
+  const pref = store.get("evw.prefs2", {});
   const pick = (k, d) => (u.has(k) ? u.get(k) : pref[k] ?? d);
   S = {
-    tab: pick("tab", "glance"),
+    tab: pick("tab", "table"),
+    sort: pick("sort", "imp"),
+    ev: pick("ev", "all"),
+    all: pick("all", "0") === "1",
     q: u.get("q") || "",
     only: pick("only", "0") === "1",
     color: pick("color", "1") !== "0",
@@ -287,11 +343,11 @@ function initState() {
     cats: new Set(String(pick("cats", "fit,strat,line,ours")).split(",").filter(Boolean)),
     custom: store.get("evw.custom", {}),
   };
-  if (!TABS.some((t) => t.k === S.tab)) S.tab = "glance";
+  if (!TABS.some((t) => t.k === S.tab)) S.tab = "table";
 }
 function saveState() {
-  const p = { tab: S.tab, only: S.only ? "1" : "0", color: S.color ? "1" : "0", why: S.why ? "1" : "0", desc: S.desc ? "1" : "0", cats: [...S.cats].join(",") };
-  store.set("evw.prefs", p);
+  const p = { tab: S.tab, sort: S.sort, ev: S.ev, all: S.all ? "1" : "0", only: S.only ? "1" : "0", color: S.color ? "1" : "0", why: S.why ? "1" : "0", desc: S.desc ? "1" : "0", cats: [...S.cats].join(",") };
+  store.set("evw.prefs2", p);
   const u = new URLSearchParams(p);
   if (S.q) u.set("q", S.q);
   history.replaceState(null, "", "?" + u.toString() + location.hash.replace(/#k=.*/, ""));
@@ -442,6 +498,57 @@ function peopleView() {
   return html;
 }
 
+const DAYORD = { d0930: 0, d1001: 1, d1003: 2 };
+const EVSHORT = { d0930: "KBW 9/30", d1001: "KBW 10/1", d1003: "XRP 10/3" };
+const TIER = { ours: "우리", top: "최우선", high: "우선", ref: "참고", line: "선" };
+const firstAt = (pid) => {
+  const w = whereOf(pid)[0];
+  return w ? DAYORD[w.day] * 10000 + parseInt(w.start.replace(":", ""), 10) : 99999;
+};
+const nameOf = (pid) => D.people[pid].ko || D.people[pid].name;
+function tableRows() {
+  let ids = Object.keys(D.people).filter((p) => (S.all || shown(mark(p))) && (S.ev === "all" || D.people[p].ev.includes(S.ev)) && qmatch(personHay(p)));
+  const rank = (p) => (D.people[p].rank ?? 999);
+  const evo = (p) => (D.people[p].ev.includes("KBW") ? 0 : 1);
+  const cmp = {
+    imp: (a, b) => rank(a) - rank(b) || firstAt(a) - firstAt(b),
+    time: (a, b) => firstAt(a) - firstAt(b) || rank(a) - rank(b),
+    event: (a, b) => evo(a) - evo(b) || firstAt(a) - firstAt(b),
+    name: (a, b) => nameOf(a).localeCompare(nameOf(b), "ko"),
+  }[S.sort] || ((a, b) => rank(a) - rank(b));
+  return ids.sort(cmp);
+}
+function tableView() {
+  const ids = tableRows();
+  const cnt = {};
+  for (const p of ids) { const m = mark(p) || "none"; cnt[m] = (cnt[m] || 0) + 1; }
+  const segs = (lbl, key, opts) => `<div class="seg" role="group" aria-label="${lbl}"><span class="lbl">${lbl}</span>${opts.map(([v, t]) => `<button data-${key}="${v}" aria-pressed="${String(S[key === "all" ? "all" : key]) === v || (key === "all" && (S.all ? "1" : "0") === v)}">${t}</button>`).join("")}</div>`;
+  let html = `<section class="day"><h2>관련자 표</h2><p class="meta">${ids.length}명 · ${CATS.filter((c) => cnt[c.k]).map((c) => `<span class="c-${c.k}">${c.label} ${cnt[c.k]}</span>`).join(" · ")}${cnt.none ? ` · 표시 없음 ${cnt.none}` : ""}</p><p>두 행사의 관련자를 한 표로 — 중요도는 제안 순위다(기존 관계 · 레인 중심 · 10/3 동선 · 옆 사람으로 이어지는 정도). 세션을 누르면 그 자리로 간다.</p></section>`;
+  html += `<div class="ctl">${segs("정렬", "sort", [["imp", "중요도"], ["time", "시간"], ["event", "행사"], ["name", "이름"]])}${segs("행사", "ev", [["all", "전체"], ["KBW", "KBW"], ["XRP SEOUL", "XRP SEOUL"]])}${segs("대상", "all", [["0", "관련자만"], ["1", "전체 연사"]])}<button class="btn noprint" id="printBtn">인쇄 · PDF</button></div>`;
+  if (!ids.length) return html + `<p class="empty">조건에 맞는 사람이 없습니다 — 색 칩이나 검색어를 풀어 보세요.</p>`;
+  html += `<table class="rt"><thead><tr><th class="c-rank">중요도</th><th class="c-who">연사 · 소속</th><th class="c-ses">세션</th><th class="c-co">회사</th><th class="c-pe">인물</th><th class="c-why">우리와 결 · 근거</th></tr></thead><tbody>`;
+  for (const pid of ids) {
+    const p = D.people[pid];
+    const m = mark(pid);
+    const custom = S.custom[pid] !== undefined;
+    const t = custom && !p.rank ? "" : p.tier || "";
+    const tl = t ? TIER[t] : custom ? "내 표시" : "—";
+    const rk = p.rank != null && p.rank > 0 && p.rank < 90 ? `<b class="rk">${p.rank}</b>` : "";
+    const ses = whereOf(pid).map((s) => `<a href="#${s.id}" data-go="${s.day}" data-s="${s.id}">${esc(EVSHORT[s.day])} ${esc(s.start)} ${esc(s.title)}</a>`).join("");
+    const lines = (arr) => (arr || []).map((x) => `<p>${esc(x)}</p>`).join("");
+    const why = m && (custom ? (m === p.mark ? p.why : "") : p.why);
+    html += `<tr class="${m ? "m-" + m : ""}">
+      <td class="c-rank" data-l="중요도"><span class="tier t-${t || "none"}">${tl}</span>${rk}${p.rwhy ? `<small class="rw">${esc(p.rwhy)}</small>` : ""}</td>
+      <td class="c-who" data-l="연사 · 소속"><b>${esc(nameOf(pid))}</b>${p.ko ? `<span class="en">${esc(p.name)}</span>` : ""}${p.ev.length > 1 ? `<span class="ev2" style="margin-left:6px">두 행사</span>` : ""}<span class="org">${esc(p.xorg || p.org || "")}</span></td>
+      <td class="c-ses" data-l="세션">${ses}</td>
+      <td class="c-co" data-l="회사">${lines(p.co)}</td>
+      <td class="c-pe" data-l="인물">${lines(p.pe)}</td>
+      <td class="c-why" data-l="우리와 결 · 근거"><button class="mk${custom ? " custom" : ""}" data-mk="${esc(pid)}" aria-label="${esc(p.name)} 표시 바꾸기">${LABEL[m]}</button>${why ? `<p class="why">${esc(why)}</p>` : ""}${p.note ? `<p class="note">${esc(p.note)}</p>` : ""}</td>
+    </tr>`;
+  }
+  return html + `</tbody></table>`;
+}
+
 function legend() {
   const cnt = {};
   for (const p of Object.keys(D.people)) { const m = mark(p); if (m) cnt[m] = (cnt[m] || 0) + 1; }
@@ -464,7 +571,11 @@ function render() {
   tabs();
   legend();
   const v = $("#view");
-  v.innerHTML = S.tab === "glance" ? glanceView() : S.tab === "people" ? peopleView() : dayView(S.tab);
+  const wide = S.tab === "table";
+  for (const el of [v, document.querySelector("#app > header"), $("#foot"), document.querySelector(".bar .wrap")]) el.classList.toggle("wide", wide);
+  v.innerHTML = S.tab === "table" ? tableView() : S.tab === "glance" ? glanceView() : S.tab === "people" ? peopleView() : dayView(S.tab);
+  const pb = $("#printBtn");
+  if (pb) pb.onclick = () => window.print();
   saveState();
 }
 
@@ -490,8 +601,11 @@ function wire() {
   $("#upd").textContent = D.updated;
   $("#foot").innerHTML = D.foot.map((x) => `<p>${esc(x)}</p>`).join("");
   document.addEventListener("click", (e) => {
-    const t = e.target.closest("[data-tab],[data-c],[data-mk],[data-go]");
+    const t = e.target.closest("[data-tab],[data-c],[data-mk],[data-go],[data-sort],[data-ev],[data-all]");
     if (!t) return;
+    if (t.dataset.sort) { S.sort = t.dataset.sort; render(); return; }
+    if (t.dataset.ev) { S.ev = t.dataset.ev; render(); return; }
+    if (t.dataset.all) { S.all = t.dataset.all === "1"; render(); return; }
     if (t.dataset.tab) { go(t.dataset.tab); return; }
     if (t.dataset.c) {
       const c = t.dataset.c;
