@@ -73,7 +73,8 @@ h1.title { font-size: clamp(24px, 5vw, 34px); line-height: 1.2; letter-spacing: 
 
 /* 막대 */
 .bar { position: sticky; top: 0; z-index: 5; background: color-mix(in srgb, var(--bg) 92%, transparent); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
-.bar .wrap { padding-top: 10px; padding-bottom: 10px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; }
+.bar .wrap { padding-top: 8px; padding-bottom: 8px; display: grid; grid-template-columns: minmax(0, 1fr); }
+.tools { display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; padding-top: 12px; }
 .tabs { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; min-width: 0; }
 .tabs::-webkit-scrollbar { display: none; }
 .tab { flex: none; border: 1px solid var(--line); background: var(--surface); border-radius: 999px; padding: 7px 14px; font-size: 14px; font-weight: 600; white-space: nowrap; }
@@ -187,7 +188,7 @@ footer p { margin: 4px 0; }
   .sess.xs ul.sp { grid-template-columns: 1fr; }
 }
 /* 관련자 표 */
-main.wide, header.wide, footer.wide, .bar .wrap.wide { max-width: 1400px; }
+main.wide, header.wide, footer.wide, .bar .wrap.wide, .tools.wide { max-width: 1400px; }
 .ctl { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; margin: 0 0 12px; }
 .seg { display: inline-flex; align-items: center; gap: 4px; flex-wrap: wrap; }
 .seg .lbl { font-size: 12px; color: var(--muted); font-weight: 700; margin-right: 4px; }
@@ -213,20 +214,47 @@ main.wide, header.wide, footer.wide, .bar .wrap.wide { max-width: 1400px; }
 .t-top { background: var(--ink); color: var(--bg); } .t-high { border: 1px solid var(--ink2); color: var(--ink2); }
 .t-ref { border: 1px solid var(--line); color: var(--muted); } .t-line { background: var(--rule-bg); color: var(--rule); }
 .t-ours { background: var(--ours-bg); color: var(--ours); border: 1px solid var(--ours-line); } .t-none { color: var(--muted); }
+.t-known { border: 1px dashed var(--accent); color: var(--accent); }
+.rt .c-more, .ctl-m { display: none; }
 .rk { font-variant-numeric: tabular-nums; font-size: 15px; margin-left: 6px; }
 small.rw { display: block; color: var(--muted); font-size: 12px; margin-top: 4px; line-height: 1.45; }
 body.nocolor .rt tr td { background: var(--surface) !important; }
 body.nodesc .rt .c-co, body.nodesc .rt .c-pe { display: none; }
 @media (max-width: 860px) {
-  .rt, .rt tbody, .rt tr, .rt td { display: block; width: 100% !important; }
+  .rt, .rt tbody { display: block; width: 100% !important; }
   .rt { border: 0; background: transparent; }
   .rt thead { display: none; }
-  .rt tr { border: 1px solid var(--line); border-radius: 12px; margin: 0 0 10px; overflow: hidden; background: var(--surface); }
-  .rt td { border: 0; padding: 4px 12px; }
-  .rt td:first-child { padding-top: 10px; } .rt td:last-child { padding-bottom: 12px; }
-  .rt td[data-l]::before { content: attr(data-l); display: block; font-size: 11.5px; color: var(--muted); font-weight: 700; letter-spacing: .02em; }
-  .rt td.c-rank::before, .rt td.c-who::before { display: none; }
+  .rt tr { display: grid; grid-template-columns: minmax(0, 1fr); grid-template-areas: "rank" "who" "why" "ses" "more" "co" "pe";
+           border: 1px solid var(--line); border-radius: 14px; margin: 0 0 10px; overflow: hidden; background: var(--surface); }
+  .rt td { display: block; width: auto !important; border: 0; padding: 3px 14px; }
+  .rt td.c-rank { grid-area: rank; padding-top: 12px; } .rt td.c-who { grid-area: who; } .rt td.c-why { grid-area: why; padding-top: 6px; }
+  .rt td.c-ses { grid-area: ses; } .rt td.c-more { grid-area: more; display: block; padding-bottom: 12px; }
+  .rt td.c-co { grid-area: co; display: none; } .rt td.c-pe { grid-area: pe; display: none; padding-bottom: 12px; }
+  .rt tr.open td.c-co, .rt tr.open td.c-pe { display: block; }
+  .rt td[data-l]::before { content: attr(data-l); display: block; font-size: 11.5px; color: var(--muted); font-weight: 700; letter-spacing: .02em; margin-bottom: 2px; }
+  .rt td.c-rank::before, .rt td.c-who::before, .rt td.c-why::before, .rt td.c-more::before { display: none; }
   .rt td.c-rank small.rw { display: inline; margin-left: 6px; }
+  .rt .c-who b { font-size: 16px; }
+  .rt .c-why .why { font-size: 14px; }
+  .rt .c-ses a { font-size: 13.5px; }
+  .rt .more { width: 100%; border: 1px solid var(--line); background: transparent; border-radius: 10px; padding: 9px 12px; font-size: 13.5px; font-weight: 700; color: var(--ink2); }
+  .rt tr.m-fit .more, .rt tr.m-strat .more, .rt tr.m-ours .more { background: var(--surface); }
+  body.nodesc .rt td.c-more { display: none; }
+}
+@media (max-width: 640px) {
+  .eyebrow { margin-top: 16px; font-size: 11px; }
+  h1.title { font-size: 22px; margin-bottom: 4px; }
+  .sub { display: none; }
+  .ctl { display: none; }
+  .ctl-m { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; margin: 0 0 10px; }
+  .ctl-m label { display: grid; gap: 2px; font-size: 11.5px; font-weight: 700; color: var(--muted); }
+  .ctl-m select { width: 100%; min-height: 40px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); color: var(--ink); padding: 0 8px; font-size: 14px; font-weight: 600; }
+  .day { padding: 12px 14px; }
+  .day p.lead { display: none; }
+  .mk { min-width: 48px; height: 36px; }
+  .row .btn { padding: 9px 10px; }
+  .legend .chip { padding: 5px 10px; }
+  main { padding-top: 12px; }
 }
 @media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
 @media print {
@@ -258,9 +286,10 @@ body.nodesc .rt .c-co, body.nodesc .rt .c-pe { display: none; }
     <h1 class="title">KBW · XRP SEOUL 연사 지도</h1>
     <p class="sub">9/30 · 10/1 KBW2026 → 10/3 XRP SEOUL 2026. 누가 언제 어디서 말하는지, 그중 우리와 결이 맞거나 전략상 필요한 사람은 누구인지 한 화면에.</p>
   </header>
-  <nav class="bar" aria-label="보기와 옵션">
-    <div class="wrap">
-      <div class="tabs" role="tablist" id="tabs"></div>
+  <nav class="bar" aria-label="보기">
+    <div class="wrap"><div class="tabs" role="tablist" id="tabs"></div></div>
+  </nav>
+  <div class="tools wrap">
       <div class="row">
         <input type="search" id="q" placeholder="이름 · 회사 · 세션 · 근거 검색" aria-label="검색">
         <button class="btn" id="onlyBtn" aria-pressed="false" title="표시된 사람 · 세션만">표시만</button>
@@ -280,8 +309,7 @@ body.nodesc .rt .c-co, body.nodesc .rt .c-pe { display: none; }
         <p class="hint">사람 옆 네모를 누르면 표시가 결 → 전략 → 선 → 없음 순으로 바뀌고 이 기기에만 저장됩니다(점 = 내가 바꾼 것). 위 색 칩을 누르면 그 분류만 켜고 끕니다. 설정은 주소에도 붙어 링크로 나눌 수 있습니다.</p>
       </div>
       <div class="legend" id="legend"></div>
-    </div>
-  </nav>
+  </div>
   <main class="wrap" id="view"></main>
   <footer class="wrap" id="foot"></footer>
 </div>
@@ -500,7 +528,7 @@ function peopleView() {
 
 const DAYORD = { d0930: 0, d1001: 1, d1003: 2 };
 const EVSHORT = { d0930: "KBW 9/30", d1001: "KBW 10/1", d1003: "XRP 10/3" };
-const TIER = { ours: "우리", top: "최우선", high: "우선", ref: "참고", line: "선" };
+const TIER = { top: "최우선", high: "우선", ref: "참고", known: "기존 연결", ours: "우리", line: "선" };
 const firstAt = (pid) => {
   const w = whereOf(pid)[0];
   return w ? DAYORD[w.day] * 10000 + parseInt(w.start.replace(":", ""), 10) : 99999;
@@ -523,7 +551,9 @@ function tableView() {
   const cnt = {};
   for (const p of ids) { const m = mark(p) || "none"; cnt[m] = (cnt[m] || 0) + 1; }
   const segs = (lbl, key, opts) => `<div class="seg" role="group" aria-label="${lbl}"><span class="lbl">${lbl}</span>${opts.map(([v, t]) => `<button data-${key}="${v}" aria-pressed="${String(S[key === "all" ? "all" : key]) === v || (key === "all" && (S.all ? "1" : "0") === v)}">${t}</button>`).join("")}</div>`;
-  let html = `<section class="day"><h2>관련자 표</h2><p class="meta">${ids.length}명 · ${CATS.filter((c) => cnt[c.k]).map((c) => `<span class="c-${c.k}">${c.label} ${cnt[c.k]}</span>`).join(" · ")}${cnt.none ? ` · 표시 없음 ${cnt.none}` : ""}</p><p>두 행사의 관련자를 한 표로 — 중요도는 제안 순위다(기존 관계 · 레인 중심 · 10/3 동선 · 옆 사람으로 이어지는 정도). 세션을 누르면 그 자리로 간다.</p></section>`;
+  let html = `<section class="day"><h2>관련자 표</h2><p class="meta">${ids.length}명 · ${CATS.filter((c) => cnt[c.k]).map((c) => `<span class="c-${c.k}">${c.label} ${cnt[c.k]}</span>`).join(" · ")}${cnt.none ? ` · 표시 없음 ${cnt.none}` : ""}</p><p class="lead">두 행사의 관련자를 한 표로 — 중요도는 제안 순위다. 새로 열 관계가 먼저, 기존 연결은 후순위, 우리는 그 뒤, 선은 맨 끝. 세션을 누르면 그 자리로 간다.</p></section>`;
+  const sel = (lbl, key, opts, cur) => `<label>${lbl}<select data-sel="${key}">${opts.map(([v, t]) => `<option value="${v}"${v === cur ? " selected" : ""}>${t}</option>`).join("")}</select></label>`;
+  html += `<div class="ctl-m">${sel("정렬", "sort", [["imp", "중요도"], ["time", "시간"], ["event", "행사"], ["name", "이름"]], S.sort)}${sel("행사", "ev", [["all", "전체"], ["KBW", "KBW"], ["XRP SEOUL", "XRP SEOUL"]], S.ev)}${sel("대상", "all", [["0", "관련자만"], ["1", "전체 연사"]], S.all ? "1" : "0")}</div>`;
   html += `<div class="ctl">${segs("정렬", "sort", [["imp", "중요도"], ["time", "시간"], ["event", "행사"], ["name", "이름"]])}${segs("행사", "ev", [["all", "전체"], ["KBW", "KBW"], ["XRP SEOUL", "XRP SEOUL"]])}${segs("대상", "all", [["0", "관련자만"], ["1", "전체 연사"]])}<button class="btn noprint" id="printBtn">인쇄 · PDF</button></div>`;
   if (!ids.length) return html + `<p class="empty">조건에 맞는 사람이 없습니다 — 색 칩이나 검색어를 풀어 보세요.</p>`;
   html += `<table class="rt"><thead><tr><th class="c-rank">중요도</th><th class="c-who">연사 · 소속</th><th class="c-ses">세션</th><th class="c-co">회사</th><th class="c-pe">인물</th><th class="c-why">우리와 결 · 근거</th></tr></thead><tbody>`;
@@ -533,7 +563,7 @@ function tableView() {
     const custom = S.custom[pid] !== undefined;
     const t = custom && !p.rank ? "" : p.tier || "";
     const tl = t ? TIER[t] : custom ? "내 표시" : "—";
-    const rk = p.rank != null && p.rank > 0 && p.rank < 90 ? `<b class="rk">${p.rank}</b>` : "";
+    const rk = ["top", "high", "ref"].includes(t) ? `<b class="rk">${p.rank}</b>` : "";
     const ses = whereOf(pid).map((s) => `<a href="#${s.id}" data-go="${s.day}" data-s="${s.id}">${esc(EVSHORT[s.day])} ${esc(s.start)} ${esc(s.title)}</a>`).join("");
     const lines = (arr) => (arr || []).map((x) => `<p>${esc(x)}</p>`).join("");
     const why = m && (custom ? (m === p.mark ? p.why : "") : p.why);
@@ -541,6 +571,7 @@ function tableView() {
       <td class="c-rank" data-l="중요도"><span class="tier t-${t || "none"}">${tl}</span>${rk}${p.rwhy ? `<small class="rw">${esc(p.rwhy)}</small>` : ""}</td>
       <td class="c-who" data-l="연사 · 소속"><b>${esc(nameOf(pid))}</b>${p.ko ? `<span class="en">${esc(p.name)}</span>` : ""}${p.ev.length > 1 ? `<span class="ev2" style="margin-left:6px">두 행사</span>` : ""}<span class="org">${esc(p.xorg || p.org || "")}</span></td>
       <td class="c-ses" data-l="세션">${ses}</td>
+      <td class="c-more"><button class="more" data-more="1" aria-expanded="false">회사 · 인물 보기</button></td>
       <td class="c-co" data-l="회사">${lines(p.co)}</td>
       <td class="c-pe" data-l="인물">${lines(p.pe)}</td>
       <td class="c-why" data-l="우리와 결 · 근거"><button class="mk${custom ? " custom" : ""}" data-mk="${esc(pid)}" aria-label="${esc(p.name)} 표시 바꾸기">${LABEL[m]}</button>${why ? `<p class="why">${esc(why)}</p>` : ""}${p.note ? `<p class="note">${esc(p.note)}</p>` : ""}</td>
@@ -572,8 +603,10 @@ function render() {
   legend();
   const v = $("#view");
   const wide = S.tab === "table";
-  for (const el of [v, document.querySelector("#app > header"), $("#foot"), document.querySelector(".bar .wrap")]) el.classList.toggle("wide", wide);
+  for (const el of [v, document.querySelector("#app > header"), $("#foot"), document.querySelector(".bar .wrap"), document.querySelector(".tools")]) el.classList.toggle("wide", wide);
   v.innerHTML = S.tab === "table" ? tableView() : S.tab === "glance" ? glanceView() : S.tab === "people" ? peopleView() : dayView(S.tab);
+  const at = document.querySelector('.tab[aria-selected="true"]');
+  if (at) at.scrollIntoView({ block: "nearest", inline: "nearest" });
   const pb = $("#printBtn");
   if (pb) pb.onclick = () => window.print();
   saveState();
@@ -601,8 +634,13 @@ function wire() {
   $("#upd").textContent = D.updated;
   $("#foot").innerHTML = D.foot.map((x) => `<p>${esc(x)}</p>`).join("");
   document.addEventListener("click", (e) => {
-    const t = e.target.closest("[data-tab],[data-c],[data-mk],[data-go],[data-sort],[data-ev],[data-all]");
+    const t = e.target.closest("[data-tab],[data-c],[data-mk],[data-go],[data-sort],[data-ev],[data-all],[data-more]");
     if (!t) return;
+    if (t.dataset.more) {
+      const tr = t.closest("tr"); const open = tr.classList.toggle("open");
+      t.textContent = open ? "접기" : "회사 · 인물 보기"; t.setAttribute("aria-expanded", String(open));
+      return;
+    }
     if (t.dataset.sort) { S.sort = t.dataset.sort; render(); return; }
     if (t.dataset.ev) { S.ev = t.dataset.ev; render(); return; }
     if (t.dataset.all) { S.all = t.dataset.all === "1"; render(); return; }
@@ -626,6 +664,14 @@ function wire() {
     }
     if (t.dataset.go) { e.preventDefault(); go(t.dataset.go, t.dataset.s); }
   });
+  document.addEventListener("change", (e) => {
+    const sl = e.target.closest("select[data-sel]");
+    if (!sl) return;
+    const k = sl.dataset.sel;
+    if (k === "all") S.all = sl.value === "1"; else S[k] = sl.value;
+    render();
+  });
+  if (PLAIN) $("#lockBtn").hidden = true;
   $("#q").value = S.q;
   let tm;
   $("#q").addEventListener("input", (e) => { clearTimeout(tm); tm = setTimeout(() => { S.q = e.target.value.trim(); render(); }, 120); });

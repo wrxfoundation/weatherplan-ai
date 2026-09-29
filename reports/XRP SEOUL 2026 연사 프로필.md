@@ -1,15 +1,15 @@
-# 10/3 그랜드 하얏트 서울 — 세션 순서대로 연사의 회사 · 인물, 우리와 결이 맞는 10명은 초록으로
+# 10/3 그랜드 하얏트 서울 — 세션 순서대로 연사의 회사 · 인물, 우리와 결이 맞는 11명은 초록으로
 <!-- docx: landscape -->
 
-10/3 XRP SEOUL 2026(그랜드 하얏트 서울) 연사 43명을 주최 프로그램 순서대로 묶고, 사람마다 회사 한 줄 · 인물 한 줄을 붙였다. 리플 소속이 6명(XRP 아시아 포함 7명)으로 가장 많고, 한국 금융권(케이뱅크 · 교보증권 · 우리은행 · 전북은행 · 메리츠증권 · 카카오뱅크)이 예금토큰 · 스테이블코인 세션에 모였다. 나머지는 토큰화 자산(RWA) · 온체인 금융 · AI 에이전트 · 거래소 축이다. 우리 키노트는 14:50. 우리와 결이 맞는 10명(이미 연결 4 · 새로 열 관계 6)은 초록으로 표시하고 근거를 짧게 달았으며, 이 10명은 회사 · 인물을 한 번 더 조사해 1~2줄씩 보탰다. 명단 · 직함은 프로그램 이미지 표기 그대로, 설명은 9/29 공개 자료 검색 요약 기준이다.
+10/3 XRP SEOUL 2026(그랜드 하얏트 서울) 연사 43명을 주최 프로그램 순서대로 묶고, 사람마다 회사 한 줄 · 인물 한 줄을 붙였다. 리플 소속이 6명(XRP 아시아 포함 7명)으로 가장 많고, 한국 금융권(케이뱅크 · 교보증권 · 우리은행 · 전북은행 · 메리츠증권 · 카카오뱅크)이 예금토큰 · 스테이블코인 세션에 모였다. 나머지는 토큰화 자산(RWA) · 온체인 금융 · AI 에이전트 · 거래소 축이다. 우리 키노트는 14:50. 우리와 결이 맞는 11명(이미 연결 5 · 새로 열 관계 6)은 초록으로 표시하고 근거를 짧게 달았으며, 이 11명은 회사 · 인물을 한 번 더 조사해 1~2줄씩 보탰다. 명단 · 직함은 프로그램 이미지 표기 그대로, 설명은 9/29 공개 자료 검색 요약 기준이다.
 
 ## 결 맞는 사람 — 한눈에
 
-결 = 우리 레인(검증 데이터 · x402 기계 고객 · DePIN · 보험/지수 상품)이나 이미 맺은 관계와 곧바로 이어지는가. 아래 세션 표에서 초록 글자 · 옅은 초록 줄이 이 10명이고, 맨 오른쪽 칸에 근거를 짧게 달았다.
+결 = 우리 레인(검증 데이터 · x402 기계 고객 · DePIN · 보험/지수 상품)이나 이미 맺은 관계와 곧바로 이어지는가. 아래 세션 표에서 초록 글자 · 옅은 초록 줄이 이 11명이고, 맨 오른쪽 칸에 근거를 짧게 달았다.
 
-- **이미 연결(4)** — 에리(9/23 미팅 · 12:05 좌장) · 휴고 필리온(케이웨더 × Flare · 12:05, 13:30) · 문창훈(파트너 클러스터 · 15:50) · 제이크 구(Catalyze 협업 · 15:50)
+- **이미 연결(5)** — 에리(9/23 미팅 · 12:05 좌장) · 휴고 필리온(케이웨더 × Flare · 12:05, 13:30) · 아시시 비를라(이전 XRP 컨퍼런스 인연 · 12:05) · 문창훈(파트너 클러스터 · 15:50) · 제이크 구(Catalyze 협업 · 15:50)
 - **새로 열 관계(6)** — 챈들러 팡(x402 기계 고객 · 12:35, 13:15) · 코너 설리번(보장 층 · 12:05) · 나다니엘 T. 브래들리(데이터 자산화 · 15:05, 17:45) · 윤장혁(XRPL 구조화상품 · 15:20) · 마르친 카즈미에르차크(오라클 · 16:55) · 레이시 위즈덤(DePIN 투자 · 18:10)
-- **시간순 동선** — 12:05 에리 · 휴고 · 코너 → 12:35 챈들러 → 13:30 휴고 → 14:50 우리 키노트 → 15:05 나다니엘 → 15:20 윤장혁 → 15:50 제이크 구 · 문창훈 → 16:55 마르친 → 18:10 레이시
+- **시간순 동선** — 12:05 에리 · 아시시 · 휴고 · 코너 → 12:35 챈들러 → 13:30 휴고 → 14:50 우리 키노트 → 15:05 나다니엘 → 15:20 윤장혁 → 15:50 제이크 구 · 문창훈 → 16:55 마르친 → 18:10 레이시
 - **서로 이어진 줄** — 레이시의 PL Capital 이 챈들러의 t54 시드를 공동 주도했다(2026.2). 제이크 구의 Catalyze 가 운영한 KFIP 2026 1위가 윤장혁의 리스크엑스다. 휴고 · 코너는 같은 Flare 생태계이고, Eri 는 휴고와 2019년부터 구면이다(9/23 미팅). 한 사람을 만나면 옆 사람 소개를 부탁하기 쉽다.
 - **표시하지 않은 사람** — 리플 소속 7명(XRP 아시아 포함, 공개 직함까지 규칙) · 로빈후드 · 비트스탬프(거래소 소속 — 인사만, 사업 메시지는 먼저 열지 않는다) · 크로스체인(엑셀라 · 스퀴드 · 바이코노미 — 9/30 까지 멀티체인 신호 금지) · 한국 금융권(관계 자산이지만 지금 레인 밖).
 - **같은 세션, 명단 밖** — 박종한(구독 약 25만) · 김동환은 우리 KOL 명단에 없다. 문창훈 · 제이크 구와 같은 15:50 세션이라 현장 인사 후보로만 둔다.
@@ -19,7 +19,7 @@
 | 연사 · 소속 | 세션 | 회사 | 인물 | 우리와 결 · 근거 |
 |---|---|---|---|---|
 | 에리 이시야마 Crypto Eri · 오나미 프레스(Onami Press) 공동창업자 | 12:05 XRP 활용 · 자산 토큰화 전망 | 블록체인·AI 결합 멀티미디어 보도자료 플랫폼, share-to-earn 포인트 보상 | 도쿄 기반 XRP·크립토 유튜버 'Crypto Eri'. WebX 2026 패널 좌장<br>샌프란시스코 베이 지역에서 자라 도쿄로 이주, 2019년 SBI 의 리플 결제 앱 발언을 계기로 XRP 를 추적(2019 인터뷰). 휴고와 2019년부터 구면 · 이번 KBW 미디어 파트너(9/23 미팅) | {{기존 연결(9/23 미팅) — 10/3 사진 · X 소개 · 대담 클립 제안. 일본 XRP 창구}} |
-| 아시시 비를라 Asheesh Birla · 에버노스(Evernorth) 창업자 겸 대표 | 12:05 XRP 활용 · 자산 토큰화 전망 | XRP 트레저리(DAT) 기업. 10억 달러+ 조달, 나스닥 'XRPN' 상장 추진 | 리플 창립팀(2013 합류)·RippleNet 총괄 출신, 2022년 리플 이사회 합류 |  |
+| 아시시 비를라 Asheesh Birla · 에버노스(Evernorth) 창업자 겸 대표 | 12:05 XRP 활용 · 자산 토큰화 전망 | XRP 트레저리(DAT) 기업. 10억 달러+ 조달, 나스닥 'XRPN' 상장 추진<br>Armada Acquisition Corp. II 와 SPAC 합병 — 9/30 주주 표결 뒤 나스닥 XRPN. XRP 약 4.73억 개를 기관 대출 · 유동성 공급에 굴려 주당 XRP 를 늘리는 전략(SBI · Pantera · GSR 등 투자) | 리플 창립팀(2013 합류)·RippleNet 총괄 출신, 2022년 리플 이사회 합류<br>리플 결제 사업을 10년 넘게 이끈 뒤 창업. 이전 XRP 컨퍼런스에서 맺은 인연(서우 9/29) | {{기존 연결 — 이전 XRP 컨퍼런스 인연. 12:05 에리 좌장 패널}} |
 | 휴고 필리온 Hugo Philion · 플레어 공동창업자 | 12:05 XRP 활용 · 자산 토큰화 전망 / 13:30 XRP 프로그래머블 자본 | XRP를 DeFi로 잇는 EVM L1. FAssets로 FXRP 발행(2025.9 메인넷)<br>Flare 2.0 — TEE(격리 연산) 기반 기밀 연산 FCC 로 기관 거래 · 데이터를 비공개 처리, 2026.7 Songbird 배포 표결. 가격(FTSO) · 외부 데이터 증명(FDC)을 L1 에 내장 | Flare Labs CEO 겸임. 원자재 파생상품 PM 출신, UCL 머신러닝 석사<br>XRP Australia 2026 키노트 「기밀 데이터 프로토콜 위 프로그래머블 금융」. Eri 와 2019년부터 구면(9/23 미팅) | {{케이웨더 × Flare 파트너(9/5 공개) — 데이터 검증 층}} |
 | 니컬러스 모츠 Nicholas Motz · 소일(Soil) 공동창업자 | 12:05 XRP 활용 · 자산 토큰화 전망 | 사모신용 기반 고정수익 프로토콜. XRPL RLUSD 볼트 72시간 만에 100만 달러 | Soil CIO 겸 ORQO 그룹(아부다비) CEO. 포브스 '30 언더 30' 선정 |  |
 | 코너 설리번 Connor Sullivan · 파이어라이트(Firelight) 최고 전략 책임자 | 12:05 XRP 활용 · 자산 토큰화 전망 | 스테이킹한 XRP로 DeFi 해킹 등을 보장하는 Flare 기반 프로토콜(stXRP)<br>Sentora 인큐베이팅 · Flare 지원. 2026.8월 말 800만 달러 조달(Gumi Cryptos 주도, Maven 11 등) — 담보를 BTC · XLM 으로 넓히고 9월 첫 보장 연동 | CSO로 온체인 보장 레이어 구축 주도. Fireblocks·재보험 언더라이팅 출신<br>재보험사 TransRe 언더라이팅 → Fireblocks → Firelight. 리스테이킹을 EigenLayer 와 달리 보장에 쓰는 설계를 직접 설명 | {{Flare 위 보장(보험) 층 · 재보험 출신 — 우리 보험 레인의 대화 상대}} |
@@ -79,7 +79,7 @@
 
 ## 읽는 법
 
-- 초록 글자 · 옅은 초록 줄 = 우리와 결(10명). 근거는 「우리와 결 · 근거」 칸에, 회사 · 인물 칸의 줄바꿈 아래는 9/29 추가 조사분이다.
+- 초록 글자 · 옅은 초록 줄 = 우리와 결(11명). 근거는 「우리와 결 · 근거」 칸에, 회사 · 인물 칸의 줄바꿈 아래는 9/29 추가 조사분이다.
 - 노란 형광(우리 키노트 줄)과 목차 · 절 제목의 빨간 「날씨 데이터」는 서우 편집 그대로다.
 - 결 판단 기준: ① 이미 맺은 관계(9/23 Eri 미팅 · 9/5 Flare 워크숍 · Catalyze 협업) ② 우리 레인 — 검증 데이터 · x402 기계 고객 · DePIN · 보험/지수 상품. 내부 근거 기록은 출처 절 끝.
 - 말할 때 선: Flare 쪽(휴고 · 코너)과 t54 는 기술 통합 표현 금지 — 케이웨더 × Flare 파트너십(공개)까지만, 웰비안 직접 통합 · Flare 미공개 계획은 대외 0. 보험 레인은 내부 검토 · 미구축이라 대외 0. 타임레버리지 협업은 광고 표기 전제.
@@ -94,7 +94,7 @@
 ## 출처
 
 - 에리 — [onamipress.com](https://onamipress.com/) · [webx-asia.com](https://webx-asia.com/agenda/) · [www.xrparmynews.com](https://www.xrparmynews.com/xrp-army-news-interview-with-crypto-eri-from-japan/)
-- 아시시 — [www.evernorth.xyz](https://www.evernorth.xyz/press-release-08-27-2026) · [u.today](https://u.today/ripplenets-general-manager-is-stepping-down)
+- 아시시 — [www.evernorth.xyz](https://www.evernorth.xyz/press-release-08-27-2026) · [u.today](https://u.today/ripplenets-general-manager-is-stepping-down) · [www.coindesk.com](https://www.coindesk.com/markets/2026/08/28/an-xrp-treasury-company-backed-by-ripple-is-a-shareholder-vote-away-from-nasdaq)
 - 휴고 — [flare.network](https://flare.network/news/fassets-fxrp-is-live-on-mainnet) · [usethebitcoin.com](https://usethebitcoin.com/crypto-personalities/hugo-philion-flare-labs-ceo/) · [www.cryptopolitan.com](https://www.cryptopolitan.com/flare-ceo-says-xrp-is-set-for-major-growth/) · [news.bitcoin.com](https://news.bitcoin.com/flare-targets-xrpl-expansion-with-july-6-vote-on-songbird-confidential-compute-rollout/) · [www.youtube.com](https://www.youtube.com/watch?v=lyNcaoOr-6w)
 - 니컬러스 — [chainwire.org](https://chainwire.org/2026/02/19/soil-launches-first-compliant-rwa-backed-yield-protocol-on-xrpl-to-unlock-utility-for-rlusd-holders/) · [www.prnewswire.com](https://www.prnewswire.com/news-releases/orqo-group-launches-as-unified-digital-asset-management-platform-302556617.html)
 - 코너 — [flare.network](https://flare.network/news/firelight-launch) · [www.theblock.co](https://www.theblock.co/post/381210/firelight-xrp-staking-flare-stxrp-defi-insurance) · [www.coindesk.com](https://www.coindesk.com/business/2026/08/31/firelight-raises-usd8-million-expands-beyond-xrp-as-it-aims-to-make-defi-less-scary-for-fintechs) · [thedefiant.io](https://thedefiant.io/news/defi/firelight-raises-8-million-to-backstop-defi-vaults-with-staked-xrp)

@@ -69,7 +69,7 @@
 ## 일정
 
 - 9/30 Eri 방한 → 10/1(목) KBW 미디어 업무 → **10/2(금) Flare 파티 첫 대면(우리도 참석)** → **10/3(토) XRP SEOUL 2026**
-- Eri 패널 동석: Flare 측 Ashish(에버노스 — 수첩의 Asheesh Birla, Evernorth CEO 구면으로 보임 · 확인 필요) · DeFi 팀(폴란드 추정) ·
+- Eri 패널 동석: Flare 측 Ashish(에버노스 — 수첩의 Asheesh Birla, Evernorth CEO 구면으로 보임 · ~~확인 필요~~ **9/29 서우 확인: 기존 연결 — 이전 XRP 컨퍼런스 인연**) · DeFi 팀(폴란드 추정) ·
   Doppler Finance(공동 플래티넘 — 인지만, 연결 없음)
 - Eri 가 한국팀 CBAX(청취상 · Johnny 대표 · 해커톤 1위 · 파티 스폰서 · 키노트) 소개 의향
   - → 9/29 [추론] **CBAX = SIVAX(리스크엑스 · 윤장혁 Johnny Youn 대표 · KFIP 2026 1위)** 로 보인다 — XRP SEOUL 15:20 연사. 10/2 Flare 파티에서 Eri 에게 확인

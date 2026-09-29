@@ -271,11 +271,12 @@ PNOTE = {
     "Balaji Srinivasan": "테제 글이 우리 레인에 닿을 때 1회. 상품 얘기 0",
     "Yuval Rooz": "JPM 토큰화 예금이 Canton — 우리 정산은 XRPL, 섞지 않는다",
     "Chetan Karkhanis": "프랭클린템플턴 = t54 시드 공동 주도사(2026.2)",
+    "Asheesh Birla": "에버노스 SPAC 합병 표결 9/30 — 행사 전에 결과 확인",
 }
 
 # XRP SEOUL — md 「우리와 결」 10명을 결 · 전략으로 나눈다 + 선
 XS_FIT = {"Hugo Philion", "Connor Sullivan", "Chandler Fang", "Nathaniel T. Bradley", "Johnny Youn", "Marcin Kazmierczak"}
-XS_STRAT = {"Crypto Eri", "Jake Ku", "Changhoon Moon", "Lacey Wisdom"}
+XS_STRAT = {"Crypto Eri", "Jake Ku", "Changhoon Moon", "Lacey Wisdom", "Asheesh Birla"}  # 아시시 = 이전 XRP 컨퍼런스 인연(9/29 서우)
 XS_OURS = {"Sunghwan Kim"}
 XS_LINE = {
     "Christina Chan": "리플 — 공개 직함까지",
@@ -297,8 +298,9 @@ XS_WHY = {
     "Changhoon Moon": "9/5 Flare 워크숍 같은 무대 — 국내 XRP 리테일 창구",
     "Connor Sullivan": "Flare 생태계 보장 층 · 재보험 출신 — 리스크를 값으로 매기는 쪽",
     "Johnny Youn": "XRPL 구조화상품(KFIP 2026 1위) — 지수 · 파생 설계 역량",
+    "Asheesh Birla": "기존 연결 — 이전 XRP 컨퍼런스 인연. 에버노스(XRP 트레저리)",
 }
-XS_PE_DROP = [r"\s*휴고와 2019년부터 구면 · 이번 KBW 미디어 파트너\(9/23 미팅\)", r"\s*Eri 와 2019년부터 구면\(9/23 미팅\)",
+XS_PE_DROP = [r"\s*휴고와 2019년부터 구면 · 이번 KBW 미디어 파트너\(9/23 미팅\)", r"\s*Eri 와 2019년부터 구면\(9/23 미팅\)", r"\(서우 9/29\)",
               r"\.\s*$"]
 
 KO = {
@@ -329,42 +331,46 @@ KBW_DESC = {
     "John D'Agostino": ("Coinbase(추정)", "10/1 「월가의 크립토 결산」 패널"),
     "Mike Belshe": ("BitGo — 디지털자산 커스터디", "CEO. 9/30 「기관 크립토 시대의 보안」"),
 }
-# 중요도 — 제안 순위(0 = 우리, 1~5 최우선, 6~13 우선, 14~ 참고, 90~ 선). 둘째 값 = 순위 근거(공개 가능한 한 구절)
-RANK = {
-    "Sunghwan Kim": (0, "우리 키노트 14:50"),
-    "Hugo Philion": (1, "기존 파트너 · 같은 날 13:30 키노트"),
-    "Crypto Eri": (2, "기존 연결 · 12:05 좌장 · 일본 · X 확산"),
-    "Chandler Fang": (3, "x402 결제 층 핵심 · 이번 주 서울"),
-    "Marcin Kazmierczak": (4, "오라클 첫 대화 후보 · 두 행사"),
-    "Lacey Wisdom": (5, "DePIN 투자사 · t54 투자사"),
-    "Charles Jansen": (6, "지수 · 평가 기관 · KBW 10/1"),
-    "Jake Ku": (7, "국내 XRPL 커뮤니티 관문"),
-    "Changhoon Moon": (8, "국내 XRP 리테일 창구"),
-    "Nathaniel T. Bradley": (9, "데이터 자산화 · 센서 데이터 제휴"),
-    "Johnny Youn": (10, "XRPL 구조화상품 · KFIP 1위"),
-    "Connor Sullivan": (11, "Flare 생태계 보장 층"),
-    "Caroline D. Pham": (12, "해외 구매 온램프"),
-    "Guy Wuollet": (13, "DePIN 투자(a16z crypto)"),
-    "Michael Heinrich": (14, "데이터 · AI 인프라"),
-    "Ambre Soubiran": (15, "시장 데이터 회사"),
-    "Jongwook Oh": (16, "국내 x402 패널"),
-    "Tom Schmidt": (17, "DePIN 투자(Dragonfly)"),
-    "Lasse Clausen": (18, "DePIN VC"),
-    "Akshat Vaidya": (19, "인프라 VC"),
-    "Andrea Muttoni": (20, "데이터 권리"),
-    "SungGuan Yun": (21, "한국은행 디지털화폐"),
-    "Michael Ippolito": (22, "영문 미디어"),
-    "Frank Chaparro": (23, "미디어"),
-}
+# 중요도 — 제안 순위. 새로 열 관계가 먼저(최우선 5 · 우선 7 · 참고 7), 기존 연결은 후순위, 우리는 그 뒤, 선은 맨 끝
+# (9/29 서우 「기존 연결은 후순위로 빼 — 아시시 비를라도 기존 연결자, 어차피 논의 대상인 우리도 뒤로」)
+TIERS = [
+    ("top", [("Chandler Fang", "x402 결제 층 핵심 · 이번 주 서울"),
+             ("Marcin Kazmierczak", "오라클 첫 대화 후보 · 두 행사"),
+             ("Lacey Wisdom", "DePIN 투자사 · t54 투자사"),
+             ("Charles Jansen", "지수 · 평가 기관 · KBW 10/1"),
+             ("Nathaniel T. Bradley", "데이터 자산화 · 센서 데이터 제휴")]),
+    ("high", [("Johnny Youn", "XRPL 구조화상품 · KFIP 1위"),
+              ("Connor Sullivan", "Flare 생태계 보장 층"),
+              ("Caroline D. Pham", "해외 구매 온램프"),
+              ("Guy Wuollet", "DePIN 투자(a16z crypto)"),
+              ("Michael Heinrich", "데이터 · AI 인프라"),
+              ("Ambre Soubiran", "시장 데이터 회사"),
+              ("Jongwook Oh", "국내 x402 패널")]),
+    ("ref", [("Tom Schmidt", "DePIN 투자(Dragonfly)"),
+             ("Lasse Clausen", "DePIN VC"),
+             ("Akshat Vaidya", "인프라 VC"),
+             ("Andrea Muttoni", "데이터 권리"),
+             ("SungGuan Yun", "한국은행 디지털화폐"),
+             ("Michael Ippolito", "영문 미디어"),
+             ("Frank Chaparro", "미디어")]),
+    ("known", [("Hugo Philion", "기존 파트너 · 10/3 13:30 키노트"),
+               ("Crypto Eri", "기존 연결 · 12:05 좌장"),
+               ("Asheesh Birla", "기존 연결 · 이전 XRP 컨퍼런스"),
+               ("Jake Ku", "기존 연결 · XRPL Korea"),
+               ("Changhoon Moon", "기존 연결 · 9/5 워크숍")]),
+    ("ours", [("Sunghwan Kim", "우리 키노트 14:50")]),
+]
 LINE_ORDER = ["Monica Long", "Kyoungsuk Oh", "SeonJoo Yoon", "Johann Kerbrat", "Leonard Hoh", "Arjun Sethi", "John D'Agostino",
               "Mike Belshe", "Christina Chan", "Jinnie Lee", "Sabrina Tachdjian", "Ayo Akinyele", "Tatsuya Kohrogi",
               "Pablo Che Leo", "Adam Oozeer", "Fig", "Aniket Jindal"]
-
-
-def tier(rank):
-    if rank is None:
-        return ""
-    return "ours" if rank == 0 else "top" if rank <= 5 else "high" if rank <= 13 else "ref" if rank < 90 else "line"
+BASE = {"top": 1, "high": 6, "ref": 13, "known": 50, "ours": 80}
+RANK = {}
+for t, people_ in TIERS:
+    for i, (k, why) in enumerate(people_):
+        RANK[k] = (BASE[t] + i, t, why)
+for i, k in enumerate(LINE_ORDER):
+    RANK[k] = (90 + i, "line", "")
+assert [BASE["high"] - BASE["top"], BASE["ref"] - BASE["high"]] == [len(TIERS[0][1]), len(TIERS[1][1])]
 
 
 # ── 판정 — KBW 세션(제목 앞부분으로 찾는다) ─────────────────────────────────────────────
@@ -414,7 +420,7 @@ NOTES = [
     "지난 사이드: 9/28 「Agentic Payments Onchain」(리플 · t54 · Tenity · Bloom, KBW 공식 사이드) — t54 가 KBW 주간에 서울에 있다. 10/3 챈들러 팡 동선에 참고.",
     "두 행사에 다 나오는 사람은 KBW 에서 먼저 볼 수 있다 — 마르친(RedStone) 9/30 12:00 → 10/3 16:55.",
     "소속 칸: 「추정」 = 알려진 정보라 재확인 전. 빈 칸은 붙여 넣은 아젠다에 소속이 없어서다 — KBW 연사 페이지에서 확인.",
-    "중요도 = 제안 순위(최우선 5 · 우선 8 · 참고 10, 선은 맨 뒤) — 기존 관계 · 레인 중심 · 10/3 동선 · 옆 사람으로 이어지는 정도로 매겼다.",
+    "중요도 = 제안 순위 — 새로 열 관계(최우선 5 · 우선 7 · 참고 7)가 먼저, 기존 연결 5는 후순위, 우리는 그 뒤, 선은 맨 끝. 새 관계 안에서는 레인 중심 · 10/3 동선 · 옆 사람으로 이어지는 정도로 매겼다.",
     "판정은 제안이다 — 「내 표시」로 바꾸면 이 기기에만 저장되고, 「내보내기」로 복사해 보내 주면 원본에 반영한다.",
     "결 = 우리 레인(검증 데이터 · x402 기계 고객 · DePIN · 보험/지수) · 전략 = 관계 · 자본 · 정책 · 미디어 · "
     "선 = 말할 때 조심(공개 직함까지 · 인사만) · 우리 = 김성환 대표 키노트.",
@@ -560,10 +566,9 @@ def marks(people):
             co, pe = KBW_DESC[k]
             p["co"], p["pe"] = [co], [pe]
         if k in RANK:
-            p["rank"], p["rwhy"] = RANK[k]
-        elif k in LINE_ORDER:
-            p["rank"], p["rwhy"] = 90 + LINE_ORDER.index(k), ""
-        p["tier"] = tier(p.get("rank"))
+            p["rank"], p["tier"], p["rwhy"] = RANK[k]
+        else:
+            p["tier"] = ""
     both = [k for k, p in people.items() if len(p["ev"]) > 1]
     return both
 
