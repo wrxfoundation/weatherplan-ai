@@ -607,8 +607,8 @@
  },
  {
   "key": "Caroline D. Pham",
-  "summary": "Caroline D. Pham은 2025년 미국 CFTC 위원장 대행으로 ‘크립토 스프린트’를 이끌며 토큰화 담보(스테이블코인 포함) 파일럿 · 규제 거래소 현물 크립토 거래 · 예측시장 규제 완화를 밀어붙인 인물이다. 2026년 MoonPay에 최고법률책임자(CLO) · 최고행정책임자(CAO)로 합류했고, 2026.4부터 기관 사업 MoonPay Institutional을 이끄는 Moon Global Markets CEO를 맡았다. KBW 9/30 14:50 「How Tokenization Is Rewiring Wall Street」 연사.",
-  "now": "MoonPay 최고법률책임자(CLO) 겸 최고행정책임자(CAO) · Moon Global Markets CEO(MoonPay Institutional 총괄)",
+  "summary": "Caroline D. Pham은 2025년 미국 CFTC 위원장 대행으로 ‘크립토 스프린트’를 이끌며 토큰화 담보(스테이블코인 포함) 파일럿 · 규제 거래소 현물 크립토 거래 · 예측시장 규제 완화를 밀어붙인 인물이다. 2026년 MoonPay에 최고법률책임자(CLO) · 최고행정책임자(CAO)로 합류했고, 2026.4부터 기관 사업 MoonPay Institutional CEO를 맡았다(Moon Global Markets CEO 로 소개된 적도 있다). KBW 9/30 14:50 「How Tokenization Is Rewiring Wall Street」 연사.",
+  "now": "MoonPay 최고법률책임자(CLO) 겸 최고행정책임자(CAO) · MoonPay Institutional CEO(KBW2026 보도자료 표기 — 2026.5 Consensus 소개에는 Moon Global Markets CEO)",
   "career": [
    "2026.4~ MoonPay · Moon Global Markets CEO — 기관 사업 MoonPay Institutional 총괄",
    "2026.1~ MoonPay · CLO 겸 CAO — 글로벌 법무 · 행정, 워싱턴 정책 · 규제 전략 총괄(2025.12 발표, 합류월 확인 필요)",
@@ -698,6 +698,10 @@
    {
     "t": "CoinDesk — 예측시장 no-action(2025.12)",
     "u": "https://www.coindesk.com/policy/2025/12/11/cftc-gives-no-action-leeway-to-polymarket-gemini-predictit-ledgerx-over-data-rules"
+   },
+   {
+    "t": "KBW2026 보도자료 — 연사 직함",
+    "u": "https://www.chainbits.com/press-releases/kbw2026-brings-global-finance-policy-and-crypto-leaders-to-seoul"
    }
   ],
   "check": [
@@ -1479,8 +1483,8 @@
  },
  {
   "key": "SungGuan Yun",
-  "summary": "윤성관(Yun Sung-guan) 한국은행 디지털화폐연구실장. 1999년 입행 후 지급결제 분야에서 CBDC 모의실험(2021~2022)과 예금토큰 실거래 「프로젝트 한강」을 맡아 왔고, 2026.7 신현송 총재의 ECB 신트라 포럼 논문(프로젝트 한강의 교훈) 공동 저자다. 2026.1 강연에서 2030년까지 국고금의 4분의 1을 디지털화폐로 집행하는 목표를 언급.",
-  "now": "한국은행 디지털화폐연구실장(Head, Office of Digital Currency Research)",
+  "summary": "윤성관(Yun Sung-guan) 한국은행 디지털화폐실장. 1999년 입행 후 지급결제 분야에서 CBDC 모의실험(2021~2022)과 예금토큰 실거래 「프로젝트 한강」을 맡아 왔고, 2026.7 신현송 총재의 ECB 신트라 포럼 논문(프로젝트 한강의 교훈) 공동 저자다. 2026.1 강연에서 2030년까지 국고금의 4분의 1을 디지털화폐로 집행하는 목표를 언급.",
+  "now": "한국은행 디지털화폐실장(2026 보도 · 부서명 — 2025.1 인사 때 명칭은 디지털화폐연구실장)",
   "career": [
    "2025.1~ 한국은행 디지털화폐연구실장(2025.1 인사, 2026 국내 보도에는 「디지털화폐실장」으로도 표기)",
    "2024 한국은행 디지털화폐연구부장(2024 한국금융미래포럼 강연 당시)",
@@ -1573,10 +1577,14 @@
    {
     "t": "CoinDesk — 한은 총재 후보 CBDC 입장(2026.4)",
     "u": "https://www.coindesk.com/policy/2026/04/14/bank-of-korea-nominee-backs-central-bank-led-digital-currency-sees-limited-role-for-stablecoins"
+   },
+   {
+    "t": "네이트 — 윤성관 디지털화폐실장(2026.7)",
+    "u": "https://m.news.nate.com/view/20260701n34813"
    }
   ],
   "check": [
-   "현재 직함: 「디지털화폐연구실장」(2025.1 인사·영문 연사 소개) vs 2026 국내 보도의 「디지털화폐실장」 — 조직 개편 여부 확인 필요.",
+   "직함: 2026 보도 · 부서명은 「디지털화폐실장」(2026.8 산하 자산토큰화반 신설) — 2025.1 인사 때 명칭은 「디지털화폐연구실장」",
    "2021 「전자금융부장」·2024 「디지털화폐연구부장」은 발표 당시 보도·영상 제목 기준.",
    "한강 2단계 실거래 실제 개시 여부(2026.9께 전망 보도).",
    "「2030년 국고금 4분의 1」은 정부 경제성장전략 목표를 소개한 발언(일요신문·시사오늘 보도 기준).",
@@ -1586,7 +1594,7 @@
  },
  {
   "key": "Michael Ippolito",
-  "summary": "Blockworks 공동창업자(2018, Jason Yanowitz 와 공동)로 콘텐츠 · 재무를 맡는다. 기관 투자 행사로 시작한 Blockworks 를 미디어 · 리서치 · 데이터 · 공시(IR) 플랫폼으로 키웠고, 2026.6 Messari 를 인수해 「크립토판 모닝스타」를 노린다. KBW 10/1 12:15 「Wall Street's Crypto Reckoning」 모더레이터.",
+  "summary": "Blockworks 공동창업자(2018, Jason Yanowitz 와 공동)로 콘텐츠 · 재무를 맡는다. 기관 투자 행사로 시작한 Blockworks 를 미디어 · 리서치 · 데이터 · 공시(IR) 플랫폼으로 키웠다가 2025.10 뉴스 부문을 닫고 데이터 · 분석 쪽으로 돌렸고, 2026.6 Messari 를 인수해 「크립토판 모닝스타」를 노린다. KBW 10/1 12:15 「Wall Street's Crypto Reckoning」 모더레이터.",
   "now": "Blockworks 공동창업자(콘텐츠 · 재무 총괄) · 팟캐스트 On the Margin 진행 · Bell Curve 공동 진행",
   "career": [
    "2018~ Blockworks 공동창업자 — 콘텐츠 · 재무 총괄",
@@ -1613,7 +1621,8 @@
    "2026.3 온체인 비즈니스용 IR 플랫폼 출시 · DAS 뉴욕 개최",
    "2026.4 시리즈 A 연장(평가 $192M) — 조달 목적은 파편화된 크립토 데이터 업계의 인수 통합",
    "2026.5 Transparency Alliance 출범 — 거래소 등 40여 곳 참여, TTF 공시 44개 프로토콜(연내 200+ 목표), 2026.4 SEC · CFTC 와 TTF 논의",
-   "2026.6 Messari 인수"
+   "2026.6 Messari 인수",
+   "2025.10 뉴스 부문 폐쇄 — 데이터 · 애널리틱스로 전환(뉴스레터 · 팟캐스트 · DAS 행사는 유지)"
   ],
   "views": [
    "온체인 비즈니스는 이미 전례 없이 투명하지만, 정보가 모이고 표준화되지 않아 투자자도 프로토콜도 그 혜택을 온전히 못 본다 — 공시 표준화 논리(Blockworks 보도자료 · Business Wire, 날짜 확인 필요)",
@@ -1686,6 +1695,10 @@
    {
     "t": "On the Margin 소개 (Blockworks)",
     "u": "https://blockworks.com/news/on-the-margin"
+   },
+   {
+    "t": "TheStreet — Blockworks 뉴스 부문 폐쇄(2025.10)",
+    "u": "https://www.thestreet.com/crypto/jobs/blockworks-shutters-its-news-division-pivots-to-data-and-analytics"
    }
   ],
   "check": [
@@ -1821,7 +1834,7 @@
    "2020.8 Flare 백서 공개(당시 Spark 토큰)",
    "2021.6 $11.3M 라운드(Kenetic 리드)",
    "2024.2 $35M 투자 유치(Kenetic · Aves Lair)",
-   "2026.3 XRP Australia 키노트 「The Next Phase of XRP Utility」 — Flare 2.0 · 기밀 연산 소개",
+   "2026.3.27 XRP Australia(시드니) 키노트 「The Next Phase of XRP Utility」 — Flare 2.0 · 기밀 연산 소개",
    "2026.9 FXRP 보안 논쟁에 공개 반박 — 담보 · XRPL 에스크로 · 검증 구조 설명"
   ],
   "views": [
