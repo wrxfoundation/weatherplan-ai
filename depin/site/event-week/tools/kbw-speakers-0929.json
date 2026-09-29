@@ -169,12 +169,21 @@
  },
  {
   "key": "Gene Fang",
-  "org_ko": "",
-  "co_ko": "",
-  "confidence": "low",
-  "sources": [],
-  "note": "확인 못 함 — 공개 출처에서 세션 관련 인물 식별 불가",
-  "batch": "K1"
+  "org_ko": "무디스 레이팅스 · 이그제큐티브 디렉터",
+  "co_ko": "신용평가사",
+  "confidence": "high",
+  "sources": [
+   {
+    "t": "파이낸셜뉴스 — KBW2026 10월 1일 패널(9/21)",
+    "u": "https://www.fnnews.com/news/202609211904271582"
+   },
+   {
+    "t": "파이낸셜뉴스 — KBW2026 개막(9/28)",
+    "u": "https://www.fnnews.com/news/202609281825215665"
+   }
+  ],
+  "note": "K5 — 보도의 「진팡 무디스 레이팅스 이그제큐티브 디렉터」",
+  "batch": "K5"
  },
  {
   "key": "Gwang-suk Kim",
@@ -630,12 +639,17 @@
  },
  {
   "key": "Dan Kong",
-  "org_ko": "",
-  "co_ko": "",
-  "confidence": "low",
-  "sources": [],
-  "note": "여러 조합으로 검색했으나 동일 인물 확인 못 함",
-  "batch": "K2"
+  "org_ko": "맥킨지앤드컴퍼니 · 부파트너",
+  "co_ko": "글로벌 경영 컨설팅사",
+  "confidence": "medium",
+  "sources": [
+   {
+    "t": "블록미디어 — 맥킨지 디지털자산 전망",
+    "u": "https://www.blockmedia.co.kr/archives/979939"
+   }
+  ],
+  "note": "K5",
+  "batch": "K5"
  },
  {
   "key": "David Park",
@@ -770,12 +784,21 @@
  },
  {
   "key": "Joonhong Kim",
-  "org_ko": "",
+  "org_ko": "페어스퀘어랩(FairSquareLab) · CEO",
   "co_ko": "",
-  "confidence": "low",
-  "sources": [],
-  "note": "검색 한도 소진으로 미검색",
-  "batch": "K2"
+  "confidence": "high",
+  "sources": [
+   {
+    "t": "The Full FX — 온체인 FX 정산 워킹그룹",
+    "u": "https://thefullfx.com/working-group-plans-onchain-fx-settlement-project/"
+   },
+   {
+    "t": "Progmat 보도자료(2025.2.17)",
+    "u": "https://progmat.co.jp/wp-content/uploads/2025/02/20250217_PR_02.pdf"
+   }
+  ],
+  "note": "K5 — 세션(Project Pangea · FX 정산) 주제와 맞음",
+  "batch": "K5"
  },
  {
   "key": "Jung-Ho Park",
@@ -851,12 +874,21 @@
  },
  {
   "key": "Michael Lewellen",
-  "org_ko": "",
-  "co_ko": "",
-  "confidence": "low",
-  "sources": [],
-  "note": "검색 한도 소진으로 미검색",
-  "batch": "K2"
+  "org_ko": "Turnkey · 솔루션 엔지니어링 총괄",
+  "co_ko": "지갑 · 키 관리 인프라",
+  "confidence": "medium",
+  "sources": [
+   {
+    "t": "ETHDenver 연사 소개 — Michael Lewellen",
+    "u": "https://ethdenver.com/speakers/michael-lewellen/"
+   },
+   {
+    "t": "Dark Mode 2026 연사 소개",
+    "u": "https://darkmode.securityalliance.org/darkmode-2026/speaker/8UGERQ/"
+   }
+  ],
+  "note": "K5 — 9/29 밤 본 세션 검색. 직함은 2026 행사 연사 소개 기준",
+  "batch": "K5"
  },
  {
   "key": "Min Lin",
@@ -878,30 +910,45 @@
  },
  {
   "key": "Ran Hammer",
-  "org_ko": "",
-  "co_ko": "",
-  "confidence": "low",
-  "sources": [],
-  "note": "검색 한도 소진으로 미검색. 미검증 단서: Orbs 사업개발 담당 이력",
-  "batch": "K2"
+  "org_ko": "Orbs · CEO",
+  "co_ko": "온체인 트레이딩 인프라(L3) 프로젝트",
+  "confidence": "high",
+  "sources": [
+   {
+    "t": "Orbs Appoints Ran Hammer CEO(2026.9.10)",
+    "u": "https://www.globenewswire.com/news-release/2026/09/10/3359839/0/en/orbs-appoints-ran-hammer-ceo-to-lead-its-next-stage-of-growth.html"
+   }
+  ],
+  "note": "K5 — 2026.9 CEO 선임",
+  "batch": "K5"
  },
  {
   "key": "Ryo Kato",
-  "org_ko": "",
+  "org_ko": "SBI · 수석 부사장 · HashHub CEO",
   "co_ko": "",
-  "confidence": "low",
-  "sources": [],
-  "note": "검색 한도 소진으로 미검색",
-  "batch": "K2"
+  "confidence": "medium",
+  "sources": [
+   {
+    "t": "Bloomingbit — KBW2026 연사 라인업",
+    "u": "https://en.bloomingbit.io/feed/news/119480"
+   }
+  ],
+  "note": "K5",
+  "batch": "K5"
  },
  {
   "key": "Steve Chung",
-  "org_ko": "",
-  "co_ko": "",
-  "confidence": "low",
-  "sources": [],
-  "note": "검색 한도 소진으로 미검색",
-  "batch": "K2"
+  "org_ko": "The Block · CEO",
+  "co_ko": "크립토 전문 미디어 · 리서치",
+  "confidence": "high",
+  "sources": [
+   {
+    "t": "The Block Appoints Steve Chung as CEO(2026.4)",
+    "u": "https://www.prnewswire.com/news-releases/the-block-appoints-steve-chung-as-ceo-to-accelerate-institutional-expansion-at-the-intersection-of-crypto-finance-and-ai-302753190.html"
+   }
+  ],
+  "note": "K5",
+  "batch": "K5"
  },
  {
   "key": "Sunho Hwang",
@@ -914,12 +961,21 @@
  },
  {
   "key": "Taisuko Isono",
-  "org_ko": "",
-  "co_ko": "",
-  "confidence": "low",
-  "sources": [],
-  "note": "검색 한도 소진으로 미검색",
-  "batch": "K2"
+  "org_ko": "SMBC 닛코증권 · DeFi 기술 부장",
+  "co_ko": "일본 증권사(미쓰이스미토모 금융그룹 계열)",
+  "confidence": "high",
+  "sources": [
+   {
+    "t": "IOLITE — SMBC Nikko Taisuke Isono 인터뷰",
+    "u": "https://iolite.net/en/magazine/vol21/smbc-nikko-taisuke-isono-interview"
+   },
+   {
+    "t": "GFTN Forum Japan 연사 소개",
+    "u": "https://gftnforum.jp/speakers/spkr14196-taisuke-isono"
+   }
+  ],
+  "note": "K5 — 공식 표기는 Taisuke Isono(아젠다 표기 Taisuko)",
+  "batch": "K5"
  },
  {
   "key": "Toby Chapple",
@@ -932,12 +988,21 @@
  },
  {
   "key": "Wai Lum Kwok",
-  "org_ko": "",
-  "co_ko": "",
-  "confidence": "low",
-  "sources": [],
-  "note": "검색 한도 소진으로 미검색",
-  "batch": "K2"
+  "org_ko": "ADGM 금융감독청(FSRA) · 인가 총괄(Senior Executive Director)",
+  "co_ko": "아부다비 국제금융센터(ADGM)의 금융 감독 당국",
+  "confidence": "high",
+  "sources": [
+   {
+    "t": "Fintech News Middle East — ADGM 핀테크 규제, Wai Lum Kwok",
+    "u": "https://fintechnews.ae/29020/abudhabi/adgm-fintech-regulation-wai-lum-kwok/"
+   },
+   {
+    "t": "Crypto Bahamas 연사 소개",
+    "u": "https://www.cryptobahamas.com/speakers/wai-lum-kwok"
+   }
+  ],
+  "note": "K5 — Senior Executive Director, Authorisation",
+  "batch": "K5"
  },
  {
   "key": "Yongjae Lee",
@@ -1239,12 +1304,17 @@
  },
  {
   "key": "Kevin Kwong",
-  "org_ko": "",
-  "co_ko": "",
-  "confidence": "low",
-  "sources": [],
-  "note": "소속 확인 못 함",
-  "batch": "K3"
+  "org_ko": "Memeland(9GAG) · 최고사업책임자",
+  "co_ko": "9GAG 계열 밈 · NFT 커뮤니티 프로젝트",
+  "confidence": "medium",
+  "sources": [
+   {
+    "t": "WebX 2024 연사 소개",
+    "u": "https://2024.webx-asia.com/speaker/3338878"
+   }
+  ],
+  "note": "K5 — 직함은 2024 행사 기준",
+  "batch": "K5"
  },
  {
   "key": "Kyle Trimble",
@@ -1347,12 +1417,17 @@
  },
  {
   "key": "Steve Lee",
-  "org_ko": "",
-  "co_ko": "",
-  "confidence": "low",
-  "sources": [],
-  "note": "웹검색 한도 소진으로 미조회 — 확인 못 함",
-  "batch": "K3"
+  "org_ko": "Neoclassic Capital · 공동창업자 겸 매니징 파트너",
+  "co_ko": "크립토 투자사",
+  "confidence": "high",
+  "sources": [
+   {
+    "t": "TEAMZ Summit 연사 소개 — Steve Lee",
+    "u": "https://www.teamz.co.jp/en/speaker/steve-lee"
+   }
+  ],
+  "note": "K5",
+  "batch": "K5"
  },
  {
   "key": "Tae-Ik Jung",
@@ -1365,21 +1440,35 @@
  },
  {
   "key": "Teresa Goody Guillén",
-  "org_ko": "",
-  "co_ko": "",
-  "confidence": "low",
-  "sources": [],
-  "note": "웹검색 한도 소진으로 미조회. 2025년 이전 공개 정보상 BakerHostetler 파트너(블록체인·디지털자산 팀) — 재확인 필요",
-  "batch": "K3"
+  "org_ko": "Bellementis PLLC · 매니징 파트너(변호사)",
+  "co_ko": "디지털자산 규제를 다루는 미국 로펌",
+  "confidence": "medium",
+  "sources": [
+   {
+    "t": "Bellementis — Teresa Goody Guillén",
+    "u": "https://www.bellementis.com/people/teresa-goody-guillen"
+   },
+   {
+    "t": "SEC Crypto Task Force 서면 의견(2026.1)",
+    "u": "https://www.sec.gov/about/crypto-task-force/written-submission/tgg-sec-crypto-task-force-letter-012626"
+   }
+  ],
+  "note": "K5",
+  "batch": "K5"
  },
  {
   "key": "Uli Agustina",
-  "org_ko": "",
+  "org_ko": "인도네시아 금융감독청(OJK) · 디지털금융자산 · 암호자산 감독 국장",
   "co_ko": "",
-  "confidence": "low",
-  "sources": [],
-  "note": "웹검색 한도 소진으로 미조회 — 확인 못 함",
-  "batch": "K3"
+  "confidence": "medium",
+  "sources": [
+   {
+    "t": "WebX 2026 연사 소개",
+    "u": "https://webx-asia.com/speakers/"
+   }
+  ],
+  "note": "K5 — 세션(자카르타 규제) 주제와 맞음",
+  "batch": "K5"
  },
  {
   "key": "Will Au",
@@ -1510,17 +1599,17 @@
  },
  {
   "key": "David Shengart",
-  "org_ko": "",
+  "org_ko": "Not Alone Ventures · 코어 컨트리뷰터",
   "co_ko": "",
-  "confidence": "low",
+  "confidence": "medium",
   "sources": [
    {
-    "t": "CryptoMondays to Host Featured Event at ETHDenver and Conduct Curated Studio Interviews with Web3 Innovators | The Manila Times",
-    "u": "https://www.manilatimes.net/2026/02/14/tmt-newswire/globenewswire/cryptomondays-to-host-featured-event-at-ethdenver-and-conduct-curated-studio-interviews-with-web3-innovators/2278207"
+    "t": "Cryptobitmag — TOKEN2049 싱가포르 Startup Day",
+    "u": "https://www.cryptobitmag.com/peanut-trade-protocol-labs-supermoon-host-startup-day-at-token2049-singapore-uniting-builders-and-vcs/"
    }
   ],
-  "note": "확인 못 함 — 블록체인 투자자로 2026년 행사 게스트 이력은 있으나 현 소속·직함 특정 못 함(과거 SWIDOM 공동창업자, Cointelegraph Accelerator 관련 이력)",
-  "batch": "K4"
+  "note": "K5",
+  "batch": "K5"
  },
  {
   "key": "Dominic Jang",
@@ -1752,10 +1841,15 @@
  },
  {
   "key": "Michelle Tankimovich",
-  "org_ko": "",
-  "co_ko": "",
+  "org_ko": "American Bitcoin · IR 총괄(Head of Investor Relations)",
+  "co_ko": "나스닥 상장 비트코인 채굴·보유 기업",
   "confidence": "high",
-  "sources": [],
+  "sources": [
+   {
+    "t": "ABTC - Head of IR, Michelle Tankimovich - Q2 Earnings & Updates! — Power Analysis",
+    "u": "https://podcastrex.com/shows/power-analysis/abtc-head-of-ir-michelle-tankimovich-q2-earnings-updates"
+   }
+  ],
   "note": "2026년 초 비서실장(Chief of Staff) 직함 이후 IR 총괄로 표기",
   "batch": "K4"
  },
@@ -1857,12 +1951,17 @@
  },
  {
   "key": "Vishal Gupta",
-  "org_ko": "",
-  "co_ko": "",
-  "confidence": "low",
-  "sources": [],
-  "note": "확인 못 함 — 세션 전체 웹 검색 한도(200회) 소진으로 미검색",
-  "batch": "K4"
+  "org_ko": "True Markets · 공동창업자 겸 CEO",
+  "co_ko": "크립토 거래 플랫폼(TrueX)",
+  "confidence": "high",
+  "sources": [
+   {
+    "t": "Fortune — True Markets(2025.5.20)",
+    "u": "https://fortune.com/crypto/2025/05/20/true-markets-truex-vishal-gupta-crypto-solana-exchange/"
+   }
+  ],
+  "note": "K5",
+  "batch": "K5"
  },
  {
   "key": "Woosup Lee",

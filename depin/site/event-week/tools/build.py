@@ -655,8 +655,13 @@ KBW_TPL = HERE / "kbw.html"
 KBW_RES = HERE / "kbw-speakers-0929.json"  # 9/29 밤 — 소속이 빈 KBW 연사 조사(네 갈래)
 KBW_DAYS = [{"id": "d0930", "label": "9/30(수)", "nth": "1일차"}, {"id": "d1001", "label": "10/1(목)", "nth": "2일차"}]
 KBW_FOOT = [
-    "출처 — KBW2026 공개 아젠다(9/29 기준, 본 컨퍼런스 이틀) · 행사 소개는 공식 사이트(koreablockchainweek.com)와 보도 요약.",
+    "출처 — KBW2026 공개 아젠다(9/29 기준, 본 컨퍼런스 이틀) · 행사 소개는 파이낸셜뉴스 · 주최 보도자료 · 공식 사이트(위 링크).",
     "소속 · 직함은 공개 자료 검색 요약(9/29)이다. 「추정」은 재확인 전, 빈 칸은 아직 찾지 못한 연사 — 인용 전 원출처를 연다.",
+    "세션 아래 한 줄은 제목을 한국어로 옮긴 것이고(발표 내용 요약이 아님), 그 아래 회색 한 구절은 보도 · 보도자료에서 옮겼다. "
+    "주제는 제목 기준으로 하나씩 붙였다.",
+    "핵심 · 주요는 공개 직함 · 회사 규모 · 주최 발표를 기준으로 한 편집 판단이다 — 핵심 = 업계 전반이 아는 이름(주요 거래소 · 프로토콜 · 기관의 "
+    "대표 · 창업자, 전 · 현직 정책 결정자, 주최가 앞세운 연사), 주요 = 큰 회사 · 기관의 임원, 이름난 프로젝트 창업자, 정책 단체 · 미디어 대표, "
+    "대중 인지도가 있는 인물.",
 ]
 # 소속 · 회사 한 줄은 짧게 — 조사 문장의 메모성 괄호(보도 · 기준 · 확인 …) · 투자액 · 목표치 같은 뒷문장은 싣지 않는다.
 KBW_NOTE = r"보도|기준|확인|추정|팩트체크|회사 발표|세션|모더레이터|소개|인물 DB"
@@ -706,14 +711,214 @@ KBW_CO_FIX = {
     "Laura Estefania": "Web3 기업 대상 PR · 미디어 전략 자문사",
     "Wonseok Baek": "",
     "Andrew Park": "",  # 소속 줄에 「KBW 주최사」가 이미 있다
+    "Jake Salerno": "탈중앙 AI 인프라(데이터 가용성 · 저장 · 연산)",  # 조사 문장의 「최초의 …를 표방」 대신 같은 회사 대표 줄과 같은 말
 }
-KBW_ORG_FIX = {"Taweh Beysolow II": "Bond Labs · CEO"}
+KBW_ORG_FIX = {"Taweh Beysolow II": "Bond Labs · CEO",
+               "Harry Jung": "Nxum · 전 백악관 가상자산 자문위원회 부국장",                  # 파이낸셜뉴스 9/28(KBW2026 개막 기사)
+               "Chetan Karkhanis": "프랭클린템플턴 · 디지털자산 고객전략 수석부사장"}         # 같은 기사
 
 # 이 페이지에는 우리 쪽 판단 · 계획이 한 글자도 없어야 한다(공개 관문 PUBLIC_BAN 에 더해)
 # (제3자 회사 설명의 「텔레그램 · TON」, 「분쟁을 판정하는」은 막지 않는다 — 우리 행동을 뜻하는 표현만)
 KBW_BAN = [r"우리(?!은행|금융|카드|투자|자산|종금)", r"웰비안", r"(?i)wellbian", r"케이웨더", r"(?i)kweather", r"후속", r"미팅", r"할 일",
            r"현장", r"명함", r"맞팔", r"텔레그램 추가", r"관련자", r"판정 전|판정 기록|우리 판정", r"측정 데이터", r"(?<![가-힣])결(?![가-힣])",
            r"키노트 14:50"]
+
+# ── 9/29 밤 서우 「중요 인물 · 연관 주제 · 인물 프로그램을 따로 볼 수 있게 필터 칩, 10/1 을 먼저 — 행사 소개 · 프로그램 소개가
+#    부실하고 너무 나열식」. 페이지에는 분류 결과(표시)만 싣고, 이유 · 판단 근거는 싣지 않는다.
+# 행사 소개 — 보도 · 주최 발표로 확인한 사실만(출처는 페이지 아래 링크로)
+KBW_ABOUT = {
+    "lead": "Korea Blockchain Week(KBW)는 팩트블록(FACTBLOCK)이 2018년부터 해마다 서울에서 여는 블록체인 컨퍼런스로, 올해가 9회째다. "
+            "올해 이름은 「KBW2026 with Upbit」 — 업비트(두나무)가 프레젠팅 파트너로 붙어, 개인 투자자 중심이던 국내 논의를 "
+            "기관 · 글로벌 금융까지 넓히는 것을 내걸었다.",
+    "facts": [
+        ("일정", "본 컨퍼런스 9/30(수) · 10/1(목)", "9/29 은 기관 · 금융권 대상 초청제 「업비트 인스티튜셔널 서밋」"),
+        ("장소", "워커힐 호텔앤리조트(서울 광진구)", ""),
+        ("스폰서", "두나무(업비트) · 0G · BRV · 비트고 · 스테이블 · 트리아", "주최가 9/9 에 밝힌 주요 스폰서"),
+        ("주제", "기관 투자자의 시장 참여 · 금융 인프라 · 스테이블코인 · 실물자산(RWA) 토큰화 · AI × 블록체인 · 글로벌 규제 변화", ""),
+        ("규모", "__SIZE__", "공개 아젠다 기준(무대 이름이 없어 시간순) · 공식 소개는 세션 100개+ · 연사 300명+"),
+    ],
+    # 주최 보도자료가 앞세운 연사(이름 · 보도 직함) — 페이지에서 누르면 그 세션으로 간다
+    "head": [("Tom Lee", "BitMine 회장"), ("Arthur Hayes", "Maelstrom CIO"), ("Joe Lubin", "이더리움 공동창업자 · Consensys CEO"),
+             ("Kyoungsuk Oh", "두나무(업비트) 대표"), ("Jeff Yan", "Hyperliquid Labs CEO"), ("Bo Hines", "Tether USA₮ CEO"),
+             ("Harry Jung", "전 백악관 가상자산 자문위원회 부국장"), ("Brian Quintenz", "전 CFTC 위원"), ("Monica Long", "리플 사장")],
+    "src": [("파이낸셜뉴스 9/9", "https://www.fnnews.com/news/202609090854147727"),
+            ("파이낸셜뉴스 9/21", "https://www.fnnews.com/news/202609211904271582"),
+            ("파이낸셜뉴스 9/28", "https://www.fnnews.com/news/202609281825215665"),
+            ("주최 보도자료(연사)", "https://www.chainbits.com/press-releases/kbw2026-brings-global-finance-policy-and-crypto-leaders-to-seoul"),
+            ("공식 사이트", "https://koreablockchainweek.com/")],
+}
+KBW_KO = {  # 소개 · 하이라이트에 나오는 연사 한글 이름(보도 표기가 있으면 그대로)
+    "Tom Lee": "톰 리", "Arthur Hayes": "아서 헤이즈", "Joe Lubin": "조 루빈", "Jeff Yan": "제프 얀", "Bo Hines": "보 하인스",
+    "Harry Jung": "해리 정", "Brian Quintenz": "브라이언 퀸텐즈", "Monica Long": "모니카 롱", "Balaji Srinivasan": "발라지 스리니바산",
+    "Eleanor Terrett": "엘리너 테렛", "Gene Fang": "진 팡", "Chetan Karkhanis": "체탄 카르카니스", "Johann Kerbrat": "요한 케르브라",
+    "Guy Young": "가이 영", "Yat Siu": "얏 시우",
+}
+# 주제 — 세션마다 하나(제목 기준). 순서 = 페이지 순서
+KBW_THEMES = [
+    ("open", "기조 발표", "주최 · 프레젠팅 파트너 대표 발표, 둘째 날 첫 시간대 단독 발표"),
+    ("policy", "정책 · 규제", "미국 · 아시아 규제 당국 · 입법 · 정책 단체 · 법조 — 규칙이 어떻게 바뀌나"),
+    ("inst", "기관 금융 · 토큰화", "은행 · 운용사 · 평가사가 온체인으로 옮겨 가는 길 — 토큰화 · RWA · 기관 인프라"),
+    ("stable", "스테이블코인 · 결제", "스테이블코인 발행 · 결제 · 카드 · 외환 정산 · 지갑"),
+    ("ai", "AI · 데이터", "AI 에이전트와 결제 · 검증 가능한 연산 · 데이터 소유 · 신뢰 오라클"),
+    ("market", "시장 · 투자", "거래 · 사이클 · ETF · 트레저리 기업 · 벤처 자본의 흐름"),
+    ("tech", "기술 · 인프라", "L1 · L2 · DeFi 스택 · 보안 · 프라이버시"),
+    ("korea", "한국 시장", "한국은행 · 국회 · 증권 · 거래소 협의체 — 국내 제도와 시장"),
+    ("culture", "문화 · 커뮤니티", "밈 · 수집품 · 스포츠 · 엔터테인먼트"),
+    ("etc", "그 밖", "연사 표기 없는 발표"),
+]
+# 세션 → (주제, 한 줄 풀이). 한 줄 = 제목을 우리말로 푼 것(새 사실 0) — 판게아만 보도자료 한 구절을 붙인다
+KBW_SESS = {
+    # 9/30
+    "Global Money, Local Rails": ("stable", "글로벌 돈, 로컬 결제망 — 스테이블코인이 주류로"),
+    "What Professional Traders See": ("market", "전문 트레이더는 보고 개인 투자자는 놓치는 것"),
+    "The Next Chapter of Connection": ("open", "연결의 다음 장 — 주최 팩트블록 대표 발표"),
+    "How to Make DeFi Great Again": ("tech", "DeFi 를 다시 위대하게"),
+    "From Hong Kong and Jakarta to Bangkok": ("policy", "홍콩 · 자카르타 · 방콕 — 아시아 디지털자산의 새 규칙"),
+    "Beyond Trading: Building Financial Infrastructure": ("open", "거래를 넘어 — 더 연결된 미래를 위한 금융 인프라(두나무 대표 발표)"),
+    "Beyond Tokenization: Markets, Not Chains": ("inst", "토큰화 너머 — 체인이 아니라 시장"),
+    "FLOP: Bigger Than Bitcoin": ("market", "「FLOP: 비트코인보다 크다」 — 아서 헤이즈 단독 발표"),
+    "Next Million Chains": ("tech", "다음 백만 개의 체인"),
+    "How Hyperliquid Pilled Wall Street": ("market", "하이퍼리퀴드는 어떻게 월가를 24시간 거래로 끌어들였나"),
+    "The Future of Banking": ("inst", "은행의 미래 — 핵심 금융 인프라 고도화"),
+    "Ethereum's Wall Street Moment": ("market", "이더리움의 월가 순간"),
+    "Kraken's Quest": ("market", "크라켄의 도전 — 거래소에서 글로벌 금융 인프라로"),
+    "Trade Everything": ("market", "모든 것을 거래하다 — 글로벌 시장을 잇는 통합 거래 플랫폼"),
+    "Canton's Bet on Connected Capital Markets": ("inst", "캔톤이 거는 곳 — 연결된 자본시장"),
+    "Beyond Scale: What L1s Are for Now": ("tech", "확장성 너머 — 지금 L1 은 무엇을 위해 있나"),
+    "MetaMask's Next Chapter": ("tech", "메타마스크의 다음 장 — 열린 돈"),
+    "From Staking to Stablecoins": ("tech", "스테이킹에서 스테이블코인까지 — 새 수익 구조"),
+    "Digital Currency and the Future Monetary System": ("korea", "디지털화폐와 미래 통화 체계 — 한국의 다음 설계"),
+    "$50M Fund. Deploy on BOT Chain": ("ai", "$50M 펀드 — 에이전트 경제 · RWA 를 내건 AI 네이티브 블록체인 BOT Chain"),
+    "Securing the Institutional Crypto Era": ("inst", "기관 크립토 시대의 보안"),
+    "x402, AI Payments": ("ai", "x402 · AI 결제 · 프라이버시 — 스스로 거래하는 층 만들기"),
+    "Who Can Take the Money": ("etc", "누가 돈을 가져가나"),
+    "The Trillion-Dollar Agentic Economy": ("ai", "1조 달러 에이전트 경제 — AI 에이전트의 신뢰 층"),
+    "Bringing Millions of Consumers Onchain": ("tech", "수백만 소비자를 온체인으로"),
+    "Sponsored Session: Shinzo Network": ("etc", "후원 세션 — Shinzo Network"),
+    "From Silos to Superapp": ("tech", "사일로에서 슈퍼앱으로 — DeFi 의 미래"),
+    "A New Era for Digital Assets in Korea": ("korea", "한국 디지털자산의 새 시대"),
+    "How Narratives Move Markets": ("market", "내러티브는 시장을 어떻게 움직이나"),
+    "Bitcoin's Next Frontier": ("tech", "비트코인의 다음 개척지 — 가치 저장에서 생산적 자본으로"),
+    "The Future of Digital Finance": ("inst", "디지털 금융의 미래 — 프로그래머블 경제 안내"),
+    "Who Wins When Intelligence Becomes Abundant": ("ai", "지능이 넘쳐날 때 누가 이기나"),
+    "Beyond CLARITY": ("policy", "CLARITY 법 이후 — 미국 크립토 시장의 다음 단계"),
+    "Korea's Digital Asset Policy Moment": ("korea", "한국 디지털자산 정책의 결정적 순간"),
+    "Defending DeFi": ("tech", "DeFi 지키기 — 예방에서 공동 대응까지"),
+    "The Data Race Behind the AI Boom": ("ai", "AI 붐 뒤의 데이터 경쟁"),
+    "Stable: The First USD₮-Native Blockchain": ("stable", "Stable — USD₮ 로 움직이는 실물 정산용 블록체인"),
+    "Tokenizing the Fund Industry": ("inst", "펀드 산업의 토큰화 — 전통 운용사와 RWA 프로토콜 잇기"),
+    "Tokenizing AI Models": ("ai", "AI 모델의 토큰화 — 탈중앙 지능이라는 새 자산군"),
+    "From Diplomacy to Digital Ownership": ("policy", "외교에서 디지털 소유로"),
+    "The Stablecoin Paradox": ("stable", "스테이블코인의 역설 — 실결제의 투명성과 프라이버시"),
+    "Lawyers, Liability and the Next US Crypto Regime": ("policy", "변호사 · 책임 · 미국 크립토 규제의 다음 체제"),
+    "How Tokenization Is Rewiring Wall Street": ("inst", "토큰화는 월가를 어떻게 다시 짜나"),
+    "DeFi Is Dead, Long Live On-Chain Finance": ("tech", "DeFi 는 죽었다, 온체인 금융 만세"),
+    "How Industry and Regulators Can Work Together": ("policy", "업계와 규제 당국이 함께 여는 기관 시대"),
+    "Putting Real-World Value to Work": ("inst", "실물 가치를 일하게 하다 — 에이전트 · 자산 · 새 RealFi 경제"),
+    "Agentic Payments: Making the New Internet": ("ai", "에이전트 결제 — 새 인터넷 만들기"),
+    "The Rise of Crypto-Native Neobanks": ("stable", "크립토 네이티브 네오뱅크의 부상"),
+    "ASX": ("etc", ""),
+    "What Policymakers Need to Hear": ("policy", "정책 결정자가 들어야 할 말"),
+    "More Assets, More Geos": ("inst", "더 많은 자산, 더 많은 지역 — RWA 가 세계로 번지는 법"),
+    "How Tether Became Global Financial Infrastructure": ("stable", "테더는 어떻게 글로벌 금융 인프라가 됐나"),
+    "Can DeFi Beat Wall Street": ("tech", "DeFi 는 월가를 월가의 방식으로 이길 수 있나"),
+    "Culture, Collectibles and the Meme Economy": ("culture", "문화 · 수집품 · 밈 경제"),
+    "Crypto Policy 2027": ("policy", "크립토 정책 2027 — 시장을 가를 싸움들"),
+    "Can Permissionless Networks Thrive": ("tech", "기관 크립토 시대에도 무허가형 네트워크가 클 수 있나"),
+    "Finding Alpha in the Hyperliquid Ecosystem": ("market", "하이퍼리퀴드 생태계에서 초과수익 찾기"),
+    "Leveraging AI for Financial Trading": ("ai", "금융 트레이딩에 AI 쓰기"),
+    "Satoshi's Dream? Mission Possible": ("culture", "사토시의 꿈? 미션 파서블"),
+    "The Road Ahead: Washington's Next Move": ("policy", "앞으로의 길 — 워싱턴의 다음 디지털자산 규제"),
+    # 10/1
+    "From Online Tribes to Startup Societies": ("open", "온라인 부족에서 스타트업 사회로"),
+    "What Institutions Need to Move Onchain": ("inst", "기관이 온체인으로 옮겨 가려면 무엇이 필요한가"),
+    "Project Pangea: Rewiring Global FX": ("stable", "프로젝트 판게아 — 국제 외환(FX) 결제를 다시 잇다"),
+    "Fireside: Nxum's Harry Jung": ("policy", "해리 정(Nxum) 대담"),
+    "Is the Bull Back?": ("market", "강세장은 돌아왔나 — 지금 시장 읽기"),
+    "Will Bitcoin's 4-Year Cycle Ever Die?": ("market", "비트코인 4년 주기는 끝날까"),
+    "SCAN": ("etc", ""),
+    "US Tech Policy: Is DeFi on the Agenda?": ("policy", "미국 기술 정책 — DeFi 도 의제에 올랐나"),
+    "From Market Data to Ratings": ("inst", "시장 데이터에서 신용등급까지 — 크립토의 새 기관 인프라"),
+    "Your Next Customer Is an AI Agent": ("ai", "다음 고객은 AI 에이전트 — 에이전트가 찾고 이해하고 살 수 있는 상품"),
+    "Where Robinhood's Reach Meets Decentralized Trading": ("market", "로빈후드의 이용자 기반이 탈중앙 거래와 만나는 곳"),
+    "Institutional Tokenization at Scale": ("inst", "기관 토큰화 — 시범 사업에서 실제 운영으로"),
+    "Beyond Standard Tokens": ("inst", "표준 토큰 너머 — 기관이 쓸 수 있는 규정 준수형 RWA 설계"),
+    "The New DeFi Stack": ("tech", "새 DeFi 스택 — 합성 달러와 초고속 거래의 만남"),
+    "L2 Adoption Won. Did L2s?": ("tech", "L2 방식은 이겼다 — L2 들도 이겼나"),
+    "The Ceiling on the Agent Economy": ("ai", "에이전트 경제의 천장은 어디인가"),
+    "What TradFi Needs to Go Onchain": ("inst", "전통 금융이 온체인으로 가려면"),
+    "Where AI Meets Blockchain": ("ai", "AI 와 블록체인이 만나는 곳 — 토큰에 담기는 가치"),
+    "Why Your Money Still Lives in Too Many Places": ("stable", "돈은 왜 아직 너무 여러 곳에 흩어져 있나"),
+    "Onchain Finance's Speed Problem": ("tech", "온체인 금융의 속도 문제"),
+    "Liquid Everything": ("korea", "모든 것의 유동화 — 토큰증권(STO)이 바꾸는 한국 자본시장"),
+    "Stablecoins, Securities, and the Frictionless Future": ("stable", "스테이블코인 · 증권 — 마찰 없는 미래"),
+    "Wall Street's Crypto Reckoning": ("inst", "월가의 크립토 결단 — 올인인가, 접을 것인가"),
+    "The Self-Custodial Banking Stack": ("stable", "기관이 올라탈 자기수탁형 뱅킹 스택"),
+    "Friends and Family": ("market", "크립토 초기 투자자들은 지금 어디에 거나"),
+    "GASOK Presentation": ("etc", "GASOK 발표"),
+    "Membership Has Its Privileges": ("stable", "크립토 카드는 기존 카드와 겨룰 수 있나"),
+    "What's Next for the $TRUMP Coin": ("culture", "$TRUMP 코인의 다음 단계"),
+    "Verifiable Computing in the Age of AI": ("ai", "AI 시대의 검증 가능한 연산"),
+    "The Problem Blockchain Doesn't Solve": ("tech", "블록체인이 풀지 못하는 문제"),
+    "How Capital Is Mapping Crypto's Next Cycle": ("market", "자본은 크립토의 다음 사이클을 어떻게 그리나"),
+    "Programmable Machine Needs Programmable Money": ("ai", "프로그래밍 가능한 기계에는 프로그래밍 가능한 돈이 필요하다"),
+    "Inside the Institutions": ("policy", "기관 안에서 본 지금의 블록체인 — 정책 · 인프라 · 법"),
+    "Inventing the Decentralized Future With Gno.land": ("tech", "Gno.land 로 짓는 탈중앙 미래"),
+    "The Internet of Privacy": ("tech", "프라이버시 인터넷 — 차세대 웹3 의 사적 인프라"),
+    "Crypto ETFs": ("market", "크립토 ETF — 틈새 상품에서 기본 편입 자산으로?"),
+    "When AI Agents Meet Onchain Money": ("ai", "AI 에이전트가 온체인 돈을 만날 때"),
+    "Beyond the Game: Athletes Become Owners": ("culture", "경기 너머 — 선수가 주인이 되다"),
+    "What's the Future of Non-USD Stablecoins?": ("stable", "달러 밖 스테이블코인의 미래"),
+    "Sovereignty by Design": ("ai", "설계된 주권 — 데이터 · AI · 소유가 만나는 곳"),
+    "What Drives the Next Wave of Stablecoin Adoption?": ("stable", "스테이블코인 확산의 다음 물결은 무엇이 이끄나"),
+    "Smarter Models, Harder Problems": ("ai", "더 똑똑한 모델, 더 어려운 문제 — 놀이 · 학습 · AI 의 미래"),
+    "On the Front Lines of Cybercrime": ("policy", "사이버 범죄의 최전선 — 정보 · 보안 · 자금세탁방지"),
+    "T.J. Miller Is Ready to Roast": ("culture", "코미디언 T.J. 밀러의 로스트(풍자) 무대"),
+    "How DATCos Are Getting Creative": ("market", "디지털자산 트레저리 기업(DATCo)들의 새 전략"),
+    "What the Market Data Is Really Saying": ("market", "시장 데이터가 실제로 말하는 것"),
+    "Korea's Next Generation of Digital Asset Venues": ("korea", "한국의 차세대 디지털자산 거래 시장"),
+    "Memecoins Will Never Die": ("culture", "밈코인은 죽지 않는다"),
+    "Trust Oracles in Onchain Economies": ("ai", "신뢰 오라클 — 가격 오라클이 DeFi 를 만들었다면, 신뢰 오라클이 키운다"),
+    "Sponsored Session: BTQ Technologies": ("tech", "후원 세션 — BTQ Technologies(양자내성 보안)"),
+}
+KBW_SESS_NOTE = {  # 제목만으로는 뜻이 닫히는 세션에 붙이는 보도 한 구절(출처 = KBW_ABOUT src 밖이면 여기 주석)
+    "Project Pangea: Rewiring Global FX": "체인링크와 여러 나라 은행 컨소시엄이 추진하는 국제 외환 T+0 정산 틀 — 체인링크 보도자료",  # PR Newswire 2026 「Chainlink and Multinational Banking Consortia Launch Project Pangea」
+    "Fireside: Nxum's Harry Jung": "전 백악관 가상자산 자문위원회 부국장 — 블록체인 정책의 현재와 미래를 다루는 대담(파이낸셜뉴스 9/28)",
+}
+# 업계 중요도 — 공개 직함 · 회사 규모 · 주최 발표 기준의 편집 판단(우리와의 관계와 무관)
+KBW_IMP_A = {  # 핵심 — 업계 전반이 아는 이름
+    "Kyoungsuk Oh", "Arjun Sethi", "Tom Lee", "Arthur Hayes", "Joe Lubin", "Jeff Yan", "Bo Hines", "Harry Jung", "Brian Quintenz",
+    "Monica Long", "Balaji Srinivasan", "Caroline D. Pham", "Jing Wang", "Ed Felten", "Guy Young", "Paul Frambot", "Keone Hon",
+    "Jae Kwon", "Yat Siu", "Yuval Rooz", "Mike Belshe", "Johann Kerbrat", "Muneeb Ali", "Byoungdeok Min", "SungGuan Yun",
+}
+KBW_IMP_B = {  # 주요 — 큰 회사 · 기관의 임원, 이름난 프로젝트 창업자 · CEO, 정책 단체 · 미디어 대표, 대중 인지도
+    "Guy Wuollet", "Miles Jennings", "Tom Schmidt", "Franklin Bi", "Lasse Clausen", "Kelvin Koh", "Zhuoqun Bian",
+    "Jaejin Kim", "Andrew Park", "SeonJoo Yoon",
+    "Eleanor Terrett", "Camila Russo", "Frank Chaparro", "Michael Ippolito", "Michael Lau", "Steve Chung",
+    "Sheila Warren", "Chris Brummer", "Lindsay Fraser", "Cody Carbone", "Miller Whitehouse-Levine", "Amanda Tuminelli", "Chris Land",
+    "Wai Lum Kwok", "Uli Agustina", "Huei Ching Wong", "Trevor Traina", "Teresa Goody Guillén",
+    "John D'Agostino", "John Darsie", "Chetan Karkhanis", "Gene Fang", "Charles Jansen", "Ambre Soubiran", "Alvin Chia",
+    "Niki Ariyasinghe", "Jan-Oliver Sell", "Tianwei Liu", "Joseph Chalom", "David Schamis", "Katherine Dowling", "Alex Thorn", "Hong Kim",
+    "Mike Silagadze", "Eric Chen", "Felix Fan", "Michael Heinrich", "Howard Wu", "Austin Federa", "Vladimir Novakovski",
+    "Michael Figge", "Ben Fielding", "Todd McDonald", "Brian Mehler", "Sam MacPherson", "Alex Cutler",
+    "Ansem", "T.J. Miller", "Tristan Thompson", "Bill Zanker", "Justin Waldron",
+}
+# 연관 — 표시가 붙은 연사(분야 · 전략 · 리플 · 기존 연결) + 연사 지도에서 뺐던 0G · RedStone + 9/29 조사 관련도 3. 페이지엔 이유를 싣지 않는다
+KBW_REL_EXTRA = {"Yijing Shi", "Kevin Liu", "Wonseok Baek"}
+# 10/1 을 먼저 — 하루 소개 · 놓치기 아까운 세션(업계 쪽 무게 기준)
+KBW_DAY_INTRO = {
+    "d1001": {
+        "lead": "둘째 날 오전은 기관 금융 · 토큰화 세션이 가장 많고, 오후는 AI · 데이터와 시장 · 투자 세션이 몰린다 — 밈코인 · 스포츠 · "
+                "코미디 같은 문화 무대도 끼어 있다. 10:00 발라지 스리니바산 발표와 함께 문을 열고, 10:15 에 해리 정 전 백악관 "
+                "가상자산 자문위원회 부국장의 정책 대담이 이어진다.",
+        "hl": [("From Online Tribes to Startup Societies", "첫 시간대 단독 발표 — 『The Network State』 저자 발라지 스리니바산"),
+               ("Fireside: Nxum's Harry Jung", "전 백악관 가상자산 자문위원회 부국장 · 진행 엘리너 테렛"),
+               ("From Market Data to Ratings", "무디스 레이팅스 · S&P Global · 프랭클린템플턴 · Kaiko 가 한 무대"),
+               ("The New DeFi Stack", "Ethena 의 가이 영 · Lighter 의 블라디미르 노바코프스키"),
+               ("Smarter Models, Harder Problems", "The Block CEO 진행 · Gensyn · play.fun · Advanced AI Society"),
+               ("What's the Future of Non-USD Stablecoins?", "유로(Qivalis) · 싱가포르 달러(StraitsX) · 외환 L2(Codex)")],
+    },
+}
 
 
 def key(name):
@@ -824,7 +1029,7 @@ def parse_xrps(people):
 # confidence · sources. confidence 가 high · medium 인 것만 소속 · 회사 · 인물 칸에 싣는다(low 는 싣지 않는다).
 RESEARCH = HERE / "research-0929b.json"
 RES = {r["key"]: r for r in json.loads(RESEARCH.read_text(encoding="utf-8"))} if RESEARCH.exists() else {}
-RES_BAD_SRC = re.compile(r"linkedin|crunchbase|rocketreach|zoominfo|contactout|apollo\.io|theorg\.com|signalhire|x\.com/|twitter\.com|facebook|instagram", re.I)
+RES_BAD_SRC = re.compile(r"linkedin|crunchbase|rocketreach|zoominfo|contactout|apollo\.io|theorg\.com|signalhire|//(?:www\.)?x\.com/|twitter\.com|facebook|instagram", re.I)  # x.com 은 도메인 자리만(podcastrex.com 은 통과)
 def ref_title(x):
     """출처 제목(기사 제목)이 공개 판 규칙에 걸리면 제목 대신 사이트 이름만 — 링크는 그대로(예: 「리플과 파트너십」 · 「KOSDAQ-Listed」)."""
     t = str(x.get("t") or "")
@@ -911,29 +1116,73 @@ def kbw_data():
         if r.get("co_ko") and not pp.get("co"):
             pp["co"] = [r["co_ko"]]
     keys = sorted({x["p"] for s in kbw for x in s["sp"]})
+    for name, group in (("핵심", KBW_IMP_A), ("주요", KBW_IMP_B), ("연관 더함", KBW_REL_EXTRA), ("한글 이름", set(KBW_KO))):
+        miss = sorted(group - set(keys))
+        assert not miss, (f"KBW {name} 이름 불일치", miss)
+    assert not KBW_IMP_A & KBW_IMP_B, ("핵심 · 주요 겹침", KBW_IMP_A & KBW_IMP_B)
     ppl = {}
     for k in keys:
-        raw = people[k].get("xorg") or people[k].get("org", "")
+        pk = people[k]
+        raw = pk.get("xorg") or pk.get("org", "")
         org = KBW_ORG_FIX.get(k) or kbw_org(raw)
-        co = KBW_CO_FIX[k] if k in KBW_CO_FIX else kbw_co((people[k].get("co") or [""])[0], org)
-        est = (people[k].get("src") == "k" and not people[k].get("xorg")) or "인물 DB" in raw
-        ppl[k] = {"name": people[k]["name"], "ko": people[k].get("ko", ""), "org": org, "est": est, "co": co}
+        co = KBW_CO_FIX[k] if k in KBW_CO_FIX else kbw_co((pk.get("co") or [""])[0], org)
+        est = (pk.get("src") == "k" and not pk.get("xorg")) or "인물 DB" in raw
+        imp = "a" if k in KBW_IMP_A else "b" if k in KBW_IMP_B else ""
+        rel = pk.get("mark") in ("fit", "strat", "ripple") or pk.get("tier") == "known" or k in NOT_TARGET or k in KBW_REL_EXTRA
+        ppl[k] = {"name": pk["name"], "ko": pk.get("ko") or KBW_KO.get(k, ""), "org": org, "est": est, "co": co,
+                  **({"imp": imp} if imp else {}), **({"rel": True} if rel else {})}
     for k in list(KBW_CO_FIX) + list(KBW_ORG_FIX):
         assert k in ppl, ("KBW 한 줄 고침 이름 불일치", k)
+    themes = {t for t, _, _ in KBW_THEMES}
+    used = set()
+
+    def meta(title):
+        hit = [pre for pre in KBW_SESS if title.startswith(pre)]
+        assert len(hit) == 1, ("KBW 세션 주제 · 한 줄 없음(또는 둘 이상)", title, hit)
+        used.add(hit[0])
+        th, ko = KBW_SESS[hit[0]]
+        assert th in themes, ("KBW 주제 이름 불일치", th)
+        return th, ko, KBW_SESS_NOTE.get(hit[0], "")
     order = {"d0930": 0, "d1001": 1}
-    sessions = [{"id": s["id"], "day": s["day"], "start": s["start"], "end": s["end"], "title": s["title"], "kind": s["kind"],
-                 "sp": [{"p": x["p"], **({"mod": True} if x.get("mod") else {})} for x in s["sp"]]}
-                for s in sorted(kbw, key=lambda s: (order[s["day"]], s["start"], s["end"], s["id"]))]
+    sessions = []
+    for s in sorted(kbw, key=lambda s: (order[s["day"]], s["start"], s["end"], s["id"])):
+        row = {"id": s["id"], "day": s["day"], "start": s["start"], "end": s["end"], "title": s["title"], "kind": s["kind"],
+               "sp": [{"p": x["p"], **({"mod": True} if x.get("mod") else {})} for x in s["sp"]]}
+        if s["kind"] != "break":
+            th, ko, note = meta(s["title"])
+            row.update({"th": th, "ko": ko, **({"note": note} if note else {}), **({"rel": True} if s["mark"] in ("fit", "strat") else {})})
+        sessions.append(row)
+    assert used == set(KBW_SESS), ("KBW 세션 한 줄 — 아젠다에 없는 제목", set(KBW_SESS) - used)
+    assert set(KBW_SESS_NOTE) <= set(KBW_SESS), ("KBW 세션 보도 구절 이름 불일치", set(KBW_SESS_NOTE) - set(KBW_SESS))
     n_s = sum(1 for s in sessions if s["kind"] != "break")
-    facts = [
-        ("행사", "Korea Blockchain Week 2026(KBW2026)", "주최 팩트블록(FACTBLOCK) · 같은 주 서울 곳곳에서 파트너 행사 · 워크숍 · 전시가 함께 열린다"),
-        ("일정", "본 컨퍼런스 9/30(수) · 10/1(목)", "9/29 은 업비트 · 팩트블록 공동 비공개 기관 서밋(초청제)"),
-        ("장소", "그랜드 워커힐 서울", ""),
-        ("규모", f"무대 3곳 · 세션 {n_s}개 · 연사 {len(keys)}명",
-         "공개 아젠다 기준(무대 이름이 없어 시간순) · 공식 소개는 세션 100개+ · 연사 300명+"),
-        ("주제", "정책 · 시장 구조 · 다음 시장 사이클 · 온체인 자본시장 · 24시간 탈중앙 거래 · 정산 · 결제 · AI × 크립토", "공식 소개의 여섯 갈래"),
-    ]
-    return {"updated": "2026-09-29", "asof": "9/29", "days": KBW_DAYS, "sessions": sessions, "people": ppl, "facts": facts, "foot": KBW_FOOT}
+    by_title = {}
+    for s in sessions:
+        by_title.setdefault(s["day"], []).append(s)
+    intro = {}
+    for day, v in KBW_DAY_INTRO.items():
+        hl = []
+        for pre, why in v["hl"]:
+            hit = [s["id"] for s in by_title[day] if s["title"].startswith(pre)]
+            assert len(hit) == 1, ("KBW 하이라이트 세션 이름 불일치", day, pre)
+            hl.append([hit[0], why])
+        intro[day] = {"lead": v["lead"], "hl": hl}
+    first = {}
+    for s in sessions:
+        for x in s["sp"]:
+            first.setdefault(x["p"], s["id"])
+    head = []
+    for k, role in KBW_ABOUT["head"]:
+        assert k in first, ("KBW 대표 연사 이름 불일치", k)
+        head.append({"p": k, "role": role, "sid": first[k]})
+    pos = {s["id"]: i for i, s in enumerate(sessions)}
+    head.sort(key=lambda h: pos[h["sid"]])  # 페이지엔 시간순
+    about = {"lead": KBW_ABOUT["lead"], "head": head, "src": KBW_ABOUT["src"],
+             "facts": [(a, b.replace("__SIZE__", f"무대 3곳 · 세션 {n_s}개 · 연사 {len(keys)}명"), c) for a, b, c in KBW_ABOUT["facts"]]}
+    hint = "핵심 · 주요 = 업계 중요도(공개 직함 · 회사 규모 · 주최 발표 기준) · 연관 = AI 에이전트 · 데이터 검증 · 결제 · 오라클 · " \
+           "국내 정책 · 투자 흐름 · XRPL 과 맞닿은 세션 · 연사"
+    return {"updated": "2026-09-29", "asof": "9/29", "days": KBW_DAYS, "firstDay": "d1001", "sessions": sessions, "people": ppl,
+            "themes": [{"id": t, "name": n, "desc": d} for t, n, d in KBW_THEMES], "intro": intro, "about": about, "hint": hint,
+            "foot": KBW_FOOT + [hint + "."]}
 
 
 def kbw_gate(text, people):
