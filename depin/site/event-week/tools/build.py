@@ -159,7 +159,7 @@ ORG = {
     "Yat Siu": ("Animoca Brands 회장", "n"),
     "Johann Kerbrat": ("Robinhood 크립토 총괄", "n"),
     "Marcin Kazmierczak": ("RedStone 공동창업자", "n"),
-    "SungGuan Yun": ("한국은행 디지털화폐", "n"),
+    "SungGuan Yun": ("한국은행 디지털화폐연구실장", "n"),
     "Frank Chaparro": ("GSR 콘텐츠", "n"),
     "Michael Heinrich": ("0G Labs CEO", "n"),
     "Monica Long": ("Ripple 사장", "n"),
@@ -171,7 +171,7 @@ ORG = {
     "Brian Mehler": ("Stable", "s"),
     "John Lilic": ("Tria CSO", "s"),
     "Heejin Shin": ("교보증권 신사업담당 이사", "s"),
-    "Andrea Muttoni": ("Story Foundation 사장", "s"),
+    "Andrea Muttoni": ("The DATA Foundation(구 Story) CEO", "n"),
     "Chetan Karkhanis": ("Franklin Templeton SVP", "s"),
     "Ambre Soubiran": ("Kaiko CEO", "s"),
     "Wish Wu": ("Pharos Network CEO", "s"),
@@ -215,7 +215,7 @@ ORG = {
     "Farooq Malik": ("Rain", "k"),
     "Raagulan Pathy": ("KAST", "k"),
     "Bill Zanker": ("$TRUMP 발행 측", "k"),
-    "Akshat Vaidya": ("Maven 11", "k"),
+    "Akshat Vaidya": ("Maelstrom 매니징 파트너", "n"),
     "Dryden Brown": ("Praxis", "k"),
     "Cody Carbone": ("The Digital Chamber", "k"),
     "Miller Whitehouse-Levine": ("Solana Policy Institute", "k"),
@@ -241,14 +241,14 @@ PMARK = {
     # KBW
     "Charles Jansen": ("fit", "지수 · 평가 기관(S&P Global) — 합의 지수 방법론이 그대로 얹힌다. 사업 제안보다 사례 비교로 연다"),
     "Ambre Soubiran": ("fit", "시장 데이터 회사(Kaiko)가 기관 인프라가 되는 길 — 데이터 회사인 우리가 가는 같은 길"),
-    "Andrea Muttoni": ("fit", "IP · 데이터 권리의 온체인화(Story) — AI 학습 데이터 권리, 측정 데이터가 쓰이는 판"),
+    "Andrea Muttoni": ("fit", "AI 학습 데이터의 출처 · 라이선스(The DATA Foundation, 구 Story) — 측정 데이터가 쓰이는 판"),
     "Jongwook Oh": ("fit", "국내 x402 패널(웨이브릿지 대표) — 한국 기관 쪽 x402 대화 상대"),
     "Michael Heinrich": ("strat", "탈중앙 데이터 · AI 인프라(0G Labs) — 데이터 쪽 대화 후보"),
     "Caroline D. Pham": ("strat", "해외 구매자 RLUSD 온램프(MoonPay) — 해외 결제를 설계할 때 대화 상대"),
     "Guy Wuollet": ("strat", "DePIN 투자 관점(a16z crypto) — 실적을 들고 만날 상대"),
     "Tom Schmidt": ("strat", "DePIN 투자(Dragonfly) — 한 하우스에는 한 사람만 연다"),
     "Lasse Clausen": ("strat", "DePIN 을 다뤄 온 VC(1kx) — 대화는 1차 판매 실적 뒤"),
-    "Akshat Vaidya": ("strat", "인프라 VC(Maven 11) — Firelight 8월 라운드 참여. 실적 뒤"),
+    "Akshat Vaidya": ("strat", "Arthur Hayes 패밀리 오피스(Maelstrom) — 「AI 에이전트가 가장 과소평가된 기회」. 대화는 실적 뒤"),
     "SungGuan Yun": ("strat", "한국은행 디지털화폐 — 예금토큰 · 원화 결제 방향"),
     "Michael Ippolito": ("strat", "영문 미디어 · 리서치(Blockworks) — 10/3 시연 뒤 커버리지 후보"),
     "Frank Chaparro": ("strat", "미디어(GSR 콘텐츠) — 모더레이터 3세션"),
@@ -286,9 +286,9 @@ XS_LINE = {
     "Pablo Che Leo": "리플 — 공개 직함까지",
     "Sabrina Tachdjian": "XRP 아시아(리플이 만든 조직) — 리플과 같은 선",
     "Leonard Hoh": "거래소 — 인사만",
-    "Adam Oozeer": "크로스체인 — 우리 쪽 발화는 10/3 직전 다시 확인",
-    "Fig": "크로스체인 — 우리 쪽 발화는 10/3 직전 다시 확인",
-    "Aniket Jindal": "멀티체인 실행 — 우리 쪽 발화는 10/3 직전 다시 확인",
+    "Adam Oozeer": "크로스체인 인프라 — 인사만",
+    "Fig": "크로스체인 인프라 — 인사만",
+    "Aniket Jindal": "크로스체인 인프라 — 인사만",
 }
 
 # 비밀번호 없는 페이지용 — md 결 근거 중 비공개 관계 · 계획이 든 칸은 공개 가능한 표현으로
@@ -296,8 +296,8 @@ XS_WHY = {
     "Crypto Eri": "기존 연결 — 일본 XRP 커뮤니티 · 12:05 패널 좌장 · X 확산",
     "Jake Ku": "기존 연결 — XRPL Korea(국내 커뮤니티 · 빌더 관문)",
     "Changhoon Moon": "9/5 Flare 워크숍 같은 무대 — 국내 XRP 리테일 창구",
-    "Connor Sullivan": "Flare 생태계 보장 층 · 재보험 출신 — 리스크를 값으로 매기는 쪽",
-    "Johnny Youn": "XRPL 구조화상품(KFIP 2026 1위) — 지수 · 파생 설계 역량",
+    "Connor Sullivan": "Flare 생태계 XRP 보장 층 — 리스크를 값으로 매기려면 데이터를 믿을 수 있어야 한다",
+    "Johnny Youn": "XRPL 구조화상품(KFIP 2026 1위) — 검증된 데이터가 기준값이 되는 상품 설계",
     "Asheesh Birla": "기존 연결 — 이전 XRP 컨퍼런스 인연. 에버노스(XRP 트레저리)",
 }
 XS_PE_DROP = [r"\s*휴고와 2019년부터 구면 · 이번 KBW 미디어 파트너\(9/23 미팅\)", r"\s*Eri 와 2019년부터 구면\(9/23 미팅\)", r"\(서우 9/29\)",
@@ -308,23 +308,23 @@ KO = {
     "Michael Heinrich": "마이클 하인리히", "Caroline D. Pham": "캐롤라인 팸", "Guy Wuollet": "가이 울렛", "Tom Schmidt": "톰 슈미트",
     "Lasse Clausen": "라세 클라우젠", "Akshat Vaidya": "악샷 바이디아", "Michael Ippolito": "마이클 이폴리토",
     "Frank Chaparro": "프랭크 차파로", "Kyoungsuk Oh": "오경석", "SeonJoo Yoon": "윤선주", "Arjun Sethi": "아르준 세티",
-    "John D'Agostino": "존 다고스티노", "Mike Belshe": "마이크 벨시", "Byoungdeok Min": "민병덕",
+    "John D'Agostino": "존 다고스티노", "Mike Belshe": "마이크 벨시", "Byoungdeok Min": "민병덕", "SungGuan Yun": "윤성관",
 }
 # KBW 쪽 회사 · 인물 한 줄(표시된 사람만 — 공개 자료 기준)
 KBW_DESC = {
-    "Charles Jansen": ("S&P Global — 신용평가 · 지수(S&P 다우존스 지수) · 시장 데이터", "DeFi 전환 총괄. 10/1 「시장 데이터에서 등급으로」 패널"),
+    "Charles Jansen": ("S&P Global — 신용평가 · 지수(S&P 다우존스 지수) · 시장 데이터", "Ratings 매니징 디렉터 · DeFi 전환 총괄. 10/1 「시장 데이터에서 등급으로」 패널"),
     "Ambre Soubiran": ("Kaiko — 크립토 시장 데이터 · 지수. 거래소 · DeFi 체결 데이터로 리스크 · 변동성 지표, Cometh 인수", "CEO. 10/1 「시장 데이터에서 등급으로」 패널"),
-    "Andrea Muttoni": ("Story — 지식재산(IP)을 온체인에 등록 · 라이선스하는 L1, AI 학습 데이터 권리", "Story Foundation 사장. 9/30 「AI 붐 뒤의 데이터 레이스」 패널"),
+    "Andrea Muttoni": ("The DATA Foundation — 2026.6 Story 에서 전환, AI 학습 데이터 소싱 · 검증 · 라이선스 인프라", "CEO(전 Story Foundation 사장). 9/30 「AI 붐 뒤의 데이터 레이스」 패널"),
     "Jongwook Oh": ("웨이브릿지 — 국내 디지털자산 금융 인프라", "대표. 9/30 「x402 · AI 결제 · 프라이버시」 패널"),
     "Michael Heinrich": ("0G Labs — 탈중앙 AI 인프라(데이터 가용성 · 저장 · 연산)", "공동창업자 겸 CEO. 9/30 「AI 에이전트 신뢰 층」 발표"),
-    "Caroline D. Pham": ("MoonPay — 법정화폐 ↔ 크립토 온램프 · 결제", "전 CFTC 위원장 대행. 9/30 「토큰화가 월가를 바꾸는 법」 패널"),
+    "Caroline D. Pham": ("MoonPay — 법정화폐 ↔ 크립토 온램프 · 결제", "최고법률책임자 · Moon Global Markets CEO(전 CFTC 위원장 대행). 9/30 「토큰화가 월가를 바꾸는 법」 패널"),
     "Guy Wuollet": ("a16z crypto — 크립토 전문 VC", "GP. 9/30 「펀드 산업의 토큰화」 패널"),
     "Tom Schmidt": ("Dragonfly — 크립토 VC", "GP. 10/1 「자본이 그리는 다음 사이클」 패널"),
-    "Lasse Clausen": ("1kx — 크립토 VC(추정)", "10/1 「자본이 그리는 다음 사이클」 패널"),
-    "Akshat Vaidya": ("Maven 11 — 크립토 VC(추정). Firelight 8월 라운드 참여", "10/1 「초기 투자자들이 지금 거는 곳」 패널"),
-    "SungGuan Yun": ("한국은행 — 디지털화폐(CBDC · 예금토큰)", "9/30 「디지털화폐와 한국의 다음 구조」"),
+    "Lasse Clausen": ("1kx — 리서치 중심 크립토 VC(2018~, 160건+ 투자)", "공동창업자 · 파운딩 파트너. 10/1 「자본이 그리는 다음 사이클」 패널"),
+    "Akshat Vaidya": ("Maelstrom — Arthur Hayes 패밀리 오피스(벤처 · 리퀴드 · 사모 · 공개시장)", "공동창업자 · 매니징 파트너(전 BitMEX). 10/1 「초기 투자자들이 지금 거는 곳」 패널"),
+    "SungGuan Yun": ("한국은행 — 디지털화폐(CBDC · 예금토큰 · 프로젝트 한강)", "디지털화폐연구실장. 9/30 「디지털화폐와 한국의 다음 구조」"),
     "Michael Ippolito": ("Blockworks — 크립토 미디어 · 리서치 · 행사", "공동창업자. 10/1 「월가의 크립토 결산」 모더레이터"),
-    "Frank Chaparro": ("미디어(GSR 콘텐츠)", "모더레이터 3세션(9/30 두 번 · 10/1)"),
+    "Frank Chaparro": ("GSR — 크립토 마켓메이커(전 The Block 첫 기자)", "콘텐츠 총괄 · 팟캐스트 The Crypto Tape. 모더레이터 3세션(9/30 두 번 · 10/1)"),
     "Kyoungsuk Oh": ("두나무 — 업비트 운영사, KBW 메인 스폰서", "대표. 9/30 10:30 발표"),
     "SeonJoo Yoon": ("업비트(두나무)", "CBIO. 9/30 「CLARITY 이후 미국 시장」 모더레이터"),
     "Arjun Sethi": ("Kraken — 글로벌 거래소", "공동 CEO"),
@@ -348,7 +348,7 @@ TIERS = [
               ("Jongwook Oh", "국내 x402 패널")]),
     ("ref", [("Tom Schmidt", "DePIN 투자(Dragonfly)"),
              ("Lasse Clausen", "DePIN VC"),
-             ("Akshat Vaidya", "인프라 VC"),
+             ("Akshat Vaidya", "패밀리 오피스 · AI 에이전트"),
              ("Andrea Muttoni", "데이터 권리"),
              ("SungGuan Yun", "한국은행 디지털화폐"),
              ("Michael Ippolito", "영문 미디어"),
@@ -373,6 +373,52 @@ for i, k in enumerate(LINE_ORDER):
 assert [BASE["high"] - BASE["top"], BASE["ref"] - BASE["high"]] == [len(TIERS[0][1]), len(TIERS[1][1])]
 
 
+# ── 인물 상세(이름을 누르면 여는 패널) ─────────────────────────────────────────────────
+# 조사 = tools/profiles.json(공개 자료 검색 요약 — 9/29 여섯 갈래 조사 + 레이시는 서우 보고서 검증).
+# 「우리와의 결」 = 아래 FIT(공개 가능한 사실만 — 페이지에 비밀번호가 없다).
+PROFILES = HERE / "profiles.json"
+FIT = {
+    "Chandler Fang": ["AI 에이전트가 x402 로 데이터를 건당 산다 — 우리 측정 데이터는 x402 단가가 공개돼 있다(집계 · 코호트 · 리포트)",
+                      "t54 의 에이전트 신원(KYA) · 결제 전 위험 검사는 「산 데이터가 진짜 측정값인가」와 짝이다 — 기기 NFT · 원장 기록",
+                      "XRPL 위 RLUSD 정산 — 같은 원장에서 돈과 데이터가 오간다"],
+    "Marcin Kazmierczak": ["오라클 = 값을 체인에 넣는 층 — 측정 · 날씨 데이터도 체인 위 값이 될 수 있다(기술 통합이 아니라 대화)",
+                           "Credora 인수(데이터 → 등급) — 측정 데이터에 품질 점수를 매기는 방향과 같다",
+                           "KBW 9/30 12:00 · XRP SEOUL 10/3 16:55 — 두 번 볼 수 있다"],
+    "Lacey Wisdom": ["날씨 DePIN(WeatherXM)을 이미 포트폴리오로 안다 — 차별점부터: 실내 공기질 · 케이웨더 30년 관측 · 기업 고객 4,000곳+",
+                     "t54(XRPL x402) 시드 공동 주도 — 우리 x402 데이터 판매와 바로 이어지는 화제",
+                     "기기 1대 = NFT 1개(위조 방지) — 기고에서 짚은 허위 위치 · 부정 방지 논점과 맞닿는다"],
+    "Charles Jansen": ["여러 출처를 합의해 기준값을 내는 방식(우리 날씨 11개 출처 합의)은 지수 방법론과 같은 문법이다",
+                       "데이터 회사가 온체인으로 가는 사례 — 「30년 데이터 회사의 DePIN」이 통하는 청중"],
+    "Nathaniel T. Bradley": ["데이터를 자산으로 가치평가 · 토큰화 — 측정 데이터의 값을 매기는 같은 테제",
+                             "AgSensor 제휴(농업 센서 데이터) — 센서 데이터 선례, 실내 공기질은 옆 칸",
+                             "XRPL 무대 단골(XRP Tokyo 2026 · XRP Seoul 2025)"],
+    "Johnny Youn": ["XRPL 위 구조화상품 — 검증된 측정 · 날씨 데이터가 상품의 기준값이 되는 구조를 이야기할 상대",
+                    "국내 XRPL 빌더(KFIP 2026 1위) — 한국 XRPL 판에서 계속 이어질 사람"],
+    "Connor Sullivan": ["Flare 생태계의 XRP 보장 층 — 케이웨더 × Flare 공개 파트너십과 같은 판",
+                        "리스크를 값으로 매기는 쪽은 데이터를 믿을 수 있어야 한다 — 검증된 측정 데이터 이야기"],
+    "Caroline D. Pham": ["해외 구매자가 RLUSD 로 들어오는 온램프 — 해외 판매 결제 경로",
+                         "전 CFTC 위원장 대행 — 토큰화 담보 · 파생 규제 감각"],
+    "Guy Wuollet": ["DePIN · 인프라 투자 관점 — 가동 기기 · 데이터 판매 실적을 들고 만날 상대"],
+    "Michael Heinrich": ["AI 가 쓰는 데이터의 출처 · 무결성 — 우리 측정 데이터 검증과 같은 질문"],
+    "Ambre Soubiran": ["시장 데이터 회사가 규제 벤치마크 · 기관 인프라가 된 길 — 날씨 데이터 회사가 가는 방향의 선례"],
+    "Jongwook Oh": ["국내 x402 패널 — 한국 기관 쪽이 에이전트 결제를 어떻게 보는지 들을 자리"],
+    "Tom Schmidt": ["DePIN 투자사 — 같은 회사는 한 사람만 연다"],
+    "Lasse Clausen": ["DePIN 을 다뤄 온 VC — 실적 뒤 대화"],
+    "Akshat Vaidya": ["「AI 에이전트가 가장 과소평가된 기회」(2025.8) — 에이전트가 데이터를 사는 x402 레인과 같은 방향",
+                      "초기 투자자 패널(10/1) — 대화는 판매 실적 뒤"],
+    "Andrea Muttoni": ["측정 데이터가 AI 학습 데이터로 쓰일 때의 출처 · 라이선스 — The DATA Foundation 의 Trace 가 다루는 문제"],
+    "SungGuan Yun": ["예금토큰 · 원화 결제 방향 — 국내 결제 · 정산 환경 파악(듣기만)"],
+    "Michael Ippolito": ["영문 미디어 · 리서치 — 10/3 시연 뒤 커버리지 후보"],
+    "Frank Chaparro": ["미디어 — 모더레이터 3세션, 인터뷰 · 콘텐츠 창구"],
+    "Hugo Philion": ["케이웨더 × Flare 파트너십(2026.9.5 공개 무대) — 데이터 검증 층",
+                     "10/3 13:30 키노트 → 우리 14:50 키노트 — 같은 날 두 무대"],
+    "Crypto Eri": ["일본 XRP 커뮤니티 · 영상 채널 — 12:05 패널 좌장", "X · 짧은 영상 확산 창구"],
+    "Asheesh Birla": ["이전 XRP 컨퍼런스 인연 — 인사 · 근황", "XRP 를 굴리는 트레저리 — RLUSD 를 XRP 디파이 진입로로 쓰는 전략(공개)"],
+    "Jake Ku": ["국내 XRPL 커뮤니티 · 빌더 관문 — KFIP · 해커톤 운영"],
+    "Changhoon Moon": ["국내 XRP 리테일 청중(장기 보유자 층)", "2026.9.5 Flare 워크숍 같은 무대"],
+}
+
+
 # ── 판정 — KBW 세션(제목 앞부분으로 찾는다) ─────────────────────────────────────────────
 SMARK = {
     "x402, AI Payments": ("fit", "x402 = 우리 기계 고객 레인(정본 x402 단가). 카카오페이가 x402 재단 창립 멤버(국내 유일) — 한국 x402 흐름을 한자리에서"),
@@ -389,7 +435,7 @@ SMARK = {
     "Sovereignty by Design": ("fit", "데이터 소유 · 주권 — 가정 측정 데이터의 주인은 누구인가"),
     "Trust Oracles in Onchain Economies": ("fit", "가격 오라클 다음은 신뢰 오라클 — 측정 데이터의 신뢰가 우리 상품"),
     "How Capital Is Mapping Crypto's Next Cycle": ("strat", "DePIN · 인프라 자본 지도 — Dragonfly · 1kx · Spartan. 대화는 판매 실적 뒤"),
-    "Friends and Family": ("strat", "초기 투자자들이 지금 거는 곳 — Maven 11(Firelight 투자 참여)"),
+    "Friends and Family": ("strat", "초기 투자자들이 지금 거는 곳 — Maelstrom(Arthur Hayes 패밀리 오피스) 등"),
     "Korea's Digital Asset Policy Moment": ("strat", "국내 규제 — 보상 · 포인트 · DEX 게이트 판단의 전제. 듣기만"),
     "A New Era for Digital Assets in Korea": ("strat", "국내 규제 — 보상 · 포인트 · DEX 게이트 판단의 전제. 듣기만"),
     "Digital Currency and the Future Monetary System": ("strat", "한국은행 디지털화폐 — 예금토큰 · 원화 결제 방향"),
@@ -422,7 +468,7 @@ NOTES = [
     "소속 칸: 「추정」 = 알려진 정보라 재확인 전. 빈 칸은 붙여 넣은 아젠다에 소속이 없어서다 — KBW 연사 페이지에서 확인.",
     "중요도 = 제안 순위 — 새로 열 관계(최우선 5 · 우선 7 · 참고 7)가 먼저, 기존 연결 5는 후순위, 우리는 그 뒤, 선은 맨 끝. 새 관계 안에서는 레인 중심 · 10/3 동선 · 옆 사람으로 이어지는 정도로 매겼다.",
     "판정은 제안이다 — 「내 표시」로 바꾸면 이 기기에만 저장되고, 「내보내기」로 복사해 보내 주면 원본에 반영한다.",
-    "결 = 우리 레인(검증 데이터 · x402 기계 고객 · DePIN · 보험/지수) · 전략 = 관계 · 자본 · 정책 · 미디어 · "
+    "결 = 우리 레인(검증 데이터 · x402 기계 고객 · DePIN · 데이터 → 등급) · 전략 = 관계 · 자본 · 정책 · 미디어 · "
     "선 = 말할 때 조심(공개 직함까지 · 인사만) · 우리 = 김성환 대표 키노트.",
 ]
 FOOT = [
@@ -487,9 +533,10 @@ def md_rows():
 
 
 def clean(t):
-    t = t.replace("==", "")
+    t = t.replace("==", "").replace("!!", "")
     t = re.sub(r"\{\{(.+?)\}\}", r"\1", t)
     t = t.replace("[추론]", "(추론)")
+    t = t.replace("前 ", "전 ")  # Pretendard 에 한자 글리프가 없다 — PDF 서체가 섞이지 않게
     return t.strip()
 
 
@@ -535,6 +582,12 @@ def parse_xrps(people):
     return out
 
 
+PROF = {}
+if PROFILES.exists():
+    for _pr in json.loads(PROFILES.read_text(encoding="utf-8")):
+        PROF[_pr["key"]] = {k: v for k, v in _pr.items() if k != "key"}
+
+
 def marks(people):
     for k, p in people.items():
         m, why = "", ""
@@ -569,6 +622,8 @@ def marks(people):
             p["rank"], p["tier"], p["rwhy"] = RANK[k]
         else:
             p["tier"] = ""
+        if k in PROF:
+            p["prof"] = {**PROF[k], "fit": FIT.get(k, [])}
     both = [k for k, p in people.items() if len(p["ev"]) > 1]
     return both
 
@@ -579,6 +634,8 @@ def data():
     both = marks(people)
     for k in XS_FIT | XS_STRAT | set(XS_LINE) | XS_OURS | set(RANK) | set(KBW_DESC) | set(KO) | set(LINE_ORDER) | set(XS_WHY):
         assert k in people, ("이름 불일치", k)
+    for k in list(PROF) + list(FIT):
+        assert k in people, ("상세 이름 불일치", k)
     unranked = [k for k, p in people.items() if p["mark"] and "rank" not in p]
     assert not unranked, ("표시됐는데 순위 없음", unranked)
     blocks = []
@@ -599,6 +656,45 @@ def data():
     }
 
 
+# 비밀번호 없는 판의 마지막 관문 — 대외 금지 구절이 데이터 · 템플릿에 하나라도 있으면 쓰지 않고 멈춘다.
+# (제3자의 공개 경력 · 사명은 막지 않는다: 「재보험 출신」은 되고 「보험 레인」은 안 된다.)
+PUBLIC_BAN = [
+    r"보험 레인", r"보험 ?/ ?지수", r"파라메트릭", r"(?i)parametric", r"보험 지급",
+    r"업비트 트랙", r"11월 트랙", r"상장 트랙", r"리플 채널", r"별도 채널", r"\bNDA\b", r"크립토닷컴", r"(?i)(?<![a-z0-9])crypto\.com", r"(?i)(?<![a-z0-9])og\.com",
+    r"1촌", r"수첩", r"멀티체인", r"판매 목표", r"5,000대", r"초기 바운티", r"(?i)connectx402", r"3만\+?\s*(?:개\s*)?(?:IoT|센서)",
+    r"상장사(?:가|의)? ?(?:뒷받침|B2B)", r"케이웨더 토큰", r"자회사", r"국내 ?(?:최대|1위)", r"(?i)WLBN\s*(?:코인|coin)",
+    r"리플(?:과|와)? ?(?:협력|제휴|파트너)", r"(?i)ripple\s+(?:partnership|partner of)", r"(?:디센트|D'CENT)", r"타임레버리지(?:와|와의)? ?(?:파트너|제휴)",
+    r"서우", r"주노", r"9/23", r"그녀", r"그는 ", r"그의 ",
+    # 날씨 데이터 × x402 · 날씨 데이터의 XRPL 기록은 미공개 계획 · 미확정 — x402 는 측정 데이터(정본 단가)만
+    # 예측시장 × 우리(날씨 · 케이웨더 · 웰비안) 연결은 대외 0 — 한국 쪽 규제 논쟁에 이름이 엮이지 않게
+    r"(?:날씨|케이웨더|웰비안|wellbian)[^\n\"]{0,40}예측시장", r"예측시장[^\n\"]{0,40}(?:날씨|케이웨더|웰비안|wellbian)",
+    r"날씨[^\n\"]{0,24}x402", r"x402[^\n\"]{0,24}날씨", r"XRPL[^\n\"]{0,12}(?:기록|남)[^\n\"]{0,6}날씨", r"날씨 데이터[^\n\"]{0,14}XRPL(?:에|에서|로)? ?(?:기록|남|앵커)",
+]
+PROF_GENDER = r"(?i)\b(?:she|her|hers|he|his|him)\b(?![-'])"
+
+
+def public_gate(text):
+    hits = []
+    for rx in PUBLIC_BAN:
+        for m in re.finditer(rx, text):
+            hits.append(f"{rx!r} → …{text[max(0, m.start() - 40):m.end() + 40]}…")
+    if hits:
+        sys.exit("공개 판에 금지 구절:\n  " + "\n  ".join(hits[:40]))
+
+
+def prof_gate(people):
+    """인물 상세 본문(출처 제목 제외)에 성별 대명사가 있으면 멈춘다."""
+    hits = []
+    for k, p in people.items():
+        pr = p.get("prof")
+        if not pr:
+            continue
+        body = json.dumps({x: v for x, v in pr.items() if x != "sources"}, ensure_ascii=False)
+        hits += [f"{k}: {m.group(0)}" for m in re.finditer(PROF_GENDER, body)]
+    if hits:
+        sys.exit("인물 상세에 성별 표현: " + ", ".join(hits))
+
+
 def main():
     d = data()
     payload = json.dumps(d, ensure_ascii=False, separators=(",", ":"))
@@ -608,6 +704,9 @@ def main():
     print(f"sessions {n_s} · people {n_p} · marks {marked} · both {d['both']}")
     args = sys.argv[1:]
     tpl = (HERE / "page.html").read_text(encoding="utf-8")
+    if args[:1] == ["--plain"] or not os.environ.get("EVENT_PASS"):
+        public_gate(payload + tpl)
+        prof_gate(d["people"])
     if args[:1] == ["--plain"]:
         out = Path(args[1])
         out.write_text(tpl.replace("/*__PLAIN__*/null", payload).replace("/*__SEALED__*/null", "null"), encoding="utf-8")
