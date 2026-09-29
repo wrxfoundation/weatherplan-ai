@@ -288,7 +288,10 @@ PNOTE = {
 
 # XRP SEOUL — md 「우리와 결」 을 결 · 전략으로 나눈다 + 리플(따로 묶음) + 선
 XS_FIT = {"Hugo Philion", "Connor Sullivan", "Chandler Fang", "Nathaniel T. Bradley", "Johnny Youn", "Marcin Kazmierczak"}
-XS_STRAT = {"Crypto Eri", "Jake Ku", "Changhoon Moon", "Lacey Wisdom", "Asheesh Birla"}  # 아시시 = 이전 XRP 컨퍼런스 인연(9/29)
+XS_STRAT = {"Crypto Eri", "Changhoon Moon", "Lacey Wisdom", "Asheesh Birla"}  # 아시시 = 이전 XRP 컨퍼런스 인연(9/29)
+# 관련자에서 뺀다 — 우리 쪽 · 주최 측이라 만날 대상이 아니다(9/29 밤 서우 「제이크 구랑 XRP 카탈라이즈 인원은 빼」).
+# 프로그램 연사로는 남는다(세션 카드 · 전체 연사의 「표시 없음」). 표시 · 순위 · 할 일 · 인물 상세 어디에도 다시 넣지 않는다.
+NOT_TARGET = {"Jake Ku": "카탈라이즈(XRPL Korea) — 우리 쪽"}
 XS_OURS = {"Sunghwan Kim"}
 # 리플 — 10/3 에 한 번은 인사할 사람. 공개 직함 · 공개 활동 · 세션만(관계 메모 0 · 협력 표현 0)
 XS_RIPPLE = {
@@ -326,7 +329,6 @@ XS_WHY = {
                     "10/3 12:05 · 13:30 → 14:50 우리 키노트",
     "Crypto Eri": "기존 연결 — 일본 XRP 커뮤니티 영상 채널(crypto Eri) · Onami Press. 10/3 12:05 패널 좌장 — 영상 · X 확산 창구",
     "Asheesh Birla": "기존 연결 — 이전 XRP 컨퍼런스 인연. 에버노스(XRP 트레저리) — 9/30 SPAC 합병 표결 사흘 뒤 무대",
-    "Jake Ku": "기존 연결 — XRPL Korea · 국내 첫 XRPL 빌더 프로그램(KFIP 2026) 운영. 국내 XRPL 빌더로 이어지는 관문. 10/3 15:50",
     "Changhoon Moon": "기존 연결 — 9/5 Flare 워크숍 같은 무대. XRP 유튜브 · 저서(『리플 빅뱅』)로 국내 XRP 장기 보유자 청중에 닿는 창구",
 }
 XS_CO_DROP = [r"\s*·\s*코스닥 상장"]  # 케이웨더 대외 표현은 「30년 · 4,000+」까지 — 상장 여부는 공개 판에 싣지 않는다
@@ -361,25 +363,25 @@ KBW_DESC = {
     "John D'Agostino": ("Coinbase — 미국 거래소", "Coinbase Institutional 전략 총괄. 10/1 「월가의 크립토 결산」 패널"),
     "Mike Belshe": ("BitGo — 디지털자산 커스터디", "CEO. 9/30 「기관 크립토 시대의 보안」"),
 }
-# 중요도 — 제안 순위. 새로 열 관계가 먼저(최우선 5 · 우선 5 · 참고 7), 리플은 따로 묶음, 기존 연결은 그 뒤, 우리, 선은 맨 끝
-# (9/29 서우 「기존 연결은 후순위로 빼 — 아시시 비를라도 기존 연결자」 · 「하인리히 · 오종욱은 기존 접촉 — 맨 뒤로」
-#  · 「리플 인원은 한 번은 만나야 하니 따로 묶어」)
+# 중요도 — 제안 순위. 우리에게 제일 중요한 세 분야 순서로 먼저: DePIN → AI 에이전트 → 결제(9/29 밤 서우 「depin 과 ai agent,
+# 그리고 pay 결제 쪽을 우선순위 순서로 기본 보기에 — 순위도 그렇게, 그들이 제일 중요하다」) → 그 밖 새 관계 → 리플(따로 묶음) → 기존 연결 → 우리 → 선.
+# (9/29 서우 「기존 연결은 후순위로」 · 「하인리히 · 오종욱은 기존 접촉 — 맨 뒤로」 · 「리플 인원은 따로 묶어」 — 분야와 겹쳐도 이 묶음이 먼저다)
 TIERS = [
-    ("top", [("Chandler Fang", "x402 결제 층 핵심 · 이번 주 서울"),
-             ("Marcin Kazmierczak", "오라클 첫 대화 후보 · 두 행사"),
-             ("Lacey Wisdom", "DePIN 투자사 · t54 투자사"),
+    ("depin", [("Lacey Wisdom", "DePIN 투자 16곳 · 날씨 DePIN 포트폴리오 · 10/3"),
+               ("Nathaniel T. Bradley", "센서 데이터 자산화 · 농업 센서 제휴 · 10/3"),
+               ("Guy Wuollet", "DePIN 투자 테제 · 가정 에너지 DePIN"),
+               ("Lasse Clausen", "온체인 매출로 DePIN 을 재는 VC")]),
+    ("agent", [("Chandler Fang", "XRPL x402 촉진자 · 이번 주 서울"),
+               ("Akshat Vaidya", "「AI 에이전트가 가장 과소평가된 기회」"),
+               ("Tom Schmidt", "「AI 에이전트 결제 레일」 테제"),
+               ("Andrea Muttoni", "AI 학습 데이터 라이선스")]),
+    ("pay", [("Caroline D. Pham", "해외 구매 온램프(MoonPay)"),
+             ("SungGuan Yun", "한국은행 디지털화폐 — 원화 결제 방향")]),
+    ("ref", [("Marcin Kazmierczak", "오라클 첫 대화 후보 · 두 행사"),
              ("Charles Jansen", "지수 · 평가 기관 · KBW 10/1"),
-             ("Nathaniel T. Bradley", "데이터 자산화 · 센서 데이터 제휴")]),
-    ("high", [("Johnny Youn", "XRPL 구조화상품 · KFIP 1위"),
-              ("Connor Sullivan", "Flare 생태계 보장 층"),
-              ("Caroline D. Pham", "해외 구매 온램프"),
-              ("Guy Wuollet", "DePIN 투자(a16z crypto)"),
-              ("Ambre Soubiran", "시장 데이터 회사")]),
-    ("ref", [("Tom Schmidt", "DePIN 투자(Dragonfly)"),
-             ("Lasse Clausen", "DePIN VC"),
-             ("Akshat Vaidya", "패밀리 오피스 · AI 에이전트"),
-             ("Andrea Muttoni", "데이터 권리"),
-             ("SungGuan Yun", "한국은행 디지털화폐"),
+             ("Ambre Soubiran", "시장 데이터 회사"),
+             ("Johnny Youn", "XRPL 구조화상품 · KFIP 1위"),
+             ("Connor Sullivan", "Flare 생태계"),
              ("Michael Ippolito", "데이터 · 리서치 미디어"),
              ("Frank Chaparro", "미디어")]),
     ("ripple", [("Monica Long", "리플 사장 · 두 행사"),
@@ -392,19 +394,19 @@ TIERS = [
     ("known", [("Hugo Philion", "기존 파트너 · 10/3 13:30 키노트"),
                ("Crypto Eri", "기존 연결 · 12:05 좌장"),
                ("Asheesh Birla", "기존 연결 · 이전 XRP 컨퍼런스"),
-               ("Jake Ku", "기존 연결 · XRPL Korea"),
                ("Changhoon Moon", "기존 연결 · 9/5 워크숍"),
                ("Michael Heinrich", "기존 접촉 · 9/30 발표"),
                ("Jongwook Oh", "기존 접촉 · 9/30 x402 패널")]),
     ("ours", [("Sunghwan Kim", "우리 키노트 14:50")]),
 ]
+NEW_TIERS = ("depin", "agent", "pay", "ref")  # 번호를 1부터 잇는 새 관계
 LINE_ORDER = ["Kyoungsuk Oh", "SeonJoo Yoon", "Johann Kerbrat", "Leonard Hoh", "Arjun Sethi", "John D'Agostino", "Mike Belshe",
               "Adam Oozeer", "Fig", "Aniket Jindal"]
-# 번호는 새 관계(최우선 → 우선 → 참고)만 1부터 잇고, 리플 · 기존 연결 · 우리 · 선은 묶음 번호대(표에는 번호를 안 쓴다)
+# 번호는 새 관계(DePIN → AI 에이전트 → 결제 → 그 밖)만 1부터 잇고, 리플 · 기존 연결 · 우리 · 선은 묶음 번호대(표에는 번호를 안 쓴다)
 BASE = {"ripple": 30, "known": 50, "ours": 80}
 _n = 1
 for t, people_ in TIERS:
-    if t in ("top", "high", "ref"):
+    if t in NEW_TIERS:
         BASE[t], _n = _n, _n + len(people_)
 RANK = {}
 for t, people_ in TIERS:
@@ -415,6 +417,20 @@ for i, k in enumerate(LINE_ORDER):
 _len = {t: len(v) for t, v in TIERS}
 assert _n <= BASE["ripple"] and BASE["ripple"] + _len["ripple"] <= BASE["known"] and BASE["known"] + _len["known"] <= BASE["ours"], _len
 assert len(RANK) == sum(_len.values()) + len(LINE_ORDER), "순위표에 같은 이름이 두 번"
+
+# ── 판정 전 분야 연사 — AI 에이전트 · 결제 세션의 다른 연사(표시 · 할 일 없이 분야 묶음으로만, 관련자 뒤)
+POOL_SESS = {
+    "agent_s": ["x402, AI Payments", "The Trillion-Dollar Agentic Economy", "The Data Race Behind the AI Boom",
+                "Putting Real-World Value to Work", "Agentic Payments: Making the New Internet", "Your Next Customer Is an AI Agent",
+                "The Ceiling on the Agent Economy", "Verifiable Computing in the Age of AI", "Programmable Machine Needs Programmable Money",
+                "When AI Agents Meet Onchain Money", "XRPL AI 에이전트 경제", "신뢰 기반 AI 에이전트 경제"],
+    "pay_s": ["Global Money, Local Rails", "Digital Currency and the Future Monetary System", "Stable: The First USD",
+              "The Stablecoin Paradox", "The Rise of Crypto-Native Neobanks", "Why Your Money Still Lives in Too Many Places",
+              "Stablecoins, Securities, and the Frictionless Future", "Membership Has Its Privileges", "What's the Future of Non-USD Stablecoins",
+              "What Drives the Next Wave of Stablecoin Adoption", "해외송금부터 예금토큰까지", "Tria 가 바라보는 XRP 네오뱅크",
+              "스테이블코인, 일상 금융 속으로"],
+}
+
 
 # ── 할 일 — 두 칸(9/29 밤 서우 「현장은 어수선해서 준비해 발표하거나 협력을 바로 만들 수 없다 — 현장은 만남에 의의,
 #    일은 메일이나 후속 미팅에서」)
@@ -482,8 +498,6 @@ ACT = {
                    "메일 — 부스 시연(측정기 → 원장 기록 확인) 영상을 보내 일본어 영상 · X 소개가 가능한지 부탁"),
     "Asheesh Birla": ("10/3 12:05 패널 뒤 인사 · 근황 — 9/30 합병 표결 결과부터 확인",
                       "메일 — 표결 결과에 맞춘 근황 인사"),
-    "Jake Ku": ("10/3 15:50 패널 전후 반가운 인사",
-                "미팅 — 다음 KFIP · 해커톤에 검증 가능한 센서 데이터(x402 측정 데이터) 과제를 넣는 방안"),
     "Changhoon Moon": ("10/3 15:50 패널 전후 반가운 인사",
                        "메일 — 측정기 → 원장 기록 확인 흐름을 유튜브로 소개하는 방안(보상은 테스트 중 · 비보장 고지와 함께)"),
     "Michael Heinrich": ("KBW 9/30 12:20 발표 뒤 근황 인사",
@@ -548,7 +562,6 @@ FIT = {
                      "10/3 13:30 키노트 → 우리 14:50 키노트 — 같은 날 두 무대"],
     "Crypto Eri": ["일본 XRP 커뮤니티 · 영상 채널 — 12:05 패널 좌장", "X · 짧은 영상 확산 창구"],
     "Asheesh Birla": ["이전 XRP 컨퍼런스 인연 — 인사 · 근황", "XRP 를 굴리는 트레저리 — RLUSD 를 XRP 디파이 진입로로 쓰는 전략(공개)"],
-    "Jake Ku": ["국내 XRPL 커뮤니티 · 빌더 관문 — KFIP · 해커톤 운영"],
     "Changhoon Moon": ["국내 XRP 리테일 청중(장기 보유자 층)", "2026.9.5 Flare 워크숍 같은 무대"],
 }
 
@@ -600,8 +613,8 @@ NOTES = [
     "지난 사이드: 9/28 「Agentic Payments Onchain」(리플 · t54 · Tenity · Bloom, KBW 공식 사이드) — t54 가 KBW 주간에 서울에 있다. 10/3 챈들러 팡 동선에 참고.",
     "두 행사에 다 나오는 사람은 KBW 에서 먼저 볼 수 있다 — 마르친(RedStone) 9/30 12:00 → 10/3 16:55.",
     "소속 칸: 「추정」 = 알려진 정보라 재확인 전. 빈 칸은 붙여 넣은 아젠다에 소속이 없어서다 — KBW 연사 페이지에서 확인.",
-    "중요도 = 제안 순위 — 새로 열 관계(최우선 5 · 우선 5 · 참고 7)가 먼저, 리플 7은 따로 묶고, 기존 연결 7은 그 뒤, 우리, 선은 맨 끝. "
-    "새 관계 안에서는 우리 사업과 가까운 정도 · 10/3 동선 · 옆 사람으로 이어지는 정도로 매겼다.",
+    "중요도 = 제안 순위 — 우리에게 제일 중요한 세 분야 순서로 먼저: DePIN 4 → AI 에이전트 4 → 결제 2(번호 1~10), 그 밖 새 관계 7(11~17), "
+    "리플 7은 따로 묶고, 기존 연결 6 · 우리 · 선은 뒤. 그다음 AI 에이전트 · 결제 세션의 다른 연사(판정 전 — 소속 확인 필요)를 분야별로 묶었다.",
     "관련자 표는 전체 연사가 기본 — 「대상 · 관련자만」을 누르면 표시된 사람만 남는다.",
     "★ = 즐겨찾기 — 이름 옆 ☆ 을 누르면 「★ 즐겨찾기」 탭에 모인다. 이 기기에만 저장되고, 「목록 링크 복사」로 다른 기기 · 대표님께 넘긴다.",
     "판정은 제안이다 — 「내 표시」로 바꾸면 이 기기에만 저장되고, 「내보내기」로 복사해 보내 주면 원본에 반영한다.",
@@ -784,6 +797,21 @@ def data():
         assert k in people, ("상세 이름 불일치", k)
     unranked = [k for k, p in people.items() if p["mark"] and "rank" not in p]
     assert not unranked, ("표시됐는데 순위 없음", unranked)
+    for k in NOT_TARGET:
+        assert k in people and not people[k]["mark"] and not people[k]["tier"] and "prof" not in people[k] and k not in ACT, ("관련자에서 뺀 사람", k)
+    pool = {}
+    for s_ in kbw + xs:
+        for tier_, prefixes in POOL_SESS.items():
+            if any(s_["title"].startswith(x) for x in prefixes):
+                for x in s_["sp"]:
+                    pp = people[x["p"]]
+                    if not pp["mark"] and not pp["tier"] and x["p"] not in NOT_TARGET and pool.get(x["p"]) != "agent_s":
+                        pool[x["p"]] = tier_
+    for k, t_ in pool.items():
+        people[k]["tier"] = t_
+    for prefixes in POOL_SESS.values():
+        for x in prefixes:
+            assert any(s_["title"].startswith(x) for s_ in kbw + xs), ("분야 세션 이름 불일치", x)
     noact = [k for k, p in people.items() if p["mark"] and not (len(p["act"]) == 2 and all(p["act"]))]
     assert not noact, ("표시됐는데 할 일(현장 · 후속) 없음", noact)
     odd = [k for k, p in people.items() if (p["mark"] == "ripple") != (p["tier"] == "ripple")]
@@ -858,7 +886,7 @@ def main():
     n_s = sum(1 for s in d["sessions"] if s["kind"] != "break")
     n_p = len(d["people"])
     marked = {m: sum(1 for p in d["people"].values() if p["mark"] == m) for m in ("fit", "strat", "ripple", "line", "ours")}
-    tiers = {t: sum(1 for p in d["people"].values() if p.get("tier") == t) for t in ("top", "high", "ref", "ripple", "known", "ours", "line")}
+    tiers = {t: sum(1 for p in d["people"].values() if p.get("tier") == t) for t in ("depin", "agent", "pay", "ref", "ripple", "known", "ours", "line", "agent_s", "pay_s")}
     print(f"sessions {n_s} · people {n_p} · marks {marked} · tiers {tiers} · both {d['both']}")
     args = sys.argv[1:]
     tpl = (HERE / "page.html").read_text(encoding="utf-8")
