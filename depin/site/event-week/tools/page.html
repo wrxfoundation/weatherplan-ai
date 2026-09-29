@@ -284,8 +284,12 @@ body.nodesc .pr .desc { display: none; }
 /* 할 일 — 사람마다 한 줄 */
 .act { font-size: 13.5px; line-height: 1.55; margin: 5px 0 0; color: var(--ink); font-weight: 500; }
 .act b { display: inline-block; font-size: 11px; font-weight: 800; letter-spacing: .04em; color: var(--accent-ink); background: var(--accent-bg); border-radius: 5px; padding: 0 6px; line-height: 18px; margin-right: 7px; vertical-align: 1px; }
-.drawer .act2 { font-size: 15px; line-height: 1.6; font-weight: 600; color: var(--ink); margin: 0; padding: 12px 14px; border-radius: 12px; background: var(--accent-bg); }
-body.nocolor .act b, body.nocolor .drawer .act2 { background: var(--rule-bg); color: var(--ink-2); }
+.act.nx b { background: var(--accent-ink); color: var(--surface); }
+.drawer .act2 { display: grid; grid-template-columns: auto 1fr; gap: 8px 12px; align-items: baseline; font-size: 15px; line-height: 1.6; font-weight: 600; color: var(--ink); margin: 0; padding: 12px 14px; border-radius: 12px; background: var(--accent-bg); }
+.drawer .act2 dt { font-size: 11.5px; font-weight: 800; letter-spacing: .04em; color: var(--accent-ink); background: var(--surface); border-radius: 5px; padding: 0 7px; line-height: 20px; }
+.drawer .act2 dt.nx { background: var(--accent-ink); color: var(--surface); }
+.drawer .act2 dd { margin: 0; }
+body.nocolor .act b, body.nocolor .act.nx b, body.nocolor .drawer .act2, body.nocolor .drawer .act2 dt { background: var(--rule-bg); color: var(--ink-2); }
 
 /* 즐겨찾기 — 이름 옆 별(이 기기에 저장) */
 .star { background: none; border: 0; padding: 0 4px 0 0; margin: 0; font: inherit; font-size: 17px; line-height: 1; color: var(--faint); cursor: pointer; vertical-align: -1px; }
@@ -588,6 +592,8 @@ function personHay(pid) {
 }
 const qmatch = (text) => !S.q || S.q.toLowerCase().split(/\s+/).filter(Boolean).every((w) => text.includes(w));
 const nameOf = (pid) => D.people[pid].ko || D.people[pid].name;
+// 할 일 두 칸 — 현장(만남까지) · 후속(메일 · 미팅)
+const actHTML = (p, m) => (m && p.act && p.act.length === 2 ? `<p class="act"><b>현장</b>${esc(p.act[0])}</p><p class="act nx"><b>후속</b>${esc(p.act[1])}</p>` : "");
 const star = (pid) => {
   const on = S.fav.has(pid);
   return `<button class="star" data-fav="${esc(pid)}" aria-pressed="${on}" aria-label="${esc(nameOf(pid))} 즐겨찾기 ${on ? "빼기" : "넣기"}" title="즐겨찾기 ${on ? "빼기" : "넣기"}">${on ? "★" : "☆"}</button>`;
@@ -612,7 +618,7 @@ function personLi(pid, mod, withDesc, extra = "") {
   return `<li class="pr${m ? " m-" + m : ""}" data-p="${esc(pid)}">
     <div class="pr-top"><div><div class="whorow">${star(pid)}<button class="nmb" data-open="${esc(pid)}"><span class="nm">${esc(nameOf(pid))}</span>${p.prof ? `<span class="more-i">상세</span>` : ""}</button></div>${p.ko ? `<span class="en">${esc(p.name)}</span>` : ""}${flags}
       ${org ? `<div class="org">${esc(org)}${src}</div>` : ""}</div>${pill(pid)}</div>
-    ${why ? `<p class="why">${esc(why)}</p>` : ""}${p.act && m ? `<p class="act"><b>할 일</b>${esc(p.act)}</p>` : ""}${p.note ? `<p class="note">${esc(p.note)}</p>` : ""}${desc}${extra}
+    ${why ? `<p class="why">${esc(why)}</p>` : ""}${actHTML(p, m)}${p.note ? `<p class="note">${esc(p.note)}</p>` : ""}${desc}${extra}
   </li>`;
 }
 
@@ -799,7 +805,7 @@ function tableHTML(ids, byImp) {
     html += `<tr class="r${m ? " m-" + m : ""}">
       <td class="c-n">${nCell}</td>
       <td class="c-who"><div class="whorow">${star(pid)}<button class="nmb" data-open="${esc(pid)}"><span class="nm">${esc(nameOf(pid))}</span>${p.prof ? `<span class="more-i">상세</span>` : ""}</button></div>${p.ko ? `<span class="en">${esc(p.name)}</span>` : ""}<span class="org">${esc(p.xorg || p.org || "")}${p.ev.length > 1 ? `<span class="flag">두 행사</span>` : ""}</span></td>
-      <td class="c-why"><div class="whyhead">${pill(pid)}</div>${why ? `<p class="why">${esc(why)}</p>` : ""}${p.act && m ? `<p class="act"><b>할 일</b>${esc(p.act)}</p>` : ""}${p.note ? `<p class="note">${esc(p.note)}</p>` : ""}${p.rwhy && ranked ? `<p class="rw"><b>순위 근거</b> · ${esc(p.rwhy)}</p>` : ""}</td>
+      <td class="c-why"><div class="whyhead">${pill(pid)}</div>${why ? `<p class="why">${esc(why)}</p>` : ""}${actHTML(p, m)}${p.note ? `<p class="note">${esc(p.note)}</p>` : ""}${p.rwhy && ranked ? `<p class="rw"><b>순위 근거</b> · ${esc(p.rwhy)}</p>` : ""}</td>
       <td class="c-ses" data-l="세션">${ses}</td>
       <td class="c-more"><button class="more" data-more="1" aria-expanded="false">회사 · 인물 보기</button></td>
       <td class="c-co" data-l="회사">${lines(p.co)}</td>
@@ -845,14 +851,14 @@ function drawer(pid) {
       <h2 id="dname">${esc(nameOf(pid))}</h2>${p.ko ? `<div class="en2">${esc(p.name)}</div>` : ""}<div class="org2">${esc(p.xorg || p.org || "")}</div></div>
     <div class="db">
       ${pr.summary ? `<section><h3>한줄 요약</h3><p class="sum">${esc(pr.summary)}</p></section>` : `<p class="none">${m === "line" ? "상세 조사 대상 아님 — 선(말할 때 조심). 공개 정보까지만." : m === "ripple" ? "상세 조사 대상 아님 — 리플은 공개 직함 · 공개 활동까지만 싣는다." : m === "ours" ? "우리 키노트." : "상세 조사 전 — 공개 기본 정보만 있습니다."}</p>`}
-      ${p.act && m ? `<section><h3>할 일</h3><p class="act2">${esc(p.act)}</p></section>` : ""}
+      ${m && p.act && p.act.length === 2 ? `<section><h3>할 일</h3><dl class="act2"><dt>현장</dt><dd>${esc(p.act[0])}</dd><dt class="nx">후속</dt><dd>${esc(p.act[1])}</dd></dl></section>` : ""}
       ${why || fit ? `<section><h3>${m === "line" ? "말할 때" : m === "ripple" ? "리플 — 공개 직함 · 활동" : m === "ours" ? "우리" : "왜 봐야 하나"}</h3><div class="fitbox m-${m || "none"}">${why ? `<p class="why m-${m}">${esc(why)}</p>` : ""}${fit ? `<ol>${li(fit)}</ol>` : ""}</div></section>` : ""}
       ${sec("이 주간 동선", where ? `<div class="where">${where}</div>` : "")}
       ${sec("인물", rows.length ? `<dl>${rows.map(([k, v]) => `<dt>${k}</dt><dd>${v}</dd>`).join("")}</dl>` : "")}
       ${L(pr.org) ? sec("회사 · 펀드", `<ul>${lix(pr.org)}</ul>`) : sec("회사 · 인물", desc)}
       ${sec("이력 · 딜", L(pr.record) ? `<ul>${lix(pr.record)}</ul>` : "")}
       ${sec("관점 — 공개 발언 · 기고", L(pr.views) ? `<ul>${lix(pr.views)}</ul>` : "")}
-      ${sec("대화 거리", L(pr.talk) ? `<ul>${li(pr.talk)}</ul>` : "")}
+      ${sec("대화 거리 — 후속 미팅용", L(pr.talk) ? `<ul>${li(pr.talk)}</ul>` : "")}
       ${sec("출처", L(pr.sources) ? `<ul class="src">${pr.sources.map((x) => `<li><a href="${esc(x.u)}" target="_blank" rel="noopener noreferrer">${esc(x.t || x.u)}</a></li>`).join("")}</ul>` : "")}
       ${sec("확인 필요", L(pr.check) ? `<ul class="chk">${li(pr.check)}</ul>` : "")}
       ${pr.summary ? `<p class="foot2">공개 자료 검색 요약 기준(${esc(pr.asof || D.updated)}). 대외 인용 전 원출처를 연다.</p>` : ""}
