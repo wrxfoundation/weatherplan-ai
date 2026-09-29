@@ -1904,3 +1904,9 @@ Thanks Odelia — writing to you at that address today. Mine is support@wellbian
   날씨 XRPL 기록(→ x402 는 측정 데이터 정본 단가만) · 파라메트릭 · 예측시장 × 날씨 · 「코스닥 상장사」 수식 · 타임레버리지 공동 주최 메모 · 리플 인사 공개 논쟁 문구 제거.
   빌드에 **공개 관문**(`PUBLIC_BAN` · `prof_gate`) — 금지 구절 · 성별 대명사가 있으면 파일을 쓰지 않는다. 검증: 24명 패널 모두 열림 · 가로 넘침 0(1440 · 390) ·
   PDF 7쪽 전부 Pretendard · 콘솔 오류 0.
+- **Tarek Mansour(Kalshi 공동창업 · CEO) 1촌 메모 + 반박 · 우위 논리 카톡(9/29, 서우 링크드인 글 캡처 3장 + 「1촌 멘트하고 우리 반박논리 그리고 우리가 우위논리 카톡형태」)** —
+  글 = Crosier 논문(arXiv 2609.23969 프리프린트, 9/20): 칼시 5년 · 미국 7개 도시 · 다음 날 최고기온, 7곳 중 6곳 NBM 보다 정확 · 첫 1시간 RMSE 약 10%↓.
+  판정 = 1촌 요청 + 메모만(칼시 계열 Edward 9/15 인사 · 동시 대화 2개 상한), 공개 댓글 0. 메모 286자(`the other half is the number it settles on` — 정산 숫자 자리를
+  보완으로, 다른 거래소 · 그의 수치 · 체인 · 측정기 0, `eleven feeds`). 반박 = 예보 위에 얹힘 · 범위(미국 7도시 · 최고기온 하나) · 관측소 하나의 숫자(파리 CDG) ·
+  칼시의 TWC 전환 · 오류 판독 연기 절차. 우위 = 합의값 · 원장 지문(첫 게시값 증명) · 미국 밖 도시 · 책임지는 발행자 · 무결성 예산. 약점 = 11개 중 8개 Open-Meteo 경유 ·
+  미국 1차 정산원 대체 불가. 기록 = `intel/business-directions.md` 「Tarek Mansour」 절(카톡 공유본 포함).
