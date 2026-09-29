@@ -613,7 +613,7 @@ function personLi(pid, mod, withDesc, extra = "") {
   const m = mark(pid);
   const org = p.xorg || p.org;
   const src = !p.xorg && p.src && SRC[p.src] ? `<span class="src">${SRC[p.src]}</span>` : "";
-  const flags = `${mod ? `<span class="flag">모더레이터</span>` : ""}${p.ev.length > 1 ? `<span class="flag">두 행사</span>` : ""}`;
+  const flags = `${mod ? `<span class="flag">모더레이터</span>` : ""}${p.ev.length > 1 && !p.quiet ? `<span class="flag">두 행사</span>` : ""}`;
   let desc = "";
   if (withDesc && (p.co || p.pe)) {
     const lines = (arr, lb) => arr && arr.length ? `<p><span class="lb">${lb}</span>${esc(arr[0])}${arr.slice(1).map((x) => `<span class="add">${esc(x)}</span>`).join("")}</p>` : "";
@@ -757,7 +757,7 @@ function tableRows() {
   const rank = (p) => D.people[p].rank ?? 999;
   const evo = (p) => (D.people[p].ev.includes("KBW") ? 0 : 1);
   const cmp = {
-    imp: (a, b) => GORDER.indexOf(groupOf(a)) - GORDER.indexOf(groupOf(b)) || rank(a) - rank(b) || firstAt(a) - firstAt(b),
+    imp: (a, b) => GORDER.indexOf(groupOf(a)) - GORDER.indexOf(groupOf(b)) || (D.people[a].quiet ? 1 : 0) - (D.people[b].quiet ? 1 : 0) || rank(a) - rank(b) || firstAt(a) - firstAt(b),
     time: (a, b) => firstAt(a) - firstAt(b) || rank(a) - rank(b),
     event: (a, b) => evo(a) - evo(b) || firstAt(a) - firstAt(b),
     name: (a, b) => nameOf(a).localeCompare(nameOf(b), "ko"),
@@ -809,7 +809,7 @@ function tableHTML(ids, byImp) {
     const why = whyOf(pid);
     html += `<tr class="r${m ? " m-" + m : ""}">
       <td class="c-n">${nCell}</td>
-      <td class="c-who"><div class="whorow">${star(pid)}<button class="nmb" data-open="${esc(pid)}"><span class="nm">${esc(nameOf(pid))}</span>${p.prof ? `<span class="more-i">상세</span>` : ""}</button></div>${p.ko ? `<span class="en">${esc(p.name)}</span>` : ""}<span class="org">${esc(p.xorg || p.org || "")}${p.ev.length > 1 ? `<span class="flag">두 행사</span>` : ""}</span></td>
+      <td class="c-who"><div class="whorow">${star(pid)}<button class="nmb" data-open="${esc(pid)}"><span class="nm">${esc(nameOf(pid))}</span>${p.prof ? `<span class="more-i">상세</span>` : ""}</button></div>${p.ko ? `<span class="en">${esc(p.name)}</span>` : ""}<span class="org">${esc(p.xorg || p.org || "")}${p.ev.length > 1 && !p.quiet ? `<span class="flag">두 행사</span>` : ""}</span></td>
       <td class="c-why"><div class="whyhead">${pill(pid)}</div>${why ? `<p class="why">${esc(why)}</p>` : ""}${actHTML(p, m)}${p.note ? `<p class="note">${esc(p.note)}</p>` : ""}${p.rwhy && ranked ? `<p class="rw"><b>순위 근거</b> · ${esc(p.rwhy)}</p>` : ""}</td>
       <td class="c-ses" data-l="세션">${ses}</td>
       <td class="c-more"><button class="more" data-more="1" aria-expanded="false">회사 · 인물 보기</button></td>
