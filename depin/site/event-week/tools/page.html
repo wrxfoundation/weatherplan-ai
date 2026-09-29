@@ -129,7 +129,7 @@ button { cursor: pointer; }
 .dot.m-fit { background: var(--fit); } .dot.m-strat { background: var(--strat); } .dot.m-line { background: var(--rule); } .dot.m-ours { background: var(--ours); } .dot.m-ripple { background: var(--rip); }
 
 /* ── 공통 부품 ── */
-main { padding: 18px 0 44px; }
+main.wrap { padding-top: 18px; padding-bottom: 44px; }  /* .wrap 의 padding 줄임꼴보다 우선 */
 .pill { display: inline-flex; align-items: center; justify-content: center; min-width: 38px; height: 24px; padding: 0 9px; border-radius: 7px; font-size: 12px; font-weight: 800; letter-spacing: .01em; border: 1px solid transparent; white-space: nowrap; }
 button.pill { cursor: pointer; }
 .pill.m-fit { background: var(--fit); color: #fff; } .pill.m-strat { background: var(--strat); color: #fff; }
@@ -391,9 +391,12 @@ footer p { margin: 4px 0; }
   .rt td.c-n .n { display: inline; font-size: 15px; } .rt td.c-n .t { display: inline; margin: 0; font-size: 12px; } .rt td.c-n .dash { display: none; }
   .rt td.c-n .pm { display: inline-flex !important; margin-left: auto; } .rt .whyhead { display: none !important; }
   .rt td.c-who { grid-area: who; } .rt td.c-why { grid-area: why; padding-top: 10px; } .rt td.c-ses { grid-area: ses; padding-top: 10px; }
-  .rt td.c-more { grid-area: more; display: block; padding: 10px 16px 14px; }
-  .rt td.c-co { grid-area: co; display: none; } .rt td.c-pe { grid-area: pe; display: none; padding-bottom: 14px; }
+  .rt tr.r td.c-more { grid-area: more; display: block; padding: 8px 16px 12px; }
+  /* 회사 · 인물은 접어 둔다 — 「.rt tr.r td」(블록)보다 우선순위가 높아야 실제로 접힌다 */
+  .rt tr.r td.c-co { grid-area: co; display: none; } .rt tr.r td.c-pe { grid-area: pe; display: none; padding-bottom: 14px; }
   .rt tr.r.open td.c-co, .rt tr.r.open td.c-pe { display: block; }
+  .rt .rw { display: none; }
+  .rt td.c-why .why { font-weight: 560; line-height: 1.55; }
   .rt td[data-l]::before { content: attr(data-l); display: block; font-size: 11px; font-weight: 700; letter-spacing: .06em; color: var(--muted); margin-bottom: 4px; }
   .rt .nm { font-size: 17px; } .rt .en { display: inline; margin-left: 6px; } .rt .org { margin-top: 3px; } .rt .whorow { display: inline-flex; }
   .rt .whyhead { position: absolute; }
@@ -401,12 +404,17 @@ footer p { margin: 4px 0; }
   .rt td.c-why .whyhead { position: static; }
   .rt tr.grp { display: block; margin: 18px 0 8px; }
   .rt tr.grp td { display: block; background: transparent; border: 0; padding: 0 2px; }
-  .more { width: 100%; border: 1px solid var(--line-2); background: var(--surface); border-radius: 10px; padding: 10px 12px; font-size: 13.5px; font-weight: 700; color: var(--ink-2); }
+  .more { width: 100%; display: flex; align-items: center; justify-content: space-between; border: 0; border-top: 1px solid var(--line); background: transparent;
+          padding: 10px 0 0; font: inherit; font-size: 13.5px; font-weight: 700; color: var(--accent-ink); cursor: pointer; text-align: left; }
+  .more::after { content: "▾"; font-size: 12px; }
+  .more[aria-expanded="true"]::after { content: "▴"; }
+  .rt tr.r.open td.c-co { padding-top: 10px; }
   body.nodesc .rt td.c-more { display: none; }
 }
 /* ── 휴대폰 ── */
 @media (max-width: 640px) {
-  .wrap { padding: 0 16px; }
+  .wrap { padding-left: 16px; padding-right: 16px; }
+  main.wrap { padding-top: 14px; }
   .top { padding-top: 18px; }
   .top h1 { font-size: 23px; margin: 6px 0 4px; }
   .top .lead { font-size: 13.5px; }
@@ -415,11 +423,15 @@ footer p { margin: 4px 0; }
   .tab { padding: 8px 12px; font-size: 13.5px; }
   .tab .lg { display: none; } .tab .sm { display: inline; }
   .ctl { display: none; }
-  .ctl-m { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin: 0 0 12px; }
+  .ctl-m { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 8px; margin: 0 0 14px; }
   .ctl-m label { display: grid; gap: 4px; }
   .ctl-m select { width: 100%; min-height: 42px; border: 1px solid var(--line-2); border-radius: 10px; background: var(--surface); color: var(--ink); padding: 0 10px; font-size: 14px; font-weight: 600; }
   .key .chip small { display: none; }
-  .stats { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; } .stat.k-ev { display: none; }
+  .key { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; margin: 0 -16px; padding: 0 16px 2px; gap: 6px; }
+  .key::-webkit-scrollbar { display: none; }
+  .key > .lbl { display: none; }
+  .key .chip { flex: none; padding: 5px 10px; gap: 5px; }
+  .stats { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; margin-bottom: 14px; } .stat.k-ev { display: none; }
   .stat { padding: 10px 8px; text-align: center; } .stat .lbl { font-size: 10.5px; letter-spacing: .02em; }
   .stat .v { font-size: 20px; margin: 4px 0 0; } .stat .s { display: none; } .stat .v small { display: none; }
   h3.blk { display: grid; gap: 2px; }
@@ -442,7 +454,7 @@ footer p { margin: 4px 0; }
   .nmb .nm { text-decoration: none; }
   .wrap, .wrap.wide { max-width: none; padding: 0; }
   .top { padding-top: 0; } .top h1 { font-size: 20px; margin: 2px 0 10px; }
-  main { padding: 0; }
+  main.wrap { padding: 0; }
   .stats { grid-template-columns: repeat(5, 1fr); gap: 6px; margin-bottom: 8px; }
   .stat { padding: 8px 10px; box-shadow: none; } .stat .v { font-size: 18px; margin: 2px 0 0; }
   .panel, .rt { box-shadow: none; }
@@ -635,27 +647,9 @@ const pill = (pid) => {
   return `<button class="pill m-${m || "none"}${isCustom(pid) ? " custom" : ""}" data-mk="${esc(pid)}" title="눌러서 표시 바꾸기" aria-label="${esc(D.people[pid].name)} 표시 — 지금 ${m ? LABEL[m] : "없음"}, 눌러서 바꾸기">${LABEL[m]}</button>`;
 };
 
-function personLi(pid, mod, withDesc, extra = "") {
-  const p = D.people[pid];
-  const m = mark(pid);
-  const org = p.xorg || p.org;
-  const src = !p.xorg && p.src && SRC[p.src] ? `<span class="src">${SRC[p.src]}</span>` : "";
-  const flags = `${mod ? `<span class="flag">모더레이터</span>` : ""}${p.ev.length > 1 && !p.quiet ? `<span class="flag">두 행사</span>` : ""}`;
-  let desc = "";
-  if (withDesc && (p.co || p.pe)) {
-    const lines = (arr, lb) => arr && arr.length ? `<p><span class="lb">${lb}</span>${esc(arr[0])}${arr.slice(1).map((x) => `<span class="add">${esc(x)}</span>`).join("")}</p>` : "";
-    desc = `<div class="desc">${lines(p.co, "회사")}${lines(p.pe, "인물")}</div>`;
-  }
-  const why = whyOf(pid);
-  return `<li class="pr${m ? " m-" + m : ""}" data-p="${esc(pid)}">
-    <div class="pr-top"><div><div class="whorow">${star(pid)}<button class="nmb" data-open="${esc(pid)}"><span class="nm">${esc(nameOf(pid))}</span>${p.prof ? `<span class="more-i">상세</span>` : ""}</button></div>${p.ko ? `<span class="en">${esc(p.name)}</span>` : ""}${flags}
-      ${org ? `<div class="org">${esc(org)}${src}</div>` : ""}</div>${pill(pid)}</div>
-    ${why ? `<p class="why">${esc(why)}</p>` : ""}${actHTML(p, m)}${p.note ? `<p class="note">${esc(p.note)}</p>` : ""}${desc}${extra}
-  </li>`;
-}
 
 // 시간대별 칸의 사람 — 이름 · 소속 | 한 줄(BRIEF) · 회사 · 인물 첫 줄. 할 일 · 긴 근거는 싣지 않는다(관련자 표 · 인물 패널)
-function personRow(pid, mod, withDesc) {
+function personRow(pid, mod, withDesc, extra = "") {
   const p = D.people[pid];
   const m = mark(pid);
   const org = p.xorg || p.org;
@@ -663,7 +657,7 @@ function personRow(pid, mod, withDesc) {
   const flags = `${mod ? `<span class="flag">모더레이터</span>` : ""}${p.ev.length > 1 && !p.quiet ? `<span class="flag">두 행사</span>` : ""}`;
   const brief = m && (isCustom(pid) ? (m === p.mark ? p.brief : "") : p.brief);
   const one = (arr, lb) => (arr && arr.length ? `<p class="d"><span class="lb">${lb}</span>${esc(arr[0])}</p>` : "");
-  const about = `${brief ? `<p class="why brief">${esc(brief)}</p>` : ""}${withDesc ? one(p.co, "회사") + one(p.pe, "인물") : ""}`;
+  const about = `${brief ? `<p class="why brief">${esc(brief)}</p>` : ""}${withDesc ? one(p.co, "회사") + one(p.pe, "인물") : ""}${extra}`;
   return `<li class="pr cmp${m ? " m-" + m : ""}" data-p="${esc(pid)}">
     <div class="who"><div class="whorow">${star(pid)}<button class="nmb" data-open="${esc(pid)}"><span class="nm">${esc(nameOf(pid))}</span>${p.prof ? `<span class="more-i">상세</span>` : ""}</button></div>${p.ko ? `<span class="en">${esc(p.name)}</span>` : ""}
       ${org ? `<div class="org">${esc(org)}${src}</div>` : ""}${flags ? `<div class="flags">${flags}</div>` : ""}</div>
@@ -736,8 +730,10 @@ function glanceView() {
     for (const s of ss) {
       const who = s.sp.filter(pickW).map((x) => `<span class="w m-${mark(x.p)}">${esc(nameOf(x.p))}</span>`).join("");
       const sm = shown(s.mark) ? s.mark : "";
-      const first = s.sp.find((x) => pickW(x) && whyOf(x.p));
-      const ex = sm && s.why ? s.why : first ? whyOf(first.p) : "";
+      // 한 줄(BRIEF)이 있는 사람을 먼저, 없으면(리플 · 우리) 근거의 첫 마디
+      const briefOf = (pid) => { const p = D.people[pid], m = mark(pid); return !m || (isCustom(pid) && m !== p.mark) ? "" : p.brief || (p.why || "").split(" — ")[0]; };
+      const first = s.sp.find((x) => pickW(x) && D.people[x.p].brief && briefOf(x.p)) || s.sp.find((x) => pickW(x) && briefOf(x.p));
+      const ex = sm && s.why ? s.why : first ? briefOf(first.p) : "";
       html += `<button class="it" data-go="${d.id}" data-s="${s.id}"><span class="tm">${esc(s.start)}</span><span><span class="ti">${sm ? `<span class="pill m-${sm}">${sm === "ours" ? "우리" : LABEL[sm]}</span>` : ""}${esc(s.title)}</span>${who ? `<span class="who">${who}</span>` : ""}${ex && S.why ? `<span class="ex">${esc(ex)}</span>` : ""}</span></button>`;
     }
     html += `</div>`;
@@ -779,7 +775,7 @@ function peopleView() {
   let html = `<section class="dayhead panel"><span class="lbl">두 행사 전체</span><h2>사람 찾기</h2><p class="meta">연사 ${total}${ids.length !== total ? ` 중 ${ids.length}` : ""} · 표시된 사람이 위로</p></section><div class="panel" style="padding:6px"><ul class="sp" style="margin:0">`;
   for (const p of ids) {
     const w = `<div class="pwhere">${whereOf(p).map((s) => `<a href="#${s.id}" data-go="${s.day}" data-s="${s.id}"><b>${DEV[s.day]} ${DSHORT[s.day]} ${esc(s.start)}</b>${esc(s.title)}</a>`).join("")}</div>`;
-    html += personLi(p, false, S.desc, w);
+    html += personRow(p, false, S.desc, w);
   }
   html += `</ul></div>`;
   if (!ids.length) html += `<p class="empty">찾는 사람이 없습니다.</p>`;
@@ -1022,7 +1018,7 @@ function wire() {
     if (t.dataset.close && t.dataset.go) { closeDrawer(); }
     if (t.dataset.more) {
       const tr = t.closest("tr"); const open = tr.classList.toggle("open");
-      t.textContent = open ? "접기" : "회사 · 인물 보기"; t.setAttribute("aria-expanded", String(open));
+      t.textContent = open ? "회사 · 인물 접기" : "회사 · 인물 보기"; t.setAttribute("aria-expanded", String(open));
       return;
     }
     if (t.dataset.sort) { S.sort = t.dataset.sort; render(); return; }
