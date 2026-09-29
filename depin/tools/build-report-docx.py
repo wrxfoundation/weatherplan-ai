@@ -4,7 +4,7 @@
 정본은 md 다. 이 스크립트는 md 를 읽어 docx 를 만들 뿐 문장을 따로 갖지 않는다 — md 를 고친 뒤 다시 돌리면
 docx 가 따라온다(build-canon-docx.py 와 같은 원칙 · 같은 서체와 색).
 
-  python3 depin/tools/build-report-docx.py "reports/XRPL 인플루언서와 DePIN 고객 확보.md" [out.docx] [--no-number]
+  python3 depin/tools/build-report-docx.py "reports/XRPL 인플루언서와 DePIN 고객 확보.md" [out.docx] [--no-number] [--landscape]
 
 out 을 빼면 md 옆에 같은 이름의 .docx 를 만든다.
 
@@ -14,7 +14,10 @@ out 을 빼면 md 옆에 같은 이름의 .docx 를 만든다.
   → 근거 표시([1차 원문] · [검색요약] · [내부] · 「원출처 확인 필요」 · unverified (aggregator) 등) 8.5 회색
   「[외부 근거]」 「[추론]」 은 작은 꼬리표로, [추론] 문단은 옅은 바탕으로 외부 근거 문단과 구별한다.
   링크는 밑줄 없이 강조색(출처가 본문보다 앞서 보이지 않게). 표는 머리글 반복 · 첫 열 굵게(4열 이상) · 열 너비 자동.
-  열 6개 이상인 표가 든 ## 절은 가로 쪽. 첫 쪽은 표지 · 요약 · 목차(누르면 그 절로), 본문은 둘째 쪽부터.
+  머리글이 같은 표끼리는 열 너비가 같다. 열 6개 이상인 표가 든 ## 절은 가로 쪽. md 에 `<!-- docx: landscape -->` 줄이 있거나 --landscape 면 문서 전체 가로.
+  첫 쪽은 표지 · 요약 · 목차(누르면 그 절로), 본문은 둘째 쪽부터.
+  강조 표기: {{…}} = 우리와 결(초록 굵게, 그 표 줄은 옅은 초록 바탕) · ==…== = 노란 형광(서우 편집 표기)
+  · !!…!! = 빨강(목차에도) · 표 칸 안 <br> = 줄바꿈.
   줄 높이는 고정값(본문 10/16pt) — Word 의 맑은 고딕과 대체 서체에서 쪽 배치가 달라지지 않게.
 """
 import re
@@ -43,6 +46,9 @@ EVID_CHIP = "ECECFA"   # [외부 근거] 꼬리표 바탕
 INFER_TXT = "8A5A00"   # [추론] 꼬리표 글자
 INFER_CHIP = "F6EBD2"  # [추론] 꼬리표 바탕
 INFER_BOX = "FBF7EF"   # [추론] 문단 바탕
+FIT = "0B7A55"         # {{우리와 결}} 글자
+FIT_ROW = "E9F6EF"     # 결 표시가 든 표 줄 바탕
+RED = "FF0000"         # !!강조!! — 서우가 목차에 쓴 빨강 그대로
 MARGIN = Cm(1.8)
 
 # 크기(pt) — 한곳에서 위계를 정한다
@@ -54,6 +60,8 @@ L_TITLE, L_SUB, L_H2, L_H3, L_BODY, L_LEAD, L_CHECK = 34, 20, 22, 17, 16, 16.5, 
 REPO = Path(__file__).resolve().parents[2]
 ARGS = [a for a in sys.argv[1:] if not a.startswith("--")]
 NUMBER = "--no-number" not in sys.argv[1:]
+LANDSCAPE = "--landscape" in sys.argv[1:]
+LANDSCAPE_MARK = "<!-- docx: landscape -->"
 if not ARGS:
     sys.exit(__doc__)
 SRC = Path(ARGS[0])
@@ -64,6 +72,10 @@ TOKEN = re.compile(
     r"\[(?P<lt>[^\]]+)\]\((?P<url>[^)\s]+)\)"
     r"|(?P<chip>\[(?:외부 근거|추론)\])"
     rf"|(?P<tag>{TAGS})"
+    r"|\{\{(?P<fit>.+?)\}\}"
+    r"|==(?P<hl>.+?)=="
+    r"|!!(?P<red>.+?)!!"
+    r"|(?P<br><br>)"
     r"|\*\*(?P<b>.+?)\*\*"
     r"|`(?P<c>[^`]+)`"
     r"|(?<![*\w])\*(?P<i>[^\s*][^*]*?)\*(?![*\w])"
@@ -71,8 +83,8 @@ TOKEN = re.compile(
 
 
 # ── 글자 ─────────────────────────────────────────────────────────────
-def rpr(size, bold=False, italic=False, color=INK, underline=False, fill=None):
-    """w:rPr — 스키마 순서(rFonts · b · i · color · sz · u · shd). 모든 글자는 한 서체."""
+def rpr(size, bold=False, italic=False, color=INK, underline=False, fill=None, highlight=None):
+    """w:rPr — 스키마 순서(rFonts · b · i · color · sz · highlight · u · shd). 모든 글자는 한 서체."""
     el = OxmlElement("w:rPr")
     f = OxmlElement("w:rFonts")
     for a in ("w:ascii", "w:hAnsi", "w:eastAsia", "w:cs"):
@@ -91,6 +103,10 @@ def rpr(size, bold=False, italic=False, color=INK, underline=False, fill=None):
         s = OxmlElement(tag)
         s.set(qn("w:val"), str(int(round(size * 2))))
         el.append(s)
+    if highlight:
+        h = OxmlElement("w:highlight")
+        h.set(qn("w:val"), highlight)
+        el.append(h)
     if underline:
         u = OxmlElement("w:u")
         u.set(qn("w:val"), "single")
@@ -133,33 +149,45 @@ def chip(p, label, size):
                        color=INFER_TXT if infer else ACCENT, fill=INFER_CHIP if infer else EVID_CHIP))
 
 
-def inline(p, text, size, bold=False, italic=False, color=INK):
-    """링크 · 꼬리표 · 근거 표시 · **굵게** · *기울임* · `코드`. 굵게 안도 다시 읽는다."""
+def inline(p, text, size, bold=False, italic=False, color=INK, hl=None):
+    """링크 · 꼬리표 · 근거 표시 · **굵게** · *기울임* · `코드` · {{결}} · ==형광== · !!빨강!! · <br>. 안쪽도 다시 읽는다."""
     pos = 0
     for m in TOKEN.finditer(text):
         if m.start() > pos:
-            p._p.append(run_el(text[pos:m.start()], size, bold=bold, italic=italic, color=color))
+            p._p.append(run_el(text[pos:m.start()], size, bold=bold, italic=italic, color=color, highlight=hl))
         if m.group("url"):
             add_link(p, m.group("url"), m.group("lt"), size, bold, italic)
         elif m.group("chip"):
             chip(p, m.group("chip")[1:-1], size)
         elif m.group("tag"):
-            p._p.append(run_el(m.group("tag"), max(size - 1.5, 7), italic=italic, color=MUTE))
+            p._p.append(run_el(m.group("tag"), max(size - 1.5, 7), italic=italic, color=MUTE, highlight=hl))
+        elif m.group("fit") is not None:
+            inline(p, m.group("fit"), size, bold=True, italic=italic, color=FIT, hl=hl)
+        elif m.group("hl") is not None:
+            inline(p, m.group("hl"), size, bold=bold, italic=italic, color=color, hl="yellow")
+        elif m.group("red") is not None:
+            inline(p, m.group("red"), size, bold=bold, italic=italic, color=RED, hl=hl)
+        elif m.group("br") is not None:
+            r = OxmlElement("w:r")
+            r.append(OxmlElement("w:br"))
+            p._p.append(r)
         elif m.group("b") is not None:
-            inline(p, m.group("b"), size, bold=True, italic=italic, color=color)
+            inline(p, m.group("b"), size, bold=True, italic=italic, color=color, hl=hl)
         elif m.group("c") is not None:
-            p._p.append(run_el(m.group("c"), size, bold=bold, italic=italic, color=MUTE))
+            p._p.append(run_el(m.group("c"), size, bold=bold, italic=italic, color=MUTE, highlight=hl))
         else:
-            inline(p, m.group("i"), size, bold=bold, italic=True, color=color)
+            inline(p, m.group("i"), size, bold=bold, italic=True, color=color, hl=hl)
         pos = m.end()
     if pos < len(text):
-        p._p.append(run_el(text[pos:], size, bold=bold, italic=italic, color=color))
+        p._p.append(run_el(text[pos:], size, bold=bold, italic=italic, color=color, highlight=hl))
 
 
 def plain(text):
     """표시되는 글자만 — 폭 계산 · 목차용."""
-    text = re.sub(r"\[([^\]]+)\]\([^)\s]+\)", r"\1", text)
-    return text.replace("**", "").replace("`", "")
+    text = re.sub(r"\[([^\]]+)\]\([^)\s]+\)", r"\1", text).replace("<br>", " ")
+    for mk in ("**", "`", "{{", "}}", "==", "!!"):
+        text = text.replace(mk, "")
+    return text
 
 
 def units(text):
@@ -263,7 +291,10 @@ def col_widths(rows, total, size):
         cells = [plain(r[j] if j < len(r) else "") for r in body]
         lens = [units(c) for c in cells]
         tok = max((len(t) for c in cells for t in re.findall(r"[!-~]+", c)), default=0)
-        raw.append(max(sum(lens) / len(lens), head[j], 4))
+        # 절반 넘게 빈 열(결 · 근거처럼 몇 줄에만 쓰는 칸)은 채워진 칸 평균 — 빈칸에 묻혀 좁아지지 않게
+        filled = [x for x in lens if x]
+        avg = sum(filled) / len(filled) if filled and len(filled) * 2 < len(lens) else sum(lens) / len(lens)
+        raw.append(max(avg, head[j], 4))
         minw.append(max((max(head[j], 4) + 1) * unit, min(tok, 18) * size * 12 + 60) + pad)  # 반각 실폭 ≈ 0.6em
     fixed = set()
     while True:
@@ -281,10 +312,10 @@ def col_widths(rows, total, size):
     return out
 
 
-def add_table(doc, rows, total):
+def add_table(doc, rows, total, width_rows=None):
     n = len(rows[0])
     size = 8.5 if n <= 5 else 8
-    widths = col_widths(rows, total, size)
+    widths = col_widths(width_rows or rows, total, size)
     t = doc.add_table(rows=len(rows), cols=n)
     t.alignment = WD_TABLE_ALIGNMENT.CENTER
     t.autofit = False
@@ -321,6 +352,7 @@ def add_table(doc, rows, total):
         if i == 0:
             trpr.append(OxmlElement("w:tblHeader"))
         cells = rows[i] + [""] * (n - len(rows[i]))
+        fit = i > 0 and any("{{" in c for c in cells)
         for j, cell in enumerate(row.cells):
             cell.width = Emu(widths[j] * 635)
             p = cell.paragraphs[0]
@@ -329,6 +361,8 @@ def add_table(doc, rows, total):
             inline(p, cells[j], size, bold=(i == 0 or (j == 0 and n >= 4)))
             if i == 0:
                 shade(cell, HEAD_FILL)
+            elif fit:
+                shade(cell, FIT_ROW)
             elif i % 2 == 0:
                 shade(cell, ZEBRA)
     gap = doc.add_paragraph()
@@ -360,6 +394,10 @@ def parse(md):
                 rows.append(split_row(lines[i]))
                 i += 1
             blocks.append(("table", [r for r in rows if not re.fullmatch(r"[\s|:-]+", "|".join(r))]))
+            continue
+        if re.fullmatch(r"\s*<!--.*-->\s*", ln):
+            flush()
+            i += 1
             continue
         m = re.match(r"(#{1,3}) (.+)", ln)
         if m:
@@ -400,7 +438,7 @@ def no_theme(rfonts):
         rfonts.set(qn(a), KO_FONT)
 
 
-def setup(doc, title):
+def setup(doc, title, landscape=False):
     d = doc.styles.element.find(qn("w:docDefaults")).find(qn("w:rPrDefault")).find(qn("w:rPr"))
     rf = d.find(qn("w:rFonts"))
     if rf is None:
@@ -434,8 +472,8 @@ def setup(doc, title):
     doc.core_properties.title = title
     doc.core_properties.author = "wellbian"
     sec = doc.sections[0]
-    sec.orientation = WD_ORIENT.PORTRAIT
-    sec.page_width, sec.page_height = Cm(21.0), Cm(29.7)
+    sec.orientation = WD_ORIENT.LANDSCAPE if landscape else WD_ORIENT.PORTRAIT
+    sec.page_width, sec.page_height = (Cm(29.7), Cm(21.0)) if landscape else (Cm(21.0), Cm(29.7))
     for side in ("left_margin", "right_margin", "top_margin", "bottom_margin"):
         setattr(sec, side, MARGIN)
     sec.different_first_page_header_footer = True  # 표지에는 머리글 · 쪽 번호 없음
@@ -514,13 +552,16 @@ def contents(doc, heads):
         h.set(qn("w:history"), "1")
         if num:
             h.append(run_el(f"{num}\t", size, bold=kind == "h2", color=ACCENT))
-        h.append(run_el(plain(text), size, color=INK if kind == "h2" else MUTE))
+        for k, seg in enumerate(re.split(r"!!(.+?)!!", text)):
+            if seg:
+                h.append(run_el(plain(seg), size, color=RED if k % 2 else (INK if kind == "h2" else MUTE)))
         e._p.append(h)
 
 
 def build(md, title, src_label):
     doc = Document()
-    setup(doc, title)
+    land = LANDSCAPE or LANDSCAPE_MARK in md
+    setup(doc, title, land)
     blocks = parse(md)
 
     # ## 절 단위로 묶어 가로 쪽 여부를 정한다
@@ -532,10 +573,15 @@ def build(md, title, src_label):
         cur.append(b)
     groups.append(cur)
     heads = [b for b in blocks if b[0] in ("h2", "h3")]
+    # 머리글이 같은 표는 한 벌로 보고 열 너비를 같게(세션별 표 등) — 모든 줄을 합쳐 너비를 잰다
+    same = {}
+    for b in blocks:
+        if b[0] == "table":
+            same.setdefault(tuple(b[1][0]), [b[1][0]]).extend(b[1][1:])
 
     bid, lead_done, first_h2 = 0, False, True
     for g in groups:
-        orient(doc, any(b[0] == "table" and len(b[1][0]) >= 6 for b in g))
+        orient(doc, land or any(b[0] == "table" and len(b[1][0]) >= 6 for b in g))
         for b in g:
             kind = b[0]
             if kind == "h1":
@@ -568,7 +614,7 @@ def build(md, title, src_label):
                 if b[1].startswith("**[추론]"):
                     tint(p, INFER_BOX)
             elif kind == "table":
-                add_table(doc, b[1], body_width(doc))
+                add_table(doc, b[1], body_width(doc), same[tuple(b[1][0])])
             elif kind == "check":
                 p = doc.add_paragraph()
                 hang(p, Cm(0.6))
