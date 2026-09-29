@@ -3641,3 +3641,33 @@ Good to be connected.
 
 금지선 재확인 — 크립토닷컴 · OG.com · 예측시장 · 정산 · 계약 사실 0(MNDA), 다른 거래소·플랫폼 0, XRP SEOUL 스폰서 0,
 Flare 진전 0, 토큰 · 상장 · WLBN 0. 체결 뒤에도 크립토닷컴 이름은 그에게 쓰지 않는다. 발송 여부는 서우가 알려줄 때 갱신.
+
+## Crypto Eri — 도쿄 34일 연속 비, 가벼운 한 줄 (9/29 밤)
+
+**흐름**: 서우가 Japan Times 9/29 「Tokyo sets a new record with 34 straight days of rain」 링크 + 「이 내용으로 eri 한테 가벼운 말 던져보자」.
+원문은 이 환경에서 EGRESS_BLOCKED(우회 안 함) — 같은 날 보도 요약으로 사실 확인: 도쿄 도심 9/29 까지 34일 연속 강수 = 관측 사상 최장
+(이전 33일, 2019.6.27~7.29) · 원인 = 가을장마 전선(秋雨前線) + 태풍 여럿 · 9월 일조 시간 역대 두 번째로 적을 전망.
+출처: phys.org(AFP) · 웨더뉴스 · tenki.jp · Bloomberg 제목(「… Adds to Price Woes」).
+
+**본 판(X DM — 개인 농담이라 1:1, 그룹 방은 아래 짧은 판)**:
+```
+Eri — Tokyo just hit 34 straight days of rain, the longest on record. Akisame really overdid it this year 🌧
+
+Fellow weather nerd question: are Portland and Seattle feeling upstaged on your weather screen? Hope the rain doesn't follow you to Seoul. See you this week!
+```
+
+**짧은 판(텔레그램 「Kweather(wellbian)<>Eri」 방)**:
+```
+34 straight days of rain in Tokyo, a new record 🌧 Hope Seoul gives you a dry week, Eri. See you soon!
+```
+
+| 구절 | 하는 일 |
+|---|---|
+| `34 straight days … the longest on record` | 기사 제목 그대로의 사실 하나만 — mm · 시작 연도(1876/1886 보도가 갈림)는 쓰지 않는다 |
+| `Akisame really overdid it` | 원인(가을장마 전선)을 일본어 한 단어로 — 9/24 추석 ↔ 츠키미 인사와 같은 결의 문화 다리 |
+| `Fellow weather nerd` · `Portland and Seattle … on your weather screen` | 9/23 콜에서 Eri 가 한 말(평생 웨더긱 · 폰에 도쿄 · 포틀랜드 · 시애틀 · 오슬로 날씨 · 「괴짜 동료를 만나 기쁘다」)을 기억한다는 신호 + 답하기 쉬운 질문 하나 |
+| `Hope the rain doesn't follow you to Seoul` | 9/30 방한을 날짜 없이 — 일정이 바뀌어도 틀리지 않게. 서울 예보는 말하지 않는다(기상 회사가 틀린 예보를 건네지 않게) |
+| `See you this week!` | 10/2 · 10/3 만남을 행사 이름 없이 |
+
+**넣지 않은 것**: Flare · 데이터 마켓 · 10/3 발표 암시 0(09:00 공개 전 대외 0) · 케이웨더 · 예보 · 데이터 · 사업 이야기 0 · Onami 0 ·
+성별 표현 0 · 기사 링크(도쿄 사람에게 도쿄 날씨 기사는 군더더기 — 붙이려면 본 판 끝에 한 줄). 발송 여부는 서우가 알려줄 때 갱신.
