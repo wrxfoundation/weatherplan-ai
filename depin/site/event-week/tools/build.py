@@ -249,8 +249,6 @@ PMARK = {
                               "측정 데이터가 AI 학습에 쓰일 때 권리 · 정산을 다루는 곳"),
     "Jongwook Oh": ("fit", "기존 연결 — 웨이브릿지(기관 수탁 · 프라임 브로커 · 스테이블코인 정산). "
                            "9/30 「x402 · AI 결제 · 프라이버시」 패널 — 국내 기관 쪽 x402 시각"),
-    "Michael Heinrich": ("strat", "기존 연결 — 0G Labs(AI 전용 L1 · 데이터 가용성 · 저장). "
-                                  "9/30 「AI 에이전트 신뢰 층」 발표 — AI 가 쓰는 데이터의 무결성 이야기"),
     "Caroline D. Pham": ("strat", "MoonPay — 카드 · 계좌로 크립토를 사는 온램프 · 결제, MoonPay Institutional CEO(전 CFTC 위원장 대행). "
                                   "해외 구매 결제 경로를 설계할 때 대화 상대"),
     "Guy Wuollet": ("strat", "a16z crypto GP — DePIN 투자 테제를 쓴 사람, 가정 태양광 · 배터리 DePIN(Daylight) 투자 주도. "
@@ -292,7 +290,8 @@ XS_STRAT = {"Crypto Eri", "Changhoon Moon", "Lacey Wisdom", "Asheesh Birla"}  # 
 # 관련자에서 뺀다 — 우리 쪽 · 주최 측이라 만날 대상이 아니다(9/29 밤 서우 「제이크 구랑 XRP 카탈라이즈 인원은 빼」).
 # 프로그램 연사로는 남는다(세션 카드 · 전체 연사의 「표시 없음」 맨 끝). 표시 · 순위 · 할 일 · 인물 상세 · 「두 행사」 표시 어디에도 다시 넣지 않는다.
 NOT_TARGET = {"Jake Ku": "카탈라이즈(XRPL Korea) — 우리 쪽",
-              "Marcin Kazmierczak": "RedStone — 후순위(9/29 밤 서우 「별로였어 — 아무 색 · 태그 없이 뒤로」)"}
+              "Marcin Kazmierczak": "RedStone — 후순위(9/29 밤 서우 「별로였어 — 아무 색 · 태그 없이 뒤로」)",
+              "Michael Heinrich": "0G Labs — 뺌(9/29 밤 서우 「제로지 0g 빼」)"}
 XS_OURS = {"Sunghwan Kim"}
 # 리플 — 10/3 에 한 번은 인사할 사람. 공개 직함 · 공개 활동 · 세션만(관계 메모 0 · 협력 표현 0)
 XS_RIPPLE = {
@@ -393,7 +392,6 @@ TIERS = [
                ("Crypto Eri", "기존 연결 · 12:05 좌장"),
                ("Asheesh Birla", "기존 연결 · 이전 XRP 컨퍼런스"),
                ("Changhoon Moon", "기존 연결 · 9/5 워크숍"),
-               ("Michael Heinrich", "기존 접촉 · 9/30 발표"),
                ("Jongwook Oh", "기존 접촉 · 9/30 x402 패널")]),
     ("ours", [("Sunghwan Kim", "우리 키노트 14:50")]),
 ]
@@ -415,6 +413,12 @@ for i, k in enumerate(LINE_ORDER):
 _len = {t: len(v) for t, v in TIERS}
 assert _n <= BASE["ripple"] and BASE["ripple"] + _len["ripple"] <= BASE["known"] and BASE["known"] + _len["known"] <= BASE["ours"], _len
 assert len(RANK) == sum(_len.values()) + len(LINE_ORDER), "순위표에 같은 이름이 두 번"
+
+# ── 보이는 행사 — 9/29 밤 서우 「XRP SEOUL 만 넣자, KBW 는 숨김 처리」. KBW 판정 · 조사 · 아젠다는 이 파일에 그대로 두고
+#    공개 판(www)에서만 뺀다. 다시 보이려면 ("KBW", "XRP SEOUL").
+SHOW_EVENTS = ("XRP SEOUL",)
+DAY_EVENT = {"d0930": "KBW", "d1001": "KBW", "d1003": "XRP SEOUL"}
+
 
 # ── 판정 전 분야 연사 — AI 에이전트 · 결제 세션의 다른 연사(표시 · 할 일 없이 분야 묶음으로만, 관련자 뒤)
 POOL_SESS = {
@@ -515,7 +519,6 @@ FIT = {
     "Caroline D. Pham": ["해외 구매자가 카드 · 계좌로 크립토 결제에 들어오는 온램프 — 해외 판매 결제 경로",
                          "전 CFTC 위원장 대행 — 토큰화 담보 · 파생 규제 감각"],
     "Guy Wuollet": ["DePIN 투자 테제 · 가정 에너지 DePIN(Daylight) — 가정에 기기를 까는 모델을 이미 본 투자자"],
-    "Michael Heinrich": ["기존 접촉 — 근황 · 인사부터", "AI 가 쓰는 데이터의 출처 · 무결성 — 우리 측정 데이터 검증과 같은 질문"],
     "Ambre Soubiran": ["시장 데이터 회사가 규제 벤치마크 · 기관 인프라가 된 길 — 날씨 데이터 회사가 가는 방향의 선례"],
     "Jongwook Oh": ["기존 접촉 — 근황 · 인사부터", "국내 x402 패널 — 한국 기관 쪽이 에이전트 결제를 어떻게 보는지 들을 자리"],
     "Tom Schmidt": ["「AI 에이전트 결제 레일」 테제 — 에이전트가 데이터를 건당 사는 결제가 실사용 사례"],
@@ -576,13 +579,14 @@ DAYS = [
      "note": "우리 무대 — 김성환 대표 키노트 14:50 · 플래티넘 스폰서 · 부스. 무대 하나라 시간이 곧 순서다."},
 ]
 
-NOTES = [
+NOTES_KBW = [
     "9/29 은 업비트 공동 비공개 기관 포럼(초청제) — 이 지도에 없다. 본 컨퍼런스는 9/30 · 10/1.",
-    "지난 사이드: 9/28 「Agentic Payments Onchain」(리플 · t54 · Tenity · Bloom, KBW 공식 사이드) — t54 가 KBW 주간에 서울에 있다. 10/3 챈들러 팡 동선에 참고.",
     "두 행사에 다 나오는 사람은 KBW 에서 먼저 볼 수 있다 — 한눈에 「두 행사에 다 나오는 사람」.",
-    "소속 칸: 「추정」 = 알려진 정보라 재확인 전. 빈 칸은 붙여 넣은 아젠다에 소속이 없어서다 — KBW 연사 페이지에서 확인.",
-    "중요도 = 제안 순위 — 우리에게 제일 중요한 세 분야 순서로 먼저: DePIN 4 → AI 에이전트 4 → 결제 2(번호 1~10), 그 밖 새 관계 6(11~16), "
-    "리플 7은 따로 묶고, 기존 연결 6 · 우리 · 선은 뒤. 그다음 AI 에이전트 · 결제 세션의 다른 연사(판정 전 — 소속 확인 필요)를 분야별로 묶었다.",
+]
+NOTES = [
+    "t54 는 KBW 주간(9/28 공식 사이드 「Agentic Payments Onchain」)부터 서울에 있다 — 10/3 챈들러 팡 동선에 참고.",
+    "소속 칸: 「추정」 = 알려진 정보라 재확인 전. 9/29 밤 추가 조사로 채운 칸은 인물 패널에 출처가 있다.",
+    "__RANK_NOTE__",
     "관련자 표는 전체 연사가 기본 — 「대상 · 관련자만」을 누르면 표시된 사람만 남는다.",
     "★ = 즐겨찾기 — 이름 옆 ☆ 을 누르면 「★ 즐겨찾기」 탭에 모인다. 이 기기에만 저장되고, 「목록 링크 복사」로 다른 기기 · 대표님께 넘긴다.",
     "판정은 제안이다 — 「내 표시」로 바꾸면 이 기기에만 저장되고, 「내보내기」로 복사해 보내 주면 원본에 반영한다.",
@@ -593,8 +597,8 @@ NOTES = [
     "메모할 시간은 없고, 발표 · 제안 · 협력을 그 자리에서 만들지 않는다) · 「후속」 = 행사 뒤 메일 · 미팅에서 여는 일. 리플 · 기존 연결 묶음은 할 일 칸 없이 근거만.",
 ]
 FOOT = [
-    "출처 — KBW2026 공식 아젠다(9/29 붙여 넣은 전문) · XRP SEOUL 2026 주최 프로그램 이미지 + 9/29 공개 자료 검색 요약"
-    "(reports/XRP SEOUL 2026 연사 프로필.md) · 판정 = 우리 내부 기록.",
+    "출처 — __SRC__XRP SEOUL 2026 주최 프로그램 이미지 + 9/29 공개 자료 검색 요약"
+    "(reports/XRP SEOUL 2026 연사 프로필.md · 9/29 밤 추가 조사) · 판정 = 우리 내부 기록.",
     "설명은 검색 요약 기준이다 — 대외 인용 전 원출처를 연다. 이 페이지와 링크는 밖으로 돌리지 않는다.",
 ]
 
@@ -819,15 +823,37 @@ def data():
         if m:
             blocks.append({"id": block_of(m.group(1)), "start": m.group(1), "end": m.group(2),
                            "title": m.group(3).replace("!!", "")})
+    sessions = kbw + xs
+    days = DAYS
+    if set(SHOW_EVENTS) != {"KBW", "XRP SEOUL"}:
+        sessions = [s_ for s_ in sessions if DAY_EVENT[s_["day"]] in SHOW_EVENTS]
+        days = [d_ for d_ in DAYS if DAY_EVENT[d_["id"]] in SHOW_EVENTS]
+        people = {k: p for k, p in people.items() if set(p["ev"]) & set(SHOW_EVENTS)}
+        for p in people.values():
+            p["ev"] = [e for e in p["ev"] if e in SHOW_EVENTS]
+        both = [k for k in both if k in people and len(people[k]["ev"]) > 1]
+        blocks = [b_ for b_ in blocks] if "XRP SEOUL" in SHOW_EVENTS else []
+    # 번호 — 보이는 새 관계만 1부터 다시(분야 순서 → 원래 순위)
+    vis = sorted((k for k, p in people.items() if p.get("tier") in NEW_TIERS), key=lambda k: (NEW_TIERS.index(people[k]["tier"]), people[k]["rank"]))
+    for i, k in enumerate(vis, 1):
+        people[k]["rank"] = i
+    cnt = {t: sum(1 for p in people.values() if p.get("tier") == t) for t in ("depin", "agent", "pay", "ref", "ripple", "known", "line", "depin_s", "agent_s", "pay_s")}
+    lanes = " → ".join(f"{lb} {cnt[t]}" for t, lb in (("depin", "DePIN"), ("agent", "AI 에이전트"), ("pay", "결제")) if cnt[t])
+    rank_note = (f"중요도 = 제안 순위 — 우리에게 제일 중요한 세 분야 순서로 먼저: {lanes}, 그 밖 새 관계 {cnt['ref']}(번호 1~{len(vis)}). "
+                 f"리플 {cnt['ripple']}은 따로 묶고, 기존 연결 {cnt['known']} · 우리 · 선 {cnt['line']}은 뒤. "
+                 "그다음 분야 세션의 다른 연사(9/29 조사, 표시 전)를 분야별로 관련도 높은 순으로 묶었다.")
+    notes = (NOTES_KBW if "KBW" in SHOW_EVENTS else []) + [rank_note if n == "__RANK_NOTE__" else n for n in NOTES]
+    foot = [f.replace("__SRC__", "KBW2026 공식 아젠다(9/29 붙여 넣은 전문) · " if "KBW" in SHOW_EVENTS else "") for f in FOOT]
     return {
         "updated": "2026-09-29",
-        "days": DAYS,
+        "events": list(SHOW_EVENTS),
+        "days": days,
         "blocks": blocks,
-        "sessions": kbw + xs,
+        "sessions": sessions,
         "people": people,
         "both": sorted(both),
-        "notes": NOTES,
-        "foot": FOOT,
+        "notes": notes,
+        "foot": foot,
     }
 
 
@@ -888,9 +914,15 @@ def main():
     n_p = len(d["people"])
     marked = {m: sum(1 for p in d["people"].values() if p["mark"] == m) for m in ("fit", "strat", "ripple", "line", "ours")}
     tiers = {t: sum(1 for p in d["people"].values() if p.get("tier") == t) for t in ("depin", "agent", "pay", "ref", "ripple", "known", "ours", "line", "depin_s", "agent_s", "pay_s")}
-    print(f"sessions {n_s} · people {n_p} · marks {marked} · tiers {tiers} · both {d['both']}")
+    print(f"events {d['events']} · sessions {n_s} · people {n_p} · marks {marked} · tiers {tiers} · both {d['both']}")
     args = sys.argv[1:]
     tpl = (HERE / "page.html").read_text(encoding="utf-8")
+    if tuple(SHOW_EVENTS) == ("XRP SEOUL",):
+        for old, new, n in (("<title>KBW · XRP SEOUL 연사 지도</title>", "<title>XRP SEOUL 2026 연사 지도</title>", 1),
+                            ("<h1>KBW · XRP SEOUL 연사 지도</h1>", "<h1>XRP SEOUL 2026 연사 지도</h1>", 2),
+                            ("9/30 · 10/1 KBW2026 → 10/3 XRP SEOUL 2026. 누구를", "10/3 XRP SEOUL 2026 · 그랜드 하얏트 서울. 누구를", 1)):
+            assert tpl.count(old) == n, ("머리글 치환 불일치", old)
+            tpl = tpl.replace(old, new)
     if args[:1] == ["--plain"] or not os.environ.get("EVENT_PASS"):
         public_gate(payload + tpl)
         prof_gate(d["people"])

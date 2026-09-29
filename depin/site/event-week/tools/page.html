@@ -547,6 +547,9 @@ const TABS = [
   { k: "people", label: "사람 찾기", short: "사람" },
 ];
 
+// 보이는 행사(빌드 스위치 SHOW_EVENTS) — 한 행사만이면 날짜 탭 · 행사 거르기 · 「행사별」 타일을 그 행사에 맞춘다
+const tabsOn = () => TABS.filter((t) => !/^d\d{4}$/.test(t.k) || D.days.some((d) => d.id === t.k));
+const multiEv = () => (D.events || ["KBW", "XRP SEOUL"]).length > 1;
 function initState() {
   const u = new URLSearchParams(location.search);
   const pref = store.get("evw.prefs3", {});  // 9/29 기본값(전체 연사 · 리플 칩)을 바꾸며 키를 새로 — 예전 저장값이 새 기본값을 덮지 않게
@@ -568,7 +571,8 @@ function initState() {
   // 즐겨찾기 링크(?fav=이름,이름)로 열면 이 기기 목록에 더한다
   const fq = u.get("fav");
   if (fq) { for (const id of fq.split(",")) if (D.people[id]) S.fav.add(id); store.set("evw.fav", [...S.fav]); }
-  if (!TABS.some((t) => t.k === S.tab)) S.tab = "table";
+  if (!tabsOn().some((t) => t.k === S.tab)) S.tab = "table";
+  if (!multiEv()) S.ev = "all";
 }
 function saveState() {
   const p = { tab: S.tab, sort: S.sort, ev: S.ev, all: S.all ? "1" : "0", only: S.only ? "1" : "0", color: S.color ? "1" : "0", why: S.why ? "1" : "0", desc: S.desc ? "1" : "0", cats: [...S.cats].join(",") };
@@ -777,15 +781,17 @@ function tableView() {
     <div class="stat panel k-rip"><span class="lbl">리플</span><span class="v">${g("ripple")}</span><span class="s">RLUSD · XRPL — 한 번은 인사</span></div>
     <div class="stat panel k-known"><span class="lbl">기존 연결</span><span class="v">${g("known")}</span><span class="s">이미 알거나 접촉한 사람 — 뒤로</span></div>
     <div class="stat panel k-line"><span class="lbl">선 · 조심</span><span class="v">${g("line")}</span><span class="s">공개 직함까지 · 인사만</span></div>
-    <div class="stat panel k-ev"><span class="lbl">행사별</span><span class="v num">${nKbw}<small style="font-size:14px;color:var(--muted);font-weight:600"> KBW</small> · ${nX}<small style="font-size:14px;color:var(--muted);font-weight:600"> XRP</small></span><span class="s">두 행사 ${nBoth}</span></div>
+    ${multiEv() ? `<div class="stat panel k-ev"><span class="lbl">행사별</span><span class="v num">${nKbw}<small style="font-size:14px;color:var(--muted);font-weight:600"> KBW</small> · ${nX}<small style="font-size:14px;color:var(--muted);font-weight:600"> XRP</small></span><span class="s">두 행사 ${nBoth}</span></div>`
+      : `<div class="stat panel k-ev"><span class="lbl">XRP SEOUL 연사</span><span class="v num">${nX}</span><span class="s">10/3 그랜드 하얏트 서울</span></div>`}
   </div>`;
   const segs = (lbl, key, opts) => `<div class="seg" role="group" aria-label="${lbl}"><span class="lbl">${lbl}</span><span class="opts2">${opts.map(([v, t]) => `<button data-${key}="${v}" aria-pressed="${key === "all" ? (S.all ? "1" : "0") === v : S[key] === v}">${t}</button>`).join("")}</span></div>`;
   const sel = (lbl, key, opts, cur) => `<label><span class="lbl">${lbl}</span><select data-sel="${key}">${opts.map(([v, t]) => `<option value="${v}"${v === cur ? " selected" : ""}>${t}</option>`).join("")}</select></label>`;
   const O_SORT = [["imp", "중요도"], ["time", "시간"], ["event", "행사"], ["name", "이름"]];
   const O_EV = [["all", "전체"], ["KBW", "KBW"], ["XRP SEOUL", "XRP SEOUL"]];
   const O_ALL = [["1", "전체 연사"], ["0", "관련자만"]];
-  html += `<div class="ctl">${segs("정렬", "sort", O_SORT)}${segs("행사", "ev", O_EV)}${segs("대상", "all", O_ALL)}<button class="btn noprint" id="printBtn">인쇄 · PDF</button></div>`;
-  html += `<div class="ctl-m">${sel("정렬", "sort", O_SORT, S.sort)}${sel("행사", "ev", O_EV, S.ev)}${sel("대상", "all", O_ALL, S.all ? "1" : "0")}</div>`;
+  const O_SORT2 = multiEv() ? O_SORT : O_SORT.filter(([v]) => v !== "event");
+  html += `<div class="ctl">${segs("정렬", "sort", O_SORT2)}${multiEv() ? segs("행사", "ev", O_EV) : ""}${segs("대상", "all", O_ALL)}<button class="btn noprint" id="printBtn">인쇄 · PDF</button></div>`;
+  html += `<div class="ctl-m">${sel("정렬", "sort", O_SORT2, S.sort)}${multiEv() ? sel("행사", "ev", O_EV, S.ev) : ""}${sel("대상", "all", O_ALL, S.all ? "1" : "0")}</div>`;
   if (!ids.length) return html + `<p class="empty">조건에 맞는 사람이 없습니다 — 색 칩이나 검색어를 풀어 보세요.</p>`;
   return html + tableHTML(ids, S.sort === "imp");
 }
@@ -897,7 +903,7 @@ function legend() {
 
 function tabs() {
   const n = (did) => D.sessions.filter((s) => s.day === did && s.kind !== "break" && sessMarked(s)).length;
-  $("#tabs").innerHTML = TABS.map((t) => `<button class="tab" role="tab" data-tab="${t.k}" aria-selected="${S.tab === t.k}">${t.short ? `<span class="lg">${t.label}</span><span class="sm">${t.short}</span>` : t.label}${t.k.startsWith("d") ? `<small>${n(t.k)}</small>` : t.k === "fav" ? `<small>${S.fav.size}</small>` : ""}</button>`).join("");
+  $("#tabs").innerHTML = tabsOn().map((t) => `<button class="tab" role="tab" data-tab="${t.k}" aria-selected="${S.tab === t.k}">${t.short ? `<span class="lg">${t.label}</span><span class="sm">${t.short}</span>` : t.label}${t.k.startsWith("d") ? `<small>${n(t.k)}</small>` : t.k === "fav" ? `<small>${S.fav.size}</small>` : ""}</button>`).join("");
 }
 
 function render() {
