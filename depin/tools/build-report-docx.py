@@ -411,7 +411,8 @@ def setup(doc, title):
     if lang is None:
         lang = OxmlElement("w:lang")
         d.append(lang)
-    lang.set(qn("w:val"), "ko-KR")
+    # 로마자는 en-US — ko-KR 로 두면 LibreOffice 등이 표 칸에서 영문 단어를 글자 단위로 끊는다(Village Islan|d)
+    lang.set(qn("w:val"), "en-US")
     lang.set(qn("w:eastAsia"), "ko-KR")
     normal = doc.styles["Normal"]
     normal.font.size = Pt(S_BODY)
