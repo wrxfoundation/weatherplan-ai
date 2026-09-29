@@ -703,6 +703,11 @@ def parse_xrps(people):
     return out
 
 
+# 9/29 밤 추가 조사 — 판정 전 분야 연사 · 추정 소속 · DePIN 훑기. 사람마다 key · title_ko · org_line · person_line · lane · relevance(0~3) ·
+# confidence · sources. confidence 가 high · medium 인 것만 소속 · 회사 · 인물 칸에 싣는다(low 는 싣지 않는다).
+RESEARCH = HERE / "research-0929b.json"
+RES = {r["key"]: r for r in json.loads(RESEARCH.read_text(encoding="utf-8"))} if RESEARCH.exists() else {}
+RES_BAD_SRC = re.compile(r"linkedin|crunchbase|rocketreach|zoominfo|contactout|apollo\.io|theorg\.com|signalhire|x\.com/|twitter\.com|facebook|instagram", re.I)
 PROF = {}
 if PROFILES.exists():
     for _pr in json.loads(PROFILES.read_text(encoding="utf-8")):
@@ -768,16 +773,36 @@ def data():
     assert not unranked, ("표시됐는데 순위 없음", unranked)
     for k in NOT_TARGET:
         assert k in people and not people[k]["mark"] and not people[k]["tier"] and "prof" not in people[k] and k not in ACT, ("관련자에서 뺀 사람", k)
+    for k, r in RES.items():
+        assert k in people, ("조사 이름 불일치", k)
+        pp = people[k]
+        if r.get("confidence") not in ("high", "medium") or not r.get("title_ko") or "확인 못 함" in r["title_ko"]:
+            continue
+        if not pp.get("xorg"):
+            pp["org"], pp["src"] = r["title_ko"], "s"
+        if "co" not in pp:
+            pp["co"] = [r["org_line"]] if r.get("org_line") and "확인 못 함" not in r["org_line"] else []
+            pp["pe"] = [r["person_line"]] if r.get("person_line") and "확인 못 함" not in r["person_line"] else []
+        pp["refs"] = [x for x in r.get("sources", []) if isinstance(x, dict) and str(x.get("u", "")).startswith("http") and not RES_BAD_SRC.search(x["u"])][:4]
+        pp["prel"] = int(r.get("relevance", 0))
+        if not pp["mark"] and r.get("relevance_reason") and "확인 못 함" not in r["relevance_reason"]:
+            pp["pwhy"] = r["relevance_reason"]
     pool = {}
+    for k, r in RES.items():  # 조사로 찾은 DePIN 연사 — 세션 제목에 DePIN 이 없어도 분야 묶음으로
+        pp = people[k]
+        if r.get("lane") == "depin" and int(r.get("relevance", 0)) >= 2 and r.get("confidence") in ("high", "medium") \
+                and not pp["mark"] and not pp["tier"] and k not in NOT_TARGET:
+            pool[k] = "depin_s"
     for s_ in kbw + xs:
         for tier_, prefixes in POOL_SESS.items():
             if any(s_["title"].startswith(x) for x in prefixes):
                 for x in s_["sp"]:
                     pp = people[x["p"]]
-                    if not pp["mark"] and not pp["tier"] and x["p"] not in NOT_TARGET and pool.get(x["p"]) != "agent_s":
+                    if not pp["mark"] and not pp["tier"] and x["p"] not in NOT_TARGET and pool.get(x["p"]) not in ("depin_s", "agent_s"):
                         pool[x["p"]] = tier_
     for k, t_ in pool.items():
         people[k]["tier"] = t_
+        people[k]["rank"] = 200 + (3 - people[k].get("prel", 0)) * 10  # 분야 묶음 안에서 관련도 높은 사람이 위(번호는 쓰지 않는다)
     for prefixes in POOL_SESS.values():
         for x in prefixes:
             assert any(s_["title"].startswith(x) for s_ in kbw + xs), ("분야 세션 이름 불일치", x)
@@ -844,6 +869,10 @@ def prof_gate(people):
             continue
         body = json.dumps({x: v for x, v in pr.items() if x != "sources"}, ensure_ascii=False)
         hits += [f"{k}: {m.group(0)}" for m in re.finditer(PROF_GENDER, body)]
+    for k in RES:  # 추가 조사 칸(소속 · 회사 · 인물)도 같은 규칙
+        p = people[k]
+        body = json.dumps([p.get("org", ""), p.get("co", []), p.get("pe", [])], ensure_ascii=False)
+        hits += [f"{k}: {m.group(0)}" for m in re.finditer(PROF_GENDER + r"|그녀|그는 |그의 ", body)]
     if hits:
         sys.exit("인물 상세에 성별 표현: " + ", ".join(hits))
 
@@ -858,7 +887,7 @@ def main():
     n_s = sum(1 for s in d["sessions"] if s["kind"] != "break")
     n_p = len(d["people"])
     marked = {m: sum(1 for p in d["people"].values() if p["mark"] == m) for m in ("fit", "strat", "ripple", "line", "ours")}
-    tiers = {t: sum(1 for p in d["people"].values() if p.get("tier") == t) for t in ("depin", "agent", "pay", "ref", "ripple", "known", "ours", "line", "agent_s", "pay_s")}
+    tiers = {t: sum(1 for p in d["people"].values() if p.get("tier") == t) for t in ("depin", "agent", "pay", "ref", "ripple", "known", "ours", "line", "depin_s", "agent_s", "pay_s")}
     print(f"sessions {n_s} · people {n_p} · marks {marked} · tiers {tiers} · both {d['both']}")
     args = sys.argv[1:]
     tpl = (HERE / "page.html").read_text(encoding="utf-8")
