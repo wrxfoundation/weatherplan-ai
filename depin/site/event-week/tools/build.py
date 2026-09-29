@@ -265,6 +265,13 @@ PMARK = {
                                   "기관 투자자가 읽는 리서치 · 방송 창구"),
     "Frank Chaparro": ("strat", "GSR(마켓메이커) 전략커뮤니케이션 · 팟캐스트 The Crypto Tape — KBW 모더레이터 3세션. "
                                 "시장 쪽 인터뷰 · 콘텐츠 창구"),
+    # 9/29 밤 조사로 분야에 올림(KBW — 지금은 공개 판에서 숨김)
+    "Albert Castellana Lluís": ("fit", "GenLayer = 여러 AI 모델이 합의로 AI 에이전트 사이 분쟁을 가르는 체인 — 에이전트가 산 데이터의 "
+                                       "품질 다툼을 누가 가르나에 대한 답. KBW 10/1 14:50"),
+    "Tianwei Liu": ("fit", "StraitsX = 싱가포르 달러 스테이블코인 XSGD 발행사 — 2025.5 XRPL 에 XSGD 출시(RLUSD 와 같은 원장). "
+                           "동남아 구매자 결제 경로 후보. KBW 10/1 15:00"),
+    "Jan-Oliver Sell": ("fit", "Qivalis = 유럽 은행 컨소시엄의 유로 스테이블코인 — 유로 ↔ 원화 스테이블코인 교환 정산 시범(Project Pangea). "
+                               "유럽 판매 대금을 원화로 바꾸는 길 후보(초기 단계). KBW 10/1 15:00"),
     "Kyoungsuk Oh": ("line", "거래소 · 메인 스폰서(업비트) — 인사만, 우리가 먼저 열지 않는다"),
     "SeonJoo Yoon": ("line", "거래소 · 메인 스폰서(업비트) — 인사만, 우리가 먼저 열지 않는다"),
     "Arjun Sethi": ("line", "거래소(Kraken) — 인사만, 사업 메시지는 먼저 열지 않는다"),
@@ -285,7 +292,8 @@ PNOTE = {
 }
 
 # XRP SEOUL — md 「우리와 결」 을 결 · 전략으로 나눈다 + 리플(따로 묶음) + 선
-XS_FIT = {"Hugo Philion", "Connor Sullivan", "Chandler Fang", "Nathaniel T. Bradley", "Johnny Youn"}
+XS_FIT = {"Hugo Philion", "Connor Sullivan", "Chandler Fang", "Nathaniel T. Bradley", "Johnny Youn",
+          "John Lilic", "Jaehyuk Choi"}  # 9/29 밤 조사로 결제 분야에 올림
 XS_STRAT = {"Crypto Eri", "Changhoon Moon", "Lacey Wisdom", "Asheesh Birla"}  # 아시시 = 이전 XRP 컨퍼런스 인연(9/29)
 # 관련자에서 뺀다 — 우리 쪽 · 주최 측이라 만날 대상이 아니다(9/29 밤 서우 「제이크 구랑 XRP 카탈라이즈 인원은 빼」).
 # 프로그램 연사로는 남는다(세션 카드 · 전체 연사의 「표시 없음」 맨 끝). 표시 · 순위 · 할 일 · 인물 상세 · 「두 행사」 표시 어디에도 다시 넣지 않는다.
@@ -328,6 +336,10 @@ XS_WHY = {
                     "10/3 12:05 · 13:30 → 14:50 우리 키노트",
     "Crypto Eri": "기존 연결 — 일본 XRP 커뮤니티 영상 채널(crypto Eri) · Onami Press. 10/3 12:05 패널 좌장 — 영상 · X 확산 창구",
     "Asheesh Birla": "기존 연결 — 이전 XRP 컨퍼런스 인연. 에버노스(XRP 트레저리) — 9/30 SPAC 합병 표결 사흘 뒤 무대",
+    "John Lilic": "Tria = 자기수탁형 네오파이낸스 앱(카드 결제 · 거래 · 예치), 사람 · AI 에이전트용 결제를 내세운다 — 크립토 보유자가 "
+                  "카드로 쓰는 결제 경로. ConsenSys 초기 멤버 · Polygon 출신. 10/3 16:10 · 18:10 두 세션",
+    "Jaehyuk Choi": "케이뱅크 디지털자산TF장 — 2026.4 리플 디지털 월렛 기반 해외송금 기술검증(PoC) 보도. 국내 은행 쪽 스테이블코인 · "
+                    "송금 흐름을 여는 실무자. 10/3 13:45",
     "Changhoon Moon": "기존 연결 — 9/5 Flare 워크숍 같은 무대. XRP 유튜브 · 저서(『리플 빅뱅』)로 국내 XRP 장기 보유자 청중에 닿는 창구",
 }
 XS_CO_DROP = [r"\s*·\s*코스닥 상장"]  # 케이웨더 대외 표현은 「30년 · 4,000+」까지 — 상장 여부는 공개 판에 싣지 않는다
@@ -371,10 +383,15 @@ TIERS = [
                ("Guy Wuollet", "DePIN 투자 테제 · 가정 에너지 DePIN"),
                ("Lasse Clausen", "온체인 매출로 DePIN 을 재는 VC")]),
     ("agent", [("Chandler Fang", "XRPL x402 촉진자 · 이번 주 서울"),
+               ("Albert Castellana Lluís", "에이전트 분쟁 판정 체인(조사 관련도 3)"),
                ("Akshat Vaidya", "「AI 에이전트가 가장 과소평가된 기회」"),
                ("Tom Schmidt", "「AI 에이전트 결제 레일」 테제"),
                ("Andrea Muttoni", "AI 학습 데이터 라이선스")]),
     ("pay", [("Caroline D. Pham", "해외 구매 온램프(MoonPay)"),
+             ("John Lilic", "크립토 네오뱅크 · 카드 · 10/3 두 세션"),
+             ("Tianwei Liu", "XRPL 위 XSGD · 동남아 결제(조사 관련도 3)"),
+             ("Jaehyuk Choi", "케이뱅크 디지털자산TF · 해외송금 PoC · 10/3"),
+             ("Jan-Oliver Sell", "유로 스테이블코인 · 유로 → 원화 정산(조사 관련도 3)"),
              ("SungGuan Yun", "한국은행 디지털화폐 — 원화 결제 방향")]),
     ("ref", [("Charles Jansen", "지수 · 평가 기관 · KBW 10/1"),
              ("Ambre Soubiran", "시장 데이터 회사"),
@@ -460,11 +477,21 @@ ACT = {
                       "메일 — 「에이전트가 가장 과소평가된 기회」 테제에 맞춰 x402 데이터 구매 사례 소개"),
     "Tom Schmidt": (f"KBW 10/1 14:00 패널 뒤 {MEET}",
                     "메일 — 에이전트가 x402 로 측정 데이터를 건당 사는 실사용 사례(XRPL 메인넷)를 소개 한 장으로"),
+    "Albert Castellana Lluís": (f"KBW 10/1 14:50 패널 뒤 {MEET}",
+                                "메일 — 에이전트가 산 측정 데이터의 품질 다툼을 GenLayer 로 가르는 구조를 묻는 미팅 요청"),
     "Andrea Muttoni": (f"KBW 9/30 14:10 패널 뒤 {MEET}",
                        "메일 — 실내 공기질 시계열 데이터셋(정본 「데이터셋 협의」)을 AI 학습 데이터로 라이선스하는 조건 문의 → 미팅"),
     # 결제
     "Caroline D. Pham": (f"KBW 9/30 14:50 패널 뒤 {MEET}",
                          "메일 — 해외 구매자 결제 경로(카드 → 크립토 온램프)에 MoonPay 를 붙이는 조건 · 절차 문의 → 담당 팀 연결"),
+    "John Lilic": (f"10/3 16:10 · 18:10 세션 뒤 {MEET}",
+                   "메일 — 해외 구매자가 Tria 카드 · 지갑으로 RLUSD 결제에 들어오는 경로(XRPL 지원 여부부터) 문의 → 미팅"),
+    "Tianwei Liu": (f"KBW 10/1 15:00 패널 뒤 {MEET}",
+                    "메일 — 동남아 구매자가 XRPL 위 XSGD 로 결제하는 경로 문의 → 미팅"),
+    "Jaehyuk Choi": ("10/3 13:45 세션 뒤 인사 · 명함",
+                     "메일 — 해외 구매자 대금의 국내 수취 · 원화 정산 경로(스테이블코인 · 블록체인 송금)를 묻는 미팅 요청"),
+    "Jan-Oliver Sell": (f"KBW 10/1 15:00 패널 뒤 {MEET}(StraitsX 창업자와 같은 패널)",
+                        "메일 — 유로 매출을 원화로 정산하는 Pangea 경로의 참여 조건 문의"),
     "SungGuan Yun": ("KBW 9/30 12:00 세션을 듣고 인사 · 명함까지",
                      "따로 연락하지 않는다 — 발언(예금토큰 · 스테이블코인 역할 분담)은 내부 메모로"),
     # 그 밖 새 관계
@@ -585,7 +612,7 @@ NOTES_KBW = [
     "두 행사에 다 나오는 사람은 KBW 에서 먼저 볼 수 있다 — 한눈에 「두 행사에 다 나오는 사람」.",
 ]
 NOTES = [
-    "t54 는 KBW 주간(9/28 공식 사이드 「Agentic Payments Onchain」)부터 서울에 있다 — 10/3 챈들러 팡 동선에 참고.",
+    "t54 는 9/28(공식 사이드 「Agentic Payments Onchain」)부터 서울에 있다 — 10/3 챈들러 팡 동선에 참고.",
     "소속 칸: 「추정」 = 알려진 정보라 재확인 전. 9/29 밤 추가 조사로 채운 칸은 인물 패널에 출처가 있다.",
     "__RANK_NOTE__",
     "관련자 표는 전체 연사가 기본 — 「대상 · 관련자만」을 누르면 표시된 사람만 남는다.",
@@ -713,6 +740,14 @@ def parse_xrps(people):
 RESEARCH = HERE / "research-0929b.json"
 RES = {r["key"]: r for r in json.loads(RESEARCH.read_text(encoding="utf-8"))} if RESEARCH.exists() else {}
 RES_BAD_SRC = re.compile(r"linkedin|crunchbase|rocketreach|zoominfo|contactout|apollo\.io|theorg\.com|signalhire|x\.com/|twitter\.com|facebook|instagram", re.I)
+def ref_title(x):
+    """출처 제목(기사 제목)이 공개 판 규칙에 걸리면 제목 대신 사이트 이름만 — 링크는 그대로(예: 「리플과 파트너십」 · 「KOSDAQ-Listed」)."""
+    t = str(x.get("t") or "")
+    if not t or any(re.search(rx, t) for rx in PUBLIC_BAN) or re.search(r"(?i)kosdaq|상장", t):
+        return re.sub(r"^https?://(?:www\.)?([^/]+).*$", r"\1", str(x["u"]))
+    return t
+
+
 PROF = {}
 if PROFILES.exists():
     for _pr in json.loads(PROFILES.read_text(encoding="utf-8")):
@@ -781,6 +816,11 @@ def data():
     for k, r in RES.items():
         assert k in people, ("조사 이름 불일치", k)
         pp = people[k]
+        pp["refs"] = [{"t": ref_title(x), "u": x["u"]} for x in r.get("sources", [])
+                      if isinstance(x, dict) and str(x.get("u", "")).startswith("http") and not RES_BAD_SRC.search(x["u"])][:4]
+        pp["prel"] = int(r.get("relevance", 0))
+        if not pp["mark"] and r.get("relevance_reason") and "확인 못 함" not in r["relevance_reason"][:6]:
+            pp["pwhy"] = r["relevance_reason"]
         if r.get("confidence") not in ("high", "medium") or not r.get("title_ko") or "확인 못 함" in r["title_ko"]:
             continue
         if not pp.get("xorg"):
@@ -788,10 +828,6 @@ def data():
         if "co" not in pp:
             pp["co"] = [r["org_line"]] if r.get("org_line") and "확인 못 함" not in r["org_line"] else []
             pp["pe"] = [r["person_line"]] if r.get("person_line") and "확인 못 함" not in r["person_line"] else []
-        pp["refs"] = [x for x in r.get("sources", []) if isinstance(x, dict) and str(x.get("u", "")).startswith("http") and not RES_BAD_SRC.search(x["u"])][:4]
-        pp["prel"] = int(r.get("relevance", 0))
-        if not pp["mark"] and r.get("relevance_reason") and "확인 못 함" not in r["relevance_reason"]:
-            pp["pwhy"] = r["relevance_reason"]
     pool = {}
     for k, r in RES.items():  # 조사로 찾은 DePIN 연사 — 세션 제목에 DePIN 이 없어도 분야 묶음으로
         pp = people[k]
@@ -832,6 +868,11 @@ def data():
         people = {k: p for k, p in people.items() if set(p["ev"]) & set(SHOW_EVENTS)}
         for p in people.values():
             p["ev"] = [e for e in p["ev"] if e in SHOW_EVENTS]
+            if "KBW" not in SHOW_EVENTS:  # 숨긴 KBW 세션을 가리키는 구절도 뺀다(모니카 롱 근거 · 요한 케르브라 현장 칸 등)
+                if p.get("why"):
+                    p["why"] = re.sub(r"\s*·\s*KBW \d+/\d+ \d+:\d+ [^·]*$", "", p["why"])
+                if p.get("act"):
+                    p["act"] = [re.sub(r"^KBW \d+/\d+ \d+:\d+ · ", "", a) for a in p["act"]]
         both = [k for k in both if k in people and len(people[k]["ev"]) > 1]
         blocks = [b_ for b_ in blocks] if "XRP SEOUL" in SHOW_EVENTS else []
     # 번호 — 보이는 새 관계만 1부터 다시(분야 순서 → 원래 순위)
@@ -896,7 +937,9 @@ def prof_gate(people):
             continue
         body = json.dumps({x: v for x, v in pr.items() if x != "sources"}, ensure_ascii=False)
         hits += [f"{k}: {m.group(0)}" for m in re.finditer(PROF_GENDER, body)]
-    for k in RES:  # 추가 조사 칸(소속 · 회사 · 인물)도 같은 규칙
+    for k in RES:  # 추가 조사 칸(소속 · 회사 · 인물)도 같은 규칙 — 공개 판에 실린 사람만
+        if k not in people:
+            continue
         p = people[k]
         body = json.dumps([p.get("org", ""), p.get("co", []), p.get("pe", [])], ensure_ascii=False)
         hits += [f"{k}: {m.group(0)}" for m in re.finditer(PROF_GENDER + r"|그녀|그는 |그의 ", body)]
@@ -904,7 +947,8 @@ def prof_gate(people):
         sys.exit("인물 상세에 성별 표현: " + ", ".join(hits))
 
 
-HANJA = str.maketrans({"前": "전", "美": "미", "韓": "한", "人": "인", "中": "중", "日": "일", "北": "북", "英": "영", "新": "신", "大": "대"})
+HANJA = str.maketrans({"前": "전", "美": "미", "韓": "한", "人": "인", "中": "중", "日": "일", "北": "북", "英": "영", "新": "신", "大": "대",
+                       "銀": "은", "株": "주", "與": "여", "野": "야", "對": "대", "靑": "청", "協": "협"})  # 기사 제목 약자(우리銀 등)
 
 
 def main():

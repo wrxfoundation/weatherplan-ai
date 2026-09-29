@@ -32,10 +32,10 @@
 | 연사 · 소속 | 세션 | 회사 | 인물 | 우리와 결 · 근거 |
 |---|---|---|---|---|
 | 지니 리 Jinnie Lee · 리플 영업 이사 | 13:45 해외송금부터 예금토큰까지 | 2026년 3월 싱가포르 MAS 샌드박스 참여 — RLUSD 무역금융 결제 시범 | 리플 아시아태평양 세일즈 디렉터. 파이어블록스 세일즈 디렉터 · 클레이튼 재단 · ANZ 출신(ANZ 는 인물 DB 기준) |  |
-| 최재혁 Jaehyuk Choi · 케이뱅크 TF 리드 | 13:45 해외송금부터 예금토큰까지 | 2026.4 리플과 전략적 파트너십 체결, 블록체인 기반 해외송금 기술검증(PoC) | 삼성SDS 개발자 출신·2017년 합류, 디지털자산TF장으로 스테이블코인 사업 총괄 |  |
+| 최재혁 Jaehyuk Choi · 케이뱅크 TF 리드 | 13:45 해외송금부터 예금토큰까지 | 2026.4 리플과 전략적 파트너십 — 리플 디지털 월렛 기반 블록체인 해외송금 기술검증(PoC) | 디지털자산TF장. 삼성SDS 개발자 출신 · 2017년 데이터 · IT 담당으로 합류 |  |
 | 신희진 Heejin Shin · 교보증권 신사업담당 이사 | 13:45 해외송금부터 예금토큰까지 | 2026.4 코스콤과 토큰증권 공동 플랫폼 협약(참여 증권사 9곳으로 확대) | 신사업 담당. 2026.4 이데일리 포럼서 'STO RWA 신사업과 유망 자산' 발표 |  |
-| 한승훈 Seunghoon Han · 우리은행 차장 | 13:45 해외송금부터 예금토큰까지 | 2025년 한은 '프로젝트 한강' 실거래 테스트서 예금토큰 발행·전자지갑 제공 | 디지털혁신부 차장. 2026.4 "빅테크와 컨소시엄 형태로 발행하는 구조를 준비 중" |  |
-| 윤만식 Mansik Yoon · 전북은행 팀장 | 13:45 해외송금부터 예금토큰까지 | 2026.8.18 리플 페이먼츠 도입 — 국내 지방은행 첫 사례, 수출입 · 스타트업 기업 고객 해외송금 | 공개 정보 확인 안 됨(행사 표기 '팀장') 「원출처 확인 필요」 |  |
+| 한승훈 Seunghoon Han · 우리은행 차장 | 13:45 해외송금부터 예금토큰까지 | 은행 · 빅테크 · 핀테크 원화 스테이블코인 컨소시엄 준비 · 지갑 라이선스 추진(2026.4 보도, 은행 50%+1주 전제) | 디지털혁신부 차장 |  |
+| 윤만식 Mansik Yoon · 전북은행 팀장 | 13:45 해외송금부터 예금토큰까지 | 2026.8.18 리플 페이먼츠 도입 — 국내 지방은행 가운데 처음, 수출입 · IT 스타트업 · 온라인 크리에이터 기업 고객 해외송금 | 공개 정보 확인 안 됨(행사 표기 '팀장') 「원출처 확인 필요」 |  |
 | 사브리나 타치지안 Sabrina Tachdjian · XRP 아시아(XRP Asia) 사장 | 14:15 특별 발표: 아시아 XRP 생태계의 다음 행보 | 리플이 2026년 2월 공개한 아태 XRPL 빌더 지원 조직 — 현지 펀딩 배분 지향 | 리플 XRPL 생태계 성장 담당(싱가포르). HBAR 재단 아태 생태계 총괄 · 핀테크·결제 펀드 총괄 경력 |  |
 | 아요 아킨옐레 Ayo Akinyele · 리플 엔지니어링 부문 시니어 디렉터 | 14:35 XRPL 대중화, 무엇을 준비해야 하나 | XRPL에 영지식증명·선택적 공개를 넣어 기관용 프라이버시·확장성 강화 추진 | RippleX 엔지니어링 시니어 디렉터. 존스홉킨스 CS 박사 암호학자·볼트랩스 출신 |  |
 | ==김성환 Sunghwan Kim · 케이웨더(웰비안랩스) 창업자 겸 대표== | ==14:50 날씨 데이터 비즈니스의 새로운 기회 ★ 우리 키노트== | ==케이웨더: 30년 기상 관측 · 기업 고객 4,000곳+ · 코스닥 상장. 웰비안은 그 위에 지은 공기질 DePIN(XRPL)+AI인프라== | ==우리 키노트 — 케이웨더 창업자 겸 대표. 날씨 데이터 경제, XRPL 새 판(정산 · 검증 데이터)을 말하는 자리== |  |
@@ -54,13 +54,13 @@
 | 박종한 Jonghan Park · 박작가의 크립토연구소 대표 | 15:50 XRP 생태계, 어떻게 키울까 | 암호화폐 시장 분석 유튜브 채널 · 구독자 약 25만(토큰포스트 인터뷰 시점) | 채널 운영 작가 · 저서 7권, 『알트코인 레볼루션』·『암호화폐 트렌드 2026』 공저 |  |
 | 문창훈 Changhoon Moon · 타임레버리지 대표 | 15:50 XRP 생태계, 어떻게 키울까 | 리플(XRP) 특화 투자 유튜브 · 카나리 캐피탈 CEO 대담, 오프라인 컨퍼런스 10회+(2026.2 제10차)<br>2026.8~9 에도 XRP 전망 · 대담 영상을 꾸준히 올린다(최근 영상 기준) | 『리플 빅뱅』 저자 · 단국대 화학공학과 졸업 후 이더리움 채굴장 운영 경험<br>1995년생 · 성균관대 핀테크 MBA 과정. 신간 『토큰 투 더 문』 출간기념회로 독자와 직접 만남 | {{기존 연결 — 파트너 클러스터(Flare · 디센트), 9/5 워크숍 강연. 국내 XRP 리테일 창구}} |
 | 김동환 Donghwan Kim · 대니월드 대표 | 15:50 XRP 생태계, 어떻게 키울까 | 비트코인·알트코인 분석 유튜브 채널 · 구독자 약 2만 안팎(2025 저자 소개) | 블록체인 전문강사 · 2020년부터 과기정통부 주관 강의, 박종한과 『알트코인 레볼루션』 공저 |  |
-| 존 릴릭 John Lilic · 트리아 최고 전략 책임자 | 16:10 Tria 가 바라보는 XRP 네오뱅크 / 18:10 스테이블코인, 일상 금융 | 자기수탁형 크립토 네오뱅크(카드결제·거래·예치). 2026.8 XRPL 네이티브 지원, XRP로 카드 충전 | Tria 공동창업자 겸 CSO. ConsenSys 초기 멤버(6년), Matic→Polygon 전환 주도에 참여 |  |
+| 존 릴릭 John Lilic · 트리아 최고 전략 책임자 | 16:10 Tria 가 바라보는 XRP 네오뱅크 / 18:10 스테이블코인, 일상 금융 | 자기수탁형 네오파이낸스 앱(카드 결제 · 거래 · 예치) — 사람 · AI 에이전트용 결제를 내세운다. XRP 로 카드 충전 연동 보도(확인 필요) | Tria 공동창업자 겸 CSO. ConsenSys 초기 멤버(6년), Matic → Polygon 전환에 참여 |  |
 
 ## 16:25–18:35 · 온체인 금융 · 토큰화 시장 · 거래소 · 금융권 · 스테이블코인
 
 | 연사 · 소속 | 세션 | 회사 | 인물 | 우리와 결 · 근거 |
 |---|---|---|---|---|
-| 루암 시라타판타 Ruam Siratanapanta · SCBX 디지털자산사업 총괄 | 16:25 온체인 금융, 인프라에서 실사용까지 | 태국 시암상업은행(SCB)의 모회사 금융지주. 리플 초기 투자, SCB EASY 앱에서 리플넷 해외송금 | SCBX 디지털자산사업 총괄. 전 Bitkub 부CEO(사업·전략), Sea·Shopee 출신(프로필 기준) |  |
+| 루암 시라타판타 Ruam Siratanapanta · SCBX 디지털자산사업 총괄 | 16:25 온체인 금융, 인프라에서 실사용까지 | 태국 시암상업은행(SCB)의 모회사 금융지주 · 카카오그룹과 해외 결제 · 송금 서비스 개발 MOU | SCBX 디지털자산사업 총괄(XRP SEOUL 3차 연사 발표 표기) |  |
 | 아니켓 진달 Aniket Jindal · 바이코노미 창업자 | 16:25 온체인 금융, 인프라에서 실사용까지 | 온체인 실행·UX 인프라. MEE로 여러 체인 작업을 서명 1회로 처리, 국내 XRP 지갑 기린 월렛과 협업(2025.1 발표) | Biconomy 공동창업자, 운영 총괄. 창업 전 Binance 초기 직원, 웹3·핀테크 엔젤 투자자 |  |
 | 아담 우지어 Adam Oozeer · 엑셀라 그로스 총괄 | 16:25 온체인 금융, 인프라에서 실사용까지 | 블록체인 간 상호운용 네트워크. 인텐트·RFQ API로 크로스체인 유동성과 실행 제공 | Axelar·Common Prefix 그로스 총괄 겸임. 체인 통합과 인텐트/RFQ API 확산 담당 |  |
 | 타로 키무라 Taro Kimura · 미드나잇 재단 일본 총괄 | 16:25 온체인 금융, 인프라에서 실사용까지 | 프라이버시·규제준수형 블록체인. 선택적 공개로 기밀 급여·재무 등 온체인 금융 지향 | 미드나잇 일본 컨트리 매니저. 전 Mycel 공동창업자(CCO), LinkedIn 글로벌 영업 디렉터 |  |
@@ -74,7 +74,7 @@
 | 사무엘 심 Samuel Shim · 메리츠증권 글로벌 디지털자산 총괄 | 17:45 금융권은 토큰화자산을 어떻게 준비하고 있나 | 2026.8 토큰증권을 중요 사업 영역으로 보고 비정형 증권부터 단계적 확대 방침 | 2026년 국채 토큰화 보고서 'Beyond the Dollar' 저자(한국 사례 분석) |  |
 | 파블로 체 레오 Pablo Che Leo · 리플 그로스 총괄 | 17:45 금융권은 토큰화자산을 어떻게 준비하고 있나 | 달러 스테이블코인 RLUSD 발행사 — 2025년 11월 시가총액 10억 달러 돌파 보도 | 공개 정보 확인 안 됨 「원출처 확인 필요」 |  |
 | 레이시 위즈덤 Lacey Wisdom · PL캐피탈(PL Capital) 제너럴 파트너 | 18:10 스테이블코인, 일상 금융 속으로 | 크립토 VC(PL Capital Crypto). DePIN·DeSci 투자 테제 공개, DePIN 16곳 투자(2024.11.25 기고 기준)<br>프로토콜 랩스(파일코인 — 초기 DePIN 네트워크) 계열 VC 패밀리 · AI · 물리 인프라 · 금융 레일에 투자. 2026.2 t54 시드 공동 주도 | PL Capital 크립토 부문 GP. 전 Eniac Ventures 투자자, JP모건 주식 애널리스트 출신<br>PL Venture Holdings 사내 초기 투자 · 앤드루 W. 멜런 재단 LP 경력 | {{DePIN 전문 투자자(16곳 투자 · 테제 공개) — 투자 · 생태계 창구}} |
-| 이한길 Leo Lee · 카카오뱅크 팀장 | 18:10 스테이블코인, 일상 금융 속으로 | 2026.9 카카오그룹, 그랩·SCBX와 원화 스테이블코인 발행·해외결제·송금 MOU | 스테이블코인 TF 리드(전문가 프로필 검색 기준). 개인 발언·이력은 확인 안 됨 |  |
+| 이한길 Leo Lee · 카카오뱅크 팀장 | 18:10 스테이블코인, 일상 금융 속으로 | 카카오그룹 MOU — 그랩과 원화 스테이블코인 발행 · 유통, SCBX 와 해외 결제 · 송금 서비스 개발(교보생명 · 보난자팩토리도 참여) | 카카오뱅크 팀장(2차 연사진 보도). 카카오 스테이블코인 공동 TF 는 3사 대표가 이끈다 — 개인 역할은 확인 안 됨 |  |
 | 피그 Fig · 스퀴드(Squid) 공동창업자 | 18:10 스테이블코인, 일상 금융 속으로 | Axelar 기반 크로스체인 스왑·결제 라우터. 주최측 소개상 XRPL 공식 브릿지 파트너 | Squid 공동창업자('Fig'로 활동, 본명 미확인). 의대에서 테크로 전향, 디자인·금융 거쳐 크립토 |  |
 
 ## 읽는 법
@@ -102,9 +102,9 @@
 - 챈들러 — [www.t54.ai](https://www.t54.ai/blog/t54-labs-raises-5m-seed-round) · [pulse2.com](https://pulse2.com/t54-labs-profile-chandler-fang-interview/) · [www.forbes.com](https://www.forbes.com/sites/boazsobrado/2026/06/22/the-entire-society-is-a-trust-business-the-startup-ripple-backed/) · [news.bitcoin.com](https://news.bitcoin.com/featured/new-phase-for-xrp-could-emerge-as-ai-agents-move-toward-real-spending/)
 - 모니카 — [ripple.com](https://ripple.com/insights/ripple-names-monica-long-as-president/) · [ripple.com](https://ripple.com/ripple-press/ripple-acquires-prime-broker-hidden-road/)
 - 지니 — [u.today](https://u.today/ripple-heads-to-seoul-koreas-banking-giants-set-for-xrp-spotlight) · [www.coindesk.com](https://www.coindesk.com/business/2026/03/25/ripple-taps-singapore-s-central-bank-sandbox-to-test-stablecoin-powered-trade-finance-with-rlusd)
-- 최재혁 — [www.newspim.com](https://www.newspim.com/news/view/20260922001138) · [view.asiae.co.kr](https://view.asiae.co.kr/article/2026042710232007775)
+- 최재혁 — [www.newspim.com](https://www.newspim.com/news/view/20260922001138) · [view.asiae.co.kr](https://view.asiae.co.kr/article/2026042710232007775) · [www.fintechtimes.co.kr](https://www.fintechtimes.co.kr/news/article.html?no=55852)
 - 신희진 — [edaily.co.kr](https://edaily.co.kr/News/Read?mediaCodeNo=257&newsId=05097126645419072) · [view.asiae.co.kr](https://view.asiae.co.kr/article/2026041410393034864)
-- 한승훈 — [www.decenter.kr](https://www.decenter.kr/article/20032939) · [m.bikorea.net](https://m.bikorea.net/news/articleView.html?idxno=42385)
+- 한승훈 — [www.decenter.kr](https://www.decenter.kr/article/20032939) · [marketin.edaily.co.kr](https://marketin.edaily.co.kr/News/ReadE?newsId=01708886645381680)
 - 윤만식 — [ripple.com](https://ripple.com/ripple-press/ripple-and-jeonbuk-bank-partner-to-modernize-cross-border-payments-for-korea-s-regional-banking-sector/) · [edaily.co.kr](https://edaily.co.kr/News/Read?mediaCodeNo=257&newsId=03644086645548632)
 - 사브리나 — [ripple.com](https://ripple.com/insights/supporting-innovation-on-the-xrp-ledger/)
 - 아요 — [ripple.com](https://ripple.com/insights/privacy-scale-and-the-future-of-blockchain-finance/) · [www.coindesk.com](https://www.coindesk.com/tech/2025/10/03/ripple-engineer-says-xrp-ledger-aims-to-be-institutions-first-choice-for-innovation-and-trust)
@@ -119,7 +119,7 @@
 - 문창훈 — [www.blockmedia.co.kr](https://www.blockmedia.co.kr/archives/970737) · [store.kyobobook.co.kr](https://store.kyobobook.co.kr/person/detail/1120023601) · [www.fntoday.co.kr](https://www.fntoday.co.kr/news/articleView.html?idxno=387554) · [bnk.kpipa.or.kr](https://bnk.kpipa.or.kr/home/v3/addition/adiPromoMetaDataView02/seq_20241217143821721004)
 - 김동환 — [www.aladin.co.kr](https://www.aladin.co.kr/shop/wproduct.aspx?ItemId=355220708) · [www.aladin.co.kr](https://www.aladin.co.kr/author/wauthor_overview.aspx?AuthorSearch=@10250422)
 - 존 — [chainwire.org](https://chainwire.org/2026/09/16/tria-deepens-korea-push-as-diamond-sponsor-of-korea-blockchain-week-2026/) · [blockchainmedia.id](https://blockchainmedia.id/xrp-ledger-dapat-integrasi-baru-xrp-kini-bisa-dipakai-top-up-kartu/)
-- 루암 — [www.prnewswire.com](https://www.prnewswire.com/news-releases/seabw-2026-closes-in-bangkok-as-southeast-asias-digital-assets-move-from-experimentation-to-institutional-adoption-302782002.html)
+- 루암 — [www.prnewswire.com](https://www.prnewswire.com/news-releases/seabw-2026-closes-in-bangkok-as-southeast-asias-digital-assets-move-from-experimentation-to-institutional-adoption-302782002.html) · [www.digitaltoday.co.kr](https://www.digitaltoday.co.kr/news/articleView.html?idxno=702635)
 - 아니켓 — [seablockchainweek.org](https://seablockchainweek.org/speakers/aniket-jindal) · [www.digitalasset.works](https://www.digitalasset.works/news/articleView.html?idxno=43114)
 - 아담 — [www.rootdata.com](https://www.rootdata.com/member/Adam%20Oozeer?k=MTc4NDE%3D) · [www.enetnews.co.kr](https://www.enetnews.co.kr/news/articleView.html?idxno=54812)
 - 타로 — [www.teamz.co.jp](https://www.teamz.co.jp/en/speaker/taro-kimura) · [www.enetnews.co.kr](https://www.enetnews.co.kr/news/articleView.html?idxno=54812)
@@ -133,6 +133,6 @@
 - 사무엘 — [www.kucoin.com](https://www.kucoin.com/news/insight/KCS/6aaa426c7d10fa0007cdd99f) · [www.hankyung.com](https://www.hankyung.com/article/2026082024536)
 - 파블로 — [www.cnbc.com](https://www.cnbc.com/2025/11/05/ripple-gets-40-billion-valuation-after-500-million-funding-round.html)
 - 레이시 — [plcapital.xyz](https://plcapital.xyz/crypto) · [www.t54.ai](https://www.t54.ai/blog/t54-labs-raises-5m-seed-round)
-- 이한길 — [www.fntimes.com](https://www.fntimes.com/html/view.php?ud=2026092315162016071b5a221379_18) · [www.startupn.kr](https://www.startupn.kr/news/articleView.html?idxno=59733)
+- 이한길 — [www.fntimes.com](https://www.fntimes.com/html/view.php?ud=2026092315162016071b5a221379_18) · [www.startupn.kr](https://www.startupn.kr/news/articleView.html?idxno=59733) · [www.techm.kr](https://www.techm.kr/news/articleView.html?idxno=155664)
 - 피그 — [epicenter.tv](https://epicenter.tv/episode/498-fig-squid-router-sub-20-second-cross-chain-swaps-axelar-powered-interoperability) · [www.dt.co.kr](https://www.dt.co.kr/article/12082578)
 - 결 근거(내부 기록) — `depin/content/eri-call-0923.md` · `depin/content/flare-workshop-0905.md` · `depin/intel/ecosystem-log.md`(8/27 워크숍 · 9/3 t54) · `depin/intel/kol-channels.md` · `depin/intel/celeb-ladder.md` · `depin/content/landing-redesign-plan.md`

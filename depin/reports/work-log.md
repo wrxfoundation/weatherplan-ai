@@ -1944,3 +1944,14 @@ Thanks Odelia — writing to you at that address today. Mine is support@wellbian
   검증 1440 · 390px 66항목 통과 · 콘솔 오류 0.
 - **연사 지도 — 기존 연결도 할 일 빼기(9/29 밤, 서우 「기존 연결도 현장 · 후속 내용 빼」)** — 휴고 · Eri · 아시시 · 문창훈 · 하인리히 · 오종욱 6명의 현장 · 후속 칸 삭제,
   리플과 같이 근거 한 줄만. 빌드 검사: 리플 · 기존 연결에 할 일이 있으면 멈추고, 나머지 표시된 사람(27명)은 두 칸이 모두 있어야 한다. 검증 66항목 통과 · 콘솔 오류 0.
+- **연사 지도 — XRP SEOUL 만 · 0G 빼기 · 추가 조사 72명 반영 · 관련도 높은 사람 분야에(9/29 밤, 서우 「나머지 조사 안 된 · 정보 부족한 사람들도 마저 조사」 →
+  「조사 끝나면 관련도 높은 사람은 분야에 올려줘 · 제로지 0g 빼 · xrp seoul 만 넣자, kbw 는 숨김 처리해서 다시 파일줘」)** — `site/event-week/`.
+  공개 판 = XRP SEOUL 만(`SHOW_EVENTS = ("XRP SEOUL",)` — KBW 아젠다 · 판정 · 조사는 build.py 에 그대로, 되돌리기 `("KBW", "XRP SEOUL")`): 10/3 세션 18 · 연사 43 ·
+  제목 「XRP SEOUL 2026 연사 지도」 · 행사 거르기 없음 · 근거 · 할 일 속 KBW 구절 자동 삭제 · 번호는 보이는 사람만 1부터. 0G Labs 둘(하인리히 · Jake Salerno)을
+  `NOT_TARGET` 으로(인물 상세 21명). 추가 조사 = 다섯 갈래 72명(`tools/research-0929b.json`, WebSearch 요약 — 기사 원문 차단, 우회 안 함): 소속 · 회사 · 인물 칸은
+  신뢰 high · medium 만, 출처 최대 4개(인물 DB · SNS 제외, 관문에 걸리는 기사 제목은 도메인만). 분야 올림 = 관련도 3 · high — Albert Castellana Lluís(GenLayer ·
+  AI 에이전트) · Tianwei Liu(StraitsX — XRPL 위 XSGD · 결제) · Jan-Oliver Sell(Qivalis · 결제), 셋 다 KBW 라 지금 숨김. 예외로 XRP 결제 묶음에 관련도 2 · high
+  존 릴릭(Tria) · 최재혁(케이뱅크 디지털자산TF — 현장은 인사 · 명함까지). XRP 판 번호 = 레이시 · 나다니엘 · 챈들러 · 존 릴릭 · 최재혁 · 조니 윤 · 코너, 관련자 24 ·
+  할 일 13명. 저장소 루트 `reports/XRP SEOUL 2026 연사 프로필.md`(+ docx) 결제 세션 6줄 재검증 정정(최재혁 PoC 표현 · 한승훈 · 윤만식 · 존 릴릭 · 루암 · 이한길).
+  남은 확인 = 파블로 체 레오 약력 · KBW x402 패널 3명 소속 · Tria XRP 카드 충전 보도 · 사실 점검 확인불가 121항목. 검증 1440 · 390px 36항목 · 콘솔 오류 0 ·
+  PDF 6쪽(KBW 0) · 숨긴 두 행사 판도 관문 통과(297명 · 번호 1~21). 전달 = zip · 관련자표 PDF · 한 파일 html · 연사 프로필 docx.
