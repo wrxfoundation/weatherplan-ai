@@ -1,14 +1,14 @@
-# Korea Rising — verified K-pop snapshot (2026-09-28)
+# Korea Rising — verified K-pop snapshot (2026-09-29)
 
 Every line is **cross-verified** (≥2 independent sources agree on the canonical name) and carries its source + Skill Score. Full data + Schema.org JSON-LD: <https://aiagentlabs.co.kr/> · via KoreaAPI (MCP).
 
 ## 🎬 Latest official releases (YouTube)
-- **BoA** — You still our No.1 BoA
-- **BOYNEXTDOOR** — 좋다 #BOYNEXTDOOR #보이넥스트도어 #BND #SUNGHO #TAESAN
-- **EVERGLOW** — Kingdom Hearts IV - Extended D23 2026 Trailer
-- **Oh My Girl** — 2026 오마이걸이 전하는 추석 인사 메시지
+- **QWER** — 기적 같이 내린 별빛 아래 품었던 꿈들💫
+- **BOYNEXTDOOR** — MOVE LIKE #KANY 🐾 #BOYNEXTDOOR #보이넥스트도어 #BND #ANIMAL #ANIMAL_Challenge
+- **ZICO** — 지코 근황이라는 게 숨긴다고 숨겨지는 것도 아니고
 - **Kiss of Life** — [추석특집📺] 키씨야 나 한번 믿어봐 ~ #KISSOFLIFE #키스오브라이프 #KIOF #JULIE #쥴리 #Shorts
-- **SUNMI** — 𝐒𝐦𝐚𝐫𝐭 𝐊𝐢𝐭𝐜𝐡𝐞𝐧. 𝐒𝐦𝐨𝐨𝐭𝐡 𝐒𝐞𝐫𝐯𝐢𝐜𝐞｜𝐒𝐔𝐍𝐌𝐈 𝐅𝐋𝐄𝐗 𝟑 𝐊𝐃𝐒
+- **VIVIZ** — [VIVI.Zip] 항저우 팬미팅 Spring Whisper 포스터 촬영💙 Highlight #2
+- **Chung Ha** — Long time not playing LA and actually got ambushed -.-
 
 ## 🎤 Verified roster (640 acts)
 - **2NE1**: I Am the Best
