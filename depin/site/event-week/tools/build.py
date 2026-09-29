@@ -648,6 +648,73 @@ FOOT = [
     "설명은 검색 요약 기준이다 — 대외 인용 전 원출처를 연다. 이 페이지와 링크는 밖으로 돌리지 않는다.",
 ]
 
+# ── KBW2026 프로그램 서브페이지(www/kbw.html) — 9/29 밤 서우 「kbw 는 다시 별도 서브페이지로. 다른 것 넣지 말고 어떤 행사인지와
+#    프로그램 위주로 연사 소개만 간략히 — 우리가 그때 누구를 만나 무엇을 한다거나 후속 미팅 같은 건 절대 없다, 그냥 참여하는 거니까」.
+#    싣는 것 = 행사 사실 · 시간순 세션 · 연사 이름 · 소속 · 직함 · 회사 한 줄. 표시 · 근거 · 할 일 · 순위 · 인물 상세 · 즐겨찾기는 없다.
+KBW_TPL = HERE / "kbw.html"
+KBW_RES = HERE / "kbw-speakers-0929.json"  # 9/29 밤 — 소속이 빈 KBW 연사 조사(네 갈래)
+KBW_DAYS = [{"id": "d0930", "label": "9/30(수)", "nth": "1일차"}, {"id": "d1001", "label": "10/1(목)", "nth": "2일차"}]
+KBW_FOOT = [
+    "출처 — KBW2026 공개 아젠다(9/29 기준, 본 컨퍼런스 이틀) · 행사 소개는 공식 사이트(koreablockchainweek.com)와 보도 요약.",
+    "소속 · 직함은 공개 자료 검색 요약(9/29)이다. 「추정」은 재확인 전, 빈 칸은 아직 찾지 못한 연사 — 인용 전 원출처를 연다.",
+]
+# 소속 · 회사 한 줄은 짧게 — 조사 문장의 메모성 괄호(보도 · 기준 · 확인 …) · 투자액 · 목표치 같은 뒷문장은 싣지 않는다.
+KBW_NOTE = r"보도|기준|확인|추정|팩트체크|회사 발표|세션|모더레이터|소개|인물 DB"
+
+
+def kbw_org(s):
+    s = re.sub(r"\s*\([^()]*(?:%s)[^()]*\)" % KBW_NOTE, "", s)                    # 메모성 괄호
+    s = re.sub(r"(?<=\S)\((?:[A-Za-z0-9][A-Za-z0-9 .,&'/+·-]*)\)", "", s)          # 영문 중복 괄호 (GP) · (Talus Labs)
+    s = re.sub(r"\s+—\s+(.*)$", lambda m: "" if re.search(KBW_NOTE, m.group(1)) else " · " + m.group(1), s)
+    return re.sub(r"\s{2,}", " ", s).strip(" ·")
+
+
+def kbw_co(s, org, limit=50):
+    if not s or s.startswith("소속 기업 없음"):
+        return ""
+    s = re.sub(r"\s*\([^()]*(?:%s)[^()]*\)" % KBW_NOTE, "", s)
+    m = re.match(r"^([^—:：]{1,30}?)\s*(?:—|:)\s+(.+)$", s)                          # 「회사 — 설명」이면 회사 이름을 뗀다
+    if m and (not re.search(r"[가-힣]", m.group(1)) or m.group(1).split("(")[0].strip() in org):
+        s = m.group(2)
+    s = re.split(r"\.\s+", s)[0].split(" — ")[0].strip().rstrip(".")
+    if len(s) > limit:
+        cut = max(s.rfind(" · ", 0, limit), s.rfind(", ", 0, limit), s.rfind("·", 0, limit))
+        s = (s[:cut] if cut >= 18 else s[:limit]).rstrip(" ·,") + "…"
+    bare = re.sub(r"\s", "", s).rstrip("…")
+    return "" if bare and bare in re.sub(r"\s", "", org) else s
+
+
+# 자동으로 줄이면 어색해지는 회사 한 줄 — 위 조사 문장에서 줄인 말(새 사실 0)
+KBW_CO_FIX = {
+    "Ann Chien": "Web3 게임 · DeFi · 인프라에 투자하는 벤처 펀드",
+    "Burnt Banksy": "지갑 · 가스 같은 크립토 요소를 감춘 소비자용 레이어1",
+    "Dhawal Shah": "자연어 · 음성 명령을 온체인 실행으로 바꾸는 AI 크립토 코파일럿",
+    "Haonan Li": "스테이블코인 FX 전문 이더리움 L2",
+    "Itai Elizur": "Web3 PR · 마케팅 에이전시(Chainwire = 업계 보도자료 배포 서비스)",
+    "Jakob Kronbichler": "스테이블코인 결제 흐름을 금융하는 수익형 디지털 달러 프로토콜",
+    "Jan-Oliver Sell": "유럽 은행 컨소시엄이 세운 MiCA 규제 유로 스테이블코인 발행사",
+    "Jing Wang": "이더리움 L2 · 오픈소스 롤업 스택 OP Stack",
+    "Lorenzo Romagnoli": "USDT 를 여러 체인으로 옮기는 옴니체인 유동성 레이어",
+    "Michael Figge": "BAYC · CryptoPunks 를 보유한 NFT · 엔터테인먼트 기업",
+    "Nate Holiday": "조회 결과에 ZK 증명(Proof of SQL)을 붙이는 검증형 데이터 웨어하우스",
+    "Raafi Hossain": "신흥시장 대상 샤리아 준수 스테이블코인 네오뱅크",
+    "Raagulan Pathy": "Visa 카드로 쓰는 스테이블코인 네오뱅크",
+    "Sylvia To": "기관 중심 디지털자산 거래소 그룹(CoinDesk 모회사)",
+    "Tristan Thompson": "NBA 선수를 토큰화한 온체인 판타지 농구",
+    "Wish Wu": "실물자산 · 전통금융 자본을 온체인으로 옮기는 레이어1",
+    "Andrey Lazorenko": "ZKsync 기반 ADI Chain 운영(아부다비 IHC 계열)",
+    "Laura Estefania": "Web3 기업 대상 PR · 미디어 전략 자문사",
+    "Wonseok Baek": "",
+    "Andrew Park": "",  # 소속 줄에 「KBW 주최사」가 이미 있다
+}
+KBW_ORG_FIX = {"Taweh Beysolow II": "Bond Labs · CEO"}
+
+# 이 페이지에는 우리 쪽 판단 · 계획이 한 글자도 없어야 한다(공개 관문 PUBLIC_BAN 에 더해)
+# (제3자 회사 설명의 「텔레그램 · TON」, 「분쟁을 판정하는」은 막지 않는다 — 우리 행동을 뜻하는 표현만)
+KBW_BAN = [r"우리(?!은행|금융|카드|투자|자산|종금)", r"웰비안", r"(?i)wellbian", r"케이웨더", r"(?i)kweather", r"후속", r"미팅", r"할 일",
+           r"현장", r"명함", r"맞팔", r"텔레그램 추가", r"관련자", r"판정 전|판정 기록|우리 판정", r"측정 데이터", r"(?<![가-힣])결(?![가-힣])",
+           r"키노트 14:50"]
+
 
 def key(name):
     n = re.sub(r"^(Hon\.|Dr\.)\s+", "", name.strip())
@@ -820,6 +887,61 @@ def marks(people):
             p["prof"] = {**PROF[k], "fit": FIT.get(k, [])}
     both = [k for k, p in people.items() if len(p["ev"]) > 1 and k not in NOT_TARGET]
     return both
+
+
+def kbw_data():
+    """KBW2026 프로그램 서브페이지 데이터 — 세션 · 연사 이름 · 소속 · 회사 한 줄만(표시 · 근거 · 할 일 없음)."""
+    kbw, people = parse_agenda()
+    marks(people)
+    for k, r in RES.items():  # 9/29 추가 조사 — 신뢰 high · medium 만 소속 · 회사 한 줄에
+        if k not in people or r.get("confidence") not in ("high", "medium") or not r.get("title_ko") or "확인 못 함" in r["title_ko"]:
+            continue
+        pp = people[k]
+        if not pp.get("xorg"):
+            pp["org"], pp["src"] = r["title_ko"], "s"
+        if not pp.get("co") and r.get("org_line") and "확인 못 함" not in r["org_line"]:
+            pp["co"] = [r["org_line"]]
+    kres = {r["key"]: r for r in json.loads(KBW_RES.read_text(encoding="utf-8"))} if KBW_RES.exists() else {}
+    for k, r in kres.items():  # 소속이 빈 연사 조사 — high · medium 은 그대로, low 는 「추정」
+        assert k in people, ("KBW 조사 이름 불일치", k)
+        pp = people[k]
+        if pp.get("xorg") or pp.get("org") or not r.get("org_ko") or r.get("confidence") not in ("high", "medium", "low"):
+            continue
+        pp["org"], pp["src"] = r["org_ko"], ("s" if r["confidence"] in ("high", "medium") else "k")
+        if r.get("co_ko") and not pp.get("co"):
+            pp["co"] = [r["co_ko"]]
+    keys = sorted({x["p"] for s in kbw for x in s["sp"]})
+    ppl = {}
+    for k in keys:
+        raw = people[k].get("xorg") or people[k].get("org", "")
+        org = KBW_ORG_FIX.get(k) or kbw_org(raw)
+        co = KBW_CO_FIX[k] if k in KBW_CO_FIX else kbw_co((people[k].get("co") or [""])[0], org)
+        est = (people[k].get("src") == "k" and not people[k].get("xorg")) or "인물 DB" in raw
+        ppl[k] = {"name": people[k]["name"], "ko": people[k].get("ko", ""), "org": org, "est": est, "co": co}
+    for k in list(KBW_CO_FIX) + list(KBW_ORG_FIX):
+        assert k in ppl, ("KBW 한 줄 고침 이름 불일치", k)
+    order = {"d0930": 0, "d1001": 1}
+    sessions = [{"id": s["id"], "day": s["day"], "start": s["start"], "end": s["end"], "title": s["title"], "kind": s["kind"],
+                 "sp": [{"p": x["p"], **({"mod": True} if x.get("mod") else {})} for x in s["sp"]]}
+                for s in sorted(kbw, key=lambda s: (order[s["day"]], s["start"], s["end"], s["id"]))]
+    n_s = sum(1 for s in sessions if s["kind"] != "break")
+    facts = [
+        ("행사", "Korea Blockchain Week 2026(KBW2026)", "주최 팩트블록(FACTBLOCK) · 같은 주 서울 곳곳에서 파트너 행사 · 워크숍 · 전시가 함께 열린다"),
+        ("일정", "본 컨퍼런스 9/30(수) · 10/1(목)", "9/29 은 업비트 · 팩트블록 공동 비공개 기관 서밋(초청제)"),
+        ("장소", "그랜드 워커힐 서울", ""),
+        ("규모", f"무대 3곳 · 세션 {n_s}개 · 연사 {len(keys)}명",
+         "공개 아젠다 기준(무대 이름이 없어 시간순) · 공식 소개는 세션 100개+ · 연사 300명+"),
+        ("주제", "정책 · 시장 구조 · 다음 시장 사이클 · 온체인 자본시장 · 24시간 탈중앙 거래 · 정산 · 결제 · AI × 크립토", "공식 소개의 여섯 갈래"),
+    ]
+    return {"updated": "2026-09-29", "asof": "9/29", "days": KBW_DAYS, "sessions": sessions, "people": ppl, "facts": facts, "foot": KBW_FOOT}
+
+
+def kbw_gate(text, people):
+    hits = [f"{rx!r} → …{text[max(0, m.start() - 30):m.end() + 30]}…" for rx in KBW_BAN for m in re.finditer(rx, text)]
+    body = json.dumps([[p["org"], p["co"]] for p in people.values()], ensure_ascii=False)
+    hits += [f"성별 표현 → {m.group(0)}" for m in re.finditer(PROF_GENDER + r"|그녀|그는 |그의 ", body)]
+    if hits:
+        sys.exit("KBW 페이지에 싣지 않는 말:\n  " + "\n  ".join(hits[:40]))
 
 
 def data():
@@ -1010,6 +1132,7 @@ def main():
     if not pw:
         out.write_text(tpl.replace("/*__PLAIN__*/null", payload).replace("/*__SEALED__*/null", "null"), encoding="utf-8")
         print("wrote plain", out, len(out.read_bytes()), "bytes")
+        write_kbw()
         return
     if len(pw) < 10:
         sys.exit("EVENT_PASS 는 10자 이상 — 저장소 · 로그에 남기지 않는다")
@@ -1017,6 +1140,21 @@ def main():
                             env={**os.environ, "EVENT_PASS": pw}, check=True).stdout.decode()
     out.write_text(tpl.replace("/*__PLAIN__*/null", "null").replace("/*__SEALED__*/null", sealed), encoding="utf-8")
     print("wrote sealed", out, len(out.read_bytes()), "bytes")
+
+
+def write_kbw():
+    """www/kbw.html — KBW2026 프로그램(행사 소개 · 세션 · 연사 소속만). 공개 관문 + KBW 관문을 통과해야 쓴다."""
+    k = kbw_data()
+    payload = json.dumps(k, ensure_ascii=False, separators=(",", ":")).translate(HANJA)
+    assert not re.search(r"[\u3400-\u4dbf\u4e00-\u9fff]", payload), ("KBW 한자 남음", re.findall(r".{12}[\u4e00-\u9fff].{12}", payload)[:5])
+    tpl = KBW_TPL.read_text(encoding="utf-8")
+    public_gate(payload + tpl)
+    kbw_gate(payload + tpl, k["people"])
+    out = SITE / "www" / "kbw.html"
+    out.write_text(tpl.replace("/*__KBW__*/null", payload), encoding="utf-8")
+    n_org = sum(1 for p in k["people"].values() if p["org"])
+    print(f"wrote kbw {out} {len(out.read_bytes())} bytes · sessions {sum(1 for s in k['sessions'] if s['kind'] != 'break')} · "
+          f"speakers {len(k['people'])} · with org {n_org} (추정 {sum(1 for p in k['people'].values() if p['est'])}) · blank {len(k['people']) - n_org}")
 
 
 if __name__ == "__main__":
