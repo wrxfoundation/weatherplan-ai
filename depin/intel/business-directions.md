@@ -1964,3 +1964,30 @@ Head of Product, KWeather
 ```
 Hi Tye, I'm KJ Lee, Head of Product at KWeather; we've measured weather in Korea for 30 years. I sent your Starlink team an RFQ this week for enterprise terminals across our weather radar network. Glad to connect.
 ```
+
+## Shirley Wong (Polymarket, Growth lead) — 1촌 성사 → 인사만 (2026-09-29, 서우 프로필 캡처 3장 + 「1촌 멘트」)
+
+- **자리**: Polymarket Growth lead(**2026-09~**, 두바이) · 직전 Kalshi 「Perps Growth」(2026-09, 1개월) · Binance 3년 9개월(Growth — Affiliate Lead
+  2025-03~2026-09 · BD Manager 2023-01~2025-03, 어필리에이트 1,000+ · 도달 2억) · Aptos Foundation Ecosystem Growth Lead(2025-01~03, 바이낸스와 겹침).
+  「2025 Binance Star · 2025H2 Top Performers」 · WEF 2023. 팔로워 7,773 · 공통 1촌 10.
+- **어느 폴리마켓인가**: 두바이 성장 담당 → **글로벌(polymarket.com) 쪽일 가능성**(확인 전) — CFTC 밖이고 **한국 차단**(8/18) 플랫폼. 우리 폴리마켓 레인은
+  폴리마켓 US(Paul + Institutional 메일)다.
+
+**판정 — 인사만, 사업 이야기 0**
+- **폴리마켓 계열 상한이 이미 찼다**(Paul + 메일 = 2, Megan 보류). Shirley 는 세 번째라 제안 · 역할 줄 0.
+- **성장 · 어필리에이트 자리**는 한국 이용자 대상 협업(마케팅 · KOL · 어필리에이트 · 커뮤니티)과 바로 이어진다 — 한국에서 막힌 플랫폼이라 **카운슬과 무관하게 0**.
+  그래서 인사에 **측정기 · 커뮤니티 절반을 뺐다**(예측시장 공통 규칙) · 「settlement」도 뺐다(제안으로 읽히지 않게).
+- 역할 줄 대신 **새 직장 축하 한 줄**(요청 0). 칼시 · 바이낸스 · 앱토스 · 폴리마켓 이름 0 · 공통 1촌 이름 0.
+- **그가 먼저 날씨 · 데이터로 말을 걸면** 새 스레드를 열지 않고 폴리마켓 US 창구(Paul · Institutional)로 잇는다. 성장 · 한국 협업 제안이 오면
+  긍정형으로 「데이터 쪽부터」.
+
+**1촌 인사 (EN, 505자)**
+```
+Hi Shirley — thanks for connecting, and congratulations on the new role.
+
+I run partnerships at wellbian. KWeather has measured weather in South Korea for thirty years and supplies data to 4,000+ enterprise clients; wellbian is the network built on top of that.
+
+We publish city-level weather across 90 countries and 167 cities. Each value is a consensus across eleven weather feeds rather than a single reading, and every input is fingerprinted to a public ledger before it's used.
+
+Good to be connected.
+```
