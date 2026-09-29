@@ -25,6 +25,7 @@
   --strat: #a0520c; --strat-bg: #fdf3e6; --strat-line: #f0d2a8;
   --rule: #5b5b75; --rule-bg: #f0f0f5; --rule-line: #d8d8e4;
   --ours: #6a5400; --ours-bg: #fff6c7; --ours-line: #efdc86;
+  --rip: #0b6e99; --rip-bg: #e8f4fa; --rip-line: #b6dcee; --star: #c98a00;
   --shadow: 0 1px 2px rgba(22, 22, 63, .05), 0 2px 8px rgba(22, 22, 63, .04);
   --r: 14px; --r-sm: 9px;
   color-scheme: light;
@@ -39,6 +40,7 @@
     --strat: #f3b36c; --strat-bg: #33240f; --strat-line: #6b4a1c;
     --rule: #bcbcd2; --rule-bg: #23243a; --rule-line: #3b3d58;
     --ours: #ffe57f; --ours-bg: #3a3311; --ours-line: #6a5c1c;
+  --rip: #6cc4ec; --rip-bg: #0e2a38; --rip-line: #1f5670; --star: #ffcc4d;
     --shadow: none;
     color-scheme: dark;
   }
@@ -52,6 +54,7 @@
   --strat: #f3b36c; --strat-bg: #33240f; --strat-line: #6b4a1c;
   --rule: #bcbcd2; --rule-bg: #23243a; --rule-line: #3b3d58;
   --ours: #ffe57f; --ours-bg: #3a3311; --ours-line: #6a5c1c;
+  --rip: #6cc4ec; --rip-bg: #0e2a38; --rip-line: #1f5670; --star: #ffcc4d;
   --shadow: none;
   color-scheme: dark;
 }
@@ -123,7 +126,7 @@ button { cursor: pointer; }
 .chip b { font-weight: 700; color: var(--ink); font-variant-numeric: tabular-nums; }
 .chip small { font-size: 12px; font-weight: 500; color: var(--muted); }
 .chip[aria-pressed="false"] { opacity: .45; }
-.dot.m-fit { background: var(--fit); } .dot.m-strat { background: var(--strat); } .dot.m-line { background: var(--rule); } .dot.m-ours { background: var(--ours); }
+.dot.m-fit { background: var(--fit); } .dot.m-strat { background: var(--strat); } .dot.m-line { background: var(--rule); } .dot.m-ours { background: var(--ours); } .dot.m-ripple { background: var(--rip); }
 
 /* ── 공통 부품 ── */
 main { padding: 18px 0 44px; }
@@ -131,28 +134,29 @@ main { padding: 18px 0 44px; }
 button.pill { cursor: pointer; }
 .pill.m-fit { background: var(--fit); color: #fff; } .pill.m-strat { background: var(--strat); color: #fff; }
 .pill.m-line { background: var(--rule-bg); color: var(--rule); border-color: var(--rule-line); } .pill.m-ours { background: var(--ours-bg); color: var(--ours); border-color: var(--ours-line); }
+.pill.m-ripple { background: var(--rip); color: #fff; }
 .pill.m-none { background: transparent; color: var(--faint); border: 1px solid transparent; min-width: 30px; font-weight: 600; }
 .pill.m-none:hover { border-color: var(--line-2); color: var(--muted); }
 .pill.custom::after { content: ""; width: 5px; height: 5px; border-radius: 50%; background: currentColor; margin-left: 5px; }
 .flag { display: inline-block; font-size: 11px; font-weight: 700; color: var(--muted); border: 1px solid var(--line-2); border-radius: 5px; padding: 0 5px; line-height: 17px; vertical-align: 2px; margin-left: 6px; white-space: nowrap; }
 .why { font-weight: 600; font-size: 14px; line-height: 1.5; margin: 0; }
-.m-fit .why, .why.m-fit { color: var(--fit); } .m-strat .why, .why.m-strat { color: var(--strat); } .m-line .why, .why.m-line { color: var(--rule); } .m-ours .why, .why.m-ours { color: var(--ours); }
+.m-fit .why, .why.m-fit { color: var(--fit); } .m-strat .why, .why.m-strat { color: var(--strat); } .m-line .why, .why.m-line { color: var(--rule); } .m-ours .why, .why.m-ours { color: var(--ours); } .m-ripple .why, .why.m-ripple { color: var(--rip); }
 .note { font-size: 12.5px; color: var(--muted); margin: 4px 0 0; }
 .empty { color: var(--muted); text-align: center; padding: 36px 0; }
 .panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); box-shadow: var(--shadow); }
 h2.sec { font-size: 20px; font-weight: 700; letter-spacing: -0.015em; margin: 32px 0 12px; display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
 h2.sec small { font-size: 13px; font-weight: 500; color: var(--muted); letter-spacing: 0; }
-body.nocolor .pill.m-fit, body.nocolor .pill.m-strat, body.nocolor .pill.m-ours { background: var(--rule-bg) !important; color: var(--ink-2) !important; border-color: var(--line-2) !important; }
+body.nocolor .pill.m-fit, body.nocolor .pill.m-strat, body.nocolor .pill.m-ours, body.nocolor .pill.m-ripple { background: var(--rule-bg) !important; color: var(--ink-2) !important; border-color: var(--line-2) !important; }
 body.nocolor .why { color: var(--ink-2) !important; }
 body.nocolor tr.r, body.nocolor .pr, body.nocolor .sess { background: var(--surface) !important; }
 body.nowhy .why, body.nowhy .note, body.nowhy .swhy, body.nowhy .rw { display: none !important; }
 
 /* ── 요약 숫자 ── */
-.stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin: 0 0 16px; }
+.stats { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; margin: 0 0 16px; }
 .stat { padding: 14px 16px; }
 .stat .v { display: block; font-size: 28px; line-height: 1.15; font-weight: 800; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; margin: 6px 0 2px; }
 .stat .s { font-size: 12.5px; color: var(--muted); }
-.stat.k-new .v { color: var(--ink); } .stat.k-known .v { color: var(--accent-ink); } .stat.k-line .v { color: var(--rule); }
+.stat.k-new .v { color: var(--ink); } .stat.k-known .v { color: var(--accent-ink); } .stat.k-line .v { color: var(--rule); } .stat.k-rip .v { color: var(--rip); }
 
 /* ── 조작 ── */
 .ctl { display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center; margin: 0 0 12px; }
@@ -196,6 +200,7 @@ body.nowhy .why, body.nowhy .note, body.nowhy .swhy, body.nowhy .rw { display: n
 .rt tr.r.m-fit td { background: color-mix(in srgb, var(--fit-bg) 70%, var(--surface)); }
 .rt tr.r.m-strat td { background: color-mix(in srgb, var(--strat-bg) 70%, var(--surface)); }
 .rt tr.r.m-ours td { background: var(--ours-bg); }
+.rt tr.r.m-ripple td { background: color-mix(in srgb, var(--rip-bg) 70%, var(--surface)); }
 .rt tr.r.m-line td { color: var(--muted); } .rt tr.r.m-line .nm { color: var(--ink-2); }
 .rt tr.grp td { background: var(--surface-2); padding: 12px 14px 10px; border-top: 1px solid var(--line-2); }
 .rt tr.grp .g { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
@@ -227,6 +232,7 @@ body.nodesc .rt .c-co, body.nodesc .rt .c-pe { display: none; }
 .it .who { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 7px; }
 .w { font-size: 12.5px; font-weight: 700; border-radius: 6px; padding: 1px 8px; line-height: 20px; }
 .w.m-fit { background: var(--fit-bg); color: var(--fit); } .w.m-strat { background: var(--strat-bg); color: var(--strat); } .w.m-ours { background: var(--ours-bg); color: var(--ours); } .w.m-line { background: var(--rule-bg); color: var(--rule); }
+.w.m-ripple { background: var(--rip-bg); color: var(--rip); }
 body.nocolor .w { background: var(--rule-bg) !important; color: var(--ink-2) !important; }
 .it .ex { display: block; font-size: 13px; color: var(--ink-2); margin-top: 6px; }
 .it:hover .ti { color: var(--accent-ink); }
@@ -267,13 +273,29 @@ ul.sp { list-style: none; margin: 12px 0 0; padding: 0; display: grid; gap: 6px;
 .pr .desc p { margin: 0; }
 .pr .desc .lb { font-size: 11px; font-weight: 700; letter-spacing: .06em; color: var(--muted); margin-right: 8px; }
 .pr .desc .add { display: block; margin-top: 3px; }
-.pr.m-fit { background: var(--fit-bg); } .pr.m-strat { background: var(--strat-bg); } .pr.m-ours { background: var(--ours-bg); }
+.pr.m-fit { background: var(--fit-bg); } .pr.m-strat { background: var(--strat-bg); } .pr.m-ours { background: var(--ours-bg); } .pr.m-ripple { background: var(--rip-bg); }
 .sess.s-fit .pr.m-fit, .sess.s-strat .pr.m-strat, .sess.s-ours .pr.m-ours { background: var(--surface); }
 .dim .pr:not([class*="m-"]) { opacity: .5; }
 .pwhere { margin-top: 8px; display: grid; gap: 2px; }
 .pwhere a { font-size: 13px; color: var(--accent-ink); text-decoration: none; font-weight: 600; }
 .pwhere a b { font-variant-numeric: tabular-nums; margin-right: 6px; color: var(--ink); }
 body.nodesc .pr .desc { display: none; }
+
+/* 할 일 — 사람마다 한 줄 */
+.act { font-size: 13.5px; line-height: 1.55; margin: 5px 0 0; color: var(--ink); font-weight: 500; }
+.act b { display: inline-block; font-size: 11px; font-weight: 800; letter-spacing: .04em; color: var(--accent-ink); background: var(--accent-bg); border-radius: 5px; padding: 0 6px; line-height: 18px; margin-right: 7px; vertical-align: 1px; }
+.drawer .act2 { font-size: 15px; line-height: 1.6; font-weight: 600; color: var(--ink); margin: 0; padding: 12px 14px; border-radius: 12px; background: var(--accent-bg); }
+body.nocolor .act b, body.nocolor .drawer .act2 { background: var(--rule-bg); color: var(--ink-2); }
+
+/* 즐겨찾기 — 이름 옆 별(이 기기에 저장) */
+.star { background: none; border: 0; padding: 0 4px 0 0; margin: 0; font: inherit; font-size: 17px; line-height: 1; color: var(--faint); cursor: pointer; vertical-align: -1px; }
+.star:hover, .star[aria-pressed="true"] { color: var(--star); }
+.star:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+.whorow { display: flex; align-items: baseline; } .whorow .star { flex: none; } .whorow .nmb { min-width: 0; }
+.pr .whorow { display: inline-flex; }
+.drawer .dh .row1 .star { margin-left: auto; font-size: 22px; padding: 4px 6px; } .drawer .dh .row1 .star + .x { margin-left: 6px; }
+.favhead { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
+.favhead h2.sec { margin: 6px 0 0; } .favbtns { display: flex; gap: 8px; flex-wrap: wrap; }
 
 /* 한눈에 목록 속 이름 — 누르면 인물 패널 */
 .nml { background: none; border: 0; padding: 0; font: inherit; font-weight: 700; color: inherit; cursor: pointer; text-decoration: underline dotted; text-underline-offset: 3px; }
@@ -294,6 +316,7 @@ body.nodesc .pr .desc { display: none; }
 .drawer .sum { font-size: 15.5px; line-height: 1.65; font-weight: 500; color: var(--ink); margin: 0; }
 .drawer .fitbox { border-radius: 12px; padding: 12px 14px; background: var(--surface-2); border: 1px solid var(--line); }
 .drawer .fitbox.m-fit { background: var(--fit-bg); border-color: var(--fit-line); } .drawer .fitbox.m-strat { background: var(--strat-bg); border-color: var(--strat-line); }
+.drawer .fitbox.m-ripple { background: var(--rip-bg); border-color: var(--rip-line); }
 .drawer .fitbox .why { margin-bottom: 6px; }
 .drawer ol, .drawer ul { margin: 0; padding-left: 18px; display: grid; gap: 6px; font-size: 14px; color: var(--ink-2); line-height: 1.6; }
 .drawer .fitbox ol { color: var(--ink); }
@@ -328,7 +351,7 @@ footer p { margin: 4px 0; }
 
 /* ── 태블릿 이하: 표 → 카드 ── */
 @media (max-width: 900px) {
-  .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .stats { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .days { grid-template-columns: 1fr; }
   .rt { border: 0; background: transparent; box-shadow: none; }
   .rt, .rt tbody { display: block; }
@@ -339,6 +362,7 @@ footer p { margin: 4px 0; }
   .rt tr.r.m-fit { background: color-mix(in srgb, var(--fit-bg) 70%, var(--surface)); border-color: var(--fit-line); }
   .rt tr.r.m-strat { background: color-mix(in srgb, var(--strat-bg) 70%, var(--surface)); border-color: var(--strat-line); }
   .rt tr.r.m-ours { background: var(--ours-bg); border-color: var(--ours-line); }
+  .rt tr.r.m-ripple { background: color-mix(in srgb, var(--rip-bg) 70%, var(--surface)); border-color: var(--rip-line); }
   .rt td.c-n { grid-area: n; text-align: left; padding-top: 14px; display: flex !important; align-items: baseline; gap: 8px; }
   .rt td.c-n .n { display: inline; font-size: 15px; } .rt td.c-n .t { display: inline; margin: 0; font-size: 12px; } .rt td.c-n .dash { display: none; }
   .rt td.c-n .pm { display: inline-flex !important; margin-left: auto; } .rt .whyhead { display: none !important; }
@@ -347,7 +371,7 @@ footer p { margin: 4px 0; }
   .rt td.c-co { grid-area: co; display: none; } .rt td.c-pe { grid-area: pe; display: none; padding-bottom: 14px; }
   .rt tr.r.open td.c-co, .rt tr.r.open td.c-pe { display: block; }
   .rt td[data-l]::before { content: attr(data-l); display: block; font-size: 11px; font-weight: 700; letter-spacing: .06em; color: var(--muted); margin-bottom: 4px; }
-  .rt .nm { font-size: 17px; } .rt .en { display: inline; margin-left: 6px; } .rt .org { margin-top: 3px; }
+  .rt .nm { font-size: 17px; } .rt .en { display: inline; margin-left: 6px; } .rt .org { margin-top: 3px; } .rt .whorow { display: inline-flex; }
   .rt .whyhead { position: absolute; }
   .rt td.c-why { position: relative; }
   .rt td.c-why .whyhead { position: static; }
@@ -371,7 +395,7 @@ footer p { margin: 4px 0; }
   .ctl-m label { display: grid; gap: 4px; }
   .ctl-m select { width: 100%; min-height: 42px; border: 1px solid var(--line-2); border-radius: 10px; background: var(--surface); color: var(--ink); padding: 0 10px; font-size: 14px; font-weight: 600; }
   .key .chip small { display: none; }
-  .stats { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
+  .stats { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; } .stat.k-ev { display: none; }
   .stat { padding: 10px 8px; text-align: center; } .stat .lbl { font-size: 10.5px; letter-spacing: .02em; }
   .stat .v { font-size: 20px; margin: 4px 0 0; } .stat .s { display: none; } .stat .v small { display: none; }
   h3.blk { display: grid; gap: 2px; }
@@ -390,17 +414,18 @@ footer p { margin: 4px 0; }
   @page { size: A4 landscape; margin: 10mm; }
   * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   body { background: #fff; font-size: 12px; }
-  .bar, .tools, .ctl, .ctl-m, footer, .noprint, .top .lead, .drawer, .dbg, .more-i { display: none !important; }
+  .bar, .tools, .ctl, .ctl-m, footer, .noprint, .top .lead, .drawer, .dbg, .more-i, .star, .favbtns { display: none !important; }
   .nmb .nm { text-decoration: none; }
   .wrap, .wrap.wide { max-width: none; padding: 0; }
   .top { padding-top: 0; } .top h1 { font-size: 20px; margin: 2px 0 10px; }
   main { padding: 0; }
-  .stats { grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 8px; }
+  .stats { grid-template-columns: repeat(5, 1fr); gap: 6px; margin-bottom: 8px; }
   .stat { padding: 8px 10px; box-shadow: none; } .stat .v { font-size: 18px; margin: 2px 0 0; }
   .panel, .rt { box-shadow: none; }
   .rt th { position: static; font-size: 9.5px; padding: 7px 8px; }
   .rt td { font-size: 10px; padding: 8px; line-height: 1.5; }
   .rt .nm { font-size: 12px; } .rt .why { font-size: 10.5px; } .rt td.c-n .n { font-size: 14px; }
+  .rt .rw { font-size: 9px; margin-top: 3px; } .rt .act { font-size: 10px; margin-top: 3px; } .rt .act b { font-size: 8.5px; line-height: 14px; padding: 0 4px; margin-right: 5px; }
   .ses .st, .ses .stt { font-size: 10px; }
   .rt tr { break-inside: avoid; }
   .rt tr.grp td { padding: 7px 8px 5px; } .rt tr.grp .gt { font-size: 11.5px; } .rt tr.grp .gc, .rt tr.grp .gd { font-size: 10px; }
@@ -425,7 +450,7 @@ footer p { margin: 4px 0; }
   <header class="top wrap">
     <span class="lbl">WELLBIAN 내부 · <span id="upd" class="num"></span> 기준</span>
     <h1>KBW · XRP SEOUL 연사 지도</h1>
-    <p class="lead">9/30 · 10/1 KBW2026 → 10/3 XRP SEOUL 2026. 누구를 먼저 만나고, 왜 만나는지 — 새로 만날 사람이 위, 기존 연결은 아래.</p>
+    <p class="lead">9/30 · 10/1 KBW2026 → 10/3 XRP SEOUL 2026. 누구를 먼저 만나고, 왜 만나고, 무엇을 할지 — 새로 만날 사람이 위, 리플 · 기존 연결은 아래.</p>
   </header>
   <nav class="bar" aria-label="보기">
     <div class="wrap"><div class="tabs" role="tablist" id="tabs"></div></div>
@@ -462,26 +487,28 @@ const PLAIN = /*__PLAIN__*/null;
 const SEALED = /*__SEALED__*/null;
 
 const CATS = [
-  { k: "fit", label: "결", long: "우리 레인" },
-  { k: "strat", label: "전략", long: "관계 · 자본 · 정책" },
-  { k: "line", label: "선", long: "말할 때 조심" },
+  { k: "fit", label: "결", long: "사업이 바로 엮이는 곳 — 데이터를 사거나 검증" },
+  { k: "strat", label: "전략", long: "도와줄 사람 — 투자 · 정책 · 미디어 · 커뮤니티" },
+  { k: "ripple", label: "리플", long: "RLUSD · XRPL 만든 회사 — 한 번은 인사" },
+  { k: "line", label: "선", long: "조심 — 거래소 · 인프라, 인사만" },
   { k: "ours", label: "우리", long: "우리 키노트" },
 ];
-const LABEL = { fit: "결", strat: "전략", line: "선", ours: "우리", "": "＋" };
-const CYCLE = ["", "fit", "strat", "line"];
+const LABEL = { fit: "결", strat: "전략", ripple: "리플", line: "선", ours: "우리", "": "＋" };
+const CYCLE = ["", "fit", "strat", "ripple", "line"];
 const SRC = { n: "", s: "", k: "추정" };
-const TIER = { top: "최우선", high: "우선", ref: "참고", known: "기존 연결", ours: "우리", line: "선" };
+const TIER = { top: "최우선", high: "우선", ref: "참고", ripple: "리플", known: "기존 연결", ours: "우리", line: "선" };
 const GROUP = {
   top: ["최우선", "새로 만날 사람 가운데 먼저"],
-  high: ["우선", "우리 레인에 바로 닿는 사람"],
-  ref: ["참고", "자본 · 미디어 · 정책 — 때가 되면"],
-  known: ["기존 연결", "이미 아는 사람 — 인사 · 근황"],
+  high: ["우선", "우리 사업에 바로 닿는 사람"],
+  ref: ["참고", "투자 · 정책 · 미디어 — 판을 읽고 알려 줄 사람"],
+  ripple: ["리플", "RLUSD 발행사 · XRPL 기여자 — 10/3 에 한 번은 인사할 사람(공개 직함 기준)"],
+  known: ["기존 연결", "이미 알거나 접촉한 사람 — 인사 · 근황"],
   ours: ["우리", "우리 키노트"],
-  line: ["선", "공개 직함까지 · 인사만"],
+  line: ["선", "거래소 · 인프라 — 공개 직함까지 · 인사만"],
   mine: ["내 표시", "이 기기에서 표시한 사람"],
   none: ["표시 없음", "판정 밖 연사"],
 };
-const GORDER = ["top", "high", "ref", "known", "ours", "line", "mine", "none"];
+const GORDER = ["top", "high", "ref", "ripple", "known", "ours", "line", "mine", "none"];
 const store = {
   get(k, d) { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
   set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} },
@@ -502,6 +529,7 @@ async function unseal(pass) {
 let D, S;
 const TABS = [
   { k: "table", label: "관련자 표", short: "관련자" },
+  { k: "fav", label: "★ 즐겨찾기", short: "★" },
   { k: "glance", label: "한눈에" },
   { k: "d0930", label: "KBW 9/30", short: "9/30" },
   { k: "d1001", label: "KBW 10/1", short: "10/1" },
@@ -511,26 +539,30 @@ const TABS = [
 
 function initState() {
   const u = new URLSearchParams(location.search);
-  const pref = store.get("evw.prefs2", {});
+  const pref = store.get("evw.prefs3", {});  // 9/29 기본값(전체 연사 · 리플 칩)을 바꾸며 키를 새로 — 예전 저장값이 새 기본값을 덮지 않게
   const pick = (k, d) => (u.has(k) ? u.get(k) : pref[k] ?? d);
   S = {
     tab: pick("tab", "table"),
     sort: pick("sort", "imp"),
     ev: pick("ev", "all"),
-    all: pick("all", "0") === "1",
+    all: pick("all", "1") === "1",
     q: u.get("q") || "",
     only: pick("only", "0") === "1",
     color: pick("color", "1") !== "0",
     why: pick("why", "1") !== "0",
     desc: pick("desc", "1") !== "0",
-    cats: new Set(String(pick("cats", "fit,strat,line,ours")).split(",").filter(Boolean)),
+    cats: new Set(String(pick("cats", "fit,strat,ripple,line,ours")).split(",").filter(Boolean)),
     custom: store.get("evw.custom", {}),
+    fav: new Set(store.get("evw.fav", []).filter((p) => D.people[p])),
   };
+  // 즐겨찾기 링크(?fav=이름,이름)로 열면 이 기기 목록에 더한다
+  const fq = u.get("fav");
+  if (fq) { for (const id of fq.split(",")) if (D.people[id]) S.fav.add(id); store.set("evw.fav", [...S.fav]); }
   if (!TABS.some((t) => t.k === S.tab)) S.tab = "table";
 }
 function saveState() {
   const p = { tab: S.tab, sort: S.sort, ev: S.ev, all: S.all ? "1" : "0", only: S.only ? "1" : "0", color: S.color ? "1" : "0", why: S.why ? "1" : "0", desc: S.desc ? "1" : "0", cats: [...S.cats].join(",") };
-  store.set("evw.prefs2", p);
+  store.set("evw.prefs3", p);
   const u = new URLSearchParams(p);
   if (S.q) u.set("q", S.q);
   history.replaceState(null, "", "?" + u.toString() + location.hash.replace(/#k=.*/, ""));
@@ -556,6 +588,10 @@ function personHay(pid) {
 }
 const qmatch = (text) => !S.q || S.q.toLowerCase().split(/\s+/).filter(Boolean).every((w) => text.includes(w));
 const nameOf = (pid) => D.people[pid].ko || D.people[pid].name;
+const star = (pid) => {
+  const on = S.fav.has(pid);
+  return `<button class="star" data-fav="${esc(pid)}" aria-pressed="${on}" aria-label="${esc(nameOf(pid))} 즐겨찾기 ${on ? "빼기" : "넣기"}" title="즐겨찾기 ${on ? "빼기" : "넣기"}">${on ? "★" : "☆"}</button>`;
+};
 const pill = (pid) => {
   const m = mark(pid);
   return `<button class="pill m-${m || "none"}${isCustom(pid) ? " custom" : ""}" data-mk="${esc(pid)}" title="눌러서 표시 바꾸기" aria-label="${esc(D.people[pid].name)} 표시 — 지금 ${m ? LABEL[m] : "없음"}, 눌러서 바꾸기">${LABEL[m]}</button>`;
@@ -574,9 +610,9 @@ function personLi(pid, mod, withDesc, extra = "") {
   }
   const why = whyOf(pid);
   return `<li class="pr${m ? " m-" + m : ""}" data-p="${esc(pid)}">
-    <div class="pr-top"><div><button class="nmb" data-open="${esc(pid)}"><span class="nm">${esc(nameOf(pid))}</span>${p.prof ? `<span class="more-i">상세</span>` : ""}</button>${p.ko ? `<span class="en">${esc(p.name)}</span>` : ""}${flags}
+    <div class="pr-top"><div><div class="whorow">${star(pid)}<button class="nmb" data-open="${esc(pid)}"><span class="nm">${esc(nameOf(pid))}</span>${p.prof ? `<span class="more-i">상세</span>` : ""}</button></div>${p.ko ? `<span class="en">${esc(p.name)}</span>` : ""}${flags}
       ${org ? `<div class="org">${esc(org)}${src}</div>` : ""}</div>${pill(pid)}</div>
-    ${why ? `<p class="why">${esc(why)}</p>` : ""}${p.note ? `<p class="note">${esc(p.note)}</p>` : ""}${desc}${extra}
+    ${why ? `<p class="why">${esc(why)}</p>` : ""}${p.act && m ? `<p class="act"><b>할 일</b>${esc(p.act)}</p>` : ""}${p.note ? `<p class="note">${esc(p.note)}</p>` : ""}${desc}${extra}
   </li>`;
 }
 
@@ -635,7 +671,7 @@ function glanceView() {
     html += `<button class="dcard panel" data-go="${d.id}"><span class="lbl">${esc(d.label)}</span><h3>${esc(d.event)}</h3><p class="pl num">${esc(d.place)} · 세션 ${ss.length} · 연사 ${ppl.size}</p><p class="nt">${esc(d.note)}</p><div class="cnt">${cnt}</div></button>`;
   }
   html += `</div><h2 class="sec">먼저 볼 것<small>표시된 세션 · 사람, 시간순 — 누르면 그 자리로</small></h2><div class="tl">`;
-  const pickW = (x) => ["fit", "strat", "ours"].includes(mark(x.p)) && shown(mark(x.p));
+  const pickW = (x) => ["fit", "strat", "ripple", "ours"].includes(mark(x.p)) && shown(mark(x.p));
   let any = false;
   for (const d of D.days) {
     const ss = D.sessions.filter((s) => s.day === d.id && s.kind !== "break" && (shown(s.mark) || s.sp.some(pickW))).filter((s) => qmatch(hay(s))).sort(bySess);
@@ -653,6 +689,13 @@ function glanceView() {
   }
   if (!any) html += `<p class="empty">표시된 항목이 없습니다 — 색 칩을 켜 보세요.</p>`;
   html += `</div>`;
+  const rips = Object.keys(D.people).filter((p) => mark(p) === "ripple" && S.cats.has("ripple") && qmatch(personHay(p)))
+    .sort((a, b) => (D.people[a].rank || 999) - (D.people[b].rank || 999));
+  if (rips.length) {
+    html += `<h2 class="sec">리플 — 한 번은 인사<small>RLUSD 발행사 · XRPL 기여자 · 공개 직함 기준</small></h2><div class="panel plain"><ul>`;
+    for (const p of rips) html += `<li><b><button class="nml" data-open="${esc(p)}">${esc(nameOf(p))}</button></b> — ${esc(whyOf(p) || D.people[p].xorg || D.people[p].org)}</li>`;
+    html += `</ul></div>`;
+  }
   const lines = Object.keys(D.people).filter((p) => mark(p) === "line" && S.cats.has("line") && qmatch(personHay(p)));
   if (lines.length) {
     const groups = {};
@@ -719,38 +762,44 @@ function tableView() {
   const nBoth = ids.filter((p) => D.people[p].ev.length > 1).length;
   let html = `<div class="stats">
     <div class="stat panel k-new"><span class="lbl">새로 만날 사람</span><span class="v">${nNew}</span><span class="s num">최우선 ${g("top")} · 우선 ${g("high")} · 참고 ${g("ref")}</span></div>
-    <div class="stat panel k-known"><span class="lbl">기존 연결</span><span class="v">${g("known")}</span><span class="s">이미 아는 사람 — 뒤로</span></div>
+    <div class="stat panel k-rip"><span class="lbl">리플</span><span class="v">${g("ripple")}</span><span class="s">RLUSD · XRPL — 한 번은 인사</span></div>
+    <div class="stat panel k-known"><span class="lbl">기존 연결</span><span class="v">${g("known")}</span><span class="s">이미 알거나 접촉한 사람 — 뒤로</span></div>
     <div class="stat panel k-line"><span class="lbl">선 · 조심</span><span class="v">${g("line")}</span><span class="s">공개 직함까지 · 인사만</span></div>
-    <div class="stat panel"><span class="lbl">행사별</span><span class="v num">${nKbw}<small style="font-size:14px;color:var(--muted);font-weight:600"> KBW</small> · ${nX}<small style="font-size:14px;color:var(--muted);font-weight:600"> XRP</small></span><span class="s">두 행사 ${nBoth}</span></div>
+    <div class="stat panel k-ev"><span class="lbl">행사별</span><span class="v num">${nKbw}<small style="font-size:14px;color:var(--muted);font-weight:600"> KBW</small> · ${nX}<small style="font-size:14px;color:var(--muted);font-weight:600"> XRP</small></span><span class="s">두 행사 ${nBoth}</span></div>
   </div>`;
   const segs = (lbl, key, opts) => `<div class="seg" role="group" aria-label="${lbl}"><span class="lbl">${lbl}</span><span class="opts2">${opts.map(([v, t]) => `<button data-${key}="${v}" aria-pressed="${key === "all" ? (S.all ? "1" : "0") === v : S[key] === v}">${t}</button>`).join("")}</span></div>`;
   const sel = (lbl, key, opts, cur) => `<label><span class="lbl">${lbl}</span><select data-sel="${key}">${opts.map(([v, t]) => `<option value="${v}"${v === cur ? " selected" : ""}>${t}</option>`).join("")}</select></label>`;
   const O_SORT = [["imp", "중요도"], ["time", "시간"], ["event", "행사"], ["name", "이름"]];
   const O_EV = [["all", "전체"], ["KBW", "KBW"], ["XRP SEOUL", "XRP SEOUL"]];
-  const O_ALL = [["0", "관련자만"], ["1", "전체 연사"]];
+  const O_ALL = [["1", "전체 연사"], ["0", "관련자만"]];
   html += `<div class="ctl">${segs("정렬", "sort", O_SORT)}${segs("행사", "ev", O_EV)}${segs("대상", "all", O_ALL)}<button class="btn noprint" id="printBtn">인쇄 · PDF</button></div>`;
   html += `<div class="ctl-m">${sel("정렬", "sort", O_SORT, S.sort)}${sel("행사", "ev", O_EV, S.ev)}${sel("대상", "all", O_ALL, S.all ? "1" : "0")}</div>`;
   if (!ids.length) return html + `<p class="empty">조건에 맞는 사람이 없습니다 — 색 칩이나 검색어를 풀어 보세요.</p>`;
-  html += `<table class="rt"><thead><tr><th class="c-n">순위</th><th class="c-who">사람</th><th class="c-why">우리와 결 · 근거</th><th class="c-ses">세션</th><th class="c-co">회사</th><th class="c-pe">인물</th></tr></thead><tbody>`;
+  return html + tableHTML(ids, S.sort === "imp");
+}
+
+function tableHTML(ids, byImp) {
+  const g = (k) => ids.filter((p) => groupOf(p) === k).length;
+  let html = `<table class="rt"><thead><tr><th class="c-n">순위</th><th class="c-who">사람</th><th class="c-why">왜 봐야 하나 · 할 일</th><th class="c-ses">세션</th><th class="c-co">회사</th><th class="c-pe">인물</th></tr></thead><tbody>`;
   let cur = null;
   for (const pid of ids) {
     const p = D.people[pid];
     const m = mark(pid);
     const grp = groupOf(pid);
-    if (S.sort === "imp" && grp !== cur) {
+    if (byImp && grp !== cur) {
       cur = grp;
       const [gt, gd] = GROUP[grp];
       html += `<tr class="grp"><td colspan="7"><div class="g"><span class="gt">${gt}</span><span class="gc">${g(grp)}명</span><span class="gd">${gd}</span></div></td></tr>`;
     }
     const ranked = ["top", "high", "ref"].includes(p.tier) && !(isCustom(pid) && !p.tier);
-    const nCell = (ranked ? `<span class="n">${p.rank}</span>${S.sort !== "imp" ? `<span class="t">${TIER[p.tier]}</span>` : ""}` : `${S.sort !== "imp" && p.tier ? `<span class="t">${TIER[p.tier]}</span>` : `<span class="dash">·</span>`}`) + `<span class="pm">${pill(pid)}</span>`;
+    const nCell = (ranked ? `<span class="n">${p.rank}</span>${!byImp ? `<span class="t">${TIER[p.tier]}</span>` : ""}` : `${!byImp && p.tier ? `<span class="t">${TIER[p.tier]}</span>` : `<span class="dash">·</span>`}`) + `<span class="pm">${pill(pid)}</span>`;
     const ses = whereOf(pid).map((s) => `<a class="ses" href="#${s.id}" data-go="${s.day}" data-s="${s.id}"><span class="st"><span>${DSHORT[s.day]} ${esc(s.start)}</span><span class="ev${s.day === "d1003" ? " x" : ""}">${DEV[s.day]}</span></span><span class="stt">${esc(s.title)}</span></a>`).join("");
     const lines = (arr) => (arr || []).map((x) => `<p>${esc(x)}</p>`).join("");
     const why = whyOf(pid);
     html += `<tr class="r${m ? " m-" + m : ""}">
       <td class="c-n">${nCell}</td>
-      <td class="c-who"><button class="nmb" data-open="${esc(pid)}"><span class="nm">${esc(nameOf(pid))}</span>${p.prof ? `<span class="more-i">상세</span>` : ""}</button>${p.ko ? `<span class="en">${esc(p.name)}</span>` : ""}<span class="org">${esc(p.xorg || p.org || "")}${p.ev.length > 1 ? `<span class="flag">두 행사</span>` : ""}</span></td>
-      <td class="c-why"><div class="whyhead">${pill(pid)}</div>${why ? `<p class="why">${esc(why)}</p>` : ""}${p.note ? `<p class="note">${esc(p.note)}</p>` : ""}${p.rwhy && ranked ? `<p class="rw"><b>순위 근거</b> · ${esc(p.rwhy)}</p>` : ""}</td>
+      <td class="c-who"><div class="whorow">${star(pid)}<button class="nmb" data-open="${esc(pid)}"><span class="nm">${esc(nameOf(pid))}</span>${p.prof ? `<span class="more-i">상세</span>` : ""}</button></div>${p.ko ? `<span class="en">${esc(p.name)}</span>` : ""}<span class="org">${esc(p.xorg || p.org || "")}${p.ev.length > 1 ? `<span class="flag">두 행사</span>` : ""}</span></td>
+      <td class="c-why"><div class="whyhead">${pill(pid)}</div>${why ? `<p class="why">${esc(why)}</p>` : ""}${p.act && m ? `<p class="act"><b>할 일</b>${esc(p.act)}</p>` : ""}${p.note ? `<p class="note">${esc(p.note)}</p>` : ""}${p.rwhy && ranked ? `<p class="rw"><b>순위 근거</b> · ${esc(p.rwhy)}</p>` : ""}</td>
       <td class="c-ses" data-l="세션">${ses}</td>
       <td class="c-more"><button class="more" data-more="1" aria-expanded="false">회사 · 인물 보기</button></td>
       <td class="c-co" data-l="회사">${lines(p.co)}</td>
@@ -758,6 +807,15 @@ function tableView() {
     </tr>`;
   }
   return html + `</tbody></table>`;
+}
+
+function favView() {
+  const imp = (a, b) => GORDER.indexOf(groupOf(a)) - GORDER.indexOf(groupOf(b)) || (D.people[a].rank || 999) - (D.people[b].rank || 999) || firstAt(a) - firstAt(b);
+  const ids = [...S.fav].filter((p) => D.people[p]).sort(imp);
+  let html = `<div class="favhead"><h2 class="sec">즐겨찾기<small>${ids.length}명 · 이 기기에 저장 — 이름 옆 ☆ 로 넣고 뺀다</small></h2>
+    <div class="favbtns"><button class="btn" id="favLink">목록 링크 복사</button><button class="btn" id="favPrint">인쇄 · PDF</button><button class="btn" id="favClear">비우기</button></div></div>`;
+  if (!ids.length) return html + `<p class="empty">아직 비어 있습니다 — 관련자 표 · 세션 · 사람 찾기에서 이름 옆 ☆ 을 누르면 여기에 모입니다.<br>「목록 링크 복사」로 다른 기기나 대표님께 그대로 넘길 수 있습니다.</p>`;
+  return html + tableHTML(ids, true);
 }
 
 function drawer(pid) {
@@ -783,11 +841,12 @@ function drawer(pid) {
   const where = whereOf(pid).map((s) => `<a href="#${s.id}" data-go="${s.day}" data-s="${s.id}" data-close="1"><b>${DEV[s.day]} ${DSHORT[s.day]} ${esc(s.start)}</b><span>${esc(s.title)}</span></a>`).join("");
   const desc = !p.prof && (p.co || p.pe) ? `<ul>${(p.co || []).map((x) => `<li>${esc(x)}</li>`).join("")}${(p.pe || []).map((x) => `<li>${esc(x)}</li>`).join("")}</ul>` : "";
   $("#drawer").innerHTML = `
-    <div class="dh"><div class="row1">${m ? `<span class="pill m-${m}">${LABEL[m]}</span>` : ""}${tierTxt ? `<span class="rk">${tierTxt}</span>` : ""}<button class="x" data-close="1" aria-label="닫기">✕</button></div>
+    <div class="dh"><div class="row1">${m ? `<span class="pill m-${m}">${LABEL[m]}</span>` : ""}${tierTxt ? `<span class="rk">${tierTxt}</span>` : ""}${star(pid)}<button class="x" data-close="1" aria-label="닫기">✕</button></div>
       <h2 id="dname">${esc(nameOf(pid))}</h2>${p.ko ? `<div class="en2">${esc(p.name)}</div>` : ""}<div class="org2">${esc(p.xorg || p.org || "")}</div></div>
     <div class="db">
-      ${pr.summary ? `<section><h3>한줄 요약</h3><p class="sum">${esc(pr.summary)}</p></section>` : `<p class="none">${m === "line" ? "상세 조사 대상 아님 — 선(말할 때 조심). 공개 정보까지만." : m === "ours" ? "우리 키노트." : "상세 조사 전 — 공개 기본 정보만 있습니다."}</p>`}
-      ${why || fit ? `<section><h3>${m === "line" ? "말할 때" : m === "ours" ? "우리" : "우리와의 결"}</h3><div class="fitbox m-${m || "none"}">${why ? `<p class="why m-${m}">${esc(why)}</p>` : ""}${fit ? `<ol>${li(fit)}</ol>` : ""}</div></section>` : ""}
+      ${pr.summary ? `<section><h3>한줄 요약</h3><p class="sum">${esc(pr.summary)}</p></section>` : `<p class="none">${m === "line" ? "상세 조사 대상 아님 — 선(말할 때 조심). 공개 정보까지만." : m === "ripple" ? "상세 조사 대상 아님 — 리플은 공개 직함 · 공개 활동까지만 싣는다." : m === "ours" ? "우리 키노트." : "상세 조사 전 — 공개 기본 정보만 있습니다."}</p>`}
+      ${p.act && m ? `<section><h3>할 일</h3><p class="act2">${esc(p.act)}</p></section>` : ""}
+      ${why || fit ? `<section><h3>${m === "line" ? "말할 때" : m === "ripple" ? "리플 — 공개 직함 · 활동" : m === "ours" ? "우리" : "왜 봐야 하나"}</h3><div class="fitbox m-${m || "none"}">${why ? `<p class="why m-${m}">${esc(why)}</p>` : ""}${fit ? `<ol>${li(fit)}</ol>` : ""}</div></section>` : ""}
       ${sec("이 주간 동선", where ? `<div class="where">${where}</div>` : "")}
       ${sec("인물", rows.length ? `<dl>${rows.map(([k, v]) => `<dt>${k}</dt><dd>${v}</dd>`).join("")}</dl>` : "")}
       ${L(pr.org) ? sec("회사 · 펀드", `<ul>${lix(pr.org)}</ul>`) : sec("회사 · 인물", desc)}
@@ -800,8 +859,10 @@ function drawer(pid) {
     </div>`;
 }
 let lastFocus = null;
+let curPid = null;
 function openDrawer(pid) {
   lastFocus = document.activeElement;
+  curPid = pid;
   drawer(pid);
   $("#drawer").hidden = false; $("#dbg").hidden = false;
   document.body.classList.add("drawer-open");
@@ -823,7 +884,7 @@ function legend() {
 
 function tabs() {
   const n = (did) => D.sessions.filter((s) => s.day === did && s.kind !== "break" && sessMarked(s)).length;
-  $("#tabs").innerHTML = TABS.map((t) => `<button class="tab" role="tab" data-tab="${t.k}" aria-selected="${S.tab === t.k}">${t.short ? `<span class="lg">${t.label}</span><span class="sm">${t.short}</span>` : t.label}${t.k.startsWith("d") ? `<small>${n(t.k)}</small>` : ""}</button>`).join("");
+  $("#tabs").innerHTML = TABS.map((t) => `<button class="tab" role="tab" data-tab="${t.k}" aria-selected="${S.tab === t.k}">${t.short ? `<span class="lg">${t.label}</span><span class="sm">${t.short}</span>` : t.label}${t.k.startsWith("d") ? `<small>${n(t.k)}</small>` : t.k === "fav" ? `<small>${S.fav.size}</small>` : ""}</button>`).join("");
 }
 
 function render() {
@@ -837,13 +898,27 @@ function render() {
   tabs();
   legend();
   const v = $("#view");
-  const wide = S.tab === "table";
+  const wide = S.tab === "table" || S.tab === "fav";
   for (const el of document.querySelectorAll("#app .wrap")) el.classList.toggle("wide", wide);
-  v.innerHTML = S.tab === "table" ? tableView() : S.tab === "glance" ? glanceView() : S.tab === "people" ? peopleView() : dayView(S.tab);
+  v.innerHTML = S.tab === "table" ? tableView() : S.tab === "fav" ? favView() : S.tab === "glance" ? glanceView() : S.tab === "people" ? peopleView() : dayView(S.tab);
   const at = document.querySelector('.tab[aria-selected="true"]');
   if (at) at.scrollIntoView({ block: "nearest", inline: "nearest" });
   const pb = $("#printBtn");
   if (pb) pb.onclick = () => window.print();
+  const fp = $("#favPrint");
+  if (fp) fp.onclick = () => window.print();
+  const fl = $("#favLink");
+  if (fl) fl.onclick = async () => {
+    const u = new URLSearchParams({ tab: "fav", fav: [...S.fav].join(",") });
+    const url = location.href.split(/[?#]/)[0] + "?" + u.toString();
+    try { await navigator.clipboard.writeText(url); toast(`즐겨찾기 ${S.fav.size}명 링크를 복사했습니다 — 여는 기기의 목록에 더해집니다`); }
+    catch (e) { prompt("아래 링크를 복사하세요", url); }
+  };
+  const fc = $("#favClear");
+  if (fc) fc.onclick = () => {
+    if (!S.fav.size) { toast("비어 있습니다"); return; }
+    if (confirm(`즐겨찾기 ${S.fav.size}명을 이 기기에서 지웁니다.`)) { S.fav.clear(); store.del("evw.fav"); render(); toast("즐겨찾기를 비웠습니다"); }
+  };
   saveState();
 }
 
@@ -870,8 +945,20 @@ function wire() {
   $("#foot").innerHTML = D.foot.map((x) => `<p>${esc(x)}</p>`).join("");
   document.addEventListener("click", (e) => {
     if (e.target.closest("#dbg")) { closeDrawer(); return; }
-    const t = e.target.closest("[data-tab],[data-c],[data-mk],[data-go],[data-sort],[data-ev],[data-all],[data-more],[data-open],[data-close]");
+    const t = e.target.closest("[data-fav],[data-tab],[data-c],[data-mk],[data-go],[data-sort],[data-ev],[data-all],[data-more],[data-open],[data-close]");
     if (!t) return;
+    if (t.dataset.fav) {
+      e.preventDefault();
+      const pid = t.dataset.fav;
+      S.fav.has(pid) ? S.fav.delete(pid) : S.fav.add(pid);
+      store.set("evw.fav", [...S.fav]);
+      toast(S.fav.has(pid) ? `★ 즐겨찾기에 넣었습니다 — ${nameOf(pid)}` : `즐겨찾기에서 뺐습니다 — ${nameOf(pid)}`);
+      const y = window.scrollY;
+      render();
+      window.scrollTo(0, y);
+      if (!$("#drawer").hidden && curPid) { const ds = $("#drawer").scrollTop; drawer(curPid); $("#drawer").scrollTop = ds; }
+      return;
+    }
     if (t.dataset.open) { e.preventDefault(); openDrawer(t.dataset.open); return; }
     if (t.dataset.close && !t.dataset.go) { closeDrawer(); return; }
     if (t.dataset.close && t.dataset.go) { closeDrawer(); }
