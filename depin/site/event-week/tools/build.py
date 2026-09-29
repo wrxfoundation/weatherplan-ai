@@ -291,7 +291,8 @@ XS_STRAT = {"Crypto Eri", "Changhoon Moon", "Lacey Wisdom", "Asheesh Birla"}  # 
 # 프로그램 연사로는 남는다(세션 카드 · 전체 연사의 「표시 없음」 맨 끝). 표시 · 순위 · 할 일 · 인물 상세 · 「두 행사」 표시 어디에도 다시 넣지 않는다.
 NOT_TARGET = {"Jake Ku": "카탈라이즈(XRPL Korea) — 우리 쪽",
               "Marcin Kazmierczak": "RedStone — 후순위(9/29 밤 서우 「별로였어 — 아무 색 · 태그 없이 뒤로」)",
-              "Michael Heinrich": "0G Labs — 뺌(9/29 밤 서우 「제로지 0g 빼」)"}
+              "Michael Heinrich": "0G Labs — 뺌(9/29 밤 서우 「제로지 0g 빼」)",
+              "Jake Salerno": "0G Labs(GTM 부사장, 9/29 조사) — 0G 와 같이 뺌"}
 XS_OURS = {"Sunghwan Kim"}
 # 리플 — 10/3 에 한 번은 인사할 사람. 공개 직함 · 공개 활동 · 세션만(관계 메모 0 · 협력 표현 0)
 XS_RIPPLE = {
