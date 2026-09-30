@@ -2021,3 +2021,6 @@ Thanks Odelia — writing to you at that address today. Mine is support@wellbian
 - **9/30 저녁 회의(20:10 녹음, 약 2시간 12분) 카톡 보고본(서우 녹취 파일 + 「카톡 보고 형태」)** — 채팅으로만 전달(AI 팩토리 사업 구조 · 자금 · 리플 관련
   발언이 섞여 내용은 저장소 밖, 원문 UTF-16 → 스크래치패드 변환). 사이트 문구 쪽 미결 1건만 적는다: 웨더 이코노미 단계 표현 — 대표 「측정 · 검증 · 보상 · 유통」
   4단계 vs 회의 끝 「측정 · 정제 · 유통 + 보상은 각 단계를 돌리는 장치」 → 발표 전 하나로.
+- **Malea Otranto(Polymarket Global Head of Trust and Safety) 인사(9/30, 서우 프로필 캡처 3장 + 「Lynn 처럼 인사하자」)** — `intel/business-directions.md`
+  Shirley 절 다음. 3촌이라 1촌 요청 메모(256자) + 수락 뒤 인사(563자). 폴리마켓 계열 상한이 차서(Paul · 메일 · Shirley) 인사만 — 측정기 절반 · 정산 · 플랫폼 이름 0,
+  「eleven weather feeds」, 새 직장 축하 한 줄. 트러스트 앤 세이프티라 정산 무결성과 가장 가깝지만 그래서 더 꺼내지 않음.

@@ -1992,6 +1992,38 @@ We publish city-level weather across 90 countries and 167 cities. Each value is 
 Good to be connected.
 ```
 
+## Malea Otranto (Polymarket, Global Head of Trust and Safety) — 1촌 요청 메모 + 수락 뒤 인사 (2026-09-30, 서우 프로필 캡처 3장 + 「Lynn 처럼 인사하자」)
+
+- **자리**(캡처 기준): Polymarket 첫 Global Head of Trust and Safety(**2026-08~**, 뉴욕 — 기능 · 팀을 처음부터 세우는 자리) · 직전 Meta 6년 8개월
+  (Head of Trust and Safety — Global Business Group, Global Partners 2024-03~2026-08 · Head of Strategic Initiatives & Executive Operations, GBG
+  2020-01~2024-03) · WE(Associate Director, USA 2018-08~2020-01). American University. 3촌 · 팔로워 2,562. 9/30 「8월 합류 · 오늘 새 발표」 글.
+- **어느 폴리마켓인가**: 「Global」 직함 · 뉴욕 — 글로벌(polymarket.com, 한국 차단 8/18)과 US 중 어디 소속인지 확인 전.
+
+**판정 — 인사만, 사업 이야기 0 (Shirley 판과 같은 결)**
+- 폴리마켓 계열 상한이 이미 찼다(Paul + Institutional 메일 = 2, Megan 보류, Shirley 인사만) → 네 번째라 제안 · 역할 줄 0.
+- 트러스트 앤 세이프티는 정산 무결성(4월 파리 공항 센서 조작 건)과 가장 가까운 자리지만, 그래서 더 「정산 · 조작 방지」를 꺼내지 않는다 — 제안으로 읽힌다.
+- 예측시장 공통 규칙 그대로: 측정기 절반 뺌 · 「eleven weather feeds」 · 플랫폼 · 전 직장 이름 0 · 「settlement · market」 0 · 10/3 09:00 전 Flare · 날씨 데이터 마켓 0.
+- 역할 줄 대신 새 직장 축하 한 줄. Shirley 와 비교해도 각자 받은 말이 되게 문장을 바꿨다.
+- **그가 먼저 무결성 · 데이터로 말을 걸면** 새 스레드를 열지 않고 폴리마켓 US 창구(Paul · Institutional)로 잇는다.
+
+**1촌 요청 메모 (256자 — 상한 300)**
+```
+Hi Malea, congratulations on the new role. I lead partnerships at wellbian. KWeather has measured weather in Korea for 30 years; wellbian builds on it: city-level weather from 11 weather feeds, every input fingerprinted to a public ledger. Glad to connect.
+```
+
+**수락 뒤 인사 (EN, 563자)**
+```
+Hi Malea — thanks for connecting, and congratulations on the new role. Building a team from a blank page is no small thing.
+
+I lead partnerships at wellbian. KWeather has been measuring weather in South Korea for thirty years and serves 4,000+ enterprise clients with data; wellbian is the network we built on that base.
+
+Our data covers 90 countries and 167 cities. Rather than trusting a single reading, each city value is a consensus of eleven weather feeds, and every input leaves a fingerprint on a public ledger before anyone uses it.
+
+Good to be connected.
+```
+
+**발송 여부는 Claude 가 관리하지 않는다** — 서우 통보 시 갱신.
+
 ## Tarek Mansour (Kalshi 공동창업 · CEO) — 1촌 요청 메모 + 반박 · 우위 논리 (2026-09-29, 서우 링크드인 글 캡처 3장 + 「1촌 멘트 · 반박논리 · 우위논리 카톡」)
 
 - **글**: 2촌. 9/20 논문 「Prediction Markets Beat the Weather Forecast on Tomorrow's High Temperature」(Alexander W. Crosier, arXiv 2609.23969 프리프린트 ·
