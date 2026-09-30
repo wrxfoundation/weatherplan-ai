@@ -36,8 +36,12 @@ TOSS_SECRET_KEY=               # 시크릿 키 — 서버 전용
 ## 3. 심사용 모바일웹 URL
 
 토스 쪽에서 "모바일웹 URL이 나와야 한다"고 한 건 심사에 쓸 실제 동작 주소가 필요하다는 뜻이다.
-kcare-app 은 저장소 안의 독립 Next.js 앱이라 **Vercel 프로젝트를 따로 만들고 Root Directory 를
-`kcare-app` 으로 지정**해서 배포하면 자체 URL 이 나온다.
+회사 저장소(kcare-beta)로 옮긴 뒤에는 앱이 저장소 루트에 있으므로 Vercel 에서 가져오기만 하면
+자체 URL 이 나온다 (DEPLOY.md 2단계). 모노레포(weatherplan-ai)에서 배포할 때만 Root Directory 를
+`kcare-app` 으로 지정한다.
+
+2026-09-30: 보안 헤더(CSP)가 토스 스크립트·통신·iframe 을 막고 있던 것을 고쳤다
+(`next.config.js` — `*.tosspayments.com` 허용). 이전 빌드에서는 키를 넣어도 결제창이 뜨지 않았다.
 
 심사에 낼 주소:
 

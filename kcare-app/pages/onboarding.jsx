@@ -1,6 +1,6 @@
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Card, SectionLabel, PrimaryButton, GhostButton, Badge } from "../components/ui";
 import Icon from "../components/icons";
 import { PRICING, HOUSEHOLD, BASE_BENEFITS, HOSPITAL_BENEFITS, CARE_LOCATIONS, PAYMENT_MODES, fmtWon } from "../lib/config";
@@ -13,6 +13,10 @@ const HOUSEHOLDS = [
 import { TIER1_DISTRICTS, TIER2_DISTRICTS, SCREENING_ITEMS, screenRegion } from "../lib/region";
 import { CORE, CORE_NOTE, TRACKS, STEP_LABELS, trackOf } from "../lib/tracks";
 import { SALES_REP, isRepCode } from "../lib/sales";
+import { AUTH_ENABLED, GoogleMark, googleSignIn, useAuth } from "../lib/auth";
+
+// 간편가입 표기 — 구글은 실제 로그인(설정됐을 때), 카카오·네이버는 아직 데모다
+const AUTH_LABEL = { google: "Google", kakao: "카카오", naver: "네이버" };
 import { useAppState } from "../lib/state";
 
 // 온보딩 — REQ-05 상품 · REQ-07 결제권한 · REQ-15 이용적합성 심사
@@ -30,7 +34,8 @@ export default function Onboarding() {
   const { dispatch } = useAppState();
   const [stepKey, setStepKey] = useState("track");
   const [form, setForm] = useState({
-    auth: null, // 간편가입 — "kakao" | "naver" | null (2026-09-04 시트 앱 전체 4번)
+    auth: null, // 간편가입 — "google" | "kakao" | "naver" | null (2026-09-04 시트 앱 전체 4번 · 구글 2026-09-30)
+    authEmail: null, // 구글 로그인으로 연결된 이메일
     track: null, // lib/tracks.js 의 id
     forSelf: null, // 정기 케어 외 트랙 — 본인 이용인지 대신 신청인지
     careLocation: null, // 정기 케어 — 자택(home) / 요양병원(hospital) · 실무자 피드백 2026-08-09
@@ -52,6 +57,14 @@ export default function Onboarding() {
   });
   const [waitlisted, setWaitlisted] = useState(false);
   const set = (patch) => setForm((f) => ({ ...f, ...patch }));
+  // 구글 로그인에서 돌아오면 간편가입을 '구글 연결됨'으로 채운다 — 한 번만 (해제하면 다시 채우지 않는다)
+  const auth = useAuth();
+  const googleFilled = useRef(false);
+  useEffect(() => {
+    if (googleFilled.current || !auth.user?.email) return;
+    googleFilled.current = true;
+    setForm((f) => (f.auth ? f : { ...f, auth: "google", authEmail: auth.user.email }));
+  }, [auth.user?.email]);
   // 영업자 링크(/onboarding?ref=S-0012)로 들어오면 추천 코드를 미리 채운다
   useEffect(() => {
     const ref = router.query.ref;
@@ -92,6 +105,7 @@ export default function Onboarding() {
       type: "completeOnboarding",
       payload: {
         auth: form.auth,
+        authEmail: form.auth === "google" ? form.authEmail : null,
         track: form.track,
         forSelf: form.forSelf,
         careLocation: track?.needsRelation ? form.careLocation : null, // DB: care_location_type
@@ -175,18 +189,33 @@ export default function Onboarding() {
                 {form.auth ? (
                   <div className="mt-2.5 flex items-center gap-2 rounded-xl bg-green/10 px-3.5 py-3">
                     <span className="text-[14px] font-bold text-green">
-                      ✓ {form.auth === "kakao" ? "카카오" : "네이버"} 계정 연결됨
+                      ✓ {AUTH_LABEL[form.auth]} 계정 연결됨
                     </span>
-                    <span className="ml-auto text-[11px] text-muted">실제 로그인은 앱 키 등록 후</span>
+                    <span className="ml-auto min-w-0 truncate text-[11px] text-muted">
+                      {form.auth === "google" && form.authEmail ? form.authEmail : "실제 로그인은 앱 키 등록 후"}
+                    </span>
                     <button
-                      onClick={() => set({ auth: null })}
+                      onClick={() => set({ auth: null, authEmail: null })}
                       className="btn-press btn-inline text-[12px] font-bold text-muted underline underline-offset-2"
                     >
                       해제
                     </button>
                   </div>
                 ) : (
-                  <div className="mt-2.5 grid grid-cols-2 gap-2">
+                  <>
+                  {/* 구글 — 로그인 설정이 있으면 실제 구글 로그인으로 갔다가 이 화면으로 돌아온다 */}
+                  <button
+                    onClick={() =>
+                      AUTH_ENABLED
+                        ? googleSignIn(`/onboarding${salesRef ? `?ref=${encodeURIComponent(salesRef)}` : ""}`)
+                        : set({ auth: "google" })
+                    }
+                    className="btn-press mt-2.5 flex w-full items-center justify-center gap-2 rounded-xl border border-[#DADCE0] bg-white py-3 text-[14px] font-bold text-[#1F1F1F]"
+                  >
+                    <GoogleMark size={18} />
+                    Google로 시작
+                  </button>
+                  <div className="mt-2 grid grid-cols-2 gap-2">
                     <button
                       onClick={() => set({ auth: "kakao" })}
                       className="btn-press flex items-center justify-center gap-2 rounded-xl py-3 text-[14px] font-bold"
@@ -204,6 +233,7 @@ export default function Onboarding() {
                       네이버로 시작
                     </button>
                   </div>
+                  </>
                 )}
                 <p className="mt-2 text-[11px] leading-[1.6] text-muted">
                   연결하면 이름·연락처를 다시 적지 않아도 됩니다. 연결 없이도 아래에서 이어서 진행할 수 있습니다.
@@ -904,7 +934,9 @@ export default function Onboarding() {
                 <div className="mt-3 space-y-2 text-[14px]">
                   {[
                     ["신청 서비스", track.short],
-                    ...(form.auth ? [["가입 방식", `${form.auth === "kakao" ? "카카오" : "네이버"} 간편가입 (데모)`]] : []),
+                    ...(form.auth
+                      ? [["가입 방식", form.auth === "google" && form.authEmail ? `Google 로그인 · ${form.authEmail}` : `${AUTH_LABEL[form.auth]} 간편가입 (데모)`]]
+                      : []),
                     ...(track.needsRelation
                       ? [
                           ["거주 형태", hospital ? "요양병원" : "자택"],

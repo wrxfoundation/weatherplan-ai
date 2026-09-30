@@ -1,0 +1,43 @@
+name: ci
+
+# 회사 저장소(이 폴더가 저장소 루트) 품질 게이트 — 푸시·PR 마다 린트 · 빌드 · 스모크.
+# 모노레포(weatherplan-ai) 안에서는 이 파일이 동작하지 않는다 (GitHub 은 루트의 .github 만 읽는다).
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+
+      - run: npm ci
+
+      # 린트는 경고도 실패로 본다
+      - name: 린트 (경고 0 기준)
+        run: npx next lint --max-warnings=0
+
+      - name: 빌드
+        run: npm run build
+
+      # 스모크가 쓰는 브라우저 — 버전을 package.json 의 playwright-core 와 정확히 맞춘다
+      - name: 브라우저 설치
+        run: npx --yes playwright@1.62.1 install --with-deps chromium
+
+      - name: 서버 기동
+        run: |
+          npm start &
+          npx --yes wait-on http://localhost:3100/service --timeout 90000
+
+      # 빌드가 못 잡는 것 — 렌더 오류 · 빈 화면 · 접근성 회귀 · 터치 타깃
+      - name: 스모크 (전 화면 × 모바일·데스크톱)
+        run: npm run smoke
+        env:
+          SMOKE_BASE: http://localhost:3100

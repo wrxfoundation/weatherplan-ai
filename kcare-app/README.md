@@ -1,41 +1,90 @@
-# kcare-app — K-CARE 온보딩 · 가족 앱 (1차 구현)
+# K-CARE 베타
 
-2026-07 실무자 미팅 요구사항(`../docs/kcare/requirements-2026-07-meeting.md`)의 1차 범위 중
-**온보딩과 가족 앱**을 구현한 독립 Next.js 앱입니다. Weather Plan AI 본체와 별개이며,
-백엔드 없이 목 데이터 + localStorage로 동작하는 데모 단계입니다.
+부모님 케어 멤버십 K-CARE 의 베타 웹앱이다. 어르신 · 보호자 · 컨시어지 · 영업자 · 관제 · 경영
+여섯 역할의 화면이 하나의 Next.js 앱에 들어 있다.
 
-## 실행
+- 배포 방법: **[DEPLOY.md](DEPLOY.md)** — GitHub · Vercel · 구글 로그인 설정 순서
+- 기술: Next.js 14 (Pages Router) · React 18 · Tailwind CSS 3 · NextAuth 4 (구글 로그인) ·
+  토스페이먼츠 SDK v2 · Leaflet · Anthropic SDK
+- 서버 위치: Vercel 서울 리전 (`vercel.json`)
+
+## 화면
+
+| 역할 | 주소 | 내용 |
+|---|---|---|
+| 시연 허브 | `/` | 시연 동선 · 역할 바로가기 · 로그인 상태 |
+| 로그인 | `/login` | 구글 계정 로그인 (설정 전이면 안내) |
+| 대외 소개 | `/service` | 서비스 · 요금 · 해지 · 환불 |
+| 가입 상담 | `/onboarding` | 트랙 선택 · 가구 구성 · 지역 심사 · 결제권한 · 요금 · 구글로 시작 · 영업자 추천 코드 |
+| 어르신 | `/elder` | 오늘 · 약 미션 · 해주세요 · 마음사서함 · 가족 · SOS |
+| 보호자 | `/family` · `/family/calendar` · `/family/requests` · `/family/store` · `/family/my` · `/family/watch` · `/family/hospitals` | 오늘 어머니 · 공유 캘린더 · 해주세요 · 스토어 · 결제 관리 |
+| 컨시어지 | `/concierge` · `/concierge-onboarding` · `/care-profile` · `/safety-check` | 오늘 · 고객 · 마음사서함 · 방문·리포트 · 제안 |
+| 영업자 | `/sales` | 실적 · 수당(확정 전) · 모집 고객 · 초대 링크 |
+| 관제 | `/dispatch` | 통합 알림 · SOS 대응 · 관제 기준 · 명부 · 방문 · 기기 · 감사 로그 (16개 메뉴) |
+| 경영 | `/admin` | KPI · 가격 · 손익 · 리스크 |
+| 결제 | `/pay` · `/pay/result` | 토스페이먼츠 결제위젯 · 자동결제 카드 등록 |
+| 리포트 | `/report/verify` · `/report/care` · `/report/visit` · `/report/exec` | 고객에게 나가는 문서 |
+
+## 로컬에서 실행
+
+Node 20 이상.
 
 ```bash
-cd kcare-app
 npm install
-npm run dev   # http://localhost:3100
+cp .env.example .env.local   # 필요한 값만 채운다 · 비워도 실행된다
+npm run dev                  # http://localhost:3100
 ```
 
-## Vercel 배포
+## 품질 게이트
 
-새 프로젝트 생성 → Root Directory를 `kcare-app`으로 지정 (Framework: Next.js 자동 감지).
-내부 자료 성격이므로 Deployment Protection 권장.
+```bash
+npm run verify    # 린트(경고 0) + 빌드
+npm start &       # 운영 모드로 기동 (http://localhost:3100)
+npm run smoke     # 23개 화면을 모바일·데스크톱으로 실제로 열어 검사
+```
 
-## 구현 범위 ↔ 요구사항 매핑
+빌드는 렌더 시점 오류 · 빈 화면 · 접근성 회귀 · 터치 타깃 축소를 못 잡는다. 스모크가 그 그물이다.
+GitHub Actions(`.github/workflows/ci.yml`)가 푸시마다 같은 것을 돌린다.
 
-| 화면 | 구현된 요구사항 |
+## 환경변수
+
+전부 선택이다. 없으면 해당 기능이 '설정 전' 안내로 바뀌고 나머지 화면은 그대로 동작한다.
+목록과 설명은 [`.env.example`](.env.example), 넣는 곳은 [DEPLOY.md 4단계](DEPLOY.md#4-vercel-에-환경변수-넣고-다시-배포).
+
+| 기능 | 변수 |
 |---|---|
-| `/onboarding` | REQ-15 서비스 가능지역·이용적합성 심사 (급지 자동 판정 + 방문 확인 항목) · REQ-07 결제권한 4모드 선택(기본 한도 5만원) · REQ-05 기본상품 10종·가격(설정값, 미확정 표기) |
-| `/family` (홈) | REQ-02 다음 일정 한 줄 노출 → 캘린더 · REQ-06/S3 SOS 수신 배너(확인 1버튼, SLA 비노출) · AI 이상 징후 카드(필수 고지 문구 포함) · 주간 요약·외출 컨디션(두 구간 중 낮은 값) · 형제 공동 관리(순위 없음) · 멤버십 상태(온보딩 결과 반영) |
-| `/family/calendar` | REQ-02 공유 캘린더 — 일정 9종, 월 그리드, 7일 내 알림 팝업 카드, 보호자 등록, 컨시어지 등록 일정 source 표기 |
-| `/family/requests` | REQ-03 해주세요 — 상태 8종 상태 머신·처리 이력·첨부(사진·금액·희망일·긴급도·담당·완료증빙) · REQ-07 결제대기 승인(한도 로직 연동) · REQ-08 구매대행 요청 수신(컨시어지→보호자) |
+| 구글 로그인 | `GOOGLE_CLIENT_ID` · `GOOGLE_CLIENT_SECRET` · `NEXTAUTH_SECRET` · `NEXTAUTH_URL` |
+| 베타 잠금 | `BETA_REQUIRE_LOGIN` · `BETA_ALLOWED_DOMAINS` · `BETA_ALLOWED_EMAILS` |
+| AI 도우미 | `ANTHROPIC_API_KEY` |
+| 결제 | `NEXT_PUBLIC_TOSS_CLIENT_KEY` · `TOSS_SECRET_KEY` |
 
-## 도메인 규칙 준수 (docs/kcare/design-handoff/01-domain-rules.md)
+키는 저장소에 올리지 않는다. `.env.local` 은 `.gitignore` 로 막혀 있다.
 
-- 가족 화면에 관제 경과시간·SLA를 노출하지 않음. SOS 시 가족 행동은 `확인했습니다` 1개
-- 필수 카피 유지: AI 고지 / "숫자를 읽고 판단하는 일은 저희가 합니다…" / 연락 담당 고정 안내
-- 형제 분담은 사실만 표기, 순위 없음
-- 미연동 지표(웨어러블·결제)는 "연동 대기" 정직 표기, 임의 수치 생성 없음
-- 모든 단가는 `lib/config.js` 설정값 — 하드코딩 금지 (가입비·2급지 요율은 미확정 플래그)
+## 폴더
 
-## 다음 단계 (미구현)
+```
+pages/          화면과 API (api/ai · api/auth · api/payments)
+components/     공용 UI · 관제 콘솔(ops/) · 마음사서함 · 결제 시트
+lib/            데이터 · 규칙 (가격 config.js · 영업 sales.js · 결제 payments.js · 로그인 auth*.js)
+middleware.js   베타 잠금 (BETA_REQUIRE_LOGIN=1 일 때만)
+scripts/        smoke.mjs — 전 화면 스모크 검사
+docs/           요구사항 · 회의록 · 디자인 핸드오프 · 결정 기록 · DB 설계 · 결제 연동
+```
 
-- 사용자(어르신) 홈 — 접근성 규격(본문 18px+, 버튼 패딩 28px), SOS 2초 길게 누르기+5초 취소(REQ-06 인터랙션은 어르신 화면 몫)
-- 컨시어지 앱 — 당일 동선(REQ-09), 안심케어박스 워크플로(REQ-10), 관찰 리포트(REQ-11)
-- 스토어(장바구니)·마이 탭, 서버 연동(상태는 전부 서버 소유로 이관)
+## 지켜 온 규칙
+
+- **확정되지 않은 금액은 만들지 않는다.** '요금 확정 전' · '확인 중'으로 적는다 (`lib/config.js` 한 곳에서 관리).
+- **빨강은 위험 신호 전용**이다 (SOS · 낙상). 가격 · 일반 경고에는 쓰지 않는다.
+- **가족 화면에 관제 경과시간 · SLA 를 보이지 않는다.** SOS 때 가족 행동은 '확인했습니다' 하나.
+- **영업자에게는 고객의 건강 · 위치 · 케어 기록을 보이지 않는다.** 이름 · 연락처도 일부만.
+- **어르신 화면** 본문은 19px 이상, 버튼은 누르기 쉬운 크기를 유지한다.
+- 자세한 도메인 규칙: `docs/design-handoff/01-domain-rules.md`
+
+## 베타의 제약
+
+- **데이터는 브라우저(localStorage)에만 저장된다.** 서버 DB 가 없어 가입 상담 신청 · 결제 내역 ·
+  영업자 모집 기록이 회사로 모이지 않는다. 실제 고객을 받기 전에 서버 저장을 붙여야 한다
+  (설계 초안: `docs/DB-SCHEMA.md`).
+- 결제는 토스 **테스트 키**로만 운영한다. 주문 테이블 · 월 자동 청구 · 취소 · 환불이 남아 있다.
+- 실제 로그인은 **구글만** 된다. 카카오 · 네이버는 연결 표시만 하는 데모다.
+- 영업자 수당은 수수료 제도가 확정되면 `lib/sales.js` 의 `SALES_COMMISSION` 을 채워 켠다.

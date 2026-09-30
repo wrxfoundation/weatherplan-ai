@@ -3,6 +3,7 @@ import Logo from "../components/Logo";
 import Link from "next/link";
 import { useState } from "react";
 import { useAppState } from "../lib/state";
+import { useAuth } from "../lib/auth";
 
 // 데모 홈 = 시연 허브 — 6단계 시연 동선(슬라이드와 동일) + 라이브 데모 상태 + 원탭 초기화.
 // KO/EN 토글은 허브 한정 (해외 이해관계자 배석 대비) — 앱 본문은 한국어 단일.
@@ -66,6 +67,7 @@ const T = {
 
 export default function Home() {
   const { state, dispatch } = useAppState();
+  const auth = useAuth();
   const [lang, setLang] = useState("ko");
   const t = T[lang];
   const joined = !!state.onboarding;
@@ -88,6 +90,14 @@ export default function Home() {
         <main className="w-full max-w-[880px] py-12">
           <div className="flex items-start justify-between">
             <Logo height={42} tone="onDark" beta />
+            <div className="flex items-center gap-2">
+              {/* 구글 로그인 — 로그인돼 있으면 이름, 아니면 로그인 화면으로 */}
+              <Link
+                href="/login"
+                className="tap rounded-full border border-white/15 px-3 text-[11px] font-bold text-white/70"
+              >
+                {auth.user ? `● ${auth.user.name || auth.user.email}` : lang === "ko" ? "로그인" : "Sign in"}
+              </Link>
             <div className="flex gap-1 rounded-full border border-white/15 p-1">
               {["ko", "en"].map((l) => (
                 <button
@@ -100,6 +110,7 @@ export default function Home() {
                   {l.toUpperCase()}
                 </button>
               ))}
+            </div>
             </div>
           </div>
           {/* whitespace-pre-line: 카피의 개행(\n)을 그대로 살린다 — 슬로건은 줄바꿈 위치가 리듬이다 */}

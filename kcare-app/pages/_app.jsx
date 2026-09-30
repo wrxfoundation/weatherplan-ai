@@ -2,6 +2,7 @@ import "leaflet/dist/leaflet.css";
 import "../styles/globals.css";
 import Head from "next/head";
 import { AppStateProvider } from "../lib/state";
+import { AuthProvider } from "../lib/auth";
 import Boundary from "../components/Boundary";
 
 export default function App({ Component, pageProps }) {
@@ -30,9 +31,12 @@ export default function App({ Component, pageProps }) {
       </Head>
       {/* 한 화면이 터져도 흰 화면 대신 안내가 뜨게 — 시연 사고 방지 */}
       <Boundary>
-        <AppStateProvider>
-          <Component {...pageProps} />
-        </AppStateProvider>
+        {/* 구글 로그인 세션 — 로그인 설정이 없으면 아무것도 감싸지 않는다 (lib/auth.js) */}
+        <AuthProvider>
+          <AppStateProvider>
+            <Component {...pageProps} />
+          </AppStateProvider>
+        </AuthProvider>
       </Boundary>
     </>
   );
