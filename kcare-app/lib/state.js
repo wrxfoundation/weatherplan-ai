@@ -6,6 +6,7 @@ import { PRICING } from "./config";
 import { transition } from "./requests";
 import { SEED_VISIT, advance } from "./workflow";
 import { useAuth } from "./auth";
+import { setStorageScope } from "./scope";
 
 // 앱 전역 상태.
 // 역할 간 연동: 어르신 SOS → 가족 배너 / 컨시어지 보충 요청 → 가족 결제 승인.
@@ -140,6 +141,12 @@ function rebaseSeedEvents(events) {
     .map((e) => (SEED_BY_ID[e.id] && e.at < Date.now() ? { ...e, at: SEED_BY_ID[e.id].at } : e));
 }
 
+// 서버 저장 모드에서는 동작마다 시각(_at)과 번호(_op)가 붙는다. 시각·id 를 그 값에서 만들면
+// 다른 폰에서 다시 쌓아도(충돌 처리) 같은 id 가 나온다 — 여러 건을 한 번에 다시 쌓을 때
+// Date.now() 가 겹쳐 id 가 같아지는 일도 없다. 데모에서는 붙지 않으니 지금 시각을 쓴다.
+const nowOf = (a) => (Number.isFinite(a?._at) ? a._at : Date.now());
+const idOf = (prefix, a) => (a?._op ? `${prefix}${a._op}` : `${prefix}${Date.now()}`);
+
 function reducer(state, action) {
   switch (action.type) {
     case "hydrate": {
@@ -211,9 +218,9 @@ function reducer(state, action) {
         ),
       };
     case "setPriority":
-      return { ...state, priority: { ...action.payload, setAt: Date.now() } };
+      return { ...state, priority: { ...action.payload, setAt: nowOf(action) } };
     case "addReport":
-      return { ...state, reports: [{ ...action.payload, at: Date.now() }, ...state.reports] };
+      return { ...state, reports: [{ ...action.payload, at: nowOf(action) }, ...state.reports] };
     case "addRequest":
       return { ...state, requests: [action.payload, ...state.requests] };
     case "transitionRequest":
@@ -240,7 +247,7 @@ function reducer(state, action) {
       return {
         ...state,
         ticker: [
-          { id: `ev${Date.now()}`, at: Date.now(), ...action.payload },
+          { id: idOf("ev", action), at: nowOf(action), ...action.payload },
           ...state.ticker,
         ].slice(0, 40),
       };
@@ -257,7 +264,7 @@ function reducer(state, action) {
         visit: {
           ...state.visit,
           ...(action.patch || {}),
-          audit: [...state.visit.audit, { at: Date.now(), ...action.event }],
+          audit: [...state.visit.audit, { at: nowOf(action), ...action.event }],
         },
       };
     case "kitUpdate":
@@ -283,7 +290,7 @@ function reducer(state, action) {
     case "addPayment": {
       const list = state.payments || [];
       if (action.payload.orderId && list.some((p) => p.orderId === action.payload.orderId)) return state;
-      return { ...state, payments: [{ id: `pay${Date.now()}`, at: Date.now(), ...action.payload }, ...list].slice(0, 30) };
+      return { ...state, payments: [{ id: idOf("pay", action), at: nowOf(action), ...action.payload }, ...list].slice(0, 30) };
     }
     case "setBilling":
       return { ...state, billing: action.payload };
@@ -294,19 +301,20 @@ function reducer(state, action) {
     case "commitPendingOrder": {
       const po = state.pendingOrder;
       if (!po) return state;
-      const now = Date.now();
+      const now = nowOf(action);
+      const key = action._op || now;
       const pay = action.payload || {};
       return {
         ...state,
         pendingOrder: null,
         demo: { ...state.demo, cart: true, safetyCart: [] },
         orders: [
-          { id: `od${now}`, at: now, by: "김민수", channel: po.channel, items: po.items, ship: po.ship, status: "preparing", receipt: pay.receiptUrl || null, note: "" },
+          { id: `od${key}`, at: now, by: "김민수", channel: po.channel, items: po.items, ship: po.ship, status: "preparing", receipt: pay.receiptUrl || null, note: "" },
           ...state.orders,
         ],
         requests: [
           {
-            id: `rq-${now}`,
+            id: `rq-${key}`,
             dir: "fromGuardian",
             type: "물품 전달해 주세요",
             detail: `보호자 주문: ${po.items.map((i) => i.name).join(", ")} — 다음 배송일에 전달해 주세요.`,
@@ -328,11 +336,11 @@ function reducer(state, action) {
       };
     }
     case "addVoice":
-      return { ...state, voices: [{ id: `vo${Date.now()}`, at: Date.now(), ...action.payload }, ...state.voices].slice(0, 30) };
+      return { ...state, voices: [{ id: idOf("vo", action), at: nowOf(action), ...action.payload }, ...state.voices].slice(0, 30) };
     case "addReview":
-      return { ...state, reviews: [{ id: `rv${Date.now()}`, at: Date.now(), ...action.payload }, ...state.reviews] };
+      return { ...state, reviews: [{ id: idOf("rv", action), at: nowOf(action), ...action.payload }, ...state.reviews] };
     case "addOrder":
-      return { ...state, orders: [{ id: `od${Date.now()}`, at: Date.now(), ...action.payload }, ...state.orders] };
+      return { ...state, orders: [{ id: idOf("od", action), at: nowOf(action), ...action.payload }, ...state.orders] };
     case "addMyHospital":
       return { ...state, myHospitals: [...state.myHospitals, action.payload] };
     // 복지혜택 진행상태 — 관제·보호자·컨시어지 누가 바꿔도 같은 값 (lib/welfare.js WELFARE_STATUS)
@@ -341,7 +349,7 @@ function reducer(state, action) {
         ...state,
         welfare: {
           ...state.welfare,
-          status: { ...state.welfare.status, [action.id]: { status: action.status, at: Date.now(), by: action.by || "" } },
+          status: { ...state.welfare.status, [action.id]: { status: action.status, at: nowOf(action), by: action.by || "" } },
         },
       };
     // 보호자가 미확인 항목에 답한다 — 답이 바뀌면 자동판정이 바뀐다
@@ -382,11 +390,37 @@ const readLocal = (key) => {
   }
 };
 
+// 서버 상태에는 `_ops`(이미 들어간 동작 번호 목록)가 같이 실린다. 화면 상태에는 싣지 않고 따로 든다 —
+// 응답을 못 받아 같은 동작을 다시 보내도 두 번 들어가지 않게 하는 표식이다.
+const stripOps = (s) => {
+  if (!s || typeof s !== "object") return {};
+  const { _ops, ...rest } = s; // eslint-disable-line no-unused-vars
+  return rest;
+};
+const opsOf = (s) => (s && Array.isArray(s._ops) ? s._ops : []);
 // 서버에서 받은 상태를 화면용으로 — 빈 기록 위에 형태 검증을 거쳐 얹는다
-const fromServer = (payload) => reducer(freshState(), { type: "hydrate", payload: payload || {} });
+const fromServer = (payload) => reducer(freshState(), { type: "hydrate", payload: stripOps(payload) });
 
-const POLL_MS = 4000; // 같은 가구의 다른 폰이 바꾼 것을 가져오는 간격
+const POLL_ACTIVE_MS = 4000; // 누군가 만지고 있을 때 — 다른 폰이 바꾼 것을 4초 안에
+const POLL_IDLE_MS = 10000; // 2분 넘게 손대지 않은 화면은 10초마다 (켜 둔 화면이 서버를 계속 두드리지 않게)
+const ACTIVE_WINDOW_MS = 120000;
 const SAVE_DELAY_MS = 400; // 연달아 누른 것을 한 번에 보낸다
+const MAX_OPS = 300; // 서버에 남겨 두는 최근 동작 번호 수
+
+const newOpId = () => `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 8)}`;
+// 이 기기에 남겨 두는 것 (테스트 가구별) — 보내지 못한 동작 · 마지막으로 받은 서버 상태
+const pendingKey = (hh) => `kcare-acct-pending-${hh}-v1`;
+const cacheKey = (hh) => `kcare-acct-cache-${hh}-v1`;
+const writeLocal = (key, value) => {
+  try {
+    if (value == null) localStorage.removeItem(key);
+    else localStorage.setItem(key, JSON.stringify(value));
+  } catch (_) {
+    /* 용량 초과 등 — 이 기기 보관은 보조 수단이라 조용히 넘어간다 */
+  }
+};
+const savePending = (hh, list) => hh && writeLocal(pendingKey(hh), list.length ? list : null);
+const saveCache = (hh, state, version) => hh && state && writeLocal(cacheKey(hh), { version, state });
 
 export function AppStateProvider({ children }) {
   const auth = useAuth();
@@ -405,21 +439,26 @@ export function AppStateProvider({ children }) {
   const stateRef = useRef(state);
   stateRef.current = state;
   const scopeRef = useRef(null);
+  const householdRef = useRef(null);
   const backendRef = useRef("local");
   const storeKeyRef = useRef(KEY);
   const versionRef = useRef(0);
-  const pendingRef = useRef([]); // 서버에 아직 안 보낸 동작 — 충돌하면 서버 상태 위에 다시 쌓는다
+  const opsRef = useRef([]); // 서버 상태에 이미 들어간 동작 번호
+  const pendingRef = useRef([]); // 서버에 아직 안 들어간 동작 — 충돌하면 서버 상태 위에 다시 쌓는다
   const savingRef = useRef(false);
   const retryRef = useRef(0);
+  const lastActiveRef = useRef(Date.now());
 
-  // 화면이 쓰는 dispatch — 서버 저장 중이면 동작을 기록해 두었다가 함께 보낸다
+  // 화면이 쓰는 dispatch — 서버 저장 중이면 동작에 번호를 붙여 모아 두었다가 함께 보낸다.
+  // 모은 것은 이 기기에도 적어 둔다 — 보내기 전에 새로고침하거나 끊겨도 잃지 않게.
   const dispatch = useCallback((action) => {
     let a = action;
-    if (backendRef.current === "server" || scopeRef.current?.startsWith("acct:")) {
-      if (a.type === "reset") a = { ...a, fresh: true };
-    }
+    if (scopeRef.current?.startsWith("acct:") && a.type === "reset") a = { ...a, fresh: true };
     if (backendRef.current === "server") {
-      pendingRef.current.push({ ...a, _at: Date.now() });
+      // 같은 번호를 화면에도 쓴다 — 나중에 충돌로 다시 쌓아도 id·시각이 그대로다
+      a = { ...a, _at: Date.now(), _op: newOpId() };
+      pendingRef.current.push(a);
+      savePending(householdRef.current, pendingRef.current);
       setDirty((d) => d + 1);
     }
     rawDispatch(a);
@@ -432,7 +471,10 @@ export function AppStateProvider({ children }) {
     setReady(false);
     pendingRef.current = [];
     versionRef.current = 0;
+    opsRef.current = [];
     retryRef.current = 0;
+    householdRef.current = household;
+    setStorageScope(scope === "demo" ? null : household);
 
     const loadLocal = (key, base, mode, error = null) => {
       backendRef.current = "local";
@@ -445,34 +487,45 @@ export function AppStateProvider({ children }) {
       if (scope === "demo") {
         loadLocal(KEY, DEFAULT, "demo");
       } else {
-        // 잠깐 끊긴 것 때문에 이 기기 저장으로 떨어지지 않게 두 번 더 해 본다 (설정 전 503 은 바로 받아들인다)
         let res = null;
-        for (let i = 0; i < 3 && !cancelled; i++) {
-          try {
-            res = await fetch("/api/household", { cache: "no-store" });
-          } catch (_) {
-            res = null;
-          }
-          if (res && (res.ok || res.status < 500 || res.status === 503)) break;
-          await new Promise((r) => setTimeout(r, 1500));
+        let body = {};
+        try {
+          res = await fetch("/api/household", { cache: "no-store" });
+          body = await res.json().catch(() => ({}));
+        } catch (_) {
+          res = null;
         }
         if (cancelled) return;
-        const body = res ? await res.json().catch(() => ({})) : {};
-        if (res?.ok) {
-          backendRef.current = "server";
-          versionRef.current = body.version || 0;
-          if (body.state) {
-            rawDispatch({ type: "set", state: fromServer(body.state) });
-          } else {
-            // 처음 들어온 가구 — 빈 기록으로 만들어 서버에 한 번 저장한다
-            rawDispatch({ type: "set", state: freshState() });
-            pendingRef.current.push({ type: "init", _at: Date.now() });
-            setDirty((d) => d + 1);
-          }
-          setSync({ mode: "server", status: "saved", savedAt: body.updatedAt ? Date.parse(body.updatedAt) : null, error: null });
+        if (res && res.status === 503 && body.error === "db-not-configured") {
+          // 서버 저장 설정 전 — 이 기기에만 (데모와 섞이지 않게 계정 가구별 칸)
+          loadLocal(acctKey(household), freshState(), "local", "db-not-configured");
         } else {
-          // 서버 저장 설정 전(503) · 네트워크 오류 — 이 기기에만 저장한다
-          loadLocal(acctKey(household), freshState(), "local", body.error || (res ? `http-${res.status}` : "network"));
+          // 서버 저장. 첫 읽기가 실패해도(끊김 · 일시 오류) 서버 모드로 연다 — 마지막으로 받아 둔 상태를
+          // 보여 주고, 누른 것은 모아 두었다가 연결되면 보낸다 (다음 확인에서 최신을 받는다).
+          backendRef.current = "server";
+          const cached = readLocal(cacheKey(household));
+          const base = res?.ok ? body.state : cached?.state || null;
+          versionRef.current = res?.ok ? body.version || 0 : cached?.version || 0;
+          opsRef.current = opsOf(base);
+          // 이 기기에서 보내지 못한 동작 — 서버에 이미 들어간 것은 빼고 다시 쌓는다
+          const saved = readLocal(pendingKey(household));
+          const carried = (Array.isArray(saved) ? saved : []).filter(
+            (a) => a && typeof a.type === "string" && a.type !== "init" && !opsRef.current.includes(a._op)
+          );
+          const next = carried.reduce((acc, a) => reducer(acc, a), base ? fromServer(base) : freshState());
+          rawDispatch({ type: "set", state: next });
+          // 처음 들어온 가구 — 빈 기록으로 만들어 서버에 한 번 저장한다
+          pendingRef.current = res?.ok && !base ? [{ type: "init", _at: Date.now(), _op: newOpId() }, ...carried] : carried;
+          savePending(household, pendingRef.current);
+          if (res?.ok && base) saveCache(household, base, versionRef.current);
+          if (pendingRef.current.length) setDirty((d) => d + 1);
+          const err = res?.ok ? null : body.error || (res ? `http-${res.status}` : "network");
+          setSync({
+            mode: "server",
+            status: err ? "error" : "saved",
+            savedAt: res?.ok && body.updatedAt ? Date.parse(body.updatedAt) : null,
+            error: err,
+          });
         }
       }
       if (cancelled) return;
@@ -494,15 +547,18 @@ export function AppStateProvider({ children }) {
     }
   }, [state, ready]);
 
-  // 서버에 저장 — 버전이 맞을 때만 덮어쓴다. 다른 폰이 먼저 바꿨으면(409) 그 상태 위에
-  // 내가 한 동작을 다시 쌓아서 보낸다. 누른 것만으로 '저장됨'이 되지 않는다 — 서버 응답을 받아야 한다.
+  // 서버에 저장 — 버전이 맞을 때만 덮어쓴다. 다른 폰이 먼저 바꿨으면(409) 그 상태 위에 내 동작 중
+  // 아직 안 들어간 것만 다시 쌓아서 보낸다. 누른 것만으로 '저장됨'이 되지 않는다 — 서버 응답을 받아야 한다.
   const flush = useCallback(async ({ keepalive = false } = {}) => {
     if (backendRef.current !== "server" || savingRef.current || pendingRef.current.length === 0) return;
     savingRef.current = true;
+    const hh = householdRef.current;
     const sent = pendingRef.current.slice();
+    const ops = [...opsRef.current, ...sent.map((a) => a._op).filter(Boolean)].slice(-MAX_OPS);
+    const snapshot = { ...stateRef.current, _ops: ops };
     const body = JSON.stringify({
       baseVersion: versionRef.current,
-      state: stateRef.current,
+      state: snapshot,
       actions: sent.filter((a) => a.type !== "init"),
     });
     setSync((s) => ({ ...s, status: "saving" }));
@@ -517,33 +573,57 @@ export function AppStateProvider({ children }) {
       const j = await res.json().catch(() => ({}));
       if (res.ok) {
         versionRef.current = j.version;
+        opsRef.current = ops;
         pendingRef.current = pendingRef.current.slice(sent.length);
+        savePending(hh, pendingRef.current);
+        saveCache(hh, snapshot, j.version);
         retryRef.current = 0;
         setSync((s) => ({ ...s, status: "saved", savedAt: Date.now(), error: null }));
         again = pendingRef.current.length > 0;
       } else if (res.status === 409 && j.error === "conflict") {
-        // 서버 상태 + 아직 안 들어간 내 동작 → 다시 보낸다
-        const mine = pendingRef.current.filter((a) => a.type !== "init");
+        // 서버 상태 + 내 동작 중 아직 안 들어간 것 → 다시 보낸다
+        // (응답만 못 받았던 저장은 서버의 _ops 에 이미 있으니 여기서 빠진다 — 중복 없음)
+        const serverOps = opsOf(j.state);
+        const mine = pendingRef.current.filter((a) => a.type !== "init" && !serverOps.includes(a._op));
         const next = mine.reduce((acc, a) => reducer(acc, a), fromServer(j.state));
         versionRef.current = j.version || 0;
-        pendingRef.current = j.state ? mine : [{ type: "init", _at: Date.now() }, ...mine];
+        opsRef.current = serverOps;
+        pendingRef.current = j.state ? mine : [{ type: "init", _at: Date.now(), _op: newOpId() }, ...mine];
+        savePending(hh, pendingRef.current);
+        if (j.state) saveCache(hh, j.state, versionRef.current);
         rawDispatch({ type: "set", state: next });
         again = pendingRef.current.length > 0;
-        setSync((s) => ({ ...s, status: again ? "saving" : "saved" }));
+        setSync((s) => ({ ...s, status: again ? "saving" : "saved", error: null }));
       } else {
-        throw Object.assign(new Error("save-failed"), { code: j.error || `http-${res.status}` });
+        // 다시 보내도 소용없는 오류 — 로그인 만료(401) · 잘못된 요청(400) · 용량 초과(413).
+        // 되풀이하지 않고 안내만 띄운다 (로그인하면 다시 읽으면서 모아 둔 것을 보낸다).
+        const code = j.error || (res.status === 413 ? "state-too-large" : `http-${res.status}`);
+        const permanent = res.status === 401 || res.status === 400 || res.status === 413;
+        throw Object.assign(new Error("save-failed"), { code, permanent });
       }
     } catch (e) {
       retryRef.current += 1;
       setSync((s) => ({ ...s, status: "error", error: e.code || "network" }));
-      // 3초 · 6초 · 12초 … 최대 30초 간격으로 다시 보낸다 (동작은 버리지 않는다)
-      const wait = Math.min(30000, 3000 * 2 ** (retryRef.current - 1));
-      setTimeout(() => setDirty((d) => d + 1), wait);
+      if (!e.permanent) {
+        // 3초 · 6초 · 12초 … 최대 30초 간격으로 다시 보낸다 (동작은 버리지 않는다)
+        const wait = Math.min(30000, 3000 * 2 ** (retryRef.current - 1));
+        setTimeout(() => setDirty((d) => d + 1), wait);
+      }
     } finally {
       savingRef.current = false;
     }
     if (again) setDirty((d) => d + 1);
   }, []);
+
+  // 지금 모인 것을 다 보낼 때까지 기다린다 — 결제창으로 떠나기 전 · 로그아웃 전
+  const flushNow = useCallback(async () => {
+    for (let i = 0; i < 6; i++) {
+      if (backendRef.current !== "server" || pendingRef.current.length === 0) return true;
+      if (savingRef.current) await new Promise((r) => setTimeout(r, 250));
+      else await flush();
+    }
+    return pendingRef.current.length === 0;
+  }, [flush]);
 
   useEffect(() => {
     if (!ready || backendRef.current !== "server" || pendingRef.current.length === 0) return undefined;
@@ -565,46 +645,109 @@ export function AppStateProvider({ children }) {
     };
   }, [ready, sync.mode, flush]);
 
-  // 같은 가구의 다른 폰이 바꾼 것 가져오기 — 내가 보낼 것이 없을 때만 (보낼 게 있으면 충돌 처리가 맡는다)
+  // 같은 가구의 다른 폰이 바꾼 것 가져오기 — 내가 보낼 것이 없을 때만 (보낼 게 있으면 충돌 처리가 맡는다).
+  // 만지고 있으면 4초, 2분 넘게 가만히 있으면 10초, 화면이 꺼져 있으면 쉬고 켜지는 순간 바로 본다.
   useEffect(() => {
     if (!ready || sync.mode !== "server") return undefined;
     let stopped = false;
-    const tick = async () => {
+    let lastPoll = 0;
+    const mark = () => {
+      lastActiveRef.current = Date.now();
+    };
+    const tick = async (force = false) => {
       if (stopped || document.hidden || savingRef.current || pendingRef.current.length) return;
+      const idle = Date.now() - lastActiveRef.current > ACTIVE_WINDOW_MS;
+      if (!force && idle && Date.now() - lastPoll < POLL_IDLE_MS) return;
+      lastPoll = Date.now();
       try {
         const res = await fetch(`/api/household?v=${versionRef.current}`, { cache: "no-store" });
-        if (!res.ok) return;
-        const j = await res.json();
-        if (stopped || !j.changed || savingRef.current || pendingRef.current.length) return;
-        if (j.version > versionRef.current && j.state) {
+        const j = await res.json().catch(() => ({}));
+        if (stopped) return;
+        if (!res.ok) {
+          if (res.status === 401) setSync((s) => ({ ...s, status: "error", error: "login-required" }));
+          return;
+        }
+        if (savingRef.current || pendingRef.current.length) return;
+        // 버전이 다르면 서버 것을 받는다 — 작아진 경우도(관리자가 SQL 로 가구를 지워 처음부터 다시 시작)
+        if (j.changed && j.version !== versionRef.current) {
           versionRef.current = j.version;
-          rawDispatch({ type: "set", state: fromServer(j.state) });
-          setSync((s) => ({ ...s, status: "saved", remoteAt: Date.now(), remoteBy: j.updatedBy || null }));
+          opsRef.current = opsOf(j.state);
+          if (j.state) saveCache(householdRef.current, j.state, j.version);
+          rawDispatch({ type: "set", state: j.state ? fromServer(j.state) : freshState() });
+          setSync((s) => ({ ...s, status: "saved", error: null, remoteAt: Date.now(), remoteBy: j.updatedBy || null }));
+        } else {
+          // 연결이 돌아왔다 — 첫 읽기 실패로 켜져 있던 안내를 내린다
+          setSync((s) => (s.status === "error" ? { ...s, status: "saved", error: null } : s));
         }
       } catch (_) {
         /* 다음 차례에 다시 본다 */
       }
     };
-    const id = setInterval(tick, POLL_MS);
-    const onFocus = () => tick();
+    const id = setInterval(() => tick(), POLL_ACTIVE_MS);
+    const onFocus = () => {
+      mark();
+      tick(true);
+    };
+    const ACTIVITY = ["pointerdown", "keydown", "touchstart"];
     window.addEventListener("focus", onFocus);
     document.addEventListener("visibilitychange", onFocus);
+    ACTIVITY.forEach((ev) => window.addEventListener(ev, mark, { passive: true }));
     return () => {
       stopped = true;
       clearInterval(id);
       window.removeEventListener("focus", onFocus);
       document.removeEventListener("visibilitychange", onFocus);
+      ACTIVITY.forEach((ev) => window.removeEventListener(ev, mark));
     };
   }, [ready, sync.mode]);
 
-  const syncValue = useMemo(() => ({ ...sync, household, flush }), [sync, household, flush]);
+  const syncValue = useMemo(() => ({ ...sync, household, flush: flushNow }), [sync, household, flushNow]);
 
   return (
     <Ctx.Provider value={{ state, dispatch }}>
       <SyncCtx.Provider value={syncValue}>
-        {ready ? children : <div className="min-h-screen bg-nav" />}
+        {ready ? (
+          <>
+            {children}
+            <SyncNotice sync={sync} />
+          </>
+        ) : (
+          <div className="min-h-screen bg-nav" />
+        )}
       </SyncCtx.Provider>
     </Ctx.Provider>
+  );
+}
+
+// 저장이 안 되고 있을 때 어느 화면에서든 보이는 안내 — 누른 것이 서버에 안 들어가는 걸 모르고
+// 테스트를 이어 가지 않게. 빨강은 위험 신호 전용이라 주황(amber)으로.
+function SyncNotice({ sync }) {
+  if (sync.mode !== "server" || sync.status !== "error") return null;
+  const here = typeof window !== "undefined" ? window.location.pathname + window.location.search : "/";
+  const text =
+    sync.error === "login-required"
+      ? "로그인이 만료됐어요. 다시 로그인하면 모아 둔 것을 이어서 저장합니다."
+      : sync.error === "schema-missing"
+        ? "서버 저장 설정을 확인해야 해요 (표 없음). 누른 것은 이 기기에 모아 둡니다."
+        : sync.error === "state-too-large"
+          ? "저장할 내용이 너무 커졌어요 (스토어 사진 등). 관리자에게 알려 주세요."
+          : sync.error === "invalid-request"
+            ? "저장 요청이 거절됐어요. 새로고침한 뒤 다시 해 주세요."
+            : "저장이 안 되고 있어요. 연결되면 모아 둔 것을 자동으로 보냅니다.";
+  return (
+    <div
+      role="status"
+      aria-live="polite"
+      className="fixed left-1/2 top-2 z-[70] flex w-max max-w-[92vw] -translate-x-1/2 items-center gap-2 rounded-full border border-amber/40 bg-[#FFF7E8] px-4 py-2 text-[13px] font-bold leading-[1.5] text-amber shadow-lg"
+    >
+      <span aria-hidden className="h-[7px] w-[7px] shrink-0 animate-pulse rounded-full bg-amber" />
+      <span>{text}</span>
+      {sync.error === "login-required" && (
+        <a href={`/login?callbackUrl=${encodeURIComponent(here)}`} className="tap shrink-0 underline underline-offset-2">
+          로그인
+        </a>
+      )}
+    </div>
   );
 }
 

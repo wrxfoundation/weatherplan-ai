@@ -2,6 +2,7 @@
 // 다른 고객의 데모 요청(lib/ops-admin OPS_REQUEST_EXTRAS)은 컴포넌트 안에서 같은 전이 규칙으로 움직인다.
 // 앱 상태에 없는 열(실제 비용·영수증·완료 확인·평가·환불·반복)은 id 별 meta 로 보관하고 localStorage 에 남긴다
 // (§19 "새로고침 후에도 입력내용 유지").
+import { scopedKey } from "../../lib/scope";
 import { useEffect, useMemo, useState } from "react";
 import Icon from "../icons";
 import { useAppState } from "../../lib/state";
@@ -87,9 +88,9 @@ export default function RequestsMgmt() {
   // 저장값 복원은 마운트 뒤에 — 서버 프리렌더와 어긋나지 않게
   useEffect(() => {
     try {
-      const m = JSON.parse(localStorage.getItem(META_KEY) || "null");
+      const m = JSON.parse(localStorage.getItem(scopedKey(META_KEY)) || "null");
       if (m && typeof m === "object") setMeta((prev) => ({ ...prev, ...m }));
-      const x = JSON.parse(localStorage.getItem(EXTRA_KEY) || "null");
+      const x = JSON.parse(localStorage.getItem(scopedKey(EXTRA_KEY)) || "null");
       if (Array.isArray(x) && x.length) setExtras(x);
     } catch (_) {
       /* 손상된 저장값은 무시 */
@@ -99,8 +100,8 @@ export default function RequestsMgmt() {
   useEffect(() => {
     if (!loaded) return;
     try {
-      localStorage.setItem(META_KEY, JSON.stringify(meta));
-      localStorage.setItem(EXTRA_KEY, JSON.stringify(extras));
+      localStorage.setItem(scopedKey(META_KEY), JSON.stringify(meta));
+      localStorage.setItem(scopedKey(EXTRA_KEY), JSON.stringify(extras));
     } catch (_) {
       /* 저장 실패는 데모 동작에 영향 없음 */
     }

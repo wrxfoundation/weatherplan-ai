@@ -1,3 +1,4 @@
+import ModeLink from "../components/ModeLink";
 import Head from "next/head";
 import Link from "next/link";
 import { useMemo, useState } from "react";
@@ -241,9 +242,7 @@ export default function ConciergePage() {
               >
                 관제에 알리기
               </button>
-              <Link href="/" className="tap shrink-0 text-[12px] font-bold text-muted/50">
-                데모 홈
-              </Link>
+              <ModeLink className="tap shrink-0 text-[12px] font-bold" />
             </div>
             <button
               onClick={() => dispatch({ type: "demo", payload: { offline: !state.demo.offline } })}

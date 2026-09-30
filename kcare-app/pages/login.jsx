@@ -171,7 +171,11 @@ export default function LoginPage() {
                   {callbackUrl === "/" && ROLE_LABEL[auth.user.role] ? `${ROLE_LABEL[auth.user.role]} 화면으로 계속하기` : "계속하기"}
                 </button>
                 <button
-                  onClick={() => logout("/login")}
+                  onClick={async () => {
+                        // 모아 둔 것을 다 보낸 뒤에 나간다 — 로그아웃하면 세션이 끊겨 더는 못 보낸다
+                        await sync.flush?.();
+                        logout("/login");
+                      }}
                   className="btn-press mt-2 w-full rounded-xl border border-navy/15 py-3 text-[14px] font-bold text-muted"
                 >
                   로그아웃

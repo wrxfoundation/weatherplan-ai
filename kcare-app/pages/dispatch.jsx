@@ -1,3 +1,4 @@
+import { scopedKey } from "../lib/scope";
 import Head from "next/head";
 import Logo from "../components/Logo";
 import Link from "next/link";
@@ -491,7 +492,7 @@ export default function DispatchConsole() {
     let last = linkedSosAt.current;
     if (!last) {
       try {
-        last = Number(window.localStorage.getItem(SOS_LINK_KEY)) || 0;
+        last = Number(window.localStorage.getItem(scopedKey(SOS_LINK_KEY))) || 0;
       } catch {
         last = 0;
       }
@@ -512,7 +513,7 @@ export default function DispatchConsole() {
     );
     linkedSosAt.current = sosAt || Date.now();
     try {
-      window.localStorage.setItem(SOS_LINK_KEY, String(linkedSosAt.current));
+      window.localStorage.setItem(scopedKey(SOS_LINK_KEY), String(linkedSosAt.current));
     } catch {
       /* 저장이 막힌 브라우저 — 메모리 ref 로만 중복을 막는다 */
     }

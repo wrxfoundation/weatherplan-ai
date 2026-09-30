@@ -38,7 +38,7 @@ function activityRows(actions, user) {
     .map((a) => {
       const summary = summarize(a);
       if (!summary) return null;
-      const { type, _at, ...rest } = a;
+      const { type, _at, _op, ...rest } = a; // eslint-disable-line no-unused-vars
       let payload = trimPayload(rest);
       if (JSON.stringify(payload).length > MAX_PAYLOAD_CHARS) payload = { truncated: true };
       return {
@@ -96,7 +96,9 @@ export default async function handler(req, res) {
       if (since != null && Number.isFinite(since)) {
         const { data, error } = await db().from("households").select("version").eq("id", user.household).maybeSingle();
         if (error) throw error;
-        if (!data || data.version <= since) return res.status(200).json({ changed: false, version: data?.version ?? 0 });
+        // 같을 때만 '안 바뀜'. 작아진 경우(관리자가 가구를 지워 처음부터)도 바뀐 것으로 알린다
+        if ((data?.version ?? 0) === since) return res.status(200).json({ changed: false, version: since });
+        if (!data) return res.status(200).json({ changed: true, state: null, version: 0, updatedAt: null, updatedBy: null });
       }
       let row = await current(user.household);
       if (!row) {

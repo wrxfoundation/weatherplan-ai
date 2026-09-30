@@ -29,10 +29,12 @@ export function useAuth() {
   return { enabled: true, status, user: data?.user || null };
 }
 
-// 돌아올 주소는 이 사이트 안의 경로만 받는다 — 외부 주소로 튕겨 나가는 것을 막는다
+// 돌아올 주소는 이 사이트 안의 경로만 받는다 — 외부 주소로 튕겨 나가는 것을 막는다.
+// 브라우저는 역슬래시를 슬래시로 읽고 탭·줄바꿈을 지운다 — "/\evil.com" 이 "//evil.com" 이 되므로 함께 막는다.
 export const safeCallback = (v, fallback = "/") => {
   const s = typeof v === "string" ? v : "";
-  return s.startsWith("/") && !s.startsWith("//") ? s : fallback;
+  if (!s.startsWith("/") || s.startsWith("//") || /[\\\u0000-\u001f\u007f]/.test(s)) return fallback;
+  return s;
 };
 
 // 'Google 계정으로 계속하기' — 실제 구글이면 구글로, 아니면 시뮬레이션 화면으로

@@ -2,6 +2,7 @@
 // 대시보드·긴급 배너·SOS 콘솔이 같은 사건 목록을 본다. 모듈 단위 저장소 하나를 useSyncExternalStore 로 구독하고,
 // localStorage["kcare-ops-sos-v1"] 에 저장해 새로고침·메뉴 이동 뒤에도 진행 중 사건이 남는다 (19절).
 // 서버에서는 빈 목록을 주고, 마운트 뒤에 저장값을 읽는다 — 첫 렌더가 서버와 어긋나지 않게.
+import { isAccountScope, scopedKey } from "./scope";
 import { useEffect, useMemo, useSyncExternalStore } from "react";
 import { SEV, Btn, Pill, SevPill } from "../components/ops/ui";
 import { dayKey, fmtElapsed, useNow, MIN } from "./ops-time";
@@ -47,7 +48,7 @@ function subscribe(fn) {
 function persist() {
   if (typeof window === "undefined" || !state.hydrated) return;
   try {
-    window.localStorage.setItem(SOS_KEY, JSON.stringify({ v: 1, incidents: state.incidents }));
+    window.localStorage.setItem(scopedKey(SOS_KEY), JSON.stringify({ v: 1, incidents: state.incidents }));
   } catch {
     /* 저장 공간이 막힌 브라우저에서는 메모리 상태만 쓴다 */
   }
@@ -113,7 +114,7 @@ function hydrate() {
   if (state.hydrated || typeof window === "undefined") return;
   let incidents = null;
   try {
-    const raw = window.localStorage.getItem(SOS_KEY);
+    const raw = window.localStorage.getItem(scopedKey(SOS_KEY));
     if (raw) {
       const parsed = JSON.parse(raw);
       if (parsed && Array.isArray(parsed.incidents)) incidents = parsed.incidents;
@@ -121,13 +122,14 @@ function hydrate() {
   } catch {
     incidents = null;
   }
-  state = { hydrated: true, incidents: incidents || seedIncidents(Date.now()) };
+  // 테스트 가구는 목업 사건 없이 시작한다 — 실제로 들어온 SOS 만 사건이 된다
+  state = { hydrated: true, incidents: incidents || (isAccountScope() ? [] : seedIncidents(Date.now())) };
   if (!incidents) persist();
   if (!storageBound) {
     storageBound = true;
     // 다른 탭에서 바뀐 사건도 같이 본다 (관제사 2명이 같은 사건을 볼 때)
     window.addEventListener("storage", (e) => {
-      if (e.key !== SOS_KEY || !e.newValue) return;
+      if (e.key !== scopedKey(SOS_KEY) || !e.newValue) return;
       try {
         const parsed = JSON.parse(e.newValue);
         if (parsed && Array.isArray(parsed.incidents)) {

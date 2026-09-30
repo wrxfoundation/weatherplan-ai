@@ -207,7 +207,11 @@ export default function MyPage() {
                       {auth.user.name}
                       {auth.user.provider && <span className="ml-1 text-[12px] text-muted">{PROVIDER_LABEL[auth.user.provider]}</span>}
                     </span>
-                    <button onClick={() => logout("/login")} className="btn-press btn-chip rounded-full border border-navy/15 px-2.5 text-[12px] font-bold text-muted">
+                    <button onClick={async () => {
+                        // 모아 둔 것을 다 보낸 뒤에 나간다 — 로그아웃하면 세션이 끊겨 더는 못 보낸다
+                        await sync.flush?.();
+                        logout("/login");
+                      }} className="btn-press btn-chip rounded-full border border-navy/15 px-2.5 text-[12px] font-bold text-muted">
                       로그아웃
                     </button>
                   </span>

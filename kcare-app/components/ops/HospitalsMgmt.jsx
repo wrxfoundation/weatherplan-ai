@@ -1,6 +1,7 @@
 // 병원 관리 — 요청서 §15. 기본 명부(lib/mock MOU_HOSPITALS)를 §15 필드로 넓히고, 등록·수정·삭제를 연다.
 // 편집 결과는 localStorage(kcare-ops-hospitals-v1)에 남기고, 수정은 덮어쓰지 않고 변경 이력을 쌓는다.
 // 실제 주소·전화는 지어내지 않는다 — 공개 대표정보를 확인한 곳만 적고 나머지는 "확인 중".
+import { scopedKey } from "../../lib/scope";
 import { useEffect, useMemo, useState } from "react";
 import Icon from "../icons";
 import { Panel, PanelHead, Stat, Pill, Btn, Tabs, Table, KV, Field, Drawer, Confirm, Note, Empty, Stamp } from "./ui";
@@ -33,7 +34,7 @@ export default function HospitalsMgmt() {
 
   useEffect(() => {
     try {
-      const saved = JSON.parse(localStorage.getItem(HOSPITALS_STORAGE_KEY) || "null");
+      const saved = JSON.parse(localStorage.getItem(scopedKey(HOSPITALS_STORAGE_KEY)) || "null");
       if (saved && Array.isArray(saved.hospitals) && saved.hospitals.length) setList(saved.hospitals);
       if (saved && Array.isArray(saved.removed)) setRemoved(saved.removed);
     } catch (_) {
@@ -44,7 +45,7 @@ export default function HospitalsMgmt() {
   useEffect(() => {
     if (!loaded) return;
     try {
-      localStorage.setItem(HOSPITALS_STORAGE_KEY, JSON.stringify({ hospitals: list, removed }));
+      localStorage.setItem(scopedKey(HOSPITALS_STORAGE_KEY), JSON.stringify({ hospitals: list, removed }));
     } catch (_) {
       /* 저장 실패는 데모 동작에 영향 없음 */
     }

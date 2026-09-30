@@ -74,7 +74,7 @@ Vercel 프로젝트 → **Settings → Environment Variables** → Environment �
 | 이름 | 값 |
 |---|---|
 | `NEXTAUTH_SECRET` | 임의의 긴 난수 — 터미널에서 `openssl rand -base64 32` (윈도우는 Git Bash) |
-| `BETA_TEST_PASSWORD` | 테스트 계정 세 개가 같이 쓰는 비밀번호 — 12자 이상으로 정한다 |
+| `BETA_TEST_PASSWORD` | 테스트 계정 세 개가 같이 쓰는 비밀번호 — **20자 이상 무작위**로 (비밀번호 생성기) |
 
 넣고 **Redeploy** 하면 `<운영 주소>/login` 에 테스트 아이디 로그인이 뜬다.
 
@@ -87,6 +87,9 @@ Vercel 프로젝트 → **Settings → Environment Variables** → Environment �
 | `test-concierge` | 컨시어지 | `/concierge` |
 
 - 비밀번호는 셋 다 `BETA_TEST_PASSWORD` 값이다. 테스트하는 사람에게 따로 전달한다.
+  세 계정이 한 비밀번호를 같이 쓰고 로그인 시도 횟수 제한이 없으니 짧거나 추측 가능한 값은 쓰지 않는다.
+  밖으로 샌 것 같으면 값을 바꾸고 Redeploy — 그 뒤로는 새 비밀번호로만 들어온다. 이미 로그인한 폰까지
+  바로 내보내려면 `NEXTAUTH_SECRET` 도 새 값으로 바꾼다 (그대로 두면 로그인이 최대 7일 유지된다).
 - 로그인 화면의 **Google 계정으로 계속하기**는 5단계 전까지 **시뮬레이션**이다 — 계정 선택 → 비밀번호 →
   정보 제공 동의 순서를 그대로 보여 주고, 실제로는 위 테스트 계정으로 들어간다
   (이메일 `guardian@kcare.test` 등 · 화면에 '시뮬레이션'이라고 표시된다).
@@ -146,6 +149,7 @@ Vercel 프로젝트 → **Settings → Environment Variables** → Environment �
    - 어르신 폰 홈의 **도와줘요** → 몇 초 안에 보호자 폰 **해주세요** 탭에 '즉시 방문 요청'이 뜬다
    - Supabase **Table Editor → activity** 에 줄이 쌓인다
 4. 보호자 폰 **마이** 탭 → 멤버십 카드의 **기록 저장**이 '서버에 저장 (Supabase)'
+5. 사람이 직접 돌려 볼 시나리오 전체: [`docs/TEST-SCENARIOS.md`](docs/TEST-SCENARIOS.md)
 
 **테스트 가구를 처음으로 되돌리기** — 시연 허브(`/`)에서 테스트 계정으로 로그인한 채
 **↺ 테스트 가구 기록 비우기**. 활동 기록(activity)까지 지우려면 SQL Editor 에서
@@ -191,7 +195,8 @@ Vercel 프로젝트 → **Settings → Environment Variables** → Environment �
 | '아이디 또는 비밀번호가 맞지 않습니다' | 아이디 오타(`test-guardian` 등) · `BETA_TEST_PASSWORD` 값 확인 |
 | '이 기기에만 저장 — 서버 저장 설정 전' | 4단계 두 값이 없거나 Redeploy 를 안 했다 |
 | '서버 저장 오류 (schema-missing)' | 4-2 표 만들기를 안 했다 |
-| 다른 폰에 안 뜬다 | 같은 가구(테스트 계정 셋)인지 · 로그인 화면의 '저장'이 서버인지. 4초마다 가져온다 |
+| 다른 폰에 안 뜬다 | 같은 가구(테스트 계정 셋)인지 · 로그인 화면의 '저장'이 서버인지. 만지고 있으면 4초, 2분 넘게 가만히 두면 10초마다 가져온다 |
+| 화면 위에 주황 "저장이 안 되고 있어요" | 폰이 끊겼거나 Supabase 가 멈췄다(무료 플랜은 일주일 안 쓰면 일시정지 → 대시보드에서 Restore). 누른 것은 폰에 모아 두었다가 연결되면 한 번만 들어간다 |
 | `redirect_uri_mismatch` | 콘솔의 리디렉션 URI 와 `NEXTAUTH_URL` 이 다르다. https · 끝의 `/` · 오타 확인 |
 | `access_denied` · "앱이 확인되지 않음" | 테스트 사용자에 없는 구글 계정. 5-1 Audience 에서 추가 |
 | "허용된 계정이 아닙니다" | `BETA_ALLOWED_DOMAINS` · `BETA_ALLOWED_EMAILS` 목록 밖의 구글 계정 |

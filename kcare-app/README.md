@@ -4,6 +4,7 @@
 여섯 역할의 화면이 하나의 Next.js 앱에 들어 있다.
 
 - 배포 방법: **[DEPLOY.md](DEPLOY.md)** — GitHub · Vercel · 테스트 계정 로그인 · Supabase · 구글 로그인 순서
+- 테스트 계정 시나리오 (폰 3대): **[docs/TEST-SCENARIOS.md](docs/TEST-SCENARIOS.md)**
 - 기술: Next.js 14 (Pages Router) · React 18 · Tailwind CSS 3 · NextAuth 4 (테스트 계정 · 구글) ·
   Supabase (서버 저장) · 토스페이먼츠 SDK v2 · Leaflet · Anthropic SDK
 

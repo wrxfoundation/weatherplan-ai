@@ -1,5 +1,5 @@
+import ModeLink from "../components/ModeLink";
 import Head from "next/head";
-import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import {
   ASK_DOCTOR,
@@ -537,7 +537,9 @@ export default function ElderHome() {
     const check = () => {
       if (otherModal) return;
       const d = new Date();
-      const today = d.toDateString();
+      // 날짜 표식은 한국 시간으로 — 가구 상태를 여러 폰이 같이 쓰므로, 폰마다 시간대가 다르면
+      // 서로 다른 날짜로 덮어쓰며 알람이 되풀이된다 (2026-09-30 점검)
+      const today = new Date(d.getTime() + 9 * 3600000).toISOString().slice(0, 10);
       const shown = medPopShown.date === today ? medPopShown.slots || {} : {};
       const h = d.getHours() + d.getMinutes() / 60;
       const passed = MED_PLAN.filter((s) => h >= slotHour(s.time));
@@ -849,9 +851,7 @@ export default function ElderHome() {
                   K-CARE
                 </span>
                 {/* .tap — 글자는 작게 두고 누르는 영역만 44px (QA: 44×28 이었다) */}
-                <Link href="/" className="tap text-[15px] font-bold text-muted/50">
-                  데모 홈
-                </Link>
+                <ModeLink className="tap text-[15px] font-bold" />
               </div>
               <div className="mt-0.5 flex items-start justify-between gap-3">
                 <div className="min-w-0 pt-1">
