@@ -1,9 +1,9 @@
-// 베타 잠금 — BETA_REQUIRE_LOGIN=1 이면 구글 로그인을 해야 화면이 열린다.
+// 베타 잠금 — BETA_REQUIRE_LOGIN=1 이면 로그인(테스트 계정 또는 구글)을 해야 화면이 열린다.
 // 기본은 꺼져 있다 (토스 심사·시연처럼 누구나 봐야 하는 때가 있어서).
-// 로그인 설정(구글 키·NEXTAUTH_SECRET)이 없으면 잠그지 않는다 — 잠그면 아무도 못 들어온다.
+// 로그인 설정(NEXTAUTH_SECRET + 테스트 비밀번호 또는 구글 키)이 없으면 잠그지 않는다 — 잠그면 아무도 못 들어온다.
 import { NextResponse } from "next/server";
 import { getToken } from "next-auth/jwt";
-import { betaGateOn, isAllowedEmail, isPublicPath } from "./lib/auth-server";
+import { betaGateOn, isAllowedToken, isPublicPath } from "./lib/auth-server";
 
 export async function middleware(req) {
   if (!betaGateOn()) return NextResponse.next();
@@ -11,7 +11,7 @@ export async function middleware(req) {
   if (isPublicPath(pathname)) return NextResponse.next();
 
   const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
-  const ok = token && isAllowedEmail(token.email);
+  const ok = isAllowedToken(token);
   if (ok) return NextResponse.next();
 
   if (pathname.startsWith("/api/")) {

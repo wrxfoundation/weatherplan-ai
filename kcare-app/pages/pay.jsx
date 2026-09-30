@@ -12,7 +12,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { ANONYMOUS, loadTossPayments } from "@tosspayments/tosspayments-sdk";
 import { Card, SectionLabel, PrimaryButton, Badge } from "../components/ui";
 import Icon from "../components/icons";
-import { useAppState } from "../lib/state";
+import { useAppState, useSync } from "../lib/state";
 import { fmtWon, PRICING, HOUSEHOLD } from "../lib/config";
 import {
   PAY_KINDS,
@@ -29,6 +29,7 @@ const isBilling = (kind) => kind === "billing";
 export default function PayPage() {
   const router = useRouter();
   const { state } = useAppState();
+  const sync = useSync();
   const { kind = "store", amount, orderName = "K-CARE 결제", ref: refId = "" } = router.query;
   const value = Number(amount) || 0;
   const meta = PAY_KINDS[kind] || PAY_KINDS.store;
@@ -94,6 +95,8 @@ export default function PayPage() {
     setPhase("requesting");
     const origin = window.location.origin;
     try {
+      // 테스트 계정이면 담아 둔 주문을 서버에 먼저 저장한다 — 결제창에서 돌아오면 서버에서 다시 읽는다
+      await sync.flush();
       if (isBilling(kind)) {
         await paymentRef.current.requestBillingAuth({
           method: "CARD",

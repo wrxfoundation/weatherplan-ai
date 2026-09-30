@@ -23,8 +23,8 @@ if git -C "$ROOT" cat-file -e HEAD:docs/kcare 2>/dev/null; then
 fi
 
 # 키 흔적이 섞여 들어가지 않았는지 마지막으로 본다 — 접두어 뒤에 실제 키 본문이 붙은 모양만 잡는다
-# (Anthropic · 토스 시크릿 · 구글 클라이언트 보안 비밀). 이 스크립트 자신은 패턴 글자를 담고 있어 뺀다.
-KEY_RE='sk-ant-[a-z0-9]+-[A-Za-z0-9_-]{20,}|(test|live)_g?sk_[A-Za-z0-9]{12,}|GOCSPX-[A-Za-z0-9_-]{20,}'
+# (Anthropic · 토스 시크릿 · 구글 클라이언트 보안 비밀 · Supabase 비밀 키). 이 스크립트 자신은 패턴 글자를 담고 있어 뺀다.
+KEY_RE='sk-ant-[a-z0-9]+-[A-Za-z0-9_-]{20,}|(test|live)_g?sk_[A-Za-z0-9]{12,}|GOCSPX-[A-Za-z0-9_-]{20,}|sb_secret_[A-Za-z0-9_-]{16,}'
 if grep -rIlE --exclude=package-standalone.sh "$KEY_RE" "$TMP/$NAME" >/dev/null 2>&1; then
   echo "키로 보이는 문자열이 들어 있어 중단합니다:" >&2
   grep -rIlE --exclude=package-standalone.sh "$KEY_RE" "$TMP/$NAME" | sed "s|$TMP/$NAME/||" >&2

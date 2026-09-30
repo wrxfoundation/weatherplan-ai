@@ -13,9 +13,9 @@ const HOUSEHOLDS = [
 import { TIER1_DISTRICTS, TIER2_DISTRICTS, SCREENING_ITEMS, screenRegion } from "../lib/region";
 import { CORE, CORE_NOTE, TRACKS, STEP_LABELS, trackOf } from "../lib/tracks";
 import { SALES_REP, isRepCode } from "../lib/sales";
-import { AUTH_ENABLED, GoogleMark, googleSignIn, useAuth } from "../lib/auth";
+import { AUTH_ENABLED, GOOGLE_ENABLED, GoogleMark, googleStart, useAuth } from "../lib/auth";
 
-// 간편가입 표기 — 구글은 실제 로그인(설정됐을 때), 카카오·네이버는 아직 데모다
+// 간편가입 표기 — 구글은 실제 로그인(설정됐을 때) 또는 시뮬레이션(테스트 계정), 카카오·네이버는 아직 데모다
 const AUTH_LABEL = { google: "Google", kakao: "카카오", naver: "네이버" };
 import { useAppState } from "../lib/state";
 
@@ -57,14 +57,16 @@ export default function Onboarding() {
   });
   const [waitlisted, setWaitlisted] = useState(false);
   const set = (patch) => setForm((f) => ({ ...f, ...patch }));
-  // 구글 로그인에서 돌아오면 간편가입을 '구글 연결됨'으로 채운다 — 한 번만 (해제하면 다시 채우지 않는다)
+  // 구글 로그인(또는 시뮬레이션)에서 돌아오면 간편가입을 '구글 연결됨'으로 채운다 — 한 번만
+  // (해제하면 다시 채우지 않는다). 테스트 아이디로 들어온 경우는 구글을 고른 게 아니라 채우지 않는다.
   const auth = useAuth();
   const googleFilled = useRef(false);
+  const googleEmail = auth.user?.provider === "google" || auth.user?.provider === "google-sim" ? auth.user.email : null;
   useEffect(() => {
-    if (googleFilled.current || !auth.user?.email) return;
+    if (googleFilled.current || !googleEmail) return;
     googleFilled.current = true;
-    setForm((f) => (f.auth ? f : { ...f, auth: "google", authEmail: auth.user.email }));
-  }, [auth.user?.email]);
+    setForm((f) => (f.auth ? f : { ...f, auth: "google", authEmail: googleEmail }));
+  }, [googleEmail]);
   // 영업자 링크(/onboarding?ref=S-0012)로 들어오면 추천 코드를 미리 채운다
   useEffect(() => {
     const ref = router.query.ref;
@@ -187,27 +189,32 @@ export default function Onboarding() {
               <Card className="p-4">
                 <SectionLabel>간편하게 시작</SectionLabel>
                 {form.auth ? (
-                  <div className="mt-2.5 flex items-center gap-2 rounded-xl bg-green/10 px-3.5 py-3">
-                    <span className="text-[14px] font-bold text-green">
-                      ✓ {AUTH_LABEL[form.auth]} 계정 연결됨
-                    </span>
-                    <span className="ml-auto min-w-0 truncate text-[11px] text-muted">
-                      {form.auth === "google" && form.authEmail ? form.authEmail : "실제 로그인은 앱 키 등록 후"}
-                    </span>
-                    <button
-                      onClick={() => set({ auth: null, authEmail: null })}
-                      className="btn-press btn-inline text-[12px] font-bold text-muted underline underline-offset-2"
-                    >
-                      해제
-                    </button>
+                  <div className="mt-2.5 rounded-xl bg-green/10 px-3.5 py-3">
+                    <div className="flex items-center gap-2">
+                      <span className="text-[14px] font-bold text-green">
+                        ✓ {AUTH_LABEL[form.auth]} 계정 연결됨
+                      </span>
+                      <button
+                        onClick={() => set({ auth: null, authEmail: null })}
+                        className="btn-press btn-inline ml-auto shrink-0 text-[12px] font-bold text-muted underline underline-offset-2"
+                      >
+                        해제
+                      </button>
+                    </div>
+                    <div className="mt-0.5 truncate text-[12px] text-muted">
+                      {form.auth === "google" && form.authEmail
+                        ? `${form.authEmail}${GOOGLE_ENABLED ? "" : " · 시뮬레이션"}`
+                        : "실제 로그인은 앱 키 등록 후"}
+                    </div>
                   </div>
                 ) : (
                   <>
-                  {/* 구글 — 로그인 설정이 있으면 실제 구글 로그인으로 갔다가 이 화면으로 돌아온다 */}
+                  {/* 구글 — 로그인 설정이 있으면 구글 로그인(구글 설정 전이면 시뮬레이션)으로 갔다가
+                      이 화면으로 돌아온다. 로그인 설정이 아예 없으면 데모 표시만 */}
                   <button
                     onClick={() =>
                       AUTH_ENABLED
-                        ? googleSignIn(`/onboarding${salesRef ? `?ref=${encodeURIComponent(salesRef)}` : ""}`)
+                        ? googleStart(`/onboarding${salesRef ? `?ref=${encodeURIComponent(salesRef)}` : ""}`)
                         : set({ auth: "google" })
                     }
                     className="btn-press mt-2.5 flex w-full items-center justify-center gap-2 rounded-xl border border-[#DADCE0] bg-white py-3 text-[14px] font-bold text-[#1F1F1F]"
@@ -935,7 +942,7 @@ export default function Onboarding() {
                   {[
                     ["신청 서비스", track.short],
                     ...(form.auth
-                      ? [["가입 방식", form.auth === "google" && form.authEmail ? `Google 로그인 · ${form.authEmail}` : `${AUTH_LABEL[form.auth]} 간편가입 (데모)`]]
+                      ? [["가입 방식", form.auth === "google" && form.authEmail ? `Google 로그인${GOOGLE_ENABLED ? "" : " (시뮬레이션)"} · ${form.authEmail}` : `${AUTH_LABEL[form.auth]} 간편가입 (데모)`]]
                       : []),
                     ...(track.needsRelation
                       ? [

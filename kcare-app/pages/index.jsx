@@ -2,8 +2,9 @@ import Head from "next/head";
 import Logo from "../components/Logo";
 import Link from "next/link";
 import { useState } from "react";
-import { useAppState } from "../lib/state";
-import { useAuth } from "../lib/auth";
+import { storageText, useAppState, useSync } from "../lib/state";
+import { AUTH_ENABLED, useAuth } from "../lib/auth";
+import { householdName } from "../lib/test-accounts";
 
 // 데모 홈 = 시연 허브 — 6단계 시연 동선(슬라이드와 동일) + 라이브 데모 상태 + 원탭 초기화.
 // KO/EN 토글은 허브 한정 (해외 이해관계자 배석 대비) — 앱 본문은 한국어 단일.
@@ -17,6 +18,12 @@ const T = {
     demoState: "DEMO 상태",
     idle: "대기 — 시연 준비 완료",
     reset: "↺ 시연 초기화",
+    resetAcct: "↺ 테스트 가구 기록 비우기",
+    resetConfirm: "테스트 가구의 기록(요청·일정·주문·음성 등)을 모두 비웁니다. 같은 가구의 다른 계정 화면에서도 사라집니다. 계속할까요?",
+    modeDemo: "데모 (시뮬레이션)",
+    modeDemoSub: "목데이터로 시작하고 이 브라우저에만 저장됩니다.",
+    modeLogin: "테스트 계정으로 로그인 → 실제 저장",
+    modeTest: "테스트 계정",
     flowTitle: "시연 동선 — 15분 데모 가이드",
     flowHint: "순서대로 클릭 · 하나의 케어 루프",
     closing: "클로징 3원칙 — 구조가 해자 (동의 · 접근 기록 전면 공개) · 사람이 최종 판단 (L4) · 케어가 지표 (판매액 없는 평가)",
@@ -43,6 +50,12 @@ const T = {
     demoState: "DEMO STATE",
     idle: "Idle — ready to present",
     reset: "↺ Reset demo",
+    resetAcct: "↺ Clear test household",
+    resetConfirm: "This clears every record (requests, schedule, orders, voice) of the test household for all of its accounts. Continue?",
+    modeDemo: "Demo (simulation)",
+    modeDemoSub: "Starts from sample data and is saved in this browser only.",
+    modeLogin: "Sign in with a test account → real storage",
+    modeTest: "Test account",
     flowTitle: "Demo flow — 15-minute guide",
     flowHint: "Click in order · one care loop",
     closing: "Closing principles — Trust is the moat (consent & access log fully disclosed) · Humans make the final call (L4) · Care is the metric (no sales-based evaluation)",
@@ -68,6 +81,8 @@ const T = {
 export default function Home() {
   const { state, dispatch } = useAppState();
   const auth = useAuth();
+  const sync = useSync();
+  const account = !!auth.user?.household;
   const [lang, setLang] = useState("ko");
   const t = T[lang];
   const joined = !!state.onboarding;
@@ -131,11 +146,38 @@ export default function Home() {
               </span>
             ))}
             <button
-              onClick={() => dispatch({ type: "reset" })}
+              onClick={() => {
+                // 테스트 가구는 세 계정이 같이 쓰는 서버 기록이라 한 번 묻는다
+                if (account && !window.confirm(t.resetConfirm)) return;
+                dispatch({ type: "reset" });
+              }}
               className="btn-press ml-auto rounded-full border border-white/25 px-4 py-1.5 text-[12px] font-bold text-white/80"
             >
-              {t.reset}
+              {account ? t.resetAcct : t.reset}
             </button>
+          </div>
+
+          {/* 지금 모드 — 데모(시뮬레이션, 이 브라우저만) / 테스트 계정(가구 단위 서버 저장) */}
+          <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1.5 rounded-xl border border-white/10 bg-white/[.04] px-4 py-3 text-[13px]">
+            {account ? (
+              <>
+                <b className="text-[#8FE3C0]">{t.modeTest}</b>
+                <span className="text-white/80">
+                  {auth.user.name} · {householdName(auth.user.household)}
+                </span>
+                <span className="text-white/55">{storageText(sync)}</span>
+              </>
+            ) : (
+              <>
+                <b className="text-white">{t.modeDemo}</b>
+                <span className="text-white/55">{t.modeDemoSub}</span>
+                {AUTH_ENABLED && (
+                  <Link href="/login" className="tap ml-auto font-bold text-[#E8CFA4] underline underline-offset-2">
+                    {t.modeLogin}
+                  </Link>
+                )}
+              </>
+            )}
           </div>
 
           {/* 시연 동선 6단계 — 슬라이드와 동일한 순서 */}

@@ -21,12 +21,12 @@ import {
 import { VIDEO_POLICY, VIDEO_SEGMENTS } from "../../lib/console";
 import { HOUSEHOLD, PAYMENT_MODES, PRICING, fmtWon } from "../../lib/config";
 import { fmtCard, payHref } from "../../lib/payments";
-import { logout, useAuth } from "../../lib/auth";
+import { PROVIDER_LABEL, logout, useAuth } from "../../lib/auth";
 
 // 월 구독료 표기 — 가입 때 고른 가구 구성(한 분 / 부부)에 따라 갈린다. 2급지는 확정 전.
 const monthlyLabel = (ob) =>
   ob?.tier === 2 ? "별도 산정" : ob?.household === "couple" ? `${fmtWon(HOUSEHOLD.monthly)} · 부부 가구` : fmtWon(PRICING.subscription.monthly);
-import { useAppState } from "../../lib/state";
+import { storageText, useAppState, useSync } from "../../lib/state";
 import { honorific } from "../../lib/tracks";
 
 // 마이 — 2026-09-04 시트 보호자 마이 1·2번 (첨부 영상 시안대로 재구성).
@@ -40,6 +40,7 @@ import { honorific } from "../../lib/tracks";
 export default function MyPage() {
   const { state, dispatch } = useAppState();
   const auth = useAuth();
+  const sync = useSync();
   const ob = state.onboarding;
   const [settingOpen, setSettingOpen] = useState(false);
   const [consentRenewed, setConsentRenewed] = useState(false); // 동의 갱신 원탭
@@ -196,24 +197,28 @@ export default function MyPage() {
             <Row k="결제수단" v={state.billing ? fmtCard(state.billing) : <PendingTag>미등록</PendingTag>} />
             <Row k="결제권한" v={payLabel(ob, honor)} />
             <Row k="방문기록 영상 동의" v={ob?.videoConsent ? "동의함" : ob ? "미동의 (가입 시 선택)" : "동의함 (데모)"} />
-            {/* 로그인 계정 — 구글 로그인 (설정 전이면 '설정 전') */}
+            {/* 로그인 계정 — 테스트 계정 · 구글 (설정 전이면 '설정 전'). 로그인하면 기록이 서버에 저장된다 */}
             <Row
               k="로그인 계정"
               v={
                 auth.user ? (
-                  <span className="inline-flex items-center gap-2">
-                    <span className="font-num">{auth.user.email}</span>
+                  <span className="inline-flex flex-wrap items-center justify-end gap-2">
+                    <span>
+                      {auth.user.name}
+                      {auth.user.provider && <span className="ml-1 text-[12px] text-muted">{PROVIDER_LABEL[auth.user.provider]}</span>}
+                    </span>
                     <button onClick={() => logout("/login")} className="btn-press btn-chip rounded-full border border-navy/15 px-2.5 text-[12px] font-bold text-muted">
                       로그아웃
                     </button>
                   </span>
                 ) : (
                   <Link href="/login?callbackUrl=%2Ffamily%2Fmy" className="tap font-bold text-navy underline underline-offset-2">
-                    {auth.enabled ? "구글로 로그인" : "구글 로그인 설정 전"}
+                    {auth.enabled ? "로그인" : "로그인 설정 전"}
                   </Link>
                 )
               }
             />
+            <Row k="기록 저장" v={<span className={sync.mode === "server" && sync.status !== "error" ? "text-green" : "text-muted"}>{storageText(sync)}</span>} />
           </div>
         </Card>
 

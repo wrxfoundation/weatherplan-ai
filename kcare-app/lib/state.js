@@ -1,16 +1,23 @@
-import { createContext, useContext, useEffect, useReducer, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useReducer, useRef, useState } from "react";
 // mock.js 가 아니라 seed.js 에서 가져온다 — state 는 _app 에서 import 되므로
 // 여기서 mock.js 를 참조하면 콘솔 목데이터 전체가 모든 페이지에 실린다 (seed.js 주석 참고).
 import { INITIAL_EVENTS, INITIAL_REQUESTS, INITIAL_KIT, SEED_EVENTS, SEED_ORDERS, SEED_REPORTS } from "./seed";
 import { PRICING } from "./config";
 import { transition } from "./requests";
 import { SEED_VISIT, advance } from "./workflow";
+import { useAuth } from "./auth";
 
-// 앱 전역 상태 — 데모 단계에서는 클라이언트 보관(localStorage).
-// 실제 구현에서 이 상태는 전부 서버 소유가 된다 (핸드오프 04 §4).
-// 역할 간 연동 데모: 어르신 SOS → 가족 배너 / 컨시어지 보충 요청 → 가족 결제 승인.
+// 앱 전역 상태.
+// 역할 간 연동: 어르신 SOS → 가족 배너 / 컨시어지 보충 요청 → 가족 결제 승인.
+//
+// 어디에 저장하나 (2026-09-30):
+//   데모     로그인하지 않음 → 이 브라우저(localStorage)에만. 시연용 목데이터로 시작한다.
+//   테스트   테스트 계정으로 로그인 → 가구 단위로 서버(Supabase)에 저장. 기록은 비운 채 시작한다.
+//            같은 가구의 다른 계정(보호자·어르신·컨시어지)이 몇 초 안에 같은 상태를 본다.
+//            서버 저장이 설정 전이면 이 기기에만 저장한다 (데모와 섞이지 않게 따로 둔다).
 
 const KEY = "kcare-demo-state-v2";
+const acctKey = (household) => `kcare-acct-${household}-v1`;
 
 const DEFAULT = {
   onboarding: null, // { rel, res, elderName, district, tier, paymentMode, limitAmount, joinedAt }
@@ -98,6 +105,26 @@ const DEFAULT = {
   // 결제창으로 넘어가기 전에 담아 둔 스토어 주문. 승인이 끝나야 orders·requests 로 선다.
   pendingOrder: null,
 };
+
+// 테스트 가구의 첫 상태 — 구성(방문 흐름 · 키트 · 우선 날씨)은 두고 기록(일정 · 요청 · 주문 · 결제 ·
+// 음성 · 리포트 · 알림)은 비운다. 화면에 뜨는 기록이 전부 테스트하는 사람이 만든 것이 되게.
+export function freshState() {
+  return {
+    ...DEFAULT,
+    // AI 이상 징후 카드는 센서가 없는 테스트 가구에서 지어낸 알림이 된다 — 닫아 둔다
+    // (보호자 화면 아래 데모 조작으로 다시 띄울 수 있다)
+    demo: { ...DEFAULT.demo, anomaly: "dismissed" },
+    events: [],
+    requests: [],
+    reports: [],
+    ticker: [],
+    orders: [],
+    voices: [],
+    reviews: [],
+    payments: [],
+    myHospitals: [],
+  };
+}
 
 // 저장된 일정 중 씨앗(INITIAL_EVENTS)에서 온 것을 손본다 —
 //  · 없어진 씨앗(ev4 아침 혈압약)은 지운다. 시드에서 빼도 localStorage 에 남아 있으면
@@ -329,48 +356,284 @@ function reducer(state, action) {
       else delete next[action.id];
       return { ...state, productImages: next };
     }
+    // 테스트 가구에서 누르면 데모 목데이터가 아니라 빈 기록으로 돌아간다 (Provider 가 fresh 를 붙인다)
     case "reset":
-      return DEFAULT;
+      return action.fresh ? freshState() : DEFAULT;
+    // 저장소에서 읽은 값으로 통째로 바꾼다 — base 위에 hydrate 규칙(형태 검증)으로 얹는다
+    case "replace":
+      return reducer(action.base || DEFAULT, { type: "hydrate", payload: action.payload || {} });
+    // 이미 계산해 둔 상태로 바꾼다 (서버 충돌 뒤 다시 쌓은 결과)
+    case "set":
+      return action.state || state;
     default:
       return state;
   }
 }
 
 const Ctx = createContext(null);
+const SyncCtx = createContext({ mode: "demo", status: "idle" });
+
+const readLocal = (key) => {
+  try {
+    const raw = localStorage.getItem(key);
+    return raw ? JSON.parse(raw) : null;
+  } catch (_) {
+    return null; // 손상된 저장값은 무시
+  }
+};
+
+// 서버에서 받은 상태를 화면용으로 — 빈 기록 위에 형태 검증을 거쳐 얹는다
+const fromServer = (payload) => reducer(freshState(), { type: "hydrate", payload: payload || {} });
+
+const POLL_MS = 4000; // 같은 가구의 다른 폰이 바꾼 것을 가져오는 간격
+const SAVE_DELAY_MS = 400; // 연달아 누른 것을 한 번에 보낸다
 
 export function AppStateProvider({ children }) {
-  const [state, dispatch] = useReducer(reducer, DEFAULT);
-  // 목 데이터가 현재 시각 기준이라 서버 프리렌더와 클라이언트가 어긋난다.
-  // 데모 단계에서는 마운트 후 렌더로 하이드레이션 불일치를 차단한다.
-  const [ready, setReady] = useState(false);
+  const auth = useAuth();
+  const household = auth.user?.household || null;
+  // 세션을 아직 모르면 아무것도 읽지 않는다 — 데모 상태를 잠깐 보여 줬다가 바꾸지 않게
+  const scope = auth.status === "loading" ? null : household ? `acct:${household}` : "demo";
 
-  useEffect(() => {
-    try {
-      const raw = localStorage.getItem(KEY);
-      if (raw) dispatch({ type: "hydrate", payload: JSON.parse(raw) });
-    } catch (_) {
-      /* 손상된 저장값은 무시 */
+  const [state, rawDispatch] = useReducer(reducer, DEFAULT);
+  // 목 데이터가 현재 시각 기준이라 서버 프리렌더와 클라이언트가 어긋난다.
+  // 마운트 후 렌더로 하이드레이션 불일치를 차단한다 · 저장소를 다 읽은 뒤에 화면을 연다.
+  const [ready, setReady] = useState(false);
+  // sync.mode: "demo" | "local"(테스트 계정 · 서버 설정 전) | "server"
+  const [sync, setSync] = useState({ mode: "demo", status: "idle", savedAt: null, error: null });
+  const [dirty, setDirty] = useState(0);
+
+  const stateRef = useRef(state);
+  stateRef.current = state;
+  const scopeRef = useRef(null);
+  const backendRef = useRef("local");
+  const storeKeyRef = useRef(KEY);
+  const versionRef = useRef(0);
+  const pendingRef = useRef([]); // 서버에 아직 안 보낸 동작 — 충돌하면 서버 상태 위에 다시 쌓는다
+  const savingRef = useRef(false);
+  const retryRef = useRef(0);
+
+  // 화면이 쓰는 dispatch — 서버 저장 중이면 동작을 기록해 두었다가 함께 보낸다
+  const dispatch = useCallback((action) => {
+    let a = action;
+    if (backendRef.current === "server" || scopeRef.current?.startsWith("acct:")) {
+      if (a.type === "reset") a = { ...a, fresh: true };
     }
-    setReady(true);
+    if (backendRef.current === "server") {
+      pendingRef.current.push({ ...a, _at: Date.now() });
+      setDirty((d) => d + 1);
+    }
+    rawDispatch(a);
+  }, []);
+
+  // 저장소 고르기 — 로그인·로그아웃하면 다시 읽는다
+  useEffect(() => {
+    if (!scope || scope === scopeRef.current) return undefined;
+    let cancelled = false;
+    setReady(false);
+    pendingRef.current = [];
+    versionRef.current = 0;
+    retryRef.current = 0;
+
+    const loadLocal = (key, base, mode, error = null) => {
+      backendRef.current = "local";
+      storeKeyRef.current = key;
+      rawDispatch({ type: "replace", base, payload: readLocal(key) });
+      setSync({ mode, status: "idle", savedAt: null, error });
+    };
+
+    (async () => {
+      if (scope === "demo") {
+        loadLocal(KEY, DEFAULT, "demo");
+      } else {
+        // 잠깐 끊긴 것 때문에 이 기기 저장으로 떨어지지 않게 두 번 더 해 본다 (설정 전 503 은 바로 받아들인다)
+        let res = null;
+        for (let i = 0; i < 3 && !cancelled; i++) {
+          try {
+            res = await fetch("/api/household", { cache: "no-store" });
+          } catch (_) {
+            res = null;
+          }
+          if (res && (res.ok || res.status < 500 || res.status === 503)) break;
+          await new Promise((r) => setTimeout(r, 1500));
+        }
+        if (cancelled) return;
+        const body = res ? await res.json().catch(() => ({})) : {};
+        if (res?.ok) {
+          backendRef.current = "server";
+          versionRef.current = body.version || 0;
+          if (body.state) {
+            rawDispatch({ type: "set", state: fromServer(body.state) });
+          } else {
+            // 처음 들어온 가구 — 빈 기록으로 만들어 서버에 한 번 저장한다
+            rawDispatch({ type: "set", state: freshState() });
+            pendingRef.current.push({ type: "init", _at: Date.now() });
+            setDirty((d) => d + 1);
+          }
+          setSync({ mode: "server", status: "saved", savedAt: body.updatedAt ? Date.parse(body.updatedAt) : null, error: null });
+        } else {
+          // 서버 저장 설정 전(503) · 네트워크 오류 — 이 기기에만 저장한다
+          loadLocal(acctKey(household), freshState(), "local", body.error || (res ? `http-${res.status}` : "network"));
+        }
+      }
+      if (cancelled) return;
+      scopeRef.current = scope;
+      setReady(true);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [scope, household]);
+
+  // 이 기기에 저장 (데모 · 서버 설정 전 테스트 계정)
+  useEffect(() => {
+    if (!ready || backendRef.current !== "local") return;
+    try {
+      localStorage.setItem(storeKeyRef.current, JSON.stringify(state));
+    } catch (_) {
+      /* 저장 실패는 화면 동작에 영향 없음 */
+    }
+  }, [state, ready]);
+
+  // 서버에 저장 — 버전이 맞을 때만 덮어쓴다. 다른 폰이 먼저 바꿨으면(409) 그 상태 위에
+  // 내가 한 동작을 다시 쌓아서 보낸다. 누른 것만으로 '저장됨'이 되지 않는다 — 서버 응답을 받아야 한다.
+  const flush = useCallback(async ({ keepalive = false } = {}) => {
+    if (backendRef.current !== "server" || savingRef.current || pendingRef.current.length === 0) return;
+    savingRef.current = true;
+    const sent = pendingRef.current.slice();
+    const body = JSON.stringify({
+      baseVersion: versionRef.current,
+      state: stateRef.current,
+      actions: sent.filter((a) => a.type !== "init"),
+    });
+    setSync((s) => ({ ...s, status: "saving" }));
+    let again = false;
+    try {
+      const res = await fetch("/api/household", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body,
+        keepalive: keepalive && body.length < 60000,
+      });
+      const j = await res.json().catch(() => ({}));
+      if (res.ok) {
+        versionRef.current = j.version;
+        pendingRef.current = pendingRef.current.slice(sent.length);
+        retryRef.current = 0;
+        setSync((s) => ({ ...s, status: "saved", savedAt: Date.now(), error: null }));
+        again = pendingRef.current.length > 0;
+      } else if (res.status === 409 && j.error === "conflict") {
+        // 서버 상태 + 아직 안 들어간 내 동작 → 다시 보낸다
+        const mine = pendingRef.current.filter((a) => a.type !== "init");
+        const next = mine.reduce((acc, a) => reducer(acc, a), fromServer(j.state));
+        versionRef.current = j.version || 0;
+        pendingRef.current = j.state ? mine : [{ type: "init", _at: Date.now() }, ...mine];
+        rawDispatch({ type: "set", state: next });
+        again = pendingRef.current.length > 0;
+        setSync((s) => ({ ...s, status: again ? "saving" : "saved" }));
+      } else {
+        throw Object.assign(new Error("save-failed"), { code: j.error || `http-${res.status}` });
+      }
+    } catch (e) {
+      retryRef.current += 1;
+      setSync((s) => ({ ...s, status: "error", error: e.code || "network" }));
+      // 3초 · 6초 · 12초 … 최대 30초 간격으로 다시 보낸다 (동작은 버리지 않는다)
+      const wait = Math.min(30000, 3000 * 2 ** (retryRef.current - 1));
+      setTimeout(() => setDirty((d) => d + 1), wait);
+    } finally {
+      savingRef.current = false;
+    }
+    if (again) setDirty((d) => d + 1);
   }, []);
 
   useEffect(() => {
-    try {
-      localStorage.setItem(KEY, JSON.stringify(state));
-    } catch (_) {
-      /* 저장 실패는 데모 동작에 영향 없음 */
-    }
-  }, [state]);
+    if (!ready || backendRef.current !== "server" || pendingRef.current.length === 0) return undefined;
+    const t = setTimeout(() => flush(), SAVE_DELAY_MS);
+    return () => clearTimeout(t);
+  }, [dirty, ready, flush]);
+
+  // 화면을 떠나거나 백그라운드로 가면 기다리지 않고 바로 보낸다
+  useEffect(() => {
+    if (!ready || sync.mode !== "server") return undefined;
+    const onHide = () => {
+      if (document.visibilityState === "hidden") flush({ keepalive: true });
+    };
+    document.addEventListener("visibilitychange", onHide);
+    window.addEventListener("pagehide", onHide);
+    return () => {
+      document.removeEventListener("visibilitychange", onHide);
+      window.removeEventListener("pagehide", onHide);
+    };
+  }, [ready, sync.mode, flush]);
+
+  // 같은 가구의 다른 폰이 바꾼 것 가져오기 — 내가 보낼 것이 없을 때만 (보낼 게 있으면 충돌 처리가 맡는다)
+  useEffect(() => {
+    if (!ready || sync.mode !== "server") return undefined;
+    let stopped = false;
+    const tick = async () => {
+      if (stopped || document.hidden || savingRef.current || pendingRef.current.length) return;
+      try {
+        const res = await fetch(`/api/household?v=${versionRef.current}`, { cache: "no-store" });
+        if (!res.ok) return;
+        const j = await res.json();
+        if (stopped || !j.changed || savingRef.current || pendingRef.current.length) return;
+        if (j.version > versionRef.current && j.state) {
+          versionRef.current = j.version;
+          rawDispatch({ type: "set", state: fromServer(j.state) });
+          setSync((s) => ({ ...s, status: "saved", remoteAt: Date.now(), remoteBy: j.updatedBy || null }));
+        }
+      } catch (_) {
+        /* 다음 차례에 다시 본다 */
+      }
+    };
+    const id = setInterval(tick, POLL_MS);
+    const onFocus = () => tick();
+    window.addEventListener("focus", onFocus);
+    document.addEventListener("visibilitychange", onFocus);
+    return () => {
+      stopped = true;
+      clearInterval(id);
+      window.removeEventListener("focus", onFocus);
+      document.removeEventListener("visibilitychange", onFocus);
+    };
+  }, [ready, sync.mode]);
+
+  const syncValue = useMemo(() => ({ ...sync, household, flush }), [sync, household, flush]);
 
   return (
     <Ctx.Provider value={{ state, dispatch }}>
-      {ready ? children : <div className="min-h-screen bg-nav" />}
+      <SyncCtx.Provider value={syncValue}>
+        {ready ? children : <div className="min-h-screen bg-nav" />}
+      </SyncCtx.Provider>
     </Ctx.Provider>
   );
 }
 
 export function useAppState() {
   return useContext(Ctx);
+}
+
+// 저장 상태 — { mode: demo|local|server, status: idle|saving|saved|error, savedAt, error, household, flush }
+export function useSync() {
+  return useContext(SyncCtx);
+}
+
+// 어디에 저장되는지 한 줄 — 로그인 화면 · 시연 허브 · 마이 탭
+export function storageText(sync) {
+  if (sync.mode === "server") {
+    if (sync.status === "error") {
+      return sync.error === "login-required"
+        ? "로그인이 만료됐습니다 — 다시 로그인하면 이어서 저장됩니다"
+        : "서버 저장 재시도 중 — 연결을 확인해 주세요";
+    }
+    const at = sync.savedAt ? new Date(sync.savedAt).toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" }) : "";
+    return `서버에 저장 (Supabase)${at ? ` · 마지막 저장 ${at}` : ""}`;
+  }
+  if (sync.mode === "local") {
+    return sync.error && sync.error !== "db-not-configured"
+      ? `서버 저장 오류 (${sync.error}) — 지금은 이 기기에만 저장`
+      : "이 기기에만 저장 — 서버 저장 설정 전";
+  }
+  return "데모 (시뮬레이션) — 이 브라우저에만 저장";
 }
 
 // 결제권한 판정 — REQ-07. 금액이 보호자 승인을 필요로 하는지.

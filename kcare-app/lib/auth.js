@@ -1,19 +1,26 @@
-// 구글 로그인 — 화면 쪽 도우미.
+// 로그인 — 화면 쪽 도우미.
 //
-// AUTH_ENABLED 는 빌드 때 정해진다 (next.config.js 가 키 세 개가 다 있는지만 보고 "1" 을 넣는다 ·
+// 켜짐 여부는 빌드 때 정해진다 (next.config.js 가 환경변수가 있는지만 보고 "1" 을 넣는다 ·
 // 키 값 자체는 브라우저로 나가지 않는다). 키를 넣거나 바꾸면 재배포해야 반영된다.
-// 꺼져 있으면 SessionProvider 를 띄우지 않는다 — 없는 인증 서버를 매번 두드리지 않게.
+//   AUTH_ENABLED    로그인이 하나라도 켜져 있다 — 꺼져 있으면 SessionProvider 를 띄우지 않는다
+//   GOOGLE_ENABLED  실제 구글 로그인
+//   TEST_LOGIN      테스트 계정 로그인 (구글이 꺼져 있으면 구글 버튼은 시뮬레이션으로 간다)
 import { SessionProvider, signIn, signOut, useSession } from "next-auth/react";
 
 export const AUTH_ENABLED = process.env.NEXT_PUBLIC_AUTH_ENABLED === "1";
+export const GOOGLE_ENABLED = process.env.NEXT_PUBLIC_GOOGLE_ENABLED === "1";
+export const TEST_LOGIN = process.env.NEXT_PUBLIC_TEST_LOGIN === "1";
+// 구글 버튼이 시뮬레이션으로 가는지 — 실제 구글이 꺼져 있고 테스트 로그인이 켜져 있을 때
+export const GOOGLE_SIMULATED = !GOOGLE_ENABLED && TEST_LOGIN;
 
-const OFF = { enabled: false, status: "off", user: null };
+const OFF = { enabled: false, status: "unauthenticated", user: null };
 
 export function AuthProvider({ children }) {
   if (!AUTH_ENABLED) return children;
   return <SessionProvider refetchOnWindowFocus={false}>{children}</SessionProvider>;
 }
 
+// user: { id, name, email, provider("test"|"google-sim"|"google"), role, household }
 export function useAuth() {
   if (!AUTH_ENABLED) return OFF;
   // AUTH_ENABLED 는 빌드 때 고정되는 상수라 렌더마다 같은 경로를 탄다 — 훅 호출 순서가 바뀌지 않는다
@@ -28,8 +35,23 @@ export const safeCallback = (v, fallback = "/") => {
   return s.startsWith("/") && !s.startsWith("//") ? s : fallback;
 };
 
-export const googleSignIn = (callbackUrl = "/") => signIn("google", { callbackUrl: safeCallback(callbackUrl) });
+// 'Google 계정으로 계속하기' — 실제 구글이면 구글로, 아니면 시뮬레이션 화면으로
+export function googleStart(callbackUrl = "/") {
+  const cb = safeCallback(callbackUrl);
+  if (GOOGLE_ENABLED) return signIn("google", { callbackUrl: cb });
+  window.location.assign(`/login/google?callbackUrl=${encodeURIComponent(cb)}`);
+  return Promise.resolve();
+}
+
+// 테스트 계정 로그인 — 화면을 떠나지 않고 결과만 받는다 ({ ok, error })
+export async function testSignIn({ id, password, via = "test" }) {
+  const r = await signIn("test", { redirect: false, id, password, via });
+  return { ok: !!r?.ok && !r?.error, error: r?.error || null };
+}
+
 export const logout = (callbackUrl = "/") => signOut({ callbackUrl: safeCallback(callbackUrl) });
+
+export const PROVIDER_LABEL = { test: "테스트 아이디", "google-sim": "Google (시뮬레이션)", google: "Google" };
 
 // 구글 로그인 버튼용 로고 (Google 브랜드 가이드의 4색 G). 외부 이미지를 불러오지 않도록 인라인으로 둔다.
 export function GoogleMark({ size = 18 }) {

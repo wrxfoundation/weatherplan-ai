@@ -16,10 +16,14 @@ const BRAND_LOGO = pick("logo");
 // 한 덩어리로 뭉친다. 그래서 어두운 배경용을 따로 둔다.
 const BRAND_LOGO_DARK = pick("logo-dark");
 
-// 구글 로그인이 설정됐는지 — 키 세 개가 다 있으면 "1". 값은 브라우저로 나가지 않고 켜짐 여부만 나간다.
-// 빌드 때 정해지므로 키를 넣거나 바꾸면 재배포해야 한다 (lib/auth.js).
-const AUTH_ENABLED =
-  process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET && process.env.NEXTAUTH_SECRET ? "1" : "";
+// 로그인이 설정됐는지 — 값은 브라우저로 나가지 않고 켜짐 여부("1")만 나간다.
+// 빌드 때 정해지므로 키를 넣거나 바꾸면 재배포해야 한다 (lib/auth.js · lib/auth-server.js 와 같은 판단).
+//   테스트 계정: NEXTAUTH_SECRET + BETA_TEST_PASSWORD
+//   구글:       NEXTAUTH_SECRET + GOOGLE_CLIENT_ID + GOOGLE_CLIENT_SECRET
+const HAS_SESSION = !!process.env.NEXTAUTH_SECRET;
+const GOOGLE_ENABLED = HAS_SESSION && process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET ? "1" : "";
+const TEST_LOGIN = HAS_SESSION && process.env.BETA_TEST_PASSWORD ? "1" : "";
+const AUTH_ENABLED = GOOGLE_ENABLED || TEST_LOGIN ? "1" : "";
 
 // CSP — 민감 프로필을 다루는 앱: 허용 출처를 명시적으로 한정한다.
 // 외부 허용은 폰트(Google Fonts) · 지도 타일(OSM·CARTO) · 결제(토스페이먼츠)뿐 · 그 외 전부 자기 출처.
@@ -29,6 +33,7 @@ const AUTH_ENABLED =
 // 토스 서버와 통신한다. 전에는 script·connect·frame 이 전부 'self' 라 배포 환경에서 결제창이
 // 뜨지 않았다 (2026-09-30 발견 · 작업 환경은 토스 호스트가 막혀 있어 드러나지 않았다).
 // 구글 로그인은 이동(리디렉션)으로만 오가므로 여기 추가할 것이 없다 — 프로필 사진도 쓰지 않는다.
+// 서버 저장(Supabase)도 브라우저가 아니라 우리 API 가 부르므로 여기 넣지 않는다 (lib/db.js).
 const TOSS = "https://*.tosspayments.com";
 const CSP = [
   "default-src 'self'",
@@ -61,6 +66,8 @@ const nextConfig = {
     NEXT_PUBLIC_BRAND_LOGO: BRAND_LOGO,
     NEXT_PUBLIC_BRAND_LOGO_DARK: BRAND_LOGO_DARK,
     NEXT_PUBLIC_AUTH_ENABLED: AUTH_ENABLED,
+    NEXT_PUBLIC_GOOGLE_ENABLED: GOOGLE_ENABLED,
+    NEXT_PUBLIC_TEST_LOGIN: TEST_LOGIN,
   },
   async headers() {
     return [

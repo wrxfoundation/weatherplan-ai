@@ -33,6 +33,7 @@ const ROUTES = [
   "/sales",
   // 구글 로그인 — 2026-09-30. 키가 없으면 '설정 전' 안내, 있으면 로그인 버튼이 뜬다.
   "/login",
+  "/login/google",
   // 리포트 3종은 고객에게 나가는 문서다 — 화면보다 오히려 더 봐야 한다.
   // 그동안 verify 만 돌고 있어서 본문 리포트의 회귀를 못 잡았다.
   "/report/verify", "/report/care", "/report/visit", "/report/exec",

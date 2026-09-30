@@ -3,9 +3,13 @@
 부모님 케어 멤버십 K-CARE 의 베타 웹앱이다. 어르신 · 보호자 · 컨시어지 · 영업자 · 관제 · 경영
 여섯 역할의 화면이 하나의 Next.js 앱에 들어 있다.
 
-- 배포 방법: **[DEPLOY.md](DEPLOY.md)** — GitHub · Vercel · 구글 로그인 설정 순서
-- 기술: Next.js 14 (Pages Router) · React 18 · Tailwind CSS 3 · NextAuth 4 (구글 로그인) ·
-  토스페이먼츠 SDK v2 · Leaflet · Anthropic SDK
+- 배포 방법: **[DEPLOY.md](DEPLOY.md)** — GitHub · Vercel · 테스트 계정 로그인 · Supabase · 구글 로그인 순서
+- 기술: Next.js 14 (Pages Router) · React 18 · Tailwind CSS 3 · NextAuth 4 (테스트 계정 · 구글) ·
+  Supabase (서버 저장) · 토스페이먼츠 SDK v2 · Leaflet · Anthropic SDK
+
+**데모와 테스트 계정** — 로그인하지 않으면 데모(시뮬레이션)다: 목데이터로 시작하고 그 브라우저에만 저장된다.
+테스트 계정(보호자 · 어르신 · 컨시어지, 한 가구 공유)으로 로그인하면 빈 기록으로 시작하고 Supabase 에
+저장되며, 같은 가구의 다른 폰이 몇 초 안에 같은 것을 본다. 구글 로그인 설정 전에는 구글 버튼이 시뮬레이션이다.
 - 서버 위치: Vercel 서울 리전 (`vercel.json`)
 
 ## 화면
@@ -13,7 +17,7 @@
 | 역할 | 주소 | 내용 |
 |---|---|---|
 | 시연 허브 | `/` | 시연 동선 · 역할 바로가기 · 로그인 상태 |
-| 로그인 | `/login` | 구글 계정 로그인 (설정 전이면 안내) |
+| 로그인 | `/login` · `/login/google` | 테스트 아이디 · 구글 (구글 설정 전이면 시뮬레이션) · 저장 위치 표시 |
 | 대외 소개 | `/service` | 서비스 · 요금 · 해지 · 환불 |
 | 가입 상담 | `/onboarding` | 트랙 선택 · 가구 구성 · 지역 심사 · 결제권한 · 요금 · 구글로 시작 · 영업자 추천 코드 |
 | 어르신 | `/elder` | 오늘 · 약 미션 · 해주세요 · 마음사서함 · 가족 · SOS |
@@ -40,7 +44,7 @@ npm run dev                  # http://localhost:3100
 ```bash
 npm run verify    # 린트(경고 0) + 빌드
 npm start &       # 운영 모드로 기동 (http://localhost:3100)
-npm run smoke     # 23개 화면을 모바일·데스크톱으로 실제로 열어 검사
+npm run smoke     # 24개 화면을 모바일·데스크톱으로 실제로 열어 검사
 ```
 
 빌드는 렌더 시점 오류 · 빈 화면 · 접근성 회귀 · 터치 타깃 축소를 못 잡는다. 스모크가 그 그물이다.
@@ -53,7 +57,9 @@ GitHub Actions(`.github/workflows/ci.yml`)가 푸시마다 같은 것을 돌린�
 
 | 기능 | 변수 |
 |---|---|
-| 구글 로그인 | `GOOGLE_CLIENT_ID` · `GOOGLE_CLIENT_SECRET` · `NEXTAUTH_SECRET` · `NEXTAUTH_URL` |
+| 테스트 계정 로그인 | `NEXTAUTH_SECRET` · `BETA_TEST_PASSWORD` |
+| 서버 저장 (Supabase) | `SUPABASE_URL` · `SUPABASE_SECRET_KEY` — 표는 `supabase/schema.sql` |
+| 구글 로그인 | `GOOGLE_CLIENT_ID` · `GOOGLE_CLIENT_SECRET` · `NEXTAUTH_URL` (+ `NEXTAUTH_SECRET`) |
 | 베타 잠금 | `BETA_REQUIRE_LOGIN` · `BETA_ALLOWED_DOMAINS` · `BETA_ALLOWED_EMAILS` |
 | AI 도우미 | `ANTHROPIC_API_KEY` |
 | 결제 | `NEXT_PUBLIC_TOSS_CLIENT_KEY` · `TOSS_SECRET_KEY` |
@@ -63,12 +69,14 @@ GitHub Actions(`.github/workflows/ci.yml`)가 푸시마다 같은 것을 돌린�
 ## 폴더
 
 ```
-pages/          화면과 API (api/ai · api/auth · api/payments)
+pages/          화면과 API (api/ai · api/auth · api/household · api/status · api/payments)
 components/     공용 UI · 관제 콘솔(ops/) · 마음사서함 · 결제 시트
-lib/            데이터 · 규칙 (가격 config.js · 영업 sales.js · 결제 payments.js · 로그인 auth*.js)
+lib/            데이터 · 규칙 (가격 config.js · 영업 sales.js · 결제 payments.js · 로그인 auth*.js ·
+                테스트 계정 test-accounts.js · 저장 state.js(화면) · db.js(서버) · 활동 기록 activity.js)
+supabase/       schema.sql — 베타 서버 저장 표 (SQL Editor 에 붙여 넣고 Run)
 middleware.js   베타 잠금 (BETA_REQUIRE_LOGIN=1 일 때만)
 scripts/        smoke.mjs — 전 화면 스모크 검사
-docs/           요구사항 · 회의록 · 디자인 핸드오프 · 결정 기록 · DB 설계 · 결제 연동
+docs/           요구사항 · 회의록 · 디자인 핸드오프 · 결정 기록 · 실서비스 DB 설계 · 결제 연동
 ```
 
 ## 지켜 온 규칙
@@ -82,9 +90,11 @@ docs/           요구사항 · 회의록 · 디자인 핸드오프 · 결정 �
 
 ## 베타의 제약
 
-- **데이터는 브라우저(localStorage)에만 저장된다.** 서버 DB 가 없어 가입 상담 신청 · 결제 내역 ·
-  영업자 모집 기록이 회사로 모이지 않는다. 실제 고객을 받기 전에 서버 저장을 붙여야 한다
-  (설계 초안: `docs/DB-SCHEMA.md`).
+- **서버에 쌓이는 것은 테스트 계정의 기록뿐이다** (Supabase · 가구 상태 통째 + 활동 기록 · 가입 신청 · 결제).
+  데모와 로그인 없는 가입 상담 신청 · 영업자 모집 기록은 그 브라우저에만 남는다. 실제 고객을 받기 전에
+  실서비스 설계(`docs/DB-SCHEMA.md` · `docs/schema.sql`)로 옮기고 공개 가입 저장을 붙여야 한다.
+- 테스트 계정에는 실제 고객 개인정보를 넣지 않는다 (개인정보 영향평가 전).
+- 화면 속 어르신 건강 수치 · 복약 통계 같은 값은 아직 목데이터다.
 - 결제는 토스 **테스트 키**로만 운영한다. 주문 테이블 · 월 자동 청구 · 취소 · 환불이 남아 있다.
-- 실제 로그인은 **구글만** 된다. 카카오 · 네이버는 연결 표시만 하는 데모다.
+- 실제 로그인은 **테스트 계정과 구글만** 된다. 카카오 · 네이버는 연결 표시만 하는 데모다.
 - 영업자 수당은 수수료 제도가 확정되면 `lib/sales.js` 의 `SALES_COMMISSION` 을 채워 켠다.
