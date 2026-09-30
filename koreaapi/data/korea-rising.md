@@ -1,14 +1,14 @@
-# Korea Rising — verified K-pop snapshot (2026-09-29)
+# Korea Rising — verified K-pop snapshot (2026-09-30)
 
 Every line is **cross-verified** (≥2 independent sources agree on the canonical name) and carries its source + Skill Score. Full data + Schema.org JSON-LD: <https://aiagentlabs.co.kr/> · via KoreaAPI (MCP).
 
 ## 🎬 Latest official releases (YouTube)
+- **WJSN** — [ENG] WJSN (우주소녀) - My Cosmic Diary E08
 - **QWER** — 기적 같이 내린 별빛 아래 품었던 꿈들💫
-- **BOYNEXTDOOR** — MOVE LIKE #KANY 🐾 #BOYNEXTDOOR #보이넥스트도어 #BND #ANIMAL #ANIMAL_Challenge
-- **ZICO** — 지코 근황이라는 게 숨긴다고 숨겨지는 것도 아니고
-- **Kiss of Life** — [추석특집📺] 키씨야 나 한번 믿어봐 ~ #KISSOFLIFE #키스오브라이프 #KIOF #JULIE #쥴리 #Shorts
+- **AKMU** — AKMU 콘서트를 엄청 잘 즐기는 방법에 대하여
+- **BOYNEXTDOOR** — 영통의 조건 - #산앤한 들어보세요 🐾 #BOYNEXTDOOR #보이넥스트도어 #ANIMAL #ANIMAL_Challenge
+- **Oh My Girl** — 이번 앨범 대박나시궁~ 만듀무강 하시구~
 - **VIVIZ** — [VIVI.Zip] 항저우 팬미팅 Spring Whisper 포스터 촬영💙 Highlight #2
-- **Chung Ha** — Long time not playing LA and actually got ambushed -.-
 
 ## 🎤 Verified roster (640 acts)
 - **2NE1**: I Am the Best
