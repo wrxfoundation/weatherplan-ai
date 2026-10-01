@@ -5,7 +5,8 @@ import Link from "next/link";
 import { useAuth } from "../lib/auth";
 import { useSync } from "../lib/state";
 
-export default function ModeLink({ className = "" }) {
+// compact — 머리줄이 빽빽한 화면(컨시어지)에서는 이름 대신 '● 계정'만 (이름은 읽어 주는 이름표에 남긴다)
+export default function ModeLink({ className = "", compact = false }) {
   const auth = useAuth();
   const sync = useSync();
   const u = auth.user;
@@ -20,7 +21,7 @@ export default function ModeLink({ className = "" }) {
   return (
     <Link href="/login" className={`${className} text-navy`} aria-label={`${u.name} · ${ok ? "서버에 저장 중" : "저장 확인 필요"} — 계정 보기`}>
       <span aria-hidden className={`mr-1.5 inline-block h-[8px] w-[8px] shrink-0 rounded-full ${ok ? "bg-green" : "bg-amber"}`} />
-      {u.name}
+      {compact ? "계정" : u.name}
     </Link>
   );
 }

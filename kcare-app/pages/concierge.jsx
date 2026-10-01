@@ -242,7 +242,7 @@ export default function ConciergePage() {
               >
                 관제에 알리기
               </button>
-              <ModeLink className="tap shrink-0 text-[12px] font-bold" />
+              <ModeLink compact className="tap shrink-0 whitespace-nowrap text-[12px] font-bold" />
             </div>
             <button
               onClick={() => dispatch({ type: "demo", payload: { offline: !state.demo.offline } })}
