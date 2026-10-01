@@ -8,18 +8,20 @@
 
 ### 30초 소개
 
-측정기가 아니라 날씨에서 시작한다. 케이웨더 날씨 → 웰비안이 넓혀 갈 방향(실내 → 실외 → 레이더 → 위성) → 웨더 데이터 이코노미 순서로 말하고, 집 안 측정기는 「첫 단계」로만 놓는다. 백월 그림을 손으로 짚으며 말한다.
+측정기가 아니라 날씨에서 시작한다. 케이웨더와 기술 협력하는 날씨 데이터 네트워크 → 167개 도시 합의값 → 탈중앙 세계 민간 기상청 → 첫 단계 측정기 → 실외 · 레이더 · 위성 → 웨더 데이터 이코노미 순서로, 백월 그림을 손으로 짚으며 말한다(10/1 서우 수정안).
 
-- **국문(30초)** — 케이웨더는 30년 동안 날씨를 재 왔고, 지금은 90개국 167개 도시의 날씨를 매시간 11개 날씨 피드의 합의값으로 냅니다. 웰비안은 그 위에서 누구나 참여하는 세계 민간 기상청을 만들어 갑니다. 첫 단계는 집 안의 측정기이고, 실외 · 레이더 · 위성으로 넓혀 갑니다. 측정하고, 검증하고, 보상하고, 그 데이터가 기업과 AI 로 갑니다. 이걸 웨더 데이터 이코노미라고 부릅니다.
-- **영문(30초)** — KWeather has measured weather in Korea for thirty years and now publishes hourly weather for 167 cities in 90 countries, each value a consensus across eleven weather feeds. wellbian builds on that, toward a people-powered weather service for the world. It starts with a certified sensor in your home and grows outdoors, then to radar and satellites. Readings are measured, verified and rewarded, and the data goes on to businesses and AI. We call it the Weather Data Economy.
-- **바쁠 때 한 줄** — 케이웨더 30년 날씨 위에서, 집 안 측정기부터 실외 · 레이더 · 위성까지 누구나 참여하는 날씨 데이터 네트워크입니다. / A weather data network anyone can join, built on KWeather's thirty years: from home sensors to outdoor sensors, radar and satellites.
+- **국문(30초)** — 웰비안은 30년 된 민간 기상기업 케이웨더와 기술 협력하는 날씨 데이터 네트워크입니다. 90개국 167개 도시의 날씨를 관측소 한 곳에 기대지 않고, 매시간 11개 날씨 피드를 맞춰 보고 튀는 값은 빼서 합의값으로 냅니다. 그 위에서, 누구나 참여할수록 촘촘해지는 탈중앙 세계 민간 기상청을 만들어 갑니다. 첫 단계는 실내 공기질 측정기이고, 실외 · 레이더 · 위성으로 넓혀 갑니다. 데이터 측정 → 검증 → 보상 → 데이터 유통, 이게 웨더 데이터 이코노미입니다.
+- **영문(30초)** — wellbian is a weather data network built with our technology partner KWeather, which has measured weather in Korea for thirty years. For 167 cities in 90 countries, we don't rely on a single station: every hour, eleven weather feeds are checked against each other, outliers are dropped, and the consensus is published. On top of that, we're building a decentralized weather service for the world, one that gets denser with everyone who joins. It starts with an indoor air-quality sensor and grows outdoors, then to radar and satellites. Measure, verify, reward, distribute: that's the Weather Data Economy.
+- **날씨 데이터 마켓 한 줄** — 날씨 데이터 마켓은 이렇게 만든 도시 날씨에 블록체인 지문을 남겨 누구나 검증할 수 있게 하고, 사람이든 AI든 XRP 로 사서 쓰는 케이웨더의 공식 날씨 데이터 시장이에요(운영 웰비안랩스 · 공개 베타). / The Weather Data Market is KWeather's official weather data market, run by Wellbian Labs and in public beta: each city value carries an on-chain fingerprint anyone can verify, and people and AI agents alike buy it with XRP.
+- **바쁠 때 한 줄** — 케이웨더 30년 날씨 위에, 집 안 측정기부터 실외 · 레이더 · 위성까지 누구나 참여할 수 있게 탈중앙으로 만든 날씨 데이터 네트워크예요. / A decentralized weather data network anyone can join, built on KWeather's thirty years of weather: from home sensors to outdoor sensors, radar and satellites.
+- `주의: 11개는 관측소가 아니라 날씨 피드다(공항 관측 · 케이웨더 · MET Norway 직접 + 예보 모델 묶음) — "관측소 11곳" · "매분"이라고 하지 않는다. 합의값은 매시간, 1분 단위는 공항 관측 감시뿐이다.`
 - `주의: 실외 · 레이더 · 위성은 넓혀 갈 방향(백월 그림)이지 일정이 아니다 — "언제요?"에는 "정해지면 공지합니다".`
-- `주의: 167개 도시 날씨는 케이웨더 날씨 데이터 마켓(오늘 발표)의 데이터다 — "웰비안이 Flare 에 올라갔다"고 하지 않는다.`
-- `주의: 「세계 민간 기상청」은 목표다 — 공공 기상청과 견주거나 "이미 그 수준"이라고 하지 않는다.`
+- `주의: 날씨 데이터 마켓은 케이웨더 공식 오라클이고 운영이 웰비안랩스다 — "WLBN · 측정기가 Flare 에 올라갔다"고 하지 않는다. 마켓 사이트 문구에 있어도 예측시장 · 정산 · 보험은 말하지 않는다.`
+- `주의: 「세계 민간 기상청」은 목표다 — 공공 기상청과 견주거나 "이미 그 수준"이라고 하지 않는다. "한국 최대 · 1위"는 쓰지 않는다(금지어 표).`
 
 ### 보여 주는 순서
 
-- 1) 백월 앞에서 30초 소개 — 그림을 짚으며 케이웨더 날씨 → 실내 → 실외 → 레이더 → 위성 → 측정 · 검증 · 보상 · 데이터 유통.
+- 1) 백월 앞에서 30초 소개 — 그림을 짚으며 케이웨더와 기술 협력 → 167개 도시 합의값 → 탈중앙 세계 민간 기상청 → 실내 → 실외 → 레이더 → 위성 → 측정 · 검증 · 보상 · 데이터 유통.
 - 2) 측정기 실물을 손에 쥐어 준다 → 화면에 뜨는 실내 날씨 7가지(초미세먼지 · 미세먼지 · CO₂ · TVOC · 온도 · 습도 · 체감온도). 옆의 실외 측정기(운영안 물자 목록 2대)는 "실외로 넓혀 갈 다음 단계"로 가리킨다 — 오늘 판매하지 않는다.
 - 3) AI 이용권을 물으면 영상(지구 지도 · 강수 · 바람 · AI 예보)으로 AI 팩토리가 만드는 결과물을 먼저 보여 준다 — 지도를 손으로 조작하지 않고 녹화 영상으로(9/30 회의).
 - 4) 관심을 보이면 손님 휴대폰으로 wellbian.io/launch 를 연다(카드 또는 RLUSD). 현장 구매자에게는 우산(한정).
@@ -56,6 +58,7 @@
 - [ ] DeFi(DEX) · 리더보드 · 데이터 바운티 · 데이터 마켓 메뉴가 열렸는지(9/30 회의 — DEX 10/2 오픈 → 10/3 09:00 사이트 연결)와 출금 개시 공지 여부 → 6절 「출금 · 지금 어디서 사요?」 답을 A · B 중 하나로
 - [ ] 웨더 이코노미 설명 단계 — 4단계(측정 · 검증 · 보상 · 유통, 대표님)로 확정인지(9/30 회의 끝에 「측정 · 정제 · 유통 + 보상」 안이 나옴)
 - [ ] 09:00 발표 원문(케이웨더 날씨 데이터 마켓 · Flare) → 9절 답과 문장 맞추기
+- [ ] 날씨 데이터 마켓 주소 — 10/1 붙여 넣은 화면은 weathermarket.io 가 마켓 본체(9/24 기록은 .io 시뮬레이터 · .ai 오라클) → 9절 「11개 피드」 답과 안내 주소 하나로
 - [ ] 커뮤니티 안내 통일 — 이벤트 POP 는 디스코드, 사이트 「커뮤니티 입장」 버튼은 텔레그램
 - [ ] 문의 메일 하나로 — 사이트 · 약관 admin@wellbianlabs.io, 옛 FAQ 일부 admin@wellbian.io
 - [ ] 2차 구매분 배송 안내 문구와 해외 배송 가능 국가(사이트 FAQ 「해외에서도 구매할 수 있나요?」)
@@ -175,7 +178,8 @@
 | 데이터는 어떻게 사요? | 사이트 「데이터 마켓」(wellbian.io/data)에 단가가 공개돼 있습니다 — 집계 호출당 0.002, 코호트 0.05, 리포트 0.5 RLUSD(9/10 사이트 기준). 기업용 데이터셋은 협의라 명함 주시면 담당자가 연락드립니다.<br>`주의: 당일 사이트 단가 확인` |
 | 오늘 발표한 게 뭐예요? (09:00 뒤) | 케이웨더의 날씨 데이터 마켓이 Flare 메인넷에서 가동 중이라고 오늘 발표했습니다. 167개 도시의 매시간 날씨를 11개 날씨 피드의 합의값으로 내고, 쓰이기 전에 온체인에 기록하며, 구독은 XRP 로 결제합니다.<br>`주의: "오늘 가동"이 아니라 "오늘 발표" · 시험 중 기능 · 보험 지급 0` |
 | 웰비안 측정기 데이터도 Flare 에 올라가요? | 날씨 데이터 마켓은 케이웨더의 도시 날씨 데이터 서비스입니다. 웰비안 측정기는 XRPL 위에서 움직입니다.<br>`주의: 웰비안 × Flare 직접 연결 0` |
-| 11개 피드가 다 독립적인 거예요? | 11개 날씨 피드의 값을 모아 관측소 하나의 숫자가 아니라 합의값으로 냅니다. 피드 구성은 weathermarket.ai 문서에 공개돼 있습니다.<br>`주의: "독립 출처 11개" 0` |
+| 11개 피드가 다 독립적인 거예요? | 11개 날씨 피드의 값을 모아 관측소 하나의 숫자가 아니라 합의값으로 냅니다. 피드 구성은 날씨 데이터 마켓 사이트 문서(Docs)에 공개돼 있습니다.<br>`주의: "독립 출처 11개" · "관측소 11곳" 0 · 주소는 당일 확인` |
+| 날씨 데이터 마켓이랑 웰비안 사이트 「데이터 마켓」은 같은 거예요? | 다릅니다. 날씨 데이터 마켓은 케이웨더의 공식 날씨 데이터 시장으로 167개 도시 날씨를 XRP 로 사는 곳이고, 운영은 웰비안랩스가 합니다. 웰비안 사이트의 「데이터 마켓」(wellbian.io/data)은 측정기 네트워크 데이터를 RLUSD 로 사는 메뉴입니다.<br>`주의: 예측시장 · 정산 · 보험 0 · 가격은 각 사이트 화면으로` |
 
 ## 이벤트 · 경품 · 발표
 
@@ -250,7 +254,7 @@
 | 항목 | 값 | 어디 적혀 있나 |
 |---|---|---|
 | 케이웨더 | 30년 · 기업 고객 4,000곳 이상 | 고정 문구 |
-| 날씨 데이터 | 90개국 167개 도시 · 11개 날씨 피드 합의값 | 고정 문구 |
+| 날씨 데이터 | 90개국 167개 도시 · 매시간 11개 날씨 피드 합의값 · 케이웨더 공식 오라클 「날씨 데이터 마켓」(운영 웰비안랩스 · 공개 베타 · XRP 결제) | 고정 문구 · 마켓 사이트(10/1) |
 | 측정기 2차 판매 | 650 RLUSD · 카드 1,083,000원 · 계정당 10대 · 10/3 09:00 · 완판 시까지 | 판매 페이지 |
 | 측정기 1차(종료) | 450 RLUSD · 750,000원 · 9/15 12:00~9/16 12:00 | 판매 페이지 |
 | 측정기 | ARC-600DA · 측정 7항목 · 1분 단위 · 5인치 터치 · 월 전기료 1,000원 미만 · KC · 성능인증 CO₂ · PM2.5 1등급 | 판매 페이지 |

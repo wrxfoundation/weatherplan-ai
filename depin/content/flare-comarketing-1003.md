@@ -318,6 +318,8 @@ Kristaps가 물은 소비 방식·빈도·과거 데이터·예보는 아직 답
 
 - **도메인 정리**: `weathermarket.io` = **시뮬레이터**(예측시장·파라메트릭 보험, 가상 sUSDT, 「SIMULATION · VIRTUAL SUSDT ONLY」) ·
   `weathermarket.ai` = **오라클(Weather Data Market)**. 디지털사업 계정 링크는 오타가 아니었다 — Flare 문안의 `.ai/docs` 도 맞다.
+  **10/1 갱신**: 서우가 붙여 넣은 `weathermarket.io` 첫 화면 = **마켓 본체**(WDM/V3 합의 오라클 · 167개 도시 · 90개국 · 공개 베타 · 실제 XRP 결제 ·
+  하단 「케이웨더 공식 Web3 날씨 오라클 · 운영 위탁 Wellbian Labs」) — 도메인 배치가 바뀐 것으로 보인다. `.ai` 상태는 확인 전(세션 프록시 차단) → 밖에 주소를 쓰기 전 확인.
 - **앵커**: 각 실행을 직렬화·SHA-256 → **Flare 메인넷 SnapshotAnchor = 9/23 부터 기록의 정본**. 그 전 실행은 BNB 체인 1세대 앵커도 있다. (XRPL 앵커 언급 없음.)
 - **피드**: 도시당 매시간 **11개 = 직접 3(KWeather · METAR · MET Norway) + Open-Meteo 경유 8** → 지표별 합의값(중앙값 + MAD 이상치 제거, 파라미터는 비공개).
   ⚠ **「eleven independent sources」 표현 재검토** — 8개가 한 API(Open-Meteo)를 거친다. 「11 feeds」가 문서와 같은 말이다(1촌 인사 기본값 문구, 서우 결정 대기).
