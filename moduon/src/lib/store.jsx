@@ -5,6 +5,7 @@ import { createContext, useContext, useEffect, useMemo, useReducer } from 'react
 import { buildSeed, SEED_VERSION } from './seed'
 import { routeLead, monthKey } from './engine'
 import { CATEGORIES, REGIONS, unitBySigungu, canTransition } from './constants'
+import { setRebateCards } from './ratecard'
 
 const KEY = 'moduon_db_v1'
 const SESSION_KEY = 'moduon_session_v1'
@@ -386,6 +387,33 @@ function reducer(db, action) {
       }
     }
 
+    // 리베이트 단가표 업로드 — 시트별 카드(최신 먼저, 통신사당 10개까지) + 사람이 고친 단말 매핑 기억.
+    // 계산은 ratecard.activeRebateCard 가 적용일 기준으로 고른다(미래 적용일 = 예약).
+    case 'REBATE_IMPORT': {
+      const cards = action.cards ?? []
+      if (!cards.length) return db
+      const per = {}
+      const keep = [...cards, ...(db.policies.rebateCards ?? [])].filter((c) => (per[c.carrier] = (per[c.carrier] ?? 0) + 1) <= 10)
+      return {
+        ...db,
+        policies: { ...db.policies, rebateCards: keep, rebateAliases: { ...(db.policies.rebateAliases ?? {}), ...(action.aliases ?? {}) } },
+        auditLog: log({
+          actor: '본사 관리자', action: '리베이트 단가표 반영',
+          target: cards.map((c) => `${c.carrier} ${c.code ?? ''}`.trim()).join(', '),
+          detail: `${action.file ?? ''} · ${cards.map((c) => `${c.effectiveFrom}~ ${c.groups.length}행×${c.tiers.length}구간`).join(' / ')}`,
+        }),
+      }
+    }
+    case 'REBATE_REMOVE': {
+      const gone = (db.policies.rebateCards ?? []).find((c) => c.id === action.id)
+      if (!gone) return db
+      return {
+        ...db,
+        policies: { ...db.policies, rebateCards: db.policies.rebateCards.filter((c) => c.id !== action.id) },
+        auditLog: log({ actor: '본사 관리자', action: '리베이트 단가표 삭제', target: `${gone.carrier} ${gone.code ?? ''}`.trim(), detail: `${gone.effectiveFrom}~ · ${gone.source?.file ?? ''}` }),
+      }
+    }
+
     // +@ 표기 명칭 — 정산서·CSV·드릴다운이 전부 policies.opexLabel 하나를 읽는다
     case 'POLICY_OPEX': {
       const label = String(action.label ?? '').trim() || '영업비'
@@ -420,6 +448,8 @@ const StoreCtx = createContext(null)
 
 export function StoreProvider({ children }) {
   const [db, dispatch] = useReducer(reducer, null, load)
+  // 업로드한 리베이트 카드를 계산 모듈에 알린다 — 자식이 그리기 전에(같은 렌더 안에서) 넣어야 숫자가 한 박자 늦지 않는다
+  setRebateCards(db.policies?.rebateCards)
 
   useEffect(() => {
     try { localStorage.setItem(KEY, JSON.stringify(db)) } catch { /* quota */ }

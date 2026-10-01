@@ -5,7 +5,8 @@ import { won, fmtDate, SAUP_TIERS } from '../../lib/engine'
 import { Card, Btn, Modal, Field, binputCls, useToast } from '../../components/ui'
 import { AiInsight } from '../../components/AiPanel'
 import { policyPanel } from '../../lib/ai'
-import { selfMarginOf, PRICE_CARD, PRICE_ROW, priceDetail, isPriced, REBATE_CARD, REBATE_ROW, rebateDetail, ETC_ROW, isListed } from '../../lib/ratecard'
+import { selfMarginOf, PRICE_CARD, PRICE_ROW, activeRebateCard, REBATE_SEED } from '../../lib/ratecard'
+import RebateSection from '../../components/admin/RebateImport'
 import { calcPhoneQuote, PHONE_DEVICES, PHONE_PLANS } from '../../lib/phones'
 
 export default function AdminPolicies() {
@@ -18,6 +19,7 @@ export default function AdminPolicies() {
   const [feeRate, setFeeRate] = useState(Math.round(p.feeRate * 100))
   const [note, setNote] = useState('')
   const margin = selfMarginOf(db)
+  const rebateCard = activeRebateCard('KT') ?? REBATE_SEED
   const [marginIn, setMarginIn] = useState(margin)
 
   const apply = () => {
@@ -53,7 +55,7 @@ export default function AdminPolicies() {
             <h2 className="text-[15.5px] font-extrabold text-bink">셀프개통 고정 마진</h2>
             <p className="mt-1 text-[12.5px] text-bmuted">
               <b className="text-bink">{PRICE_CARD.name}에 값이 있는 조합은 그 값이 곧 판매가</b>라 이 마진을 타지 않습니다(마진이 이미 가격에 반영됨).
-              가격표에 없는 단말만 «{REBATE_CARD.name} 리베이트 − 이 마진 = 고객 지원금» 으로 계산합니다.
+              가격표에 없는 단말만 «{rebateCard.name} 리베이트 − 이 마진 = 고객 지원금» 으로 계산합니다.
             </p>
           </div>
           <div className="flex items-center gap-2">
@@ -102,7 +104,7 @@ export default function AdminPolicies() {
         </div>
         <p className="mt-2 text-[11px] leading-4 text-bfaint">
           리베이트가 마진보다 작으면 고객 지원금은 0원이고 마진도 리베이트까지만 남습니다(마이너스 마진을 만들지 않습니다).
-          24개월 할부 기준이며 {REBATE_CARD.notes.length}개 환수 조건은 단가표 고지를 따릅니다.
+          24개월 할부 기준이며 {rebateCard.notes?.length ?? 0}개 환수 조건은 단가표 고지를 따릅니다.
         </p>
       </Card>
 
@@ -194,79 +196,8 @@ export default function AdminPolicies() {
         </ul>
       </Card>
 
-      {/* 리베이트 표 — 사업자 R/B 전용. 2차 시트가 가격표로 바뀌며 리베이트 열이 빠져 직전 수령분을 유지한다. */}
-      <Card track="b" className="mt-4 p-5" data-t="rate-card">
-        <div className="flex flex-wrap items-end justify-between gap-3">
-          <div>
-            <h2 className="text-[15.5px] font-extrabold text-bink">
-              {REBATE_CARD.name} <span className="text-[12.5px] font-semibold text-bmuted">· {REBATE_CARD.effectiveFrom}~ · {REBATE_CARD.carrier}</span>
-              {REBATE_CARD.stale && <span className="ml-2 rounded bg-warn/15 px-1.5 py-0.5 text-[10.5px] font-bold text-warn">직전 수령분</span>}
-            </h2>
-            <p className="mt-1 text-[12.5px] text-bmuted">
-              <b className="text-bink">사업자 R/B 전용</b>입니다 — 고객 가격에는 쓰이지 않습니다(가격은 위 가격표가 정합니다).
-              최신 시트가 가격표로 바뀌며 리베이트 열이 빠져, 새 리베이트 표를 받을 때까지 직전 값을 유지합니다.
-            </p>
-          </div>
-          <span className="rounded-full bg-tint px-2.5 py-0.5 text-[11px] font-bold text-primary-text">단위: 만원</span>
-        </div>
-
-        <div className="mt-3.5 overflow-x-auto">
-          <table className="w-full min-w-[700px] text-[12.5px]" data-t="rate-card-table">
-            <thead>
-              <tr className="border-b border-brow text-[11.5px] text-bmuted">
-                <th rowSpan={2} className="px-2 py-2 text-left align-bottom font-semibold">단말</th>
-                {REBATE_CARD.plans.map((pl) => (
-                  <th key={pl.key} colSpan={REBATE_CARD.joins.length} className="border-l border-brow px-2 py-2 text-center font-semibold">{pl.name}</th>
-                ))}
-              </tr>
-              <tr className="border-b border-brow text-[11px] text-bfaint">
-                {REBATE_CARD.plans.flatMap((pl) => REBATE_CARD.joins.map((j, i) => (
-                  <th key={`${pl.key}${j.key}`} className={`px-2 py-1.5 text-right font-semibold ${i === 0 ? 'border-l border-brow' : ''}`}>{j.label.replace('010 신규', '010')}</th>
-                )))}
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-brow">
-              {REBATE_CARD.devices.map((d) => (
-                <tr key={d.key} data-t="rate-card-row" data-row={d.key} className={d.fallback ? 'bg-warn/[0.06]' : ''}>
-                  <td className="px-2 py-2 font-bold text-bink">
-                    {d.label}
-                    {d.assumed && <span className="ml-1.5 rounded bg-warn/15 px-1.5 py-0.5 text-[10.5px] font-bold text-warn">확인 필요</span>}
-                  </td>
-                  {REBATE_CARD.plans.flatMap((pl) => (d.rows[pl.key] ?? []).map((v, i) => (
-                    <td key={`${pl.key}${i}`} className={`tnum px-2 py-2 text-right ${v === 0 ? 'text-bfaint' : 'text-bbody'} ${i === 0 ? 'border-l border-brow' : ''}`}>{v}</td>
-                  )))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-
-        <div className="mt-4 rounded-card bg-bbg px-4 py-3">
-          <div className="text-[12.5px] font-extrabold text-bink">판매 단말 → 리베이트 행 매핑</div>
-          <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1.5" data-t="rate-card-map">
-            {PHONE_DEVICES.map((dev) => {
-              const listed = isListed(dev.id)
-              return (
-                <span key={dev.id} data-t="rate-map-item" data-listed={listed ? '1' : '0'} className="text-[12px]">
-                  <b className="font-bold text-bbody">{dev.short}</b>
-                  <span className="mx-1 text-bfaint">→</span>
-                  <span className={listed ? 'font-semibold text-ok' : 'font-semibold text-warn'}>
-                    {REBATE_CARD.devices.find((x) => x.key === (REBATE_ROW[dev.id] ?? ETC_ROW))?.label}
-                  </span>
-                </span>
-              )
-            })}
-          </div>
-          <p className="mt-2 text-[11px] leading-4 text-bfaint">
-            리베이트 표에 이름이 없는 단말은 <b className="text-warn">그 외</b> 줄을 씁니다. 시트에 그 외 행이 없어
-            각 칸의 최솟값으로 임시 설정했습니다 — 높게 잡으면 고객 지원금을 과다 약속하게 되므로 낮은 쪽으로 두었습니다.
-          </p>
-        </div>
-
-        <ul className="mt-3 space-y-1 text-[11px] leading-[1.6] text-bfaint">
-          {REBATE_CARD.notes.map((n) => <li key={n}>· {n}</li>)}
-        </ul>
-      </Card>
+      {/* 리베이트 표 — 사업자 R/B · 셀프개통 지원금의 원천. 지금 쓰는 표 + 단가표 업로드(양식 무관 자동 인식) */}
+      <RebateSection />
 
       <Card track="b" className="mt-4 p-5">
         <div className="flex flex-wrap items-center justify-between gap-2">

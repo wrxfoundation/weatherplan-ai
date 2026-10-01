@@ -5,7 +5,7 @@
 // ④ 'X' 조합은 아예 고를 수 없는가 (버튼 비활성)
 // ⑤ 가격표 미수록 단말은 기존 계산 경로로 떨어지는가 (임의 가격을 만들지 않는가)
 // ⑥ 셀프개통 마진은 미수록 단말에만 걸리는가
-// ⑦ 사업자 R/B(리베이트 표)가 그대로 살아 있고 개인에겐 안 보이는가
+// ⑦ 사업자 R/B(리베이트 표 — 기본값 K1 원본 시트)가 살아 있고 개인에겐 안 보이는가
 let pw
 try { pw = require('/opt/node22/lib/node_modules/playwright') } catch { pw = require('playwright') }
 const BASE = process.env.QA_BASE ?? 'http://localhost:4173'
@@ -137,7 +137,7 @@ const num = (s) => Number(String(s).replace(/[^0-9]/g, '')) || 0
   // ───────────── ⑦ 사업자 R/B — 리베이트 표는 그대로 ─────────────
   console.log('\n── ⑦ 사업자 R/B(리베이트 표) 유지 ──')
   check(body.includes('사업자 R/B 전용'), '리베이트 표가 R/B 전용임을 고지')
-  check(body.includes('직전 수령분'), '리베이트 표가 직전 수령분임을 고지')
+  check(body.includes('KT 정책 단가표 K1') && body.includes('단가표 업로드'), '리베이트 표 출처(K1) · 단가표 업로드 자리')
   await session({ role: 'member', memberId: 'MB3', type: '사업자', tier: 'seller', code: 'A1N7742' })
   await go('/calculator/phone')
   check((await page.locator('[data-t="rb-panel"]').count()) === 1, '사업자 — R/B 블록 노출')

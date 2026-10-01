@@ -10,6 +10,8 @@
 //     용량별 RAM 은 그 단말의 용량 키만 쓴다. 가격표가 있는 단말(KT)은 KT 모델명(…NK)이 있어야 한다.
 //  ⑤ 출고가 기준점 — 제조사 국내 출고가(docs/PHONE_SPECS.md). 2026-09-28 에 폴드8 256GB 가 폴드8 '울트라' 값(257만)
 //     으로 들어가 있던 사고를 다시 막는다. 바꿀 땐 문서의 근거와 이 표를 같이 고친다.
+//  ⑥ 리베이트 시드 = 원본 시트를 업로드 인식기로 읽은 결과 (scripts/fixtures/kt-k1-rebate-20260918.xlsx)
+//     인식기가 망가지거나 시드를 손으로 고치면 여기서 갈라진다. 우리 단말은 전부 어느 행엔가(대체 행 포함) 붙어야 한다.
 const esbuild = require('esbuild')
 const { join } = require('node:path')
 
@@ -51,7 +53,7 @@ check(bad2.length === 0, `견적 용량 라벨 ↔ 출고가 한 항목에서 ($
 const ids = new Set(PHONE_DEVICES.map((d) => d.id))
 const planIds = new Set(PHONE_PLANS.map((p) => p.id))
 const ghostPrice = Object.keys(card.PRICE_ROW).filter((k) => !ids.has(k))
-const ghostRebate = Object.keys(card.REBATE_ROW).filter((k) => !ids.has(k))
+const ghostRebate = card.REBATE_SEED.groups.flatMap((g) => g.devices).filter((k) => !ids.has(k))
 check(ghostPrice.length === 0 && ghostRebate.length === 0, `가격표·리베이트 매핑이 실제 단말만 가리킴${ghostPrice.length + ghostRebate.length ? ` ← ${[...ghostPrice, ...ghostRebate].join(',')}` : ''}`)
 check(card.PRICE_CARD.plans.every((p) => planIds.has(p.key)), `가격표 요금제 ${card.PRICE_CARD.plans.length}종이 화면 요금제 목록에 존재`)
 
@@ -85,6 +87,7 @@ const MSRP = {
   flip8: { '256GB': 1683000, '512GB': 1936000 },
   s26u: { '256GB': 1797400, '512GB': 2050400, '1TB': 2545400 },
   s26: { '256GB': 1254000, '512GB': 1507000 },
+  ip17: { '256GB': 1452000, '512GB': 1760000 }, // 2026-09 인상분(KT 공시변동 09-22 · 머니투데이·ZDNet 09-10)
 }
 const msrpBad = []
 for (const [id, want] of Object.entries(MSRP)) {
@@ -95,6 +98,27 @@ for (const [id, want] of Object.entries(MSRP)) {
   }
 }
 check(msrpBad.length === 0, `출고가 = 제조사 국내 출고가 (${Object.keys(MSRP).length}종)${msrpBad.length ? ` ← ${msrpBad.join(', ')}` : ''}`)
+// 공시변동으로 받은 KT 공통지원금이 견적에 그대로 쓰인다(추정 보정값으로 덮이지 않는다)
+const ipq = calcPhoneQuote({ deviceId: 'ip17', planId: 'choice110', join: 'mnp', method: 'support', carrier: 'KT', extra15: false })
+const ipc = calcPhoneQuote({ deviceId: 'ip17', planId: 'choice110', join: 'chg', method: 'support', carrier: 'KT', extra15: false })
+check(ipq.publicSupport === 500000 && ipc.publicSupport === 450000 && ipq.price === 1452000, `아이폰 17 KT 공통지원금 MNP 500,000 · 기변 450,000 · 출고가 1,452,000 (${ipq.publicSupport.toLocaleString()} · ${ipc.publicSupport.toLocaleString()} · ${ipq.price.toLocaleString()})`)
 
-console.log(fail === 0 ? '\nSMOKE: ALL PASS' : `\nSMOKE: ${fail} FAIL`)
-process.exit(fail === 0 ? 0 : 1)
+// ⑥ (인식기는 비동기 — 압축 해제)
+;(async () => {
+  const imp = load('src/lib/rebateImport.js')
+  const { readFileSync } = require('node:fs')
+  const r = await imp.importRebateWorkbook(readFileSync(join(root, 'scripts/fixtures/kt-k1-rebate-20260918.xlsx')), { fileName: 'KT 단가표.xlsx' })
+  const t = r.tables[0]
+  const seed = card.REBATE_SEED
+  check(!!t && t.carrier === 'KT' && t.code === 'K1' && t.effectiveFrom === '2026-09-18' && t.unit === 10000, `원본 시트 인식 — KT · K1 · 2026-09-18 · 만원 (${t?.carrier} · ${t?.code} · ${t?.effectiveFrom} · ${t?.unit})`)
+  const pick = (c) => JSON.stringify({ tiers: c.tiers.map(({ key, min }) => ({ key, min })), groups: c.groups.map(({ label, devices, fallback, values }) => ({ label, devices: [...devices].sort(), fallback, values })), notes: c.notes })
+  check(!!t && pick(t) === pick(seed), `리베이트 시드 = 원본 시트 인식 결과 (구간 ${t?.tiers.length} · 행 ${t?.groups.length} · 고지 ${t?.notes.length})`)
+  const orphan = PHONE_DEVICES.filter((d) => !card.rebateDetail({ deviceId: d.id, planId: 'choice110', join: 'mnp' }).covered).map((d) => d.id)
+  check(orphan.length === 0, `우리 단말 전부 리베이트 행 있음(대체 행 포함)${orphan.length ? ` ← ${orphan.join(',')}` : ''}`)
+  const ip = card.rebateDetail({ deviceId: 'ip17p', planId: 'choice110', join: 'mnp' })
+  check(ip.rebate === 250000 && ip.device?.label === '아이폰17류(전체)', `아이폰17 프로 → '아이폰17류(전체)' 행 · 110K MNP 250,000 (${ip.device?.label} · ${ip.rebate.toLocaleString()})`)
+  const a56 = card.rebateDetail({ deviceId: 'a56', planId: 'basic4g', join: 'chg' })
+  check(a56.rebate === 120000 && !a56.listed, `A56 → 그외 5G(대체 행) · 37K 기변 120,000 (${a56.device?.label} · ${a56.rebate.toLocaleString()})`)
+  console.log(fail === 0 ? '\nSMOKE: ALL PASS' : `\nSMOKE: ${fail} FAIL`)
+  process.exit(fail === 0 ? 0 : 1)
+})().catch((e) => { console.log(`FAIL  인식기 실행 오류 — ${e.message}`); process.exit(1) })

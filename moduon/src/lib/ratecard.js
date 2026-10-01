@@ -15,8 +15,8 @@
 //
 // [통신사] 가격표는 KT 전용이다. 다른 통신사로 견적을 내면 가격표를 쓰지 않는다(unlisted 취급).
 //
-// [R/B] 2차 시트에는 리베이트 열이 없다. 사업자 R/B 가 근거를 잃지 않도록 직전 수령분(1차 시트)을
-//   REBATE_CARD 로 남겨 둔다. 새 리베이트 표를 받으면 REBATE_CARD 만 교체한다.
+// [R/B] 리베이트는 '리베이트 카드'(아래 2)가 따로 쥔다. 기본값은 KT K1 원본 시트(2026-09-18),
+//   새 표는 어드민 › 정책 › 단가표 업로드로 반영한다 — 양식이 달라도 같은 주소로 들어온다(rebateImport.js).
 //
 // ※ 가격표가 바뀌면 PRICE_CARD.plans / devices 만 교체한다. 요금제 목록·가격·스모크가 함께 갱신된다.
 
@@ -122,74 +122,115 @@ export function availableFor({ deviceId, planId, carrier = null } = {}) {
 }
 
 // ─────────────────────────────────────────────────────────────────────────
-// 2) 리베이트 표 — 사업자 R/B 전용. 2차 시트에 리베이트 열이 없어 직전 수령분을 유지한다.
-//    리베이트 = 단말 × 요금제 × 가입유형. 새 표를 받으면 이 블록만 교체한다.
+// 2) 리베이트 카드 — 사업자 R/B · 셀프개통 마진의 원천
+//    집주소 = 통신사 → 정책(차수·적용일) → 단말 행 → 요금구간(하한 월정액) → 가입유형  ⇒  금액(원)
+//    · 단말 행은 시트 표기 그대로('갤럭시 S26류') 두고, 그 행에 속하는 우리 단말 id 를 devices 에 단다
+//    · 요금구간은 이름이 아니라 '하한 월정액'으로 찾는다 — 요금제 월정액 ≥ min 인 가장 높은 구간.
+//      그래서 시트마다 구간 이름이 달라도, 우리 요금제가 늘어도 매핑을 다시 하지 않는다
+//    · '그외 5G' 같은 대체 행(fallback)은 어느 행에도 안 붙은 단말이 쓴다
+//    어드민 › 정책 › 단가표 업로드(rebateImport.js)로 반영한 카드가 있으면 그것, 없으면 아래 시드.
+//    적용일이 미래인 카드는 그날부터 자동으로 쓰인다(예약).
 // ─────────────────────────────────────────────────────────────────────────
-export const REBATE_CARD = {
-  id: 'kt-k1-rebate-20260918',
+export const REBATE_JOINS = [
+  { key: 'new', label: '010 신규' },
+  { key: 'mnp', label: '번호이동' },
+  { key: 'chg', label: '기기변경' },
+]
+
+// 시드 — KT 「K1」 동판 단가표(2026-09-18~) 원본 시트. 업로드 인식기로 뽑은 값을 그대로 옮겼고,
+// scripts/qa-data-check.cjs 가 원본 파일(scripts/fixtures)을 인식기로 다시 읽어 이 시드와 같은지 매번 대조한다.
+const SEED_TIERS = [
+  { key: 't110000', label: '110K (초이스110)', min: 110000 },
+  { key: 't90000', label: '90K이상 (초이스 90~100)', min: 90000 },
+  { key: 't61000', label: '61K이상 베이직 (30GB~80)', min: 61000 },
+  { key: 't49000', label: '49K 이상 베이직(10GB~21GB)', min: 49000 },
+  { key: 't37000', label: '37K이상 베이직 (4GB~7GB)', min: 37000 },
+]
+// [시트 표기, 우리 단말, 대체 행(망), 망, …구간별 [010, MNP, 기변] 만원] — 구간 순서는 SEED_TIERS
+const SEED_ROWS = [
+  ['갤럭시 Z플립 8', ['flip8'], null, '5G', [36, 47, 43], [33, 45, 40], [23, 35, 30], [18, 30, 25], [0, 12, 12]],
+  ['갤럭시 Z폴드 8류', ['fold8'], null, '5G', [36, 47, 43], [33, 45, 40], [23, 35, 30], [18, 30, 25], [0, 12, 12]],
+  ['갤럭시 S26류', ['s26u', 's26'], null, '5G', [36, 47, 43], [33, 45, 40], [23, 35, 30], [18, 30, 25], [0, 12, 12]],
+  ['갤럭시 25류', [], null, '5G', [36, 47, 43], [33, 45, 40], [23, 35, 30], [18, 30, 25], [0, 12, 12]],
+  ['아이폰18P/PM', [], null, '5G', [20, 30, 27], [18, 25, 25], [5, 12, 12], [0, 5, 5], [0, 5, 5]],
+  ['아이폰17류(전체)', ['ip17p', 'ip17pm', 'ip17'], null, '5G', [18, 25, 25], [16, 23, 23], [5, 12, 12], [0, 5, 5], [0, 5, 5]],
+  ['아이폰17E', [], null, '5G', [36, 47, 43], [33, 45, 40], [23, 35, 30], [18, 30, 25], [0, 12, 12]],
+  ['갤럭시 Z플립 7', [], null, '5G', [33, 45, 40], [32, 44, 39], [23, 35, 30], [18, 30, 25], [0, 12, 12]],
+  ['갤럭시 Z폴드 7', [], null, '5G', [33, 45, 40], [32, 44, 39], [23, 35, 30], [18, 30, 25], [0, 12, 12]],
+  ['A256, A366, M366', [], null, '5G', [38, 50, 45], [36, 48, 43], [28, 40, 35], [23, 35, 30], [0, 12, 12]],
+  ['A376, A276', [], null, '5G', [33, 45, 40], [32, 44, 39], [23, 35, 30], [18, 30, 25], [0, 12, 12]],
+  ['그외 5G', ['a56'], '5G', '5G', [33, 45, 40], [32, 44, 39], [23, 35, 30], [18, 30, 25], [0, 12, 12]],
+  ['LTE 전모델(A17 포함)', [], 'LTE', 'LTE', [18, 30, 25], [15, 27, 22], [10, 22, 17], [5, 17, 12], [0, 12, 12]],
+  ['SM-A165(LTE)', [], null, 'LTE', [18, 30, 25], [15, 27, 22], [10, 22, 17], [8, 20, 15], [0, 12, 12]],
+]
+const SEED_NOTES = [
+  'M+5월 이내 해지시(타사 MNP 이동 포함) 리베이트 전액 환수/ 010신규의 경우, M+6월 이내 해지시 전액 환수',
+  'D+123일 이내 요금제 변경시(고ARPU→저ARPU) 요금제 구간별 차액 금액 환수',
+  '서식지 부적격(7일 이내) 건당 2만원 차감',
+  '가입자 신분증 미첨부시(필요시 / 7일 이내) 건당 10만원 차감(서식지 부적격 중복 차감)',
+  'D+3일 이내 증빙서류(카드영수증,현금영수증,입금통장사본) 미첨부시 건당 10만원 환수',
+  'M+3월 이내 할부금 중도 완납시 건당 10만원 환수',
+  '선개통 발생시, KT기준 차감',
+  'VOC 차감 : VOC 접수 시점 9시간(KT업무 시간 기준) 이내 미처리시 건당 10만원 환수',
+]
+export const REBATE_SEED = {
+  id: 'KT-K1-2026-09-18-seed',
   carrier: 'KT',
+  code: 'K1',
   name: 'KT 정책 단가표 K1 (리베이트)',
   effectiveFrom: '2026-09-18',
-  stale: true, // 2차 시트가 가격표로 바뀌며 리베이트 열이 빠졌다 — 새 표 수령 시 교체
-  plans: [
-    { key: 'choice110', name: '초이스 110' },
-    { key: 'choice90', name: '초이스 90' },
-    { key: 'basic4g', name: '베이직 4GB' },
-  ],
-  joins: [
-    { key: 'new', label: '010 신규', col: 0 },
-    { key: 'mnp', label: '번호이동', col: 1 },
-    { key: 'chg', label: '기기변경', col: 2 },
-  ],
-  devices: [
-    { key: 'flip8', label: '갤럭시 Z플립8', rows: { choice110: [36, 47, 43], choice90: [33, 45, 40], basic4g: [0, 12, 12] } },
-    { key: 'fold8', label: '갤럭시 Z폴드8', rows: { choice110: [36, 47, 43], choice90: [33, 45, 40], basic4g: [0, 12, 12] } },
-    { key: 'fold8u', label: '갤럭시 Z폴드8 Ultra', rows: { choice110: [36, 47, 43], choice90: [33, 45, 40], basic4g: [0, 12, 12] } },
-    { key: 's26', label: '갤럭시 S26', rows: { choice110: [36, 47, 43], choice90: [33, 45, 40], basic4g: [0, 12, 12] } },
-    { key: 's26p', label: '갤럭시 S26+', rows: { choice110: [36, 47, 43], choice90: [33, 45, 40], basic4g: [0, 12, 12] } },
-    { key: 's26u', label: '갤럭시 S26 Ultra', rows: { choice110: [36, 47, 43], choice90: [33, 45, 40], basic4g: [0, 12, 12] } },
-    { key: 'ip18p', label: '아이폰18 P/PM', rows: { choice110: [20, 30, 27], choice90: [18, 25, 25], basic4g: [0, 5, 5] } },
-    { key: 'a376', label: 'A376', rows: { choice110: [33, 45, 40], choice90: [32, 44, 39], basic4g: [0, 12, 12] } },
-    { key: 'a276', label: 'A276', rows: { choice110: [33, 45, 40], choice90: [32, 44, 39], basic4g: [0, 12, 12] } },
-    // 그 외 — 표에 이름이 없는 모델. 시트에 그 외 행이 없어 각 칸 최솟값으로 임시 설정(확인 대기).
-    { key: 'etc', label: '그 외', fallback: true, assumed: true, rows: { choice110: [20, 30, 27], choice90: [18, 25, 25], basic4g: [0, 5, 5] } },
-  ],
-  notes: [
-    'M+5월 이내 해지(타사 번호이동 포함) 시 리베이트 전액 환수 · 010 신규는 M+6월 이내',
-    'D+123일 이내 요금제 하향 시 차액 환수',
-    '서식지 부적격(7일 이내) 건당 2만원 차감 · 신분증 미첨부 건당 10만원 차감',
-    'D+3일 이내 증빙서류 미첨부 시 건당 10만원 환수 · M+3월 이내 할부 중도완납 건당 10만원 환수',
-  ],
+  tiers: SEED_TIERS,
+  joins: REBATE_JOINS.map((j) => j.key),
+  groups: SEED_ROWS.map(([label, devices, fallback, net, ...t], i) => ({
+    key: `g${i + 1}`, label, net, fallback, devices,
+    values: Object.fromEntries(SEED_TIERS.map((tier, ti) => [tier.key, t[ti].map((v) => (v == null ? null : v * M))])),
+  })),
+  notes: SEED_NOTES,
+  source: { file: 'KT K1 동판 단가표(2026-09-18) — 기본값', sheet: 'K1', unit: M, importedAt: null, seed: true },
 }
 
-export const ETC_ROW = 'etc'
-export const REBATE_ROW = { flip8: 'flip8', fold8: 'fold8', s26: 's26', s26u: 's26u' }
-
-export const rebatePlan = (planId) => REBATE_CARD.plans.find((p) => p.key === planId) ?? null
-export const rebateDevice = (deviceId) => REBATE_CARD.devices.find((d) => d.key === (REBATE_ROW[deviceId] ?? ETC_ROW)) ?? REBATE_CARD.devices.find((d) => d.key === ETC_ROW)
-export const joinCol = (join) => REBATE_CARD.joins.find((j) => j.key === join)?.col ?? 1
-export const isListed = (deviceId) => Boolean(REBATE_ROW[deviceId])
-
-/** 한 건의 정책 리베이트(원). 표에 없는 요금제면 0. */
-export function rebateOf({ deviceId, planId, join = 'mnp' } = {}) {
-  if (!rebatePlan(planId)) return 0
-  const row = rebateDevice(deviceId).rows[planId]
-  return (row?.[joinCol(join)] ?? 0) * M
+// 업로드 반영분(최신 먼저) — StoreProvider 가 db.policies.rebateCards 를 렌더마다 넣어 준다.
+// 계산 함수(가격·R/B)는 순수 함수라 스토어를 모르므로, 여기 한 곳에서 '지금 쓰는 카드'를 정한다.
+let UPLOADED = []
+export function setRebateCards(cards) { UPLOADED = Array.isArray(cards) ? cards : [] }
+export const ymd = (d = new Date()) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+const poolOf = (carrier) => [...UPLOADED.filter((c) => c.carrier === carrier), ...(REBATE_SEED.carrier === carrier ? [REBATE_SEED] : [])]
+/** 그 통신사에 지금 유효한 카드 — 적용일이 지난 것 중 가장 최근(같은 날이면 나중에 올린 것) */
+export function activeRebateCard(carrier = 'KT', on = ymd()) {
+  return poolOf(carrier).filter((c) => !c.effectiveFrom || c.effectiveFrom <= on)
+    .sort((a, b) => (b.effectiveFrom ?? '').localeCompare(a.effectiveFrom ?? ''))[0] ?? null
 }
+/** 적용일이 아직 오지 않은(예약) 카드 */
+export const pendingRebateCards = (carrier = 'KT', on = ymd()) => poolOf(carrier).filter((c) => c.effectiveFrom && c.effectiveFrom > on)
 
-/** R/B 화면이 근거를 밝힐 수 있게 조합 정보까지 같이 돌려준다. */
-export function rebateDetail({ deviceId, planId, join = 'mnp' } = {}) {
-  const device = rebateDevice(deviceId)
-  const plan = rebatePlan(planId)
+export const cardGroup = (card, deviceId) =>
+  card?.groups.find((g) => g.devices?.includes(deviceId)) ?? card?.groups.find((g) => g.fallback === '5G') ?? null
+export const cardTier = (card, monthly) =>
+  [...(card?.tiers ?? [])].filter((t) => t.min != null).sort((a, b) => b.min - a.min).find((t) => monthly >= t.min) ?? null
+
+/**
+ * 한 건의 정책 리베이트와 근거(카드·행·구간). 그 통신사 카드가 없으면 KT 카드로 받친다(기존 동작 유지).
+ * covered — 행과 구간을 찾았다(0원도 표의 답이다). 칸이 'X'(취급 안 함)면 rebate 0 · blocked true.
+ */
+export function rebateDetail({ deviceId, planId, join = 'mnp', carrier = 'KT', card: given = null } = {}) {
+  const card = given ?? activeRebateCard(carrier) ?? activeRebateCard('KT')
+  const plan = pricePlan(planId)
+  const group = cardGroup(card, deviceId)
+  const tier = plan ? cardTier(card, plan.monthly) : null
+  const v = group && tier ? group.values?.[tier.key]?.[card.joins.indexOf(join)] : undefined
   return {
-    rebate: rebateOf({ deviceId, planId, join }),
-    device, plan,
-    listed: isListed(deviceId), // false = '그 외' 줄로 떨어진 건
-    covered: Boolean(plan), // false = 표가 모르는 요금제(값 0 과 구분해야 한다)
-    joinLabel: REBATE_CARD.joins.find((j) => j.key === join)?.label ?? join,
-    carrier: REBATE_CARD.carrier, cardName: REBATE_CARD.name, effectiveFrom: REBATE_CARD.effectiveFrom,
+    rebate: v ?? 0,
+    device: group ? { key: group.key, label: group.label } : null,
+    plan: tier ? { key: tier.key, name: tier.label } : null,
+    listed: Boolean(group && !group.fallback), // false = 대체 행('그외 5G')으로 떨어진 건
+    covered: Boolean(group && tier),
+    blocked: v === null,
+    joinLabel: REBATE_JOINS.find((j) => j.key === join)?.label ?? join,
+    carrier: card?.carrier, cardName: card?.name, effectiveFrom: card?.effectiveFrom, cardId: card?.id,
   }
 }
+/** 한 건의 정책 리베이트(원). 표가 모르는 조합이면 0. */
+export const rebateOf = (args) => rebateDetail(args).rebate
 
 // ─────────────────────────────────────────────────────────────────────────
 // 3) 셀프개통 고정 마진 — 가격표가 값을 주지 못하는 조합에서만 쓰인다.
@@ -202,8 +243,8 @@ export const selfMarginOf = (db) => db?.policies?.selfMargin ?? SELF_MARGIN_DEFA
  * 리베이트에서 회사 고정 마진만 떼고 나머지를 고객 지원금으로.
  * 리베이트가 마진보다 작으면 지원금 0 · 마진도 리베이트까지만 — 마이너스 마진을 만들지 않는다.
  */
-export function selfSupport({ deviceId, planId, join, margin = SELF_MARGIN_DEFAULT } = {}) {
-  const rebate = rebateOf({ deviceId, planId, join })
+export function selfSupport({ deviceId, planId, join, margin = SELF_MARGIN_DEFAULT, carrier = 'KT' } = {}) {
+  const rebate = rebateOf({ deviceId, planId, join, carrier: carrier ?? 'KT' })
   const customer = Math.max(0, rebate - margin)
   return { rebate, margin: Math.min(margin, rebate), customer, short: rebate < margin }
 }

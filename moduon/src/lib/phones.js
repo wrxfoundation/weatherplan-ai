@@ -46,8 +46,10 @@ export const PHONE_DEVICES = [
   { id: 'ip17pm', brand: 'apple', name: '아이폰 17 프로 맥스 256GB', short: '아이폰 17 프로 맥스', price: 1990000, support: { mnp: 280000, chg: 220000, new: 250000 }, tag: '최대 화면', spec: specLine('ip17pm'),
     storages: [{ key: '256GB', price: 1990000 }, { key: '512GB', price: 2290000 }, { key: '1TB', price: 2590000 }],
     colors: [{ name: '코스믹 오렌지', hex: '#E2733A' }, { name: '딥 블루', hex: '#2E4A7A' }, { name: '실버', hex: '#D9D9DE' }] },
-  { id: 'ip17', brand: 'apple', name: '아이폰 17 256GB', short: '아이폰 17', price: 1290000, support: { mnp: 300000, chg: 240000, new: 270000 }, tag: '표준', spec: specLine('ip17'),
-    storages: [{ key: '256GB', price: 1290000 }, { key: '512GB', price: 1590000 }],
+  // 2026-09 애플 국내 가격 인상(256GB 1,287,000 → 1,452,000 · 512GB 1,584,000 → 1,760,000) — KT 공시변동(09-22) '아이폰 17 (NEW)' 와 같은 값
+  { id: 'ip17', brand: 'apple', name: '아이폰 17 256GB', short: '아이폰 17', price: 1452000, support: { mnp: 300000, chg: 240000, new: 270000 }, tag: '표준', spec: specLine('ip17'),
+    supportBy: { KT: { mnp: 500000, chg: 450000, new: 450000, from: '2026-09-22', src: 'KT 공시변동(제로노트 주요 변동사항 2026-09-22)' } },
+    storages: [{ key: '256GB', price: 1452000 }, { key: '512GB', price: 1760000 }],
     colors: [{ name: '라벤더', hex: '#B9A7D6' }, { name: '미스트 블루', hex: '#A7BCD3' }, { name: '세이지', hex: '#9BB59C' }, { name: '블랙', hex: '#2B2B2E' }, { name: '화이트', hex: '#EDEDEF' }] },
 ]
 export const phoneDevice = (id) => PHONE_DEVICES.find((d) => d.id === id) ?? PHONE_DEVICES[0]
@@ -111,7 +113,9 @@ export function calcPhoneQuote({ deviceId = 'fold8', planId = 'choice110', join 
   const st = device.storages?.find((s) => s.key === storage) ?? device.storages?.[0] ?? null
   const price = st?.price ?? device.price
   const adj = carrier ? (CARRIER_SUPPORT_ADJ[carrier] ?? 1) : 1
-  const baseSupport = Math.floor(((device.support[join] ?? 0) * adj) / 1000) * 1000
+  // 통신사가 공시한 공통지원금(공시변동으로 받은 확정값)이 있으면 그 값 — 없으면 대표값 × 통신사 보정(추정)
+  const fixed = carrier ? device.supportBy?.[carrier]?.[join] : undefined
+  const baseSupport = fixed ?? Math.floor(((device.support[join] ?? 0) * adj) / 1000) * 1000
 
   // 가격표에 값이 있으면 그 값이 곧 할부원금이다 — 지원금을 따로 빼지 않는다(마진은 가격에 이미 반영).
   // 화면의 지원금 줄은 표시용으로 출고가 − 판매가 를 역산해 채운다(출고가 − 지원금 = 할부원금이 유지되게).
@@ -119,7 +123,7 @@ export function calcPhoneQuote({ deviceId = 'fold8', planId = 'choice110', join 
   const priced = card.state === 'covered'
 
   // 셀프개통 모드: 리베이트 − 고정 마진 = 고객 지원금. 가격표가 값을 주면 이 경로를 타지 않는다.
-  const policy = priced || policyMargin == null ? null : selfSupport({ deviceId, planId: plan.id, join, margin: policyMargin })
+  const policy = priced || policyMargin == null ? null : selfSupport({ deviceId, planId: plan.id, join, margin: policyMargin, carrier: carrier ?? 'KT' })
   const publicSupport = priced ? Math.max(0, price - card.price) : (method === 'support' ? baseSupport : 0)
   const extraSupport = priced || method !== 'support' ? 0
     : policy ? policy.customer
