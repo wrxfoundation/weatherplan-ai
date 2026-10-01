@@ -21,9 +21,11 @@ const T = {
     resetAcct: "↺ 테스트 가구 기록 비우기",
     resetConfirm: "테스트 가구의 기록(요청·일정·주문·음성 등)을 모두 비웁니다. 같은 가구의 다른 계정 화면에서도 사라집니다. 계속할까요?",
     modeDemo: "데모 (시뮬레이션)",
-    modeDemoSub: "목데이터로 시작하고 이 브라우저에만 저장됩니다.",
-    modeLogin: "테스트 계정으로 로그인 → 실제 저장",
+    modeChips: ["목데이터로 시작", "이 브라우저에만 저장"],
+    modeLogin: "테스트 계정으로 로그인",
+    modeLoginSub: "실제 저장",
     modeTest: "테스트 계정",
+    modeAccount: "계정 · 로그아웃",
     flowTitle: "시연 동선 — 15분 데모 가이드",
     flowHint: "순서대로 클릭 · 하나의 케어 루프",
     closing: "클로징 3원칙 — 구조가 해자 (동의 · 접근 기록 전면 공개) · 사람이 최종 판단 (L4) · 케어가 지표 (판매액 없는 평가)",
@@ -53,9 +55,11 @@ const T = {
     resetAcct: "↺ Clear test household",
     resetConfirm: "This clears every record (requests, schedule, orders, voice) of the test household for all of its accounts. Continue?",
     modeDemo: "Demo (simulation)",
-    modeDemoSub: "Starts from sample data and is saved in this browser only.",
-    modeLogin: "Sign in with a test account → real storage",
+    modeChips: ["Sample data", "Saved in this browser only"],
+    modeLogin: "Sign in with a test account",
+    modeLoginSub: "real storage",
     modeTest: "Test account",
+    modeAccount: "Account · sign out",
     flowTitle: "Demo flow — 15-minute guide",
     flowHint: "Click in order · one care loop",
     closing: "Closing principles — Trust is the moat (consent & access log fully disclosed) · Humans make the final call (L4) · Care is the metric (no sales-based evaluation)",
@@ -107,11 +111,21 @@ export default function Home() {
             <Logo height={42} tone="onDark" beta />
             <div className="flex items-center gap-2">
               {/* 구글 로그인 — 로그인돼 있으면 이름, 아니면 로그인 화면으로 */}
+              {/* 로그인돼 있으면 폰에서는 '● 계정'만 — 이름까지 넣으면 로고와 겹친다. 누가 로그인했는지는 아래 모드 칸에 */}
               <Link
                 href="/login"
-                className="tap rounded-full border border-white/15 px-3 text-[11px] font-bold text-white/70"
+                className="tap whitespace-nowrap rounded-full border border-white/15 px-3 text-[11px] font-bold text-white/70"
               >
-                {auth.user ? `● ${auth.user.name || auth.user.email}` : lang === "ko" ? "로그인" : "Sign in"}
+                {auth.user ? (
+                  <>
+                    <span className="sm:hidden">● {lang === "ko" ? "계정" : "Account"}</span>
+                    <span className="hidden sm:inline">● {auth.user.name || auth.user.email}</span>
+                  </>
+                ) : lang === "ko" ? (
+                  "로그인"
+                ) : (
+                  "Sign in"
+                )}
               </Link>
             <div className="flex gap-1 rounded-full border border-white/15 p-1">
               {["ko", "en"].map((l) => (
@@ -128,6 +142,66 @@ export default function Home() {
             </div>
             </div>
           </div>
+          {/* 지금 모드 — 맨 앞에 크게 (2026-10-01 요청). 데모인지 실제 저장인지를 칩으로 나눠 보여 주고,
+              데모일 때는 초록 버튼으로 테스트 계정 로그인으로 보낸다. 초록 위 흰 글자 5.4:1 */}
+          <section
+            aria-label={lang === "ko" ? "지금 모드" : "Current mode"}
+            className="mt-6 flex flex-col gap-3 rounded-2xl border border-white/15 bg-white/[.06] p-4 sm:flex-row sm:items-center sm:p-5"
+          >
+            {account ? (
+              <>
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="inline-flex items-center gap-2 rounded-full bg-green px-4 py-2 text-[16px] font-black text-white">
+                    <span aria-hidden className="h-[8px] w-[8px] rounded-full bg-white" />
+                    {t.modeTest}
+                  </span>
+                  <span className="rounded-full border border-white/20 px-3.5 py-2 text-[14px] font-bold text-white/90">
+                    {auth.user.name} · {householdName(auth.user.household)}
+                  </span>
+                  <span
+                    className={`rounded-full border px-3.5 py-2 text-[14px] font-bold ${
+                      sync.mode === "server" && sync.status !== "error" ? "border-[#8FE3C0]/40 text-[#8FE3C0]" : "border-[#F0D9A8]/40 text-[#F0D9A8]"
+                    }`}
+                  >
+                    {storageText(sync)}
+                  </span>
+                </div>
+                <Link
+                  href="/login"
+                  className="btn-press inline-flex items-center justify-center rounded-xl border border-white/30 px-4 py-2.5 text-[14px] font-bold text-white/90 sm:ml-auto sm:shrink-0"
+                >
+                  {t.modeAccount}
+                </Link>
+              </>
+            ) : (
+              <>
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-[16px] font-black text-nav">
+                    <span aria-hidden className="h-[8px] w-[8px] rounded-full bg-gold" />
+                    {t.modeDemo}
+                  </span>
+                  {t.modeChips.map((c) => (
+                    <span key={c} className="rounded-full border border-white/20 px-3.5 py-2 text-[14px] font-bold text-white/80">
+                      {c}
+                    </span>
+                  ))}
+                </div>
+                {AUTH_ENABLED && (
+                  // 폰에서는 두 줄(문구 · '실제 저장' 알약)로 쌓고, 넓은 화면에서는 한 줄로
+                  <Link
+                    href="/login"
+                    className="btn-press flex flex-col items-center justify-center gap-1 rounded-xl bg-green px-5 py-3 font-bold text-white shadow-[0_6px_18px_rgba(30,122,90,.35)] hover:brightness-110 sm:ml-auto sm:shrink-0 sm:flex-row sm:gap-2.5 sm:py-3.5"
+                  >
+                    <span className="whitespace-nowrap text-[16px]">
+                      {t.modeLogin} <span aria-hidden>→</span>
+                    </span>
+                    <span className="whitespace-nowrap rounded-full bg-white/20 px-2.5 py-0.5 text-[13px]">{t.modeLoginSub}</span>
+                  </Link>
+                )}
+              </>
+            )}
+          </section>
+
           {/* whitespace-pre-line: 카피의 개행(\n)을 그대로 살린다 — 슬로건은 줄바꿈 위치가 리듬이다 */}
           <h1 className="mt-4 whitespace-pre-line break-keep text-[30px] font-black leading-[1.35] text-white">
             {t.h1}
@@ -155,29 +229,6 @@ export default function Home() {
             >
               {account ? t.resetAcct : t.reset}
             </button>
-          </div>
-
-          {/* 지금 모드 — 데모(시뮬레이션, 이 브라우저만) / 테스트 계정(가구 단위 서버 저장) */}
-          <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1.5 rounded-xl border border-white/10 bg-white/[.04] px-4 py-3 text-[13px]">
-            {account ? (
-              <>
-                <b className="text-[#8FE3C0]">{t.modeTest}</b>
-                <span className="text-white/80">
-                  {auth.user.name} · {householdName(auth.user.household)}
-                </span>
-                <span className="text-white/55">{storageText(sync)}</span>
-              </>
-            ) : (
-              <>
-                <b className="text-white">{t.modeDemo}</b>
-                <span className="text-white/55">{t.modeDemoSub}</span>
-                {AUTH_ENABLED && (
-                  <Link href="/login" className="tap ml-auto font-bold text-[#E8CFA4] underline underline-offset-2">
-                    {t.modeLogin}
-                  </Link>
-                )}
-              </>
-            )}
           </div>
 
           {/* 시연 동선 6단계 — 슬라이드와 동일한 순서 */}
