@@ -8,20 +8,21 @@
 
 ### 30초 소개
 
-측정기가 아니라 날씨에서 시작한다. 케이웨더와 기술 협력하는 날씨 데이터 네트워크 → 167개 도시 합의값 → 탈중앙 세계 민간 기상청 → 첫 단계 측정기 → 실외 · 레이더 · 위성 → 웨더 데이터 이코노미 순서로, 백월 그림을 손으로 짚으며 말한다(10/1 서우 수정안).
+측정기가 아니라 날씨에서 시작한다. 케이웨더와 기술 협력하는 날씨 데이터 네트워크 → 167개 도시 합의값 → 탈중앙 세계 민간 기상청 → 첫 단계 측정기 → 실외 · 레이더 · 위성 → AI 팩토리 → 웨더 데이터 이코노미 순서로, 백월 그림을 손으로 짚으며 말한다(10/1 서우 수정안).
 
-- **국문(30초)** — 웰비안은 30년 된 민간 기상기업 케이웨더와 기술 협력하는 날씨 데이터 네트워크입니다. 90개국 167개 도시의 날씨를 관측소 한 곳에 기대지 않고, 매시간 11개 날씨 피드를 맞춰 보고 튀는 값은 빼서 합의값으로 냅니다. 그 위에서, 누구나 참여할수록 촘촘해지는 탈중앙 세계 민간 기상청을 만들어 갑니다. 첫 단계는 실내 공기질 측정기이고, 실외 · 레이더 · 위성으로 넓혀 갑니다. 데이터 측정 → 검증 → 보상 → 데이터 유통, 이게 웨더 데이터 이코노미입니다.
-- **영문(30초)** — wellbian is a weather data network built with our technology partner KWeather, which has measured weather in Korea for thirty years. For 167 cities in 90 countries, we don't rely on a single station: every hour, eleven weather feeds are checked against each other, outliers are dropped, and the consensus is published. On top of that, we're building a decentralized weather service for the world, one that gets denser with everyone who joins. It starts with an indoor air-quality sensor and grows outdoors, then to radar and satellites. Measure, verify, reward, distribute: that's the Weather Data Economy.
+- **국문(30초)** — 웰비안은 30년 된 민간 기상기업 케이웨더와 기술 협력하는 날씨 데이터 네트워크입니다. 90개국 167개 도시의 날씨를 관측소 한 곳에 기대지 않고, 매시간 11개 날씨 피드를 맞춰 보고 튀는 값은 빼서 합의값으로 냅니다. 그 위에서, 누구나 참여할수록 촘촘해지는 탈중앙 세계 민간 기상청을 만들어 갑니다. 첫 단계는 실내 공기질 측정기이고, 실외 · 레이더 · 위성으로 넓혀 갑니다. 이렇게 모인 데이터는 AI 팩토리에서 AI 예보 · 데이터셋 같은 날씨 AI 콘텐츠가 되고, AI 이용권으로 쓸 수 있습니다. 데이터 측정 → 검증 → 보상 → 데이터 유통, 이게 웨더 데이터 이코노미입니다.
+- **영문(30초)** — wellbian is a weather data network built with our technology partner KWeather, which has measured weather in Korea for thirty years. For 167 cities in 90 countries, we don't rely on a single station: every hour, eleven weather feeds are checked against each other, outliers are dropped, and the consensus is published. On top of that, we're building a decentralized weather service for the world, one that gets denser with everyone who joins. It starts with an indoor air-quality sensor and grows outdoors, then to radar and satellites. All of this data feeds the AI Factory, where it becomes weather AI content such as AI forecasts and datasets, available with an AI Factory pass. Measure, verify, reward, distribute: that's the Weather Data Economy.
 - **날씨 데이터 마켓 한 줄** — 날씨 데이터 마켓은 이렇게 만든 도시 날씨에 블록체인 지문을 남겨 누구나 검증할 수 있게 하고, 사람이든 AI든 XRP 로 사서 쓰는 케이웨더의 공식 날씨 데이터 시장이에요(운영 웰비안랩스 · 공개 베타). / The Weather Data Market is KWeather's official weather data market, run by Wellbian Labs and in public beta: each city value carries an on-chain fingerprint anyone can verify, and people and AI agents alike buy it with XRP.
 - **바쁠 때 한 줄** — 케이웨더 30년 날씨 위에, 집 안 측정기부터 실외 · 레이더 · 위성까지 누구나 참여할 수 있게 탈중앙으로 만든 날씨 데이터 네트워크예요. / A decentralized weather data network anyone can join, built on KWeather's thirty years of weather: from home sensors to outdoor sensors, radar and satellites.
 - `주의: 11개는 관측소가 아니라 날씨 피드다(공항 관측 · 케이웨더 · MET Norway 직접 + 예보 모델 묶음) — "관측소 11곳" · "매분"이라고 하지 않는다. 합의값은 매시간, 1분 단위는 공항 관측 감시뿐이다.`
 - `주의: 실외 · 레이더 · 위성은 넓혀 갈 방향(백월 그림)이지 일정이 아니다 — "언제요?"에는 "정해지면 공지합니다".`
 - `주의: 날씨 데이터 마켓은 케이웨더 공식 오라클이고 운영이 웰비안랩스다 — "WLBN · 측정기가 Flare 에 올라갔다"고 하지 않는다. 마켓 사이트 문구에 있어도 예측시장 · 정산 · 보험은 말하지 않는다.`
+- `주의: AI 팩토리는 결과물(영상)로 보여 준다 — 소유 · 운영 주체 · 위치 · 구축 일정은 말하지 않는다(내부 미정). 이용권은 콘텐츠 이용권이지 투자가 아니다 — 수익 · 가치 0.`
 - `주의: 「세계 민간 기상청」은 목표다 — 공공 기상청과 견주거나 "이미 그 수준"이라고 하지 않는다. "한국 최대 · 1위"는 쓰지 않는다(금지어 표).`
 
 ### 보여 주는 순서
 
-- 1) 백월 앞에서 30초 소개 — 그림을 짚으며 케이웨더와 기술 협력 → 167개 도시 합의값 → 탈중앙 세계 민간 기상청 → 실내 → 실외 → 레이더 → 위성 → 측정 · 검증 · 보상 · 데이터 유통.
+- 1) 백월 앞에서 30초 소개 — 그림을 짚으며 케이웨더와 기술 협력 → 167개 도시 합의값 → 탈중앙 세계 민간 기상청 → 실내 → 실외 → 레이더 → 위성 → AI 팩토리(결과물은 3) 영상으로) → 측정 · 검증 · 보상 · 데이터 유통.
 - 2) 측정기 실물을 손에 쥐어 준다 → 화면에 뜨는 실내 날씨 7가지(초미세먼지 · 미세먼지 · CO₂ · TVOC · 온도 · 습도 · 체감온도). 옆의 실외 측정기(운영안 물자 목록 2대)는 "실외로 넓혀 갈 다음 단계"로 가리킨다 — 오늘 판매하지 않는다.
 - 3) AI 이용권을 물으면 영상(지구 지도 · 강수 · 바람 · AI 예보)으로 AI 팩토리가 만드는 결과물을 먼저 보여 준다 — 지도를 손으로 조작하지 않고 녹화 영상으로(9/30 회의).
 - 4) 관심을 보이면 손님 휴대폰으로 wellbian.io/launch 를 연다(카드 또는 RLUSD). 현장 구매자에게는 우산(한정).
