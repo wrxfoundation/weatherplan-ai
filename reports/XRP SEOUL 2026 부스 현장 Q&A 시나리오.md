@@ -57,7 +57,8 @@
 - [ ] 09:00 2차 판매(측정기) · AI 이용권 판매가 정상으로 열렸는지 — 카운트다운 종료 · 구매 버튼 · 결제 화면까지
 - [ ] AI 이용권 카드 결제 가능 여부(운영안 「확인 필요」) → 7절 「카드로 돼요?」 답 확정
 - [ ] DeFi(DEX) · 리더보드 · 데이터 바운티 · 데이터 마켓 메뉴가 열렸는지(9/30 회의 — DEX 10/2 오픈 → 10/3 09:00 사이트 연결)와 출금 개시 공지 여부 → 6절 「출금 · 지금 어디서 사요?」 답을 A · B 중 하나로
-- [ ] 웨더 이코노미 설명 단계 — 4단계(측정 · 검증 · 보상 · 유통, 대표님)로 확정인지(9/30 회의 끝에 「측정 · 정제 · 유통 + 보상」 안이 나옴)
+- [ ] 웨더 이코노미 설명 단계 — 키노트 원고는 세 층(수집 · 정제 · 가치, 보상은 수집 층 안), 부스 30초 소개는 네 단계(측정 · 검증 · 보상 · 유통). 하나로 맞출지(9/30 회의 끝 「측정 · 정제 · 유통 + 보상」 안이 키노트와 같은 모양)
+- [ ] 키노트 최종 원고 — 예측시장 예시 도시 · 기밀 연산 · 지급 표현 · 오늘 발표 언급을 고쳤는지(`reports/XRP SEOUL 2026 키노트 국문 번역.md` 1절) → 「키노트 뒤 나올 질문」 답과 맞추기
 - [ ] 09:00 발표 원문(케이웨더 날씨 데이터 마켓 · Flare) → 9절 답과 문장 맞추기
 - [ ] 날씨 데이터 마켓 주소 — 10/1 붙여 넣은 화면은 weathermarket.io 가 마켓 본체(9/24 기록은 .io 시뮬레이터 · .ai 오라클) → 9절 「11개 피드」 답과 안내 주소 하나로
 - [ ] 커뮤니티 안내 통일 — 이벤트 POP 는 디스코드, 사이트 「커뮤니티 입장」 버튼은 텔레그램
@@ -182,6 +183,18 @@
 | 11개 피드가 다 독립적인 거예요? | 11개 날씨 피드의 값을 모아 관측소 하나의 숫자가 아니라 합의값으로 냅니다. 피드 구성은 날씨 데이터 마켓 사이트 문서(Docs)에 공개돼 있습니다.<br>`주의: "독립 출처 11개" · "관측소 11곳" 0 · 주소는 당일 확인` |
 | 날씨 데이터 마켓이랑 웰비안 사이트 「데이터 마켓」은 같은 거예요? | 다릅니다. 날씨 데이터 마켓은 케이웨더의 공식 날씨 데이터 시장으로 167개 도시 날씨를 XRP 로 사는 곳이고, 운영은 웰비안랩스가 합니다. 웰비안 사이트의 「데이터 마켓」(wellbian.io/data)은 측정기 네트워크 데이터를 RLUSD 로 사는 메뉴입니다.<br>`주의: 예측시장 · 정산 · 보험 0 · 가격은 각 사이트 화면으로` |
 
+## 키노트(14:50) 뒤 나올 질문
+
+대표님 키노트는 웨더 데이터 이코노미를 세 층(DePIN 수집 → AI 인프라 정제 → 예측시장 · 파라메트릭 보험 · 의사결정 인텔리전스)으로 설명하고 XRP 레저 · 플레어를 고른 이유를 말한다. 15:05 뒤 부스로 오는 사람은 그 문장을 들고 온다. 번역 전문과 원고 수정 제안은 `reports/XRP SEOUL 2026 키노트 국문 번역.md`.
+
+| 질문 | 이렇게 답한다 |
+|---|---|
+| 발표에서 예측시장 얘기하던데, 어디랑 해요? 한국에서도 돼요? | 대표님 발표는 검증된 날씨 지수가 쓰일 수 있는 곳으로 예측시장 · 파라메트릭 보험 · 기업 의사결정을 소개한 것입니다. 저희가 예측시장을 운영하지는 않고, 특정 플랫폼 · 고객 · 계약 이야기는 드리지 않습니다.<br>`주의: 플랫폼 · 고객 이름 0 · 한국 이용 · 베팅 이야기 0 · 「정산」 단어 쓰지 않기` |
+| 비가 오면 보험금이 자동으로 나온다는 거예요? 지금 돼요? | 파라메트릭 보험이 어떻게 움직이는지 설명드린 것이고, 저희는 그 기준이 되는 검증된 날씨 지수를 만드는 쪽입니다. 보험을 직접 팔거나 지급하지는 않습니다.<br>`주의: 지급 기능은 아직 없다 — 「된다」 0 · 보험사 이름 0` |
+| 플레어 기밀 연산으로 처리한다는 건 지금 돌아가요? | 기밀 연산은 설계하고 시험하는 단계입니다. 지금 가동 중인 것은 케이웨더 날씨 데이터 마켓의 매시간 기록이고, 오늘 아침 발표한 내용입니다.<br>`주의: 「FCC 로 가동 중」 0 · 메인넷 날짜 0 · 측정기 데이터가 플레어에 올라간다고 하지 않기` |
+| AI 데이터센터(AIDC)는 어디에, 몇 개 지어요? | 위치 · 규모 · 일정은 정해지면 공지합니다. 지금은 AI 팩토리가 만든 결과물을 영상으로 보여 드릴게요.<br>`주의: 소유 · 운영 주체 · 위치 · 구축 일정 단정 0(내부 미정)` |
+| 데이터를 내면 수익을 나눠 준다는 거죠? 얼마예요? | 기여한 데이터에 보상한다는 원칙을 말씀드린 겁니다. 보상은 테스트 중이고 지급량과 가치는 보장되지 않으며, 출금 개시 공지 전까지 포인트로 쌓입니다.<br>`주의: 「수익 배분」 · 금액 · 계산 0` |
+
 ## 이벤트 · 경품 · 발표
 
 | 질문 | 이렇게 답한다 |
@@ -248,6 +261,8 @@
 | Who buys the data? | Businesses whose work depends on the weather, such as construction, energy and retail, plus apps, AI services and researchers. KWeather has supplied weather data to enterprise clients for thirty years. |
 | Is my data private? | The sensor only measures air quality and weather. We collect nothing that identifies you, and any data sold is de-identified and aggregated. |
 | What did you announce today? (09:00 뒤) | KWeather's Weather Data Market is live on Flare mainnet: hourly weather for 167 cities, each value a consensus across 11 weather feeds, recorded on-chain before it's used, and paid for in XRP. |
+| Do you run prediction markets? (after the keynote) | No. The keynote described where verified weather indices can be used: prediction markets, parametric insurance and business decisions. We don't name platforms, customers or contracts. |
+| Is the confidential settlement live? (after the keynote) | It's designed and in testing. What's live today is KWeather's Weather Data Market, recording every hourly run on-chain, which we announced this morning. |
 | Can we talk business or investment? | Please leave your card and our team will follow up. |
 
 ## 숫자 카드
