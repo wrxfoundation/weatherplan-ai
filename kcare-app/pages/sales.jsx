@@ -9,6 +9,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { Card, SectionLabel, Badge } from "../components/ui";
 import Icon from "../components/icons";
+import ModeLink from "../components/ModeLink";
 import { useAppState } from "../lib/state";
 import { fmtWon } from "../lib/config";
 import {
@@ -106,9 +107,7 @@ export default function SalesPage() {
                   {SALES_REP.code} · {SALES_REP.branch}
                 </div>
               </div>
-              <Link href="/" className="tap shrink-0 text-[12px] font-bold text-muted/60">
-                데모 홈
-              </Link>
+              <ModeLink className="tap shrink-0 whitespace-nowrap text-[12px] font-bold" />
             </div>
           </header>
 

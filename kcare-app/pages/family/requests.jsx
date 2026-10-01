@@ -340,7 +340,7 @@ function RequestCard({ req, open, onToggle, onboarding, dispatch, isPrimary }) {
             </span>
           )}
           {req.preferredDate && <span>희망일 {fmtD(req.preferredDate)}</span>}
-          <span>담당 {req.assignee}</span>
+          <span>담당 {req.assignee || "미배정"}</span>
           {req.photos.length > 0 && <span>사진 {req.photos.length}장</span>}
         </div>
         {/* 진행 스텝퍼 — 지금 어디까지 왔는지 한눈에 */}

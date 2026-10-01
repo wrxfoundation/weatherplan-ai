@@ -230,6 +230,15 @@ function reducer(state, action) {
           r.id === action.id ? transition(r, action.to, action.note) : r
         ),
       };
+    // 관제가 담당 컨시어지를 바꾼다 — 보호자 해주세요 카드의 '담당'이 같이 바뀐다 (2026-10-01).
+    // 빈 문자열이면 미배정. 상태는 그대로 두고, 바꾼 기록은 관제 화면의 변경 이력에 남는다.
+    case "assignRequest":
+      return {
+        ...state,
+        requests: state.requests.map((r) =>
+          r.id === action.id ? { ...r, assignee: String(action.assignee || "") } : r
+        ),
+      };
     case "demo":
       return { ...state, demo: { ...state.demo, ...action.payload } };
     case "elderPatch":

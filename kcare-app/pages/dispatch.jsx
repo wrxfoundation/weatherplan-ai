@@ -78,6 +78,7 @@ import HospitalsMgmt from "../components/ops/HospitalsMgmt";
 import Accounts from "../components/ops/Accounts";
 import AuditLog from "../components/ops/AuditLog";
 import Integrations from "../components/ops/Integrations";
+import ModeLink from "../components/ModeLink";
 import { SosBanner, useIncidents } from "../lib/ops-sos";
 
 // 배치관리자(관제) — 핸드오프 09 상세 명세 + REQ-04(긴급 대응 범위, 회의 확정 우선).
@@ -636,6 +637,7 @@ export default function DispatchConsole() {
   const [watchCalled, setWatchCalled] = useState(false);
   const [guardianPinged, setGuardianPinged] = useState(false);
   const [nightCalled, setNightCalled] = useState(false); // 야간 출동(외주) 호출 — REQ-04
+  const pendingEvents = (state.events || []).filter((e) => e.approval === "pending").length;
   const actions = [];
   if (sos)
     actions.push({
@@ -904,9 +906,7 @@ export default function DispatchConsole() {
                 <span className="text-[12px] font-bold tracking-[.16em] text-muted">
                   역할 04 / 배치 관제 센터
                 </span>
-                <Link href="/" className="tap text-[12px] font-bold text-muted/60 underline-offset-2 hover:underline">
-                  데모 홈
-                </Link>
+                <ModeLink className="tap text-[12px] font-bold underline-offset-2 hover:underline" />
               </div>
               <div className="mt-0.5 flex flex-wrap items-center gap-2.5">
                 <h1 className="text-[29px] font-bold tracking-[-.01em] text-navy">강남지점 실시간 관제</h1>
@@ -1166,8 +1166,10 @@ export default function DispatchConsole() {
               }}
               mapSlot={mapPanel}
               opsCount={actions.length}
-              // 어르신 앱은 "관제센터에서 확인 전화를 드립니다"라고 약속한다 — 그 부탁이 들어와 있으면 접어 두지 않는다
-              opsOpen={actions.some((a) => a.level === "critical" || a.id.startsWith("elder-"))}
+              // 어르신 앱은 "관제센터에서 확인 전화를 드립니다"라고 약속한다 — 그 부탁이 들어와 있으면 접어 두지 않는다.
+              // 보호자 일정등록 요청도 같다 — 관제가 승인해야 캘린더에 오르는데, 접혀 있으면 아무도 못 본다 (2026-10-01 관제 테스트).
+              opsOpen={actions.some((a) => a.level === "critical" || a.id.startsWith("elder-")) || pendingEvents > 0}
+              opsNote={pendingEvents > 0 ? `일정 승인 대기 ${pendingEvents}건` : null}
               opsSlot={<>
           {/* ── 방문 업무흐름 8단계 — 일정 수립 알람이 여기로 온다 (2026-08-13 미팅) ── */}
           <section className="mt-[18px]">

@@ -38,6 +38,8 @@ export function summarize(a) {
       return `해주세요 요청 · ${clip(p.type, 40)}`;
     case "transitionRequest":
       return `요청 상태 → ${clip(a.to, 20)}`;
+    case "assignRequest":
+      return `요청 담당 → ${clip(a.assignee || "미배정", 20)}`;
     case "demo":
       return p.sos === true ? "SOS 발신" : null;
     case "ackSos":

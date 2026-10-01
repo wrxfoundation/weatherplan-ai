@@ -137,11 +137,15 @@ export default function RequestsMgmt() {
     else setExtras((prev) => prev.map((x) => (x.id === r.id ? transition(x, to, note) : x)));
   };
   // meta 변경 — 덮어쓰지 않고 변경 이력을 쌓는다 (감사로그 원칙). before 는 호출자가 표시용 문자열로 준다.
+  // 앱 상태 요청의 담당자는 공유 상태에 쓴다 (보호자 카드 '담당'이 같이 바뀐다) — 이 기기에는 변경 이력만 남긴다.
+  // 값까지 기기에 두면 다른 관제 기기에서 바꾼 담당을 이 기기의 옛 값이 가린다.
   const patchMeta = (id, field, label, after, before) => {
+    const shared = field === "assignee" && dispatch && stateRequests.some((s) => s.id === id);
+    if (shared) dispatch({ type: "assignRequest", id, assignee: after });
     setMeta((prev) => {
       const cur = prev[id] || {};
       const entry = { at: Date.now(), by: OPERATOR, field: label, before: before ?? "—", after: showVal(field, after) };
-      return { ...prev, [id]: { ...cur, [field]: after, changes: [...(cur.changes || []), entry] } };
+      return { ...prev, [id]: { ...cur, ...(shared ? {} : { [field]: after }), changes: [...(cur.changes || []), entry] } };
     });
   };
 

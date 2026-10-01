@@ -261,8 +261,8 @@ export default function LoginPage() {
                       {busy ? "확인 중…" : "로그인"}
                     </button>
                     <p className="mt-3 text-[12px] leading-[1.7] text-muted">
-                      세 계정은 <b className="text-ink">{householdName(TEST_ACCOUNTS[0].household)}</b>을 함께 씁니다. 보호자가 보낸 요청이
-                      어르신·컨시어지 화면에 뜹니다. 비밀번호는 관리자에게 받으세요.
+                      테스트 계정은 모두 <b className="text-ink">{householdName(TEST_ACCOUNTS[0].household)}</b>을 함께 씁니다. 보호자가 보낸
+                      요청이 어르신·컨시어지·관제 화면에 뜹니다. 비밀번호는 관리자에게 받으세요.
                     </p>
                   </form>
                 ) : (

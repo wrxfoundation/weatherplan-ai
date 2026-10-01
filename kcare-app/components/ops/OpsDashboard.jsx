@@ -28,7 +28,8 @@ function tileSub(k, n, ctx) {
 }
 
 // opsCount: 운영현황 안 '지금 처리할 일' 건수 — 접혀 있어도 숫자는 보인다. opsOpen: 어르신 부탁·긴급 건이 있으면 펼친 채로 시작.
-export default function OpsDashboard({ onStartSos, onOpenSos, mapSlot, opsSlot, opsCount = null, opsOpen = false }) {
+// opsNote: 접혀 있어도 보여야 할 다른 대기 건 (예: 보호자 일정 승인 대기).
+export default function OpsDashboard({ onStartSos, onOpenSos, mapSlot, opsSlot, opsCount = null, opsOpen = false, opsNote = null }) {
   const { open, start } = useIncidents();
   const now = useNow(1000);
   const [tile, setTile] = useState("all");
@@ -255,6 +256,11 @@ export default function OpsDashboard({ onStartSos, onOpenSos, mapSlot, opsSlot, 
           {opsCount != null && (
             <Pill tone={opsCount > 0 ? (opsOpen ? "danger" : "warn") : "muted"} className="mr-1 align-middle">
               지금 처리할 일 {opsCount}건
+            </Pill>
+          )}
+          {opsNote && (
+            <Pill tone="warn" className="mr-1 align-middle">
+              {opsNote}
             </Pill>
           )}{" "}
           <span className="text-[12px] font-semibold text-muted">— 건강관제 이후 처리할 업무 (방문 업무흐름 · 복지 매칭 · AI 배정 · 배차 그리드 · 핸드오프 · 수락 지연 · 아침 브리핑)</span>

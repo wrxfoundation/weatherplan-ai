@@ -8,7 +8,7 @@
 //
 // 필요한 환경변수 (배포 환경에만 넣는다 · 코드·git 에 적지 않는다):
 //   NEXTAUTH_SECRET       세션 서명용 임의 문자열 (openssl rand -base64 32)
-//   BETA_TEST_PASSWORD    테스트 계정 세 개가 같이 쓰는 비밀번호 (12자 이상 권장)
+//   BETA_TEST_PASSWORD    테스트 계정이 모두 같이 쓰는 비밀번호 (12자 이상 권장)
 //   GOOGLE_CLIENT_ID      Google Cloud 콘솔 > Google Auth Platform > Clients 에서 만든 웹 클라이언트 ID
 //   GOOGLE_CLIENT_SECRET  같은 클라이언트의 보안 비밀
 //   NEXTAUTH_URL          운영 주소 (예: https://kcare-beta.vercel.app) — 구글 리디렉션 주소의 기준

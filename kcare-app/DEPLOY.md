@@ -19,7 +19,7 @@ Supabase 를 붙여 실제 저장을 켜는 순서다. 구글 로그인은 준�
 |---|---|---|
 | 시작 데이터 | 시연용 목데이터 | 기록이 빈 상태 |
 | 저장 위치 | 그 브라우저에만 | 서버 (Supabase) — 4단계 전에는 그 기기에만 |
-| 다른 폰과 | 따로 논다 | 같은 가구의 세 계정이 몇 초 안에 같은 것을 본다 |
+| 다른 폰과 | 따로 논다 | 같은 가구의 테스트 계정들이 몇 초 안에 같은 것을 본다 |
 
 ---
 
@@ -74,20 +74,22 @@ Vercel 프로젝트 → **Settings → Environment Variables** → Environment �
 | 이름 | 값 |
 |---|---|
 | `NEXTAUTH_SECRET` | 임의의 긴 난수 — 터미널에서 `openssl rand -base64 32` (윈도우는 Git Bash) |
-| `BETA_TEST_PASSWORD` | 테스트 계정 세 개가 같이 쓰는 비밀번호 — **20자 이상 무작위**로 (비밀번호 생성기) |
+| `BETA_TEST_PASSWORD` | 테스트 계정 다섯 개가 같이 쓰는 비밀번호 — **20자 이상 무작위**로 (비밀번호 생성기) |
 
 넣고 **Redeploy** 하면 `<운영 주소>/login` 에 테스트 아이디 로그인이 뜬다.
 
-**테스트 계정** — 셋이 **테스트 가구 1** 을 함께 쓴다 (목록은 `lib/test-accounts.js`)
+**테스트 계정** — 다섯 계정이 **테스트 가구 1** 을 함께 쓴다 (목록은 `lib/test-accounts.js`)
 
 | 아이디 | 역할 | 로그인하면 가는 곳 |
 |---|---|---|
 | `test-guardian` | 보호자 | `/family` |
 | `test-elder` | 어르신 | `/elder` |
 | `test-concierge` | 컨시어지 | `/concierge` |
+| `test-ops` | 관제 (PC 권장) | `/dispatch` |
+| `test-sales` | 영업자 | `/sales` |
 
 - 비밀번호는 셋 다 `BETA_TEST_PASSWORD` 값이다. 테스트하는 사람에게 따로 전달한다.
-  세 계정이 한 비밀번호를 같이 쓰고 로그인 시도 횟수 제한이 없으니 짧거나 추측 가능한 값은 쓰지 않는다.
+  모든 테스트 계정이 한 비밀번호를 같이 쓰고 로그인 시도 횟수 제한이 없으니 짧거나 추측 가능한 값은 쓰지 않는다.
   밖으로 샌 것 같으면 값을 바꾸고 Redeploy — 그 뒤로는 새 비밀번호로만 들어온다. 이미 로그인한 폰까지
   바로 내보내려면 `NEXTAUTH_SECRET` 도 새 값으로 바꾼다 (그대로 두면 로그인이 최대 7일 유지된다).
 - 로그인 화면의 **Google 계정으로 계속하기**는 5단계 전까지 **시뮬레이션**이다 — 계정 선택 → 비밀번호 →
@@ -115,7 +117,7 @@ Vercel 프로젝트 → **Settings → Environment Variables** → Environment �
 
 | 표 | 쌓이는 것 |
 |---|---|
-| `households` | 가구의 앱 상태 전체 (요청 · 일정 · 주문 · 음성 · SOS …) — 세 계정이 같이 본다 |
+| `households` | 가구의 앱 상태 전체 (요청 · 일정 · 주문 · 음성 · SOS …) — 테스트 계정이 같이 본다 |
 | `activity` | 누가 · 언제 · 무엇을 — 한 줄씩 (예: `어르신 · 해주세요 요청 · 즉시 방문 요청`) |
 | `signups` | 가입 상담 신청 (이름 · 지역 · 연락처 · 추천 영업자 코드 …) |
 | `payments` | 토스 결제 승인 건 (금액은 토스 응답 기준) |
@@ -145,7 +147,7 @@ Vercel 프로젝트 → **Settings → Environment Variables** → Environment �
    - `"error":"schema-missing"` → 4-2 를 안 했다 (표가 없다)
    - `"error":"bad-key"` → 비밀 키가 틀렸다 (복사할 때 잘렸는지)
 2. 로그인 화면 아래에 **● 서버 저장 연결됨** 이 보인다.
-3. **폰 세 대로** — 폰1 `test-guardian`, 폰2 `test-elder`, 폰3 `test-concierge` 로 로그인
+3. **폰 세 대로** — 폰1 `test-guardian`, 폰2 `test-elder`, 폰3 `test-concierge` 로 로그인 (관제 `test-ops` · 영업자 `test-sales` 순서는 `docs/TEST-SCENARIOS.md`)
    - 어르신 폰 홈의 **도와줘요** → 몇 초 안에 보호자 폰 **해주세요** 탭에 '즉시 방문 요청'이 뜬다
    - Supabase **Table Editor → activity** 에 줄이 쌓인다
 4. 보호자 폰 **마이** 탭 → 멤버십 카드의 **기록 저장**이 '서버에 저장 (Supabase)'

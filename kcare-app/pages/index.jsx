@@ -221,7 +221,7 @@ export default function Home() {
             ))}
             <button
               onClick={() => {
-                // 테스트 가구는 세 계정이 같이 쓰는 서버 기록이라 한 번 묻는다
+                // 테스트 가구는 테스트 계정 모두가 같이 쓰는 서버 기록이라 한 번 묻는다
                 if (account && !window.confirm(t.resetConfirm)) return;
                 dispatch({ type: "reset" });
               }}
