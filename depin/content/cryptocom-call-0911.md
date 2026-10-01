@@ -484,3 +484,49 @@ SEC 에 증권선물 거래소로 신고 등록)이 **미국 개별 주식 무�
 예보사업자 등록증 · Earth-2 · 지도 링크). ⚠ 「정산 기준을 어떻게 정했고 분쟁을 어떻게 닫았는지」 한 장 노트는 새로 써야 했던 문서 — 실제로 붙어 나갔는지 확인.
 있으면 좋은 것: City Catalog 엑셀 내보내기(9/18 「if you have an Excel」 — 사이트가 덮지만 법무 · US team 이 돌려 보기 쉽다).
 **9/29 내부 회의** — 「자료는 메일로 바로 보낸다(weathermarket.ai 개편 설명과 함께) · 기다리지 않는다 · 담당자가 일정을 짜고 관련자 독촉까지」. 위 ①~③ 이 그 「필요 내용」이다.
+
+## 10/1 — 개편 덱 송부 메일 (서우 「첨부가 크립토닷컴에 전해 줄 내용, 이미 사이트에서 구현 · 상용화 가능한 내용이라 이렇게 전달한다고 멘트」)
+
+**첨부 덱(서우 작성, 9장)**: 01 케이웨더맵(엔비디아 AI 모델 · 상품 10종 영상) · 02 날씨 AI 팩토리(wellbianai.io/ai-factory, 4장) ·
+03 Weather Data Market(weathermarket.io · /docs · /proof) · 04 예측시장 데모(weatherfi.io · /docs) · 05 2011 삼성화재 날씨보험 선례.
+9/18 「우리 숙제」 ① 기술 · 데이터 문서 · 샘플과 9/29 회의 「weathermarket.ai 개편 설명과 함께 메일로 바로」에 해당.
+
+**판단**
+- 「구현 · 상용화 가능」 멘트는 지도 · AI 팩토리 · 마켓에만 건다. 데모는 실거래가 아니라 「유일한 예외」로 가르고, 「우리가 운영하는 서비스가 아니다」로
+  선을 긋는다(데이터 제공자 포지션 · 도박법 문구). 삼성 건은 2011 선례로 표시.
+- 마켓 상태는 사이트 하단 그대로 먼저 말한다 — 공개 베타 · 실거래 · 검증 한 단계는 테스트넷(「상태 고지를 먼저 하는 이유」). 체인 이름 0(「메일에서 체인 이름을 쓰지 않는 이유」).
+- 수신 Vincent 단독 · 9/18 스레드 답장 · Kevin 호명 0 · 다른 거래소 · 플랫폼 이름 0. 콜에서 나온 「국내 유일 민간 예보사업자」는 넣지 않는다(「유일」 금지 · 근거 확인 전).
+- AI 팩토리는 기능만 — 소유 · 운영 주체 단정 0. API 공급은 9/18 기사 기준 「계획」이라 「API 로 판다」고 쓰지 않는다.
+- `[ ]` 두 곳은 서우가 고른다: 9/15 체험 계정이 새 사이트에서 되는지 · 재배포 권리 줄(9/18 에 확정 답 약속, 아직 1순위 숙제)을 넣을지.
+  weatherfi.io 가 가상 자산 데모인지는 세션 프록시 차단으로 확인 못 함(9/24 기록 기준 시뮬레이터 = 가상 sUSDT).
+
+```
+Subject: Re: KWeather × Crypto.com — materials following today's call
+
+Vincent,
+
+Following up on our call on 18 September, I've attached an updated overview of what we showed you.
+
+You'll see the deck is mostly links and screenshots. That's deliberate: what's in it is already built and running on our live sites and ready for commercial use, so rather than describe it, we'd like your team to open each page and try it.
+
+In the deck
+· KWeather Map (kweathermap.com) — ten AI forecast products built on NVIDIA Earth-2 models: 60- and 15-day global forecasts, 3-day forecasts for Korea at 1.5 km, and 2- and 12-hour radar rainfall nowcasts. A short video walks through all ten.
+· Weather AI Factory (wellbianai.io/ai-factory) — where those models run on our weather data to produce forecasts and datasets.
+· Weather Data Market (weathermarket.io) — rebuilt since our call: 167 cities in 90 countries, each value a consensus of eleven weather feeds, with proofs anyone can re-check, live pricing and API docs. It's in public beta and purchases on it are real, so please buy in small amounts while testing. One verification step is still on a test network, as the site footer notes.
+· Prediction-market demo (weatherfi.io) — the one exception: a working demo with no real money, built to show how our data resolves a market from end to end. It's a demonstration, not a service we operate.
+· A precedent — Samsung Fire & Marine's weather-linked insurance, launched in 2011 under a joint agreement with KWeather.
+
+[The test account we shared on 15 September works on the new site.]
+[The new site needs new credentials — tell us how many seats your US team needs and we'll issue them.]
+
+[On redistribution rights, the source-by-source answer we promised is being finalised and will follow separately.]
+
+Happy to reconvene once your US team has had a look, and to look at the co-creation pack whenever it's ready.
+
+Best regards,
+
+Seowoo Park (Logan)
+Head of Partnerships & Operations
+KWeather · wellbian
+wellbian.io
+```
