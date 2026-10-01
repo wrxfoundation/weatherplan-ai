@@ -16,6 +16,8 @@ out 을 빼면 md 옆에 같은 이름의 .docx 를 만든다.
   링크는 밑줄 없이 강조색(출처가 본문보다 앞서 보이지 않게). 표는 머리글 반복 · 첫 열 굵게(4열 이상) · 열 너비 자동.
   머리글이 같은 표끼리는 열 너비가 같다. 열 6개 이상인 표가 든 ## 절은 가로 쪽. md 에 `<!-- docx: landscape -->` 줄이 있거나 --landscape 면 문서 전체 가로.
   첫 쪽은 표지 · 요약 · 목차(누르면 그 절로), 본문은 둘째 쪽부터.
+  표지 라벨은 기본 「조사 보고서」 — md 에 `<!-- docx: label=현장 응대 자료 -->` 줄이 있으면 그 말로.
+  머리글 끝 문구도 `<!-- docx: header=… -->` 로 바꿀 수 있다(기본 「수치·명단은 원출처 확인 전 대외 인용 금지」).
   강조 표기: {{…}} = 우리와 결(초록 굵게, 그 표 줄은 옅은 초록 바탕) · ==…== = 노란 형광(서우 편집 표기)
   · !!…!! = 빨강(목차에도) · 표 칸 안 <br> = 줄바꿈.
   줄 높이는 고정값(본문 10/16pt) — Word 의 맑은 고딕과 대체 서체에서 쪽 배치가 달라지지 않게.
@@ -62,6 +64,9 @@ ARGS = [a for a in sys.argv[1:] if not a.startswith("--")]
 NUMBER = "--no-number" not in sys.argv[1:]
 LANDSCAPE = "--landscape" in sys.argv[1:]
 LANDSCAPE_MARK = "<!-- docx: landscape -->"
+LABEL_RE = re.compile(r"<!--\s*docx:\s*label=(.+?)\s*-->")  # 표지 라벨 바꾸기(기본 「조사 보고서」)
+HEADER_RE = re.compile(r"<!--\s*docx:\s*header=(.+?)\s*-->")  # 머리글 끝 문구 바꾸기
+HEADER_NOTE = "수치·명단은 원출처 확인 전 대외 인용 금지"
 if not ARGS:
     sys.exit(__doc__)
 SRC = Path(ARGS[0])
@@ -438,7 +443,7 @@ def no_theme(rfonts):
         rfonts.set(qn(a), KO_FONT)
 
 
-def setup(doc, title, landscape=False):
+def setup(doc, title, landscape=False, note=HEADER_NOTE):
     d = doc.styles.element.find(qn("w:docDefaults")).find(qn("w:rPrDefault")).find(qn("w:rPr"))
     rf = d.find(qn("w:rFonts"))
     if rf is None:
@@ -479,7 +484,7 @@ def setup(doc, title, landscape=False):
     sec.different_first_page_header_footer = True  # 표지에는 머리글 · 쪽 번호 없음
     hp = sec.header.paragraphs[0]
     hp.paragraph_format.space_after = Pt(0)
-    hp._p.append(run_el(f"wellbian 내부 · {title} · {date.today().isoformat()} · 수치·명단은 원출처 확인 전 대외 인용 금지",
+    hp._p.append(run_el(f"wellbian 내부 · {title} · {date.today().isoformat()} · {note}",
                         7.5, color=MUTE))
     fp = sec.footer.paragraphs[0]
     fp.alignment = WD_ALIGN_PARAGRAPH.CENTER
@@ -561,7 +566,8 @@ def contents(doc, heads):
 def build(md, title, src_label):
     doc = Document()
     land = LANDSCAPE or LANDSCAPE_MARK in md
-    setup(doc, title, land)
+    hm = HEADER_RE.search(md)
+    setup(doc, title, land, hm.group(1) if hm else HEADER_NOTE)
     blocks = parse(md)
 
     # ## 절 단위로 묶어 가로 쪽 여부를 정한다
@@ -588,7 +594,8 @@ def build(md, title, src_label):
                 k = doc.add_paragraph()
                 k.paragraph_format.space_before = Pt(4)
                 k.paragraph_format.space_after = Pt(10)
-                k._p.append(run_el("조사 보고서", S_META, bold=True, color=ACCENT))
+                lm = LABEL_RE.search(md)
+                k._p.append(run_el(lm.group(1) if lm else "조사 보고서", S_META, bold=True, color=ACCENT))
                 k._p.append(run_el(f"   wellbian 내부 · {date.today().isoformat()}", S_META, color=MUTE))
                 t = doc.add_paragraph(style="Heading 1")
                 t._p.append(run_el(title, S_TITLE, bold=True))

@@ -2025,3 +2025,9 @@ Thanks Odelia — writing to you at that address today. Mine is support@wellbian
 - **Malea Otranto(Polymarket Global Head of Trust and Safety) 인사(9/30, 서우 프로필 캡처 3장 + 「Lynn 처럼 인사하자」)** — `intel/business-directions.md`
   Shirley 절 다음. 3촌이라 1촌 요청 메모(256자) + 수락 뒤 인사(563자). 폴리마켓 계열 상한이 차서(Paul · 메일 · Shirley) 인사만 — 측정기 절반 · 정산 · 플랫폼 이름 0,
   「eleven weather feeds」, 새 직장 축하 한 줄. 트러스트 앤 세이프티라 정산 무결성과 가장 가깝지만 그래서 더 꺼내지 않음.
+- **XRP SEOUL 2026 부스 현장 Q&A 시나리오 docx(10/1, 서우 부스 운영안 PDF + 판매 · AI 이용권 페이지 전문 + 「현장 예상 질문과 답변 QA 시나리오 docx화」)** —
+  저장소 루트 `reports/XRP SEOUL 2026 부스 현장 Q&A 시나리오.md` + .docx(11쪽). 30초 소개(국 · 영) · 원칙 5 · 금지어 표 · 당일 아침 확인 11 · 방문자 유형 9 ·
+  Q&A 80(답 + 회색 「주의」 줄) · 넘길 곳(연결 담당 (안)) · 영어 카드 15 · 숫자 카드. 근거 대조 중 어긋난 것 — 이벤트 POP 디스코드 vs 사이트 「커뮤니티 입장」
+  텔레그램 · 문의 메일 admin@wellbianlabs.io vs 옛 FAQ admin@wellbian.io · AI 이용권 카드 결제(운영안 「확인 필요」) · 출금/DEX 상태 · 해외 배송 · 2차 구매분 사전 포인트
+  → 「당일 확인」 표시. 10/3 발표 문장은 「케이웨더의 날씨 데이터 마켓 · 오늘 발표(9/23부터 가동)」, 웰비안 × Flare 직접 연결 0. 운영안의 개인 연락처는 옮기지 않음.
+  빌더(`build-report-docx.py`)에 표지 라벨 · 머리글 문구를 md 에서 바꾸는 표기 추가(기본값 그대로 — 연사 프로필 재빌드로 회귀 확인).
