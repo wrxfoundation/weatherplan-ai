@@ -497,7 +497,11 @@ SEC 에 증권선물 거래소로 신고 등록)이 **미국 개별 주식 무�
 - 마켓 상태는 사이트 하단 그대로 먼저 말한다 — 공개 베타 · 실거래 · 검증 한 단계는 테스트넷(「상태 고지를 먼저 하는 이유」). 체인 이름 0(「메일에서 체인 이름을 쓰지 않는 이유」).
 - 수신 Vincent 단독 · 9/18 스레드 답장 · Kevin 호명 0 · 다른 거래소 · 플랫폼 이름 0. 콜에서 나온 「국내 유일 민간 예보사업자」는 넣지 않는다(「유일」 금지 · 근거 확인 전).
 - AI 팩토리는 기능만 — 소유 · 운영 주체 단정 0. API 공급은 9/18 기사 기준 「계획」이라 「API 로 판다」고 쓰지 않는다.
-- `[ ]` 두 곳은 서우가 고른다: 9/15 체험 계정이 새 사이트에서 되는지 · 재배포 권리 줄(9/18 에 확정 답 약속, 아직 1순위 숙제)을 넣을지.
+- `[ ]` 는 서우가 고른다: 9/15 체험 계정이 새 사이트에서 되는지.
+- **재배포 권리 — 답 대신 그쪽 쓰임새를 묻는다(10/1 서우 「재배포 범위나 내용을 알아야 우리가 알려주지 않을까」)**: 무엇(판정 · 지수 / 예보 / 원천 값) ·
+  누구에게(최종 이용자 / 가격 산정 등 파트너) · 어디서(관할 · 마켓 종류) · 얼마나 실시간(실시간 / 지연) · 독점 범위(도시 · 계약 종류 · 기간).
+  독점을 범위로 묻는 형태라 9/29 정리(전면 독점이면 다른 레인이 막힌다)와 맞는다. 그쪽 답이 오면 바로 소스별로 답할 수 있게
+  9/29 체크리스트 ① 의 11개 소스 라이선스 표는 계속 채운다 — 예보 모델 묶음(Open-Meteo 경유)의 상업 이용 조건, 기상청 원천 자료(KIM 등) 재배포 조건이 핵심.
   weatherfi.io 가 가상 자산 데모인지는 세션 프록시 차단으로 확인 못 함(9/24 기록 기준 시뮬레이터 = 가상 sUSDT).
 
 ```
@@ -519,7 +523,13 @@ In the deck
 [The test account we shared on 15 September works on the new site.]
 [The new site needs new credentials — tell us how many seats your US team needs and we'll issue them.]
 
-[On redistribution rights, the source-by-source answer we promised is being finalised and will follow separately.]
+On redistribution rights: the terms differ between our own outputs and the underlying source readings, and by how the data is used, so the precise answer depends on your setup. Could you tell us:
+· What you would redistribute — our determinations and index values, our forecasts, or the underlying source readings
+· To whom — end users on your market pages, or partners further along, for example for pricing
+· Where — which jurisdictions and which types of market
+· How fresh — real time, or after a delay
+· Whether you need exclusivity, and if so for which cities, contract types and period
+With that, we can come back with a source-by-source answer that fits how you'd actually use the data.
 
 Happy to reconvene once your US team has had a look, and to look at the co-creation pack whenever it's ready.
 
