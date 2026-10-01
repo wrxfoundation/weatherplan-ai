@@ -2,24 +2,30 @@
 <!-- docx: header=내부 응대용 · 밖으로 돌리지 않는다 -->
 # 10/3(토) XRP SEOUL 2026 플래티넘 부스에서 방문객이 실제로 물을 질문과 답. 숫자는 판매 페이지 · 약관 · 백서에 적힌 것만 쓰고, 수익 · 토큰 가격 · 상장 · 제휴는 약속하지 않는다.
 
-현장에서는 세 가지만 지킨다. 첫째, 30초 소개로 시작하고 측정기 실물을 먼저 만져 보게 한다. 둘째, 가격과 수량은 사이트에 적힌 그대로 말하고, 토큰의 가치 · 수익 · 상장 시점은 말하지 않는다. 셋째, 투자 · 상장 · 데이터 구매 · 언론 질문은 현장에서 답하지 않고 명함을 받아 담당자에게 넘긴다. 당일 아침(09:00~10:00) 2절 확인 항목을 채운 뒤 「당일 확인」 표시가 붙은 답을 확정한다. 근거는 부스 운영안(9/29) · wellbian.io 판매 페이지와 AI 이용권 페이지(10/1 기준) · 이용약관 v1.0 · 백서 · 사이트 FAQ 정본, 그리고 9/29 · 9/30 내부 회의 결정(설명은 웨더 이코노미 하나로 · 용어 통일 · AI 팩토리는 결과물로 보여 주기 · DEX 일정)이다. 회의에서 아직 정하지 않은 것(AI 팩토리 소유 · 운영 주체 등)은 답으로 단정하지 않고 「주의」에 적었다.
+현장에서는 세 가지만 지킨다. 첫째, 30초 소개는 측정기가 아니라 날씨에서 시작하고(케이웨더 날씨 → 실내 · 실외 · 레이더 · 위성 → 웨더 데이터 이코노미), 그다음 측정기 실물을 만져 보게 한다. 둘째, 가격과 수량은 사이트에 적힌 그대로 말하고, 토큰의 가치 · 수익 · 상장 시점은 말하지 않는다. 셋째, 투자 · 상장 · 데이터 구매 · 언론 질문은 현장에서 답하지 않고 명함을 받아 담당자에게 넘긴다. 당일 아침(09:00~10:00) 2절 확인 항목을 채운 뒤 「당일 확인」 표시가 붙은 답을 확정한다. 근거는 부스 운영안(9/29) · wellbian.io 판매 페이지와 AI 이용권 페이지(10/1 기준) · 이용약관 v1.0 · 백서 · 사이트 FAQ 정본, 그리고 9/29 · 9/30 내부 회의 결정(설명은 웨더 이코노미 하나로 · 용어 통일 · AI 팩토리는 결과물로 보여 주기 · DEX 일정)이다. 회의에서 아직 정하지 않은 것(AI 팩토리 소유 · 운영 주체 등)은 답으로 단정하지 않고 「주의」에 적었다.
 
 ## 30초 소개 · 응대 원칙
 
-### 한 문장 소개
+### 30초 소개
 
-- **국문** — 케이웨더가 30년 동안 재 온 날씨를 이제 집과 사무실에 둔 측정기로 함께 모읍니다. 측정하고, 검증하고, 보상하고, 모인 데이터는 기업과 AI 서비스로 쓰입니다. 이걸 웨더 데이터 이코노미라고 부릅니다.
-- **영문** — KWeather has measured weather in Korea for thirty years. wellbian lets anyone add a certified sensor at home: readings are measured, verified and rewarded, and the data goes on to businesses and AI services. We call it the Weather Data Economy.
+측정기가 아니라 날씨에서 시작한다. 케이웨더 날씨 → 웰비안이 넓혀 갈 방향(실내 → 실외 → 레이더 → 위성) → 웨더 데이터 이코노미 순서로 말하고, 집 안 측정기는 「첫 단계」로만 놓는다. 백월 그림을 손으로 짚으며 말한다.
+
+- **국문(30초)** — 케이웨더는 30년 동안 날씨를 재 왔고, 지금은 90개국 167개 도시의 날씨를 매시간 11개 날씨 피드의 합의값으로 냅니다. 웰비안은 그 위에서 누구나 참여하는 세계 민간 기상청을 만들어 갑니다. 첫 단계는 집 안의 측정기이고, 실외 · 레이더 · 위성으로 넓혀 갑니다. 측정하고, 검증하고, 보상하고, 그 데이터가 기업과 AI 로 갑니다. 이걸 웨더 데이터 이코노미라고 부릅니다.
+- **영문(30초)** — KWeather has measured weather in Korea for thirty years and now publishes hourly weather for 167 cities in 90 countries, each value a consensus across eleven weather feeds. wellbian builds on that, toward a people-powered weather service for the world. It starts with a certified sensor in your home and grows outdoors, then to radar and satellites. Readings are measured, verified and rewarded, and the data goes on to businesses and AI. We call it the Weather Data Economy.
+- **바쁠 때 한 줄** — 케이웨더 30년 날씨 위에서, 집 안 측정기부터 실외 · 레이더 · 위성까지 누구나 참여하는 날씨 데이터 네트워크입니다. / A weather data network anyone can join, built on KWeather's thirty years: from home sensors to outdoor sensors, radar and satellites.
+- `주의: 실외 · 레이더 · 위성은 넓혀 갈 방향(백월 그림)이지 일정이 아니다 — "언제요?"에는 "정해지면 공지합니다".`
+- `주의: 167개 도시 날씨는 케이웨더 날씨 데이터 마켓(오늘 발표)의 데이터다 — "웰비안이 Flare 에 올라갔다"고 하지 않는다.`
+- `주의: 「세계 민간 기상청」은 목표다 — 공공 기상청과 견주거나 "이미 그 수준"이라고 하지 않는다.`
 
 ### 보여 주는 순서
 
-- 1) 측정기 실물을 손에 쥐어 준다 → 화면에 뜨는 실내 날씨 7가지(초미세먼지 · 미세먼지 · CO₂ · TVOC · 온도 · 습도 · 체감온도).
-- 2) 백월을 가리킨다 → 측정 · 검증 · 보상 · 데이터 유통, 그리고 실내 → 실외 → 레이더 → 위성으로 넓혀 가는 그림.
+- 1) 백월 앞에서 30초 소개 — 그림을 짚으며 케이웨더 날씨 → 실내 → 실외 → 레이더 → 위성 → 측정 · 검증 · 보상 · 데이터 유통.
+- 2) 측정기 실물을 손에 쥐어 준다 → 화면에 뜨는 실내 날씨 7가지(초미세먼지 · 미세먼지 · CO₂ · TVOC · 온도 · 습도 · 체감온도). 옆의 실외 측정기(운영안 물자 목록 2대)는 "실외로 넓혀 갈 다음 단계"로 가리킨다 — 오늘 판매하지 않는다.
 - 3) AI 이용권을 물으면 영상(지구 지도 · 강수 · 바람 · AI 예보)으로 AI 팩토리가 만드는 결과물을 먼저 보여 준다 — 지도를 손으로 조작하지 않고 녹화 영상으로(9/30 회의).
 - 4) 관심을 보이면 손님 휴대폰으로 wellbian.io/launch 를 연다(카드 또는 RLUSD). 현장 구매자에게는 우산(한정).
 - 5) 사지 않아도 X 팔로우 · 디스코드 입장 이벤트로 경품을 건넨다.
 
-### 원칙 다섯 가지
+### 원칙 여섯 가지
 
 - **숫자는 이 문서와 사이트에 있는 것만.** 모르는 건 "확인해서 알려 드릴게요" 하고 명함이나 텔레그램을 받는다.
 - **계산하지 않는다.** 원화 환산 · 수익 · 본전 기간을 계산해 주지 않고, 손님이 계산해도 맞장구치지 않는다.
@@ -54,6 +60,7 @@
 - [ ] 문의 메일 하나로 — 사이트 · 약관 admin@wellbianlabs.io, 옛 FAQ 일부 admin@wellbian.io
 - [ ] 2차 구매분 배송 안내 문구와 해외 배송 가능 국가(사이트 FAQ 「해외에서도 구매할 수 있나요?」)
 - [ ] 2차 구매자도 기기를 받기 전 포인트가 쌓이는지(1차는 쌓이도록 안내)
+- [ ] 실외 측정기 2대(운영안 물자 목록) — 모델명 · 한 줄 설명 · 「오늘 판매 아님」 안내 → 5절 「저 실외 측정기도 팔아요?」 답 확정
 - [ ] 경품 수량 — 우산 200 · 에코백 1,000 · 물티슈 2,000, 소진 때 안내 문구
 - [ ] 발표 시간 14:50 변동 여부 · 부스 와이파이 · 에그 · 결제용 노트북
 - [ ] 연결 담당(13절 표의 「(안)」) 확정 · 공유방 개설
@@ -77,7 +84,7 @@
 
 | 질문 | 이렇게 답한다 |
 |---|---|
-| 웰비안이 뭐예요? | 집이나 사무실에 둔 인증 측정기로 실내 날씨(공기질 · 온습도)를 재고, 검증된 데이터에 토큰(WLBN)으로 보상하고, 모인 데이터를 기업과 AI 서비스에 공급하는 날씨 데이터 네트워크입니다. 기기 파트너는 30년 된 기상 회사 케이웨더입니다.<br>`주의: 기기 파는 회사로만 들리지 않게 데이터까지` |
+| 웰비안이 뭐예요? | 케이웨더가 30년 동안 재 온 날씨 위에서, 누구나 참여해 넓혀 가는 날씨 데이터 네트워크입니다. 첫 단계는 집이나 사무실에 두는 인증 측정기이고, 실외 · 레이더 · 위성으로 넓혀 갑니다. 측정하고 검증하고 토큰(WLBN)으로 보상하고, 모인 데이터는 기업과 AI 서비스로 갑니다. 기기 파트너는 케이웨더입니다.<br>`주의: 측정기부터 꺼내지 않는다 — 날씨 · 넓혀 갈 방향 · 데이터 유통까지 말하고 측정기는 첫 단계로` |
 | 케이웨더랑 무슨 관계예요? | 케이웨더는 기기 파트너입니다. 측정기 제공 · 품질 인증 · 기술 지원을 맡고, 국내 유통 · 판매 · 설치 · A/S · 고객 응대를 위탁받아 합니다. 서비스 운영과 토큰 발행 · 보상 정책은 싱가포르 법인 Wellbian Labs Pte. Ltd.가 합니다(약관 제3 · 4조).<br>`주의: "케이웨더 토큰" · "자회사" 0` |
 | 케이웨더가 상장사니까 보증하는 거죠? | 토큰과 보상은 Wellbian Labs 가 운영하고, 케이웨더는 기기 쪽 파트너입니다. 케이웨더 회사 · 주식 이야기는 현장에서 드리지 않습니다.<br>`주의: 주가 · 사업 계획 · 실적 0` |
 | 왜 XRPL(XRP 레저)이에요? | 기기마다 위조할 수 없는 기기 NFT(XLS-20)를 붙이고, 결제는 RLUSD 로, 토큰 교환은 XRPL 의 AMM(XLS-30)으로 처리할 수 있어서입니다. 수수료가 낮고 결제가 몇 초면 끝납니다.<br>`주의: XRP 가격과 연결 0` |
@@ -100,7 +107,8 @@
 | 뭘 재요? | 초미세먼지(PM2.5) · 미세먼지(PM10) · CO₂ · TVOC · 온도 · 습도 · 체감온도, 7가지를 1분 단위로 잽니다. 5인치 터치 화면에서 바로 보입니다. |
 | 정확해요? 인증은? | KC 인증과 성능인증을 받았습니다. 성능인증은 CO₂ 1등급 · PM2.5 1등급입니다. |
 | 전기료 · 설치는? | 12V 어댑터로 월 전기료 1,000원이 안 됩니다. 벽걸이 · 탁상 겸용이고 Wi-Fi 와 블루투스로 연결합니다. |
-| 실외에 둬도 돼요? | 실내용 측정기입니다. 실외 · 레이더 · 위성으로 넓혀 가는 계획이고, 실외 측정기는 정해지면 공지합니다.<br>`주의: 출시 시점 약속 0` |
+| 실외에 둬도 돼요? | 실내용 측정기입니다. 실외는 웰비안이 넓혀 갈 다음 단계이고, 실외 참여 방법은 정해지면 공지합니다.<br>`주의: 출시 시점 약속 0` |
+| 저 실외 측정기도 팔아요? | 오늘 판매는 실내 측정기와 AI 이용권입니다. 옆의 실외 측정기는 기기 파트너 케이웨더의 장비이고, 웰비안 네트워크는 실내에서 실외 · 레이더 · 위성으로 넓혀 갈 방향입니다. 실외 참여 방법은 정해지면 공지합니다.<br>`주의: 판매 · 보상 · 출시 시점 약속 0 · 모델명 · 사양은 당일 확인` |
 | 받으면 어떻게 시작해요? | 전원을 켜고 블루투스로 연결한 뒤 Wi-Fi 를 잡고, 사이트 「기기 등록」(wellbian.io/redeem)에서 등록하면 측정 데이터가 네트워크로 올라갑니다. |
 | 한 집에 여러 대 둬도 돼요? | 됩니다(계정당 10대). 다만 한 공간에 몰아 두면 측정값이 겹쳐 데이터로서 의미가 적고, 보상에도 기기 한 대당 하루 상한이 있습니다. 공간마다 한 대를 권합니다. |
 | 보상 없이 측정기로만 써도 돼요? | 됩니다. 보상을 빼도 CO₂ · 미세먼지 · 온습도를 실시간으로 보는 실내 공기질 측정기입니다.<br>`주의: 측정기가 필요한지로 판단하시게` |
@@ -220,7 +228,8 @@
 
 | Question | Answer |
 |---|---|
-| What is wellbian? | A weather data network. People place a certified indoor sensor at home or work; readings are measured, verified and rewarded, and the data goes on to businesses and AI services. Our device partner is KWeather, which has measured weather in Korea for thirty years and serves 4,000+ enterprise clients. |
+| What is wellbian? | A weather data network anyone can join, built on KWeather, which has measured weather in Korea for thirty years and serves 4,000+ enterprise clients. It starts with a certified sensor at home or work and grows outdoors, then to radar and satellites. Readings are measured, verified and rewarded, and the data goes on to businesses and AI services. |
+| Do you sell the outdoor sensor? | Not today. We're selling the indoor sensor and the AI Factory pass. The outdoor unit is KWeather's; we'll announce how outdoor sensors join the network once it's decided. |
 | Is this KWeather's token? | No. Wellbian Labs Pte. Ltd. in Singapore runs the service and issues WLBN. KWeather is the device partner: it supplies and certifies the sensor and handles distribution and after-sales in Korea. |
 | How much is the device? How do I buy? | 650 RLUSD, or KRW 1,083,000 with a Korean card. Sign up at wellbian.io/launch with an email, choose quantity and address, then pay by card or with RLUSD from an XRPL wallet such as Xaman, D'CENT or Girin. Up to 10 per account. |
 | Can I buy from overseas? | Yes, with RLUSD. Shipping follows the FAQ on the site. (당일 확인) |
