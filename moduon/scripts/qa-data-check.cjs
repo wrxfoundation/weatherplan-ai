@@ -12,6 +12,8 @@
 //     으로 들어가 있던 사고를 다시 막는다. 바꿀 땐 문서의 근거와 이 표를 같이 고친다.
 //  ⑥ 리베이트 시드 = 원본 시트를 업로드 인식기로 읽은 결과 (scripts/fixtures/kt-k1-rebate-20260918.xlsx)
 //     인식기가 망가지거나 시드를 손으로 고치면 여기서 갈라진다. 우리 단말은 전부 어느 행엔가(대체 행 포함) 붙어야 한다.
+//  ⑦ 운영팀 예시 양식(scripts/fixtures/moduon-sample-skt-lg.xlsx — 금액은 임의) — SKT: 표 2개(5G·LTE)·공통/선약·용량별 행,
+//     LG: 010 칸 없음·이름 칸이 빈 칸을 참조하는 수식이라 0 → 이름을 못 읽었다고 말하고 기본으로 반영에서 뺀다
 const esbuild = require('esbuild')
 const { join } = require('node:path')
 
@@ -53,7 +55,7 @@ check(bad2.length === 0, `견적 용량 라벨 ↔ 출고가 한 항목에서 ($
 const ids = new Set(PHONE_DEVICES.map((d) => d.id))
 const planIds = new Set(PHONE_PLANS.map((p) => p.id))
 const ghostPrice = Object.keys(card.PRICE_ROW).filter((k) => !ids.has(k))
-const ghostRebate = card.REBATE_SEED.groups.flatMap((g) => g.devices).filter((k) => !ids.has(k))
+const ghostRebate = card.REBATE_SEED.sections.flatMap((s) => s.groups.flatMap((g) => g.devices)).filter((k) => !ids.has(k))
 check(ghostPrice.length === 0 && ghostRebate.length === 0, `가격표·리베이트 매핑이 실제 단말만 가리킴${ghostPrice.length + ghostRebate.length ? ` ← ${[...ghostPrice, ...ghostRebate].join(',')}` : ''}`)
 check(card.PRICE_CARD.plans.every((p) => planIds.has(p.key)), `가격표 요금제 ${card.PRICE_CARD.plans.length}종이 화면 요금제 목록에 존재`)
 
@@ -111,14 +113,34 @@ check(ipq.publicSupport === 500000 && ipc.publicSupport === 450000 && ipq.price 
   const t = r.tables[0]
   const seed = card.REBATE_SEED
   check(!!t && t.carrier === 'KT' && t.code === 'K1' && t.effectiveFrom === '2026-09-18' && t.unit === 10000, `원본 시트 인식 — KT · K1 · 2026-09-18 · 만원 (${t?.carrier} · ${t?.code} · ${t?.effectiveFrom} · ${t?.unit})`)
-  const pick = (c) => JSON.stringify({ tiers: c.tiers.map(({ key, min }) => ({ key, min })), groups: c.groups.map(({ label, devices, fallback, values }) => ({ label, devices: [...devices].sort(), fallback, values })), notes: c.notes })
-  check(!!t && pick(t) === pick(seed), `리베이트 시드 = 원본 시트 인식 결과 (구간 ${t?.tiers.length} · 행 ${t?.groups.length} · 고지 ${t?.notes.length})`)
+  const pick = (c) => JSON.stringify({ sections: c.sections.map((sec) => ({ tiers: sec.tiers.map(({ key, min }) => ({ key, min })), groups: sec.groups.map(({ label, devices, fallback, values }) => ({ label, devices: [...devices].sort(), fallback, values })) })), notes: c.notes })
+  check(!!t && pick(t) === pick(seed), `리베이트 시드 = 원본 시트 인식 결과 (구간 ${t?.sections[0]?.tiers.length} · 행 ${t?.sections[0]?.groups.length} · 고지 ${t?.notes.length})`)
   const orphan = PHONE_DEVICES.filter((d) => !card.rebateDetail({ deviceId: d.id, planId: 'choice110', join: 'mnp' }).covered).map((d) => d.id)
   check(orphan.length === 0, `우리 단말 전부 리베이트 행 있음(대체 행 포함)${orphan.length ? ` ← ${orphan.join(',')}` : ''}`)
   const ip = card.rebateDetail({ deviceId: 'ip17p', planId: 'choice110', join: 'mnp' })
   check(ip.rebate === 250000 && ip.device?.label === '아이폰17류(전체)', `아이폰17 프로 → '아이폰17류(전체)' 행 · 110K MNP 250,000 (${ip.device?.label} · ${ip.rebate.toLocaleString()})`)
   const a56 = card.rebateDetail({ deviceId: 'a56', planId: 'basic4g', join: 'chg' })
   check(a56.rebate === 120000 && !a56.listed, `A56 → 그외 5G(대체 행) · 37K 기변 120,000 (${a56.device?.label} · ${a56.rebate.toLocaleString()})`)
+  // ⑦
+  const ex = await imp.importRebateWorkbook(readFileSync(join(root, 'scripts/fixtures/moduon-sample-skt-lg.xlsx')), { fileName: '모두온 단가표 예시.xlsx' })
+  const skt = ex.tables.find((x) => x.sheet === 'SKT'), lg = ex.tables.find((x) => x.sheet === 'LG')
+  check(!!skt && skt.carrier === 'SKT' && skt.code === 'S2' && skt.effectiveFrom === '2026-09-01' && skt.sections.length === 2 && skt.sections.every((x) => x.method) && skt.sections[1].net === 'LTE',
+    `SKT — S2 · 2026-09-01 · 표 2개(5G·LTE) · 공통/선약 (${skt?.code} · ${skt?.effectiveFrom} · ${skt?.sections.length}표 · ${skt?.sections.map((x) => x.net).join('/')})`)
+  const owner = (id, st = null) => skt?.sections.flatMap((x) => x.groups).find((g) => g.devices.includes(id) && (g.storage ?? null) === st)?.label
+  const want = { ip17: '아이폰17', ip17p: '아이폰17프로', ip17pm: '아이폰17프로맥스', flip8: '갤럭시 플립8', fold8: '갤럭시 폴드8', s26: '갤럭시S26', s26u: '갤럭시 S26 Ultra' }
+  const wrong = Object.entries(want).filter(([id, l]) => owner(id) !== l).map(([id]) => `${id}→${owner(id) ?? '없음'}`)
+  check(wrong.length === 0 && owner('s26', '512GB') === '갤럭시S26 512G', `SKT 단말 매핑(펫네임·모델명) + S26 512G 용량 행${wrong.length ? ` ← ${wrong.join(', ')}` : ''}`)
+  const sktCard = imp.toCard(skt, { effectiveFrom: '2026-09-01' })
+  const r256 = card.rebateDetail({ deviceId: 's26', planId: 'choice110', join: 'mnp', method: 'select', storage: '256GB', card: sktCard })
+  const r512 = card.rebateDetail({ deviceId: 's26', planId: 'choice110', join: 'mnp', method: 'select', storage: '512GB', card: sktCard })
+  check(r256.device?.label === '갤럭시S26' && r512.device?.label === '갤럭시S26 512G' && r512.methodLabel === '선약' && r512.rebate === 200000,
+    `SKT 조회 — 용량별 행 · 선약 칸 (256GB→${r256.device?.label} · 512GB→${r512.device?.label} · ${r512.methodLabel} ${r512.rebate.toLocaleString()})`)
+  const sw = skt?.issues.filter((x) => x.level === 'warn').map((x) => x.msg).join(' | ') ?? ''
+  check(/음수 금액 2칸/.test(sw) && /=AU24-5/.test(sw) && /구간 숫자보다 낮은 요금제/.test(sw) && /A56/.test(sw), 'SKT 경고 — 음수(=AU24-5) · 구간과 요금제 불일치 · A56 행 없음')
+  const lw = lg?.issues.map((x) => x.msg).join(' | ') ?? ''
+  check(!!lg && lg.carrier === 'LG U+' && lg.code === 'L1' && lg.unreadable === true && /19개 행의 단말 이름/.test(lw) && /=T7/.test(lw) && /010 칸이 없는/.test(lw),
+    `LG — L1 · 이름 19행이 수식(=T7) 때문에 0 → 못 읽음·기본 제외 · 010 칸 없음 (${lg?.code} · unreadable ${lg?.unreadable})`)
+
   console.log(fail === 0 ? '\nSMOKE: ALL PASS' : `\nSMOKE: ${fail} FAIL`)
   process.exit(fail === 0 ? 0 : 1)
 })().catch((e) => { console.log(`FAIL  인식기 실행 오류 — ${e.message}`); process.exit(1) })

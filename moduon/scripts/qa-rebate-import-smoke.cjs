@@ -7,6 +7,7 @@
 // ⑤ 매핑 고치기 — S26 울트라를 'S26류'에서 빼면 '그외 5G' 로 떨어지고, 다음 업로드에 그 매핑을 기억한다
 // ⑥ 적용일이 미래면 예약 — 지금 표는 그대로
 // ⑦ 지우기 → 기본값으로 복귀 · 잘못된 파일은 읽지 않고 이유를 말한다
+// ⑧ 운영팀 예시 양식(SKT·LG 시트, 금액 임의) — SKT 는 표 2개·공통/선약·용량별 행까지 읽어 반영, LG 는 이름 칸 수식 문제를 짚고 기본 제외
 let pw
 try { pw = require('/opt/node22/lib/node_modules/playwright') } catch { pw = require('playwright') }
 const { join } = require('node:path')
@@ -111,6 +112,23 @@ const SELLER = { role: 'member', memberId: 'MB3', type: '사업자', tier: 'sell
   check((await txt('rebate-error')).includes('엑셀') && (await count('[data-t="rebate-preview"]')) === 0, `엑셀이 아닌 파일 → 이유 안내 (${await txt('rebate-error')})`)
   await upload({ name: '옛날.xls', mimeType: 'application/vnd.ms-excel', buffer: Buffer.from([0xd0, 0xcf, 0x11, 0xe0, 0xa1, 0xb1, 0x1a, 0xe1, ...new Array(40).fill(0)]) })
   check((await txt('rebate-error')).includes('.xls'), `예전 .xls → 다른 이름으로 저장 안내 (${await txt('rebate-error')})`)
+
+  // ───────── ⑧ 예시 양식 ─────────
+  console.log('\n── ⑧ 운영팀 예시 양식(SKT·LG) ──')
+  await admin(); await upload('moduon-sample-skt-lg.xlsx')
+  const sheets = await page.locator('[data-t="rebate-preview"]').evaluateAll((xs) => xs.map((x) => x.dataset.sheet))
+  check(JSON.stringify(sheets) === JSON.stringify(['SKT', 'LG']), `시트 2개 미리보기 (${sheets.join(',')})`)
+  const skt = page.locator('[data-t="rebate-preview"][data-sheet="SKT"]'), lg = page.locator('[data-t="rebate-preview"][data-sheet="LG"]')
+  const sktStats = await skt.locator('[data-t="rebate-stats"]').innerText()
+  check(sktStats.includes('표 2개') && sktStats.includes('공통/선약') && (await skt.locator('[data-t="rebate-carrier"]').inputValue()) === 'SKT', `SKT — 표 2개 · 공통/선약 · 통신사 SKT (${sktStats})`)
+  const s512 = await skt.locator('[data-t="rebate-map-row"][data-label="갤럭시S26 512G"] [data-t="rebate-map-chip"]').evaluateAll((xs) => xs.map((x) => x.dataset.id))
+  check(JSON.stringify(s512) === '["s26"]', `용량별 행 '갤럭시S26 512G' → S26 (${s512.join(',')})`)
+  check((await skt.locator('[data-t="rebate-include"]').isChecked()) && !(await lg.locator('[data-t="rebate-include"]').isChecked()) && (await lg.locator('[data-t="rebate-unreadable"]').count()) === 1,
+    'LG 는 단말 이름을 못 읽어 기본으로 반영 제외, SKT 는 반영 대상')
+  check((await lg.locator('[data-t="rebate-issues"]').innerText()).includes('=T7'), 'LG — 이름 칸 수식(=T7) 문제를 짚는다')
+  await page.locator('[data-t="rebate-apply"]').click(); await wait(400)
+  check((await txt('rate-card-others')).includes('SKT') && (await txt('rate-card-source')).includes('기본값'), `SKT 표만 반영 — KT 표는 그대로 (${(await txt('rate-card-others')).slice(0, 40)})`)
+  check((await count('[data-t="rebate-history-row"][data-carrier="SKT"]')) === 1 && (await count('[data-t="rebate-history-row"][data-carrier="LG U+"]')) === 0, '이력 — SKT 1장, LG 없음')
 
   check(errors.length === 0, `pageerror 0 (${errors.length}${errors[0] ? ` — ${errors[0].slice(0, 100)}` : ''})`)
   await browser.close()

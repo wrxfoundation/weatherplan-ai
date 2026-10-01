@@ -179,12 +179,16 @@ export const REBATE_SEED = {
   code: 'K1',
   name: 'KT 정책 단가표 K1 (리베이트)',
   effectiveFrom: '2026-09-18',
-  tiers: SEED_TIERS,
   joins: REBATE_JOINS.map((j) => j.key),
-  groups: SEED_ROWS.map(([label, devices, fallback, net, ...t], i) => ({
-    key: `g${i + 1}`, label, net, fallback, devices,
-    values: Object.fromEntries(SEED_TIERS.map((tier, ti) => [tier.key, t[ti].map((v) => (v == null ? null : v * M))])),
-  })),
+  // 표(섹션) — 한 시트에 5G·LTE 표가 따로 있으면 섹션도 여럿. K1 은 표 하나(할인방식 구분 없음)
+  sections: [{
+    key: 's1', label: '5G', net: '5G', method: false,
+    tiers: SEED_TIERS,
+    groups: SEED_ROWS.map(([label, devices, fallback, net, ...t], i) => ({
+      key: `s1g${i + 1}`, label, net, fallback, devices,
+      values: Object.fromEntries(SEED_TIERS.map((tier, ti) => [tier.key, t[ti].map((v) => (v == null ? null : v * M))])),
+    })),
+  }],
   notes: SEED_NOTES,
   source: { file: 'KT K1 동판 단가표(2026-09-18) — 기본값', sheet: 'K1', unit: M, importedAt: null, seed: true },
 }
@@ -203,28 +207,49 @@ export function activeRebateCard(carrier = 'KT', on = ymd()) {
 /** 적용일이 아직 오지 않은(예약) 카드 */
 export const pendingRebateCards = (carrier = 'KT', on = ymd()) => poolOf(carrier).filter((c) => c.effectiveFrom && c.effectiveFrom > on)
 
-export const cardGroup = (card, deviceId) =>
-  card?.groups.find((g) => g.devices?.includes(deviceId)) ?? card?.groups.find((g) => g.fallback === '5G') ?? null
-export const cardTier = (card, monthly) =>
-  [...(card?.tiers ?? [])].filter((t) => t.min != null).sort((a, b) => b.min - a.min).find((t) => monthly >= t.min) ?? null
+// 예전(v2.11) 카드 모양 — 섹션 없이 tiers·groups 를 바로 가진 카드 — 도 그대로 읽는다
+export const sectionsOf = (card) => card?.sections ?? (card?.groups ? [{ key: 's1', label: null, net: null, method: false, tiers: card.tiers ?? [], groups: card.groups }] : [])
+
+/** 단말(·용량) → { 섹션, 행 }. 용량별 행이 있으면 그 용량 행 › 용량 없는 행 › 아무 행 › 대체 행('그외 5G') 순 */
+export function cardMatch(card, deviceId, storage = null) {
+  const secs = sectionsOf(card)
+  const hits = secs.flatMap((s) => s.groups.filter((g) => g.devices?.includes(deviceId)).map((g) => ({ s, g })))
+  const hit = (storage && hits.find((h) => h.g.storage === storage)) || hits.find((h) => !h.g.storage) || hits[0]
+  if (hit) return hit
+  for (const s of secs) { const g = s.groups.find((x) => x.fallback === '5G'); if (g) return { s, g } }
+  return null
+}
+export const cardTier = (section, monthly) =>
+  [...(section?.tiers ?? [])].filter((t) => t.min != null).sort((a, b) => b.min - a.min).find((t) => monthly >= t.min) ?? null
+// 한 칸 — 방식 구분이 있는 표면 { support, select } 중 고른 방식(없으면 공통), 없는 표면 그대로
+const cellOf = (card, g, tier, join, method) => {
+  const row = g?.values?.[tier?.key]
+  const arr = Array.isArray(row) ? row : row ? (row[method] ?? row.support) : null
+  return arr ? arr[card.joins.indexOf(join)] : undefined
+}
+const METHOD_LABEL = { support: '공통', select: '선약' }
 
 /**
  * 한 건의 정책 리베이트와 근거(카드·행·구간). 그 통신사 카드가 없으면 KT 카드로 받친다(기존 동작 유지).
  * covered — 행과 구간을 찾았다(0원도 표의 답이다). 칸이 'X'(취급 안 함)면 rebate 0 · blocked true.
  */
-export function rebateDetail({ deviceId, planId, join = 'mnp', carrier = 'KT', card: given = null } = {}) {
+export function rebateDetail({ deviceId, planId, join = 'mnp', method = 'support', storage = null, carrier = 'KT', card: given = null } = {}) {
   const card = given ?? activeRebateCard(carrier) ?? activeRebateCard('KT')
   const plan = pricePlan(planId)
-  const group = cardGroup(card, deviceId)
-  const tier = plan ? cardTier(card, plan.monthly) : null
-  const v = group && tier ? group.values?.[tier.key]?.[card.joins.indexOf(join)] : undefined
+  const hit = cardMatch(card, deviceId, storage)
+  const group = hit?.g ?? null
+  const tier = plan && hit ? cardTier(hit.s, plan.monthly) : null
+  const v = group && tier ? cellOf(card, group, tier, join, method) : undefined
+  const split = Boolean(group && tier && !Array.isArray(group.values?.[tier.key]))
   return {
     rebate: v ?? 0,
-    device: group ? { key: group.key, label: group.label } : null,
+    device: group ? { key: group.key, label: group.label, storage: group.storage ?? null } : null,
     plan: tier ? { key: tier.key, name: tier.label } : null,
+    section: hit ? { key: hit.s.key, label: hit.s.label } : null,
     listed: Boolean(group && !group.fallback), // false = 대체 행('그외 5G')으로 떨어진 건
     covered: Boolean(group && tier),
     blocked: v === null,
+    methodLabel: split ? METHOD_LABEL[method] ?? null : null, // 표가 공통/선약을 나눌 때만
     joinLabel: REBATE_JOINS.find((j) => j.key === join)?.label ?? join,
     carrier: card?.carrier, cardName: card?.name, effectiveFrom: card?.effectiveFrom, cardId: card?.id,
   }
@@ -243,8 +268,8 @@ export const selfMarginOf = (db) => db?.policies?.selfMargin ?? SELF_MARGIN_DEFA
  * 리베이트에서 회사 고정 마진만 떼고 나머지를 고객 지원금으로.
  * 리베이트가 마진보다 작으면 지원금 0 · 마진도 리베이트까지만 — 마이너스 마진을 만들지 않는다.
  */
-export function selfSupport({ deviceId, planId, join, margin = SELF_MARGIN_DEFAULT, carrier = 'KT' } = {}) {
-  const rebate = rebateOf({ deviceId, planId, join, carrier: carrier ?? 'KT' })
+export function selfSupport({ deviceId, planId, join, margin = SELF_MARGIN_DEFAULT, carrier = 'KT', storage = null } = {}) {
+  const rebate = rebateOf({ deviceId, planId, join, carrier: carrier ?? 'KT', method: 'support', storage })
   const customer = Math.max(0, rebate - margin)
   return { rebate, margin: Math.min(margin, rebate), customer, short: rebate < margin }
 }

@@ -123,7 +123,7 @@ export function calcPhoneQuote({ deviceId = 'fold8', planId = 'choice110', join 
   const priced = card.state === 'covered'
 
   // 셀프개통 모드: 리베이트 − 고정 마진 = 고객 지원금. 가격표가 값을 주면 이 경로를 타지 않는다.
-  const policy = priced || policyMargin == null ? null : selfSupport({ deviceId, planId: plan.id, join, margin: policyMargin, carrier: carrier ?? 'KT' })
+  const policy = priced || policyMargin == null ? null : selfSupport({ deviceId, planId: plan.id, join, margin: policyMargin, carrier: carrier ?? 'KT', storage: st?.key ?? null })
   const publicSupport = priced ? Math.max(0, price - card.price) : (method === 'support' ? baseSupport : 0)
   const extraSupport = priced || method !== 'support' ? 0
     : policy ? policy.customer

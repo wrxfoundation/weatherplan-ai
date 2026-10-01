@@ -400,7 +400,7 @@ function reducer(db, action) {
         auditLog: log({
           actor: '본사 관리자', action: '리베이트 단가표 반영',
           target: cards.map((c) => `${c.carrier} ${c.code ?? ''}`.trim()).join(', '),
-          detail: `${action.file ?? ''} · ${cards.map((c) => `${c.effectiveFrom}~ ${c.groups.length}행×${c.tiers.length}구간`).join(' / ')}`,
+          detail: `${action.file ?? ''} · ${cards.map((c) => { const sec = c.sections ?? []; return `${c.effectiveFrom}~ ${sec.reduce((a, x) => a + x.groups.length, 0)}행×${sec.reduce((a, x) => a + x.tiers.length, 0)}구간` }).join(' / ')}`,
         }),
       }
     }

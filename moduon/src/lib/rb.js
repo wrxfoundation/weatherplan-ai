@@ -22,11 +22,12 @@ export const rbRateIdFor = ({ kind, deviceId, itemId, mvno }) =>
  * @param support 매장이 고객에게 얹어 주는 추가지원금(셀러 재량). 통신사 공시지원금은 여기 들어오면 안 된다 —
  *                그건 통신사가 내는 돈이라 R/B 와 무관하고, 넣으면 셀러 수당이 늘 0 으로 깎인다.
  */
-export function rbFor({ kind = 'phone', deviceId, itemId, mvno = false, join = 'mnp', support = 0, planId = null, viewer }) {
+export function rbFor({ kind = 'phone', deviceId, itemId, mvno = false, join = 'mnp', support = 0, planId = null, method = 'support', storage = null, viewer }) {
   const item = rateItem(rbRateIdFor({ kind, deviceId, itemId, mvno }))
   // 휴대폰(알뜰폰 제외)은 실제 수령한 통신사 정책 단가표를 쓴다 — 셀프개통 화면과 같은 숫자여야 한다.
   // 단가표에 없는 조합이면 0 이 되므로, 그때만 기존 데모 단가표로 받친다.
-  const card = kind === 'phone' && !mvno ? rebateDetail({ deviceId, planId, join }) : null
+  // 할인방식·용량 — 표가 공통/선약이나 용량별 행을 나누면 그 칸을 쓴다(나누지 않으면 무시된다)
+  const card = kind === 'phone' && !mvno ? rebateDetail({ deviceId, planId, join, method, storage }) : null
   const adj = kind === 'phone' ? (JOIN_ADJ[join] ?? 1) : 1
   // 단가표가 아는 요금제면 그 값이 곧 단가다 — 0 원도 단가표의 답이므로 데모 단가로 덮으면 안 된다.
   // 데모 단가표(commission)는 단가표가 모르는 요금제일 때만 받친다.

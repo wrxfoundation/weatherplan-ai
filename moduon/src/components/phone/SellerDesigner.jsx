@@ -53,7 +53,9 @@ export default function SellerDesigner({ viewer, initialDeviceId }) {
   }, [d.deviceId, d.planId, d.join, d.method, locked]) // eslint-disable-line react-hooks/exhaustive-deps
 
   // 수당 먼저 — 추가지원금은 내 수당 한도로 잘리고, 잘린 값으로 가격을 계산해야 두 칸 숫자가 맞는다
-  const rb = useMemo(() => rbFor({ kind: 'phone', deviceId: d.deviceId, join: d.join, support: Number(d.extraSupport) || 0, planId: d.planId, viewer }), [d.deviceId, d.join, d.extraSupport, d.planId, viewer])
+  // 용량 — 표에 용량별 행(예: 갤럭시S26 512G)이 있으면 그 행. 할인방식 — 표가 공통/선약을 나누면 그 칸
+  const storageKey = phoneDevice(d.deviceId).storages?.find((x) => x.key === d.storage)?.key ?? phoneDevice(d.deviceId).storages?.[0]?.key ?? null
+  const rb = useMemo(() => rbFor({ kind: 'phone', deviceId: d.deviceId, join: d.join, support: Number(d.extraSupport) || 0, planId: d.planId, method: d.method, storage: storageKey, viewer }), [d.deviceId, d.join, d.extraSupport, d.planId, d.method, storageKey, viewer])
   const q = useMemo(() => designPhoneQuote({ ...d, extraSupport: rb.customer }), [d, rb.customer])
   const clipped = (Number(d.extraSupport) || 0) > rb.customer
 
@@ -201,7 +203,7 @@ export default function SellerDesigner({ viewer, initialDeviceId }) {
         {/* ── 오른쪽: 수당(R/B) → 월 납부요금정보(A+B) ── */}
         <div className="flex min-w-0 flex-col gap-4 lg:sticky lg:top-[calc(var(--gnb-h,111px)+16px)]" data-t="seller-right">
           <div className="print:hidden" data-t="seller-rb">
-            <RbPanel kind="phone" deviceId={d.deviceId} join={d.join} support={rb.customer} planId={d.planId} compact />
+            <RbPanel kind="phone" deviceId={d.deviceId} join={d.join} support={rb.customer} planId={d.planId} method={d.method} storage={storageKey} compact />
           </div>
 
           <section className="rounded-card bg-white p-4 shadow-card sm:p-5" data-t="seller-summary">

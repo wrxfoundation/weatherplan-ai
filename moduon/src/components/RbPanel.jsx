@@ -8,12 +8,12 @@ import { rbFor } from '../lib/rb'
 import { won } from '../lib/engine'
 
 // compact — 판매자 설계 화면의 오른쪽 좁은 칸(월 납부요금정보 바로 위)에 얹을 때: 안내 문단을 한 줄로 줄인다
-export default function RbPanel({ kind = 'phone', deviceId, itemId, mvno = false, join = 'mnp', support = 0, planId = null, note, compact = false }) {
+export default function RbPanel({ kind = 'phone', deviceId, itemId, mvno = false, join = 'mnp', support = 0, planId = null, method = 'support', storage = null, note, compact = false }) {
   const { db } = useStore()
   const viewer = bizIdentity(db, getSession())
   if (!viewer) return null // 개인회원·비로그인 — R/B 자체를 노출하지 않는다
 
-  const rb = rbFor({ kind, deviceId, itemId, mvno, join, support, planId, viewer })
+  const rb = rbFor({ kind, deviceId, itemId, mvno, join, support, planId, method, storage, viewer })
 
   return (
     <section data-t="rb-panel" data-tier={viewer.tier} className="animate-rise rounded-card border border-bindigo/25 bg-bindigo/[0.04] p-4 sm:p-5">
@@ -43,7 +43,7 @@ export default function RbPanel({ kind = 'phone', deviceId, itemId, mvno = false
 
       <p className="mt-2.5 text-[11px] leading-[1.55] text-bfaint">
         {rb.card?.covered
-          ? `${rb.card.cardName} (${rb.card.effectiveFrom}~) · ${rb.card.device.label}${rb.card.listed ? '' : ' (단가표 미수록 → 그 외 적용)'} · ${rb.card.plan.name} · ${rb.joinLabel}`
+          ? `${rb.card.cardName} (${rb.card.effectiveFrom}~) · ${rb.card.device.label}${rb.card.listed ? '' : ' (단가표 미수록 → 그 외 적용)'} · ${rb.card.plan.name} · ${rb.joinLabel}${rb.card.methodLabel ? ` · ${rb.card.methodLabel}` : ''}`
           : `${rb.item.name} 기준${rb.joinLabel ? ` · ${rb.joinLabel}` : ''}${rb.adjusted ? ' (번호이동 단가 대비 조정 적용)' : ''}`}
         {' · '}최종 지급은 개통 확정 후 정산서로 확정됩니다.
         {note ? ` ${note}` : ''}

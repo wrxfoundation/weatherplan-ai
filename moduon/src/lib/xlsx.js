@@ -4,7 +4,8 @@
 // 압축 해제는 브라우저·Node 공통 DecompressionStream('deflate-raw') — 라이브러리를 들이지 않는다.
 // 못 읽는 것: .xls(구 바이너리)·암호 걸린 파일·zip64(4GB 초과). 셀 서식·수식은 보지 않고 저장된 값만 쓴다.
 //
-// 반환: { sheets: [{ name, hidden, cells: { G7: 36, D7: '갤럭시 Z플립 8', … }, merges: ['D7:F7', …] }] }
+// 반환: { sheets: [{ name, hidden, cells: { G7: 36, D7: '갤럭시 Z플립 8', … }, merges: ['D7:F7', …], formulas: { D7: 'AO7', … } }] }
+//   formulas — 수식 칸의 식(값은 엑셀이 저장해 둔 계산 결과). 이름 칸이 빈 칸을 참조해 0 이 된 경우를 알려 주는 데 쓴다.
 
 const td = new TextDecoder('utf-8')
 const u16 = (b, o) => b[o] | (b[o + 1] << 8)
@@ -84,11 +85,14 @@ export async function readXlsx(buf) {
     const path = target(attr(tag, 'r:id'))
     const xml = path ? await str(path) : null
     if (!xml) continue
-    const cells = {}
+    const cells = {}, formulas = {}
     for (const c of xml.matchAll(/<c\b([^>]*?)(?:\/>|>([\s\S]*?)<\/c>)/g)) {
       const a = ` ${c[1]}`, body = c[2] ?? ''
       const ref = attr(a, 'r'), t = attr(a, 't')
       if (!ref) continue
+      // 공유 수식의 자식 칸은 식 없이 <f t="shared" si="0"/> 만 있다 — 수식이라는 사실만 남긴다
+      const f = /<f\b[^>]*>([\s\S]*?)<\/f>/.exec(body)?.[1] ?? (/<f\b[^>]*\/>/.test(body) ? '(공유 수식)' : null)
+      if (f) formulas[ref] = decode(f)
       let v
       if (t === 'inlineStr') v = textOf(/<is\b[^>]*>([\s\S]*?)<\/is>/.exec(body)?.[1] ?? '')
       else {
@@ -103,7 +107,7 @@ export async function readXlsx(buf) {
       cells[ref] = v
     }
     const merges = [...xml.matchAll(/<mergeCell\b[^>]*\sref="([^"]+)"/g)].map((x) => x[1])
-    sheets.push({ name: attr(tag, 'name') ?? `시트${sheets.length + 1}`, hidden: /hidden/i.test(attr(tag, 'state') ?? ''), cells, merges })
+    sheets.push({ name: attr(tag, 'name') ?? `시트${sheets.length + 1}`, hidden: /hidden/i.test(attr(tag, 'state') ?? ''), cells, merges, formulas })
   }
   if (!sheets.length) throw new Error('읽을 수 있는 시트가 없습니다')
   return { sheets }
@@ -132,5 +136,6 @@ export function toGrid(sheet) {
     rows: maxR, cols: maxC,
     at: (r, c) => val.get(`${r},${c}`),
     origin: (r, c) => origin.get(`${r},${c}`) ?? `${colName(c)}${r}`,
+    formula: (r, c) => sheet.formulas?.[origin.get(`${r},${c}`) ?? `${colName(c)}${r}`] ?? null,
   }
 }
