@@ -3,7 +3,12 @@
 // 비공개 메모·약속은 덮어쓰지 않고 항목을 쌓는다 (감사로그 원칙).
 import { useMemo, useState } from "react";
 import Icon from "../icons";
-import { SERVICE_MENU } from "../../lib/requests";
+import { SERVICE_MENU, STATUS } from "../../lib/requests";
+import { useAppState } from "../../lib/state";
+import { visitReportOf } from "../../lib/live-household";
+import { LIVE_ELDER } from "../../lib/ops-health";
+import { RESULT_TONE } from "../../lib/visit-report";
+import { LiveToggle, useLiveView } from "./LiveToggle";
 import { Panel, PanelHead, Stat, Pill, Btn, Tabs, Table, KV, Field, Avatar, Note, Empty, Stamp } from "./ui";
 import { CONCIERGES, NOW, OUTING_REQUESTS, TODAY, TOGETHER_CLIENTS, TOGETHER_GO, daysBetween, elderOf, fmtDT, fmtRel } from "../../lib/ops-admin";
 
@@ -11,7 +16,103 @@ const TOGETHER_BASE = SERVICE_MENU.find((s) => s.no === 6);
 const OPERATOR = "김태영 (관제사)";
 const dayDiff = (dateStr) => daysBetween(NOW, Date.parse(`${dateStr}T09:00:00+09:00`));
 
+const KST = 9 * 3600 * 1000;
+const when = (t) => (t ? new Date(Number(t) + KST).toISOString().slice(5, 16).replace("T", " ") : "—");
+
+// 테스트 가구 1 의 함께해요 (2026-10-02 "남은 것도 다") — 가구 기록에서 바로 읽는다:
+//   요청      requests 중 '함께 해요' · '함께가요' (어르신 · 보호자 해주세요). 처리는 해주세요 관리에서
+//   정서 관찰  컨시어지 안심방문 '마음 7가지' — 확인 여부 · 컨시어지가 고른 상태 · 메모 그대로 (진단하지 않는다)
+//   최근 대화  마음사서함 · 안부 음성 (길이 · 보낸 사람만 — 녹음 파일은 베타에서 저장하지 않는다)
+function LiveTogether() {
+  const { state } = useAppState();
+  const asks = (state.requests || []).filter((r) => /함께/.test(r.type || ""));
+  const mind = visitReportOf(state).axes.find((a) => a.axis === "마음");
+  const voices = (state.voices || []).slice(0, 6);
+  const needsCheck = mind ? mind.items.filter((i) => i.grade === "주의").length : 0;
+  return (
+    <div className="space-y-4">
+      <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+        <Stat label="함께 해요 · 함께가요 요청" value={asks.length} unit="건" />
+        <Stat label="진행 중" value={asks.filter((r) => !["done", "cancelled", "rejected"].includes(r.status)).length} unit="건" tone="info" />
+        <Stat label="마음 7가지 확인" value={mind ? mind.items.filter((i) => i.done).length : 0} unit="/ 7" tone="ok" sub="컨시어지 안심방문 기록" />
+        <Stat label="추가 확인 필요" value={needsCheck} unit="항목" tone="warn" sub="컨시어지가 '주의'로 고른 마음 항목" />
+      </div>
+      <Panel>
+        <PanelHead title={`함께 해요 · 함께가요 요청 — ${LIVE_ELDER} 님`} sub="어르신 · 보호자가 해주세요에서 신청한 것 · 처리(확인 · 담당 · 완료)는 해주세요 관리에서 합니다" />
+        <div className="mt-3">
+          <Table
+            dense
+            rows={asks}
+            rowKey={(r) => r.id}
+            empty="아직 함께 해요 · 함께가요 요청이 없습니다 — 어르신 · 보호자 앱 해주세요에서 신청하면 여기에 뜹니다."
+            cols={[
+              { k: "at", label: "신청", render: (r) => <span className="whitespace-nowrap font-num text-[12px]">{when(r.history?.[0]?.at)}</span> },
+              { k: "type", label: "서비스", render: (r) => <b className="text-navy">{r.type}</b> },
+              { k: "from", label: "신청한 사람", render: (r) => (r.dir === "fromElder" ? "어르신" : r.dir === "fromGuardian" ? "보호자" : "컨시어지") },
+              { k: "detail", label: "내용", render: (r) => <span className="text-[12px] text-ink">{r.detail || "—"}</span> },
+              { k: "date", label: "희망일", render: (r) => <span className="font-num text-[12px]">{r.preferredDate || "—"}</span> },
+              { k: "status", label: "상태 · 담당", render: (r) => <span className="flex flex-wrap items-center gap-1"><Pill tone={r.status === "done" ? "ok" : r.status === "requested" ? "warn" : "info"}>{STATUS[r.status]?.label || r.status}</Pill><span className="text-[12px] text-muted">{r.assignee || "미배정"}</span></span> },
+            ]}
+          />
+        </div>
+      </Panel>
+      <div className="grid gap-4 xl:grid-cols-2">
+        <Panel>
+          <PanelHead title="정서 관찰 — 마음 7가지" sub="컨시어지 안심방문 기록 그대로 · 상태는 컨시어지가 고른 항목에만 · 진단하지 않습니다" />
+          <ul className="mt-2 divide-y divide-navy/[.06]">
+            {(mind?.items || []).map((i) => (
+              <li key={i.k} className="py-2">
+                <div className="flex items-center justify-between gap-2 text-[13px]">
+                  <span className="font-bold text-navy">{i.k}</span>
+                  {i.grade ? (
+                    <span className="rounded-full px-2 py-[1px] text-[11px] font-bold" style={{ background: RESULT_TONE[i.grade]?.bg, color: RESULT_TONE[i.grade]?.fg }}>{i.grade}</span>
+                  ) : (
+                    <Pill tone={i.done ? "ok" : "muted"}>{i.done ? "확인함" : "이번엔 보지 않음"}</Pill>
+                  )}
+                </div>
+                {i.note && <div className="mt-0.5 text-[12px] text-ink">{i.note}</div>}
+              </li>
+            ))}
+          </ul>
+        </Panel>
+        <Panel>
+          <PanelHead title="최근 대화 — 음성" sub="마음사서함 · 안부 음성 · 최근 6건 (전체는 커뮤니케이션)" />
+          {voices.length === 0 ? (
+            <div className="mt-3"><Empty>아직 주고받은 음성이 없습니다.</Empty></div>
+          ) : (
+            <ul className="mt-2 divide-y divide-navy/[.06]">
+              {voices.map((v) => (
+                <li key={v.id} className="flex items-center justify-between gap-2 py-2 text-[13px]">
+                  <span className="min-w-0 text-ink"><b className="text-navy">{v.from}</b> → {v.to} · {v.context || "음성"} · <span className="font-num">{Number(v.secs) || 0}초</span></span>
+                  <span className="shrink-0 font-num text-[12px] text-muted">{when(v.at)}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </Panel>
+      </div>
+      <Note>정서 관찰은 관찰 내용 · 컨시어지가 고른 상태만 기록합니다 — 진단 · 판단은 의료진과 전문기관의 몫입니다.</Note>
+    </div>
+  );
+}
+
 export default function TogetherMgmt() {
+  const { liveOn, view, setView } = useLiveView();
+  if (view === "real")
+    return (
+      <div className="space-y-4">
+        <div>
+          <h2 className="text-[22px] font-bold text-navy">함께해요 관리</h2>
+          <p className="mt-0.5 text-[13px] text-muted">말벗 · 산책 · 장보기 · 나들이 같은 관계형 서비스의 요청 · 정서 관찰 · 대화를 봅니다</p>
+        </div>
+        <LiveToggle view={view} onChange={setView} label="함께해요 보기" />
+        {liveOn ? <LiveTogether /> : <Note>테스트 계정으로 로그인하면 테스트 가구의 실제 기록이 여기에 뜹니다.</Note>}
+      </div>
+    );
+  return <DemoTogether toggle={<LiveToggle view={view} onChange={setView} label="함께해요 보기" />} />;
+}
+
+function DemoTogether({ toggle }) {
   const [clients, setClients] = useState(TOGETHER_CLIENTS);
   const [sel, setSel] = useState(TOGETHER_CLIENTS[0].elder);
   const [tab, setTab] = useState("rel");
@@ -67,6 +168,7 @@ export default function TogetherMgmt() {
         </div>
         <div className="text-[12px] text-muted">기준 {TODAY}</div>
       </div>
+      {toggle}
 
       <div className="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-5">
         <Stat label="활성 고객" value={stats.active} unit="명" active={filter === ""} onClick={() => setFilter("")} />

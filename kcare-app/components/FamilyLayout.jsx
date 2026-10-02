@@ -6,6 +6,7 @@ import { ELDER } from "../lib/mock";
 import { trackOf, honorific } from "../lib/tracks";
 import { useAppState } from "../lib/state";
 import Splash from "./Splash";
+import RoleGate from "./RoleGate";
 
 const TABS = [
   { href: "/family", label: "홈", icon: "home" },
@@ -32,7 +33,7 @@ export default function FamilyLayout({ children, title, action }) {
     track.id === "elder" ? honorific(state.onboarding) : `${track.short} · ${elderName}`;
 
   return (
-    <>
+    <RoleGate role="guardian" title="보호자">
       <Splash service="family" />
     <div className="min-h-screen bg-nav">
       <div className="relative mx-auto flex min-h-screen w-full max-w-[430px] flex-col bg-paper shadow-[0_0_60px_rgba(0,0,0,.45)]">
@@ -102,6 +103,6 @@ export default function FamilyLayout({ children, title, action }) {
         </nav>
       </div>
     </div>
-    </>
+    </RoleGate>
   );
 }

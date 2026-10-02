@@ -7,12 +7,14 @@
 import { STATUS } from "./requests";
 import { fmtWon } from "./config";
 import { LIVE_ELDER } from "./ops-health";
-import { VISITS, visitDetail } from "./ops-mgmt";
+import { VISITS, itemKeys, visitDetail } from "./ops-mgmt";
 import { checkupFor } from "./checkup";
 import { AI_REPORT } from "./mock";
 
 export const LIVE_TAG = "테스트 가구 1";
+export const NO_DEVICE_WATCH = "수신 안 함 (베타)";
 export const LIVE_GUARDIAN = "김민수";
+export const LIVE_CONCIERGE = "박지현";
 
 const KST = 9 * 3600 * 1000;
 const ymd = (t) => (t ? new Date(Number(t) + KST).toISOString().slice(0, 10) : null);
@@ -36,9 +38,13 @@ export function liveRequests(state) {
   }));
 }
 
+// 가입 상담을 마친 가구인지 — 마이 '결제 관리'에서 결제권한만 먼저 저장하면 onboarding 이 반쯤 생긴다.
+// 그걸 가입으로 보면 관제에 지어낸 '티어1 · 이용 중'이 뜬다 (2026-10-02 코드 점검). joinedAt 이 있어야 가입이다.
+export const signedUp = (state) => (state?.onboarding?.joinedAt ? state.onboarding : null);
+
 export function liveElder(e, state) {
   if (!e || e.name !== LIVE_ELDER) return e;
-  const ob = state?.onboarding || null;
+  const ob = signedUp(state);
   const elderPhone = ob ? String(ob.elderPhone || (ob.forSelf ? ob.phone : "") || "").trim() : "";
   const sos = state?.demo?.sos
     ? [{ no: "진행 중 (실제)", at: mdhm(state.demo.sosAt), cause: "어르신 SOS 버튼", result: state.ops?.sosDispatched ? "급파 지시됨 · 대응 중" : "관제 확인 중" }]
@@ -47,9 +53,14 @@ export function liveElder(e, state) {
     ...e,
     live: true,
     onboarded: !!ob,
+    // 테스트 가구에는 워치 · 센서가 없다 — 예시 기기의 '정상 수신 · 착용 중'과 건강 수치를 실제처럼 보이면 안 된다
+    watch: NO_DEVICE_WATCH,
+    devices: { watch: { model: "워치 없음 — 베타는 휴대폰 앱으로 테스트", id: "—", feed: "none", at: "—", battery: "—", worn: "—", threshold: "기본값 적용" }, sensors: [] },
+    trend: [],
     appliedName: ob?.elderName && ob.elderName !== e.name ? ob.elderName : null,
     requests: liveRequests(state),
-    sos: [...sos, ...(e.sos || [])],
+    // 예시 SOS 이력(09-01 심박 경보 등)을 실제 뒤에 붙이지 않는다 — 실제 가구에는 실제 SOS 만
+    sos,
   };
   if (!ob) return live;
   const guardianPhone = ob.forSelf ? "" : String(ob.phone || "").trim();
@@ -78,15 +89,33 @@ export function liveElder(e, state) {
 
 export function liveGuardian(g, state, account) {
   if (!g || g.name !== LIVE_GUARDIAN) return g;
-  const ob = state?.onboarding || null;
+  const ob = signedUp(state);
   const mine = (state?.requests || []).filter((r) => r.dir === "fromGuardian");
+  const vops = state?.visit?.ops || {};
+  const esc = state?.escort || {};
+  // 보호자에게 실제로 간 것 · 보호자가 실제로 보낸 것만 — 예시 연락 · 보고서 · 결제 이력은 쓰지 않는다 (2026-10-02 코드 점검)
+  const log = [
+    ...(state?.voices || []).filter((v) => v.from === "보호자").map((v) => ({ ts: v.at, at: mdhm(v.at), ch: "앱 음성", text: `안부 음성 ${Number(v.secs) || 0}초 → ${v.to}`, state: "sent" })),
+    ...(vops.sentTs ? [{ ts: vops.sentTs, at: mdhm(vops.sentTs), ch: "보고서", text: "안심방문 리포트 발송", state: vops.viewed === "열람 완료" ? "read" : "delivered" }] : []),
+    ...(esc.sentAt ? [{ ts: esc.sentAt, at: mdhm(esc.sentAt), ch: "보고서", text: "동행 리포트 전달", state: esc.viewedAt ? "read" : "delivered" }] : []),
+    ...(state?.payments || []).map((p) => ({ ts: p.at, at: mdhm(p.at), ch: "결제", text: `${p.orderName || "결제"} 승인`, state: "approved" })),
+  ].sort((a, b) => (b.ts || 0) - (a.ts || 0));
+  const reports = [
+    ...(vops.sentTs ? [{ at: mdhm(vops.sentTs), title: "안심방문 리포트", state: vops.viewed === "열람 완료" ? "read" : "delivered" }] : []),
+    ...(esc.sentAt ? [{ at: mdhm(esc.sentAt), title: "동행 리포트", state: esc.viewedAt ? "read" : "delivered" }] : []),
+  ];
   const base = {
     ...g,
     live: true,
     onboarded: !!ob,
-    // 마지막 접속 시각은 감사로그(로그인 기록)에 있다 — 여기서 데모 시각을 보여 주지 않는다
-    app: { state: account ? `테스트 계정 (${account}) · 접속 기록은 감사로그` : "테스트 계정", last: "—" },
-    requests: mine.length ? mine.map((r) => `${r.type} — ${STATUS[r.status]?.label || r.status}${r.assignee ? ` · 담당 ${r.assignee}` : ""}`) : g.requests,
+    app: { state: account ? `테스트 계정 (${account})` : "테스트 계정", last: "—" },
+    requests: mine.map((r) => `${r.type} — ${STATUS[r.status]?.label || r.status}${r.assignee ? ` · 담당 ${r.assignee}` : ""}`),
+    complaints: [],
+    log,
+    reports,
+    // 명부 '보고서' 칸 — 실제로 보낸 리포트의 열람 여부 (예시의 '오늘 열람'을 쓰지 않는다)
+    report: reports.length ? (reports.every((r) => r.state === "read") ? "열람" : "미열람") : "보낸 보고서 없음",
+    payments: (state?.payments || []).map((p) => ({ at: mdhm(p.at), item: p.orderName || "결제", amount: p.amount, state: "approved" })),
   };
   if (!ob || ob.forSelf) return base;
   const limit = Number(ob.limitAmount ?? 50000);
@@ -113,7 +142,10 @@ export function liveVisit(base, state) {
   const v = state?.visit || {};
   const plan = state?.visitPlan || {};
   const ops = v.ops || {};
-  const d = visitDetail({ ...base, status: "planned", followup: false });
+  const d0 = visitDetail({ ...base, status: "planned", followup: false });
+  // 거주 형태 — 컨시어지가 현장에서 고른 값 → 가입 상담 값 → 명부 값 순 (점검표와 같은 21항목을 세기 위해)
+  const loc = v.loc || state?.onboarding?.careLocation || d0.loc;
+  const d = loc === d0.loc ? d0 : { ...d0, loc, keys: itemKeys(loc) };
   const doneNames = new Set(Object.keys(v.checks || {}).map((k) => k.slice(k.indexOf("-") + 1)));
   const pending = d.keys.filter((k) => !doneNames.has(k));
   const gps = (v.audit || []).find((e) => e.kind === "gps");
@@ -123,7 +155,10 @@ export function liveVisit(base, state) {
   const active = !done && (!!v.checkedIn || !!checkinAt || doneNames.size > 0 || ["arrived", "recording"].includes(plan.status));
   const status = done ? "done" : active ? "active" : "planned";
   const followups = Array.isArray(ops.followups) ? ops.followups : [];
-  const notes = Object.entries(v.notes || {}).filter(([, t]) => t).map(([k, t]) => `${k.slice(k.indexOf("-") + 1)} — ${t}`);
+  // 항목 메모 · 상태 — 컨시어지가 적거나 고른 것만 (상태가 없으면 지어 붙이지 않는다)
+  const grades = v.grades || {};
+  const noteKeys = [...new Set([...Object.keys(v.notes || {}).filter((k) => (v.notes || {})[k]), ...Object.keys(grades)])];
+  const notes = noteKeys.map((k) => `${k.slice(k.indexOf("-") + 1)} — ${[grades[k], (v.notes || {})[k]].filter(Boolean).join(" · ")}`);
   return {
     ...d,
     live: true,
@@ -147,7 +182,16 @@ export function liveVisit(base, state) {
     interimAt: ops.interimAt || null,
     followups,
     followup: followups.length > 0,
-    memoLine: status === "planned" ? "컨시어지 체크인 전" : status === "active" ? `점검 ${d.keys.length - pending.length}/${d.keys.length}` : "리포트 도착 · 관제 검수",
+    memoLine:
+      status === "planned"
+        ? "컨시어지 체크인 전"
+        : status === "active"
+          ? `점검 ${d.keys.length - pending.length}/${d.keys.length}`
+          : ops.sentAt
+            ? "보호자 리포트 발송됨"
+            : ops.review === "검수 완료"
+              ? "검수 완료 · 발송 전"
+              : "리포트 도착 · 관제 검수",
   };
 }
 
@@ -157,8 +201,8 @@ export const visitOpsPatch = (p) => Object.fromEntries(Object.entries(p || {}).f
 
 // ── 보호자 안심방문 리포트 (2026-10-02 관제 연동 — "보호자 리포트도 연동") ──
 // 관제가 '보호자 리포트 발송'을 해야 보호자에게 열린다. 내용은 컨시어지 방문 기록 그대로 —
-// 21항목 중 확인한 것과 항목 메모 · 총평 · 사진 수 · 체크인 · 관제 검수 시각. 상태(양호 · 주의 …)나
-// 판정은 컨시어지가 매기지 않으므로 지어내지 않는다.
+// 21항목 중 확인한 것과 항목 메모 · 총평 · 사진 수 · 체크인 · 관제 검수 시각.
+// 항목 상태(양호 · 관찰 · 주의)는 컨시어지가 고른 항목에만 붙는다. 종합 판정은 만들지 않는다.
 export const STAGE_LABEL = {
   planned: "컨시어지 방문 전",
   active: "방문 중 — 점검하고 있습니다",
@@ -172,12 +216,14 @@ export function visitReportOf(state) {
   const ops = state?.visit?.ops || {};
   const checks = state?.visit?.checks || {};
   const notes = state?.visit?.notes || {};
+  const grades = state?.visit?.grades || {};
   const axes = checkupFor(v.loc).map((a) => ({
     axis: a.axis,
     icon: a.icon,
-    items: a.items.map((i) => ({ k: i.k, done: !!checks[`${a.axis}-${i.k}`], note: notes[`${a.axis}-${i.k}`] || "" })),
+    items: a.items.map((i) => ({ k: i.k, done: !!checks[`${a.axis}-${i.k}`], note: notes[`${a.axis}-${i.k}`] || "", grade: grades[`${a.axis}-${i.k}`] || "" })),
   }));
   const done = axes.reduce((n, a) => n + a.items.filter((i) => i.done).length, 0);
+  const gradeCounts = axes.flatMap((a) => a.items).reduce((m, i) => (i.grade ? { ...m, [i.grade]: (m[i.grade] || 0) + 1 } : m), {});
   const total = axes.reduce((n, a) => n + a.items.length, 0);
   const sent = !!ops.sentAt;
   const stage = sent ? "sent" : v.status === "done" ? (ops.review === "검수 완료" ? "ready" : "review") : v.status;
@@ -187,10 +233,12 @@ export function visitReportOf(state) {
     sent,
     client: LIVE_ELDER,
     visitedTs: gps?.at || state?.visitPlan?.gpsAt || (state?.reports || [])[0]?.at || null,
-    concierge: { pri: v.pair?.pri?.name || "박지현", sub: v.pair?.sub?.name || "—" },
+    // 실제로 앱을 쓰는 컨시어지는 박지현(테스트 컨시어지 계정) 한 사람 — 명부의 부 동행(예시)을 다녀간 사람처럼 적지 않는다
+    concierge: { pri: LIVE_CONCIERGE, sub: null },
     axes,
     done,
     total,
+    gradeCounts,
     photos: state?.visit?.photos || 0,
     memo: state?.visit?.memo || "",
     reportNote: v.reportNote,
@@ -198,5 +246,37 @@ export function visitReportOf(state) {
     sentAt: ops.sentAt || null,
     sentTs: ops.sentTs || null,
     viewed: ops.viewed === "열람 완료",
+  };
+}
+
+// ── 컨시어지 관리 (2026-10-02 "남은 것도 다") ──
+// 테스트 컨시어지 계정(test-concierge)이 앱에서 한 것으로 박지현 줄의 일부를 다시 만든다 —
+// 지금 상태(SOS 출동 · 방문 중), 오늘 일정(김순자 안심방문 · 맡은 해주세요), SOS 출동이력, 관제 연락.
+// 근무시간 · 피로도 · 자격 · 평가 · 위치는 앱이 모으지 않으므로 예시 그대로 두고 화면에 그렇다고 적는다.
+export function liveConcierge(c, state) {
+  if (!c || c.name !== LIVE_CONCIERGE) return c;
+  const base = VISITS.find((x) => x.name === LIVE_ELDER) || VISITS[0];
+  const v = liveVisit(base, state);
+  const sosOn = !!state?.demo?.sos;
+  const ops = state?.ops || {};
+  const status = sosOn && ops.sosAcceptedAt ? "SOS 출동 중" : sosOn && ops.sosDispatched ? "급파 수락 대기" : v.status === "active" ? "방문 중" : "기록 없음";
+  const asks = (state?.requests || []).filter((r) => r.assignee === LIVE_CONCIERGE && !["done", "cancelled", "rejected"].includes(r.status));
+  const today = [
+    { time: v.checkin?.at && v.checkin.at !== "—" ? v.checkin.at : "—", name: LIVE_ELDER, memo: `안심방문 · ${v.memoLine}`, role: "주", status: v.status },
+    ...asks.map((r) => ({ time: mdhm(r.history?.[0]?.at).slice(6), name: LIVE_ELDER, memo: `해주세요 · ${r.type} (${STATUS[r.status]?.label || r.status})`, role: "주", status: r.status === "inProgress" ? "active" : "planned" })),
+  ];
+  const sos = sosOn
+    ? [{ no: "진행 중 (실제)", at: mdhm(state.demo.sosAt), role: ops.sosAcceptedAt ? `주 · 급파 수락 ${hhmm(ops.sosAcceptedAt)}` : ops.sosDispatched ? "주 · 급파 지시됨 · 수락 대기" : "관제 확인 중 · 급파 전" }]
+    : [];
+  const msgs = (state?.opsMessages || []).filter((m) => m.role === "concierge");
+  return {
+    ...c,
+    live: true,
+    status,
+    today,
+    elders: c.elders.some((e) => e.name === LIVE_ELDER) ? c.elders : [{ name: LIVE_ELDER, age: "—", dong: state?.onboarding?.district || "—", risk: "—", role: "주" }, ...c.elders],
+    sos: [...sos, ...c.sos],
+    location: { text: v.checkin?.at && v.checkin.at !== "—" ? `${LIVE_ELDER} 님 댁 체크인 ${v.checkin.at} (GPS 체크인 기록) · 실시간 위치는 베타에서 받지 않습니다` : "실시간 위치는 베타에서 받지 않습니다 — 체크인 때 GPS 기록만 남습니다", at: v.checkin?.at || "—", feed: "none" },
+    opsMsgs: { total: msgs.length, open: msgs.filter((m) => !m.ackAt).length },
   };
 }

@@ -3,6 +3,8 @@
 import { useMemo, useState } from "react";
 import { Avatar, Btn, Empty, FeedPill, Note, Panel, PanelHead, Pill, SEV, SevBar, SevPill, Stamp, Stat, StatePill, TONE } from "./ui";
 import HealthDrawer from "./OpsDashboard/HealthDrawer";
+import LiveStrip from "./OpsDashboard/LiveStrip";
+import { useAuth } from "../../lib/auth";
 import { STEP_ORDER, useIncidents } from "../../lib/ops-sos";
 import { NORMAL_SAMPLE, OPS_TODAY, PRIORITY, SYSTEMS, SYSTEM_STATE, TILES, TOTAL_ELDERS, WATCH_LINKED } from "../../lib/ops-health";
 import { fmtClock, fmtDur, fmtElapsed, fmtTime, MIN, useNow } from "../../lib/ops-time";
@@ -29,7 +31,8 @@ function tileSub(k, n, ctx) {
 
 // opsCount: 운영현황 안 '지금 처리할 일' 건수 — 접혀 있어도 숫자는 보인다. opsOpen: 어르신 부탁·긴급 건이 있으면 펼친 채로 시작.
 // opsNote: 접혀 있어도 보여야 할 다른 대기 건 (예: 보호자 일정 승인 대기).
-export default function OpsDashboard({ onStartSos, onOpenSos, mapSlot, opsSlot, opsCount = null, opsOpen = false, opsNote = null }) {
+export default function OpsDashboard({ onStartSos, onOpenSos, onMenu, mapSlot, opsSlot, opsCount = null, opsOpen = false, opsNote = null }) {
+  const liveOn = !!useAuth().user?.household;
   const { open, start } = useIncidents();
   const now = useNow(1000);
   const [tile, setTile] = useState("all");
@@ -94,6 +97,8 @@ export default function OpsDashboard({ onStartSos, onOpenSos, mapSlot, opsSlot, 
           </>
         }
       />
+
+      {liveOn && <LiveStrip onMenu={onMenu} />}
 
       {/* 2-1 상단 통합현황 12타일 — 클릭하면 아래 명단이 그 조건으로 걸러진다 */}
       <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-6" role="group" aria-label="통합현황">

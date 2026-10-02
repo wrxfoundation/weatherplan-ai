@@ -3,6 +3,7 @@ import FamilyLayout from "../../components/FamilyLayout";
 import { Card, SectionLabel, PendingTag } from "../../components/ui";
 import Icon from "../../components/icons";
 import { FIT3_INFO, FIT3_METRICS } from "../../lib/mock";
+import { useAuth } from "../../lib/auth";
 
 // 워치 모니터링 상세 — 갤럭시 Fit3 8개 항목 (회의 초안 표 구현).
 // 정직 표기 원칙: "실시간"이 아니라 준실시간(5분 동기화) · 낙상 SOS 경로 명시.
@@ -13,6 +14,30 @@ const LEVEL = {
 };
 
 export default function WatchPage() {
+  // 테스트 가구에는 워치가 없다 — 예시 수치를 '착용 중 · 마지막 수신'으로 보여 주면 실제 기록처럼 읽힌다 (2026-10-02 UX 점검)
+  const live = !!useAuth().user?.household;
+  if (live)
+    return (
+      <>
+        <Head>
+          <title>워치 모니터링 — K-CARE</title>
+        </Head>
+        <FamilyLayout>
+          <Card className="p-[18px]">
+            <div className="flex items-center gap-2.5">
+              <Icon name="watch" size={22} strokeWidth={2} className="text-gold" />
+              <span className="text-[17px] font-black text-navy">워치 연결 안 함 · 베타</span>
+            </div>
+            <p className="mt-2.5 text-[14px] leading-[1.75] text-ink">
+              테스트 가구는 워치 · 센서 없이 휴대폰 앱으로만 테스트합니다. 수면 · 걸음 · 심박 같은 건강 수치는 받지 않습니다.
+            </p>
+            <p className="mt-2 text-[13px] leading-[1.7] text-muted">
+              대신 어르신 앱의 복약 체크 · SOS · 안부 음성은 실제로 이어집니다 — 홈 &lsquo;오늘&rsquo; 카드에서 보입니다.
+            </p>
+          </Card>
+        </FamilyLayout>
+      </>
+    );
   return (
     <>
       <Head>

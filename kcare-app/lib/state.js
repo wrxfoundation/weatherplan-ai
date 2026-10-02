@@ -83,7 +83,11 @@ const DEFAULT = {
   // 컨시어지 방문 수행 상태 + 감사 타임라인 (REQ-12 골격)
   // checks · notes · memo · photos — 21항목 점검 · 항목 메모 · 총평 · 사진 수. 관제 방문관리가 같은 값을 본다 (2026-10-02).
   // ops — 관제가 이 방문에 한 것 (검수 · 보호자 발송 · 중간 알림 · 후속조치).
-  visit: { checkedIn: false, kitDone: false, reportSent: false, audit: [], checks: {}, notes: {}, memo: "", photos: 0, ops: {} },
+  // grades — 항목 상태(양호 · 관찰 · 주의). 컨시어지가 고른 것만 있다 — 고르지 않은 항목에 상태를 지어 붙이지 않는다.
+  visit: { checkedIn: false, kitDone: false, reportSent: false, audit: [], checks: {}, notes: {}, grades: {}, memo: "", photos: 0, ops: {} },
+  // 병원 동행 기록 — 컨시어지 '동행 기록 저장' → '검수 확정 후 가족에게 전달' → 보호자 마이 '동행 리포트' (2026-10-02).
+  // 녹화 여부는 컨시어지가 직접 체크한 값 그대로다 (없는 영상을 있다고 하지 않는다).
+  escort: { note: "", photos: 0, recorded: false, by: "", savedAt: null, sentAt: null, viewedAt: null },
   // 관제 연락 — 컨시어지 '관제에 알리기'. 관제가 확인(·답장)하면 컨시어지 화면에 그대로 보인다 (2026-10-02).
   opsMessages: [],
   kit: INITIAL_KIT,
@@ -114,8 +118,11 @@ const DEFAULT = {
 // 테스트 가구의 첫 상태 — 구성(방문 흐름 · 키트 · 우선 날씨)은 두고 기록(일정 · 요청 · 주문 · 결제 ·
 // 음성 · 리포트 · 알림)은 비운다. 화면에 뜨는 기록이 전부 테스트하는 사람이 만든 것이 되게.
 export function freshState() {
+  // 방문 업무흐름 씨앗의 날짜(2026-08-22)는 이미 지난 날이라 테스트 가구에서는 '일주일 뒤 14:00'으로 다시 잡는다 (2026-10-02 UX 점검)
+  const ymd = new Date(Date.now() + 7 * 86400000 + 9 * 3600000).toISOString().slice(0, 10);
   return {
     ...DEFAULT,
+    visitPlan: { ...SEED_VISIT, id: `vs-${ymd}`, at: `${ymd} 14:00`, trail: [{ at: Date.now(), status: "draft", note: "월 정기 안심방문", actor: "박지현" }] },
     // AI 이상 징후 카드는 센서가 없는 테스트 가구에서 지어낸 알림이 된다 — 닫아 둔다
     // (보호자 화면 아래 데모 조작으로 다시 띄울 수 있다)
     demo: { ...DEFAULT.demo, anomaly: "dismissed" },
@@ -192,8 +199,10 @@ function reducer(state, action) {
           audit: arr(p.visit && p.visit.audit, state.visit.audit),
           checks: obj(p.visit && p.visit.checks, state.visit.checks),
           notes: obj(p.visit && p.visit.notes, state.visit.notes),
+          grades: obj(p.visit && p.visit.grades, state.visit.grades),
           ops: obj(p.visit && p.visit.ops, state.visit.ops),
         },
+        escort: { ...state.escort, ...obj(p.escort, {}) },
         opsMessages: arr(p.opsMessages, state.opsMessages),
         ticker: arr(p.ticker, state.ticker),
         events: rebaseSeedEvents(arr(p.events, state.events)),
@@ -228,8 +237,16 @@ function reducer(state, action) {
       };
     case "setPriority":
       return { ...state, priority: { ...action.payload, setAt: nowOf(action) } };
-    case "addReport":
-      return { ...state, reports: [{ ...action.payload, at: nowOf(action) }, ...state.reports] };
+    // closesVisit — 컨시어지 '검수 확정 후 가족에게 전달'. 오늘 방문의 리포트를 냈다는 표시(visit.reportSent)도 같이 켠다
+    // (오늘 탭 '마무리 필요'가 이 값을 본다. 전에는 켜는 곳이 없어서 리포트를 내도 '마무리 필요'가 남았다).
+    case "addReport": {
+      const { closesVisit, ...report } = action.payload || {};
+      return {
+        ...state,
+        reports: [{ ...report, at: nowOf(action) }, ...state.reports],
+        visit: closesVisit ? { ...state.visit, reportSent: true } : state.visit,
+      };
+    }
     case "addRequest":
       return { ...state, requests: [action.payload, ...state.requests] };
     case "transitionRequest":
@@ -248,8 +265,16 @@ function reducer(state, action) {
           r.id === action.id ? { ...r, assignee: String(action.assignee || "") } : r
         ),
       };
-    case "demo":
-      return { ...state, demo: { ...state.demo, ...action.payload } };
+    // 새 SOS 가 켜지면 지난 SOS 의 급파 · 119 · 수락 표시를 지운다 — 남아 있으면 새 SOS 가 처음부터 '급파 · 수락됨'으로 보인다
+    case "demo": {
+      const p = action.payload || {};
+      const freshSos = p.sos === true && !state.demo.sos;
+      return {
+        ...state,
+        demo: { ...state.demo, ...p },
+        ops: freshSos ? { ...state.ops, sosDispatched: false, sos119: false, sosAcceptedAt: null, sosAcceptedBy: "" } : state.ops,
+      };
+    }
     case "elderPatch":
       return { ...state, elder: { ...state.elder, ...action.patch } };
     // 오늘 복약 체크 · 건기식 재구매 — 되돌리지 않는다 (06 §5). 키만 켜 준다.
@@ -270,12 +295,17 @@ function reducer(state, action) {
         ].slice(0, 40),
       };
     case "ackSos":
-      // SOS 해제 — 관제 전용. 급파·연계 플래그도 함께 초기화
+      // SOS 해제 — 관제 전용. 급파·연계 · 컨시어지 수락 플래그도 함께 초기화
       return {
         ...state,
         demo: { ...state.demo, sos: false },
-        ops: { ...state.ops, sosDispatched: false, sos119: false },
+        ops: { ...state.ops, sosDispatched: false, sos119: false, sosAcceptedAt: null, sosAcceptedBy: "" },
       };
+    // 컨시어지가 급파를 수락했다 — 관제 SOS 대응과 컨시어지 관리에 같은 시각이 뜬다 (한 번만).
+    // 전에는 컨시어지 화면 안에서만 기억해서, 새로고침하면 다시 '수락' 버튼이 떴고 관제는 티커로만 알았다.
+    case "sosAccept":
+      if (!state.demo.sos || state.ops.sosAcceptedAt) return state;
+      return { ...state, ops: { ...state.ops, sosAcceptedAt: nowOf(action), sosAcceptedBy: String(action.by || "") } };
     case "audit":
       return {
         ...state,
@@ -297,8 +327,43 @@ function reducer(state, action) {
       return action.key
         ? { ...state, visit: { ...state.visit, notes: { ...(state.visit.notes || {}), [action.key]: String(action.text || "") } } }
         : { ...state, visit: { ...state.visit, memo: String(action.text || "") } };
+    // 항목 상태 — 컨시어지가 직접 고른다. 상태를 고르면 그 항목은 본 것이므로 점검도 같이 켠다. 빈 값이면 지운다.
+    case "visitGrade": {
+      const grades = { ...(state.visit.grades || {}) };
+      const checks = { ...(state.visit.checks || {}) };
+      if (action.grade) {
+        grades[action.key] = String(action.grade);
+        if (!checks[action.key]) checks[action.key] = { at: nowOf(action) };
+      } else delete grades[action.key];
+      return { ...state, visit: { ...state.visit, grades, checks } };
+    }
     case "visitPhoto":
       return { ...state, visit: { ...state.visit, photos: (state.visit.photos || 0) + 1 } };
+    // 거주 형태(자택 · 요양병원) — 컨시어지 점검표와 관제 방문관리 · 보호자 리포트가 같은 21항목을 쓰게 가구 기록에 둔다
+    case "visitLoc":
+      return action.loc === "home" || action.loc === "hospital" ? { ...state, visit: { ...state.visit, loc: action.loc } } : state;
+    // 동행 기록 — 저장 한 번 (보낸 뒤에는 고치지 않는다 — 보호자가 본 것과 기록이 달라지면 안 된다)
+    case "escortSave": {
+      if (state.escort?.sentAt) return state;
+      const p = action.payload || {};
+      return {
+        ...state,
+        escort: {
+          ...state.escort,
+          note: String(p.note || ""),
+          photos: Math.max(0, Number(p.photos) || 0),
+          recorded: !!p.recorded,
+          by: String(p.by || ""),
+          savedAt: nowOf(action),
+        },
+      };
+    }
+    case "escortSend":
+      if (state.escort?.sentAt) return state;
+      return { ...state, escort: { ...state.escort, sentAt: nowOf(action) } };
+    case "escortViewed":
+      if (!state.escort?.sentAt || state.escort.viewedAt) return state;
+      return { ...state, escort: { ...state.escort, viewedAt: nowOf(action) } };
     // 관제가 이 방문에 한 것 — 검수 · 보호자 발송 · 중간 알림 · 후속조치 (관제 방문관리 상세)
     case "visitOps":
       return { ...state, visit: { ...state.visit, ops: { ...(state.visit.ops || {}), ...(action.patch || {}) } } };
@@ -712,10 +777,13 @@ export function AppStateProvider({ children }) {
       const idle = Date.now() - lastActiveRef.current > ACTIVE_WINDOW_MS;
       if (!force && idle && Date.now() - lastPoll < POLL_IDLE_MS) return;
       lastPoll = Date.now();
+      // 읽는 동안 내 저장이 끝나 버전이 올라갔으면 이 응답은 그보다 옛것이다 — 버린다.
+      // 받으면 화면이 잠깐 내 동작 전으로 돌아가고 버전도 뒤로 간다 (2026-10-02 코드 점검).
+      const askedAt = versionRef.current;
       try {
-        const res = await fetch(`/api/household?v=${versionRef.current}`, { cache: "no-store" });
+        const res = await fetch(`/api/household?v=${askedAt}`, { cache: "no-store" });
         const j = await res.json().catch(() => ({}));
-        if (stopped) return;
+        if (stopped || versionRef.current !== askedAt) return;
         if (!res.ok) {
           if (res.status === 401) setSync((s) => ({ ...s, status: "error", error: "login-required" }));
           return;

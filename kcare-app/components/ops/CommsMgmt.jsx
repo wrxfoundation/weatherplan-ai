@@ -5,8 +5,8 @@ import { useMemo, useState } from "react";
 import Icon from "../icons";
 import { Panel, PanelHead, Stat, Pill, Btn, Tabs, Table, Avatar, Note, Empty, SevBar, Field } from "./ui";
 import { COMMS, COMM_CHANNELS, COMM_STATUS, ELDERS, NOW, TODAY, daysBetween, elderOf, fmtDT, fmtRel } from "../../lib/ops-admin";
-import { useAuth } from "../../lib/auth";
 import LiveComms from "./LiveComms";
+import { LiveToggle, useLiveView } from "./LiveToggle";
 
 const HOUR = 3600000;
 const isToday = (ts) => fmtRel(ts).startsWith("오늘");
@@ -33,18 +33,8 @@ function buildFollowups(items) {
 // 테스트 계정으로 들어오면 '실제 기록 (테스트 가구 1)'이 기본 — 가구 기록의 음성 · 관제 연락 · 어르신 부탁 (LiveComms).
 // '예시 기록'은 요청서 시안용 데모 그대로 (2026-10-02).
 export default function CommsMgmt() {
-  const liveOn = !!useAuth().user?.household;
-  const [mode, setMode] = useState(null);
-  const view = mode || (liveOn ? "real" : "demo");
-  const toggle = (
-    <div className="flex flex-wrap items-center gap-2" role="group" aria-label="연락 보기">
-      {[["real", "실제 기록 (테스트 가구 1)"], ["demo", "예시 기록"]].map(([k, label]) => (
-        <button key={k} type="button" aria-pressed={view === k} onClick={() => setMode(k)} className="btn-press rounded-full px-3.5 py-1.5 text-[12px] font-bold" style={view === k ? { background: "#0A1F3C", color: "#fff" } : { background: "rgba(10,31,60,.06)", color: "#5C5A54" }}>
-          {label}
-        </button>
-      ))}
-    </div>
-  );
+  const { liveOn, view, setView } = useLiveView();
+  const toggle = <LiveToggle view={view} onChange={setView} label="연락 보기" />;
   if (view === "demo") return <div className="space-y-3">{toggle}<DemoComms /></div>;
   return (
     <div className="space-y-4">

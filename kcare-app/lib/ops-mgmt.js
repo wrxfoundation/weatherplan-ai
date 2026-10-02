@@ -142,7 +142,7 @@ export function visitDetail(v) {
 // ── 어르신 관리 (7절) ─────────────────────────────────────────────────
 export const ELDER_TABS = ["기본정보", "건강·질환", "보호자", "담당 컨시어지", "워치·센서", "건강 변화", "방문관리", "해주세요", "함께해요", "SOS·이상징후", "복지혜택", "동의서·서류", "상담·관제메모", "수정이력"];
 export const SERVICE_STATE = { active: { label: "이용 중", tone: "ok" }, paused: { label: "일시중지", tone: "warn" }, ended: { label: "종료", tone: "muted" } };
-export const feedOf = (watch) => (watch === "정상 수신" ? "live" : watch.includes("미착용") ? "unworn" : watch.includes("배터리") ? "battery" : "stale");
+export const feedOf = (watch) => (watch === "정상 수신" ? "live" : watch.includes("베타") ? "none" : watch.includes("미착용") ? "unworn" : watch.includes("배터리") ? "battery" : "stale");
 export const sevOf = (risk) => ({ 높음: "danger", 중간: "warn", 낮음: "ok" }[risk] || "ok");
 
 const KIMSJ = {

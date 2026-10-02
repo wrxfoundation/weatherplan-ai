@@ -8,6 +8,9 @@ import { ROSTERS } from "../../lib/rosters";
 import { VISIT_STATE, logEntry, sevOf, TODAY } from "../../lib/ops-mgmt";
 import { STAFF_TABS, STAFF_TONE, STAFF_STATS, conciergeDetail, fatigueTone, fatigueLabel, certNear } from "../../lib/ops-mgmt-people";
 import { EditDrawer, HistoryTable } from "./mgmt/EditLog";
+import { useAuth } from "../../lib/auth";
+import { useAppState } from "../../lib/state";
+import { LIVE_TAG, liveConcierge } from "../../lib/live-household";
 
 const BRANCHES = [...new Set(ROSTERS.concierges.rows.map((r) => r[1]))];
 const REGIONS = [...new Set(ROSTERS.concierges.rows.map((r) => r[3]))];
@@ -15,7 +18,10 @@ const ROLES = ["주 담당", "부 담당", "주·부 겸용"];
 const CONTRACTS = ["정규직", "수습 계약 (3개월)", "계약직", "사전 배치 계약"];
 const F = { branch: "전체 지점", role: "역할", status: "근무상태", region: "담당권역", cert: "자격상태" };
 const hasNear = (c) => c.certs.some(certNear);
-const rank = (c) => (c.status === "휴식 권고" ? 0 : hasNear(c) ? 1 : c.status === "짝 대기" ? 2 : c.status === "동행 중" ? 3 : c.status === "가용" ? 4 : 5);
+const rank = (c) => (c.live ? -1 : c.status === "휴식 권고" ? 0 : hasNear(c) ? 1 : c.status === "짝 대기" ? 2 : c.status === "동행 중" ? 3 : c.status === "가용" ? 4 : 5);
+// 테스트 컨시어지 줄의 상태 — SOS 출동은 위험 신호라 빨강, 나머지는 운영 상태
+const LIVE_TONE = { "SOS 출동 중": "danger", "급파 수락 대기": "warn", "방문 중": "info", "기록 없음": "muted" };
+const toneOf = (s) => STAFF_TONE[s] || LIVE_TONE[s] || "muted";
 const yn = (b) => (b ? "예" : "아니오");
 const EMPTY_FORM = { name: "", branch: BRANCHES[0], region: REGIONS[0], workDays: "월–금 09:00–18:00", vehicle: false, drive: true, role: ROLES[1], emergency: false, cert: "BLS 응급교육", certUntil: "", training: "노인돌봄 기본교육", contract: CONTRACTS[1], active: true, leave: "" };
 
@@ -46,7 +52,11 @@ function Fatigue({ pct }) {
 }
 
 export default function ConciergeMgmt({ openProfile }) {
-  const [rows, setRows] = useState(() => ROSTERS.concierges.rows.map(conciergeDetail));
+  const [baseRows, setRows] = useState(() => ROSTERS.concierges.rows.map(conciergeDetail));
+  // 테스트 계정이면 박지현 줄에 테스트 컨시어지가 앱에서 한 것을 덮는다 (2026-10-02)
+  const liveOn = !!useAuth().user?.household;
+  const { state } = useAppState();
+  const rows = liveOn ? baseRows.map((c) => liveConcierge(c, state)) : baseRows;
   const [sel, setSel] = useState("박지현");
   const [tab, setTab] = useState("근무현황");
   const [q, setQ] = useState("");
@@ -82,10 +92,10 @@ export default function ConciergeMgmt({ openProfile }) {
     .sort((a, b) => rank(a) - rank(b) || a.name.localeCompare(b.name));
 
   const cols = [
-    { k: "name", label: "이름", render: (c) => <span className="flex items-center gap-2"><Avatar name={c.name} size={30} /><span className="font-bold text-navy">{c.name}</span></span> },
+    { k: "name", label: "이름", render: (c) => <span className="flex items-center gap-2"><Avatar name={c.name} size={30} /><span className="font-bold text-navy">{c.name}</span>{c.live && <Pill tone="gold">실제</Pill>}</span> },
     { k: "role", label: "역할 · 권역", render: (c) => <>{c.roleType} · {c.region}{/수습/.test(c.role) && <Pill tone="muted" className="ml-1">수습</Pill>}</> },
-    { k: "status", label: "현재상태", render: (c) => <Pill tone={STAFF_TONE[c.status] || "muted"} dot>{c.status}</Pill> },
-    { k: "today", label: "오늘 일정", render: (c) => <span className="font-num">{c.jobs} · {c.hours}h</span> },
+    { k: "status", label: "현재상태", render: (c) => <Pill tone={toneOf(c.status)} dot>{c.status}</Pill> },
+    { k: "today", label: "오늘 일정", render: (c) => <span className="font-num">{c.live ? `${c.today.length}건 (실제)` : `${c.jobs} · ${c.hours}h`}</span> },
     { k: "fatigue", label: "피로도", render: (c) => <Fatigue pct={c.fatigue} /> },
     { k: "cert", label: "자격 · 특이", render: (c) => <span className={hasNear(c) ? "font-bold text-gold" : "text-ink"}>{c.cert}</span> },
   ];
@@ -259,7 +269,7 @@ export default function ConciergeMgmt({ openProfile }) {
             <span className="text-[12px] text-muted">휴식 권고 · 자격 임박 · 짝 대기 우선</span>
           </div>
           <div className="mt-2"><Table cols={cols} rows={list} onRow={(c) => setSel(c.name)} rowKey={(c) => c.name} selected={cur?.name} /></div>
-          <div className="mt-2 text-right font-num text-[11px] text-muted">1–{list.length} / {STAFF_STATS.total}명</div>
+          <div className="mt-2 text-right font-num text-[11px] text-muted">1–{list.length} / {STAFF_STATS.total}명{liveOn ? " · 박지현 외 명부는 예시" : ""}</div>
         </Panel>
 
         {cur && (
@@ -269,7 +279,8 @@ export default function ConciergeMgmt({ openProfile }) {
               <div className="min-w-0 flex-1">
                 <div className="flex flex-wrap items-center gap-2">
                   <h2 className="text-[17px] font-bold text-navy">{cur.name} 컨시어지</h2>
-                  <Pill tone={STAFF_TONE[cur.status] || "muted"} dot>{cur.status}</Pill>
+                  <Pill tone={toneOf(cur.status)} dot>{cur.status}</Pill>
+                  {cur.live && <Pill tone="gold">{LIVE_TAG}</Pill>}
                   {cur.emergency && <Pill tone="gold">긴급출동 가능</Pill>}
                 </div>
                 <div className="mt-0.5 text-[12px] text-muted">{cur.branch} · {cur.roleType} · 평점 <span className="font-num">{cur.rating}</span> · {cur.cert}</div>
@@ -279,6 +290,14 @@ export default function ConciergeMgmt({ openProfile }) {
                 <Btn small ghost tone={cur.account === "활성" ? "muted" : "ok"} onClick={() => setConfirm({ reason: "" })}>{cur.account === "활성" ? "계정 비활성화" : "계정 활성화"}</Btn>
               </div>
             </div>
+            {cur.live && (
+              <div className="mt-3">
+                <Note tone="info">
+                  테스트 컨시어지 계정(test-concierge)의 실제 기록 — 현재상태 · 오늘 일정 · 위치(체크인) · SOS 출동이력 · 관제 연락 {cur.opsMsgs.total}건
+                  {cur.opsMsgs.open ? ` (확인 전 ${cur.opsMsgs.open}건)` : ""}. 근무시간 · 피로도 · 자격 · 평가 · 연락처는 앱이 모으지 않는 값이라 예시입니다.
+                </Note>
+              </div>
+            )}
             <Tabs className="mt-3" tabs={STAFF_TABS.map((t) => [t, t, t === "담당고객" ? cur.elders.length : undefined])} value={tab} onChange={setTab} />
             <div className="mt-3">{renderTab()}</div>
           </Panel>

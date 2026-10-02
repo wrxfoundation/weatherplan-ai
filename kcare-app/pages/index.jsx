@@ -4,7 +4,10 @@ import Link from "next/link";
 import { useState } from "react";
 import { storageText, useAppState, useSync } from "../lib/state";
 import { AUTH_ENABLED, useAuth } from "../lib/auth";
-import { householdName } from "../lib/test-accounts";
+import { ROLE_HOME, ROLE_LABEL, householdName } from "../lib/test-accounts";
+
+// 테스트 계정은 자기 역할 화면만 연다 (components/RoleGate.jsx) — 허브에서도 다른 역할 화면 버튼은 뺀다
+const GATED = { "/family": "guardian", "/elder": "elder", "/concierge": "concierge", "/sales": "sales", "/dispatch": "ops", "/onboarding": "guardian" };
 
 // 데모 홈 = 시연 허브 — 6단계 시연 동선(슬라이드와 동일) + 라이브 데모 상태 + 원탭 초기화.
 // KO/EN 토글은 허브 한정 (해외 이해관계자 배석 대비) — 앱 본문은 한국어 단일.
@@ -26,6 +29,9 @@ const T = {
     modeLoginSub: "실제 저장",
     modeTest: "테스트 계정",
     modeAccount: "계정 · 로그아웃",
+    myScreen: (r) => `내 화면으로 — ${r}`,
+    acctState: "테스트 가구 상태",
+    acctGuide: "테스트 순서는 'K-CARE 베타테스트 안내'를 따릅니다 — 폰 하나에 계정 하나. 다른 역할 화면은 그 역할 계정으로 들어갑니다.",
     flowTitle: "시연 동선 — 15분 데모 가이드",
     flowHint: "순서대로 클릭 · 하나의 케어 루프",
     closing: "클로징 3원칙 — 구조가 해자 (동의 · 접근 기록 전면 공개) · 사람이 최종 판단 (L4) · 케어가 지표 (판매액 없는 평가)",
@@ -60,6 +66,9 @@ const T = {
     modeLoginSub: "real storage",
     modeTest: "Test account",
     modeAccount: "Account · sign out",
+    myScreen: (r) => `Go to my screen — ${r}`,
+    acctState: "TEST HOUSEHOLD",
+    acctGuide: "Follow the beta test guide — one account per device. Other role screens open with that role's account.",
     flowTitle: "Demo flow — 15-minute guide",
     flowHint: "Click in order · one care loop",
     closing: "Closing principles — Trust is the moat (consent & access log fully disclosed) · Humans make the final call (L4) · Care is the metric (no sales-based evaluation)",
@@ -166,12 +175,22 @@ export default function Home() {
                     {storageText(sync)}
                   </span>
                 </div>
-                <Link
-                  href="/login"
-                  className="btn-press inline-flex items-center justify-center rounded-xl border border-white/30 px-4 py-2.5 text-[14px] font-bold text-white/90 sm:ml-auto sm:shrink-0"
-                >
-                  {t.modeAccount}
-                </Link>
+                <div className="flex flex-col gap-2 sm:ml-auto sm:shrink-0 sm:flex-row">
+                  {ROLE_HOME[auth.user.role] && (
+                    <Link
+                      href={ROLE_HOME[auth.user.role]}
+                      className="btn-press inline-flex items-center justify-center rounded-xl bg-green px-5 py-2.5 text-[15px] font-bold text-white shadow-[0_6px_18px_rgba(30,122,90,.35)]"
+                    >
+                      {t.myScreen(ROLE_LABEL[auth.user.role])} <span aria-hidden className="ml-1">→</span>
+                    </Link>
+                  )}
+                  <Link
+                    href="/login"
+                    className="btn-press inline-flex items-center justify-center rounded-xl border border-white/30 px-4 py-2.5 text-[14px] font-bold text-white/90"
+                  >
+                    {t.modeAccount}
+                  </Link>
+                </div>
               </>
             ) : (
               <>
@@ -210,7 +229,7 @@ export default function Home() {
 
           {/* 라이브 데모 상태 + 초기화 */}
           <div className="mt-6 flex flex-wrap items-center gap-2">
-            <span className="text-[12px] font-bold tracking-[.12em] text-white/40">{t.demoState}</span>
+            <span className="text-[12px] font-bold tracking-[.12em] text-white/40">{account ? t.acctState : t.demoState}</span>
             {live.length === 0 && (
               <span className="rounded-full bg-white/10 px-3 py-1 text-[12px] font-bold text-white/60">{t.idle}</span>
             )}
@@ -231,7 +250,11 @@ export default function Home() {
             </button>
           </div>
 
-          {/* 시연 동선 6단계 — 슬라이드와 동일한 순서 */}
+          {/* 시연 동선 6단계 — 슬라이드와 동일한 순서. 테스트 계정에서는 숨긴다 — '시연 컨트롤로 SOS 발생'처럼
+              데모에서만 되는 순서라 테스트 가구에 그대로 하면 모든 폰에 가짜 기록이 남는다 (2026-10-02 UX 점검) */}
+          {account ? (
+            <p className="mt-6 rounded-2xl border border-white/10 bg-white/[.04] p-4 text-[13px] leading-[1.7] text-white/70">{t.acctGuide}</p>
+          ) : (
           <div className="mt-6 rounded-2xl border border-white/10 bg-white/[.04] p-5">
             <div className="flex items-baseline justify-between">
               <h2 className="text-[16px] font-bold text-white">{t.flowTitle}</h2>
@@ -258,16 +281,19 @@ export default function Home() {
             </div>
             <p className="mt-4 border-t border-white/10 pt-3 text-[11px] leading-[1.7] text-white/40">{t.closing}</p>
           </div>
+          )}
 
           {/* 역할 바로가기 + 온보딩 */}
           <div className="mt-6 grid gap-3 sm:grid-cols-3">
+            {(!account || auth.user.role === "guardian") && (
             <Link
               href="/onboarding"
               className="btn-press block rounded-2xl bg-gold py-3.5 text-center text-[15px] font-bold text-nav shadow-[inset_0_1px_0_rgba(255,255,255,.35)]"
             >
               {joined ? t.rejoin : t.join}
             </Link>
-            {t.roles.map(([href, label]) => (
+            )}
+            {t.roles.filter(([href]) => !account || !GATED[href] || GATED[href] === auth.user.role).map(([href, label]) => (
               <Link
                 key={href}
                 href={href}

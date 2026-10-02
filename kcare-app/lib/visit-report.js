@@ -111,3 +111,8 @@ export function countStates(items) {
 
 export const ALL_ITEMS = VISIT_REPORT.axes.flatMap((a) => a.items);
 export const STATE_ORDER = ["양호", "주의", "관찰", "위험"];
+
+// 컨시어지가 현장에서 항목마다 고르는 상태 (2026-10-02 — 테스트 가구 실제 리포트).
+// 위험은 넣지 않는다 — 위험해 보이면 상태를 적을 때가 아니라 '관제에 알리기' · SOS 로 바로 알린다
+// (빨강은 위험 신호 전용 — 리포트 칸에 빨강을 쓰지 않는다). 고르지 않으면 상태 없이 '확인함'만 남는다.
+export const VISIT_GRADES = ["양호", "관찰", "주의"];

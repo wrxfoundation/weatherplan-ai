@@ -35,7 +35,7 @@ const phoneOf = (name) => {
   return p && p !== "—" ? p : demoTel(name);
 };
 const build = (row) => ({ ...elderDetail(row), phone: phoneOf(row[0]), guardians: guardiansOf(row[0]) });
-const VIEWS = { all: () => true, risk: (e) => e.risk === "높음", watch: (e) => e.watch !== "정상 수신", nosub: (e) => e.sub === "—", paused: (e) => e.service.state !== "active" };
+const VIEWS = { all: () => true, risk: (e) => e.risk === "높음", watch: (e) => e.watch !== "정상 수신" && !e.live, nosub: (e) => e.sub === "—", paused: (e) => e.service.state !== "active" };
 const VIEW_LABEL = { all: "전체", risk: "위험 높음", watch: "워치 이상", nosub: "부 담당 없음", paused: "일시중지 · 종료" };
 const EMPTY_FORM = { name: "", sex: "여", born: "1948", loc: "자택", dong: "", branch: "강남 본점", gName: "", gRel: "아들", pri: "박지현", sub: "서다인", watchId: "", sensor: "거실 · 욕실", threshold: false, priority: "1순위 주 보호자 → 2순위 부 보호자 → 담당 컨시어지 → 119", visitDay: "매월 셋째 주", product: PRODUCTS[0], pay: PAYS[1], cEmergency: false, cEntry: false };
 
@@ -211,6 +211,10 @@ export default function ElderMgmt() {
                 <div className="mt-0.5 text-[12px] text-muted">{cur.branch} · {cur.addr} · 담당 {cur.pri} · {cur.sub} · 등록 <span className="font-num">{cur.regDate}</span></div>
               </div>
             </div>
+            {/* 테스트 가구 줄은 보호자 가입 상담 · 앱 기록에서 온 값이라 여기서 고치면 화면과 수정이력이 어긋난다 (2026-10-02 코드 점검) */}
+            {cur.live ? (
+              <div className="mt-3"><Note>테스트 가구 값은 보호자 앱 가입 상담 · 마이에서 바뀝니다 — 관제에서는 고치지 않습니다.</Note></div>
+            ) : (
             <div className="mt-3 flex flex-wrap gap-2">
               <Btn small onClick={() => setEdit(true)}>정보 수정</Btn>
               <Btn small ghost onClick={() => setConfirm({ type: "concierge", pri: cur.pri, sub: cur.sub === "—" ? STAFF[0] : cur.sub, reason: "" })}>담당 컨시어지 변경</Btn>
@@ -221,6 +225,7 @@ export default function ElderMgmt() {
                 {cur.service.state !== "ended" && <Btn small ghost tone="muted" onClick={() => setConfirm({ type: "service", to: "ended", reason: "" })}>서비스 종료</Btn>}
               </span>
             </div>
+            )}
             <Tabs className="mt-3" tabs={ELDER_TABS.map((t) => [t, t, t === "수정이력" ? cur.history.length : undefined])} value={tab} onChange={setTab} />
             <div className="mt-3"><ElderTabs e={cur} tab={tab} onChange={(fn) => update(cur.name, fn)} /></div>
           </Panel>

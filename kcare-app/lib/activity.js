@@ -45,7 +45,7 @@ export function summarize(a) {
     case "assignRequest":
       return `요청 담당 → ${clip(a.assignee || "미배정", 20)}`;
     case "demo":
-      return p.sos === true ? "SOS 발신" : null;
+      return p.sos === true ? "SOS 발신" : p.sos === false ? "SOS 알림 끔 (시연 컨트롤)" : null;
     case "ackSos":
       return "SOS 해제";
     case "elderMark":
@@ -60,8 +60,20 @@ export function summarize(a) {
       return `방문 점검 · ${clip(String(a.key || "").replace(/^[^-]*-/, ""), 30)} ${a.done ? "완료" : "취소"}`;
     case "visitNote":
       return a.key ? `방문 항목 메모 · ${clip(String(a.key).replace(/^[^-]*-/, ""), 30)}` : "방문 총평 메모";
+    case "visitGrade":
+      return `방문 항목 상태 · ${clip(String(a.key || "").replace(/^[^-]*-/, ""), 30)} ${a.grade ? clip(a.grade, 8) : "지움"}`;
     case "visitPhoto":
       return "방문 사진 첨부";
+    case "visitLoc":
+      return `방문 거주 형태 → ${a.loc === "hospital" ? "요양병원" : "자택"}`;
+    case "escortSave":
+      return `동행 기록 저장 · 사진 ${Number(p.photos) || 0}장${p.recorded ? " · 영상 있음" : ""}`;
+    case "escortSend":
+      return "동행 리포트 보호자 전달";
+    case "escortViewed":
+      return "보호자 동행 리포트 열람";
+    case "sosAccept":
+      return `SOS 급파 수락 · ${clip(a.by, 20)}`;
     case "visitOps":
       return `관제 방문 처리 · ${[...new Set(Object.keys(a.patch || {}).map((k) => VISIT_OPS[k]).filter(Boolean))].join(" · ") || "기타"}`;
     case "visitViewed":

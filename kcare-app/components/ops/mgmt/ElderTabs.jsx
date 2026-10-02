@@ -111,6 +111,7 @@ export default function ElderTabs({ e, tab, onChange }) {
               cols={[{ k: "type", label: "기기" }, { k: "place", label: "설치장소" }, { k: "at", label: "마지막 작동", render: (s) => <Stamp at={s.at} prefix="확인" /> }, { k: "state", label: "상태", render: (s) => <Pill tone={s.state === "정상" ? "ok" : "device"}>{s.state}</Pill> }]}
               rows={e.devices.sensors}
               rowKey={(s, i) => `${s.place}-${i}`}
+              empty="설치된 센서가 없습니다."
             />
           </Sec>
           <div className="mt-2 text-[11px] text-muted">기기 등록 · 교체 · 장애이력은 웨어러블·센서 관리에서. 워치·센서 연결 변경은 [정보 수정] (사유 필수).</div>
@@ -127,6 +128,7 @@ export default function ElderTabs({ e, tab, onChange }) {
               cols={[{ k: "m", label: "항목" }, { k: "v", label: RANGES[range], render: (r) => <span className="font-num font-bold text-navy">{r.vals[range]}</span> }, { k: "s", label: "수신", render: () => <Stamp at={e.devices.watch.at} /> }]}
               rows={e.trend.map((t) => ({ m: t[0], vals: t.slice(1) }))}
               rowKey={(r) => r.m}
+              empty="워치 · 센서 수신이 없어 건강 변화 기록이 없습니다."
             />
           </div>
           <div className="mt-2"><Note>변화 그래프 연동 대기 — 최근 1시간 · 오늘 · 최근 7일 · 최근 30일 단위. 값은 참고자료이며 의료진의 진단을 대신하지 않습니다.</Note></div>

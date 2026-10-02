@@ -8,6 +8,8 @@ import { authConfigured } from "../../lib/auth-server";
 import { db, dbConfigured, dbErrorCode } from "../../lib/db";
 
 const MAX_ROWS = 500;
+// ?role= — 한 역할의 기록만 (관제 웨어러블 · 보호자 관리의 '마지막 앱 사용'). 테스트 계정 역할 이름만 받는다.
+const ROLES = new Set(["guardian", "elder", "concierge", "ops", "sales"]);
 
 export default async function handler(req, res) {
   res.setHeader("Cache-Control", "no-store");
@@ -22,13 +24,14 @@ export default async function handler(req, res) {
   if (!dbConfigured()) return res.status(503).json({ error: "db-not-configured" });
 
   const limit = Math.min(MAX_ROWS, Math.max(1, Number(req.query.limit) || 300));
+  const role = typeof req.query.role === "string" && ROLES.has(req.query.role) ? req.query.role : null;
   try {
-    const { data, error, status } = await db()
+    let q = db()
       .from("activity")
       .select("id, created_at, client_at, account_id, role, type, summary")
-      .eq("household_id", user.household)
-      .order("id", { ascending: false })
-      .limit(limit);
+      .eq("household_id", user.household);
+    if (role) q = q.eq("role", role);
+    const { data, error, status } = await q.order("id", { ascending: false }).limit(limit);
     if (error) {
       const code = dbErrorCode(error, status);
       return res.status(code === "schema-missing" ? 503 : 502).json({ error: code });

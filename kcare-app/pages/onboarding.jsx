@@ -18,6 +18,7 @@ import { AUTH_ENABLED, GOOGLE_ENABLED, GoogleMark, googleStart, useAuth } from "
 // 간편가입 표기 — 구글은 실제 로그인(설정됐을 때) 또는 시뮬레이션(테스트 계정), 카카오·네이버는 아직 데모다
 const AUTH_LABEL = { google: "Google", kakao: "카카오", naver: "네이버" };
 import { useAppState } from "../lib/state";
+import RoleGate from "../components/RoleGate";
 
 // 온보딩 — REQ-05 상품 · REQ-07 결제권한 · REQ-15 이용적합성 심사
 //
@@ -29,7 +30,7 @@ import { useAppState } from "../lib/state";
 const RELATIONS = ["아들", "딸", "배우자", "기타"];
 const DISTRICTS = [...TIER1_DISTRICTS, ...TIER2_DISTRICTS, "그 외 지역"];
 
-export default function Onboarding() {
+function Onboarding() {
   const router = useRouter();
   const { dispatch } = useAppState();
   const [stepKey, setStepKey] = useState("track");
@@ -1034,5 +1035,14 @@ export default function Onboarding() {
         </div>
       </div>
     </>
+  );
+}
+
+// 테스트 계정은 자기 역할 화면만 — 다른 역할이면 안내를 띄운다 (components/RoleGate.jsx)
+export default function OnboardingGated() {
+  return (
+    <RoleGate role="guardian" title="가입 상담">
+      <Onboarding />
+    </RoleGate>
   );
 }

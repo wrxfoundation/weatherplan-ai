@@ -26,6 +26,8 @@ import { needsGuardianApproval, useAppState } from "../lib/state";
 import Icon from "../components/icons";
 import Splash from "../components/Splash";
 import ElderHealthReport from "../components/ElderHealthReport";
+import RoleGate from "../components/RoleGate";
+import { useAuth } from "../lib/auth";
 
 // 사용자(어르신) 홈 — 핸드오프 06 elder 상세 명세 + REQ-01(우선 날씨) + REQ-06(SOS 오작동 방지)
 // 구조: 헤더(날짜·인사)·푸터(SOS·전화·탭) 고정, 카드 스택만 스크롤 (06 §1).
@@ -277,8 +279,9 @@ function CardHead({ title, titleColor = "#0A1F3C", right, rightColor = "#5C5A54"
   );
 }
 
-export default function ElderHome() {
+function ElderHome() {
   const { state, dispatch } = useAppState();
+  const liveHH = !!useAuth().user?.household; // 테스트 가구 — 워치가 없다
   const [tab, setTabRaw] = useState("home"); // elderTab — 기본 '홈' (사분면 허브)
   const scrollRef = useRef(null);
   // 카드는 언마운트하지 않지만, 탭 전환 시 스크롤은 맨 위로 — 카드 상단이 잘려 보이지 않게
@@ -985,7 +988,15 @@ export default function ElderHome() {
             {/* order 4 · 오늘의 건강정보 — 오늘 탭 네 번째 자리 (2026-08-28 시트
                 "오늘 아이콘을 누르면 4가지 정보만"). 어제 숫자를 나란히 두고,
                 과거 기록은 건강 탭에서 본다. 안부 전화 카드는 삭제(8/12 시트). */}
-            <ElderCard show={tab === "today"} order={4}>
+            {/* 테스트 가구 — 워치가 없어 걸음 · 잠은 지어낸 숫자가 된다. 그렇다고 말한다 (2026-10-02 UX 점검) */}
+            {liveHH && (
+              <ElderCard show={tab === "today"} order={4}>
+                <CardHead title="오늘의 건강정보" icon="activity" />
+                <p className="mt-2 text-[20px] leading-[1.6] text-ink">워치를 차지 않으셔서 걸음 · 잠은 나오지 않습니다.</p>
+                <p className="mt-1 text-[17px] leading-[1.6] text-muted">약을 드시면 아래 &lsquo;오늘 약&rsquo;에서 눌러 주세요 — 가족에게 전해집니다.</p>
+              </ElderCard>
+            )}
+            <ElderCard show={tab === "today" && !liveHH} order={4}>
               <CardHead title="오늘의 건강정보" right="어제와 비교" icon="activity" />
               <p className="mt-2 text-[20px] leading-[1.6] text-ink">{TODAY_ME.line}</p>
               <div className="mt-1">
@@ -1404,7 +1415,13 @@ export default function ElderHome() {
             {/* order 0 · 오늘 몸 상태 — 건강 탭 최상단 실시간 요약 (2026-08-21 시트 건강 1번).
                 요약 세 줄은 접지 않는다. 접힌 채로도 걸음·잠·맥박이 보여야 하고, 세부만
                 펼친다 — 매일 보는 숫자를 두 번 눌러야 나오면 접은 것이 손해다. */}
-            <ElderCard show={tab === "health"} order={0}>
+            {liveHH && (
+              <ElderCard show={tab === "health"} order={0}>
+                <CardHead title="오늘 몸 상태" icon="activity" />
+                <p className="mt-2 text-[20px] leading-[1.6] text-ink">워치를 연결하지 않아 걸음 · 잠 · 맥박이 나오지 않습니다.</p>
+              </ElderCard>
+            )}
+            <ElderCard show={tab === "health" && !liveHH} order={0}>
               <CardHead title="오늘 몸 상태" right="갤럭시 핏" icon="activity" />
               <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-[20px] leading-[1.5] text-ink">
                 {TODAY_ME.rows.map((r) => {
@@ -2925,5 +2942,14 @@ function SosButton({ phase, setPhase, onDispatch }) {
         </div>
       )}
     </>
+  );
+}
+
+// 테스트 계정은 자기 역할 화면만 — 다른 역할이면 안내를 띄운다 (components/RoleGate.jsx)
+export default function ElderHomeGated() {
+  return (
+    <RoleGate role="elder" title="어르신">
+      <ElderHome />
+    </RoleGate>
   );
 }

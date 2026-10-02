@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useAppState } from "../../lib/state";
 import { useAuth } from "../../lib/auth";
 import { LIVE_TAG, liveGuardian } from "../../lib/live-household";
+import { lastText, useLastActivity } from "../../lib/last-activity";
 import PhoneLink from "./PhoneLink";
 import { Panel, Stat, Pill, Avatar, Btn, Tabs, Table, KV, Field, Toggle, Drawer, Confirm, Stamp, Note, Empty, TONE } from "./ui";
 import Icon from "../icons";
@@ -51,6 +52,8 @@ export default function GuardianMgmt({ openProfile }) {
   // 테스트 계정으로 들어왔으면 김민수(김순자 님 주 보호자) 줄에 테스트 가구 1 의 가입 상담 값 · 해주세요를 덮는다
   const appState = useAppState()?.state;
   const authUser = useAuth().user;
+  // 테스트 보호자의 마지막 앱 사용 — 감사로그와 같은 기록에서 (2026-10-02)
+  const guardianLast = useLastActivity("guardian", !!authUser?.household);
   const liveOn = !!authUser?.household;
   const shown = liveOn ? rows.map((g) => liveGuardian(g, appState, "test-guardian")) : rows;
   const [sel, setSel] = useState("G-001");
@@ -165,7 +168,7 @@ export default function GuardianMgmt({ openProfile }) {
             {isAbroad(cur) && <KV k="현지시간" v={<span className="font-num">{localClock(now, cur.tz)} <span className="text-muted">(KST {localClock(now, 0)} · 시차 {cur.tz > 0 ? "+" : ""}{cur.tz}h)</span></span>} />}
             <KV k="연락 가능시간" v={cur.hours} />
             <KV k="야간 연락" v={cur.night ? "가능 (22:00 이후 포함)" : "불가 — 야간에는 다음 순위로"} tone={cur.night ? "ok" : "warn"} />
-            <KV k="앱 계정" v={<span>{cur.app.state} · <Stamp at={cur.app.last} prefix="마지막 접속" /></span>} />
+            <KV k="앱 계정" v={cur.live ? <span>{cur.app.state} · 마지막 사용 {lastText(guardianLast)}</span> : <span>{cur.app.state} · <Stamp at={cur.app.last} prefix="마지막 접속" /></span>} />
           </Sec>
           <Sec title="연락 수신동의">
             <div className="flex flex-wrap gap-1.5">
@@ -289,7 +292,8 @@ export default function GuardianMgmt({ openProfile }) {
                 </div>
                 <div className="mt-0.5 text-[12px] text-muted">{cur.elders.map((e) => `${e.name} 고객의 ${cur.rel}`).join(" · ")} · {cur.region}{isAbroad(cur) ? ` · 현지 ${localClock(now, cur.tz)}` : ""}</div>
               </div>
-              <Btn small onClick={() => setEdit(true)}>정보 수정</Btn>
+              {/* 테스트 가구 보호자는 앱 가입 상담 · 마이 값 — 여기서 고치면 화면과 수정이력이 어긋난다 */}
+              {cur.live ? <span className="text-[11px] text-muted">값은 보호자 앱에서 바뀝니다</span> : <Btn small onClick={() => setEdit(true)}>정보 수정</Btn>}
             </div>
             <Tabs className="mt-3" tabs={GUARDIAN_TABS.map((t) => [t, t, t === "연락이력" ? cur.log.length : undefined])} value={tab} onChange={setTab} />
             <div className="mt-3">{renderTab()}</div>

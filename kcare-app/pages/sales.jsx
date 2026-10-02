@@ -27,6 +27,7 @@ import {
   referralPath,
   salesSummary,
 } from "../lib/sales";
+import RoleGate from "../components/RoleGate";
 
 const FILTERS = [
   ["all", "전체"],
@@ -37,7 +38,7 @@ const FILTERS = [
 
 const md = (d) => (d ? `${Number(d.slice(5, 7))}/${Number(d.slice(8, 10))}` : null);
 
-export default function SalesPage() {
+function SalesPage() {
   const { state } = useAppState();
   const [filter, setFilter] = useState("all");
   const [open, setOpen] = useState(null);
@@ -315,5 +316,14 @@ export default function SalesPage() {
         </div>
       </div>
     </>
+  );
+}
+
+// 테스트 계정은 자기 역할 화면만 — 다른 역할이면 안내를 띄운다 (components/RoleGate.jsx)
+export default function SalesPageGated() {
+  return (
+    <RoleGate role="sales" title="영업자">
+      <SalesPage />
+    </RoleGate>
   );
 }

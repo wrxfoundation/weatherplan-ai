@@ -6,6 +6,8 @@ import { scopedKey } from "../../lib/scope";
 import { useEffect, useMemo, useState } from "react";
 import Icon from "../icons";
 import { useAppState } from "../../lib/state";
+import { useAuth } from "../../lib/auth";
+import { LiveToggle } from "./LiveToggle";
 import { STATUS, SERVICE_MENU, URGENCY, canTransition, transition } from "../../lib/requests";
 import { PRICING, fmtWon } from "../../lib/config";
 import { Panel, PanelHead, Stat, Pill, Btn, Table, KV, Field, Toggle, Drawer, Confirm, Note, Empty } from "./ui";
@@ -77,6 +79,10 @@ export default function RequestsMgmt() {
   const stateRequests = ctx?.state?.requests || NO_REQUESTS;
   const dispatch = ctx?.dispatch;
   const [extras, setExtras] = useState(OPS_REQUEST_EXTRAS);
+  // 테스트 계정이면 실제 요청(가구 기록)만 기본으로 — 예시 요청(김순자 이름의 예시 포함)이 실제 일처럼 섞이지 않게 (2026-10-02 코드 점검)
+  const liveOn = !!useAuth().user?.household;
+  const [showDemo, setShowDemo] = useState(null);
+  const withDemo = showDemo ?? !liveOn;
   const [meta, setMeta] = useState(OPS_REQUEST_META);
   const [loaded, setLoaded] = useState(false);
   const [group, setGroup] = useState("");
@@ -107,7 +113,10 @@ export default function RequestsMgmt() {
     }
   }, [meta, extras, loaded]);
 
-  const all = useMemo(() => [...stateRequests, ...extras].map(normalize), [stateRequests, extras]);
+  const all = useMemo(
+    () => [...stateRequests.map((r) => ({ ...r, real: liveOn })), ...(withDemo ? extras.map((r) => ({ ...r, demo: liveOn })) : [])].map(normalize),
+    [stateRequests, extras, withDemo, liveOn]
+  );
   const types = useMemo(() => ["전체", ...Array.from(new Set(all.map((r) => r.type)))], [all]);
   const counts = useMemo(() => {
     const c = {};
@@ -152,7 +161,7 @@ export default function RequestsMgmt() {
   const cols = [
     { k: "recv", label: "고객 요청 접수", render: (r) => (
       <div className="min-w-[150px]">
-        <div className="flex items-center gap-1.5 font-bold text-navy">{r.elder}{r.urgency === "urgent" && <span className="rounded-full px-1.5 text-[10px] font-bold" style={{ color: URGENCY.urgent.fg, background: URGENCY.urgent.bg }}>긴급</span>}</div>
+        <div className="flex items-center gap-1.5 font-bold text-navy">{r.elder}{r.real && <Pill tone="gold">실제</Pill>}{r.demo && <span className="text-[11px] font-normal text-muted">예시</span>}{r.urgency === "urgent" && <span className="rounded-full px-1.5 text-[10px] font-bold" style={{ color: URGENCY.urgent.fg, background: URGENCY.urgent.bg }}>긴급</span>}</div>
         <div className="text-[12px] text-muted">{r.by}</div>
         <div className="font-num text-[11px] text-muted">{fmtRel(r.receivedAt)}</div>
       </div>
@@ -188,8 +197,9 @@ export default function RequestsMgmt() {
           <h2 className="text-[22px] font-bold text-navy">해주세요 관리</h2>
           <p className="mt-0.5 text-[13px] text-muted">고객 요청의 접수 · 결제 승인 · 배정 · 수행 · 완료 확인 · 평가 · 환불까지 한 줄로 관리합니다</p>
         </div>
-        <div className="text-[12px] text-muted">앱 상태 연결 {stateRequests.length}건 · 데모 {extras.length}건</div>
+        <div className="text-[12px] text-muted">앱 상태 연결 {stateRequests.length}건 · 데모 {extras.length}건{liveOn && !withDemo ? " (숨김)" : ""}</div>
       </div>
+      {liveOn && <LiveToggle view={withDemo ? "demo" : "real"} onChange={(k) => setShowDemo(k === "demo")} label="요청 보기" realLabel="실제 요청만 (테스트 가구 1)" demoLabel="예시 요청도 함께" />}
 
       <div className="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-5">
         {Object.entries(GROUPS).map(([k, g]) => (

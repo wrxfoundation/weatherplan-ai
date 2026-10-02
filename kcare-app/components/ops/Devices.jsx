@@ -5,6 +5,11 @@ import { Avatar, Btn, Drawer, Empty, Field, Note, Panel, PanelHead, Pill, SevBar
 import { DevicesTab, FaultsTab, RealtimeTab, SwapsTab, TimelineTab } from "./Devices/DeviceTabs";
 import { CAUSES, DEVICES, DEVICE_STATE, DEVICE_TYPES, FLEET, PLACES, sortDevices } from "../../lib/ops-devices";
 import { fmtDate, fmtTime, MIN, useNow } from "../../lib/ops-time";
+import { useAuth } from "../../lib/auth";
+import { useAppState } from "../../lib/state";
+import { LIVE_TAG } from "../../lib/live-household";
+import { LIVE_ELDER } from "../../lib/ops-health";
+import { lastText, useLastActivity } from "../../lib/last-activity";
 
 const STATUS_OPTS = ["전체 상태", "위험", "점검", "주의", "정상"];
 const TYPE_OPTS = ["장비 유형 전체", "갤럭시 Fit3 이슈", "mmWave 센서 이슈", "이슈 없음"];
@@ -18,7 +23,42 @@ function issueSource(r) {
   return null;
 }
 
+// 테스트 가구 1 — 워치 · 센서 없이 휴대폰 앱으로만 테스트한다 (2026-10-02 "남은 것도 다").
+// 기기 신호 대신 어르신 앱이 실제로 남긴 것(마지막 사용 · SOS 버튼 · 복약 체크 · 마음사서함 청취)을 보여 준다.
+function LiveDevicePanel() {
+  const { state } = useAppState();
+  const last = useLastActivity("elder");
+  const slots = Object.keys(state.elder?.medSlots || {}).filter((k) => state.elder.medSlots[k]);
+  const played = Object.keys(state.elder?.msgPlayed || {}).length;
+  const sosAt = state.demo?.sos && state.demo.sosAt ? new Date(state.demo.sosAt).toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit", hour12: false }) : null;
+  const cells = [
+    ["워치 (갤럭시 Fit)", "연결 안 함 · 베타", "muted"],
+    ["센서 (mmWave · 도어)", "설치 안 함 · 베타", "muted"],
+    ["어르신 앱 마지막 사용", lastText(last), last.status === "ok" ? "ok" : "muted"],
+    ["SOS 버튼 (앱)", state.demo?.sos ? `발신 중${sosAt ? ` · ${sosAt}` : ""}` : "대기", state.demo?.sos ? "danger" : "ok"],
+    ["복약 체크 (어르신 앱)", slots.length ? slots.join(" · ") : "아직 없음", slots.length ? "ok" : "muted"],
+    ["마음사서함 청취", `${played}건`, played ? "ok" : "muted"],
+  ];
+  return (
+    <Panel>
+      <PanelHead
+        title={<span className="flex flex-wrap items-center gap-2">{LIVE_ELDER} 님 <Pill tone="gold">{LIVE_TAG}</Pill></span>}
+        sub="워치 · 센서 없이 휴대폰 앱으로 테스트합니다 — 기기 신호 대신 어르신 앱이 실제로 남긴 기록입니다. 아래 장비 명부와 수치는 예시입니다."
+      />
+      <div className="mt-3 grid grid-cols-2 gap-2 md:grid-cols-3 xl:grid-cols-6">
+        {cells.map(([k, v, tone]) => (
+          <div key={k} className="rounded-xl bg-navy/[.04] px-3 py-2.5">
+            <div className="text-[11px] font-bold text-muted">{k}</div>
+            <div className="mt-0.5 text-[13px] font-bold" style={{ color: TONE[tone].fg }}>{v}</div>
+          </div>
+        ))}
+      </div>
+    </Panel>
+  );
+}
+
 export default function Devices() {
+  const liveOn = !!useAuth().user?.household;
   const now = useNow(1000);
   const [rows, setRows] = useState(DEVICES);
   const [q, setQ] = useState("");
@@ -63,6 +103,8 @@ export default function Devices() {
   return (
     <div className="space-y-4">
       <PanelHead title="웨어러블·센서 관리" sub="고객별 장비 연결 상태와 실시간 수신 데이터를 통합 점검합니다" right={<span className="card-glass rounded-xl px-3 py-1.5">마지막 동기화 <span className="font-num font-bold text-navy">{now ? fmtTime(now - FLEET.syncAgoSec * 1000) : "--:--:--"}</span></span>} />
+
+      {liveOn && <LiveDevicePanel />}
 
       <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-5">
         <Stat label="관리 대상 가구" value={FLEET.households} unit="가구" sub="전체 서비스 가구" tone="ok" />

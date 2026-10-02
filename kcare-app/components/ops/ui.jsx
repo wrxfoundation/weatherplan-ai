@@ -42,6 +42,8 @@ export const FEED_STATE = {
   stale: { label: "장시간 미수신", tone: "device" },
   unworn: { label: "워치 미착용", tone: "device" },
   battery: { label: "배터리 방전", tone: "device" },
+  // 테스트 가구 — 위치 · 기기 신호를 받지 않는다 (베타). '미수신'처럼 보이면 고장으로 읽힌다
+  none: { label: "수신 안 함 (베타)", tone: "muted" },
 };
 
 // min-w-0: 그리드·플렉스 칸 안에서 표(min-width 560px)가 칸을 밀어 넓히지 않게 한다 —

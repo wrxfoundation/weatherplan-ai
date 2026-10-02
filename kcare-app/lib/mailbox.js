@@ -11,6 +11,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { MY_CLIENTS } from "./console";
 import { TEACHER_INBOX } from "./mock";
+import { scopedKey } from "./scope";
 
 const MIN = 60000;
 export const VOICE_CATEGORIES = ["안부인사", "방문안내", "복약확인", "병원일정", "가족 메시지 전달", "요청사항 답변", "긴급확인"];
@@ -142,6 +143,16 @@ export function commState(c) {
 
 // ── 화면 상태 훅 — 페이지가 들고 탭·하단 배지가 같이 본다 ──
 const NO_VOICES = [];
+// 어르신이 보낸 실제 목소리를 들었는지 · 처리했는지 — 이 기기에 남긴다. 화면에만 두면 새로고침마다 다시 '미청취'가 된다 (2026-10-02 코드 점검).
+const LIVE_KEY = "kcare-mailbox-live-v1";
+const readLive = () => {
+  try {
+    const v = JSON.parse(localStorage.getItem(scopedKey(LIVE_KEY)) || "{}");
+    return v && typeof v === "object" ? v : {};
+  } catch (_) {
+    return {};
+  }
+};
 
 // liveVoices — 어르신이 앱 마음사서함에서 보낸 목소리 (가구 기록 voices 중 → 컨시어지, {id, at, secs, client}).
 // 받은 음성메시지 맨 위에 붙는다 (2026-10-02 — 전에는 어르신 화면에만 남고 컨시어지에게 닿지 않았다).
@@ -151,12 +162,25 @@ export function useMailbox(liveVoices = NO_VOICES) {
     if (!liveVoices.length) return;
     setInbox((prev) => {
       const have = new Set(prev.map((m) => m.id));
+      const saved = readLive();
       const add = liveVoices
         .filter((v) => !have.has(`live-${v.id}`))
-        .map((v) => ({ id: `live-${v.id}`, client: v.client, minsAgo: Math.max(0, (Date.now() - v.at) / MIN), secs: v.secs, status: "unheard", memo: null, live: true }));
+        .map((v) => {
+          const id = `live-${v.id}`;
+          return { id, client: v.client, minsAgo: Math.max(0, (Date.now() - v.at) / MIN), secs: v.secs, status: saved[id]?.status || "unheard", memo: saved[id]?.memo ?? null, live: true };
+        });
       return add.length ? [...add, ...prev] : prev;
     });
   }, [liveVoices]);
+  useEffect(() => {
+    const live = inbox.filter((m) => m.live);
+    if (!live.length) return;
+    try {
+      localStorage.setItem(scopedKey(LIVE_KEY), JSON.stringify({ ...readLive(), ...Object.fromEntries(live.map((m) => [m.id, { status: m.status, memo: m.memo }])) }));
+    } catch (_) {
+      /* 저장이 막힌 브라우저 — 이 화면에서만 기억 */
+    }
+  }, [inbox]);
   const [sent, setSent] = useState({}); // { 이름: { at, secs, category, title, status: sending|sent|failed, tries, shareGuardian } }
   const [opsSent, setOpsSent] = useState({}); // { 이름: at }
   const [extra, setExtra] = useState({}); // { 이름: [대화기록에 덧붙은 메시지] }

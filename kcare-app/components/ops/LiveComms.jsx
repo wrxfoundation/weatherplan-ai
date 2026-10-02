@@ -90,7 +90,7 @@ export default function LiveComms() {
     ["", "오늘 연락", rows.filter((r) => day(r.at) === today).length, "navy"],
     ["voice", "음성 메시지", rows.filter((r) => r.ch === "voice").length, "info"],
     ["ops", "관제 연락", rows.filter((r) => r.ch === "ops").length, "warn"],
-    ["open", "확인 전", rows.filter((r) => r.open).length, "danger"],
+    ["open", "확인 전", rows.filter((r) => r.open).length, "warn"],
     ["ask", "어르신 부탁", rows.filter((r) => r.ch === "ask").length, "gold"],
   ];
 

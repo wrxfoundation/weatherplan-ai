@@ -24,12 +24,14 @@ const KIND_LABEL = { ...AUDIT_KINDS, ...REAL_KINDS };
 const KIND_OF_TYPE = {
   login: "auth",
   demo: "sos", ackSos: "sos",
-  opsPatch: "dispatch",
+  opsPatch: "dispatch", sosAccept: "dispatch",
   addRequest: "request", transitionRequest: "request", assignRequest: "request",
   addEvent: "schedule", updateEvent: "schedule", decideEvent: "schedule",
-  addVoice: "message", addReview: "message", welfareAnswer: "message",
+  addVoice: "message", addReview: "message", welfareAnswer: "message", addOpsMessage: "message", ackOpsMessage: "message",
   completeOnboarding: "signup", onboardingPatch: "signup", addPayment: "signup", setBilling: "signup", commitPendingOrder: "signup", addOrder: "signup",
   audit: "visit", advanceVisit: "visit", patchVisit: "visit",
+  visitCheck: "visit", visitLoc: "visit", visitNote: "visit", visitGrade: "visit", visitPhoto: "visit", visitOps: "visit", visitViewed: "visit",
+  escortSave: "visit", escortSend: "visit", escortViewed: "visit",
   guardianPatch: "edit", welfareStatus: "edit", addMyHospital: "edit", setPriority: "edit", addReport: "edit", reset: "edit",
   pushEvent: "ticker",
 };
