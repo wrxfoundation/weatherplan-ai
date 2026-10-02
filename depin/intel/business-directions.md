@@ -2164,3 +2164,34 @@ Good to be connected.
 ```
 
 **발송 여부는 Claude 가 관리하지 않는다** — 서우 통보 시 갱신.
+
+## 리플 에코시스템 팀 3명 — 10/2 미팅 뒤 1촌 인사 (2026-10-02, 서우 프로필 캡처 8장)
+
+10/2 13:00~14:08 XRPL 생태계 미팅 상대. 미팅 내용 보고는 채팅(카톡 보고본)으로만 — 그쪽이 「방 안에서만」이라 한 내용은 10/3 무대 발표 전까지 어디에도 적지 않는다.
+
+- **Christina Chan**(캡처 기준): Ripple **Senior Director, Ecosystem Growth**(2025-01~, 샌프란시스코) · 직전 Head of Funding Programs / Ecosystem Fund
+  (2023-03~2025-01 — Ripple 의 1B XRP 생태계 펀드 집행 전략) · Accelerator · Developer Growth · Product Design 거쳐 6년 6개월. 상태: **1촌 요청 대기중**.
+  → 그랜트 · 펀드 쪽 질문의 정답 창구.
+- **Tatsuya (Tats) Kohrogi**: Ripple **Senior Ecosystem Growth Manager**(2025-01~, 싱가포르) · 전 Ginco Head of APAC · PlayMining CSO · SMU Web3 강의.
+  상태: **이미 1촌** → 요청 없이 메시지. 미팅에서 토큰 경제 · 마켓메이커 질문, X 네이티브 확산 팁, 「Ripple · 제품명 표기 조심」 당부를 한 사람(받아쓰기 추정).
+- **Sabrina T**: Ripple **XRPL ecosystem growth**(2026-03~, 싱가포르) · 전 Hedera Foundation VP Financial Markets APAC · 전 French Tech Seoul 이사 ·
+  연세대 교환 · 한국어 4급 — **링크드인 글을 한국어로 쓴다**. 상태: 2촌 → 1촌 요청.
+
+**판정** — 감사 + 내일 행사 한 줄. 협력 · 파트너십 · 토큰 · 가격 0, 미팅에서 들은 미공개 내용 0, 공통 1촌 이름 0.
+
+**Sabrina — 1촌 요청 메모(174자, 끝줄만 한국어)**
+```
+Hi Sabrina, thank you for the time today and the warm welcome. I really enjoyed the conversation about building in Asia, and I'm glad to be connected. 내일 XRP SEOUL에서 뵙겠습니다! 😊
+```
+
+**Tats — 메시지(이미 1촌, 182자 — 「rise to the occasion」은 프로필 소개의 立つ 풀이를 받은 말)**
+```
+Hi Tats, thank you for the time today and the sharp questions, and for the tips on launching natively on X. We'll do our best to rise to the occasion tomorrow 😄 See you at XRP SEOUL!
+```
+
+**Christina — 수락되면(64자, 요청에 222자 메모를 붙였다면 이것만)**
+```
+Thanks for connecting, Christina. See you at XRP SEOUL tomorrow!
+```
+
+**발송 여부는 Claude 가 관리하지 않는다** — 서우 통보 시 갱신.
