@@ -1,6 +1,7 @@
 // SOS 콘솔 오른쪽 열 — 고객 핵심정보 · 보호자 연락 · 현장 출동 추천 · 119 전달용 요약 (시안 SOS 긴급대응 센터).
 import { Btn, FeedPill, KV, Panel, PanelHead, Pill, Stamp, TONE } from "../ui";
-import { getHealth, liveCustomer } from "../../../lib/ops-health";
+import { liveCustomer, liveHealth } from "../../../lib/ops-health";
+import { useAuth } from "../../../lib/auth";
 import PhoneLink from "../PhoneLink";
 import { useAppState } from "../../../lib/state";
 import { fmtLocal, fmtTime } from "../../../lib/ops-time";
@@ -12,11 +13,13 @@ const RANK = { 주: "1순위", 부: "2순위", 비상: "3순위" };
 const STEP_OF_ROLE = { 주: "guardian1", 부: "guardian2", 비상: "guardian2" };
 
 export default function SidePanels({ inc, now, api, role }) {
-  const c = liveCustomer(inc.customer, useAppState()?.state?.onboarding);
-  const h = getHealth(inc.customer);
+  const appState = useAppState()?.state;
+  const ob = appState?.onboarding;
+  const c = liveCustomer(inc.customer, ob, appState?.health);
+  const h = liveHealth(inc.customer, ob, !!useAuth().user?.household);
   const ro = role !== "controller";
   const rows119 = build119(inc, c, h);
-  const stamp = (f) => (now ? fmtTime(now - (f?.agoSec ?? 0) * 1000) : "—");
+  const stamp = (f) => (now && f?.agoSec != null ? fmtTime(now - f.agoSec * 1000) : "—");
   const guardianState = (g) => {
     const rec = inc.steps?.[STEP_OF_ROLE[g.role]];
     if (!rec) return { label: "대기", tone: "muted" };

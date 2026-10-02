@@ -1,5 +1,6 @@
 // 건강·안전 관제 목 데이터 — 요청서 2·3·6절. 숫자는 데모 값이며 시안(2026-09-16)과 어긋나지 않게 맞췄다.
 // 시각은 "지금 기준 n분 전" 상대값으로 두어 화면의 시계와 항상 맞물린다.
+import { DEFAULT_HEALTH, healthOf, medSummary } from "./meds";
 
 // 데모 인물 — 기존 앱과 같은 어르신·컨시어지·보호자
 export const CUSTOMERS = {
@@ -7,9 +8,10 @@ export const CUSTOMERS = {
     name: "김순자", age: 78, sex: "여", branch: "강남 본점", district: "강남구 대치동",
     address: "서울 강남구 대치동 OO아파트 101동 1203호", phone: "010-0120-1001",
     concierge: { main: "박지현", sub: "서다인" },
-    conditions: ["심부전", "고혈압"], meds: ["항응고제", "혈압약"], allergies: ["등록된 알레르기 없음"],
+    // 질환 · 복용약 · 알레르기는 lib/meds.js 한 벌에서 온다 — 어르신 앱 복약 계획과 같은 값 (2026-10-02 QA)
+    conditions: DEFAULT_HEALTH.conditions, meds: medSummary(DEFAULT_HEALTH.meds), allergies: DEFAULT_HEALTH.allergies,
     guardians: [
-      { name: "김민수", rel: "아들", role: "주", place: "서울", tz: 0, phone: "010-0751-1234", note: "결제 10만 한도" },
+      { name: "김민수", rel: "아들", role: "주", place: "서울", tz: 0, phone: "010-0751-1234", note: "어르신 직접 결제 하루 5만 한도" },
       { name: "김지영", rel: "차녀", role: "부", place: "LA", tz: -16, phone: "해외 연락처" },
       { name: "김현우", rel: "삼남", role: "비상", place: "시드니", tz: 1, phone: "해외 연락처" },
     ],
@@ -44,9 +46,10 @@ export const CUSTOMERS = {
     ltc: "장기요양 3등급",
   },
   오태식: {
-    name: "오태식", age: 80, sex: "남", branch: "강남 본점", district: "서초구 방배동",
-    address: "서울 서초구 방배동 OO아파트 2동 1105호", phone: "010-0120-5001",
-    concierge: { main: "한서연", sub: "오하늘" },
+    // 나이 · 주소 · 담당은 명부(lib/rosters.js) · 컨시어지 고객 목록과 같은 값 (2026-10-02 QA "77세 역삼동 vs 80세 방배동")
+    name: "오태식", age: 77, sex: "남", branch: "강남 본점", district: "강남구 역삼동",
+    address: "서울 강남구 역삼동 OO아파트 2동 1105호", phone: "010-0120-5001",
+    concierge: { main: "박지현", sub: "오하늘" },
     conditions: ["경도 인지장애", "고지혈증"], meds: ["인지개선제", "고지혈증약"], allergies: ["등록된 알레르기 없음"],
     guardians: [{ name: "오세라", rel: "장녀", role: "주", place: "서울", tz: 0, phone: "010-0697-5512" }],
     consent: { entry: "긴급 시 문 개방 동의 완료 (2025-12-15)", measure: "긴급조치 사전동의 완료", door: "공동현관 비밀번호 보관 · 현관 번호키" },
@@ -83,10 +86,14 @@ export const telHref = (v) => {
 // 데모 가구 어르신(김순자) — 테스트 가구에서 보호자가 가입 상담에 적은 연락처·주소가 있으면 그걸 쓴다.
 // 그래야 관제 테스터가 어르신 역할 테스터에게 실제로 전화해 볼 수 있다. 없으면 예시 번호.
 export const LIVE_ELDER = "김순자";
-export function liveCustomer(name, onboarding) {
-  const c = getCustomer(name);
+// health — 가구 상태의 state.health (관제 · 컨시어지가 고친 복용약 · 질환 · 알레르기). 김순자 님에게만 얹는다.
+export function liveCustomer(name, onboarding, health) {
+  const c0 = getCustomer(name);
+  if (name !== LIVE_ELDER) return c0;
+  const h = healthOf({ health });
+  const c = { ...c0, conditions: h.conditions.length ? h.conditions : ["등록 없음"], meds: h.meds.length ? medSummary(h.meds) : ["등록 없음"], allergies: h.allergies.length ? h.allergies : ["등록 없음"] };
   const ob = onboarding;
-  if (!ob || name !== LIVE_ELDER) return c;
+  if (!ob) return c;
   const elderPhone = String(ob.elderPhone || (ob.forSelf ? ob.phone : "") || "").trim();
   const guardianPhone = ob.forSelf ? "" : String(ob.phone || "").trim();
   const address = String(ob.address || "").trim();
@@ -98,6 +105,23 @@ export function liveCustomer(name, onboarding) {
       guardianPhone && c.guardians.length
         ? [{ ...c.guardians[0], phone: guardianPhone, phoneSource: "가입 상담" }, ...c.guardians.slice(1)]
         : c.guardians,
+  };
+}
+
+// 테스트 가구(김순자)의 건강 신호 — 워치 · 센서가 없다. 예시 심박 132 · 위치 '대치동 자택 (실시간)'을 SOS 센터와
+// 119 신고 정보에 그대로 쓰면 지어낸 값이 신고된다 (2026-10-02 QA "SOS 위치 불일치"). 받지 않는다고 적고,
+// 위치는 가입 상담 주소를 '자택으로 추정'으로만 쓴다.
+const NONE = { v: "수신 안 함 (베타)", agoSec: null, feed: "none" };
+export function liveHealth(name, onboarding, live) {
+  if (!live || name !== LIVE_ELDER) return getHealth(name);
+  const address = String(onboarding?.address || "").trim();
+  return {
+    hr: { ...NONE, unit: "" }, restHr: { ...NONE, unit: "" }, spo2: { ...NONE, unit: "" }, stress: NONE, activity: NONE, steps: NONE, sleep: NONE,
+    fall: NONE, sosBtn: { v: "어르신 앱 SOS 버튼", agoSec: null, feed: "none" },
+    location: { v: address ? `자택으로 추정 — ${address} (위치 수신 안 함 · 베타)` : "위치 수신 안 함 (베타) — 자택 주소는 가입 상담 전", agoSec: null, feed: "none" },
+    worn: NONE, battery: NONE, comm: { v: "워치 없음 — 휴대폰 앱만", agoSec: null, feed: "none" }, lastRx: { agoSec: null, feed: "none" },
+    base: { hr: null, spo2: null, steps: null },
+    noDevice: true,
   };
 }
 
@@ -130,7 +154,7 @@ export const PRIORITY = [
   { id: "p-noh", name: "노영길", age: 82, sev: "warn", kind: "vital", tags: ["vital"], signal: "안정시 심박 급변", value: "평소 대비 +28%", threshold: "주의 +25% (위험 +40%) · 5분 내 변화", agoMin: 35, lastNormal: { agoMin: 60, text: "안정시 66 bpm" }, location: "강남구 논현동 자택 (실시간)", rxAgoMin: 0.4, feed: "live", controller: "김태영", state: "ack" },
   { id: "p-kwon", name: "권말녀", age: 86, sev: "warn", kind: "activity", tags: ["activity"], signal: "활동량 급감", value: "오늘 410보", threshold: "7일 평균(1,800보) 대비 -60% 이하", agoMin: 115, lastNormal: { agoMin: 1440, text: "어제 1,920보" }, location: "송파구 방이동 자택 (실시간)", rxAgoMin: 4, feed: "live", controller: "김태영", state: "ack" },
   { id: "p-han", name: "한복자", age: 79, sev: "device", kind: "stale", tags: ["stale", "battery"], signal: "건강정보 장시간 미수신 · 배터리 방전 추정", value: "6시간 17분 미수신", threshold: "미수신 주의 2시간 (위험 6시간) · 마지막 배터리 12%", agoMin: 377, lastNormal: { agoMin: 377, text: "심박 78 bpm · 배터리 12%" }, location: "강동구 길동 (마지막 위치 · 미수신)", rxAgoMin: 377, feed: "battery", controller: "김태영", state: "ack" },
-  { id: "p-oh", name: "오태식", age: 80, sev: "device", kind: "sensor", tags: ["sensor"], signal: "욕실 mmWave 센서 오프라인", value: "센서 전원 꺼짐", threshold: "센서 응답 없음 10분", agoMin: 4, lastNormal: { agoMin: 15, text: "욕실 재실 감지 종료" }, location: "서초구 방배동 자택 (워치 실시간)", rxAgoMin: 0.3, feed: "live", controller: "김태영", state: "new" },
+  { id: "p-oh", name: "오태식", age: 77, sev: "device", kind: "sensor", tags: ["sensor"], signal: "욕실 mmWave 센서 오프라인", value: "센서 전원 꺼짐", threshold: "센서 응답 없음 10분", agoMin: 4, lastNormal: { agoMin: 15, text: "욕실 재실 감지 종료" }, location: "강남구 역삼동 자택 (워치 실시간)", rxAgoMin: 0.3, feed: "live", controller: "김태영", state: "new" },
   { id: "p-jung", name: "정옥분", age: 80, sev: "device", kind: "stale", tags: ["stale"], signal: "삼성헬스 동기화 지연", value: "7시간 5분 미수신", threshold: "미수신 주의 2시간 (위험 6시간)", agoMin: 425, lastNormal: { agoMin: 425, text: "심박 72 bpm · 배터리 66%" }, location: "강남구 청담동 (마지막 위치)", rxAgoMin: 425, feed: "stale", controller: "김태영", state: "ack" },
   { id: "p-yoo", name: "유상철", age: 84, sev: "device", kind: "stale", tags: ["stale"], signal: "휴대전화 연결 끊김", value: "6시간 30분 미수신", threshold: "미수신 주의 2시간 (위험 6시간)", agoMin: 390, lastNormal: { agoMin: 390, text: "심박 69 bpm · 배터리 58%" }, location: "서초구 잠원동 (마지막 위치)", rxAgoMin: 390, feed: "stale", controller: "김태영", state: "new" },
   { id: "p-an", name: "안분이", age: 79, sev: "device", kind: "sensor", tags: ["sensor"], signal: "거실 센서 전원 꺼짐", value: "센서 응답 없음 25분", threshold: "센서 응답 없음 10분", agoMin: 25, lastNormal: { agoMin: 26, text: "거실 재실 감지" }, location: "강동구 암사동 자택 (워치 실시간)", rxAgoMin: 0.5, feed: "live", controller: "김태영", state: "ack" },

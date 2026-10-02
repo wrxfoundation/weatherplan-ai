@@ -1,12 +1,13 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useReducer, useRef, useState } from "react";
 // mock.js 가 아니라 seed.js 에서 가져온다 — state 는 _app 에서 import 되므로
 // 여기서 mock.js 를 참조하면 콘솔 목데이터 전체가 모든 페이지에 실린다 (seed.js 주석 참고).
-import { INITIAL_EVENTS, INITIAL_REQUESTS, INITIAL_KIT, SEED_EVENTS, SEED_ORDERS, SEED_REPORTS } from "./seed";
+import { INITIAL_EVENTS, INITIAL_REQUESTS, SEED_EVENTS, SEED_ORDERS, SEED_REPORTS } from "./seed";
 import { PRICING } from "./config";
 import { transition } from "./requests";
 import { SEED_VISIT, advance } from "./workflow";
 import { useAuth } from "./auth";
 import { setStorageScope } from "./scope";
+import { cleanMedSlot } from "./meds";
 
 // 앱 전역 상태.
 // 역할 간 연동: 어르신 SOS → 가족 배너 / 컨시어지 보충 요청 → 가족 결제 승인.
@@ -84,13 +85,12 @@ const DEFAULT = {
   // checks · notes · memo · photos — 21항목 점검 · 항목 메모 · 총평 · 사진 수. 관제 방문관리가 같은 값을 본다 (2026-10-02).
   // ops — 관제가 이 방문에 한 것 (검수 · 보호자 발송 · 중간 알림 · 후속조치).
   // grades — 항목 상태(양호 · 관찰 · 주의). 컨시어지가 고른 것만 있다 — 고르지 않은 항목에 상태를 지어 붙이지 않는다.
-  visit: { checkedIn: false, kitDone: false, reportSent: false, audit: [], checks: {}, notes: {}, grades: {}, memo: "", photos: 0, ops: {} },
-  // 병원 동행 기록 — 컨시어지 '동행 기록 저장' → '검수 확정 후 가족에게 전달' → 보호자 마이 '동행 리포트' (2026-10-02).
+  visit: { checkedIn: false, reportSent: false, audit: [], checks: {}, notes: {}, grades: {}, memo: "", photos: 0, ops: {} },
+  // 병원 동행 기록 — 컨시어지 '동행 기록 저장' → '리포트 제출' → 관제 '보호자 리포트 발송' → 보호자 홈 · 마이 '동행 리포트' (2026-10-02).
   // 녹화 여부는 컨시어지가 직접 체크한 값 그대로다 (없는 영상을 있다고 하지 않는다).
   escort: { note: "", photos: 0, recorded: false, by: "", savedAt: null, sentAt: null, viewedAt: null },
   // 관제 연락 — 컨시어지 '관제에 알리기'. 관제가 확인(·답장)하면 컨시어지 화면에 그대로 보인다 (2026-10-02).
   opsMessages: [],
-  kit: INITIAL_KIT,
   // 스토어 상품 이미지 — 경영 콘솔에서 올리면 스토어 썸네일이 바뀐다 (실무자 요청).
   // { [상품id]: dataURL }. 업로드 시 320px 로 줄여 저장한다 — localStorage 5MB 한도.
   productImages: {},
@@ -113,12 +113,15 @@ const DEFAULT = {
   billing: null,
   // 결제창으로 넘어가기 전에 담아 둔 스토어 주문. 승인이 끝나야 orders·requests 로 선다.
   pendingOrder: null,
+  // 건강 정보 한 벌 — 복용약 · 질환 · 알레르기 (2026-10-02 QA). null 이면 lib/meds.js 기본값.
+  // 관제(어르신 관리 › 건강·질환)와 컨시어지(고객 탭)가 고치고, 어르신 · 보호자 · 관제 · SOS 신고 정보가 읽는다 (healthOf).
+  health: null,
 };
 
-// 테스트 가구의 첫 상태 — 구성(방문 흐름 · 키트 · 우선 날씨)은 두고 기록(일정 · 요청 · 주문 · 결제 ·
+// 테스트 가구의 첫 상태 — 구성(방문 흐름 · 복약 계획 · 우선 날씨)은 두고 기록(일정 · 요청 · 주문 · 결제 ·
 // 음성 · 리포트 · 알림)은 비운다. 화면에 뜨는 기록이 전부 테스트하는 사람이 만든 것이 되게.
 export function freshState() {
-  // 방문 업무흐름 씨앗의 날짜(2026-08-22)는 이미 지난 날이라 테스트 가구에서는 '일주일 뒤 14:00'으로 다시 잡는다 (2026-10-02 UX 점검)
+  // 테스트 가구의 방문 업무흐름은 '일주일 뒤 14:00' — 데모 씨앗(사흘 뒤)과 따로 잡는다 (2026-10-02 UX 점검)
   const ymd = new Date(Date.now() + 7 * 86400000 + 9 * 3600000).toISOString().slice(0, 10);
   return {
     ...DEFAULT,
@@ -140,16 +143,20 @@ export function freshState() {
 }
 
 // 저장된 일정 중 씨앗(INITIAL_EVENTS)에서 온 것을 손본다 —
-//  · 없어진 씨앗(ev4 아침 혈압약)은 지운다. 시드에서 빼도 localStorage 에 남아 있으면
+//  · 없어진 씨앗(ev4 아침 혈압약 · ev3 케어박스 점검 — 케어박스는 제공하지 않는다, 2026-10-02)은 지운다. 시드에서 빼도 localStorage 에 남아 있으면
 //    화면에 계속 뜬다 (2026-09-04 시트 어르신 전체 2번).
 //  · 시각이 지난 씨앗은 오늘 기준으로 다시 잡는다. 씨앗의 at 은 첫 실행일 기준으로
 //    계산돼 저장되므로, 며칠 뒤 열면 "9월 3일 안심방문"처럼 지난 일정이 남는다
 //    (같은 시트 3번이 그 화면이었다). 어르신·보호자가 직접 옮긴 미래 일정은 건드리지 않는다.
 const SEED_BY_ID = Object.fromEntries(INITIAL_EVENTS.map((e) => [e.id, e]));
-const REMOVED_SEED_IDS = new Set(["ev4"]);
+const REMOVED_SEED_IDS = new Set(["ev4", "ev3"]);
+// 바뀐 씨앗 — 저장된 옛 모양이면 새 씨앗으로 갈아 끼운다. ev1(순환기내과)은 '일주일 뒤 10:00'이었다가
+// 관제 · 컨시어지 화면의 '오늘 13:50 동행'과 맞췄다 (2026-10-02 QA).
+const LEGACY_SEED_NOTES = { ev1: "박지현 선생님 동행 · 픽업 09:10" };
 function rebaseSeedEvents(events) {
   return events
     .filter((e) => !REMOVED_SEED_IDS.has(e.id))
+    .map((e) => (LEGACY_SEED_NOTES[e.id] && e.note === LEGACY_SEED_NOTES[e.id] ? { ...SEED_BY_ID[e.id] } : e))
     .map((e) => (SEED_BY_ID[e.id] && e.at < Date.now() ? { ...e, at: SEED_BY_ID[e.id].at } : e));
 }
 
@@ -209,7 +216,11 @@ function reducer(state, action) {
         reports: arr(p.reports, state.reports),
         requests: arr(p.requests, state.requests),
         productImages: obj(p.productImages, state.productImages),
-        visitPlan: { ...state.visitPlan, ...(p.visitPlan || {}) },
+        // 옛 씨앗 방문(2026-08-22 고정)이 저장돼 있으면 날짜만 오늘 기준 씨앗으로 바꾼다 (2026-10-02 QA)
+        visitPlan: (() => {
+          const v = { ...state.visitPlan, ...(p.visitPlan || {}) };
+          return v.id === "vs-2026-08-22" ? { ...v, id: SEED_VISIT.id, at: SEED_VISIT.at } : v;
+        })(),
         voices: arr(p.voices, state.voices),
         reviews: arr(p.reviews, state.reviews),
         orders: arr(p.orders, state.orders),
@@ -217,6 +228,7 @@ function reducer(state, action) {
         payments: arr(p.payments, state.payments),
         billing: p.billing ?? state.billing,
         pendingOrder: p.pendingOrder ?? state.pendingOrder,
+        health: obj(p.health, state.health),
       };
     }
     case "completeOnboarding":
@@ -237,7 +249,7 @@ function reducer(state, action) {
       };
     case "setPriority":
       return { ...state, priority: { ...action.payload, setAt: nowOf(action) } };
-    // closesVisit — 컨시어지 '검수 확정 후 가족에게 전달'. 오늘 방문의 리포트를 냈다는 표시(visit.reportSent)도 같이 켠다
+    // closesVisit — 컨시어지 '리포트 제출'. 오늘 방문의 리포트를 냈다는 표시(visit.reportSent)도 같이 켠다
     // (오늘 탭 '마무리 필요'가 이 값을 본다. 전에는 켜는 곳이 없어서 리포트를 내도 '마무리 필요'가 남았다).
     case "addReport": {
       const { closesVisit, ...report } = action.payload || {};
@@ -385,15 +397,28 @@ function reducer(state, action) {
           m.id === action.id && !m.ackAt ? { ...m, ackAt: nowOf(action), ackBy: action.by || "관제", reply: String(action.reply || "") } : m
         ),
       };
-    case "kitUpdate":
-      return { ...state, kit: action.items };
     case "advanceVisit":
       // 8단계 전이 — 단계를 건너뛰면 workflow.advance 가 그대로 돌려보낸다
       return { ...state, visitPlan: advance(state.visitPlan, action.to, action.note, action.actor) };
+    // 건강 정보 저장 — 관제 · 컨시어지 화면의 '복용약 · 질환 수정'. 모양을 여기서 한 번 더 거른다 (여러 폰이 쓰는 값).
+    case "setHealth": {
+      const pl = action.payload || {};
+      const list = (v) => (Array.isArray(v) ? v.map((x) => String(x || "").trim().slice(0, 40)).filter(Boolean).slice(0, 20) : []);
+      return {
+        ...state,
+        health: {
+          meds: (Array.isArray(pl.meds) ? pl.meds : []).map(cleanMedSlot).filter(Boolean).slice(0, 6),
+          conditions: list(pl.conditions),
+          allergies: list(pl.allergies),
+          by: String(action.by || "").slice(0, 30),
+          at: nowOf(action),
+        },
+      };
+    }
     case "patchVisit":
       return { ...state, visitPlan: { ...state.visitPlan, ...action.patch } };
-    // 보호자 일정등록 '요청' 승인 — 관제만 할 수 있다 (2026-08-12 시트 예약 1번).
-    // approval 이 "pending" 인 동안에는 어르신·컨시어지 캘린더에 뜨지 않는다.
+    // 보호자 · 어르신 일정등록 '요청' 승인 — 관제만 할 수 있다 (2026-08-12 시트 예약 1번).
+    // approval 이 "pending" 인 동안에는 컨시어지 캘린더에 뜨지 않는다 (누가 무엇을 보나: eventsFor).
     case "decideEvent":
       return {
         ...state,
@@ -543,6 +568,11 @@ const saveCache = (hh, state, version) => hh && state && writeLocal(cacheKey(hh)
 export function AppStateProvider({ children }) {
   const auth = useAuth();
   const household = auth.user?.household || null;
+  // 관제 PC 는 창이 다른 창에 가려져도(브라우저가 '숨김'으로 본다) 계속 가져온다 — SOS 팝업 · 알림음이
+  // 창을 앞으로 꺼내야만 뜨면 늦는다 (2026-10-02 QA "관제 화면을 열어 둔 채 1분 넘게 새 요청이 안 뜸")
+  const keepPollingHidden = auth.user?.role === "ops";
+  const keepRef = useRef(keepPollingHidden);
+  keepRef.current = keepPollingHidden;
   // 세션을 아직 모르면 아무것도 읽지 않는다 — 데모 상태를 잠깐 보여 줬다가 바꾸지 않게
   const scope = auth.status === "loading" ? null : household ? `acct:${household}` : "demo";
 
@@ -773,8 +803,8 @@ export function AppStateProvider({ children }) {
       lastActiveRef.current = Date.now();
     };
     const tick = async (force = false) => {
-      if (stopped || document.hidden || savingRef.current || pendingRef.current.length) return;
-      const idle = Date.now() - lastActiveRef.current > ACTIVE_WINDOW_MS;
+      if (stopped || (document.hidden && !keepRef.current) || savingRef.current || pendingRef.current.length) return;
+      const idle = document.hidden || Date.now() - lastActiveRef.current > ACTIVE_WINDOW_MS;
       if (!force && idle && Date.now() - lastPoll < POLL_IDLE_MS) return;
       lastPoll = Date.now();
       // 읽는 동안 내 저장이 끝나 버전이 올라갔으면 이 응답은 그보다 옛것이다 — 버린다.
@@ -901,10 +931,34 @@ export function storageText(sync) {
 }
 
 // 결제권한 판정 — REQ-07. 금액이 보호자 승인을 필요로 하는지.
-export function needsGuardianApproval(onboarding, amount) {
+// spentToday — 오늘(한국 날짜) 어르신이 직접 결제한 합계. 한도는 하루 누적으로 센다 (2026-10-02 결정:
+// 30,000원 + 25,000원을 같은 날 내면 둘째 것은 보호자 승인으로 간다).
+export function needsGuardianApproval(onboarding, amount, spentToday = 0) {
   const mode = onboarding?.paymentMode || "limit";
   const limit = onboarding?.limitAmount ?? PRICING.paymentLimitDefault;
   if (mode === "guardianOnly") return true;
   if (mode === "elderOnly" || mode === "both") return false;
-  return amount == null ? false : amount > limit;
+  return amount == null ? false : amount + (Number(spentToday) || 0) > limit;
+}
+
+// 오늘 어르신이 직접 결제한 합계 — 해주세요 · 스토어에서 payBy:"elder" 로 들어간 것 (취소 · 처리불가는 빼고)
+const kstDay = (t) => new Date(Number(t) + 9 * 3600000).toISOString().slice(0, 10);
+export function elderSpentToday(state, now = Date.now()) {
+  const today = kstDay(now);
+  return (state?.requests || [])
+    .filter((r) => r.payBy === "elder" && Number(r.amount) > 0 && !["cancelled", "rejected"].includes(r.status))
+    .filter((r) => kstDay(r.history?.[0]?.at || 0) === today)
+    .reduce((s, r) => s + Number(r.amount), 0);
+}
+
+// 누가 어떤 일정을 보나 — 관제 승인 전 · 반려된 일정이 확정된 것처럼 보이면 안 된다.
+// 보호자: 전부 (캘린더가 '승인 대기 · 반려' 칩을 단다). 어르신: 확정된 것 + 본인이 남긴 승인 대기 건
+// ('관제 확인 중'으로 표시). 그 밖(컨시어지 · 집계): 확정된 것만.
+export function eventsFor(events, who) {
+  return (events || []).filter((e) => {
+    if (!e.approval || e.approval === "approved") return true;
+    if (who === "guardian") return true;
+    if (who === "elder") return e.approval === "pending" && e.by === "elder";
+    return false;
+  });
 }

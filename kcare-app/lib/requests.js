@@ -8,8 +8,9 @@ export const STATUS = {
   inProgress: { label: "처리중", fg: "#B08D57", bg: "rgba(176,141,87,.16)" },
   done: { label: "완료", fg: "#1E7A5A", bg: "rgba(30,122,90,.12)" },
   cancelled: { label: "취소", fg: "#5C5A54", bg: "rgba(92,90,84,.12)" },
-  rejected: { label: "처리불가", fg: "#C0392B", bg: "rgba(192,57,43,.1)" },
-  needsAdmin: { label: "관리자 확인필요", fg: "#C0392B", bg: "rgba(192,57,43,.14)" },
+  // 빨강은 위험 신호(SOS · 낙상) 전용 — 처리불가 · 관리자 확인은 회색 · 금색으로 둔다
+  rejected: { label: "처리불가", fg: "#5C5A54", bg: "rgba(92,90,84,.12)" },
+  needsAdmin: { label: "관리자 확인필요", fg: "#8A5D12", bg: "rgba(138,93,18,.14)" },
 };
 
 const TRANSITIONS = {
@@ -251,5 +252,14 @@ export const GUARDIAN_PRESETS = [
 
 export const URGENCY = {
   normal: { label: "보통", fg: "#5C5A54", bg: "rgba(92,90,84,.1)" },
-  urgent: { label: "긴급", fg: "#C0392B", bg: "rgba(192,57,43,.1)" },
+  urgent: { label: "긴급", fg: "#8A5D12", bg: "rgba(176,141,87,.18)" }, // 긴급도 위험 신호는 아니다 — 금색
 };
+
+// 희망일 표기 — 보호자 앱은 시각값(숫자)으로, 예시 데이터는 'YYYY-MM-DD' 로 남는다. 관제가 숫자를 그대로
+// 보여 '1791590400000'이 됐다 (2026-10-02 QA). 날짜 · 시간 · '이번 주 안' 같은 말을 한 줄로.
+export function fmtPreferred(r, empty = "미정") {
+  const v = r?.preferredDate;
+  const d = typeof v === "number" && Number.isFinite(v) ? new Date(v + 9 * 3600000).toISOString().slice(0, 10) : v || null;
+  if (d) return `${d}${r.preferredTime ? ` ${r.preferredTime}` : ""}`;
+  return r?.preferredWhen && r.preferredWhen !== "선생님과 통화해서 정하기" ? r.preferredWhen : r?.preferredWhen ? "통화로 정함" : empty;
+}

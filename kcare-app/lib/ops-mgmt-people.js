@@ -4,6 +4,7 @@
 import { ROSTERS } from "./rosters";
 import { SERVICE_MENU } from "./requests";
 import { VISITS, demoTel, ADMIN, OPERATOR } from "./ops-mgmt";
+import { pastHm } from "./reltime";
 
 const past = (at, field, before, after, reason, who = OPERATOR) => ({ at, account: who.account, name: who.name, role: who.role, field, before, after, reason });
 const svc = (no) => SERVICE_MENU.find((s) => s.no === no);
@@ -27,28 +28,28 @@ const G = (id, name, rel, role, elder, age, region, tz, report, payLimit, contac
   id: `G-${String(id).padStart(3, "0")}`, name, rel, role, elders: [{ name: elder, age, role }], region, tz, tzLabel: tz == null ? null : region,
   tel: demoTel(name), hours: "08:00–22:00", night: role === "주", consent: { call: true, sms: true, push: true }, sosOrder: role === "주" ? 1 : role === "부" ? 2 : 3,
   scope: role === "주" ? SCOPES[0] : SCOPES[1], reportVia: REPORT_VIA[1], report, payer: payLimit != null, payLimit, contact,
-  app: { state: "정상", last: "오늘 09:12" }, emergency: role === "주" ? "119 신고 · 현장출동 동의" : "열람 동의",
+  app: { state: "정상", last: pastHm("09:12") }, emergency: role === "주" ? "119 신고 · 현장출동 동의" : "열람 동의",
   requests: [], complaints: [], reports: [{ at: "09-16", title: "9월 정기방문 보고서", state: report.includes("미열람") ? "noreply" : "read" }],
   log: [{ at: "09-16 14:10", ch: "보고서", text: "9월 정기방문 보고서 발송", state: report.includes("미열람") ? "delivered" : "read" }],
   payments: payLimit == null ? [] : [{ at: "09-08", item: svc(6).name, amount: svc(6).amount, state: "approved" }],
   history: [], ...x,
 });
 export const GUARDIANS = [
-  G(1, "김민수", "아들", "주", "김순자", 78, "서울 강남구", null, "오늘 열람", 100000, "정상", {
-    hours: "06:00–23:00", app: { state: "정상", last: "오늘 16:58" },
+  G(1, "김민수", "아들", "주", "김순자", 78, "서울 강남구", null, "오늘 열람", 50000, "정상", {
+    hours: "06:00–23:00", app: { state: "정상", last: pastHm("16:58") },
     requests: ["22시 이후 알림은 문자 대신 앱 푸시로", "월 방문 때 어머니 사진 꼭 보내주세요", "복약 관련 변화는 바로 전화 주세요"],
     complaints: [{ at: "08-20", type: "상담", text: "보고서 사진 화질 문의", state: "답변 완료" }],
     log: [
-      { at: "오늘 16:42", ch: "앱 푸시", text: "건강 주의 알림 (외출 횟수 변화)", state: "replied" },
-      { at: "오늘 14:10", ch: "보고서", text: "방문 중간 알림 · 점검 17/21", state: "read" },
+      { at: pastHm("16:42"), ch: "앱 푸시", text: "건강 주의 알림 (외출 횟수 변화)", state: "replied" },
+      { at: pastHm("14:10"), ch: "보고서", text: "방문 중간 알림 · 점검 17/21", state: "read" },
       { at: "어제 09:30", ch: "앱 푸시", text: `결제 승인 요청 · ${svc(13).name}`, state: "approved" },
       { at: "09-18 18:00", ch: "문자", text: "9월 방문 일정 통보 (09-22 14:00)", state: "delivered" },
       { at: "09-01 07:40", ch: "전화", text: "야간 심박 경보 사후 통보 (정상 확인)", state: "called" },
       { at: "08-30 21:05", ch: "문자", text: "복약 알림 재발송", state: "failed" },
     ],
-    reports: [{ at: "오늘 14:10", title: "방문 중간 알림", state: "read" }, { at: "09-01", title: "SOS-20260901-002 상황보고서", state: "read" }, { at: "08-19", title: "8월 정기방문 보고서", state: "read" }],
+    reports: [{ at: pastHm("14:10"), title: "방문 중간 알림", state: "read" }, { at: "09-01", title: "SOS-20260901-002 상황보고서", state: "read" }, { at: "08-19", title: "8월 정기방문 보고서", state: "read" }],
     payments: [{ at: "어제", item: svc(13).name, amount: svc(13).amount, state: "approved" }, { at: "09-08", item: svc(6).name, amount: svc(6).amount, state: "approved" }, { at: "08-27", item: svc(2).name, amount: svc(2).amount, state: "approved" }],
-    history: [past("2026-08-12 15:05", "결제 승인 한도", "50,000원", "100,000원", "병원 동행 프리미엄 2시간 요금이 한도를 넘어 승인이 막힘 — 보호자 요청", ADMIN)],
+    history: [past("2026-08-12 15:05", "어르신 직접 결제 한도", "30,000원", "50,000원", "보호자 요청", ADMIN)],
   }),
   G(2, "김지영", "차녀", "부", "김순자", 78, "LA", -16, "7일 미열람", null, "확인 필요", { hours: "현지 09:00–21:00", night: false, reportVia: REPORT_VIA[3], app: { state: "정상", last: "09-14" }, log: [{ at: "09-16 14:10", ch: "보고서", text: "9월 정기방문 보고서 발송", state: "delivered" }, { at: "09-20 10:00", ch: "앱 푸시", text: "보고서 미열람 재알림", state: "noreply" }] }),
   G(3, "김현우", "삼남", "비상", "김순자", 78, "시드니", 1, "오늘 열람", null, "정상", { consent: { call: true, sms: false, push: true }, scope: SCOPES[2], history: [past("2026-08-12 15:02", "보호자 연결", "—", "김순자 · 비상 보호자", "보호자 김민수 요청으로 비상 연락 등록", ADMIN)] }),
@@ -57,12 +58,12 @@ export const GUARDIANS = [
   G(6, "최선영", "차녀", "주", "최정자", 75, "도쿄", 0, "3일 미열람", 50000, "정상", { reportVia: REPORT_VIA[0] }),
   G(7, "한준호", "아들", "주", "한복자", 79, "서울 강동구", null, "오늘 열람", 100000, "정상", { requests: ["투석 왕복 동행 결과는 당일 알림"] }),
   G(8, "오세라", "장녀", "주", "오태식", 77, "서울 강남구", null, "오늘 열람", 50000, "정상"),
-  G(9, "노시우", "아들", "주", "노만수", 80, "대전", null, "3일 미열람", 50000, "미응답", { log: [{ at: "오늘 13:40", ch: "앱 푸시", text: "워치 배터리 부족 · 충전기 교체 통보", state: "noreply" }, { at: "09-16 14:10", ch: "보고서", text: "9월 정기방문 보고서 발송", state: "delivered" }] }),
+  G(9, "노시우", "아들", "주", "노만수", 80, "대전", null, "3일 미열람", 50000, "미응답", { log: [{ at: pastHm("13:40"), ch: "앱 푸시", text: "워치 배터리 부족 · 충전기 교체 통보", state: "noreply" }, { at: "09-16 14:10", ch: "보고서", text: "9월 정기방문 보고서 발송", state: "delivered" }] }),
   G(10, "도예진", "장녀", "주", "도금례", 86, "서울 강동구", null, "오늘 열람", 100000, "정상"),
   G(11, "문성호", "아들", "주", "문순덕", 88, "서울 마포구", null, "어제 열람", 100000, "정상"),
   G(12, "서유진", "장녀", "주", "서옥자", 82, "경기 성남", null, "그저께 열람", 50000, "정상"),
   G(13, "임재현", "아들", "주", "임화자", 87, "런던", -8, "오늘 열람", 100000, "정상", { hours: "현지 08:00–22:00" }),
-  G(14, "강도윤", "아들", "주", "강필순", 84, "서울 강남구", null, "7일 미열람", 100000, "확인 필요", { log: [{ at: "오늘 12:10", ch: "전화", text: "복약 불일치 확인 요청", state: "noreply" }, { at: "09-16 14:10", ch: "보고서", text: "9월 정기방문 보고서 발송", state: "delivered" }] }),
+  G(14, "강도윤", "아들", "주", "강필순", 84, "서울 강남구", null, "7일 미열람", 100000, "확인 필요", { log: [{ at: pastHm("12:10"), ch: "전화", text: "복약 불일치 확인 요청", state: "noreply" }, { at: "09-16 14:10", ch: "보고서", text: "9월 정기방문 보고서 발송", state: "delivered" }] }),
 ];
 // 상단 현황은 시안 값 — 명부는 그중 일부(1–14)만 표시한다
 export const GUARDIAN_STATS = { total: 218, primary: 200, overseas: 35, unread: 12, contact: 4 };

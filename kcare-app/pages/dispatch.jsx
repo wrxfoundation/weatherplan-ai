@@ -47,6 +47,8 @@ import {
   mapPeople,
 } from "../lib/console";
 import { useAppState } from "../lib/state";
+import { fmtPreferred } from "../lib/requests";
+import { relMd } from "../lib/reltime";
 import AiChat from "../components/AiChat";
 import HelpTip from "../components/HelpTip";
 import Icon from "../components/icons";
@@ -510,6 +512,7 @@ function DispatchConsole() {
     const t = setInterval(ringAlarm, 10000);
     return () => clearInterval(t);
   }, [sosPopup]);
+  const newRequests = (state.requests || []).filter((r) => r.status === "requested");
   const MENU_COUNTS = {
     sos: sosOpen.length,
     elder: TOTAL_ELDERS,
@@ -519,6 +522,8 @@ function DispatchConsole() {
     wearable: FLEET.needsCheck,
     // 관제 연락(컨시어지 '관제에 알리기') 중 확인 전 — 있으면 커뮤니케이션 메뉴에 숫자 (2026-10-02)
     ...((state.opsMessages || []).some((m) => !m.ackAt) ? { comms: (state.opsMessages || []).filter((m) => !m.ackAt).length } : {}),
+    // 해주세요 — 관제가 아직 받지 않은(요청됨) 건 수. 긴급이 섞여 있어도 여기서 먼저 보인다 (2026-10-02 QA)
+    ...(newRequests.length ? { requests: newRequests.length } : {}),
   };
   const sosUnread = sosOpen.some((i) => i.state === "new"); // 미확인 사건 — 사이드바 점등
 
@@ -699,6 +704,8 @@ function DispatchConsole() {
   const [nightCalled, setNightCalled] = useState(false); // 야간 출동(외주) 호출 — REQ-04
   const pendingEvents = (state.events || []).filter((e) => e.approval === "pending").length;
   const actions = [];
+  // 만족도를 남긴 보호자 — 테스트 가구는 '김순자 님 보호자 (관계)'로 (예시 보호자 '김민수'로 찍지 않는다)
+  const npsWho = liveOn ? `${ELDER.name} 님 보호자${state.onboarding?.rel ? ` (${state.onboarding.relDetail || state.onboarding.rel})` : ""}` : "김민수";
   if (sos)
     actions.push({
       id: "sos", level: "critical",
@@ -713,9 +720,9 @@ function DispatchConsole() {
   if (npsDetractor && !handled.npsCall)
     actions.push({
       id: "npsCall", level: "high",
-      title: `만족도 ${npsDetractor.score}점 회복 콜 — 김민수 (${npsDetractor.reason || "사유 미선택"})`,
+      title: `만족도 ${npsDetractor.score}점 회복 콜 — ${npsWho} (${npsDetractor.reason || "사유 미선택"})`,
       meta: "보호자 앱 NPS 접수 → 24h SLA · 회복이 먼저", act: "콜 완료",
-      ticker: ["대응", "NPS 회복 콜 완료 — 김민수 · 조치 결과 가족 공유 예정", "#8FA9CC"],
+      ticker: ["대응", `NPS 회복 콜 완료 — ${npsWho} · 조치 결과 가족 공유 예정`, "#8FA9CC"],
       clear: { npsDetractor: null },
     });
   if (assign === "pending")
@@ -753,8 +760,23 @@ function DispatchConsole() {
         title: `${r.type} — ${ELDER.name} (${ELDER.age})`,
         meta: `어르신 화면 · ${r.detail}`,
         act: "확인 전화 완료",
-        ticker: ["대응", `${ELDER.name} ${r.type} 확인 전화 완료 — 컨시어지 ${r.assignee} 진행`, "#8FA9CC"],
+        ticker: ["대응", `${ELDER.name} ${r.type} 확인 전화 완료 — ${r.assignee ? `컨시어지 ${r.assignee} 진행` : "담당 배정은 해주세요 관리에서"}`, "#8FA9CC"],
         onAct: () => dispatch({ type: "transitionRequest", id: r.id, to: "confirmed", note: "관제 확인 전화 완료 · 컨시어지 진행" }),
+      })
+    );
+  // 보호자 해주세요 중 '긴급' — 접수 확인 전이면 지금 처리할 일에 올린다 (2026-10-02 QA: 긴급으로 보내도 관제 첫 화면에
+  // 아무 표시가 없었다). 확인하면 '확인됨'으로 넘어가 보호자 화면 상태도 같이 바뀐다. 담당 배정은 해주세요 관리에서.
+  (state.requests || [])
+    .filter((r) => r.dir === "fromGuardian" && r.urgency === "urgent" && r.status === "requested")
+    .forEach((r) =>
+      actions.push({
+        id: `elder-req-${r.id}`,
+        level: "high",
+        title: `긴급 해주세요 — ${r.type} · ${ELDER.name} 보호자`,
+        meta: `${fmtPreferred(r, "희망일 미정")}${r.detail ? ` · ${r.detail}` : ""}`,
+        act: "접수 확인",
+        ticker: ["대응", `긴급 해주세요 접수 확인 — ${r.type} · 담당 배정은 해주세요 관리에서`, "#8FA9CC"],
+        onAct: () => dispatch({ type: "transitionRequest", id: r.id, to: "confirmed", note: "관제 접수 확인 (긴급)" }),
       })
     );
   // 컨시어지 '관제에 알리기' — 확인 전인 것은 지금 처리할 일에 올린다 (2026-10-02). 확인하면 컨시어지 화면에 '관제 확인'.
@@ -1086,7 +1108,7 @@ function DispatchConsole() {
 
           {sosPopup && (
             <SosAlertModal
-              customer={liveCustomer(ELDER.name, state.onboarding)}
+              customer={liveCustomer(ELDER.name, state.onboarding, state.health)}
               sosAt={state.demo.sosAt}
               elapsed={elapsed}
               dispatched={sosDispatched}
@@ -1110,7 +1132,9 @@ function DispatchConsole() {
               </span>
               <div className="min-w-[240px] flex-1">
                 <div className="text-[17px] font-bold">
-                  어르신 SOS 버튼 발신 · 김순자 (78) · 강남구 대치동 — 최근접 컨시어지 박지현 (1.2km)
+                  어르신 SOS 버튼 발신 · 김순자 (78) ·{" "}
+                  {/* 테스트 가구는 가입 상담 주소 — 예시 '강남구 대치동'이 실제 주소와 어긋났다 (2026-10-02 QA) */}
+                  {liveOn ? liveCustomer(ELDER.name, state.onboarding, state.health).address : "강남구 대치동"} — {liveOn ? "담당 컨시어지 박지현" : "최근접 컨시어지 박지현 (1.2km)"}
                 </div>
                 {/* 같은 사건이 SOS 센터에도 있다 — 여기는 급파·119 즉시 조치, 13단계 절차·종료는 센터에서 */}
                 <div className="mt-0.5 font-num text-[12px] opacity-[.88]">
@@ -1875,7 +1899,7 @@ function DispatchConsole() {
                     ))}
                   </div>
                   <p className="mt-3 border-t border-navy/[.08] pt-2 text-[11px] leading-[1.7] text-muted">
-                    이수민은 상한 임박으로 오늘 배차 후보에서 자동 제외됐고 7/29 투석 건 AI 제안에서도
+                    이수민은 상한 임박으로 오늘 배차 후보에서 자동 제외됐고 {relMd(2)} 투석 건 AI 제안에서도
                     빠졌습니다 — 피곤한 동행자가 어르신을 부축하는 것이 가장 흔한 사고 원인입니다.
                   </p>
                 </Panel>
@@ -1954,7 +1978,7 @@ function DispatchConsole() {
                   ))}
                 </div>
                 <p className="mt-2.5 text-[11px] leading-[1.6] text-muted">
-                  31일(금) 폭염 특보 예보 — 배차 6건 중 3건에 일정 조정 권고를 선제 발송할 수 있습니다
+                  (예시) 특보 예보가 뜨면 — 배차 6건 중 3건에 일정 조정 권고를 선제 발송할 수 있습니다
                   (F8-4)
                 </p>
               </Panel>
@@ -2077,7 +2101,9 @@ function DispatchConsole() {
           {menu === "weather" && (
             <div className="mt-4 grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(360px, 100%), 1fr))" }}>
               <Panel className="min-w-0">
-                <PanelHead title="현재 기상 — 강남지점 권역" right={WEATHER_NOW.updated} />
+                {/* 날씨는 아직 고정 예시값이다 — 10월에 '폭염 · 체감 36°'가 실제처럼 보이지 않게 표기한다 (2026-10-02 QA).
+                    실제 값은 기상 데이터 연동 뒤에 들어온다. */}
+                <PanelHead title="현재 기상 — 강남지점 권역" right={`예시 날씨 · 실제 연동 전`} />
                 {/* 특보 배너 — 빨강은 위험 신호 전용 원칙과 일치 */}
                 <div className="mt-3 rounded-xl border border-danger/25 bg-danger/[.07] px-4 py-3">
                   <div className="flex flex-wrap items-center gap-2">
@@ -2308,6 +2334,7 @@ function DispatchConsole() {
 }
 
 // 보호자 일정등록 요청 승인 큐 — 2026-08-12 보호자화면 시트 예약 1번.
+// 어르신이 남긴 병원 · 부탁할 일도 같은 큐로 온다 (2026-10-02 QA — 승인 없이 '동행 확정'으로 뜨던 것).
 //
 // 보호자가 K-CARE 일정을 등록하면 바로 캘린더에 뜨지 않는다. 관제가 팀 배정과
 // 배차가 가능한지 보고 승인해야 어르신·컨시어지 화면에 올라간다. 승인 없이
@@ -2338,7 +2365,7 @@ function EventApprovals() {
   return (
     <section className="card-glass mt-[18px] rounded-[14px] px-5 py-4">
       <div className="flex items-baseline justify-between">
-        <h2 className="text-[15px] font-bold tracking-[.02em] text-navy">보호자 일정등록 요청</h2>
+        <h2 className="text-[15px] font-bold tracking-[.02em] text-navy">일정등록 요청 — 보호자 · 어르신</h2>
         <span className="font-num text-[12px] text-muted">{pending.length}건 · 승인 대기</span>
       </div>
       <p className="mt-1 text-[12px] leading-[1.7] text-muted">
@@ -2363,7 +2390,7 @@ function EventApprovals() {
             <div className="min-w-[160px] flex-1">
               <div className="text-[15px] font-bold text-navy">{e.title}</div>
               <div className="text-[12px] text-muted">
-                {e.source} ·{" "}
+                {e.by === "elder" ? "어르신 직접 등록" : e.source} ·{" "}
                 <span className={e.escort ? "font-bold text-amber" : ""}>
                   {e.escort ? "동행 필요 — 배차 검토" : "동행 불필요 — 일정 공유만"}
                 </span>

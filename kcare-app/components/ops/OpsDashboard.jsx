@@ -8,6 +8,7 @@ import { useAuth } from "../../lib/auth";
 import { STEP_ORDER, useIncidents } from "../../lib/ops-sos";
 import { NORMAL_SAMPLE, OPS_TODAY, PRIORITY, SYSTEMS, SYSTEM_STATE, TILES, TOTAL_ELDERS, WATCH_LINKED } from "../../lib/ops-health";
 import { fmtClock, fmtDur, fmtElapsed, fmtTime, MIN, useNow } from "../../lib/ops-time";
+import { relKoLong } from "../../lib/reltime";
 
 const stepTitle = (k) => STEP_ORDER.find((s) => s.k === k)?.title || "—";
 
@@ -88,7 +89,7 @@ export default function OpsDashboard({ onStartSos, onOpenSos, onMenu, mapSlot, o
     <div className="space-y-4">
       <PanelHead
         title="통합 건강·안전 관제"
-        sub="2026년 9월 22일 화요일 · 전체 서비스 대상자 실시간 현황"
+        sub={`${relKoLong(0)} · 전체 서비스 대상자 실시간 현황`}
         right={
           <>
             <Pill tone="ok" dot>LIVE {now ? fmtTime(now) : "--:--:--"}</Pill>

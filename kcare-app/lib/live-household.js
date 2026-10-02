@@ -21,7 +21,7 @@ const ymd = (t) => (t ? new Date(Number(t) + KST).toISOString().slice(0, 10) : n
 const mdhm = (t) => (t ? new Date(Number(t) + KST).toISOString().slice(5, 16).replace("T", " ") : "—");
 
 export const PAY_MODE = {
-  limit: (ob) => `한도형 — ${Number(ob.limitAmount ?? 50000).toLocaleString("ko-KR")}원 이하 어르신 직접`,
+  limit: (ob) => `한도형 — 하루 ${Number(ob.limitAmount ?? 50000).toLocaleString("ko-KR")}원까지 어르신 직접`,
   both: () => "양쪽 모두 결제",
   guardianOnly: () => "보호자만 결제",
   elderOnly: () => "어르신만 결제",
@@ -34,7 +34,7 @@ export function liveRequests(state) {
     at: mdhm(r.history?.[0]?.at),
     name: r.type,
     price: r.amount != null ? fmtWon(r.amount) : "요금 확정 전",
-    state: `${STATUS[r.status]?.label || r.status}${r.assignee ? ` · 담당 ${r.assignee}` : ""}`,
+    state: `${STATUS[r.status]?.label || r.status}${r.assignee ? ` · 담당 ${r.assignee}` : " · 담당 미배정"}`,
   }));
 }
 
@@ -109,7 +109,8 @@ export function liveGuardian(g, state, account) {
     live: true,
     onboarded: !!ob,
     app: { state: account ? `테스트 계정 (${account})` : "테스트 계정", last: "—" },
-    requests: mine.map((r) => `${r.type} — ${STATUS[r.status]?.label || r.status}${r.assignee ? ` · 담당 ${r.assignee}` : ""}`),
+    // 담당이 비어 있으면 '미배정'이라고 쓴다 — 관제가 정할 일이 남았다는 뜻 (2026-10-02 QA: 담당을 박지현으로 미리 박지 않는다)
+    requests: mine.map((r) => `${r.type} — ${STATUS[r.status]?.label || r.status}${r.assignee ? ` · 담당 ${r.assignee}` : " · 담당 미배정"}`),
     complaints: [],
     log,
     reports,

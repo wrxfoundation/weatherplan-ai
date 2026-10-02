@@ -2,6 +2,7 @@ import Head from "next/head";
 import Link from "next/link";
 import { useState } from "react";
 import { useAppState } from "../lib/state";
+import { healthOf, medDrugs } from "../lib/meds";
 import {
   CP_KPIS,
   CP_LOOP,
@@ -58,8 +59,11 @@ function PanelHead({ title, right }) {
 }
 
 export default function CareProfile() {
-  const { dispatch } = useAppState();
+  const { state, dispatch } = useAppState();
   const [briefSent, setBriefSent] = useState(false);
+  // 복약 줄은 가구 상태의 건강 정보(관제 · 컨시어지가 고친 값)를 그대로 쓴다 — lib/meds.js healthOf
+  const drugs = medDrugs(healthOf(state).meds);
+  const attrs = CP_ATTRS.map((a) => (a.k === "복약" ? { ...a, v: drugs.length ? `${drugs.join(" · ")} ${drugs.length}종` : "등록 없음" } : a));
   const [crisisRun, setCrisisRun] = useState(false);
 
   const push = (kind, text, color) => dispatch({ type: "pushEvent", payload: { kind, text, color } });
@@ -143,7 +147,7 @@ export default function CareProfile() {
                     </tr>
                   </thead>
                   <tbody>
-                    {CP_ATTRS.map((a) => (
+                    {attrs.map((a) => (
                       <tr key={a.k} className="border-b border-navy/[.06] align-top">
                         <td className="whitespace-nowrap py-2 pr-3 font-bold text-navy">{a.k}</td>
                         <td className="py-2 pr-3 text-ink">{a.v}</td>

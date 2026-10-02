@@ -28,7 +28,7 @@ export default function StorePage() {
   // 첫 방문 안전진단(컨시어지)이 담아 둔 생활안전용품 — 자동으로 선택된 채 시작
   const safetyCart = state.demo.safetyCart || [];
   const [sel, setSel] = useState(() => Object.fromEntries(safetyCart.map((id) => [id, true])));
-  const [cat, setCat] = useState(safetyCart.length > 0 ? "safety" : "vitamin");
+  const [cat, setCat] = useState("safety"); // 스토어는 생활안전용품만 (2026-10-02 운영 결정)
   const [groupIdx, setGroupIdx] = useState(0);
   const [tab, setTab] = useState("shop"); // shop | orders — 구매내역 조회 (2026-08-12 시트)
   // 상품 상세 시트 — 카드를 누르면 바로 담기지 않고 상세를 먼저 본다 (2026-09-22 상담실장 확인)
@@ -118,7 +118,9 @@ export default function StorePage() {
           </Card>
         )}
 
-        {/* 카테고리 — 큰 버튼 (실무자 UI 샘플: 활성은 채움, 비활성은 옅게) */}
+        {/* 카테고리 — 큰 버튼 (실무자 UI 샘플: 활성은 채움, 비활성은 옅게).
+            지금은 생활안전용품 한 분류뿐이라(2026-10-02 운영 결정) 고를 것이 없으면 줄을 감춘다 */}
+        {STORE_CATALOG.length > 1 && (
         <div className="grid grid-cols-4 gap-2">
           {STORE_CATALOG.map((c) => {
             const on = cat === c.id;
@@ -141,6 +143,7 @@ export default function StorePage() {
             );
           })}
         </div>
+        )}
 
         {/* 하위분류 칩 — 영양제처럼 그룹이 여럿일 때만. 가로 스크롤. 그냥 두면 오른쪽이 잘린 것처럼 보여서
             더 있는 줄 모른다. 오른쪽 끝을 흐리게 덮어 "이어진다"를 보여 준다. */}
@@ -275,7 +278,7 @@ export default function StorePage() {
               <span className="text-[15px] font-bold text-navy">담은 물품 {items.length}건</span>
               <span className="font-num text-[19px] font-bold text-navy">{fmtWon(total)}</span>
             </div>
-            <p className="mt-1 text-[11px] text-muted">배송비 포함 · 다음 안심방문 또는 택배로 배송됩니다</p>
+            <p className="mt-1 text-[11px] text-muted">배송비 무료 · 다음 안심방문 또는 택배로 배송됩니다</p>
           </Card>
         )}
 
@@ -329,7 +332,7 @@ function OrderHistory({ orders, status }) {
               ))}
             </ul>
             <div className="mt-2.5 flex items-baseline justify-between border-t border-navy/[.08] pt-2.5">
-              <span className="text-[12px] text-muted">물품 {fmtWon(goods)} + 배송 {fmtWon(o.ship || 0)}</span>
+              <span className="text-[12px] text-muted">물품 {fmtWon(goods)} · {o.ship ? `배송 ${fmtWon(o.ship)}` : "배송 무료"}</span>
               <span className="font-num text-[17px] font-bold text-navy">{fmtWon(goods + (o.ship || 0))}</span>
             </div>
             {o.receipt && (

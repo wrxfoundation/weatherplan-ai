@@ -1,6 +1,6 @@
 // 결제 화면 — 토스페이먼츠 결제위젯(주문서형) · 자동결제 카드 등록.
 //
-// /pay?kind=store&amount=26000&orderName=영국산%20비타민C&ref=rq-1
+// /pay?kind=store&amount=80000&orderName=논슬립%20욕실%20매트&ref=rq-1
 // /pay?kind=billing                        (월 구독 카드 등록)
 //
 // 흐름: 서버에서 주문번호·금액 서명을 받는다 → 위젯을 그린다 → 결제 요청(리다이렉트)
@@ -13,6 +13,7 @@ import { ANONYMOUS, loadTossPayments } from "@tosspayments/tosspayments-sdk";
 import { Card, SectionLabel, PrimaryButton, Badge } from "../components/ui";
 import Icon from "../components/icons";
 import { useAppState, useSync } from "../lib/state";
+import { useAuth } from "../lib/auth";
 import { fmtWon, PRICING, HOUSEHOLD } from "../lib/config";
 import {
   PAY_KINDS,
@@ -28,8 +29,11 @@ const isBilling = (kind) => kind === "billing";
 
 export default function PayPage() {
   const router = useRouter();
-  const { state } = useAppState();
+  const { state, dispatch } = useAppState();
   const sync = useSync();
+  // 데모(테스트 계정이 아닌 시연)에서만 '가상 승인'을 연다 (2026-10-02 결정). 테스트 계정은 실제 토스 테스트 결제로만 끝난다.
+  const demo = !useAuth().user?.household;
+  const [demoDone, setDemoDone] = useState(null);
   const { kind = "store", amount, orderName = "K-CARE 결제", ref: refId = "" } = router.query;
   const value = Number(amount) || 0;
   const meta = PAY_KINDS[kind] || PAY_KINDS.store;
@@ -121,6 +125,26 @@ export default function PayPage() {
   };
 
   const testMode = isTestKey();
+
+  // ── 데모 가상 승인 — 토스를 부르지 않는다. 결제 기록에 '데모 · 실제 결제 없음'을 남기고,
+  // 결제가 끝났을 때와 같은 다음 단계(해주세요 진행 · 스토어 주문)를 세운다. 시연 흐름이 결제 키 없이도 이어지게.
+  const demoApprove = () => {
+    const payment = {
+      orderId: `demo_${kind}_${Date.now()}`,
+      orderName: String(orderName),
+      amount: value,
+      method: "데모 가상 승인",
+      approvedAt: new Date().toISOString(),
+      demo: true,
+    };
+    dispatch({ type: "addPayment", payload: { kind, ref: refId || null, status: "done", ...payment } });
+    dispatch({ type: "pushEvent", payload: { kind: "결제", text: `${meta.label} ${fmtWon(value)} 데모 가상 승인 (실제 결제 없음)`, color: "#8FE3C0" } });
+    if (kind === "request" && refId) {
+      dispatch({ type: "transitionRequest", id: refId, to: "inProgress", note: `데모 가상 승인 ${fmtWon(value)} (실제 결제 없음)` });
+    }
+    if (kind === "store") dispatch({ type: "commitPendingOrder", payload: payment });
+    setDemoDone(payment);
+  };
 
   return (
     <>
@@ -217,6 +241,22 @@ export default function PayPage() {
               </Card>
             )}
 
+            {demoDone && (
+              <Card className="p-[18px]">
+                <div className="flex items-center justify-between">
+                  <SectionLabel>데모 가상 승인</SectionLabel>
+                  <Badge fg="#1E7A5A" bg="rgba(30,122,90,.12)">승인 처리됨</Badge>
+                </div>
+                <p className="mt-2 text-[13px] leading-[1.7] text-ink">
+                  {fmtWon(demoDone.amount)} — 실제 결제는 없습니다. 결제가 끝났을 때와 같이 다음 단계가 진행됩니다.
+                </p>
+                <Link href={meta.back} className="tap mt-3 flex w-full items-center justify-center rounded-xl border border-navy/20 py-3 text-[14px] font-bold text-navy">
+                  돌아가기
+                </Link>
+              </Card>
+            )}
+
+            {!demoDone && (
             <PrimaryButton
               onClick={pay}
               disabled={phase !== "ready"}
@@ -228,6 +268,18 @@ export default function PayPage() {
                   ? "카드 등록하기"
                   : `${fmtWon(value)} 결제하기`}
             </PrimaryButton>
+            )}
+
+            {/* 데모 전용 — 결제 키가 없어도 시연을 이어 간다. 실제 결제와 헷갈리지 않게 버튼 말에 '실제 결제 없음'을 박는다 */}
+            {demo && !isBilling(kind) && !demoDone && value > 0 && (
+              <button
+                onClick={demoApprove}
+                disabled={phase === "requesting"}
+                className="btn-press w-full rounded-2xl border border-navy/20 py-3.5 text-[14px] font-bold text-navy disabled:opacity-50"
+              >
+                데모 승인 (실제 결제 없음)
+              </button>
+            )}
 
             <div className="px-1">
               {PAY_NOTICE.map((n) => (

@@ -6,6 +6,8 @@
 // 새 데이터를 추가할 때 어느 화면이 쓰는지 먼저 보고 파일을 고를 것.
 
 import { MOU_HOSPITALS } from "./mock";
+import { SAFETY_GOODS } from "./store";
+import { relMd, relMdw, relYmd } from "./reltime";
 
 // 컨시어지 당일 동선 — REQ-09. 상세 주소는 담당 확정(approved) 후에만.
 export const TODAY_ROUTE = [
@@ -16,8 +18,9 @@ export const TODAY_ROUTE = [
     approved: true,
     customer: "김순자 (78)",
     purpose: "병원동행 · 순환기내과 외래",
-    meta1: "순환기내과 외래 · 휠체어 필요 · 차량 동행",
-    meta2: "직전 방문 6/14 · 보행 보조 필요 · 청력 저하",
+    meta1: "순환기내과 외래 · 외출 시 휠체어 · 차량 동행",
+    // 직전 방문은 오늘 기준 — 정기 안심방문(약 한 달 전). 이동 방식은 선호 카드와 같은 말 (2026-10-02 QA)
+    meta2: `직전 방문 ${relMd(-27)} · 실내는 천천히 걸으심 · 청력 저하`,
     origin: "강남 거점 (역삼동)",
     address: "강남구 대치동 ○○아파트 103동 1204호",
     dong: "강남구 대치동",
@@ -70,9 +73,9 @@ export const STAFF = [
 
 // AI 자율 배차 L4 (09 §3) — why(근거)는 규제 요건. 없으면 렌더 금지
 export const AI_ASSIGN = [
-  { client: "한복자 (79)", time: "7/28 09:00", job: "고대구로 재활의학과 · 휠체어", staff: "한서연 + 김도윤", score: 96, why: "주: 재활 이력 2회 · 부: 휠체어 이동 실습 필요 · 동성 페어 · 신규 조합" },
-  { client: "오태식 (77)", time: "7/28 13:00", job: "KMI 검진 · 수면내시경 보호자", staff: "정민호 + 오하늘", score: 94, why: "주: 검진 대행 자격 · 부: 당일 공백 4시간 · 순환 규칙 통과" },
-  { client: "최정자 (75)", time: "7/29 08:30", job: "세브란스 투석 · 주 3회 고정", staff: "윤세라 + 최도현", score: 91, why: "주: 투석 동행 이력 11회 · 이수민은 주 근무 상한 임박으로 후보 제외" },
+  { client: "한복자 (79)", time: `${relMd(1)} 09:00`, job: "고대구로 재활의학과 · 휠체어", staff: "한서연 + 김도윤", score: 96, why: "주: 재활 이력 2회 · 부: 휠체어 이동 실습 필요 · 동성 페어 · 신규 조합" },
+  { client: "오태식 (77)", time: `${relMd(1)} 13:00`, job: "KMI 검진 · 수면내시경 보호자", staff: "정민호 + 오하늘", score: 94, why: "주: 검진 대행 자격 · 부: 당일 공백 4시간 · 순환 규칙 통과" },
+  { client: "최정자 (75)", time: `${relMd(2)} 08:30`, job: "세브란스 투석 · 주 3회 고정", staff: "윤세라 + 최도현", score: 91, why: "주: 투석 동행 이력 11회 · 이수민은 주 근무 상한 임박으로 후보 제외" },
 ];
 
 // SLA 관제 (09 §8.4) — SOS 초동은 "접수·연계" SLA (현장 도착 아님, REQ-04)
@@ -215,7 +218,7 @@ export const REVENUE_STREAMS = [
   { no: "08", name: "글로벌 아웃바운드", status: "todo" },
   { no: "09", name: "보험 연계 (GA)", status: "cond" },
   { no: "10", name: "데이터 라이선싱", status: "cond" },
-  { no: "11", name: "안심케어박스", status: "impl" },
+  { no: "11", name: "안심케어박스 (제공 안 함 · 10/02 결정)", status: "todo" },
   { no: "12", name: "재가급여", status: "cond" },
   { no: "13", name: "B2B SaaS 공급", status: "todo" },
   { no: "14", name: "기관 위탁 운영", status: "todo" },
@@ -268,29 +271,29 @@ export const VIDEO_MODES = [
 // 명부 20명 밖의 고객이다 (명부는 상세 프로필 보유분만 싣는다 · 전체 200명).
 // 고객 탭 목록 · 마음사서함 소통 대상이 이 배열 하나를 본다.
 export const MY_CLIENTS = [
-  { name: "김순자", age: 78, where: "대치동", loc: "자택", note: "이번 달 방문 9/9 · 12번째",
+  { name: "김순자", age: 78, where: "대치동", loc: "자택", note: `최근 방문 ${relMd(-27)} · 12번째`,
     proposed: 6, accepted: 5, referredBy: null, role: "주" },
-  { name: "오태식", age: 77, where: "역삼동", loc: "자택", note: "이번 달 방문 9/3 · 5번째",
+  { name: "오태식", age: 77, where: "역삼동", loc: "자택", note: `최근 방문 ${relMd(-19)} · 5번째`,
     proposed: 4, accepted: 1, referredBy: null, role: "주" },
-  { name: "안병철", age: 85, where: "대치동", loc: "자택", note: "이번 달 방문 9/16 · 8번째",
+  { name: "안병철", age: 85, where: "대치동", loc: "자택", note: `최근 방문 ${relMd(-6)} · 8번째`,
     proposed: 2, accepted: 2, referredBy: null, role: "주" },
-  { name: "정말순", age: 84, where: "청담동", loc: "요양병원", note: "면회 9/12 · 3번째",
+  { name: "정말순", age: 84, where: "청담동", loc: "요양병원", note: `면회 ${relMd(-10)} · 3번째`,
     proposed: 3, accepted: 2, referredBy: "김순자 (같은 성당)", role: "주" },
-  { name: "박영자", age: 81, where: "삼성동", loc: "자택", note: "첫 방문 예정 9/24",
+  { name: "박영자", age: 81, where: "삼성동", loc: "자택", note: `첫 방문 예정 ${relMd(2)}`,
     proposed: 0, accepted: 0, referredBy: "김순자 (이웃)", role: "주" },
-  { name: "윤정례", age: 80, where: "도곡동", loc: "자택", note: "이번 달 방문 9/18 · 4번째",
+  { name: "윤정례", age: 80, where: "도곡동", loc: "자택", note: `최근 방문 ${relMd(-4)} · 4번째`,
     proposed: 2, accepted: 1, referredBy: null, role: "부" },
-  { name: "배기태", age: 79, where: "삼성동", loc: "자택", note: "이번 달 방문 9/4 · 6번째",
+  { name: "배기태", age: 79, where: "삼성동", loc: "자택", note: `최근 방문 ${relMd(-18)} · 6번째`,
     proposed: 3, accepted: 3, referredBy: null, role: "부" },
-  { name: "손말자", age: 86, where: "청담동", loc: "자택", note: "이번 달 방문 9/11 · 9번째",
+  { name: "손말자", age: 86, where: "청담동", loc: "자택", note: `최근 방문 ${relMd(-11)} · 9번째`,
     proposed: 5, accepted: 3, referredBy: null, role: "부" },
-  { name: "전옥희", age: 82, where: "역삼동", loc: "자택", note: "이번 달 방문 9/15 · 2번째",
+  { name: "전옥희", age: 82, where: "역삼동", loc: "자택", note: `최근 방문 ${relMd(-7)} · 2번째`,
     proposed: 1, accepted: 0, referredBy: "오태식 (경로당)", role: "부" },
-  { name: "한동식", age: 83, where: "대치동", loc: "자택", note: "이번 달 방문 9/8 · 7번째",
+  { name: "한동식", age: 83, where: "대치동", loc: "자택", note: `최근 방문 ${relMd(-14)} · 7번째`,
     proposed: 2, accepted: 2, referredBy: null, role: "부" },
-  { name: "김복남", age: 88, where: "개포동", loc: "요양병원", note: "면회 9/19 · 5번째",
+  { name: "김복남", age: 88, where: "개포동", loc: "요양병원", note: `면회 ${relMd(-3)} · 5번째`,
     proposed: 1, accepted: 1, referredBy: null, role: "부" },
-  { name: "이순례", age: 76, where: "도곡동", loc: "자택", note: "이번 달 방문 9/20 · 1번째",
+  { name: "이순례", age: 76, where: "도곡동", loc: "자택", note: `최근 방문 ${relMd(-2)} · 1번째`,
     proposed: 0, accepted: 0, referredBy: null, role: "부" },
 ];
 
@@ -328,39 +331,43 @@ export const CONCIERGE_JOB_KINDS = {
   visit: { label: "안심방문", color: "#B08D57" },
 };
 
-export const CONCIERGE_CAL = [
-  { id: "cc1", day: 3, kind: "visit", client: "오태식", age: 77, time: "오전 10:00", where: "역삼동 자택",
+const CONCIERGE_CAL_RAW = [
+  { id: "cc1", off: -19, kind: "visit", client: "오태식", age: 77, time: "오전 10:00", where: "역삼동 자택",
     detail: "월 1회 안심방문 · 21항목 점검", crew: "박지현 1인", memo: "지난달 냉장고 정리 후속 확인" },
-  { id: "cc2", day: 5, kind: "escort", client: "김순자", age: 78, time: "오후 1:50", where: "서울아산병원",
-    detail: "순환기내과 외래 동행 (프리미엄 · 2인)", crew: "박지현 · 서다인", memo: "픽업 13:10 · 휠체어 동선" },
-  { id: "cc3", day: 9, kind: "visit", client: "김순자", age: 78, time: "오후 2:00", where: "대치동 자택",
-    detail: "월 1회 안심방문 · 21항목 점검", crew: "박지현 1인", memo: "3회차 · 혈압·복약 재확인" },
-  { id: "cc4", day: 12, kind: "request", client: "정말순", age: 84, time: "오전 11:00", where: "청담 요양병원",
+  { id: "cc2", off: -17, kind: "escort", client: "김순자", age: 78, time: "오후 1:50", where: "서울아산병원",
+    detail: "순환기내과 외래 동행 (프리미엄 · 2인)", crew: "박지현 · 서다인", memo: "픽업 13:50 · 휠체어 동선" },
+  { id: "cc3", off: 3, kind: "visit", client: "김순자", age: 78, time: "오후 2:00", where: "대치동 자택",
+    detail: "월 1회 안심방문 · 21항목 점검", crew: "박지현 1인", memo: "월 정기 · 혈압·복약 재확인" },
+  { id: "cc4", off: -10, kind: "request", client: "정말순", age: 84, time: "오전 11:00", where: "청담 요양병원",
     detail: "해주세요 — 요양병원 안심케어", crew: "박지현 1인", memo: "자녀 영상 메시지 전달" },
-  { id: "cc5", day: 16, kind: "daily", client: "오태식", age: 77, time: "오후 3:00", where: "역삼동 일대",
+  { id: "cc5", off: -6, kind: "daily", client: "오태식", age: 77, time: "오후 3:00", where: "역삼동 일대",
     detail: "일상 동행 — 은행 · 장보기", crew: "서다인 1인", memo: "통장 정리 · 반찬 구매" },
-  { id: "cc6", day: 19, kind: "escort", client: "정말순", age: 84, time: "오전 9:30", where: "강남세브란스",
+  { id: "cc6", off: -3, kind: "escort", client: "정말순", age: 84, time: "오전 9:30", where: "강남세브란스",
     detail: "정형외과 외래 동행 (베이직 · 1인)", crew: "박지현 1인", memo: "현장에서 만나 접수부터" },
-  // ── 오늘(22일) — 컨시어지 오늘 탭 '오늘의 일정'이 이 네 건을 그대로 쓴다 (2026-09-22 시안).
+  // ── 오늘(off 0) — 컨시어지 오늘 탭 '오늘의 일정'이 이 네 건을 그대로 쓴다 (2026-09-22 시안).
   // 관제 배차 그리드(lib/mock.js JOBS j1·j2)와 같은 두 동행 + 명부의 안병철 야간 안부 확인.
   // start/end 는 오늘 건에만 있다 — 진행 순서·예상 종료 계산용.
-  { id: "ct1", day: 22, kind: "escort", client: "오태식", age: 77, time: "오전 9:00", start: "09:00", end: "11:30", where: "KMI 검진센터 (강남)",
+  { id: "ct1", off: 0, kind: "escort", client: "오태식", age: 77, time: "오전 9:00", start: "09:00", end: "11:30", where: "KMI 검진센터 (강남)",
     detail: "KMI 종합검진 · 수면내시경 보호자 동행 (2인)", crew: "박지현 · 오하늘", memo: "검진 대행 자격 · 동성 페어 · 결과지는 보호자 앱으로", seed: "done", report: false },
-  { id: "ct2", day: 22, kind: "request", client: "정말순", age: 84, time: "오전 11:40", start: "11:40", end: "12:30", where: "청담 요양병원",
+  { id: "ct2", off: 0, kind: "request", client: "정말순", age: 84, time: "오전 11:40", start: "11:40", end: "12:30", where: "청담 요양병원",
     detail: "해주세요 — 요양병원 안심케어 · 자녀 영상 메시지 전달", crew: "박지현 1인", memo: "면회실 예약 11:40 · 태블릿 지참", seed: "planned" },
-  { id: "ct3", day: 22, kind: "escort", client: "김순자", age: 78, time: "오후 1:50", start: "13:50", end: "18:00", where: "서울아산병원",
-    detail: "순환기내과 외래 동행 (프리미엄 · 2인) · 차량 · 휠체어", crew: "박지현 · 서다인", memo: "픽업 13:10 대치동 103동 정문 · 지하주차 B2", seed: "planned", main: true },
-  { id: "ct4", day: 22, kind: "visit", client: "안병철", age: 85, time: "오후 7:00", start: "19:00", end: "19:30", where: "대치동 자택",
+  { id: "ct3", off: 0, kind: "escort", client: "김순자", age: 78, time: "오후 1:50", start: "13:50", end: "18:00", where: "서울아산병원",
+    detail: "순환기내과 외래 동행 (프리미엄 · 2인) · 차량 · 휠체어", crew: "박지현 · 서다인", memo: "픽업 13:50 대치동 103동 정문 · 지하주차 B2", seed: "planned", main: true },
+  { id: "ct4", off: 0, kind: "visit", client: "안병철", age: 85, time: "오후 7:00", start: "19:00", end: "19:30", where: "대치동 자택",
     detail: "야간 안부 확인 — 워치 무수집 후속 · 복약 확인", crew: "박지현 1인", memo: "관제 긴급확인 요청과 같은 건 · 정기 재방문이라 1인", seed: "planned" },
-  { id: "cc8", day: 23, kind: "request", client: "김순자", age: 78, time: "오후 5:00", where: "대치동 자택",
+  { id: "cc8", off: 1, kind: "request", client: "김순자", age: 78, time: "오후 5:00", where: "대치동 자택",
     detail: "해주세요 — 약국 심부름 (처방약 수령)", crew: "서다인 1인", memo: "약값은 현장 카드 결제" },
-  { id: "cc7", day: 24, kind: "visit", client: "박영자", age: 81, time: "오후 2:00", where: "삼성동 자택",
+  { id: "cc7", off: 2, kind: "visit", client: "박영자", age: 81, time: "오후 2:00", where: "삼성동 자택",
     detail: "첫 안심방문 — 홈 안전진단 30항목", crew: "박지현 · 서다인 (2인)", memo: "첫 대면이라 2인 배차" },
-  { id: "cc9", day: 26, kind: "daily", client: "김순자", age: 78, time: "오전 10:30", where: "대치동 주민센터",
+  { id: "cc9", off: 4, kind: "daily", client: "김순자", age: 78, time: "오전 10:30", where: "대치동 주민센터",
     detail: "일상 동행 — 관공서 서류 발급", crew: "서다인 1인", memo: "등본 · 인감 발급" },
 ];
+// 날짜는 오늘에서 며칠 떨어졌나(off)로 적는다 — 예전엔 9월 기준 day 숫자라 10월에 열면 '오늘 업무 0건'이
+// 되면서 같은 화면의 동행 카드는 그대로 떠 있었다 (2026-10-02 QA). ymd 는 화면이 날짜 칸과 맞출 때 쓴다.
+export const CONCIERGE_CAL = CONCIERGE_CAL_RAW.map((j) => ({ ...j, ymd: relYmd(j.off) }));
 
-export const VIDEO_SEGMENTS = ["현관 진입 · 본인 확인", "케어박스 점검", "생활환경 확인", "서비스 종료 확인"];
+// 케어박스 점검 구간은 뺐다 — 케어박스를 제공하지 않는다 (2026-10-02 운영 결정)
+export const VIDEO_SEGMENTS = ["현관 진입 · 본인 확인", "21항목 점검", "생활환경 확인", "서비스 종료 확인"];
 
 export const VIDEO_POLICY = {
   // 욕실은 촬영 불가에서 뺐다 (2026-08-12 실무진 요청) — 낙상 위험이 가장 높은
@@ -368,7 +375,7 @@ export const VIDEO_POLICY = {
   // 찍지 않는다는 단서를 함께 둔다 (탈의공간·화장실 사용 중은 여전히 금지).
   allowed: ["거실", "현관", "주방", "욕실 (사람이 없을 때 · 안전 점검 목적)", "병원 이동", "약상자 점검"],
   banned: ["화장실 사용 중", "탈의공간", "침실"],
-  retention: "일반 방문 4주 후 자동 삭제 · 사고·민원은 사건 종료 시까지 · 법적 분쟁은 법령 기준 별도 보관",
+  retention: "일반 방문 30일 후 자동 삭제 · 사고·민원은 사건 종료 시까지 · 법적 분쟁은 법령 기준 별도 보관",
 };
 
 // ─── 보호자 앱 디자인 콘솔 정합분 ──────────────────────────────────────────────
@@ -430,10 +437,13 @@ export const EARNINGS = {
   earlyPayNote: "조기 지급은 주 정산액의 50% 한도 안에서 가능합니다 (한도 규칙)",
 };
 
-// 케어 제안 — 제안은 반드시 근거(trigger)를 동반한다 (도메인 규칙 1.1)
+// 케어 제안 — 제안은 반드시 근거(trigger)를 동반한다 (도메인 규칙 1.1).
+// 스토어는 생활안전용품만 판다 (2026-10-02 운영 결정) — 제안 품목과 금액도 스토어 카탈로그에서 가져온다.
+// 전에는 '미끄럼 방지 매트 28,000원'처럼 스토어(80,000원)와 다른 값이 따로 있었다.
+const safetyGood = (id) => SAFETY_GOODS.find((g) => g.id === id);
 export const CARE_SUGGESTIONS = [
-  { item: "미끄럼 방지 매트", trigger: "근거: 낙상 위험물 관찰 2회 (6/14 · 7/26 리포트)", est: 28000 },
-  { item: "쿨매트 · 냉감 침구", trigger: "근거: 실내 31° 고온 알림 · 폭염 특보", est: 35000 },
+  { item: safetyGood("mat").name, trigger: "근거: 욕실 낙상 위험물 관찰 2회 (최근 안심방문 리포트 두 번)", est: safetyGood("mat").price },
+  { item: safetyGood("sensorLight").name, trigger: "근거: 야간 화장실 이동 · 복도 조명 어두움 (홈 안전진단)", est: safetyGood("sensorLight").price },
 ];
 
 // ─── AI 활용 지점 — 원칙: 8.4 사람 검수 · 근거 동반 · 어르신 무부담(앰비언트) ────
@@ -443,7 +453,7 @@ export const CARE_SUGGESTIONS = [
 export const AI_BRIEFING = {
   confirmed: [
     "청력 저하 — 왼쪽에서 또박또박 말하기",
-    "휠체어 이동 — 병원 정문 경사로 이용",
+    "실내는 천천히 걸으심 · 외출 · 병원에서는 휠체어 — 정문 경사로 이용",
     "지난 방문 \"입맛이 없다\" 발언 2회 — 식사 여부 여쭤보기",
   ],
   unconfirmed: ["낙상 이력 상세 — 가족 진술과 본인 진술이 다름 · 캐묻지 말고 관찰만"],
@@ -592,15 +602,17 @@ export const SAFETY_MONTHLY = [
 ];
 
 export const ELDER_MIX = [
-  { k: "75 – 79세", n: 58, w: 44 },
-  { k: "80 – 84세", n: 51, w: 39 },
-  { k: "85세 이상", n: 23, w: 17 },
+  // 합계는 관제 '전체 관리 어르신'(200)과 같다 — 비율은 그대로 (2026-10-02 QA)
+  { k: "75 – 79세", n: 88, w: 44 },
+  { k: "80 – 84세", n: 78, w: 39 },
+  { k: "85세 이상", n: 34, w: 17 },
 ];
 
 export const ELDER_RISK_MIX = [
-  { k: "위험 높음", n: 11, color: "#C0392B" },
-  { k: "중간 · 관찰", n: 34, color: "#8A5D12" },
-  { k: "안정", n: 87, color: "#1E7A5A" },
+  // 합계 200 — 관제 '전체 관리 어르신'과 같다 (비율은 그대로 · 2026-10-02 QA)
+  { k: "위험 높음", n: 17, color: "#C0392B" },
+  { k: "중간 · 관찰", n: 52, color: "#8A5D12" },
+  { k: "안정", n: 131, color: "#1E7A5A" },
 ];
 
 // ── AI 어시스턴트 캔드 Q&A — 관제·경영 (키 미설정 데모 폴백 · keys는 자유 입력 매칭용) ──
@@ -697,13 +709,13 @@ export const CRM_STAGE = {
 export const ELDER_PREFS = [
   ["호칭", "\"여사님\" — 이름만 부르는 것 싫어하심"],
   ["대화", "왼쪽에서 또렷하게 · 손주 이야기 좋아하심"],
-  ["이동", "걸음 느림 — 15분 여유 · 계단보다 엘리베이터"],
+  ["이동", "실내는 천천히 걸으심 · 외출 시 휠체어 — 15분 여유 · 계단보다 엘리베이터"],
   ["음료", "찬물 대신 미지근한 보리차"],
   ["피할 것", "다른 어르신과 병세 비교 · 재촉하는 말"],
 ];
 
 export const TODAY_DETAIL = {
-  text: "모레(8/1)는 김순자님 생신입니다. 오늘 동행 마무리에 축하 말씀 한마디와, 따님 김지영님(LA)이 남긴 안부 메시지 전달을 부탁드려요.",
+  text: `모레(${relMd(2)})는 김순자님 생신입니다. 오늘 동행 마무리에 축하 말씀 한마디와, 따님 김지영님(LA)이 남긴 안부 메시지 전달을 부탁드려요.`,
   src: "가족 캘린더 · 메시지함",
 };
 
@@ -731,7 +743,7 @@ export const COMMS_TRACKING = {
 
 // ════ 확장 — AI 능동형 아침 브리핑 (관제 출근 3분 요약 · 읽음도 감사 로그) ════
 export const MORNING_BRIEF = {
-  date: "7/30 (목) 07:30 생성",
+  date: `${relMdw(0)} 07:30 생성`,
   summary: "오늘 배차 6건 · 위험 높음 2명 · 오후 체감 36° 폭염 주의 — 외출 브리핑 발송이 최우선입니다.",
   items: [
     { k: "날씨", text: "14시 체감 36° · 외출지수 오후 급락 — 13:50 김순자님 동행은 차량 대기 최소화" },
@@ -757,7 +769,7 @@ export const THANKS_FEED = [
 ];
 
 export const COACHING_LOG = [
-  { who: "오하늘 (수습)", coach: "박지현", topic: "어르신 응대 — 속도 맞추기 · 경청", next: "8/2 동행 코칭 3회차", state: "진행" },
+  { who: "오하늘 (수습)", coach: "박지현", topic: "어르신 응대 — 속도 맞추기 · 경청", next: `${relMd(3)} 동행 코칭 3회차`, state: "진행" },
   { who: "서다인", coach: "관제 매니저", topic: "권역 이동 부담 면담 — 배차 하향 합의", next: "2주 후 재점검", state: "조치" },
   { who: "김도윤", coach: "한서연", topic: "투석 동행 자격 준비 (6/10건)", next: "8월 내 10건 달성 예상", state: "진행" },
 ];
@@ -767,7 +779,7 @@ export const CS_METRICS = [
   { k: "이번 주 티켓", v: "23건", note: "신규 8 · 처리 중 5 · 완료 10" },
   { k: "첫 응답", v: "11분", note: "목표 30분 — 준수 96%" },
   { k: "해결까지", v: "4.2h", note: "환불 · 정산 제외 중앙값" },
-  { k: "회복 콜 이행", v: "100%", note: "NPS 비추천 → 24h 내" },
+  { k: "회복 콜 이행", v: "92%", note: "NPS 비추천 → 24h 내 (CS 메뉴와 같은 값)" },
 ];
 
 export const CS_TOPICS = [
@@ -1380,7 +1392,7 @@ export const SEC_STATUS = [
   { k: "접근 기록 전면 공개 (감사 로그)", state: "구현", note: "전 역할 액션 티커 기록" },
   { k: "동의 만료 갱신 루프 (D-30)", state: "구현", note: "신뢰센터 · 발송 센터 연동" },
   { k: "실서버 전환 — Supabase 서울 리전", state: "로드맵", note: "RLS로 접근 매트릭스 구현 · Vault 필드 암호화 · service 키 서버 전용 · PITR — 데모는 목 데이터" },
-  { k: "PIA (개인정보 영향평가)", state: "8월 진행", note: "규제 캘린더 등재 · 건강 민감정보 대량 처리" },
+  { k: "PIA (개인정보 영향평가)", state: "진행 중", note: "규제 캘린더 등재 · 건강 민감정보 대량 처리" },
   { k: "가명정보 적정성 외부 검증", state: "내년 2월", note: "데이터 활용 전 선결" },
 ];
 
@@ -1443,7 +1455,7 @@ export const CRM_STUCK = {
 // ════ 관제 · 웨어러블 운영 섹션 (기기 자산 · 알림 · 배터리 · 페어링) ════
 // 원칙: 단일 지표로 판정하지 않는다 · 알림은 복합 조건 · 낙상은 보호자 직통 + 관제 우회 (이중 경로).
 export const WEAR_KPIS = [
-  { k: "배포 기기", v: "132", note: "어르신 1인 1대 · 예비 8대", color: "#0A1F3C" },
+  { k: "배포 기기", v: "186", note: "워치 연동 186 / 전체 200 (관제와 같은 값) · 예비 8대", color: "#0A1F3C" },
   { k: "정상 수신", v: "126", note: "5분 주기 준실시간", color: "#1E7A5A" },
   { k: "무수집 4h+", v: "3", note: "배터리 · 착용 확인 콜 대상", color: "#C0392B" },
   { k: "배터리 20% 이하", v: "5", note: "방문 시 충전 안내", color: "#8A5D12" },
@@ -1580,9 +1592,9 @@ export const FALL_METRICS = [
 ];
 
 export const WEAR_CONSENT = [
-  { k: "생체정보 수집 동의", v: "132 / 132", note: "가입 시 필수 · 만료 D-30 갱신 루프", tone: "ok" },
-  { k: "낙상 시 보호자 직통", v: "129 / 132", note: "3가구 미동의 — 관제 경유만", tone: "warn" },
-  { k: "위치 공유 (동행 중)", v: "128 / 132", note: "동행 구간에만 수집", tone: "ok" },
+  { k: "생체정보 수집 동의", v: "200 / 200", note: "가입 시 필수 · 만료 D-30 갱신 루프", tone: "ok" },
+  { k: "낙상 시 보호자 직통", v: "197 / 200", note: "3가구 미동의 — 관제 경유만", tone: "warn" },
+  { k: "위치 공유 (동행 중)", v: "196 / 200", note: "동행 구간에만 수집", tone: "ok" },
   { k: "데이터 보존", v: "S1 등급", note: "케어 종료 후 1년 → 자동 파기", tone: "info" },
 ];
 
@@ -1817,7 +1829,7 @@ export const OKRS = [
   ]},
   { o: "규제 리스크를 착수 전에 없앤다", progress: 40, krs: [
     { k: "의료법 27조 3항 계약 구조 전환", now: "착수 필요", pct: 10, tone: "bad" },
-    { k: "PIA(개인정보 영향평가) 완료", now: "8월 진행", pct: 45, tone: "warn" },
+    { k: "PIA(개인정보 영향평가) 완료", now: "진행 중", pct: 45, tone: "warn" },
     { k: "CRITICAL 리스크 4 → 1", now: "4건", pct: 25, tone: "bad" },
   ]},
 ];
@@ -2178,7 +2190,7 @@ export const IR_GAPS = [
   { k: "의료법 27조 3항 계약 구조", risk: "병원 연계 수수료가 알선으로 해석되면 형사 리스크 — 딜 브레이커",
     fix: "법무 의견서 + 수수료 → 정액 업무위탁으로 계약 전환", when: "2026 Q3", menu: "risk", tone: "bad" },
   { k: "PIA 미완료", risk: "민감정보(질병 · 장애) 처리 근거 미비 — 실서버 전환 자체가 막힌다",
-    fix: "8월 PIA 진행 · 완료 전 실명 데이터 투입 금지", when: "2026 Q3", menu: "security", tone: "bad" },
+    fix: "PIA 진행 중 · 완료 전 실명 데이터 투입 금지", when: "2026 Q3", menu: "security", tone: "bad" },
   { k: "매출총이익률 29.4%", risk: "케어업 마진 상한이 30% 아래로 보이면 소프트웨어 배수가 안 붙는다",
     fix: "권역 밀도 상향 · 크로스 지원 이동 수당 축소로 32% 경로", when: "2026 Q4", menu: "pl", tone: "warn" },
 ];
@@ -2293,7 +2305,7 @@ export const DATAROOM = [
   { k: "코호트 · 유닛 이코노믹스", state: "준비 완료", tone: "ok" },
   { k: "리스크 레지스터 23건", state: "준비 완료", tone: "ok" },
   { k: "의료법 자문 의견서", state: "미비 — C4 시정 후", tone: "bad" },
-  { k: "PIA 결과 보고서", state: "8월 진행", tone: "warn" },
+  { k: "PIA 결과 보고서", state: "진행 중", tone: "warn" },
   { k: "컨시어지 계약서 표준안", state: "노무 자문 대기", tone: "warn" },
   { k: "지자체 · 병원 제휴 계약", state: "준비 완료", tone: "ok" },
   { k: "기술 아키텍처 · DB 설계", state: "준비 완료", tone: "ok" },
@@ -2349,15 +2361,15 @@ export const PARTNER_RULES = [
 
 // ════ 경영 · 가격 · 상품 (Pricing & Packaging) ════
 export const PRICING_KPIS = [
-  { k: "가입·설치비", v: "38.5만", note: "1인 · 2026-09-11 확정", color: "#1E7A5A" },
+  { k: "가입·설치비", v: "확정 전", note: "1인 · 케어박스 제외(10/02)로 다시 정하는 중 · 이전 38.5만", color: "#8A5D12" },
   { k: "월 구독료", v: "5.5만", note: "1인 · 부부 가구 7.7만 · 최소 약정 12개월 · 확정", color: "#1E7A5A" },
-  { k: "회사 실입금 (구독)", v: "3.1만", note: "대리점망 수당 60% 차감 후", color: "#C0392B" },
+  { k: "회사 실입금 (구독)", v: "3.1만", note: "대리점망 수당 60% 차감 후", color: "#8A5D12" }, // 빨강은 SOS·낙상 전용
   { k: "옵션 부착률", v: "22%", note: "손익분기의 조건 — 아래 참조", color: "#8A5D12" },
 ];
 
 // 확정 상품 — 2026-08-01 회의. 일시금 패키지 안은 폐기.
 export const PLANS = [
-  { k: "가입·설치비 (최초 1회)", price: "38.5만", inc: "Fit3 · 케어박스 · 21항목 점검 · 앱 설치 · 리포트", who: "부가세 별도 · 합계 27.5만", n: "확정", tone: "ok" },
+  { k: "가입·설치비 (최초 1회)", price: "확정 전", inc: "Fit3 · 21항목 점검 · 앱 설치 · 리포트", who: "케어박스 제외(10/02)로 다시 정하는 중 · 이전 38.5만", n: "확정 전", tone: "warn" },
   { k: "월 구독 (기본 · 1인)", price: "5.5만", inc: "안심방문 월 1회 · 병원 동행 연 1회 · 관제 · 리포트", who: "최소 약정 12개월 · 부부 가구 7.7만", n: "확정", tone: "ok" },
   { k: "체험 바우처", price: "무료", inc: "동행 1회 + 방문 2회 축소판 · 1인 1매", who: "제휴 영업망 회원 대상 — 맛보기 후 전환", n: "운영", tone: "warn" },
   { k: "평생관리 패키지", price: "55만", inc: "일시금 · 횟수 소진형", who: "일시금 선호 고객 한정 · 주력 아님", n: "보조", tone: "info" },
@@ -2383,11 +2395,11 @@ export const PRICING_UNIT = {
     { k: "병원 동행 연 1회 (월 배분)", v: "−9,167", tone: "bad", note: "110,000 ÷ 12" },
     { k: "기본 구독 월 손익", v: "−52,167", tone: "bad", note: "옵션 없이는 적자 · 부부 가구(77,000)는 −52,533" },
   ],
-  note: "가입·설치비 38.5만에서 Fit3 7만 + 케어박스 3만 + 첫 방문 원가를 빼면 남는 폭이 작습니다. 손익분기는 가구당 월 옵션 매출 약 12만(마진 35% 가정)이며, 현재 부착률 22%로는 미달입니다. 회의에서도 “업셀링을 안 하면 적자를 무조건 보는 구조”로 확인된 사항입니다.",
+  note: "가입·설치비는 케어박스 제외(10/02)로 다시 정하는 중입니다 — 이전 38.5만 기준으로도 Fit3 7만 + 첫 방문 원가를 빼면 남는 폭이 작았습니다. 손익분기는 가구당 월 옵션 매출 약 12만(마진 35% 가정)이며, 현재 부착률 22%로는 미달입니다. 회의에서도 “업셀링을 안 하면 적자를 무조건 보는 구조”로 확인된 사항입니다.",
 };
 
 export const PRICING_DECISIONS = [
-  { k: "가입·설치비 385,000 · 월 55,000 (1인) · 부부 77,000 확정", why: "2026-09-11 실무진 결정 — 일시금 50~60만 안은 접고 설치비 + 월 구독으로", opt: "확정 — 최소 약정 12개월", state: "확정 (9/11)", tone: "ok" },
+  { k: "월 55,000 (1인) · 부부 77,000 확정 · 가입·설치비 재산정", why: "2026-09-11 실무진 결정 — 일시금 50~60만 안은 접고 설치비 + 월 구독으로. 2026-10-02 케어박스를 제공하지 않기로 해 가입·설치비(385,000)는 확정 전으로 돌림", opt: "구독 확정 — 최소 약정 12개월 · 설치비 다시 정함", state: "구독 확정 (9/11) · 설치비 확정 전 (10/02)", tone: "warn" },
   { k: "기본은 가볍게 · 수익은 옵션", why: "기본 구독은 구조적 역마진 — 방문 원가 6.5만이 실입금 3.08만을 넘는다", opt: "추가 동행 · 추가 방문 · 구매대행으로 메운다", state: "확정 (8/01)", tone: "warn" },
   { k: "유통 경로 — 직판", why: "2026-09-23 이성준 님: 네트워크가 아닌 직판 방식 · 영업자 화면(/sales) 신설", opt: "수수료 제도 문서 수령 후 수당 · 손익 재계산 (8/01 가정치 35%는 쓰지 않음)", state: "직판 결정 · 수수료 확정 전", tone: "warn" },
   { k: "체험 바우처 전면 배포", why: "“시식” 없이는 전환이 안 된다 — 3회 방문이면 이웃을 데려온다", opt: "1인 1매 · 동행 1 + 방문 2 축소판", state: "확정 (8/01)", tone: "ok" },
@@ -2441,7 +2453,7 @@ export const EXEC_PRIORITY = [
     who: "CS팀", menu: "crm", label: "CRM · 라이프사이클" },
   { u: "soon", k: "송파·마포 수급 갭 (화·목 0.8)", why: "배차 실패 구간 · 크로스 지원으로 임시 대응 중",
     who: "운영총괄", menu: "branches", label: "지점 현황" },
-  { u: "soon", k: "PIA(개인정보 영향평가) 8월 진행", why: "완료 전에는 실명 데이터 투입 불가 — 실서버 전환 게이트",
+  { u: "soon", k: "PIA(개인정보 영향평가) 진행 중", why: "완료 전에는 실명 데이터 투입 불가 — 실서버 전환 게이트",
     who: "CPO", menu: "security", label: "보안 · 데이터" },
   { u: "watch", k: "GPM 29.4% (목표 32%)", why: "티어2 역마진 · 크로스 지원 이동 수당 상승",
     who: "재무", menu: "pl", label: "예산 · 손익" },
@@ -2462,28 +2474,29 @@ export const PRIORITY_TONE = {
 // 방문 7일·3일·1일 전에 전화로 일정을 확인한다. 체크하면 관제로 넘어가고,
 // 안 한 것이 남아 있으면 관제가 먼저 안다. 노쇼의 절반은 "그날인 줄 몰랐다"이다.
 //
-// 날짜는 데모에서 만들지 않는다 — 실제로는 방문일에서 역산한다.
+// 날짜는 오늘 기준으로 방문일에서 역산한다 (예전엔 8/24~8/27 로 고정돼 10월에도 그대로 떴다).
 export const CALL_CHECKS = [
   {
     id: "cc1",
     customer: "이영호 (81)",
-    visitAt: "8/25 (화) 09:10",
+    // 내일 09:10 — 동선 카드 '내일 09:10 이영호'와 같은 건 (2026-10-02 QA)
+    visitAt: `${relMdw(1)} 09:10`,
     purpose: "병원동행 · 정형외과 재진",
     steps: [
-      { k: "d7", label: "7일 전", due: "8/18", done: true },
-      { k: "d3", label: "3일 전", due: "8/22", done: true },
-      { k: "d1", label: "1일 전", due: "8/24", done: false },
+      { k: "d7", label: "7일 전", due: relMd(-6), done: true },
+      { k: "d3", label: "3일 전", due: relMd(-2), done: true },
+      { k: "d1", label: "1일 전", due: relMd(0), done: false },
     ],
   },
   {
     id: "cc2",
     customer: "한복자 (79)",
-    visitAt: "8/28 (금) 14:00",
+    visitAt: `${relMdw(4)} 14:00`,
     purpose: "안심방문 · 월 1회",
     steps: [
-      { k: "d7", label: "7일 전", due: "8/21", done: true },
-      { k: "d3", label: "3일 전", due: "8/25", done: false },
-      { k: "d1", label: "1일 전", due: "8/27", done: false },
+      { k: "d7", label: "7일 전", due: relMd(-3), done: true },
+      { k: "d3", label: "3일 전", due: relMd(1), done: false },
+      { k: "d1", label: "1일 전", due: relMd(3), done: false },
     ],
   },
 ];

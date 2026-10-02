@@ -54,8 +54,9 @@ export default function CalendarPage() {
   ];
 
   const dayEvents = (monthEvents[selected] || []).sort((a, b) => a.at - b.at);
+  // 7일 이내 — 반려된 것은 빼고, 센 만큼 다 보여 준다 ('5건'이라 해 놓고 3건만 보이던 것 · 2026-10-02 QA)
   const soon = events
-    .filter((e) => e.at > Date.now() && e.at < Date.now() + 7 * 86400000)
+    .filter((e) => e.approval !== "rejected" && e.at > Date.now() && e.at < Date.now() + 7 * 86400000)
     .sort((a, b) => a.at - b.at);
 
   const isToday = (d) =>
@@ -72,7 +73,7 @@ export default function CalendarPage() {
           <Card className="border-gold/40 bg-gradient-to-b from-[#FBF6EC] to-[#F4EEE1] p-4">
             <SectionLabel>7일 이내 알림 {soon.length}건</SectionLabel>
             <div className="mt-2 space-y-1.5">
-              {soon.slice(0, 3).map((e) => (
+              {soon.map((e) => (
                 <div key={e.id} className="flex items-center gap-2 text-[13px]">
                   <span
                     className="h-[8px] w-[8px] shrink-0 rounded-full"
@@ -82,6 +83,7 @@ export default function CalendarPage() {
                     {new Date(e.at).toLocaleDateString("ko-KR", { month: "numeric", day: "numeric" })}
                   </span>
                   <span className="flex-1 truncate text-ink">{e.title}</span>
+                  {e.approval === "pending" && <span className="shrink-0 text-[11px] font-bold text-amber">승인 대기</span>}
                 </div>
               ))}
             </div>
@@ -232,22 +234,20 @@ export default function CalendarPage() {
                         관제 승인 대기 {e.escort ? "· 동행 필요" : "· 동행 불필요"}
                       </div>
                     )}
+                    {/* 반려는 위험 신호가 아니다 — 빨강 대신 회색 */}
                     {e.approval === "rejected" && (
-                      <div className="mt-1 inline-flex items-center gap-1.5 rounded-full bg-danger/10 px-2 py-0.5 text-[11px] font-bold text-danger">
+                      <div className="mt-1 inline-flex items-center gap-1.5 rounded-full bg-navy/[.06] px-2 py-0.5 text-[11px] font-bold text-muted">
                         관제 반려 — 해주세요로 사유가 전달됩니다
                       </div>
                     )}
                     {e.note && (
                       <div className="mt-1 text-[13px] leading-[1.6] text-muted">{e.note}</div>
                     )}
-                    {/* 병원 일정 — 외출 컨디션 · 동행 편성 상태 (날씨 × 배차 연동) */}
-                    {e.kind === "hospital" && !e.approval && (
+                    {/* 병원 일정 — 관제가 승인한 동행 건만 '동행 확정'. 누가 가는지는 배차가 정해지기 전엔 지어내지 않는다 */}
+                    {e.kind === "hospital" && e.approval === "approved" && e.escort && (
                       <div className="mt-1.5 flex flex-wrap gap-1.5">
-                        <span className="rounded-full border border-amber/30 bg-[#FFF7E8] px-2 py-0.5 text-[11px] font-bold text-amber">
-                          외출지수 52 주의 · 차량 권장
-                        </span>
                         <span className="rounded-full bg-green/10 px-2 py-0.5 text-[11px] font-bold text-green">
-                          동행 확정 — 박지현 + 서다인
+                          동행 확정{e.escortTeam ? ` — ${e.escortTeam}` : " — 담당자는 관제가 배정 후 안내"}
                         </span>
                       </div>
                     )}

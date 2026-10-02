@@ -62,6 +62,8 @@ export default function Visits({ openProfile }) {
       // 시각은 화면 표시용 'HH:MM'과 함께 실제 시각도 남긴다 (보호자 리포트 머리 · 정렬용)
       const ops = visitOpsPatch({ ...p, ...(p.sentAt ? { sentTs: Date.now() } : {}), ...(p.reviewedAt ? { reviewedTs: Date.now() } : {}) });
       if (Object.keys(ops).length) dispatch?.({ type: "visitOps", patch: ops });
+      // 함께 제출된 동행 기록도 관제 발송 때 보호자에게 간다 — 관제 검수 없이 가족에게 가지 않게 (2026-10-02 QA)
+      if (p.sentAt && appState?.escort?.savedAt && !appState.escort.sentAt) dispatch?.({ type: "escortSend" });
       return;
     }
     setVisits((vs) => vs.map((v) => (v.id === id ? { ...v, ...p } : v)));

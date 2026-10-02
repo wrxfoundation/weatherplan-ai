@@ -51,21 +51,21 @@ export const TRACKS = [
       label: "월 구독",
       confirmed: true,
       monthly: PRICING.subscription.monthly,
-      entry: PRICING.entryFee.total,
+      entry: PRICING.entryFee.total, // 2026-10-02 부터 확정 전(null) — 화면은 '확정 전'으로 쓴다
       term: PRICING.subscription.term,
       note: "위약금 없이 언제든 해지",
     },
     home: {
       title: "오늘 어머니는",
       badge: "평소와 같음",
-      line: "어제 잘 주무셨고, 아침 약도 챙겨 드셨습니다. 오후에 동네 한 바퀴 산책도 하셨어요.",
+      line: "어제 잘 주무셨고, 아침 약도 챙겨 드셨습니다. 어제 오후엔 동네 한 바퀴 산책도 하셨어요.",
       foot: "숫자를 읽고 판단하는 일은 저희가 합니다. 한 줄이 초록이면 연락하지 않으셔도 됩니다.",
       blocks: ["weekly", "outing", "vitals", "feed", "assistant", "siblings"],
     },
     next: [
       ["전담 컨시어지 배정", "첫 방문은 2인 · 영업일 1일 이내"],
       ["사전 상담 콜", "30분 · 케어 프로필 구축"],
-      ["첫 안심방문", "갤럭시 워치 · 안심케어박스 전달"],
+      ["첫 안심방문", "갤럭시 워치 전달 · 21항목 첫 점검"],
     ],
   },
   {
@@ -174,6 +174,14 @@ export const trackOf = (id) => TRACKS.find((t) => t.id === id) || TRACKS[0];
 export function honorific(ob) {
   const name = (ob?.elderName || "").trim();
   return `${name || "김순자"} 님`;
+}
+
+// 받침에 따라 조사를 고른다 — "어머니가 · 본인이" (화면에 '이(가)'를 그대로 보이지 않게, 2026-10-02 QA)
+export function josa(word, withFinal, withoutFinal) {
+  const w = String(word || "");
+  const c = w.trim().slice(-1).charCodeAt(0);
+  if (!(c >= 0xac00 && c <= 0xd7a3)) return `${w}${withoutFinal}`;
+  return `${w}${(c - 0xac00) % 28 ? withFinal : withoutFinal}`;
 }
 
 export function subjectLabel(track, ob) {

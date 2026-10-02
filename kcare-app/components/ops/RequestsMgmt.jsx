@@ -8,14 +8,13 @@ import Icon from "../icons";
 import { useAppState } from "../../lib/state";
 import { useAuth } from "../../lib/auth";
 import { LiveToggle } from "./LiveToggle";
-import { STATUS, SERVICE_MENU, URGENCY, canTransition, transition } from "../../lib/requests";
+import { STATUS, SERVICE_MENU, URGENCY, canTransition, fmtPreferred, transition } from "../../lib/requests";
 import { PRICING, fmtWon } from "../../lib/config";
-import { Panel, PanelHead, Stat, Pill, Btn, Table, KV, Field, Toggle, Drawer, Confirm, Note, Empty } from "./ui";
+import { Panel, PanelHead, Stat, Pill, Btn, Table, KV, Field, Toggle, Drawer, Confirm, Note, Empty, useOperator } from "./ui";
 import { CONCIERGES, OPS_REQUEST_EXTRAS, OPS_REQUEST_META, REQ_DIR, REPEAT_OPTIONS, elderOf, fmtDT, fmtRel } from "../../lib/ops-admin";
 
 const META_KEY = "kcare-ops-requests-meta-v1";
 const EXTRA_KEY = "kcare-ops-requests-extra-v1";
-const OPERATOR = "김태영 (관제사)";
 const NO_REQUESTS = [];
 
 // 예외를 먼저 — 긴급 → 관리자 확인 → 접수 → 결제대기 → 확인 → 처리중 → 완료 → 종결
@@ -47,7 +46,7 @@ function normalize(r) {
     fromConcierge: `${r.assignee || "컨시어지"} (컨시어지)`,
     fromOps: "김태영 (관제)",
   }[r.dir] || REQ_DIR[r.dir] || "—";
-  return { ...r, elder, by, receivedAt: r.history?.[0]?.at ?? null, menu: SERVICE_MENU.find((s) => s.name === r.type) || null, limit: e?.payLimit ?? PRICING.paymentLimitDefault };
+  return { ...r, elder, by, receivedAt: r.history?.[0]?.at ?? null, menu: SERVICE_MENU.find((s) => s.name === r.type) || null, limit: r.limit ?? e?.payLimit ?? PRICING.paymentLimitDefault };
 }
 
 // 보호자 결제 승인 상태 — 금액·진행상태에서 읽는다. 지어내지 않고 없는 값은 "요금 확정 전".
@@ -74,10 +73,13 @@ function showVal(field, v) {
 }
 
 export default function RequestsMgmt() {
+  const OPERATOR = useOperator();
   const ctx = useAppState();
   // 상태 훅이 없을 때(단독 렌더)는 고정 빈 배열 — 매 렌더마다 새 배열이면 useMemo 의존성이 계속 바뀐다
   const stateRequests = ctx?.state?.requests || NO_REQUESTS;
   const dispatch = ctx?.dispatch;
+  // 가입 상담에서 보호자가 정한 어르신 직접 결제 한도 — 어르신 앱이 보는 값과 같아야 한다 (2026-10-02 QA)
+  const obLimit = ctx?.state?.onboarding?.paymentMode === "limit" || (ctx?.state?.onboarding && !ctx.state.onboarding.paymentMode) ? ctx.state.onboarding.limitAmount ?? null : null;
   const [extras, setExtras] = useState(OPS_REQUEST_EXTRAS);
   // 테스트 계정이면 실제 요청(가구 기록)만 기본으로 — 예시 요청(김순자 이름의 예시 포함)이 실제 일처럼 섞이지 않게 (2026-10-02 코드 점검)
   const liveOn = !!useAuth().user?.household;
@@ -114,8 +116,8 @@ export default function RequestsMgmt() {
   }, [meta, extras, loaded]);
 
   const all = useMemo(
-    () => [...stateRequests.map((r) => ({ ...r, real: liveOn })), ...(withDemo ? extras.map((r) => ({ ...r, demo: liveOn })) : [])].map(normalize),
-    [stateRequests, extras, withDemo, liveOn]
+    () => [...stateRequests.map((r) => ({ ...r, real: liveOn, ...(obLimit != null ? { limit: obLimit } : {}) })), ...(withDemo ? extras.map((r) => ({ ...r, demo: liveOn })) : [])].map(normalize),
+    [stateRequests, extras, withDemo, liveOn, obLimit]
   );
   const types = useMemo(() => ["전체", ...Array.from(new Set(all.map((r) => r.type)))], [all]);
   const counts = useMemo(() => {
@@ -180,7 +182,7 @@ export default function RequestsMgmt() {
     ) },
     { k: "pay", label: "보호자 결제 승인", render: (r) => { const p = payState(r); return <Pill tone={p.tone}>{p.label}</Pill>; } },
     { k: "assignee", label: "담당자 배정", render: (r) => <span className="font-medium text-ink">{meta[r.id]?.assignee || r.assignee || <span className="text-muted">미배정</span>}</span> },
-    { k: "date", label: "예정일", render: (r) => <span className="font-num text-[12px]">{r.preferredDate || "미정"}</span> },
+    { k: "date", label: "예정일", render: (r) => <span className="font-num text-[12px]">{fmtPreferred(r)}{r.hospital ? <span className="block text-[11px] text-muted">{r.hospital}</span> : null}</span> },
     { k: "status", label: "진행상태", render: (r) => <StatusPill status={r.status} /> },
     { k: "cost", label: "실제 비용", align: "right", render: (r) => (meta[r.id]?.cost != null ? fmtWon(meta[r.id].cost) : "—") },
     { k: "receipt", label: "영수증", render: (r) => (meta[r.id]?.receipt ? <Pill tone="ok">첨부</Pill> : <span className="text-muted">—</span>) },
@@ -231,6 +233,7 @@ export default function RequestsMgmt() {
 }
 
 function Detail({ r, m, onClose, onTransition, onPatch }) {
+  const OPERATOR = useOperator();
   const [note, setNote] = useState("");
   const [cost, setCost] = useState(m.cost != null ? String(m.cost) : "");
   const [ratingNote, setRatingNote] = useState(m.ratingNote || "");
@@ -264,9 +267,10 @@ function Detail({ r, m, onClose, onTransition, onPatch }) {
           <KV k="요청 내용" v={r.detail} />
           <KV k="서비스 설명" v={r.menu ? r.menu.scope : "메뉴 외 요청 — 관제가 범위를 정합니다"} />
           <KV k="가격" v={r.menu ? r.menu.priceLabel : r.amount != null ? `${fmtWon(r.amount)} (예상)` : "요금 확정 전"} tone="gold" />
-          <KV k="예정일" v={r.preferredDate || "미정"} mono />
-          <KV k="긴급도" v={URGENCY[r.urgency]?.label || "보통"} tone={r.urgency === "urgent" ? "danger" : undefined} />
-          <KV k="보호자 결제 승인" v={<span className="flex flex-wrap items-center gap-2"><Pill tone={pay.tone}>{pay.label}</Pill><span className="text-[11px] text-muted">{elderOf(r.elder)?.guardian || "보호자"} · 1회 한도 {fmtWon(r.limit)}</span></span>} />
+          <KV k="예정일" v={fmtPreferred(r)} mono />
+          {r.hospital && <KV k="병원" v={r.hospital} />}
+          <KV k="긴급도" v={URGENCY[r.urgency]?.label || "보통"} tone={r.urgency === "urgent" ? "gold" : undefined} />
+          <KV k="보호자 결제 승인" v={<span className="flex flex-wrap items-center gap-2"><Pill tone={pay.tone}>{pay.label}</Pill><span className="text-[11px] text-muted">{elderOf(r.elder)?.guardian || "보호자"} · 어르신 직접 결제 하루 {fmtWon(r.limit)}까지</span></span>} />
           {r.photos?.length > 0 && <KV k="첨부 사진" v={r.photos.join(", ")} mono />}
           {r.proof && <KV k="완료 증빙" v={r.proof} mono />}
         </section>

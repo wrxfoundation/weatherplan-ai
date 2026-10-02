@@ -109,7 +109,7 @@ export default function GuardianMgmt({ openProfile }) {
     { k: "elders", label: "담당 어르신", render: (g) => g.elders.map(elderBtn) },
     { k: "where", label: "거주 · 현지시간", render: (g) => <><span style={isAbroad(g) ? { color: TONE.info.fg, fontWeight: 700 } : undefined}>{g.region}</span> · <span className="font-num">{localClock(now, g.tz)}</span></> },
     { k: "report", label: "보고서", render: (g) => <span className={isUnread(g) ? "font-bold text-gold" : ""}>{g.report}</span> },
-    { k: "pay", label: "결제 · 연락", render: (g) => <><span className="block text-[12px]">{g.payMode || (g.payer ? `${fmtWon(g.payLimit)} 승인` : "열람 전용")}</span><Pill tone={CONTACT_TONE[g.contact]}>{g.contact}</Pill></> },
+    { k: "pay", label: "결제 · 연락", render: (g) => <><span className="block text-[12px]">{g.payMode || (g.payer ? `어르신 하루 ${fmtWon(g.payLimit)}` : "열람 전용")}</span><Pill tone={CONTACT_TONE[g.contact]}>{g.contact}</Pill></> },
   ];
 
   const editFields = cur
@@ -122,7 +122,7 @@ export default function GuardianMgmt({ openProfile }) {
         { label: "야간 연락 가능", value: cur.night ? "예" : "아니오", options: ["예", "아니오"], apply: (g, v) => ({ ...g, night: v === "예" }) },
         { label: "보고서 수신방법", value: cur.reportVia, options: REPORT_VIA, apply: (g, v) => ({ ...g, reportVia: v }) },
         { label: "고객정보 열람범위", value: cur.scope, options: SCOPES, apply: (g, v) => ({ ...g, scope: v }) },
-        { label: "결제 승인 한도 (원)", value: cur.payLimit == null ? "권한 없음" : String(cur.payLimit), apply: (g, v) => ({ ...g, payer: Number(v) > 0, payLimit: Number(v) > 0 ? Number(v) : null }) },
+        { label: "어르신 직접 결제 한도 (하루 누적, 원)", value: cur.payLimit == null ? "권한 없음" : String(cur.payLimit), apply: (g, v) => ({ ...g, payer: Number(v) > 0, payLimit: Number(v) > 0 ? Number(v) : null }) },
         { label: "앱 계정 상태", value: cur.app.state, options: ["정상", "잠금", "탈퇴"], apply: (g, v) => ({ ...g, app: { ...g.app, state: v } }) },
       ]
     : [];
@@ -189,7 +189,7 @@ export default function GuardianMgmt({ openProfile }) {
         <div>
           <KV k="고객정보 열람범위" v={cur.scope} />
           <KV k="보고서 수신" v={cur.reportVia} />
-          <KV k="결제 승인" v={cur.payMode ? `${cur.payMode} (가입 상담)` : cur.payer ? `승인자 · 1회 ${fmtWon(cur.payLimit)} 한도` : "권한 없음 (열람 전용)"} tone={cur.payer ? "ok" : undefined} />
+          <KV k="결제 승인" v={cur.payMode ? `${cur.payMode} (가입 상담)` : cur.payer ? `승인자 · 어르신 하루 ${fmtWon(cur.payLimit)}까지 직접 결제, 넘으면 승인` : "권한 없음 (열람 전용)"} tone={cur.payer ? "ok" : undefined} />
           <KV k="긴급조치 동의" v={cur.emergency} />
           <KV k="SOS 연락 우선순위" v={`${cur.sosOrder}순위`} />
           <KV k="야간 연락 가능" v={cur.night ? "예" : "아니오"} />
@@ -225,7 +225,7 @@ export default function GuardianMgmt({ openProfile }) {
     return (
       <div>
         <KV k="승인권한" v={cur.payer ? "승인자" : "없음 (열람 전용)"} />
-        <KV k="1회 한도" v={cur.payer ? fmtWon(cur.payLimit) : "—"} mono />
+        <KV k="어르신 직접 결제 한도" v={cur.payer ? `${fmtWon(cur.payLimit)} (하루 누적)` : "—"} mono />
         <div className="mt-2"><Table dense cols={[{ k: "at", label: "일자" }, { k: "item", label: "항목" }, { k: "amount", label: "금액", align: "right", render: (p) => fmtWon(p.amount) }, { k: "state", label: "상태", render: (p) => <NotifyPill s={p.state} /> }]} rows={cur.payments} rowKey={(p, i) => `${p.at}-${i}`} empty="결제 승인 이력이 없습니다." /></div>
         <div className="mt-2 text-[11px] text-muted">금액은 서비스 메뉴 가격 기준 · 요금 확정 전 항목은 "별도 산정"으로 표시됩니다.</div>
       </div>
@@ -348,7 +348,7 @@ export default function GuardianMgmt({ openProfile }) {
             <Field id="gr-via" label="보고서 수신방법" value={form.via} onChange={setF("via")} options={REPORT_VIA} />
           </div>
           <Row id="gr-payer" label="결제 승인권한" hint="해주세요 유료 서비스 승인" on={form.payer} onChange={setF("payer")} />
-          {form.payer && <Field id="gr-limit" label="1회 승인 한도 (원)" type="number" value={form.limit} onChange={setF("limit")} hint={`${fmtWon(Number(form.limit) || 0)}`} />}
+          {form.payer && <Field id="gr-limit" label="어르신 직접 결제 한도 (하루 누적, 원)" type="number" value={form.limit} onChange={setF("limit")} hint={`${fmtWon(Number(form.limit) || 0)}`} />}
           <Field id="gr-scope" label="고객정보 열람범위" value={form.scope} onChange={setF("scope")} options={SCOPES} />
         </div>
       </Drawer>

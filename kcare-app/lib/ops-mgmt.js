@@ -5,9 +5,12 @@
 import { ROSTERS } from "./rosters";
 import { checkupFor } from "./checkup";
 import { SERVICE_MENU } from "./requests";
+import { DEFAULT_HEALTH, medSummary } from "./meds";
+import { relKoLong, relYmd } from "./reltime";
 
-export const TODAY = "2026-09-22";
-export const TODAY_LABEL = "2026년 9월 22일 화요일";
+// 오늘 — 고정 날짜(2026-09-22)였던 것을 화면을 연 날로 (2026-10-02 QA "기준일 9월 22일")
+export const TODAY = relYmd(0);
+export const TODAY_LABEL = relKoLong(0);
 
 // 현재 접속 계정 — 감사로그의 "누가". 브리프: 관제사 김태영 · 강남 본점
 export const OPERATOR = { account: "kty.kim@kcare", name: "김태영", role: "관제사", branch: "강남 본점" };
@@ -148,7 +151,8 @@ export const sevOf = (risk) => ({ 높음: "danger", 중간: "warn", 낮음: "ok"
 const KIMSJ = {
   service: { state: "active", since: "2025-05-12", product: "K-CARE 멤버십 티어1 · 월 1회 2인 1조 안심방문 포함", pay: "정상 · 자동결제 (매월 12일)", visitDay: "매월 셋째 주 화요일 14:00", cycle: "월 1회" },
   priority: ["1순위 김민수 (아들 · 주 보호자)", "2순위 김지영 (차녀 · 부 · LA)", "3순위 김현우 (삼남 · 비상 · 시드니)", "담당 컨시어지 박지현 → 119"],
-  health: { dx: ["심부전", "고혈압"], meds: ["항응고제 (아침)", "혈압약 (아침 · 저녁)"], allergy: "확인된 알레르기 없음 (2026-05-12 확인)", hospital: "서울아산병원 순환기내과 (주 이용)", note: "관찰 내용: 지난달 대비 외출 횟수 감소 · 복약 달력 빈칸 2회 — 추가 확인 필요. 진단·판단은 의료진의 몫." },
+  // 질환 · 복용약은 lib/meds.js 한 벌 (어르신 앱 복약 계획과 같은 값). 화면은 가구 상태(state.health)가 있으면 그것을 쓴다 — ElderTabs
+  health: { dx: DEFAULT_HEALTH.conditions, meds: medSummary(DEFAULT_HEALTH.meds), allergy: DEFAULT_HEALTH.allergies.join(" · "), hospital: "서울아산병원 순환기내과 (주 이용)", note: "관찰 내용: 지난달 대비 외출 횟수 감소 · 복약 달력 빈칸 2회 — 추가 확인 필요. 진단·판단은 의료진의 몫." },
   devices: { watch: { model: "갤럭시 워치 (삼성헬스 연동)", id: "GW-2034", feed: "live", at: "14:02", battery: "71%", worn: "착용 중", threshold: "개별 임계값 적용 (안정시 심박 상한 95)" }, sensors: [{ type: "mmWave 센서", place: "거실", at: "14:01", state: "정상" }, { type: "mmWave 센서", place: "욕실", at: "13:58", state: "정상" }] },
   trend: [["안정시 심박", "68 bpm", "66–71", "65–72", "64–74"], ["혈중산소", "97%", "96–98", "95–98", "95–98"], ["걸음 수", "—", "1,840", "일 평균 2,310", "일 평균 2,640"], ["수면", "—", "6h 10m", "평균 6h 20m", "평균 6h 40m"]],
   requests: [{ at: "09-19", name: svc(13).name, price: svc(13).priceLabel, state: "완료 · 영수증 첨부" }, { at: "09-08", name: svc(6).name, price: svc(6).priceLabel, state: "완료 · 보호자 승인" }, { at: "08-27", name: svc(2).name, price: svc(2).priceLabel, state: "완료 · 리포트 발송" }],

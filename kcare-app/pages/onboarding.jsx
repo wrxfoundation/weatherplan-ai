@@ -14,6 +14,7 @@ import { TIER1_DISTRICTS, TIER2_DISTRICTS, SCREENING_ITEMS, screenRegion } from 
 import { CORE, CORE_NOTE, TRACKS, STEP_LABELS, trackOf } from "../lib/tracks";
 import { SALES_REP, isRepCode } from "../lib/sales";
 import { AUTH_ENABLED, GOOGLE_ENABLED, GoogleMark, googleStart, useAuth } from "../lib/auth";
+import { LIVE_ELDER } from "../lib/ops-health";
 
 // 간편가입 표기 — 구글은 실제 로그인(설정됐을 때) 또는 시뮬레이션(테스트 계정), 카카오·네이버는 아직 데모다
 const AUTH_LABEL = { google: "Google", kakao: "카카오", naver: "네이버" };
@@ -99,6 +100,8 @@ function Onboarding() {
   const hospital = form.careLocation === "hospital";
   // 부부 가구 — 월 구독료만 확정(77,000). 가입·설치비는 결정에 없어 확정 전으로 안내한다.
   const couple = !!track?.needsRelation && form.household === "couple";
+  // 테스트 계정으로 정기 케어 가입 상담을 하면 어르신 이름을 고정한다 (아래 finish 주석)
+  const lockName = !!auth.user?.household && !!track?.needsRelation;
   const monthlyFee = couple ? HOUSEHOLD.monthly : track?.billing?.monthly;
   // 거주 형태에 따라 기본상품이 갈린다 — 실무자 피드백 시트의 표 그대로
   const benefits = hospital ? HOSPITAL_BENEFITS : BASE_BENEFITS;
@@ -119,7 +122,9 @@ function Onboarding() {
         address: form.address.trim(),
         elderPhone: form.elderPhone.trim(),
         res: form.res,
-        elderName: form.elderName || (track?.needsRelation ? "김순자" : "본인"),
+        // 테스트 가구는 어르신 이름을 김순자로 고정한다 — 관제 · 컨시어지 · 감사로그는 김순자로 보는데
+        // 가입 상담에서 다른 이름(예: 김오자)을 넣으면 보호자 · 어르신 화면만 그 이름이 돼 섞였다 (2026-10-02 QA 11번)
+        elderName: lockName ? LIVE_ELDER : form.elderName || (track?.needsRelation ? "김순자" : "본인"),
         district: form.district,
         tier: result?.tier ?? 1,
         paymentMode: form.paymentMode,
@@ -133,7 +138,7 @@ function Onboarding() {
       type: "pushEvent",
       payload: {
         kind: "가입",
-        text: `신규 접수 — ${track?.short} · ${form.elderName || (track?.needsRelation ? "김순자" : "본인")} (${form.district})${salesRef ? ` · 추천 ${salesRef}` : ""}`,
+        text: `신규 접수 — ${track?.short} · ${lockName ? LIVE_ELDER : form.elderName || (track?.needsRelation ? "김순자" : "본인")} (${form.district})${salesRef ? ` · 추천 ${salesRef}` : ""}`,
         color: "#8FE3C0",
       },
     });
@@ -568,13 +573,20 @@ function Onboarding() {
                 확인합니다.
               </p>
               <Card className="p-5">
-                <SectionLabel>{who} 성함 (선택)</SectionLabel>
+                <SectionLabel>{who} 성함 {lockName ? "(테스트 가구 고정)" : "(선택)"}</SectionLabel>
                 <input
-                  value={form.elderName}
-                  onChange={(e) => set({ elderName: e.target.value })}
+                  value={lockName ? LIVE_ELDER : form.elderName}
+                  readOnly={lockName}
+                  aria-readonly={lockName || undefined}
+                  onChange={(e) => !lockName && set({ elderName: e.target.value })}
                   placeholder={track.needsRelation ? "예: 김순자" : "예: 이정민"}
-                  className="mt-2 w-full rounded-xl border border-navy/15 bg-white px-3.5 py-3 text-[16px] outline-none focus:border-gold"
+                  className={`mt-2 w-full rounded-xl border border-navy/15 px-3.5 py-3 text-[16px] outline-none focus:border-gold ${lockName ? "bg-navy/[.04] text-muted" : "bg-white"}`}
                 />
+                {lockName && (
+                  <p className="mt-1.5 text-[12px] leading-[1.6] text-muted">
+                    테스트 가구는 모든 화면이 같은 이름을 쓰도록 {LIVE_ELDER} 님으로 고정합니다. 실제 이름은 넣지 마세요.
+                  </p>
+                )}
                 <div className="mt-5">
                   <SectionLabel>{track.needsRelation ? "어르신 거주 지역" : "서비스 받으실 지역"}</SectionLabel>
                   <select
@@ -700,7 +712,7 @@ function Onboarding() {
                       <p className="mt-1.5 pl-6 text-[13px] leading-[1.65] text-muted">{m.desc}</p>
                       {m.key === "limit" && on && (
                         <div className="mt-3 flex items-center gap-2 pl-6">
-                          <span className="text-[13px] text-muted">한도</span>
+                          <span className="text-[13px] text-muted">하루 한도</span>
                           {[30000, 50000, 100000].map((v) => (
                             <button
                               key={v}
@@ -770,14 +782,14 @@ function Onboarding() {
                     <div className="mt-1.5 text-[12px] leading-[1.7] opacity-70">
                       {couple ? (
                         <>
-                          부부 가구 가입·설치비는 확정 전 — 배정 상담에서 안내 (한 분 기준{" "}
-                          {fmtWon(track.billing.entry)}) · 최소 약정 {track.billing.term}개월 · {track.billing.note}
+                          부부 가구 가입·설치비는 확정 전 — 배정 상담에서 안내 · 최소 약정 {track.billing.term}개월 ·{" "}
+                          {track.billing.note}
                         </>
                       ) : (
                         <>
-                          최초 1회 가입·설치비 {fmtWon(PRICING.entryFee.amount)} (부가세 별도 · 합계{" "}
-                          {fmtWon(track.billing.entry)}) · 최소 약정 {track.billing.term}개월 ·{" "}
-                          {track.billing.note}
+                          최초 1회 가입·설치비{" "}
+                          {track.billing.entry != null ? fmtWon(track.billing.entry) : "확정 전 — 배정 상담에서 안내"} · 최소 약정{" "}
+                          {track.billing.term}개월 · {track.billing.note}
                         </>
                       )}
                     </div>
@@ -900,7 +912,7 @@ function Onboarding() {
                 </div>
                 <p className="mt-1.5 pl-6 text-[12px] leading-[1.7] text-muted">
                   서비스 품질관리·분쟁 예방 목적. 거실·현관·주방 등 서비스 공간만 촬영하며
-                  욕실·화장실·탈의공간·침실은 촬영하지 않습니다. 일반 방문 영상은 4주 후 자동
+                  욕실·화장실·탈의공간·침실은 촬영하지 않습니다. 일반 방문 영상은 30일 후 자동
                   삭제되고, 열람은 보호자·관리자로 제한됩니다.
                 </p>
               </Card>
@@ -951,7 +963,7 @@ function Onboarding() {
                           ["가구 구성", couple ? `부부 두 분 · 월 ${fmtWon(HOUSEHOLD.monthly)}` : "한 분"],
                         ]
                       : []),
-                    [who, `${form.elderName || (track.needsRelation ? "김순자" : "본인")}님 · ${form.district}`],
+                    [who, `${lockName ? LIVE_ELDER : form.elderName || (track.needsRelation ? "김순자" : "본인")}님 · ${form.district}`],
                     track.needsRelation
                       ? [
                           "보호자",
@@ -965,7 +977,7 @@ function Onboarding() {
                       ? [
                           "결제권한",
                           {
-                            limit: `${(form.limitAmount ?? 50000).toLocaleString()}원 이하 어르신 직접`,
+                            limit: `하루 ${(form.limitAmount ?? 50000).toLocaleString()}원까지 어르신 직접`,
                             both: "양쪽 모두",
                             guardianOnly: "보호자만",
                             elderOnly: "어르신만",

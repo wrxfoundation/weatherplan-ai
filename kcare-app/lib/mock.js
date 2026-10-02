@@ -2,10 +2,11 @@
 // 미연동 지표는 임의 생성하지 않고 "연동 대기"로 표기한다 (PRD 정직성 원칙).
 
 // 상태 시드는 lib/seed.js 로 분리 — _app 공용 청크가 이 파일을 끌어오지 않게 한다.
-export { INITIAL_EVENTS, INITIAL_REQUESTS, INITIAL_KIT, SEED_EVENTS, SEED_REPORTS } from "./seed";
+export { INITIAL_EVENTS, INITIAL_REQUESTS, SEED_EVENTS, SEED_REPORTS } from "./seed";
 
 // 복약·건기식은 lib/meds.js 한 곳에서만 정의한다 (케어 프로필이 이걸 파생해 쓴다)
 import { MED_PLAN, SUPPLEMENTS } from "./meds";
+import { pastHm, relKoMd, relMd, relMdw, relMondayOffset } from "./reltime";
 const MED_DRUGS = [
   ...new Set(MED_PLAN.flatMap((d) => d.items.map((i) => i.name.split(" (")[0]))),
 ];
@@ -50,7 +51,6 @@ export const EVENT_KINDS = {
   hospital: { label: "병원동행", color: "#C0392B", group: "escort" },
   medication: { label: "복약 알림", color: "#1E7A5A", group: "personal" },
   visit: { label: "안심방문", color: "#B08D57", group: "visit" },
-  kit: { label: "약상자 교체", color: "#1E7A5A", group: "personal" },
   checkup: { label: "건강검진", color: "#1E7A5A", group: "personal" },
   family: { label: "가족이벤트", color: "#0A1F3C", group: "family" },
   delivery: { label: "배송", color: "#5C5A54", group: "delivery" },
@@ -61,8 +61,9 @@ export const EVENT_KINDS = {
 
 // 주간 요약 (프로토타입 목 수치 재사용) — 웨어러블 실연동 대기 표기 필수
 export const WEEKLY = [
-  { name: "수면", value: "6.4h", delta: "+0.3", last: "지난주 6.1" },
-  { name: "활동", value: "3,820", delta: "+12%", last: "지난주 3,410" },
+  // 걸음 · 수면은 어르신 화면 건강 수치(VITALS)와 같은 값 — 두 화면이 다른 숫자를 말하지 않게 (2026-10-02 QA)
+  { name: "수면", value: "6.2h", delta: "-0.2", last: "지난주 6.4" },
+  { name: "활동", value: "3,140", delta: "-8%", last: "지난주 3,410" },
   { name: "복약", value: "19/21", delta: "+2", last: "지난주 17/21" },
 ];
 
@@ -95,7 +96,7 @@ export const OUTING = {
     "햇볕이 매우 강합니다. 밝은 색 긴팔과 챙 넓은 모자를 쓰시고, 병원 근처는 공기가 나쁘니 마스크를 끼세요.",
   kit: ["양산", "챙 넓은 모자", "KF94 마스크", "생수 500ml", "얇은 긴팔"],
   source: "100점 감점식",
-  asOf: "14:00 기준",
+  asOf: "예시 날씨 · 실제 연동 전", // 고정 예시값 — 10월에도 '체감 35°'가 실제처럼 보이지 않게 (2026-10-02 QA)
   // 보호자 카드 3열 요인 그리드 (디자인 콘솔)
   factors3: [
     { label: "실내 온도", value: "31° 주의", level: "caution" },
@@ -224,8 +225,9 @@ export const VOICE_MSG = {
 // 어르신에게 타이핑은 장벽이다 — 목소리만 남기면 되게 한다.
 export const VOICE_TO = [
   { id: "v1", initials: "민수", name: "아들 민수", sub: "주 보호자 · 서울", avBg: "#0A1F3C", avFg: "#FFFFFF" },
-  { id: "v2", initials: "지영", name: "차녀 지영", sub: "LA · 지금 새벽", avBg: "#E8DFCB", avFg: "#7A5C28" },
-  { id: "v3", initials: "현우", name: "삼남 현우", sub: "시드니 · 지금 오후", avBg: "#DCE5F0", avFg: "#33507A" },
+  // 해외 가족은 그곳 시각으로 '지금 새벽 · 아침 …'을 계산한다 (tz) — 고정 글씨였을 때 한국 낮에도 '지금 새벽'이었다 (2026-10-02 QA)
+  { id: "v2", initials: "지영", name: "차녀 지영", sub: "LA", tz: "America/Los_Angeles", avBg: "#E8DFCB", avFg: "#7A5C28" },
+  { id: "v3", initials: "현우", name: "삼남 현우", sub: "시드니", tz: "Australia/Sydney", avBg: "#DCE5F0", avFg: "#33507A" },
   { id: "all", initials: "가족", name: "가족 모두", sub: "세 자녀에게 함께", avBg: "#1E7A5A", avFg: "#FFFFFF" },
 ];
 
@@ -243,6 +245,21 @@ export const TEACHER = { name: "박지현", role: "담당 컨시어지" };
 // text 는 음성인식(STT) 결과가 아니라 '무슨 용건이었는지' 한 줄 제목이다.
 // 목록에서 어느 것을 다시 들을지 고르는 데만 쓴다 — 내용은 듣기로 듣는다.
 // STT 를 붙일지는 미정이라 받아쓴 것처럼 길게 쓰지 않는다 (2026-08-28).
+// 씨앗 메시지의 시각 — '몇 분 전'을 지금 시각에서 빼면 새로고침할 때마다 시각이 바뀌고(11:04 → 12:23),
+// 어르신 · 컨시어지 화면이 몇 분씩 어긋난다 (2026-10-02 QA). 정오를 기준으로 그날의 고정 시각을 정하고,
+// 그 시각이 아직 안 왔으면 하루 앞 같은 시각으로 — 미래 시각은 보이지 않는다.
+const SEED_REF_MIN = 12 * 60;
+export function seedAt(minsAgo, now = Date.now()) {
+  const KST = 9 * 3600000;
+  const DAY = 86400000;
+  const days = Math.floor(minsAgo / 1440);
+  const clock = SEED_REF_MIN - (minsAgo % 1440);
+  const midnight = Math.floor((now + KST) / DAY) * DAY - KST;
+  let at = midnight + clock * 60000 - days * DAY;
+  while (at > now) at -= DAY;
+  return at;
+}
+
 export const TEACHER_INBOX = [
   // 오늘 아침 어르신이 보낸 것 — 컨시어지 마음사서함에는 '받은 음성 · 미청취'로 뜬다
   // (같은 메시지를 두 화면이 본다 · lib/mailbox.js).
@@ -258,7 +275,7 @@ export const TEACHER_INBOX = [
     dir: "in",
     minsAgo: 85,
     durationSec: 34,
-    text: "내일 정형외과 · 9시 반에 모시러 갑니다",
+    text: "오늘 순환기내과 · 1시 50분에 모시러 갑니다",
   },
   {
     id: "t2",
@@ -445,7 +462,7 @@ export const PRIORITY_PRESETS = [
 ];
 
 // STORE_ITEMS(6개 평면 목록)는 여기 있었다 — 스토어 재편 이후 lib/store.js 의
-// STORE_CATALOG(영양제·일상용품·생활안전용품 3분류)이 유일한 카탈로그다. 약국 분류는 2026-08-28 삭제 (lib/store.js 주석).
+// STORE_CATALOG 가 유일한 카탈로그다 — 2026-10-02 부터 생활안전용품 한 분류만 (lib/store.js 주석).
 
 // MOU 병원 — 진료 과목마다 한 곳 이상 (회의 8)
 //
@@ -505,7 +522,7 @@ export const VITALS = [
 
 // 담당 컨시어지 — 관계 연속성("12번 모셨습니다")이 신뢰의 근거
 export const CARE_TEAM = {
-  dateLabel: "8/23 (금) 동행",
+  dateLabel: `오늘 ${relMdw(0)} 동행`,
   members: [
     {
       initials: "박지현",
@@ -535,10 +552,11 @@ export const CARE_TEAM = {
 // 동행 완료 리포트 — AI 초안 · 컨시어지 확정 (8.4 Human-in-the-loop) · 2인 서명
 export const AI_REPORT = {
   draft:
-    "14:32 도착, 순환기내과 접수 완료. 대기 40분 중 김순자 님 컨디션 양호. 처방 3종 수령, 약국 동행 후 15:50 귀가 완료. 다음 외래 8월 23일 안내드렸습니다.",
+    `14:32 도착, 순환기내과 접수 완료. 대기 40분 중 김순자 님 컨디션 양호. 처방 3종 수령, 약국 동행 후 15:50 귀가 완료. 다음 외래 ${relKoMd(28)} 안내드렸습니다.`,
   hitl: "AI가 초안을 만들고 컨시어지가 확정합니다 — 검수 없이는 가족에게 전달되지 않습니다 (8.4 Human-in-the-loop)",
+  // 2인 서명은 2026-08-12 삭제 — 발행 전 미리보기로 본인이 확인하고, 관제 검수를 거쳐 보호자에게 간다 (2026-10-02 QA)
   signRule:
-    "사고·분쟁 시 두 사람의 기록이 각각 남아야 증언이 됩니다 — 한 명만 서명한 리포트는 발송되지 않습니다.",
+    "발행 전에 보호자에게 갈 화면을 직접 확인하세요 — 제출한 리포트는 관제 검수를 거쳐 보호자에게 발송됩니다.",
 };
 
 // AI_CALL("오전 10시에 전화가 와요" 안부 전화 카드)은 여기 있었다 — VoiceNote
@@ -553,7 +571,7 @@ export const AI_ASSISTANT_QA = [
   },
   {
     q: "다음 진료 전에 챙길 게 있나요?",
-    a: "8/23 순환기내과 외래 전, '어지러움' 발언이 2회 기록되어 질문 목록에 올라가 있습니다. 혈압 기록은 컨시어지가 지참합니다.",
+    a: "오늘 순환기내과 외래 전, '어지러움' 발언이 2회 기록되어 질문 목록에 올라가 있습니다. 혈압 기록은 컨시어지가 지참합니다.",
     src: "안부 전화 기록 · 공유 캘린더",
   },
   {
@@ -572,8 +590,8 @@ export const INVITE = { link: "kcare.app/i/7F2K9Q", rule: "7일 유효 · 1회�
 // daysAgo 로 두는 이유: 날짜를 박아 두면 며칠 뒤 열었을 때 "D-2 삭제"가 이미 지난 날짜가 된다.
 export const VIDEO_RETENTION_DAYS = 30;
 export const VISIT_VIDEOS = [
-  { id: "vv3", title: "3회차 안심방문", by: "박지현", daysAgo: 0, len: "8분 12초", hold: null },
-  { id: "vv2", title: "2회차 안심방문", by: "박지현 · 서다인", daysAgo: 28, len: "7분 40초", hold: null },
+  { id: "vv3", title: "월 정기 안심방문", by: "박지현", daysAgo: 13, len: "8분 12초", hold: null },
+  { id: "vv2", title: "월 정기 안심방문", by: "박지현 · 서다인", daysAgo: 27, len: "7분 40초", hold: null },
   {
     id: "vv1",
     title: "첫 안심방문 · 안전진단",
@@ -581,15 +599,18 @@ export const VISIT_VIDEOS = [
     daysAgo: 59,
     len: "11분 05초",
     // 30일이 지났지만 남아 있는 것 — 관리자가 보관 기간을 지정한 예 (데모)
-    hold: { until: "10월 31일까지", why: "안전용품 설치 확인 요청 건 · 관리자 지정" },
+    hold: { until: `${relKoMd(29)}까지`, why: "안전용품 설치 확인 요청 건 · 관리자 지정" },
   },
 ];
 
 export const PEOPLE_KPIS = [
   { k: "가입 가구", v: "128", sub: "+12 이번 달", color: "#0A1F3C" },
-  { k: "활성 어르신", v: "132", sub: "멤버십 유지 97%", color: "#0A1F3C" },
-  { k: "보호자 계정", v: "241", sub: "주 128 · 부 113", color: "#0A1F3C" },
-  { k: "컨시어지 재직", v: "24", sub: "수습 5 · 시니어 4", color: "#0A1F3C" },
+  // 어르신 · 보호자 · 컨시어지 수는 관제 콘솔 값과 같게 (2026-10-02 QA "132 vs 200 · 241 vs 218 · 24 vs 42").
+  // 출처: lib/ops-health.js TOTAL_ELDERS · lib/ops-mgmt-people.js GUARDIAN_STATS · STAFF_STATS — 그쪽을 바꾸면 여기도.
+  // (가져다 쓰지 않는 이유: 이 파일은 어르신 앱도 읽는데, 관제 명부 모듈까지 딸려 오면 가장 낮은 사양 화면이 무거워진다)
+  { k: "활성 어르신", v: "200", sub: "멤버십 유지 97%", color: "#0A1F3C" },
+  { k: "보호자 계정", v: "218", sub: "주 200 · 부 18", color: "#0A1F3C" },
+  { k: "컨시어지 재직", v: "42", sub: "수습 5 · 시니어 4", color: "#0A1F3C" },
   { k: "컨시어지 90일 유지", v: "87%", sub: "업계 평균 61%", color: "#1E7A5A" },
   { k: "보호자 NPS", v: "62", sub: "리포트 만족 기여 1위", color: "#1E7A5A" },
 ];
@@ -653,10 +674,10 @@ export const CONSENTS = [
 ];
 
 export const ACCESS_LOG = [
-  { at: "오늘 13:12", who: "박지현 (컨시어지)", what: "케어 프로필 · 선호 카드", why: "동행 준비" },
-  { at: "오늘 09:40", who: "관제 (강남지점)", what: "일정 · 워치 상태", why: "배차 브리핑" },
+  { at: pastHm("13:12"), who: "박지현 (컨시어지)", what: "케어 프로필 · 선호 카드", why: "동행 준비" },
+  { at: pastHm("09:40"), who: "관제 (강남지점)", what: "일정 · 워치 상태", why: "배차 브리핑" },
   { at: "어제 20:00", who: "AI 리포트 시스템", what: "방문 기록", why: "리포트 초안 작성" },
-  { at: "7/26", who: "김지영 (부 보호자)", what: "케어 리포트", why: "열람" },
+  { at: relMd(-6), who: "김지영 (부 보호자)", what: "케어 리포트", why: "열람" },
 ];
 
 export const TRUST_METRICS = [
@@ -695,11 +716,11 @@ export const HOSPITAL_PARTNERS = {
 
 // ════ 경영 주간 AI 브리핑 — 능동형: 경영에게도 묻기 전에 요약 (집계 전용) ════
 export const EXEC_BRIEF = {
-  date: "7/28 (월) 주간 생성",
+  date: `${relMdw(relMondayOffset())} 주간 생성`,
   summary: "가입 +12가구 · 컨시어지 유지율 87% 유지 — 주의 신호는 부보호자 열람률(64%)과 위기 11가구입니다.",
   items: [
-    { k: "사람", text: "수습 5명 중 2명이 8월 일반 전환 요건 도달 예상 — 투석 배차 여력 +15%" },
-    { k: "리스크", text: "폭염 지속 시 외출지수 하락 → 8월 첫 주 배차 12% 감소 전망 · 재택 방문 전환 권고" },
+    { k: "사람", text: "수습 5명 중 2명이 다음 달 일반 전환 요건 도달 예상 — 투석 배차 여력 +15%" },
+    { k: "리스크", text: "날씨로 외출지수가 떨어지는 주에는 배차가 줄어듭니다 — 재택 방문 전환 기준을 미리 정해 두세요 (실제 날씨 연동 전 · 예시)" },
     { k: "권고", text: "가입비 정책(12 – 15만) 확정이 퍼널 최대 병목 — 이번 주 의사결정 안건 상정" },
   ],
 };
@@ -794,7 +815,7 @@ export const CP_GUARD = [
 ];
 
 export const CP_BRIEF = {
-  head: "7/26 13:50 김순자 (78) · 박지현(주) + 서다인(부)",
+  head: `${relMd(0)} 13:50 김순자 (78) · 박지현(주) + 서다인(부)`,
   why: "2인 방문에서는 어르신을 처음 만나는 사람이 한 명 섞입니다. 프로필 38개 속성을 다 읽을 시간은 없으니, 이 어르신에게만 해당하는 것 6개로 압축해 출발 전에 두 사람 모두에게 보냅니다.",
   dont: [
     ["왼쪽에서 말 걸지 않기", "왼쪽 귀 청력이 거의 없습니다. 대답이 없으면 못 들으신 겁니다 — 다시 크게 말하지 말고 오른쪽으로 돌아가세요."],
@@ -806,7 +827,7 @@ export const CP_BRIEF = {
     ["접수 번호표는 부 동행이 받기", "대기 줄에서 오래 서 계시면 어지러워하십니다. 주 동행은 어르신과 함께 앉아 있으세요."],
     ["진료 후 ‘오늘 여쭤볼 것’ 3건 확인", "어르신 앱에 담긴 질문입니다. 답을 듣고 리포트에 그대로 옮겨 적으세요."],
   ],
-  delta: "6/14 방문 대비 — 보행이 눈에 띄게 느려졌고 휠체어를 처음 사용하십니다. 야간 화장실 횟수가 늘어 이뇨제 복용 시간 조정을 여쭤볼 예정입니다. 아들 민수 님이 9월 귀국 예정이라 그때 요양원 상담을 계획 중입니다.",
+  delta: "지난 방문 대비 — 보행이 눈에 띄게 느려졌고 휠체어를 처음 사용하십니다. 야간 화장실 횟수가 늘어 이뇨제 복용 시간 조정을 여쭤볼 예정입니다. 아들 민수 님이 9월 귀국 예정이라 그때 요양원 상담을 계획 중입니다.",
 };
 
 export const CP_TIMELINE = [
@@ -818,8 +839,8 @@ export const CP_TIMELINE = [
 ];
 
 export const CP_GAPS = [
-  { level: "높음", k: "복용 중인 건강기능식품", why: "약물 상호작용 확인에 필요 · 다음 방문 시 약통 사진으로 확인", when: "7/29 예정" },
-  { level: "높음", k: "응급 시 1순위 연락처 우선순위", why: "3남매 중 누구부터인지 미확정 · 가족 회의 안건에 포함", when: "8/3 회의" },
+  { level: "높음", k: "복용 중인 건강기능식품", why: "약물 상호작용 확인에 필요 · 다음 방문 시 약통 사진으로 확인", when: "다음 안심방문" },
+  { level: "높음", k: "응급 시 1순위 연락처 우선순위", why: "3남매 중 누구부터인지 미확정 · 가족 회의 안건에 포함", when: "다음 가족 회의" },
   { level: "중간", k: "종교 · 식이 제한", why: "케어푸드 제안 전 필요 · 안부콜 대화에서 자연 확인", when: "다음 안부콜" },
   { level: "중간", k: "낙상 이력 상세 (시기·장소)", why: "가족 진술과 본인 진술이 다름 · 재확인 필요", when: "보류" },
   { level: "낮음", k: "취미 · 관심사", why: "생활지원 제안 개인화용 · 급하지 않음", when: "수시" },

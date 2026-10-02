@@ -21,7 +21,7 @@ export function guardianOf(c, role) {
 export function build119(inc, c, health) {
   return [
     ["이름·나이", `${c.name} · ${c.age ?? "—"}세 · ${c.sex}`],
-    ["정확한 위치", `${health.location.v} · 마지막 위치 수신 ${health.location.agoSec != null ? `${Math.round(health.location.agoSec / 60)}분 전` : "—"}`],
+    ["정확한 위치", health.noDevice ? health.location.v : `${health.location.v} · 마지막 위치 수신 ${health.location.agoSec != null ? `${Math.round(health.location.agoSec / 60)}분 전` : "—"}`],
     ["자택 주소", c.address],
     ["이상징후", inc.cause],
     ["실제 측정값", `${inc.value} (기준 ${inc.threshold})`],

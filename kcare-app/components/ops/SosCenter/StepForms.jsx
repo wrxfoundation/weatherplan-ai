@@ -4,7 +4,8 @@
 import { useState } from "react";
 import { Btn, Confirm, Empty, Field, KV, Pill, Toggle, TONE } from "../ui";
 import { CALL_RESULTS } from "../../../lib/ops-sos";
-import { LIVE_ELDER, dispatchCandidates, getHealth, liveCustomer, telHref } from "../../../lib/ops-health";
+import { LIVE_ELDER, dispatchCandidates, liveCustomer, liveHealth, telHref } from "../../../lib/ops-health";
+import { useAuth } from "../../../lib/auth";
 import { useAppState } from "../../../lib/state";
 import { fmtClock, fmtTime } from "../../../lib/ops-time";
 import { build119, guardianOf, summary119Text } from "./helpers";
@@ -112,7 +113,8 @@ const AGENCIES = ["서울종합방재센터 119", "강동소방서", "강남소�
 const TRANSFER_OPTS = ["미정", "이송", "현장 처치 후 미이송"];
 
 function Report119Form({ inc, c, api, ro }) {
-  const rows = build119(inc, c, getHealth(inc.customer));
+  const live = !!useAuth().user?.household;
+  const rows = build119(inc, c, liveHealth(inc.customer, useAppState()?.state?.onboarding, live));
   const [f, setF] = useState({ at: fmtTime(Date.now()), reporter: inc.controller || "김태영", caseNo: "", agency: AGENCIES[0], content: `${c.name}(${c.age}세) ${inc.cause} · ${inc.value} · 본인 통화 미연결`, eta: "", arrivedAt: "", transferred: "미정", hospital: "", request: "" });
   const set = (k) => (v) => setF({ ...f, [k]: v });
   const id = `${inc.id}-119`;
@@ -276,7 +278,8 @@ function TransferForm({ inc, c, api, ro }) {
 }
 
 export default function StepForm({ inc, stepKey, api, role }) {
-  const c = liveCustomer(inc.customer, useAppState()?.state?.onboarding);
+  const appState = useAppState()?.state;
+  const c = liveCustomer(inc.customer, appState?.onboarding, appState?.health);
   const rec = inc.steps?.[stepKey] || {};
   const ro = role !== "controller";
   const main = guardianOf(c, "주");

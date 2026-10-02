@@ -19,9 +19,10 @@ export const INITIAL_EVENTS = [
     id: "ev1",
     kind: "hospital",
     title: "순환기내과 진료 · 서울아산병원",
-    at: daysFromNow(7, 10, 0),
+    // 오늘 13:50 — 관제 배차 · 컨시어지 오늘 일정의 김순자 동행과 같은 건 (2026-10-02 QA "화면마다 다름")
+    at: daysFromNow(0, 13, 50),
     source: "컨시어지 등록",
-    note: "박지현 선생님 동행 · 픽업 09:10",
+    note: "박지현 · 서다인 선생님 동행 · 13:50 댁에서 출발 (차량)",
   },
   {
     id: "ev2",
@@ -31,21 +32,13 @@ export const INITIAL_EVENTS = [
     source: "관제 배정",
     note: "박지현 · 서다인 2인 방문",
   },
-  {
-    id: "ev3",
-    kind: "kit",
-    title: "안심케어박스 점검·교체",
-    at: daysFromNow(3, 14, 30),
-    source: "관제 배정",
-    note: "안심방문과 동시 진행",
-  },
   // ev4 "아침 혈압약"(복약 알림)은 뺐다 (2026-09-04 시트 어르신 전체 2번) —
   // 약 복용은 일정 알람이 아니라 복용 시간에 뜨는 약 미션 팝업이 맡는다 (elder.jsx).
   // 저장된 옛 상태에 남아 있는 것은 lib/state.js hydrate 가 걸러 낸다.
   {
     id: "ev5",
     kind: "delivery",
-    title: "생수 · 생활물품 배송",
+    title: "LED 확대경 배송",
     at: daysFromNow(5, 11, 0),
     source: "스토어 주문",
     note: "",
@@ -66,17 +59,17 @@ export const INITIAL_REQUESTS = [
     id: "rq1",
     dir: "fromConcierge",
     type: "생활용품이 부족합니다",
-    detail: "미끄럼방지 슬리퍼가 낡았고 물티슈가 떨어져 갑니다. 다음 안심방문 전에 스토어 주문이 필요합니다.",
-    amount: 18000,
+    detail: "미끄럼방지 슬리퍼가 낡았습니다. 다음 안심방문 전에 스토어(논슬립 실내 안전 슬리퍼) 주문이 필요합니다.",
+    amount: 25000,
     preferredDate: null,
     urgency: "normal",
     assignee: "박지현",
-    photos: ["kit-2026-07-visit.jpg"],
+    photos: ["slippers-visit.jpg"],
     status: "awaitingPayment",
     history: [
       { at: Date.now() - 86400000 * 2, status: "requested", note: "안심방문 중 잔여량 확인" },
       { at: Date.now() - 86400000 * 2 + 3600000, status: "confirmed", note: "" },
-      { at: Date.now() - 86400000, status: "awaitingPayment", note: "예상 금액 18,000원" },
+      { at: Date.now() - 86400000, status: "awaitingPayment", note: "예상 금액 25,000원" },
     ],
     proof: null,
   },
@@ -99,20 +92,6 @@ export const INITIAL_REQUESTS = [
     ],
     proof: "visit-2026-07-21-livingroom.jpg",
   },
-];
-
-// K-CARE 안심케어박스 초기 재고 — REQ-10
-// isMedicine=true 품목은 고객 요청 구매분 보관 또는 고객 소유 수량 확인만 (의료법 27조 경계)
-export const INITIAL_KIT = [
-  { name: "체온계", qty: 1, unit: "개", expiry: null, opened: false, isMedicine: false, low: false },
-  { name: "밴드", qty: 4, unit: "매", expiry: "2027-03", opened: true, isMedicine: false, low: true },
-  { name: "거즈·소독용품", qty: 2, unit: "세트", expiry: "2027-01", opened: false, isMedicine: false, low: false },
-  { name: "마스크 (KF94)", qty: 6, unit: "매", expiry: null, opened: true, isMedicine: false, low: false },
-  { name: "손소독제", qty: 1, unit: "병", expiry: "2026-11", opened: true, isMedicine: false, low: false },
-  { name: "냉찜질팩", qty: 1, unit: "개", expiry: null, opened: false, isMedicine: false, low: false },
-  { name: "비상연락카드 · 복약체크표", qty: 1, unit: "세트", expiry: null, opened: false, isMedicine: false, low: false },
-  { name: "해열제 (고객 소유)", qty: 3, unit: "정", expiry: "2026-09", opened: true, isMedicine: true, low: true },
-  { name: "파스 (고객 소유)", qty: 1, unit: "매", expiry: "2026-12", opened: true, isMedicine: true, low: true },
 ];
 
 // 실시간 접수 티커 초기값 — 이후 이벤트는 전 화면 액션이 state.events로 push
@@ -146,20 +125,17 @@ export const SEED_REPORTS = [
 ];
 
 // 스토어 구매내역 시드 — 보호자 스토어 '구매내역 조회' (2026-08-12 시트).
-// 일반의약품(안티푸라민 등)과 약국 영수증은 뺐다 — 약국 분류 삭제 (lib/store.js).
+// 스토어는 생활안전용품만 · 배송비 무료 (2026-10-02 운영 결정, lib/store.js) — 시드 주문도 그 안에서만.
 export const SEED_ORDERS = [
   {
     id: "od-2026-0731",
     daysAgo: 16,
     by: "김민수",
     channel: "보호자 스토어",
-    items: [
-      { id: "dl1", name: "소독티슈", qty: 1, price: 3700 },
-      { id: "vt1", name: "영국산 비타민C 3000", qty: 1, price: 26000 },
-    ],
-    ship: 3000,
+    items: [{ id: "slippers", name: "논슬립 실내 안전 슬리퍼", qty: 1, price: 25000 }],
+    ship: 0,
     status: "delivered",
-    note: "8/1 안심방문 때 함께 전달",
+    note: "안심방문 때 함께 전달",
   },
   {
     id: "od-2026-0808",
@@ -170,7 +146,7 @@ export const SEED_ORDERS = [
       { id: "mat", name: "논슬립 욕실 미끄럼 방지 매트 (2.3m)", qty: 1, price: 80000 },
       { id: "sensorLight", name: "동작 인식 LED 센서등 (1m)", qty: 2, price: 20000 },
     ],
-    ship: 3500,
+    ship: 0,
     status: "delivered",
     receipt: null,
     note: "첫 방문 안전진단 '아니오' 항목에서 자동으로 담긴 용품",
@@ -180,8 +156,8 @@ export const SEED_ORDERS = [
     daysAgo: 2,
     by: "김지영",
     channel: "보호자 스토어",
-    items: [{ id: "vt2", name: "비타민씨 골드", qty: 1, price: 11000 }],
-    ship: 3000,
+    items: [{ id: "magnifier", name: "LED 확대경", qty: 1, price: 40000 }],
+    ship: 0,
     status: "shipping",
     receipt: null,
     note: "",

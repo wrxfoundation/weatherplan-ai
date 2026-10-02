@@ -1,7 +1,11 @@
 // 어르신 상세 14탭 (요청서 7절 순서 그대로). 김순자는 채워진 예시, 나머지는 명부 요약.
 // 정서·건강은 관찰 내용 · 변화 징후 · 추가 확인 필요로만 쓴다 — 진단명·점수 없음.
 import { useState } from "react";
-import { KV, Pill, Table, Tabs, Stamp, FeedPill, SevPill, Note, Empty, Btn } from "../ui";
+import { KV, Pill, Table, Tabs, Stamp, FeedPill, SevPill, Note, Empty, Btn, useOperator } from "../ui";
+import { useAppState } from "../../../lib/state";
+import { healthOf, medSummary } from "../../../lib/meds";
+import { LIVE_ELDER } from "../../../lib/ops-health";
+import { HealthEditor } from "../../HealthInfo";
 import { VISITS, VISIT_STATE, visitPill, sevOf, demoTel, stampNow, OPERATOR } from "../../../lib/ops-mgmt";
 import { HistoryTable } from "./EditLog";
 import PhoneLink from "../PhoneLink";
@@ -27,6 +31,12 @@ const num = (k, label) => ({ k, label, render: (r) => <span className="font-num"
 
 export default function ElderTabs({ e, tab, onChange }) {
   const [range, setRange] = useState(1);
+  // 김순자 님(테스트 가구)의 복용약 · 질환 · 알레르기는 가구 상태 한 벌을 쓴다 — 여기서 고치면
+  // 어르신 복약 미션 · 보호자 마이 · 컨시어지 · SOS 119 신고 정보가 같이 바뀐다 (2026-10-02 QA)
+  const app = useAppState();
+  const operator = useOperator();
+  const [healthEdit, setHealthEdit] = useState(false);
+  const shared = e.name === LIVE_ELDER && app?.state ? healthOf(app.state) : null;
   const [memo, setMemo] = useState("");
   const visits = VISITS.filter((v) => v.name === e.name);
   const past = [{ id: "past-1", when: "08-19 14:00", team: `${e.branch} 팀`, memo: "8월 정기방문 · 21/21 · 검수 완료 · 보호자 열람", status: "done", followup: false }];
@@ -52,11 +62,32 @@ export default function ElderTabs({ e, tab, onChange }) {
         </div>
       );
     case "건강·질환":
+      if (shared && healthEdit)
+        return (
+          <HealthEditor
+            health={shared}
+            onCancel={() => setHealthEdit(false)}
+            onSave={(payload) => {
+              app.dispatch({ type: "setHealth", payload, by: `${operator} (관제)` });
+              app.dispatch({ type: "pushEvent", payload: { kind: "건강", text: `건강 정보 수정 — ${e.name} · 복용 ${payload.meds.length}번 · 질환 ${payload.conditions.length}가지`, color: "#8FA9CC" } });
+              setHealthEdit(false);
+            }}
+          />
+        );
       return (
         <div>
-          <KV k="주요 질환" v={<span className="flex flex-wrap gap-1">{e.health.dx.map((d) => <Pill key={d} tone="info">{d}</Pill>)}</span>} />
-          <KV k="복용약" v={e.health.meds.join(" · ")} />
-          <KV k="알레르기" v={e.health.allergy} />
+          {shared && (
+            <div className="mb-2 flex items-center justify-between gap-2">
+              <span className="text-[12px] text-muted">
+                어르신 · 보호자 · 컨시어지 · SOS 신고 정보와 같은 값
+                {shared.custom && shared.at ? ` · 마지막 수정 ${new Date(shared.at).toLocaleString("ko-KR", { month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit", hour12: false })}${shared.by ? ` · ${shared.by}` : ""}` : " · 첫 안심방문 등록값"}
+              </span>
+              <Btn small onClick={() => setHealthEdit(true)}>복용약 · 질환 수정</Btn>
+            </div>
+          )}
+          <KV k="주요 질환" v={<span className="flex flex-wrap gap-1">{(shared ? shared.conditions : e.health.dx).map((d) => <Pill key={d} tone="info">{d}</Pill>)}{shared && !shared.conditions.length && "등록 없음"}</span>} />
+          <KV k="복용약" v={shared ? (shared.meds.length ? <span className="block">{medSummary(shared.meds).map((m) => <span key={m} className="block">{m}</span>)}</span> : "등록 없음") : e.health.meds.join(" · ")} />
+          <KV k="알레르기" v={shared ? shared.allergies.join(" · ") || "등록 없음" : e.health.allergy} />
           <KV k="주 이용 병원" v={e.health.hospital} />
           <KV k="관찰 메모" v={e.health.note} />
           <div className="mt-3"><Note>건강·센서 데이터는 참고자료이며 의료진의 진단을 대신하지 않습니다. 기록은 관찰 내용 · 변화 징후 · 추가 확인 필요로만 씁니다.</Note></div>

@@ -316,7 +316,7 @@ export default function ConciergeOnboarding() {
                 <ol className="mt-3 space-y-4">
                   {[
                     ["기본 교육 배정", "치매 케어 · 응급처치 · 앱 사용 (2일 · 유급)"],
-                    ["케어박스 · 워치 수령", "첫 출근일 관제센터에서 전달"],
+                    ["워치 수령", "첫 출근일 관제센터에서 전달"],
                     ["수습 시작 — 부 동행 12건", `시니어 코치와 페어 · ${region || "강남"} 권역 우선 배차`],
                   ].map(([t, d], i) => (
                     <li key={t} className="flex items-start gap-3">

@@ -5,15 +5,16 @@ import FamilyLayout from "../../components/FamilyLayout";
 import { Card, SectionLabel, Badge, PendingTag, Collapse } from "../../components/ui";
 import Icon from "../../components/icons";
 import { AI_ASSISTANT_QA, CARE_TEAM, ELDER, EVENT_GROUPS, EVENT_KINDS, FEED_TONE, NEIGHBORHOOD_FEED, OUTING, VITALS, WEEKLY } from "../../lib/mock";
-import { trackOf, subjectLabel, honorific } from "../../lib/tracks";
+import { trackOf, subjectLabel, honorific, josa } from "../../lib/tracks";
 import VoiceNote from "../../components/VoiceNote";
 import MapDialog, { distanceM, prettyDistance } from "../../components/MapDialog";
 import { CONCIERGE_POS, ELDER_HOMES } from "../../lib/console";
 
-import { useAppState } from "../../lib/state";
+import { eventsFor, useAppState } from "../../lib/state";
 import { useAuth } from "../../lib/auth";
 import { scopedKey } from "../../lib/scope";
 import { useLastActivity } from "../../lib/last-activity";
+import { healthOf } from "../../lib/meds";
 import { STAGE_LABEL, visitReportOf } from "../../lib/live-household";
 
 // 가족 앱 홈 — 핸드오프 02 family 명세 + REQ-02(다음 일정 홈 노출)
@@ -65,14 +66,24 @@ export default function FamilyHome() {
   const has = (b) => track.home.blocks.includes(b) && !(live && FAKE_IN_TEST.includes(b));
   const elderLast = useLastActivity("elder", live);
   const medDone = Object.keys(state.elder?.medSlots || {}).filter((k) => state.elder.medSlots[k]);
+  // 복약 계획 — 관제 · 컨시어지가 고친 건강 정보 그대로 (어르신 앱과 같은 값, lib/meds.js healthOf)
+  const medPlan = healthOf(state).meds;
+  const morningMed = medPlan.find((d) => d.slot === "아침") || null;
   const voicesToElder = (state.voices || []).filter((v) => v.from === "보호자");
   const heard = voicesToElder.filter((v) => state.elder?.msgPlayed?.[v.id]).length;
+  // 어르신 → 주 보호자(아들 민수) · 가족 모두에게 온 목소리
+  const fromElder = (state.voices || []).filter((v) => v.from === `${ELDER.name} 님` && (v.to === "아들 민수" || v.to === "가족 모두"));
+  const unheardFromElder = fromElder.filter((v) => !state.guardian?.voiceHeard?.[v.id]).length;
+  const checkinAt = (state.visit.audit || []).find((e) => e.kind === "gps")?.at;
+  const checkinHm = checkinAt ? new Date(checkinAt).toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit", hour12: false }) : null;
   const visitStage = live ? `이번 방문 — ${STAGE_LABEL[visitReportOf(state).stage]}` : "";
   const subj = subjectLabel(track, ob); // 화면에서 이용자를 부르는 말 — 트랙마다 다르다
   const honor = honorific(ob); // 고객 호칭 — 전부 "~~님" 으로 통일 (2026-08-12 시트)
   const anomaly = state.demo.anomaly;
 
-  const upcoming = [...state.events]
+  // 반려된 일정은 홈에서 뺀다 (캘린더에는 사유 칩과 함께 남는다). 승인 대기 건은 '승인 대기'로 단다.
+  const upcoming = eventsFor(state.events, "guardian")
+    .filter((e) => e.approval !== "rejected")
     .sort((a, b) => a.at - b.at)
     .filter((e) => e.at > Date.now())
     .slice(0, 3);
@@ -126,7 +137,7 @@ export default function FamilyHome() {
             <div className="text-[12px] font-bold tracking-[.14em] opacity-85">
               긴급 · SOS 수신
             </div>
-            <div className="mt-1 text-[19px] font-bold">{subj}이(가) 도움을 요청했습니다</div>
+            <div className="mt-1 text-[19px] font-bold">{josa(subj, "이", "가")} 도움을 요청했습니다</div>
             <div className="mt-0.5 text-[13px] opacity-90">{sosStage}</div>
             <button
               onClick={ackSosHere}
@@ -196,14 +207,16 @@ export default function FamilyHome() {
                 지금 박지현 컨시어지가 {subj} 곁에 함께 있습니다
               </div>
               <div className="mt-0.5 text-[12px] leading-[1.6] text-muted">
-                13:50 출발 · GPS · 시간 기록 중 — 종료 후 2시간 안에 리포트가 도착합니다
+                {/* 실제 체크인 시각 — 고정 '13:50 출발'은 체크인 시각과 어긋났다 (2026-10-02 QA) */}
+                {checkinHm ? `${checkinHm} 체크인` : "체크인"} · GPS · 시간 기록 중 — 방문을 마치고 관제 검수가 끝나면 리포트가 도착합니다
               </div>
             </div>
           </Card>
         )}
 
-        {/* AI 이상 징후 카드 — anomaly === 'open' */}
-        {anomaly === "open" && (
+        {/* AI 이상 징후 카드 — anomaly === 'open'. SOS 가 켜져 있으면 숨긴다 — "아직 SOS 를 누르지 않았습니다"가
+            SOS 배너 바로 아래 남아 서로 어긋났다 (2026-10-02 QA) */}
+        {anomaly === "open" && !state.demo.sos && (
           <div className="rounded-card border border-amber/35 bg-gradient-to-b from-[#FFF7E8] to-[#FBEFD8] p-[18px]">
             <div className="flex items-center gap-2">
               <span className="h-[7px] w-[7px] animate-livePing rounded-full bg-amber" />
@@ -215,15 +228,19 @@ export default function FamilyHome() {
               새벽 3시 12분, 거실에서 5초간 급격한 움직임 후 정지
             </div>
             <p className="mt-1 text-[13px] leading-[1.7] text-[#5A4A22]">
-              낙상 의심 패턴입니다. 이후 심박 108bpm(평소 72), 오전 복약 미기록. {honor}은
+              낙상 의심 패턴입니다. 이후 심박 108bpm(평소 72){medDone.includes("아침") ? "" : ", 오전 복약 미기록"}. {honor}은
               아직 SOS를 누르지 않았습니다.
             </p>
             <div className="mt-3 space-y-1.5">
               {[
                 ["03:12", "거실 급가속 후 5초 정지", "낙상 의심", "#C0392B"],
                 ["03:14", "심박 108bpm · 평소 대비 +50%", "이상", "#8A5D12"],
-                ["08:00", "아침 혈압약 복약 미기록", "미이행", "#8A5D12"],
-              ].map(([t, txt, tag, color]) => (
+                // 복약은 어르신 앱 체크와 같은 값 — '다 먹었어요'를 누르면 여기서도 바뀐다 (2026-10-02 QA)
+                morningMed &&
+                  (medDone.includes("아침")
+                    ? [morningMed.time, `아침 약(${morningMed.elderLabel}) 복약 체크됨`, "확인", "#1E7A5A"]
+                    : [morningMed.time, `아침 약(${morningMed.elderLabel}) 복약 미기록`, "미이행", "#8A5D12"]),
+              ].filter(Boolean).map(([t, txt, tag, color]) => (
                 <div key={t} className="flex items-center gap-2">
                   <span className="w-[40px] shrink-0 font-num text-[11px] font-bold text-amber">
                     {t}
@@ -282,13 +299,18 @@ export default function FamilyHome() {
             </Badge>
           </div>
           <div className="mt-2 text-[19px] font-bold leading-[1.55]">
-            {live ? `${honor}이 앱에 남기신 오늘 기록입니다` : track.home.line}
+            {live
+              ? `${honor}이 앱에 남기신 오늘 기록입니다`
+              : // 데모 문장의 '아침 약도 챙겨 드셨습니다'는 어르신 앱 체크와 맞춘다 — 체크 전이면 그렇게 말한다 (2026-10-02 QA)
+                medDone.includes("아침")
+                ? track.home.line
+                : track.home.line.replace("아침 약도 챙겨 드셨습니다.", "아침 약은 아직 체크 전입니다.")}
           </div>
           {live && (
             <>
               <div className="mt-4 grid grid-cols-3 gap-2 border-t border-white/10 pt-3.5">
                 {[
-                  ["복약 체크", medDone.length ? medDone.join(" · ") : "아직"],
+                  ["복약 체크", medPlan.length ? `${medPlan.filter((d) => medDone.includes(d.slot)).length}/${medPlan.length}${medDone.length ? ` · ${medDone.join(" · ")}` : ""}` : "약 등록 전"],
                   [
                     "앱 마지막 사용",
                     elderLast.status === "ok" && elderLast.at
@@ -393,6 +415,40 @@ export default function FamilyHome() {
             한마디 남기는 흐름이라 위로 올렸다. */}
         <Card className="p-[18px]">
           <div className="text-[17px] font-black text-navy">안부 음성 남기기</div>
+          {/* 어르신이 가족 탭에서 보낸 목소리 — 주 보호자(아들 민수)와 '가족 모두'에게 온 것.
+              전에는 저장만 되고 보호자 앱에 들을 곳이 없었다 (2026-10-02 QA). 녹음 파일은 베타에서 저장하지 않아 길이만 보인다. */}
+          {fromElder.length > 0 && (
+            <div className="mt-2.5 space-y-1.5 rounded-xl bg-gold/[.08] p-3">
+              <div className="text-[12px] font-bold text-[#8A5D12]">
+                {honor}이 보낸 목소리{unheardFromElder ? ` · 새 목소리 ${unheardFromElder}개` : ""}
+              </div>
+              {fromElder.slice(0, 4).map((v) => {
+                const heard = !!state.guardian?.voiceHeard?.[v.id];
+                return (
+                  <div key={v.id} className="flex items-center gap-2 text-[13px]">
+                    <span className="font-num font-bold text-navy">
+                      {new Date(v.at).toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit", hour12: false })}
+                    </span>
+                    <span className="flex-1 text-ink">
+                      목소리 {v.secs}초{v.to === "가족 모두" ? " · 가족 모두에게" : ""}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (heard) return;
+                        dispatch({ type: "guardianPatch", patch: { voiceHeard: { ...(state.guardian?.voiceHeard || {}), [v.id]: true } } });
+                        dispatch({ type: "pushEvent", payload: { kind: "음성", text: `보호자가 ${honor} 목소리 ${v.secs}초 청취`, color: "#8FA9CC" } });
+                      }}
+                      className={`btn-press btn-inline btn-chip rounded-full px-3 py-1.5 text-[12px] font-bold ${heard ? "bg-green/10 text-green" : "bg-navy text-white"}`}
+                    >
+                      {heard ? "✓ 들었어요" : "▶ 듣기"}
+                    </button>
+                  </div>
+                );
+              })}
+              <p className="text-[11px] leading-[1.5] text-muted">베타에서는 녹음 파일을 저장하지 않아 길이만 보입니다.</p>
+            </div>
+          )}
           <VoiceNote
             to={honor}
             onSend={(secs) => {
@@ -524,7 +580,9 @@ export default function FamilyHome() {
             </div>
             <div className="mt-2.5 space-y-3">
               {upcoming.map((e) => {
-                const [label, fg, bg] = e.source?.includes("AI")
+                const [label, fg, bg] = e.approval === "pending"
+                  ? ["승인 대기", "#8A5D12", "rgba(176,141,87,.14)"]
+                  : e.source?.includes("AI")
                   ? ["확정", "#1E7A5A", "rgba(30,122,90,.12)"]
                   : e.kind === "medication"
                   ? ["대기", "#5C5A54", "rgba(92,90,84,.1)"]
@@ -634,7 +692,7 @@ export default function FamilyHome() {
             "있으면 챙기는" 정보다 — 제목줄의 건수만 봐도 새 소식이 있는지 안다. */}
         {has("feed") && (
           <Card className="p-0">
-            <Collapse title="우리 동네 소식" count={`${NEIGHBORHOOD_FEED.length}건`} note={live ? "예시 소식 · 지역 연동 전" : `대치동 · ${ELDER.district}`}>
+            <Collapse title="우리 동네 소식" count={`${NEIGHBORHOOD_FEED.length}건`} note="예시 소식 · 지역 연동 전">
               <NeighborhoodFeed
                 onApply={(item) =>
                   dispatch({
@@ -712,9 +770,16 @@ export default function FamilyHome() {
           {demoOpen && (
             <div className="mt-2 flex justify-center gap-2">
               <button
-                onClick={() =>
-                  dispatch({ type: "demo", payload: state.demo.sos ? { sos: false } : { sos: true, sosAt: Date.now() } })
-                }
+                onClick={() => {
+                  dispatch({ type: "demo", payload: state.demo.sos ? { sos: false } : { sos: true, sosAt: Date.now() } });
+                  // 감사 로그(관제 티커)에도 남긴다 — 어르신 SOS 와 같은 줄 모양 (2026-10-02 QA "보호자 SOS 가 감사 로그에 미기록")
+                  dispatch({
+                    type: "pushEvent",
+                    payload: state.demo.sos
+                      ? { kind: "SOS", text: "SOS 알림 끔 (시연 컨트롤)", color: "#8FA9CC" }
+                      : { kind: "SOS", text: `${ELDER.name}(${ELDER.age}) SOS 발신 (시연 컨트롤) · 가족·관제 동시 점등`, color: "#FF8A80" },
+                  });
+                }}
                 className="btn-press rounded-lg border border-navy/20 px-3 py-1.5 text-[12px] font-bold text-muted"
               >
                 SOS {state.demo.sos ? "해제" : "발생"}

@@ -608,7 +608,7 @@ function VisitReportPage() {
 }
 
 // ── 병원 동행 리포트 (2026-10-02 "남은 것도 다" — 동행 리포트 연동) ──
-// 컨시어지 '동행 기록 저장'(적은 글 · 사진 장수 · 영상 녹화 여부) → '검수 확정 후 가족에게 전달'을 눌러야 열린다.
+// 컨시어지 '동행 기록 저장'(적은 글 · 사진 장수 · 영상 녹화 여부) → '리포트 제출' → 관제 검수 · 보호자 리포트 발송 때 함께 열린다.
 // 적은 글을 그대로 싣는다 — AI 초안 · 진단 · 판정을 붙이지 않는다. 보호자가 처음 열면 관제 커뮤니케이션 · 감사로그에 '열람'.
 const hmDot = (t) => (t ? new Date(Number(t) + 9 * 3600 * 1000).toISOString().slice(11, 16) : "—");
 function LiveEscortReport() {
@@ -625,13 +625,13 @@ function LiveEscortReport() {
   const back = { backHref: fromFamily ? "/family/my" : "/concierge", backLabel: fromFamily ? "마이로" : "컨시어지로" };
   if (!sent)
     return (
-      <DocShell title="동행 리포트" period="테스트 가구 1 · 전달 전" {...back} docType="escort-live" live={{ stamp: "컨시어지 검수 확정 뒤 전달", canon: "escort-live-pending" }}>
+      <DocShell title="동행 리포트" period="테스트 가구 1 · 전달 전" {...back} docType="escort-live" live={{ stamp: "관제 검수 뒤 전달", canon: "escort-live-pending" }}>
         <div className="mt-4 rounded-[14px] border border-navy/[.1] px-5 py-6 text-center">
           <div className="text-[16px] font-black" style={{ color: NAVY }}>동행 리포트가 아직 오지 않았습니다</div>
           <p className="mt-2 text-[13px] leading-[1.8] text-muted">
             병원 동행을 마치면 컨시어지가 적은 기록을 확인한 뒤 보내 드립니다.
             <br />
-            지금 단계: <b className="text-ink">{e.savedAt ? "컨시어지가 동행 기록을 저장했습니다 — 검수 확정 뒤 전달" : "동행 기록 전"}</b>
+            지금 단계: <b className="text-ink">{e.savedAt ? "컨시어지가 동행 기록을 저장했습니다 — 관제 검수 뒤 전달" : "동행 기록 전"}</b>
           </p>
         </div>
       </DocShell>

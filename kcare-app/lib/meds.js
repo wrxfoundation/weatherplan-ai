@@ -46,7 +46,7 @@ export function slotHour(hhmm) {
 }
 
 // 건강기능식품 — 남은 용량(remain/total)과 유통기한. 재구매 알림 판단은 아래 함수.
-// storeId 는 스토어 상품 id — 재구매 버튼이 장바구니로 바로 이어진다.
+// storeId 는 스토어 상품 id 자리 — 스토어가 생활안전용품만 팔게 되어(2026-10-02) 지금은 비어 있다. 재구매는 해주세요로 간다.
 // slot — 알람 팝업에서 같은 시간대 약과 한 카드로 합쳐 보여주기 위한 값
 // (2026-08-31). 실무진 자료에 영양제 복용 시간대가 없어서 임의로 정하지 않았다.
 //
@@ -69,7 +69,7 @@ export const SUPPLEMENTS = [
     total: 90,
     unit: "정",
     expiry: "2027-04",
-    storeId: "vt2",
+    storeId: null, // 스토어는 생활안전용품만 판다 — 다시 사는 것은 해주세요(심부름)로
   },
   {
     id: "sp2",
@@ -144,9 +144,71 @@ export function needsReorder(s, now = new Date()) {
 }
 
 // 오늘 몇 번 중 몇 번 드셨는지 — 진행바에 그대로 쓴다.
-// taken 은 { "아침": true, ... } 형태의 state.elder.medSlots
-export function medProgress(taken = {}) {
-  const total = MED_PLAN.length;
-  const done = MED_PLAN.filter((d) => taken[d.slot]).length;
+// taken 은 { "아침": true, ... } 형태의 state.elder.medSlots · plan 은 healthOf(state).meds
+export function medProgress(taken = {}, plan = MED_PLAN) {
+  const total = plan.length;
+  const done = plan.filter((d) => taken[d.slot]).length;
   return { done, total, pct: total ? Math.round((done / total) * 100) : 0 };
 }
+
+// ── 건강 정보 한 벌 — 복용약 · 질환 · 알레르기 (2026-10-02 QA "복용약 등록·수정 버튼 없음 · 화면마다 약이 다름") ──
+//
+// 전에는 어르신 화면(MED_PLAN: 아모잘탄 · 아스피린 · 메트포르민 · 아토르바), 관제 어르신 관리
+// (항응고제 · 혈압약), SOS 119 신고 정보(항응고제 · 혈압약)가 서로 다른 목록을 들고 있었다.
+// 이제 가구 상태(state.health)에 한 벌만 두고, 관제(어르신 관리 › 건강·질환)와 컨시어지(고객 탭)에서
+// 고친다. 어르신 · 보호자 · 관제 · SOS 신고 정보가 모두 healthOf(state) 를 읽는다.
+// state.health 가 없으면(아직 아무도 고치지 않았으면) 아래 기본값 — 복약 계획(MED_PLAN)과 같은 출처다.
+// 질환은 복용약과 맞췄다: 혈압약 → 고혈압 · 당뇨약 → 당뇨 · 콜레스테롤약 → 고지혈증 (심부전은 관제 기록).
+export const MED_SLOTS = ["아침", "점심", "저녁", "자기 전"];
+export const DEFAULT_HEALTH = {
+  conditions: ["심부전", "고혈압", "당뇨", "고지혈증"],
+  allergies: ["등록된 알레르기 없음"],
+  meds: MED_PLAN,
+};
+
+const strList = (v) => (Array.isArray(v) ? v.map((x) => String(x || "").trim()).filter(Boolean).slice(0, 20) : null);
+const HHMM = /^([01]\d|2[0-3]):[0-5]\d$/;
+function cleanSlot(d) {
+  if (!d || typeof d !== "object") return null;
+  const slot = String(d.slot || "").trim();
+  const time = HHMM.test(String(d.time || "")) ? String(d.time) : null;
+  const items = Array.isArray(d.items)
+    ? d.items
+        .map((i) => ({ name: String(i?.name || "").trim().slice(0, 40), dose: String(i?.dose || "").trim().slice(0, 20) }))
+        .filter((i) => i.name)
+        .slice(0, 10)
+    : [];
+  if (!slot || !time || !items.length) return null;
+  return { slot: slot.slice(0, 10), time, elderLabel: String(d.elderLabel || "").trim().slice(0, 20) || items.map((i) => i.name.replace(/\s*\([^)]*\)\s*$/, "")).join(" · "), items };
+}
+export const sortSlots = (plan) => [...plan].sort((a, b) => slotHour(a.time) - slotHour(b.time));
+
+// 가구 상태에서 건강 정보를 읽는다 — 저장값은 여러 폰이 쓰는 입력이라 모양을 확인하고 쓴다.
+export function healthOf(state) {
+  const h = state?.health;
+  if (!h || typeof h !== "object") return { ...DEFAULT_HEALTH, custom: false, by: null, at: null };
+  const meds = Array.isArray(h.meds) ? sortSlots(h.meds.map(cleanSlot).filter(Boolean)) : DEFAULT_HEALTH.meds;
+  return {
+    meds,
+    conditions: strList(h.conditions) || DEFAULT_HEALTH.conditions,
+    allergies: strList(h.allergies) || DEFAULT_HEALTH.allergies,
+    custom: true,
+    by: h.by ? String(h.by) : null,
+    at: Number.isFinite(h.at) ? h.at : null,
+  };
+}
+export { cleanSlot as cleanMedSlot };
+
+// 관제 · SOS 신고 정보용 한 줄씩 — "혈압약 (아모잘탄) 1정 — 아침 · 저녁"
+export function medSummary(plan = MED_PLAN) {
+  const by = new Map();
+  for (const d of plan) {
+    for (const i of d.items) {
+      if (!by.has(i.name)) by.set(i.name, { name: i.name, dose: i.dose, slots: [] });
+      by.get(i.name).slots.push(d.slot);
+    }
+  }
+  return [...by.values()].map((m) => `${m.name}${m.dose ? ` ${m.dose}` : ""} — ${m.slots.join(" · ")}`);
+}
+// 서로 다른 약 이름 (성분명 포함) — 케어 프로필 '복약 n종'
+export const medDrugs = (plan = MED_PLAN) => [...new Set(plan.flatMap((d) => d.items.map((i) => i.name)))];

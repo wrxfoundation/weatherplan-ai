@@ -3,7 +3,8 @@
 import { useState } from "react";
 import { Avatar, Btn, FeedPill, KV, Panel, Pill, SEV, SevPill, Stamp, StatePill, Steps, TONE } from "../ui";
 import { STEP_ORDER } from "../../../lib/ops-sos";
-import { liveCustomer, getHealth } from "../../../lib/ops-health";
+import { liveCustomer, liveHealth } from "../../../lib/ops-health";
+import { useAuth } from "../../../lib/auth";
 import { useAppState } from "../../../lib/state";
 import { fmtElapsed, fmtTime } from "../../../lib/ops-time";
 import { guardianOf, resultLabel, stepSummary, stepTitle } from "./helpers";
@@ -32,8 +33,10 @@ function defaultSub(k, c) {
 }
 
 export default function IncidentDetail({ inc, now, api, role, onClosePopup }) {
-  const c = liveCustomer(inc.customer, useAppState()?.state?.onboarding);
-  const h = getHealth(inc.customer);
+  const appState = useAppState()?.state;
+  const ob = appState?.onboarding;
+  const c = liveCustomer(inc.customer, ob, appState?.health);
+  const h = liveHealth(inc.customer, ob, !!useAuth().user?.household);
   const [infoOpen, setInfoOpen] = useState(true);
   const ro = role !== "controller";
   const closed = inc.state === "closed";
@@ -51,8 +54,8 @@ export default function IncidentDetail({ inc, now, api, role, onClosePopup }) {
     return { k: s.k, title: s.title, state, right, sub: stepSummary(rec) || defaultSub(s.k, c) };
   });
 
-  const stamp = (f) => (now ? fmtTime(now - (f?.agoSec ?? 0) * 1000) : "—");
-  const lastNormal = inc.customer === "박말순" ? "걸음 감지 · 심박 84 bpm" : inc.customer === "김순자" ? "심박 96 bpm · 혈중산소 96%" : `심박 ${h.restHr.v} bpm · 혈중산소 ${h.spo2.v}%`;
+  const stamp = (f) => (now && f?.agoSec != null ? fmtTime(now - f.agoSec * 1000) : "—");
+  const lastNormal = h.noDevice ? "워치 없음 — 받은 건강 데이터 없음" : inc.customer === "박말순" ? "걸음 감지 · 심박 84 bpm" : inc.customer === "김순자" ? "심박 96 bpm · 혈중산소 96%" : `심박 ${h.restHr.v} bpm · 혈중산소 ${h.spo2.v}%`;
 
   return (
     <Panel style={{ boxShadow: closed ? undefined : `inset 0 0 0 1.5px ${TONE[sevTone].bar}66` }}>

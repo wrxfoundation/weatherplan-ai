@@ -3,17 +3,16 @@
 // 비공개 메모·약속은 덮어쓰지 않고 항목을 쌓는다 (감사로그 원칙).
 import { useMemo, useState } from "react";
 import Icon from "../icons";
-import { SERVICE_MENU, STATUS } from "../../lib/requests";
+import { SERVICE_MENU, STATUS, fmtPreferred } from "../../lib/requests";
 import { useAppState } from "../../lib/state";
 import { visitReportOf } from "../../lib/live-household";
 import { LIVE_ELDER } from "../../lib/ops-health";
 import { RESULT_TONE } from "../../lib/visit-report";
 import { LiveToggle, useLiveView } from "./LiveToggle";
-import { Panel, PanelHead, Stat, Pill, Btn, Tabs, Table, KV, Field, Avatar, Note, Empty, Stamp } from "./ui";
+import { Panel, PanelHead, Stat, Pill, Btn, Tabs, Table, KV, Field, Avatar, Note, Empty, Stamp, useOperator } from "./ui";
 import { CONCIERGES, NOW, OUTING_REQUESTS, TODAY, TOGETHER_CLIENTS, TOGETHER_GO, daysBetween, elderOf, fmtDT, fmtRel } from "../../lib/ops-admin";
 
 const TOGETHER_BASE = SERVICE_MENU.find((s) => s.no === 6);
-const OPERATOR = "김태영 (관제사)";
 const dayDiff = (dateStr) => daysBetween(NOW, Date.parse(`${dateStr}T09:00:00+09:00`));
 
 const KST = 9 * 3600 * 1000;
@@ -50,7 +49,7 @@ function LiveTogether() {
               { k: "type", label: "서비스", render: (r) => <b className="text-navy">{r.type}</b> },
               { k: "from", label: "신청한 사람", render: (r) => (r.dir === "fromElder" ? "어르신" : r.dir === "fromGuardian" ? "보호자" : "컨시어지") },
               { k: "detail", label: "내용", render: (r) => <span className="text-[12px] text-ink">{r.detail || "—"}</span> },
-              { k: "date", label: "희망일", render: (r) => <span className="font-num text-[12px]">{r.preferredDate || "—"}</span> },
+              { k: "date", label: "희망일", render: (r) => <span className="font-num text-[12px]">{fmtPreferred(r, "—")}</span> },
               { k: "status", label: "상태 · 담당", render: (r) => <span className="flex flex-wrap items-center gap-1"><Pill tone={r.status === "done" ? "ok" : r.status === "requested" ? "warn" : "info"}>{STATUS[r.status]?.label || r.status}</Pill><span className="text-[12px] text-muted">{r.assignee || "미배정"}</span></span> },
             ]}
           />
@@ -238,6 +237,7 @@ function ServiceCard({ title, price, scope, note, icon, badge }) {
 }
 
 function ClientDetail({ c, tab, setTab, patch }) {
+  const OPERATOR = useOperator();
   const e = elderOf(c.elder);
   const [memo, setMemo] = useState("");
   const [promise, setPromise] = useState("");

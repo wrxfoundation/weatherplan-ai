@@ -22,6 +22,7 @@
 //    통화 체크, GPS 체크인, 녹화 시작이 전부 기록이다. 나중에 분쟁이 나면
 //    이 타임라인이 유일한 사실이다.
 
+import { relYmd } from "./reltime";
 export const VISIT_STATUS = {
   draft: { label: "일정 수립", fg: "#5C5A54", bg: "rgba(92,90,84,.1)", step: 1 },
   review: { label: "관제 검토 중", fg: "#8A5D12", bg: "rgba(138,93,18,.12)", step: 2 },
@@ -168,13 +169,15 @@ export const FOLLOWUP_ROUTES = [
   },
 ];
 
-// 데모 시드 — 관제·컨시어지 화면이 같은 방문을 본다
+// 데모 시드 — 관제·컨시어지 화면이 같은 방문을 본다.
+// 날짜는 오늘 기준 사흘 뒤 14:00 — 캘린더 씨앗 '안심방문'(lib/seed.js ev2)과 같은 날이다
+// (이전엔 2026-08-22 로 고정돼 10월에도 '8월 22일 방문'이 떴다 — 2026-10-02 QA).
 export const SEED_VISIT = {
-  id: "vs-2026-08-22",
+  id: `vs-${relYmd(3)}`,
   elderName: "김순자",
   district: "강남구 대치동",
   kind: "firstVisit", // lib/dispatch-policy.js 의 배차 유형
-  at: "2026-08-22 14:00",
+  at: `${relYmd(3)} 14:00`,
   status: "review",
   crew: [],
   vehicle: null,

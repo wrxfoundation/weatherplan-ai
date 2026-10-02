@@ -4,7 +4,7 @@ import { useState } from "react";
 import { payHref } from "../../lib/payments";
 import FamilyLayout from "../../components/FamilyLayout";
 import { Card, SectionLabel, PrimaryButton, GhostButton, Badge, Collapse } from "../../components/ui";
-import { STATUS, GUARDIAN_PRESETS, SERVICE_MENU, SERVICE_PLUS, URGENCY } from "../../lib/requests";
+import { STATUS, GUARDIAN_PRESETS, SERVICE_MENU, SERVICE_PLUS, URGENCY, fmtPreferred } from "../../lib/requests";
 import { fmtWon, PRICING } from "../../lib/config";
 import { useAppState, needsGuardianApproval } from "../../lib/state";
 import { honorific } from "../../lib/tracks";
@@ -20,8 +20,6 @@ import { ASK_GUARDIAN, matchWelfare, profileFor, welfareCounts } from "../../lib
 const ACTIVE_CATS = ["건강지원", "생활지원", "가족지원", "전문지원", "긴급지원"];
 const INACTIVE = SERVICE_MENU.filter((s) => !s.active);
 
-const fmtD = (t) =>
-  new Date(t).toLocaleDateString("ko-KR", { month: "numeric", day: "numeric", weekday: "short" });
 
 export default function RequestsPage() {
   const { state, dispatch } = useAppState();
@@ -283,6 +281,7 @@ export default function RequestsPage() {
         {creating && (
           <CreateRequestSheet
             preset={typeof creating === "object" ? creating : null}
+            myHospitals={(state.myHospitals || []).map((h) => h.name).filter(Boolean)}
             onClose={() => setCreating(false)}
             onCreate={(req) => {
               dispatch({ type: "addRequest", payload: req });
@@ -321,9 +320,11 @@ function RequestCard({ req, open, onToggle, onboarding, dispatch, isPrimary }) {
           <span className="ml-auto text-[11px] font-bold text-muted/70">
             {
               {
+                // 받는 곳을 실제대로 — 어르신 부탁 · 보호자 요청은 관제가 먼저 받아 담당을 정한다.
+                // 보호자 승인을 기다리는 것만 '→ 보호자' (2026-10-02 QA "즉시 방문 요청이 → 보호자로 보임")
                 fromConcierge: "컨시어지 → 보호자",
-                fromElder: `${honor} → 보호자`,
-                fromGuardian: "보호자 → 컨시어지",
+                fromElder: req.status === "awaitingPayment" ? `${honor} → 보호자 승인` : `${honor} → 관제`,
+                fromGuardian: "보호자 → 관제",
                 fromOps: "관제 → 보호자", // 복지혜택 안내 (2026-09-04)
               }[req.dir]
             }
@@ -339,7 +340,8 @@ function RequestCard({ req, open, onToggle, onboarding, dispatch, isPrimary }) {
               금액 <b className="font-num text-ink">{fmtWon(req.amount)}</b>
             </span>
           )}
-          {req.preferredDate && <span>희망일 {fmtD(req.preferredDate)}</span>}
+          {(req.preferredDate || req.preferredWhen) && <span>희망 {fmtPreferred(req)}</span>}
+          {req.hospital && <span>병원 {req.hospital}</span>}
           <span>담당 {req.assignee || "미배정"}</span>
           {req.photos.length > 0 && <span>사진 {req.photos.length}장</span>}
         </div>
@@ -489,11 +491,15 @@ function RequestCard({ req, open, onToggle, onboarding, dispatch, isPrimary }) {
   );
 }
 
-function CreateRequestSheet({ preset, onClose, onCreate }) {
+function CreateRequestSheet({ preset, onClose, onCreate, myHospitals = [] }) {
   const [type, setType] = useState(preset ? preset.name : GUARDIAN_PRESETS[0]);
   const [detail, setDetail] = useState("");
   const [amount, setAmount] = useState(preset?.amount ? String(preset.amount) : "");
   const [preferredDate, setPreferredDate] = useState("");
+  // 시간 · 병원 — 병원 동행처럼 '어디서 · 언제'가 있어야 배차하는 요청 (2026-10-02 QA "날짜·시간·병원 선택 단계 없음")
+  const [preferredTime, setPreferredTime] = useState("");
+  const [hospital, setHospital] = useState("");
+  const hospitalAsk = /병원|진료|검진/.test(String(type || ""));
   const [urgency, setUrgency] = useState("normal");
   const [photo, setPhoto] = useState(false);
 
@@ -563,6 +569,36 @@ function CreateRequestSheet({ preset, onClose, onCreate }) {
             />
           </div>
         </div>
+        <div className="mt-3 grid grid-cols-2 gap-3">
+          <div>
+            <SectionLabel>희망 시간 (선택)</SectionLabel>
+            <input
+              aria-label="희망 시간 (선택)"
+              type="time"
+              value={preferredTime}
+              onChange={(e) => setPreferredTime(e.target.value)}
+              className="mt-2 w-full rounded-xl border border-navy/15 px-3.5 py-3 text-[15px] outline-none focus:border-gold"
+            />
+          </div>
+          {hospitalAsk && (
+            <div>
+              <SectionLabel>병원 (선택)</SectionLabel>
+              <input
+                aria-label="병원 (선택)"
+                list="req-hospitals"
+                value={hospital}
+                onChange={(e) => setHospital(e.target.value)}
+                placeholder="병원 · 진료과"
+                className="mt-2 w-full rounded-xl border border-navy/15 px-3.5 py-3 text-[15px] outline-none focus:border-gold"
+              />
+              <datalist id="req-hospitals">
+                {myHospitals.map((h) => (
+                  <option key={h} value={h} />
+                ))}
+              </datalist>
+            </div>
+          )}
+        </div>
 
         <div className="mt-4 flex items-center gap-4">
           <div>
@@ -611,8 +647,11 @@ function CreateRequestSheet({ preset, onClose, onCreate }) {
                 detail: detail.trim(),
                 amount: amount ? Number(amount) : null,
                 preferredDate: preferredDate ? new Date(preferredDate).getTime() : null,
+                preferredTime: preferredTime || null,
+                hospital: hospitalAsk && hospital.trim() ? hospital.trim() : null,
                 urgency,
-                assignee: "박지현",
+                // 담당은 관제가 정한다 — 늘 박지현으로 미리 박아 두지 않는다 (2026-10-02 QA)
+                assignee: "",
                 photos: photo ? ["첨부사진.jpg"] : [],
                 status: "requested",
                 history: [{ at: Date.now(), status: "requested", note: "" }],

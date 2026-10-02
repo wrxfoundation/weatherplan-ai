@@ -104,6 +104,8 @@ export function summarize(a) {
       return `복지혜택 ${clip(a.id, 20)} → ${clip(a.status, 20)}`;
     case "welfareAnswer":
       return "복지 질문 답변";
+    case "setHealth":
+      return `건강 정보 수정 · 복용 ${Array.isArray(p.meds) ? p.meds.length : 0}번 · 질환 ${Array.isArray(p.conditions) ? p.conditions.length : 0}가지${a.by ? ` · ${clip(a.by, 20)}` : ""}`;
     case "guardianPatch":
       return "보호자 정보 수정";
     case "reset":

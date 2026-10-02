@@ -60,7 +60,8 @@ function draftForGuardian(inc, c, timeline) {
 }
 
 export function ReportView({ inc, api, role }) {
-  const c = liveCustomer(inc.customer, useAppState()?.state?.onboarding);
+  const appState = useAppState()?.state;
+  const c = liveCustomer(inc.customer, appState?.onboarding, appState?.health);
   const timeline = buildTimeline(inc);
   const [draft, setDraft] = useState(() => draftForGuardian(inc, c, timeline));
   const [copied, setCopied] = useState(false);

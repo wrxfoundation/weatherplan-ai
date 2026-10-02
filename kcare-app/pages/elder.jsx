@@ -14,15 +14,16 @@ import {
   VITALS,
   VOICE_MSG,
   VOICE_TO,
+  seedAt,
   rollingTopics,
 } from "../lib/mock";
 import { PRICING, fmtWon } from "../lib/config";
 import { STORE_CATALOG } from "../lib/store";
 import ProductSheet from "../components/ProductSheet";
 import { SERVICE_MENU, SERVICE_PLUS } from "../lib/requests";
-import { MED_PLAN, MED_STREAK, SUPPLEMENTS, daysLeft, medProgress, needsReorder, slotHour } from "../lib/meds";
+import { MED_STREAK, SUPPLEMENTS, daysLeft, healthOf, medProgress, needsReorder, slotHour } from "../lib/meds";
 import { VERDICT, matchWelfare, profileFor, welfareCounts } from "../lib/welfare";
-import { needsGuardianApproval, useAppState } from "../lib/state";
+import { elderSpentToday, eventsFor, needsGuardianApproval, useAppState } from "../lib/state";
 import Icon from "../components/icons";
 import Splash from "../components/Splash";
 import ElderHealthReport from "../components/ElderHealthReport";
@@ -140,8 +141,8 @@ function spokenClock(hhmm) {
 // 어르신에게는 '지금 삼킬 것'이 하나의 묶음이지 처방/영양제로 갈리지 않는다.
 // 처방약은 성분명이 아니라 어르신용 이름(elderLabel · "아산병원약")으로 부른다
 // (2026-09-04 시트 오늘 3번 "약 성분 삭제").
-function medDoseNames(slot) {
-  const plan = MED_PLAN.find((d) => d.slot === slot);
+function medDoseNames(slot, medPlan) {
+  const plan = medPlan.find((d) => d.slot === slot);
   const rx = plan?.elderLabel ? [plan.elderLabel] : (plan?.items || []).map((i) => stripIngredient(i.name));
   const sup = SUPPLEMENTS.filter((x) => x.slot === slot).map((x) => x.name.split(" ")[0]);
   return [...rx, ...sup].join(" · ");
@@ -319,7 +320,7 @@ function ElderHome() {
   const [storeSel, setStoreSel] = useState({});
   const [storeSent, setStoreSent] = useState(null); // 'approval' | 'ordered'
   const [storeDetail, setStoreDetail] = useState(null); // 상품 상세 시트 — 담기 전 설명을 먼저 본다 (2026-09-22)
-  const [storeCat, setStoreCat] = useState("vitamin"); // 스토어 탭 분류 (약국 분류는 삭제 — lib/store.js)
+  const [storeCat, setStoreCat] = useState("safety"); // 스토어 탭 분류 — 지금은 생활안전용품 하나 (lib/store.js)
   const [storeGroup, setStoreGroup] = useState(0); // 소분류 — 분류를 바꾸면 첫 칸으로 돌아간다
   // askOpen(해주세요 아코디언)은 타일 그리드 + 시트로 바뀌면서 없앴다 (2026-08-24)
   const [vitalsOpen, setVitalsOpen] = useState(false); // 건강 탭 — 몸 상태 세부
@@ -338,7 +339,10 @@ function ElderHome() {
   // 새로고침을 견뎌야 하는 것들은 전부 state.elder 에 있다 (lib/state.js 주석 참고).
   // 로컬 useState 로 두면 시연 중 새로고침 한 번에 복약 체크가 사라지고,
   // 이미 보낸 요청을 다시 보낼 수 있게 된다.
-  const { voicePlayed, askAdded, medSlots, reordered, visitAsked, askSpoken } = state.elder;
+  const { voicePlayed, askAdded, medSlots, reordered, askSpoken } = state.elder;
+  const visitOpen = (state.requests || []).find(
+    (r) => r.dir === "fromElder" && r.type === "즉시 방문 요청" && !["done", "cancelled", "rejected"].includes(r.status)
+  ) || null;
   const msgPlayed = state.elder.msgPlayed || {};
   const todaySeen = state.elder.todaySeen || 0;
   // 홈 '오늘' 타일의 점 — 마지막으로 오늘 탭을 본 뒤 일정이 늘었으면 켜진다 (시트 전체 9번)
@@ -348,7 +352,8 @@ function ElderHome() {
   // 결제 모드는 온보딩에서 정해진 값을 그대로 따른다. 여기서 바꾸지 않는다.
   const payMode = state.onboarding?.paymentMode || "limit";
   const payLimit = state.onboarding?.limitAmount ?? PRICING.paymentLimitDefault;
-  const approver = (state.onboarding?.guardianName || "아들 민수").replace(/^아들 |^차녀 |^삼남 /, "");
+  // 승인하는 가족 — 가입 상담을 거친 가구는 보호자 이름을 받지 않으므로 '보호자'로 부른다 (예시 '민수'로 지어내지 않는다)
+  const approver = state.onboarding?.rel ? "보호자" : "민수";
   const payRule = {
     approver,
     headline: {
@@ -364,6 +369,7 @@ function ElderHome() {
   // 선택 항목의 결제 분기 — 무료(멤버십 포함) / 본인 결제 / 보호자 승인.
   // 보호자 메뉴(SERVICE_MENU)는 amount 가 null 인 것도 있다 — 요금 확정 전이라
   // 금액을 지어내지 않고 "요금은 확인 후 알려드립니다"로 간다.
+  const spentToday = elderSpentToday(state); // 하루 누적 한도 (2026-10-02 결정)
   const askPlan = (() => {
     if (!askSel) return { mode: null, approval: false, notice: "", cta: "" };
     if (askSel.amount === 0) {
@@ -372,10 +378,10 @@ function ElderHome() {
     if (askSel.amount == null) {
       return { mode: "quote", approval: false, notice: "요금이 아직 정해지지 않은 것이라, 선생님이 확인해서 먼저 알려드립니다.", cta: "부탁하기" };
     }
-    const approval = needsGuardianApproval(state.onboarding, askSel.amount);
+    const approval = needsGuardianApproval(state.onboarding, askSel.amount, spentToday);
     return approval
       ? { mode: "approval", approval: true, notice: `${approver} 님에게 확인을 부탁드립니다. 승인되면 바로 시작합니다.`, cta: "가족에게 부탁하기" }
-      : { mode: "self", approval: false, notice: `${fmtWon(payLimit)} 안이라 바로 진행됩니다.`, cta: "바로 부탁하기" };
+      : { mode: "self", approval: false, notice: `오늘 쓰신 돈과 합쳐 ${fmtWon(payLimit)} 안이라 바로 진행됩니다.`, cta: "바로 부탁하기" };
   })();
   const myRequests = (state.requests || []).filter((r) => r.dir === "fromElder");
 
@@ -389,14 +395,16 @@ function ElderHome() {
   });
 
   // REQ-02 공유 캘린더에서 다음 일정 바인딩
-  const upcoming = [...state.events].sort((a, b) => a.at - b.at).filter((e) => e.at > Date.now());
+  // 관제 승인 전 · 반려된 남의 일정은 빼고, 본인이 남긴 승인 대기 건은 '관제 확인 중'으로 보인다 (eventsFor)
+  const myEvents = eventsFor(state.events, "elder");
+  const upcoming = [...myEvents].sort((a, b) => a.at - b.at).filter((e) => e.at > Date.now());
   const next = upcoming[0];
 
   // 이번 달 달력 — 공유 일정(state.events)을 날짜별로 센다 (시트 어르신 오늘 1번).
   // 지난 일정도 달력에는 남긴다. "그날 뭐였더라"를 확인하는 것이 달력의 쓸모다.
   // now 는 위에서 인사말 날짜에 쓰려고 이미 만들어 둔 것을 그대로 쓴다.
   const monthLabel = `${now.getMonth() + 1}월`;
-  const monthEvents = state.events.filter((e) => {
+  const monthEvents = myEvents.filter((e) => {
     const d = new Date(e.at);
     return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth();
   });
@@ -426,11 +434,14 @@ function ElderHome() {
 
   // 오늘 약 — 첫 안심방문에서 등록한 복약 계획(lib/meds.js)을 어르신이 직접 체크한다.
   // 진행바는 '몇 번 중 몇 번'을 그대로 센다 (시트: 전체 횟수에서 복용 횟수).
-  const med = medProgress(medSlots);
+  // 복약 계획 — 가구 상태의 건강 정보(관제 · 컨시어지가 고친 값)를 그대로 쓴다 (lib/meds.js healthOf)
+  const medPlan = healthOf(state).meds;
+  const medPlanKey = medPlan.map((d) => `${d.slot}@${d.time}`).join("|"); // 알람 시각이 바뀌면 다시 본다
+  const med = medProgress(medSlots, medPlan);
   // 연속 성공일 — 오늘까지 다 드셨으면 어제까지의 연속에 하루를 더한다
   const medStreak = MED_STREAK.days + (med.done === med.total ? 1 : 0);
   // 아직 안 드신 것 중 첫 번째 = 지금 드실 약. 그 다음 것은 한 줄로만 예고한다.
-  const medPending = MED_PLAN.filter((d) => !medSlots[d.slot]);
+  const medPending = medPlan.filter((d) => !medSlots[d.slot]);
   const medNext = medPending[0] || null;
   const medAfter = medPending[1] || null;
   const [medPop, setMedPop] = useState(null); // 알람 팝업이 띄운 시간대 (null이면 닫힘)
@@ -449,7 +460,7 @@ function ElderHome() {
     (i) => storeSel[i.id] && i.price
   );
   const storeTotal = storeItems.reduce((s, i) => s + i.price + (i.ship || 0), 0);
-  const storeApproval = needsGuardianApproval(state.onboarding, storeTotal);
+  const storeApproval = needsGuardianApproval(state.onboarding, storeTotal, spentToday);
 
   // 오늘이 방문일인가 — 오늘 오시는 분에게만 전화를 열어 준다 (시트 '오늘' 1번)
   const visitToday = upcoming.some((e) => e.kind === "visit" && isToday(e.at));
@@ -479,7 +490,7 @@ function ElderHome() {
   const greetHour = now.getHours();
   const greetLine =
     greetHour < 5 ? "편안한 밤이에요"
-    : greetHour < 11 ? "좋은 아침이에요"
+    : greetHour < 12 ? "좋은 아침이에요" // 오전 11시대에 '좋은 오후예요'가 나오던 것 (2026-10-02 QA)
     : greetHour < 17 ? "좋은 오후예요"
     : greetHour < 22 ? "좋은 저녁이에요"
     : "편안한 밤이에요";
@@ -505,7 +516,7 @@ function ElderHome() {
     dispatch({ type: "addVoice", payload: { from: `${ELDER.name} 님`, to: "컨시어지", secs: sec, context: "마음사서함", title: "선생님께 보낸 목소리" } });
     dispatch({
       type: "pushEvent",
-      payload: { kind: "부탁", text: `${ELDER.name} 음성 메시지 → 컨시어지 ${TEACHER.name}`, color: "#B08D57" },
+      payload: { kind: "음성", text: `${ELDER.name} 음성 메시지 → 컨시어지 ${TEACHER.name}`, color: "#8FA9CC" },
     });
     setConcMsg("sent");
   };
@@ -517,7 +528,8 @@ function ElderHome() {
     ...(state.voices || [])
       .filter((v) => v.from === `${ELDER.name} 님` && v.to === "컨시어지")
       .map((v) => ({ id: v.id, dir: "out", at: v.at, durationSec: v.secs, text: v.title || "선생님께 보낸 목소리" })),
-    ...TEACHER_INBOX.map((m) => ({ ...m, at: nowMs - m.minsAgo * 60000 })),
+    // 테스트 가구는 예시 선생님 메시지 없이 — 컨시어지가 실제로 보낸 것만 (2026-10-02 QA)
+    ...(liveHH ? [] : TEACHER_INBOX.map((m) => ({ ...m, at: seedAt(m.minsAgo, nowMs) }))),
     // 컨시어지 앱 마음사서함에서 보낸 것 — 제목은 컨시어지가 보낼 때 적은 한 줄 (STT 아님)
     ...(state.voices || [])
       .filter((v) => v.from === "컨시어지" && v.to === ELDER.name)
@@ -545,7 +557,7 @@ function ElderHome() {
       const today = new Date(d.getTime() + 9 * 3600000).toISOString().slice(0, 10);
       const shown = medPopShown.date === today ? medPopShown.slots || {} : {};
       const h = d.getHours() + d.getMinutes() / 60;
-      const passed = MED_PLAN.filter((s) => h >= slotHour(s.time));
+      const passed = medPlan.filter((s) => h >= slotHour(s.time));
       const due = passed.find((s) => !medSlots[s.slot] && !shown[s.slot]);
       if (!due) return;
       setMedPop(due.slot);
@@ -559,7 +571,7 @@ function ElderHome() {
     const t = setInterval(check, 60000);
     return () => clearInterval(t);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [otherModal, medSlots, medPopShown.date, medPopShown.slots]);
+  }, [otherModal, medSlots, medPopShown.date, medPopShown.slots, medPlanKey]);
 
   // 가족 탭 스레드 — 이름을 누르면 그 사람과 주고받은 목소리가 시간순으로 펼쳐진다
   // (2026-09-04 시트 가족 2번). 보낸 것은 state.voices(새로고침을 견딘다), 받은 것은
@@ -573,7 +585,8 @@ function ElderHome() {
     const incoming = [];
     if (v.id === "v1") {
       const t8 = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 8, 10).getTime();
-      incoming.push({
+      // 테스트 가구에서는 예시 '아들 목소리'를 넣지 않는다 — 보호자가 실제로 보낸 것만 (2026-10-02 QA)
+      if (!liveHH) incoming.push({
         id: "seed-minsu",
         dir: "in",
         at: Math.min(t8, nowMs),
@@ -594,7 +607,7 @@ function ElderHome() {
     if (m.seed) {
       if (voicePlayed) return;
       dispatch({ type: "elderPatch", patch: { voicePlayed: true } });
-      dispatch({ type: "pushEvent", payload: { kind: "메시지", text: "어르신이 아들 음성 메시지 청취 완료", color: "#8FA9CC" } });
+      dispatch({ type: "pushEvent", payload: { kind: "음성", text: "어르신이 아들 음성 메시지 청취 완료", color: "#8FA9CC" } });
       return;
     }
     markPlayed(m.id);
@@ -603,7 +616,7 @@ function ElderHome() {
   // 즉시 방문 요청 — 홈 인사 옆 '도와줘요' 버튼이 부른다 (옛 '지금 와 주세요' 플로팅 버튼).
   // 요청이 곧 방문은 아니다 — 관제가 먼저 전화로 확인하고 배차한다 (시트 어르신 전체 2번).
   const askVisit = () => {
-    if (visitAsked) return;
+    if (visitOpen) return;
     dispatch({ type: "elderPatch", patch: { visitAsked: true } });
     dispatch({
       type: "addRequest",
@@ -615,7 +628,7 @@ function ElderHome() {
         amount: null,
         preferredDate: null,
         urgency: "urgent",
-        assignee: "박지현",
+        assignee: "", // 관제가 확인 전화 뒤 정한다
         photos: [],
         status: "requested",
         history: [{ at: Date.now(), status: "requested", note: "어르신 즉시방문요청" }],
@@ -627,8 +640,10 @@ function ElderHome() {
       payload: { kind: "방문", text: `${ELDER.name}(${ELDER.age}) 즉시 방문 요청 · 관제 확인 전화 발신`, color: "#B08D57" },
     });
   };
+  // 도와줘요의 지금 상태는 깃발(visitAsked)이 아니라 요청 자체에서 읽는다 — 관제가 확인 전화를 마치면
+  // '확인됨'으로 바뀌고, 요청이 끝나면 다시 누를 수 있다. 깃발만 보면 한 번 누른 뒤 영영 '관제 전화 대기'였다 (2026-10-02 QA)
   // 도와줘요 — 누르면 요청이 가고, 팝업으로 "관제센터에서 고객님에게 연락이 갑니다"를
-  // 보여 준다 (시트 전체 6번). 두 번 눌러도 요청은 한 번만 간다 (visitAsked).
+  // 보여 준다 (시트 전체 6번). 진행 중인 요청이 있으면 다시 보내지 않는다.
   const askHelp = () => {
     askVisit();
     setHelpPop(true);
@@ -730,7 +745,7 @@ function ElderHome() {
               <span aria-hidden className="shrink-0">
                 <Icon name="pill" size={22} strokeWidth={2} />
               </span>
-              {medDoseNames(medPop)}
+              {medDoseNames(medPop, medPlan)}
             </p>
             <button
               onClick={() => {
@@ -867,18 +882,20 @@ function ElderHome() {
                     도와줘요가 바로 그것이라 옅은 빨강 바탕을 쓴다. 요청 뒤에는 초록 '요청됨'. */}
                 <button
                   onClick={askHelp}
-                  aria-label={visitAsked ? "방문 요청을 보냈습니다 — 관제 전화 대기" : "도와줘요 — 즉시 방문 요청"}
+                  aria-label={
+                    !visitOpen ? "도와줘요 — 즉시 방문 요청" : visitOpen.status === "requested" ? "방문 요청을 보냈습니다 — 관제 전화 대기" : "관제가 확인했습니다 — 선생님이 연락드립니다"
+                  }
                   className="btn-press flex h-[66px] w-[66px] shrink-0 flex-col items-center justify-center gap-0.5 rounded-[18px]"
                   style={
-                    visitAsked
+                    visitOpen
                       ? { background: "rgba(30,122,90,.12)", color: "#1E7A5A" }
                       : { background: "rgba(192,57,43,.11)", color: "#C0392B", boxShadow: "inset 0 0 0 1px rgba(192,57,43,.22)" }
                   }
                 >
                   <span aria-hidden>
-                    <Icon name={visitAsked ? "clock" : "bell"} size={24} strokeWidth={2} />
+                    <Icon name={visitOpen ? (visitOpen.status === "requested" ? "clock" : "check") : "bell"} size={24} strokeWidth={2} />
                   </span>
-                  <span className="text-[15px] font-bold leading-[1.15]">{visitAsked ? "요청됨" : "도와줘요"}</span>
+                  <span className="text-[15px] font-bold leading-[1.15]">{visitOpen ? (visitOpen.status === "requested" ? "요청됨" : "확인됨") : "도와줘요"}</span>
                 </button>
               </div>
               {/* 호칭은 "~~님"으로 통일 — '어르신' 표기 삭제 (2026-08-12 시트 전체 요청 1번). */}
@@ -933,6 +950,7 @@ function ElderHome() {
                           {shortDay(next.at, now)} {spokenTime(next.at)}
                         </span>{" "}
                         {next.title.replace(/\s*\([^)]*\)\s*$/, "").replace(/^K-CARE\s+/, "")}
+                        {next.approval === "pending" && <span className="text-muted"> · 확인 중</span>}
                       </span>
                       <span aria-hidden className="-rotate-90 shrink-0" style={{ color: "#8A5D12" }}>
                         <Icon name="chev" size={20} strokeWidth={2} />
@@ -1211,7 +1229,7 @@ function ElderHome() {
                         {spokenDay(e.at)} {spokenTime(e.at)}
                       </div>
                       <div className="mt-[3px] text-[18px] leading-[1.45] text-muted">
-                        {e.title} · {EVENT_KINDS[e.kind]?.label || "일정"}
+                        {e.title} · {e.approval === "pending" ? "관제 확인 중" : EVENT_KINDS[e.kind]?.label || "일정"}
                       </div>
                     </div>
                   ))}
@@ -1285,6 +1303,9 @@ function ElderHome() {
                           <div key={e.id} style={SUB_CARD}>
                             <div className="text-[20px] font-bold text-navy">{spokenTime(e.at)}</div>
                             <div className="mt-0.5 text-[19px] leading-[1.45] text-ink">{e.title}</div>
+                            {e.approval === "pending" && (
+                              <div className="mt-0.5 text-[18px] leading-[1.45] text-muted">관제에서 확인하고 있습니다</div>
+                            )}
                             {e.note && (
                               <div className="mt-0.5 text-[18px] leading-[1.45] text-muted">{e.note}</div>
                             )}
@@ -1341,6 +1362,9 @@ function ElderHome() {
                       줄바꿈됐다(QA 실측). 우리 앱 안에서 우리 이름은 알려 주는 게 없다. */}
                   {next.title.replace(/^K-CARE\s+/, "")}
                 </div>
+                {next.approval === "pending" && (
+                  <p className="mt-2 text-[19px] leading-[1.6] text-white/[.86]">관제에서 확인하고 있습니다. 정해지면 선생님이 알려드립니다.</p>
+                )}
                 {next.note && (
                   <p className="mt-2 text-[19px] leading-[1.6] text-white/[.86]">{next.note}</p>
                 )}
@@ -1506,7 +1530,7 @@ function ElderHome() {
                         {medNext.slot} {spokenClock(medNext.time)}
                       </span>
                       <span className="mt-0.5 block text-[22px] font-bold leading-[1.3] text-navy">
-                        {medDoseNames(medNext.slot)} 먹기
+                        {medDoseNames(medNext.slot, medPlan)} 먹기
                       </span>
                     </span>
                     <span
@@ -1521,7 +1545,7 @@ function ElderHome() {
                     <div className="mt-2 flex items-center gap-3 rounded-[14px] px-4 py-3" style={SUB_CARD}>
                       <span className="shrink-0 text-[16px] font-bold text-muted">다음 약</span>
                       <span className="min-w-0 flex-1 truncate text-right text-[18px] font-bold text-navy">
-                        {medAfter.slot} {spokenClock(medAfter.time)} · {medDoseNames(medAfter.slot)}
+                        {medAfter.slot} {spokenClock(medAfter.time)} · {medDoseNames(medAfter.slot, medPlan)}
                       </span>
                     </div>
                   )}
@@ -1543,7 +1567,7 @@ function ElderHome() {
               {/* 이번 주 — 시안의 동그라미 줄. 못 드신 날은 회색 (빨강은 SOS 전용) */}
               <div className="mt-3 rounded-[16px] px-4 py-3.5" style={SUB_CARD}>
                 <p className="text-center text-[17px] font-bold text-navy">
-                  {MED_PLAN[0].elderLabel}, 요즘 참 꾸준히 드시고 계세요
+                  {medPlan[0]?.elderLabel || "드시는 약"}, 요즘 참 꾸준히 드시고 계세요
                 </p>
                 <div className="mt-2.5 flex gap-1">
                   {[...MED_STREAK.week, { label: "오늘", done: med.done === med.total, today: true }].map((d) => (
@@ -1578,12 +1602,15 @@ function ElderHome() {
               order={2}
               title="드시는 약 정보"
               icon="pill"
-              right={`하루 ${MED_PLAN.length}번`}
+              right={medPlan.length ? `하루 ${medPlan.length}번` : "등록 전"}
               open={medInfoOpen}
               onToggle={() => setMedInfoOpen((v) => !v)}
             >
               <div>
-                {MED_PLAN.map((d) => (
+                {medPlan.length === 0 && (
+                  <p className="py-2 text-[19px] leading-[1.6] text-muted">아직 등록된 약이 없습니다. 선생님이 방문 때 등록해 드립니다.</p>
+                )}
+                {medPlan.map((d) => (
                   <div key={d.slot} className="flex items-baseline gap-3 border-t border-navy/[.07] py-3 first:border-t-0">
                     <span className="w-[62px] shrink-0 text-[19px] font-bold text-navy">{d.slot}</span>
                     <span className="min-w-0 flex-1">
@@ -1743,7 +1770,8 @@ function ElderHome() {
             >
               {/* #5C7799 는 흰 카드 위에서 4.49:1 — WCAG AA 4.5:1 에 0.01 모자랐다.
                   같은 파란 계열이면서 이미 다른 화면에서 쓰는 #3B5C8A 로 바꿨다. */}
-              <CardHead title="지금 우리 동네" right={`실외 · ${ELDER.dong}`} rightColor="#3B5C8A" icon="sun" iconColor="#3B5C8A" />
+              {/* 날씨는 아직 예시값 — 실제 날씨처럼 보이지 않게 '예시'를 붙인다 (2026-10-02 QA) */}
+              <CardHead title="지금 우리 동네" right={`${ELDER.dong} · 예시 날씨`} rightColor="#3B5C8A" icon="sun" iconColor="#3B5C8A" />
               <div className="mt-2 flex items-end gap-3">
                 <span className="font-num text-[44px] font-bold leading-none text-navy">
                   {ELDER_NOW.tempLabel}
@@ -1941,7 +1969,9 @@ function ElderHome() {
                 보호자 스토어와 같은 카탈로그(lib/store.js)를 쓰되, 활자를 키우고
                 한 화면에 한 분류만 보여준다. 담으면 결제권한(REQ-07)대로 갈린다. */}
             <ElderCard show={tab === "store"} order={0} style={LIGHT_CARD}>
-              <CardHead title="무엇을 사드릴까요" right="담으면 배송으로 옵니다" />
+              <CardHead title="안전용품" right="배송비 없이 가져다 드립니다" />
+              {/* 분류가 하나뿐이면(생활안전용품만 — 2026-10-02 운영 결정) 고르는 줄을 감춘다 */}
+              {STORE_CATALOG.length > 1 && (
               <div className="mt-3 grid grid-cols-2 gap-2">
                 {STORE_CATALOG.map((c) => {
                   const on = storeCat === c.id;
@@ -1966,6 +1996,7 @@ function ElderHome() {
                   );
                 })}
               </div>
+              )}
               {storeCatalog.note && (
                 <p className="mt-3 rounded-2xl px-4 py-3.5 text-[19px] leading-[1.6] text-muted" style={SUB_CARD}>
                   {storeCatalog.note}
@@ -2127,6 +2158,7 @@ function ElderHome() {
                           type: storeApproval ? "물건 승인 부탁해요" : "물건을 담았어요",
                           detail: `스토어에서 담으신 물품: ${storeItems.map((i) => i.name).join(", ")}`,
                           amount: storeTotal,
+                          payBy: storeApproval ? null : "elder", // 하루 누적 한도에 들어간다
                           preferredDate: null,
                           urgency: "normal",
                           assignee: "박지현",
@@ -2258,7 +2290,7 @@ function ElderHome() {
                   dispatch({
                     type: "pushEvent",
                     payload: {
-                      kind: "메시지",
+                      kind: "음성",
                       text: `${ELDER.name}(${ELDER.age}) → ${target.name} 목소리 메시지 ${sec}초 전송`,
                       color: "#8FA9CC",
                     },
@@ -2332,7 +2364,10 @@ function ElderHome() {
               dispatch({ type: "addEvent", payload: ev });
               dispatch({
                 type: "pushEvent",
-                payload: { kind: "일정", text: `어르신 간단등록 · ${ev.title}`, color: "#8FA9CC" },
+                payload:
+                  ev.approval === "pending"
+                    ? { kind: "일정", text: `어르신 일정등록 요청 — ${ev.title}${ev.escort ? " · 동행 필요" : ""} · 관제 검토 대기`, color: "#B08D57" }
+                    : { kind: "일정", text: `어르신 간단등록 · ${ev.title}`, color: "#8FA9CC" },
               });
               setEventSheet(false);
             }}
@@ -2361,37 +2396,33 @@ function ElderHome() {
               setAskSel(null);
               setAskSent(null);
             }}
-            onAsk={() => {
+            hospitals={(state.myHospitals || []).map((h) => h.name).filter(Boolean)}
+            onAsk={({ when, hospital }) => {
               const amount = askSel.amount;
               setAskSent({ name: askSel.name, mode: askPlan.mode, amount });
+              const now0 = Date.now();
+              const preferredDate = when === "오늘" ? kstYmd(now0) : when === "내일" ? kstYmd(now0 + 86400000) : null;
+              // 서비스 이름을 그대로 남긴다 — 전에는 '부탁' · '부탁 · 승인 필요'로 들어가 관제에서 '메뉴 외 요청'이 됐다 (2026-10-02 QA).
+              // 바로 '처리중'으로 넘기지 않는다 — 관제가 확인하고 담당을 정한다 (요청됨 → 관제 확인).
               dispatch({
                 type: "addRequest",
                 payload: {
-                  id: `rq-${Date.now()}`,
+                  id: `rq-${now0}`,
                   dir: "fromElder",
-                  type: askPlan.approval ? "부탁 · 승인 필요" : "부탁",
-                  detail: `${askSel.name} (${askSel.scope})`,
+                  type: askSel.name,
+                  detail: [askSel.scope, `희망: ${when}`, hospital ? `병원: ${hospital}` : null].filter(Boolean).join(" · "),
                   amount,
-                  preferredDate: null,
+                  preferredDate,
+                  preferredWhen: when,
+                  hospital: hospital || null,
+                  payBy: askPlan.approval || !amount ? null : "elder",
                   urgency: "normal",
-                  assignee: "박지현",
+                  assignee: "",
                   photos: [],
-                  status: askPlan.approval ? "awaitingPayment" : "inProgress",
+                  status: askPlan.approval ? "awaitingPayment" : "requested",
                   history: [
-                    { at: Date.now(), status: "requested", note: "어르신 해주세요" },
-                    { at: Date.now(), status: "confirmed", note: "" },
-                    askPlan.approval
-                      ? { at: Date.now(), status: "awaitingPayment", note: `보호자 승인 대기 · ${fmtWon(amount)}` }
-                      : {
-                          at: Date.now(),
-                          status: "inProgress",
-                          note:
-                            amount === 0
-                              ? "멤버십 포함"
-                              : amount == null
-                              ? "요금 확인 후 안내"
-                              : `어르신 직접 결제 ${fmtWon(amount)} (한도 내 · 데모)`,
-                        },
+                    { at: now0, status: "requested", note: `어르신 해주세요 · 희망 ${when}${hospital ? ` · ${hospital}` : ""}` },
+                    ...(askPlan.approval ? [{ at: now0, status: "awaitingPayment", note: `보호자 승인 대기 · ${fmtWon(amount)} (오늘 한도 초과)` }] : []),
                   ],
                   proof: null,
                 },
@@ -2453,6 +2484,7 @@ function ElderHome() {
         <SosButton
           phase={sosPhase}
           setPhase={setSosPhase}
+          dispatched={!!state.ops.sosDispatched}
           onDispatch={() => {
             // sosAt — 관제가 이 발신을 사건 저장소에 한 번만 잇기 위한 표식 (pages/dispatch.jsx)
             dispatch({ type: "demo", payload: { sos: true, sosAt: Date.now() } });
@@ -2501,6 +2533,9 @@ function ElderEventSheet({ onClose, onCreate }) {
     const d = new Date();
     d.setDate(d.getDate() + day.add);
     d.setHours(time.h, 0, 0, 0);
+    // 병원 · 부탁할 일은 K-CARE 가 움직여야 하는 일이라 관제 승인을 거친다 (보호자 일정등록과 같은 규칙).
+    // 가족이 오는 일정만 바로 올라간다.
+    const needsOps = kind.kind !== "family";
     onCreate({
       id: `ev-${Date.now()}`,
       kind: kind.kind,
@@ -2508,6 +2543,7 @@ function ElderEventSheet({ onClose, onCreate }) {
       at: d.getTime(),
       source: "어르신 등록",
       note: "",
+      ...(needsOps ? { approval: "pending", by: "elder", escort: kind.kind === "hospital" } : {}),
     });
   };
 
@@ -2536,7 +2572,7 @@ function ElderEventSheet({ onClose, onCreate }) {
         <div className="mx-auto mb-4 h-[4px] w-[38px] rounded-full bg-navy/15" />
         <div className="text-[26px] font-black text-navy">일정 남기기</div>
         <p className="mt-1 text-[19px] leading-[1.5] text-muted">
-          가족과 선생님에게도 함께 보입니다.
+          가족에게 함께 보입니다. 병원 · 부탁할 일은 관제가 확인한 뒤 선생님 일정에 올라갑니다.
         </p>
 
         <div className="mt-5 text-[19px] font-bold text-navy">무슨 일인가요?</div>
@@ -2588,6 +2624,16 @@ function ElderEventSheet({ onClose, onCreate }) {
 // 보낸 것은 오른쪽 남색 — 마음사서함과 같은 문법이다.
 // 녹음은 눌렀다 떼는 토글이다 (2026-08-12 시트 가족 1번) — 꾹 누르기는 손 떨림에 끊긴다.
 // 빨강은 SOS 전용이므로 녹음 중 색은 금색 계열을 쓴다 (06 §4.2).
+// 그곳의 지금 — 새벽 · 아침 · 낮 · 저녁 · 밤 (어르신이 '지금 전화해도 되나'를 가늠하는 말)
+function localPart(tz) {
+  try {
+    const h = Number(new Intl.DateTimeFormat("en-US", { timeZone: tz, hour: "numeric", hourCycle: "h23" }).format(new Date()));
+    return h < 5 ? "새벽" : h < 11 ? "아침" : h < 17 ? "낮" : h < 21 ? "저녁" : "밤";
+  } catch (_) {
+    return null;
+  }
+}
+
 function FamilyThreads({ open, onToggle, threadFor, onPlay, onSend }) {
   const [rec, setRec] = useState(null); // { id, sec } — 녹음 중인 사람
   const [tooShort, setTooShort] = useState(null); // 스치듯 눌린 사람 id
@@ -2634,7 +2680,7 @@ function FamilyThreads({ open, onToggle, threadFor, onPlay, onSend }) {
               <span className="min-w-0 flex-1">
                 <span className="block text-[21px] font-bold leading-[1.3] text-navy">{v.name}</span>
                 <span className="block text-[17px] leading-[1.35]" style={{ color: unread > 0 ? "#8A5D12" : "#5C5A54" }}>
-                  {unread > 0 ? `새 목소리 ${unread}개` : thread.length ? `주고받은 목소리 ${thread.length}개` : v.sub}
+                  {unread > 0 ? `새 목소리 ${unread}개` : thread.length ? `주고받은 목소리 ${thread.length}개` : v.tz && localPart(v.tz) ? `${v.sub} · 지금 ${localPart(v.tz)}` : v.sub}
                 </span>
               </span>
               {unread > 0 && <span aria-hidden className="h-[12px] w-[12px] shrink-0 rounded-full" style={{ background: "#B08D57" }} />}
@@ -2784,8 +2830,18 @@ function ElderWelfareSheet({ matches, counts, asked, onAsk, onClose }) {
 // 예전 AskItem 아코디언(접힌 줄에 가격 유지)을 대체한다 — 타일 그리드에서는 가격이
 // 타일에 못 실리므로, 시트 첫 줄에 가격을 크게 둔다 (무엇이 얼마인지가 첫 정보).
 // 보내면 시트 안에서 바로 "보냈습니다"로 바뀐다 — 화면 이동 없이 결과를 확인한다.
-function ElderAskSheet({ item, plan, sent, approver, onAsk, onClose }) {
+// 한국 날짜 'YYYY-MM-DD' — 희망일을 숫자(시각값)가 아니라 날짜 글자로 남긴다 (관제 예정일이 '1791590400000'으로 보였다)
+const kstYmd = (t) => new Date(t + 9 * 3600000).toISOString().slice(0, 10);
+const WHEN_OPTS = ["오늘", "내일", "이번 주 안", "선생님과 통화해서 정하기"];
+const isHospitalItem = (item) => /병원|진료|검진/.test(`${item?.name || ""} ${item?.scope || ""}`);
+
+function ElderAskSheet({ item, plan, sent, approver, onAsk, onClose, hospitals = [] }) {
   const off = !item.active;
+  // 언제 · 어느 병원 — 어르신에게는 날짜 입력 대신 큰 버튼 몇 개 (2026-10-02 QA "날짜 · 시간 · 병원 선택 단계 없음")
+  const [when, setWhen] = useState(WHEN_OPTS[3]);
+  const askHospital = isHospitalItem(item);
+  const hospitalOpts = [...hospitals.slice(0, 3), "선생님과 통화해서 정하기"];
+  const [hospital, setHospital] = useState(hospitalOpts[hospitalOpts.length - 1]);
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center bg-[rgba(8,23,45,.6)]" onClick={onClose}>
       <div
@@ -2800,8 +2856,8 @@ function ElderAskSheet({ item, plan, sent, approver, onAsk, onClose }) {
               {sent.mode === "approval"
                 ? `${approver} 님에게 확인을 부탁드렸습니다. 승인되면 바로 시작합니다.`
                 : sent.mode === "free"
-                ? "선생님에게 전달했습니다. 곧 연락드립니다."
-                : "접수했습니다. 선생님이 곧 시작합니다."}
+                ? "관제센터에 전달했습니다. 확인하고 곧 연락드립니다."
+                : "접수했습니다. 관제센터가 확인하고 선생님을 정해 연락드립니다."}
             </p>
             <ElderBtn onClick={onClose} variant="done" className="mt-4">
               닫기
@@ -2828,13 +2884,51 @@ function ElderAskSheet({ item, plan, sent, approver, onAsk, onClose }) {
               </>
             ) : (
               <>
-                <p className="mt-3 rounded-2xl p-4 text-[19px] font-bold leading-[1.5]"
+                <p className="mt-4 text-[19px] font-bold text-navy">언제가 좋으세요?</p>
+                <div className="mt-2 grid grid-cols-2 gap-2" role="group" aria-label="언제가 좋으세요">
+                  {WHEN_OPTS.map((o) => (
+                    <button
+                      key={o}
+                      type="button"
+                      aria-pressed={when === o}
+                      onClick={() => setWhen(o)}
+                      className={`btn-press rounded-2xl border-2 px-3 py-3.5 text-[18px] font-bold leading-[1.3] ${o.length > 6 ? "col-span-2" : ""}`}
+                      style={when === o ? { borderColor: "#1E7A5A", background: "rgba(30,122,90,.1)", color: "#1E7A5A" } : { borderColor: "rgba(10,31,60,.15)", color: "#0A1F3C" }}
+                    >
+                      {o}
+                    </button>
+                  ))}
+                </div>
+                {askHospital && (
+                  <>
+                    <p className="mt-4 text-[19px] font-bold text-navy">어느 병원이세요?</p>
+                    <div className="mt-2 grid gap-2" role="group" aria-label="어느 병원이세요">
+                      {hospitalOpts.map((o) => (
+                        <button
+                          key={o}
+                          type="button"
+                          aria-pressed={hospital === o}
+                          onClick={() => setHospital(o)}
+                          className="btn-press rounded-2xl border-2 px-3 py-3.5 text-[18px] font-bold leading-[1.3]"
+                          style={hospital === o ? { borderColor: "#1E7A5A", background: "rgba(30,122,90,.1)", color: "#1E7A5A" } : { borderColor: "rgba(10,31,60,.15)", color: "#0A1F3C" }}
+                        >
+                          {o}
+                        </button>
+                      ))}
+                    </div>
+                  </>
+                )}
+                <p className="mt-4 rounded-2xl p-4 text-[19px] font-bold leading-[1.5]"
                    style={plan.approval
                      ? { background: "rgba(138,93,18,.1)", color: "#8A5D12" }
                      : { background: "rgba(30,122,90,.1)", color: "#1E7A5A" }}>
                   {plan.notice}
                 </p>
-                <ElderBtn onClick={onAsk} variant={plan.approval ? "primary" : "success"} className="mt-4">
+                <ElderBtn
+                  onClick={() => onAsk({ when, hospital: askHospital && hospital !== hospitalOpts[hospitalOpts.length - 1] ? hospital : null })}
+                  variant={plan.approval ? "primary" : "success"}
+                  className="mt-4"
+                >
                   <span className="block leading-[1.35]">{plan.cta}</span>
                   <span className="block text-[19px] leading-[1.35] text-white/85">
                     {item.amount === 0 ? "비용 없음" : item.amount == null ? "요금 확인 후 안내" : fmtWon(item.amount)}
@@ -2861,7 +2955,7 @@ function ElderAskSheet({ item, plan, sent, approver, onAsk, onClose }) {
 // 2026-08-12 시트로 화면 안 트리거 버튼은 없앴다. 이제 진입점은 바탕화면 바로가기
 // (/elder?sos=1) 하나뿐이라, 이 컴포넌트는 취소 유예 화면과 접수 화면만 그린다.
 // 화면 안에 SOS 와 즉시방문요청이 나란히 있으면 급할 때 무엇을 눌러야 할지 고르게 된다.
-function SosButton({ phase, setPhase, onDispatch }) {
+function SosButton({ phase, setPhase, onDispatch, dispatched = false }) {
   const [count, setCount] = useState(5);
   const countTimer = useRef(null);
 
@@ -2922,13 +3016,24 @@ function SosButton({ phase, setPhase, onDispatch }) {
             <div className="mx-auto flex h-[90px] w-[90px] items-center justify-center rounded-full bg-green text-[40px] text-white">
               ✓
             </div>
+            {/* 관제가 급파를 지시하기 전에는 '오고 있다'고 하지 않는다 — 아직 아무도 출발하지 않았다 (2026-10-02 QA) */}
             <div className="mt-6 text-[30px] font-black leading-[1.45] text-white">
-              선생님이
-              <br />
-              오고 있습니다
+              {dispatched ? (
+                <>
+                  선생님이
+                  <br />
+                  오고 있습니다
+                </>
+              ) : (
+                <>
+                  관제센터가
+                  <br />
+                  확인하고 있습니다
+                </>
+              )}
             </div>
             <p className="mt-4 text-[21px] leading-[1.65] text-white/80">
-              가족에게도 알렸습니다.
+              {dispatched ? "가족에게도 알렸습니다." : "곧 전화를 드립니다. 가족에게도 알렸습니다."}
               <br />
               편한 자세로 기다리세요.
             </p>

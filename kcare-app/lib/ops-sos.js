@@ -178,8 +178,12 @@ function start(customer, cause) {
   const c = typeof customer === "string" ? { name: customer } : customer || {};
   const existing = state.incidents.find((inc) => inc.customer === c.name && isOpen(inc));
   if (existing) {
+    // 어르신이 SOS 버튼을 누른 것은 기존 이상징후보다 앞에 둔다 — 사건 제목이 예전 신호(예: 심박)로 남으면
+    // 관제가 SOS 를 못 알아본다 (2026-10-02 QA "SOS 버튼 사건이 '심박 132bpm' 사건에 병합")
+    const sosButton = /SOS 버튼/.test(cause || "");
     patch(existing.id, (inc) => ({
       ...inc,
+      ...(sosButton && !/SOS 버튼/.test(inc.cause || "") ? { cause: `어르신 SOS 버튼 발신 · 이전 신호: ${inc.cause}`, state: "new" } : {}),
       alerts: (inc.alerts || 0) + 1,
       signals: [...(inc.signals || []), { at: now, text: `${cause || c.cause || "추가 이상징후"}${c.value ? ` · ${c.value}` : ""} — 기존 사건에 추가` }],
       sev: (SEV[c.sev]?.rank ?? 9) < (SEV[inc.sev]?.rank ?? 9) ? c.sev : inc.sev,

@@ -35,7 +35,8 @@ export default function VisitFlow({ role = "ops" }) {
   return (
     <div className="min-w-0 rounded-2xl border border-navy/[.08] bg-white/60 p-4">
       <div className="flex flex-wrap items-center gap-2">
-        <span className="text-[15px] font-bold text-navy">방문 업무흐름</span>
+        {/* '다음 정기 안심방문'이라고 못 박는다 — 같은 화면의 오늘 병원 동행(짝 출발 확정)과 다른 건이다 (2026-10-02 QA) */}
+        <span className="text-[15px] font-bold text-navy">다음 정기 안심방문 · 업무흐름</span>
         <span
           className="rounded-full px-2 py-0.5 text-[11px] font-bold"
           style={{ color: st.fg, background: st.bg }}

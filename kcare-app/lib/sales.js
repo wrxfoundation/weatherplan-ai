@@ -8,6 +8,7 @@
 // (lib/config.js PRICING.channel.direct 35% 는 2026-08-01 회의 가정치라 여기서 쓰지 않는다).
 // 제도가 오면 SALES_COMMISSION.rules 를 채우고 confirmed 를 true 로 바꾸면 화면에 금액이 뜬다.
 import { HOUSEHOLD, PRICING } from "./config";
+import { relMd, relYmd } from "./reltime";
 
 export const SALES_REP = {
   code: "S-0012",
@@ -44,14 +45,16 @@ export const IN_PROGRESS = new Set(["lead", "consulted"]);
 // 모집 고객 (데모). 영업자에게는 계약자(보호자) 이름 일부 · 관계 · 구 · 상품 · 진행 단계만 보인다.
 // 어르신의 건강·위치·케어 기록은 영업자 화면에 싣지 않는다.
 // 김민수 님 가구(김순자 님)는 앱 전체의 데모 가구와 같은 집이다 — 이 영업자가 모집했다.
+// 날짜는 오늘 기준 며칠 전으로 — 9월 날짜로 고정해 두면 10월에 '이번 달 실적 0건'이 되면서 누적 숫자만 남아
+// 월간과 누적이 섞여 보였다 (2026-10-02 QA 9번).
 export const SALES_CUSTOMERS = [
-  { id: "sc1", name: "김민수", rel: "아들", district: "강남구", household: "single", status: "installed", leadAt: "2026-09-02", joinedAt: "2026-09-05", installedAt: "2026-09-09", phone: "010-****-2231" },
-  { id: "sc2", name: "이수정", rel: "딸", district: "서초구", household: "couple", status: "installed", leadAt: "2026-09-04", joinedAt: "2026-09-08", installedAt: "2026-09-12", phone: "010-****-8810" },
-  { id: "sc3", name: "박준호", rel: "아들", district: "강남구", household: "single", status: "joined", leadAt: "2026-09-10", joinedAt: "2026-09-17", installedAt: null, phone: "010-****-0457", note: "첫 방문 9/25 예정" },
-  { id: "sc4", name: "정미란", rel: "며느리", district: "송파구", household: "single", status: "consulted", leadAt: "2026-09-15", joinedAt: null, installedAt: null, phone: "010-****-7719", note: "가족 회의 후 결정 · 9/26 재연락" },
-  { id: "sc5", name: "최영숙", rel: "본인", district: "강남구", household: "couple", status: "lead", leadAt: "2026-09-21", joinedAt: null, installedAt: null, phone: "010-****-3308", note: "상담 콜 9/24 오전" },
-  { id: "sc6", name: "오세훈", rel: "아들", district: "서초구", household: "single", status: "lead", leadAt: "2026-09-22", joinedAt: null, installedAt: null, phone: "010-****-1962" },
-  { id: "sc7", name: "윤지영", rel: "딸", district: "강동구", household: "single", status: "dropped", leadAt: "2026-09-06", joinedAt: null, installedAt: null, phone: "010-****-5540", note: "서비스 지역 2급지 · 요금 확정 후 재안내" },
+  { id: "sc1", name: "김민수", rel: "아들", district: "강남구", household: "single", status: "installed", leadAt: relYmd(-20), joinedAt: relYmd(-17), installedAt: relYmd(-13), phone: "010-****-2231" },
+  { id: "sc2", name: "이수정", rel: "딸", district: "서초구", household: "couple", status: "installed", leadAt: relYmd(-18), joinedAt: relYmd(-14), installedAt: relYmd(-10), phone: "010-****-8810" },
+  { id: "sc3", name: "박준호", rel: "아들", district: "강남구", household: "single", status: "joined", leadAt: relYmd(-12), joinedAt: relYmd(-5), installedAt: null, phone: "010-****-0457", note: `첫 방문 ${relMd(3)} 예정` },
+  { id: "sc4", name: "정미란", rel: "며느리", district: "송파구", household: "single", status: "consulted", leadAt: relYmd(-7), joinedAt: null, installedAt: null, phone: "010-****-7719", note: `가족 회의 후 결정 · ${relMd(4)} 재연락` },
+  { id: "sc5", name: "최영숙", rel: "본인", district: "강남구", household: "couple", status: "lead", leadAt: relYmd(-1), joinedAt: null, installedAt: null, phone: "010-****-3308", note: `상담 콜 ${relMd(2)} 오전` },
+  { id: "sc6", name: "오세훈", rel: "아들", district: "서초구", household: "single", status: "lead", leadAt: relYmd(0), joinedAt: null, installedAt: null, phone: "010-****-1962" },
+  { id: "sc7", name: "윤지영", rel: "딸", district: "강동구", household: "single", status: "dropped", leadAt: relYmd(-16), joinedAt: null, installedAt: null, phone: "010-****-5540", note: "서비스 지역 2급지 · 요금 확정 후 재안내" },
 ];
 
 // ── 표기 도우미 ──
@@ -65,7 +68,7 @@ export function maskName(n) {
 }
 export const householdLabel = (h) => (h === "couple" ? "부부 가구" : "1인");
 export const monthlyOf = (h) => (h === "couple" ? HOUSEHOLD.monthly : PRICING.subscription.monthly);
-// 부부 가구 가입·설치비는 결정에 없다 (lib/config.js HOUSEHOLD.entryFee = null) — 합계에서 빼고 따로 센다
+// 가입·설치비가 확정 전이면(부부 가구 · 2026-10-02 부터 1인도 — lib/config.js) null — 합계에서 빼고 따로 센다
 export const entryOf = (h) => (h === "couple" ? HOUSEHOLD.entryFee : PRICING.entryFee.total);
 
 export const referralPath = (code = SALES_REP.code) => `/onboarding?ref=${encodeURIComponent(code)}`;

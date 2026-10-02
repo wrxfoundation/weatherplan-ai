@@ -115,20 +115,22 @@ function SalesPage() {
           <main className="flex-1 space-y-3.5 px-4 pb-12 pt-4">
             {/* 이번 달 실적 */}
             <Card className="p-[18px]">
+              {/* 이번 달 숫자와 누적 숫자를 한 줄에 섞지 않는다 — 칸마다 기준을 적는다 (2026-10-02 QA 9번) */}
               <div className="flex items-baseline gap-2">
-                <span className="text-[15px] font-black text-navy">{now.getMonth() + 1}월 실적</span>
+                <span className="text-[15px] font-black text-navy">내 실적</span>
                 <span className="ml-auto font-num text-[12px] text-muted">누적 모집 {sum.total}건 · 가입 전환 {sum.conversion}%</span>
               </div>
               <div className="mt-3 grid grid-cols-4 gap-2 text-center">
                 {[
-                  ["상담 신청", sum.leadsMonth, "#3B5C8A"],
-                  ["진행 중", sum.inProgress, "#7A4C8A"],
-                  ["가입 완료", sum.paidMonth, "#8A5D12"],
-                  ["설치 완료", sum.installed, "#1E7A5A"],
-                ].map(([k, v, c]) => (
+                  ["상담 신청", `${now.getMonth() + 1}월`, sum.leadsMonth, "#3B5C8A"],
+                  ["가입 완료", `${now.getMonth() + 1}월`, sum.paidMonth, "#8A5D12"],
+                  ["진행 중", "지금", sum.inProgress, "#7A4C8A"],
+                  ["설치 완료", "누적", sum.installed, "#1E7A5A"],
+                ].map(([k, basis, v, c]) => (
                   <div key={k} className="rounded-xl bg-navy/[.04] px-1 py-2.5">
                     <div className="font-num text-[22px] font-black leading-none" style={{ color: c }}>{v}</div>
                     <div className="mt-1 text-[11px] text-muted">{k}</div>
+                    <div className="text-[10.5px] font-bold text-muted/80">{basis}</div>
                   </div>
                 ))}
               </div>
@@ -165,7 +167,7 @@ function SalesPage() {
                 <div className="text-[12px] font-bold text-muted">수당 계산에 쓰일 내 실적</div>
                 <div className="mt-2 space-y-1.5 text-[13.5px]">
                   <div className="flex justify-between gap-3">
-                    <span className="text-muted">가입 완료 고객</span>
+                    <span className="text-muted">가입 완료 고객 (누적)</span>
                     <span className="font-num font-bold text-ink">{sum.paid}건</span>
                   </div>
                   <div className="flex justify-between gap-3">
@@ -174,7 +176,7 @@ function SalesPage() {
                   </div>
                   {sum.entryUnknown > 0 && (
                     <p className="text-[11.5px] leading-[1.6] text-muted">
-                      부부 가구 {sum.entryUnknown}건은 가입·설치비가 확정 전이라 합계에서 뺐습니다.
+                      {sum.entryUnknown}건은 가입·설치비가 확정 전이라(2026-10-02 케어박스 제외로 다시 정하는 중) 합계에서 뺐습니다.
                     </p>
                   )}
                   <div className="flex justify-between gap-3">

@@ -11,6 +11,9 @@ import StoreImageManager from "../components/StoreImageManager";
 import MobileSectionNav from "../components/MobileSectionNav";
 import StaggerIn from "../components/StaggerIn";
 import { ROSTERS, ROSTER_CHECKS, ROSTER_ACCESS, searchAll } from "../lib/rosters";
+import { TOTAL_ELDERS } from "../lib/ops-health";
+import { useAppState } from "../lib/state";
+import { GUARDIAN_STATS, STAFF_STATS } from "../lib/ops-mgmt-people";
 import { SERVICE_PLUS } from "../lib/requests";
 import {
   LIFECYCLE_STAGES,
@@ -341,6 +344,10 @@ function StatTile({ k, v, color = NAVY, note }) {
 }
 
 export default function AdminConsole() {
+  // 앱에서 실제로 들어온 만족도 · 후기 — 경영 화면이 정적이라 보호자가 낸 점수가 안 보이던 것 (2026-10-02 QA)
+  const appState = useAppState()?.state;
+  const liveNps = appState?.ops?.npsDetractor || null;
+  const liveReviews = appState?.reviews || [];
   const [tab, setTab] = useState("dash"); // 랜딩 = 전체 포괄 대시보드
   const [rosterSub, setRosterSub] = useState("home"); // 명부 서브메뉴 — 종합/어르신/보호자/컨시어지/병원
   const [smOpen, setSmOpen] = useState(false); // 인원 관리 — 프로필 카드 열림 (데모: 박지현 기준)
@@ -2064,6 +2071,22 @@ export default function AdminConsole() {
                     <StatTile key={r.k} k={r.k} v={r.v} note={r.note} />
                   ))}
                 </div>
+                {(liveNps || liveReviews.length > 0) && (
+                  <div className="mt-3 rounded-xl border border-gold/30 bg-gold/[.06] px-3.5 py-2.5 text-[12px] leading-[1.7] text-ink">
+                    <div className="font-bold text-navy">앱에서 방금 들어온 것</div>
+                    {liveNps && (
+                      <div>
+                        비추천 {liveNps.score}점 · {liveNps.reason || "사유 미선택"} → 관제 &lsquo;지금 처리할 일&rsquo;에 회복 콜로 올라가 있습니다
+                      </div>
+                    )}
+                    {liveReviews.length > 0 && (
+                      <div>
+                        동행 후기 {liveReviews.length}건 · 최근 {liveReviews[0].score != null ? `${liveReviews[0].score}점` : ""}
+                        {liveReviews[0].text ? ` — ${String(liveReviews[0].text).slice(0, 40)}` : ""}
+                      </div>
+                    )}
+                  </div>
+                )}
                 <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[11px] leading-[1.7] text-muted">
                   비추천(0 – 6)은 접수 즉시 회복 플로우 — 점수보다 회복 속도가 NPS를 만듭니다.
                 </p>
@@ -2400,9 +2423,10 @@ export default function AdminConsole() {
 
                   <div className="grid gap-3" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(160px, 100%), 1fr))" }}>
                     {[
-                      ["활성 어르신", "132", `명부 표시 ${ROSTERS.elders.rows.length}건`],
-                      ["보호자", "241", `명부 표시 ${ROSTERS.guardians.rows.length}건 · 주 128 · 부 113`],
-                      ["컨시어지", "24", `재직 전원 ${ROSTERS.concierges.rows.length}건 · 수습 4`],
+                      // 관제 콘솔과 같은 출처 (2026-10-02 QA)
+                      ["활성 어르신", String(TOTAL_ELDERS), `명부 표시 ${ROSTERS.elders.rows.length}건`],
+                      ["보호자", String(GUARDIAN_STATS.total), `명부 표시 ${ROSTERS.guardians.rows.length}건 · 주 ${GUARDIAN_STATS.primary} · 부 ${GUARDIAN_STATS.total - GUARDIAN_STATS.primary}`],
+                      ["컨시어지", String(STAFF_STATS.total), `명부 표시 ${ROSTERS.concierges.rows.length}건 · 수습 5`],
                       ["제휴 병원", String(ROSTERS.hospitals.rows.length), "패스트트랙 3"],
                     ].map(([k, v, note]) => (
                       <Panel key={k} className="!p-4">
@@ -2561,7 +2585,7 @@ export default function AdminConsole() {
               </Panel>
 
               <Panel className="min-w-0">
-                <PanelHead title="어르신 구성" right={<span className="text-[12px] text-muted">전체 132명</span>} />
+                <PanelHead title="어르신 구성" right={<span className="text-[12px] text-muted">전체 {TOTAL_ELDERS}명</span>} />
                 <div className="mt-3 space-y-3">
                   {ELDER_MIX.map((m) => (
                     <BarRow key={m.k} label={m.k} value={`${m.n}명`} w={m.w} color={NAVY} />
@@ -4724,7 +4748,7 @@ export default function AdminConsole() {
           title="AI 경영 어시스턴트"
           subtitle="사람 지표 분석 · 집계 전용"
           qa={ADMIN_AI_QA}
-          context="가입 128가구(+12) · 활성 어르신 132 · 보호자 241(주 128 / 부 113) · 컨시어지 24 · 90일 유지 87% · NPS 62 · 이탈 위험 11가구 · 부보호자 열람 64%"
+          context="가입 128가구(+12) · 활성 어르신 200 · 보호자 218(주 200 / 부 18) · 컨시어지 42 · 90일 유지 87% · NPS 62 · 이탈 위험 11가구 · 부보호자 열람 64%"
           intro="사람 · 경영 지표를 분석해 드립니다. 이번 달 요약, 이탈 위험 조치, 유지율 개선 포인트를 물어보세요."
           note="집계 데이터만 다룹니다 — 개별 사건 · 개인정보는 관제 · CS 소관입니다."
           stage={AI_STAGE_NOW}

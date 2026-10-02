@@ -1,14 +1,18 @@
 // 관제 콘솔 운영·관리 메뉴 목 데이터 — 해주세요 · 함께해요 · 커뮤니케이션 · 병원 · 계정 · 감사로그 · 연동상태.
 // 2026-09-22 관제 개선 요청서 §12~§17 기준. 인물은 앱 데모 인물과 같다.
 //
-// 시각은 전부 고정 기준시각(NOW)에서 계산한다 — Date.now() 를 쓰면 서버 프리렌더와
-// 클라이언트가 다른 값을 그려 하이드레이션이 어긋난다. 표기는 KST 로 직접 계산한다
-// (toLocaleString 은 서버 시간대에 따라 결과가 달라진다).
+// 시각은 전부 기준시각(NOW)에서 계산한다. 목 데이터는 '2026-09-22 14:30' 기준으로 적어 두었고,
+// 화면을 여는 지금으로 통째로 옮긴다 (분 단위 그대로) — 10월에 열어도 '기준 9월 22일' · 오전에
+// '오늘 14:10' 같은 것이 뜨지 않게 (2026-10-02 QA). 몇 분 전 · 며칠 전 관계는 그대로 유지된다.
+// 앱 상태 프로바이더가 마운트 뒤에만 그리므로 서버 프리렌더와 어긋날 일은 없다 (pages/_app.jsx).
+// 표기는 KST 로 직접 계산한다 (toLocaleString 은 시간대에 따라 결과가 달라진다).
 
-export const TODAY = "2026-09-22";
 const KST = 9 * 3600 * 1000;
-export const NOW = Date.parse("2026-09-22T14:30:00+09:00");
-export const T = (s) => Date.parse(`${s.replace(" ", "T")}:00+09:00`);
+const BASE_NOW = Date.parse("2026-09-22T14:30:00+09:00");
+const SHIFT = Math.floor((Date.now() - BASE_NOW) / 60000) * 60000;
+export const NOW = BASE_NOW + SHIFT;
+export const T = (s) => Date.parse(`${s.replace(" ", "T")}:00+09:00`) + SHIFT;
+export const TODAY = new Date(NOW + KST).toISOString().slice(0, 10);
 export const ago = (min) => NOW - min * 60000;
 
 const p2 = (n) => String(n).padStart(2, "0");
@@ -39,12 +43,12 @@ export const daysBetween = (a, b) => Math.round((b - a) / 86400000);
 
 // ── 데모 인물 ──
 export const ELDERS = [
-  // payLimit: 보호자 1회 결제 한도 — 김민수만 10만원으로 올려 두었다. 없으면 PRICING 기본 한도.
-  { name: "김순자", age: 78, district: "강남구 대치동", manager: "박지현", guardian: "김민수", guardianRel: "아들", home: "대치동 자택", payLimit: 100000 },
+  // payLimit: 어르신 직접 결제 한도(하루 누적) — 보호자가 정한다. 없으면 PRICING 기본 한도(50,000원) — 어르신 앱과 같은 값.
+  { name: "김순자", age: 78, district: "강남구 대치동", manager: "박지현", guardian: "김민수", guardianRel: "아들", home: "대치동 자택" },
   { name: "이영호", age: 81, district: "송파구 잠실동", manager: "이수민", guardian: "이성호", guardianRel: "아들", home: "잠실동 자택" },
   { name: "박말순", age: 83, district: "강동구 길동", manager: "정민호", guardian: "박은지", guardianRel: "장녀", home: "길동 자택" },
   { name: "한복자", age: 79, district: "강동구 길동", manager: "윤세라", guardian: "한준호", guardianRel: "아들", home: "길동 자택" },
-  { name: "오태식", age: 80, district: "서초구", manager: "한서연", guardian: "확인 중", guardianRel: "", home: "서초 자택" },
+  { name: "오태식", age: 77, district: "강남구 역삼동", manager: "박지현", guardian: "오세라", guardianRel: "장녀", home: "역삼동 자택" },
   { name: "최정자", age: 75, district: "강남구", manager: "서다인", guardian: "최선영", guardianRel: "차녀", home: "강남 자택" },
   { name: "강필순", age: 82, district: "강남구", manager: "오하늘", guardian: "확인 중", guardianRel: "", home: "강남 자택" },
 ];

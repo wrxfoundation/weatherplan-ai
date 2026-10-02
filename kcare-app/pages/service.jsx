@@ -137,7 +137,8 @@ export default function ServiceLanding({ heroArt, heroVideo }) {
   const [openKey, setOpenKey] = useState(null);
   const [openGroup, setOpenGroup] = useState(null); // FAQ 그룹 — 전부 접어 둔다
   const monthly = fmtWon(PRICING.subscription.monthly);
-  const entry = fmtWon(PRICING.entryFee.total);
+  // 가입·설치비는 2026-10-02 부터 확정 전 (케어박스 제외 — lib/config.js). 값이 없으면 '확정 전'으로 쓴다.
+  const entry = PRICING.entryFee.total == null ? "확정 전" : fmtWon(PRICING.entryFee.total);
 
   return (
     <>
@@ -456,13 +457,13 @@ export default function ServiceLanding({ heroArt, heroVideo }) {
           </p>
         </Section>
 
-        {/* ── 스토어 — 일반의약품은 다루지 않는다 (2026-08-28 확인: 앱 결제
-            구매대행 불가). 영양제 등 건강기능식품·의약외품과 생활용품만 다룬다. ── */}
+        {/* ── 스토어 — 생활안전용품만 판다 (2026-10-02 운영 결정). 일반의약품은 2026-08-28 에 이미 뺐다
+            (앱 결제 구매대행 불가). 장보기 · 건강식품 심부름은 해주세요(생활 대행)로 간다. ── */}
         <Section
           collapsible
-          eyebrow="필요한 물건"
-          title="사다 드리고, 영수증을 남깁니다"
-          desc="장보기가 가장 자주 오는 부탁입니다. 앱에서 고르시면 방문 때 함께 가져다 드립니다."
+          eyebrow="안전용품"
+          title="집 안 낙상 위험을 줄이는 물건만 팝니다"
+          desc="첫 방문 안전진단에서 '아니오'가 나온 자리에 맞는 용품을 앱에서 고르시면, 방문 때 함께 가져다 드립니다. 배송비는 받지 않습니다."
         >
           <div className="grid gap-3 sm:grid-cols-2">
             {STORE_CATALOG.map((c) => (
@@ -485,8 +486,8 @@ export default function ServiceLanding({ heroArt, heroVideo }) {
             ))}
           </div>
           <p className="mt-5 rounded-[14px] border border-navy/[.09] bg-white/70 px-5 py-4 text-[14.5px] leading-[1.85] text-muted">
-            의약품은 다루지 않습니다 — 영양제 등 건강기능식품과 생활용품만 판매합니다.
-            대행 수수료는 부탁 종류에 따라 상담에서 안내드립니다.
+            스토어는 생활안전용품만 판매합니다 — 의약품 · 건강식품 · 생활용품은 팔지 않습니다.
+            장보기나 건강식품을 사다 드리는 일은 해주세요(생활 대행)로 부탁하시면 되고, 대행 요금은 상담에서 안내드립니다.
           </p>
         </Section>
 
@@ -495,7 +496,7 @@ export default function ServiceLanding({ heroArt, heroVideo }) {
           id="pricing"
           eyebrow="요금"
           title={`가입·설치비 ${entry}, 이후 매월 ${monthly}`}
-          desc="표기 금액은 부가세 포함입니다. 생활 요청은 건별 실비가 따로 붙습니다."
+          desc={`표기 금액은 부가세 포함입니다. 생활 요청은 건별 실비가 따로 붙습니다.${PRICING.entryFee.total == null ? " 가입·설치비는 구성이 바뀌어 다시 정하는 중이라 상담에서 안내드립니다." : ""}`}
         >
           <div className="grid gap-3.5 sm:grid-cols-2">
             <div className="card-glass rounded-[16px] px-5 py-5">
@@ -545,8 +546,7 @@ export default function ServiceLanding({ heroArt, heroVideo }) {
             <p className="mt-2 text-[13px] leading-[1.7] text-muted">{HOUSEHOLD.conditions.join(" · ")}</p>
             <p className="mt-2.5 max-w-[640px] text-[14.5px] leading-[1.85] text-ink">
               방문은 가구 단위로 한 번 가고, 점검은 두 분이 각각 받으십니다. 몸 7가지와 마음
-              7가지는 각자 보고, 집 7가지는 함께 봅니다. 웨어러블은 두 분께 각각, 케어박스는
-              가구에 하나입니다.
+              7가지는 각자 보고, 집 7가지는 함께 봅니다. 웨어러블은 두 분께 각각 드립니다.
             </p>
             <p className="mt-2 text-[13.5px] leading-[1.8] text-muted">
               두 분 요금은 1인 요금에 2인차를 더하는 방식으로 설계 중입니다. 확정 전이라
@@ -763,8 +763,8 @@ export default function ServiceLanding({ heroArt, heroVideo }) {
           subtitle="요금 · 이용 방법 · 해지 규정"
           qa={LANDING_AI_QA}
           context={
-            `가입·설치비 ${entry}(부가세 포함) · 월 ${monthly}. ` +
-            "포함: 갤럭시 Fit3, 케어박스, 최초 21항목 점검, 앱 설치, 안심방문 월 1회, " +
+            `가입·설치비 ${entry} · 월 ${monthly}(부가세 포함). ` +
+            "포함: 갤럭시 Fit3, 최초 21항목 점검, 앱 설치, 안심방문 월 1회, 케어박스는 제공하지 않음, " +
             "병원 동행 연 1회, 보호자 알림·공유 캘린더, 월간 리포트, 24시간 긴급 접수. " +
             "점검 21가지 = 몸 7 · 마음 7 · 집 7. 마음 항목은 진단하지 않고 지난달 대비 변화만 기록. " +
             "첫 방문 · 종합평가는 2인 배차. 중도 해지 위약금 없음, 잔여분 일할 환급. 청약철회 14일. " +

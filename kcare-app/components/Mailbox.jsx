@@ -715,7 +715,7 @@ export function RecordSheet({ client, onClose, onSend }) {
 }
 
 // ── 탭 본문 ──
-export default function Mailbox({ mb, onEvent, onSent }) {
+export default function Mailbox({ mb, onEvent, onSent, onToOps }) {
   const { clients, counts, openInbox, unsentList, alerts, threadFor, hear, setMemo, complete, toOps, send } = mb;
   const [open, setOpen] = useState(null); // 대화 열린 고객 이름
   const [recFor, setRecFor] = useState(null); // 녹음 시트 대상
@@ -725,7 +725,10 @@ export default function Mailbox({ mb, onEvent, onSent }) {
 
   const doOps = (name, inboxId) => {
     toOps(name, inboxId);
-    onEvent?.("관제", `${name} 고객 음성 · 관제 전달 — 확인 요청`, "#8FA9CC");
+    // 관제가 실제로 받아 처리할 수 있게 '관제 연락'으로 넘긴다 (관제 지금 처리할 일 · 커뮤니케이션).
+    // 전에는 티커에만 '확인 요청'이 남아 관제가 처리할 방법이 없었다 (2026-10-02 QA)
+    if (onToOps) onToOps(name, byName[name]?.open?.find((m) => m.id === inboxId)?.memo || "");
+    else onEvent?.("관제", `${name} 고객 음성 · 관제 전달 — 확인 요청`, "#8FA9CC");
   };
   // 발송은 서버 확인이 온 뒤에 끝난다 — 성공해야 고객 화면(어르신 마음사서함)에 꽂히고
   // 미발송 목록에서 빠진다. 실패는 티커에도 실패로 남긴다.

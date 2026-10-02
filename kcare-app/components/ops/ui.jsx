@@ -7,6 +7,8 @@
 //   · 정상 정보보다 예외 정보를 먼저 보이게 한다 — 목록은 위험도·발생시각순.
 // 모든 실시간 값에는 마지막 수신 시각을 같이 쓴다 (요청서 3절) — <Stamp/> 로 붙인다.
 
+import { useAuth } from "../../lib/auth";
+
 export const TONE = {
   ok: { fg: "#1E7A5A", bg: "rgba(30,122,90,.12)", bar: "#1E7A5A" },
   warn: { fg: "#8A5D12", bg: "rgba(138,93,18,.12)", bar: "#C9862B" },
@@ -387,4 +389,11 @@ export function Note({ children, tone = "muted" }) {
       {children}
     </p>
   );
+}
+
+// 처리 기록에 남는 '처리자' — 테스트 계정이면 로그인한 계정 이름, 시연이면 예시 관제사 (2026-10-02 QA:
+// 테스트 관제로 처리해도 '김태영 (관제사)'로 찍혔다)
+export function useOperator() {
+  const user = useAuth().user;
+  return user?.household ? user.name || "관제" : "김태영 (관제사)";
 }

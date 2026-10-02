@@ -90,7 +90,7 @@ export const DEVICES = [
     swaps: [{ at: "2025-08-18", device: "KCF-250818", type: "신규 등록", from: "—", to: "Galaxy Fit3", reason: "서비스 개시", by: "정민호" }],
   },
   {
-    name: "오태식", age: 80, district: "서초", concierge: "한서연", status: "check", summary: "욕실 센서 오프라인 (전원 꺼짐)", cause: "sensor_off", rxAgoMin: 4,
+    name: "오태식", age: 77, district: "강남", concierge: "박지현", status: "check", summary: "욕실 센서 오프라인 (전원 꺼짐)", cause: "sensor_off", rxAgoMin: 4,
     watch: watch("KCF-251215", { registered: "2025-12-15", battery: 61, rxAgoSec: 18 }),
     sensors: [sensor(1, "거실", "KMW-5501", { registered: "2025-12-15" }), sensor(2, "침실", "KMW-5502", { registered: "2025-12-15" }), sensor(3, "욕실", "KMW-5503", { registered: "2025-12-15", online: false, rxAgoSec: 240, lastCheck: "응답 없음 — 전원 확인 필요" }), sensor(4, "주방", "KMW-5504", { registered: "2026-02-10" }), sensor(5, "현관", "KMW-5505", { registered: "2026-02-10", type: "도어 개폐 센서", model: "KDR-10", power: "배터리 (77%)" }), sensor(6, "복도", "KMW-5506", { registered: "2026-02-10" })],
     realtime: { hr: { v: 71, unit: "bpm", note: "정상", tone: "ok", agoSec: 18 }, spo2: { v: 97, unit: "%", note: "정상", tone: "ok", agoSec: 18 }, resp: { v: 15, unit: "회/분", note: "참고값", tone: "info", agoSec: 25 }, motion: { v: "감지", place: "거실", note: "25초 전", tone: "ok", agoSec: 25 } },

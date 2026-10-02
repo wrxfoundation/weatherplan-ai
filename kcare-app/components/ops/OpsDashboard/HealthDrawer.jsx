@@ -77,9 +77,10 @@ export default function HealthDrawer({ name, row, open, onClose, onStartSos }) {
   const [range, setRange] = useState("1h");
   const [metric, setMetric] = useState("hr");
   const now = useNow(1000);
-  const onboarding = useAppState()?.state?.onboarding;
+  const appState = useAppState()?.state;
+  const onboarding = appState?.onboarding;
   if (!open || !name) return null;
-  const c = liveCustomer(name, onboarding);
+  const c = liveCustomer(name, onboarding, appState?.health);
   const h = getHealth(name);
   const series = getSeries(name, range);
   const [, mLabel, unit] = METRICS.find((m) => m[0] === metric) || METRICS[0];

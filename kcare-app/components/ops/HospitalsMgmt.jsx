@@ -4,11 +4,10 @@
 import { scopedKey } from "../../lib/scope";
 import { useEffect, useMemo, useState } from "react";
 import Icon from "../icons";
-import { Panel, PanelHead, Stat, Pill, Btn, Tabs, Table, KV, Field, Drawer, Confirm, Note, Empty, Stamp } from "./ui";
+import { Panel, PanelHead, Stat, Pill, Btn, Tabs, Table, KV, Field, Drawer, Confirm, Note, Empty, Stamp, useOperator } from "./ui";
 import { ELDERS, ELDER_NAMES, TODAY, elderOf, fmtDT } from "../../lib/ops-admin";
 import { HOSPITALS_SEED, HOSPITALS_STORAGE_KEY, HOSPITAL_FIELDS, HOSPITAL_NOTICE, NEAREST_ER } from "../../lib/ops-admin-sys";
 
-const OPERATOR = "김태영 (관제사)";
 const ER_OPTIONS = ["운영", "미운영", "확인 중"];
 const BOOKING_OPTIONS = ["—", "대기", "예약 진행 중", "예약 확정"];
 const CHECK_KEYS = ["address", "phone", "hours", "travel", "parking", "wheelchair", "reception", "guardianNeeded"];
@@ -18,6 +17,7 @@ const blank = () => ({ name: "", dept: "", partner: "제휴", er: "확인 중", 
 const toForm = (h) => ({ ...blank(), ...h, partner: h.partner ? "제휴" : "비제휴", bookingStatus: h.booking?.status || "—", bookingNext: h.booking?.next || "", mainFor: [...(h.mainFor || [])] });
 
 export default function HospitalsMgmt() {
+  const OPERATOR = useOperator();
   const [list, setList] = useState(HOSPITALS_SEED);
   const [removed, setRemoved] = useState([]);
   const [loaded, setLoaded] = useState(false);

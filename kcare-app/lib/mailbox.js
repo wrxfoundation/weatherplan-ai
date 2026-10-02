@@ -10,8 +10,9 @@
 // 실패는 목록에서 빼지 않고 '발송 실패'로 남는다.
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { MY_CLIENTS } from "./console";
-import { TEACHER_INBOX } from "./mock";
+import { TEACHER_INBOX, seedAt } from "./mock";
 import { scopedKey } from "./scope";
+import { relMd } from "./reltime";
 
 const MIN = 60000;
 export const VOICE_CATEGORIES = ["안부인사", "방문안내", "복약확인", "병원일정", "가족 메시지 전달", "요청사항 답변", "긴급확인"];
@@ -45,7 +46,7 @@ export const CLIENT_SEED = {
   전옥희: { sentToday: false, lastSentMin: 1440 + 20, lastReplyMin: 100, noReplyDays: 0, callMissed: 0, opsNote: null },
   한동식: { sentToday: true, lastSentMin: 140, lastReplyMin: 60, noReplyDays: 0, callMissed: 0, opsNote: null },
   김복남: { sentToday: false, lastSentMin: 3 * 1440, lastReplyMin: null, noReplyDays: 0, callMissed: 0, exclude: "입원 중 — 병원 소통 대행 (관제 제외 처리)", opsNote: "요양병원 · 간호사 전달사항 관제 경유" },
-  이순례: { sentToday: false, lastSentMin: 1440 + 30, lastReplyMin: 1440 + 10, noReplyDays: 1, callMissed: 0, opsNote: "9/20 첫 방문 · 앱 사용 안내 완료" },
+  이순례: { sentToday: false, lastSentMin: 1440 + 30, lastReplyMin: 1440 + 10, noReplyDays: 1, callMissed: 0, opsNote: `${relMd(-2)} 첫 방문 · 앱 사용 안내 완료` },
 };
 
 // 받은 음성 (미처리 우선 목록의 씨앗). memo 는 들은 뒤 적는 청취 메모 — 안 들었으면 null.
@@ -95,19 +96,20 @@ const OTHER_THREADS = {
   박영자: [],
 };
 
-export function threadSeed(name, now) {
+export function threadSeed(name, now, liveClient = null) {
+  if (name === liveClient) return []; // 테스트 가구의 실제 고객 — 예시 대화를 섞지 않는다
   if (name === "김순자") {
     return TEACHER_INBOX.map((m) => ({
       id: `th-${m.id}`,
       dir: m.dir === "in" ? "out" : "in",
-      at: now - m.minsAgo * MIN,
+      at: seedAt(m.minsAgo, now),
       secs: m.durationSec,
       text: m.dir === "in" ? m.text : KIM_MEMOS[m.id] ?? null,
       inboxId: m.id === "t5" ? "in-t5" : null,
       heard: m.dir === "out" && m.id !== "t5",
     }));
   }
-  return (OTHER_THREADS[name] || []).map((m) => ({ ...m, at: now - m.minsAgo * MIN }));
+  return (OTHER_THREADS[name] || []).map((m) => ({ ...m, at: seedAt(m.minsAgo, now) }));
 }
 
 // ── 시각 표기 ──
@@ -156,8 +158,11 @@ const readLive = () => {
 
 // liveVoices — 어르신이 앱 마음사서함에서 보낸 목소리 (가구 기록 voices 중 → 컨시어지, {id, at, secs, client}).
 // 받은 음성메시지 맨 위에 붙는다 (2026-10-02 — 전에는 어르신 화면에만 남고 컨시어지에게 닿지 않았다).
-export function useMailbox(liveVoices = NO_VOICES) {
-  const [inbox, setInbox] = useState(() => INBOX_SEED.map((m) => ({ ...m })));
+// liveOut — 컨시어지가 보낸 실제 음성 (가구 기록 voices 중 컨시어지 → 고객, {id, at, secs, client, title}).
+// 대화 보기에 받은 것 · 보낸 것이 실제로 같이 보이게 (2026-10-02 QA "대화 보기에 고정 메시지만").
+// liveClient — 테스트 계정일 때 실제 고객(김순자). 그 고객의 예시 받은 음성 · 대화는 빼고 실제 기록만 보인다.
+export function useMailbox(liveVoices = NO_VOICES, liveOut = NO_VOICES, liveClient = null) {
+  const [inbox, setInbox] = useState(() => INBOX_SEED.filter((m) => m.client !== liveClient).map((m) => ({ ...m })));
   useEffect(() => {
     if (!liveVoices.length) return;
     setInbox((prev) => {
@@ -167,7 +172,7 @@ export function useMailbox(liveVoices = NO_VOICES) {
         .filter((v) => !have.has(`live-${v.id}`))
         .map((v) => {
           const id = `live-${v.id}`;
-          return { id, client: v.client, minsAgo: Math.max(0, (Date.now() - v.at) / MIN), secs: v.secs, status: saved[id]?.status || "unheard", memo: saved[id]?.memo ?? null, live: true };
+          return { id, client: v.client, at: v.at, minsAgo: Math.max(0, (Date.now() - v.at) / MIN), secs: v.secs, status: saved[id]?.status || "unheard", memo: saved[id]?.memo ?? null, live: true };
         });
       return add.length ? [...add, ...prev] : prev;
     });
@@ -231,7 +236,7 @@ export function useMailbox(liveVoices = NO_VOICES) {
     const rank = { needReply: 0, unheard: 1, heard: 2 };
     return inbox
       .filter((m) => OPEN_INBOX.has(m.status))
-      .map((m) => ({ ...m, at: now - m.minsAgo * MIN }))
+      .map((m) => ({ ...m, at: m.at ?? seedAt(m.minsAgo, now) }))
       .sort((a, b) => rank[a.status] - rank[b.status] || a.minsAgo - b.minsAgo);
   }, [inbox, now]);
 
@@ -278,16 +283,22 @@ export function useMailbox(liveVoices = NO_VOICES) {
 
   const threadFor = useCallback(
     (name) => {
-      const base = threadSeed(name, now).map((m) => {
+      const base = threadSeed(name, now, liveClient).map((m) => {
         const ib = m.inboxId ? inbox.find((x) => x.id === m.inboxId) : null;
         const withInbox = ib ? { ...m, text: ib.memo ?? m.text, status: ib.status, heard: ib.status !== "unheard" } : m;
         const heard = withInbox.heard || !!heardExtra[m.id] || !!heardExtra[m.inboxId];
         const memo = threadMemo[m.inboxId] ?? threadMemo[m.id];
         return { ...withInbox, heard, ...(memo === undefined ? null : { text: memo }) };
       });
-      return [...base, ...(extra[name] || [])].sort((a, b) => a.at - b.at);
+      const liveIn = inbox
+        .filter((m) => m.live && m.client === name)
+        .map((m) => ({ id: `th-${m.id}`, dir: "in", at: m.at, secs: m.secs, text: threadMemo[m.id] ?? m.memo ?? null, inboxId: m.id, heard: m.status !== "unheard" || !!heardExtra[m.id], live: true }));
+      const out = liveOut.filter((v) => v.client === name).map((v) => ({ id: `th-live-${v.id}`, dir: "out", at: v.at, secs: v.secs, text: v.title || null, mine: true, live: true }));
+      // 방금 보낸 것은 화면 기록(extra)과 가구 기록(out)에 둘 다 있다 — 같은 것은 한 번만
+      const ex = (extra[name] || []).filter((e) => !out.some((o) => Math.abs(o.at - e.at) < 15000 && o.secs === e.secs));
+      return [...base, ...liveIn, ...out, ...ex].sort((a, b) => a.at - b.at);
     },
-    [inbox, extra, threadMemo, heardExtra, now]
+    [inbox, extra, threadMemo, heardExtra, now, liveOut, liveClient]
   );
 
   // 들은 것으로 표시 — 오늘 받은 것은 미청취 → 답장 필요로 옮기고, 지난 메시지는 표시만 바꾼다
