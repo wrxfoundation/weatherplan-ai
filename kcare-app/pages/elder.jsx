@@ -486,7 +486,8 @@ export default function ElderHome() {
   // 홈에서 보낸 목소리는 '선생님' 탭 메시지함에 그대로 쌓인다 (2026-08-28 요청:
   // "메인화면 메시지 보내기는 여기와 연동"). 같은 목록을 두 자리에서 보는 것이라
   // 데이터는 한 벌만 둔다.
-  const [sentMsgs, setSentMsgs] = useState([]);
+  // 보낸 목소리는 가구 기록(voices: 어르신 → 컨시어지)에 둔다 — 컨시어지 마음사서함과 관제 커뮤니케이션이
+  // 같은 것을 본다 (2026-10-02). 전에는 이 화면에만 있어 컨시어지에게 닿지 않았다.
   // 메시지 버튼을 누르면 가운데 녹음 창이 열린다 (2026-08-30 요청).
   // 전에는 같은 버튼을 두 번 눌러 녹음·전송했는데, 지금 녹음 중인지가 작은
   // 원 안 글씨로만 보여서 알기 어려웠다. 창을 띄우면 '지금 말할 차례'가 화면
@@ -498,10 +499,7 @@ export default function ElderHome() {
   const sendConcMsg = () => {
     // 실제로 창을 열어 둔 시간을 길이로 쓴다 (최소 3초 — 짧게 한마디도 한마디다)
     const sec = Math.max(3, Math.round((Date.now() - recStart.current) / 1000));
-    setSentMsgs((prev) => [
-      { id: `me-${Date.now()}`, dir: "out", at: Date.now(), durationSec: sec, text: "선생님께 보낸 목소리" },
-      ...prev,
-    ]);
+    dispatch({ type: "addVoice", payload: { from: `${ELDER.name} 님`, to: "컨시어지", secs: sec, context: "마음사서함", title: "선생님께 보낸 목소리" } });
     dispatch({
       type: "pushEvent",
       payload: { kind: "부탁", text: `${ELDER.name} 음성 메시지 → 컨시어지 ${TEACHER.name}`, color: "#B08D57" },
@@ -513,7 +511,9 @@ export default function ElderHome() {
   // 것은 걸러 낸다. 오래된 것이 위, 최신이 아래 — 카톡처럼 (2026-09-04 시트 마음사서함 2번).
   const nowMs = now.getTime();
   const teacherMsgs = [
-    ...sentMsgs,
+    ...(state.voices || [])
+      .filter((v) => v.from === `${ELDER.name} 님` && v.to === "컨시어지")
+      .map((v) => ({ id: v.id, dir: "out", at: v.at, durationSec: v.secs, text: v.title || "선생님께 보낸 목소리" })),
     ...TEACHER_INBOX.map((m) => ({ ...m, at: nowMs - m.minsAgo * 60000 })),
     // 컨시어지 앱 마음사서함에서 보낸 것 — 제목은 컨시어지가 보낼 때 적은 한 줄 (STT 아님)
     ...(state.voices || [])

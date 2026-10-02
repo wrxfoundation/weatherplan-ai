@@ -81,7 +81,11 @@ const DEFAULT = {
     color: e.color,
   })),
   // 컨시어지 방문 수행 상태 + 감사 타임라인 (REQ-12 골격)
-  visit: { checkedIn: false, kitDone: false, reportSent: false, audit: [] },
+  // checks · notes · memo · photos — 21항목 점검 · 항목 메모 · 총평 · 사진 수. 관제 방문관리가 같은 값을 본다 (2026-10-02).
+  // ops — 관제가 이 방문에 한 것 (검수 · 보호자 발송 · 중간 알림 · 후속조치).
+  visit: { checkedIn: false, kitDone: false, reportSent: false, audit: [], checks: {}, notes: {}, memo: "", photos: 0, ops: {} },
+  // 관제 연락 — 컨시어지 '관제에 알리기'. 관제가 확인(·답장)하면 컨시어지 화면에 그대로 보인다 (2026-10-02).
+  opsMessages: [],
   kit: INITIAL_KIT,
   // 스토어 상품 이미지 — 경영 콘솔에서 올리면 스토어 썸네일이 바뀐다 (실무자 요청).
   // { [상품id]: dataURL }. 업로드 시 320px 로 줄여 저장한다 — localStorage 5MB 한도.
@@ -124,6 +128,7 @@ export function freshState() {
     reviews: [],
     payments: [],
     myHospitals: [],
+    opsMessages: [],
   };
 }
 
@@ -185,7 +190,11 @@ function reducer(state, action) {
           ...state.visit,
           ...(p.visit || {}),
           audit: arr(p.visit && p.visit.audit, state.visit.audit),
+          checks: obj(p.visit && p.visit.checks, state.visit.checks),
+          notes: obj(p.visit && p.visit.notes, state.visit.notes),
+          ops: obj(p.visit && p.visit.ops, state.visit.ops),
         },
+        opsMessages: arr(p.opsMessages, state.opsMessages),
         ticker: arr(p.ticker, state.ticker),
         events: rebaseSeedEvents(arr(p.events, state.events)),
         reports: arr(p.reports, state.reports),
@@ -275,6 +284,35 @@ function reducer(state, action) {
           ...(action.patch || {}),
           audit: [...state.visit.audit, { at: nowOf(action), ...action.event }],
         },
+      };
+    // 21항목 점검 하나 — done 이 아니면 지운다 (컨시어지 화면과 관제 방문관리가 같이 본다)
+    case "visitCheck": {
+      const checks = { ...(state.visit.checks || {}) };
+      if (action.done) checks[action.key] = { at: nowOf(action) };
+      else delete checks[action.key];
+      return { ...state, visit: { ...state.visit, checks } };
+    }
+    // 항목 메모(key) 또는 총평(key 없음) — 입력을 마칠 때 한 번 보낸다
+    case "visitNote":
+      return action.key
+        ? { ...state, visit: { ...state.visit, notes: { ...(state.visit.notes || {}), [action.key]: String(action.text || "") } } }
+        : { ...state, visit: { ...state.visit, memo: String(action.text || "") } };
+    case "visitPhoto":
+      return { ...state, visit: { ...state.visit, photos: (state.visit.photos || 0) + 1 } };
+    // 관제가 이 방문에 한 것 — 검수 · 보호자 발송 · 중간 알림 · 후속조치 (관제 방문관리 상세)
+    case "visitOps":
+      return { ...state, visit: { ...state.visit, ops: { ...(state.visit.ops || {}), ...(action.patch || {}) } } };
+    case "addOpsMessage":
+      return {
+        ...state,
+        opsMessages: [{ id: idOf("om", action), at: nowOf(action), ackAt: null, ...action.payload }, ...(state.opsMessages || [])].slice(0, 60),
+      };
+    case "ackOpsMessage":
+      return {
+        ...state,
+        opsMessages: (state.opsMessages || []).map((m) =>
+          m.id === action.id && !m.ackAt ? { ...m, ackAt: nowOf(action), ackBy: action.by || "관제", reply: String(action.reply || "") } : m
+        ),
       };
     case "kitUpdate":
       return { ...state, kit: action.items };

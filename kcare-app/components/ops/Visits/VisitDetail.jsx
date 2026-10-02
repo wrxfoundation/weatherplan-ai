@@ -41,7 +41,8 @@ export default function VisitDetail({ visit: v, onChange, openProfile }) {
   const total = v.keys.length;
   const done = total - v.pending.length;
   const missing = required.filter((k) => v.pending.includes(k));
-  const editable = v.status === "active";
+  // 실제 줄(v.live)은 점검 · 사진 · 메모 · 체크인 · 완료를 컨시어지 앱이 한다 — 여기서는 보기만 (2026-10-02)
+  const editable = v.status === "active" && !v.live;
   const pk = visitPill(v);
   const svc = SERVICES.find((s) => s.name === svcName) || SERVICES[0];
 
@@ -75,12 +76,14 @@ export default function VisitDetail({ visit: v, onChange, openProfile }) {
     <Panel className="space-y-4">
       <div className="flex flex-wrap items-center gap-2">
         <h2 className="text-[17px] font-bold text-navy">{v.name} 고객 방문</h2>
+        {v.live && <Pill tone="ok">테스트 가구 1 · 실제</Pill>}
         <Pill tone={VISIT_STATE[pk].tone}>{VISIT_STATE[pk].label}{pk !== "followup" && v.followup ? " · 후속" : ""}</Pill>
         <span className="font-num text-[12px] text-muted">{v.time}–{v.end}</span>
         <span className="text-[12px] text-muted">· {v.addr}</span>
         <span className="ml-auto flex gap-2">
           {openProfile && <Btn small ghost onClick={() => openProfile(v.name)}>고객 상세</Btn>}
-          {v.status === "planned" && <Btn small onClick={() => setConfirm("start")}>방문 시작 · GPS 체크인</Btn>}
+          {v.status === "planned" && !v.live && <Btn small onClick={() => setConfirm("start")}>방문 시작 · GPS 체크인</Btn>}
+          {v.status === "planned" && v.live && <span className="text-[12px] text-muted">체크인은 컨시어지 앱에서 합니다</span>}
         </span>
       </div>
       <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[12px] text-muted">
@@ -152,6 +155,7 @@ export default function VisitDetail({ visit: v, onChange, openProfile }) {
           })}
         </div>
         {editable && <div className="mt-1.5 text-[11px] text-muted">항목을 누르면 완료·대기가 바뀝니다. 기록은 관찰 사실만 — 점수·진단명을 쓰지 않습니다.</div>}
+        {v.live && <div className="mt-1.5 text-[11px] text-muted">컨시어지 앱에서 점검하면 몇 초 안에 여기 반영됩니다.</div>}
       </div>
 
       <div className="grid gap-3 lg:grid-cols-2">
@@ -164,8 +168,14 @@ export default function VisitDetail({ visit: v, onChange, openProfile }) {
             </span>
           </div>
           <div className="mt-2">
-            <Field id={`memo-${v.id}`} label="현장 메모 (본 것과 들은 말 그대로)" type="textarea" value={v.memo} onChange={(m) => onChange({ memo: m })} placeholder='예) 복약 달력 빈칸 2회 · 본인은 "먹었다"고 하심' disabled={v.status === "planned"} />
+            <Field id={`memo-${v.id}`} label={v.live ? "현장 메모 (컨시어지 총평)" : "현장 메모 (본 것과 들은 말 그대로)"} type="textarea" value={v.memo} onChange={(m) => onChange({ memo: m })} placeholder={v.live ? "컨시어지가 총평을 쓰면 여기 보입니다" : '예) 복약 달력 빈칸 2회 · 본인은 "먹었다"고 하심'} disabled={v.status === "planned" || v.live} />
           </div>
+          {v.live && v.itemNotes?.length > 0 && (
+            <ul className="mt-2 space-y-0.5 text-[12px] text-ink">
+              {v.itemNotes.map((n) => <li key={n}>· {n}</li>)}
+            </ul>
+          )}
+          {v.live && v.reportNote && <div className="mt-2 rounded-lg bg-navy/[.04] px-2.5 py-2 text-[12px] text-ink">컨시어지 리포트 — {v.reportNote}</div>}
         </div>
         <div className="rounded-xl border border-navy/[.08] p-3">
           <h3 className="text-[13px] font-bold text-navy">이전 방문 대비 변화</h3>
@@ -228,6 +238,12 @@ export default function VisitDetail({ visit: v, onChange, openProfile }) {
               <Btn ghost onClick={() => setMsg(`임시 저장 ${stampNow()} · 새로고침 후에도 입력내용이 유지됩니다`)}>임시 저장</Btn>
               <Btn ghost tone="info" onClick={() => { onChange({ interimAt: clock() }); setMsg(`보호자 중간 알림 발송 ${stampNow()} · 점검 ${done}/${total} · 발송 상태는 보호자 관리 연락이력에서 확인`); }}>보호자에게 중간 알림</Btn>
               <Btn className="ml-auto" disabled={missing.length > 0} onClick={() => setConfirm("complete")} title={missing.length ? "필수 항목 누락 — 완료 불가" : undefined}>점검 완료 및 보고서 작성</Btn>
+            </>
+          )}
+          {v.live && v.status === "active" && (
+            <>
+              <Btn ghost tone="info" onClick={() => { onChange({ interimAt: clock() }); setMsg(`보호자 중간 알림 발송 ${stampNow()} · 점검 ${done}/${total}`); }}>보호자에게 중간 알림</Btn>
+              <span className="self-center text-[12px] text-muted">점검 완료 · 리포트는 컨시어지 앱의 '검수 확정 후 가족에게 전달'로 넘어옵니다</span>
             </>
           )}
           {v.status === "done" && v.review === "검수 대기" && <Btn className="ml-auto" tone="info" onClick={() => setConfirm("approve")}>관제 검수 승인</Btn>}

@@ -141,8 +141,22 @@ export function commState(c) {
 }
 
 // ── 화면 상태 훅 — 페이지가 들고 탭·하단 배지가 같이 본다 ──
-export function useMailbox() {
+const NO_VOICES = [];
+
+// liveVoices — 어르신이 앱 마음사서함에서 보낸 목소리 (가구 기록 voices 중 → 컨시어지, {id, at, secs, client}).
+// 받은 음성메시지 맨 위에 붙는다 (2026-10-02 — 전에는 어르신 화면에만 남고 컨시어지에게 닿지 않았다).
+export function useMailbox(liveVoices = NO_VOICES) {
   const [inbox, setInbox] = useState(() => INBOX_SEED.map((m) => ({ ...m })));
+  useEffect(() => {
+    if (!liveVoices.length) return;
+    setInbox((prev) => {
+      const have = new Set(prev.map((m) => m.id));
+      const add = liveVoices
+        .filter((v) => !have.has(`live-${v.id}`))
+        .map((v) => ({ id: `live-${v.id}`, client: v.client, minsAgo: Math.max(0, (Date.now() - v.at) / MIN), secs: v.secs, status: "unheard", memo: null, live: true }));
+      return add.length ? [...add, ...prev] : prev;
+    });
+  }, [liveVoices]);
   const [sent, setSent] = useState({}); // { 이름: { at, secs, category, title, status: sending|sent|failed, tries, shareGuardian } }
   const [opsSent, setOpsSent] = useState({}); // { 이름: at }
   const [extra, setExtra] = useState({}); // { 이름: [대화기록에 덧붙은 메시지] }

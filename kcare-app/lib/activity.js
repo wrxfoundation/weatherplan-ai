@@ -12,6 +12,8 @@ const clip = (s, n = 80) => {
   return v.length > n ? `${v.slice(0, n)}…` : v;
 };
 
+// 관제 방문관리에서 바꾼 칸 → 사람이 읽는 말 (stepIdx · viewed · followup 은 같이 따라오는 값이라 뺀다)
+const VISIT_OPS = { review: "검수", reviewedAt: "검수", sentAt: "보호자 리포트 발송", interimAt: "보호자 중간 알림", followups: "후속조치" };
 const ELDER_MARKS = { medSlots: "복약 체크", reordered: "건기식 재구매 부탁", msgPlayed: "마음사서함 메시지 청취" };
 
 // 기록하지 않는 동작 — 저장·동기화 내부 동작이거나, 결제 전 임시 상태이거나, 내용이 이미지라 큰 것이거나,
@@ -54,6 +56,18 @@ export function summarize(a) {
       return clip(p.text, 120) || null;
     case "audit":
       return `방문 기록 · ${clip(a.event?.label, 60)}`;
+    case "visitCheck":
+      return `방문 점검 · ${clip(String(a.key || "").replace(/^[^-]*-/, ""), 30)} ${a.done ? "완료" : "취소"}`;
+    case "visitNote":
+      return a.key ? `방문 항목 메모 · ${clip(String(a.key).replace(/^[^-]*-/, ""), 30)}` : "방문 총평 메모";
+    case "visitPhoto":
+      return "방문 사진 첨부";
+    case "visitOps":
+      return `관제 방문 처리 · ${[...new Set(Object.keys(a.patch || {}).map((k) => VISIT_OPS[k]).filter(Boolean))].join(" · ") || "기타"}`;
+    case "addOpsMessage":
+      return `관제 연락 · ${clip(p.from, 20)} — ${clip(p.text, 80)}`;
+    case "ackOpsMessage":
+      return `관제 연락 확인${a.reply ? ` · 답: ${clip(a.reply, 60)}` : ""}`;
     case "advanceVisit":
       return `방문 단계 → ${clip(a.to, 20)}`;
     case "patchVisit":

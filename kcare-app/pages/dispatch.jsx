@@ -511,6 +511,8 @@ export default function DispatchConsole() {
     concierge: STAFF_STATS.total,
     hospital: HOSPITALS_SEED.filter((h) => h.partner).length,
     wearable: FLEET.needsCheck,
+    // 관제 연락(컨시어지 '관제에 알리기') 중 확인 전 — 있으면 커뮤니케이션 메뉴에 숫자 (2026-10-02)
+    ...((state.opsMessages || []).some((m) => !m.ackAt) ? { comms: (state.opsMessages || []).filter((m) => !m.ackAt).length } : {}),
   };
   const sosUnread = sosOpen.some((i) => i.state === "new"); // 미확인 사건 — 사이드바 점등
 
@@ -728,6 +730,20 @@ export default function DispatchConsole() {
         onAct: () => dispatch({ type: "transitionRequest", id: r.id, to: "confirmed", note: "관제 확인 전화 완료 · 컨시어지 진행" }),
       })
     );
+  // 컨시어지 '관제에 알리기' — 확인 전인 것은 지금 처리할 일에 올린다 (2026-10-02). 확인하면 컨시어지 화면에 '관제 확인'.
+  (state.opsMessages || [])
+    .filter((m) => !m.ackAt)
+    .forEach((m) =>
+      actions.push({
+        id: `elder-ops-${m.id}`,
+        level: "high",
+        title: `관제 연락 — ${m.from}`,
+        meta: `${m.text} · ${new Date(m.at).toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit", hour12: false })}`,
+        act: "확인",
+        ticker: ["관제", `관제 연락 확인 — ${m.from}: ${m.text}`, "#8FA9CC"],
+        onAct: () => dispatch({ type: "ackOpsMessage", id: m.id, by: "관제" }),
+      })
+    );
   const LEVEL_ORDER = { critical: 0, high: 1, med: 2 };
   actions.sort((a, b) => LEVEL_ORDER[a.level] - LEVEL_ORDER[b.level]);
 
@@ -755,6 +771,7 @@ export default function DispatchConsole() {
     urgent: ["SOS", "대응", "환경"],
     dispatchG: ["배차", "동행", "예약", "브리핑"],
     care: ["복약", "리포트", "메시지", "어르신", "체크인", "일정"],
+    talk: ["관제 연락", "관제", "음성", "부탁", "메시지", "CS", "감사"],
     commerce: ["구매대행", "장바구니", "스토어", "옵션", "정산", "보험", "제안", "설정"],
   };
   const tickerGroup = TICKER_GROUPS[tickerFilter];
@@ -762,7 +779,7 @@ export default function DispatchConsole() {
   const renderTicker = (maxH) => (
     <>
       <div className="mt-2.5 flex flex-wrap gap-1.5">
-        {[["all", "전체"], ["urgent", "긴급"], ["dispatchG", "배차"], ["care", "케어"], ["commerce", "커머스"]].map(
+        {[["all", "전체"], ["urgent", "긴급"], ["dispatchG", "배차"], ["care", "케어"], ["talk", "소통"], ["commerce", "커머스"]].map(
           ([k, label]) => (
             <button
               key={k}

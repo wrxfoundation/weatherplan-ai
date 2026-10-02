@@ -7,6 +7,7 @@
 import { STATUS } from "./requests";
 import { fmtWon } from "./config";
 import { LIVE_ELDER } from "./ops-health";
+import { VISITS, visitDetail } from "./ops-mgmt";
 
 export const LIVE_TAG = "테스트 가구 1";
 export const LIVE_GUARDIAN = "김민수";
@@ -98,3 +99,55 @@ export function liveGuardian(g, state, account) {
     payMode: payText(ob),
   };
 }
+
+// ── 방문관리 (2026-10-02 관제 연동 4) ──
+// 김순자 님 오늘 방문 줄을 가구 기록으로 다시 만든다 — 컨시어지 앱의 체크인 · 21항목 점검 · 총평 · 사진 수 · 리포트,
+// 관제가 한 검수 · 보호자 발송 · 중간 알림 · 후속조치(visit.ops). 데모 줄의 예시 내용(메모 · 변화 · 요청)은 가져오지 않는다.
+const hhmm = (t) => (t ? new Date(Number(t) + KST).toISOString().slice(11, 16) : null);
+export const LIVE_VISIT_ID = (VISITS.find((x) => x.name === LIVE_ELDER) || VISITS[0]).id;
+
+export function liveVisit(base, state) {
+  if (!base || base.name !== LIVE_ELDER) return base;
+  const v = state?.visit || {};
+  const plan = state?.visitPlan || {};
+  const ops = v.ops || {};
+  const d = visitDetail({ ...base, status: "planned", followup: false });
+  const doneNames = new Set(Object.keys(v.checks || {}).map((k) => k.slice(k.indexOf("-") + 1)));
+  const pending = d.keys.filter((k) => !doneNames.has(k));
+  const gps = (v.audit || []).find((e) => e.kind === "gps");
+  const checkinAt = gps?.at || (plan.gpsAt ? Number(plan.gpsAt) || null : null);
+  const report = (state?.reports || [])[0] || null;
+  const done = !!report || plan.status === "done";
+  const active = !done && (!!v.checkedIn || !!checkinAt || doneNames.size > 0 || ["arrived", "recording"].includes(plan.status));
+  const status = done ? "done" : active ? "active" : "planned";
+  const followups = Array.isArray(ops.followups) ? ops.followups : [];
+  const notes = Object.entries(v.notes || {}).filter(([, t]) => t).map(([k, t]) => `${k.slice(k.indexOf("-") + 1)} — ${t}`);
+  return {
+    ...d,
+    live: true,
+    date: base.date,
+    status,
+    pending,
+    photos: v.photos || 0,
+    memo: v.memo || "",
+    itemNotes: notes,
+    changes: [],
+    request: null,
+    checkin: checkinAt ? { at: hhmm(checkinAt), gps: "GPS 확인 · 컨시어지 앱 체크인" } : status === "active" ? { at: "—", gps: "체크인 기록 없이 점검 시작" } : null,
+    completedAt: report ? hhmm(report.at) : null,
+    reportNote: report?.note || null,
+    review: done ? ops.review || "검수 대기" : active ? "수행 중" : "—",
+    stepIdx: done ? (ops.stepIdx ?? 3) : active ? 1 : 0,
+    viewed: ops.viewed || "—",
+    reviewedAt: ops.reviewedAt || null,
+    sentAt: ops.sentAt || null,
+    interimAt: ops.interimAt || null,
+    followups,
+    followup: followups.length > 0,
+    memoLine: status === "planned" ? "컨시어지 체크인 전" : status === "active" ? `점검 ${d.keys.length - pending.length}/${d.keys.length}` : "리포트 도착 · 관제 검수",
+  };
+}
+
+// 관제 방문 상세에서 바꾼 것 중 관제 몫만 가구 기록으로 (점검 · 사진 · 메모 · 체크인은 컨시어지 몫)
+const OPS_KEYS = ["review", "stepIdx", "reviewedAt", "sentAt", "viewed", "interimAt", "followups", "followup"];
+export const visitOpsPatch = (p) => Object.fromEntries(Object.entries(p || {}).filter(([k]) => OPS_KEYS.includes(k)));

@@ -1,6 +1,9 @@
 // 방문관리 — 월 1회 2인 1조 방문 일정부터 21항목 점검 · 결과보고까지 (요청서 11절 · 시안 방문관리).
 // 배차 완료로 끝나지 않는다: 수행 → 결과입력 → 관제검수 → 보호자 보고까지 상태가 이어진다 (Visits/VisitDetail).
 import { useState } from "react";
+import { useAppState } from "../../lib/state";
+import { useAuth } from "../../lib/auth";
+import { LIVE_TAG, liveVisit, visitOpsPatch } from "../../lib/live-household";
 import { Panel, PanelHead, Stat, Pill, Btn, Field, Toggle, Drawer, Note, Empty } from "./ui";
 import Icon from "../icons";
 import { ROSTERS } from "../../lib/rosters";
@@ -18,7 +21,11 @@ const CYCLES = ["월 1회", "월 2회", "주 1회"];
 const rank = (v) => (v.status === "active" ? 0 : v.status === "done" && v.followup && v.review !== "검수 완료" ? 1 : v.status === "planned" ? 2 : 3);
 
 export default function Visits({ openProfile }) {
-  const [visits, setVisits] = useState(() => VISITS.map((v) => ({ ...visitDetail(v), date: TODAY })));
+  const [baseVisits, setVisits] = useState(() => VISITS.map((v) => ({ ...visitDetail(v), date: TODAY })));
+  // 테스트 계정이면 김순자 님 방문 줄을 가구 기록(컨시어지 앱 점검 · 관제 검수)으로 다시 만든다 (2026-10-02)
+  const { state: appState, dispatch } = useAppState() || {};
+  const liveOn = !!useAuth().user?.household;
+  const visits = liveOn ? baseVisits.map((v) => liveVisit(v, appState)) : baseVisits;
   const [sel, setSel] = useState("V-0922-14");
   const [q, setQ] = useState("");
   const [date, setDate] = useState(TODAY);
@@ -49,7 +56,15 @@ export default function Visits({ openProfile }) {
     .filter((v) => team === ALL_TEAM || v.team === team)
     .sort((a, b) => (byTime ? 0 : rank(a) - rank(b)) || a.time.localeCompare(b.time));
   const cur = visits.find((v) => v.id === sel) || list[0];
-  const patch = (id, p) => setVisits((vs) => vs.map((v) => (v.id === id ? { ...v, ...p } : v)));
+  const patch = (id, p) => {
+    // 실제 줄 — 관제 몫(검수 · 발송 · 중간 알림 · 후속조치)만 가구 기록으로. 점검 · 사진 · 메모는 컨시어지 앱이 쓴다.
+    if (liveOn && visits.find((v) => v.id === id)?.live) {
+      const ops = visitOpsPatch(p);
+      if (Object.keys(ops).length) dispatch?.({ type: "visitOps", patch: ops });
+      return;
+    }
+    setVisits((vs) => vs.map((v) => (v.id === id ? { ...v, ...p } : v)));
+  };
 
   const register = () => {
     const like = VISITS.find((v) => v.pri === form.pri) || VISITS[0];
@@ -95,6 +110,12 @@ export default function Visits({ openProfile }) {
       </Panel>
 
       {msg && <Note tone="ok">{msg}</Note>}
+      {liveOn && (
+        <Note tone="ok">
+          <b>{LIVE_TAG}</b> — 김순자 님 방문은 실제 기록입니다: 컨시어지 앱의 체크인 · 21가지 점검 · 총평 · 사진, 관제의 검수 · 보호자 발송.
+          점검은 컨시어지 앱에서 하고, 여기서는 실시간으로 봅니다. 나머지 방문은 예시입니다.
+        </Note>
+      )}
 
       <div className="grid gap-4 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">
         <Panel>
@@ -116,9 +137,12 @@ export default function Visits({ openProfile }) {
                 >
                   <span className="font-num w-[44px] shrink-0 pt-0.5 text-[13px] font-bold text-navy">{v.time}</span>
                   <span className="min-w-0 flex-1">
-                    <span className="block text-[14px] font-bold text-navy">{v.name}</span>
+                    <span className="flex items-center gap-1.5 text-[14px] font-bold text-navy">
+                      {v.name}
+                      {v.live ? <Pill tone="ok">실제</Pill> : liveOn ? <span className="text-[11px] font-medium text-muted">예시</span> : null}
+                    </span>
                     <span className="block truncate text-[12px] text-muted">
-                      {v.team} · {v.status === "active" ? `점검 ${done}/${v.keys.length}${v.loc === "hospital" ? " · 병실" : ""}` : v.memo}
+                      {v.team} · {v.live ? v.memoLine : v.status === "active" ? `점검 ${done}/${v.keys.length}${v.loc === "hospital" ? " · 병실" : ""}` : v.memo}
                     </span>
                   </span>
                   <Pill tone={VISIT_STATE[pk].tone}>{VISIT_STATE[pk].label}</Pill>
