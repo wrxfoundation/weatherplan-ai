@@ -1,6 +1,6 @@
 {
  "version": "0.1.0",
- "generated_at": "2026-09-13",
+ "generated_at": "2026-10-02",
  "license": "CC BY 4.0",
  "attribution": "한국요괴지도 (Korean Yokai Map)",
  "count": 163,
@@ -682,11 +682,12 @@
     "막내",
     "내기"
    ],
-   "art_hint": "a young man whose body is only the left half — one eye, one arm, one leg — standing upright and steady on a village path with a heavy grain sack over his shoulder, two ordinary brothers looking back at him, low hills and thatched roofs",
+   "art_hint": "a sturdy cheerful young man whose body is only the left half — one eye, one arm, one leg — as the folktale tells, balancing easily on his single leg with a heavy grain sack over his shoulder on a village path, two ordinary brothers looking back at him, low hills and thatched roofs, drawn plainly as a folktale figure with no wound and no blood",
    "art_anchors": [
     "costume_male",
     "landscape"
    ],
+   "art_modifier": "vermilion and malachite, a single human figure in hanbok with no animal or plant parts",
    "habitat": [
     "마을",
     "장터",
@@ -721,10 +722,11 @@
    "updated_at": "2026-09-13",
    "sensitivity": null,
    "art": {
-    "status": "pending",
-    "direction": "minhwa-v1",
+    "status": "generated",
+    "direction": "minhwa-v2",
     "file": null,
-    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
+    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
+    "job_id": "fc2acdea-b4c3-4b4f-9306-5d9593ba4578"
    }
   },
   {
@@ -842,11 +844,11 @@
     "문에 붙이는 이름",
     "진지왕의 혼"
    ],
-   "art_hint": "a young man in Silla court dress standing calmly on a newly built stone bridge at dawn, a crowd of small indistinct shadowy figures dispersing into the mist behind him, a strip of paper with writing pasted on a wooden gate post in the foreground",
+   "art_hint": "a young man in early Silla dress — a hip-length wrap jacket belted at the waist over wide trousers gathered at the ankle, a small peaked cap tied under the chin — standing calmly on a newly built stone bridge at dawn, a crowd of small indistinct shadowy figures dispersing into the mist behind him, a blank strip of paper pasted on a wooden gate post in the foreground",
    "art_anchors": [
-    "costume_male",
     "architecture"
    ],
+   "art_modifier": "ochre and vermilion accents, the dokkaebi present only as small indistinct shadows in the mist, the young man himself plainly human with no club",
    "habitat": [
     "다리",
     "문간",
@@ -896,10 +898,11 @@
    "updated_at": "2026-09-13",
    "sensitivity": null,
    "art": {
-    "status": "pending",
-    "direction": "minhwa-v1",
+    "status": "generated",
+    "direction": "minhwa-v2",
     "file": null,
-    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
+    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
+    "job_id": "4ee2fe9f-51c7-4b3b-888c-31bd8703f5ab"
    }
   },
   {
@@ -1982,10 +1985,11 @@
    },
    "updated_at": "2026-09-13",
    "art": {
-    "status": "pending",
-    "direction": "minhwa-v1",
+    "status": "generated",
+    "direction": "minhwa-v2",
     "file": null,
-    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
+    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
+    "job_id": "d4f8b073-eb13-4add-b4aa-5717a87aaa3d"
    }
   },
   {
@@ -2160,6 +2164,7 @@
     "landscape",
     "architecture"
    ],
+   "art_modifier": "deep vermilion accents, a monstrous bird with nothing human about it, Korean minhwa animal painting conventions",
    "habitat": [
     "산길",
     "초가지붕",
@@ -2198,10 +2203,11 @@
    "updated_at": "2026-09-13",
    "sensitivity": null,
    "art": {
-    "status": "pending",
-    "direction": "minhwa-v1",
+    "status": "generated",
+    "direction": "minhwa-v2",
     "file": null,
-    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
+    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
+    "job_id": "cdd1026b-b59c-4279-9869-8093b1f7bdeb"
    }
   },
   {
@@ -2226,7 +2232,7 @@
     "밤새 따라옴",
     "문밖의 소리"
    ],
-   "art_hint": "a moonlit country path between burial mounds, a man hurrying away with a wrapped bundle under his arm, a pale figure dragging itself along the path far behind him, low mist, bare trees, no faces visible",
+   "art_hint": "a moonlit country path among low grassy mounds, a man in hanbok hurrying away with a wrapped bundle under his arm and glancing back over his shoulder, far behind him on the path a faint pale shape following through the mist, bare trees, no faces visible",
    "art_anchors": [
     "costume_male",
     "landscape"
@@ -2271,10 +2277,11 @@
    },
    "updated_at": "2026-09-13",
    "art": {
-    "status": "pending",
-    "direction": "minhwa-v1",
+    "status": "generated",
+    "direction": "minhwa-v2",
     "file": null,
-    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
+    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
+    "job_id": "9110d1b1-cb77-4510-b2d3-7ebb7a14abf3"
    }
   },
   {
@@ -4020,11 +4027,12 @@
     "여우 둔갑",
     "배신"
    ],
-   "art_hint": "a two-storey timber gate tower newly raised at night beside a temple wall, scaffolding still standing, a fox slipping away along the base of the wall into darkness, lantern light on fresh-cut timber, no crowd",
+   "art_hint": "a two-storey timber gate tower newly raised at night beside a temple wall, scaffolding still standing, a fox slipping away along the base of the wall into darkness, pine-torch light on fresh-cut timber, no crowd",
    "art_anchors": [
     "architecture",
     "landscape"
    ],
+   "art_modifier": "ochre and vermilion accents, night, the dokkaebi shown only as the fox slipping away, no dokkaebi figure and no club",
    "habitat": [
     "절 어귀",
     "누문",
@@ -4071,10 +4079,11 @@
    "updated_at": "2026-09-13",
    "sensitivity": null,
    "art": {
-    "status": "pending",
-    "direction": "minhwa-v1",
+    "status": "generated",
+    "direction": "minhwa-v2",
     "file": null,
-    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
+    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
+    "job_id": "9d825b3c-d1ed-4f07-acf3-e24188d03408"
    }
   },
   {
@@ -5013,10 +5022,11 @@
    "updated_at": "2026-09-12",
    "sensitivity": null,
    "art": {
-    "status": "pending",
-    "direction": "minhwa-v1",
+    "status": "generated",
+    "direction": "minhwa-v2",
     "file": null,
-    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
+    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
+    "job_id": "36f5f6c7-dd7f-4380-85d5-454b1ab4d287"
    }
   },
   {
@@ -5091,10 +5101,11 @@
    "updated_at": "2026-09-12",
    "sensitivity": null,
    "art": {
-    "status": "pending",
-    "direction": "minhwa-v1",
+    "status": "generated",
+    "direction": "minhwa-v2",
     "file": null,
-    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
+    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
+    "job_id": "2dce1f91-e44e-4a2d-be02-4d8f789fbb81"
    }
   },
   {
@@ -5353,10 +5364,11 @@
    },
    "updated_at": "2026-09-12",
    "art": {
-    "status": "pending",
-    "direction": "minhwa-v1",
+    "status": "generated",
+    "direction": "minhwa-v2",
     "file": null,
-    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
+    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
+    "job_id": "e48e3afa-87e1-4ef5-b42e-06b6ca72d555"
    }
   },
   {
@@ -5501,6 +5513,7 @@
     "objects",
     "architecture"
    ],
+   "art_modifier": "aged ochre and brown, the jar itself as the subject, no club",
    "habitat": [
     "고방",
     "부엌",
@@ -5534,10 +5547,11 @@
    "updated_at": "2026-09-12",
    "sensitivity": null,
    "art": {
-    "status": "pending",
-    "direction": "minhwa-v1",
+    "status": "generated",
+    "direction": "minhwa-v2",
     "file": null,
-    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
+    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
+    "job_id": "48cf336c-b474-441b-92a2-1a2bdb153ada"
    }
   },
   {
@@ -5726,11 +5740,12 @@
     "울음",
     "풍랑"
    ],
-   "art_hint": "a small pale child-like sea creature with smooth skin and dark eyes caught in a fisherman's net on a wet rocky shore at dawn, the fisherman in coarse hemp clothes hesitating with the net half open, grey sea and a pine-covered headland behind",
+   "art_hint": "a pale sea creature with an almost human face, large dark eyes and webbed hands, its lower half hidden in the folds of a fisherman's net on a wet rocky shore at dawn, the fisherman in coarse hemp clothes hesitating with the net half open as if to let it go, grey sea and a pine-covered headland behind, no fish tail and no seashells",
    "art_anchors": [
     "costume_male",
     "landscape"
    ],
+   "art_modifier": "azurite and malachite wash, grey sea, no dragon and no serpent",
    "habitat": [
     "동해안",
     "갯바위",
@@ -5778,10 +5793,11 @@
    "updated_at": "2026-09-12",
    "sensitivity": null,
    "art": {
-    "status": "pending",
-    "direction": "minhwa-v1",
+    "status": "generated",
+    "direction": "minhwa-v2",
     "file": null,
-    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
+    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
+    "job_id": "1a300843-f2a5-4216-8a71-60b83f9c4d9a"
    }
   },
   {
@@ -5885,10 +5901,11 @@
     "호동",
     "찢김"
    ],
-   "art_hint": "a large war drum on a wooden stand inside a dim armoury, its hide split open in a long tear, a curved horn trumpet snapped beside it, spears racked along the wall, cold dawn light through a doorway",
+   "art_hint": "a large Korean war drum on a wooden stand inside a dim armoury, its plain undecorated hide head split open in a long tear, no comma-swirl crest on the drumhead, a curved horn trumpet snapped beside it, spears racked along the wall, cold dawn light through a doorway",
    "art_anchors": [
     "architecture"
    ],
+   "art_modifier": "aged ochre and brown, the broken drum and horn as the subject, no club",
    "habitat": [
     "무기고",
     "성"
@@ -5922,10 +5939,11 @@
    "updated_at": "2026-09-12",
    "sensitivity": null,
    "art": {
-    "status": "pending",
-    "direction": "minhwa-v1",
+    "status": "generated",
+    "direction": "minhwa-v2",
     "file": null,
-    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
+    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
+    "job_id": "8803074e-9f71-48ce-bfd9-9bb87339404a"
    }
   },
   {
@@ -5950,7 +5968,7 @@
     "신원",
     "부임 수령"
    ],
-   "art_hint": "two young women in white mourning hanbok standing side by side in the dark doorway of a provincial magistrate's hall at night, water still dripping from their sleeves onto the wooden floor, a low desk and a guttering oil lamp before them",
+   "art_hint": "two young women in white mourning hanbok standing side by side in the dark doorway of a provincial magistrate's hall at night, each with her hair in a single long braid down the back tied with a red daenggi ribbon, faces calm and sorrowful, water still dripping from their sleeves onto the wooden floor, a low desk and a guttering oil lamp before them",
    "art_anchors": [
     "costume_female",
     "architecture"
@@ -5995,10 +6013,11 @@
    "updated_at": "2026-09-12",
    "sensitivity": null,
    "art": {
-    "status": "pending",
-    "direction": "minhwa-v1",
+    "status": "generated",
+    "direction": "minhwa-v2",
     "file": null,
-    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
+    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
+    "job_id": "128a8c25-44de-4f8f-ad6c-7dabfb986d10"
    }
   },
   {
@@ -6621,11 +6640,12 @@
     "배신 화소",
     "급소"
    ],
-   "art_hint": "a huge shaggy hornless beast slumped at the bottom of a vast underground cavern lit by one hanging lamp, a young man in Korean lamellar armour with a straight sword standing over it, a woman in hanbok holding a rope that climbs into darkness",
+   "art_hint": "a huge shaggy hornless beast slumped at the bottom of a vast underground cavern lit by a single oil-dish lamp on a rock ledge, a young man in hanbok with his trousers bound by leg wrappings and a straight double-edged sword in hand standing over it, a woman in hanbok holding a rope that climbs into darkness",
    "art_anchors": [
     "costume_male",
     "landscape"
    ],
+   "art_modifier": "malachite green and ink wash, a deep underground granite cavern",
    "habitat": [
     "동굴",
     "지하국",
@@ -6661,10 +6681,11 @@
    "updated_at": "2026-09-12",
    "sensitivity": null,
    "art": {
-    "status": "pending",
-    "direction": "minhwa-v1",
+    "status": "generated",
+    "direction": "minhwa-v2",
     "file": null,
-    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
+    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
+    "job_id": "99fab179-1c39-43fc-8a10-0fdc7ec13af0"
    }
   },
   {
@@ -7107,10 +7128,11 @@
    "updated_at": "2026-09-13",
    "sensitivity": null,
    "art": {
-    "status": "pending",
-    "direction": "minhwa-v1",
+    "status": "generated",
+    "direction": "minhwa-v2",
     "file": null,
-    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
+    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
+    "job_id": "bd6bda29-c8fa-4922-beac-ddbf7ff26cb3"
    }
   },
   {
@@ -7222,6 +7244,7 @@
     "architecture",
     "landscape"
    ],
+   "art_modifier": "aged ochre and brown, the flute itself as the subject, no club",
    "habitat": [
     "동해",
     "감은사",
@@ -7279,10 +7302,11 @@
    "updated_at": "2026-09-12",
    "sensitivity": null,
    "art": {
-    "status": "pending",
-    "direction": "minhwa-v1",
+    "status": "generated",
+    "direction": "minhwa-v2",
     "file": null,
-    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
+    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
+    "job_id": "73d2eb88-5147-4d49-b298-6913cbfcb3e4"
    }
   },
   {
@@ -7446,6 +7470,7 @@
     "costume_male",
     "landscape"
    ],
+   "art_modifier": "vermilion and malachite, the boy fully human, the great tree his only kin",
    "habitat": [
     "홍수",
     "산꼭대기"
@@ -7484,10 +7509,11 @@
    "updated_at": "2026-09-12",
    "sensitivity": null,
    "art": {
-    "status": "pending",
-    "direction": "minhwa-v1",
+    "status": "generated",
+    "direction": "minhwa-v2",
     "file": null,
-    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
+    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
+    "job_id": "8faede7a-6d24-4da8-b209-c246a2dbf1c5"
    }
   },
   {
@@ -7848,10 +7874,11 @@
    "updated_at": "2026-09-12",
    "sensitivity": null,
    "art": {
-    "status": "pending",
-    "direction": "minhwa-v1",
+    "status": "generated",
+    "direction": "minhwa-v2",
     "file": null,
-    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
+    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
+    "job_id": "cf99eb0f-9bc1-4ce6-9466-c031e5478654"
    }
   },
   {
@@ -8069,7 +8096,7 @@
     "무고",
     "깃발 행렬"
    ],
-   "art_hint": "a night procession of villagers carrying tall coloured flags and paper flower lanterns along a narrow alley toward a small tile-roofed shrine, a general's portrait visible inside the open door, lantern light on plastered walls",
+   "art_hint": "a night procession of villagers carrying tall coloured flags and cheongsa-chorong lanterns of blue and red silk hung from wooden poles along a narrow alley toward a small tile-roofed shrine, a general's portrait visible inside the open door, warm light on plastered walls",
    "art_anchors": [
     "costume_male",
     "architecture",
@@ -8125,10 +8152,11 @@
    },
    "updated_at": "2026-09-12",
    "art": {
-    "status": "pending",
-    "direction": "minhwa-v1",
+    "status": "generated",
+    "direction": "minhwa-v2",
     "file": null,
-    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
+    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
+    "job_id": "19224d2d-62bd-4015-aea6-b2b2110ad3c9"
    }
   },
   {
@@ -8198,10 +8226,11 @@
    "updated_at": "2026-09-12",
    "sensitivity": null,
    "art": {
-    "status": "pending",
-    "direction": "minhwa-v1",
+    "status": "generated",
+    "direction": "minhwa-v2",
     "file": null,
-    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
+    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
+    "job_id": "36a8042f-5bfe-4786-8d37-85536537548a"
    }
   },
   {
@@ -8370,6 +8399,7 @@
     "costume_male",
     "landscape"
    ],
+   "art_modifier": "deep vermilion accents, an ordinary loyal dog with no transformation, Korean minhwa animal painting conventions",
    "habitat": [
     "들",
     "냇가",
@@ -8419,10 +8449,11 @@
    "updated_at": "2026-09-12",
    "sensitivity": null,
    "art": {
-    "status": "pending",
-    "direction": "minhwa-v1",
+    "status": "generated",
+    "direction": "minhwa-v2",
     "file": null,
-    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
+    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
+    "job_id": "bbf2f99d-865b-4aeb-b993-085784416a6d"
    }
   },
   {
@@ -8646,10 +8677,11 @@
     "삼재",
     "대문"
    ],
-   "art_hint": "a woodblock-style talisman print of a hawk with three heads and a single leg, drawn in flat cinnabar and black ink on coarse yellowed paper, pasted on a weathered wooden gate plank",
+   "art_hint": "a talisman sheet stamped from a carved block showing a hawk with three heads and a single leg, in flat cinnabar and black ink on coarse yellowed paper, no characters or writing on the sheet, only the bird, pasted on a weathered wooden gate plank",
    "art_anchors": [
     "architecture"
    ],
+   "art_modifier": "cinnabar and black ink on yellowed paper, Korean talisman print conventions",
    "habitat": [
     "대문",
     "기둥"
@@ -8685,10 +8717,11 @@
    "updated_at": "2026-09-12",
    "sensitivity": null,
    "art": {
-    "status": "pending",
-    "direction": "minhwa-v1",
+    "status": "generated",
+    "direction": "minhwa-v2",
     "file": null,
-    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
+    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
+    "job_id": "aacee500-5ba6-42a5-96b4-b39934bbdc47"
    }
   },
   {
@@ -8769,7 +8802,7 @@
     "두꺼비와 짝",
     "세 다리"
    ],
-   "art_hint": "a three-legged crow inside a large red sun disc painted on a stone tomb ceiling, surrounded by flowing cloud scrolls in mineral pigment, the paint worn and chalky, a smaller moon disc with a toad at the opposite corner",
+   "art_hint": "a three-legged crow with a feathered crest on its head standing inside a large red sun disc, painted on a stone tomb ceiling in the manner of Goguryeo tomb murals, surrounded by flowing cloud scrolls in mineral pigment, the paint worn and chalky, a smaller moon disc with a toad at the opposite corner",
    "art_anchors": [],
    "habitat": [
     "해",
@@ -8807,10 +8840,11 @@
    "updated_at": "2026-09-12",
    "sensitivity": null,
    "art": {
-    "status": "pending",
-    "direction": "minhwa-v1",
+    "status": "generated",
+    "direction": "minhwa-v2",
     "file": null,
-    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
+    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
+    "job_id": "d84716ea-50e9-4c9f-b3bc-ff3f026cd674"
    }
   },
   {
@@ -8834,11 +8868,12 @@
     "다리 셋",
     "근거 희박"
    ],
-   "art_hint": "a lean three-legged dog with bristling dark fur standing rigid in a moonlit courtyard, hackles raised, staring at a pair of woman's shoes left empty on the stone step, low mist across the ground",
+   "art_hint": "a lean three-legged dog with bristling dark fur standing rigid in a moonlit courtyard, hackles raised, staring at a pair of embroidered Korean silk shoes with gently upturned toes left empty on the stone step, low mist across the ground",
    "art_anchors": [
     "landscape",
     "architecture"
    ],
+   "art_modifier": "deep vermilion accents, a plain dog with three legs and no transformation, Korean minhwa animal painting conventions",
    "habitat": [
     "집 마당",
     "고갯길"
@@ -8873,10 +8908,11 @@
    "updated_at": "2026-09-12",
    "sensitivity": null,
    "art": {
-    "status": "pending",
-    "direction": "minhwa-v1",
+    "status": "generated",
+    "direction": "minhwa-v2",
     "file": null,
-    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
+    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
+    "job_id": "060f5ebe-ef11-4bee-8be9-1a7f1e4bb76e"
    }
   },
   {
@@ -9136,10 +9172,11 @@
    "updated_at": "2026-09-12",
    "sensitivity": null,
    "art": {
-    "status": "pending",
-    "direction": "minhwa-v1",
+    "status": "generated",
+    "direction": "minhwa-v2",
     "file": null,
-    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
+    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
+    "job_id": "a16e64f6-7459-4367-b48a-59a2eef2cf71"
    }
   },
   {
@@ -9489,8 +9526,9 @@
     "강서대묘",
     "현무"
    ],
-   "art_hint": "four mineral-pigment wall paintings shown together — a blue dragon, a white tiger, a red bird, and a tortoise entwined with a snake — each on a dark plastered tomb wall with flowing cloud scrolls between them",
+   "art_hint": "four mineral-pigment wall paintings in the manner of the Goguryeo Gangseo Great Tomb murals shown together — a blue dragon, a white tiger, a red bird, and a tortoise entwined with a snake — each on a dark plastered tomb wall with flowing cloud scrolls between them",
    "art_anchors": [],
+   "art_modifier": "mineral pigment on dark plaster, Goguryeo tomb mural conventions",
    "habitat": [
     "고분 널방",
     "왕릉"
@@ -9523,10 +9561,11 @@
    "updated_at": "2026-09-12",
    "sensitivity": null,
    "art": {
-    "status": "pending",
-    "direction": "minhwa-v1",
+    "status": "generated",
+    "direction": "minhwa-v2",
     "file": null,
-    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
+    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
+    "job_id": "80e07670-1c00-4b59-8be4-02083ad6eed9"
    }
   },
   {
@@ -9921,10 +9960,11 @@
    "updated_at": "2026-09-12",
    "sensitivity": null,
    "art": {
-    "status": "pending",
-    "direction": "minhwa-v1",
+    "status": "generated",
+    "direction": "minhwa-v2",
     "file": null,
-    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
+    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
+    "job_id": "d12f27b7-e639-4f39-bbce-eef81b652df1"
    }
   },
   {
@@ -10684,11 +10724,12 @@
     "어린 넋",
     "금기"
    ],
-   "art_hint": "a small brass hand-bell and a bundle of white paper strips on a low shrine table in a dim room, a child-sized empty cushion beside it, one candle burning, no figure",
+   "art_hint": "a cluster of small brass shaman bells on a short wooden handle and a bundle of white paper strips on a low shrine table in a dim room, a child-sized empty cushion beside it, one candle burning, no figure",
    "art_anchors": [
     "objects",
     "architecture"
    ],
+   "art_modifier": "pale ink wash, thin even brush lines, no figure — the child present only as the empty cushion",
    "habitat": [
     "신당",
     "무당 집"
@@ -10726,10 +10767,11 @@
    },
    "updated_at": "2026-09-12",
    "art": {
-    "status": "pending",
-    "direction": "minhwa-v1",
+    "status": "generated",
+    "direction": "minhwa-v2",
     "file": null,
-    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
+    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
+    "job_id": "fe7dd040-78ac-445a-bf95-dfd0efc16b05"
    }
   },
   {
@@ -10988,10 +11030,11 @@
    "updated_at": "2026-09-12",
    "sensitivity": null,
    "art": {
-    "status": "pending",
-    "direction": "minhwa-v1",
+    "status": "generated",
+    "direction": "minhwa-v2",
     "file": null,
-    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
+    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
+    "job_id": "54b8136b-1aa7-4d72-a253-6e68659ba72a"
    }
   },
   {
@@ -11146,7 +11189,7 @@
     "이류혼",
     "속담"
    ],
-   "art_hint": "a small mole in a tiny hemp coat standing at the foot of a weathered stone buddha in a field at dusk, the sun low behind drifting cloud, wind bending the grass, the buddha's base undermined by fresh earth",
+   "art_hint": "a small mole in a tiny hemp coat standing at the foot of a tall weathered Korean field mireuk — a granite standing buddha with a flat stone hat, bare stone with no red bib and no knitted cap — at dusk, the sun low behind drifting cloud, wind bending the grass, the buddha's base undermined by fresh earth",
    "art_anchors": [
     "landscape"
    ],
@@ -11189,10 +11232,11 @@
    "updated_at": "2026-09-12",
    "sensitivity": null,
    "art": {
-    "status": "pending",
-    "direction": "minhwa-v1",
+    "status": "generated",
+    "direction": "minhwa-v2",
     "file": null,
-    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
+    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
+    "job_id": "1c55b891-65e8-4b9a-9a2d-54758cfa5a9b"
    }
   },
   {
@@ -11494,10 +11538,11 @@
     "기운 빼앗김",
     "지리"
    ],
-   "art_hint": "a small luminous pale bead held between two fingertips in darkness, a faint fox-shaped shadow receding behind a stone wall, a boy's ink-stained book bag fallen on a frosted path, moonlight",
+   "art_hint": "a small luminous pale bead held between two fingertips in darkness, a faint fox-shaped shadow receding behind a stone wall, a boy's cloth-wrapped bundle of books fallen on a frosted path, moonlight",
    "art_anchors": [
     "landscape"
    ],
+   "art_modifier": "aged ochre and brown, the bead itself as the subject, no club",
    "habitat": [
     "서당길",
     "고갯길",
@@ -11539,10 +11584,11 @@
    "updated_at": "2026-09-12",
    "sensitivity": null,
    "art": {
-    "status": "pending",
-    "direction": "minhwa-v1",
+    "status": "generated",
+    "direction": "minhwa-v2",
     "file": null,
-    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)"
+    "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
+    "job_id": "b177f91b-0a4f-4f0a-a47c-abe3d9a48611"
    }
   },
   {

@@ -685,7 +685,7 @@
         "신원",
         "부임 수령"
       ],
-      "art_hint": "two young women in white mourning hanbok standing side by side in the dark doorway of a provincial magistrate's hall at night, water still dripping from their sleeves onto the wooden floor, a low desk and a guttering oil lamp before them",
+      "art_hint": "two young women in white mourning hanbok standing side by side in the dark doorway of a provincial magistrate's hall at night, each with her hair in a single long braid down the back tied with a red daenggi ribbon, faces calm and sorrowful, water still dripping from their sleeves onto the wooden floor, a low desk and a guttering oil lamp before them",
       "art_anchors": [
         "costume_female",
         "architecture"
@@ -752,11 +752,12 @@
         "어린 넋",
         "금기"
       ],
-      "art_hint": "a small brass hand-bell and a bundle of white paper strips on a low shrine table in a dim room, a child-sized empty cushion beside it, one candle burning, no figure",
+      "art_hint": "a cluster of small brass shaman bells on a short wooden handle and a bundle of white paper strips on a low shrine table in a dim room, a child-sized empty cushion beside it, one candle burning, no figure",
       "art_anchors": [
         "objects",
         "architecture"
       ],
+      "art_modifier": "pale ink wash, thin even brush lines, no figure — the child present only as the empty cushion",
       "habitat": [
         "신당",
         "무당 집"
@@ -881,7 +882,7 @@
         "밤새 따라옴",
         "문밖의 소리"
       ],
-      "art_hint": "a moonlit country path between burial mounds, a man hurrying away with a wrapped bundle under his arm, a pale figure dragging itself along the path far behind him, low mist, bare trees, no faces visible",
+      "art_hint": "a moonlit country path among low grassy mounds, a man in hanbok hurrying away with a wrapped bundle under his arm and glancing back over his shoulder, far behind him on the path a faint pale shape following through the mist, bare trees, no faces visible",
       "art_anchors": [
         "costume_male",
         "landscape"

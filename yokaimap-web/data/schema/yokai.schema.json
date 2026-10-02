@@ -124,6 +124,11 @@
         "enum": ["costume_female", "costume_male", "architecture", "landscape", "objects"]
       }
     },
+    "art_modifier": {
+      "type": "string",
+      "minLength": 10,
+      "description": "이 개체에만 적용할 분류 수식(영문). 생략하면 direction.json의 category_modifiers 기본값을 쓴다. art_anchors와 같은 이유로 둔다 — 도깨비 분류 수식은 \"jeogori·topknot·club\"을 강제하므로, 도깨비를 부리는 사람(비형랑)이나 인물이 없는 컷(길달)에 곤봉 든 도깨비가 끼어든다. 그런 개체만 덮어쓴다."
+    },
     "habitat": {
       "type": "array",
       "items": {

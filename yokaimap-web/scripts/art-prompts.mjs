@@ -44,7 +44,8 @@ export function promptFor(entry) {
     dir.style,
     dir.exclude_japanese.prompt,
     dir.exclude_chinese.prompt,
-    dir.category_modifiers[entry.category] ?? '',
+    // 분류 수식도 앵커와 같은 이유로 개체가 이긴다(art_modifier).
+    entry.art_modifier ?? dir.category_modifiers[entry.category] ?? '',
     dir.composition.plate,
     dir.constraints_general,
   ]

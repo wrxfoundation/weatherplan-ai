@@ -799,11 +799,12 @@
         "배신 화소",
         "급소"
       ],
-      "art_hint": "a huge shaggy hornless beast slumped at the bottom of a vast underground cavern lit by one hanging lamp, a young man in Korean lamellar armour with a straight sword standing over it, a woman in hanbok holding a rope that climbs into darkness",
+      "art_hint": "a huge shaggy hornless beast slumped at the bottom of a vast underground cavern lit by a single oil-dish lamp on a rock ledge, a young man in hanbok with his trousers bound by leg wrappings and a straight double-edged sword in hand standing over it, a woman in hanbok holding a rope that climbs into darkness",
       "art_anchors": [
         "costume_male",
         "landscape"
       ],
+      "art_modifier": "malachite green and ink wash, a deep underground granite cavern",
       "habitat": [
         "동굴",
         "지하국",

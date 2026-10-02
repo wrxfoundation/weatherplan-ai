@@ -1988,6 +1988,285 @@
         "date": "2026-09-12",
         "result": "pass"
       }
+    },
+    {
+      "index": 133,
+      "kind": "plate",
+      "id": "kr-banjjogi",
+      "target": "public/img/yokai/banjjogi.webp",
+      "aspect": "4:5",
+      "job_id": "fc2acdea-b4c3-4b4f-9306-5d9593ba4578",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_010233_fc2acdea-b4c3-4b4f-9306-5d9593ba4578.png"
+    },
+    {
+      "index": 134,
+      "kind": "plate",
+      "id": "kr-bihyeongnang",
+      "target": "public/img/yokai/bihyeongnang.webp",
+      "aspect": "4:5",
+      "job_id": "4ee2fe9f-51c7-4b3b-888c-31bd8703f5ab",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_010233_4ee2fe9f-51c7-4b3b-888c-31bd8703f5ab.png"
+    },
+    {
+      "index": 135,
+      "kind": "plate",
+      "id": "kr-dajagu-halmi",
+      "target": "public/img/yokai/dajagu-halmi.webp",
+      "aspect": "4:5",
+      "job_id": "d4f8b073-eb13-4add-b4aa-5717a87aaa3d",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_010442_d4f8b073-eb13-4add-b4aa-5717a87aaa3d.png"
+    },
+    {
+      "index": 136,
+      "kind": "plate",
+      "id": "kr-datbal-goemul",
+      "target": "public/img/yokai/datbal-goemul.webp",
+      "aspect": "4:5",
+      "job_id": "cdd1026b-b59c-4279-9869-8093b1f7bdeb",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_010233_cdd1026b-b59c-4279-9869-8093b1f7bdeb.png"
+    },
+    {
+      "index": 137,
+      "kind": "plate",
+      "id": "kr-deokdaegol-sicheong",
+      "target": "public/img/yokai/deokdaegol-sicheong.webp",
+      "aspect": "4:5",
+      "job_id": "9110d1b1-cb77-4510-b2d3-7ebb7a14abf3",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_010442_9110d1b1-cb77-4510-b2d3-7ebb7a14abf3.png"
+    },
+    {
+      "index": 138,
+      "kind": "plate",
+      "id": "kr-gildal",
+      "target": "public/img/yokai/gildal.webp",
+      "aspect": "4:5",
+      "job_id": "9d825b3c-d1ed-4f07-acf3-e24188d03408",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_010233_9d825b3c-d1ed-4f07-acf3-e24188d03408.png"
+    },
+    {
+      "index": 139,
+      "kind": "plate",
+      "id": "kr-hakgyo-gyedan",
+      "target": "public/img/yokai/hakgyo-gyedan.webp",
+      "aspect": "4:5",
+      "job_id": "36f5f6c7-dd7f-4380-85d5-454b1ab4d287",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_010442_36f5f6c7-dd7f-4380-85d5-454b1ab4d287.png"
+    },
+    {
+      "index": 140,
+      "kind": "plate",
+      "id": "kr-hallakgungi",
+      "target": "public/img/yokai/hallakgungi.webp",
+      "aspect": "4:5",
+      "job_id": "2dce1f91-e44e-4a2d-be02-4d8f789fbb81",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_010442_2dce1f91-e44e-4a2d-be02-4d8f789fbb81.png"
+    },
+    {
+      "index": 141,
+      "kind": "plate",
+      "id": "kr-hosikchong",
+      "target": "public/img/yokai/hosikchong.webp",
+      "aspect": "4:5",
+      "job_id": "e48e3afa-87e1-4ef5-b42e-06b6ca72d555",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_010608_e48e3afa-87e1-4ef5-b42e-06b6ca72d555.png"
+    },
+    {
+      "index": 142,
+      "kind": "plate",
+      "id": "kr-hwasubun",
+      "target": "public/img/yokai/hwasubun.webp",
+      "aspect": "4:5",
+      "job_id": "48cf336c-b474-441b-92a2-1a2bdb153ada",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_010443_48cf336c-b474-441b-92a2-1a2bdb153ada.png"
+    },
+    {
+      "index": 143,
+      "kind": "plate",
+      "id": "kr-ineo",
+      "target": "public/img/yokai/ineo.webp",
+      "aspect": "4:5",
+      "job_id": "1a300843-f2a5-4216-8a71-60b83f9c4d9a",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_010741_1a300843-f2a5-4216-8a71-60b83f9c4d9a.png"
+    },
+    {
+      "index": 144,
+      "kind": "plate",
+      "id": "kr-jamyeonggo",
+      "target": "public/img/yokai/jamyeonggo.webp",
+      "aspect": "4:5",
+      "job_id": "8803074e-9f71-48ce-bfd9-9bb87339404a",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_010608_8803074e-9f71-48ce-bfd9-9bb87339404a.png"
+    },
+    {
+      "index": 145,
+      "kind": "plate",
+      "id": "kr-janghwa-hongryeon",
+      "target": "public/img/yokai/janghwa-hongryeon.webp",
+      "aspect": "4:5",
+      "job_id": "128a8c25-44de-4f8f-ad6c-7dabfb986d10",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_010608_128a8c25-44de-4f8f-ad6c-7dabfb986d10.png"
+    },
+    {
+      "index": 146,
+      "kind": "plate",
+      "id": "kr-jihaguk-daejeok",
+      "target": "public/img/yokai/jihaguk-daejeok.webp",
+      "aspect": "4:5",
+      "job_id": "99fab179-1c39-43fc-8a10-0fdc7ec13af0",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_010608_99fab179-1c39-43fc-8a10-0fdc7ec13af0.png"
+    },
+    {
+      "index": 147,
+      "kind": "plate",
+      "id": "kr-maegu",
+      "target": "public/img/yokai/maegu.webp",
+      "aspect": "4:5",
+      "job_id": "bd6bda29-c8fa-4922-beac-ddbf7ff26cb3",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_010608_bd6bda29-c8fa-4922-beac-ddbf7ff26cb3.png"
+    },
+    {
+      "index": 148,
+      "kind": "plate",
+      "id": "kr-manpasikjeok",
+      "target": "public/img/yokai/manpasikjeok.webp",
+      "aspect": "4:5",
+      "job_id": "73d2eb88-5147-4d49-b298-6913cbfcb3e4",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_010742_73d2eb88-5147-4d49-b298-6913cbfcb3e4.png"
+    },
+    {
+      "index": 149,
+      "kind": "plate",
+      "id": "kr-mokdoryeong",
+      "target": "public/img/yokai/mokdoryeong.webp",
+      "aspect": "4:5",
+      "job_id": "8faede7a-6d24-4da8-b209-c246a2dbf1c5",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_010742_8faede7a-6d24-4da8-b209-c246a2dbf1c5.png"
+    },
+    {
+      "index": 150,
+      "kind": "plate",
+      "id": "kr-mundoryeong",
+      "target": "public/img/yokai/mundoryeong.webp",
+      "aspect": "4:5",
+      "job_id": "cf99eb0f-9bc1-4ce6-9466-c031e5478654",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_010742_cf99eb0f-9bc1-4ce6-9466-c031e5478654.png"
+    },
+    {
+      "index": 151,
+      "kind": "plate",
+      "id": "kr-nami",
+      "target": "public/img/yokai/nami.webp",
+      "aspect": "4:5",
+      "job_id": "19224d2d-62bd-4015-aea6-b2b2110ad3c9",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_010742_19224d2d-62bd-4015-aea6-b2b2110ad3c9.png"
+    },
+    {
+      "index": 152,
+      "kind": "plate",
+      "id": "kr-nat-dokkaebi",
+      "target": "public/img/yokai/nat-dokkaebi.webp",
+      "aspect": "4:5",
+      "job_id": "36a8042f-5bfe-4786-8d37-85536537548a",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_010742_36a8042f-5bfe-4786-8d37-85536537548a.png"
+    },
+    {
+      "index": 153,
+      "kind": "plate",
+      "id": "kr-osu-uigyeon",
+      "target": "public/img/yokai/osu-uigyeon.webp",
+      "aspect": "4:5",
+      "job_id": "bbf2f99d-865b-4aeb-b993-085784416a6d",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_010905_bbf2f99d-865b-4aeb-b993-085784416a6d.png"
+    },
+    {
+      "index": 154,
+      "kind": "plate",
+      "id": "kr-samdu-iljokeung",
+      "target": "public/img/yokai/samdu-iljokeung.webp",
+      "aspect": "4:5",
+      "job_id": "aacee500-5ba6-42a5-96b4-b39934bbdc47",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_010905_aacee500-5ba6-42a5-96b4-b39934bbdc47.png"
+    },
+    {
+      "index": 155,
+      "kind": "plate",
+      "id": "kr-samjogo",
+      "target": "public/img/yokai/samjogo.webp",
+      "aspect": "4:5",
+      "job_id": "d84716ea-50e9-4c9f-b3bc-ff3f026cd674",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_010905_d84716ea-50e9-4c9f-b3bc-ff3f026cd674.png"
+    },
+    {
+      "index": 156,
+      "kind": "plate",
+      "id": "kr-samjokgu",
+      "target": "public/img/yokai/samjokgu.webp",
+      "aspect": "4:5",
+      "job_id": "060f5ebe-ef11-4bee-8be9-1a7f1e4bb76e",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_010905_060f5ebe-ef11-4bee-8be9-1a7f1e4bb76e.png"
+    },
+    {
+      "index": 157,
+      "kind": "plate",
+      "id": "kr-sangsabaem",
+      "target": "public/img/yokai/sangsabaem.webp",
+      "aspect": "4:5",
+      "job_id": "a16e64f6-7459-4367-b48a-59a2eef2cf71",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_010905_a16e64f6-7459-4367-b48a-59a2eef2cf71.png"
+    },
+    {
+      "index": 158,
+      "kind": "plate",
+      "id": "kr-sasin",
+      "target": "public/img/yokai/sasin.webp",
+      "aspect": "4:5",
+      "job_id": "80e07670-1c00-4b59-8be4-02083ad6eed9",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_010905_80e07670-1c00-4b59-8be4-02083ad6eed9.png"
+    },
+    {
+      "index": 159,
+      "kind": "plate",
+      "id": "kr-seonmyo",
+      "target": "public/img/yokai/seonmyo.webp",
+      "aspect": "4:5",
+      "job_id": "d12f27b7-e639-4f39-bbce-eef81b652df1",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_011020_d12f27b7-e639-4f39-bbce-eef81b652df1.png"
+    },
+    {
+      "index": 160,
+      "kind": "plate",
+      "id": "kr-taejagwi",
+      "target": "public/img/yokai/taejagwi.webp",
+      "aspect": "4:5",
+      "job_id": "fe7dd040-78ac-445a-bf95-dfd0efc16b05",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_011020_fe7dd040-78ac-445a-bf95-dfd0efc16b05.png"
+    },
+    {
+      "index": 161,
+      "kind": "plate",
+      "id": "kr-wangsin",
+      "target": "public/img/yokai/wangsin.webp",
+      "aspect": "4:5",
+      "job_id": "54b8136b-1aa7-4d72-a253-6e68659ba72a",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_011020_54b8136b-1aa7-4d72-a253-6e68659ba72a.png"
+    },
+    {
+      "index": 162,
+      "kind": "plate",
+      "id": "kr-yaseohon",
+      "target": "public/img/yokai/yaseohon.webp",
+      "aspect": "4:5",
+      "job_id": "1c55b891-65e8-4b9a-9a2d-54758cfa5a9b",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_011020_1c55b891-65e8-4b9a-9a2d-54758cfa5a9b.png"
+    },
+    {
+      "index": 163,
+      "kind": "plate",
+      "id": "kr-yeou-guseul",
+      "target": "public/img/yokai/yeou-guseul.webp",
+      "aspect": "4:5",
+      "job_id": "b177f91b-0a4f-4f0a-a47c-abe3d9a48611",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_011020_b177f91b-0a4f-4f0a-a47c-abe3d9a48611.png"
     }
   ],
   "approved_direction": "minhwa-v2 (2026-08-16 승인)"

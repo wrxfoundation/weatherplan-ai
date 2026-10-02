@@ -755,11 +755,12 @@
         "울음",
         "풍랑"
       ],
-      "art_hint": "a small pale child-like sea creature with smooth skin and dark eyes caught in a fisherman's net on a wet rocky shore at dawn, the fisherman in coarse hemp clothes hesitating with the net half open, grey sea and a pine-covered headland behind",
+      "art_hint": "a pale sea creature with an almost human face, large dark eyes and webbed hands, its lower half hidden in the folds of a fisherman's net on a wet rocky shore at dawn, the fisherman in coarse hemp clothes hesitating with the net half open as if to let it go, grey sea and a pine-covered headland behind, no fish tail and no seashells",
       "art_anchors": [
         "costume_male",
         "landscape"
       ],
+      "art_modifier": "azurite and malachite wash, grey sea, no dragon and no serpent",
       "habitat": [
         "동해안",
         "갯바위",

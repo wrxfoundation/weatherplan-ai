@@ -699,11 +699,11 @@
         "문에 붙이는 이름",
         "진지왕의 혼"
       ],
-      "art_hint": "a young man in Silla court dress standing calmly on a newly built stone bridge at dawn, a crowd of small indistinct shadowy figures dispersing into the mist behind him, a strip of paper with writing pasted on a wooden gate post in the foreground",
+      "art_hint": "a young man in early Silla dress — a hip-length wrap jacket belted at the waist over wide trousers gathered at the ankle, a small peaked cap tied under the chin — standing calmly on a newly built stone bridge at dawn, a crowd of small indistinct shadowy figures dispersing into the mist behind him, a blank strip of paper pasted on a wooden gate post in the foreground",
       "art_anchors": [
-        "costume_male",
         "architecture"
       ],
+      "art_modifier": "ochre and vermilion accents, the dokkaebi present only as small indistinct shadows in the mist, the young man himself plainly human with no club",
       "habitat": [
         "다리",
         "문간",
@@ -774,11 +774,12 @@
         "여우 둔갑",
         "배신"
       ],
-      "art_hint": "a two-storey timber gate tower newly raised at night beside a temple wall, scaffolding still standing, a fox slipping away along the base of the wall into darkness, lantern light on fresh-cut timber, no crowd",
+      "art_hint": "a two-storey timber gate tower newly raised at night beside a temple wall, scaffolding still standing, a fox slipping away along the base of the wall into darkness, pine-torch light on fresh-cut timber, no crowd",
       "art_anchors": [
         "architecture",
         "landscape"
       ],
+      "art_modifier": "ochre and vermilion accents, night, the dokkaebi shown only as the fox slipping away, no dokkaebi figure and no club",
       "habitat": [
         "절 어귀",
         "누문",

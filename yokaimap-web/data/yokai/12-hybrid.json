@@ -384,7 +384,7 @@
         "이류혼",
         "속담"
       ],
-      "art_hint": "a small mole in a tiny hemp coat standing at the foot of a weathered stone buddha in a field at dusk, the sun low behind drifting cloud, wind bending the grass, the buddha's base undermined by fresh earth",
+      "art_hint": "a small mole in a tiny hemp coat standing at the foot of a tall weathered Korean field mireuk — a granite standing buddha with a flat stone hat, bare stone with no red bib and no knitted cap — at dusk, the sun low behind drifting cloud, wind bending the grass, the buddha's base undermined by fresh earth",
       "art_anchors": [
         "landscape"
       ],
@@ -453,6 +453,7 @@
         "costume_male",
         "landscape"
       ],
+      "art_modifier": "vermilion and malachite, the boy fully human, the great tree his only kin",
       "habitat": [
         "홍수",
         "산꼭대기"
@@ -512,11 +513,12 @@
         "막내",
         "내기"
       ],
-      "art_hint": "a young man whose body is only the left half — one eye, one arm, one leg — standing upright and steady on a village path with a heavy grain sack over his shoulder, two ordinary brothers looking back at him, low hills and thatched roofs",
+      "art_hint": "a sturdy cheerful young man whose body is only the left half — one eye, one arm, one leg — as the folktale tells, balancing easily on his single leg with a heavy grain sack over his shoulder on a village path, two ordinary brothers looking back at him, low hills and thatched roofs, drawn plainly as a folktale figure with no wound and no blood",
       "art_anchors": [
         "costume_male",
         "landscape"
       ],
+      "art_modifier": "vermilion and malachite, a single human figure in hanbok with no animal or plant parts",
       "habitat": [
         "마을",
         "장터",

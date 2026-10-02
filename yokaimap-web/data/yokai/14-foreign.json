@@ -614,10 +614,11 @@
         "삼재",
         "대문"
       ],
-      "art_hint": "a woodblock-style talisman print of a hawk with three heads and a single leg, drawn in flat cinnabar and black ink on coarse yellowed paper, pasted on a weathered wooden gate plank",
+      "art_hint": "a talisman sheet stamped from a carved block showing a hawk with three heads and a single leg, in flat cinnabar and black ink on coarse yellowed paper, no characters or writing on the sheet, only the bird, pasted on a weathered wooden gate plank",
       "art_anchors": [
         "architecture"
       ],
+      "art_modifier": "cinnabar and black ink on yellowed paper, Korean talisman print conventions",
       "habitat": [
         "대문",
         "기둥"
@@ -676,8 +677,9 @@
         "강서대묘",
         "현무"
       ],
-      "art_hint": "four mineral-pigment wall paintings shown together — a blue dragon, a white tiger, a red bird, and a tortoise entwined with a snake — each on a dark plastered tomb wall with flowing cloud scrolls between them",
+      "art_hint": "four mineral-pigment wall paintings in the manner of the Goguryeo Gangseo Great Tomb murals shown together — a blue dragon, a white tiger, a red bird, and a tortoise entwined with a snake — each on a dark plastered tomb wall with flowing cloud scrolls between them",
       "art_anchors": [],
+      "art_modifier": "mineral pigment on dark plaster, Goguryeo tomb mural conventions",
       "habitat": [
         "고분 널방",
         "왕릉"
