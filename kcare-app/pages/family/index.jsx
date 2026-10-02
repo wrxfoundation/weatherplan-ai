@@ -115,8 +115,24 @@ export default function FamilyHome() {
           </div>
         )}
 
-        {/* 컨시어지 체크인 → 보호자 라이브 — 역할 간 실시간 연동 */}
-        {state.visit.checkedIn && !state.demo.sos && (
+        {/* 관제가 보낸 안심방문 리포트 — 열어 보기 전까지 홈 위쪽에 (2026-10-02 보호자 리포트 연동) */}
+        {state.visit.ops?.sentAt && state.visit.ops?.viewed !== "열람 완료" && (
+          <Link href="/report/visit?from=family" className="btn-press block">
+            <Card className="flex items-center gap-3 border border-gold/40 p-4">
+              <span aria-hidden className="flex h-[36px] w-[36px] shrink-0 items-center justify-center rounded-full bg-gold/15 text-gold">
+                <Icon name="doc" size={18} />
+              </span>
+              <div className="min-w-0 flex-1">
+                <div className="text-[15px] font-bold text-navy">안심방문 리포트가 도착했습니다</div>
+                <div className="mt-0.5 text-[12px] text-muted">관제 검수를 마친 이번 방문 기록 · 눌러서 보기</div>
+              </div>
+              <span aria-hidden className="text-[18px] text-gold">›</span>
+            </Card>
+          </Link>
+        )}
+
+        {/* 컨시어지 체크인 → 보호자 라이브 — 역할 간 실시간 연동 (리포트가 오면 방문이 끝난 것) */}
+        {state.visit.checkedIn && !state.demo.sos && !state.visit.ops?.sentAt && (
           <Card className="flex items-center gap-3 p-4">
             <span className="h-[10px] w-[10px] shrink-0 animate-livePing rounded-full bg-green" />
             <div className="min-w-0 flex-1">

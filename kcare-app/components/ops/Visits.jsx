@@ -59,7 +59,8 @@ export default function Visits({ openProfile }) {
   const patch = (id, p) => {
     // 실제 줄 — 관제 몫(검수 · 발송 · 중간 알림 · 후속조치)만 가구 기록으로. 점검 · 사진 · 메모는 컨시어지 앱이 쓴다.
     if (liveOn && visits.find((v) => v.id === id)?.live) {
-      const ops = visitOpsPatch(p);
+      // 시각은 화면 표시용 'HH:MM'과 함께 실제 시각도 남긴다 (보호자 리포트 머리 · 정렬용)
+      const ops = visitOpsPatch({ ...p, ...(p.sentAt ? { sentTs: Date.now() } : {}), ...(p.reviewedAt ? { reviewedTs: Date.now() } : {}) });
       if (Object.keys(ops).length) dispatch?.({ type: "visitOps", patch: ops });
       return;
     }

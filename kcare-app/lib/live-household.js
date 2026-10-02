@@ -8,6 +8,8 @@ import { STATUS } from "./requests";
 import { fmtWon } from "./config";
 import { LIVE_ELDER } from "./ops-health";
 import { VISITS, visitDetail } from "./ops-mgmt";
+import { checkupFor } from "./checkup";
+import { AI_REPORT } from "./mock";
 
 export const LIVE_TAG = "테스트 가구 1";
 export const LIVE_GUARDIAN = "김민수";
@@ -135,7 +137,8 @@ export function liveVisit(base, state) {
     request: null,
     checkin: checkinAt ? { at: hhmm(checkinAt), gps: "GPS 확인 · 컨시어지 앱 체크인" } : status === "active" ? { at: "—", gps: "체크인 기록 없이 점검 시작" } : null,
     completedAt: report ? hhmm(report.at) : null,
-    reportNote: report?.note || null,
+    // 컨시어지 화면의 리포트 문장은 아직 동행 예시 초안(AI_REPORT.draft)이다 — 실제 방문 기록처럼 보이면 안 되므로 뺀다
+    reportNote: report?.note && report.note !== AI_REPORT.draft ? report.note : null,
     review: done ? ops.review || "검수 대기" : active ? "수행 중" : "—",
     stepIdx: done ? (ops.stepIdx ?? 3) : active ? 1 : 0,
     viewed: ops.viewed || "—",
@@ -149,5 +152,51 @@ export function liveVisit(base, state) {
 }
 
 // 관제 방문 상세에서 바꾼 것 중 관제 몫만 가구 기록으로 (점검 · 사진 · 메모 · 체크인은 컨시어지 몫)
-const OPS_KEYS = ["review", "stepIdx", "reviewedAt", "sentAt", "viewed", "interimAt", "followups", "followup"];
+const OPS_KEYS = ["review", "stepIdx", "reviewedAt", "sentAt", "viewed", "interimAt", "followups", "followup", "reviewedTs", "sentTs"];
 export const visitOpsPatch = (p) => Object.fromEntries(Object.entries(p || {}).filter(([k]) => OPS_KEYS.includes(k)));
+
+// ── 보호자 안심방문 리포트 (2026-10-02 관제 연동 — "보호자 리포트도 연동") ──
+// 관제가 '보호자 리포트 발송'을 해야 보호자에게 열린다. 내용은 컨시어지 방문 기록 그대로 —
+// 21항목 중 확인한 것과 항목 메모 · 총평 · 사진 수 · 체크인 · 관제 검수 시각. 상태(양호 · 주의 …)나
+// 판정은 컨시어지가 매기지 않으므로 지어내지 않는다.
+export const STAGE_LABEL = {
+  planned: "컨시어지 방문 전",
+  active: "방문 중 — 점검하고 있습니다",
+  review: "방문 완료 — 관제 검수 중",
+  ready: "관제 검수 완료 — 곧 보내 드립니다",
+  sent: "발송됨",
+};
+export function visitReportOf(state) {
+  const base = VISITS.find((x) => x.name === LIVE_ELDER) || VISITS[0];
+  const v = liveVisit(base, state);
+  const ops = state?.visit?.ops || {};
+  const checks = state?.visit?.checks || {};
+  const notes = state?.visit?.notes || {};
+  const axes = checkupFor(v.loc).map((a) => ({
+    axis: a.axis,
+    icon: a.icon,
+    items: a.items.map((i) => ({ k: i.k, done: !!checks[`${a.axis}-${i.k}`], note: notes[`${a.axis}-${i.k}`] || "" })),
+  }));
+  const done = axes.reduce((n, a) => n + a.items.filter((i) => i.done).length, 0);
+  const total = axes.reduce((n, a) => n + a.items.length, 0);
+  const sent = !!ops.sentAt;
+  const stage = sent ? "sent" : v.status === "done" ? (ops.review === "검수 완료" ? "ready" : "review") : v.status;
+  const gps = (state?.visit?.audit || []).find((e) => e.kind === "gps");
+  return {
+    stage,
+    sent,
+    client: LIVE_ELDER,
+    visitedTs: gps?.at || state?.visitPlan?.gpsAt || (state?.reports || [])[0]?.at || null,
+    concierge: { pri: v.pair?.pri?.name || "박지현", sub: v.pair?.sub?.name || "—" },
+    axes,
+    done,
+    total,
+    photos: state?.visit?.photos || 0,
+    memo: state?.visit?.memo || "",
+    reportNote: v.reportNote,
+    reviewedAt: ops.reviewedAt || null,
+    sentAt: ops.sentAt || null,
+    sentTs: ops.sentTs || null,
+    viewed: ops.viewed === "열람 완료",
+  };
+}

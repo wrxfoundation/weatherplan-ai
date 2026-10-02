@@ -64,6 +64,8 @@ export function summarize(a) {
       return "방문 사진 첨부";
     case "visitOps":
       return `관제 방문 처리 · ${[...new Set(Object.keys(a.patch || {}).map((k) => VISIT_OPS[k]).filter(Boolean))].join(" · ") || "기타"}`;
+    case "visitViewed":
+      return "보호자 안심방문 리포트 열람";
     case "addOpsMessage":
       return `관제 연락 · ${clip(p.from, 20)} — ${clip(p.text, 80)}`;
     case "ackOpsMessage":

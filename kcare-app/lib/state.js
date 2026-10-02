@@ -302,6 +302,12 @@ function reducer(state, action) {
     // 관제가 이 방문에 한 것 — 검수 · 보호자 발송 · 중간 알림 · 후속조치 (관제 방문관리 상세)
     case "visitOps":
       return { ...state, visit: { ...state.visit, ops: { ...(state.visit.ops || {}), ...(action.patch || {}) } } };
+    // 보호자가 안심방문 리포트를 열었다 — 관제 방문관리에 '열람 완료' (한 번만)
+    case "visitViewed": {
+      const ops = state.visit.ops || {};
+      if (ops.viewed === "열람 완료") return state;
+      return { ...state, visit: { ...state.visit, ops: { ...ops, viewed: "열람 완료", viewedTs: nowOf(action) } } };
+    }
     case "addOpsMessage":
       return {
         ...state,
