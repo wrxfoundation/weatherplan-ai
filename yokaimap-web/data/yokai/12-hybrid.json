@@ -514,10 +514,9 @@
         "막내",
         "내기"
       ],
-      "art_hint": "only the left half of a cheerful young man is painted on the paper, as if the painter stopped at a vertical line down the middle of his body — one eye, half a mouth, one arm, one leg — and to the right of that line there is nothing but blank hanji paper; he hops on his single leg with a grain sack held by his one arm on a village path, two ordinary brothers looking back at him, thatched roofs, a folktale figure with no wound and no blood",
+      "art_hint": "only the left half of a cheerful young man is painted on the paper, as if the painter stopped at a vertical line down the middle of his body — one eye, half a mouth, one arm, one leg — and to the right of that line there is nothing but blank hanji paper; he hops on his single leg with a grain sack held by his one arm on a plain village path, low thatched roofs behind, two ordinary brothers looking back at him, nothing else in the background, a folktale figure with no wound and no blood",
       "art_anchors": [
-        "costume_youth",
-        "landscape"
+        "costume_youth"
       ],
       "art_modifier": "vermilion and malachite, a single human figure in hanbok with no animal or plant parts",
       "habitat": [

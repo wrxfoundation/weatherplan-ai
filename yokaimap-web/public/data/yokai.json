@@ -682,10 +682,9 @@
     "막내",
     "내기"
    ],
-   "art_hint": "only the left half of a cheerful young man is painted on the paper, as if the painter stopped at a vertical line down the middle of his body — one eye, half a mouth, one arm, one leg — and to the right of that line there is nothing but blank hanji paper; he hops on his single leg with a grain sack held by his one arm on a village path, two ordinary brothers looking back at him, thatched roofs, a folktale figure with no wound and no blood",
+   "art_hint": "only the left half of a cheerful young man is painted on the paper, as if the painter stopped at a vertical line down the middle of his body — one eye, half a mouth, one arm, one leg — and to the right of that line there is nothing but blank hanji paper; he hops on his single leg with a grain sack held by his one arm on a plain village path, low thatched roofs behind, two ordinary brothers looking back at him, nothing else in the background, a folktale figure with no wound and no blood",
    "art_anchors": [
-    "costume_youth",
-    "landscape"
+    "costume_youth"
    ],
    "art_modifier": "vermilion and malachite, a single human figure in hanbok with no animal or plant parts",
    "habitat": [
@@ -726,7 +725,7 @@
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
-    "job_id": "c23e6ecc-aded-4585-9392-97df14368675"
+    "job_id": "5596b5a0-2c5a-409a-9381-3c1d4ff09590"
    }
   },
   {
@@ -7298,9 +7297,9 @@
    "updated_at": "2026-09-12",
    "sensitivity": null,
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/manpasikjeok.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "81a3383a-15ee-416c-9e40-b5923a9d4032"
    }
@@ -7505,9 +7504,9 @@
    "updated_at": "2026-09-12",
    "sensitivity": null,
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/mokdoryeong.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "20b2c24f-0e26-4b55-85b8-f0d9d26236a2"
    }
@@ -8222,9 +8221,9 @@
    "updated_at": "2026-09-12",
    "sensitivity": null,
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/nat-dokkaebi.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "0d203757-caa8-4af5-bba7-a7e603165332"
    }
@@ -8864,7 +8863,7 @@
     "다리 셋",
     "근거 희박"
    ],
-   "art_hint": "a lean dark dog with only three legs in total — a single foreleg set in the middle under its chest and two hind legs — standing like a tripod, seen exactly side-on, the place where a second foreleg would be simply empty, bristling fur, hackles raised, staring at a pair of embroidered Korean silk shoes with gently upturned toes left empty on the stone step of a moonlit courtyard, low mist across the ground",
+   "art_hint": "a lean dark dog painted in the flat side-on manner of a Goguryeo tomb mural, standing with exactly three legs in a row beneath its body — a front leg, a middle leg and a back leg — each leg clearly separate, bristling fur, hackles raised, staring at a pair of flat embroidered Korean silk kkotsin shoes with gently upturned toes and no heels left empty on a stone step, moonlit courtyard, low mist across the ground",
    "art_anchors": [
     "landscape",
     "architecture"
@@ -8908,7 +8907,7 @@
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
-    "job_id": "0b3fc660-9460-4533-849d-2bb4adf6c7cf"
+    "job_id": "d7f5a9b8-dc7b-42e0-81dd-750398d77ce3"
    }
   },
   {
@@ -11582,9 +11581,9 @@
    "updated_at": "2026-09-12",
    "sensitivity": null,
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/yeou-guseul.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "5fd381c1-0b51-452b-8531-f33ea33219b7"
    }

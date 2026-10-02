@@ -79,6 +79,11 @@
 | 오방색 천이 무지개 | "five-colour"가 막연하다 | 다섯 색을 이름으로: blue, white, red, black and yellow(`landscape` 앵커에 반영) |
 | 여우 옆에 지붕 달린 작은 상자 | `landscape` 앵커의 서낭당이 작은 사당으로 그려짐 | 여우 컷은 `landscape`를 뺀다 — **여우+작은 사당은 이나리 도상**이다 |
 | 바위·소품 귀퉁이에 필기체 낙서 | 가짜 서명 | 확대해서 본다. 재생성(제약문에 이미 `no signature`가 있어도 나온다) |
+| 짚신이 또 조리가 됨(엄지 끈) | "no thong"이라는 부정문은 약하다 | **버선을 신긴다** — 코가 하나로 모인 버선 위에는 엄지 끈이 들어갈 자리가 없다. `costume_male`·`costume_youth`에 반영 |
+| 도깨비 얼굴이 통째로 붉음 | 분류 수식 "ochre and vermilion accents"가 피부로 감 | 붉은 얼굴+방망이는 뿔이 없어도 아카오니다. 수식에 "in the clothing only, ordinary weathered tan human skin" |
+| 여우 옆에 석등·사당이 또 생김 | `landscape` 앵커의 서낭당·장승 | **여우 컷에는 `landscape`를 쓰지 않는다**(매구·여우구슬 둘 다 이걸로 걸렸고, 빼자 통과) |
+| "Silla stone pagoda"가 채색 다층탑이 됨 | 모델이 고유명을 모른다 | 이름 대신 모양을 쓴다 — 이단 기단, 얇고 평평한 옥개석 셋, 채색 없음 |
+| 붉은 해에 방사형 햇살 | 해 원반 + 빛살 | **욱일기 도상** — 즉시 반려. 해는 원반만 |
 
 ## 개체별로 직접 배제해야 하는 일본·중국 도상
 

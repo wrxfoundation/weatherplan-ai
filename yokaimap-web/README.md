@@ -68,9 +68,15 @@ npm run dev                  # http://localhost:5173
 
 1. **이중 서피스** — 도감·상세·홈은 밝은 한지(긴 글을 읽고 광고가 붙는 면), 지도는 밤의 먹빛.
    `data-surface="night"`로 전환하고 컴포넌트는 의미 토큰(`--bg`/`--surface`/`--text`)만 쓴다.
-2. **인장(印)** — 14개 분류마다 명조 한자 1자(鬼宅獸水山魂疫濟堂天器婚街外)를 색 타일에 넣어
+2. **인장(印)** — 14개 분류마다 한자 1자(鬼宅獸水山魂疫濟堂天器婚街外)를 색 타일에 넣어
    카드·지도 마커·상세 히어로·OG 카드에서 같은 식별자로 반복한다. 도상이 들어오기 전까지의 시각적 앵커.
-3. **명조 × 고딕 대비** — 요괴 이름과 제목은 Nanum Myeongjo, 본문·UI는 Pretendard. 둘 다 셀프호스팅.
+   인장 글자는 **텍스트가 아니라 윤곽선**이다(`src/ui/sealGlyphs.js`, Noto Serif KR Bold · OFL).
+   텍스트로 찍으면 OS 서체를 타서 맥에서는 고딕으로 떴다. `scripts/build-seal-glyphs.mjs`가 뽑고,
+   분류 글자에 윤곽선이 없으면 `validate.mjs`가 빌드를 멈춘다.
+3. **명조 × 고딕 대비** — 제목·요괴 이름은 `--font-serif`(Nanum Myeongjo), 본문·UI는 `--font-sans`(Pretendard).
+   **주의: 지금은 두 서체 모두 로드하지 않는다** — 토큰에 이름만 있고 `@font-face`가 없어서, 사용자 기기에
+   설치돼 있지 않으면 OS 기본 서체로 떨어진다(맥은 제목도 고딕). 셀프호스팅은 남은 작업이다.
+   fontsource판 나눔명조는 인장 한자 15자 중 9자가 없으므로, 인장을 윤곽선으로 뺀 것은 이와 별개로 필요했다.
 
 색은 `src/styles/tokens.css`가 진실 원천이다. 분류색은 `--cat` 하나만 인라인으로 주입하고,
 배경·테두리는 서피스별 혼합 비율(`--cat-bg`, `--cat-line`)로 `color-mix()`에서 계산한다.
@@ -131,6 +137,13 @@ data/yokai/*.json           개체별 art_hint(영문 시각 서술) ← 프롬�
 `src/ui/Icon.jsx` — 24px 그리드 stroke 아이콘을 직접 그려 넣었다(외부 아이콘 패키지 0).
 `<Icon name="pin" size={16} />`처럼 쓰고, 색은 `currentColor`를 따른다.
 날씨·시간 조건은 `WEATHER_ICON` / `TIME_ICON` 매핑으로 괴담지수 근거 배지에 그대로 붙는다.
+
+**한 글립은 한 뜻만.** 파일 머리에 의미표가 있다(설화=scroll, 노래=music, 출처=quote, 원문=brush …).
+새 개념이 생기면 있던 글립을 빌리지 말고 그린다 — 빌려 쓰다가 노래 상세에서 '원문'과 '출처'가 같은
+따옴표로 붙어 나온 적이 있다. 상세 페이지(개체·설화·노래)의 섹션 머리는 전부 글립을 단다.
+
+파비콘·앱 아이콘(`favicon.svg/.ico`, `apple-touch-icon`, `icon-192/512`, maskable, `manifest.webmanifest`)은
+`scripts/build-icons.mjs`가 브랜드 인장 怪의 같은 윤곽선에서 만든다.
 
 ## 구조
 
