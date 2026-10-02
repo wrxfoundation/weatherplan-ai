@@ -72,6 +72,13 @@
 | 배경이 일본식 신사 | 경물 앵커 부재 | `landscape` 앵커(서낭당·장승·솟대) 추가 |
 | 여성 개체에 갓·바지 | 분류 앵커가 개체와 어긋남 | 개체에 `art_anchors` 지정(분류 기본값을 이긴다) |
 | 불꽃·그림자 컷에 사람이 낌 | 앵커·수식어가 인물을 단정 | `art_anchors`에서 복식 제거 + `art_hint`에 "no figure" |
+| 소년·총각에 상투·비녀 막대, 풀어 내린 긴 머리 | `costume_male`이 기혼 남성 머리(갓·상투)를 강제 | 미혼 인물은 `costume_youth`(외가닥 댕기머리·모자 없음) |
+| 석상·소품에 분류 색이 칠해짐 | `category_modifiers`의 색 구절(예: vermilion and malachite)이 옷 색이 된다 | 개체에 `art_modifier` 지정 — 색 구절도 바꾼다(야서혼 석불이 주홍·초록 천 옷을 입었다) |
+| 피리·쌀독에 방망이, 충견이 반인반수, 인어 그물에 용 | 분류 수식이 색만이 아니라 내용을 강제 | 개체에 `art_modifier` — 분류 기본값의 색 구절은 두고 내용 구절만 바꾼다 |
+| 세 발·반쪽 몸이 사라짐(다리 2·4, 팔다리 온전) | 모델이 해부를 정상화한다 | 개수를 위치로 센다("a left leg, a middle leg and a right leg"), 변형 2장을 뽑아 고른다 |
+| 오방색 천이 무지개 | "five-colour"가 막연하다 | 다섯 색을 이름으로: blue, white, red, black and yellow(`landscape` 앵커에 반영) |
+| 여우 옆에 지붕 달린 작은 상자 | `landscape` 앵커의 서낭당이 작은 사당으로 그려짐 | 여우 컷은 `landscape`를 뺀다 — **여우+작은 사당은 이나리 도상**이다 |
+| 바위·소품 귀퉁이에 필기체 낙서 | 가짜 서명 | 확대해서 본다. 재생성(제약문에 이미 `no signature`가 있어도 나온다) |
 
 ## 개체별로 직접 배제해야 하는 일본·중국 도상
 
@@ -107,7 +114,14 @@
   도감 도판이므로 서사를 잃지 않는 선에서 표현을 바꾼다 —
   "carved granite statue of an elderly goddess in Korean robes",
   "standing fully dressed at the edge of a mountain pool".
-  인물 컷에는 `fully clothed`, 유혈 소재에는 `no gore and no blood`를 미리 넣어 둔다.
+  인물 컷에는 `fully clothed`를 미리 넣어 둔다.
+- **금지어 목록이 필터를 건드릴 수 있다.** 덕대골 시체는 `no blood and no gore`가 든 채로
+  걸렸고, 그 구절과 "dragging itself"를 빼고 **보이는 것**(멀리서 따라오는 희미한 형체)으로
+  다시 쓰자 통과했다. 어느 단어였는지는 분리하지 못했다. 유혈 소재는 무엇이 없어야 하는지가
+  아니라 무엇이 보이는지로 쓴다.
+- **아이·피부·몸·그물의 조합은 쓰지 않는다.** 인어 초안("child-like · smooth skin ·
+  human-like in body · caught in a net")이 걸렸다. 필터가 막아야 하는 조합이 맞다 — 오탐이
+  아니다. 얼굴과 화소(방생)로 다시 썼다.
 - 생성 결과 URL은 만료될 수 있다. 리포 반입은 `node scripts/fetch-art.mjs`로,
   CDN 접근이 되는 환경에서 되도록 빨리 실행한다.
 - **비용은 장당 8크레딧**이다(`recraft_v4_1` · 2k · standard, 2026-09 실측: 12장에 96).
@@ -119,6 +133,18 @@
   뒤뜰이나 들판 장면에는 과하다. 생성 전에 `node scripts/art-prompts.mjs --pending`으로
   읽어 보고 어긋나면 **개체의 `art_anchors`를 고친다** — 프롬프트를 손으로 고치면
   다음 배치에서 되돌아온다. 확장 36체 중 11체가 여기 걸렸다.
+
+- **변형 후보.** 개수·해부처럼 모델이 자주 틀리는 개체는 2장을 뽑는다. 둘 다 리포로
+  들어와야 비교할 수 있으므로(생성 세션은 CDN을 못 본다), A는 `plate` 항목에, B는
+  `kind: "candidate"` 항목으로 `public/img/yokai/_candidates/<slug>-b.webp`에 받는다.
+  빌드는 `plate`만 읽으므로 후보는 화면에 나오지 않는다. 고른 뒤 이긴 쪽을 `git mv`로
+  제자리에 옮기고, **후보 항목과 `_candidates/` 파일은 지운다** — 남기면 배포 경로로
+  그대로 노출된다(반려 금강역사 파일과 같은 이유).
+- **반려 기록은 `history`에 남긴다.** 항목의 job_id/url을 새 생성분으로 바꾸고, 이전 시도는
+  `history: [{ job_id, url, review: { result: "reject", reason } }]`로 옮긴다. 같은 자리가
+  두 번 뚫렸는지 나중에 볼 수 있어야 '배제문을 늘릴지, 주어를 다시 쓸지'를 판단할 수 있다.
+- **`by: "검수"`와 `by: "프로젝트 오너"`를 구분한다.** 확대 검수를 마친 것은 `검수`로,
+  오너가 직접 본 것만 `프로젝트 오너`로 적는다. 남이 보지 않은 것을 봤다고 적지 않는다.
 
 ## 통과 기록
 

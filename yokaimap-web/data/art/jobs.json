@@ -1995,8 +1995,20 @@
       "id": "kr-banjjogi",
       "target": "public/img/yokai/banjjogi.webp",
       "aspect": "4:5",
-      "job_id": "fc2acdea-b4c3-4b4f-9306-5d9593ba4578",
-      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_010233_fc2acdea-b4c3-4b4f-9306-5d9593ba4578.png"
+      "job_id": "85107985-f25d-430e-9d37-d9c48f8729d1",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_012755_85107985-f25d-430e-9d37-d9c48f8729d1.png",
+      "history": [
+        {
+          "job_id": "fc2acdea-b4c3-4b4f-9306-5d9593ba4578",
+          "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_010233_fc2acdea-b4c3-4b4f-9306-5d9593ba4578.png",
+          "review": {
+            "by": "검수",
+            "date": "2026-10-02",
+            "result": "reject",
+            "reason": "내용 — 팔다리가 온전하다. 반쪽 몸이 개체의 정체인데 빠졌다(칠성신 보름달과 같은 유형)"
+          }
+        }
+      ]
     },
     {
       "index": 134,
@@ -2005,7 +2017,13 @@
       "target": "public/img/yokai/bihyeongnang.webp",
       "aspect": "4:5",
       "job_id": "4ee2fe9f-51c7-4b3b-888c-31bd8703f5ab",
-      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_010233_4ee2fe9f-51c7-4b3b-888c-31bd8703f5ab.png"
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_010233_4ee2fe9f-51c7-4b3b-888c-31bd8703f5ab.png",
+      "review": {
+        "by": "검수",
+        "date": "2026-10-02",
+        "result": "pass",
+        "note": "신라 초기 복식(허리띠 저고리·발목 오므린 바지·턱끈 관), 갓 없음. 도깨비는 그림자 무리. 문설주 종이는 공백(가짜 글자 없음). 한지 창살 — 오너 확인 대기"
+      }
     },
     {
       "index": 135,
@@ -2014,7 +2032,13 @@
       "target": "public/img/yokai/dajagu-halmi.webp",
       "aspect": "4:5",
       "job_id": "d4f8b073-eb13-4add-b4aa-5717a87aaa3d",
-      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_010442_d4f8b073-eb13-4add-b4aa-5717a87aaa3d.png"
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_010442_d4f8b073-eb13-4add-b4aa-5717a87aaa3d.png",
+      "review": {
+        "by": "검수",
+        "date": "2026-10-02",
+        "result": "pass",
+        "note": "동정·옷고름·가슴 위 치마말기·머릿수건·버선. 서낭 돌무지·오방색 천. 붉은 기둥 둘은 상인방 없음(도리이 아님). 처마 완만 — 오너 확인 대기"
+      }
     },
     {
       "index": 136,
@@ -2023,7 +2047,13 @@
       "target": "public/img/yokai/datbal-goemul.webp",
       "aspect": "4:5",
       "job_id": "cdd1026b-b59c-4279-9869-8093b1f7bdeb",
-      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_010233_cdd1026b-b59c-4279-9869-8093b1f7bdeb.png"
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_010233_cdd1026b-b59c-4279-9869-8093b1f7bdeb.png",
+      "review": {
+        "by": "검수",
+        "date": "2026-10-02",
+        "result": "pass",
+        "note": "긴 부리·긴 꼬리 새가 초가 지붕에. 문틈의 두 아이. 서낭·벅수·까치 — 오너 확인 대기"
+      }
     },
     {
       "index": 137,
@@ -2032,7 +2062,13 @@
       "target": "public/img/yokai/deokdaegol-sicheong.webp",
       "aspect": "4:5",
       "job_id": "9110d1b1-cb77-4510-b2d3-7ebb7a14abf3",
-      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_010442_9110d1b1-cb77-4510-b2d3-7ebb7a14abf3.png"
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_010442_9110d1b1-cb77-4510-b2d3-7ebb7a14abf3.png",
+      "review": {
+        "by": "검수",
+        "date": "2026-10-02",
+        "result": "pass",
+        "note": "갓·흰 바지저고리·발목 묶음·짚신. 추격자는 발치의 옅은 형체로만 — 필터 회피로 순화한 의도대로. 서낭·장승 — 오너 확인 대기"
+      }
     },
     {
       "index": 138,
@@ -2040,8 +2076,20 @@
       "id": "kr-gildal",
       "target": "public/img/yokai/gildal.webp",
       "aspect": "4:5",
-      "job_id": "9d825b3c-d1ed-4f07-acf3-e24188d03408",
-      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_010233_9d825b3c-d1ed-4f07-acf3-e24188d03408.png"
+      "job_id": "8c5b3e4e-39db-45ed-b5f3-20a759b17a18",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_012755_8c5b3e4e-39db-45ed-b5f3-20a759b17a18.png",
+      "history": [
+        {
+          "job_id": "9d825b3c-d1ed-4f07-acf3-e24188d03408",
+          "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_010233_9d825b3c-d1ed-4f07-acf3-e24188d03408.png",
+          "review": {
+            "by": "검수",
+            "date": "2026-10-02",
+            "result": "reject",
+            "reason": "건축 — 기와·곡선 없는 판자 지붕, X자 가새 목탑, 주칠 판벽(한국 절 담장 아님). 통로가 없어 문으로 읽히지 않는다"
+          }
+        }
+      ]
     },
     {
       "index": 139,
@@ -2050,7 +2098,13 @@
       "target": "public/img/yokai/hakgyo-gyedan.webp",
       "aspect": "4:5",
       "job_id": "36f5f6c7-dd7f-4380-85d5-454b1ab4d287",
-      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_010442_36f5f6c7-dd7f-4380-85d5-454b1ab4d287.png"
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_010442_36f5f6c7-dd7f-4380-85d5-454b1ab4d287.png",
+      "review": {
+        "by": "검수",
+        "date": "2026-10-02",
+        "result": "pass",
+        "note": "아랫벽 짙은 색·윗벽 흰 학교 복도 도장, 형광등, 인물 없음 — 오너 확인 대기"
+      }
     },
     {
       "index": 140,
@@ -2059,7 +2113,13 @@
       "target": "public/img/yokai/hallakgungi.webp",
       "aspect": "4:5",
       "job_id": "2dce1f91-e44e-4a2d-be02-4d8f789fbb81",
-      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_010442_2dce1f91-e44e-4a2d-be02-4d8f789fbb81.png"
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_010442_2dce1f91-e44e-4a2d-be02-4d8f789fbb81.png",
+      "review": {
+        "by": "검수",
+        "date": "2026-10-02",
+        "result": "pass",
+        "note": "동정·옷고름·상투·두루마기. 버선 위 엮음 짚신, 엄지 끈 없음(확대 확인). 검은 화산토·세 가지 꽃 — 오너 확인 대기"
+      }
     },
     {
       "index": 141,
@@ -2068,7 +2128,13 @@
       "target": "public/img/yokai/hosikchong.webp",
       "aspect": "4:5",
       "job_id": "e48e3afa-87e1-4ef5-b42e-06b6ca72d555",
-      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_010608_e48e3afa-87e1-4ef5-b42e-06b6ca72d555.png"
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_010608_e48e3afa-87e1-4ef5-b42e-06b6ca72d555.png",
+      "review": {
+        "by": "검수",
+        "date": "2026-10-02",
+        "result": "pass",
+        "note": "돌무지 위 엎은 시루와 쇠꼬챙이. 낙엽·서낭·장승·까치. 인물 없음 — 오너 확인 대기"
+      }
     },
     {
       "index": 142,
@@ -2077,7 +2143,13 @@
       "target": "public/img/yokai/hwasubun.webp",
       "aspect": "4:5",
       "job_id": "48cf336c-b474-441b-92a2-1a2bdb153ada",
-      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_010443_48cf336c-b474-441b-92a2-1a2bdb153ada.png"
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_010443_48cf336c-b474-441b-92a2-1a2bdb153ada.png",
+      "review": {
+        "by": "검수",
+        "date": "2026-10-02",
+        "result": "pass",
+        "note": "넘치는 쌀·됫박·놋그릇·옹기. 기와 완만. 방망이 없음 — 오너 확인 대기"
+      }
     },
     {
       "index": 143,
@@ -2085,8 +2157,20 @@
       "id": "kr-ineo",
       "target": "public/img/yokai/ineo.webp",
       "aspect": "4:5",
-      "job_id": "1a300843-f2a5-4216-8a71-60b83f9c4d9a",
-      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_010741_1a300843-f2a5-4216-8a71-60b83f9c4d9a.png"
+      "job_id": "7a60fed7-4889-414e-a143-c3bbced7ffbe",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_012755_7a60fed7-4889-414e-a143-c3bbced7ffbe.png",
+      "history": [
+        {
+          "job_id": "1a300843-f2a5-4216-8a71-60b83f9c4d9a",
+          "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_010741_1a300843-f2a5-4216-8a71-60b83f9c4d9a.png",
+          "review": {
+            "by": "검수",
+            "date": "2026-10-02",
+            "result": "reject",
+            "reason": "일반 — 장승 아래 바위에 가짜 서명 같은 필기체 낙서"
+          }
+        }
+      ]
     },
     {
       "index": 144,
@@ -2094,8 +2178,20 @@
       "id": "kr-jamyeonggo",
       "target": "public/img/yokai/jamyeonggo.webp",
       "aspect": "4:5",
-      "job_id": "8803074e-9f71-48ce-bfd9-9bb87339404a",
-      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_010608_8803074e-9f71-48ce-bfd9-9bb87339404a.png"
+      "job_id": "935c1e07-f75a-4b15-9b4f-fb382a999ff1",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_012755_935c1e07-f75a-4b15-9b4f-fb382a999ff1.png",
+      "history": [
+        {
+          "job_id": "8803074e-9f71-48ce-bfd9-9bb87339404a",
+          "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_010608_8803074e-9f71-48ce-bfd9-9bb87339404a.png",
+          "review": {
+            "by": "검수",
+            "date": "2026-10-02",
+            "result": "reject",
+            "reason": "§2 처마 — 배경 건물 처마가 갈고리처럼 크게 솟았다. 내용 — 뿔나팔이 부러지지 않았다"
+          }
+        }
+      ]
     },
     {
       "index": 145,
@@ -2103,8 +2199,20 @@
       "id": "kr-janghwa-hongryeon",
       "target": "public/img/yokai/janghwa-hongryeon.webp",
       "aspect": "4:5",
-      "job_id": "128a8c25-44de-4f8f-ad6c-7dabfb986d10",
-      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_010608_128a8c25-44de-4f8f-ad6c-7dabfb986d10.png"
+      "job_id": "edc12afd-1aa2-4641-9c74-cfcdcc50006d",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_012755_edc12afd-1aa2-4641-9c74-cfcdcc50006d.png",
+      "history": [
+        {
+          "job_id": "128a8c25-44de-4f8f-ad6c-7dabfb986d10",
+          "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_010608_128a8c25-44de-4f8f-ad6c-7dabfb986d10.png",
+          "review": {
+            "by": "검수",
+            "date": "2026-10-02",
+            "result": "reject",
+            "reason": "소품 — 유리 등피 석유 남포등(19세기 말 이후 물건). 효종 대 이야기"
+          }
+        }
+      ]
     },
     {
       "index": 146,
@@ -2113,7 +2221,13 @@
       "target": "public/img/yokai/jihaguk-daejeok.webp",
       "aspect": "4:5",
       "job_id": "99fab179-1c39-43fc-8a10-0fdc7ec13af0",
-      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_010608_99fab179-1c39-43fc-8a10-0fdc7ec13af0.png"
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_010608_99fab179-1c39-43fc-8a10-0fdc7ec13af0.png",
+      "review": {
+        "by": "검수",
+        "date": "2026-10-02",
+        "result": "pass",
+        "note": "갓·동정·옷고름·행전·짚신. 곧은 양날검(카타나 아님). 등잔. 뿔 없는 짐승. 밧줄 잡은 이가 남성으로 보이는 점은 경미 — 오너 확인 대기"
+      }
     },
     {
       "index": 147,
@@ -2121,8 +2235,20 @@
       "id": "kr-maegu",
       "target": "public/img/yokai/maegu.webp",
       "aspect": "4:5",
-      "job_id": "bd6bda29-c8fa-4922-beac-ddbf7ff26cb3",
-      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_010608_bd6bda29-c8fa-4922-beac-ddbf7ff26cb3.png"
+      "job_id": "4d00a6e7-1309-4ebc-b9e0-888851f3c8a6",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_012925_4d00a6e7-1309-4ebc-b9e0-888851f3c8a6.png",
+      "history": [
+        {
+          "job_id": "bd6bda29-c8fa-4922-beac-ddbf7ff26cb3",
+          "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_010608_bd6bda29-c8fa-4922-beac-ddbf7ff26cb3.png",
+          "review": {
+            "by": "검수",
+            "date": "2026-10-02",
+            "result": "reject",
+            "reason": "§2 — 소나무 옆 지붕 달린 작은 상자(석등롱·호코라). 여우와 작은 사당의 조합은 이나리 도상이다"
+          }
+        }
+      ]
     },
     {
       "index": 148,
@@ -2130,8 +2256,20 @@
       "id": "kr-manpasikjeok",
       "target": "public/img/yokai/manpasikjeok.webp",
       "aspect": "4:5",
-      "job_id": "73d2eb88-5147-4d49-b298-6913cbfcb3e4",
-      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_010742_73d2eb88-5147-4d49-b298-6913cbfcb3e4.png"
+      "job_id": "9770a925-325a-45ea-9219-bb2904457597",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_012925_9770a925-325a-45ea-9219-bb2904457597.png",
+      "history": [
+        {
+          "job_id": "73d2eb88-5147-4d49-b298-6913cbfcb3e4",
+          "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_010742_73d2eb88-5147-4d49-b298-6913cbfcb3e4.png",
+          "review": {
+            "by": "검수",
+            "date": "2026-10-02",
+            "result": "reject",
+            "reason": "§2 — 붉은 등 기둥 한 쌍(일본 신사 등롱), 장지문형 큰 격자 문. 피리가 장난감처럼 채색됐다"
+          }
+        }
+      ]
     },
     {
       "index": 149,
@@ -2139,8 +2277,20 @@
       "id": "kr-mokdoryeong",
       "target": "public/img/yokai/mokdoryeong.webp",
       "aspect": "4:5",
-      "job_id": "8faede7a-6d24-4da8-b209-c246a2dbf1c5",
-      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_010742_8faede7a-6d24-4da8-b209-c246a2dbf1c5.png"
+      "job_id": "c2861c25-2d4e-4af9-a449-8f2372eb6652",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_012927_c2861c25-2d4e-4af9-a449-8f2372eb6652.png",
+      "history": [
+        {
+          "job_id": "8faede7a-6d24-4da8-b209-c246a2dbf1c5",
+          "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_010742_8faede7a-6d24-4da8-b209-c246a2dbf1c5.png",
+          "review": {
+            "by": "검수",
+            "date": "2026-10-02",
+            "result": "reject",
+            "reason": "중국풍 — 상투에 긴 비녀 막대 둘(簪). 아이에게 상투 자체가 맞지 않다(미혼은 댕기머리)"
+          }
+        }
+      ]
     },
     {
       "index": 150,
@@ -2148,8 +2298,20 @@
       "id": "kr-mundoryeong",
       "target": "public/img/yokai/mundoryeong.webp",
       "aspect": "4:5",
-      "job_id": "cf99eb0f-9bc1-4ce6-9466-c031e5478654",
-      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_010742_cf99eb0f-9bc1-4ce6-9466-c031e5478654.png"
+      "job_id": "c7601d2e-7581-4d09-9755-604e0c344a2a",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_012926_c7601d2e-7581-4d09-9755-604e0c344a2a.png",
+      "history": [
+        {
+          "job_id": "cf99eb0f-9bc1-4ce6-9466-c031e5478654",
+          "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_010742_cf99eb0f-9bc1-4ce6-9466-c031e5478654.png",
+          "review": {
+            "by": "검수",
+            "date": "2026-10-02",
+            "result": "reject",
+            "reason": "중국풍 — 높은 상투관 아래로 풀어 내린 긴 머리(고장극 공자 도상). 조선 남자는 머리를 풀지 않는다"
+          }
+        }
+      ]
     },
     {
       "index": 151,
@@ -2158,7 +2320,13 @@
       "target": "public/img/yokai/nami.webp",
       "aspect": "4:5",
       "job_id": "19224d2d-62bd-4015-aea6-b2b2110ad3c9",
-      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_010742_19224d2d-62bd-4015-aea6-b2b2110ad3c9.png"
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_010742_19224d2d-62bd-4015-aea6-b2b2110ad3c9.png",
+      "review": {
+        "by": "검수",
+        "date": "2026-10-02",
+        "result": "pass",
+        "note": "전립 쓴 행렬·오방색 기·청홍 비단 초롱(일본 조칭 아님). 기와 사당·달항아리·놋그릇·금줄·장승 — 오너 확인 대기"
+      }
     },
     {
       "index": 152,
@@ -2166,8 +2334,20 @@
       "id": "kr-nat-dokkaebi",
       "target": "public/img/yokai/nat-dokkaebi.webp",
       "aspect": "4:5",
-      "job_id": "36a8042f-5bfe-4786-8d37-85536537548a",
-      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_010742_36a8042f-5bfe-4786-8d37-85536537548a.png"
+      "job_id": "a2331311-4a82-4ac4-85ac-2e4af5aaf1cd",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_012926_a2331311-4a82-4ac4-85ac-2e4af5aaf1cd.png",
+      "history": [
+        {
+          "job_id": "36a8042f-5bfe-4786-8d37-85536537548a",
+          "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_010742_36a8042f-5bfe-4786-8d37-85536537548a.png",
+          "review": {
+            "by": "검수",
+            "date": "2026-10-02",
+            "result": "reject",
+            "reason": "§2 — 엄지와 둘째 발가락 사이 끈(조리·와라지). 1차 생성 때와 같은 사고"
+          }
+        }
+      ]
     },
     {
       "index": 153,
@@ -2176,7 +2356,13 @@
       "target": "public/img/yokai/osu-uigyeon.webp",
       "aspect": "4:5",
       "job_id": "bbf2f99d-865b-4aeb-b993-085784416a6d",
-      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_010905_bbf2f99d-865b-4aeb-b993-085784416a6d.png"
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_010905_bbf2f99d-865b-4aeb-b993-085784416a6d.png",
+      "review": {
+        "by": "검수",
+        "date": "2026-10-02",
+        "result": "pass",
+        "note": "젖어 김 나는 개·불길 고리·잠든 사람. 상투는 끈 묶음(성인이라 맞음), 비녀 막대 없음. 짚신 엄지 끈 없음(확대 확인) — 오너 확인 대기"
+      }
     },
     {
       "index": 154,
@@ -2185,7 +2371,13 @@
       "target": "public/img/yokai/samdu-iljokeung.webp",
       "aspect": "4:5",
       "job_id": "aacee500-5ba6-42a5-96b4-b39934bbdc47",
-      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_010905_aacee500-5ba6-42a5-96b4-b39934bbdc47.png"
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_010905_aacee500-5ba6-42a5-96b4-b39934bbdc47.png",
+      "review": {
+        "by": "검수",
+        "date": "2026-10-02",
+        "result": "pass",
+        "note": "머리 셋·다리 하나. 누런 종이에 주사 판화, 대문 널판. 글자 없음 — 오너 확인 대기"
+      }
     },
     {
       "index": 155,
@@ -2193,8 +2385,20 @@
       "id": "kr-samjogo",
       "target": "public/img/yokai/samjogo.webp",
       "aspect": "4:5",
-      "job_id": "d84716ea-50e9-4c9f-b3bc-ff3f026cd674",
-      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_010905_d84716ea-50e9-4c9f-b3bc-ff3f026cd674.png"
+      "job_id": "d1052fee-226e-4d5d-829e-d48a18adeec4",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_013054_d1052fee-226e-4d5d-829e-d48a18adeec4.png",
+      "history": [
+        {
+          "job_id": "d84716ea-50e9-4c9f-b3bc-ff3f026cd674",
+          "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_010905_d84716ea-50e9-4c9f-b3bc-ff3f026cd674.png",
+          "review": {
+            "by": "검수",
+            "date": "2026-10-02",
+            "result": "reject",
+            "reason": "내용 — 다리가 둘이다. 세 발이 개체의 정체"
+          }
+        }
+      ]
     },
     {
       "index": 156,
@@ -2202,8 +2406,20 @@
       "id": "kr-samjokgu",
       "target": "public/img/yokai/samjokgu.webp",
       "aspect": "4:5",
-      "job_id": "060f5ebe-ef11-4bee-8be9-1a7f1e4bb76e",
-      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_010905_060f5ebe-ef11-4bee-8be9-1a7f1e4bb76e.png"
+      "job_id": "8d329e1f-b26f-431b-9913-ecd049217468",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_013053_8d329e1f-b26f-431b-9913-ecd049217468.png",
+      "history": [
+        {
+          "job_id": "060f5ebe-ef11-4bee-8be9-1a7f1e4bb76e",
+          "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_010905_060f5ebe-ef11-4bee-8be9-1a7f1e4bb76e.png",
+          "review": {
+            "by": "검수",
+            "date": "2026-10-02",
+            "result": "reject",
+            "reason": "내용 — 다리가 넷이다"
+          }
+        }
+      ]
     },
     {
       "index": 157,
@@ -2212,7 +2428,13 @@
       "target": "public/img/yokai/sangsabaem.webp",
       "aspect": "4:5",
       "job_id": "a16e64f6-7459-4367-b48a-59a2eef2cf71",
-      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_010905_a16e64f6-7459-4367-b48a-59a2eef2cf71.png"
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_010905_a16e64f6-7459-4367-b48a-59a2eef2cf71.png",
+      "review": {
+        "by": "검수",
+        "date": "2026-10-02",
+        "result": "pass",
+        "note": "동정·옷고름·쪽머리에 비녀 하나. 단청 띠 기와집. 여인과 뱀의 이중 그림자 — 오너 확인 대기"
+      }
     },
     {
       "index": 158,
@@ -2221,7 +2443,13 @@
       "target": "public/img/yokai/sasin.webp",
       "aspect": "4:5",
       "job_id": "80e07670-1c00-4b59-8be4-02083ad6eed9",
-      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_010905_80e07670-1c00-4b59-8be4-02083ad6eed9.png"
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_010905_80e07670-1c00-4b59-8be4-02083ad6eed9.png",
+      "review": {
+        "by": "검수",
+        "date": "2026-10-02",
+        "result": "pass",
+        "note": "청룡·백호·주작·현무. 용 발톱 4(황제용 5조·금박 아님). 가로 띠 구도라 위아래 여백이 크다(메모) — 오너 확인 대기"
+      }
     },
     {
       "index": 159,
@@ -2230,7 +2458,13 @@
       "target": "public/img/yokai/seonmyo.webp",
       "aspect": "4:5",
       "job_id": "d12f27b7-e639-4f39-bbce-eef81b652df1",
-      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_011020_d12f27b7-e639-4f39-bbce-eef81b652df1.png"
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_011020_d12f27b7-e639-4f39-bbce-eef81b652df1.png",
+      "review": {
+        "by": "검수",
+        "date": "2026-10-02",
+        "result": "pass",
+        "note": "공중에 뜬 너럭바위 그림자 속 용의 윤곽, 스님들, 법당 처마 완만 — 오너 확인 대기"
+      }
     },
     {
       "index": 160,
@@ -2239,7 +2473,13 @@
       "target": "public/img/yokai/taejagwi.webp",
       "aspect": "4:5",
       "job_id": "fe7dd040-78ac-445a-bf95-dfd0efc16b05",
-      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_011020_fe7dd040-78ac-445a-bf95-dfd0efc16b05.png"
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_011020_fe7dd040-78ac-445a-bf95-dfd0efc16b05.png",
+      "review": {
+        "by": "검수",
+        "date": "2026-10-02",
+        "result": "pass",
+        "note": "무구 방울(원뿔형으로 과장)·흰 종이 술·놋그릇·빈 붉은 방석. 인물 없음 — 오너 확인 대기"
+      }
     },
     {
       "index": 161,
@@ -2248,7 +2488,13 @@
       "target": "public/img/yokai/wangsin.webp",
       "aspect": "4:5",
       "job_id": "54b8136b-1aa7-4d72-a253-6e68659ba72a",
-      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_011020_54b8136b-1aa7-4d72-a253-6e68659ba72a.png"
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_011020_54b8136b-1aa7-4d72-a253-6e68659ba72a.png",
+      "review": {
+        "by": "검수",
+        "date": "2026-10-02",
+        "result": "pass",
+        "note": "흰 천에 싼 단지·접은 삼베·흰쌀 놋그릇·창살 빛줄기·금줄 — 오너 확인 대기"
+      }
     },
     {
       "index": 162,
@@ -2256,8 +2502,20 @@
       "id": "kr-yaseohon",
       "target": "public/img/yokai/yaseohon.webp",
       "aspect": "4:5",
-      "job_id": "1c55b891-65e8-4b9a-9a2d-54758cfa5a9b",
-      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_011020_1c55b891-65e8-4b9a-9a2d-54758cfa5a9b.png"
+      "job_id": "b679ae68-28f0-4114-8601-4336775705ea",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_013054_b679ae68-28f0-4114-8601-4336775705ea.png",
+      "history": [
+        {
+          "job_id": "1c55b891-65e8-4b9a-9a2d-54758cfa5a9b",
+          "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_011020_1c55b891-65e8-4b9a-9a2d-54758cfa5a9b.png",
+          "review": {
+            "by": "검수",
+            "date": "2026-10-02",
+            "result": "reject",
+            "reason": "§2 — 석불에 주홍·초록 천 옷(지장보살 옷 입히기 관습). 분류 수식의 vermilion and malachite가 옷 색으로 칠해졌다"
+          }
+        }
+      ]
     },
     {
       "index": 163,
@@ -2265,8 +2523,60 @@
       "id": "kr-yeou-guseul",
       "target": "public/img/yokai/yeou-guseul.webp",
       "aspect": "4:5",
-      "job_id": "b177f91b-0a4f-4f0a-a47c-abe3d9a48611",
-      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_011020_b177f91b-0a4f-4f0a-a47c-abe3d9a48611.png"
+      "job_id": "0e830ca0-355c-413c-b855-50562f95b073",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_013053_0e830ca0-355c-413c-b855-50562f95b073.png",
+      "history": [
+        {
+          "job_id": "b177f91b-0a4f-4f0a-a47c-abe3d9a48611",
+          "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_011020_b177f91b-0a4f-4f0a-a47c-abe3d9a48611.png",
+          "review": {
+            "by": "검수",
+            "date": "2026-10-02",
+            "result": "reject",
+            "reason": "앵커 — 서낭 천이 오방색이 아니라 무지개 7색. 손 해부가 어색하고 여우가 거의 안 보인다"
+          }
+        }
+      ]
+    },
+    {
+      "index": 164,
+      "kind": "candidate",
+      "id": "kr-banjjogi",
+      "target": "public/img/yokai/_candidates/banjjogi-b.webp",
+      "aspect": "4:5",
+      "job_id": "cf8853db-098e-4ef2-98a6-b85b16ca1e38",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_012755_cf8853db-098e-4ef2-98a6-b85b16ca1e38.png",
+      "note": "변형 B — 검수 후 고른 쪽만 남기고 지운다"
+    },
+    {
+      "index": 165,
+      "kind": "candidate",
+      "id": "kr-janghwa-hongryeon",
+      "target": "public/img/yokai/_candidates/janghwa-hongryeon-b.webp",
+      "aspect": "4:5",
+      "job_id": "dbe32a2e-1b62-456a-b242-d3d9af802e9c",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_012926_dbe32a2e-1b62-456a-b242-d3d9af802e9c.png",
+      "note": "변형 B — 검수 후 고른 쪽만 남기고 지운다"
+    },
+    {
+      "index": 166,
+      "kind": "candidate",
+      "id": "kr-samjogo",
+      "target": "public/img/yokai/_candidates/samjogo-b.webp",
+      "aspect": "4:5",
+      "job_id": "fba63045-d006-43f5-a246-185dd83bf7f0",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_013053_fba63045-d006-43f5-a246-185dd83bf7f0.png",
+      "note": "변형 B — 검수 후 고른 쪽만 남기고 지운다"
+    },
+    {
+      "index": 167,
+      "kind": "candidate",
+      "id": "kr-samjokgu",
+      "target": "public/img/yokai/_candidates/samjokgu-b.webp",
+      "aspect": "4:5",
+      "job_id": "7fde1219-2aee-4016-a337-0d0e84b81fac",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_013054_7fde1219-2aee-4016-a337-0d0e84b81fac.png",
+      "note": "변형 B — 검수 후 고른 쪽만 남기고 지운다"
     }
   ],
   "approved_direction": "minhwa-v2 (2026-08-16 승인)"

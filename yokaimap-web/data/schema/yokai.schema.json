@@ -121,7 +121,7 @@
       "type": "array",
       "description": "이 개체에만 적용할 한국성 앵커 키. 생략하면 direction.json의 category_anchors 기본값을 쓴다. 분류 기본값은 뭉툭해서, 각시도깨비(여성)에 남성 복식이 붙거나 도깨비불·어둑시니(인물 없음)에 사람이 끼어드는 사고가 난다. 그런 개체만 여기서 덮어쓴다. 빈 배열은 '앵커 없음'이다.",
       "items": {
-        "enum": ["costume_female", "costume_male", "architecture", "landscape", "objects"]
+        "enum": ["costume_female", "costume_male", "costume_youth", "architecture", "landscape", "objects"]
       }
     },
     "art_modifier": {

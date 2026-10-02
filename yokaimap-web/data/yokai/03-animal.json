@@ -778,7 +778,7 @@
         "다리 셋",
         "근거 희박"
       ],
-      "art_hint": "a lean three-legged dog with bristling dark fur standing rigid in a moonlit courtyard, hackles raised, staring at a pair of embroidered Korean silk shoes with gently upturned toes left empty on the stone step, low mist across the ground",
+      "art_hint": "a lean dog with exactly three legs — two forelegs and a single hind leg set in the middle of its haunch — bristling dark fur, standing rigid side-on in a moonlit courtyard so all three legs are clearly visible, hackles raised, staring at a pair of embroidered Korean silk shoes with gently upturned toes left empty on the stone step, low mist across the ground",
       "art_anchors": [
         "landscape",
         "architecture"
@@ -916,9 +916,8 @@
         "개가 알아봄",
         "가축 폐사"
       ],
-      "art_hint": "an old fox with dull grey-tipped fur crouched low inside a dark cattle byre at night, eyes catching the light, a village dog with raised hackles blocking the doorway, straw and a wooden trough",
+      "art_hint": "an old fox with dull grey-tipped fur crouched low inside the dark cattle byre of a thatched Korean farmhouse at night, eyes catching the light, a big village dog with raised hackles blocking the byre doorway, straw, a wooden trough, earthen walls, nothing else in the scene",
       "art_anchors": [
-        "landscape",
         "architecture"
       ],
       "habitat": [
