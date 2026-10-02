@@ -46,6 +46,13 @@ const failed = []
 
 for (const item of manifest.items) {
   const target = join(ROOT, item.target)
+  // 반려 확정된 항목은 받지 않는다. URL이 살아 있으니 파일이 없으면 받아 버리는데, 그러면
+  // 빌드는 경로를 안 내도 public/img에 남아 배포 경로로 그대로 노출된다(반려 금강역사와 같은 사고).
+  // 삼족구처럼 재생성을 멈추고 인장 폴백으로 둔 개체가 여기에 해당한다.
+  if (item.review?.result === 'reject') {
+    skipped++
+    continue
+  }
   if (!force && existsSync(target)) {
     skipped++
     continue

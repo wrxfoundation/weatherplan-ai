@@ -721,11 +721,11 @@
    "updated_at": "2026-09-13",
    "sensitivity": null,
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/banjjogi.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
-    "job_id": "5596b5a0-2c5a-409a-9381-3c1d4ff09590"
+    "job_id": "fafae9d6-1e01-4ceb-9456-f340d4fb16a7"
    }
   },
   {

@@ -1995,8 +1995,8 @@
       "id": "kr-banjjogi",
       "target": "public/img/yokai/banjjogi.webp",
       "aspect": "4:5",
-      "job_id": "5596b5a0-2c5a-409a-9381-3c1d4ff09590",
-      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_015445_5596b5a0-2c5a-409a-9381-3c1d4ff09590.png",
+      "job_id": "fafae9d6-1e01-4ceb-9456-f340d4fb16a7",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_015445_fafae9d6-1e01-4ceb-9456-f340d4fb16a7.png",
       "history": [
         {
           "job_id": "fc2acdea-b4c3-4b4f-9306-5d9593ba4578",
@@ -2047,8 +2047,24 @@
             "result": "reject",
             "reason": "§2 — 몸의 왼쪽 반만 그린 구도는 처음으로 맞았으나 배경에 석등롱과 붉은 원통 등롱(변형 B)"
           }
+        },
+        {
+          "job_id": "5596b5a0-2c5a-409a-9381-3c1d4ff09590",
+          "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_015445_5596b5a0-2c5a-409a-9381-3c1d4ff09590.png",
+          "review": {
+            "by": "검수",
+            "date": "2026-10-02",
+            "result": "unchosen",
+            "reason": "변형 A — 반쪽 몸은 맞으나 화면 오른쪽 절반을 배경까지 통째로 비워 미완성 그림으로 읽힌다"
+          }
         }
-      ]
+      ],
+      "review": {
+        "by": "검수",
+        "date": "2026-10-02",
+        "result": "pass",
+        "note": "몸 가운데 세로선에서 그림이 멈춘다 — 눈 하나·입 반쪽·팔 하나·다리 하나. 배경(형제·초가)은 선을 넘어 이어져서 미완성이 아니라 반쪽이의 몸으로 읽힌다. 댕기머리·동정·옷고름·버선 위 짚신. 상처·피 없음. 석등·등롱 없음(서낭 앵커 제거) — 오너 확인 대기"
+      }
     },
     {
       "index": 134,
@@ -2608,8 +2624,24 @@
             "result": "reject",
             "reason": "내용 — 다리 넷, 굽 달린 신(변형 B)"
           }
+        },
+        {
+          "job_id": "94791b8e-9fe8-4aba-acd8-596535276f3c",
+          "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_015445_94791b8e-9fe8-4aba-acd8-596535276f3c.png",
+          "review": {
+            "by": "검수",
+            "date": "2026-10-02",
+            "result": "reject",
+            "reason": "내용 — 다리 넷(4차 변형 B)"
+          }
         }
-      ]
+      ],
+      "review": {
+        "by": "검수",
+        "date": "2026-10-02",
+        "result": "reject",
+        "reason": "내용 — 다리 넷(4차 변형 A), 끈 묶는 서양 구두. 네 가지 서술(앞다리 둘·뒷다리 하나 / 외앞다리 삼각대 / 고분벽화식 앞·가운데·뒤 / 삼족오가 통과한 나란히 서술)로 8장을 뽑아 8장 모두 다리가 넷이었다. 모델이 개의 해부를 정상화하는 한계로 보고 재생성을 멈춘다. 인장 폴백 유지"
+      }
     },
     {
       "index": 157,
@@ -2749,26 +2781,6 @@
         "result": "pass",
         "note": "댕기머리 소년 손바닥의 빛나는 구슬, 돌담을 넘어 달아나는 여우, 초가, 책보. 사당·석등·기둥 없음 — 오너 확인 대기"
       }
-    },
-    {
-      "index": 168,
-      "kind": "candidate",
-      "id": "kr-banjjogi",
-      "target": "public/img/yokai/_candidates/banjjogi-b.webp",
-      "aspect": "4:5",
-      "job_id": "fafae9d6-1e01-4ceb-9456-f340d4fb16a7",
-      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_015445_fafae9d6-1e01-4ceb-9456-f340d4fb16a7.png",
-      "note": "변형 B — 검수 후 고른 쪽만 남기고 지운다"
-    },
-    {
-      "index": 169,
-      "kind": "candidate",
-      "id": "kr-samjokgu",
-      "target": "public/img/yokai/_candidates/samjokgu-b.webp",
-      "aspect": "4:5",
-      "job_id": "94791b8e-9fe8-4aba-acd8-596535276f3c",
-      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_015445_94791b8e-9fe8-4aba-acd8-596535276f3c.png",
-      "note": "변형 B — 검수 후 고른 쪽만 남기고 지운다"
     }
   ],
   "approved_direction": "minhwa-v2 (2026-08-16 승인)"
