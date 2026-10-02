@@ -26,10 +26,12 @@ export function logEntry({ field, before, after, reason }) {
 const past = (at, field, before, after, reason, who = OPERATOR) => ({ at, account: who.account, name: who.name, role: who.role, field, before, after, reason });
 export const ADMIN = { account: "sj.lee@kcare", name: "이수정", role: "관리자" };
 
-// 전화번호 마스킹 — 화면에 원번호를 두지 않는다 (게이팅 원칙). 이름에서 안정적으로 만든다.
-export const maskTel = (name) => {
+// 예시 인물 전화번호 — 이름에서 안정적으로 만든다. 관제는 가리지 않고 전부 본다 (2026-10-02 현장 요청:
+// "관제실은 모든 정보에 블라인드 처리 없이"). 010-0xxx 는 개통 대역 밖이라 실제 사람에게 걸리지 않는다.
+export const demoTel = (name) => {
   const c = name.charCodeAt(0);
-  return `010-${20 + (c % 70)}**-${10 + ((c >> 3) % 80)}**`;
+  const d = name.charCodeAt(name.length - 1);
+  return `010-0${String(c % 1000).padStart(3, "0")}-${String(1000 + ((c * 7 + d) % 9000))}`;
 };
 
 // 보호자 알림 상태 8종 (요청서 8절). 발송 실패·미응답은 운영 경고라 amber.
@@ -132,7 +134,7 @@ export function visitDetail(v) {
   return {
     ...v, ...base, ...d, stepIdx, loc, keys, addr: HOSPITAL[v.name] || addrOf(v.name), end: plusHour(v.time),
     cycle: "월 1회", nextDate: "2026-10-20 (확정 전)", confirmed: true, notified: v.id !== "V-0922-16", // 양삼순 온보딩 방문만 보호자 통보 전
-    pair: { pri: { name: v.pri, tel: maskTel(v.pri) }, sub: { name: v.sub, tel: maskTel(v.sub) } },
+    pair: { pri: { name: v.pri, tel: demoTel(v.pri) }, sub: { name: v.sub, tel: demoTel(v.sub) } },
     request: d.request || null,
   };
 }
@@ -168,7 +170,7 @@ export function elderDetail(r) {
     service: { state: "active", since: regDate, product: `K-CARE 멤버십 ${tier} · 월 1회 2인 1조 안심방문 포함`, pay: "정상 · 자동결제", visitDay: "매월 셋째 주 (확정 전)", cycle: "월 1회" },
     priority: ["1순위 주 보호자", "2순위 부 보호자", `담당 컨시어지 ${pri} → 119`],
     health: { dx: ["명부 기준 위험 " + risk + " · 상세는 건강정보 열람 권한 필요"], meds: ["복용약 · 연동 대기"], allergy: "확인 필요", hospital: next.includes("병원") || /내과|외과|안과|재활/.test(next) ? next.replace(/^.*?\d{2}:\d{2} /, "") : "주 이용 병원 확인 필요", note: "관찰 내용 · 변화 징후는 방문 기록에서 봅니다." },
-    devices: { watch: { model: "갤럭시 워치 (삼성헬스 연동)", id: "GW-****", feed: feedOf(watch), at: watch === "정상 수신" ? "14:00" : "확인 필요", battery: watch.includes("배터리") ? watch.replace("배터리 ", "") : "—", worn: watch.includes("미착용") ? "미착용" : "착용 중", threshold: "기본값 적용" }, sensors: [{ type: "mmWave 센서", place: "설치 확인 필요", at: "—", state: "연동 대기" }] },
+    devices: { watch: { model: "갤럭시 워치 (삼성헬스 연동)", id: `GW-${String(1000 + (name.charCodeAt(0) % 9000))}`, feed: feedOf(watch), at: watch === "정상 수신" ? "14:00" : "확인 필요", battery: watch.includes("배터리") ? watch.replace("배터리 ", "") : "—", worn: watch.includes("미착용") ? "미착용" : "착용 중", threshold: "기본값 적용" }, sensors: [{ type: "mmWave 센서", place: "설치 확인 필요", at: "—", state: "연동 대기" }] },
     trend: [["안정시 심박", "연동 대기", "—", "—", "—"], ["혈중산소", "연동 대기", "—", "—", "—"]],
     requests: [], together: { manager: `${pri} (전담 케어매니저)`, lastTalk: "기록 없음", interests: "확인 필요", observed: ["최근 방문 기록에서 관찰 내용을 봅니다"], promise: "—", nextCheck: "—", shared: "—", memo: "—" },
     sos: [], welfare: [{ name: "자동매칭", state: ltc !== "—" ? `장기요양 ${ltc} 기준 재확인 대기` : "대상 조건 확인 대기" }],

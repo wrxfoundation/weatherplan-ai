@@ -1,7 +1,7 @@
 import ModeLink from "../components/ModeLink";
 import Head from "next/head";
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Card, SectionLabel, PrimaryButton, GhostButton, Badge, Avatar } from "../components/ui";
 import Icon from "../components/icons";
 import VisitFlow from "../components/VisitFlow";
@@ -54,6 +54,8 @@ import { fmtWon } from "../lib/config";
 import { useAppState } from "../lib/state";
 import { supplementSlotNote } from "../lib/meds";
 import Splash from "../components/Splash";
+import { LIVE_ELDER, liveCustomer, telHref } from "../lib/ops-health";
+import { ringAlarm } from "../lib/alarm";
 
 // 컨시어지 앱 — REQ-09(동선·주소 게이팅) · REQ-10(케어박스) · REQ-11(관찰 리포트)
 // · REQ-12(감사 타임라인·영상) + 디자인 콘솔 정합 (오늘·리포트·제안·정산 4탭).
@@ -108,6 +110,19 @@ export default function ConciergePage() {
   const [reqSent, setReqSent] = useState(false);
   const [pairCalled, setPairCalled] = useState(false);
   const [sosAck, setSosAck] = useState(false); // 관제 급파 수락 원샷
+  // 어르신 SOS — 시각 · 어르신 번호(테스트 가구는 가입 상담에서 받은 번호) · 알림음 (2026-10-02)
+  const sosTime = state.demo.sos && state.demo.sosAt
+    ? new Date(state.demo.sosAt).toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit", hour12: false })
+    : null;
+  const elderTel = telHref(liveCustomer(LIVE_ELDER, state.onboarding).phone);
+  const rangFor = useRef("");
+  useEffect(() => {
+    if (!state.demo.sos) return;
+    const key = `${state.demo.sosAt || "on"}:${state.ops.sosDispatched ? "dispatched" : "new"}`;
+    if (rangFor.current === key) return;
+    rangFor.current = key;
+    ringAlarm();
+  }, [state.demo.sos, state.demo.sosAt, state.ops.sosDispatched]);
   const [voiceMood, setVoiceMood] = useState(null); // 현장의 소리 — 마음 체크인
   const [voiceType, setVoiceType] = useState(null);
   const [voiceText, setVoiceText] = useState("");
@@ -253,6 +268,54 @@ export default function ConciergePage() {
           </header>
 
           <main className="flex-1 space-y-3.5 overflow-y-auto px-4 pb-28 pt-4">
+            {/* ── 어르신 SOS — 어느 탭에 있든 맨 위에 (2026-10-02 현장 요청: "어르신 SOS 가 컨시어지에 알람 안 뜸").
+                급파 지시 전에는 '관제 확인 중' + 어르신께 바로 전화, 급파 지시가 오면 수락 버튼. ── */}
+            {state.demo.sos && !state.ops.sosDispatched && (
+              <div role="alert" className="animate-sosPulse rounded-2xl bg-danger p-4 text-white">
+                <div className="text-[12px] font-bold tracking-[.14em] opacity-85">긴급 · 어르신 SOS</div>
+                <div className="mt-1 text-[18px] font-bold leading-[1.4]">김순자님이 SOS를 눌렀습니다</div>
+                <div className="mt-0.5 text-[13px] opacity-90">
+                  {sosTime ? `${sosTime} · ` : ""}관제센터가 확인 중입니다. 급파 지시가 오면 여기서 수락합니다.
+                </div>
+                <div className="mt-3 flex gap-2">
+                  {elderTel ? (
+                    <a href={elderTel} className="btn-press flex-1 rounded-[10px] bg-white py-3 text-center text-[16px] font-bold text-danger">
+                      어르신께 전화
+                    </a>
+                  ) : null}
+                  <button
+                    onClick={() => setOpsMsgOpen(true)}
+                    className="btn-press flex-1 rounded-[10px] border border-white/70 py-3 text-[15px] font-bold"
+                  >
+                    관제에 알리기
+                  </button>
+                </div>
+              </div>
+            )}
+            {/* 관제 급파 → 컨시어지 긴급 배너 — 역할 간 실시간 연동 (SOS + 급파 지시 시) · 모든 탭 맨 위 */}
+            {state.demo.sos && state.ops.sosDispatched && (
+              <div role="alert" className="animate-sosPulse rounded-2xl bg-danger p-4 text-white">
+                <div className="text-[12px] font-bold tracking-[.14em] opacity-85">긴급 급파 · 관제 지시</div>
+                <div className="mt-1 text-[18px] font-bold leading-[1.4]">
+                  김순자님 SOS — 최근접 동행자로 지정되었습니다
+                </div>
+                <div className="mt-0.5 text-[13px] opacity-90">
+                  대치동 자택 1.2km · 서다인(부)과 2인 급파 · 도착 예정 6분
+                </div>
+                <button
+                  onClick={() => {
+                    if (sosAck) return;
+                    setSosAck(true);
+                    push("대응", "박지현 급파 수락 — 이동 시작 (도착 예정 6분)", "#FF8A80");
+                  }}
+                  disabled={sosAck}
+                  className="btn-press mt-3 w-full rounded-[10px] bg-white py-3 text-[16px] font-bold text-danger disabled:opacity-80"
+                >
+                  {sosAck ? "✓ 수락됨 — 이동 중 (관제 공유)" : "급파 수락 · 이동 시작"}
+                </button>
+              </div>
+            )}
+
             {/* ════ 오늘 — 출근해서 제일 먼저 보는 것 ════ */}
             {tab === "today" && (
               <>
@@ -402,30 +465,6 @@ export default function ConciergePage() {
                   </Card>
                 )}
 
-
-                {/* 관제 급파 → 컨시어지 긴급 배너 — 역할 간 실시간 연동 (SOS + 급파 지시 시) */}
-                {state.demo.sos && state.ops.sosDispatched && (
-                  <div className="animate-sosPulse rounded-2xl bg-danger p-4 text-white">
-                    <div className="text-[12px] font-bold tracking-[.14em] opacity-85">긴급 급파 · 관제 지시</div>
-                    <div className="mt-1 text-[18px] font-bold leading-[1.4]">
-                      김순자님 SOS — 최근접 동행자로 지정되었습니다
-                    </div>
-                    <div className="mt-0.5 text-[13px] opacity-90">
-                      대치동 자택 1.2km · 서다인(부)과 2인 급파 · 도착 예정 6분
-                    </div>
-                    <button
-                      onClick={() => {
-                        if (sosAck) return;
-                        setSosAck(true);
-                        push("대응", "박지현 급파 수락 — 이동 시작 (도착 예정 6분)", "#FF8A80");
-                      }}
-                      disabled={sosAck}
-                      className="btn-press mt-3 w-full rounded-[10px] bg-white py-3 text-[16px] font-bold text-danger disabled:opacity-80"
-                    >
-                      {sosAck ? "✓ 수락됨 — 이동 중 (관제 공유)" : "급파 수락 · 이동 시작"}
-                    </button>
-                  </div>
-                )}
 
                 {state.demo.offline && (
                   <div className="rounded-[14px] border border-amber/30 bg-gradient-to-b from-[#FFF7E8] to-[#FBEFD8] p-3.5">

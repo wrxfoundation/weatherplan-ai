@@ -5,11 +5,11 @@
 export const CUSTOMERS = {
   김순자: {
     name: "김순자", age: 78, sex: "여", branch: "강남 본점", district: "강남구 대치동",
-    address: "서울 강남구 대치동 OO아파트 101동 1203호", phone: "010-****-1001",
+    address: "서울 강남구 대치동 OO아파트 101동 1203호", phone: "010-0120-1001",
     concierge: { main: "박지현", sub: "서다인" },
     conditions: ["심부전", "고혈압"], meds: ["항응고제", "혈압약"], allergies: ["등록된 알레르기 없음"],
     guardians: [
-      { name: "김민수", rel: "아들", role: "주", place: "서울", tz: 0, phone: "010-****-1234", note: "결제 10만 한도" },
+      { name: "김민수", rel: "아들", role: "주", place: "서울", tz: 0, phone: "010-0751-1234", note: "결제 10만 한도" },
       { name: "김지영", rel: "차녀", role: "부", place: "LA", tz: -16, phone: "해외 연락처" },
       { name: "김현우", rel: "삼남", role: "비상", place: "시드니", tz: 1, phone: "해외 연락처" },
     ],
@@ -18,43 +18,43 @@ export const CUSTOMERS = {
   },
   이영호: {
     name: "이영호", age: 81, sex: "남", branch: "송파지점", district: "송파구 잠실동",
-    address: "서울 송파구 잠실동 OO아파트 5동 402호", phone: "010-****-2001",
+    address: "서울 송파구 잠실동 OO아파트 5동 402호", phone: "010-0120-2001",
     concierge: { main: "이수민", sub: "오하늘" },
     conditions: ["만성 폐질환", "퇴행성 관절염"], meds: ["기관지 확장제", "소염진통제"], allergies: ["등록된 알레르기 없음"],
-    guardians: [{ name: "이성호", rel: "아들", role: "주", place: "서울", tz: 0, phone: "010-****-2210" }],
+    guardians: [{ name: "이성호", rel: "아들", role: "주", place: "서울", tz: 0, phone: "010-0583-2210" }],
     consent: { entry: "긴급 시 문 개방 동의 완료 (2026-07-29)", measure: "긴급조치 사전동의 완료", door: "현관 번호키 · 비밀번호 보관 동의" },
     ltc: "장기요양 4등급", personal: { spo2Warn: 92, spo2Danger: 89, note: "만성 폐질환 — 평소 93~95% 유지" },
   },
   박말순: {
     name: "박말순", age: 83, sex: "여", branch: "송파지점", district: "강동구 길동",
-    address: "서울 강동구 길동 OO아파트 3층 302호", phone: "010-****-3001",
+    address: "서울 강동구 길동 OO아파트 3층 302호", phone: "010-0120-3001",
     concierge: { main: "윤세라", sub: "정민호" },
     conditions: ["심부전", "고혈압", "청각장애(심하지 않음)"], meds: ["항응고제", "혈압약"], allergies: ["보호자 확인 필요"],
-    guardians: [{ name: "박은지", rel: "장녀", role: "주", place: "부산", tz: 0, phone: "010-****-3302" }],
+    guardians: [{ name: "박은지", rel: "장녀", role: "주", place: "부산", tz: 0, phone: "010-0227-3302" }],
     consent: { entry: "긴급 시 문 개방 동의 완료 (2025-10-20)", measure: "긴급조치 사전동의 완료", door: "공동현관 없음 · 현관 디지털도어락 비밀번호 보관" },
     ltc: "장기요양 2등급",
   },
   한복자: {
     name: "한복자", age: 79, sex: "여", branch: "송파지점", district: "강동구 길동",
-    address: "서울 강동구 길동 OO빌라 201호", phone: "010-****-4001",
+    address: "서울 강동구 길동 OO빌라 201호", phone: "010-0120-4001",
     concierge: { main: "정민호", sub: "서다인" },
     conditions: ["만성 신부전 (투석)", "당뇨"], meds: ["인슐린", "인 결합제"], allergies: ["등록된 알레르기 없음"],
-    guardians: [{ name: "한준호", rel: "아들", role: "주", place: "서울", tz: 0, phone: "010-****-4418" }],
+    guardians: [{ name: "한준호", rel: "아들", role: "주", place: "서울", tz: 0, phone: "010-0039-4418" }],
     consent: { entry: "긴급 시 문 개방 동의 완료 (2025-08-18)", measure: "긴급조치 사전동의 완료", door: "현관 열쇠 · 보호자 보관" },
     ltc: "장기요양 3등급",
   },
   오태식: {
     name: "오태식", age: 80, sex: "남", branch: "강남 본점", district: "서초구 방배동",
-    address: "서울 서초구 방배동 OO아파트 2동 1105호", phone: "010-****-5001",
+    address: "서울 서초구 방배동 OO아파트 2동 1105호", phone: "010-0120-5001",
     concierge: { main: "한서연", sub: "오하늘" },
     conditions: ["경도 인지장애", "고지혈증"], meds: ["인지개선제", "고지혈증약"], allergies: ["등록된 알레르기 없음"],
-    guardians: [{ name: "오세라", rel: "장녀", role: "주", place: "서울", tz: 0, phone: "010-****-5512" }],
+    guardians: [{ name: "오세라", rel: "장녀", role: "주", place: "서울", tz: 0, phone: "010-0697-5512" }],
     consent: { entry: "긴급 시 문 개방 동의 완료 (2025-12-15)", measure: "긴급조치 사전동의 완료", door: "공동현관 비밀번호 보관 · 현관 번호키" },
     ltc: "인지지원등급", personal: { inactiveWarn: "3시간", note: "낮잠 습관 — 주간 무감지 주의 기준 완화" },
   },
   최정자: {
     name: "최정자", age: 75, sex: "여", branch: "강남 본점", district: "강남구 역삼동",
-    address: "서울 강남구 역삼동 OO오피스텔 803호", phone: "010-****-6001",
+    address: "서울 강남구 역삼동 OO오피스텔 803호", phone: "010-0120-6001",
     concierge: { main: "서다인", sub: "오하늘" },
     conditions: ["골다공증"], meds: ["골다공증약"], allergies: ["등록된 알레르기 없음"],
     guardians: [{ name: "최선영", rel: "차녀", role: "주", place: "도쿄", tz: 0, phone: "해외 연락처" }],
@@ -63,14 +63,43 @@ export const CUSTOMERS = {
   },
   강필순: {
     name: "강필순", age: 82, sex: "여", branch: "강남 본점", district: "강남구 대치동",
-    address: "서울 강남구 대치동 OO빌라 102호", phone: "010-****-7001",
+    address: "서울 강남구 대치동 OO빌라 102호", phone: "010-0120-7001",
     concierge: { main: "서다인", sub: "오하늘" },
     conditions: ["시각장애(심함)", "고혈압"], meds: ["혈압약"], allergies: ["등록된 알레르기 없음"],
-    guardians: [{ name: "강OO", rel: "아들", role: "주", place: "확정 전", tz: 0, phone: "등록 확인 필요" }],
+    guardians: [{ name: "강도윤", rel: "아들", role: "주", place: "서울", tz: 0, phone: "010-0027-7702" }],
     consent: { entry: "긴급 시 문 개방 동의 완료 (2025-07-02)", measure: "긴급조치 사전동의 완료", door: "공동현관 비밀번호 보관" },
     ltc: "장기요양 2등급",
   },
 };
+
+// 관제는 고객 정보를 가리지 않는다 — 전화번호 전체를 보여 줘야 관제가 바로 건다 (2026-10-02 현장 요청).
+// 예시 고객 번호는 010-0xxx 로 둔다. 개통 대역(010-2xxx~9xxx) 밖이라 눌러도 실제 사람에게 걸리지 않는다.
+export const isDemoPhone = (v) => /^010-0\d{3}-\d{4}$/.test(String(v || ""));
+export const telHref = (v) => {
+  const d = String(v || "").replace(/[^\d+]/g, "");
+  return d.length >= 9 ? `tel:${d}` : null;
+};
+
+// 데모 가구 어르신(김순자) — 테스트 가구에서 보호자가 가입 상담에 적은 연락처·주소가 있으면 그걸 쓴다.
+// 그래야 관제 테스터가 어르신 역할 테스터에게 실제로 전화해 볼 수 있다. 없으면 예시 번호.
+export const LIVE_ELDER = "김순자";
+export function liveCustomer(name, onboarding) {
+  const c = getCustomer(name);
+  const ob = onboarding;
+  if (!ob || name !== LIVE_ELDER) return c;
+  const elderPhone = String(ob.elderPhone || (ob.forSelf ? ob.phone : "") || "").trim();
+  const guardianPhone = ob.forSelf ? "" : String(ob.phone || "").trim();
+  const address = String(ob.address || "").trim();
+  return {
+    ...c,
+    ...(elderPhone ? { phone: elderPhone, phoneSource: "가입 상담" } : {}),
+    ...(address ? { address } : {}),
+    guardians:
+      guardianPhone && c.guardians.length
+        ? [{ ...c.guardians[0], phone: guardianPhone, phoneSource: "가입 상담" }, ...c.guardians.slice(1)]
+        : c.guardians,
+  };
+}
 
 // 이름이 데모 인물에 없어도 화면이 비지 않게 — 기본 프로필
 export function getCustomer(name) {

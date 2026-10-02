@@ -4,7 +4,8 @@
 import { useState } from "react";
 import { Btn, Confirm, Empty, Field, KV, Pill, Toggle, TONE } from "../ui";
 import { CALL_RESULTS } from "../../../lib/ops-sos";
-import { dispatchCandidates, getCustomer, getHealth } from "../../../lib/ops-health";
+import { dispatchCandidates, getHealth, liveCustomer, telHref } from "../../../lib/ops-health";
+import { useAppState } from "../../../lib/state";
 import { fmtClock, fmtTime } from "../../../lib/ops-time";
 import { build119, guardianOf, summary119Text } from "./helpers";
 import { CloseForm, ReportView } from "./CloseReport";
@@ -30,7 +31,9 @@ function Tries({ tries }) {
 }
 
 // 어르신 전화 · 보호자 연락 공용 — withRequest 는 보호자 요청사항 칸
-function ContactForm({ inc, stepKey, rec, api, ro, target, channels, withRequest, allowSkip, nextDefault }) {
+function ContactForm({ inc, stepKey, rec, api, ro, target, phone, channels, withRequest, allowSkip, nextDefault }) {
+  // '전화 걸기'는 시도를 기록하고 실제 전화 앱도 연다 (2026-10-02 — 관제가 번호를 보고 바로 건다)
+  const dial = telHref(phone);
   const [result, setResult] = useState("미연결");
   const [answer, setAnswer] = useState("");
   const [request, setRequest] = useState("");
@@ -41,9 +44,15 @@ function ContactForm({ inc, stepKey, rec, api, ro, target, channels, withRequest
   return (
     <div className="card-glass rounded-xl p-3">
       <div className="flex flex-wrap items-center gap-2">
-        {channels.map((ch) => (
-          <Btn key={ch} small tone={ch === "전화 걸기" ? "danger" : "navy"} disabled={ro} onClick={() => logTry(ch)}>{ch}</Btn>
-        ))}
+        {channels.map((ch) =>
+          ch === "전화 걸기" && dial && !ro ? (
+            <a key={ch} href={dial} onClick={() => logTry(ch)} className="btn-press rounded-[10px] px-3 py-1.5 text-[12px] font-bold text-white" style={{ background: TONE.danger.fg }}>
+              {ch}
+            </a>
+          ) : (
+            <Btn key={ch} small tone={ch === "전화 걸기" ? "danger" : "navy"} disabled={ro} onClick={() => logTry(ch)}>{ch}</Btn>
+          )
+        )}
         <span className="text-[12px] text-ink">{target}</span>
         <Tries tries={rec.tries} />
       </div>
@@ -259,7 +268,7 @@ function TransferForm({ inc, c, api, ro }) {
 }
 
 export default function StepForm({ inc, stepKey, api, role }) {
-  const c = getCustomer(inc.customer);
+  const c = liveCustomer(inc.customer, useAppState()?.state?.onboarding);
   const rec = inc.steps?.[stepKey] || {};
   const ro = role !== "controller";
   const main = guardianOf(c, "주");
@@ -267,11 +276,11 @@ export default function StepForm({ inc, stepKey, api, role }) {
   const common = { inc, api, ro };
   switch (stepKey) {
     case "confirm": return <ConfirmForm {...common} />;
-    case "call1": return <ContactForm {...common} stepKey="call1" rec={rec} target={`어르신 ${c.name} ${c.phone}`} channels={["전화 걸기"]} nextDefault="미연결 시 2차 전화" />;
-    case "call2": return <ContactForm {...common} stepKey="call2" rec={rec} target={`어르신 ${c.name} ${c.phone}`} channels={["전화 걸기"]} nextDefault="미연결 시 3차 전화 자동 활성" />;
-    case "call3": return <ContactForm {...common} stepKey="call3" rec={rec} target={`어르신 ${c.name} ${c.phone}`} channels={["전화 걸기", "워치 알림"]} nextDefault="미연결 시 주 보호자 연락" allowSkip />;
-    case "guardian1": return <ContactForm {...common} stepKey="guardian1" rec={rec} target={main ? `주 보호자 ${main.name} (${main.rel} · ${main.place}) ${main.phone}` : "주 보호자 등록 없음"} channels={["전화 걸기", "앱 알림", "문자"]} withRequest nextDefault="부 보호자 연락 · 조치 예정 통보" allowSkip={!main} />;
-    case "guardian2": return <ContactForm {...common} stepKey="guardian2" rec={rec} target={sub ? `부 보호자 ${sub.name} (${sub.rel} · ${sub.place}) ${sub.phone}` : "부 보호자 등록 없음"} channels={["전화 걸기", "앱 알림", "문자"]} withRequest nextDefault="조치 예정 통보" allowSkip />;
+    case "call1": return <ContactForm {...common} stepKey="call1" rec={rec} target={`어르신 ${c.name} ${c.phone}`} phone={c.phone} channels={["전화 걸기"]} nextDefault="미연결 시 2차 전화" />;
+    case "call2": return <ContactForm {...common} stepKey="call2" rec={rec} target={`어르신 ${c.name} ${c.phone}`} phone={c.phone} channels={["전화 걸기"]} nextDefault="미연결 시 3차 전화 자동 활성" />;
+    case "call3": return <ContactForm {...common} stepKey="call3" rec={rec} target={`어르신 ${c.name} ${c.phone}`} phone={c.phone} channels={["전화 걸기", "워치 알림"]} nextDefault="미연결 시 주 보호자 연락" allowSkip />;
+    case "guardian1": return <ContactForm {...common} stepKey="guardian1" rec={rec} phone={main?.phone} target={main ? `주 보호자 ${main.name} (${main.rel} · ${main.place}) ${main.phone}` : "주 보호자 등록 없음"} channels={["전화 걸기", "앱 알림", "문자"]} withRequest nextDefault="부 보호자 연락 · 조치 예정 통보" allowSkip={!main} />;
+    case "guardian2": return <ContactForm {...common} stepKey="guardian2" rec={rec} phone={sub?.phone} target={sub ? `부 보호자 ${sub.name} (${sub.rel} · ${sub.place}) ${sub.phone}` : "부 보호자 등록 없음"} channels={["전화 걸기", "앱 알림", "문자"]} withRequest nextDefault="조치 예정 통보" allowSkip />;
     case "notice": return <NoticeForm {...common} c={c} />;
     case "call119": return <Report119Form {...common} c={c} />;
     case "dispatch": return <DispatchForm {...common} c={c} />;

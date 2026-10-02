@@ -3,7 +3,8 @@
 import { useState } from "react";
 import { Avatar, Btn, FeedPill, KV, Panel, Pill, SEV, SevPill, Stamp, StatePill, Steps, TONE } from "../ui";
 import { STEP_ORDER } from "../../../lib/ops-sos";
-import { getCustomer, getHealth } from "../../../lib/ops-health";
+import { liveCustomer, getHealth } from "../../../lib/ops-health";
+import { useAppState } from "../../../lib/state";
 import { fmtElapsed, fmtTime } from "../../../lib/ops-time";
 import { guardianOf, resultLabel, stepSummary, stepTitle } from "./helpers";
 import StepForm from "./StepForms";
@@ -31,7 +32,7 @@ function defaultSub(k, c) {
 }
 
 export default function IncidentDetail({ inc, now, api, role, onClosePopup }) {
-  const c = getCustomer(inc.customer);
+  const c = liveCustomer(inc.customer, useAppState()?.state?.onboarding);
   const h = getHealth(inc.customer);
   const [infoOpen, setInfoOpen] = useState(true);
   const ro = role !== "controller";

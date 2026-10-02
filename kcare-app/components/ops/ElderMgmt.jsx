@@ -104,7 +104,7 @@ export default function ElderMgmt() {
     e = {
       ...e,
       loc: form.loc === "요양병원" ? "hospital" : "home",
-      guardians: [{ name: form.gName.trim(), rel: form.gRel, role: "주 보호자", region: "—", tel: "등록 후 마스킹", consent: consentAll }],
+      guardians: [{ name: form.gName.trim(), rel: form.gRel, role: "주 보호자", region: "—", tel: "연락처 등록 필요", consent: consentAll }],
       service: { ...e.service, product: form.product, pay: form.pay, visitDay: form.visitDay },
       priority: form.priority.split("→").map((s) => s.trim()).filter(Boolean),
       devices: { watch: { ...e.devices.watch, id: form.watchId || "연결 대기", feed: form.watchId ? "live" : "unworn", threshold: form.threshold ? "개별 임계값 설정 예정 (관제기준 설정)" : "기본값 적용" }, sensors: [{ type: "mmWave 센서", place: form.sensor, at: "—", state: "설치 예정" }] },
@@ -125,7 +125,7 @@ export default function ElderMgmt() {
     if (!c.reason?.trim()) return setConfirm({ ...c, err: true });
     if (c.type === "service") update(cur.name, (e) => log({ ...e, service: { ...e.service, state: c.to } }, "서비스 상태", SERVICE_STATE[e.service.state].label, SERVICE_STATE[c.to].label, c.reason));
     if (c.type === "concierge") update(cur.name, (e) => log({ ...e, pri: c.pri, sub: c.sub }, "담당 컨시어지", `${e.pri} · ${e.sub}`, `${c.pri} · ${c.sub}`, c.reason));
-    if (c.type === "guardian") update(cur.name, (e) => log({ ...e, guardians: [...e.guardians, { name: c.name.trim(), rel: c.rel, role: `${c.role} 보호자`, region: "—", tel: "등록 후 마스킹", consent: consentAll }] }, "보호자 연결", e.guardians.map((g) => g.name).join(" · ") || "—", [...e.guardians.map((g) => g.name), c.name.trim()].join(" · "), c.reason));
+    if (c.type === "guardian") update(cur.name, (e) => log({ ...e, guardians: [...e.guardians, { name: c.name.trim(), rel: c.rel, role: `${c.role} 보호자`, region: "—", tel: "연락처 등록 필요", consent: consentAll }] }, "보호자 연결", e.guardians.map((g) => g.name).join(" · ") || "—", [...e.guardians.map((g) => g.name), c.name.trim()].join(" · "), c.reason));
     setConfirm(null);
     setMsg("확인 절차를 거쳐 실행 · 이력 저장");
   };

@@ -1,15 +1,18 @@
 // SOS 콘솔 오른쪽 열 — 고객 핵심정보 · 보호자 연락 · 현장 출동 추천 · 119 전달용 요약 (시안 SOS 긴급대응 센터).
 import { Btn, FeedPill, KV, Panel, PanelHead, Pill, Stamp, TONE } from "../ui";
-import { getCustomer, getHealth } from "../../../lib/ops-health";
+import { getHealth, liveCustomer } from "../../../lib/ops-health";
+import PhoneLink from "../PhoneLink";
+import { useAppState } from "../../../lib/state";
 import { fmtLocal, fmtTime } from "../../../lib/ops-time";
 import { build119, consciousness, summary119Text } from "./helpers";
 import { DispatchForm } from "./StepForms";
 
 const RANK = { 주: "1순위", 부: "2순위", 비상: "3순위" };
+
 const STEP_OF_ROLE = { 주: "guardian1", 부: "guardian2", 비상: "guardian2" };
 
 export default function SidePanels({ inc, now, api, role }) {
-  const c = getCustomer(inc.customer);
+  const c = liveCustomer(inc.customer, useAppState()?.state?.onboarding);
   const h = getHealth(inc.customer);
   const ro = role !== "controller";
   const rows119 = build119(inc, c, h);
@@ -29,6 +32,7 @@ export default function SidePanels({ inc, now, api, role }) {
       <Panel>
         <PanelHead title="고객 핵심정보" />
         <div className="mt-1">
+          <KV k="휴대폰" v={<PhoneLink phone={c.phone} source={c.phoneSource} />} />
           <KV k="현재 위치" v={<span>{h.location.v} <FeedPill feed={h.location.feed} /></span>} />
           <KV k="마지막 수신" v={<Stamp at={stamp(h.lastRx)} prefix="" />} mono />
           <KV k="자택 주소" v={c.address} />
@@ -61,7 +65,7 @@ export default function SidePanels({ inc, now, api, role }) {
                     <Pill tone={st.tone}>{st.label}</Pill>
                   </div>
                   <div className="mt-0.5 text-[12px] text-muted">
-                    {g.place}{g.tz ? ` · 현지시각 ${fmtLocal(now, g.tz)}` : ""} · {g.phone}{g.note ? ` · ${g.note}` : ""}
+                    {g.place}{g.tz ? ` · 현지시각 ${fmtLocal(now, g.tz)}` : ""} · <PhoneLink phone={g.phone} source={g.phoneSource} />{g.note ? ` · ${g.note}` : ""}
                   </div>
                   <div className="mt-1.5 flex gap-1.5">
                     <Btn small tone="navy" disabled={ro} onClick={() => logGuardian(g, "전화")}>전화</Btn>

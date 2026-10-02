@@ -3,7 +3,7 @@ import Head from "next/head";
 import Logo from "../components/Logo";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   ELDER,
   JOBS,
@@ -56,12 +56,15 @@ import MobileSectionNav from "../components/MobileSectionNav";
 import StaggerIn from "../components/StaggerIn";
 import { CREW_RULES } from "../lib/dispatch-policy";
 // 사이드바 배지 — 각 관리 화면의 머릿수 Stat 과 같은 출처를 쓴다 (화면 200명 · 배지 20명처럼 어긋나지 않게)
-import { TOTAL_ELDERS } from "../lib/ops-health";
+import { TOTAL_ELDERS, liveCustomer } from "../lib/ops-health";
+import SosAlertModal from "../components/ops/SosAlertModal";
+import { ringAlarm } from "../lib/alarm";
 import { FLEET } from "../lib/ops-devices";
 import { GUARDIAN_STATS, STAFF_STATS } from "../lib/ops-mgmt-people";
 import { HOSPITALS_SEED } from "../lib/ops-admin-sys";
 // 어르신 SOS 버튼을 관제 사건으로 이은 시각 — 같은 발신을 두 번 사건화하지 않기 위한 표식
 const SOS_LINK_KEY = "kcare-ops-sos-link-v1";
+const SOS_POPUP_KEY = "kcare-ops-sos-popup-v1"; // 이 기기에서 SOS 팝업을 닫은 sosAt
 // 관제 콘솔 재구성 — 2026-09-22 관제 개선 요청서(19절) · 시안 8장 (components/ops/*)
 import OpsDashboard from "../components/ops/OpsDashboard";
 import SosCenter from "../components/ops/SosCenter";
@@ -473,6 +476,34 @@ export default function DispatchConsole() {
   const [hoDone, setHoDone] = useState({}); // 정체 건 처리 원샷
   // 사이드바 배지 카운트 — 각 화면 첫 Stat 과 같은 숫자 (어르신 200 · 보호자 218 · 컨시어지 42 · 제휴 병원 · 점검 필요 기기)
   const { open: sosOpen, hydrated: sosHydrated, start: startIncident } = useIncidents(); // 진행 중 SOS 사건 (요청서 6-6)
+  // SOS 팝업 — 새 SOS(sosAt)마다 한 번 뜨고, 닫으면 이 기기에서는 그 SOS 로 다시 뜨지 않는다 (배너는 남는다).
+  // 열려 있는 동안 10초마다 알림음을 다시 울린다 (2026-10-02 현장 요청).
+  const [sosPopupAck, setSosPopupAck] = useState(null);
+  const [sosPopupReady, setSosPopupReady] = useState(false);
+  useEffect(() => {
+    try {
+      setSosPopupAck(window.localStorage.getItem(scopedKey(SOS_POPUP_KEY)));
+    } catch {
+      /* 저장이 막힌 브라우저 — 이 화면에서만 기억 */
+    }
+    setSosPopupReady(true);
+  }, []);
+  const sosPopupKey = sos ? String(state.demo.sosAt || "on") : null;
+  const sosPopup = sosPopupReady && !!sosPopupKey && sosPopupAck !== sosPopupKey;
+  const closeSosPopup = useCallback(() => {
+    setSosPopupAck(sosPopupKey);
+    try {
+      window.localStorage.setItem(scopedKey(SOS_POPUP_KEY), sosPopupKey || "");
+    } catch {
+      /* 위와 같음 */
+    }
+  }, [sosPopupKey]);
+  useEffect(() => {
+    if (!sosPopup) return undefined;
+    ringAlarm();
+    const t = setInterval(ringAlarm, 10000);
+    return () => clearInterval(t);
+  }, [sosPopup]);
   const MENU_COUNTS = {
     sos: sosOpen.length,
     elder: TOTAL_ELDERS,
@@ -1006,6 +1037,25 @@ export default function DispatchConsole() {
             </div>
           </nav>
 
+          {sosPopup && (
+            <SosAlertModal
+              customer={liveCustomer(ELDER.name, state.onboarding)}
+              sosAt={state.demo.sosAt}
+              elapsed={elapsed}
+              dispatched={sosDispatched}
+              onOpenCenter={() => {
+                closeSosPopup();
+                setSosFocus(sosOpen.find((i) => i.customer === ELDER.name)?.id || null);
+                setMenu("sos");
+              }}
+              onDispatch={() => {
+                if (sosDispatched) return;
+                dispatch({ type: "opsPatch", patch: { sosDispatched: true } });
+                push("대응", "박지현 급파 지시 · 119 연계 대기", "#FF8A80");
+              }}
+              onClose={closeSosPopup}
+            />
+          )}
           {/* ── SOS 배너 (09 §2 + REQ-04 경계) — SOS 섹션에는 전용 배너가 있으므로 중복 제외 ── */}
           {sos && menu !== "sos" && (
             <section

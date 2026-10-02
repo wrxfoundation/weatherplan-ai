@@ -2,7 +2,8 @@
 // 최근 1시간·오늘·7일·30일 변화 그래프를 인라인 SVG 로 그린다 (외부 라이브러리 없음).
 import { useState } from "react";
 import { Avatar, Btn, Drawer, FeedPill, KV, Note, Pill, SevPill, Stamp, Tabs, TONE } from "../ui";
-import { getCustomer, getHealth, getSeries, RANGES } from "../../../lib/ops-health";
+import { getHealth, getSeries, liveCustomer, RANGES } from "../../../lib/ops-health";
+import { useAppState } from "../../../lib/state";
 import { fmtTime, useNow } from "../../../lib/ops-time";
 
 const FIELDS = [
@@ -76,8 +77,9 @@ export default function HealthDrawer({ name, row, open, onClose, onStartSos }) {
   const [range, setRange] = useState("1h");
   const [metric, setMetric] = useState("hr");
   const now = useNow(1000);
+  const onboarding = useAppState()?.state?.onboarding;
   if (!open || !name) return null;
-  const c = getCustomer(name);
+  const c = liveCustomer(name, onboarding);
   const h = getHealth(name);
   const series = getSeries(name, range);
   const [, mLabel, unit] = METRICS.find((m) => m[0] === metric) || METRICS[0];

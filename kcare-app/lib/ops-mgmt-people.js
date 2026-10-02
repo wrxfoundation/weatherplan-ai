@@ -3,7 +3,7 @@
 // 보호자는 브리프의 데모 인물(이성호·박은지·최선영·한준호 …)이 명부와 다른 곳이 있어 여기서 따로 정의한다.
 import { ROSTERS } from "./rosters";
 import { SERVICE_MENU } from "./requests";
-import { VISITS, maskTel, ADMIN, OPERATOR } from "./ops-mgmt";
+import { VISITS, demoTel, ADMIN, OPERATOR } from "./ops-mgmt";
 
 const past = (at, field, before, after, reason, who = OPERATOR) => ({ at, account: who.account, name: who.name, role: who.role, field, before, after, reason });
 const svc = (no) => SERVICE_MENU.find((s) => s.no === no);
@@ -25,7 +25,7 @@ export function localClock(now, tz) {
 
 const G = (id, name, rel, role, elder, age, region, tz, report, payLimit, contact, x = {}) => ({
   id: `G-${String(id).padStart(3, "0")}`, name, rel, role, elders: [{ name: elder, age, role }], region, tz, tzLabel: tz == null ? null : region,
-  tel: maskTel(name), hours: "08:00–22:00", night: role === "주", consent: { call: true, sms: true, push: true }, sosOrder: role === "주" ? 1 : role === "부" ? 2 : 3,
+  tel: demoTel(name), hours: "08:00–22:00", night: role === "주", consent: { call: true, sms: true, push: true }, sosOrder: role === "주" ? 1 : role === "부" ? 2 : 3,
   scope: role === "주" ? SCOPES[0] : SCOPES[1], reportVia: REPORT_VIA[1], report, payer: payLimit != null, payLimit, contact,
   app: { state: "정상", last: "오늘 09:12" }, emergency: role === "주" ? "119 신고 · 현장출동 동의" : "열람 동의",
   requests: [], complaints: [], reports: [{ at: "09-16", title: "9월 정기방문 보고서", state: report.includes("미열람") ? "noreply" : "read" }],
@@ -106,7 +106,7 @@ export function conciergeDetail(r) {
   const late = { declined: 0, late: probation ? 1 : 0, cancel: 0 };
   const ratingNum = parseFloat(rating) || null;
   return {
-    name, branch, role, region, regDate, rating, jobs, fat, cert, status, hours: h, fatigue, tel: maskTel(name),
+    name, branch, role, region, regDate, rating, jobs, fat, cert, status, hours: h, fatigue, tel: demoTel(name),
     roleType: /주·부/.test(role) ? "주·부 겸용" : /주/.test(role) ? "주 담당" : "부 담당",
     workDays: probation ? "월–금 10:00–17:00" : "월–금 09:00–18:00 (토 격주)",
     vehicle: /차량/.test(cert), emergency: /주/.test(role) && status !== "휴식 권고" && status !== "오픈 대기",

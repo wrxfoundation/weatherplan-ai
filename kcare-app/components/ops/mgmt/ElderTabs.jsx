@@ -2,7 +2,7 @@
 // 정서·건강은 관찰 내용 · 변화 징후 · 추가 확인 필요로만 쓴다 — 진단명·점수 없음.
 import { useState } from "react";
 import { KV, Pill, Table, Tabs, Stamp, FeedPill, SevPill, Note, Empty, Btn } from "../ui";
-import { VISITS, VISIT_STATE, visitPill, sevOf, maskTel, stampNow, OPERATOR } from "../../../lib/ops-mgmt";
+import { VISITS, VISIT_STATE, visitPill, sevOf, demoTel, stampNow, OPERATOR } from "../../../lib/ops-mgmt";
 import { HistoryTable } from "./EditLog";
 
 const RANGES = ["최근 1시간", "오늘", "최근 7일", "최근 30일"];
@@ -86,7 +86,7 @@ export default function ElderTabs({ e, tab, onChange }) {
             <div key={r} className="rounded-xl bg-navy/[.04] p-3">
               <div className="text-[11px] font-bold text-muted">{r}</div>
               <div className="mt-1 text-[15px] font-bold text-navy">{n === "—" ? <span className="text-gold">미배정</span> : n}</div>
-              {n !== "—" && <div className="font-num text-[11px] text-muted">연락 {maskTel(n)} · {e.branch}</div>}
+              {n !== "—" && <div className="font-num text-[11px] text-muted">연락 {demoTel(n)} · {e.branch}</div>}
             </div>
           ))}
           <div className="text-[11px] text-muted sm:col-span-2">2인 1가구 짝 원칙 — 부 담당이 없으면 주 담당 부재 시 대체가 안 됩니다. 변경은 상단 [담당 컨시어지 변경] (확인 절차 · 이력 기록).</div>

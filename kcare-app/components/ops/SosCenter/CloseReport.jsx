@@ -3,7 +3,8 @@
 import { useState } from "react";
 import { Btn, Confirm, Field, KV, Note, Pill, Table, TONE } from "../ui";
 import { CLOSE_RESULTS } from "../../../lib/ops-sos";
-import { getCustomer } from "../../../lib/ops-health";
+import { liveCustomer } from "../../../lib/ops-health";
+import { useAppState } from "../../../lib/state";
 import { fmtDateTime, fmtDur, fmtTime } from "../../../lib/ops-time";
 import { buildTimeline } from "./helpers";
 
@@ -59,7 +60,7 @@ function draftForGuardian(inc, c, timeline) {
 }
 
 export function ReportView({ inc, api, role }) {
-  const c = getCustomer(inc.customer);
+  const c = liveCustomer(inc.customer, useAppState()?.state?.onboarding);
   const timeline = buildTimeline(inc);
   const [draft, setDraft] = useState(() => draftForGuardian(inc, c, timeline));
   const [copied, setCopied] = useState(false);

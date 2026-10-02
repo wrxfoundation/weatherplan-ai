@@ -124,7 +124,7 @@ export default function GuardianMgmt({ openProfile }) {
     const tel = form.tel.replace(/\D/g, "");
     const g = {
       id: `G-${Date.now()}`, name: form.name.trim(), rel: form.rel, role: form.role, elders: [{ ...e, role: form.role }],
-      region: form.region.trim() || form.tz.split(" ")[0], tz: TZ[form.tz], tel: tel.length >= 10 ? `${tel.slice(0, 3)}-${tel.slice(3, 5)}**-${tel.slice(-4, -2)}**` : "미입력",
+      region: form.region.trim() || form.tz.split(" ")[0], tz: TZ[form.tz], tel: tel.length >= 10 ? `${tel.slice(0, 3)}-${tel.slice(3, -4)}-${tel.slice(-4)}` : "미입력",
       hours: "08:00–22:00", night: form.night, consent: { call: form.call, sms: form.sms, push: form.push }, sosOrder: Number(form.sos), scope: form.scope, reportVia: form.via,
       report: "발송 전", payer: form.payer, payLimit: form.payer ? Number(form.limit) || 0 : null, contact: "정상", app: { state: "초대 발송 · 가입 대기", last: "—" },
       emergency: form.role === "주" ? "119 신고 · 현장출동 동의 (서명 대기)" : "열람 동의", requests: [], complaints: [], reports: [], payments: [],
@@ -228,7 +228,7 @@ export default function GuardianMgmt({ openProfile }) {
           <p className="mt-0.5 text-[13px] text-muted">연락 우선순위 · 알림 · 보고서 · 결제권한 및 소통이력을 관리합니다.</p>
         </div>
         <div className="flex gap-2">
-          <Btn ghost onClick={() => setMsg("엑셀 다운로드는 권한 확인 후 제공됩니다 · 연락처는 마스킹 상태로 · 다운로드는 감사로그에 기록")}><span className="inline-flex items-center gap-1"><Icon name="download" size={14} /> 엑셀 다운로드</span></Btn>
+          <Btn ghost onClick={() => setMsg("엑셀 다운로드는 권한 확인 후 제공됩니다 · 다운로드는 감사로그에 기록")}><span className="inline-flex items-center gap-1"><Icon name="download" size={14} /> 엑셀 다운로드</span></Btn>
           <Btn onClick={() => setReg(true)}><span className="inline-flex items-center gap-1"><Icon name="plus" size={14} /> 신규 보호자 등록</span></Btn>
         </div>
       </div>
@@ -313,7 +313,7 @@ export default function GuardianMgmt({ openProfile }) {
           </div>
           <Field id="gr-elder" label="연결 어르신" value={form.elder} onChange={setF("elder")} options={ELDERS} hint="등록 후 [+ 어르신 연결]로 복수 연결" />
           <div className="grid gap-3 sm:grid-cols-3">
-            <Field id="gr-tel" label="휴대전화" value={form.tel} onChange={setF("tel")} placeholder="010-0000-0000" hint="저장 시 마스킹" />
+            <Field id="gr-tel" label="휴대전화" value={form.tel} onChange={setF("tel")} placeholder="010-0000-0000" hint="관제 화면에는 전체 번호로 보입니다" />
             <Field id="gr-region" label="거주지역" value={form.region} onChange={setF("region")} placeholder="서울 강남구" />
             <Field id="gr-tz" label="해외 시간대" value={form.tz} onChange={setF("tz")} options={Object.keys(TZ)} />
           </div>
