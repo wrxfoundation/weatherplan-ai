@@ -55,10 +55,25 @@ const { entries, categories, regions } = bundle
 const shellRaw = readFileSync(join(DIST, 'index.html'), 'utf8')
 // 기본 origin으로 박아 둔 절대 URL을 실제 배포 도메인으로 교체
 const shell = shellRaw.split(DEFAULT_ORIGIN).join(ORIGIN)
-writeFileSync(join(DIST, 'index.html'), shell)
 
 const esc = (s) =>
   String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
+
+// 홈('/')은 셸 그대로 나간다. index.html 메타에 숫자를 손으로 적어 두면 도감이 늘 때마다 낡는다 —
+// 실제로 163체가 된 뒤에도 검색 결과·공유 카드에는 '120체'가 나가고 있었다. 번들에서 채운다.
+{
+  const homeDesc =
+    `도깨비·구미호·이무기부터 제주 본풀이 신격까지, 한국 요괴·신격 ${bundle.count}체와 설화 ${taleBundle.count}편·` +
+    `노래 ${songBundle.count}편을 전승지 좌표와 함께 공개 자료 기반으로 정리한 지도형 도감. 모든 항목에 출처와 검증등급을 표기합니다.`
+  const home = shell
+    .replace(/(<meta name="description" content=")[^"]*(")/, `$1${esc(homeDesc)}$2`)
+    .replace(/(<meta property="og:description" content=")[^"]*(")/, `$1${esc(homeDesc)}$2`)
+  if ((home.match(new RegExp(`content="${esc(homeDesc).replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}"`, 'g')) ?? []).length !== 2) {
+    console.error('❌ 홈 설명 치환 실패 — index.html의 description·og:description 메타가 한 줄인지 확인할 것.')
+    process.exit(1)
+  }
+  writeFileSync(join(DIST, 'index.html'), home)
+}
 
 const urls = [{ loc: '/', priority: '1.0' }]
 

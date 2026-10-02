@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { YOKAI, CAT } from '../data/yokai.js'
+import { YOKAI, CAT, META } from '../data/yokai.js'
 import { slugOf } from '../seo.js'
 import { timeBucket, seasonOf, TIME_LABEL, SEASON_LABEL } from '../engine/omen.js'
 import { regionAt, encountersFor, needsFaithNotice, REGION_RADIUS_KM } from '../engine/hunt.js'
@@ -139,7 +139,7 @@ export default function HuntPage() {
 
       {geo === GEO.ok && !region && (
         <div className="notice warn" style={{ marginTop: 'var(--sp-4)' }}>
-          반경 {REGION_RADIUS_KM}km 안에 <strong>기록된 전승지가 없습니다.</strong> 시드 120체의 전승지는 73곳이라
+          반경 {REGION_RADIUS_KM}km 안에 <strong>기록된 전승지가 없습니다.</strong> 도감 {META.count}체의 전승지는 {META.siteCount}곳이라
           아직 비어 있는 지역이 많습니다. 없는 전승을 지어내지 않으므로, 이 지역은 데이터가 채워질 때까지 비어 있습니다.
         </div>
       )}
