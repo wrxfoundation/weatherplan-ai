@@ -56,7 +56,7 @@
 
 - [ ] 09:00 2차 판매(측정기) · AI 이용권 판매가 정상으로 열렸는지 — 카운트다운 종료 · 구매 버튼 · 결제 화면까지
 - [ ] AI 이용권 카드 결제 가능 여부(운영안 「확인 필요」) → 7절 「카드로 돼요?」 답 확정
-- [ ] DeFi(DEX) · 리더보드 · 데이터 바운티 · 데이터 마켓 메뉴가 열렸는지(9/30 회의 — DEX 10/2 오픈 → 10/3 09:00 사이트 연결)와 출금 개시 공지 여부 → 6절 「출금 · 지금 어디서 사요?」 답을 A · B 중 하나로
+- [ ] XRPL DEX 의 WLBN/RLUSD AMM 풀은 **10/2 저녁 가동 확인**(서우 스왑 화면). 남은 확인: 사이트 DeFi · 리더보드 · 데이터 바운티 · 데이터 마켓 메뉴 연결(10/3 09:00)과 출금 개시 공지 여부 → 6절 「출금 돼요?」 답을 A · B 중 하나로
 - [ ] 웨더 이코노미 설명 단계 — 키노트 원고는 세 층(수집 · 정제 · 가치, 보상은 수집 층 안), 부스 30초 소개는 네 단계(측정 · 검증 · 보상 · 유통). 하나로 맞출지(9/30 회의 끝 「측정 · 정제 · 유통 + 보상」 안이 키노트와 같은 모양)
 - [ ] 키노트 최종 원고 — 예측시장 예시 도시 · 기밀 연산 · 지급 표현 · 오늘 발표 언급을 고쳤는지(`reports/XRP SEOUL 2026 키노트 국문 번역.md` 1절) → 「키노트 뒤 나올 질문」 답과 맞추기
 - [ ] 09:00 발표 원문(케이웨더 날씨 데이터 마켓 · Flare) → 9절 답과 문장 맞추기
@@ -129,12 +129,12 @@
 | 보상 받으려면 뭘 해요? | 측정기를 켜 두고 Wi-Fi 연결을 유지하시면 됩니다. 데이터가 꾸준히 들어와야(전송률 95% 이상) 전부 쌓이고, 80~95% 면 줄고, 80% 아래면 쌓이지 않습니다. |
 | 언제부터 쌓여요? | 기기를 등록하고 측정값이 검증을 통과하면 쌓입니다. 1차 구매분은 기기를 받기 전에도 기기 NFT 당 포인트가 쌓이도록 안내했습니다.<br>`주의: 당일 확인 — 2차도 같은지` |
 | 토큰 빼서 팔 수 있어요? 출금 돼요? | (A) 출금 개시 공지 전이면 — 지금은 계정에 포인트로 쌓이고, 지갑으로 옮기는 출금 개시일은 회사가 공지합니다. (B) 공지 뒤면 — 공지된 방법대로 클레임해 지갑으로 받으실 수 있습니다.<br>`주의: 당일 확인 — A · B 중 하나만` |
-| 지금 WLBN 은 어디서 사요? 얼마예요? | 사이트 DeFi 메뉴에 공지된 범위로 안내해 드립니다. 가격은 시장에서 정해지고, 저희가 가격을 말씀드리거나 보장하지 않습니다.<br>`주의: 가격 숫자 0 · 당일 확인` |
-| 거래소 상장해요? 언제? | 정해진 날짜는 없습니다. 백서에 공개된 단계별 기준을 따르고, 상장 시점이나 가격은 약속하지 않습니다.<br>`주의: "곧" · "준비 중" 0` |
+| 지금 WLBN 은 어디서 사요? 얼마예요? | XRP 레저 안의 탈중앙 거래소(AMM)에 WLBN/RLUSD 풀이 열려 있어, 지원하는 지갑에서 RLUSD 와 교환할 수 있습니다. 진짜 WLBN 은 발행 계정 rDJz8WJhsKgydqJzSZXMpsJot3eRmSkR5 로 확인하세요. 가격은 시장에서 정해지고, 저희가 말씀드리거나 보장하지 않습니다.<br>`주의: 사라고 권하지 않는다 · 가격 숫자 · 스왑 · 시세 화면 보여 주기 0 · 「상장했다」 0` |
+| 거래소 상장해요? 언제? | 거래소 상장은 정해진 날짜가 없습니다. 지금 열린 것은 XRP 레저 안의 탈중앙 거래소(AMM) 풀이고, 백서에 공개된 단계별 기준을 따릅니다. 상장 시점이나 가격은 약속하지 않습니다.<br>`주의: "곧" · "준비 중" 0 · AMM 풀을 「상장」이라 부르지 않기` |
 | 총 발행량 · 배분은? | 총 100억 개를 처음에 전부 발행했습니다. 노드 보상 1기 28%, 2기 18%(조건을 못 채우면 소각), 소각 예정 25%, 유동성(LP) 8%, 팀 6%(12개월 잠금 뒤 48개월에 걸쳐 풀림), 생태계 5%, 전략 투자 5%, 유동성 · 준비금 5% 입니다. 사이트 토큰 페이지와 백서에 공개돼 있습니다. |
 | 소각은요? | 데이터 판매로 결제된 WLBN 의 절반은 자동으로 소각되고, 배분표의 소각 예정 물량과 사들인 물량도 소각합니다. 모두 온체인 기록으로 남습니다.<br>`주의: "소각되니 오른다" 0` |
 | 보상이 점점 줄어든다던데요? | 네트워크가 커질수록 지점당 기준량이 줄도록 산식이 백서에 공개돼 있습니다. 한 사람이 독식하지 못하게 기기 한 대당 하루 상한도 있습니다. |
-| 진짜 WLBN 인지 어떻게 알아요? | XRPL 발행 계정 rDJz8WJhsKgydqJzSZXMpsJot3eRmSkR5 에서 나온 WLBN 만 진짜입니다. 트러스트라인을 열기 전에 익스플로러에서 발행 계정을 확인하세요.<br>`주의: 가짜 토큰 주의` |
+| 진짜 WLBN 인지 어떻게 알아요? | XRPL 발행 계정 rDJz8WJhsKgydqJzSZXMpsJot3eRmSkR5 에서 나온 WLBN 만 진짜입니다. 트러스트라인을 열거나 교환하기 전에 익스플로러 · 지갑 화면에서 발행 계정을 확인하세요.<br>`주의: DEX 가 열린 직후에는 같은 이름의 가짜 토큰이 흔하다 — 발행 계정 앞자리(rDJz8)부터 보여 주기` |
 | WLBN 이 코인이에요? 증권이에요? | 네트워크의 보상과 결제에 쓰는 XRPL 발행 토큰(유틸리티 토큰)입니다. 지분 · 증권 · 예금이 아닙니다.<br>`주의: "코인" 받아 쓰지 않기` |
 
 ## AI Factory Content Access Pass
@@ -252,8 +252,8 @@
 | How much is the device? How do I buy? | 650 RLUSD, or KRW 1,083,000 with a Korean card. Sign up at wellbian.io/launch with an email, choose quantity and address, then pay by card or with RLUSD from an XRPL wallet such as Xaman, D'CENT or Girin. Up to 10 per account. |
 | Can I buy from overseas? | Yes, with RLUSD. Shipping follows the FAQ on the site. (당일 확인) |
 | How much will I get? | We don't put a number on it. Under the published policy, each verified location receives a set amount of WLBN a day, which steps down as the network grows. The reward layer is in testing, and neither the amount nor the value is guaranteed. |
-| Can I withdraw or sell WLBN? | (A) Rewards build up as points until the withdrawal opening date, which we'll announce. (B) After the notice, you claim them to your wallet as described there. (당일 확인 — 하나만) |
-| Will WLBN be listed? | There is no date. We follow the milestone gates in the whitepaper and make no promise on timing or price. |
+| Can I withdraw or sell WLBN? | Rewards: (A) they build up as points until the withdrawal opening date, which we'll announce, or (B) after the notice, you claim them to your wallet as described there (당일 확인 — 하나만). WLBN itself can be swapped with RLUSD in an AMM pool on the XRP Ledger's built-in DEX; we don't comment on price. |
+| Will WLBN be listed? | There is no date for exchange listings. What's open now is a WLBN/RLUSD AMM pool on the XRP Ledger's built-in DEX. We follow the milestone gates in the whitepaper and make no promise on timing or price. Genuine WLBN comes from the issuer rDJz8WJhsKgydqJzSZXMpsJot3eRmSkR5. |
 | Are you working with Ripple? | We're a Platinum sponsor of XRP SEOUL 2026. We build on the XRP Ledger and take payments in RLUSD. |
 | Why the XRP Ledger? | Device NFTs that can't be forged (XLS-20), fast and low-cost payments in RLUSD, and a built-in AMM (XLS-30). |
 | What is the AI Factory Content Access Pass? | A three-year access pass NFT for weather AI content: a weather AI agent, refined datasets and an API. Each pass receives 5 WLBN a day (5,475 over three years) to pay for that content at fixed token prices. 380 RLUSD each, 4,000 passes, up to 10 per account. |
