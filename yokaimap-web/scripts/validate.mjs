@@ -245,6 +245,27 @@ export function checkSongIntegrity(songs, yokaiIds, taleIds) {
   return { errors, warnings, stats: { total: songs.length } }
 }
 
+/**
+ * 인장 글자는 텍스트가 아니라 윤곽선(src/ui/sealGlyphs.js)으로 그린다. 분류를 늘리고
+ * scripts/build-seal-glyphs.mjs를 안 돌리면 그 분류만 글자로 떨어져서 — OS 서체로 —
+ * 한 줄에 인장 얼굴이 섞인다. 바로 그것을 없애려고 윤곽선으로 바꿨으므로 오류로 막는다.
+ * 생성 파일의 형식은 생성기가 정하므로 텍스트로 읽는다(runValidation은 동기다).
+ */
+export function checkSealGlyphs() {
+  const errors = []
+  const cats = JSON.parse(readFileSync(join(ROOT, 'data/categories.json'), 'utf8'))
+  const list = Array.isArray(cats) ? cats : cats.categories
+  const file = join(ROOT, 'src/ui/sealGlyphs.js')
+  if (!existsSync(file)) return { errors: ['src/ui/sealGlyphs.js가 없다 — node scripts/build-seal-glyphs.mjs'] }
+  const have = new Set([...readFileSync(file, 'utf8').matchAll(/^\s*"(.)":\s*"[Mm]/gmu)].map((m) => m[1]))
+  for (const c of list) {
+    if (c.glyph && !have.has(c.glyph)) {
+      errors.push(`인장 윤곽선 없음: ${c.id} '${c.glyph}' — node scripts/build-seal-glyphs.mjs를 다시 돌린다`)
+    }
+  }
+  return { errors }
+}
+
 export function runValidation() {
   const schema = JSON.parse(readFileSync(join(ROOT, 'data/schema/yokai.schema.json'), 'utf8'))
   const entries = loadSeed()
@@ -288,6 +309,7 @@ export function runValidation() {
       ...taleIntegrity.errors,
       ...songErrors,
       ...songIntegrity.errors,
+      ...checkSealGlyphs().errors,
     ],
     warnings: [...integrity.warnings, ...taleIntegrity.warnings, ...songIntegrity.warnings],
     stats: { ...integrity.stats, tales: taleIntegrity.stats.total, songs: songIntegrity.stats.total },

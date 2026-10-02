@@ -17,6 +17,7 @@ import {
   slugOf,
   META,
 } from '../data/yokai.js'
+import { Glyph, glyphHtml } from '../ui/Seal.jsx'
 import OmenPanel from './OmenPanel.jsx'
 import Icon from '../ui/Icon.jsx'
 
@@ -86,7 +87,7 @@ function popupHtml(site) {
   const c = CAT[e.category]
   return `<div class="hovercard">
     <div style="display:flex;align-items:center;gap:8px">
-      <span class="seal sm" style="--cat:${c?.color}">${esc(c?.glyph ?? '')}</span>
+      <span class="seal sm" style="--cat:${c?.color}">${glyphHtml(c?.glyph)}</span>
       <strong>${esc(e.canonical)}</strong>
     </div>
     <div class="muted" style="margin:4px 0 6px">${esc(site.name)} · ${esc(PRECISION_LABEL[site.precision])}</div>
@@ -230,7 +231,7 @@ export default function MapPage() {
                     title={c.blurb}
                   >
                     <span className="seal sm" style={{ '--cat': c.color }} aria-hidden="true">
-                      {c.glyph}
+                      <Glyph ch={c.glyph} />
                     </span>
                     {c.name}
                     <span className="cnt">{catCounts[c.id] ?? 0}</span>

@@ -124,7 +124,7 @@ export default function TalePage() {
       {tale.motifs.length > 0 && (
         <div className="section">
           <div className="section-head">
-            <Icon name="layers" size={17} />
+            <Icon name="hash" size={17} />
             <h2>화소</h2>
           </div>
           <div className="row" style={{ gap: 5 }}>
@@ -225,6 +225,7 @@ export default function TalePage() {
       {related.length > 0 && (
         <div className="section">
           <div className="section-head">
+            <Icon name="scroll" size={17} />
             <h2>이어지는 이야기</h2>
           </div>
           <div className="row">
@@ -240,7 +241,7 @@ export default function TalePage() {
       {songs.length > 0 && (
         <div className="section">
           <div className="section-head">
-            <Icon name="flame" size={17} />
+            <Icon name="music" size={17} />
             <h2>이 이야기에 딸린 노래</h2>
           </div>
           <div className="row">

@@ -75,11 +75,11 @@ export default function HomePage() {
             도감 {META.count}체
           </Link>
           <Link className="btn ghost lg" to="/seolhwa">
-            <Icon name="quote" size={17} />
+            <Icon name="scroll" size={17} />
             설화 {TALE_META.count}편
           </Link>
           <Link className="btn ghost lg" to="/norae">
-            <Icon name="flame" size={17} />
+            <Icon name="music" size={17} />
             노래 {SONG_META.count}편
           </Link>
         </div>

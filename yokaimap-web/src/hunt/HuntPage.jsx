@@ -6,7 +6,7 @@ import { timeBucket, seasonOf, TIME_LABEL, SEASON_LABEL } from '../engine/omen.j
 import { regionAt, encountersFor, needsFaithNotice, REGION_RADIUS_KM } from '../engine/hunt.js'
 import { readCollection, collect, clearCollection } from './collection.js'
 import ArtPlate from '../ui/ArtPlate.jsx'
-import Icon from '../ui/Icon.jsx'
+import Icon, { TIME_ICON } from '../ui/Icon.jsx'
 
 /* 위치 상태 — 각 상태를 화면에 그대로 드러낸다. 권한을 못 받았는데 조용히
    아무 지역이나 보여 주면 그건 사용자를 속이는 것이다. */
@@ -113,7 +113,7 @@ export default function HuntPage() {
             <>
               <p className="body-text">탐사를 시작하려면 위치 권한이 필요합니다.</p>
               <button type="button" className="btn primary" onClick={ask}>
-                <Icon name="pin" size={16} /> 내 권역 확인
+                <Icon name="locate" size={16} /> 내 권역 확인
               </button>
             </>
           )}
@@ -148,10 +148,10 @@ export default function HuntPage() {
         <>
           <div className="row small muted" style={{ marginTop: 'var(--sp-4)', gap: 'var(--sp-3)' }}>
             <span>
-              <Icon name="pin" size={14} /> {region.sigungu.join(' · ')}
+              <Icon name="locate" size={14} /> {region.sigungu.join(' · ')}
             </span>
             <span>
-              <Icon name="moon" size={14} /> {TIME_LABEL[timeBucket(ctx.hour)]}
+              <Icon name={TIME_ICON[timeBucket(ctx.hour)] ?? 'moon'} size={14} /> {TIME_LABEL[timeBucket(ctx.hour)]}
             </span>
             <span>{SEASON_LABEL[seasonOf(ctx.month)]}</span>
             <span>가장 가까운 전승지 {region.nearest.distanceKm.toFixed(1)}km</span>

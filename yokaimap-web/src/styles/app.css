@@ -188,6 +188,14 @@ h3 {
   font-size: 48px;
   border-radius: 8px;
 }
+/* 인장 글자는 윤곽선 SVG다(Seal.jsx의 Glyph). 1em 정사각이라 .seal의 font-size가 그대로 크기를 정하고,
+   글자로 찍을 때와 같은 자리에 앉는다. 색은 currentColor — .seal·.filled·.brand-seal의 color를 따른다. */
+.seal-glyph {
+  display: block;
+  width: 1em;
+  height: 1em;
+  fill: currentColor;
+}
 .seal.filled {
   background: var(--cat, var(--seal));
   border-color: transparent;

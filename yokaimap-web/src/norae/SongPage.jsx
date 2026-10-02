@@ -114,7 +114,7 @@ export default function SongPage() {
       {song.original ? (
         <div className="section">
           <div className="section-head">
-            <Icon name="quote" size={17} />
+            <Icon name="brush" size={17} />
             <h2>원문</h2>
             <span className="spacer" />
             <span className="small muted">{SCRIPT_LABEL[song.original_script]}</span>
@@ -125,7 +125,7 @@ export default function SongPage() {
       ) : (
         <div className="section">
           <div className="section-head">
-            <Icon name="info" size={17} />
+            <Icon name="brush" size={17} />
             <h2>원문</h2>
           </div>
           <p className="small muted" style={{ marginBottom: 0 }}>
@@ -140,7 +140,7 @@ export default function SongPage() {
       {/* 뜻풀이 — 우리가 쓴 것. 원문과 같은 무게로 보이면 안 되므로 반드시 구분해 표시한다 */}
       <div className="section">
         <div className="section-head">
-          <Icon name="book" size={17} />
+          <Icon name="speech" size={17} />
           <h2>뜻풀이</h2>
         </div>
         <p className="body-text">{song.gloss}</p>
@@ -153,7 +153,7 @@ export default function SongPage() {
       {song.function.length > 0 && (
         <div className="section">
           <div className="section-head">
-            <Icon name="layers" size={17} />
+            <Icon name="hash" size={17} />
             <h2>노래가 하는 일</h2>
           </div>
           <div className="row" style={{ gap: 5 }}>
@@ -234,6 +234,7 @@ export default function SongPage() {
       {related.length > 0 && (
         <div className="section">
           <div className="section-head">
+            <Icon name="music" size={17} />
             <h2>함께 보는 노래</h2>
           </div>
           <div className="row">

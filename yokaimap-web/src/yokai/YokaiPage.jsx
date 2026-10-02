@@ -122,6 +122,7 @@ export default function YokaiPage() {
 
       <div className="section">
         <div className="section-head">
+          <Icon name="info" size={17} />
           <h2>기본 정보</h2>
         </div>
         <dl className="kv">
@@ -247,6 +248,7 @@ export default function YokaiPage() {
       {related.length > 0 && (
         <div className="section">
           <div className="section-head">
+            <Icon name="book" size={17} />
             <h2>관련 항목</h2>
           </div>
           <div className="card-grid">
@@ -268,7 +270,7 @@ export default function YokaiPage() {
       {inTales.length > 0 && (
         <div className="section">
           <div className="section-head">
-            <Icon name="quote" size={17} />
+            <Icon name="scroll" size={17} />
             <h2>이 개체가 나오는 설화</h2>
           </div>
           <div className="row">
@@ -286,7 +288,7 @@ export default function YokaiPage() {
       {inSongs.length > 0 && (
         <div className="section">
           <div className="section-head">
-            <Icon name="flame" size={17} />
+            <Icon name="music" size={17} />
             <h2>이 개체에 걸린 노래</h2>
           </div>
           <div className="row">

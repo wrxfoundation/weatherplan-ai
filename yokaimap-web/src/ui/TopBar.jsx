@@ -1,6 +1,8 @@
 import { Link, NavLink } from 'react-router-dom'
 import { META } from '../data/yokai.js'
 import Icon from './Icon.jsx'
+import { Glyph } from './Seal.jsx'
+import { BRAND_GLYPH } from './sealGlyphs.js'
 import { useTheme } from '../main.jsx'
 
 /* system → light → dark 순환. 아이콘과 라벨이 "지금 무엇인지"를 말하게 둔다. */
@@ -31,11 +33,11 @@ const NAV = [
   { to: '/', label: '홈', icon: 'home', end: true },
   { to: '/map', label: '지도', icon: 'map' },
   { to: '/dogam', label: '도감', icon: 'book' },
-  { to: '/seolhwa', label: '설화', icon: 'quote' },
-  { to: '/norae', label: '노래', icon: 'flame' },
+  { to: '/seolhwa', label: '설화', icon: 'scroll' },
+  { to: '/norae', label: '노래', icon: 'music' },
   { to: '/quiz', label: '체질진단', icon: 'compass' },
-  { to: '/hunt', label: '탐사', icon: 'pin' },
-  { to: '/collection', label: '수집첩', icon: 'badge' },
+  { to: '/hunt', label: '탐사', icon: 'locate' },
+  { to: '/collection', label: '수집첩', icon: 'stamp' },
   { to: '/business', label: '기관·기업', icon: 'building' },
   { to: '/about', label: '데이터 원칙', icon: 'shield' },
 ]
@@ -45,7 +47,7 @@ export default function TopBar() {
     <header className="topbar">
       <Link to="/" className="brand">
         <span className="brand-seal" aria-hidden="true">
-          怪
+          <Glyph ch={BRAND_GLYPH} />
         </span>
         <span>한국요괴지도</span>
       </Link>
