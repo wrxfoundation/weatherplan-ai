@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="오늘">
+  <rect x="8" y="15" width="48" height="41" rx="10" fill="#FFFFFF" stroke="#0A1F3C" stroke-width="3"/>
+  <path d="M8 25a10 10 0 0 1 10-10h28a10 10 0 0 1 10 10v2H8z" fill="#0A1F3C"/>
+  <rect x="18" y="8" width="5" height="13" rx="2.5" fill="#0A1F3C"/>
+  <rect x="41" y="8" width="5" height="13" rx="2.5" fill="#0A1F3C"/>
+  <circle cx="22" cy="38" r="4.4" fill="#B08D57"/>
+  <circle cx="32" cy="38" r="3.1" fill="#0A1F3C" opacity=".2"/>
+  <circle cx="42" cy="38" r="3.1" fill="#0A1F3C" opacity=".2"/>
+  <circle cx="22" cy="48" r="3.1" fill="#0A1F3C" opacity=".2"/>
+  <circle cx="32" cy="48" r="3.1" fill="#0A1F3C" opacity=".2"/>
+  <circle cx="42" cy="48" r="3.1" fill="#0A1F3C" opacity=".2"/>
+</svg>
