@@ -1995,8 +1995,8 @@
       "id": "kr-banjjogi",
       "target": "public/img/yokai/banjjogi.webp",
       "aspect": "4:5",
-      "job_id": "85107985-f25d-430e-9d37-d9c48f8729d1",
-      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_012755_85107985-f25d-430e-9d37-d9c48f8729d1.png",
+      "job_id": "c23e6ecc-aded-4585-9392-97df14368675",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_014547_c23e6ecc-aded-4585-9392-97df14368675.png",
       "history": [
         {
           "job_id": "fc2acdea-b4c3-4b4f-9306-5d9593ba4578",
@@ -2006,6 +2006,26 @@
             "date": "2026-10-02",
             "result": "reject",
             "reason": "내용 — 팔다리가 온전하다. 반쪽 몸이 개체의 정체인데 빠졌다(칠성신 보름달과 같은 유형)"
+          }
+        },
+        {
+          "job_id": "85107985-f25d-430e-9d37-d9c48f8729d1",
+          "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_012755_85107985-f25d-430e-9d37-d9c48f8729d1.png",
+          "review": {
+            "by": "검수",
+            "date": "2026-10-02",
+            "result": "reject",
+            "reason": "내용 — 다리 둘(변형 A, 머리 위 리본 매듭도 어색)"
+          }
+        },
+        {
+          "job_id": "cf8853db-098e-4ef2-98a6-b85b16ca1e38",
+          "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_012755_cf8853db-098e-4ef2-98a6-b85b16ca1e38.png",
+          "review": {
+            "by": "검수",
+            "date": "2026-10-02",
+            "result": "reject",
+            "reason": "내용 — 다리 둘(변형 B)"
           }
         }
       ]
@@ -2089,7 +2109,13 @@
             "reason": "건축 — 기와·곡선 없는 판자 지붕, X자 가새 목탑, 주칠 판벽(한국 절 담장 아님). 통로가 없어 문으로 읽히지 않는다"
           }
         }
-      ]
+      ],
+      "review": {
+        "by": "검수",
+        "date": "2026-10-02",
+        "result": "pass",
+        "note": "기와 얹은 2층 누문·단청 공포·가운데 통로·새끼로 묶은 비계, 기와 얹은 절 담장 밑의 여우, 관솔불. 처마 완만 — 오너 확인 대기"
+      }
     },
     {
       "index": 139,
@@ -2170,7 +2196,13 @@
             "reason": "일반 — 장승 아래 바위에 가짜 서명 같은 필기체 낙서"
           }
         }
-      ]
+      ],
+      "review": {
+        "by": "검수",
+        "date": "2026-10-02",
+        "result": "pass",
+        "note": "얼굴만 사람 같은 바다 짐승, 아래는 그물 속, 꼬리·조개 없음. 갓·짚신 어부. 네 귀퉁이 확대 — 서명 없음 — 오너 확인 대기"
+      }
     },
     {
       "index": 144,
@@ -2191,7 +2223,13 @@
             "reason": "§2 처마 — 배경 건물 처마가 갈고리처럼 크게 솟았다. 내용 — 뿔나팔이 부러지지 않았다"
           }
         }
-      ]
+      ],
+      "review": {
+        "by": "검수",
+        "date": "2026-10-02",
+        "result": "pass",
+        "note": "뿔나팔 두 동강, 창 시렁, 문 너머 맨 담장뿐·솟은 처마 없음. 찢긴 자리가 북면이 아니라 북통인 점은 경미 — 오너 확인 대기"
+      }
     },
     {
       "index": 145,
@@ -2199,8 +2237,8 @@
       "id": "kr-janghwa-hongryeon",
       "target": "public/img/yokai/janghwa-hongryeon.webp",
       "aspect": "4:5",
-      "job_id": "edc12afd-1aa2-4641-9c74-cfcdcc50006d",
-      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_012755_edc12afd-1aa2-4641-9c74-cfcdcc50006d.png",
+      "job_id": "dbe32a2e-1b62-456a-b242-d3d9af802e9c",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_012926_dbe32a2e-1b62-456a-b242-d3d9af802e9c.png",
       "history": [
         {
           "job_id": "128a8c25-44de-4f8f-ad6c-7dabfb986d10",
@@ -2211,8 +2249,24 @@
             "result": "reject",
             "reason": "소품 — 유리 등피 석유 남포등(19세기 말 이후 물건). 효종 대 이야기"
           }
+        },
+        {
+          "job_id": "edc12afd-1aa2-4641-9c74-cfcdcc50006d",
+          "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_012755_edc12afd-1aa2-4641-9c74-cfcdcc50006d.png",
+          "review": {
+            "by": "검수",
+            "date": "2026-10-02",
+            "result": "unchosen",
+            "reason": "변형 A — 쌍갈래 머리에 서양식 큰 리본. B를 골랐다"
+          }
         }
-      ]
+      ],
+      "review": {
+        "by": "검수",
+        "date": "2026-10-02",
+        "result": "pass",
+        "note": "외가닥 댕기머리·조각 다리 서안(운각)·낮은 등잔대 위 놋쇠 등잔·붓·바닥의 물웅덩이. 종이에 가짜 글자 없음(확대 확인) — 오너 확인 대기"
+      }
     },
     {
       "index": 146,
@@ -2248,7 +2302,13 @@
             "reason": "§2 — 소나무 옆 지붕 달린 작은 상자(석등롱·호코라). 여우와 작은 사당의 조합은 이나리 도상이다"
           }
         }
-      ]
+      ],
+      "review": {
+        "by": "검수",
+        "date": "2026-10-02",
+        "result": "pass",
+        "note": "외양간의 여우·문을 막은 개·짚·여물통·초가. 사당·석등 없음(landscape 앵커 제거가 맞았다). 개가 셰퍼드형인 점은 경미 — 오너 확인 대기"
+      }
     },
     {
       "index": 148,
@@ -2256,8 +2316,8 @@
       "id": "kr-manpasikjeok",
       "target": "public/img/yokai/manpasikjeok.webp",
       "aspect": "4:5",
-      "job_id": "9770a925-325a-45ea-9219-bb2904457597",
-      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_012925_9770a925-325a-45ea-9219-bb2904457597.png",
+      "job_id": "81a3383a-15ee-416c-9e40-b5923a9d4032",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_014450_81a3383a-15ee-416c-9e40-b5923a9d4032.png",
       "history": [
         {
           "job_id": "73d2eb88-5147-4d49-b298-6913cbfcb3e4",
@@ -2268,6 +2328,16 @@
             "result": "reject",
             "reason": "§2 — 붉은 등 기둥 한 쌍(일본 신사 등롱), 장지문형 큰 격자 문. 피리가 장난감처럼 채색됐다"
           }
+        },
+        {
+          "job_id": "9770a925-325a-45ea-9219-bb2904457597",
+          "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_012925_9770a925-325a-45ea-9219-bb2904457597.png",
+          "review": {
+            "by": "검수",
+            "date": "2026-10-02",
+            "result": "reject",
+            "reason": "§2 — 쌍탑이 채색한 여러 층 탑에 처마가 들렸다. 신라 화강암 삼층석탑이 아니다"
+          }
         }
       ]
     },
@@ -2277,8 +2347,8 @@
       "id": "kr-mokdoryeong",
       "target": "public/img/yokai/mokdoryeong.webp",
       "aspect": "4:5",
-      "job_id": "c2861c25-2d4e-4af9-a449-8f2372eb6652",
-      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_012927_c2861c25-2d4e-4af9-a449-8f2372eb6652.png",
+      "job_id": "20b2c24f-0e26-4b55-85b8-f0d9d26236a2",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_014451_20b2c24f-0e26-4b55-85b8-f0d9d26236a2.png",
       "history": [
         {
           "job_id": "8faede7a-6d24-4da8-b209-c246a2dbf1c5",
@@ -2288,6 +2358,16 @@
             "date": "2026-10-02",
             "result": "reject",
             "reason": "중국풍 — 상투에 긴 비녀 막대 둘(簪). 아이에게 상투 자체가 맞지 않다(미혼은 댕기머리)"
+          }
+        },
+        {
+          "job_id": "c2861c25-2d4e-4af9-a449-8f2372eb6652",
+          "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_012927_c2861c25-2d4e-4af9-a449-8f2372eb6652.png",
+          "review": {
+            "by": "검수",
+            "date": "2026-10-02",
+            "result": "reject",
+            "reason": "§2 — 엄지와 둘째 발가락 사이 끈(조리). costume_youth의 \"no thong\" 문구로는 막히지 않았다"
           }
         }
       ]
@@ -2311,7 +2391,13 @@
             "reason": "중국풍 — 높은 상투관 아래로 풀어 내린 긴 머리(고장극 공자 도상). 조선 남자는 머리를 풀지 않는다"
           }
         }
-      ]
+      ],
+      "review": {
+        "by": "검수",
+        "date": "2026-10-02",
+        "result": "pass",
+        "note": "외가닥 댕기머리·흰 모시 도포·발목 묶은 바지·버선 위 짚신, 책보, 제주 검은 밭담·샘. 정수리 댕기 매듭이 다소 뻣뻣 — 오너 확인 대기"
+      }
     },
     {
       "index": 151,
@@ -2334,8 +2420,8 @@
       "id": "kr-nat-dokkaebi",
       "target": "public/img/yokai/nat-dokkaebi.webp",
       "aspect": "4:5",
-      "job_id": "a2331311-4a82-4ac4-85ac-2e4af5aaf1cd",
-      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_012926_a2331311-4a82-4ac4-85ac-2e4af5aaf1cd.png",
+      "job_id": "0d203757-caa8-4af5-bba7-a7e603165332",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_014511_0d203757-caa8-4af5-bba7-a7e603165332.png",
       "history": [
         {
           "job_id": "36a8042f-5bfe-4786-8d37-85536537548a",
@@ -2345,6 +2431,16 @@
             "date": "2026-10-02",
             "result": "reject",
             "reason": "§2 — 엄지와 둘째 발가락 사이 끈(조리·와라지). 1차 생성 때와 같은 사고"
+          }
+        },
+        {
+          "job_id": "a2331311-4a82-4ac4-85ac-2e4af5aaf1cd",
+          "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_012926_a2331311-4a82-4ac4-85ac-2e4af5aaf1cd.png",
+          "review": {
+            "by": "검수",
+            "date": "2026-10-02",
+            "result": "reject",
+            "reason": "§2 — 얼굴 전체가 붉다. 붉은 얼굴에 방망이 든 험상궂은 장정은 뿔이 없어도 아카오니 도상이다. 분류 수식의 vermilion이 피부로 갔다"
           }
         }
       ]
@@ -2397,8 +2493,24 @@
             "result": "reject",
             "reason": "내용 — 다리가 둘이다. 세 발이 개체의 정체"
           }
+        },
+        {
+          "job_id": "fba63045-d006-43f5-a246-185dd83bf7f0",
+          "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_013053_fba63045-d006-43f5-a246-185dd83bf7f0.png",
+          "review": {
+            "by": "검수",
+            "date": "2026-10-02",
+            "result": "reject",
+            "reason": "§2 — 붉은 해 원반에 방사형 금빛 햇살. 욱일기 도상"
+          }
         }
-      ]
+      ],
+      "review": {
+        "by": "검수",
+        "date": "2026-10-02",
+        "result": "pass",
+        "note": "세 발이 왼쪽·가운데·오른쪽으로 나란히, 발마다 발톱. 볏, 달 속 두꺼비, 닳은 석채 — 오너 확인 대기"
+      }
     },
     {
       "index": 156,
@@ -2406,8 +2518,8 @@
       "id": "kr-samjokgu",
       "target": "public/img/yokai/samjokgu.webp",
       "aspect": "4:5",
-      "job_id": "8d329e1f-b26f-431b-9913-ecd049217468",
-      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_013053_8d329e1f-b26f-431b-9913-ecd049217468.png",
+      "job_id": "0b3fc660-9460-4533-849d-2bb4adf6c7cf",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_014450_0b3fc660-9460-4533-849d-2bb4adf6c7cf.png",
       "history": [
         {
           "job_id": "060f5ebe-ef11-4bee-8be9-1a7f1e4bb76e",
@@ -2417,6 +2529,26 @@
             "date": "2026-10-02",
             "result": "reject",
             "reason": "내용 — 다리가 넷이다"
+          }
+        },
+        {
+          "job_id": "8d329e1f-b26f-431b-9913-ecd049217468",
+          "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_013053_8d329e1f-b26f-431b-9913-ecd049217468.png",
+          "review": {
+            "by": "검수",
+            "date": "2026-10-02",
+            "result": "reject",
+            "reason": "내용 — 다리 넷(변형 A)"
+          }
+        },
+        {
+          "job_id": "7fde1219-2aee-4016-a337-0d0e84b81fac",
+          "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_013054_7fde1219-2aee-4016-a337-0d0e84b81fac.png",
+          "review": {
+            "by": "검수",
+            "date": "2026-10-02",
+            "result": "reject",
+            "reason": "내용 — 다리 넷(변형 B), 굽 달린 신"
           }
         }
       ]
@@ -2515,7 +2647,13 @@
             "reason": "§2 — 석불에 주홍·초록 천 옷(지장보살 옷 입히기 관습). 분류 수식의 vermilion and malachite가 옷 색으로 칠해졌다"
           }
         }
-      ]
+      ],
+      "review": {
+        "by": "검수",
+        "date": "2026-10-02",
+        "result": "pass",
+        "note": "민 화강암 미륵·돌로 새긴 옷·갓 모양 보개, 천·채색 없음. 무너지는 기단 앞 무명옷 들쥐(野鼠) — 오너 확인 대기"
+      }
     },
     {
       "index": 163,
@@ -2523,8 +2661,8 @@
       "id": "kr-yeou-guseul",
       "target": "public/img/yokai/yeou-guseul.webp",
       "aspect": "4:5",
-      "job_id": "0e830ca0-355c-413c-b855-50562f95b073",
-      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_013053_0e830ca0-355c-413c-b855-50562f95b073.png",
+      "job_id": "5fd381c1-0b51-452b-8531-f33ea33219b7",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_014511_5fd381c1-0b51-452b-8531-f33ea33219b7.png",
       "history": [
         {
           "job_id": "b177f91b-0a4f-4f0a-a47c-abe3d9a48611",
@@ -2535,47 +2673,37 @@
             "result": "reject",
             "reason": "앵커 — 서낭 천이 오방색이 아니라 무지개 7색. 손 해부가 어색하고 여우가 거의 안 보인다"
           }
+        },
+        {
+          "job_id": "0e830ca0-355c-413c-b855-50562f95b073",
+          "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_013053_0e830ca0-355c-413c-b855-50562f95b073.png",
+          "review": {
+            "by": "검수",
+            "date": "2026-10-02",
+            "result": "reject",
+            "reason": "§2 — 돌무지 위 석등롱, 판 모자 얹은 기둥 둘(반쪽 도리이). 여우 옆 사당·석등 — 매구와 같은 사고"
+          }
         }
       ]
     },
     {
-      "index": 164,
+      "index": 168,
       "kind": "candidate",
       "id": "kr-banjjogi",
       "target": "public/img/yokai/_candidates/banjjogi-b.webp",
       "aspect": "4:5",
-      "job_id": "cf8853db-098e-4ef2-98a6-b85b16ca1e38",
-      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_012755_cf8853db-098e-4ef2-98a6-b85b16ca1e38.png",
+      "job_id": "beee8501-abfc-4dd2-a4d3-43084e412e6a",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_014450_beee8501-abfc-4dd2-a4d3-43084e412e6a.png",
       "note": "변형 B — 검수 후 고른 쪽만 남기고 지운다"
     },
     {
-      "index": 165,
-      "kind": "candidate",
-      "id": "kr-janghwa-hongryeon",
-      "target": "public/img/yokai/_candidates/janghwa-hongryeon-b.webp",
-      "aspect": "4:5",
-      "job_id": "dbe32a2e-1b62-456a-b242-d3d9af802e9c",
-      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_012926_dbe32a2e-1b62-456a-b242-d3d9af802e9c.png",
-      "note": "변형 B — 검수 후 고른 쪽만 남기고 지운다"
-    },
-    {
-      "index": 166,
-      "kind": "candidate",
-      "id": "kr-samjogo",
-      "target": "public/img/yokai/_candidates/samjogo-b.webp",
-      "aspect": "4:5",
-      "job_id": "fba63045-d006-43f5-a246-185dd83bf7f0",
-      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_013053_fba63045-d006-43f5-a246-185dd83bf7f0.png",
-      "note": "변형 B — 검수 후 고른 쪽만 남기고 지운다"
-    },
-    {
-      "index": 167,
+      "index": 169,
       "kind": "candidate",
       "id": "kr-samjokgu",
       "target": "public/img/yokai/_candidates/samjokgu-b.webp",
       "aspect": "4:5",
-      "job_id": "7fde1219-2aee-4016-a337-0d0e84b81fac",
-      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_013054_7fde1219-2aee-4016-a337-0d0e84b81fac.png",
+      "job_id": "b316eb3f-e7ff-4025-9bcc-9c27162bdb57",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_014450_b316eb3f-e7ff-4025-9bcc-9c27162bdb57.png",
       "note": "변형 B — 검수 후 고른 쪽만 남기고 지운다"
     }
   ],

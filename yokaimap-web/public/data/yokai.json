@@ -682,7 +682,7 @@
     "막내",
     "내기"
    ],
-   "art_hint": "a cheerful young man drawn as exactly half a person — only the left half of him exists: half a face with a single eye, a single arm, a single leg — and where his right half would be there is only empty hanji paper, the edge running straight down the middle of his body, hopping easily on his one leg with a grain sack held by his one arm on a village path, two ordinary brothers looking back at him, thatched roofs, a folktale figure with no wound and no blood",
+   "art_hint": "only the left half of a cheerful young man is painted on the paper, as if the painter stopped at a vertical line down the middle of his body — one eye, half a mouth, one arm, one leg — and to the right of that line there is nothing but blank hanji paper; he hops on his single leg with a grain sack held by his one arm on a village path, two ordinary brothers looking back at him, thatched roofs, a folktale figure with no wound and no blood",
    "art_anchors": [
     "costume_youth",
     "landscape"
@@ -726,7 +726,7 @@
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
-    "job_id": "85107985-f25d-430e-9d37-d9c48f8729d1"
+    "job_id": "c23e6ecc-aded-4585-9392-97df14368675"
    }
   },
   {
@@ -4079,9 +4079,9 @@
    "updated_at": "2026-09-13",
    "sensitivity": null,
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/gildal.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "8c5b3e4e-39db-45ed-b5f3-20a759b17a18"
    }
@@ -5793,9 +5793,9 @@
    "updated_at": "2026-09-12",
    "sensitivity": null,
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/ineo.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "7a60fed7-4889-414e-a143-c3bbced7ffbe"
    }
@@ -5939,9 +5939,9 @@
    "updated_at": "2026-09-12",
    "sensitivity": null,
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/jamyeonggo.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "935c1e07-f75a-4b15-9b4f-fb382a999ff1"
    }
@@ -6013,11 +6013,11 @@
    "updated_at": "2026-09-12",
    "sensitivity": null,
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/janghwa-hongryeon.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
-    "job_id": "edc12afd-1aa2-4641-9c74-cfcdcc50006d"
+    "job_id": "dbe32a2e-1b62-456a-b242-d3d9af802e9c"
    }
   },
   {
@@ -7127,9 +7127,9 @@
    "updated_at": "2026-09-13",
    "sensitivity": null,
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/maegu.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "4d00a6e7-1309-4ebc-b9e0-888851f3c8a6"
    }
@@ -7238,10 +7238,8 @@
     "감은사",
     "이견대"
    ],
-   "art_hint": "a single node-jointed flute of plain natural bamboo resting on dark folded silk on a granite terrace above the East Sea at dawn, behind it a pair of identical three-storey Silla granite stone pagodas standing side by side on an empty temple site, a low rock islet in the sea beyond, mist over the water, no wooden temple hall, no lanterns, no figure",
-   "art_anchors": [
-    "landscape"
-   ],
+   "art_hint": "a single node-jointed flute of plain natural bamboo resting on dark folded silk on a granite terrace above the East Sea at dawn, behind it a pair of identical squat grey granite stone pagodas — each a two-tier stone base carrying three thin flat stone roof slabs with only a slight lift at the corners, plain unpainted grey stone, a short iron finial — standing side by side on an empty temple site, a low rock islet in the sea beyond, Korean red pines on the cliff, mist over the water, no wooden building, no lanterns, no posts, no figure",
+   "art_anchors": [],
    "art_modifier": "aged ochre and brown, the flute itself as the subject, no club",
    "habitat": [
     "동해",
@@ -7304,7 +7302,7 @@
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
-    "job_id": "9770a925-325a-45ea-9219-bb2904457597"
+    "job_id": "81a3383a-15ee-416c-9e40-b5923a9d4032"
    }
   },
   {
@@ -7511,7 +7509,7 @@
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
-    "job_id": "c2861c25-2d4e-4af9-a449-8f2372eb6652"
+    "job_id": "20b2c24f-0e26-4b55-85b8-f0d9d26236a2"
    }
   },
   {
@@ -7872,9 +7870,9 @@
    "updated_at": "2026-09-12",
    "sensitivity": null,
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/mundoryeong.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "c7601d2e-7581-4d09-9755-604e0c344a2a"
    }
@@ -8179,7 +8177,7 @@
     "재물 손실",
     "관용구"
    ],
-   "art_hint": "a hornless dokkaebi standing brazenly in harsh midday sunlight on a dusty village road, coarse hemp jeogori and baji, unkempt topknot, knotted wooden club over one shoulder, his feet in white beoseon socks with a single rounded toe inside closed woven straw shoes whose sides wrap the whole foot, a short hard shadow beneath him, thatched roofs behind",
+   "art_hint": "a hornless dokkaebi with an ordinary weathered tan face and a rough grin, standing brazenly in harsh midday sunlight on a dusty village road, coarse hemp jeogori and baji, unkempt topknot, knotted wooden club over one shoulder, his feet in white beoseon socks with a single rounded toe inside closed woven straw shoes, a short hard shadow beneath him, thatched roofs behind",
    "art_anchors": [
     "costume_male",
     "landscape"
@@ -8228,7 +8226,7 @@
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
-    "job_id": "a2331311-4a82-4ac4-85ac-2e4af5aaf1cd"
+    "job_id": "0d203757-caa8-4af5-bba7-a7e603165332"
    }
   },
   {
@@ -8838,9 +8836,9 @@
    "updated_at": "2026-09-12",
    "sensitivity": null,
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/samjogo.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "d1052fee-226e-4d5d-829e-d48a18adeec4"
    }
@@ -8866,7 +8864,7 @@
     "다리 셋",
     "근거 희박"
    ],
-   "art_hint": "a lean dog with exactly three legs — two forelegs and a single hind leg set in the middle of its haunch — bristling dark fur, standing rigid side-on in a moonlit courtyard so all three legs are clearly visible, hackles raised, staring at a pair of embroidered Korean silk shoes with gently upturned toes left empty on the stone step, low mist across the ground",
+   "art_hint": "a lean dark dog with only three legs in total — a single foreleg set in the middle under its chest and two hind legs — standing like a tripod, seen exactly side-on, the place where a second foreleg would be simply empty, bristling fur, hackles raised, staring at a pair of embroidered Korean silk shoes with gently upturned toes left empty on the stone step of a moonlit courtyard, low mist across the ground",
    "art_anchors": [
     "landscape",
     "architecture"
@@ -8910,7 +8908,7 @@
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
-    "job_id": "8d329e1f-b26f-431b-9913-ecd049217468"
+    "job_id": "0b3fc660-9460-4533-849d-2bb4adf6c7cf"
    }
   },
   {
@@ -11231,9 +11229,9 @@
    "updated_at": "2026-09-12",
    "sensitivity": null,
    "art": {
-    "status": "generated",
+    "status": "final",
     "direction": "minhwa-v2",
-    "file": null,
+    "file": "/img/yokai/yaseohon.webp",
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
     "job_id": "b679ae68-28f0-4114-8601-4336775705ea"
    }
@@ -11537,9 +11535,10 @@
     "기운 빼앗김",
     "지리"
    ],
-   "art_hint": "a small luminous pale bead resting in the open palm of a boy's hand in moonlight, a fox with a long brush tail slipping away behind a low stone wall, a boy's cloth-wrapped bundle of books fallen on a frosted path",
+   "art_hint": "a boy kneeling on a frosted village path at night, a small luminous pale bead resting in his open palm, a fox with a long brush tail slipping away along a low Korean stone wall, a thatched farmhouse beyond the wall, his cloth-wrapped bundle of books fallen beside him, moonlight, no shrine, no lantern and no posts",
    "art_anchors": [
-    "landscape"
+    "costume_youth",
+    "architecture"
    ],
    "art_modifier": "aged ochre and brown, the bead itself as the subject, no club",
    "habitat": [
@@ -11587,7 +11586,7 @@
     "direction": "minhwa-v2",
     "file": null,
     "license": "CC BY 4.0 (AI 생성 · 원본 도상 없음)",
-    "job_id": "0e830ca0-355c-413c-b855-50562f95b073"
+    "job_id": "5fd381c1-0b51-452b-8531-f33ea33219b7"
    }
   },
   {
