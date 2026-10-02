@@ -4,6 +4,8 @@
 // 사람이 읽는 한 줄로 남긴다. 회사는 Supabase Table Editor 에서 이 표만 봐도 흐름을 따라갈 수 있다.
 // 화면 표시용 깃발(오늘 탭을 봤다 · 알람을 띄웠다 등)은 남기지 않는다 — null 을 돌려주면 건너뛴다.
 
+import { STATUS } from "./requests";
+
 const won = (n) => (Number.isFinite(Number(n)) ? `${Number(n).toLocaleString("ko-KR")}원` : "");
 const clip = (s, n = 80) => {
   const v = String(s ?? "").replace(/\s+/g, " ").trim();
@@ -37,7 +39,7 @@ export function summarize(a) {
     case "addRequest":
       return `해주세요 요청 · ${clip(p.type, 40)}`;
     case "transitionRequest":
-      return `요청 상태 → ${clip(a.to, 20)}`;
+      return `요청 상태 → ${clip(STATUS[a.to]?.label || a.to, 20)}`;
     case "assignRequest":
       return `요청 담당 → ${clip(a.assignee || "미배정", 20)}`;
     case "demo":

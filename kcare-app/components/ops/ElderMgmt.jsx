@@ -1,12 +1,15 @@
 // 어르신 관리 — 명부(검색·필터·엑셀) + 신규 등록 + 상세 14탭 + 사유 필수 수정이력 (요청서 7절).
 // 서비스 시작·일시중지·종료 · 담당 변경 · 보호자 연결은 Confirm 을 거치고 이력을 남긴다.
 import { useState } from "react";
+import { useAppState } from "../../lib/state";
+import { useAuth } from "../../lib/auth";
+import { LIVE_TAG, liveElder } from "../../lib/live-household";
 import { Panel, Stat, Pill, SevPill, FeedPill, Avatar, Btn, Tabs, Table, Field, Toggle, Drawer, Confirm, Note } from "./ui";
 import Icon from "../icons";
 import { ROSTERS } from "../../lib/rosters";
-import { ELDER_TABS, SERVICE_STATE, elderDetail, feedOf, sevOf, logEntry, TODAY } from "../../lib/ops-mgmt";
+import { ELDER_TABS, SERVICE_STATE, elderDetail, feedOf, sevOf, logEntry, TODAY, demoTel } from "../../lib/ops-mgmt";
 import { GUARDIANS } from "../../lib/ops-mgmt-people";
-import { TOTAL_ELDERS } from "../../lib/ops-health";
+import { TOTAL_ELDERS, getCustomer } from "../../lib/ops-health";
 import ElderTabs from "./mgmt/ElderTabs";
 import { EditDrawer } from "./mgmt/EditLog";
 
@@ -26,13 +29,22 @@ const guardiansOf = (name) => {
   if (mine.length) return mine;
   return ROSTERS.guardians.rows.filter((r) => r[3].startsWith(name)).map((r) => ({ name: r[0], rel: r[1], role: r[2], region: r[5], tel: r[9], consent: consentAll }));
 };
-const build = (row) => ({ ...elderDetail(row), guardians: guardiansOf(row[0]) });
+// 관제는 연락처를 가리지 않는다 — SOS 화면과 같은 출처(ops-health)의 번호, 없으면 예시 번호
+const phoneOf = (name) => {
+  const p = getCustomer(name).phone;
+  return p && p !== "—" ? p : demoTel(name);
+};
+const build = (row) => ({ ...elderDetail(row), phone: phoneOf(row[0]), guardians: guardiansOf(row[0]) });
 const VIEWS = { all: () => true, risk: (e) => e.risk === "높음", watch: (e) => e.watch !== "정상 수신", nosub: (e) => e.sub === "—", paused: (e) => e.service.state !== "active" };
 const VIEW_LABEL = { all: "전체", risk: "위험 높음", watch: "워치 이상", nosub: "부 담당 없음", paused: "일시중지 · 종료" };
 const EMPTY_FORM = { name: "", sex: "여", born: "1948", loc: "자택", dong: "", branch: "강남 본점", gName: "", gRel: "아들", pri: "박지현", sub: "서다인", watchId: "", sensor: "거실 · 욕실", threshold: false, priority: "1순위 주 보호자 → 2순위 부 보호자 → 담당 컨시어지 → 119", visitDay: "매월 셋째 주", product: PRODUCTS[0], pay: PAYS[1], cEmergency: false, cEntry: false };
 
 export default function ElderMgmt() {
   const [elders, setElders] = useState(() => ROSTERS.elders.rows.map(build));
+  // 테스트 계정으로 들어왔으면 김순자 줄에 테스트 가구 1 의 실제 값(가입 상담 · 해주세요 · SOS)을 덮는다
+  const appState = useAppState()?.state;
+  const liveOn = !!useAuth().user?.household;
+  const shown = liveOn ? elders.map((e) => liveElder(e, appState)) : elders;
   const [sel, setSel] = useState("김순자");
   const [tab, setTab] = useState("기본정보");
   const [q, setQ] = useState("");
@@ -46,7 +58,7 @@ export default function ElderMgmt() {
   const [form, setForm] = useState(EMPTY_FORM);
   const setF = (k) => (v) => setForm((f) => ({ ...f, [k]: v }));
 
-  const cur = elders.find((e) => e.name === sel) || elders[0];
+  const cur = shown.find((e) => e.name === sel) || shown[0];
   const update = (name, fn) => setElders((es) => es.map((e) => (e.name === name ? fn(e) : e)));
   const log = (e, field, before, after, reason) => ({ ...e, history: [logEntry({ field, before, after, reason }), ...e.history] });
 
@@ -58,15 +70,20 @@ export default function ElderMgmt() {
     { k: "nosub", label: "부 담당 없음", value: elders.filter(VIEWS.nosub).length, tone: "warn" },
     { k: "paused", label: "일시중지 · 종료", value: elders.filter(VIEWS.paused).length, tone: "warn" },
   ];
-  const list = elders
+  const list = shown
     .filter(VIEWS[view])
     .filter((e) => branch === ALL_BRANCH || e.branch === branch)
     .filter((e) => loc === ALL_LOC || (loc === "자택" ? e.loc === "home" : e.loc === "hospital"))
     .filter((e) => !q || e.name.includes(q) || e.dong.includes(q) || e.pri.includes(q) || e.sub.includes(q))
-    .sort((a, b) => RISK_RANK[a.risk] - RISK_RANK[b.risk] || (a.watch === "정상 수신") - (b.watch === "정상 수신"));
+    .sort((a, b) => (b.live ? 1 : 0) - (a.live ? 1 : 0) || RISK_RANK[a.risk] - RISK_RANK[b.risk] || (a.watch === "정상 수신") - (b.watch === "정상 수신"));
 
   const cols = [
-    { k: "name", label: "이름", render: (e) => <span className="font-bold text-navy">{e.name}</span> },
+    { k: "name", label: "이름", render: (e) => (
+      <span className="inline-flex flex-wrap items-center gap-1">
+        <span className="font-bold text-navy">{e.name}</span>
+        {e.live ? <Pill tone="ok">실제</Pill> : liveOn ? <span className="text-[11px] text-muted">예시</span> : null}
+      </span>
+    ) },
     { k: "sa", label: "성별 · 나이", render: (e) => <span className="font-num">{e.sex} · {e.age}</span> },
     { k: "where", label: "지점 · 동", render: (e) => <>{e.branch}<span className="block text-[11px] text-muted">{e.dong}</span></> },
     { k: "loc", label: "거주", render: (e) => (e.loc === "hospital" ? <Pill tone="info">요양병원</Pill> : <span className="text-muted">자택</span>) },
@@ -162,6 +179,12 @@ export default function ElderMgmt() {
       </Panel>
 
       {msg && <Note tone="ok">{msg}</Note>}
+      {liveOn && (
+        <Note tone="ok">
+          <b>{LIVE_TAG}</b> — 김순자 님 줄은 테스트 가구의 실제 기록입니다 (가입 상담 연락처 · 주소 · 결제권한, 해주세요, SOS).
+          {shown.find((e) => e.live)?.onboarded ? "" : " 보호자가 가입 상담을 마치면 연락처 · 주소가 실제 값으로 바뀝니다."} 나머지 어르신은 예시입니다.
+        </Note>
+      )}
 
       <div className="grid gap-4 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)]">
         <Panel>
@@ -179,6 +202,7 @@ export default function ElderMgmt() {
               <div className="min-w-0 flex-1">
                 <div className="flex flex-wrap items-center gap-2">
                   <h2 className="text-[17px] font-bold text-navy">{cur.name}</h2>
+                  {cur.live && <Pill tone="ok">{LIVE_TAG}</Pill>}
                   <span className="font-num text-[13px] text-muted">{cur.age}세 · {cur.sex}</span>
                   <SevPill sev={sevOf(cur.risk)} />
                   <Pill tone={SERVICE_STATE[cur.service.state].tone}>{SERVICE_STATE[cur.service.state].label}</Pill>

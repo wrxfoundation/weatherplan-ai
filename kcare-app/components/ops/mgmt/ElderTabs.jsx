@@ -4,6 +4,7 @@ import { useState } from "react";
 import { KV, Pill, Table, Tabs, Stamp, FeedPill, SevPill, Note, Empty, Btn } from "../ui";
 import { VISITS, VISIT_STATE, visitPill, sevOf, demoTel, stampNow, OPERATOR } from "../../../lib/ops-mgmt";
 import { HistoryTable } from "./EditLog";
+import PhoneLink from "../PhoneLink";
 
 const RANGES = ["최근 1시간", "오늘", "최근 7일", "최근 30일"];
 const docTone = (s) => (s.startsWith("서명") ? "ok" : s.startsWith("갱신") || s.startsWith("확인") || s.startsWith("미서명") ? "warn" : "muted");
@@ -35,8 +36,10 @@ export default function ElderTabs({ e, tab, onChange }) {
       return (
         <div>
           <KV k="이름" v={`${e.name} (${e.sex} · ${e.age}세 · ${e.born}년생)`} />
+          {e.appliedName && <KV k="가입 상담 이름" v={e.appliedName} />}
+          <KV k="휴대폰" v={<PhoneLink phone={e.phone} source={e.phoneSource} />} />
           <KV k="지점" v={e.branch} />
-          <KV k="주소" v={`${e.addr} · 상세주소는 권한 열람`} />
+          <KV k="주소" v={e.addr} />
           <KV k="거주형태" v={e.loc === "hospital" ? "요양병원" : "자택"} />
           <KV k="장애 정도" v={e.disability} />
           <KV k="보훈" v={e.veteran} />
@@ -69,7 +72,7 @@ export default function ElderTabs({ e, tab, onChange }) {
               { k: "rel", label: "관계" },
               { k: "role", label: "역할", render: (g) => <Pill tone={roleTone(g.role)}>{g.role}</Pill> },
               { k: "region", label: "거주" },
-              num("tel", "연락"),
+              { k: "tel", label: "연락", render: (g) => <PhoneLink phone={g.tel} source={g.live ? "가입 상담" : null} /> },
               { k: "consent", label: "수신동의", render: (g) => <span className="text-[11px] text-muted">{[g.consent.call && "전화", g.consent.sms && "문자", g.consent.push && "앱 푸시"].filter(Boolean).join(" · ") || "—"}</span> },
             ]}
             rows={e.guardians}

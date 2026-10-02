@@ -34,3 +34,4 @@ export function findTestAccount(idOrEmail) {
 }
 
 export const householdName = (id) => TEST_HOUSEHOLDS[id]?.name || id || "";
+export const accountName = (id) => TEST_ACCOUNTS.find((a) => a.id === id)?.name || id || "—";
