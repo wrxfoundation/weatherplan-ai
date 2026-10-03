@@ -101,3 +101,58 @@ Contact: [name, email]
 - 계약 상대 — 9/30 품의로 (주)케이팝타워(대행사)로 확인. 타워 쪽(YTN)과의 관계 · 리플 쪽 역할(녹취 「리플에서 올라왔어요」)은 답사 때.
 - 제안을 배포한 곳 · 참여 의향 스폰서 수.
 - 「저한테 따로 주기로」의 받는 쪽 = 어느 법인 계좌인지(개인 계좌 0).
+
+## 10/3 밤 — 서우 개인 X · 링크드인 글 (19:12, 서우 타워 사진 2장 + 「링크드인이랑 X 에 남산 케이웨더 로고 노출된 거 올릴 거야」)
+
+사진: ① 파란 탑신 「XRP 로고 × KWeather 로고」 ② 흰 탑신 「XRP SEOUL 2026」. 순서 ① → ②.
+
+**규칙 적용**
+- **「XRP × KWeather」를 글자로 옮기지 않는다.** 사진이 보여 주는 것은 두면 되고, 상장사 이름과 XRP 를 묶은 문장은 협력 · 보유 신호로 읽힌다.
+  본문은 「XRP SEOUL 2026 을 맞아 불을 밝힌 타워에 케이웨더 로고도 올라갔다」까지만 쓴다.
+- 비용 · 대행사 · 타워 쪽 계약 · 스폰서 분담 · VIP 리셉션 0(이 파일 위쪽은 내부용). 리플 · 토큰 · 가격 0. 「최대 · 1위 · 유일」 0.
+- 첫 줄 위트 = 날씨 예보 형식(「맑음 · 시정 아주 좋음」 — 시정은 로고가 잘 보인다는 말장난). **실제 하늘이 흐렸으면 「맑음」은 뺀다.**
+- 개인 계정 기준이다. @wellbianlabs 에 케이웨더 로고를 자랑하면 「상장사가 뒷받침」으로 읽힐 수 있어 쓰지 않는다.
+- 링크드인은 하루 마무리 글(부스 · 키노트 · 타워). 낮 부스 글을 아직 안 올렸으면 이 글 하나로 합치고, 부스 사진(4번 자른 판)을 셋째 장으로 붙인다.
+
+**X — A 영문 위트 (190자 · X 가중 191)**
+```
+Namsan tonight: clear skies, excellent visibility.
+
+N Seoul Tower lit up for #XRPSEOUL2026, and the KWeather logo was up there too. Not a bad way for a weather company to close out the day 🌙
+```
+**X — B 영문 하루 마무리 (146자 · 가중 146)**
+```
+Booth by day, Namsan by night. N Seoul Tower lit up for #XRPSEOUL2026 tonight, KWeather logo included. Thank you to everyone who stopped by today.
+```
+**X — C 국문 (120자 · 가중 182)**
+```
+오늘 밤 남산 날씨: 맑음. 시정: 아주 좋음.
+
+XRP SEOUL 2026을 맞아 불을 밝힌 남산서울타워에 케이웨더 로고가 올라갔습니다. 날씨 회사의 하루 마무리로 딱 좋은 풍경이네요 🌙
+
+#XRPSEOUL2026
+```
+**링크드인 — 영문 (509자 / 3,000)**
+```
+Namsan tonight: clear skies, excellent visibility.
+
+N Seoul Tower lit up for XRP SEOUL 2026, and the KWeather logo was up there with it.
+
+It's been a long day: our booth in the Grand Salon, our keynote on the Weather Data Economy, and a lot of good conversations in between. Seeing a weather company's name on the Seoul skyline was a fitting way to end it.
+
+Thank you to everyone who stopped by today, and to the team behind XRP SEOUL 2026 for putting it all together.
+
+#XRPSEOUL2026 #KWeather #wellbian #XRPL
+```
+**링크드인 — 국문 (271자)**
+```
+오늘 밤 남산 날씨: 맑음. 시정: 아주 좋음.
+
+XRP SEOUL 2026을 맞아 불을 밝힌 남산서울타워에 케이웨더 로고가 함께 올라갔습니다.
+
+긴 하루였습니다. 그랜드 살롱의 부스, 웨더 데이터 이코노미 키노트, 그리고 그 사이사이의 좋은 대화들. 서울의 밤하늘에 뜬 날씨 회사의 이름을 보며 하루를 마무리합니다.
+
+부스에 들러 주신 모든 분들, 그리고 XRP SEOUL 2026을 준비해 주신 분들께 감사드립니다.
+
+#XRPSEOUL2026 #케이웨더 #wellbian #XRPL
+```
