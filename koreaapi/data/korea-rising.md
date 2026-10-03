@@ -1,14 +1,14 @@
-# Korea Rising — verified K-pop snapshot (2026-10-02)
+# Korea Rising — verified K-pop snapshot (2026-10-03)
 
 Every line is **cross-verified** (≥2 independent sources agree on the canonical name) and carries its source + Skill Score. Full data + Schema.org JSON-LD: <https://aiagentlabs.co.kr/> · via KoreaAPI (MCP).
 
 ## 🎬 Latest official releases (YouTube)
-- **BOYNEXTDOOR** — 숭니멀2 #BOYNEXTDOOR #보이넥스트도어 #BND #ANIMAL #ANIMAL_Challenge
+- **QWER** — 기적 같이 내린 별빛 아래 품었던 꿈들💫
+- **Xdinary Heroes** — [Xdinary Heroes : Xtra Files] Ep.95 〈SOUND PLANET FESTIVAL 2026〉 Behind
+- **AKMU** — AKMU 콘서트를 엄청 잘 즐기는 방법에 대하여
+- **BOYNEXTDOOR** — MOVE LIKE #유병재 🐾#BOYNEXTDOOR #보이넥스트도어 #ANIMAL #ANIMAL_Challenge
+- **ZICO** — 지코 근황이라는 게 숨긴다고 숨겨지는 것도 아니고
 - **EVERGLOW** — Kingdom Hearts IV - Extended D23 2026 Trailer
-- **Kiss of Life** — [KI-OFF] KLIP-#51 | DERMAFIRM 광고 촬영 Behind
-- **VIVIZ** — [VIVI.Zip] 항저우 팬미팅 Spring Whisper 포스터 촬영💙 Highlight #2
-- **SUNMI** — 𝐒𝐦𝐚𝐫𝐭 𝐊𝐢𝐭𝐜𝐡𝐞𝐧. 𝐒𝐦𝐨𝐨𝐭𝐡 𝐒𝐞𝐫𝐯𝐢𝐜𝐞｜𝐒𝐔𝐍𝐌𝐈 𝐅𝐋𝐄𝐗 𝟑 𝐊𝐃𝐒
-- **P1Harmony** — Belated birthday thirst trap
 
 ## 🎤 Verified roster (640 acts)
 - **2NE1**: I Am the Best
