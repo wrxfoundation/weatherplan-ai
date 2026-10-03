@@ -156,3 +156,30 @@ XRP SEOUL 2026을 맞아 불을 밝힌 남산서울타워에 케이웨더 로고
 
 #XRPSEOUL2026 #케이웨더 #wellbian #XRPL
 ```
+
+**X — 무료 계정판(서우 「일반 무료 X 유저용으로 재구성」 · 링크드인 영문을 280 안으로)** — 서우 해시태그 `#XRP #Ripple #namsantower` 중
+**#Ripple → #XRPSEOUL2026**(10/2 리플 「이름 사용 조심」 요청 · 「XRP × KWeather」 사진과 붙으면 케이웨더 × 리플 협력으로 읽힘), #namsantower → #NamsanTower(같은 태그, 읽기 쉽게).
+
+단일(264 · 가중 264)
+```
+Namsan tonight: clear skies, excellent visibility.
+
+N Seoul Tower lit up for XRP SEOUL 2026, KWeather logo included. A weather company's name on the Seoul skyline was a fitting end to a long day.
+
+Thanks to everyone who stopped by!
+
+#XRP #XRPSEOUL2026 #NamsanTower
+```
+타래 1/2(246) · 2/2(242) — 링크드인 문장을 다 살릴 때
+```
+Namsan tonight: clear skies, excellent visibility.
+
+N Seoul Tower lit up for XRP SEOUL 2026, and the KWeather logo was up there with it. A weather company's name on the Seoul skyline: a fitting way to end the day.
+
+#XRP #XRPSEOUL2026 #NamsanTower
+```
+```
+It's been a long day: our booth in the Grand Salon, our keynote on the Weather Data Economy, and a lot of good conversations in between.
+
+Thank you to everyone who stopped by, and to the team behind XRP SEOUL 2026 for putting it all together.
+```
