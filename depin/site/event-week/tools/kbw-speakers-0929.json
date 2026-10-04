@@ -1,0 +1,1984 @@
+[
+ {
+  "key": "Aaron Gwak",
+  "org_ko": "Libeara · 창업자 겸 CEO",
+  "co_ko": "SC Ventures(Standard Chartered) 지원 토큰화 플랫폼",
+  "confidence": "high",
+  "sources": [
+   {
+    "t": "Aaron Gwak",
+    "u": "https://live.theasianbanker.com/guest/Aaron-Gwak"
+   }
+  ],
+  "note": "",
+  "batch": "K1"
+ },
+ {
+  "key": "Alvin Chia",
+  "org_ko": "Northern Trust · 아시아태평양 디지털자산 혁신 총괄",
+  "co_ko": "미국 금융서비스 기업(자산수탁·자산관리)",
+  "confidence": "medium",
+  "sources": [
+   {
+    "t": "Alvin Chia | Northern Trust",
+    "u": "https://www.northerntrust.com/united-states/insights-research/asset-servicing/experts/chia-alvin"
+   },
+   {
+    "t": "Dr. Alvin Chia – Digital Assets Summit 2025 (Singapore)",
+    "u": "https://summit.digitalassetsassociation.org/speaker/dr-alvin-chia/"
+   }
+  ],
+  "note": "직함은 2025년 자료 기준(2026년 재확인 못 함); 동명이인이 있어 세션 주제(토큰화)로 판단",
+  "batch": "K1"
+ },
+ {
+  "key": "Annabelle Huang",
+  "org_ko": "Altius Labs · 공동창업자 겸 CEO",
+  "co_ko": "블록체인 실행(execution) 레이어 인프라 개발사",
+  "confidence": "high",
+  "sources": [
+   {
+    "t": "Annabelle Huang | Speaker | Consensus Hong Kong 2026",
+    "u": "https://consensus-hongkong.coindesk.com/agenda/speaker/-annabelle-huang"
+   },
+   {
+    "t": "Blockchain Infrastructure in Web3 | Annabelle Huang of AltiusLabs",
+    "u": "https://womenlead.co.uk/blog/blockchain-infrastructure-annabelle-huang-altius-labs"
+   }
+  ],
+  "note": "",
+  "batch": "K1"
+ },
+ {
+  "key": "Bella Park",
+  "org_ko": "",
+  "co_ko": "",
+  "confidence": "low",
+  "sources": [],
+  "note": "LinkedIn 프로필 외 공개 출처 없음 — 세션 주제(AI·데이터)로 추정한 후보, KBW 연결 확인 못 함",
+  "batch": "K1"
+ },
+ {
+  "key": "CJ Fong",
+  "org_ko": "GSR · 매니징 디렉터, APAC·EMEA 세일즈 총괄",
+  "co_ko": "디지털자산 트레이딩·마켓메이킹 기업",
+  "confidence": "medium",
+  "sources": [
+   {
+    "t": "Our Team | GSR Markets",
+    "u": "https://www.gsr.io/our-team"
+   },
+   {
+    "t": "CJ Fong / GSR Markets Managing Director, Head of APAC & EMEA Sales | WebX2024",
+    "u": "https://2024.webx-asia.com/speaker/3291912"
+   }
+  ],
+  "note": "직함은 2024–2025년 자료 기준(2026년 재확인 못 함)",
+  "batch": "K1"
+ },
+ {
+  "key": "Chef Kids",
+  "org_ko": "PancakeSwap",
+  "co_ko": "여러 체인 탈중앙화 거래소(DEX)",
+  "confidence": "medium",
+  "sources": [
+   {
+    "t": "PancakeSwap's Chef Kids to Discuss Tokenization at KBW 2026",
+    "u": "https://coinfomania.com/pancakeswaps-chef-kids-to-discuss-tokenization-at-kbw-2026/"
+   }
+  ],
+  "note": "PancakeSwap 팀의 활동명(가명)으로 보임; KBW2026 보도로 소속만 확인, 직함은 확인 못 함",
+  "batch": "K1"
+ },
+ {
+  "key": "Cris Blanco",
+  "org_ko": "Beldex · 최고전략책임자(CSO)",
+  "co_ko": "프라이버시 중심 블록체인·애플리케이션 생태계",
+  "confidence": "high",
+  "sources": [
+   {
+    "t": "Beldex Launches $1 Million Grants Program for Privacy Innovation By Chainwire",
+    "u": "https://www.investing.com/news/cryptocurrency-news/beldex-launches-1-million-grants-program-for-privacy-innovation-4921886"
+   },
+   {
+    "t": "Beldex Launches $1M Global Grants Program, Opening Privacy Infrastructure To Developers Worldwide | Metaverse Post",
+    "u": "https://mpost.io/beldex-launches-1m-global-grants-program-opening-privacy-infrastructure-to-developers-worldwide/"
+   }
+  ],
+  "note": "",
+  "batch": "K1"
+ },
+ {
+  "key": "David Olsson",
+  "org_ko": "EDX Markets · 최고사업책임자(CCO)",
+  "co_ko": "기관 투자자 대상 디지털자산 거래소",
+  "confidence": "medium",
+  "sources": [
+   {
+    "t": "CfC St. Moritz | David Olsson",
+    "u": "https://cfc-stmoritz.com/profiles/david-olsson"
+   },
+   {
+    "t": "David Olsson Speaker Profile",
+    "u": "https://blockworks.com/speaker/david-olsson"
+   }
+  ],
+  "note": "이전 Kraken 기관영업 총괄; 현 직함은 연사 프로필 기준(게재 시점 확인 못 함)",
+  "batch": "K1"
+ },
+ {
+  "key": "David Toh",
+  "org_ko": "Mirana Ventures · 매니징 파트너",
+  "co_ko": "블록체인·웹3 분야 벤처 투자사",
+  "confidence": "medium",
+  "sources": [
+   {
+    "t": "Mirana - Team",
+    "u": "https://www.mirana.xyz/team"
+   }
+  ],
+  "note": "동명이인 가능; 세션 주제(초기 투자자)로 추정, KBW 연결 자료는 확인 못 함",
+  "batch": "K1"
+ },
+ {
+  "key": "Dongjoo Suh",
+  "org_ko": "",
+  "co_ko": "",
+  "confidence": "low",
+  "sources": [],
+  "note": "확인 못 함 — 블록체인 기업(EIOB) 관련 동명 프로필이 있으나 프로필 사이트 외 근거 없음",
+  "batch": "K1"
+ },
+ {
+  "key": "Eugene Chen",
+  "org_ko": "Ellipsis Labs · 공동창업자 겸 CEO",
+  "co_ko": "Solana 기반 DeFi 프로토콜(Phoenix) 개발사",
+  "confidence": "medium",
+  "sources": [
+   {
+    "t": "The Future of DeFi Trading: Routers, Perps, and MCP | Eugene Chen | Lightspeed | Solana Media",
+    "u": "https://solana.com/ko/podcasts/lightspeed/episodes/the-future-of-defi-trading-routers-perps-and-mcp-eugene-chen-2026-03-31"
+   },
+   {
+    "t": "Eugene Chen Speaker Profile - Blockworks",
+    "u": "https://blockworks.com/speaker/eugene-chen"
+   }
+  ],
+  "note": "동명이인 가능; DeFi 세션 주제로 Ellipsis Labs 인물로 추정",
+  "batch": "K1"
+ },
+ {
+  "key": "Gene Fang",
+  "org_ko": "무디스 레이팅스 · 이그제큐티브 디렉터",
+  "co_ko": "신용평가사",
+  "confidence": "high",
+  "sources": [
+   {
+    "t": "파이낸셜뉴스 — KBW2026 10월 1일 패널(9/21)",
+    "u": "https://www.fnnews.com/news/202609211904271582"
+   },
+   {
+    "t": "파이낸셜뉴스 — KBW2026 개막(9/28)",
+    "u": "https://www.fnnews.com/news/202609281825215665"
+   }
+  ],
+  "note": "K5 — 보도의 「진팡 무디스 레이팅스 이그제큐티브 디렉터」",
+  "batch": "K5"
+ },
+ {
+  "key": "Gwang-suk Kim",
+  "org_ko": "",
+  "co_ko": "",
+  "confidence": "low",
+  "sources": [],
+  "note": "확인 못 함 — 공개 출처에서 세션 관련 인물 식별 불가",
+  "batch": "K1"
+ },
+ {
+  "key": "Hogun Lee",
+  "org_ko": "",
+  "co_ko": "",
+  "confidence": "low",
+  "sources": [],
+  "note": "확인 못 함 — 블록체인 분야 동명 인물(Avalanche 앰배서더, 前 InterVest 등 프로필 사이트 기재)이 있으나 현 소속을 공개 출처로 확인 못 함",
+  "batch": "K1"
+ },
+ {
+  "key": "Hyunsu Jung",
+  "org_ko": "Hyperion DeFi · CEO",
+  "co_ko": "Hyperliquid 생태계 기반 나스닥 상장 디지털자산 기업",
+  "confidence": "high",
+  "sources": [
+   {
+    "t": "Hyperion DeFi Appoints Hyunsu Jung as Chief Executive Officer :: Hyperion DeFi, Inc. (HYPD)",
+    "u": "https://ir.hyperiondefi.com/news-events/press-releases/detail/301/hyperion-defi-appoints-hyunsu-jung-as-chief-executive-officer"
+   },
+   {
+    "t": "Meet Hyperion DeFi: Fly Exclusive with CEO Hyunsu Jung - TipRanks.com",
+    "u": "https://www.tipranks.com/news/the-fly/meet-hyperion-defi-fly-exclusive-with-ceo-hyunsu-jung-thefly-news"
+   }
+  ],
+  "note": "",
+  "batch": "K1"
+ },
+ {
+  "key": "Isidoros Passadis",
+  "org_ko": "Lido Ecosystem Foundation · 스테이킹 총괄",
+  "co_ko": "이더리움 리퀴드 스테이킹 프로토콜(Lido) 생태계 재단",
+  "confidence": "medium",
+  "sources": [
+   {
+    "t": "Recap: Lido Tokenholder Update: February 2026",
+    "u": "https://blog.lido.fi/recap-lido-tokenholder-update-february-2026/"
+   },
+   {
+    "t": "Isidoros Passadis - People in crypto | IQ.wiki",
+    "u": "https://iq.wiki/wiki/isidoros-passadis"
+   }
+  ],
+  "note": "영문 직함 표기(Chief of Staking 등)는 출처별 차이 가능",
+  "batch": "K1"
+ },
+ {
+  "key": "Jason Atkins",
+  "org_ko": "Auros · 최고사업책임자(CCO)",
+  "co_ko": "디지털자산 알고리즘 트레이딩·마켓메이킹 기업",
+  "confidence": "high",
+  "sources": [
+   {
+    "t": "Jason Atkins | Speaker | Consensus Hong Kong 2026",
+    "u": "https://consensus-hongkong.coindesk.com/agenda/speaker/-jason-atkins"
+   },
+   {
+    "t": "Lack of liquidity is a growing concern in crypto, says Auros' Jason Atkins",
+    "u": "https://www.coindesk.com/markets/2026/01/17/lack-of-liquidity-is-a-growing-concern-in-crypto-says-auros-jason-atkins"
+   }
+  ],
+  "note": "",
+  "batch": "K1"
+ },
+ {
+  "key": "Jongsub Lee",
+  "org_ko": "서울대학교 경영대학 · 교수(재무)",
+  "co_ko": "서울대학교 경영대학",
+  "confidence": "medium",
+  "sources": [
+   {
+    "t": "Jongsub Lee Department of Finance SNU Business School Seoul National University",
+    "u": "https://biz.snu.ac.kr/en/external/faculty?mode=downloadcv&idx=2761"
+   },
+   {
+    "t": "Jongsub Lee",
+    "u": "https://www.jongsublee.com/"
+   }
+  ],
+  "note": "동명이인 가능; 디지털금융(DeFi·스테이블코인) 연구 이력으로 동일인 추정",
+  "batch": "K1"
+ },
+ {
+  "key": "June Morita",
+  "org_ko": "Perplexity · APAC 총괄",
+  "co_ko": "AI 기반 답변형 검색 엔진 기업",
+  "confidence": "low",
+  "sources": [
+   {
+    "t": "ALL SPEAKERS | WebX",
+    "u": "https://webx-asia.com/speakers/"
+   }
+  ],
+  "note": "WebX 연사 목록 검색 결과에만 근거 — 동일인 여부·직함 재확인 필요",
+  "batch": "K1"
+ },
+ {
+  "key": "Jungwha Lee",
+  "org_ko": "",
+  "co_ko": "",
+  "confidence": "low",
+  "sources": [],
+  "note": "확인 못 함 — 소속 정보 없음(검색상 KBW 아젠다에 'Who Wins When Intelligence Becomes Abundant?' 패널로도 표기)",
+  "batch": "K1"
+ },
+ {
+  "key": "Katie Talati",
+  "org_ko": "Arca · 리서치 디렉터",
+  "co_ko": "디지털자산 전문 자산운용사",
+  "confidence": "high",
+  "sources": [
+   {
+    "t": "Arca Blog | Katie Talati",
+    "u": "https://www.ar.ca/blog/author/katie-talati"
+   }
+  ],
+  "note": "",
+  "batch": "K1"
+ },
+ {
+  "key": "Koki Sato",
+  "org_ko": "UPCX · 최고마케팅책임자(CMO)",
+  "co_ko": "결제 중심 오픈소스 블록체인 플랫폼",
+  "confidence": "medium",
+  "sources": [
+   {
+    "t": "CMO ของ UPCX คุณ Koki Sato เตรียมเข้าร่วมงาน Blockchain KOL ที่กรุงเทพฯ",
+    "u": "https://www.prachachat.net/biz-movement/public-relations/news-1786505"
+   }
+  ],
+  "note": "직함 게재 시점 확인 못 함(2026년 재확인 못 함); 세션 주제(결제)로 동일인 추정",
+  "batch": "K1"
+ },
+ {
+  "key": "Lindsay Fraser",
+  "org_ko": "Blockchain Association · 최고정책책임자(CPO)",
+  "co_ko": "미국 블록체인 업계 정책·옹호 단체",
+  "confidence": "high",
+  "sources": [
+   {
+    "t": "Uniswap's Lindsay Fraser to Run Policy Shop at Blockchain Association",
+    "u": "https://www.coindesk.com/policy/2025/12/04/uniswap-s-lindsay-fraser-to-run-policy-shop-at-blockchain-association"
+   },
+   {
+    "t": "Lindsay Fraser",
+    "u": "https://www.ces.tech/speakers/lindsay-fraser/"
+   }
+  ],
+  "note": "",
+  "batch": "K1"
+ },
+ {
+  "key": "Mark Wendland",
+  "org_ko": "Canton Strategic Holdings · 이사회 의장 겸 CEO",
+  "co_ko": "Canton Coin 트레저리·검증인 운영 나스닥 상장사",
+  "confidence": "high",
+  "sources": [
+   {
+    "t": "Canton Strategic Holdings CEO Mark Wendland on DTCC's October Launch and Canton's Institutional Adoption Path - Genfinity",
+    "u": "https://genfinity.io/2026/07/21/canton-strategic-holdings-mark-wendland-dtcc-october-launch/"
+   },
+   {
+    "t": "About | Canton Strategic Holdings",
+    "u": "https://www.cantonstrategic.com/about"
+   }
+  ],
+  "note": "구 사명 Tharimmune",
+  "batch": "K1"
+ },
+ {
+  "key": "Michael Lau",
+  "org_ko": "CoinDesk · Consensus 의장",
+  "co_ko": "디지털자산 미디어·컨퍼런스 기업(Bullish 계열)",
+  "confidence": "medium",
+  "sources": [
+   {
+    "t": "Michael Lau | Speaker | Consensus Miami 2026 - CoinDesk",
+    "u": "https://consensus.coindesk.com/agenda/speaker/-michael-lau"
+   },
+   {
+    "t": "20,000 Expected in Miami: The Wall Street & Crypto Convergence at Consensus 2026",
+    "u": "https://www.cryptotimes.io/2026/05/02/20000-expected-in-miami-the-wall-street-crypto-convergence-at-consensus-2026/"
+   }
+  ],
+  "note": "Bullish 사업개발 총괄(SVP) 표기 자료도 있음; 동명이인 가능",
+  "batch": "K1"
+ },
+ {
+  "key": "Mickey Hardy",
+  "org_ko": "Arcadia · CEO",
+  "co_ko": "웹3 마케팅·컨설팅 에이전시",
+  "confidence": "medium",
+  "sources": [
+   {
+    "t": "Mickey Hardy - My Framer Site - yard[hub] web3 Growth Camp",
+    "u": "https://web3growth.camp/speakers/mickey-hardy"
+   },
+   {
+    "t": "Monster Web3 Launches w/ Mickey Hardy, CEO of Arcadia Marketing · Luma",
+    "u": "https://luma.com/tl24h5en"
+   }
+  ],
+  "note": "2026년 자료로 재확인 못 함",
+  "batch": "K1"
+ },
+ {
+  "key": "Mykolas Majauskas",
+  "org_ko": "Bybit · 글로벌 정책 총괄",
+  "co_ko": "글로벌 가상자산 거래소",
+  "confidence": "high",
+  "sources": [
+   {
+    "t": "Bybit's Mykolas Majauskas Advocates Tokenisation to Drive India's $1 Trillion Fintech Economy - Benzinga",
+    "u": "https://www.benzinga.com/pressreleases/26/05/52456234/bybits-mykolas-majauskas-advocates-tokenisation-to-drive-indias-1-trillion-fintech-economy"
+   },
+   {
+    "t": "Mykolas Majauskas",
+    "u": "https://www.parisblockchainweek.com/speaker-2026/mykolas-majauskas"
+   }
+  ],
+  "note": "",
+  "batch": "K1"
+ },
+ {
+  "key": "Paul Kim",
+  "org_ko": "",
+  "co_ko": "",
+  "confidence": "low",
+  "sources": [],
+  "note": "확인 못 함 — 동명이인 다수, 세션 관련 인물 식별 불가",
+  "batch": "K1"
+ },
+ {
+  "key": "Ryan Yoon",
+  "org_ko": "Tiger Research · 리서치 애널리스트",
+  "co_ko": "아시아 웹3 시장 리서치 기업",
+  "confidence": "medium",
+  "sources": [
+   {
+    "t": "Take RWA Tokenization Offshore First - by Ryan Yoon",
+    "u": "https://reports.tiger-research.com/p/take-rwa-tokenization-offshore-first-eng"
+   },
+   {
+    "t": "게임사의 블록체인 지갑 의사 결정 기준 - by Ryan Yoon",
+    "u": "https://reports.tiger-research.com/p/80c"
+   }
+  ],
+  "note": "직함 표기(애널리스트/시니어 애널리스트) 확인 필요",
+  "batch": "K1"
+ },
+ {
+  "key": "Sean Lee",
+  "org_ko": "",
+  "co_ko": "",
+  "confidence": "low",
+  "sources": [],
+  "note": "확인 못 함 — 동명이인 다수(예: Crypto Council for Innovation 아태 자문역), KBW 연결 확인 못 함",
+  "batch": "K1"
+ },
+ {
+  "key": "Sunayna Tuteja",
+  "org_ko": "Atlantic Council GeoEconomics Center · 비상주 선임연구위원",
+  "co_ko": "미국 싱크탱크 Atlantic Council의 지경학 연구센터",
+  "confidence": "medium",
+  "sources": [
+   {
+    "t": "Sunayna Tuteja — IO2026 - IO Summit",
+    "u": "https://www.theiosummit.com/sunayna-tuteja"
+   },
+   {
+    "t": "Sunayna Tuteja - Aspen Institute",
+    "u": "https://www.aspeninstitute.org/people/sunayna-tuteja/"
+   }
+  ],
+  "note": "전 미 연방준비제도 최고혁신책임자(CIO); 현 주 소속은 불명확(Atlantic Council 합류는 검색 요약 기준)",
+  "batch": "K1"
+ },
+ {
+  "key": "Taishi Sato",
+  "org_ko": "DeFimans · 공동창업자 겸 대표",
+  "co_ko": "SBI 계열 일본 웹3 컨설팅 기업",
+  "confidence": "medium",
+  "sources": [
+   {
+    "t": "佐藤太思 | DeFimans",
+    "u": "https://defimans.com/member/%E4%BD%90%E8%97%A4%E5%A4%AA%E6%80%9D/"
+   },
+   {
+    "t": "Ethereum Institutional Summit 2026 | Sep 25, 2026 Tokyo",
+    "u": "https://eis.fracton.ventures/"
+   }
+  ],
+  "note": "동명이인 다수; 직함 표기(CEO/Co-CEO) 출처별 상이",
+  "batch": "K1"
+ },
+ {
+  "key": "Thomas Uhm",
+  "org_ko": "Qube Research & Technologies(QRT) · 퀀트 리서치 디렉터",
+  "co_ko": "영국 런던 기반 퀀트 투자운용사",
+  "confidence": "high",
+  "sources": [
+   {
+    "t": "Thomas Uhm | Speaker | Consensus Hong Kong 2026",
+    "u": "https://consensus-hongkong.coindesk.com/agenda/speaker/-thomas-uhm"
+   },
+   {
+    "t": "The Digital Asset Conference IV | London 19-20 Oct 2026",
+    "u": "https://www.thedigitalassetconference.com/"
+   }
+  ],
+  "note": "전 Jito Foundation CCO",
+  "batch": "K1"
+ },
+ {
+  "key": "Viv Diwakar",
+  "org_ko": "Canton Foundation · 총괄(Head)",
+  "co_ko": "Canton Network 생태계·거버넌스 지원 재단",
+  "confidence": "high",
+  "sources": [
+   {
+    "t": "LSEG Appointed as a Super Validator on Canton Network | LSEG",
+    "u": "https://www.lseg.com/en/media-centre/press-releases/2026/lseg-appointed-as-a-super-validator-on-canton-network"
+   },
+   {
+    "t": "LSEG Expands Canton Role as DiSH Enables Digital Settlement – CoinSpectator",
+    "u": "https://coinspectator.com/mainstream/2026/09/28/lseg-expands-canton-role-as-dish-enables-digital-settlement/"
+   }
+  ],
+  "note": "일부 자료에 'Interim Head'(임시) 표기",
+  "batch": "K1"
+ },
+ {
+  "key": "Yesha Yadav",
+  "org_ko": "Vanderbilt Law School · 법학 교수·부학장",
+  "co_ko": "미국 밴더빌트대학교 로스쿨",
+  "confidence": "high",
+  "sources": [
+   {
+    "t": "Curriculum Vitae of Yesha Yadav — Professor of Law",
+    "u": "https://docs.house.gov/meetings/BA/BA00/20260429/119245/HHRG-119-BA00-Bio-YadavP-20260429.pdf"
+   },
+   {
+    "t": "Yesha Yadav | Speakers | CoinDesk Policy & Regulation 2026 | Washington, D.C.",
+    "u": "https://policy-regulation.coindesk.com/agenda/speaker/-yesha-yadav"
+   }
+  ],
+  "note": "",
+  "batch": "K1"
+ },
+ {
+  "key": "Alex Jongkyu Lim",
+  "org_ko": "LayerZero Labs · 게이밍·IP 및 한국 총괄",
+  "co_ko": "크로스체인 상호운용성 프로토콜 개발사",
+  "confidence": "medium",
+  "sources": [
+   {
+    "t": "Alex Lim - SEABW 2026",
+    "u": "https://seablockchainweek.org/speakers/alex-lim"
+   },
+   {
+    "t": "Open Source Summit Korea 2025: Panel Discussion - The Shift to Digital Money",
+    "u": "https://osskorea2025.sched.com/event/2ACeS/panel-discussion-the-shift-to-digital-money-daniela-barbosa-the-linux-foundation-jooyni-sung-the-bank-of-korea-louis-kim-shinhan-bank-alex-lim-layerzero"
+   }
+  ],
+  "note": "직함 표기가 자료마다 다름(2025년 일부 자료는 APAC 총괄). 2026 SEABW 연사 소개 기준. 전 HAECHI Labs 사업개발 총괄",
+  "batch": "K2"
+ },
+ {
+  "key": "Amal Moritz",
+  "org_ko": "",
+  "co_ko": "",
+  "confidence": "low",
+  "sources": [],
+  "note": "여러 조합으로 검색했으나 동일 인물 확인 못 함(이름 표기 차이 가능성)",
+  "batch": "K2"
+ },
+ {
+  "key": "Azeem Khan",
+  "org_ko": "Miden · 공동창업자",
+  "co_ko": "영지식 증명 기반 프라이버시 지향 블록체인",
+  "confidence": "high",
+  "sources": [
+   {
+    "t": "Is crypto still cypherpunk? With Miden co-founder Azeem Khan | The Block",
+    "u": "https://www.theblock.co/post/388811/is-crypto-still-cypherpunk-with-miden-co-founder-azeem-khan"
+   }
+  ],
+  "note": "전 Morph(L2) 공동창업자·COO",
+  "batch": "K2"
+ },
+ {
+  "key": "Benjamin Stani",
+  "org_ko": "FalconX · APAC 기관영업 총괄",
+  "co_ko": "기관 대상 디지털자산 거래·프라임 브로커리지",
+  "confidence": "high",
+  "sources": [
+   {
+    "t": "Institutions Need Liquidity, Risk Controls to Move Into Digital Assets, Panel Says at EastPoint: Seoul 2026",
+    "u": "https://en.bloomingbit.io/feed/news/121128"
+   },
+   {
+    "t": "Money Never Sleeps – Full Stack PayFi Live from LEAP East",
+    "u": "https://thegreatconvergence.substack.com/p/money-never-sleeps-full-stack-payfi"
+   }
+  ],
+  "note": "",
+  "batch": "K2"
+ },
+ {
+  "key": "Caroline Friedman",
+  "org_ko": "Bastion · COO",
+  "co_ko": "스테이블코인 서비스 특화 금융 인프라 기업",
+  "confidence": "high",
+  "sources": [
+   {
+    "t": "Powering the Future: Caroline Friedman, COO, Bastion | The Glasshammer",
+    "u": "https://theglasshammer.com/2026/08/powering-the-future-caroline-friedman-coo-bastion/"
+   },
+   {
+    "t": "Caroline Friedman Appointed as Chief Operating Officer at Bastion",
+    "u": "https://www.prnewswire.com/news-releases/caroline-friedman-appointed-as-chief-operating-officer-at-bastion-302000506.html"
+   }
+  ],
+  "note": "이사회 구성원 겸임",
+  "batch": "K2"
+ },
+ {
+  "key": "Chris Land",
+  "org_ko": "미국 상원 은행위원회 디지털자산 소위원회 · 스태프 디렉터",
+  "co_ko": "미 상원 은행위원회 산하 디지털자산 담당 소위원회",
+  "confidence": "high",
+  "sources": [
+   {
+    "t": "Chris Land: Staff director, Senate Banking subcommittee on digital assets | The Hill",
+    "u": "https://thehill.com/the-hill-notable-staffers-2026/6078048-chris-land-staff-director-senate-banking-subcommittee-digital-assets/"
+   },
+   {
+    "t": "Chris Land leads negotiations on Senate cryptocurrency bill | Crypto Briefing",
+    "u": "https://cryptobriefing.com/chris-land-senate-crypto-bill-negotiations/"
+   }
+  ],
+  "note": "Cynthia Lummis 상원의원실 법률고문(General Counsel) 겸임",
+  "batch": "K2"
+ },
+ {
+  "key": "Dan Kong",
+  "org_ko": "맥킨지앤드컴퍼니 · 부파트너",
+  "co_ko": "글로벌 경영 컨설팅사",
+  "confidence": "medium",
+  "sources": [
+   {
+    "t": "블록미디어 — 맥킨지 디지털자산 전망",
+    "u": "https://www.blockmedia.co.kr/archives/979939"
+   }
+  ],
+  "note": "K5",
+  "batch": "K5"
+ },
+ {
+  "key": "David Park",
+  "org_ko": "",
+  "co_ko": "",
+  "confidence": "low",
+  "sources": [],
+  "note": "KBW 아젠다에서 x402 세션 모더레이터로만 확인. 동명이인이 많아 소속 특정 못 함",
+  "batch": "K2"
+ },
+ {
+  "key": "Dax Hansen",
+  "org_ko": "Ashurst Perkins Coie · 파트너 변호사",
+  "co_ko": "Perkins Coie·Ashurst 합병으로 출범한 국제 로펌",
+  "confidence": "high",
+  "sources": [
+   {
+    "t": "J Dax Hansen",
+    "u": "https://perkinscoie.com/professionals/j-dax-hansen"
+   },
+   {
+    "t": "Ashurst, Perkins Coie complete $2.8bn transatlantic merger - The Global Legal Post",
+    "u": "https://www.globallegalpost.com/news/ashurst-perkins-coie-complete-28bn-transatlantic-merger-2039988449"
+   }
+  ],
+  "note": "핀테크 산업 부문 창설, 금융서비스 섹터 공동 의장. 2026년 합병 전 Perkins Coie",
+  "batch": "K2"
+ },
+ {
+  "key": "Eddie Zhang",
+  "org_ko": "Arcus · CEO",
+  "co_ko": "Robinhood Chain 기반 주식토큰·무기한선물 탈중앙 거래소",
+  "confidence": "high",
+  "sources": [
+   {
+    "t": "dYdX Launches Arcus, a DEX Pairing Stock Tokens With Perpetuals on Robinhood Chain | The Defiant",
+    "u": "https://thedefiant.io/news/defi/dydx-launches-arcus-dex-stock-tokens-perpetuals-robinhood-chain"
+   },
+   {
+    "t": "Welcome to Arcus - Arcus",
+    "u": "https://arcus.xyz/blog/welcome-to-arcus"
+   }
+  ],
+  "note": "Arcus는 dYdX Labs가 출시. Pocket Protector 창업자(2025년 dYdX Labs 인수)",
+  "batch": "K2"
+ },
+ {
+  "key": "Eva Lawrence",
+  "org_ko": "Figment · 매출 총괄(Head of Revenue)",
+  "co_ko": "기관 대상 스테이킹 인프라 제공사",
+  "confidence": "high",
+  "sources": [
+   {
+    "t": "Eva Lawrence – Paris Blockchain Week 2026",
+    "u": "https://www.parisblockchainweek.com/speaker-2026/eva-lawrence"
+   },
+   {
+    "t": "Eva Lawrence | The Agora by Kaiko Speaker",
+    "u": "https://agora.kaiko.com/speakers/eva-lawrence"
+   }
+  ],
+  "note": "이전 직함 EMEA 총괄",
+  "batch": "K2"
+ },
+ {
+  "key": "Gerald Gallagher",
+  "org_ko": "Sei Labs · 법무총괄",
+  "co_ko": "레이어1 블록체인 Sei 개발사",
+  "confidence": "medium",
+  "sources": [
+   {
+    "t": "Meet the Team - Crypto in America",
+    "u": "https://www.cryptoinamerica.com/p/meet-the-team"
+   },
+   {
+    "t": "Gerald Gallagher | Speakers | CoinDesk: Policy & Regulation",
+    "u": "https://policy-regulation.coindesk.com/agenda/speaker/-gerald-gallagher"
+   }
+  ],
+  "note": "Sei Development Foundation 대표·Crypto in America 팟캐스트 공동 진행자 겸임. 2026년 날짜가 명시된 출처는 확인 못 함",
+  "batch": "K2"
+ },
+ {
+  "key": "Haan Junn",
+  "org_ko": "",
+  "co_ko": "",
+  "confidence": "low",
+  "sources": [],
+  "note": "인물 DB성 자료에만 Yozma Group Korea 디렉터 이력의 동명 인물이 있어 동일인·현 소속 확인 못 함",
+  "batch": "K2"
+ },
+ {
+  "key": "Hoon Seo",
+  "org_ko": "",
+  "co_ko": "",
+  "confidence": "low",
+  "sources": [],
+  "note": "공개 자료에서 동일 인물 확인 못 함",
+  "batch": "K2"
+ },
+ {
+  "key": "Ian Fong",
+  "org_ko": "",
+  "co_ko": "",
+  "confidence": "low",
+  "sources": [],
+  "note": "LinkedIn에 Money20/20 소속 동명 인물이 있으나 인용 가능한 출처로 확인 못 함. 검색 한도 소진으로 추가 검색 불가",
+  "batch": "K2"
+ },
+ {
+  "key": "Jacquelyn Melinek",
+  "org_ko": "Crypto in America · 공동 진행자",
+  "co_ko": "미국 암호화폐 정책·산업 인터뷰 팟캐스트",
+  "confidence": "medium",
+  "sources": [
+   {
+    "t": "Meet the Team - Crypto in America",
+    "u": "https://www.cryptoinamerica.com/p/meet-the-team"
+   }
+  ],
+  "note": "다른 연사 검색 결과로 간접 확인. Token Relations 창업자로도 알려져 있으나 검색 한도 소진으로 미검증",
+  "batch": "K2"
+ },
+ {
+  "key": "Jeffrey Choi",
+  "org_ko": "",
+  "co_ko": "",
+  "confidence": "low",
+  "sources": [],
+  "note": "검색 한도 소진으로 미검색",
+  "batch": "K2"
+ },
+ {
+  "key": "Joonhong Kim",
+  "org_ko": "페어스퀘어랩(FairSquareLab) · CEO",
+  "co_ko": "",
+  "confidence": "high",
+  "sources": [
+   {
+    "t": "The Full FX — 온체인 FX 정산 워킹그룹",
+    "u": "https://thefullfx.com/working-group-plans-onchain-fx-settlement-project/"
+   },
+   {
+    "t": "Progmat 보도자료(2025.2.17)",
+    "u": "https://progmat.co.jp/wp-content/uploads/2025/02/20250217_PR_02.pdf"
+   }
+  ],
+  "note": "K5 — 세션(Project Pangea · FX 정산) 주제와 맞음",
+  "batch": "K5"
+ },
+ {
+  "key": "Jung-Ho Park",
+  "org_ko": "",
+  "co_ko": "",
+  "confidence": "low",
+  "sources": [],
+  "note": "검색 한도 소진으로 미검색",
+  "batch": "K2"
+ },
+ {
+  "key": "Justin Kim",
+  "org_ko": "",
+  "co_ko": "",
+  "confidence": "low",
+  "sources": [],
+  "note": "검색 한도 소진으로 미검색",
+  "batch": "K2"
+ },
+ {
+  "key": "Kengkat Imsamrit",
+  "org_ko": "",
+  "co_ko": "",
+  "confidence": "low",
+  "sources": [],
+  "note": "검색 한도 소진으로 미검색",
+  "batch": "K2"
+ },
+ {
+  "key": "Kyle Jenke",
+  "org_ko": "Optimism · 최고사업책임자(CBO)",
+  "co_ko": "이더리움 레이어2 네트워크 및 OP Stack 생태계",
+  "confidence": "high",
+  "sources": [
+   {
+    "t": "Should You Rent or Build Your Payment Infrastructure: Interview with Kyle Jenke, Chief Business Officer of Optimism — WalletConnect",
+    "u": "https://walletconnect.com/blog/kyle-jenke-optimism"
+   },
+   {
+    "t": "Exclusive: Optimism's Kyle Jenke on Enterprise Adoption, Infrastructure Control and the Road Ahead",
+    "u": "https://www.ccn.com/education/crypto/optimism-kyle-jenke-enterprise-blockchain-regulation/"
+   }
+  ],
+  "note": "",
+  "batch": "K2"
+ },
+ {
+  "key": "Luis Kim",
+  "org_ko": "",
+  "co_ko": "",
+  "confidence": "low",
+  "sources": [],
+  "note": "검색 한도 소진으로 미검색",
+  "batch": "K2"
+ },
+ {
+  "key": "Matthew Dawson",
+  "org_ko": "Ethereum Institutional · 공동창업자",
+  "co_ko": "이더리움 기관 도입 지원 비영리 단체",
+  "confidence": "high",
+  "sources": [
+   {
+    "t": "Ethereum (ETH) news: A new nonprofit launches with a focus on Wall Street and institutional adoption",
+    "u": "https://www.coindesk.com/tech/2026/07/01/ethereum-gets-a-new-nonprofit-focused-on-institutional-adoption"
+   },
+   {
+    "t": "Ethereum Institutional Launches as Ecosystem's New Wall Street Liaison",
+    "u": "https://finance.yahoo.com/markets/crypto/articles/ethereum-institutional-launches-ecosystems-wall-181422052.html"
+   }
+  ],
+  "note": "전 Ethereum Foundation 엔터프라이즈 리드. 단체는 2026년 7월 출범",
+  "batch": "K2"
+ },
+ {
+  "key": "Michael Lewellen",
+  "org_ko": "Turnkey · 솔루션 엔지니어링 총괄",
+  "co_ko": "지갑 · 키 관리 인프라",
+  "confidence": "medium",
+  "sources": [
+   {
+    "t": "ETHDenver 연사 소개 — Michael Lewellen",
+    "u": "https://ethdenver.com/speakers/michael-lewellen/"
+   },
+   {
+    "t": "Dark Mode 2026 연사 소개",
+    "u": "https://darkmode.securityalliance.org/darkmode-2026/speaker/8UGERQ/"
+   }
+  ],
+  "note": "K5 — 9/29 밤 본 세션 검색. 직함은 2026 행사 연사 소개 기준",
+  "batch": "K5"
+ },
+ {
+  "key": "Min Lin",
+  "org_ko": "",
+  "co_ko": "",
+  "confidence": "low",
+  "sources": [],
+  "note": "검색 한도 소진으로 미검색",
+  "batch": "K2"
+ },
+ {
+  "key": "Myunggu Jin",
+  "org_ko": "",
+  "co_ko": "",
+  "confidence": "low",
+  "sources": [],
+  "note": "검색 한도 소진으로 미검색",
+  "batch": "K2"
+ },
+ {
+  "key": "Ran Hammer",
+  "org_ko": "Orbs · CEO",
+  "co_ko": "온체인 트레이딩 인프라(L3) 프로젝트",
+  "confidence": "high",
+  "sources": [
+   {
+    "t": "Orbs Appoints Ran Hammer CEO(2026.9.10)",
+    "u": "https://www.globenewswire.com/news-release/2026/09/10/3359839/0/en/orbs-appoints-ran-hammer-ceo-to-lead-its-next-stage-of-growth.html"
+   }
+  ],
+  "note": "K5 — 2026.9 CEO 선임",
+  "batch": "K5"
+ },
+ {
+  "key": "Ryo Kato",
+  "org_ko": "SBI · 수석 부사장 · HashHub CEO",
+  "co_ko": "",
+  "confidence": "medium",
+  "sources": [
+   {
+    "t": "Bloomingbit — KBW2026 연사 라인업",
+    "u": "https://en.bloomingbit.io/feed/news/119480"
+   }
+  ],
+  "note": "K5",
+  "batch": "K5"
+ },
+ {
+  "key": "Steve Chung",
+  "org_ko": "The Block · CEO",
+  "co_ko": "크립토 전문 미디어 · 리서치",
+  "confidence": "high",
+  "sources": [
+   {
+    "t": "The Block Appoints Steve Chung as CEO(2026.4)",
+    "u": "https://www.prnewswire.com/news-releases/the-block-appoints-steve-chung-as-ceo-to-accelerate-institutional-expansion-at-the-intersection-of-crypto-finance-and-ai-302753190.html"
+   }
+  ],
+  "note": "K5",
+  "batch": "K5"
+ },
+ {
+  "key": "Sunho Hwang",
+  "org_ko": "",
+  "co_ko": "",
+  "confidence": "low",
+  "sources": [],
+  "note": "검색 한도 소진으로 미검색",
+  "batch": "K2"
+ },
+ {
+  "key": "Taisuko Isono",
+  "org_ko": "SMBC 닛코증권 · DeFi 기술 부장",
+  "co_ko": "일본 증권사(미쓰이스미토모 금융그룹 계열)",
+  "confidence": "high",
+  "sources": [
+   {
+    "t": "IOLITE — SMBC Nikko Taisuke Isono 인터뷰",
+    "u": "https://iolite.net/en/magazine/vol21/smbc-nikko-taisuke-isono-interview"
+   },
+   {
+    "t": "GFTN Forum Japan 연사 소개",
+    "u": "https://gftnforum.jp/speakers/spkr14196-taisuke-isono"
+   }
+  ],
+  "note": "K5 — 공식 표기는 Taisuke Isono(아젠다 표기 Taisuko)",
+  "batch": "K5"
+ },
+ {
+  "key": "Toby Chapple",
+  "org_ko": "",
+  "co_ko": "",
+  "confidence": "low",
+  "sources": [],
+  "note": "검색 한도 소진으로 미검색",
+  "batch": "K2"
+ },
+ {
+  "key": "Wai Lum Kwok",
+  "org_ko": "ADGM 금융감독청(FSRA) · 인가 총괄(Senior Executive Director)",
+  "co_ko": "아부다비 국제금융센터(ADGM)의 금융 감독 당국",
+  "confidence": "high",
+  "sources": [
+   {
+    "t": "Fintech News Middle East — ADGM 핀테크 규제, Wai Lum Kwok",
+    "u": "https://fintechnews.ae/29020/abudhabi/adgm-fintech-regulation-wai-lum-kwok/"
+   },
+   {
+    "t": "Crypto Bahamas 연사 소개",
+    "u": "https://www.cryptobahamas.com/speakers/wai-lum-kwok"
+   }
+  ],
+  "note": "K5 — Senior Executive Director, Authorisation",
+  "batch": "K5"
+ },
+ {
+  "key": "Yongjae Lee",
+  "org_ko": "",
+  "co_ko": "",
+  "confidence": "low",
+  "sources": [],
+  "note": "검색 한도 소진으로 미검색",
+  "batch": "K2"
+ },
+ {
+  "key": "Alex Zverev",
+  "org_ko": "",
+  "co_ko": "",
+  "confidence": "low",
+  "sources": [],
+  "note": "아젠다상 9/30 BitGo Stage 세션만 확인, 소속 확인 못 함(동명 테니스 선수 결과가 대부분)",
+  "batch": "K3"
+ },
+ {
+  "key": "Angelina Kwan",
+  "org_ko": "Stratford Finance · 공동창업자 겸 CEO",
+  "co_ko": "홍콩 기반 금융 규제·컴플라이언스 자문사",
+  "confidence": "high",
+  "sources": [
+   {
+    "t": "Angelina Kwan | Speaker | Consensus Hong Kong 2026",
+    "u": "https://consensus-hongkong.coindesk.com/agenda/speaker/-angelina-kwan"
+   },
+   {
+    "t": "Angelina Kwan",
+    "u": "https://insightsforum.gftn.co/speakers/spkr167-angelina-kwan"
+   }
+  ],
+  "note": "",
+  "batch": "K3"
+ },
+ {
+  "key": "Azfer Khan",
+  "org_ko": "Gondor Capital · 벤처 총괄(Head of Ventures)",
+  "co_ko": "",
+  "confidence": "low",
+  "sources": [
+   {
+    "t": "Azfer Khan - People in crypto | IQ.wiki",
+    "u": "https://iq.wiki/wiki/azfer-khan"
+   }
+  ],
+  "note": "IQ.wiki 기준, KBW2026 표기 소속 미확인(전 Codex PBC CLO)",
+  "batch": "K3"
+ },
+ {
+  "key": "Brett Hornung",
+  "org_ko": "",
+  "co_ko": "",
+  "confidence": "low",
+  "sources": [],
+  "note": "stakeFi 소속은 LinkedIn 프로필로만 확인; 이전 BCW Group Web3 솔루션 총괄",
+  "batch": "K3"
+ },
+ {
+  "key": "Changhyun Cho",
+  "org_ko": "1Self.World · 창업자 겸 대표",
+  "co_ko": "지갑 기반 데이터·리워드 마케팅 플랫폼(MyB) 운영사",
+  "confidence": "medium",
+  "sources": [
+   {
+    "t": "[템터뷰] 지갑으로 광고하는 웹3 세상을 향해...'마이비'와 엑스플라 동행 뒷얘기 - 테크M",
+    "u": "https://www.techm.kr/news/articleView.html?idxno=134497"
+   },
+   {
+    "t": "1Self.World",
+    "u": "https://www.1self.world/"
+   }
+  ],
+  "note": "세션 주제(AI 데이터)와 사업 분야 일치로 동일인 판단, 아젠다 소속 표기는 미확인",
+  "batch": "K3"
+ },
+ {
+  "key": "Christopher Montagano",
+  "org_ko": "Orca · 최고법무책임자(CLO) 겸 기업개발 총괄",
+  "co_ko": "Solana 기반 탈중앙화 거래소(DEX)",
+  "confidence": "medium",
+  "sources": [
+   {
+    "t": "Christopher Montagano",
+    "u": "https://www.pli.edu/faculty/christopher-montagano-i2227112"
+   },
+   {
+    "t": "June 17, 2025 VIA WEBSITE SUBMISSION U.S. Securities and Exchange Commission",
+    "u": "https://www.sec.gov/files/orca-creative-061725.pdf"
+   }
+  ],
+  "note": "2025년 자료 기준, 2026년 직함 표기는 미확인",
+  "batch": "K3"
+ },
+ {
+  "key": "Daniel Kim",
+  "org_ko": "",
+  "co_ko": "",
+  "confidence": "low",
+  "sources": [],
+  "note": "동명이인 다수, 소속 확인 못 함(과거 KBW 연사 NFTBank 창업자와 동일인 여부 미확인)",
+  "batch": "K3"
+ },
+ {
+  "key": "David Schamis",
+  "org_ko": "Hyperliquid Strategies · CEO",
+  "co_ko": "HYPE 보유 디지털자산 트레저리 기업(Nasdaq: PURR)",
+  "confidence": "high",
+  "sources": [
+   {
+    "t": "Leadership Team — Hyperliquid Strategies Inc",
+    "u": "https://hypestrat.xyz/leadership"
+   },
+   {
+    "t": "David Schamis - speakers",
+    "u": "https://www.salt.org/speakers/david-schamis"
+   }
+  ],
+  "note": "Atlas Merchant Capital 공동창업 파트너 겸 CIO 겸임",
+  "batch": "K3"
+ },
+ {
+  "key": "Do-Yun Kim",
+  "org_ko": "",
+  "co_ko": "",
+  "confidence": "low",
+  "sources": [],
+  "note": "아젠다상 세션(모더레이터 Jung-Ho Park, 패널 Gwang-suk Kim·Tae-Ik Jung)만 확인, 소속 확인 못 함",
+  "batch": "K3"
+ },
+ {
+  "key": "Edison Lim",
+  "org_ko": "Based · 공동창업자 겸 CEO",
+  "co_ko": "트레이딩·결제 통합 크립토 앱(Hyperliquid 기반)",
+  "confidence": "high",
+  "sources": [
+   {
+    "t": "Hyperliquid web3 'SuperApp' Based raises $11.5 million Series A led by Pantera | The Block",
+    "u": "https://www.theblock.co/post/390809/hyperliquid-web3-based-funding-pantera"
+   },
+   {
+    "t": "Pantera leads $11.5M round in Based, a Hyperliquid-powered crypto app",
+    "u": "https://www.coindesk.com/business/2026/02/20/pantera-leads-usd11-5m-round-in-based-a-hyperliquid-powered-crypto-app"
+   }
+  ],
+  "note": "",
+  "batch": "K3"
+ },
+ {
+  "key": "Francesco Fabracci",
+  "org_ko": "Tether · 토큰화 확장 총괄(Head of Tokenization Expansion)",
+  "co_ko": "스테이블코인 USDT 발행사(토큰화 플랫폼 Hadron 운영)",
+  "confidence": "medium",
+  "sources": [
+   {
+    "t": "Tokenization Doesn't Fix Illiquid Assets: PBW 2026",
+    "u": "https://cointelegraph.com/news/tokenization-illiquid-assets-liquidity-rwa-panel-pbw"
+   },
+   {
+    "t": "Vietnam RWA Summit",
+    "u": "https://rwa.blockchain.vn/en/home"
+   }
+  ],
+  "note": "세부 직함은 LinkedIn·행사 연사 소개 기준(전체 이름 Francesco Ranieri Fabracci)",
+  "batch": "K3"
+ },
+ {
+  "key": "Goki Kato",
+  "org_ko": "AndLaw · CEO",
+  "co_ko": "일본 블록체인 스타트업",
+  "confidence": "low",
+  "sources": [
+   {
+    "t": "Startup Portfolio | JETRO Startup - Japan External Trade Organization - JETRO",
+    "u": "https://www.jetro.go.jp/en/startup/portfolio.html"
+   }
+  ],
+  "note": "JETRO 스타트업 포트폴리오(2022년 전후) 기준, 현재 소속·AI 트레이딩 세션과의 연관성 미확인",
+  "batch": "K3"
+ },
+ {
+  "key": "Henson Orser",
+  "org_ko": "Soter · 창업자 겸 CEO",
+  "co_ko": "기관 대상 디지털자산 보험 서비스 기업",
+  "confidence": "high",
+  "sources": [
+   {
+    "t": "Where Institutions Meet The Chain: Inside The Speaker Lineup For HSC Conference Seoul 2026 | Metaverse Post",
+    "u": "https://mpost.io/where-institutions-meet-the-chain-inside-the-speaker-lineup-for-hsc-conference-seoul-2026/"
+   },
+   {
+    "t": "Henson Orser - speakers",
+    "u": "https://www.salt.org/speakers/henson-orser"
+   }
+  ],
+  "note": "",
+  "batch": "K3"
+ },
+ {
+  "key": "Huei Ching Wong",
+  "org_ko": "Securities Commission Malaysia · 디지털전략·혁신 담당 이사(Executive Director)",
+  "co_ko": "말레이시아 자본시장 감독기관",
+  "confidence": "high",
+  "sources": [
+   {
+    "t": "Dr. Wong Huei Ching - Senior Management | Securities Commission Malaysia",
+    "u": "https://www.sc.com.my/about/senior-management/dr-wong-huei-ching"
+   },
+   {
+    "t": "Dr. Wong Huei Ching, Executive Director Digital Strategy & Innovation, Securities Commission Malaysia, Author at Fintech News Malaysia",
+    "u": "https://fintechnews.my/author/wong-huei-ching-2433/"
+   }
+  ],
+  "note": "공식 표기 Dr. Wong Huei Ching",
+  "batch": "K3"
+ },
+ {
+  "key": "Insoo Choi",
+  "org_ko": "",
+  "co_ko": "",
+  "confidence": "low",
+  "sources": [],
+  "note": "동명이인(연구자 등) 결과만 확인, 소속 확인 못 함",
+  "batch": "K3"
+ },
+ {
+  "key": "Jaejin Kim",
+  "org_ko": "DAXA(디지털자산거래소 공동협의체) · 부회장",
+  "co_ko": "국내 원화 가상자산거래소 자율규제 협의체",
+  "confidence": "medium",
+  "sources": [
+   {
+    "t": "DAXA 김재진 부회장 \"가상자산 자율규제, 공적규제 울타리 안에서 성장 가능\" - ZDNet korea",
+    "u": "https://zdnet.co.kr/view/?no=20240718141237"
+   },
+   {
+    "t": "재단법인 디지털자산보호재단(DAPF)",
+    "u": "https://www.kdapf.org/company/greeting"
+   }
+  ],
+  "note": "디지털자산보호재단 이사장 겸임; 직함은 2024~2026년 초 자료 기준",
+  "batch": "K3"
+ },
+ {
+  "key": "Jiyong Lee",
+  "org_ko": "",
+  "co_ko": "",
+  "confidence": "low",
+  "sources": [],
+  "note": "소속 확인 못 함",
+  "batch": "K3"
+ },
+ {
+  "key": "Jordan Jefferson",
+  "org_ko": "DogeOS · 창업자 겸 CEO",
+  "co_ko": "Dogecoin 기반 애플리케이션 레이어",
+  "confidence": "high",
+  "sources": [
+   {
+    "t": "Dogecoin has 'crazy things on the horizon' as ecosystem grows beyond Elon Musk, says DogeOS founder | The Block",
+    "u": "https://www.theblock.co/news/ecosystems/2026-05-15-dogecoin-has-crazy-things-on-the-horizon-as-ecosystem-grows-beyond-elon-musk-says-dogeos-founder-401373"
+   },
+   {
+    "t": "Thumzup Appoints DogeOS CEO and MyDoge Leader Jordan Jefferson to Crypto Advisory Board",
+    "u": "https://www.prnewswire.com/news-releases/thumzup-appoints-dogeos-ceo-and-mydoge-leader-jordan-jefferson-to-crypto-advisory-board-302553817.html"
+   }
+  ],
+  "note": "MyDoge 지갑도 이끎",
+  "batch": "K3"
+ },
+ {
+  "key": "Junggeun Lee",
+  "org_ko": "",
+  "co_ko": "",
+  "confidence": "low",
+  "sources": [],
+  "note": "소속 확인 못 함",
+  "batch": "K3"
+ },
+ {
+  "key": "Justin Waldron",
+  "org_ko": "play.fun · 창업자 겸 CEO",
+  "co_ko": "",
+  "confidence": "medium",
+  "sources": [
+   {
+    "t": "Justin Waldron | TEAMZ WEB3/AI SUMMIT",
+    "u": "https://www.teamz.co.jp/en/speaker/justin-waldron"
+   },
+   {
+    "t": "Justin Waldron - Wikipedia",
+    "u": "https://en.wikipedia.org/wiki/Justin_Waldron"
+   }
+  ],
+  "note": "2026년 4월 TEAMZ 소개는 play.fun 창업자 겸 CEO; Playable Intelligence는 LinkedIn 기준(더 최근으로 추정). Zynga 공동창업자",
+  "batch": "K3"
+ },
+ {
+  "key": "Kevin Kwong",
+  "org_ko": "Memeland(9GAG) · 최고사업책임자",
+  "co_ko": "9GAG 계열 밈 · NFT 커뮤니티 프로젝트",
+  "confidence": "medium",
+  "sources": [
+   {
+    "t": "WebX 2024 연사 소개",
+    "u": "https://2024.webx-asia.com/speaker/3338878"
+   }
+  ],
+  "note": "K5 — 직함은 2024 행사 기준",
+  "batch": "K5"
+ },
+ {
+  "key": "Kyle Trimble",
+  "org_ko": "",
+  "co_ko": "",
+  "confidence": "low",
+  "sources": [],
+  "note": "LinkedIn 프로필로만 확인",
+  "batch": "K3"
+ },
+ {
+  "key": "Mackenzie Hom",
+  "org_ko": "",
+  "co_ko": "",
+  "confidence": "low",
+  "sources": [],
+  "note": "인물 DB로만 확인(사업개발 디렉터 표기도 있음)",
+  "batch": "K3"
+ },
+ {
+  "key": "Max Marcisiak",
+  "org_ko": "Luganodes · 사업개발 총괄",
+  "co_ko": "스위스 기반 기관용 스테이킹 인프라 제공사",
+  "confidence": "medium",
+  "sources": [
+   {
+    "t": "Luganodes: Institutional Staking & Cosmos | Max Marcisiak",
+    "u": "https://www.youtube.com/watch?v=YypyMv0CVCE"
+   },
+   {
+    "t": "Luganodes Pulse — May",
+    "u": "https://medium.com/luganodes/luganodes-pulse-may-66061b14f9dc"
+   }
+  ],
+  "note": "회사 게시물은 BD Lead, 인물 DB는 글로벌 사업개발 부사장(VP)으로 표기",
+  "batch": "K3"
+ },
+ {
+  "key": "Michael Zhao",
+  "org_ko": "Grayscale · 리서치 담당",
+  "co_ko": "디지털자산 운용사",
+  "confidence": "medium",
+  "sources": [
+   {
+    "t": "Hyperliquid Breaks the Mold | Grayscale",
+    "u": "https://research.grayscale.com/reports/hyperliquid-breaks-the-mold"
+   },
+   {
+    "t": "Hyperliquid Forum Singapore 2026 by DAYS | Institutional Summit",
+    "u": "https://www.hyperliquidforum.com/singapore"
+   }
+  ],
+  "note": "2026년 5월 Grayscale Hyperliquid 리포트 공동 저자; 세부 직함 미확인",
+  "batch": "K3"
+ },
+ {
+  "key": "Minkyu Kang",
+  "org_ko": "",
+  "co_ko": "",
+  "confidence": "low",
+  "sources": [],
+  "note": "소속 확인 못 함",
+  "batch": "K3"
+ },
+ {
+  "key": "Niki Ariyasinghe",
+  "org_ko": "Chainlink Labs · 아시아태평양·중동 담당 부사장",
+  "co_ko": "블록체인 오라클·상호운용성 인프라 개발사",
+  "confidence": "high",
+  "sources": [
+   {
+    "t": "Chainlink teams up with 47 South Korean, European banks to speed up international money transfers",
+    "u": "https://www.coindesk.com/markets/2026/06/23/chainlink-teams-up-with-47-south-korean-european-banks-to-speed-up-international-money-transfers"
+   },
+   {
+    "t": "Chainlink Joins Bank Group To Study Stablecoin FX Settlement | CoinMarketCap",
+    "u": "https://coinmarketcap.com/academy/en/article/chainlink-joins-bank-group-stablecoin-fx-settlement"
+   }
+  ],
+  "note": "",
+  "batch": "K3"
+ },
+ {
+  "key": "Reid Simon",
+  "org_ko": "",
+  "co_ko": "",
+  "confidence": "low",
+  "sources": [],
+  "note": "LinkedIn 기준(최근 이동으로 보임); 2025년에는 Securitize 소속으로 활동",
+  "batch": "K3"
+ },
+ {
+  "key": "Sanghoon Jung",
+  "org_ko": "",
+  "co_ko": "",
+  "confidence": "low",
+  "sources": [],
+  "note": "웹검색 한도 소진으로 미조회 — 확인 못 함",
+  "batch": "K3"
+ },
+ {
+  "key": "Steve Lee",
+  "org_ko": "Neoclassic Capital · 공동창업자 겸 매니징 파트너",
+  "co_ko": "크립토 투자사",
+  "confidence": "high",
+  "sources": [
+   {
+    "t": "TEAMZ Summit 연사 소개 — Steve Lee",
+    "u": "https://www.teamz.co.jp/en/speaker/steve-lee"
+   }
+  ],
+  "note": "K5",
+  "batch": "K5"
+ },
+ {
+  "key": "Tae-Ik Jung",
+  "org_ko": "",
+  "co_ko": "",
+  "confidence": "low",
+  "sources": [],
+  "note": "아젠다상 세션(모더레이터 Jung-Ho Park, 패널 Gwang-suk Kim·Do-Yun Kim)만 확인, 소속 확인 못 함",
+  "batch": "K3"
+ },
+ {
+  "key": "Teresa Goody Guillén",
+  "org_ko": "Bellementis PLLC · 매니징 파트너(변호사)",
+  "co_ko": "디지털자산 규제를 다루는 미국 로펌",
+  "confidence": "medium",
+  "sources": [
+   {
+    "t": "Bellementis — Teresa Goody Guillén",
+    "u": "https://www.bellementis.com/people/teresa-goody-guillen"
+   },
+   {
+    "t": "SEC Crypto Task Force 서면 의견(2026.1)",
+    "u": "https://www.sec.gov/about/crypto-task-force/written-submission/tgg-sec-crypto-task-force-letter-012626"
+   }
+  ],
+  "note": "K5",
+  "batch": "K5"
+ },
+ {
+  "key": "Uli Agustina",
+  "org_ko": "인도네시아 금융감독청(OJK) · 디지털금융자산 · 암호자산 감독 국장",
+  "co_ko": "",
+  "confidence": "medium",
+  "sources": [
+   {
+    "t": "WebX 2026 연사 소개",
+    "u": "https://webx-asia.com/speakers/"
+   }
+  ],
+  "note": "K5 — 세션(자카르타 규제) 주제와 맞음",
+  "batch": "K5"
+ },
+ {
+  "key": "Will Au",
+  "org_ko": "",
+  "co_ko": "",
+  "confidence": "low",
+  "sources": [],
+  "note": "웹검색 한도 소진으로 미조회 — 확인 못 함",
+  "batch": "K3"
+ },
+ {
+  "key": "Youbin Kang",
+  "org_ko": "nonce Classic · CEO",
+  "co_ko": "Web3 초기 프로젝트 액셀러레이터",
+  "confidence": "medium",
+  "sources": [
+   {
+    "t": "Youbin Kang - People in crypto | IQ.wiki",
+    "u": "https://iq.wiki/wiki/youbin-kang"
+   }
+  ],
+  "note": "IQ.wiki 기준; Ethereum Foundation APAC 정책 리드(파트타임) 겸임 정보 있음",
+  "batch": "K3"
+ },
+ {
+  "key": "Alice Liu",
+  "org_ko": "CoinMarketCap · 리서치 총괄(Head of Research)",
+  "co_ko": "암호화폐 시세·시장 데이터 집계 플랫폼",
+  "confidence": "medium",
+  "sources": [
+   {
+    "t": "Alice Liu, Head of Research at CoinMarketCap Joins NYSE TV Live",
+    "u": "https://tv.nyse.com/videos/alice-liu-head-of-research-at-coinmarketcap-joins-nyse-tv-live"
+   },
+   {
+    "t": "Alice Liu Explains Crypto Data and Institutional Market Signals",
+    "u": "https://cms.fintech.tv/coinmarketcap-tracks-50-million-tokens-here-is-how-to-tell-what-is-real/"
+   }
+  ],
+  "note": "KBW2026 세션과 직접 연결되는 자료는 확인 못 함. 일부 자료는 'Research Lead'로 표기",
+  "batch": "K4"
+ },
+ {
+  "key": "Anna Yim",
+  "org_ko": "",
+  "co_ko": "",
+  "confidence": "low",
+  "sources": [],
+  "note": "확인 못 함 — 공개 자료에서 해당 인물을 특정하지 못함",
+  "batch": "K4"
+ },
+ {
+  "key": "Baylor Myers",
+  "org_ko": "BitGo · 기업개발 부사장(VP, Corporate Development)",
+  "co_ko": "기관용 디지털자산 수탁·지갑·거래 인프라",
+  "confidence": "medium",
+  "sources": [
+   {
+    "t": "Revolutionising Digital Assets - BitGo - J. Baylor Myers (Dinis Guarda Podcast Series)",
+    "u": "https://citiesabc.buzzsprout.com/1032388/episodes/17470102-revolutionising-digital-assets-bitgo-j-baylor-myers"
+   },
+   {
+    "t": "Baylor Myers - Tiger Hill Partners",
+    "u": "https://www.tigerhillpartners.com/team/baylor-myers/"
+   }
+  ],
+  "note": "직함은 2025년 자료 기준. Tiger Hill Partners 선임 고문(Senior Advisor) 프로필도 있어 2026 현직 재확인 필요. 前 미 재무부 부비서실장",
+  "batch": "K4"
+ },
+ {
+  "key": "Brian Smith",
+  "org_ko": "",
+  "co_ko": "",
+  "confidence": "low",
+  "sources": [],
+  "note": "확인 못 함 — 동명이인 다수(Multicoin Capital, Jito Foundation 등), KBW 세션과 연결되는 자료 없음",
+  "batch": "K4"
+ },
+ {
+  "key": "Charles Lu",
+  "org_ko": "Espresso Systems · 공동창업자 겸 COO",
+  "co_ko": "롤업(L2) 간 상호운용·확정 인프라 개발사",
+  "confidence": "medium",
+  "sources": [
+   {
+    "t": "Stanford cryptography researchers are building Espresso, a privacy-focused blockchain | TechCrunch",
+    "u": "https://techcrunch.com/2022/03/07/stanford-crypto-researchers-building-espresso-privacy-scalability-blockchain/"
+   },
+   {
+    "t": "Charles Lu - Stanford Computer Science",
+    "u": "https://cs.stanford.edu/~charleslu/"
+   }
+  ],
+  "note": "COO 직함은 2022년 보도 기준 — 2026 직함 재확인 필요",
+  "batch": "K4"
+ },
+ {
+  "key": "Christy Choi",
+  "org_ko": "SkyGG · 공동창업자 겸 CEO",
+  "co_ko": "",
+  "confidence": "low",
+  "sources": [
+   {
+    "t": "Christy Choi – KOREA BLOCKCHAIN WEEK",
+    "u": "https://koreablockchainweek.com/speaker/christy-choi/"
+   },
+   {
+    "t": "Explore the Event Agenda at KBW2026",
+    "u": "https://koreablockchainweek.com/agenda"
+   }
+  ],
+  "note": "과거 KBW 연사 페이지 기준 직함. 2026 현직 소속은 확인 못 함(AO Labs 공동창업자, 前 Binance Labs 창립 디렉터 이력)",
+  "batch": "K4"
+ },
+ {
+  "key": "Danny Park",
+  "org_ko": "",
+  "co_ko": "",
+  "confidence": "low",
+  "sources": [
+   {
+    "t": "Danny Park, Author | The Block",
+    "u": "https://www.theblock.co/author/danny-park"
+   }
+  ],
+  "note": "동명이인 가능 — KBW 세션과 직접 연결되는 자료는 확인 못 함",
+  "batch": "K4"
+ },
+ {
+  "key": "David Shengart",
+  "org_ko": "Not Alone Ventures · 코어 컨트리뷰터",
+  "co_ko": "",
+  "confidence": "medium",
+  "sources": [
+   {
+    "t": "Cryptobitmag — TOKEN2049 싱가포르 Startup Day",
+    "u": "https://www.cryptobitmag.com/peanut-trade-protocol-labs-supermoon-host-startup-day-at-token2049-singapore-uniting-builders-and-vcs/"
+   }
+  ],
+  "note": "K5",
+  "batch": "K5"
+ },
+ {
+  "key": "Dominic Jang",
+  "org_ko": "ATH Labs · 공동창업자 겸 최고전략책임자(CSO)",
+  "co_ko": "실물 수집품 토큰화 플랫폼(Deadstock) 개발사",
+  "confidence": "medium",
+  "sources": [
+   {
+    "t": "Dominic Jang - People in crypto | IQ.wiki",
+    "u": "https://iq.wiki/wiki/dominic-jang"
+   }
+  ],
+  "note": "출처가 크립토 인물 위키 중심 — 공식 발표로 재확인 권장. 前 NEXPACE(MapleStory Universe) CBO",
+  "batch": "K4"
+ },
+ {
+  "key": "Enzo",
+  "org_ko": "",
+  "co_ko": "",
+  "confidence": "low",
+  "sources": [],
+  "note": "확인 못 함 — 단일 이름 표기로 공개 자료에서 특정 못 함",
+  "batch": "K4"
+ },
+ {
+  "key": "Gabriel Yang",
+  "org_ko": "",
+  "co_ko": "",
+  "confidence": "low",
+  "sources": [],
+  "note": "확인 못 함 — 공개 자료에서 해당 인물을 특정하지 못함",
+  "batch": "K4"
+ },
+ {
+  "key": "Goobin Park",
+  "org_ko": "미래에셋자산운용 · 상무",
+  "co_ko": "미래에셋그룹 계열 자산운용사(Global X ETF 운용)",
+  "confidence": "high",
+  "sources": [
+   {
+    "t": "미래에셋, 디지털자산 사업 본격화…\"모든 상품 온체인화 목표\" [이스트포인트 : 서울 2026] | 한국경제",
+    "u": "https://www.hankyung.com/article/202609280003i"
+   },
+   {
+    "t": "Explore the Event Agenda at KBW2026",
+    "u": "https://koreablockchainweek.com/agenda"
+   }
+  ],
+  "note": "한글명 박구빈(2026년 9월 보도 기준)",
+  "batch": "K4"
+ },
+ {
+  "key": "Hitoshi Harada",
+  "org_ko": "Alpaca · 공동창업자 겸 최고제품책임자(CPO)",
+  "co_ko": "증권 거래 API·주식 토큰화 인프라 기업",
+  "confidence": "medium",
+  "sources": [
+   {
+    "t": "Alpaca's Vision for a \"Global Financial OS\" | Co-Founder Hitoshi Harada on the Story Behind Tokenized Stocks",
+    "u": "https://alpaca.markets/blog/alpacas-vision-for-a-global-financial-os-co-founder-hitoshi-harada-on-the-story-behind-tokenized-stocks/"
+   },
+   {
+    "t": "From Failed AI Startup to FinTech Unicorn: Alpaca Becomes the AWS of Global Investing",
+    "u": "https://www.fintechobserver.com/from-failed-ai-startup-to-fintech-unicorn-alpaca-becomes-the-aws-of-global-investing/"
+   }
+  ],
+  "note": "공동창업자는 회사 블로그로 확인. CPO 직함은 인물 DB 기반이며 CTO로 표기한 자료도 있음",
+  "batch": "K4"
+ },
+ {
+  "key": "Hyobong Kim",
+  "org_ko": "법무법인 태평양 · 파트너 변호사",
+  "co_ko": "국내 종합 법무법인(Bae, Kim & Lee)",
+  "confidence": "high",
+  "sources": [
+   {
+    "t": "Hyobong Kim - BAE, KIM & LEE LLC",
+    "u": "https://www.bkl.co.kr/en/law/member/11157-hyobong-kim"
+   },
+   {
+    "t": "Explore the Event Agenda at KBW2026",
+    "u": "https://koreablockchainweek.com/agenda"
+   }
+  ],
+  "note": "",
+  "batch": "K4"
+ },
+ {
+  "key": "Insung An",
+  "org_ko": "한화투자증권 · 부사장(디지털부문)",
+  "co_ko": "한화그룹 계열 증권사",
+  "confidence": "high",
+  "sources": [
+   {
+    "t": "한화투자증권 \"모바일 투자앱 개편, 투자정보 강화\" | 아시아경제",
+    "u": "https://view.asiae.co.kr/article/2026052713552836363"
+   },
+   {
+    "t": "[단독] 한화투자증권, 미래에셋증권 디지털부문 대표 영입 | 현대경제신문",
+    "u": "http://www.finomy.com/news/articleView.html?idxno=250546"
+   }
+  ],
+  "note": "한글명 안인성. 前 미래에셋증권 디지털부문 대표",
+  "batch": "K4"
+ },
+ {
+  "key": "Jarred Winn",
+  "org_ko": "Winn.ventures · 매니징 파트너",
+  "co_ko": "Web3 프로젝트 성장·마케팅 자문사",
+  "confidence": "medium",
+  "sources": [
+   {
+    "t": "Jarred Winn | ETHDenver",
+    "u": "https://ethdenver.com/speakers/jarred-winn/"
+   },
+   {
+    "t": "Binance Charity Welcomes SVP Jarred Winn to Drive Blockchain-Based Philanthropy in the US and Globally | Binance Blog",
+    "u": "https://www.binance.com/en/blog/all/binance-charity-welcomes-svp-jarred-winn-to-drive-blockchainbased-philanthropy-in-the-us-and-globally--421499824684900447"
+   }
+  ],
+  "note": "Winn.solutions 창업자·CEO로 표기한 자료도 있음. 前 Binance SVP",
+  "batch": "K4"
+ },
+ {
+  "key": "Jonathan Kim",
+  "org_ko": "",
+  "co_ko": "",
+  "confidence": "low",
+  "sources": [
+   {
+    "t": "Explore the Event Agenda at KBW2026",
+    "u": "https://koreablockchainweek.com/agenda"
+   }
+  ],
+  "note": "확인 못 함 — KBW2026 모더레이터 등재는 확인되나 소속 자료 없음(동명이인 다수)",
+  "batch": "K4"
+ },
+ {
+  "key": "Jun Choi",
+  "org_ko": "OtterSec · 최고운영책임자(COO)",
+  "co_ko": "블록체인 스마트컨트랙트 보안 감사 기업",
+  "confidence": "medium",
+  "sources": [
+   {
+    "t": "From Barber to Blockchain: Won Jun Choi's Startup Rise | IBTimes",
+    "u": "https://www.ibtimes.com/barber-blockchain-won-jun-chois-startup-rise-3784790"
+   }
+  ],
+  "note": "동명이인 다수 — KBW 세션과 직접 연결되는 자료는 확인 못 함(DeFi 보안 세션 주제와는 부합)",
+  "batch": "K4"
+ },
+ {
+  "key": "Junghoon Lee",
+  "org_ko": "",
+  "co_ko": "",
+  "confidence": "low",
+  "sources": [
+   {
+    "t": "Explore the Event Agenda at KBW2026",
+    "u": "https://koreablockchainweek.com/agenda"
+   }
+  ],
+  "note": "확인 못 함 — KBW2026 x402 세션 연사 등재는 확인되나 소속 자료 없음",
+  "batch": "K4"
+ },
+ {
+  "key": "Juyoung Lim",
+  "org_ko": "",
+  "co_ko": "",
+  "confidence": "low",
+  "sources": [
+   {
+    "t": "Explore the Event Agenda at KBW2026",
+    "u": "https://koreablockchainweek.com/agenda"
+   }
+  ],
+  "note": "확인 못 함 — KBW2026 x402 세션 연사 등재는 확인되나 소속 자료 없음",
+  "batch": "K4"
+ },
+ {
+  "key": "Kibeom Kang",
+  "org_ko": "",
+  "co_ko": "",
+  "confidence": "low",
+  "sources": [],
+  "note": "확인 못 함 — 공개 자료에서 STO 분야 동명 인물을 특정하지 못함",
+  "batch": "K4"
+ },
+ {
+  "key": "Leeren Chang",
+  "org_ko": "",
+  "co_ko": "",
+  "confidence": "low",
+  "sources": [
+   {
+    "t": "Explore the Event Agenda at KBW2026",
+    "u": "https://koreablockchainweek.com/agenda"
+   }
+  ],
+  "note": "확인 못 함 — KBW2026 아젠다 등재는 확인되나 공개 출처에서 현 소속 특정 못 함",
+  "batch": "K4"
+ },
+ {
+  "key": "Mark Lee",
+  "org_ko": "",
+  "co_ko": "",
+  "confidence": "low",
+  "sources": [],
+  "note": "확인 못 함 — 세션 전체 웹 검색 한도(200회) 소진으로 미검색",
+  "batch": "K4"
+ },
+ {
+  "key": "Melody He",
+  "org_ko": "The Spartan Group · 공동창업자 겸 파트너",
+  "co_ko": "싱가포르 기반 블록체인 투자·자문사",
+  "confidence": "high",
+  "sources": [
+   {
+    "t": "Melody He | Speaker | Consensus Hong Kong 2026 - CoinDesk",
+    "u": "https://consensus-hongkong.coindesk.com/agenda/speaker/-melody-he"
+   },
+   {
+    "t": "Melody He Speaker Profile | Blockworks",
+    "u": "https://blockworks.com/speaker/melody-he"
+   }
+  ],
+  "note": "Spartan 자문 부문·Spartan AI Labs 총괄",
+  "batch": "K4"
+ },
+ {
+  "key": "Michelle Tankimovich",
+  "org_ko": "American Bitcoin · IR 총괄(Head of Investor Relations)",
+  "co_ko": "나스닥 상장 비트코인 채굴·보유 기업",
+  "confidence": "high",
+  "sources": [
+   {
+    "t": "ABTC - Head of IR, Michelle Tankimovich - Q2 Earnings & Updates! — Power Analysis",
+    "u": "https://podcastrex.com/shows/power-analysis/abtc-head-of-ir-michelle-tankimovich-q2-earnings-updates"
+   }
+  ],
+  "note": "2026년 초 비서실장(Chief of Staff) 직함 이후 IR 총괄로 표기",
+  "batch": "K4"
+ },
+ {
+  "key": "Minsuk Choi",
+  "org_ko": "",
+  "co_ko": "",
+  "confidence": "low",
+  "sources": [],
+  "note": "확인 못 함 — 동명이인 다수, KBW 세션과 연결되는 공개 자료 없음",
+  "batch": "K4"
+ },
+ {
+  "key": "Patrick Wilson",
+  "org_ko": "Solana Policy Institute · 법무 총괄(General Counsel)",
+  "co_ko": "솔라나·탈중앙 네트워크 관련 미국 정책 교육 비영리 단체",
+  "confidence": "medium",
+  "sources": [
+   {
+    "t": "Patrick Wilson | Solana Policy Institute",
+    "u": "https://www.solanapolicyinstitute.org/team/patrick-wilson"
+   }
+  ],
+  "note": "일부 자료는 CLO로 표기. 동명이인(미국 기술정책 분야) 있어 KBW 세션과 직접 연결 자료는 확인 못 함",
+  "batch": "K4"
+ },
+ {
+  "key": "Robbie Nakarmi",
+  "org_ko": "SC Ventures(Standard Chartered) · 디지털자산 펀드 총괄(Digital Assets Fund Lead)",
+  "co_ko": "Standard Chartered 산하 벤처 투자·혁신 조직",
+  "confidence": "medium",
+  "sources": [
+   {
+    "t": "Nothing Ventured, Nothing Gained | SC Ventures",
+    "u": "https://scventures.io/fintechbridge/community/d88de887-d1f5-45fe-9189-de4ca0db254e"
+   }
+  ],
+  "note": "직함은 SC Ventures 관련 공개 자료 기준, KBW 세션과 직접 연결 자료는 확인 못 함. 前 Binance·Hogan Lovells 법률 분야 경력",
+  "batch": "K4"
+ },
+ {
+  "key": "Se Yong Park",
+  "org_ko": "Fomo · 공동창업자 겸 CEO",
+  "co_ko": "소비자용 크립토 트레이딩 앱",
+  "confidence": "high",
+  "sources": [
+   {
+    "t": "Buying memecoins with credit cards on Robinhood Wallet and Fomo appears to sidestep card-network crypto rules | The Block",
+    "u": "https://www.theblock.co/news/business/2026-09-01-buying-memecoins-with-credit-cards-on-robinhood-wallet-fomo-sidestep-card-network-crypto-rules-411911"
+   },
+   {
+    "t": "Why Benchmark made a rare crypto bet on trading app Fomo, with $17M Series A | TechCrunch",
+    "u": "https://techcrunch.com/2025/11/06/why-benchmark-made-a-rare-crypto-bet-on-trading-app-fomo-with-17m-series-a/"
+   }
+  ],
+  "note": "前 dYdX",
+  "batch": "K4"
+ },
+ {
+  "key": "Suhhee Han",
+  "org_ko": "법무법인 광장 · 파트너 변호사",
+  "co_ko": "국내 종합 법무법인(Lee & Ko)",
+  "confidence": "high",
+  "sources": [
+   {
+    "t": "Suh Hee HAN - Lee & Ko",
+    "u": "https://www.leeko.com/leenko/member/memberDetail.do?lang=EN&memberNo=1383"
+   },
+   {
+    "t": "Explore the Event Agenda at KBW2026",
+    "u": "https://koreablockchainweek.com/agenda"
+   }
+  ],
+  "note": "로펌 영문 표기 'Suh Hee Han'",
+  "batch": "K4"
+ },
+ {
+  "key": "Taha El-Magbri",
+  "org_ko": "Paragon · 창업자",
+  "co_ko": "크립토·매크로 지표 기반 무기한 선물 인덱스 마켓",
+  "confidence": "medium",
+  "sources": [
+   {
+    "t": "PARAGON ANNOUNCES FIRST CRYPTO-NATIVE PERPETUAL INDEX MARKETS GO LIVE ON HYPERLIQUID | PR Newswire",
+    "u": "https://www.prnewswire.com/news-releases/paragon-announces-first-crypto-native-perpetual-index-markets-go-live-on-hyperliquid-302733053.html"
+   }
+  ],
+  "note": "일부 자료는 공동창업자로 표기",
+  "batch": "K4"
+ },
+ {
+  "key": "Thomas Sy",
+  "org_ko": "",
+  "co_ko": "",
+  "confidence": "low",
+  "sources": [],
+  "note": "확인 못 함 — 세션 전체 웹 검색 한도(200회) 소진으로 미검색",
+  "batch": "K4"
+ },
+ {
+  "key": "Vishal Gupta",
+  "org_ko": "True Markets · 공동창업자 겸 CEO",
+  "co_ko": "크립토 거래 플랫폼(TrueX)",
+  "confidence": "high",
+  "sources": [
+   {
+    "t": "Fortune — True Markets(2025.5.20)",
+    "u": "https://fortune.com/crypto/2025/05/20/true-markets-truex-vishal-gupta-crypto-solana-exchange/"
+   }
+  ],
+  "note": "K5",
+  "batch": "K5"
+ },
+ {
+  "key": "Woosup Lee",
+  "org_ko": "",
+  "co_ko": "",
+  "confidence": "low",
+  "sources": [],
+  "note": "확인 못 함 — 세션 전체 웹 검색 한도(200회) 소진으로 미검색",
+  "batch": "K4"
+ },
+ {
+  "key": "Youngseok Kim",
+  "org_ko": "",
+  "co_ko": "",
+  "confidence": "low",
+  "sources": [],
+  "note": "확인 못 함 — 세션 전체 웹 검색 한도(200회) 소진으로 미검색",
+  "batch": "K4"
+ }
+]

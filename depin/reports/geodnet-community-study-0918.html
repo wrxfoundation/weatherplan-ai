@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>GEODNET 커뮤니티 스터디 케이스</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --ground:#F5F7F6; --surface:#FFFFFF; --ink:#1B2620; --muted:#5C6B66;
+  --accent:#0E6B7A; --accent-ink:#0A4F5B; --crisis:#B5472A; --line:#D7DFDC; --tint:#E4EEEB; --tint-crisis:#F6E7E1;
+  --c-general:#0E6B7A; --c-technical:#7FB3A7; --c-geopulse:#C9A227; --c-tokenrun:#B5472A; --c-etc:#B9C4C0;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ground:#101715; --surface:#172120; --ink:#E6ECE9; --muted:#9AA8A3;
+    --accent:#5FB8C7; --accent-ink:#8CD0DB; --crisis:#E27A5C; --line:#2A3633; --tint:#1E2B28; --tint-crisis:#33231D;
+    --c-general:#5FB8C7; --c-technical:#5E8F84; --c-geopulse:#D8B84A; --c-tokenrun:#E27A5C; --c-etc:#4E5C58;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#101715; --surface:#172120; --ink:#E6ECE9; --muted:#9AA8A3;
+  --accent:#5FB8C7; --accent-ink:#8CD0DB; --crisis:#E27A5C; --line:#2A3633; --tint:#1E2B28; --tint-crisis:#33231D;
+  --c-general:#5FB8C7; --c-technical:#5E8F84; --c-geopulse:#D8B84A; --c-tokenrun:#E27A5C; --c-etc:#4E5C58;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{
+  background:var(--ground); color:var(--ink);
+  font-family:"IBM Plex Sans KR","Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic",system-ui,sans-serif;
+  font-size:16px; line-height:1.72; padding-block:0 64px; padding-inline:20px;
+  -webkit-font-smoothing:antialiased;
+}
+.mono{font-family:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;font-variant-numeric:tabular-nums}
+a{color:var(--accent-ink)}
+h1,h2,h3{text-wrap:balance;line-height:1.25;margin:0}
+h1{font-size:clamp(28px,4.2vw,42px);font-weight:700;letter-spacing:-0.01em}
+h2{font-size:clamp(21px,2.6vw,27px);font-weight:600;margin-block:0 14px}
+h3{font-size:17px;font-weight:600;margin-block:22px 8px}
+p{margin:0 0 14px}
+strong{font-weight:600}
+.eyebrow{font-family:"IBM Plex Mono",monospace;font-size:12px;letter-spacing:0.14em;text-transform:uppercase;color:var(--accent-ink)}
+
+/* frame */
+.wrap{max-width:1180px;margin:0 auto}
+header.top{padding-block:52px 34px;border-bottom:1px solid var(--line)}
+header.top .lede{max-width:66ch;font-size:18px;color:var(--muted);margin-top:14px}
+header.top .meta{display:flex;flex-wrap:wrap;gap:8px 24px;margin-top:22px;font-size:13px;color:var(--muted)}
+.layout{display:grid;grid-template-columns:220px minmax(0,1fr);gap:48px;padding-top:36px}
+nav.toc{position:sticky;top:20px;align-self:start;font-size:13.5px;line-height:1.5}
+nav.toc .eyebrow{display:block;margin-bottom:10px}
+nav.toc ol{list-style:none;margin:0;padding:0;border-left:2px solid var(--line)}
+nav.toc li a{display:block;padding:5px 0 5px 12px;color:var(--muted);text-decoration:none;border-left:2px solid transparent;margin-left:-2px}
+nav.toc li a:hover,nav.toc li a:focus-visible{color:var(--ink);border-left-color:var(--accent)}
+nav.toc li.pre a{color:var(--accent-ink);font-weight:500}
+main{min-width:0;max-width:78ch}
+section{padding-block:34px;border-bottom:1px solid var(--line);scroll-margin-top:16px}
+section:first-child{padding-top:0}
+section .num{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--muted);letter-spacing:0.1em;margin-bottom:8px;display:block}
+ul,ol{padding-left:22px;margin:0 0 14px}
+li{margin-bottom:6px}
+
+/* primer */
+.primer{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:28px 28px 18px;margin-bottom:8px}
+.primer h2{margin-bottom:8px}
+.why{border-left:3px solid var(--accent);padding-left:16px;margin:18px 0 24px}
+.why p{margin-bottom:8px}
+dl.gloss{display:grid;grid-template-columns:1fr 1fr;gap:14px 28px;margin:0}
+dl.gloss div{padding:10px 0;border-top:1px dashed var(--line)}
+dl.gloss dt{font-weight:600;font-size:15px}
+dl.gloss dt .en{font-family:"IBM Plex Mono",monospace;font-weight:400;font-size:12px;color:var(--muted);margin-left:6px}
+dl.gloss dd{margin:2px 0 0;font-size:14.5px;color:var(--muted);line-height:1.6}
+
+/* lesson callout */
+.lesson{background:var(--tint);border-radius:6px;padding:16px 18px;margin:20px 0 6px;font-size:15px}
+.lesson .eyebrow{display:block;margin-bottom:6px}
+.lesson.crisis{background:var(--tint-crisis)}
+.lesson.crisis .eyebrow{color:var(--crisis)}
+.lesson p:last-child{margin-bottom:0}
+
+/* tables */
+.tw{overflow-x:auto;margin:14px 0 18px;border:1px solid var(--line);border-radius:6px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:14px;line-height:1.5}
+th,td{padding:9px 12px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line)}
+th{font-weight:600;background:var(--tint);white-space:nowrap;font-size:13px}
+tr:last-child td{border-bottom:none}
+td.n{font-family:"IBM Plex Mono",monospace;font-variant-numeric:tabular-nums;white-space:nowrap}
+td.hot{color:var(--crisis);font-weight:600}
+
+/* summary list */
+ol.key{padding-left:0;list-style:none;counter-reset:k}
+ol.key li{counter-increment:k;display:grid;grid-template-columns:36px 1fr;gap:10px;padding:12px 0;border-top:1px solid var(--line)}
+ol.key li::before{content:counter(k,decimal-leading-zero);font-family:"IBM Plex Mono",monospace;color:var(--accent-ink);font-size:14px;padding-top:3px}
+ol.key li:last-child{border-bottom:1px solid var(--line)}
+
+/* chart */
+figure{margin:18px 0 22px;background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:18px 16px 12px}
+figure .ttl{font-weight:600;font-size:15px;margin-bottom:4px}
+figure .sub{font-size:13px;color:var(--muted);margin-bottom:10px}
+figure svg{width:100%;height:auto;display:block}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13px;color:var(--muted);margin-top:8px}
+.legend span::before{content:"";display:inline-block;width:11px;height:11px;border-radius:2px;margin-right:6px;vertical-align:-1px;background:var(--sw)}
+
+/* checklist */
+ul.check{list-style:none;padding-left:0}
+ul.check li{display:grid;grid-template-columns:22px 1fr;gap:10px;padding:8px 0;border-top:1px dashed var(--line)}
+ul.check li::before{content:"";width:15px;height:15px;border:1.5px solid var(--accent);border-radius:3px;margin-top:5px}
+
+footer{max-width:78ch;margin:40px auto 0;font-size:13px;color:var(--muted);line-height:1.6}
+footer ul{padding-left:18px}
+
+@media (max-width:860px){
+  .layout{grid-template-columns:1fr;gap:20px}
+  nav.toc{position:static;border:1px solid var(--line);border-radius:6px;padding:14px 16px;background:var(--surface)}
+  nav.toc ol{border-left:none;columns:2;column-gap:20px}
+  nav.toc li a{padding-left:0;border-left:none;margin-left:0}
+  dl.gloss{grid-template-columns:1fr}
+  .primer{padding:20px 18px 12px}
+  body{font-size:15.5px}
+}
+@media (prefers-reduced-motion:no-preference){ html{scroll-behavior:smooth} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="top">
+  <span class="eyebrow">Wellbian 커뮤니티 전략 · 스터디 케이스 1</span>
+  <h1 style="margin-top:10px">GEODNET은 커뮤니티를 어떻게 만들고, 어디서 무너졌나</h1>
+  <p class="lede">DePIN 프로젝트 GEODNET의 공식 디스코드 4년 8개월치(메시지 148,000개)를 분석했다. 우리가 가야 할 길을 정하기 전에, 먼저 간 팀이 무엇을 했고 무엇이 통했는지 같은 데이터로 본다.</p>
+  <div class="meta mono">
+    <span>기준일 2026-09-18</span>
+    <span>데이터 2022-01 ~ 2026-09</span>
+    <span>채널 14개 · 메시지 148,233개</span>
+  </div>
+</header>
+
+<div class="layout">
+<nav class="toc" aria-label="목차">
+  <span class="eyebrow">목차</span>
+  <ol>
+    <li class="pre"><a href="#primer">읽기 전에 · 용어</a></li>
+    <li><a href="#s1">01 요약</a></li>
+    <li><a href="#s2">02 데이터와 방법</a></li>
+    <li><a href="#s3">03 팀 구성과 역할</a></li>
+    <li><a href="#s4">04 초기 셋팅 타임라인</a></li>
+    <li><a href="#s5">05 이벤트와 인센티브</a></li>
+    <li><a href="#s6">06 채널 구조와 규칙</a></li>
+    <li><a href="#s7">07 주요 이슈와 반응</a></li>
+    <li><a href="#s8">08 시기별 관심사 변화</a></li>
+    <li><a href="#s9">09 하드웨어 유통</a></li>
+    <li><a href="#s10">10 규제와 법인 구조</a></li>
+    <li><a href="#s11">11 Wellbian 적용</a></li>
+  </ol>
+</nav>
+
+<main>
+
+<section id="primer" class="primer">
+  <span class="eyebrow">읽기 전에</span>
+  <h2>왜 이 케이스인가</h2>
+  <div class="why">
+    <p><strong>같은 구조다.</strong> GEODNET은 개인이 집에 기기를 설치하고, 그 기기가 만든 데이터를 팀이 기업에 팔고, 기여자에게 토큰으로 보상하는 프로젝트다. Wellbian이 하려는 것과 뼈대가 같다.</p>
+    <p><strong>4년치 기록이 전부 공개돼 있다.</strong> 서버를 연 첫날부터 커뮤니티 리더가 만든 파산 사태까지, 팀과 유저가 주고받은 말이 그대로 남아 있다. 이만큼 긴 기간을 처음부터 볼 수 있는 케이스는 드물다.</p>
+    <p><strong>성공과 실패가 둘 다 있다.</strong> 스테이션 21,000대, 국내 거래소 상장까지 갔지만, 그 사이에 신뢰가 크게 깨진 순간이 세 번 있었다. 무엇을 따라 하고 무엇을 피할지 한 케이스에서 배울 수 있다.</p>
+  </div>
+  <h3 style="margin-top:0">용어</h3>
+  <p style="color:var(--muted);font-size:14.5px">본문에 설명 없이 나오는 단어들이다. 한 번 훑고 시작하면 된다.</p>
+  <dl class="gloss">
+    <div><dt>DePIN<span class="en">Decentralized Physical Infrastructure Network</span></dt><dd>개인들이 각자 기기를 설치해 네트워크를 만들고, 토큰으로 보상받는 모델. 헬륨(무선), 하이브매퍼(지도), GEODNET(위치 보정)이 대표 사례.</dd></div>
+    <div><dt>RTK / GNSS<span class="en">위치 보정 데이터</span></dt><dd>GPS 오차를 센티미터 단위로 줄여주는 기술. GEODNET은 이 보정 데이터를 드론·농기계·로봇 회사에 판다. 기기 보유자가 만드는 "상품"이다.</dd></div>
+    <div><dt>스테이션 / 마이너<span class="en">station, miner</span></dt><dd>개인이 지붕에 설치하는 기기. 데이터를 보내면 토큰을 받는다. 초기엔 "마이너", 나중엔 "스테이션"으로 부름.</dd></div>
+    <div><dt>GEOD 토큰<span class="en">$GEOD</span></dt><dd>보상용 코인. 팀이 데이터 매출의 일부로 토큰을 시장에서 사서 소각해 가치를 받친다. 2026년 7월 업비트·빗썸 상장.</dd></div>
+    <div><dt>반감기<span class="en">halving</span></dt><dd>매년 기기당 토큰 보상이 절반으로 줄어드는 규칙. 시행 때마다 커뮤니티가 술렁인다.</dd></div>
+    <div><dt>수퍼헥스<span class="en">SuperHex</span></dt><dd>기기가 없는 지역을 지정해 먼저 설치하는 사람에게 보상을 배로 주는 제도. 커버리지를 넓히는 핵심 도구이자 논란의 단골 소재.</dd></div>
+    <div><dt>위치 NFT<span class="en">location NFT</span></dt><dd>잘 설치된 기기에 주는 증표. 나중에 근처에 다른 기기가 생겨도 보상이 깎이지 않게 보호한다. 조건은 30일 이상 가동, 성능 98% 이상.</dd></div>
+    <div><dt>RRR<span class="en">reward rate</span></dt><dd>기기 성능 점수(퍼센트). 98% 넘으면 우수 설치로 본다. 커뮤니티에서 가장 자주 나오는 숫자.</dd></div>
+    <div><dt>AMA<span class="en">Ask Me Anything</span></dt><dd>팀이 라이브로 질문을 받는 행사. 디스코드 음성, X 스페이스, 줌으로 진행.</dd></div>
+    <div><dt>FUD<span class="en">Fear, Uncertainty, Doubt</span></dt><dd>근거 없는 의혹으로 불안을 퍼뜨리는 행위. 크립토 커뮤니티에서 위기 상황을 부르는 말.</dd></div>
+    <div><dt>OG<span class="en">Original Gangster</span></dt><dd>초창기부터 남아 있는 장기 기여자. GEODNET은 2025년에 정식 역할 배지로 만들었다.</dd></div>
+    <div><dt>유통사 / 리셀러<span class="en">distributor, reseller</span></dt><dd>제조사 대신 기기를 파는 업체. 대부분 여러 DePIN 프로젝트 기기를 함께 파는 온라인 샵이다.</dd></div>
+    <div><dt>디스코드 역할<span class="en">Discord role</span></dt><dd>서버 안에서 계정에 붙이는 배지. 누가 팀이고 누가 인증된 판매자인지 구별하는 용도로 쓰인다.</dd></div>
+    <div><dt>VASP<span class="en">가상자산사업자</span></dt><dd>코인을 대신 사고팔거나 보관하는 사업자에게 필요한 국내 신고. 토큰을 발행만 하는 프로젝트는 대상이 아니다.</dd></div>
+  </dl>
+</section>
+
+<section id="s1">
+  <span class="num">01</span>
+  <h2>요약</h2>
+  <p>GEODNET은 하드웨어 배송이라는 지루한 단계를 투명하게 공유하는 것만으로 첫 1년의 커뮤니티를 만들었고, 토큰과 앱은 그 위에 나중에 얹었다. 핵심 결론은 여섯 가지다.</p>
+  <ol class="key">
+    <li><span><strong>초기 팀은 3명이었다.</strong> 창업자가 배송 현황을 직접 쓰고, 운영 담당이 주문을 손으로 처리하고, 열성 유저 한 명이 사실상 커뮤니티 매니저 역할을 했다. 전문 CM은 서버 개설 2년 반 뒤에야 들어왔다.</span></li>
+    <li><span><strong>인센티브는 전부 네트워크 품질에 묶였다.</strong> NFT는 30일 이상 98% 성능 스테이션에만, 2배 보상은 커버리지가 빈 인도에만, 트레이드인은 기존 스테이션에서 20km 이상 떨어진 위치에만 줬다. 조건 없는 에어드랍은 한 번도 없었다.</span></li>
+    <li><span><strong>가격·ROI 얘기 금지가 1번 규칙이었다.</strong> 유저들끼리 서로 단속할 정도로 내재화됐고, 토큰 가치 논쟁과 FUD 사태 때 팀이 '실제 일에 집중한다'고 선을 그을 수 있는 근거가 됐다.</span></li>
+    <li><span><strong>가장 큰 신뢰 위기는 커뮤니티 리더가 만들었다.</strong> 3년간 커뮤니티를 이끈 rouven이 유통사(Easynav)를 차렸고, 2025년 3월 그 회사가 고객 돈을 받은 채 파산했다. general 채널 4년 중 최대 급증일(하루 1,067개)이고, 제조사가 자비로 주문을 대신 처리해야 했다.</span></li>
+    <li><span><strong>유통사는 재고를 사지 않았고, 디스코드 유통사 역할은 정품 인증 배지였다.</strong> 고객 결제 후 발주 구조라 유통사 파산 시 고객 돈이 그대로 사라진다.</span></li>
+    <li><span><strong>토큰 보상형 앱 런칭은 봇으로 실패했다.</strong> 2025년 12월 TokenRun은 한 달 7,896개 메시지로 전용 채널 최고치를 찍었지만, 출금 장애와 봇 유입으로 열흘 만에 리워드 프로그램이 중단됐다.</span></li>
+  </ol>
+</section>
+
+<section id="s2">
+  <span class="num">02</span>
+  <h2>데이터 범위와 분석 방법</h2>
+  <p>GEODNET 공식 디스코드 14개 채널을 DiscordChatExporter로 뽑은 JSON 265MB, 메시지 148,233개를 분석했다. 메타데이터를 걷어낸 실제 본문은 약 1,300만 자다.</p>
+  <div class="tw"><table>
+    <thead><tr><th>채널</th><th>메시지 수</th><th>기간</th><th>성격</th></tr></thead>
+    <tbody>
+      <tr><td>general</td><td class="n">107,029</td><td class="n">2022-01 ~ 2026-09</td><td>커뮤니티 잡담·논쟁</td></tr>
+      <tr><td>technical</td><td class="n">15,860</td><td class="n">2022-06 ~ 2026-09</td><td>설치·장애 문의</td></tr>
+      <tr><td>token-run</td><td class="n">11,927</td><td class="n">2025-12 ~ 2026-09</td><td>앱 런칭 전용</td></tr>
+      <tr><td>geo-pulse</td><td class="n">6,882</td><td class="n">2024-11 ~ 2026-09</td><td>신제품 전용</td></tr>
+      <tr><td>updates</td><td class="n">1,720</td><td class="n">2022-01 ~ 2026-08</td><td>팀 공지 + 댓글</td></tr>
+      <tr><td>socials</td><td class="n">897</td><td class="n">2024-06 ~ 2026-09</td><td>SNS 링크</td></tr>
+      <tr><td>solar-stations</td><td class="n">813</td><td class="n">2025-04 ~ 2026-09</td><td>태양광 설치</td></tr>
+      <tr><td>announcements</td><td class="n">485</td><td class="n">2023-09 ~ 2026-09</td><td>공식 발표</td></tr>
+      <tr><td>off-topic</td><td class="n">418</td><td class="n">2025-07 ~ 2026-09</td><td>잡담</td></tr>
+      <tr><td>giveaway</td><td class="n">314</td><td class="n">2025-05 ~ 2025-07</td><td>이벤트</td></tr>
+      <tr><td>geo-measure-closed-beta</td><td class="n">155</td><td class="n">2026-04 ~ 2026-09</td><td>비공개 베타</td></tr>
+      <tr><td>geo-swarm</td><td class="n">41</td><td class="n">2026-02 ~ 2026-09</td><td>신제품</td></tr>
+      <tr><td>poll</td><td class="n">36</td><td class="n">2022-09 ~ 2025-10</td><td>투표</td></tr>
+      <tr><td>new-superhex</td><td class="n">23</td><td class="n">2024-06 ~ 2025-08</td><td>자동 공지</td></tr>
+    </tbody>
+  </table></div>
+  <p><strong>주의점.</strong> 유통사 목록 채널과 지원 티켓 채널은 익스포트에 포함되지 않았다. general은 2026-09-18까지, 나머지 채널은 2026-09-12까지 들어있다.</p>
+  <p>분석은 세 가지 방법을 썼다. 월별·일별 대화량으로 급증 시점을 찾고, 그 시점 직전 3일의 공식 발표를 맞춰 이슈를 특정했다. 팀 계정(이름 끝 ".geodnet", 어드민 역할)과 유통사 역할 계정을 분리해 발언을 추적했다. 키워드별 첫 언급 시점과 분기별 빈도로 이벤트·전략 도입 순서를 복원했다.</p>
+</section>
+
+<section id="s3">
+  <span class="num">03</span>
+  <h2>팀 구성과 역할</h2>
+  <p>커뮤니티 운영은 세 시기로 나뉜다. 2022~2023년은 창업자·운영·유저 출신 리더 3인 체제, 2024년은 전문 CM 한 명 체제, 2025년 이후는 제품별 담당자를 둔 다인 체제다.</p>
+  <div class="tw"><table>
+    <thead><tr><th>시기</th><th>계정</th><th>역할</th><th>반기 최대 발언</th></tr></thead>
+    <tbody>
+      <tr><td class="n">2022 ~ 2023</td><td>mike.geodnet</td><td>창업자. 배송·생산 현황을 긴 글로 직접 공유. 위기 때만 등장</td><td class="n">94</td></tr>
+      <tr><td class="n">2022 ~ 2023</td><td>Sharon (hyfix)</td><td>운영. 대기자 명단, 수동 인보이스, 이메일 회신, 기브어웨이</td><td class="n">428</td></tr>
+      <tr><td class="n">2022 ~ 2025-03</td><td>rouven</td><td>스위스 유저 출신 커뮤니티 리더. 주간 Q&amp;A, 퀵가이드, 각국 텔레그램, 규칙 집행. 2023-11부터 유통사 Easynav 운영 겸임. 2025-03 파산 후 이탈</td><td class="n">1,874</td></tr>
+      <tr><td class="n">2022 ~ 2023</td><td>david.geodnet</td><td>블록체인 책임자. 토큰·지갑 이슈 때만 등장</td><td class="n">35</td></tr>
+      <tr><td class="n">2024 ~ 2025 상반기</td><td>ZoeyDeer</td><td>첫 전문 CM. 커뮤니티 이름 투표, 건의사항 월간 회신, 오프라인 밋업 수요 조사, Easynav 사태 환불 안내</td><td class="n">1,541</td></tr>
+      <tr><td class="n">2024 하반기 ~</td><td>miala.geodnet</td><td>기술 지원 겸 상시 응대. 현재 최다 발언</td><td class="n">4,510</td></tr>
+      <tr><td class="n">2025 ~</td><td>wendy.geodnet</td><td>기술 지원</td><td class="n">364</td></tr>
+      <tr><td class="n">2025 하반기</td><td>Hera.geodnet</td><td>소셜 미디어 담당. TokenRun 런칭 전면 대응</td><td class="n">194</td></tr>
+      <tr><td class="n">2025 하반기</td><td>Timothy.geodnet</td><td>GEO-MEASURE 제품 담당</td><td class="n">306</td></tr>
+      <tr><td class="n">2026</td><td>andrew.yuan.geodnet</td><td>GEO-MEASURE 비공개 베타 운영</td><td class="n">49</td></tr>
+    </tbody>
+  </table></div>
+  <p><strong>3인 체제의 핵심은 팀이 못 하는 것을 유저가 채우게 둔 구조다.</strong> rouven은 원래 팀원이 아니었다. 페이스북 그룹과 텔레그램을 먼저 만들어 운영하다가 2022년 5월 공식 앰배서더 리퍼럴 링크를 받았고, 결국 어드민이 됐다. 창업자는 주 1~2회만 글을 썼지만 매번 반응 20~40개를 받았다. 발언 빈도보다 내용의 무게가 신뢰를 만들었다.</p>
+  <p><strong>2024년 전환점.</strong> 2024년 상반기는 rouven이 반기 1,874개로 가장 바쁘게 일하던 시기였고, 동시에 자기 유통사 Easynav를 커뮤니티 안에서 홍보하던 시기였다. 하반기에 ZoeyDeer가 들어오면서 운영이 '리더 1인의 실시간 응대'에서 '설문·투표·월간 피드백 보고'로 바뀌었고, 커뮤니티 이름(GEODians)과 OG 역할이 생겼다. rouven은 2025년 3월 건강 문제를 이유로 잠적한 뒤 Easynav 파산이 공개되면서 다시 나타나지 않았다. 이후 커뮤니티 리더 역할은 유통사 Paradox Wireless와 OG 유저 두엇이 나눠 맡았다.</p>
+  <div class="lesson"><span class="eyebrow">이 섹션의 교훈</span><p>초기엔 전문 CM보다 "창업자가 직접 쓰는 주 1회 글"과 "열성 유저 한 명"이 커뮤니티를 만든다. 다만 그 유저에게 권한을 줄 때는 이해충돌을 미리 막아야 한다. 뒤의 07·09 섹션에서 그 대가를 본다.</p></div>
+</section>
+
+<section id="s4">
+  <span class="num">04</span>
+  <h2>초기 커뮤니티 셋팅 타임라인 (2022년)</h2>
+  <p>첫 4개월은 토큰 얘기를 거의 하지 않고 배송과 설치에만 집중했다. 서버 개설 시점에 이미 대기자 1,000명이 있었고, 팀은 "아직 Day 0 전"이라며 기대치를 낮췄다.</p>
+  <div class="tw"><table>
+    <thead><tr><th>시기</th><th>팀이 한 일</th></tr></thead>
+    <tbody>
+      <tr><td class="n">2022-01 말</td><td>서버 오픈. 헬륨 출신 유저들의 인사와 잡담. 창업자가 "PayPal 막힐 수 있으니 며칠 기다려달라"고 직접 답변</td></tr>
+      <tr><td class="n">2022-01-27</td><td>운영 담당 Sharon 합류 공지. 대기자 명단과 이메일 1,000통 담당</td></tr>
+      <tr><td class="n">2022-02 초</td><td>주간 Q&amp;A 시작. 구글폼으로 질문 수집 → 창업자 답변 → 주 1회 릴리즈. 유저 요청으로 핀 메시지 활용 시작</td></tr>
+      <tr><td class="n">2022-02-08</td><td>첫 8대 발송 공지(이탈리아 3, 루마니아 5). 나사 부족 같은 사소한 문제도 그대로 공유. 유저 반응 "투명성이 좋다"</td></tr>
+      <tr><td class="n">2022-02-11</td><td>재판매 금지 정책 예고. "되팔 계획이면 환불받아라"</td></tr>
+      <tr><td class="n">2022-02</td><td>규칙 확립. 가격·ROI·거래 얘기 금지가 1번</td></tr>
+      <tr><td class="n">2022-03</td><td>라스베가스 측량 컨퍼런스 참가 사진. 공장 생산 사진 "독점 공개". 상하이 봉쇄 영향 실시간 공유</td></tr>
+      <tr><td class="n">2022-04</td><td>국가별 주문 현황 차트 공개(4,500대). 인스타그램 개설. 첫 라이브 AMA(4/29) 후 요약문과 녹음 배포</td></tr>
+      <tr><td class="n">2022-05</td><td>200대 온라인 마일스톤. rouven에게 공식 앰배서더 리퍼럴 링크 부여</td></tr>
+      <tr><td class="n">2022-06</td><td>배송 전용 채널 분리. technical 채널 개설. 퀵가이드 v2.2. 가격 인상($395→$495) 예고로 주문 유도. 첫 EU 유통사 발표</td></tr>
+      <tr><td class="n">2022-08</td><td>규칙 리마인더 재공지. 첫 굿즈 기브어웨이(티셔츠·스티커·펜, 트위터·인스타 연동)</td></tr>
+      <tr><td class="n">2022-09</td><td>헬륨 마이너 트레이드인 투표(반응 220개). poll 채널 개설</td></tr>
+      <tr><td class="n">2022-10</td><td>콘솔 장애 대응. 위치 NFT 예고</td></tr>
+      <tr><td class="n">2022-11</td><td>인도 2배 보상. 현지 파트너가 설치·영상 담당. 헬륨 트레이드인 종료(80건 신청, 30대 교환)</td></tr>
+      <tr><td class="n">2022-12 ~ 2023-02</td><td>NFT 발행. 트라이밴드 업그레이드 카드 배송. 월 2,500~2,800개로 초기 최대 활황</td></tr>
+    </tbody>
+  </table></div>
+  <p>채널은 필요가 생길 때마다 하나씩 늘렸다. general과 updates 두 개로 시작해 5개월 뒤 technical, 8개월 뒤 poll, 20개월 뒤에야 announcements가 분리됐다. 신제품 전용 채널(geo-pulse, token-run, geo-swarm)은 모두 2024년 이후다.</p>
+  <div class="lesson"><span class="eyebrow">이 섹션의 교훈</span><p>첫 반년의 콘텐츠는 "배송 어디까지 됐나"였다. 화려한 이벤트가 아니라 진행 상황을 숨김없이 자주 알리는 것이 초기 신뢰의 전부였다.</p></div>
+</section>
+
+<section id="s5">
+  <span class="num">05</span>
+  <h2>이벤트와 인센티브 프로그램</h2>
+  <p>인센티브는 항상 네트워크 품질이나 커버리지 확장이라는 조건에 묶였다. 조건 없는 에어드랍은 4년 동안 한 번도 없었다. 이벤트 자체보다 그 결과를 텍스트로 남기는 데 공을 들였다.</p>
+  <div class="tw"><table>
+    <thead><tr><th>프로그램</th><th>시작</th><th>내용</th><th>조건 / 효과</th></tr></thead>
+    <tbody>
+      <tr><td>주간 Q&amp;A</td><td class="n">2022-02</td><td>구글폼으로 질문 수집, 창업자 답변을 주 1회 릴리즈</td><td>여러 소셜 채널 질문을 하나로 모음. "폼으로 넣어라"가 논쟁 차단 도구로도 쓰임. 2023년 하반기에 중단</td></tr>
+      <tr><td>라이브 AMA</td><td class="n">2022-04</td><td>창업자·CTO·블록체인 책임자 출연</td><td>반드시 텍스트 요약과 녹음 배포. 이후 X Space, Zoom AMA로 이어짐</td></tr>
+      <tr><td>굿즈 기브어웨이</td><td class="n">2022-08</td><td>티셔츠·스티커·펜</td><td>트위터·인스타 팔로우 유도. 수상자 인증샷을 다시 공유</td></tr>
+      <tr><td>헬륨 트레이드인</td><td class="n">2022-09</td><td>헬륨 마이너를 GEODNET 기기로 교환</td><td>기존 스테이션에서 20km 이상 떨어진 미국 위치만. 80건 신청, 30대 교환</td></tr>
+      <tr><td>지역 2배 보상</td><td class="n">2022-11</td><td>인도 스테이션 보상 2배</td><td>커버리지 빈 지역만. 현지 파트너가 설치·마케팅 동시 진행</td></tr>
+      <tr><td>위치 NFT</td><td class="n">2022-12</td><td>잘 설치된 스테이션에 보상 보호 NFT</td><td>30일 온라인 + 성능 98% 이상. 이후 헥스당 1개로 제한. 초기 최대 활황 유발</td></tr>
+      <tr><td>수퍼헥스</td><td class="n">2023-08</td><td>빈 지역 먼저 설치 시 보상 배수</td><td>커버리지 확장 전용. 7일 오프라인 시 자격 상실</td></tr>
+      <tr><td>커뮤니티 이름 투표</td><td class="n">2024-12</td><td>멤버 호칭 투표 → GEODians</td><td>디자인 투표까지 이어짐. 반응 446개로 투표 중 최고</td></tr>
+      <tr><td>건의사항 월간 회신</td><td class="n">2024-08</td><td>하드웨어 건의를 모아 반영 결과 보고</td><td>건의자 이름을 멘션. 반응 131개</td></tr>
+      <tr><td>오프라인 밋업 수요 조사</td><td class="n">2025-02</td><td>국가 깃발 이모지로 투표</td><td>반응 338개. 뉴욕 DePIN 컨퍼런스로 이어짐</td></tr>
+      <tr><td>듀얼밴드 업그레이드 할인</td><td class="n">2025-02</td><td>구형 기기 보유자 할인</td><td>30일 성능 98% 이상 조건</td></tr>
+      <tr><td>Gleam 기브어웨이</td><td class="n">2025-07</td><td>신제품 5대 + 티셔츠</td><td>전용 giveaway 채널과 봇 사용</td></tr>
+      <tr><td>TokenRun 리퍼럴</td><td class="n">2025-12</td><td>앱 리퍼럴 1인당 25 GEOD, 4명까지</td><td>X·Discord 리워드는 봇 때문에 출시 8일 만에 중단</td></tr>
+    </tbody>
+  </table></div>
+  <p>토큰 기반 보상 이벤트는 2025년 12월이 첫 시도였고 봇 유입으로 실패했다. 그 전 3년간은 굿즈와 기기 자체가 상품이었다.</p>
+  <div class="lesson"><span class="eyebrow">이 섹션의 교훈</span><p>"참여하면 토큰"이 아니라 "네트워크에 기여하면 토큰"이었다. 조건이 없는 순간 봇이 들어온다. 2025년 12월이 그 증거다.</p></div>
+</section>
+
+<section id="s6">
+  <span class="num">06</span>
+  <h2>채널 구조와 운영 규칙</h2>
+  <p>규칙의 핵심은 투기 차단이었다. 2022년 8월 공식 규칙 10조 중 절반이 거래·가격·사적 판매 금지였다.</p>
+  <h3>공식 규칙 (2022-08 기준)</h3>
+  <ul>
+    <li>예의. 인종·성 차별, 괴롭힘은 즉시 차단</li>
+    <li>OTC·거래·거래소 논의 금지. 가격 추측과 ROI 논의 금지</li>
+    <li>개인키·시드 공유 금지</li>
+    <li>스팸과 리퍼럴 링크 홍보 금지</li>
+    <li>모르는 사람에게 토큰 전송 금지. 팀은 절대 토큰을 요구하지 않음</li>
+    <li>팀은 거래를 중개하지 않음. 사적 판매 금지</li>
+    <li>스푸핑·어뷰즈 홍보 금지</li>
+    <li>법률·금융 자문 아님</li>
+    <li>다단계 마케팅 리크루팅 금지</li>
+  </ul>
+  <p><strong>스캠 대응은 시간이 갈수록 커졌다.</strong> 스캠 관련 언급이 2022년 분기당 10건 미만에서 2025년 분기당 100건 이상으로 늘었다. 대응은 세 가지였다. "팀은 DM을 먼저 보내지 않는다"를 반복 공지하고, 블록체인 책임자가 스캠 식별 영상을 만들어 핀하고, 유통사와 OG 유저에게 역할 배지를 줘 진짜를 구별하게 했다.</p>
+  <p><strong>핀 메시지는 역할이 바뀌었다.</strong> 2022년에는 배송 현황을 핀했고, 2025년 이후에는 위기 대응 메시지와 사용 가이드를 핀했다. 비공개 베타 채널에서는 프로그램 규칙, 로드맵, 알려진 버그 목록을 핀으로 관리했다.</p>
+  <p><strong>역할 체계</strong>는 verified(일반 인증), OG GEODian(장기 기여자 24명), Distributor(유통사 6곳), GEODNET Tech.Support, Admin, ambassador 여섯 개다. OG 역할은 2025년에 생겼고, 스캠 구별과 기여자 예우 둘 다를 노렸다.</p>
+  <div class="lesson"><span class="eyebrow">이 섹션의 교훈</span><p>규칙은 서버 개설 첫 달에 정하고 반복해서 붙여야 유저가 스스로 지킨다. 나중에 정하면 이미 형성된 문화와 싸워야 한다.</p></div>
+</section>
+
+<section id="s7">
+  <span class="num">07</span>
+  <h2>주요 이슈와 커뮤니티 반응</h2>
+  <p>일곱 번의 큰 이슈 중 가장 컸던 것은 외부 공격이 아니라 내부에서 나왔다. 커뮤니티 리더가 차린 유통사가 파산한 2025년 3월이 general 채널 4년 중 최대 급증일이다. 팀의 공통 패턴은 창업자가 직접 한 번 길게 쓰고 그 다음은 실무 담당자가 개별 응대로 넘어가는 것이다.</p>
+  <div class="tw"><table>
+    <thead><tr><th>시기</th><th>이슈</th><th>피크 대화량</th><th>커뮤니티 반응</th><th>팀 대응</th><th>진정까지</th></tr></thead>
+    <tbody>
+      <tr><td class="n">2025-12-09 ~ 14</td><td>TokenRun 앱 런칭</td><td class="n">전용 채널 하루 1,458개</td><td>출금 안 됨, RTK 안 잡힘, 봇 많음. 유저 간 "불평만 한다" vs "ETA라도 달라" 분열</td><td>출시 3일 뒤 가이드, 5일 뒤 긴급 패치, 8일 뒤 X·Discord 리워드 중단. 출금 장애 공지가 역대 최고 반응(+75)</td><td>약 2주</td></tr>
+      <tr><td class="n">2025-08-27 ~ 28</td><td>공식 X 계정 해킹</td><td class="n">general 하루 324개</td><td>가짜 토큰 배포 트윗이 올라감. 유저들이 서로 "링크 클릭 마라" 경고</td><td>당일 공지 네 번. 팀원이 농담으로 분위기 수습</td><td>당일</td></tr>
+      <tr><td class="n">2025-07-01 ~ 03</td><td>반감기 + GIP-6 보너스 보상 시행</td><td class="n">general 하루 659개</td><td>"선택된 스테이션을 지도에 보여달라", 신호 세기 기준 논쟁</td><td>사전 공지 3건, 시행 당일 확인 방법 안내</td><td>약 1주</td></tr>
+      <tr><td class="n">2025-05-07</td><td>남미 수퍼헥스 사전 통보 논란</td><td class="n">general 하루 307개</td><td>"왜 그 사람들만 미리 알았냐"(+18). 공정성 문제 제기</td><td>CM이 배경 설명(+18)</td><td>당일</td></tr>
+      <tr><td class="n">2025-03-20 ~ 21</td><td class="hot">커뮤니티 리더 rouven의 유통사 Easynav 파산</td><td class="n">general 하루 1,067개 (4년 최대)</td><td>"제조사가 인증한 유통사니 책임져라"(+9), "돈 들고 도망갔다"(+13), "5만 달러 투자하려 했다"(+14)</td><td>창업자 공식 입장문(+156, 역대 최고). 제조사가 자비로 환불·재발송. CM이 PayPal 환불 절차 개별 안내</td><td>약 2주. 리더는 복귀 안 함</td></tr>
+      <tr><td class="n">2024-03</td><td>ETHDenver 펀딩 발표·가격 신고가·스테이션 급증</td><td class="n">general 월 5,218개 (월 기준 최대)</td><td>거래소 상장 영업, 지갑 탈취 신고, 수퍼헥스 규칙 요구</td><td>한 달에 공지 31건. 2FA 의무화, 스캠 영상, 마일스톤 공지 반복</td><td>하반기까지 고유지</td></tr>
+      <tr><td class="n">2023-10-05 ~ 06</td><td>FUD 사태 (외부 인플루언서가 지갑 의혹 제기)</td><td class="n">general 하루 209개</td><td>"질문한 사람을 왜 밴하냐" vs "그들은 스캐머다" 대립</td><td>블록체인 책임자 지갑 설명(+9). 창업자 "PR 회사 없다, 실제 일에 집중"(+17)</td><td>2일</td></tr>
+      <tr><td class="n">2023-04-12</td><td>토큰 가치·업그레이드 가격 논쟁</td><td class="n">general 하루 502개</td><td>가격 인상에 반발</td><td>창업자 web2 매출 구조 설명(+15)</td><td>당일</td></tr>
+      <tr><td class="n">2022-12 ~ 2023-02</td><td>NFT·트라이밴드 배송 혼선</td><td class="n">general 하루 692개</td><td>주문 번호 문의 폭주, NFT 조건 오해</td><td>리더가 같은 답을 수십 번 반복</td><td>약 3개월</td></tr>
+    </tbody>
+  </table></div>
+  <p><strong>잘 된 것.</strong> 위기 순간에 창업자가 직접 나온 메시지는 항상 그날 최고 반응을 받았다. "모른다"와 "다음 주에 다시 얘기하겠다"를 숨기지 않았다. TokenRun 때는 문제 발생 → 원인 확인 공지 → 수정 예정일 공지 → 패치 공지 → 이전 건 처리 완료 공지를 매일 이어갔다.</p>
+  <p><strong>잘 안 된 것.</strong> Easynav 사태는 예고가 있었다. rouven은 2023년 11월부터 공식 공지 채널에서 자기 회사를 홍보했고, 유저 질문에 "어디서 사냐"고 되묻고 자기 사이트로 유도했다. 커뮤니티 모더레이터와 판매자를 한 사람이 겸하는 이해충돌을 1년 4개월간 아무도 막지 않았다. 파산 직전 "건강 문제로 잠시 쉬겠다"는 메시지가 마지막이었고, 팀은 그 사이 주문이 제조사에 넘어오지 않는 것을 감지하지 못했다. TokenRun 때는 소셜 담당자가 기술 문의를 받아 "나는 개발자가 아니다"라고 답해야 했고, 런칭 전 가이드가 없어 같은 질문이 수백 번 반복됐다.</p>
+  <div class="lesson crisis"><span class="eyebrow">이 섹션의 교훈</span><p>위기의 절반은 예방 가능한 구조 문제였다. 리더와 판매자 겸임, 런칭 전 가이드 부재, 담당자 간 역할 미분리. 위기 대응 매뉴얼보다 이 세 가지를 먼저 막는 게 싸다.</p></div>
+</section>
+
+<section id="s8">
+  <span class="num">08</span>
+  <h2>시기별 커뮤니티 관심사 변화</h2>
+  <p>커뮤니티는 하드웨어 시대(2022~2023), 확장기(2024~2025), 앱 시대(2025-12~)로 세 번 성격이 바뀌었다. 월 대화량 정점은 토큰 런칭이 아니라 2024년 3월 펀딩 발표 시기였고, 2026년에는 general이 월 1,000개 아래로 내려왔다.</p>
+  <figure>
+    <div class="ttl">월별 커뮤니티 메시지 수 (봇 제외)</div>
+    <div class="sub">디스코드 익스포트 14개 채널 집계 · 2022-01 ~ 2026-09 (9월은 부분 집계)</div>
+    <div id="chart"></div>
+    <div class="legend">
+      <span style="--sw:var(--c-general)">general</span>
+      <span style="--sw:var(--c-technical)">technical</span>
+      <span style="--sw:var(--c-geopulse)">geo-pulse</span>
+      <span style="--sw:var(--c-tokenrun)">token-run</span>
+      <span style="--sw:var(--c-etc)">기타</span>
+    </div>
+  </figure>
+  <p><strong>하드웨어 시대 (2022 ~ 2023).</strong> 주문 번호, 배송 추적, 안테나 설치 높이, 케이블 손실, 펌웨어 업데이트가 대화의 전부였다. 2023년 1월 월 2,800개로 첫 정점을 찍었고, 그 안에서 토큰 가치 논쟁과 FUD가 두 번 터졌다. 커뮤니티 리더 한 명이 실시간으로 다 받아냈다.</p>
+  <p><strong>확장기 (2024 ~ 2025).</strong> 2024년 1~7월 general이 월 3,000~5,200개로 4년 중 가장 붐볐다. ETHDenver 시드 펀딩 발표, 스테이션 4,000대에서 10,000대로 급증, 가격 신고가가 겹쳤다. 대화 주제도 설치에서 수퍼헥스 규칙, 반감기, 스캠으로 옮겨갔다. 팀은 이 시기에 전문 CM을 넣고 투표·설문·월간 건의 회신으로 구조화했다. 2025년 3월 Easynav 파산이 이 시기의 신뢰를 한 번 크게 깎았고, 스캠 언급이 그달 151건으로 최고치를 찍었다.</p>
+  <p><strong>앱 시대 (2025-12 ~).</strong> TokenRun 앱은 한 달에 7,896개로 전용 채널 최고 기록을 만들었지만 기기 보유자 커뮤니티와는 다른 사람들이었다. 같은 달 general은 2,531개로 평소와 비슷했고, 2026년 들어 general은 월 800~1,300개로 내려왔다. 앱 유저는 기기 커뮤니티로 합류하지 않고 전용 채널에 머물다 빠졌다.</p>
+  <div class="lesson"><span class="eyebrow">이 섹션의 교훈</span><p>대화량이 가장 많았던 때는 "좋은 소식이 겹친 때"였지, 이벤트를 많이 한 때가 아니다. 그리고 앱 유저와 기기 유저는 서로 다른 커뮤니티다. 하나로 합쳐지길 기대하면 안 된다.</p></div>
+</section>
+
+<section id="s9">
+  <span class="num">09</span>
+  <h2>하드웨어 유통 전략</h2>
+  <p>유통사를 미리 뿌리고 시작한 게 아니다. 제조사(HYFIX, 창업자 회사) 직판으로 6개월을 버틴 뒤 배송비와 관세 문제로 지역 유통사를 하나씩 붙였다.</p>
+  <p><strong>1단계 직판 (2022-01 ~ 06).</strong> Shopify로 판매했고 결제는 암호화폐만 받았다. PayPal, 카드, Amazon Pay 모두 "크립토 관련 장비"라는 이유로 계정이 동결됐다. 대기자 명단으로 수량을 예측하고 운영 담당자가 수동 인보이스를 보냈다. 첫 100대는 이탈리아·루마니아 텔레그램 커뮤니티가 거의 다 가져갔다.</p>
+  <p><strong>2단계 유통사 추가 (2022-06 ~).</strong> 유통사는 대부분 헬륨 핫스팟을 팔던 DePIN 멀티 브랜드 리셀러였다.</p>
+  <div class="tw"><table>
+    <thead><tr><th>시기</th><th>유통사</th><th>지역</th><th>상태</th></tr></thead>
+    <tbody>
+      <tr><td class="n">2024-10</td><td>Novyx.tech</td><td>글로벌, 산업용 RTK 고객</td><td>활동 중</td></tr>
+      <tr><td class="n">2024-07</td><td>Paradox Wireless</td><td>미국</td><td>활동 중. 디스코드 최다 발언자</td></tr>
+      <tr><td class="n">2024</td><td>Crypship, iDeploy, TechnostoreX</td><td>독일, 라틴, 터키</td><td>활동 중</td></tr>
+      <tr><td class="n">2023-11</td><td class="hot">Easynav.xyz</td><td>유럽·글로벌</td><td>커뮤니티 리더 rouven이 설립. 공식 공지로 "올인원 파트너" 소개. 2025-03 고객 결제금 보유한 채 파산</td></tr>
+      <tr><td class="n">2022-12</td><td>Mapping Network</td><td>캐나다</td><td>2023 이후 언급 없음</td></tr>
+      <tr><td class="n">2022-11</td><td>Hepta Networks</td><td>인도</td><td>현지 설치·영상 담당. HYFIX India로 이어짐</td></tr>
+      <tr><td class="n">2022-06</td><td>euGeo</td><td>EU</td><td>2024-11 계약 종료</td></tr>
+    </tbody>
+  </table></div>
+  <p>현재 공식 유통사는 9곳이다. 동아시아 담당은 일본 Village Island 한 곳이고 한국 유통사는 없다.</p>
+  <p><strong>계약 구조.</strong> 유통사는 재고를 사지 않는다. 고객 주문과 결제를 받은 뒤 제조사에 발주한다. Easynav 파산 때 제조사가 이 구조를 공식 설명했다. Easynav는 커뮤니티 리더가 차린 회사였기 때문에 피해가 커졌다. 그는 어드민 권한으로 공식 공지 채널에 자기 회사 할인 쿠폰을 올렸고, 유저가 "어디서 사냐"고 물으면 자기 사이트로 보냈다. 파산 후 창업자 입장문이 반응 156개로 4년 중 최고를 기록했고, 제조사가 환불 안 되는 주문을 자비로 재발송했다. 유통 마진과 리퍼럴 비율은 디스코드에 공개된 적이 없다.</p>
+  <p><strong>디스코드 유통사 역할의 실제 용도.</strong> 고객 응대가 아니라 정품 판매자 인증이다. 유통사 계정 6개 중 5개는 4년간 메시지가 7개 이하다. 오히려 유통사가 팀에게 펌웨어 위치를 묻거나 DM 허락을 구하는, 유통사가 지원받는 창구로 쓰였다. 유통사 목록 채널이 있어 피싱 사이트와 구별하는 기준점 역할도 했다.</p>
+  <div class="lesson"><span class="eyebrow">이 섹션의 교훈</span><p>우리는 기기가 이미 있으니 직판 6개월을 건너뛸 수 있다. 다만 결제 채널이 막히는 문제는 똑같이 겪을 수 있고, 유통사가 고객 돈을 쥐고 있는 구조는 계약으로 막아야 한다.</p></div>
+</section>
+
+<section id="s10">
+  <span class="num">10</span>
+  <h2>규제와 법인 구조</h2>
+  <p>GEODNET은 VASP(가상자산사업자)를 취득하지 않았고 필요도 없었다. 토큰 발행과 기기 보상 지급만 하고, 유저 지갑의 개인키를 보관하거나 토큰을 대신 사고팔지 않기 때문이다.</p>
+  <p><strong>법인은 둘로 나뉜다.</strong> 토큰과 네트워크는 싱가포르 비영리 재단(GEODNET Foundation)이 맡고, 하드웨어 판매는 미국 HYFIX가 맡는다. 토큰 지급 주체와 기기 판매 주체를 분리한 것이다. 디스코드 4년치에 라이선스나 VASP 언급은 한 건도 없다.</p>
+  <p><strong>한국 상장.</strong> 원래 코빗에만 상장돼 있었고 2026년 7월 업비트와 빗썸에 동시 상장됐다. 상장 심사는 거래소가 VASP로서 하는 것이고 프로젝트가 VASP일 필요는 없다.</p>
+  <p><strong>한국 법 기준.</strong> FIU 신고 매뉴얼과 대법원 판례상 단순 발행사는 VASP 대상이 아니다. 다만 유저 개인키를 회사가 보관하거나, 앱 안에서 토큰을 원화나 다른 코인으로 바꿔주거나, 유저 간 거래를 중개하면 신고 의무가 생길 수 있다. GEODNET의 TokenRun 앱도 출금 기능이 있지만 유저 본인의 솔라나 지갑으로 보내는 구조라 이 선을 넘지 않았다.</p>
+  <p><strong>미국 상황.</strong> 디지털 자산을 증권과 상품으로 분류하는 CLARITY Act가 2026-09-15 상원에서 49대 50으로 부결됐다. DePIN 토큰이 상품으로 분류될 길이 닫혔고, 미국 유저에게 토큰 보상형 기기를 팔 때의 불확실성은 그대로 남았다. 이 섹션은 법률 자문이 아니며 설계 확정 전 변호사 확인이 필요하다.</p>
+</section>
+
+<section id="s11">
+  <span class="num">11</span>
+  <h2>Wellbian 적용 시사점</h2>
+  <p>Wellbian은 기기가 이미 있으므로 GEODNET이 6개월 걸린 배송 단계를 건너뛰고, 한국 직판과 해외 위탁 유통을 동시에 시작할 수 있다. 아래는 팀 전략과 커뮤니티 전략으로 나눈 실행 항목이다. 방향을 정하기 전 토론용 초안이다.</p>
+  <h3>팀 전략</h3>
+  <ul class="check">
+    <li><span>역할 3개를 먼저 정한다. 창업자가 직접 쓰는 주 1회 현황 글, 주문·배송·이메일을 맡는 운영 1명, 커뮤니티 안에서 장차 리더로 키울 해외 유저 1명.</span></li>
+    <li><span>토큰 지급 법인과 기기 판매 법인을 분리한다. 보상은 유저 본인 지갑으로 직접 지급해 VASP 선을 넘지 않는다. 설계 확정 전 변호사 확인.</span></li>
+    <li><span>결제 채널을 미리 두 개 이상 확보한다. GEODNET은 PayPal·카드가 막혀 암호화폐만 받았고, 이게 유통사를 붙인 근본 이유였다.</span></li>
+    <li><span>해외 유통사는 Village Island(동아시아) → Crypship, HeliumDeploy(서구권) 순으로 컨택한다. 고객 결제 후 발주 구조를 기본으로 제안하고, 유통사가 고객 돈을 장기 보유하지 못하는 조건을 넣는다.</span></li>
+    <li><span>런칭 전에 완성된 사용 가이드와 기기 호환 목록을 준비한다. TokenRun은 가이드가 출시 3일 뒤에 나와 같은 질문이 수백 번 반복됐다.</span></li>
+  </ul>
+  <h3>커뮤니티 전략</h3>
+  <ul class="check">
+    <li><span>첫 규칙은 가격·ROI 논의 금지로 잡고 서버 개설 달에 공지한다. 유저들이 서로 단속할 때까지 반복한다.</span></li>
+    <li><span>주간 Q&amp;A 폼을 첫 달부터 운영한다. 텔레그램·디스코드·SNS 질문을 하나로 모으고, 논쟁이 과열될 때 "폼으로 넣어달라"로 끊는 도구로도 쓴다.</span></li>
+    <li><span>인센티브는 전부 조건을 붙인다. 설치 품질, 빈 지역, 장기 가동 같은 네트워크 기여 조건 없는 에어드랍은 하지 않는다. 토큰 보상형 SNS 이벤트는 봇 유입으로 실패한 전례가 있다.</span></li>
+    <li><span>채널은 general과 updates 두 개로 시작하고 필요할 때 늘린다. 제품별 전용 채널은 제품이 나오면 만든다.</span></li>
+    <li><span>유통사와 장기 기여자에게 역할 배지를 준다. 유통사 역할은 정품 인증이지 CS 의무가 아니며, 대신 유통사가 팀에 물어볼 수 있는 비공개 채널을 같이 준다.</span></li>
+    <li><span>커뮤니티 리더·모더레이터와 판매자를 분리한다. 어드민 권한을 가진 사람이 유통사를 차리면 공식 채널이 그 회사 홍보처가 되고, 파산하면 팀이 공범으로 보인다. GEODNET 최대 신뢰 위기가 여기서 나왔다.</span></li>
+    <li><span>위기 때 창업자가 한 번 길게 쓴다. 문제 확인 → 수정 예정일 → 패치 → 이전 건 처리 완료를 날짜와 함께 순서대로 공지한다. 밴 사유는 공개한다.</span></li>
+    <li><span>한국 커뮤니티는 직접 운영하고, 해외는 국가별 텔레그램을 현지 유저에게 맡긴다. GEODNET 첫 100대는 이탈리아·루마니아 텔레그램이 만들었다.</span></li>
+  </ul>
+</section>
+
+</main>
+</div>
+
+<footer>
+  <p><strong>출처와 방법.</strong> GEODNET 공식 디스코드 익스포트(2022-01-24 ~ 2026-09-18, 14개 채널). 유통사 목록은 GEODNET·Wingbits·Hivemapper 공식 유통사 페이지, 한국 상장은 업비트·빗썸 공지, 법인 구조는 Business Wire 보도자료, VASP 기준은 국내 법률사무소 칼럼, CLARITY Act는 CNBC 보도를 참고했다. 인용된 반응 수(+숫자)는 디스코드 이모지 반응 합계다.</p>
+  <p>작성 2026-09-18 · Wellbian 내부 공유용</p>
+</footer>
+</div>
+
+<script>
+(function(){
+  var months=[];for(var yr=2022;yr<=2026;yr++){for(var m=1;m<=12;m++){if(yr===2026&&m>9)break;months.push(yr+"-"+(m<10?"0":"")+m);}}
+  var S={
+    general:[237,777,385,495,1129,1474,1307,1141,1118,1140,1688,2445,2601,2071,1057,1480,1037,873,583,911,834,898,684,902,3810,3065,5218,4654,4601,3443,3187,1860,1999,3217,2649,2261,2407,1509,3919,3233,2682,2581,4007,2633,2648,1835,1641,2531,953,838,872,1044,829,1320,832,978,218],
+    technical:[0,0,0,0,0,1,1,4,18,18,78,55,205,42,61,14,30,24,29,34,9,25,20,43,249,265,538,534,546,543,485,495,473,388,521,660,848,237,578,1001,897,388,710,684,494,472,350,584,254,321,261,162,159,201,190,162,53],
+    geopulse:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,296,72,562,982,983,519,351,594,427,395,412,249,192,94,78,91,71,79,111,47,54,27,8],
+    tokenrun:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,7896,862,285,214,386,130,404,934,384,89],
+    etc:[55,379,174,186,140,154,16,42,12,70,113,15,54,55,61,18,3,0,2,6,10,21,29,45,37,29,31,28,26,34,39,35,35,45,32,45,45,56,45,113,659,167,310,221,117,80,87,69,70,72,65,46,72,92,79,94,42]
+  };
+  var order=["general","technical","geopulse","tokenrun","etc"];
+  var color={general:"var(--c-general)",technical:"var(--c-technical)",geopulse:"var(--c-geopulse)",tokenrun:"var(--c-tokenrun)",etc:"var(--c-etc)"};
+  var W=900,H=340,padL=52,padR=12,padT=14,padB=34;
+  var n=months.length,iw=W-padL-padR,ih=H-padT-padB,bw=iw/n;
+  var max=0;for(var i=0;i<n;i++){var t=0;order.forEach(function(k){t+=S[k][i];});if(t>max)max=t;}
+  var ymax=Math.ceil(max/2000)*2000;
+  function y(v){return padT+ih-(v/ymax)*ih;}
+  var s='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="월별 커뮤니티 메시지 수, 채널별 누적 막대">';
+  for(var g=0;g<=ymax;g+=2000){var yy=y(g);s+='<line x1="'+padL+'" x2="'+(W-padR)+'" y1="'+yy+'" y2="'+yy+'" stroke="var(--line)" stroke-width="1"/>';s+='<text x="'+(padL-8)+'" y="'+(yy+4)+'" text-anchor="end" font-size="11" font-family="IBM Plex Mono,monospace" fill="var(--muted)">'+g.toLocaleString()+'</text>';}
+  for(var i=0;i<n;i++){var acc=0;var x=padL+i*bw+bw*0.15;var w=bw*0.7;
+    order.forEach(function(k){var v=S[k][i];if(!v)return;var y1=y(acc+v),y0=y(acc);s+='<rect x="'+x.toFixed(1)+'" y="'+y1.toFixed(1)+'" width="'+w.toFixed(1)+'" height="'+(y0-y1).toFixed(1)+'" fill="'+color[k]+'"><title>'+months[i]+' '+k+': '+v.toLocaleString()+'</title></rect>';acc+=v;});
+    if(months[i].slice(5)==="01"){var xc=padL+i*bw;s+='<line x1="'+xc+'" x2="'+xc+'" y1="'+padT+'" y2="'+(padT+ih)+'" stroke="var(--line)" stroke-width="1"/>';s+='<text x="'+(xc+4)+'" y="'+(H-12)+'" font-size="11" font-family="IBM Plex Mono,monospace" fill="var(--muted)">'+months[i].slice(0,4)+'</text>';}
+  }
+  var pk=[{i:14,t:"NFT·배송 혼선"},{i:26,t:"펀딩 발표·ATH"},{i:38,t:"Easynav 파산"},{i:47,t:"TokenRun 런칭"}];
+  pk.forEach(function(p){var tot=0;order.forEach(function(k){tot+=S[k][p.i];});var xc=padL+p.i*bw+bw/2;var yt=y(tot)-6;s+='<text x="'+xc+'" y="'+yt+'" text-anchor="middle" font-size="11" font-family="IBM Plex Sans KR,sans-serif" fill="var(--ink)">'+p.t+'</text>';});
+  s+='</svg>';
+  document.getElementById("chart").innerHTML=s;
+})();
+</script>
+</body>
+</html>
