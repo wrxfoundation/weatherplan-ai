@@ -3706,3 +3706,16 @@ These were the lights on N Seoul Tower for XRP SEOUL 2026, where KWeather was a 
 ```
 - **부스트된 크립토 글에는 사칭 「고객 지원」 답글이 붙는다.** 답글 12개를 점검하고, 사칭 · 「DM 주세요」류는 숨기고 신고한다.
 - 집행 금액을 받으면 프로필 방문당 비용 · CPM 을 계산해 다음 부스트 판단에 쓴다.
+
+**부스트 타기팅 변경 (10/4, 서우 「타겟 찾음 완료」 — Ads Manager 화면)** — 캠페인 목표 도달(노출 · CPM · 자동 입찰) 그대로,
+광고 그룹 「xrpseoul」: 일 ₩140,000 · 총 ₩280,000(이미 약 ₩145,000 지출) · 10/3 ~ 10/5 06:03 PDT(= 10/5 22:03 KST) · 25세 이상 · 전 성별 ·
+미국 · 일본 · 한국 · 프랑스 · 독일 · 태국 · 관심사(금융 시장 · 개인 금융 · 기술 · 소프트웨어 · 전자 · 창업) ·
+팔로워 유사(XRPL 재단 · 커먼즈 · XRPL Labs · Wietse · Xaman · Mai_XRPLJapan · token2049 · 리플 공식 · 임원 계정 · 하이프 계정 등 28) ·
+키워드(blockchain · coin · xrp · ripple · robinhood · binance).
+- 비용(두 화면 시점이 같다고 볼 때): CPM 약 ₩330 · 프로필 방문 1회 약 ₩780.
+- 권고: ① 키워드 coin · binance · robinhood 빼기(트레이더 · 거래소 청중 — WLBN 은 coin 이 아니고, 우리가 찾는 건 XRPL 실사용 · DePIN 층) →
+  XRPL · DePIN · oracle · weather data 로. ② 팔로워 유사에서 playbook 하이프 분류 계정(RippleXity — D 하이프 · Stellar_Rippler — 허위 시의성 사례) 빼기.
+  ③ 리플 공식 · 임원 계정(Ripple · RippleLabs · RippleXDev · RippleSwell · bgarlinghouse · MonicaLongSF)은 타기팅이 비공개라 규칙 위반은 아니지만
+  「XRP × Wellbian」 광고를 리플 쪽 사람들 피드에 유료로 띄우는 셈 — 10/2 「이름 조심」 부탁 직후라 빼기 권장. 기록에 없는 계정(RipBullWinkle ·
+  RippleXrpie · RL_Tracker · allthemoney · 숨은 8개)은 서우가 가격 · 하이프 계정인지 확인. ④ 목표가 팔로워 · 프로필 방문이면 다음엔 도달 대신
+  팔로워 · 참여 목표 캠페인. ⑤ 판매 · 토큰 보상 글로 바꿔 이 나라들에 돌리려면 EU(MiCA) · 일본 · 미국 암호자산 광고 규정 먼저.
