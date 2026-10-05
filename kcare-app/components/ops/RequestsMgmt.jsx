@@ -17,7 +17,9 @@ const META_KEY = "kcare-ops-requests-meta-v1";
 const EXTRA_KEY = "kcare-ops-requests-extra-v1";
 const NO_REQUESTS = [];
 
-// 예외를 먼저 — 긴급 → 관리자 확인 → 접수 → 결제대기 → 확인 → 처리중 → 완료 → 종결
+// 정렬 — 기본은 최근 접수 순 (2026-10-05: 보호자가 방금 넣은 요청이 긴급 · 완료 건 밑에 묻혀 바로 안 보였다).
+// '처리 우선 순'은 예외를 먼저 — 긴급 → 관리자 확인 → 접수 → 결제대기 → 확인 → 처리중 → 완료 → 종결
+const SORTS = { recent: "최근 접수 순", priority: "처리 우선 순" };
 const STATUS_RANK = { needsAdmin: 0, requested: 1, awaitingPayment: 2, confirmed: 3, inProgress: 4, done: 5, rejected: 6, cancelled: 7 };
 const GROUPS = {
   received: { label: "접수", keys: ["requested", "confirmed", "needsAdmin"], tone: "navy" },
@@ -50,12 +52,15 @@ function normalize(r) {
 }
 
 // 보호자 결제 승인 상태 — 금액·진행상태에서 읽는다. 지어내지 않고 없는 값은 "요금 확정 전".
+// 어르신 한도는 어르신이 낸 요청에만 쓴다 — 보호자가 직접 낸 6만원 요청이 '한도 내 · 승인 불필요'로 보였다 (2026-10-05).
 function payState(r) {
   if (r.amount == null) return { label: "요금 확정 전", tone: "muted" };
   if (r.amount === 0) return { label: "승인 불필요 (무료)", tone: "muted" };
-  if (r.status === "awaitingPayment") return { label: "승인 대기", tone: "warn" };
+  if (r.status === "awaitingPayment") return { label: r.dir === "fromGuardian" ? "결제 대기" : "승인 대기", tone: "warn" };
   if (r.status === "inProgress" || r.status === "done") return { label: "승인 완료", tone: "ok" };
   if (r.status === "cancelled" || r.status === "rejected") return { label: "—", tone: "muted" };
+  if (r.dir === "fromGuardian") return { label: "보호자 신청 · 결제 전", tone: "muted" };
+  if (r.dir !== "fromElder") return { label: "보호자 승인 필요", tone: "info" };
   return r.amount > r.limit ? { label: "승인 필요 (한도 초과)", tone: "info" } : { label: "한도 내 · 승인 불필요", tone: "muted" };
 }
 
@@ -91,6 +96,7 @@ export default function RequestsMgmt() {
   const [q, setQ] = useState("");
   const [type, setType] = useState("전체");
   const [status, setStatus] = useState("전체");
+  const [sort, setSort] = useState(SORTS.recent);
   const [openId, setOpenId] = useState(null);
 
   // 저장값 복원은 마운트 뒤에 — 서버 프리렌더와 어긋나지 않게
@@ -136,8 +142,12 @@ export default function RequestsMgmt() {
       .filter((r) => type === "전체" || r.type === type)
       .filter((r) => status === "전체" || STATUS[r.status]?.label === status)
       .filter((r) => !kw || [r.elder, r.type, r.detail, r.by, r.assignee].join(" ").includes(kw))
-      .sort((x, y) => (x.urgency === "urgent" ? 0 : 1) - (y.urgency === "urgent" ? 0 : 1) || STATUS_RANK[x.status] - STATUS_RANK[y.status] || (y.receivedAt || 0) - (x.receivedAt || 0));
-  }, [all, group, type, status, q, meta]);
+      .sort((x, y) =>
+        sort === SORTS.priority
+          ? (x.urgency === "urgent" ? 0 : 1) - (y.urgency === "urgent" ? 0 : 1) || STATUS_RANK[x.status] - STATUS_RANK[y.status] || (y.receivedAt || 0) - (x.receivedAt || 0)
+          : (y.receivedAt || 0) - (x.receivedAt || 0)
+      );
+  }, [all, group, type, status, q, meta, sort]);
 
   const open = openId ? all.find((r) => r.id === openId) : null;
 
@@ -214,12 +224,13 @@ export default function RequestsMgmt() {
           <div className="min-w-[220px] flex-1"><Field id="req-q" label="검색" value={q} onChange={setQ} placeholder="고객 · 요청자 · 서비스 · 내용" /></div>
           <div className="w-[220px]"><Field id="req-type" label="서비스 종류" value={type} onChange={setType} options={types} /></div>
           <div className="w-[160px]"><Field id="req-status" label="진행상태" value={status} onChange={setStatus} options={["전체", ...Object.values(STATUS).map((s) => s.label)]} /></div>
+          <div className="w-[160px]"><Field id="req-sort" label="정렬" value={sort} onChange={setSort} options={Object.values(SORTS)} /></div>
           <div className="pb-2 text-[12px] text-muted">총 <b className="font-num text-navy">{rows.length}</b>건</div>
         </div>
       </Panel>
 
       <Panel>
-        <PanelHead title="요청 명부" sub="긴급 · 관리자 확인 · 접수 순으로 먼저 보입니다. 행을 누르면 상세가 열립니다" right={<span>가격은 서비스 메뉴(lib/requests) 값 그대로</span>} />
+        <PanelHead title="요청 명부" sub={`${sort === SORTS.priority ? "긴급 · 관리자 확인 · 접수 순으로" : "최근에 접수된 요청부터"} 보입니다. 행을 누르면 상세가 열립니다`} right={<span>가격은 서비스 메뉴(lib/requests) 값 그대로</span>} />
         <div className="mt-3">
           <Table cols={cols} rows={rows} onRow={(r) => setOpenId(r.id)} selected={openId} empty="조건에 맞는 요청이 없습니다." />
         </div>
