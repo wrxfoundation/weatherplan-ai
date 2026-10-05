@@ -2195,3 +2195,20 @@ Thanks for connecting, Christina. See you at XRP SEOUL tomorrow!
 ```
 
 **발송 여부는 Claude 가 관리하지 않는다** — 서우 통보 시 갱신.
+
+## 리플 커뮤니티 담당 — Dan Fisher (2026-10-05, 서우 텔레그램 · X 프로필 캡처 4장 + 「댄에게 내 소개」)
+
+- **공개 직함**: Community Relations Manager, Ripple(토론토). X 인증 계정 · 우리 @wellbianlabs 와 XRP SEOUL 2026 계정이 팔로우 중.
+- **본인 확인**: 텔레그램 사용자명이 X 바이오에 적힌 텔레그램 링크와 같다 — 서우가 X 바이오의 링크로 들어간 계정이라 본인으로 본다.
+  리플 이름을 단 텔레그램 사칭이 흔하므로, 앞으로도 X 바이오 링크와 다른 계정의 DM 은 받지 않는다. 개인 계정 · 연락처는 저장소에 적지 않는다.
+- **선**: 리플 협력 · 미팅 내용(10/2) 언급 0, 요청은 「커뮤니티와 계속 연결」까지. Swell(10월 뉴욕) 참석은 미확정이라 꺼내지 않는다.
+- **인사 초안(텔레그램, 「Hi dan」 다음 메시지)**:
+```
+I'm Logan (Seowoo Park), Head of Partnerships at wellbian. Great to connect here after following you on X.
+
+Quick intro: wellbian is a weather data network on the XRP Ledger, built with KWeather, a Korean weather company with 30 years of observation and 4,000+ enterprise clients. It starts with a certified indoor air sensor at home, and every reading is fingerprinted to a public ledger so anyone can check it. Device licenses and RLUSD checkout run on XRPL.
+
+We were at XRP SEOUL 2026 last week with KWeather's keynote and booth, and if you saw N Seoul Tower lit up for XRP on the night of the 3rd, that was us.
+
+Would love to stay in touch and see where we can support the XRP community. Thanks!
+```
