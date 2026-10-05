@@ -162,7 +162,7 @@ export function medProgress(taken = {}, plan = MED_PLAN) {
 export const MED_SLOTS = ["아침", "점심", "저녁", "자기 전"];
 export const DEFAULT_HEALTH = {
   conditions: ["심부전", "고혈압", "당뇨", "고지혈증"],
-  allergies: ["등록된 알레르기 없음"],
+  allergies: [], // 없음 — 화면은 '등록 없음'으로 쓴다 (문장을 값으로 두면 편집기에서 알레르기로 저장된다)
   meds: MED_PLAN,
 };
 

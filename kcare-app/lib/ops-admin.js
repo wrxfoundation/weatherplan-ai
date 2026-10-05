@@ -13,6 +13,9 @@ const SHIFT = Math.floor((Date.now() - BASE_NOW) / 60000) * 60000;
 export const NOW = BASE_NOW + SHIFT;
 export const T = (s) => Date.parse(`${s.replace(" ", "T")}:00+09:00`) + SHIFT;
 export const TODAY = new Date(NOW + KST).toISOString().slice(0, 10);
+// 날짜만 적은 값(다음 확인일 · 약속 기한 · 희망일)도 같은 날수만큼 옮긴다 — 시각만 옮기면 모두 '지남'이 된다
+const DAY_SHIFT = Math.round((Date.parse(TODAY) - Date.parse("2026-09-22")) / 86400000);
+export const D = (ymd) => new Date(Date.parse(ymd) + DAY_SHIFT * 86400000).toISOString().slice(0, 10);
 export const ago = (min) => NOW - min * 60000;
 
 const p2 = (n) => String(n).padStart(2, "0");
@@ -63,35 +66,35 @@ export const OPS_REQUEST_EXTRAS = [
   {
     id: "rq-d1", elder: "김순자", dir: "fromGuardian", type: "협력 병원 예약 대행",
     detail: "10월 초 강남세브란스 내과 재진 예약을 잡아 주세요. 오전 시간대 선호.",
-    amount: 0, preferredDate: "2026-10-02", urgency: "normal", assignee: "박지현", photos: [], proof: null,
+    amount: 0, preferredDate: D("2026-10-02"), urgency: "normal", assignee: "박지현", photos: [], proof: null,
     status: "confirmed",
     history: hist([["2026-09-21 20:12", "requested"], ["2026-09-22 09:05", "confirmed", "병원 예약 슬롯 확인 중"]]),
   },
   {
     id: "rq-d2", elder: "이영호", dir: "fromElder", type: "생활 대행",
     detail: "잠실 새마을시장 장보기 · 쌀 10kg · 김치 담을 배추 2포기.",
-    amount: 30000, preferredDate: "2026-09-24", urgency: "normal", assignee: "이수민", photos: [], proof: null,
+    amount: 30000, preferredDate: D("2026-09-24"), urgency: "normal", assignee: "이수민", photos: [], proof: null,
     status: "inProgress",
     history: hist([["2026-09-20 10:40", "requested", "말로 요청"], ["2026-09-20 11:02", "confirmed"], ["2026-09-21 09:00", "inProgress", "방문 일정에 반영"]]),
   },
   {
     id: "rq-d3", elder: "박말순", dir: "fromGuardian", type: "병원 동행 프리미엄 (2인 1조)",
     detail: "9/25 강동성심병원 정형외과 외래 · 자택 픽업 필요 · 휠체어 사용.",
-    amount: 90000, preferredDate: "2026-09-25", urgency: "normal", assignee: "정민호", photos: [], proof: null,
+    amount: 90000, preferredDate: D("2026-09-25"), urgency: "normal", assignee: "정민호", photos: [], proof: null,
     status: "awaitingPayment",
     history: hist([["2026-09-19 18:30", "requested"], ["2026-09-20 09:10", "confirmed", "정민호 · 서다인(차량) 2인 편성"], ["2026-09-20 09:12", "awaitingPayment", "기본 2시간 90,000원 · 보호자 승인 요청"]]),
   },
   {
     id: "rq-d4", elder: "최정자", dir: "fromConcierge", type: "약국 심부름",
     detail: "혈압약 처방전 재발급분 조제 · 자택 전달. 오늘 중 필요.",
-    amount: null, preferredDate: "2026-09-23", urgency: "urgent", assignee: "서다인", photos: [], proof: null,
+    amount: null, preferredDate: D("2026-09-23"), urgency: "urgent", assignee: "서다인", photos: [], proof: null,
     status: "requested",
     history: hist([["2026-09-22 13:48", "requested", "안심방문 중 잔여 약 2일분 확인"]]),
   },
   {
     id: "rq-d5", elder: "한복자", dir: "fromGuardian", type: "자택 안심케어 추가 방문",
     detail: "명절 전 집 정리 상태 · 냉장고 식품 확인 부탁.",
-    amount: 60000, preferredDate: "2026-09-18", urgency: "normal", assignee: "윤세라", photos: ["visit-2026-09-18-kitchen.jpg"], proof: "visit-2026-09-18-report.pdf",
+    amount: 60000, preferredDate: D("2026-09-18"), urgency: "normal", assignee: "윤세라", photos: ["visit-2026-09-18-kitchen.jpg"], proof: "visit-2026-09-18-report.pdf",
     status: "done",
     history: hist([["2026-09-15 21:00", "requested"], ["2026-09-16 09:20", "confirmed"], ["2026-09-16 09:21", "awaitingPayment", "60,000원 승인 요청"], ["2026-09-16 12:40", "inProgress", "보호자 승인 완료"], ["2026-09-18 11:30", "done", "냉장고 유통기한 지난 식품 3건 폐기 · 사진 첨부"]]),
   },
@@ -105,7 +108,7 @@ export const OPS_REQUEST_EXTRAS = [
   {
     id: "rq-d7", elder: "최정자", dir: "fromGuardian", type: "생활 대행",
     detail: "매주 금요일 오전 산책 동행 · 말벗 (반복).",
-    amount: 30000, preferredDate: "2026-09-26", urgency: "normal", assignee: "서다인", photos: [], proof: null,
+    amount: 30000, preferredDate: D("2026-09-26"), urgency: "normal", assignee: "서다인", photos: [], proof: null,
     status: "confirmed",
     history: hist([["2026-09-05 22:10", "requested", "도쿄에서 앱 접수"], ["2026-09-06 09:00", "confirmed", "매주 반복 요청"]]),
   },
@@ -140,11 +143,11 @@ export const TOGETHER_CLIENTS = [
     mood: { observed: "대화 시간 30분 유지 · 웃음 잦음 · 먼저 화초 이야기를 꺼내심", changes: "지난주보다 외출 의욕이 낮아짐 (\"무릎이 시원치 않다\")", needsCheck: "무릎 통증 정도 · 보행 보조 필요 여부 (다음 방문에서 확인)" },
     vsPrev: "대화량 비슷 · 외출 의욕 감소 · 식사량 유지",
     promises: [
-      { text: "10/2 병원 재진 전날 전화로 준비물 확인", due: "2026-10-01", done: false },
-      { text: "다음 방문 때 베란다 화분 분갈이 함께", due: "2026-09-26", done: false },
-      { text: "옛 가요 CD 챙겨 오기", due: "2026-09-19", done: true },
+      { text: "10/2 병원 재진 전날 전화로 준비물 확인", due: D("2026-10-01"), done: false },
+      { text: "다음 방문 때 베란다 화분 분갈이 함께", due: D("2026-09-26"), done: false },
+      { text: "옛 가요 CD 챙겨 오기", due: D("2026-09-19"), done: true },
     ],
-    nextCheck: "2026-09-24",
+    nextCheck: D("2026-09-24"),
     shared: "9/21 대화 요약 · 무릎 불편 언급 · 다음 방문 계획 (김민수 열람 완료)",
     privateMemo: "차녀 이야기가 나오면 말을 돌리심 — 먼저 묻지 않기. 보호자 미공유.",
     history: [
@@ -160,8 +163,8 @@ export const TOGETHER_CLIENTS = [
     interests: ["바둑", "야구 중계", "시장 장보기"],
     mood: { observed: "말수 보통 · 바둑 이야기에 활기", changes: "특이 변화 없음", needsCheck: "" },
     vsPrev: "변화 없음",
-    promises: [{ text: "9/24 장보기 때 배추 고르는 것 함께", due: "2026-09-24", done: false }],
-    nextCheck: "2026-09-24",
+    promises: [{ text: "다음 장보기 때 배추 고르는 것 함께", due: D("2026-09-24"), done: false }],
+    nextCheck: D("2026-09-24"),
     shared: "9/20 통화 요약 (이성호 열람 완료)",
     privateMemo: "",
     history: [
@@ -175,8 +178,8 @@ export const TOGETHER_CLIENTS = [
     interests: ["텔레비전 연속극", "뜨개질", "딸 소식"],
     mood: { observed: "표정 차분 · 대화 중 딸 이야기에 눈물 비침", changes: "지난 2주 방문 때보다 말수 감소", needsCheck: "혼자 있는 시간의 식사 · 수면 — 보호자와 통화 필요" },
     vsPrev: "말수 감소 · 뜨개질은 계속 하심",
-    promises: [{ text: "동행 전 휠체어 대여 확인", due: "2026-09-24", done: false }, { text: "뜨개실 색상 사진 보호자에게 전달", due: "2026-09-20", done: true }],
-    nextCheck: "2026-09-23",
+    promises: [{ text: "동행 전 휠체어 대여 확인", due: D("2026-09-24"), done: false }, { text: "뜨개실 색상 사진 보호자에게 전달", due: D("2026-09-20"), done: true }],
+    nextCheck: D("2026-09-23"),
     shared: "9/19 방문 요약 · 말수 감소 관찰 (박은지 미열람)",
     privateMemo: "딸(박은지) 통화 후 기분 변동 큼 — 통화 직후 방문은 피하기. 보호자 미공유.",
     history: [
@@ -190,8 +193,8 @@ export const TOGETHER_CLIENTS = [
     interests: ["요리", "손주", "성당 모임"],
     mood: { observed: "밝고 활기 · 명절 준비로 분주", changes: "특이 변화 없음", needsCheck: "" },
     vsPrev: "변화 없음",
-    promises: [{ text: "10/3 함께가요 나들이 일정 확정 전화", due: "2026-09-26", done: false }],
-    nextCheck: "2026-09-26",
+    promises: [{ text: "함께가요 나들이 일정 확정 전화", due: D("2026-09-26"), done: false }],
+    nextCheck: D("2026-09-26"),
     shared: "9/18 추가 방문 보고서 (한준호 열람 완료)",
     privateMemo: "",
     history: [
@@ -205,8 +208,8 @@ export const TOGETHER_CLIENTS = [
     interests: ["등산", "신문 읽기"],
     mood: { observed: "말수 적음 · 질문에는 또박또박 답하심", changes: "지난달보다 전화 응답 느려짐", needsCheck: "보호자 연락처 미확정 — 비상연락 체계 확인" },
     vsPrev: "전화 응답 지연 · 외출은 유지",
-    promises: [{ text: "가벼운 산책 코스 추천 자료 전달", due: "2026-09-22", done: false }],
-    nextCheck: "2026-09-22",
+    promises: [{ text: "가벼운 산책 코스 추천 자료 전달", due: D("2026-09-22"), done: false }],
+    nextCheck: D("2026-09-22"),
     shared: "보호자 미등록 — 공유 대상 없음",
     privateMemo: "가족 이야기를 꺼리심. 보호자 미공유.",
     history: [{ at: T("2026-09-15 09:30"), kind: "동행", text: "KMI 검진 동행 중 대화 20분", by: "한서연" }],
@@ -217,8 +220,8 @@ export const TOGETHER_CLIENTS = [
     interests: ["산책", "커피", "일본 드라마"],
     mood: { observed: "밝음 · 금요일 산책을 기다리심", changes: "특이 변화 없음", needsCheck: "" },
     vsPrev: "변화 없음",
-    promises: [{ text: "9/26 산책 후 카페 들르기", due: "2026-09-26", done: false }],
-    nextCheck: "2026-09-26",
+    promises: [{ text: "다음 산책 후 카페 들르기", due: D("2026-09-26"), done: false }],
+    nextCheck: D("2026-09-26"),
     shared: "9/22 방문 요약 (최선영 미열람 · 도쿄 시차)",
     privateMemo: "",
     history: [
@@ -233,8 +236,8 @@ export const TOGETHER_CLIENTS = [
     interests: ["라디오", "화투", "옛 사진"],
     mood: { observed: "9/10 이후 전화 미응답 3회 · 마지막 통화는 평온", changes: "연락 빈도 급감", needsCheck: "장기 무응답 — 방문 확인 필요 (보호자 미등록)" },
     vsPrev: "확인 불가 (무응답)",
-    promises: [{ text: "옛 사진 앨범 함께 보기", due: "2026-09-17", done: false }],
-    nextCheck: "2026-09-22",
+    promises: [{ text: "옛 사진 앨범 함께 보기", due: D("2026-09-17"), done: false }],
+    nextCheck: D("2026-09-22"),
     shared: "보호자 미등록 — 공유 대상 없음",
     privateMemo: "",
     history: [{ at: T("2026-09-10 11:00"), kind: "말벗", text: "전화 말벗 10분", by: "오하늘" }],

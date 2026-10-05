@@ -819,9 +819,9 @@ function DispatchConsole() {
     all: null,
     urgent: ["SOS", "대응", "환경"],
     dispatchG: ["배차", "동행", "예약", "브리핑"],
-    care: ["복약", "리포트", "메시지", "어르신", "체크인", "일정"],
+    care: ["복약", "리포트", "메시지", "어르신", "체크인", "일정", "건강"],
     talk: ["관제 연락", "관제", "음성", "부탁", "메시지", "CS", "감사"],
-    commerce: ["구매대행", "장바구니", "스토어", "옵션", "정산", "보험", "제안", "설정"],
+    commerce: ["구매대행", "구매", "장바구니", "스토어", "옵션", "정산", "보험", "제안", "설정", "결제"],
   };
   const tickerGroup = TICKER_GROUPS[tickerFilter];
   const tickerItems = state.ticker.filter((e) => !tickerGroup || tickerGroup.includes(e.kind));

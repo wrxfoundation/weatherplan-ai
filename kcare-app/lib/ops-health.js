@@ -9,7 +9,7 @@ export const CUSTOMERS = {
     address: "서울 강남구 대치동 OO아파트 101동 1203호", phone: "010-0120-1001",
     concierge: { main: "박지현", sub: "서다인" },
     // 질환 · 복용약 · 알레르기는 lib/meds.js 한 벌에서 온다 — 어르신 앱 복약 계획과 같은 값 (2026-10-02 QA)
-    conditions: DEFAULT_HEALTH.conditions, meds: medSummary(DEFAULT_HEALTH.meds), allergies: DEFAULT_HEALTH.allergies,
+    conditions: DEFAULT_HEALTH.conditions, meds: medSummary(DEFAULT_HEALTH.meds), allergies: DEFAULT_HEALTH.allergies.length ? DEFAULT_HEALTH.allergies : ["등록된 알레르기 없음"],
     guardians: [
       { name: "김민수", rel: "아들", role: "주", place: "서울", tz: 0, phone: "010-0751-1234", note: "어르신 직접 결제 하루 5만 한도" },
       { name: "김지영", rel: "차녀", role: "부", place: "LA", tz: -16, phone: "해외 연락처" },

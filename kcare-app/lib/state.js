@@ -216,10 +216,14 @@ function reducer(state, action) {
         reports: arr(p.reports, state.reports),
         requests: arr(p.requests, state.requests),
         productImages: obj(p.productImages, state.productImages),
-        // 옛 씨앗 방문(2026-08-22 고정)이 저장돼 있으면 날짜만 오늘 기준 씨앗으로 바꾼다 (2026-10-02 QA)
+        // 옛 씨앗 방문(2026-08-22 고정)이나, 아무도 손대지 않은 채(진행 기록 1줄 · 검토 전) 날짜가 지난 방문은
+        // 날짜만 오늘 기준 씨앗(사흘 뒤 14:00)으로 옮긴다 — 저장된 날짜가 그대로 과거가 되지 않게 (2026-10-02 QA · 코드 리뷰)
         visitPlan: (() => {
           const v = { ...state.visitPlan, ...(p.visitPlan || {}) };
-          return v.id === "vs-2026-08-22" ? { ...v, id: SEED_VISIT.id, at: SEED_VISIT.at } : v;
+          const today = new Date(Date.now() + 9 * 3600000).toISOString().slice(0, 10);
+          const untouched = (v.trail || []).length <= 1 && ["draft", "review"].includes(v.status);
+          const stale = v.id === "vs-2026-08-22" || (untouched && String(v.at || "").slice(0, 10) < today);
+          return stale ? { ...v, id: SEED_VISIT.id, at: SEED_VISIT.at } : v;
         })(),
         voices: arr(p.voices, state.voices),
         reviews: arr(p.reviews, state.reviews),
@@ -460,11 +464,12 @@ function reducer(state, action) {
             id: `rq-${key}`,
             dir: "fromGuardian",
             type: "물품 전달해 주세요",
+            // 담당은 관제가 정한다 (2026-10-02 QA — 박지현으로 미리 박지 않는다)
             detail: `보호자 주문: ${po.items.map((i) => i.name).join(", ")} — 다음 배송일에 전달해 주세요.`,
             amount: po.total,
             preferredDate: null,
             urgency: "normal",
-            assignee: "박지현",
+            assignee: "",
             photos: [],
             status: "inProgress",
             history: [
@@ -952,13 +957,13 @@ export function elderSpentToday(state, now = Date.now()) {
 }
 
 // 누가 어떤 일정을 보나 — 관제 승인 전 · 반려된 일정이 확정된 것처럼 보이면 안 된다.
-// 보호자: 전부 (캘린더가 '승인 대기 · 반려' 칩을 단다). 어르신: 확정된 것 + 본인이 남긴 승인 대기 건
-// ('관제 확인 중'으로 표시). 그 밖(컨시어지 · 집계): 확정된 것만.
+// 보호자: 전부 (캘린더가 '승인 대기 · 반려' 칩을 단다). 어르신: 확정된 것 + 본인이 남긴 승인 대기 · 반려 건
+// ('관제 확인 중' · '관제에서 다시 연락드립니다'로 표시 — 말없이 사라지지 않게). 그 밖(컨시어지 · 집계): 확정된 것만.
 export function eventsFor(events, who) {
   return (events || []).filter((e) => {
     if (!e.approval || e.approval === "approved") return true;
     if (who === "guardian") return true;
-    if (who === "elder") return e.approval === "pending" && e.by === "elder";
+    if (who === "elder") return e.by === "elder" && (e.approval === "pending" || e.approval === "rejected");
     return false;
   });
 }

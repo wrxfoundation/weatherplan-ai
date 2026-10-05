@@ -290,7 +290,7 @@ function ElderHome() {
     setTabRaw(k);
     scrollRef.current?.scrollTo({ top: 0 });
     // 오늘 탭을 열면 "새 일정" 점이 꺼진다 — 그때까지의 일정 수를 기억한다 (시트 전체 9번)
-    if (k === "today") dispatch({ type: "elderPatch", patch: { todaySeen: state.events.length } });
+    if (k === "today") dispatch({ type: "elderPatch", patch: { todaySeen: eventsFor(state.events, "elder").length } });
   };
   const [helpPop, setHelpPop] = useState(false); // 도와줘요 안내 팝업 (시트 전체 6번)
   const [famOpen, setFamOpen] = useState(null); // 가족 탭 — 펼친 가족 (시트 가족 2번)
@@ -346,7 +346,7 @@ function ElderHome() {
   const msgPlayed = state.elder.msgPlayed || {};
   const todaySeen = state.elder.todaySeen || 0;
   // 홈 '오늘' 타일의 점 — 마지막으로 오늘 탭을 본 뒤 일정이 늘었으면 켜진다 (시트 전체 9번)
-  const newSchedule = state.events.length > todaySeen;
+  const newSchedule = eventsFor(state.events, "elder").length > todaySeen; // 어르신에게 보이는 일정만 센다
 
   // ── 해주세요: 결제권한(REQ-07)을 어르신 말로 옮긴다 ──
   // 결제 모드는 온보딩에서 정해진 값을 그대로 따른다. 여기서 바꾸지 않는다.
@@ -439,7 +439,9 @@ function ElderHome() {
   const medPlanKey = medPlan.map((d) => `${d.slot}@${d.time}`).join("|"); // 알람 시각이 바뀌면 다시 본다
   const med = medProgress(medSlots, medPlan);
   // 연속 성공일 — 오늘까지 다 드셨으면 어제까지의 연속에 하루를 더한다
-  const medStreak = MED_STREAK.days + (med.done === med.total ? 1 : 0);
+  // 등록된 약이 없으면(편집기에서 모두 뺀 경우) '다 드셨습니다'도 연속 하루도 아니다 (2026-10-02 코드 리뷰)
+  const medAllDone = med.total > 0 && med.done === med.total;
+  const medStreak = MED_STREAK.days + (medAllDone ? 1 : 0);
   // 아직 안 드신 것 중 첫 번째 = 지금 드실 약. 그 다음 것은 한 줄로만 예고한다.
   const medPending = medPlan.filter((d) => !medSlots[d.slot]);
   const medNext = medPending[0] || null;
@@ -951,6 +953,7 @@ function ElderHome() {
                         </span>{" "}
                         {next.title.replace(/\s*\([^)]*\)\s*$/, "").replace(/^K-CARE\s+/, "")}
                         {next.approval === "pending" && <span className="text-muted"> · 확인 중</span>}
+                        {next.approval === "rejected" && <span className="text-muted"> · 다시 연락드림</span>}
                       </span>
                       <span aria-hidden className="-rotate-90 shrink-0" style={{ color: "#8A5D12" }}>
                         <Icon name="chev" size={20} strokeWidth={2} />
@@ -1229,7 +1232,7 @@ function ElderHome() {
                         {spokenDay(e.at)} {spokenTime(e.at)}
                       </div>
                       <div className="mt-[3px] text-[18px] leading-[1.45] text-muted">
-                        {e.title} · {e.approval === "pending" ? "관제 확인 중" : EVENT_KINDS[e.kind]?.label || "일정"}
+                        {e.title} · {e.approval === "pending" ? "관제 확인 중" : e.approval === "rejected" ? "관제에서 다시 연락드립니다" : EVENT_KINDS[e.kind]?.label || "일정"}
                       </div>
                     </div>
                   ))}
@@ -1306,6 +1309,9 @@ function ElderHome() {
                             {e.approval === "pending" && (
                               <div className="mt-0.5 text-[18px] leading-[1.45] text-muted">관제에서 확인하고 있습니다</div>
                             )}
+                            {e.approval === "rejected" && (
+                              <div className="mt-0.5 text-[18px] leading-[1.45] text-muted">이대로는 어렵습니다 — 관제에서 다시 연락드립니다</div>
+                            )}
                             {e.note && (
                               <div className="mt-0.5 text-[18px] leading-[1.45] text-muted">{e.note}</div>
                             )}
@@ -1364,6 +1370,9 @@ function ElderHome() {
                 </div>
                 {next.approval === "pending" && (
                   <p className="mt-2 text-[19px] leading-[1.6] text-white/[.86]">관제에서 확인하고 있습니다. 정해지면 선생님이 알려드립니다.</p>
+                )}
+                {next.approval === "rejected" && (
+                  <p className="mt-2 text-[19px] leading-[1.6] text-white/[.86]">이대로는 어렵습니다. 관제에서 다시 연락드립니다.</p>
                 )}
                 {next.note && (
                   <p className="mt-2 text-[19px] leading-[1.6] text-white/[.86]">{next.note}</p>
@@ -1550,6 +1559,10 @@ function ElderHome() {
                     </div>
                   )}
                 </>
+              ) : med.total === 0 ? (
+                <p className="mt-3 rounded-[16px] px-4 py-3.5 text-center text-[20px] font-bold leading-[1.45] text-muted" style={SUB_CARD}>
+                  아직 등록된 약이 없습니다. 선생님이 방문 때 등록해 드립니다.
+                </p>
               ) : (
                 <p
                   className="mt-3 rounded-[16px] px-4 py-3.5 text-center text-[20px] font-bold leading-[1.45]"
@@ -1570,7 +1583,7 @@ function ElderHome() {
                   {medPlan[0]?.elderLabel || "드시는 약"}, 요즘 참 꾸준히 드시고 계세요
                 </p>
                 <div className="mt-2.5 flex gap-1">
-                  {[...MED_STREAK.week, { label: "오늘", done: med.done === med.total, today: true }].map((d) => (
+                  {[...MED_STREAK.week, { label: "오늘", done: medAllDone, today: true }].map((d) => (
                     <div key={d.label} className="flex flex-1 flex-col items-center gap-1">
                       <span className={`text-[15px] font-bold ${d.today ? "text-navy" : "text-muted"}`}>{d.label}</span>
                       <span
@@ -2572,7 +2585,7 @@ function ElderEventSheet({ onClose, onCreate }) {
         <div className="mx-auto mb-4 h-[4px] w-[38px] rounded-full bg-navy/15" />
         <div className="text-[26px] font-black text-navy">일정 남기기</div>
         <p className="mt-1 text-[19px] leading-[1.5] text-muted">
-          가족에게 함께 보입니다. 병원 · 부탁할 일은 관제가 확인한 뒤 선생님 일정에 올라갑니다.
+          가족에게 함께 보입니다. 병원 · 부탁할 일은 관제가 확인한 뒤 확정됩니다.
         </p>
 
         <div className="mt-5 text-[19px] font-bold text-navy">무슨 일인가요?</div>

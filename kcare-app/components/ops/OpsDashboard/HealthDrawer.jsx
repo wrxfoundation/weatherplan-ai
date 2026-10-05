@@ -2,8 +2,9 @@
 // 최근 1시간·오늘·7일·30일 변화 그래프를 인라인 SVG 로 그린다 (외부 라이브러리 없음).
 import { useState } from "react";
 import { Avatar, Btn, Drawer, FeedPill, KV, Note, Pill, SevPill, Stamp, Tabs, TONE } from "../ui";
-import { getHealth, getSeries, liveCustomer, RANGES } from "../../../lib/ops-health";
+import { getSeries, liveCustomer, liveHealth, RANGES } from "../../../lib/ops-health";
 import { useAppState } from "../../../lib/state";
+import { useAuth } from "../../../lib/auth";
 import { fmtTime, useNow } from "../../../lib/ops-time";
 
 const FIELDS = [
@@ -79,12 +80,14 @@ export default function HealthDrawer({ name, row, open, onClose, onStartSos }) {
   const now = useNow(1000);
   const appState = useAppState()?.state;
   const onboarding = appState?.onboarding;
+  const live = !!useAuth().user?.household;
   if (!open || !name) return null;
   const c = liveCustomer(name, onboarding, appState?.health);
-  const h = getHealth(name);
+  // 테스트 가구는 워치 · 센서가 없다 — 예시 심박 · 그래프 대신 '수신 안 함' (SOS 센터와 같은 출처, 2026-10-02 코드 리뷰)
+  const h = liveHealth(name, onboarding, live);
   const series = getSeries(name, range);
   const [, mLabel, unit] = METRICS.find((m) => m[0] === metric) || METRICS[0];
-  const stampOf = (f) => (now ? fmtTime(now - (f?.agoSec ?? 0) * 1000) : "—");
+  const stampOf = (f) => (now && f?.agoSec != null ? fmtTime(now - f.agoSec * 1000) : "—");
   return (
     <Drawer
       open={open}
@@ -158,6 +161,9 @@ export default function HealthDrawer({ name, row, open, onClose, onStartSos }) {
           </div>
         </div>
         <Tabs className="mt-2" value={range} onChange={setRange} tabs={RANGES.map(([k, label]) => [k, label])} />
+        {h.noDevice ? (
+          <div className="mt-3"><Note>워치 · 센서를 연결하지 않은 가구라(베타) 변화 그래프가 없습니다.</Note></div>
+        ) : (
         <div className="card-glass mt-3 rounded-xl p-3">
           <div className="flex items-baseline justify-between text-[12px] text-muted">
             <span>{mLabel} · {RANGES.find((r) => r[0] === range)?.[3]} 간격</span>
@@ -165,6 +171,7 @@ export default function HealthDrawer({ name, row, open, onClose, onStartSos }) {
           </div>
           <TrendChart data={series[metric]} lines={thresholdsFor(metric, c.personal)} unit={unit} xStart={X_LABELS[range][0]} xEnd={X_LABELS[range][1]} />
         </div>
+        )}
       </section>
 
       <section className="mt-5">

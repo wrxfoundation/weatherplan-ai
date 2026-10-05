@@ -245,19 +245,12 @@ export const TEACHER = { name: "박지현", role: "담당 컨시어지" };
 // text 는 음성인식(STT) 결과가 아니라 '무슨 용건이었는지' 한 줄 제목이다.
 // 목록에서 어느 것을 다시 들을지 고르는 데만 쓴다 — 내용은 듣기로 듣는다.
 // STT 를 붙일지는 미정이라 받아쓴 것처럼 길게 쓰지 않는다 (2026-08-28).
-// 씨앗 메시지의 시각 — '몇 분 전'을 지금 시각에서 빼면 새로고침할 때마다 시각이 바뀌고(11:04 → 12:23),
-// 어르신 · 컨시어지 화면이 몇 분씩 어긋난다 (2026-10-02 QA). 정오를 기준으로 그날의 고정 시각을 정하고,
-// 그 시각이 아직 안 왔으면 하루 앞 같은 시각으로 — 미래 시각은 보이지 않는다.
-const SEED_REF_MIN = 12 * 60;
+// 씨앗 메시지의 시각 — '몇 분 전'을 지금 시각에서 바로 빼면 새로고침할 때마다 시각이 바뀌고(11:04 → 12:23),
+// 어르신 · 컨시어지 화면이 몇 분씩 어긋난다 (2026-10-02 QA). 정시(시 단위로 내림)에서 빼서 한 시간 동안은 같은 시각을
+// 보이게 한다. 정오 기준으로 하던 것은 오전에 순서가 뒤집혔다 (85분 전 것이 1,400분 전 것보다 앞서 보임 — 코드 리뷰).
 export function seedAt(minsAgo, now = Date.now()) {
-  const KST = 9 * 3600000;
-  const DAY = 86400000;
-  const days = Math.floor(minsAgo / 1440);
-  const clock = SEED_REF_MIN - (minsAgo % 1440);
-  const midnight = Math.floor((now + KST) / DAY) * DAY - KST;
-  let at = midnight + clock * 60000 - days * DAY;
-  while (at > now) at -= DAY;
-  return at;
+  const hour = Math.floor(now / 3600000) * 3600000;
+  return hour - minsAgo * 60000;
 }
 
 export const TEACHER_INBOX = [
@@ -291,11 +284,11 @@ export const TEACHER_INBOX = [
     durationSec: 51,
     text: "혈압 잘 받았습니다 · 저녁 약 잊지 마세요",
   },
-  // 곧 지워지는 것 — 24시간 원칙이 눈에 보이게 하나 남겨 둔다 (23시간 20분 전)
+  // 곧 지워지는 것 — 24시간 원칙이 눈에 보이게 하나 남겨 둔다 (23시간 전 — 시각을 정시에서 세므로 한 시간 안에 24시간을 넘지 않게)
   {
     id: "t4",
     dir: "in",
-    minsAgo: 1400,
+    minsAgo: 1380,
     durationSec: 27,
     text: "장 봐 온 것 냉장고에 넣어 뒀습니다",
   },

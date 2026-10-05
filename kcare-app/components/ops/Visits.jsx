@@ -155,7 +155,17 @@ export default function Visits({ openProfile }) {
           </div>
         </Panel>
 
-        {cur ? <VisitDetail visit={cur} onChange={(p) => patch(cur.id, p)} openProfile={openProfile} /> : <Panel><Empty>방문을 선택하면 상세가 여기 표시됩니다.</Empty></Panel>}
+        {cur ? (
+          <VisitDetail
+            visit={cur}
+            onChange={(p) => patch(cur.id, p)}
+            openProfile={openProfile}
+            // 동행 기록은 방문 21항목과 따로 보낸다 — 동행만 한 날(점검 없음)에도 필수 점검에 막히지 않게 (2026-10-02 코드 리뷰)
+            escort={cur.live ? appState?.escort : null}
+            submitted={!!(cur.live && appState?.visit?.reportSent)}
+            onEscortSend={() => dispatch?.({ type: "escortSend" })}
+          />
+        ) : <Panel><Empty>방문을 선택하면 상세가 여기 표시됩니다.</Empty></Panel>}
       </div>
 
       <Note>건강·센서 데이터는 참고자료이며 의료진의 진단을 대신하지 않습니다.</Note>

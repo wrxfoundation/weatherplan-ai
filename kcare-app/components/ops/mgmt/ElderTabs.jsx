@@ -68,7 +68,7 @@ export default function ElderTabs({ e, tab, onChange }) {
             health={shared}
             onCancel={() => setHealthEdit(false)}
             onSave={(payload) => {
-              app.dispatch({ type: "setHealth", payload, by: `${operator} (관제)` });
+              app.dispatch({ type: "setHealth", payload, by: operator.includes("관제") ? operator : `${operator} (관제)` });
               app.dispatch({ type: "pushEvent", payload: { kind: "건강", text: `건강 정보 수정 — ${e.name} · 복용 ${payload.meds.length}번 · 질환 ${payload.conditions.length}가지`, color: "#8FA9CC" } });
               setHealthEdit(false);
             }}

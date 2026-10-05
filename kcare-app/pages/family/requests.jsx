@@ -302,7 +302,9 @@ function RequestCard({ req, open, onToggle, onboarding, dispatch, isPrimary }) {
   const honor = honorific(onboarding); // 고객 호칭 — 전부 "~~님" (2026-08-12 시트)
   const [notified, setNotified] = useState(false); // 부 보호자 → 주 보호자 승인 알림
   const st = STATUS[req.status];
-  const needApproval = needsGuardianApproval(onboarding, req.amount);
+  // 어르신 부탁이 결제대기로 왔으면 어르신 앱이 이미 '오늘 쓰신 금액과 합쳐' 한도를 넘었다고 본 것이다 —
+  // 여기서 금액만 다시 재면 30,000 + 25,000 원 같은 경우 '한도 이내'라고 거꾸로 말한다 (2026-10-02 코드 리뷰)
+  const needApproval = req.dir === "fromElder" ? true : needsGuardianApproval(onboarding, req.amount);
   const stepIdx = STEP_ORDER.indexOf(req.status); // 취소·처리불가·관리자 검토는 -1 → 스텝퍼 미표시
 
   return (
@@ -414,6 +416,8 @@ function RequestCard({ req, open, onToggle, onboarding, dispatch, isPrimary }) {
                     결제 금액 <b className="font-num">{fmtWon(req.amount)}</b> —{" "}
                     {onboarding?.paymentMode === "guardianOnly"
                       ? "보호자 결제 방식이므로"
+                      : req.dir === "fromElder"
+                      ? "오늘 쓰신 금액과 합쳐 하루 한도를 넘어"
                       : "설정 한도를 초과하여"}{" "}
                     보호자 승인이 필요합니다.
                   </>

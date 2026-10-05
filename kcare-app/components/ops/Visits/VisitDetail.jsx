@@ -28,7 +28,7 @@ function Tile({ title, right, children }) {
   );
 }
 
-export default function VisitDetail({ visit: v, onChange, openProfile }) {
+export default function VisitDetail({ visit: v, onChange, openProfile, escort = null, submitted = false, onEscortSend }) {
   const [showAll, setShowAll] = useState(false);
   const [confirm, setConfirm] = useState(null);
   const [svcOpen, setSvcOpen] = useState(false);
@@ -254,6 +254,20 @@ export default function VisitDetail({ visit: v, onChange, openProfile }) {
           {v.status === "done" && v.review === "검수 완료" && v.stepIdx < 5 && <Btn className="ml-auto" onClick={() => setConfirm("send")}>보호자 리포트 발송</Btn>}
           {v.status === "done" && v.stepIdx === 5 && v.viewed === "미열람" && <Btn className="ml-auto" ghost tone="warn" onClick={() => setMsg(`보호자 미열람 재알림 발송 ${stampNow()}`)}>미열람 재알림</Btn>}
         </div>
+        {/* 병원 동행 기록 — 방문 21항목과 따로 검토 · 발송한다. 동행만 있는 날은 필수 점검이 없으므로 여기서 바로 보낸다 */}
+        {escort?.savedAt && (
+          <div className="mt-3 flex flex-wrap items-center gap-2 rounded-xl border border-navy/[.08] bg-white/60 px-3 py-2.5 text-[12.5px]">
+            <span className="font-bold text-navy">병원 동행 기록</span>
+            <span className="text-muted">
+              컨시어지 저장{escort.photos ? ` · 사진 ${escort.photos}장` : ""}{escort.recorded ? " · 영상 녹화" : ""}
+              {escort.sentAt ? " · 보호자에게 발송됨" : submitted ? " · 제출됨 — 관제 확인 대기" : " · 컨시어지 제출 전"}
+              {escort.viewedAt ? " · 보호자 열람" : ""}
+            </span>
+            {!escort.sentAt && submitted && (
+              <Btn small className="ml-auto" onClick={() => { onEscortSend?.(); setMsg(`동행 리포트 보호자 발송 ${stampNow()}`); }}>동행 리포트 발송</Btn>
+            )}
+          </div>
+        )}
         {msg && <div className="mt-2"><Note tone="ok">{msg}</Note></div>}
         <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-[12px] text-muted">
           <span className="inline-flex items-center gap-1">관제 검수 <Pill tone={REVIEW_TONE[v.review] || "muted"}>{v.review}</Pill>{v.reviewedAt && <Stamp at={v.reviewedAt} prefix="검수" />}</span>

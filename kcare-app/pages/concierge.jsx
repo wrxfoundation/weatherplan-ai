@@ -261,7 +261,8 @@ function ConciergePage() {
       cells.push({
         day: d,
         today: d === cNow.getDate(),
-        jobs: CONCIERGE_CAL.filter((j) => j.ymd === `${cNow.getFullYear()}-${String(cNow.getMonth() + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`),
+        // 오늘에서 며칠 떨어진 날인지(off)로 맞춘다 — 달력과 '오늘의 일정'이 같은 기준(이 폰의 오늘)을 쓰게
+        jobs: CONCIERGE_CAL.filter((j) => j.off === d - cNow.getDate()),
       });
     }
     return cells;
