@@ -1,15 +1,15 @@
 // 사건 상세 (가운데 열) — 6-2 상단 고정정보 전부 · 6-3 13단계 타임라인 · 종료 후 상황보고서.
 // 팝업을 닫아도 사건은 목록에 남는다 — 닫기는 선택 해제일 뿐이다 (6-1 · 19절).
 import { useState } from "react";
-import { Avatar, Btn, FeedPill, KV, Panel, Pill, SEV, SevPill, Stamp, StatePill, Steps, TONE } from "../ui";
-import { STEP_ORDER } from "../../../lib/ops-sos";
+import { Avatar, Btn, Confirm, FeedPill, KV, Panel, Pill, SEV, SevPill, Stamp, StatePill, Steps, TONE, useOperator } from "../ui";
+import { JUMP_LABEL, STEP_INDEX, STEP_ORDER, firstOpenFrom } from "../../../lib/ops-sos";
 import { liveCustomer, liveHealth } from "../../../lib/ops-health";
 import { useAuth } from "../../../lib/auth";
 import { useAppState } from "../../../lib/state";
 import { fmtDateTime, fmtElapsed, fmtTime } from "../../../lib/ops-time";
 import { guardianOf, resultLabel, stepSummary, stepTitle } from "./helpers";
 import StepForm from "./StepForms";
-import { ReportView, ResolvePanel, resolveStepOf } from "./CloseReport";
+import { ReportView, ResolvePanel } from "./CloseReport";
 
 function defaultSub(k, c) {
   const main = guardianOf(c, "주");
@@ -101,36 +101,47 @@ export default function IncidentDetail({ inc, now, api, role, onClosePopup }) {
   const h = liveHealth(inc.customer, ob, !!useAuth().user?.household);
   const [infoOpen, setInfoOpen] = useState(true);
   const [resolveAt, setResolveAt] = useState(null); // 해결 완료 패널 — 단계 키 (어느 단계에서든 종료)
+  const [jump, setJump] = useState(null); // 바로 이동 확인 — "call119" | "dispatch"
   const ro = role !== "controller";
   const closed = inc.state === "closed";
+  // 처리 기록의 관제사 — 테스트 계정이면 로그인한 이름 (예시 관제사 이름을 박아 두지 않는다)
+  const operator = useOperator().replace(/ \(관제사\)$/, "");
+  // 지금 진행 중인 단계 — 가리키는 단계가 이미 끝나 있으면(예전 기록) 다음 빈 단계
+  const activeK = closed ? null : inc.steps?.[inc.step]?.result ? firstOpenFrom(inc.steps, (STEP_INDEX[inc.step] ?? 0) + 1) : inc.step;
+  // 어느 단계에서든 119 신고 · 담당자 파견으로 바로 (2026-10-05 현장 요청) — 아직 안 했고 지금 단계보다 뒤일 때
+  const canJump = (t) => !closed && !ro && !inc.steps?.[t]?.result && (STEP_INDEX[t] ?? 0) > (STEP_INDEX[activeK] ?? 99);
+  const jumpOver = jump ? STEP_ORDER.slice(STEP_INDEX[activeK] ?? 0, STEP_INDEX[jump]).filter((x) => !inc.steps?.[x.k]?.result) : [];
+  const scrollToActive = () => setTimeout(() => document.getElementById(`active-${inc.id}`)?.scrollIntoView({ behavior: "smooth", block: "center" }), 80);
   const sevTone = SEV[inc.sev]?.tone || "danger";
   const main = guardianOf(c, "주");
   const sub = guardianOf(c, "부");
   // 통화가 '연결'로 저장되면 그 자리에서 해결 완료를 권한다 — 다음 단계로 넘어가도 바로 끝낼 수 있게 (2026-10-05)
-  const apiX = {
-    ...api,
-    setStep: (id, k, rec, opts) => {
-      api.setStep(id, k, rec, opts);
-      if (rec?.result === "connected") setResolveAt(k);
-    },
-  };
   const openResolve = (k) => {
     setResolveAt(k);
     setTimeout(() => document.getElementById(`resolve-${inc.id}-${k}`)?.scrollIntoView({ behavior: "smooth", block: "center" }), 60);
+  };
+  const apiX = {
+    ...api,
+    setStep: (id, k, rec, opts) => {
+      api.setStep(id, k, rec, { ...opts, by: operator });
+      if (rec?.result === "connected") setResolveAt(k);
+    },
+    resolveHere: openResolve, // 단계 폼의 '저장하고 여기서 해결'
   };
   // 해결 완료 패널 — 고른 단계 바로 아래에 연다 (지난 단계를 눌러도 그 자리에서)
   const panelFor = (k) =>
     !closed && resolveAt === k ? (
       <div id={`resolve-${inc.id}-${k}`} className="mt-2">
-        <ResolvePanel key={k} inc={inc} api={api} role={role} stepKey={k} by={inc.controller || "김태영"} onDone={() => setResolveAt(null)} onCancel={() => setResolveAt(null)} />
+        <ResolvePanel key={k} inc={inc} api={api} role={role} stepKey={k} onPick={openResolve} onDone={() => setResolveAt(null)} onCancel={() => setResolveAt(null)} />
       </div>
     ) : null;
 
   const steps = STEP_ORDER.map((s) => {
     const rec = inc.steps?.[s.k];
     let state = "wait";
-    if (rec?.result) state = rec.result === "skip" ? "skip" : rec.result === "noanswer" ? "fail" : "done";
-    else if (!closed && s.k === inc.step) state = "active";
+    // 미연결 · 거절 · 통화불가는 '못 함'으로 — 초록(완료)은 연결 · 완료만
+    if (rec?.result) state = rec.result === "skip" ? "skip" : ["noanswer", "refused", "unavailable"].includes(rec.result) ? "fail" : "done";
+    else if (!closed && s.k === activeK) state = "active";
     if (closed && (s.k === "close" || s.k === "report")) state = "done";
     const right = rec?.result ? `${resultLabel(rec)} · ${fmtTime(rec.at)}` : state === "active" ? "진행 중" : rec?.tries?.length ? `시도 ${rec.tries.length}회` : undefined;
     // 기록이 있는 단계(완료 · 건너뜀 · 미연결 · 메모)와 지금 단계는 메모를 남길 수 있다 — 종료 뒤에도
@@ -138,13 +149,20 @@ export default function IncidentDetail({ inc, now, api, role, onClosePopup }) {
     const summary = stepSummary(rec) || defaultSub(s.k, c);
     // 지난 단계(결과가 남은 단계)에도 '이 단계에서 해결 완료' — 다음 단계로 넘어간 뒤 돌아와 끝낼 수 있게 (2026-10-05 현장 요청)
     const canResolveHere = !closed && !ro && !["close", "report"].includes(s.k) && rec?.result && rec.result !== "skip" && state !== "active";
+    // 건너뛴 단계(바로 이동 · 직접 건너뜀 · 본인 연결로 생략)는 사건이 열려 있는 동안 다시 진행할 수 있다
+    const canRedo = !closed && !ro && rec?.result === "skip";
     const sub = notable ? (
       <>
         {summary}
-        <StepNotes inc={inc} stepKey={s.k} api={api} ro={ro} by={inc.controller || "김태영"} />
+        <StepNotes inc={inc} stepKey={s.k} api={api} ro={ro} by={operator} />
         {canResolveHere && resolveAt !== s.k && (
           <button type="button" onClick={() => openResolve(s.k)} className="btn-press btn-inline mt-1 text-[12px] font-bold text-green underline underline-offset-2">
             이 단계에서 해결 완료
+          </button>
+        )}
+        {canRedo && (
+          <button type="button" onClick={() => { api.redo(inc.id, s.k, operator); scrollToActive(); }} className="btn-press btn-inline mt-1 text-[12px] font-bold text-navy underline underline-offset-2">
+            이 단계 다시 진행
           </button>
         )}
         {state !== "active" && panelFor(s.k)}
@@ -190,9 +208,12 @@ export default function IncidentDetail({ inc, now, api, role, onClosePopup }) {
       </div>
 
       <div className="mt-3 flex flex-wrap items-center gap-2">
-        {inc.state === "new" && <Btn small tone="danger" disabled={ro} onClick={() => api.ack(inc.id, "김태영")}>사건 확인 (담당 김태영)</Btn>}
-        {!inc.controller && inc.state !== "new" && <Btn small disabled={ro} onClick={() => api.assign(inc.id, "김태영")}>담당 배정 · 김태영</Btn>}
-        {!closed && <Btn small tone="ok" disabled={ro} onClick={() => openResolve(resolveStepOf(inc))}>해결 완료</Btn>}
+        {inc.state === "new" && <Btn small tone="danger" disabled={ro} onClick={() => api.ack(inc.id, operator)}>사건 확인 (담당 {operator})</Btn>}
+        {!inc.controller && inc.state !== "new" && <Btn small disabled={ro} onClick={() => api.assign(inc.id, operator)}>담당 배정 · {operator}</Btn>}
+        {/* 어느 단계에서든 — 해결 완료(지금 단계, 패널에서 해결한 단계를 바꿀 수 있다) · 119 신고 · 담당자 파견 */}
+        {!closed && <Btn small tone="ok" disabled={ro} onClick={() => openResolve(activeK)}>해결 완료</Btn>}
+        {canJump("call119") && <Btn ghost small tone="danger" onClick={() => setJump("call119")}>119 신고로</Btn>}
+        {canJump("dispatch") && <Btn ghost small tone="navy" onClick={() => setJump("dispatch")}>담당자 파견으로</Btn>}
         {!closed && <Btn ghost small tone="warn" disabled={ro} onClick={() => api.addSignal(inc.id, "추가 이상징후 수신 — 같은 사건에 병합 (데모)")}>추가 이상징후 병합</Btn>}
         <Btn ghost small tone="muted" onClick={() => setInfoOpen(!infoOpen)}>{infoOpen ? "고정정보 접기" : "고정정보 펼치기"}</Btn>
         <span className="flex-1" />
@@ -240,11 +261,16 @@ export default function IncidentDetail({ inc, now, api, role, onClosePopup }) {
         <Steps steps={steps}>
           {(s) => (
             <>
+              <div id={`active-${inc.id}`} />
               <StepForm key={s.k} inc={inc} stepKey={s.k} api={apiX} role={role} />
-              {/* 지금 단계에서 끝낼 수도 있다. 지난 단계에서 해결됐으면 그 단계의 '이 단계에서 해결 완료'를 누른다 */}
+              {/* 지금 단계에서 바로 — 119 신고 · 담당자 파견으로 가거나 여기서 끝낸다. 통화 · 확인 단계는 폼 안의
+                  '저장하고 여기서 해결'로 입력한 내용까지 남긴다. 지난 단계에서 해결됐으면 그 단계의 링크를 누른다 */}
               {!closed && !["close", "report"].includes(s.k) && resolveAt !== s.k && (
-                <div className="mt-2 flex flex-wrap justify-end gap-2">
-                  <Btn ghost small tone="ok" disabled={ro} onClick={() => openResolve(s.k)}>이 단계에서 해결 완료</Btn>
+                <div className="mt-2 flex flex-wrap items-center justify-end gap-2">
+                  <span className="mr-auto text-[11.5px] font-bold text-muted">이 단계에서 바로</span>
+                  {canJump("call119") && <Btn ghost small tone="danger" onClick={() => setJump("call119")}>119 신고로</Btn>}
+                  {canJump("dispatch") && <Btn ghost small tone="navy" onClick={() => setJump("dispatch")}>담당자 파견으로</Btn>}
+                  {!["confirm", "call1", "call2", "call3", "guardian1", "guardian2"].includes(s.k) && <Btn ghost small tone="ok" disabled={ro} onClick={() => openResolve(s.k)}>이 단계에서 해결 완료</Btn>}
                 </div>
               )}
               {panelFor(s.k)}
@@ -254,6 +280,20 @@ export default function IncidentDetail({ inc, now, api, role, onClosePopup }) {
       </div>
 
       {closed && <div className="mt-4"><ReportView inc={inc} api={api} role={role} /></div>}
+      <Confirm
+        open={!!jump}
+        title={jump === "call119" ? "119 신고 단계로 바로 갑니다" : "담당자 파견 단계로 바로 갑니다"}
+        body={jump ? `${jumpOver.map((x) => x.title).join(" · ") || "남은 단계 없음"} — ${jumpOver.length}단계는 '건너뜀 — ${JUMP_LABEL[jump]}'으로 남습니다. 건너뛴 단계는 '이 단계 다시 진행'으로 언제든 다시 할 수 있습니다.` : ""}
+        confirmLabel={jump === "call119" ? "119 신고로" : "담당자 파견으로"}
+        tone={jump === "call119" ? "danger" : "navy"}
+        onCancel={() => setJump(null)}
+        onConfirm={() => {
+          api.jumpTo(inc.id, jump, operator);
+          setJump(null);
+          setResolveAt(null);
+          scrollToActive();
+        }}
+      />
     </Panel>
   );
 }

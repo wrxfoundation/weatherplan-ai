@@ -1,8 +1,8 @@
 // 사건 종료(6-7)와 사후 상황보고서 — 결과·사유·조치결과 필수, 권한 있는 관제사만, Confirm 을 거친다.
 // 종료 후에는 발생~종료 기록을 시간순으로 자동 정리하고 보호자 전달용 문구 초안을 만든다.
 import { useState } from "react";
-import { Btn, Confirm, Field, KV, Note, Pill, Table, TONE } from "../ui";
-import { CLOSE_RESULTS, STEP_INDEX, STEP_ORDER } from "../../../lib/ops-sos";
+import { Btn, Confirm, Field, KV, Note, Pill, Table, TONE, useOperator } from "../ui";
+import { CALL_RESULTS, CLOSE_RESULTS, STEP_INDEX, STEP_ORDER } from "../../../lib/ops-sos";
 import { liveCustomer } from "../../../lib/ops-health";
 import { useAppState } from "../../../lib/state";
 import { fmtDateTime, fmtDur, fmtTime } from "../../../lib/ops-time";
@@ -26,7 +26,8 @@ const titleOf = (k) => STEP_ORDER.find((s) => s.k === k)?.title || k;
 //   119 → 119 이송 · 이송/인계 단계 → 그때 고른 처리 방식
 function defaultResult(k, rec) {
   if (k === "confirm") return "단순 오작동";
-  if (k === "guardian1" || k === "guardian2") return "보호자 인계";
+  // 보호자가 통화로 확인해 준 것은 '정상 확인' — '보호자 인계'는 이송 / 인계 단계에서 실제로 넘겼을 때
+  if (k === "guardian1" || k === "guardian2") return "정상 확인";
   if (k === "call119") return "119 이송";
   if (k === "dispatch" || k === "arrive") return "현장 조치 완료";
   if (k === "transfer") {
@@ -37,6 +38,7 @@ function defaultResult(k, rec) {
 }
 // 해결 내용 첫 글 — 그 단계에 남은 답변 · 메모 · 현장 조치
 function defaultOutcome(k, rec) {
+  if (k === "confirm") return ""; // 이상징후 확인 메모(수치 급상승 등)는 '오작동' 결론과 다를 수 있어 미리 넣지 않는다
   const said = rec?.answer || rec?.dispatch?.actions || rec?.memo || "";
   return said ? `${titleOf(k)} — ${said}` : "";
 }
@@ -46,16 +48,39 @@ export function resolveStepOf(inc) {
   const done = STEP_ORDER.filter((s) => !["close", "report"].includes(s.k) && ["connected", "done"].includes(inc.steps?.[s.k]?.result));
   return done.length ? done[done.length - 1].k : inc.step;
 }
-export function ResolvePanel({ inc, api, role, stepKey, by = "김태영", onDone, onCancel }) {
+// 해결할 수 있는 단계 — 실제로 진행한 단계(건너뜀 제외) + 지금 단계
+export function resolvableSteps(inc) {
+  return STEP_ORDER.filter((s) => !["close", "report"].includes(s.k) && ((inc.steps?.[s.k]?.result && inc.steps[s.k].result !== "skip") || s.k === inc.step));
+}
+export function ResolvePanel({ inc, api, role, stepKey, by: byProp, onDone, onCancel, onPick }) {
+  const operator = useOperator();
+  const by = byProp || operator;
   const ro = role !== "controller";
-  const at = stepKey || resolveStepOf(inc);
-  const [result, setResult] = useState(defaultResult(at, inc.steps?.[at]));
-  const [outcome, setOutcome] = useState(defaultOutcome(at, inc.steps?.[at] || (at === "arrive" ? inc.steps?.dispatch : null)));
+  const at = stepKey || inc.step || resolveStepOf(inc);
+  const rec0 = inc.steps?.[at];
+  const [result, setResult] = useState(defaultResult(at, rec0));
+  const [outcome, setOutcome] = useState(defaultOutcome(at, rec0 || (at === "arrive" ? inc.steps?.dispatch : null)));
+  const choices = resolvableSteps(inc);
+  const failed = rec0?.result && !["done", "connected"].includes(rec0.result);
   const [ask, setAsk] = useState(false);
   const releaseSos = useReleaseSos();
   return (
     <div className="rounded-xl border border-green/30 bg-green/[.05] p-3">
-      <div className="text-[13px] font-bold text-green">{titleOf(at)} 단계에서 해결 완료</div>
+      <div className="flex flex-wrap items-center gap-2">
+        <span className="text-[13px] font-bold text-green">{titleOf(at)} 단계에서 해결 완료</span>
+        {onPick && choices.length > 1 && (
+          <label className="ml-auto flex items-center gap-1 text-[12px] text-muted">
+            해결한 단계
+            <select aria-label="해결한 단계" value={at} disabled={ro} onChange={(e) => onPick(e.target.value)} className="rounded-md border border-navy/15 bg-white px-2 py-1 text-[12px] font-bold text-navy">
+              {choices.map((s) => (
+                <option key={s.k} value={s.k}>{s.title}</option>
+              ))}
+            </select>
+          </label>
+        )}
+      </div>
+      {!rec0?.result && <p className="mt-1 text-[11.5px] font-bold text-amber">이 단계 입력칸에 쓴 내용은 따로 저장되지 않습니다 — 남길 내용은 아래 &lsquo;해결 내용&rsquo;에 적어 주세요.</p>}
+      {failed && <p className="mt-1 text-[11.5px] font-bold text-amber">이 단계는 &lsquo;{rec0.result === "skip" ? "건너뜀" : "미연결"}&rsquo;으로 남아 있습니다 — 나중에 연결돼 해결했다는 메모가 시각과 함께 붙습니다.</p>}
       <p className="mt-0.5 text-[12px] leading-[1.6] text-muted">남은 단계는 &lsquo;건너뜀 — {titleOf(at)}에서 해결&rsquo;로 닫히고 사건이 종료됩니다. 상황보고서는 그대로 정리됩니다.</p>
       <div className="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-2">
         <Field id={`${inc.id}-resolve-result`} label="종료 결과" value={result} onChange={setResult} options={CLOSE_RESULTS} disabled={ro} required />
@@ -74,14 +99,20 @@ export function ResolvePanel({ inc, api, role, stepKey, by = "김태영", onDone
         onCancel={() => setAsk(false)}
         onConfirm={() => {
           const now = Date.now();
-          const idx = STEP_INDEX[at] ?? 0;
+          const idx = STEP_INDEX[at] ?? -1;
           const steps = { ...(inc.steps || {}) };
           // 지운 기록이 없게 합친다 — 시도 횟수 · 메모 · 파견 기록은 그대로 두고 결과 · 메모 한 줄만 더한다
           const join = (prev, add) => (prev ? `${prev} · ${add}` : add);
-          if (!steps[at]?.result) steps[at] = { ...(steps[at] || {}), at: steps[at]?.at ?? now, by: steps[at]?.by ?? by, result: "done", memo: join(steps[at]?.memo, `해결 — ${outcome.trim()}`) };
+          const note = { id: `n${now}`, at: now, by, text: `이 단계에서 해결 — ${outcome.trim()}`, after: false };
+          // autoPrev — 재개하면 해결 전 모습(시각 · 수행자 · 메모)으로 되돌린다
+          const prevOf = (r) => ({ at: r?.at ?? null, by: r?.by ?? null, memo: r?.memo ?? "" });
+          if (!steps[at]?.result) steps[at] = { ...(steps[at] || {}), at: steps[at]?.at ?? now, by: steps[at]?.by ?? by, result: "done", autoDone: true, autoPrev: prevOf(steps[at]), memo: join(steps[at]?.memo, `해결 — ${outcome.trim()}`) };
+          // 미연결 · 건너뜀으로 남은 단계에서 해결 — 결과는 그대로 두고(그때 기록) 해결 메모를 시각과 함께 붙인다
+          else if (!["done", "connected"].includes(steps[at].result)) steps[at] = { ...steps[at], resolvedHere: now, notes: [...(steps[at].notes || []), note] };
+          // 아직 하지 않은 단계는 앞뒤 모두 '건너뜀 — ○○에서 해결' (다시 진행으로 되돌려 둔 앞 단계 포함)
           STEP_ORDER.forEach((s, i) => {
-            if (i > idx && !["close", "report"].includes(s.k) && !steps[s.k]?.result)
-              steps[s.k] = { ...(steps[s.k] || {}), at: steps[s.k]?.at ?? now, by: steps[s.k]?.by ?? by, result: "skip", memo: join(steps[s.k]?.memo, `${titleOf(at)}에서 해결 — 진행하지 않음`) };
+            if (i !== idx && !["close", "report"].includes(s.k) && !steps[s.k]?.result)
+              steps[s.k] = { ...(steps[s.k] || {}), at: steps[s.k]?.at ?? now, by: steps[s.k]?.by ?? by, result: "skip", autoSkip: true, autoPrev: prevOf(steps[s.k]), memo: join(steps[s.k]?.memo, `${titleOf(at)}에서 해결 — 진행하지 않음`) };
           });
           api.update(inc.id, { steps });
           api.close(inc.id, { result, reason: `${titleOf(at)} 단계에서 해결`, outcome: outcome.trim(), by });
@@ -102,6 +133,7 @@ export function CloseForm({ inc, api, role }) {
   const ro = role !== "controller";
   const valid = result && reason.trim() && outcome.trim();
   const releaseSos = useReleaseSos();
+  const operator = useOperator();
   return (
     <div className="card-glass rounded-xl p-3">
       {ro && <div className="mb-2"><Note tone="warn">조회 전용 권한은 사건을 종료할 수 없습니다. 담당 관제사(김태영)에게 종료를 요청하세요.</Note></div>}
@@ -122,7 +154,7 @@ export function CloseForm({ inc, api, role }) {
         tone="danger"
         onCancel={() => setAsk(false)}
         onConfirm={() => {
-          api.close(inc.id, { result, reason: reason.trim(), outcome: outcome.trim(), by: "김태영" });
+          api.close(inc.id, { result, reason: reason.trim(), outcome: outcome.trim(), by: operator });
           releaseSos(inc, result);
           setAsk(false);
         }}
@@ -134,13 +166,20 @@ export function CloseForm({ inc, api, role }) {
 function draftForGuardian(inc, c, timeline) {
   const first = timeline[0]?.at ?? inc.startedAt;
   const end = inc.closed?.at ?? Date.now();
-  const calls = ["call1", "call2", "call3"].filter((k) => inc.steps?.[k]?.tries?.length).length;
+  // 실제로 건 전화 — 시도 기록이 있거나 통화 결과(연결 · 미연결 · 거절 · 통화불가)를 남긴 단계
+  const calls = ["call1", "call2", "call3"].filter((k) => inc.steps?.[k]?.tries?.length || CALL_RESULTS[inc.steps?.[k]?.result]).length;
   const dispatched = inc.steps?.dispatch?.dispatch;
   const r119 = inc.steps?.call119?.report;
+  // 한 일만 적는다 — 전화를 안 했으면 '0차례 연락' 같은 문장을 만들지 않는다
+  const did = [
+    calls ? `어르신께 ${calls}차례 연락을 시도했습니다` : "",
+    dispatched ? `컨시어지 ${dispatched.name}이(가) 현장을 방문했습니다` : "",
+    r119 ? `${r119.agency}에 신고했습니다` : "",
+  ].filter(Boolean);
   return [
     `[K-CARE 관제센터] ${c.name} 어르신 보호자님께 상황을 알려드립니다.`,
     `· 발생: ${fmtDateTime(first)} — ${inc.cause} (${inc.value})`,
-    `· 대응: 관제사 ${inc.controller || "김태영"}이(가) 어르신께 ${calls}차례 연락을 시도했고${dispatched ? `, 컨시어지 ${dispatched.name}이(가) 현장을 방문했습니다` : ""}${r119 ? `, ${r119.agency}에 신고했습니다` : ""}.`,
+    `· 대응: 관제사 ${inc.closed?.by || inc.controller || "김태영"}${did.length ? ` — ${did.join(" · ")}.` : "이(가) 확인했습니다."}`,
     `· 결과: ${inc.closed?.result || "—"} — ${inc.closed?.outcome || "—"}`,
     `· 종료: ${fmtDateTime(end)} (발생 후 ${fmtDur(end - first)})`,
     "추가 확인이 필요하시면 관제센터로 연락 주세요. 건강·센서 데이터는 참고자료이며 의료진의 진단을 대신하지 않습니다.",

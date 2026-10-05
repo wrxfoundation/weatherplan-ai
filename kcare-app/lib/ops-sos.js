@@ -222,6 +222,16 @@ function assign(id, controller) {
   patch(id, (inc) => ({ ...inc, controller }));
 }
 
+// 이 단계부터 아직 결과가 없는 첫 단계 — 다른 곳(팝업 급파 · 옆 패널 파견)에서 미리 끝낸 단계는 건너뛴다
+export function firstOpenFrom(steps, i) {
+  for (let j = Math.max(0, i); j < STEP_ORDER.length; j++) {
+    const k = STEP_ORDER[j].k;
+    if (k === "close" || k === "report") return "close";
+    if (!steps?.[k]?.result) return k;
+  }
+  return "close";
+}
+
 // setStep(id, stepKey, record, { advance }) — 단계 기록을 덮어쓰지 않고 합친다.
 // record.try 가 있으면 시도 횟수·시각을 자동 기록 (6-3 "버튼을 누르면 시도 횟수와 시간이 자동 기록").
 // record.result 가 있으면 다음 단계로 넘어간다 — 2차 미연결이면 3차가 자동 활성된다.
@@ -231,15 +241,58 @@ function setStep(id, stepKey, record = {}, opts = {}) {
     const prev = inc.steps?.[stepKey] || {};
     const { try: tryNote, ...rest } = record;
     const tries = tryNote ? [...(prev.tries || []), { at: now, result: tryNote.result || "pending", note: tryNote.note || "" }] : prev.tries;
-    const merged = { ...prev, ...rest, at: rest.at ?? prev.at ?? now, by: rest.by ?? prev.by ?? inc.controller ?? "김태영", tries };
+    const merged = { ...prev, ...rest, at: rest.at ?? prev.at ?? now, by: rest.by ?? prev.by ?? opts.by ?? inc.controller ?? "김태영", tries };
     const steps = { ...inc.steps, [stepKey]: merged };
-    let step = inc.step;
-    if (rest.result && opts.advance !== false && STEP_INDEX[stepKey] >= (STEP_INDEX[inc.step] ?? 0)) {
-      const i = STEP_INDEX[stepKey];
-      step = STEP_ORDER[Math.min(i + 1, STEP_ORDER.length - 1)].k;
+    // 어르신 본인과 통화가 연결되면 남은 어르신 전화(2차 · 3차)는 할 필요가 없다 — '건너뜀'으로 남기고 보호자 연락으로
+    if (rest.result === "connected" && opts.advance !== false && stepKey === inc.step && ["call1", "call2"].includes(stepKey)) {
+      ["call2", "call3"].forEach((k) => {
+        if (STEP_INDEX[k] > STEP_INDEX[stepKey] && !steps[k]?.result) steps[k] = { ...(steps[k] || {}), at: now, by: merged.by, result: "skip", byConnect: true, memo: `${STEP_ORDER[STEP_INDEX[stepKey]].title} 연결 — 추가 전화 불필요` };
+      });
     }
+    let step = inc.step;
+    // 지금 단계를 끝낸 때만 다음으로 — 뒤 단계(옆 패널 파견 등)를 먼저 기록해도 앞 단계를 건너뛰지 않는다 (2026-10-05 점검)
+    if (rest.result && opts.advance !== false && stepKey === inc.step) step = firstOpenFrom(steps, STEP_INDEX[stepKey] + 1);
+    // 가리키는 단계가 이미 끝나 있으면(팝업에서 급파 등) 다음 빈 단계로 — 진행 중 단계가 사라지지 않게
+    if (inc.state !== "closed" && steps[step]?.result && !["close", "report"].includes(step)) step = firstOpenFrom(steps, STEP_INDEX[step] + 1);
     const escalated = STEP_INDEX[step] > STEP_INDEX.confirm && inc.state !== "closed";
     return { ...inc, steps, step, state: escalated ? "active" : inc.state === "new" ? "ack" : inc.state, controller: inc.controller || merged.by };
+  });
+}
+
+// 어느 단계에서든 119 신고 · 담당자 파견으로 바로 (2026-10-05 현장 요청: "1단계나 2단계에서 바로 119 연결하거나
+// 담당자 배치하거나 이슈 해결이 될 수도 있으니까"). 지금 단계부터 그 앞까지 결과 없는 단계는 '건너뜀 — ○○(으)로 바로 진행'으로
+// 남기고 그 단계를 연다. 건너뛴 단계는 redo 로 다시 진행할 수 있다 — 지우지 않고 기록으로 남는다.
+export const JUMP_LABEL = { call119: "119 신고로 바로 진행", dispatch: "담당자 파견으로 바로 진행" };
+function jumpTo(id, target, by) {
+  const now = Date.now();
+  patch(id, (inc) => {
+    const ti = STEP_INDEX[target];
+    const from = STEP_INDEX[inc.step] ?? 0;
+    if (inc.state === "closed" || ti == null || ti <= from) return inc;
+    const who = by || inc.controller || "김태영";
+    const steps = { ...(inc.steps || {}) };
+    for (let j = from; j < ti; j++) {
+      const k = STEP_ORDER[j].k;
+      const prev = steps[k] || {};
+      if (!prev.result) steps[k] = { ...prev, at: now, by: who, result: "skip", jumpSkip: { target, prevAt: prev.at ?? null, prevBy: prev.by ?? null, prevMemo: prev.memo ?? "" }, memo: prev.memo ? `${prev.memo} · ${JUMP_LABEL[target] || "바로 진행"}` : JUMP_LABEL[target] || "바로 진행" };
+    }
+    const step = steps[target]?.result ? firstOpenFrom(steps, ti + 1) : target;
+    return { ...inc, steps, step, state: "active", controller: inc.controller || who };
+  });
+}
+
+// 건너뛴 단계 다시 진행 — 결과(건너뜀)만 걷어 내고 그 단계를 연다. 시도 · 메모는 남고, 다시 진행했다는 메모가 시각과 함께 붙는다.
+// 그 단계를 마치면 다음 빈 단계(원래 하던 단계)로 돌아간다.
+function redo(id, k, by) {
+  const now = Date.now();
+  patch(id, (inc) => {
+    const rec = inc.steps?.[k];
+    if (inc.state === "closed" || rec?.result !== "skip") return inc;
+    const { result: _r, jumpSkip, byConnect: _c, autoSkip: _s, ...keep } = rec; // eslint-disable-line no-unused-vars
+    const back = jumpSkip ? { ...keep, at: jumpSkip.prevAt ?? undefined, by: jumpSkip.prevBy ?? undefined, memo: jumpSkip.prevMemo || undefined } : keep;
+    Object.keys(back).forEach((x) => back[x] === undefined && delete back[x]);
+    const note = { id: `n${now}`, at: now, by: by || inc.controller || "김태영", text: `건너뛴 단계 다시 진행 (${rec.memo || "건너뜀"})`, after: false };
+    return { ...inc, steps: { ...inc.steps, [k]: { ...back, notes: [...(rec.notes || []), note] } }, step: k };
   });
 }
 
@@ -266,11 +319,23 @@ function close(id, { result, reason, outcome, by = "김태영" }) {
 
 function reopen(id) {
   patch(id, (inc) => {
-    const firstOpen = STEP_ORDER.find((s) => s.k !== "close" && s.k !== "report" && !inc.steps?.[s.k]?.result)?.k || "close";
-    const { close: _closed, ...steps } = inc.steps || {};
+    const { close: _closed, ...steps0 } = inc.steps || {};
+    // '해결 완료'가 자동으로 채운 건너뜀 · 완료는 되돌린다 — 그 단계를 다시 진행할 수 있게 (시도 · 메모는 남긴다)
+    const steps = {};
+    Object.entries(steps0).forEach(([k, rec]) => {
+      if (rec?.autoSkip || rec?.autoDone) {
+        const { result: _r, autoSkip: _s, autoDone: _d, autoPrev, ...keep } = rec; // eslint-disable-line no-unused-vars
+        const back = { ...keep, at: autoPrev?.at ?? undefined, by: autoPrev?.by ?? undefined, memo: autoPrev?.memo || undefined };
+        Object.keys(back).forEach((x) => back[x] === undefined && delete back[x]);
+        if (Object.keys(back).some((x) => !["at", "by", "memo"].includes(x)) || back.memo) steps[k] = back;
+      } else steps[k] = rec;
+    });
     // 종료 뒤에 남긴 메모는 지우지 않는다 (사후 메모 — 덮어쓰지 않는 기록)
     if (_closed?.notes?.length) steps.close = { notes: _closed.notes };
-    return { ...inc, state: "active", closed: null, step: firstOpen, steps, signals: [...(inc.signals || []), { at: Date.now(), text: "사건 재개 (종료 취소)" }] };
+    const firstOpen = firstOpenFrom(steps, 0);
+    // 앞선 종료는 지우지 않고 이력으로 남긴다 ("종료는 이력에 남습니다")
+    const closures = inc.closed ? [...(inc.closures || []), inc.closed] : inc.closures || [];
+    return { ...inc, state: "active", closed: null, closures, step: firstOpen, steps, signals: [...(inc.signals || []), { at: Date.now(), text: "사건 재개 (종료 취소)" }] };
   });
 }
 
@@ -279,7 +344,7 @@ export function useIncidents() {
   useEffect(() => {
     hydrate();
   }, []);
-  const api = useMemo(() => ({ start, ack, assign, setStep, addSignal, update, close, reopen }), []);
+  const api = useMemo(() => ({ start, ack, assign, setStep, jumpTo, redo, addSignal, update, close, reopen }), []);
   const open = useMemo(() => sortIncidents(snap.incidents.filter(isOpen)), [snap.incidents]);
   const closed = useMemo(() => [...snap.incidents.filter((i) => !isOpen(i))].sort((a, b) => (b.closed?.at || 0) - (a.closed?.at || 0)), [snap.incidents]);
   return { incidents: snap.incidents, open, closed, hydrated: snap.hydrated, ...api };

@@ -6,11 +6,13 @@ export const stepTitle = (k) => STEP_ORDER.find((s) => s.k === k)?.title || k;
 
 // 어르신 통화 결과로 "의식 및 통화 가능 여부"를 판정한다 — 판정이 아니라 기록 사실만 옮긴다
 export function consciousness(inc) {
-  const calls = ["call1", "call2", "call3"].map((k) => inc.steps?.[k]).filter(Boolean);
+  // 실제로 건 통화만 센다 — 건너뜀 · 바로 이동 · 해결로 닫힌 단계는 '미연결'이 아니다
+  const calls = ["call1", "call2", "call3"].map((k) => inc.steps?.[k]).filter((r) => r && (CALL_RESULTS[r.result] || (!r.result && r.tries?.length)));
   if (calls.some((c) => c.result === "connected")) return "통화 연결됨 — 의식 있음 · 응답 가능 (관제사 통화 기준)";
   if (calls.some((c) => c.result === "refused")) return "통화 거절 — 응답은 있음";
   if (calls.length === 0) return "미확인 — 아직 통화 시도 없음";
-  return `미확인 — 본인 전화 ${calls.length}회 미연결`;
+  const missed = calls.filter((c) => c.result === "noanswer" || c.result === "unavailable").length;
+  return missed ? `미확인 — 본인 전화 ${missed}회 미연결` : "미확인 — 통화 결과 기록 전";
 }
 
 export function guardianOf(c, role) {
@@ -60,7 +62,7 @@ export function stepSummary(rec) {
 
 export function resultLabel(rec) {
   if (!rec?.result) return null;
-  if (rec.result === "done") return "완료";
+  if (rec.result === "done") return rec.autoDone ? "완료 (여기서 해결)" : "완료";
   if (rec.result === "skip") return "건너뜀";
   return CALL_RESULTS[rec.result] || rec.result;
 }
@@ -69,9 +71,21 @@ export function resultLabel(rec) {
 export function buildTimeline(inc) {
   const ev = [];
   (inc.signals || []).forEach((s) => ev.push({ at: s.at, kind: "이상징후", text: s.text }));
+  // 한 번에 건너뛴 단계(해결 완료 · 바로 이동 · 본인 연결)는 한 줄로 묶는다 — 같은 시각 · 같은 사유
+  const bulk = new Map();
   Object.entries(inc.steps || {}).forEach(([k, rec]) => {
     (rec.tries || []).forEach((t, i) => ev.push({ at: t.at, kind: stepTitle(k), text: `${i + 1}차 시도${t.note ? ` · ${t.note}` : ""}` }));
-    if (rec.at && (rec.result || rec.memo)) {
+    // 종료 단계 기록은 아래 '사건 종료' 줄과 같은 내용이라 따로 넣지 않는다 (메모는 넣는다)
+    if (k === "close") {
+      (rec.notes || []).forEach((n) => ev.push({ at: n.at, kind: stepTitle(k), text: `메모 ${n.editOf ? "수정" : "추가"}${n.after ? " (사건 종료 뒤)" : ""} — ${n.text}`, by: n.by }));
+      return;
+    }
+    if (rec.result === "skip" && (rec.autoSkip || rec.jumpSkip || rec.byConnect) && rec.at) {
+      const key = `${rec.at}|${rec.memo}`;
+      const g = bulk.get(key) || { at: rec.at, by: rec.by, memo: rec.memo, titles: [] };
+      g.titles.push(stepTitle(k));
+      bulk.set(key, g);
+    } else if (rec.at && (rec.result || rec.memo)) {
       ev.push({ at: rec.at, kind: stepTitle(k), text: [resultLabel(rec), rec.answer && `답변 “${rec.answer}”`, rec.request && `요청 “${rec.request}”`, rec.next && `다음 ${rec.next}`, rec.memo].filter(Boolean).join(" · ") || "기록", by: rec.by });
     }
     // 단계 메모 — 추가 · 수정 시각 그대로 (사후에 쓴 것은 '사건 종료 뒤'로)
@@ -87,6 +101,9 @@ export function buildTimeline(inc) {
       if (r.arrivedAt) ev.push({ at: rec.at, kind: "119 신고", text: `구급대 실제 도착 ${r.arrivedAt}${r.hospital ? ` · 이송 ${r.hospital}` : ""}` });
     }
   });
+  bulk.forEach((g) => ev.push({ at: g.at, kind: "건너뜀", text: `${g.titles.join(" · ")} — ${g.memo}`, by: g.by }));
+  // 재개 전 종료도 지우지 않고 보인다
+  (inc.closures || []).forEach((x) => ev.push({ at: x.at, kind: "사건 종료 (재개됨)", text: `${x.result} · ${x.reason} · 조치결과 ${x.outcome}`, by: x.by }));
   if (inc.closed) ev.push({ at: inc.closed.at, kind: "사건 종료", text: `${inc.closed.result} · ${inc.closed.reason} · 조치결과 ${inc.closed.outcome}`, by: inc.closed.by });
   return ev.sort((a, b) => a.at - b.at);
 }

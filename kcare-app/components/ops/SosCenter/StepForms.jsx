@@ -35,13 +35,16 @@ function Tries({ tries }) {
 function ContactForm({ inc, stepKey, rec, api, ro, target, phone, channels, withRequest, allowSkip, nextDefault }) {
   // '전화 걸기'는 시도를 기록하고 실제 전화 앱도 연다 (2026-10-02 — 관제가 번호를 보고 바로 건다)
   const dial = telHref(phone);
-  const [result, setResult] = useState("미연결");
+  // 결과는 관제사가 직접 고른다 — 미리 '미연결'이 골라져 있으면 연결된 통화를 미연결로 저장하기 쉽다 (2026-10-05 점검)
+  const [result, setResult] = useState("");
   const [answer, setAnswer] = useState("");
   const [request, setRequest] = useState("");
   const [next, setNext] = useState(nextDefault || "");
   const [memo, setMemo] = useState("");
   const id = `${inc.id}-${stepKey}`;
   const logTry = (ch) => api.setStep(inc.id, stepKey, { try: { result: "dialing", note: `${ch} · ${target}` } }, { advance: false });
+  // 연결됐으면 '미연결 시 ○○' 같은 기본 다음 조치 문구는 남기지 않는다
+  const save = () => api.setStep(inc.id, stepKey, { result: keyOf(result), answer, request, next: result === "연결" && next === nextDefault ? "" : next, memo });
   return (
     <div className="card-glass rounded-xl p-3">
       <div className="flex flex-wrap items-center gap-2">
@@ -58,7 +61,7 @@ function ContactForm({ inc, stepKey, rec, api, ro, target, phone, channels, with
         <Tries tries={rec.tries} />
       </div>
       <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
-        <Field id={`${id}-result`} label="결과" value={result} onChange={setResult} options={RESULT_LABELS} disabled={ro} required />
+        <Field id={`${id}-result`} label="결과" value={result} onChange={setResult} options={["", ...RESULT_LABELS]} disabled={ro} required />
         <Field id={`${id}-answer`} label="상대방 답변" value={answer} onChange={setAnswer} placeholder="예: 어지러워 누워 있다고 함" disabled={ro} />
         {withRequest && <Field id={`${id}-request`} label="보호자 요청사항" value={request} onChange={setRequest} placeholder="예: 119 부르지 말고 먼저 컨시어지 방문 요청" disabled={ro} />}
         <Field id={`${id}-next`} label="다음 조치" value={next} onChange={setNext} disabled={ro} />
@@ -66,7 +69,8 @@ function ContactForm({ inc, stepKey, rec, api, ro, target, phone, channels, with
       </div>
       <div className="mt-3 flex flex-wrap justify-end gap-2">
         {allowSkip && <Btn ghost small tone="muted" disabled={ro} onClick={() => api.setStep(inc.id, stepKey, { result: "skip", memo: memo || "해당 없음" })}>건너뛰기</Btn>}
-        <Btn small disabled={ro} onClick={() => api.setStep(inc.id, stepKey, { result: keyOf(result), answer, request, next, memo })}>결과 저장 · 다음 단계</Btn>
+        <Btn ghost small tone="ok" disabled={ro || !result} title={!result ? "통화 결과를 먼저 고릅니다" : undefined} onClick={() => { save(); api.resolveHere?.(stepKey); }}>저장하고 여기서 해결</Btn>
+        <Btn small disabled={ro || !result} title={!result ? "통화 결과를 먼저 고릅니다" : undefined} onClick={save}>결과 저장 · 다음 단계</Btn>
       </div>
     </div>
   );
@@ -77,7 +81,8 @@ function ConfirmForm({ inc, api, ro }) {
   return (
     <div className="card-glass rounded-xl p-3">
       <Field id={`${inc.id}-confirm-memo`} label="확인 내용 (관제사 메모)" value={memo} onChange={setMemo} type="textarea" placeholder="수치·위치·기기 상태를 확인한 내용" disabled={ro} />
-      <div className="mt-3 flex justify-end gap-2">
+      <div className="mt-3 flex flex-wrap justify-end gap-2">
+        <Btn ghost small tone="ok" disabled={ro} onClick={() => { api.setStep(inc.id, "confirm", { result: "done", memo }); api.resolveHere?.("confirm"); }}>저장하고 여기서 해결 (오작동 등)</Btn>
         <Btn small disabled={ro} onClick={() => api.setStep(inc.id, "confirm", { result: "done", memo })}>이상징후 확인 완료 · 1차 전화로</Btn>
       </div>
     </div>
@@ -100,7 +105,8 @@ function NoticeForm({ inc, c, api, ro }) {
         ))}
       </fieldset>
       <div className="mt-2"><Field id={`${inc.id}-notice-text`} label="통보 내용" value={text} onChange={setText} type="textarea" disabled={ro} /></div>
-      <div className="mt-3 flex justify-end gap-2">
+      <div className="mt-3 flex flex-wrap justify-end gap-2">
+        <Btn ghost small tone="muted" disabled={ro} onClick={() => api.setStep(inc.id, "notice", { result: "skip", memo: "통보 생략 — 보호자와 이미 통화 등" })}>통보 생략 — 건너뛰기</Btn>
         <Btn small disabled={ro || chosen.length === 0} onClick={() => api.setStep(inc.id, "notice", { try: { result: "sent", note: `앱 푸시·문자 → ${chosen.join("·")}` }, result: "done", answer: `발송 대상 ${chosen.join("·")}`, memo: text })}>
           조치 예정 통보 발송
         </Btn>
@@ -136,7 +142,7 @@ function Report119Form({ inc, c, api, ro }) {
           <Field id={`${id}-agency`} label="출동기관" value={f.agency} onChange={set("agency")} options={AGENCIES} disabled={ro} />
           <div className="sm:col-span-2"><Field id={`${id}-content`} label="신고내용" value={f.content} onChange={set("content")} type="textarea" disabled={ro} /></div>
           <Field id={`${id}-eta`} label="예상 도착시간" value={f.eta} onChange={set("eta")} placeholder="예: 8분" disabled={ro} />
-          <Field id={`${id}-arrived`} label="실제 도착시간" value={f.arrivedAt} onChange={set("arrivedAt")} placeholder="도착 후 입력" hint="도착·이송 항목은 나중에 이 단계에서 다시 입력할 수 있습니다" disabled={ro} />
+          <Field id={`${id}-arrived`} label="실제 도착시간" value={f.arrivedAt} onChange={set("arrivedAt")} placeholder="도착 후 입력" hint="저장 뒤 도착 · 이송 소식은 이 단계 '메모 남기기'나 '병원 이송 / 보호자 인계' 단계에 적습니다" disabled={ro} />
           <Field id={`${id}-transfer`} label="이송 여부" value={f.transferred} onChange={set("transferred")} options={TRANSFER_OPTS} disabled={ro} />
           <Field id={`${id}-hospital`} label="이송 병원" value={f.hospital} onChange={set("hospital")} disabled={ro} />
           <div className="sm:col-span-2"><Field id={`${id}-request`} label="구급대 요청사항" value={f.request} onChange={set("request")} placeholder="예: 복용약 봉투 준비, 보호자 연락처 전달" disabled={ro} /></div>
@@ -168,6 +174,11 @@ export function DispatchForm({ inc, c, api, ro, compact = false }) {
   const list = compact ? cands.slice(0, 3) : cands;
   return (
     <div className="space-y-2">
+      {!compact && (
+        <div className="flex justify-end">
+          <Btn ghost small tone="muted" disabled={ro} onClick={() => api.setStep(inc.id, "dispatch", { result: "skip", memo: "현장 파견 불필요" })}>파견 불필요 — 건너뛰기</Btn>
+        </div>
+      )}
       {list.map((k, i) => (
         <div key={k.name} className="card-glass flex flex-wrap items-center gap-2 rounded-xl px-3 py-2">
           <div className="min-w-0 flex-1">

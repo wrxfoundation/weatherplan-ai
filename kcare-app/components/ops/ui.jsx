@@ -151,7 +151,7 @@ export function Avatar({ name, size = 40, tone = "navy" }) {
       style={{ width: size, height: size, background: t.bg, color: t.fg, fontSize: Math.round(size * 0.34) }}
       aria-hidden
     >
-      {name.slice(0, 2)}
+      {String(name || "?").slice(0, 2)}
     </span>
   );
 }

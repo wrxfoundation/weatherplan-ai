@@ -17,7 +17,8 @@ export default function SidePanels({ inc, now, api, role }) {
   const ob = appState?.onboarding;
   const c = liveCustomer(inc.customer, ob, appState?.health);
   const h = liveHealth(inc.customer, ob, !!useAuth().user?.household);
-  const ro = role !== "controller";
+  // 종료된 사건은 옆 패널에서도 전화 기록 · 파견을 하지 않는다 (재개한 뒤에만)
+  const ro = role !== "controller" || inc.state === "closed";
   const rows119 = build119(inc, c, h);
   const stamp = (f) => (now && f?.agoSec != null ? fmtTime(now - f.agoSec * 1000) : "—");
   const guardianState = (g) => {
