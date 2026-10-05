@@ -21,8 +21,25 @@ function useReleaseSos() {
   };
 }
 const titleOf = (k) => STEP_ORDER.find((s) => s.k === k)?.title || k;
-const defaultResult = (k) =>
-  k === "confirm" ? "단순 오작동" : ["dispatch", "arrive"].includes(k) ? "현장 조치 완료" : k === "transfer" ? "보호자 인계" : "정상 확인";
+// 누가 해결했나에 따라 기본 종료 결과 (2026-10-05 사람별 해결 시나리오) — 관제사가 바꿀 수 있다
+//   이상징후 확인 → 단순 오작동 · 어르신 통화 → 정상 확인 · 보호자 → 보호자 인계 · 컨시어지 → 현장 조치 완료
+//   119 → 119 이송 · 이송/인계 단계 → 그때 고른 처리 방식
+function defaultResult(k, rec) {
+  if (k === "confirm") return "단순 오작동";
+  if (k === "guardian1" || k === "guardian2") return "보호자 인계";
+  if (k === "call119") return "119 이송";
+  if (k === "dispatch" || k === "arrive") return "현장 조치 완료";
+  if (k === "transfer") {
+    const a = String(rec?.answer || "");
+    return a.startsWith("병원 이송") ? "119 이송" : a.startsWith("병원 동행") ? "병원 동행" : a.startsWith("현장 종결") ? "현장 조치 완료" : "보호자 인계";
+  }
+  return "정상 확인";
+}
+// 해결 내용 첫 글 — 그 단계에 남은 답변 · 메모 · 현장 조치
+function defaultOutcome(k, rec) {
+  const said = rec?.answer || rec?.dispatch?.actions || rec?.memo || "";
+  return said ? `${titleOf(k)} — ${said}` : "";
+}
 // 해결한 단계 — 마지막으로 결과가 남은 단계(예: 1차 전화 '연결'), 없으면 지금 단계
 export function resolveStepOf(inc) {
   // 실제로 해결이 가능했던 결과만 — 미연결 · 거절 · 통화불가 단계에서 '해결'했다고 적지 않는다
@@ -32,8 +49,8 @@ export function resolveStepOf(inc) {
 export function ResolvePanel({ inc, api, role, stepKey, by = "김태영", onDone, onCancel }) {
   const ro = role !== "controller";
   const at = stepKey || resolveStepOf(inc);
-  const [result, setResult] = useState(defaultResult(at));
-  const [outcome, setOutcome] = useState(inc.steps?.[at]?.answer ? `${titleOf(at)} — ${inc.steps[at].answer}` : "");
+  const [result, setResult] = useState(defaultResult(at, inc.steps?.[at]));
+  const [outcome, setOutcome] = useState(defaultOutcome(at, inc.steps?.[at] || (at === "arrive" ? inc.steps?.dispatch : null)));
   const [ask, setAsk] = useState(false);
   const releaseSos = useReleaseSos();
   return (

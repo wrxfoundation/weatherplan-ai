@@ -106,6 +106,25 @@ export default function IncidentDetail({ inc, now, api, role, onClosePopup }) {
   const sevTone = SEV[inc.sev]?.tone || "danger";
   const main = guardianOf(c, "주");
   const sub = guardianOf(c, "부");
+  // 통화가 '연결'로 저장되면 그 자리에서 해결 완료를 권한다 — 다음 단계로 넘어가도 바로 끝낼 수 있게 (2026-10-05)
+  const apiX = {
+    ...api,
+    setStep: (id, k, rec, opts) => {
+      api.setStep(id, k, rec, opts);
+      if (rec?.result === "connected") setResolveAt(k);
+    },
+  };
+  const openResolve = (k) => {
+    setResolveAt(k);
+    setTimeout(() => document.getElementById(`resolve-${inc.id}-${k}`)?.scrollIntoView({ behavior: "smooth", block: "center" }), 60);
+  };
+  // 해결 완료 패널 — 고른 단계 바로 아래에 연다 (지난 단계를 눌러도 그 자리에서)
+  const panelFor = (k) =>
+    !closed && resolveAt === k ? (
+      <div id={`resolve-${inc.id}-${k}`} className="mt-2">
+        <ResolvePanel key={k} inc={inc} api={api} role={role} stepKey={k} by={inc.controller || "김태영"} onDone={() => setResolveAt(null)} onCancel={() => setResolveAt(null)} />
+      </div>
+    ) : null;
 
   const steps = STEP_ORDER.map((s) => {
     const rec = inc.steps?.[s.k];
@@ -117,10 +136,18 @@ export default function IncidentDetail({ inc, now, api, role, onClosePopup }) {
     // 기록이 있는 단계(완료 · 건너뜀 · 미연결 · 메모)와 지금 단계는 메모를 남길 수 있다 — 종료 뒤에도
     const notable = !!rec || state === "active" || (closed && ["close", "report"].includes(s.k));
     const summary = stepSummary(rec) || defaultSub(s.k, c);
+    // 지난 단계(결과가 남은 단계)에도 '이 단계에서 해결 완료' — 다음 단계로 넘어간 뒤 돌아와 끝낼 수 있게 (2026-10-05 현장 요청)
+    const canResolveHere = !closed && !ro && !["close", "report"].includes(s.k) && rec?.result && rec.result !== "skip" && state !== "active";
     const sub = notable ? (
       <>
         {summary}
         <StepNotes inc={inc} stepKey={s.k} api={api} ro={ro} by={inc.controller || "김태영"} />
+        {canResolveHere && resolveAt !== s.k && (
+          <button type="button" onClick={() => openResolve(s.k)} className="btn-press btn-inline mt-1 text-[12px] font-bold text-green underline underline-offset-2">
+            이 단계에서 해결 완료
+          </button>
+        )}
+        {state !== "active" && panelFor(s.k)}
       </>
     ) : summary;
     return { k: s.k, title: s.title, state, right, sub };
@@ -165,18 +192,12 @@ export default function IncidentDetail({ inc, now, api, role, onClosePopup }) {
       <div className="mt-3 flex flex-wrap items-center gap-2">
         {inc.state === "new" && <Btn small tone="danger" disabled={ro} onClick={() => api.ack(inc.id, "김태영")}>사건 확인 (담당 김태영)</Btn>}
         {!inc.controller && inc.state !== "new" && <Btn small disabled={ro} onClick={() => api.assign(inc.id, "김태영")}>담당 배정 · 김태영</Btn>}
-        {!closed && <Btn small tone="ok" disabled={ro} onClick={() => setResolveAt(resolveStepOf(inc))}>해결 완료</Btn>}
+        {!closed && <Btn small tone="ok" disabled={ro} onClick={() => openResolve(resolveStepOf(inc))}>해결 완료</Btn>}
         {!closed && <Btn ghost small tone="warn" disabled={ro} onClick={() => api.addSignal(inc.id, "추가 이상징후 수신 — 같은 사건에 병합 (데모)")}>추가 이상징후 병합</Btn>}
         <Btn ghost small tone="muted" onClick={() => setInfoOpen(!infoOpen)}>{infoOpen ? "고정정보 접기" : "고정정보 펼치기"}</Btn>
         <span className="flex-1" />
         <Btn ghost small tone="muted" onClick={onClosePopup} title="사건은 종료되지 않고 목록에 남습니다">팝업 닫기 · 사건 유지</Btn>
       </div>
-
-      {!closed && resolveAt && (
-        <div className="mt-3">
-          <ResolvePanel key={resolveAt} inc={inc} api={api} role={role} stepKey={resolveAt} by={inc.controller || "김태영"} onDone={() => setResolveAt(null)} onCancel={() => setResolveAt(null)} />
-        </div>
-      )}
 
       {/* 6-2 사건 상단 고정정보 */}
       {infoOpen && (
@@ -219,18 +240,14 @@ export default function IncidentDetail({ inc, now, api, role, onClosePopup }) {
         <Steps steps={steps}>
           {(s) => (
             <>
-              <StepForm key={s.k} inc={inc} stepKey={s.k} api={api} role={role} />
-              {/* 이 단계 · 바로 앞 단계에서 해결됐으면 여기서 끝낸다 (1차 전화 '연결'로 끝나는 일이 많다) */}
-              {!closed && !["close", "report"].includes(s.k) && (
+              <StepForm key={s.k} inc={inc} stepKey={s.k} api={apiX} role={role} />
+              {/* 지금 단계에서 끝낼 수도 있다. 지난 단계에서 해결됐으면 그 단계의 '이 단계에서 해결 완료'를 누른다 */}
+              {!closed && !["close", "report"].includes(s.k) && resolveAt !== s.k && (
                 <div className="mt-2 flex flex-wrap justify-end gap-2">
-                  {resolveStepOf(inc) !== s.k && (
-                    <Btn ghost small tone="ok" disabled={ro} onClick={() => setResolveAt(resolveStepOf(inc))}>
-                      {STEP_ORDER.find((x) => x.k === resolveStepOf(inc))?.title}에서 해결 완료
-                    </Btn>
-                  )}
-                  <Btn ghost small tone="ok" disabled={ro} onClick={() => setResolveAt(s.k)}>이 단계에서 해결 완료</Btn>
+                  <Btn ghost small tone="ok" disabled={ro} onClick={() => openResolve(s.k)}>이 단계에서 해결 완료</Btn>
                 </div>
               )}
+              {panelFor(s.k)}
             </>
           )}
         </Steps>

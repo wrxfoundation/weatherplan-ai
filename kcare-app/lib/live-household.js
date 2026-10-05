@@ -6,7 +6,7 @@
 // 연락처 · 주소 · 관계 · 결제권한 · 해주세요 · SOS 는 실제 값이다. 가입 상담 전이면 데모 값 그대로 두고 그렇다고 적는다.
 import { STATUS } from "./requests";
 import { fmtWon } from "./config";
-import { LIVE_ELDER } from "./ops-health";
+import { LIVE_ELDER, fmtPhone } from "./ops-health";
 import { VISITS, itemKeys, visitDetail } from "./ops-mgmt";
 import { checkupFor } from "./checkup";
 import { AI_REPORT } from "./mock";
@@ -45,7 +45,7 @@ export const signedUp = (state) => (state?.onboarding?.joinedAt ? state.onboardi
 export function liveElder(e, state) {
   if (!e || e.name !== LIVE_ELDER) return e;
   const ob = signedUp(state);
-  const elderPhone = ob ? String(ob.elderPhone || (ob.forSelf ? ob.phone : "") || "").trim() : "";
+  const elderPhone = ob ? fmtPhone(ob.elderPhone || (ob.forSelf ? ob.phone : "") || "") : "";
   const sos = state?.demo?.sos
     ? [{ no: "진행 중 (실제)", at: mdhm(state.demo.sosAt), cause: "어르신 SOS 버튼", result: state.ops?.sosDispatched ? "급파 지시됨 · 대응 중" : "관제 확인 중" }]
     : [];
@@ -63,7 +63,7 @@ export function liveElder(e, state) {
     sos,
   };
   if (!ob) return live;
-  const guardianPhone = ob.forSelf ? "" : String(ob.phone || "").trim();
+  const guardianPhone = ob.forSelf ? "" : fmtPhone(ob.phone || "");
   return {
     ...live,
     phone: elderPhone || e.phone,
@@ -123,7 +123,7 @@ export function liveGuardian(g, state, account) {
   return {
     ...base,
     rel: ob.rel || g.rel,
-    tel: String(ob.phone || "").trim() || g.tel,
+    tel: fmtPhone(ob.phone || "") || g.tel,
     telSource: ob.phone ? "가입 상담" : null,
     region: ob.district || g.region,
     payer: ob.paymentMode !== "elderOnly",

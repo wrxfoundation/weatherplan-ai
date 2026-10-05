@@ -83,6 +83,17 @@ export const telHref = (v) => {
   return d.length >= 9 ? `tel:${d}` : null;
 };
 
+// 가입 상담에서 하이픈 없이 적은 번호를 읽기 쉽게 — 01022222222 → 010-2222-2222 (2026-10-05 SOS 화면)
+export function fmtPhone(v) {
+  const raw = String(v || "").trim();
+  const d = raw.replace(/\D/g, "");
+  if (/^01\d{9}$/.test(d)) return `${d.slice(0, 3)}-${d.slice(3, 7)}-${d.slice(7)}`;
+  if (/^01\d{8}$/.test(d)) return `${d.slice(0, 3)}-${d.slice(3, 6)}-${d.slice(6)}`;
+  if (/^02\d{7,8}$/.test(d)) return `02-${d.slice(2, d.length - 4)}-${d.slice(-4)}`;
+  if (/^0\d{9,10}$/.test(d)) return `${d.slice(0, 3)}-${d.slice(3, d.length - 4)}-${d.slice(-4)}`;
+  return raw;
+}
+
 // 데모 가구 어르신(김순자) — 테스트 가구에서 보호자가 가입 상담에 적은 연락처·주소가 있으면 그걸 쓴다.
 // 그래야 관제 테스터가 어르신 역할 테스터에게 실제로 전화해 볼 수 있다. 없으면 예시 번호.
 export const LIVE_ELDER = "김순자";
@@ -94,8 +105,8 @@ export function liveCustomer(name, onboarding, health) {
   const c = { ...c0, conditions: h.conditions.length ? h.conditions : ["등록 없음"], meds: h.meds.length ? medSummary(h.meds) : ["등록 없음"], allergies: h.allergies.length ? h.allergies : ["등록 없음"] };
   const ob = onboarding;
   if (!ob) return c;
-  const elderPhone = String(ob.elderPhone || (ob.forSelf ? ob.phone : "") || "").trim();
-  const guardianPhone = ob.forSelf ? "" : String(ob.phone || "").trim();
+  const elderPhone = fmtPhone(ob.elderPhone || (ob.forSelf ? ob.phone : "") || "");
+  const guardianPhone = ob.forSelf ? "" : fmtPhone(ob.phone || "");
   const address = String(ob.address || "").trim();
   return {
     ...c,
