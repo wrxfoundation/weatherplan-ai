@@ -500,7 +500,7 @@ function RequestCard({ req, open, onToggle, onboarding, dispatch, isPrimary, pay
                   ? "이 제안을 거절할까요? 컨시어지에게 거절로 전달됩니다."
                   : rule.mode === "ops"
                     ? `${req.status === "inProgress" ? "이미 진행 중이라" : rule.days == null ? "확정 날짜가 없어" : `서비스일까지 ${CANCEL_FREE_DAYS}일이 안 남아`} 관제가 확인한 뒤 취소됩니다.${pay ? " 승인되면 결제하신 금액은 관제가 환불합니다." : ""}`
-                    : `지금 취소하면 바로 취소됩니다.${pay ? ` 결제하신 ${fmtWon(pay.amount)}은 관제가 환불 처리합니다.` : ""}`}
+                    : `지금 취소하면 바로 취소됩니다.${pay ? (pay.demo ? ` 데모 결제 ${fmtWon(pay.amount)}은 바로 환불 처리됩니다.` : ` 결제하신 ${fmtWon(pay.amount)}은 관제가 환불 처리합니다.`) : ""}`}
               </p>
               <div className="mt-2.5 flex gap-2">
                 <GhostButton className="flex-1" onClick={() => setConfirming(null)}>
