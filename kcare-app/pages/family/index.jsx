@@ -17,6 +17,17 @@ import { useLastActivity } from "../../lib/last-activity";
 import { healthOf } from "../../lib/meds";
 import { STAGE_LABEL, visitReportOf } from "../../lib/live-household";
 
+// 받은 음성 '받은 때' — 오늘 · 어제는 말로, 그 전은 날짜로 (시각만 쓰면 며칠 전 것도 오늘처럼 읽힌다)
+const whenLabel = (at) => {
+  const d = new Date(at);
+  const hm = d.toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit", hour12: false });
+  const day = (x) => new Date(x.getFullYear(), x.getMonth(), x.getDate()).getTime();
+  const diff = Math.round((day(new Date()) - day(d)) / 86400000);
+  if (diff <= 0) return `오늘 ${hm}`;
+  if (diff === 1) return `어제 ${hm}`;
+  return `${d.getMonth() + 1}/${d.getDate()} ${hm}`;
+};
+
 // 가족 앱 홈 — 핸드오프 02 family 명세 + REQ-02(다음 일정 홈 노출)
 // 정보 비대칭 규칙: 경과시간·SLA 비노출, 가족 행동은 '확인했습니다' 1개.
 //
@@ -71,9 +82,12 @@ export default function FamilyHome() {
   const morningMed = medPlan.find((d) => d.slot === "아침") || null;
   const voicesToElder = (state.voices || []).filter((v) => v.from === "보호자");
   const heard = voicesToElder.filter((v) => state.elder?.msgPlayed?.[v.id]).length;
-  // 어르신 → 주 보호자(아들 민수) · 가족 모두에게 온 목소리
-  const fromElder = (state.voices || []).filter((v) => v.from === `${ELDER.name} 님` && (v.to === "아들 민수" || v.to === "가족 모두"));
+  // 어르신 → 주 보호자(아들 민수) · 가족 모두에게 온 목소리 — 최근 것부터
+  const fromElder = (state.voices || [])
+    .filter((v) => v.from === `${ELDER.name} 님` && (v.to === "아들 민수" || v.to === "가족 모두"))
+    .sort((a, b) => b.at - a.at);
   const unheardFromElder = fromElder.filter((v) => !state.guardian?.voiceHeard?.[v.id]).length;
+  const [elderVoicesAll, setElderVoicesAll] = useState(false);
   const checkinAt = (state.visit.audit || []).find((e) => e.kind === "gps")?.at;
   const checkinHm = checkinAt ? new Date(checkinAt).toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit", hour12: false }) : null;
   const visitStage = live ? `이번 방문 — ${STAGE_LABEL[visitReportOf(state).stage]}` : "";
@@ -415,40 +429,6 @@ export default function FamilyHome() {
             한마디 남기는 흐름이라 위로 올렸다. */}
         <Card className="p-[18px]">
           <div className="text-[17px] font-black text-navy">안부 음성 남기기</div>
-          {/* 어르신이 가족 탭에서 보낸 목소리 — 주 보호자(아들 민수)와 '가족 모두'에게 온 것.
-              전에는 저장만 되고 보호자 앱에 들을 곳이 없었다 (2026-10-02 QA). 녹음 파일은 베타에서 저장하지 않아 길이만 보인다. */}
-          {fromElder.length > 0 && (
-            <div className="mt-2.5 space-y-1.5 rounded-xl bg-gold/[.08] p-3">
-              <div className="text-[12px] font-bold text-[#8A5D12]">
-                {honor}이 보낸 목소리{unheardFromElder ? ` · 새 목소리 ${unheardFromElder}개` : ""}
-              </div>
-              {fromElder.slice(0, 4).map((v) => {
-                const heard = !!state.guardian?.voiceHeard?.[v.id];
-                return (
-                  <div key={v.id} className="flex items-center gap-2 text-[13px]">
-                    <span className="font-num font-bold text-navy">
-                      {new Date(v.at).toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit", hour12: false })}
-                    </span>
-                    <span className="flex-1 text-ink">
-                      목소리 {v.secs}초{v.to === "가족 모두" ? " · 가족 모두에게" : ""}
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        if (heard) return;
-                        dispatch({ type: "guardianPatch", patch: { voiceHeard: { ...(state.guardian?.voiceHeard || {}), [v.id]: true } } });
-                        dispatch({ type: "pushEvent", payload: { kind: "음성", text: `보호자가 ${honor} 목소리 ${v.secs}초 청취`, color: "#8FA9CC" } });
-                      }}
-                      className={`btn-press btn-inline btn-chip rounded-full px-3 py-1.5 text-[12px] font-bold ${heard ? "bg-green/10 text-green" : "bg-navy text-white"}`}
-                    >
-                      {heard ? "✓ 들었어요" : "▶ 듣기"}
-                    </button>
-                  </div>
-                );
-              })}
-              <p className="text-[11px] leading-[1.5] text-muted">베타에서는 녹음 파일을 저장하지 않아 길이만 보입니다.</p>
-            </div>
-          )}
           <VoiceNote
             to={honor}
             onSend={(secs) => {
@@ -475,6 +455,75 @@ export default function FamilyHome() {
               ))}
             </div>
           )}
+        </Card>
+
+        {/* 어르신이 보낸 음성 — 안부 음성 남기기 바로 아래 따로 둔다 (2026-10-05 요청: "어르신이 보낸 메세지
+            자체를 볼 수 있는 본문 테이블에서 안부 음성 남기기 밑으로"). 전에는 녹음 카드 안 작은 칸이라
+            받은 것이 없으면 아예 안 보였고, 있어도 보낸 것과 섞여 찾기 어려웠다. 받은 것이 없어도 자리는 남긴다.
+            주 보호자(아들 민수)와 '가족 모두'에게 온 것 — 차녀 · 삼남 앞으로 간 것은 그 가족의 앱 몫이다. */}
+        <Card className="p-[18px]">
+          <div className="flex items-baseline justify-between gap-2">
+            <div className="text-[17px] font-black text-navy">{honor}이 보낸 음성</div>
+            <span className={`text-[12px] font-bold ${unheardFromElder ? "text-[#8A5D12]" : "text-muted"}`}>
+              {unheardFromElder ? `새 음성 ${unheardFromElder}건` : fromElder.length ? `모두 ${fromElder.length}건` : ""}
+            </span>
+          </div>
+          {fromElder.length === 0 ? (
+            <p className="mt-2 rounded-xl bg-paper px-3 py-3 text-[13px] leading-[1.6] text-muted">
+              아직 받은 음성이 없습니다. {honor}이 어르신 앱 가족 탭에서 목소리를 보내시면 여기에 쌓입니다.
+            </p>
+          ) : (
+            <table className="mt-2.5 w-full text-left text-[13px]">
+              <caption className="sr-only">{honor}이 보낸 음성 목록</caption>
+              <thead>
+                <tr className="border-b border-navy/[.08] text-[11px] text-muted">
+                  <th scope="col" className="py-1.5 font-bold">받은 때</th>
+                  <th scope="col" className="py-1.5 font-bold">내용</th>
+                  <th scope="col" className="py-1.5 text-right font-bold">
+                    <span className="sr-only">듣기</span>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {(elderVoicesAll ? fromElder : fromElder.slice(0, 5)).map((v) => {
+                  const heardIt = !!state.guardian?.voiceHeard?.[v.id];
+                  return (
+                    <tr key={v.id} className="border-b border-navy/[.05] last:border-0">
+                      <td className="whitespace-nowrap py-2 pr-2 align-middle font-num font-bold text-navy">{whenLabel(v.at)}</td>
+                      <td className="py-2 pr-2 align-middle text-ink">
+                        목소리 {v.secs}초{v.to === "가족 모두" ? " · 가족 모두에게" : ""}
+                        {!heardIt && <span className="ml-1.5 rounded-full bg-gold/[.15] px-1.5 py-0.5 text-[10px] font-bold text-[#8A5D12]">새</span>}
+                      </td>
+                      <td className="py-2 text-right align-middle">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            if (heardIt) return;
+                            dispatch({ type: "guardianPatch", patch: { voiceHeard: { ...(state.guardian?.voiceHeard || {}), [v.id]: true } } });
+                            dispatch({ type: "pushEvent", payload: { kind: "음성", text: `보호자가 ${honor} 목소리 ${v.secs}초 청취`, color: "#8FA9CC" } });
+                          }}
+                          aria-label={heardIt ? `${whenLabel(v.at)} 목소리 들었음` : `${whenLabel(v.at)} 목소리 ${v.secs}초 듣기`}
+                          className={`btn-press btn-inline btn-chip whitespace-nowrap rounded-full px-3 py-1.5 text-[12px] font-bold ${heardIt ? "bg-green/10 text-green" : "bg-navy text-white"}`}
+                        >
+                          {heardIt ? "✓ 들었어요" : "▶ 듣기"}
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          )}
+          {fromElder.length > 5 && (
+            <button
+              type="button"
+              onClick={() => setElderVoicesAll((x) => !x)}
+              className="btn-press mt-2 w-full rounded-xl bg-navy/[.05] py-2 text-[12px] font-bold text-navy"
+            >
+              {elderVoicesAll ? "최근 5건만 보기" : `전체 ${fromElder.length}건 보기`}
+            </button>
+          )}
+          <p className="mt-2 text-[11px] leading-[1.5] text-muted">베타에서는 녹음 파일을 저장하지 않아 받은 때와 길이만 보입니다.</p>
         </Card>
 
         {/* 담당 컨시어지 — 신원·관계 연속성 + AI 예약 (디자인 콘솔) */}
