@@ -14,10 +14,10 @@ import { buildTimeline } from "./helpers";
 // 실제 앱의 SOS(김순자 댁)로 열린 사건을 끝내면 어르신 · 보호자 · 컨시어지 화면의 SOS 알림도 같이 끈다
 function useReleaseSos() {
   const ctx = useAppState();
-  return (inc) => {
+  return (inc, result) => {
     if (!ctx?.state?.demo?.sos || inc.customer !== "김순자") return;
     ctx.dispatch({ type: "ackSos" });
-    ctx.dispatch({ type: "pushEvent", payload: { kind: "대응", text: `SOS 사건 종료 — ${inc.closed?.result || "해결 완료"} · 어르신 · 가족 앱 알림 해제`, color: "#8FE3C0" } });
+    ctx.dispatch({ type: "pushEvent", payload: { kind: "대응", text: `SOS 사건 종료 — ${result || "해결 완료"} · 어르신 · 가족 앱 알림 해제`, color: "#8FE3C0" } });
   };
 }
 const titleOf = (k) => STEP_ORDER.find((s) => s.k === k)?.title || k;
@@ -25,7 +25,8 @@ const defaultResult = (k) =>
   k === "confirm" ? "단순 오작동" : ["dispatch", "arrive"].includes(k) ? "현장 조치 완료" : k === "transfer" ? "보호자 인계" : "정상 확인";
 // 해결한 단계 — 마지막으로 결과가 남은 단계(예: 1차 전화 '연결'), 없으면 지금 단계
 export function resolveStepOf(inc) {
-  const done = STEP_ORDER.filter((s) => !["close", "report"].includes(s.k) && inc.steps?.[s.k]?.result && inc.steps[s.k].result !== "skip");
+  // 실제로 해결이 가능했던 결과만 — 미연결 · 거절 · 통화불가 단계에서 '해결'했다고 적지 않는다
+  const done = STEP_ORDER.filter((s) => !["close", "report"].includes(s.k) && ["connected", "done"].includes(inc.steps?.[s.k]?.result));
   return done.length ? done[done.length - 1].k : inc.step;
 }
 export function ResolvePanel({ inc, api, role, stepKey, by = "김태영", onDone, onCancel }) {
@@ -58,13 +59,16 @@ export function ResolvePanel({ inc, api, role, stepKey, by = "김태영", onDone
           const now = Date.now();
           const idx = STEP_INDEX[at] ?? 0;
           const steps = { ...(inc.steps || {}) };
-          if (!steps[at]?.result) steps[at] = { ...(steps[at] || {}), at: now, by, result: "done", memo: `해결 — ${outcome.trim()}` };
+          // 지운 기록이 없게 합친다 — 시도 횟수 · 메모 · 파견 기록은 그대로 두고 결과 · 메모 한 줄만 더한다
+          const join = (prev, add) => (prev ? `${prev} · ${add}` : add);
+          if (!steps[at]?.result) steps[at] = { ...(steps[at] || {}), at: steps[at]?.at ?? now, by: steps[at]?.by ?? by, result: "done", memo: join(steps[at]?.memo, `해결 — ${outcome.trim()}`) };
           STEP_ORDER.forEach((s, i) => {
-            if (i > idx && !["close", "report"].includes(s.k) && !steps[s.k]?.result) steps[s.k] = { at: now, by, result: "skip", memo: `${titleOf(at)}에서 해결 — 진행하지 않음` };
+            if (i > idx && !["close", "report"].includes(s.k) && !steps[s.k]?.result)
+              steps[s.k] = { ...(steps[s.k] || {}), at: steps[s.k]?.at ?? now, by: steps[s.k]?.by ?? by, result: "skip", memo: join(steps[s.k]?.memo, `${titleOf(at)}에서 해결 — 진행하지 않음`) };
           });
           api.update(inc.id, { steps });
           api.close(inc.id, { result, reason: `${titleOf(at)} 단계에서 해결`, outcome: outcome.trim(), by });
-          releaseSos(inc);
+          releaseSos(inc, result);
           setAsk(false);
           onDone?.();
         }}
@@ -102,7 +106,7 @@ export function CloseForm({ inc, api, role }) {
         onCancel={() => setAsk(false)}
         onConfirm={() => {
           api.close(inc.id, { result, reason: reason.trim(), outcome: outcome.trim(), by: "김태영" });
-          releaseSos(inc);
+          releaseSos(inc, result);
           setAsk(false);
         }}
       />

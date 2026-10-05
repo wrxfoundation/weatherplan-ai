@@ -313,7 +313,17 @@ function reducer(state, action) {
     // 결제가 끝났다 — 승인 전이면 담당 컨시어지 승인 대기로, 이미 승인됐거나(요금 확정 전 항목) 제안을 수락한 것이면 확정으로
     case "requestPaid": {
       const r = state.requests.find((x) => x.id === action.id);
-      if (!r || r.status !== "awaitingPayment") return state;
+      if (!r) return state;
+      // 결제창에 있는 사이 취소 · 거절됐거나 이미 결제된 건(두 번 결제) — 방금 들어온 결제는 환불 대기로 (돈만 받고 끝나지 않게)
+      if (r.status !== "awaitingPayment") {
+        const at = nowOf(action);
+        const mine = (state.payments || []).filter((p) => p.ref === r.id && p.status === "done" && !p.refund);
+        const late = CLOSED_REQ.includes(r.status) ? mine : mine.slice(0, Math.max(0, mine.length - 1));
+        if (!late.length) return state;
+        const ids = new Set(late.map((p) => p.id));
+        const why = CLOSED_REQ.includes(r.status) ? "결제 전에 요청이 끝남 — 환불" : "같은 요청 두 번 결제 — 환불";
+        return { ...state, payments: state.payments.map((p) => (ids.has(p.id) ? { ...p, refund: { status: p.demo ? "done" : "pending", amount: p.amount, reason: why, at, by: "자동" } } : p)) };
+      }
       const at = nowOf(action);
       const proposal = r.dir === "fromConcierge" || r.dir === "fromOps";
       const approved = !!r.approvedAt || proposal;
@@ -385,7 +395,8 @@ function reducer(state, action) {
       const why = action.note ? ` — ${action.note}` : "";
       if (action.approve) return closeRequest(state, r, "cancelled", `관제 취소 승인 (${by})${why}`, at, by);
       const back = r.cancelReq?.from === "inProgress" ? "inProgress" : "confirmed";
-      return withRequest(state, transition(r, back, `관제 취소 반려 (${by})${why}`, at, { by }), false);
+      const { cancelReq: _gone, ...rest } = transition(r, back, `관제 취소 반려 (${by})${why}`, at, { by }); // eslint-disable-line no-unused-vars
+      return withRequest(state, rest, false);
     }
     // 상태는 그대로 두고 처리 기록만 한 줄 — 도와줘요 '확인 전화 미연결 · 재시도' 같은 중간 단계 (보호자 · 컨시어지 팝업이 이 줄을 띄운다)
     case "noteRequest": {
@@ -406,7 +417,8 @@ function reducer(state, action) {
       let next = null;
       if (action.step === "call") {
         if (action.result === "fine") next = line("done", `확인 전화 연결 · 전화로 해결 (${by})${memo}`, { resolvedAt: at, resolvedBy: by });
-        else if (action.result === "visit") next = line("confirmed", `확인 전화 연결 · 방문 필요 (${by})${memo}`);
+        // 이미 출동 중이면 상태는 그대로 두고 기록만 (출동한 컨시어지 화면의 도착 · 완료 버튼이 사라지지 않게)
+        else if (action.result === "visit") next = line(r.status === "requested" ? "confirmed" : r.status, `확인 전화 연결 · 방문 필요 (${by})${memo}`);
         else next = line(r.status, `확인 전화 미연결 — 다시 걸거나 바로 출동 (${by})${memo}`);
       } else if (action.step === "dispatch") {
         const who = String(action.assignee || r.assignee || "");
@@ -600,7 +612,8 @@ function reducer(state, action) {
     case "addPayment": {
       const list = state.payments || [];
       if (action.payload.orderId && list.some((p) => p.orderId === action.payload.orderId)) return state;
-      return { ...state, payments: [{ id: idOf("pay", action), at: nowOf(action), ...action.payload }, ...list].slice(0, 30) };
+      // 환불 · '이미 결제' 판단이 이 기록을 본다 — 넉넉히 남긴다
+      return { ...state, payments: [{ id: idOf("pay", action), at: nowOf(action), ...action.payload }, ...list].slice(0, 200) };
     }
     case "setBilling":
       return { ...state, billing: action.payload };

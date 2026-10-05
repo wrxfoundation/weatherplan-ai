@@ -20,7 +20,7 @@ import {
 import { PRICING, fmtWon } from "../lib/config";
 import { STORE_CATALOG } from "../lib/store";
 import ProductSheet from "../components/ProductSheet";
-import { CLOSED, SERVICE_MENU, SERVICE_PLUS, approverOf, cancelRule, fmtScheduled, isVisitCall } from "../lib/requests";
+import { CLOSED, SERVICE_MENU, SERVICE_PLUS, approverOf, cancelRule, fmtScheduled, isStoreOrder, isVisitCall } from "../lib/requests";
 import { LIVE_CONCIERGE } from "../lib/live-household";
 import { MED_STREAK, SUPPLEMENTS, daysLeft, healthOf, medProgress, needsReorder, slotHour } from "../lib/meds";
 import { VERDICT, matchWelfare, profileFor, welfareCounts } from "../lib/welfare";
@@ -385,7 +385,8 @@ function ElderHome() {
       ? { mode: "approval", approval: true, notice: `${approver} 님이 먼저 결제해 주시면 선생님이 일정을 정해 드립니다.`, cta: "가족에게 부탁하기" }
       : { mode: "self", approval: false, notice: `오늘 쓰신 돈과 합쳐 ${fmtWon(payLimit)} 안이라 직접 내십니다. 선생님이 일정을 보고 정해 드립니다.`, cta: "바로 부탁하기" };
   })();
-  const myRequests = (state.requests || []).filter((r) => r.dir === "fromElder");
+  // 내 부탁 + 내가 수락한 선생님 제안 (수락한 뒤에도 보이고 취소할 수 있게)
+  const myRequests = (state.requests || []).filter((r) => r.dir === "fromElder" || (approverOf(r) === "elder" && r.status !== "requested"));
   // 선생님(컨시어지)이 어르신에게 수락을 물은 제안 (2026-10-05 — 승인 대상은 컨시어지가 정한다)
   const proposalsForMe = (state.requests || []).filter((r) => r.status === "requested" && approverOf(r) === "elder");
   const [elderConfirm, setElderConfirm] = useState(null); // { id, kind: "cancel" | "decline" }
@@ -2036,7 +2037,7 @@ function ElderHome() {
                       : r.status === "cancelled" ? ["취소되었습니다", "#5C5A54"]
                       : ["선생님이 진행 중입니다", "#1E7A5A"];
                     const rule = cancelRule(r);
-                    const canCancel = !isVisitCall(r) && !CLOSED.includes(r.status) && ["free", "ops"].includes(rule.mode);
+                    const canCancel = !isVisitCall(r) && !isStoreOrder(r) && !CLOSED.includes(r.status) && ["free", "ops"].includes(rule.mode);
                     const asking = elderConfirm?.id === r.id && elderConfirm.kind === "cancel";
                     return (
                       <div key={r.id} style={SUB_CARD}>
@@ -2533,7 +2534,7 @@ function ElderHome() {
                   preferredWhen: when,
                   hospital: hospital || null,
                   payBy: askPlan.approval || !amount ? null : "elder",
-                  // 응급 대응은 긴급으로 (2026-10-05 — 전에는 늘 '보통'이라 관제 할 일 순서가 밀렸다)
+                  // 응급 대응은 긴급으로 (2026-10-05 — 컨시어지 승인 큐에 '긴급'으로 뜬다)
                   urgency: askSel.no === 12 ? "urgent" : "normal",
                   assignee: LIVE_CONCIERGE,
                   photos: [],

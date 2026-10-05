@@ -4,7 +4,7 @@ import { useState } from "react";
 import { payHref } from "../../lib/payments";
 import FamilyLayout from "../../components/FamilyLayout";
 import { Card, SectionLabel, PrimaryButton, GhostButton, Badge, Collapse } from "../../components/ui";
-import { STATUS, GUARDIAN_PRESETS, SERVICE_MENU, SERVICE_PLUS, URGENCY, CANCEL_FREE_DAYS, CLOSED, approverOf, cancelRule, fmtPreferred, fmtScheduled, paymentOf } from "../../lib/requests";
+import { STATUS, GUARDIAN_PRESETS, SERVICE_MENU, SERVICE_PLUS, URGENCY, CANCEL_FREE_DAYS, CLOSED, approverOf, cancelRule, fmtPreferred, fmtScheduled, isStoreOrder, isVisitCall, paymentOf } from "../../lib/requests";
 import { fmtWon, PRICING } from "../../lib/config";
 import { useAppState } from "../../lib/state";
 import { LIVE_CONCIERGE } from "../../lib/live-household";
@@ -309,7 +309,7 @@ export default function RequestsPage() {
 const STEPS_ASK = ["결제", "컨시어지 승인", "확정", "진행", "완료"];
 const STEPS_PROPOSAL = ["제안", "수락 · 결제", "확정", "진행", "완료"];
 function stepOf(r) {
-  if (CLOSED.includes(r.status) && r.status !== "done") return -1;
+  if ((CLOSED.includes(r.status) && r.status !== "done") || isVisitCall(r) || isStoreOrder(r)) return -1;
   const proposal = approverOf(r) !== "concierge";
   switch (r.status) {
     case "awaitingPayment":
@@ -354,7 +354,7 @@ function RequestCard({ req, open, onToggle, onboarding, dispatch, isPrimary, pay
   // 보호자가 할 수 있는 것 — 결제(결제 대기) · 제안 수락/거절(승인 대상이 보호자일 때) · 취소(규칙대로)
   const canAnswer = req.status === "requested" && approver === "guardian";
   const canPay = req.status === "awaitingPayment";
-  const canCancel = !visitCall && req.dir !== "fromOps" && !canAnswer && ["free", "ops"].includes(rule.mode) && !(proposal && req.status === "requested");
+  const canCancel = !visitCall && !isStoreOrder(req) && req.dir !== "fromOps" && !canAnswer && ["free", "ops"].includes(rule.mode) && !(proposal && req.status === "requested");
   const goPay = () => router.push(payHref({ kind: "request", amount: req.amount, orderName: req.type, ref: req.id }));
 
   return (
@@ -499,8 +499,8 @@ function RequestCard({ req, open, onToggle, onboarding, dispatch, isPrimary, pay
                 {confirming === "decline"
                   ? "이 제안을 거절할까요? 컨시어지에게 거절로 전달됩니다."
                   : rule.mode === "ops"
-                    ? `서비스일까지 ${CANCEL_FREE_DAYS}일이 안 남아 관제가 확인한 뒤 취소됩니다.${pay ? " 승인되면 결제하신 금액은 환불됩니다." : ""}`
-                    : `지금 취소하면 바로 취소됩니다.${pay ? ` 결제하신 ${fmtWon(pay.amount)}은 환불됩니다.` : ""}`}
+                    ? `${req.status === "inProgress" ? "이미 진행 중이라" : rule.days == null ? "확정 날짜가 없어" : `서비스일까지 ${CANCEL_FREE_DAYS}일이 안 남아`} 관제가 확인한 뒤 취소됩니다.${pay ? " 승인되면 결제하신 금액은 관제가 환불합니다." : ""}`
+                    : `지금 취소하면 바로 취소됩니다.${pay ? ` 결제하신 ${fmtWon(pay.amount)}은 관제가 환불 처리합니다.` : ""}`}
               </p>
               <div className="mt-2.5 flex gap-2">
                 <GhostButton className="flex-1" onClick={() => setConfirming(null)}>

@@ -268,6 +268,8 @@ function reopen(id) {
   patch(id, (inc) => {
     const firstOpen = STEP_ORDER.find((s) => s.k !== "close" && s.k !== "report" && !inc.steps?.[s.k]?.result)?.k || "close";
     const { close: _closed, ...steps } = inc.steps || {};
+    // 종료 뒤에 남긴 메모는 지우지 않는다 (사후 메모 — 덮어쓰지 않는 기록)
+    if (_closed?.notes?.length) steps.close = { notes: _closed.notes };
     return { ...inc, state: "active", closed: null, step: firstOpen, steps, signals: [...(inc.signals || []), { at: Date.now(), text: "사건 재개 (종료 취소)" }] };
   });
 }

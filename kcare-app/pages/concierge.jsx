@@ -1683,7 +1683,7 @@ function ConciergePage() {
                 {/* 제안 받을 사람 · 제안 일정 — 아래 모든 제안에 같이 붙는다 (2026-10-05 "승인대상자는 컨시어지가 정한다") */}
                 <Card className="p-4">
                   <div className="text-[15px] font-black text-navy">제안 보내기 설정</div>
-                  <p className="mt-0.5 text-[11.5px] leading-[1.6] text-muted">누가 수락할지, 언제 해 드릴지 정하고 아래에서 제안하세요. 수락되면 바로 확정됩니다.</p>
+                  <p className="mt-0.5 text-[11.5px] leading-[1.6] text-muted">누가 수락할지, 언제 해 드릴지 정하고 아래에서 제안하세요. 수락되면 확정됩니다 (금액이 있으면 보호자 결제 뒤).</p>
                   <div className="mt-2.5 flex gap-1.5" role="radiogroup" aria-label="수락할 분">
                     {[["guardian", "보호자"], ["elder", "어르신"]].map(([k, l]) => (
                       <button

@@ -342,6 +342,9 @@ function Detail({ r, m, real, payments, dispatch, onClose, onTransition, onPatch
                 </p>
                 <Field id={`req-opsnote-${r.id}`} label="관제 메모 (이력에 남고 요청자에게 보입니다)" value={opsNote} onChange={setOpsNote} placeholder="예: 보호자와 통화 후 취소 승인" />
                 <div className="mt-2 flex flex-wrap gap-2">
+                  {r.status === "needsAdmin" && (
+                    <Btn small tone="navy" onClick={() => dispatch?.({ type: "transitionRequest", id: r.id, to: "requested", note: `관제 확인 — 담당 컨시어지 승인 대기로 (${OPERATOR})`, by: OPERATOR })}>승인 대기로 돌려보내기</Btn>
+                  )}
                   {r.status === "cancelRequested" && (
                     <>
                       <Btn small tone="navy" onClick={() => setConfirm({ kind: "cancelOk", label: "취소 승인" })}>취소 요청 승인{paid ? " (환불 대기로)" : ""}</Btn>

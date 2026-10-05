@@ -18,6 +18,7 @@ import {
   approverOf,
   fmtPreferred,
   fmtScheduled,
+  isStoreOrder,
   isVisitCall,
   kstYmd,
   paymentOf,
@@ -74,6 +75,9 @@ function ApproveRow({ r, me, requests, payments, dispatch, push }) {
   const day = useMemo(() => scheduleOn(date, me, requests, r.id), [date, me, requests, r.id]);
   const clash = day.some((d) => d.t && time && d.t.slice(0, 2) === time.slice(0, 2));
   const past = date < kstYmd(Date.now());
+  // 요금 확정 전 항목은 금액을 정해야 승인된다 (무료면 0) — 비워 두면 아무도 결제하지 않은 채 확정됐다 (2026-10-05 리뷰)
+  const needPrice = r.amount == null && !isStoreOrder(r);
+  const priceOk = !needPrice || (amount !== "" && Number(amount) >= 0 && Number.isFinite(Number(amount)));
   const who = FROM[r.dir] || "";
   return (
     <div className="rounded-xl border border-navy/[.08] bg-white/70 p-3">
@@ -82,6 +86,7 @@ function ApproveRow({ r, me, requests, payments, dispatch, push }) {
         {r.urgency === "urgent" && <Badge fg={URGENCY.urgent.fg} bg={URGENCY.urgent.bg}>긴급</Badge>}
         <span className="ml-auto text-[11px] text-muted">
           {who} · {hm(r.history?.[0]?.at || Date.now())}
+          {r.assignee && r.assignee !== me ? ` · 담당 ${r.assignee}` : ""}
         </span>
       </div>
       <div className="mt-1.5 text-[14px] font-bold text-navy">{r.type}</div>
@@ -100,6 +105,7 @@ function ApproveRow({ r, me, requests, payments, dispatch, push }) {
             value={date}
             min={kstYmd(Date.now())}
             onChange={(e) => setDate(e.target.value)}
+            aria-label="확정 날짜"
             className="mt-1 w-full rounded-lg border border-navy/15 px-2.5 py-2 text-[14px] text-ink outline-none focus:border-gold"
           />
         </label>
@@ -113,12 +119,13 @@ function ApproveRow({ r, me, requests, payments, dispatch, push }) {
           />
         </label>
       </div>
-      {r.amount == null && (
+      {needPrice && (
         <label className="mt-2 block text-[11px] font-bold text-muted">
-          요금 (원) — 비우면 '확정 전'으로 둡니다
+          요금 (원) — 승인 전에 꼭 정해 주세요 (무료면 0). 금액이 있으면 승인 뒤 보호자가 결제합니다
           <input
             type="number"
             inputMode="numeric"
+            min={0}
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
             placeholder="예: 30000"
@@ -175,9 +182,9 @@ function ApproveRow({ r, me, requests, payments, dispatch, push }) {
             거절
           </button>
           <button
-            disabled={!date || past}
+            disabled={!date || past || !priceOk}
             onClick={() => {
-              dispatch({ type: "approveRequest", id: r.id, by: me, date, time, amount: r.amount == null ? amount : undefined });
+              dispatch({ type: "approveRequest", id: r.id, by: me, date, time, amount: needPrice ? amount : undefined });
               push("해주세요", `${me} 승인 — ${r.type} · ${date} ${time}`, "#8FE3C0");
             }}
             className="btn-press flex-[2] rounded-xl bg-navy py-2.5 text-[13px] font-bold text-white disabled:opacity-40"
@@ -191,7 +198,9 @@ function ApproveRow({ r, me, requests, payments, dispatch, push }) {
 }
 
 export default function ConciergeRequests({ requests, payments, me, dispatch, push }) {
-  const mine = (r) => !r.assignee || r.assignee === me;
+  // 베타에서 앱을 쓰는 컨시어지는 한 사람(테스트 컨시어지 계정)이라, 관제가 다른 컨시어지로 바꾼 건도 여기서 받는다
+  // (안 그러면 아무 큐에도 없어 승인 대기로 멈춘다 — 2026-10-05 리뷰). 담당이 다르면 카드에 이름을 단다.
+  const mine = () => true;
   const asks = (requests || []).filter((r) => !isVisitCall(r) && !CLOSED.includes(r.status));
   const toApprove = asks.filter((r) => r.status === "requested" && approverOf(r) === "concierge" && mine(r));
   const waitingPay = asks.filter((r) => r.status === "awaitingPayment" && mine(r));
