@@ -26,6 +26,9 @@ const KIND_OF_TYPE = {
   demo: "sos", ackSos: "sos",
   opsPatch: "dispatch", sosAccept: "dispatch",
   addRequest: "request", transitionRequest: "request", assignRequest: "request",
+  // 2026-10-05 해주세요 승인 · 결제 · 취소 · 환불, 도와줘요 처리 단계
+  requestPaid: "request", approveRequest: "request", declineRequest: "request", respondProposal: "request",
+  cancelRequest: "request", decideCancel: "request", forceCancel: "request", refundDone: "request", noteRequest: "request", helpCall: "request",
   addEvent: "schedule", updateEvent: "schedule", decideEvent: "schedule",
   addVoice: "message", addReview: "message", welfareAnswer: "message", addOpsMessage: "message", ackOpsMessage: "message",
   completeOnboarding: "signup", onboardingPatch: "signup", addPayment: "signup", setBilling: "signup", commitPendingOrder: "signup", addOrder: "signup",
