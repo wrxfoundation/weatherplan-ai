@@ -3,7 +3,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useReducer,
 // 여기서 mock.js 를 참조하면 콘솔 목데이터 전체가 모든 페이지에 실린다 (seed.js 주석 참고).
 import { INITIAL_EVENTS, INITIAL_REQUESTS, SEED_EVENTS, SEED_ORDERS, SEED_REPORTS } from "./seed";
 import { PRICING } from "./config";
-import { transition } from "./requests";
+import { approverOf, cancelRule, paymentOf, transition } from "./requests";
 import { SEED_VISIT, advance } from "./workflow";
 import { useAuth } from "./auth";
 import { setStorageScope } from "./scope";
@@ -166,6 +166,43 @@ function rebaseSeedEvents(events) {
 const nowOf = (a) => (Number.isFinite(a?._at) ? a._at : Date.now());
 const idOf = (prefix, a) => (a?._op ? `${prefix}${a._op}` : `${prefix}${Date.now()}`);
 
+// ── 해주세요 상태 바꾸기 도우미 (reducer 전용) ──
+const CLOSED_REQ = ["done", "cancelled", "rejected"];
+const reqTs = (ymd, hm) => Date.parse(`${ymd}T${/^\d{2}:\d{2}$/.test(hm || "") ? hm : "10:00"}:00+09:00`);
+// 확정된 해주세요는 캘린더에도 — 보호자 · 어르신 · 컨시어지가 같은 일정을 본다. 취소 · 거절되면 뺀다.
+const reqEvent = (r) => ({
+  id: `ev-${r.id}`,
+  reqId: r.id,
+  kind: "request",
+  title: `해주세요 · ${r.type}`,
+  at: reqTs(r.scheduledDate, r.scheduledTime),
+  source: r.dir === "fromConcierge" ? "컨시어지 제안 수락" : "컨시어지 승인",
+  note: r.assignee ? `${r.assignee} 담당` : "",
+});
+function withRequest(state, next, addEvent) {
+  const events = (state.events || []).filter((e) => e.reqId !== next.id);
+  return {
+    ...state,
+    requests: state.requests.map((x) => (x.id === next.id ? next : x)),
+    events: addEvent && next.scheduledDate ? [...events, reqEvent(next)] : addEvent ? events : state.events,
+  };
+}
+// 거절 · 취소 — 보호자가 낸 돈은 환불 대기로 (베타: 관제가 토스 상점관리자에서 환불하고 '환불 완료'). 데모 가상 승인은 돈이 없어 바로 완료.
+function closeRequest(state, r, to, note, at, by) {
+  const next = transition(r, to, note, at, { by });
+  if (next === r) return state;
+  return {
+    ...state,
+    requests: state.requests.map((x) => (x.id === r.id ? next : x)),
+    events: (state.events || []).filter((e) => e.reqId !== r.id),
+    payments: (state.payments || []).map((p) =>
+      p.ref === r.id && p.status === "done" && !p.refund
+        ? { ...p, refund: { status: p.demo ? "done" : "pending", amount: p.amount, reason: note, at, by, ...(p.demo ? { doneAt: at, doneBy: "데모 (실제 결제 없음)" } : {}) } }
+        : p
+    ),
+  };
+}
+
 function reducer(state, action) {
   switch (action.type) {
     case "hydrate": {
@@ -269,7 +306,133 @@ function reducer(state, action) {
       return {
         ...state,
         requests: state.requests.map((r) =>
-          r.id === action.id ? transition(r, action.to, action.note) : r
+          r.id === action.id ? transition(r, action.to, action.note, nowOf(action), action.by ? { by: action.by } : {}) : r
+        ),
+      };
+    // ── 해주세요 승인 · 결제 · 취소 (2026-10-05 결정 — lib/requests.js 머리말) ──
+    // 결제가 끝났다 — 승인 전이면 담당 컨시어지 승인 대기로, 이미 승인됐거나(요금 확정 전 항목) 제안을 수락한 것이면 확정으로
+    case "requestPaid": {
+      const r = state.requests.find((x) => x.id === action.id);
+      if (!r || r.status !== "awaitingPayment") return state;
+      const at = nowOf(action);
+      const proposal = r.dir === "fromConcierge" || r.dir === "fromOps";
+      const approved = !!r.approvedAt || proposal;
+      const base = approved && !r.approvedAt ? { ...r, approvedAt: at, approvedBy: "보호자" } : r;
+      const next = transition(base, approved ? "confirmed" : "requested", action.note || "결제 완료", at, { by: "보호자" });
+      return withRequest(state, next, approved);
+    }
+    // 담당 컨시어지 승인 — 자기 일정을 보고 날짜 · 시간을 정한다. 요금 확정 전 항목은 금액도 여기서 정해 결제로 보낸다
+    case "approveRequest": {
+      const r = state.requests.find((x) => x.id === action.id);
+      if (!r || r.status !== "requested" || approverOf(r) !== "concierge") return state;
+      const at = nowOf(action);
+      const by = String(action.by || r.assignee || "");
+      const amount = r.amount == null && action.amount !== "" && action.amount != null && Number.isFinite(Number(action.amount)) ? Number(action.amount) : r.amount;
+      let payBy = r.payBy || null;
+      let to = "confirmed";
+      const paid = !!paymentOf(state.payments, r.id) || payBy === "elder";
+      if (!paid && amount > 0) {
+        if (r.dir === "fromElder" && !needsGuardianApproval(state.onboarding, amount, elderSpentToday(state, at))) payBy = "elder";
+        else to = "awaitingPayment";
+      }
+      const when = `${action.date || ""}${action.time ? ` ${action.time}` : ""}`.trim();
+      const base = { ...r, amount, payBy, assignee: by || r.assignee, scheduledDate: action.date || null, scheduledTime: action.time || "", approvedAt: at, approvedBy: by };
+      const next = transition(base, to, `${by} 승인${when ? ` · ${when}` : ""}${to === "awaitingPayment" ? ` · 결제 대기 ${amount.toLocaleString("ko-KR")}원` : ""}`, at, { by });
+      return withRequest(state, next, to === "confirmed");
+    }
+    // 담당 컨시어지 거절 — 결제했으면 환불 대기로
+    case "declineRequest": {
+      const r = state.requests.find((x) => x.id === action.id);
+      if (!r || r.status !== "requested" || approverOf(r) !== "concierge") return state;
+      const by = String(action.by || r.assignee || "");
+      return closeRequest(state, r, "rejected", `${by} 거절${action.reason ? ` — ${action.reason}` : ""}`, nowOf(action), by);
+    }
+    // 컨시어지 제안 — 컨시어지가 정한 승인 대상(보호자 · 어르신)만 수락 · 거절한다
+    case "respondProposal": {
+      const r = state.requests.find((x) => x.id === action.id);
+      if (!r || r.status !== "requested" || approverOf(r) !== action.role) return state;
+      const at = nowOf(action);
+      const who = action.role === "elder" ? "어르신" : "보호자";
+      if (!action.accept) return closeRequest(state, r, "rejected", `${who} 거절${action.reason ? ` — ${action.reason}` : ""}`, at, who);
+      let payBy = r.payBy || null;
+      let to = "confirmed";
+      if (r.amount > 0) {
+        if (action.role === "elder" && !needsGuardianApproval(state.onboarding, r.amount, elderSpentToday(state, at))) payBy = "elder";
+        else to = "awaitingPayment";
+      }
+      const next = transition({ ...r, payBy, approvedAt: at, approvedBy: who }, to, `${who} 수락${to === "awaitingPayment" ? " · 보호자 결제 대기" : ""}`, at, { by: who });
+      return withRequest(state, next, to === "confirmed");
+    }
+    // 취소 — 확정 전이거나 서비스일 3일 이상 남았으면 바로, 그 안(2일 전 · 전날 · 당일 · 진행 중)은 관제 승인 요청
+    case "cancelRequest": {
+      const r = state.requests.find((x) => x.id === action.id);
+      if (!r) return state;
+      const at = nowOf(action);
+      const who = String(action.by || "");
+      const why = action.reason ? ` — ${action.reason}` : "";
+      const rule = cancelRule(r, at);
+      if (rule.mode === "free") return closeRequest(state, r, "cancelled", `${who} 취소${why}`, at, who);
+      if (rule.mode !== "ops") return state;
+      const next = transition(r, "cancelRequested", `${who} 취소 요청${why} — 관제 승인 대기`, at, { by: who });
+      return withRequest(state, next === r ? r : { ...next, cancelReq: { by: who, reason: action.reason || "", at, from: r.status } }, false);
+    }
+    // 관제 — 취소 요청 승인(취소 · 환불 대기) 또는 반려(원래 상태로)
+    case "decideCancel": {
+      const r = state.requests.find((x) => x.id === action.id);
+      if (!r || r.status !== "cancelRequested") return state;
+      const at = nowOf(action);
+      const by = String(action.by || "관제");
+      const why = action.note ? ` — ${action.note}` : "";
+      if (action.approve) return closeRequest(state, r, "cancelled", `관제 취소 승인 (${by})${why}`, at, by);
+      const back = r.cancelReq?.from === "inProgress" ? "inProgress" : "confirmed";
+      return withRequest(state, transition(r, back, `관제 취소 반려 (${by})${why}`, at, { by }), false);
+    }
+    // 상태는 그대로 두고 처리 기록만 한 줄 — 도와줘요 '확인 전화 미연결 · 재시도' 같은 중간 단계 (보호자 · 컨시어지 팝업이 이 줄을 띄운다)
+    case "noteRequest": {
+      const r = state.requests.find((x) => x.id === action.id);
+      if (!r || !action.note) return state;
+      const next = { ...r, history: [...(r.history || []), { at: nowOf(action), status: r.status, note: String(action.note), by: String(action.by || "") }] };
+      return { ...state, requests: state.requests.map((x) => (x.id === r.id ? next : x)) };
+    }
+    // 도와줘요(즉시 방문 요청) 관제 처리 — 확인 전화 결과 · 출동 지시 · 해결 완료 (2026-10-05).
+    // 어느 단계에서든 해결 완료로 닫을 수 있다 (1차 전화로 끝나는 일이 많다). 각 단계는 이력 한 줄 → 보호자 · 컨시어지 팝업.
+    case "helpCall": {
+      const r = state.requests.find((x) => x.id === action.id);
+      if (!r || CLOSED_REQ.includes(r.status)) return state;
+      const at = nowOf(action);
+      const by = String(action.by || "관제");
+      const memo = action.note ? ` — ${action.note}` : "";
+      const line = (status, note, extra = {}) => ({ ...r, ...extra, status, history: [...(r.history || []), { at, status, note, by }] });
+      let next = null;
+      if (action.step === "call") {
+        if (action.result === "fine") next = line("done", `확인 전화 연결 · 전화로 해결 (${by})${memo}`, { resolvedAt: at, resolvedBy: by });
+        else if (action.result === "visit") next = line("confirmed", `확인 전화 연결 · 방문 필요 (${by})${memo}`);
+        else next = line(r.status, `확인 전화 미연결 — 다시 걸거나 바로 출동 (${by})${memo}`);
+      } else if (action.step === "dispatch") {
+        const who = String(action.assignee || r.assignee || "");
+        next = line("inProgress", `${who} 컨시어지 출동 지시 (${by})${memo}`, { assignee: who });
+      } else if (action.step === "arrive") {
+        next = line(r.status, `${by} 현장 도착${memo}`);
+      } else if (action.step === "resolve") {
+        next = line("done", `해결 완료 (${by})${memo}`, { resolvedAt: at, resolvedBy: by });
+      }
+      return next ? { ...state, requests: state.requests.map((x) => (x.id === r.id ? next : x)) } : state;
+    }
+    // 관제 강제 취소 — 상태 · 기한과 상관없이. 결제했으면 환불 대기로
+    case "forceCancel": {
+      const r = state.requests.find((x) => x.id === action.id);
+      if (!r) return state;
+      const by = String(action.by || "관제");
+      return closeRequest(state, r, "cancelled", `관제 강제 취소 (${by})${action.reason ? ` — ${action.reason}` : ""}`, nowOf(action), by);
+    }
+    // 관제 — 토스 상점관리자에서 환불한 뒤 '환불 완료'로 닫는다
+    case "refundDone":
+      return {
+        ...state,
+        payments: (state.payments || []).map((p) =>
+          p.id === action.paymentId && p.refund && p.refund.status !== "done"
+            ? { ...p, refund: { ...p.refund, status: "done", doneAt: nowOf(action), doneBy: String(action.by || "관제") } }
+            : p
         ),
       };
     // 관제가 담당 컨시어지를 바꾼다 — 보호자 해주세요 카드의 '담당'이 같이 바뀐다 (2026-10-01).

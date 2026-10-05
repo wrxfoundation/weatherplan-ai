@@ -51,7 +51,10 @@ import { checkupFor, REPORT_HEADLINE } from "../lib/checkup";
 import { requiredFor } from "../lib/ops-mgmt";
 import { RESULT_TONE, VISIT_GRADES } from "../lib/visit-report";
 import { STORE_CATALOG } from "../lib/store";
-import { SERVICE_MENU, STATUS } from "../lib/requests";
+import { SERVICE_MENU, daysUntil, kstYmd } from "../lib/requests";
+import ConciergeRequests from "../components/ConciergeRequests";
+import { HelpCallCard, HelpCallPopup } from "../components/HelpCall";
+import { LIVE_CONCIERGE } from "../lib/live-household";
 import { fmtWon } from "../lib/config";
 import { useAppState } from "../lib/state";
 import { useAuth } from "../lib/auth";
@@ -120,6 +123,25 @@ function ConciergePage() {
   const [apptTime, setApptTime] = useState("09:30");
   const [apptMemo, setApptMemo] = useState("");
   const [reqText, setReqText] = useState(""); // 컨시어지 요청 본문
+  // 제안 받을 사람 · 제안 일정 — 승인 대상은 컨시어지가 정한다 (2026-10-05). 내 일정에 맞춰 날짜를 제안한다.
+  const ME = LIVE_CONCIERGE;
+  const [propTo, setPropTo] = useState("guardian");
+  const [propDate, setPropDate] = useState(() => kstYmd(Date.now() + 3 * 86400000));
+  const [propTime, setPropTime] = useState("14:00");
+  const propLabel = propTo === "elder" ? "어르신" : "보호자";
+  const withProposal = (p) => {
+    const at = Date.now();
+    return {
+      ...p,
+      dir: "fromConcierge",
+      assignee: ME,
+      approver: propTo,
+      scheduledDate: propDate || null,
+      scheduledTime: propDate ? propTime : "",
+      status: "requested",
+      history: [{ at, status: "requested", note: `${p.history?.[0]?.note || "컨시어지 제안"} · ${propLabel} 수락 대기${propDate ? ` · 제안 일정 ${propDate} ${propTime}` : ""}` }],
+    };
+  };
   const [reqSent, setReqSent] = useState(false);
   const [pairCalled, setPairCalled] = useState(false);
   // 관제 급파 수락 — 가구 기록(ops.sosAcceptedAt)에 남겨 관제 SOS 대응과 컨시어지 관리가 같은 시각을 본다 (2026-10-02)
@@ -225,11 +247,6 @@ function ConciergePage() {
   const purchasing = state.requests.filter(
     (r) => r.dir === "fromConcierge" && r.status === "inProgress"
   );
-  // 어르신 화면에서 온 부탁 — 도와줘요(즉시 방문) · 해주세요 · 복지혜택 (2026-09-04 시트
-  // 어르신 해주세요 3번 "컨시어지 화면에도 처리 가능한 내용이 없음"). 종결된 것은 뺀다.
-  const elderAsks = state.requests.filter(
-    (r) => r.dir === "fromElder" && !["done", "cancelled", "rejected"].includes(r.status)
-  );
   // 복지혜택 제안 — 담당 가구(김순자)에 맞는 것 (앱 전체 3번). 판정은 관제·보호자와 같은 값.
   const [welfareSent, setWelfareSent] = useState({});
   const welfareMatches = matchWelfare(profileFor(ELDER.name, state.welfare?.answers));
@@ -252,6 +269,21 @@ function ConciergePage() {
   // 고객·보호자가 함께 쓰는 캘린더(배송·개인일정·가족이벤트 포함)는 고객 탭에서
   // 고객 이름을 눌러 상세로 본다.
   const cNow = new Date();
+  // 내가 승인 · 수락받아 확정된 해주세요도 달력에 (2026-10-05) — 데모 달력과 같은 모양으로
+  const reqJobs = (state.requests || [])
+    .filter((r) => r.scheduledDate && r.assignee === ME && ["confirmed", "inProgress", "cancelRequested"].includes(r.status))
+    .map((r) => ({
+      id: `rq-cal-${r.id}`,
+      off: daysUntil(r.scheduledDate),
+      kind: "request",
+      client: live ? LIVE_ELDER : ELDER.name,
+      age: ELDER.age,
+      time: r.scheduledTime || "시간 미정",
+      where: r.hospital || "",
+      detail: `해주세요 — ${r.type}`,
+      crew: `${ME} 1인`,
+      memo: r.detail || "",
+    }));
   const calMonthLabel = `${cNow.getFullYear()}년 ${cNow.getMonth() + 1}월`;
   const calCells = (() => {
     const first = new Date(cNow.getFullYear(), cNow.getMonth(), 1);
@@ -262,7 +294,7 @@ function ConciergePage() {
         day: d,
         today: d === cNow.getDate(),
         // 오늘에서 며칠 떨어진 날인지(off)로 맞춘다 — 달력과 '오늘의 일정'이 같은 기준(이 폰의 오늘)을 쓰게
-        jobs: CONCIERGE_CAL.filter((j) => j.off === d - cNow.getDate()),
+        jobs: [...CONCIERGE_CAL.filter((j) => j.off === d - cNow.getDate()), ...reqJobs.filter((j) => j.off === d - cNow.getDate())],
       });
     }
     return cells;
@@ -510,54 +542,12 @@ function ConciergePage() {
                 {/* 방문 업무흐름 — 관제와 같은 건을 본다 (2026-08-13 미팅 8단계) */}
                 <VisitFlow role="concierge" />
 
-                {/* 어르신이 부탁한 것 — 도와줘요 · 해주세요 · 복지혜택 (2026-09-04 시트).
-                    관제가 확인 전화를 마치면 '확인됨'으로 넘어오고, 여기서 진행·완료를 누른다.
-                    어르신 화면 '부탁해 둔 것'의 문구가 이 단계를 그대로 따라간다. */}
-                {elderAsks.length > 0 && (
-                  <Card className="p-4">
-                    <div className="flex items-center gap-2">
-                      <span className="text-[15px] font-black text-navy">{ELDER.name} 님이 부탁한 것</span>
-                      <span className="ml-auto font-num text-[12px] font-bold text-amber">{elderAsks.length}건</span>
-                    </div>
-                    <div className="mt-3 space-y-2">
-                      {elderAsks.map((r) => {
-                        const st = STATUS[r.status];
-                        const next =
-                          r.status === "requested" ? ["확인함", "confirmed", "컨시어지 확인"]
-                          : r.status === "confirmed" ? ["진행 시작", "inProgress", "컨시어지 진행 시작"]
-                          : r.status === "inProgress" ? ["완료", "done", "컨시어지 완료 처리"]
-                          : null;
-                        return (
-                          <div key={r.id} className="rounded-xl border border-navy/[.07] bg-white/60 p-3">
-                            <div className="flex items-center gap-2">
-                              <Badge fg={st.fg} bg={st.bg}>{st.label}</Badge>
-                              {r.urgency === "urgent" && <Badge fg="#C0392B" bg="rgba(192,57,43,.1)">긴급</Badge>}
-                              <span className="ml-auto font-num text-[11px] text-muted">{fmtT(r.history[0]?.at || Date.now())}</span>
-                            </div>
-                            <div className="mt-1.5 text-[14px] font-bold text-navy">{r.type}</div>
-                            <div className="mt-0.5 text-[12px] leading-[1.6] text-muted">{r.detail}</div>
-                            {r.status === "requested" && (
-                              <p className="mt-1.5 text-[11.5px] font-bold text-amber">관제 확인 전화 대기 — 관제 대시보드 &lsquo;지금 처리할 일&rsquo;</p>
-                            )}
-                            {next && (
-                              <button
-                                onClick={() => {
-                                  dispatch({ type: "transitionRequest", id: r.id, to: next[1], note: next[2] });
-                                  push("어르신", `${ELDER.name} ${r.type} — ${next[2]}`, "#8FE3C0");
-                                }}
-                                className={`btn-press mt-2.5 w-full rounded-xl border py-2.5 text-[13px] font-bold ${
-                                  next[1] === "done" ? "border-green/40 text-green" : "border-navy/20 text-navy"
-                                }`}
-                              >
-                                {next[0]}
-                              </button>
-                            )}
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </Card>
-                )}
+                {/* 도와줘요(즉시 방문 요청) — 관제가 확인 전화 · 출동 지시를 하고, 그 단계가 여기 그대로 뜬다 (2026-10-05) */}
+                <HelpCallCard role="concierge" me={ME} />
+
+                {/* 해주세요 — 보호자 · 어르신 부탁은 내 일정을 보고 승인 · 거절, 확정 건 진행 · 완료, 보낸 제안 (2026-10-05).
+                    전에는 어르신 부탁만 보였고, 관제 확인 전에 '확인함'을 누를 수 있었다. */}
+                <ConciergeRequests requests={state.requests} payments={state.payments} me={ME} dispatch={dispatch} push={push} />
 
 
                 {state.demo.offline && (
@@ -1690,6 +1680,38 @@ function ConciergePage() {
             {/* ════ 제안 탭 ════ */}
             {tab === "suggest" && (
               <>
+                {/* 제안 받을 사람 · 제안 일정 — 아래 모든 제안에 같이 붙는다 (2026-10-05 "승인대상자는 컨시어지가 정한다") */}
+                <Card className="p-4">
+                  <div className="text-[15px] font-black text-navy">제안 보내기 설정</div>
+                  <p className="mt-0.5 text-[11.5px] leading-[1.6] text-muted">누가 수락할지, 언제 해 드릴지 정하고 아래에서 제안하세요. 수락되면 바로 확정됩니다.</p>
+                  <div className="mt-2.5 flex gap-1.5" role="radiogroup" aria-label="수락할 분">
+                    {[["guardian", "보호자"], ["elder", "어르신"]].map(([k, l]) => (
+                      <button
+                        key={k}
+                        role="radio"
+                        aria-checked={propTo === k}
+                        onClick={() => setPropTo(k)}
+                        className={`btn-press flex-1 rounded-xl border py-2.5 text-[13px] font-bold ${propTo === k ? "border-navy bg-navy text-white" : "border-navy/15 text-muted"}`}
+                      >
+                        {l}이 수락
+                      </button>
+                    ))}
+                  </div>
+                  <div className="mt-2 grid grid-cols-2 gap-2">
+                    <label className="block text-[11px] font-bold text-muted">
+                      제안 날짜
+                      <input type="date" value={propDate} min={kstYmd(Date.now())} onChange={(e) => setPropDate(e.target.value)} className="mt-1 w-full rounded-lg border border-navy/15 px-2.5 py-2 text-[14px] text-ink outline-none focus:border-gold" />
+                    </label>
+                    <label className="block text-[11px] font-bold text-muted">
+                      시간
+                      <input type="time" value={propTime} onChange={(e) => setPropTime(e.target.value)} className="mt-1 w-full rounded-lg border border-navy/15 px-2.5 py-2 text-[14px] text-ink outline-none focus:border-gold" />
+                    </label>
+                  </div>
+                  {propTo === "elder" && (
+                    <p className="mt-2 text-[11.5px] leading-[1.6] text-amber">어르신 하루 한도를 넘는 금액은 어르신이 수락한 뒤 보호자가 결제합니다.</p>
+                  )}
+                </Card>
+
                 {/* 케어 제안 — 제안은 반드시 근거(trigger)를 동반 (도메인 규칙 1.1) */}
                 <SectionLabel>케어 제안</SectionLabel>
                 {CARE_SUGGESTIONS.map((sg) => (
@@ -1705,9 +1727,8 @@ function ConciergePage() {
                         setSuggested((x) => ({ ...x, [sg.item]: true }));
                         dispatch({
                           type: "addRequest",
-                          payload: {
+                          payload: withProposal({
                             id: `rq-${Date.now()}`,
-                            dir: "fromConcierge",
                             type: `케어 제안 · ${sg.item}`,
                             detail: `${sg.trigger}. 필요하시면 결제 후 다음 방문 때 가져다 드립니다 (배송비 무료).`,
                             amount: sg.est,
@@ -1718,9 +1739,9 @@ function ConciergePage() {
                             status: "requested",
                             history: [{ at: Date.now(), status: "requested", note: "관찰 근거 기반 제안" }],
                             proof: null,
-                          },
+                          }),
                         });
-                        push("제안", `케어 제안 전송 · ${sg.item} (근거 동반)`, "#B08D57");
+                        push("제안", `케어 제안 전송 · ${sg.item} (근거 동반) — ${propLabel} 수락 대기`, "#B08D57");
                       }}
                       disabled={!!suggested[sg.item]}
                       className={`btn-press mt-2.5 w-full rounded-xl border py-2.5 text-[13px] font-bold ${
@@ -1764,9 +1785,8 @@ function ConciergePage() {
                         setWelfareSent((s) => ({ ...s, [m.policy.id]: true }));
                         dispatch({
                           type: "addRequest",
-                          payload: {
+                          payload: withProposal({
                             id: `rq-${Date.now()}`,
-                            dir: "fromConcierge",
                             type: `복지혜택 제안 · ${m.policy.name}`,
                             detail: `${m.policy.summary} — ${m.policy.value}. ${m.verdict} · 확인할 것: ${m.checks}. 신청: ${m.policy.apply}`,
                             amount: 0,
@@ -1777,12 +1797,12 @@ function ConciergePage() {
                             status: "requested",
                             history: [{ at: Date.now(), status: "requested", note: "컨시어지 현장 제안 · 공공지원 우선" }],
                             proof: null,
-                          },
+                          }),
                         });
                         dispatch({ type: "welfareStatus", id: m.policy.id, status: "자격확인", by: "컨시어지" });
                         push("복지", `복지혜택 제안 — ${m.policy.name} (${m.verdict})`, "#F0D9A8");
                       }}
-                      sendLabel="보호자에게 제안"
+                      sendLabel={`${propLabel}에게 제안`}
                       sent={welfareSent}
                     />
                   </div>
@@ -1859,14 +1879,14 @@ function ConciergePage() {
                     if (shopSent) {
                       return (
                         <p className="mt-3 rounded-xl border border-green/25 bg-green/5 p-3 text-[13px] font-bold text-green">
-                          보호자 승인 요청 전송됨 — 승인되면 구매 후 완료사진을 올립니다.
+                          {propLabel}에게 제안을 보냈습니다 — 수락 · 결제되면 확정되고, 오늘 탭 &lsquo;확정된 것&rsquo;에서 진행합니다.
                         </p>
                       );
                     }
                     if (items.length === 0) {
                       return (
                         <p className="mt-3 text-[12px] text-muted">
-                          물품을 담으면 예상금액과 함께 보호자 승인 요청이 전송됩니다.
+                          물품을 담으면 예상금액과 함께 {propLabel}에게 제안이 갑니다.
                         </p>
                       );
                     }
@@ -1876,34 +1896,28 @@ function ConciergePage() {
                           setShopSent(true);
                           dispatch({
                             type: "addRequest",
-                            payload: {
+                            payload: withProposal({
                               id: `rq-${Date.now()}`,
-                              dir: "fromConcierge",
-                              type: "결제가 필요합니다",
+                              type: "안전용품 제안",
                               detail: `안전용품: ${items.map((i) => i.name).join(", ")} — 결제가 끝나면 다음 방문 때 가져다 드립니다 (배송비 무료).`,
                               amount: est,
                               preferredDate: null,
                               urgency: "normal",
                               assignee: "박지현",
                               photos: [],
-                              status: "awaitingPayment",
-                              history: [
-                                { at: Date.now(), status: "requested", note: "안전용품 제안 등록" },
-                                { at: Date.now(), status: "confirmed", note: "" },
-                                { at: Date.now(), status: "awaitingPayment", note: `예상 금액 ${fmtWon(est)}` },
-                              ],
+                              history: [{ at: Date.now(), status: "requested", note: `안전용품 제안 · 예상 금액 ${fmtWon(est)}` }],
                               proof: null,
-                            },
+                            }),
                           });
                           dispatch({
                             type: "audit",
                             event: { kind: "request", label: `안전용품 결제 승인 요청 · ${items.length}개 품목` },
                           });
-                          push("구매", `안전용품 ${items.length}건 결제 승인 요청 · ${fmtWon(est)}`, "#B08D57");
+                          push("구매", `안전용품 ${items.length}건 제안 · ${fmtWon(est)} — ${propLabel} 수락 대기`, "#B08D57");
                         }}
                         className="btn-press btn-dark mt-3 w-full rounded-xl bg-navy py-3 text-[15px] font-bold text-white"
                       >
-                        보호자 승인 요청 · 예상 {fmtWon(est)}
+                        {propLabel}에게 제안 · 예상 {fmtWon(est)}
                       </button>
                     );
                   })()}
@@ -1952,9 +1966,8 @@ function ConciergePage() {
                             setAskProposed((s) => ({ ...s, [m.no]: true }));
                             dispatch({
                               type: "addRequest",
-                              payload: {
+                              payload: withProposal({
                                 id: `rq-${Date.now()}`,
-                                dir: "fromConcierge",
                                 type: m.name,
                                 detail: `컨시어지 제안 — ${m.scope}`,
                                 amount: m.amount ?? null,
@@ -1967,9 +1980,9 @@ function ConciergePage() {
                                   { at: Date.now(), status: "requested", note: "컨시어지 현장 제안" },
                                 ],
                                 proof: null,
-                              },
+                              }),
                             });
-                            push("제안", `${m.name} 제안 — 보호자 확인 대기`, "#B08D57");
+                            push("제안", `${m.name} 제안 — ${propLabel} 수락 대기`, "#B08D57");
                           }}
                           className={`btn-press flex w-full items-center gap-2.5 rounded-xl border p-2.5 text-left disabled:opacity-60 ${
                             on ? "border-green/30 bg-green/5" : "border-navy/12"
@@ -1989,7 +2002,7 @@ function ConciergePage() {
                     })}
                   </div>
                   <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[11px] leading-[1.7] text-muted">
-                    제안은 보호자 확인을 거쳐야 진행됩니다. 판매 실적은 평가에 넣지 않습니다 (원칙 1).
+                    제안은 위에서 고른 분({propLabel})이 수락해야 진행됩니다. 판매 실적은 평가에 넣지 않습니다 (원칙 1).
                   </p>
                 </Card>
 
@@ -2011,9 +2024,8 @@ function ConciergePage() {
                     onClick={() => {
                       dispatch({
                         type: "addRequest",
-                        payload: {
+                        payload: withProposal({
                           id: `rq-${Date.now()}`,
-                          dir: "fromConcierge",
                           type: "컨시어지 요청",
                           detail: reqText.trim(),
                           amount: null,
@@ -2024,14 +2036,14 @@ function ConciergePage() {
                           status: "requested",
                           history: [{ at: Date.now(), status: "requested", note: "컨시어지 현장 등록" }],
                           proof: null,
-                        },
+                        }),
                       });
                       dispatch({ type: "audit", event: { kind: "request", label: "컨시어지 요청 등록" } });
                       setReqSent(true);
                     }}
                     className="btn-press mt-2.5 w-full rounded-xl bg-navy py-3 text-[15px] font-bold text-white disabled:opacity-40"
                   >
-                    {reqSent ? "✓ 보호자에게 전달됨" : "보호자에게 요청 보내기"}
+                    {reqSent ? `✓ ${propLabel}에게 전달됨` : `${propLabel}에게 요청 보내기`}
                   </button>
                   <p className="mt-3 text-[11px] leading-[1.6] text-muted">
                     등록한 요청은 보호자 홈에 &lsquo;컨시어지 요청&rsquo;으로 뜨고, 상태가 함께
@@ -2588,6 +2600,8 @@ export default function ConciergePageGated() {
   return (
     <RoleGate role="concierge" title="컨시어지">
       <ConciergePage />
+      {/* 도와줘요 — 어느 탭에서든 팝업 (2026-10-05) */}
+      <HelpCallPopup role="concierge" />
     </RoleGate>
   );
 }

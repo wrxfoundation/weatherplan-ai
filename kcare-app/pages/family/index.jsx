@@ -16,6 +16,8 @@ import { scopedKey } from "../../lib/scope";
 import { useLastActivity } from "../../lib/last-activity";
 import { healthOf } from "../../lib/meds";
 import { STAGE_LABEL, visitReportOf } from "../../lib/live-household";
+import { approverOf } from "../../lib/requests";
+import { HelpCallCard } from "../../components/HelpCall";
 
 // 받은 음성 '받은 때' — 오늘 · 어제는 말로, 그 전은 날짜로 (시각만 쓰면 며칠 전 것도 오늘처럼 읽힌다)
 const whenLabel = (at) => {
@@ -131,7 +133,10 @@ export default function FamilyHome() {
       setAskAi({ ...qa, loading: false }); // 데모 폴백 — 기록 기반 준비 답변
     }
   };
-  const pendingApprovals = state.requests.filter((r) => r.status === "awaitingPayment").length;
+  // 보호자가 할 일 — 결제 대기 + 승인 대상이 보호자인 컨시어지 제안 (2026-10-05)
+  const pendingApprovals = state.requests.filter(
+    (r) => r.status === "awaitingPayment" || (r.status === "requested" && approverOf(r) === "guardian")
+  ).length;
   const repScore = Math.min(...OUTING.legs.map((l) => l.score)); // 두 구간 중 낮은 값
 
   return (
@@ -140,6 +145,8 @@ export default function FamilyHome() {
         <title>가족 앱 — K-CARE</title>
       </Head>
       <FamilyLayout>
+        {/* 도와줘요 진행 — 팝업을 닫아도 홈 맨 위에 남는다 (2026-10-05) */}
+        <HelpCallCard role="guardian" />
         {/* SOS 배너 — 조건부, 최상단 */}
         {state.demo.sos && sosAck === sosKey && (
           <div role="status" className="rounded-2xl border border-danger/30 bg-danger/[.06] px-4 py-3 text-[13px] font-bold text-danger">
@@ -597,7 +604,7 @@ export default function FamilyHome() {
               style={{ background: "#D9542B" }}
             >
               <div className="text-[16px] font-bold">
-                결제 승인이 필요한 요청 {pendingApprovals}건
+                결제 · 수락이 필요한 해주세요 {pendingApprovals}건
               </div>
               <span className="text-[20px] text-white/80">›</span>
             </div>

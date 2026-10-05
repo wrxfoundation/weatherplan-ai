@@ -20,7 +20,8 @@ import {
 import { PRICING, fmtWon } from "../lib/config";
 import { STORE_CATALOG } from "../lib/store";
 import ProductSheet from "../components/ProductSheet";
-import { SERVICE_MENU, SERVICE_PLUS } from "../lib/requests";
+import { CLOSED, SERVICE_MENU, SERVICE_PLUS, approverOf, cancelRule, fmtScheduled, isVisitCall } from "../lib/requests";
+import { LIVE_CONCIERGE } from "../lib/live-household";
 import { MED_STREAK, SUPPLEMENTS, daysLeft, healthOf, medProgress, needsReorder, slotHour } from "../lib/meds";
 import { VERDICT, matchWelfare, profileFor, welfareCounts } from "../lib/welfare";
 import { elderSpentToday, eventsFor, needsGuardianApproval, useAppState } from "../lib/state";
@@ -233,6 +234,7 @@ const ELDER_BTN = {
   success: { background: "#1E7A5A", color: "#FFFFFF" },
   cool: { background: "#2F5D8A", color: "#FFFFFF" },
   done: { background: "rgba(255,255,255,.85)", color: "#5C5A54" },
+  ghost: { background: "rgba(10,31,60,.07)", color: "#0A1F3C" },
 };
 function ElderBtn({ variant = "primary", lines, className = "", children, ...props }) {
   return (
@@ -373,17 +375,20 @@ function ElderHome() {
   const askPlan = (() => {
     if (!askSel) return { mode: null, approval: false, notice: "", cta: "" };
     if (askSel.amount === 0) {
-      return { mode: "free", approval: false, notice: "멤버십에 포함된 것이라 따로 내실 돈이 없습니다.", cta: "부탁하기" };
+      return { mode: "free", approval: false, notice: "멤버십에 포함된 것이라 따로 내실 돈이 없습니다. 선생님이 일정을 보고 정해 드립니다.", cta: "부탁하기" };
     }
     if (askSel.amount == null) {
-      return { mode: "quote", approval: false, notice: "요금이 아직 정해지지 않은 것이라, 선생님이 확인해서 먼저 알려드립니다.", cta: "부탁하기" };
+      return { mode: "quote", approval: false, notice: "요금이 아직 정해지지 않은 것이라, 선생님이 일정과 요금을 정해 먼저 알려드립니다.", cta: "부탁하기" };
     }
     const approval = needsGuardianApproval(state.onboarding, askSel.amount, spentToday);
     return approval
-      ? { mode: "approval", approval: true, notice: `${approver} 님에게 확인을 부탁드립니다. 승인되면 바로 시작합니다.`, cta: "가족에게 부탁하기" }
-      : { mode: "self", approval: false, notice: `오늘 쓰신 돈과 합쳐 ${fmtWon(payLimit)} 안이라 바로 진행됩니다.`, cta: "바로 부탁하기" };
+      ? { mode: "approval", approval: true, notice: `${approver} 님이 먼저 결제해 주시면 선생님이 일정을 정해 드립니다.`, cta: "가족에게 부탁하기" }
+      : { mode: "self", approval: false, notice: `오늘 쓰신 돈과 합쳐 ${fmtWon(payLimit)} 안이라 직접 내십니다. 선생님이 일정을 보고 정해 드립니다.`, cta: "바로 부탁하기" };
   })();
   const myRequests = (state.requests || []).filter((r) => r.dir === "fromElder");
+  // 선생님(컨시어지)이 어르신에게 수락을 물은 제안 (2026-10-05 — 승인 대상은 컨시어지가 정한다)
+  const proposalsForMe = (state.requests || []).filter((r) => r.status === "requested" && approverOf(r) === "elder");
+  const [elderConfirm, setElderConfirm] = useState(null); // { id, kind: "cancel" | "decline" }
 
   const name = givenName(state.onboarding?.elderName || ELDER.name);
   const now = new Date();
@@ -885,7 +890,7 @@ function ElderHome() {
                 <button
                   onClick={askHelp}
                   aria-label={
-                    !visitOpen ? "도와줘요 — 즉시 방문 요청" : visitOpen.status === "requested" ? "방문 요청을 보냈습니다 — 관제 전화 대기" : "관제가 확인했습니다 — 선생님이 연락드립니다"
+                    !visitOpen ? "도와줘요 — 즉시 방문 요청" : visitOpen.status === "requested" ? "방문 요청을 보냈습니다 — 관제 전화 대기" : visitOpen.status === "inProgress" ? `${visitOpen.assignee || "선생님"} 선생님이 가고 있습니다` : "관제가 확인했습니다 — 선생님이 연락드립니다"
                   }
                   className="btn-press flex h-[66px] w-[66px] shrink-0 flex-col items-center justify-center gap-0.5 rounded-[18px]"
                   style={
@@ -897,7 +902,7 @@ function ElderHome() {
                   <span aria-hidden>
                     <Icon name={visitOpen ? (visitOpen.status === "requested" ? "clock" : "check") : "bell"} size={24} strokeWidth={2} />
                   </span>
-                  <span className="text-[15px] font-bold leading-[1.15]">{visitOpen ? (visitOpen.status === "requested" ? "요청됨" : "확인됨") : "도와줘요"}</span>
+                  <span className="text-[15px] font-bold leading-[1.15]">{visitOpen ? (visitOpen.status === "requested" ? "요청됨" : visitOpen.status === "inProgress" ? "오는 중" : "확인됨") : "도와줘요"}</span>
                 </button>
               </div>
               {/* 호칭은 "~~님"으로 통일 — '어르신' 표기 삭제 (2026-08-12 시트 전체 요청 1번). */}
@@ -1951,6 +1956,64 @@ function ElderHome() {
             {/* 확인·보내기는 시트(ElderAskSheet)로 옮겼다 (2026-08-24 참고 시안 —
                 타일을 "누르면 보여지게"). 보낸 결과는 아래 '부탁해 둔 것'에 쌓인다. */}
 
+            {/* order 0 (맨 위 인사 바로 아래) · 선생님이 제안한 것 — 어르신이 수락 · 거절 (2026-10-05: 승인 대상은 선생님이 정한다) */}
+            {proposalsForMe.length > 0 && (
+              <ElderCard show={tab === "ask"} order={0} style={{ ...LIGHT_CARD, border: "2px solid rgba(176,141,87,.55)" }}>
+                <CardHead title="선생님이 제안했어요" right={`${proposalsForMe.length}건`} />
+                <div className="mt-2 space-y-2.5">
+                  {proposalsForMe.map((r) => {
+                    const asking = elderConfirm?.id === r.id && elderConfirm.kind === "decline";
+                    return (
+                      <div key={r.id} style={SUB_CARD}>
+                        <div className="text-[20px] font-bold leading-[1.35] text-navy">{r.type}</div>
+                        {r.detail && <p className="mt-1 text-[17px] leading-[1.5] text-ink">{r.detail}</p>}
+                        <p className="mt-1.5 text-[18px] font-bold leading-[1.45] text-[#8A5D12]">
+                          {fmtScheduled(r) ? `${fmtScheduled(r)} · ` : ""}
+                          {r.amount > 0 ? fmtWon(r.amount) : r.amount === 0 ? "돈 안 드는 것" : "요금은 선생님이 알려드려요"}
+                        </p>
+                        {asking ? (
+                          <div className="mt-3">
+                            <p className="text-[18px] font-bold leading-[1.5] text-navy">안 하시겠어요?</p>
+                            <div className="mt-2 grid grid-cols-2 gap-2">
+                              <ElderBtn variant="ghost" className="!p-4" onClick={() => setElderConfirm(null)}>
+                                아니요
+                              </ElderBtn>
+                              <ElderBtn
+                                className="!p-4"
+                                onClick={() => {
+                                  dispatch({ type: "respondProposal", id: r.id, accept: false, role: "elder" });
+                                  dispatch({ type: "pushEvent", payload: { kind: "해주세요", text: `${ELDER.name} 선생님 제안 거절 — ${r.type}`, color: "#8FA9CC" } });
+                                  setElderConfirm(null);
+                                }}
+                              >
+                                안 할게요
+                              </ElderBtn>
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="mt-3 grid grid-cols-2 gap-2">
+                            <ElderBtn variant="ghost" className="!p-4" onClick={() => setElderConfirm({ id: r.id, kind: "decline" })}>
+                              괜찮아요
+                            </ElderBtn>
+                            <ElderBtn
+                              variant="success"
+                              className="!p-4"
+                              onClick={() => {
+                                dispatch({ type: "respondProposal", id: r.id, accept: true, role: "elder" });
+                                dispatch({ type: "pushEvent", payload: { kind: "해주세요", text: `${ELDER.name} 선생님 제안 수락 — ${r.type}`, color: "#8FE3C0" } });
+                              }}
+                            >
+                              해 주세요
+                            </ElderBtn>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </ElderCard>
+            )}
+
             {/* order 9 · 진행 중인 부탁 */}
             <ElderCard show={tab === "ask"} order={9} style={LIGHT_CARD}>
               <CardHead title="부탁해 둔 것" right={`${myRequests.length}건`} />
@@ -1959,18 +2022,59 @@ function ElderHome() {
               ) : (
                 <div className="mt-2 space-y-2">
                   {myRequests.slice(0, 4).map((r) => {
-                    // 상태를 어르신 말로 — 관제·컨시어지가 단계를 넘기면 여기 글이 바뀐다
-                    // (2026-09-04 시트 해주세요 3번: 관제·컨시어지 화면과 이어졌다).
+                    // 상태를 어르신 말로 — 선생님 · 관제가 단계를 넘기면 여기 글이 바뀐다
+                    // (2026-10-05: 보호자 · 어르신 부탁은 담당 선생님이 일정을 보고 정한다. 도와줘요만 관제 확인 전화)
+                    const when = fmtScheduled(r);
                     const line =
-                      r.status === "awaitingPayment" ? [`${payRule.approver} 님 승인 기다리는 중`, "#8A5D12"]
-                      : r.status === "requested" ? ["관제센터에서 확인 전화를 드립니다", "#8A5D12"]
+                      r.status === "awaitingPayment" ? [`${payRule.approver} 님 결제 기다리는 중`, "#8A5D12"]
+                      : r.status === "requested" ? [isVisitCall(r) ? "관제센터에서 확인 전화를 드립니다" : "선생님이 일정을 보고 정해 드립니다", "#8A5D12"]
+                      : r.status === "confirmed" ? [when ? `${when}에 해 드립니다` : "선생님이 하기로 했습니다", "#1E7A5A"]
+                      : r.status === "cancelRequested" ? ["취소를 관제에서 확인하고 있습니다", "#8A5D12"]
+                      : r.status === "needsAdmin" ? ["관제에서 확인하고 있습니다", "#8A5D12"]
                       : r.status === "done" ? ["끝났습니다", "#5C5A54"]
-                      : r.status === "cancelled" || r.status === "rejected" ? ["취소되었습니다", "#5C5A54"]
+                      : r.status === "rejected" ? ["이번에는 어렵다고 합니다", "#5C5A54"]
+                      : r.status === "cancelled" ? ["취소되었습니다", "#5C5A54"]
                       : ["선생님이 진행 중입니다", "#1E7A5A"];
+                    const rule = cancelRule(r);
+                    const canCancel = !isVisitCall(r) && !CLOSED.includes(r.status) && ["free", "ops"].includes(rule.mode);
+                    const asking = elderConfirm?.id === r.id && elderConfirm.kind === "cancel";
                     return (
                       <div key={r.id} style={SUB_CARD}>
                         <div className="text-[19px] font-bold leading-[1.35] text-navy">{r.type}</div>
                         <div className="mt-1 text-[18px] font-bold" style={{ color: line[1] }}>{line[0]}</div>
+                        {canCancel &&
+                          (asking ? (
+                            <div className="mt-2.5">
+                              <p className="text-[17px] leading-[1.5] text-ink">
+                                {rule.mode === "ops" ? "날짜가 가까워 관제에서 확인한 뒤 취소됩니다." : "지금 취소하면 바로 취소됩니다."}
+                              </p>
+                              <div className="mt-2 grid grid-cols-2 gap-2">
+                                <ElderBtn variant="ghost" className="!p-4" onClick={() => setElderConfirm(null)}>
+                                  아니요
+                                </ElderBtn>
+                                <ElderBtn
+                                  className="!p-4"
+                                  onClick={() => {
+                                    dispatch({ type: "cancelRequest", id: r.id, by: "어르신" });
+                                    dispatch({
+                                      type: "pushEvent",
+                                      payload: { kind: "해주세요", text: `${ELDER.name} ${rule.mode === "ops" ? "취소 요청 (관제 승인 필요)" : "취소"} — ${r.type}`, color: "#B08D57" },
+                                    });
+                                    setElderConfirm(null);
+                                  }}
+                                >
+                                  취소할게요
+                                </ElderBtn>
+                              </div>
+                            </div>
+                          ) : (
+                            <button
+                              onClick={() => setElderConfirm({ id: r.id, kind: "cancel" })}
+                              className="btn-press mt-2 min-h-[48px] rounded-xl px-1 text-[17px] font-bold text-muted underline underline-offset-4"
+                            >
+                              {rule.mode === "ops" ? "취소 부탁하기" : "취소하기"}
+                            </button>
+                          ))}
                       </div>
                     );
                   })}
@@ -2416,7 +2520,7 @@ function ElderHome() {
               const now0 = Date.now();
               const preferredDate = when === "오늘" ? kstYmd(now0) : when === "내일" ? kstYmd(now0 + 86400000) : null;
               // 서비스 이름을 그대로 남긴다 — 전에는 '부탁' · '부탁 · 승인 필요'로 들어가 관제에서 '메뉴 외 요청'이 됐다 (2026-10-02 QA).
-              // 바로 '처리중'으로 넘기지 않는다 — 관제가 확인하고 담당을 정한다 (요청됨 → 관제 확인).
+              // 담당 컨시어지가 자기 일정을 보고 승인한다 (2026-10-05). 한도를 넘는 것은 보호자가 먼저 결제한다.
               dispatch({
                 type: "addRequest",
                 payload: {
@@ -2429,13 +2533,14 @@ function ElderHome() {
                   preferredWhen: when,
                   hospital: hospital || null,
                   payBy: askPlan.approval || !amount ? null : "elder",
-                  urgency: "normal",
-                  assignee: "",
+                  // 응급 대응은 긴급으로 (2026-10-05 — 전에는 늘 '보통'이라 관제 할 일 순서가 밀렸다)
+                  urgency: askSel.no === 12 ? "urgent" : "normal",
+                  assignee: LIVE_CONCIERGE,
                   photos: [],
                   status: askPlan.approval ? "awaitingPayment" : "requested",
                   history: [
                     { at: now0, status: "requested", note: `어르신 해주세요 · 희망 ${when}${hospital ? ` · ${hospital}` : ""}` },
-                    ...(askPlan.approval ? [{ at: now0, status: "awaitingPayment", note: `보호자 승인 대기 · ${fmtWon(amount)} (오늘 한도 초과)` }] : []),
+                    ...(askPlan.approval ? [{ at: now0, status: "awaitingPayment", note: `보호자 결제 대기 · ${fmtWon(amount)} (오늘 한도 초과)` }] : []),
                   ],
                   proof: null,
                 },
@@ -2445,7 +2550,7 @@ function ElderHome() {
                 payload: {
                   kind: "부탁",
                   text: askPlan.approval
-                    ? `${ELDER.name} 해주세요 — ${askSel.name} · 보호자 승인 요청 (${fmtWon(amount)})`
+                    ? `${ELDER.name} 해주세요 — ${askSel.name} · 보호자 결제 요청 (${fmtWon(amount)})`
                     : `${ELDER.name} 해주세요 — ${askSel.name} · ${
                         amount === 0 ? "멤버십 포함" : amount == null ? "요금 확인 후 안내" : `직접 결제 ${fmtWon(amount)}`
                       }`,
@@ -2863,14 +2968,12 @@ function ElderAskSheet({ item, plan, sent, approver, onAsk, onClose, hospitals =
       >
         {sent ? (
           <>
-            <CardHead title="보냈습니다" right={sent.mode === "approval" ? "승인 기다리는 중" : "접수됨"} />
+            <CardHead title="보냈습니다" right={sent.mode === "approval" ? "결제 기다리는 중" : "선생님 확인 중"} />
             <p className="mt-2 text-[22px] font-bold leading-[1.5] text-navy">{sent.name}</p>
             <p className="mt-3 rounded-2xl bg-green/10 p-4 text-[19px] font-bold leading-[1.5] text-green">
               {sent.mode === "approval"
-                ? `${approver} 님에게 확인을 부탁드렸습니다. 승인되면 바로 시작합니다.`
-                : sent.mode === "free"
-                ? "관제센터에 전달했습니다. 확인하고 곧 연락드립니다."
-                : "접수했습니다. 관제센터가 확인하고 선생님을 정해 연락드립니다."}
+                ? `${approver} 님에게 결제를 부탁드렸습니다. 결제되면 선생님이 일정을 정해 드립니다.`
+                : "선생님께 전달했습니다. 선생님이 일정을 보고 정해 드립니다."}
             </p>
             <ElderBtn onClick={onClose} variant="done" className="mt-4">
               닫기

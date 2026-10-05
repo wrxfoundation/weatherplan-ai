@@ -52,6 +52,7 @@ export function stepSummary(rec) {
   if (rec.request) parts.push(`보호자 요청 “${rec.request}”`);
   if (rec.next) parts.push(`다음 조치 ${rec.next}`);
   if (rec.memo) parts.push(`메모 ${rec.memo}`);
+  if (rec.notes?.length) parts.push(`추가 메모 ${rec.notes.length}건`);
   if (rec.dispatch) parts.push(`${rec.dispatch.name} ${rec.dispatch.two ? "2인" : "1인"} 출동 · 지시 ${fmtClock(rec.dispatch.orderedAt)}${rec.dispatch.arrivedAt ? ` · 도착 ${fmtClock(rec.dispatch.arrivedAt)}` : ""}`);
   if (rec.report) parts.push(`접수번호 ${rec.report.caseNo || "—"} · ${rec.report.agency || "119"}`);
   return parts.join(" · ");
@@ -73,6 +74,8 @@ export function buildTimeline(inc) {
     if (rec.at && (rec.result || rec.memo)) {
       ev.push({ at: rec.at, kind: stepTitle(k), text: [resultLabel(rec), rec.answer && `답변 “${rec.answer}”`, rec.request && `요청 “${rec.request}”`, rec.next && `다음 ${rec.next}`, rec.memo].filter(Boolean).join(" · ") || "기록", by: rec.by });
     }
+    // 단계 메모 — 추가 · 수정 시각 그대로 (사후에 쓴 것은 '사건 종료 뒤'로)
+    (rec.notes || []).forEach((n) => ev.push({ at: n.at, kind: stepTitle(k), text: `메모 ${n.editOf ? "수정" : "추가"}${n.after ? " (사건 종료 뒤)" : ""} — ${n.text}`, by: n.by }));
     if (rec.dispatch) {
       const d = rec.dispatch;
       if (d.acceptedAt) ev.push({ at: d.acceptedAt, kind: "현장 파견", text: `${d.name} 수락` });

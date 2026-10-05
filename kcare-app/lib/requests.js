@@ -1,41 +1,112 @@
 // 양방향 "해주세요" 업무형 요청 시스템 — REQ-03
-// 상태 8종(회의 확정)과 허용 전이. 상태 전이는 이 모듈만 경유한다.
+// 상태와 허용 전이. 상태 전이는 이 모듈만 경유한다.
+//
+// 2026-10-05 운영 결정 (docs/kcare/decisions/2026-10-05-request-flow.md):
+//   · 보호자 · 어르신의 해주세요는 '배정된 컨시어지'가 자기 일정을 보고 승인(날짜 · 시간 확정)하거나 거절한다.
+//     관제는 처리 현황 · 승인 내역 · 결제액을 보고, 강제 취소와 취소 요청 승인만 한다.
+//   · 컨시어지가 제안하는 해주세요는 컨시어지가 정한 승인 대상(보호자 또는 어르신)이 수락 · 거절한다.
+//   · 결제는 요청할 때 먼저 (보호자 결제). 거절 · 취소되면 환불 — 베타에서는 관제의 '환불 대기'로 넘어간다.
+//   · 확정 뒤 취소: 서비스일 3일 전까지는 바로 취소, 그 안(2일 전 · 전날 · 당일)은 관제가 취소를 승인한다.
+//   · 도와줘요(즉시 방문 요청)는 지금처럼 관제가 확인 전화 후 배차한다 — 이 규칙 밖.
 
 export const STATUS = {
-  requested: { label: "요청됨", fg: "#0A1F3C", bg: "rgba(10,31,60,.08)" },
-  confirmed: { label: "확인됨", fg: "#3B5C8A", bg: "rgba(59,92,138,.12)" },
   awaitingPayment: { label: "결제대기", fg: "#8A5D12", bg: "rgba(138,93,18,.12)" },
+  requested: { label: "승인 대기", fg: "#0A1F3C", bg: "rgba(10,31,60,.08)" },
+  confirmed: { label: "확정", fg: "#3B5C8A", bg: "rgba(59,92,138,.12)" },
+  cancelRequested: { label: "취소 요청", fg: "#8A5D12", bg: "rgba(138,93,18,.14)" },
   inProgress: { label: "처리중", fg: "#B08D57", bg: "rgba(176,141,87,.16)" },
   done: { label: "완료", fg: "#1E7A5A", bg: "rgba(30,122,90,.12)" },
   cancelled: { label: "취소", fg: "#5C5A54", bg: "rgba(92,90,84,.12)" },
-  // 빨강은 위험 신호(SOS · 낙상) 전용 — 처리불가 · 관리자 확인은 회색 · 금색으로 둔다
-  rejected: { label: "처리불가", fg: "#5C5A54", bg: "rgba(92,90,84,.12)" },
+  // 빨강은 위험 신호(SOS · 낙상) 전용 — 거절 · 관리자 확인은 회색 · 금색으로 둔다
+  rejected: { label: "거절", fg: "#5C5A54", bg: "rgba(92,90,84,.12)" },
   needsAdmin: { label: "관리자 확인필요", fg: "#8A5D12", bg: "rgba(138,93,18,.14)" },
 };
 
 const TRANSITIONS = {
-  requested: ["confirmed", "cancelled", "rejected", "needsAdmin"],
-  confirmed: ["awaitingPayment", "inProgress", "cancelled", "rejected", "needsAdmin"],
-  awaitingPayment: ["inProgress", "cancelled", "needsAdmin"],
-  inProgress: ["done", "rejected", "needsAdmin"],
+  // 선결제 — 결제가 끝나면 승인 대기로(이미 승인된 건 · 수락한 제안은 확정으로)
+  awaitingPayment: ["requested", "confirmed", "cancelled", "needsAdmin"],
+  // 승인 대기 — 컨시어지(또는 제안의 승인 대상)가 확정 · 거절. 요금 확정 전 항목은 승인하면서 금액을 정하고 결제로
+  requested: ["confirmed", "awaitingPayment", "cancelled", "rejected", "needsAdmin"],
+  confirmed: ["inProgress", "cancelRequested", "cancelled", "needsAdmin"],
+  // 취소 요청 — 관제가 승인하면 취소, 반려하면 원래 상태로
+  cancelRequested: ["cancelled", "confirmed", "inProgress"],
+  inProgress: ["done", "cancelRequested", "cancelled", "needsAdmin"],
   done: [],
   cancelled: [],
   rejected: [],
-  needsAdmin: ["confirmed", "inProgress", "rejected"],
+  needsAdmin: ["requested", "confirmed", "inProgress", "cancelled", "rejected"],
 };
+
+export const CLOSED = ["done", "cancelled", "rejected"];
 
 export function canTransition(from, to) {
   return (TRANSITIONS[from] || []).includes(to);
 }
 
-export function transition(req, to, note) {
+// at — 서버 저장 모드에서는 동작 시각(_at)을 넘긴다 (다른 기기에서 다시 적용해도 같은 이력이 되게)
+export function transition(req, to, note, at = Date.now(), extra = {}) {
   if (!canTransition(req.status, to)) return req;
   return {
     ...req,
     status: to,
-    history: [...req.history, { at: Date.now(), status: to, note: note || "" }],
+    history: [...(req.history || []), { at, status: to, note: note || "", ...extra }],
   };
 }
+
+// ── 날짜 · 취소 규칙 ──
+const KST = 9 * 3600 * 1000;
+export const kstYmd = (t) => new Date(Number(t) + KST).toISOString().slice(0, 10);
+const isYmd = (v) => typeof v === "string" && /^\d{4}-\d{2}-\d{2}$/.test(v);
+// 희망일 — 보호자 앱은 시각값(숫자), 어르신 · 예시 데이터는 'YYYY-MM-DD'
+export function preferredYmd(r) {
+  const v = r?.preferredDate;
+  if (typeof v === "number" && Number.isFinite(v)) return kstYmd(v);
+  return isYmd(v) ? v : null;
+}
+// 서비스일 — 컨시어지가 승인하며 정한 날짜, 아직이면 희망일
+export const serviceYmd = (r) => (isYmd(r?.scheduledDate) ? r.scheduledDate : preferredYmd(r));
+// 오늘(한국 날짜)부터 그 날까지 며칠 — 당일 0, 전날 1
+export function daysUntil(ymd, now = Date.now()) {
+  if (!isYmd(ymd)) return null;
+  return Math.round((Date.parse(ymd) - Date.parse(kstYmd(now))) / 86400000);
+}
+export const CANCEL_FREE_DAYS = 3; // 서비스일 3일 전까지는 바로 취소
+
+// 지금 이 요청을 취소하면 어떻게 되나
+//   free    — 바로 취소 (승인 전이거나 서비스일 3일 이상 남음). 결제했으면 환불 대기로
+//   ops     — 관제 승인이 필요한 취소 요청 (서비스일 2일 전 · 전날 · 당일 · 진행 중)
+//   pending — 이미 취소 요청이 관제에 가 있다
+//   none    — 끝난 건
+export function cancelRule(r, now = Date.now()) {
+  if (!r || CLOSED.includes(r.status)) return { mode: "none" };
+  if (r.status === "cancelRequested") return { mode: "pending" };
+  if (r.status === "inProgress") return { mode: "ops", days: daysUntil(serviceYmd(r), now) };
+  if (r.status !== "confirmed") return { mode: "free" };
+  const days = daysUntil(serviceYmd(r), now);
+  if (days == null) return { mode: "ops", days };
+  return days >= CANCEL_FREE_DAYS ? { mode: "free", days } : { mode: "ops", days };
+}
+
+// 확정 일정 한 줄 — "2026-10-28 14:00"
+export function fmtScheduled(r) {
+  if (!isYmd(r?.scheduledDate)) return null;
+  return `${r.scheduledDate}${r.scheduledTime ? ` ${r.scheduledTime}` : ""}`;
+}
+
+// 이 요청의 결제 — 보호자가 토스(또는 데모 가상 승인)로 낸 것. 어르신 직접(payBy elder)은 기록만 있다
+export function paymentOf(payments, id) {
+  return (payments || []).find((p) => p.ref === id && p.status === "done") || null;
+}
+
+// 누가 승인하나 — 보호자 · 어르신 요청은 담당 컨시어지, 컨시어지 제안은 컨시어지가 정한 승인 대상
+export const APPROVER_LABEL = { concierge: "담당 컨시어지", guardian: "보호자", elder: "어르신", ops: "관제" };
+export function approverOf(r) {
+  if (r?.dir === "fromConcierge") return r.approver === "elder" ? "elder" : "guardian";
+  if (r?.dir === "fromOps") return "guardian";
+  return "concierge";
+}
+// 도와줘요(즉시 방문 요청)는 관제가 확인 전화로 받는다 — 컨시어지 승인 큐에 넣지 않는다
+export const isVisitCall = (r) => r?.type === "즉시 방문 요청";
 
 // ── 보호자 '해주세요' 서비스 메뉴 — kcare팀 실무자 피드백 (2026-08-09 엑셀) ──
 //

@@ -6,10 +6,10 @@ import { STEP_ORDER } from "../../../lib/ops-sos";
 import { liveCustomer, liveHealth } from "../../../lib/ops-health";
 import { useAuth } from "../../../lib/auth";
 import { useAppState } from "../../../lib/state";
-import { fmtElapsed, fmtTime } from "../../../lib/ops-time";
+import { fmtDateTime, fmtElapsed, fmtTime } from "../../../lib/ops-time";
 import { guardianOf, resultLabel, stepSummary, stepTitle } from "./helpers";
 import StepForm from "./StepForms";
-import { ReportView } from "./CloseReport";
+import { ReportView, ResolvePanel, resolveStepOf } from "./CloseReport";
 
 function defaultSub(k, c) {
   const main = guardianOf(c, "주");
@@ -32,12 +32,75 @@ function defaultSub(k, c) {
   }
 }
 
+// 단계 메모 — 처리 중이든 종료 뒤든 지난 단계로 돌아가 메모를 남긴다 (2026-10-05 현장 요청).
+// 사후 기록이라 고친 흔적이 남아야 한다: 메모는 덮어쓰지 않고 한 줄씩 쌓으며, 추가 · 수정한 시각(날짜 시:분)과
+// 관제사를 같이 남긴다. 수정은 원래 메모를 지우지 않고 '수정' 줄을 새로 붙인다. 종료 뒤에 쓴 것은 '사후'로 표시한다.
+function StepNotes({ inc, stepKey, api, ro, by }) {
+  const rec = inc.steps?.[stepKey] || {};
+  const notes = rec.notes || [];
+  const [open, setOpen] = useState(null); // null | "new" | 수정할 메모 id
+  const [text, setText] = useState("");
+  const edited = new Set(notes.filter((n) => n.editOf).map((n) => n.editOf));
+  const save = () => {
+    const v = text.trim();
+    if (!v) return;
+    const now = Date.now();
+    const note = { id: `n${now}`, at: now, by, text: v, after: inc.state === "closed", ...(open !== "new" ? { editOf: open } : {}) };
+    api.update(inc.id, { steps: { ...(inc.steps || {}), [stepKey]: { ...rec, notes: [...notes, note] } } });
+    setOpen(null);
+    setText("");
+  };
+  return (
+    <div className="mt-1.5 space-y-1">
+      {notes.map((n) => {
+        const orig = n.editOf ? notes.find((x) => x.id === n.editOf) : null;
+        return (
+          <div key={n.id} className={`rounded-lg px-2.5 py-1.5 text-[12px] leading-[1.55] ${edited.has(n.id) ? "bg-navy/[.03] text-muted line-through decoration-muted/60" : "bg-gold/[.08] text-ink"}`}>
+            <span className="font-num font-bold text-navy no-underline">{fmtDateTime(n.at)}</span>{" "}
+            <span className="font-bold">{n.editOf ? "메모 수정" : "메모 추가"}</span>
+            {n.after && <span className="ml-1 rounded bg-amber/15 px-1 text-[10.5px] font-bold text-amber">사건 종료 뒤</span>}
+            <span className="text-muted"> · {n.by}</span>
+            {orig && <span className="text-muted"> · {fmtDateTime(orig.at)} 메모를 고침</span>}
+            <div>{n.text}</div>
+            {!ro && !edited.has(n.id) && open === null && (
+              <button type="button" onClick={() => { setOpen(n.id); setText(n.text); }} className="btn-press btn-inline text-[11px] font-bold text-navy underline underline-offset-2">
+                수정
+              </button>
+            )}
+          </div>
+        );
+      })}
+      {!ro && (open === null ? (
+        <button type="button" onClick={() => { setOpen("new"); setText(""); }} className="btn-press btn-inline text-[12px] font-bold text-navy underline underline-offset-2">
+          + 메모 {notes.length ? "더 " : ""}남기기
+        </button>
+      ) : (
+        <div className="rounded-lg border border-navy/15 bg-white p-2">
+          <textarea
+            aria-label={`${STEP_ORDER.find((x) => x.k === stepKey)?.title || stepKey} 메모`}
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            rows={2}
+            className="w-full resize-none rounded-md border border-navy/10 px-2 py-1.5 text-[13px] text-ink outline-none focus:border-gold"
+            placeholder="추가 · 수정한 시각(날짜 시:분)과 관제사 이름이 같이 남습니다"
+          />
+          <div className="mt-1.5 flex justify-end gap-1.5">
+            <Btn ghost small tone="muted" onClick={() => { setOpen(null); setText(""); }}>닫기</Btn>
+            <Btn small disabled={!text.trim()} onClick={save}>{open === "new" ? "메모 저장" : "수정 저장"}</Btn>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export default function IncidentDetail({ inc, now, api, role, onClosePopup }) {
   const appState = useAppState()?.state;
   const ob = appState?.onboarding;
   const c = liveCustomer(inc.customer, ob, appState?.health);
   const h = liveHealth(inc.customer, ob, !!useAuth().user?.household);
   const [infoOpen, setInfoOpen] = useState(true);
+  const [resolveAt, setResolveAt] = useState(null); // 해결 완료 패널 — 단계 키 (어느 단계에서든 종료)
   const ro = role !== "controller";
   const closed = inc.state === "closed";
   const sevTone = SEV[inc.sev]?.tone || "danger";
@@ -51,7 +114,16 @@ export default function IncidentDetail({ inc, now, api, role, onClosePopup }) {
     else if (!closed && s.k === inc.step) state = "active";
     if (closed && (s.k === "close" || s.k === "report")) state = "done";
     const right = rec?.result ? `${resultLabel(rec)} · ${fmtTime(rec.at)}` : state === "active" ? "진행 중" : rec?.tries?.length ? `시도 ${rec.tries.length}회` : undefined;
-    return { k: s.k, title: s.title, state, right, sub: stepSummary(rec) || defaultSub(s.k, c) };
+    // 기록이 있는 단계(완료 · 건너뜀 · 미연결 · 메모)와 지금 단계는 메모를 남길 수 있다 — 종료 뒤에도
+    const notable = !!rec || state === "active" || (closed && ["close", "report"].includes(s.k));
+    const summary = stepSummary(rec) || defaultSub(s.k, c);
+    const sub = notable ? (
+      <>
+        {summary}
+        <StepNotes inc={inc} stepKey={s.k} api={api} ro={ro} by={inc.controller || "김태영"} />
+      </>
+    ) : summary;
+    return { k: s.k, title: s.title, state, right, sub };
   });
 
   const stamp = (f) => (now && f?.agoSec != null ? fmtTime(now - f.agoSec * 1000) : "—");
@@ -93,11 +165,18 @@ export default function IncidentDetail({ inc, now, api, role, onClosePopup }) {
       <div className="mt-3 flex flex-wrap items-center gap-2">
         {inc.state === "new" && <Btn small tone="danger" disabled={ro} onClick={() => api.ack(inc.id, "김태영")}>사건 확인 (담당 김태영)</Btn>}
         {!inc.controller && inc.state !== "new" && <Btn small disabled={ro} onClick={() => api.assign(inc.id, "김태영")}>담당 배정 · 김태영</Btn>}
+        {!closed && <Btn small tone="ok" disabled={ro} onClick={() => setResolveAt(resolveStepOf(inc))}>해결 완료</Btn>}
         {!closed && <Btn ghost small tone="warn" disabled={ro} onClick={() => api.addSignal(inc.id, "추가 이상징후 수신 — 같은 사건에 병합 (데모)")}>추가 이상징후 병합</Btn>}
         <Btn ghost small tone="muted" onClick={() => setInfoOpen(!infoOpen)}>{infoOpen ? "고정정보 접기" : "고정정보 펼치기"}</Btn>
         <span className="flex-1" />
         <Btn ghost small tone="muted" onClick={onClosePopup} title="사건은 종료되지 않고 목록에 남습니다">팝업 닫기 · 사건 유지</Btn>
       </div>
+
+      {!closed && resolveAt && (
+        <div className="mt-3">
+          <ResolvePanel key={resolveAt} inc={inc} api={api} role={role} stepKey={resolveAt} by={inc.controller || "김태영"} onDone={() => setResolveAt(null)} onCancel={() => setResolveAt(null)} />
+        </div>
+      )}
 
       {/* 6-2 사건 상단 고정정보 */}
       {infoOpen && (
@@ -137,7 +216,24 @@ export default function IncidentDetail({ inc, now, api, role, onClosePopup }) {
         <span className="text-[12px] text-muted">담당 관제사 {inc.controller || "미배정"} · 권한 {ro ? "조회 전용" : "관제사"}</span>
       </div>
       <div className="mt-3">
-        <Steps steps={steps}>{(s) => <StepForm key={s.k} inc={inc} stepKey={s.k} api={api} role={role} />}</Steps>
+        <Steps steps={steps}>
+          {(s) => (
+            <>
+              <StepForm key={s.k} inc={inc} stepKey={s.k} api={api} role={role} />
+              {/* 이 단계 · 바로 앞 단계에서 해결됐으면 여기서 끝낸다 (1차 전화 '연결'로 끝나는 일이 많다) */}
+              {!closed && !["close", "report"].includes(s.k) && (
+                <div className="mt-2 flex flex-wrap justify-end gap-2">
+                  {resolveStepOf(inc) !== s.k && (
+                    <Btn ghost small tone="ok" disabled={ro} onClick={() => setResolveAt(resolveStepOf(inc))}>
+                      {STEP_ORDER.find((x) => x.k === resolveStepOf(inc))?.title}에서 해결 완료
+                    </Btn>
+                  )}
+                  <Btn ghost small tone="ok" disabled={ro} onClick={() => setResolveAt(s.k)}>이 단계에서 해결 완료</Btn>
+                </div>
+              )}
+            </>
+          )}
+        </Steps>
       </div>
 
       {closed && <div className="mt-4"><ReportView inc={inc} api={api} role={role} /></div>}

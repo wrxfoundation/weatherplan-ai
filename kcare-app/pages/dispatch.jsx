@@ -47,7 +47,8 @@ import {
   mapPeople,
 } from "../lib/console";
 import { useAppState } from "../lib/state";
-import { fmtPreferred } from "../lib/requests";
+import { CLOSED, isVisitCall } from "../lib/requests";
+import { HelpCallOps, HELP_STAGE } from "../components/HelpCall";
 import { relMd } from "../lib/reltime";
 import AiChat from "../components/AiChat";
 import HelpTip from "../components/HelpTip";
@@ -512,7 +513,12 @@ function DispatchConsole() {
     const t = setInterval(ringAlarm, 10000);
     return () => clearInterval(t);
   }, [sosPopup]);
-  const newRequests = (state.requests || []).filter((r) => r.status === "requested");
+  // 해주세요 관리 숫자 — 관제가 할 일만: 도와줘요 진행 중 · 취소 요청(관제 승인) · 환불 대기 (2026-10-05).
+  // 보호자 · 어르신의 일반 해주세요는 담당 컨시어지가 승인하므로 세지 않는다.
+  const newRequests = [
+    ...(state.requests || []).filter((r) => (isVisitCall(r) && !CLOSED.includes(r.status)) || r.status === "cancelRequested"),
+    ...(state.payments || []).filter((p) => p.refund && p.refund.status !== "done"),
+  ];
   const MENU_COUNTS = {
     sos: sosOpen.length,
     elder: TOTAL_ELDERS,
@@ -522,7 +528,7 @@ function DispatchConsole() {
     wearable: FLEET.needsCheck,
     // 관제 연락(컨시어지 '관제에 알리기') 중 확인 전 — 있으면 커뮤니케이션 메뉴에 숫자 (2026-10-02)
     ...((state.opsMessages || []).some((m) => !m.ackAt) ? { comms: (state.opsMessages || []).filter((m) => !m.ackAt).length } : {}),
-    // 해주세요 — 관제가 아직 받지 않은(요청됨) 건 수. 긴급이 섞여 있어도 여기서 먼저 보인다 (2026-10-02 QA)
+    // 해주세요 — 관제가 처리할 것 (도와줘요 · 취소 요청 · 환불 대기)
     ...(newRequests.length ? { requests: newRequests.length } : {}),
   };
   const sosUnread = sosOpen.some((i) => i.state === "new"); // 미확인 사건 — 사이드바 점등
@@ -699,6 +705,7 @@ function DispatchConsole() {
 
   // ── 액션 큐 — 지금 관제가 처리할 일. 우선순위·마감을 한 줄로 (상황파악 → 적시 대응) ──
   const [handled, setHandled] = useState({});
+  const [helpOpen, setHelpOpen] = useState(null); // 도와줘요 대응 팝업 — 지금 처리할 일에서 다시 연다
   const [watchCalled, setWatchCalled] = useState(false);
   const [guardianPinged, setGuardianPinged] = useState(false);
   const [nightCalled, setNightCalled] = useState(false); // 야간 출동(외주) 호출 — REQ-04
@@ -747,38 +754,44 @@ function DispatchConsole() {
       id: "brief", level: "med", title: "외출 브리핑 3건 발송",
       meta: "최정자 34점 — 일정 조정 권고 포함", jumpTab: "plan",
     });
-  // 어르신 화면에서 온 부탁 — 도와줘요(즉시 방문) · 해주세요 · 복지혜택 (2026-09-04 시트
-  // 어르신 해주세요 3번: "관제가 먼저 전화로 확인한다고 되어 있으나 관제 대시보드에 없음").
-  // 어르신 화면은 '관제센터에서 확인 전화를 드립니다'라고 약속하므로, 확인 전화를 여기서
-  // 끝내면 그 건이 '확인됨'으로 넘어가 어르신·컨시어지 화면 문구가 같이 바뀐다.
+  // 도와줘요(어르신 즉시 방문 요청) — 관제가 처리한다 (2026-10-05). 새로 오면 팝업이 뜨고(HelpCallOps),
+  // 끝날 때까지 여기 남아 '대응 열기'로 다시 연다. 해주세요(보호자 · 어르신 부탁)는 담당 컨시어지가 승인하므로 여기 올리지 않는다.
   (state.requests || [])
-    .filter((r) => r.dir === "fromElder" && r.status === "requested")
+    .filter((r) => isVisitCall(r) && !CLOSED.includes(r.status))
     .forEach((r) =>
       actions.push({
-        id: `elder-${r.id}`,
-        level: r.urgency === "urgent" ? "high" : "med",
-        title: `${r.type} — ${ELDER.name} (${ELDER.age})`,
-        meta: `어르신 화면 · ${r.detail}`,
-        act: "확인 전화 완료",
-        ticker: ["대응", `${ELDER.name} ${r.type} 확인 전화 완료 — ${r.assignee ? `컨시어지 ${r.assignee} 진행` : "담당 배정은 해주세요 관리에서"}`, "#8FA9CC"],
-        onAct: () => dispatch({ type: "transitionRequest", id: r.id, to: "confirmed", note: "관제 확인 전화 완료 · 컨시어지 진행" }),
+        id: `help-${r.id}`,
+        level: "critical",
+        title: `도와줘요 — ${ELDER.name} (${ELDER.age}) 즉시 방문 요청`,
+        meta: `${HELP_STAGE[r.status] || ""} · ${r.history?.[r.history.length - 1]?.note || "어르신 화면"}`,
+        view: "대응 열기",
+        onOpen: () => setHelpOpen(r.id),
       })
     );
-  // 보호자 해주세요 중 '긴급' — 접수 확인 전이면 지금 처리할 일에 올린다 (2026-10-02 QA: 긴급으로 보내도 관제 첫 화면에
-  // 아무 표시가 없었다). 확인하면 '확인됨'으로 넘어가 보호자 화면 상태도 같이 바뀐다. 담당 배정은 해주세요 관리에서.
+  // 해주세요 취소 요청 — 서비스일 3일 안이라 관제 승인이 필요한 것 (2026-10-05)
   (state.requests || [])
-    .filter((r) => r.dir === "fromGuardian" && r.urgency === "urgent" && r.status === "requested")
+    .filter((r) => r.status === "cancelRequested")
     .forEach((r) =>
       actions.push({
-        id: `elder-req-${r.id}`,
+        id: `cancel-${r.id}`,
         level: "high",
-        title: `긴급 해주세요 — ${r.type} · ${ELDER.name} 보호자`,
-        meta: `${fmtPreferred(r, "희망일 미정")}${r.detail ? ` · ${r.detail}` : ""}`,
-        act: "접수 확인",
-        ticker: ["대응", `긴급 해주세요 접수 확인 — ${r.type} · 담당 배정은 해주세요 관리에서`, "#8FA9CC"],
-        onAct: () => dispatch({ type: "transitionRequest", id: r.id, to: "confirmed", note: "관제 접수 확인 (긴급)" }),
+        title: `해주세요 취소 요청 — ${r.type}`,
+        meta: `${r.cancelReq?.by || "요청자"} · ${r.scheduledDate || ""} ${r.scheduledTime || ""} · 해주세요 관리에서 승인 · 반려`,
+        menu: "requests",
       })
     );
+  // 환불 대기 — 거절 · 취소된 해주세요의 결제 (토스 상점관리자에서 환불한 뒤 '환불 완료')
+  {
+    const refunds = (state.payments || []).filter((p) => p.refund && p.refund.status !== "done");
+    if (refunds.length)
+      actions.push({
+        id: "refunds",
+        level: "high",
+        title: `환불 대기 ${refunds.length}건`,
+        meta: `${refunds.map((p) => `${p.orderName || "해주세요"} ${Number(p.refund.amount || 0).toLocaleString("ko-KR")}원`).join(" · ")} — 해주세요 관리`,
+        menu: "requests",
+      });
+  }
   // 컨시어지 '관제에 알리기' — 확인 전인 것은 지금 처리할 일에 올린다 (2026-10-02). 확인하면 컨시어지 화면에 '관제 확인'.
   (state.opsMessages || [])
     .filter((m) => !m.ackAt)
@@ -804,6 +817,8 @@ function DispatchConsole() {
     : { label: "정상 운영", cls: "bg-[rgba(30,122,90,.12)] text-green" };
 
   const jumpTo = (a) => {
+    if (a.onOpen) return a.onOpen();
+    if (a.menu) return setMenu(a.menu);
     setMenu("dash");
     if (a.jumpTab) {
       setTab(a.jumpTab);
@@ -1106,6 +1121,8 @@ function DispatchConsole() {
             </div>
           </nav>
 
+          {/* 도와줘요 — 새로 오면 저절로, 지금 처리할 일 '대응 열기'로 다시 (2026-10-05) */}
+          <HelpCallOps openId={helpOpen} onClose={() => setHelpOpen(null)} />
           {sosPopup && (
             <SosAlertModal
               customer={liveCustomer(ELDER.name, state.onboarding, state.health)}
@@ -1286,7 +1303,8 @@ function DispatchConsole() {
               opsCount={actions.length}
               // 어르신 앱은 "관제센터에서 확인 전화를 드립니다"라고 약속한다 — 그 부탁이 들어와 있으면 접어 두지 않는다.
               // 보호자 일정등록 요청도 같다 — 관제가 승인해야 캘린더에 오르는데, 접혀 있으면 아무도 못 본다 (2026-10-01 관제 테스트).
-              opsOpen={actions.some((a) => a.level === "critical" || a.id.startsWith("elder-")) || pendingEvents > 0}
+              // 도와줘요 · 해주세요 취소 요청 · 환불 대기도 관제가 직접 할 일이라 펼친다 (2026-10-05)
+              opsOpen={actions.some((a) => a.level === "critical" || /^(elder-|help-|cancel-|refunds)/.test(a.id)) || pendingEvents > 0}
               opsNote={pendingEvents > 0 ? `일정 승인 대기 ${pendingEvents}건` : null}
               opsSlot={<>
           {/* ── 방문 업무흐름 8단계 — 일정 수립 알람이 여기로 온다 (2026-08-13 미팅) ── */}
@@ -1346,7 +1364,7 @@ function DispatchConsole() {
                         onClick={() => jumpTo(a)}
                         className="btn-press shrink-0 rounded-[10px] border border-navy/20 px-3.5 py-2 text-[13px] font-bold text-navy"
                       >
-                        보기 →
+                        {a.view || "보기 →"}
                       </button>
                     )}
                   </div>

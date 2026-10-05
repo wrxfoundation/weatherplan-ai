@@ -23,7 +23,8 @@ export default function LiveStrip({ onMenu }) {
   const tiles = [
     { k: "sos", label: "SOS", value: state.demo?.sos ? (state.ops?.sosAcceptedAt ? "출동 중" : state.ops?.sosDispatched ? "급파 · 수락 대기" : "확인 필요") : openIncident ? "알림 해제 · 사건 종료 전" : "없음", tone: state.demo?.sos ? "danger" : openIncident ? "warn" : "ok", menu: "sos" },
     { k: "comms", label: "관제 연락 확인 전", value: `${unacked}건`, tone: unacked ? "warn" : "ok", menu: "comms" },
-    { k: "asks", label: "해주세요 접수 대기", value: `${reqs.filter((r) => r.status === "requested").length}건`, tone: reqs.some((r) => r.status === "requested") ? "warn" : "ok", menu: "requests" },
+    // 승인 대기 — 담당 컨시어지(제안은 보호자 · 어르신)가 승인할 것. 관제는 지켜본다 (2026-10-05)
+    { k: "asks", label: "해주세요 승인 대기", value: `${reqs.filter((r) => r.status === "requested").length}건`, tone: reqs.some((r) => r.status === "requested") ? "warn" : "ok", menu: "requests" },
     { k: "open", label: "해주세요 진행 중", value: `${reqs.filter((r) => OPEN(r) && r.status !== "requested").length}건`, tone: "info", menu: "requests" },
     { k: "events", label: "일정 승인 대기", value: `${pendingEvents}건`, tone: pendingEvents ? "warn" : "ok", menu: null },
     { k: "visit", label: "오늘 방문", value: v.memoLine, tone: v.status === "active" ? "info" : "navy", menu: "visits" },

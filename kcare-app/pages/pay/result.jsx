@@ -81,9 +81,9 @@ export default function PayResult() {
         type: "pushEvent",
         payload: { kind: "결제", text: `${meta.label} ${fmtWon(data.payment.amount)} 결제 완료 — ${data.payment.method || "카드"}`, color: "#8FE3C0" },
       });
-      // 결제가 끝나야 다음 단계가 선다 — 해주세요는 진행으로, 스토어는 주문·배송 요청으로.
+      // 결제가 끝나야 다음 단계가 선다 — 해주세요는 담당 컨시어지 승인 대기로(이미 승인 · 수락된 것은 확정), 스토어는 주문·배송 요청으로.
       if (kind === "request" && refId) {
-        dispatch({ type: "transitionRequest", id: refId, to: "inProgress", note: `보호자 결제 완료 ${fmtWon(data.payment.amount)}` });
+        dispatch({ type: "requestPaid", id: refId, note: `보호자 결제 완료 ${fmtWon(data.payment.amount)}` });
       }
       if (kind === "store") {
         dispatch({ type: "commitPendingOrder", payload: data.payment });

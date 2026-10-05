@@ -44,6 +44,26 @@ export function summarize(a) {
       return `요청 상태 → ${clip(STATUS[a.to]?.label || a.to, 20)}`;
     case "assignRequest":
       return `요청 담당 → ${clip(a.assignee || "미배정", 20)}`;
+    case "requestPaid":
+      return "해주세요 결제 완료";
+    case "approveRequest":
+      return `해주세요 승인 · ${clip(a.by, 12)} · ${clip(a.date, 10)}${a.time ? ` ${clip(a.time, 5)}` : ""}`;
+    case "declineRequest":
+      return `해주세요 거절 · ${clip(a.by, 12)}${a.reason ? ` · ${clip(a.reason, 40)}` : ""}`;
+    case "respondProposal":
+      return `컨시어지 제안 ${a.accept ? "수락" : "거절"} · ${a.role === "elder" ? "어르신" : "보호자"}`;
+    case "cancelRequest":
+      return `해주세요 취소 · ${clip(a.by, 12)}${a.reason ? ` · ${clip(a.reason, 40)}` : ""}`;
+    case "decideCancel":
+      return `취소 요청 ${a.approve ? "승인" : "반려"} · 관제`;
+    case "forceCancel":
+      return `해주세요 강제 취소 · 관제${a.reason ? ` · ${clip(a.reason, 40)}` : ""}`;
+    case "helpCall":
+      return `도와줘요 · ${{ call: "확인 전화", dispatch: "출동 지시", arrive: "현장 도착", resolve: "해결 완료" }[a.step] || a.step}${a.step === "call" ? ` · ${{ fine: "전화로 해결", visit: "방문 필요", noanswer: "미연결" }[a.result] || ""}` : ""}${a.assignee ? ` · ${clip(a.assignee, 12)}` : ""}`;
+    case "noteRequest":
+      return `요청 처리 기록 · ${clip(a.note, 60)}`;
+    case "refundDone":
+      return "환불 완료 처리 · 관제";
     case "demo":
       return p.sos === true ? "SOS 발신" : p.sos === false ? "SOS 알림 끔 (시연 컨트롤)" : null;
     case "ackSos":

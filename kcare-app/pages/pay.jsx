@@ -127,7 +127,7 @@ export default function PayPage() {
   const testMode = isTestKey();
 
   // ── 데모 가상 승인 — 토스를 부르지 않는다. 결제 기록에 '데모 · 실제 결제 없음'을 남기고,
-  // 결제가 끝났을 때와 같은 다음 단계(해주세요 진행 · 스토어 주문)를 세운다. 시연 흐름이 결제 키 없이도 이어지게.
+  // 결제가 끝났을 때와 같은 다음 단계(해주세요는 컨시어지 승인 대기 · 확정, 스토어는 주문)를 세운다. 시연 흐름이 결제 키 없이도 이어지게.
   const demoApprove = () => {
     const payment = {
       orderId: `demo_${kind}_${Date.now()}`,
@@ -140,7 +140,7 @@ export default function PayPage() {
     dispatch({ type: "addPayment", payload: { kind, ref: refId || null, status: "done", ...payment } });
     dispatch({ type: "pushEvent", payload: { kind: "결제", text: `${meta.label} ${fmtWon(value)} 데모 가상 승인 (실제 결제 없음)`, color: "#8FE3C0" } });
     if (kind === "request" && refId) {
-      dispatch({ type: "transitionRequest", id: refId, to: "inProgress", note: `데모 가상 승인 ${fmtWon(value)} (실제 결제 없음)` });
+      dispatch({ type: "requestPaid", id: refId, note: `데모 가상 승인 ${fmtWon(value)} (실제 결제 없음)` });
     }
     if (kind === "store") dispatch({ type: "commitPendingOrder", payload: payment });
     setDemoDone(payment);

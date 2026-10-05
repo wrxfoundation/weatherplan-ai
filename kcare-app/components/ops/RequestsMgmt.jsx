@@ -1,4 +1,6 @@
 // 해주세요 관리 — 요청서 §12. 앱 상태(state.requests)의 요청은 그대로 연결하고,
+// 2026-10-05 운영 결정: 보호자 · 어르신 해주세요는 담당 컨시어지가 승인하고, 관제는 현황(승인 내역 · 결제액)을 보며
+// 강제 취소 · 취소 요청 승인 · 환불 처리만 한다. 실제 요청의 상태를 관제가 임의로 넘기지 않는다.
 // 다른 고객의 데모 요청(lib/ops-admin OPS_REQUEST_EXTRAS)은 컴포넌트 안에서 같은 전이 규칙으로 움직인다.
 // 앱 상태에 없는 열(실제 비용·영수증·완료 확인·평가·환불·반복)은 id 별 meta 로 보관하고 localStorage 에 남긴다
 // (§19 "새로고침 후에도 입력내용 유지").
@@ -8,7 +10,7 @@ import Icon from "../icons";
 import { useAppState } from "../../lib/state";
 import { useAuth } from "../../lib/auth";
 import { LiveToggle } from "./LiveToggle";
-import { STATUS, SERVICE_MENU, URGENCY, canTransition, fmtPreferred, transition } from "../../lib/requests";
+import { APPROVER_LABEL, STATUS, SERVICE_MENU, URGENCY, approverOf, canTransition, fmtPreferred, fmtScheduled, isVisitCall, paymentOf, transition } from "../../lib/requests";
 import { PRICING, fmtWon } from "../../lib/config";
 import { Panel, PanelHead, Stat, Pill, Btn, Table, KV, Field, Toggle, Drawer, Confirm, Note, Empty, useOperator } from "./ui";
 import { CONCIERGES, OPS_REQUEST_EXTRAS, OPS_REQUEST_META, REQ_DIR, REPEAT_OPTIONS, elderOf, fmtDT, fmtRel } from "../../lib/ops-admin";
@@ -20,9 +22,9 @@ const NO_REQUESTS = [];
 // 정렬 — 기본은 최근 접수 순 (2026-10-05: 보호자가 방금 넣은 요청이 긴급 · 완료 건 밑에 묻혀 바로 안 보였다).
 // '처리 우선 순'은 예외를 먼저 — 긴급 → 관리자 확인 → 접수 → 결제대기 → 확인 → 처리중 → 완료 → 종결
 const SORTS = { recent: "최근 접수 순", priority: "처리 우선 순" };
-const STATUS_RANK = { needsAdmin: 0, requested: 1, awaitingPayment: 2, confirmed: 3, inProgress: 4, done: 5, rejected: 6, cancelled: 7 };
+const STATUS_RANK = { needsAdmin: 0, cancelRequested: 0, requested: 1, awaitingPayment: 2, confirmed: 3, inProgress: 4, done: 5, rejected: 6, cancelled: 7 };
 const GROUPS = {
-  received: { label: "접수", keys: ["requested", "confirmed", "needsAdmin"], tone: "navy" },
+  received: { label: "접수 · 확정", keys: ["requested", "confirmed", "needsAdmin", "cancelRequested"], tone: "navy" },
   awaitingPayment: { label: "결제 대기", keys: ["awaitingPayment"], tone: "warn" },
   inProgress: { label: "진행 중", keys: ["inProgress"], tone: "info" },
   done: { label: "완료", keys: ["done"], tone: "ok" },
@@ -53,15 +55,28 @@ function normalize(r) {
 
 // 보호자 결제 승인 상태 — 금액·진행상태에서 읽는다. 지어내지 않고 없는 값은 "요금 확정 전".
 // 어르신 한도는 어르신이 낸 요청에만 쓴다 — 보호자가 직접 낸 6만원 요청이 '한도 내 · 승인 불필요'로 보였다 (2026-10-05).
-function payState(r) {
+function payState(r, payments) {
+  const paid = paymentOf(payments, r.id);
+  if (paid?.refund) return paid.refund.status === "done" ? { label: `환불 완료 ${fmtWon(paid.refund.amount)}`, tone: "ok" } : { label: `환불 대기 ${fmtWon(paid.refund.amount)}`, tone: "warn" };
+  if (paid) return { label: `결제 완료 ${fmtWon(paid.amount)}${paid.demo ? " (데모)" : ""}`, tone: "ok" };
+  if (r.payBy === "elder" && r.amount > 0) return { label: `어르신 직접 ${fmtWon(r.amount)}`, tone: "muted" };
   if (r.amount == null) return { label: "요금 확정 전", tone: "muted" };
   if (r.amount === 0) return { label: "승인 불필요 (무료)", tone: "muted" };
-  if (r.status === "awaitingPayment") return { label: r.dir === "fromGuardian" ? "결제 대기" : "승인 대기", tone: "warn" };
+  if (r.status === "awaitingPayment") return { label: "보호자 결제 대기", tone: "warn" };
   if (r.status === "inProgress" || r.status === "done") return { label: "승인 완료", tone: "ok" };
   if (r.status === "cancelled" || r.status === "rejected") return { label: "—", tone: "muted" };
   if (r.dir === "fromGuardian") return { label: "보호자 신청 · 결제 전", tone: "muted" };
   if (r.dir !== "fromElder") return { label: "보호자 승인 필요", tone: "info" };
   return r.amount > r.limit ? { label: "승인 필요 (한도 초과)", tone: "info" } : { label: "한도 내 · 승인 불필요", tone: "muted" };
+}
+
+// 누가 승인했나 — 보호자 · 어르신 요청은 담당 컨시어지, 제안은 승인 대상, 도와줘요는 관제
+function approvalText(r) {
+  if (isVisitCall(r)) return "관제 처리 (도와줘요)";
+  if (r.approvedAt) return `${r.approvedBy || APPROVER_LABEL[approverOf(r)]} · ${fmtRel(r.approvedAt)}`;
+  if (r.status === "requested") return `${APPROVER_LABEL[approverOf(r)]} 승인 대기`;
+  if (r.status === "awaitingPayment") return approverOf(r) === "concierge" ? "결제 뒤 컨시어지 승인" : "수락 · 결제 대기";
+  return "—";
 }
 
 const stars = (n) => "★★★★★".slice(0, n) + "☆☆☆☆☆".slice(0, 5 - n);
@@ -82,6 +97,7 @@ export default function RequestsMgmt() {
   const ctx = useAppState();
   // 상태 훅이 없을 때(단독 렌더)는 고정 빈 배열 — 매 렌더마다 새 배열이면 useMemo 의존성이 계속 바뀐다
   const stateRequests = ctx?.state?.requests || NO_REQUESTS;
+  const payments = ctx?.state?.payments || NO_REQUESTS;
   const dispatch = ctx?.dispatch;
   // 가입 상담에서 보호자가 정한 어르신 직접 결제 한도 — 어르신 앱이 보는 값과 같아야 한다 (2026-10-02 QA)
   const obLimit = ctx?.state?.onboarding?.paymentMode === "limit" || (ctx?.state?.onboarding && !ctx.state.onboarding.paymentMode) ? ctx.state.onboarding.limitAmount ?? null : null;
@@ -190,9 +206,10 @@ export default function RequestsMgmt() {
         <div className="mt-0.5 font-num text-[12px] font-bold text-gold">{r.menu ? r.menu.priceLabel : r.amount != null ? `${fmtWon(r.amount)} (예상)` : "요금 확정 전"}</div>
       </div>
     ) },
-    { k: "pay", label: "보호자 결제 승인", render: (r) => { const p = payState(r); return <Pill tone={p.tone}>{p.label}</Pill>; } },
+    { k: "pay", label: "결제", render: (r) => { const p = payState(r, payments); return <Pill tone={p.tone}>{p.label}</Pill>; } },
     { k: "assignee", label: "담당자 배정", render: (r) => <span className="font-medium text-ink">{meta[r.id]?.assignee || r.assignee || <span className="text-muted">미배정</span>}</span> },
-    { k: "date", label: "예정일", render: (r) => <span className="font-num text-[12px]">{fmtPreferred(r)}{r.hospital ? <span className="block text-[11px] text-muted">{r.hospital}</span> : null}</span> },
+    { k: "approval", label: "승인", render: (r) => <span className="text-[12px]">{approvalText(r)}</span> },
+    { k: "date", label: "확정 일정 · 희망", render: (r) => <span className="font-num text-[12px]">{fmtScheduled(r) ? <b className="text-navy">{fmtScheduled(r)}</b> : <span className="text-muted">희망 {fmtPreferred(r)}</span>}{r.hospital ? <span className="block text-[11px] text-muted">{r.hospital}</span> : null}</span> },
     { k: "status", label: "진행상태", render: (r) => <StatusPill status={r.status} /> },
     { k: "cost", label: "실제 비용", align: "right", render: (r) => (meta[r.id]?.cost != null ? fmtWon(meta[r.id].cost) : "—") },
     { k: "receipt", label: "영수증", render: (r) => (meta[r.id]?.receipt ? <Pill tone="ok">첨부</Pill> : <span className="text-muted">—</span>) },
@@ -238,19 +255,32 @@ export default function RequestsMgmt() {
 
       <Note>건강 · 센서 데이터는 참고자료이며 의료진의 진단을 대신하지 않습니다. 서비스 가격은 확정된 메뉴 값만 표시하고, 확정 전 항목은 "요금 확정 전"으로 둡니다.</Note>
 
-      {open && <Detail r={open} m={meta[open.id] || {}} onClose={() => setOpenId(null)} onTransition={doTransition} onPatch={patchMeta} />}
+      {open && (
+        <Detail
+          r={open}
+          m={meta[open.id] || {}}
+          real={stateRequests.some((x) => x.id === open.id)}
+          payments={payments}
+          dispatch={dispatch}
+          onClose={() => setOpenId(null)}
+          onTransition={doTransition}
+          onPatch={patchMeta}
+        />
+      )}
     </div>
   );
 }
 
-function Detail({ r, m, onClose, onTransition, onPatch }) {
+function Detail({ r, m, real, payments, dispatch, onClose, onTransition, onPatch }) {
   const OPERATOR = useOperator();
+  const paid = paymentOf(payments, r.id);
+  const [opsNote, setOpsNote] = useState("");
   const [note, setNote] = useState("");
   const [cost, setCost] = useState(m.cost != null ? String(m.cost) : "");
   const [ratingNote, setRatingNote] = useState(m.ratingNote || "");
   const [confirm, setConfirm] = useState(null); // { kind: 'transition'|'refund', to, reason }
   const [refundReason, setRefundReason] = useState("");
-  const pay = payState(r);
+  const pay = payState(r, payments);
   const assignee = m.assignee || r.assignee || "";
   const nextStates = Object.keys(STATUS).filter((k) => canTransition(r.status, k));
   const refundable = r.amount > 0 && !m.refund && ["awaitingPayment", "inProgress", "done"].includes(r.status);
@@ -263,6 +293,8 @@ function Detail({ r, m, onClose, onTransition, onPatch }) {
   const runConfirm = () => {
     if (!confirm) return;
     if (confirm.kind === "transition") onTransition(r, confirm.to, note || confirm.label);
+    if (confirm.kind === "force") dispatch?.({ type: "forceCancel", id: r.id, by: OPERATOR, reason: opsNote.trim() || "관제 판단" });
+    if (confirm.kind === "cancelOk") dispatch?.({ type: "decideCancel", id: r.id, approve: true, by: OPERATOR, note: opsNote.trim() });
     if (confirm.kind === "refund") {
       onPatch(r.id, "refund", "취소 · 환불", { status: "환불 요청", amount: m.cost ?? r.amount, reason: refundReason, at: Date.now() });
       if (canTransition(r.status, "cancelled")) onTransition(r, "cancelled", `환불 요청 · ${refundReason || "사유 미입력"}`);
@@ -278,10 +310,14 @@ function Detail({ r, m, onClose, onTransition, onPatch }) {
           <KV k="요청 내용" v={r.detail} />
           <KV k="서비스 설명" v={r.menu ? r.menu.scope : "메뉴 외 요청 — 관제가 범위를 정합니다"} />
           <KV k="가격" v={r.menu ? r.menu.priceLabel : r.amount != null ? `${fmtWon(r.amount)} (예상)` : "요금 확정 전"} tone="gold" />
-          <KV k="예정일" v={fmtPreferred(r)} mono />
+          <KV k="희망일" v={fmtPreferred(r)} mono />
+          {real && <KV k="확정 일정" v={fmtScheduled(r) || "아직 없음"} mono tone={fmtScheduled(r) ? "ok" : undefined} />}
+          {real && <KV k="승인" v={approvalText(r)} />}
+          {real && paid && <KV k="결제" v={`${fmtWon(paid.amount)} · ${paid.method || "카드"}${paid.demo ? " (데모 · 실제 결제 없음)" : ""} · ${fmtDT(paid.at || Date.parse(paid.approvedAt) || r.receivedAt)}`} tone="ok" />}
+          {real && r.cancelReq && <KV k="취소 요청" v={`${r.cancelReq.by} · ${fmtDT(r.cancelReq.at)}${r.cancelReq.reason ? ` · ${r.cancelReq.reason}` : ""}`} tone="gold" />}
           {r.hospital && <KV k="병원" v={r.hospital} />}
           <KV k="긴급도" v={URGENCY[r.urgency]?.label || "보통"} tone={r.urgency === "urgent" ? "gold" : undefined} />
-          <KV k="보호자 결제 승인" v={<span className="flex flex-wrap items-center gap-2"><Pill tone={pay.tone}>{pay.label}</Pill><span className="text-[11px] text-muted">{elderOf(r.elder)?.guardian || "보호자"} · 어르신 직접 결제 하루 {fmtWon(r.limit)}까지</span></span>} />
+          <KV k="결제" v={<span className="flex flex-wrap items-center gap-2"><Pill tone={pay.tone}>{pay.label}</Pill><span className="text-[11px] text-muted">{elderOf(r.elder)?.guardian || "보호자"} · 어르신 직접 결제 하루 {fmtWon(r.limit)}까지</span></span>} />
           {r.photos?.length > 0 && <KV k="첨부 사진" v={r.photos.join(", ")} mono />}
           {r.proof && <KV k="완료 증빙" v={r.proof} mono />}
         </section>
@@ -292,8 +328,34 @@ function Detail({ r, m, onClose, onTransition, onPatch }) {
             onChange={(v) => v !== (assignee || "미배정") && onPatch(r.id, "assignee", "담당자", v === "미배정" ? "" : v, assignee || "미배정")} />
         </section>
 
+        {real ? (
+          <section>
+            <h4 className="mb-2 text-[13px] font-bold text-navy">관제 조치</h4>
+            {["done", "cancelled", "rejected"].includes(r.status) ? (
+              <Empty>종결된 요청입니다.</Empty>
+            ) : (
+              <>
+                <p className="mb-2 text-[12px] leading-[1.6] text-muted">
+                  {isVisitCall(r)
+                    ? "도와줘요는 대시보드 팝업(지금 처리할 일 › 대응 열기)에서 확인 전화 · 출동 지시 · 해결 완료로 처리합니다."
+                    : "승인 · 진행은 담당 컨시어지가 합니다. 관제는 취소 요청을 승인 · 반려하거나 강제 취소합니다."}
+                </p>
+                <Field id={`req-opsnote-${r.id}`} label="관제 메모 (이력에 남고 요청자에게 보입니다)" value={opsNote} onChange={setOpsNote} placeholder="예: 보호자와 통화 후 취소 승인" />
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {r.status === "cancelRequested" && (
+                    <>
+                      <Btn small tone="navy" onClick={() => setConfirm({ kind: "cancelOk", label: "취소 승인" })}>취소 요청 승인{paid ? " (환불 대기로)" : ""}</Btn>
+                      <Btn small ghost onClick={() => dispatch?.({ type: "decideCancel", id: r.id, approve: false, by: OPERATOR, note: opsNote.trim() })}>취소 요청 반려</Btn>
+                    </>
+                  )}
+                  <Btn small ghost tone="muted" onClick={() => setConfirm({ kind: "force", label: "강제 취소" })}>강제 취소{paid && !paid.refund ? " (환불 대기로)" : ""}</Btn>
+                </div>
+              </>
+            )}
+          </section>
+        ) : (
         <section>
-          <h4 className="mb-2 text-[13px] font-bold text-navy">진행상태 변경</h4>
+          <h4 className="mb-2 text-[13px] font-bold text-navy">진행상태 변경 <span className="text-[11px] font-normal text-muted">예시 요청</span></h4>
           {nextStates.length === 0 ? <Empty>종결된 요청입니다 — 더 바꿀 수 있는 상태가 없습니다.</Empty> : (
             <>
               <Field id={`req-note-${r.id}`} label="변경 메모 (이력에 남습니다)" value={note} onChange={setNote} placeholder="예: 보호자 승인 완료 · 컨시어지 진행" />
@@ -311,6 +373,7 @@ function Detail({ r, m, onClose, onTransition, onPatch }) {
             </>
           )}
         </section>
+        )}
 
         <section>
           <h4 className="mb-2 text-[13px] font-bold text-navy">실제 비용 · 영수증</h4>
@@ -342,7 +405,21 @@ function Detail({ r, m, onClose, onTransition, onPatch }) {
 
         <section>
           <h4 className="mb-2 text-[13px] font-bold text-navy">취소 · 환불</h4>
-          {m.refund ? <KV k={m.refund.status} v={`${m.refund.amount ? fmtWon(m.refund.amount) : "—"} · ${m.refund.reason || "사유 미입력"}`} tone="info" /> : refundable ? (
+          {real ? (
+            paid?.refund ? (
+              <div className="flex flex-wrap items-center gap-2">
+                <Pill tone={paid.refund.status === "done" ? "ok" : "warn"}>{paid.refund.status === "done" ? "환불 완료" : "환불 대기"} {fmtWon(paid.refund.amount)}</Pill>
+                <span className="text-[11px] text-muted">{paid.refund.reason}</span>
+                {paid.refund.status !== "done" && (
+                  <Btn small tone="ok" onClick={() => dispatch?.({ type: "refundDone", paymentId: paid.id, by: OPERATOR })}>토스에서 환불함 · 환불 완료</Btn>
+                )}
+              </div>
+            ) : paid ? (
+              <Empty>결제 완료 {fmtWon(paid.amount)} — 거절 · 취소되면 여기서 환불 대기로 넘어옵니다.</Empty>
+            ) : (
+              <Empty>{r.payBy === "elder" ? "어르신 직접 결제 — 카드 결제 기록이 없어 환불 처리 대상이 아닙니다." : "결제 기록 없음."}</Empty>
+            )
+          ) : m.refund ? <KV k={m.refund.status} v={`${m.refund.amount ? fmtWon(m.refund.amount) : "—"} · ${m.refund.reason || "사유 미입력"}`} tone="info" /> : refundable ? (
             <div className="flex items-end gap-2">
               <div className="flex-1"><Field id={`req-refund-${r.id}`} label="사유" value={refundReason} onChange={setRefundReason} placeholder="예: 보호자 요청 · 일정 변경" /></div>
               <Btn small ghost tone="muted" onClick={() => setConfirm({ kind: "refund" })}>취소 · 환불 요청</Btn>
@@ -378,8 +455,8 @@ function Detail({ r, m, onClose, onTransition, onPatch }) {
       </div>
 
       <Confirm open={!!confirm} onCancel={() => setConfirm(null)} onConfirm={runConfirm}
-        title={confirm?.kind === "refund" ? "취소 · 환불을 요청합니다" : `상태를 '${confirm?.label}'로 바꿉니다`}
-        body={confirm?.kind === "refund" ? `${r.elder} · ${r.type} — 환불 요청이 기록되고, 가능하면 요청이 취소 상태로 바뀝니다. 되돌릴 수 없습니다.` : "종결 상태로 바뀌면 다시 진행할 수 없습니다. 메모가 이력에 남습니다."}
+        title={confirm?.kind === "refund" ? "취소 · 환불을 요청합니다" : confirm?.kind === "force" ? "강제 취소합니다" : confirm?.kind === "cancelOk" ? "취소 요청을 승인합니다" : `상태를 '${confirm?.label}'로 바꿉니다`}
+        body={confirm?.kind === "refund" ? `${r.elder} · ${r.type} — 환불 요청이 기록되고, 가능하면 요청이 취소 상태로 바뀝니다. 되돌릴 수 없습니다.` : confirm?.kind === "force" || confirm?.kind === "cancelOk" ? `${r.elder} · ${r.type} — 요청이 취소되고${paid && !paid.refund ? `, 결제 ${fmtWon(paid.amount)}은 환불 대기로 넘어갑니다` : ""}. 보호자 · 어르신 · 컨시어지 화면에 같이 반영되고 되돌릴 수 없습니다.` : "종결 상태로 바뀌면 다시 진행할 수 없습니다. 메모가 이력에 남습니다."}
         confirmLabel={confirm?.kind === "refund" ? "환불 요청" : confirm?.label} tone="navy" />
     </Drawer>
   );

@@ -7,6 +7,7 @@ import { trackOf, honorific } from "../lib/tracks";
 import { useAppState } from "../lib/state";
 import Splash from "./Splash";
 import RoleGate from "./RoleGate";
+import { HelpCallPopup } from "./HelpCall";
 
 const TABS = [
   { href: "/family", label: "홈", icon: "home" },
@@ -73,6 +74,9 @@ export default function FamilyLayout({ children, title, action }) {
         </header>
 
         <main className="flex-1 space-y-3.5 overflow-y-auto px-4 pb-28 pt-4">{children}</main>
+
+        {/* 도와줘요 — 어르신이 누르면, 관제가 단계를 넘길 때마다 어느 탭에서든 뜬다 (2026-10-05) */}
+        <HelpCallPopup role="guardian" />
 
         <nav className="fixed bottom-0 left-1/2 z-30 w-full max-w-[430px] -translate-x-1/2 border-t border-navy/10 bg-white/95 backdrop-blur">
           <div className="grid grid-cols-5">
