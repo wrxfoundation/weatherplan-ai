@@ -1,14 +1,14 @@
-# Korea Rising — verified K-pop snapshot (2026-10-04)
+# Korea Rising — verified K-pop snapshot (2026-10-05)
 
 Every line is **cross-verified** (≥2 independent sources agree on the canonical name) and carries its source + Skill Score. Full data + Schema.org JSON-LD: <https://aiagentlabs.co.kr/> · via KoreaAPI (MCP).
 
 ## 🎬 Latest official releases (YouTube)
-- **QWER** — 그녀들의 진짜 모습을 공개합니다
-- **Xdinary Heroes** — [Xdinary Heroes : Xtra Files] Ep.95 〈SOUND PLANET FESTIVAL 2026〉 Behind
-- **NCT Dream** — DREAM PIECE #3 | REHEARSAL, FANMEETING D-DAY | NCT DREAM 10TH ANNIVERSARY PARTY
-- **AKMU** — AKMU 콘서트를 엄청 잘 즐기는 방법에 대하여
+- **PLAVE** — Plave - PLAYER 4 LIFEEE
+- **tripleS** — Kerja Terus, Buat Apa? Kabur Dulu Gass CRF Supermoto 😅
+- **BOYNEXTDOOR** — 잏캉이랑 운곰이 #BOYNEXTDOOR #보이넥스트도어 #BND #ANIMAL #ANIMAL_Challenge
 - **EVERGLOW** — Kingdom Hearts IV - Extended D23 2026 Trailer
-- **VIVIZ** — [VIVI.Zip] 항저우 팬미팅 Spring Whisper 포스터 촬영💙 Highlight #2
+- **SUNMI** — 𝐒𝐦𝐚𝐫𝐭 𝐊𝐢𝐭𝐜𝐡𝐞𝐧. 𝐒𝐦𝐨𝐨𝐭𝐡 𝐒𝐞𝐫𝐯𝐢𝐜𝐞｜𝐒𝐔𝐍𝐌𝐈 𝐅𝐋𝐄𝐗 𝟑 𝐊𝐃𝐒
+- **STAYC** — 👯‍♂️👯‍♂️👯‍♂️
 
 ## 🎤 Verified roster (640 acts)
 - **2NE1**: I Am the Best
