@@ -2088,3 +2088,4 @@ Thanks Odelia — writing to you at that address today. Mine is support@wellbian
 - **남산타워 영상 캡션 최종(10/6 밤, 서우 수정본 어법 정리)** — `intel/x-activity-log.md` 같은 절. 「lit up bright · our logo up there」 · 18°C · Mine the sky · 255/280. 태그가 @wellbianlabs 라 케이웨더 계정 게시로 보고, 그 경우 「Mine the sky」 삭제 권고.
 - **남산타워 영상 캡션 2차 정리(10/6 밤)** — 서울 · Namsan Seoul Tower 병기, 280 안으로 줄임(275/280). `intel/x-activity-log.md` 같은 절.
 - **「태그 넣으면 부스트 안 되나」(10/6 밤, 서우)** — `playbook.md` 「낯선 DM · 유료 부스트」에 3줄. 멘션만으로 막히지 않는 것으로 앎(X 도움말 접속 차단 — 공식 미확인, 버튼으로 확인) · 답글은 보통 불가 → 단독 원글 · 유료 확산 글엔 상장사 태그 + 토큰 문구 같이 두지 않기.
+- **10/6 부스트 3건 캠페인 화면 판독(10/6 밤, 서우 Ads Manager 캡처)** — `intel/x-activity-log.md` 끝 절. 같은 글 두 캠페인 CPM ₩864 vs ₩271(비싼 쪽 링크 0 → 타기팅 확인 뒤 끄기 권고) · 싼 쪽 링크 80(클릭당 ₩407) · 영상 글은 재생 · 프로필 방문으로 보기 · 전체 5건 ₩346,727 · 115.6만 노출.
