@@ -2293,6 +2293,21 @@ Thanks so much, Dan, that's really kind of you.
 One thing that would help: are there community calls or meetups, virtual is perfect, where XRPL projects can give a short demo? We'd love to show the community how a reading gets verified and fingerprinted on the ledger. And once our first units ship, if anyone comes to mind who'd enjoy trying one, an intro would mean a lot.
 ```
 
+- **★ 10/6 서우 결정 — 「XRP SEOUL 플래티넘 참여 · 남산타워 점등을 알리면서, XRP 생태계에 본격 들어와 힘을 싣고 있는데 홍보 도움 가능하냐로. 처음부터 기계 얘기는 이상하다」**
+  → 위 「데모 · 소개」 답장들을 대체. 기기 0. 「플래티넘 파트너」는 공식 명칭대로 **「Platinum Sponsor」**(주체 = 케이웨더, @XRPSEOUL 이미지 · 9/9 공지).
+  남산타워는 첫 인사에 이미 있어 「XRP 커뮤니티를 서울에 맞는 우리 방식」으로 다시 묶었다(행사 조명 — 협력 발표 아님).
+  「힘을 싣는다」는 투자 · 매입으로 읽히지 않게 「오래 짓겠다(for the long run)」로. 홍보 부탁은 **그가 먼저 꺼낸 「협업 · 홍보 기회」를 받는 형식**으로,
+  범위는 커뮤니티 쪽(콜 · Spaces · 밋업 · 사람)으로 열어 둔다 — 리플 공식 계정 홍보를 청하는 문장 0.
+
+**답장 (텔레그램, EN, 539자 — 최종)**
+```
+Thanks so much, Dan, really appreciate it.
+
+A bit more context on us: KWeather came in as a Platinum Sponsor of XRP SEOUL 2026, and lighting up N Seoul Tower on the night of the 3rd was our way of welcoming the XRP community to Seoul. We're committed to building in the XRP ecosystem for the long run.
+
+Since you mentioned collaboration and promotional opportunities, we'd love to take you up on that. What could that look like on the community side? Community calls, Spaces, meetups, or people we should meet, we're open to whatever fits.
+```
+
 ## David Zabransky (Bybit EU, Country Manager CZ/SK) — 1촌 · 판정 (2026-10-06, 서우 프로필 캡처 1장)
 
 - **자리**(캡처 기준): Bybit EU 체코 · 슬로바키아 국가 매니저(플젠, 체코) · 인증 배지 · **이미 1촌**(팔로우 중) · 공통 1촌 18.

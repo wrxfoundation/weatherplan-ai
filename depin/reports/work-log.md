@@ -2083,3 +2083,4 @@ Thanks Odelia — writing to you at that address today. Mine is support@wellbian
 - **Dan 에게 기기 · 리퍼럴 문의 판정(10/6, 서우 「가볍게 물어볼래」)** — `intel/business-directions.md` Dan 절. 본인에게는 묻지 않음(리플 직원 · 수수료 · 「리플이 미는 기기」로 읽힘 · 9/26 기준 리플 소속 제외 · 출고 전) → 그의 네트워크 제안을 써서 커뮤니티 사람 소개만 부탁하는 답장(309자).
 - **Dan Fisher 역할 정리 · 부탁할 것(10/6, 서우 텔레그램 프로필 캡처 + 「근본적으로 뭐 하는 사람이고 뭘 도와 달라 할까」)** — `intel/business-directions.md` Dan 절. 같은 직함 리플 채용 공고(검색 요약 — 원문 차단): 커뮤니티 관계 · 행사 · 의견 전달. 부탁 = 커뮤니티 콜 · 밋업 데모 자리 → 출고 뒤 소개 → 조언, 안 할 것 = 본인 기기 · 리퍼럴 · 리플 계정 홍보 · 사업 연결 · Swell. 답장 교체(375자). 전화번호 미기재.
 - **소개 구매자 「알리겠다」 회신에 감사 답(10/6, 서우 문구)** — `intel/x-activity-log.md` 같은 절. 「폭발적 성장」 → 「as fast as we can」(가격 기대로 읽히지 않게), 207자.
+- **Dan 답장 최종 — 서우 결정(10/6, 「플래티넘 참여 · 남산타워 알리고 홍보 도움 가능하냐, 기계 얘기는 처음부터 X」)** — `intel/business-directions.md` Dan 절. 「Platinum Sponsor」(케이웨더) · 남산타워 재서술 · 「for the long run」 · 그가 먼저 꺼낸 홍보 기회를 받는 형식 · 커뮤니티 쪽 범위(539자). 앞선 데모 · 소개 답장 대체.
