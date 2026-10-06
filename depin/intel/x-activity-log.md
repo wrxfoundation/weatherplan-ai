@@ -3799,3 +3799,30 @@ These were the lights on N Seoul Tower for XRP SEOUL 2026, where KWeather was a 
 - 다음 부스트부터 사이트 링크(유입 추적)와 구매 전환 추적을 붙여, 노출이 방문 · 구매로 이어지는지까지 보겠습니다
 - 타기팅을 바꿀 때는 광고 그룹을 새로 만들어 전후 성과를 자동으로 나누겠습니다
 ```
+
+## Kenny Nguyen (@mrnguyen007) — 기기 체험 제안 판정 (10/6, 서우 「기계 보내 줄 테니 리뷰되냐 물어볼까」)
+
+- **누구**(서우 캡처): X 278K · 유튜브 채널 · 미국 캘리포니아 · 2011 가입 · 구독 기능. 바이오 「I DO NOT GIVE FINANCIAL ADVICE · BEWARE OF SCAMMERS」.
+  고정 글(9/4) = 트럼프 대통령 · SEC · CFTC 위원장 · 갈링하우스와 함께라는 사진 글. 우리 쪽이 팔로우하는 계정 28곳이 그를 팔로우. 접점 0(사다리 칸 0).
+  외부 검색으로는 인물 정보가 확인되지 않았다.
+- **판정 — 「리뷰해 주면 보낸다」는 묻지 않는다.**
+  ① 리뷰를 조건으로 한 증정은 대가성 홍보다 — 미국은 받은 사실을 밝힐 의무가 있고(FTC), 기기에 보상이 붙어 있어 더 민감하다.
+     우리 방식은 9/16 Eri A판 「no strings · 올리면 우리가 보냈다고 밝혀 달라」.
+  ② 지금은 보낼 수 없다 — 첫 출고 일정 미정 · 미국 배송 미확정(9/2 「해외 배송」 답 미확정 그대로) · 저장소에 미국 전파 인증(FCC) 기록 없음(KC 까지).
+     무선 기기는 미국에서 팔거나 들여오기 전에 장비 인증이 필요하다(FCC). 「보내겠다」는 약속은 못 지키면 부채다(9/16 교훈).
+  ③ 맞는 사람인지 먼저 — 9/26 기준으로 가격 · 차트 위주 계정은 제외, 정치 인사 쪽 신호(고정 글)도 본다. 최근 글 20개를 서우가 확인.
+  ④ 고정 글에 리플 CEO 가 있어, 그가 쓰면 「리플 쪽 기기」로 읽힐 수 있다 — 문안에 리플 0.
+- **순서**: 팔로우 → 그의 글에 레인 답글(링크 · CTA 0) → ②가 서고 증정분(비공표) 1대 배정이 나면 아래 DM. **@wellbianlabs 공식 계정에서** 보낸다
+  (사칭 경고를 걸어 둔 계정이라 개인 계정의 「무료 기기」 DM 은 피싱으로 읽힌다).
+- 리뷰 · 홍보 요청 0 · 토큰 · 보상 · 가격 · 판매 0 · 리플 0 · 어필리에이트 조건 0(조건 정본 확인 전).
+
+**체험 제안 DM (②가 선 뒤에만, EN, 760자)**
+```
+Kenny — Seowoo from Seoul. I run partnerships at wellbian.
+
+If you saw N Seoul Tower lit up for XRP SEOUL 2026 on the 3rd, that was KWeather and us. KWeather has measured weather in South Korea for thirty years and supplies data to 4,000+ enterprise clients. wellbian is the network we built on top: city-level weather for 167 cities from eleven weather feeds, and a certified air-quality sensor people run in their own rooms, with every reading fingerprinted to the XRP Ledger.
+
+It's a physical thing, which is still rare on XRPL. I'd like to send you one from our first US shipment — no strings, no brief, nothing you have to post. If you ever do mention it, I'd ask you to say we sent it; that protects you more than it protects us.
+
+Where should I send it?
+```
