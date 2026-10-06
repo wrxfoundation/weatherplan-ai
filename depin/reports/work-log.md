@@ -2068,3 +2068,4 @@ Thanks Odelia — writing to you at that address today. Mine is support@wellbian
 - **스타링크 RFQ 재구성 메일 + Joel DM(10/6, 서우 KJ 원 RFQ 붙여 넣기 + 「재구성해서 보내자」)** — 채팅으로만(수량 · 원문은 저장소 밖 규칙). 고친 것: 「leading · spearhead · world's largest」 → 30년 · 4,000곳 이상 · 코스닥 상장 사실 · 「within NVIDIA」 삭제(사실 확인 전) · 웰비안 링크 삭제(9/28 규칙) · D2C 「모듈」 → 연결 + 통신사 경로 질문 · 라이드셰어는 발사 영업 몫 명시 · 「45,051 units」 합계 삭제 · 항목별 요청 · 한국 재판매사 경로.
 - **Swell 뉴욕에서 Joel 미팅 가능성(10/6)** — `intel/business-directions.md` Joel 절. 레드먼드 상근이라 뉴욕 현장은 어려움 → 미국행 확정 시 레드먼드 별도 방문 제안(RFQ 대화가 이어진 뒤).
 - **Joel 에게 10/30 레드먼드 대면 제안(10/6, 서우 결정)** — 뉴욕 컨퍼런스 뒤 하루를 스타링크 전용으로, 어려우면 화상. DM · 메일 문단(채팅).
+- **스타링크 RFQ 메일 · DM 수정(10/6, 서우 「화상 먼저 · 28일 아님 · 보낸 곳은 D2C 메일」)** — `intel/business-directions.md` KJ RFQ 절 정정(날짜 · 보낸 곳) · Joel 절에 순서 수정. 메일 · DM 전문은 채팅(주소는 저장소에 적지 않음).
