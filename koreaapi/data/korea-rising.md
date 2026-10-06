@@ -1,14 +1,14 @@
-# Korea Rising — verified K-pop snapshot (2026-10-05)
+# Korea Rising — verified K-pop snapshot (2026-10-06)
 
 Every line is **cross-verified** (≥2 independent sources agree on the canonical name) and carries its source + Skill Score. Full data + Schema.org JSON-LD: <https://aiagentlabs.co.kr/> · via KoreaAPI (MCP).
 
 ## 🎬 Latest official releases (YouTube)
-- **PLAVE** — Plave - PLAYER 4 LIFEEE
-- **tripleS** — Kerja Terus, Buat Apa? Kabur Dulu Gass CRF Supermoto 😅
-- **BOYNEXTDOOR** — 잏캉이랑 운곰이 #BOYNEXTDOOR #보이넥스트도어 #BND #ANIMAL #ANIMAL_Challenge
+- **QWER** — 그녀들의 진짜 모습을 공개합니다
+- **Xdinary Heroes** — Croxx The Sound, XMF with 😈
+- **BOYNEXTDOOR** — BOYNEXTDOOR 'ANIMAL' Performance Video #BOYNEXTDOOR #보이넥스트도어 #BND #HOME_DELUXE #ANIMAL
 - **EVERGLOW** — Kingdom Hearts IV - Extended D23 2026 Trailer
-- **SUNMI** — 𝐒𝐦𝐚𝐫𝐭 𝐊𝐢𝐭𝐜𝐡𝐞𝐧. 𝐒𝐦𝐨𝐨𝐭𝐡 𝐒𝐞𝐫𝐯𝐢𝐜𝐞｜𝐒𝐔𝐍𝐌𝐈 𝐅𝐋𝐄𝐗 𝟑 𝐊𝐃𝐒
-- **STAYC** — 👯‍♂️👯‍♂️👯‍♂️
+- **Oh My Girl** — 효정이랑 여행 갈 사람~? 여행 메이트 모집합니다! 🧳💛
+- **VIVIZ** — [VIVI.Zip] 항저우 팬미팅 Spring Whisper 포스터 촬영💙 Highlight #2
 
 ## 🎤 Verified roster (640 acts)
 - **2NE1**: I Am the Best
