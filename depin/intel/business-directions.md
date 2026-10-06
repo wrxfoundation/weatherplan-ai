@@ -1706,6 +1706,28 @@ Limitless Research is why I wanted to say hello: a desk that studies how forecas
 Good to be connected.
 ```
 
+- **진행(서우 캡처, 10/7)**: 9/28 요청 메모 → 수락 → **10/5(월) 그가 먼저 「Limitless 와 날씨 마켓을 운영할 생각이 있냐」** → 10/6(화) 서우 「매우 열려 있다 · 팀과 논의해
+  공식 답을 곧 주겠다」(서명 오타 「Sewoo」). → **사업 창구가 열렸다 — Limitless 창구는 Daria 하나, CJ 에게는 따로 사업 이야기 0**(회사 상한).
+- **10/7 서우 결정 — 화상 미팅 요청(내일 10/8 목 또는 10/12 월), 협의는 크립토닷컴 9/18 콜과 같은 결로.** 준비(`content/cryptocom-brief-0918.md` 구조 그대로):
+  - 목적은 계약이 아니라 **납득** — 가격 · 수익 배분 · 독점 · 기간은 이 자리에서 정하지 않는다. 리드 = 크립토닷컴 때처럼 이창민 본부장, 서우 = 진행 · 가드 → **본부장 목/월 일정 먼저 확인.**
+  - 프레임 = **「날씨 데이터가 아니라 판정을 판다」** — 정산 뒤 진 쪽이 시비 걸 수 없는 값(11개 피드 합의 · 정산 전 공개 원장 지문).
+  - 그쪽에 물을 것: 원하는 도시 · 조건 · 정산 시각 · 분쟁 처리 · 받는 형식(API · 온체인) · Limitless Research 의 과거 데이터 수요.
+  - **Limitless 만의 선**: ① 한국 도시 마켓 · 한국 이용자 대상 마케팅 · 케이웨더 이름을 건 현지 캠페인 → 카운슬 의견 전까지 받지 않음, 「한국 밖 도시 · 데이터 쪽부터」로 긍정형
+    ② 계약 전 선행 = 카운슬 의견 + 한국 도시 계약 제외 · 한국 거주자 배제 조항(9/28) ③ 토큰(LMTS) · 상장 · 가격 0, 케이웨더 상장사 — 공개 전 사업 정보 0
+    ④ 다른 플랫폼 이름 0(크립토닷컴 포함) ⑤ 웰비안 × Flare 통합 표현 0.
+
+**미팅 요청 (LinkedIn, EN, 771자)**
+```
+Hi Daria, following up as promised. We've talked it through internally and would love to explore weather markets with Limitless.
+
+Could we set up a short video call, about 30 minutes? Tomorrow (Thursday, Oct 8) or next Monday (Oct 12) would work well on our side. Just let me know a time that suits you (KST is fine).
+
+On our end, we'd walk you through how we produce a city-level weather determination: a consensus across eleven weather feeds, with each input fingerprinted to a public ledger before a market settles on it. We'd also love to hear how Limitless sets up and resolves its markets, and what you'd need from a resolution source. If someone on your product side handles market creation or resolution, it would be great to have them join.
+
+Best,
+Seowoo (Logan)
+```
+
 ## CJ Hetherington (Limitless 공동창업자 · CEO / Limitless Markets US 그룹 CEO) — 판정 (2026-09-28) → **Limitless 는 이 사람 먼저. 1촌 + Lynn 인사, 각도는 「기관 리스크 이전」 · 미국 거래소 레인**
 
 서우가 프로필 캡처 공유(글 없음). 2촌 · 팔로워 3,357 · 공통 1촌 둘(이름 팔지 않음). 9/28 글: KBW 로 서울에 왔고 이야기 나눌 사람을 찾는다.
