@@ -3937,3 +3937,20 @@ Another angle came in tonight, from across the Han River. 🌉
 
 The corner of the frame reads 18°C at 8:32 pm. We notice these things.
 ```
+
+**10/6 밤 서우 수정 → 최종** — 「로고가 떠 있고 환하게 밝혀진 모습」으로 · 행사장 줄 · 「We notice these things.」 삭제 · 「Mine the sky」 추가 · 태그 @wellbianlabs
+(= **케이웨더 계정(@Kweather_Co)에서 올리는 글**로 읽힌다 — 웰비안 계정에서 올리면 태그를 @Kweather_Co 로).
+⚠ 케이웨더 계정에서 올린다면 「Mine the sky」 줄은 빼는 쪽을 권했다 — 상장사 공식 계정이 「채굴」을 말하면 토큰 사업을 띄우는 것으로 읽힐 수 있다(「상장사가 뒷받침」 금지와 같은 결).
+
+**최종 (255/280)**
+```
+Someone sent us this from across the Han River. 🌉
+
+N Seoul Tower, lit up bright on the night of XRP SEOUL 2026, with our logo up there alongside @wellbianlabs.
+
+The corner of the frame reads 18°C at 8:32 pm.
+
+Mine the sky. 🌦⛏
+
+#Wellbian #XRPSEOUL #XRPL
+```
