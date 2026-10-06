@@ -1833,6 +1833,12 @@ KJ(케이웨더 Head of Product)가 9/28 스타링크 팀에 견적 요청을 �
 
 **정정**: 위 「스타링크 쪽」의 VP Business Operations 는 **Lauren Dreyer** 가 복수 보도로 확인된다 — Samuel(Chad) Gibbs IV 표기(집계 사이트)는 쓰지 않는다.
 
+**10/6 — Joel Cherkis(Senior Director, Starlink Enterprise · 레드먼드) 회신** — 서우가 3촌 메시지로 RFQ 를 알리자(10/6 08:54) 「어디로 보냈는지,
+무엇을 보냈는지 알아야 도울 수 있다 — 이메일로」(11:02). 경력: Starlink Business Operations Director · Senior Manager → 2026-01 부터 Enterprise
+(전 세계 고객 성공 · 성장), 이전 Gro Intelligence(기후 · 식량 안보 AI 데이터) SVP Sales & Partnerships. **평판 단말 + 기업 요금 항목의 주인에 가장
+가깝다.** 다음 수: LinkedIn 짧은 회신 → 이메일에 RFQ 원문 첨부 · KJ 참조 · 세 항목을 조직별로 정리(라이드셰어는 발사 영업 몫이라고 먼저 밝힘) ·
+한국은 재판매사 구조임을 안다고 한 줄. 이메일 주소 · 수량 · 원문은 저장소에 적지 않는다(초안은 채팅).
+
 **진행**
 - **SpaceX 는 KJ 스레드 하나로 일원화** — 위 영업 메일 초안과 Stephanie 메모는 보내지 않는다(같은 회사에 케이웨더 두 사람이 겹치는 요청을
   다른 말로 보내는 셈). 발사 질문은 KJ 스레드 후속으로 붙인다.
