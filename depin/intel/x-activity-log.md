@@ -3826,3 +3826,34 @@ It's a physical thing, which is still rare on XRPL. I'd like to send you one fro
 
 Where should I send it?
 ```
+
+## 고객 자작 인포그래픽 — James 소개 구매자 공개 글 (10/6, 서우 캡처 2장)
+
+- **무슨 일**: James(어필리에이트 코드 보유)가 소개한 구매자(인증 계정 · 미국 추정)가 **구매 완료** 뒤 공개 글 + 자작 인포그래픽(「Chart by」 본인 표기 ·
+  맨 위 「@WELLBIANLABS」 머리글이라 공식 그림처럼 보인다). 글: 「구매했다 · 습도 · CO2 · 온도를 잰다 · 검증 뒤 $WLBN 으로 XRP Ledger 에서 paid out」.
+- **정본 대조 — 맞는 것**: 측정 항목(PM2.5 · PM10 · CO₂ · TVOC · 온도 · 습도, 1분 단위 — 판매 페이지 · 9/8 블로그) · 1인 최대 10장(판매 페이지 — 백서 5장과의
+  불일치는 정본 §7 S) · 167개 도시 · 11개 피드 · 30년. **확인 못 함**: 3.6 W · 「nearby devices cross-check」.
+- **우리가 쓸 수 없는 표현 4곳**:
+  ① 「Built with KWeather (KOSDAQ-listed)」 — 상장사가 뒷받침하는 것처럼 읽힌다(핵심 금지).
+  ② 「Made by KWeather」 — 케이웨더 제조사 단독 주어(핵심 금지).
+  ③ 「Flare oracle live Oct 3」 — 웰비안 × Flare 통합으로 읽힌다(핵심 금지) · 10/3 은 「가동」이 아니라 「발표」(9/23 부터 가동).
+  ④ 「paid out in $WLBN」 · 「Owners earn WLBN tokens on the XRP Ledger」 — 출금 개시 전이라 적립 WLBN 은 포인트로만 있다(정본 「출금 개시」) · 캐시태그.
+- **대응**: 공개 답글 = 감사 + 보상 사실 한 줄(고객 첫 공개 글이라 1일 1답글 중 우선) · 수정 부탁은 **DM**(아래 줄 삭제 · 「Made by」 → 「Device partner」 둘만) ·
+  **좋아요 · RT · 인용은 그림이 고쳐진 뒤에**(우리가 퍼뜨리면 그림의 표현을 우리가 채택한 것이 된다). 고객 계정명은 저장소에 적지 않는다.
+- 최악 해석: 「그럼 지금은 포인트뿐이냐」 — 사실이라 감수한다. 나중에 「지급된다더니」보다 낫다.
+
+**공개 답글 (EN, 228/280)**
+```
+Thank you, and welcome aboard! For anyone reading: rewards are still in testing (amounts and value not guaranteed) and accrue as points until withdrawals open. From day one, your unit shows you exactly what's in your home's air.
+```
+
+**DM — 수정 부탁 + 코드 확인 (EN, 517자)**
+```
+Hi, this is the wellbian team. Thank you for the purchase, and for the chart. It's lovely work.
+
+Two small asks, only if you're up for it. KWeather is a listed company, so we're careful about how it's described alongside wellbian:
+1) Could you drop the bottom line (KOSDAQ-listed · Flare oracle · D'CENT)? The Flare data market is KWeather's, not wellbian's.
+2) Could "Made by KWeather" read "Device partner: KWeather"?
+
+Also, did James's code apply to your order in the end? If not, reply here and we'll sort it out.
+```
