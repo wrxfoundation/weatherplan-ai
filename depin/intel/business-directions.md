@@ -2260,6 +2260,8 @@ We were at XRP SEOUL 2026 last week with KWeather's keynote and booth, and if yo
 Would love to stay in touch and see where we can support the XRP community. Thanks!
 ```
 
+- **10/5 21:55 회신**(서우 텔레그램 캡처, 10/6 번역): 맞팔 · 연결에 감사, 토론토 기반, 필요하면 자기 네트워크를 연결해 주겠다 · 협업 · 홍보 기회를 찾고 싶으면 언제든 연락하라. → 답할 때는 커뮤니티 쪽(행사 · 교육)으로 좁히고 리플 이름을 건 홍보로 읽히는 제안은 하지 않는다(리플 「이름 사용 조심」 요청 · 협력 표현 금지).
+
 ## David Zabransky (Bybit EU, Country Manager CZ/SK) — 1촌 · 판정 (2026-10-06, 서우 프로필 캡처 1장)
 
 - **자리**(캡처 기준): Bybit EU 체코 · 슬로바키아 국가 매니저(플젠, 체코) · 인증 배지 · **이미 1촌**(팔로우 중) · 공통 1촌 18.
