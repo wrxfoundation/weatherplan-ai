@@ -2065,3 +2065,4 @@ Thanks Odelia — writing to you at that address today. Mine is support@wellbian
 - **PL Capital GP 링크드인 후속 메시지(10/5, 서우 대화 캡처 + 「행사 당일 인사도 못 함 — 레이징에 대해 더 물어볼 것」)** — 채팅으로만 전달(웰비안 자금 조달 관련이라 내용은 저장소 밖, 9/30 기록과 같은 처리).
 - **리플 커뮤니티 담당 Dan Fisher 텔레그램 첫 인사(10/5, 서우 캡처 4장 + 「댄에게 내 소개」)** — `intel/business-directions.md` 끝 절. 본인 확인(X 바이오 링크 = 텔레그램 계정) · 공개 직함까지 · 리플 협력 · 10/2 미팅 · Swell 언급 0 · 남산타워 조명을 커뮤니티 훅으로.
 - **스타링크 Joel Cherkis 회신 대응(10/6, 서우 프로필 · 대화 캡처 3장)** — `intel/business-directions.md` KJ 견적 요청 절 끝. LinkedIn 회신 + RFQ 전달 이메일 초안(채팅) — 세 항목 조직별 정리 · 라이드셰어는 발사 영업 몫 · 한국 재판매사 구조 인지 · KJ 참조. 보낸 창구는 KJ 확인으로 채움.
+- **스타링크 RFQ 재구성 메일 + Joel DM(10/6, 서우 KJ 원 RFQ 붙여 넣기 + 「재구성해서 보내자」)** — 채팅으로만(수량 · 원문은 저장소 밖 규칙). 고친 것: 「leading · spearhead · world's largest」 → 30년 · 4,000곳 이상 · 코스닥 상장 사실 · 「within NVIDIA」 삭제(사실 확인 전) · 웰비안 링크 삭제(9/28 규칙) · D2C 「모듈」 → 연결 + 통신사 경로 질문 · 라이드셰어는 발사 영업 몫 명시 · 「45,051 units」 합계 삭제 · 항목별 요청 · 한국 재판매사 경로.
