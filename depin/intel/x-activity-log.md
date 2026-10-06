@@ -3885,3 +3885,15 @@ Thank you so much for making this, and welcome aboard! James has been great, and
 
 P.S. James mentioned his code didn't apply at first. If that's still the case, just let us know and we'll sort it out.
 ```
+
+**★ 10/6 서우 — 「이분은 배송 시작하면 DM 주자, 우리를 처음부터 알아봐 주신 분이니」** → 감사 DM 끝 줄을 「X · 텔레그램 공지」에서 **개인 DM 약속**으로 교체.
+날짜는 약속하지 않고 「그분 기기가 출고되면」으로 묶었다(지역별 출고 순서가 달라도 지킬 수 있게). **할 일: 이분 기기 출고 시 이 DM 스레드로 직접 연락.**
+
+**DM — 감사 + 출고 시 개인 연락 (EN, 218자)** + 선택 P.S.(코드 확인)
+```
+Thank you so much for making this, and welcome aboard! James has been great, and we're glad he brought you in.
+
+You found us early, and that means a lot, so we'll message you here personally as soon as your unit ships.
+
+P.S. James mentioned his code didn't apply at first. If that's still the case, just let us know and we'll sort it out.
+```
