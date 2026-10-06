@@ -2259,3 +2259,31 @@ We were at XRP SEOUL 2026 last week with KWeather's keynote and booth, and if yo
 
 Would love to stay in touch and see where we can support the XRP community. Thanks!
 ```
+
+## David Zabransky (Bybit EU, Country Manager CZ/SK) — 1촌 · 판정 (2026-10-06, 서우 프로필 캡처 1장)
+
+- **자리**(캡처 기준): Bybit EU 체코 · 슬로바키아 국가 매니저(플젠, 체코) · 인증 배지 · **이미 1촌**(팔로우 중) · 공통 1촌 18.
+  Bybit EU = 바이비트 유럽 법인 — 오스트리아 FMA MiCA 인가(2025-05) · 빈 본사 · bybit.eu 2025-07 출범(검색 요약 2차).
+- **판정 — 1촌 유지 · 메시지 0(먼저 보내지 않는다).** 바이비트 셋째 — Daria(CIS 마케팅) · Paloma(카드 · 페이, 9/10)와 같은 자리(보류 · 그가 먼저 연락하면 듣는 톤).
+  레인이 없다: 체코 · 슬로바키아 거래 이용자를 늘리는 자리이고, 우리는 거래 고객이 아니며 그 시장도 없다. 거래소 1촌 규칙(인사만 · 사업 이야기는 먼저 열지 않음) 그대로,
+  진행 중인 다른 거래소 건과 겹쳐 보이지 않게 한다.
+- 관계 유지는 그의 게시물에 좋아요 · 댓글까지(제품 언급 0).
+- **그가 먼저 말을 걸면** 아래 인사(Lynn 기본값 거래소판 — 선택 줄 · XRP SEOUL 스폰서 · 다른 거래소 · Flare 0). 「eleven independent sources」 → 「eleven weather feeds」
+  (10/3 발표 문구와 같은 말 — 기본값 자체의 교체 결정은 서우 몫으로 남긴다).
+- **상장을 꺼내면** 정본 §6 문구로 닫는다(백서 게이트 G1~G3 Exchange: Prohibited · G4 전 상장 없음).
+
+**그가 먼저 말을 걸면 (EN, 554자)**
+```
+David — thanks for connecting.
+
+I run partnerships at wellbian. KWeather has measured weather in South Korea for thirty years and supplies data to 4,000+ enterprise clients; wellbian is the network built on top of that.
+
+We work on two layers: certified air-quality sensors that people run in their own rooms, and city-level weather across 90 countries and 167 cities, where each value is a consensus across eleven weather feeds rather than a single reading. Every input is fingerprinted to a public ledger before it goes anywhere.
+
+Good to be connected.
+```
+
+**상장을 꺼내면 (EN, 158자)**
+```
+Thanks, David. Our published policy rules out exchange listing before the G4 gate, so it isn't something we can take up at this stage. Glad to stay connected.
+```
