@@ -2039,6 +2039,38 @@ Good to be connected.
   UNICEF USA End Trafficking 담당(2014-07~2016-08) · American University(Law and Society). **판정 · 문안 그대로** — 수락 뒤 인사의 「Building a team from a blank page」가
   소개란과 맞는다. 할 일 = 기다림. 요청 취소 · 재발송 금지(취소하면 같은 사람에게 최대 3주 재요청 불가 — LinkedIn 도움말 4800) · InMail · 추가 메시지 0(폴리마켓 상한).
 
+## Lisa Mantil (Polymarket, Head of Institutional Growth) — 수락 뒤 인사 (2026-10-06, 서우 프로필 캡처 3장)
+
+- **자리**(캡처 기준): Polymarket Head of Institutional Growth(**2026-09~**, 뉴욕 — 「Building Polymarket's institutional business, with the products,
+  infrastructure and liquidity…」) · 직전 Goldman Sachs 27년 7개월(Partner, Global Head of ETF Accelerator 2022~2026-02 — 고객의 투자 상품 출시를 돕는
+  은행 소유 플랫폼을 처음부터 · Partner, Global Head of Program Trading Distribution 2019~2022 · MD, Americas Electronic Trading 2016~2019 ·
+  VP/MD Synthetics Products Group(ETF) 2005~2016 · VP Program Trading Group). NYU Stern. 2촌 · 공통 1촌 1 · 팔로워 2,466 · 인증 배지.
+  9/30 합류 글(반응 830 · 댓글 139). **1촌 요청 보냄 · 대기 중**(10/6).
+- **보도(검색 요약 2차 · 원문 미열람)**: CNBC 9/29 — 월가 기관 유동성 · 주문 흐름을 끌어오는 자리(거래량은 지금까지 개인 · 스포츠 중심). 약 5주 사이 고위직 영입 4명 중 하나.
+- **어느 폴리마켓인가**: 확인 전. 월가 기관 유동성이면 US(CFTC) 쪽일 가능성이 있으나 추정이다.
+
+**판정 — 인사만 (Shirley · Malea 와 같은 결)**
+- 폴리마켓 계열 상한이 찼다(Paul + Institutional 메일 = 2, Megan 보류, Shirley · Malea 인사만) → 다섯 번째라 제안 · 역할 줄 0.
+- **9/28 메일을 보낸 곳이 US 연락처의 「Institutional」 창구**라, 그가 US 소속이면 그 창구를 보는 팀의 책임자일 수 있다. 그래도 그의 일은 기관 유동성(주문 흐름)이고
+  정산 출처 제안의 주인은 상장 쪽(Nick Rice — Head of Markets)이다 → 메일 언급 0.
+- **그가 먼저 무엇을 하느냐고 물으면** 이 스레드에서 답하고 「9/28 기관 창구로 보낸 메일과 같은 건」으로 한 줄 묶는다(새 제안서 X).
+- 수락 전 금지: 메시지 버튼(InMail) · 공통 1촌에게 소개 부탁(화면의 「소개」 버튼) · 요청 취소 · 재발송.
+- 문장: Malea(같은 뉴욕 · 같은 영입 물결)와 비교해도 각자 받은 말이 되게 — 「the new role」 → 「the move」, 「blank page」 0(그의 프로필 문구이기도 하다).
+  첫 줄 「listening to clients」는 그의 합류 글 첫 문장에서 받았다. 골드만 · 폴리마켓 이름 · 「settlement · market」 0, 측정기 절반 뺌.
+
+**수락 뒤 인사 (EN, 568자)**
+```
+Lisa, thank you for connecting, and congratulations on the move. A career spent listening to clients travels well.
+
+I look after partnerships at wellbian. KWeather has been observing weather in South Korea for thirty years and provides data to more than 4,000 enterprise clients; wellbian is built on that foundation.
+
+The weather we publish spans 167 cities in 90 countries. No city value rests on a single reading: each one is a consensus across eleven weather feeds, and every input is fingerprinted to a public ledger before it's put to use.
+
+Glad we're connected.
+```
+
+**발송 여부는 Claude 가 관리하지 않는다** — 서우 통보 시 갱신.
+
 ## Samuel Shim (메리츠증권, Head of Global Digital Assets) — 1촌 요청 메모 + 수락 뒤 인사 (2026-10-01, 서우 프로필 캡처 2장)
 
 - **자리**(캡처 기준): 메리츠증권 **Head of Global Digital Assets**(2026-06~ — 한국 증권 토큰화와 프라임 브로커리지 · 수탁 · 체결 기관 인프라) ·
