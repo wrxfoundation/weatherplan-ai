@@ -2,6 +2,7 @@ import Icon from "./icons";
 import { FLOW_STEPS, REMINDERS, FOLLOWUP_ROUTES, VISIT_STATUS } from "../lib/workflow";
 import { crewFor, crewLabel, crewReason } from "../lib/dispatch-policy";
 import { useAppState } from "../lib/state";
+import { LIVE_ELDER } from "../lib/ops-health";
 
 // 방문 업무흐름 8단계 — 관제(/dispatch)와 컨시어지(/concierge)가 같은 건을 본다.
 // role 로 조작 권한이 갈린다: 관제만 승인·반려하고, 컨시어지만 컨펌·통화·GPS·녹화를 한다.
@@ -25,7 +26,7 @@ export default function VisitFlow({ role = "ops" }) {
         type: "pushEvent",
         payload: {
           kind: "일정",
-          text: `${step.title} — ${v.elderName}님 (${step.notify.join(" · ")} 알림)`,
+          text: `${step.title} — ${v.elderName || LIVE_ELDER}님 (${step.notify.join(" · ")} 알림)`,
           color: "#8FA9CC",
         },
       });
@@ -45,7 +46,7 @@ export default function VisitFlow({ role = "ops" }) {
           {st.label}
         </span>
         <span className="ml-auto font-num text-[12px] text-muted">
-          {v.elderName}님 · {v.at}
+          {v.elderName || LIVE_ELDER}님 · {v.at}
         </span>
       </div>
 

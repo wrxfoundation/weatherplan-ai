@@ -113,7 +113,7 @@ Vercel 프로젝트 → **Settings → Environment Variables** → Environment �
 1. 왼쪽 메뉴 **SQL Editor** → **New query**
 2. 저장소의 [`supabase/schema.sql`](supabase/schema.sql) 내용을 전부 붙여 넣고 **Run**
    → `Success. No rows returned` 가 나오면 된다 (여러 번 돌려도 괜찮다)
-3. 왼쪽 **Table Editor** 에 표 5개가 보이면 끝
+3. 왼쪽 **Table Editor** 에 표가 보이면 끝 (2026-10-06 부터 회원 · 센터 표와 센터별 보기도 함께 — 4-6)
 
 | 표 | 쌓이는 것 |
 |---|---|
@@ -121,7 +121,9 @@ Vercel 프로젝트 → **Settings → Environment Variables** → Environment �
 | `activity` | 누가 · 언제 · 무엇을 — 한 줄씩 (예: `어르신 · 해주세요 요청 · 즉시 방문 요청`) |
 | `signups` | 가입 상담 신청 (이름 · 지역 · 연락처 · 추천 영업자 코드 …) |
 | `payments` | 토스 결제 승인 건 (금액은 토스 응답 기준) |
-| `accounts` | 로그인한 계정 · 마지막 로그인 시각 |
+| `accounts` | 로그인한 계정 · 마지막 로그인 시각 · 회원(아이디 · 역할 · 상태 · 소속 센터 · 비밀번호 해시) |
+| `centers` | 관제 1 · 2 · 3센터 · 가입 코드 |
+| `account_audit` | 가입 · 승인 · 역할 변경 · 정지 · 가입 코드 변경 기록 |
 
 모든 표는 **서버 비밀 키로만** 읽고 쓸 수 있게 잠겨 있다 (RLS · 브라우저용 키 권한 회수).
 
@@ -152,6 +154,33 @@ Vercel 프로젝트 → **Settings → Environment Variables** → Environment �
    - Supabase **Table Editor → activity** 에 줄이 쌓인다
 4. 보호자 폰 **마이** 탭 → 멤버십 카드의 **기록 저장**이 '서버에 저장 (Supabase)'
 5. 사람이 직접 돌려 볼 시나리오 전체: [`docs/TEST-SCENARIOS.md`](docs/TEST-SCENARIOS.md)
+
+### 4-6. 회원가입 · 관제 1/2/3센터 (2026-10-06)
+
+회원가입과 센터별 공간은 **4-2 의 `supabase/schema.sql` 을 한 번 더 Run** 하면 켜진다 (예전에 돌렸어도 새 표 · 칸만
+더해지고 기존 기록은 그대로다). 환경변수는 따로 넣지 않는다 — `NEXTAUTH_SECRET` + Supabase 두 값이 있으면 된다.
+
+1. SQL Editor → `supabase/schema.sql` 전체 붙여 넣기 → **Run**
+2. `<운영 주소>/api/status` → `"members":{"ok":true,…}` 이면 준비 끝
+3. 센터 가입 코드 보기 — SQL Editor 에서 `select id, name, join_code from public.centers order by id;`
+   (관제 화면 **계정·권한** 맨 위에도 보이고, 거기서 바꿀 수 있다)
+
+| 센터 | 관제 아이디 (공용 테스트 비밀번호) | 쓰는 공간 | Table Editor 에서 보기 |
+|---|---|---|---|
+| 관제 1센터 | `ops1` | `HH-C1` | `center1_accounts` · `center1_household` · `center1_activity` · `center1_signups` · `center1_payments` |
+| 관제 2센터 | `ops2` | `HH-C2` | `center2_…` |
+| 관제 3센터 | `ops3` | `HH-C3` | `center3_…` |
+
+- **가입 입구가 셋**이다 — 이용자(어르신 · 보호자) `/join` · 현장 · 영업(컨시어지 · 영업자) `/partner/join` ·
+  관제 관리자 `/ops/join`. 로그인도 `/login` · `/partner/login` · `/ops/login` 으로 나뉜다.
+- **가입 코드가 센터를 정한다.** 관제 화면 **계정·권한 → 가입 링크 복사**로 영역별 링크(코드 포함)를 나눠 준다.
+- 이용자는 가입하면 바로 쓴다. 현장 · 영업 · 관제 가입은 **그 센터 관제가 승인**해야 로그인된다
+  (관제 첫 화면 '지금 처리할 일'에 **가입 승인 대기**).
+- 관제는 같은 화면에서 **역할 부여 · 정지 · 다시 사용**을 한다. 바꾼 것은 `account_audit` 에 남는다.
+- 센터끼리는 회원 · 기록 · SOS 가 섞이지 않는다. 예전 테스트 계정(`test-…`)과 **테스트 가구 1** 은 그대로 남는다.
+- 비밀번호는 암호화(scrypt 해시)해서만 저장한다. 테스트하는 사람에게 **실제 이름 · 연락처를 넣지 말라고** 안내한다.
+- 센터를 처음 상태로: SQL Editor 에서 `delete from public.households where id = 'HH-C1';`
+  (회원까지 지우려면 `delete from public.accounts where center_id = 'C1' and password_hash is not null;`)
 
 **테스트 가구를 처음으로 되돌리기** — 시연 허브(`/`)에서 테스트 계정으로 로그인한 채
 **↺ 테스트 가구 기록 비우기**. 활동 기록(activity)까지 지우려면 SQL Editor 에서

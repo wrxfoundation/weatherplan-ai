@@ -5,6 +5,7 @@ import { useState } from "react";
 import { Btn, Confirm, Empty, Field, KV, Pill, Toggle, TONE } from "../ui";
 import { CALL_RESULTS } from "../../../lib/ops-sos";
 import { LIVE_ELDER, dispatchCandidates, liveCustomer, liveHealth, telHref } from "../../../lib/ops-health";
+import { LIVE_CONCIERGE } from "../../../lib/live-household";
 import { useAuth } from "../../../lib/auth";
 import { useAppState } from "../../../lib/state";
 import { fmtClock, fmtTime } from "../../../lib/ops-time";
@@ -166,7 +167,8 @@ export function DispatchForm({ inc, c, api, ro, compact = false }) {
   if (done) {
     return (
       <div className="card-glass rounded-xl p-3 text-[13px] text-ink">
-        <span className="font-bold text-navy">{done.name}</span> {done.two ? "2인" : "1인"} 출동 지시 {fmtClock(done.orderedAt)} · 예상 도착 {done.etaMin}분 · 거리 {done.distKm}km
+        <span className="font-bold text-navy">{done.name}</span> {done.two ? "2인" : "1인"} 출동 지시 {fmtClock(done.orderedAt)}
+        {done.etaMin != null ? ` · 예상 도착 ${done.etaMin}분 · 거리 ${done.distKm}km` : " · 위치 수신 안 함 — 도착 예상은 컨시어지에게 확인"}
         <div className="mt-1 text-[12px] text-muted">수락 {done.acceptedAt ? fmtClock(done.acceptedAt) : "대기"} · 출발 {done.departedAt ? fmtClock(done.departedAt) : "대기"} · 도착 {done.arrivedAt ? fmtClock(done.arrivedAt) : "대기"}</div>
       </div>
     );
@@ -174,6 +176,7 @@ export function DispatchForm({ inc, c, api, ro, compact = false }) {
   const list = compact ? cands.slice(0, 3) : cands;
   return (
     <div className="space-y-2">
+      {list.length === 0 && <Empty>파견할 수 있는 컨시어지가 없습니다 — 이 센터에 승인된 컨시어지가 아직 없습니다 (계정·권한에서 승인).</Empty>}
       {!compact && (
         <div className="flex justify-end">
           <Btn ghost small tone="muted" disabled={ro} onClick={() => api.setStep(inc.id, "dispatch", { result: "skip", memo: "현장 파견 불필요" })}>파견 불필요 — 건너뛰기</Btn>
@@ -189,7 +192,7 @@ export function DispatchForm({ inc, c, api, ro, compact = false }) {
               <Pill tone={k.emergency ? "ok" : "muted"}>{k.emergency ? "긴급출동 가능" : "긴급출동 불가"}</Pill>
               {k.car && <Pill tone="info">차량</Pill>}
             </div>
-            <div className="mt-0.5 text-[12px] text-muted">{k.where} · <span className="font-num">{k.distKm}km · 예상 도착 {k.etaMin}분</span></div>
+            <div className="mt-0.5 text-[12px] text-muted">{k.where}{k.distKm != null && <> · <span className="font-num">{k.distKm}km · 예상 도착 {k.etaMin}분</span></>}</div>
           </div>
           {!compact && (
             <label htmlFor={`${inc.id}-two-${k.name}`} className="text-[12px] text-muted">
@@ -206,18 +209,18 @@ export function DispatchForm({ inc, c, api, ro, compact = false }) {
       <Confirm
         open={!!pick}
         title={`${pick?.name} 컨시어지를 현장에 파견합니다`}
-        body={pick ? `${c.name} 어르신 자택(${c.district})까지 ${pick.distKm}km · 예상 ${pick.etaMin}분 · ${two[pick.name] ? "2인" : "1인"} 출동. 파견 지시 시각이 기록되고 컨시어지 앱으로 지시가 전송됩니다.` : ""}
+        body={pick ? `${c.name} 어르신 자택(${c.district})${pick.distKm != null ? `까지 ${pick.distKm}km · 예상 ${pick.etaMin}분` : ""} · ${two[pick.name] ? "2인" : "1인"} 출동. 파견 지시 시각이 기록되고 컨시어지 앱으로 지시가 전송됩니다.` : ""}
         confirmLabel="파견 지시"
         tone="danger"
         onCancel={() => setPick(null)}
         onConfirm={() => {
           // 테스트 가구 김순자 님 SOS 에 박지현(테스트 컨시어지 계정)을 보내면 가구 기록에도 급파를 남긴다 —
           // 그래야 컨시어지 폰에 '급파 수락' 배너가 뜨고, 수락하면 그 시각이 여기 '수락' 칸에 붙는다 (2026-10-02).
-          const live = inc.customer === LIVE_ELDER && pick.name === "박지현" && app?.state?.demo?.sos;
+          const live = inc.customer === LIVE_ELDER && pick.name === LIVE_CONCIERGE && app?.state?.demo?.sos;
           api.setStep(inc.id, "dispatch", { result: "done", dispatch: { name: pick.name, two: !!two[pick.name], orderedAt: Date.now(), acceptedAt: live ? app.state.ops?.sosAcceptedAt || null : null, departedAt: null, arrivedAt: null, actions: "", accompany: false, etaMin: pick.etaMin, distKm: pick.distKm } });
           if (live && !app.state.ops?.sosDispatched) {
             app.dispatch({ type: "opsPatch", patch: { sosDispatched: true } });
-            app.dispatch({ type: "pushEvent", payload: { kind: "대응", text: `${pick.name} 급파 지시 (SOS 센터) · 도착 예정 ${pick.etaMin}분`, color: "#FF8A80" } });
+            app.dispatch({ type: "pushEvent", payload: { kind: "대응", text: `${pick.name} 급파 지시 (SOS 센터)${pick.etaMin != null ? ` · 도착 예정 ${pick.etaMin}분` : ""}`, color: "#FF8A80" } });
           }
           setPick(null);
         }}

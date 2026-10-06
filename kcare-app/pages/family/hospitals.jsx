@@ -3,6 +3,7 @@ import { useState } from "react";
 import FamilyLayout from "../../components/FamilyLayout";
 import { Card, SectionLabel, Badge, PrimaryButton } from "../../components/ui";
 import { HOSPITAL_PARTNERS, MOU_HOSPITALS } from "../../lib/mock";
+import { LIVE_CONCIERGE } from "../../lib/live-household";
 import { useAppState } from "../../lib/state";
 
 // 제휴병원 예약 및 상담 — 회의 8. MOU 병원만, 진료 과목마다 한 곳 이상.
@@ -33,7 +34,7 @@ export default function HospitalsPage() {
         amount: null,
         preferredDate: null,
         urgency: "normal",
-        assignee: "박지현",
+        assignee: LIVE_CONCIERGE,
         photos: [],
         status: "requested",
         history: [{ at: Date.now(), status: "requested", note: "제휴병원 예약 및 상담에서 요청" }],

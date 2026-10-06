@@ -5,6 +5,7 @@ import { useState } from "react";
 import { storageText, useAppState, useSync } from "../lib/state";
 import { AUTH_ENABLED, useAuth } from "../lib/auth";
 import { ROLE_HOME, ROLE_LABEL, householdName } from "../lib/test-accounts";
+import { LIVE_ELDER } from "../lib/ops-health";
 
 // 테스트 계정은 자기 역할 화면만 연다 (components/RoleGate.jsx) — 허브에서도 다른 역할 화면 버튼은 뺀다
 const GATED = { "/family": "guardian", "/elder": "elder", "/concierge": "concierge", "/sales": "sales", "/dispatch": "ops", "/onboarding": "guardian" };
@@ -102,7 +103,7 @@ export default function Home() {
 
   // 라이브 데모 상태 — 발표자가 현재 시연 상태를 한눈에
   const live = [
-    joined && { label: t.joinedChip(state.onboarding.elderName || "김순자"), cls: "bg-gold/20 text-[#E8CFA4]" },
+    joined && { label: t.joinedChip(state.onboarding.elderName || LIVE_ELDER), cls: "bg-gold/20 text-[#E8CFA4]" },
     state.demo.sos && { label: t.sosChip(state.ops.sosDispatched), cls: "bg-danger text-white animate-sosPulse" },
     state.visit.checkedIn && { label: t.visitChip, cls: "bg-green/20 text-[#8FE3C0]" },
     state.ops.npsDetractor && { label: t.npsChip, cls: "bg-[rgba(138,93,18,.3)] text-[#F0D9A8]" },

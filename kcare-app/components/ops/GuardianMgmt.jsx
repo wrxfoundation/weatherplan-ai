@@ -3,7 +3,10 @@
 import { useEffect, useState } from "react";
 import { useAppState } from "../../lib/state";
 import { useAuth } from "../../lib/auth";
-import { LIVE_TAG, liveGuardian } from "../../lib/live-household";
+import { LIVE_GUARDIAN, LIVE_TAG, liveGuardian } from "../../lib/live-household";
+import { LIVE_ELDER } from "../../lib/ops-health";
+import { centerNow } from "../../lib/people-store";
+import { people } from "../../lib/people";
 import { lastText, useLastActivity } from "../../lib/last-activity";
 import PhoneLink from "./PhoneLink";
 import { Panel, Stat, Pill, Avatar, Btn, Tabs, Table, KV, Field, Toggle, Drawer, Confirm, Stamp, Note, Empty, TONE } from "./ui";
@@ -25,6 +28,16 @@ const rank = (g) => (g.contact !== "정상" ? 0 : isUnread(g) ? 1 : 2);
 const clock = () => stampNow().slice(5);
 const splitElder = (s) => { const [name, age] = s.replace(")", "").split(" ("); return { name, age }; };
 const EMPTY_FORM = { name: "", rel: "아들", elder: ELDERS[0], role: "부", tel: "", region: "", tz: "국내", call: true, sms: true, push: true, night: false, sos: "2", via: REPORT_VIA[1], payer: false, limit: "50000", scope: SCOPES[1] };
+
+// 관제 센터 공간(2026-10-06) — 예시 명부 대신 그 센터에 가입한 보호자. 먼저 가입한 분이 주 보호자, 나머지는 부 보호자
+function centerGuardians() {
+  return people().guardians.map((name, i) => ({
+    id: `G-C${i + 1}`, name, rel: "—", role: i === 0 ? "주" : "부", elders: [{ name: LIVE_ELDER, age: "—", role: i === 0 ? "주" : "부" }], region: "—", tz: null, tzLabel: null,
+    tel: "—", hours: "—", night: false, consent: { call: true, sms: true, push: true }, sosOrder: i + 1, scope: SCOPES[i === 0 ? 0 : 1], reportVia: REPORT_VIA[1],
+    report: "보낸 보고서 없음", payer: false, payLimit: null, contact: "정상", app: { state: "회원 계정", last: "—" }, emergency: "—",
+    requests: [], complaints: [], reports: [], log: [], payments: [], history: [], live: true,
+  }));
+}
 
 function NotifyPill({ s }) {
   const n = NOTIFY_STATE[s] || NOTIFY_STATE.sent;
@@ -55,7 +68,8 @@ export default function GuardianMgmt({ openProfile }) {
   // 테스트 보호자의 마지막 앱 사용 — 감사로그와 같은 기록에서 (2026-10-02)
   const guardianLast = useLastActivity("guardian", !!authUser?.household);
   const liveOn = !!authUser?.household;
-  const shown = liveOn ? rows.map((g) => liveGuardian(g, appState, "test-guardian")) : rows;
+  const center = centerNow();
+  const shown = center ? centerGuardians().map((g) => liveGuardian(g, appState)) : liveOn ? rows.map((g) => liveGuardian(g, appState, "test-guardian")) : rows;
   const [sel, setSel] = useState("G-001");
   const [tab, setTab] = useState("기본정보");
   const [q, setQ] = useState("");
@@ -81,12 +95,15 @@ export default function GuardianMgmt({ openProfile }) {
   const addLog = (id, entry) => update(id, (g) => ({ ...g, log: [{ at: clock(), ...entry }, ...g.log] }));
   const preset = (k, v) => setFilter({ ...F, ...(k ? { [k]: v } : {}) });
 
+  const cs = center
+    ? { total: shown.length, primary: shown.filter((g) => g.role === "주").length, overseas: shown.filter(isAbroad).length, unread: shown.filter(isUnread).length, contact: shown.filter((g) => g.contact !== "정상").length }
+    : GUARDIAN_STATS;
   const stats = [
-    { label: "전체 보호자", value: GUARDIAN_STATS.total, tone: "navy", on: () => preset(), active: JSON.stringify(f) === JSON.stringify(F) },
-    { label: "주 보호자", value: GUARDIAN_STATS.primary, tone: "ok", on: () => preset("role", "주"), active: f.role === "주" },
-    { label: "해외 거주", value: GUARDIAN_STATS.overseas, tone: "info", on: () => preset("where", "해외"), active: f.where === "해외" },
-    { label: "보고서 미열람", value: GUARDIAN_STATS.unread, tone: "warn", on: () => preset("rep", "미열람"), active: f.rep === "미열람" },
-    { label: "연락 확인 필요", value: GUARDIAN_STATS.contact, tone: "warn", on: () => preset("contact", "확인 필요"), active: f.contact === "확인 필요" },
+    { label: "전체 보호자", value: cs.total, tone: "navy", on: () => preset(), active: JSON.stringify(f) === JSON.stringify(F) },
+    { label: "주 보호자", value: cs.primary, tone: "ok", on: () => preset("role", "주"), active: f.role === "주" },
+    { label: "해외 거주", value: cs.overseas, tone: "info", on: () => preset("where", "해외"), active: f.where === "해외" },
+    { label: "보고서 미열람", value: cs.unread, tone: "warn", on: () => preset("rep", "미열람"), active: f.rep === "미열람" },
+    { label: "연락 확인 필요", value: cs.contact, tone: "warn", on: () => preset("contact", "확인 필요"), active: f.contact === "확인 필요" },
   ];
   const list = shown
     .filter((g) => !q || g.name.includes(q) || g.elders.some((e) => e.name.includes(q)) || g.tel.includes(q))
@@ -241,7 +258,7 @@ export default function GuardianMgmt({ openProfile }) {
         </div>
         <div className="flex gap-2">
           <Btn ghost onClick={() => setMsg("엑셀 다운로드는 권한 확인 후 제공됩니다 · 다운로드는 감사로그에 기록")}><span className="inline-flex items-center gap-1"><Icon name="download" size={14} /> 엑셀 다운로드</span></Btn>
-          <Btn onClick={() => setReg(true)}><span className="inline-flex items-center gap-1"><Icon name="plus" size={14} /> 신규 보호자 등록</span></Btn>
+          {!center && <Btn onClick={() => setReg(true)}><span className="inline-flex items-center gap-1"><Icon name="plus" size={14} /> 신규 보호자 등록</span></Btn>}
         </div>
       </div>
 
@@ -263,8 +280,8 @@ export default function GuardianMgmt({ openProfile }) {
       {msg && <Note tone="ok">{msg}</Note>}
       {liveOn && (
         <Note tone="ok">
-          <b>{LIVE_TAG}</b> — 김민수 님 줄은 테스트 가구의 실제 기록입니다 (가입 상담 연락처 · 관계 · 결제권한, 보낸 해주세요).
-          {shown.find((g) => g.live)?.onboarded ? "" : " 보호자가 가입 상담을 마치면 연락처가 실제 값으로 바뀝니다."} 나머지 보호자는 예시입니다.
+          <b>{LIVE_TAG}</b> — {center ? (shown.length ? `${shown.map((g) => g.name).join(" · ")} 님은 이 센터에 가입한 보호자입니다` : "아직 가입한 보호자가 없습니다 — 가입 화면(/join)에서 들어옵니다") : `${LIVE_GUARDIAN} 님 줄은 테스트 가구의 실제 기록입니다`} (가입 상담 연락처 · 관계 · 결제권한, 보낸 해주세요).
+          {shown.find((g) => g.live)?.onboarded ? "" : " 보호자가 가입 상담을 마치면 연락처가 실제 값으로 바뀝니다."} {center ? "예시 명부는 보이지 않습니다." : "나머지 보호자는 예시입니다."}
         </Note>
       )}
 

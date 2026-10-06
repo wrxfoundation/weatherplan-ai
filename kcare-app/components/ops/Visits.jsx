@@ -3,7 +3,9 @@
 import { useState } from "react";
 import { useAppState } from "../../lib/state";
 import { useAuth } from "../../lib/auth";
-import { LIVE_TAG, liveVisit, visitOpsPatch } from "../../lib/live-household";
+import { LIVE_CONCIERGE, LIVE_TAG, LIVE_VISIT_ID, liveVisit, liveVisitBase, visitOpsPatch } from "../../lib/live-household";
+import { LIVE_ELDER } from "../../lib/ops-health";
+import { centerNow } from "../../lib/people-store";
 import { Panel, PanelHead, Stat, Pill, Btn, Field, Toggle, Drawer, Note, Empty } from "./ui";
 import Icon from "../icons";
 import { ROSTERS } from "../../lib/rosters";
@@ -25,8 +27,10 @@ export default function Visits({ openProfile }) {
   // 테스트 계정이면 김순자 님 방문 줄을 가구 기록(컨시어지 앱 점검 · 관제 검수)으로 다시 만든다 (2026-10-02)
   const { state: appState, dispatch } = useAppState() || {};
   const liveOn = !!useAuth().user?.household;
-  const visits = liveOn ? baseVisits.map((v) => liveVisit(v, appState)) : baseVisits;
-  const [sel, setSel] = useState("V-0922-14");
+  // 관제 센터 공간 — 예시 방문 대신 그 센터 어르신 방문 한 줄 (2026-10-06)
+  const center = centerNow();
+  const visits = center ? [liveVisit({ ...visitDetail(liveVisitBase()), date: TODAY }, appState)] : liveOn ? baseVisits.map((v) => liveVisit(v, appState)) : baseVisits;
+  const [sel, setSel] = useState(LIVE_VISIT_ID);
   const [q, setQ] = useState("");
   const [date, setDate] = useState(TODAY);
   const [status, setStatus] = useState(ALL_STATUS);
@@ -35,7 +39,7 @@ export default function Visits({ openProfile }) {
   const [byTime, setByTime] = useState(false);
   const [reg, setReg] = useState(false);
   const [msg, setMsg] = useState("");
-  const [form, setForm] = useState({ name: "김순자", cycle: "월 1회", date: TODAY, time: "10:00", pri: "박지현", sub: "서다인", confirmed: true, notify: true });
+  const [form, setForm] = useState({ name: LIVE_ELDER, cycle: "월 1회", date: TODAY, time: "10:00", pri: LIVE_CONCIERGE, sub: "서다인", confirmed: true, notify: true });
   const setF = (k) => (val) => setForm((f) => ({ ...f, [k]: val }));
 
   const todays = visits.filter((v) => v.date === TODAY);
@@ -87,9 +91,11 @@ export default function Visits({ openProfile }) {
           <h2 className="text-[22px] font-bold text-navy">방문관리</h2>
           <p className="mt-0.5 text-[13px] text-muted">월 1회 2인 1조 방문 일정부터 21가지 점검 · 결과보고까지 관리합니다.</p>
         </div>
-        <Btn onClick={() => setReg(true)}>
-          <span className="inline-flex items-center gap-1"><Icon name="plus" size={14} /> 방문 일정 등록</span>
-        </Btn>
+        {!center && (
+          <Btn onClick={() => setReg(true)}>
+            <span className="inline-flex items-center gap-1"><Icon name="plus" size={14} /> 방문 일정 등록</span>
+          </Btn>
+        )}
       </div>
 
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
@@ -115,8 +121,8 @@ export default function Visits({ openProfile }) {
       {msg && <Note tone="ok">{msg}</Note>}
       {liveOn && (
         <Note tone="ok">
-          <b>{LIVE_TAG}</b> — 김순자 님 방문은 실제 기록입니다: 컨시어지 앱의 체크인 · 21가지 점검 · 총평 · 사진, 관제의 검수 · 보호자 발송.
-          점검은 컨시어지 앱에서 하고, 여기서는 실시간으로 봅니다. 나머지 방문은 예시입니다.
+          <b>{LIVE_TAG}</b> — {LIVE_ELDER} 님 방문은 실제 기록입니다: 컨시어지 앱의 체크인 · 21가지 점검 · 총평 · 사진, 관제의 검수 · 보호자 발송.
+          점검은 컨시어지 앱에서 하고, 여기서는 실시간으로 봅니다. {center ? "예시 방문은 보이지 않습니다." : "나머지 방문은 예시입니다."}
         </Note>
       )}
 

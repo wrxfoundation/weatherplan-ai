@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Btn, Confirm, Field, KV, Note, Pill, Table, TONE, useOperator } from "../ui";
 import { CALL_RESULTS, CLOSE_RESULTS, STEP_INDEX, STEP_ORDER } from "../../../lib/ops-sos";
-import { liveCustomer } from "../../../lib/ops-health";
+import { LIVE_ELDER, liveCustomer } from "../../../lib/ops-health";
 import { useAppState } from "../../../lib/state";
 import { fmtDateTime, fmtDur, fmtTime } from "../../../lib/ops-time";
 import { buildTimeline } from "./helpers";
@@ -15,7 +15,7 @@ import { buildTimeline } from "./helpers";
 function useReleaseSos() {
   const ctx = useAppState();
   return (inc, result) => {
-    if (!ctx?.state?.demo?.sos || inc.customer !== "김순자") return;
+    if (!ctx?.state?.demo?.sos || inc.customer !== LIVE_ELDER) return;
     ctx.dispatch({ type: "ackSos" });
     ctx.dispatch({ type: "pushEvent", payload: { kind: "대응", text: `SOS 사건 종료 — ${result || "해결 완료"} · 어르신 · 가족 앱 알림 해제`, color: "#8FE3C0" } });
   };

@@ -3,13 +3,15 @@
 import { useState } from "react";
 import { useAppState } from "../../lib/state";
 import { useAuth } from "../../lib/auth";
-import { LIVE_TAG, liveElder } from "../../lib/live-household";
+import { LIVE_CONCIERGE, LIVE_TAG, liveElder } from "../../lib/live-household";
+import { centerNow } from "../../lib/people-store";
+import { people } from "../../lib/people";
 import { Panel, Stat, Pill, SevPill, FeedPill, Avatar, Btn, Tabs, Table, Field, Toggle, Drawer, Confirm, Note } from "./ui";
 import Icon from "../icons";
 import { ROSTERS } from "../../lib/rosters";
 import { ELDER_TABS, SERVICE_STATE, elderDetail, feedOf, sevOf, logEntry, TODAY, demoTel } from "../../lib/ops-mgmt";
 import { GUARDIANS } from "../../lib/ops-mgmt-people";
-import { TOTAL_ELDERS, getCustomer } from "../../lib/ops-health";
+import { LIVE_ELDER, TOTAL_ELDERS, getCustomer } from "../../lib/ops-health";
 import ElderTabs from "./mgmt/ElderTabs";
 import { EditDrawer } from "./mgmt/EditLog";
 
@@ -35,6 +37,22 @@ const phoneOf = (name) => {
   return p && p !== "—" ? p : demoTel(name);
 };
 const build = (row) => ({ ...elderDetail(row), phone: phoneOf(row[0]), guardians: guardiansOf(row[0]) });
+// 관제 센터 공간(2026-10-06) — 예시 명부 대신 그 센터 어르신 한 분. 이름만 정하고 나머지는 비워 둔다
+// (가입 상담 · 앱 기록이 liveElder 로 채운다 — 예시 인물의 나이 · 동네 · 질환 · 보호자를 붙이지 않는다)
+function centerElder(ob) {
+  const p = people();
+  const row = [LIVE_ELDER, "—", "—", p.tag, ob?.district || "—", "—", "—", TODAY, "—", ob?.tier ? `티어${ob.tier}` : "—", LIVE_CONCIERGE, "—", "수신 안 함 (베타)", "낮음", "—"];
+  return {
+    ...elderDetail(row),
+    born: "—",
+    addr: ob?.address?.trim() || "주소 미등록 (가입 상담 전)",
+    loc: ob?.careLocation === "hospital" ? "hospital" : "home",
+    phone: "—",
+    guardians: p.guardians.map((name, i) => ({ name, rel: "—", role: i === 0 ? "주 보호자" : "부 보호자", region: "—", tel: "—", consent: consentAll })),
+    // 서명 기록을 지어 넣지 않는다 — 베타 가입에는 계약서 · 동의서 서명 절차가 아직 없다
+    docs: [{ name: "서비스 이용 계약서 · 긴급조치 사전동의서", state: "베타 — 서명 절차 전", at: "—" }],
+  };
+}
 const VIEWS = { all: () => true, risk: (e) => e.risk === "높음", watch: (e) => e.watch !== "정상 수신" && !e.live, nosub: (e) => e.sub === "—", paused: (e) => e.service.state !== "active" };
 const VIEW_LABEL = { all: "전체", risk: "위험 높음", watch: "워치 이상", nosub: "부 담당 없음", paused: "일시중지 · 종료" };
 const EMPTY_FORM = { name: "", sex: "여", born: "1948", loc: "자택", dong: "", branch: "강남 본점", gName: "", gRel: "아들", pri: "박지현", sub: "서다인", watchId: "", sensor: "거실 · 욕실", threshold: false, priority: "1순위 주 보호자 → 2순위 부 보호자 → 담당 컨시어지 → 119", visitDay: "매월 셋째 주", product: PRODUCTS[0], pay: PAYS[1], cEmergency: false, cEntry: false };
@@ -44,8 +62,9 @@ export default function ElderMgmt() {
   // 테스트 계정으로 들어왔으면 김순자 줄에 테스트 가구 1 의 실제 값(가입 상담 · 해주세요 · SOS)을 덮는다
   const appState = useAppState()?.state;
   const liveOn = !!useAuth().user?.household;
-  const shown = liveOn ? elders.map((e) => liveElder(e, appState)) : elders;
-  const [sel, setSel] = useState("김순자");
+  const center = centerNow();
+  const shown = center ? [liveElder(centerElder(appState?.onboarding), appState)] : liveOn ? elders.map((e) => liveElder(e, appState)) : elders;
+  const [sel, setSel] = useState(LIVE_ELDER);
   const [tab, setTab] = useState("기본정보");
   const [q, setQ] = useState("");
   const [branch, setBranch] = useState(ALL_BRANCH);
@@ -63,12 +82,13 @@ export default function ElderMgmt() {
   const log = (e, field, before, after, reason) => ({ ...e, history: [logEntry({ field, before, after, reason }), ...e.history] });
 
   // 전체 수는 대시보드·사이드바 배지와 같은 출처(TOTAL_ELDERS). 명단에는 상세 프로필이 있는 인원만 올라온다.
+  const base = center ? shown : elders;
   const stats = [
-    { k: "all", label: "전체 관리 어르신", value: TOTAL_ELDERS, tone: "navy", sub: `명단 표시 ${elders.length}명 · 상세 프로필 보유` },
-    { k: "risk", label: "위험 높음", value: elders.filter(VIEWS.risk).length, tone: "danger" },
-    { k: "watch", label: "워치 이상", value: elders.filter(VIEWS.watch).length, tone: "device" },
-    { k: "nosub", label: "부 담당 없음", value: elders.filter(VIEWS.nosub).length, tone: "warn" },
-    { k: "paused", label: "일시중지 · 종료", value: elders.filter(VIEWS.paused).length, tone: "warn" },
+    { k: "all", label: "전체 관리 어르신", value: center ? shown.length : TOTAL_ELDERS, tone: "navy", sub: center ? `${LIVE_TAG} 회원` : `명단 표시 ${elders.length}명 · 상세 프로필 보유` },
+    { k: "risk", label: "위험 높음", value: base.filter(VIEWS.risk).length, tone: "danger" },
+    { k: "watch", label: "워치 이상", value: base.filter(VIEWS.watch).length, tone: "device" },
+    { k: "nosub", label: "부 담당 없음", value: base.filter(VIEWS.nosub).length, tone: "warn" },
+    { k: "paused", label: "일시중지 · 종료", value: base.filter(VIEWS.paused).length, tone: "warn" },
   ];
   const list = shown
     .filter(VIEWS[view])
@@ -159,9 +179,11 @@ export default function ElderMgmt() {
           <Btn ghost onClick={() => setMsg("엑셀 다운로드는 권한 확인 후 제공됩니다 · 다운로드는 감사로그에 기록")} title="권한 확인 후 다운로드 · 감사로그 기록">
             <span className="inline-flex items-center gap-1"><Icon name="download" size={14} /> 엑셀 다운로드</span>
           </Btn>
-          <Btn onClick={() => setReg(true)}>
-            <span className="inline-flex items-center gap-1"><Icon name="plus" size={14} /> 신규 고객 등록</span>
-          </Btn>
+          {!center && (
+            <Btn onClick={() => setReg(true)}>
+              <span className="inline-flex items-center gap-1"><Icon name="plus" size={14} /> 신규 고객 등록</span>
+            </Btn>
+          )}
         </div>
       </div>
 
@@ -181,8 +203,9 @@ export default function ElderMgmt() {
       {msg && <Note tone="ok">{msg}</Note>}
       {liveOn && (
         <Note tone="ok">
-          <b>{LIVE_TAG}</b> — 김순자 님 줄은 테스트 가구의 실제 기록입니다 (가입 상담 연락처 · 주소 · 결제권한, 해주세요, SOS).
-          {shown.find((e) => e.live)?.onboarded ? "" : " 보호자가 가입 상담을 마치면 연락처 · 주소가 실제 값으로 바뀝니다."} 나머지 어르신은 예시입니다.
+          <b>{LIVE_TAG}</b> — {LIVE_ELDER} 님 줄은 {center ? "이 센터" : "테스트 가구"}의 실제 기록입니다 (가입 상담 연락처 · 주소 · 결제권한, 해주세요, SOS).
+          {shown.find((e) => e.live)?.onboarded ? "" : " 보호자가 가입 상담을 마치면 연락처 · 주소가 실제 값으로 바뀝니다."}
+          {center ? " 예시 명부는 보이지 않습니다 — 새 어르신은 가입 화면(/join)에서 들어옵니다." : " 나머지 어르신은 예시입니다."}
         </Note>
       )}
 

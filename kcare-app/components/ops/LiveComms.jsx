@@ -9,6 +9,7 @@ import { Panel, PanelHead, Stat, Pill, Btn, Table, Note, Empty } from "./ui";
 import { useAppState } from "../../lib/state";
 import { STATUS } from "../../lib/requests";
 import { ELDER } from "../../lib/mock";
+import { LIVE_CONCIERGE, LIVE_TAG } from "../../lib/live-household";
 
 const KST = 9 * 3600 * 1000;
 const day = (t) => new Date(t + KST).toISOString().slice(0, 10);
@@ -26,8 +27,8 @@ function rowsOf(state) {
       id: `v-${v.id}`,
       at: v.at,
       ch: "voice",
-      from: v.from === "컨시어지" ? "컨시어지 박지현" : v.from,
-      to: v.to === "컨시어지" ? "컨시어지 박지현" : v.to,
+      from: v.from === "컨시어지" ? `컨시어지 ${LIVE_CONCIERGE}` : v.from,
+      to: v.to === "컨시어지" ? `컨시어지 ${LIVE_CONCIERGE}` : v.to,
       text: `${VOICE_CONTEXT[v.context] || v.context || "음성"} · ${Number(v.secs) || 0}초${v.title && v.title !== "선생님께 보낸 목소리" ? ` · ${v.title}` : ""}`,
       state: toElder ? (played[v.id] ? "어르신 청취" : "미청취") : toGuardian ? (guardianHeard[v.id] ? "보호자 청취" : "보호자 미청취") : "전달됨",
       tone: (toElder && !played[v.id]) || (toGuardian && !guardianHeard[v.id]) ? "warn" : "ok",
@@ -104,7 +105,7 @@ export default function LiveComms() {
         ))}
       </div>
       <Panel>
-        <PanelHead title="통합 이력 — 테스트 가구 1" sub="최근 순 · 보호자 · 어르신 · 컨시어지가 앱에서 주고받은 실제 연락. 관제 연락은 여기서 확인 · 답장합니다" right={<span className="font-num text-[13px] font-bold text-navy">{list.length}건</span>} />
+        <PanelHead title={`통합 이력 — ${LIVE_TAG}`} sub="최근 순 · 보호자 · 어르신 · 컨시어지가 앱에서 주고받은 실제 연락. 관제 연락은 여기서 확인 · 답장합니다" right={<span className="font-num text-[13px] font-bold text-navy">{list.length}건</span>} />
         <div className="mt-3">
           {rows.length === 0 ? (
             <Empty>아직 연락이 없습니다 — 보호자 안부 음성, 어르신 마음사서함, 컨시어지 '관제에 알리기'가 여기에 쌓입니다.</Empty>

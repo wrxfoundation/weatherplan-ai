@@ -13,6 +13,7 @@ import { useAppState } from "../../lib/state";
 import { ROLE_LABEL, accountName, householdName } from "../../lib/test-accounts";
 import { LIVE_ELDER } from "../../lib/ops-health";
 import { downloadCsv } from "../../lib/rosters";
+import { LIVE_TAG } from "../../lib/live-household";
 
 const KIND_TONE = { auth: "muted", viewCustomer: "info", viewHealth: "info", viewLocation: "info", edit: "warn", threshold: "warn", download: "gold", contact: "navy", dispatch: "navy", sos: "danger", report: "ok", request: "navy", schedule: "info", message: "info", signup: "gold", visit: "ok", ticker: "muted", other: "muted" };
 const VIEW_KINDS = ["viewCustomer", "viewHealth", "viewLocation"];
@@ -142,7 +143,7 @@ export default function AuditLog() {
         <Btn ghost onClick={exportCsv}><Icon name="download" size={14} /> CSV 내보내기 (기록됨)</Btn>
       </div>
       <div className="flex flex-wrap items-center gap-2" role="group" aria-label="기록 보기">
-        {[["real", "실제 기록 (테스트 가구 1)"], ["demo", "예시 기록"]].map(([k, label]) => {
+        {[["real", `실제 기록 (${LIVE_TAG})`], ["demo", "예시 기록"]].map(([k, label]) => {
           const on = viewMode === k;
           return (
             <button key={k} type="button" aria-pressed={on} onClick={() => { setMode(k); setStatF(""); setKinds([]); setAccount("전체"); setRole("전체"); setSelId(null); }} className="btn-press rounded-full px-3.5 py-1.5 text-[12px] font-bold" style={on ? { background: "#0A1F3C", color: "#fff" } : { background: "rgba(10,31,60,.06)", color: "#5C5A54" }}>

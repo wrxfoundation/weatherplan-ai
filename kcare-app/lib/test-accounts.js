@@ -11,6 +11,8 @@
 // 배포 환경변수 BETA_TEST_PASSWORD 하나를 모든 테스트 계정이 같이 쓴다.
 // 이메일은 구글 로그인 시뮬레이션에 쓰는 가짜 주소다 (.test 는 실제로 쓰이지 않는 예약 도메인).
 
+import { peopleNow } from "./people-store";
+
 export const TEST_HOUSEHOLDS = {
   "HH-TEST-01": { id: "HH-TEST-01", name: "테스트 가구 1" },
   // 관제 센터 공간 (2026-10-06 · lib/centers.js) — 센터마다 따로 쓰는 빈 공간
@@ -46,4 +48,5 @@ export function findTestAccount(idOrEmail) {
 }
 
 export const householdName = (id) => TEST_HOUSEHOLDS[id]?.name || id || "";
-export const accountName = (id) => [...TEST_ACCOUNTS, ...CENTER_OPS_ACCOUNTS].find((a) => a.id === id)?.name || id || "—";
+// 회원(관제 센터 공간)은 그 센터 회원 이름 — lib/people.js 가 받아 둔 목록에서
+export const accountName = (id) => [...TEST_ACCOUNTS, ...CENTER_OPS_ACCOUNTS].find((a) => a.id === id)?.name || peopleNow()?.byId?.[id] || id || "—";

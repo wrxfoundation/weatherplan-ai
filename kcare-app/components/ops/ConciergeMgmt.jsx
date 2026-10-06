@@ -10,7 +10,9 @@ import { STAFF_TABS, STAFF_TONE, STAFF_STATS, conciergeDetail, fatigueTone, fati
 import { EditDrawer, HistoryTable } from "./mgmt/EditLog";
 import { useAuth } from "../../lib/auth";
 import { useAppState } from "../../lib/state";
-import { LIVE_TAG, liveConcierge } from "../../lib/live-household";
+import { LIVE_CONCIERGE, LIVE_TAG, liveConcierge } from "../../lib/live-household";
+import { centerNow } from "../../lib/people-store";
+import { people } from "../../lib/people";
 
 const BRANCHES = [...new Set(ROSTERS.concierges.rows.map((r) => r[1]))];
 const REGIONS = [...new Set(ROSTERS.concierges.rows.map((r) => r[3]))];
@@ -24,6 +26,16 @@ const LIVE_TONE = { "SOS 출동 중": "danger", "급파 수락 대기": "warn", 
 const toneOf = (s) => STAFF_TONE[s] || LIVE_TONE[s] || "muted";
 const yn = (b) => (b ? "예" : "아니오");
 const EMPTY_FORM = { name: "", branch: BRANCHES[0], region: REGIONS[0], workDays: "월–금 09:00–18:00", vehicle: false, drive: true, role: ROLES[1], emergency: false, cert: "BLS 응급교육", certUntil: "", training: "노인돌봄 기본교육", contract: CONTRACTS[1], active: true, leave: "" };
+
+// 관제 센터 공간(2026-10-06) — 예시 명부 대신 그 센터에 가입 · 승인된 컨시어지. 자격 · 교육 · 평가는 지어 넣지 않는다
+function centerConcierges() {
+  const p = people();
+  return p.concierges.map((name, i) => ({
+    ...conciergeDetail([name, p.tag, i === 0 ? "주 담당" : "부 담당", "—", "—", "—", "0건", "0", "—", "기록 없음"]),
+    tel: "—", workDays: "—", vehicle: false, emergency: true, certs: [], trainings: [], contract: "베타 회원", week: [], weekHours: 0, rest: "—",
+    internal: "평가 전", eval: [], elders: [], today: [], history: [], live: true,
+  }));
+}
 
 function Sec({ title, right, children }) {
   return (
@@ -56,8 +68,9 @@ export default function ConciergeMgmt({ openProfile }) {
   // 테스트 계정이면 박지현 줄에 테스트 컨시어지가 앱에서 한 것을 덮는다 (2026-10-02)
   const liveOn = !!useAuth().user?.household;
   const { state } = useAppState();
-  const rows = liveOn ? baseRows.map((c) => liveConcierge(c, state)) : baseRows;
-  const [sel, setSel] = useState("박지현");
+  const center = centerNow();
+  const rows = center ? centerConcierges().map((c) => liveConcierge(c, state)) : liveOn ? baseRows.map((c) => liveConcierge(c, state)) : baseRows;
+  const [sel, setSel] = useState(LIVE_CONCIERGE);
   const [tab, setTab] = useState("근무현황");
   const [q, setQ] = useState("");
   const [f, setFilter] = useState(F);
@@ -75,12 +88,15 @@ export default function ConciergeMgmt({ openProfile }) {
   const update = (name, fn) => setRows((rs) => rs.map((c) => (c.name === name ? fn(c) : c)));
   const log = (c, field, before, after, reason) => ({ ...c, history: [logEntry({ field, before, after, reason }), ...c.history] });
 
+  const ss = center
+    ? { total: rows.length, free: rows.filter((c) => c.status === "가용").length, onDuty: rows.filter((c) => c.status === "동행 중" || c.status === "방문 중").length, fatigue: 0, cert: 0 }
+    : STAFF_STATS;
   const stats = [
-    { label: "전체 인원", value: STAFF_STATS.total, tone: "navy", on: () => preset(), active: JSON.stringify(f) === JSON.stringify(F) },
-    { label: "현재 가용", value: STAFF_STATS.free, tone: "ok", on: () => preset("status", "가용"), active: f.status === "가용" },
-    { label: "동행 중", value: STAFF_STATS.onDuty, tone: "info", on: () => preset("status", "동행 중"), active: f.status === "동행 중" },
-    { label: "피로 · 휴식권고", value: STAFF_STATS.fatigue, tone: "warn", on: () => preset("status", "피로·휴식권고"), active: f.status === "피로·휴식권고" },
-    { label: "자격 만료임박", value: STAFF_STATS.cert, tone: "warn", on: () => preset("cert", "만료 임박"), active: f.cert === "만료 임박" },
+    { label: "전체 인원", value: ss.total, tone: "navy", on: () => preset(), active: JSON.stringify(f) === JSON.stringify(F) },
+    { label: "현재 가용", value: ss.free, tone: "ok", on: () => preset("status", "가용"), active: f.status === "가용" },
+    { label: "동행 중", value: ss.onDuty, tone: "info", on: () => preset("status", "동행 중"), active: f.status === "동행 중" },
+    { label: "피로 · 휴식권고", value: ss.fatigue, tone: "warn", on: () => preset("status", "피로·휴식권고"), active: f.status === "피로·휴식권고" },
+    { label: "자격 만료임박", value: ss.cert, tone: "warn", on: () => preset("cert", "만료 임박"), active: f.cert === "만료 임박" },
   ];
   const list = rows
     .filter((c) => !q || c.name.includes(q) || c.branch.includes(q) || c.region.includes(q) || c.cert.includes(q))
@@ -241,7 +257,7 @@ export default function ConciergeMgmt({ openProfile }) {
         </div>
         <div className="flex gap-2">
           <Btn ghost onClick={() => setMsg("엑셀 다운로드는 권한 확인 후 제공됩니다 · 다운로드는 감사로그에 기록")}><span className="inline-flex items-center gap-1"><Icon name="download" size={14} /> 엑셀 다운로드</span></Btn>
-          <Btn onClick={() => setReg(true)}><span className="inline-flex items-center gap-1"><Icon name="plus" size={14} /> 신규 컨시어지 등록</span></Btn>
+          {!center && <Btn onClick={() => setReg(true)}><span className="inline-flex items-center gap-1"><Icon name="plus" size={14} /> 신규 컨시어지 등록</span></Btn>}
         </div>
       </div>
 
@@ -269,7 +285,7 @@ export default function ConciergeMgmt({ openProfile }) {
             <span className="text-[12px] text-muted">휴식 권고 · 자격 임박 · 짝 대기 우선</span>
           </div>
           <div className="mt-2"><Table cols={cols} rows={list} onRow={(c) => setSel(c.name)} rowKey={(c) => c.name} selected={cur?.name} /></div>
-          <div className="mt-2 text-right font-num text-[11px] text-muted">1–{list.length} / {STAFF_STATS.total}명{liveOn ? " · 박지현 외 명부는 예시" : ""}</div>
+          <div className="mt-2 text-right font-num text-[11px] text-muted">1–{list.length} / {ss.total}명{center ? ` · ${LIVE_TAG} 회원만` : liveOn ? ` · ${LIVE_CONCIERGE} 외 명부는 예시` : ""}</div>
         </Panel>
 
         {cur && (

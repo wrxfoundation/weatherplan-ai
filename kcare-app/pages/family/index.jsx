@@ -15,9 +15,11 @@ import { useAuth } from "../../lib/auth";
 import { scopedKey } from "../../lib/scope";
 import { useLastActivity } from "../../lib/last-activity";
 import { healthOf } from "../../lib/meds";
-import { STAGE_LABEL, visitReportOf } from "../../lib/live-household";
+import { LIVE_CONCIERGE, LIVE_TAG, STAGE_LABEL, visitReportOf } from "../../lib/live-household";
+import { centerNow } from "../../lib/people-store";
 import { approverOf } from "../../lib/requests";
 import { HelpCallCard } from "../../components/HelpCall";
+import { elderWho } from "../../lib/people";
 
 // 받은 음성 '받은 때' — 오늘 · 어제는 말로, 그 전은 날짜로 (시각만 쓰면 며칠 전 것도 오늘처럼 읽힌다)
 const whenLabel = (at) => {
@@ -60,9 +62,9 @@ export default function FamilyHome() {
     }
   };
   const sosStage = state.ops?.sosAcceptedAt
-    ? "박지현 컨시어지가 출동을 수락해 이동 중입니다 · 관제센터 대응 중"
+    ? `${LIVE_CONCIERGE} 컨시어지가 출동을 수락해 이동 중입니다 · 관제센터 대응 중`
     : state.ops?.sosDispatched
-      ? "관제센터가 박지현 컨시어지를 급파했습니다 · 수락 대기"
+      ? `관제센터가 ${LIVE_CONCIERGE} 컨시어지를 급파했습니다 · 수락 대기`
       : "관제센터가 확인하고 있습니다 — 곧 연락드립니다";
   // '지금 어디쯤' 지도 (2026-08-31 요청) — 오늘 오시는 주 동행이 어디까지 왔는지.
   // 좌표는 lib/console.js 한 곳에서 온다 (관제 지도와 같은 값).
@@ -225,7 +227,7 @@ export default function FamilyHome() {
             <span className="h-[10px] w-[10px] shrink-0 animate-livePing rounded-full bg-green" />
             <div className="min-w-0 flex-1">
               <div className="text-[14px] font-bold text-navy">
-                지금 박지현 컨시어지가 {subj} 곁에 함께 있습니다
+                지금 {LIVE_CONCIERGE} 컨시어지가 {subj} 곁에 함께 있습니다
               </div>
               <div className="mt-0.5 text-[12px] leading-[1.6] text-muted">
                 {/* 실제 체크인 시각 — 고정 '13:50 출발'은 체크인 시각과 어긋났다 (2026-10-02 QA) */}
@@ -539,11 +541,11 @@ export default function FamilyHome() {
             <span className="text-[12px] font-bold tracking-[.14em] text-gold-soft">
               담당 컨시어지
             </span>
-            <span className="font-num text-[12px] text-white/60">{live ? "테스트 컨시어지 계정" : CARE_TEAM.dateLabel}</span>
+            <span className="font-num text-[12px] text-white/60">{live ? (centerNow() ? `${LIVE_TAG} 담당` : "테스트 컨시어지 계정") : CARE_TEAM.dateLabel}</span>
           </div>
           <div className="mt-3 space-y-2.5">
             {/* 테스트 가구 — 실제로 앱을 쓰는 컨시어지(박지현)만. 경력 · 방문 횟수 같은 예시 이력은 쓰지 않는다 */}
-            {(live ? CARE_TEAM.members.slice(0, 1).map((m) => ({ ...m, career: "주 담당 · 안심방문 · 동행", relation: visitStage })) : CARE_TEAM.members).map((m) => (
+            {(live ? CARE_TEAM.members.slice(0, 1).map((m) => ({ ...m, name: LIVE_CONCIERGE, initials: LIVE_CONCIERGE.slice(1, 3), career: "주 담당 · 안심방문 · 동행", relation: visitStage })) : CARE_TEAM.members).map((m) => (
               <div
                 key={m.name}
                 className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/[.05] p-3.5"
@@ -833,7 +835,7 @@ export default function FamilyHome() {
                     type: "pushEvent",
                     payload: state.demo.sos
                       ? { kind: "SOS", text: "SOS 알림 끔 (시연 컨트롤)", color: "#8FA9CC" }
-                      : { kind: "SOS", text: `${ELDER.name}(${ELDER.age}) SOS 발신 (시연 컨트롤) · 가족·관제 동시 점등`, color: "#FF8A80" },
+                      : { kind: "SOS", text: `${elderWho()} SOS 발신 (시연 컨트롤) · 가족·관제 동시 점등`, color: "#FF8A80" },
                   });
                 }}
                 className="btn-press rounded-lg border border-navy/20 px-3 py-1.5 text-[12px] font-bold text-muted"

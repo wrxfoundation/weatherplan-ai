@@ -7,6 +7,7 @@ import Icon from "../../icons";
 import { checkupFor } from "../../../lib/checkup";
 import { SERVICE_MENU } from "../../../lib/requests";
 import { VISIT_STATE, VISIT_STEPS, requiredFor, visitPill, stampNow } from "../../../lib/ops-mgmt";
+import { LIVE_TAG } from "../../../lib/live-household";
 
 const AXIS_TONE = { green: "ok", gold: "gold", navy: "navy" };
 const REVIEW_TONE = { "검수 완료": "ok", "검수 대기": "warn", "수행 중": "info" };
@@ -76,7 +77,7 @@ export default function VisitDetail({ visit: v, onChange, openProfile, escort = 
     <Panel className="space-y-4">
       <div className="flex flex-wrap items-center gap-2">
         <h2 className="text-[17px] font-bold text-navy">{v.name} 고객 방문</h2>
-        {v.live && <Pill tone="ok">테스트 가구 1 · 실제</Pill>}
+        {v.live && <Pill tone="ok">{LIVE_TAG} · 실제</Pill>}
         <Pill tone={VISIT_STATE[pk].tone}>{VISIT_STATE[pk].label}{pk !== "followup" && v.followup ? " · 후속" : ""}</Pill>
         <span className="font-num text-[12px] text-muted">{v.time}–{v.end}</span>
         <span className="text-[12px] text-muted">· {v.addr}</span>

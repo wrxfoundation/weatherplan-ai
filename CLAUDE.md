@@ -51,7 +51,7 @@ pages/
 cd kcare-app
 npm run verify   # 린트(경고 0) + 빌드
 npm start &      # 그 다음
-npm run smoke    # 25개 화면 실제로 열어 검사
+npm run smoke    # 30개 화면 실제로 열어 검사
 ```
 `next build`는 렌더 시점 오류·Tailwind 클래스 충돌·접근성 회귀를 못 잡습니다.
 스모크가 그 그물입니다 — 화면이 비었는지, 콘솔 오류가 났는지, 랜드마크·버튼

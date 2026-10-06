@@ -14,6 +14,9 @@ import { APPROVER_LABEL, STATUS, SERVICE_MENU, URGENCY, approverOf, canTransitio
 import { PRICING, fmtWon } from "../../lib/config";
 import { Panel, PanelHead, Stat, Pill, Btn, Table, KV, Field, Toggle, Drawer, Confirm, Note, Empty, useOperator } from "./ui";
 import { CONCIERGES, OPS_REQUEST_EXTRAS, OPS_REQUEST_META, REQ_DIR, REPEAT_OPTIONS, elderOf, fmtDT, fmtRel } from "../../lib/ops-admin";
+import { LIVE_TAG } from "../../lib/live-household";
+import { LIVE_ELDER } from "../../lib/ops-health";
+import { conciergeChoices } from "../../lib/people";
 
 const META_KEY = "kcare-ops-requests-meta-v1";
 const EXTRA_KEY = "kcare-ops-requests-extra-v1";
@@ -42,7 +45,7 @@ function StatusPill({ status }) {
 }
 
 function normalize(r) {
-  const elder = r.elder || "김순자";
+  const elder = r.elder || LIVE_ELDER;
   const e = elderOf(elder);
   const by = {
     fromGuardian: `${e?.guardian || "보호자"} (보호자)`,
@@ -228,7 +231,7 @@ export default function RequestsMgmt() {
         </div>
         <div className="text-[12px] text-muted">앱 상태 연결 {stateRequests.length}건 · 데모 {extras.length}건{liveOn && !withDemo ? " (숨김)" : ""}</div>
       </div>
-      {liveOn && <LiveToggle view={withDemo ? "demo" : "real"} onChange={(k) => setShowDemo(k === "demo")} label="요청 보기" realLabel="실제 요청만 (테스트 가구 1)" demoLabel="예시 요청도 함께" />}
+      {liveOn && <LiveToggle view={withDemo ? "demo" : "real"} onChange={(k) => setShowDemo(k === "demo")} label="요청 보기" realLabel={`실제 요청만 (${LIVE_TAG})`} demoLabel="예시 요청도 함께" />}
 
       <div className="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-5">
         {Object.entries(GROUPS).map(([k, g]) => (
@@ -324,7 +327,7 @@ function Detail({ r, m, real, payments, dispatch, onClose, onTransition, onPatch
 
         <section>
           <h4 className="mb-2 text-[13px] font-bold text-navy">담당자 배정</h4>
-          <Field id={`req-assignee-${r.id}`} label="담당 컨시어지" value={assignee || "미배정"} options={["미배정", ...CONCIERGES]}
+          <Field id={`req-assignee-${r.id}`} label="담당 컨시어지" value={assignee || "미배정"} options={["미배정", ...conciergeChoices(CONCIERGES)]}
             onChange={(v) => v !== (assignee || "미배정") && onPatch(r.id, "assignee", "담당자", v === "미배정" ? "" : v, assignee || "미배정")} />
         </section>
 

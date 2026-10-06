@@ -16,6 +16,7 @@ import { ringAlarm } from "../lib/alarm";
 import { ELDER } from "../lib/mock";
 import { LIVE_CONCIERGE } from "../lib/live-household";
 import { CONCIERGES } from "../lib/ops-admin";
+import { conciergeChoices, elderWho } from "../lib/people";
 
 const RECENT_MS = 12 * 3600 * 1000; // 끝난 도와줘요도 12시간은 팝업 · 카드에 남긴다 (결과를 알려야 하므로)
 const lastAt = (r) => r.history?.[r.history.length - 1]?.at || 0;
@@ -212,7 +213,7 @@ export function HelpCallOps({ openId, onClose }) {
           <span className="ml-auto rounded-full bg-gold/20 px-2.5 py-[3px] text-[12px] font-bold text-[#8A5D12]">{HELP_STAGE[r.status]}</span>
         </div>
         <div className="mt-1 text-[22px] font-black text-navy">
-          {ELDER.name} ({ELDER.age}) 님이 도와줘요를 눌렀습니다
+          {elderWho(" ")} 님이 도와줘요를 눌렀습니다
         </div>
         <p className="mt-1 text-[13px] text-muted">어르신 화면 · {hm(r.history[0].at)} 접수 — 확인 전화부터. 어느 단계에서든 해결되면 해결 완료로 닫습니다.</p>
 
@@ -256,7 +257,7 @@ export function HelpCallOps({ openId, onClose }) {
                   onChange={(e) => setWho(e.target.value)}
                   className="flex-1 rounded-lg border border-navy/15 bg-white px-3 py-2.5 text-[14px] text-ink"
                 >
-                  {CONCIERGES.map((c) => (
+                  {conciergeChoices(CONCIERGES).map((c) => (
                     <option key={c} value={c}>
                       {c}
                       {c === LIVE_CONCIERGE ? " (담당)" : ""}

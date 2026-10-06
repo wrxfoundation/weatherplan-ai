@@ -10,11 +10,18 @@ import { LIVE_ELDER, fmtPhone } from "./ops-health";
 import { VISITS, itemKeys, visitDetail } from "./ops-mgmt";
 import { checkupFor } from "./checkup";
 import { AI_REPORT } from "./mock";
+import { centerNow } from "./people-store";
 
-export const LIVE_TAG = "테스트 가구 1";
+// 관제 센터 공간(2026-10-06)에서는 센터 이름 · 가입한 보호자 · 컨시어지 이름으로 바뀐다 — lib/people.js applyPeople
+export let LIVE_TAG = "테스트 가구 1";
 export const NO_DEVICE_WATCH = "수신 안 함 (베타)";
-export const LIVE_GUARDIAN = "김민수";
-export const LIVE_CONCIERGE = "박지현";
+export let LIVE_GUARDIAN = "김민수";
+export let LIVE_CONCIERGE = "박지현";
+export function setLiveNames({ tag, guardian, concierge }) {
+  LIVE_TAG = tag;
+  LIVE_GUARDIAN = guardian;
+  LIVE_CONCIERGE = concierge;
+}
 
 const KST = 9 * 3600 * 1000;
 const ymd = (t) => (t ? new Date(Number(t) + KST).toISOString().slice(0, 10) : null);
@@ -108,7 +115,7 @@ export function liveGuardian(g, state, account) {
     ...g,
     live: true,
     onboarded: !!ob,
-    app: { state: account ? `테스트 계정 (${account})` : "테스트 계정", last: "—" },
+    app: { state: centerNow() ? "회원 계정" : account ? `테스트 계정 (${account})` : "테스트 계정", last: "—" },
     // 담당이 비어 있으면 '미배정'이라고 쓴다 — 관제가 정할 일이 남았다는 뜻 (2026-10-02 QA: 담당을 박지현으로 미리 박지 않는다)
     requests: mine.map((r) => `${r.type} — ${STATUS[r.status]?.label || r.status}${r.assignee ? ` · 담당 ${r.assignee}` : " · 담당 미배정"}`),
     complaints: [],
@@ -137,6 +144,11 @@ export function liveGuardian(g, state, account) {
 // 관제가 한 검수 · 보호자 발송 · 중간 알림 · 후속조치(visit.ops). 데모 줄의 예시 내용(메모 · 변화 · 요청)은 가져오지 않는다.
 const hhmm = (t) => (t ? new Date(Number(t) + KST).toISOString().slice(11, 16) : null);
 export const LIVE_VISIT_ID = (VISITS.find((x) => x.name === LIVE_ELDER) || VISITS[0]).id;
+// 실제 가구의 방문 줄 바탕 — 명부의 기본 인물 줄. 관제 센터 공간이면 이름 · 담당만 그 센터 사람으로 바꾸고 예시 내용(팀 · 메모)은 뺀다
+export function liveVisitBase() {
+  const t = VISITS.find((x) => x.id === LIVE_VISIT_ID) || VISITS[0];
+  return centerNow() ? { ...t, name: LIVE_ELDER, team: LIVE_TAG, region: "—", memo: "", pri: LIVE_CONCIERGE, sub: "—" } : t;
+}
 
 export function liveVisit(base, state) {
   if (!base || base.name !== LIVE_ELDER) return base;
@@ -212,7 +224,7 @@ export const STAGE_LABEL = {
   sent: "발송됨",
 };
 export function visitReportOf(state) {
-  const base = VISITS.find((x) => x.name === LIVE_ELDER) || VISITS[0];
+  const base = liveVisitBase();
   const v = liveVisit(base, state);
   const ops = state?.visit?.ops || {};
   const checks = state?.visit?.checks || {};
@@ -256,7 +268,7 @@ export function visitReportOf(state) {
 // 근무시간 · 피로도 · 자격 · 평가 · 위치는 앱이 모으지 않으므로 예시 그대로 두고 화면에 그렇다고 적는다.
 export function liveConcierge(c, state) {
   if (!c || c.name !== LIVE_CONCIERGE) return c;
-  const base = VISITS.find((x) => x.name === LIVE_ELDER) || VISITS[0];
+  const base = liveVisitBase();
   const v = liveVisit(base, state);
   const sosOn = !!state?.demo?.sos;
   const ops = state?.ops || {};

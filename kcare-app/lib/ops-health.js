@@ -1,6 +1,7 @@
 // 건강·안전 관제 목 데이터 — 요청서 2·3·6절. 숫자는 데모 값이며 시안(2026-09-16)과 어긋나지 않게 맞췄다.
 // 시각은 "지금 기준 n분 전" 상대값으로 두어 화면의 시계와 항상 맞물린다.
 import { DEFAULT_HEALTH, healthOf, medSummary } from "./meds";
+import { peopleNow } from "./people-store";
 
 // 데모 인물 — 기존 앱과 같은 어르신·컨시어지·보호자
 export const CUSTOMERS = {
@@ -96,14 +97,29 @@ export function fmtPhone(v) {
 
 // 데모 가구 어르신(김순자) — 테스트 가구에서 보호자가 가입 상담에 적은 연락처·주소가 있으면 그걸 쓴다.
 // 그래야 관제 테스터가 어르신 역할 테스터에게 실제로 전화해 볼 수 있다. 없으면 예시 번호.
-export const LIVE_ELDER = "김순자";
+// 관제 센터 공간(2026-10-06)에서는 가입한 어르신 이름으로 바뀐다 — lib/people.js applyPeople (화면이 읽을 때마다 지금 값)
+export let LIVE_ELDER = "김순자";
+export function setLiveElder(name) {
+  LIVE_ELDER = name;
+}
 // health — 가구 상태의 state.health (관제 · 컨시어지가 고친 복용약 · 질환 · 알레르기). 김순자 님에게만 얹는다.
 export function liveCustomer(name, onboarding, health) {
   const c0 = getCustomer(name);
   if (name !== LIVE_ELDER) return c0;
   const h = healthOf({ health });
-  const c = { ...c0, conditions: h.conditions.length ? h.conditions : ["등록 없음"], meds: h.meds.length ? medSummary(h.meds) : ["등록 없음"], allergies: h.allergies.length ? h.allergies : ["등록 없음"] };
+  const c1 = { ...c0, conditions: h.conditions.length ? h.conditions : ["등록 없음"], meds: h.meds.length ? medSummary(h.meds) : ["등록 없음"], allergies: h.allergies.length ? h.allergies : ["등록 없음"] };
   const ob = onboarding;
+  // 관제 센터 공간 — 예시 인물의 보호자 · 담당자 대신 그 센터 회원 (주 보호자 = 먼저 가입한 보호자)
+  const p = peopleNow();
+  const c = p
+    ? {
+        ...c1,
+        branch: p.tag,
+        district: ob?.district || "지역 미등록",
+        concierge: { main: p.concierge, sub: "—" },
+        guardians: p.guardians.map((name, i) => ({ name, rel: i === 0 && ob && !ob.forSelf ? ob.relDetail || ob.rel || "—" : "—", role: i === 0 ? "주" : "부", place: "—", tz: 0, phone: "—" })),
+      }
+    : c1;
   if (!ob) return c;
   const elderPhone = fmtPhone(ob.elderPhone || (ob.forSelf ? ob.phone : "") || "");
   const guardianPhone = ob.forSelf ? "" : fmtPhone(ob.phone || "");
@@ -331,6 +347,9 @@ export function districtKey(district = "") {
   return ["강동", "송파", "강남", "서초"].find((k) => district.startsWith(k)) || "강남";
 }
 export function dispatchCandidates(district) {
+  // 관제 센터 공간 — 그 센터에 승인된 컨시어지만. 위치를 받지 않으므로 거리 · 도착 예상은 비워 둔다 (지어 넣지 않는다)
+  const p = peopleNow();
+  if (p) return p.concierges.map((name) => ({ name, role: "센터 컨시어지", where: "위치 수신 안 함 (베타)", emergency: true, two: false, car: false, distKm: null, etaMin: null }));
   const k = districtKey(district);
   return DISPATCH_POOL.map((c) => {
     const dist = c.dist[k] ?? 9.9;

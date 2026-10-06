@@ -9,6 +9,7 @@ import { useAuth } from "../../lib/auth";
 import { useAppState } from "../../lib/state";
 import { LIVE_TAG } from "../../lib/live-household";
 import { LIVE_ELDER } from "../../lib/ops-health";
+import { centerNow } from "../../lib/people-store";
 import { lastText, useLastActivity } from "../../lib/last-activity";
 
 const STATUS_OPTS = ["전체 상태", "위험", "점검", "주의", "정상"];
@@ -105,6 +106,11 @@ export default function Devices() {
       <PanelHead title="웨어러블·센서 관리" sub="고객별 장비 연결 상태와 실시간 수신 데이터를 통합 점검합니다" right={<span className="card-glass rounded-xl px-3 py-1.5">마지막 동기화 <span className="font-num font-bold text-navy">{now ? fmtTime(now - FLEET.syncAgoSec * 1000) : "--:--:--"}</span></span>} />
 
       {liveOn && <LiveDevicePanel />}
+      {/* 관제 센터 공간 — 예시 장비 명부는 다른 가구의 것이라 보이지 않는다 (2026-10-06) */}
+      {centerNow() ? (
+        <Note>이 센터에는 연결된 워치 · 센서가 없습니다 (베타는 휴대폰 앱으로 테스트). 예시 장비 명부는 보이지 않습니다.</Note>
+      ) : (
+      <>
 
       <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-5">
         <Stat label="관리 대상 가구" value={FLEET.households} unit="가구" sub="전체 서비스 가구" tone="ok" />
@@ -189,6 +195,8 @@ export default function Devices() {
       <Note>건강·센서 데이터는 참고자료이며 의료진의 진단을 대신하지 않습니다. 장비 등록·교체·회수는 이력으로 남습니다.</Note>
 
       <RegisterDrawer reg={reg} rows={rows} onClose={() => setReg(null)} onSave={register} />
+      </>
+      )}
     </div>
   );
 }

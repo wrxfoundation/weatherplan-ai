@@ -30,6 +30,7 @@ import Splash from "../components/Splash";
 import ElderHealthReport from "../components/ElderHealthReport";
 import RoleGate from "../components/RoleGate";
 import { useAuth } from "../lib/auth";
+import { elderWho } from "../lib/people";
 
 // 사용자(어르신) 홈 — 핸드오프 06 elder 상세 명세 + REQ-01(우선 날씨) + REQ-06(SOS 오작동 방지)
 // 구조: 헤더(날짜·인사)·푸터(SOS·전화·탭) 고정, 카드 스택만 스크롤 (06 §1).
@@ -645,7 +646,7 @@ function ElderHome() {
     });
     dispatch({
       type: "pushEvent",
-      payload: { kind: "방문", text: `${ELDER.name}(${ELDER.age}) 즉시 방문 요청 · 관제 확인 전화 발신`, color: "#B08D57" },
+      payload: { kind: "방문", text: `${elderWho()} 즉시 방문 요청 · 관제 확인 전화 발신`, color: "#B08D57" },
     });
   };
   // 도와줘요의 지금 상태는 깃발(visitAsked)이 아니라 요청 자체에서 읽는다 — 관제가 확인 전화를 마치면
@@ -1426,7 +1427,7 @@ function ElderHome() {
                       className="btn-press mt-3 flex w-full items-center justify-center gap-2 rounded-[18px] py-[19px] text-[19px] font-bold text-white"
                       style={{ background: "rgba(255,255,255,.13)" }}
                     >
-                      {calling ? "박지현 선생님께 연결 중입니다" : "박지현 선생님께 전화"}
+                      {calling ? `${TEACHER.name} 선생님께 연결 중입니다` : `${TEACHER.name} 선생님께 전화`}
                     </button>
                     {/* 방문 사기 방어 — 설명을 줄이는 중에도 이 한 줄은 남긴다 (안전) */}
                     <p className="mt-2.5 text-[17px] leading-[1.5] text-white/[.8]">
@@ -1698,7 +1699,7 @@ function ElderHome() {
                                 amount: null,
                                 preferredDate: null,
                                 urgency: "normal",
-                                assignee: "박지현",
+                                assignee: LIVE_CONCIERGE,
                                 photos: [],
                                 status: "requested",
                                 history: [{ at: Date.now(), status: "requested", note: "재구매 알림에서 요청" }],
@@ -1838,7 +1839,7 @@ function ElderHome() {
                       amount: null,
                       preferredDate: null,
                       urgency: "normal",
-                      assignee: "박지현",
+                      assignee: LIVE_CONCIERGE,
                       photos: [],
                       status: "requested",
                       history: [{ at: Date.now(), status: "requested", note: "음성 요청" }],
@@ -2279,7 +2280,7 @@ function ElderHome() {
                           payBy: storeApproval ? null : "elder", // 하루 누적 한도에 들어간다
                           preferredDate: null,
                           urgency: "normal",
-                          assignee: "박지현",
+                          assignee: LIVE_CONCIERGE,
                           photos: [],
                           status: storeApproval ? "awaitingPayment" : "inProgress",
                           history: [
@@ -2409,7 +2410,7 @@ function ElderHome() {
                     type: "pushEvent",
                     payload: {
                       kind: "음성",
-                      text: `${ELDER.name}(${ELDER.age}) → ${target.name} 목소리 메시지 ${sec}초 전송`,
+                      text: `${elderWho()} → ${target.name} 목소리 메시지 ${sec}초 전송`,
                       color: "#8FA9CC",
                     },
                   });
@@ -2583,7 +2584,7 @@ function ElderHome() {
                   amount: 0,
                   preferredDate: null,
                   urgency: "normal",
-                  assignee: "박지현",
+                  assignee: LIVE_CONCIERGE,
                   photos: [],
                   status: "requested",
                   history: [{ at: Date.now(), status: "requested", note: "어르신 해주세요 · 복지 혜택" }],
@@ -2611,7 +2612,7 @@ function ElderHome() {
               type: "pushEvent",
               payload: {
                 kind: "SOS",
-                text: `${ELDER.name}(${ELDER.age}) SOS 발신 · 가족·관제 동시 점등`,
+                text: `${elderWho()} SOS 발신 · 가족·관제 동시 점등`,
                 color: "#FF8A80",
               },
             });

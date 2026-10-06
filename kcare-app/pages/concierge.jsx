@@ -54,7 +54,7 @@ import { STORE_CATALOG } from "../lib/store";
 import { SERVICE_MENU, daysUntil, kstYmd } from "../lib/requests";
 import ConciergeRequests from "../components/ConciergeRequests";
 import { HelpCallCard, HelpCallPopup } from "../components/HelpCall";
-import { LIVE_CONCIERGE } from "../lib/live-household";
+import { LIVE_CONCIERGE, LIVE_TAG } from "../lib/live-household";
 import { fmtWon } from "../lib/config";
 import { useAppState } from "../lib/state";
 import { useAuth } from "../lib/auth";
@@ -423,7 +423,7 @@ function ConciergePage() {
                 <button
                   onClick={() => {
                     if (sosAck) return;
-                    dispatch({ type: "sosAccept", by: "박지현" });
+                    dispatch({ type: "sosAccept", by: LIVE_CONCIERGE });
                     push("대응", "박지현 급파 수락 — 이동 시작 (도착 예정 6분)", "#FF8A80");
                   }}
                   disabled={sosAck}
@@ -443,13 +443,13 @@ function ConciergePage() {
                 {/* 테스트 가구 — 무엇이 실제로 남고 무엇이 예시인지 맨 위에서 말한다 (2026-10-02 UX 점검) */}
                 {live && (
                   <div role="note" className="rounded-xl border border-gold/40 bg-gold/[.08] px-3.5 py-3 text-[13px] leading-[1.65] text-ink">
-                    <b className="text-navy">테스트 가구 1 — 실제 고객은 김순자 님뿐입니다.</b> 체크인 · 방문 점검 · 리포트 · 동행 기록 ·
-                    관제에 알리기 · 김순자 님 마음사서함 · SOS 수락은 실제로 저장되어 다른 폰에 뜹니다. 다른 고객 · 긴급확인 · 오늘의 짝 · 외출
+                    <b className="text-navy">{LIVE_TAG} — 실제 고객은 {LIVE_ELDER} 님뿐입니다.</b> 체크인 · 방문 점검 · 리포트 · 동행 기록 ·
+                    관제에 알리기 · {LIVE_ELDER} 님 마음사서함 · SOS 수락은 실제로 저장되어 다른 폰에 뜹니다. 다른 고객 · 긴급확인 · 오늘의 짝 · 외출
                     컨디션은 예시입니다.
                   </div>
                 )}
                 <TodayHeader
-                  name="박지현"
+                  name={LIVE_CONCIERGE}
                   now={cNow}
                   today={today}
                   urgentCount={urgentDone ? 0 : 1}
@@ -1284,7 +1284,7 @@ function ConciergePage() {
 
                   {/* 리포트 상단 카피 미리보기 — 보호자 앱 · 알림톡에 나가는 문장 */}
                   <div className="mt-3 rounded-xl bg-navy p-3.5 text-[14.5px] font-bold leading-[1.6] text-white">
-                    {REPORT_HEADLINE[careLoc](state.onboarding?.elderName || "김순자")}
+                    {REPORT_HEADLINE[careLoc](LIVE_ELDER)}
                     <span className="mt-1 block text-[11px] font-normal text-white/55">
                       리포트 상단 문장 — 체크가 끝나면 사진 · 15초 영상 메시지와 함께 나갑니다
                     </span>
@@ -1513,7 +1513,7 @@ function ConciergePage() {
                         if (!escortNote.trim() || escortSaved) return;
                         dispatch({
                           type: "escortSave",
-                          payload: { note: escortNote.trim(), photos: escortPhotos.length, recorded: escortRecorded, by: "박지현" },
+                          payload: { note: escortNote.trim(), photos: escortPhotos.length, recorded: escortRecorded, by: LIVE_CONCIERGE },
                         });
                         push(
                           "리포트",
@@ -1548,7 +1548,7 @@ function ConciergePage() {
                     {preview && (
                       <div className="animate-tickIn mt-2.5 rounded-xl border border-gold/40 bg-paper p-3.5">
                         <div className="text-[13px] font-bold text-navy">
-                          {REPORT_HEADLINE[careLoc](state.onboarding?.elderName || "김순자")}
+                          {REPORT_HEADLINE[careLoc](LIVE_ELDER)}
                         </div>
                         <div className="mt-2 space-y-1">
                           {checkupFor(careLoc).flatMap((ax) =>
@@ -1612,7 +1612,7 @@ function ConciergePage() {
                       const note = escortSaved ? escort.note : live ? state.visit.memo || "" : AI_REPORT.draft;
                       dispatch({
                         type: "addReport",
-                        payload: { id: `rp-${Date.now()}`, by: "박지현", flagged: 0, note, secretNote: "", shared: true, closesVisit: true },
+                        payload: { id: `rp-${Date.now()}`, by: LIVE_CONCIERGE, flagged: 0, note, secretNote: "", shared: true, closesVisit: true },
                       });
                       // 가족에게 가는 것은 관제가 검수하고 '보호자 리포트 발송'을 누를 때다 — 동행 기록도 그때 같이 간다.
                       // 전에는 이 버튼을 누르자마자 '가족에게 전달됨'이라고 했지만 실제로는 관제 검수 대기였다 (2026-10-02 QA)
@@ -1637,7 +1637,7 @@ function ConciergePage() {
                 <Card className="p-4">
                   <div className="space-y-3">
                     {state.reports.map((r) => {
-                      const mine = r.by === "박지현";
+                      const mine = r.by === LIVE_CONCIERGE;
                       return (
                         <div key={r.id} className="border-t border-navy/[.07] pt-3 first:border-t-0 first:pt-0">
                           <div className="flex items-center gap-2">
@@ -1734,7 +1734,7 @@ function ConciergePage() {
                             amount: sg.est,
                             preferredDate: null,
                             urgency: "normal",
-                            assignee: "박지현",
+                            assignee: LIVE_CONCIERGE,
                             photos: [],
                             status: "requested",
                             history: [{ at: Date.now(), status: "requested", note: "관찰 근거 기반 제안" }],
@@ -1792,7 +1792,7 @@ function ConciergePage() {
                             amount: 0,
                             preferredDate: null,
                             urgency: "normal",
-                            assignee: "박지현",
+                            assignee: LIVE_CONCIERGE,
                             photos: [],
                             status: "requested",
                             history: [{ at: Date.now(), status: "requested", note: "컨시어지 현장 제안 · 공공지원 우선" }],
@@ -1903,7 +1903,7 @@ function ConciergePage() {
                               amount: est,
                               preferredDate: null,
                               urgency: "normal",
-                              assignee: "박지현",
+                              assignee: LIVE_CONCIERGE,
                               photos: [],
                               history: [{ at: Date.now(), status: "requested", note: `안전용품 제안 · 예상 금액 ${fmtWon(est)}` }],
                               proof: null,
@@ -1973,7 +1973,7 @@ function ConciergePage() {
                                 amount: m.amount ?? null,
                                 preferredDate: null,
                                 urgency: "normal",
-                                assignee: "박지현",
+                                assignee: LIVE_CONCIERGE,
                                 photos: [],
                                 status: "requested",
                                 history: [
@@ -2031,7 +2031,7 @@ function ConciergePage() {
                           amount: null,
                           preferredDate: null,
                           urgency: "normal",
-                          assignee: "박지현",
+                          assignee: LIVE_CONCIERGE,
                           photos: [],
                           status: "requested",
                           history: [{ at: Date.now(), status: "requested", note: "컨시어지 현장 등록" }],
@@ -2249,7 +2249,7 @@ function ConciergePage() {
                           setVoiceSent(true);
                           push(
                             "메시지",
-                            `현장의 소리 접수 — ${voiceType} (${voiceAnon ? "익명" : "박지현"})${
+                            `현장의 소리 접수 — ${voiceType} (${voiceAnon ? "익명" : LIVE_CONCIERGE})${
                               voiceMood === "지쳐요" ? " · 마음 체크인: 지침 — 배차 조정 검토" : ""
                             }`,
                             "#8FA9CC"

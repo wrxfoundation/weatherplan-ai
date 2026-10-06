@@ -60,6 +60,9 @@ import StaggerIn from "../components/StaggerIn";
 import { CREW_RULES } from "../lib/dispatch-policy";
 // 사이드바 배지 — 각 관리 화면의 머릿수 Stat 과 같은 출처를 쓴다 (화면 200명 · 배지 20명처럼 어긋나지 않게)
 import { TOTAL_ELDERS, liveCustomer } from "../lib/ops-health";
+import { LIVE_CONCIERGE, LIVE_GUARDIAN, LIVE_TAG } from "../lib/live-household";
+import { centerNow } from "../lib/people-store";
+import { elderWho, people } from "../lib/people";
 import SosAlertModal from "../components/ops/SosAlertModal";
 import { ringAlarm } from "../lib/alarm";
 import { FLEET } from "../lib/ops-devices";
@@ -521,13 +524,15 @@ function DispatchConsole() {
     ...(state.requests || []).filter((r) => (isVisitCall(r) && !CLOSED.includes(r.status)) || r.status === "cancelRequested"),
     ...(state.payments || []).filter((p) => p.refund && p.refund.status !== "done"),
   ];
+  // 관제 센터 공간 — 명부 숫자도 그 센터 회원 수 (예시 200명 · 218명이 아니다 · 2026-10-06)
+  const pp = people();
   const MENU_COUNTS = {
     sos: sosOpen.length,
-    elder: TOTAL_ELDERS,
-    guardian: GUARDIAN_STATS.total,
-    concierge: STAFF_STATS.total,
+    elder: centerNow() ? 1 : TOTAL_ELDERS,
+    guardian: centerNow() ? pp.guardians.length : GUARDIAN_STATS.total,
+    concierge: centerNow() ? pp.concierges.length : STAFF_STATS.total,
     hospital: HOSPITALS_SEED.filter((h) => h.partner).length,
-    wearable: FLEET.needsCheck,
+    ...(centerNow() ? {} : { wearable: FLEET.needsCheck }),
     // 관제 연락(컨시어지 '관제에 알리기') 중 확인 전 — 있으면 커뮤니케이션 메뉴에 숫자 (2026-10-02)
     ...((state.opsMessages || []).some((m) => !m.ackAt) ? { comms: (state.opsMessages || []).filter((m) => !m.ackAt).length } : {}),
     // 해주세요 — 관제가 처리할 것 (도와줘요 · 취소 요청 · 환불 대기)
@@ -581,10 +586,10 @@ function DispatchConsole() {
   const orderSosDispatch = () => {
     if (sosDispatched) return;
     dispatch({ type: "opsPatch", patch: { sosDispatched: true } });
-    push("대응", "박지현 급파 지시 · 119 연계 대기", "#FF8A80");
+    push("대응", `${LIVE_CONCIERGE} 급파 지시 · 119 연계 대기`, "#FF8A80");
     const inc = sosOpen.find((i) => i.customer === ELDER.name);
     if (inc && !inc.steps?.dispatch?.dispatch) {
-      setIncidentStep(inc.id, "dispatch", { result: "done", dispatch: { name: "박지현", two: true, orderedAt: Date.now(), acceptedAt: sosAcceptedAt, departedAt: null, arrivedAt: null, actions: "", accompany: false, etaMin: 6, distKm: 1.2 } }, { advance: false });
+      setIncidentStep(inc.id, "dispatch", { result: "done", dispatch: { name: LIVE_CONCIERGE, two: true, orderedAt: Date.now(), acceptedAt: sosAcceptedAt, departedAt: null, arrivedAt: null, actions: "", accompany: false, etaMin: centerNow() ? null : 6, distKm: centerNow() ? null : 1.2 } }, { advance: false });
     }
   };
   useEffect(() => {
@@ -765,7 +770,7 @@ function DispatchConsole() {
       actions.push({
         id: `help-${r.id}`,
         level: "critical",
-        title: `도와줘요 — ${ELDER.name} (${ELDER.age}) 즉시 방문 요청`,
+        title: `도와줘요 — ${elderWho(" ")} 즉시 방문 요청`,
         meta: `${HELP_STAGE[r.status] || ""} · ${r.history?.[r.history.length - 1]?.note || "어르신 화면"}`,
         view: "대응 열기",
         onOpen: () => setHelpOpen(r.id),
@@ -1033,7 +1038,7 @@ function DispatchConsole() {
                 <ModeLink className="tap text-[12px] font-bold underline-offset-2 hover:underline" />
               </div>
               <div className="mt-0.5 flex flex-wrap items-center gap-2.5">
-                <h1 className="text-[29px] font-bold tracking-[-.01em] text-navy">강남지점 실시간 관제</h1>
+                <h1 className="text-[29px] font-bold tracking-[-.01em] text-navy">{centerNow() ? `${LIVE_TAG} 실시간 관제` : "강남지점 실시간 관제"}</h1>
                 <button
                   onClick={() => setMenu("dash")}
                   title="대시보드로 이동"
@@ -1161,14 +1166,14 @@ function DispatchConsole() {
               </span>
               <div className="min-w-[240px] flex-1">
                 <div className="text-[17px] font-bold">
-                  어르신 SOS 버튼 발신 · 김순자 (78) ·{" "}
+                  어르신 SOS 버튼 발신 · {elderWho(" ")} ·{" "}
                   {/* 테스트 가구는 가입 상담 주소 — 예시 '강남구 대치동'이 실제 주소와 어긋났다 (2026-10-02 QA) */}
-                  {liveOn ? liveCustomer(ELDER.name, state.onboarding, state.health).address : "강남구 대치동"} — {liveOn ? "담당 컨시어지 박지현" : "최근접 컨시어지 박지현 (1.2km)"}
+                  {liveOn ? liveCustomer(ELDER.name, state.onboarding, state.health).address : "강남구 대치동"} — {liveOn ? `담당 컨시어지 ${LIVE_CONCIERGE}` : `최근접 컨시어지 ${LIVE_CONCIERGE} (1.2km)`}
                 </div>
                 {/* 같은 사건이 SOS 센터에도 있다 — 여기는 급파·119 즉시 조치, 13단계 절차·종료는 센터에서 */}
                 <div className="mt-0.5 font-num text-[12px] opacity-[.88]">
                   {(() => {
-                    const inc = sosOpen.find((i) => i.customer === "김순자");
+                    const inc = sosOpen.find((i) => i.customer === ELDER.name);
                     return inc ? `사건 ${inc.id} 에 병합 · 대응 절차·종료는 SOS 긴급대응 센터` : "사건 등록 중";
                   })()}
                 </div>
@@ -1207,8 +1212,8 @@ function DispatchConsole() {
                 >
                   {sosDispatched
                     ? sosAcceptedAt
-                      ? `박지현 수락 ${new Date(sosAcceptedAt).toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit", hour12: false })} · 이동 중`
-                      : "급파 중 · 박지현 수락 대기"
+                      ? `${LIVE_CONCIERGE} 수락 ${new Date(sosAcceptedAt).toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit", hour12: false })} · 이동 중`
+                      : `급파 중 · ${LIVE_CONCIERGE} 수락 대기`
                     : "급파 지시 (주간 · 가용)"}
                 </button>
                 <button
@@ -1224,7 +1229,7 @@ function DispatchConsole() {
                 </button>
                 <button
                   onClick={() => {
-                    setSosFocus(sosOpen.find((i) => i.customer === "김순자")?.id || null);
+                    setSosFocus(sosOpen.find((i) => i.customer === ELDER.name)?.id || null);
                     setMenu("sos");
                   }}
                   className="btn-press rounded-xl border border-white/70 px-4 py-2.5 text-[15px] font-bold"
@@ -1245,7 +1250,7 @@ function DispatchConsole() {
                   onClick={() => {
                     if (watchCalled) return;
                     setWatchCalled(true);
-                    push("대응", "김순자 워치 자동 통화 시도 — 응답 대기", "#FF8A80");
+                    push("대응", `${ELDER.name} 워치 자동 통화 시도 — 응답 대기`, "#FF8A80");
                   }}
                   disabled={watchCalled}
                   className="btn-press rounded-xl border border-white/40 px-4 py-2.5 text-[15px] font-medium disabled:opacity-70"
@@ -1256,7 +1261,7 @@ function DispatchConsole() {
                   onClick={() => {
                     if (guardianPinged) return;
                     setGuardianPinged(true);
-                    push("대응", "보호자 김민수에게 상황 확인 알림 발송", "#8FA9CC");
+                    push("대응", `보호자 ${LIVE_GUARDIAN}에게 상황 확인 알림 발송`, "#8FA9CC");
                   }}
                   disabled={guardianPinged}
                   className="btn-press rounded-xl border border-white/40 px-4 py-2.5 text-[15px] font-medium disabled:opacity-70"
@@ -2570,7 +2575,7 @@ function FloatProfile({ item, pos, onClose, onAction }) {
         amount: 0,
         preferredDate: null,
         urgency: "normal",
-        assignee: "박지현",
+        assignee: LIVE_CONCIERGE,
         photos: [],
         status: "requested",
         history: [{ at: Date.now(), status: "requested", note: "관제 자동 매칭 → 보호자 안내" }],

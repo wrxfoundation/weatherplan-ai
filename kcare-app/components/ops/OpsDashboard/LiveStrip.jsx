@@ -2,9 +2,8 @@
 // 아래 12타일 · 우선 확인 대상은 전체 서비스 대상자 시안(예시)이다. 테스트 가구에서 실제로 일어난 것만
 // 여기 따로 세고, 누르면 그 일을 처리하는 메뉴로 간다.
 import { useAppState } from "../../../lib/state";
-import { LIVE_TAG, liveVisit } from "../../../lib/live-household";
+import { LIVE_TAG, liveVisit, liveVisitBase } from "../../../lib/live-household";
 import { LIVE_ELDER } from "../../../lib/ops-health";
-import { VISITS } from "../../../lib/ops-mgmt";
 import { Panel, PanelHead, Pill, TONE } from "../ui";
 import { useIncidents } from "../../../lib/ops-sos";
 
@@ -14,7 +13,7 @@ export default function LiveStrip({ onMenu }) {
   const { state } = useAppState();
   // 알림을 해제해도 SOS 센터 사건은 종료 절차(결과 · 사유)를 거쳐야 닫힌다 — 그 사이를 '없음'으로 보이지 않게
   const openIncident = useIncidents().open.some((i) => i.customer === LIVE_ELDER);
-  const v = liveVisit(VISITS.find((x) => x.name === LIVE_ELDER) || VISITS[0], state);
+  const v = liveVisit(liveVisitBase(), state);
   const ops = state.visit?.ops || {};
   const reqs = state.requests || [];
   const unacked = (state.opsMessages || []).filter((m) => !m.ackAt).length;

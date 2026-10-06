@@ -7,7 +7,7 @@ import { GLOSSARY, sha256Hex } from "../../lib/glossary";
 import { ALL_ITEMS, RESULT_TONE, STATE_ORDER, VISIT_GRADES, VISIT_REPORT, countStates } from "../../lib/visit-report";
 import { useAppState } from "../../lib/state";
 import { useAuth } from "../../lib/auth";
-import { STAGE_LABEL, visitReportOf } from "../../lib/live-household";
+import { LIVE_TAG, STAGE_LABEL, visitReportOf } from "../../lib/live-household";
 import { LIVE_ELDER } from "../../lib/ops-health";
 import {
   AI_REPORT,
@@ -491,7 +491,7 @@ function LiveVisitReport() {
   const back = { backHref: fromFamily ? "/family/my" : "/concierge", backLabel: fromFamily ? "마이로" : "컨시어지로" };
   if (!r.sent)
     return (
-      <DocShell title="안심방문 리포트" period="테스트 가구 1 · 발송 전" {...back} docType="visit-live" live={{ stamp: "관제 검수 뒤 발송", canon: "visit-live-pending" }}>
+      <DocShell title="안심방문 리포트" period={`${LIVE_TAG} · 발송 전`} {...back} docType="visit-live" live={{ stamp: "관제 검수 뒤 발송", canon: "visit-live-pending" }}>
         <div className="mt-4 rounded-[14px] border border-navy/[.1] px-5 py-6 text-center">
           <div className="text-[16px] font-black" style={{ color: NAVY }}>이번 방문 리포트는 아직 오지 않았습니다</div>
           <p className="mt-2 text-[13px] leading-[1.8] text-muted">
@@ -506,14 +506,14 @@ function LiveVisitReport() {
   return (
     <DocShell
       title="안심방문 리포트"
-      period={`${ymdDot(r.visitedTs)} 방문 · 테스트 가구 1`}
+      period={`${ymdDot(r.visitedTs)} 방문 · ${LIVE_TAG}`}
       {...back}
       docType="visit-live"
       live={{ stamp: `${ymdDot(r.sentTs)} 발송 · 실제 방문 기록`, canon: JSON.stringify({ type: "visit-live", visitedTs: r.visitedTs, sentTs: r.sentTs, axes: r.axes, memo: r.memo, photos: r.photos }) }}
     >
       <div className="avoid-break mt-3 flex flex-col gap-3 rounded-[14px] px-5 py-4 sm:flex-row sm:items-start sm:gap-4" style={{ background: NAVY }}>
         <div className="min-w-0 flex-1 text-white">
-          <div className="text-[10px] font-bold tracking-[.08em] text-white/60">케이케어 방문 리포트 · 테스트 가구 1 · 실제 방문 기록</div>
+          <div className="text-[10px] font-bold tracking-[.08em] text-white/60">케이케어 방문 리포트 · {LIVE_TAG} · 실제 방문 기록</div>
           <div className="mt-1 flex items-baseline gap-2">
             <span className="text-[24px] font-black">{r.client}</span>
             <span className="text-[12px] text-white/75">어르신</span>
@@ -625,7 +625,7 @@ function LiveEscortReport() {
   const back = { backHref: fromFamily ? "/family/my" : "/concierge", backLabel: fromFamily ? "마이로" : "컨시어지로" };
   if (!sent)
     return (
-      <DocShell title="동행 리포트" period="테스트 가구 1 · 전달 전" {...back} docType="escort-live" live={{ stamp: "관제 검수 뒤 전달", canon: "escort-live-pending" }}>
+      <DocShell title="동행 리포트" period={`${LIVE_TAG} · 전달 전`} {...back} docType="escort-live" live={{ stamp: "관제 검수 뒤 전달", canon: "escort-live-pending" }}>
         <div className="mt-4 rounded-[14px] border border-navy/[.1] px-5 py-6 text-center">
           <div className="text-[16px] font-black" style={{ color: NAVY }}>동행 리포트가 아직 오지 않았습니다</div>
           <p className="mt-2 text-[13px] leading-[1.8] text-muted">
@@ -639,13 +639,13 @@ function LiveEscortReport() {
   return (
     <DocShell
       title="동행 리포트"
-      period={`${ymdDot(e.savedAt)} 병원 동행 · 테스트 가구 1`}
+      period={`${ymdDot(e.savedAt)} 병원 동행 · ${LIVE_TAG}`}
       {...back}
       docType="escort-live"
       live={{ stamp: `${ymdDot(e.sentAt)} ${hmDot(e.sentAt)} 전달 · 실제 동행 기록`, canon: JSON.stringify({ type: "escort-live", note: e.note, photos: e.photos, recorded: e.recorded, savedAt: e.savedAt, sentAt: e.sentAt }) }}
     >
       <div className="avoid-break mt-3 rounded-[14px] px-5 py-4 text-white" style={{ background: NAVY }}>
-        <div className="text-[10px] font-bold tracking-[.08em] text-white/60">케이케어 동행 리포트 · 테스트 가구 1 · 실제 동행 기록</div>
+        <div className="text-[10px] font-bold tracking-[.08em] text-white/60">케이케어 동행 리포트 · {LIVE_TAG} · 실제 동행 기록</div>
         <div className="mt-1 flex items-baseline gap-2">
           <span className="text-[24px] font-black">{LIVE_ELDER}</span>
           <span className="text-[12px] text-white/75">어르신 · 병원 동행</span>

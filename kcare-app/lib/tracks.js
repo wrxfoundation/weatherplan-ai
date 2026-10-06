@@ -1,4 +1,6 @@
 import { PRICING } from "./config";
+import { LIVE_ELDER } from "./ops-health";
+import { centerNow } from "./people-store";
 
 // 서비스 트랙 — 온보딩 첫 단계에서 고른 것이 이후 화면 전체를 결정한다.
 //
@@ -171,7 +173,9 @@ export const trackOf = (id) => TRACKS.find((t) => t.id === id) || TRACKS[0];
 // 같은 호칭이 맞지만, 본인이 신청한 병원 동행에서 "어머니"가 뜨면 그건 오류다.
 // 고객 호칭 — "어르신" 대신 "성함 + 님" 으로 통일한다 (2026-08-12 시트 전체 요청사항).
 // 데모 기본 가구는 김순자 님. 온보딩에서 성함을 받으면 그 이름을 쓴다.
+// 관제 센터 공간(2026-10-06)은 그 센터 어르신 이름 (회원 → 가입 상담 이름 · lib/people.js) — 아직 없으면 '어르신'
 export function honorific(ob) {
+  if (centerNow()) return LIVE_ELDER === "어르신" ? "어르신" : `${LIVE_ELDER} 님`;
   const name = (ob?.elderName || "").trim();
   return `${name || "김순자"} 님`;
 }

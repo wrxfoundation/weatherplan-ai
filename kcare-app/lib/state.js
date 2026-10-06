@@ -8,6 +8,9 @@ import { SEED_VISIT, advance } from "./workflow";
 import { useAuth } from "./auth";
 import { setStorageScope } from "./scope";
 import { cleanMedSlot } from "./meds";
+import { isCenterHousehold } from "./centers";
+import { LIVE_GUARDIAN } from "./live-household";
+import { applyPeople, peopleFor } from "./people";
 
 // 앱 전역 상태.
 // 역할 간 연동: 어르신 SOS → 가족 배너 / 컨시어지 보충 요청 → 가족 결제 승인.
@@ -141,6 +144,18 @@ export function freshState() {
     opsMessages: [],
   };
 }
+
+// 관제 센터 공간(HH-C1~3)의 첫 상태 (2026-10-06 "기존 db 가 없어야") — 테스트 가구 1 의 첫 상태에서 사람에 딸린
+// 예시 값까지 비운다: 복약 · 질환 · 알레르기(예시 처방이 새 어르신에게 붙지 않게) · 방문 흐름의 예시 어르신 · 담당자 이름.
+export function centerFreshState() {
+  const base = freshState();
+  return {
+    ...base,
+    health: { meds: [], conditions: [], allergies: [], by: null, at: null },
+    visitPlan: { ...base.visitPlan, elderName: null, district: null, trail: [{ ...base.visitPlan.trail[0], actor: "관제" }] },
+  };
+}
+const freshFor = (household) => (isCenterHousehold(household) ? centerFreshState() : freshState());
 
 // 저장된 일정 중 씨앗(INITIAL_EVENTS)에서 온 것을 손본다 —
 //  · 없어진 씨앗(ev4 아침 혈압약 · ev3 케어박스 점검 — 케어박스는 제공하지 않는다, 2026-10-02)은 지운다. 시드에서 빼도 localStorage 에 남아 있으면
@@ -632,7 +647,7 @@ function reducer(state, action) {
         pendingOrder: null,
         demo: { ...state.demo, cart: true, safetyCart: [] },
         orders: [
-          { id: `od${key}`, at: now, by: "김민수", channel: po.channel, items: po.items, ship: po.ship, status: "preparing", receipt: pay.receiptUrl || null, note: "" },
+          { id: `od${key}`, at: now, by: LIVE_GUARDIAN, channel: po.channel, items: po.items, ship: po.ship, status: "preparing", receipt: pay.receiptUrl || null, note: "" },
           ...state.orders,
         ],
         requests: [
@@ -690,7 +705,7 @@ function reducer(state, action) {
     }
     // 테스트 가구에서 누르면 데모 목데이터가 아니라 빈 기록으로 돌아간다 (Provider 가 fresh 를 붙인다)
     case "reset":
-      return action.fresh ? freshState() : DEFAULT;
+      return action.fresh ? (action.center ? centerFreshState() : freshState()) : DEFAULT;
     // 저장소에서 읽은 값으로 통째로 바꾼다 — base 위에 hydrate 규칙(형태 검증)으로 얹는다
     case "replace":
       return reducer(action.base || DEFAULT, { type: "hydrate", payload: action.payload || {} });
@@ -723,7 +738,7 @@ const stripOps = (s) => {
 };
 const opsOf = (s) => (s && Array.isArray(s._ops) ? s._ops : []);
 // 서버에서 받은 상태를 화면용으로 — 빈 기록 위에 형태 검증을 거쳐 얹는다
-const fromServer = (payload) => reducer(freshState(), { type: "hydrate", payload: stripOps(payload) });
+const fromServer = (payload, household) => reducer(freshFor(household), { type: "hydrate", payload: stripOps(payload) });
 
 const POLL_ACTIVE_MS = 4000; // 누군가 만지고 있을 때 — 다른 폰이 바꾼 것을 4초 안에
 const POLL_IDLE_MS = 10000; // 2분 넘게 손대지 않은 화면은 10초마다 (켜 둔 화면이 서버를 계속 두드리지 않게)
@@ -764,6 +779,8 @@ export function AppStateProvider({ children }) {
   // sync.mode: "demo" | "local"(테스트 계정 · 서버 설정 전) | "server"
   const [sync, setSync] = useState({ mode: "demo", status: "idle", savedAt: null, error: null });
   const [dirty, setDirty] = useState(0);
+  // 관제 센터 공간 — 그 센터 회원 이름 · 역할 (화면의 어르신 · 보호자 · 컨시어지 이름 · lib/people.js)
+  const [centerPeople, setCenterPeople] = useState(null);
 
   const stateRef = useRef(state);
   stateRef.current = state;
@@ -777,12 +794,13 @@ export function AppStateProvider({ children }) {
   const savingRef = useRef(false);
   const retryRef = useRef(0);
   const lastActiveRef = useRef(Date.now());
+  const peopleAtRef = useRef(Date.now());
 
   // 화면이 쓰는 dispatch — 서버 저장 중이면 동작에 번호를 붙여 모아 두었다가 함께 보낸다.
   // 모은 것은 이 기기에도 적어 둔다 — 보내기 전에 새로고침하거나 끊겨도 잃지 않게.
   const dispatch = useCallback((action) => {
     let a = action;
-    if (scopeRef.current?.startsWith("acct:") && a.type === "reset") a = { ...a, fresh: true };
+    if (scopeRef.current?.startsWith("acct:") && a.type === "reset") a = { ...a, fresh: true, center: isCenterHousehold(householdRef.current) };
     if (backendRef.current === "server") {
       // 같은 번호를 화면에도 쓴다 — 나중에 충돌로 다시 쌓아도 id·시각이 그대로다
       a = { ...a, _at: Date.now(), _op: newOpId() };
@@ -827,7 +845,7 @@ export function AppStateProvider({ children }) {
         if (cancelled) return;
         if (res && res.status === 503 && body.error === "db-not-configured") {
           // 서버 저장 설정 전 — 이 기기에만 (데모와 섞이지 않게 계정 가구별 칸)
-          loadLocal(acctKey(household), freshState(), "local", "db-not-configured");
+          loadLocal(acctKey(household), freshFor(household), "local", "db-not-configured");
         } else {
           // 서버 저장. 첫 읽기가 실패해도(끊김 · 일시 오류) 서버 모드로 연다 — 마지막으로 받아 둔 상태를
           // 보여 주고, 누른 것은 모아 두었다가 연결되면 보낸다 (다음 확인에서 최신을 받는다).
@@ -841,7 +859,8 @@ export function AppStateProvider({ children }) {
           const carried = (Array.isArray(saved) ? saved : []).filter(
             (a) => a && typeof a.type === "string" && a.type !== "init" && !opsRef.current.includes(a._op)
           );
-          const next = carried.reduce((acc, a) => reducer(acc, a), base ? fromServer(base) : freshState());
+          if (res?.ok && Array.isArray(body.people)) setCenterPeople(body.people);
+          const next = carried.reduce((acc, a) => reducer(acc, a), base ? fromServer(base, household) : freshFor(household));
           rawDispatch({ type: "set", state: next });
           // 처음 들어온 가구 — 빈 기록으로 만들어 서버에 한 번 저장한다
           pendingRef.current = res?.ok && !base ? [{ type: "init", _at: Date.now(), _op: newOpId() }, ...carried] : carried;
@@ -914,7 +933,7 @@ export function AppStateProvider({ children }) {
         // (응답만 못 받았던 저장은 서버의 _ops 에 이미 있으니 여기서 빠진다 — 중복 없음)
         const serverOps = opsOf(j.state);
         const mine = pendingRef.current.filter((a) => a.type !== "init" && !serverOps.includes(a._op));
-        const next = mine.reduce((acc, a) => reducer(acc, a), fromServer(j.state));
+        const next = mine.reduce((acc, a) => reducer(acc, a), fromServer(j.state, hh));
         versionRef.current = j.version || 0;
         opsRef.current = serverOps;
         pendingRef.current = j.state ? mine : [{ type: "init", _at: Date.now(), _op: newOpId() }, ...mine];
@@ -992,8 +1011,14 @@ export function AppStateProvider({ children }) {
       // 받으면 화면이 잠깐 내 동작 전으로 돌아가고 버전도 뒤로 간다 (2026-10-02 코드 점검).
       const askedAt = versionRef.current;
       try {
-        const res = await fetch(`/api/household?v=${askedAt}`, { cache: "no-store" });
+        // 센터 공간은 1분에 한 번 회원 이름도 같이 묻는다 — 새로 가입 · 승인된 사람이 화면 이름에 들어오게
+        const withPeople = isCenterHousehold(householdRef.current) && Date.now() - peopleAtRef.current > 60000;
+        const res = await fetch(`/api/household?v=${askedAt}${withPeople ? "&people=1" : ""}`, { cache: "no-store" });
         const j = await res.json().catch(() => ({}));
+        if (res.ok && Array.isArray(j.people)) {
+          peopleAtRef.current = Date.now();
+          setCenterPeople(j.people);
+        }
         if (stopped || versionRef.current !== askedAt) return;
         if (!res.ok) {
           if (res.status === 401) setSync((s) => ({ ...s, status: "error", error: "login-required" }));
@@ -1005,7 +1030,7 @@ export function AppStateProvider({ children }) {
           versionRef.current = j.version;
           opsRef.current = opsOf(j.state);
           if (j.state) saveCache(householdRef.current, j.state, j.version);
-          rawDispatch({ type: "set", state: j.state ? fromServer(j.state) : freshState() });
+          rawDispatch({ type: "set", state: j.state ? fromServer(j.state, householdRef.current) : freshFor(householdRef.current) });
           setSync((s) => ({ ...s, status: "saved", error: null, remoteAt: Date.now(), remoteBy: j.updatedBy || null }));
         } else {
           // 연결이 돌아왔다 — 첫 읽기 실패로 켜져 있던 안내를 내린다
@@ -1034,6 +1059,9 @@ export function AppStateProvider({ children }) {
   }, [ready, sync.mode]);
 
   const syncValue = useMemo(() => ({ ...sync, household, flush: flushNow }), [sync, household, flushNow]);
+
+  // 화면이 그리기 전에 이 공간의 사람 이름을 맞춘다 — 데모 · 테스트 가구 1 은 예전 이름, 센터 공간은 회원 이름
+  if (ready) applyPeople(peopleFor(scopeRef.current?.startsWith("acct:") ? household : null, centerPeople, state.onboarding));
 
   return (
     <Ctx.Provider value={{ state, dispatch }}>
