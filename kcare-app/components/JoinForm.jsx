@@ -273,7 +273,7 @@ export default function JoinForm({ area }) {
       </Field>
 
       <label className="mt-4 flex cursor-pointer items-start gap-2.5 rounded-xl bg-paper px-3.5 py-3 text-[13px] leading-[1.65] text-ink">
-        <input type="checkbox" checked={agree} onChange={(e) => setAgree(e.target.checked)} className="mt-1 h-[18px] w-[18px] shrink-0" />
+        <input type="checkbox" checked={agree} onChange={(e) => setAgree(e.target.checked)} className="mt-0.5 h-6 w-6 shrink-0" />
         <span>
           베타 테스트용 가입입니다. 실명 · 실제 연락처 같은 실제 개인정보는 넣지 않습니다. 비밀번호는 암호화해 저장하고, 기록은 가입한 센터 안에서만
           보입니다.
