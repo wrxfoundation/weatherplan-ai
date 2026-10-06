@@ -2070,3 +2070,4 @@ Thanks Odelia — writing to you at that address today. Mine is support@wellbian
 - **Joel 에게 10/30 레드먼드 대면 제안(10/6, 서우 결정)** — 뉴욕 컨퍼런스 뒤 하루를 스타링크 전용으로, 어려우면 화상. DM · 메일 문단(채팅).
 - **스타링크 RFQ 메일 · DM 수정(10/6, 서우 「화상 먼저 · 28일 아님 · 보낸 곳은 D2C 메일」)** — `intel/business-directions.md` KJ RFQ 절 정정(날짜 · 보낸 곳) · Joel 절에 순서 수정. 메일 · DM 전문은 채팅(주소는 저장소에 적지 않음).
 - **Joel 대면 일정 — 대표 지시 반영(10/6, 「10/30 안 맞춰도 됨 · 대면이 중요 · 편하게 일정」)** — `intel/business-directions.md` Joel 절. 보낸 DM 에 같은 날 P.S. 한 줄 → 이후 회신 대기.
+- **Malea Otranto 프로필 재확인(10/6, 서우 캡처 3장 · 글 없음)** — `intel/business-directions.md` Malea 절에 10/6 줄. 1촌 요청 수락 대기 중 · 팔로워 2,562 → 3,043. 판정 · 9/30 문안 그대로, 할 일 = 기다림(취소 · 재발송 · 추가 메시지 0). 수락 뒤 인사는 채팅에 다시 붙임.

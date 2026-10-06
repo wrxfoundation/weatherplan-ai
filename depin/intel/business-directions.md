@@ -2034,6 +2034,11 @@ Good to be connected.
 
 **발송 여부는 Claude 가 관리하지 않는다** — 서우 통보 시 갱신.
 
+- **10/6 캡처(서우 프로필 3장, 글 없음)** — 1촌 요청 **보냄 · 수락 대기 중**. 3촌 그대로, 팔로워 2,562 → 3,043(9/30 합류 소식 글 뒤 6일 +481 — 관심이 몰리는 때라
+  수락이 늦는 건 자연스럽다). 새로 보인 것: 소개란(「zero-to-one builder … advising C-suite leaders on trust, safety, and high-stakes decisions」) ·
+  UNICEF USA End Trafficking 담당(2014-07~2016-08) · American University(Law and Society). **판정 · 문안 그대로** — 수락 뒤 인사의 「Building a team from a blank page」가
+  소개란과 맞는다. 할 일 = 기다림. 요청 취소 · 재발송 금지(취소하면 같은 사람에게 최대 3주 재요청 불가 — LinkedIn 도움말 4800) · InMail · 추가 메시지 0(폴리마켓 상한).
+
 ## Samuel Shim (메리츠증권, Head of Global Digital Assets) — 1촌 요청 메모 + 수락 뒤 인사 (2026-10-01, 서우 프로필 캡처 2장)
 
 - **자리**(캡처 기준): 메리츠증권 **Head of Global Digital Assets**(2026-06~ — 한국 증권 토큰화와 프라임 브로커리지 · 수탁 · 체결 기관 인프라) ·
