@@ -3954,3 +3954,16 @@ Mine the sky. 🌦⛏
 
 #Wellbian #XRPSEOUL #XRPL
 ```
+
+**10/6 밤 서우 2차 수정 → 최종 교체 (275/280)** — 「Seoul」 · 「(Namsan Seoul Tower)」 추가. 그대로 넣으면 280 을 넘어 「across Seoul's Han River」 · 「The frame's corner」로 줄였다.
+```
+Someone sent us this from across Seoul's Han River. 🌉
+
+N Seoul Tower (Namsan Seoul Tower), lit up bright on the night of XRP SEOUL 2026, with our logo up there alongside @wellbianlabs.
+
+The frame's corner reads 18°C at 8:32 pm.
+
+Mine the sky. 🌦⛏
+
+#Wellbian #XRPSEOUL #XRPL
+```

@@ -2086,3 +2086,4 @@ Thanks Odelia — writing to you at that address today. Mine is support@wellbian
 - **Dan 답장 최종 — 서우 결정(10/6, 「플래티넘 참여 · 남산타워 알리고 홍보 도움 가능하냐, 기계 얘기는 처음부터 X」)** — `intel/business-directions.md` Dan 절. 「Platinum Sponsor」(케이웨더) · 남산타워 재서술 · 「for the long run」 · 그가 먼저 꺼낸 홍보 기회를 받는 형식 · 커뮤니티 쪽 범위(539자). 앞선 데모 · 소개 답장 대체.
 - **남산타워 점등 영상(타워 쪽 제공, 강 건너 시점) X 캡션(10/6 밤, 서우 캡처 + 대표 지시 「다른 사람이 보내 준 영상이라고」)** — `intel/x-activity-log.md` 끝 절. 「Someone sent us this from across the Han River」(사실 그대로 — 없는 제보자 0) · 18°C 스탬프 훅 · A 단독 275/280(내일 아침) · B 스레드 132/280(오늘 밤, 오늘 원글 2건). 음악 저작권 확인.
 - **남산타워 영상 캡션 최종(10/6 밤, 서우 수정본 어법 정리)** — `intel/x-activity-log.md` 같은 절. 「lit up bright · our logo up there」 · 18°C · Mine the sky · 255/280. 태그가 @wellbianlabs 라 케이웨더 계정 게시로 보고, 그 경우 「Mine the sky」 삭제 권고.
+- **남산타워 영상 캡션 2차 정리(10/6 밤)** — 서울 · Namsan Seoul Tower 병기, 280 안으로 줄임(275/280). `intel/x-activity-log.md` 같은 절.
