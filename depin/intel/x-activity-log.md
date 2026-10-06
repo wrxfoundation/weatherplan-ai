@@ -3857,3 +3857,21 @@ Two small asks, only if you're up for it. KWeather is a listed company, so we're
 
 Also, did James's code apply to your order in the end? If not, reply here and we'll sort it out.
 ```
+
+**10/6 19:04 — 그가 먼저 DM**: 「I hope this chart I made is accurate.」 + 그림 · 「James 의 친구, James 가 관심을 갖게 해 줬다」. 정확한지 물었으니 위 「수정 부탁 둘」
+DM 대신 **고칠 곳 목록**으로 답한다(맞는 것을 먼저 · 고칠 것 넷 · 코드 확인). 3.6 W · 「nearby devices cross-check」는 우리 자료로 확인이 안 돼 맞다고 하지 않는다.
+- 공개 답글: 그가 고친 그림으로 **다시 올리면** 새 글에 감사 한 줄만(사실 안내 불필요), **원래 글을 그대로 두면** 위 공개 답글(보상 안내 포함)을 그 글에.
+
+**DM — 정확도 답변 (EN, 955자, 위 「수정 부탁」 DM 대체)**
+```
+Thank you so much, and James has been great. We're glad he brought you in.
+
+It's a lovely chart, and most of it is right: six readings every minute, up to 10 licences per person, 167 cities from 11 weather feeds, and KWeather's 30 years. Since you asked, a few lines we'd change so it matches where we are today:
+
+1) Rewards are still in testing (amounts and value not guaranteed) and build up as points until withdrawals open, which we'll announce separately. So "Owners earn WLBN tokens" and "Earn on XRPL" would be more accurate as "WLBN rewards (in testing)".
+2) "Made by KWeather" → "Device partner: KWeather".
+3) The bottom line: KWeather is a listed company, so we keep "KOSDAQ-listed" out of anything about wellbian, and the Flare data market is KWeather's, not wellbian's. Simplest is to drop that line.
+4) Optional: "Mine the sky" → "Measure the sky".
+
+Did James's code apply to your order in the end? If not, tell us here and we'll sort it out.
+```
