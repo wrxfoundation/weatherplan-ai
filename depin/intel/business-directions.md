@@ -2287,3 +2287,29 @@ Good to be connected.
 ```
 Thanks, David. Our published policy rules out exchange listing before the G4 gate, so it isn't something we can take up at this stage. Glad to stay connected.
 ```
+
+## Ann Chu (Bloomberg Media, Global Head of Licensing & Partnerships) — 새 1촌 · Lynn 형식 인사만 (2026-10-06, 서우 프로필 캡처 3장)
+
+- **자리**(캡처 기준): Bloomberg Media 라이선싱 · 파트너십 글로벌 총괄(2025-07~, 홍콩 · 대면) — 블룸버그 미디어 콘텐츠의 라이선스 · 유통 · 브랜드 파트너십.
+  뉴스룸도 터미널 · 데이터 쪽도 아닌 **미디어 사업 쪽**. Bloomberg 10년 10개월(APAC 전략 파트너십 · 라이선싱 · BD 2021~2025-07 · SEA · ANZ 콘텐츠 라이선싱 ·
+  네트워크 유통 2016~2021) · Facebook Journalism Project 코치(2021, 7개월) · CNN 14년 1개월(홍콩 — 광고 스폰서십 캠페인 · 방송 판매 · 제휴사 관계 · BizAsia
+  작가 · 프로듀서 2000~2005) · DreamWorks Animation 배급(LA, 1999~2000). 홍콩대. 인증 배지 · 공통 1촌 1 · **새 1촌**(10/6).
+- **판정 — Lynn 형식 인사만, 선택 줄 0.** 블룸버그 넷째 — Michael McDonough · Matthew Parkinson(9/16, 사업 대화 둘 = 한 회사 상한) · Anna Irrera(뉴스, 9/28).
+  미디어 콘텐츠 라이선싱은 지금 우리 레인이 아니다(우리가 브랜드 콘텐츠를 사거나, 우리 데이터를 미디어에 라이선스하는 일 — 둘 다 의제에 없음).
+  인사는 사내 보고 대상이 아니라 상한에 걸리지 않는다(Christy 판정과 같은 논리).
+- 케이웨더는 상장사 — 미디어 회사 사람에게도 공개된 사실만.
+- **그가 답하면** 가벼운 대화까지. 라이선싱 · 데이터 이야기를 꺼내면 Michael · Matthew 쪽 답이 오기 전에는 새 사업 스레드를 열지 않는다(「나중에 자세히」까지).
+- 문장은 Michael · Anna 판과 겹치지 않게 바꿨다. 공통 1촌 이름 0. 링크드인이 띄운 한국어 자동 인사는 쓰지 않는다.
+
+**1촌 인사 (EN, 572자)**
+```
+Ann — thanks for connecting.
+
+I look after partnerships at wellbian. KWeather has been observing weather in South Korea for thirty years and provides data to more than 4,000 enterprise clients; wellbian is the network we built on that foundation.
+
+There are two layers to it: certified air-quality sensors that people keep in their own rooms, and city-level weather for 167 cities in 90 countries, where each value is a consensus of eleven weather feeds rather than a single reading. Every input is fingerprinted to a public ledger before it's used.
+
+Good to be connected.
+```
+
+**발송 여부는 Claude 가 관리하지 않는다** — 서우 통보 시 갱신.
