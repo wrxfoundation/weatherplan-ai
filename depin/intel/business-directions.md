@@ -2262,6 +2262,20 @@ Would love to stay in touch and see where we can support the XRP community. Than
 
 - **10/5 21:55 회신**(서우 텔레그램 캡처, 10/6 번역): 맞팔 · 연결에 감사, 토론토 기반, 필요하면 자기 네트워크를 연결해 주겠다 · 협업 · 홍보 기회를 찾고 싶으면 언제든 연락하라. → 답할 때는 커뮤니티 쪽(행사 · 교육)으로 좁히고 리플 이름을 건 홍보로 읽히는 제안은 하지 않는다(리플 「이름 사용 조심」 요청 · 협력 표현 금지).
 
+- **10/6 서우 「기기 보내 주고 리퍼럴 이런 거 가능한가 가볍게 물어볼래」 → Dan 본인에게는 묻지 않는다.**
+  ① 리플 직원이다 — 리퍼럴(판매 수수료)은 돈이라 본인 회사 규정과 부딪힐 수 있고, 기기도 개인 선물이 아니라 회사 앞으로가 원칙(8/22 갤럭시 증정 판단).
+  ② 리플 직원이 우리 리퍼럴 링크로 알리면 「리플이 미는 기기」로 읽힌다 — 리플의 「이름 사용 조심」 요청 · 협력 표현 금지와 정면으로 부딪힌다.
+  ③ 9/26 인플루언서 기준에서 리플 소속은 뺀다. ④ 첫 출고 전이다.
+  → 그가 먼저 내민 **「네트워크」**를 쓴다: 기기를 써 볼 만한 커뮤니티 사람(밋업 운영 · XRP 콘텐츠) 소개만 부탁. 기기 · 리퍼럴 이야기는 소개받은 사람과 직접
+  (조건 없는 체험 · 원하면 리퍼럴 · 광고 표시). 소개받은 사람에게도 Dan · 리플 이름은 공개적으로 쓰지 않는다. 리퍼럴 숫자는 조건 정본 정리 전에는 말하지 않는다.
+
+**답장 (텔레그램, EN, 309자)**
+```
+Thanks so much, Dan, that's really kind of you.
+
+One thing that would help: once our first units ship, we'd love to get a few into the hands of community folks who'd genuinely enjoy using one, like people who run meetups or make XRP content. If anyone comes to mind, an intro would mean a lot. No rush at all.
+```
+
 ## David Zabransky (Bybit EU, Country Manager CZ/SK) — 1촌 · 판정 (2026-10-06, 서우 프로필 캡처 1장)
 
 - **자리**(캡처 기준): Bybit EU 체코 · 슬로바키아 국가 매니저(플젠, 체코) · 인증 배지 · **이미 1촌**(팔로우 중) · 공통 1촌 18.
