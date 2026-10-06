@@ -2361,3 +2361,28 @@ Good to be connected.
 ```
 
 **발송 여부는 Claude 가 관리하지 않는다** — 서우 통보 시 갱신.
+
+## Aarathi P (인도 방갈로르 — 운영 · 인사 · 교육) — 들어온 1촌 · 판정 (2026-10-07, 서우 프로필 캡처 3장 + 「나에게 1촌함」)
+
+- **자리**(캡처 기준): 헤드라인 「Integrity · Leadership · Director · Host · Interviewer · Trainer · English Tutor · Learning & Development · ex-ANZ · ex-EY」.
+  Stronghold Investment Management 운영 · 인적자원 디렉터(2023-11~2024-07, 방갈로르) · Delta Capita QC 컨설턴트(2022-01~2023-04) · EY 컨설턴트(2019-02~2022-01) ·
+  Capco 컨설턴트(2016-08~2018-07, HSBC 모리셔스 현장 포함). 추천서 6(같이 일한 실명 인물). 공통 1촌 5. **그쪽이 요청 → 1촌.**
+- **판정 — 1촌 유지 · 먼저 메시지 0.** 금융 컨설팅 → 운영 · 인사 → 교육 · 진행 쪽으로, 우리 레인(데이터 · DePIN · 결제 · 예측시장)과 닿는 곳이 없다.
+  이런 들어온 요청은 채용 · 교육 서비스 제안으로 이어지는 일이 많다. 받지 않는 기준(신호 3개)에는 해당하지 않는다 — 실제 경력 · 추천서가 있다.
+- **그쪽이 먼저 메시지를 보내면** 아래 Lynn 기본값. **채용 · 서비스 제안이면** 긍정형 한 줄로 닫는다(「필요 없다」류 부정형 선 긋기 0 — 9/18 · 9/19 교훈).
+
+**먼저 말을 걸어오면 (EN, 556자 — Lynn 기본값 · 「eleven weather feeds」)**
+```
+Aarathi — thanks for connecting.
+
+I run partnerships at wellbian. KWeather has measured weather in South Korea for thirty years and supplies data to 4,000+ enterprise clients; wellbian is the network built on top of that.
+
+We work on two layers: certified air-quality sensors that people run in their own rooms, and city-level weather across 90 countries and 167 cities, where each value is a consensus across eleven weather feeds rather than a single reading. Every input is fingerprinted to a public ledger before it goes anywhere.
+
+Good to be connected.
+```
+
+**채용 · 서비스 제안이면 (EN, 86자)**
+```
+Thanks for reaching out, Aarathi. I'll keep it in mind, and it's good to be connected.
+```
