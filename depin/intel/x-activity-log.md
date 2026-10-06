@@ -3906,3 +3906,34 @@ P.S. James mentioned his code didn't apply at first. If that's still the case, j
 ```
 Thank you for finding us and for seeing what we're building. That means a lot to our whole team. We'll work hard to grow this ecosystem as fast as we can, and we're glad to have you with us from the start. 🙏
 ```
+
+## 남산타워 점등 영상(강 건너 시점) — X 캡션 (10/6 밤, 서우 캡처 3장 + 「우리 로고 바뀌는 영상에 알맞게 X 스크립트」)
+
+- **영상**: 타워 쪽이 오늘 밤 보내온 10/3 20:32 영상(한강 남쪽에서 남산을 본 시점 · 로고가 바뀌는 점등 · 오른쪽 아래 불 켜진 건물이 행사장 그랜드 하얏트로 보임 —
+  서우 확인 전). 화면 구석에 **기온 18°C · 시각 스탬프**, 오른쪽 아래에 **곡 제목 · 재생 막대**(배경 음악).
+- **케이웨더 대표 지시**: 「다른 사람이 보내 준 영상이라고 하면서 X 에 올려 달라」(「한강 산책하던 사람」 · 「한강 너머 사는 사람이 제보」는 단톡 농담).
+  → **「Someone sent us this from across the Han River」**로 쓴다 — 누군가(타워 쪽)가 보내 줬고, 찍은 곳이 강 건너라 **둘 다 사실**이다.
+  산책객 · 주민 같은 **없는 제보자는 만들지 않는다** — 타워 쪽이 같은 영상을 올리면 지어낸 제보자가 드러나 연출로 보인다.
+- **규칙**: 「XRP × KWeather」류 문구 0(영상 속 점등은 그림으로만) · 리플 0 · 가격 · 토큰 0 · 행사명은 「XRP SEOUL 2026」 · 케이웨더 태그는 고정 글과 같게.
+  날씨 회사다운 한 줄 = 구석의 18°C 스탬프.
+- **올리는 때**: 오늘 원글이 이미 둘(고정 글 · 부스트 글) — 1일 1원글(파트너 발표일 2) 규칙. **오늘 밤이면 B(고정 글 스레드에 답글)**, 따로 크게 올리려면 **내일 아침 A**.
+- **음악**: 배경 곡이 깔려 있으면 저작권 신고로 막히거나 소리가 꺼질 수 있다 — 소리를 빼고 올리거나 곡 사용 허락을 확인.
+- 「행사장(venue)」 줄은 그 건물이 그랜드 하얏트가 맞을 때만 — 아니면 「, and the venue lit up below」를 지운다.
+
+**A — 단독 원글 (내일 아침, 275/280)**
+```
+Someone sent us this from across the Han River. 🌉
+
+N Seoul Tower on the night of XRP SEOUL 2026, our logo coming up on the tower with @Kweather_Co, and the venue lit up below.
+
+The corner of the frame reads 18°C at 8:32 pm. We notice these things.
+
+#Wellbian #XRPSEOUL #XRPL
+```
+
+**B — 오늘 밤 고정 글 스레드 답글 (132/280)**
+```
+Another angle came in tonight, from across the Han River. 🌉
+
+The corner of the frame reads 18°C at 8:32 pm. We notice these things.
+```
