@@ -3875,3 +3875,13 @@ It's a lovely chart, and most of it is right: six readings every minute, up to 1
 
 Did James's code apply to your order in the end? If not, tell us here and we'll sort it out.
 ```
+
+**★ 10/6 서우 결정 — 「내비두자, 외부 글인데 우리가 참견할 건 아님 · 고맙다 해 줘」** → 위 수정 부탁 · 정확도 답변 DM · 공개 답글의 보상 안내는 **모두 폐기**.
+감사만 보낸다. 「정확하다」고는 쓰지 않았다(내용 확인으로 읽히지 않게). RT · 인용 0. 규칙은 `playbook.md` 「고객이 만든 홍보물」을 이 결정으로 고쳐 씀.
+
+**DM — 감사 (EN, 193자)** + 선택 P.S.(James 가 부탁한 코드 확인, 118자)
+```
+Thank you so much for making this, and welcome aboard! James has been great, and we're glad he brought you in. We'll post shipping updates on X and Telegram first, so you'll hear from us there.
+
+P.S. James mentioned his code didn't apply at first. If that's still the case, just let us know and we'll sort it out.
+```
