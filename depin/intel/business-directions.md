@@ -2276,6 +2276,23 @@ Thanks so much, Dan, that's really kind of you.
 One thing that would help: once our first units ship, we'd love to get a few into the hands of community folks who'd genuinely enjoy using one, like people who run meetups or make XRP content. If anyone comes to mind, an intro would mean a lot. No rush at all.
 ```
 
+- **10/6 서우 「근본적으로 뭐 하는 사람이고 뭘 도와 달라 할까」**
+  - **하는 일**(같은 직함의 리플 채용 공고 · 검색 요약 2차, 원문 열람 차단): X · 디스코드 · 텔레그램 · 행사 · 포럼에서 XRP/XRPL 커뮤니티와의 관계를 맡는다 —
+    커뮤니티 참여 계획 · 커뮤니티 행사(그가 XRP Community Day Americas(온라인)에 사람들을 초대한 기록) · 커뮤니티 의견을 마케팅 등 사내 팀에 전달.
+    **사업 · 파트너십 창구가 아니라 커뮤니티 사람과 행사를 잇는 사람.** 텔레그램 「Ripple - XRP」 그룹(약 1.6만 명)이 서우와 공통.
+  - **부탁할 것**(그의 일과 맞고 「커뮤니티와 계속 연결」 선 안): ① 커뮤니티 콜 · 밋업(온라인 포함)에서 짧은 데모 자리 ② 출고 뒤 기기를 써 볼 만한 커뮤니티 사람 소개
+    ③ (대화가 이어지면) XRP 커뮤니티가 새 프로젝트를 믿게 되는 조건에 대한 조언.
+  - **부탁하지 않을 것**: 본인에게 기기 · 리퍼럴 · 리플 공식 계정 · 그룹에서의 홍보(RT · 공지) · 리플 사업 쪽 연결(RLUSD · 투자 · 그랜트 — 개발자 그랜트 · 해커톤은
+    RippleX 개발자 생태계 팀 몫) · Swell(참석 확정 전 언급 0 — 확정되면 「뉴욕 커뮤니티 밋업 · 사이드 행사」가 가장 구체적인 부탁).
+  - 프로필의 전화번호는 쓰지 않는다(그는 X 로 확인 · DM 하라고 적어 둠). 저장소에도 적지 않는다.
+
+**답장 (텔레그램, EN, 375자 — 위 「소개 부탁」 답장을 대체: 데모 자리를 첫 부탁으로, 소개는 출고 뒤로)**
+```
+Thanks so much, Dan, that's really kind of you.
+
+One thing that would help: are there community calls or meetups, virtual is perfect, where XRPL projects can give a short demo? We'd love to show the community how a reading gets verified and fingerprinted on the ledger. And once our first units ship, if anyone comes to mind who'd enjoy trying one, an intro would mean a lot.
+```
+
 ## David Zabransky (Bybit EU, Country Manager CZ/SK) — 1촌 · 판정 (2026-10-06, 서우 프로필 캡처 1장)
 
 - **자리**(캡처 기준): Bybit EU 체코 · 슬로바키아 국가 매니저(플젠, 체코) · 인증 배지 · **이미 1촌**(팔로우 중) · 공통 1촌 18.
