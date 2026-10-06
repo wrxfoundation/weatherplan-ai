@@ -3897,3 +3897,12 @@ You found us early, and that means a lot, so we'll message you here personally a
 
 P.S. James mentioned his code didn't apply at first. If that's still the case, just let us know and we'll sort it out.
 ```
+
+**10/6 19:34~39 그의 회신**: 「Thanks!」 · 「Weather Data Token Generator 를 알리려 최대한 하겠다 — 멋진 아이디어, 사람들이 봐야 한다」.
+서우 「알아봐 주고 인정해 줘서 고맙다 · 생태계가 폭발적으로 성장하게 노력하겠다」 → 「폭발적으로(explosively)」는 토큰 프로젝트에서 가격 기대로 읽힐 수 있어
+「as fast as we can」으로. 홍보 요청 · 조건 0(그가 스스로 알리겠다는 것 — 내버려 둔다).
+
+**DM — 감사 회신 (EN, 207자)**
+```
+Thank you for finding us and for seeing what we're building. That means a lot to our whole team. We'll work hard to grow this ecosystem as fast as we can, and we're glad to have you with us from the start. 🙏
+```
