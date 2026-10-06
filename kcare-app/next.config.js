@@ -23,7 +23,14 @@ const BRAND_LOGO_DARK = pick("logo-dark");
 const HAS_SESSION = !!process.env.NEXTAUTH_SECRET;
 const GOOGLE_ENABLED = HAS_SESSION && process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET ? "1" : "";
 const TEST_LOGIN = HAS_SESSION && process.env.BETA_TEST_PASSWORD ? "1" : "";
-const AUTH_ENABLED = GOOGLE_ENABLED || TEST_LOGIN ? "1" : "";
+//   회원 가입 · 로그인: NEXTAUTH_SECRET + Supabase 주소 + 비밀 키 (회원 표가 서버에 있다 · 2026-10-06)
+const MEMBER_LOGIN =
+  HAS_SESSION &&
+  (process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL) &&
+  (process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY)
+    ? "1"
+    : "";
+const AUTH_ENABLED = GOOGLE_ENABLED || TEST_LOGIN || MEMBER_LOGIN ? "1" : "";
 
 // CSP — 민감 프로필을 다루는 앱: 허용 출처를 명시적으로 한정한다.
 // 외부 허용은 폰트(Google Fonts) · 지도 타일(OSM·CARTO) · 결제(토스페이먼츠)뿐 · 그 외 전부 자기 출처.
@@ -68,6 +75,7 @@ const nextConfig = {
     NEXT_PUBLIC_AUTH_ENABLED: AUTH_ENABLED,
     NEXT_PUBLIC_GOOGLE_ENABLED: GOOGLE_ENABLED,
     NEXT_PUBLIC_TEST_LOGIN: TEST_LOGIN,
+    NEXT_PUBLIC_MEMBER_LOGIN: MEMBER_LOGIN,
   },
   async headers() {
     return [

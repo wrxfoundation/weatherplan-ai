@@ -6,6 +6,7 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "./auth/[...nextauth]";
 import { authConfigured } from "../../lib/auth-server";
 import { db, dbConfigured, dbErrorCode } from "../../lib/db";
+import { memberStillValid } from "../../lib/members";
 
 const MAX_ROWS = 500;
 // ?role= — 한 역할의 기록만 (관제 웨어러블 · 보호자 관리의 '마지막 앱 사용'). 테스트 계정 역할 이름만 받는다.
@@ -26,6 +27,8 @@ export default async function handler(req, res) {
   const limit = Math.min(MAX_ROWS, Math.max(1, Number(req.query.limit) || 300));
   const role = typeof req.query.role === "string" && ROLES.has(req.query.role) ? req.query.role : null;
   try {
+    const still = await memberStillValid(user);
+    if (!still.ok) return res.status(401).json({ error: still.reason });
     let q = db()
       .from("activity")
       .select("id, created_at, client_at, account_id, role, type, summary")

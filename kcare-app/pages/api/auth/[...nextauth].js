@@ -10,9 +10,54 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
-import { authConfigured, googleConfigured, isAllowedEmail, testLoginConfigured, testPasswordMatches } from "../../../lib/auth-server";
+import { authConfigured, googleConfigured, isAllowedEmail, memberLoginConfigured, testLoginConfigured, testPasswordMatches } from "../../../lib/auth-server";
 import { recordLogin } from "../../../lib/db";
 import { findTestAccount } from "../../../lib/test-accounts";
+import { CENTERS, areaOfRole, centerOfHousehold } from "../../../lib/centers";
+import { memberForLogin } from "../../../lib/members";
+import { verifyPassword } from "../../../lib/password";
+
+const slow = () => new Promise((r) => setTimeout(r, 600));
+// 로그인 창에 돌려주는 이유 코드 — 비밀번호가 맞은 뒤에만 알려 준다 (아이디가 있는지 떠볼 수 없게)
+const reject = (code) => {
+  throw new Error(code);
+};
+
+// 회원 로그인 (2026-10-06) — 가입 화면에서 만든 아이디 · 비밀번호. 영역(user · partner · ops) 입구가 맞아야 한다.
+// 센터 관제 테스트 계정(ops1~3 · 공용 테스트 비밀번호)도 관제 입구에서 이 제공자로 들어온다.
+async function authorizeMember(credentials) {
+  const id = String(credentials?.id || "").trim().toLowerCase();
+  const password = String(credentials?.password || "");
+  const area = ["user", "partner", "ops"].includes(credentials?.area) ? credentials.area : null;
+  if (!id || !password) return null;
+  const t = findTestAccount(id);
+  if (t) {
+    if (!testLoginConfigured() || !testPasswordMatches(password)) {
+      await slow();
+      return null;
+    }
+    if (area && areaOfRole(t.role) !== area) reject("WrongArea");
+    return { id: t.id, name: t.name, email: t.email, role: t.role, household: t.household, center: t.center || null, provider: "test" };
+  }
+  let m = null;
+  try {
+    m = await memberForLogin(id);
+  } catch (_) {
+    reject("ServerDown");
+  }
+  const ok = await verifyPassword(password, m?.password_hash);
+  if (!m || !ok) {
+    await slow();
+    return null;
+  }
+  if (m.status === "pending") reject("Pending");
+  if (m.status === "rejected") reject("Rejected");
+  if (m.status !== "active") reject("Suspended");
+  if (area && areaOfRole(m.role) !== area) reject(`WrongArea:${areaOfRole(m.role) || ""}`);
+  const center = CENTERS[m.center_id];
+  if (!center) reject("NoCenter");
+  return { id: m.id, name: m.name, email: null, role: m.role, household: center.household, center: center.id, provider: "member" };
+}
 
 function providers() {
   const list = [];
@@ -41,6 +86,16 @@ function providers() {
       })
     );
   }
+  if (memberLoginConfigured()) {
+    list.push(
+      CredentialsProvider({
+        id: "member",
+        name: "회원",
+        credentials: { id: { label: "아이디" }, password: { label: "비밀번호", type: "password" }, area: {} },
+        authorize: authorizeMember,
+      })
+    );
+  }
   if (googleConfigured()) {
     list.push(
       GoogleProvider({
@@ -59,7 +114,7 @@ export const authOptions = {
   pages: { signIn: "/login", error: "/login" },
   callbacks: {
     async signIn({ account, profile, user }) {
-      if (account?.provider === "test") return true; // 비밀번호는 authorize 에서 이미 봤다
+      if (account?.provider === "test" || account?.provider === "member") return true; // 비밀번호는 authorize 에서 이미 봤다
       if (account?.provider !== "google") return false;
       // 구글이 이메일을 확인한 계정만 · 허용 목록이 있으면 그 안에서만
       if (profile && profile.email_verified === false) return false;
@@ -74,6 +129,7 @@ export const authOptions = {
         token.provider = google ? "google" : user.provider || "test";
         token.role = google ? null : user.role || null;
         token.household = google ? null : user.household || null;
+        token.center = google ? null : user.center || centerOfHousehold(user.household)?.id || null;
       }
       return token;
     },
@@ -88,6 +144,7 @@ export const authOptions = {
           provider: token.provider || null,
           role: token.role || null,
           household: token.household || null,
+          center: token.center || null,
         },
       };
     },

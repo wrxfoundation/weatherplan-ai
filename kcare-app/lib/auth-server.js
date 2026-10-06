@@ -21,7 +21,12 @@ export const sessionConfigured = () => !!process.env.NEXTAUTH_SECRET;
 export const googleConfigured = () =>
   sessionConfigured() && !!(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET);
 export const testLoginConfigured = () => sessionConfigured() && !!process.env.BETA_TEST_PASSWORD;
-export const authConfigured = () => googleConfigured() || testLoginConfigured();
+// 회원 가입 · 로그인 (2026-10-06) — 회원 표가 서버 저장(Supabase)에 있으므로 그 연결까지 있어야 켜진다
+export const memberLoginConfigured = () =>
+  sessionConfigured() &&
+  !!(process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL) &&
+  !!(process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY);
+export const authConfigured = () => googleConfigured() || testLoginConfigured() || memberLoginConfigured();
 
 // 비밀번호 비교 — 길이·내용과 상관없이 같은 시간이 걸리게 끝까지 본다
 export function testPasswordMatches(input) {
@@ -54,16 +59,20 @@ export function isAllowedEmail(email) {
 // 구글 계정은 허용 목록을 본다
 export function isAllowedToken(token) {
   if (!token) return false;
-  if (token.provider === "test" || token.provider === "google-sim") return true;
+  if (token.provider === "test" || token.provider === "google-sim" || token.provider === "member") return true;
   return isAllowedEmail(token.email);
 }
 
 export const betaGateOn = () => process.env.BETA_REQUIRE_LOGIN === "1" && authConfigured();
 
 // 로그인 없이 열리는 화면 — 로그인 화면 자체(구글 시뮬레이션 포함) · 인증 콜백 · 설정 상태 ·
-// 대외 서비스 소개 · 결제(토스 심사·결제창 복귀)
+// 대외 서비스 소개 · 결제(토스 심사·결제창 복귀) · 회원 가입과 영역별 로그인 입구(2026-10-06)
 export const PUBLIC_PATHS = [
   /^\/login(\/|$)/,
+  /^\/join(\/|$)/,
+  /^\/partner\/(join|login)$/,
+  /^\/ops\/(join|login)$/,
+  /^\/api\/join$/,
   /^\/api\/auth(\/|$)/,
   /^\/api\/status$/,
   /^\/service(\/|$)/,

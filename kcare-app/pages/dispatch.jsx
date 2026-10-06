@@ -84,6 +84,7 @@ import HospitalsMgmt from "../components/ops/HospitalsMgmt";
 import RoleGate from "../components/RoleGate";
 import { useAuth } from "../lib/auth";
 import Accounts from "../components/ops/Accounts";
+import CenterMembers, { usePendingMembers } from "../components/ops/CenterMembers";
 import AuditLog from "../components/ops/AuditLog";
 import Integrations from "../components/ops/Integrations";
 import ModeLink from "../components/ModeLink";
@@ -515,6 +516,7 @@ function DispatchConsole() {
   }, [sosPopup]);
   // 해주세요 관리 숫자 — 관제가 할 일만: 도와줘요 진행 중 · 취소 요청(관제 승인) · 환불 대기 (2026-10-05).
   // 보호자 · 어르신의 일반 해주세요는 담당 컨시어지가 승인하므로 세지 않는다.
+  const pendingMembers = usePendingMembers();
   const newRequests = [
     ...(state.requests || []).filter((r) => (isVisitCall(r) && !CLOSED.includes(r.status)) || r.status === "cancelRequested"),
     ...(state.payments || []).filter((p) => p.refund && p.refund.status !== "done"),
@@ -530,6 +532,7 @@ function DispatchConsole() {
     ...((state.opsMessages || []).some((m) => !m.ackAt) ? { comms: (state.opsMessages || []).filter((m) => !m.ackAt).length } : {}),
     // 해주세요 — 관제가 처리할 것 (도와줘요 · 취소 요청 · 환불 대기)
     ...(newRequests.length ? { requests: newRequests.length } : {}),
+    ...(pendingMembers ? { accounts: pendingMembers } : {}),
   };
   const sosUnread = sosOpen.some((i) => i.state === "new"); // 미확인 사건 — 사이드바 점등
 
@@ -806,6 +809,15 @@ function DispatchConsole() {
         onAct: () => dispatch({ type: "ackOpsMessage", id: m.id, by: "관제" }),
       })
     );
+  // 관제 센터 — 현장 · 영업 · 관제 가입 신청 승인 대기 (2026-10-06 회원 · 권한)
+  if (pendingMembers)
+    actions.push({
+      id: "members-pending",
+      level: "high",
+      title: `가입 승인 대기 ${pendingMembers}명`,
+      meta: "현장 · 영업 · 관제 가입 신청 — 계정·권한에서 승인하거나 거절",
+      menu: "accounts",
+    });
   const LEVEL_ORDER = { critical: 0, high: 1, med: 2 };
   actions.sort((a, b) => LEVEL_ORDER[a.level] - LEVEL_ORDER[b.level]);
 
@@ -1304,7 +1316,7 @@ function DispatchConsole() {
               // 어르신 앱은 "관제센터에서 확인 전화를 드립니다"라고 약속한다 — 그 부탁이 들어와 있으면 접어 두지 않는다.
               // 보호자 일정등록 요청도 같다 — 관제가 승인해야 캘린더에 오르는데, 접혀 있으면 아무도 못 본다 (2026-10-01 관제 테스트).
               // 도와줘요 · 해주세요 취소 요청 · 환불 대기도 관제가 직접 할 일이라 펼친다 (2026-10-05)
-              opsOpen={actions.some((a) => a.level === "critical" || /^(elder-|help-|cancel-|refunds)/.test(a.id)) || pendingEvents > 0}
+              opsOpen={actions.some((a) => a.level === "critical" || /^(elder-|help-|cancel-|refunds|members-)/.test(a.id)) || pendingEvents > 0}
               opsNote={pendingEvents > 0 ? `일정 승인 대기 ${pendingEvents}건` : null}
               opsSlot={<>
           {/* ── 방문 업무흐름 8단계 — 일정 수립 알람이 여기로 온다 (2026-08-13 미팅) ── */}
@@ -2316,7 +2328,12 @@ function DispatchConsole() {
           {menu === "visits" && <Visits openProfile={openProfile} />}
           {menu === "requests" && <RequestsMgmt />}
           {menu === "together" && <TogetherMgmt />}
-          {menu === "accounts" && <Accounts />}
+          {menu === "accounts" && (
+            <div className="space-y-4">
+              <CenterMembers />
+              <Accounts />
+            </div>
+          )}
           {menu === "audit" && <AuditLog />}
           {menu === "integrations" && <Integrations />}
           </StaggerIn>

@@ -5,7 +5,8 @@
 -- 여기에는 실제 고객 개인정보를 넣지 않는다 (설계 문서의 개인정보 영향평가 게이트 전).
 --
 -- 쓰는 법: Supabase 대시보드 → SQL Editor → New query → 이 파일 전체를 붙여 넣고 Run.
--- 여러 번 돌려도 된다 (이미 있는 표는 건너뛴다).
+-- 여러 번 돌려도 된다 (이미 있는 표 · 칸은 건너뛴다). 2026-10-06 회원 · 관제 센터가 추가됐다 — 예전에 돌렸어도
+-- 이 파일 전체를 한 번 더 Run 하면 새 표 · 칸만 더해진다 (기존 기록은 그대로).
 --
 -- 누가 읽고 쓰나: 우리 서버(Vercel API)만, 비밀 키(sb_secret_… 또는 service_role)로.
 -- 브라우저용 키(publishable · anon)로는 아무것도 못 보게 막는다 —
@@ -98,18 +99,112 @@ create table if not exists public.payments (
 );
 create index if not exists payments_household_idx on public.payments (household_id, created_at desc);
 
+-- ── 회원 · 관제 센터 (2026-10-06) ────────────────────────────────────────────
+-- 관제 1 · 2 · 3센터는 서로 완전히 따로 쓰는 테스트 공간이다. 센터마다 가구 상태(HH-C1 …) · 회원 · 활동 기록이
+-- 따로 쌓이고, 다른 센터의 것은 보이지 않는다. 테스트 가구 1(HH-TEST-01)은 예전 테스트 계정 그대로 남는다.
+-- 표를 센터마다 새로 만들지 않고 같은 표 안에서 센터 번호로 나눈다 — 화면 · 서버 코드가 한 벌이면 된다.
+-- 대신 Table Editor 에서 센터별로 따로 보이게 center1_… · center2_… · center3_… 보기(view)를 둔다.
+create table if not exists public.centers (
+  id            text primary key,            -- C1 · C2 · C3
+  name          text not null,               -- 관제 1센터
+  household_id  text not null,               -- 이 센터가 쓰는 가구 상태 (HH-C1)
+  join_code     text not null,               -- 가입 코드 — 이 코드로 가입한 사람이 이 센터 회원이 된다 (관제 화면에서 바꿀 수 있다)
+  created_at    timestamptz not null default now()
+);
+insert into public.centers (id, name, household_id, join_code) values
+  ('C1', '관제 1센터', 'HH-C1', upper(substr(md5(random()::text), 1, 6))),
+  ('C2', '관제 2센터', 'HH-C2', upper(substr(md5(random()::text), 1, 6))),
+  ('C3', '관제 3센터', 'HH-C3', upper(substr(md5(random()::text), 1, 6)))
+on conflict (id) do nothing;
+create unique index if not exists centers_join_code_key on public.centers (join_code);
+
+alter table public.households add column if not exists center_id text references public.centers(id);
+
+-- 회원 — 가입 화면에서 만든 계정. 비밀번호는 해시(scrypt)만 저장한다 (원문은 어디에도 남지 않는다)
+alter table public.accounts add column if not exists center_id     text references public.centers(id);
+alter table public.accounts add column if not exists login_id      text;           -- 로그인 아이디 (소문자)
+alter table public.accounts add column if not exists password_hash text;           -- scrypt$… (테스트 · 구글 계정은 비어 있다)
+alter table public.accounts add column if not exists status        text not null default 'active'; -- pending · active · rejected · suspended
+alter table public.accounts add column if not exists phone         text;
+alter table public.accounts add column if not exists profile       jsonb;          -- 활동 지역 · 소속 등 가입 때 적은 것
+alter table public.accounts add column if not exists requested_role text;          -- 가입 때 고른 역할
+alter table public.accounts add column if not exists approved_by   text;
+alter table public.accounts add column if not exists approved_at   timestamptz;
+alter table public.accounts add column if not exists created_at    timestamptz not null default now();
+-- 가입만 하고 아직 로그인하지 않은 회원은 로그인 시각이 비어 있다
+alter table public.accounts alter column first_login_at drop not null;
+alter table public.accounts alter column last_login_at drop not null;
+create unique index if not exists accounts_login_id_key on public.accounts (login_id) where login_id is not null;
+create index if not exists accounts_center_idx on public.accounts (center_id, status);
+
+-- 권한 변경 기록 — 승인 · 거절 · 역할 변경 · 정지 · 가입 코드 변경. 지우지 않는다
+create table if not exists public.account_audit (
+  id          bigint generated always as identity primary key,
+  center_id   text references public.centers(id),
+  account_id  text,                          -- 바뀐 계정 (가입 코드 변경이면 비어 있다)
+  actor_id    text not null,                 -- 바꾼 관제 계정
+  action      text not null,                 -- signup · approve · reject · role · suspend · activate · join-code
+  before      jsonb,
+  after       jsonb,
+  created_at  timestamptz not null default now()
+);
+create index if not exists account_audit_center_idx on public.account_audit (center_id, created_at desc);
+
+-- 센터별 보기 (Table Editor 에서 '관제 1센터 표'처럼 본다 · 읽기 전용)
+create or replace view public.center1_accounts with (security_invoker = on) as
+  select id, login_id, name, role, status, phone, profile, created_at, approved_by, approved_at, last_login_at from public.accounts where center_id = 'C1';
+create or replace view public.center1_household with (security_invoker = on) as
+  select id, name, version, updated_at, updated_by, state from public.households where id = 'HH-C1';
+create or replace view public.center1_activity with (security_invoker = on) as
+  select id, created_at, account_id, role, type, summary from public.activity where household_id = 'HH-C1';
+create or replace view public.center1_signups with (security_invoker = on) as
+  select * from public.signups where household_id = 'HH-C1';
+create or replace view public.center1_payments with (security_invoker = on) as
+  select * from public.payments where household_id = 'HH-C1';
+create or replace view public.center2_accounts with (security_invoker = on) as
+  select id, login_id, name, role, status, phone, profile, created_at, approved_by, approved_at, last_login_at from public.accounts where center_id = 'C2';
+create or replace view public.center2_household with (security_invoker = on) as
+  select id, name, version, updated_at, updated_by, state from public.households where id = 'HH-C2';
+create or replace view public.center2_activity with (security_invoker = on) as
+  select id, created_at, account_id, role, type, summary from public.activity where household_id = 'HH-C2';
+create or replace view public.center2_signups with (security_invoker = on) as
+  select * from public.signups where household_id = 'HH-C2';
+create or replace view public.center2_payments with (security_invoker = on) as
+  select * from public.payments where household_id = 'HH-C2';
+create or replace view public.center3_accounts with (security_invoker = on) as
+  select id, login_id, name, role, status, phone, profile, created_at, approved_by, approved_at, last_login_at from public.accounts where center_id = 'C3';
+create or replace view public.center3_household with (security_invoker = on) as
+  select id, name, version, updated_at, updated_by, state from public.households where id = 'HH-C3';
+create or replace view public.center3_activity with (security_invoker = on) as
+  select id, created_at, account_id, role, type, summary from public.activity where household_id = 'HH-C3';
+create or replace view public.center3_signups with (security_invoker = on) as
+  select * from public.signups where household_id = 'HH-C3';
+create or replace view public.center3_payments with (security_invoker = on) as
+  select * from public.payments where household_id = 'HH-C3';
+
 -- 잠그기 — 서버 비밀 키만 읽고 쓴다
 alter table public.households enable row level security;
 alter table public.accounts   enable row level security;
 alter table public.activity   enable row level security;
 alter table public.signups    enable row level security;
 alter table public.payments   enable row level security;
+alter table public.centers    enable row level security;
+alter table public.account_audit enable row level security;
 
-revoke all on table public.households, public.accounts, public.activity, public.signups, public.payments from anon, authenticated;
+revoke all on table public.households, public.accounts, public.activity, public.signups, public.payments,
+  public.centers, public.account_audit from anon, authenticated;
+revoke all on table public.center1_accounts, public.center1_household, public.center1_activity, public.center1_signups, public.center1_payments, public.center2_accounts, public.center2_household, public.center2_activity, public.center2_signups, public.center2_payments, public.center3_accounts, public.center3_household, public.center3_activity, public.center3_signups, public.center3_payments from anon, authenticated;
 
+-- 관제 센터 가입 코드 보기 (따로 실행 · 관제 1~3센터 화면 '회원 · 권한'에서도 보인다):
+--   select id, name, join_code from public.centers order by id;
+--
 -- 확인용 (따로 실행):
 --   select created_at, account_id, summary from public.activity order by created_at desc limit 50;
 --   select id, version, updated_at, updated_by from public.households;
 --
 -- 테스트 가구를 처음 상태로 되돌리기 (따로 실행 · 그 가구의 활동 기록도 함께 지워진다):
 --   delete from public.households where id = 'HH-TEST-01';
+--
+-- 관제 1센터를 처음 상태로 (따로 실행 · 회원까지 지우려면 둘째 줄도):
+--   delete from public.households where id = 'HH-C1';
+--   delete from public.accounts where center_id = 'C1' and password_hash is not null;

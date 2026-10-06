@@ -10,6 +10,7 @@ import RosterTable from "../components/RosterTable";
 import StoreImageManager from "../components/StoreImageManager";
 import MobileSectionNav from "../components/MobileSectionNav";
 import StaggerIn from "../components/StaggerIn";
+import RoleGate from "../components/RoleGate";
 import { ROSTERS, ROSTER_CHECKS, ROSTER_ACCESS, searchAll } from "../lib/rosters";
 import { TOTAL_ELDERS } from "../lib/ops-health";
 import { useAppState } from "../lib/state";
@@ -343,7 +344,17 @@ function StatTile({ k, v, color = NAVY, note }) {
   );
 }
 
-export default function AdminConsole() {
+// 경영 콘솔은 관제 영역 — 로그인한 이용자 · 현장 · 영업 계정은 들어오지 못한다 (2026-10-06 영역별 권한).
+// 로그인하지 않은 데모는 지금처럼 열린다.
+export default function AdminPage() {
+  return (
+    <RoleGate role="ops" title="경영 콘솔">
+      <AdminConsole />
+    </RoleGate>
+  );
+}
+
+function AdminConsole() {
   // 앱에서 실제로 들어온 만족도 · 후기 — 경영 화면이 정적이라 보호자가 낸 점수가 안 보이던 것 (2026-10-02 QA)
   const appState = useAppState()?.state;
   const liveNps = appState?.ops?.npsDetractor || null;

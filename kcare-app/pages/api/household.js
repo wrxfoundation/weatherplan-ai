@@ -12,6 +12,8 @@ import { authOptions } from "./auth/[...nextauth]";
 import { authConfigured } from "../../lib/auth-server";
 import { db, dbConfigured, dbErrorCode, ensureHousehold } from "../../lib/db";
 import { summarize, trimPayload } from "../../lib/activity";
+import { centerOfHousehold } from "../../lib/centers";
+import { centerPeople, memberStillValid } from "../../lib/members";
 
 export const config = { api: { bodyParser: { sizeLimit: "4mb" } } };
 
@@ -91,14 +93,22 @@ export default async function handler(req, res) {
   if (!dbConfigured()) return res.status(503).json({ error: "db-not-configured" });
 
   try {
+    // 회원 계정 — 관제가 정지하거나 역할을 바꿨으면 여기서 멈춘다 (다시 로그인)
+    const still = await memberStillValid(user);
+    if (!still.ok) return res.status(401).json({ error: still.reason });
+
     if (req.method === "GET") {
+      // 관제 센터 가구 — 그 센터 회원 이름 · 역할 (화면의 어르신 · 보호자 · 컨시어지 이름). 처음 읽을 때와 ?people=1 일 때만
+      const center = centerOfHousehold(user.household);
       const since = req.query.v != null ? Number(req.query.v) : null;
+      const withPeople = center && (since == null || req.query.people === "1");
+      const people = withPeople ? { center: { id: center.id, name: center.name }, people: await centerPeople(center.id) } : {};
       if (since != null && Number.isFinite(since)) {
         const { data, error } = await db().from("households").select("version").eq("id", user.household).maybeSingle();
         if (error) throw error;
         // 같을 때만 '안 바뀜'. 작아진 경우(관리자가 가구를 지워 처음부터)도 바뀐 것으로 알린다
-        if ((data?.version ?? 0) === since) return res.status(200).json({ changed: false, version: since });
-        if (!data) return res.status(200).json({ changed: true, state: null, version: 0, updatedAt: null, updatedBy: null });
+        if ((data?.version ?? 0) === since) return res.status(200).json({ changed: false, version: since, ...people });
+        if (!data) return res.status(200).json({ changed: true, state: null, version: 0, updatedAt: null, updatedBy: null, ...people });
       }
       let row = await current(user.household);
       if (!row) {
@@ -111,6 +121,7 @@ export default async function handler(req, res) {
         version: row.version,
         updatedAt: row.updated_at || null,
         updatedBy: row.updated_by || null,
+        ...people,
       });
     }
 

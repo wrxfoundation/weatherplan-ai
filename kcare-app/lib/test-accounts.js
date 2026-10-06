@@ -13,6 +13,10 @@
 
 export const TEST_HOUSEHOLDS = {
   "HH-TEST-01": { id: "HH-TEST-01", name: "테스트 가구 1" },
+  // 관제 센터 공간 (2026-10-06 · lib/centers.js) — 센터마다 따로 쓰는 빈 공간
+  "HH-C1": { id: "HH-C1", name: "관제 1센터", center: "C1" },
+  "HH-C2": { id: "HH-C2", name: "관제 2센터", center: "C2" },
+  "HH-C3": { id: "HH-C3", name: "관제 3센터", center: "C3" },
 };
 
 export const TEST_ACCOUNTS = [
@@ -23,6 +27,14 @@ export const TEST_ACCOUNTS = [
   { id: "test-sales", name: "테스트 영업자", role: "sales", email: "sales@kcare.test", household: "HH-TEST-01" },
 ];
 
+// 관제 센터 관리자 — 센터마다 하나씩 (2026-10-06 "관제 1 2 3 아이디를 만들어서 해당 중심으로"). 같은 공용 비밀번호.
+// 각자 자기 센터 공간(HH-C1 …)만 보고, 그 센터에 가입한 회원을 승인 · 역할 부여한다. /ops/login 에서 들어온다.
+export const CENTER_OPS_ACCOUNTS = [
+  { id: "ops1", name: "관제 1센터 관리자", role: "ops", email: "ops1@kcare.test", household: "HH-C1", center: "C1" },
+  { id: "ops2", name: "관제 2센터 관리자", role: "ops", email: "ops2@kcare.test", household: "HH-C2", center: "C2" },
+  { id: "ops3", name: "관제 3센터 관리자", role: "ops", email: "ops3@kcare.test", household: "HH-C3", center: "C3" },
+];
+
 export const ROLE_LABEL = { guardian: "보호자", elder: "어르신", concierge: "컨시어지", ops: "관제", sales: "영업자" };
 export const ROLE_HOME = { guardian: "/family", elder: "/elder", concierge: "/concierge", ops: "/dispatch", sales: "/sales" };
 
@@ -30,8 +42,8 @@ export const ROLE_HOME = { guardian: "/family", elder: "/elder", concierge: "/co
 export function findTestAccount(idOrEmail) {
   const v = String(idOrEmail || "").trim().toLowerCase();
   if (!v) return null;
-  return TEST_ACCOUNTS.find((a) => a.id === v || a.email === v) || null;
+  return [...TEST_ACCOUNTS, ...CENTER_OPS_ACCOUNTS].find((a) => a.id === v || a.email === v) || null;
 }
 
 export const householdName = (id) => TEST_HOUSEHOLDS[id]?.name || id || "";
-export const accountName = (id) => TEST_ACCOUNTS.find((a) => a.id === id)?.name || id || "—";
+export const accountName = (id) => [...TEST_ACCOUNTS, ...CENTER_OPS_ACCOUNTS].find((a) => a.id === id)?.name || id || "—";

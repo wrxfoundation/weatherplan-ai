@@ -10,6 +10,8 @@ import { SessionProvider, signIn, signOut, useSession } from "next-auth/react";
 export const AUTH_ENABLED = process.env.NEXT_PUBLIC_AUTH_ENABLED === "1";
 export const GOOGLE_ENABLED = process.env.NEXT_PUBLIC_GOOGLE_ENABLED === "1";
 export const TEST_LOGIN = process.env.NEXT_PUBLIC_TEST_LOGIN === "1";
+//   MEMBER_LOGIN    회원 가입 · 아이디 로그인 (서버 저장이 연결돼 있어야 한다 · 2026-10-06)
+export const MEMBER_LOGIN = process.env.NEXT_PUBLIC_MEMBER_LOGIN === "1";
 // 구글 버튼이 시뮬레이션으로 가는지 — 실제 구글이 꺼져 있고 테스트 로그인이 켜져 있을 때
 export const GOOGLE_SIMULATED = !GOOGLE_ENABLED && TEST_LOGIN;
 
@@ -20,7 +22,7 @@ export function AuthProvider({ children }) {
   return <SessionProvider refetchOnWindowFocus={false}>{children}</SessionProvider>;
 }
 
-// user: { id, name, email, provider("test"|"google-sim"|"google"), role, household }
+// user: { id, name, email, provider("test"|"google-sim"|"google"|"member"), role, household, center }
 export function useAuth() {
   if (!AUTH_ENABLED) return OFF;
   // AUTH_ENABLED 는 빌드 때 고정되는 상수라 렌더마다 같은 경로를 탄다 — 훅 호출 순서가 바뀌지 않는다
@@ -45,6 +47,12 @@ export function googleStart(callbackUrl = "/") {
   return Promise.resolve();
 }
 
+// 회원 로그인 — 영역(user · partner · ops) 입구에서. 센터 관제 테스트 계정(ops1~3)도 여기로 들어온다
+export async function memberSignIn({ id, password, area }) {
+  const r = await signIn("member", { redirect: false, id, password, area });
+  return { ok: !!r?.ok && !r?.error, error: r?.error || null };
+}
+
 // 테스트 계정 로그인 — 화면을 떠나지 않고 결과만 받는다 ({ ok, error })
 export async function testSignIn({ id, password, via = "test" }) {
   const r = await signIn("test", { redirect: false, id, password, via });
@@ -53,7 +61,7 @@ export async function testSignIn({ id, password, via = "test" }) {
 
 export const logout = (callbackUrl = "/") => signOut({ callbackUrl: safeCallback(callbackUrl) });
 
-export const PROVIDER_LABEL = { test: "테스트 아이디", "google-sim": "Google (시뮬레이션)", google: "Google" };
+export const PROVIDER_LABEL = { test: "테스트 아이디", "google-sim": "Google (시뮬레이션)", google: "Google", member: "회원 아이디" };
 
 // 구글 로그인 버튼용 로고 (Google 브랜드 가이드의 4색 G). 외부 이미지를 불러오지 않도록 인라인으로 둔다.
 export function GoogleMark({ size = 18 }) {
