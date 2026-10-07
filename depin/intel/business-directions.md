@@ -2408,3 +2408,18 @@ Good to be connected.
 ```
 Thanks for reaching out, Aarathi. I'll keep it in mind, and it's good to be connected.
 ```
+
+## Charlotte Jao (OKX Taiwan VIP RM · TABEI 이사) — 판정 (2026-10-07, 서우 프로필 캡처 2장)
+
+- **자리**(캡처 기준): OKX **Taiwan VIP RM**(2026-07~, 재택 — 기관 계정 관리 · 파생 · 옵션 · 마켓메이킹 유동성) · **TABEI(대만 블록체인 생태계 혁신 협회)
+  이사 · 홍보 이사**(2022-03~, 타이베이 — Taiwan Blockchain Summit 8회 · MEETABEI 포럼) · 이중언어(영 · 중) 행사 사회 · 모더레이터(2015~, 기술 · 반도체 · 디지털 자산).
+  싱가포르 표기 · 인증 배지 · 2촌 · 공통 1촌 2. 아직 1촌 아님.
+- **판정 — 1촌 요청은 해도 되지만 메시지 0.** OKX 넷째다 — **OKX 의 문은 Kyuyoung 하나**(9/16). 게다가 자리가 상장 · 마켓메이킹과 가장 가까운
+  거래 고객 관리라, 어떤 사업 문장도 「OKX 에 얹으려는 한국 프로젝트」로 읽힌다. 요청은 메모 없이 또는 기본 메모만(거래소 자리라 관심 이유 줄 0).
+- 수락 뒤 먼저 보내지 않는다. 그쪽이 먼저 말을 걸면 Lynn 기본값 인사(선택 줄 0).
+- **나중 접점 후보(지금 쓰지 않음)**: TABEI · Taiwan Blockchain Summit · 행사 사회 — 대만 · 아시아 무대가 필요해지면 그때 **협회 · 행사 결**로 연다(OKX 이야기 0).
+
+**1촌 요청 메모 — 넣을 때만 (EN, 248자)**
+```
+Hi Charlotte, I run partnerships at wellbian. KWeather has measured weather in Korea for 30 years; wellbian builds on it: home air sensors plus city-level weather from 11 weather feeds, every input fingerprinted to a public ledger. Glad to connect.
+```

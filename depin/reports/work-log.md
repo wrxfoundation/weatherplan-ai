@@ -2098,3 +2098,4 @@ Thanks Odelia — writing to you at that address today. Mine is support@wellbian
 - **Limitless(Daria) 화상 미팅 요청 + 준비(10/7, 서우 「내일 목 또는 다음 주 월, 협의는 크립토닷컴과 유사하게」)** — `intel/business-directions.md` Daria 절. 요청 문안 771자(판정 프레임 · 상품 담당 동석 요청 · 한국 · 토큰 · 다른 플랫폼 0), 준비 = 납득 목적 · 본부장 리드 확인 · Limitless 만의 선 5.
 - **크립토닷컴 후속 채널 판단(10/7, 서우 「메일로 할까 링크드인으로 물어볼까」 + 10/1 메일 캡처)** — `content/cryptocom-call-0911.md` 끝 절. 같은 스레드 전체 답장(9/17 교훈: 침묵 = 사내 처리) · 새 정보 하나(10/3 발표, 주어 케이웨더) + 작은 질문 둘(US team 좌석 · 재배포 콜/메일) · 링크드인은 일주일 더 무응답일 때 한 번.
 - **크립토닷컴 후속 메일 최종(10/7, 서우 「Flare 빼고 키노트 내용 간략히 · 질문은 그대로」 + 키노트 원고 붙여 넣기)** — `content/cryptocom-call-0911.md` 같은 절. 키노트 세 층 요약 + 「검증 가능 · 조작 어려움 · 실시간 지수 = 9/18 의 그 층」, Flare · 서울 예시 · AI 데이터센터 · 보상 0 (1039자).
+- **Charlotte Jao(OKX Taiwan VIP RM · TABEI 이사) 판정(10/7, 서우 캡처 2장)** — `intel/business-directions.md` 끝 절. OKX 넷째 · 문은 Kyuyoung 하나 → 1촌 요청만(메모 없음 또는 기본 메모 248자) · 메시지 0. TABEI · 대만 행사는 나중 접점 후보로만.
