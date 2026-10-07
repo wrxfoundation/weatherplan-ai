@@ -595,3 +595,20 @@ Some of us will also be in New York from October 27 to 29, if meeting your US te
 Best regards,
 Seowoo
 ```
+
+**10/7 서우 2차 수정 → 최종 교체** — 「뭘 제시하지 말고 검토가 어디까지 됐는지 묻고 도움을 주겠다고」. 질문 둘(좌석 · 재배포 콜/메일) · 뉴욕 줄 삭제,
+「검토가 어디까지 왔는지」 한 질문 + 도움 한 줄로. 키노트 문단은 그대로.
+
+**후속 메일 최종 (EN, 789자)**
+```
+Hi Vincent,
+
+Just following up on my note from last week, in case it got buried.
+
+One update since then: on October 3 we gave the keynote at XRP SEOUL 2026, "Weather Data Economy." In short, it laid out three layers: collecting weather data at scale, refining it with AI into indices the market can rely on, and turning those indices into economic value through prediction markets, parametric insurance and weather derivatives. The point we stressed is that the top layer only works if the indices underneath are verifiable, hard to manipulate and available in real time, which is the same layer we walked your team through on September 18.
+
+Could you let me know where your team's review stands? If there's anything we can do to help along the way, just let us know.
+
+Best regards,
+Seowoo
+```
