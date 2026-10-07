@@ -2126,3 +2126,4 @@ Thanks Odelia — writing to you at that address today. Mine is support@wellbian
 - **Courtenay Dunn(ICE VP Government Affairs, DC) 판정(10/7, 서우 캡처 2장 · 1촌 대기)** — 대관(변호사 출신)은 데이터 구매 자리가 아님 · 거래소 소속 인사만 · ICE 는 Lynn 이 열려 있어 동시 대화 상한 · 수락되면 Lynn 기본값 558자(선택 줄 없음) · 사업 · 예측시장 · 토큰 이야기 0. `intel/business-directions.md` 끝 절.
 - **Limitless Daria — 텔레그램 · Head of BD 연결 제안(10/7 18:23)** — 답 270자: 텔레그램 아이디(저장소 밖) · Daria 가 셋 그룹방을 열게(BD 사칭 방지) · 우리 쪽 사업 총괄 동료 합류 가능. Limitless 동시 대화 = Daria + BD 총괄(상한) · CJ 0. 첫 통화 원칙 · 선 ①~⑤ 그대로. `intel/business-directions.md` Daria Han 절.
 - **Aarathi P 첫 메시지 — NFT 판매 권유(10/7 18:36)** — 자기 NFT 작품에 오퍼 · 공유 요청 + 외부 링크(XRPL 계정 형식 주소). 판정: 답 0(playbook 받지 않는 기준 응대) · 링크 클릭 · 지갑 연결 · 서명 0 · 1촌 끊기는 서우 판단(알림 없음). `intel/business-directions.md` Aarathi 절.
+- **Aarathi P 1촌 끊기(10/7, 서우 「사기 계정 같음」)** — business-directions Aarathi 절에 결정 · playbook 「받지 않는 기준」에 한 줄 추가: 수락 뒤라도 첫 메시지가 NFT · 토큰 · 작품 구매 권유 + 외부 링크(지갑 주소)면 바로 1촌 끊기 · 링크 · 지갑 · 서명 · 답 0.
