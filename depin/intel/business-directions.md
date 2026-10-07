@@ -2659,3 +2659,20 @@ From your seat, you'll know better than most that a payment set to move on a con
 Good to be connected.
 ```
 **발송 여부는 Claude 가 관리하지 않는다** — 서우 통보 시 갱신.
+
+## Limitless 텔레그램 그룹 — 날씨 시장 맞장구 + 사전 심층 논의 제안 (2026-10-07 23시, 서우 캡처 + 지시)
+
+- 그룹 「Limitless <> KWeather」 7명. Daria: Clyde · Henrich 가 플랫폼 연동 담당, 콜 전 문서 요청 → 서우가 우리 쪽 소개 · 문서 예고 →
+  서우 「날씨 시장 아직 없던데 생각해 둔 게 있나」 → Daria: 「구현 아이디어는 있었으나 아직 · 정책 쪽과 얘기했는데 날씨 시장이 예측시장의 좋은 사용 사례가 될 수 있다」.
+- 서우 지시: 맞장구 + 우리는 논의 준비가 돼 있다 · 시너지 · 콜 전에 심도 있게 논의하자.
+- 지킨 선: 한국 도시 · 한국 이용자 0(카운슬 전 · 계약엔 한국 도시 제외 · 거주자 배제 조항 선행) · 다른 플랫폼 이름 0 · 가격 · 수익 배분 · 독점 0 ·
+  Flare 0 · 데모는 「실거래 아닌 데모」로만. 묻는 것 둘(시작 도시 · 시장 종류 / 정산 방식) — 정산 방식을 알아야 우리 답이 정해진다(크립토닷컴 재배포 질문과 같은 결).
+
+**답 (EN, 766자)**
+```
+That's great to hear, Daria. We see it the same way: weather is one of the clearest real-world use cases for prediction markets, because the outcome is measurable and anyone can check it afterwards.
+
+On our side, we're ready to get into it. We already publish city-level weather for 167 cities in 90 countries, each value a consensus across eleven weather feeds with a record anyone can re-check, and we've built a working demo of how that data resolves a market end to end. So I think there's real synergy here.
+
+Before the call, it would be good to go a bit deeper on how we could work together: which cities and types of weather markets you'd want to start with, and how resolution works on your side. I'll share the docs here shortly so everyone can take a look.
+```
