@@ -540,3 +540,35 @@ Head of Partnerships & Operations
 KWeather · wellbian
 wellbian.io
 ```
+
+## 10/7 — 후속(회신 6일 없음) 채널 판단 (서우 「후속 체크 메일로 할까 링크드인으로 물어볼까」)
+
+- **메일, 같은 스레드 전체 답장으로.** 이 건은 처음부터 메일 · 그쪽 팀 동석으로 굴러왔다(Legal · product team · US team). 링크드인은 Vincent 개인에게만 가서
+  스레드가 갈라지고, 팀을 건너뛰는 모양이 된다. **9/17 교훈**: 링크드인 재촉 직전에 그쪽이 캘린더 초대를 보냈다 — 침묵은 대개 사내 처리 중이다.
+- 「확인만」 메일 대신 **새 정보 하나 + 답하기 쉬운 작은 질문 둘**: 10/3 발표(주어 = 케이웨더, 「launched」 아닌 「announced · is live」, 테스트넷 검증 단계는 그대로라고 한 줄 —
+  10/1 메일과 어긋나지 않게) · US team 좌석 수 · 재배포 질문을 콜로 할지 메일로 할지. 뉴욕(10/27~29) 줄은 일정 확정일 때만.
+- **링크드인은 메일 뒤 일주일 더 조용할 때 한 번**, 메일을 봤는지만 묻는다.
+- ⚠ 검증 단계(테스트넷) 상태가 10/1 이후 바뀌었으면 그 문장을 고친다.
+
+**후속 메일 (EN, 687자)**
+```
+Hi Vincent,
+
+Just following up on my note from last week, in case it got buried.
+
+One update since then: on October 3, at XRP SEOUL 2026, KWeather announced that its Weather Data Market is live on Flare mainnet. The one verification step I mentioned is still on a test network, as before.
+
+Whenever it's convenient, a quick reply on two small things would let us move on our side:
+· how many seats your US team needs on the new site, so we can issue them right away
+· whether you'd prefer to go through the redistribution questions on a short call or by email
+
+Some of us will also be in New York from October 27 to 29, if meeting your US team in person would help.
+
+Best regards,
+Seowoo
+```
+
+**링크드인 — 메일 뒤 일주일 무응답일 때만 (EN, 105자)**
+```
+Hi Vincent, I sent a short follow-up by email last week. No rush at all, just making sure it reached you.
+```
