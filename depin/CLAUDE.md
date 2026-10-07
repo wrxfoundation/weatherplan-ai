@@ -35,6 +35,7 @@
 | 런치 포스트·UTM 규칙·발급 목록 | `content/launch-post-0907.md` | utm_source = 채널명 소문자 |
 | 구 플랫폼(wlbn.wellbianlabs.io, 8/24) 팩트시트 | `intel/wlbn-platform.md` | 토큰·약관은 정본이 우선 |
 | 링크드인 1촌 인사 문안 | `intel/playbook.md` 「링크드인 1촌 인사 기본값」 | Lynn 형식 · 영문/1촌 요청 메모(300자)/국문 |
+| 위성 · 발사 · 스타링크 용어 쉬운 풀이(큐브샛 · 탑재체 · 저궤도 · 라이드셰어 · 지상국 · D2C 등) | `intel/satellite-terms.md` | 10/7 서우 요청. 견적 대화용 — 수량 · 자금 · 일정은 넣지 않음 |
 | 작업 일지(모든 판정·결정의 시간순 기록) | `reports/work-log.md` | 매 작업 끝에 한 항목 |
 
 ## 갱신 순서 — 사이트 문구가 바뀌면
