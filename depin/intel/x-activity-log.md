@@ -4078,16 +4078,16 @@ On swag, to be honest, we can't send any out just yet. We don't have official t-
 
 **10/7 — 앞 판(325자)이 이미 나갔다(서우) → 후속 DM 으로 바로잡는다**
 - 앞 판은 「의견 주면 팀과 논의」였다. 그가 경품 행사를 굿즈에 맞춰 준비하기 전에 **지금은 못 보낸다 · 미국 상황을 본 뒤**를 먼저 알린다.
-- 「Realistically」 = 서우의 「현실적으로」. 「팀과 확인했다」는 쓰지 않았다(실제로 팀 확인을 거친 것이 아니면 지어낸 말이 된다).
+- 「Realistically」 = 서우의 「현실적으로」. **실제로 팀 확인을 거쳤다(서우 10/7)** → 「I talked it over with the team」을 넣어 첫 답의 「discuss them with the team」을 닫는다.
 - 판매량을 모른다는 말은 이번에도 「막 시작이라 상황을 본다」로. 「come back to it」은 바람이지 약속이 아니다.
 - 그가 이미 아이디어를 보냈다면 첫 문장을 아래 대체 줄로 바꾼다.
 
-**DM — 굿즈 후속 (EN, 376자)**
+**DM — 굿즈 후속 (EN, 412자)**
 ```
-Quick follow-up on the swag. Realistically, we won't be able to send any out just yet. We're only just getting started in the US, so we'd like to see how things go there first before doing something like that. Wanted to be upfront so you're not planning around it. Really appreciate you thinking of us, and we'd love to come back to it once we have a better sense of things. 🙏
+Quick follow-up on the swag. I talked it over with the team, and realistically, we won't be able to send any out just yet. We're only just getting started in the US, so we'd like to see how things go there first before doing something like that. Wanted to be upfront so you're not planning around it. Really appreciate you thinking of us, and we'd love to come back to it once we have a better sense of things. 🙏
 ```
 
-그가 이미 아이디어를 보냈다면 — 첫 두 문장 대신 (100자)
+그가 이미 아이디어를 보냈다면 — 첫 두 문장 대신 (128자)
 ```
-Thanks so much for the ideas! Realistically, though, we won't be able to send any swag out just yet.
+Thanks so much for the ideas! I talked it over with the team, and realistically, we won't be able to send any swag out just yet.
 ```
