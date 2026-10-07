@@ -1,13 +1,13 @@
-# Korea Rising — verified K-pop snapshot (2026-10-06)
+# Korea Rising — verified K-pop snapshot (2026-10-07)
 
 Every line is **cross-verified** (≥2 independent sources agree on the canonical name) and carries its source + Skill Score. Full data + Schema.org JSON-LD: <https://aiagentlabs.co.kr/> · via KoreaAPI (MCP).
 
 ## 🎬 Latest official releases (YouTube)
-- **QWER** — 그녀들의 진짜 모습을 공개합니다
+- **BoA** — You still our No.1 BoA
+- **PLAVE** — Plave - PLAYER 4 LIFEEE
 - **Xdinary Heroes** — Croxx The Sound, XMF with 😈
-- **BOYNEXTDOOR** — BOYNEXTDOOR 'ANIMAL' Performance Video #BOYNEXTDOOR #보이넥스트도어 #BND #HOME_DELUXE #ANIMAL
-- **EVERGLOW** — Kingdom Hearts IV - Extended D23 2026 Trailer
-- **Oh My Girl** — 효정이랑 여행 갈 사람~? 여행 메이트 모집합니다! 🧳💛
+- **ZICO** — 지코 근황이라는 게 숨긴다고 숨겨지는 것도 아니고
+- **Kiss of Life** — [KI-OFF] KLIP-#51 | DERMAFIRM 광고 촬영 Behind
 - **VIVIZ** — [VIVI.Zip] 항저우 팬미팅 Spring Whisper 포스터 촬영💙 Highlight #2
 
 ## 🎤 Verified roster (640 acts)
