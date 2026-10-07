@@ -2423,3 +2423,37 @@ Thanks for reaching out, Aarathi. I'll keep it in mind, and it's good to be conn
 ```
 Hi Charlotte, I run partnerships at wellbian. KWeather has measured weather in Korea for 30 years; wellbian builds on it: home air sensors plus city-level weather from 11 weather feeds, every input fingerprinted to a public ledger. Glad to connect.
 ```
+
+## Daria Tymoshenko (Lavatti — 커뮤니티 운영 대행 · 우크라이나) — 판정 (2026-10-07, 서우 프로필 캡처 2장 + 「DePIN 판매 수익 쉐어 논의가 될까」)
+
+- **자리**(캡처 기준): 헤드라인 「Community Operations Lead | 350K+ Members Scaled | 95% Support Automation | Head of Community · Web3 · Fintech · iGaming」 ·
+  Lavatti · 키이우 국립경제대 · 우크라이나 · 1촌 500+ · 팔로워 3,448 · 공통 1촌 13. 소개 「10+ years · 350,000+ community members · 95% support automation ·
+  30+ countries — 커뮤니티를 관리만 하는 게 아니라 운영 인프라를 만든다」. 스페셜 = 포트폴리오 링크(사례: Web3 · 핀테크 · 아이게이밍).
+  배너에 프로젝트 로고 30여 개(미스테리움 · 와이루 같은 DePIN 포함) — **함께 일했다는 증거는 아니다**(포트폴리오 원문은 프록시 차단, 재시도 안 함).
+  검색에 크립토 구인 사이트 인재 프로필(@lavatti)이 잡힌다(원문 미확인) — 일감 · 채용을 찾는 쪽으로 보인다.
+- **Limitless · 바이빗의 Daria 와 다른 사람.**
+- **판정 — 판매 수익 쉐어는 맞지 않는다. 1촌 유지 · 사업 제안 0.**
+  ① **파는 사람이 아니라 운영해 주는 사람**이다 — 350K 는 고객사 커뮤니티를 키운 숫자이지 본인 청중이 아니다(팔로워 3,448). 판매 연동 보수는 자기 청중에게 파는
+  사람(KOL · 리셀러)의 구조다. ② 고객사 커뮤니티에 우리 기기를 팔면 그의 고객사와 이해가 부딪친다. ③ 운영자에게 판매 연동 보수를 주면 **운영이 영업이 된다** —
+  보상이 「테스트 중」인 프로젝트에서 운영진이 판매를 밀면 고객 신뢰 · 규제 쪽 위험. 판매 연동 보상은 정본 9/11 「KOL 5% + 5%(코드별 결제 URL)」 하나뿐이고,
+  앰배서더 시범안(10/1)도 커미션 0. ④ 아이게이밍 경력 — 우리는 상장사 기기 파트너가 있고 래플도 도박법 선 안에서 설계했다(평판 고려 한 줄, 결격 사유는 아니다).
+- **쓸모가 생기는 때**: 영어권 커뮤니티 운영(텔레그램 기기 소유자 지원 · FAQ 봇 자동화)을 사람에게 맡길 때의 후보. 그때도 **운영 계약(월정액 · 결과물 단위)**이지
+  판매 쉐어가 아니다. 지금은 미국 판매 추이를 보는 중이라(10/7 굿즈 답과 같은 이유) 아니다.
+- **문안**: 서우가 1촌을 요청한 쪽이면 수락 뒤 아래 Lynn 기본값. 그쪽이 요청한 쪽이면 먼저 메시지 0(Aarathi 판정과 같은 결) — 말을 걸어오면 Lynn 기본값,
+  운영 서비스 제안이면 긍정형 한 줄로 닫는다.
+
+**Lynn 기본값 (EN, 554자 — 「eleven weather feeds」)**
+```
+Daria — thanks for connecting.
+
+I run partnerships at wellbian. KWeather has measured weather in South Korea for thirty years and supplies data to 4,000+ enterprise clients; wellbian is the network built on top of that.
+
+We work on two layers: certified air-quality sensors that people run in their own rooms, and city-level weather across 90 countries and 167 cities, where each value is a consensus across eleven weather feeds rather than a single reading. Every input is fingerprinted to a public ledger before it goes anywhere.
+
+Good to be connected.
+```
+
+**운영 서비스 제안을 받으면 (EN, 107자)**
+```
+Thanks for reaching out, Daria. I'll keep it in mind as our community grows, and it's good to be connected.
+```
