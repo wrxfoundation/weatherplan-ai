@@ -183,3 +183,14 @@ It's been a long day: our booth in the Grand Salon, our keynote on the Weather D
 
 Thank you to everyone who stopped by, and to the team behind XRP SEOUL 2026 for putting it all together.
 ```
+
+## 10/7 — USDT 로 받은 참여사 분담금 인보이스 양식 (서우 「웰비안랩스가 남산타워 광고 송출 비용을 USDT 로 받았는데 인보이스는 필요」)
+
+- **양식**: `content/invoice-template-namsan-1003.docx`(A4 한 장, 영문) · 생성 스크립트 `invoice-template-namsan-1003.build.js`. 대괄호 칸만 채운다 —
+  금액 · 지갑 주소 · 트랜잭션 해시 · 상대 법인 정보는 저장소에 적지 않는다.
+- **실제 흐름이 9/29 권장안과 다르다**: 권장은 「케이웨더 단일 계약 · 법인 계좌 · 가상자산 수취 0」이었고, 실제는 **웰비안랩스가 USDT 로 받았다.**
+  그래서 아래를 남긴다 — ① 참여사마다 인보이스 1장(번호 연번) ② 각 장에 네트워크 · 받은 지갑 · 트랜잭션 해시 · 받은 시각(UTC) ③ 받은 시점의 원화 · 달러
+  환산값과 환율 출처(회계용) ④ 세금 처리 칸은 세무사 확인 뒤.
+- **케이웨더와의 정산**: YTN 비용을 케이웨더가 냈다면, 분담금은 웰비안랩스에 들어왔으니 **특수관계자 거래**다 — 9/29 안 6번대로 비용 분담 약정서 · 양사 내부 승인 ·
+  청구서로 행사 비용 정산표에 한 줄씩 남긴다(누가 얼마를 내고 받았는지).
+- 작성 순서: 번호 → 청구처 → 금액 → 받은 내역(익스플로러에서 해시 확인) → 환산값 → 서명 → PDF 로 저장해 발송.
