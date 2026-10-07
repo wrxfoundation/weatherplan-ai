@@ -4127,3 +4127,26 @@ I'd like to send you one from our first US shipment to try at home — no string
 
 Where should I send it?
 ```
+
+**10/7 — 서우가 B 로 가기로 · 사브리나(XRP Asia) 기기 인증 글을 녹여 달라** → **이름 없이 녹였다(권장).**
+- 사브리나 타치지안 = 리플 XRPL 생태계 성장(싱가포르) · XRP Asia = 리플이 2026-02 공개한 아태 XRPL 빌더 허브(`business-directions.md` 10/2 · 연사 지도).
+  가격 목표 계정(555K)에 그 이름을 주면 「리플 XRP Asia 도 쓰는 기기」로 퍼질 수 있다 — 핵심 금지(리플은 RLUSD 발행사 · XRPL 기여자로만 · 협력 표현 0 ·
+  리플의 이름 주의 요청)와 10/2 에 이어진 리플 생태계 팀 관계를 함께 건드린다. 그의 글은 공개돼 있어도, 판매 · 증정 DM 의 근거로 쓰는 것은 다른 일이다.
+- 그래서 「XRP SEOUL 2026 에서 만난 분 한 명이 이미 설치해 X 에 올렸다」로. 그가 「누구냐」고 물으면 그때 공개 글 링크만 — 이름을 넣으려면 **사브리나에게 먼저 한 줄 허락**
+  (「크리에이터 한 분께 당신 글을 소개해도 될까요」).
+- 「XRP Asia 디렉터」 직함은 확인되지 않았다(9/29 사실 점검 — 행사 표기는 「사장」, 인물 DB 는 리플 생태계 성장) → 이름을 넣더라도 직함 없이 「Sabrina from XRP Asia」.
+
+**B — 기기 제안 + 현장 인증 한 줄 (이름 없음 · 권장, EN, 783자)**
+```
+Hi John — Seowoo here, Head of Relations & Partnerships at wellbian.
+
+Thank you for the interest in XRP SEOUL 2026, the N Seoul Tower lighting and wellbian. It means a lot to see it reach the XRP community on the other side of the world.
+
+Our device is where everything we're building on XRPL starts: an air-quality sensor people run in their own rooms, with KWeather as our device partner and every reading fingerprinted to the XRP Ledger. It's a physical thing, which is still rare on XRPL, and one of the people we met at XRP SEOUL 2026 has already set one up and shared it on X.
+
+I'd like to send you one from our first US shipment to try at home — no strings, no brief, nothing you have to post. If you ever do mention it, I'd ask you to say we sent it.
+
+Where should I send it?
+```
+
+이름을 넣는 판 (사브리나 허락 뒤에만, 762자) — 위 문장의 「one of the people we met at XRP SEOUL 2026」 → 「Sabrina from XRP Asia」.
