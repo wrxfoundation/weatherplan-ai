@@ -265,13 +265,16 @@ export default function LoginPage() {
                       </p>
                     )}
                     <MemberLogin key={memberId} area="user" callbackUrl={callbackUrl} defaultId={memberId} />
+                    {/* 문장 속 작은 링크 대신 누르기 쉬운 단추로 — 어르신 · 보호자 입구다 (터치 타깃 24px 이상) */}
                     <p className="mt-3 text-[12px] leading-[1.7] text-muted">
-                      어르신 · 보호자 아이디로 들어옵니다. 아직 없으면{" "}
-                      <Link href="/join" className="font-bold text-navy underline underline-offset-2">
-                        회원가입
-                      </Link>
-                      (담당 케어센터에서 받은 가입 코드가 필요합니다).
+                      어르신 · 보호자 아이디로 들어옵니다. 아직 아이디가 없으면 담당 케어센터에서 받은 가입 코드로 가입하세요.
                     </p>
+                    <Link
+                      href="/join"
+                      className="btn-press mt-2 flex min-h-[44px] w-full items-center justify-center rounded-xl border border-navy/20 text-[14px] font-bold text-navy"
+                    >
+                      회원가입 (가입 코드 필요)
+                    </Link>
                   </div>
                 ) : TEST_LOGIN ? (
                   <form onSubmit={submit} className="mt-5">
