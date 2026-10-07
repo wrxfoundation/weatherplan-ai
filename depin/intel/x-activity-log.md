@@ -4201,3 +4201,53 @@ Sounds good, John. To be transparent, this would be one of our first creator par
 
 Could you put together a trial package with the content structure, timing and pricing, plus a few recent reach and engagement numbers? Those would help me with the internal case. And since it would be a paid partnership, the posts would need to be clearly marked as such.
 ```
+
+## James 소개 구매자 — 「도울 일 있냐」 + 코드를 James 처럼 줄지 (10/7 16:34, 서우 캡처)
+
+- **받은 DM**(10/6 인포그래픽 구매자 · 같은 스레드): 「도울 일이 있을까? X 의 XRP 커뮤니티에서 꽤 알려져 있다 · 올해 XRP Las Vegas 에 가서 만난 사람들이 지금 X 친구들」.
+  어제 그는 「Weather Data Token Generator 를 알리겠다」고 했다(10/6 절). 계정명은 적지 않는다(고객).
+  이 스레드에는 10/6 19:45 뒤 굿즈 이야기가 없다 → 10/7 굿즈 문의 DM 은 James 쪽으로 보인다(서우 확인).
+- **서우 질문**: 「이미 기기를 산 분 · 도와준다니 감사 — 레퍼럴 코드를 James 처럼 동일하게 줘야 하나」.
+- **판정 — 준다면 James 와 똑같은 조건으로만. 먼저 내밀지 말고 「원하시면」으로 열어 둔다.**
+  ① **같은 조건** — 둘은 친구이고 James 의 코드로 산 사람이라 조건이 바로 비교된다. 다르면 둘 중 한 관계가 상한다.
+     구매 고객 추천인(James · 이 구매자)은 팔로워 수와 관계없이 한 티어 · 유료 크리에이터(John)는 별개 트랙(9/11 근거 ① · 10/7 상한 행).
+     ⚠ James 코드 조건은 「9/11 정본보다 높게 나감 — 서우 확인 대기」(celeb-ladder) — 그 조건이 이 티어의 기준이 된다. 숫자는 저장소에 적지 않는다.
+  ② **코드를 주는 순간 그의 글은 우리 광고가 된다** — 코드 없는 글은 그의 말이라 참견하지 않지만(playbook 「고객이 만든 홍보물」 10/6),
+     코드가 붙은 글은 이해관계(FTC)라 글마다 광고 표시가 필요하고, 그 글의 주장(「Token Generator」 · earn)에 우리 책임이 생긴다 →
+     코드를 받을 때 두 줄(광고 표시 · 보상은 테스트 중 — 수익 · 가격 0)을 함께 준다(playbook 「고객이 만든 홍보물」 4 · 9/11 「수락하는 답장에서 광고 표시」).
+  ③ **코드 없는 지금 목소리가 더 세다** — 고객이 스스로 하는 말은 #ad 가 없어 더 믿긴다(Eri 모델). 그래서 답은 「가장 큰 도움 = 지금처럼 자기 말로 ·
+     기기가 오면 실제 집 공기」를 먼저, 코드는 선택지로 뒤에. 고를 권리를 그에게 준다.
+  ④ **미국 출고 전** — 그의 기기도 아직 안 나갔다. 코드로 미국 주문이 늘면 기다리는 사람이 는다 → 코드를 받으면 「미국 출고 전」 고지 한 줄(John 절 ⑤와 같은 선).
+     코드는 소스별 귀속이 남아 「미국 추이를 본 뒤」(굿즈 결정)의 측정 도구도 된다.
+  ⑤ **코드 주기 전 1분 확인** — 그의 고정 글 · 최근 글이 가격 목표(「XRP $○○」) 증폭이면 코드 = 가격 글에 우리 이름을 엮는 일(9/26 제외 기준 · John 기기 보류와 같은 사유).
+- 금지: 수익 · 가격 · 「earn」 · 홍보 요청 · 게시 조건 0 · 굿즈 · 증정 약속 0 · 「너에게만 특별히」 0(James 와 같다고 말한다).
+
+**A — 답 (권장, EN, 417자) — 고마움 + 자기 말로 + 코드는 선택지**
+```
+Thank you, that's really generous of you. 🙏
+
+Honestly, the best help is what you're already doing: sharing what you think, in your own words. And once your unit arrives, if you feel like posting what your home's air actually looks like, that will say more than anything we could write ourselves.
+
+If it would be useful, we can also set you up with your own referral code, on the same terms as James. Just let me know.
+```
+
+**B — 코드는 아직 꺼내지 않을 때 (EN, 340자)**
+```
+Thank you, that's really generous of you. 🙏
+
+Honestly, the best help is what you're already doing: sharing what you think, in your own words. And once your unit arrives, if you feel like posting what your home's air actually looks like, that will say more than anything we could write ourselves.
+
+We'll message you here as soon as it ships.
+```
+
+**C — 그가 코드를 원하면 (EN, 575자)** — 코드 · 조건은 James 때처럼 팀 메일로(메일 주소는 저장소 밖).
+```
+Great! What's the best email for you? The team will send your code and the details, the same setup James has.
+
+Two quick things we ask of everyone with a code:
+· Please mark posts that include your code as an ad (#ad or "affiliate link"). It's required in the US and keeps things clear for everyone.
+· Rewards are still in testing, with amounts and value not guaranteed, so please leave earnings and price out of it. What the unit shows about your home's air is the story.
+
+And since US units haven't started shipping yet, it's worth mentioning that to anyone who orders now.
+```
+- James 에게도 C 의 두 줄(광고 표시 · 보상 문구)이 갔는지 확인 — 팀 메일에 없었다면 같은 두 줄을 James 에게도 한 번(같은 조건 · 같은 요청).
