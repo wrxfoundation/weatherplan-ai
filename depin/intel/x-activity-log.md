@@ -4091,3 +4091,39 @@ Quick follow-up on the swag. I talked it over with the team, and realistically, 
 ```
 Thanks so much for the ideas! I talked it over with the team, and realistically, we won't be able to send any swag out just yet.
 ```
+
+## John Squire (@TheCryptoSquire) — 감사 + 기기 체험 DM 판정 (10/7, 서우 캡처 + 「XRP SEOUL · 남산타워 조명 · wellbian 관심에 감사 · 내 직급 · 우리 기기가 XRPL 의 근본 · 보내 줄 테니 써 보라」)
+
+- **누구**(캡처): X 555K · 인증 · 2010 가입 · 「Content Creator」 · 구독 기능 · 바이오 「Digital Assets • Global Markets • The Future of Finance」 · 우리가 팔로우하는 47곳이 그를 팔로우.
+  **고정 글(9/27) = 「DECEMBER 24, 2026 · JAKE CLAVER WAS RIGHT!!! XRP: $750」** — 장기 가격 목표 + Jake Claver 증폭.
+- **기존 기록**: playbook 판단표 「홀더 정서 · 컨빅션 글 — ⚠️ 인프라 문장에만 반응」의 사례가 바로 그다 · 8/23 그의 글에 에너지 효율 답글 1회.
+- **판정 — 기기 제안은 보류, 감사 DM(A)만 권함.**
+  ① 9/26 제외 기준에 걸린다 — Dom Kwok(장기 가격 목표 반복) 제외와 같은 사유이고, 고정 글이 제외 명단의 Jake Claver 를 띄운다. 기기를 보내면 그 고정 글 아래에서 우리 기기가 소개된다.
+  ② 보상이 붙은 기기 + 가격 목표 계정 = 「사면 번다」로 읽히기 쉽다(보상은 테스트 중 · 지급량 · 가치 비보장). 무상 제공은 이해관계라 그의 글에 대한 책임이 우리에게도 생긴다(FTC).
+  ③ 미국 배송 · 전파 인증(FCC) · 증정분 배정이 아직이다 — Kenny ②(10/6)와 같다. 오늘 굿즈 답에서도 「미국은 막 시작 · 상황을 본 뒤」라고 했다.
+- **문안 원칙**: 「XRPL 의 근본」은 그대로 쓰지 않는다(「XRPL 의 기반」은 과장 — 최대 · 유일류, XRPL 쪽 사람들이 반박한다) → 「XRPL 에서 우리가 짓는 것의 출발점」.
+  「certified」는 뺐다 — 미국 독자에게는 미국 인증(FCC)으로 읽힐 수 있는데 기록상 KC 까지다. 직함은 링크드인 · 메일과 같은 「Head of Relations & Partnerships」.
+  **@wellbianlabs 공식 계정에서** 보낸다(Kenny 판정과 같은 이유 — 사칭 경고를 걸어 둔 계정). 토큰 · 보상 · 가격 · 판매 0 · 리플 0 · 리뷰 요청 0.
+- **B 를 보내게 되면**: 출고 때 짧은 안내를 같이 — 우리가 보냈다고 밝혀 달라 · 보상은 테스트 중이라 수익으로 소개하지 말아 달라(무상 제공 = 이해관계, FTC).
+
+**A — 감사 DM (권장, EN, 393자)**
+```
+Hi John — Seowoo here, Head of Relations & Partnerships at wellbian.
+
+Thank you for the interest in XRP SEOUL 2026, the N Seoul Tower lighting and wellbian. It means a lot to see it reach the XRP community on the other side of the world.
+
+We make a home air-quality sensor, with KWeather as our device partner, and every reading is fingerprinted to the XRP Ledger. Glad you're following along.
+```
+
+**B — 기기 체험 제안 (서우가 그래도 보내기로 하면 · ③이 선 뒤, EN, 693자)**
+```
+Hi John — Seowoo here, Head of Relations & Partnerships at wellbian.
+
+Thank you for the interest in XRP SEOUL 2026, the N Seoul Tower lighting and wellbian. It means a lot to see it reach the XRP community on the other side of the world.
+
+Our device is where everything we're building on XRPL starts: an air-quality sensor people run in their own rooms, with KWeather as our device partner and every reading fingerprinted to the XRP Ledger. It's a physical thing, which is still rare on XRPL.
+
+I'd like to send you one from our first US shipment to try at home — no strings, no brief, nothing you have to post. If you ever do mention it, I'd ask you to say we sent it.
+
+Where should I send it?
+```
