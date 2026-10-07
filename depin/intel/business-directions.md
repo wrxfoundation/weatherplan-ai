@@ -2676,3 +2676,26 @@ On our side, we're ready to get into it. We already publish city-level weather f
 
 Before the call, it would be good to go a bit deeper on how we could work together: which cities and types of weather markets you'd want to start with, and how resolution works on your side. I'll share the docs here shortly so everyone can take a look.
 ```
+
+## Limitless 연동 · BD 두 사람 — Clyde Carver · Henrich Tauber 역할과 콜 준비 (2026-10-07, 서우 링크드인 캡처 2장)
+
+- **Clyde Carver** — Limitless Labs **DevRel Engineer**(2026-03~, 재택 · 헤드라인 「Agentic Engineering & Prediction Markets」). 거래소에 붙는 제3자
+  (마켓메이커 · 커스터디 · iGaming · 에이전트 빌더)의 **기술 창구** — 공개 문서(LLM 용 MCP 엔드포인트) · 공식 SDK 넷(TS · Python · Go · Rust) · 파트너 연동
+  범위 잡기 · API 매핑 · 기관 마켓메이커 인프라 세션 · API 변경 공지 절차. 에이전트 매매 프레임워크를 오픈소스로 냈다. 기술: REST · WebSocket · EIP-712 · CLOB.
+- **Henrich Tauber** — Limitless Labs **Head of Business Development**(2026-03~ · 2025-12 첫 B2B 전담으로 입사해 파트너십 조직을 처음부터 세움) ·
+  전 Magic Square Head of Sales(2024~2025 — 직접 300+ 건 계약). **딜 주인**(B2B · 엔터프라이즈 파트너십 · GTM).
+- 둘 다 2026-03 현 직책 — 조직이 젊고 파트너를 빠르게 늘리는 중(Clyde 「39+ 파트너 연동」). 거래량 자기 표기가 서로 다르다(헤드라인마다 다름) → 우리 자료에 인용 0.
+- **콜 구도**: Daria(한국 · 일본 성장 — 관계 주인) · Henrich(상업 조건) · Clyde(연동 실무). 우리 쪽 리드 이창민 본부장 · 서우 진행 · 가드.
+  - Henrich 가 물을 것: 무엇을 주고 무엇을 원하나 · 상업 모델(라이선스 / 거래량 연동) · 공동 마케팅. → 첫 콜에서 가격 · 배분 · 독점 · 기간 0(9/18 크립토닷컴 결),
+    그쪽 표준 파트너 모델을 먼저 듣는다. 우리가 낼 것 = 한국 밖 도시 몇 곳 · 시장 종류 하나로 좁힌 시범 윤곽.
+  - Clyde 가 물을 것: 지금 시장을 어떻게 정산하나(누가 결과를 올리나 · 분쟁 창) · 받는 형식(API 당겨 가기 / 밀어 주기 · 서명된 값 · 체인 위 피드) · 정산 시각 ·
+    반올림 · 늦게 들어온 값 처리 · 장애 시 대체 · 과거 데이터(백테스트). → 우리 답의 재료 = 도시 값 계산 방법 · 정산 시각 · 수정 정책 · 공개 기록 확인 절차 · 샘플 응답.
+    체인 위 피드를 Base 에 달라고 하면 그 자리에서 약속 0(멀티체인 결정은 내부).
+- **새로 짚을 선**
+  ① **정산원과 트레이더용 데이터를 같이 팔 때** — 정산값은 모두에게 같은 시각 공개, 사전 접근 판매 0(정산 무결성 · 마켓메이커를 다루는 Clyde 가 먼저 볼 지점).
+  ② Daria 의 「정책 입안자들과 얘기했다」 — **어느 나라 정책 쪽인지 먼저 확인**. 한국이면 케이웨더(상장사) 이름이 한국 예측시장 정책 논의의 사례로 쓰이지 않게(카운슬 전 0).
+  ③ Daria 담당이 한국 · 일본 — 일본도 도박죄 체계라 일본 도시 · 일본 이용자도 한국과 같은 선으로 법률 확인 전 보류(제안).
+  ④ 창구는 이 그룹 하나 — Clyde · Henrich 에게 따로 DM 0. 링크드인 1촌은 콜 뒤 「콜에서 반가웠다」 메모로.
+- **자료(서우 내부 결정 대기 — 제안)**: Henrich 용 = 덱(10/1 크립토닷컴 덱 구성에서 크립토닷컴 맞춤 부분 뺀 판) · Clyde 용 = 방법론 한 장 + weathermarket.io /docs · /proof
+  (공개 사이트라 공유 부담 낮음 · 실구매 · 테스트넷 검증 단계는 10/1 메일처럼 먼저 고지). **weatherfi.io 는 링크 대신 콜에서 화면 공유** — 7명 그룹의 링크는 돌고,
+  가상 자산 예측시장 데모가 「케이웨더가 예측시장을 운영한다」로 캡처될 수 있다. 데모에 한국 도시 시장이 있으면 콜 전에 가린다.
