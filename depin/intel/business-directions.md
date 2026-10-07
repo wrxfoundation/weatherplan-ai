@@ -2515,3 +2515,22 @@ Good to be connected.
   같은 회사 · 같은 사업 줄에 Vincent 건이 답 대기 중(건너뛰는 모양 · 계열 상한 · 9/28 Stephen 선례), Lynn 인사의 데이터 층이 곧 검토 중인 물건이라
   인사가 병행 제안으로 읽힌다. 그가 먼저 말을 걸면 Lynn 554자(선택 줄 0). co-creation(볼륨 기반) 단계에서 크립토닷컴 두 번째 자리 — 가능하면 Vincent 가 붙이게.
   상세 · 문안 = `content/cryptocom-call-0911.md` 「10/7 — Maria Allott」.
+
+## Neal Kumar (Polymarket, Chief Legal Officer · 뉴욕) — 판정 (2026-10-07, 서우 프로필 캡처 3장 · 3촌)
+
+- **자리**(캡처 기준): Polymarket **Chief Legal Officer**(2025-04~, 뉴욕 · 인증 배지 · 1촌 500+) · Willkie Farr & Gallagher 8년 4개월(Partner 2021-01~2025-04 워싱턴 DC —
+  금융기관 · 트레이딩 회사 · 실수요자 · 협회 대리 · Associate 2017-01~2021-01) · Cadwalader Associate(2012-06~2017-01) · **CFTC 법률고문실 Counsel(2009-06~2012-05)** ·
+  Yonkers 시 법무(2008~2009). King's College London LLM · Pace 로스쿨 JD. 프로필 사진 = ICE × Polymarket 화면. 최근 글(15시간 전): FT 독자 편지
+  「Prediction markets and the wisdom of crowds」(예측시장 비판 칼럼 반박 · 반응 59). 우리 1촌 Edward(칼시 감시팀)가 그를 팔로우.
+- **판정 — 1촌 요청 보류 · 반응 0 · 할 일 0(팔로우만 선택).**
+  ① **폴리마켓 여섯 번째** — 상한(Paul + 기관 메일)은 찼고 인사만 칸도 셋(Shirley 수락 · Malea · Lisa 대기). 같은 뉴욕 경영진에 요청이 또 가면 수가 조급함으로 읽힌다.
+     Malea · Lisa 답 전에 새로 보내지 않는다(playbook 「동시 대화 상한」 3).
+  ② **법무는 딜을 여는 자리가 아니라 닫는 자리** — 정산 출처 제안의 주인은 상장(Nick Rice · Head of Markets), 우리 문은 Paul · 기관 메일. 법무는 계약 단계에서
+     딜 주인이 붙인다(9/28 Stephen Humenik — OG.com CLO 보류와 같은 결).
+  ③ **그가 필요해지는 때는 정해져 있다** — 데이터 계약 전제(카운슬 의견 + 한국 도시 계약 제외 · 한국 거주자 배제 조항, 9/28)를 받아 줄 사람이 법무다.
+     그 조항을 들고 갈 때 딜 주인을 통해 만난다. 지금 1촌은 그때 쓸 첫인상을 미리 쓰는 일.
+  ④ **한국 민감도 · 반응 0** — 폴리마켓은 8/18 한국에서 도박으로 차단(날씨 · 서울 강수량 시장 사유)됐고 그는 폴리마켓 규제 논쟁의 얼굴(FT 편지)이다.
+     케이웨더는 상장사 — FT 글에 좋아요 · 댓글 · 공유 0(Katie Harries 의 FT 편지는 좋아요 재량이었지만, 한국에서 막힌 플랫폼이라 한 단계 더 조인다).
+- 팔로우는 선택 — 미국 예측시장 규제 흐름(전 CFTC 법률고문)을 읽는 정보원. 반응을 남기지 않는 구독이다(그의 팔로워 목록에는 남는다).
+- **다시 볼 때**: Paul · 기관 메일 답이 와 조건 · 계약 이야기로 넘어갈 때(딜 주인이 붙임) · 카운슬 의견이 나왔을 때 · 그가 먼저 연결하면 인사만(예측시장 공통 규칙 —
+  측정기 절반 뺌 · 「eleven weather feeds」 · 「settlement · market」 0 · 플랫폼 · 전 직장 이름 0 · 문장은 Shirley · Malea · Lisa 와 다르게) 후 폴리마켓 US 창구로 잇는다.
