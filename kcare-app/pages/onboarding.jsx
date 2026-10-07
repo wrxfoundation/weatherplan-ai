@@ -78,7 +78,8 @@ function Onboarding() {
   }, [router.query.ref]);
   const salesRef = isRepCode(form.salesRef) ? form.salesRef.trim().toUpperCase() : null;
   // 데모 영업자는 한 명이다 — 코드가 맞으면 이름을 보여 주고, 모르는 코드는 코드만 남긴다
-  const salesRefLabel = salesRef ? (salesRef === SALES_REP.code ? `${SALES_REP.name} (${salesRef})` : salesRef) : null;
+  // 예시 영업자 이름은 데모 · 테스트 가구에서만 붙인다 — 센터 공간은 코드만 (누구 코드인지 지어 붙이지 않는다)
+  const salesRefLabel = salesRef ? (salesRef === SALES_REP.code && !centerNow() ? `${SALES_REP.name} (${salesRef})` : salesRef) : null;
 
   const track = form.track ? trackOf(form.track) : null;
   // 트랙을 고르기 전에도 진행 막대를 그려야 해서 기본 흐름을 빌려 쓴다
@@ -547,7 +548,7 @@ function Onboarding() {
                   />
                   {form.salesRef.trim() && !isRepCode(form.salesRef) && (
                     <p className="mt-1.5 text-[12px] font-bold leading-[1.6] text-amber">
-                      코드 형식은 S-0000 입니다. 받으신 코드를 다시 확인해 주세요.
+                      코드는 S- 로 시작합니다 (예: S-0012 · S-영업자아이디). 받으신 코드를 다시 확인해 주세요.
                     </p>
                   )}
                 </div>

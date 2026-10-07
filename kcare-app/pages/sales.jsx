@@ -11,6 +11,8 @@ import { Card, SectionLabel, Badge } from "../components/ui";
 import Icon from "../components/icons";
 import ModeLink from "../components/ModeLink";
 import { useAppState } from "../lib/state";
+import { useAuth } from "../lib/auth";
+import { inCenter, meAs, people } from "../lib/people";
 import { fmtWon } from "../lib/config";
 import {
   IN_PROGRESS,
@@ -23,6 +25,7 @@ import {
   householdLabel,
   liveLead,
   maskName,
+  memberRepCode,
   monthlyOf,
   referralPath,
   salesSummary,
@@ -40,6 +43,11 @@ const md = (d) => (d ? `${Number(d.slice(5, 7))}/${Number(d.slice(8, 10))}` : nu
 
 function SalesPage() {
   const { state } = useAppState();
+  const { user } = useAuth();
+  // 관제 센터 공간 — 예시 고객 · 예시 실적 없이 내 코드로 들어온 신청만 (2026-10-06 UX 점검)
+  const center = inCenter();
+  const myCode = center && user?.role === "sales" && user?.id ? memberRepCode(user.id) : SALES_REP.code;
+  const myName = meAs(user, "sales");
   const [filter, setFilter] = useState("all");
   const [open, setOpen] = useState(null);
   const [copied, setCopied] = useState(false);
@@ -49,9 +57,10 @@ function SalesPage() {
 
   // 가입 상담에서 내 코드로 들어온 신청이 있으면 맨 위에 붙는다 — 영업 → 가입 상담 연계
   const rows = useMemo(() => {
-    const live = liveLead(state.onboarding);
-    return live ? [live, ...SALES_CUSTOMERS] : SALES_CUSTOMERS;
-  }, [state.onboarding]);
+    const live = liveLead(state.onboarding, myCode);
+    const base = center ? [] : SALES_CUSTOMERS;
+    return live ? [live, ...base] : base;
+  }, [state.onboarding, myCode, center]);
 
   const now = new Date();
   const monthKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
@@ -67,7 +76,7 @@ function SalesPage() {
     })
     .sort((a, b) => (b.live ? 1 : 0) - (a.live ? 1 : 0) || (b.leadAt || "").localeCompare(a.leadAt || ""));
 
-  const link = `${origin}${referralPath()}`;
+  const link = `${origin}${referralPath(myCode)}`;
   const copy = async () => {
     try {
       await navigator.clipboard.writeText(link);
@@ -101,11 +110,11 @@ function SalesPage() {
               <div className="min-w-0">
                 <div className="font-num text-[11px] font-bold tracking-[.18em] text-gold">SALES · 회원 유치</div>
                 <div className="mt-0.5 flex items-center gap-2">
-                  <h1 className="whitespace-nowrap text-[21px] font-black text-navy">{SALES_REP.name} 영업자</h1>
+                  <h1 className="whitespace-nowrap text-[21px] font-black text-navy">{myName} 영업자</h1>
                   <span className="chip-gold shrink-0 rounded-full px-2 py-[3px] text-[10px] font-bold">{SALES_REP.model}</span>
                 </div>
                 <div className="mt-0.5 font-num text-[12px] text-muted">
-                  {SALES_REP.code} · {SALES_REP.branch}
+                  {myCode} · {center ? people().tag : SALES_REP.branch}
                 </div>
               </div>
               <ModeLink className="tap shrink-0 whitespace-nowrap text-[12px] font-bold" />
@@ -213,7 +222,11 @@ function SalesPage() {
                 })}
               </div>
               <div className="mt-2.5 space-y-2">
-                {list.length === 0 && <p className="py-4 text-center text-[13px] text-muted">해당하는 고객이 없습니다.</p>}
+                {list.length === 0 && (
+                  <p className="py-4 text-center text-[13px] leading-[1.7] text-muted">
+                    {rows.length === 0 ? "아직 모집한 고객이 없습니다 — 아래 내 링크를 보내 보세요." : "해당하는 고객이 없습니다."}
+                  </p>
+                )}
                 {list.map((r) => {
                   const st = SALES_STATUS[r.status];
                   const isOpen = open === r.id;
@@ -284,7 +297,7 @@ function SalesPage() {
               </div>
               <p className="mt-2 text-[12.5px] leading-[1.7] text-muted">
                 이 링크로 가입 상담을 신청하면 내 고객으로 집계됩니다. 링크 없이 신청한 고객에게는 추천
-                코드 <b className="font-num text-navy">{SALES_REP.code}</b> 를 알려 주세요.
+                코드 <b className="font-num text-navy">{myCode}</b> 를 알려 주세요.
               </p>
               <div className="mt-2.5 break-all rounded-xl border border-navy/12 bg-white/70 px-3 py-2.5 font-num text-[12.5px] text-navy">
                 {link}
@@ -297,7 +310,7 @@ function SalesPage() {
                   고객에게 공유
                 </button>
               </div>
-              <Link href={referralPath()} className="tap mt-2 flex w-full items-center justify-center text-[12.5px] font-bold text-gold underline underline-offset-2">
+              <Link href={referralPath(myCode)} className="tap mt-2 flex w-full items-center justify-center text-[12.5px] font-bold text-gold underline underline-offset-2">
                 내 링크로 가입 상담 화면 열어 보기
               </Link>
             </Card>

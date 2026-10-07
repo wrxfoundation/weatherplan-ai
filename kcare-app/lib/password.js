@@ -2,9 +2,10 @@
 // 저장 모양: scrypt$N$r$p$소금(base64)$해시(base64) — 나중에 강도를 올려도 예전 해시를 읽을 수 있게 값을 함께 둔다.
 import { randomBytes, scrypt, timingSafeEqual } from "crypto";
 
+// N=2^14 · r=8 · p=5 — OWASP 권장 최소(메모리 16MB 를 쓰는 조합). 예전 p=1 해시도 저장된 값으로 확인한다
 const N = 16384;
 const R = 8;
-const P = 1;
+const P = 5;
 const KEYLEN = 32;
 
 const derive = (pw, salt, n, r, p, len) =>
@@ -35,8 +36,18 @@ export async function verifyPassword(pw, stored) {
 }
 
 export function newJoinCode() {
-  // 헷갈리는 글자(0 O 1 I)는 뺀다
+  // 헷갈리는 글자(0 O 1 I)는 뺀다 · 32자 중 8자리 = 40비트 (256 은 32 로 나누어떨어져 치우침 없음)
   const A = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
-  const b = randomBytes(6);
+  const b = randomBytes(8);
   return Array.from(b, (x) => A[x % A.length]).join("");
+}
+
+// 비밀번호 비교 (센터 관리자 계정용) — 길이 · 내용과 상관없이 같은 시간
+export function sameSecret(input, want) {
+  const a = String(input || "");
+  const b = String(want || "");
+  if (!b) return false;
+  let diff = a.length ^ b.length;
+  for (let i = 0; i < b.length; i++) diff |= b.charCodeAt(i) ^ (i < a.length ? a.charCodeAt(i) : 0);
+  return diff === 0;
 }

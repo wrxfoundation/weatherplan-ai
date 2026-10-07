@@ -2,7 +2,7 @@ import Link from "next/link";
 import Icon from "./icons";
 import { useRouter } from "next/router";
 import { Avatar } from "./ui";
-import { ELDER } from "../lib/mock";
+import { avatarText, elderNameOf } from "../lib/people";
 import { trackOf, honorific } from "../lib/tracks";
 import { useAppState } from "../lib/state";
 import Splash from "./Splash";
@@ -22,7 +22,7 @@ const TABS = [
 export default function FamilyLayout({ children, title, action }) {
   const router = useRouter();
   const { state, dispatch } = useAppState();
-  const elderName = state.onboarding?.elderName || ELDER.name;
+  const elderName = elderNameOf(state.onboarding);
   const role = state.demo.guardianRole || "primary";
   // 정기 케어는 "김순자 님", 나머지 트랙은 "병원 동행 · 이정민" 처럼
   // 무엇으로 쓰고 있는지가 제목에 드러나야 한다.
@@ -69,7 +69,7 @@ export default function FamilyLayout({ children, title, action }) {
               </div>
             </div>
             {/* 성 제외 이름 — 디자인 콘솔 헤더 아바타. 화면이 오른쪽 위 버튼을 주면 그것이 대신 선다. */}
-            {action || <Avatar name={elderName} text={elderName.length >= 3 ? elderName.slice(1) : elderName} size={38} />}
+            {action || <Avatar name={elderName} text={avatarText(elderName)} size={38} />}
           </div>
         </header>
 

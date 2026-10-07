@@ -157,15 +157,24 @@ Vercel 프로젝트 → **Settings → Environment Variables** → Environment �
 
 ### 4-6. 회원가입 · 관제 1/2/3센터 (2026-10-06)
 
-회원가입과 센터별 공간은 **4-2 의 `supabase/schema.sql` 을 한 번 더 Run** 하면 켜진다 (예전에 돌렸어도 새 표 · 칸만
-더해지고 기존 기록은 그대로다). 환경변수는 따로 넣지 않는다 — `NEXTAUTH_SECRET` + Supabase 두 값이 있으면 된다.
+회원가입과 센터별 공간은 **4-2 의 `supabase/schema.sql` 을 한 번 더 Run** 하고, **센터 관리자 비밀번호**를 하나
+넣으면 켜진다 (예전에 돌렸어도 새 표 · 칸만 더해지고 기존 기록은 그대로다).
 
-1. SQL Editor → `supabase/schema.sql` 전체 붙여 넣기 → **Run**
-2. `<운영 주소>/api/status` → `"members":{"ok":true,…}` 이면 준비 끝
-3. 센터 가입 코드 보기 — SQL Editor 에서 `select id, name, join_code from public.centers order by id;`
-   (관제 화면 **계정·권한** 맨 위에도 보이고, 거기서 바꿀 수 있다)
+1. SQL Editor → `supabase/schema.sql` 전체 붙여 넣기 → **Run** (점검 반영본 — 로그인 잠금 · 8자리 가입 코드가 더해졌다)
+2. Vercel 환경변수에 **센터 관리자 비밀번호**를 넣고 **Redeploy**
 
-| 센터 | 관제 아이디 (공용 테스트 비밀번호) | 쓰는 공간 | Table Editor 에서 보기 |
+   | 이름 | 값 |
+   |---|---|
+   | `CENTER_OPS_PASSWORD` | 관제 센터 관리자(`ops1` · `ops2` · `ops3`)가 쓰는 비밀번호 — **20자 이상 무작위**, `BETA_TEST_PASSWORD` 와 **다른 값** |
+   | `CENTER_OPS_PASSWORD_C1` ~ `_C3` | (선택) 센터마다 다르게 하려면. 있으면 그 센터만 이 값을 쓴다 |
+
+   - 센터 관리자는 회원 승인 · 역할 · 정지를 모두 할 수 있으니 테스트 계정 비밀번호와 나눠 둔다.
+     `CENTER_OPS_PASSWORD` 가 없으면 `ops1` ~ `ops3` 은 로그인되지 않는다 (테스트 계정 비밀번호로는 안 들어간다).
+3. `<운영 주소>/api/status` → `"members":{"ok":true,…}` · `"login":{…"centerOps":true}` 이면 준비 끝
+4. 센터 가입 코드 보기 — 관제 화면 **계정·권한** 맨 위 (거기서 바꿀 수 있다).
+   SQL Editor 에서는 `select id, name, join_code from public.centers order by id;`
+
+| 센터 | 센터 관리자 아이디 (`CENTER_OPS_PASSWORD`) | 쓰는 공간 | Table Editor 에서 보기 |
 |---|---|---|---|
 | 관제 1센터 | `ops1` | `HH-C1` | `center1_accounts` · `center1_household` · `center1_activity` · `center1_signups` · `center1_payments` |
 | 관제 2센터 | `ops2` | `HH-C2` | `center2_…` |
@@ -173,11 +182,17 @@ Vercel 프로젝트 → **Settings → Environment Variables** → Environment �
 
 - **가입 입구가 셋**이다 — 이용자(어르신 · 보호자) `/join` · 현장 · 영업(컨시어지 · 영업자) `/partner/join` ·
   관제 관리자 `/ops/join`. 로그인도 `/login` · `/partner/login` · `/ops/login` 으로 나뉜다.
-- **가입 코드가 센터를 정한다.** 관제 화면 **계정·권한 → 가입 링크 복사**로 영역별 링크(코드 포함)를 나눠 준다.
-- 이용자는 가입하면 바로 쓴다. 현장 · 영업 · 관제 가입은 **그 센터 관제가 승인**해야 로그인된다
-  (관제 첫 화면 '지금 처리할 일'에 **가입 승인 대기**).
+- **가입 코드가 센터를 정한다.** 새 코드는 8자리(헷갈리는 글자 뺀 무작위)다. 관제 화면 **계정·권한 → 링크 복사**로
+  영역별 링크(코드 포함)를 나눠 준다. 코드가 밖으로 샜으면 **코드 바꾸기** — 옛 코드는 바로 막히고 가입한 회원은 그대로다.
+- **어느 입구로 가입하든 그 센터 관제가 승인해야 로그인된다** (2026-10-06 점검 — 이용자도). 관제 첫 화면
+  '지금 처리할 일'과 메뉴 **계정·권한** 숫자에 **가입 승인 대기**가 뜬다. 승인 대기가 30명을 넘으면 새 가입을 잠시 받지 않는다.
 - 관제는 같은 화면에서 **역할 부여 · 정지 · 다시 사용**을 한다. 바꾼 것은 `account_audit` 에 남는다.
+  관제 역할을 주고 빼는 일과 관제 회원 정지는 **센터 관리자(ops1~3)만** 한다.
+- 정지 · 역할 변경은 그 사람이 로그인해 있어도 15초 안에 화면이 멈추고 이유와 갈 곳(다시 로그인)이 뜬다.
+- **로그인 잠금** — 같은 아이디로 비밀번호를 5번 틀리면 5분 동안 맞는 비밀번호도 받지 않는다(되풀이되면 최대 60분).
+  풀어 주려면 SQL Editor 에서 `update public.accounts set failed_logins = 0, locked_until = null where id = '아이디';`
 - 센터끼리는 회원 · 기록 · SOS 가 섞이지 않는다. 예전 테스트 계정(`test-…`)과 **테스트 가구 1** 은 그대로 남는다.
+- `/login` 은 **가입한 아이디** 탭이 먼저 열린다. 테스트 계정은 **베타 테스트 계정** 탭(또는 가입한 아이디 탭에 `test-…` 아이디)으로 들어온다.
 - 비밀번호는 암호화(scrypt 해시)해서만 저장한다. 테스트하는 사람에게 **실제 이름 · 연락처를 넣지 말라고** 안내한다.
 - 센터를 처음 상태로: SQL Editor 에서 `delete from public.households where id = 'HH-C1';`
   (회원까지 지우려면 `delete from public.accounts where center_id = 'C1' and password_hash is not null;`)
@@ -223,7 +238,8 @@ Vercel 프로젝트 → **Settings → Environment Variables** → Environment �
 | 증상 | 원인 · 해결 |
 |---|---|
 | 로그인 화면이 '로그인이 아직 설정되지 않았습니다' | 3단계 두 값이 없거나 Redeploy 를 안 했다 |
-| '아이디 또는 비밀번호가 맞지 않습니다' | 아이디 오타(`test-guardian` 등) · `BETA_TEST_PASSWORD` 값 확인 |
+| '아이디 또는 비밀번호가 맞지 않습니다' | 아이디 오타(`test-guardian` 등) · `BETA_TEST_PASSWORD` 값 확인. `ops1` ~ `ops3` 은 `CENTER_OPS_PASSWORD` 값 |
+| '비밀번호를 여러 번 틀려 잠시 잠겼습니다' | 5분 뒤 다시. 바로 풀려면 4-6 의 SQL |
 | '이 기기에만 저장 — 서버 저장 설정 전' | 4단계 두 값이 없거나 Redeploy 를 안 했다 |
 | '서버 저장 오류 (schema-missing)' | 4-2 표 만들기를 안 했다 |
 | 다른 폰에 안 뜬다 | 같은 가구(테스트 계정 셋)인지 · 로그인 화면의 '저장'이 서버인지. 만지고 있으면 4초, 2분 넘게 가만히 두면 10초마다 가져온다 |

@@ -7,9 +7,8 @@ import { Card, SectionLabel, PrimaryButton, GhostButton, Badge, Collapse } from 
 import { STATUS, GUARDIAN_PRESETS, SERVICE_MENU, SERVICE_PLUS, URGENCY, CANCEL_FREE_DAYS, CLOSED, approverOf, cancelRule, fmtPreferred, fmtScheduled, isStoreOrder, isVisitCall, paymentOf } from "../../lib/requests";
 import { fmtWon, PRICING } from "../../lib/config";
 import { useAppState } from "../../lib/state";
-import { LIVE_CONCIERGE } from "../../lib/live-household";
+import { assigneeNow, elderNameOf } from "../../lib/people";
 import { honorific } from "../../lib/tracks";
-import { ELDER } from "../../lib/mock";
 import WelfareList from "../../components/WelfareList";
 import { ASK_GUARDIAN, matchWelfare, profileFor, welfareCounts } from "../../lib/welfare";
 
@@ -44,7 +43,7 @@ export default function RequestsPage() {
 
   // 복지혜택 (2026-09-04 시트 앱 전체 3번) — 관제가 자동 매칭한 것을 보호자가 확인·신청한다.
   // 답(answers)은 관제·컨시어지·어르신 화면이 같이 본다.
-  const honorName = ob?.elderName || ELDER.name;
+  const honorName = elderNameOf(ob);
   const answers = state.welfare?.answers || {};
   const welfareMatches = matchWelfare(profileFor(honorName, answers));
   const welfareN = welfareCounts(welfareMatches);
@@ -61,7 +60,7 @@ export default function RequestsPage() {
         amount: 0,
         preferredDate: null,
         urgency: "normal",
-        assignee: LIVE_CONCIERGE, // 가구 담당 컨시어지가 승인한다 (2026-10-05)
+        assignee: assigneeNow() || "", // 가구 담당 컨시어지가 승인한다 (2026-10-05)
         photos: [],
         status: "requested",
         history: [{ at: Date.now(), status: "requested", note: "보호자 앱 · 복지혜택 신청 도움 요청" }],
@@ -589,7 +588,7 @@ function CreateRequestSheet({ preset, onClose, onCreate, myHospitals = [], isPri
         <div className="mx-auto mb-4 h-[4px] w-[38px] rounded-full bg-navy/15" />
         <div className="text-[19px] font-black text-navy">{preset ? preset.name : "해주세요 요청"}</div>
         <p className="mt-1 text-[12px] leading-[1.6] text-muted">
-          담당 컨시어지({LIVE_CONCIERGE})가 일정을 보고 승인하면 확정됩니다.
+          {assigneeNow() ? `담당 컨시어지(${assigneeNow()})가 일정을 보고 승인하면 확정됩니다.` : "아직 담당 컨시어지가 없습니다 — 센터 관제가 담당을 정하고 승인하면 확정됩니다."}
           {payNow ? " 요청할 때 결제하고, 승인되지 않으면 환불됩니다." : amount === 0 ? " 따로 내실 금액이 없습니다." : " 요금은 컨시어지가 승인하며 알려 드리고, 그 뒤 결제합니다."}
         </p>
         {preset?.priceLabel && (
@@ -728,7 +727,7 @@ function CreateRequestSheet({ preset, onClose, onCreate, myHospitals = [], isPri
                 hospital: hospitalAsk && hospital.trim() ? hospital.trim() : null,
                 urgency,
                 // 가구 담당 컨시어지가 받아 승인한다 — 관제는 바꿀 수 있다 (2026-10-05)
-                assignee: LIVE_CONCIERGE,
+                assignee: assigneeNow() || "",
                 photos: photo ? ["첨부사진.jpg"] : [],
                 status: payNow ? "awaitingPayment" : "requested",
                 history: [

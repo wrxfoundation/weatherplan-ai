@@ -2,7 +2,8 @@
 // 설명형 프로토콜을 실행형 콘솔로: 왼쪽 사건 목록 / 가운데 사건 상세·단계 기록 / 오른쪽 고객·보호자·출동·119.
 // 사건 상태는 lib/ops-sos 의 공유 저장소에 있어 새로고침·메뉴 이동 뒤에도 남는다.
 import { useEffect, useRef, useState } from "react";
-import { Avatar, Btn, Drawer, Empty, Field, Note, Panel, PanelHead, Pill, SevBar, SevPill, StatePill, TONE } from "./ui";
+import { Avatar, Btn, Drawer, Empty, Field, Note, Panel, PanelHead, Pill, SevBar, SevPill, StatePill, TONE, useOperator } from "./ui";
+import { centerNow } from "../../lib/people-store";
 import { useIncidents } from "../../lib/ops-sos";
 import { CUSTOMERS } from "../../lib/ops-health";
 import { fmtClock, fmtElapsed, fmtTime, useNow } from "../../lib/ops-time";
@@ -10,7 +11,8 @@ import IncidentDetail from "./SosCenter/IncidentDetail";
 import SidePanels from "./SosCenter/SidePanels";
 import { stepTitle } from "./SosCenter/helpers";
 
-const ROLE = { controller: "관제사 김태영", viewer: "조회 전용" };
+// 권한 보기 — 관제사 이름은 로그인한 관제 계정 (예시 이름은 데모에서만 · 2026-10-06 누수 점검)
+const ROLE = { controller: "관제사", viewer: "조회 전용" };
 const RE_ALERT = ["30초", "1분", "3분", "끄기"];
 
 function IncidentCard({ inc, now, selected, flash, onSelect }) {
@@ -82,7 +84,9 @@ export default function SosCenter({ focusId }) {
   }, [flash]);
 
   const current = incidents.find((i) => i.id === selected) || (selected === "__none__" ? null : open[0] || null);
-  const avgFirst = "31초";
+  // 평균 1차 응답 — 예시 값. 관제 센터 공간은 아직 모은 기록이 없어 비운다
+  const avgFirst = centerNow() ? "—" : "31초";
+  const operator = String(useOperator()).replace(/\s*\(.*\)$/, "");
 
   return (
     <div className="space-y-4">
@@ -98,7 +102,7 @@ export default function SosCenter({ focusId }) {
             <label htmlFor="sos-role" className="flex items-center gap-1.5">
               권한
               <select id="sos-role" value={role} onChange={(e) => setRole(e.target.value)} className="card-glass rounded-lg px-2 py-1 text-[12px] font-bold text-navy">
-                {Object.entries(ROLE).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
+                {Object.entries(ROLE).map(([k, v]) => <option key={k} value={k}>{k === "controller" ? `${v} ${operator}` : v}</option>)}
               </select>
             </label>
             <button type="button" aria-pressed={sound} onClick={() => setSound(!sound)} className="btn-press btn-inline rounded-full px-2.5 py-1 text-[11px] font-bold" style={{ background: sound ? TONE.ok.bg : TONE.muted.bg, color: sound ? TONE.ok.fg : TONE.muted.fg }}>
@@ -190,7 +194,7 @@ export default function SosCenter({ focusId }) {
             <Btn ghost tone="muted" onClick={() => setManual(false)}>취소</Btn>
             <Btn tone="danger" onClick={() => {
               const c = CUSTOMERS[mName];
-              const id = store.start({ name: mName, age: c?.age ?? null, sev: "danger", value: "수동 등록", threshold: "—", controller: "김태영" }, mCause);
+              const id = store.start({ name: mName, age: c?.age ?? null, sev: "danger", value: "수동 등록", threshold: "—", controller: operator }, mCause);
               setSelected(id);
               setManual(false);
             }}>사건 생성</Btn>

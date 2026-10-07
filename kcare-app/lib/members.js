@@ -25,15 +25,39 @@ export async function setJoinCode(id, code) {
   return data?.[0]?.join_code || null;
 }
 
-// 로그인용 — 비밀번호 해시까지 (로그인 확인에만 쓰고 응답에 싣지 않는다)
+// 로그인용 — 비밀번호 해시 · 잠금까지 (로그인 확인에만 쓰고 응답에 싣지 않는다)
 export async function memberForLogin(loginId) {
   const { data, error, status } = await db()
     .from("accounts")
-    .select(`${MEMBER_COLS}, password_hash`)
+    .select(`${MEMBER_COLS}, password_hash, locked_until`)
     .eq("login_id", loginId)
     .maybeSingle();
   if (error) throw fail(error, status);
   return data;
+}
+
+// 로그인 실패 — 5번 틀리면 잠근다 (supabase/schema.sql kcare_login_failed). 표가 예전 모양이면 조용히 넘어간다
+export async function loginFailed(id) {
+  try {
+    const { error, status } = await db().rpc("kcare_login_failed", { p_id: id });
+    if (error) throw fail(error, status);
+  } catch (e) {
+    console.error("[members] 로그인 실패 기록 안 됨", dbErrorCode(e));
+  }
+}
+export async function loginSucceeded(id) {
+  try {
+    await db().from("accounts").update({ failed_logins: 0, locked_until: null }).eq("id", id).gt("failed_logins", 0);
+  } catch (_) {
+    /* 잠금 칸이 없는 예전 표 — 로그인은 막지 않는다 */
+  }
+}
+
+// 그 센터 승인 대기 수 — 가입 신청이 한꺼번에 쏟아지는 것을 막는다 (pages/api/join.js)
+export async function pendingCount(centerId) {
+  const { count, error, status } = await db().from("accounts").select("id", { count: "exact", head: true }).eq("center_id", centerId).eq("status", "pending");
+  if (error) throw fail(error, status);
+  return count || 0;
 }
 
 // 회원 계정 id 는 아이디 그대로다 (테스트 · 구글 계정 id 와는 모양이 달라 겹치지 않는다 — lib/centers.js checkLoginId)
@@ -98,7 +122,8 @@ export async function activityLine(household, accountId, role, type, summary) {
   }
 }
 
-// 그 센터의 사용 중인 사람 — 화면 이름(어르신 · 보호자 · 컨시어지 · 영업자)에 쓴다. 이름 · 역할만 (연락처는 싣지 않는다)
+// 그 센터의 사용 중인 사람 — 화면 이름(어르신 · 보호자 · 컨시어지 · 영업자)에 쓴다. 이름 · 역할만 (연락처는 싣지 않는다).
+// 관제가 아닌 회원에게는 아이디를 보내지 않고 관제 회원도 빼고 보낸다 (2026-10-06 점검: 로그인 아이디가 다 보였다) — pages/api/household.js
 export async function centerPeople(centerId) {
   const { data, error, status } = await db()
     .from("accounts")
@@ -126,7 +151,8 @@ export async function memberStillValid(user) {
     cache.set(user.id, { at: Date.now(), row });
   }
   if (row.status !== "active") return { ok: false, reason: row.status === "gone" ? "account-removed" : `account-${row.status}` };
-  if (row.role !== user.role || row.center_id !== user.center) return { ok: false, reason: "role-changed" };
+  // 바뀐 역할의 입구(영역)는 본인에게만 알려 준다 — 다시 로그인할 곳으로 바로 보내려고
+  if (row.role !== user.role || row.center_id !== user.center) return { ok: false, reason: "role-changed", area: row.center_id === user.center ? areaOfRole(row.role) : null };
   return { ok: true };
 }
 export const forgetMember = (id) => cache.delete(id);

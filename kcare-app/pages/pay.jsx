@@ -14,6 +14,7 @@ import { Card, SectionLabel, PrimaryButton, Badge } from "../components/ui";
 import Icon from "../components/icons";
 import { useAppState, useSync } from "../lib/state";
 import { useAuth } from "../lib/auth";
+import { meAs } from "../lib/people";
 import { fmtWon, PRICING, HOUSEHOLD } from "../lib/config";
 import {
   PAY_KINDS,
@@ -32,7 +33,8 @@ export default function PayPage() {
   const { state, dispatch } = useAppState();
   const sync = useSync();
   // 데모(테스트 계정이 아닌 시연)에서만 '가상 승인'을 연다 (2026-10-02 결정). 테스트 계정은 실제 토스 테스트 결제로만 끝난다.
-  const demo = !useAuth().user?.household;
+  const authUser = useAuth().user;
+  const demo = !authUser?.household;
   const [demoDone, setDemoDone] = useState(null);
   const { kind = "store", amount, orderName = "K-CARE 결제", ref: refId = "" } = router.query;
   const value = Number(amount) || 0;
@@ -46,7 +48,8 @@ export default function PayPage() {
   const mounted = useRef(false);
 
   const ob = state.onboarding;
-  const buyerName = ob?.elderName ? "김민수" : "김민수"; // 결제자는 보호자 — 데모 고정값
+  // 결제자는 보호자 — 센터 공간은 로그인한 보호자 이름, 데모 · 테스트 가구는 예전 인물 (2026-10-06 점검)
+  const buyerName = meAs(authUser, "guardian");
   const monthly = ob?.household === "couple" ? HOUSEHOLD.monthly : PRICING.subscription.monthly;
 
   // ── 위젯 준비 ──
@@ -142,7 +145,7 @@ export default function PayPage() {
     if (kind === "request" && refId) {
       dispatch({ type: "requestPaid", id: refId, note: `데모 가상 승인 ${fmtWon(value)} (실제 결제 없음)` });
     }
-    if (kind === "store") dispatch({ type: "commitPendingOrder", payload: payment });
+    if (kind === "store") dispatch({ type: "commitPendingOrder", payload: payment, by: buyerName });
     setDemoDone(payment);
   };
 

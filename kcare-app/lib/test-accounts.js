@@ -29,8 +29,9 @@ export const TEST_ACCOUNTS = [
   { id: "test-sales", name: "테스트 영업자", role: "sales", email: "sales@kcare.test", household: "HH-TEST-01" },
 ];
 
-// 관제 센터 관리자 — 센터마다 하나씩 (2026-10-06 "관제 1 2 3 아이디를 만들어서 해당 중심으로"). 같은 공용 비밀번호.
+// 관제 센터 관리자 — 센터마다 하나씩 (2026-10-06 "관제 1 2 3 아이디를 만들어서 해당 중심으로").
 // 각자 자기 센터 공간(HH-C1 …)만 보고, 그 센터에 가입한 회원을 승인 · 역할 부여한다. /ops/login 에서 들어온다.
+// 비밀번호는 테스터 공용 비밀번호가 아니라 따로 둔 CENTER_OPS_PASSWORD(센터별 CENTER_OPS_PASSWORD_C1 …)다 — lib/auth-server.js
 export const CENTER_OPS_ACCOUNTS = [
   { id: "ops1", name: "관제 1센터 관리자", role: "ops", email: "ops1@kcare.test", household: "HH-C1", center: "C1" },
   { id: "ops2", name: "관제 2센터 관리자", role: "ops", email: "ops2@kcare.test", household: "HH-C2", center: "C2" },
@@ -41,11 +42,18 @@ export const ROLE_LABEL = { guardian: "보호자", elder: "어르신", concierge
 export const ROLE_HOME = { guardian: "/family", elder: "/elder", concierge: "/concierge", ops: "/dispatch", sales: "/sales" };
 
 // 아이디나 이메일 어느 쪽으로 적어도 찾는다 (대소문자·앞뒤 공백 무시)
+// 공용 비밀번호를 쓰는 테스트 계정만 — 센터 관리자(ops1~3)는 findCenterOps
 export function findTestAccount(idOrEmail) {
   const v = String(idOrEmail || "").trim().toLowerCase();
   if (!v) return null;
-  return [...TEST_ACCOUNTS, ...CENTER_OPS_ACCOUNTS].find((a) => a.id === v || a.email === v) || null;
+  return TEST_ACCOUNTS.find((a) => a.id === v || a.email === v) || null;
 }
+export function findCenterOps(idOrEmail) {
+  const v = String(idOrEmail || "").trim().toLowerCase();
+  if (!v) return null;
+  return CENTER_OPS_ACCOUNTS.find((a) => a.id === v || a.email === v) || null;
+}
+export const isCenterOwner = (id, centerId) => CENTER_OPS_ACCOUNTS.some((a) => a.id === id && a.center === centerId);
 
 export const householdName = (id) => TEST_HOUSEHOLDS[id]?.name || id || "";
 // 회원(관제 센터 공간)은 그 센터 회원 이름 — lib/people.js 가 받아 둔 목록에서

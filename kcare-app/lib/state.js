@@ -5,11 +5,10 @@ import { INITIAL_EVENTS, INITIAL_REQUESTS, SEED_EVENTS, SEED_ORDERS, SEED_REPORT
 import { PRICING } from "./config";
 import { approverOf, cancelRule, paymentOf, transition } from "./requests";
 import { SEED_VISIT, advance } from "./workflow";
-import { useAuth } from "./auth";
+import { logout, useAuth } from "./auth";
 import { setStorageScope } from "./scope";
 import { cleanMedSlot } from "./meds";
-import { isCenterHousehold } from "./centers";
-import { LIVE_GUARDIAN } from "./live-household";
+import { AREAS, areaOfRole, centerOfHousehold, isCenterHousehold } from "./centers";
 import { applyPeople, peopleFor } from "./people";
 
 // 앱 전역 상태.
@@ -478,7 +477,7 @@ function reducer(state, action) {
       return {
         ...state,
         demo: { ...state.demo, ...p },
-        ops: freshSos ? { ...state.ops, sosDispatched: false, sos119: false, sosAcceptedAt: null, sosAcceptedBy: "" } : state.ops,
+        ops: freshSos ? { ...state.ops, sosDispatched: false, sosDispatchedTo: "", sos119: false, sosAcceptedAt: null, sosAcceptedBy: "" } : state.ops,
       };
     }
     case "elderPatch":
@@ -505,7 +504,7 @@ function reducer(state, action) {
       return {
         ...state,
         demo: { ...state.demo, sos: false },
-        ops: { ...state.ops, sosDispatched: false, sos119: false, sosAcceptedAt: null, sosAcceptedBy: "" },
+        ops: { ...state.ops, sosDispatched: false, sosDispatchedTo: "", sos119: false, sosAcceptedAt: null, sosAcceptedBy: "" },
       };
     // 컨시어지가 급파를 수락했다 — 관제 SOS 대응과 컨시어지 관리에 같은 시각이 뜬다 (한 번만).
     // 전에는 컨시어지 화면 안에서만 기억해서, 새로고침하면 다시 '수락' 버튼이 떴고 관제는 티커로만 알았다.
@@ -647,7 +646,7 @@ function reducer(state, action) {
         pendingOrder: null,
         demo: { ...state.demo, cart: true, safetyCart: [] },
         orders: [
-          { id: `od${key}`, at: now, by: LIVE_GUARDIAN, channel: po.channel, items: po.items, ship: po.ship, status: "preparing", receipt: pay.receiptUrl || null, note: "" },
+          { id: `od${key}`, at: now, by: String(action.by || "보호자"), channel: po.channel, items: po.items, ship: po.ship, status: "preparing", receipt: pay.receiptUrl || null, note: "" },
           ...state.orders,
         ],
         requests: [
@@ -795,6 +794,8 @@ export function AppStateProvider({ children }) {
   const retryRef = useRef(0);
   const lastActiveRef = useRef(Date.now());
   const peopleAtRef = useRef(Date.now());
+  // 관제가 이 아이디를 정지 · 거절 · 역할 변경했다 — 저장 · 확인을 멈춘다 (계속 보내도 401 만 돌아온다 · 2026-10-06 UX 점검)
+  const blockedRef = useRef(false);
 
   // 화면이 쓰는 dispatch — 서버 저장 중이면 동작에 번호를 붙여 모아 두었다가 함께 보낸다.
   // 모은 것은 이 기기에도 적어 둔다 — 보내기 전에 새로고침하거나 끊겨도 잃지 않게.
@@ -820,7 +821,10 @@ export function AppStateProvider({ children }) {
     versionRef.current = 0;
     opsRef.current = [];
     retryRef.current = 0;
+    blockedRef.current = false;
     householdRef.current = household;
+    // 다른 센터 · 계정으로 바뀌면 앞 공간의 회원 이름을 들고 가지 않는다 (2026-10-06 점검)
+    setCenterPeople(null);
     setStorageScope(scope === "demo" ? null : household);
 
     const loadLocal = (key, base, mode, error = null) => {
@@ -868,11 +872,13 @@ export function AppStateProvider({ children }) {
           if (res?.ok && base) saveCache(household, base, versionRef.current);
           if (pendingRef.current.length) setDirty((d) => d + 1);
           const err = res?.ok ? null : body.error || (res ? `http-${res.status}` : "network");
+          if (res?.status === 401 && ACCOUNT_NOTICE[err]) blockedRef.current = true;
           setSync({
             mode: "server",
             status: err ? "error" : "saved",
             savedAt: res?.ok && body.updatedAt ? Date.parse(body.updatedAt) : null,
             error: err,
+            area: body.area || null,
           });
         }
       }
@@ -898,7 +904,7 @@ export function AppStateProvider({ children }) {
   // 서버에 저장 — 버전이 맞을 때만 덮어쓴다. 다른 폰이 먼저 바꿨으면(409) 그 상태 위에 내 동작 중
   // 아직 안 들어간 것만 다시 쌓아서 보낸다. 누른 것만으로 '저장됨'이 되지 않는다 — 서버 응답을 받아야 한다.
   const flush = useCallback(async ({ keepalive = false } = {}) => {
-    if (backendRef.current !== "server" || savingRef.current || pendingRef.current.length === 0) return;
+    if (backendRef.current !== "server" || blockedRef.current || savingRef.current || pendingRef.current.length === 0) return;
     savingRef.current = true;
     const hh = householdRef.current;
     const sent = pendingRef.current.slice();
@@ -947,11 +953,12 @@ export function AppStateProvider({ children }) {
         // 되풀이하지 않고 안내만 띄운다 (로그인하면 다시 읽으면서 모아 둔 것을 보낸다).
         const code = j.error || (res.status === 413 ? "state-too-large" : `http-${res.status}`);
         const permanent = res.status === 401 || res.status === 400 || res.status === 413;
-        throw Object.assign(new Error("save-failed"), { code, permanent });
+        if (res.status === 401 && ACCOUNT_NOTICE[code]) blockedRef.current = true;
+        throw Object.assign(new Error("save-failed"), { code, permanent, area: j.area || null });
       }
     } catch (e) {
       retryRef.current += 1;
-      setSync((s) => ({ ...s, status: "error", error: e.code || "network" }));
+      setSync((s) => ({ ...s, status: "error", error: e.code || "network", area: e.area || null }));
       if (!e.permanent) {
         // 3초 · 6초 · 12초 … 최대 30초 간격으로 다시 보낸다 (동작은 버리지 않는다)
         const wait = Math.min(30000, 3000 * 2 ** (retryRef.current - 1));
@@ -1003,7 +1010,7 @@ export function AppStateProvider({ children }) {
       lastActiveRef.current = Date.now();
     };
     const tick = async (force = false) => {
-      if (stopped || (document.hidden && !keepRef.current) || savingRef.current || pendingRef.current.length) return;
+      if (stopped || blockedRef.current || (document.hidden && !keepRef.current) || savingRef.current || pendingRef.current.length) return;
       const idle = document.hidden || Date.now() - lastActiveRef.current > ACTIVE_WINDOW_MS;
       if (!force && idle && Date.now() - lastPoll < POLL_IDLE_MS) return;
       lastPoll = Date.now();
@@ -1021,7 +1028,11 @@ export function AppStateProvider({ children }) {
         }
         if (stopped || versionRef.current !== askedAt) return;
         if (!res.ok) {
-          if (res.status === 401) setSync((s) => ({ ...s, status: "error", error: "login-required" }));
+          // 관제가 정지 · 역할 변경한 회원은 그 이유를 그대로 (account-suspended · role-changed …)
+          if (res.status === 401) {
+            if (ACCOUNT_NOTICE[j.error]) blockedRef.current = true;
+            setSync((s) => ({ ...s, status: "error", error: j.error || "login-required", area: j.area || null }));
+          }
           return;
         }
         if (savingRef.current || pendingRef.current.length) return;
@@ -1069,7 +1080,7 @@ export function AppStateProvider({ children }) {
         {ready ? (
           <>
             {children}
-            <SyncNotice sync={sync} />
+            <SyncNotice sync={syncValue} />
           </>
         ) : (
           <div className="min-h-screen bg-nav" />
@@ -1081,9 +1092,45 @@ export function AppStateProvider({ children }) {
 
 // 저장이 안 되고 있을 때 어느 화면에서든 보이는 안내 — 누른 것이 서버에 안 들어가는 걸 모르고
 // 테스트를 이어 가지 않게. 빨강은 위험 신호 전용이라 주황(amber)으로.
+// 관제가 회원을 정지 · 거절 · 역할 변경했을 때 — 화면 전체를 막고 갈 곳 하나만 준다 (2026-10-06 UX 점검:
+// 전에는 '로그인이 만료됐어요' 띠만 떠서 로그인 화면과 앱 사이를 맴돌았고, 누른 것은 조용히 저장되지 않았다)
+const ACCOUNT_NOTICE = {
+  "account-suspended": { title: "이 아이디는 사용이 멈춰졌습니다", body: (c) => `${c} 관제가 이 아이디의 사용을 멈췄습니다. 지금부터 누른 것은 저장되지 않습니다. 센터 관제에 문의해 주세요.` },
+  "account-rejected": { title: "쓸 수 없는 아이디입니다", body: (c) => `${c} 관제가 이 가입을 받지 않았습니다. 센터 관제에 문의해 주세요.` },
+  "account-removed": { title: "아이디를 찾을 수 없습니다", body: (c) => `${c}에 이 아이디가 없습니다. 센터 관제에 문의해 주세요.` },
+  "account-pending": { title: "관제 승인을 기다리는 아이디입니다", body: (c) => `${c} 관제가 승인하면 다시 로그인해 주세요.` },
+  "role-changed": { title: "관제가 역할을 바꿨습니다", body: () => "다시 로그인하면 바뀐 역할의 화면으로 들어갑니다. 지금 화면에서 누른 것은 저장되지 않습니다." },
+};
+
 function SyncNotice({ sync }) {
+  const { user } = useAuth();
   if (sync.mode !== "server" || sync.status !== "error") return null;
   const here = typeof window !== "undefined" ? window.location.pathname + window.location.search : "/";
+  const loginAt = AREAS[areaOfRole(user?.role)]?.login || "/login";
+  const notice = ACCOUNT_NOTICE[sync.error];
+  if (notice) {
+    const centerName = centerOfHousehold(sync.household)?.name || "센터";
+    // 역할이 바뀌면 바뀐 역할의 입구로 — 아이디를 채워서 보낸다
+    const area = sync.error === "role-changed" ? AREAS[sync.area] : null;
+    const idq = user?.id ? `&id=${encodeURIComponent(user.id)}` : "";
+    const go = area ? `${area.login}?tab=member${idq}` : `${loginAt}?tab=member${idq}`;
+    return (
+      <div className="fixed inset-0 z-[90] flex items-center justify-center bg-[rgba(8,23,45,.6)] p-4">
+        <div role="alertdialog" aria-modal="true" aria-labelledby="acct-block-title" className="w-full max-w-[400px] rounded-[22px] bg-white p-6 shadow-xl" style={{ borderTop: "6px solid #B08D57" }}>
+          <h2 id="acct-block-title" className="text-[19px] font-black leading-[1.4] text-navy">{notice.title}</h2>
+          <p className="mt-2 text-[15px] leading-[1.7] text-ink">{notice.body(centerName)}</p>
+          <button
+            type="button"
+            autoFocus
+            onClick={() => logout(go)}
+            className="btn-press mt-5 w-full rounded-xl bg-navy py-3.5 text-[16px] font-bold text-white"
+          >
+            {area ? `${area.label} 로그인으로 다시 들어가기` : "로그아웃"}
+          </button>
+        </div>
+      </div>
+    );
+  }
   const text =
     sync.error === "login-required"
       ? "로그인이 만료됐어요. 다시 로그인하면 모아 둔 것을 이어서 저장합니다."
@@ -1103,7 +1150,7 @@ function SyncNotice({ sync }) {
       <span aria-hidden className="h-[7px] w-[7px] shrink-0 animate-pulse rounded-full bg-amber" />
       <span>{text}</span>
       {sync.error === "login-required" && (
-        <a href={`/login?callbackUrl=${encodeURIComponent(here)}`} className="tap shrink-0 underline underline-offset-2">
+        <a href={`${loginAt}?callbackUrl=${encodeURIComponent(here)}`} className="tap shrink-0 underline underline-offset-2">
           로그인
         </a>
       )}
@@ -1124,6 +1171,7 @@ export function useSync() {
 export function storageText(sync) {
   if (sync.mode === "server") {
     if (sync.status === "error") {
+      if (ACCOUNT_NOTICE[sync.error]) return `저장 멈춤 — ${ACCOUNT_NOTICE[sync.error].title}`;
       return sync.error === "login-required"
         ? "로그인이 만료됐습니다 — 다시 로그인하면 이어서 저장됩니다"
         : "서버 저장 재시도 중 — 연결을 확인해 주세요";

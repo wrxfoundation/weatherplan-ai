@@ -29,7 +29,8 @@ export default function Visits({ openProfile }) {
   const liveOn = !!useAuth().user?.household;
   // 관제 센터 공간 — 예시 방문 대신 그 센터 어르신 방문 한 줄 (2026-10-06)
   const center = centerNow();
-  const visits = center ? [liveVisit({ ...visitDetail(liveVisitBase()), date: TODAY }, appState)] : liveOn ? baseVisits.map((v) => liveVisit(v, appState)) : baseVisits;
+  // 센터 공간의 방문 줄 — 예시 줄의 '보호자 통보 완료' · 다음 방문일을 물려받지 않는다 (2026-10-06 누수 점검)
+  const visits = center ? [liveVisit({ ...visitDetail(liveVisitBase()), date: TODAY, notified: false, confirmed: false, nextDate: "—" }, appState)] : liveOn ? baseVisits.map((v) => liveVisit(v, appState)) : baseVisits;
   const [sel, setSel] = useState(LIVE_VISIT_ID);
   const [q, setQ] = useState("");
   const [date, setDate] = useState(TODAY);

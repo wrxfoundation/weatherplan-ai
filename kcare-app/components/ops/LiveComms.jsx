@@ -10,6 +10,8 @@ import { useAppState } from "../../lib/state";
 import { STATUS } from "../../lib/requests";
 import { ELDER } from "../../lib/mock";
 import { LIVE_CONCIERGE, LIVE_TAG } from "../../lib/live-household";
+import { centerNow } from "../../lib/people-store";
+import { people } from "../../lib/people";
 
 const KST = 9 * 3600 * 1000;
 const day = (t) => new Date(t + KST).toISOString().slice(0, 10);
@@ -22,7 +24,7 @@ function rowsOf(state) {
   const guardianHeard = state.guardian?.voiceHeard || {};
   const voices = (state.voices || []).map((v) => {
     const toElder = v.to === ELDER.name || v.to === `${ELDER.name} 님`;
-    const toGuardian = v.to === "아들 민수" || v.to === "가족 모두";
+    const toGuardian = v.to === "아들 민수" || v.to === "가족 모두" || (centerNow() && people().guardians.includes(v.to));
     return {
       id: `v-${v.id}`,
       at: v.at,

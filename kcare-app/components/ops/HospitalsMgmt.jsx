@@ -2,6 +2,8 @@
 // 편집 결과는 localStorage(kcare-ops-hospitals-v1)에 남기고, 수정은 덮어쓰지 않고 변경 이력을 쌓는다.
 // 실제 주소·전화는 지어내지 않는다 — 공개 대표정보를 확인한 곳만 적고 나머지는 "확인 중".
 import { scopedKey } from "../../lib/scope";
+import { centerNow } from "../../lib/people-store";
+import { LIVE_ELDER } from "../../lib/ops-health";
 import { useEffect, useMemo, useState } from "react";
 import Icon from "../icons";
 import { Panel, PanelHead, Stat, Pill, Btn, Tabs, Table, KV, Field, Drawer, Confirm, Note, Empty, Stamp, useOperator } from "./ui";
@@ -16,9 +18,13 @@ const pendingCount = (h) => CHECK_KEYS.filter((k) => String(h[k]).startsWith("�
 const blank = () => ({ name: "", dept: "", partner: "제휴", er: "확인 중", address: "확인 중", phone: "확인 중", hours: "확인 중", travel: "확인 중", parking: "확인 중", wheelchair: "확인 중", reception: "확인 중", guardianNeeded: "확인 중", caution: "", bookingStatus: "—", bookingNext: "", mainFor: [] });
 const toForm = (h) => ({ ...blank(), ...h, partner: h.partner ? "제휴" : "비제휴", bookingStatus: h.booking?.status || "—", bookingNext: h.booking?.next || "", mainFor: [...(h.mainFor || [])] });
 
+const centerSeed = () =>
+  HOSPITALS_SEED.filter((h) => h.partner).map((h) => ({ ...h, mainFor: [], booking: { status: "—", next: "" }, escorts: [], travel: "확인 중" }));
+
 export default function HospitalsMgmt() {
   const OPERATOR = useOperator();
-  const [list, setList] = useState(HOSPITALS_SEED);
+  // 관제 센터 공간 — 제휴 병원 명부만. 예시 고객의 주 이용 병원 · 예약 · 동행 이력 · 자택 이동시간은 붙이지 않는다 (2026-10-06 누수 점검)
+  const [list, setList] = useState(() => (centerNow() ? centerSeed() : HOSPITALS_SEED));
   const [removed, setRemoved] = useState([]);
   const [loaded, setLoaded] = useState(false);
   const [selId, setSelId] = useState(HOSPITALS_SEED[0]?.id || null);
@@ -30,7 +36,7 @@ export default function HospitalsMgmt() {
   const [statF, setStatF] = useState("");
   const [form, setForm] = useState(null); // { mode: 'add'|'edit', id?, values }
   const [del, setDel] = useState(null);
-  const [sosElder, setSosElder] = useState("김순자");
+  const [sosElder, setSosElder] = useState(() => (centerNow() ? LIVE_ELDER : "김순자"));
 
   useEffect(() => {
     try {
@@ -227,7 +233,7 @@ export default function HospitalsMgmt() {
       </div>
 
       <Panel>
-        <PanelHead title="SOS 상황 병원 표시" sub="고객의 주 이용 병원과 가장 가까운 응급실을 구분해 보여줍니다" right={<div className="w-[150px]"><Field id="hp-sos-elder" label="고객" value={sosElder} onChange={setSosElder} options={ELDER_NAMES} /></div>} />
+        <PanelHead title="SOS 상황 병원 표시" sub="고객의 주 이용 병원과 가장 가까운 응급실을 구분해 보여줍니다" right={<div className="w-[150px]"><Field id="hp-sos-elder" label="고객" value={sosElder} onChange={setSosElder} options={centerNow() ? [LIVE_ELDER] : ELDER_NAMES} /></div>} />
         <div className="mt-3 grid gap-3 md:grid-cols-2">
           <div className="rounded-xl p-3" style={{ background: "rgba(59,92,138,.08)" }}>
             <div className="flex items-center gap-1.5 text-[12px] font-bold" style={{ color: "#3B5C8A" }}><Icon name="hospital" size={14} /> 주 이용 병원 · {sosElder}</div>

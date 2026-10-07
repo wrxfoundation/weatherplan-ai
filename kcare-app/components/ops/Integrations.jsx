@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import Icon from "../icons";
 import { Panel, PanelHead, Stat, Pill, Btn, Table, KV, Note, Stamp, Empty } from "./ui";
 import { fmtDT, fmtRel } from "../../lib/ops-admin";
+import { centerNow } from "../../lib/people-store";
 import { INTEGRATIONS, INTEG_INCIDENTS, INTEG_STATUS } from "../../lib/ops-admin-sys";
 
 const RANK = { down: 0, delayed: 1, pending: 2, ok: 3 };
@@ -37,7 +38,8 @@ export default function Integrations() {
     <div className="space-y-4">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h2 className="text-[22px] font-bold text-navy">시스템 연동상태</h2>
+          {/* 관제 센터 공간 — 아래 연동 항목 · 장애 이력은 예시다 (예시 고객 이름이 들어 있다 · 2026-10-06 누수 점검) */}
+          <h2 className="text-[22px] font-bold text-navy">시스템 연동상태{centerNow() ? " (운영 설계 예시)" : ""}</h2>
           <p className="mt-0.5 text-[13px] text-muted">건강 · 센서 · 발송 · 결제 · 지도 · 119 연계의 수신 상태와 최근 장애를 한 곳에서 봅니다</p>
         </div>
         <div className="text-[12px] text-muted">상태 판정 주기 5분 · 연동 대기 항목은 수동 절차로 운영</div>

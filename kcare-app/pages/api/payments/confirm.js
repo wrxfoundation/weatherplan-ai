@@ -6,6 +6,7 @@ import { confirmPayment, hasSecret, publicPayment, verifyOrder } from "../../../
 import { authConfigured } from "../../../lib/auth-server";
 import { db, dbConfigured, dbErrorCode } from "../../../lib/db";
 import { authOptions } from "../auth/[...nextauth]";
+import { memberStillValid } from "../../../lib/members";
 
 // 테스트 계정으로 로그인한 결제는 서버(Supabase payments 표)에도 남긴다 — 금액·상태는 토스 응답 기준.
 // 기록이 실패해도 결제 승인 응답은 그대로 돌려준다 (돈은 이미 승인됐다).
@@ -15,6 +16,12 @@ async function record(req, res, p) {
     const session = await getServerSession(req, res, authOptions);
     const user = session?.user;
     if (!user?.household) return;
+    // 관제가 정지 · 역할 변경한 회원의 결제는 가구 기록에 붙이지 않는다 (승인 자체는 토스에서 이미 끝났다 — 로그만)
+    const still = await memberStillValid(user);
+    if (!still.ok) {
+      console.error("[payments] 정지 · 변경된 계정의 결제 기록 건너뜀", still.reason);
+      return;
+    }
     const kind = /^kcare_([a-z]+)_/.exec(p.orderId)?.[1] || null;
     const { error, status } = await db()
       .from("payments")

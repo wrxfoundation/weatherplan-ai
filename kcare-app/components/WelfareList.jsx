@@ -20,6 +20,8 @@ const FILTERS = [
 const FIELD_LABEL = Object.fromEntries(PROFILE_FIELDS.map(([k, l]) => [k, l]));
 FIELD_LABEL.income = "소득(중위소득 %)";
 FIELD_LABEL.housing = "주거형태";
+FIELD_LABEL.age = "나이";
+FIELD_LABEL.region = "사는 곳";
 
 export function VerdictBadge({ verdict, small }) {
   const t = VERDICT_TONE[verdict];

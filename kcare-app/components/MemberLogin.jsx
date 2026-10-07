@@ -14,6 +14,7 @@ const ERR = {
   Suspended: "사용이 정지된 아이디입니다. 센터 관제에 문의해 주세요.",
   ServerDown: "서버 저장에 연결하지 못했습니다. 잠시 뒤 다시 시도해 주세요.",
   NoCenter: "소속 센터를 찾지 못했습니다. 센터 관제에 문의해 주세요.",
+  Locked: "비밀번호를 여러 번 틀려 잠시 잠겼습니다. 몇 분 뒤 다시 시도해 주세요.",
 };
 
 export default function MemberLogin({ area, callbackUrl = "/", idHint, defaultId = "" }) {
@@ -25,7 +26,7 @@ export default function MemberLogin({ area, callbackUrl = "/", idHint, defaultId
   if (!MEMBER_LOGIN) {
     return (
       <p className="rounded-xl bg-paper px-3.5 py-3 text-[13px] leading-[1.7] text-ink">
-        회원 로그인은 서버 저장(Supabase) 연결 뒤에 켜집니다 — 배포 환경변수 NEXTAUTH_SECRET · SUPABASE_URL · SUPABASE_SECRET_KEY (DEPLOY.md).
+        회원 로그인은 서버 저장 연결 뒤에 켜집니다 — 배포 환경변수 NEXTAUTH_SECRET · SUPABASE_URL · SUPABASE_SECRET_KEY (DEPLOY.md).
       </p>
     );
   }
@@ -58,7 +59,7 @@ export default function MemberLogin({ area, callbackUrl = "/", idHint, defaultId
         <div role="alert" className="mb-3 rounded-xl border border-amber/30 bg-[#FFF7E8] px-3.5 py-2.5 text-[13px] font-bold leading-[1.6] text-amber">
           {message}
           {wrong && (
-            <Link href={wrong.login} className="ml-1 underline underline-offset-2">
+            <Link href={`${wrong.login}?tab=member&id=${encodeURIComponent(id.trim())}`} className="ml-1 underline underline-offset-2">
               {wrong.label} 로그인으로
             </Link>
           )}

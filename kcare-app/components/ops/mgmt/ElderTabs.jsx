@@ -5,6 +5,7 @@ import { KV, Pill, Table, Tabs, Stamp, FeedPill, SevPill, Note, Empty, Btn, useO
 import { useAppState } from "../../../lib/state";
 import { healthOf, medSummary } from "../../../lib/meds";
 import { LIVE_ELDER } from "../../../lib/ops-health";
+import { centerNow } from "../../../lib/people-store";
 import { HealthEditor } from "../../HealthInfo";
 import { VISITS, VISIT_STATE, visitPill, sevOf, demoTel, stampNow, OPERATOR } from "../../../lib/ops-mgmt";
 import { HistoryTable } from "./EditLog";
@@ -39,7 +40,8 @@ export default function ElderTabs({ e, tab, onChange }) {
   const shared = e.name === LIVE_ELDER && app?.state ? healthOf(app.state) : null;
   const [memo, setMemo] = useState("");
   const visits = VISITS.filter((v) => v.name === e.name);
-  const past = [{ id: "past-1", when: "08-19 14:00", team: `${e.branch} 팀`, memo: "8월 정기방문 · 21/21 · 검수 완료 · 보호자 열람", status: "done", followup: false }];
+  // 지난 방문 예시 — 관제 센터 공간의 어르신(e.live · 새로 시작)에게는 지어낸 이력을 붙이지 않는다 (2026-10-06 점검)
+  const past = centerNow() ? [] : [{ id: "past-1", when: "08-19 14:00", team: `${e.branch} 팀`, memo: "8월 정기방문 · 21/21 · 검수 완료 · 보호자 열람", status: "done", followup: false }];
 
   switch (tab) {
     case "기본정보":

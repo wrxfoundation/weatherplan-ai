@@ -44,7 +44,7 @@ export async function ensureHousehold(id) {
   if (error) throw Object.assign(error, { status });
 }
 
-const LOGIN_TEXT = { "google-sim": "로그인 · Google (시뮬레이션)", google: "로그인 · Google", member: "로그인 · 회원 아이디" };
+const LOGIN_TEXT = { "google-sim": "로그인 · Google (시뮬레이션)", google: "로그인 · Google", member: "로그인 · 회원 아이디", center: "로그인 · 센터 관리자" };
 
 // 로그인 기록 — 계정 표(마지막 로그인)와 활동 기록(로그인 한 줄). 실패해도 로그인은 막지 않는다.
 export async function recordLogin(user) {

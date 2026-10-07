@@ -6,6 +6,7 @@ import Icon from "../icons";
 import { Panel, PanelHead, Stat, Pill, Btn, Table, KV, Field, Toggle, Drawer, Confirm, Note, Empty, Avatar } from "./ui";
 import { NOW, fmtDT, fmtRel } from "../../lib/ops-admin";
 import { ACCOUNTS_SEED, BRANCHES, PERMS, PERM_MATRIX, ROLES } from "../../lib/ops-admin-sys";
+import { centerNow } from "../../lib/people-store";
 
 const roleLabel = (k) => ROLES.find((r) => r.key === k)?.label || k;
 // 권한은 분류일 뿐 위험이 아니다 — 빨강을 쓰지 않는다
@@ -87,7 +88,8 @@ export default function Accounts() {
     <div className="space-y-4">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h2 className="text-[22px] font-bold text-navy">계정 · 권한관리</h2>
+          {/* 관제 센터 공간 — 위 '회원 · 권한 (실제)'와 헷갈리지 않게 예시임을 제목에 적는다 (2026-10-06 UX 점검) */}
+          <h2 className="text-[22px] font-bold text-navy">계정 · 권한관리{centerNow() ? " (운영 설계 예시)" : ""}</h2>
           <p className="mt-0.5 text-[13px] text-muted">권한 6종과 제한 작업 10종을 매트릭스로 관리하고, 계정의 활성 상태 · 마지막 로그인을 봅니다</p>
         </div>
         <div className="flex flex-wrap items-center gap-3">

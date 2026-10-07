@@ -10,6 +10,7 @@ import {
   CRM_TIMELINE,
   ELDER_TAGS,
   TAG_TONE,
+  elderWho,
 } from "../lib/mock";
 import WelfareList from "../components/WelfareList";
 import { PROFILE_FIELDS, WELFARE_PROFILES, matchWelfare, profileFor, welfareCounts } from "../lib/welfare";
@@ -62,7 +63,7 @@ import { CREW_RULES } from "../lib/dispatch-policy";
 import { TOTAL_ELDERS, liveCustomer } from "../lib/ops-health";
 import { LIVE_CONCIERGE, LIVE_GUARDIAN, LIVE_TAG } from "../lib/live-household";
 import { centerNow } from "../lib/people-store";
-import { elderWho, people } from "../lib/people";
+import { assigneeNow, isPlaceholder, people } from "../lib/people";
 import SosAlertModal from "../components/ops/SosAlertModal";
 import { ringAlarm } from "../lib/alarm";
 import { FLEET } from "../lib/ops-devices";
@@ -346,7 +347,8 @@ function ControlMap({ sos, mode = "light", onSelect, focus, focusKey }) {
       const tileTheme = MAP_TILES[mode] || MAP_TILES.light;
       MAP_DISTRICTS.forEach((d) => add(d.lat, d.lng, d.name, tileTheme.district, 4));
       MAP_HOSPITALS.forEach((h) => add(h.lat, h.lng, `${h.name} · 제휴 병원`, "#B08D57", 7, h.name));
-      mapPeople(sos, mode).forEach((p) => add(p.lat, p.lng, p.label, p.color, 7, p.label.split(" ·")[0]));
+      // 관제 센터 공간 — 예시 인물(어르신 · 컨시어지) 마커를 찍지 않는다. 베타는 실제 위치를 받지 않는다 (2026-10-06 누수 점검)
+      (centerNow() ? [] : mapPeople(sos, mode)).forEach((p) => add(p.lat, p.lng, p.label, p.color, 7, p.label.split(" ·")[0]));
       map.fitBounds(L.latLngBounds(pts), { padding: [26, 26] });
     });
 
@@ -528,7 +530,8 @@ function DispatchConsole() {
   const pp = people();
   const MENU_COUNTS = {
     sos: sosOpen.length,
-    elder: centerNow() ? 1 : TOTAL_ELDERS,
+    // 아직 어르신 회원도 가입 상담 이름도 없으면 0 — '어르신' 자리 이름을 한 명으로 세지 않는다
+    elder: centerNow() ? (isPlaceholder(pp.elder) ? 0 : 1) : TOTAL_ELDERS,
     guardian: centerNow() ? pp.guardians.length : GUARDIAN_STATS.total,
     concierge: centerNow() ? pp.concierges.length : STAFF_STATS.total,
     hospital: HOSPITALS_SEED.filter((h) => h.partner).length,
@@ -583,13 +586,19 @@ function DispatchConsole() {
   const sosAcceptedAt = state.ops.sosAcceptedAt || null;
   // 배너 · 팝업의 '급파 지시' — 가구 기록(ops.sosDispatched)과 SOS 센터 사건의 파견 기록을 같이 남긴다.
   // 전에는 가구 기록만 바뀌어서 SOS 센터 6-5 파견 칸이 비어 있고, 컨시어지 수락 시각이 붙을 자리가 없었다 (2026-10-02).
+  // 센터 공간은 그 센터 컨시어지에게 — 승인된 컨시어지가 없으면 급파하지 않는다 (자리 이름을 담당으로 남기지 않게)
+  const sosTarget = centerNow() ? assigneeNow() : LIVE_CONCIERGE;
   const orderSosDispatch = () => {
     if (sosDispatched) return;
-    dispatch({ type: "opsPatch", patch: { sosDispatched: true } });
-    push("대응", `${LIVE_CONCIERGE} 급파 지시 · 119 연계 대기`, "#FF8A80");
+    if (!sosTarget) {
+      push("대응", "급파할 컨시어지가 없습니다 — 계정·권한에서 컨시어지 가입을 승인하세요 · 119 연계는 바로 할 수 있습니다", "#FF8A80");
+      return;
+    }
+    dispatch({ type: "opsPatch", patch: { sosDispatched: true, sosDispatchedTo: sosTarget } });
+    push("대응", `${sosTarget} 급파 지시 · 119 연계 대기`, "#FF8A80");
     const inc = sosOpen.find((i) => i.customer === ELDER.name);
     if (inc && !inc.steps?.dispatch?.dispatch) {
-      setIncidentStep(inc.id, "dispatch", { result: "done", dispatch: { name: LIVE_CONCIERGE, two: true, orderedAt: Date.now(), acceptedAt: sosAcceptedAt, departedAt: null, arrivedAt: null, actions: "", accompany: false, etaMin: centerNow() ? null : 6, distKm: centerNow() ? null : 1.2 } }, { advance: false });
+      setIncidentStep(inc.id, "dispatch", { result: "done", dispatch: { name: sosTarget, two: !centerNow(), orderedAt: Date.now(), acceptedAt: sosAcceptedAt, departedAt: null, arrivedAt: null, actions: "", accompany: false, etaMin: centerNow() ? null : 6, distKm: centerNow() ? null : 1.2 } }, { advance: false });
     }
   };
   useEffect(() => {
@@ -702,11 +711,16 @@ function DispatchConsole() {
 
   // KPI — 실시간 계산 · 클릭 시 해당 화면으로 점프
   const unmatchedCount = jobs.filter((j) => !j.sup).length;
+  // 관제 센터 공간은 SOS 만 — 진행중 · 배차 · 가동률 · 미매칭은 예시 인력 명부에서 나온 값이다 (2026-10-06 누수 점검)
   const kpis = [
-    { k: "진행중", v: "2", color: "#0A1F3C", tab: "live" },
-    { k: "오늘 배차", v: String(jobs.length), color: "#0A1F3C", tab: "live" },
-    { k: "가동률", v: "82%", color: "#1E7A5A", tab: "plan" },
-    { k: "미매칭", v: String(unmatchedCount), color: unmatchedCount > 0 ? "#C0392B" : "#5C5A54", tab: "pair" },
+    ...(centerNow() ? [] : [{ k: "진행중", v: "2", color: "#0A1F3C", tab: "live" }]),
+    ...(centerNow()
+      ? []
+      : [
+          { k: "오늘 배차", v: String(jobs.length), color: "#0A1F3C", tab: "live" },
+          { k: "가동률", v: "82%", color: "#1E7A5A", tab: "plan" },
+          { k: "미매칭", v: String(unmatchedCount), color: unmatchedCount > 0 ? "#C0392B" : "#5C5A54", tab: "pair" },
+        ]),
     // 진행 중 사건 수 — 긴급 배너·사이드바 배지·SOS 센터와 같은 출처 (lib/ops-sos)
     { k: "SOS", v: String(sosOpen.length), color: sosOpen.length ? "#C0392B" : "#5C5A54", menu: "sos" },
   ];
@@ -727,7 +741,10 @@ function DispatchConsole() {
       title: sosDispatched ? "SOS 대응 중 — 119 연계·해제 판단" : "SOS 급파 지시 필요",
       meta: `경과 ${elapsed} · 목표 60초`, jump: "sos-banner",
     });
-  if (unmatchedCount > 0)
+  // 예시 고객(한복자 · 이영호 · 박말순 · 최정자)의 할 일 — 관제 센터 공간에는 올리지 않는다 (2026-10-06 UX 점검:
+  // 실제 할 일이 예시 사이에 묻히고 '처리 대기 n건'이 예시까지 셌다)
+  const demoQ = !centerNow();
+  if (demoQ && unmatchedCount > 0)
     actions.push({
       id: "unmatch", level: "high", title: "짝 미매칭 — 한복자 (79) 투석 16:20",
       meta: "해소 목표 15:50 · 서다인 재배치안 승인 대기", jumpTab: "pair",
@@ -740,24 +757,24 @@ function DispatchConsole() {
       ticker: ["대응", `NPS 회복 콜 완료 — ${npsWho} · 조치 결과 가족 공유 예정`, "#8FA9CC"],
       clear: { npsDetractor: null },
     });
-  if (assign === "pending")
+  if (demoQ && assign === "pending")
     actions.push({
       id: "assign", level: "high", title: `AI 배정안 ${AI_ASSIGN.length}건 승인 대기`,
       meta: "평균 적합 94% · 목표 10분 내 확정", jump: "ai-assign",
     });
-  if (!handled.fallCall)
+  if (demoQ && !handled.fallCall)
     actions.push({
       id: "fallCall", level: "med", title: "이영호 (81) 경과 관찰 콜",
       meta: "어제 낙상 복합 알림 · 동행 전 컨디션 확인", act: "콜 완료",
       ticker: ["대응", "이영호 경과 관찰 콜 완료 · 컨디션 양호", "#8FA9CC"],
     });
-  if (!handled.battCall)
+  if (demoQ && !handled.battCall)
     actions.push({
       id: "battCall", level: "med", title: "박말순 (83) 워치 무수집 확인 콜",
       meta: "6시간 무수집 · 배터리 원인 분리 후 판단", act: "콜 완료",
       ticker: ["대응", "박말순 배터리 확인 콜 완료 · 충전 안내", "#8FA9CC"],
     });
-  if (!briefed)
+  if (demoQ && !briefed)
     actions.push({
       id: "brief", level: "med", title: "외출 브리핑 3건 발송",
       meta: "최정자 34점 — 일정 조정 권고 포함", jumpTab: "plan",
@@ -814,13 +831,13 @@ function DispatchConsole() {
         onAct: () => dispatch({ type: "ackOpsMessage", id: m.id, by: "관제" }),
       })
     );
-  // 관제 센터 — 현장 · 영업 · 관제 가입 신청 승인 대기 (2026-10-06 회원 · 권한)
+  // 관제 센터 — 가입 신청 승인 대기 (2026-10-06 회원 · 권한 · 모든 영역 승인)
   if (pendingMembers)
     actions.push({
       id: "members-pending",
       level: "high",
       title: `가입 승인 대기 ${pendingMembers}명`,
-      meta: "현장 · 영업 · 관제 가입 신청 — 계정·권한에서 승인하거나 거절",
+      meta: "이용자 · 현장 · 영업 · 관제 가입 신청 — 계정·권한에서 승인하거나 거절",
       menu: "accounts",
     });
   const LEVEL_ORDER = { critical: 0, high: 1, med: 2 };
@@ -1146,6 +1163,7 @@ function DispatchConsole() {
               sosAt={state.demo.sosAt}
               elapsed={elapsed}
               dispatched={sosDispatched}
+              canDispatch={!!sosTarget}
               onOpenCenter={() => {
                 closeSosPopup();
                 setSosFocus(sosOpen.find((i) => i.customer === ELDER.name)?.id || null);
@@ -1168,7 +1186,7 @@ function DispatchConsole() {
                 <div className="text-[17px] font-bold">
                   어르신 SOS 버튼 발신 · {elderWho(" ")} ·{" "}
                   {/* 테스트 가구는 가입 상담 주소 — 예시 '강남구 대치동'이 실제 주소와 어긋났다 (2026-10-02 QA) */}
-                  {liveOn ? liveCustomer(ELDER.name, state.onboarding, state.health).address : "강남구 대치동"} — {liveOn ? `담당 컨시어지 ${LIVE_CONCIERGE}` : `최근접 컨시어지 ${LIVE_CONCIERGE} (1.2km)`}
+                  {liveOn ? liveCustomer(ELDER.name, state.onboarding, state.health).address : "강남구 대치동"} — {liveOn ? `담당 컨시어지 ${sosTarget || "아직 없음 — 계정·권한에서 승인"}` : `최근접 컨시어지 ${LIVE_CONCIERGE} (1.2km)`}
                 </div>
                 {/* 같은 사건이 SOS 센터에도 있다 — 여기는 급파·119 즉시 조치, 13단계 절차·종료는 센터에서 */}
                 <div className="mt-0.5 font-num text-[12px] opacity-[.88]">
@@ -1207,14 +1225,16 @@ function DispatchConsole() {
                 {/* 급파 지시가 해제보다 시각적으로 강하다 — 실수 방지 (09 §2) */}
                 <button
                   onClick={orderSosDispatch}
-                  disabled={sosDispatched}
+                  disabled={sosDispatched || !sosTarget}
                   className="btn-press btn-on-red rounded-xl bg-white px-4 py-2.5 text-[15px] font-bold text-danger disabled:opacity-80"
                 >
                   {sosDispatched
                     ? sosAcceptedAt
-                      ? `${LIVE_CONCIERGE} 수락 ${new Date(sosAcceptedAt).toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit", hour12: false })} · 이동 중`
-                      : `급파 중 · ${LIVE_CONCIERGE} 수락 대기`
-                    : "급파 지시 (주간 · 가용)"}
+                      ? `${state.ops.sosAcceptedBy || sosTarget} 수락 ${new Date(sosAcceptedAt).toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit", hour12: false })} · 이동 중`
+                      : `급파 중 · ${state.ops.sosDispatchedTo || sosTarget} 수락 대기`
+                    : sosTarget
+                    ? "급파 지시 (주간 · 가용)"
+                    : "급파할 컨시어지 없음 — 계정·권한"}
                 </button>
                 <button
                   onClick={() => {
@@ -1390,6 +1410,14 @@ function DispatchConsole() {
             )}
           </section>
 
+          {/* 핸드오프 정체 · 아침 브리핑 · AI 배정 · 배차 그리드 · 페어 · 계획 — 예시 인력 · 예시 고객으로 만든 운영 설계 화면이다.
+              관제 센터 공간에는 보이지 않는다 (2026-10-06 누수 점검: 실제 요청 사이에 예시 배정안 · 예시 일정이 섞였다) */}
+          {centerNow() ? (
+            <p className="mt-[18px] rounded-[14px] bg-navy/[.04] px-5 py-3 text-[12.5px] leading-[1.7] text-muted">
+              배차 그리드 · AI 배정 · 아침 브리핑 · 페어 편성은 인력 명부가 들어오면 켜집니다 — 지금 {LIVE_TAG}에는 운영 설계 예시를 보이지 않습니다.
+            </p>
+          ) : (
+          <>
           {/* ── 역할 간 핸드오프 정체 — 사고는 사람과 사람 사이에서 난다 (단계 클릭 → 멈춘 건) ── */}
           <section className="card-glass mt-[18px] rounded-[14px] px-5 py-4">
             <div className="flex flex-wrap items-baseline justify-between gap-2">
@@ -2104,6 +2132,8 @@ function DispatchConsole() {
               </div>
             </div>
           )}
+          </>
+          )}
             </>}
             />
           )}
@@ -2336,7 +2366,17 @@ function DispatchConsole() {
           {menu === "accounts" && (
             <div className="space-y-4">
               <CenterMembers />
-              <Accounts />
+              {/* 관제 센터 공간 — 아래 예시 계정 명부(운영 설계)는 접어 둔다. 위 '회원 · 권한 (실제)'와 섞여 보이지 않게 (2026-10-06 누수 점검) */}
+              {centerNow() ? (
+                <details className="rounded-[14px] bg-navy/[.04] px-4 py-3">
+                  <summary className="cursor-pointer text-[13px] font-bold text-muted">계정 · 권한관리 — 운영 설계 예시 (권한 매트릭스) 펼쳐 보기</summary>
+                  <div className="mt-3">
+                    <Accounts />
+                  </div>
+                </details>
+              ) : (
+                <Accounts />
+              )}
             </div>
           )}
           {menu === "audit" && <AuditLog />}
@@ -2462,7 +2502,8 @@ function EventApprovals() {
 // 대부분 '추가확인'이다 — 보호자가 앱에서 답하면(state.welfare.answers) 그 자리에서 바뀐다.
 // 데모 가구는 김순자 댁 하나라 답은 그 댁에만 얹는다.
 function WelfareBoard({ onOpen, answers = {}, statuses = {} }) {
-  const rows = Object.keys(WELFARE_PROFILES).map((name) => {
+  // 관제 센터 공간은 그 센터 어르신 한 분만 — 예시 고객(이영호 · 박말순 …)을 늘어놓지 않는다 (2026-10-06 점검)
+  const rows = (centerNow() ? [ELDER.name] : Object.keys(WELFARE_PROFILES)).map((name) => {
     const prof = profileFor(name, name === ELDER.name ? answers : {});
     const m = matchWelfare(prof);
     const c = welfareCounts(m);
@@ -2501,7 +2542,7 @@ function WelfareBoard({ onOpen, answers = {}, statuses = {} }) {
             {rows.map((r) => (
               <tr key={r.name} className="border-t border-navy/[.06]">
                 <td className="py-2 font-bold text-navy">
-                  {r.name} <span className="font-num text-[11px] font-medium text-muted">{r.age} · {r.where}</span>
+                  {r.name} <span className="font-num text-[11px] font-medium text-muted">{[r.age, r.where].filter(Boolean).join(" · ") || "나이 · 주소 미등록"}</span>
                 </td>
                 <td className="py-2 text-right font-num font-bold" style={{ color: "#1E7A5A" }}>{r.c.high}</td>
                 <td className="py-2 text-right font-num font-bold" style={{ color: "#8A5D12" }}>{r.c.check}</td>
@@ -2575,7 +2616,7 @@ function FloatProfile({ item, pos, onClose, onAction }) {
         amount: 0,
         preferredDate: null,
         urgency: "normal",
-        assignee: LIVE_CONCIERGE,
+        assignee: assigneeNow() || "",
         photos: [],
         status: "requested",
         history: [{ at: Date.now(), status: "requested", note: "관제 자동 매칭 → 보호자 안내" }],

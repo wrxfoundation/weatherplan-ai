@@ -3,6 +3,11 @@ import { FLOW_STEPS, REMINDERS, FOLLOWUP_ROUTES, VISIT_STATUS } from "../lib/wor
 import { crewFor, crewLabel, crewReason } from "../lib/dispatch-policy";
 import { useAppState } from "../lib/state";
 import { LIVE_ELDER } from "../lib/ops-health";
+import { inCenter, people } from "../lib/people";
+
+// 배정 버튼 — 센터 공간은 그 센터 컨시어지(주 · 부 순서), 데모 · 테스트 가구는 예시 짝 (2026-10-06 점검)
+const crewChoices = () =>
+  inCenter() ? people().concierges.map((n, i) => `${n} (${i === 0 ? "주" : "부"})`) : ["박지현 (주)", "서다인 (부)"];
 
 // 방문 업무흐름 8단계 — 관제(/dispatch)와 컨시어지(/concierge)가 같은 건을 본다.
 // role 로 조작 권한이 갈린다: 관제만 승인·반려하고, 컨시어지만 컨펌·통화·GPS·녹화를 한다.
@@ -91,7 +96,7 @@ export default function VisitFlow({ role = "ops" }) {
             이 방문은 <b className="text-navy">{crewLabel(crew)}</b>입니다 — {crewReason(v.kind)}
           </p>
           <div className="mt-2.5 flex flex-wrap gap-1.5">
-            {["박지현 (주)", "서다인 (부)"].slice(0, crew).map((n) => (
+            {crewChoices().slice(0, crew).map((n) => (
               <button
                 key={n}
                 onClick={() =>
@@ -125,7 +130,9 @@ export default function VisitFlow({ role = "ops" }) {
               onClick={() => go("approved", `${crewLabel(crew)} · 차량 ${v.vehicle}`)}
               className="btn-press flex-[2] rounded-xl bg-navy py-2.5 text-[13.5px] font-bold text-white disabled:opacity-40"
             >
-              {(v.crew || []).length < crew || !v.vehicle
+              {inCenter() && crewChoices().length < crew
+                ? `${crewLabel(crew)} 방문 — 이 센터에 승인된 컨시어지가 ${crew}명 이상이어야 배정할 수 있습니다 (지금 ${crewChoices().length}명)`
+                : (v.crew || []).length < crew || !v.vehicle
                 ? "인원 · 차량을 채워야 승인할 수 있습니다"
                 : "일정계획 승인 — 4개 화면에 반영"}
             </button>

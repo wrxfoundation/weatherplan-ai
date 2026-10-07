@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import FamilyLayout from "../../components/FamilyLayout";
 import { Card, SectionLabel, Badge, PendingTag, Collapse } from "../../components/ui";
 import Icon from "../../components/icons";
-import { AI_ASSISTANT_QA, CARE_TEAM, ELDER, EVENT_GROUPS, EVENT_KINDS, FEED_TONE, NEIGHBORHOOD_FEED, OUTING, VITALS, WEEKLY } from "../../lib/mock";
+import { AI_ASSISTANT_QA, CARE_TEAM, ELDER, EVENT_GROUPS, EVENT_KINDS, FEED_TONE, NEIGHBORHOOD_FEED, OUTING, VITALS, WEEKLY, elderWho } from "../../lib/mock";
 import { trackOf, subjectLabel, honorific, josa } from "../../lib/tracks";
 import VoiceNote from "../../components/VoiceNote";
 import MapDialog, { distanceM, prettyDistance } from "../../components/MapDialog";
@@ -19,7 +19,7 @@ import { LIVE_CONCIERGE, LIVE_TAG, STAGE_LABEL, visitReportOf } from "../../lib/
 import { centerNow } from "../../lib/people-store";
 import { approverOf } from "../../lib/requests";
 import { HelpCallCard } from "../../components/HelpCall";
-import { elderWho } from "../../lib/people";
+import { avatarText, meAs } from "../../lib/people";
 
 // 받은 음성 '받은 때' — 오늘 · 어제는 말로, 그 전은 날짜로 (시각만 쓰면 며칠 전 것도 오늘처럼 읽힌다)
 const whenLabel = (at) => {
@@ -41,7 +41,8 @@ const whenLabel = (at) => {
 export default function FamilyHome() {
   const { state, dispatch } = useAppState();
   const [demoOpen, setDemoOpen] = useState(false);
-  const live = !!useAuth().user?.household; // 테스트 계정 — 시연 컨트롤(SOS 켜기 · 이상 징후 재현)을 숨긴다
+  const authUser = useAuth().user;
+  const live = !!authUser?.household; // 테스트 계정 — 시연 컨트롤(SOS 켜기 · 이상 징후 재현)을 숨긴다
   // SOS '확인했습니다' — 이 기기에서만 배너를 접는다. SOS 해제는 관제만 한다 (ackSos).
   // 전에는 이 버튼이 SOS 자체를 꺼서 관제 팝업 · 알람과 컨시어지 알람까지 같이 사라졌다 (2026-10-02 코드 점검).
   const sosKey = state.demo.sos ? String(state.demo.sosAt || "on") : "";
@@ -88,7 +89,8 @@ export default function FamilyHome() {
   const heard = voicesToElder.filter((v) => state.elder?.msgPlayed?.[v.id]).length;
   // 어르신 → 주 보호자(아들 민수) · 가족 모두에게 온 목소리 — 최근 것부터
   const fromElder = (state.voices || [])
-    .filter((v) => v.from === `${ELDER.name} 님` && (v.to === "아들 민수" || v.to === "가족 모두"))
+    // 관제 센터 공간은 그 센터 보호자 이름 앞으로 온 것 (lib/people.js voiceTargetsCenter)
+    .filter((v) => v.from === `${ELDER.name} 님` && (v.to === (centerNow() ? meAs(authUser, "guardian") : "아들 민수") || v.to === "가족 모두"))
     .sort((a, b) => b.at - a.at);
   const unheardFromElder = fromElder.filter((v) => !state.guardian?.voiceHeard?.[v.id]).length;
   const [elderVoicesAll, setElderVoicesAll] = useState(false);
@@ -545,7 +547,7 @@ export default function FamilyHome() {
           </div>
           <div className="mt-3 space-y-2.5">
             {/* 테스트 가구 — 실제로 앱을 쓰는 컨시어지(박지현)만. 경력 · 방문 횟수 같은 예시 이력은 쓰지 않는다 */}
-            {(live ? CARE_TEAM.members.slice(0, 1).map((m) => ({ ...m, name: LIVE_CONCIERGE, initials: LIVE_CONCIERGE.slice(1, 3), career: "주 담당 · 안심방문 · 동행", relation: visitStage })) : CARE_TEAM.members).map((m) => (
+            {(live ? CARE_TEAM.members.slice(0, 1).map((m) => ({ ...m, name: LIVE_CONCIERGE, initials: centerNow() ? avatarText(LIVE_CONCIERGE) : m.initials, career: "주 담당 · 안심방문 · 동행", relation: visitStage })) : CARE_TEAM.members).map((m) => (
               <div
                 key={m.name}
                 className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/[.05] p-3.5"

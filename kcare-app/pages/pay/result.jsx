@@ -12,12 +12,15 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Card, SectionLabel, PrimaryButton, GhostButton, Badge } from "../../components/ui";
 import Icon from "../../components/icons";
 import { useAppState } from "../../lib/state";
+import { useAuth } from "../../lib/auth";
+import { meAs } from "../../lib/people";
 import { fmtWon } from "../../lib/config";
 import { PAY_KINDS, fmtCard } from "../../lib/payments";
 
 export default function PayResult() {
   const router = useRouter();
   const { dispatch } = useAppState();
+  const { user } = useAuth();
   const { kind = "store", ref: refId = "", sig = "", paymentKey, orderId, amount, code, message, authKey, customerKey } = router.query;
   const meta = PAY_KINDS[kind] || PAY_KINDS.store;
 
@@ -86,13 +89,13 @@ export default function PayResult() {
         dispatch({ type: "requestPaid", id: refId, note: `보호자 결제 완료 ${fmtWon(data.payment.amount)}` });
       }
       if (kind === "store") {
-        dispatch({ type: "commitPendingOrder", payload: data.payment });
+        dispatch({ type: "commitPendingOrder", payload: data.payment, by: meAs(user, "guardian") });
       }
     } catch (e) {
       setPhase("failed");
       setErr({ code: e.code || "CONFIRM_FAILED", message: e.message || "결제 승인에 실패했습니다." });
     }
-  }, [router.isReady, code, message, authKey, customerKey, paymentKey, orderId, amount, sig, kind, refId, meta.label, dispatch]);
+  }, [router.isReady, code, message, authKey, customerKey, paymentKey, orderId, amount, sig, kind, refId, meta.label, dispatch, user]);
 
   useEffect(() => {
     run();

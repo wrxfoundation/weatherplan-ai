@@ -13,6 +13,7 @@ import { MY_CLIENTS } from "./console";
 import { TEACHER_INBOX, seedAt } from "./mock";
 import { scopedKey } from "./scope";
 import { relMd } from "./reltime";
+import { peopleNow } from "./people-store";
 
 const MIN = 60000;
 export const VOICE_CATEGORIES = ["안부인사", "방문안내", "복약확인", "병원일정", "가족 메시지 전달", "요청사항 답변", "긴급확인"];
@@ -48,6 +49,9 @@ export const CLIENT_SEED = {
   김복남: { sentToday: false, lastSentMin: 3 * 1440, lastReplyMin: null, noReplyDays: 0, callMissed: 0, exclude: "입원 중 — 병원 소통 대행 (관제 제외 처리)", opsNote: "요양병원 · 간호사 전달사항 관제 경유" },
   이순례: { sentToday: false, lastSentMin: 1440 + 30, lastReplyMin: 1440 + 10, noReplyDays: 1, callMissed: 0, opsNote: `${relMd(-2)} 첫 방문 · 앱 사용 안내 완료` },
 };
+
+// 관제 센터 공간의 어르신 — 소통 이력이 아직 없다
+const CENTER_SEED = { sentToday: false, lastSentMin: null, lastReplyMin: null, noReplyDays: 0, callMissed: 0, opsNote: null };
 
 // 받은 음성 (미처리 우선 목록의 씨앗). memo 는 들은 뒤 적는 청취 메모 — 안 들었으면 null.
 // in-t5 는 어르신 마음사서함(lib/mock.js TEACHER_INBOX t5)과 같은 메시지다.
@@ -204,19 +208,25 @@ export function useMailbox(liveVoices = NO_VOICES, liveOut = NO_VOICES, liveClie
     };
   }, []);
 
+  // 관제 센터 공간(2026-10-06 점검) — 예시 고객 12명 · 예시 받은 음성 없이, 그 센터 어르신 한 분과 앱에 실제로 남은 음성만
+  const centerP = peopleNow();
+  const inboxNow = useMemo(() => (centerP ? inbox.filter((m) => m.live) : inbox), [inbox, centerP]);
   const clients = useMemo(
     () =>
-      MY_CLIENTS.map((c) => {
-        const seed = CLIENT_SEED[c.name] || {};
+      (centerP
+        ? [{ name: centerP.elder, age: null, where: centerP.district, loc: "자택", note: "앱에 남은 기록만", proposed: 0, accepted: 0, referredBy: null, role: "주" }]
+        : MY_CLIENTS
+      ).map((c) => {
+        const seed = centerP ? CENTER_SEED : CLIENT_SEED[c.name] || {};
         const s = sent[c.name];
-        const open = inbox.filter((m) => m.client === c.name && OPEN_INBOX.has(m.status));
+        const open = inboxNow.filter((m) => m.client === c.name && OPEN_INBOX.has(m.status));
         const doneToday = !!seed.sentToday || s?.status === "sent";
         const excluded = !!seed.exclude;
         const row = { ...c, ...seed, sent: s, open, doneToday, excluded, unsent: !doneToday && !excluded, opsSentAt: opsSent[c.name] || null };
         row.comm = commState(row);
         return row;
       }),
-    [inbox, sent, opsSent]
+    [inboxNow, sent, opsSent, centerP]
   );
 
   const counts = useMemo(() => {
@@ -226,19 +236,19 @@ export function useMailbox(liveVoices = NO_VOICES, liveOut = NO_VOICES, liveClie
       target: target.length,
       excluded: clients.length - target.length,
       done: target.filter((c) => c.doneToday).length,
-      needReply: inbox.filter((m) => OPEN_INBOX.has(m.status)).length,
+      needReply: inboxNow.filter((m) => OPEN_INBOX.has(m.status)).length,
       unsent: target.filter((c) => c.unsent).length,
       failed: clients.filter((c) => c.sent?.status === "failed").length,
     };
-  }, [clients, inbox]);
+  }, [clients, inboxNow]);
 
   const openInbox = useMemo(() => {
     const rank = { needReply: 0, unheard: 1, heard: 2 };
-    return inbox
+    return inboxNow
       .filter((m) => OPEN_INBOX.has(m.status))
       .map((m) => ({ ...m, at: m.at ?? seedAt(m.minsAgo, now) }))
       .sort((a, b) => rank[a.status] - rank[b.status] || a.minsAgo - b.minsAgo);
-  }, [inbox, now]);
+  }, [inboxNow, now]);
 
   const unsentList = useMemo(
     () => clients.filter((c) => c.unsent).sort((a, b) => (b.noReplyDays - a.noReplyDays) || (b.callMissed - a.callMissed)),
@@ -268,7 +278,7 @@ export function useMailbox(liveVoices = NO_VOICES, liveOut = NO_VOICES, liveClie
       setSent((s) => ({ ...s, [name]: { ...payload, at, status: "sending", tries: prevTries + 1 } }));
       clearTimeout(timers.current[name]);
       timers.current[name] = setTimeout(() => {
-        const fail = !!CLIENT_SEED[name]?.sendFail && prevTries === 0;
+        const fail = !peopleNow() && !!CLIENT_SEED[name]?.sendFail && prevTries === 0;
         setSent((s) => ({ ...s, [name]: { ...s[name], status: fail ? "failed" : "sent" } }));
         if (!fail) {
           setExtra((e) => ({ ...e, [name]: [...(e[name] || []), { id: `th-sent-${at}`, dir: "out", at, secs: payload.secs, text: payload.title, mine: true }] }));
@@ -283,7 +293,7 @@ export function useMailbox(liveVoices = NO_VOICES, liveOut = NO_VOICES, liveClie
 
   const threadFor = useCallback(
     (name) => {
-      const base = threadSeed(name, now, liveClient).map((m) => {
+      const base = (centerP ? [] : threadSeed(name, now, liveClient)).map((m) => {
         const ib = m.inboxId ? inbox.find((x) => x.id === m.inboxId) : null;
         const withInbox = ib ? { ...m, text: ib.memo ?? m.text, status: ib.status, heard: ib.status !== "unheard" } : m;
         const heard = withInbox.heard || !!heardExtra[m.id] || !!heardExtra[m.inboxId];
@@ -298,7 +308,7 @@ export function useMailbox(liveVoices = NO_VOICES, liveOut = NO_VOICES, liveClie
       const ex = (extra[name] || []).filter((e) => !out.some((o) => Math.abs(o.at - e.at) < 15000 && o.secs === e.secs));
       return [...base, ...liveIn, ...out, ...ex].sort((a, b) => a.at - b.at);
     },
-    [inbox, extra, threadMemo, heardExtra, now, liveOut, liveClient]
+    [inbox, extra, threadMemo, heardExtra, now, liveOut, liveClient, centerP]
   );
 
   // 들은 것으로 표시 — 오늘 받은 것은 미청취 → 답장 필요로 옮기고, 지난 메시지는 표시만 바꾼다

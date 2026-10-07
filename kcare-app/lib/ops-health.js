@@ -1,7 +1,7 @@
 // 건강·안전 관제 목 데이터 — 요청서 2·3·6절. 숫자는 데모 값이며 시안(2026-09-16)과 어긋나지 않게 맞췄다.
 // 시각은 "지금 기준 n분 전" 상대값으로 두어 화면의 시계와 항상 맞물린다.
 import { DEFAULT_HEALTH, healthOf, medSummary } from "./meds";
-import { peopleNow } from "./people-store";
+import { onPeople, peopleNow } from "./people-store";
 
 // 데모 인물 — 기존 앱과 같은 어르신·컨시어지·보호자
 export const CUSTOMERS = {
@@ -99,9 +99,9 @@ export function fmtPhone(v) {
 // 그래야 관제 테스터가 어르신 역할 테스터에게 실제로 전화해 볼 수 있다. 없으면 예시 번호.
 // 관제 센터 공간(2026-10-06)에서는 가입한 어르신 이름으로 바뀐다 — lib/people.js applyPeople (화면이 읽을 때마다 지금 값)
 export let LIVE_ELDER = "김순자";
-export function setLiveElder(name) {
-  LIVE_ELDER = name;
-}
+onPeople((p) => {
+  LIVE_ELDER = p.elder;
+});
 // health — 가구 상태의 state.health (관제 · 컨시어지가 고친 복용약 · 질환 · 알레르기). 김순자 님에게만 얹는다.
 export function liveCustomer(name, onboarding, health) {
   const c0 = getCustomer(name);

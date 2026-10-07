@@ -14,6 +14,7 @@
 //  · 정책 데이터(lib/welfare-data.js)는 손으로 고치지 않는다 — scripts/gen-welfare.py.
 
 import { WELFARE_POLICIES, WELFARE_CATEGORIES, WELFARE_SOURCES } from "./welfare-data";
+import { centerNow } from "./people-store";
 
 export { WELFARE_POLICIES, WELFARE_CATEGORIES };
 
@@ -90,8 +91,10 @@ export function scorePolicy(p, c) {
   const e = p.elig;
   const t = {
     // ※ 최대연령(02 C열)은 시트 공식에 없다 — 79건 전부 빈 칸이라 영향은 없다
-    age: e.minAge == null || (c.age != null && c.age >= e.minAge) ? 1 : 0,
-    region: p.sido === "전국" || p.sido === c.sido ? 1 : 0,
+    // 나이 · 주소를 아직 모르면(관제 센터 공간의 새 어르신) 불일치가 아니라 확인 필요(0.5) — 2026-10-06 점검.
+    // 데모 · 시트 고객은 둘 다 값이 있어 판정이 그대로다
+    age: e.minAge == null ? 1 : c.age == null ? 0.5 : c.age >= e.minAge ? 1 : 0,
+    region: p.sido === "전국" || p.sido === c.sido ? 1 : !c.sido ? 0.5 : 0,
     income: e.incomePct == null ? 1 : c.incomePct == null ? 0.5 : c.incomePct <= e.incomePct ? 1 : 0,
     basic: flagTerm(e.basic, c.basic),
     nearPoor: flagTerm(e.nearPoor, c.nearPoor),
@@ -124,7 +127,7 @@ export function scorePolicy(p, c) {
   //    대상으로만 두기 때문. 점수만 깎인다.
   const failKeys = keys.filter((k) => k !== "income");
   const fail = failKeys.some((k) => t[k] === 0);
-  const unsureKeys = keys.filter((k) => k !== "age" && k !== "region");
+  const unsureKeys = keys;
   const unsure = unsureKeys.some((k) => t[k] === 0.5) || p.confidence === "추가확인";
   const verdict = fail ? VERDICT.low : unsure ? VERDICT.check : VERDICT.high;
   const basis = fail
@@ -250,7 +253,10 @@ export const ASK_GUARDIAN = [
 ];
 
 // 이름 → 프로필 (없으면 김순자 데모 가구). 보호자 답을 얹어서 돌려준다.
+// 관제 센터 공간은 예시 인물 프로필을 빌리지 않는다 — 모르는 값은 전부 미확인으로 시작한다 (2026-10-06 점검)
 export function profileFor(name, answers) {
-  const base = WELFARE_PROFILES[name] || WELFARE_PROFILES.김순자;
+  const base = centerNow()
+    ? { ...UNKNOWN, disabled: "미확인", crisis: "미확인", name: name || "어르신", sido: null, sigungu: null, age: null, basisNote: "케어 프로필이 아직 없습니다 — 나이 · 주소 · 자격은 보호자 답과 방문 확인으로 채웁니다." }
+    : WELFARE_PROFILES[name] || WELFARE_PROFILES.김순자;
   return applyAnswers(base, answers);
 }

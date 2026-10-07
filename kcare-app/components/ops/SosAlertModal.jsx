@@ -5,7 +5,7 @@ import { useEffect, useRef } from "react";
 import PhoneLink from "./PhoneLink";
 import { telHref } from "../../lib/ops-health";
 
-export default function SosAlertModal({ customer, sosAt, elapsed, dispatched, onOpenCenter, onDispatch, onClose }) {
+export default function SosAlertModal({ customer, sosAt, elapsed, dispatched, canDispatch = true, onOpenCenter, onDispatch, onClose }) {
   const first = useRef(null);
   useEffect(() => {
     first.current?.focus();
@@ -69,10 +69,10 @@ export default function SosAlertModal({ customer, sosAt, elapsed, dispatched, on
           )}
           <button
             onClick={onDispatch}
-            disabled={dispatched}
+            disabled={dispatched || !canDispatch}
             className="btn-press rounded-xl border border-navy/20 px-4 py-3 text-[14px] font-bold text-navy disabled:opacity-60"
           >
-            {dispatched ? "급파 중" : "급파 지시"}
+            {dispatched ? "급파 중" : canDispatch ? "급파 지시" : "급파할 컨시어지 없음"}
           </button>
           <button onClick={onClose} className="btn-press w-full rounded-xl py-2 text-[13px] font-bold text-muted underline underline-offset-2">
             닫기 — 위쪽 빨간 배너에서 계속 처리

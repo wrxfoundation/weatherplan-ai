@@ -10,18 +10,18 @@ import { LIVE_ELDER, fmtPhone } from "./ops-health";
 import { VISITS, itemKeys, visitDetail } from "./ops-mgmt";
 import { checkupFor } from "./checkup";
 import { AI_REPORT } from "./mock";
-import { centerNow } from "./people-store";
+import { centerNow, onPeople } from "./people-store";
 
 // 관제 센터 공간(2026-10-06)에서는 센터 이름 · 가입한 보호자 · 컨시어지 이름으로 바뀐다 — lib/people.js applyPeople
 export let LIVE_TAG = "테스트 가구 1";
 export const NO_DEVICE_WATCH = "수신 안 함 (베타)";
 export let LIVE_GUARDIAN = "김민수";
 export let LIVE_CONCIERGE = "박지현";
-export function setLiveNames({ tag, guardian, concierge }) {
-  LIVE_TAG = tag;
-  LIVE_GUARDIAN = guardian;
-  LIVE_CONCIERGE = concierge;
-}
+onPeople((p) => {
+  LIVE_TAG = p.tag;
+  LIVE_GUARDIAN = p.guardian;
+  LIVE_CONCIERGE = p.concierge;
+});
 
 const KST = 9 * 3600 * 1000;
 const ymd = (t) => (t ? new Date(Number(t) + KST).toISOString().slice(0, 10) : null);

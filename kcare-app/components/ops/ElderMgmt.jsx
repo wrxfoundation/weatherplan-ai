@@ -49,6 +49,8 @@ function centerElder(ob) {
     loc: ob?.careLocation === "hospital" ? "hospital" : "home",
     phone: "—",
     guardians: p.guardians.map((name, i) => ({ name, rel: "—", role: i === 0 ? "주 보호자" : "부 보호자", region: "—", tel: "—", consent: consentAll })),
+    // 결제 · 이용 상태를 지어 넣지 않는다 (예시 '정상 · 자동결제' 없이 — 2026-10-06 누수 점검)
+    service: { state: "active", since: "—", product: "베타 — 상품 확정 전", pay: "베타 — 결제 기록 없음", visitDay: "—", cycle: "—" },
     // 서명 기록을 지어 넣지 않는다 — 베타 가입에는 계약서 · 동의서 서명 절차가 아직 없다
     docs: [{ name: "서비스 이용 계약서 · 긴급조치 사전동의서", state: "베타 — 서명 절차 전", at: "—" }],
   };

@@ -2,6 +2,7 @@
 // 명부 원본은 lib/rosters.js 를 그대로 읽고, 여기엔 상세 패널에 필요한 것만 얹는다.
 // 데모 인물은 기존 앱과 같아야 하므로 이름·관계·지역을 새로 만들지 않는다.
 // 보호자·컨시어지 상세는 lib/ops-mgmt-people.js.
+import { centerNow } from "./people-store";
 import { ROSTERS } from "./rosters";
 import { checkupFor } from "./checkup";
 import { SERVICE_MENU } from "./requests";
@@ -31,7 +32,9 @@ export const ADMIN = { account: "sj.lee@kcare", name: "이수정", role: "관리
 
 // 예시 인물 전화번호 — 이름에서 안정적으로 만든다. 관제는 가리지 않고 전부 본다 (2026-10-02 현장 요청:
 // "관제실은 모든 정보에 블라인드 처리 없이"). 010-0xxx 는 개통 대역 밖이라 실제 사람에게 걸리지 않는다.
+// 예시 인물의 예시 번호 — 관제 센터 공간의 회원에게는 번호를 지어 붙이지 않는다 (2026-10-06 누수 점검)
 export const demoTel = (name) => {
+  if (centerNow()) return "번호 미등록";
   const c = name.charCodeAt(0);
   const d = name.charCodeAt(name.length - 1);
   return `010-0${String(c % 1000).padStart(3, "0")}-${String(1000 + ((c * 7 + d) % 9000))}`;

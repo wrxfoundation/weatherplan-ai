@@ -1,7 +1,9 @@
 // 통합 알림센터 첫 화면 — 요청서 2절 · 시안 "통합 건강·안전 관제".
 // 첫 화면의 최우선 목적은 전체 어르신의 실시간 건강·안전상태 확인이다. 운영관리 영역(2-3)은 삭제하지 않고 맨 아래 접이식으로 내린다.
 import { useMemo, useState } from "react";
-import { Avatar, Btn, Empty, FeedPill, Note, Panel, PanelHead, Pill, SEV, SevBar, SevPill, Stamp, Stat, StatePill, TONE } from "./ui";
+import { Avatar, Btn, Empty, FeedPill, Note, Panel, PanelHead, Pill, SEV, SevBar, SevPill, Stamp, Stat, StatePill, TONE, useOperator } from "./ui";
+import { centerNow } from "../../lib/people-store";
+import { people } from "../../lib/people";
 import HealthDrawer from "./OpsDashboard/HealthDrawer";
 import LiveStrip from "./OpsDashboard/LiveStrip";
 import { useAuth } from "../../lib/auth";
@@ -12,10 +14,10 @@ import { relKoLong } from "../../lib/reltime";
 
 const stepTitle = (k) => STEP_ORDER.find((s) => s.k === k)?.title || "—";
 
-function tileSub(k, n, ctx) {
+function tileSub(k, n, ctx, center = false, total = TOTAL_ELDERS) {
   switch (k) {
-    case "all": return `워치 연결 ${WATCH_LINKED}명`;
-    case "ok": return `전체의 ${((n / TOTAL_ELDERS) * 100).toFixed(1)}%`;
+    case "all": return center ? "워치 수신 안 함 (베타)" : `워치 연결 ${WATCH_LINKED}명`;
+    case "ok": return total ? `전체의 ${((n / total) * 100).toFixed(1)}%` : "—";
     case "warn": return "확인 필요";
     case "danger": return `SEV1 ${ctx.sev1}명 · 위험 ${n - ctx.sev1}명`;
     case "sos": return `미확인 ${ctx.newSos}건`;
@@ -34,6 +36,9 @@ function tileSub(k, n, ctx) {
 // opsNote: 접혀 있어도 보여야 할 다른 대기 건 (예: 보호자 일정 승인 대기).
 export default function OpsDashboard({ onStartSos, onOpenSos, onMenu, mapSlot, opsSlot, opsCount = null, opsOpen = false, opsNote = null }) {
   const liveOn = !!useAuth().user?.household;
+  const operator = String(useOperator()).replace(/\s*\(.*\)$/, "");
+  // 관제 센터 공간 — 아래 '우선 확인 대상'은 예시 인물이라 실제 SOS 사건을 열지 않는다 (2026-10-06 누수 점검)
+  const center = centerNow();
   const { open, start } = useIncidents();
   const now = useNow(1000);
   const [tile, setTile] = useState("all");
@@ -43,7 +48,8 @@ export default function OpsDashboard({ onStartSos, onOpenSos, onMenu, mapSlot, o
   // 사건이 열린 고객은 사건의 상태·발생시각을 우선한다 — 같은 고객을 두 곳에서 다르게 보이지 않게
   const rows = useMemo(() => {
     const byName = Object.fromEntries(open.map((i) => [i.customer, i]));
-    return PRIORITY.map((r) => {
+    // 관제 센터 공간 — 예시 대상자(200명 · 우선 확인 19명)를 늘어놓지 않는다. SOS 사건은 아래 '진행 중 SOS'로 (2026-10-06 누수 점검)
+    return (center ? [] : PRIORITY).map((r) => {
       const inc = byName[r.name];
       if (!inc) return r;
       const sev = (SEV[inc.sev]?.rank ?? 9) < (SEV[r.sev]?.rank ?? 9) ? inc.sev : r.sev;
@@ -52,7 +58,7 @@ export default function OpsDashboard({ onStartSos, onOpenSos, onMenu, mapSlot, o
       const d = (SEV[a.sev]?.rank ?? 9) - (SEV[b.sev]?.rank ?? 9);
       return d !== 0 ? d : (a.startedAt ?? -a.agoMin) - (b.startedAt ?? -b.agoMin);
     });
-  }, [open]);
+  }, [open, center]);
 
   const ctx = useMemo(() => ({
     sosNames: new Set(open.map((i) => i.customer)),
@@ -61,12 +67,18 @@ export default function OpsDashboard({ onStartSos, onOpenSos, onMenu, mapSlot, o
     newSos: open.filter((i) => i.state === "new").length,
   }), [open, rows]);
 
-  const normalCount = TOTAL_ELDERS - rows.length;
+  const total = center ? people().elders.length : TOTAL_ELDERS;
+  // 센터 공간은 예시 대상자 줄이 없으니 SOS 사건으로 센다 — SOS 가 진행 중인데 '현재 SOS 0' · '정상 100%'로 보이지 않게
+  const sosPeople = new Set(open.map((i) => i.customer)).size;
+  const normalCount = Math.max(0, total - (center ? sosPeople : rows.length));
   const counts = useMemo(() => Object.fromEntries(TILES.map((t) => {
-    if (t.k === "all") return [t.k, TOTAL_ELDERS];
+    if (t.k === "all") return [t.k, total];
+    if (center && t.k === "sos") return [t.k, open.length];
+    if (center && t.k === "active") return [t.k, open.filter((i) => i.state === "active").length];
+    if (center && t.k === "danger") return [t.k, sosPeople];
     if (t.k === "ok") return [t.k, normalCount];
     return [t.k, rows.filter((r) => t.filter(r, ctx)).length];
-  })), [rows, ctx, normalCount]);
+  })), [rows, ctx, normalCount, total, center, open, sosPeople]);
 
   const activeTile = TILES.find((t) => t.k === tile) || TILES[0];
   const filtered = useMemo(() => {
@@ -78,7 +90,7 @@ export default function OpsDashboard({ onStartSos, onOpenSos, onMenu, mapSlot, o
   const rowAt = (r) => (r.startedAt ?? (now ? now - r.agoMin * MIN : null));
 
   function startSos(r) {
-    const id = start({ name: r.name, age: r.age, sev: r.sev === "warn" || r.sev === "device" ? "danger" : r.sev, value: r.value, threshold: r.threshold, controller: "김태영" }, r.signal);
+    const id = start({ name: r.name, age: r.age, sev: r.sev === "warn" || r.sev === "device" ? "danger" : r.sev, value: r.value, threshold: r.threshold, controller: operator }, r.signal);
     setDetail(null);
     onStartSos?.(r.name, id);
   }
@@ -109,7 +121,7 @@ export default function OpsDashboard({ onStartSos, onOpenSos, onMenu, mapSlot, o
             label={t.label}
             value={counts[t.k]}
             unit={t.k === "sos" || t.k === "active" || t.k === "fall" ? "건" : "명"}
-            sub={tileSub(t.k, counts[t.k], ctx)}
+            sub={tileSub(t.k, counts[t.k], ctx, center, total)}
             tone={t.k === "danger" || t.k === "sos" ? "danger" : t.tone === "danger" ? "warn" : t.tone}
             active={tile === t.k}
             onClick={() => setTile(tile === t.k ? "all" : t.k)}
@@ -125,7 +137,9 @@ export default function OpsDashboard({ onStartSos, onOpenSos, onMenu, mapSlot, o
             sub={`위험도·발생시각 순 자동 정렬 · ${tile === "all" ? "이상징후 전체" : activeTile.label} ${tile === "ok" ? "" : `${filtered.length}명`}`}
             right={tile !== "all" && <Btn ghost small tone="muted" onClick={() => setTile("all")}>필터 해제</Btn>}
           />
-          {tile === "ok" ? (
+          {center && filtered.length === 0 ? (
+            <div className="mt-3"><Empty>이상징후가 올라온 어르신이 없습니다 — 베타는 워치 · 센서를 받지 않아 SOS · 도와줘요만 여기와 '진행 중 SOS'에 올라옵니다.</Empty></div>
+          ) : tile === "ok" ? (
             <div className="mt-3"><Empty>정상 상태 어르신은 아래 “정상 {normalCount}명 — 명단 보기”에서 확인합니다. 이상징후가 있는 고객만 이 목록에 올라옵니다.</Empty></div>
           ) : filtered.length === 0 ? (
             <div className="mt-3"><Empty>조건에 맞는 고객이 없습니다.</Empty></div>
@@ -170,7 +184,7 @@ export default function OpsDashboard({ onStartSos, onOpenSos, onMenu, mapSlot, o
                       {r.incidentId ? (
                         <Btn small tone="danger" onClick={() => onOpenSos?.(r.incidentId)}>SOS 대응 보기</Btn>
                       ) : (
-                        <Btn small tone="danger" onClick={() => startSos(r)}>SOS 대응 시작</Btn>
+                        center ? <Pill tone="muted">예시</Pill> : <Btn small tone="danger" onClick={() => startSos(r)}>SOS 대응 시작</Btn>
                       )}
                     </div>
                   </li>
@@ -178,6 +192,7 @@ export default function OpsDashboard({ onStartSos, onOpenSos, onMenu, mapSlot, o
               })}
             </ul>
           )}
+          {!center && (
           <details className="mt-3 rounded-xl bg-navy/[.04] px-4 py-2.5">
             <summary className="cursor-pointer text-[13px] font-bold text-green">정상 {normalCount}명 — 명단 보기</summary>
             <div className="mt-2 flex flex-wrap gap-1.5">
@@ -189,6 +204,7 @@ export default function OpsDashboard({ onStartSos, onOpenSos, onMenu, mapSlot, o
               <span className="self-center text-[12px] text-muted">외 {Math.max(0, normalCount - NORMAL_SAMPLE.length)}명 · 전체 명단은 어르신 탭에서</span>
             </div>
           </details>
+          )}
         </Panel>
 
         {/* 오른쪽 열 — 지도 · 진행 중 SOS · 오늘의 운영업무 · 시스템 연동상태 */}
@@ -228,6 +244,8 @@ export default function OpsDashboard({ onStartSos, onOpenSos, onMenu, mapSlot, o
             )}
           </Panel>
 
+          {!center && (
+          <>
           <Panel>
             <PanelHead title="오늘의 운영업무" sub="건강관제 이후 처리할 업무" />
             <div className="mt-3 grid grid-cols-3 gap-2">
@@ -252,6 +270,8 @@ export default function OpsDashboard({ onStartSos, onOpenSos, onMenu, mapSlot, o
               })}
             </ul>
           </Panel>
+          </>
+          )}
         </div>
       </div>
 
@@ -276,7 +296,7 @@ export default function OpsDashboard({ onStartSos, onOpenSos, onMenu, mapSlot, o
 
       <Note>건강·센서 데이터는 참고자료이며 의료진의 진단을 대신하지 않습니다.</Note>
 
-      <HealthDrawer name={detail} row={detailRow} open={!!detail} onClose={() => setDetail(null)} onStartSos={detailRow && !detailRow.incidentId ? () => startSos(detailRow) : null} />
+      <HealthDrawer name={detail} row={detailRow} open={!!detail} onClose={() => setDetail(null)} onStartSos={detailRow && !detailRow.incidentId && !center ? () => startSos(detailRow) : null} />
     </div>
   );
 }

@@ -7,6 +7,7 @@ export { INITIAL_EVENTS, INITIAL_REQUESTS, SEED_EVENTS, SEED_REPORTS } from "./s
 // 복약·건기식은 lib/meds.js 한 곳에서만 정의한다 (케어 프로필이 이걸 파생해 쓴다)
 import { MED_PLAN, SUPPLEMENTS } from "./meds";
 import { pastHm, relKoMd, relMd, relMdw, relMondayOffset } from "./reltime";
+import { onPeople } from "./people-store";
 const MED_DRUGS = [
   ...new Set(MED_PLAN.flatMap((d) => d.items.map((i) => i.name.split(" (")[0]))),
 ];
@@ -241,6 +242,17 @@ export const VOICE_TO = [
 // minsAgo 는 '지금'에서 거꾸로 센 분이다. 고정 시각을 박아 두면 데모를 며칠 뒤에
 // 열었을 때 전부 24시간을 넘겨 빈 목록이 된다.
 export const TEACHER = { name: "박지현", role: "담당 컨시어지" };
+
+// 관제 센터 공간(2026-10-06)에서는 그 센터 어르신 · 담당 컨시어지 이름으로 — lib/people.js (예시 나이 · 동네는 비운다)
+onPeople((p) => {
+  ELDER.name = p.elder;
+  ELDER.age = p.elderAge;
+  ELDER.district = p.district;
+  ELDER.dong = p.dong;
+  TEACHER.name = p.concierge;
+});
+// "김순자(78)" · 나이를 모르면 이름만 — 센터 공간에는 나이를 지어 넣지 않는다
+export const elderWho = (sep = "") => (ELDER.age ? `${ELDER.name}${sep}(${ELDER.age})` : ELDER.name);
 
 // text 는 음성인식(STT) 결과가 아니라 '무슨 용건이었는지' 한 줄 제목이다.
 // 목록에서 어느 것을 다시 들을지 고르는 데만 쓴다 — 내용은 듣기로 듣는다.

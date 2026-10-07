@@ -27,6 +27,11 @@ export const memberLoginConfigured = () =>
   !!(process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL) &&
   !!(process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY);
 export const authConfigured = () => googleConfigured() || testLoginConfigured() || memberLoginConfigured();
+// 관제 센터 관리자(ops1 · ops2 · ops3) 비밀번호 — 테스터 공용 비밀번호(BETA_TEST_PASSWORD)와 따로 둔다 (2026-10-06 점검:
+// 공용 비밀번호를 아는 테스터 누구나 모든 센터의 관리자가 될 수 있었다). 센터마다 CENTER_OPS_PASSWORD_C1 … 로 따로 줄 수 있고,
+// 없으면 CENTER_OPS_PASSWORD 하나를 세 센터가 같이 쓴다. 둘 다 없으면 센터 관리자 로그인은 꺼진다.
+export const centerOpsPassword = (centerId) => process.env[`CENTER_OPS_PASSWORD_${centerId}`] || process.env.CENTER_OPS_PASSWORD || "";
+export const centerOpsConfigured = () => ["C1", "C2", "C3"].some((c) => !!centerOpsPassword(c));
 
 // 비밀번호 비교 — 길이·내용과 상관없이 같은 시간이 걸리게 끝까지 본다
 export function testPasswordMatches(input) {
@@ -59,7 +64,7 @@ export function isAllowedEmail(email) {
 // 구글 계정은 허용 목록을 본다
 export function isAllowedToken(token) {
   if (!token) return false;
-  if (token.provider === "test" || token.provider === "google-sim" || token.provider === "member") return true;
+  if (["test", "google-sim", "member", "center"].includes(token.provider)) return true;
   return isAllowedEmail(token.email);
 }
 

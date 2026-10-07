@@ -5,48 +5,52 @@
 //                                → { status: "active" | "pending", center, role, area }
 //
 // 가입 코드가 센터를 정한다 — 코드는 그 센터 관제가 회원 · 권한 화면에서 나눠 주고 바꿀 수 있다.
-// 이용자(어르신 · 보호자)는 바로 사용, 현장 · 영업(컨시어지 · 영업자)과 관제는 그 센터 관제가 승인해야 로그인된다.
+// 어느 영역이든 그 센터 관제가 승인해야 로그인된다 (lib/centers.js). 승인 대기가 너무 쌓이면 새 가입을 잠시 받지 않는다.
 // 비밀번호는 scrypt 해시로만 저장한다. 실패 이유는 아이디 중복 · 입력 오류만 알려 준다.
 import { memberLoginConfigured } from "../../lib/auth-server";
 import { dbConfigured, dbErrorCode, ensureHousehold } from "../../lib/db";
-import { AREAS, JOIN_CODE_RE, checkLoginId, checkPassword, normCode } from "../../lib/centers";
-import { activityLine, audit, centerByCode, createMember, loginIdTaken } from "../../lib/members";
+import { AREAS, JOIN_CODE_RE, checkLoginId, checkPassword, isArea, normCode } from "../../lib/centers";
+import { activityLine, audit, centerByCode, createMember, loginIdTaken, pendingCount } from "../../lib/members";
 import { hashPassword } from "../../lib/password";
 import { ROLE_LABEL } from "../../lib/test-accounts";
+import { clientIp, makeLimiter, sameSiteJson } from "../../lib/http";
 
 const str = (v, n) => String(v ?? "").trim().slice(0, n);
 const slow = () => new Promise((r) => setTimeout(r, 400));
 
-// 같은 곳에서 짧은 시간에 여러 번 두드리는 것을 늦춘다 (서버 인스턴스마다 · 베타용 최소 장치)
-const hits = new Map();
-function tooMany(req) {
-  const ip = String(req.headers["x-forwarded-for"] || req.socket?.remoteAddress || "?").split(",")[0].trim();
-  const now = Date.now();
-  const list = (hits.get(ip) || []).filter((t) => now - t < 10 * 60 * 1000);
-  list.push(now);
-  hits.set(ip, list);
-  return list.length > 30;
-}
+// 같은 곳(IP)에서 짧은 시간에 여러 번 두드리는 것을 늦춘다 — 전체 150번, 틀린 코드 20번 / 10분 (서버 인스턴스마다).
+// 한 사무실 와이파이(같은 IP)에서 테스터 여럿이 함께 가입해도 걸리지 않을 만큼 — 코드 맞히기는 틀린 코드 수로 막는다
+const anyHit = makeLimiter({ windowMs: 10 * 60 * 1000, max: 150 });
+const badCode = makeLimiter({ windowMs: 10 * 60 * 1000, max: 20 });
+const badCodeSeen = new Map();
+const MAX_PENDING = 30; // 한 센터의 승인 대기 — 넘으면 관제가 정리할 때까지 새 가입을 받지 않는다
 
 export default async function handler(req, res) {
   res.setHeader("Cache-Control", "no-store");
   if (!memberLoginConfigured() || !dbConfigured()) return res.status(503).json({ error: "member-not-configured" });
-  if (tooMany(req)) return res.status(429).json({ error: "too-many" });
+  const ip = clientIp(req);
+  if (anyHit(ip) || (badCodeSeen.get(ip) || 0) > Date.now()) return res.status(429).json({ error: "too-many" });
+  const wrongCode = async () => {
+    if (badCode(ip)) badCodeSeen.set(ip, Date.now() + 10 * 60 * 1000);
+    if (badCodeSeen.size > 5000) for (const [k, t] of badCodeSeen) if (t < Date.now()) badCodeSeen.delete(k);
+    await slow();
+  };
 
   try {
     if (req.method === "GET") {
       const code = normCode(req.query.code);
       const center = JOIN_CODE_RE.test(code) ? await centerByCode(code) : null;
       if (!center) {
-        await slow();
+        await wrongCode();
         return res.status(404).json({ error: "bad-code" });
       }
       return res.status(200).json({ center: { id: center.id, name: center.name } });
     }
 
     if (req.method === "POST") {
+      if (!sameSiteJson(req)) return res.status(415).json({ error: "json-only" });
       const b = req.body || {};
-      const area = AREAS[b.area] ? b.area : null;
+      const area = isArea(b.area) ? b.area : null;
       const role = area && AREAS[area].roles.includes(b.role) ? b.role : null;
       const loginId = str(b.loginId, 40).toLowerCase();
       const name = str(b.name, 20);
@@ -60,14 +64,15 @@ export default async function handler(req, res) {
       if (pwErr) errors.password = pwErr;
       if (name.length < 2) errors.name = "이름을 2자 이상 적어 주세요";
       if (!b.agree) errors.agree = "안내에 동의해야 가입할 수 있습니다";
-      if (!JOIN_CODE_RE.test(code)) errors.code = "가입 코드 6자리를 적어 주세요";
+      if (!JOIN_CODE_RE.test(code)) errors.code = "가입 코드를 적어 주세요 (6~8자리)";
       if (Object.keys(errors).length) return res.status(400).json({ error: "invalid", fields: errors });
 
       const center = await centerByCode(code);
       if (!center) {
-        await slow();
+        await wrongCode();
         return res.status(400).json({ error: "invalid", fields: { code: "맞지 않는 가입 코드입니다" } });
       }
+      if ((await pendingCount(center.id)) >= MAX_PENDING) return res.status(429).json({ error: "pending-full" });
       if (await loginIdTaken(loginId)) return res.status(409).json({ error: "taken", fields: { loginId: "이미 쓰는 아이디입니다" } });
 
       const profile = {};

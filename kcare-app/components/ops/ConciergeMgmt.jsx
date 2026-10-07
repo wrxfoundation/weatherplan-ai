@@ -34,6 +34,10 @@ function centerConcierges() {
     ...conciergeDetail([name, p.tag, i === 0 ? "주 담당" : "부 담당", "—", "—", "—", "0건", "0", "—", "기록 없음"]),
     tel: "—", workDays: "—", vehicle: false, emergency: true, certs: [], trainings: [], contract: "베타 회원", week: [], weekHours: 0, rest: "—",
     internal: "평가 전", eval: [], elders: [], today: [], history: [], live: true,
+    // 첫 컨시어지만 liveConcierge 가 가구 기록으로 덮는다 — 나머지도 화면이 읽는 칸은 비워서 채워 둔다
+    location: { text: "실시간 위치는 베타에서 받지 않습니다 — 체크인 때 GPS 기록만 남습니다", at: "—", feed: "none" },
+    opsMsgs: { total: 0, open: 0 },
+    missed: { declined: 0, late: 0, cancel: 0 },
   }));
 }
 
@@ -309,7 +313,7 @@ export default function ConciergeMgmt({ openProfile }) {
             {cur.live && (
               <div className="mt-3">
                 <Note tone="info">
-                  테스트 컨시어지 계정(test-concierge)의 실제 기록 — 현재상태 · 오늘 일정 · 위치(체크인) · SOS 출동이력 · 관제 연락 {cur.opsMsgs.total}건
+                  {center ? "이 센터 컨시어지 회원" : "테스트 컨시어지 계정(test-concierge)"}의 실제 기록 — 현재상태 · 오늘 일정 · 위치(체크인) · SOS 출동이력 · 관제 연락 {cur.opsMsgs.total}건
                   {cur.opsMsgs.open ? ` (확인 전 ${cur.opsMsgs.open}건)` : ""}. 근무시간 · 피로도 · 자격 · 평가 · 연락처는 앱이 모으지 않는 값이라 예시입니다.
                 </Note>
               </div>

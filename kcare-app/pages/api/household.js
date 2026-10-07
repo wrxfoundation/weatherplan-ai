@@ -14,6 +14,11 @@ import { db, dbConfigured, dbErrorCode, ensureHousehold } from "../../lib/db";
 import { summarize, trimPayload } from "../../lib/activity";
 import { centerOfHousehold } from "../../lib/centers";
 import { centerPeople, memberStillValid } from "../../lib/members";
+import { sameSiteJson } from "../../lib/http";
+
+// 서버가 직접 남기는 기록 종류 — 화면이 보낸 동작으로는 만들 수 없다 (가입 · 회원 관리 · 로그인 줄을 꾸며 넣지 못하게)
+const SERVER_ONLY = new Set(["login", "memberSignup", "memberAdmin"]);
+const ACTION_TYPE_RE = /^[A-Za-z][A-Za-z0-9]{1,39}$/;
 
 export const config = { api: { bodyParser: { sizeLimit: "4mb" } } };
 
@@ -95,14 +100,16 @@ export default async function handler(req, res) {
   try {
     // 회원 계정 — 관제가 정지하거나 역할을 바꿨으면 여기서 멈춘다 (다시 로그인)
     const still = await memberStillValid(user);
-    if (!still.ok) return res.status(401).json({ error: still.reason });
+    if (!still.ok) return res.status(401).json({ error: still.reason, area: still.area || null });
 
     if (req.method === "GET") {
       // 관제 센터 가구 — 그 센터 회원 이름 · 역할 (화면의 어르신 · 보호자 · 컨시어지 이름). 처음 읽을 때와 ?people=1 일 때만
       const center = centerOfHousehold(user.household);
       const since = req.query.v != null ? Number(req.query.v) : null;
       const withPeople = center && (since == null || req.query.people === "1");
-      const people = withPeople ? { center: { id: center.id, name: center.name }, people: await centerPeople(center.id) } : {};
+      // 관제가 아니면 아이디 없이 이름 · 역할만, 관제 회원은 빼고 (로그인 아이디를 모두에게 보이지 않게 · 2026-10-06 점검)
+      const shown = (list) => (user.role === "ops" ? list : list.filter((m) => m.role !== "ops").map((m) => ({ name: m.name, role: m.role })));
+      const people = withPeople ? { center: { id: center.id, name: center.name }, people: shown(await centerPeople(center.id)) } : {};
       if (since != null && Number.isFinite(since)) {
         const { data, error } = await db().from("households").select("version").eq("id", user.household).maybeSingle();
         if (error) throw error;
@@ -126,12 +133,13 @@ export default async function handler(req, res) {
     }
 
     if (req.method === "PUT") {
+      if (!sameSiteJson(req)) return res.status(415).json({ error: "json-only" });
       const { baseVersion, state, actions = [] } = req.body || {};
       if (!Number.isInteger(baseVersion) || baseVersion < 0 || !isPlainObject(state) || !Array.isArray(actions)) {
         return res.status(400).json({ error: "invalid-request" });
       }
       if (JSON.stringify(state).length > MAX_STATE_CHARS) return res.status(413).json({ error: "state-too-large" });
-      const list = actions.filter((a) => isPlainObject(a) && typeof a.type === "string").slice(0, MAX_ACTIONS);
+      const list = actions.filter((a) => isPlainObject(a) && typeof a.type === "string" && ACTION_TYPE_RE.test(a.type) && !SERVER_ONLY.has(a.type)).slice(0, MAX_ACTIONS);
 
       if (baseVersion === 0) await ensureHousehold(user.household);
       const { data, error } = await db()

@@ -9,6 +9,7 @@ import {
   AI_REPORT,
   ELDER,
   OUTING,
+  elderWho,
 } from "../lib/mock";
 import WelfareList from "../components/WelfareList";
 import { matchWelfare, profileFor, welfareCounts } from "../lib/welfare";
@@ -54,7 +55,8 @@ import { STORE_CATALOG } from "../lib/store";
 import { SERVICE_MENU, daysUntil, kstYmd } from "../lib/requests";
 import ConciergeRequests from "../components/ConciergeRequests";
 import { HelpCallCard, HelpCallPopup } from "../components/HelpCall";
-import { LIVE_CONCIERGE, LIVE_TAG } from "../lib/live-household";
+import { LIVE_TAG } from "../lib/live-household";
+import { elderNameOf, inCenter, meAs, people } from "../lib/people";
 import { fmtWon } from "../lib/config";
 import { useAppState } from "../lib/state";
 import { useAuth } from "../lib/auth";
@@ -124,7 +126,8 @@ function ConciergePage() {
   const [apptMemo, setApptMemo] = useState("");
   const [reqText, setReqText] = useState(""); // 컨시어지 요청 본문
   // 제안 받을 사람 · 제안 일정 — 승인 대상은 컨시어지가 정한다 (2026-10-05). 내 일정에 맞춰 날짜를 제안한다.
-  const ME = LIVE_CONCIERGE;
+  // 센터 공간에서 컨시어지가 여럿이면 로그인한 사람 이름으로 남긴다 (2026-10-06 점검)
+  const ME = meAs(authUser, "concierge");
   const [propTo, setPropTo] = useState("guardian");
   const [propDate, setPropDate] = useState(() => kstYmd(Date.now() + 3 * 86400000));
   const [propTime, setPropTime] = useState("14:00");
@@ -152,8 +155,8 @@ function ConciergePage() {
   const hm = (t) => new Date(t).toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit", hour12: false });
   const sendOpsMsg = (text) => {
     if (!text) return;
-    dispatch({ type: "addOpsMessage", payload: { from: "컨시어지 박지현", role: "concierge", text } });
-    push("관제 연락", `컨시어지 박지현 — ${text}`, "#8FA9CC");
+    dispatch({ type: "addOpsMessage", payload: { from: `컨시어지 ${ME}`, role: "concierge", text } });
+    push("관제 연락", `컨시어지 ${ME} — ${text}`, "#8FA9CC");
     setOpsMsgText("");
   };
   // 어르신 SOS — 시각 · 어르신 번호(테스트 가구는 가입 상담에서 받은 번호) · 알림음 (2026-10-02)
@@ -270,6 +273,12 @@ function ConciergePage() {
   // 고객 이름을 눌러 상세로 본다.
   const cNow = new Date();
   // 내가 승인 · 수락받아 확정된 해주세요도 달력에 (2026-10-05) — 데모 달력과 같은 모양으로
+  const center = inCenter(); // 관제 센터 공간 — 예시 일정 · 예시 고객 없이 (2026-10-06 누수 점검)
+  // 담당 고객 — 센터 공간은 그 센터 어르신 한 분 (예시 고객 12명 · 예시 케어 프로필 링크 없이)
+  const myClients = center
+    ? [{ name: LIVE_ELDER, age: null, where: people().district, loc: "자택", note: "앱에 남은 기록만", proposed: 0, accepted: 0, referredBy: null }]
+    : MY_CLIENTS;
+  const ClientRow = center ? "div" : Link;
   const reqJobs = (state.requests || [])
     .filter((r) => r.scheduledDate && r.assignee === ME && ["confirmed", "inProgress", "cancelRequested"].includes(r.status))
     .map((r) => ({
@@ -294,7 +303,7 @@ function ConciergePage() {
         day: d,
         today: d === cNow.getDate(),
         // 오늘에서 며칠 떨어진 날인지(off)로 맞춘다 — 달력과 '오늘의 일정'이 같은 기준(이 폰의 오늘)을 쓰게
-        jobs: [...CONCIERGE_CAL.filter((j) => j.off === d - cNow.getDate()), ...reqJobs.filter((j) => j.off === d - cNow.getDate())],
+        jobs: [...(center ? [] : CONCIERGE_CAL).filter((j) => j.off === d - cNow.getDate()), ...reqJobs.filter((j) => j.off === d - cNow.getDate())],
       });
     }
     return cells;
@@ -303,7 +312,7 @@ function ConciergePage() {
 
   // ── 오늘 앞단 (2026-09-22 시안 1) ──
   // 오늘 일정은 달력과 같은 출처(CONCIERGE_CAL)를 쓴다 — 두 곳이 다른 말을 하지 않게.
-  const todayJobs = CONCIERGE_CAL.filter((j) => j.off === 0 && j.start);
+  const todayJobs = center ? [] : CONCIERGE_CAL.filter((j) => j.off === 0 && j.start);
   const today = useToday(todayJobs, cNow);
   const [urgentOpen, setUrgentOpen] = useState(false);
   const [urgentSteps, setUrgentSteps] = useState({});
@@ -361,10 +370,13 @@ function ConciergePage() {
                 </div>
                 <div className="mt-0.5 flex items-center gap-2">
                   {/* 이 화면의 h1 — 없으면 문서에 제목 계층이 아예 없다 */}
-                  <h1 className="whitespace-nowrap text-[21px] font-black text-navy">박지현 · 주 동행</h1>
-                  <span className="chip-gold shrink-0 rounded-full px-2 py-[3px] font-num text-[10px] font-bold">
-                    {EARNINGS.grade}
-                  </span>
+                  <h1 className="whitespace-nowrap text-[21px] font-black text-navy">{ME} · 주 동행</h1>
+                  {/* 등급은 예시 정산 값 — 관제 센터 공간의 새 컨시어지에게는 붙이지 않는다 */}
+                  {!center && (
+                    <span className="chip-gold shrink-0 rounded-full px-2 py-[3px] font-num text-[10px] font-bold">
+                      {EARNINGS.grade}
+                    </span>
+                  )}
                 </div>
               </div>
               {/* 관제에 말 걸기 — 어르신의 즉시방문요청과 같은 자리·같은 성격이다
@@ -391,7 +403,7 @@ function ConciergePage() {
             {state.demo.sos && !state.ops.sosDispatched && (
               <div role="alert" className="animate-sosPulse rounded-2xl bg-danger p-4 text-white">
                 <div className="text-[12px] font-bold tracking-[.14em] opacity-85">긴급 · 어르신 SOS</div>
-                <div className="mt-1 text-[18px] font-bold leading-[1.4]">김순자님이 SOS를 눌렀습니다</div>
+                <div className="mt-1 text-[18px] font-bold leading-[1.4]">{LIVE_ELDER}님이 SOS를 눌렀습니다</div>
                 <div className="mt-0.5 text-[13px] opacity-90">
                   {sosTime ? `${sosTime} · ` : ""}관제센터가 확인 중입니다. 급파 지시가 오면 여기서 수락합니다.
                 </div>
@@ -415,16 +427,17 @@ function ConciergePage() {
               <div role="alert" className="animate-sosPulse rounded-2xl bg-danger p-4 text-white">
                 <div className="text-[12px] font-bold tracking-[.14em] opacity-85">긴급 급파 · 관제 지시</div>
                 <div className="mt-1 text-[18px] font-bold leading-[1.4]">
-                  김순자님 SOS — 최근접 동행자로 지정되었습니다
+                  {LIVE_ELDER}님 SOS — {center ? "관제가 출동을 지시했습니다" : "최근접 동행자로 지정되었습니다"}
                 </div>
                 <div className="mt-0.5 text-[13px] opacity-90">
-                  대치동 자택 1.2km · 서다인(부)과 2인 급파 · 도착 예정 6분
+                  {/* 센터 공간은 거리 · 도착 예정을 계산하지 않는다 — 예시 값을 보이지 않는다 */}
+                  {center ? `${LIVE_ELDER} 님 댁으로 · 거리 · 도착 예정은 베타에서 계산하지 않습니다` : "대치동 자택 1.2km · 서다인(부)과 2인 급파 · 도착 예정 6분"}
                 </div>
                 <button
                   onClick={() => {
                     if (sosAck) return;
-                    dispatch({ type: "sosAccept", by: LIVE_CONCIERGE });
-                    push("대응", "박지현 급파 수락 — 이동 시작 (도착 예정 6분)", "#FF8A80");
+                    dispatch({ type: "sosAccept", by: ME });
+                    push("대응", `${ME} 급파 수락 — 이동 시작${center ? "" : " (도착 예정 6분)"}`, "#FF8A80");
                   }}
                   disabled={sosAck}
                   className="btn-press mt-3 w-full rounded-[10px] bg-white py-3 text-[16px] font-bold text-danger disabled:opacity-80"
@@ -444,19 +457,19 @@ function ConciergePage() {
                 {live && (
                   <div role="note" className="rounded-xl border border-gold/40 bg-gold/[.08] px-3.5 py-3 text-[13px] leading-[1.65] text-ink">
                     <b className="text-navy">{LIVE_TAG} — 실제 고객은 {LIVE_ELDER} 님뿐입니다.</b> 체크인 · 방문 점검 · 리포트 · 동행 기록 ·
-                    관제에 알리기 · {LIVE_ELDER} 님 마음사서함 · SOS 수락은 실제로 저장되어 다른 폰에 뜹니다. 다른 고객 · 긴급확인 · 오늘의 짝 · 외출
-                    컨디션은 예시입니다.
+                    관제에 알리기 · {LIVE_ELDER} 님 마음사서함 · SOS 수락은 실제로 저장되어 다른 폰에 뜹니다.
+                    {center ? "" : " 다른 고객 · 긴급확인 · 오늘의 짝 · 외출 컨디션은 예시입니다."}
                   </div>
                 )}
                 <TodayHeader
-                  name={LIVE_CONCIERGE}
+                  name={ME}
                   now={cNow}
                   today={today}
-                  urgentCount={urgentDone ? 0 : 1}
+                  urgentCount={center || urgentDone ? 0 : 1}
                   reportDue={wrapUp ? `${wrapUp} 고객` : null}
                 />
 
-                <UrgentBanner u={CONCIERGE_URGENT} done={urgentDone} onOpen={() => setUrgentOpen(true)} />
+                {!center && <UrgentBanner u={CONCIERGE_URGENT} done={urgentDone} onOpen={() => setUrgentOpen(true)} />}
 
                 {nowJob ? (
                   <NowCard
@@ -568,12 +581,17 @@ function ConciergePage() {
                     (2026-09-22 재구성 전에는 같은 동행이 두 카드에 두 번 떴다). */}
                 <Card className="p-[18px]">
                   <div className="flex items-center justify-between">
-                    <span className="text-[15px] font-black text-navy">동행 준비</span>
+                    <span className="text-[15px] font-black text-navy">{center ? "방문 체크인" : "동행 준비"}</span>
                     {/* 두 사람 모두 체크인해야 수행중 — 나만 체크인했으면 '짝 체크인 대기' (2026-10-02 QA 13번) */}
                     <Badge fg="#FFFFFF" bg="#0A1F3C">
-                      {v.checkedIn && pairCalled ? "수행중" : v.checkedIn ? "짝 체크인 대기" : "예정"}
+                      {center ? (v.checkedIn ? "체크인 완료" : "체크인 전") : v.checkedIn && pairCalled ? "수행중" : v.checkedIn ? "짝 체크인 대기" : "예정"}
                     </Badge>
                   </div>
+                  {/* 짝 · 외출 컨디션 · 준비물은 예시 일정의 것 — 관제 센터 공간에는 보이지 않는다 (2026-10-06 누수 점검) */}
+                  {center ? (
+                    <p className="mt-1 text-[12.5px] leading-[1.6] text-muted">{LIVE_ELDER} 님 댁에 도착하면 체크인하세요 — GPS 기록이 관제 방문관리에 남습니다.</p>
+                  ) : (
+                  <>
                   <div className="mt-1 text-[12.5px] leading-[1.6] text-muted">
                     {a1.customer} · {a1.hospital} · {a1.timeRange}
                     <br />
@@ -685,6 +703,8 @@ function ConciergePage() {
                     ))}
                   </div>
 
+                  </>
+                  )}
                   {/* GPS 출근 체크인 — 감사 타임라인 시작 */}
                   <button
                     onClick={() => {
@@ -695,7 +715,7 @@ function ConciergePage() {
                         event: { kind: "gps", label: "출근 체크인 · GPS 좌표 기록" },
                       });
                       // '수행중'은 두 사람 모두 체크인해야 시작이다 — 혼자 체크인한 것을 수행중이라고 적지 않는다 (2026-10-02 QA)
-                      push("체크인", live ? "박지현 출근 체크인 · 김순자(78) 댁 (GPS 기록)" : "박지현 출근 체크인 · 김순자(78) — 짝(서다인) 체크인 대기", "#4ADE80");
+                      push("체크인", live ? `${ME} 출근 체크인 · ${elderWho()} 댁 (GPS 기록)` : "박지현 출근 체크인 · 김순자(78) — 짝(서다인) 체크인 대기", "#4ADE80");
                     }}
                     disabled={v.checkedIn}
                     className={`btn-press btn-dark mt-4 w-full rounded-xl py-3.5 text-[17px] font-bold text-white ${
@@ -707,6 +727,8 @@ function ConciergePage() {
                 </Card>
 
 
+                {!center && (
+                <>
                 {/* 내일 일정 — 오늘 업무 뒤에 확인 · 주소 게이팅 유지 (REQ-09) */}
                 <Card className="p-4">
                   <div className="flex items-center gap-2">
@@ -733,7 +755,11 @@ function ConciergePage() {
                     )}
                   </div>
                 </Card>
+                </>
+                )}
 
+                {!center && (
+                <>
                 {/* 방문 전 확인전화 — 7일·3일·1일 전 (2026-08-21 시트 컨시어지 오늘 3번).
                     체크하면 관제로 넘어간다. 노쇼의 절반은 "그날인 줄 몰랐다"라서,
                     안 한 것이 남아 있으면 관제가 먼저 알아야 한다. */}
@@ -784,7 +810,11 @@ function ConciergePage() {
                     것도 관제가 알아야 할 정보입니다.
                   </p>
                 </Card>
+                </>
+                )}
 
+                {!center && (
+                <>
                 {/* 오늘의 한 끗 — 선제 케어 한 가지 (세계 최고 컨시어지: anticipation) */}
                 <Card className="border border-gold/30 p-4">
                   <div className="flex items-center gap-2">
@@ -809,6 +839,8 @@ function ConciergePage() {
                     </button>
                   </div>
                 </Card>
+                </>
+                )}
 
               </>
             )}
@@ -820,16 +852,16 @@ function ConciergePage() {
                 <Card className="p-4">
                   <SectionLabel>내가 담당하는 고객</SectionLabel>
                   <div className="mt-2.5 space-y-1.5">
-                    {MY_CLIENTS.map((c) => (
-                      <Link
+                    {myClients.map((c) => (
+                      <ClientRow
                         key={c.name}
-                        href="/care-profile"
+                        {...(center ? {} : { href: "/care-profile" })}
                         className="btn-press flex items-center gap-3 rounded-xl border border-navy/[.08] bg-white/70 px-3 py-2.5"
                       >
                         <Avatar name={c.name} size={34} />
                         <span className="min-w-0 flex-1">
                           <span className="block text-[14.5px] font-bold text-ink">
-                            {c.name} <span className="font-num text-[12px] text-muted">({c.age})</span>
+                            {c.name} {c.age ? <span className="font-num text-[12px] text-muted">({c.age})</span> : null}
                           </span>
                           <span className="block text-[11.5px] text-muted">{c.where} · {c.note}</span>
                           {/* 제안 수락 · 소개 관계 — 2026-08-21 시트 고객 1·2번.
@@ -850,8 +882,8 @@ function ConciergePage() {
                         <span className="shrink-0 rounded-full bg-navy/[.06] px-2 py-[3px] text-[10.5px] font-bold text-muted">
                           {c.loc}
                         </span>
-                        <span className="shrink-0 text-[17px] text-muted">›</span>
-                      </Link>
+                        {!center && <span className="shrink-0 text-[17px] text-muted">›</span>}
+                      </ClientRow>
                     ))}
                   </div>
                 </Card>
@@ -882,7 +914,7 @@ function ConciergePage() {
                     첫 안심방문 때 약봉투를 보고 여기서 고친다. 어르신 복약 미션 · 보호자 마이 · 관제 · SOS 신고 정보가 같은 값을 쓴다. */}
                 <Card className="p-[18px]">
                   <div className="flex items-center justify-between gap-2">
-                    <span className="text-[17px] font-black text-navy">김순자님 건강 정보</span>
+                    <span className="text-[17px] font-black text-navy">{LIVE_ELDER}님 건강 정보</span>
                     {!healthEdit && (
                       <button
                         onClick={() => setHealthEdit(true)}
@@ -898,7 +930,7 @@ function ConciergePage() {
                         health={healthOf(state)}
                         onCancel={() => setHealthEdit(false)}
                         onSave={(payload) => {
-                          const by = live ? `${authUser?.name || "컨시어지"} (컨시어지)` : "박지현 (컨시어지)";
+                          const by = live ? `${authUser?.name || ME} (컨시어지)` : "박지현 (컨시어지)";
                           dispatch({ type: "setHealth", payload, by });
                           push("건강", `건강 정보 수정 — 복용 ${payload.meds.length}번 · 질환 ${payload.conditions.length}가지 · ${by}`, "#8FA9CC");
                           setHealthEdit(false);
@@ -913,13 +945,14 @@ function ConciergePage() {
                 {/* 선호 카드 + AI 동행 브리핑 — 방문 전 30초 (2026-08-12 대표 피드백으로 합침) */}
                 <Card className="p-[18px]">
                   <div className="flex items-center justify-between">
-                    <span className="text-[17px] font-black text-navy">김순자님 선호 카드</span>
+                    <span className="text-[17px] font-black text-navy">{LIVE_ELDER}님 선호 카드</span>
                     <Badge fg="#7A5C28" bg="rgba(176,141,87,.15)">
                       방문 전 30초 확인
                     </Badge>
                   </div>
                   <div className="mt-3 space-y-2">
-                    {ELDER_PREFS.map(([k, val]) => (
+                    {center && !prefAdded && <p className="text-[13px] leading-[1.6] text-muted">아직 적힌 선호가 없습니다.</p>}
+                    {(center ? [] : ELDER_PREFS).map(([k, val]) => (
                       <div key={k} className="flex gap-2.5 text-[13px]">
                         <span className="w-[56px] shrink-0 font-bold text-gold">{k}</span>
                         <span className="flex-1 leading-[1.6] text-ink">{val}</span>
@@ -934,6 +967,8 @@ function ConciergePage() {
                       </div>
                     )}
                   </div>
+                  {/* 정해진 예시 문장을 넣는 시연 단추 — 관제 센터 공간에는 두지 않는다 */}
+                  {!center && (
                   <button
                     onClick={() => {
                       if (prefAdded) return;
@@ -945,11 +980,18 @@ function ConciergePage() {
                   >
                     {prefAdded ? "오늘 알게 된 선호 기록됨 ✓" : "+ 오늘 알게 된 선호 기록"}
                   </button>
+                  )}
                   <p className="mt-2 text-[11px] leading-[1.6] text-muted">
                     선호 카드는 담당 페어와 관제만 봅니다 · 다음 동행 브리핑에 자동 반영됩니다.
                   </p>
                   {/* AI 동행 브리핑 — 선호 카드와 합쳤다 (2026-08-12 대표 피드백).
-                      둘 다 "방문 전에 30초 읽는 것"이라 화면을 나눌 이유가 없었다. */}
+                      둘 다 "방문 전에 30초 읽는 것"이라 화면을 나눌 이유가 없었다.
+                      관제 센터 공간에는 아직 케어 프로필 · 관찰 기록이 없어 브리핑을 만들지 않는다 (2026-10-06 누수 점검) */}
+                  {center ? (
+                    <p className="mt-4 border-t border-navy/[.08] pt-3.5 text-[12.5px] leading-[1.6] text-muted">
+                      AI 동행 브리핑은 방문 리포트 · 관찰 기록이 쌓이면 만들어집니다.
+                    </p>
+                  ) : (
                   <div className="mt-4 border-t border-navy/[.08] pt-3.5">
                   <div className="flex items-center gap-2">
                     <span className="text-[16px] font-black text-navy">AI 동행 브리핑</span>
@@ -985,6 +1027,7 @@ function ConciergePage() {
                     쌓이고 다음 브리핑에 반영됩니다.
                   </p>
                   </div>
+                  )}
                 </Card>
 
               </>
@@ -1284,7 +1327,7 @@ function ConciergePage() {
 
                   {/* 리포트 상단 카피 미리보기 — 보호자 앱 · 알림톡에 나가는 문장 */}
                   <div className="mt-3 rounded-xl bg-navy p-3.5 text-[14.5px] font-bold leading-[1.6] text-white">
-                    {REPORT_HEADLINE[careLoc](LIVE_ELDER)}
+                    {REPORT_HEADLINE[careLoc](elderNameOf(state.onboarding))}
                     <span className="mt-1 block text-[11px] font-normal text-white/55">
                       리포트 상단 문장 — 체크가 끝나면 사진 · 15초 영상 메시지와 함께 나갑니다
                     </span>
@@ -1513,7 +1556,7 @@ function ConciergePage() {
                         if (!escortNote.trim() || escortSaved) return;
                         dispatch({
                           type: "escortSave",
-                          payload: { note: escortNote.trim(), photos: escortPhotos.length, recorded: escortRecorded, by: LIVE_CONCIERGE },
+                          payload: { note: escortNote.trim(), photos: escortPhotos.length, recorded: escortRecorded, by: ME },
                         });
                         push(
                           "리포트",
@@ -1548,7 +1591,7 @@ function ConciergePage() {
                     {preview && (
                       <div className="animate-tickIn mt-2.5 rounded-xl border border-gold/40 bg-paper p-3.5">
                         <div className="text-[13px] font-bold text-navy">
-                          {REPORT_HEADLINE[careLoc](LIVE_ELDER)}
+                          {REPORT_HEADLINE[careLoc](elderNameOf(state.onboarding))}
                         </div>
                         <div className="mt-2 space-y-1">
                           {checkupFor(careLoc).flatMap((ax) =>
@@ -1612,7 +1655,7 @@ function ConciergePage() {
                       const note = escortSaved ? escort.note : live ? state.visit.memo || "" : AI_REPORT.draft;
                       dispatch({
                         type: "addReport",
-                        payload: { id: `rp-${Date.now()}`, by: LIVE_CONCIERGE, flagged: 0, note, secretNote: "", shared: true, closesVisit: true },
+                        payload: { id: `rp-${Date.now()}`, by: ME, flagged: 0, note, secretNote: "", shared: true, closesVisit: true },
                       });
                       // 가족에게 가는 것은 관제가 검수하고 '보호자 리포트 발송'을 누를 때다 — 동행 기록도 그때 같이 간다.
                       // 전에는 이 버튼을 누르자마자 '가족에게 전달됨'이라고 했지만 실제로는 관제 검수 대기였다 (2026-10-02 QA)
@@ -1637,7 +1680,7 @@ function ConciergePage() {
                 <Card className="p-4">
                   <div className="space-y-3">
                     {state.reports.map((r) => {
-                      const mine = r.by === LIVE_CONCIERGE;
+                      const mine = r.by === ME;
                       return (
                         <div key={r.id} className="border-t border-navy/[.07] pt-3 first:border-t-0 first:pt-0">
                           <div className="flex items-center gap-2">
@@ -1714,7 +1757,15 @@ function ConciergePage() {
 
                 {/* 케어 제안 — 제안은 반드시 근거(trigger)를 동반 (도메인 규칙 1.1) */}
                 <SectionLabel>케어 제안</SectionLabel>
-                {CARE_SUGGESTIONS.map((sg) => (
+                {/* 예시 제안은 예시 관찰 기록(욕실 위험물 2회 …)을 근거로 단다 — 관제 센터 공간의 새 어르신에게는 근거가 없다 (2026-10-06 누수 점검) */}
+                {center && (
+                  <Card className="p-4">
+                    <p className="text-[13px] leading-[1.7] text-muted">
+                      아직 근거가 될 관찰 기록이 없습니다 — 안심방문 리포트에 관찰이 쌓이면 근거를 달아 제안할 수 있습니다. 아래 서비스 · 복지혜택 제안은 지금도 보낼 수 있습니다.
+                    </p>
+                  </Card>
+                )}
+                {(center ? [] : CARE_SUGGESTIONS).map((sg) => (
                   <Card key={sg.item} className="p-4">
                     <div className="flex items-baseline justify-between">
                       <span className="text-[16px] font-bold text-navy">{sg.item}</span>
@@ -1734,7 +1785,7 @@ function ConciergePage() {
                             amount: sg.est,
                             preferredDate: null,
                             urgency: "normal",
-                            assignee: LIVE_CONCIERGE,
+                            assignee: ME,
                             photos: [],
                             status: "requested",
                             history: [{ at: Date.now(), status: "requested", note: "관찰 근거 기반 제안" }],
@@ -1792,7 +1843,7 @@ function ConciergePage() {
                             amount: 0,
                             preferredDate: null,
                             urgency: "normal",
-                            assignee: LIVE_CONCIERGE,
+                            assignee: ME,
                             photos: [],
                             status: "requested",
                             history: [{ at: Date.now(), status: "requested", note: "컨시어지 현장 제안 · 공공지원 우선" }],
@@ -1903,7 +1954,7 @@ function ConciergePage() {
                               amount: est,
                               preferredDate: null,
                               urgency: "normal",
-                              assignee: LIVE_CONCIERGE,
+                              assignee: ME,
                               photos: [],
                               history: [{ at: Date.now(), status: "requested", note: `안전용품 제안 · 예상 금액 ${fmtWon(est)}` }],
                               proof: null,
@@ -1973,7 +2024,7 @@ function ConciergePage() {
                                 amount: m.amount ?? null,
                                 preferredDate: null,
                                 urgency: "normal",
-                                assignee: LIVE_CONCIERGE,
+                                assignee: ME,
                                 photos: [],
                                 status: "requested",
                                 history: [
@@ -2031,7 +2082,7 @@ function ConciergePage() {
                           amount: null,
                           preferredDate: null,
                           urgency: "normal",
-                          assignee: LIVE_CONCIERGE,
+                          assignee: ME,
                           photos: [],
                           status: "requested",
                           history: [{ at: Date.now(), status: "requested", note: "컨시어지 현장 등록" }],
@@ -2249,7 +2300,7 @@ function ConciergePage() {
                           setVoiceSent(true);
                           push(
                             "메시지",
-                            `현장의 소리 접수 — ${voiceType} (${voiceAnon ? "익명" : LIVE_CONCIERGE})${
+                            `현장의 소리 접수 — ${voiceType} (${voiceAnon ? "익명" : ME})${
                               voiceMood === "지쳐요" ? " · 마음 체크인: 지침 — 배차 조정 검토" : ""
                             }`,
                             "#8FA9CC"
@@ -2379,7 +2430,7 @@ function ConciergePage() {
                   onClick={() => {
                     if (earlyPay) return;
                     setEarlyPay(true);
-                    push("정산", "박지현 조기 지급 신청 · 한도 내 승인 대기", "#8FA9CC");
+                    push("정산", `${ME} 조기 지급 신청 · 한도 내 승인 대기`, "#8FA9CC");
                   }}
                   disabled={earlyPay}
                   className={`btn-press btn-dark w-full rounded-xl py-3.5 text-[16px] font-bold text-white ${

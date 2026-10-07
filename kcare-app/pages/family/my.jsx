@@ -22,6 +22,7 @@ import { VIDEO_POLICY, VIDEO_SEGMENTS } from "../../lib/console";
 import { HOUSEHOLD, PAYMENT_MODES, PRICING, fmtWon } from "../../lib/config";
 import { fmtCard, payHref } from "../../lib/payments";
 import { PROVIDER_LABEL, logout, useAuth } from "../../lib/auth";
+import { inCenter, people } from "../../lib/people";
 
 // 월 구독료 표기 — 가입 때 고른 가구 구성(한 분 / 부부)에 따라 갈린다. 2급지는 확정 전.
 const monthlyLabel = (ob) =>
@@ -55,6 +56,8 @@ export default function MyPage() {
   const honor = honorific(ob); // 고객 호칭 — 전부 "~~님" (2026-08-12 시트)
   // 화면 주인 — 데모는 주 보호자 페르소나(김민수). 테스트 계정은 로그인한 계정 이름 (예시 이름을 붙이지 않는다).
   const me = auth.user?.household ? { name: auth.user.name || "보호자", isPrimary: true } : GUARDIANS.find((g) => g.isPrimary) || GUARDIANS[0];
+  // 가족 구성원 — 관제 센터 공간은 그 센터에 가입 · 승인된 보호자 (예시 김민수 · 김지영 · 김현우를 보이지 않는다)
+  const family = inCenter() ? people().guardians.map((name, i) => ({ name, relation: name === me.name ? "나" : "보호자", isPrimary: i === 0 })) : GUARDIANS;
   const videoConsent = ob?.joinedAt ? !!ob.videoConsent : true; // 가입 상담 전에는 동의로 본다 (컨시어지 화면과 같은 기본값)
 
   return (
@@ -98,7 +101,15 @@ export default function MyPage() {
         </Card>
 
         {/* 안심방문 바디캠 영상 — 리포트와 평가 사이 (시트 마이 2번) */}
-        <BodycamCard consent={videoConsent} onOpen={setVideo} />
+        {/* 관제 센터 공간 — 예시 영상을 보이지 않는다 (베타는 영상을 받지 않는다 · 2026-10-06 UX 점검) */}
+        {inCenter() ? (
+          <Card className="p-[18px]">
+            <div className="text-[17px] font-black text-navy">안심방문 바디캠 영상</div>
+            <p className="mt-2 text-[13px] leading-[1.7] text-muted">아직 받은 영상이 없습니다 — 베타 테스트에서는 바디캠 영상을 올리지 않습니다.</p>
+          </Card>
+        ) : (
+          <BodycamCard consent={videoConsent} onOpen={setVideo} />
+        )}
 
         {/* 동행 후 만족도 — 리포트 바로 아래 (2026-08-28 시트 홈 2번).
             테스트 가구는 컨시어지가 동행 리포트를 보낸 뒤에만 묻는다 — 없던 동행을 '끝났습니다'라고 하지 않는다 (2026-10-02 UX 점검) */}
@@ -160,10 +171,11 @@ export default function MyPage() {
         <Card className="p-[18px]">
           <div className="flex items-center justify-between">
             <SectionLabel>가족 구성원</SectionLabel>
-            <span className="text-[12px] text-muted">{GUARDIANS.length} / 5명</span>
+            <span className="text-[12px] text-muted">{family.length} / 5명</span>
           </div>
           <div className="mt-3 space-y-2.5">
-            {GUARDIANS.map((g) => (
+            {family.length === 0 && <p className="text-[13px] text-muted">아직 이 센터에 승인된 보호자가 없습니다.</p>}
+            {family.map((g) => (
               <div key={g.name} className="flex items-center gap-2.5 text-[15px]">
                 <span className="flex-1 font-bold text-ink">{g.name}</span>
                 <span className="text-[12px] text-muted">{g.relation.split(" · ")[0]}</span>
@@ -290,7 +302,8 @@ export default function MyPage() {
           <div className="mt-3 border-t border-navy/[.08] pt-3">
             <div className="text-[12px] font-bold text-navy">최근 접근 기록</div>
             <div className="mt-2 space-y-2">
-              {ACCESS_LOG.map((l, i) => (
+              {inCenter() && <p className="text-[12px] text-muted">아직 남은 접근 기록이 없습니다.</p>}
+              {(inCenter() ? [] : ACCESS_LOG).map((l, i) => (
                 <div key={i} className="text-[12px] leading-[1.6]">
                   <span className="font-num font-semibold text-muted">{l.at}</span>{" "}
                   <span className="font-bold text-ink">{l.who}</span>
@@ -898,7 +911,7 @@ function NpsCard({ onEvent, onDetractor, onReview, reviews = [], when = null }) 
             onChange={(e) => setMemo(e.target.value)}
             rows={3}
             aria-label="코멘트 · 후기"
-            placeholder="예: 어머니가 박지현 선생님 오시는 날을 기다리십니다. 다음엔 무릎 이야기도 여쭤봐 주세요."
+            placeholder="예: 어머니가 선생님 오시는 날을 기다리십니다. 다음엔 무릎 이야기도 여쭤봐 주세요."
             className="mt-2 w-full resize-none rounded-xl border border-navy/15 px-3.5 py-3 text-[15px] leading-[1.7] outline-none focus:border-gold"
           />
           <button

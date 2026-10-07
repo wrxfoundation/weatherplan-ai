@@ -121,9 +121,10 @@ export default function Home() {
             <Logo height={42} tone="onDark" beta />
             <div className="flex items-center gap-2">
               {/* 구글 로그인 — 로그인돼 있으면 이름, 아니면 로그인 화면으로 */}
+              {/* 시연 허브의 로그인 단추는 베타 테스트 계정 탭으로 바로 연다 — /login 은 가입한 회원 탭이 먼저다 (2026-10-06) */}
               {/* 로그인돼 있으면 폰에서는 '● 계정'만 — 이름까지 넣으면 로고와 겹친다. 누가 로그인했는지는 아래 모드 칸에 */}
               <Link
-                href="/login"
+                href="/login?tab=test"
                 className="tap whitespace-nowrap rounded-full border border-white/15 px-3 text-[11px] font-bold text-white/70"
               >
                 {auth.user ? (
@@ -186,7 +187,7 @@ export default function Home() {
                     </Link>
                   )}
                   <Link
-                    href="/login"
+                    href="/login?tab=test"
                     className="btn-press inline-flex items-center justify-center rounded-xl border border-white/30 px-4 py-2.5 text-[14px] font-bold text-white/90"
                   >
                     {t.modeAccount}
@@ -209,7 +210,7 @@ export default function Home() {
                 {AUTH_ENABLED && (
                   // 폰에서는 두 줄(문구 · '실제 저장' 알약)로 쌓고, 넓은 화면에서는 한 줄로
                   <Link
-                    href="/login"
+                    href="/login?tab=test"
                     className="btn-press flex flex-col items-center justify-center gap-1 rounded-xl bg-green px-5 py-3 font-bold text-white shadow-[0_6px_18px_rgba(30,122,90,.35)] hover:brightness-110 sm:ml-auto sm:shrink-0 sm:flex-row sm:gap-2.5 sm:py-3.5"
                   >
                     <span className="whitespace-nowrap text-[16px]">

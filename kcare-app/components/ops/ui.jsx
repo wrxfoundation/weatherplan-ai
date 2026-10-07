@@ -7,6 +7,7 @@
 //   · 정상 정보보다 예외 정보를 먼저 보이게 한다 — 목록은 위험도·발생시각순.
 // 모든 실시간 값에는 마지막 수신 시각을 같이 쓴다 (요청서 3절) — <Stamp/> 로 붙인다.
 
+import { createPortal } from "react-dom";
 import { useAuth } from "../../lib/auth";
 
 export const TONE = {
@@ -293,9 +294,13 @@ export function Toggle({ id, on, onChange, label }) {
 
 // 오른쪽에서 열리는 상세 패널 — 화면을 덮지 않고 옆에 붙는다 (대형 모니터 전제).
 // 좁은 화면에서는 전체 폭 모달처럼 보인다.
+// 화면 전체를 덮는 창은 body 로 옮겨 그린다 — 등장 효과(transform)가 걸린 카드 안에서 그리면 'fixed' 가
+// 화면이 아니라 그 카드를 기준으로 잡혀 확인창이 화면 밖(위)으로 열렸다 (2026-10-06 UX 점검 · 계정·권한 정지 확인)
+const toBody = (el) => (typeof document === "undefined" ? el : createPortal(el, document.body));
+
 export function Drawer({ open, onClose, title, sub, children, width = 520, footer }) {
   if (!open) return null;
-  return (
+  return toBody(
     <div className="fixed inset-0 z-[1200] flex justify-end bg-navy/30" onClick={onClose}>
       <div
         role="dialog"
@@ -324,7 +329,7 @@ export function Drawer({ open, onClose, title, sub, children, width = 520, foote
 // 확인 절차 — 출동·종료처럼 되돌리기 어려운 실행 전에 한 번 더 묻는다 (요청서 19절)
 export function Confirm({ open, title, body, confirmLabel = "실행", tone = "navy", onConfirm, onCancel, children }) {
   if (!open) return null;
-  return (
+  return toBody(
     <div className="fixed inset-0 z-[1300] flex items-center justify-center bg-navy/40 px-4" onClick={onCancel}>
       <div role="alertdialog" aria-modal="true" aria-label={title} onClick={(e) => e.stopPropagation()} className="card-frost w-full max-w-[440px] rounded-[16px] p-5">
         <h3 className="text-[16px] font-bold text-navy">{title}</h3>

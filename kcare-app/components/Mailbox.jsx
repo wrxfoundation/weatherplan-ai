@@ -180,7 +180,7 @@ function UnsentCard({ c, onSend, onOpen }) {
         <button onClick={onOpen} className="btn-press btn-inline min-w-0 flex-1 text-left">
           <span className="flex flex-wrap items-center gap-1.5">
             <span className="text-[15px] font-bold text-navy">{c.name} 고객</span>
-            <span className="font-num text-[11px] text-muted">{c.age}세 · {c.where}</span>
+            <span className="font-num text-[11px] text-muted">{[c.age ? `${c.age}세` : null, c.where].filter(Boolean).join(" · ")}</span>
             {c.role === "부" && <Badge fg="#5C5A54" bg="rgba(10,31,60,.06)">부 담당</Badge>}
           </span>
           <span className="mt-0.5 block font-num text-[12px] text-muted">
@@ -306,7 +306,7 @@ function AllClients({ clients, onOpen }) {
             <Face name={c.name} tone="navy" size={34} />
             <span className="min-w-0 flex-1">
               <span className="block text-[14px] font-bold text-ink">
-                {c.name} <span className="font-num text-[11px] text-muted">{c.age}세</span>
+                {c.name} {c.age ? <span className="font-num text-[11px] text-muted">{c.age}세</span> : null}
               </span>
               <span className="block font-num text-[11.5px] text-muted">
                 발송 {agoLabel(c.lastSentMin)} · 응답 {agoLabel(c.lastReplyMin)}
@@ -368,7 +368,7 @@ export function VoiceThread({ client, thread, onClose, onRecord, onPlay, onMemo,
             <div className="min-w-0 flex-1">
               <div className="text-[17px] font-bold leading-tight">{client.name} 고객</div>
               <div className="mt-0.5 font-num text-[11.5px] text-white/75">
-                {client.age}세 · {client.where} · 최근 응답 {agoLabel(client.lastReplyMin)}
+                {[client.age ? `${client.age}세` : null, client.where, `최근 응답 ${agoLabel(client.lastReplyMin)}`].filter(Boolean).join(" · ")}
               </div>
             </div>
             <button

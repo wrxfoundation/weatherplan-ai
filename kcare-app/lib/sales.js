@@ -9,6 +9,7 @@
 // 제도가 오면 SALES_COMMISSION.rules 를 채우고 confirmed 를 true 로 바꾸면 화면에 금액이 뜬다.
 import { HOUSEHOLD, PRICING } from "./config";
 import { relMd, relYmd } from "./reltime";
+import { onPeople } from "./people-store";
 
 export const SALES_REP = {
   code: "S-0012",
@@ -18,6 +19,10 @@ export const SALES_REP = {
   since: "2026-09-01",
   phone: "010-****-4127",
 };
+// 관제 센터 공간(2026-10-06)에서는 그 센터에 가입한 영업자 이름 — lib/people.js
+onPeople((p) => {
+  SALES_REP.name = p.sales;
+});
 
 export const SALES_COMMISSION = {
   model: "직판",
@@ -72,7 +77,10 @@ export const monthlyOf = (h) => (h === "couple" ? HOUSEHOLD.monthly : PRICING.su
 export const entryOf = (h) => (h === "couple" ? HOUSEHOLD.entryFee : PRICING.entryFee.total);
 
 export const referralPath = (code = SALES_REP.code) => `/onboarding?ref=${encodeURIComponent(code)}`;
-export const isRepCode = (v) => /^S-\d{4}$/.test(String(v || "").trim().toUpperCase());
+// 추천 코드 — 예시 영업자는 S-0012, 관제 센터 회원 영업자는 자기 아이디로 만든 코드(S-아이디 · 2026-10-06 UX 점검:
+// 전에는 센터의 영업자 모두가 같은 S-0012 를 나눠 써서 누구 고객인지 갈리지 않았다)
+export const isRepCode = (v) => /^S-(\d{4}|[A-Z][A-Z0-9._-]{3,19})$/.test(String(v || "").trim().toUpperCase());
+export const memberRepCode = (loginId) => `S-${String(loginId || "").trim().toUpperCase()}`;
 
 // 가입 상담에서 이 영업자 코드로 들어온 신청 — 보호자 이름은 가입 상담에서 받지 않으므로 어르신 이름으로 표기한다
 export function liveLead(onboarding, code = SALES_REP.code) {

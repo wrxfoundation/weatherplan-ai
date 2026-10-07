@@ -61,7 +61,7 @@ export async function testSignIn({ id, password, via = "test" }) {
 
 export const logout = (callbackUrl = "/") => signOut({ callbackUrl: safeCallback(callbackUrl) });
 
-export const PROVIDER_LABEL = { test: "테스트 아이디", "google-sim": "Google (시뮬레이션)", google: "Google", member: "회원 아이디" };
+export const PROVIDER_LABEL = { test: "테스트 아이디", "google-sim": "Google (시뮬레이션)", google: "Google", member: "회원 아이디", center: "센터 관리자" };
 
 // 구글 로그인 버튼용 로고 (Google 브랜드 가이드의 4색 G). 외부 이미지를 불러오지 않도록 인라인으로 둔다.
 export function GoogleMark({ size = 18 }) {

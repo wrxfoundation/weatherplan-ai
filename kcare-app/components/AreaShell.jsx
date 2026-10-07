@@ -2,6 +2,7 @@
 // 위쪽 탭으로 다른 영역 입구로 옮겨 갈 수 있다 (가입 화면이면 가입 화면끼리, 로그인이면 로그인끼리).
 import Head from "next/head";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import Logo from "./Logo";
 import { AREAS } from "../lib/centers";
 
@@ -14,6 +15,9 @@ const TONE = {
 export default function AreaShell({ area, mode, title, lead, children, below }) {
   const a = AREAS[area];
   const t = TONE[area];
+  // 가입 링크(?code=)로 들어와서 다른 영역 탭으로 옮겨도 코드를 들고 간다 (2026-10-06 UX 점검)
+  const q = useRouter().query.code;
+  const code = mode === "join" && typeof q === "string" ? q : "";
   return (
     <>
       <Head>
@@ -28,7 +32,7 @@ export default function AreaShell({ area, mode, title, lead, children, below }) 
               return (
                 <Link
                   key={x.key}
-                  href={mode === "join" ? x.join : x.login}
+                  href={mode === "join" ? `${x.join}${code ? `?code=${encodeURIComponent(code)}` : ""}` : x.login}
                   aria-current={on ? "page" : undefined}
                   className={`flex min-h-[48px] flex-col items-center justify-center rounded-xl px-1 text-center leading-tight ${on ? TONE[x.key].chip : "text-white/70"}`}
                 >

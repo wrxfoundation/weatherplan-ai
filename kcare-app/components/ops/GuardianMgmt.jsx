@@ -292,7 +292,7 @@ export default function GuardianMgmt({ openProfile }) {
             <span className="text-[12px] text-muted">확인 필요 · 미열람 우선</span>
           </div>
           <div className="mt-2"><Table cols={cols} rows={list} onRow={(g) => setSel(g.id)} rowKey={(g) => g.id} selected={cur?.id} /></div>
-          <div className="mt-2 text-right font-num text-[11px] text-muted">1–{list.length} / {GUARDIAN_STATS.total}명</div>
+          <div className="mt-2 text-right font-num text-[11px] text-muted">1–{list.length} / {cs.total}명</div>
         </Panel>
 
         {cur && (

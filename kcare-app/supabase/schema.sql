@@ -108,13 +108,19 @@ create table if not exists public.centers (
   id            text primary key,            -- C1 · C2 · C3
   name          text not null,               -- 관제 1센터
   household_id  text not null,               -- 이 센터가 쓰는 가구 상태 (HH-C1)
-  join_code     text not null,               -- 가입 코드 — 이 코드로 가입한 사람이 이 센터 회원이 된다 (관제 화면에서 바꿀 수 있다)
+  join_code     text not null,               -- 가입 코드 8자리 — 이 코드로 가입한 사람이 이 센터 회원이 된다 (관제 화면에서 바꿀 수 있다)
   created_at    timestamptz not null default now()
 );
+-- 첫 가입 코드 — 헷갈리는 글자(0 O 1 I)를 뺀 32자 중 8자리, gen_random_uuid() 의 무작위 바이트(암호학적 난수)로 만든다
+create or replace function public.kcare_new_join_code() returns text
+language sql volatile set search_path = public, pg_catalog as $$
+  select string_agg(substr('ABCDEFGHJKLMNPQRSTUVWXYZ23456789', (get_byte(b, i) % 32) + 1, 1), '' order by i)
+  from (select decode(replace(gen_random_uuid()::text, '-', ''), 'hex') as b) u, unnest(array[0, 1, 2, 3, 4, 5, 10, 11]) as i
+$$;
 insert into public.centers (id, name, household_id, join_code) values
-  ('C1', '관제 1센터', 'HH-C1', upper(substr(md5(random()::text), 1, 6))),
-  ('C2', '관제 2센터', 'HH-C2', upper(substr(md5(random()::text), 1, 6))),
-  ('C3', '관제 3센터', 'HH-C3', upper(substr(md5(random()::text), 1, 6)))
+  ('C1', '관제 1센터', 'HH-C1', public.kcare_new_join_code()),
+  ('C2', '관제 2센터', 'HH-C2', public.kcare_new_join_code()),
+  ('C3', '관제 3센터', 'HH-C3', public.kcare_new_join_code())
 on conflict (id) do nothing;
 create unique index if not exists centers_join_code_key on public.centers (join_code);
 
@@ -131,11 +137,26 @@ alter table public.accounts add column if not exists requested_role text;       
 alter table public.accounts add column if not exists approved_by   text;
 alter table public.accounts add column if not exists approved_at   timestamptz;
 alter table public.accounts add column if not exists created_at    timestamptz not null default now();
+-- 로그인 실패 — 5번 틀리면 잠시 잠근다 (5분 → 10분 → … 최대 1시간 · 맞게 들어오면 처음부터)
+alter table public.accounts add column if not exists failed_logins integer not null default 0;
+alter table public.accounts add column if not exists locked_until  timestamptz;
 -- 가입만 하고 아직 로그인하지 않은 회원은 로그인 시각이 비어 있다
 alter table public.accounts alter column first_login_at drop not null;
 alter table public.accounts alter column last_login_at drop not null;
 create unique index if not exists accounts_login_id_key on public.accounts (login_id) where login_id is not null;
 create index if not exists accounts_center_idx on public.accounts (center_id, status);
+
+-- 로그인 실패 한 번 — 동시에 여러 번 틀려도 빠짐없이 세도록 한 문장으로 올린다. 잠긴 시각을 돌려준다
+create or replace function public.kcare_login_failed(p_id text) returns timestamptz
+language sql volatile set search_path = public, pg_catalog as $$
+  update public.accounts
+     set failed_logins = failed_logins + 1,
+         locked_until = case when failed_logins + 1 >= 5
+                             then now() + make_interval(mins => least(60, 5 * (2 ^ least(4, failed_logins + 1 - 5))::int))
+                             else locked_until end
+   where id = p_id
+  returning locked_until
+$$;
 
 -- 권한 변경 기록 — 승인 · 거절 · 역할 변경 · 정지 · 가입 코드 변경. 지우지 않는다
 create table if not exists public.account_audit (
@@ -193,6 +214,8 @@ alter table public.account_audit enable row level security;
 
 revoke all on table public.households, public.accounts, public.activity, public.signups, public.payments,
   public.centers, public.account_audit from anon, authenticated;
+revoke all on function public.kcare_login_failed(text), public.kcare_new_join_code() from public, anon, authenticated;
+grant execute on function public.kcare_login_failed(text) to service_role;
 revoke all on table public.center1_accounts, public.center1_household, public.center1_activity, public.center1_signups, public.center1_payments, public.center2_accounts, public.center2_household, public.center2_activity, public.center2_signups, public.center2_payments, public.center3_accounts, public.center3_household, public.center3_activity, public.center3_signups, public.center3_payments from anon, authenticated;
 
 -- 관제 센터 가입 코드 보기 (따로 실행 · 관제 1~3센터 화면 '회원 · 권한'에서도 보인다):

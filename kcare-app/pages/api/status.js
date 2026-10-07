@@ -1,12 +1,12 @@
 // 설정 상태 — 로그인 · 서버 저장이 켜졌는지만 알려 준다 (값·키·주소는 싣지 않는다).
 // 로그인 화면과 배포 뒤 확인(DEPLOY.md)에서 쓴다. 베타 잠금 중에도 열려 있다.
-import { googleConfigured, memberLoginConfigured, testLoginConfigured } from "../../lib/auth-server";
+import { centerOpsConfigured, googleConfigured, memberLoginConfigured, testLoginConfigured } from "../../lib/auth-server";
 import { db, dbConfigured, dbErrorCode } from "../../lib/db";
 
 export default async function handler(req, res) {
   res.setHeader("Cache-Control", "no-store");
   const out = {
-    login: { test: testLoginConfigured(), google: googleConfigured(), member: memberLoginConfigured() },
+    login: { test: testLoginConfigured(), google: googleConfigured(), member: memberLoginConfigured(), centerOps: centerOpsConfigured() },
     db: { configured: dbConfigured(), ok: false, error: null },
     // 회원 가입 · 관제 센터 표(2026-10-06) — schema.sql 을 다시 돌려야 생긴다
     members: { ok: false, error: null },
