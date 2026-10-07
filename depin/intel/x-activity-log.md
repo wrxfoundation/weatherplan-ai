@@ -4159,11 +4159,31 @@ Where should I send it?
 - 답은 「지금 단계에선 유료 홍보를 하지 않는다 · 첫 기기를 집에 들이는 데 집중 · 바뀌면 기억하겠다」 — 금액 · 조건 · 다음 약속 0. 단가표를 요청하지 않는다(협상으로 들어가는 문).
   다시 조르면 같은 선으로 한 번 더, 그 뒤엔 답을 줄인다.
 
-**DM — 협업 제안 답 (EN, 376자)**
+**DM — 협업 제안 답 (EN, 376자 — 보내지 않음, 아래 서우 결정으로 교체)**
 ```
 Thanks so much, John, and totally understood on the device.
 
 We really appreciate the offer to collaborate. At this stage we're not running paid promotions. We're focused on getting our first units into people's homes and letting the product speak for itself. If that changes, we'll keep you in mind.
 
 Thanks again for the support around XRP SEOUL 2026. Great to be connected.
+```
+
+**★ 10/7 서우 결정 — 「일단 얘기나 들어 보자 · 조건 안 맞으면 안 하면 된다 · 레퍼럴은 상한 안에서 가능」** → 거절 답 대신 **제안을 듣는 답.**
+- 답에는 상한 숫자를 꺼내지 않는다(상대가 먼저 제안하게) · 「레퍼럴(성과) 기반」만 밝힌다 · 미국 출고가 막 시작이라 시점을 맞추겠다는 한 줄로 기대치를 낮춘다.
+- **조건을 볼 때 확인할 것**(협의 단계에서):
+  ① 구조 = 레퍼럴(판매 연동)만. 고정 게시비를 요구하면 「집행형 유료 없음」의 예외라 서우 결정. 지급은 법정화폐 · 스테이블코인으로 — WLBN 으로 홍보비를 주지 않는다.
+  ② 공개 — 그의 글마다 #ad 또는 「Paid partnership」 + 레퍼럴 링크 표시(FTC). 계약에 넣는다.
+  ③ 문구 선 — 가격 · 수익 · 「earn」 0, 보상은 「테스트 중 · 지급량 · 가치 비보장」, WLBN 을 coin 으로 부르지 않음, 케이웨더 = 기기 파트너(상장사 · 제조사 단독 주어 0),
+     리플 협력 표현 0. 우리 글 · 링크가 들어가는 게시물은 올리기 전 문구 확인권.
+  ④ 가격 예측 글(고정 글의 「XRP $750」 · Jake Claver 류)에 우리 링크 · 태그를 엮지 않는다.
+  ⑤ 시작 시점 = 미국 출고 · FCC 확인 뒤. 그 전이면 배송 시점 고지 문구가 필수.
+  ⑥ 상한은 개인별로 쪼개지 않고 같은 티어로 — 한 명에게 올린 값이 곧 새 기준이 된다(9/11 근거 ①). 숫자는 저장소에 적지 않는다(채팅).
+
+**DM — 제안 듣기 (EN, 402자)**
+```
+Thanks, John. Happy to hear what you have in mind.
+
+We usually work with creators on a referral basis, so it stays performance-based and aligned on both sides. Could you share what you're thinking: the kind of content, the timing, and how you'd like to structure it? Shipping to the US is only just getting started, so we'd want to line the timing up with that.
+
+We'll take a look and come back to you.
 ```
