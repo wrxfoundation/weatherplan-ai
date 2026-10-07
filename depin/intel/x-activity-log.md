@@ -4187,3 +4187,17 @@ We usually work with creators on a referral basis, so it stays performance-based
 
 We'll take a look and come back to you.
 ```
+
+**10/7 18:41 — John 회신**: 「고정 금액의 유료 콘텐츠 파트너십을 원한다 · 팔로워 55만(XRP · XRPL 중심) · 첫 달 캠페인(원글 · 재게시 · 지속 노출), 미국 출시 시점에 맞춰 ·
+좋으면 내용 구성 · 시점 · 가격을 담은 패키지를 보내겠다」. 레퍼럴이 아니라 **고정비**를 원한다.
+**★ 서우 결정 — 「좋다, 다만 초기라 내부에 어필해야 하니 적정한 trial 금액이면」** → 9/3 「집행형 유료 없음」의 **첫 예외를 검토**(시험 규모 · 금액은 패키지를 보고 결정).
+- 답에 더한 것 둘: ① 최근 노출 · 참여 지표 요청(내부 설득 자료 · 9/28 KOL KPI 틀로 도달률 · ER 을 본다) ② 유료 파트너십이라 글마다 표시가 필요하다는 한 줄(FTC — 가격을 매길 때부터 알게).
+- 패키지가 오면 볼 것: 게시 수 · 재게시 · 기간 · 금액(시험 규모) · 성과를 잴 장치(UTM 링크 · 레퍼럴 코드 — 끝나고 프로필 방문 · 클릭 · 결제로 내부 보고) ·
+  위 ①~⑥(지급 수단 · 광고 표시 · 문구 선 · 가격 예측 글과 분리 · 시작 시점 = 미국 출고 · FCC 뒤 · 같은 티어) · 계약 주체 · 인보이스. 금액은 저장소에 적지 않는다.
+
+**DM — trial 금액 요청 (EN, 534자)**
+```
+Sounds good, John. To be transparent, this would be one of our first creator partnerships, so I'll need to make the case internally. A trial-sized package at a reasonable price would work best to start, and if it goes well, it's much easier to build from there.
+
+Could you put together a trial package with the content structure, timing and pricing, plus a few recent reach and engagement numbers? Those would help me with the internal case. And since it would be a paid partnership, the posts would need to be clearly marked as such.
+```
