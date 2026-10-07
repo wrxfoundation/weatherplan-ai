@@ -1729,6 +1729,20 @@ Best,
 Seowoo (Logan)
 ```
 
+- **10/7 18:23 Daria 회신**: 「텔레그램 있냐 · 우리 Head of BD 와 연결하겠다 — 그가 봐야 할 건이다」 → 미팅 요청이 BD 총괄로 올라갔다.
+  Limitless 동시 대화 = Daria + Head of BD(둘 — 상한), CJ 에게는 여전히 사업 이야기 0.
+- **답 원칙**: 텔레그램 아이디(저장소에 적지 않음) · **Daria 가 셋이 있는 그룹방을 열게** — 텔레그램은 BD 사칭이 흔해, 소개한 사람이 만든 방이면 상대가 진짜인지 확인된다.
+  모르는 계정의 개별 DM · 링크 · 파일 · 지갑 요청은 받지 않는다. 우리 쪽은 「사업 총괄 동료」(이창민 본부장 — 일정 확인 전이라 이름 · 직함은 쓰지 않음)를 붙일 수 있다는 한 줄.
+- BD 총괄과의 첫 통화도 위 준비 그대로 — 목적은 납득, 조건(가격 · 배분 · 독점 · 기간)은 정하지 않음 · Limitless 만의 선 ①~⑤.
+
+**LinkedIn 답 — 텔레그램 (EN, 270자, 아이디 자리는 채워서)**
+```
+Thank you, Daria, that would be great. My Telegram is [@your_handle]. If it's easier, feel free to start a small group with the three of us, and we can find a time for a short call there. I may also bring in a colleague who leads our business side.
+
+Best,
+Seowoo (Logan)
+```
+
 ## CJ Hetherington (Limitless 공동창업자 · CEO / Limitless Markets US 그룹 CEO) — 판정 (2026-09-28) → **Limitless 는 이 사람 먼저. 1촌 + Lynn 인사, 각도는 「기관 리스크 이전」 · 미국 거래소 레인**
 
 서우가 프로필 캡처 공유(글 없음). 2촌 · 팔로워 3,357 · 공통 1촌 둘(이름 팔지 않음). 9/28 글: KBW 로 서울에 왔고 이야기 나눌 사람을 찾는다.
