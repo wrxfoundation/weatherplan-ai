@@ -2625,3 +2625,37 @@ Anna 님, 안녕하세요. 케이웨더 디지털사업본부에서 wellbian 파
 ```
 저희가 백서에 공개한 단계상 거래소는 아직 검토할 때가 아닙니다. 지금은 기기와 데이터에 집중하고 있어요.
 ```
+
+## Kara Kennedy (JPMorgan Kinexys, MD · Global Head of Market Development · 에든버러) — 1촌 요청 메모 + 수락 뒤 인사 (2026-10-07, 서우 프로필 캡처 3장 · 2촌)
+
+- **자리**(캡처 기준): JPMorganChase 5년 2개월 — **Kinexys Global Head of Market Development(2026-04~)** · Co-Head of Kinexys(2025-09~2026-04) ·
+  Head of Digital Asset Product, Securities Services(2023~2025) · Head of Digital Assets, Custody & Fund Services(2021~2023, 에든버러) ·
+  BNY Mellon 8년 4개월(커스터디 상품 — 디지털자산 리드, 런던) · Legal & General IM(액티브 주식 상품) · **런던증권거래소(채권 · ETP · 예탁증서 상품 2007~2010)** ·
+  에든버러대. 인증 · 팔로워 3,984 · 2촌.
+- **왜 볼 사람인가**: Kinexys = JPM 블록체인 사업부. 2026-05 XRPL 토큰화 국채 국경간 결제 실증(온도 OUSG · 마스터카드 MTN → Kinexys 법정화폐 레그, ecosystem-log ★ 검증)이
+  Kinexys 의 퍼블릭 체인 첫 연동이었다. 경력이 거래소 상품 → 커스터디 → 토큰화 돈 — 「정산에 쓰는 값」을 직업으로 아는 사람.
+- **판정 — 1촌 요청 + 메모 → 수락 뒤 인사(데이터 먼저 · 자리 한 줄) · 사업 제안 0.** JPM 첫 사람(상한 문제없음). 기관은 데이터 실적 뒤에 연다(9/11 게이트) — 지금은 관계 자산.
+  ① 거래소가 아니라 은행 · 시장 인프라 자리라 선택 줄(자리와 닿는 한 줄 · 요청 0)은 쓴다 — 「조건에 따라 움직이는 지급은 그 조건을 정하는 데이터만큼만 믿을 수 있다」.
+     Kinexys 상품 기능은 단정하지 않는다(그의 전문 영역으로만 말한다).
+  ② 5월 실증 언급 0 — 리플이 얽혀 있고 그의 프로젝트인지 모른다. JPM 토큰화 예금은 XRPL 이 아니라 Base(8/24 팩트체크 카드 ③).
+  ③ 체인 이름 · XRP SEOUL 0(은행 상대에게 진영 신호) · 토큰 · 가격 0 · 측정기 절반 뺌(자리와 무관 — Alexander · Paul 선례).
+- **나중의 결**: 파라메트릭 보험 · 날씨 파생 지급을 토큰화 돈으로 — 검증된 날씨 지수가 지급 조건이 되는 그림. 데이터 판매 실적이 선 뒤, 그가 먼저 물을 때.
+
+**1촌 요청 메모 (263자 — 상한 300)**
+```
+Hi Kara, I run partnerships at wellbian. KWeather has measured weather in Korea for 30 years; we turn that into city-level weather values contracts can settle on, each a consensus of eleven feeds with every input fingerprinted to a public ledger. Glad to connect.
+```
+
+**수락 뒤 인사 (EN, 637자)**
+```
+Kara — thanks for connecting.
+
+I run partnerships at wellbian. KWeather has measured weather in South Korea for thirty years and supplies data to 4,000+ enterprise clients; wellbian is the network built on top of that.
+
+We publish city-level weather across 90 countries and 167 cities. Each value is a consensus across eleven weather feeds rather than a single reading, and every input is fingerprinted to a public ledger before it's used.
+
+From your seat, you'll know better than most that a payment set to move on a condition is only as good as the data that decides it. For weather, that's the layer we work on.
+
+Good to be connected.
+```
+**발송 여부는 Claude 가 관리하지 않는다** — 서우 통보 시 갱신.
