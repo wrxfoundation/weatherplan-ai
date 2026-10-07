@@ -2699,3 +2699,27 @@ Before the call, it would be good to go a bit deeper on how we could work togeth
 - **자료(서우 내부 결정 대기 — 제안)**: Henrich 용 = 덱(10/1 크립토닷컴 덱 구성에서 크립토닷컴 맞춤 부분 뺀 판) · Clyde 용 = 방법론 한 장 + weathermarket.io /docs · /proof
   (공개 사이트라 공유 부담 낮음 · 실구매 · 테스트넷 검증 단계는 10/1 메일처럼 먼저 고지). **weatherfi.io 는 링크 대신 콜에서 화면 공유** — 7명 그룹의 링크는 돌고,
   가상 자산 예측시장 데모가 「케이웨더가 예측시장을 운영한다」로 캡처될 수 있다. 데모에 한국 도시 시장이 있으면 콜 전에 가린다.
+
+## Limitless 그룹 — Henrich 문서 요청 · 「다른 예측시장 어디와 하나」 (2026-10-08 02:21, 서우 캡처 + 지시)
+
+- 그룹 8명(우리 쪽 KJ 합류). 서우 10/7 23:06 수정 발송분은 **172개 도시 · 91개국**(playbook Lynn 기본값은 167 · 90 — 사이트 갱신으로 보임, 서우 확인 뒤 기본값 갱신).
+- **Henrich**: 문서 먼저 좋다 · 가장 쓸모 있는 건 데이터 자체(어느 도시 · 관측소 · 갱신 주기 · API) · 데모 공유 가능하면 · **다른 어느 예측시장과 일하는지**.
+- **서우 결정**: weatherfi.io · weathermarket.io 링크를 주고 설명(앞 절의 「weatherfi.io 는 화면 공유」 제안 대신) · 다른 곳은 대외비라 「거래소 1곳과 진행 중」만.
+- 판단: ① 「관측소」 질문 = 우리는 관측소 하나가 아니라 도시 단위 합의값 — 정산 무결성 논지와 같은 말로 답한다. 피드 구성은 문서가 말한다(9/24 확인 — 11개 중 8개 Open-Meteo 경유)
+  ② 갱신 주기는 저장소 기록에 없다 → 문안에 빈칸, 문서 · 이창민 본부장 확인 ③ 상태 고지 그대로(공개 베타 · 실구매 · 테스트넷 검증 한 단계 — 바뀌었으면 고친다) · 데모 = 실돈 0 · 우리가 운영하는 서비스 아님(10/1 메일 문구)
+  ④ 다른 예측시장 = **「one other exchange · NDA 라 이름 불가」까지**. 9/14 규칙(회사명 · 특정 가능한 업태 서술 0)에 맞춰 미국 · 규제 · 크립토 같은 수식어 0, 아웃바운드만 한 곳(폴리마켓 US 등)은 세지 않는다.
+  ⑤ 그쪽이 NDA 를 꺼내면 서명 법인 먼저(데이터 계약 상대는 케이웨더 — 크립토닷컴 「발견 1」) ⑥ 데모에 한국 도시 시장이 보이면 한 줄 추가: 「한국 도시는 데모용 — 실제 시장은 한국 밖에서 시작」.
+  한국 도시 제외는 콜에서 이창민 본부장이 말로(이 메시지엔 넣지 않음).
+
+**답 (EN, 899자)**
+```
+Thanks, Henrich, and good to meet you.
+
+Here's where to start:
+· Weather Data Market: weathermarket.io (API docs at /docs, verification at /proof). It covers 172 cities in 91 countries. Rather than settling on a single station, each city value is a consensus across eleven weather feeds, and the docs list the feeds behind it. Values update every [ ]. It's in public beta and purchases on it are real, so please keep test purchases small. One verification step is still on a test network, as the site footer notes.
+· Demo: weatherfi.io, a working demo with no real money, built to show how our data resolves a market end to end. It's a demonstration, not a service we operate.
+
+On other prediction markets: we're in early discussions with one other exchange. It's under NDA, so I can't name it yet.
+
+Once you've had a look, happy to set up a call. Changmin can walk Clyde through the technical side.
+```
