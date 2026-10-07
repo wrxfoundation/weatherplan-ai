@@ -2508,3 +2508,10 @@ We work on two layers: certified air-quality sensors that people run in their ow
 
 Good to be connected.
 ```
+
+## Maria Allott (Crypto.com VP, Global Head of Sales · 거래소 부대표 · 두바이) — 판정 (2026-10-07, 서우 캡처 2장 · 이미 1촌)
+
+- 예측시장 · RWA · 주식 무기한 선물을 기관 · VIP · 브로커에게 파는 판매 총괄(전 OKX 기관 판매). **판정: 1촌 유지 · 지금 메시지 0** —
+  같은 회사 · 같은 사업 줄에 Vincent 건이 답 대기 중(건너뛰는 모양 · 계열 상한 · 9/28 Stephen 선례), Lynn 인사의 데이터 층이 곧 검토 중인 물건이라
+  인사가 병행 제안으로 읽힌다. 그가 먼저 말을 걸면 Lynn 554자(선택 줄 0). co-creation(볼륨 기반) 단계에서 크립토닷컴 두 번째 자리 — 가능하면 Vincent 가 붙이게.
+  상세 · 문안 = `content/cryptocom-call-0911.md` 「10/7 — Maria Allott」.

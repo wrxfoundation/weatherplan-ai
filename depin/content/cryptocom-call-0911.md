@@ -612,3 +612,36 @@ Could you let me know where your team's review stands? If there's anything we ca
 Best regards,
 Seowoo
 ```
+
+## 10/7 — Maria Allott 1촌 판정 (서우 프로필 캡처 2장, 이미 1촌)
+
+- **자리**(캡처 기준): Crypto.com **VP, Global Head of Sales | Deputy MD of the Exchange**(2026-03~, 두바이) — 예측시장 · RWA · 주식 무기한 선물 ·
+  토큰화 주식을 **기관 · VIP/프로 트레이더 · 브로커에게 파는** 판매 총괄. 보도 제목 「Crypto.com hires OKX alum Maria Allott to head Prediction Markets sales」.
+  전 OKX(2022-12~2026-02) 기관 판매 · BD(유럽 · 중동 · 중남미, 런던). KTH · 팔로워 약 1.3만 · 공통 1촌 11(Vincent 포함).
+- **판정 — 1촌은 그대로, 지금은 메시지 0. 그가 먼저 말을 걸면 그때 Lynn 인사(선택 줄 0).**
+  ① **같은 회사 · 같은 사업 줄** — 우리 데이터 건은 Vincent(전략 파트너십)가 사내 주인으로 product team 검토 중이고 답 대기(10/7 후속 789자).
+     지금 예측시장 판매 총괄에게 가면 Vincent 를 건너뛰는 모양 — 9/28 Stephen Humenik 보류와 같은 이유 · 계열 상한.
+  ② **인사가 곧 제안이 된다** — Lynn 인사의 데이터 층(167개 도시 · 11개 피드 합의값 · 원장 지문)이 Vincent 쪽이 검토 중인 물건이다.
+     예측시장 판매 총괄에게는 인사가 아니라 병행 제안으로 읽힌다. 같은 주에 Vincent 후속 메일도 나간다.
+  ③ **우리 데이터를 사는 자리가 아니다** — 크립토닷컴 상품을 파는 쪽(우리는 그의 고객이 아니고, 그도 우리 고객이 아니다). 지금 그가 할 일이 없다.
+- **언제 열리나** — 9/18 Vincent 가 말한 co-creation(볼륨 기반 pack) 단계. 볼륨 기반이면 그 볼륨을 만드는 게 그의 조직(기관 · 브로커 판매)이라,
+  날씨 계약 상장 · 공동 상품 얘기가 서면 크립토닷컴 두 번째 자리(레인 = 기관 판매)로 자연스럽다. **가능하면 Vincent 가 붙이게.**
+  그 자리의 우리 카드는 날씨 계약의 기관 수요 쪽(추론 — 케이웨더 기업 고객층이 실제로 날씨 위험을 지는 쪽). 고객사 이름 · 수 · 거래 약속 0.
+- **지금 할 것** — 그의 글에 좋아요까지 · 댓글 0(9/21 Vincent 글 선례 — 크립토닷컴 · 미팅 사실 비공개). OKX(전 직장) · 다른 거래소 · 플랫폼 이름 0 ·
+  두바이 축(Henry · Alessandro) 연결 0 · MNDA · 검토 내용 0.
+
+**그가 먼저 메시지를 보내면 (EN, 554자 — Lynn 기본값 · 선택 줄 없음)**
+```
+Maria — thanks for connecting.
+
+I run partnerships at wellbian. KWeather has measured weather in South Korea for thirty years and supplies data to 4,000+ enterprise clients; wellbian is the network built on top of that.
+
+We work on two layers: certified air-quality sensors that people run in their own rooms, and city-level weather across 90 countries and 167 cities, where each value is a consensus across eleven weather feeds rather than a single reading. Every input is fingerprinted to a public ledger before it goes anywhere.
+
+Good to be connected.
+```
+
+**그가 사업 얘기를 꺼냈을 때만 — 맺음 앞에 한 줄 (EN, 143자)** — 사내 주인을 Vincent 로 세운다(그에게 크립토닷컴 사내 사람이라 대화 사실 언급은 가능, 내용 0).
+```
+On the business side, we've been in touch with Vincent on your partnerships team, so he has the background. Happy to talk whenever it's useful.
+```
