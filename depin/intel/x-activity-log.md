@@ -4150,3 +4150,20 @@ Where should I send it?
 ```
 
 이름을 넣는 판 (사브리나 허락 뒤에만, 762자) — 위 문장의 「one of the people we met at XRP SEOUL 2026」 → 「Sabrina from XRP Asia」.
+
+**10/7 17:40 — John 회신(서우 캡처)**: 「제안은 고맙지만 기기는 받지 않겠다 · 웰비안과의 협업에는 관심 — XRP 중심의 큰 X 커뮤니티가 있으니 XRPL 에서 짓는 것의
+콘텐츠 · 노출 · 홍보가 필요하면 이야기하자」 → **유료 홍보 제안으로 읽는다.**
+- **판정 — 지금은 받지 않는다. 정중히, 문은 닫지 않고.** ① 사다리 원칙 「Eri 모델 — 유료 게시 발주가 아니다(9/3 「집행형 유료 없음」)」 · 판매 연동 보수는 KOL 5% + 5%
+  코드 하나뿐 ② 9/26 제외 기준(장기 가격 목표 · Jake Claver 증폭)은 그대로 ③ 보상이 붙은 기기를 가격 목표 계정이 돈을 받고 홍보하면 「사면 번다」 프레임 + 대가 공개 의무(FTC) ·
+  상장사 기기 파트너 쪽 평판까지 걸린다 ④ 미국 출고 · FCC 전이라 홍보할 물건이 아직 미국 손에 없다.
+- 답은 「지금 단계에선 유료 홍보를 하지 않는다 · 첫 기기를 집에 들이는 데 집중 · 바뀌면 기억하겠다」 — 금액 · 조건 · 다음 약속 0. 단가표를 요청하지 않는다(협상으로 들어가는 문).
+  다시 조르면 같은 선으로 한 번 더, 그 뒤엔 답을 줄인다.
+
+**DM — 협업 제안 답 (EN, 376자)**
+```
+Thanks so much, John, and totally understood on the device.
+
+We really appreciate the offer to collaborate. At this stage we're not running paid promotions. We're focused on getting our first units into people's homes and letting the product speak for itself. If that changes, we'll keep you in mind.
+
+Thanks again for the support around XRP SEOUL 2026. Great to be connected.
+```
