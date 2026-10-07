@@ -2467,3 +2467,24 @@ Good to be connected.
 ```
 Thanks for reaching out, Daria. I'll keep it in mind as our community grows, and it's good to be connected.
 ```
+
+## Courtenay Dunn (ICE VP, Government Affairs · 워싱턴 DC) — 판정 (2026-10-07, 서우 프로필 캡처 2장 · 1촌 요청 대기 중)
+
+- **자리**(캡처 기준): ICE 7년 4개월 — Counsel(2019-07~2022-03) → Director(2022-03~2023-08) → Senior Director(2023-08~2026-06) → **VP, Government Affairs(2026-06~, 워싱턴 DC)** ·
+  그 전 MERSCORP Holdings(MERS — ICE 계열, 주택금융) Associate · Assistant Secretary(2018-04~2022-03). 변호사 출신 대관(정책 · 규제 대응) 담당. 3촌 · 1촌 500+. **서우 요청 → 대기 중.**
+- **판정 — 수락되면 Lynn 기본값 인사만, 사업 이야기 0.**
+  ① 대관은 데이터를 사는 자리가 아니다 — ICE 의 데이터 · 예측시장 쪽 문은 Lynn Martin(NYSE Group 사장 · ICE 채권 · 데이터 서비스 의장, 9/13 인사 · 9/14 2차)과
+     Christy(아태 고객 개발, 9/25 판정)다. ② ICE 는 거래소(NYSE) — 거래소 소속에는 인사만 · 선택 줄도 0(playbook 금지선). ③ 회사당 동시 대화 2 — ICE 는 이미 Lynn 이 열려 있다.
+  ④ 미국 대관 담당에게 토큰 · 예측시장 · 규제 이야기를 먼저 꺼내지 않는다(ICE 가 폴리마켓 최대주주라는 보도도 대외 언급 금지 그대로).
+- 수락 뒤 그가 먼저 말을 걸면 그때 대화. 요청을 거둘 필요는 없다.
+
+**수락되면 (EN, 558자 — Lynn 기본값 · 선택 줄 없음)**
+```
+Courtenay — thanks for connecting.
+
+I run partnerships at wellbian. KWeather has measured weather in South Korea for thirty years and supplies data to 4,000+ enterprise clients; wellbian is the network built on top of that.
+
+We work on two layers: certified air-quality sensors that people run in their own rooms, and city-level weather across 90 countries and 167 cities, where each value is a consensus across eleven weather feeds rather than a single reading. Every input is fingerprinted to a public ledger before it goes anywhere.
+
+Good to be connected.
+```
