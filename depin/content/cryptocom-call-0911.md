@@ -572,3 +572,26 @@ Seowoo
 ```
 Hi Vincent, I sent a short follow-up by email last week. No rush at all, just making sure it reached you.
 ```
+
+**10/7 서우 수정 → 최종** — 「Flare 얘기는 빼고, 키노트 발표를 했으니 내용을 간략히 첨언, 질문은 그대로」. 키노트(10/3 「Weather Data Economy」) 요약은
+세 층(데이터 수집 → AI 로 지수화 → 예측시장 · 파라메트릭 보험 · 날씨 파생상품) + **「맨 위 층은 밑의 지수가 검증 가능 · 조작 어려움 · 실시간일 때만 선다 = 9/18 에 보여 준 그 층」**으로
+그쪽 관심에 묶었다. 원고 속 Flare · 기밀 연산 · 서울 예측시장 예시 · AI 데이터센터 · 보상(DePIN)은 넣지 않았다(한국 도시 마켓 · 토큰 · AI 팩토리 규칙).
+원고를 첨부한다면 Flare 문단이 함께 간다는 점만 알아 둔다(공개 발표라 문제는 아님).
+
+**후속 메일 최종 (EN, 1039자 — 위 초안 대체)**
+```
+Hi Vincent,
+
+Just following up on my note from last week, in case it got buried.
+
+One update since then: on October 3 we gave the keynote at XRP SEOUL 2026, "Weather Data Economy." In short, it laid out three layers: collecting weather data at scale, refining it with AI into indices the market can rely on, and turning those indices into economic value through prediction markets, parametric insurance and weather derivatives. The point we stressed is that the top layer only works if the indices underneath are verifiable, hard to manipulate and available in real time, which is the same layer we walked your team through on September 18.
+
+Whenever it's convenient, a quick reply on two small things would let us move on our side:
+· how many seats your US team needs on the new site, so we can issue them right away
+· whether you'd prefer to go through the redistribution questions on a short call or by email
+
+Some of us will also be in New York from October 27 to 29, if meeting your US team in person would help.
+
+Best regards,
+Seowoo
+```
