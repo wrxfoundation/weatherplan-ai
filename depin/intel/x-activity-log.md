@@ -4037,14 +4037,14 @@ Mine the sky. 🌦⛏
   「등」은 실제 있는 둘만 · 「적극 논의」 → 「we'll definitely discuss them with the team」(논의를 약속하고 제작은 약속하지 않는다) · 「for your community」(경품 지원 약속으로 읽히지 않게) ·
   수량 · 발송 · 기기 증정 약속 0 · 「기기도 산다」에는 맞장구치지 않는다.
 
-**DM — 굿즈 답 (EN, 325자)**
+**DM — 굿즈 답 (EN, 325자 — 아래 서우 수정판으로 교체, 보내지 않음)**
 ```
 So glad to hear that, and we can't wait to see the video! 🙌
 
 As for swag, we have some tote bags and umbrellas we made for XRP SEOUL 2026, but no official t-shirts or hats at the moment. If you have any ideas on what would work well for your community, we'd love to hear them, and we'll definitely discuss them with the team.
 ```
 
-**굿즈를 보내기로 하면 — 팀 논의 때 볼 것(지금 DM 에는 넣지 않는다)**
+**나중에 굿즈를 보내기로 하면 — 그때 볼 것(지금 DM 에는 넣지 않는다)**
 1. 조건 0 — 게시 · 팔로우 · 구매를 요구하지 않는다(무상 제공 「no strings」와 같은 결).
 2. 그의 경품 글에 우리가 보낸 굿즈라고 표시(예: 「swag from @wellbianlabs」 · #ad) — 어필리에이트 코드로 이미 이해관계(material connection)가 있고, FTC 는 무상 제품 · 커미션 ·
    경품 응모를 모두 이해관계로 본다(2014 Cole Haan 종결 서한 — https://www.loeb.com/en/insights/publications/2014/04/ftc-letter-states-pinterest-contest-entries-are-__ ).
@@ -4054,3 +4054,24 @@ As for swag, we have some tote bags and umbrellas we made for XRP SEOUL 2026, bu
 4. 경품은 굿즈만 — 기기 · WLBN · 보상 포인트는 경품으로 내지 않는다(기기 증정은 미국 배송 · 인증 · 첫 출고 · 증정분 배정이 선 뒤 — Kenny 절과 같은 선).
 5. 티셔츠 · 모자를 새로 만든다면 wellbian 로고만 — XRP · 리플 이름 · 로고, 「XRP × wellbian」 문구는 넣지 않는다(리플은 RLUSD 발행사 · XRPL 기여자로만 · 10/3 성과 로그:
    「XRP × 우리」 표기는 유료 확산에서 제휴로 읽힌다).
+
+**★ 10/7 서우 수정 — 「현실적으로 못 보내는 게 맞고, 미국에서 얼마나 팔릴지 모르니 추이를 더 본 뒤에 하는 게 낫다」** → 「의견 주면 팀과 적극 논의」 줄을 빼고
+**지금은 못 보낸다 · 미국 추이를 본 뒤**로 바꿨다(의견을 청해 놓고 나중에 거절하는 모양을 피한다).
+- 「미국에서 얼마나 팔릴지 모른다」는 그대로 쓰지 않고 「we're only just getting started in the US, so we'd like to see how things go there first」로 —
+  판매량을 모른다고 고객에게 말하면 미국 수요에 자신 없는 것으로 읽힌다. 뜻(추이를 본다)은 같다.
+- 「come back to it once we have a better sense of things」는 바람이지 약속이 아니다(날짜 · 조건 0). 영상 · 경품 행사 제안에는 감사만.
+- 에코백 · 우산 문장은 그의 질문(굿즈 있나)에 대한 사실 답이라 남겼다. 「그럼 그거라도」 요청이 걱정되면 그 문장을 뺀 짧은 판.
+
+**DM — 굿즈 답 최종 (EN, 400자)**
+```
+Can't wait to see the video! 🙌
+
+On swag, to be honest, we can't send any out just yet. We have some tote bags and umbrellas we made for XRP SEOUL 2026, but no official t-shirts or hats, and since we're only just getting started in the US, we'd like to see how things go there first. Really appreciate you thinking of it, though, and we'd love to come back to it once we have a better sense of things.
+```
+
+짧은 판 (에코백 · 우산 문장 뺌, 342자)
+```
+Can't wait to see the video! 🙌
+
+On swag, to be honest, we can't send any out just yet. We don't have official t-shirts or hats, and since we're only just getting started in the US, we'd like to see how things go there first. Really appreciate you thinking of it, though, and we'd love to come back to it once we have a better sense of things.
+```
