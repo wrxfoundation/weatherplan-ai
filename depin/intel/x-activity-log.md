@@ -4027,3 +4027,30 @@ Mine the sky. 🌦⛏
 - B 는 좋아요 10 중 9 · 답글 1 이 오가닉 — 팔로워 반응은 이미 받았다.
 - 링크 클릭이 Ads Manager(무타깃 80)와 게시 활동(A 0)에서 다르게 잡힌다 — 광고에 붙은 웹사이트 버튼 클릭으로 보임. 사이트 유입은 GA 로.
 - **권고: B 의 남은 23시간은 멈추거나 예산을 줄인다**(방문당 약 ₩4,000). 이번 판의 교훈 = 타기팅보다 **소재**: 10/3 의 탑 사진이 가장 쌌다.
+
+## 굿즈(swag) 문의 — 구매 고객 DM (10/7 07:35, 서우 붙여 넣기 + 「영어로」)
+
+- **받은 DM**: 「기기 설치하고 영상 찍을 날이 기다려진다 · 티셔츠 · 모자 같은 굿즈 있나 · 경품 행사를 자주 하는데 커뮤니티가 팔로우 · 공유하고 기기도 살 수 있게 한다」.
+  발신자는 붙여 넣은 문구에 없다 — 10/4 구매한 James(어필리에이트 코드 보유) 또는 그가 소개한 구매자(10/6 인포그래픽)로 보인다(서우 확인). 계정명은 적지 않는다.
+- **서우 지시**: 「XRP SEOUL 2026 용으로 준비한 에코백 · 우산 등은 있으나 공식 티셔츠 · 모자는 없다 · 의견 주면 내부 팀원들과 적극 논의하겠다 — 영어로」.
+- **고른 말**: 에코백 → 「tote bags」(미국 독자에게 eco bag 은 낯설다 — 래플 페이지 영문은 eco bag) · 「at the moment」(「yet」은 만들 계획처럼 읽혀 뺐다) ·
+  「등」은 실제 있는 둘만 · 「적극 논의」 → 「we'll definitely discuss them with the team」(논의를 약속하고 제작은 약속하지 않는다) · 「for your community」(경품 지원 약속으로 읽히지 않게) ·
+  수량 · 발송 · 기기 증정 약속 0 · 「기기도 산다」에는 맞장구치지 않는다.
+
+**DM — 굿즈 답 (EN, 325자)**
+```
+So glad to hear that, and we can't wait to see the video! 🙌
+
+As for swag, we have some tote bags and umbrellas we made for XRP SEOUL 2026, but no official t-shirts or hats at the moment. If you have any ideas on what would work well for your community, we'd love to hear them, and we'll definitely discuss them with the team.
+```
+
+**굿즈를 보내기로 하면 — 팀 논의 때 볼 것(지금 DM 에는 넣지 않는다)**
+1. 조건 0 — 게시 · 팔로우 · 구매를 요구하지 않는다(무상 제공 「no strings」와 같은 결).
+2. 그의 경품 글에 우리가 보낸 굿즈라고 표시(예: 「swag from @wellbianlabs」 · #ad) — 어필리에이트 코드로 이미 이해관계(material connection)가 있고, FTC 는 무상 제품 · 커미션 ·
+   경품 응모를 모두 이해관계로 본다(2014 Cole Haan 종결 서한 — https://www.loeb.com/en/insights/publications/2014/04/ftc-letter-states-pinterest-contest-entries-are-__ ).
+   `playbook.md` 「고객이 만든 홍보물」 4 와 같은 줄.
+3. 응모 조건에 **기기 구매를 넣지 않는다** — 미국에서는 「경품 + 추첨 + 대가(구매)」 셋이 모이면 불법 복권으로 본다(그래서 「No purchase necessary」 —
+   https://www.mondaq.com/unitedstates/gaming/1094270/can-a-sweepstakes-require-a-purchase-to-enter ). 「기기도 산다」는 응모와 무관해야 한다. 법무 확인 전 일반 원칙.
+4. 경품은 굿즈만 — 기기 · WLBN · 보상 포인트는 경품으로 내지 않는다(기기 증정은 미국 배송 · 인증 · 첫 출고 · 증정분 배정이 선 뒤 — Kenny 절과 같은 선).
+5. 티셔츠 · 모자를 새로 만든다면 wellbian 로고만 — XRP · 리플 이름 · 로고, 「XRP × wellbian」 문구는 넣지 않는다(리플은 RLUSD 발행사 · XRPL 기여자로만 · 10/3 성과 로그:
+   「XRP × 우리」 표기는 유료 확산에서 제휴로 읽힌다).
