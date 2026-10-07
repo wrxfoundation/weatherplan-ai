@@ -2550,3 +2550,30 @@ Good to be connected.
      (미국 판매 대금 · 데이터 대금 수납 등) 에코시스템 팀에 「미주 결제 담당이 누구냐」고 물어 소개로 만난다.
   ④ Swell(10/27~29 뉴욕 — 리플 행사) 참석이 확정되면 에코시스템 팀을 통해 현장 소개를 부탁하는 길이 있다(참석 미확정 — 대외에 꺼내지 않음).
 - 금지 그대로: 리플 협력 · 10/2 미팅 · NDA 언급 0 · 공통 1촌 이름 0 · 리퍼럴 · 기기 제안 0(10/6 Dan 판정 — 리플 직원).
+
+**★ 10/7 서우 정정 — 「아냐, 이제 컨택해도 돼. XRP SEOUL 도 했고 Sabrina · Christina · Tats 다 미팅했어 — 인사해 봐」** → 위 「보류」 판정을 거둔다.
+- 「리플 소속은 콜드로 열지 않는다」(9/10 · 9/16)는 공식 관계 전 기준이었다. 10/2 에코시스템 팀 미팅 · 10/3 XRP SEOUL 뒤로 **리플 사람에게 인사 컨택 허용**(서우 10/7).
+  남는 선: 협력 · 제휴 표현 · NDA · 미팅 내용 0 · 리퍼럴 · 기기 · 홍보 요청 0(Dan 판정) · 리플 이름 · 제품명 대외 사용 조심(10/2 당부).
+- **에코시스템 팀을 문장에 넣는다** — 건너뛰는 모양을 푸는 방법이 그 팀을 밝히는 것이다(만난 사실만 · 미팅 내용 0). 리플 사람끼리라 대외 언급이 아니다.
+- **선택 줄 = 그의 자리(결제 · 스테이블코인)** — 해외 구매자 RLUSD 결제(정본 판매 조건 「카드(국내) 또는 RLUSD(해외 · Web3 지갑)」) · 데이터 API 호출당 RLUSD
+  (정본 x402 · AI 에이전트 자율 결제 검증). 단가 숫자 · 토큰 · 보상 · Flare 0. 리플 사람이라 체인 이름(XRPL)은 쓴다(Dan 선례).
+- 2촌이라 **1촌 요청 메모 → 수락 뒤 DM**. 메시지 버튼(InMail)이 열려 바로 보내면 DM 첫 줄을 「Hi Kleber —」로 바꾼다.
+
+**1촌 요청 메모 (283자 — 상한 300)**
+```
+Hi Kleber, I run partnerships at wellbian and met Christina, Tats and Sabrina from your ecosystem team around XRP SEOUL 2026. KWeather has measured weather in Korea for 30 years; we build on it: city weather from 11 feeds, fingerprinted on XRPL, with RLUSD checkout. Glad to connect.
+```
+
+**수락 뒤 DM (EN, 797자)**
+```
+Kleber — thanks for connecting. I had the pleasure of meeting Christina, Tats and Sabrina from your ecosystem team around XRP SEOUL 2026.
+
+I run partnerships at wellbian. KWeather has measured weather in South Korea for thirty years and supplies data to 4,000+ enterprise clients; wellbian is the network built on top of that.
+
+We work on two layers: certified air-quality sensors that people run in their own rooms, and city-level weather across 90 countries and 167 cities, each value a consensus of eleven weather feeds. Every input is fingerprinted on the XRP Ledger.
+
+Given your work on stablecoin payments, one detail you might like: buyers outside Korea check out in RLUSD, and our data API can be paid per call in RLUSD, by people or by software agents on their own.
+
+Good to be connected.
+```
+**발송 여부는 Claude 가 관리하지 않는다** — 서우 통보 시 갱신.
