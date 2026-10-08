@@ -2848,3 +2848,12 @@ Once you've had a look, happy to set up a call. Changmin can walk Clyde through 
 - **10/8 서우 결정 — Allessandra 지금 바로(「못 기다린다 · 일정 확정해야」)**. 10/13 대기 철회. 방식 = 프로필 「메시지」 버튼으로 바로 InMail(수락 대기 없이 받은편지함) — 1촌 요청과 중복 발송 0.
   실례 줄이기: ① Johann 에게도 보냈다고 밝힘(비서실장 몰래 돌아가는 모양 방지) ② 연락 이유 = 「이번 주 일정 확정」 ③ 답하기 쉽게 — 「30분 가능?」 또는 「맞는 사람 이름 하나」 ④ 「not this time 도 도움」.
   영업일 3일 무응답 시 짧은 재확인 1회. 문안(제목 · 본문 · 대안 메모 · 재확인) 채팅.
+
+## Eve Hsiao (OKX CEO Office · Business Performance Senior Manager · 홍콩) — 판정 (2026-10-08, 서우 프로필 캡처 4장)
+
+- **자리**(캡처 기준): OKX Senior Manager, Business Performance, CEO Office(2026-08~ · 홍콩 · VIP 전략) · 전 **Crypto.com Senior Strategy Associate(2025-05~2026-03, 홍콩)** ·
+  McKinsey 타이베이 BA → Associate(2021~2025) · 시간제 커리어 멘토. 팔로워 약 2.8천. **공통 1촌 = Vincent · Raj**(Vincent 는 우리 크립토닷컴 라인 상대일 가능성 높음).
+- **판정 — 1촌 요청은 메모 없이(또는 하지 않음) · 메시지 0.** ① OKX 다섯째 — **OKX 의 문은 Kyuyoung 하나**(9/16 · Charlotte · Shawn 과 같은 이유)
+  ② 자리가 VIP · 매출 성과라 어떤 사업 문장도 「거래소에 얹으려는 프로젝트」로 읽힌다 ③ 크립토닷컴 출신 + Vincent 공통 1촌 — 우리 말이 그쪽으로 돌아갈 수 있고,
+  크립토닷컴 · OG.com 은 원래 이름 0. 3월 퇴사라 우리 크립토닷컴 협의(9월~)와는 겹치지 않는다(그래서 「통로」로도 쓰지 않는다).
+- 쓸 수 있는 건 나중에 그쪽이 먼저 말을 걸 때만 — 그때도 인사 · 소개 두 층(Lynn)까지, OKX · 크립토닷컴 · 토큰 이야기 0.
