@@ -2894,3 +2894,25 @@ We'll be in New York from October 24 to 29 for Swell. I know you're based in Kan
 Best,
 Logan
 ```
+- **10/8 서우 「프리미엄 메시지로 길게」 → 긴 판(제목 49자 · 본문 1554자).** 1촌이라 일반 메시지로도 길게 보낼 수 있다(InMail 크레딧 불필요 — 제목 칸만 없음).
+  더한 것: US Open 경력 → 테니스 성장 연결 · 두 층 소개(기기 파트너 30년 · 약 4,000 고객사) · XRP SEOUL 2026 대표 연사 · 서울 커피. 여전히 데이터 · 정산 · 시장 제안 0, 부탁 하나.
+
+```
+제목: Congrats on the tennis role, and a New York hello
+
+Hi Nate,
+
+Congratulations on joining Polymarket to lead growth for tennis, and thanks for connecting. Going from the US Open social team to building a tennis audience at Polymarket feels like a natural next step, and your launch post made it clear how much you care about the sport.
+
+I'm Logan, Head of Partnerships & Operations at Wellbian Labs, based in Seoul. We work on weather data in two layers. The first is indoor air: certified sensors in homes, with our device partner KWeather, a Korean weather company with 30 years of observation and around 4,000 corporate and public clients. The second is the city layer: weather values for 172 cities in 91 countries, each a consensus of eleven independent sources, with outliers set aside and every input fingerprinted to a public ledger so it can be checked later.
+
+Tennis is one of the sports where weather quietly decides a lot. Heat rules, roof closures and rain delays reshape a day's schedule, and fans feel every one of them. That is part of why your new role caught my eye, although this note is mainly a hello.
+
+Our CEO spoke at XRP SEOUL 2026 earlier this month, and our team will be in New York from October 24 to 29 for Swell. I know you're based in Kansas City, so if there is someone on the team in New York you think I should say hello to while we're there, a pointer would mean a lot. And if you are ever passing through Seoul, coffee is on me.
+
+No pressure at all, and congrats again on the new chapter.
+
+Best regards,
+Logan (Seowoo Park)
+Head of Partnerships & Operations, Wellbian Labs
+```
