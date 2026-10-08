@@ -2816,3 +2816,5 @@ Once you've had a look, happy to set up a call. Changmin can walk Clyde through 
   **대상 아님**: Gaëtan Thabot(크립토 파트너십, 시카고 — 토큰 · 상장 신호 레인이라 닫힘) · Ravi Mulani(기업개발, SF — 투자 · 인수는 훨씬 뒤) · Chloe Barz(대관) · 법무 · 컴플라이언스 · 홍보 · 인사 · IR · 구매 · 엔지니어 ·
   Gaurav Saxena(뉴욕 Sr. Director — 분야 미표기, 프로필 확인 전 보류). 로빈후드 예측시장 허브 카테고리에 날씨는 보이지 않음(제3자 정리 기준) → 제안은 「새 카테고리」.
   **길은 그대로**: Steve Quirk 소개 → JB 또는 Adam · Rothera 는 Tom 스레드. 상한 2 · 10/15 재판정 유지.
+- **10/8 추가 캡처(6~10쪽)** — 뉴욕 후보 추가: **Tyler Gibbons**(Partnerships, 뉴욕 — 어떤 파트너십인지 프로필 확인 · 예측시장 쪽이면 ④ 와 같은 급) · Hillary Skeffington(Staff PM, 뉴욕) · Kanika Dutta(Product, 뉴욕) — 담당 분야 확인 전 보류.
+  Nejc Bizjak(Bitstamp by Robinhood 전략 · 운영, 뉴욕) = 거래소 레인 · 같은 계열 상한 → 아님. Raymond Albano(영업 · 관계관리, 덴버) · Alex Liu(크립토 · 해외 엔지니어링) · 나머지 지원 조직 = 아님.
