@@ -2818,3 +2818,9 @@ Once you've had a look, happy to set up a call. Changmin can walk Clyde through 
   **길은 그대로**: Steve Quirk 소개 → JB 또는 Adam · Rothera 는 Tom 스레드. 상한 2 · 10/15 재판정 유지.
 - **10/8 추가 캡처(6~10쪽)** — 뉴욕 후보 추가: **Tyler Gibbons**(Partnerships, 뉴욕 — 어떤 파트너십인지 프로필 확인 · 예측시장 쪽이면 ④ 와 같은 급) · Hillary Skeffington(Staff PM, 뉴욕) · Kanika Dutta(Product, 뉴욕) — 담당 분야 확인 전 보류.
   Nejc Bizjak(Bitstamp by Robinhood 전략 · 운영, 뉴욕) = 거래소 레인 · 같은 계열 상한 → 아님. Raymond Albano(영업 · 관계관리, 덴버) · Alex Liu(크립토 · 해외 엔지니어링) · 나머지 지원 조직 = 아님.
+- **★ 서우 결정(10/8) — 문은 Johann Kerbrat**: 「Swell 연사라 말 걸기 자연스럽고 뉴욕 담당자를 이어 줄 수 있다 · 시카고는 너무 멀다」. → 받아들임.
+  - 상한 2: Johann + Tom Chippas(Rothera). **Steve Quirk 는 1촌 유지 · 메시지 0**(자리 교체). Adam(시카고) · JB 는 Johann 소개로만.
+  - 순서: ① 10/20 전후 1촌 요청(프로필이 「팔로우」 버튼 — 더보기 → 1촌 맺기, 안 되면 팔로우만 하고 현장) ② Swell 세션 뒤 현장 인사 → 「뉴욕 팀 누구와 얘기하면 되나」 한 질문
+    ③ 당일 저녁 감사 + 소개 부탁 한 줄. 데이터 · 가격 · 계약 제안은 소개받은 사람과(10/15 크립토닷컴 상태 재판정 뒤).
+  - 금지: 크립토닷컴 · OG.com · 다른 거래소 이름 0 · 토큰 · WLBN · 상장 0(크립토 총괄이라 가장 먼저 나올 질문 — 「오늘은 날씨 데이터 얘기」로 돌림) · 한국 도시 마켓 0 · KBW 참석 언급 0(우리는 안 갔다).
+  - 문안 3종(요청 메모 · 현장 · 후속)은 채팅.
