@@ -2152,3 +2152,4 @@ Thanks Odelia — writing to you at that address today. Mine is support@wellbian
 - **SpaceX Makena 회신 · 미국 동선(10/8, 서우 「Swell 이후 플로리다에서 만나면 되나」)** — 10/30(금) 케이프커내버럴 대면 제안 · Joel 레드먼드는 A(10/26 먼저) / B(11/2 뒤) 두 경로 · ITAR 방문 승인 대비 · 1단계 사양 10/23 전. 답 문안은 채팅. business-directions SpaceX 절.
 - **Limitless 뉴욕 대면 제안 문안(10/8)** — Swell(10/27~29) 뉴욕 방문 · 뉴욕 팀 있으면 대면. 가능일은 Swell 기간(10/30 플로리다). 문안은 채팅. business-directions Limitless 끝 절.
 - **로빈후드 뉴욕 대상 판정(10/8, 서우 링크드인 검색 캡처 5장)** — 1순위 Adam Hickerson(선물 · 예측시장, 시카고) · Swell 현장 Johann Kerbrat 인사만 · 길 = Steve Quirk 소개(상한 2) · 크립토닷컴 미체결 게이트 → 10/15 재판정. business-directions 끝 절.
+- **로빈후드 대상 재정렬(10/8, 캡처 5장 추가 + 웹 검색)** — ① JB Mackenzie(VP & GM 선물 · 예측시장, 결정권자 · OG.com 거래 당사자라 게이트 최강) ② Adam Hickerson ③ Rothera Tom Chippas · Matt Trudeau ④ Valeria R.(뉴욕 실무) ⑤ Johann(Swell 인사). 날씨 카테고리 없음 → 새 카테고리 제안. business-directions 끝 절.

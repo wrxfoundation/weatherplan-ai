@@ -2807,3 +2807,12 @@ Once you've had a look, happy to set up a call. Changmin can walk Clyde through 
 - **⚠ 게이트**: 9/26 판정(로빈후드 계열 = 크립토닷컴 라인 체결 뒤 · 10월 중순 넘기면 재판정) 그대로 — 크립토닷컴 회신 6일+ 없음 · 같은 주 뉴욕에서 그쪽 US team 대면도 제안해 둠 ·
   로빈후드 예측시장 물량은 OG.com 으로 간다 → 지금 요청하면 「우회」로 읽힐 수 있다. **10/15 재판정**(대면 요청은 2주 전이 한계): 그때까지 크립토닷컴 답이 오면 Steve 인사 → 소개 요청,
   없으면 Swell 현장 Johann 인사만. 서우 · 대표가 지금 가기로 하면 Adam 1촌 요청 메모(280자, 채팅)만 — 데이터 제안 0.
+- **10/8 추가 — 캡처 3 · 4 · 5쪽 + 웹 검색(검색 요약 · 원문 미대조)으로 다시 줄 세움**:
+  ① **JB Mackenzie** — VP & GM, Futures and Prediction Markets(2023-01 입사, 로빈후드 IR 경영진 페이지) — **예측시장 사업의 실제 결정권자**. 캡처에 없음 · 거점 미확인.
+     로빈후드 × 크립토닷컴 · OG.com 거래를 공개적으로 말한 사람(Sportico 「purely additive」) — **우리 크립토닷컴 라인과 가장 가까운 자리 = 게이트가 가장 세게 걸린다.**
+  ② **Adam Hickerson**(COO · Sr. Director, 선물 · 예측시장, 시카고) — ① 아래 운영 책임. ③ **Tom Chippas**(Rothera CEO, 9/28 요청) · **Matt Trudeau**(Rothera — 8월 IEX 팟캐스트에 Chippas 와 출연, 직함 미확인) —
+     Rothera = 로빈후드 주도 · SIG 투자 CFTC 거래소 · 청산소(옛 MIAXdx, 2026-01 인수) · 6월 정식 가동 · Q2 매출 1,700만 달러 → **상품 약관에 정산원을 적는 곳 = 실구매자**.
+  ④ **Valeria R.**(CFTC 규제 시장 운영, 뉴욕) — 뉴욕 실무 대면 후보. ⑤ **Johann Kerbrat**(Swell 현장 인사만).
+  **대상 아님**: Gaëtan Thabot(크립토 파트너십, 시카고 — 토큰 · 상장 신호 레인이라 닫힘) · Ravi Mulani(기업개발, SF — 투자 · 인수는 훨씬 뒤) · Chloe Barz(대관) · 법무 · 컴플라이언스 · 홍보 · 인사 · IR · 구매 · 엔지니어 ·
+  Gaurav Saxena(뉴욕 Sr. Director — 분야 미표기, 프로필 확인 전 보류). 로빈후드 예측시장 허브 카테고리에 날씨는 보이지 않음(제3자 정리 기준) → 제안은 「새 카테고리」.
+  **길은 그대로**: Steve Quirk 소개 → JB 또는 Adam · Rothera 는 Tom 스레드. 상한 2 · 10/15 재판정 유지.
