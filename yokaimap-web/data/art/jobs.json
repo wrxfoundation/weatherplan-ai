@@ -1,0 +1,2787 @@
+{
+  "direction": "minhwa-v2",
+  "generated_at": "2026-08-16",
+  "provider": "higgsfield / recraft_v4_1 (2k, standard) · 팔레트·배경색 파라미터 강제",
+  "note": "시드 120체 전부의 도판을 minhwa-v2로 생성한 매니페스트다. 빌드(scripts/build-data.mjs)가 이 파일에서 art.status를 계산하므로, review.result를 pass로 올리기 전에는 사이트에 도판이 나오지 않고 인장 폴백으로 떨어진다. 검수는 docs/ART_REVIEW.md 체크리스트로 한다. 이미지 파일 반입은 CDN 접근이 되는 환경에서 node scripts/fetch-art.mjs로 실행한다 — 생성 세션의 egress 정책이 CDN 호스트를 차단했다.",
+  "review_checklist": "docs/ART_REVIEW.md",
+  "items": [
+    {
+      "index": 0,
+      "kind": "hero",
+      "id": "hero-night-pass",
+      "target": "public/img/hero/night-pass.webp",
+      "aspect": "16:9",
+      "job_id": "22a87312-46f9-471d-85b4-9bb53b5564ef",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260912_112354_22a87312-46f9-471d-85b4-9bb53b5564ef.png",
+      "review": {
+        "by": "검수",
+        "date": "2026-09-12",
+        "result": "pass",
+        "note": "밤·장승·서낭 돌무지·도깨비불 확인. 도리이·석등·벚꽃 없음. 구도 중앙 집중"
+      },
+      "scene": "hero-night-pass"
+    },
+    {
+      "index": 1,
+      "kind": "plate",
+      "id": "kr-dokkaebi",
+      "target": "public/img/yokai/dokkaebi.webp",
+      "aspect": "4:5",
+      "job_id": "9f954676-7887-4f9e-af6e-b565b97ddda6",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260817_012949_9f954676-7887-4f9e-af6e-b565b97ddda6.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 2,
+      "kind": "plate",
+      "id": "kr-gumiho",
+      "target": "public/img/yokai/gumiho.webp",
+      "aspect": "4:5",
+      "job_id": "9c7e6ea1-97a3-4cb1-962f-dd2c4b031d6d",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_041833_9c7e6ea1-97a3-4cb1-962f-dd2c4b031d6d.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 3,
+      "kind": "plate",
+      "id": "kr-imugi",
+      "target": "public/img/yokai/imugi.webp",
+      "aspect": "4:5",
+      "job_id": "276c310f-65a7-423c-a36a-84c09ff13848",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_041702_276c310f-65a7-423c-a36a-84c09ff13848.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 4,
+      "kind": "plate",
+      "id": "kr-seolmundae",
+      "target": "public/img/yokai/seolmundae.webp",
+      "aspect": "4:5",
+      "job_id": "f978199c-a516-4b66-ae6d-3ab732f5fd01",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_041702_f978199c-a516-4b66-ae6d-3ab732f5fd01.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 5,
+      "kind": "plate",
+      "id": "kr-yeongdeung-halmang",
+      "target": "public/img/yokai/yeongdeung-halmang.webp",
+      "aspect": "4:5",
+      "job_id": "8d654691-47a9-4744-ab2d-c5846a891725",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_041702_8d654691-47a9-4744-ab2d-c5846a891725.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 6,
+      "kind": "plate",
+      "id": "kr-samsin",
+      "target": "public/img/yokai/samsin.webp",
+      "aspect": "4:5",
+      "job_id": "2cc97c79-1f52-447e-91d0-f77611c960f9",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_041702_2cc97c79-1f52-447e-91d0-f77611c960f9.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 7,
+      "kind": "plate",
+      "id": "kr-songaksi",
+      "target": "public/img/yokai/songaksi.webp",
+      "aspect": "4:5",
+      "job_id": "63a70b75-1096-4c62-8cd7-a6276d911529",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_041833_63a70b75-1096-4c62-8cd7-a6276d911529.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 8,
+      "kind": "plate",
+      "id": "kr-gangcheori",
+      "target": "public/img/yokai/gangcheori.webp",
+      "aspect": "4:5",
+      "job_id": "248d94d2-dbc7-4979-8bd3-0fa62ed64e63",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_041833_248d94d2-dbc7-4979-8bd3-0fa62ed64e63.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 9,
+      "kind": "plate",
+      "id": "kr-jangsanbeom",
+      "target": "public/img/yokai/jangsanbeom.webp",
+      "aspect": "4:5",
+      "job_id": "3507460f-0ba3-4d09-be91-e4b554650724",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_041702_3507460f-0ba3-4d09-be91-e4b554650724.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 10,
+      "kind": "plate",
+      "id": "kr-jangseung",
+      "target": "public/img/yokai/jangseung.webp",
+      "aspect": "4:5",
+      "job_id": "be849370-9733-4213-8037-9cf7854e19dc",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_041702_be849370-9733-4213-8037-9cf7854e19dc.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 11,
+      "kind": "plate",
+      "id": "kr-sansillyeong",
+      "target": "public/img/yokai/sansillyeong.webp",
+      "aspect": "4:5",
+      "job_id": "bed477fd-9414-4b2e-92f8-7542ef27ca6b",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_050056_bed477fd-9414-4b2e-92f8-7542ef27ca6b.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 12,
+      "kind": "plate",
+      "id": "kr-sangun",
+      "target": "public/img/yokai/sangun.webp",
+      "aspect": "4:5",
+      "job_id": "879162ca-16ca-4df1-bf11-019daf866303",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_050056_879162ca-16ca-4df1-bf11-019daf866303.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 13,
+      "kind": "plate",
+      "id": "kr-seongju",
+      "target": "public/img/yokai/seongju.webp",
+      "aspect": "4:5",
+      "job_id": "580b785f-2d7d-4a0b-b2bc-e3dc446d76df",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_050056_580b785f-2d7d-4a0b-b2bc-e3dc446d76df.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 14,
+      "kind": "plate",
+      "id": "kr-jowang",
+      "target": "public/img/yokai/jowang.webp",
+      "aspect": "4:5",
+      "job_id": "5a946fc1-d543-4e9d-8905-f238b42f7716",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_050706_5a946fc1-d543-4e9d-8905-f238b42f7716.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 15,
+      "kind": "plate",
+      "id": "kr-yongwang",
+      "target": "public/img/yokai/yongwang.webp",
+      "aspect": "4:5",
+      "job_id": "54972ec1-9c05-4381-a2d1-8894f5f5dc82",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260817_110456_54972ec1-9c05-4381-a2d1-8894f5f5dc82.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 16,
+      "kind": "plate",
+      "id": "kr-jacheongbi",
+      "target": "public/img/yokai/jacheongbi.webp",
+      "aspect": "4:5",
+      "job_id": "af412bce-e49e-459b-b248-e254c7078496",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_050835_af412bce-e49e-459b-b248-e254c7078496.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 17,
+      "kind": "plate",
+      "id": "kr-gangnim",
+      "target": "public/img/yokai/gangnim.webp",
+      "aspect": "4:5",
+      "job_id": "3c63d6fb-89b3-4558-8dfd-b372929bde93",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260817_110456_3c63d6fb-89b3-4558-8dfd-b372929bde93.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 18,
+      "kind": "plate",
+      "id": "kr-seonang",
+      "target": "public/img/yokai/seonang.webp",
+      "aspect": "4:5",
+      "job_id": "e74e2571-0483-4aa4-a63a-2d9000ff30b3",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_050056_e74e2571-0483-4aa4-a63a-2d9000ff30b3.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 19,
+      "kind": "plate",
+      "id": "kr-mireuk",
+      "target": "public/img/yokai/mireuk.webp",
+      "aspect": "4:5",
+      "job_id": "8096032a-f29e-4c6c-8db9-807fe134f333",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_050706_8096032a-f29e-4c6c-8db9-807fe134f333.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 20,
+      "kind": "plate",
+      "id": "kr-dokkaebi-bangmangi",
+      "target": "public/img/yokai/dokkaebi-bangmangi.webp",
+      "aspect": "4:5",
+      "job_id": "970203f8-8037-4a4a-9f75-48c2e3eb203f",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_050706_970203f8-8037-4a4a-9f75-48c2e3eb203f.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 21,
+      "kind": "plate",
+      "id": "kr-hongkong-halmae",
+      "target": "public/img/yokai/hongkong-halmae.webp",
+      "aspect": "4:5",
+      "job_id": "f0ea5f07-4e6e-4214-a916-eb0b731615d0",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_050706_f0ea5f07-4e6e-4214-a916-eb0b731615d0.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 22,
+      "kind": "plate",
+      "id": "kr-jeoseung-saja",
+      "target": "public/img/yokai/jeoseung-saja.webp",
+      "aspect": "4:5",
+      "job_id": "a8f2aa6b-cdc3-47a9-b880-db9ff9addb15",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_050056_a8f2aa6b-cdc3-47a9-b880-db9ff9addb15.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 23,
+      "kind": "plate",
+      "id": "kr-dokgakgwi",
+      "target": "public/img/yokai/dokgakgwi.webp",
+      "aspect": "4:5",
+      "job_id": "33a37ff8-b78b-427e-965b-e537f14caae5",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260817_012949_33a37ff8-b78b-427e-965b-e537f14caae5.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 24,
+      "kind": "plate",
+      "id": "kr-dokkaebi-bul",
+      "target": "public/img/yokai/dokkaebi-bul.webp",
+      "aspect": "4:5",
+      "job_id": "22173bed-4ed6-49f4-9a79-1e4401106e67",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_051410_22173bed-4ed6-49f4-9a79-1e4401106e67.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 25,
+      "kind": "plate",
+      "id": "kr-dokkaebi-teo",
+      "target": "public/img/yokai/dokkaebi-teo.webp",
+      "aspect": "4:5",
+      "job_id": "6f20ef08-f4a3-4cd8-bc1c-665bc107e1a2",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_051410_6f20ef08-f4a3-4cd8-bc1c-665bc107e1a2.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 26,
+      "kind": "plate",
+      "id": "kr-eoduksini",
+      "target": "public/img/yokai/eoduksini.webp",
+      "aspect": "4:5",
+      "job_id": "b42407ba-3960-44c0-9a79-7af45628c0be",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_051410_b42407ba-3960-44c0-9a79-7af45628c0be.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 27,
+      "kind": "plate",
+      "id": "kr-gae-dokkaebi",
+      "target": "public/img/yokai/gae-dokkaebi.webp",
+      "aspect": "4:5",
+      "job_id": "f8c2b38c-867d-4c50-9d6e-5a65c7ee1a87",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260817_012949_f8c2b38c-867d-4c50-9d6e-5a65c7ee1a87.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 28,
+      "kind": "plate",
+      "id": "kr-gaksi-dokkaebi",
+      "target": "public/img/yokai/gaksi-dokkaebi.webp",
+      "aspect": "4:5",
+      "job_id": "b2826afb-bed5-4e94-a4ec-2408e3d44b01",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_051410_b2826afb-bed5-4e94-a4ec-2408e3d44b01.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 29,
+      "kind": "plate",
+      "id": "kr-mul-dokkaebi",
+      "target": "public/img/yokai/mul-dokkaebi.webp",
+      "aspect": "4:5",
+      "job_id": "8907afb1-4977-452e-ada3-f05b48b85996",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_051410_8907afb1-4977-452e-ada3-f05b48b85996.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 30,
+      "kind": "plate",
+      "id": "kr-cheollyung",
+      "target": "public/img/yokai/cheollyung.webp",
+      "aspect": "4:5",
+      "job_id": "bf29bad7-e465-456a-8345-fb1afd1951b5",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_051410_bf29bad7-e465-456a-8345-fb1afd1951b5.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 31,
+      "kind": "plate",
+      "id": "kr-eop",
+      "target": "public/img/yokai/eop.webp",
+      "aspect": "4:5",
+      "job_id": "0ea5cc6b-8ce1-44ff-beaa-d300a109038b",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_051606_0ea5cc6b-8ce1-44ff-beaa-d300a109038b.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 32,
+      "kind": "plate",
+      "id": "kr-jisin",
+      "target": "public/img/yokai/jisin.webp",
+      "aspect": "4:5",
+      "job_id": "ec6ee5dd-5794-475f-9e3c-9920c0f54586",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_051606_ec6ee5dd-5794-475f-9e3c-9920c0f54586.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 33,
+      "kind": "plate",
+      "id": "kr-dangsan-halmeoni",
+      "target": "public/img/yokai/dangsan-halmeoni.webp",
+      "aspect": "4:5",
+      "job_id": "3135779c-9b5b-4890-a714-4646e0262094",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_051606_3135779c-9b5b-4890-a714-4646e0262094.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 34,
+      "kind": "plate",
+      "id": "kr-golmaegi",
+      "target": "public/img/yokai/golmaegi.webp",
+      "aspect": "4:5",
+      "job_id": "8e276d96-b2a8-4661-b323-5c1cc970144c",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_051606_8e276d96-b2a8-4661-b323-5c1cc970144c.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 35,
+      "kind": "plate",
+      "id": "kr-imgyeongeop",
+      "target": "public/img/yokai/imgyeongeop.webp",
+      "aspect": "4:5",
+      "job_id": "3c00c04d-3173-4198-8284-617817d4e95e",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_051606_3c00c04d-3173-4198-8284-617817d4e95e.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 36,
+      "kind": "plate",
+      "id": "kr-sotdae",
+      "target": "public/img/yokai/sotdae.webp",
+      "aspect": "4:5",
+      "job_id": "7fb2ee18-9bbc-452d-aa15-5699b7bed1f0",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_051606_7fb2ee18-9bbc-452d-aa15-5699b7bed1f0.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 37,
+      "kind": "plate",
+      "id": "kr-arang",
+      "target": "public/img/yokai/arang.webp",
+      "aspect": "4:5",
+      "job_id": "4e4f9afd-15e0-47c5-8393-a7a9db843d9d",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_051847_4e4f9afd-15e0-47c5-8393-a7a9db843d9d.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 38,
+      "kind": "plate",
+      "id": "kr-dalgyal-gwisin",
+      "target": "public/img/yokai/dalgyal-gwisin.webp",
+      "aspect": "4:5",
+      "job_id": "5a36e3da-e829-4b87-a1ba-716a45cd8e46",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_051847_5a36e3da-e829-4b87-a1ba-716a45cd8e46.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 39,
+      "kind": "plate",
+      "id": "kr-mongdal",
+      "target": "public/img/yokai/mongdal.webp",
+      "aspect": "4:5",
+      "job_id": "b311090a-0f4a-48f0-8470-81ad9c8e8c95",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_051848_b311090a-0f4a-48f0-8470-81ad9c8e8c95.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 40,
+      "kind": "plate",
+      "id": "kr-mujugohon",
+      "target": "public/img/yokai/mujugohon.webp",
+      "aspect": "4:5",
+      "job_id": "a4d7b6b8-a48d-45ca-8e7e-5be7f2239e65",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_051847_a4d7b6b8-a48d-45ca-8e7e-5be7f2239e65.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 41,
+      "kind": "plate",
+      "id": "kr-sangmun",
+      "target": "public/img/yokai/sangmun.webp",
+      "aspect": "4:5",
+      "job_id": "12455b70-6e4d-4ffb-bfa9-50796639152b",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_051847_12455b70-6e4d-4ffb-bfa9-50796639152b.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 42,
+      "kind": "plate",
+      "id": "kr-sinrip-wongwi",
+      "target": "public/img/yokai/sinrip-wongwi.webp",
+      "aspect": "4:5",
+      "job_id": "40686751-dea2-4dd8-9a97-97edae8f11e0",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_051847_40686751-dea2-4dd8-9a97-97edae8f11e0.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 43,
+      "kind": "plate",
+      "id": "kr-sondol",
+      "target": "public/img/yokai/sondol.webp",
+      "aspect": "4:5",
+      "job_id": "7ad55ae2-af49-431d-9695-d788cd09b739",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_051847_7ad55ae2-af49-431d-9695-d788cd09b739.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 44,
+      "kind": "plate",
+      "id": "kr-yeongsan",
+      "target": "public/img/yokai/yeongsan.webp",
+      "aspect": "4:5",
+      "job_id": "8db9f7c7-d401-4aa4-869d-d0f1b7258e2f",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_051847_8db9f7c7-d401-4aa4-869d-d0f1b7258e2f.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 45,
+      "kind": "plate",
+      "id": "kr-dueoksini",
+      "target": "public/img/yokai/dueoksini.webp",
+      "aspect": "4:5",
+      "job_id": "396ca41e-bc52-4e44-a776-848a23c8798e",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_052017_396ca41e-bc52-4e44-a776-848a23c8798e.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 46,
+      "kind": "plate",
+      "id": "kr-geuseundae",
+      "target": "public/img/yokai/geuseundae.webp",
+      "aspect": "4:5",
+      "job_id": "e810bb89-2d13-4049-abac-bbbd20c88907",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_052017_e810bb89-2d13-4049-abac-bbbd20c88907.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 47,
+      "kind": "plate",
+      "id": "kr-cheuksin",
+      "target": "public/img/yokai/cheuksin.webp",
+      "aspect": "4:5",
+      "job_id": "448edd14-0a43-4665-a05a-31a93c832c09",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_052017_448edd14-0a43-4665-a05a-31a93c832c09.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 48,
+      "kind": "plate",
+      "id": "kr-munjeon",
+      "target": "public/img/yokai/munjeon.webp",
+      "aspect": "4:5",
+      "job_id": "0dfb1efe-f815-4e90-b053-f7769a7500b8",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_052017_0dfb1efe-f815-4e90-b053-f7769a7500b8.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 49,
+      "kind": "plate",
+      "id": "kr-gawi",
+      "target": "public/img/yokai/gawi.webp",
+      "aspect": "4:5",
+      "job_id": "3a3701d5-7fd7-4892-9b06-57a5d2b1e306",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_052017_3a3701d5-7fd7-4892-9b06-57a5d2b1e306.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 50,
+      "kind": "plate",
+      "id": "kr-sonnim",
+      "target": "public/img/yokai/sonnim.webp",
+      "aspect": "4:5",
+      "job_id": "a98f3a56-b945-46ac-ae8e-a4d4ae11fa00",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_052159_a98f3a56-b945-46ac-ae8e-a4d4ae11fa00.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 51,
+      "kind": "plate",
+      "id": "kr-hongyeoksin",
+      "target": "public/img/yokai/hongyeoksin.webp",
+      "aspect": "4:5",
+      "job_id": "482872bc-ec25-4586-b6d0-f23a1b0677d4",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_052159_482872bc-ec25-4586-b6d0-f23a1b0677d4.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 52,
+      "kind": "plate",
+      "id": "kr-yeoksin",
+      "target": "public/img/yokai/yeoksin.webp",
+      "aspect": "4:5",
+      "job_id": "8d14eb8d-47dd-43c0-9b15-d78b1dda9297",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_052159_8d14eb8d-47dd-43c0-9b15-d78b1dda9297.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 53,
+      "kind": "plate",
+      "id": "kr-jeung",
+      "target": "public/img/yokai/jeung.webp",
+      "aspect": "4:5",
+      "job_id": "e274d7ab-b578-4bb8-ae2c-5fb1a02d32c9",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_052159_e274d7ab-b578-4bb8-ae2c-5fb1a02d32c9.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 54,
+      "kind": "plate",
+      "id": "kr-gaekgwi",
+      "target": "public/img/yokai/gaekgwi.webp",
+      "aspect": "4:5",
+      "job_id": "334d1cf3-8407-4499-b31b-8034c079f58d",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_052159_334d1cf3-8407-4499-b31b-8034c079f58d.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 55,
+      "kind": "plate",
+      "id": "kr-samjaesin",
+      "target": "public/img/yokai/samjaesin.webp",
+      "aspect": "4:5",
+      "job_id": "b83d623e-40ba-4962-9083-ad8a301e58aa",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_052159_b83d623e-40ba-4962-9083-ad8a301e58aa.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 56,
+      "kind": "plate",
+      "id": "kr-bitjaru-gwisin",
+      "target": "public/img/yokai/bitjaru-gwisin.webp",
+      "aspect": "4:5",
+      "job_id": "d3c8c537-cc4c-4b73-9fdd-47cb02c03cc1",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_052336_d3c8c537-cc4c-4b73-9fdd-47cb02c03cc1.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 57,
+      "kind": "plate",
+      "id": "kr-dokkaebi-gamtu",
+      "target": "public/img/yokai/dokkaebi-gamtu.webp",
+      "aspect": "4:5",
+      "job_id": "31d5ea8e-e258-44a4-9738-7f3b17520ac8",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_052337_31d5ea8e-e258-44a4-9738-7f3b17520ac8.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 58,
+      "kind": "plate",
+      "id": "kr-jeolgutgongi",
+      "target": "public/img/yokai/jeolgutgongi.webp",
+      "aspect": "4:5",
+      "job_id": "5d4793c7-f790-4f81-969d-e3393b3d4c03",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_052336_5d4793c7-f790-4f81-969d-e3393b3d4c03.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 59,
+      "kind": "plate",
+      "id": "kr-jipsin-dokkaebi",
+      "target": "public/img/yokai/jipsin-dokkaebi.webp",
+      "aspect": "4:5",
+      "job_id": "7f219d11-67fb-4da0-b511-38df261d50a0",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_052336_7f219d11-67fb-4da0-b511-38df261d50a0.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 60,
+      "kind": "plate",
+      "id": "kr-jigwi",
+      "target": "public/img/yokai/jigwi.webp",
+      "aspect": "4:5",
+      "job_id": "8f513aa1-3817-4d9e-a1ba-269762b1ec94",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_052336_8f513aa1-3817-4d9e-a1ba-269762b1ec94.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 61,
+      "kind": "plate",
+      "id": "kr-teoju",
+      "target": "public/img/yokai/teoju.webp",
+      "aspect": "4:5",
+      "job_id": "019a4896-2991-46e5-b6af-107dc2dac870",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_052336_019a4896-2991-46e5-b6af-107dc2dac870.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 62,
+      "kind": "plate",
+      "id": "kr-geumdwaeji",
+      "target": "public/img/yokai/geumdwaeji.webp",
+      "aspect": "4:5",
+      "job_id": "e25424a3-9ba3-4763-923c-153aeaaa347f",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_052459_e25424a3-9ba3-4763-923c-153aeaaa347f.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 63,
+      "kind": "plate",
+      "id": "kr-magohalmi",
+      "target": "public/img/yokai/magohalmi.webp",
+      "aspect": "4:5",
+      "job_id": "9f25149d-e616-4c5c-a66f-678d62b2e289",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_052459_9f25149d-e616-4c5c-a66f-678d62b2e289.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 64,
+      "kind": "plate",
+      "id": "kr-mayago",
+      "target": "public/img/yokai/mayago.webp",
+      "aspect": "4:5",
+      "job_id": "305511dd-d5dc-46dd-885c-0a4d88b5869b",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_052459_305511dd-d5dc-46dd-885c-0a4d88b5869b.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 65,
+      "kind": "plate",
+      "id": "kr-palgongsan-sansin",
+      "target": "public/img/yokai/palgongsan-sansin.webp",
+      "aspect": "4:5",
+      "job_id": "4c70b895-45a5-44ee-bf0f-52925d43892c",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_052459_4c70b895-45a5-44ee-bf0f-52925d43892c.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 66,
+      "kind": "plate",
+      "id": "kr-sansam-dongja",
+      "target": "public/img/yokai/sansam-dongja.webp",
+      "aspect": "4:5",
+      "job_id": "25a3eb57-d211-48f0-b690-fa8e1fd20840",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_052459_25a3eb57-d211-48f0-b690-fa8e1fd20840.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 67,
+      "kind": "plate",
+      "id": "kr-taebaek-sansin",
+      "target": "public/img/yokai/taebaek-sansin.webp",
+      "aspect": "4:5",
+      "job_id": "bb9b2e1e-c9db-4ead-a8ec-c7b73a816c84",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_052618_bb9b2e1e-c9db-4ead-a8ec-c7b73a816c84.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 68,
+      "kind": "plate",
+      "id": "kr-seongmo-cheonwang",
+      "target": "public/img/yokai/seongmo-cheonwang.webp",
+      "aspect": "4:5",
+      "job_id": "326f2bfd-bf35-4212-a2f6-0effc74daa01",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260817_110456_326f2bfd-bf35-4212-a2f6-0effc74daa01.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 69,
+      "kind": "plate",
+      "id": "kr-agijangsu",
+      "target": "public/img/yokai/agijangsu.webp",
+      "aspect": "4:5",
+      "job_id": "c2bc9c11-66ef-484d-aaa8-df7fbc8e195c",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260817_110456_c2bc9c11-66ef-484d-aaa8-df7fbc8e195c.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 70,
+      "kind": "plate",
+      "id": "kr-bulgasari",
+      "target": "public/img/yokai/bulgasari.webp",
+      "aspect": "4:5",
+      "job_id": "00e29afc-e1ce-4c7b-b2cf-cea2ba1be59c",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_052618_00e29afc-e1ce-4c7b-b2cf-cea2ba1be59c.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 71,
+      "kind": "plate",
+      "id": "kr-hoeorib",
+      "target": "public/img/yokai/hoeorib.webp",
+      "aspect": "4:5",
+      "job_id": "963bdc39-7453-45c2-b887-2d6627fe6ab4",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_052618_963bdc39-7453-45c2-b887-2d6627fe6ab4.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 72,
+      "kind": "plate",
+      "id": "kr-hwagwang",
+      "target": "public/img/yokai/hwagwang.webp",
+      "aspect": "4:5",
+      "job_id": "a3ab04d7-204b-46f3-8869-cd3e790bb96c",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_052618_a3ab04d7-204b-46f3-8869-cd3e790bb96c.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 73,
+      "kind": "plate",
+      "id": "kr-gaeyang-halmi",
+      "target": "public/img/yokai/gaeyang-halmi.webp",
+      "aspect": "4:5",
+      "job_id": "d6015caf-29a0-4f4a-ac53-2c8bebfe9512",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_052740_d6015caf-29a0-4f4a-ac53-2c8bebfe9512.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 74,
+      "kind": "plate",
+      "id": "kr-gyeryong",
+      "target": "public/img/yokai/gyeryong.webp",
+      "aspect": "4:5",
+      "job_id": "9948fe6b-de21-435b-bb0f-d75745c021f8",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_052739_9948fe6b-de21-435b-bb0f-d75745c021f8.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 75,
+      "kind": "plate",
+      "id": "kr-haerang",
+      "target": "public/img/yokai/haerang.webp",
+      "aspect": "4:5",
+      "job_id": "98957f90-d4b7-4e4f-87f0-3e6c3688f886",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_052740_98957f90-d4b7-4e4f-87f0-3e6c3688f886.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 76,
+      "kind": "plate",
+      "id": "kr-haeryong",
+      "target": "public/img/yokai/haeryong.webp",
+      "aspect": "4:5",
+      "job_id": "82a0db66-5786-4fb7-815a-f96e875d959f",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_052740_82a0db66-5786-4fb7-815a-f96e875d959f.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 77,
+      "kind": "plate",
+      "id": "kr-jeongsin",
+      "target": "public/img/yokai/jeongsin.webp",
+      "aspect": "4:5",
+      "job_id": "4ce1645f-367c-4627-9dfb-7748648a34e8",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_052740_4ce1645f-367c-4627-9dfb-7748648a34e8.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 78,
+      "kind": "plate",
+      "id": "kr-mulgwisin",
+      "target": "public/img/yokai/mulgwisin.webp",
+      "aspect": "4:5",
+      "job_id": "9e0f6687-31b8-4838-a073-2671b88ad2a3",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_052739_9e0f6687-31b8-4838-a073-2671b88ad2a3.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 79,
+      "kind": "plate",
+      "id": "kr-sinjikki",
+      "target": "public/img/yokai/sinjikki.webp",
+      "aspect": "4:5",
+      "job_id": "46661dba-fedb-4b2c-af89-bbf22a572b81",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_052854_46661dba-fedb-4b2c-af89-bbf22a572b81.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 80,
+      "kind": "plate",
+      "id": "kr-subu",
+      "target": "public/img/yokai/subu.webp",
+      "aspect": "4:5",
+      "job_id": "9378b62b-ceda-49ed-8c4d-8fef05b0c1c4",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_052854_9378b62b-ceda-49ed-8c4d-8fef05b0c1c4.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 81,
+      "kind": "plate",
+      "id": "kr-cheonjiwang",
+      "target": "public/img/yokai/cheonjiwang.webp",
+      "aspect": "4:5",
+      "job_id": "0836b4ca-cc0a-4ced-bea3-bc4c54da8cc9",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_052854_0836b4ca-cc0a-4ced-bea3-bc4c54da8cc9.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 82,
+      "kind": "plate",
+      "id": "kr-gameunjang",
+      "target": "public/img/yokai/gameunjang.webp",
+      "aspect": "4:5",
+      "job_id": "517775bd-6514-49d8-827d-844fbbd6e695",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_052854_517775bd-6514-49d8-827d-844fbbd6e695.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 83,
+      "kind": "plate",
+      "id": "kr-gu-samseung-halmang",
+      "target": "public/img/yokai/gu-samseung-halmang.webp",
+      "aspect": "4:5",
+      "job_id": "1f8683a6-40ec-455e-adee-0bd7f32a00e2",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_052854_1f8683a6-40ec-455e-adee-0bd7f32a00e2.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 84,
+      "kind": "plate",
+      "id": "kr-baekjutto",
+      "target": "public/img/yokai/baekjutto.webp",
+      "aspect": "4:5",
+      "job_id": "8a08cace-b18e-4306-a429-c29ecf1bec1c",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_053014_8a08cace-b18e-4306-a429-c29ecf1bec1c.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 85,
+      "kind": "plate",
+      "id": "kr-gwenegitto",
+      "target": "public/img/yokai/gwenegitto.webp",
+      "aspect": "4:5",
+      "job_id": "a92235aa-4ff9-45a0-b74a-966ceedf82cb",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_053014_a92235aa-4ff9-45a0-b74a-966ceedf82cb.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 86,
+      "kind": "plate",
+      "id": "kr-oneuri",
+      "target": "public/img/yokai/oneuri.webp",
+      "aspect": "4:5",
+      "job_id": "e9a401be-23e7-422e-9c19-d6811d5e813f",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_053013_e9a401be-23e7-422e-9c19-d6811d5e813f.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 87,
+      "kind": "plate",
+      "id": "kr-samseung-halmang",
+      "target": "public/img/yokai/samseung-halmang.webp",
+      "aspect": "4:5",
+      "job_id": "49470cbd-5a2b-4afd-818f-7f742f5bb3af",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_053013_49470cbd-5a2b-4afd-818f-7f742f5bb3af.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 88,
+      "kind": "plate",
+      "id": "kr-socheonguk",
+      "target": "public/img/yokai/socheonguk.webp",
+      "aspect": "4:5",
+      "job_id": "04ccba9b-1a04-4681-8a1c-6437aa77a528",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_053014_04ccba9b-1a04-4681-8a1c-6437aa77a528.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 89,
+      "kind": "plate",
+      "id": "kr-dukkeobi-sillang",
+      "target": "public/img/yokai/dukkeobi-sillang.webp",
+      "aspect": "4:5",
+      "job_id": "1c9ac961-4ab0-49b3-ab60-9cce29565528",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_053014_1c9ac961-4ab0-49b3-ab60-9cce29565528.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 90,
+      "kind": "plate",
+      "id": "kr-gureongdeongdeong",
+      "target": "public/img/yokai/gureongdeongdeong.webp",
+      "aspect": "4:5",
+      "job_id": "64845365-590f-4247-bdf9-e54f2daadca9",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_053134_64845365-590f-4247-bdf9-e54f2daadca9.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 91,
+      "kind": "plate",
+      "id": "kr-seonnyeo",
+      "target": "public/img/yokai/seonnyeo.webp",
+      "aspect": "4:5",
+      "job_id": "3c23d07d-2e1f-4ff9-9a4f-57b014b66bc7",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_053134_3c23d07d-2e1f-4ff9-9a4f-57b014b66bc7.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 92,
+      "kind": "plate",
+      "id": "kr-ureonggaksi",
+      "target": "public/img/yokai/ureonggaksi.webp",
+      "aspect": "4:5",
+      "job_id": "8932bb97-f249-4298-8545-37e2b658ab89",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_053134_8932bb97-f249-4298-8545-37e2b658ab89.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 93,
+      "kind": "plate",
+      "id": "kr-yaraeja",
+      "target": "public/img/yokai/yaraeja.webp",
+      "aspect": "4:5",
+      "job_id": "54b9951e-d485-4890-b894-452ef0493d4b",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_053134_54b9951e-d485-4890-b894-452ef0493d4b.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 94,
+      "kind": "plate",
+      "id": "kr-baeksa",
+      "target": "public/img/yokai/baeksa.webp",
+      "aspect": "4:5",
+      "job_id": "578bc7b3-ffa6-4264-9aab-74d0183eb674",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_053134_578bc7b3-ffa6-4264-9aab-74d0183eb674.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 95,
+      "kind": "plate",
+      "id": "kr-changgwi",
+      "target": "public/img/yokai/changgwi.webp",
+      "aspect": "4:5",
+      "job_id": "3605e5bc-5495-46ba-822b-fea6c3a69953",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_053134_3605e5bc-5495-46ba-822b-fea6c3a69953.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 96,
+      "kind": "plate",
+      "id": "kr-cheonggaeguri",
+      "target": "public/img/yokai/cheonggaeguri.webp",
+      "aspect": "4:5",
+      "job_id": "744442ad-0db4-465e-b607-160f911ba763",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_053251_744442ad-0db4-465e-b607-160f911ba763.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 97,
+      "kind": "plate",
+      "id": "kr-jinegaksi",
+      "target": "public/img/yokai/jinegaksi.webp",
+      "aspect": "4:5",
+      "job_id": "4e9f1dce-26b4-4841-a6eb-e940e6da407d",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_053251_4e9f1dce-26b4-4841-a6eb-e940e6da407d.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 98,
+      "kind": "plate",
+      "id": "kr-jwi-dungap",
+      "target": "public/img/yokai/jwi-dungap.webp",
+      "aspect": "4:5",
+      "job_id": "12ea8c24-c9d2-4038-aabd-34b5b67770b9",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260817_012949_12ea8c24-c9d2-4038-aabd-34b5b67770b9.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 99,
+      "kind": "plate",
+      "id": "kr-myogwi",
+      "target": "public/img/yokai/myogwi.webp",
+      "aspect": "4:5",
+      "job_id": "dc07318f-6025-4627-9f99-13b48598bed2",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_053251_dc07318f-6025-4627-9f99-13b48598bed2.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 100,
+      "kind": "plate",
+      "id": "kr-nogu-hwaho",
+      "target": "public/img/yokai/nogu-hwaho.webp",
+      "aspect": "4:5",
+      "job_id": "ddd0838a-29d4-4737-98b6-7dd2be074181",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_053252_ddd0838a-29d4-4737-98b6-7dd2be074181.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 101,
+      "kind": "plate",
+      "id": "kr-sapsalgae",
+      "target": "public/img/yokai/sapsalgae.webp",
+      "aspect": "4:5",
+      "job_id": "0b0e6a7a-d2d0-400c-8b37-50e2f8f6043b",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_053251_0b0e6a7a-d2d0-400c-8b37-50e2f8f6043b.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 102,
+      "kind": "plate",
+      "id": "kr-yongma",
+      "target": "public/img/yokai/yongma.webp",
+      "aspect": "4:5",
+      "job_id": "ecd1a66a-ba9b-4006-bf1e-97fba1423d7a",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_053416_ecd1a66a-ba9b-4006-bf1e-97fba1423d7a.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 103,
+      "kind": "plate",
+      "id": "kr-gangsi",
+      "target": "public/img/yokai/gangsi.webp",
+      "aspect": "4:5",
+      "job_id": "8fe57b4d-fc41-4f6e-ab2b-2e70084999a2",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_053416_8fe57b4d-fc41-4f6e-ab2b-2e70084999a2.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 104,
+      "kind": "plate",
+      "id": "kr-haetae",
+      "target": "public/img/yokai/haetae.webp",
+      "aspect": "4:5",
+      "job_id": "64820136-c5bc-4c1a-b630-8ae378e53965",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_053416_64820136-c5bc-4c1a-b630-8ae378e53965.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 105,
+      "kind": "plate",
+      "id": "kr-nachal",
+      "target": "public/img/yokai/nachal.webp",
+      "aspect": "4:5",
+      "job_id": "aa85e573-146b-481f-a42f-21cfefda770b",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_053416_aa85e573-146b-481f-a42f-21cfefda770b.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 106,
+      "kind": "plate",
+      "id": "kr-sacheonwang",
+      "target": "public/img/yokai/sacheonwang.webp",
+      "aspect": "4:5",
+      "job_id": "e5a0fb81-7e4f-4585-b86a-f6367152939c",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_053416_e5a0fb81-7e4f-4585-b86a-f6367152939c.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 107,
+      "kind": "plate",
+      "id": "kr-yeou-nui",
+      "target": "public/img/yokai/yeou-nui.webp",
+      "aspect": "4:5",
+      "job_id": "8d4c0306-fbc6-4a9d-ba2b-81612d589b4d",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260817_012949_8d4c0306-fbc6-4a9d-ba2b-81612d589b4d.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 108,
+      "kind": "plate",
+      "id": "kr-yacha",
+      "target": "public/img/yokai/yacha.webp",
+      "aspect": "4:5",
+      "job_id": "4bbeec77-7697-48d9-84a8-ac4c19bcabf6",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_053532_4bbeec77-7697-48d9-84a8-ac4c19bcabf6.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 109,
+      "kind": "plate",
+      "id": "kr-yeomna",
+      "target": "public/img/yokai/yeomna.webp",
+      "aspect": "4:5",
+      "job_id": "9cc78a04-6821-4bcb-8ab5-9e829d696826",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_053532_9cc78a04-6821-4bcb-8ab5-9e829d696826.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 110,
+      "kind": "plate",
+      "id": "kr-elevator-goedam",
+      "target": "public/img/yokai/elevator-goedam.webp",
+      "aspect": "4:5",
+      "job_id": "6781ae91-c293-4cef-adce-6f72762f1713",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_053532_6781ae91-c293-4cef-adce-6f72762f1713.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 111,
+      "kind": "plate",
+      "id": "kr-geomeun-bonggo",
+      "target": "public/img/yokai/geomeun-bonggo.webp",
+      "aspect": "4:5",
+      "job_id": "c432df46-0d76-4dbe-a9ae-3b529a96a8fd",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_053532_c432df46-0d76-4dbe-a9ae-3b529a96a8fd.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 112,
+      "kind": "plate",
+      "id": "kr-jayuro-gwisin",
+      "target": "public/img/yokai/jayuro-gwisin.webp",
+      "aspect": "4:5",
+      "job_id": "bd3b17d7-4c51-4b7a-9276-6df679d3517f",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_053644_bd3b17d7-4c51-4b7a-9276-6df679d3517f.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 113,
+      "kind": "plate",
+      "id": "kr-jihacheol-gwisin",
+      "target": "public/img/yokai/jihacheol-gwisin.webp",
+      "aspect": "4:5",
+      "job_id": "2dd9bd07-44ca-4292-80a8-622fc499c071",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_053644_2dd9bd07-44ca-4292-80a8-622fc499c071.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 114,
+      "kind": "plate",
+      "id": "kr-kongkong-gwisin",
+      "target": "public/img/yokai/kongkong-gwisin.webp",
+      "aspect": "4:5",
+      "job_id": "9d71bbbb-c6cf-4de0-8a3d-40dc1767cf05",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260817_110456_9d71bbbb-c6cf-4de0-8a3d-40dc1767cf05.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 115,
+      "kind": "plate",
+      "id": "kr-ppalgan-mask",
+      "target": "public/img/yokai/ppalgan-mask.webp",
+      "aspect": "4:5",
+      "job_id": "f3f8b832-7bd9-4f05-9e3d-bbc1e79cc0fe",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260817_110456_f3f8b832-7bd9-4f05-9e3d-bbc1e79cc0fe.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 116,
+      "kind": "plate",
+      "id": "kr-teoneol-goedam",
+      "target": "public/img/yokai/teoneol-goedam.webp",
+      "aspect": "4:5",
+      "job_id": "56c81209-b5c1-4ee0-a78a-0d7aa6a9b071",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_053644_56c81209-b5c1-4ee0-a78a-0d7aa6a9b071.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 117,
+      "kind": "plate",
+      "id": "kr-hwajangsil-gwisin",
+      "target": "public/img/yokai/hwajangsil-gwisin.webp",
+      "aspect": "4:5",
+      "job_id": "b2d8caf3-6938-40e6-9b23-288111a96cc9",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_053644_b2d8caf3-6938-40e6-9b23-288111a96cc9.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 118,
+      "kind": "plate",
+      "id": "kr-bunsinsaba",
+      "target": "public/img/yokai/bunsinsaba.webp",
+      "aspect": "4:5",
+      "job_id": "c0519c93-c543-451b-af00-2286202eac06",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_053735_c0519c93-c543-451b-af00-2286202eac06.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 119,
+      "kind": "plate",
+      "id": "kr-dokkaebi-sillang",
+      "target": "public/img/yokai/dokkaebi-sillang.webp",
+      "aspect": "4:5",
+      "job_id": "9ba640fd-c9d8-433f-b77e-833ff6ac6de9",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_053830_9ba640fd-c9d8-433f-b77e-833ff6ac6de9.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 120,
+      "kind": "plate",
+      "id": "kr-yeoubi",
+      "target": "public/img/yokai/yeoubi.webp",
+      "aspect": "4:5",
+      "job_id": "acbe7b36-46ad-4432-9947-07cdaa72fa56",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260816_053830_acbe7b36-46ad-4432-9947-07cdaa72fa56.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-11",
+        "result": "pass",
+        "note": "오너 전수 검수 — 왜색·중국풍 지적 없음"
+      }
+    },
+    {
+      "index": 121,
+      "kind": "plate",
+      "id": "kr-bibi",
+      "target": "public/img/yokai/bibi.webp",
+      "aspect": "4:5",
+      "job_id": "ff62f879-0da7-4da4-8ef4-28059690c9eb",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260912_080704_ff62f879-0da7-4da4-8ef4-28059690c9eb.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-12",
+        "result": "pass"
+      }
+    },
+    {
+      "index": 122,
+      "kind": "plate",
+      "id": "kr-bugunsin",
+      "target": "public/img/yokai/bugunsin.webp",
+      "aspect": "4:5",
+      "job_id": "ea4fab5d-7aa7-4136-92e3-1c5721fb31ef",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260912_075832_ea4fab5d-7aa7-4136-92e3-1c5721fb31ef.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-12",
+        "result": "pass"
+      }
+    },
+    {
+      "index": 123,
+      "kind": "plate",
+      "id": "kr-bulgae",
+      "target": "public/img/yokai/bulgae.webp",
+      "aspect": "4:5",
+      "job_id": "8893dbf3-3dd0-491f-a4b1-c7102c97189b",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260912_075832_8893dbf3-3dd0-491f-a4b1-c7102c97189b.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-12",
+        "result": "pass"
+      }
+    },
+    {
+      "index": 124,
+      "kind": "plate",
+      "id": "kr-byeoljubu",
+      "target": "public/img/yokai/byeoljubu.webp",
+      "aspect": "4:5",
+      "job_id": "a0a52618-2342-4a70-aef6-e431f9d4fa67",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260912_075832_a0a52618-2342-4a70-aef6-e431f9d4fa67.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-12",
+        "result": "pass"
+      }
+    },
+    {
+      "index": 125,
+      "kind": "plate",
+      "id": "kr-cheoyong",
+      "target": "public/img/yokai/cheoyong.webp",
+      "aspect": "4:5",
+      "job_id": "53e46a24-231d-4586-a010-cf5b255b03a1",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260912_075832_53e46a24-231d-4586-a010-cf5b255b03a1.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-12",
+        "result": "pass"
+      }
+    },
+    {
+      "index": 126,
+      "kind": "plate",
+      "id": "kr-chilseong",
+      "target": "public/img/yokai/chilseong.webp",
+      "aspect": "4:5",
+      "job_id": "882d2e15-fb38-4f30-aa41-25781cce2dbe",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260912_080704_882d2e15-fb38-4f30-aa41-25781cce2dbe.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-12",
+        "result": "pass"
+      }
+    },
+    {
+      "index": 127,
+      "kind": "plate",
+      "id": "kr-choeyeong",
+      "target": "public/img/yokai/choeyeong.webp",
+      "aspect": "4:5",
+      "job_id": "cc5998f7-135e-44f7-88b6-c7f76d9fd211",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260912_080043_cc5998f7-135e-44f7-88b6-c7f76d9fd211.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-12",
+        "result": "pass"
+      }
+    },
+    {
+      "index": 128,
+      "kind": "plate",
+      "id": "kr-geumcheok",
+      "target": "public/img/yokai/geumcheok.webp",
+      "aspect": "4:5",
+      "job_id": "e175ec3f-0d68-476b-ac8f-2382077b54ac",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260912_080043_e175ec3f-0d68-476b-ac8f-2382077b54ac.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-12",
+        "result": "pass"
+      }
+    },
+    {
+      "index": 129,
+      "kind": "plate",
+      "id": "kr-geumgang-yeoksa",
+      "target": "public/img/yokai/geumgang-yeoksa.webp",
+      "aspect": "4:5",
+      "job_id": "e0dd3f6d-66e2-4fdd-84ce-cfc8e6b809ef",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260912_112354_e0dd3f6d-66e2-4fdd-84ce-cfc8e6b809ef.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-12",
+        "result": "pass"
+      }
+    },
+    {
+      "index": 130,
+      "kind": "plate",
+      "id": "kr-gimnyeong-daesa",
+      "target": "public/img/yokai/gimnyeong-daesa.webp",
+      "aspect": "4:5",
+      "job_id": "ebd0a626-5268-48ef-af5c-c365d19f2fe2",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260912_080043_ebd0a626-5268-48ef-af5c-c365d19f2fe2.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-12",
+        "result": "pass"
+      }
+    },
+    {
+      "index": 131,
+      "kind": "plate",
+      "id": "kr-godang-halmi",
+      "target": "public/img/yokai/godang-halmi.webp",
+      "aspect": "4:5",
+      "job_id": "e3de65db-d3c6-4e7e-b4e5-a8662d2c1b07",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260912_080043_e3de65db-d3c6-4e7e-b4e5-a8662d2c1b07.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-12",
+        "result": "pass"
+      }
+    },
+    {
+      "index": 132,
+      "kind": "plate",
+      "id": "kr-habaek",
+      "target": "public/img/yokai/habaek.webp",
+      "aspect": "4:5",
+      "job_id": "5cd128e1-b0de-47ac-8e25-f8e76b77d18f",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20260912_080043_5cd128e1-b0de-47ac-8e25-f8e76b77d18f.png",
+      "review": {
+        "by": "프로젝트 오너",
+        "date": "2026-09-12",
+        "result": "pass"
+      }
+    },
+    {
+      "index": 133,
+      "kind": "plate",
+      "id": "kr-banjjogi",
+      "target": "public/img/yokai/banjjogi.webp",
+      "aspect": "4:5",
+      "job_id": "fafae9d6-1e01-4ceb-9456-f340d4fb16a7",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_015445_fafae9d6-1e01-4ceb-9456-f340d4fb16a7.png",
+      "history": [
+        {
+          "job_id": "fc2acdea-b4c3-4b4f-9306-5d9593ba4578",
+          "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_010233_fc2acdea-b4c3-4b4f-9306-5d9593ba4578.png",
+          "review": {
+            "by": "검수",
+            "date": "2026-10-02",
+            "result": "reject",
+            "reason": "내용 — 팔다리가 온전하다. 반쪽 몸이 개체의 정체인데 빠졌다(칠성신 보름달과 같은 유형)"
+          }
+        },
+        {
+          "job_id": "85107985-f25d-430e-9d37-d9c48f8729d1",
+          "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_012755_85107985-f25d-430e-9d37-d9c48f8729d1.png",
+          "review": {
+            "by": "검수",
+            "date": "2026-10-02",
+            "result": "reject",
+            "reason": "내용 — 다리 둘(변형 A, 머리 위 리본 매듭도 어색)"
+          }
+        },
+        {
+          "job_id": "cf8853db-098e-4ef2-98a6-b85b16ca1e38",
+          "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_012755_cf8853db-098e-4ef2-98a6-b85b16ca1e38.png",
+          "review": {
+            "by": "검수",
+            "date": "2026-10-02",
+            "result": "reject",
+            "reason": "내용 — 다리 둘(변형 B)"
+          }
+        },
+        {
+          "job_id": "c23e6ecc-aded-4585-9392-97df14368675",
+          "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_014547_c23e6ecc-aded-4585-9392-97df14368675.png",
+          "review": {
+            "by": "검수",
+            "date": "2026-10-02",
+            "result": "reject",
+            "reason": "내용 — 가운데 외다리 서술로도 다리 둘·팔 둘(변형 A)"
+          }
+        },
+        {
+          "job_id": "beee8501-abfc-4dd2-a4d3-43084e412e6a",
+          "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_014450_beee8501-abfc-4dd2-a4d3-43084e412e6a.png",
+          "review": {
+            "by": "검수",
+            "date": "2026-10-02",
+            "result": "reject",
+            "reason": "§2 — 몸의 왼쪽 반만 그린 구도는 처음으로 맞았으나 배경에 석등롱과 붉은 원통 등롱(변형 B)"
+          }
+        },
+        {
+          "job_id": "5596b5a0-2c5a-409a-9381-3c1d4ff09590",
+          "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_015445_5596b5a0-2c5a-409a-9381-3c1d4ff09590.png",
+          "review": {
+            "by": "검수",
+            "date": "2026-10-02",
+            "result": "unchosen",
+            "reason": "변형 A — 반쪽 몸은 맞으나 화면 오른쪽 절반을 배경까지 통째로 비워 미완성 그림으로 읽힌다"
+          }
+        }
+      ],
+      "review": {
+        "by": "검수",
+        "date": "2026-10-02",
+        "result": "pass",
+        "note": "몸 가운데 세로선에서 그림이 멈춘다 — 눈 하나·입 반쪽·팔 하나·다리 하나. 배경(형제·초가)은 선을 넘어 이어져서 미완성이 아니라 반쪽이의 몸으로 읽힌다. 댕기머리·동정·옷고름·버선 위 짚신. 상처·피 없음. 석등·등롱 없음(서낭 앵커 제거) — 오너 확인 대기"
+      }
+    },
+    {
+      "index": 134,
+      "kind": "plate",
+      "id": "kr-bihyeongnang",
+      "target": "public/img/yokai/bihyeongnang.webp",
+      "aspect": "4:5",
+      "job_id": "4ee2fe9f-51c7-4b3b-888c-31bd8703f5ab",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_010233_4ee2fe9f-51c7-4b3b-888c-31bd8703f5ab.png",
+      "review": {
+        "by": "검수",
+        "date": "2026-10-02",
+        "result": "pass",
+        "note": "신라 초기 복식(허리띠 저고리·발목 오므린 바지·턱끈 관), 갓 없음. 도깨비는 그림자 무리. 문설주 종이는 공백(가짜 글자 없음). 한지 창살 — 오너 확인 대기"
+      }
+    },
+    {
+      "index": 135,
+      "kind": "plate",
+      "id": "kr-dajagu-halmi",
+      "target": "public/img/yokai/dajagu-halmi.webp",
+      "aspect": "4:5",
+      "job_id": "d4f8b073-eb13-4add-b4aa-5717a87aaa3d",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_010442_d4f8b073-eb13-4add-b4aa-5717a87aaa3d.png",
+      "review": {
+        "by": "검수",
+        "date": "2026-10-02",
+        "result": "pass",
+        "note": "동정·옷고름·가슴 위 치마말기·머릿수건·버선. 서낭 돌무지·오방색 천. 붉은 기둥 둘은 상인방 없음(도리이 아님). 처마 완만 — 오너 확인 대기"
+      }
+    },
+    {
+      "index": 136,
+      "kind": "plate",
+      "id": "kr-datbal-goemul",
+      "target": "public/img/yokai/datbal-goemul.webp",
+      "aspect": "4:5",
+      "job_id": "cdd1026b-b59c-4279-9869-8093b1f7bdeb",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_010233_cdd1026b-b59c-4279-9869-8093b1f7bdeb.png",
+      "review": {
+        "by": "검수",
+        "date": "2026-10-02",
+        "result": "pass",
+        "note": "긴 부리·긴 꼬리 새가 초가 지붕에. 문틈의 두 아이. 서낭·벅수·까치 — 오너 확인 대기"
+      }
+    },
+    {
+      "index": 137,
+      "kind": "plate",
+      "id": "kr-deokdaegol-sicheong",
+      "target": "public/img/yokai/deokdaegol-sicheong.webp",
+      "aspect": "4:5",
+      "job_id": "9110d1b1-cb77-4510-b2d3-7ebb7a14abf3",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_010442_9110d1b1-cb77-4510-b2d3-7ebb7a14abf3.png",
+      "review": {
+        "by": "검수",
+        "date": "2026-10-02",
+        "result": "pass",
+        "note": "갓·흰 바지저고리·발목 묶음·짚신. 추격자는 발치의 옅은 형체로만 — 필터 회피로 순화한 의도대로. 서낭·장승 — 오너 확인 대기"
+      }
+    },
+    {
+      "index": 138,
+      "kind": "plate",
+      "id": "kr-gildal",
+      "target": "public/img/yokai/gildal.webp",
+      "aspect": "4:5",
+      "job_id": "8c5b3e4e-39db-45ed-b5f3-20a759b17a18",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_012755_8c5b3e4e-39db-45ed-b5f3-20a759b17a18.png",
+      "history": [
+        {
+          "job_id": "9d825b3c-d1ed-4f07-acf3-e24188d03408",
+          "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_010233_9d825b3c-d1ed-4f07-acf3-e24188d03408.png",
+          "review": {
+            "by": "검수",
+            "date": "2026-10-02",
+            "result": "reject",
+            "reason": "건축 — 기와·곡선 없는 판자 지붕, X자 가새 목탑, 주칠 판벽(한국 절 담장 아님). 통로가 없어 문으로 읽히지 않는다"
+          }
+        }
+      ],
+      "review": {
+        "by": "검수",
+        "date": "2026-10-02",
+        "result": "pass",
+        "note": "기와 얹은 2층 누문·단청 공포·가운데 통로·새끼로 묶은 비계, 기와 얹은 절 담장 밑의 여우, 관솔불. 처마 완만 — 오너 확인 대기"
+      }
+    },
+    {
+      "index": 139,
+      "kind": "plate",
+      "id": "kr-hakgyo-gyedan",
+      "target": "public/img/yokai/hakgyo-gyedan.webp",
+      "aspect": "4:5",
+      "job_id": "36f5f6c7-dd7f-4380-85d5-454b1ab4d287",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_010442_36f5f6c7-dd7f-4380-85d5-454b1ab4d287.png",
+      "review": {
+        "by": "검수",
+        "date": "2026-10-02",
+        "result": "pass",
+        "note": "아랫벽 짙은 색·윗벽 흰 학교 복도 도장, 형광등, 인물 없음 — 오너 확인 대기"
+      }
+    },
+    {
+      "index": 140,
+      "kind": "plate",
+      "id": "kr-hallakgungi",
+      "target": "public/img/yokai/hallakgungi.webp",
+      "aspect": "4:5",
+      "job_id": "2dce1f91-e44e-4a2d-be02-4d8f789fbb81",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_010442_2dce1f91-e44e-4a2d-be02-4d8f789fbb81.png",
+      "review": {
+        "by": "검수",
+        "date": "2026-10-02",
+        "result": "pass",
+        "note": "동정·옷고름·상투·두루마기. 버선 위 엮음 짚신, 엄지 끈 없음(확대 확인). 검은 화산토·세 가지 꽃 — 오너 확인 대기"
+      }
+    },
+    {
+      "index": 141,
+      "kind": "plate",
+      "id": "kr-hosikchong",
+      "target": "public/img/yokai/hosikchong.webp",
+      "aspect": "4:5",
+      "job_id": "e48e3afa-87e1-4ef5-b42e-06b6ca72d555",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_010608_e48e3afa-87e1-4ef5-b42e-06b6ca72d555.png",
+      "review": {
+        "by": "검수",
+        "date": "2026-10-02",
+        "result": "pass",
+        "note": "돌무지 위 엎은 시루와 쇠꼬챙이. 낙엽·서낭·장승·까치. 인물 없음 — 오너 확인 대기"
+      }
+    },
+    {
+      "index": 142,
+      "kind": "plate",
+      "id": "kr-hwasubun",
+      "target": "public/img/yokai/hwasubun.webp",
+      "aspect": "4:5",
+      "job_id": "48cf336c-b474-441b-92a2-1a2bdb153ada",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_010443_48cf336c-b474-441b-92a2-1a2bdb153ada.png",
+      "review": {
+        "by": "검수",
+        "date": "2026-10-02",
+        "result": "pass",
+        "note": "넘치는 쌀·됫박·놋그릇·옹기. 기와 완만. 방망이 없음 — 오너 확인 대기"
+      }
+    },
+    {
+      "index": 143,
+      "kind": "plate",
+      "id": "kr-ineo",
+      "target": "public/img/yokai/ineo.webp",
+      "aspect": "4:5",
+      "job_id": "7a60fed7-4889-414e-a143-c3bbced7ffbe",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_012755_7a60fed7-4889-414e-a143-c3bbced7ffbe.png",
+      "history": [
+        {
+          "job_id": "1a300843-f2a5-4216-8a71-60b83f9c4d9a",
+          "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_010741_1a300843-f2a5-4216-8a71-60b83f9c4d9a.png",
+          "review": {
+            "by": "검수",
+            "date": "2026-10-02",
+            "result": "reject",
+            "reason": "일반 — 장승 아래 바위에 가짜 서명 같은 필기체 낙서"
+          }
+        }
+      ],
+      "review": {
+        "by": "검수",
+        "date": "2026-10-02",
+        "result": "pass",
+        "note": "얼굴만 사람 같은 바다 짐승, 아래는 그물 속, 꼬리·조개 없음. 갓·짚신 어부. 네 귀퉁이 확대 — 서명 없음 — 오너 확인 대기"
+      }
+    },
+    {
+      "index": 144,
+      "kind": "plate",
+      "id": "kr-jamyeonggo",
+      "target": "public/img/yokai/jamyeonggo.webp",
+      "aspect": "4:5",
+      "job_id": "935c1e07-f75a-4b15-9b4f-fb382a999ff1",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_012755_935c1e07-f75a-4b15-9b4f-fb382a999ff1.png",
+      "history": [
+        {
+          "job_id": "8803074e-9f71-48ce-bfd9-9bb87339404a",
+          "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_010608_8803074e-9f71-48ce-bfd9-9bb87339404a.png",
+          "review": {
+            "by": "검수",
+            "date": "2026-10-02",
+            "result": "reject",
+            "reason": "§2 처마 — 배경 건물 처마가 갈고리처럼 크게 솟았다. 내용 — 뿔나팔이 부러지지 않았다"
+          }
+        }
+      ],
+      "review": {
+        "by": "검수",
+        "date": "2026-10-02",
+        "result": "pass",
+        "note": "뿔나팔 두 동강, 창 시렁, 문 너머 맨 담장뿐·솟은 처마 없음. 찢긴 자리가 북면이 아니라 북통인 점은 경미 — 오너 확인 대기"
+      }
+    },
+    {
+      "index": 145,
+      "kind": "plate",
+      "id": "kr-janghwa-hongryeon",
+      "target": "public/img/yokai/janghwa-hongryeon.webp",
+      "aspect": "4:5",
+      "job_id": "dbe32a2e-1b62-456a-b242-d3d9af802e9c",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_012926_dbe32a2e-1b62-456a-b242-d3d9af802e9c.png",
+      "history": [
+        {
+          "job_id": "128a8c25-44de-4f8f-ad6c-7dabfb986d10",
+          "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_010608_128a8c25-44de-4f8f-ad6c-7dabfb986d10.png",
+          "review": {
+            "by": "검수",
+            "date": "2026-10-02",
+            "result": "reject",
+            "reason": "소품 — 유리 등피 석유 남포등(19세기 말 이후 물건). 효종 대 이야기"
+          }
+        },
+        {
+          "job_id": "edc12afd-1aa2-4641-9c74-cfcdcc50006d",
+          "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_012755_edc12afd-1aa2-4641-9c74-cfcdcc50006d.png",
+          "review": {
+            "by": "검수",
+            "date": "2026-10-02",
+            "result": "unchosen",
+            "reason": "변형 A — 쌍갈래 머리에 서양식 큰 리본. B를 골랐다"
+          }
+        }
+      ],
+      "review": {
+        "by": "검수",
+        "date": "2026-10-02",
+        "result": "pass",
+        "note": "외가닥 댕기머리·조각 다리 서안(운각)·낮은 등잔대 위 놋쇠 등잔·붓·바닥의 물웅덩이. 종이에 가짜 글자 없음(확대 확인) — 오너 확인 대기"
+      }
+    },
+    {
+      "index": 146,
+      "kind": "plate",
+      "id": "kr-jihaguk-daejeok",
+      "target": "public/img/yokai/jihaguk-daejeok.webp",
+      "aspect": "4:5",
+      "job_id": "99fab179-1c39-43fc-8a10-0fdc7ec13af0",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_010608_99fab179-1c39-43fc-8a10-0fdc7ec13af0.png",
+      "review": {
+        "by": "검수",
+        "date": "2026-10-02",
+        "result": "pass",
+        "note": "갓·동정·옷고름·행전·짚신. 곧은 양날검(카타나 아님). 등잔. 뿔 없는 짐승. 밧줄 잡은 이가 남성으로 보이는 점은 경미 — 오너 확인 대기"
+      }
+    },
+    {
+      "index": 147,
+      "kind": "plate",
+      "id": "kr-maegu",
+      "target": "public/img/yokai/maegu.webp",
+      "aspect": "4:5",
+      "job_id": "4d00a6e7-1309-4ebc-b9e0-888851f3c8a6",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_012925_4d00a6e7-1309-4ebc-b9e0-888851f3c8a6.png",
+      "history": [
+        {
+          "job_id": "bd6bda29-c8fa-4922-beac-ddbf7ff26cb3",
+          "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_010608_bd6bda29-c8fa-4922-beac-ddbf7ff26cb3.png",
+          "review": {
+            "by": "검수",
+            "date": "2026-10-02",
+            "result": "reject",
+            "reason": "§2 — 소나무 옆 지붕 달린 작은 상자(석등롱·호코라). 여우와 작은 사당의 조합은 이나리 도상이다"
+          }
+        }
+      ],
+      "review": {
+        "by": "검수",
+        "date": "2026-10-02",
+        "result": "pass",
+        "note": "외양간의 여우·문을 막은 개·짚·여물통·초가. 사당·석등 없음(landscape 앵커 제거가 맞았다). 개가 셰퍼드형인 점은 경미 — 오너 확인 대기"
+      }
+    },
+    {
+      "index": 148,
+      "kind": "plate",
+      "id": "kr-manpasikjeok",
+      "target": "public/img/yokai/manpasikjeok.webp",
+      "aspect": "4:5",
+      "job_id": "81a3383a-15ee-416c-9e40-b5923a9d4032",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_014450_81a3383a-15ee-416c-9e40-b5923a9d4032.png",
+      "history": [
+        {
+          "job_id": "73d2eb88-5147-4d49-b298-6913cbfcb3e4",
+          "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_010742_73d2eb88-5147-4d49-b298-6913cbfcb3e4.png",
+          "review": {
+            "by": "검수",
+            "date": "2026-10-02",
+            "result": "reject",
+            "reason": "§2 — 붉은 등 기둥 한 쌍(일본 신사 등롱), 장지문형 큰 격자 문. 피리가 장난감처럼 채색됐다"
+          }
+        },
+        {
+          "job_id": "9770a925-325a-45ea-9219-bb2904457597",
+          "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_012925_9770a925-325a-45ea-9219-bb2904457597.png",
+          "review": {
+            "by": "검수",
+            "date": "2026-10-02",
+            "result": "reject",
+            "reason": "§2 — 쌍탑이 채색한 여러 층 탑에 처마가 들렸다. 신라 화강암 삼층석탑이 아니다"
+          }
+        }
+      ],
+      "review": {
+        "by": "검수",
+        "date": "2026-10-02",
+        "result": "pass",
+        "note": "민 대나무 피리·검은 비단, 채색 없는 화강암 삼층석탑 한 쌍(얇은 옥개석), 바다와 바위섬, 절벽의 적송. 등·기둥·목조 건물 없음 — 오너 확인 대기"
+      }
+    },
+    {
+      "index": 149,
+      "kind": "plate",
+      "id": "kr-mokdoryeong",
+      "target": "public/img/yokai/mokdoryeong.webp",
+      "aspect": "4:5",
+      "job_id": "20b2c24f-0e26-4b55-85b8-f0d9d26236a2",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_014451_20b2c24f-0e26-4b55-85b8-f0d9d26236a2.png",
+      "history": [
+        {
+          "job_id": "8faede7a-6d24-4da8-b209-c246a2dbf1c5",
+          "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_010742_8faede7a-6d24-4da8-b209-c246a2dbf1c5.png",
+          "review": {
+            "by": "검수",
+            "date": "2026-10-02",
+            "result": "reject",
+            "reason": "중국풍 — 상투에 긴 비녀 막대 둘(簪). 아이에게 상투 자체가 맞지 않다(미혼은 댕기머리)"
+          }
+        },
+        {
+          "job_id": "c2861c25-2d4e-4af9-a449-8f2372eb6652",
+          "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_012927_c2861c25-2d4e-4af9-a449-8f2372eb6652.png",
+          "review": {
+            "by": "검수",
+            "date": "2026-10-02",
+            "result": "reject",
+            "reason": "§2 — 엄지와 둘째 발가락 사이 끈(조리). costume_youth의 \"no thong\" 문구로는 막히지 않았다"
+          }
+        }
+      ],
+      "review": {
+        "by": "검수",
+        "date": "2026-10-02",
+        "result": "pass",
+        "note": "외가닥 댕기머리, 버선 위 짚신(엄지 끈 없음), 쓰러진 나무의 개미 줄, 비. 돌무지 위 오방색 천 두른 당집과 얼굴 새긴 장승 — 석등 아님(확대 확인) — 오너 확인 대기"
+      }
+    },
+    {
+      "index": 150,
+      "kind": "plate",
+      "id": "kr-mundoryeong",
+      "target": "public/img/yokai/mundoryeong.webp",
+      "aspect": "4:5",
+      "job_id": "c7601d2e-7581-4d09-9755-604e0c344a2a",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_012926_c7601d2e-7581-4d09-9755-604e0c344a2a.png",
+      "history": [
+        {
+          "job_id": "cf99eb0f-9bc1-4ce6-9466-c031e5478654",
+          "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_010742_cf99eb0f-9bc1-4ce6-9466-c031e5478654.png",
+          "review": {
+            "by": "검수",
+            "date": "2026-10-02",
+            "result": "reject",
+            "reason": "중국풍 — 높은 상투관 아래로 풀어 내린 긴 머리(고장극 공자 도상). 조선 남자는 머리를 풀지 않는다"
+          }
+        }
+      ],
+      "review": {
+        "by": "검수",
+        "date": "2026-10-02",
+        "result": "pass",
+        "note": "외가닥 댕기머리·흰 모시 도포·발목 묶은 바지·버선 위 짚신, 책보, 제주 검은 밭담·샘. 정수리 댕기 매듭이 다소 뻣뻣 — 오너 확인 대기"
+      }
+    },
+    {
+      "index": 151,
+      "kind": "plate",
+      "id": "kr-nami",
+      "target": "public/img/yokai/nami.webp",
+      "aspect": "4:5",
+      "job_id": "19224d2d-62bd-4015-aea6-b2b2110ad3c9",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_010742_19224d2d-62bd-4015-aea6-b2b2110ad3c9.png",
+      "review": {
+        "by": "검수",
+        "date": "2026-10-02",
+        "result": "pass",
+        "note": "전립 쓴 행렬·오방색 기·청홍 비단 초롱(일본 조칭 아님). 기와 사당·달항아리·놋그릇·금줄·장승 — 오너 확인 대기"
+      }
+    },
+    {
+      "index": 152,
+      "kind": "plate",
+      "id": "kr-nat-dokkaebi",
+      "target": "public/img/yokai/nat-dokkaebi.webp",
+      "aspect": "4:5",
+      "job_id": "0d203757-caa8-4af5-bba7-a7e603165332",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_014511_0d203757-caa8-4af5-bba7-a7e603165332.png",
+      "history": [
+        {
+          "job_id": "36a8042f-5bfe-4786-8d37-85536537548a",
+          "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_010742_36a8042f-5bfe-4786-8d37-85536537548a.png",
+          "review": {
+            "by": "검수",
+            "date": "2026-10-02",
+            "result": "reject",
+            "reason": "§2 — 엄지와 둘째 발가락 사이 끈(조리·와라지). 1차 생성 때와 같은 사고"
+          }
+        },
+        {
+          "job_id": "a2331311-4a82-4ac4-85ac-2e4af5aaf1cd",
+          "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_012926_a2331311-4a82-4ac4-85ac-2e4af5aaf1cd.png",
+          "review": {
+            "by": "검수",
+            "date": "2026-10-02",
+            "result": "reject",
+            "reason": "§2 — 얼굴 전체가 붉다. 붉은 얼굴에 방망이 든 험상궂은 장정은 뿔이 없어도 아카오니 도상이다. 분류 수식의 vermilion이 피부로 갔다"
+          }
+        }
+      ],
+      "review": {
+        "by": "검수",
+        "date": "2026-10-02",
+        "result": "pass",
+        "note": "평범한 그을린 얼굴에 거친 웃음(붉은 얼굴 없음), 뿔 없음, 옹이 방망이, 버선 위 짚신, 초가·장승 — 오너 확인 대기"
+      }
+    },
+    {
+      "index": 153,
+      "kind": "plate",
+      "id": "kr-osu-uigyeon",
+      "target": "public/img/yokai/osu-uigyeon.webp",
+      "aspect": "4:5",
+      "job_id": "bbf2f99d-865b-4aeb-b993-085784416a6d",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_010905_bbf2f99d-865b-4aeb-b993-085784416a6d.png",
+      "review": {
+        "by": "검수",
+        "date": "2026-10-02",
+        "result": "pass",
+        "note": "젖어 김 나는 개·불길 고리·잠든 사람. 상투는 끈 묶음(성인이라 맞음), 비녀 막대 없음. 짚신 엄지 끈 없음(확대 확인) — 오너 확인 대기"
+      }
+    },
+    {
+      "index": 154,
+      "kind": "plate",
+      "id": "kr-samdu-iljokeung",
+      "target": "public/img/yokai/samdu-iljokeung.webp",
+      "aspect": "4:5",
+      "job_id": "aacee500-5ba6-42a5-96b4-b39934bbdc47",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_010905_aacee500-5ba6-42a5-96b4-b39934bbdc47.png",
+      "review": {
+        "by": "검수",
+        "date": "2026-10-02",
+        "result": "pass",
+        "note": "머리 셋·다리 하나. 누런 종이에 주사 판화, 대문 널판. 글자 없음 — 오너 확인 대기"
+      }
+    },
+    {
+      "index": 155,
+      "kind": "plate",
+      "id": "kr-samjogo",
+      "target": "public/img/yokai/samjogo.webp",
+      "aspect": "4:5",
+      "job_id": "d1052fee-226e-4d5d-829e-d48a18adeec4",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_013054_d1052fee-226e-4d5d-829e-d48a18adeec4.png",
+      "history": [
+        {
+          "job_id": "d84716ea-50e9-4c9f-b3bc-ff3f026cd674",
+          "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_010905_d84716ea-50e9-4c9f-b3bc-ff3f026cd674.png",
+          "review": {
+            "by": "검수",
+            "date": "2026-10-02",
+            "result": "reject",
+            "reason": "내용 — 다리가 둘이다. 세 발이 개체의 정체"
+          }
+        },
+        {
+          "job_id": "fba63045-d006-43f5-a246-185dd83bf7f0",
+          "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_013053_fba63045-d006-43f5-a246-185dd83bf7f0.png",
+          "review": {
+            "by": "검수",
+            "date": "2026-10-02",
+            "result": "reject",
+            "reason": "§2 — 붉은 해 원반에 방사형 금빛 햇살. 욱일기 도상"
+          }
+        }
+      ],
+      "review": {
+        "by": "검수",
+        "date": "2026-10-02",
+        "result": "pass",
+        "note": "세 발이 왼쪽·가운데·오른쪽으로 나란히, 발마다 발톱. 볏, 달 속 두꺼비, 닳은 석채 — 오너 확인 대기"
+      }
+    },
+    {
+      "index": 156,
+      "kind": "plate",
+      "id": "kr-samjokgu",
+      "target": "public/img/yokai/samjokgu.webp",
+      "aspect": "4:5",
+      "job_id": "d7f5a9b8-dc7b-42e0-81dd-750398d77ce3",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_015445_d7f5a9b8-dc7b-42e0-81dd-750398d77ce3.png",
+      "history": [
+        {
+          "job_id": "060f5ebe-ef11-4bee-8be9-1a7f1e4bb76e",
+          "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_010905_060f5ebe-ef11-4bee-8be9-1a7f1e4bb76e.png",
+          "review": {
+            "by": "검수",
+            "date": "2026-10-02",
+            "result": "reject",
+            "reason": "내용 — 다리가 넷이다"
+          }
+        },
+        {
+          "job_id": "8d329e1f-b26f-431b-9913-ecd049217468",
+          "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_013053_8d329e1f-b26f-431b-9913-ecd049217468.png",
+          "review": {
+            "by": "검수",
+            "date": "2026-10-02",
+            "result": "reject",
+            "reason": "내용 — 다리 넷(변형 A)"
+          }
+        },
+        {
+          "job_id": "7fde1219-2aee-4016-a337-0d0e84b81fac",
+          "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_013054_7fde1219-2aee-4016-a337-0d0e84b81fac.png",
+          "review": {
+            "by": "검수",
+            "date": "2026-10-02",
+            "result": "reject",
+            "reason": "내용 — 다리 넷(변형 B), 굽 달린 신"
+          }
+        },
+        {
+          "job_id": "0b3fc660-9460-4533-849d-2bb4adf6c7cf",
+          "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_014450_0b3fc660-9460-4533-849d-2bb4adf6c7cf.png",
+          "review": {
+            "by": "검수",
+            "date": "2026-10-02",
+            "result": "reject",
+            "reason": "내용 — 다리 넷, 굽 달린 서양식 구두(변형 A)"
+          }
+        },
+        {
+          "job_id": "b316eb3f-e7ff-4025-9bcc-9c27162bdb57",
+          "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_014450_b316eb3f-e7ff-4025-9bcc-9c27162bdb57.png",
+          "review": {
+            "by": "검수",
+            "date": "2026-10-02",
+            "result": "reject",
+            "reason": "내용 — 다리 넷, 굽 달린 신(변형 B)"
+          }
+        },
+        {
+          "job_id": "94791b8e-9fe8-4aba-acd8-596535276f3c",
+          "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_015445_94791b8e-9fe8-4aba-acd8-596535276f3c.png",
+          "review": {
+            "by": "검수",
+            "date": "2026-10-02",
+            "result": "reject",
+            "reason": "내용 — 다리 넷(4차 변형 B)"
+          }
+        }
+      ],
+      "review": {
+        "by": "검수",
+        "date": "2026-10-02",
+        "result": "reject",
+        "reason": "내용 — 다리 넷(4차 변형 A), 끈 묶는 서양 구두. 네 가지 서술(처음 힌트 '세 다리 개' / 앞다리 둘·뒷다리 하나 / 가슴 가운데 외앞다리의 삼각대 / 삼족오가 통과한 '나란히' 서술을 옮긴 고분벽화식 앞·가운데·뒤)로 7장을 뽑아 7장 모두 다리가 넷이었다. 모델이 개의 해부를 정상화하는 한계로 보고 재생성을 멈춘다. 인장 폴백 유지"
+      }
+    },
+    {
+      "index": 157,
+      "kind": "plate",
+      "id": "kr-sangsabaem",
+      "target": "public/img/yokai/sangsabaem.webp",
+      "aspect": "4:5",
+      "job_id": "a16e64f6-7459-4367-b48a-59a2eef2cf71",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_010905_a16e64f6-7459-4367-b48a-59a2eef2cf71.png",
+      "review": {
+        "by": "검수",
+        "date": "2026-10-02",
+        "result": "pass",
+        "note": "동정·옷고름·쪽머리에 비녀 하나. 단청 띠 기와집. 여인과 뱀의 이중 그림자 — 오너 확인 대기"
+      }
+    },
+    {
+      "index": 158,
+      "kind": "plate",
+      "id": "kr-sasin",
+      "target": "public/img/yokai/sasin.webp",
+      "aspect": "4:5",
+      "job_id": "80e07670-1c00-4b59-8be4-02083ad6eed9",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_010905_80e07670-1c00-4b59-8be4-02083ad6eed9.png",
+      "review": {
+        "by": "검수",
+        "date": "2026-10-02",
+        "result": "pass",
+        "note": "청룡·백호·주작·현무. 용 발톱 4(황제용 5조·금박 아님). 가로 띠 구도라 위아래 여백이 크다(메모) — 오너 확인 대기"
+      }
+    },
+    {
+      "index": 159,
+      "kind": "plate",
+      "id": "kr-seonmyo",
+      "target": "public/img/yokai/seonmyo.webp",
+      "aspect": "4:5",
+      "job_id": "d12f27b7-e639-4f39-bbce-eef81b652df1",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_011020_d12f27b7-e639-4f39-bbce-eef81b652df1.png",
+      "review": {
+        "by": "검수",
+        "date": "2026-10-02",
+        "result": "pass",
+        "note": "공중에 뜬 너럭바위 그림자 속 용의 윤곽, 스님들, 법당 처마 완만 — 오너 확인 대기"
+      }
+    },
+    {
+      "index": 160,
+      "kind": "plate",
+      "id": "kr-taejagwi",
+      "target": "public/img/yokai/taejagwi.webp",
+      "aspect": "4:5",
+      "job_id": "fe7dd040-78ac-445a-bf95-dfd0efc16b05",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_011020_fe7dd040-78ac-445a-bf95-dfd0efc16b05.png",
+      "review": {
+        "by": "검수",
+        "date": "2026-10-02",
+        "result": "pass",
+        "note": "무구 방울(원뿔형으로 과장)·흰 종이 술·놋그릇·빈 붉은 방석. 인물 없음 — 오너 확인 대기"
+      }
+    },
+    {
+      "index": 161,
+      "kind": "plate",
+      "id": "kr-wangsin",
+      "target": "public/img/yokai/wangsin.webp",
+      "aspect": "4:5",
+      "job_id": "54b8136b-1aa7-4d72-a253-6e68659ba72a",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_011020_54b8136b-1aa7-4d72-a253-6e68659ba72a.png",
+      "review": {
+        "by": "검수",
+        "date": "2026-10-02",
+        "result": "pass",
+        "note": "흰 천에 싼 단지·접은 삼베·흰쌀 놋그릇·창살 빛줄기·금줄 — 오너 확인 대기"
+      }
+    },
+    {
+      "index": 162,
+      "kind": "plate",
+      "id": "kr-yaseohon",
+      "target": "public/img/yokai/yaseohon.webp",
+      "aspect": "4:5",
+      "job_id": "b679ae68-28f0-4114-8601-4336775705ea",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_013054_b679ae68-28f0-4114-8601-4336775705ea.png",
+      "history": [
+        {
+          "job_id": "1c55b891-65e8-4b9a-9a2d-54758cfa5a9b",
+          "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_011020_1c55b891-65e8-4b9a-9a2d-54758cfa5a9b.png",
+          "review": {
+            "by": "검수",
+            "date": "2026-10-02",
+            "result": "reject",
+            "reason": "§2 — 석불에 주홍·초록 천 옷(지장보살 옷 입히기 관습). 분류 수식의 vermilion and malachite가 옷 색으로 칠해졌다"
+          }
+        }
+      ],
+      "review": {
+        "by": "검수",
+        "date": "2026-10-02",
+        "result": "pass",
+        "note": "민 화강암 미륵·돌로 새긴 옷·갓 모양 보개, 천·채색 없음. 무너지는 기단 앞 무명옷 들쥐(野鼠) — 오너 확인 대기"
+      }
+    },
+    {
+      "index": 163,
+      "kind": "plate",
+      "id": "kr-yeou-guseul",
+      "target": "public/img/yokai/yeou-guseul.webp",
+      "aspect": "4:5",
+      "job_id": "5fd381c1-0b51-452b-8531-f33ea33219b7",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_014511_5fd381c1-0b51-452b-8531-f33ea33219b7.png",
+      "history": [
+        {
+          "job_id": "b177f91b-0a4f-4f0a-a47c-abe3d9a48611",
+          "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_011020_b177f91b-0a4f-4f0a-a47c-abe3d9a48611.png",
+          "review": {
+            "by": "검수",
+            "date": "2026-10-02",
+            "result": "reject",
+            "reason": "앵커 — 서낭 천이 오방색이 아니라 무지개 7색. 손 해부가 어색하고 여우가 거의 안 보인다"
+          }
+        },
+        {
+          "job_id": "0e830ca0-355c-413c-b855-50562f95b073",
+          "url": "https://d8j0ntlcm91z4.cloudfront.net/user_37c9Ks1OdY9EiCnbQ95G3YWq7EC/hf_20261002_013053_0e830ca0-355c-413c-b855-50562f95b073.png",
+          "review": {
+            "by": "검수",
+            "date": "2026-10-02",
+            "result": "reject",
+            "reason": "§2 — 돌무지 위 석등롱, 판 모자 얹은 기둥 둘(반쪽 도리이). 여우 옆 사당·석등 — 매구와 같은 사고"
+          }
+        }
+      ],
+      "review": {
+        "by": "검수",
+        "date": "2026-10-02",
+        "result": "pass",
+        "note": "댕기머리 소년 손바닥의 빛나는 구슬, 돌담을 넘어 달아나는 여우, 초가, 책보. 사당·석등·기둥 없음 — 오너 확인 대기"
+      }
+    }
+  ],
+  "approved_direction": "minhwa-v2 (2026-08-16 승인)"
+}
