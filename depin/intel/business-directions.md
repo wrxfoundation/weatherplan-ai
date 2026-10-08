@@ -2833,3 +2833,5 @@ Once you've had a look, happy to set up a call. Changmin can walk Clyde through 
   ⚠ 서우 링크드인 헤드라인이 COO 와 맞는지 확인(수락 전 프로필을 본다). 문안 채팅.
 - **10/8 Johann 문안 3종 확정** — ① 1촌 메모 299자 ② 수락 뒤 첫 메시지 863자(Lynn 두 층 · 172 · 91 · 11개 출처 · 원장 지문 · 「날씨는 얇은 카테고리 · 공항 한 값」 · Swell 커피 20분 · 부재 시 담당자 소개)
   ③ 무응답(요청 1주) 시 프리미엄 메시지(InMail) 제목 57자 · 본문 970자 — 같은 내용을 자기완결형으로. 링크 0 · 크립토닷컴 · OG.com · 토큰 0. 문안은 채팅.
+- **10/8 일정 갱신 — 뉴욕 체류 10/24~29**(서우). InMail 제목 확정 「From XRP SEOUL 2026: coffee in New York, Oct 24–29?」 · 본문 「from October 24 to 29 for Swell」 · 30분.
+  수락 뒤 첫 메시지도 10/24~29 로. 여파: SpaceX 동선 A(10/26 레드먼드)는 빠짐 → **B(10/30 플로리다 → 11/2 레드먼드)**. Limitless 뉴욕 문안도 아직이면 10/24~29.
