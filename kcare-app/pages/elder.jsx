@@ -284,7 +284,8 @@ function CardHead({ title, titleColor = "#0A1F3C", right, rightColor = "#5C5A54"
 
 function ElderHome() {
   const { state, dispatch } = useAppState();
-  const liveHH = !!useAuth().user?.household; // 테스트 가구 — 워치가 없다
+  const authUser = useAuth().user;
+  const liveHH = !!authUser?.household; // 테스트 가구 — 워치가 없다
   const [tab, setTabRaw] = useState("home"); // elderTab — 기본 '홈' (사분면 허브)
   const scrollRef = useRef(null);
   // 카드는 언마운트하지 않지만, 탭 전환 시 스크롤은 맨 위로 — 카드 상단이 잘려 보이지 않게
@@ -391,7 +392,11 @@ function ElderHome() {
   const proposalsForMe = (state.requests || []).filter((r) => r.status === "requested" && approverOf(r) === "elder");
   const [elderConfirm, setElderConfirm] = useState(null); // { id, kind: "cancel" | "decline" }
 
-  const name = givenName(elderNameOf(state.onboarding));
+  // 관제 센터 공간에 어르신이 둘 이상 가입했으면 — 인사는 로그인한 본인 이름으로, 기록은 먼저 가입한 어르신 기준이라고 알린다
+  // (2026-10-08 현장 테스트: 두 번째로 가입한 어르신에게 첫 어르신 이름으로 인사했다)
+  const mainElder = elderNameOf(state.onboarding);
+  const otherElder = inCenter() && authUser?.role === "elder" && authUser?.name && authUser.name !== mainElder ? authUser.name : null;
+  const name = givenName(otherElder || mainElder);
   const now = new Date();
   const dateLong = now.toLocaleDateString("ko-KR", {
     year: "numeric",
@@ -916,6 +921,12 @@ function ElderHome() {
                 <br />
                 {greetLine}
               </h1>
+              {otherElder && (
+                <p role="note" className="mt-2 rounded-[16px] bg-[#FBF6EC] px-4 py-3 text-[17px] leading-[1.6] text-ink">
+                  이 센터의 기록(약 · 일정 · 부탁 · 마음사서함)은 <b className="text-navy">{mainElder} 님</b> 기준으로 함께 씁니다.
+                  따로 해 보시려면 다른 관제 센터의 가입 코드로 가입해 주세요.
+                </p>
+              )}
               {/* 선생님 메시지 배너 — 홈에서만, 안 들은 메시지가 있을 때 (시트 전체 5번
                   "메시지가 오면 알 수 있게 표시" · 시안의 남색 띠). 누르면 마음사서함.
                   안 들은 것이 없으면 그 자리에 다음 일정 한 줄을 둔다 — 첫 화면에 배너

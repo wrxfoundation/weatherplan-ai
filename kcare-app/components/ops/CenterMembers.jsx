@@ -154,6 +154,8 @@ export default function CenterMembers() {
   const origin = typeof window !== "undefined" ? window.location.origin : "";
   const links = code ? Object.values(AREAS).map((a) => [a, `${origin}${a.join}?code=${code}`]) : [];
   const count = (role) => members.filter((m) => m.status === "active" && m.role === role).length;
+  // 이미 사용 중인 어르신 (가입 순) — 두 번째 어르신 승인 때 '같은 가족 기록'임을 알린다
+  const activeElders = members.filter((m) => m.status === "active" && m.role === "elder").map((m) => m.name);
   const pickRole = (m) => roleOf[m.id] || m.role;
   // 관제 역할 · 관제 회원은 센터 관리자(ops1~3)만 바꾼다 — 관제 회원 화면에서는 고를 수 없게
   const owner = !!data?.owner;
@@ -236,10 +238,14 @@ export default function CenterMembers() {
           </span>
           <Btn ghost small onClick={() => code && (copy(code), copied2s("code"))}>{copied === "code" ? "복사됨" : "코드 복사"}</Btn>
           <span className="flex-1" />
-          <Btn ghost small tone="warn" disabled={busy === "code"} onClick={() => setAsk({ action: "rotate", title: "가입 코드를 새로 만듭니다", body: "지금 코드는 바로 쓸 수 없게 됩니다. 이미 가입한 회원에게는 영향이 없습니다. 새 코드를 다시 나눠 주세요." })}>
+          <Btn ghost small tone="warn" disabled={busy === "code"} onClick={() => setAsk({ action: "rotate", title: "가입 코드를 새로 만듭니다", body: `지금 코드는 바로 쓸 수 없게 됩니다. 이미 가입한 회원에게는 영향이 없습니다. 새 코드로 가입해도 같은 ${data?.center?.name || center.name} · 같은 가족 기록에 들어옵니다 — 새 가족 공간이 생기지 않습니다. 다른 가족으로 처음부터 해 보려면 다른 관제 센터의 코드를 쓰세요.` })}>
             코드 바꾸기
           </Btn>
         </div>
+        <p className="mt-1.5 text-[11.5px] leading-[1.6] text-muted">
+          가입 코드는 &lsquo;어느 센터에 가입하나&rsquo;만 정합니다 — 베타는 한 센터 = 한 가족 기록이라, 코드를 바꿔도 같은 기록을 함께 씁니다.
+          다른 가족으로 따로 해 보려면 다른 관제 센터(ops1 · ops2 · ops3)의 코드를 쓰세요.
+        </p>
         <ul className="mt-2 space-y-1.5">
           {links.map(([a, url]) => (
             <li key={a.key} className="flex flex-wrap items-center gap-2 text-[12px]">
@@ -291,7 +297,7 @@ export default function CenterMembers() {
                 </select>
               </label>
               {lockedForMe(m) && <span className="text-[11px] text-muted">관제 가입은 센터 관리자가 승인</span>}
-              <Btn small tone="ok" disabled={!!busy || lockedForMe(m)} onClick={() => setAsk({ id: m.id, action: "approve", role: pickRole(m), title: `${m.name} 님을 ${ROLE_LABEL[pickRole(m)]}(으)로 승인합니다`, body: `${AREAS[areaOfRole(pickRole(m))].label} 로그인(${AREAS[areaOfRole(pickRole(m))].login})에서 들어올 수 있게 됩니다.` })}>
+              <Btn small tone="ok" disabled={!!busy || lockedForMe(m)} onClick={() => setAsk({ id: m.id, action: "approve", role: pickRole(m), title: `${m.name} 님을 ${ROLE_LABEL[pickRole(m)]}(으)로 승인합니다`, body: `${AREAS[areaOfRole(pickRole(m))].label} 로그인(${AREAS[areaOfRole(pickRole(m))].login})에서 들어올 수 있게 됩니다.${pickRole(m) === "elder" && activeElders.length ? ` 이 센터에는 이미 어르신 ${activeElders.join(" · ")} 님이 있습니다 — 베타는 한 센터 = 한 가족이라 약 · 일정 · 부탁 · SOS 기록을 함께 쓰고, 화면은 ${activeElders[0]} 님 기준으로 보입니다. 다른 가족이면 거절하고 다른 관제 센터의 코드로 가입하게 해 주세요.` : ""}` })}>
                 승인
               </Btn>
               <Btn small ghost tone="muted" disabled={!!busy} onClick={() => setAsk({ id: m.id, action: "reject", title: `${m.name} 님 가입을 거절합니다`, body: "거절한 아이디는 로그인할 수 없습니다. 나중에 '다시 사용'으로 되돌릴 수 있습니다." })}>
