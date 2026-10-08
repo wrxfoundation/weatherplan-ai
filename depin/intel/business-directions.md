@@ -2740,3 +2740,12 @@ On other prediction markets: we're in early discussions with one other exchange.
 
 Once you've had a look, happy to set up a call. Changmin can walk Clyde through the technical side.
 ```
+
+## Limitless 거래액 조사 (2026-10-08, 서우 「연거래액 · 월거래액」 — 웹 검색 요약 · 원문 · DefiLlama API 차단)
+
+- **누적**: 자기 표기 $3B+ · $3.5B+(Henrich 헤드라인) · $4.5B+(Clyde) / DefiLlama 누적 명목(notional) 약 $3.43B · 누적 DEX 거래량 약 $1.47B(스냅샷 날짜 불명) /
+  2025-10 시드 때 누적 $5억(Base 최대 예측시장 표기) · 2026-07-10 PredictionTalk 누적 $1.4B.
+- **월**: 2026 1분기 명목 월 약 $3.6억 → 약 $11억(4월, 2차 보도) · 같은 4월 테이커 거래량 $2.05억(다른 집계) · 6월 「월 약 $20억」(CMC 가 The Block 인용) ·
+  7/10 기준 30일 $1.3억(PredictionTalk) · DefiLlama 30일 명목 $3,349만(오래된 스냅샷 추정). **연간 공식 수치는 못 찾음.**
+- **왜 이렇게 다른가**: 명목(notional = 지급액 기준, 1주 = $1)과 실제 오간 돈(테이커 · 프리미엄)을 섞어 쓴다. 명목은 몇 배 부풀어 보인다.
+- **쓰는 법**: 대외 인용 0. 콜에서 Henrich 에게 「최근 3개월 월 거래량(정의 포함) · 상위 시장 종류」를 직접 묻는 게 가장 정확. 비교: 칼시 · 폴리마켓은 각 월 수십억 달러대 — Limitless 는 한두 자릿수 작다.
