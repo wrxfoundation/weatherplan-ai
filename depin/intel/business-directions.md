@@ -2871,3 +2871,26 @@ Once you've had a look, happy to set up a call. Changmin can walk Clyde through 
 - 문안 원칙: 축하 + 경력 한 줄 · Lynn 데이터 층(172 · 91 · 11개 출처 · 이상치 · withheld · 원장 지문) · 「날씨는 얇은 카테고리 · 공항 한 관측소」 · 뉴욕 커피 30분 또는 담당자.
   한국 도시 · 서울 시장 0 · 드골 사건 · 크립토닷컴 · OG.com · 다른 거래소 이름 0 · 토큰 0. 영문(국문 인사 한 줄은 선택).
 - **⚠ 대화가 진전되면**: 데이터 공급 논의 전 카운슬 의견 · 한국 도시 제외 · 한국 거주자 제외 조항(9/28 예측마켓 공통 규칙) · 크립토닷컴 MNDA 독점 조항 확인.
+
+## Nate Schanker (Polymarket, Growth Lead, Tennis · 캔자스시티) — 1촌 수락 뒤 인사 + 뉴욕 담당자 소개 부탁 (2026-10-08, 서우 캡처 3장 · 「인사 나누고 월말 뉴욕 가는데 관련 담당자 만나고 싶다 하자, 이분은 캔자스라 안 되고」)
+- **자리**(캡처 기준): Polymarket Growth Lead, Tennis(**2026-09~**, 캔자스시티 · 3일 전 합류 글 「lead growth for tennis」) · 직전 Moonshot Growth Lead(뉴욕, 2025-08~2026-09) ·
+  Sleeper Growth(2024-09~2025-08) · M80 공동창업(e스포츠, 2022-12~2024-11) · US Open 소셜 시즌직(2022~2024, 뉴욕) · Forbes 30 Under 30 · 1촌(이미 수락).
+- **판정 — 서우 결정대로 인사 + 뉴욕 소개 부탁(요청 하나).** 폴리마켓 여덟째라 원칙(Paul + 기관 메일, 제품 스레드 = Edward, 나머지 인사만)보다 한 칸 더 간다.
+  그래서 ① 데이터 · 정산 · 시장 제안 0 — 「뉴욕에서 인사할 사람 한 명 알려 달라」까지 ② 「No pressure」로 닫는다 ③ 테니스 한 줄(더위 규정 · 우천 지연)로 그의 새 자리에 맞춘다.
+  링크드인이 띄운 국문 기본 문구(「1촌이 되어주셔서 기쁩니다」)는 보내지 않는다.
+- **답이 오면**: Edward(거래소 제품 · 뉴욕)를 가리키면 「이미 인사드렸다」로 받고 새 스레드를 열지 않는다. 다른 사람을 소개하면 서우에게 먼저 가져와 상한을 다시 본다.
+  성장 · 한국 협업 · 스폰서 이야기가 오면 법률 의견 · 한국 도시 · 거주자 제외가 먼저(예측시장 규칙).
+- **보낸 문안**(1촌 메시지, 785자):
+
+```
+Hi Nate, congrats on the new role, and thanks for connecting.
+
+I'm Logan, Head of Partnerships & Operations at Wellbian Labs. We work on weather data in two layers: indoor air sensors in homes, and city-level weather for 172 cities in 91 countries, each a consensus of eleven independent sources, with every input fingerprinted to a public ledger. Our device partner is KWeather, a Korean weather company with 30 years of observation.
+
+Tennis is a sport where weather quietly decides a lot, from heat rules to rain delays, so your new role caught my eye.
+
+We'll be in New York from October 24 to 29 for Swell. I know you're based in Kansas City, so if there's someone on the team in New York you think I should say hello to, a pointer would mean a lot. No pressure at all.
+
+Best,
+Logan
+```

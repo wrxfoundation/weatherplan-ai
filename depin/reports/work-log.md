@@ -2171,3 +2171,4 @@ Thanks Odelia — writing to you at that address today. Mine is support@wellbian
 - **Eve Hsiao 인사 메모(10/8 서우 「인사만」)** — 새 직책 축하 + 한 줄 소개, 사업 · 요청 0. business-directions 끝 절.
 - **Edward Lee(폴리마켓 거래소 제품 총괄) InMail(10/8)** — 폴리마켓 제품 스레드 하나로 지정 · 뉴욕 커피 · 카운슬/한국 제외 조항은 진전 시. business-directions 끝 절.
 - **태풍 키우기 v0.1(10/8 서우 「태풍을 키우는 게임 어때 · 만들어봐」)** — `depin/site/typhoon-grow/`. 판단: 괴혼식 「삼켜서 커지기」가 태풍 원리(따뜻한 바다 · 수증기 · 차가운 꼬리 · 시어 · 육지)와 맞음, 엔진은 Unity 대신 three.js(링크로 즉시 실행 · 모바일 웹), 위성 시점 셰이더 구름으로 「고무인형」 회피, 피해를 점수로 만들지 않음(점수 = 바다 위 ACE). 기존 ② 태풍의 눈(길 바꾸기)과 다른 게임. 봇 균형: 가만히 ACE 중앙값 3.1(별 0) · 무작위 5.4 · 욕심쟁이 29(별 2~3). 브랜드 · 배포는 서우 결정 대기.
+- **Nate Schanker(폴리마켓 테니스 성장 · 캔자스시티) 1촌 메시지(10/8)** — 인사 + 10/24~29 뉴욕 · 뉴욕 쪽 인사할 사람 소개 부탁 한 가지. 폴리마켓 여덟째라 데이터 · 정산 제안 0, Edward 를 가리키면 새 스레드 안 엶. business-directions 끝 절.
