@@ -2151,3 +2151,4 @@ Thanks Odelia — writing to you at that address today. Mine is support@wellbian
 - **Limitless 그룹 실제 발송본 기록(10/8 11:40 소개 · 11:43 본문, 서우 「이렇게 보냄」)** — 소개(플레어 뺌) · 본문(드골 서사 + CNN 링크 · 172 · 91 · 매시 갱신 · API · 링크 둘 · 체인링크 · 플레어 · OG.com). 남은 것: OG.com MNDA 조항 확인 · wellbianlabs.io 167 · 90 → 172 · 91 갱신 요청 · 보류 비율 · 시범 도시 · 월 거래량 콜 준비. business-directions 끝 절.
 - **SpaceX Makena 회신 · 미국 동선(10/8, 서우 「Swell 이후 플로리다에서 만나면 되나」)** — 10/30(금) 케이프커내버럴 대면 제안 · Joel 레드먼드는 A(10/26 먼저) / B(11/2 뒤) 두 경로 · ITAR 방문 승인 대비 · 1단계 사양 10/23 전. 답 문안은 채팅. business-directions SpaceX 절.
 - **Limitless 뉴욕 대면 제안 문안(10/8)** — Swell(10/27~29) 뉴욕 방문 · 뉴욕 팀 있으면 대면. 가능일은 Swell 기간(10/30 플로리다). 문안은 채팅. business-directions Limitless 끝 절.
+- **로빈후드 뉴욕 대상 판정(10/8, 서우 링크드인 검색 캡처 5장)** — 1순위 Adam Hickerson(선물 · 예측시장, 시카고) · Swell 현장 Johann Kerbrat 인사만 · 길 = Steve Quirk 소개(상한 2) · 크립토닷컴 미체결 게이트 → 10/15 재판정. business-directions 끝 절.
