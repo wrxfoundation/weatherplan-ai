@@ -2749,3 +2749,13 @@ Once you've had a look, happy to set up a call. Changmin can walk Clyde through 
   7/10 기준 30일 $1.3억(PredictionTalk) · DefiLlama 30일 명목 $3,349만(오래된 스냅샷 추정). **연간 공식 수치는 못 찾음.**
 - **왜 이렇게 다른가**: 명목(notional = 지급액 기준, 1주 = $1)과 실제 오간 돈(테이커 · 프리미엄)을 섞어 쓴다. 명목은 몇 배 부풀어 보인다.
 - **쓰는 법**: 대외 인용 0. 콜에서 Henrich 에게 「최근 3개월 월 거래량(정의 포함) · 상위 시장 종류」를 직접 묻는 게 가장 정확. 비교: 칼시 · 폴리마켓은 각 월 수십억 달러대 — Limitless 는 한두 자릿수 작다.
+
+## Vi Hoang (Binance, Growth Specialist — Binance Pay 성장 운영 APAC · 홍콩) — 판정 (2026-10-08, 서우 캡처 4장 · 2촌 · 1촌 요청 대기 중)
+
+- **자리**(캡처 기준): Binance Growth Specialist(2026-07~, 재택 · 「Binance Pay Growth Operations (APAC)」 · 헤드라인 「APAC Stablecoin Payment」) ·
+  직전 Binance Accelerator Program 인턴(마케팅 · 가맹점 운영, 2026-01~07 홍콩) · Grab 마케팅(호치민) · VNG(게임 · NFT 플랫폼 마케팅) · HKU. 공통 1촌 Hazel · Morty 외.
+- **신호**: 1주 전 WELLBIAN LABS 회사 페이지 방문(서우 회사 페이지 알림). 서우 1촌 요청은 대기 중.
+- **판정 — 수락되면 인사만(선택 줄 0) · 사업 이야기 0.** ① **바이낸스 여덟째** — 발신 넷(Emily · Max · Alexander · Jenny) + 1촌만 셋(Hazel · Paola · Ilie)
+  (playbook 「동시 대화 상한」 — 다섯째부터 「뿌린다」) ② 거래소 소속 = 인사만 ③ 바이낸스 페이(가맹점 결제)는 기기 판매 결제 수단과 닿지만 결제 레인은 Emily 와 겹치고,
+  주니어 성장 운영 자리라 사업 문이 아니다 — 꺼내지 않는다 ④ 회사 페이지 방문은 관심 신호지만 우리가 먼저 사업으로 받지 않는다(그가 먼저 물으면 그때).
+- 수락 전 금지: 메시지 버튼(InMail) · 공통 1촌 소개 부탁 · 요청 취소 · 재발송.
