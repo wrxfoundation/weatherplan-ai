@@ -2156,3 +2156,4 @@ Thanks Odelia — writing to you at that address today. Mine is support@wellbian
 - **로빈후드 문 = Johann Kerbrat(10/8 서우 결정)** — Swell 현장 인사 → 뉴욕 팀 소개 요청 · 상한 Johann + Tom(Steve 메시지 0) · 10/20 전후 1촌 요청 · 문안 3종 채팅. business-directions 끝 절.
 - **Johann 1촌 메모 수정(10/8 서우)** — XRP SEOUL 2026 케이웨더 대표 키노트 + Swell 대면을 첫 줄에 · 같은 무대판 / 등단 미확인판 2개 · 지금 발송. business-directions 끝 절.
 - **Johann 1촌 메모 최종(10/8 서우 정정)** — XRP SEOUL 연사 = 웰비안 대표 김성환 · 서우 = Wellbian Labs COO 로 소개 · Swell 대화 + 부재 시 담당자 소개 부탁. 이후 문안 「our CEO」 통일. business-directions 끝 절.
+- **Johann 수락 뒤 첫 메시지 · InMail 문안(10/8)** — 863자 · 제목 57 + 본문 970자, 요청 1주 무응답 시 InMail. business-directions 끝 절.
