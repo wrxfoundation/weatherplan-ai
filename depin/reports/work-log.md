@@ -2149,3 +2149,4 @@ Thanks Odelia — writing to you at that address today. Mine is support@wellbian
 - **Limitless Henrich 답 재작성(10/8, 디지털전략 지시 — 상대 이름 · 날씨 카테고리 약함 · 드골 서사)** — 서사 첫 문단 · 체인링크 · 플레어(인프라) · OG.com(시장) 이름 · 링크 둘. 짚은 것: OG.com 은 MNDA 조항 확인 권함 · 체인링크는 L1 아님 · 드골은 조작 단정 0. business-directions 끝 절.
 - **Limitless Henrich 답 최종 — 사이트 원문 반영(10/8)** — 갱신 주기 · 관측소 · API 실제 사양으로 채움 · METAR Watch 링크 · 테스트넷 문장 정확화. playbook Lynn 기본값 172 · 91 로 갱신.
 - **Limitless 그룹 실제 발송본 기록(10/8 11:40 소개 · 11:43 본문, 서우 「이렇게 보냄」)** — 소개(플레어 뺌) · 본문(드골 서사 + CNN 링크 · 172 · 91 · 매시 갱신 · API · 링크 둘 · 체인링크 · 플레어 · OG.com). 남은 것: OG.com MNDA 조항 확인 · wellbianlabs.io 167 · 90 → 172 · 91 갱신 요청 · 보류 비율 · 시범 도시 · 월 거래량 콜 준비. business-directions 끝 절.
+- **SpaceX Makena 회신 · 미국 동선(10/8, 서우 「Swell 이후 플로리다에서 만나면 되나」)** — 10/30(금) 케이프커내버럴 대면 제안 · Joel 레드먼드는 A(10/26 먼저) / B(11/2 뒤) 두 경로 · ITAR 방문 승인 대비 · 1단계 사양 10/23 전. 답 문안은 채팅. business-directions SpaceX 절.
