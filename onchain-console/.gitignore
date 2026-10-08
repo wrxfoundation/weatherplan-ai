@@ -1,0 +1,4 @@
+# 채널 연동 — 토큰·수집 데이터는 커밋하지 않는다
+server/.env
+server/data/
+public/live/*.json
