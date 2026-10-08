@@ -2768,3 +2768,6 @@ Once you've had a look, happy to set up a call. Changmin can walk Clyde through 
 - **⚠ 짚은 것(서우에게)**: ① OG.com 이름 — 크립토닷컴 MNDA 가 「논의 사실」까지 비밀로 묶는지 조항 확인 전이고, 우리 대화 상대는 크립토닷컴(Vincent)이라 OG.com 표기가 정확한지도 미확인 ·
   Limitless 는 OG.com 의 경쟁사라 말이 돌아갈 수 있다 → 지시는 따르되 MNDA 조항 한 번 확인 권함 ② 체인링크는 레이어1 이 아니라 오라클 네트워크 — 문안은 「인프라 쪽」으로 묶음 ·
   체인링크 논의는 「관심이 많다」(10/7 회의) 수준 — 「discussions」가 과하면 「conversations」 ③ 드골 건은 「한 센서의 값이 문제가 됐다」까지(조작 단정 0).
+- **10/8 사이트 원문(서우 붙여 넣기)으로 최종 문안 확정** — 갱신 = 매시 합의 실행 · METAR 1분 감시 · 5분 관측 / 도시마다 기준 ICAO 관측소 + 관측소 일별 기록 / REST · OpenAPI · MCP · 판정(met · not met · withheld) /
+  공개 베타 · 실구매 · Flare FCC 증명 경로만 테스트넷 / weatherfi = 가상 sUSDT 시뮬레이터(한국 도시 포함 172개). 결제는 XRP(RLUSD 아님). 문안 전문은 채팅(OG.com 포함).
+  playbook Lynn 기본값 도시 수 167 · 90 → **172 · 91** 갱신(사이트 첫 화면 기준).

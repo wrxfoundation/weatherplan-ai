@@ -640,7 +640,7 @@ RWA·발행 제안은 우리 레인이 아니다.
 | 10/3 | @wellbianlabs 원글 — 남산타워 3색 조명(사진 3장 + 3줄 · 유료 부스트) | 「XRP × Wellbian. XRP × KWeather. XRP SEOUL 2026. Three lights, one tower」 | 좋아요 479 · 답글 14 · 재게시 45 · 프로필 방문 368(노출 848.9K, 부스트 99% — 10/4) | 현장 실물 사진은 팔로워 재게시(오가닉 약 23)를 부른다. 부스트는 노출을 사고, 타기팅을 좁히면 효율이 소폭(프로필 방문 +6%) 오른다. 「XRP × 우리」 표기는 유료 확산에서 제휴로 읽힌다 |
 | (기입) | | | | |
 
-## 링크드인 1촌 인사 기본값 — Lynn 형식 (2026-09-24 신설)
+## 링크드인 1촌 인사 기본값 — Lynn 형식 (2026-09-24 신설 · 10/8 도시 수 172 · 91 갱신 — weathermarket.io 첫 화면 기준)
 
 서우(9/24): 「자꾸 기기 판매만으로 읽혀지게 되는 인사여서 lynn 정도의 인사말을 기본값을 박아」. Hazel(9/23)·Paola(9/24) 인사가
 「집에서 돌리는 인증 공기 센서 + 케이웨더 기기 파트너」 한 줄이라 **기기 파는 회사로 읽혔다.** 앞으로 1촌 인사는 이 기본값에서 시작한다.
@@ -648,7 +648,7 @@ RWA·발행 제안은 우리 레인이 아니다.
 **구조** (Lynn·Edward·Morty·Kritda 에서 굳은 형식)
 1. 감사 한 줄 — `{Name} — thanks for connecting.`
 2. 누구인지 — 케이웨더(30년 · 기업 고객 4,000+) → wellbian 은 그 위에 지은 네트워크. **케이웨더 먼저**(무명 프로젝트로 읽히지 않게, 9/13 소개 순서).
-3. **두 층** — 측정기(집에서 돌리는 인증 공기질 센서) **+ 데이터**(90개국 167개 도시, 한 지점이 아니라 11개 독립 출처의 합의값) + 원장 지문.
+3. **두 층** — 측정기(집에서 돌리는 인증 공기질 센서) **+ 데이터**(91개국 172개 도시, 한 지점이 아니라 11개 독립 출처의 합의값) + 원장 지문.
    **데이터 층을 빼면 기기 판매로 읽힌다 — 빼지 않는다.**
 4. (선택) 상대 자리와 닿는 한 줄 — 요청·제안 0. 거래소·레인 없는 자리는 생략.
 5. 맺음 — `Good to be connected.` 긍정형으로 닫는다(「nothing to ask」류 부정형 선 긋기 0 — 9/18 Alexander · 9/19 Kritda 교훈).
@@ -659,7 +659,7 @@ RWA·발행 제안은 우리 레인이 아니다.
 
 I run partnerships at wellbian. KWeather has measured weather in South Korea for thirty years and supplies data to 4,000+ enterprise clients; wellbian is the network built on top of that.
 
-We work on two layers: certified air-quality sensors that people run in their own rooms, and city-level weather across 90 countries and 167 cities, where each value is a consensus across eleven independent sources rather than a single reading. Every input is fingerprinted to a public ledger before it goes anywhere.
+We work on two layers: certified air-quality sensors that people run in their own rooms, and city-level weather across 91 countries and 172 cities, where each value is a consensus across eleven independent sources rather than a single reading. Every input is fingerprinted to a public ledger before it goes anywhere.
 
 Good to be connected.
 ```
@@ -675,7 +675,7 @@ Hi {Name}, I run partnerships at wellbian. KWeather has measured weather in Kore
 
 케이웨더 디지털사업본부에서 wellbian 파트너십을 맡고 있는 박서우입니다. 케이웨더가 30년 동안 날씨를 재 오며 기업 고객 4,000곳 이상에 데이터를 공급해 왔고, wellbian은 그 위에 지은 네트워크입니다.
 
-두 층으로 일합니다. 각자 집에서 돌리는 인증 공기질 측정기, 그리고 90개국 167개 도시의 날씨를 한 지점이 아니라 11개 독립 출처의 합의값으로 내는 데이터입니다. 모든 값은 쓰이기 전에 공개 원장에 지문을 남깁니다.
+두 층으로 일합니다. 각자 집에서 돌리는 인증 공기질 측정기, 그리고 91개국 172개 도시의 날씨를 한 지점이 아니라 11개 독립 출처의 합의값으로 내는 데이터입니다. 모든 값은 쓰이기 전에 공개 원장에 지문을 남깁니다.
 
 반갑습니다.
 ```
