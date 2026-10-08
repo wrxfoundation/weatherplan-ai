@@ -2841,3 +2841,7 @@ Once you've had a look, happy to set up a call. Changmin can walk Clyde through 
   메모는 Johann 언급 0. 뉴욕 도착(10/24) 전 1주가 대면 약속의 현실적 한계. Tom Chippas 가 9/28 요청을 수락했다면 그 스레드로 「뉴욕 10/24~29」 한 줄은 별도로 가능(Rothera 몫).
 - **10/8 Tyler Gibbons 프로필 확인(서우 캡처 · 팔로우만 해 둠)** — Senior Manager, Partnerships(2026-07~) · 담당 = 신용카드 · 뱅킹 · 여행 · 리워드 · 골드 멤버십 · 성장 상품(이전 역할엔 AI · 데이터도). 뉴욕 · 입사 4년 11개월.
   **예측시장 담당 아님 → 두 번째 후보에서 내림**(팔로우 유지 · 요청 0). 10/16 두 번째 한 명 = **Valeria R.**(CFTC 규제 시장 운영, 뉴욕) — 그 전에 프로필로 담당 확인.
+- **10/8 Allessandra Miller 판정(서우 「별도 컨택?」)** — Chief of Staff, International and Crypto(2026-01~ · SF) = **Johann 의 비서실장 자리**(Johann = SVP & GM Crypto and International).
+  이전: 로빈후드 크립토 운영 매니저 → 시니어 매니저(2022-12~2026-01) · Gemini 운영 · 전사 리스크(2021~2022) · EY 기술 리스크 컨설팅(2017~2021). 일정 · 안건 · 내부 연결을 쥐는 자리라 「뉴욕 담당자 소개」에 가장 맞다.
+  **판정: 컨택 O, 단 오늘 동시가 아니라 10/13(Johann 미수락 시) 첫 수** — InMail(유료)보다 먼저. 같은 Johann 라인으로 묶어 상한에 따로 세지 않음.
+  메모는 Johann 을 숨기지 않는다(비서실장에게는 그게 본론). 그 뒤 순서: 10/16 Johann InMail → 그래도 없으면 Valeria R.(프로필 확인 후). Tyler 는 팔로우만.

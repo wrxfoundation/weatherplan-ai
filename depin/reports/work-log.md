@@ -2160,3 +2160,4 @@ Thanks Odelia — writing to you at that address today. Mine is support@wellbian
 - **뉴욕 체류 10/24~29 반영(10/8)** — Johann InMail 제목 · 본문 날짜 · 첫 메시지 날짜 수정 · SpaceX 동선 B 로 · Limitless 문안 날짜. business-directions 끝 절.
 - **로빈후드 대기 순서(10/8)** — 동시 발송 0 · 10/13 InMail · 10/16 두 번째 한 명(Tyler Gibbons 확인 → 아니면 Valeria R.) · Tom 수락 시 그 스레드로 뉴욕 한 줄. business-directions 끝 절.
 - **Tyler Gibbons 확인(10/8)** — 카드 · 뱅킹 · 리워드 파트너십이라 예측시장 아님 → 팔로우만 · 두 번째 후보 = Valeria R. business-directions 끝 절.
+- **Allessandra Miller(로빈후드 크립토 · 해외 비서실장) 판정(10/8)** — Johann 라인 · 10/13 미수락 시 첫 수(메모 채팅) · 10/16 InMail · 그다음 Valeria. business-directions 끝 절.
