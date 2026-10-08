@@ -2858,3 +2858,4 @@ Once you've had a look, happy to set up a call. Changmin can walk Clyde through 
   크립토닷컴 · OG.com 은 원래 이름 0. 3월 퇴사라 우리 크립토닷컴 협의(9월~)와는 겹치지 않는다(그래서 「통로」로도 쓰지 않는다).
 - 쓸 수 있는 건 나중에 그쪽이 먼저 말을 걸 때만 — 그때도 인사 · 소개 두 층(Lynn)까지, OKX · 크립토닷컴 · 토큰 이야기 0.
 - **10/8 서우 수정 — 「그냥 인사만, 업계에 발 들인 거니까」**: 1촌 요청에 축하 + 한 줄 소개 메모(Lynn 두 층 · 사업 제안 · 요청 0 · 크립토닷컴 언급 0). 수락 뒤에도 그쪽이 먼저 열기 전엔 메시지 0. 문안 채팅.
+- **10/8 서우 「프리미엄 메시지라 길게」** — InMail 로 보냄: 제목 「Congratulations on the new role」 · 본문 축하 + Lynn 두 층 소개 + 「No ask here」 · 크립토닷컴 · OKX 사업 · 토큰 0. 문안 채팅.
