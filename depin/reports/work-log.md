@@ -2146,3 +2146,4 @@ Thanks Odelia — writing to you at that address today. Mine is support@wellbian
 - **정정 — 한국 스타링크 판매 구조(10/8, 서우 캡처 「이건 다른 의미야?」)** — 캡처는 안테나형 위성 인터넷(주거용 · 로밍 요금제, 스탠다드 · 미니 키트, 이마트 판매)이라 위성 직접 연결(D2C)과 다른 서비스. 다만 앞 답의 「SK텔링크 · KT SAT 재판매뿐」은 틀림 — 개인은 스타링크에서 직접 산다(기업만 재판매). satellite-terms 리셀러 행 · 키트 행 추가 · D2C 행 · business-directions SpaceX 절 정정.
 - **Limitless 거래액 조사(10/8, 서우 「연 · 월거래액」)** — 누적 $3~4.5B(자기 표기 · DefiLlama 명목) · 월은 출처마다 $3천만~$20억(명목 vs 실거래 정의 차이) · 연간 공식 수치 없음 · 콜에서 정의 포함해 직접 묻기 권함. business-directions 끝 절.
 - **Vi Hoang(Binance Pay 성장 운영 APAC · 홍콩) 판정(10/8, 서우 캡처 4장 · 요청 대기)** — 바이낸스 여덟째 · 거래소 · 결제 레인은 Emily 와 겹침 → 수락되면 인사만(선택 줄 0) · 회사 페이지 방문은 신호로만. 인사 문안은 채팅. business-directions 끝 절.
+- **Limitless Henrich 답 재작성(10/8, 디지털전략 지시 — 상대 이름 · 날씨 카테고리 약함 · 드골 서사)** — 서사 첫 문단 · 체인링크 · 플레어(인프라) · OG.com(시장) 이름 · 링크 둘. 짚은 것: OG.com 은 MNDA 조항 확인 권함 · 체인링크는 L1 아님 · 드골은 조작 단정 0. business-directions 끝 절.
