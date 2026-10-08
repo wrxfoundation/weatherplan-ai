@@ -2169,3 +2169,4 @@ Thanks Odelia — writing to you at that address today. Mine is support@wellbian
 - **외부 X 사용자 시점 설명 카드로 다시(10/8 서우 「Montserrat 통일 · 외부 사용자 시점 · 인포그래픽 + 실사 · AI 티 나는 이미지 금지」)** — Higgsfield 실사풍 사진(서울 고층 창가 측정기 + 길 건너 옥상 자동기상장비, 홀로그램 · 빛줄기 0) 위에 손으로 그은 듯한 설명선 2개 · 1인칭 문구(「I finally looked into…」) · 흐름 한 줄 · 정직한 두 줄(기기 파트너 KWeather · 보상 테스트 중 · 비보장). 카드 · 번호 원 · 대문자 라벨 같은 템플릿 장식 제거. 파일 채팅 전달.
 - **Eve Hsiao(OKX CEO Office · 전 크립토닷컴 전략) 판정(10/8)** — 1촌 요청 메모 없이 · 메시지 0(OKX 문 = Kyuyoung 하나 · VIP 매출 자리 · Vincent 공통 1촌). business-directions 끝 절.
 - **Eve Hsiao 인사 메모(10/8 서우 「인사만」)** — 새 직책 축하 + 한 줄 소개, 사업 · 요청 0. business-directions 끝 절.
+\n- **Edward Lee(폴리마켓 거래소 제품 총괄) InMail(10/8)** — 폴리마켓 제품 스레드 하나로 지정 · 뉴욕 커피 · 카운슬/한국 제외 조항은 진전 시. business-directions 끝 절.\n

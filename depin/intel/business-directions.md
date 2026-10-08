@@ -2860,3 +2860,14 @@ Once you've had a look, happy to set up a call. Changmin can walk Clyde through 
 - **10/8 서우 수정 — 「그냥 인사만, 업계에 발 들인 거니까」**: 1촌 요청에 축하 + 한 줄 소개 메모(Lynn 두 층 · 사업 제안 · 요청 0 · 크립토닷컴 언급 0). 수락 뒤에도 그쪽이 먼저 열기 전엔 메시지 0. 문안 채팅.
 - **10/8 서우 「프리미엄 메시지라 길게」** — InMail 로 보냄: 제목 「Congratulations on the new role」 · 본문 축하 + Lynn 두 층 소개 + 「No ask here」 · 크립토닷컴 · OKX 사업 · 토큰 0. 문안 채팅.
 - **10/8 서우 정정 — 직함은 COO 가 아니라 「Head of Partnerships & Operations」**(depin/CLAUDE.md 기록과 같음). 오늘 쓴 Johann · Allessandra · Eve 문안의 「COO」를 모두 이 직함으로 바꿈(서명 「Logan (Seowoo Park) · Head of Partnerships & Operations, Wellbian Labs」). 이미 보낸 건 그대로 두고 다음 메시지부터 바른 직함. 링크드인 헤드라인도 같은 직함인지 확인.
+
+## Edward Lee (Polymarket, Head of Product, Exchange · 뉴욕 대면근무) — InMail (2026-10-08, 서우 캡처 4장 · 「기회다, 프리미엄 메시지」)
+
+- **자리**(캡처 기준): Polymarket **Head of Product, Exchange**(2026-09~, 뉴욕 대면 — 합류 글 「Polymarket US 와 국제 온체인 거래소 양쪽 제품」) ·
+  Coinbase Director of PM(2020-12~2026-09 · 파생 사업을 세움) · Circle VP 제품 · BD(Poloniex, 2019~2020) · LINE Plus 블록체인 · 크립토 부문 창업(2016~2018) ·
+  VCNC 첫 직원(2012~2016, 서울 · 해외 확장) · 미시간대 전기공학. 공통 1촌 2명.
+- **판정 — 서우 결정대로 InMail.** 폴리마켓 일곱째(상한 = Paul + 기관 메일, 나머지 인사만)라 원칙상 넘치지만, **거래소 제품 총괄 = 계약 사양 · 정산원을 정하는 자리**라
+  우리 레인에 가장 맞는 사람이고 한국 경력 · 뉴욕 대면(10/24~29)이 맞는다 → **폴리마켓 제품 스레드는 Edward 하나로**, Paul · 기관 메일은 기존대로 · 나머지는 인사만 유지.
+- 문안 원칙: 축하 + 경력 한 줄 · Lynn 데이터 층(172 · 91 · 11개 출처 · 이상치 · withheld · 원장 지문) · 「날씨는 얇은 카테고리 · 공항 한 관측소」 · 뉴욕 커피 30분 또는 담당자.
+  한국 도시 · 서울 시장 0 · 드골 사건 · 크립토닷컴 · OG.com · 다른 거래소 이름 0 · 토큰 0. 영문(국문 인사 한 줄은 선택).
+- **⚠ 대화가 진전되면**: 데이터 공급 논의 전 카운슬 의견 · 한국 도시 제외 · 한국 거주자 제외 조항(9/28 예측마켓 공통 규칙) · 크립토닷컴 MNDA 독점 조항 확인.
