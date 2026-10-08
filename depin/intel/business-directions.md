@@ -2859,3 +2859,4 @@ Once you've had a look, happy to set up a call. Changmin can walk Clyde through 
 - 쓸 수 있는 건 나중에 그쪽이 먼저 말을 걸 때만 — 그때도 인사 · 소개 두 층(Lynn)까지, OKX · 크립토닷컴 · 토큰 이야기 0.
 - **10/8 서우 수정 — 「그냥 인사만, 업계에 발 들인 거니까」**: 1촌 요청에 축하 + 한 줄 소개 메모(Lynn 두 층 · 사업 제안 · 요청 0 · 크립토닷컴 언급 0). 수락 뒤에도 그쪽이 먼저 열기 전엔 메시지 0. 문안 채팅.
 - **10/8 서우 「프리미엄 메시지라 길게」** — InMail 로 보냄: 제목 「Congratulations on the new role」 · 본문 축하 + Lynn 두 층 소개 + 「No ask here」 · 크립토닷컴 · OKX 사업 · 토큰 0. 문안 채팅.
+- **10/8 서우 정정 — 직함은 COO 가 아니라 「Head of Partnerships & Operations」**(depin/CLAUDE.md 기록과 같음). 오늘 쓴 Johann · Allessandra · Eve 문안의 「COO」를 모두 이 직함으로 바꿈(서명 「Logan (Seowoo Park) · Head of Partnerships & Operations, Wellbian Labs」). 이미 보낸 건 그대로 두고 다음 메시지부터 바른 직함. 링크드인 헤드라인도 같은 직함인지 확인.
