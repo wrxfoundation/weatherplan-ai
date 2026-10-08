@@ -36,6 +36,7 @@
 | 구 플랫폼(wlbn.wellbianlabs.io, 8/24) 팩트시트 | `intel/wlbn-platform.md` | 토큰·약관은 정본이 우선 |
 | 링크드인 1촌 인사 문안 | `intel/playbook.md` 「링크드인 1촌 인사 기본값」 | Lynn 형식 · 영문/1촌 요청 메모(300자)/국문 |
 | Measured Room — 집 하나의 공기 시뮬레이션(거실 · 침실 · 주방) + **게임 「환기 타이밍」**(v0.12 · 저녁 6시간을 2분에 · 방 카드 10분 환기 · 빨간불 없는 시간 % · 측정기 없이 모드) · **v0.14.1 게임 화면 셋 비교판** — 실사 렌더(v0.14 기본) · 3D 모형(v0.13 three.js) · 방 사진(v0.12), 시작 카드 · 칩 · `&view=render|3d|photo` 로 고름 | `site/measured-room/` (README 에 버전별 변경 · 게임 규칙 · 균형 표, 배포 wellbian-measured-room-v0113.vercel.app 은 v0.11.3) | 10/8 v0.14.1. 점수만(토큰 · 경품 0) · 개념 시뮬레이션 · `#game=1` 로 게임 바로 · `&view=3d` · `&view=photo` · 이미지 `assets/game-*.jpg`(Higgsfield 생성) · 좌표는 코드 `HROOM` 등 |
+| 날씨 미니게임 ④ 「태풍 키우기」 — 내가 태풍이 되어 따뜻한 바다의 구름을 삼키며 자라는 괴혼식 웹 · 모바일 게임(three.js 위성 시점 · 화면 셋 위성/적외/수온 · 점수 = 바다 위 ACE · 9일 한 판 약 3분 반). ② 「태풍의 눈」(`site/storm-eye/` — 기압계로 길 바꾸기) · ① `site/which-sky/` · ③ `site/monsoon-defense/` 와 같은 시리즈 | `site/typhoon-grow/` (README 에 규칙 · 모형 · 균형 표 · 해시, `src/` 에서 `node build.js`) | 10/8 v0.1. 점수만(토큰 · 경품 0) · **피해 점수 없음**(도시는 이름만, 상륙은 약화) · 모형 날씨 고정 문구 · 브랜드 미정(바닥글 「날씨 미니게임」) · `#seed=` `#view=` `#auto=1` `#dbgI=` |
 | 위성 · 발사 · 스타링크 용어 쉬운 풀이(큐브샛 · 탑재체 · 저궤도 · 라이드셰어 · 지상국 · D2C 등) | `intel/satellite-terms.md` | 10/7 서우 요청. 견적 대화용 — 수량 · 자금 · 일정은 넣지 않음 |
 | 작업 일지(모든 판정·결정의 시간순 기록) | `reports/work-log.md` | 매 작업 끝에 한 항목 |
 
