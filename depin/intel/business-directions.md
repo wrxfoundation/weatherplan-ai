@@ -2794,3 +2794,5 @@ Once you've had a look, happy to set up a call. Changmin can walk Clyde through 
 - **남은 것**: ① OG.com 이름이 나갔다 — 크립토닷컴 MNDA 조항(논의 사실 비밀 여부) 확인은 여전히 필요, 문제 되면 다음 메시지에서 더 키우지 않기 ·
   ② 링크한 wellbianlabs.io 가 아직 「167 cities · 90 countries」 — 본문 172 · 91 과 어긋남, 사이트 갱신 요청(같은 페이지 「KWeather makes the devices」 · 「World's Largest」 문구도) ·
   ③ 예상 후속 질문 준비 = 도시별 보류(withheld) 비율 · 시범 도시(정산 가능률 높은 비한국 도시) · 한국 도시 제외는 콜에서 구두로 · Henrich 에게 월 거래량(정의 포함) 되묻기.
+- **10/8 뉴욕 대면 제안(서우 지시)** — 「10월 말 Swell(10/27~29)로 뉴욕에 간다 · 뉴욕에 계신 분 있으면 직접 뵙자」. 근거: CJ = Limitless Markets US 그룹 CEO(뉴욕, 9/28 판정 절 — 검색 요약) →
+  문안은 「뉴욕 팀이 있는 걸로 안다」 정도로 부드럽게. 10/30 은 SpaceX 플로리다라 뉴욕 가능일 = Swell 기간(10/27~29) 안. 11:43 본문에 답이 없으면 연달아 보내지 말고 답 뒤 또는 다음 날.
