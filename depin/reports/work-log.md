@@ -2162,3 +2162,4 @@ Thanks Odelia — writing to you at that address today. Mine is support@wellbian
 - **Tyler Gibbons 확인(10/8)** — 카드 · 뱅킹 · 리워드 파트너십이라 예측시장 아님 → 팔로우만 · 두 번째 후보 = Valeria R. business-directions 끝 절.
 - **Allessandra Miller(로빈후드 크립토 · 해외 비서실장) 판정(10/8)** — Johann 라인 · 10/13 미수락 시 첫 수(메모 채팅) · 10/16 InMail · 그다음 Valeria. business-directions 끝 절.
 - **Allessandra 즉시 InMail(10/8 서우 결정)** — 제목 · 본문 · 1촌 메모 대안 · 3일 뒤 재확인. Johann 에게도 보냈다고 밝힘 · 답하기 쉬운 두 갈래. business-directions 끝 절.
+- **Measured Room v0.13 — 게임 3D 단면 집(10/8, 서우 「three.js 로 더 실감나게」 → 「시도해보자」)** — 물리 · 점수 그대로 화면만 three.js(게임 시작 때만 jsDelivr 0.160.0, 실패 시 사진). 거실 · 침실 · 주방 돌하우스 · 미닫이 창 · CO₂/PM2.5 입자 · 상태 안개 · 사람 5 · 노을→밤 · 기기 화면 색 · 이름표 탭 환기 · 측정기 없이 = 공기 안 보임 · 사진/3D 전환. 검증 3화면 · 자동 플레이 3D = 사진 91% · 오류 0. README v0.13.
