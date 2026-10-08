@@ -2158,3 +2158,4 @@ Thanks Odelia — writing to you at that address today. Mine is support@wellbian
 - **Johann 1촌 메모 최종(10/8 서우 정정)** — XRP SEOUL 연사 = 웰비안 대표 김성환 · 서우 = Wellbian Labs COO 로 소개 · Swell 대화 + 부재 시 담당자 소개 부탁. 이후 문안 「our CEO」 통일. business-directions 끝 절.
 - **Johann 수락 뒤 첫 메시지 · InMail 문안(10/8)** — 863자 · 제목 57 + 본문 970자, 요청 1주 무응답 시 InMail. business-directions 끝 절.
 - **뉴욕 체류 10/24~29 반영(10/8)** — Johann InMail 제목 · 본문 날짜 · 첫 메시지 날짜 수정 · SpaceX 동선 B 로 · Limitless 문안 날짜. business-directions 끝 절.
+- **로빈후드 대기 순서(10/8)** — 동시 발송 0 · 10/13 InMail · 10/16 두 번째 한 명(Tyler Gibbons 확인 → 아니면 Valeria R.) · Tom 수락 시 그 스레드로 뉴욕 한 줄. business-directions 끝 절.
