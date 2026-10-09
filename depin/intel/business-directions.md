@@ -2916,3 +2916,26 @@ Best regards,
 Logan (Seowoo Park)
 Head of Partnerships & Operations, Wellbian Labs
 ```
+
+## Stephen Humenik (OG.com CLO · 이사회 의장 / Crypto.com EVP 예측 · 자본시장 법무 총괄 · 시카고) — 1촌 성사 → 지금 메시지 0 (2026-10-09, 서우 캡처 3장)
+- **자리**(캡처 기준): OG.com **Chief Legal Officer · 이사회 의장**(2026-04~, 시카고 — 「OG.com Prediction Markets which powers Crypto.com Predictions」 · CFTC 규제 거래소의
+  법무 · 규제 · 전략) · Crypto.com **EVP, Global Head of Legal for Prediction & Capital Markets**(2026-04~, 워싱턴 DC · 시카고 · 싱가포르) — 크립토닷컴 4년 4개월
+  (SVP 자본시장 · 청산 총괄 2024~2026, 파생 법무 2023, 파생 총괄 2022~) · **CFTC 글로벌시장자문위원회(GMAC) 디지털자산시장 소위 위원**(2023-06~) · ABA 증권 · 자본시장 ·
+  파생 소위 공동의장 · 전 K&L Gates 파트너(2019~2022) · 인증 배지 · 1촌 500+ · 공통 1촌 Vincent · Matt 외 2. **새 1촌**(링크드인 「새 1촌」 하이라이트).
+- **9/28 판정과의 관계**: 그때는 2촌이라 「1촌 · DM 보류 — Vincent 라인 위로 건너뛰는 모양 · 계열 상한, 법무 창구는 Vincent 를 통해서」. 1촌이 된 지금도 이유는 그대로다
+  (크립토닷컴 데이터 건 = Vincent 가 사내 주인 · product team 검토 · 10/7 후속 메일 답 대기 · 10/15 재판정).
+- **판정 — 1촌은 그대로, 지금은 메시지 0(Maria Allott 10/7 과 같은 결). 링크드인이 띄운 국문 기본 문구도 보내지 않는다.**
+  ① **법무는 딜을 닫는 자리** — 그가 우리 계약 검토의 최종 관문일 가능성이 크다(추론). 검토 중에 우리가 법무 총괄에게 따로 인사하면 압박 · 우회로 읽힌다.
+  ② **인사가 곧 제안이 된다** — 우리 데이터 층이 지금 그 회사가 검토 중인 물건이다.
+  ③ **그가 필요한 때는 정해져 있다** — 계약 단계에서 카운슬 의견 · 한국 도시 · 한국 거주자 제외 조항 · MNDA 범위(OG.com 이름 · 논의 사실)를 다룰 때, Vincent 가 붙인다.
+- **할 것**: 그의 글에 좋아요까지 · 댓글 0(9/21 Vincent 글 선례). OG.com 주식 무기한 선물 신청(9/28 메모)은 공개 문서지만 말 걸 거리로 쓰지 않는다.
+- **그가 먼저 메시지를 보내면**(EN, 388자 — 사업 대화는 Vincent 로, 내용 0 · 토큰 · 한국 시장 · 다른 거래소 · 로빈후드 0):
+
+```
+Hi Stephen, thanks for connecting.
+
+I'm Logan, Head of Partnerships & Operations at Wellbian Labs in Seoul. We work on weather data, with KWeather, a Korean weather company with 30 years of observation, as our device partner.
+
+We've been in touch with Vincent on the partnerships side, so I'll keep the business conversation there. Just wanted to say hello, and it's good to be connected.
+```
+- **Vincent 가 답한 뒤**에는 다시 본다 — 검토가 법무로 넘어갔다고 Vincent 가 말하면, 그때 Vincent 소개로 인사.

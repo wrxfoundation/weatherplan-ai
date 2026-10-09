@@ -645,3 +645,7 @@ Good to be connected.
 ```
 On the business side, we've been in touch with Vincent on your partnerships team, so he has the background. Happy to talk whenever it's useful.
 ```
+
+## 10/9 — Stephen Humenik 새 1촌
+
+9/28 보류 대상(OG.com CLO · 크립토닷컴 예측 · 자본시장 법무 총괄)이 1촌이 됐다. 판정 = 메시지 0(Vincent 답 대기 · 10/15 재판정) · 좋아요까지. 그가 먼저 말을 걸면 사업은 Vincent 로 돌리는 짧은 답. 상세 · 문안은 `intel/business-directions.md` 끝 절.
