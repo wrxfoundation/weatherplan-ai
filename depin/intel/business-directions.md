@@ -2958,6 +2958,11 @@ I'm Logan, Head of Partnerships & Operations at Wellbian Labs in Seoul. We work 
 
 Operations research at Columbia, Web3 growth, and now investing is a great mix for this space. Good to be connected.
 ```
+- **10/9 서우 「300자 이내로」 → 짧은 판(286자, 이걸 보냄)**:
+
+```
+Hi Haley, thanks for connecting. I'm Logan, Head of Partnerships & Operations at Wellbian Labs in Seoul. We pair indoor air sensors, with KWeather as device partner, with city weather for 172 cities, each a consensus of 11 sources fingerprinted to a public ledger. Good to be connected.
+```
 - **그가 답하면 붙일 한 줄**(EN, 122자 — 그가 먼저 관심을 보일 때만):
 
 ```
