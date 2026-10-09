@@ -2939,3 +2939,27 @@ I'm Logan, Head of Partnerships & Operations at Wellbian Labs in Seoul. We work 
 We've been in touch with Vincent on the partnerships side, so I'll keep the business conversation there. Just wanted to say hello, and it's good to be connected.
 ```
 - **Vincent 가 답한 뒤**에는 다시 본다 — 검토가 법무로 넘어갔다고 Vincent 가 말하면, 그때 Vincent 소개로 인사.
+
+## Haley (Hui) Huang (YZi Labs, Investment Director · 뉴욕 대면) — 1촌 요청 보냄 → 수락 뒤 인사만 (2026-10-09, 서우 캡처 4장)
+- **자리**(캡처 기준): **YZi Labs Investment Director**(2025-07~, 뉴욕 대면 — 「Web3 · 핀테크 · 프런티어 기술 테제 투자」, 구 바이낸스랩스) · 전 OKX Web3 Growth
+  (지갑 · DeFi · DEX · 마켓플레이스, 2023-06~2025-07, 뉴욕) · NLVC(중국 중심 VC) Web3 리서치 · 투자(2022~2023) · 선전 PE 인턴 둘 · 컬럼비아 OR 석사 · 중산대 학사 · 인증 배지 ·
+  3촌 · 1촌 500+. 최근 피드: YZi Labs SF Tech Week 「AIDC Builder Dinner」(컴퓨트) 퍼감. **서우가 1촌 요청을 보냈다**(캡처 토스트).
+- **판정 — 투자자 · VC 기본값 ②(맺되 먼저 사업 얘기 0, 「데이터 실적」에서 열림). 수락 뒤 Lynn 두 층 인사 한 번 · 요청 0.**
+  ① 계획을 들고 가면 그게 첫인상이 된다 — 투자 · 라운드 · 토큰 이야기 0(WLBN · 가격 · 투자 포텐셜 발화 금지).
+  ② YZi = BNB 권역(Opinion · Predict.fun 과 같은 권역, 9/28 메모) · 그는 전 OKX — 체인 · 거래소 · 상장 신호가 될 말 0, 그쪽 포트폴리오 이름 0.
+  ③ 뉴욕 동선(10/24~29)은 **그가 답하면** 그때 커피 한 줄을 붙인다(아래). 수락 직후 첫 메시지에 넣으면 피칭 미팅 요청으로 읽힌다.
+- 요청에 메모가 없었어도 취소 · 재발송 0(취소하면 3주 재요청 불가).
+- **수락 뒤 인사**(EN, 574자):
+
+```
+Hi Haley, thanks for connecting.
+
+I'm Logan, Head of Partnerships & Operations at Wellbian Labs in Seoul. We work on weather data in two layers: certified indoor air sensors that people run in their own homes, with KWeather, a Korean weather company with 30 years of observation, as our device partner; and city-level weather for 172 cities in 91 countries, each a consensus of eleven independent sources, with every input fingerprinted to a public ledger.
+
+Operations research at Columbia, Web3 growth, and now investing is a great mix for this space. Good to be connected.
+```
+- **그가 답하면 붙일 한 줄**(EN, 122자 — 그가 먼저 관심을 보일 때만):
+
+```
+If you happen to be around New York October 24 to 29, we'll be in town for Swell and I'd be glad to say hello over coffee.
+```

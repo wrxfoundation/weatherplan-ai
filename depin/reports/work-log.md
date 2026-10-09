@@ -2174,3 +2174,4 @@ Thanks Odelia — writing to you at that address today. Mine is support@wellbian
 - **Nate Schanker(폴리마켓 테니스 성장 · 캔자스시티) 1촌 메시지(10/8)** — 인사 + 10/24~29 뉴욕 · 뉴욕 쪽 인사할 사람 소개 부탁 한 가지. 폴리마켓 여덟째라 데이터 · 정산 제안 0, Edward 를 가리키면 새 스레드 안 엶. business-directions 끝 절.
 - **Nate Schanker 긴 판(10/8 「프리미엄 메시지로 길게」)** — 제목 + 본문 약 1,500자, 부탁은 뉴욕 인사할 사람 소개 하나 그대로. business-directions Nate 절에 추가.
 - **Stephen Humenik(OG.com CLO · 크립토닷컴 예측 · 자본시장 법무 총괄) 새 1촌 판정(10/9)** — 메시지 0(Maria 10/7 과 같은 결 · Vincent 답 대기 · 10/15 재판정), 좋아요까지. 그가 먼저 말 걸 때 답(사업은 Vincent 로). business-directions 끝 절 · cryptocom-call 10/9.
+- **Haley Huang(YZi Labs 투자 디렉터 · 뉴욕) 1촌 요청 뒤 판정(10/9)** — VC 기본값 ②: 수락 뒤 Lynn 두 층 인사만, 투자 · 토큰 · 체인 · 거래소 0, 뉴욕 커피는 그가 답할 때만. business-directions 끝 절.
