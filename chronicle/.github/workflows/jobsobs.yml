@@ -1,0 +1,66 @@
+# Chronicle #13 워크넷 채용 관측소 (jobs-observatory) — standalone 리포용.
+#
+# 일 1회 워크넷 채용정보 API로 한국 AI·데이터 채용공고를 박제. 공고는 마감 즉시 소멸.
+# 기존 DATA_GO_KR_KEY 시크릿 재사용(워크넷 API "활용신청"만 하면 됨). 키 없으면 휴면.
+# Manual: Actions tab -> "jobsobs" -> Run workflow.
+name: jobsobs
+
+on:
+  workflow_dispatch: {}
+  schedule:
+    - cron: "51 21 * * *" # daily ~06:51 KST
+
+permissions:
+  contents: write
+
+concurrency:
+  group: chronicle-cron # 전 수집 크론 직렬화 — docs 동시 재생성 경합 방지
+  cancel-in-progress: false
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Install deps
+        run: npm ci
+
+      - name: Collect + seal (무키면 휴면·0건, 변경 없으면 아무것도 쓰지 않음)
+        env:
+          DATA_GO_KR_KEY: ${{ secrets.DATA_GO_KR_KEY }}
+        run: npm run collect -- jobs-observatory
+
+      - name: Verify hash chain
+        run: npm run verify -- jobs-observatory
+
+      - name: Anchor chain head to RFC 3161 TSA (best-effort)
+        run: npm run anchor -- jobs-observatory
+
+      - name: Publish site (docs/)
+        run: |
+          npm run site
+          test -f docs/index.html && test -f docs/.nojekyll  # 산출물 없으면 여기서 실패
+
+      - name: Commit accumulated data
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data docs
+          if git diff --cached --quiet; then
+            echo "no data change"
+          else
+            git commit -m "data(jobs-observatory): daily Korea AI jobs ledger [skip ci]"
+            n=0
+            until git push; do
+              n=$((n+1))
+              if [ "$n" -ge 3 ]; then echo "push failed after $n attempts" >&2; exit 1; fi
+              git pull --rebase origin "$GITHUB_REF_NAME"
+            done
+          fi
