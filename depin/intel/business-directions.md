@@ -3188,3 +3188,15 @@ Head of Partnerships & Operations, Wellbian Labs
 - Nubila: 데이터 층 겹침 → 기기 · 유통만 말한다. IoTeX · peaq: 통합 표현 금지, 「목록 · 데이터 가능성」까지.
 - GEODNET 본사(Horton)는 Village Island 답(한국 담당 여부) 뒤 — 유통사 건너뛰기 모양 금지.
 - 순서: 10/12~15 Village Island · Nubila(한 명) · 제타큐브 → 10/19~23 Horton · Larry Pang · SEA DePIN · Rydon · (선택) 토큰포스트. 한 회사 한 사람, 무응답 7일 뒤 예비 창구 1회.
+
+## Nicola White (Robinhood, VP of Crypto Institutions · 뉴욕 대면근무) — 판정 (2026-10-10, 서우 프로필 캡처 2장, 지시 없음)
+
+- **자리**(캡처 기준): Robinhood VP of Crypto Institutions(2025-02~ · 뉴욕) · 전 B2C2(크립토 유동성 공급 · 마켓메이커) USA 사장 → CEO(2021-07~2023-12, 저지시티) ·
+  Citadel Securities MD · Global COO FICC(2016~2020) · Morgan Stanley 약 13년 · 워털루대. 소개 = 채권 시장 · 기관 업무 혁신. 2촌 · 공통 1촌 4명. 팔로워 약 8.2천.
+- **판정 — 1촌 요청에 인사 메모만(250자 기본값), 사업 메시지 0 · 뉴욕 미팅 요청 0.**
+  ① 자리가 **크립토 기관 영업(거래 · 유동성)** = 거래소 레인 — 예측시장 · 날씨 정산과 무관하고, 말을 걸면 토큰 · 상장 질문으로 간다(Gaëtan Thabot 10/8 판정과 같은 결)
+  ② 로빈후드 계열 상한 2 = Johann(+ Allessandra 같은 라인) · Tom Chippas(Rothera) — 이미 찼다. 셋째 대화를 열면 「뿌리기」로 읽힌다
+  ③ 9/26 게이트(크립토닷컴 라인 우선) · **10/15 재판정** 그대로.
+- 뉴욕 10/24~29 담당자는 Johann/Allessandra 답으로 정한다 — Nicola 는 그 경로가 아니다. Swell 현장에서 마주치면 인사 · 명함까지.
+- 메모 금지선: 토큰 · WLBN · 상장 · 거래소 · XRP SEOUL 스폰서 · 크립토닷컴 · OG.com · 예측시장 · 뉴욕 일정 0 · 공통 1촌 이름 0. 수락 뒤에도 그쪽이 먼저 열기 전엔 메시지 0.
+
