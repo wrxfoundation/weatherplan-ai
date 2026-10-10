@@ -3050,3 +3050,36 @@ Joanne 님 안녕하세요, 웰비안 랩스의 박서우입니다. 저희는 �
 - **10/10 유럽 유통 방향 절의 수정**: Crypship 1순위 → 3순위(WeatherXM 공식 목록에 없음 — 캐시 기준). 같은 절의 「Easynav 파산 교훈」은 외부 미확인 — 내부 디스코드 근거로만.
 - **막힌 곳 = 서류**: 이번 주 첫 행동은 케이웨더에 ARC-600DA 의 EU 인증(CE/RED · EN 18031 · RoHS) 상태 문의. 메일에는 「인증 상태는 기기 파트너와 확인 중」으로만 쓴다(있다고 하지 않음).
 - **문구**: 메일에서 「certified」를 뺐다(EU 리셀러는 CE 주장으로 읽음). WLBN 이름 0 · 보상 = 「in testing, no promised amounts」 · 숫자 0. 「eleven independent sources」 표현은 playbook 의 「eleven weather feeds」 전환 결정 대기와 맞물림 — 서우 결정 시 함께 바꾼다.
+
+## Tobias Klaver (Hexaspot 영업 매니저 · 전 공동/단독 소유주 · Connect IoT & Trackpac 엔지니어 · 네덜란드 노르트홀란트) — Hexaspot 1순위의 사람 창구 (2026-10-10, 서우 캡처 2장)
+- **자리**(캡처 기준): **Hexaspot Verkoopmanager(영업 매니저, 2023-11~, 알크마르)** · Eigenaar(소유주, 2021-07~2025-10) · Mede-eigenaar(공동 소유주, 2021-07~2023-01) ·
+  Connect IoT Principal Platform & Infrastructure Engineer(2023-11~, 알크마르 · 하이브리드 — 클라우드 · 쿠버네티스) · 헤드라인 「Supreme Code Commander at Connect IoT & Trackpac」 ·
+  Klaver Design 창업(프리랜서) · 3촌 · 1촌 75 · 배너 = 네덜란드 · 독일 서부 헬륨 커버리지 지도. **1촌 요청 대기 중.**
+- **판정 — 보고서의 「공용 지원 메일 → 기업 영업」 대신 이 사람에게 직접.** 창업 때부터 Hexaspot 을 만든 사람이고 지금 영업 매니저다. Trackpac(Hexaspot 이 파는 LoRa 센서 브랜드)과
+  Connect IoT 쪽 엔지니어라 기기 연결 방식(LoRaWAN · Wi-Fi) 질문에 바로 답할 수 있는 자리.
+  ⚠ 2025-10 에 「소유주」가 끝났다 — 매각 · 지분 정리 가능성. 지금 누가 결정하는지는 통화에서 묻는다(추정으로 쓰지 않음).
+- **보낼 것**: 메시지 버튼(3촌 — InMail) 또는 1촌 수락 뒤 일반 메시지. 보고서 Hexaspot 첫 메일을 그에게 맞춰 줄임(Connect IoT · Trackpac 언급, 「certified」 0, 인증은 「기기 파트너와 확인 중」, 숫자 · 토큰 0).
+  7일 후속 · 통화 스크립트는 보고서 그대로.
+
+제목(65자): `Indoor air quality for Hexaspot's business buyers – Wellbian Labs`
+
+```
+Hi Tobias,
+
+I'm Logan, Head of Partnerships & Operations at Wellbian Labs. I came across your work at Hexaspot and Connect IoT: LoRaWAN and Helium hardware, WeatherXM stations and Trackpac sensors on the same shelf.
+
+We run an indoor air-quality network that started in Korea, with KWeather as our device partner: 30 years of observation and around 4,000 corporate and public clients. Behind the device sits city-level weather for 172 cities in 91 countries, each a consensus of eleven independent sources, every input fingerprinted to a public ledger. A participation rewards layer is in testing, with no promised amounts, so in Europe we would lead with what the device measures.
+
+Hexaspot looks like the right first conversation for us in Europe. Your business buyers already ask for temperature and humidity sensors, and indoor air quality would sit next to them. EU certification status is being confirmed with our device partner, so before preparing anything I'd like to ask:
+1. What do you need from a new brand before listing?
+2. Do you import stock yourselves, or prefer an EU-based supplier?
+3. Would your buyers expect LoRaWAN, Wi-Fi, or both?
+
+Would a 20-minute call in the next two weeks work for you?
+
+Best regards,
+Logan (Seowoo Park)
+Head of Partnerships & Operations, Wellbian Labs
+```
+
+(본문 1298자)

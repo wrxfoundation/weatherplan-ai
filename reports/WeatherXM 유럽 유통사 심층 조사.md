@@ -145,6 +145,8 @@ MiCA 에는 DePIN 하드웨어 전용 지침이 없다. 일반 규정으로 판�
 
 ### Hexaspot
 
+> **10/10 추가** — 사람 창구를 찾았다: Tobias Klaver(영업 매니저 2023-11~, 2021-07~2025-10 소유주, Connect IoT · Trackpac 엔지니어). 링크드인으로 직접 보낸다(그에게 맞춘 판은 `depin/intel/business-directions.md` 「Tobias Klaver」 절). 아래 공용 창구 판은 그가 답이 없을 때 쓴다.
+
 받는 곳: 사이트 Contact Us 의 공용 지원 메일. 본문에 "기업 영업(Business Sales) 담당께 전달 부탁" 한 줄이 이미 들어 있다. B2B 견적 · LoRaWAN · WS2000 이 각도다.
 
 **(a) 첫 메일** — 제목: `Indoor air quality next to your WS2000 and LoRaWAN sensors` · 본문 1,617자
