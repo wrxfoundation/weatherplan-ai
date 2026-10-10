@@ -1,0 +1,229 @@
+/* 라이선스(/membership) · WELLBIAN 소개(/token) · 토크노믹스(/token/tokenomics) 를
+   메인 판매 페이지(.wb-store, launch/store.css)와 같은 톤으로 맞추는 스코프 스타일 (2026-09-07 지시).
+   변수·글꼴·제목 크기·섹션 여백은 store.css 의 값을 그대로 옮겼고, globals.css 의
+   .section-header / .panel / .note / 버튼은 이 안에서만 메인 페이지 모양으로 덮어쓴다.
+   .wb-store 처럼 button/a 를 전역 리셋하지는 않는다 - 이 페이지들은 .btn-primary/.btn-ghost 를 쓴다. */
+.wb-page {
+  --w-main: #4d4dce;
+  --w-deep: #1b1b48;
+  --w-tint: #eeeefb;
+  --ink-1: #22223a; --ink-2: #44445e; --ink-3: #5b5b74; --ink-4: #6b6b85;
+  --cap: #8a8aa3; --hint: #9a9ab5; --dis: #b5b5c9;
+  --bd-input: #d8d8e6; --bd-btn: #e2e2ee; --bd-card: #e5e5ef;
+  --sec-alt: #f6f6fa; --panel: #fafafd;
+  --mono: var(--font-montserrat), "Pretendard Variable", Pretendard, sans-serif;
+
+  font-family: "Pretendard Variable", Pretendard, -apple-system, "Apple SD Gothic Neo", sans-serif;
+  font-size: 17px;
+  line-height: 1.6;
+  font-weight: 400;
+  color: var(--ink-1);
+  background: #fff;
+  -webkit-font-smoothing: antialiased;
+  word-break: keep-all;
+}
+.wb-page .wrap { max-width: 1280px; margin: 0 auto; }
+.wb-page .sec-pad { padding: 64px 64px 80px; }
+.wb-page .sec-pad + .sec-pad { padding-top: 0; }
+@media (max-width: 720px) { .wb-page .sec-pad { padding: 32px 20px 48px; } }
+.wb-page .mono { font-family: var(--mono); font-style: normal; font-weight: 700; letter-spacing: .01em; font-variant-numeric: tabular-nums; }
+
+/* 제목 블록 = 메인 페이지의 "가운데 큰 제목 + 설명 한 줄" 패턴 */
+.wb-page .section-header {
+  display: flex; flex-direction: column; align-items: center; text-align: center; gap: 8px;
+  border-bottom: 0; padding: 0; margin: 0 0 28px;
+}
+.wb-page .section-header::after { display: none; }
+.wb-page .section-header h1, .wb-page .section-header h2 {
+  font-family: inherit; font-size: clamp(27px, 3.4vw, 39px); font-weight: 800;
+  letter-spacing: -.01em; line-height: 1.2; color: var(--w-deep); text-wrap: balance;
+}
+.wb-page .section-header em { color: var(--w-main); font-weight: inherit; }
+.wb-page .section-coord {
+  font-family: inherit; font-weight: 400; font-size: 19px; color: var(--ink-4);
+  letter-spacing: 0; text-transform: none; text-align: center; max-width: 900px;
+}
+.wb-page .section-coord div:last-child { color: var(--ink-4); margin-top: 2px; }
+.wb-page .serif { font-family: inherit; }
+/* 제목 바로 아래 안내 한 문단 (2026-09-11).
+   제목이 가운데인데 문단만 왼쪽에 붙어 있어 따로 노는 데다, 줄이 '긴 줄 + 짧은 줄' 로
+   끊겨 읽기 나빴다. 좌우 여백을 auto 로 주어 가운데에 놓고, text-wrap: balance 로
+   줄 길이를 고르게 나눈다(브라우저가 마지막 줄만 짧게 남기지 않는다).
+   폭은 페이지마다 inline 으로 정해 두었으므로 건드리지 않는다. */
+.wb-page .section-header + p { margin-left: auto; margin-right: auto; text-wrap: balance; }
+/* 칸이 좁은 설명 문단도 줄 길이를 고르게 나눈다 - 마지막 줄에 한두 마디만 남는 것을 막는다.
+   브라우저가 여러 줄(약 6줄)까지만 balance 를 적용하므로 긴 본문에는 영향이 없다. */
+.wb-page .panel p, .wb-page .panel li, .wb-page .note { text-wrap: balance; }
+
+.wb-page .panel {
+  background: #fff; border: 1px solid var(--bd-card); border-radius: 12px; box-shadow: none; padding: 22px 24px;
+}
+.wb-page .panel-header { font-size: 13px; font-weight: 800; letter-spacing: .12em; color: var(--w-main); }
+.wb-page .note {
+  font-size: 17px; line-height: 1.7; color: var(--ink-2);
+  border: 1px solid var(--bd-card); border-left: 3px solid var(--w-main); border-radius: 12px; background: var(--panel);
+}
+.wb-page .dim { color: var(--cap); }
+.wb-page .badge { font-size: 12.5px; }
+
+.wb-page .btn-primary, .wb-page .btn-ghost { font-size: 17px; font-weight: 700; padding: 13px 26px; border-radius: 10px; line-height: 1.2; }
+.wb-page .btn-primary { background: var(--w-main); color: #fff; }
+.wb-page .btn-primary:hover { background: var(--w-main); filter: brightness(.94); }
+.wb-page .btn-ghost { background: #fff; border: 1px solid var(--bd-btn); color: var(--ink-2); }
+.wb-page .btn-ghost:hover { border-color: var(--w-main); color: var(--w-deep); background: var(--w-tint); }
+
+.wb-page .stats-grid { border-color: var(--bd-card); background: var(--bd-card); border-radius: 12px; box-shadow: none; }
+.wb-page .stat-cell { background: #fff; padding: 20px 22px; }
+.wb-page .stat-cell-k { font-size: 12.5px; color: var(--cap); }
+.wb-page .stat-cell-v { font-size: 34px; color: var(--w-deep); }
+.wb-page .feed-table.compact th { font-size: 12px; color: var(--cap); }
+.wb-page .feed-table.compact td { font-size: 15.5px; padding: 10px 12px; }
+
+/* ── 마이페이지(/my) 에서 쓰는 대시보드 위젯도 같은 톤으로 ── */
+.wb-page .feed-wrap { border: 1px solid var(--bd-card); border-radius: 12px; box-shadow: none; background: #fff; }
+.wb-page .feed-wrap:hover { box-shadow: none; }
+.wb-page .feed-head { background: var(--w-deep); padding: 14px 22px; }
+.wb-page .feed-head-title { font-size: 13px; font-weight: 800; letter-spacing: .12em; }
+.wb-page .feed-table th { font-size: 12.5px; color: var(--cap); padding: 12px 22px; }
+.wb-page .feed-table td { font-size: 15.5px; padding: 13px 22px; }
+.wb-page .feed-table .dim { font-size: 14px; color: var(--cap); }
+.wb-page .feed-table .id { color: var(--w-main); }
+.wb-page .feed-table tbody tr:nth-child(even) td { background: var(--panel); }
+.wb-page .note.warn { border-left-color: #c0392b; background: #fdf3f2; color: #8a3535; }
+.wb-page .note.ok { border-left-color: #1e8e5a; background: #e9f7f0; color: #1e8e5a; }
+.wb-page .stat-cell-delta { font-size: 13.5px; letter-spacing: .02em; }
+.wb-page .stat-cell-v.cyan { color: var(--w-main); }
+.wb-page .stat-cell-k span:last-child { color: var(--w-main); }
+.wb-page .badge.cyan { color: var(--w-main); border-color: #c9c9ee; background: var(--w-tint); }
+.wb-page details > summary { font-size: 15.5px; color: var(--cap); }
+.wb-page input, .wb-page select, .wb-page textarea { font-size: 16px; }
+
+/* ── 모바일(≤600px) 표 잘림 방지 (2026-09-08 지시: 좌우 스크롤 없이 내용이 잘리지 않게) ──
+   주문·예매 표는 카드형으로 풀고, 기기 모니터링(리스트 모드) 표는 고정 폭 열 + 줄바꿈으로 화면 안에 들어오게 한다. */
+@media (max-width: 600px) {
+  .wb-page .feed-table th, .wb-page .feed-table td { white-space: normal; }
+  /* 주문 내역: 5열 표 → 한 주문 = 한 카드 (주문번호·날짜 / 상태 / 제네시스 / 금액 / 링크) */
+  .wb-page .feed-table.compact thead { display: none; }
+  .wb-page .feed-table.compact tbody tr { display: grid; grid-template-columns: 1fr auto; gap: 4px 12px; padding: 12px 16px; border-bottom: 1px solid var(--line, #ececf3); }
+  .wb-page .feed-table.compact tbody tr:nth-child(even) td { background: transparent; }
+  .wb-page .feed-table.compact td { display: block; padding: 0 !important; border: 0; font-size: 14.5px; }
+  .wb-page .feed-table.compact td:first-child { grid-column: 1 / -1; font-size: 15px; }
+  .wb-page .feed-table.compact td.num { text-align: left; }
+  .wb-page .feed-table.compact td[colspan] { grid-column: 1 / -1; }
+  .wb-page .feed-table.compact td:last-child { grid-column: 1 / -1; white-space: normal !important; }
+  /* 기기 모니터링 */
+  .wb-page .dev-monitor-grid, .wb-page .dev-monitor-bottom, .wb-page .dev-monitor-heat { grid-template-columns: 1fr !important; }
+  .wb-page .dev-monitor-grid > div { grid-column: auto !important; grid-row: auto !important; min-width: 0; }
+  .wb-page .dev-monitor table { table-layout: fixed; font-size: 13.5px !important; }
+  .wb-page .dev-monitor th, .wb-page .dev-monitor td { padding: 8px 6px !important; word-break: keep-all; overflow-wrap: anywhere; }
+  .wb-page .dev-monitor th:first-child, .wb-page .dev-monitor td:first-child { width: 36%; }
+  .wb-page .dev-monitor td .mono, .wb-page .dev-monitor td.mono { font-size: 13px; letter-spacing: 0; }
+  .wb-page .dev-monitor td > span[style*="border-radius: 999px"] { padding: 2px 7px !important; font-size: 12px !important; }
+}
+
+/* ── 라이선스 NFT 페이지(/membership) - 디자이너 시안 이식 (2026-09-11) ──
+   wellbian.vercel.app/membership 의 .lic-* 규칙을 그대로 옮겼다(값·간격 동일).
+   카드 한 장 = 제목·설명(가운데) + 카드 그림 + 혜택 상자. 상자만 테두리를 갖고 카드는 배경 위에 그대로 놓인다. */
+.wb-page.lic-page { --lic-line: #d3d3e6; --lic-faint: #8a8a99; --lic-dim: #414660; }
+.wb-page.lic-page .section-coord { max-width: none; }
+.wb-page .lic-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 26px 22px; padding-top: 20px; }
+.wb-page .lic { display: flex; flex-direction: column; gap: 14px; text-align: left; max-width: 294px; height: 100%; margin-inline: auto; }
+.wb-page .lic-head { text-align: center; padding: 0 2px; }
+.wb-page .lic-title { display: flex; flex-wrap: wrap; justify-content: center; align-items: baseline; gap: 9px; }
+.wb-page .lic-name { font-family: var(--serif); color: var(--w-deep); font-size: 25px; font-weight: 800; line-height: 1.2; }
+.wb-page .lic-name[data-lang="en"], .wb-page .lic-name[data-lang="es"] { letter-spacing: -1px; }
+.wb-page .lic-tag { color: #333; margin: 7px 0 0; font-size: 18px; line-height: 1.5; }
+.wb-page .lic-tag[data-lang="en"], .wb-page .lic-tag[data-lang="es"] { letter-spacing: -1px; }
+.wb-page .lic-taxon { letter-spacing: .04em; color: var(--lic-faint); font-size: 13px; font-weight: 700; }
+.wb-page .lic-art { flex-shrink: 0; width: 100%; margin: 2px 0 0; }
+/* 긴 영문 지명·문장이 칸을 밀어내지 않게 */
+.wb-page .lic-box, .wb-page .lic-box *, .wb-page .lic-art *, .wb-page .lic-tag,
+.wb-page .lic-lead p, .wb-page .lic-cta-note { word-break: normal; overflow-wrap: anywhere; }
+/* 기기 카드 등급 핀 - 카드 그림 위에 얹는다(앞면이 position:relative) */
+.wb-page .lic-art .lc-tierpill {
+  position: absolute; top: 28%; left: 9.5%;
+  color: #fff; letter-spacing: .08em; white-space: nowrap; pointer-events: none;
+  background: rgba(255, 255, 255, .1); border: 1px solid rgba(255, 255, 255, .3);
+  border-radius: 999px; padding: 5px 13px; font-size: 11.5px; font-weight: 800; line-height: 1;
+}
+.wb-page .lic-grades { display: flex; flex-wrap: wrap; gap: 6px; margin: -5px 0 9px -5px; }
+.wb-page .lic-grade-btn { box-shadow: none; padding: 5px 12px; font-size: 14px; }
+.wb-page .lic-box, .wb-page .lic-cta { border: 1px solid var(--lic-line); box-shadow: none; border-radius: 10px; }
+.wb-page .lic-box { display: flex; flex-direction: column; flex: 1; gap: 6px; font-size: 16px; line-height: 1.55; }
+.wb-page .lic-h-row { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+.wb-page .lic-h { letter-spacing: .12em; color: var(--w-main); font-size: 15px; font-weight: 800; }
+.wb-page .lic-h2 { margin-top: 6px; }
+.wb-page .lic-list { margin: 0; padding-left: 5px; list-style: none; }
+.wb-page .lic-issue { color: var(--lic-faint); margin-top: 4px; padding-top: 6px; font-size: 14.5px; line-height: 1.55; }
+.wb-page .lic-issue b { color: var(--lic-dim); font-size: 15px; }
+.wb-page .lic-issue2 { margin-top: 0; padding-top: 2px; }
+.wb-page .lic-lead { border: 1px solid var(--lic-line); background: #f5f5fc; border-radius: 10px; width: fit-content; max-width: 100%; margin: -14px auto 0; padding: 26px 30px; }
+.wb-page .lic-intro { text-align: left; color: var(--lic-dim); margin: 0; font-size: 19px; font-weight: 400; line-height: 1.65; }
+.wb-page .lic-hint { text-align: left; margin: 10px 0 0; padding-left: 0; font-size: 15.5px; }
+.wb-page .lic-hint::before { content: "· "; }
+.wb-page .lic-sec { margin-top: 56px; }
+/* 예약 안내 띠 - 시안은 채운 남보라 바탕에 흰 버튼 */
+.wb-page .lic-cta { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; margin-top: 38px; color: #fff; background: #3a3a9b; border-color: #3a3a9b; }
+.wb-page .lic-cta-text { flex: 1; min-width: 260px; }
+.wb-page .lic-cta-title { font-size: 18.5px; line-height: 1.35; }
+.wb-page .lic-cta-note { color: rgba(255, 255, 255, .82); margin: 2px 0 0; font-size: 16px; line-height: 1.5; }
+.wb-page .lic-cta > a { flex: none; align-self: center; color: #3a3a9b; background: #fff; box-shadow: none; }
+.wb-page .lic-cta > a:hover { color: #3a3a9b; background: #ededfa; filter: none; }
+.wb-page .lic-cta > a:active { color: #3a3a9b; background: #dcdcf2; filter: none; }
+@media (max-width: 720px) {
+  .wb-page .lic-lead { padding: 20px 18px; margin-top: -6px; }
+  .wb-page .lic-intro { font-size: 17px; }
+  .wb-page .lic-sec { margin-top: 40px; }
+  .wb-page .lic-cta { margin-top: 26px; }
+}
+
+
+/* ── 관리자 콘솔 (2026-09-11 지시: 사이트와 같은 톤으로) ──
+   색·글꼴·패널·표·버튼은 사이트와 같은 것을 쓰되, 소개 페이지용 '가운데 큰 제목 + 넓은 여백'은
+   쓰지 않는다. 콘솔은 표와 숫자가 빽빽한 작업 도구라 한 화면에 들어오는 것이 먼저다. */
+/* 흰 바탕은 화면 끝까지, 본문 폭은 그대로 (2026-09-12).
+   예전에는 본문 폭(1152px)에만 흰 바탕이 깔려 색 바탕 위에 흰 판이 떠 있는 모양이었고
+   좌우·위아래로 어중간한 여백이 남았다. full-bleed 로 바탕을 넓히고, main-wrap 의
+   위아래 여백을 상쇄해 헤더 밑에서 푸터까지 흰 바탕이 이어지게 한다.
+   안쪽 내용은 예전과 같은 폭(1152px) 가운데 정렬을 유지한다 - 표 배치가 바뀌지 않는다. */
+.wb-page.admin-page {
+  font-size: 16px;
+  margin-top: -24px; margin-bottom: -48px;
+  padding: 26px clamp(14px, 3vw, 28px) 56px;
+}
+.wb-page.admin-page > * { max-width: 1152px; margin-inline: auto; }
+/* 제목은 사이트 다른 페이지와 같이 가운데 (2026-09-12 지시).
+   글자 크기만 콘솔에 맞게 한 단계 줄인다 - 소개 페이지의 39px 은 도구에 과하다. */
+.wb-page.admin-page .section-header { gap: 6px; margin: 0 auto 18px; }
+.wb-page.admin-page .section-header h1 { font-size: 27px; }
+.wb-page.admin-page .section-coord { font-size: 13px; color: var(--cap); letter-spacing: .06em; }
+.wb-page.admin-page .section-coord div:last-child { color: var(--cap); }
+.wb-page.admin-page .panel { padding: 18px 20px; }
+.wb-page.admin-page .btn-primary, .wb-page.admin-page .btn-ghost { font-size: 14.5px; padding: 9px 16px; border-radius: 8px; }
+.wb-page.admin-page .stat-cell { padding: 16px 18px; }
+.wb-page.admin-page .stat-cell-v { font-size: 27px; }
+.wb-page.admin-page input, .wb-page.admin-page select, .wb-page.admin-page textarea { font-size: 14.5px; }
+.wb-page.admin-page .feed-head { padding: 12px 18px; }
+.wb-page.admin-page .feed-table th { padding: 10px 16px; }
+.wb-page.admin-page .feed-table td { font-size: 14.5px; padding: 10px 16px; }
+/* 열이 열세 개인 '스테이션별 실측' 표가 좌우로 넘치지 않게 (2026-09-12 지시).
+   앞서 글자를 13px → 14px 로 키우면서 1,440px 화면에서도 79px 넘쳤다. 원래 크기로 되돌리고,
+   화면이 좁아지면 좌우 여백부터 조여 스크롤이 생기는 폭을 최대한 낮춘다.
+   실측: 1440·1280 여유 있음 / 1100 은 여백 7px 로 딱 맞음 / 1024 는 12.5px + 6px 로 딱 맞음. */
+.wb-page.admin-page .feed-table.compact td { font-size: 13px; padding: 8px 10px; }
+.wb-page.admin-page .feed-table.compact th { font-size: 10.5px; padding: 8px 10px; }
+@media (max-width: 1200px) {
+  .wb-page.admin-page .feed-table.compact th,
+  .wb-page.admin-page .feed-table.compact td { padding-left: 7px; padding-right: 7px; }
+}
+@media (max-width: 1060px) {
+  .wb-page.admin-page .feed-table.compact td { font-size: 12.5px; }
+  .wb-page.admin-page .feed-table.compact th,
+  .wb-page.admin-page .feed-table.compact td { padding-left: 6px; padding-right: 6px; }
+}
+/* 콘솔의 표는 가로로 길다 - 소개 페이지의 모바일 카드 변환은 쓰지 않는다 */
+@media (max-width: 600px) {
+  .wb-page.admin-page .feed-table.compact thead { display: table-header-group; }
+  .wb-page.admin-page .feed-table.compact tbody tr { display: table-row; }
+  .wb-page.admin-page .feed-table.compact td { display: table-cell; padding: 8px 10px !important; }
+}

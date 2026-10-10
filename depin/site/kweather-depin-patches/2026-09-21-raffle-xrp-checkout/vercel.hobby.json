@@ -1,0 +1,7 @@
+{
+  "crons": [
+    { "path": "/api/cron/reconcile", "schedule": "0 3 * * *" },
+    { "path": "/api/cron/prune", "schedule": "30 2 * * *" }
+  ],
+  "regions": ["icn1"]
+}
