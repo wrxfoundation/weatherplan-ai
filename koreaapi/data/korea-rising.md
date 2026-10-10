@@ -1,14 +1,14 @@
-# Korea Rising — verified K-pop snapshot (2026-10-09)
+# Korea Rising — verified K-pop snapshot (2026-10-10)
 
 Every line is **cross-verified** (≥2 independent sources agree on the canonical name) and carries its source + Skill Score. Full data + Schema.org JSON-LD: <https://aiagentlabs.co.kr/> · via KoreaAPI (MCP).
 
 ## 🎬 Latest official releases (YouTube)
+- **ZICO** — 지코 근황이라는 게 숨긴다고 숨겨지는 것도 아니고
 - **EVERGLOW** — Kingdom Hearts IV - Extended D23 2026 Trailer
-- **Oh My Girl** — 🐱승희의 멍냥진창 포캣멍센터 방문기🐶 | 봉사활동이라고 쓰고 힐링이라고 읽는ㄷr…🍃
-- **Chung Ha** — Long time not playing LA and actually got ambushed -.-
-- **SUNMI** — 𝐒𝐦𝐚𝐫𝐭 𝐊𝐢𝐭𝐜𝐡𝐞𝐧. 𝐒𝐦𝐨𝐨𝐭𝐡 𝐒𝐞𝐫𝐯𝐢𝐜𝐞｜𝐒𝐔𝐍𝐌𝐈 𝐅𝐋𝐄𝐗 𝟑 𝐊𝐃𝐒
-- **P1Harmony** — P1Harmony (피원하모니) INTAK (인탁) 'INTRO' Dance Practice @Seoul International Drama Awards 2026
-- **CRAVITY** — Boogley dance🕺💃
+- **Kiss of Life** — [KI-OFF] 위즈 파크에 승리 요정 하늘이 출근 🧚‍♀️🍀 | kt wiz 시구 Behind
+- **STAYC** — 👯‍♂️👯‍♂️👯‍♂️
+- **SF9** — 10년이면 이제 가족이지🏡 | 셒구가족의 다시 쓰는 너의 프로필📝
+- **IU** — IU with her bodyguard #iu #kpop #kdrama
 
 ## 🎤 Verified roster (640 acts)
 - **2NE1**: I Am the Best
