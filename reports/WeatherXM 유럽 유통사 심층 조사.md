@@ -219,6 +219,8 @@ Thanks for your time. I'm Logan, partnerships at Wellbian Labs. Short version: a
 
 ### HeliumDeploy
 
+> **10/10 추가** — 사람 창구: Rory Bokser(공동창업자 · Head of Product, 몬트리올). 짧은 InMail 을 먼저 보내고 제조사 창구는 병행(문안은 `depin/intel/business-directions.md` 「Rory Bokser」 절).
+
 받는 곳: 공개 「For Manufacturers」 페이지 양식. 스펙 시트와 보드 사진을 첨부하고 아래 본문을 메시지 칸에 넣는다. 양식에 글자 수 제한이 있으면 셋째 · 다섯째 문단(숫자 · 유럽)을 남기고 넷째 문단을 줄인다. 이 회사는 퀘벡 회사라 의사결정은 창업자 한두 명이 할 가능성이 크다.
 
 **(a) 첫 제출** — 제목: `Manufacturer submission: indoor air-quality monitor (spec sheet + board photo)` · 본문 1,430자

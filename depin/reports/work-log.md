@@ -2184,3 +2184,4 @@ Thanks Odelia — writing to you at that address today. Mine is support@wellbian
 - **Tobias Klaver(Hexaspot 영업 매니저 · 전 소유주 · Connect IoT/Trackpac) InMail(10/10)** — Hexaspot 1순위의 사람 창구. 보고서 첫 메일을 그에게 맞춰 1298자. 2025-10 소유주 종료 → 결정권자는 통화에서 확인. business-directions 끝 절.
 - **Tobias 짧은 판(10/10)** — 제품 소개 + XRP SEOUL 이후 XRPL 커뮤니티 · 미국 크리에이터 관심 + 유럽 진출 가능성 한 질문 653자. 「리플 반응 좋다」는 핵심 금지라 뺌.
 - **Tobias 최종판(10/10)** — 정제 데이터에 예측시장 플랫폼 문의가 들어오기 시작했다는 한 문장 추가(이름 · 정산 · 규모 0) 748자.
+- **Rory Bokser(HeliumDeploy 공동창업 · Head of Product) InMail(10/10)** — Tobias 최종판 결 · For Manufacturers 창구 병행 문장 809자. virtual mining · 수익 언급 0(통화에서 마케팅 부속서).

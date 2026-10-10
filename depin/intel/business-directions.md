@@ -3116,3 +3116,22 @@ Best regards,
 Logan (Seowoo Park)
 Head of Partnerships & Operations, Wellbian Labs
 ```
+
+## Rory Bokser (HeliumDeploy / Moken 공동창업자 · Head of Product · 몬트리올) — HeliumDeploy 2순위의 사람 창구 (2026-10-10, 서우 캡처 2장)
+- **자리**(캡처 기준): HeliumDeploy **Head of Product**(2022-01~ · 헤드라인 「Co-Founder & Head of Product at HeliumDeploy / Moken」) — 「virtual mining」 핵심 상품을 만들고 매출 1천만(단위 미표기) 성장에 기여, Moken.io(마켓플레이스 · 솔라나 보상 분배) 개발.
+  전 LunchBox 공동창업 · Product Lead(2017-09~2022-01, 몬트리올) · Wizrd 공동창업(2016~2017) · Magnit.io 개발자 · McGill 수학 연구조교. 메시지 버튼 있음(1촌 아님 → InMail).
+- **판정 — 보낸다(Tobias 최종판과 같은 결).** 제품 · 브랜드를 들이는 결정 라인이라 공개 「For Manufacturers」 창구와 병행해도 된다 — 본문에서 「그 창구가 먼저면 거기서 시작하겠다」로 길을 열어 둠.
+  **넣지 않은 것**: virtual mining · Moken · 수익 · 회수(그들 마케팅의 위험 지점 — 통화에서 마케팅 부속서로 다룸, 보고서 HeliumDeploy 통화 스크립트 6번) · 토큰 이름 · 플랫폼 이름 · 리플.
+- 제목(52자): `Indoor air quality for HeliumDeploy? – Wellbian Labs` · 본문 809자
+
+```
+Hi Rory,
+
+I'm Logan from Wellbian Labs in Seoul. We make an indoor air-quality monitor with KWeather, a Korean weather company with 30 years of observation, and connect it to a weather data network on the XRPL. Since our keynote at XRP SEOUL 2026 it has drawn interest from the XRPL community and from creators in the US. Our refined weather data has also started to bring inquiries from prediction-market platforms, and we are now looking at distribution beyond Korea.
+
+HeliumDeploy already carries WeatherXM and a wide DePIN range, so I wondered whether an indoor air-quality device could fit your lineup. Would you be open to a short chat? If your For Manufacturers page is the better first step, I'm happy to start there.
+
+Best regards,
+Logan (Seowoo Park)
+Head of Partnerships & Operations, Wellbian Labs
+```
