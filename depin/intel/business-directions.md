@@ -3201,4 +3201,4 @@ Head of Partnerships & Operations, Wellbian Labs
 - 메모 금지선: 토큰 · WLBN · 상장 · 거래소 · XRP SEOUL 스폰서 · 크립토닷컴 · OG.com · 예측시장 · 뉴욕 일정 0 · 공통 1촌 이름 0. 수락 뒤에도 그쪽이 먼저 열기 전엔 메시지 0.- **10/10 서우 「아냐 프리미엄 메시지도 그냥 써줘」 + 게시물 캡처** — 자리 보강: 프로필 직함 외에 **Bitstamp GM**(TOKEN2049 싱가포르 10/7~8 배너 「Vice President Institutional Crypto and GM of Bitstamp」).
   → InMail 로 보냄(서우 결정 — 로빈후드 상한 2 를 넘는 셋째 스레드임을 인지). 제목 「After TOKEN2049 – hello from Seoul」 · 본문 = TOKEN2049 안부 + Lynn 두 층 + XRP SEOUL 2026 우리 대표 키노트 + 경력 한 줄 + 뉴욕 10/24~29 커피 가벼운 제안(안 되면 연결만으로 좋다).
   0: 토큰 · WLBN · 상장 · Bitstamp 사업 · 예측시장 · 크립토닷컴 · OG.com · Johann/Allessandra · 공통 1촌 · 스폰서. 답이 오면 날씨 데이터 얘기로만 — 거래소 · 상장 질문은 「오늘은 날씨 데이터」로 돌린다. 문안 채팅.
-
+- **10/10 서우 수정 「뉴욕 가서 볼 수 있냐를 물어야 해, 기존 다른 사람처럼」** — Johann · Edward 판처럼 뉴욕 미팅 요청을 본론으로: 제목 「Meeting in New York, October 24–29 – Wellbian Labs」 · 첫 문단에 방문 목적 · 끝에 「30분 커피 가능?」 + 부재 시 뉴욕 팀 담당자 소개 부탁. 경력 칭찬 줄 뺌. 금지선 그대로. 문안 채팅.
