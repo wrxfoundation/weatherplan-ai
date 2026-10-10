@@ -3181,3 +3181,10 @@ Best regards,
 Logan (Seowoo Park)
 Head of Partnerships & Operations, Wellbian Labs
 ```
+
+**다음 컨택 라운드 — GEODNET · Aethir · 그 밖 DePIN(10/10, 서우 「다 컨택한상태네 그럼 geodnet 이나 aethir 쪽도 찾아보자」)** — 보고서 `reports/GEODNET Aethir 유통망과 컨택 창구.md`(첫 메시지 원문은 보고서에).
+- 판정: 실제 유통 물량 후보는 Village Island(동아시아 GEODNET · Wingbits 유통) 하나, 나머지는 소개 · 무대 · 목록 등재용. 한국은 DePIN 하드웨어 유통 빈칸 — 「한국 쪽 짝」으로 말을 건다.
+- Aethir: 플레이북 8/24 판정(동종 피어 아님) 유지. 판매 · 유통 · 기금 언급 없이 행사 패널 각도만(Mark Rydon) · 서우 결정에 따라 보류 가능. WeatherXM × Aethir 보조금은 경쟁사 데이터 사용 조건이라 신청 권고 아님.
+- Nubila: 데이터 층 겹침 → 기기 · 유통만 말한다. IoTeX · peaq: 통합 표현 금지, 「목록 · 데이터 가능성」까지.
+- GEODNET 본사(Horton)는 Village Island 답(한국 담당 여부) 뒤 — 유통사 건너뛰기 모양 금지.
+- 순서: 10/12~15 Village Island · Nubila(한 명) · 제타큐브 → 10/19~23 Horton · Larry Pang · SEA DePIN · Rydon · (선택) 토큰포스트. 한 회사 한 사람, 무응답 7일 뒤 예비 창구 1회.
