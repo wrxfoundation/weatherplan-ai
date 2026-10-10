@@ -3083,3 +3083,22 @@ Head of Partnerships & Operations, Wellbian Labs
 ```
 
 (본문 1298자)
+- **10/10 서우 「너무 깊게 묻는 듯 — 제품 홍보 곁들여 진출 가능성 정도로 간략히 · XRP SEOUL 이후 미국 인플루언서 반응 · 리플 반응 좋다 정도」 → 짧은 판(이걸 보냄, 위 긴 판 대체).**
+  넣은 것: 기기 + XRPL 날씨 데이터 네트워크(두 층) · XRP SEOUL 2026 키노트 이후 XRPL 커뮤니티와 미국 크리에이터 관심 · 유럽 진출 가능성 한 질문.
+  **뺀 것 — 「리플 반응이 좋다」**: 핵심 금지(리플은 RLUSD 발행사 · XRPL 기여자로만, 협력 · 논의 사실 자체 대외 언급 금지)에 걸린다. 같은 효과를 「XRPL community」로 냈다.
+  인증 · 수입 · 서류 질문은 통화에서(보고서 통화 스크립트).
+
+제목(48자): `Indoor air quality for Hexaspot? – Wellbian Labs`
+
+```
+Hi Tobias,
+
+I'm Logan from Wellbian Labs in Seoul. We make an indoor air-quality monitor with KWeather, a Korean weather company with 30 years of observation, and connect it to a weather data network on the XRPL. Since our keynote at XRP SEOUL 2026 it has drawn interest from the XRPL community and from creators in the US, and we are now looking at Europe.
+
+Seeing WeatherXM stations and LoRaWAN sensors in Hexaspot's range, I wondered whether an indoor air-quality device could have a place there too. Would you be open to a short chat about whether that is possible?
+
+Best regards,
+Logan (Seowoo Park)
+Head of Partnerships & Operations, Wellbian Labs
+```
+(본문 653자)

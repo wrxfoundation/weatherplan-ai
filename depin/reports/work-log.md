@@ -2182,3 +2182,4 @@ Thanks Odelia — writing to you at that address today. Mine is support@wellbian
 - **WeatherXM 유럽 유통사 심층 조사(10/10)** — 조사 5 병렬(WeatherXM · Crypship · Hexaspot/FreshMiners · HeliumDeploy · 리셀러 프로그램/EU 인증/MiCA) → 보고서 + docx. 순서 Hexaspot → HeliumDeploy(병행) → Crypship(서류 뒤) · FreshMiners 보류. 업체별 첫 메일(1,4~1,6천 자) · 7일 후속 · 통화 스크립트. 9/16 리스트 정정. 전부 검색 요약(사이트 차단).
 - **X DM Winkle(Crypto Researcher) 답(10/10)** — 보유 공개 · 하반기 전망은 빼고 「거래보다 만드는 쪽 · wellbian 집중」 176자. 투자방 유도형 첫 인사 패턴 — 종료 신호 목록. x-activity-log 끝.
 - **Tobias Klaver(Hexaspot 영업 매니저 · 전 소유주 · Connect IoT/Trackpac) InMail(10/10)** — Hexaspot 1순위의 사람 창구. 보고서 첫 메일을 그에게 맞춰 1298자. 2025-10 소유주 종료 → 결정권자는 통화에서 확인. business-directions 끝 절.
+- **Tobias 짧은 판(10/10)** — 제품 소개 + XRP SEOUL 이후 XRPL 커뮤니티 · 미국 크리에이터 관심 + 유럽 진출 가능성 한 질문 653자. 「리플 반응 좋다」는 핵심 금지라 뺌.
