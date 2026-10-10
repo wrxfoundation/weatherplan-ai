@@ -3135,3 +3135,29 @@ Best regards,
 Logan (Seowoo Park)
 Head of Partnerships & Operations, Wellbian Labs
 ```
+
+## Abel Solomon (HeliumDeploy CEO · 공동창업 · 영업 총괄 · 몬트리올) — HeliumDeploy 창구를 Rory 에서 Abel 로 (2026-10-10, 서우 캡처 2장)
+- **자리**(캡처 기준): HeliumDeploy **CEO(2026-07~)** · Head of Sales and co-founder(2021-08~, 몬트리올) · 전 Eatobia 창업(2018~2020, 식당 SaaS · 와이파이 150+곳) · ENERCON Canada 전기공학 인턴(2015) ·
+  콘코디아 전기전자공학 학사(전력 · 재생에너지) · 폴리테크니크 몽레알.
+- **판정 — HeliumDeploy 는 Abel 한 명에게만 보낸다. Rory 판은 보내지 않고 대기**(같은 회사 두 명 동시 = 뿌리기 · 계열 상한).
+  유통 · 공급 계약은 영업 총괄 출신 CEO 라인이 정한다. Rory(제품) 는 Abel 이 넘기거나 7일 무응답 때 예비.
+- **⚠ 서우 링크드인 프리미엄 결제 오류**(캡처 상단 「결제를 처리하는 동안 문제가 발생했습니다 · 결제 방법을 변경해 주세요」) — 프리미엄 메시지(InMail)가 막힐 수 있다.
+  결제를 고치기 전이면 Abel 은 **1촌 요청 + 메모(아래 300자 판)**로 가고, 수락 뒤 본문을 일반 메시지로 보낸다. Tobias 는 이미 요청 대기라 수락 뒤 일반 메시지(취소 · 재요청 금지).
+- **본문**(809자 — Rory 판과 같고 인사만 바꿈):
+
+```
+Hi Abel,
+
+I'm Logan from Wellbian Labs in Seoul. We make an indoor air-quality monitor with KWeather, a Korean weather company with 30 years of observation, and connect it to a weather data network on the XRPL. Since our keynote at XRP SEOUL 2026 it has drawn interest from the XRPL community and from creators in the US. Our refined weather data has also started to bring inquiries from prediction-market platforms, and we are now looking at distribution beyond Korea.
+
+HeliumDeploy already carries WeatherXM and a wide DePIN range, so I wondered whether an indoor air-quality device could fit your lineup. Would you be open to a short chat? If your For Manufacturers page is the better first step, I'm happy to start there.
+
+Best regards,
+Logan (Seowoo Park)
+Head of Partnerships & Operations, Wellbian Labs
+```
+- **1촌 요청 메모**(270자):
+
+```
+Hi Abel, I'm Logan from Wellbian Labs in Seoul. We make an indoor air-quality monitor with KWeather and connect it to a weather data network on the XRPL. We're looking at distribution beyond Korea and wondered if it could fit HeliumDeploy's lineup. Open to a short chat?
+```
