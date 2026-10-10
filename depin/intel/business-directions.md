@@ -3161,3 +3161,23 @@ Head of Partnerships & Operations, Wellbian Labs
 ```
 Hi Abel, I'm Logan from Wellbian Labs in Seoul. We make an indoor air-quality monitor with KWeather and connect it to a weather data network on the XRPL. We're looking at distribution beyond Korea and wondered if it could fit HeliumDeploy's lineup. Open to a short chat?
 ```
+
+## Crypship — 메일로 (2026-10-10, 서우 사이트 캡처 2장 · 「여긴 메일로 써야 할 듯」)
+- **원문 확인(캡처)**: Imprint = **Kansi Solutions GmbH**, 66640 Namborn(독일) · HRB 107712(자르브뤼켄 지방법원) · 대표 **Jonas Becker · Konstantin Nidens** · VAT DE346326134 · 연락 = 지원 메일 · 전화(저장소에 적지 않음).
+  홈 = 「Your #1 Shop for DePIN Hardware and Miners」 · 「Official Distributor for GEODNET, Wingbits, ROVR & many more」 · 칸 셋 Trending Miners / **Pre TGE**(SkyX SKY-100 224,99€ · Wingbits MGW310 908,50€ · **Nubila Marco 299€** — 날씨 관측소) / Bundles(MGW310 + Nubila 1.129€ 등).
+  → 조사 보고서의 Imprint 사실(법인 · 등록 · 대표)은 이제 원문 확인됨. 날씨 선반은 WeatherXM 이 아니라 **Nubila**.
+- **판정 — 지원 메일로, 두 대표 이름을 받는 사람으로.** 링크드인 사람 창구가 아직 없고 Imprint 의 공용 메일이 공식 창구다. 순서는 보고서대로 3순위지만 짧은 판이라 지금 보내도 된다(인증 · 서류 질문은 통화에서).
+  각도 = Nubila 날씨 관측소를 이미 판다 + RTKdata 로 데이터 쪽을 안다. **⚠ 「Pre TGE」 칸** — 우리 기기가 그 칸에 놓이면 토큰 출시 예고로 읽힌다. 통화 · 계약에서 「Pre TGE · 채굴 · 수익 칸 배치 금지」를 마케팅 부속서에 넣는다(메일에는 쓰지 않음).
+- 제목(64자): `Indoor air quality next to your Nubila stations? – Wellbian Labs` · 본문 856자
+
+```
+Dear Jonas, dear Konstantin,
+
+I'm Logan from Wellbian Labs in Seoul. We make an indoor air-quality monitor with KWeather, a Korean weather company with 30 years of observation, and connect it to a weather data network on the XRPL. Since our keynote at XRP SEOUL 2026 it has drawn interest from the XRPL community and from creators in the US. Our refined weather data has also started to bring inquiries from prediction-market platforms, and we are now looking at Europe.
+
+Crypship already carries Nubila weather stations alongside GEODNET and Wingbits, and with RTKdata you also know the data side of DePIN well. That is why I wanted to ask whether an indoor air-quality device could have a place in your shop. Would you be open to a short call to see if this is possible?
+
+Best regards,
+Logan (Seowoo Park)
+Head of Partnerships & Operations, Wellbian Labs
+```

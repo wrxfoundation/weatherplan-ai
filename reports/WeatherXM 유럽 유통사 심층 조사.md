@@ -294,6 +294,8 @@ Thanks for coming back on our submission. I'm Logan, partnerships at Wellbian La
 
 ### Crypship
 
+> **10/10 추가 — 원문 확인(서우 캡처)**: Imprint = Kansi Solutions GmbH · HRB 107712 · 대표 Jonas Becker · Konstantin Nidens(검색 요약과 일치). 홈의 날씨 선반은 **Nubila Marco(299€)** 이고 「Pre TGE」 칸이 있다. 짧은 판 메일은 `depin/intel/business-directions.md` 「Crypship — 메일로」 절.
+
 받는 곳: Bulk Orders 양식이나 Support Center 의 공용 지원 메일. 두 대표의 이름은 공개 About · 등기 정보에 있는 그대로 쓴다. 하드웨어 + 데이터(RTKdata), Nubila · SkyX 날씨 선반이 각도다. **보내는 시점은 케이웨더 인증 답을 받은 뒤(2~3주차)**로 한다.
 
 **(a) 첫 메일** — 제목: `Hardware plus data: an indoor air-quality monitor for Crypship` · 본문 1,446자
