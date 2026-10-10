@@ -2,6 +2,8 @@
 
 GEODNET 디스코드 익스포트 분석과 GEODNET · Wingbits · Hivemapper 공식 유통사 페이지(2026-09-16 기준)로 정리한 DePIN 하드웨어 리셀러 22곳과 폐업 · 비활성 3곳이다. 동아시아 공식 유통은 일본 **Village Island** 가 사실상 유일해 1순위 컨택이고, 한국어 검색으로 확인되는 국내 전문 리셀러는 없다. 글로벌 배송이 되는 멀티 브랜드 샵(HeliumDeploy · Crypship 등)이 해외 위탁 후보이며, 온보딩은 GEODNET 방식(무재고 · 결제 뒤 발주 · 디스코드 역할 · 리퍼럴 링크)을 참고하되 리셀러 파산에 대비해 고객 결제를 리셀러가 오래 쥐지 않게 하는 계약 조건이 필요하다.
 
+> **10/10 정정** — `reports/WeatherXM 유럽 유통사 심층 조사.md` 기준: ① Crypship 은 캐시된 WeatherXM 공식 리셀러 목록에 없고 WeatherXM 상품 페이지도 검색되지 않는다(취급 프로젝트 칸의 WeatherXM 은 미확인) · 자체 안테나 마운트 · 디스코드 상주도 미확인. ② Easynav 파산(2025-03)은 내부 GEODNET 디스코드 분석 근거이고, 외부 검색에서는 파산 기록을 찾지 못했다 — 확인 전 대외 인용 금지. ③ euGeo 는 WeatherXM 목록에 아직 보이고, AMP Champment(Ampchampment) 는 WeatherXM D1 을 EU 재고로 판다.
+
 ## 아시아 · 한국 접근 가능
 
 | 업체 | 본사 · 지역 | 취급 프로젝트 | 웹 | 비고 |

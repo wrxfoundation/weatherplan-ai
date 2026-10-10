@@ -3043,3 +3043,10 @@ Head of Partnerships & Operations, Wellbian Labs
 ```
 Joanne 님 안녕하세요, 웰비안 랩스의 박서우입니다. 저희는 케이웨더가 기기 파트너인 실내 공기질 측정기를 중심으로 한 웹3(DePIN) 프로젝트입니다. 이 측정기를 유럽, 특히 네덜란드 쪽에 공급할 길이 있을지 궁금한데, 웹3 서비스도 도와주실 수 있는 분야인지 먼저 여쭙고 싶습니다.
 ```
+
+## WeatherXM 유럽 유통사 심층 조사 → 순서 확정 (2026-10-10, 서우 「1순위 WeatherXM 파는 곳 먼저 깊게 캐보자 · 스크립트」)
+- 보고서 = 저장소 루트 `reports/WeatherXM 유럽 유통사 심층 조사.md`(+ .docx). 업체별 첫 메일 · 7일 후속 · 통화 스크립트(물을 것 8 · 예상 질문 5 답)는 보고서 「업체별 컨택 스크립트」가 정본.
+- **순서**: ① Hexaspot(1주차 메일 — 공용 창구 → 기업 영업) ② HeliumDeploy(같은 주 제조사 창구 제출 · 마케팅 부속서 · EU 수입자 정리 전 서명 금지) ③ Crypship(2~3주차, 인증 상태 받은 뒤) · FreshMiners 보류.
+- **10/10 유럽 유통 방향 절의 수정**: Crypship 1순위 → 3순위(WeatherXM 공식 목록에 없음 — 캐시 기준). 같은 절의 「Easynav 파산 교훈」은 외부 미확인 — 내부 디스코드 근거로만.
+- **막힌 곳 = 서류**: 이번 주 첫 행동은 케이웨더에 ARC-600DA 의 EU 인증(CE/RED · EN 18031 · RoHS) 상태 문의. 메일에는 「인증 상태는 기기 파트너와 확인 중」으로만 쓴다(있다고 하지 않음).
+- **문구**: 메일에서 「certified」를 뺐다(EU 리셀러는 CE 주장으로 읽음). WLBN 이름 0 · 보상 = 「in testing, no promised amounts」 · 숫자 0. 「eleven independent sources」 표현은 playbook 의 「eleven weather feeds」 전환 결정 대기와 맞물림 — 서우 결정 시 함께 바꾼다.
