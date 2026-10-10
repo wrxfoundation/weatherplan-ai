@@ -4251,3 +4251,14 @@ Two quick things we ask of everyone with a code:
 And since US units haven't started shipping yet, it's worth mentioning that to anyone who orders now.
 ```
 - James 에게도 C 의 두 줄(광고 표시 · 보상 문구)이 갔는지 확인 — 팀 메일에 없었다면 같은 두 줄을 James 에게도 한 번(같은 조건 · 같은 요청).
+
+## DM — .Ripple.Bull.Winkle.|.Crypto.Researcher (2026-10-10, 서우 캡처 · 「XRP 약간 투자 및 하반기 호황을 믿는다, 난 wellbian 에 집중」)
+- 상대: 2009 가입 · 팔로워 3.4천 · 「Hello Logan」 → 「I noticed you're following my contents… How's the stock/crypto market going with you?」.
+- **판정 — 답은 하되 서우 원안의 두 줄은 뺀다.** ① 「XRP 약간 투자」 = 계정 운영자의 보유 공개 → 홍보 · 이해충돌로 읽힘 ② 「하반기 호황을 믿는다」 = 시세 전망(playbook 금지).
+  이 첫 인사 형태(팔로우 감사 → 「시장 어떠냐」)는 투자방 · 시그널 · 「멘토」 유도형 DM 의 흔한 시작이다 — 단정은 아님.
+- **보낸 답**(EN, 176자): 거래보다 만드는 데 시간을 쓴다 → wellbian(XRPL 위 날씨 데이터 네트워크)에 집중. 링크 · 토큰 · 숫자 0.
+
+```
+Thanks Winkle! Nice to meet you too. I spend my time building rather than trading these days. I'm focused on Wellbian, a weather data network on the XRPL. Glad to be connected.
+```
+- **다음 신호면 대화 종료**: 트레이딩 그룹 · 텔레그램 · 왓츠앱 이동 권유, 수익 · 시그널 · 「투자 기회」, 지갑 · 시드 · 결제 요청, 거래소 · 앱 추천. 협업 · 콘텐츠 제안이면 KOL 사다리(`celeb-ladder.md`) 기준으로 따로 본다.

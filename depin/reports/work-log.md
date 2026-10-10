@@ -2180,3 +2180,4 @@ Thanks Odelia — writing to you at that address today. Mine is support@wellbian
 - **유럽 유통 방향 · Andy Pringle(YOM CCO) (10/10 서우 「DePIN 유통업체 컨택해야 할 듯」)** — 1순위 = WeatherXM 을 이미 파는 EU 유통사(Crypship · Hexaspot · HeliumDeploy, 9/16 리스트). 첫 메일은 「등재 요구 조건」을 묻는 형식(약속 0), 보내기 전 CE · MiCA 의견 · 유통 조건 · 기기 한 장. Andy = 1촌 메모(유럽 DePIN 동료). business-directions 끝 절.
 - **Joanne 짧은 판(10/10)** — 웹3(DePIN) 먼저 밝히고 유럽 공급 · 웹3 취급 여부만 묻는 162자. business-directions Joanne 절 끝.
 - **WeatherXM 유럽 유통사 심층 조사(10/10)** — 조사 5 병렬(WeatherXM · Crypship · Hexaspot/FreshMiners · HeliumDeploy · 리셀러 프로그램/EU 인증/MiCA) → 보고서 + docx. 순서 Hexaspot → HeliumDeploy(병행) → Crypship(서류 뒤) · FreshMiners 보류. 업체별 첫 메일(1,4~1,6천 자) · 7일 후속 · 통화 스크립트. 9/16 리스트 정정. 전부 검색 요약(사이트 차단).
+- **X DM Winkle(Crypto Researcher) 답(10/10)** — 보유 공개 · 하반기 전망은 빼고 「거래보다 만드는 쪽 · wellbian 집중」 176자. 투자방 유도형 첫 인사 패턴 — 종료 신호 목록. x-activity-log 끝.
