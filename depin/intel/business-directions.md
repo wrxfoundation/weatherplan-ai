@@ -2998,3 +2998,43 @@ Joanne 님 안녕하세요, 웰비안 랩스(Wellbian Labs)에서 파트너십·
 
 박서우 드림
 ```
+
+## 유럽 유통 방향 — 「DePIN 유통사로 가자」 + Andy Pringle (YOM CCO · 바르셀로나) (2026-10-10, 서우 캡처 3장 · 「DePIN 유통업체를 컨택해야 할 듯한데」)
+- **판정 — 맞다. 유럽 첫 문은 Joanne(현지화 대행)이 아니라 이미 날씨 · 환경 DePIN 기기를 파는 유통사다.**
+  저장소 `reports/DePIN 하드웨어 리셀러 유통사 리스트.md`(9/16) 유럽 · 글로벌 칸에서 **WeatherXM(날씨 관측 DePIN — 우리와 가장 가까운 비교군)을 이미 파는 곳**이 1순위:
+  ① **Crypship.io**(독일 · Helium · DIMO · WeatherXM · GEODNET 등 멀티, 디스코드 상주) ② **Hexaspot**(네덜란드 · WeatherXM · Helium · LoRaWAN, RAKwireless 파트너)
+  ③ **HeliumDeploy**(캐나다 본사 · EU 창고 · WeatherXM 포함 · 규모 최대) ④ FreshMiners(네덜란드 · GEODNET · Wingbits · Hivemapper — 날씨 없음).
+  연락 전 각 프로젝트 공식 목록에서 현재 등재 다시 확인(리스트 원칙). 연락처는 저장소 밖(9/16 원본 · 서우 전달본).
+- **보내기 전 준비(없으면 첫 답에서 막힘)**: ① ARC-600DA CE(RED · EMC · LVD) · RED 사이버보안 · RoHS · WEEE 가능 여부 — 케이웨더 ② 보상 층 EU 규제(MiCA) 법무 한 줄 의견 — 10/10 Joanne 절 ①~④
+  ③ 유통 조건 초안(공급가 · 마진 · 드롭십/주문 후 발주 — GEODNET 은 무재고 · 결제 뒤 발주 · 결제 장기 보유 금지(Easynav 파산 교훈)) · 배송지(한국 → EU 관세 · 부가세 · IOSS) ④ 기기 한 장 자료.
+  → 그래서 첫 메일은 **「등재에 뭘 요구하는지」를 묻는 형식** — 그들의 요구 목록이 곧 우리 준비 목록이 된다. 공급 · 가격 · 일정 약속 0.
+- **Andy Pringle**: YOM CCO(2025-01~, DePIN 클라우드 게이밍 — 그 전 어드바이저 2024-11~, 바르셀로나) · Circle Square 헤드헌팅(사모 · VC · IB, 런던 2004~) · 블록체인 스타트업 다수 어드바이저 ·
+  B Minted 어드바이저(2022~2025) · 팔로워 약 1.4만 · 2촌(공통 Bogdan). 유통사가 아니라 **유럽 DePIN 운영 동료 · 소개 허브** 자리. 할 일 = 1촌 요청 메모(아래) · 수락 뒤엔 그가 반응하면
+  「YOM 은 유럽에서 하드웨어를 어떤 채널로 내는지」 한 질문까지. 어드바이저 · 헤드헌팅 영업이 오면 정중히 보류(우리는 지금 고용 · 자문 계약 단계 아님).
+- **Andy 1촌 요청 메모**(EN, 282자):
+
+```
+Hi Andy, I'm Logan, Head of Partnerships & Operations at Wellbian Labs in Seoul. We run a weather DePIN: certified indoor air sensors with KWeather as device partner, plus city weather for 172 cities fingerprinted to a public ledger. Glad to connect with a DePIN operator in Europe.
+```
+- **유통사 첫 메일 틀**(EN, 1179자 — Crypship · Hexaspot · HeliumDeploy 각각 이름만 바꿔. 위 준비 ①이 「불가」면 보내지 않는다):
+
+```
+Subject: New weather DePIN hardware for your EU shop – Wellbian Labs
+
+Hi [name],
+
+I'm Logan, Head of Partnerships & Operations at Wellbian Labs in Seoul. Your shop already carries weather and environmental DePIN hardware, so I wanted to ask how you onboard a new device.
+
+What we have: a certified indoor air-quality station built with KWeather, a Korean weather company with 30 years of observation and around 4,000 corporate and public clients. Each station feeds a network that also publishes city-level weather for 172 cities, every input fingerprinted to a public ledger. The participation rewards layer is still in testing, with no promised amounts.
+
+We are looking at EU distribution and would like to understand your side before we commit to anything:
+1. What you need from a project before listing (certifications, documentation, support model)
+2. How you prefer to work: stock, dropship, or order-then-ship
+3. What you usually expect projects to have settled on the EU regulatory side for the rewards layer
+
+If it is useful, I can send a one-page device sheet. Thank you for your time.
+
+Best regards,
+Logan (Seowoo Park)
+Head of Partnerships & Operations, Wellbian Labs
+```
