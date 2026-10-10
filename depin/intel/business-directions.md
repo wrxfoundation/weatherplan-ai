@@ -3102,3 +3102,17 @@ Logan (Seowoo Park)
 Head of Partnerships & Operations, Wellbian Labs
 ```
 (본문 653자)
+- **10/10 서우 「관측 정제 데이터가 좋아서 예측마켓에서도 문의가 들어오고 있다 정도로 약간 어필」 → 최종판(이걸 보냄).** 한 문장 추가: 「Our refined weather data has also started to bring inquiries from prediction-market platforms」.
+  플랫폼 이름 0(예측시장끼리 이름 흘리지 않기 · 크립토닷컴 MNDA) · 정산 · 계약 · 규모 표현 0 — 「문의가 들어오기 시작했다」까지(크립토닷컴 · Limitless 인바운드가 근거). 본문 748자.
+
+```
+Hi Tobias,
+
+I'm Logan from Wellbian Labs in Seoul. We make an indoor air-quality monitor with KWeather, a Korean weather company with 30 years of observation, and connect it to a weather data network on the XRPL. Since our keynote at XRP SEOUL 2026 it has drawn interest from the XRPL community and from creators in the US. Our refined weather data has also started to bring inquiries from prediction-market platforms, and we are now looking at Europe.
+
+Seeing WeatherXM stations and LoRaWAN sensors in Hexaspot's range, I wondered whether an indoor air-quality device could have a place there too. Would you be open to a short chat about whether that is possible?
+
+Best regards,
+Logan (Seowoo Park)
+Head of Partnerships & Operations, Wellbian Labs
+```
