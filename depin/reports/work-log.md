@@ -2202,3 +2202,4 @@ Thanks Odelia — writing to you at that address today. Mine is support@wellbian
 - **Gemini 창구 교체(10/11, 서우 「gemini titan」 검색 캡처 2장)** — 한 사람 = Oliver Li(Prediction Markets · 상품 운영 · 출시, Gemini Titan, 샌프란시스코) · 30분 화상(뉴욕 줄 0) · 예비 Elaine Song(뉴욕) · 법무 Brigitte Weyls 는 계약 단계. InMail 본문 1,230자 · 메모 229자.
 - **Gemini Elaine Song 병행 발송(10/11, 서우 「시간 없어서 던져 보자 그래도」)** — Oliver(화상) + Elaine(뉴욕 커피) = Gemini 상한 2. Elaine 본문에 「Oliver 에게도 썼다」 한 줄. 본문 1,340자 · 메모 237자.
 - **Bonnie Y Chan(HKEX CEO) 링크드인 글 댓글(10/11, 서우 「댓글 달자」 — 서우 팔로우 중)** — HKEX Foundation 돌봄 가족의 날 · CarePal 첫 등장 글. 댓글 = 돌봄에 대한 감사 + CarePal 축하만(A 210자 · B 서울 고령 가족 한 줄 212자). 제품 · 실내 공기 · 데이터 · 거래소 · 상장 언급 0(사회공헌 글에 영업 0).
+- **Emilie Choi(Coinbase President & COO) 판정(10/11, 서우 캡처 3장 · 1촌 대기)** — 요청 유지 · 수락 시 Lynn 기본 인사(561자)만 · 사업은 예측시장 제품 책임자에게. 선택안: 「예측시장 팀 맞는 사람 이름 하나」 InMail(본문 1,072자).
