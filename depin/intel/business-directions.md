@@ -3252,4 +3252,7 @@ Head of Partnerships & Operations, Wellbian Labs
   샌프란시스코라 **30분 화상만**(Louis 와 같은 결 — 뉴욕 줄 0). InMail 제목 65자 · 본문 1,230자 · 1촌 메모 229자(문안 채팅).
   - Elaine Song(뉴욕 · 전략 · 사업개발)은 **7일 무응답일 때 예비**(한 회사 한 사람). Brigitte Weyls(General Counsel, Gemini Titan · 시카고) = 법무, 계약 단계에서 딜 주인이 붙임.
   - 대상 아님: Rohan C.(전 Gemini Titan CEO → 현 Cubist) · Mansi B.(전 Gemini 법무 → Overchain) · Severo De La Riva(예측시장 인턴) · Titan Gemini Group · Titan Global · 그 밖 「Titan」 동명.
+- **10/11 서우 「시간이 없어서 던져 보자 그래도」 — Elaine Song 도 지금 함께 보냄(Oliver 와 병행).** Gemini 동시 대화 = Oliver(화상) + Elaine(뉴욕 커피) = **상한 2 꽉 참 → Gemini 새 사람 0.**
+  Elaine 경력(서우 캡처): Gemini Strategy and Corporate Development(2025-09~ · 뉴욕) · HBAR Foundation VP Strategy · Crypto Economy Fund Director(2021~2025) · Okcoin Crypto Partnerships Lead · Gartner · UPenn(정치학 · 동아시아학) · Georgetown(기술경영 석사).
+  병행이라 **「Oliver Li 에게도 썼으니 편하게 같이 넣어 달라」 한 줄**로 밝힘(Allessandra 10/8 선례 — 몰래 두 갈래로 보이지 않게). 전 직장 · 체인 이름(HBAR 등) 0. InMail 제목 65자 · 본문 1,340자 · 1촌 메모 237자.
 

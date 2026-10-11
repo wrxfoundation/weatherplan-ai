@@ -2200,3 +2200,4 @@ Thanks Odelia — writing to you at that address today. Mine is support@wellbian
 - **Pascal Kurzawa(Exodus · Monavate Head of Partnerships, 싱가포르) 판정(10/11, 서우 캡처 3장)** — 지갑 · 스왑 · 카드 결제 레인 = 거래소에 준함 → 1촌 요청 + Lynn 기본 메모(251자) · 수락 뒤 Lynn 기본 인사(561자)까지, 사업 0. 공통 1촌 Vincent · Daria. 결제 레인이 필요해질 때 다시.
 - **Gemini 창구 판정(10/11, 서우 캡처 5장)** — Eric Kuhn(Head of Onchain, 마이애미) 지금 아님 · 한 사람 = Elaine Song(전략 · 사업개발, 뉴욕) — 「Gemini Predictions」 제품 책임자를 먼저 찾으면 교체. InMail 본문 1,260자 · 메모 237자.
 - **Gemini 창구 교체(10/11, 서우 「gemini titan」 검색 캡처 2장)** — 한 사람 = Oliver Li(Prediction Markets · 상품 운영 · 출시, Gemini Titan, 샌프란시스코) · 30분 화상(뉴욕 줄 0) · 예비 Elaine Song(뉴욕) · 법무 Brigitte Weyls 는 계약 단계. InMail 본문 1,230자 · 메모 229자.
+- **Gemini Elaine Song 병행 발송(10/11, 서우 「시간 없어서 던져 보자 그래도」)** — Oliver(화상) + Elaine(뉴욕 커피) = Gemini 상한 2. Elaine 본문에 「Oliver 에게도 썼다」 한 줄. 본문 1,340자 · 메모 237자.
