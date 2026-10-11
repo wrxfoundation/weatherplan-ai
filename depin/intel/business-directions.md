@@ -3223,4 +3223,8 @@ Head of Partnerships & Operations, Wellbian Labs
 - **Arbol — Sid Jha**(Founder & CEO, 뉴욕). 각도: 파라메트릭 트리거 값 — 관측소 하나는 빠지거나 틀어지고, 피드 합의 + 입력 공개 기록은 사후 분쟁에 강하다 → 트리거 지수 또는 두 번째 확인(미국 · 유럽 밖 도시 포함). dClimate(Arbol 계열 데이터 마켓)는 언급 0. 제목 51자 · 본문 1202자 · 메모 265자.
 - **Fanatics Markets — 책임자 미확인**(링크드인에서 「Fanatics Markets」 예측시장 · 거래소 · 제품 책임자 찾기, 못 찾으면 Fanatics Betting & Gaming 경영진 — 직함 확인). 각도: 「기후가 로드맵에 있다」(회사 발표) → 정산 숫자가 어려운 부분 · 공항 센서 하나 대신 합의 + 공개 기록 + withheld. 지금은 크립토닷컴 CDNA 위에서 운영 → 크립토닷컴 · BGC 인수 언급 0. 제목 54자 · 본문 1293자 · 메모 254자.
 - InMail 결제 오류가 남아 있으면 1촌 메모(300자 안)로 보내고 수락 뒤 본문.
+- **10/11 Fanatics Markets 사람 확인(서우 링크드인 검색 캡처 4장)** — 후보: **Louis Sutton**(VP Product @ Fanatics Markets · 런던 · 2촌 · 팔로워 약 2.2만) · Josh Horowitz(Fanatics VP, Fanatics Markets · 리노 · 「Building the future of prediction markets」) · Ryan F.(Chief Compliance Officer, Fanatics Markets · 미국 · 뉴욕 컴플라이언스 채용 중 · 공통 1촌 Stephen · Matt) · Scot McClintic(COO, Fanatics Betting & Gaming · 필라델피아 · 전 CPO 2021~2024 뉴욕) · Jim Bumbulsky(「Prediction Markets — ex Crypto.com, Fanatics」, 전 직원) · Maria Frackowiak(전 ADI Predictstreet 마케팅 · 두바이).
+  - **판정 — 한 사람 = Louis Sutton(제품).** 기후를 로드맵에 넣는 결정이 제품 자리다. 런던이라 뉴욕 대면 대신 **30분 화상 + 「팀원이 그 주 뉴욕에 있으면 대면」 한 줄**. 7일 무응답이면 예비 = Josh Horowitz(직무 확인 뒤).
+  - Ryan F.(컴플라이언스)는 딜을 여는 자리가 아니라 계약 단계에서 — 그리고 공통 1촌 「Stephen」이 크립토닷컴 · OG.com 의 Stephen Humenik 일 수 있다(확인 전) → **그 경로로 소개를 부탁하지 않는다.** Scot McClintic(사업부 COO)은 제품 경로가 막힐 때만. Jim Bumbulsky · Maria Frackowiak 은 대상 아님(전 직원 · 다른 회사).
+  - InMail: 제목 54자 · 본문 1,320자 · 1촌 메모 245자(문안 채팅). 크립토닷컴 · BGC 인수 언급 0.
 
