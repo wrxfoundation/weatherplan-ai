@@ -2198,3 +2198,4 @@ Thanks Odelia — writing to you at that address today. Mine is support@wellbian
 - **Fanatics Markets 사람 판정(10/11, 서우 캡처 4장)** — 한 사람 = Louis Sutton(VP Product, 런던) · 화상 + 「팀원이 뉴욕에 있으면 대면」 · 예비 Josh Horowitz · Ryan F.(CCO, 공통 1촌 Stephen — 크립토닷컴 쪽일 수 있음) 경로 0 · Scot McClintic(COO)은 막힐 때만. InMail 본문 1,320자 · 메모 245자.
 - **Louis Sutton InMail 수정(10/11, 서우 「뉴욕에서 보자는 얘기 빼고 화상 미팅 가능하다 정도로」)** — 뉴욕 줄 삭제 → 「30분 화상, 런던 일정에 맞추겠다」. 본문 1,251자 · 메모 251자.
 - **Pascal Kurzawa(Exodus · Monavate Head of Partnerships, 싱가포르) 판정(10/11, 서우 캡처 3장)** — 지갑 · 스왑 · 카드 결제 레인 = 거래소에 준함 → 1촌 요청 + Lynn 기본 메모(251자) · 수락 뒤 Lynn 기본 인사(561자)까지, 사업 0. 공통 1촌 Vincent · Daria. 결제 레인이 필요해질 때 다시.
+- **Gemini 창구 판정(10/11, 서우 캡처 5장)** — Eric Kuhn(Head of Onchain, 마이애미) 지금 아님 · 한 사람 = Elaine Song(전략 · 사업개발, 뉴욕) — 「Gemini Predictions」 제품 책임자를 먼저 찾으면 교체. InMail 본문 1,262자 · 메모 237자.

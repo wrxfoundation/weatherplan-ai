@@ -3240,3 +3240,12 @@ Head of Partnerships & Operations, Wellbian Labs
   ④ 열리는 때: 기기 결제 · x402 기계 결제에 스테이블코인 결제 파트너가 필요해질 때(결제 레인) — 그쪽이 먼저 물으면 그때.
 - 금지: WLBN · 토큰 · 지갑 지원 · 스왑 · 상장 · 가격 · RLUSD/리플 0 · TOKEN2049 믹서 언급 0(우리는 안 갔다).
 
+## Gemini — 누구에게 (2026-10-11, 서우 링크드인 검색 캡처 5장 · Eric Kuhn 프로필)
+
+- 맥락: 전수 리스트 15번(Gemini Titan · Olympus = CFTC DCM · DCO, 예측시장은 크립토 위주 · 날씨 없음 · 뉴욕 본사). 우리 레인 = 새 범주로서의 날씨 정산.
+- **Eric Kuhn(Head of Onchain · 마이애미 · 재택 · 전 Kraken Director of Product · Microsoft 분산 신원 · Apple Pay PM)** → **지금 아님.** 온체인(지갑 · 디파이) 자리라 예측시장 상품 주인이 아니고, 말을 걸면 토큰 · 온체인 질문으로 간다. 뉴욕도 아님. 그쪽이 먼저 연결하면 Lynn 인사만.
+- 캡처 안의 다른 사람: Clark Read(Head of Trading — 거래 데스크, 상장 아님) · Olivia Santarelli(마케팅) · Charles Ng(APAC CCO) · Louisa D.(UK 컴플라이언스) · Chris Colman(APAC OTC) · Eddie Perdomo(카드 지원) → 대상 아님.
+  Eli Dubizh(소프트웨어 엔지니어 · 「Predictions @Gemini」 · 뉴욕) = 예측시장 팀이 뉴욕에 있다는 신호, 첫 문은 아님. Nolen Neri Hayes(현 Polymarket 기관 영업, 전 Gemini) = 폴리마켓 상한 → 0. Google Gemini(Grant Delgado · Kaitlyn Roberts) · CrowdReply · 전 직원(Rakib · Sena S.)은 무관.
+- **한 사람 = Elaine Song(Strategy and Corporate Development · 뉴욕 · 「Building markets & ecosystems for digital and emerging assets」)** — 단, 먼저 링크드인에서 「Gemini Predictions」 · 「Gemini Titan」으로 예측시장 제품 · GM 을 찾아 있으면 그 사람으로 바꾼다.
+  InMail: 제목 65자 · 본문 1,262자 · 1촌 메모 237자(뉴욕 10/24~29 커피 · 다른 담당이면 한 사람만). 「크립토 가격」 대신 「cover crypto today」 — 가격 · 토큰 · 상장 단어 0.
+
