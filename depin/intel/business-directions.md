@@ -3292,3 +3292,20 @@ Head of Partnerships & Operations, Wellbian Labs
   ④ **조건 대화 전에 받을 것**: 회사 사이트 · 무역 면허 · TDRA 딜러 등록 여부 · 지금 파는 기기.
 - **문안**(채팅): 1촌 요청 메모 281자 · 수락 뒤(이미 1촌이면 바로) 메시지 1,183자. Lynn 두 층(측정기 + 172 · 91 · 11개 출처 · 원장 지문) · 두 질문 ·
   「UAE 승인은 아직 기기 파트너와 밟아야 할 단계 — 제안이 아니라 초기 대화」. certified 0(UAE 승인 주장으로 읽힘) · 금지어 검사 0(coin · earn · certif · exclusiv · WLBN · XRP · reward · price 등).
+
+## Victus Global BD 두 사람 — Sam Obi · Jay (Kuku) Patel — 판정 (2026-10-11, 서우 캡처 5장 · Jay 에게 1촌 요청 보냄)
+
+- **Victus Global**(검색 요약 · 회사 자체 자료 위주): 「Web3 투자 · 디지털자산 인프라」 회사(BVI, 2022~ · CEO Matisse Eykelberg) — 토큰 OTC 자금 · 마켓메이킹 · 담보 대출.
+  BD 채용 공고 = 「이미 거래소에 상장된 프로젝트를 찾아 OTC 부서로 연결」 · BD 프로그램 = OTC · 마켓메이킹 · 자문 계약이 성사되면 수수료.
+- **Sam Obi**(캡처 기준): Victus Global BDM(시간제 2026-03~) · MetaLabs Ventures BDM(2025-09~, 재택) · Navi BDM(2025-02~) · 전 Likvidi 브랜드 앰배서더 · 나이지리아 포트하커트 · 2촌(공통 1촌 1).
+- **Jay (Kuku) Patel**(캡처 기준): 「Web3 BD | Community Management | Growth Strategy」 · GonnaMakeIt NFTs BD Specialist(시간제 2026-08~, 프로젝트 소싱 · 온보딩) ·
+  Victus Global BD Representative(시간제 2026-08~, 재택 · 경력 칸에 Gate 이미지) · Bitfinity Network core team(커뮤니티, 2022~) · BD KOL Partner · 인도 바도다라 · 2촌(공통 1촌 14).
+  **서우가 1촌 요청 보냄(대기 중).** 배너의 개인 연락처는 저장소에 적지 않는다.
+- **판정 — 둘 다 레인 밖. Sam = 1촌 0 · 할 일 0. Jay = 대기 중 요청은 취소 권장(수락돼도 우리가 먼저 메시지 0).**
+  ① 수수료형 BD — 상장된 토큰의 OTC 자금 · 마켓메이킹 · 상장 · KOL 을 파는 자리. 우리는 거래소 · 상장 · 유동성 신호 0 이고 WLBN 출금 · 상장도 열리지 않았다 —
+     그쪽이 팔 물건이 우리에게 없다(Tina Lee/BYDFi 9/10 과 같은 결, 더 조인다: 마켓메이킹 = 가격 관리).
+  ② 우리가 먼저 요청한 모양이라 「관심 있다」로 읽힌다 → 수락되면 제안 메시지가 이어진다. 케이웨더(코스닥 상장사) 이름이 마켓메이커 · OTC 와 엮이지 않게.
+  ③ 취소하면 3주 재요청 불가 — 이 경우엔 문제 없다.
+- **그쪽이 먼저 제안하면**(수락 뒤 · 인바운드) 한 줄로 닫는다(114자): `Thanks for reaching out. That isn't something we're looking at, but I appreciate you thinking of us. All the best.`
+  토큰 · 상장 · 가격 단어 0. 선금 · 수수료 · 지갑 정보 요구는 응하지 않는다.
+- 같은 화면 「더 많은 프로필」(VC · 교수 · 마케터 등)도 지금 레인 밖 — 할 일 0.
