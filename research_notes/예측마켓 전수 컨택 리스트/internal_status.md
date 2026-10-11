@@ -26,6 +26,7 @@
 - Neal Kumar(CLO, 뉴욕) — 보류 · 반응 0
 - **Edward Lee(Head of Product, Exchange, 뉴욕 대면) — InMail(10/8, 서우 결정) · 폴리마켓 제품 스레드는 Edward 하나로**
 - Nate Schanker(Growth Lead, Tennis, 캔자스시티) — 인사 + 뉴욕 담당자 소개 부탁(10/8)
+- Sammi Tapper(Chief of Staff to the Chief Growth Officer, 뉴욕 대면 · 2026-10 합류) — 보류 · 합류 글 반응 0(10/11)
 - → 폴리마켓은 상한을 이미 크게 넘었다(서우 결정들). **새 사람 추가 0** — 답이 오면 Edward(제품) · Paul/기관 메일 스레드로 모은다.
 
 **칼시 (뉴욕 본사)**

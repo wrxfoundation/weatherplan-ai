@@ -3264,3 +3264,16 @@ Head of Partnerships & Operations, Wellbian Labs
   ③ Coinbase 쪽 기존 1촌 Wilson Cheng · Chantal Bradford 는 1촌만 — 동시 대화 0 이라 상한 문제는 없다.
 - **서우가 그래도 지금 던지기로 하면(선택안)**: InMail 은 미팅 요청이 아니라 **「예측시장 팀의 맞는 사람 이름 하나」**만 묻는다 — 제목 60자 · 본문 1,072자(문안 채팅). 토큰 · WLBN · 상장 · 가격 · 다른 거래소 이름 0. 이 경우 수락 뒤 Lynn 인사는 생략(같은 사람에게 두 번 소개 0).
 
+## Sammi Tapper (Polymarket, Chief of Staff to the Chief Growth Officer · 뉴욕 대면) — 판정 (2026-10-11, 서우 캡처 3장 · 2촌)
+
+- **자리**(캡처 기준): Polymarket Chief of Staff, Chief Growth Officer(**2026-10~**, 1개월 · 뉴욕 대면 · 2일 전 합류 글 「Vogue · Condé Nast 3년 뒤 CGO 비서실장으로」) ·
+  Vogue 3년 3개월(Director of Operations, Special Projects 2025-10~ · 보그 편집장 겸 콘데나스트 글로벌 CCO 비서 2023-08~2025-10) · CAA 연극 부문 Business Affairs 보조(2022~2023) ·
+  Northwestern 커뮤니케이션 · 국제학 · 중국어(2022). 인증 배지 · 2촌 · 1촌 500+ · 팔로워 3,303. CGO 이름은 캡처에 없음(확인 전).
+- **판정 — 1촌 요청 보류 · 합류 글 좋아요 · 댓글 0 · 할 일 0.**
+  ① **폴리마켓 아홉째** — 상한(Paul + 기관 메일)은 진작 넘었고 제품 스레드 = Edward(10/8 InMail) · 뉴욕 소개 부탁 = Nate(10/8) 둘 다 답 대기. 전수 리스트 규칙 「폴리마켓 새 사람 추가 0」.
+     답 전에 같은 회사 뉴욕 사람에게 또 가면 수가 조급함으로 읽힌다(Neal 10/7 과 같은 결).
+  ② **자리가 다르다** — 성장 총괄의 비서실장(일정 · 운영 · 특별 프로젝트, 1개월 차) — 정산 출처 · 계약 사양을 정하는 자리가 아니다. 성장 레인은 한국 이용자 마케팅과 이어진다
+     (Shirley 9/29 — 한국에서 막힌 플랫폼이라 0).
+  ③ **공개 반응 0** — 폴리마켓 경영진 글 공개 댓글 0 규칙(케이웨더 상장사 이름이 국내 예측시장 · 도박 논쟁에 엮이지 않게). 합류 축하 글도 같다.
+- **다시 볼 때**: Edward · Nate 답이 성장 쪽(CGO)을 가리키거나 뉴욕 자리에 CGO 가 붙을 때 — 그때 일정 창구. 서우에게 먼저 가져와 상한을 다시 본다.
+  그가 먼저 연결하면 인사만(예측시장 공통 규칙 — 측정기 절반 뺌 · 「eleven weather feeds」 · 「settlement · market」 0 · 플랫폼 · 전 직장 이름 0 · 문장은 Shirley · Malea · Lisa 와 다르게) 후 Edward 스레드로 잇는다.
