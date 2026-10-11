@@ -3277,3 +3277,18 @@ Head of Partnerships & Operations, Wellbian Labs
   ③ **공개 반응 0** — 폴리마켓 경영진 글 공개 댓글 0 규칙(케이웨더 상장사 이름이 국내 예측시장 · 도박 논쟁에 엮이지 않게). 합류 축하 글도 같다.
 - **다시 볼 때**: Edward · Nate 답이 성장 쪽(CGO)을 가리키거나 뉴욕 자리에 CGO 가 붙을 때 — 그때 일정 창구. 서우에게 먼저 가져와 상한을 다시 본다.
   그가 먼저 연결하면 인사만(예측시장 공통 규칙 — 측정기 절반 뺌 · 「eleven weather feeds」 · 「settlement · market」 0 · 플랫폼 · 전 직장 이름 0 · 문장은 Shirley · Malea · Lisa 와 다르게) 후 Edward 스레드로 잇는다.
+
+## Shreya Shri (Dave Labs Co-Founder & CEO · 두바이) — 두바이 DePIN · 유통 문의 (2026-10-11, 서우 캡처 1장 + 「두바이쪽 depin 과 총판 가능 여부 물어볼까」)
+
+- **자리**(캡처 기준): Dave Labs Co-Founder & CEO(2025-01~, 두바이 대면 · 헤드라인 「Product Strategy, Fintech Services」 · 보유 기술 Business Development · FinTech) ·
+  Shri lab Director & Co-founder(2024-09~, 두바이) · Siamaq Founder, Director(2019-11~, 인도 푸네) · EA Business Marketing Consultant(2015~2019, 재택) · EA SPORTS Senior Executive(2014). 1촌 여부는 캡처에 없음.
+- **공개 자료**(검색 요약, 10/11): Dave Labs · Shri lab · Siamaq 모두 검색에 안 잡힌다 — 하드웨어 수입 · 유통 · DePIN 실적 확인 0.
+- **판정 — 묻는다. 다만 「총판」이 아니라 두 질문으로: 두바이 DePIN 판(누가 기기를 사서 돌리나) + 유통 관심 또는 맞는 사람.**
+  ① **총판(지역 독점)은 첫 메시지 0** — 유통 실적이 안 보이는 상대에게 독점을 주면 UAE 가 막힌다. 물어 오면 「비독점으로 시작」(10/10 EU 유통사 답과 같음) · 독점 여부는 경영진 결정.
+  ② **UAE 판매 서류**(검색 요약 2차 — 원문 미확인): 무선 기기는 모델별 TDRA 형식승인 · TDRA 등록 딜러가 승인을 보유 · 통관 때 TDRA 허가(2026-02 명확화 보도).
+     우리 기기는 국내 KC 만 → 공급 · 날짜 · 가격 약속 0. 케이웨더 인증 문의(EU CE/RED)에 UAE TDRA 를 함께 넣는다. 해외 배송은 아직 대기 명단(9/26).
+  ③ **두바이 VARA 마케팅 규정**(검색 요약 2차): 두바이를 향한 가상자산 홍보에 역외 · 미등록 회사도 적용 · 경고 문구 의무 · 벌금 최대 AED 1,000만 보도 →
+     유통사가 보상 · 토큰 문구로 팔면 우리 문제가 된다. 첫 메시지 토큰 · 보상 0, 계약 땐 EU 와 같은 마케팅 부속서 + 카운슬.
+  ④ **조건 대화 전에 받을 것**: 회사 사이트 · 무역 면허 · TDRA 딜러 등록 여부 · 지금 파는 기기.
+- **문안**(채팅): 1촌 요청 메모 281자 · 수락 뒤(이미 1촌이면 바로) 메시지 1,183자. Lynn 두 층(측정기 + 172 · 91 · 11개 출처 · 원장 지문) · 두 질문 ·
+  「UAE 승인은 아직 기기 파트너와 밟아야 할 단계 — 제안이 아니라 초기 대화」. certified 0(UAE 승인 주장으로 읽힘) · 금지어 검사 0(coin · earn · certif · exclusiv · WLBN · XRP · reward · price 등).
