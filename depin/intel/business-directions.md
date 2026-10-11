@@ -3209,3 +3209,10 @@ Head of Partnerships & Operations, Wellbian Labs
 - **독점 안 함**: 크립토닷컴을 포함해 어느 예측시장 플랫폼과도 독점 계약을 하지 않는다. → 9/29 체크리스트의 「독점 입장 먼저」 해소, 칼시 · ForecastEx · 폴리마켓 US · Limitless · Rothera 등 다른 레인을 막는 조건 없음. 크립토닷컴이 독점을 물으면 「비독점」으로 답한다.
 - **시장성 문장**: 「마켓 형성 적극 논의 중」 — EN `We are in active discussions with prediction-market platforms about launching weather markets.` / KO 「예측시장 플랫폼들과 날씨 마켓 개설을 적극 논의하고 있습니다.」 플랫폼 이름 · 규모 · 계약 · 「입증」 단정 0. 전수 컨택 리스트(10/11) 문안은 이 문장으로 통일.
 
+## 예측마켓 전수 컨택 리스트 (2026-10-11, 서우 「예측마켓도 총망라해서 컨택하게 리스트 짜줘, 시장성 입증됐으니」)
+
+- 정본 = 저장소 루트 `reports/예측마켓 전수 컨택 리스트.md`(+ docx, 124곳). 9/28 구글 시트(12행)를 대체하는 전수판.
+- 이번 주(10/12~10/16): 칼시 Will Brackett(발송 기록 없음 — 서우 확인) · Limitless 기존 그룹에서 뉴욕 날짜 · Public.com · Arbol · Fanatics Markets 뉴욕 대면 요청 / ForecastEx(한 명) · TWC Belanger 화상 / Xchange Alpha 도메인 확인 뒤 / 10/15(목) 크립토닷컴 재판정(「비독점」).
+- 상한 그대로: 폴리마켓 · 로빈후드 · 바이낸스 새 사람 0. 폴리마켓 글로벌 서울 · 한국 도시 시장과 폴리마켓 유통 지갑 · 거래소는 하지 않음.
+- 각도 변화: 칼시가 미국 도시 다지점 지수(Synoptic)를 직접 만들고 범용 약관 1순위를 TWC 로 → 우리 물건은 미국 밖 도시 · 공개 원장 기록 · withheld 판정. 마켓메이커는 「정산값은 모두에게 같은 시각」 원칙을 정한 뒤.
+
