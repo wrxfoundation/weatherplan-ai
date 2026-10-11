@@ -1,14 +1,14 @@
-# Korea Rising — verified K-pop snapshot (2026-10-10)
+# Korea Rising — verified K-pop snapshot (2026-10-11)
 
 Every line is **cross-verified** (≥2 independent sources agree on the canonical name) and carries its source + Skill Score. Full data + Schema.org JSON-LD: <https://aiagentlabs.co.kr/> · via KoreaAPI (MCP).
 
 ## 🎬 Latest official releases (YouTube)
-- **ZICO** — 지코 근황이라는 게 숨긴다고 숨겨지는 것도 아니고
-- **EVERGLOW** — Kingdom Hearts IV - Extended D23 2026 Trailer
-- **Kiss of Life** — [KI-OFF] 위즈 파크에 승리 요정 하늘이 출근 🧚‍♀️🍀 | kt wiz 시구 Behind
+- **BoA** — You still our No.1 BoA
+- **PLAVE** — Plave - PLAYER 4 LIFEEE
+- **Xdinary Heroes** — Obsessed with #DAY6 #YoungK❤️‍🔥
+- **Kiss of Life** — 사랑이 시작된 순간을 기억하나요?#KISSOFLIFE #키스오브라이프 #KIOF #BELLE #벨 #Shorts
+- **Chung Ha** — Long time not playing LA and actually got ambushed -.-
 - **STAYC** — 👯‍♂️👯‍♂️👯‍♂️
-- **SF9** — 10년이면 이제 가족이지🏡 | 셒구가족의 다시 쓰는 너의 프로필📝
-- **IU** — IU with her bodyguard #iu #kpop #kdrama
 
 ## 🎤 Verified roster (640 acts)
 - **2NE1**: I Am the Best
