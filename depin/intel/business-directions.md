@@ -3216,3 +3216,11 @@ Head of Partnerships & Operations, Wellbian Labs
 - 상한 그대로: 폴리마켓 · 로빈후드 · 바이낸스 새 사람 0. 폴리마켓 글로벌 서울 · 한국 도시 시장과 폴리마켓 유통 지갑 · 거래소는 하지 않음.
 - 각도 변화: 칼시가 미국 도시 다지점 지수(Synoptic)를 직접 만들고 범용 약관 1순위를 TWC 로 → 우리 물건은 미국 밖 도시 · 공개 원장 기록 · withheld 판정. 마켓메이커는 「정산값은 모두에게 같은 시각」 원칙을 정한 뒤.
 
+## 뉴욕 대면 InMail 3건 — Public.com · Arbol · Fanatics Markets (2026-10-11, 서우 「여기 접근해 보자 프리미엄 스크립트」)
+
+- 근거 = `reports/예측마켓 전수 컨택 리스트.md` 뉴욕 대면 줄(54 · 35 · 12). 공통: Logan 기본 문단 + 「We are in active discussions with prediction-market platforms about launching weather markets.」 + 뉴욕 10/24~29 커피 30분 + 「다른 담당이면 한 사람만 알려 달라」. 다른 플랫폼 이름 · 한국 도시 · 토큰 · 가격 · 독점 · 「independent」 · certified 0. 한 회사 한 사람.
+- **Public.com — Leif Abraham**(공동창업자 — 직함은 링크드인에서 확인 · 9/24 예측시장 AI 에이전트 출시 대변인). 각도: 에이전트는 읽는 날씨 데이터만큼만 좋다 → 도시별 매시 합의값 + 피드 불일치 플래그 API. 제목 62자 · 본문 1320자 · 1촌 메모 256자.
+- **Arbol — Sid Jha**(Founder & CEO, 뉴욕). 각도: 파라메트릭 트리거 값 — 관측소 하나는 빠지거나 틀어지고, 피드 합의 + 입력 공개 기록은 사후 분쟁에 강하다 → 트리거 지수 또는 두 번째 확인(미국 · 유럽 밖 도시 포함). dClimate(Arbol 계열 데이터 마켓)는 언급 0. 제목 51자 · 본문 1202자 · 메모 265자.
+- **Fanatics Markets — 책임자 미확인**(링크드인에서 「Fanatics Markets」 예측시장 · 거래소 · 제품 책임자 찾기, 못 찾으면 Fanatics Betting & Gaming 경영진 — 직함 확인). 각도: 「기후가 로드맵에 있다」(회사 발표) → 정산 숫자가 어려운 부분 · 공항 센서 하나 대신 합의 + 공개 기록 + withheld. 지금은 크립토닷컴 CDNA 위에서 운영 → 크립토닷컴 · BGC 인수 언급 0. 제목 54자 · 본문 1293자 · 메모 254자.
+- InMail 결제 오류가 남아 있으면 1촌 메모(300자 안)로 보내고 수락 뒤 본문.
+
