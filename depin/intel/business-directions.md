@@ -3203,3 +3203,9 @@ Head of Partnerships & Operations, Wellbian Labs
   0: 토큰 · WLBN · 상장 · Bitstamp 사업 · 예측시장 · 크립토닷컴 · OG.com · Johann/Allessandra · 공통 1촌 · 스폰서. 답이 오면 날씨 데이터 얘기로만 — 거래소 · 상장 질문은 「오늘은 날씨 데이터」로 돌린다. 문안 채팅.
 - **10/10 서우 수정 「뉴욕 가서 볼 수 있냐를 물어야 해, 기존 다른 사람처럼」** — Johann · Edward 판처럼 뉴욕 미팅 요청을 본론으로: 제목 「Meeting in New York, October 24–29 – Wellbian Labs」 · 첫 문단에 방문 목적 · 끝에 「30분 커피 가능?」 + 부재 시 뉴욕 팀 담당자 소개 부탁. 경력 칭찬 줄 뺌. 금지선 그대로. 문안 채팅.
 - **10/10 서우 추가 「XRP 처럼 기관 · 규제 친화적이며, 예측마켓에 공급을 협의 중이라는 내용 언급」** — 한 문단 추가: 「In the same spirit as the XRP Ledger … institution- and regulator-friendly: every value can be traced and checked」 + 「in discussions with prediction-market platforms about supplying our weather data」. 플랫폼 이름 · 규모 · 정산 0, 「compliant · approved」 류 규제 적합 단정 0, 리플 0. 본문 1,304자. ⚠ 「협의 중」은 상대 이름 없는 일반 표현 — 크립토닷컴 MNDA 가 협의 사실 자체를 비밀로 묶는지 확인 필요(묶으면 「inquiries from」판으로).
+
+## 예측마켓 — 독점 안 함 · 대외 시장성 문장 확정 (2026-10-11, 서우)
+
+- **독점 안 함**: 크립토닷컴을 포함해 어느 예측시장 플랫폼과도 독점 계약을 하지 않는다. → 9/29 체크리스트의 「독점 입장 먼저」 해소, 칼시 · ForecastEx · 폴리마켓 US · Limitless · Rothera 등 다른 레인을 막는 조건 없음. 크립토닷컴이 독점을 물으면 「비독점」으로 답한다.
+- **시장성 문장**: 「마켓 형성 적극 논의 중」 — EN `We are in active discussions with prediction-market platforms about launching weather markets.` / KO 「예측시장 플랫폼들과 날씨 마켓 개설을 적극 논의하고 있습니다.」 플랫폼 이름 · 규모 · 계약 · 「입증」 단정 0. 전수 컨택 리스트(10/11) 문안은 이 문장으로 통일.
+

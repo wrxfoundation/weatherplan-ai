@@ -8,7 +8,7 @@
 
 | 업체 | 우리 쪽 상대 · 경로 | 지금까지 | 지금 상태 | 다음 · 게이트 |
 |---|---|---|---|---|
-| **크립토닷컴 / OG.com (CDNA)** | **Vincent**(전략 파트너십 · 사내 주인) — 메일 스레드 · 콜 | 9/11 소개 메일 → 9/14 콜 → 9/17 영문 덱 → 9/18 딥다이브 콜(그쪽 6명: 법무 · product team · US team) → 9/18 자료 메일 → 10/1 개편 덱 메일 → 10/7 후속 메일(789자, 검토 진행 질문) | **MNDA 체결 · product team 검토 중 · 10/7 후속 답 대기** | **10/15 재판정**. 크립토닷컴 계열 다른 사람 메시지 0: Maria Allott(VP Global Head of Sales · 예측시장 판매 총괄, 1촌 · 메시지 0) · Stephen Humenik(OG.com CLO · 1촌 10/9 · 메시지 0) · Travis McGhee(Global Head of Predictions, 미접촉). ⚠ **독점 입장 미정** — 9/18 메일 「독점은 상업 조건, 열려 있다」 vs 9/17 브리프 「독점 없음」. **전면 독점이면 칼시 · ForecastEx · 폴리마켓 US · Limitless · Rothera 레인이 전부 막힌다 → 범위(도시 · 계약 종류 · 기간) 한정 입장을 먼저 정해야 함**. ⚠ 계약 당사자(웰비안 SG vs 케이웨더) 미정 → 카운슬. ⚠ MNDA 가 「논의 사실」 자체를 비밀로 묶는지 조항 확인 전 |
+| **크립토닷컴 / OG.com (CDNA)** | **Vincent**(전략 파트너십 · 사내 주인) — 메일 스레드 · 콜 | 9/11 소개 메일 → 9/14 콜 → 9/17 영문 덱 → 9/18 딥다이브 콜(그쪽 6명: 법무 · product team · US team) → 9/18 자료 메일 → 10/1 개편 덱 메일 → 10/7 후속 메일(789자, 검토 진행 질문) | **MNDA 체결 · product team 검토 중 · 10/7 후속 답 대기** | **10/15 재판정**. 크립토닷컴 계열 다른 사람 메시지 0: Maria Allott(VP Global Head of Sales · 예측시장 판매 총괄, 1촌 · 메시지 0) · Stephen Humenik(OG.com CLO · 1촌 10/9 · 메시지 0) · Travis McGhee(Global Head of Predictions, 미접촉). ✅ **독점 안 함 — 서우 결정(10/11)**: 크립토닷컴을 포함해 어느 플랫폼과도 독점 계약을 하지 않는다 → 다른 예측시장 레인을 막는 조건이 없다. 크립토닷컴이 독점을 물으면 「비독점」으로 답한다(9/18 메일의 「상업 조건, 열려 있다」를 정리하는 답). ⚠ 계약 당사자(웰비안 SG vs 케이웨더) 미정 → 카운슬. ⚠ MNDA 가 「논의 사실」 자체를 비밀로 묶는지 조항 확인 전 |
 | **Limitless** (Base 체인 · Limitless Markets US 뉴욕) | 텔레그램 그룹 「Limitless <> KWeather」(8명) — Daria Han(Head of Growth Korea & Japan · 관계 주인) · Henrich Tauber(Head of BD · 딜 주인) · Clyde Carver(DevRel · 연동) · 우리 쪽 KJ · 서우 / CJ Hetherington(공동창업 · CEO, Limitless Markets US 그룹 CEO, 뉴욕) 1촌 + 인사(9/28) | **인바운드**. 10/7 Daria 「정책 쪽과 얘기했는데 날씨가 예측시장의 좋은 사용 사례」 → 10/8 Henrich 문서 요청 · 「다른 예측시장 어디와 하나」 → 10/8 11:40 · 11:43 소개 + 본문 발송(드골 서사 · 172 · 91 · API · weathermarket.io · weatherfi.io 데모 · 「인프라 쪽 체인링크 · 플레어, 시장 쪽 OG.com 과 논의 중」) · 뉴욕 대면 제안(10/8) | 콜 일정 잡는 중 · 답 대기 | 첫 콜에서 가격 · 배분 · 독점 · 기간 0 · 한국 도시 제외는 콜에서 구두로 · 정산 보류(withheld) 비율 · 시범 도시 준비 · 그쪽 월 거래량(정의 포함) 되묻기. ⚠ OG.com 이름이 이미 나감(MNDA 조항 확인 필요) |
 | **Flare** | 공동 마케팅 · 기술 협업 그룹 | 10/3 XRP SEOUL 2026 에서 「Weather Data Market on Flare mainnet」 발표(주어 케이웨더) · FCC 증명 경로는 테스트넷 | 진행 중(인프라 레인) | 웰비안 × Flare 직접 통합 클레임 금지(대외 문구 규칙) |
 | **Chainlink** | 9/29 회의 기록상 KBW 주간 현장 미팅(추정) · 10/7 회의 「관심이 많다」 | — | 「conversations」 수준 | 「discussions」 과장 금지 |
@@ -71,7 +71,8 @@
 
 ## C. 대외 문구 규칙 (예측시장 상대 — 모두 지킨다)
 
-- 상대에게 **다른 거래소 · 플랫폼 이름 0**(예외: 서우 · 디지털전략 지시로 Limitless 에 OG.com 이름이 나감 — 확대 금지). 「in discussions with prediction-market platforms」(이름 없이)는 10/10 서우 승인 문장 — **크립토닷컴 MNDA 가 논의 사실을 묶으면 「inquiries from prediction-market platforms」로 낮춘다.**
+- 상대에게 **다른 거래소 · 플랫폼 이름 0**(예외: 서우 · 디지털전략 지시로 Limitless 에 OG.com 이름이 나감 — 확대 금지).
+- **시장성 문장 = 「마켓 형성 적극 논의 중」(서우 결정 10/11)** — 영문 정본: `We are in active discussions with prediction-market platforms about launching weather markets.` / 국문: 「예측시장 플랫폼들과 날씨 마켓 개설을 적극 논의하고 있습니다.」 플랫폼 이름 · 규모 · 계약 · 「입증」 단정 0.
 - **한 회사(계열) 동시 대화 2개 상한**(이미 넘긴 곳: 폴리마켓 · 로빈후드 · 바이낸스 — 새 사람 추가 0).
 - **한국 도시 · 한국 이용자 0** — 첫 메시지에 한국 도시 이름 0. 데이터 계약 전 카운슬 의견 + 한국 도시 계약 제외 · 한국 거주자 배제 조항. 폴리마켓 글로벌의 서울(인천) 시장 정산 · 검증은 카운슬 전 0(최상 민감). 일본 도시 · 일본 이용자도 같은 선(제안).
 - 리스크 · 컴플라이언스 · 법무 상대에는 「eleven independent sources」 대신 **「eleven weather feeds」**(11개 중 8개가 Open-Meteo 경유 — 「독립」부터 반박당함). 도시 수는 **172개 도시 · 91개국**(10/8 사이트 기준).
