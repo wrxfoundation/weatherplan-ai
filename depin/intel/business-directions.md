@@ -3247,5 +3247,5 @@ Head of Partnerships & Operations, Wellbian Labs
 - 캡처 안의 다른 사람: Clark Read(Head of Trading — 거래 데스크, 상장 아님) · Olivia Santarelli(마케팅) · Charles Ng(APAC CCO) · Louisa D.(UK 컴플라이언스) · Chris Colman(APAC OTC) · Eddie Perdomo(카드 지원) → 대상 아님.
   Eli Dubizh(소프트웨어 엔지니어 · 「Predictions @Gemini」 · 뉴욕) = 예측시장 팀이 뉴욕에 있다는 신호, 첫 문은 아님. Nolen Neri Hayes(현 Polymarket 기관 영업, 전 Gemini) = 폴리마켓 상한 → 0. Google Gemini(Grant Delgado · Kaitlyn Roberts) · CrowdReply · 전 직원(Rakib · Sena S.)은 무관.
 - **한 사람 = Elaine Song(Strategy and Corporate Development · 뉴욕 · 「Building markets & ecosystems for digital and emerging assets」)** — 단, 먼저 링크드인에서 「Gemini Predictions」 · 「Gemini Titan」으로 예측시장 제품 · GM 을 찾아 있으면 그 사람으로 바꾼다.
-  InMail: 제목 65자 · 본문 1,262자 · 1촌 메모 237자(뉴욕 10/24~29 커피 · 다른 담당이면 한 사람만). 「크립토 가격」 대신 「cover crypto today」 — 가격 · 토큰 · 상장 단어 0.
+  InMail: 제목 65자 · 본문 1,260자 · 1촌 메모 237자(뉴욕 10/24~29 커피 · 다른 담당이면 한 사람만). 「크립토 가격」 대신 「cover crypto today」 — 가격 · 토큰 · 상장 단어 0.
 
