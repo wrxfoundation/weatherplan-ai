@@ -3259,7 +3259,7 @@ Head of Partnerships & Operations, Wellbian Labs
 ## Emilie Choi (Coinbase President & COO · 샌프란시스코) — 판정 (2026-10-11, 서우 캡처 3장 · 1촌 요청 대기 중)
 
 - **자리**(캡처 기준): Coinbase President and Chief Operating Officer(2018-03~) · 전 Okta · ZipRecruiter · Naspers 이사 · LinkedIn VP & Head of Corporate Development(2009~2018, 인수 · 전략 투자 40건+) · Johns Hopkins 경제학 · Wharton MBA. 2촌 · 팔로워 약 4.9만 · 공통 1촌 Pierre. **서우 1촌 요청이 이미 대기 중.**
-- **판정 — 요청은 그대로 둔다(취소하면 3주 재요청 불가). 수락되면 Lynn 기본 인사(561자)만.** 예측시장 사업 얘기는 사장이 아니라 **Coinbase 예측시장 제품 책임자**(링크드인 「Coinbase prediction markets」로 찾기)에게.
+- **판정 — 요청은 그대로 둔다(취소하면 3주 재요청 불가). 수락되면 Lynn 인사 미국판(545자 — 기본값에서 「certified」 빼고 「eleven independent sources」→「eleven weather feeds」, 뉴욕 InMail 3건과 같은 기준)만.** 예측시장 사업 얘기는 사장이 아니라 **Coinbase 예측시장 제품 책임자**(링크드인 「Coinbase prediction markets」로 찾기)에게.
   ① 거래소 최고 경영진 — 우리 이름이 그 자리에 가면 무엇보다 「상장 요청」으로 읽힐 위험이 크다(WLBN · 토큰 · 상장 단어 0이어도). ② 지금 Coinbase 의 날씨 계약은 다른 거래소 계약을 유통하는 구조라 정산원을 고르는 곳이 아니다(자체 거래소가 날씨를 낼 때 구매자가 된다 — 전수 리스트 9번 「관찰」).
   ③ Coinbase 쪽 기존 1촌 Wilson Cheng · Chantal Bradford 는 1촌만 — 동시 대화 0 이라 상한 문제는 없다.
 - **서우가 그래도 지금 던지기로 하면(선택안)**: InMail 은 미팅 요청이 아니라 **「예측시장 팀의 맞는 사람 이름 하나」**만 묻는다 — 제목 60자 · 본문 1,072자(문안 채팅). 토큰 · WLBN · 상장 · 가격 · 다른 거래소 이름 0. 이 경우 수락 뒤 Lynn 인사는 생략(같은 사람에게 두 번 소개 0).
