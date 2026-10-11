@@ -3228,3 +3228,15 @@ Head of Partnerships & Operations, Wellbian Labs
   - Ryan F.(컴플라이언스)는 딜을 여는 자리가 아니라 계약 단계에서 — 그리고 공통 1촌 「Stephen」이 크립토닷컴 · OG.com 의 Stephen Humenik 일 수 있다(확인 전) → **그 경로로 소개를 부탁하지 않는다.** Scot McClintic(사업부 COO)은 제품 경로가 막힐 때만. Jim Bumbulsky · Maria Frackowiak 은 대상 아님(전 직원 · 다른 회사).
   - InMail: 제목 54자 · 본문 1,320자 · 1촌 메모 245자(문안 채팅). 크립토닷컴 · BGC 인수 언급 0.
 
+## Pascal Kurzawa (Exodus · Monavate, Head of Partnerships · 싱가포르) — 판정 (2026-10-11, 서우 캡처 3장 · 「이 사람은」)
+
+- **자리**(캡처 기준): Exodus Head of Partnerships(계약직 2025-09~ · 싱가포르 재택 — 「Exodus/XO Swap 파트너십: 재단 · 스테이블코인 발행사 · 거래소」) · Monavate Head of Partnerships Web3(2026-05~ · 런던 재택 — Monavate 는 2026 Exodus(NYSE: EXOD) 인수) ·
+  전 Mercuryo Senior Sales Manager(B2B 온/오프램프 API, 2023~2025) · BFG Blockchain Founders Group 자문(2022~2025). 2촌 · 팔로워 약 1.8만 · 공통 1촌 20(Takuya · Vincent 외).
+  최근 글(3일 전): TOKEN2049 싱가포르 10/7 VIP 믹서(Exodus · onramper · Zcash 공동) — 좋아요에 Daria Han(Limitless).
+- **판정 — 1촌 요청 + Lynn 기본 메모(251자), 수락 뒤 Lynn 기본 인사(561자)까지. 사업 얘기 0.**
+  ① 지갑 · 스왑 · 카드 결제 자리 = 거래소에 준하는 레인 — 말을 걸면 「지갑 지원 · 스왑 · 토큰」 질문으로 간다(백서 게이트 · WLBN 은 coin 아님 · 상장 신호 0). Gaëtan Thabot(10/8) · Wilson Cheng 과 같은 결.
+  ② 예측시장 · 데이터 구매자가 아니다 — 이번 라운드(예측시장 전수 리스트)와 무관.
+  ③ 공통 1촌 Vincent(크립토닷컴일 가능성) · Daria(Limitless) — 같은 판에 말이 돈다. 공통 1촌 이름 · 다른 플랫폼 · 진행 중 대화 0.
+  ④ 열리는 때: 기기 결제 · x402 기계 결제에 스테이블코인 결제 파트너가 필요해질 때(결제 레인) — 그쪽이 먼저 물으면 그때.
+- 금지: WLBN · 토큰 · 지갑 지원 · 스왑 · 상장 · 가격 · RLUSD/리플 0 · TOKEN2049 믹서 언급 0(우리는 안 갔다).
+
