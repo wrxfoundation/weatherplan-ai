@@ -3587,11 +3587,11 @@ Good to be connected.
   「since September」는 뺐다(SPEC 날짜는 상품 페이지 날짜라 가동 시점 근거로 약함 — 「now running」).
 - 첫 판 메모를 아직 안 보냈으면 아래로 바꾼다. 이미 보냈으면 메모는 그대로 두고 수락 뒤 메시지만 아래 판으로.
 
-**1촌 요청 메모 (293자)**
+**1촌 요청 메모 (293자 · 10/12 갱신 1차, 아래 「가벼운 판」으로 대체)**
 ```
 Hi Sima, Logan from Wellbian Labs, Seoul. With KWeather (30 years of observation) we run home air sensors and weather data for 172 cities, and now a weather AI factory on B300 GPUs, accessed through a pass on the XRP Ledger. Your Aethir years are close to what we are scaling. Glad to connect.
 ```
-**수락 뒤 메시지 — 20분 통화 요청 (925자)**
+**수락 뒤 메시지 — 20분 통화 요청 (925자 · 대체됨 — 서우 「질의를 던지지 말고 가벼운 논의로」)**
 ```
 Sima, thanks for connecting.
 
@@ -3606,3 +3606,27 @@ Logan
 ```
 - **통화에서 들을 것**: GPU 증설을 직접 서버로 하나 외부 GPU 네트워크로 하나(가용률 · 단가 구조) · 노드 라이선스 파트너 유통에서 무엇이 버텼고 무엇이 되사기로 이어졌나 · 아시아 밖 유통 파트너 고르는 기준 · Xsolla 결제(해외 판매 결제 설계 — 첫 판 「다시 볼 때」 그대로).
 - **말하지 않을 것**: 적립량 · 가격 · 판매 수량 · 매출 · 토큰 유동성 · 상장 · 다른 플랫폼 이름 · 리플과의 관계.
+
+#### Sima Zhang — 가벼운 판 (10/12, 서우 「Sima 문제는 어려워서 질의를 던지지 말고 파트너십에 대해 가벼운 논의로」)
+
+- 바뀐 것: GPU 증설 · 해외 유통 두 질문을 뺐다. 첫 메시지는 소개 + 「같이 할 여지가 있나」 + 짧은 대화 제안까지 — 의제 없음.
+  메모의 「Your Aethir years are close to what we are scaling」(증설을 묻겠다는 신호)도 첫 판 문장 「Your path from Aethir to Xsolla caught my eye」로 되돌렸다.
+- 대화가 열리면 그의 지금 일(Xsolla 웹3 제휴 · Emberstone)부터 듣는다. GPU · 유통 이야기는 그쪽이 먼저 꺼내면 받는다(위 「통화에서 들을 것」은 그때 쓰는 메모로 남김). 자문 제안 · 추천 코드 배포 주의는 위 그대로.
+
+**1촌 요청 메모 (288자)**
+```
+Hi Sima, Logan from Wellbian Labs, Seoul. With KWeather (30 years of observation) we run home air sensors and weather data for 172 cities, and now a weather AI factory on B300 GPUs, accessed through a pass on the XRP Ledger. Your path from Aethir to Xsolla caught my eye. Glad to connect.
+```
+**수락 뒤 메시지 (815자)**
+```
+Sima, thanks for connecting.
+
+I run partnerships at wellbian. KWeather has measured weather in South Korea for thirty years and supplies data to 4,000+ enterprise clients; wellbian is the network built on top of that.
+
+We work across three layers: air-quality sensors people run in their own rooms, city weather for 172 cities built from a consensus of eleven weather feeds with every input fingerprinted to a public ledger, and a Weather AI Factory on B300 GPUs that turns that data into a weather AI agent, datasets and APIs. Access runs through a pass issued on the XRP Ledger.
+
+Given your path from Aethir to Web3 partnerships at Xsolla, I'd enjoy hearing what you're working on and seeing whether there's a way for us to work together. No set agenda. Happy to have a short chat whenever suits you.
+
+Best,
+Logan
+```
