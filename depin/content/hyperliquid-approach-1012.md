@@ -115,3 +115,13 @@ Head of Partnerships & Operations, Wellbian Labs
   「building infrastructure for new market categories on Hyperliquid」로 고쳤다(본문 길이 +18자).
 - 링크드인 검색어: 「Skew Technologies」 · 「David Gil」 + Hyperliquid. 안 잡히면 X 쪽 공식 계정으로 확인 뒤 판단.
 
+**4부 보충 2 (10/12) — 링크드인 · X 에서 사람이 안 잡힘 → 회사 창구로**
+- 보도자료 회사 소개(About Skew): 웹사이트 **skew.trade** · X **@skewtrade** · 「직접 거래 상품을 내고, **파트너와 함께 새 시장을 온체인으로 가져온다**」 — 우리 제안이 들어갈 문이 회사 소개에 적혀 있다.
+- 순서: ① skew.trade 에 문의 · 파트너 양식이 있으면 거기로 ② 없으면 @skewtrade 를 @wellbianlabs 공식 계정에서 팔로우 → DM 이 열려 있으면 아래 짧은 판 ③ 둘 다 막히면 보류(Hyperion DeFi 를 통한 소개는 Outcome 대화가 진전된 뒤에만 — 상장사 경영진에게 투기적 제안 0).
+- 시점은 그대로 — Jonathan(Outcome) 반응을 보고 약 1주 뒤.
+
+**X DM · 웹 문의 짧은 판 (493자)**
+```
+Hi Skew team, Logan from Wellbian Labs in Seoul. With KWeather (30 years of observation) we run weather data built to settle markets: 172 cities, a consensus of eleven weather feeds, every input on a public ledger, and a withheld verdict when inputs disagree. We are in active discussions with prediction-market platforms about launching weather markets. Since you bring new market categories on-chain with partners, is weather on your list? Happy to share more with whoever leads new markets.
+```
+
