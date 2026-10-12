@@ -3717,3 +3717,7 @@ The hard part is the settlement number, and as deployer that risk sits on your s
 
 No ask right now. If useful, I can send a one-page template draft (cities, thresholds, settlement and withheld rules) to keep on file. What would need to be true for weather to make your list?
 ```
+- **10/12 서우 텔레그램 발송 완료 → 회사 소개 한 통 덧붙임**(서우 「간략한 회사 소개 다시 첨언」). 예측시장 상대라 **데이터 층만**(측정기 · 토큰 0) · 싱가포르 법인 앞세우지 않음 · 케이웨더 「30년 · 4,000+」 까지. 링크 · 덱 약속 0(있는 것만).
+```
+A quick intro, since we're new to each other here. Wellbian Labs works with KWeather, a Korean weather company with 30 years of observation and 4,000+ enterprise clients, to build weather data for settling markets. We publish hourly weather for 172 cities in 91 countries: each value is a consensus of eleven weather feeds, every input is fingerprinted to a public ledger, and each check returns met, not met or withheld. It's available through a REST API with an OpenAPI spec.
+```
