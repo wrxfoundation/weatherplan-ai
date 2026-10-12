@@ -2260,3 +2260,4 @@ Thanks Odelia — writing to you at that address today. Mine is support@wellbian
 - **Outcome Jonathan 답 수정본(10/12, 서우 「텔레그램 수정 가능」)** — 시범 문단에 「매일 정산 → 슬롯 몇 개만 잠깐, 매일 반환」 한 줄 넣은 939자 판.
 - **Eve Hsiao(OKX CEO Office) 후속(10/12, 서우)** — 답 「happy to stay in touch」 → 감사 한 줄(93자)로 닫음 · 사업 0 · OKX 문은 Kyuyoung 하나 유지 · 다음 인사부터 certified · independent 빼기.
 - **Eve Hsiao 후속 — 사업 한 줄 판(10/12, 서우 「행사 말고 가볍게 사업 어필」)** — 308자, 예측시장 날씨 데이터(정산 층) · 대외 문장 · 요청 0. 거래소 인사만 규칙은 서우 결정으로 이번만 넘김(토큰 · 상장 · OKX 0).
+- **Yuna Yu(YZi Labs Brand & PR · 홍콩) 판정(10/12, 서우 캡처)** — 1촌 + 메모(304자, 「impact first」 고리) · 수락 뒤 Lynn 인사(547자) · 사업 · 투자 0 · YZi 상한 2 꽉 참(Haley + Yuna).

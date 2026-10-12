@@ -3787,3 +3787,26 @@ Thank you, Eve, likewise! Enjoy the new chapter, and I hope our paths cross at a
 ```
 Thank you, Eve, likewise! Enjoy the new chapter. One thing on our side you might find interesting from a strategy seat: we're in active discussions with prediction-market platforms about launching weather markets, with our data as the settlement layer. Happy to share how it's shaping up if it's ever useful.
 ```
+## Yuna Yu (YZi Labs Brand & PR Manager · 홍콩) — 판정 (2026-10-12, 서우 캡처 1장)
+
+- **자리**(캡처 기준): YZi Labs **Brand & PR Manager**(2025-05~, 홍콩 재택 — 「Web3 · AI · 헬스케어/바이오 투자, impact first」) · 전 Serotonin APAC Marketing Manager(2024~2025, 웹3 마케팅 대행) · 전 Eureka Meta Capital(웹3 재간접 펀드, Account Director/Manager 2022~2024). 헤드라인 「Web3, AI, Biotech | Impact First」.
+- **판정 — 1촌 요청 + 메모, 수락 뒤 Lynn 기본 인사만. 사업 · 투자 이야기 0.**
+  ① 투자사 = VC 기본값(사업 얘기 0 · Haley Huang 10/9 과 같은 선). 홍보 담당이라 투자 결정 자리도 아니다.
+  ② **YZi 두 번째 사람 → 회사 상한 2 꽉 참**(Haley + Yuna). YZi 는 BNB 권역 — 체인 · 토큰 · 거래소 · 포트폴리오(Opinion · Predict.fun) 이름 0.
+  ③ 잡을 고리 = 그의 「impact first」 — 우리 일의 출발이 집 안 공기라는 점(측정기 + 데이터 두 층 그대로). 지역 홍콩 → certified 0.
+- 다시 볼 때: YZi 포트폴리오 행사 · 미디어 기획에서 실물 데이터 · 헬스(공기질) 이야기를 찾을 때 — 그쪽이 먼저.
+
+**1촌 요청 메모 (304자)**
+```
+Hi Yuna, Logan from Wellbian Labs, Seoul. With KWeather (30 years of observation) we run home air-quality sensors and weather data for 172 cities, every input fingerprinted to a public ledger. Your “impact first” line resonated, since our work starts with the air people breathe at home. Glad to connect.
+```
+**수락 뒤 인사 (547자)**
+```
+Yuna, thanks for connecting.
+
+I run partnerships at Wellbian Labs. KWeather has measured weather in South Korea for thirty years and supplies data to 4,000+ enterprise clients; Wellbian is the network built on top of that.
+
+We work on two layers: air-quality sensors that people run in their own homes, and city-level weather across 91 countries and 172 cities, where each value is a consensus across eleven weather feeds rather than a single reading. Every input is fingerprinted to a public ledger before it goes anywhere.
+
+Good to be connected.
+```
