@@ -2238,3 +2238,4 @@ Thanks Odelia — writing to you at that address today. Mine is support@wellbian
 - **Hyperion 호칭 정정(10/12, 서우 「현수님 말고 CEO 나 정현수 대표 풀네임」)** — 국문 「정현수 대표님」 · 영문 「your CEO, Hyunsu Jung」 · 「Mr. Jung」 · 「Dear Mr. Jung」 으로 폼 메시지 · 메일 B · Skew DM C · business-directions 국문/영문판 교체. 이름만 부르는 호칭 0.
 - **행사 · 홍보 이력 발화 규칙(10/12, 서우 「xrp seoul 이나 남산타워 얘기하지 말까」)** — playbook 끝에 절 신설: 예측시장 · 정산 · 기관 · 거래소 상대 첫 메시지에서 빼고(체인 색 · 한국 소매 홍보 · 코인 하이프 · 글자), XRPL 생태계 · 국내 커뮤니티 · DePIN · 언론 · 우리 게시물 · 미팅 중 질문받을 때 구두 한 줄은 허용. 지금까지 나간 PM 문안에는 둘 다 없음(점검).
 - **예비 메일 제목 후보(10/12, 서우 「메일 보낼 건데 제목」)** — Hyperion 3 · Public.com 3, `content/backup-channels-1012.md` 끝.
+- **Outcome 거절 답장 → 설득 1회(10/12, 서우 대화 붙여 넣기 + 「설득해 보자, 큰 시장이니」)** — 회사 쪽 「지금은 날씨 마켓 안 봄 · Jonathan 텔레그램으로」. 텔레그램 메시지 949자(반박 0 · 일일 반복 마켓 모양 · 배포자 담보 위험 · 템플릿 초안 제안 · 「무엇이 갖춰지면」 질문). Ahmed · Diogo 후속 0. 텔레그램 아이디는 저장소 미기재.

@@ -3695,3 +3695,25 @@ Logan
   ② 건설 공정 지연(우천일)으로 엮을 수는 있지만 그건 TradeGuard 의 상품이 아니다 — 억지로 붙이면 「우리 얘기만 하는 콜드」로 읽힌다.
   ③ 이번 주(10/12~16)는 뉴욕 대면 요청이 우선, 새 갈래는 주 5건 이내 — 결이 약한 칸에 쓰지 않는다.
 - 다시 볼 때: 건설 현장 날씨 데이터(케이웨더 건설 기상 쪽)가 해외 GC 상품으로 나갈 때 — 그때도 케이웨더 영업 영역과 먼저 조율.
+
+## Outcome 답장 — 「지금은 날씨 마켓 안 본다, 앞으로는 Jonathan 텔레그램으로」 → 설득 1회 (2026-10-12, 서우 「설득을 해 보자, 큰 시장이니」)
+
+- **사실**: 10/12 14:51 예비 창구 A(회사 계정 DM) 발송 → 15:03 회사 쪽 답 「앞으로 연락은 Jonathan 텔레그램으로 · **지금은 날씨 마켓을 찾고 있지 않다**」. (텔레그램 아이디는 저장소에 적지 않음 — 채팅 전달.)
+- **판단**: 「아니요」를 반박하면 문이 닫힌다. 설득은 **한 번, 짧게, 주는 것 하나** — 지금 거절 이유를 모르니 「무엇이 갖춰지면 날씨가 목록에 오르나」를 묻고, 그들 일을 줄여 주는 것(템플릿 초안)을 제안한다.
+- **각도 셋**: ① 모양 — 도시별 일 최고기온 = 매일 반복되는 일일 마켓(HIP-4 의 반복 일일 마켓과 같은 모양 · 시간대마다 돌아감) · 내부자 정보 0(측정되는 결과) ② 배포자 위험 — 배포자가 곧 오라클이라 틀린 정산은 그들 담보 위험 → 판정 보류가 그 장치 ③ 일 덜기 — 1장짜리 템플릿 초안(도시 · 문턱 · 정산 · 보류 규칙).
+- **회사 상한 정리**: Outcome 이 창구를 Jonathan 으로 지정 → **Ahmed · Diogo 쪽은 더 밀지 않는다**(후속 0, 답이 오면 Jonathan 으로 모은다).
+- **보내지 않을 것**: 다른 플랫폼 이름 · 거래량 숫자(원출처 확인 전) · 토큰 · HYPE · XRP SEOUL · 한국 도시 · 재촉. 7일 무응답이면 그대로 두고, 그들이 새 범주를 연다는 공지가 나오면 그때 템플릿 들고 다시.
+- **준비 거리(답이 「보내 달라」면)**: 1장 템플릿 초안 — 비한국 도시 중 **정산 가능률 높은 곳**만(10/8 기준 도시별 보류 비율 편차 큼), 지표 = 일 최고기온 문턱, 정산 시각 · 데이터 마감 · 보류 시 처리(무효 · 연장은 그들 상품 설계 몫). 공급 계약 전 조건(법률 의견 · 한국 도시 · 한국 이용자 0) 그대로.
+- **다른 문**: HIP-4 다른 배포자 쪽은 Hyperion → Skew(HIP-4 는 Skew 로드맵 뒤쪽) 라인이 살아 있다.
+- 확인 거리: 「HIP-4 의 반복 일일 마켓」 = 검색 요약(메인넷 첫 시장이 BTC 일일 바이너리) — 원문 대조 전.
+
+**텔레그램 — Jonathan (949자)**
+```
+Hi Jonathan, Logan from Wellbian Labs in Seoul. Your team pointed me here and said weather isn't on the list right now. Understood, and thanks for the quick, clear answer.
+
+One thought for when you do look at new categories. Like the recurring daily markets on HIP-4, a city's daily high temperature is a natural daily market: one per city per day, every day, across time zones. And nobody holds inside information, because the outcome is measured, not announced.
+
+The hard part is the settlement number, and as deployer that risk sits on your stake. That's the piece we built: a consensus of eleven weather feeds per city, every input fingerprinted to a public ledger, and a withheld verdict instead of a forced number on days the data can't support one.
+
+No ask right now. If useful, I can send a one-page template draft (cities, thresholds, settlement and withheld rules) to keep on file. What would need to be true for weather to make your list?
+```
