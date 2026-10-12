@@ -3310,3 +3310,10 @@ Head of Partnerships & Operations, Wellbian Labs
 - **그쪽이 먼저 제안하면**(수락 뒤 · 인바운드) 한 줄로 닫는다(114자): `Thanks for reaching out. That isn't something we're looking at, but I appreciate you thinking of us. All the best.`
   토큰 · 상장 · 가격 단어 0. 선금 · 수수료 · 지갑 정보 요구는 응하지 않는다.
 - 같은 화면 「더 많은 프로필」(VC · 교수 · 마케터 등)도 지금 레인 밖 — 할 일 0.
+
+## 링크드인 콜드 메시지 확장 — 정산 데이터 고객을 예측시장 밖으로 (2026-10-12, 서우 「이 시사점으로 콜드 메시지 전략 확장」)
+
+- 근거 = Artemis 10/8 ForecastEx × Reask 시사점(정산 데이터 조건 넷 · 고객은 재보험 · ILS · 브로커까지 · 상품은 정산값 + 기준 확률). 문안 · 표 = `content/linkedin-cold-expansion-1012.md`.
+- 새 갈래 셋: ① 재보험 · ILS 펀드 ② 지수형 보험 · MGA · 인슈어테크 ③ 재보험 브로커. 각도 = 「양쪽이 확인할 수 있는 도시 단위 숫자 + 판정 보류」. 「기준 확률(예보)」은 케이웨더 결정 전 0.
+- 국내 보험 · 재보험은 케이웨더 기존 영업과 겹칠 수 있어 서우 단독 콜드 0 — 케이웨더와 먼저 조율. Reask 연락 0(아시아 범위 확인 전).
+- 회사당 1명 · 주 5건 이내 2주 시험 · 이번 주는 뉴욕 대면 요청 우선. 금지어: 다른 회사 이름 · certified · independent · 예보 상품 · 토큰 · 가격 · 독점 · 최초.
