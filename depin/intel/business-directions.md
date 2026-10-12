@@ -4229,3 +4229,34 @@ We are in active discussions with prediction-market platforms about launching we
 Best,
 Logan
 ```
+
+## Myriad — Ilan Hazan 판정 (2026-10-13, 서우 캡처 3장 · 2촌)
+
+- **사람**: Myriad Markets · Decrypt Media 공동창업 · COO(프랑스). DASTAN(Decrypt · Rug Radio · Myriad 지주사) 공동창업 · COO 2023-12~, Decrypt 공동창업 · CPO 2018-05~,
+  전 ConsenSys Mesh 엔지니어 · LitePaper 공동창업 CTO(ConsenSys 인수). 2촌 · 공통 1촌 Raymond · Ali 외 5 · 팔로워 5,723. 의사결정자 자리가 맞다.
+- **회사**: 「Converting real-time information into tradable markets」 · 직원 11–50 · 팔로워 763. 전수 리스트 80행(관찰 · 날씨 없음 · BNB · USD1 · Trust Wallet 유통) · 118행(Trust Wallet 예측 탭 = 하지 않음).
+  Decrypt 보도(자사 매체 · 날짜 미확인): USDC 거래 1,000만 달러+ · 이용자 50만+ · 확장 프로그램 6만+. 시장 = 스포츠 · 정치 · 문화 · 크립토, 날씨 범주 없음(텍사스 철새 시장 정도). 「CANDLES」 단기 시장.
+- **결이 맞는 점**: 실시간 정보 → 시장 · 짧은 만기 상품 ↔ 우리 시간별 도시 값 · 원장 기록(온체인 정산이 바로 읽을 수 있음). 날씨 = 아직 없는 범주.
+- **위험 셋**: ① 한국 민감도 상 — 역외 온체인 · Trust Wallet 유통 · 3자 자료상 지역 제한 없음 → 9/28 규칙 「한국 이용자 차단이 계약으로 보장되기 전 보류」 그대로.
+  ② **언론사 공동창업자** — 우리가 하는 말이 Decrypt 기사가 될 수 있다. 상장사 케이웨더 + 예측시장 = 국내 「기후 도박」 보도 경로(10/13 판정). 첫 통화 시작에 「사업 대화 · 보도용 아님」을 말로 정한다.
+  ③ 규모 작음(자사 매체 수치) · 프랑스 → 뉴욕 대면 아님(화상).
+- **판정**: 1촌 요청 + 메모는 지금 보내도 된다(관계 · 듣기). 사업 본문은 수락 뒤. **데이터 · 데모 · 조건 이야기는 두 가지 뒤** — Myriad 약관의 한국 차단 확인 + 서우 결정(역외 온체인 보류를 이 건에 풀지).
+  첫 통화에서 말로: 한국 도시는 데이터 범위 밖 · 보도용 아님. 순서는 SIG · Limitless · OG.com 뒤. 공통 1촌 Raymond · Ali 가 누군지 서우 확인 — 아는 사이면 소개가 낫다.
+  회사 상한 2 — 지금은 Ilan 한 명.
+- **1촌 메모 (272자)** — (e) 온체인 메모에서 「verdicts」 앞에 「hourly」만 더함
+```
+Hi Ilan, I'm Logan from Wellbian Labs in Seoul. With KWeather we publish hourly weather verdicts for 172 cities, each run fingerprinted to a public ledger. We are in active discussions with prediction-market platforms about launching weather markets. Open to a short chat?
+```
+- **수락 뒤 본문 (960자)** — 기본 문단 + Myriad 한 줄(「real-time information into tradable markets」) · 화상 통화
+```
+Hi Ilan,
+
+Thanks for connecting. I'm Logan from Wellbian Labs in Seoul. We work with KWeather, a Korean weather company with 30 years of observation, and run a weather data market built for settling prediction markets: city-level weather for 172 cities in 91 countries, each value a consensus across eleven weather feeds, with every input fingerprinted to a public ledger, and a verdict of met, not met or withheld. We are in active discussions with prediction-market platforms about launching weather markets.
+
+Myriad's line about turning real-time information into tradable markets is close to how we see weather. A city's conditions change every hour, and each hourly verdict carries fingerprints of its inputs, so an on-chain market could settle on it and anyone could recheck the result. Would you be open to a short call about whether weather could fit Myriad's markets?
+
+Best regards,
+Logan (Seowoo Park)
+Head of Partnerships & Operations, Wellbian Labs
+```
+  금지어 검사 통과(플랫폼 · 지갑 · 체인 이름 · Decrypt · 한국 · independent · first · only 0).
