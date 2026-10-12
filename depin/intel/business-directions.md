@@ -3391,3 +3391,28 @@ Hi Jonathan, I'm Logan at Wellbian Labs in Seoul. With KWeather, a Korean weathe
 ```
 Thanks for connecting, Jonathan. Good to be in touch.
 ```
+
+- **10/12 서우 결정 — 「아냐, 시장 가능성 · 다른 곳과 협의 중(가볍게)을 초기에 어필」** → 중립 메모 판을 거두고 예측시장 각도로 연다. 위 「조건 뒤」 판정은 **공급 계약 단계의 조건**으로 남긴다
+  (데이터 공급 협의 전 법률 의견 · 한국 도시 제외 · 한국 이용자 0). 시장 문장은 10/11 정본 「We are in active discussions with prediction-market platforms about launching weather markets.」 그대로,
+  다른 플랫폼 이름 · 토큰 · HYPE · 한국 도시 · 「independent」 0. 성장 · 시장성 근거 「Weather is one of the fastest-growing event categories」(10/12 이슈 케이스 · 업계 보도 — 출처 이름 없이 일반론).
+  HIP-4 는 그의 회사 사업이라 언급 가능 — 「As far as I can see, there is no weather template on HIP-4 yet」(검색 요약 기준이라 단정 대신 「as far as I can see」).
+
+**1촌 요청 메모 — 예측시장판 (299자, 상한 300)**
+```
+Hi Jonathan, Logan from Wellbian Labs, Seoul. With KWeather (30 years of observation) we build weather data to settle prediction markets: 172 cities, 11 weather feeds per value, inputs on a public ledger. We are in active discussions with prediction-market platforms about launching weather markets.
+```
+
+**수락 뒤 메시지 (1098자)** — 위 감사 한 줄을 대체
+```
+Thanks for connecting, Jonathan.
+
+A bit more context. We work with KWeather, a Korean weather company with 30 years of observation, and run a weather data market built for settling prediction markets: city-level weather for 172 cities in 91 countries, each value a consensus across eleven weather feeds, with every input fingerprinted to a public ledger, and a verdict of met, not met or withheld.
+
+Weather is one of the fastest-growing event categories, and it is also where settlement is most fragile: many weather contracts still rest on a single airport sensor. The withheld verdict is there so that whoever settles a market never has to stand behind a number they can't defend. We are in active discussions with prediction-market platforms about launching weather markets.
+
+As far as I can see, there is no weather template on HIP-4 yet. If that is on your roadmap, I'd be glad to compare notes on what a weather template and its settlement data could look like. Would a short call in the next few weeks work?
+
+Best regards,
+Logan (Seowoo Park)
+Head of Partnerships & Operations, Wellbian Labs
+```
