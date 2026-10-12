@@ -139,3 +139,9 @@ Hello Hyperion team, I'm Logan (Seowoo Park), Head of Partnerships & Operations 
 ```
 
 - **호칭(10/12 서우 「현수님 말고 CEO 나 정현수 대표, 풀네임」)**: 영문은 「your CEO, Hyunsu Jung」 · 「Mr. Jung」, 국문은 「정현수 대표님」(한글 표기는 서우 제공). 이름만 부르는 「Hyunsu」 는 쓰지 않는다.
+
+## 10/12 메일 제목 후보 (서우 「메일 보낼 건데 제목」)
+
+- Hyperion(일반 문의 메일 → 정현수 대표): **추천** `For Hyunsu Jung (CEO): weather market settlement data – Wellbian Labs` · 대안 `Coffee in New York, Oct 24–29? Weather markets – Wellbian Labs` · `Attn: Hyunsu Jung – settlement data that protects the stake`
+- Public.com(언론 메일 → 라우팅): **추천** `Weather data for prediction-market agents – please route` · 대안 `Partnership inquiry: weather data for Public's prediction markets` · `New York, Oct 24–29: weather data for AI trading agents`
+- 제목에도 토큰 · 가격 · XRP SEOUL · 다른 플랫폼 이름 0. 받는 사람 이름 · 직함을 제목 앞에 두면 공용 메일함에서 전달이 빨라진다.

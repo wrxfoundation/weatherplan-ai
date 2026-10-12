@@ -2237,3 +2237,4 @@ Thanks Odelia — writing to you at that address today. Mine is support@wellbian
 - **Hyperion 사이트 문의 폼 문안(10/12, 서우 폼 화면 캡처)** — 1순위 창구를 폼(Inquiry type Partnership)으로 갱신 · X @HyperionDeFi 추가. 폼 메시지 1193자 · 짧은 판 615자(링크드인 병행 한 줄 · 뉴욕 커피 · Skew 소개). Organization 칸은 「Wellbian Labs」 로, 회신 메일 주소 점검 권고. `content/backup-channels-1012.md`.
 - **Hyperion 호칭 정정(10/12, 서우 「현수님 말고 CEO 나 정현수 대표 풀네임」)** — 국문 「정현수 대표님」 · 영문 「your CEO, Hyunsu Jung」 · 「Mr. Jung」 · 「Dear Mr. Jung」 으로 폼 메시지 · 메일 B · Skew DM C · business-directions 국문/영문판 교체. 이름만 부르는 호칭 0.
 - **행사 · 홍보 이력 발화 규칙(10/12, 서우 「xrp seoul 이나 남산타워 얘기하지 말까」)** — playbook 끝에 절 신설: 예측시장 · 정산 · 기관 · 거래소 상대 첫 메시지에서 빼고(체인 색 · 한국 소매 홍보 · 코인 하이프 · 글자), XRPL 생태계 · 국내 커뮤니티 · DePIN · 언론 · 우리 게시물 · 미팅 중 질문받을 때 구두 한 줄은 허용. 지금까지 나간 PM 문안에는 둘 다 없음(점검).
+- **예비 메일 제목 후보(10/12, 서우 「메일 보낼 건데 제목」)** — Hyperion 3 · Public.com 3, `content/backup-channels-1012.md` 끝.
