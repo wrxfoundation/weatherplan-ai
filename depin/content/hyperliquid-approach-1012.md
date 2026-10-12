@@ -76,3 +76,36 @@
   확정 조건: Outcome Labs 법인 등록지 · 한국 접근 정책 확인.
 - 지금 할 일: Jonathan 1촌 요청 + 중립 메모(예측시장 · 정산 언급 0). 본 메시지는 법률 의견 · 한국 차단 계약 보장 뒤.
 
+## 4부 — Skew 스크립트 미리 작성 (10/12, 서우 「skew 쪽도 스크립트 미리」)
+
+> 대상 = Skew 창업자 David Gil(보도자료 기준 — 링크드인 실계정 · 직함은 보내기 전 확인). Hyperion DeFi 는 같은 계열로 보고 동시에 따로 연락 0(회사당 1명).
+> Jonathan(Outcome)판과 같은 틀: 10/11 정본 시장 문장 · 「빠르게 크는 범주」 · 단일 공항 센서 · 판정 보류 = 정산하는 쪽 방어.
+> Skew 에 맞춘 점: 공식 발표상 기관용 선물(HIP-3)이 먼저라 예측시장 운영을 가정하지 않는다 — 「outcome markets or an index」 둘 다 열어 두는 질문으로.
+> 금지: 다른 플랫폼 · 거래소 이름(Hyperion · Outcome · CME 포함) · 토큰 · HYPE · 한국 도시 · 「independent」 · 「certified」. 금지어 검사 통과(Hyperliquid · outcome markets 는 일반어 오탐).
+
+**보내기 전 확인**
+1. David Gil 링크드인 실계정 · 현재 직함(보도자료 이름만 확인됨).
+2. Skew 가 지금 예측시장(HIP-4)을 운영하는지 — 보도 엇갈림(Bankless 「두 번째 배포자」 vs 공식 발표 「선물 먼저」).
+3. 순서: Outcome(Jonathan)이 1순위 후보 — 두 회사는 서로 다른 회사라 병행 가능하지만, 같은 주에 둘 다 보내면 하이퍼리퀴드 생태계 안에서 말이 돈다. Jonathan 반응을 보고 1주 뒤가 무난.
+4. 데이터 공급 계약 전 조건(법률 의견 · 한국 도시 제외 · 한국 이용자 0)은 그대로.
+
+**1촌 요청 메모 (290자, 상한 300)**
+```
+Hi David, Logan from Wellbian Labs, Seoul. With KWeather (30 years of observation) we build weather data to settle markets: 172 cities, 11 weather feeds per value, every input on a public ledger. We are in active discussions with prediction-market platforms about launching weather markets.
+```
+
+**수락 뒤 메시지 / InMail 본문 (1252자)** — InMail 제목 후보: `Weather markets and settlement data – Wellbian Labs`
+```
+Hi David,
+
+Thanks for connecting. I'm Logan, Head of Partnerships & Operations at Wellbian Labs in Seoul. We work with KWeather, a Korean weather company with 30 years of observation, and run a weather data market built for settling markets: city-level weather for 172 cities in 91 countries, each value a consensus across eleven weather feeds, with every input fingerprinted to a public ledger, and a verdict of met, not met or withheld.
+
+Weather has a long history as an institutional hedge, and it is now one of the fastest-growing event categories. It is also where settlement is most fragile: many weather contracts still rest on a single airport sensor. The withheld verdict exists so that whoever settles a market never has to stand behind a number they can't defend. We are in active discussions with prediction-market platforms about launching weather markets.
+
+Since Skew is building institutional markets on Hyperliquid, I wonder whether weather is on your list, either as outcome markets or as an index. If it is, I'd be glad to compare notes on what the market design and its settlement data could look like. Would a short call in the next few weeks work?
+
+Best regards,
+Logan (Seowoo Park)
+Head of Partnerships & Operations, Wellbian Labs
+```
+
