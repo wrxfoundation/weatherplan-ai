@@ -2773,6 +2773,10 @@ Once you've had a look, happy to set up a call. Changmin can walk Clyde through 
 - **왜 이렇게 다른가**: 명목(notional = 지급액 기준, 1주 = $1)과 실제 오간 돈(테이커 · 프리미엄)을 섞어 쓴다. 명목은 몇 배 부풀어 보인다.
 - **쓰는 법**: 대외 인용 0. 콜에서 Henrich 에게 「최근 3개월 월 거래량(정의 포함) · 상위 시장 종류」를 직접 묻는 게 가장 정확. 비교: 칼시 · 폴리마켓은 각 월 수십억 달러대 — Limitless 는 한두 자릿수 작다.
 
+- **10/8 16:04 · 16:10 Henrich 답**: 「검토하고 다음 주에 회신」 · 뉴욕은 「연동 · 마켓 담당이 미국에 없어 화상으로」 → 서우 16:16 「화상 좋다 · 검토 뒤 구글 미트 초대 · 편한 시간 몇 개 달라」.
+- **10/12 검토 경과 묻기(서우 「리미트리스 측 검토 경과 묻는 내용」)** — Henrich 10/8 메시지에 답장으로, 405자: 주말 인사 · 검토 경과 · 데이터 · API · 데모 질문은 여기서나 통화로 ·
+  Clyde 에게 도시 하나 API 샘플 응답 제안 · 시간 몇 개 주면 구글 미트 초대. 다른 플랫폼 이름 · 한국 도시 0. 보내는 시점 = 10/12 오후~10/13, 무응답이면 10/16(금)까지 기다려 한 번만.
+
 ## Vi Hoang (Binance, Growth Specialist — Binance Pay 성장 운영 APAC · 홍콩) — 판정 (2026-10-08, 서우 캡처 4장 · 2촌 · 1촌 요청 대기 중)
 
 - **자리**(캡처 기준): Binance Growth Specialist(2026-07~, 재택 · 「Binance Pay Growth Operations (APAC)」 · 헤드라인 「APAC Stablecoin Payment」) ·
