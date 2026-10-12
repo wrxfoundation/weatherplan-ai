@@ -3642,6 +3642,26 @@ Good to be connected.
 금지선 재확인 — 크립토닷컴 · OG.com · 예측시장 · 정산 · 계약 사실 0(MNDA), 다른 거래소·플랫폼 0, XRP SEOUL 스폰서 0,
 Flare 진전 0, 토큰 · 상장 · WLBN 0. 체결 뒤에도 크립토닷컴 이름은 그에게 쓰지 않는다. 발송 여부는 서우가 알려줄 때 갱신.
 
+**10/13 재판정(서우 프로필 캡처 2장 다시 · 1촌 · 시카고 · 공통 1촌 4)** — **지금도 메시지 0.**
+- 로빈후드 계열은 이미 상한 초과(Tom Chippas · Johann Kerbrat · Allessandra Miller · Nicola White 답 대기) · 10/11 결정 10 「10/15 뒤에도 새 사람 0 — 답만」 ·
+  10/8 「Steve 는 1촌 유지 · 메시지 0(자리 교체)」. 여기에 10/13 SIG(Rothera 공동 소유사) Nick Volbi 대면이 잡혀 로빈후드 쪽 창구를 더 늘리면 겹쳐 보인다.
+- 크립토닷컴 「우회」 우려는 10/11 비독점 결정으로 줄었지만 10/15 재판정 게이트는 그대로.
+- **다시 볼 때**: 10/15 재판정 뒤, 그리고 10/20 까지 로빈후드 스레드가 모두 조용하면 — 죽은 스레드 하나와 **자리 교체**해 Steve 에게 인사 + 소개 한 줄(그는 브로커리지 총괄이라 정산 데이터 주인이 아니고, 쓸모는 「맞는 사람」 소개 — 10/8 판정의 Adam Hickerson 쪽).
+- 문안 갱신(9/26 판의 「certified」 · 「167 cities · 90 countries」 · 「independent sources」 → 미국 · 현재 기준): 인사 544자 · 소개 한 줄(그때만) 234자.
+
+```
+Steve — thanks for connecting.
+
+I run partnerships at wellbian. KWeather has measured weather in South Korea for thirty years and supplies data to 4,000+ enterprise clients; wellbian is the network built on top of that.
+
+We work on two layers: air-quality sensors that people run in their own rooms, and city-level weather across 91 countries and 172 cities, where each value is a consensus across eleven weather feeds rather than a single reading. Every input is fingerprinted to a public ledger before it goes anywhere.
+
+Good to be connected.
+```
+```
+One more thing, if I may: we are in active discussions with prediction-market platforms about launching weather markets. If there's someone on your side who looks at new data sources for event contracts, I'd be grateful for a pointer.
+```
+
 ## Crypto Eri — 도쿄 34일 연속 비, 가벼운 한 줄 (9/29 밤)
 
 **흐름**: 서우가 Japan Times 9/29 「Tokyo sets a new record with 34 straight days of rain」 링크 + 「이 내용으로 eri 한테 가벼운 말 던져보자」.
