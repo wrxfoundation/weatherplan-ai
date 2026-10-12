@@ -3831,3 +3831,36 @@ Good to be connected.
 ```
 Thank you, Eve, likewise! Enjoy the new chapter. I'd be glad to keep swapping insights, especially on where real-world data and prediction markets are heading, and if a collaboration angle comes up on either side, let's explore it.
 ```
+
+## Dr. Laila Mintas (365Prediction Founder & CEO · 라스베이거스) — 판정 (2026-10-12, 서우 캡처 2장 · 2촌)
+
+- **자리**(캡처): 365Prediction Founder & CEO(2026-01~, 라스베이거스) · FiscalNote Strategic Advisor(2026-02~) · ADvantage 주주 · Venture Partner(2021~, 올랜도) ·
+  European T20 Premier League 주주 · 이사(2025~) · 「Lawyer by trade」 · 팔로워 약 1.2만 · 2촌(공통 1촌 Matt (Meir) 1명 — 누구인지 미확인, 소개 경로로 쓰지 않음).
+- **회사**(검색 요약 · 2차): 365Prediction, LLC = CFTC 거래소(DCM) 신청 · 계열 청산소 Next Gen Clearing(DCO) 신청, 2026-06-10 「Pending」(CFTC 신청 목록) ·
+  Eventus 감시 기술 · 이사회 Mintas · Leo Gaspar · Angela Ruggiero 외 · 「연말 면허 · 2027 초 개시」(본인 인터뷰) · 전 PlayUp US CEO · 스포츠 이벤트 계약 연방 관할 지지 의견서.
+- **판정 — 지금 1촌 요청 + 메모, 수락 뒤 본문(화상 30분).** 전수 리스트 18번(관찰 · 「승인 임박 때」)을 **지금(10/12 주)** 으로 올린다:
+  ① 개시 전 = 계약 목록 · 정산원을 규정에 쓰는 때 — 나중에 바꾸기보다 처음에 들어가는 게 단단하다 ② 작은 신생 거래소는 CEO 가 실제 창구 ③ 한국 민감도 해당 없음 · 회사 1명째.
+  스포츠 중심이라 날씨는 「계약 목록에 있나」를 묻는 형식. 뉴욕 아님(라스베이거스) → 화상만. 변호사 출신이라 과장 0 · 「withheld」 규칙을 그대로.
+- 금지: 다른 플랫폼 이름 · 한국 · 일본 도시 · 토큰 · 가격 · 독점 · certified(미국) · independent. 「Many weather contracts still resolve on a single airport station」 — 「most」 단정 대신(칼시 다지점 지수 이후).
+- 시트(예측마켓 · DePIN 컨택 현황) 18번 줄: 단계 → 지금(10/12 주) · 연락 상태 → 보낸 뒤 「보냄 · 답 대기」 (서우가 직접 — 시트 편집 커넥터 없음).
+
+**1촌 요청 메모 (EN, 275자)**
+```
+Hi Laila, I'm Logan from Wellbian Labs in Seoul. With KWeather (30 years of weather observation) we build settlement data for weather markets: city values from eleven weather feeds, every input on a public ledger. With 365Prediction heading to launch, I'd be glad to connect.
+```
+
+**수락 뒤 메시지 (EN, 1057자)**
+```
+Laila, thanks for connecting.
+
+I lead partnerships at Wellbian Labs. We work with KWeather, a Korean weather company with 30 years of observation and 4,000+ clients, on weather data built to settle markets.
+
+Weather is one of the cleanest event categories: the outcome is measurable and anyone can check it afterwards. The hard part is the settlement number. Many weather contracts still resolve on a single airport station, so one faulty sensor can decide a market. We publish hourly values for 172 cities in 91 countries, each a consensus across eleven weather feeds, with every input fingerprinted to a public ledger and a "withheld" verdict for the hours when the inputs can't support a clean answer.
+
+We are in active discussions with prediction-market platforms about launching weather markets. With 365Prediction preparing for launch, this seems the right moment to ask whether weather is on your contract list, and how you're thinking about settlement sources.
+
+Happy to walk you through it on a 30-minute video call whenever suits you.
+
+Best,
+Logan
+```
