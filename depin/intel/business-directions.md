@@ -3512,7 +3512,7 @@ Head of Partnerships & Operations, Wellbian Labs
   @skewtrade DM · skew.trade 문의는 보류(병행하면 같은 계열에 두 번), Skew 는 그의 소개로.
 - **각도**: 「정산이 틀리면 담보가 깎인다 — 판정 보류가 그 담보를 지키는 장치」. 보도도 「배포자 잘못 · 기술 장애로 삭감되면 Hyperion 이 맡긴 자본을 잃을 수 있다」고 짚었다(The Block 등, 2차).
   + 「빠르게 크는 범주」 · 단일 공항 센서 · 10/11 정본 시장 문장(국문판 「예측시장 플랫폼들과 날씨 마켓 개설을 적극 논의하고 있습니다」).
-- **금지**: HYPE · 토큰 · 가격 · Outcome 등 다른 배포자 이름 · 상장사 표현(케이웨더 · Hyperion 모두) · 한국 도시 · 「독립」. 이름 한글 표기는 추측하지 않는다(「Hyunsu 대표님」).
+- **금지**: HYPE · 토큰 · 가격 · Outcome 등 다른 배포자 이름 · 상장사 표현(케이웨더 · Hyperion 모두) · 한국 도시 · 「독립」. 이름 한글 표기는 추측하지 않는다 → **10/12 서우가 「정현수 대표」로 확정**(「현수님」 · 「Hyunsu」 단독 호칭 0, 영문은 「Mr. Jung」 · 「Hyunsu Jung」).
 - **국문판을 기본으로**(서우 「한국 사람이라 좋다」), 영어가 편한 상대로 보이면 영문판.
 - 공급 계약 전 조건(법률 의견 · 한국 도시 제외 · 한국 이용자 0)은 그대로.
 
@@ -3521,7 +3521,7 @@ Head of Partnerships & Operations, Wellbian Labs
 
 프리미엄 메시지 제목 — **추천** `뉴욕 10/24~29 커피 한 잔 — 날씨 시장 정산 데이터`(10/12 서우 요청) · 대안 `하이퍼리퀴드 날씨 시장, 담보를 지키는 정산 데이터` · `서울 웰비안랩스 박서우입니다 — 날씨 시장 논의 요청` / 영문 `Coffee in New York, Oct 24–29? Weather markets on Hyperliquid` · `Settlement data that protects the stake – Wellbian Labs`
 ```
-Hyunsu 대표님, 안녕하세요. 서울의 웰비안랩스(Wellbian Labs)에서 파트너십과 운영을 맡고 있는 박서우(Logan)입니다.
+정현수 대표님, 안녕하세요. 서울의 웰비안랩스(Wellbian Labs)에서 파트너십과 운영을 맡고 있는 박서우(Logan)입니다.
 
 저희는 30년 관측 경험을 가진 한국 기상기업 케이웨더와 함께 예측시장 정산용 날씨 데이터 마켓을 운영하고 있습니다. 91개국 172개 도시의 날씨를 11개 날씨 피드의 합의값으로 내고, 모든 입력값은 공개 원장에 지문을 남기며, 판정은 충족 · 미충족 · 판정 보류 셋입니다.
 
@@ -3536,7 +3536,7 @@ Head of Partnerships & Operations, Wellbian Labs
 **영문판 (제목 51자 · 본문 1237자)**
 제목: `Weather markets and settlement data – Wellbian Labs`
 ```
-Hi Hyunsu,
+Dear Mr. Jung,
 
 I'm Logan (Seowoo Park), Head of Partnerships & Operations at Wellbian Labs in Seoul. We work with KWeather, a Korean weather company with 30 years of observation, and run a weather data market built for settling prediction markets: city-level weather for 172 cities in 91 countries, each value a consensus across eleven weather feeds, with every input fingerprinted to a public ledger, and a verdict of met, not met or withheld.
 

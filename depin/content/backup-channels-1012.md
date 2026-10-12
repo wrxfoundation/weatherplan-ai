@@ -17,8 +17,8 @@
 | 회사 | 지금 링크드인 라인 | 예비 창구(확인 수준) | 발동 | 문안 |
 |---|---|---|---|---|
 | Outcome Labs (outcome.xyz) | Jonathan C.(1촌 메모) · Ahmed Salih(메시지) · Diogo R.(InMail) — 10/12 | ① X **@Outcomexyz** DM(회사 사이트에서 링크된 공식 계정 — 검색 확인) ② 디스코드에 파트너 · 티켓 채널이 있으면 같은 문안(공개 채널 게시 0). 메일은 못 찾음 | 셋 다 10/15 밤까지 무반응 → 10/16 (서우 「시간이 없어」) | A (541자) |
-| Hyperion DeFi (Skew 계열 문) | Hyunsu Jung — 10/12 | **1순위 = 본사 사이트 「Get in touch」 폼, Inquiry type「Partnership」**(10/12 서우 화면 — 사이트가 「파트너십 · 기관은 이 폼으로」라고 명시) · 2순위 일반 문의 메일 · X **@HyperionDeFi**(사이트 표기). IR 은 주주 · 애널리스트용이라 쓰지 않음 | 10/15 밤까지 무반응 → 10/16 | B (제목 55자 · 본문 1392자) |
-| Skew Technologies (skew.trade) | 없음(Hyunsu 소개를 기다림) | X **@skewtrade** DM(보도자료 회사 소개 — 확인) · skew.trade 문의 양식(있으면) | Hyunsu 가 메일까지 무반응 → **10/20(화)** — 한 계열 두 문을 같은 날 열지 않는다. Hyunsu 에게 썼다는 줄 포함 | C (539자 — 4부 493자 판에 Hyunsu 한 줄) |
+| Hyperion DeFi (Skew 계열 문) | Hyunsu Jung — 10/12 | **1순위 = 본사 사이트 「Get in touch」 폼, Inquiry type「Partnership」**(10/12 서우 화면 — 사이트가 「파트너십 · 기관은 이 폼으로」라고 명시) · 2순위 일반 문의 메일 · X **@HyperionDeFi**(사이트 표기). IR 은 주주 · 애널리스트용이라 쓰지 않음 | 10/15 밤까지 무반응 → 10/16 | B (제목 55자 · 본문 1411자) |
+| Skew Technologies (skew.trade) | 없음(정현수 대표 소개를 기다림) | X **@skewtrade** DM(보도자료 회사 소개 — 확인) · skew.trade 문의 양식(있으면) | 정현수 대표가 메일까지 무반응 → **10/20(화)** — 한 계열 두 문을 같은 날 열지 않는다. 정현수 대표에게 썼다는 줄 포함 | C (549자 — 4부 493자 판에 정현수 대표 한 줄) |
 | Public.com | Leif Abraham InMail — 10/11 | 언론 메일(public.com 페이지 「Contact Us」 — 검색 확인, 단일 출처) — 「예측시장 · 에이전트 파트너십 담당에게」 라우팅 요청. 파트너십 전용 주소는 못 찾음 · 공식 X 핸들은 미확인 | 10/15 밤까지 무반응 → 10/16 | D (제목 56자 · 본문 1160자) |
 | Fanatics Markets | Louis Sutton(10/11) · Mihai Anca(10/12) — 상한 2 | X **@FanaticsMarkets** DM(회사 보도자료에 적힌 공식 계정 — 확인). 소비자 응대 계정이라 약함. 지원 메일은 고객용이라 쓰지 않음 | 둘 다 7일 무반응 → 10/19(월) | E (472자) |
 | Gemini · 칼시 · Arbol · ForecastEx 등 | 각 라인(Oliver Li · Elaine Song / Will Brackett / Sid Jha …) | **공식 창구 못 찾음**(검색엔 제3자 추정 메일 형식뿐 — 쓰지 않음). 서우가 회사 사이트 Contact · 보도자료 하단 연락처 확인 → 공통 틀 F | 뉴욕 대상(칼시 · Arbol) 10/16 · 화상 대상 7일 | F (제목 53자 · 본문 954자) |
@@ -33,12 +33,12 @@
 Hi Outcome team, Logan from Wellbian Labs in Seoul. With KWeather (30 years of observation) we build weather data to settle markets: 172 cities, each value a consensus of eleven weather feeds, every input fingerprinted to a public ledger, and a verdict of met, not met or withheld. We are in active discussions with prediction-market platforms about launching weather markets. If weather is on your list of new categories, I'd value 30 minutes on a call. I've also left notes for Jonathan and Ahmed on LinkedIn, so whichever route is easier.
 ```
 
-**B. Hyperion — 메일(일반 문의 → Hyunsu)**
+**B. Hyperion — 메일(일반 문의 → 정현수 대표)**
 제목: `Attn: Hyunsu Jung – weather markets and settlement data`
 ```
-Hello Hyperion team, could you please pass this note to Hyunsu? Thank you.
+Hello Hyperion team, could you please pass this note to your CEO, Hyunsu Jung? Thank you.
 
-Hi Hyunsu,
+Dear Mr. Jung,
 
 I sent you a note on LinkedIn and am copying it here in case email is easier.
 
@@ -54,9 +54,9 @@ Head of Partnerships & Operations, Wellbian Labs
 ```
 - 국문판(648자)을 쓰고 싶으면 맨 위 영문 두 줄(전달 부탁)만 두고 국문 본문을 붙인다 — 받는 사람이 한국어를 못 읽는 직원일 수 있어서 전달 부탁 줄은 영어로.
 
-**C. Skew — X DM (539자)**
+**C. Skew — X DM (549자)**
 ```
-Hi Skew team, Logan from Wellbian Labs in Seoul. With KWeather (30 years of observation) we run weather data built to settle markets: 172 cities, a consensus of eleven weather feeds, every input on a public ledger, and a withheld verdict on days the inputs can't support a clean answer. We are in active discussions with prediction-market platforms about launching weather markets. Since you bring new market categories on-chain with partners, is weather on your list? I've also written to Hyunsu at Hyperion, so whichever route suits you.
+Hi Skew team, Logan from Wellbian Labs in Seoul. With KWeather (30 years of observation) we run weather data built to settle markets: 172 cities, a consensus of eleven weather feeds, every input on a public ledger, and a withheld verdict on days the inputs can't support a clean answer. We are in active discussions with prediction-market platforms about launching weather markets. Since you bring new market categories on-chain with partners, is weather on your list? I've also written to Hyunsu Jung, CEO of Hyperion, so whichever route suits you.
 ```
 
 **D. Public.com — 메일(언론 창구 → 라우팅)**
@@ -115,13 +115,13 @@ Head of Partnerships & Operations, Wellbian Labs
 
 - 사이트 「Get in touch」: 「Investor, partner, or builder — … for partnerships and institutional opportunities, use the form」 · 일반 문의 메일 · IR 사이트 · X @HyperionDeFi · 링크드인 hyperiondefi · 유튜브 · 인스타그램.
 - 폼 칸 확인: **Organization = 「Wellbian Labs」**(부서명 「Partnerships」 아님) · Inquiry type = Partnership · 이메일은 회신을 놓치지 않는 주소로(공용 support 함은 고객 문의와 섞인다 — 본인 회사 메일이 있으면 그쪽).
-- 같은 날 링크드인과 겹치는 문제: 폼은 회사가 파트너십 창구로 지정한 곳이라 지금 보내도 된다. 대신 본문에 「Hyunsu 에게 링크드인으로도 보냈다」 한 줄(몰래 두 갈래 0). 이 폼을 보내면 B(일반 문의 메일)는 쓰지 않는다.
+- 같은 날 링크드인과 겹치는 문제: 폼은 회사가 파트너십 창구로 지정한 곳이라 지금 보내도 된다. 대신 본문에 「정현수 대표에게 링크드인으로도 보냈다」 한 줄(몰래 두 갈래 0). 이 폼을 보내면 B(일반 문의 메일)는 쓰지 않는다.
 
-**폼 메시지 — 기본 (1193자)**
+**폼 메시지 — 기본 (1209자)**
 ```
 Hello Hyperion team,
 
-I'm Logan (Seowoo Park), Head of Partnerships & Operations at Wellbian Labs in Seoul. I also sent a note to Hyunsu on LinkedIn; please pass this to him or to whoever leads new market partnerships.
+I'm Logan (Seowoo Park), Head of Partnerships & Operations at Wellbian Labs in Seoul. I also sent a note to your CEO, Hyunsu Jung, on LinkedIn; please pass this to him or to whoever leads new market partnerships.
 
 We work with KWeather, a Korean weather company with 30 years of observation, and run weather data built for settling prediction markets: 172 cities in 91 countries, each value a consensus across eleven weather feeds, every input fingerprinted to a public ledger, with a verdict of met, not met or withheld.
 
@@ -133,7 +133,9 @@ Best regards,
 Logan (Seowoo Park)
 Head of Partnerships & Operations, Wellbian Labs
 ```
-**폼 메시지 — 글자 제한이 있으면 짧은 판 (615자)**
+**폼 메시지 — 글자 제한이 있으면 짧은 판 (633자)**
 ```
-Hello Hyperion team, I'm Logan (Seowoo Park), Head of Partnerships & Operations at Wellbian Labs in Seoul; I also sent a note to Hyunsu on LinkedIn. With KWeather (30 years of observation) we run weather data built to settle prediction markets: 172 cities, eleven weather feeds per value, every input on a public ledger, and a withheld verdict on days the inputs can't support one, which protects the stake behind a market. We are in active discussions with prediction-market platforms about launching weather markets. I'm in New York Oct 24-29; 30 minutes for coffee with Hyunsu or the right person would be great.
+Hello Hyperion team, I'm Logan (Seowoo Park), Head of Partnerships & Operations at Wellbian Labs in Seoul; I also sent a note to your CEO, Hyunsu Jung, on LinkedIn. With KWeather (30 years of observation) we run weather data built to settle prediction markets: 172 cities, eleven weather feeds per value, every input on a public ledger, and a withheld verdict on days the inputs can't support one, which protects the stake behind a market. We are in active discussions with prediction-market platforms about launching weather markets. I'm in New York Oct 24-29; 30 minutes for coffee with Mr. Jung or the right person would be great.
 ```
+
+- **호칭(10/12 서우 「현수님 말고 CEO 나 정현수 대표, 풀네임」)**: 영문은 「your CEO, Hyunsu Jung」 · 「Mr. Jung」, 국문은 「정현수 대표님」(한글 표기는 서우 제공). 이름만 부르는 「Hyunsu」 는 쓰지 않는다.
