@@ -3748,3 +3748,13 @@ I think weather is a real volume opportunity for you: up to 172 new markets a da
 
 And we've made it easy to pick up. The data side is already running: hourly values, verdicts and the public-ledger record all come through a REST API with an OpenAPI spec, so on your side it's mostly a review and wiring it into your settlement. If you have five minutes, I'd value your take on what you'd change for a HIP-4 template.
 ```
+- **10/12 20:36 Jonathan 답** — 「지금은 마켓 수 상한(cap)에 걸려 있다 · 정보는 보내 달라 · 이색(exotic) 마켓에 집중하지 않지만 상한이 풀리고 관심이 생기면 나중에」.
+  - **읽기**: 거절이 아니라 「보류 + 문 열림」. 막힌 곳은 Outcome 의지보다 **HIP-4 마켓 수 상한**(검증인 큐레이션 단계). 조건 둘 = ① 상한 해제 ② 이용자 관심. 날씨는 그들에게 「이색」 범주.
+  - **할 일**: ① 짧은 감사 + 질문 하나(「관심」을 무엇으로 보나 — 커뮤니티 요청인지, 다른 곳의 비슷한 마켓 활동인지) + 상한 풀리면 알려 달라 ② 1장짜리 정보 묶음(마켓 모양 · 정산 방식 · 템플릿 칸 · 시작 도시 · 연동) — 시작 도시는 데이터팀이 정산 가능률 높은 비한국 · 비일본 도시로 확정한 뒤.
+  - **하지 않을 것**: 「관심」을 만들려고 우리 커뮤니티(한국 비중 큼)를 해외 예측시장으로 보내는 공동 홍보 제안 0 — 한국 이용자 0 전제와 충돌. 수치 없는 「거래가 크다」 주장 0.
+  - **추적**: HIP-4 마켓 상한 해제(하이퍼리퀴드 공지 · 검증인 표결) = Outcome 재접촉 트리거. 뉴욕 출장 우선순위에서는 하이퍼리퀴드 갈래를 낮춘다(상한이 풀리기 전엔 진척 없음).
+
+텔레그램 답 (379자)
+```
+Thanks Jonathan, that's helpful and makes sense. I'll send over a short info pack so it's on file when the cap comes off. One question so I know what to watch for: when you say interest voiced, is that mostly users asking in your community, or something you'd see in activity on similar markets elsewhere? And if you're open to it, a quick ping when the cap lifts would be great.
+```
