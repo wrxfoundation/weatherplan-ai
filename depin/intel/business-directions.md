@@ -3796,9 +3796,9 @@ Thank you, Eve, likewise! Enjoy the new chapter. One thing on our side you might
   ③ 잡을 고리 = 그의 「impact first」 — 우리 일의 출발이 집 안 공기라는 점(측정기 + 데이터 두 층 그대로). 지역 홍콩 → certified 0.
 - 다시 볼 때: YZi 포트폴리오 행사 · 미디어 기획에서 실물 데이터 · 헬스(공기질) 이야기를 찾을 때 — 그쪽이 먼저.
 
-**1촌 요청 메모 (304자)**
+**1촌 요청 메모 (298자)**
 ```
-Hi Yuna, Logan from Wellbian Labs, Seoul. With KWeather (30 years of observation) we run home air-quality sensors and weather data for 172 cities, every input fingerprinted to a public ledger. Your “impact first” line resonated, since our work starts with the air people breathe at home. Glad to connect.
+Hi Yuna, Logan from Wellbian Labs, Seoul. With KWeather (30 years of observation) we run home air-quality sensors and weather data for 172 cities, every input fingerprinted to a public ledger. Your “impact first” line resonated: our work starts with the air people breathe at home. Glad to connect.
 ```
 **수락 뒤 인사 (547자)**
 ```
