@@ -3758,3 +3758,15 @@ And we've made it easy to pick up. The data side is already running: hourly valu
 ```
 Thanks Jonathan, that's helpful and makes sense. I'll send over a short info pack so it's on file when the cap comes off. One question so I know what to watch for: when you say interest voiced, is that mostly users asking in your community, or something you'd see in activity on similar markets elsewhere? And if you're open to it, a quick ping when the cap lifts would be great.
 ```
+- **10/12 답 최종(서우 「날씨 마켓이 작은 규모가 아니라는 어필 + 핵심 도시로 가볍게 시범 + 그 기준 묻기」)** — 위 379자 판 대신 이것.
+  - 규모 근거 = 「미국 규제 거래소 한 곳이 올해 7월까지 날씨 거래량 약 5억 6,400만 달러, 이미 2025년 전체보다 많다(WSJ 보도)」 — 출처 사슬: WSJ → Benzinga(Webull 재게재) · 칼시 × TWC 제휴(8/27) 기사. 거래소 이름은 쓰지 않음(상대는 알아봄). 회사 자체 전망치(올해 11억 달러) · 500% 성장은 단일 기사 · 회사 추정이라 뺌.
+  - 시범 = 자리가 나면 주요 도시 3~5곳 · 도시당 하루 최고기온 마켓 하나 · 몇 주. 템플릿 초안 · 정산 데이터 · 판정은 우리가. **가격 · 무료 언급 0**(서우 · 대표 결정 전). 도시는 이름 대신 「주요 도시」(한국 · 일본 도시 0 규칙 + 그쪽이 고르게).
+```
+Thanks Jonathan, that makes sense, and I appreciate the straight answer.
+
+One thing I'd gently push back on is weather being a small corner. One US-regulated exchange did about $564 million in weather volume through July this year, already more than its whole of 2025, as reported by the WSJ. So it's less exotic than it looks.
+
+A thought for when you have room: a light pilot. Three to five major cities, one daily high-temperature market each, for a few weeks. We'd draft the template and supply the settlement data and verdicts, so the lift on your side stays small, and you'd see real activity before committing more slots.
+
+And so I know what to watch for: when you say interest voiced, is that mostly users asking in your community, or activity on similar markets elsewhere? I'll send a short info pack either way.
+```
