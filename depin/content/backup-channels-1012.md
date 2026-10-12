@@ -168,3 +168,11 @@ Best regards,
 Logan (Seowoo Park)
 Head of Partnerships & Operations, Wellbian Labs
 ```
+
+- **10/12 서우 「support 메일 찾았어」** — 고객 지원 메일은 회원 계정 문의용(티켓 · 자동 응답 뒤 종결 가능성) → **언론 메일이 1순위, 지원 메일은 언론 메일 무응답(5영업일) 뒤 마지막.** 같은 날 두 주소로 보내지 않는다(참조로 넣으면 지원 티켓이 생김).
+  지원 메일로 보낼 때는 제목 `Partnership inquiry (not an account issue) – weather data for agents` · 첫 문단만 교체:
+```
+Hello Public team,
+
+This is a partnership inquiry, not an account issue, so it may need to go to another team. Could you forward it to whoever leads prediction markets or AI agent partnerships? I also wrote to Leif Abraham on LinkedIn, so please feel free to route it to him.
+```
