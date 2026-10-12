@@ -52,8 +52,8 @@
   ⓐ 폴리마켓 US 「글로벌 기온 계약」 10/7 자가인증(10/9 부터 상장 가능): 1차 NOAA 항공기상센터(공항 관측 자료) · NCEI, 예비 Weather Underground
   (CFTC 제출 문서 — 검색 요약, 원문 미열람). **⚠ 10/12 정정: 「계약마다 공항 관측소 하나」는 문서 명시가 아니라 추론** — 계약별 관측소 지정은 원문 확인 필요.
   이 계약을 다룬 뉴스 기사는 찾지 못했다(제출 문서뿐). ⓑ ForecastEx 허리케인 계약 정산 = Reask(10/8 무렵 — 업계지 Artemis 보도): 기준점 반경 10km 안
-  1km 격자들의 최대 3초 돌풍(CFTC 제출 · IBKR 설명글). 「공항 관측소는 큰 허리케인 때 자주 꺼진다」는 이유는 **IBKR 설명글 검색 요약 한 건뿐**
-  (10/12 재검색 미확인 — 대외 인용 0). ⓒ 폴리마켓 Protocol V2 — OracleAggregator(UMA · Chainlink ·
+  1km 격자들의 최대 3초 돌풍(CFTC 제출 · IBKR 설명글). **이유는 확인됨(10/12 오후 — 서우가 Artemis 원문 붙여 넣음, 10/8 Jack Willard)**: Reask 발언
+  「coastal and airport weather stations frequently go offline during the period of peak winds」 — 대상 163곳(미 걸프 · 대서양 · 카리브 · 멕시코 · 중미 · 남미 북부). ⓒ 폴리마켓 Protocol V2 — OracleAggregator(UMA · Chainlink ·
   EOA 리포터) 시험 10/5~30, 새 시장 11/2 부터 V2, Data API V1 10/24 종료(Crypto Briefing 2차).
   시사점: 같은 주에 한쪽은 공항 하나로 세계 도시를 열고, 다른 쪽은 공항 관측소가 꺼지는 문제를 정산 설계 이유로 적었다 — 우리 문장
   「many weather contracts still rest on a single airport sensor」의 근거 후보가 생겼다(원문 확인 전 — 이 주제를 직접 다룬 보도는 여전히 4월 파리 공항 센서 사건 쪽). 대외에서는 **다른 플랫폼 이름 0 · 원출처 1회 확인 뒤**,
