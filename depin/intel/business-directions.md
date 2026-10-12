@@ -3992,3 +3992,70 @@ I'd value your view as someone on the desk: how do you source weather observatio
 Best,
 Logan
 ```
+
+## 스포츠 예측시장 3곳 링크드인 공략 — Novig · DraftKings(DKeX) · Underdog(UDX) (2026-10-13, 서우 「링크드인 공략하기」)
+
+- 계기: 거래량 집계표(10/13) — Novig 최근 30일 약 17.7억 달러 · +134% · 6위(OG.com 거래소와 같은 체급), DraftKings · Underdog 은 OG.com 엔진에서 자기 거래소로 옮김.
+- 전수 리스트에서 셋 다 「관찰」(Novig 25 · DraftKings 24 · Underdog 17) → **지금(10/13 주)** 으로 올림. 셋 다 날씨 상품 없음(스포츠 중심) — 각도 = 「스포츠 옆 가장 깨끗한 실세계 범주」(경기일 날씨 · 도시 기온 · 강수).
+- **Novig**(Ludlow Exchange, 뉴욕 · 2026-08 스포츠 전용 개시 · 9/30 기업가치 약 20억 달러 보도 · 광고 약속 「전쟁 · 죽음 · 정치 없음」) —
+  사람: Head of Markets(뉴욕 채용 공고 — 채워졌으면 그 사람) → 없으면 Jacob Fortinsky(CEO · 공동창업). Elie Mishory(최고 규제 · 법무, 전 칼시 · CFTC)는 첫 연락 0. 뉴욕 커피.
+- **DraftKings Predictions / DKeX**(자체 CFTC 거래소 2026-06-26 · 약 18개 주 · 스포츠 · 2026 예측 사업 추가 투자 2~3억 달러, 상장사 DKNG · 보스턴) —
+  사람: Jeanine Hightower-Sellitto(SVP & GM, Prediction Markets — 10/11 노트 기준, 이번 검색으론 재확인 못 함 → 링크드인에서 직함 확인) · 없으면 「DraftKings Predictions」 제품 · 마켓 책임자. 화상 기본.
+- **Underdog Predict / UDX**(Aristotle 거래소 2026-03 인수 · 7월 자체 거래소 · IG Group 최대 13억 달러 인수 합의(마감 미확인) · 「미국 규제 예측시장 거래량 3위」 자기 주장 · 경제 · 컬처 마켓 있음) —
+  사람: 예측시장(Underdog Predict) 제품 · 마켓 책임자(이름 못 찾음 → 링크드인 「Underdog Predict」 검색) → 없으면 Jeremy Levine(CEO · 공동창업). **법무 Nick Lundgren(전 크립토닷컴 CLO · OG.com CEO) 0.** 뉴욕 커피.
+- 공통 금지: 크립토닷컴 · OG.com · 다른 플랫폼 이름(셋 다 OG.com 엔진을 떠난 회사 — 「옮겼다」 언급 0) · 한국 · 일본 도시 · 토큰 · 가격 · 독점 · certified(미국) · independent.
+  회사당 1명. 링크드인 검색어: 「Novig」+markets/trading/partnerships · 「DraftKings Predictions」/「DKeX」 · 「Underdog Predict」/「UDX」/prediction markets.
+- 뉴욕 동선: 10/29 12시 SIG · Swell 10/27~29 → 커피는 10/26 · 10/28 쪽.
+- 시트: 17 · 24 · 25번 줄 단계 → 지금, 사람 → 확인한 사람(서우가 직접).
+
+**Novig — 1촌 메모 (272자)**
+```
+Hi {Name}, I'm Logan from Wellbian Labs in Seoul. With KWeather (30 years of observation) we build weather data to settle event contracts: hourly values for 172 cities, eleven weather feeds per value, every input on a public ledger. In New York Oct 24–29; glad to connect.
+```
+**Novig — 수락 뒤 (1039자)**
+```
+{Name}, thanks for connecting.
+
+I lead partnerships at Wellbian Labs. We work with KWeather, a Korean weather company with 30 years of observation and 4,000+ clients, on weather data built to settle event contracts.
+
+Sports fans already trade on the weather without calling it that: rain delays, wind at the ballpark, heat on game day. It is one of the cleanest real-world categories there is, measurable and easy to check afterwards, and it sits comfortably with a promise of no wars, no death and no politics. The hard part is the settlement number, since many weather contracts still resolve on a single airport station. We publish hourly values for 172 cities in 91 countries, each a consensus across eleven weather feeds, with every input fingerprinted to a public ledger and a "withheld" verdict when the inputs can't support a clean answer.
+
+We are in active discussions with prediction-market platforms about launching weather markets. I'll be in New York from October 24 to 29. Would you have 30 minutes for a coffee?
+
+Best,
+Logan
+```
+**DraftKings — 1촌 메모 (267자)**
+```
+Hi {Name}, I'm Logan from Wellbian Labs in Seoul. With KWeather (30 years of observation) we build weather data to settle event contracts: hourly values for 172 cities, eleven weather feeds per value, every input on a public ledger. Congrats on DKeX; glad to connect.
+```
+**DraftKings — 수락 뒤 (1042자)**
+```
+{Name}, thanks for connecting.
+
+I lead partnerships at Wellbian Labs. We work with KWeather, a Korean weather company with 30 years of observation and 4,000+ clients, on weather data built to settle event contracts.
+
+With DKeX as your own exchange, you can now decide which categories sit next to sports. Weather is a natural one: game-day conditions, city temperatures and rainfall are measurable and easy to check afterwards, and fans already follow them. The hard part is the settlement number, since many weather contracts still resolve on a single airport station. We publish hourly values for 172 cities in 91 countries, each a consensus across eleven weather feeds, with every input fingerprinted to a public ledger and a "withheld" verdict when the inputs can't support a clean answer.
+
+We are in active discussions with prediction-market platforms about launching weather markets. Would a 30-minute video call work in the next couple of weeks? I'm also in New York from October 24 to 29 if someone on your team is there.
+
+Best,
+Logan
+```
+**Underdog — 1촌 메모 (272자)**
+```
+Hi {Name}, I'm Logan from Wellbian Labs in Seoul. With KWeather (30 years of observation) we build weather data to settle event contracts: hourly values for 172 cities, eleven weather feeds per value, every input on a public ledger. In New York Oct 24–29; glad to connect.
+```
+**Underdog — 수락 뒤 (963자)**
+```
+{Name}, thanks for connecting.
+
+I lead partnerships at Wellbian Labs. We work with KWeather, a Korean weather company with 30 years of observation and 4,000+ clients, on weather data built to settle event contracts.
+
+Underdog Predict already goes beyond sports with economics and culture markets, and weather looks like a natural next category: measurable, easy to check afterwards, and something every fan already follows on game day. The hard part is the settlement number, since many weather contracts still resolve on a single airport station. We publish hourly values for 172 cities in 91 countries, each a consensus across eleven weather feeds, with every input fingerprinted to a public ledger and a "withheld" verdict when the inputs can't support a clean answer.
+
+We are in active discussions with prediction-market platforms about launching weather markets. I'll be in New York from October 24 to 29. Would you have 30 minutes for a coffee?
+
+Best,
+Logan
+```
