@@ -4104,3 +4104,41 @@ We are in active discussions with prediction-market platforms about launching we
 Best,
 Logan
 ```
+
+- **10/13 추가 캡처(4장) → 판정 수정: 상한 2 = Jacob Fortinsky(CEO) + Brett Hoffman(Market Ops Lead). Kelechi Ukah(CTO)는 예비.**
+  Brett = 마켓 운영 책임 → 거래소에서 마켓을 올리고 **정산(결과 확정)을 처리하는 자리** = 우리 가치(정산 숫자 · 판정 보류)가 바로 닿는 사람. 위치 「미국」만 → 커피 또는 화상.
+  그 밖: D. Michael Stackrow(「Business, generally」, 뉴욕 — 사업개발 예비) · Daniel Draganoff(Business Operations, 뉴욕) · Aaron Shapira(Market Ops Specialist) ·
+  법무 셋(Alex Wolf CLO — 전 FanDuel · Underdog / Benjamin Howard / Michael Cavers 규제 · 리스크) · Elie Mishory(최고 규제 · 법무) → 법무 · 규제 0.
+- ★ **Elie Mishory 의 공통 1촌에 Will Brackett(칼시 Head of Partnerships)이 있다 = Will 은 서우의 1촌.** 전수 리스트 5번 칼시 「Will Brackett 발송 기록 없음」 →
+  이미 1촌이니 메시지로 바로 열 수 있다(뉴욕 대면 요청 · 칼시 본사 뉴욕). Brett 의 공통 1촌은 Steve Quirk(로빈후드) — 소개 경로로 쓰지 않음.
+
+**Jacob — 수락 뒤 교체판(끝 줄 Brett, 1114자)**
+```
+Jacob, thanks for connecting.
+
+I lead partnerships at Wellbian Labs. We work with KWeather, a Korean weather company with 30 years of observation and 4,000+ clients, on weather data built to settle event contracts.
+
+Sports fans already trade on the weather without calling it that: rain delays, wind at the ballpark, heat on game day. It is one of the cleanest real-world categories there is, measurable and easy to check afterwards, and it sits comfortably with a promise of no wars, no death and no politics. The hard part is the settlement number, since many weather contracts still resolve on a single airport station. We publish hourly values for 172 cities in 91 countries, each a consensus across eleven weather feeds, with every input fingerprinted to a public ledger and a "withheld" verdict when the inputs can't support a clean answer.
+
+We are in active discussions with prediction-market platforms about launching weather markets. I'll be in New York from October 24 to 29. Would you have 30 minutes for a coffee? I've also written to Brett on market operations, so no need to reply twice.
+
+Best,
+Logan
+```
+**Brett — 1촌 메모 (275자)**
+```
+Hi Brett, I'm Logan from Wellbian Labs in Seoul. We build weather data to settle event contracts: hourly values for 172 cities, eleven feeds per value, a met / not met / withheld verdict, every input on a public ledger. Market ops is where that matters most; glad to connect.
+```
+**Brett — 수락 뒤 (1139자)**
+```
+Brett, thanks for connecting.
+
+I lead partnerships at Wellbian Labs. We work with KWeather, a Korean weather company with 30 years of observation and 4,000+ clients, on weather data built to settle event contracts.
+
+Weather sits right next to sports, with rain delays, wind at the ballpark and heat on game day, and it is measurable and easy to check afterwards. On the market-ops side, a weather market lives or dies on its settlement rule: which value, which source, and what happens when the sources disagree or a station goes quiet. Many weather contracts still rest on a single airport station. We publish hourly values for 172 cities in 91 countries, each a consensus across eleven weather feeds, with a met / not met / withheld verdict, a minute-by-minute record of each airport report, and every input fingerprinted to a public ledger.
+
+We are in active discussions with prediction-market platforms about launching weather markets. I'll be in New York from October 24 to 29. Would you have 30 minutes for a coffee, or a short video call if you're not in the city? I've also written to Jacob, so no need to reply twice.
+
+Best,
+Logan
+```
