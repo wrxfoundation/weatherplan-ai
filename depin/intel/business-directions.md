@@ -3440,3 +3440,23 @@ We work on two layers: air-quality sensors that people run in their own rooms, a
 
 Good to be connected.
 ```
+
+## Justin Yun (JY Advisory CEO · 로스앤젤레스) — 들어온 1촌 요청 판정 (2026-10-12, 서우 캡처 3장 · 「무슨 역할? 기기 판매?」)
+
+- **자리**(캡처 기준): JY Advisory CEO(2026-04~ — 배너 「Business Development」, 경력 칸 「Alien.org」) · Allora Labs BDM(2024-05~2026-02 — DeFi · CeFi · 기관 · 자본시장 · CBDC · 스테이블코인 · RWA) ·
+  3BD BD Lead(2023-01~2026-02, 재택 — L1/L2 · 옴니체인 · ZK · 오라클 · IoT · 인프라 · AI 에이전트) · Just Mining OC 창업(2021~2024, 어바인 · 개인사업) · USC 마셜 경영(블록체인 부전공).
+  인증 배지 · 2촌 · 팔로워 8,142 · 공통 1촌 31. **그쪽이 1촌 요청을 보냄**(수락/건너뛰기 화면). 소개란 연락처는 저장소에 적지 않는다.
+- **무슨 역할인가**: 기기 유통사가 아니라 **외주 BD 컨설턴트** — 웹3 프로젝트에 거래소 · 투자사 · 파트너 소개를 대행하고 보통 월 자문료(리테이너)나 성사 수수료를 받는다.
+  3BD 자체가 BD 대행사이고, JY Advisory 는 그 독립판으로 보인다(추정). 채굴 사업 이력이 있어 하드웨어 판매 감각은 있을 수 있다.
+- **판정 — 수락은 해도 된다(받지 않는 기준 신호 1개 — 겹치는 직함 · 개인사업 표기 — 기준 3개 미만). 우리가 먼저 메시지 0.**
+  ① 첫 메시지는 거의 확실히 BD 자문 서비스 제안 — 우리는 외주 BD · 소개 비용을 쓰지 않는다(답 A).
+  ② 기기 판매 역할은 지금 맞지 않는다 — 미국 출고 · 전파 인증(FCC 기록 없음, KC 만) · 배송이 아직이다. 열리면 고정비가 아니라 **리퍼럴(소개 수수료) 구조**로만(답 B, 비율은 말하지 않는다).
+  ③ 쓸모가 있다면 오라클 · AI 예측 네트워크(Allora) 쪽 사람을 아는 것 — 그쪽에서 먼저 소개를 제안하면 무상 소개만 받는다.
+- **답 A — BD 자문 제안이 오면 (170자)**
+```
+Thanks, Justin, and good to be connected. We keep business development in-house for now, so I'll pass on outside support at this stage, but I appreciate you reaching out.
+```
+- **답 B — 미국 기기 판매 · 유통 이야기가 오면 (244자)**
+```
+Thanks, Justin. US availability is something we're still working through with our device partner, so I can't open distribution there yet. When we do, it will start through our referral programme rather than fixed fees. Happy to keep you posted.
+```
