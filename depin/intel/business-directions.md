@@ -3647,3 +3647,35 @@ Logan
 ```
 Hi Michael, Logan from Wellbian Labs, Seoul. Your agentic economy post struck a chord. With KWeather (30 years of observation) we run home air sensors and weather data for 172 cities, every input fingerprinted to a public ledger, so an agent can verify what it buys. Glad to connect.
 ```
+
+## Mihai Anca (Fanatics Markets VP Engineering · 런던) — 판정 (2026-10-12, 서우 캡처 1장)
+
+- **자리**(캡처 기준): Fanatics **VP Engineering**(2025-09~ · 런던 재택 · 「Managing engineering at Fanatics Markets」 · 헤드라인 「Building Prediction Markets at Fanatics」) ·
+  전 MoonPay(SVP Engineering 2025-01~09 — 엔지니어링 30 → 110+ · VP Engineering 2022~2025 · Staff Engineer 웹3 2021~2022) · 전 Coinbase Staff Software Engineer(2018~2021, 런던).
+- **판정 — Fanatics 두 번째 사람으로 보낸다(제품 Louis Sutton + 엔지니어링 Mihai = 상한 2 꽉 참 → Josh Horowitz 예비는 내림).**
+  ① 기후를 로드맵에 넣는 결정은 제품(Louis), **정산 데이터를 어떻게 붙이고 사후에 재현하나는 엔지니어링** — 같은 질문을 다른 문으로 두드리는 게 아니라 두 층이다.
+  ② 크립토 거래소 · 온램프 엔지니어 출신이라 「공개 원장 지문으로 정산을 재실행」이 바로 읽힌다. 각도 = 데이터 형식(REST · OpenAPI) · 판정 셋(met · not met · withheld — 10/8 사이트 원문) · 재현성.
+  ③ 병행을 밝힌다 — 「Louis Sutton 에게도 썼으니 편하게 넣어 달라」(Gemini Elaine 선례, 몰래 두 갈래 0). Louis 에게 아직 안 보냈으면 이 줄을 빼고 Mihai 를 한 사람으로.
+  ④ 런던 = **30분 화상만**(뉴욕 줄 0). 과거 직장(Coinbase · MoonPay) · 크립토닷컴(CDNA 운영) · BGC 인수 · 다른 플랫폼 · 한국 도시 · 토큰 · certified 0. 대외 문장(「active discussions」) 그대로.
+- 문구 근거: 「climate is on the Fanatics Markets roadmap」 = 회사 발표(SBC Americas 7/27, 전수 리스트 12번) · 172 · eleven weather feeds · REST/OpenAPI · met/not met/withheld = 10/8 사이트 원문(위 2782줄 근처).
+
+**1촌 요청 메모 (282자)**
+```
+Hi Mihai, Logan from Wellbian Labs, Seoul. With KWeather (30 years of observation) we build weather data to settle prediction markets: 172 cities, eleven weather feeds per value, every input fingerprinted to a public ledger. Curious how you see it from engineering. Glad to connect.
+```
+**InMail 제목 (50자)** — `Weather settlement data, from the engineering side`
+**InMail 본문 / 수락 뒤 메시지 (1162자)**
+```
+Hi Mihai,
+
+I run partnerships at Wellbian Labs in Seoul. With KWeather, a Korean weather company with 30 years of observation, we build weather data meant to be settled on.
+
+For each of 172 cities, every hour, the value is a consensus across eleven weather feeds rather than one station, with outliers screened out. It comes through REST with an OpenAPI spec, and each check returns met, not met or withheld: when the data can't support a clean answer, we say so instead of guessing. Every input is fingerprinted to a public ledger before it is used, so a settlement can be re-run and checked months later.
+
+I saw climate is on the Fanatics Markets roadmap. In a weather contract the hard engineering part is less the market than the number it settles on, since a single airport sensor can go offline or drift at the worst moment. We are in active discussions with prediction-market platforms about launching weather markets.
+
+I've also written to Louis Sutton on the product side, so feel free to loop him in. Would a 30-minute video call in the next couple of weeks work? Happy to walk through the data format and how a settlement gets reproduced.
+
+Best,
+Logan
+```
