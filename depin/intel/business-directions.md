@@ -3460,3 +3460,44 @@ Thanks, Justin, and good to be connected. We keep business development in-house 
 ```
 Thanks, Justin. US availability is something we're still working through with our device partner, so I can't open distribution there yet. When we do, it will start through our referral programme rather than fixed fees. Happy to keep you posted.
 ```
+
+## Outcome Labs 2명 추가 — Ahmed Salih(공동창업 · CEO) · Diogo R.(Product) (2026-10-12, 서우 「아웃컴 2명만 더 컨택하자, 시간이 없어」 · 사람 검색 캡처 3장)
+
+- **서우 결정으로 회사 상한(2)을 넘긴다** — Outcome = Jonathan(성장, 1촌 대기) + Ahmed + Diogo = 3. 넘는 대신 **두 메시지 모두 다른 사람에게도 썼다고 밝힌다**(Gemini Elaine 선례 — 「Jonathan/Ahmed 에게도 보냈다, 두 번 답할 필요 없다」).
+- **고른 이유**: Ahmed Salih = 공동창업 · CEO(두바이 · 3촌 · 「메시지」 버튼 — 바로 보낼 수 있음) = 결정권. Diogo R. = Product(리스본) = 시장 틀(템플릿) 설계 주인 — 날씨 틀 이야기의 실무 상대.
+  대안: Diogo 가 「팔로우」만 떠서 연결 · InMail 이 안 되면 **Ali Junad(공동창업 · 런던 · 1촌 맺기 가능)** 로 바꾼다.
+- **고르지 않은 사람**: sahand salih(BD Associate — 직급이 낮아 결정까지 한 단계 더) · Mario A. Camara(규제 · 컴플라이언스 · 라이선스 — 법무는 딜을 닫는 자리, 한국 차단 조항을 다룰 때 붙는다) ·
+  Dennis Furrer · Franck Speeg(Outcome 소속 확인 안 됨 — 빌더 · 마켓메이커 개인) · 엔지니어 · 디자이너.
+- 공급 계약 전 조건(법률 의견 · 한국 도시 제외 · 한국 이용자 0)은 그대로. 금지어 검사 통과(다른 플랫폼 · 토큰 · HYPE · 한국 도시 · independent 0).
+
+**Ahmed Salih — 메시지 (제목 41자 · 본문 1192자)**
+제목: `Weather markets for HIP-4 – Wellbian Labs`
+```
+Hi Ahmed,
+
+I'm Logan, Head of Partnerships & Operations at Wellbian Labs in Seoul. We work with KWeather, a Korean weather company with 30 years of observation, and run a weather data market built for settling prediction markets: city-level weather for 172 cities in 91 countries, each value a consensus across eleven weather feeds, with every input fingerprinted to a public ledger, and a verdict of met, not met or withheld.
+
+Weather is one of the fastest-growing event categories, and it is also where settlement is most fragile: many weather contracts still rest on a single airport sensor. For a deployer whose stake rides on every settlement, the withheld verdict matters: it means never having to stand behind a number you can't defend. We are in active discussions with prediction-market platforms about launching weather markets.
+
+As far as I can see, there is no weather template on HIP-4 yet, and Outcome looks like a natural team to bring one. I've also sent a connection request to Jonathan on your growth side, so please loop in whoever fits best. Would a short call in the next few weeks work?
+
+Best regards,
+Logan (Seowoo Park)
+Head of Partnerships & Operations, Wellbian Labs
+```
+
+**Diogo R. — InMail (제목 44자 · 본문 1237자)**
+제목: `A weather template for HIP-4 – Wellbian Labs`
+```
+Hi Diogo,
+
+I'm Logan, Head of Partnerships & Operations at Wellbian Labs in Seoul. We work with KWeather, a Korean weather company with 30 years of observation, and run a weather data market built for settling prediction markets: city-level weather for 172 cities in 91 countries, each value a consensus across eleven weather feeds, with every input fingerprinted to a public ledger, and a verdict of met, not met or withheld.
+
+Since you work on product, design is where I'd most value your view. A weather market lives or dies on its settlement rule: which value, which source, and what happens when the sources disagree. Many weather contracts still rest on a single airport sensor; we built the withheld verdict so a market never has to settle on a number nobody can defend. We are in active discussions with prediction-market platforms about launching weather markets.
+
+As far as I can see, there is no weather template on HIP-4 yet. I've also reached out to Ahmed and Jonathan, so there's no need to reply twice, but if a weather template is something you'd look at, I'd be glad to compare notes on what it could look like. Would a short call work?
+
+Best regards,
+Logan (Seowoo Park)
+Head of Partnerships & Operations, Wellbian Labs
+```
