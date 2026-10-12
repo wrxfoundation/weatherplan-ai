@@ -4142,3 +4142,49 @@ We are in active discussions with prediction-market platforms about launching we
 Best,
 Logan
 ```
+
+### Underdog — 사람 판정 (10/13, 서우 「Underdog」 사람 검색 캡처 5장 · 모두 2촌)
+
+- 후보: **Noah Zingler-Sternig**(Director of Markets, 밀워키 · 팔로워 약 6천 · 「팔로우」 버튼 · 공통 1촌 Steve Quirk · Will Brackett 외 2) ·
+  **Katie Boyce**(Senior Director, Strategic Operations | **COO, UDX**, 뉴욕 · 공통 1촌 Stephen Humenik) · Scott San Emeterio(Underdog Predict CRO — 리스크, 호보켄) ·
+  Wesley A. Huber(Partnerships, 뉴욕) · Alex Lam(Product, 뉴욕) · Brock Luker(Product, LA) · 트레이더 다수(Jimmy Iles · Dylan Hagan · Dylan B. · Jon Kelly · Kevin Collins) ·
+  법무(Nick Lundgren CLO · Julie Pearlman 부법무 · Gregory Noorigian · Dan Konar) · 그 밖 결제 · GTM · 리서치 · 투자자.
+- **판정 — 상한 2 = Noah Zingler-Sternig(마켓 책임 — 어떤 마켓을 올리고 무엇으로 정산할지) + Katie Boyce(UDX 거래소 COO — 결과를 나중에 방어할 수 있는가), 서로 언급.**
+  Noah 는 밀워키 → 화상 / Katie 는 뉴욕 → 커피(10/26 · 10/28). 트레이더 0(서우 「트레이더는 필요 없다」) · 법무 · 리스크 0 · Wesley(파트너십)는 예비.
+- 공통 1촌에 Stephen Humenik(크립토닷컴) · Will Brackett(칼시) · Steve Quirk(로빈후드)이 반복 — 소개 경로로 쓰지 않음.
+- 「Underdog Predict 에 경제 · 컬처 마켓이 있다」는 자료가 엇갈려(자체 거래소 개시 땐 스포츠 · e스포츠 · 체스만이라는 보도) 단정 대신 「beyond sports 를 볼 때」로 씀. IG Group 인수 언급 0.
+
+**Noah — 1촌 메모 (283자)**
+```
+Hi Noah, I'm Logan from Wellbian Labs in Seoul. We build weather data to settle event contracts: hourly values for 172 cities, eleven feeds per value, a met / not met / withheld verdict, every input on a public ledger. Weather could be a natural next market for you; glad to connect.
+```
+**Noah — 수락 뒤 (1061자)**
+```
+Noah, thanks for connecting.
+
+I lead partnerships at Wellbian Labs. We work with KWeather, a Korean weather company with 30 years of observation and 4,000+ clients, on weather data built to settle event contracts.
+
+As Underdog Predict looks at categories beyond sports, weather is a natural one: measurable, easy to check afterwards, and something every fan already follows on game day. For a markets team, a weather market lives or dies on its settlement rule: which value, which source, and what happens when the sources disagree or a station goes quiet. Many weather contracts still rest on a single airport station. We publish hourly values for 172 cities in 91 countries, each a consensus across eleven weather feeds, with a met / not met / withheld verdict and every input fingerprinted to a public ledger.
+
+We are in active discussions with prediction-market platforms about launching weather markets. Would a 30-minute video call work in the next couple of weeks? I've also written to Katie Boyce on the UDX side, so no need to reply twice.
+
+Best,
+Logan
+```
+**Katie — 1촌 메모 (271자)**
+```
+Hi Katie, I'm Logan from Wellbian Labs in Seoul. With KWeather (30 years of observation) we build weather data to settle event contracts: hourly values for 172 cities, eleven weather feeds per value, every input on a public ledger. In New York Oct 24–29; glad to connect.
+```
+**Katie — 수락 뒤 (1056자)**
+```
+Katie, thanks for connecting.
+
+I lead partnerships at Wellbian Labs. We work with KWeather, a Korean weather company with 30 years of observation and 4,000+ clients, on weather data built to settle event contracts.
+
+With UDX running as your own exchange, weather is a category worth a look beyond sports: measurable, easy to check afterwards, and followed by every fan on game day. From the exchange side, the question is whether a settled outcome can be defended later. Many weather contracts still rest on a single airport station. We publish hourly values for 172 cities in 91 countries, each a consensus across eleven weather feeds, with a "withheld" verdict when the inputs can't support a clean answer and every input fingerprinted to a public ledger, so anyone can re-check a result.
+
+We are in active discussions with prediction-market platforms about launching weather markets. I'll be in New York from October 24 to 29. Would you have 30 minutes for a coffee? I've also written to Noah on the markets team, so no need to reply twice.
+
+Best,
+Logan
+```
