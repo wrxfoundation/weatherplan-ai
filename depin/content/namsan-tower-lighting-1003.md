@@ -208,3 +208,56 @@ Thank you to everyone who stopped by, and to the team behind XRP SEOUL 2026 for 
   같은 번호의 PAID 사본이나 그 번호를 적은 영수증(Receipt)에 해시 · UTC · 환산값을 담는다.
 - **발행 시기(10/7 서우 질문 「입금 전 · 후 둘 다 되나」)**: 둘 다 된다 — 입금 전 = 청구서(DUE · 지급 안내), 입금 후 = 상대 회계의 증빙(PAID).
   발행일은 실제 발행일로 두고 입금일에 맞춰 당기지 않는다(입금일은 「Date received」 칸).
+
+## 10/12 — 인보이스 발송 메일 본문(양식 — 서우 「인보이스 보낼 메일 본문 써 줘」)
+
+- 세 장 모두 지금 판은 **청구(Balance due · Due on receipt)** 다. 10/7 기록의 「USD 2곳 입금 완료」와 다르다 — 이미 받은 곳이 있으면 그곳은
+  PAID 판 + 영수 확인 메일로 바꾼다(같은 번호).
+- 보내는 곳 = 서우 회사 메일, 첨부 = 해당 PDF 한 장, 받는 사람 = 인보이스 Attn(+ 상대가 지정한 참조). 이름 · 금액 · 계좌 · 지갑은 저장소에 적지 않는다.
+- 본문에 계좌 · 지갑 주소를 다시 쓰지 않는다(PDF 와 어긋날 위험) — 「인보이스에 적힌 곳」으로만 가리킨다.
+- 「메일로는 계좌 · 지갑을 바꾸지 않는다」 한 줄 = 인보이스 메일 가로채기(계좌 바꿔치기) 사기 예방 관례.
+- 미국 법인은 해외 거래처 등록에 W-8BEN-E(외국 법인 확인 양식)를 요청할 수 있다 — 오면 회계 · 세무와 처리.
+
+제목: `Invoice [번호] · N Seoul Tower lighting, XRP SEOUL 2026`
+
+**USD(은행 송금)**
+```
+Hi [first name],
+
+Thank you again for joining us in lighting up N Seoul Tower on the night of 3 October for XRP SEOUL 2026.
+
+Please find attached our invoice [번호] for USD [금액], payable on receipt.
+
+Payment is by bank transfer to the Wellbian Labs USD account shown on the invoice. When sending, please:
+- quote [번호] as the payment reference, and
+- select the charge option OUR, so that the full amount reaches us after bank fees.
+
+Once the transfer is made, a short reply with the remittance confirmation would help us match it, and we'll confirm receipt by email. If your team needs any vendor documents from us to process the payment, just let me know.
+
+For your security, we will never change our bank details by email alone. If you ever receive such a request, please confirm with me directly.
+
+Best regards,
+Logan (Seowoo Park)
+Head of Partnerships & Operations, Wellbian Labs
+```
+
+**USDT(BEP-20)**
+```
+Hi [first name],
+
+Thank you again for joining us in lighting up N Seoul Tower on the night of 3 October for XRP SEOUL 2026.
+
+Please find attached our invoice [번호] for [금액] USDT, payable on receipt.
+
+Payment is in USDT to the Wellbian Labs wallet shown on the invoice. When sending, please:
+- use the BNB Smart Chain (BEP-20) network only, as funds sent on any other network may not be recoverable, and
+- cover the network fee, so that the full [금액] USDT arrives.
+
+After sending, please reply with the transaction hash and the invoice number, and we'll confirm receipt by email. If you'd like to double-check the wallet address or send a small test amount first, just let me know and I'll confirm it before you send the rest.
+
+For your security, we will never change our wallet address by email alone. If you ever receive such a request, please confirm with me directly.
+
+Best regards,
+Logan (Seowoo Park)
+Head of Partnerships & Operations, Wellbian Labs
+```
