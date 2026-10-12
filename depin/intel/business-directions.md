@@ -3317,3 +3317,29 @@ Head of Partnerships & Operations, Wellbian Labs
 - 새 갈래 셋: ① 재보험 · ILS 펀드 ② 지수형 보험 · MGA · 인슈어테크 ③ 재보험 브로커. 각도 = 「양쪽이 확인할 수 있는 도시 단위 숫자 + 판정 보류」. 「기준 확률(예보)」은 케이웨더 결정 전 0.
 - 국내 보험 · 재보험은 케이웨더 기존 영업과 겹칠 수 있어 서우 단독 콜드 0 — 케이웨더와 먼저 조율. Reask 연락 0(아시아 범위 확인 전).
 - 회사당 1명 · 주 5건 이내 2주 시험 · 이번 주는 뉴욕 대면 요청 우선. 금지어: 다른 회사 이름 · certified · independent · 예보 상품 · 토큰 · 가격 · 독점 · 최초.
+
+## Jessica Elizabeth Lloyd (BeInNews Group CSO · BeInCrypto Chief Global Strategy Officer · 영국) — 판정 (2026-10-12, 서우 캡처 3장 · 새 1촌)
+
+- **자리**(캡처 기준): BeInNews Group Chief Strategy Officer(2019-09~) · BeInCrypto 7년 3개월 — Chief Global Strategy Officer(2025-02~, 「콘텐츠 · 성장 · 파트너십 전략」) ·
+  Head of Global Growth(2020-10~2025-02, 홍콩 · 현지화 25개 판) · Content SEO/Growth Manager(2019~2020) · 전 발리 동물복지협회 커뮤니케이션 · Plymouth 대학 보전생물학(환경 기자 활동) ·
+  Devon Wildlife Trust 봉사 · Content DAO 기고. 영국 · 1촌 500+ · 공통 1촌 4. **새 1촌**(링크드인이 국문 기본 인사를 띄움 — 보내지 않는다).
+- **판정 — Lynn 인사만(요청 · 제안 0). BeInCrypto 의 일 이야기는 Brian McGleenon(뉴스 총괄, 9/14 답장) 편집 라인 하나로.**
+  ① 그의 「파트너십」은 매체의 상업 쪽(스폰서 콘텐츠 · 어워드 · 행사 — 배너가 시상식 무대)이다. 일 이야기를 열면 우리가 돈을 내는 대화가 된다 — Soledad(CoinDesk, 9/17)와 같은 결.
+     편집이 광고보다 값이 크고, 유료 미디어 예산 · 행사 참가 결정 전이다.
+  ② 회사 상한: BeInCrypto = Brian(편집 · 대화 중) + Jessica(인사만) = 2 → 찼다. 같은 화면의 Vlada Morhunova(BeInNews 제품 운영) 추가 0.
+  ③ 선택 줄은 그의 보전생물학 · 환경 기자 이력 — 측정 · 확인 가능성과 닿는 한 줄, 요청 0. Brian 이름 · 보도 요청 · 「feature」 0.
+- 문구: 영국 상대라 「certified」 0(CE · UKCA 인증 주장으로 읽힘) · 「eleven weather feeds」. 토큰 · 가격 0.
+- **다시 볼 때**: 마케팅 예산 · 유료 미디어 집행 결정 뒤, 또는 BeInCrypto 행사 · 어워드 참가를 정할 때 — 그때 맞는 창구. 그가 먼저 스폰서 · 패키지를 제안하면 「지금은 아니다, 때가 되면 먼저 연락」.
+
+**수락 뒤 인사 (EN, 666자)**
+```
+Jessica — thanks for connecting.
+
+I run partnerships at wellbian. KWeather has measured weather in South Korea for thirty years and supplies data to 4,000+ enterprise clients; wellbian is the network built on top of that.
+
+We work on two layers: air-quality sensors that people run in their own rooms, and city-level weather across 91 countries and 172 cities, where each value is a consensus across eleven weather feeds rather than a single reading. Every input is fingerprinted to a public ledger before it goes anywhere.
+
+Your path from conservation biology to crypto media caught my eye. Ours runs from weather stations to a public ledger.
+
+Good to be connected.
+```
