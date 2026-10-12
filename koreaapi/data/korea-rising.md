@@ -1,14 +1,14 @@
-# Korea Rising — verified K-pop snapshot (2026-10-11)
+# Korea Rising — verified K-pop snapshot (2026-10-12)
 
 Every line is **cross-verified** (≥2 independent sources agree on the canonical name) and carries its source + Skill Score. Full data + Schema.org JSON-LD: <https://aiagentlabs.co.kr/> · via KoreaAPI (MCP).
 
 ## 🎬 Latest official releases (YouTube)
-- **BoA** — You still our No.1 BoA
-- **PLAVE** — Plave - PLAYER 4 LIFEEE
-- **Xdinary Heroes** — Obsessed with #DAY6 #YoungK❤️‍🔥
-- **Kiss of Life** — 사랑이 시작된 순간을 기억하나요?#KISSOFLIFE #키스오브라이프 #KIOF #BELLE #벨 #Shorts
+- **NCT Dream** — 2027 NCT DREAM SEASON’S GREETINGS TRAILER
+- **BOYNEXTDOOR** — 신입 냥이 #BOYNEXTDOOR #보이넥스트도어 #BND #SUNGHO #LEEHAN
+- **ZICO** — 지코 근황이라는 게 숨긴다고 숨겨지는 것도 아니고
+- **EVERGLOW** — 2025 EVERGLOW JAPAN CONCERT Behind | 皆さん~ 会いたかったです 💕
 - **Chung Ha** — Long time not playing LA and actually got ambushed -.-
-- **STAYC** — 👯‍♂️👯‍♂️👯‍♂️
+- **SUNMI** — 𝐒𝐦𝐚𝐫𝐭 𝐊𝐢𝐭𝐜𝐡𝐞𝐧. 𝐒𝐦𝐨𝐨𝐭𝐡 𝐒𝐞𝐫𝐯𝐢𝐜𝐞｜𝐒𝐔𝐍𝐌𝐈 𝐅𝐋𝐄𝐗 𝟑 𝐊𝐃𝐒
 
 ## 🎤 Verified roster (640 acts)
 - **2NE1**: I Am the Best
