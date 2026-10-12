@@ -4059,3 +4059,48 @@ We are in active discussions with prediction-market platforms about launching we
 Best,
 Logan
 ```
+
+### Novig — 사람 판정 (10/13, 서우 「Novig」 사람 검색 캡처 4장 · 모두 2촌)
+
+- 후보: **Jacob Fortinsky**(공동창업 · CEO, 뉴욕 · 팔로워 약 1.5만 · 「팔로우」 버튼 = 1촌은 「더 보기」에서) · **Kelechi Ukah**(공동창업 · CTO, 뉴욕 · 공통 1촌 Nicole Kagan) ·
+  Nikhil Panu(SVP Growth, 뉴욕) · Benjamin J.(Head of Analytics, 뉴욕) · Market Operations 넷(Jaime Korsunsky 마이애미 · Jacob Erlbaum 필라델피아 · Sam Cornette 뉴욕 · Aaron Rubin 뉴욕) ·
+  그 밖 보안 · 고객 응대 · 마케팅 · 인재 · 엔지니어 · Pantera 투자자. **Head of Markets 는 검색에 없음**(공고만).
+- **판정 — 상한 2 = Jacob Fortinsky(사업 · 범주 결정) + Kelechi Ukah(정산 데이터 연동), 서로 언급, 둘 다 뉴욕 커피.**
+  ① 「스포츠 전용 · 전쟁 · 죽음 · 정치 없음」은 창업자가 정한 상품 범위라 날씨를 넣는 결정도 CEO 몫 ② 정산 숫자 · API 는 CTO 몫 ③ 둘 다 뉴욕.
+  Market Operations 는 상장 실무라 첫 문으로는 낮음(답 없으면 Sam Cornette · Aaron Rubin(뉴욕) 중 한 명이 예비) · Nikhil Panu(성장)는 마케팅 결이라 0.
+- 거의 모든 사람의 공통 1촌 = **Matt (Meir) Vegh** — Jump · SIG · 365Prediction 에도 공통 1촌으로 나옴. 예측시장 업계 사람일 가능성이 커 서우가 프로필 확인 → 맞으면 소개 부탁 경로 검토.
+
+**Jacob — 1촌 메모 (271자)**
+```
+Hi Jacob, I'm Logan from Wellbian Labs in Seoul. With KWeather (30 years of observation) we build weather data to settle event contracts: hourly values for 172 cities, eleven weather feeds per value, every input on a public ledger. In New York Oct 24–29; glad to connect.
+```
+**Jacob — 수락 뒤 (1117자)**
+```
+Jacob, thanks for connecting.
+
+I lead partnerships at Wellbian Labs. We work with KWeather, a Korean weather company with 30 years of observation and 4,000+ clients, on weather data built to settle event contracts.
+
+Sports fans already trade on the weather without calling it that: rain delays, wind at the ballpark, heat on game day. It is one of the cleanest real-world categories there is, measurable and easy to check afterwards, and it sits comfortably with a promise of no wars, no death and no politics. The hard part is the settlement number, since many weather contracts still resolve on a single airport station. We publish hourly values for 172 cities in 91 countries, each a consensus across eleven weather feeds, with every input fingerprinted to a public ledger and a "withheld" verdict when the inputs can't support a clean answer.
+
+We are in active discussions with prediction-market platforms about launching weather markets. I'll be in New York from October 24 to 29. Would you have 30 minutes for a coffee? I've also written to Kelechi on the technical side, so no need to reply twice.
+
+Best,
+Logan
+```
+**Kelechi — 1촌 메모 (261자)**
+```
+Hi Kelechi, I'm Logan from Wellbian Labs in Seoul. We build weather data to settle event contracts: hourly values for 172 cities, eleven feeds per value, a met / not met / withheld verdict, every input on a public ledger. In New York Oct 24–29; glad to connect.
+```
+**Kelechi — 수락 뒤 (1048자)**
+```
+Kelechi, thanks for connecting.
+
+I lead partnerships at Wellbian Labs. We work with KWeather, a Korean weather company with 30 years of observation and 4,000+ clients, on weather data built to settle event contracts.
+
+Weather sits right next to sports, with rain delays, wind at the ballpark and heat on game day, and it is measurable and easy to check afterwards. The engineering problem is the settlement number, since many weather contracts still resolve on a single airport station. Our side is built for that: hourly values for 172 cities in 91 countries, each a consensus across eleven weather feeds, a met / not met / withheld verdict per condition, a minute-by-minute record of each airport report, and every input fingerprinted to a public ledger. It is served over REST with an OpenAPI spec.
+
+We are in active discussions with prediction-market platforms about launching weather markets. I'll be in New York from October 24 to 29. Would you have 30 minutes for a coffee? I've also written to Jacob, so no need to reply twice.
+
+Best,
+Logan
+```
