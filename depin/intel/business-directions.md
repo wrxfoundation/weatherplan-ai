@@ -3864,3 +3864,36 @@ Happy to walk you through it on a 30-minute video call whenever suits you.
 Best,
 Logan
 ```
+
+## Susquehanna(SIG) — Nick Volbi · Ric Best 판정 (2026-10-12, 서우 캡처 4장 · 둘 다 2촌)
+
+- **Nick Volbi** — Head of Institutional Prediction Markets(2026-08~, 뉴욕 · 대면근무) · 「기관의 맞춤 위험 이전 — 산업 · 자산군 · 상품 · 이벤트 전반」 ·
+  전 BNP Paribas MD(인덱스 플로 파생 트레이딩 부책임, 뉴욕) · Morgan Stanley MD(주가지수 파생 트레이딩 책임, 17년 10개월) · 컬럼비아 OR. 공통 1촌 Nicole · Matt (Meir) 외 1.
+- **Ric Best** — Head of Prediction Markets(2023-11~, 필라델피아 Bala Cynwyd · 대면근무) · 「거래소에 가격 · 실시간 유동성 — 이벤트 계약 · 바이너리 · 예측시장 기관 규모」 ·
+  SIG 선물 · ETF 옵션 트레이더 7년 · 예일. 공통 1촌 Nicole · Louis 외 3. (10/11 리스트의 「직함 상충」 해소 — 거래소 유동성 = Ric, 기관 맞춤 거래 = Nick.)
+- **판정 — SIG 한 사람 = Nick Volbi(지금 1촌 요청 + 가벼운 메모). Ric Best 는 예비(상한 2의 둘째) · Joe Grubb(BD)는 내림.**
+  ① Nick 의 일 = 기관 맞춤 위험 이전 → 날씨 연계 계약의 「양쪽이 확인할 수 있는 정산 숫자」가 바로 닿는다(10/12 정산 데이터 확장 각도와 같은 결) ② 뉴욕 대면근무 → 10/24~29 커피 ③ 8월 새 자리라 길을 만드는 중.
+  Ric 은 거래소 유동성(마켓메이킹) 레인 = 전수 리스트 (c) 갈래 — 공정성 원칙(서우 결정 1) 전에는 0, 필라델피아라 화상.
+- **게이트 그대로**: SIG 는 Rothera 공동 소유 → **본문은 10/15 크립토닷컴 재판정 뒤** · 본문의 「정산값은 모두에게 같은 시각, 조기 접근 0」 문장은 **서우 결정 1(공정성 원칙 넷) 채택 뒤에만** 쓸 수 있다.
+  지금 보내는 것은 1촌 메모까지(요청 · 제안 0). 수락돼도 10/15 전에는 본문 0.
+- 금지: 다른 플랫폼 · 로빈후드 · Rothera 이름 · 한국 · 일본 도시 · 토큰 · 가격 · 독점 · 예보 · 확률 상품 · certified · independent.
+- 시트 46번 줄: 사람 → Nick Volbi(예비 Ric Best) · 단계 → 지금(10/12 주, 메모만) · 다음 할 일 → 10/15 뒤 + 결정 1 뒤 본문(뉴욕 커피) (서우가 직접).
+
+**Nick — 1촌 요청 메모 (EN, 289자, 지금)**
+```
+Hi Nick, I'm Logan from Wellbian Labs in Seoul. With KWeather (30 years of observation) we build weather data for settling contracts: hourly values for 172 cities, each a consensus of eleven feeds, every input on a public ledger. Your new institutional desk caught my eye. Glad to connect.
+```
+
+**Nick — 수락 뒤 본문 (EN, 911자, 10/15 뒤 · 서우 결정 1 채택 뒤)**
+```
+Nick, thanks for connecting.
+
+I lead partnerships at Wellbian Labs. We work with KWeather, a Korean weather company with 30 years of observation and 4,000+ clients, on weather data built to settle contracts.
+
+Bespoke risk transfer is where we think weather fits best. A weather-linked contract is only as good as the number it settles on, and both sides need to be able to check it. We publish hourly values for 172 cities in 91 countries, each a consensus across eleven weather feeds, with every input fingerprinted to a public ledger and a "withheld" verdict when the inputs can't support a clean answer. Settlement values go public to everyone at the same time, with no early access for any customer.
+
+We are in active discussions with prediction-market platforms about launching weather markets. I'll be in New York from October 24 to 29. Would you have 30 minutes for a coffee while I'm there?
+
+Best,
+Logan
+```
