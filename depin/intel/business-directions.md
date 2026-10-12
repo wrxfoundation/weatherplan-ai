@@ -3416,3 +3416,27 @@ Best regards,
 Logan (Seowoo Park)
 Head of Partnerships & Operations, Wellbian Labs
 ```
+
+## Eva Gartner (Bitstamp by Robinhood, Director of Strategic Partnerships · 유럽) — 판정 (2026-10-12, 서우 캡처 2장 · 촌수 캡처에 없음)
+
+- **자리**(캡처 기준): Bitstamp by Robinhood Director of Strategic Partnerships(2025-06~ — 글로벌 「크립토 서비스 대행(CaaS)」 사업 · 주문/체결 시스템 연동 · 토큰화 · Robinhood 체인 지원) ·
+  Bitstamp 8년(Global Head of Strategic Partnerships & Corporate Development · 경영진 2023~2025 · Head of Corp Dev 2021~2023 · Head of Business Intelligence 2017~2021) ·
+  Unspendable Labs 이사회 자문 · ZBD 감독이사회 의장(유럽) · EY 구조조정 자문(2014~2017) · Cass 경영대.
+- **판정 — 1촌 요청 보류 · 할 일 0. 이미 1촌이거나 그쪽이 먼저 연결하면 Lynn 인사(유럽판)만.**
+  ① 거래소의 제휴 · 토큰화 · 체인 자리 — 말을 걸면 상장 · 토큰 · 체인 연동 질문으로 간다(거래소 소속은 인사만 · 사업 메시지 먼저 0 — 핵심 금지).
+  ② 로빈후드 계열 상한은 이미 넘었고(Rothera Tom · Johann · Allessandra · Nicola · Steve), **Bitstamp 쪽은 Nicola White(Bitstamp GM, 10/10 InMail · 뉴욕 커피) 답 대기** —
+     같은 조직에 또 가면 수가 조급함으로 읽힌다. 10/15 크립토닷컴 재판정이 이 계열 전체의 게이트(10/11 리스트).
+  ③ 데이터 · 예측시장 결정 자리가 아니다(로빈후드 예측시장 주인 = JB Mackenzie, Johann 소개로만).
+- **다시 볼 때**: Nicola 가 Bitstamp 쪽 담당으로 그를 가리킬 때(소개로 연결) · 유럽 판매 · 결제(CaaS) 레인이 실제로 열릴 때.
+- 인사 문구: 유럽 상대라 「certified」 0 · 「eleven weather feeds」(Emilie 미국판과 같은 기준). 토큰 · Bitstamp 사업 · Nicola · 예측시장 0.
+
+**인사 — 유럽판 (542자)**
+```
+Eva — thanks for connecting.
+
+I run partnerships at wellbian. KWeather has measured weather in South Korea for thirty years and supplies data to 4,000+ enterprise clients; wellbian is the network built on top of that.
+
+We work on two layers: air-quality sensors that people run in their own rooms, and city-level weather across 91 countries and 172 cities, where each value is a consensus across eleven weather feeds rather than a single reading. Every input is fingerprinted to a public ledger before it goes anywhere.
+
+Good to be connected.
+```

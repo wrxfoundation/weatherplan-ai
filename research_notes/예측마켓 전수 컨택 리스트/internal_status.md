@@ -47,6 +47,7 @@
 - Steve Quirk(Chief Brokerage Officer) — 1촌 · 메시지 0
 - JB Mackenzie(VP & GM Futures and Prediction Markets — 실제 결정권자) · Adam Hickerson(COO · Sr. Director, 시카고) — Johann 소개로만
 - Valeria R.(CFTC 규제 시장 운영, 뉴욕) — 10/16 두 번째 후보(프로필 확인 뒤)
+- Eva Gartner(Bitstamp Director of Strategic Partnerships, 유럽) — 보류 · 할 일 0(10/12, Nicola 답 대기 · 상한 초과)
 - → 상한(Johann 라인 + Tom) 초과 상태. **10/15 크립토닷컴 재판정이 이 계열 전체의 게이트**(로빈후드 예측시장 물량 일부가 OG.com 으로 감 — 우회로 읽힘 위험).
 
 **Opinion Labs (홍콩 · BNB체인 · YZi 투자)**
