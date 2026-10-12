@@ -3905,3 +3905,51 @@ We are in active discussions with prediction-market platforms about launching we
 Best,
 Logan
 ```
+
+## Jump Trading — 누구에게 (2026-10-13, 서우 「Jump Trading」 사람 검색 캡처 5장)
+
+- 후보(캡처 · 모두 2촌): **Mike Bursik** — Prediction Markets Trader(시카고, 공통 1촌 Matt (Meir) Vegh) · **Allison Gott** — Business Development(뉴욕, 공통 1촌 Katie Wheeler) ·
+  Michael Quell — Group COO, Business Development(시카고) · Sam Haribhakti — CSO Digital Assets(런던, 공통 1촌에 Maria Allott = 크립토닷컴) · Lars Hornsleth — Jump Liquidity(유럽) ·
+  Seth Zaben — Senior Counsel(뉴욕, 공통 1촌 Stephen Humenik) · 그 밖 퀀트 · 엔지니어 · 인턴.
+- **판정 — 상한 2를 둘 다 지금: Allison Gott(뉴욕 · BD — 커피) + Mike Bursik(예측시장 트레이더 — 데스크 내용 · 화상).** 서로 썼다고 밝힌다(Outcome · Gemini 선례).
+  ① 예측시장 직함이 분명한 사람은 Mike 뿐 — 데스크가 날씨 관측을 어떻게 받는지가 우리 질문 ② 뉴욕 대면은 Allison(BD 가 무엇을 맡는지 미확인 → 「맞는 사람 소개」 문을 함께 연다)
+  ③ 10/24~29 동선: SIG 10/29 12시 · Swell 10/27~29 → Allison 은 10/26 · 10/28 쪽.
+  Michael Quell(그룹 COO)은 둘 다 막힐 때만 · Sam Haribhakti 는 크립토 · 거래소 쪽 + 크립토닷컴 연결 → 0 · Seth Zaben(법무) · 퀀트 · 엔지니어 0.
+- 전수 리스트 (c) 마켓메이커 문안 바탕 — 「정산값은 모두에게 같은 시각 · 조기 접근 0」 문장 유지(10/13 Nick 본문으로 이미 밖에 나감 → 공정성 원칙 넷 내부 확정 필요).
+  Jump 의 거래소 지분(리스트 「이해상충 시선」)은 언급 0. 다른 플랫폼 · 한국 · 일본 도시 · 토큰 · 가격 · 독점 · 예보 · certified · independent 0.
+- 시트 47번 줄: 사람 → Allison Gott · Mike Bursik · 단계 → 지금(10/12 주) · 뉴욕 → ✔(Allison) (서우가 직접).
+
+**Allison — 1촌 메모 (284자)**
+```
+Hi Allison, I'm Logan from Wellbian Labs in Seoul. With KWeather (30 years of observation) we build weather data to settle prediction markets: hourly values for 172 cities, eleven weather feeds per value, published to everyone at the same time. In New York Oct 24–29; glad to connect.
+```
+**Allison — 수락 뒤 (979자)**
+```
+Allison, thanks for connecting.
+
+I lead partnerships at Wellbian Labs. We work with KWeather, a Korean weather company with 30 years of observation and 4,000+ clients, on weather data built to settle prediction markets.
+
+For a trading desk, the hard part of a weather market is the observation itself: many contracts still resolve on a single airport station. We publish hourly values for 172 cities in 91 countries, each a consensus across eleven weather feeds, with flags when a station drifts from its neighbours and every input fingerprinted to a public ledger. Settlement values go public to everyone at the same time, with no early access for any customer.
+
+We are in active discussions with prediction-market platforms about launching weather markets. I'll be in New York from October 24 to 29. Would you have 30 minutes for a coffee, or could you point me to the right person on your prediction markets side? I've also reached out to Mike Bursik on the desk.
+
+Best,
+Logan
+```
+**Mike — 1촌 메모 (285자)**
+```
+Hi Mike, Logan from Wellbian Labs, Seoul. With KWeather we run hourly weather for 172 cities, each value a consensus of eleven feeds, published to all at the same time. We are in active discussions with prediction-market platforms about launching weather markets. Open to a short chat?
+```
+**Mike — 수락 뒤 (935자)**
+```
+Mike, thanks for connecting.
+
+I lead partnerships at Wellbian Labs. We work with KWeather, a Korean weather company with 30 years of observation and 4,000+ clients, on weather data built to settle prediction markets.
+
+For trading desks we offer hourly city values for 172 cities in 91 countries, each a consensus across eleven weather feeds, plus flags when a station drifts from its neighbours, and a minute-by-minute record of when each airport report was observed, published and corrected. Every input is fingerprinted to a public ledger. Settlement values themselves go public to everyone at the same time, with no early access for any customer.
+
+I'd value your view as someone on the desk: how do you source weather observations today, and where does it break? A 20-minute video call would be great whenever suits you. I've also reached out to Allison Gott on the business development side, so no need to reply twice.
+
+Best,
+Logan
+```
