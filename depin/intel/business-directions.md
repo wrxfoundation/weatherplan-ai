@@ -3782,3 +3782,8 @@ And so I know what to watch for: when you say interest voiced, is that mostly us
 ```
 Thank you, Eve, likewise! Enjoy the new chapter, and I hope our paths cross at an event soon.
 ```
+- **10/12 서우 결정 — 행사 대신 사업 한 줄 어필**(「행사 말고 가볍게 우리 사업 어필할 게 없나」). 거래소 소속 = 인사만 규칙을 서우가 이번에 넘김 → 가장 안전한 한 줄만: **예측시장 날씨 데이터(정산 층)** · 대외 문장(「active discussions」) 그대로 · 요청 0(「쓸모 있으면 공유」). 
+  넣지 않은 것: AI 이용권 · 기기 · 토큰 · WLBN · XRP · 상장 · OKX 이름 · 한국. 그쪽이 물으면 그때 이야기하되 OKX 상장 · 토큰 쪽으로 흐르면 듣기만. OKX 상대 사업 창구는 여전히 Kyuyoung.
+```
+Thank you, Eve, likewise! Enjoy the new chapter. One thing on our side you might find interesting from a strategy seat: we're in active discussions with prediction-market platforms about launching weather markets, with our data as the settlement layer. Happy to share how it's shaping up if it's ever useful.
+```
