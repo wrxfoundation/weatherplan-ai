@@ -3516,6 +3516,8 @@ Head of Partnerships & Operations, Wellbian Labs
 
 **국문 메시지 (제목 25자 · 본문 648자)**
 제목: `날씨 시장과 정산 데이터 — 웰비안랩스 박서우`
+
+프리미엄 메시지 제목 — **추천** `뉴욕 10/24~29 커피 한 잔 — 날씨 시장 정산 데이터`(10/12 서우 요청) · 대안 `하이퍼리퀴드 날씨 시장, 담보를 지키는 정산 데이터` · `서울 웰비안랩스 박서우입니다 — 날씨 시장 논의 요청` / 영문 `Coffee in New York, Oct 24–29? Weather markets on Hyperliquid` · `Settlement data that protects the stake – Wellbian Labs`
 ```
 Hyunsu 대표님, 안녕하세요. 서울의 웰비안랩스(Wellbian Labs)에서 파트너십과 운영을 맡고 있는 박서우(Logan)입니다.
 
