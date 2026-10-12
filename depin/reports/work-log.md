@@ -2275,4 +2275,4 @@ Thanks Odelia — writing to you at that address today. Mine is support@wellbian
 - **Nick 답 수정(10/13, 서우 「빠른 답 감사 · 일정 다시 체크해 알려 주겠다」 → 「근무지가 대략 어디인지도」)** → 「우리 팀 일정 체크」)** — 250자(행사명 대신 Hudson Yards 컨퍼런스 · 주어 We/our team). 확정 · 장소 · 캘린더는 답과 팀 일정 확인 뒤.
 - **Steve Quirk(Robinhood Chief Brokerage Officer) 재판정(10/13, 서우 캡처 2장)** — 지금도 메시지 0: 로빈후드 계열 상한 초과 · 결정 10(10/15 뒤에도 새 사람 0) · SIG(Rothera 공동 소유) 대면과 겹쳐 보임. 10/15 뒤 + 10/20 까지 로빈후드 스레드 무응답이면 자리 교체로 인사 544자 + 소개 한 줄 234자. 9/26 문안의 certified · 167/90 · independent 교체. x-activity-log Steve 절.
 - **Jump Trading 창구(10/13, 서우 사람 검색 캡처 5장)** — 상한 2 지금: Allison Gott(BD · 뉴욕 커피, 메모 284 · 본문 979) + Mike Bursik(예측시장 트레이더 · 시카고 화상, 메모 285 · 본문 935), 서로 언급. Quell(COO)은 막힐 때만 · Haribhakti(크립토닷컴 연결) · 법무 · 퀀트 0. (c) 마켓메이커 문안 바탕 · 같은 시각 공개 문장 유지. business-directions 끝 절.
-- **Nick Volbi 근무지 답(10/13 01:17)** — 30 Hudson Yards(Swell 행사장 옆) · 나머지 팀 필라델피아 · 메일 주소(저장소 밖). 답 A 보류 150자 / B 확정 213자(권장).
+- **Nick Volbi 근무지 답(10/13 01:17)** — 30 Hudson Yards(Swell 행사장 옆) · 나머지 팀 필라델피아 · 메일 주소(저장소 밖). 답 A 보류 153자 / B 확정 215자(권장).
