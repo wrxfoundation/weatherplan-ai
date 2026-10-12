@@ -125,3 +125,9 @@ Head of Partnerships & Operations, Wellbian Labs
 Hi Skew team, Logan from Wellbian Labs in Seoul. With KWeather (30 years of observation) we run weather data built to settle markets: 172 cities, a consensus of eleven weather feeds, every input on a public ledger, and a withheld verdict when inputs disagree. We are in active discussions with prediction-market platforms about launching weather markets. Since you bring new market categories on-chain with partners, is weather on your list? Happy to share more with whoever leads new markets.
 ```
 
+## 5부 — Hyperion · Skew 계열 문 = Hyunsu Jung (10/12 저녁)
+
+- 서우 「한국 사람이라 좋다, 적극 어필」 → Hyperion DeFi CEO Hyunsu Jung(뉴욕)에게 국문 메시지 + 뉴욕 커피(10/24~29). 문안 = business-directions 「Hyunsu Jung」 절.
+- **Skew 쪽 @skewtrade DM · 웹 문의는 보류** — Hyperion 과 Skew 는 한 계열(담보 · 지분 · 수익 배분)이라 두 문으로 동시에 가지 않는다. Skew 는 Hyunsu 소개로.
+- 하이퍼리퀴드 쪽 현재: Outcome(Jonathan 1촌 대기 · Ahmed · Diogo 메시지) + Hyperion(Hyunsu). 각 계열 안에서는 서로의 이름 0.
+

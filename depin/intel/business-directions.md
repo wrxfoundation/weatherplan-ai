@@ -3501,3 +3501,46 @@ Best regards,
 Logan (Seowoo Park)
 Head of Partnerships & Operations, Wellbian Labs
 ```
+
+## Hyunsu Jung (Hyperion DeFi CEO · 나스닥 HYPD · 뉴욕) — 적극 어필 (2026-10-12, 서우 캡처 2장 + 「한국 사람이라 좋다, 여기도 적극 어필 · 논의하자」)
+
+- **자리**(캡처 기준): Hyperion DeFi CEO(2025-06~, 뉴욕) · DARMA Capital PM(2021~2025) · EY-Parthenon M&A(2018~2021) · GoldenTree 투자분석(2017) · Vassar · Edinburgh.
+  인증 배지 · 2촌 · 팔로워 612 · 「메시지」 버튼(바로 보낼 수 있음) · 공통 1촌 1명(메리츠 쪽 1촌 — 이름은 메시지에 쓰지 않는다).
+- **판정 — 서우 결정대로 적극 어필 + 뉴욕 커피(10/24~29).** Hyperion = Skew 에 담보를 빌려주고 지분 · 수익을 받는 회사 → **Hyperion · Skew 를 한 계열로 보고 문은 Hyunsu 하나로**:
+  @skewtrade DM · skew.trade 문의는 보류(병행하면 같은 계열에 두 번), Skew 는 그의 소개로.
+- **각도**: 「정산이 틀리면 담보가 깎인다 — 판정 보류가 그 담보를 지키는 장치」. 보도도 「배포자 잘못 · 기술 장애로 삭감되면 Hyperion 이 맡긴 자본을 잃을 수 있다」고 짚었다(The Block 등, 2차).
+  + 「빠르게 크는 범주」 · 단일 공항 센서 · 10/11 정본 시장 문장(국문판 「예측시장 플랫폼들과 날씨 마켓 개설을 적극 논의하고 있습니다」).
+- **금지**: HYPE · 토큰 · 가격 · Outcome 등 다른 배포자 이름 · 상장사 표현(케이웨더 · Hyperion 모두) · 한국 도시 · 「독립」. 이름 한글 표기는 추측하지 않는다(「Hyunsu 대표님」).
+- **국문판을 기본으로**(서우 「한국 사람이라 좋다」), 영어가 편한 상대로 보이면 영문판.
+- 공급 계약 전 조건(법률 의견 · 한국 도시 제외 · 한국 이용자 0)은 그대로.
+
+**국문 메시지 (제목 25자 · 본문 648자)**
+제목: `날씨 시장과 정산 데이터 — 웰비안랩스 박서우`
+```
+Hyunsu 대표님, 안녕하세요. 서울의 웰비안랩스(Wellbian Labs)에서 파트너십과 운영을 맡고 있는 박서우(Logan)입니다.
+
+저희는 30년 관측 경험을 가진 한국 기상기업 케이웨더와 함께 예측시장 정산용 날씨 데이터 마켓을 운영하고 있습니다. 91개국 172개 도시의 날씨를 11개 날씨 피드의 합의값으로 내고, 모든 입력값은 공개 원장에 지문을 남기며, 판정은 충족 · 미충족 · 판정 보류 셋입니다.
+
+Hyperion이 하이퍼리퀴드 위 새 시장에 담보를 내주는 구조를 보고 연락드립니다. 날씨는 가장 빠르게 크는 이벤트 범주 중 하나인데, 정산은 아직 공항 관측소 한 곳에 기대는 경우가 많습니다. 정산이 틀리면 담보가 깎이는 구조에서는, 근거가 흔들리는 날 억지로 값을 내지 않는 「판정 보류」가 곧 담보를 지키는 장치라고 생각합니다. 저희는 예측시장 플랫폼들과 날씨 마켓 개설을 적극 논의하고 있습니다.
+
+10월 24~29일에 뉴욕에 갑니다. 시간이 맞으시면 30분 커피 한 잔 하며 날씨 시장 틀과 정산 데이터를 어떻게 설계하면 좋을지 의견을 듣고 싶습니다. Skew 쪽과 이야기하는 게 맞다면 그쪽으로 연결해 주셔도 감사하겠습니다.
+
+박서우 드림
+Head of Partnerships & Operations, Wellbian Labs
+```
+
+**영문판 (제목 51자 · 본문 1237자)**
+제목: `Weather markets and settlement data – Wellbian Labs`
+```
+Hi Hyunsu,
+
+I'm Logan (Seowoo Park), Head of Partnerships & Operations at Wellbian Labs in Seoul. We work with KWeather, a Korean weather company with 30 years of observation, and run a weather data market built for settling prediction markets: city-level weather for 172 cities in 91 countries, each value a consensus across eleven weather feeds, with every input fingerprinted to a public ledger, and a verdict of met, not met or withheld.
+
+I'm writing because Hyperion backs new markets on Hyperliquid with its stake. Weather is one of the fastest-growing event categories, yet many weather contracts still rest on a single airport sensor. Where a wrong settlement costs the stake behind a market, the withheld verdict is what protects it: no forced number on a day the inputs can't support one. We are in active discussions with prediction-market platforms about launching weather markets.
+
+I'll be in New York from October 24 to 29. If you have 30 minutes for coffee, I'd value your view on how a weather market and its settlement data should be designed. If Skew is the better place for this conversation, an introduction would be just as welcome.
+
+Best regards,
+Logan (Seowoo Park)
+Head of Partnerships & Operations, Wellbian Labs
+```
