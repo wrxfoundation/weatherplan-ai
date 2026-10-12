@@ -3368,3 +3368,26 @@ Always nice to meet someone else working in crypto from Seoul.
 
 Good to be connected.
 ```
+
+## Jonathan C. (Outcome Labs, Chief Growth Officer · 싱가포르/두바이) — 판정 (2026-10-12, 서우 캡처 3장 · 2촌)
+
+- **자리**(캡처 기준): Outcome Labs **Chief Growth Officer**(2026-08~, 싱가포르 재택 · 프로필 위치 두바이) — 자기소개 「Outcome Labs 는 **첫 · 최대 HIP-4 배포자의 개발사**」(= Outcome.xyz 쪽) ·
+  Starknet Foundation Growth / Strategic Projects & Investments(2025-07~2026-08, 런던) · Nibiru Ventures GP(2024-05~2025-07) · Nibiru Chain COO · 후기 VC · 그로스 에쿼티 ·
+  J.P. Morgan IB 미디어 · 통신(2019~2021, 뉴욕) · Queen's Smith 상경. 인증 배지 · 2촌 · 팔로워 1.6만 · 공통 1촌 12.
+- **이 캡처가 바꾼 것**: 10/12 하이퍼리퀴드 전략의 「Outcome.xyz 보류 — 팀 익명」 근거가 약해졌다. 운영 개발사(Outcome Labs · 싱가포르)와 이름 · 경력이 공개된 경영진이 확인됐다.
+  Skew 는 공식 발표상 선물(HIP-3)이 먼저라 예측시장 운영이 불확실 → **Outcome 이 1순위 후보로 올라온다**(법인 등록지 · 한국 접근 정책 확인 뒤 확정).
+- **판정 — 1촌 요청 + 중립 메모만. 예측시장 · 정산 · 날씨 시장 틀 이야기는 조건(법률 의견 + 한국 차단 계약 보장) 뒤.**
+  ① 역외 무허가 시장이라 한국 위험 「상」은 그대로 — 지금 정산 데이터 공급을 먼저 꺼내면 조건 전에 협상이 시작된다.
+  ② 그의 자리는 성장(사용자 확보) — 일 이야기가 한국 이용자 쪽으로 번질 수 있다(Shirley 9/29 선례). 대화가 열리면 「비한국 도시 · 한국 이용자 0」이 첫 조건.
+  ③ 메모는 데이터 층만, 「prediction markets」 · 「settlement」 · HIP-4 · 하이퍼리퀴드 · 토큰 0. 공통 1촌 이름 0.
+- **수락 뒤**: 감사 한 줄만. 조건이 서면 「날씨 시장 틀 초안 + 정산 데이터 · 판정 보류 = 배포자 담보 보호」 각도로 본 메시지(그때 작성).
+- 회사 상한: Outcome 0 → Jonathan 1.
+
+**1촌 요청 메모 (270자)**
+```
+Hi Jonathan, I'm Logan at Wellbian Labs in Seoul. With KWeather, a Korean weather company with 30 years of observation, we publish city-level weather for 172 cities: a consensus of eleven weather feeds, with every input fingerprinted to a public ledger. Glad to connect.
+```
+**수락 뒤 (53자)**
+```
+Thanks for connecting, Jonathan. Good to be in touch.
+```

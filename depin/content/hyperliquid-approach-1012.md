@@ -67,3 +67,12 @@
 - 거래량은 Outcome, 계약하기 쉬운 쪽은 Skew(뒤에 Hyperion). 다만 Skew가 지금 실제로 예측시장을 하고 있는지부터 확인하고 순서를 확정하겠습니다
 - 세 곳 모두 날씨 시장은 없고, 연락은 법률 의견 · 한국 차단 조건이 선 뒤에 합니다 (이번 주는 담당자 확인만)
 ```
+
+## 3부 — 갱신 (10/12 저녁, Jonathan C. 프로필 캡처)
+
+- **Outcome 은 「익명 팀」이 아니다**: 운영 개발사 Outcome Labs(싱가포르)와 Chief Growth Officer Jonathan C.(전 J.P. Morgan · Starknet Foundation · Nibiru Ventures GP)가 공개 프로필로 확인됐다
+  (자기소개 「첫 · 최대 HIP-4 배포자의 개발사」 — 회사 자체 주장).
+- **순서 재정리**: Skew 는 공식 발표상 선물(HIP-3)이 먼저라 예측시장 운영 확인 전 → **1순위 후보 = Outcome(Jonathan)**, Skew 는 예측시장 운영 확인 뒤 2순위.
+  확정 조건: Outcome Labs 법인 등록지 · 한국 접근 정책 확인.
+- 지금 할 일: Jonathan 1촌 요청 + 중립 메모(예측시장 · 정산 언급 0). 본 메시지는 법률 의견 · 한국 차단 계약 보장 뒤.
+
