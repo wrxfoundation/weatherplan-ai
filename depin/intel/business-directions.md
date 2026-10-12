@@ -3721,3 +3721,16 @@ No ask right now. If useful, I can send a one-page template draft (cities, thres
 ```
 A quick intro, since we're new to each other here. Wellbian Labs works with KWeather, a Korean weather company with 30 years of observation and 4,000+ enterprise clients, to build weather data for settling markets. We publish hourly weather for 172 cities in 91 countries: each value is a consensus of eleven weather feeds, every input is fingerprinted to a public ledger, and each check returns met, not met or withheld. It's available through a REST API with an OpenAPI spec.
 ```
+- **10/12 데모 링크 덧붙임**(서우 「weatherfi.io 예시 보여 주고 검토해 보라 하자」). 기존 고지 문장 그대로(「실돈 없는 데모 · 우리가 운영하는 서비스 아님」 — 크립토닷컴 10/1 선례). **주의: 데모 도시 목록에 한국 도시가 들어 있다**(172개 전체 · 9/24 기록) → 「도시는 예시일 뿐」 한 줄. 데모 화면에 체인 · 결제 · 가상 자산 이름이 보이면 그것도 언급하지 않는다.
+  소개를 아직 안 보냈으면 합친 판, 보냈으면 짧은 판 하나만 보내고 그 뒤로는 기다린다(연속 세 통 이상 0).
+
+짧은 판 (398자)
+```
+If it helps to see it rather than read it: weatherfi.io is a working demo with no real money, built to show how our data resolves a market end to end, from the hourly value to the met, not met or withheld verdict. It's a demonstration, not a service we operate, and the cities in it are only for illustration. If you have five minutes, I'd value your take on what you'd change for a HIP-4 template.
+```
+소개 + 데모 합친 판 (736자)
+```
+A quick intro, since we're new to each other here. Wellbian Labs works with KWeather, a Korean weather company with 30 years of observation and 4,000+ enterprise clients, to build weather data for settling markets. We publish hourly weather for 172 cities in 91 countries: each value is a consensus of eleven weather feeds, every input is fingerprinted to a public ledger, and each check returns met, not met or withheld. It's available through a REST API with an OpenAPI spec.
+
+To see it end to end, weatherfi.io is a working demo with no real money. It's a demonstration, not a service we operate, and the cities in it are only for illustration. If you have five minutes, I'd value your take on what you'd change for a HIP-4 template.
+```

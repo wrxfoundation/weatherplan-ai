@@ -2240,3 +2240,4 @@ Thanks Odelia — writing to you at that address today. Mine is support@wellbian
 - **예비 메일 제목 후보(10/12, 서우 「메일 보낼 건데 제목」)** — Hyperion 3 · Public.com 3, `content/backup-channels-1012.md` 끝.
 - **Outcome 거절 답장 → 설득 1회(10/12, 서우 대화 붙여 넣기 + 「설득해 보자, 큰 시장이니」)** — 회사 쪽 「지금은 날씨 마켓 안 봄 · Jonathan 텔레그램으로」. 텔레그램 메시지 949자(반박 0 · 일일 반복 마켓 모양 · 배포자 담보 위험 · 템플릿 초안 제안 · 「무엇이 갖춰지면」 질문). Ahmed · Diogo 후속 0. 텔레그램 아이디는 저장소 미기재.
 - **Outcome Jonathan 텔레그램 — 회사 소개 덧붙임(10/12, 서우 「보내긴 했어, 간략한 회사 소개 첨언」)** — 477자, 데이터 층만 · 측정기 · 토큰 · 싱가포르 · 링크 0.
+- **Outcome Jonathan — weatherfi.io 데모 링크(10/12, 서우)** — 짧은 판 398자 · 소개 합친 판 736자. 데모 고지 문장 그대로 + 「도시는 예시」(데모에 한국 도시 포함). 보낸 뒤 대기.
