@@ -3343,3 +3343,28 @@ Your path from conservation biology to crypto media caught my eye. Ours runs fro
 
 Good to be connected.
 ```
+
+## Aurélie Boiteux (Nansen, Growth Project Manager · 서울) — 판정 (2026-10-12, 서우 캡처 3장 · 새 1촌)
+
+- **자리**(캡처 기준): Nansen 4년 10개월(재택) — Growth Project Manager(2026-10~, 서울 · 「글로벌 성장 캠페인 실행」) · Growth Lead APAC West & EMEA(2026-04~) ·
+  Ecosystem Growth Manager(2022-10~2026-04, 한국 · 생태계 팀 첫 멤버) · Relationship Manager, Blockchains & Ecosystems(2022, 서울 · 계약 5건+). ESLSCA 파리 MBA.
+  인증 배지 · 1촌 500+ · 공통 1촌 14 · 팔로워 2,273. 최근 글(4일 전): 서울 「MINING THE NIGHT」 연사 — 「Trade Everything Onchain with AI」 · 「Stake your XP with Nansen」.
+- **판정 — Lynn 인사만(요청 · 제안 0).** 링크드인이 띄운 국문 기본 인사는 보내지 않는다(그는 영어 사용자).
+  ① 자리 = 사용자 확보 · 캠페인 · 커뮤니티 성장. 지금 Nansen 이 미는 것은 AI 온체인 트레이딩 · 「XP 스테이킹」 — 일 이야기를 열면 공동 캠페인 · 포인트 · 퀘스트로 간다(토큰 · 보상 레인 0, 보상은 테스트 중).
+  ② 인맥 지도의 Nansen 판정(Alex Svanevik CEO — 게이트 「배송 · 가동 뒤」, 「지표가 쌓인 뒤 · 우리가 먼저 해석을 들이밀지 않는다」)과 같은 결 — 온체인 분석사는 우리 기록을 언젠가 읽을 쪽이다.
+  ③ 서울에 있는 사람이라 관계 비용이 낮다 — 선택 줄은 「서울」 하나. 행사 · 트레이딩 · XP 언급 0.
+- 문구: 한국 거주 상대라 Lynn 기본값 그대로(「certified」 = KC 기준 사실 · 「eleven independent sources」).
+- **다시 볼 때**: 기기 배송 · 가동으로 온체인 지표가 쌓인 뒤 — 서울 커피 한 번. 그가 먼저 공동 캠페인 · 퀘스트 · 포인트를 제안하면 「지금은 토큰 · 보상 쪽 협업은 하지 않는다」로 받는다.
+
+**수락 뒤 인사 (EN, 626자)**
+```
+Aurélie — thanks for connecting.
+
+I run partnerships at wellbian. KWeather has measured weather in South Korea for thirty years and supplies data to 4,000+ enterprise clients; wellbian is the network built on top of that.
+
+We work on two layers: certified air-quality sensors that people run in their own rooms, and city-level weather across 91 countries and 172 cities, where each value is a consensus across eleven independent sources rather than a single reading. Every input is fingerprinted to a public ledger before it goes anywhere.
+
+Always nice to meet someone else working in crypto from Seoul.
+
+Good to be connected.
+```
