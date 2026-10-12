@@ -4260,3 +4260,49 @@ Logan (Seowoo Park)
 Head of Partnerships & Operations, Wellbian Labs
 ```
   금지어 검사 통과(플랫폼 · 지갑 · 체인 이름 · Decrypt · 한국 · independent · first · only 0).
+
+## FanDuel(FanDuel Predicts) — 누구에게 (2026-10-13, 서우 「FanDuel」 사람 검색 캡처 6장)
+
+- **회사 자리**: FanDuel Predicts = CME 51% · FanDuel 49% 합작(casino.org). 계약은 **거래소가 상장** — CME, 그리고 2026-06부터 크립토닷컴 계열 거래소 계약도 같이 띄움(LSR).
+  FanDuel 은 자체 거래소(DCM) 없음 — 2026-04 자체 FCM(New Ventures III) 신청만. 날씨는 「아직 깊지 않은 범주」(LSR 날씨 가이드). 전수 리스트 10행(CME · FanDuel Predicts = 관찰).
+- **뜻**: FanDuel 은 정산원을 고르지 못한다(9/28 규칙 — 앱은 경로만). 날씨 계약이 FanDuel 에 뜨는 길 = 거래소 파트너가 상장 → **우리 OG.com 라인의 하류**.
+  FanDuel 에서 얻을 것 = 「날씨 범주를 원하나」 수요 신호 · 자체 거래소로 갈 때의 첫 대화. 줄 것 = 정산이 고객 질문에 버티는 데이터(거래소 파트너가 쓸 것).
+- **순서**: 10/15 크립토닷컴 · OG.com 재판정 뒤 보낸다(진행 중인 라인 우선). OG.com · CME · 크립토닷컴 이름 0 — 「your exchange partners」 까지만. 첫 대화에서도 OG.com 대화 사실 0(NDA).
+- **사람 — 상한 2**: ① **Aaron Champagne**(VP, New Ventures | Prediction Markets Strategy · 뉴욕 · 2촌 · 공통 1촌 2 — 「New Ventures」 = FCM 신청 법인명과 같은 줄, 범주를 정하는 자리)
+  ② **John Sheeran**(VP, Strategic Partnerships · 뉴욕 · 2촌). 서로 언급. 예비 = Ashley Chiang(Corporate Strategy · 전 McKinsey · 뉴욕). 
+  뺌: 트레이더(Isaac Torine · Jack Navin — 서우 「트레이더 필요 없음」) · 커머셜 디렉터 3(Alex Keating · Andrew Shepard · Michael Giblin — 스포츠북 영업) · 마케팅 · 엔지니어 · 데이터 사이언스 · AML(Dumitru T.) · 3촌 이상(Katherine Wang 기업개발 포함).
+- **Aaron — 1촌 메모 (271자)**
+```
+Hi Aaron, I'm Logan from Wellbian Labs in Seoul. With KWeather (30 years of observation) we build weather data to settle event contracts: hourly values for 172 cities, eleven weather feeds per value, every input on a public ledger. In New York Oct 24–29; glad to connect.
+```
+- **John — 1촌 메모 (270자)**
+```
+Hi John, I'm Logan from Wellbian Labs in Seoul. With KWeather (30 years of observation) we build weather data to settle event contracts: hourly values for 172 cities, eleven weather feeds per value, every input on a public ledger. In New York Oct 24–29; glad to connect.
+```
+- **Aaron — 수락 뒤 (1125자)** — Katie(UDX) 본문 결 + 「your exchange partners」 한 줄
+```
+Aaron, thanks for connecting.
+
+I lead partnerships at Wellbian Labs. We work with KWeather, a Korean weather company with 30 years of observation and 4,000+ clients, on weather data built to settle event contracts.
+
+As FanDuel Predicts adds categories beyond sports and finance, weather is one worth a look: measurable, easy to check afterwards, and followed by every fan on game day. The contracts would sit with your exchange partners, so the question on your side is whether a settled outcome holds up when a customer asks. Many weather contracts still rest on a single airport station. We publish hourly values for 172 cities in 91 countries, each a consensus across eleven weather feeds, with a "withheld" verdict when the inputs can't support a clean answer and every input fingerprinted to a public ledger, so anyone can re-check a result.
+
+We are in active discussions with prediction-market platforms about launching weather markets. I'll be in New York from October 24 to 29. Would you have 30 minutes for a coffee? I've also written to John Sheeran on the partnerships side, so no need to reply twice.
+
+Best,
+Logan
+```
+- **John — 수락 뒤 (1133자)** — Aaron 본문에서 첫 줄 · 끝 줄(Aaron 언급)만 바꿈
+```
+John, thanks for connecting.
+
+I lead partnerships at Wellbian Labs. We work with KWeather, a Korean weather company with 30 years of observation and 4,000+ clients, on weather data built to settle event contracts.
+
+As FanDuel Predicts adds categories beyond sports and finance, weather is one worth a look: measurable, easy to check afterwards, and followed by every fan on game day. The contracts would sit with your exchange partners, so the question on your side is whether a settled outcome holds up when a customer asks. Many weather contracts still rest on a single airport station. We publish hourly values for 172 cities in 91 countries, each a consensus across eleven weather feeds, with a "withheld" verdict when the inputs can't support a clean answer and every input fingerprinted to a public ledger, so anyone can re-check a result.
+
+We are in active discussions with prediction-market platforms about launching weather markets. I'll be in New York from October 24 to 29. Would you have 30 minutes for a coffee? I've also written to Aaron Champagne on the prediction markets side, so no need to reply twice.
+
+Best,
+Logan
+```
+  금지어 검사 통과(「Seoul」 = 회사 소재지만). 메모는 Katie · Noah 와 같은 판(정본 문장은 본문에).
