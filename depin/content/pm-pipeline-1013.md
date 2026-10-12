@@ -34,9 +34,11 @@
 - 회사: 세계 대형 가상자산 거래소. 2026.2 미국 예측시장 앱 OG.com 분사
          → 미국 CFTC 인가 거래소(CDNA, 옛 Nadex · 시카고)가 운영
 - 규모: 이용자 1.5억 명+, 2024 매출 약 15억 달러(약 2.07조 원)
-- 예측시장 거래액:
+- OG.com 거래액(OG.com 앱 단독 수치는 비공개 → OG.com을 돌리는 거래소 기준):
   · 월: 최근 30일(10월 초) 약 18.5억 달러(약 2.6조 원) — 미국 예측시장 점유율 약 2%(칼시 약 75%)
+        7월 약 11억 달러(약 1.5조 원) 추정 — 점유율 2.4%로 역산
   · 연: 공식 수치 없음
+  · 9/8부터 로빈후드 예측시장 물량 일부가 OG.com 거래소로 들어옴 → 증가 요인
 - 특징: 로빈후드 등에 예측시장 "엔진"을 대는 B2B 구조(로빈후드 지분 참여)
          → 한 번 들어가면 여러 브랜드로 퍼질 수 있음. 지금 날씨 상품은 얇음
 - 상대: 전략 파트너십 담당(사내 주인) → 제품팀 · 미국팀 검토
@@ -92,6 +94,6 @@
 - 날씨 거래량: [Benzinga via Webull](https://www.webull.ca/news-detail/15475678967514112)
 - 거래액(10/13 추가):
   - 칼시 9월 약 608억 달러: [Ticker Tracker](https://ticker-tracker.com/kalshi/volume) · [DeFi Rate](https://defirate.com/prediction-markets/volume/kalshi/) · [Prediction News](https://predictionnews.com/story/kalshi-volume-surges-but-rivals-gain-market-share) / 2025 연간 약 238억 · 2026 1~7월 약 1,340억(DeFi Rate) · 8월 약 372억([Datawallet](https://www.datawallet.com/crypto/prediction-market-statistics)) → 1~9월 약 2,300억은 출처별 월 합산 추정
-  - 크립토닷컴 최근 30일 약 18.5억 달러 · 점유율 약 2.1%(가격 계약 포함): [volumerace.com](https://volumerace.com/) · 7월 점유율 약 2.4%: [Sportico](https://www.sportico.com/business/sports-betting/2026/prediction-market-data-volume-polymarket-kalshi-world-cup-1234939529/)
+  - OG.com(거래소 = CDNA · 「OG.com Markets」, 옛 Nadex) 최근 30일 약 18.5억 달러 · 점유율 약 2.1%(가격 계약 약 7% · 화이트라벨 파트너 물량 포함): [volumerace.com](https://volumerace.com/) · 7월 점유율 약 2.4%(Nadex): [Sportico](https://www.sportico.com/business/sports-betting/2026/prediction-market-data-volume-polymarket-kalshi-world-cup-1234939529/) → 7월 약 11억 달러는 칼시 7월 약 375억 달러 ÷ 0.83 × 0.024 로 역산한 추정 · OG.com 앱 단독 월 거래액은 공개 자료 없음(리뷰 사이트 · 앱 화면에도 없음) · 로빈후드 물량 일부 OG.com 경유(9/8 시작): [The Prediction Markets Brief — Sep 2026](https://www.shiftmarkets.com/prediction-markets-brief/september-2026)
   - Limitless 6월 월 약 20억(The Block 인용 2차) · 4월 첫 10억 돌파: [Bitcoin Foundation](https://bitcoinfoundation.org/news/prediction-markets/prediction-market-limitless-volume-base/) · 누적 명목 약 34억: [DefiLlama](https://defillama.com/protocol/limitless-exchange) (스냅샷 날짜 불명)
   - HIP-4 9월 약 5,100만 · 누적 약 3.17억(10/5) · Outcome 점유율 68~85% · 리베이트: [crypto.news](https://crypto.news/hyperliquid-hip-4-volume-triples-after-open-rollout/) · [TokenPost](https://www.tokenpost.com/news/investing/27723) · [loris.tools](https://loris.tools/hip4)
