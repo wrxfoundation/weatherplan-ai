@@ -3546,3 +3546,29 @@ Best regards,
 Logan (Seowoo Park)
 Head of Partnerships & Operations, Wellbian Labs
 ```
+
+## Sima Zhang (Xsolla VP of Web3 Ecosystem Partnership · 전 Aethir 사업운영 디렉터) — 판정 (2026-10-12, 서우 캡처 1장 · 촌수 · 지역 캡처에 없음)
+
+- **자리**(캡처 기준): Xsolla VP of Web3 Ecosystem Partnership(2025-12~ — 게임 결제 · 커머스 회사의 웹3 생태계 제휴) · Emberstone 창업(2025-12~) ·
+  **Aethir Head of Business Operations(디렉터, 2024-10~2026-10 — 막 나옴)** · Tencent IEG Global PM(2021~2023) · Bain(2020~2021). 헤드라인 「Web3, AI, Fintech | Women leadership」. 보유 기술에 「Cryptocurrency Market Making」.
+- **판정 — 1촌 요청 + Lynn 메모, 수락 뒤 Lynn 인사만. 사업 이야기 0.**
+  ① 지금 자리는 게임 결제 · 커머스의 웹3 제휴 — 우리와 닿는 문은 **해외 판매 결제**(사업 방향 게이트 「2차 판매 해외 결제 설계 뒤」)와 **날씨 미니게임**(브랜드 미정 · 점수만) 둘인데 둘 다 아직이다.
+  ② Aethir 사업운영 경험 = DePIN 노드 판매 · 운영을 안다. 다만 Aethir 식 노드 라이선스 판매(런치패드 · KOL 추천 코드)는 우리가 가져오지 않는 모델(10/10 보고서) — 그 이야기로 흐르면 듣기만.
+  ③ 「마켓메이킹」 기술 태그 — 토큰 · 유동성 이야기 0.
+- 문구: 지역을 몰라 「certified」 0 · 「eleven weather feeds」(안전판). Aethir · Xsolla 는 그의 이력이라 메모에서 한 번 언급(다른 플랫폼 비교 아님).
+- **다시 볼 때**: 해외 판매 결제 수단을 설계할 때(Xsolla 결제) · 날씨 미니게임 브랜드 · 출시가 정해질 때 · 앰배서더 1기(여성 참여 확대 — 10/1 서우 「다 남자라 칙칙」)를 꾸릴 때 소개 창구로.
+
+**1촌 요청 메모 (309자)**
+```
+Hi Sima, I run partnerships at wellbian. With KWeather (30 years of observation) we run air-quality sensors in people's homes plus city-level weather for 172 cities, each value a consensus of eleven weather feeds, every input on a public ledger. Your path from Aethir to Xsolla caught my eye. Glad to connect.
+```
+**수락 뒤 인사 (543자)**
+```
+Sima — thanks for connecting.
+
+I run partnerships at wellbian. KWeather has measured weather in South Korea for thirty years and supplies data to 4,000+ enterprise clients; wellbian is the network built on top of that.
+
+We work on two layers: air-quality sensors that people run in their own rooms, and city-level weather across 91 countries and 172 cities, where each value is a consensus across eleven weather feeds rather than a single reading. Every input is fingerprinted to a public ledger before it goes anywhere.
+
+Good to be connected.
+```
