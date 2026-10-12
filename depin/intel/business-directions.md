@@ -3740,3 +3740,11 @@ If it helps to see it rather than read it: weatherfi.io is a working demo with n
 
 I think weather is a real volume opportunity for you: up to 172 new markets a day, one per city, settling around the clock across time zones, in a category your current markets don't cover yet. If you have five minutes, I'd value your take on what you'd change for a HIP-4 template.
 ```
+- **10/12 최종 2 — 「이미 다 갖춰져 있고 검토 · 연결만 하면 된다」 추가**(서우). 사실 범위: 데이터 쪽(매시 값 · 판정 · 공개 원장 기록 · REST/OpenAPI)은 돌아가고 있다(weathermarket.io 공개 베타). HIP-4 쪽은 배포자가 정산값을 올리는 구조라 「연결」은 그들 몫 — 그래서 「아무것도 만들 필요 없다」 대신 「mostly a review and wiring」. 템플릿 1장은 아직 없음(요청 오면 만든다).
+```
+If it helps to see it rather than read it: weatherfi.io is a working demo with no real money, showing how our data resolves a market end to end, from the hourly value to the met, not met or withheld verdict. It's a demonstration, not a service we operate, and the cities in it are only for illustration.
+
+I think weather is a real volume opportunity for you: up to 172 new markets a day, one per city, settling around the clock across time zones, in a category your current markets don't cover yet.
+
+And we've made it easy to pick up. The data side is already running: hourly values, verdicts and the public-ledger record all come through a REST API with an OpenAPI spec, so on your side it's mostly a review and wiring it into your settlement. If you have five minutes, I'd value your take on what you'd change for a HIP-4 template.
+```
