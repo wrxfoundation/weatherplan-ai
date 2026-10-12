@@ -4306,3 +4306,48 @@ Best,
 Logan
 ```
   금지어 검사 통과(「Seoul」 = 회사 소재지만). 메모는 Katie · Noah 와 같은 판(정본 문장은 본문에).
+
+## DraftKings(DKeX) — 사람 판정 (2026-10-13, 서우 「DraftKings Inc.」 사람 검색 캡처 5장)
+
+- **바탕**: 10/13 스포츠 3곳 절 — DKeX = 자체 CFTC 거래소(Railbird 인수, 2026-06-26) → 정산 약관을 직접 쓰는 자리. OG.com 엔진에서 나갔으므로 FanDuel 과 달리 10/15 를 기다릴 필요 없음.
+- **사람 — 상한 2 (둘 다 뉴욕 → 커피)**:
+  ① **Jeanine Hightower-Sellitto** — SVP, GM DraftKings Predictions · 뉴욕 · 2촌 · 공통 1촌 6(Michael McDonough · Stephen Humenik 외 4). 10/11 노트 직함 재확인됨. 범주를 정하는 사람.
+  ② **Edward Tian** — Senior Director, Prediction Markets · Railbird 공동창업(YC W22 — DKeX 가 된 거래소를 만든 사람) · 뉴욕 · 2촌. 새 계약 범주 자가인증 · 약관 실무를 아는 자리. 서로 언급.
+  예비: Max Meisler(Prediction Markets | DKeX · 뉴욕) · Steve Lang(VP 사업개발 · 뉴욕) · Rizwan Awan(SVP 마켓메이킹 · 전 TSX 사장 · 보스턴 — 마켓메이킹이라 지금은 뺌).
+  뺌: 규제 · 법무(Amanda Olear 전 CFTC · Bryan Cipolla) · 트레이딩(Tim Feuerborn · Eric Kopen · Aaron Hainaut · Kristian Kolev — 서우 「트레이더 필요 없음」) · FCM(Shane O'Mara) · 제품 · 운영 · CRM · 마케팅 · HR · 데이터 사이언스 · 미디어 제휴(Kevin Jaron).
+- **공통 1촌 메모**: Stephen Humenik 이 DK 예측 조직 다수와 공통 1촌(Jeanine · Edward · Shane · Peter Kane · Jake List · Amanda Olear), Michael McDonough(Jeanine · Rizwan), Matt (Meir) Vegh 또 등장. 서우가 아는 사이면 소개가 낫다 — 누군지 서우 확인.
+- **Jeanine — 1촌 메모 (274자)**
+```
+Hi Jeanine, I'm Logan from Wellbian Labs in Seoul. With KWeather (30 years of observation) we build weather data to settle event contracts: hourly values for 172 cities, eleven weather feeds per value, every input on a public ledger. Congrats on DKeX; in New York Oct 24–29.
+```
+- **Edward — 1촌 메모 (286자)** — Railbird 한 줄
+```
+Hi Edward, I'm Logan from Wellbian Labs in Seoul. With KWeather (30 years of observation) we build weather data to settle event contracts: hourly values for 172 cities, eleven weather feeds per value, every input on a public ledger. Congrats on taking Railbird to DKeX; in NY Oct 24–29.
+```
+- **Jeanine — 수락 뒤 (1078자)** — 10/13 DK 본문 + 뉴욕 커피 · Edward 언급
+```
+Jeanine, thanks for connecting.
+
+I lead partnerships at Wellbian Labs. We work with KWeather, a Korean weather company with 30 years of observation and 4,000+ clients, on weather data built to settle event contracts.
+
+With DKeX as your own exchange, you can now decide which categories sit next to sports. Weather is a natural one: game-day conditions, city temperatures and rainfall are measurable and easy to check afterwards, and fans already follow them. The hard part is the settlement number, since many weather contracts still resolve on a single airport station. We publish hourly values for 172 cities in 91 countries, each a consensus across eleven weather feeds, with every input fingerprinted to a public ledger and a "withheld" verdict when the inputs can't support a clean answer.
+
+We are in active discussions with prediction-market platforms about launching weather markets. I'll be in New York from October 24 to 29. Would you have 30 minutes for a coffee? I've also written to Edward Tian on the prediction markets team, so no need to reply twice.
+
+Best,
+Logan
+```
+- **Edward — 수락 뒤 (1086자)** — 셋째 문단 첫 문장만 Railbird 판 · Jeanine 언급
+```
+Edward, thanks for connecting.
+
+I lead partnerships at Wellbian Labs. We work with KWeather, a Korean weather company with 30 years of observation and 4,000+ clients, on weather data built to settle event contracts.
+
+With DKeX running on the exchange you built at Railbird, you can now decide which categories sit next to sports. Weather is a natural one: game-day conditions, city temperatures and rainfall are measurable and easy to check afterwards, and fans already follow them. The hard part is the settlement number, since many weather contracts still resolve on a single airport station. We publish hourly values for 172 cities in 91 countries, each a consensus across eleven weather feeds, with every input fingerprinted to a public ledger and a "withheld" verdict when the inputs can't support a clean answer.
+
+We are in active discussions with prediction-market platforms about launching weather markets. I'll be in New York from October 24 to 29. Would you have 30 minutes for a coffee? I've also written to Jeanine Hightower-Sellitto, so no need to reply twice.
+
+Best,
+Logan
+```
+  금지어 검사 통과(「Seoul」 = 회사 소재지만).
