@@ -2258,3 +2258,4 @@ Thanks Odelia — writing to you at that address today. Mine is support@wellbian
 - **Outcome — 820자 답 이미 발송(10/12, 서우)** — 슬롯 회전 한 줄은 지금 덧붙이지 않음(연속 메시지 과다). Jonathan 답이 오면 그 답장이나 정보 묶음에 넣는다.
 - **HIP-4 상한 원리 쉬운 설명 카톡 보고본(10/12, 서우)** — 주차장 비유(배포자별 자리 100 · 정산되면 비움 · 새 메뉴는 검증인 승인 · 지금 1단계) + Outcome 「꽉 참」 뜻 + 우리 각도(매일 정산 → 자리 매일 비움). 채팅으로만.
 - **Outcome Jonathan 답 수정본(10/12, 서우 「텔레그램 수정 가능」)** — 시범 문단에 「매일 정산 → 슬롯 몇 개만 잠깐, 매일 반환」 한 줄 넣은 939자 판.
+- **Eve Hsiao(OKX CEO Office) 후속(10/12, 서우)** — 답 「happy to stay in touch」 → 감사 한 줄(93자)로 닫음 · 사업 0 · OKX 문은 Kyuyoung 하나 유지 · 다음 인사부터 certified · independent 빼기.

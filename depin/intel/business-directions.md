@@ -3772,3 +3772,13 @@ A thought for when you have room: a light pilot. Three to five major cities, one
 
 And so I know what to watch for: when you say interest voiced, is that mostly users asking in your community, or activity on similar markets elsewhere? I'll send a short info pack either way.
 ```
+## Eve Hsiao (OKX CEO Office · VIP 전략 · 전 McKinsey) — 후속 (2026-10-12, 서우 대화 붙여 넣기)
+
+- **경과**: 10/8(목) 서우 축하 인사(새 자리 · TOKEN2049 주간 발표 · 컨설팅 배경, 「No ask here」) → 10/12 Eve 답 「Thanks for the genuine message and happy to stay in touch」.
+- **판정 — 짧게 받고 닫는다. 사업 0.** 거래소 소속 = 인사만 · **OKX 의 문은 Kyuyoung 하나(9/16)** 그대로 — Eve 는 관계 자산으로 둔다. 다음 접점은 그쪽이 먼저 우리 일을 물을 때만.
+- **다음 인사부터 고칠 것**: 10/8 인사는 옛 기본값이었다 — 「certified」(지역 모르면 0) · 「eleven independent sources」(→ 「eleven weather feeds」). 이미 보낸 글은 그대로 둔다.
+
+후속 한 줄 (93자)
+```
+Thank you, Eve, likewise! Enjoy the new chapter, and I hope our paths cross at an event soon.
+```
