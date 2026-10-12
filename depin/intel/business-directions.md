@@ -3734,3 +3734,9 @@ A quick intro, since we're new to each other here. Wellbian Labs works with KWea
 
 To see it end to end, weatherfi.io is a working demo with no real money. It's a demonstration, not a service we operate, and the cities in it are only for illustration. If you have five minutes, I'd value your take on what you'd change for a HIP-4 template.
 ```
+- **10/12 최종 = 짧은 판 + 「거래량이 커질 기회」**(서우 「짧은 판으로, 너희에게 마켓 볼륨이 커지는 큰 기회라고 녹여」). 근거는 숫자 대신 구조로 — 하루 최대 172개 새 마켓(도시당 하나) · 시간대 따라 쉬지 않고 정산 · 지금 그들 범주(스포츠 · 크립토 · 경제 · 금융 · 정치)에 없는 범주. 거래량 수치 · 다른 플랫폼 실적 · 「보장」 0.
+```
+If it helps to see it rather than read it: weatherfi.io is a working demo with no real money, showing how our data resolves a market end to end, from the hourly value to the met, not met or withheld verdict. It's a demonstration, not a service we operate, and the cities in it are only for illustration.
+
+I think weather is a real volume opportunity for you: up to 172 new markets a day, one per city, settling around the clock across time zones, in a category your current markets don't cover yet. If you have five minutes, I'd value your take on what you'd change for a HIP-4 template.
+```
