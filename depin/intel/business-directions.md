@@ -3558,9 +3558,9 @@ Head of Partnerships & Operations, Wellbian Labs
 - 문구: 지역을 몰라 「certified」 0 · 「eleven weather feeds」(안전판). Aethir · Xsolla 는 그의 이력이라 메모에서 한 번 언급(다른 플랫폼 비교 아님).
 - **다시 볼 때**: 해외 판매 결제 수단을 설계할 때(Xsolla 결제) · 날씨 미니게임 브랜드 · 출시가 정해질 때 · 앰배서더 1기(여성 참여 확대 — 10/1 서우 「다 남자라 칙칙」)를 꾸릴 때 소개 창구로.
 
-**1촌 요청 메모 (309자)**
+**1촌 요청 메모 (279자)**
 ```
-Hi Sima, I run partnerships at wellbian. With KWeather (30 years of observation) we run air-quality sensors in people's homes plus city-level weather for 172 cities, each value a consensus of eleven weather feeds, every input on a public ledger. Your path from Aethir to Xsolla caught my eye. Glad to connect.
+Hi Sima, I run partnerships at wellbian. With KWeather (30 years of observation) we run home air-quality sensors plus city weather for 172 cities, a consensus of eleven weather feeds, every input on a public ledger. Your path from Aethir to Xsolla caught my eye. Glad to connect.
 ```
 **수락 뒤 인사 (543자)**
 ```
