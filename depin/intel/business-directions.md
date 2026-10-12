@@ -3630,3 +3630,20 @@ Given your path from Aethir to Web3 partnerships at Xsolla, I'd enjoy hearing wh
 Best,
 Logan
 ```
+
+## Michael Lau (Consensus 의장 · Bullish 그룹 사업개발 총괄 · 홍콩) — 판정 (2026-10-12, 서우 캡처 3장 · 2촌 · 공통 1촌 3)
+
+- **자리**(캡처 기준): CoinDesk **Chairman of Consensus**(2025-03~) · **Bullish SVP, Group Head of Business Development**(2024-07~, 그 전 Global Head of Sales 2022-07~2024-07) ·
+  Block.one(영업 · 기관 고객 · 마케팅, 2020~2022) · CLSA Global CMO(2018~2020). 홍콩 · 옥스퍼드 사이드 경영대학원. 1주 전 글: Consensus Hong Kong 2027(캡처 이미지 「Feb 1-3, 2027」)의 큰 주제 = **Agentic Economy(AI × 블록체인)**.
+- **판정 — 1촌 요청 + 메모가 인사의 전부. 수락 뒤 추가 메시지 0 · 사업 이야기 0.**
+  ① 모자가 둘인데 **Bullish = 거래소**(CoinDesk 모회사) · 그 자리가 그룹 사업개발 총괄 — 상장 · 기관 거래에 가장 가까운 자리라 어떤 사업 문장도 상장 의도로 읽힌다. 거래소 소속 = 인사만(Anna Choi · ICE 와 같은 선).
+  ② 연결할 이유는 **Consensus 의장 쪽** — 그의 글(에이전트 경제)에 답하는 한 줄로 메모를 연다. Bullish · CoinDesk 보도 · 토큰 · Flare · 다른 거래소 0.
+  ③ **연사 자리는 그에게 부탁하지 않는다** — 공식 연사 신청 창구로. 검색 요약(10/12): Consensus Hong Kong 연사 신청 페이지 · 마감 2026-12-04 · 순차 심사(원문 대조 전 — 2027 홍콩판 날짜 · 주제 트랙은 페이지에서 확인).
+     주제 후보(대표 발표용, 결정은 서우/대표): 「Agents will pay for data. Who checks it?」 — 날씨는 결과가 측정되는 영역이라 에이전트가 산 데이터를 원장 지문으로 되짚는 시험대. 2월 홍콩 출장 비용 · 일정은 따로 판단.
+  ④ Bullish 첫 사람이라 회사 상한 문제없음. 공통 1촌 이름은 메모에 넣지 않는다. 「대표 1촌에게 소개 부탁」 버튼은 쓰지 않음(거래소 임원에게 소개를 부탁하는 모양이 상장 영업처럼 보인다).
+- 문구: 「agent can verify what it buys」 = 백서 검증 5건 중 「AI 에이전트 x402 자율 결제」가 근거. certified 0(지역 홍콩) · 「eleven weather feeds」는 글자 수로 뺐다.
+
+**1촌 요청 메모 (283자)**
+```
+Hi Michael, Logan from Wellbian Labs, Seoul. Your agentic economy post struck a chord. With KWeather (30 years of observation) we run home air sensors and weather data for 172 cities, every input fingerprinted to a public ledger, so an agent can verify what it buys. Glad to connect.
+```
