@@ -1244,6 +1244,8 @@ Hi Christy, I run partnerships at wellbian. KWeather has measured weather in Kor
 - 진단: 가입이 결제 직전 관문으로만 있다. 판매 창구가 닫힌 뒤 가입할 이유 · 말 걸 권리(광고성 수신 동의 없음) · 볼 눈(GA 이벤트 0 · 가입 소스 없음)이 없다.
 - 고리 넷: 회원 우선 회차(가격이 아니라 시간 · 자격) · 기기 한 대에 초대장 셋(가족 · 선물 — 리딤은 구매 계정과 무관 · 단지 지도) · 시설 → 학부모 → 가정 · 10/3 현장(경품 수령 = 동의 · 대기 명단).
 - Aethir: 대기 명단 우선(Edge) · 회차 · 파트너 배정 · 코드 귀속은 가져오고, 체커 노드형 토큰 수익권 · 토큰 리베이트는 가져오지 않는다(되사기로 이어짐, 버틴 것은 기업 매출).
+  **10/12 갱신 — 앞 절반(토큰 수익권)은 지나갔다.** 회사가 AI Factory Content Access Pass(TAXON 4026 · 매일 토큰 적립 · 상품 페이지 SPEC 2026-09-18)를 냈다 — 「노드형 이용권 + 매일 적립」은 이제 우리 상품이다(서우 10/12 「이제 우리도 충분히 가능」).
+  남는 것 둘: ① 대외 발화 규칙은 그대로(적립량 · 가격 · 수익 언급 0, 「이용권」으로 부른다) ② **추천 코드 · KOL · 런치패드 배포와 토큰 리베이트**는 매일 적립 상품의 판매 권유가 되므로 한국(FIU 추천 마케팅 경고) · UAE(VARA 역외) · 미국 기준 카운슬 확인 뒤(사이트에 할인 코드 입력란 · AFFILIATE 링크는 이미 있다).
 
 ## Galaxy Digital 7인 — 누가 무슨 역할인가 (2026-09-28, 서우 「누군지 무슨역할인지 추적」)
 
@@ -3551,18 +3553,18 @@ Head of Partnerships & Operations, Wellbian Labs
 
 - **자리**(캡처 기준): Xsolla VP of Web3 Ecosystem Partnership(2025-12~ — 게임 결제 · 커머스 회사의 웹3 생태계 제휴) · Emberstone 창업(2025-12~) ·
   **Aethir Head of Business Operations(디렉터, 2024-10~2026-10 — 막 나옴)** · Tencent IEG Global PM(2021~2023) · Bain(2020~2021). 헤드라인 「Web3, AI, Fintech | Women leadership」. 보유 기술에 「Cryptocurrency Market Making」.
-- **판정 — 1촌 요청 + Lynn 메모, 수락 뒤 Lynn 인사만. 사업 이야기 0.**
+- **판정(첫 판 — 아래 「10/12 갱신」으로 대체, 서우 「이제 우리도 충분히 가능」) — 1촌 요청 + Lynn 메모, 수락 뒤 Lynn 인사만. 사업 이야기 0.**
   ① 지금 자리는 게임 결제 · 커머스의 웹3 제휴 — 우리와 닿는 문은 **해외 판매 결제**(사업 방향 게이트 「2차 판매 해외 결제 설계 뒤」)와 **날씨 미니게임**(브랜드 미정 · 점수만) 둘인데 둘 다 아직이다.
   ② Aethir 사업운영 경험 = DePIN 노드 판매 · 운영을 안다. 다만 Aethir 식 노드 라이선스 판매(런치패드 · KOL 추천 코드)는 우리가 가져오지 않는 모델(10/10 보고서) — 그 이야기로 흐르면 듣기만.
   ③ 「마켓메이킹」 기술 태그 — 토큰 · 유동성 이야기 0.
 - 문구: 지역을 몰라 「certified」 0 · 「eleven weather feeds」(안전판). Aethir · Xsolla 는 그의 이력이라 메모에서 한 번 언급(다른 플랫폼 비교 아님).
 - **다시 볼 때**: 해외 판매 결제 수단을 설계할 때(Xsolla 결제) · 날씨 미니게임 브랜드 · 출시가 정해질 때 · 앰배서더 1기(여성 참여 확대 — 10/1 서우 「다 남자라 칙칙」)를 꾸릴 때 소개 창구로.
 
-**1촌 요청 메모 (279자)**
+**1촌 요청 메모 (279자 · 첫 판, 대체됨)**
 ```
 Hi Sima, I run partnerships at wellbian. With KWeather (30 years of observation) we run home air-quality sensors plus city weather for 172 cities, a consensus of eleven weather feeds, every input on a public ledger. Your path from Aethir to Xsolla caught my eye. Glad to connect.
 ```
-**수락 뒤 인사 (543자)**
+**수락 뒤 인사 (543자 · 첫 판, 대체됨)**
 ```
 Sima — thanks for connecting.
 
@@ -3572,3 +3574,35 @@ We work on two layers: air-quality sensors that people run in their own rooms, a
 
 Good to be connected.
 ```
+
+### Sima Zhang — 10/12 갱신: 사업 이야기를 연다 (서우 AI Factory 이용권 페이지 붙여 넣기 + 「아냐 이제 우리도 충분히 가능한대?」)
+
+- **판정을 뒤집은 이유**: 첫 판은 「Aethir 식 노드 판매는 우리가 가져오지 않는 모델」(10/10 보고서 · 위 Aethir 줄)이었는데, 회사가 이미 그 모양의 상품을 판다 —
+  AI Factory Content Access Pass(TAXON 4026 · B300 8-GPU AI Factory · 매일 적립 · 계정당 최대 100장 · 할인 코드 입력란 · 사이트 AFFILIATE). 서우가 맞다.
+- **그가 쓸모 있는 곳 둘** — ① **GPU 증설**: 상품 페이지가 「인프라가 수요에 비해 부족해 GPU 서버를 계속 증설 중 · 장애 시 외부 GPU 자원으로 임시 대체」라고 쓴다. Aethir 는 바로 그 외부 GPU(탈중앙 GPU 클라우드)다.
+  ② **이용권 유통**: Aethir 는 노드 라이선스를 파트너 · 런치패드로 팔았다 — 그 운영을 안 사람. 해외 파트너 유통을 어떻게 짜는지 듣는다.
+- **두 번째 단계(통화가 잘 되면)**: 자문 제안 — 조건 · 보상은 서우/대표 결정, 저장소에 적지 않는다.
+- **주의 한 줄**: 그의 경험을 듣는 것과 별개로, **추천 코드 · KOL · 런치패드로 매일 적립 이용권을 파는 설계**는 카운슬 확인 뒤(위 Aethir 줄 ②). 마켓메이킹 · 유동성 이야기는 계속 0.
+- 문구: 지역 몰라 「certified」 0 · 「eleven weather feeds」 · 적립량 · 가격 · 판매 수량 · 「reward/earn/token」 0 — 이용권은 「a pass issued on the XRP Ledger」. AI 팩토리 문장은 서우 링크드인 경력란(10/7)과 같은 결.
+  「since September」는 뺐다(SPEC 날짜는 상품 페이지 날짜라 가동 시점 근거로 약함 — 「now running」).
+- 첫 판 메모를 아직 안 보냈으면 아래로 바꾼다. 이미 보냈으면 메모는 그대로 두고 수락 뒤 메시지만 아래 판으로.
+
+**1촌 요청 메모 (293자)**
+```
+Hi Sima, Logan from Wellbian Labs, Seoul. With KWeather (30 years of observation) we run home air sensors and weather data for 172 cities, and now a weather AI factory on B300 GPUs, accessed through a pass on the XRP Ledger. Your Aethir years are close to what we are scaling. Glad to connect.
+```
+**수락 뒤 메시지 — 20분 통화 요청 (925자)**
+```
+Sima, thanks for connecting.
+
+I run partnerships at wellbian. KWeather has measured weather in South Korea for thirty years and supplies data to 4,000+ enterprise clients; wellbian is the network built on top of that.
+
+Three layers: air-quality sensors people run in their own rooms; city weather across 172 cities, each value a consensus of eleven weather feeds and fingerprinted to a public ledger; and a Weather AI Factory, now running on B300 GPUs, that turns that data into a weather AI agent, refined datasets and data and inference APIs. Access runs through a pass issued on the XRP Ledger.
+
+Two questions are on my desk right now: how to add GPU capacity as usage grows, and how to take the pass to partners outside Korea. You worked through both at Aethir. Would you be open to a 20-minute call in the next couple of weeks? I'd value your view, and if there's a fit on your side, I'm glad to explore it.
+
+Best,
+Logan
+```
+- **통화에서 들을 것**: GPU 증설을 직접 서버로 하나 외부 GPU 네트워크로 하나(가용률 · 단가 구조) · 노드 라이선스 파트너 유통에서 무엇이 버텼고 무엇이 되사기로 이어졌나 · 아시아 밖 유통 파트너 고르는 기준 · Xsolla 결제(해외 판매 결제 설계 — 첫 판 「다시 볼 때」 그대로).
+- **말하지 않을 것**: 적립량 · 가격 · 판매 수량 · 매출 · 토큰 유동성 · 상장 · 다른 플랫폼 이름 · 리플과의 관계.
