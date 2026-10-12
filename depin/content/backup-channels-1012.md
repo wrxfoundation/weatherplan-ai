@@ -145,3 +145,26 @@ Hello Hyperion team, I'm Logan (Seowoo Park), Head of Partnerships & Operations 
 - Hyperion(일반 문의 메일 → 정현수 대표): **추천** `For Hyunsu Jung (CEO): weather market settlement data – Wellbian Labs` · 대안 `Coffee in New York, Oct 24–29? Weather markets – Wellbian Labs` · `Attn: Hyunsu Jung – settlement data that protects the stake`
 - Public.com(언론 메일 → 라우팅): **추천** `Weather data for prediction-market agents – please route` · 대안 `Partnership inquiry: weather data for Public's prediction markets` · `New York, Oct 24–29: weather data for AI trading agents`
 - 제목에도 토큰 · 가격 · XRP SEOUL · 다른 플랫폼 이름 0. 받는 사람 이름 · 직함을 제목 앞에 두면 공용 메일함에서 전달이 빨라진다.
+
+## 10/12 Public.com 메일 전문 (서우 「public 메일 전문」) — D 를 대체
+
+- 받는 곳 = 언론 메일(주소는 채팅) · D 대비 바뀐 것: 케이웨더 「4,000+」 · 「rather than a single station」 · **「ready to plug in — REST · OpenAPI · MCP, 에이전트가 바로 부른다」**(10/8 사이트 원문 근거) · 「에이전트가 이 데이터가 처음 쓰일 자연스러운 자리」. 다른 플랫폼(파트너 거래소 포함) 이름 0.
+
+제목(56자): `Weather data for prediction-market agents – please route`
+```
+Hello Public team,
+
+Could you pass this to whoever leads prediction markets or AI agent partnerships? I also wrote to Leif Abraham on LinkedIn, so please feel free to route it to him.
+
+I'm Logan (Seowoo Park), Head of Partnerships & Operations at Wellbian Labs in Seoul. With KWeather, a Korean weather company with 30 years of observation and 4,000+ enterprise clients, we run weather data built for settling prediction markets: city-level weather for 172 cities in 91 countries, each value a consensus across eleven weather feeds rather than a single station, every input fingerprinted to a public ledger, and a verdict of met, not met or withheld.
+
+I'm writing because of your prediction-market agents. An agent trading weather contracts is only as good as the weather data it reads. We publish an hourly consensus value per city and flag when the feeds disagree, so an agent can tell a firm number from a shaky one before it acts. And it is ready to plug in: the data comes through a REST API with an OpenAPI spec and through MCP, so an agent can call it directly.
+
+We are in active discussions with prediction-market platforms about launching weather markets, and agents are a natural place for this data to show up first.
+
+I'll be in New York from October 24 to 29. If 30 minutes for coffee works for the right person, I'd be glad to walk through the data; a video call works just as well.
+
+Best regards,
+Logan (Seowoo Park)
+Head of Partnerships & Operations, Wellbian Labs
+```
