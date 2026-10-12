@@ -102,10 +102,16 @@ Thanks for connecting. I'm Logan, Head of Partnerships & Operations at Wellbian 
 
 Weather has a long history as an institutional hedge, and it is now one of the fastest-growing event categories. It is also where settlement is most fragile: many weather contracts still rest on a single airport sensor. The withheld verdict exists so that whoever settles a market never has to stand behind a number they can't defend. We are in active discussions with prediction-market platforms about launching weather markets.
 
-Since Skew is building institutional markets on Hyperliquid, I wonder whether weather is on your list, either as outcome markets or as an index. If it is, I'd be glad to compare notes on what the market design and its settlement data could look like. Would a short call in the next few weeks work?
+Since Skew is building infrastructure for new market categories on Hyperliquid, I wonder whether weather is on your list, either as outcome markets or as an index. If it is, I'd be glad to compare notes on what the market design and its settlement data could look like. Would a short call in the next few weeks work?
 
 Best regards,
 Logan (Seowoo Park)
 Head of Partnerships & Operations, Wellbian Labs
 ```
+
+**4부 보충 (10/12) — 링크드인에서 사람 찾을 때 주의**
+- 「Skew Labs SA」(스위스 루가노 · 「Switzerland's Member Lending Platform」 — Daniele Capasso CEO · Francesco Capasso 영업 · Dave Lange COO)는 **다른 회사**다. 대출 플랫폼이고 하이퍼리퀴드와 무관.
+- 대상은 **Skew Technologies**(창업자 David Gil — Hyperion 보도자료). 회사 설명 「하이퍼리퀴드에서 거래할 수 있는 것을 넓히는, 새 시장 범주 인프라」 → 본문 셋째 문단을 이 표현에 맞춰
+  「building infrastructure for new market categories on Hyperliquid」로 고쳤다(본문 길이 +18자).
+- 링크드인 검색어: 「Skew Technologies」 · 「David Gil」 + Hyperliquid. 안 잡히면 X 쪽 공식 계정으로 확인 뒤 판단.
 
