@@ -3679,3 +3679,9 @@ I've also written to Louis Sutton on the product side, so feel free to loop him 
 Best,
 Logan
 ```
+
+## 링크드인 예비 창구 — 회사 메일 · X (2026-10-12, 서우 「링크드인 안 됐을 경우 대비 — 아웃컴 · 퍼블릭 · skew 등등」)
+
+- 본문 · 문안 = `content/backup-channels-1012.md`. 뉴욕 대상은 10/15 밤까지 무반응 → 10/16 예비 창구, 화상 대상은 7일. 같은 날 한 회사 두 창구 0 · 이미 보낸 사람 이름을 밝혀 라우팅 · X DM 은 공개 글 규칙 · DM 닫혀 있으면 공개 답글로 제안 0.
+- Outcome = @Outcomexyz DM · Hyperion = 일반 문의 메일로 Hyunsu 에게(같은 사람 다른 길) · Skew = @skewtrade DM 은 Hyunsu 가 메일까지 무반응일 때 10/20 · Public = 언론 메일로 라우팅 · Fanatics = @FanaticsMarkets DM(약함) · 칼시 · Gemini · Arbol = 공식 창구 미발견 → 공통 틀.
+- 주소는 저장소에 적지 않음(채팅 전달). 회사 사이트 프록시 차단 — 보내기 전 일반 브라우저로 확인.
