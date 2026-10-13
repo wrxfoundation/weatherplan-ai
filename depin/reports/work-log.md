@@ -2308,5 +2308,6 @@ Thanks Odelia — writing to you at that address today. Mine is support@wellbian
 - **Jack Wong — 서우 결정으로 Lynn 인사 먼저(10/13)** — 보류 해제 · 인사 한 번(543자 · independent → weather feeds · certified 뺌 · 선택 줄 0). 사업 0 · 바이낸스 대화 수에 포함.
 - **Jack Wong 답 「work together?」 여지 판정(10/13)** — 작다: 상장 · 유동성 · 바이낸스 지갑 예측시장 · Binance Pay · 토큰화 상품은 닫힘, 열린 것 = 듣기 · 관계 유지. 답 A 252자(「exchange 단계 아님」 경계 + 질문) · B 124자(질문만). 제안이 오면 대표에게.
 - **Jack Wong — 서우 「열어 둬」 회신판(10/13)** — 833자: XRP SEOUL 2026 케이웨더 키노트 · 부스 · 두 층 · 시장성 정본 문장 + 「무엇을 같이 만들 수 있나」(날씨 데이터 피드 · 실세계 데이터). 스폰서 · Flare · 토큰 · 상장 · 판매 0.
+- **Jack Wong 회신 수정(10/13, 서우 「여러 예측마켓과 논의 · 주목」)** — 정본 문장 → 「active discussions with several prediction-market platforms … drawing interest across the space」, 902자. 이름 · 수 · 계약 0.
 - **Jump — Mike Bursik 대신 Michael Quell(10/13, 서우 「트레이더는 필요 없고 Quell 에게」)** — 메모 261자 · 본문 1145자(범주 성장 WSJ 한 줄 · 관측값 약점 · 같은 시각 공개 · 화상). Allison 본문 끝 줄 Quell 로(996자). Jump 의 거래소 지분 언급 0.
 - **SIG 회사 · 규모 · 접점 카톡 보고본(10/13, 서우 요청)** — `content/sig-brief-1013.md`. 1987 · 필라델피아 근교 · 비상장 · 인력 3,500~4,200 · 2025 매출 약 221억 달러(위키 2차 · 원출처 미확인 · 대외 인용 금지) · 칼시 첫 전담 · 최대 마켓메이커 · 칸토 기관 3,000곳 가격 · 로빈후드 합작 MIAXdx 90%(2026-01) · 예측시장 팀 약 80명(재확인 필요). 접점 넷(데스크 데이터 · 기관 맞춤 위험 이전 · 미국 밖 도시 · 신호 효과) · 주의(공정성 원칙 10/28 · 로빈후드/크립토닷컴 0 · 가격 · 당사자 0).
