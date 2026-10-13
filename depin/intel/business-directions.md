@@ -4351,3 +4351,25 @@ Best,
 Logan
 ```
   금지어 검사 통과(「Seoul」 = 회사 소재지만).
+
+## Sonia Cheng (Rosewood Hotel Group CEO · 홍콩) — 인사 (2026-10-13, 서우 캡처 2장 · 「인사 및 실내공기질로 가벼운 소재」)
+
+- **사람**: Rosewood Hotel Group CEO(2008~) · Chow Tai Fook Jewellery 부회장 · 집행이사(2019~) · New World Development 집행이사 · Giordano 회장(2026-04~) · HSBC 사외이사(2020~). 3촌 · 팔로워 11.2만 · 공통 연결 Ali(팔로우만).
+- **판정**: 사업 레인 없음 — 관계용 가벼운 인사. 소재 = 객실도 침실(닫힌 방의 밤사이 CO2). Lynn 기본값(케이웨더 → 두 층 → 원장) 유지, 상대 줄은 소개란 「promoting quality of life」에서.
+  호텔 공기 평가 · 제안 · 미팅 · 판매 0. 체인 이름 · 토큰 · 예측시장 0. 「certified」 · 「independent」 · 「first」 뺌. 3촌이라 메모가 막히면 팔로우만.
+- **1촌 요청 메모 (259자)**
+```
+Hi Sonia, I run partnerships at wellbian in Seoul. With KWeather (30 years of weather data) we measure the air people sleep in, plus city weather across 172 cities. A guest room is still a bedroom, and a closed one gets stuffy fast overnight. Glad to connect.
+```
+- **수락 뒤 (735자)**
+```
+Sonia — thanks for connecting.
+
+I run partnerships at wellbian. KWeather has measured weather in South Korea for thirty years and supplies data to 4,000+ enterprise clients; wellbian is the network built on top of that.
+
+We work on two layers: air-quality sensors that people run in their own rooms, and city-level weather across 91 countries and 172 cities, each value a consensus across eleven weather feeds. Every input is fingerprinted to a public ledger.
+
+One small thing bedroom air teaches: with the door and windows shut, CO2 climbs through the night, and people feel it in the morning before they can name it. A hotel room is still a bedroom, so your line about promoting quality of life stayed with me.
+
+Good to be connected.
+```
