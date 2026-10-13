@@ -4445,3 +4445,15 @@ Thanks, Alina. Glad it resonated. Logan, our Head of Partnerships, will reach ou
   ③ **레인이 안 맞는다** — 이 사람의 자리는 JV · TradFi · 토큰화 · 트래블룰이다. 우리 지금 레인(예측시장 정산 데이터 · 기기 판매)과 겹치는 데가 상장 · 거래소 협업뿐인데, 이건 「수요 증명 전 중앙 거래소 0」 원칙에 걸린다. 바이비트(Mirana) 인바운드와 같은 선이다.
 - **상대가 먼저 말을 걸면**: playbook Lynn 기본값(케이웨더 → 두 층 → 원장)으로 감사 인사만 한다. 상장 · 유동성 · 토큰화 · 바이낸스 상품 0.
   GTR(트래블룰)은 우리가 VASP 가 아니라 해당 없음 — 묻지 않는다.
+- **10/13 서우 결정 — Lynn 인사를 먼저 보낸다**(「그냥 Lynn 형식으로 먼저 인사하자, 1촌 맺기 해 줬음」). 보류 해제 · 인사 한 번만. 바이낸스 대화 수에 들어가고, 사업 · 상장 · 토큰화 · 요청은 0이다.
+  playbook 기본값에서 두 군데만 바꿨다: 「eleven independent sources」 → 「eleven weather feeds」(9/24 규칙), 「certified」 뺌(Sonia 판과 같음). 거래소 자리라 선택 줄(관심 이유)은 넣지 않았다.
+```
+Jack — thanks for connecting.
+
+I run partnerships at wellbian. KWeather has measured weather in South Korea for thirty years and supplies data to 4,000+ enterprise clients; wellbian is the network built on top of that.
+
+We work on two layers: air-quality sensors that people run in their own rooms, and city-level weather across 91 countries and 172 cities, where each value is a consensus across eleven weather feeds rather than a single reading. Every input is fingerprinted to a public ledger before it goes anywhere.
+
+Good to be connected.
+```
+  (543자)
