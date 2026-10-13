@@ -4434,3 +4434,14 @@ Thanks, Alina. Glad it resonated. Logan, our Head of Partnerships, will reach ou
 - 투자 유치 여부·조건은 대표·경영진 결정, 국내 법률 검토(카운슬) 후 진행
 ```
 출처: [The Block — Arkham, Mirana $600M ETH](https://www.theblock.co/post/343398/bybit-receives-600-million-in-eth-deposits-from-mirana-ventures-arkham) · [Mirana 공식](https://www.mirana.xyz/) · [Superscout 포트폴리오](https://superscout.co/investor/mirana-xyz) · [Forklog — Mantle EcoFund](https://forklog.com/en/bitdao-participants-to-vote-on-creating-a-200-million-ecosystem-investment-fund/) · [Benzinga — EcoFund](https://www.benzinga.com/markets/cryptocurrency/23/09/34610179/mantle-ecofunds-200m-fund-to-propel-web3-innovation) · [BTW — Sahara AI 시리즈A](https://btw.media/tech-trends/sahara-ai-secures-43m-in-a-funding-round) · [Bloomberg Law — Sahara AI](https://news.bloomberglaw.com/private-equity/usc-professor-lands-43-million-in-funding-for-ai-startup) · [Coingabbar — 바이비트 국내 구글플레이](https://www.coingabbar.com/en/crypto-currency-news/bybit-app-removed-from-south-korea-google-play-store) · [Cointelegraph — FIU 앱 차단](https://regional-front.cointelegraph.com/news/south-korea-blocked-14-crypto-exchange-apple-apps-report). 검색 요약 기준 — 대외 인용 금지.
+
+## Jack Wong (Binance BD Director, Central BD · 두바이) — 판정 (2026-10-13, 서우 캡처 3장 · 이미 1촌)
+
+- **자리**: Binance 4년 8개월. BD Director, Central BD(2026-08~)이고, 그 전에는 Central BD(CorpDev — JV · TradFi · 토큰화 · Web3 제휴 · 특별 프로젝트)와 CEO 오피스 BD·M&A를 맡았다.
+  겸직으로 Global Travel Rule(GTR, VASP 간 트래블룰 메시징 네트워크 · 싱가포르) VASP 멤버십 리드(2023-11~)다. 이미 1촌이고 공통 1촌은 56명이다.
+- **판정: 보류 — 먼저 보내는 메시지 0.**
+  ① **바이낸스 상한 초과** — 발신 넷(Emily · Max · Alexander · Jenny)에 Hazel · Vi Hoang 까지 있고, 10/11 「바이낸스 새 사람 0」이다. 1촌이라도 새 대화를 열면 「뿌린다」가 된다.
+  ② **거래소 소속 1촌 = 인사만**, 사업 메시지는 먼저 열지 않는다.
+  ③ **레인이 안 맞는다** — 이 사람의 자리는 JV · TradFi · 토큰화 · 트래블룰이다. 우리 지금 레인(예측시장 정산 데이터 · 기기 판매)과 겹치는 데가 상장 · 거래소 협업뿐인데, 이건 「수요 증명 전 중앙 거래소 0」 원칙에 걸린다. 바이비트(Mirana) 인바운드와 같은 선이다.
+- **상대가 먼저 말을 걸면**: playbook Lynn 기본값(케이웨더 → 두 층 → 원장)으로 감사 인사만 한다. 상장 · 유동성 · 토큰화 · 바이낸스 상품 0.
+  GTR(트래블룰)은 우리가 VASP 가 아니라 해당 없음 — 묻지 않는다.
