@@ -4473,3 +4473,16 @@ Thanks, Jack, happy to explore. This year our focus is the sensor network and da
 ```
 Thanks, Jack, happy to explore. What did you have in mind? It would help to know which team on your side you're thinking of.
 ```
+- **10/13 서우 결정 — 열어 둔다**(「우리 비즈니스 · 최근 동향(XRP SEOUL) 얘기하고 뭘 빌딩할 수 있는지 가볍게, 예측마켓 · 날씨 데이터로」). A · B 대신 이 판(833자).
+  들어간 것: XRP SEOUL 2026 케이웨더 키노트 · 부스(공개 사실) · 두 층 · 172개 도시 · 11개 피드 · 원장 · met/not met/withheld · 시장성 정본 문장 · 「무엇을 같이 만들 수 있나」 질문.
+  뺀 것: 스폰서 · 남산타워 · Flare · 토큰 · 판매 · 상장 · 다른 플랫폼 이름 · 한국 도시 · 대표 직함(키노트 주어는 「KWeather」).
+  상장 · 유동성 얘기가 돌아오면 대표에게 올린다(서우 단독 진행 0).
+```
+Thanks, Jack, glad to keep this open.
+
+A quick update from our side: at XRP SEOUL 2026 on October 3, KWeather gave a keynote on the weather data economy, and we ran a booth showing the network. Air-quality sensors in people's rooms, plus city-level weather for 172 cities, each value a consensus across eleven weather feeds, every input fingerprinted to a public ledger, with a verdict of met, not met or withheld.
+
+That verdict is why prediction markets keep coming up: a weather contract needs a settlement value anyone can recheck. We are in active discussions with prediction-market platforms about launching weather markets.
+
+What could we build together? It could be a weather data feed for event-style products, or something on the real-world data side where you're seeing demand. Curious where you think it fits on your side.
+```
