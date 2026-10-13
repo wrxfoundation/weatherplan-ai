@@ -4506,3 +4506,4 @@ Thanks Clyde, good to have you on it. HK is just an hour behind Seoul, so timing
   ④ 샘플 API 응답 = 비한국 · 비일본 도시 하나(정산 가능 등급 높은 곳). 데모(weatherfi.io)는 화면 공유만 하고, 한국 도시 시장은 가린다.
   ⑤ 선 그대로 — Base 체인 피드 약속 0 · 가격 · 독점 0(그쪽 표준 파트너 모델 먼저) · 한국 · 일본 도시는 구두로 범위 밖 · 정산값은 모두에게 같은 시각.
   ⑥ 되물을 것 — 그쪽 시장 형식(시간별 · 일별) · 받는 방식(API 당김 · 밀어 주기 · 온체인) · 분쟁 창 · 월 거래량(정의 포함).
+- **시간 제안(10/13 저녁, 서우 「한국 2시 · 홍콩 시간으로」)** — 서울 14:00 = 홍콩 13:00. 날짜는 10/14(수)로 가정했다(서우 확인). 146자: 「Hi Clyde, would 2pm Seoul time (1pm HK) tomorrow, Wed Oct 14, work for you? If that slot is open on your calendar, I'll book it through your link.」
