@@ -4392,3 +4392,45 @@ Hi Alina, I'm Logan, Head of Partnerships at Wellbian Labs. Thanks for your note
 ```
 Thanks, Alina. Glad it resonated. Logan, our Head of Partnerships, will reach out to set up a short call.
 ```
+
+### Mirana 조사 보고 보강 (10/13, 서우 「미라나 소개 아래보다 더 챙길 게 있나」 — 서우 쪽 보고본 받아 정정 · 추가)
+
+```
+■ 정정
+- Sahara AI는 시리즈B가 아니라 시리즈A(24.8월, 4,300만 달러 ≈ 577억원) — 미라나는 참여사 중 하나
+- 건당 투자: 미라나 공식 사이트 기준 100만~4,000만 달러(13.4억~537억원), 프리시드~시리즈C
+  → "6,715만~672억원"은 출처 확인 필요
+- 바이비트 해킹 때 6억 달러 ETH 투입은 맞음(Arkham 온체인 분석) — 단 "BTC·USDT 매각 재원"은 Arkham 추정
+- 26년 엑싯(Coinhako·Clave) · 최근 투자(Morpho·StableCoinX·Obita)는 원출처 대조 필요
+
+■ 추가로 챙길 것
+1) 상대
+- 연락: Alina Chua(Investment Manager, 전 GGV) → 대표님께 직접 메시지
+  "지금 투자 유치 중이냐" + "바이비트·맨틀 지원(상장·유동성·에코펀드 소개·공동 마케팅)" 제안
+- 결정권: 파트너급(David Toh · Sohan Sen) — 실무 담당이 먼저 온 단계
+
+2) DePIN 투자 이력 없음
+- 확인된 포트폴리오는 인프라·디파이·AI 중심, 날씨·공기질·하드웨어 DePIN 선례는 확인 안 됨
+→ 첫 통화에서 "왜 우리인가"를 먼저 들어야 함
+
+3) 맨틀 에코펀드 = 맨틀 체인에 올라오는 프로젝트용 돈
+- 2023.7 설립, 미라나가 운용사, 2억 달러(트레저리 1억 + 외부 VC 1억), 3년 40개+, 목표 1.5배(MOIC)
+→ 이 돈을 받으면 맨틀 체인 배포가 조건 — 우리는 XRPL 기반이라 정면 충돌
+
+4) 바이비트는 국내 미신고 거래소
+- 금융정보분석원(FIU) 미신고, 26년 국내 구글플레이에서 앱 내려감(웹 접속은 가능)
+- 케이웨더는 상장사 → "바이비트 상장"이 국내에서 케이웨더와 묶여 보도되면 리스크
+- 우리 공개 원칙(사이트·가이드): 수요 증명 전 중앙 거래소 상장 안 함, DEX 먼저
+
+5) 투자 구조 — 통화 전에 내부에서 정할 것
+- 지분인지 토큰(물량 배정)인지, 받는 법인은 Wellbian Labs(싱가포르) — 케이웨더는 빠짐
+- 미라나 본계정인지 맨틀 에코펀드인지
+- 상장 지원이 투자 조건(의무)으로 붙는지
+- 토큰이면 배정 물량·락업: 사이트는 "전략투자 5억, 상장 시점 언락 0", 10/13 가이드 PDF는 "시드 10% 즉시 + 7~24개월"로 서로 다름 → 먼저 정리
+
+■ 시사점(수정)
+- 자금력·네트워크는 충분, 다만 이들의 기본 시너지(바이비트 상장·맨틀 체인)는 지금 우리 원칙과 충돌
+- 첫 통화는 듣는 자리: 관심 이유 · 투자 형태 · 상장 조건 여부 확인
+- 투자 유치 여부·조건은 대표·경영진 결정, 국내 법률 검토(카운슬) 후 진행
+```
+출처: [The Block — Arkham, Mirana $600M ETH](https://www.theblock.co/post/343398/bybit-receives-600-million-in-eth-deposits-from-mirana-ventures-arkham) · [Mirana 공식](https://www.mirana.xyz/) · [Superscout 포트폴리오](https://superscout.co/investor/mirana-xyz) · [Forklog — Mantle EcoFund](https://forklog.com/en/bitdao-participants-to-vote-on-creating-a-200-million-ecosystem-investment-fund/) · [Benzinga — EcoFund](https://www.benzinga.com/markets/cryptocurrency/23/09/34610179/mantle-ecofunds-200m-fund-to-propel-web3-innovation) · [BTW — Sahara AI 시리즈A](https://btw.media/tech-trends/sahara-ai-secures-43m-in-a-funding-round) · [Bloomberg Law — Sahara AI](https://news.bloomberglaw.com/private-equity/usc-professor-lands-43-million-in-funding-for-ai-startup) · [Coingabbar — 바이비트 국내 구글플레이](https://www.coingabbar.com/en/crypto-currency-news/bybit-app-removed-from-south-korea-google-play-store) · [Cointelegraph — FIU 앱 차단](https://regional-front.cointelegraph.com/news/south-korea-blocked-14-crypto-exchange-apple-apps-report). 검색 요약 기준 — 대외 인용 금지.
