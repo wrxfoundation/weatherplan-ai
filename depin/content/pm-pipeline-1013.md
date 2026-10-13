@@ -86,7 +86,7 @@
 - 다음: Jonathan 답 대기중
 
 ━━━━━━━━━━━━━━
-■ 그 밖에 연락한 곳 (답 대기 · 인사 단계)
+■ 그 밖에 연락한 예측마켓 (답 대기 · 인사 단계)
 ※ 규모는 회사 전체 기준 · 2차 자료, 환율 1,380원
 
 [미국 예측시장 거래소 · 앱]
@@ -96,7 +96,7 @@
 - 참고: 기온 정산은 The Weather Company 계약 → 우리는 대체가 아니라 검증 쪽
 
 ⑥ 폴리마켓(Polymarket) — 칼시와 양강, 미국판 거래소도 운영
-- 규모: 기업가치 210억 달러(약 29조 원, 8월) · 8월 거래액 약 81억 달러(약 11조 원) · 최대주주 ICE(약 22%)
+- 규모: 기업가치 210억 달러(약 29조 원, 8월) · 8월 거래액 약 81억 달러(약 11조 원)
 - 연락: 미국 거래소 제품 총괄 InMail(10/8) 답 대기
 - 주의: 국내 접속 차단 대상(8/18 방미심위) → 한국 도시 · 이용자 제외, 법률 검토 뒤 진행
 
@@ -104,7 +104,7 @@
 - 규모: 2025 매출 45억 달러(약 6.2조 원) · 고객 2,700만 명 · 예측시장 매출 2분기 1.56억 달러(약 2,150억 원)
 - 연락: 기관 담당 VP InMail(10/10) · 1촌 요청(10/8) 답 대기 — SIG와 같은 계열이라 추가 연락은 멈춤
 
-⑧ 코인베이스(Coinbase) — 미국 대형 가상자산 거래소, 예측시장 탭 운영
+⑧ 코인베이스(Coinbase) — 미국 대형 가상자산 거래소, 앱에 예측시장 탭 운영
 - 규모: 2025 매출 72억 달러(약 9.9조 원)
 - 연락: 사장 겸 COO 1촌 요청(10/11) — 수락되면 인사만
 
@@ -117,7 +117,7 @@
 - 연락: 제품 VP InMail(10/11) · 엔지니어링 VP 1촌(10/12) 답 대기
 - 참고: 크립토닷컴 거래소(CDNA) 위에서 운영 → ② 라인과 이어짐, 대화에서 크립토닷컴 언급 안 함
 
-⑪ Public.com — 미국 투자 앱, 9/24 「기후」 범주 AI 에이전트 출시
+⑪ Public.com — 미국 투자 앱, 9/24 예측시장 AI 에이전트 출시(칼시 시장 연결, 「기후」 범주 포함)
 - 규모: 기업가치 약 10억 달러(2025.3) · 이용자 수 비공개
 - 연락: 공동창업자 InMail(10/11) · 제휴 창구 메일(10/12) 답 대기
 
@@ -125,7 +125,7 @@
 - 규모: 출시 전
 - 연락: 대표 1촌 + 메모(10/12) — 출시 전이라 정산 규정에 처음부터 들어갈 기회
 
-⑬ Bullish — 가상자산 거래소(뉴욕증권거래소 상장), CoinDesk · Consensus 보유
+⑬ Bullish — 가상자산 거래소(뉴욕증권거래소 상장), 5월 미국 예측시장 거래소 · 청산소 인가 신청
 - 규모: 2025 매출 약 2.9억 달러(약 4,000억 원, 조정 기준)
 - 연락: 그룹 사업개발 총괄 1촌 + 메모(10/12) — 인사만
 
@@ -134,25 +134,9 @@
 - 규모: 이용자 6,000만~1억 명 이상(자료 엇갈림)
 - 연락: 담당 1명과 대화 중(10/12 후속)
 
-⑮ YZi Labs(바이낸스 창업자 CZ 쪽 투자사, Opinion · Predict.fun 투자)
-- 연락: 투자 · 홍보 담당 1촌(10/9 · 10/12) — 인사만
-- Opinion(BNB체인 예측시장)은 9/15 · 9/28 연락 후 답 없음 → 보류
-
-[데이터 · 유통 · 날씨 보험]
-⑯ ICE(뉴욕증권거래소 모회사) — 폴리마켓 최대주주 · 날씨 데이터 보유
-- 규모: 2025 매출 99억 달러(약 13.7조 원)
-- 연락: NYSE 사장 DM(9/14) · 아시아 담당 인사(9/25)
-
-⑰ 블룸버그 — 금융 데이터 · 단말기(비상장)
-- 연락: 사업 DM(9/16) · 라이선싱 총괄 인사(10/6)
-
-⑱ Arbol — 뉴욕 날씨 보험사(정해진 날씨 수치를 넘으면 자동 지급)
-- 규모: 누적 투자 약 7,000만 달러대(시리즈 B 6,000만 달러, 2024)
-- 연락: 창업자 겸 CEO InMail(10/11)
-
-[인프라(오라클)]
-⑲ Flare — 10/3 XRP SEOUL 「Weather Data Market on Flare」 발표 뒤 기술 그룹 대화 중
-⑳ Chainlink — 10/7 회의 「관심이 많다」 → 데이터 제공 등록은 내부 결정 뒤
+⑮ Opinion — BNB체인 예측시장(홍콩)
+- 규모: 2026.2 프리 시리즈 A 2,000만 달러(약 276억 원)
+- 연락: 9/15 메시지 · 9/28 공식 메일 후 답 없음 → 보류
 
 ━━━━━━━━━━━━━━
 ■ 이번 주 연락 (10/13 문안 완료 · 순차 발송)
@@ -164,14 +148,14 @@
   → 마켓 디렉터 · UDX COO
 - 팬듀얼(FanDuel Predicts) — CME와 합작한 예측시장 앱(모회사 Flutter), 크립토닷컴 계약도 띄움
   → 예측시장 전략 VP · 제휴 VP, 10/15 크립토닷컴 판정 뒤 발송
-- Jump Trading — 비상장 대형 트레이딩사(수치 비공개)
+- Jump Trading — 예측시장 마켓메이커(비상장 대형 트레이딩사, 수치 비공개)
   → 사업개발 2명, 뉴욕 커피
 - Myriad — 크립토 매체 Decrypt 계열 온체인 예측시장, 이용자 50만+(자사 발표)
   → 공동창업 COO 1촌만(한국 차단 확인 전 사업 얘기 안 함)
 ```
 
 ## 출처(검색 요약 · 원문 대조 전)
-- 「그 밖에 연락한 곳」(10/13 추가, 서우 「컨택한 업체도 하단에 — 간략 소개 · 매출 · 이용자」) — 연락 상태 = 10/12 컨택 현황 시트 · business-directions 10/12~13 판정. 발송이 확인 안 된 10/13 문안은 「이번 주 연락」으로 따로 뺌.
+- 「그 밖에 연락한 예측마켓」(10/13 추가, 서우 「컨택한 업체도 하단에 — 간략 소개 · 매출 · 이용자」 → 「예측마켓 쪽만 좁혀」: ICE · 블룸버그 · Arbol · Flare · Chainlink · YZi Labs 뺌) — 연락 상태 = 10/12 컨택 현황 시트 · business-directions 10/12~13 판정. 발송이 확인 안 된 10/13 문안은 「이번 주 연락」으로 따로 뺌.
   - 칼시 기업가치 220억 · 400억 협상: business-directions · [The Block (FT)](https://theblock.co/post/406061/kalshi-40-billion-valuation) · [RootData (Reuters, 10/1)](https://www.rootdata.com/news/774973) / 폴리마켓 210억 · ICE 22% · 8월 약 81억(= 칼시 · 폴리마켓 합산 453억 − 칼시 372억): `reports/예측마켓 플랫폼과 모회사.md`
   - 로빈후드 2025 매출 45억 · 고객 2,700만: [Robinhood IR](https://investors.robinhood.com/news-releases/news-release-details/robinhood-reports-fourth-quarter-and-full-year-2025-results) · [InvestmentNews](https://www.investmentnews.com/equities/robinhood-caps-record-2025-with-q4-revenue-surge-but-shares-fall-on-investor-concerns/265225) / 예측시장 2분기 1.56억: 위 보고서(Robinhood 2분기 실적)
   - 코인베이스 2025 매출 72억: [SEC 10-K](https://www.sec.gov/Archives/edgar/data/1679788/000167978826000015/coin-20251231.htm)
@@ -179,11 +163,10 @@
   - Fanatics 2024 매출 81억 · Fanatics Markets = CDNA 제휴 + Paragon(중개인) 인수 · 24개 주: [Covers](https://www.covers.com/industry/fanatics-targets-50b-in-annual-revenue-with-help-of-new-credit-card-jan-13-2026) · [The Block](https://www.theblock.co/post/381288/sports-apparel-giant-fanatics-launches-prediction-market-with-crypto-com) · [Fanatics](https://www.fanaticsinc.com/press-releases/fanatics-launches-fanatics-markets-the-first-prediction-market-at-the-intersection-of-sports-finance-and-culture)
     ⚠ 전수 리스트의 「Fanatics 는 자기 거래소를 사면서」는 확인 필요(보도상 인수 대상 Paragon = 중개인(IB), 거래소는 CDNA).
   - Public.com 기업가치 약 9.8억(2025.3 D-3): [Silicon Valley Investclub](https://siliconvalleyinvestclub.com/de/companies/public/) (약한 출처)
+  - Public.com 예측시장 AI 에이전트(9/24, 칼시 시장 · 「기후」 범주): [Fortune](https://fortune.com/2026/09/24/public-ai-trading-agents-prediction-markets-kalshi-tie-up/) (notes 인용) / Bullish DCM · DCO 신청(2026-05-07): `research_notes/예측마켓 전수 컨택 리스트/us_other_exchanges.md` / Opinion 프리 A 2,000만(2026-02-04): `reports/예측마켓 플랫폼과 모회사.md`
   - 365Prediction CFTC DCM · DCO 신청 · 2027 초 목표: [Gambling Insider](https://www.gamblinginsider.com/news/167182/365prediction-laila-mintas-cftc-exchange) · [CasinoBeats](https://casinobeats.com/2026/07/28/event-contract-market-big-enough-for-everyone-says-laila-mintas-as-365prediction-eyes-launch/)
   - Bullish 2025 조정 매출 2.885억: [TIKR](https://www.tikr.com/blog/blsh-stock-reports-68-revenue-growth-in-q4-2025-is-blsh-still-undervalued-near-32) · [Barchart](https://www.barchart.com/story/news/41041/bullish-reports-fourth-quarter-2025-results)
   - OKX 이용자 6,000만~1.2억(근거 약함 · 엇갈림): [komo.ai](https://komo.ai/directory/okx) · [Datawallet](https://www.datawallet.com/zh/隐蔽性/okx-vs-binance)
-  - ICE 2025 매출 99억: [ICE IR](https://ir.theice.com/press/news-details/2026/Intercontinental-Exchange-Reports-Strong-Full-Year-2025-Results/default.aspx)
-  - Arbol 시리즈 B 6,000만(2024.4) · 누적 약 7,100만~7,600만: [Arbol](https://arbol.io/post/arbol-raises-60-million-in-series-b-funding-to-scale-parametric-insurance-responding-to-increasing-climate-risk)
   - DraftKings 2025 매출 약 61억(10-K 매출원가 ÷ 비율로 역산): [SEC 10-K](https://www.sec.gov/Archives/edgar/data/1883685/000188368526000013/dkng-20251231.htm) / Underdog 기업가치 12.3억: [Sacra](https://sacra.com/c/underdog-fantasy/) / Novig 30일 17.7억 = volumerace(서우 캡처) · 평가 약 20억 = 위 보고서 / FanDuel = business-directions 10/13 FanDuel 절 / Myriad = [Decrypt](https://decrypt.co/337489/myriad-hits-10m-usdc-trading-volume-as-prediction-markets-become-new-segment-of-defi)
 - SIG: `content/sig-brief-1013.md` 출처 목록
 - 크립토닷컴 규모: [Silicon Valley Investclub — Crypto.com](https://siliconvalleyinvestclub.com/crypto-com/) (약한 출처) · OG 분사: [Cointelegraph](https://regional-front.cointelegraph.com/news/crypto-com-launches-new-prediction-market-platform-after-40x-growth) · [The Block](https://www.theblock.co/post/388292/crypto-com-og-prediction-markets-app-monthly-volumes-17-billion-super-bowl) · OG.com 구조 = `research_notes/예측마켓 전수 컨택 리스트/us_major_exchanges.md` 4절
