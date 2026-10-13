@@ -4487,3 +4487,22 @@ That verdict is why prediction markets keep coming up: a weather contract needs 
 
 What could we build together? It could be a weather data feed for event-style products, or something on the real-world data side where you're seeing demand. Curious where you think it fits on your side.
 ```
+
+## Limitless — Clyde 가 이어받음 · 미팅 예약 링크 (2026-10-13 19:28, 서우 텔레그램 캡처)
+
+- **상황**: 서우의 10/13 01:40 검토 경과 메시지(405자, 10/12 문안) 뒤 Clyde(DevRel Engineer · 연동 실무)가 답했다.
+  「Henrich 는 며칠 자리 비움 → 내가 이어받는다 · 홍콩에 있어 시간 맞추기 쉽다」며 구글 캘린더 예약 페이지를 공유했다(링크는 저장소에 적지 않음 — 서우가 직접 예약).
+- **뜻**: 딜 주인(Henrich) 대신 **기술 담당이 먼저 보는 미팅**이 됐다. 첫 미팅 질문은 상업이 아니라 연동 쪽이다(10/7 절 「Clyde 가 물을 것」 그대로).
+- **답 (290자)**
+```
+Thanks Clyde, good to have you on it. HK is just an hour behind Seoul, so timing is easy. I'll book a slot shortly. Happy to walk through a sample API response for one city, how a value gets settled, and when a verdict is withheld. If there's anything you'd like us to prepare, let me know.
+```
+- **할 일**:
+  ① 예약 — 이번 주(10/14~17), 뉴욕(10/24~) 전. 홍콩 = 서울 −1시간.
+  ② 우리 쪽 참석 — 이창민 본부장 · 서우 + 가능하면 개발 담당 1명(기술 질문).
+  ③ **정산값 필드 답 맞추기(10/13 오라클 비교 반영)** — 시간별 「합의값」은 모델 9개 중앙값이라, 싱가포르 12시간 기준 실측보다 평균 1.1°C 낮다.
+     Clyde 는 「어느 필드로 정산하나」를 바로 묻는다 → 개발과 미리 정한다. 「정산 = 실측(METAR 기반 관측소 하루 기록) · 합의 = 이상 감지 · 지수」로 갈지, 현재 구조를 그대로 설명할지.
+     `content/oracle-vs-twc-1013.md`.
+  ④ 샘플 API 응답 = 비한국 · 비일본 도시 하나(정산 가능 등급 높은 곳). 데모(weatherfi.io)는 화면 공유만 하고, 한국 도시 시장은 가린다.
+  ⑤ 선 그대로 — Base 체인 피드 약속 0 · 가격 · 독점 0(그쪽 표준 파트너 모델 먼저) · 한국 · 일본 도시는 구두로 범위 밖 · 정산값은 모두에게 같은 시각.
+  ⑥ 되물을 것 — 그쪽 시장 형식(시간별 · 일별) · 받는 방식(API 당김 · 밀어 주기 · 온체인) · 분쟁 창 · 월 거래량(정의 포함).
