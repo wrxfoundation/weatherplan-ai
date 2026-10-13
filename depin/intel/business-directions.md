@@ -4457,3 +4457,19 @@ We work on two layers: air-quality sensors that people run in their own rooms, a
 Good to be connected.
 ```
   (543자)
+
+- **10/13 17:39 Jack 답 「Thanks anyway we can work together?」 — 여지 판정(서우 「우리가 여지가 있나」)**: 지금 실제로 열 수 있는 건 작다.
+  닫힌 것 ① 상장 · 유동성 — 공개 원칙(G4 DEX → G5 지역 · G9 글로벌 CEX, 「수요 증명 전 CEX 0」)에 걸린다. 상장사 케이웨더와 묶이는 것도 위험하다.
+  ② 바이낸스 지갑 예측시장(Predict.fun) — 역외 온체인이라 보류(9/28).
+  ③ 결제(Binance Pay) — Emily 라인과 겹친다.
+  ④ 토큰화 · TradFi 상품 — 날씨 지수 상품은 규제 영역이라 카운슬 전 0.
+  열린 것 = 그가 뭘 떠올리는지 듣기 + 관계 유지(G5 이후 대비). 답은 짧게, 우리 쪽 경계 한 줄(공개 원칙과 같은 말) + 질문. 제안 · 숫자 · 일정 · 요청은 0이다.
+  어떤 제안이든 오면 대표 · 경영진에게 올린다(서우 단독 진행 0).
+  - A 추천 (252자) — 경계 한 줄 포함
+```
+Thanks, Jack, happy to explore. This year our focus is the sensor network and data customers, so we're not at the exchange stage. What did you have in mind? If a team on your side works with real-world data, I'd be glad to hear how they think about it.
+```
+  - B (124자) — 질문만
+```
+Thanks, Jack, happy to explore. What did you have in mind? It would help to know which team on your side you're thinking of.
+```
