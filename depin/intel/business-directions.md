@@ -4373,3 +4373,22 @@ One small thing bedroom air teaches: with the door and windows shut, CO2 climbs 
 
 Good to be connected.
 ```
+
+## Mirana Ventures — Alina Chua 인바운드 (2026-10-13, 대표에게 온 링크드인 메시지 · 서우 「친추하고 300자 이내 멘트」)
+
+- **사람**: Alina Chua — Investment Manager, Mirana Ventures(싱가포르, 2021-08~) · 전 GGV Capital 애널리스트 · SMU. 서우와 3촌. 연락처 집계 사이트 정보(메일 · 전화)는 저장소에 적지 않음.
+- **메시지 요지(대표 앞)**: 센서 → AI 지수 → 온체인 정산 스택, XRP SEOUL 참가, AI Factory 이용권을 언급했다. 「장기 투자 + Bybit/Mantle 지원(상장 · 유동성 · Eco Fund 소개 · 공동 마케팅)」을 제안했고, 「지금 raising 중이냐」고 물었다.
+- **판정**: 상대가 먼저 사업을 연 인바운드라 VC 기본값(먼저 사업 얘기 0)과 충돌하지 않는다 → 맺고 통화를 잡는다. 단 글로 답할 것과 안 할 것을 나눈다.
+  ① **raising 여부 · 조건 = 대표 · 경영진 몫**이다. 서우 메모와 글에서는 답하지 않는다(10/13 Genesis PDF 의 「전략 라운드 예비 10억」도 정본 미반영이라 언급 0).
+  ② **상장 · 유동성 제안에는 반응하지 않는다.** 정본은 G1~G3 거래 금지 · G4 DEX 개방이고, 중앙 거래소는 G5(지역) · G9(글로벌) 검토다. 「수요 증명 전 상장 안 함」이 원칙이다.
+     Bybit 은 국내 미신고 해외 거래소 쪽이라 상장사 케이웨더와 엮이는 문장 자체가 위험하다.
+  ③ **Mantle = 다른 체인** → 공동 마케팅 · Eco Fund 는 멀티체인 신호다. 첫 통화에서 열지 않는다.
+  ④ 통화에서는 투자사 관점의 질문만 듣는다(관심 이유 · 투자 단계 · 포트폴리오 DePIN). 우리 쪽 숫자는 정본(사이트) 범위까지만 말한다.
+- **서우 1촌 요청 메모 (230자)**
+```
+Hi Alina, I'm Logan, Head of Partnerships at Wellbian Labs. Thanks for your note to our CEO, Kim, and for the kind words on the stack. I'll coordinate on our side and would be glad to set up a short call with him. Good to connect.
+```
+- **(선택) 대표 답장 한 줄 (105자)** — 원 메시지에 대표가 짧게 답하고 서우에게 넘긴다
+```
+Thanks, Alina. Glad it resonated. Logan, our Head of Partnerships, will reach out to set up a short call.
+```
