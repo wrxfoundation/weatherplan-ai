@@ -4528,3 +4528,12 @@ Thanks Clyde, good to have you on it. HK is just an hour behind Seoul, so timing
   3) 트레이딩 질문 — 정산 공급자의 자기 시장 거래 = 이해상충 → 「정산하는 시장에서 거래하지 않음 · 정산값은 모두에게 같은 시각」(SIG 공정성 원칙과 같은 문장). 대표의 「예측마켓용으로 학습 중」 발언이 거래로 읽히지 않게 후속 메시지에서 정리.
   4) 사용자 생성 마켓에 우리 유동성 — 우리가 시장 운영자가 됨 · 상장사 평판 → 하지 않는 쪽 권장.
 - **다음 자료부터 맞출 표현(서우 메모)**: 「largest weather company in Korea」 → 30년 · 4,000+ 고객사(최대 · 1위 금지) · 센서 「35,000」 → 확인된 숫자만 · 보험사 실명 · 지급액은 고객 동의 전 0 · 「listed on KOSDAQ」은 사실이지만 「상장사가 뒷받침」으로 이어 말하지 않음.
+
+## Yulia Smirnova (OKX Growth Lead · Growth & Brand Strategy · 두바이) — 판정 (2026-10-14, 서우 프로필 캡처 3장 · 이미 1촌)
+
+- **자리**(캡처 기준): OKX Growth Lead(2025-06~ · 두바이 하이브리드) · 그 전 OKX Content Growth Manager(2023-08~2025-06) · Bybit Senior PMM, Fiat operations(2022-02~2023-08) ·
+  Guardarian SMM(2021-09~2022-02, 포르투갈) · Sumsub Content Manager(2021-02~09, 런던). 헤드라인 「30 Under 30 Cannes Lions Brand Marketers Academy」 · Cannes Lions School 과정 2개 · 공통 1촌 16.
+- **판정 — Lynn 인사만 · 사업 0.** OKX 여섯째 — **OKX 의 문은 Kyuyoung 하나(9/16)** 그대로(Charlotte · Shawn · Eve 와 같은 선). 그로스 · 브랜드 자리라 어떤 사업 문장도 「OKX 에 얹으려는 한국 프로젝트」 또는 마케팅 제휴 타진으로 읽힌다.
+  4번 줄은 칸 라이언즈 축하 한 줄(요청 0). Bybit 경력 · OKX 스폰서십(F1 · 맨시티 · 트라이베카) · 토큰 · XRP · 기기 판매 · 예측시장 0.
+- **문안**: Lynn 기본값을 10/12 교훈대로 고친 판 — 「certified」 뺌(지역 모름) · 「eleven independent sources」 → 「eleven weather feeds」. 650자, 채팅 전달.
+- **다음**: 답이 오면 짧게 받고 닫는다(Eve 10/12 와 같은 결). 그쪽이 먼저 우리 일을 물을 때만 두 층 소개까지.
