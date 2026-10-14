@@ -32,7 +32,9 @@ const errText = (code, message) => ERR[code] || message || `처리하지 못했�
 const PENDING_EVENT = "kcare-members-pending";
 const ACTION_TEXT = { signup: "가입", approve: "가입 승인", reject: "가입 거절", role: "역할 변경", suspend: "사용 정지", activate: "다시 사용", "join-code": "가입 코드 변경" };
 const when = (t) => (t ? fmtDateTime(Date.parse(t)) : "—");
-const extraText = (p) => [p?.rel && `관계 ${p.rel}`, p?.region && `지역 ${p.region}`, p?.org && `소속 ${p.org}`].filter(Boolean).join(" · ");
+// 초대 링크로 온 가입은 누가 보낸 링크인지 붙인다 (2026-10-14 · lib/invite.js)
+const extraText = (p) =>
+  [p?.invitedBy && `${p.invitedBy} 님 초대`, p?.rel && `관계 ${p.rel}`, p?.region && `지역 ${p.region}`, p?.org && `소속 ${p.org}`].filter(Boolean).join(" · ");
 
 function copy(text) {
   try {

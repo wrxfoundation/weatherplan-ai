@@ -12,12 +12,13 @@ import { ELDER } from "../../lib/mock";
 import { LIVE_CONCIERGE, LIVE_TAG } from "../../lib/live-household";
 import { centerNow } from "../../lib/people-store";
 import { people } from "../../lib/people";
+import { playErrorText, useVoicePlayer } from "../../lib/voice-client";
 
 const KST = 9 * 3600 * 1000;
 const day = (t) => new Date(t + KST).toISOString().slice(0, 10);
 const when = (t) => new Date(t + KST).toISOString().slice(5, 16).replace("T", " ");
 const CHANNELS = { voice: { label: "음성", tone: "info" }, ops: { label: "관제 연락", tone: "warn" }, ask: { label: "어르신 부탁", tone: "gold" } };
-const VOICE_CONTEXT = { 안부: "안부 음성", 긴급: "긴급 음성", 마음사서함: "마음사서함" };
+const VOICE_CONTEXT = { 안부: "안부 음성", 긴급: "긴급 음성", 마음사서함: "마음사서함", "말로 부탁": "말로 부탁", "여쭤볼 것": "진료 때 여쭤볼 것" };
 
 function rowsOf(state) {
   const played = state.elder?.msgPlayed || {};
@@ -32,6 +33,7 @@ function rowsOf(state) {
       from: v.from === "컨시어지" ? `컨시어지 ${LIVE_CONCIERGE}` : v.from,
       to: v.to === "컨시어지" ? `컨시어지 ${LIVE_CONCIERGE}` : v.to,
       text: `${VOICE_CONTEXT[v.context] || v.context || "음성"} · ${Number(v.secs) || 0}초${v.title && v.title !== "선생님께 보낸 목소리" ? ` · ${v.title}` : ""}`,
+      clip: v.clip || null, // 실제 녹음 (2026-10-14) — 관제도 들을 수 있다
       state: toElder ? (played[v.id] ? "어르신 청취" : "미청취") : toGuardian ? (guardianHeard[v.id] ? "보호자 청취" : "보호자 미청취") : "전달됨",
       tone: (toElder && !played[v.id]) || (toGuardian && !guardianHeard[v.id]) ? "warn" : "ok",
     };
@@ -57,7 +59,7 @@ function rowsOf(state) {
       ch: "ask",
       from: `${ELDER.name} 님`,
       to: "관제",
-      text: `${r.type}${r.detail ? ` — ${r.detail}` : ""}`,
+      text: `${r.type}${r.summary?.text ? ` — "${r.summary.text}" (${r.summary.by || "컨시어지"} 정리)` : r.detail ? ` — ${r.detail}` : ""}`,
       state: STATUS[r.status]?.label || r.status,
       tone: r.status === "requested" ? "warn" : "ok",
     }));
@@ -82,6 +84,7 @@ function Reply({ msgId, onAck }) {
 
 export default function LiveComms() {
   const { state, dispatch } = useAppState();
+  const player = useVoicePlayer();
   const [ch, setCh] = useState("");
   const rows = useMemo(() => rowsOf(state), [state]);
   const today = day(Date.now());
@@ -126,6 +129,14 @@ export default function LiveComms() {
                   render: (r) => (
                     <div className="min-w-[220px] text-[12px] text-ink">
                       {r.text}
+                      {r.clip && (
+                        <span className="ml-1.5 inline-flex">
+                          <Btn small ghost tone="navy" onClick={() => player.play(r.id, { clip: r.clip })}>
+                            {player.playing === r.id ? "멈추기" : player.busy === r.id ? "받는 중…" : "듣기"}
+                          </Btn>
+                        </span>
+                      )}
+                      {player.failed?.key === r.id && <div role="alert" className="mt-0.5 text-[11px] font-bold text-amber">{playErrorText(player.failed.code)}</div>}
                       {r.reply && <div className="mt-0.5 font-bold text-navy">관제 답 — {r.reply}</div>}
                       {r.open && <Reply msgId={r.msgId} onAck={ack} />}
                     </div>
@@ -138,7 +149,7 @@ export default function LiveComms() {
           )}
         </div>
       </Panel>
-      <Note>음성은 길이 · 보낸 사람만 기록합니다 (베타 — 실제 녹음 파일은 저장하지 않음). 어르신 부탁의 처리는 해주세요 관리에서 합니다.</Note>
+      <Note>음성은 실제 녹음입니다 (2026-10-14부터 · 30일 보관 · 같은 센터 계정만 들을 수 있음). 그 전에 남은 기록은 길이 · 보낸 사람만 있습니다. 어르신 부탁의 처리는 해주세요 관리에서 합니다.</Note>
     </div>
   );
 }

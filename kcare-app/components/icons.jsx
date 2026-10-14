@@ -277,6 +277,10 @@ const PATHS = {
       <path d="M13.5 8.5l2 2" />
     </>
   ),
+  // 재생 중 멈추기 (목소리 듣기 · 2026-10-14)
+  stop: <rect x="7" y="7" width="10" height="10" rx="1.5" />,
+  // 전화 — 관제와 통화하기 (응급 대응 · 2026-10-14)
+  phone: <path d="M5.2 3.8h3.4l1.6 4.1-2.1 1.4a11.5 11.5 0 0 0 6.6 6.6l1.4-2.1 4.1 1.6v3.4a1.9 1.9 0 0 1-2 1.9C10.6 20.2 3.8 13.4 3.3 5.8a1.9 1.9 0 0 1 1.9-2Z" />,
 };
 
 export default function Icon({ name, size = 18, strokeWidth = 1.8, className = "" }) {

@@ -32,6 +32,11 @@ export const HELP_STAGE = {
   needsAdmin: "관제 확인 중",
 };
 
+// 해주세요 '응급 대응'의 '관제와 통화하기'로 온 것 (2026-10-14) — 같은 처리 흐름, 이름만 다르게 보인다
+const isEmergency = (r) => r?.via === "응급 대응";
+export const helpLabel = (r) => (isEmergency(r) ? "응급 상황 대응 · 관제와 통화 요청" : "도와줘요 · 즉시 방문 요청");
+const pressed = (r) => (isEmergency(r) ? "응급 상황 대응을 요청했습니다 (관제와 통화)" : "도와줘요를 눌렀습니다");
+
 export function helpCalls(requests, now = Date.now()) {
   return (requests || [])
     .filter((r) => isVisitCall(r) && (!CLOSED.includes(r.status) || now - lastAt(r) < RECENT_MS))
@@ -68,7 +73,7 @@ function Timeline({ r, from = 0 }) {
       {(r.history || []).map((h, i) => (
         <li key={i} className={`flex gap-2 text-[13px] leading-[1.5] ${i >= from ? "font-bold text-navy" : "text-muted"}`}>
           <span className="shrink-0 font-num">{hm(h.at)}</span>
-          <span className="min-w-0">{i === 0 ? `${ELDER.name} 님 도와줘요 — 즉시 방문 요청` : h.note || HELP_STAGE[h.status]}</span>
+          <span className="min-w-0">{i === 0 ? `${ELDER.name} 님 ${isEmergency(r) ? "응급 상황 대응 — 관제와 통화 요청" : "도와줘요 — 즉시 방문 요청"}` : h.note || HELP_STAGE[h.status]}</span>
         </li>
       ))}
     </ol>
@@ -100,9 +105,9 @@ export function HelpCallPopup({ role }) {
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center bg-[rgba(8,23,45,.55)] p-4">
       <div role="alertdialog" aria-modal="true" aria-label="도와줘요 알림" className="w-full max-w-[400px] rounded-[22px] bg-white p-5 shadow-xl" style={{ borderTop: "6px solid #B08D57" }}>
-        <div className="text-[12px] font-bold tracking-[.12em] text-[#8A5D12]">도와줘요 · 즉시 방문 요청</div>
+        <div className="text-[12px] font-bold tracking-[.12em] text-[#8A5D12]">{helpLabel(pending)}</div>
         <div className="mt-1 text-[19px] font-black leading-[1.4] text-navy">
-          {first ? `${ELDER.name} 님이 도와줘요를 눌렀습니다` : `도와줘요 — ${HELP_STAGE[pending.status] || "진행"}`}
+          {first ? `${ELDER.name} 님이 ${pressed(pending)}` : `${isEmergency(pending) ? "응급 대응" : "도와줘요"} — ${HELP_STAGE[pending.status] || "진행"}`}
         </div>
         <div className="mt-3 rounded-xl bg-[#FBF6EC] p-3">
           <Timeline r={pending} from={first ? 0 : from} />
@@ -214,11 +219,11 @@ export function HelpCallOps({ openId, onClose }) {
     <div className="fixed inset-0 z-[70] flex items-center justify-center bg-[rgba(8,23,45,.55)] p-4">
       <div role="alertdialog" aria-modal="true" aria-label="도와줘요 대응" className="max-h-[92vh] w-full max-w-[560px] overflow-y-auto rounded-[22px] bg-white p-6 shadow-xl" style={{ borderTop: "6px solid #B08D57" }}>
         <div className="flex items-center gap-2">
-          <span className="text-[12px] font-bold tracking-[.12em] text-[#8A5D12]">도와줘요 · 즉시 방문 요청</span>
+          <span className="text-[12px] font-bold tracking-[.12em] text-[#8A5D12]">{helpLabel(r)}</span>
           <span className="ml-auto rounded-full bg-gold/20 px-2.5 py-[3px] text-[12px] font-bold text-[#8A5D12]">{HELP_STAGE[r.status]}</span>
         </div>
         <div className="mt-1 text-[22px] font-black text-navy">
-          {elderWho(" ")} 님이 도와줘요를 눌렀습니다
+          {elderWho(" ")} 님이 {pressed(r)}
         </div>
         <p className="mt-1 text-[13px] text-muted">어르신 화면 · {hm(r.history[0].at)} 접수 — 확인 전화부터. 어느 단계에서든 해결되면 해결 완료로 닫습니다.</p>
 

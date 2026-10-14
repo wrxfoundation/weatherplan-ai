@@ -10,6 +10,8 @@ export default async function handler(req, res) {
     db: { configured: dbConfigured(), ok: false, error: null },
     // 회원 가입 · 관제 센터 표(2026-10-06) — schema.sql 을 다시 돌려야 생긴다
     members: { ok: false, error: null },
+    // 목소리 표(2026-10-14) — supabase/voice-clips.sql (또는 schema.sql) 을 돌려야 생긴다. 없으면 녹음 보내기가 막힌다
+    voice: { ok: false, error: null },
   };
   if (out.db.configured) {
     try {
@@ -31,6 +33,13 @@ export default async function handler(req, res) {
         out.members.ok = true;
       } catch (e) {
         out.members.error = dbErrorCode(e);
+      }
+      try {
+        const { error } = await db().from("voice_clips").select("id, household_id, mime").limit(0);
+        if (error) throw error;
+        out.voice.ok = true;
+      } catch (e) {
+        out.voice.error = dbErrorCode(e);
       }
     }
   }

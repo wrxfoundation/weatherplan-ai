@@ -11,6 +11,7 @@ import MapDialog, { distanceM, prettyDistance } from "../../components/MapDialog
 import { CONCIERGE_POS, ELDER_HOMES } from "../../lib/console";
 
 import { eventsFor, useAppState } from "../../lib/state";
+import { playErrorText, usePrefetchClips, useVoicePlayer } from "../../lib/voice-client";
 import { useAuth } from "../../lib/auth";
 import { scopedKey } from "../../lib/scope";
 import { useLastActivity } from "../../lib/last-activity";
@@ -93,6 +94,9 @@ export default function FamilyHome() {
     .filter((v) => v.from === `${ELDER.name} 님` && (v.to === (centerNow() ? meAs(authUser, "guardian") : "아들 민수") || v.to === "가족 모두"))
     .sort((a, b) => b.at - a.at);
   const unheardFromElder = fromElder.filter((v) => !state.guardian?.voiceHeard?.[v.id]).length;
+  // 어르신 목소리 듣기 — 녹음이 있으면 실제 소리를 재생한다 (2026-10-14). 미리 받아 두어야 누르는 순간 재생된다 (아이폰)
+  const player = useVoicePlayer();
+  usePrefetchClips(fromElder.slice(0, 6).map((v) => v.clip));
   const [elderVoicesAll, setElderVoicesAll] = useState(false);
   const checkinAt = (state.visit.audit || []).find((e) => e.kind === "gps")?.at;
   const checkinHm = checkinAt ? new Date(checkinAt).toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit", hour12: false }) : null;
@@ -176,8 +180,8 @@ export default function FamilyHome() {
                 to={honor}
                 tone="dark"
                 compact
-                onSend={(secs) => {
-                  dispatch({ type: "addVoice", payload: { from: "보호자", to: honor, secs, context: "긴급" } });
+                onSend={(secs, clip) => {
+                  dispatch({ type: "addVoice", payload: { from: "보호자", to: honor, secs, context: "긴급", clip } });
                   dispatch({
                     type: "pushEvent",
                     payload: { kind: "음성", text: `보호자 긴급 안부 음성 ${secs}초 — 컨시어지 단말로 전달`, color: "#FF8A80" },
@@ -442,8 +446,8 @@ export default function FamilyHome() {
           <div className="text-[17px] font-black text-navy">안부 음성 남기기</div>
           <VoiceNote
             to={honor}
-            onSend={(secs) => {
-              dispatch({ type: "addVoice", payload: { from: "보호자", to: honor, secs, context: "안부" } });
+            onSend={(secs, clip) => {
+              dispatch({ type: "addVoice", payload: { from: "보호자", to: honor, secs, context: "안부", clip } });
               dispatch({
                 type: "pushEvent",
                 payload: { kind: "음성", text: `보호자 안부 음성 ${secs}초 — 어르신 화면 가족 탭으로 전달`, color: "#8FE3C0" },
@@ -509,15 +513,26 @@ export default function FamilyHome() {
                         <button
                           type="button"
                           onClick={() => {
-                            if (heardIt) return;
-                            dispatch({ type: "guardianPatch", patch: { voiceHeard: { ...(state.guardian?.voiceHeard || {}), [v.id]: true } } });
-                            dispatch({ type: "pushEvent", payload: { kind: "음성", text: `보호자가 ${honor} 목소리 ${v.secs}초 청취`, color: "#8FA9CC" } });
+                            const markHeard = () => {
+                              if (heardIt) return;
+                              dispatch({ type: "guardianPatch", patch: { voiceHeard: { ...(state.guardian?.voiceHeard || {}), [v.id]: true } } });
+                              dispatch({ type: "pushEvent", payload: { kind: "음성", text: `보호자가 ${honor} 목소리 ${v.secs}초 청취`, color: "#8FA9CC" } });
+                            };
+                            // 녹음이 있는 것은 소리를 내고, 녹음 기능 전 기록은 들은 표시만 한다
+                            if (v.clip) player.play(`g-${v.id}`, { clip: v.clip }, { onStart: markHeard });
+                            else markHeard();
                           }}
-                          aria-label={heardIt ? `${whenLabel(v.at)} 목소리 들었음` : `${whenLabel(v.at)} 목소리 ${v.secs}초 듣기`}
+                          aria-pressed={player.playing === `g-${v.id}`}
+                          aria-label={player.playing === `g-${v.id}` ? `${whenLabel(v.at)} 목소리 멈추기` : heardIt ? `${whenLabel(v.at)} 목소리 다시 듣기` : `${whenLabel(v.at)} 목소리 ${v.secs}초 듣기`}
                           className={`btn-press btn-inline btn-chip whitespace-nowrap rounded-full px-3 py-1.5 text-[12px] font-bold ${heardIt ? "bg-green/10 text-green" : "bg-navy text-white"}`}
                         >
-                          {heardIt ? "✓ 들었어요" : "▶ 듣기"}
+                          {player.playing === `g-${v.id}` ? "■ 멈추기" : player.busy === `g-${v.id}` ? "받는 중" : heardIt ? (v.clip ? "▶ 다시 듣기" : "✓ 들었어요") : "▶ 듣기"}
                         </button>
+                        {player.failed?.key === `g-${v.id}` && (
+                          <span role="alert" className="mt-1 block text-[11px] font-bold leading-[1.4] text-amber">
+                            {playErrorText(player.failed.code)}
+                          </span>
+                        )}
                       </td>
                     </tr>
                   );
@@ -534,7 +549,9 @@ export default function FamilyHome() {
               {elderVoicesAll ? "최근 5건만 보기" : `전체 ${fromElder.length}건 보기`}
             </button>
           )}
-          <p className="mt-2 text-[11px] leading-[1.5] text-muted">베타에서는 녹음 파일을 저장하지 않아 받은 때와 길이만 보입니다.</p>
+          <p className="mt-2 text-[11px] leading-[1.5] text-muted">
+            {live ? "녹음은 30일 동안 보관하고, 같은 가구(센터) 계정만 들을 수 있습니다. 녹음 기능 전에 남은 기록은 길이만 보입니다." : "데모 — 이 기기에서 방금 녹음한 것만 소리가 납니다 (새로고침하면 사라집니다)."}
+          </p>
         </Card>
 
         {/* 담당 컨시어지 — 신원·관계 연속성 + AI 예약 (디자인 콘솔) */}

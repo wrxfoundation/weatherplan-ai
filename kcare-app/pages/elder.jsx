@@ -2,7 +2,6 @@ import ModeLink from "../components/ModeLink";
 import Head from "next/head";
 import { useEffect, useRef, useState } from "react";
 import {
-  ASK_DOCTOR,
   ELDER,
   ELDER_NOW,
   ELDER_VISITORS,
@@ -25,7 +24,11 @@ import { CLOSED, SERVICE_MENU, SERVICE_PLUS, approverOf, cancelRule, fmtSchedule
 import { assigneeNow, avatarText, elderNameOf, givenName, inCenter, voiceTargetsCenter } from "../lib/people";
 import { MED_STREAK, SUPPLEMENTS, daysLeft, healthOf, medProgress, needsReorder, slotHour } from "../lib/meds";
 import { VERDICT, matchWelfare, profileFor, welfareCounts } from "../lib/welfare";
-import { elderSpentToday, eventsFor, needsGuardianApproval, useAppState } from "../lib/state";
+import { elderSpentToday, eventsFor, needsGuardianApproval, useAppState, useSync } from "../lib/state";
+import { clipUrlNow, clock, playErrorText, saveClip, sendErrorText, RECORD_ERRORS, usePrefetchClips, useRecorder, useVoicePlayer } from "../lib/voice-client";
+import ElderRecord from "../components/ElderRecord";
+import InviteLink from "../components/InviteLink";
+import ElderDateTime, { atOf, spokenDateTime } from "../components/ElderDateTime";
 import Icon from "../components/icons";
 import Splash from "../components/Splash";
 import ElderHealthReport from "../components/ElderHealthReport";
@@ -36,7 +39,8 @@ import { useAuth } from "../lib/auth";
 // 구조: 헤더(날짜·인사)·푸터(SOS·전화·탭) 고정, 카드 스택만 스크롤 (06 §1).
 // 카드는 언마운트 없이 display 전환 + CSS order 정렬 (06 §2).
 // 접근성(타협 불가): 본문 19px 하한(예외 18px 3곳), 버튼 패딩 24~30px, 탭 60px, 색+텍스트 병행.
-// 1회성 잠금(복약 체크·재구매·askAdded)에 undo 없음 — 의도된 설계, "버그"로 고치지 말 것 (06 §5).
+// 1회성 잠금(복약 체크·재구매)에 undo 없음 — 의도된 설계, "버그"로 고치지 말 것 (06 §5).
+// '오늘 여쭤볼 것'과 '말로 부탁하기'는 1회성이 아니다 (2026-10-14 현장 요청: 실제 녹음 · 다시 말하기 · 해결 · 지우기).
 
 const LEVEL_COLOR = {
   ok: "#1E7A5A",
@@ -82,6 +86,26 @@ const ASK_TILES = [
   { no: 9, label: "복지 혜택", icon: "doc" },
   { no: 12, label: "응급 대응", icon: "alert" },
 ];
+
+// 집 고칠 일 타일 (2026-10-14 현장 요청 5번) — 위 해주세요 타일과 같은 모양. 내용은 lib/requests.js SERVICE_PLUS 그대로.
+// 날짜 · 시간은 사람이 가는 핸디맨만 고른다 — 공사맨(견적 대행) · 렌탈은 알아본 뒤 선생님이 연락드린다.
+const PLUS_TILES = [
+  { key: "handyman", label: "핸디맨", sub: "집 안 간단 수리", icon: "wrench" },
+  { key: "builder", label: "공사맨", sub: "견적 대행", icon: "search" },
+  { key: "rental", label: "가전 렌탈", sub: "제휴 렌탈", icon: "box" },
+];
+const plusItem = (p) => ({
+  no: `plus-${p.key}`,
+  name: p.name,
+  priceLabel: p.priceLabel,
+  amount: p.amount,
+  scope: p.scope,
+  point: "알아보고 진행 상황을 알려드립니다. 공사의 책임은 그 업체에 있습니다.",
+  note: p.note,
+  active: true,
+  plus: true,
+  askWhen: p.key === "handyman",
+});
 
 // GNB — 2026-09-04 시트 어르신 전체 7·8번: 하단은 마음사서함 · 홈 · 가족 셋뿐이다.
 // 도와줘요는 GNB 에서 빠져 홈 인사 옆(옛 '메시지' 버튼 자리)으로 갔다 — 화면 이동이
@@ -328,7 +352,7 @@ function ElderHome() {
   // askOpen(해주세요 아코디언)은 타일 그리드 + 시트로 바뀌면서 없앴다 (2026-08-24)
   const [vitalsOpen, setVitalsOpen] = useState(false); // 건강 탭 — 몸 상태 세부
   const [medInfoOpen, setMedInfoOpen] = useState(false); // 건강 탭 — 드시는 약 정보
-  const [plusOpen, setPlusOpen] = useState(null); // 해주세요 — 집 고칠 일 펼친 항목 (제목만 → 탭하면 세부)
+  // 집 고칠 일 펼침(plusOpen)은 타일 + 상세 시트로 바뀌면서 없앴다 (2026-10-14 현장 요청 5번)
   const [calOpen, setCalOpen] = useState(false); // 오늘 탭 — 이번 달 달력
   // visitorOpen(오늘 찾아뵙는 분 펼침)은 그 카드를 오늘 일정 안으로 넣으면서 없앴다 (2026-08-28)
   // 병원 가는 길 · 지금 집 안 카드는 건강 탭에서 뺐다 (2026-09-04 시트 건강 3번) — 상태도 함께 뺐다.
@@ -342,7 +366,12 @@ function ElderHome() {
   // 새로고침을 견뎌야 하는 것들은 전부 state.elder 에 있다 (lib/state.js 주석 참고).
   // 로컬 useState 로 두면 시연 중 새로고침 한 번에 복약 체크가 사라지고,
   // 이미 보낸 요청을 다시 보낼 수 있게 된다.
-  const { voicePlayed, askAdded, medSlots, reordered, askSpoken } = state.elder;
+  const { voicePlayed, medSlots, reordered } = state.elder;
+  // 목소리 — 테스트 계정은 서버에 올리고, 데모는 이 기기에만 (lib/voice-client.js)
+  const serverVoice = useSync().mode === "server";
+  const player = useVoicePlayer();
+  // 녹음 창 — { kind: teacher | ask | askDoctor | askDoctorEdit, id? } (2026-10-14 실제 녹음)
+  const [recFor, setRecFor] = useState(null);
   const visitOpen = (state.requests || []).find(
     (r) => r.dir === "fromElder" && r.type === "즉시 방문 요청" && !["done", "cancelled", "rejected"].includes(r.status)
   ) || null;
@@ -461,8 +490,13 @@ function ElderHome() {
   const medAfter = medPending[1] || null;
   const [medPop, setMedPop] = useState(null); // 알람 팝업이 띄운 시간대 (null이면 닫힘)
   // 건기식 — 용량이 부족하거나 유통기한이 다가온 것만 위로 올린다
-  // 오늘 여쭤볼 것 — 예시 질문(아들 민수가 남긴 것 …)은 관제 센터 공간에 두지 않는다
-  const askList = inCenter() ? [] : ASK_DOCTOR;
+  // 오늘 여쭤볼 것 — 가구 기록(state.askDoctor). 데모만 예시 질문(아들 민수가 남긴 것 …)으로 시작하고,
+  // 테스트 가구 · 관제 센터 공간은 빈 목록이다 (lib/state.js freshState). 해결한 것은 아래로 접어 둔다.
+  const askAll = state.askDoctor || [];
+  const askList = askAll.filter((q) => q.status !== "resolved");
+  const askDone = askAll.filter((q) => q.status === "resolved");
+  const [askDoneOpen, setAskDoneOpen] = useState(false);
+  const [askConfirm, setAskConfirm] = useState(null); // 지우기 확인 중인 질문 id
   const supplements = (inCenter() ? [] : SUPPLEMENTS).map((s) => ({ ...s, alert: needsReorder(s) }));
   const supAlerts = supplements.filter((s) => s.alert);
   // 세대공감 — 옆으로 밀어 보는 5장 (2026-08-28 요청 "하루 1개 말고 롤링 5개").
@@ -512,30 +546,64 @@ function ElderHome() {
     : greetHour < 22 ? "좋은 저녁이에요"
     : "편안한 밤이에요";
 
-  const [concMsg, setConcMsg] = useState(null); // null | "rec" | "sent"
-  const recStart = useRef(0);
-  // 홈에서 보낸 목소리는 '선생님' 탭 메시지함에 그대로 쌓인다 (2026-08-28 요청:
-  // "메인화면 메시지 보내기는 여기와 연동"). 같은 목록을 두 자리에서 보는 것이라
-  // 데이터는 한 벌만 둔다.
   // 보낸 목소리는 가구 기록(voices: 어르신 → 컨시어지)에 둔다 — 컨시어지 마음사서함과 관제 커뮤니케이션이
-  // 같은 것을 본다 (2026-10-02). 전에는 이 화면에만 있어 컨시어지에게 닿지 않았다.
-  // 메시지 버튼을 누르면 가운데 녹음 창이 열린다 (2026-08-30 요청).
-  // 전에는 같은 버튼을 두 번 눌러 녹음·전송했는데, 지금 녹음 중인지가 작은
-  // 원 안 글씨로만 보여서 알기 어려웠다. 창을 띄우면 '지금 말할 차례'가 화면
-  // 전체로 분명해지고, 보내기 전에 그만둘 길(취소)도 생긴다.
-  const openConcMsg = () => {
-    recStart.current = Date.now();
-    setConcMsg("rec");
-  };
-  const sendConcMsg = () => {
-    // 실제로 창을 열어 둔 시간을 길이로 쓴다 (최소 3초 — 짧게 한마디도 한마디다)
-    const sec = Math.max(3, Math.round((Date.now() - recStart.current) / 1000));
-    dispatch({ type: "addVoice", payload: { from: `${ELDER.name} 님`, to: "컨시어지", secs: sec, context: "마음사서함", title: "선생님께 보낸 목소리" } });
+  // 같은 것을 본다 (2026-10-02). 메시지 버튼을 누르면 가운데 녹음 창이 열린다 (2026-08-30 요청) —
+  // '지금 말할 차례'가 화면 전체로 분명해지고, 보내기 전에 그만둘 길도 있다.
+  // 2026-10-14부터 실제로 녹음해 보낸다 (components/ElderRecord.jsx). 전에는 창을 열어 둔 시간만 쟀다.
+  const sendTeacherVoice = (clip) => {
+    dispatch({ type: "addVoice", payload: { from: `${ELDER.name} 님`, to: "컨시어지", secs: clip.secs, context: "마음사서함", title: "선생님께 보낸 목소리", clip } });
     dispatch({
       type: "pushEvent",
-      payload: { kind: "음성", text: `${ELDER.name} 음성 메시지 → 컨시어지 ${TEACHER.name}`, color: "#8FA9CC" },
+      payload: { kind: "음성", text: `${ELDER.name} 음성 메시지 ${clip.secs}초 → 컨시어지 ${TEACHER.name}`, color: "#8FA9CC" },
     });
-    setConcMsg("sent");
+  };
+  // 말로 부탁하기 — 녹음이 담당 컨시어지 마음사서함으로 가고(음성), 같은 것이 해주세요 요청이 된다.
+  // 컨시어지가 듣고 한 줄로 정리하면 '부탁해 둔 것'에 그 글이 보인다 (2026-10-14 현장 요청 1 · 4번)
+  const sendSpokenAsk = (clip) => {
+    const id = `rq-${Date.now()}`;
+    dispatch({
+      type: "addRequest",
+      payload: {
+        id,
+        dir: "fromElder",
+        type: "말로 남기신 부탁",
+        detail: `어르신이 음성으로 남긴 부탁 (${clip.secs}초) — 담당 컨시어지가 듣고 정리합니다`,
+        amount: null,
+        preferredDate: null,
+        urgency: "normal",
+        assignee: assigneeNow() || "",
+        photos: [],
+        status: "requested",
+        history: [{ at: Date.now(), status: "requested", note: `음성 요청 ${clip.secs}초` }],
+        proof: null,
+        voice: { clip },
+        summary: null,
+      },
+    });
+    dispatch({ type: "addVoice", payload: { from: `${ELDER.name} 님`, to: "컨시어지", secs: clip.secs, context: "말로 부탁", title: "말로 남기신 부탁", clip, reqId: id } });
+    dispatch({
+      type: "pushEvent",
+      payload: { kind: "부탁", text: `${ELDER.name} 말로 부탁 ${clip.secs}초 접수 — 담당 컨시어지 확인 대기`, color: "#B08D57" },
+    });
+  };
+  // 오늘 여쭤볼 것 — 말로 남긴 질문은 목록에 들어가고, 진료에 동행할 컨시어지 마음사서함에도 같은 목소리가 간다
+  const sendAskDoctor = (clip, editId) => {
+    if (editId) dispatch({ type: "askDoctorEdit", id: editId, clip });
+    else dispatch({ type: "askDoctorAdd", payload: { clip } });
+    dispatch({
+      type: "addVoice",
+      payload: { from: `${ELDER.name} 님`, to: "컨시어지", secs: clip.secs, context: "여쭤볼 것", title: editId ? "진료 때 여쭤볼 것 — 다시 말씀하심" : "진료 때 여쭤볼 것", clip },
+    });
+    dispatch({
+      type: "pushEvent",
+      payload: { kind: "어르신", text: `진료 질문 ${editId ? "다시 말씀하심" : "1건 추가"} (${clip.secs}초) · 컨시어지 전달`, color: "#B08D57" },
+    });
+  };
+  // 목소리 듣기 — 녹음이 있으면 그것을, 데모 씨앗은 예시 소리를, 녹음 기능 전 기록은 들은 표시만
+  const playClip = (key, { clip, seed }, onPlayed) => {
+    if (clip) player.play(key, { clip }, { onStart: onPlayed });
+    else if (seed && !liveHH) player.play(key, { src: TEACHER_DEMO_FILE }, { onStart: onPlayed });
+    else onPlayed?.();
   };
 
   // 메시지함 목록 — 씨앗(TEACHER_INBOX)과 이번에 보낸 것을 합치고 24시간이 지난
@@ -544,19 +612,25 @@ function ElderHome() {
   const teacherMsgs = [
     ...(state.voices || [])
       .filter((v) => v.from === `${ELDER.name} 님` && v.to === "컨시어지")
-      .map((v) => ({ id: v.id, dir: "out", at: v.at, durationSec: v.secs, text: v.title || "선생님께 보낸 목소리" })),
+      .map((v) => ({ id: v.id, dir: "out", at: v.at, durationSec: v.secs, text: v.title || "선생님께 보낸 목소리", clip: v.clip || null })),
     // 테스트 가구는 예시 선생님 메시지 없이 — 컨시어지가 실제로 보낸 것만 (2026-10-02 QA)
-    ...(liveHH ? [] : TEACHER_INBOX.map((m) => ({ ...m, at: seedAt(m.minsAgo, nowMs) }))),
+    ...(liveHH ? [] : TEACHER_INBOX.map((m) => ({ ...m, at: seedAt(m.minsAgo, nowMs), seed: true }))),
     // 컨시어지 앱 마음사서함에서 보낸 것 — 제목은 컨시어지가 보낼 때 적은 한 줄 (STT 아님)
     ...(state.voices || [])
       .filter((v) => v.from === "컨시어지" && v.to === ELDER.name)
-      .map((v) => ({ id: v.id, dir: "in", at: v.at, durationSec: v.secs, text: v.title || "선생님이 보낸 목소리" })),
+      .map((v) => ({ id: v.id, dir: "in", at: v.at, durationSec: v.secs, text: v.title || "선생님이 보낸 목소리", clip: v.clip || null })),
   ]
     .filter((m) => nowMs - m.at < MSG_TTL_MS)
     .sort((a, b) => a.at - b.at);
   // 안 들은 받은 메시지 — 홈 배너와 GNB 점이 이걸 본다 (시트 전체 5번)
   const unreadMsgs = teacherMsgs.filter((m) => m.dir === "in" && !msgPlayed[m.id]);
   const markPlayed = (id) => dispatch({ type: "elderMark", key: "msgPlayed", id });
+  // 들을 목소리를 미리 받아 둔다 — 누르는 순간 바로 재생해야 아이폰(사파리)이 막지 않는다 (lib/voice-client.js)
+  usePrefetchClips([
+    ...teacherMsgs.filter((m) => m.dir === "in").map((m) => m.clip),
+    ...(state.voices || []).filter((v) => v.from === "보호자").map((v) => v.clip),
+    ...(state.askDoctor || []).map((q) => q.clip),
+  ]);
 
   // 복용 시간이 지나면 알람 팝업이 저절로 뜬다 (2026-09-04 시트 전체 2번 "약 복용은 일정
   // 알람에서 빼고 약 미션 팝업으로 복용 시간에 맞추어"). 하루에 때마다 한 번만 —
@@ -564,7 +638,7 @@ function ElderHome() {
   // 지난 때(아침·점심) 중 첫 것 하나만 띄우고 나머지는 띄운 것으로 친다.
   // 다른 창(녹음·도와줘요·부탁 시트)이 떠 있으면 그 창을 닫을 때까지 기다린다.
   const medPopShown = state.elder.medPopShown || { date: "", slots: {} };
-  const otherModal = !!medPop || concMsg != null || helpPop || !!askSel || eventSheet || welfareOpen || !!storeDetail;
+  const otherModal = !!medPop || !!recFor || helpPop || !!askSel || eventSheet || welfareOpen || !!storeDetail;
   useEffect(() => {
     const check = () => {
       if (otherModal) return;
@@ -598,7 +672,7 @@ function ElderHome() {
   const threadFor = (v) => {
     const out = elderVoices
       .filter((x) => x.from === `${ELDER.name} 님` && (x.to === v.name || (v.id !== "all" && x.to === "가족 모두")))
-      .map((x) => ({ id: x.id, dir: "out", at: x.at, text: x.to === "가족 모두" ? `가족 모두에게 · 목소리 ${x.secs}초` : `목소리 ${x.secs}초`, sec: x.secs }));
+      .map((x) => ({ id: x.id, dir: "out", at: x.at, text: x.to === "가족 모두" ? `가족 모두에게 · 목소리 ${x.secs}초` : `목소리 ${x.secs}초`, sec: x.secs, clip: x.clip || null }));
     const incoming = [];
     if (v.id === "v1") {
       const t8 = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 8, 10).getTime();
@@ -615,25 +689,31 @@ function ElderHome() {
       elderVoices
         .filter((x) => x.from === "보호자")
         .forEach((x) =>
-          incoming.push({ id: x.id, dir: "in", at: x.at, text: `목소리 ${x.secs}초${x.context === "긴급" ? " · 급한 안부" : ""}`, sec: x.secs, played: !!msgPlayed[x.id] })
+          incoming.push({ id: x.id, dir: "in", at: x.at, text: `목소리 ${x.secs}초${x.context === "긴급" ? " · 급한 안부" : ""}`, sec: x.secs, played: !!msgPlayed[x.id], clip: x.clip || null })
         );
     }
     return [...out, ...incoming].sort((a, b) => a.at - b.at);
   };
+  // 가족 목소리 듣기 — 들으면 '새 목소리' 표시가 꺼진다 (보낸 것도 다시 들을 수 있다)
   const playFamily = (m) => {
     if (m.seed) {
-      if (voicePlayed) return;
-      dispatch({ type: "elderPatch", patch: { voicePlayed: true } });
-      dispatch({ type: "pushEvent", payload: { kind: "음성", text: "어르신이 아들 음성 메시지 청취 완료", color: "#8FA9CC" } });
+      playClip(`fam-${m.id}`, { seed: true }, () => {
+        if (voicePlayed) return;
+        dispatch({ type: "elderPatch", patch: { voicePlayed: true } });
+        dispatch({ type: "pushEvent", payload: { kind: "음성", text: "어르신이 아들 음성 메시지 청취 완료", color: "#8FA9CC" } });
+      });
       return;
     }
-    markPlayed(m.id);
+    playClip(`fam-${m.id}`, { clip: m.clip }, () => m.dir === "in" && !m.played && markPlayed(m.id));
   };
 
   // 즉시 방문 요청 — 홈 인사 옆 '도와줘요' 버튼이 부른다 (옛 '지금 와 주세요' 플로팅 버튼).
   // 요청이 곧 방문은 아니다 — 관제가 먼저 전화로 확인하고 배차한다 (시트 어르신 전체 2번).
-  const askVisit = () => {
+  // via "응급 대응" — 해주세요 '응급 대응'의 '관제와 통화하기' (2026-10-14 현장 요청 7번). 같은 길로 관제 · 컨시어지 ·
+  // 보호자에게 동시에 뜨고, 관제가 먼저 전화한다. 진행 중인 도와줘요가 있으면 새로 만들지 않는다.
+  const askVisit = (via = null) => {
     if (visitOpen) return;
+    const emergency = via === "응급 대응";
     dispatch({ type: "elderPatch", patch: { visitAsked: true } });
     dispatch({
       type: "addRequest",
@@ -641,20 +721,23 @@ function ElderHome() {
         id: `rq-${Date.now()}`,
         dir: "fromElder",
         type: "즉시 방문 요청",
-        detail: "지금 와 주셨으면 합니다 (어르신 화면 즉시방문요청) — 관제가 먼저 전화로 확인합니다",
+        detail: emergency
+          ? "응급 상황 대응 — 관제와 통화하고 싶습니다 (어르신 해주세요 '응급 대응') — 관제가 먼저 전화로 확인합니다"
+          : "지금 와 주셨으면 합니다 (어르신 화면 즉시방문요청) — 관제가 먼저 전화로 확인합니다",
         amount: null,
         preferredDate: null,
         urgency: "urgent",
         assignee: "", // 관제가 확인 전화 뒤 정한다
         photos: [],
         status: "requested",
-        history: [{ at: Date.now(), status: "requested", note: "어르신 즉시방문요청" }],
+        history: [{ at: Date.now(), status: "requested", note: emergency ? "어르신 응급 대응 · 관제 통화 요청" : "어르신 즉시방문요청" }],
         proof: null,
+        ...(emergency ? { via } : {}),
       },
     });
     dispatch({
       type: "pushEvent",
-      payload: { kind: "방문", text: `${elderWho()} 즉시 방문 요청 · 관제 확인 전화 발신`, color: "#B08D57" },
+      payload: { kind: "방문", text: emergency ? `${elderWho()} 응급 상황 대응 — 관제 통화 요청` : `${elderWho()} 즉시 방문 요청 · 관제 확인 전화 발신`, color: "#B08D57" },
     });
   };
   // 도와줘요의 지금 상태는 깃발(visitAsked)이 아니라 요청 자체에서 읽는다 — 관제가 확인 전화를 마치면
@@ -679,48 +762,39 @@ function ElderHome() {
       </Head>
       <Splash service="elder" />
 
-      {/* ── 목소리 메시지 녹음 창 (2026-08-30 요청) ──
+      {/* ── 목소리 녹음 창 (2026-08-30 요청 · 2026-10-14 실제 녹음) ──
           화면 가운데에 띄운다. 어르신 화면에서 '지금 말할 차례'는 화면 전체로
-          말해야 알아채신다 — 작은 원 안 글씨로는 녹음 중인지 알기 어려웠다.
-          받는 사람(선생님)을 작은 글씨로 붙여 어디로 가는지 분명히 하고,
-          보내기는 맨 아래 — 엄지가 닿는 자리다. */}
-      {concMsg === "rec" && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[rgba(8,23,45,.72)] px-6">
-          <div
-            className="w-full max-w-[360px] rounded-[26px] bg-white px-6 pb-6 pt-8 text-center"
-            style={{ boxShadow: "0 30px 60px -20px rgba(8,23,45,.6)" }}
-            role="dialog"
-            aria-modal="true"
-            aria-label="목소리 메시지 녹음"
-          >
-            <span
-              aria-hidden
-              className="mx-auto flex h-[92px] w-[92px] items-center justify-center rounded-full"
-              style={{ background: "rgba(30,122,90,.12)", color: "#1E7A5A" }}
-            >
-              <span className="flex h-[68px] w-[68px] animate-livePing items-center justify-center rounded-full" style={{ background: "#1E7A5A", color: "#FFFFFF" }}>
-                <Icon name="mic" size={32} strokeWidth={2} />
-              </span>
-            </span>
-            <p className="mt-5 text-[30px] font-black leading-[1.25] text-navy">말씀하세요</p>
-            <p className="mt-1.5 text-[17px] leading-[1.5] text-muted">
-              {TEACHER.name} 선생님에게 전송됩니다
-            </p>
-            <button
-              onClick={sendConcMsg}
-              className="btn-press mt-6 w-full rounded-[18px] py-[19px] text-[21px] font-bold text-white"
-              style={{ background: "#1E7A5A" }}
-            >
-              보내기
-            </button>
-            <button
-              onClick={() => setConcMsg(null)}
-              className="btn-press mt-2 w-full rounded-[18px] py-[15px] text-[19px] font-bold text-muted"
-            >
-              그만두기
-            </button>
-          </div>
-        </div>
+          말해야 알아채신다. 받는 사람을 작은 글씨로 붙여 어디로 가는지 분명히 하고,
+          보내기는 맨 아래 — 엄지가 닿는 자리다. 서버가 받았다고 답해야 '보냈습니다'. */}
+      {recFor && (
+        <ElderRecord
+          key={`${recFor.kind}-${recFor.id || ""}`}
+          server={serverVoice}
+          label={
+            recFor.kind === "ask" ? "말로 부탁하기" : recFor.kind === "teacher" ? "선생님께 목소리 보내기" : recFor.kind === "askDoctorEdit" ? "여쭤볼 것 다시 말하기" : "여쭤볼 것 말로 남기기"
+          }
+          to={
+            recFor.kind === "ask"
+              ? `부탁하실 일을 말씀하세요 · ${TEACHER.name} 선생님에게 갑니다`
+              : recFor.kind === "teacher"
+                ? `${TEACHER.name} 선생님에게 전송됩니다`
+                : "진료 때 여쭤볼 것을 말씀하세요"
+          }
+          sentTitle={recFor.kind === "ask" ? "전달했습니다" : recFor.kind.startsWith("askDoctor") ? "담았습니다" : "보냈습니다"}
+          sentBody={
+            recFor.kind === "ask"
+              ? `${TEACHER.name} 선생님이 듣고 정리해 드립니다. '부탁해 둔 것'에서 확인하실 수 있습니다.`
+              : recFor.kind === "teacher"
+                ? `${TEACHER.name} 선생님이 들으시면 답을 주십니다.`
+                : "진료 때 선생님이 대신 여쭤봅니다. 목록에서 다시 들으실 수 있습니다."
+          }
+          onSend={(clip) => {
+            if (recFor.kind === "ask") sendSpokenAsk(clip);
+            else if (recFor.kind === "teacher") sendTeacherVoice(clip);
+            else sendAskDoctor(clip, recFor.kind === "askDoctorEdit" ? recFor.id : null);
+          }}
+          onClose={() => setRecFor(null)}
+        />
       )}
 
       {/* ── 약 알람 팝업 (2026-08-31, 참고 시안) ──
@@ -822,38 +896,6 @@ function ElderHome() {
               style={{ background: "#0A1F3C" }}
             >
               확인
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* 보낸 직후 — 어디로 갔는지 한 번 확인해 드리고 닫는다 */}
-      {concMsg === "sent" && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[rgba(8,23,45,.72)] px-6">
-          <div
-            className="w-full max-w-[360px] rounded-[26px] bg-white px-6 pb-6 pt-8 text-center"
-            style={{ boxShadow: "0 30px 60px -20px rgba(8,23,45,.6)" }}
-            role="dialog"
-            aria-modal="true"
-            aria-label="목소리 메시지 전송 완료"
-          >
-            <span
-              aria-hidden
-              className="mx-auto flex h-[92px] w-[92px] items-center justify-center rounded-full"
-              style={{ background: "rgba(30,122,90,.12)", color: "#1E7A5A" }}
-            >
-              <Icon name="speaker" size={38} strokeWidth={2} />
-            </span>
-            <p className="mt-5 text-[28px] font-black leading-[1.25] text-navy">보냈습니다</p>
-            <p className="mt-1.5 text-[18px] leading-[1.55] text-muted">
-              {TEACHER.name} 선생님이 들으시면 답을 주십니다.
-            </p>
-            <button
-              onClick={() => setConcMsg(null)}
-              className="btn-press mt-6 w-full rounded-[18px] py-[19px] text-[21px] font-bold text-navy"
-              style={QUIET_BG}
-            >
-              닫기
             </button>
           </div>
         </div>
@@ -1127,6 +1169,11 @@ function ElderHome() {
                     const mine = m.dir === "out";
                     const heard = !!msgPlayed[m.id];
                     const fresh = !mine && !heard;
+                    const pkey = `t-${m.id}`;
+                    const on = player.playing === pkey;
+                    const err = player.failed?.key === pkey ? player.failed.code : null;
+                    // 녹음 기능 전에 남은 기록 · 데모 씨앗이 아닌 테스트 기록에는 소리가 없다 — 들은 표시만 한다
+                    const silent = !m.clip && !(m.seed && !liveHH);
                     const dayOf = (x) => (isToday(x.at) ? "오늘" : spokenDay(x.at));
                     const newDay = i === 0 || dayOf(teacherMsgs[i - 1]) !== dayOf(m);
                     return (
@@ -1142,10 +1189,11 @@ function ElderHome() {
                           </div>
                         )}
                         <div className={`flex flex-col ${mine ? "items-end" : "items-start"}`}>
-                          {/* 말풍선 = 듣기 버튼. 안 들은 것은 금색 테두리와 '새 목소리'. */}
+                          {/* 말풍선 = 듣기 버튼. 안 들은 것은 금색 테두리와 '새 목소리'. 듣는 중에 다시 누르면 멈춘다 */}
                           <button
-                            onClick={() => markPlayed(m.id)}
-                            aria-label={`${m.text} · ${heard ? "다시 듣기" : "듣기"}`}
+                            onClick={() => playClip(pkey, { clip: m.clip, seed: m.seed }, () => !mine && markPlayed(m.id))}
+                            aria-pressed={on}
+                            aria-label={`${m.text} · ${on ? "멈추기" : heard || mine ? "다시 듣기" : "듣기"}`}
                             className="btn-press max-w-[92%] rounded-[20px] px-4 py-3 text-left"
                             style={
                               mine
@@ -1167,7 +1215,7 @@ function ElderHome() {
                                       : { background: "rgba(10,31,60,.08)", color: "#5C5A54" }
                                 }
                               >
-                                <Icon name={heard ? "speaker" : "play"} size={22} strokeWidth={2} />
+                                <Icon name={on ? "stop" : player.busy === pkey ? "clock" : heard || mine ? "speaker" : "play"} size={22} strokeWidth={2} />
                               </span>
                               <span className="min-w-0">
                                 {/* '새 목소리'는 시각 뒤에 붙이면 줄이 어색하게 꺾인다 — 위에 한 줄로 */}
@@ -1181,18 +1229,29 @@ function ElderHome() {
                                   className="mt-1 block font-num text-[15px]"
                                   style={{ color: mine ? "rgba(255,255,255,.7)" : "#5C5A54" }}
                                 >
-                                  {spokenTime(m.at)} · {m.durationSec}초
+                                  {spokenTime(m.at)} · {m.durationSec}초{on ? " · 듣는 중" : player.busy === pkey ? " · 받는 중" : silent ? " · 소리 없는 예전 기록" : ""}
                                 </span>
                               </span>
                             </span>
                           </button>
+                          {err && (
+                            <p role="alert" className="mt-1 max-w-[92%] text-[16px] font-bold leading-[1.45] text-[#8A5D12]">
+                              {playErrorText(err)}
+                            </p>
+                          )}
                           {/* 내려받기는 받은 메시지에만 — 보낸 것은 어르신이 이미 말씀하신
                               것이라 되돌려 받을 원본이 없다. 파일명은 ASCII (한글 download
                               속성은 크롬이 버리고 확장자 없는 파일로 저장한다 · 실측). */}
-                          {!mine && (
+                          {!mine && (m.clip || (m.seed && !liveHH)) && (
                             <a
-                              href={TEACHER_DEMO_FILE}
-                              download={`kcare-voice-${m.id}-demo.wav`}
+                              href={
+                                m.clip
+                                  ? m.clip.id.startsWith("vc_")
+                                    ? `/api/voice?id=${encodeURIComponent(m.clip.id)}&download=1`
+                                    : clipUrlNow(m.clip) || "#"
+                                  : TEACHER_DEMO_FILE
+                              }
+                              download={m.clip ? `kcare-voice-${m.id}` : `kcare-voice-${m.id}-demo.wav`}
                               aria-label="내려받기"
                               className="tap ml-2 mt-0.5 inline-flex items-center gap-1 text-[16px] font-bold text-green"
                             >
@@ -1226,7 +1285,7 @@ function ElderHome() {
             >
               <p className="mb-2 text-center text-[17px] font-bold text-muted">선생님과 하루의 일상을 나눠보아요</p>
               <button
-                onClick={openConcMsg}
+                onClick={() => setRecFor({ kind: "teacher" })}
                 className="btn-press flex w-full items-center justify-center gap-2 rounded-[18px] py-[19px] text-[20px] font-bold text-white"
                 style={{ background: "#1E7A5A", boxShadow: "0 12px 26px -14px rgba(30,122,90,.7)" }}
               >
@@ -1343,15 +1402,8 @@ function ElderHome() {
                   </div>
                 </>
               )}
-              {/* 간단등록 — 네이비 카드에 있던 것을 일정 카드로 모았다
-                  (REQ-02 어르신 권한: 조회·알림확인·간단등록) */}
-              <button
-                onClick={() => setEventSheet(true)}
-                className={`${QUIET_BTN} mt-2.5`}
-                style={QUIET_BG}
-              >
-                일정 하나 남기기
-              </button>
+              {/* '일정 하나 남기기'는 여기서 뺐다 (2026-10-14 현장 요청 2번) — 일정이 없을 때 위 '다가오는 일정'
+                  카드에도 같은 버튼이 있어 두 번 보였다. 등록은 맨 위 일정 카드 한 곳에서 한다. */}
             </ElderCard>
 
             {/* order 1 · 오늘 일정 — 유일한 네이비 다크 카드.
@@ -1449,16 +1501,26 @@ function ElderHome() {
                     </p>
                   </div>
                 )}
+                {/* 일정 하나 남기기 — 다가오는 일정 바로 아래 한 곳 (2026-10-14 현장 요청 2 · 8번).
+                    누르면 달력에서 날짜 · 시간을 고르는 창이 뜬다. */}
+                <button
+                  onClick={() => setEventSheet(true)}
+                  className="btn-press mt-4 flex w-full items-center justify-center gap-2 rounded-[18px] py-[19px] text-[20px] font-bold text-white"
+                  style={{ background: "rgba(255,255,255,.13)", boxShadow: "inset 0 0 0 1px rgba(255,255,255,.22)" }}
+                >
+                  <Icon name="calendar" size={22} strokeWidth={2} />
+                  일정 하나 남기기
+                </button>
               </ElderCard>
             )}
             {/* next 가 없을 때(잡힌 일정 0건)의 등록 자리 — 위 네이비 카드가 next 를
                 전제로 하므로, 없을 때도 "일정 하나 남기기"가 사라지지 않게 둔다.
-                지금 시드 데이터로는 일어나지 않지만 없앨 이유는 아니다. */}
+                테스트 가구 · 관제 센터 공간은 일정 0건으로 시작하므로 처음 보는 자리가 여기다. */}
             {!next && (
               <ElderCard show={tab === "today"} order={1}>
-                <CardHead title="다가오는 일정" />
-                <p className="text-[19px] leading-[1.6] text-muted">잡힌 일정이 없습니다.</p>
-                <ElderBtn className="mt-2" onClick={() => setEventSheet(true)}>
+                <CardHead title="다가오는 일정" icon="clock" />
+                <p className="mt-1 text-[19px] leading-[1.6] text-muted">잡힌 일정이 없습니다.</p>
+                <ElderBtn className="mt-3" onClick={() => setEventSheet(true)}>
                   일정 하나 남기기
                 </ElderBtn>
               </ElderCard>
@@ -1756,43 +1818,70 @@ function ElderHome() {
               order={6}
               title="오늘 여쭤볼 것"
               icon="chat"
-              summary={`${askList.length}가지`}
+              summary={`${askList.length}가지${askDone.length ? ` · 해결 ${askDone.length}` : ""}`}
               open={askDoctorOpen}
               onToggle={() => setAskDoctorOpen((v) => !v)}
             >
+              {/* 2026-10-14 현장 요청 3번 — '말로 하나 더 남기기'가 녹음 없이 '담겼습니다'로 끝났다. 이제 실제로 녹음하고,
+                  남긴 뒤에는 다시 말하기(수정) · 해결 · 지우기를 할 수 있다. 음성이 1차 입력 수단 — 키보드 입력 UI 금지 */}
               <div>
-                {askList.length === 0 && <p className="text-[18px] leading-[1.5] text-muted">아직 적힌 것이 없습니다.</p>}
-                {askList.map((q) => (
-                  <div
-                    key={q.seq}
-                    className="flex gap-3 border-t border-navy/[.07] py-[14px] first:border-t-0"
-                  >
-                    <span className="w-[22px] shrink-0 font-num text-[19px] font-bold text-gold">
-                      {q.seq}
-                    </span>
-                    <div>
-                      <div className="text-[20px] leading-[1.5] text-ink">{q.text}</div>
-                      <div className="mt-[5px] text-[18px] text-muted">{q.sourceLabel}</div>
-                    </div>
-                  </div>
+                {askList.length === 0 && <p className="text-[18px] leading-[1.5] text-muted">아직 남긴 것이 없습니다.</p>}
+                {askList.map((q, i) => (
+                  <AskDoctorRow
+                    key={q.id}
+                    q={q}
+                    n={i + 1}
+                    player={player}
+                    playClip={playClip}
+                    confirming={askConfirm === q.id}
+                    onAskRemove={() => setAskConfirm(q.id)}
+                    onCancelRemove={() => setAskConfirm(null)}
+                    onRemove={() => {
+                      dispatch({ type: "askDoctorRemove", id: q.id });
+                      setAskConfirm(null);
+                    }}
+                    onRedo={() => setRecFor({ kind: "askDoctorEdit", id: q.id })}
+                    onResolve={() => dispatch({ type: "askDoctorStatus", id: q.id, status: "resolved" })}
+                  />
                 ))}
               </div>
-              {/* 음성이 1차 입력 수단 — 키보드 입력 UI 금지 */}
-              <ElderBtn
-                onClick={() => {
-                  if (askAdded) return; // 1회성
-                  dispatch({ type: "elderPatch", patch: { askAdded: true } });
-                  dispatch({
-                    type: "pushEvent",
-                    payload: { kind: "어르신", text: "진료 질문 1건 추가 · 컨시어지 전달", color: "#B08D57" },
-                  });
-                }}
-                disabled={askAdded}
-                variant={askAdded ? "done" : "primary"}
-                className="mt-2"
-              >
-                {askAdded ? "말씀하신 내용이 담겼습니다" : "말로 하나 더 남기기"}
+              <ElderBtn onClick={() => setRecFor({ kind: "askDoctor" })} className="mt-2">
+                <span className="flex items-center justify-center gap-2.5">
+                  <Icon name="mic" size={26} strokeWidth={2} />
+                  말로 하나 더 남기기
+                </span>
               </ElderBtn>
+              {askDone.length > 0 && (
+                <div className="mt-3">
+                  <button
+                    onClick={() => setAskDoneOpen((v) => !v)}
+                    aria-expanded={askDoneOpen}
+                    className={`${QUIET_BTN}`}
+                    style={QUIET_BG}
+                  >
+                    해결한 것 {askDone.length}가지 {askDoneOpen ? "접기" : "보기"}
+                  </button>
+                  {askDoneOpen &&
+                    askDone.map((q, i) => (
+                      <AskDoctorRow
+                        key={q.id}
+                        q={q}
+                        n={i + 1}
+                        done
+                        player={player}
+                        playClip={playClip}
+                        confirming={askConfirm === q.id}
+                        onAskRemove={() => setAskConfirm(q.id)}
+                        onCancelRemove={() => setAskConfirm(null)}
+                        onRemove={() => {
+                          dispatch({ type: "askDoctorRemove", id: q.id });
+                          setAskConfirm(null);
+                        }}
+                        onReopen={() => dispatch({ type: "askDoctorStatus", id: q.id, status: "open" })}
+                      />
+                    ))}
+                </div>
+              )}
             </ElderExpand>
 
             {/* 지금 우리 동네 — 실외(청색조). 유지 (2026-09-04 시트 건강 5번).
@@ -1842,49 +1931,22 @@ function ElderHome() {
                   "글씨 크기에 차이를 두어 도드라지게"). 어르신 본문 하한(19px)의 예외 —
                   매일 보는 설명이라 익숙해지면 안 읽는 줄이다. */}
               <p className="mt-1.5 text-[17px] leading-[1.5] text-muted">{payRule.headline}</p>
-              {/* 말로 부탁하기 — 목록에 없어도 말로 남기면 선생님이 듣고 정리한다 */}
+              {/* 말로 부탁하기 — 목록에 없어도 말로 남기면 선생님이 듣고 정리한다.
+                  2026-10-14 현장 요청 4번: 누르면 '전달했습니다'만 나오고 녹음이 안 됐다. 이제 실제로 녹음해
+                  담당 컨시어지 마음사서함에 목소리로 가고, 몇 번이고 다시 부탁할 수 있다 (한 번 쓰고 잠기지 않는다). */}
               <button
-                onClick={() => {
-                  if (askSpoken) return;
-                  dispatch({ type: "elderPatch", patch: { askSpoken: true } });
-                  dispatch({
-                    type: "addRequest",
-                    payload: {
-                      id: `rq-${Date.now()}`,
-                      dir: "fromElder",
-                      type: "말로 남기신 부탁",
-                      detail: "어르신이 음성으로 남긴 요청 — 컨시어지가 듣고 정리합니다",
-                      amount: null,
-                      preferredDate: null,
-                      urgency: "normal",
-                      assignee: assigneeNow() || "",
-                      photos: [],
-                      status: "requested",
-                      history: [{ at: Date.now(), status: "requested", note: "음성 요청" }],
-                      proof: null,
-                    },
-                  });
-                  dispatch({
-                    type: "pushEvent",
-                    payload: { kind: "부탁", text: `${ELDER.name} 음성 요청 접수 — 컨시어지 확인 대기`, color: "#B08D57" },
-                  });
-                }}
+                onClick={() => setRecFor({ kind: "ask" })}
                 className="btn-elder btn-press mt-3 flex w-full items-center justify-center gap-3 rounded-[20px] p-6 text-[22px] font-bold"
-                style={
-                  askSpoken
-                    ? { background: "rgba(255,255,255,.85)", color: "#1E7A5A" }
-                    : {
-                        background:
-                          "linear-gradient(180deg, rgba(255,255,255,.14), rgba(255,255,255,0) 55%), #0A1F3C",
-                        color: "#FFFFFF",
-                        boxShadow: "inset 0 1px 0 rgba(255,255,255,.28), 0 18px 34px -22px rgba(10,31,60,.8)",
-                      }
-                }
+                style={{
+                  background: "linear-gradient(180deg, rgba(255,255,255,.14), rgba(255,255,255,0) 55%), #0A1F3C",
+                  color: "#FFFFFF",
+                  boxShadow: "inset 0 1px 0 rgba(255,255,255,.28), 0 18px 34px -22px rgba(10,31,60,.8)",
+                }}
               >
-                <span aria-hidden style={{ color: askSpoken ? "#1E7A5A" : "#C9A46B" }}>
+                <span aria-hidden style={{ color: "#C9A46B" }}>
                   <Icon name="mic" size={28} strokeWidth={2} />
                 </span>
-                {askSpoken ? "말씀하신 내용을 전달했습니다" : "말로 부탁하기"}
+                말로 부탁하기
               </button>
             </div>
 
@@ -1932,38 +1994,31 @@ function ElderHome() {
             </div>
 
             {/* order 7 · 해주세요 PLUS — 집수리·공사·렌탈은 바깥 업체를 연결한다.
-                책임 경계를 어르신 화면에도 그대로 쓴다 (공사 책임은 그 업체에 있다). */}
+                책임 경계를 어르신 화면에도 그대로 쓴다 (공사 책임은 그 업체에 있다).
+                2026-10-14 현장 요청 5번: 아래로 펼쳐지던 목록을 병원 예약 · 병원 동행 · 안심방문과 같은 아이콘 타일로
+                바꾸고, 누르면 같은 팝업(상세 시트)이 뜬다. 요금 · 범위 등 세부 내용은 그대로다. */}
             <ElderCard show={tab === "ask"} order={7} style={LIGHT_CARD}>
               <CardHead title="집 고칠 일" right="바깥 업체 연결" icon="box" />
-              {/* 서비스 이름만 보이고, 누르면 요금·범위가 펼쳐진다 (2026-09-04 시트 해주세요
-                  1번 "1회 출장비 · 견적서 제출 후 · 품목별 상이 같은 설명은 펼치면 보이도록").
-                  전에는 요금이 접힌 채로도 보였는데, 그 줄이 어르신에게는 설명으로 읽혔다. */}
-              <div className="mt-2 space-y-2">
-                {SERVICE_PLUS.map((p) => {
-                  const open = plusOpen === p.key;
+              <div className="mt-3 grid grid-cols-3 gap-2.5">
+                {PLUS_TILES.map((t) => {
+                  const p = SERVICE_PLUS.find((x) => x.key === t.key);
+                  if (!p) return null;
                   return (
-                    <div key={p.key} style={SUB_CARD}>
-                      <button
-                        onClick={() => setPlusOpen(open ? null : p.key)}
-                        aria-expanded={open}
-                        className="btn-press flex w-full items-center gap-3 text-left"
-                      >
-                        <span className="min-w-0 flex-1 text-[20px] font-bold text-navy">{p.name}</span>
-                        <span
-                          aria-hidden
-                          className="shrink-0 text-muted transition-transform duration-200"
-                          style={{ transform: open ? "rotate(180deg)" : "none" }}
-                        >
-                          <Icon name="chev" size={22} strokeWidth={2} />
-                        </span>
-                      </button>
-                      {open && (
-                        <div className="mt-2 border-t border-navy/[.08] pt-2.5">
-                          <p className="text-[18px] font-bold text-[#7A5C28]">{p.priceLabel}</p>
-                          <p className="mt-1 text-[17px] leading-[1.55] text-muted">{p.scope}</p>
-                        </div>
-                      )}
-                    </div>
+                    <button
+                      key={t.key}
+                      onClick={() => {
+                        setAskSent(null);
+                        setAskSel(plusItem(p));
+                      }}
+                      className="btn-press flex min-h-[104px] flex-col items-center justify-center gap-1 rounded-[18px] px-2 py-3.5 text-center"
+                      style={{ ...LIGHT_CARD, background: "linear-gradient(180deg, rgba(253,252,249,.98), rgba(250,248,243,.94))" }}
+                    >
+                      <span aria-hidden style={{ color: "#B08D57" }}>
+                        <Icon name={t.icon} size={30} strokeWidth={1.7} />
+                      </span>
+                      <span className="mt-0.5 text-[17px] font-bold leading-[1.25] text-navy">{t.label}</span>
+                      <span className="text-[15px] font-medium leading-[1.3] text-muted">{t.sub}</span>
+                    </button>
                   );
                 })}
               </div>
@@ -2047,7 +2102,7 @@ function ElderHome() {
                     const when = fmtScheduled(r);
                     const line =
                       r.status === "awaitingPayment" ? [`${payRule.approver} 님 결제 기다리는 중`, "#8A5D12"]
-                      : r.status === "requested" ? [isVisitCall(r) ? "관제센터에서 확인 전화를 드립니다" : "선생님이 일정을 보고 정해 드립니다", "#8A5D12"]
+                      : r.status === "requested" ? [isVisitCall(r) ? "관제센터에서 확인 전화를 드립니다" : r.voice && !r.summary?.text ? "선생님이 듣고 정리하고 있습니다" : "선생님이 일정을 보고 정해 드립니다", "#8A5D12"]
                       : r.status === "confirmed" ? [when ? `${when}에 해 드립니다` : "선생님이 하기로 했습니다", "#1E7A5A"]
                       : r.status === "cancelRequested" ? ["취소를 관제에서 확인하고 있습니다", "#8A5D12"]
                       : r.status === "needsAdmin" ? ["관제에서 확인하고 있습니다", "#8A5D12"]
@@ -2058,9 +2113,37 @@ function ElderHome() {
                     const rule = cancelRule(r);
                     const canCancel = !isVisitCall(r) && !isStoreOrder(r) && !CLOSED.includes(r.status) && ["free", "ops"].includes(rule.mode);
                     const asking = elderConfirm?.id === r.id && elderConfirm.kind === "cancel";
+                    const vkey = `rq-${r.id}`;
                     return (
                       <div key={r.id} style={SUB_CARD}>
-                        <div className="text-[19px] font-bold leading-[1.35] text-navy">{r.type}</div>
+                        <div className="text-[19px] font-bold leading-[1.35] text-navy">{r.via === "응급 대응" ? "응급 상황 대응 — 관제와 통화" : r.type}</div>
+                        {/* 말로 남기신 부탁 — 선생님이 듣고 적은 한 줄을 보여 드린다 (2026-10-14 현장 요청 1번).
+                            받아쓰기(STT)가 아니라 담당 선생님이 정리한 글이다. 정리 전에는 그렇다고 말한다. */}
+                        {r.voice && (
+                          <div className="mt-1.5 rounded-2xl px-3.5 py-3" style={{ background: "rgba(10,31,60,.05)" }}>
+                            <p className="text-[19px] leading-[1.5] text-ink">
+                              {r.summary?.text ? `“${r.summary.text}”` : "선생님이 듣고 글로 정리해 드립니다."}
+                            </p>
+                            {r.summary?.text && (
+                              <p className="mt-0.5 text-[16px] text-muted">{r.summary.by ? `${r.summary.by} 선생님이 정리했습니다` : "선생님이 정리했습니다"}</p>
+                            )}
+                            {r.voice.clip && (
+                              <button
+                                onClick={() => playClip(vkey, { clip: r.voice.clip })}
+                                aria-pressed={player.playing === vkey}
+                                className="btn-press mt-2 flex min-h-[48px] w-full items-center gap-2 rounded-xl px-1 text-left text-[17px] font-bold text-green"
+                              >
+                                <Icon name={player.playing === vkey ? "stop" : "speaker"} size={20} strokeWidth={2} />
+                                {player.playing === vkey ? "멈추기" : `내 목소리 다시 듣기 · ${clock(r.voice.clip.secs || 0)}`}
+                              </button>
+                            )}
+                            {player.failed?.key === vkey && (
+                              <p role="alert" className="mt-1 text-[16px] font-bold text-[#8A5D12]">
+                                {playErrorText(player.failed.code)}
+                              </p>
+                            )}
+                          </div>
+                        )}
                         <div className="mt-1 text-[18px] font-bold" style={{ color: line[1] }}>{line[0]}</div>
                         {canCancel &&
                           (asking ? (
@@ -2420,10 +2503,12 @@ function ElderHome() {
                 onToggle={(id) => setFamOpen((cur) => (cur === id ? null : id))}
                 threadFor={threadFor}
                 onPlay={playFamily}
-                onSend={(sec, target) => {
+                server={serverVoice}
+                player={player}
+                onSend={(sec, target, clip) => {
                   dispatch({
                     type: "addVoice",
-                    payload: { from: `${ELDER.name} 님`, to: target.name, secs: sec, context: "안부" },
+                    payload: { from: `${ELDER.name} 님`, to: target.name, secs: sec, context: "안부", clip },
                   });
                   dispatch({
                     type: "pushEvent",
@@ -2436,6 +2521,18 @@ function ElderHome() {
                 }}
               />
             </ElderCard>
+
+            {/* order 6 · 자녀 초대하기 (2026-10-14 현장 '연동 확인' 4번) — 어르신이 직접 가입하셨으면 자녀에게
+                링크를 보내고, 자녀는 그 링크로 보호자 가입을 한다 (가입 코드 없이 · 관제 승인 뒤 사용).
+                가입 코드로 회원 가입한 아이디에서만 보인다 — 데모 · 테스트 계정은 센터가 아니라 초대할 곳이 없다. */}
+            {authUser?.provider === "member" && (
+              <ElderCard show={tab === "family"} order={6} style={LIGHT_CARD}>
+                <CardHead title="자녀 초대하기" icon="users" />
+                <div className="mt-2">
+                  <InviteLink variant="elder" fromName={name} />
+                </div>
+              </ElderCard>
+            )}
 
             {/* 필요한 물건 · 토요일 배송 카드는 삭제 (2026-08-12 어르신화면 시트 가족 2번).
                 물건은 새로 만든 스토어 탭에서 본다 — 가족 탭에 상거래를 섞지 않는다. */}
@@ -2535,11 +2632,18 @@ function ElderHome() {
               setAskSent(null);
             }}
             hospitals={(state.myHospitals || []).map((h) => h.name).filter(Boolean)}
-            onAsk={({ when, hospital }) => {
+            onCallOps={() => {
+              // 응급 대응 — 요청서 대신 '관제와 통화하기' 하나 (2026-10-14 현장 요청 7번). 도와줘요와 같은 길로 관제가 먼저 전화한다
+              const already = !!visitOpen;
+              askVisit("응급 대응");
+              setAskSent({ name: askSel.name, mode: "callOps", already });
+            }}
+            onAsk={({ ymd, hm, hospital }) => {
               const amount = askSel.amount;
-              setAskSent({ name: askSel.name, mode: askPlan.mode, amount });
+              // 달력에서 고른 날짜 · 시간 (2026-10-14 현장 요청 6번) — 담당 컨시어지 승인 화면에 그대로 기본값이 된다
+              const whenText = ymd && hm ? spokenDateTime(ymd, hm) : null;
+              setAskSent({ name: askSel.name, mode: askPlan.mode, amount, when: whenText });
               const now0 = Date.now();
-              const preferredDate = when === "오늘" ? kstYmd(now0) : when === "내일" ? kstYmd(now0 + 86400000) : null;
               // 서비스 이름을 그대로 남긴다 — 전에는 '부탁' · '부탁 · 승인 필요'로 들어가 관제에서 '메뉴 외 요청'이 됐다 (2026-10-02 QA).
               // 담당 컨시어지가 자기 일정을 보고 승인한다 (2026-10-05). 한도를 넘는 것은 보호자가 먼저 결제한다.
               dispatch({
@@ -2548,19 +2652,19 @@ function ElderHome() {
                   id: `rq-${now0}`,
                   dir: "fromElder",
                   type: askSel.name,
-                  detail: [askSel.scope, `희망: ${when}`, hospital ? `병원: ${hospital}` : null].filter(Boolean).join(" · "),
+                  detail: [askSel.scope, whenText ? `희망: ${whenText}` : "일정은 선생님이 연락드려 정함", hospital ? `병원: ${hospital}` : null].filter(Boolean).join(" · "),
                   amount,
-                  preferredDate,
-                  preferredWhen: when,
+                  preferredDate: ymd || null,
+                  preferredTime: hm || null,
+                  preferredWhen: whenText || "선생님과 통화해서 정하기",
                   hospital: hospital || null,
                   payBy: askPlan.approval || !amount ? null : "elder",
-                  // 응급 대응은 긴급으로 (2026-10-05 — 컨시어지 승인 큐에 '긴급'으로 뜬다)
-                  urgency: askSel.no === 12 ? "urgent" : "normal",
+                  urgency: "normal",
                   assignee: assigneeNow() || "",
                   photos: [],
                   status: askPlan.approval ? "awaitingPayment" : "requested",
                   history: [
-                    { at: now0, status: "requested", note: `어르신 해주세요 · 희망 ${when}${hospital ? ` · ${hospital}` : ""}` },
+                    { at: now0, status: "requested", note: `어르신 해주세요 · 희망 ${whenText || "선생님과 정함"}${hospital ? ` · ${hospital}` : ""}` },
                     ...(askPlan.approval ? [{ at: now0, status: "awaitingPayment", note: `보호자 결제 대기 · ${fmtWon(amount)} (오늘 한도 초과)` }] : []),
                   ],
                   proof: null,
@@ -2642,36 +2746,23 @@ function ElderHome() {
   );
 }
 
-// 어르신 간단등록 — REQ-02 권한표 "간단등록". 종류·날짜·시간을 큰 버튼으로만 고른다.
+// 어르신 간단등록 — REQ-02 권한표 "간단등록". 종류는 큰 버튼, 날짜 · 시간은 달력에서 고른다
+// (2026-10-14 현장 요청 8번 — 오늘 · 내일 · 모레 / 아침 9시 · 낮 12시 · 오후 3시 · 저녁 6시 버튼만 있어서
+// 다음 주 일정을 넣을 수 없었다). 자유 입력은 없다 (저인지부하).
 const ELDER_EVENT_KINDS = [
   { kind: "family", label: "가족이 와요" },
   { kind: "hospital", label: "병원 갈 일" },
   { kind: "request", label: "부탁할 일" },
 ];
-const ELDER_DAYS = [
-  { add: 0, label: "오늘" },
-  { add: 1, label: "내일" },
-  { add: 2, label: "모레" },
-];
-const ELDER_TIMES = [
-  { h: 9, label: "아침 9시" },
-  { h: 12, label: "낮 12시" },
-  { h: 15, label: "오후 3시" },
-  { h: 18, label: "저녁 6시" },
-];
 
 function ElderEventSheet({ onClose, onCreate }) {
   const [kind, setKind] = useState(null);
-  const [day, setDay] = useState(null);
-  const [time, setTime] = useState(null);
+  const [when, setWhen] = useState({ ymd: null, hm: null });
 
-  const ready = kind && day !== null && time !== null;
+  const ready = !!kind && !!when.ymd && !!when.hm;
 
   const save = () => {
     if (!ready) return;
-    const d = new Date();
-    d.setDate(d.getDate() + day.add);
-    d.setHours(time.h, 0, 0, 0);
     // 병원 · 부탁할 일은 K-CARE 가 움직여야 하는 일이라 관제 승인을 거친다 (보호자 일정등록과 같은 규칙).
     // 가족이 오는 일정만 바로 올라간다.
     const needsOps = kind.kind !== "family";
@@ -2679,35 +2770,21 @@ function ElderEventSheet({ onClose, onCreate }) {
       id: `ev-${Date.now()}`,
       kind: kind.kind,
       title: kind.label,
-      at: d.getTime(),
+      at: atOf(when.ymd, when.hm),
       source: "어르신 등록",
       note: "",
       ...(needsOps ? { approval: "pending", by: "elder", escort: kind.kind === "hospital" } : {}),
     });
   };
 
-  const Pick = ({ options, value, onPick, valueKey }) => (
-    <div className="mt-2 grid grid-cols-3 gap-2">
-      {options.map((o) => {
-        const on = value === o;
-        return (
-          <button
-            key={o[valueKey]}
-            onClick={() => onPick(o)}
-            className={`btn-press rounded-2xl border-2 px-2 py-4 text-[20px] font-bold leading-[1.3] ${
-              on ? "border-navy bg-navy text-white" : "border-navy/15 text-ink"
-            }`}
-          >
-            {o.label}
-          </button>
-        );
-      })}
-    </div>
-  );
-
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center bg-[rgba(8,23,45,.6)]">
-      <div className="max-h-[92vh] w-full max-w-[430px] overflow-y-auto rounded-t-[28px] bg-elder p-6 pb-8 break-keep">
+      <div
+        className="max-h-[92vh] w-full max-w-[430px] overflow-y-auto rounded-t-[28px] bg-elder p-6 pb-8 break-keep"
+        role="dialog"
+        aria-modal="true"
+        aria-label="일정 남기기"
+      >
         <div className="mx-auto mb-4 h-[4px] w-[38px] rounded-full bg-navy/15" />
         <div className="text-[26px] font-black text-navy">일정 남기기</div>
         <p className="mt-1 text-[19px] leading-[1.5] text-muted">
@@ -2715,27 +2792,27 @@ function ElderEventSheet({ onClose, onCreate }) {
         </p>
 
         <div className="mt-5 text-[19px] font-bold text-navy">무슨 일인가요?</div>
-        <Pick options={ELDER_EVENT_KINDS} value={kind} onPick={setKind} valueKey="kind" />
-
-        <div className="mt-5 text-[19px] font-bold text-navy">언제인가요?</div>
-        <Pick options={ELDER_DAYS} value={day} onPick={setDay} valueKey="label" />
-
-        <div className="mt-5 text-[19px] font-bold text-navy">몇 시쯤인가요?</div>
-        <div className="mt-2 grid grid-cols-2 gap-2">
-          {ELDER_TIMES.map((t) => {
-            const on = time === t;
+        <div className="mt-2 grid grid-cols-3 gap-2" role="group" aria-label="무슨 일인가요">
+          {ELDER_EVENT_KINDS.map((o) => {
+            const on = kind === o;
             return (
               <button
-                key={t.h}
-                onClick={() => setTime(t)}
-                className={`btn-press rounded-2xl border-2 px-2 py-4 text-[20px] font-bold ${
+                key={o.kind}
+                type="button"
+                onClick={() => setKind(o)}
+                aria-pressed={on}
+                className={`btn-press rounded-2xl border-2 px-2 py-4 text-[20px] font-bold leading-[1.3] ${
                   on ? "border-navy bg-navy text-white" : "border-navy/15 text-ink"
                 }`}
               >
-                {t.label}
+                {o.label}
               </button>
             );
           })}
+        </div>
+
+        <div className="mt-5">
+          <ElderDateTime ymd={when.ymd} hm={when.hm} onChange={setWhen} title="언제인가요?" />
         </div>
 
         <div className="mt-6 flex gap-2">
@@ -2750,10 +2827,87 @@ function ElderEventSheet({ onClose, onCreate }) {
             disabled={!ready}
             className="btn-elder flex-[2] rounded-2xl bg-navy p-5 text-[21px] font-bold text-white disabled:opacity-40"
           >
-            남기기
+            {ready ? "남기기" : !kind ? "무슨 일인지 골라 주세요" : "날짜 · 시간을 골라 주세요"}
           </button>
         </div>
       </div>
+    </div>
+  );
+}
+
+// 오늘 여쭤볼 것 한 줄 (2026-10-14 현장 요청 3번) — 번호 · 질문(적힌 글 또는 '말로 남기신 질문') · 누가 남겼나,
+// 그 아래 큰 버튼: 듣기 · 다시 말하기(고치기) · 해결했어요 · 지우기. 지우기는 한 번 더 묻는다.
+// 가족 · 선생님이 남긴 질문은 어르신이 지우지 않는다(해결만) — 해결한 뒤에는 지울 수 있다.
+function AskDoctorRow({ q, n, done = false, player, playClip, confirming, onAskRemove, onCancelRemove, onRemove, onRedo, onResolve, onReopen }) {
+  const mine = q.source === "elder";
+  const pkey = `ad-${q.id}`;
+  const on = player.playing === pkey;
+  const err = player.failed?.key === pkey ? player.failed.code : null;
+  const btn = "btn-press flex min-h-[54px] items-center justify-center gap-1.5 rounded-2xl px-2 text-[18px] font-bold";
+  return (
+    <div className="border-t border-navy/[.07] py-[14px] first:border-t-0">
+      <div className="flex gap-3">
+        <span className="w-[22px] shrink-0 font-num text-[19px] font-bold text-gold">{n}</span>
+        <div className="min-w-0 flex-1">
+          <div className={`text-[20px] leading-[1.5] ${done ? "text-muted" : "text-ink"}`}>
+            {q.text || `말로 남기신 질문${q.secs ? ` · ${clock(q.secs)}` : ""}`}
+          </div>
+          <div className="mt-[5px] text-[18px] text-muted">
+            {q.sourceLabel}
+            {q.editedAt ? " · 다시 말씀하심" : ""}
+            {done ? " · 해결했어요" : ""}
+          </div>
+        </div>
+      </div>
+      {err && (
+        <p role="alert" className="mt-2 text-[17px] font-bold leading-[1.45] text-[#8A5D12]">
+          {playErrorText(err)}
+        </p>
+      )}
+      {confirming ? (
+        <div className="mt-2.5 rounded-2xl p-3" style={{ background: "rgba(138,93,18,.08)" }}>
+          <p className="text-[19px] font-bold text-navy">이 질문을 지울까요?</p>
+          <div className="mt-2 grid grid-cols-2 gap-2">
+            <button onClick={onCancelRemove} className={`${btn} text-navy`} style={QUIET_BG}>
+              아니요
+            </button>
+            <button onClick={onRemove} className={`${btn} text-white`} style={{ background: "#0A1F3C" }}>
+              지울게요
+            </button>
+          </div>
+        </div>
+      ) : (
+        <div className="mt-2.5 grid grid-cols-2 gap-2">
+          {q.clip && (
+            <button onClick={() => playClip(pkey, { clip: q.clip })} aria-pressed={on} className={`${btn} text-navy`} style={QUIET_BG}>
+              <Icon name={on ? "stop" : "speaker"} size={21} strokeWidth={2} />
+              {on ? "멈추기" : player.busy === pkey ? "받는 중" : "듣기"}
+            </button>
+          )}
+          {!done && mine && (
+            <button onClick={onRedo} className={`${btn} text-navy`} style={QUIET_BG}>
+              <Icon name="mic" size={21} strokeWidth={2} />
+              다시 말하기
+            </button>
+          )}
+          {!done && (
+            <button onClick={onResolve} className={btn} style={{ background: "rgba(30,122,90,.12)", color: "#1E7A5A" }}>
+              <Icon name="check" size={21} strokeWidth={2.2} />
+              해결했어요
+            </button>
+          )}
+          {done && (
+            <button onClick={onReopen} className={`${btn} text-navy`} style={QUIET_BG}>
+              다시 여쭤보기
+            </button>
+          )}
+          {(mine || done) && (
+            <button onClick={onAskRemove} className={`${btn} text-muted`} style={QUIET_BG}>
+              지우기
+            </button>
+          )}
+        </div>
+      )}
     </div>
   );
 }
@@ -2773,28 +2927,56 @@ function localPart(tz) {
   }
 }
 
-function FamilyThreads({ targets, open, onToggle, threadFor, onPlay, onSend }) {
-  const [rec, setRec] = useState(null); // { id, sec } — 녹음 중인 사람
-  const [tooShort, setTooShort] = useState(null); // 스치듯 눌린 사람 id
-  const timer = useRef(null);
-  useEffect(() => () => clearInterval(timer.current), []);
+// 2026-10-14부터 실제로 녹음한다 — 누르면 마이크가 켜지고, 다시 누르면 서버에 올린 뒤에 보낸다 (lib/voice-client.js).
+function FamilyThreads({ targets, open, onToggle, threadFor, onPlay, onSend, server = false, player }) {
+  const [recId, setRecId] = useState(null); // 녹음 중인 사람 id
+  const [sending, setSending] = useState(null); // 보내는 중인 사람 id
+  const [problem, setProblem] = useState(null); // { id, text, retry? } — 못 보낸 이유
+  const lastOut = useRef(null);
+  const recIdRef = useRef(null);
+  recIdRef.current = recId;
+  // 1분이 차면 그대로 보낸다 (다 말씀하신 것을 버리지 않는다)
+  const recorder = useRecorder({ onMax: (p) => p.then((out) => out && deliver(recIdRef.current, out)) });
 
-  const start = (v) => {
-    setTooShort(null);
-    clearInterval(timer.current);
-    setRec({ id: v.id, sec: 0 });
-    timer.current = setInterval(() => setRec((r) => (r ? { ...r, sec: Math.min(60, r.sec + 1) } : r)), 1000);
+  const deliver = async (id, out) => {
+    const v = targets.find((t) => t.id === id);
+    setRecId(null);
+    if (!v || !out) return;
+    lastOut.current = { id, out };
+    setSending(id);
+    setProblem(null);
+    try {
+      const clip = await saveClip(out, { server });
+      onSend(clip.secs, v, clip);
+    } catch (e) {
+      setProblem({ id, text: sendErrorText(e.code), retry: true });
+    } finally {
+      setSending(null);
+    }
   };
-  const finish = (v) => {
-    clearInterval(timer.current);
-    const sec = rec?.sec || 0;
-    setRec(null);
-    if (sec < 1) {
-      setTooShort(v.id); // 스치듯 눌린 것은 보내지 않는다
+  const start = async (v) => {
+    setProblem(null);
+    if (recId) recorder.cancel();
+    setRecId(v.id);
+    const ok = await recorder.start();
+    if (!ok) setRecId(null);
+  };
+  const finish = async (v) => {
+    const out = await recorder.stop();
+    if (!out) {
+      setRecId(null);
       return;
     }
-    onSend(sec, v);
+    deliver(v.id, out);
   };
+  // 녹음기가 오류로 끝났다(마이크 거부 · 너무 짧음) — 그 사람 칸에 이유를 띄운다
+  useEffect(() => {
+    if (recorder.phase === "error" && recorder.error) {
+      setProblem({ id: recIdRef.current || problem?.id, text: RECORD_ERRORS[recorder.error] || RECORD_ERRORS.failed });
+      setRecId(null);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [recorder.phase, recorder.error]);
 
   return (
     <div className="mt-3 space-y-2.5">
@@ -2802,7 +2984,9 @@ function FamilyThreads({ targets, open, onToggle, threadFor, onPlay, onSend }) {
         const isOpen = open === v.id;
         const thread = threadFor(v);
         const unread = thread.filter((m) => m.dir === "in" && !m.played).length;
-        const on = rec?.id === v.id;
+        const on = recId === v.id && (recorder.phase === "rec" || recorder.phase === "asking");
+        const busy = sending === v.id;
+        const prob = problem?.id === v.id ? problem : null;
         return (
           <div key={v.id} style={{ ...SUB_CARD, padding: "14px 15px" }}>
             <button
@@ -2856,14 +3040,16 @@ function FamilyThreads({ targets, open, onToggle, threadFor, onPlay, onSend }) {
                               {spokenTime(m.at)} · {m.sec}초
                             </div>
                           </div>
-                          {!mine && (
+                          {/* 듣기 — 받은 것은 왼쪽, 보낸 것은 오른쪽 말풍선 옆. 듣는 중에 다시 누르면 멈춘다 */}
+                          {(!mine || m.clip) && (
                             <button
                               onClick={() => onPlay(m)}
-                              aria-label={m.played ? "다시 듣기" : "듣기"}
-                              className="btn-press flex h-[44px] w-[44px] shrink-0 items-center justify-center rounded-full"
-                              style={m.played ? { background: "rgba(10,31,60,.06)", color: "#5C5A54" } : { background: "rgba(176,141,87,.2)", color: "#8A5D12" }}
+                              aria-pressed={player?.playing === `fam-${m.id}`}
+                              aria-label={player?.playing === `fam-${m.id}` ? "멈추기" : m.played || mine ? "다시 듣기" : "듣기"}
+                              className={`btn-press flex h-[44px] w-[44px] shrink-0 items-center justify-center rounded-full ${mine ? "order-first" : ""}`}
+                              style={m.played || mine ? { background: "rgba(10,31,60,.06)", color: "#5C5A54" } : { background: "rgba(176,141,87,.2)", color: "#8A5D12" }}
                             >
-                              <Icon name="speaker" size={22} strokeWidth={2} />
+                              <Icon name={player?.playing === `fam-${m.id}` ? "stop" : "speaker"} size={22} strokeWidth={2} />
                             </button>
                           )}
                         </div>
@@ -2874,8 +3060,9 @@ function FamilyThreads({ targets, open, onToggle, threadFor, onPlay, onSend }) {
 
                 <button
                   onClick={() => (on ? finish(v) : start(v))}
+                  disabled={busy || (on && recorder.phase !== "rec")}
                   aria-label={on ? `${v.name}에게 보내기` : `${v.name}에게 목소리 남기기`}
-                  className="btn-press mt-3 flex w-full items-center justify-center gap-2 rounded-[16px] py-[17px] text-[19px] font-bold text-white"
+                  className="btn-press mt-3 flex w-full items-center justify-center gap-2 rounded-[16px] py-[17px] text-[19px] font-bold text-white disabled:opacity-60"
                   style={
                     on
                       ? { background: "rgba(176,141,87,.95)", boxShadow: "inset 0 1px 0 rgba(255,255,255,.45)" }
@@ -2883,23 +3070,56 @@ function FamilyThreads({ targets, open, onToggle, threadFor, onPlay, onSend }) {
                   }
                 >
                   <Icon name="mic" size={24} strokeWidth={2} />
-                  {on ? `말씀하세요 ${rec.sec}초 · 다시 누르면 보냅니다` : `${v.name}에게 목소리 남기기`}
+                  {busy
+                    ? "보내는 중입니다"
+                    : on
+                      ? recorder.phase === "asking"
+                        ? "마이크를 켜고 있습니다"
+                        : `말씀하세요 ${clock(recorder.secs)} · 다시 누르면 보냅니다`
+                      : `${v.name}에게 목소리 남기기`}
                 </button>
                 {/* 녹음 중 파형 — 소리가 들어가고 있다는 것을 눈으로 확인 */}
-                {on && (
-                  <span className="mt-2.5 flex items-end justify-center gap-[3px]" aria-hidden>
-                    {[10, 20, 14, 26, 16, 30, 12, 22, 18, 28, 13, 24].map((h, i) => (
-                      <span
-                        key={i}
-                        className="w-[5px] rounded-full bg-gold/80"
-                        style={{ height: h, animation: `sosPulse 1s ease-in-out ${i * 0.08}s infinite` }}
-                      />
-                    ))}
-                  </span>
+                {on && recorder.phase === "rec" && (
+                  <>
+                    <span className="mt-2.5 flex items-end justify-center gap-[3px]" aria-hidden>
+                      {[10, 20, 14, 26, 16, 30, 12, 22, 18, 28, 13, 24].map((h, i) => (
+                        <span
+                          key={i}
+                          className="w-[5px] rounded-full bg-gold/80"
+                          style={{ height: h, animation: `sosPulse 1s ease-in-out ${i * 0.08}s infinite` }}
+                        />
+                      ))}
+                    </span>
+                    <button
+                      onClick={() => {
+                        recorder.cancel();
+                        setRecId(null);
+                      }}
+                      className="btn-press mt-1 w-full rounded-[14px] py-3 text-[18px] font-bold text-muted underline underline-offset-4"
+                    >
+                      그만두기
+                    </button>
+                  </>
                 )}
-                {tooShort === v.id && (
-                  <p className="mt-2.5 text-[18px] font-bold leading-[1.5] text-amber">
-                    너무 짧습니다. 조금 더 길게 말씀해 주세요.
+                {prob && (
+                  <div className="mt-2.5">
+                    <p role="alert" className="text-[18px] font-bold leading-[1.5] text-amber">
+                      {prob.text}
+                    </p>
+                    {prob.retry && lastOut.current?.id === v.id && (
+                      <button
+                        onClick={() => deliver(v.id, lastOut.current.out)}
+                        className="btn-press mt-2 w-full rounded-[14px] py-3.5 text-[19px] font-bold text-white"
+                        style={{ background: "#1E7A5A" }}
+                      >
+                        다시 보내기
+                      </button>
+                    )}
+                  </div>
+                )}
+                {player?.failed && thread.some((m) => `fam-${m.id}` === player.failed.key) && (
+                  <p role="alert" className="mt-2 text-[17px] font-bold leading-[1.5] text-[#8A5D12]">
+                    {playErrorText(player.failed.code)}
                   </p>
                 )}
               </div>
@@ -2969,32 +3189,62 @@ function ElderWelfareSheet({ matches, counts, asked, onAsk, onClose }) {
 // 예전 AskItem 아코디언(접힌 줄에 가격 유지)을 대체한다 — 타일 그리드에서는 가격이
 // 타일에 못 실리므로, 시트 첫 줄에 가격을 크게 둔다 (무엇이 얼마인지가 첫 정보).
 // 보내면 시트 안에서 바로 "보냈습니다"로 바뀐다 — 화면 이동 없이 결과를 확인한다.
-// 한국 날짜 'YYYY-MM-DD' — 희망일을 숫자(시각값)가 아니라 날짜 글자로 남긴다 (관제 예정일이 '1791590400000'으로 보였다)
-const kstYmd = (t) => new Date(t + 9 * 3600000).toISOString().slice(0, 10);
-const WHEN_OPTS = ["오늘", "내일", "이번 주 안", "선생님과 통화해서 정하기"];
+// 2026-10-14 현장 요청 6번: '언제가 좋으세요?'(오늘 · 내일 · 이번 주 안 · 통화해서 정하기)를 달력에서 날짜와
+// 시간을 골라 예약하는 것으로 바꿨다 (components/ElderDateTime.jsx). 고른 날짜 · 시간은 담당 컨시어지 승인 화면의 기본값이 된다.
+// 응급 상황 대응(no12)은 예약서가 아니다 — 1시간당 요금과 설명, '관제와 통화하기' 하나만 둔다 (같은 요청 7번).
 const isHospitalItem = (item) => /병원|진료|검진/.test(`${item?.name || ""} ${item?.scope || ""}`);
 
-function ElderAskSheet({ item, plan, sent, approver, onAsk, onClose, hospitals = [] }) {
+function ElderAskSheet({ item, plan, sent, approver, onAsk, onCallOps, onClose, hospitals = [] }) {
   const off = !item.active;
-  // 언제 · 어느 병원 — 어르신에게는 날짜 입력 대신 큰 버튼 몇 개 (2026-10-02 QA "날짜 · 시간 · 병원 선택 단계 없음")
-  const [when, setWhen] = useState(WHEN_OPTS[3]);
+  const emergency = item.no === 12;
+  // 날짜 · 시간 — 사람이 가는 서비스만 고른다 (공사맨 견적 · 가전 렌탈은 알아본 뒤 선생님이 연락)
+  const askWhen = item.askWhen !== false;
+  const [when, setWhen] = useState({ ymd: null, hm: null });
   const askHospital = isHospitalItem(item);
   const hospitalOpts = [...hospitals.slice(0, 3), "선생님과 통화해서 정하기"];
   const [hospital, setHospital] = useState(hospitalOpts[hospitalOpts.length - 1]);
+  const ready = !askWhen || (!!when.ymd && !!when.hm);
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center bg-[rgba(8,23,45,.6)]" onClick={onClose}>
       <div
         className="max-h-[92vh] w-full max-w-[430px] overflow-y-auto rounded-t-[28px] bg-elder p-6 pb-8 break-keep"
         onClick={(e) => e.stopPropagation()}
+        role="dialog"
+        aria-modal="true"
+        aria-label={item.name}
       >
-        {sent ? (
+        {sent?.mode === "callOps" ? (
+          <>
+            <span
+              aria-hidden
+              className="mx-auto flex h-[84px] w-[84px] items-center justify-center rounded-full"
+              style={{ background: "rgba(192,57,43,.1)", color: "#C0392B" }}
+            >
+              <Icon name="phone" size={38} strokeWidth={2} />
+            </span>
+            <p className="mt-4 text-center text-[26px] font-black leading-[1.35] text-navy">
+              관제센터에서
+              <br />
+              고객님에게 연락이 갑니다.
+            </p>
+            <p className="mt-2 text-center text-[18px] leading-[1.5] text-muted">
+              {sent.already ? "이미 관제에 알려 두었습니다. " : ""}전화를 받으실 수 있게 곁에 두세요.
+            </p>
+            <ElderBtn onClick={onClose} className="mt-5">
+              확인
+            </ElderBtn>
+          </>
+        ) : sent ? (
           <>
             <CardHead title="보냈습니다" right={sent.mode === "approval" ? "결제 기다리는 중" : "선생님 확인 중"} />
             <p className="mt-2 text-[22px] font-bold leading-[1.5] text-navy">{sent.name}</p>
+            {sent.when && <p className="mt-1 text-[19px] font-bold leading-[1.5] text-[#7A5C28]">희망 {sent.when}</p>}
             <p className="mt-3 rounded-2xl bg-green/10 p-4 text-[19px] font-bold leading-[1.5] text-green">
               {sent.mode === "approval"
                 ? `${approver} 님에게 결제를 부탁드렸습니다. 결제되면 선생님이 일정을 정해 드립니다.`
-                : "선생님께 전달했습니다. 선생님이 일정을 보고 정해 드립니다."}
+                : sent.when
+                  ? "선생님께 전달했습니다. 선생님이 일정을 보고 확정해 드립니다."
+                  : "선생님께 전달했습니다. 알아보고 연락드립니다."}
             </p>
             <ElderBtn onClick={onClose} variant="done" className="mt-4">
               닫기
@@ -3003,9 +3253,20 @@ function ElderAskSheet({ item, plan, sent, approver, onAsk, onClose, hospitals =
         ) : (
           <>
             <p className="text-[22px] font-black leading-[1.35] text-navy">{item.name}</p>
-            <p className="mt-1.5 text-[19px] font-bold leading-[1.5] text-[#7A5C28]">
-              {off ? "곧 시작합니다" : item.priceLabel}
-            </p>
+            {emergency && item.rates ? (
+              <div className="mt-2 rounded-2xl px-4 py-3" style={{ background: "rgba(176,141,87,.12)" }}>
+                {/* 한 줄에 한 요금 — 두 요금을 한 줄에 두면 좁은 폰에서 '야간 / 50,000원'으로 꺾였다 */}
+                {item.rates.map((r) => (
+                  <div key={r.when} className="flex items-baseline justify-between gap-3 py-[3px]">
+                    <span className="text-[18px] text-[#7A5C28]">{r.when}</span>
+                    <span className="shrink-0 font-num text-[19px] font-bold text-[#7A5C28]">{fmtWon(r.amount)}</span>
+                  </div>
+                ))}
+                <p className="mt-1.5 border-t border-[#7A5C28]/20 pt-1.5 text-[17px] font-bold text-[#7A5C28]">모두 1시간당 요금입니다</p>
+              </div>
+            ) : (
+              <p className="mt-1.5 text-[19px] font-bold leading-[1.5] text-[#7A5C28]">{off ? "곧 시작합니다" : item.priceLabel}</p>
+            )}
             <p className="mt-2.5 text-[19px] leading-[1.6] text-ink">{item.scope}</p>
             {item.point && <p className="mt-1.5 text-[18px] leading-[1.55] text-muted">{item.point}</p>}
             {item.note && <p className="mt-1.5 text-[18px] leading-[1.55] text-muted">{item.note}</p>}
@@ -3019,26 +3280,30 @@ function ElderAskSheet({ item, plan, sent, approver, onAsk, onClose, hospitals =
                   알겠습니다
                 </ElderBtn>
               </>
+            ) : emergency ? (
+              <>
+                {/* 응급 — 날짜 · 병원을 고르지 않는다. 관제가 먼저 전화해 상황을 듣고 응급동행자를 보낸다 */}
+                <ElderBtn onClick={onCallOps} className="mt-5">
+                  <span className="flex items-center justify-center gap-2.5">
+                    <Icon name="phone" size={26} strokeWidth={2} />
+                    관제와 통화하기
+                  </span>
+                </ElderBtn>
+                <p className="mt-2 text-center text-[17px] leading-[1.5] text-muted">누르면 관제센터에서 전화를 드립니다.</p>
+                <ElderBtn onClick={onClose} variant="done" className="mt-3">
+                  닫기
+                </ElderBtn>
+              </>
             ) : (
               <>
-                <p className="mt-4 text-[19px] font-bold text-navy">언제가 좋으세요?</p>
-                <div className="mt-2 grid grid-cols-2 gap-2" role="group" aria-label="언제가 좋으세요">
-                  {WHEN_OPTS.map((o) => (
-                    <button
-                      key={o}
-                      type="button"
-                      aria-pressed={when === o}
-                      onClick={() => setWhen(o)}
-                      className={`btn-press rounded-2xl border-2 px-3 py-3.5 text-[18px] font-bold leading-[1.3] ${o.length > 6 ? "col-span-2" : ""}`}
-                      style={when === o ? { borderColor: "#1E7A5A", background: "rgba(30,122,90,.1)", color: "#1E7A5A" } : { borderColor: "rgba(10,31,60,.15)", color: "#0A1F3C" }}
-                    >
-                      {o}
-                    </button>
-                  ))}
-                </div>
+                {askWhen && (
+                  <div className="mt-5">
+                    <ElderDateTime ymd={when.ymd} hm={when.hm} onChange={setWhen} title="언제가 좋으세요?" />
+                  </div>
+                )}
                 {askHospital && (
                   <>
-                    <p className="mt-4 text-[19px] font-bold text-navy">어느 병원이세요?</p>
+                    <p className="mt-5 text-[19px] font-bold text-navy">어느 병원이세요?</p>
                     <div className="mt-2 grid gap-2" role="group" aria-label="어느 병원이세요">
                       {hospitalOpts.map((o) => (
                         <button
@@ -3062,11 +3327,12 @@ function ElderAskSheet({ item, plan, sent, approver, onAsk, onClose, hospitals =
                   {plan.notice}
                 </p>
                 <ElderBtn
-                  onClick={() => onAsk({ when, hospital: askHospital && hospital !== hospitalOpts[hospitalOpts.length - 1] ? hospital : null })}
+                  onClick={() => ready && onAsk({ ymd: askWhen ? when.ymd : null, hm: askWhen ? when.hm : null, hospital: askHospital && hospital !== hospitalOpts[hospitalOpts.length - 1] ? hospital : null })}
+                  disabled={!ready}
                   variant={plan.approval ? "primary" : "success"}
-                  className="mt-4"
+                  className="mt-4 disabled:opacity-40"
                 >
-                  <span className="block leading-[1.35]">{plan.cta}</span>
+                  <span className="block leading-[1.35]">{ready ? plan.cta : "날짜와 시간을 골라 주세요"}</span>
                   <span className="block text-[19px] leading-[1.35] text-white/85">
                     {item.amount === 0 ? "비용 없음" : item.amount == null ? "요금 확인 후 안내" : fmtWon(item.amount)}
                   </span>

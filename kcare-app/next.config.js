@@ -50,7 +50,8 @@ const CSP = [
   `img-src 'self' data: blob: https://*.tile.openstreetmap.org https://*.basemaps.cartocdn.com ${TOSS}`,
   // 히어로 루프 영상 — 자기 출처만. default-src로도 이미 같은 결과지만,
   // 나중에 default-src가 넓어져도 영상 출처는 따라 넓어지지 않게 못 박아 둔다.
-  "media-src 'self'",
+  // blob: — 녹음한 목소리를 이 기기에서 재생한다 (서버에서 받은 것을 이 기기 메모리 주소로 · lib/voice-client.js)
+  "media-src 'self' blob:",
   `connect-src 'self' ${TOSS}`,
   `frame-src ${TOSS}`,
   "object-src 'none'",
@@ -87,7 +88,8 @@ const nextConfig = {
           { key: "X-Content-Type-Options", value: "nosniff" },
           { key: "X-Frame-Options", value: "DENY" },
           { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
-          { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
+          // 마이크는 우리 화면에서만 — 목소리 녹음 (2026-10-14). 전에는 막혀 있어 어떤 화면도 마이크를 잡을 수 없었다
+          { key: "Permissions-Policy", value: "camera=(), microphone=(self), geolocation=()" },
           // 데모 빌드 — 유사 개인정보(목 데이터)가 검색엔진에 색인되지 않게
           { key: "X-Robots-Tag", value: "noindex, nofollow" },
         ],

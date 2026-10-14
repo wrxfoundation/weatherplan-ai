@@ -163,3 +163,12 @@ export const SEED_ORDERS = [
     note: "",
   },
 ];
+
+// 오늘 여쭤볼 것 — 데모 씨앗 (출처 3종 elder|family|concierge 가 요점 · 06 §3.3).
+// 테스트 가구 · 관제 센터 공간은 빈 목록으로 시작한다 (lib/state.js freshState).
+// 2026-10-14부터 어르신이 말로 남기고(실제 녹음) · 다시 말하고 · 해결 · 지울 수 있다 — 씨앗도 같은 모양이다.
+export const SEED_ASK_DOCTOR = [
+  { id: "ad-seed-1", text: "어지러운 게 약 때문인지 여쭤보기", source: "elder", sourceLabel: "어르신이 말씀하신 것", status: "open" },
+  { id: "ad-seed-2", text: "무릎 통증 약을 같이 먹어도 되는지", source: "family", sourceLabel: "아들 민수가 남긴 것", status: "open" },
+  { id: "ad-seed-3", text: "다음 진료는 언제 와야 하는지", source: "concierge", sourceLabel: "컨시어지가 확인할 것", status: "open" },
+];

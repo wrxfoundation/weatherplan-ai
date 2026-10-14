@@ -1,4 +1,5 @@
 import Head from "next/head";
+import InviteLink from "../../components/InviteLink";
 import Link from "next/link";
 import { useState } from "react";
 import FamilyLayout from "../../components/FamilyLayout";
@@ -188,7 +189,12 @@ export default function MyPage() {
               </div>
             ))}
           </div>
-          {isPrimary ? (
+          {auth.user?.provider === "member" ? (
+            // 관제 센터 회원 — 실제 초대 링크 (2026-10-14 · components/InviteLink.jsx)
+            <div className="mt-3.5">
+              <InviteLink variant="guardian" fromName={auth.user?.name || ""} />
+            </div>
+          ) : isPrimary ? (
             <>
               <button
                 onClick={() => {

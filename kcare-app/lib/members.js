@@ -60,6 +60,13 @@ export async function pendingCount(centerId) {
   return count || 0;
 }
 
+// 초대 링크 하나로 가입한 사람 수 — 가입 신청에 남긴 표 번호(profile.invite)로 센다 (lib/invite.js · 거절된 것도 센다)
+export async function inviteUses(jti) {
+  const { count, error, status } = await db().from("accounts").select("id", { count: "exact", head: true }).eq("profile->>invite", jti);
+  if (error) throw fail(error, status);
+  return count || 0;
+}
+
 // 회원 계정 id 는 아이디 그대로다 (테스트 · 구글 계정 id 와는 모양이 달라 겹치지 않는다 — lib/centers.js checkLoginId)
 export async function loginIdTaken(loginId) {
   const { data, error, status } = await db().from("accounts").select("id").eq("id", loginId).limit(1);

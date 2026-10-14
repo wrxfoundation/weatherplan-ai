@@ -176,7 +176,21 @@ export function useMailbox(liveVoices = NO_VOICES, liveOut = NO_VOICES, liveClie
         .filter((v) => !have.has(`live-${v.id}`))
         .map((v) => {
           const id = `live-${v.id}`;
-          return { id, client: v.client, at: v.at, minsAgo: Math.max(0, (Date.now() - v.at) / MIN), secs: v.secs, status: saved[id]?.status || "unheard", memo: saved[id]?.memo ?? null, live: true };
+          // clip — 실제 녹음 (2026-10-14) · topic — 말로 부탁 · 여쭤볼 것처럼 무엇으로 온 목소리인지 · reqId — 말로 부탁의 해주세요 요청
+          return {
+            id,
+            voiceId: v.id,
+            client: v.client,
+            at: v.at,
+            minsAgo: Math.max(0, (Date.now() - v.at) / MIN),
+            secs: v.secs,
+            status: saved[id]?.status || "unheard",
+            memo: saved[id]?.memo ?? null,
+            live: true,
+            clip: v.clip || null,
+            topic: v.context && v.context !== "마음사서함" ? v.title || v.context : null,
+            reqId: v.reqId || null,
+          };
         });
       return add.length ? [...add, ...prev] : prev;
     });
@@ -281,7 +295,7 @@ export function useMailbox(liveVoices = NO_VOICES, liveOut = NO_VOICES, liveClie
         const fail = !peopleNow() && !!CLIENT_SEED[name]?.sendFail && prevTries === 0;
         setSent((s) => ({ ...s, [name]: { ...s[name], status: fail ? "failed" : "sent" } }));
         if (!fail) {
-          setExtra((e) => ({ ...e, [name]: [...(e[name] || []), { id: `th-sent-${at}`, dir: "out", at, secs: payload.secs, text: payload.title, mine: true }] }));
+          setExtra((e) => ({ ...e, [name]: [...(e[name] || []), { id: `th-sent-${at}`, dir: "out", at, secs: payload.secs, text: payload.title, mine: true, clip: payload.clip || null }] }));
           // 받은 메시지에 답한 것 — 그 고객의 미처리 건은 '답장 완료'
           setInbox((xs) => xs.map((m) => (m.client === name && OPEN_INBOX.has(m.status) ? { ...m, status: "replied" } : m)));
         }
@@ -302,8 +316,8 @@ export function useMailbox(liveVoices = NO_VOICES, liveOut = NO_VOICES, liveClie
       });
       const liveIn = inbox
         .filter((m) => m.live && m.client === name)
-        .map((m) => ({ id: `th-${m.id}`, dir: "in", at: m.at, secs: m.secs, text: threadMemo[m.id] ?? m.memo ?? null, inboxId: m.id, heard: m.status !== "unheard" || !!heardExtra[m.id], live: true }));
-      const out = liveOut.filter((v) => v.client === name).map((v) => ({ id: `th-live-${v.id}`, dir: "out", at: v.at, secs: v.secs, text: v.title || null, mine: true, live: true }));
+        .map((m) => ({ id: `th-${m.id}`, dir: "in", at: m.at, secs: m.secs, text: threadMemo[m.id] ?? m.memo ?? null, inboxId: m.id, heard: m.status !== "unheard" || !!heardExtra[m.id], live: true, clip: m.clip, topic: m.topic, reqId: m.reqId }));
+      const out = liveOut.filter((v) => v.client === name).map((v) => ({ id: `th-live-${v.id}`, dir: "out", at: v.at, secs: v.secs, text: v.title || null, mine: true, live: true, clip: v.clip || null }));
       // 방금 보낸 것은 화면 기록(extra)과 가구 기록(out)에 둘 다 있다 — 같은 것은 한 번만
       const ex = (extra[name] || []).filter((e) => !out.some((o) => Math.abs(o.at - e.at) < 15000 && o.secs === e.secs));
       return [...base, ...liveIn, ...out, ...ex].sort((a, b) => a.at - b.at);

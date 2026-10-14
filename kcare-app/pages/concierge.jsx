@@ -53,7 +53,7 @@ import { requiredFor } from "../lib/ops-mgmt";
 import { RESULT_TONE, VISIT_GRADES } from "../lib/visit-report";
 import { STORE_CATALOG } from "../lib/store";
 import { SERVICE_MENU, daysUntil, kstYmd } from "../lib/requests";
-import ConciergeRequests from "../components/ConciergeRequests";
+import ConciergeRequests, { NewRequestAlert, newRequestsFor } from "../components/ConciergeRequests";
 import { HelpCallCard, HelpCallPopup } from "../components/HelpCall";
 import { LIVE_TAG } from "../lib/live-household";
 import { elderNameOf, inCenter, meAs, people } from "../lib/people";
@@ -560,7 +560,9 @@ function ConciergePage() {
 
                 {/* 해주세요 — 보호자 · 어르신 부탁은 내 일정을 보고 승인 · 거절, 확정 건 진행 · 완료, 보낸 제안 (2026-10-05).
                     전에는 어르신 부탁만 보였고, 관제 확인 전에 '확인함'을 누를 수 있었다. */}
-                <ConciergeRequests requests={state.requests} payments={state.payments} me={ME} dispatch={dispatch} push={push} />
+                <div id="concierge-requests" className="scroll-mt-4">
+                  <ConciergeRequests requests={state.requests} payments={state.payments} me={ME} dispatch={dispatch} push={push} />
+                </div>
 
 
                 {state.demo.offline && (
@@ -1039,6 +1041,10 @@ function ConciergePage() {
                 mb={mb}
                 onEvent={push}
                 onToOps={(name, memo) => sendOpsMsg(`마음사서함 — ${name} 고객 음성 확인 요청${memo ? ` · 청취 메모: ${memo}` : ""}`)}
+                onMemoSync={(reqId, text) => {
+                  dispatch({ type: "requestSummary", id: reqId, text, by: ME });
+                  push("해주세요", `${ME} 말로 부탁 정리 — ${text || "(지움)"}`, "#8FA9CC");
+                }}
                 onSent={(name, payload) => {
                   // 정상 발송이 확인된 것만 고객 화면으로 간다 — 어르신 마음사서함 말풍선이 된다.
                   // 테스트 가구에는 김순자 님만 실제 고객이다 — 예시 고객에게 보낸 것은 가구 기록에 남기지 않는다 (2026-10-02 코드 점검)
@@ -1052,6 +1058,7 @@ function ConciergePage() {
                       context: payload.category,
                       title: payload.title,
                       shareGuardian: payload.shareGuardian,
+                      clip: payload.clip,
                     },
                   });
                 }}
@@ -2451,8 +2458,9 @@ function ConciergePage() {
             <div className="grid" style={{ gridTemplateColumns: `repeat(${TABS.length}, minmax(0, 1fr))` }}>
               {TABS.map((t) => {
                 const active = tab === t.key;
-                // 마음사서함에 답장 필요가 남아 있으면 숫자를 띄운다 (명세 2절 · 미처리 우선)
-                const badge = t.key === "mailbox" ? mb.counts.needReply : 0;
+                // 마음사서함에 답장 필요가 남아 있으면 숫자를 띄운다 (명세 2절 · 미처리 우선).
+                // 오늘 탭에는 승인할 해주세요 수 (2026-10-14 — 새 부탁이 온 것을 탭에서도 알 수 있게)
+                const badge = t.key === "mailbox" ? mb.counts.needReply : t.key === "today" ? newRequestsFor(state.requests).length : 0;
                 return (
                   <button
                     key={t.key}
@@ -2474,13 +2482,22 @@ function ConciergePage() {
                       )}
                     </span>
                     <span className="whitespace-nowrap">{t.label}</span>
-                    {badge > 0 && <span className="sr-only">답장 필요 {badge}건</span>}
+                    {badge > 0 && <span className="sr-only">{t.key === "today" ? `승인할 해주세요 ${badge}건` : `답장 필요 ${badge}건`}</span>}
                     {active && <span className="mt-0.5 h-[3px] w-5 rounded-full bg-gold" />}
                   </button>
                 );
               })}
             </div>
           </nav>
+
+          {/* 새 해주세요 — 어느 탭에 있든 창으로 알린다 (2026-10-14 현장 '기본 로직' 5번) */}
+          <NewRequestAlert
+            requests={state.requests}
+            onOpen={() => {
+              setTab("today");
+              setTimeout(() => document.getElementById("concierge-requests")?.scrollIntoView({ block: "start", behavior: "smooth" }), 80);
+            }}
+          />
 
           {/* 달력에서 고른 날 — 고객 이름을 누르면 그 건의 디테일 (2026-08-28 전체 요청 3번).
               여기 뜨는 것은 내가 나가는 업무 4종뿐이다. */}

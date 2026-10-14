@@ -17,6 +17,7 @@ import { CONCIERGES, OPS_REQUEST_EXTRAS, OPS_REQUEST_META, REQ_DIR, REPEAT_OPTIO
 import { LIVE_TAG } from "../../lib/live-household";
 import { LIVE_ELDER } from "../../lib/ops-health";
 import { conciergeChoices } from "../../lib/people";
+import { clock, playErrorText, useVoicePlayer } from "../../lib/voice-client";
 
 const META_KEY = "kcare-ops-requests-meta-v1";
 const EXTRA_KEY = "kcare-ops-requests-extra-v1";
@@ -211,7 +212,13 @@ export default function RequestsMgmt() {
     ) },
     { k: "pay", label: "결제", render: (r) => { const p = payState(r, payments); return <Pill tone={p.tone}>{p.label}</Pill>; } },
     { k: "assignee", label: "담당자 배정", render: (r) => <span className="font-medium text-ink">{meta[r.id]?.assignee || r.assignee || <span className="text-muted">미배정</span>}</span> },
-    { k: "approval", label: "승인", render: (r) => <span className="text-[12px]">{approvalText(r)}</span> },
+    { k: "approval", label: "승인", render: (r) => (
+      <span className="text-[12px]">
+        {approvalText(r)}
+        {/* 관제는 새 해주세요를 '확인'만 한다 (2026-10-14) — 확인 전이면 표시 */}
+        {r.real && !isVisitCall(r) && !r.opsAck && ["requested", "awaitingPayment"].includes(r.status) && <span className="ml-1"><Pill tone="warn">관제 확인 전</Pill></span>}
+      </span>
+    ) },
     { k: "date", label: "확정 일정 · 희망", render: (r) => <span className="font-num text-[12px]">{fmtScheduled(r) ? <b className="text-navy">{fmtScheduled(r)}</b> : <span className="text-muted">희망 {fmtPreferred(r)}</span>}{r.hospital ? <span className="block text-[11px] text-muted">{r.hospital}</span> : null}</span> },
     { k: "status", label: "진행상태", render: (r) => <StatusPill status={r.status} /> },
     { k: "cost", label: "실제 비용", align: "right", render: (r) => (meta[r.id]?.cost != null ? fmtWon(meta[r.id].cost) : "—") },
@@ -274,6 +281,25 @@ export default function RequestsMgmt() {
   );
 }
 
+// 말로 남기신 부탁 — 관제도 들을 수 있다. 글은 담당 컨시어지가 듣고 정리한 한 줄 (받아쓰기 아님)
+function VoiceDetail({ r }) {
+  const player = useVoicePlayer();
+  const key = `ops-${r.id}`;
+  const clip = r.voice?.clip;
+  return (
+    <section className="rounded-xl border border-gold/30 bg-[#FBF6EC] p-3">
+      <div className="text-[12px] font-bold text-[#7A5C28]">어르신 목소리 {clip ? clock(clip.secs || 0) : ""}</div>
+      <p className="mt-1 text-[13px] leading-[1.6] text-ink">{r.summary?.text ? `“${r.summary.text}” — ${r.summary.by || "담당 컨시어지"} 정리` : "아직 담당 컨시어지가 정리하지 않았습니다."}</p>
+      {clip ? (
+        <Btn small tone="navy" onClick={() => player.play(key, { clip })}>{player.playing === key ? "멈추기" : player.busy === key ? "받는 중…" : "목소리 듣기"}</Btn>
+      ) : (
+        <p className="text-[11.5px] text-muted">녹음 기능 전에 남은 요청 — 소리가 없습니다.</p>
+      )}
+      {player.failed?.key === key && <p role="alert" className="mt-1 text-[11.5px] font-bold text-amber">{playErrorText(player.failed.code)}</p>}
+    </section>
+  );
+}
+
 function Detail({ r, m, real, payments, dispatch, onClose, onTransition, onPatch }) {
   const OPERATOR = useOperator();
   const paid = paymentOf(payments, r.id);
@@ -309,6 +335,19 @@ function Detail({ r, m, real, payments, dispatch, onClose, onTransition, onPatch
     <Drawer open onClose={onClose} title={`${r.elder} · ${r.type}`} sub={`${r.by} · ${fmtDT(r.receivedAt)} 접수`} width={600}
       footer={<div className="flex flex-wrap items-center justify-between gap-2"><StatusPill status={r.status} /><span className="text-[11px] text-muted">모든 변경은 이력으로 남고 덮어쓰지 않습니다</span></div>}>
       <div className="space-y-5">
+        {real && r.voice && <VoiceDetail r={r} />}
+        {real && !isVisitCall(r) && ["requested", "awaitingPayment"].includes(r.status) && (
+          <section className="rounded-xl border border-navy/[.08] bg-navy/[.03] p-3">
+            {r.opsAck ? (
+              <p className="text-[12.5px] text-ink">관제 확인 · {r.opsAck.by} · {fmtDT(r.opsAck.at)} — 승인은 담당 컨시어지가 합니다.</p>
+            ) : (
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="text-[12.5px] text-ink">새 해주세요 — 승인은 담당 컨시어지가 하고, 관제는 받았다는 것을 확인합니다.</span>
+                <Btn small tone="navy" onClick={() => dispatch?.({ type: "opsAckRequest", id: r.id, by: OPERATOR })}>관제 확인</Btn>
+              </div>
+            )}
+          </section>
+        )}
         <section>
           <KV k="요청 내용" v={r.detail} />
           <KV k="서비스 설명" v={r.menu ? r.menu.scope : "메뉴 외 요청 — 관제가 범위를 정합니다"} />

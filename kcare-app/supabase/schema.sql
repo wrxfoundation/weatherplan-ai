@@ -7,6 +7,7 @@
 -- 쓰는 법: Supabase 대시보드 → SQL Editor → New query → 이 파일 전체를 붙여 넣고 Run.
 -- 여러 번 돌려도 된다 (이미 있는 표 · 칸은 건너뛴다). 2026-10-06 회원 · 관제 센터가 추가됐다 — 예전에 돌렸어도
 -- 이 파일 전체를 한 번 더 Run 하면 새 표 · 칸만 더해진다 (기존 기록은 그대로).
+-- 2026-10-14 목소리 표(voice_clips)가 추가됐다 — 이미 이 파일을 돌린 곳은 supabase/voice-clips.sql 짧은 것만 Run 해도 된다.
 --
 -- 누가 읽고 쓰나: 우리 서버(Vercel API)만, 비밀 키(sb_secret_… 또는 service_role)로.
 -- 브라우저용 키(publishable · anon)로는 아무것도 못 보게 막는다 —
@@ -203,7 +204,24 @@ create or replace view public.center3_signups with (security_invoker = on) as
 create or replace view public.center3_payments with (security_invoker = on) as
   select * from public.payments where household_id = 'HH-C3';
 
+-- ── 목소리 (2026-10-14) ─────────────────────────────────────────────────────
+-- 앱에서 녹음한 짧은 음성(마음사서함 · 가족 안부 · 말로 부탁하기 · 오늘 여쭤볼 것). 소리는 여기에만 있고,
+-- 가구 상태(households.state)에는 이 표의 id 만 남는다. 같은 가구 계정만 들을 수 있다 (pages/api/voice.js).
+-- 30일이 지난 것은 새 녹음이 들어올 때 지운다.
+create table if not exists public.voice_clips (
+  id            text primary key,              -- vc_…
+  household_id  text not null references public.households(id) on delete cascade,
+  account_id    text,                          -- 녹음한 계정
+  mime          text not null,                 -- audio/webm · audio/mp4 …
+  secs          integer,
+  bytes         integer,
+  data          text not null,                 -- 소리 (base64)
+  created_at    timestamptz not null default now()
+);
+create index if not exists voice_clips_household_idx on public.voice_clips (household_id, created_at desc);
+
 -- 잠그기 — 서버 비밀 키만 읽고 쓴다
+alter table public.voice_clips enable row level security;
 alter table public.households enable row level security;
 alter table public.accounts   enable row level security;
 alter table public.activity   enable row level security;
@@ -213,7 +231,7 @@ alter table public.centers    enable row level security;
 alter table public.account_audit enable row level security;
 
 revoke all on table public.households, public.accounts, public.activity, public.signups, public.payments,
-  public.centers, public.account_audit from anon, authenticated;
+  public.centers, public.account_audit, public.voice_clips from anon, authenticated;
 revoke all on function public.kcare_login_failed(text), public.kcare_new_join_code() from public, anon, authenticated;
 grant execute on function public.kcare_login_failed(text) to service_role;
 revoke all on table public.center1_accounts, public.center1_household, public.center1_activity, public.center1_signups, public.center1_payments, public.center2_accounts, public.center2_household, public.center2_activity, public.center2_signups, public.center2_payments, public.center3_accounts, public.center3_household, public.center3_activity, public.center3_signups, public.center3_payments from anon, authenticated;

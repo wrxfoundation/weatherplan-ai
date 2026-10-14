@@ -5,11 +5,15 @@
 // 원칙 둘.
 //  1) 완료는 녹음이 아니라 '정상 발송 확인'이다 — 실패는 목록에서 빼지 않고 실패로 남긴다.
 //  2) 글은 STT 가 아니다 (2026-09-11 A안 확정) — 보낼 때 적은 한 줄, 들은 뒤 적는 청취 메모.
-//     듣기 전 받은 음성에는 글이 없다.
+//     듣기 전 받은 음성에는 글이 없다. '말로 남기신 부탁'의 청취 메모는 어르신 '부탁해 둔 것'의 글 요약이 된다.
+//  3) 2026-10-14부터 실제로 녹음하고 실제로 듣는다 (lib/voice-client.js). 녹음 기능 전에 남은 기록 ·
+//     예시 고객의 음성은 소리가 없다 — 들은 표시만 바뀐다.
 // 빨강은 SOS·낙상 전용이라 '답장 필요'·'확인 필요'는 호박색을 쓴다.
 import { useEffect, useMemo, useRef, useState } from "react";
 import Icon from "./icons";
 import { Card, SectionLabel, Badge } from "./ui";
+import { useSync } from "../lib/state";
+import { RECORD_ERRORS, playErrorText, saveClip, sendErrorText, usePrefetchClips, useRecorder, useVoicePlayer } from "../lib/voice-client";
 import {
   INBOX_STATUS,
   VOICE_CATEGORIES,
@@ -115,7 +119,7 @@ function Progress({ counts }) {
 }
 
 // ── 2. 받은 음성메시지 ──
-function InboxCard({ m, client, onPlay, onOpen, onOps }) {
+function InboxCard({ m, client, onPlay, onOpen, onOps, playing = false, busy = false, error = null }) {
   return (
     <div className="rounded-xl border border-navy/[.08] bg-white/70 p-3">
       <div className="flex items-center gap-2.5">
@@ -125,6 +129,8 @@ function InboxCard({ m, client, onPlay, onOpen, onOps }) {
             <span className="text-[15px] font-bold text-navy">{m.client} 고객</span>
             {client?.age && <span className="font-num text-[11px] text-muted">{client.age}세</span>}
             <StatusPill status={m.status} />
+            {/* 무엇으로 온 목소리인지 — 말로 부탁 · 진료 때 여쭤볼 것 (어르신 화면에서 그 버튼으로 보낸 것) */}
+            {m.topic && <Badge fg="#7A5C28" bg="rgba(176,141,87,.16)">{m.topic}</Badge>}
           </div>
           <div className="mt-0.5 font-num text-[12px] text-muted">
             {whenLabel(m.at)} · 음성 {m.secs}초
@@ -132,6 +138,8 @@ function InboxCard({ m, client, onPlay, onOpen, onOps }) {
           </div>
         </div>
       </div>
+      {error && <p role="alert" className="mt-2 text-[12px] font-bold leading-[1.5] text-amber">{playErrorText(error)}</p>}
+      {m.live && !m.clip && <p className="mt-1 text-[11.5px] text-muted">녹음 기능 전에 남은 기록 — 소리는 없습니다.</p>}
       {/* 청취 메모 — 들은 뒤에만. STT 가 아니라 컨시어지가 적은 한 줄이다 */}
       {m.memo ? (
         <p className="mt-2 rounded-lg bg-navy/[.04] px-2.5 py-1.5 text-[12.5px] leading-[1.6] text-ink">{m.memo}</p>
@@ -143,10 +151,11 @@ function InboxCard({ m, client, onPlay, onOpen, onOps }) {
       <div className="mt-2.5 flex gap-2">
         <button
           onClick={onPlay}
+          aria-pressed={playing}
           className="btn-press flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-navy/20 py-2.5 text-[13px] font-bold text-navy"
         >
-          <Icon name={m.status === "unheard" ? "play" : "speaker"} size={16} strokeWidth={2} />
-          {m.status === "unheard" ? "재생" : "다시 듣기"}
+          <Icon name={playing ? "stop" : m.status === "unheard" ? "play" : "speaker"} size={16} strokeWidth={2} />
+          {playing ? "멈추기" : busy ? "받는 중" : m.status === "unheard" ? "재생" : "다시 듣기"}
         </button>
         <button
           onClick={onOpen}
@@ -335,7 +344,7 @@ function AllClients({ clients, onOpen }) {
 }
 
 // ── 고객별 음성 대화기록 (시안 3) ──
-export function VoiceThread({ client, thread, onClose, onRecord, onPlay, onMemo, onOps, sendState }) {
+export function VoiceThread({ client, thread, onClose, onRecord, onPlay, onMemo, onOps, sendState, player }) {
   const [memoFor, setMemoFor] = useState(null);
   const [memoText, setMemoText] = useState("");
   const endRef = useRef(null);
@@ -413,9 +422,13 @@ export function VoiceThread({ client, thread, onClose, onRecord, onPlay, onMemo,
                               : { background: "#FFFFFF", borderColor: "rgba(10,31,60,.1)" }
                         }
                       >
+                        {m.topic && (
+                          <span className="mb-1.5 inline-block rounded-full bg-gold/[.16] px-2 py-[2px] text-[11px] font-bold text-[#7A5C28]">{m.topic}</span>
+                        )}
                         <button
                           onClick={() => onPlay(m)}
-                          aria-label={`${mine ? "내가 보낸" : "고객이 보낸"} 음성 ${m.secs}초 듣기`}
+                          aria-pressed={player?.playing === `mb-${m.id}`}
+                          aria-label={`${mine ? "내가 보낸" : "고객이 보낸"} 음성 ${m.secs}초 ${player?.playing === `mb-${m.id}` ? "멈추기" : "듣기"}`}
                           className="btn-press flex w-full items-center gap-2.5"
                         >
                           <span
@@ -423,11 +436,15 @@ export function VoiceThread({ client, thread, onClose, onRecord, onPlay, onMemo,
                             className="flex h-[34px] w-[34px] shrink-0 items-center justify-center rounded-full"
                             style={{ background: unheard ? "#B08D57" : "#1E7A5A", color: "#FFFFFF" }}
                           >
-                            <Icon name={m.heard || mine ? "speaker" : "play"} size={17} strokeWidth={2} />
+                            <Icon name={player?.playing === `mb-${m.id}` ? "stop" : m.heard || mine ? "speaker" : "play"} size={17} strokeWidth={2} />
                           </span>
                           <Wave seed={m.id} color={mine ? "#1E7A5A" : "#0A1F3C"} dim={!mine && !m.heard} />
                           <span className="shrink-0 font-num text-[12px] font-bold text-muted">{fmtSecs(m.secs)}</span>
                         </button>
+                        {player?.failed?.key === `mb-${m.id}` && (
+                          <p role="alert" className="mt-1.5 text-[12px] font-bold text-amber">{playErrorText(player.failed.code)}</p>
+                        )}
+                        {m.live && !m.clip && <p className="mt-1 text-[11px] text-muted">녹음 기능 전에 남은 기록 — 소리는 없습니다.</p>}
                         {m.text ? (
                           <p className="mt-2 text-[13.5px] leading-[1.6] text-ink">{m.text}</p>
                         ) : (
@@ -465,7 +482,9 @@ export function VoiceThread({ client, thread, onClose, onRecord, onPlay, onMemo,
                         {memoFor === m.id && (
                           <div className="mt-2 border-t border-navy/[.08] pt-2">
                             <label htmlFor={`memo-${m.id}`} className="text-[11px] font-bold text-muted">
-                              들은 내용을 한 줄로 (자동 변환이 아니라 직접 적습니다)
+                              {m.reqId
+                                ? "무엇을 부탁하셨는지 한 줄로 — 어르신 '부탁해 둔 것'에 이 글이 그대로 보입니다"
+                                : "들은 내용을 한 줄로 (자동 변환이 아니라 직접 적습니다)"}
                             </label>
                             <textarea
                               id={`memo-${m.id}`}
@@ -530,44 +549,78 @@ export function VoiceThread({ client, thread, onClose, onRecord, onPlay, onMemo,
 }
 
 // ── 녹음 시트 (시안 3 하단) ──
+// 2026-10-14부터 실제로 녹음한다 — 녹음 시작 · 일시정지 · 종료 · 미리듣기 · 다시 녹음. 발송을 누르면 서버에 올리고,
+// 올라간 뒤에야 발송 확인 단계로 넘어간다 (완료의 기준은 '정상 발송 확인' · 명세 마지막 줄). 녹음 중 색은 금색 — 빨강은 SOS 전용.
 export function RecordSheet({ client, onClose, onSend }) {
-  const [rec, setRec] = useState(false);
-  const [secs, setSecs] = useState(0);
-  const [done, setDone] = useState(false);
-  const [paused, setPaused] = useState(false);
+  const server = useSync().mode === "server";
+  const rec = useRecorder({ maxSecs: 120 });
   const [cat, setCat] = useState(VOICE_CATEGORIES[0]);
   const [title, setTitle] = useState("");
   const [share, setShare] = useState(false);
   const [ops, setOps] = useState(true);
   const [sending, setSending] = useState(false);
-  const timer = useRef(null);
+  const [sendErr, setSendErr] = useState(null);
+  const [previewing, setPreviewing] = useState(false);
+  const audio = useRef(null);
+  const recording = rec.phase === "rec" || rec.phase === "paused" || rec.phase === "asking";
+  const done = rec.phase === "done" && !!rec.result;
+  const secs = rec.secs;
 
-  useEffect(() => {
-    if (!rec || paused) return undefined;
-    timer.current = setInterval(() => setSecs((s) => Math.min(s + 1, 120)), 1000);
-    return () => clearInterval(timer.current);
-  }, [rec, paused]);
-
-  const stop = () => {
-    setRec(false);
-    setPaused(false);
-    if (secs >= 1) setDone(true);
-    else setSecs(0);
+  useEffect(
+    () => () => {
+      audio.current?.pause();
+      if (audio.current?.src?.startsWith("blob:")) URL.revokeObjectURL(audio.current.src);
+    },
+    []
+  );
+  const preview = () => {
+    if (!rec.result) return;
+    if (!audio.current) audio.current = new Audio();
+    const a = audio.current;
+    if (previewing) {
+      a.pause();
+      setPreviewing(false);
+      return;
+    }
+    if (a.src.startsWith("blob:")) URL.revokeObjectURL(a.src);
+    a.src = URL.createObjectURL(rec.result.blob);
+    a.onended = () => setPreviewing(false);
+    a.play().then(() => setPreviewing(true)).catch(() => setPreviewing(false));
   };
   const again = () => {
-    setDone(false);
-    setSecs(0);
-    setRec(false);
-    setPaused(false);
+    audio.current?.pause();
+    setPreviewing(false);
+    setSendErr(null);
+    rec.cancel();
+  };
+  const send = async () => {
+    if (!done || sending) return;
+    audio.current?.pause();
+    setPreviewing(false);
+    setSending(true);
+    setSendErr(null);
+    try {
+      const clip = await saveClip(rec.result, { server });
+      onSend({ secs: clip.secs, category: cat, title: title.trim() || `${cat} · 음성 ${clip.secs}초`, shareGuardian: share, opsLog: ops, clip });
+    } catch (e) {
+      setSendErr(e.code || "network");
+      setSending(false);
+    }
   };
 
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center bg-[rgba(8,23,45,.5)]">
-      <div className="max-h-[92vh] w-full max-w-[430px] overflow-y-auto rounded-t-3xl bg-white p-6 pb-8">
+      <div className="max-h-[92vh] w-full max-w-[430px] overflow-y-auto rounded-t-3xl bg-white p-6 pb-8" role="dialog" aria-modal="true" aria-label={`${client.name} 고객에게 음성 보내기`}>
         <div className="mx-auto mb-4 h-[4px] w-[38px] rounded-full bg-navy/15" />
         <div className="flex items-center gap-2">
           <div className="min-w-0 flex-1 text-[18px] font-black text-navy">{client.name} 고객에게 음성 보내기</div>
-          <button onClick={onClose} className="btn-press shrink-0 rounded-[10px] border border-navy/20 px-3 py-1.5 text-[13px] font-bold text-muted">
+          <button
+            onClick={() => {
+              again();
+              onClose();
+            }}
+            className="btn-press shrink-0 rounded-[10px] border border-navy/20 px-3 py-1.5 text-[13px] font-bold text-muted"
+          >
             닫기
           </button>
         </div>
@@ -579,29 +632,48 @@ export function RecordSheet({ client, onClose, onSend }) {
               <div className="flex items-center gap-3">
                 <span
                   aria-hidden
-                  className={`flex h-[44px] w-[44px] shrink-0 items-center justify-center rounded-full ${rec && !paused ? "animate-livePing" : ""}`}
-                  style={{ background: rec ? "#C0392B" : "#1E7A5A", color: "#FFFFFF" }}
+                  className={`flex h-[44px] w-[44px] shrink-0 items-center justify-center rounded-full ${rec.phase === "rec" ? "animate-livePing" : ""}`}
+                  style={{ background: recording ? "#B08D57" : "#1E7A5A", color: "#FFFFFF" }}
                 >
                   <Icon name="mic" size={21} strokeWidth={2} />
                 </span>
                 <div className="min-w-0 flex-1">
                   <div className="font-num text-[22px] font-black leading-none text-navy">{fmtSecs(secs)}</div>
-                  <div className="mt-1 text-[12px] text-muted">
-                    {rec ? (paused ? "일시정지 — 이어서 녹음할 수 있습니다" : "녹음 중") : "눌러서 녹음을 시작하세요"}
+                  <div className="mt-1 text-[12px] text-muted" aria-live="polite">
+                    {rec.phase === "asking"
+                      ? "마이크를 켜는 중 — 브라우저가 묻으면 '허용'을 눌러 주세요"
+                      : rec.phase === "paused"
+                        ? "일시정지 — 이어서 녹음할 수 있습니다"
+                        : rec.phase === "rec"
+                          ? "녹음 중 (최대 2분)"
+                          : "눌러서 녹음을 시작하세요"}
                   </div>
                 </div>
               </div>
+              {rec.phase === "error" && (
+                <p role="alert" className="mt-2 rounded-lg bg-[#FFF7E8] px-3 py-2 text-[12.5px] font-bold leading-[1.6] text-amber">
+                  {RECORD_ERRORS[rec.error] || RECORD_ERRORS.failed}
+                </p>
+              )}
               <div className="mt-3 flex gap-2">
-                {!rec ? (
-                  <button onClick={() => setRec(true)} className="btn-press btn-dark flex-1 rounded-xl bg-green py-3 text-[15px] font-bold text-white">
+                {!recording ? (
+                  <button onClick={() => rec.start()} className="btn-press btn-dark flex-1 rounded-xl bg-green py-3 text-[15px] font-bold text-white">
                     녹음 시작
                   </button>
                 ) : (
                   <>
-                    <button onClick={() => setPaused((p) => !p)} className="btn-press flex-1 rounded-xl border border-navy/20 py-3 text-[15px] font-bold text-navy">
-                      {paused ? "이어서 녹음" : "일시정지"}
+                    <button
+                      onClick={() => (rec.phase === "paused" ? rec.resume() : rec.pause())}
+                      disabled={rec.phase === "asking"}
+                      className="btn-press flex-1 rounded-xl border border-navy/20 py-3 text-[15px] font-bold text-navy disabled:opacity-40"
+                    >
+                      {rec.phase === "paused" ? "이어서 녹음" : "일시정지"}
                     </button>
-                    <button onClick={stop} className="btn-press btn-dark flex-1 rounded-xl bg-navy py-3 text-[15px] font-bold text-white">
+                    <button
+                      onClick={() => rec.stop()}
+                      disabled={rec.phase === "asking"}
+                      className="btn-press btn-dark flex-1 rounded-xl bg-navy py-3 text-[15px] font-bold text-white disabled:opacity-40"
+                    >
                       녹음 종료
                     </button>
                   </>
@@ -610,15 +682,15 @@ export function RecordSheet({ client, onClose, onSend }) {
             </>
           ) : (
             <>
-              <div className="flex items-center gap-2.5">
+              <button onClick={preview} aria-pressed={previewing} className="btn-press flex w-full items-center gap-2.5">
                 <span aria-hidden className="flex h-[38px] w-[38px] shrink-0 items-center justify-center rounded-full bg-green text-white">
-                  <Icon name="play" size={18} strokeWidth={2} />
+                  <Icon name={previewing ? "stop" : "play"} size={18} strokeWidth={2} />
                 </span>
                 <Wave seed={`rec-${secs}`} n={20} color="#1E7A5A" />
                 <span className="shrink-0 font-num text-[13px] font-bold text-muted">{fmtSecs(secs)}</span>
-              </div>
+              </button>
               <div className="mt-2 flex items-center justify-between text-[11.5px]">
-                <span className="text-muted">녹음 미리듣기</span>
+                <span className="text-muted">{previewing ? "미리듣는 중 — 다시 누르면 멈춥니다" : "눌러서 녹음 미리듣기"}</span>
                 <span className="font-bold text-green">녹음 완료</span>
               </div>
             </>
@@ -683,6 +755,11 @@ export function RecordSheet({ client, onClose, onSend }) {
           ))}
         </div>
 
+        {sendErr && (
+          <p role="alert" className="mt-3 rounded-lg border border-amber/30 bg-[#FFF7E8] px-3 py-2 text-[12.5px] font-bold leading-[1.6] text-amber">
+            {sendErrorText(sendErr)} 녹음은 그대로 있습니다 — 다시 발송을 눌러 주세요.
+          </p>
+        )}
         <div className="mt-4 flex gap-2">
           <button
             onClick={again}
@@ -692,22 +769,18 @@ export function RecordSheet({ client, onClose, onSend }) {
             다시 녹음
           </button>
           <button
-            onClick={() => {
-              if (!done || sending) return;
-              setSending(true);
-              onSend({ secs, category: cat, title: title.trim() || `${cat} · 음성 ${secs}초`, shareGuardian: share, opsLog: ops });
-            }}
+            onClick={send}
             disabled={!done || sending}
             className="btn-press btn-dark flex-[1.6] rounded-xl bg-green py-3.5 text-[15px] font-bold text-white disabled:opacity-40"
           >
-            {sending ? "발송 중… (서버 확인 대기)" : "고객에게 음성 발송"}
+            {sending ? "발송 중… (서버 확인 대기)" : sendErr ? "다시 발송" : "고객에게 음성 발송"}
           </button>
         </div>
         <p className="mt-3 text-[11.5px] leading-[1.7] text-muted">
           정상 발송이 확인되면 오늘 미발송 목록에서 자동으로 제외됩니다. 실패하면 목록에 남고
           실패로 표시됩니다.
           <br />
-          받은 음성과 내가 보낸 음성은 고객별 대화기록에 함께 보관됩니다.
+          받은 음성과 내가 보낸 음성은 고객별 대화기록에 함께 보관됩니다{server ? " (녹음 30일 보관)" : " — 데모는 이 기기에서만 들립니다"}.
         </p>
       </div>
     </div>
@@ -715,10 +788,17 @@ export function RecordSheet({ client, onClose, onSend }) {
 }
 
 // ── 탭 본문 ──
-export default function Mailbox({ mb, onEvent, onSent, onToOps }) {
+export default function Mailbox({ mb, onEvent, onSent, onToOps, onMemoSync }) {
   const { clients, counts, openInbox, unsentList, alerts, threadFor, hear, setMemo, complete, toOps, send } = mb;
   const [open, setOpen] = useState(null); // 대화 열린 고객 이름
   const [recFor, setRecFor] = useState(null); // 녹음 시트 대상
+  // 듣기 — 실제 녹음이 있으면 소리를 낸다 (2026-10-14). 받은 것은 미리 받아 두어 누르는 순간 재생한다 (아이폰)
+  const player = useVoicePlayer();
+  usePrefetchClips(openInbox.map((m) => m.clip));
+  const playVoice = (key, m, after) => {
+    if (m.clip) player.play(key, { clip: m.clip }, { onStart: after });
+    else after?.();
+  };
 
   const byName = useMemo(() => Object.fromEntries(clients.map((c) => [c.name, c])), [clients]);
   const cur = open ? byName[open] : null;
@@ -774,7 +854,10 @@ export default function Mailbox({ mb, onEvent, onSent, onToOps }) {
                 <InboxCard
                   m={m}
                   client={byName[m.client]}
-                  onPlay={() => hear(m.id)}
+                  playing={player.playing === `mb-in-${m.id}`}
+                  busy={player.busy === `mb-in-${m.id}`}
+                  error={player.failed?.key === `mb-in-${m.id}` ? player.failed.code : null}
+                  onPlay={() => playVoice(`mb-in-${m.id}`, m, () => hear(m.id))}
                   onOpen={() => {
                     hear(m.id);
                     setOpen(m.client);
@@ -846,8 +929,14 @@ export default function Mailbox({ mb, onEvent, onSent, onToOps }) {
           sendState={cur.sent?.status}
           onClose={() => setOpen(null)}
           onRecord={() => setRecFor(cur.name)}
-          onPlay={(m) => hear(m.inboxId || m.id)}
-          onMemo={(id, text) => setMemo(id, text)}
+          player={player}
+          onPlay={(m) => playVoice(`mb-${m.id}`, m, () => hear(m.inboxId || m.id))}
+          onMemo={(id, text) => {
+            setMemo(id, text);
+            // 말로 남기신 부탁의 청취 메모 → 그 요청의 글 요약 (어르신 '부탁해 둔 것' · 보호자 · 관제가 본다)
+            const m = threadFor(cur.name).find((x) => x.inboxId === id || x.id === id);
+            if (m?.reqId) onMemoSync?.(m.reqId, text);
+          }}
           onOps={(inboxId) => doOps(cur.name, inboxId)}
         />
       )}

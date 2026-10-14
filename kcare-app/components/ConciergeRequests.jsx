@@ -6,8 +6,16 @@
 //   보낸 제안   내가 제안해 보호자 · 어르신의 수락을 기다리는 것 — 철회할 수 있다.
 //
 // 도와줘요(즉시 방문 요청)는 여기서 승인하지 않는다 — 관제가 확인 전화 후 출동을 지시한다 (HelpCallCard).
-import { useMemo, useState } from "react";
+//
+// 말로 남기신 부탁 (2026-10-14) — 어르신 목소리를 여기서 듣고, 무엇을 부탁하셨는지 한 줄로 적는다. 그 글이 어르신
+// '부탁해 둔 것' · 보호자 · 관제 화면의 요약이 된다 (받아쓰기가 아니라 담당 선생님이 정리한 글).
+// 새 해주세요가 오면 어느 탭에 있든 알림 창이 뜬다 (NewRequestAlert — 현장 '기본 로직' 5번 · 연동 확인 3번).
+import { useEffect, useMemo, useState } from "react";
 import { Card, Badge } from "./ui";
+import Icon from "./icons";
+import { clock, playErrorText, usePrefetchClips, useVoicePlayer } from "../lib/voice-client";
+import { scopedKey } from "../lib/scope";
+import { ringAlarm } from "../lib/alarm";
 import { fmtWon } from "../lib/config";
 import { CONCIERGE_CAL } from "../lib/console";
 import {
@@ -65,6 +73,59 @@ function PayLine({ r, payments }) {
   return <div className={`mt-1 text-[12px] font-bold ${pay ? "text-green" : r.amount == null ? "text-amber" : "text-muted"}`}>{text}</div>;
 }
 
+// 말로 남기신 부탁 — 듣기 + 한 줄 정리
+function VoiceAsk({ r, me, dispatch, push }) {
+  const player = useVoicePlayer();
+  const key = `cr-${r.id}`;
+  const saved = r.summary?.text || "";
+  const [text, setText] = useState(saved);
+  useEffect(() => setText(saved), [saved]);
+  const clip = r.voice?.clip || null;
+  return (
+    <div className="mt-2 rounded-lg border border-gold/30 bg-[#FBF6EC] px-3 py-2.5">
+      {clip ? (
+        <button
+          type="button"
+          onClick={() => player.play(key, { clip })}
+          aria-pressed={player.playing === key}
+          className="btn-press flex w-full items-center gap-2 rounded-lg bg-white/80 px-3 py-2 text-left text-[13px] font-bold text-navy"
+        >
+          <Icon name={player.playing === key ? "stop" : "play"} size={16} strokeWidth={2} />
+          {player.playing === key ? "멈추기" : player.busy === key ? "받는 중…" : "어르신 목소리 듣기"}
+          <span className="ml-auto font-num text-[12px] text-muted">{clock(clip.secs || 0)}</span>
+        </button>
+      ) : (
+        <p className="text-[12px] text-muted">녹음 기능 전에 남은 요청 — 소리가 없습니다. 어르신께 전화로 여쭤봐 주세요.</p>
+      )}
+      {player.failed?.key === key && <p role="alert" className="mt-1 text-[11.5px] font-bold text-amber">{playErrorText(player.failed.code)}</p>}
+      <label className="mt-2 block text-[11px] font-bold text-muted">
+        무엇을 부탁하셨는지 한 줄로 — 어르신 &lsquo;부탁해 둔 것&rsquo;에 이 글이 그대로 보입니다
+        <input
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+          maxLength={120}
+          placeholder="예: 화장실 전등이 나가서 갈아 주세요"
+          className="mt-1 w-full rounded-lg border border-navy/15 bg-white px-2.5 py-2 text-[13px] text-ink outline-none focus:border-gold"
+        />
+      </label>
+      <div className="mt-1.5 flex items-center gap-2">
+        <span className="text-[11px] text-muted">{saved ? `저장됨 · ${r.summary?.by || ""}` : "아직 정리 전 — 어르신 화면에 '선생님이 듣고 정리해 드립니다'로 보입니다"}</span>
+        <button
+          type="button"
+          disabled={text.trim() === saved}
+          onClick={() => {
+            dispatch({ type: "requestSummary", id: r.id, text: text.trim(), by: me });
+            push?.("해주세요", `${me} 말로 부탁 정리 — ${text.trim() || "(지움)"}`, "#8FA9CC");
+          }}
+          className="btn-press ml-auto shrink-0 rounded-lg bg-navy px-3 py-1.5 text-[12px] font-bold text-white disabled:opacity-40"
+        >
+          정리 저장
+        </button>
+      </div>
+    </div>
+  );
+}
+
 function ApproveRow({ r, me, requests, payments, dispatch, push }) {
   const tomorrow = kstYmd(Date.now() + 86400000);
   const [date, setDate] = useState(preferredYmd(r) || tomorrow);
@@ -91,6 +152,7 @@ function ApproveRow({ r, me, requests, payments, dispatch, push }) {
       </div>
       <div className="mt-1.5 text-[14px] font-bold text-navy">{r.type}</div>
       {r.detail && <div className="mt-0.5 text-[12px] leading-[1.6] text-muted">{r.detail}</div>}
+      {r.voice && <VoiceAsk r={r} me={me} dispatch={dispatch} push={push} />}
       <div className="mt-1 text-[12px] text-ink">
         희망 <b>{fmtPreferred(r)}</b>
         {r.hospital ? ` · ${r.hospital}` : ""}
@@ -209,6 +271,7 @@ export default function ConciergeRequests({ requests, payments, me, dispatch, pu
     .sort((a, b) => `${a.scheduledDate || ""}${a.scheduledTime || ""}`.localeCompare(`${b.scheduledDate || ""}${b.scheduledTime || ""}`));
   const sent = asks.filter((r) => r.status === "requested" && approverOf(r) !== "concierge" && r.dir === "fromConcierge" && mine(r));
   const total = toApprove.length + waitingPay.length + booked.length + sent.length;
+  usePrefetchClips(toApprove.map((r) => r.voice?.clip));
 
   return (
     <Card className="p-4">
@@ -245,6 +308,7 @@ export default function ConciergeRequests({ requests, payments, me, dispatch, pu
                   <span className="ml-auto text-[11px] text-muted">{FROM[r.dir]}</span>
                 </div>
                 <div className="mt-1.5 text-[14px] font-bold text-navy">{r.type}</div>
+                {r.summary?.text && <div className="mt-0.5 text-[12px] leading-[1.6] text-ink">&ldquo;{r.summary.text}&rdquo;</div>}
                 <PayLine r={r} payments={payments} />
                 {r.status === "cancelRequested" ? (
                   <p className="mt-1.5 text-[12px] font-bold text-amber">취소 요청 — 관제 승인 대기 ({r.cancelReq?.by || "요청자"})</p>
@@ -301,5 +365,77 @@ export default function ConciergeRequests({ requests, payments, me, dispatch, pu
         </div>
       )}
     </Card>
+  );
+}
+
+// ── 새 해주세요 알림 (2026-10-14 현장 '기본 로직' 5번 · 연동 확인 3번) ──
+// 어르신 · 보호자가 해주세요(말로 부탁 포함)를 보내면 담당 컨시어지 화면에 — 어느 탭에 있든 — 창이 뜨고 알림음이 한 번 울린다.
+// 이 기기에서 본 요청은 다시 띄우지 않는다. 승인 · 거절은 오늘 탭 '해주세요'에서 한다.
+const SEEN_KEY = "kcare-concierge-newreq-v1";
+export function newRequestsFor(requests) {
+  return (requests || []).filter((r) => r.status === "requested" && approverOf(r) === "concierge" && !isVisitCall(r) && r.dir !== "fromConcierge");
+}
+export function NewRequestAlert({ requests, onOpen }) {
+  const [seen, setSeen] = useState(null);
+  const key = scopedKey(SEEN_KEY);
+  useEffect(() => {
+    try {
+      setSeen(JSON.parse(localStorage.getItem(key) || "{}") || {});
+    } catch {
+      setSeen({});
+    }
+  }, [key]);
+  const fresh = seen ? newRequestsFor(requests).filter((r) => !seen[r.id]) : [];
+  const freshKey = fresh.map((r) => r.id).join(",");
+  useEffect(() => {
+    if (freshKey) ringAlarm();
+  }, [freshKey]);
+  if (!fresh.length) return null;
+  const close = (go) => {
+    const next = { ...(seen || {}) };
+    fresh.forEach((r) => {
+      next[r.id] = Date.now();
+    });
+    // 오래된 표시는 버린다 (요청 id 가 계속 쌓이지 않게)
+    const ids = Object.keys(next).sort((a, b) => next[b] - next[a]).slice(0, 200);
+    const trimmed = Object.fromEntries(ids.map((id) => [id, next[id]]));
+    setSeen(trimmed);
+    try {
+      localStorage.setItem(key, JSON.stringify(trimmed));
+    } catch {
+      /* 저장이 막힌 브라우저 — 이 화면에서만 기억 */
+    }
+    if (go) onOpen?.();
+  };
+  return (
+    <div className="fixed inset-0 z-[60] flex items-center justify-center bg-[rgba(8,23,45,.55)] p-4">
+      <div role="alertdialog" aria-modal="true" aria-label="새 해주세요" className="w-full max-w-[400px] rounded-[22px] bg-white p-5 shadow-xl" style={{ borderTop: "6px solid #B08D57" }}>
+        <div className="text-[12px] font-bold tracking-[.12em] text-[#8A5D12]">새 해주세요 · 승인 대기</div>
+        <div className="mt-1 text-[19px] font-black text-navy">새 부탁 {fresh.length}건이 왔습니다</div>
+        <ul className="mt-3 space-y-2">
+          {fresh.slice(0, 4).map((r) => (
+            <li key={r.id} className="rounded-xl bg-navy/[.04] px-3 py-2.5">
+              <div className="flex items-center gap-2">
+                <span className="text-[14px] font-bold text-navy">{r.type}</span>
+                {r.urgency === "urgent" && <Badge fg={URGENCY.urgent.fg} bg={URGENCY.urgent.bg}>긴급</Badge>}
+                <span className="ml-auto text-[11px] text-muted">{FROM[r.dir] || ""}</span>
+              </div>
+              <div className="mt-0.5 text-[12px] text-ink">
+                {r.voice ? `어르신 목소리 ${clock(r.voice.clip?.secs || 0)} — 들어 보고 정리해 주세요` : `희망 ${fmtPreferred(r)}`}
+              </div>
+            </li>
+          ))}
+        </ul>
+        {fresh.length > 4 && <p className="mt-1.5 text-[12px] text-muted">그 밖에 {fresh.length - 4}건</p>}
+        <div className="mt-4 flex gap-2">
+          <button type="button" onClick={() => close(false)} className="btn-press flex-1 rounded-xl border border-navy/20 py-3 text-[14px] font-bold text-navy">
+            나중에
+          </button>
+          <button type="button" autoFocus onClick={() => close(true)} className="btn-press flex-[1.6] rounded-xl bg-navy py-3 text-[14px] font-bold text-white">
+            승인하러 가기
+          </button>
+        </div>
+      </div>
+    </div>
   );
 }

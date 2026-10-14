@@ -5,6 +5,8 @@
 // 어느 영역이든 가입한 센터의 관제가 승인해야 로그인된다 (2026-10-06 점검).
 // 2026-10-06 UX 점검 — 코드는 8자리를 다 적거나 칸을 벗어나면 저절로 확인 · Enter 는 확인 단추와 같다.
 // 가입을 누르면 틀린 첫 칸으로 옮겨 가고(화면 밖에 오류가 남지 않게), 몇 칸이 남았는지 단추 위에 적는다.
+// 2026-10-14 초대 링크(?invite=) — 어르신 · 보호자가 보낸 링크로 들어오면 가입 코드 칸 · 역할 고르기 없이
+// 그 센터에 보호자로 가입 신청한다 (현장 '연동 확인' 4번). 링크가 맞지 않거나 지났으면 가입 코드로 가입하게 안내한다.
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
@@ -27,7 +29,13 @@ const EXTRA = {
   sales: [["org", "소속 · 지점", "예: 강남 지점"]],
   ops: [["org", "소속 · 직책", "예: 관제 1센터 · 관제사"]],
 };
+const INVITE_ERR = {
+  "bad-invite": "초대 링크가 맞지 않습니다 — 링크를 다시 받아 주세요.",
+  "invite-expired": "초대 링크의 기간(7일)이 지났습니다 — 새 링크를 받아 주세요.",
+  "invite-used-up": "이 초대 링크로 가입할 수 있는 인원(5명)이 다 찼습니다 — 새 링크를 받아 주세요.",
+};
 const SERVER_ERR = {
+  ...INVITE_ERR,
   "member-not-configured": "회원 가입은 서버 저장 연결 뒤에 켜집니다 (DEPLOY.md).",
   "schema-missing": "서버 표가 아직 준비되지 않았습니다 — 관리자가 supabase/schema.sql 을 다시 실행해야 합니다.",
   "too-many": "잠시 뒤 다시 시도해 주세요.",
@@ -74,6 +82,9 @@ export default function JoinForm({ area }) {
   const [serverErr, setServerErr] = useState(null);
   const [busy, setBusy] = useState(false);
   const [done, setDone] = useState(null); // { status, center }
+  // 초대 링크 — { token, state: checking | ok | error, from, left, error }
+  const [invite, setInvite] = useState(null);
+  const invited = invite?.state === "ok";
 
   // 코드 확인 — 맞으면 센터를 돌려준다 (가입 단추가 이어서 쓴다)
   const checkCode = async (raw) => {
@@ -130,6 +141,26 @@ export default function JoinForm({ area }) {
     if (q && !code) checkCode(q);
   }, [router.query.code]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // 초대 링크(?invite=) — 누가 보낸 링크인지 · 어느 센터인지 확인한다
+  useEffect(() => {
+    const t = typeof router.query.invite === "string" ? router.query.invite : "";
+    if (!t || area !== "user") return;
+    setInvite({ token: t, state: "checking" });
+    (async () => {
+      try {
+        const r = await fetch(`/api/join?invite=${encodeURIComponent(t)}`, { cache: "no-store" });
+        const j = await r.json().catch(() => ({}));
+        if (r.ok && j.center) {
+          setCenter(j.center);
+          setRole("guardian");
+          setInvite({ token: t, state: "ok", from: j.invite?.fromName || "", fromRole: j.invite?.fromRole || "elder", left: j.invite?.left ?? null, exp: j.invite?.exp || null });
+        } else setInvite({ token: t, state: "error", error: j.error || "bad-invite" });
+      } catch (_) {
+        setInvite({ token: t, state: "error", error: "network" });
+      }
+    })();
+  }, [router.query.invite, area]);
+
   if (!MEMBER_LOGIN) {
     return <p className="rounded-xl bg-paper px-3.5 py-3 text-[13px] leading-[1.7] text-ink">{SERVER_ERR["member-not-configured"]}</p>;
   }
@@ -161,7 +192,7 @@ export default function JoinForm({ area }) {
   };
   const validate = (c, codeErr) => {
     const e = {};
-    if (!c) e.code = codeErr || "가입 코드를 확인해 주세요";
+    if (!c && !invited) e.code = codeErr || "가입 코드를 확인해 주세요";
     if (!role) e.role = "역할을 골라 주세요";
     if (f.name.trim().length < 2) e.name = "이름을 2자 이상 적어 주세요";
     const idErr = checkLoginId(f.loginId);
@@ -176,8 +207,8 @@ export default function JoinForm({ area }) {
   const submit = async (ev) => {
     ev.preventDefault();
     setServerErr(null);
-    // 코드를 적기만 하고 확인을 안 눌렀으면 여기서 확인한다
-    const checked = center ? { center } : await checkCode(code);
+    // 코드를 적기만 하고 확인을 안 눌렀으면 여기서 확인한다 (초대 링크로 왔으면 링크가 센터를 정했다)
+    const checked = center || invited ? { center } : await checkCode(code);
     const e = validate(checked.center, checked.error);
     setErrors(e);
     if (Object.values(e).some(Boolean)) {
@@ -190,7 +221,7 @@ export default function JoinForm({ area }) {
       const r = await fetch("/api/join", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ code, area, role, name: f.name.trim(), phone: f.phone.trim(), loginId, password: f.password, profile: extra, agree }),
+        body: JSON.stringify({ ...(invited ? { invite: invite.token } : { code }), area, role, name: f.name.trim(), phone: f.phone.trim(), loginId, password: f.password, profile: extra, agree }),
       });
       const j = await r.json().catch(() => ({}));
       if (!r.ok) {
@@ -200,7 +231,11 @@ export default function JoinForm({ area }) {
           if (j.fields.code) setCenter(null);
           setErrors(fields);
           focusFirst(fields);
-        } else setServerErr(j.error || `http-${r.status}`);
+        } else {
+          // 초대 링크가 그사이 지났거나 다 찼다 — 가입 코드로 가입하게 돌린다
+          if (INVITE_ERR[j.error]) setInvite((v) => ({ ...(v || {}), state: "error", error: j.error }));
+          setServerErr(j.error || `http-${r.status}`);
+        }
         setBusy(false);
         return;
       }
@@ -226,7 +261,7 @@ export default function JoinForm({ area }) {
       {user && (
         <div role="note" className="mb-3 rounded-xl border border-navy/15 bg-paper px-3.5 py-2.5 text-[13px] leading-[1.6] text-ink">
           지금 <b className="text-navy">{user.name}</b>{ROLE_LABEL[user.role] ? `(${ROLE_LABEL[user.role]})` : ""}(으)로 로그인되어 있습니다. 새 아이디로 가입하려면 먼저 로그아웃하세요.
-          <button type="button" onClick={() => logout(a.join + (code ? `?code=${code}` : ""))} className="tap ml-1 font-bold text-navy underline underline-offset-2">
+          <button type="button" onClick={() => logout(a.join + (invite?.token ? `?invite=${encodeURIComponent(invite.token)}` : code ? `?code=${code}` : ""))} className="tap ml-1 font-bold text-navy underline underline-offset-2">
             로그아웃
           </button>
         </div>
@@ -237,6 +272,28 @@ export default function JoinForm({ area }) {
         </p>
       )}
 
+      {invite && (
+        <div
+          role={invite.state === "error" ? "alert" : "status"}
+          className={`mb-3 rounded-xl px-3.5 py-3 text-[14px] leading-[1.65] ${invite.state === "error" ? "border border-amber/30 bg-[#FFF7E8] font-bold text-amber" : "bg-green/[.08] text-ink"}`}
+        >
+          {invite.state === "checking" && "초대 링크를 확인하고 있습니다…"}
+          {invite.state === "ok" && (
+            <>
+              <b className="text-navy">{invite.from || "가족"} 님</b>({invite.fromRole === "guardian" ? "보호자" : "어르신"})이 보낸 초대입니다 —{" "}
+              <b className="text-green">{center?.name}</b>에 <b>보호자</b>로 가입 신청합니다. 가입 코드는 적지 않아도 됩니다.
+              {invite.exp ? <span className="mt-0.5 block text-[12.5px] text-muted">링크는 {new Date(invite.exp).toLocaleDateString("ko-KR", { month: "long", day: "numeric" })}까지{invite.left != null ? ` · ${invite.left}명 더 가입할 수 있습니다` : ""}</span> : null}
+            </>
+          )}
+          {invite.state === "error" && (
+            <>
+              {INVITE_ERR[invite.error] || "초대 링크를 확인하지 못했습니다."} 아래에 담당 센터에서 받은 가입 코드를 적어 가입할 수도 있습니다.
+            </>
+          )}
+        </div>
+      )}
+
+      {!invited && (
       <Field id="code" big={big} label="가입 코드 (담당 센터에서 받은 코드)" error={err("code")} hint={center ? null : "다 적으면 저절로 확인합니다 — 코드가 어느 센터에 가입할지 정합니다"}>
         <div className="mt-1.5 flex gap-2">
           <input
@@ -276,12 +333,14 @@ export default function JoinForm({ area }) {
           </button>
         </div>
       </Field>
-      {center && (
+      )}
+      {center && !invited && (
         <p className="mt-2 rounded-xl bg-green/[.08] px-3.5 py-2 text-[13px] font-bold text-green" role="status">
           {center.name} 회원으로 가입합니다
         </p>
       )}
 
+      {!invited && (
       <fieldset className="mt-4">
         <legend className={`font-bold text-navy ${big ? "text-[15px]" : "text-[13px]"}`}>누구로 가입하나요?</legend>
         <div className={`mt-2 grid gap-2 ${a.roles.length > 1 ? "grid-cols-2" : "grid-cols-1"}`}>
@@ -309,6 +368,7 @@ export default function JoinForm({ area }) {
         </div>
         {err("role") && <p id="role-err" className="mt-1 text-[12px] font-bold text-amber">{err("role")}</p>}
       </fieldset>
+      )}
 
       <Field id="j-name" big={big} label="이름" error={err("name")}>
         <input id="j-name" value={f.name} onChange={set("name")} autoComplete="name" maxLength={20} aria-invalid={!!errors.name} aria-describedby={described("name")} className={inputCls(errors.name)} />

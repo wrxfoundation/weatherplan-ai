@@ -113,7 +113,19 @@ export function summarize(a) {
     case "commitPendingOrder":
       return "스토어 주문 확정";
     case "addVoice":
-      return `음성 메시지 · ${clip(p.from, 20)} → ${clip(p.to, 20)} · ${Number(p.secs) || 0}초`;
+      return `음성 메시지 · ${clip(p.from, 20)} → ${clip(p.to, 20)} · ${Number(p.secs) || 0}초${p.clip ? " · 녹음" : ""}`;
+    case "askDoctorAdd":
+      return "오늘 여쭤볼 것 · 말로 남김";
+    case "askDoctorEdit":
+      return "오늘 여쭤볼 것 · 다시 말함";
+    case "askDoctorStatus":
+      return `오늘 여쭤볼 것 · ${a.status === "resolved" ? "해결" : "다시 여쭤보기"}`;
+    case "askDoctorRemove":
+      return "오늘 여쭤볼 것 · 지움";
+    case "requestSummary":
+      return `말로 부탁 요약 · ${clip(a.by, 12)}${a.text ? ` — ${clip(a.text, 60)}` : " (지움)"}`;
+    case "opsAckRequest":
+      return `해주세요 관제 확인 · ${clip(a.by, 12)}`;
     case "addReview":
       return "동행 후기";
     case "addOrder":

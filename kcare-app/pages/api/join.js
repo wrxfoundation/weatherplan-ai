@@ -1,8 +1,12 @@
 // 회원 가입 (2026-10-06) — 로그인 없이 부른다 (가입 화면 /join · /partner/join · /ops/join).
 //
 //   GET  /api/join?code=AB12CD   가입 코드가 맞는지 → { center: { id, name } } (그 밖의 정보는 싣지 않는다)
-//   POST /api/join               { code, area, role, name, phone, loginId, password, profile, agree }
+//   GET  /api/join?invite=…      초대 링크가 맞는지 → { center, invite: { fromName, fromRole, role, exp } }
+//   POST /api/join               { code | invite, area, role, name, phone, loginId, password, profile, agree }
 //                                → { status: "active" | "pending", center, role, area }
+//
+// 초대 링크(2026-10-14 · lib/invite.js) — 어르신 · 보호자가 만든 링크로 들어온 자녀는 가입 코드 없이 그 센터에
+// 보호자로 가입 신청한다. 링크 하나로 5명까지 · 7일. 초대로 와도 센터 관제가 승인해야 로그인된다.
 //
 // 가입 코드가 센터를 정한다 — 코드는 그 센터 관제가 회원 · 권한 화면에서 나눠 주고 바꿀 수 있다.
 // 어느 영역이든 그 센터 관제가 승인해야 로그인된다 (lib/centers.js). 승인 대기가 너무 쌓이면 새 가입을 잠시 받지 않는다.
@@ -10,7 +14,8 @@
 import { memberLoginConfigured } from "../../lib/auth-server";
 import { dbConfigured, dbErrorCode, ensureHousehold } from "../../lib/db";
 import { AREAS, JOIN_CODE_RE, checkLoginId, checkPassword, isArea, normCode } from "../../lib/centers";
-import { activityLine, audit, centerByCode, createMember, loginIdTaken, pendingCount } from "../../lib/members";
+import { activityLine, audit, centerByCode, createMember, inviteUses, loginIdTaken, pendingCount } from "../../lib/members";
+import { INVITE_MAX_USES, readInvite } from "../../lib/invite";
 import { hashPassword } from "../../lib/password";
 import { ROLE_LABEL } from "../../lib/test-accounts";
 import { clientIp, makeLimiter, sameSiteJson } from "../../lib/http";
@@ -37,6 +42,18 @@ export default async function handler(req, res) {
   };
 
   try {
+    if (req.method === "GET" && req.query.invite != null) {
+      const r = readInvite(req.query.invite);
+      if (!r.ok) {
+        if (r.error === "bad") await wrongCode();
+        return res.status(r.error === "expired" ? 410 : 404).json({ error: r.error === "expired" ? "invite-expired" : "bad-invite" });
+      }
+      const used = await inviteUses(r.invite.jti);
+      if (used >= INVITE_MAX_USES) return res.status(410).json({ error: "invite-used-up" });
+      const { center, fromName, fromRole, role, exp } = r.invite;
+      return res.status(200).json({ center: { id: center.id, name: center.name }, invite: { fromName, fromRole, role, exp, left: INVITE_MAX_USES - used } });
+    }
+
     if (req.method === "GET") {
       const code = normCode(req.query.code);
       const center = JOIN_CODE_RE.test(code) ? await centerByCode(code) : null;
@@ -50,8 +67,15 @@ export default async function handler(req, res) {
     if (req.method === "POST") {
       if (!sameSiteJson(req)) return res.status(415).json({ error: "json-only" });
       const b = req.body || {};
-      const area = isArea(b.area) ? b.area : null;
-      const role = area && AREAS[area].roles.includes(b.role) ? b.role : null;
+      // 초대 링크로 온 가입 — 센터 · 역할(보호자)은 링크가 정한다 (요청 값은 믿지 않는다)
+      const inv = b.invite != null ? readInvite(b.invite) : null;
+      if (inv && !inv.ok) {
+        if (inv.error === "bad") await wrongCode();
+        return res.status(400).json({ error: inv.error === "expired" ? "invite-expired" : "bad-invite" });
+      }
+      const invite = inv?.invite || null;
+      const area = invite ? "user" : isArea(b.area) ? b.area : null;
+      const role = invite ? invite.role : area && AREAS[area].roles.includes(b.role) ? b.role : null;
       const loginId = str(b.loginId, 40).toLowerCase();
       const name = str(b.name, 20);
       const phone = str(b.phone, 20).replace(/[^\d-]/g, "");
@@ -64,14 +88,15 @@ export default async function handler(req, res) {
       if (pwErr) errors.password = pwErr;
       if (name.length < 2) errors.name = "이름을 2자 이상 적어 주세요";
       if (!b.agree) errors.agree = "안내에 동의해야 가입할 수 있습니다";
-      if (!JOIN_CODE_RE.test(code)) errors.code = "가입 코드를 적어 주세요 (6~8자리)";
+      if (!invite && !JOIN_CODE_RE.test(code)) errors.code = "가입 코드를 적어 주세요 (6~8자리)";
       if (Object.keys(errors).length) return res.status(400).json({ error: "invalid", fields: errors });
 
-      const center = await centerByCode(code);
+      const center = invite ? invite.center : await centerByCode(code);
       if (!center) {
         await wrongCode();
         return res.status(400).json({ error: "invalid", fields: { code: "맞지 않는 가입 코드입니다" } });
       }
+      if (invite && (await inviteUses(invite.jti)) >= INVITE_MAX_USES) return res.status(410).json({ error: "invite-used-up" });
       if ((await pendingCount(center.id)) >= MAX_PENDING) return res.status(429).json({ error: "pending-full" });
       if (await loginIdTaken(loginId)) return res.status(409).json({ error: "taken", fields: { loginId: "이미 쓰는 아이디입니다" } });
 
@@ -81,6 +106,12 @@ export default async function handler(req, res) {
           const v = str(b.profile[k], 60);
           if (v) profile[k] = v;
         });
+      }
+      // 초대로 온 가입 — 누가 보낸 링크인지 남긴다 (관제 승인 화면에 보이고, 링크당 사용 수를 센다)
+      if (invite) {
+        profile.invite = invite.jti;
+        profile.invitedBy = str(invite.fromName, 20);
+        profile.invitedById = str(invite.from, 60);
       }
       const status = AREAS[area].approval ? "pending" : "active";
       await ensureHousehold(center.household);
@@ -113,7 +144,7 @@ export default async function handler(req, res) {
         loginId,
         role,
         "memberSignup",
-        `회원 가입 · ${ROLE_LABEL[role]} ${name}${status === "pending" ? " (관제 승인 대기)" : ""}`
+        `회원 가입 · ${ROLE_LABEL[role]} ${name}${invite ? ` · ${invite.fromName || "회원"} 님 초대` : ""}${status === "pending" ? " (관제 승인 대기)" : ""}`
       );
       return res.status(201).json({ status, center: { id: center.id, name: center.name }, role, area });
     }

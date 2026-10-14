@@ -1,7 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useReducer, useRef, useState } from "react";
 // mock.js 가 아니라 seed.js 에서 가져온다 — state 는 _app 에서 import 되므로
 // 여기서 mock.js 를 참조하면 콘솔 목데이터 전체가 모든 페이지에 실린다 (seed.js 주석 참고).
-import { INITIAL_EVENTS, INITIAL_REQUESTS, SEED_EVENTS, SEED_ORDERS, SEED_REPORTS } from "./seed";
+import { INITIAL_EVENTS, INITIAL_REQUESTS, SEED_ASK_DOCTOR, SEED_EVENTS, SEED_ORDERS, SEED_REPORTS } from "./seed";
 import { PRICING } from "./config";
 import { approverOf, cancelRule, paymentOf, transition } from "./requests";
 import { SEED_VISIT, advance } from "./workflow";
@@ -99,9 +99,13 @@ const DEFAULT = {
   // 방문 업무흐름 8단계 (lib/workflow.js) — 관제·컨시어지·보호자가 같은 건을 본다.
   // 승인(approved) 전에는 어느 캘린더에도 뜨지 않는다는 것이 이 상태의 요점.
   visitPlan: SEED_VISIT,
-  // 안부 음성 — 보호자 ↔ 어르신 양방향 (2026-08-12 시트).
-  // 데모에서는 오디오를 저장하지 않고 길이·발신자만 기록한다. 실제 구현은 서버 업로드.
+  // 목소리 — 보호자 ↔ 어르신 안부, 어르신 ↔ 컨시어지 마음사서함, 말로 부탁하기 · 오늘 여쭤볼 것 (2026-08-12 시트).
+  // 2026-10-14부터 실제로 녹음한다 — 소리는 서버(voice_clips 표)에 두고 여기에는 clip { id, mime, secs } 만 남는다
+  // (lib/voice-client.js). clip 이 없는 것은 그 전에 남은 기록(길이만 있다).
   voices: [],
+  // 오늘 여쭤볼 것 — 진료 때 선생님이 대신 여쭤볼 질문. 어르신이 말로 남기고(clip) · 다시 말하고 · 해결 · 지운다 (2026-10-14)
+  //   [{ id, at, text?, clip?, secs?, source: elder|family|concierge, sourceLabel, status: open|resolved, resolvedAt?, editedAt? }]
+  askDoctor: SEED_ASK_DOCTOR,
   // 동행 후기 — 동행 점수 아래 보호자가 남기는 코멘트 (2026-08-12 시트 홈 5번)
   reviews: [],
   // 스토어 구매내역 — 보호자 스토어 '구매내역 조회' (2026-08-12 시트 스토어 2번)
@@ -141,6 +145,7 @@ export function freshState() {
     payments: [],
     myHospitals: [],
     opsMessages: [],
+    askDoctor: [],
   };
 }
 
@@ -179,6 +184,15 @@ function rebaseSeedEvents(events) {
 // Date.now() 가 겹쳐 id 가 같아지는 일도 없다. 데모에서는 붙지 않으니 지금 시각을 쓴다.
 const nowOf = (a) => (Number.isFinite(a?._at) ? a._at : Date.now());
 const idOf = (prefix, a) => (a?._op ? `${prefix}${a._op}` : `${prefix}${Date.now()}`);
+
+// 녹음 하나의 표식 — 여러 폰이 쓰는 값이라 모양을 거른다 (서버 녹음 vc_… · 데모 녹음 mem:…)
+function cleanClip(c) {
+  if (!c || typeof c !== "object") return null;
+  const id = String(c.id || "");
+  if (!/^(vc_[A-Za-z0-9_-]{16,40}|mem:[a-z0-9]{6,24})$/.test(id)) return null;
+  const secs = Math.round(Number(c.secs));
+  return { id, mime: String(c.mime || "").slice(0, 60), secs: Number.isFinite(secs) && secs > 0 ? Math.min(secs, 180) : null };
+}
 
 // ── 해주세요 상태 바꾸기 도우미 (reducer 전용) ──
 const CLOSED_REQ = ["done", "cancelled", "rejected"];
@@ -277,6 +291,7 @@ function reducer(state, action) {
           return stale ? { ...v, id: SEED_VISIT.id, at: SEED_VISIT.at } : v;
         })(),
         voices: arr(p.voices, state.voices),
+        askDoctor: arr(p.askDoctor, state.askDoctor),
         reviews: arr(p.reviews, state.reviews),
         orders: arr(p.orders, state.orders),
         myHospitals: arr(p.myHospitals, state.myHospitals),
@@ -673,8 +688,58 @@ function reducer(state, action) {
         ],
       };
     }
-    case "addVoice":
-      return { ...state, voices: [{ id: idOf("vo", action), at: nowOf(action), ...action.payload }, ...state.voices].slice(0, 30) };
+    case "addVoice": {
+      const p = action.payload || {};
+      const clip = cleanClip(p.clip);
+      return { ...state, voices: [{ id: idOf("vo", action), at: nowOf(action), ...p, ...(p.clip ? { clip } : {}) }, ...state.voices].slice(0, 30) };
+    }
+    // ── 오늘 여쭤볼 것 (2026-10-14) — 어르신이 말로 남긴 질문. 다시 말하기 · 해결 · 지우기 ──
+    case "askDoctorAdd": {
+      const p = action.payload || {};
+      const clip = cleanClip(p.clip);
+      const item = {
+        id: idOf("ad", action),
+        at: nowOf(action),
+        source: "elder",
+        sourceLabel: "어르신이 말씀하신 것",
+        status: "open",
+        text: p.text ? String(p.text).slice(0, 120) : null,
+        clip,
+        secs: clip?.secs || null,
+      };
+      return { ...state, askDoctor: [...(state.askDoctor || []), item].slice(-30) };
+    }
+    case "askDoctorEdit": {
+      const clip = cleanClip(action.clip);
+      if (!clip) return state;
+      return {
+        ...state,
+        askDoctor: (state.askDoctor || []).map((q) => (q.id === action.id ? { ...q, clip, secs: clip.secs, text: q.source === "elder" ? null : q.text, editedAt: nowOf(action) } : q)),
+      };
+    }
+    case "askDoctorStatus":
+      return {
+        ...state,
+        askDoctor: (state.askDoctor || []).map((q) =>
+          q.id === action.id ? { ...q, status: action.status === "resolved" ? "resolved" : "open", resolvedAt: action.status === "resolved" ? nowOf(action) : null } : q
+        ),
+      };
+    case "askDoctorRemove":
+      return { ...state, askDoctor: (state.askDoctor || []).filter((q) => q.id !== action.id) };
+    // 말로 남기신 부탁의 글 요약 — 담당 컨시어지가 듣고 적는다. 어르신 '부탁해 둔 것' · 보호자 · 관제가 이 한 줄을 본다 (2026-10-14)
+    case "requestSummary": {
+      const text = String(action.text || "").replace(/\s+/g, " ").trim().slice(0, 120);
+      return {
+        ...state,
+        requests: state.requests.map((r) => (r.id === action.id ? { ...r, summary: text ? { text, by: String(action.by || "").slice(0, 30), at: nowOf(action) } : null } : r)),
+      };
+    }
+    // 관제가 새 해주세요를 봤다 — 승인은 담당 컨시어지가 하고, 관제는 확인만 한다 (2026-10-14 현장 '기본 로직' 5번)
+    case "opsAckRequest":
+      return {
+        ...state,
+        requests: state.requests.map((r) => (r.id === action.id && !r.opsAck ? { ...r, opsAck: { at: nowOf(action), by: String(action.by || "관제").slice(0, 30) } } : r)),
+      };
     case "addReview":
       return { ...state, reviews: [{ id: idOf("rv", action), at: nowOf(action), ...action.payload }, ...state.reviews] };
     case "addOrder":

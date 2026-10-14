@@ -48,7 +48,7 @@ import {
   mapPeople,
 } from "../lib/console";
 import { useAppState } from "../lib/state";
-import { CLOSED, isVisitCall } from "../lib/requests";
+import { CLOSED, approverOf, fmtPreferred, isVisitCall } from "../lib/requests";
 import { HelpCallOps, HELP_STAGE } from "../components/HelpCall";
 import { relMd } from "../lib/reltime";
 import AiChat from "../components/AiChat";
@@ -462,7 +462,9 @@ function WeatherMap() {
 
 function DispatchConsole() {
   const { state, dispatch } = useAppState();
-  const liveOn = !!useAuth().user?.household; // 테스트 계정 — 머리 숫자 중 예시인 것에 '예시'를 붙인다
+  const opsUser = useAuth().user;
+  const liveOn = !!opsUser?.household; // 테스트 계정 — 머리 숫자 중 예시인 것에 '예시'를 붙인다
+  const opsName = opsUser?.name ? String(opsUser.name).replace(/\s*\(.*\)$/, "") : "관제"; // 해주세요 '관제 확인'에 남는 이름
   const { sos, nightOption } = state.demo;
   const { sosDispatched, sos119, assign, unmatchFixed, npsDetractor } = state.ops;
   const checkedIn = state.visit.checkedIn;
@@ -522,10 +524,25 @@ function DispatchConsole() {
   // 해주세요 관리 숫자 — 관제가 할 일만: 도와줘요 진행 중 · 취소 요청(관제 승인) · 환불 대기 (2026-10-05).
   // 보호자 · 어르신의 일반 해주세요는 담당 컨시어지가 승인하므로 세지 않는다.
   const pendingMembers = usePendingMembers();
+  // 새 해주세요(보호자 · 어르신 · 말로 부탁) — 승인은 담당 컨시어지가 하고, 관제는 받았다는 것을 '확인'한다
+  // (2026-10-14 현장 '기본 로직' 5번: "컨시어지와 관제에 동시 알림 · 컨시어지 1차 대응 후 승인 · 관제는 확인")
+  const unackedAsks = (state.requests || []).filter(
+    (r) => !r.opsAck && !isVisitCall(r) && approverOf(r) === "concierge" && ["requested", "awaitingPayment"].includes(r.status) && r.dir !== "fromConcierge"
+  );
   const newRequests = [
     ...(state.requests || []).filter((r) => (isVisitCall(r) && !CLOSED.includes(r.status)) || r.status === "cancelRequested"),
     ...(state.payments || []).filter((p) => p.refund && p.refund.status !== "done"),
+    ...unackedAsks,
   ];
+  // 새 해주세요가 들어오면 알림음 한 번 (같은 것으로 다시 울리지 않는다)
+  const askRang = useRef("");
+  const askKey = unackedAsks.map((r) => r.id).join(",");
+  useEffect(() => {
+    if (!askKey || askRang.current === askKey) return;
+    const fresh = askKey.split(",").some((id) => !askRang.current.split(",").includes(id));
+    askRang.current = askKey;
+    if (fresh) ringAlarm();
+  }, [askKey]);
   // 관제 센터 공간 — 명부 숫자도 그 센터 회원 수 (예시 200명 · 218명이 아니다 · 2026-10-06)
   const pp = people();
   const MENU_COUNTS = {
@@ -793,6 +810,18 @@ function DispatchConsole() {
         onOpen: () => setHelpOpen(r.id),
       })
     );
+  // 새 해주세요 — 관제는 '확인'만 한다 (승인은 담당 컨시어지 · 2026-10-14 현장 '기본 로직' 5번)
+  unackedAsks.forEach((r) =>
+    actions.push({
+      id: `ask-${r.id}`,
+      level: r.urgency === "urgent" ? "high" : "med",
+      title: `새 해주세요 — ${r.type}${r.dir === "fromElder" ? " (어르신)" : " (보호자)"}`,
+      meta: `${r.voice ? `어르신 목소리 ${r.voice.clip?.secs || 0}초${r.summary?.text ? ` · "${r.summary.text}"` : " · 컨시어지가 듣고 정리"}` : `희망 ${fmtPreferred(r)}`} · ${r.status === "awaitingPayment" ? "보호자 결제 대기" : "담당 컨시어지 승인 대기"}`,
+      act: "확인",
+      onAct: () => dispatch({ type: "opsAckRequest", id: r.id, by: opsName }),
+      ticker: ["관제", `새 해주세요 확인 — ${r.type}`, "#8FA9CC"],
+    })
+  );
   // 해주세요 취소 요청 — 서비스일 3일 안이라 관제 승인이 필요한 것 (2026-10-05)
   (state.requests || [])
     .filter((r) => r.status === "cancelRequested")
