@@ -24,6 +24,9 @@ const B64_RE = /^[A-Za-z0-9+/]+={0,2}$/;
 const MAX_B64 = 2_700_000;
 const MAX_SECS = 180;
 const KEEP_DAYS = 30;
+// 가구마다 40MB 까지 — 넘으면 오래된 것부터 지운다. 공용 테스트 비밀번호를 아는 누구든 올릴 수 있어서,
+// 한 가구가 무료 Supabase(500MB)를 채워 모든 가구의 저장 · 가입이 멈추는 일을 막는다 (2026-10-14 점검)
+const HOUSEHOLD_CAP_BYTES = 40 * 1024 * 1024;
 const EXT = { webm: "webm", ogg: "ogg", mp4: "m4a", "x-m4a": "m4a", aac: "aac", mpeg: "mp3", wav: "wav" };
 
 // 한 계정이 짧은 시간에 쏟아 넣지 못하게 — 10분에 40개 (서버 인스턴스마다)
@@ -61,7 +64,9 @@ export default async function handler(req, res) {
         const ext = EXT[base.split("/")[1]] || "webm";
         res.setHeader("Content-Disposition", `attachment; filename="kcare-voice-${id.slice(3, 15)}.${ext}"`);
       }
-      return res.status(200).send(buf);
+      // res.send 는 버퍼를 통째로 글자로 바꿔 ETag 를 만든다 (2MB 녹음이면 수 MB) — 그대로 흘려보낸다
+      res.statusCode = 200;
+      return res.end(buf);
     }
 
     if (req.method === "POST") {
@@ -88,10 +93,23 @@ export default async function handler(req, res) {
       }
       if (ins.error) throw Object.assign(ins.error, { status: ins.status });
 
-      // 오래된 목소리 정리 — 실패해도 저장은 성공으로 답한다
+      // 오래된 목소리 정리 — 30일 지난 것, 그리고 가구 한도(40MB)를 넘는 오래된 것. 실패해도 저장은 성공으로 답한다
       try {
         const cutoff = new Date(Date.now() - KEEP_DAYS * 86400000).toISOString();
         await db().from("voice_clips").delete().eq("household_id", user.household).lt("created_at", cutoff);
+        const { data: rows } = await db()
+          .from("voice_clips")
+          .select("id, bytes")
+          .eq("household_id", user.household)
+          .order("created_at", { ascending: false })
+          .limit(2000);
+        let total = 0;
+        const drop = [];
+        for (const r of rows || []) {
+          total += Number(r.bytes) || 0;
+          if (total > HOUSEHOLD_CAP_BYTES && r.id !== id) drop.push(r.id);
+        }
+        if (drop.length) await db().from("voice_clips").delete().eq("household_id", user.household).in("id", drop.slice(0, 100)); // 주소 길이 때문에 한 번에 100개 — 남은 것은 다음 저장 때
       } catch (_) {
         /* 다음 저장 때 다시 지운다 */
       }

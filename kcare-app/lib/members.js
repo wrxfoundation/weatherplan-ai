@@ -67,6 +67,21 @@ export async function inviteUses(jti) {
   return count || 0;
 }
 
+// 가입한 뒤 내 순번 — 동시에 여러 명이 가입하면 '세고 → 넣기' 사이로 한도를 넘을 수 있어, 넣은 뒤 먼저 들어온
+// 순서(가입 시각 · 아이디)로 다시 세고 한도 밖이면 내 것을 지운다 (pages/api/join.js). 표를 따로 만들지 않는 방법.
+async function rankOf(query, id) {
+  const { data, error, status } = await query.order("created_at", { ascending: true }).order("id", { ascending: true }).limit(500);
+  if (error) throw fail(error, status);
+  return (data || []).findIndex((r) => r.id === id);
+}
+export const inviteRank = (jti, id) => rankOf(db().from("accounts").select("id").eq("profile->>invite", jti), id);
+export const pendingRank = (centerId, id) => rankOf(db().from("accounts").select("id").eq("center_id", centerId).eq("status", "pending"), id);
+// 방금 넣은 가입 신청을 되돌린다 — 승인 대기인 것만
+export async function removePending(id) {
+  const { error, status } = await db().from("accounts").delete().eq("id", id).eq("status", "pending");
+  if (error) throw fail(error, status);
+}
+
 // 회원 계정 id 는 아이디 그대로다 (테스트 · 구글 계정 id 와는 모양이 달라 겹치지 않는다 — lib/centers.js checkLoginId)
 export async function loginIdTaken(loginId) {
   const { data, error, status } = await db().from("accounts").select("id").eq("id", loginId).limit(1);

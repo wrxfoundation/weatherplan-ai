@@ -7,6 +7,7 @@
 //
 // 초대 링크(2026-10-14 · lib/invite.js) — 어르신 · 보호자가 만든 링크로 들어온 자녀는 가입 코드 없이 그 센터에
 // 보호자로 가입 신청한다. 링크 하나로 5명까지 · 7일. 초대로 와도 센터 관제가 승인해야 로그인된다.
+// 보낸 사람이 정지 · 탈퇴했거나 센터가 바뀌었으면 그 링크는 더 쓰지 못한다.
 //
 // 가입 코드가 센터를 정한다 — 코드는 그 센터 관제가 회원 · 권한 화면에서 나눠 주고 바꿀 수 있다.
 // 어느 영역이든 그 센터 관제가 승인해야 로그인된다 (lib/centers.js). 승인 대기가 너무 쌓이면 새 가입을 잠시 받지 않는다.
@@ -14,7 +15,7 @@
 import { memberLoginConfigured } from "../../lib/auth-server";
 import { dbConfigured, dbErrorCode, ensureHousehold } from "../../lib/db";
 import { AREAS, JOIN_CODE_RE, checkLoginId, checkPassword, isArea, normCode } from "../../lib/centers";
-import { activityLine, audit, centerByCode, createMember, inviteUses, loginIdTaken, pendingCount } from "../../lib/members";
+import { activityLine, audit, centerByCode, createMember, getMember, inviteRank, inviteUses, loginIdTaken, pendingCount, pendingRank, removePending } from "../../lib/members";
 import { INVITE_MAX_USES, readInvite } from "../../lib/invite";
 import { hashPassword } from "../../lib/password";
 import { ROLE_LABEL } from "../../lib/test-accounts";
@@ -29,6 +30,12 @@ const anyHit = makeLimiter({ windowMs: 10 * 60 * 1000, max: 150 });
 const badCode = makeLimiter({ windowMs: 10 * 60 * 1000, max: 20 });
 const badCodeSeen = new Map();
 const MAX_PENDING = 30; // 한 센터의 승인 대기 — 넘으면 관제가 정리할 때까지 새 가입을 받지 않는다
+
+// 초대를 보낸 사람이 아직 그 센터의 사용 중인 회원인지 — 정지 · 탈퇴한 사람의 링크는 막는다
+async function inviterActive(invite) {
+  const m = invite?.from ? await getMember(invite.from) : null;
+  return !!m && m.status === "active" && m.provider === "member" && m.center_id === invite.center.id;
+}
 
 export default async function handler(req, res) {
   res.setHeader("Cache-Control", "no-store");
@@ -48,6 +55,7 @@ export default async function handler(req, res) {
         if (r.error === "bad") await wrongCode();
         return res.status(r.error === "expired" ? 410 : 404).json({ error: r.error === "expired" ? "invite-expired" : "bad-invite" });
       }
+      if (!(await inviterActive(r.invite))) return res.status(410).json({ error: "invite-revoked" });
       const used = await inviteUses(r.invite.jti);
       if (used >= INVITE_MAX_USES) return res.status(410).json({ error: "invite-used-up" });
       const { center, fromName, fromRole, role, exp } = r.invite;
@@ -96,6 +104,7 @@ export default async function handler(req, res) {
         await wrongCode();
         return res.status(400).json({ error: "invalid", fields: { code: "맞지 않는 가입 코드입니다" } });
       }
+      if (invite && !(await inviterActive(invite))) return res.status(410).json({ error: "invite-revoked" });
       if (invite && (await inviteUses(invite.jti)) >= INVITE_MAX_USES) return res.status(410).json({ error: "invite-used-up" });
       if ((await pendingCount(center.id)) >= MAX_PENDING) return res.status(429).json({ error: "pending-full" });
       if (await loginIdTaken(loginId)) return res.status(409).json({ error: "taken", fields: { loginId: "이미 쓰는 아이디입니다" } });
@@ -111,7 +120,7 @@ export default async function handler(req, res) {
       if (invite) {
         profile.invite = invite.jti;
         profile.invitedBy = str(invite.fromName, 20);
-        profile.invitedById = str(invite.from, 60);
+        profile.invitedById = str(invite.from, 60); // 서버가 링크에서 푼 값 — 관제 화면에서만 보인다
       }
       const status = AREAS[area].approval ? "pending" : "active";
       await ensureHousehold(center.household);
@@ -137,6 +146,15 @@ export default async function handler(req, res) {
         // 동시에 같은 아이디로 가입 — 고유 색인이 막는다
         if (String(e.code) === "23505") return res.status(409).json({ error: "taken", fields: { loginId: "이미 쓰는 아이디입니다" } });
         throw e;
+      }
+      // 동시에 들어온 가입이 한도(초대 5명 · 승인 대기 30명)를 함께 넘지 않게 — 넣은 뒤 순번으로 다시 본다
+      if (status === "pending") {
+        const overInvite = invite && (await inviteRank(invite.jti, loginId)) >= INVITE_MAX_USES;
+        const overPending = !overInvite && (await pendingRank(center.id, loginId)) >= MAX_PENDING;
+        if (overInvite || overPending) {
+          await removePending(loginId);
+          return overInvite ? res.status(410).json({ error: "invite-used-up" }) : res.status(429).json({ error: "pending-full" });
+        }
       }
       await audit({ center_id: center.id, account_id: loginId, actor_id: loginId, action: "signup", before: null, after: { role, status } });
       await activityLine(

@@ -30,7 +30,7 @@ const ERR = {
 const errText = (code, message) => ERR[code] || message || `처리하지 못했습니다 (${code})`;
 // 메뉴 숫자 · 지금 처리할 일이 패널과 같은 승인 대기 수를 보게 — 패널이 새로 읽을 때마다 알린다
 const PENDING_EVENT = "kcare-members-pending";
-const ACTION_TEXT = { signup: "가입", approve: "가입 승인", reject: "가입 거절", role: "역할 변경", suspend: "사용 정지", activate: "다시 사용", "join-code": "가입 코드 변경" };
+const ACTION_TEXT = { signup: "가입", approve: "가입 승인", reject: "가입 거절", role: "역할 변경", suspend: "사용 정지", activate: "다시 사용", "join-code": "가입 코드 변경", invite: "가족 초대 링크 만듦" };
 const when = (t) => (t ? fmtDateTime(Date.parse(t)) : "—");
 // 초대 링크로 온 가입은 누가 보낸 링크인지 붙인다 (2026-10-14 · lib/invite.js)
 const extraText = (p) =>

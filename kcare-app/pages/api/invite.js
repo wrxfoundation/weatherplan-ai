@@ -8,7 +8,7 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "./auth/[...nextauth]";
 import { authConfigured } from "../../lib/auth-server";
 import { dbConfigured, dbErrorCode } from "../../lib/db";
-import { memberStillValid } from "../../lib/members";
+import { audit, memberStillValid } from "../../lib/members";
 import { CENTERS } from "../../lib/centers";
 import { INVITE_MAX_USES, inviteConfigured, makeInvite } from "../../lib/invite";
 import { makeLimiter, sameSiteJson } from "../../lib/http";
@@ -42,7 +42,9 @@ export default async function handler(req, res) {
     const still = await memberStillValid(user);
     if (!still.ok) return res.status(401).json({ error: still.reason });
     if (made(String(user.id))) return res.status(429).json({ error: "too-many" });
-    const { token, exp } = makeInvite({ center: user.center, from: user.id, fromName: user.name, fromRole: user.role });
+    const { token, exp, jti } = makeInvite({ center: user.center, from: user.id, fromName: user.name, fromRole: user.role });
+    // 누가 언제 초대 링크를 만들었는지 — 관제 '권한 변경 기록'에 남는다 (실패해도 링크는 준다)
+    await audit({ center_id: user.center, account_id: user.id, actor_id: user.id, action: "invite", before: null, after: { jti, exp, uses: INVITE_MAX_USES } });
     return res.status(201).json({ url: `${origin(req)}/join?invite=${token}`, exp, uses: INVITE_MAX_USES });
   } catch (e) {
     const code = dbErrorCode(e);

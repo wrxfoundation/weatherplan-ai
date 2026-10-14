@@ -35,9 +35,13 @@ export const SEND_ERRORS = {
   "too-many": "짧은 시간에 너무 많이 보냈습니다. 잠시 뒤 다시 보내 주세요.",
   "too-large": "녹음이 너무 깁니다. 1분 안으로 다시 말씀해 주세요.",
   gone: "이 목소리는 지금 들을 수 없습니다 (보관 기간이 지났거나 다른 기기의 데모 녹음).",
+  "invalid-request": "녹음이 제대로 담기지 않았습니다 — 그만두고 다시 녹음해 주세요.",
+  account: "이 아이디로는 지금 보낼 수 없습니다 — 다시 로그인해 주세요.",
   network: "연결이 끊겨 보내지 못했습니다. 다시 보내기를 눌러 주세요.",
 };
-export const sendErrorText = (code) => SEND_ERRORS[code] || SEND_ERRORS.network;
+// 정지 · 역할 변경(account-… · role-changed)은 다시 보내도 같다 — 연결 문제처럼 말하지 않는다
+export const sendErrorText = (code) =>
+  SEND_ERRORS[code] || (/^account-|^role-changed$/.test(String(code || "")) ? SEND_ERRORS.account : SEND_ERRORS.network);
 
 export function recorderSupport() {
   if (typeof window === "undefined") return { ok: false, reason: "unsupported" };
@@ -155,6 +159,12 @@ export function useRecorder({ maxSecs = MAX_SECS, onMax } = {}) {
       if (e.data && e.data.size) x.chunks.push(e.data);
     };
     rec.onstop = () => {
+      // 브라우저가 스스로 멈췄다(이어폰 끊김 · 전화가 마이크를 가져감 · 권한 회수) — stop() 을 거치지 않아
+      // 여기서 말한 시간을 센다. 안 세면 40초를 말해도 0초라 '너무 짧습니다'로 버려졌다 (2026-10-14 점검)
+      if (x.startedAt) {
+        x.acc = elapsed();
+        x.startedAt = 0;
+      }
       const type = (rec.mimeType || mime || x.chunks[0]?.type || "audio/webm").trim();
       const blob = new Blob(x.chunks, { type });
       const s = Math.round(x.acc / 1000);
@@ -172,7 +182,9 @@ export function useRecorder({ maxSecs = MAX_SECS, onMax } = {}) {
       setResult(out);
       setSecs(out.secs);
       setPhase("done");
-      wait?.(out);
+      // 우리가 멈추지 않았다 — 1분이 찼을 때처럼 받아 갈 곳(onMax)에 넘긴다 (두 번째 값 "ended")
+      if (wait) wait(out);
+      else onMaxRef.current?.(Promise.resolve(out), "ended");
     };
     try {
       rec.start(1000);
@@ -384,6 +396,7 @@ export function useVoicePlayer() {
   const [playing, setPlaying] = useState(null);
   const [busy, setBusy] = useState(null);
   const [failed, setFailed] = useState(null);
+  const busyRef = useRef(null);
   useEffect(() => {
     const fn = (k) => setPlaying(k);
     listeners.add(fn);
@@ -417,6 +430,8 @@ export function useVoicePlayer() {
       p.then(
         () => cb?.onStart?.(),
         (e) => {
+          // 다른 목소리를 누르거나 멈춰서 끊긴 것 — 실패가 아니다 (지금 재생 표시도 건드리지 않는다)
+          if (e?.name === "AbortError") return;
           if (current === key) {
             current = null;
             notify();
@@ -430,6 +445,11 @@ export function useVoicePlayer() {
   };
 
   const play = useCallback((key, { clip, src } = {}, cb = {}) => {
+    // 받는 중에 같은 것을 또 눌렀다 — 두 번 재생하지 않는다
+    if (busyRef.current === key) return;
+    // 다른 목소리를 받는 중이었다 — 그것은 다 받아도 틀지 않는다 (나중에 누른 것이 이긴다)
+    busyRef.current = null;
+    setBusy(null);
     setFailed(null);
     if (current === key) {
       stopVoice();
@@ -446,13 +466,18 @@ export function useVoicePlayer() {
       return;
     }
     setBusy(key);
+    busyRef.current = key;
     fetchClip(clip)
       .then((url) => {
         if (!url) throw Object.assign(new Error("gone"), { code: "gone" });
-        begin(key, url, cb);
+        // 받는 사이 다른 목소리를 눌렀으면 이것은 틀지 않는다
+        if (busyRef.current === key) begin(key, url, cb);
       })
       .catch((e) => setFailed({ key, code: e.code || "network" }))
-      .finally(() => setBusy((b) => (b === key ? null : b)));
+      .finally(() => {
+        if (busyRef.current === key) busyRef.current = null;
+        setBusy((b) => (b === key ? null : b));
+      });
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return { playing, busy, failed, play, stop: stopVoice };

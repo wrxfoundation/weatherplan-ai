@@ -12,7 +12,7 @@ import { MAX_SECS, RECORD_ERRORS, clock, saveClip, sendErrorText, useRecorder } 
 export default function ElderRecord({ label, to, sentTitle = "보냈습니다", sentBody, server = false, onSend, onClose }) {
   const [stage, setStage] = useState("rec"); // rec | sending | sent | send-error
   const [sendErr, setSendErr] = useState(null);
-  const [autoSent, setAutoSent] = useState(false);
+  const [autoSent, setAutoSent] = useState(null); // null | "max"(1분이 참) | "ended"(마이크가 끊김)
   const outRef = useRef(null);
   const sendingRef = useRef(false);
 
@@ -36,9 +36,9 @@ export default function ElderRecord({ label, to, sentTitle = "보냈습니다", 
 
   const rec = useRecorder({
     maxSecs: MAX_SECS,
-    // 1분이 차면 그대로 보낸다 — 다 말씀하신 것을 버리지 않는다
-    onMax: (p) => {
-      setAutoSent(true);
+    // 1분이 차거나 마이크가 끊기면(이어폰 · 전화) 그때까지 말씀하신 것을 그대로 보낸다 — 버리지 않는다
+    onMax: (p, why) => {
+      setAutoSent(why === "ended" ? "ended" : "max");
       p.then((out) => deliver(out));
     },
   });
@@ -77,7 +77,11 @@ export default function ElderRecord({ label, to, sentTitle = "보냈습니다", 
         </Ring>
         <p className="mt-5 text-[28px] font-black leading-[1.25] text-navy">{sentTitle}</p>
         {sentBody && <p className="mt-1.5 text-[18px] leading-[1.55] text-muted">{sentBody}</p>}
-        {autoSent && <p className="mt-1 text-[16px] leading-[1.5] text-muted">1분이 차서 거기까지 보냈습니다.</p>}
+        {autoSent && (
+          <p className="mt-1 text-[16px] leading-[1.5] text-muted">
+            {autoSent === "ended" ? "마이크가 끊겨 거기까지 보냈습니다." : "1분이 차서 거기까지 보냈습니다."}
+          </p>
+        )}
         {!server && <p className="mt-2 text-[15px] leading-[1.5] text-muted">데모 — 이 기기에서만 들을 수 있습니다.</p>}
         <button autoFocus onClick={onClose} className={`${btn} mt-6 text-navy`} style={{ background: "rgba(10,31,60,.06)" }}>
           닫기

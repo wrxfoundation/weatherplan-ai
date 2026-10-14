@@ -33,6 +33,7 @@ const INVITE_ERR = {
   "bad-invite": "초대 링크가 맞지 않습니다 — 링크를 다시 받아 주세요.",
   "invite-expired": "초대 링크의 기간(7일)이 지났습니다 — 새 링크를 받아 주세요.",
   "invite-used-up": "이 초대 링크로 가입할 수 있는 인원(5명)이 다 찼습니다 — 새 링크를 받아 주세요.",
+  "invite-revoked": "이 초대 링크는 더 쓸 수 없습니다 — 보내 준 분께 새 링크를 받아 주세요.",
 };
 const SERVER_ERR = {
   ...INVITE_ERR,
@@ -232,8 +233,12 @@ export default function JoinForm({ area }) {
           setErrors(fields);
           focusFirst(fields);
         } else {
-          // 초대 링크가 그사이 지났거나 다 찼다 — 가입 코드로 가입하게 돌린다
-          if (INVITE_ERR[j.error]) setInvite((v) => ({ ...(v || {}), state: "error", error: j.error }));
+          // 초대 링크가 그사이 지났거나 다 찼다 — 가입 코드로 가입하게 돌린다. 링크가 정한 센터도 지운다
+          // (남겨 두면 빈 코드 칸 옆에 '○○센터 회원으로 가입' 안내가 남고, 다시 보내면 빈 코드가 간다)
+          if (INVITE_ERR[j.error]) {
+            setInvite((v) => ({ ...(v || {}), state: "error", error: j.error }));
+            setCenter(null);
+          }
           setServerErr(j.error || `http-${r.status}`);
         }
         setBusy(false);
