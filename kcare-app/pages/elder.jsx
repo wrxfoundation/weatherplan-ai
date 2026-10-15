@@ -391,6 +391,9 @@ function ElderHome() {
     : laterEvents[1]
       ? { kind: "later", key: laterEvents[1].id, ev: laterEvents[1], at: laterEvents[1].at }
       : null;
+  // 관제 승인 전 · 반려된 일정은 그렇다고 말한다 — '그다음' 한 줄도 확정된 일정처럼 보이면 안 된다
+  // (2026-10-02 QA '관제 승인 전에는 확정이 아니다' · 이번 달 목록과 같은 말)
+  const approvalWord = (ev) => (ev?.approval === "pending" ? "관제 확인 중" : ev?.approval === "rejected" ? "관제에서 다시 연락드립니다" : "");
   const taskLabel = (t) =>
     t.kind === "med"
       ? `${t.slot} ${spokenClock(t.time)} · ${medDoseNames(t.slot, medPlan)}`
@@ -1170,7 +1173,15 @@ function ElderHome() {
                 <span className="flex-none text-[16px] font-extrabold" style={{ color: TONE.purple.title }}>
                   그다음
                 </span>
-                <span className="min-w-0 flex-1 text-right text-[17px] font-extrabold">{taskLabel(thenTask)}</span>
+                <span className="min-w-0 flex-1 text-right text-[17px] font-extrabold">
+                  {taskLabel(thenTask)}
+                  {/* 기다리는 상태는 금색 (빨강은 위험 신호 전용) — 일정 이름과 섞이지 않게 아래 줄로 */}
+                  {approvalWord(thenTask.ev) && (
+                    <span className="block text-[15px] font-bold" style={{ color: TONE.gold.fg }}>
+                      {approvalWord(thenTask.ev)}
+                    </span>
+                  )}
+                </span>
               </R>
             )}
             <R d={150} className="ds-g2" style={{ gap: 10 }}>
@@ -2162,7 +2173,7 @@ function ElderHome() {
                     <div className="text-[17px] font-extrabold leading-[1.35]">{cleanTitle(e.title)}</div>
                     <div className="text-[15px]" style={{ color: "#4A4F5E" }}>
                       {spokenTime(e.at)}
-                      {e.approval === "pending" ? " · 관제 확인 중" : e.approval === "rejected" ? " · 관제에서 다시 연락드립니다" : ""}
+                      {approvalWord(e) && ` · ${approvalWord(e)}`}
                     </div>
                   </div>
                   {isToday(e.at) && <Pill bg="#1B2340" fg="#FFFFFF">오늘</Pill>}
