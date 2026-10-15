@@ -4556,3 +4556,12 @@ Thanks Clyde, good to have you on it. HK is just an hour behind Seoul, so timing
   넣지 않은 것: 플랫폼 이름 · 금액(딜러 할인율 · 월 보상) · 토큰 · 가격 · 리플.
 - **통화 전에 정할 것**: ① 계약 주체 = Wellbian Labs SG(국내 대리점 메모와 같은 구조) · 개인 공구 운영자를 리셀러로 볼지 · 소개 수수료로 볼지 ② 홍콩 배송 — KC 외 전파 인증(OFCA) · 통관 ③ 홍콩 SFC 가상자산 규정 — 보상이 붙은 기기를 「수익 상품」으로 모으면 문제, 공구 안내문은 우리가 써 준다(보상 testing · 금액 비보장)
   ④ 할인 · 수수료 숫자는 9/11 정본(5% + 5%) · 딜러 20% · 가이드 PDF 30% 중 무엇인지 먼저 확정 ⑤ 「월 130달러」류 숫자는 이 사람에게도 말하지 않는다(구매자에게 그대로 전해진다).
+
+## Paul Wolf (Mastercard · Global Partnerships – Blockchain & Digital Assets · 두바이) — 판정 (2026-10-15, 서우 프로필 캡처 4장 · 이미 1촌)
+
+- **자리**(캡처 기준): Mastercard Global Partnerships – Blockchain & Digital Assets(2026-01~, 두바이) · 그 전 Blockchain & Digital Assets Lead France(2023-09~2025-12, 파리) ·
+  Stack Talent Co-Director · CSO(2021-09~2023-09) · Allianz 전략 · M&A(2020-12~2021-12) · CentraleSupélec. 1년 전 글 = Mastercard Crypto Day(파리 · Kraken 제휴 발표). 공통 1촌 13.
+- **판정 — Lynn 인사 + 결제 쪽으로 문 하나만(서우 「인사 겸 비즈니스를 열어 두는 가벼운 DM」)**. 마스터카드는 거래소가 아니라 결제 네트워크라 「거래소 = 인사만」 규칙 밖.
+  마스터카드 둘째(9/10 Move 프로덕트 디렉터는 이름 미기재). 각도 = 우리 기기 · 데이터가 이미 스테이블코인으로 결제되고(정본 §2 · x402 단가) AI 에이전트가 호출당 결제(정본 §5 메인넷 검증) → 「카드 레일과 온체인 결제가 현실 데이터에서 만나는 곳」 의견 교환. 요청은 그것까지.
+- **넣지 않은 것**: 토큰 · WLBN · 가격 · 리플 · RLUSD 이름 · XRP · Kinexys · 마스터카드 XRPL 해커톤(그쪽 참석 여부 모름) · Kraken. 「certified」 · 「independent」 0.
+- 문안 약 700자(채팅 전달). 답이 오면 짧게 받고, 그쪽이 결제 쪽을 물으면 그때 x402 · 기기 결제 흐름까지.
