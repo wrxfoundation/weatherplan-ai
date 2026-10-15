@@ -1,0 +1,99 @@
+// 스모크 — /calculator/rental(렌탈 계산기) + /office 가망고객 TOP5
+// 계산 정합성까지: 카드할인 토글이 실부담을 정확히 낮추는지, 총액 최저 배지가 실제 최소인지.
+let pw
+try { pw = require('/opt/node22/lib/node_modules/playwright') } catch { pw = require('playwright') }
+// 여러 스모크를 병렬로 돌릴 때 각자 다른 프리뷰 포트를 쓸 수 있게 — 기본은 qa-all 이 띄우는 4173
+const BASE = process.env.QA_BASE ?? 'http://localhost:4173'
+
+const num = (s) => Number(String(s).replace(/[^0-9]/g, '')) || 0
+
+;(async () => {
+  const browser = await pw.chromium.launch()
+  const page = await browser.newPage({ viewport: { width: 1280, height: 1000 } })
+  const errors = []
+  page.on('pageerror', (e) => errors.push(String(e)))
+
+  let fail = 0
+  const check = (ok, label) => { if (!ok) fail++; console.log(`${ok ? 'PASS' : 'FAIL'}  ${label}`) }
+
+  // ── 렌탈 계산기 ──
+  await page.goto(BASE + '/calculator/rental', { waitUntil: 'networkidle' })
+  await page.waitForTimeout(500)
+  let text = await page.evaluate(() => document.body.innerText)
+  for (const m of ['렌탈 견적 계산기', '방문형', '셀프형', '제휴카드 청구할인', '동시 렌탈 대수', '관리 방식 × 기간 비교', '소유권 이전', '계약 전에 꼭 확인하세요', '의무사용']) {
+    check(text.includes(m), `렌더: ${m}`)
+  }
+  check(text.includes('총액 최저'), '총액 최저 배지')
+
+  const sticky = () => page.locator('aside .tnum.text-\\[32px\\]').first().innerText().then(num)
+
+  // 카드할인은 기본 ON — 끄면 실부담이 올라가야 한다
+  const withCard = await sticky()
+  await page.click('text=제휴카드 청구할인')
+  await page.waitForTimeout(350)
+  const noCard = await sticky()
+  check(noCard > withCard, `카드할인 해제 시 실부담 증가 (${withCard} → ${noCard})`)
+  await page.click('text=제휴카드 청구할인')
+  await page.waitForTimeout(350)
+
+  // 동시 2대 → 추가 할인
+  const one = await sticky()
+  await page.click('text=2대')
+  await page.waitForTimeout(350)
+  const two = await sticky()
+  check(two < one, `동시렌탈 2대 시 실부담 감소 (${one} → ${two})`)
+
+  // 비교표 총 부담 최저 열 검증
+  const rows = await page.evaluate(() => [...document.querySelectorAll('table tbody tr')].map((tr) => {
+    const td = [...tr.querySelectorAll('td')].map((x) => x.innerText.trim())
+    return { label: td[0], total: td[3] }
+  }))
+  const totals = rows.map((r) => num(r.total))
+  check(rows.length === 4 && totals.every((v) => v > 0), `조합 4행 산출 (${totals.join(' / ')})`)
+  const minIdx = totals.indexOf(Math.min(...totals))
+  check(rows[minIdx].label.includes('총액 최저'), `총액 최저 배지가 실제 최소 행 (${rows[minIdx].label.split('\n')[0]})`)
+
+  // 정가 표기 — 카드할인을 켰을 때만. 껐을 때는 정가 = 실부담이라 취소선이 같은 숫자를 두 번 보여 준다.
+  const heads = async () => page.locator('table thead th').allInnerTexts()
+  const cardBtn = page.getByRole('button', { name: /제휴카드 청구할인/ })
+  check((await heads()).includes('정가 월'), `카드할인 ON — 비교표에 정가 월 컬럼 (${(await heads()).join('/')})`)
+  await cardBtn.click(); await page.waitForTimeout(400)
+  check(!(await heads()).includes('정가 월'), `카드할인 OFF — 정가 월 컬럼 없음 (${(await heads()).join('/')})`)
+  const asideOff = await page.locator('aside').innerText().catch(() => '')
+  check(!asideOff.includes('정가 월 렌탈료'), '카드할인 OFF — 요약 카드에도 정가 줄 없음')
+  // 정가·할인 줄이 하나도 없으면 내역 박스를 아예 그리지 않는다 — 합계 한 줄만 남으면 아래 큰 숫자와 중복이다.
+  // 앞 단계에서 동시렌탈 대수가 바뀐 채로 올 수 있어 1대로 되돌린 뒤 본다(2대 이상이면 할인 줄이 남는다).
+  await page.locator('button', { hasText: /^1대$/ }).first().click().catch(() => {})
+  await page.waitForTimeout(400)
+  const creamBoxes = async () => page.locator('aside [class*="bg-cream"]').count().catch(() => -1)
+  const asideNow = () => page.locator('aside').first().innerText().catch(() => '')
+  check((await creamBoxes()) === 0, `카드할인 OFF · 1대 — 내역 박스 없음 (${await creamBoxes()})`)
+  const dupOff = ((await asideNow()).match(/월 실부담/g) ?? []).length
+  check(dupOff === 2, `카드할인 OFF — '월 실부담' 은 라벨·합계 2회뿐 (${dupOff}회)`)
+  await cardBtn.click(); await page.waitForTimeout(400)
+  check((await creamBoxes()) === 1, `카드할인 ON — 내역 박스 복귀 (${await creamBoxes()})`)
+  await cardBtn.click(); await page.waitForTimeout(400)
+  await cardBtn.click(); await page.waitForTimeout(400)
+  check((await heads()).includes('정가 월'), '카드할인 다시 ON — 정가 월 컬럼 복귀')
+
+  // 탭 — 렌탈은 있고, 휴대폰은 사업자 전용이라 비로그인 소비자에게 보이지 않는다
+  check((await page.locator('a[href="/calculator/rental"]').count()) > 0, '계산기 탭에 렌탈 추가')
+  check((await page.locator('a[href="/calculator/phone"]').count()) === 0, '비로그인 — 계산기 탭에 휴대폰 없음(사업자 전용)')
+
+  // ── 오피스 가망고객 TOP5 ──
+  await page.addInitScript(() => localStorage.setItem('moduon_session_v1', JSON.stringify({ role: 'partner', tenantId: 'T1' })))
+  await page.goto(BASE + '/office', { waitUntil: 'networkidle' })
+  await page.waitForTimeout(700)
+  text = await page.evaluate(() => document.body.innerText)
+  check(text.includes('가망고객 TOP5'), '렌더: 가망고객 TOP5')
+  check(text.includes('잔여개월수 기준') && text.includes('위약금 기준'), '랭킹 기준 토글 2종')
+  await page.click('text=위약금 기준')
+  await page.waitForTimeout(400)
+  text = await page.evaluate(() => document.body.innerText)
+  check(text.includes('위약금') && (text.includes('위약금 없음') || text.includes('위약금 부담')), '위약금 기준 전환 시 사유 문구')
+
+  if (errors.length) { console.log('PAGEERROR:', errors.join(' | ')); fail++ }
+  await browser.close()
+  console.log(fail === 0 ? 'SMOKE: ALL PASS' : `SMOKE: ${fail} FAIL`)
+  process.exit(fail === 0 ? 0 : 1)
+})()

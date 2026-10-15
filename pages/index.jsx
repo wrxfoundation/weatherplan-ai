@@ -1413,6 +1413,7 @@ function Hero() {
       >
         <source src="/hero-loop.mp4" type="video/mp4" />
       </video>
+      <div className="hero-video-edge" aria-hidden="true" />
       <div className="hero-video-overlay" aria-hidden="true" />
 
       {/* Hero-wide subtle rainbow aurora (전역 은은한 무지개) */}
