@@ -3,23 +3,27 @@ import { useRouter } from "next/router";
 import { useState } from "react";
 import { payHref } from "../../lib/payments";
 import FamilyLayout from "../../components/FamilyLayout";
-import { Card, SectionLabel, PrimaryButton, Badge } from "../../components/ui";
-import Icon from "../../components/icons";
+import { Clay, Line } from "../../components/clay";
+import { Card, TONE, solid } from "../../components/ds";
 import { STORE_CATALOG, STORE_INDEX } from "../../lib/store";
-import ProductSheet from "../../components/ProductSheet";
+import ProductSheet, { GOODS_LOOK } from "../../components/ProductSheet";
 import { fmtWon } from "../../lib/config";
 import { useAppState } from "../../lib/state";
 import { honorific } from "../../lib/tracks";
 
-// 보호자 스토어 — 실무자 피드백 (2026-08-09) '쇼핑몰 제안' 시트 구조 그대로.
-// 썸네일 2열 그리드 (실무자 UI 샘플 반영): 카테고리 큰 버튼 → 하위분류 칩 →
-// 상품 카드(썸네일 · 이름 · 가격). 썸네일은 경영 콘솔에서 올린 이미지가 있으면
-// 그 이미지, 없으면 카테고리 아이콘이다 (state.productImages — 콘솔 연동).
+// 보호자 스토어 — 실무자 피드백 (2026-08-09) '쇼핑몰 제안' 시트 구조 + 2026-10-15 디자인 시안.
+// 2열 상품 칸(그림 · 이름 · 가격 · 담기) → 아래 남색 결제 막대. 오른쪽 위 '주문내역'은 구매내역 조회 (2026-08-12 시트).
+// 썸네일은 경영 콘솔에서 올린 이미지가 있으면 그 이미지, 없으면 시안의 클레이 그림이다 (state.productImages — 콘솔 연동).
 //
-// 가격은 navy 로 쓴다 — 샘플은 빨간 가격이지만 이 앱에서 빨강은 위험 신호
-// 전용이다 (SOS · 낙상). 상거래 숫자에 쓰면 그 원칙이 무너진다.
-// 약국(일반의약품) 분류는 2026-08-28 자로 뺐다 — 앱 결제 구매대행 불가 확인.
-// 의약외품·건강기능식품(영양제)만 남는다. lib/store.js 주석 참고.
+// 칸을 누르든 '담기'를 누르든 상품 정보 시트가 먼저 열린다 — 담기는 그 안에서만 (2026-09-22 상담실장 확인 · 전자상거래법 표시).
+// 가격은 남색 — 이 앱에서 빨강은 위험 신호 전용이다 (SOS · 낙상). 시안의 산호색 '선생님 제안' 배지도 금색으로.
+// 스토어는 생활안전용품만 판다 (2026-10-02 운영 결정 · lib/store.js).
+
+const ORDER_STATUS = {
+  preparing: { label: "준비 중", style: { background: TONE.gold.bg, color: TONE.gold.fg } },
+  shipping: { label: "배송 중", style: { background: TONE.blue.bg, color: TONE.blue.fg } },
+  delivered: { label: "전달 완료", style: { background: TONE.green.bg, color: TONE.green.fg } },
+};
 
 export default function StorePage() {
   const { state, dispatch } = useAppState();
@@ -27,22 +31,21 @@ export default function StorePage() {
   const images = state.productImages || {};
   // 첫 방문 안전진단(컨시어지)이 담아 둔 생활안전용품 — 자동으로 선택된 채 시작
   const safetyCart = state.demo.safetyCart || [];
+  const safetyPick = new Set(safetyCart);
   const [sel, setSel] = useState(() => Object.fromEntries(safetyCart.map((id) => [id, true])));
-  const [cat, setCat] = useState("safety"); // 스토어는 생활안전용품만 (2026-10-02 운영 결정)
-  const [groupIdx, setGroupIdx] = useState(0);
   const [tab, setTab] = useState("shop"); // shop | orders — 구매내역 조회 (2026-08-12 시트)
   // 상품 상세 시트 — 카드를 누르면 바로 담기지 않고 상세를 먼저 본다 (2026-09-22 상담실장 확인)
   const [detail, setDetail] = useState(null);
   const honor = honorific(state.onboarding); // 온보딩에서 받은 성함을 쓴다 — 인자 없이 부르면 기본값(김순자)으로 굳는다
   const orders = state.orders || [];
+  const active = STORE_CATALOG[0];
+  const all = STORE_CATALOG.flatMap((c) => c.groups.flatMap((g) => g.items));
 
   const items = Object.keys(sel)
     .filter((id) => sel[id])
     .map((id) => STORE_INDEX[id])
     .filter(Boolean);
   const total = items.reduce((s, i) => s + (i.price || 0) + (i.ship || 0), 0);
-  const active = STORE_CATALOG.find((c) => c.id === cat);
-  const group = active.groups[Math.min(groupIdx, active.groups.length - 1)];
 
   // 결제 — 토스페이먼츠 결제창으로 보낸다 (2026-09-23). 승인이 끝나야 주문이 선다.
   // 여기서는 무엇을 살지만 정하고, 돈이 오가는 자리는 /pay 한 곳이다.
@@ -63,229 +66,124 @@ export default function StorePage() {
     router.push(payHref({ kind: "store", amount: total, orderName: name }));
   };
 
-
-  const ORDER_STATUS = {
-    preparing: { label: "준비 중", fg: "#8A5D12", bg: "rgba(138,93,18,.12)" },
-    shipping: { label: "배송 중", fg: "#3B5C8A", bg: "rgba(59,92,138,.12)" },
-    delivered: { label: "전달 완료", fg: "#1E7A5A", bg: "rgba(30,122,90,.12)" },
-  };
+  const ordersBtn = (
+    <button
+      type="button"
+      onClick={() => setTab(tab === "shop" ? "orders" : "shop")}
+      aria-pressed={tab === "orders"}
+      className="ds-press ds-btn3d flex h-[46px] flex-none items-center rounded-[16px] bg-white px-3.5 text-[15px]"
+      style={{ boxShadow: "0 4px 0 #E3DED3" }}
+    >
+      {tab === "shop" ? `주문내역${orders.length ? ` ${orders.length}` : ""}` : "물품 보기"}
+    </button>
+  );
 
   return (
     <>
       <Head>
         <title>스토어 — K-CARE</title>
       </Head>
-      <FamilyLayout title="스토어">
-        {/* 담기 / 구매내역 조회 (2026-08-12 시트 스토어 2번) */}
-        <div className="flex gap-1.5">
-          {[
-            ["shop", "물품 담기"],
-            ["orders", `구매내역 조회${orders.length ? ` (${orders.length})` : ""}`],
-          ].map(([k, label]) => (
-            <button
-              key={k}
-              onClick={() => setTab(k)}
-              aria-pressed={tab === k}
-              // 높이는 py 로 만든다 — globals.css 의 .btn-press{min-height:44px} 가
-              // @layer 밖이라 min-h 유틸리티를 이긴다 (2026-08-28 "위아래 넓게").
-              className={`btn-press flex-1 rounded-xl border py-[16px] text-[15px] font-bold ${
-                tab === k ? "border-navy bg-navy text-white" : "border-navy/15 bg-white/70 text-muted"
-              }`}
-            >
-              {label}
-            </button>
-          ))}
-        </div>
-
+      <FamilyLayout sub={`${honor} 댁에 필요한 물건`} title={tab === "orders" ? "주문내역" : "스토어"} action={ordersBtn}>
         {tab === "orders" ? (
-          <OrderHistory orders={orders} status={ORDER_STATUS} />
+          <OrderHistory orders={orders} />
         ) : (
           <>
-        <p className="px-1 text-[13px] leading-[1.7] text-muted">
-          {honor} 화면과 같은 카탈로그입니다. 담으신 물품은 결제권한에 따라 승인 요청으로
-          오고, 보호자 주문은 바로 결제됩니다.
-        </p>
-
-        {/* 안전진단 자동 담기 — 컨시어지 첫 방문 진단과 연동 (실무자 요청) */}
-        {safetyCart.length > 0 && (
-          <Card className="border-gold/40 p-4" style={{ background: "linear-gradient(180deg,#FBF6EC,#F6EFDE)" }}>
-            <div className="text-[12px] font-bold text-gold">첫 방문 홈 안전진단 결과</div>
-            <p className="mt-1 text-[14px] leading-[1.65] text-ink">
-              진단에서 <b>&lsquo;아니오&rsquo;</b>가 나온 항목에 맞는 생활안전용품{" "}
-              <b>{safetyCart.length}개</b>가 장바구니에 담겨 있습니다. 빼셔도 됩니다 — 필요한
-              것만 결제하세요.
-            </p>
-          </Card>
-        )}
-
-        {/* 카테고리 — 큰 버튼 (실무자 UI 샘플: 활성은 채움, 비활성은 옅게).
-            지금은 생활안전용품 한 분류뿐이라(2026-10-02 운영 결정) 고를 것이 없으면 줄을 감춘다 */}
-        {STORE_CATALOG.length > 1 && (
-        <div className="grid grid-cols-4 gap-2">
-          {STORE_CATALOG.map((c) => {
-            const on = cat === c.id;
-            return (
-              <button
-                key={c.id}
-                onClick={() => {
-                  setCat(c.id);
-                  setGroupIdx(0);
-                }}
-                className={`btn-press flex flex-col items-center gap-1.5 rounded-2xl border px-1 py-3 ${
-                  on ? "border-navy bg-navy text-white" : "border-navy/12 bg-white/70 text-muted"
-                }`}
-              >
-                <Icon name={c.icon} size={24} />
-                <span className={`text-[12px] font-bold leading-tight ${on ? "text-white" : "text-muted"}`}>
-                  {c.name}
-                </span>
-              </button>
-            );
-          })}
-        </div>
-        )}
-
-        {/* 하위분류 칩 — 영양제처럼 그룹이 여럿일 때만. 가로 스크롤. 그냥 두면 오른쪽이 잘린 것처럼 보여서
-            더 있는 줄 모른다. 오른쪽 끝을 흐리게 덮어 "이어진다"를 보여 준다. */}
-        {active.groups.length > 1 && (
-          <div className="relative -mx-1">
-            <div className="flex gap-1.5 overflow-x-auto px-1 pb-1 [scrollbar-width:none]">
-            {active.groups.map((g, i) => {
-              const on = i === Math.min(groupIdx, active.groups.length - 1);
-              return (
-                <button
-                  key={g.name}
-                  onClick={() => setGroupIdx(i)}
-                  className={`btn-press shrink-0 whitespace-nowrap rounded-full border px-3.5 py-2 text-[13px] font-bold ${
-                    on ? "border-navy bg-navy text-white" : "border-navy/15 bg-white/70 text-muted"
-                  }`}
-                >
-                  {g.name}
-                </button>
-              );
-            })}
-            </div>
-            <span
-              aria-hidden
-              className="pointer-events-none absolute inset-y-0 right-0 w-10"
-              style={{ background: "linear-gradient(90deg, rgba(241,239,232,0), rgba(241,239,232,.95))" }}
-            />
-          </div>
-        )}
-
-        {/* 분류 배지(구매대행 · 안전진단 연동)는 버튼 안이 아니라 여기 둔다 —
-            9px 배지를 좁은 버튼에 욱여넣으면 읽히지도 않고 버튼만 옹졸해진다. */}
-        {(active.note || active.badge) && (
-          <div className="rounded-xl bg-navy/[.045] px-3.5 py-2.5">
-            {active.badge && (
-              <Badge fg="#8A5D12" bg="rgba(176,141,87,.16)">
-                {active.badge}
-              </Badge>
-            )}
-            {active.note && (
-              <p className={`text-[12.5px] leading-[1.7] text-muted ${active.badge ? "mt-1.5" : ""}`}>
-                {active.note}
+            {/* 안전진단 연동 — 컨시어지 첫 방문 진단과 연결 (실무자 요청). 담겨 있으면 그렇다고 먼저 말한다 */}
+            <div className="ds-r flex items-center gap-2.5 rounded-[20px] px-4 py-3" style={{ "--d": "40ms", background: TONE.green.bg }}>
+              <Clay name="shieldGreen" size={34} className="flex-none" />
+              <p className="text-[14px] font-bold leading-[1.55]" style={{ color: TONE.green.fg }}>
+                {safetyCart.length > 0 ? (
+                  <>
+                    첫 방문 홈 안전진단에서 &lsquo;아니오&rsquo;가 나온 항목의 용품 {safetyCart.length}개를 담아 두었어요. 빼셔도 됩니다 — 필요한 것만 결제하세요.
+                  </>
+                ) : (
+                  active?.note
+                )}
               </p>
-            )}
-          </div>
-        )}
+            </div>
 
-        {/* 상품 썸네일 그리드 — 2열 */}
-        <div>
-          <div className="flex items-center gap-2 px-1">
-            <span className="h-[7px] w-[7px] rounded-full bg-navy" />
-            <SectionLabel>{group.name}</SectionLabel>
-          </div>
-          <ul className="mt-2.5 grid grid-cols-2 gap-2.5">
-            {group.items.map((i) => {
-              const on = !!sel[i.id];
-              const disabled = !i.price; // 가격 확정 전 — 담기지 않는다
-              const img = images[i.id];
-              return (
-                <li key={i.id}>
-                  <button
-                    aria-label={`${i.name} 상품 정보 보기`}
-                    onClick={() => setDetail(i)}
-                    className={`btn-press w-full overflow-hidden rounded-2xl border text-left ${
-                      disabled
-                        ? "border-dashed border-navy/15 opacity-80"
-                        : on
-                        ? "border-gold ring-2 ring-gold/50"
-                        : "border-navy/12"
-                    } bg-white`}
-                  >
-                    {/* 썸네일 — 콘솔 업로드 이미지가 있으면 그 이미지, 없으면 아이콘 */}
-                    <span className="relative block aspect-square w-full bg-[#EDF1EA]">
-                      {img ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img src={img} alt="" className="absolute inset-0 h-full w-full object-cover" />
-                      ) : (
-                        /* 사진 없음 — 콘솔에서 올리기 전 상태.
-                           분류 아이콘을 쓰면 업로드 버튼처럼 보여서 글자만 둔다. */
-                        <span className="absolute inset-0 flex items-center justify-center">
-                          <span className="rounded-full bg-white/70 px-2.5 py-1 text-[10.5px] font-bold text-navy/35">
+            {/* 상품 칸 — 2열 */}
+            <ul className="ds-g2 ds-r m-0 list-none p-0" style={{ "--d": "80ms" }} aria-label={active?.name}>
+              {all.map((i) => {
+                const on = !!sel[i.id];
+                const off = !i.price; // 가격 확정 전 — 담기지 않는다
+                const look = GOODS_LOOK[i.id] || { tone: "stone", clay: null };
+                const tn = TONE[look.tone];
+                const img = images[i.id];
+                return (
+                  <li key={i.id} className="relative flex flex-col gap-2 rounded-[24px] bg-white p-3" style={{ boxShadow: "0 4px 0 #E6E2DA" }}>
+                    {safetyPick.has(i.id) && (
+                      <span className="absolute left-[18px] top-[18px] z-[1] rounded-full px-[9px] py-[3px] text-[12px] font-extrabold text-white" style={{ background: TONE.gold.fg }}>
+                        선생님 제안
+                      </span>
+                    )}
+                    <button type="button" onClick={() => setDetail(i)} aria-label={`${i.name} 상품 정보 보기`} className="ds-tap flex flex-1 flex-col gap-2 text-left">
+                      <span className="relative flex h-24 w-full items-center justify-center overflow-hidden rounded-[18px]" style={{ background: tn.bg }}>
+                        {img ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img src={img} alt="" className="absolute inset-0 h-full w-full object-cover" />
+                        ) : look.clay ? (
+                          <Clay name={look.clay} size={60} className="ds-ico" />
+                        ) : (
+                          <span className="text-[12px] font-bold" style={{ color: "#5E6270" }}>
                             사진 준비 중
                           </span>
-                        </span>
-                      )}
-                      {on && (
-                        <span className="absolute right-2 top-2 inline-flex h-[24px] w-[24px] items-center justify-center rounded-full bg-gold text-[13px] font-bold text-white shadow">
-                          ✓
-                        </span>
-                      )}
-                    </span>
-                    <span className="block px-3 pb-3 pt-2.5">
-                      <span className="block min-h-[38px] text-[14px] font-bold leading-[1.4] text-ink">
-                        {i.name}
+                        )}
                       </span>
-                      {i.price ? (
-                        <>
-                          <span className="mt-1 block font-num text-[17px] font-bold text-navy">
-                            {fmtWon(i.price)}
-                          </span>
-                          {i.ship ? (
-                            <span className="block font-num text-[10.5px] text-muted">
-                              배송 {fmtWon(i.ship)}
-                            </span>
-                          ) : null}
-                        </>
-                      ) : (
-                        <span className="mt-1 block text-[12px] font-bold text-muted">{i.pending}</span>
-                      )}
-                      {i.note && (
-                        <span className="mt-1 block text-[11px] leading-[1.5] text-muted">{i.note}</span>
-                      )}
-                    </span>
-                  </button>
-                </li>
-              );
-            })}
-          </ul>
-        </div>
+                      <b className="text-[16px] font-extrabold leading-[1.3]">{i.name}</b>
+                      <span className="ds-num text-[17px] font-black">{i.price ? fmtWon(i.price) : i.pending || "가격 확정 전"}</span>
+                    </button>
+                    <button
+                      type="button"
+                      disabled={off}
+                      onClick={() => setDetail(i)}
+                      aria-label={on ? `${i.name} — 담았어요 · 빼려면 상품 정보에서` : `${i.name} 담기 — 상품 정보를 먼저 봅니다`}
+                      className="ds-press ds-btn3d flex h-11 items-center justify-center rounded-[14px] text-[15px] disabled:opacity-50"
+                      style={on ? solid("green", 3) : { background: "#F3F1EC", boxShadow: "0 3px 0 #E3DED3", color: "#1B2340" }}
+                    >
+                      {on ? "담았어요 ✓" : "담기"}
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
 
-        <ProductSheet
-          item={detail}
-          image={detail ? images[detail.id] : null}
-          category={active}
-          selected={detail ? !!sel[detail.id] : false}
-          onToggle={(it) => setSel((s) => ({ ...s, [it.id]: !s[it.id] }))}
-          onClose={() => setDetail(null)}
-        />
+            <ProductSheet
+              item={detail}
+              image={detail ? images[detail.id] : null}
+              category={active}
+              selected={detail ? !!sel[detail.id] : false}
+              onToggle={(it) => setSel((s) => ({ ...s, [it.id]: !s[it.id] }))}
+              onClose={() => setDetail(null)}
+            />
 
-        {items.length > 0 && (
-          <Card className="p-4">
-            <div className="flex items-baseline justify-between">
-              <span className="text-[15px] font-bold text-navy">담은 물품 {items.length}건</span>
-              <span className="font-num text-[19px] font-bold text-navy">{fmtWon(total)}</span>
-            </div>
-            <p className="mt-1 text-[11px] text-muted">배송비 무료 · 다음 안심방문 또는 택배로 배송됩니다</p>
-          </Card>
-        )}
-
-        {/* 결제 — 승인이 끝나야 주문이 선다. 완료 안내는 결제 결과 화면과 구매내역 조회가 맡는다. */}
-        <PrimaryButton disabled={items.length === 0} onClick={payNow}>
-          {items.length === 0 ? "물품을 선택해 주세요" : `${fmtWon(total)} 결제하기`}
-        </PrimaryButton>
+            {/* 결제 — 승인이 끝나야 주문이 선다. 완료 안내는 결제 결과 화면과 구매내역 조회가 맡는다. */}
+            {items.length > 0 ? (
+              <div className="ds-r ds-swap flex flex-col gap-2" style={{ "--d": "120ms" }}>
+                <button
+                  type="button"
+                  onClick={payNow}
+                  className="ds-press ds-btn3d flex h-[66px] w-full items-center gap-3 rounded-[22px] px-5 text-left text-white"
+                  style={{ background: "#1B2340", boxShadow: "0 5px 0 #0E1428" }}
+                >
+                  <span className="flex h-8 min-w-[32px] flex-none items-center justify-center rounded-2xl px-2 text-[16px] font-black" style={{ background: TONE.gold.solid, color: "#1B2340" }}>
+                    {items.length}
+                  </span>
+                  <span className="flex-1 text-[18px]">{fmtWon(total)} 결제하기</span>
+                  <Line name="chevR" size={22} />
+                </button>
+                <p className="text-center text-[13px]" style={{ color: "#5E6270" }}>
+                  배송비 무료 · 다음 안심방문 또는 택배로 배송됩니다
+                </p>
+              </div>
+            ) : (
+              <p className="ds-r text-center text-[14px]" style={{ "--d": "120ms", color: "#5E6270" }}>
+                필요한 물건을 담으면 여기서 한 번에 결제해요
+              </p>
+            )}
+            <p className="px-1 text-[13px] leading-[1.7]" style={{ color: "#5E6270" }}>
+              {honor} 화면과 같은 물건들입니다. {honor}께서 담으신 물품은 결제권한에 따라 승인 요청으로 오고, 보호자 주문은 바로 결제됩니다.
+            </p>
           </>
         )}
       </FamilyLayout>
@@ -294,56 +192,58 @@ export default function StorePage() {
 }
 
 // 구매내역 조회 — 누가 · 어떤 경로로 · 무엇을 · 얼마에 샀는지.
-function OrderHistory({ orders, status }) {
+function OrderHistory({ orders }) {
   if (orders.length === 0)
     return (
-      <Card className="p-[18px]">
-        <p className="text-[15px] leading-[1.7] text-muted">아직 구매내역이 없습니다.</p>
+      <Card tone="stone" shadow={false} pad={22} className="text-center text-[16px] font-bold" style={{ color: "#5E6270" }}>
+        아직 구매내역이 없습니다.
       </Card>
     );
 
-  return (
-    <>
-      {orders.map((o) => {
-        const goods = o.items.reduce((s, i) => s + (i.price || 0) * (i.qty || 1), 0);
-        const st = status[o.status] || status.preparing;
-        return (
-          <Card key={o.id} className="p-[18px]">
-            <div className="flex items-center justify-between gap-2">
-              <div className="min-w-0">
-                <div className="font-num text-[13px] font-bold text-navy">
-                  {new Date(o.at).toLocaleDateString("ko-KR", { year: "numeric", month: "long", day: "numeric" })}
-                </div>
-                <div className="mt-0.5 truncate text-[12px] text-muted">
-                  {o.by} · {o.channel}
-                </div>
-              </div>
-              <Badge fg={st.fg} bg={st.bg}>
-                {st.label}
-              </Badge>
+  return orders.map((o, k) => {
+    const goods = o.items.reduce((s, i) => s + (i.price || 0) * (i.qty || 1), 0);
+    const st = ORDER_STATUS[o.status] || ORDER_STATUS.preparing;
+    return (
+      <Card key={o.id} className="ds-r flex flex-col gap-3" style={{ "--d": `${40 + k * 30}ms` }}>
+        <div className="flex items-center justify-between gap-2">
+          <div className="min-w-0">
+            <div className="ds-num text-[15px] font-extrabold">{new Date(o.at).toLocaleDateString("ko-KR", { year: "numeric", month: "long", day: "numeric" })}</div>
+            <div className="truncate text-[13px]" style={{ color: "#5E6270" }}>
+              {o.by} · {o.channel}
             </div>
-            <ul className="mt-3 space-y-1.5 border-t border-navy/[.08] pt-3">
-              {o.items.map((i) => (
-                <li key={i.id} className="flex items-baseline gap-2 text-[14px]">
-                  <span className="min-w-0 flex-1 truncate text-ink">{i.name}</span>
-                  <span className="font-num text-[12px] text-muted">×{i.qty || 1}</span>
-                  <span className="font-num font-bold text-navy">{fmtWon((i.price || 0) * (i.qty || 1))}</span>
-                </li>
-              ))}
-            </ul>
-            <div className="mt-2.5 flex items-baseline justify-between border-t border-navy/[.08] pt-2.5">
-              <span className="text-[12px] text-muted">물품 {fmtWon(goods)} · {o.ship ? `배송 ${fmtWon(o.ship)}` : "배송 무료"}</span>
-              <span className="font-num text-[17px] font-bold text-navy">{fmtWon(goods + (o.ship || 0))}</span>
-            </div>
-            {o.receipt && (
-              <p className="mt-2 rounded-xl bg-navy/[.045] px-3 py-2 text-[12px] leading-[1.6] text-muted">
-                구매대행 영수증 — {o.receipt}
-              </p>
-            )}
-            {o.note && <p className="mt-1.5 text-[12px] leading-[1.6] text-muted">{o.note}</p>}
-          </Card>
-        );
-      })}
-    </>
-  );
+          </div>
+          <span className="flex-none rounded-full px-2.5 py-1 text-[13px] font-extrabold" style={st.style}>
+            {st.label}
+          </span>
+        </div>
+        <ul className="m-0 flex list-none flex-col gap-1.5 border-t p-0 pt-3" style={{ borderColor: "#F0ECE4" }}>
+          {o.items.map((i) => (
+            <li key={i.id} className="flex items-baseline gap-2 text-[15px]">
+              <span className="min-w-0 flex-1 truncate">{i.name}</span>
+              <span className="ds-num text-[13px]" style={{ color: "#5E6270" }}>
+                ×{i.qty || 1}
+              </span>
+              <span className="ds-num font-extrabold">{fmtWon((i.price || 0) * (i.qty || 1))}</span>
+            </li>
+          ))}
+        </ul>
+        <div className="flex items-baseline justify-between border-t pt-2.5" style={{ borderColor: "#F0ECE4" }}>
+          <span className="text-[13px]" style={{ color: "#5E6270" }}>
+            물품 {fmtWon(goods)} · {o.ship ? `배송 ${fmtWon(o.ship)}` : "배송 무료"}
+          </span>
+          <span className="ds-num text-[18px] font-black">{fmtWon(goods + (o.ship || 0))}</span>
+        </div>
+        {o.receipt && (
+          <p className="rounded-[14px] px-3 py-2 text-[13px] leading-[1.6]" style={{ background: "#F3F1EC", color: "#5E6270" }}>
+            구매대행 영수증 — {o.receipt}
+          </p>
+        )}
+        {o.note && (
+          <p className="text-[13px] leading-[1.6]" style={{ color: "#5E6270" }}>
+            {o.note}
+          </p>
+        )}
+      </Card>
+    );
+  });
 }

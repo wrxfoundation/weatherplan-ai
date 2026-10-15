@@ -36,7 +36,7 @@ import ElderHealthReport from "../components/ElderHealthReport";
 import RoleGate from "../components/RoleGate";
 import { useAuth } from "../lib/auth";
 import { Art, Clay, ClayDefs, Line } from "../components/clay";
-import { BackHead, Btn, Card, DBlock, Face, Pill, R, Screen, Sheet, SheetTitle, Star, TONE, Wave, WhiteBtn, soft, solid, useToast } from "../components/ds";
+import { BackHead, Btn, Card, DBlock, Face, Pill, R, Screen, Sheet, SheetTitle, Star, TONE, Wave, WhiteBtn, eventTone, soft, solid, useToast } from "../components/ds";
 
 // 사용자(어르신) 홈 — 핸드오프 06 elder 상세 명세 + REQ-01(우선 날씨) + REQ-06(SOS 오작동 방지)
 // 2026-10-15 디자인 시안(클레이 3D)으로 다시 그렸다 — 화면 구성은 시안 그대로, 기능은 그대로 둔다:
@@ -183,10 +183,6 @@ function isYesterday(ts) {
 
 // 한국 날짜 표식 — 가구 상태를 여러 폰이 같이 쓰므로 폰 시간대와 무관하게 (2026-09-30 점검)
 const kstDate = (t = Date.now()) => new Date(t + 9 * 3600000).toISOString().slice(0, 10);
-
-// 일정 종류 → 색 (시안 예약 달력: 병원 초록 · 안심방문 베이지 · 배송 파랑)
-const eventTone = (kind) =>
-  ["hospital", "checkup", "nextAppt", "medication"].includes(kind) ? "green" : kind === "visit" ? "beige" : kind === "delivery" ? "blue" : kind === "family" ? "purple" : "blue";
 
 // 오늘 기분 (2026-10-15 시안) — 고른 것은 가구 기록(state.elder.moods)에 날짜별로 남는다.
 // '안 좋아요'면 관제에 알릴지 묻는다 — 알리면 관제 '지금 처리할 일'에 올라가고 확인한 사람 · 시각이 남는다.

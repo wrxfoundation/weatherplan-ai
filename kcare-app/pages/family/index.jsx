@@ -21,7 +21,7 @@ import { HelpCallCard } from "../../components/HelpCall";
 import { avatarText, meAs } from "../../lib/people";
 import { USUAL_SLEEP, fitMonth, medMonth, medTally, pastWeek, weekBefore } from "../../lib/demo-health";
 import { Clay, Line } from "../../components/clay";
-import { Btn, Card, Face, Pill, R, TONE, WhiteBtn } from "../../components/ds";
+import { Btn, Card, Face, Pill, R, TONE, WhiteBtn, eventTone } from "../../components/ds";
 
 // 받은 음성 '받은 때' — 오늘 · 어제는 말로, 그 전은 날짜로 (시각만 쓰면 며칠 전 것도 오늘처럼 읽힌다)
 const whenLabel = (at) => {
@@ -33,9 +33,6 @@ const whenLabel = (at) => {
   if (diff === 1) return `어제 ${hm}`;
   return `${d.getMonth() + 1}/${d.getDate()} ${hm}`;
 };
-
-// 일정 종류 → 색 (시안 예약 달력: 병원 초록 · 안심방문 베이지 · 배송 파랑)
-const eventTone = (kind) => (["hospital", "checkup", "nextAppt", "medication"].includes(kind) ? "green" : kind === "visit" ? "beige" : kind === "delivery" ? "blue" : kind === "family" ? "purple" : "blue");
 
 // 가족 앱 홈 — 핸드오프 02 family 명세 + REQ-02(다음 일정 홈 노출)
 // 2026-10-15 디자인 시안: 머리(오늘 · 한 줄 요약) → 이상 징후 → 네 칸(수면 · 활동 · 복약 · 외출, 누르면 세부 화면)

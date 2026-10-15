@@ -1,9 +1,10 @@
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { payHref } from "../../lib/payments";
 import FamilyLayout from "../../components/FamilyLayout";
-import { Card, SectionLabel, PrimaryButton, GhostButton, Badge, Collapse } from "../../components/ui";
+import { Clay, Line } from "../../components/clay";
+import { Btn, Card, Sheet, SheetTitle, TONE, WhiteBtn } from "../../components/ds";
 import { STATUS, GUARDIAN_PRESETS, SERVICE_MENU, SERVICE_PLUS, URGENCY, CANCEL_FREE_DAYS, CLOSED, approverOf, cancelRule, fmtPreferred, fmtScheduled, isStoreOrder, isVisitCall, paymentOf } from "../../lib/requests";
 import { fmtWon, PRICING } from "../../lib/config";
 import { useAppState } from "../../lib/state";
@@ -16,12 +17,92 @@ import { ASK_GUARDIAN, matchWelfare, profileFor, welfareCounts } from "../../lib
 // 보호자 화면: 요청(금액이 있으면 그 자리에서 결제) → 담당 컨시어지가 일정을 보고 승인 → 확정.
 // 컨시어지 제안 중 승인 대상이 보호자인 것은 여기서 수락(결제) · 거절한다.
 // 확정 뒤 취소는 서비스일 3일 전까지 바로, 그 안은 관제 승인.
+//
+// 2026-10-15 디자인 시안 '해주세요': 맨 위 보호자가 할 일(결제 · 수락 대기) 큰 카드 → 진행 중인 요청 →
+// 나라 지원 혜택 → 병원 · 생활 타일 → 곧 열려요. 시안의 산호색 결제 카드는 금색으로 (빨강 계열은 위험 신호 전용).
+// 타일의 짧은 요금은 lib/requests.js 요금 문구에서 뽑는다 — 금액을 이 화면에 따로 적지 않는다.
 
-// 활성 서비스 분류 순서 — 급한 것부터. lib/requests.js 의 cat 값과 같아야 한다.
-// 5분류 — 2026-08-28 실무진 제안 (lib/requests.js 주석 참고)
-const ACTIVE_CATS = ["건강지원", "생활지원", "가족지원", "전문지원", "긴급지원"];
+const man = (n) => `${(n / 10000).toLocaleString("ko-KR", { maximumFractionDigits: 1 })}만원`;
+function shortPrice(s) {
+  const L = String(s.priceLabel || "");
+  if (/^무료/.test(L)) return "무료";
+  if (s.point && /24시간 접수/.test(s.point)) return "24시간 접수";
+  let m = L.match(/시간당\s*([\d,]{4,})원/);
+  if (m) return `시간당 ${man(Number(m[1].replace(/,/g, "")))}`;
+  m = L.match(/1회.*?([\d,]{4,})원/);
+  if (m) return `1회 ${man(Number(m[1].replace(/,/g, "")))}`;
+  if (/견적/.test(L)) return "견적 후 진행";
+  if (s.amount == null) return "요금 확정 전";
+  return fmtWon(s.amount);
+}
+
+// 서비스 타일 — 분류 색 (병원 초록 · 생활 파랑 · 집 고칠 일 베이지 · 응급은 위험 신호라 빨강 계열)
+const SECTIONS = [
+  {
+    title: "병원",
+    tone: "green",
+    tiles: [
+      { no: 1, label: "병원 예약 대행", clay: "hospitalBook" },
+      { no: 2, label: "동행 2인", clay: "escort2" },
+      { no: 3, label: "동행 1인", clay: "escort1" },
+      { no: 4, label: "요양병원 케어", clay: "careHospital" },
+      { no: 13, label: "약국 심부름", clay: "pill" },
+    ],
+  },
+  {
+    title: "생활",
+    tone: "blue",
+    tiles: [
+      { no: 5, label: "추가 안심방문", clay: "safeVisit" },
+      { no: 6, label: "함께 해요", clay: "together" },
+      { no: 15, label: "함께가요", clay: "outing" },
+      { no: 14, label: "자녀 · 손주 동행", clay: "escort2" },
+      { no: 12, label: "응급 대응", clay: "siren", tone: "danger" },
+    ],
+  },
+];
+const PLUS_TILES = [
+  { key: "handyman", label: "핸디맨", clay: "wrench" },
+  { key: "builder", label: "공사맨", clay: "cloche" },
+  { key: "rental", label: "가전 렌탈", clay: "purifier" },
+];
 const INACTIVE = SERVICE_MENU.filter((s) => !s.active);
+// 복약이 바뀌었을 때 — 복약 미션 화면의 '약이 바뀌었어요'가 ?ask=med 로 연다. 다음 방문 때 새 약봉투를 보고 담당 컨시어지가 고친다
+const MED_CHANGE = {
+  no: "med-change",
+  name: "약이 바뀌었어요",
+  priceLabel: "무료 · 담당 컨시어지가 새 약봉투를 보고 복약 일정을 고칩니다",
+  amount: 0,
+  detail: "바뀐 약 이름 · 먹는 때(아침 · 점심 · 저녁) · 바뀐 날을 적어 주세요.",
+};
 
+// 요청 그림 — 제목에서 짐작한다 (없으면 문서)
+function reqClay(r) {
+  const t = `${r.type} ${r.detail || ""}`;
+  if (/슬리퍼/.test(t)) return "goods_slippers";
+  if (/매트/.test(t)) return "goods_mat";
+  if (/확대경/.test(t)) return "goods_magnifier";
+  if (/응급/.test(t)) return "siren";
+  if (/복지/.test(t)) return "welfareDoc";
+  if (/약/.test(r.type)) return "pill";
+  if (/병원|진료|검진/.test(t)) return "hospitalBook";
+  if (/동행/.test(t)) return "escort1";
+  if (/집|곰팡이|환기|수리|핸디맨|공사/.test(t)) return "houseSearch";
+  if (/방문/.test(t)) return "safeVisit";
+  if (/함께/.test(t)) return "together";
+  return "reportDoc";
+}
+// 상태 칩 색 — 기다림 금색 · 확정/진행 파랑 · 완료 초록 · 끝난 것 회색
+const chipTone = (s) =>
+  ["awaitingPayment", "cancelRequested", "needsAdmin"].includes(s)
+    ? { background: TONE.gold.bg, color: TONE.gold.fg }
+    : s === "requested"
+      ? { background: TONE.blue.bg, color: TONE.blue.fg }
+      : ["confirmed", "inProgress"].includes(s)
+        ? { background: TONE.blue.bg, color: TONE.blue.fg }
+        : s === "done"
+          ? { background: TONE.green.bg, color: TONE.green.fg }
+          : { background: "#EEEDEA", color: "#5E5A52" };
 
 export default function RequestsPage() {
   const { state, dispatch } = useAppState();
@@ -29,12 +110,26 @@ export default function RequestsPage() {
   const [creating, setCreating] = useState(false); // false | true | 서비스 메뉴 항목
   const [openId, setOpenId] = useState(null);
   const [wanted, setWanted] = useState({}); // 미개시 서비스 수요 신호 — no 별 1회
+  const [welfareOpen, setWelfareOpen] = useState(false);
+  const [closedOpen, setClosedOpen] = useState(false);
   const ob = state.onboarding;
   const honor = honorific(ob); // 고객 호칭 — "~~님" (2026-08-12 시트)
+  const router = useRouter();
+
+  // 복약 미션 '약이 바뀌었어요' → 요청 시트를 바로 연다 (한 번만 · 주소는 그대로 둔다)
+  useEffect(() => {
+    if (router.query.ask === "med") {
+      setCreating(MED_CHANGE);
+      router.replace("/family/requests", undefined, { shallow: true });
+    }
+  }, [router.query.ask]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const active = state.requests.filter((r) => !CLOSED.includes(r.status));
   const closed = state.requests.filter((r) => CLOSED.includes(r.status));
-  const router = useRouter();
+  // 보호자가 할 일 — 결제 대기 + 승인 대상이 보호자인 컨시어지 제안 (홈 '결제 · 수락 대기'와 같은 기준)
+  const isTodo = (r) => r.status === "awaitingPayment" || (r.status === "requested" && approverOf(r) === "guardian");
+  const todo = active.filter(isTodo);
+  const others = active.filter((r) => !isTodo(r));
 
   const limitLabel =
     ob?.paymentMode === "limit" || !ob
@@ -70,62 +165,216 @@ export default function RequestsPage() {
     dispatch({ type: "welfareStatus", id: m.policy.id, status: "신청예정", by: "보호자" });
     dispatch({ type: "pushEvent", payload: { kind: "복지", text: `보호자 복지혜택 신청 도움 요청 — ${m.policy.name}`, color: "#F0D9A8" } });
   };
+  const welfareItem = SERVICE_MENU.find((s) => s.no === 9);
+
+  const cardProps = (r) => ({
+    req: r,
+    open: openId === r.id,
+    onToggle: () => setOpenId(openId === r.id ? null : r.id),
+    onboarding: ob,
+    dispatch,
+    isPrimary,
+    payments: state.payments,
+  });
 
   return (
     <>
       <Head>
         <title>해주세요 — K-CARE</title>
       </Head>
-      <FamilyLayout title="해주세요">
-        <p className="px-1 text-[13px] leading-[1.7] text-muted">
-          부탁하시면 담당 컨시어지가 일정을 보고 승인합니다. 금액이 있는 서비스는 요청할 때 결제하고,
-          승인되지 않으면 환불됩니다. 확정 뒤에는 서비스일 {CANCEL_FREE_DAYS}일 전까지 바로 취소할 수 있고,
-          그 안에는 관제 승인을 거쳐 취소됩니다.{limitLabel && ` 어르신 직접 결제: ${limitLabel}.`}
-        </p>
+      <FamilyLayout sub="해주세요" title="무엇을 부탁드릴까요?" face={false}>
+        {/* 보호자가 할 일 — 결제 · 수락 대기 (시안 맨 위 큰 카드) */}
+        {todo.map((r, i) => (
+          <TodoCard key={r.id} d={40 + i * 30} {...cardProps(r)} />
+        ))}
 
-        {/* 복지혜택 — 베타부터 연다 (2026-09-04 시트 앱 전체 3번). 무료 회원도 같다. */}
-        <Card className="p-0">
-          <Collapse
-            title="복지혜택 — 나라에서 받을 수 있는 것"
-            count={`높음 ${welfareN.high} · 확인 ${welfareN.check}`}
-            note={`${honor} 정보로 정책 79건을 자동 판정했습니다 · 무료 회원도 이용 · 2026-09-04 검증`}
-            defaultOpen
-            tone="gold"
-          >
-            {/* 미확인 항목 — 보호자가 답하면 '추가확인'이 '높음'으로 바뀐다 (시트의 노란 입력칸) */}
-            <div className="rounded-xl bg-navy/[.04] p-3">
-              <div className="text-[12px] font-bold text-navy">몇 가지만 확인해 주세요 — 답할수록 판정이 정확해집니다</div>
-              <div className="mt-2 space-y-2">
-                {ASK_GUARDIAN.map((q) => {
-                  const cur = answers[q.key];
-                  const opts = q.options || ["Y", "N"];
-                  const label = (o) => (o === "Y" ? "예" : o === "N" ? "아니요" : o);
+        {/* 진행 중인 요청 — 한 줄 카드, 누르면 펼친다 */}
+        {others.map((r, i) => (
+          <RequestRow key={r.id} d={80 + i * 20} {...cardProps(r)} />
+        ))}
+
+        {/* 나라 지원 혜택 — 베타부터 연다 (2026-09-04 시트 앱 전체 3번). 무료 회원도 같다 */}
+        <button
+          type="button"
+          onClick={() => setWelfareOpen(true)}
+          className="ds-press ds-btn3d ds-r flex items-center gap-3 rounded-[24px] p-4 text-left"
+          style={{ "--d": "120ms", background: TONE.beige.bg, boxShadow: `0 5px 0 ${TONE.beige.sh}` }}
+        >
+          <Clay name="welfareDoc" size={48} />
+          <span className="min-w-0 flex-1">
+            <span className="block text-[19px]" style={{ color: TONE.beige.fg }}>
+              나라 지원 혜택
+            </span>
+            <span className="block text-[15px] font-bold" style={{ color: TONE.green.title }}>
+              {welfareN.high > 0 ? `받으실 가능성 높은 ${welfareN.high}개` : `확인해 볼 것 ${welfareN.check}개`}
+            </span>
+          </span>
+          <Line name="chevR" size={22} style={{ color: TONE.beige.fg }} />
+        </button>
+
+        {/* 서비스 타일 — 누르면 요청 시트 (요금 · 범위 · 결제 안내가 그 안에) */}
+        <div className="ds-r flex flex-col gap-2.5" style={{ "--d": "160ms" }}>
+          {SECTIONS.map((sec, si) => (
+            <div key={sec.title} className="flex flex-col gap-2.5" style={si ? { marginTop: 6 } : undefined}>
+              <h2 className="ds-sect" style={{ color: TONE[sec.tone].fg }}>
+                <i style={{ background: TONE[sec.tone].solid }} />
+                {sec.title}
+              </h2>
+              <div className="ds-g2" style={{ gap: 10 }}>
+                {sec.tiles.map((t) => {
+                  const s = SERVICE_MENU.find((x) => x.no === t.no && x.active);
+                  if (!s) return null;
+                  const tn = TONE[t.tone || sec.tone];
                   return (
-                    <div key={q.key} className="flex flex-wrap items-center gap-x-2 gap-y-1">
-                      <span className="min-w-[150px] flex-1 text-[12.5px] text-ink">{q.q}</span>
-                      <span className="flex gap-1">
-                        {opts.map((o) => (
-                          <button
-                            key={o}
-                            onClick={() => dispatch({ type: "welfareAnswer", key: q.key, value: o })}
-                            aria-pressed={cur === o}
-                            className={`btn-press rounded-lg border px-2.5 py-1.5 text-[12px] font-bold ${
-                              cur === o ? "border-navy bg-navy text-white" : "border-navy/15 text-muted"
-                            }`}
-                          >
-                            {label(o)}
-                          </button>
-                        ))}
+                    <button key={t.no} type="button" onClick={() => setCreating(s)} className="ds-tap ds-stile" style={{ background: tn.bg, minHeight: 84 }}>
+                      <Clay name={t.clay} size={42} className="ds-ico flex-none" />
+                      <span className="min-w-0">
+                        <b className="text-[17px]" style={{ color: tn.title || tn.fg, fontSize: 17 }}>
+                          {t.label}
+                        </b>
+                        <small className={shortPrice(s) === "무료" ? "font-extrabold" : ""} style={{ color: shortPrice(s) === "무료" ? TONE.green.title : tn.sub, fontSize: 14 }}>
+                          {shortPrice(s)}
+                        </small>
                       </span>
-                    </div>
+                    </button>
                   );
                 })}
               </div>
-              <p className="mt-2 text-[11px] leading-[1.6] text-muted">
+            </div>
+          ))}
+
+          {/* 집 고칠 일 — 해주세요 PLUS 전문업체 연결 (개편안 V2 ONE STOP 축). 책임 경계를 그대로 쓴다 */}
+          <h2 className="ds-sect mt-1.5" style={{ color: TONE.beige.fg }}>
+            <i style={{ background: "#C9A064" }} />집 고칠 일
+          </h2>
+          <div className="ds-g3" style={{ gap: 8 }}>
+            {PLUS_TILES.map((t) => {
+              const p = SERVICE_PLUS.find((x) => x.key === t.key);
+              if (!p) return null;
+              return (
+                <button
+                  key={t.key}
+                  type="button"
+                  onClick={() => setCreating({ no: `plus-${p.key}`, name: p.name, priceLabel: p.priceLabel, amount: p.amount, scope: p.scope, note: p.note })}
+                  className="ds-tap ds-stile flex-col justify-center text-center"
+                  style={{ background: TONE.beige.bg, minHeight: 112, gap: 4 }}
+                >
+                  <Clay name={t.clay} size={40} className="ds-ico" />
+                  <b className="text-[16px]" style={{ color: TONE.beige.fg, fontSize: 16 }}>
+                    {t.label}
+                  </b>
+                  <small style={{ color: TONE.beige.sub, fontSize: 13 }}>{shortPrice(p)}</small>
+                </button>
+              );
+            })}
+          </div>
+          <p className="text-[13px] leading-[1.6]" style={{ color: "#5E6270" }}>
+            직접 못 하는 일은 전문업체로 연결하고 진행 상황을 알려 드립니다. 공사·수리의 책임은 시공 업체에 있습니다.
+          </p>
+        </div>
+
+        {/* 곧 열려요 — 표기만 하고 비활성. 누르면 '필요해요' 신호로 수요를 잰다 (실무자 요청 그대로) */}
+        {INACTIVE.length > 0 && (
+          <div className="ds-r flex flex-col gap-2" style={{ "--d": "200ms" }}>
+            <h2 className="m-0 text-[15px] font-extrabold" style={{ color: "#5E5A52" }}>
+              곧 열려요
+            </h2>
+            <div className="flex flex-wrap gap-2">
+              {INACTIVE.map((s) => {
+                const sent = !!wanted[s.no];
+                return (
+                  <button
+                    key={s.no}
+                    type="button"
+                    aria-pressed={sent}
+                    onClick={() => {
+                      if (sent) return;
+                      setWanted((w) => ({ ...w, [s.no]: true }));
+                      dispatch({ type: "pushEvent", payload: { kind: "수요", text: `미개시 서비스 수요 신호 — ${s.name}`, color: "#8FA9CC" } });
+                    }}
+                    className="ds-press inline-flex min-h-[40px] items-center gap-1 rounded-full px-3.5 text-[15px] font-bold"
+                    style={sent ? { background: TONE.green.bg, color: TONE.green.fg } : { background: "#EEEDEA", color: "#5E5A52" }}
+                  >
+                    {sent && <Line name="check" size={16} />}
+                    {s.name.replace(/\s*서비스$/, "")}
+                  </button>
+                );
+              })}
+            </div>
+            <p className="text-[13px]" style={{ color: "#5E6270" }}>
+              {Object.keys(wanted).length ? "알려 주셔서 감사합니다 — 열리면 먼저 안내드릴게요." : "필요하시면 눌러서 알려 주세요 — 열리면 먼저 안내드려요."}
+            </p>
+          </div>
+        )}
+
+        <Btn tone="navy" h={58} r={20} className="ds-r text-[17px]" style={{ "--d": "220ms" }} onClick={() => setCreating(true)}>
+          직접 적어서 부탁하기
+        </Btn>
+
+        {/* 끝난 요청 — 접어 둔다 */}
+        {closed.length > 0 && (
+          <div className="ds-r flex flex-col gap-2.5" style={{ "--d": "240ms" }}>
+            <button
+              type="button"
+              aria-expanded={closedOpen}
+              onClick={() => setClosedOpen((v) => !v)}
+              className="ds-press flex min-h-[48px] items-center justify-between rounded-[18px] px-4 text-[16px] font-extrabold"
+              style={{ background: "#F3F1EC" }}
+            >
+              완료 · 종결 {closed.length}건
+              <span style={{ transform: closedOpen ? "rotate(180deg)" : undefined }}>
+                <Line name="chevD" size={20} />
+              </span>
+            </button>
+            {closedOpen && closed.map((r) => <RequestRow key={r.id} {...cardProps(r)} />)}
+          </div>
+        )}
+
+        <Card tone="stone" shadow={false} pad={14} className="text-[14px] leading-[1.7]" style={{ color: "#5E6270" }}>
+          부탁하시면 담당 컨시어지가 일정을 보고 승인합니다. 금액이 있는 서비스는 요청할 때 결제하고, 승인되지 않으면 환불됩니다. 확정 뒤에는
+          서비스일 {CANCEL_FREE_DAYS}일 전까지 바로 취소할 수 있고, 그 안에는 관제 승인을 거쳐 취소됩니다.
+          {limitLabel && ` 어르신 직접 결제: ${limitLabel}.`}
+        </Card>
+
+        {/* 나라 지원 혜택 — 질문 · 판정 목록 · 신청 도움 요청 */}
+        {welfareOpen && (
+          <Sheet onClose={() => setWelfareOpen(false)} label="나라 지원 혜택">
+            <SheetTitle sub={`높음 ${welfareN.high} · 확인 ${welfareN.check}`} title="나라 지원 혜택" />
+            <p className="text-[14px] leading-[1.6]" style={{ color: "#5E6270" }}>
+              {honor} 정보로 정책 79건을 자동 판정했습니다 · 무료 회원도 이용 · 2026-09-04 검증
+            </p>
+            {/* 미확인 항목 — 보호자가 답하면 '추가확인'이 '높음'으로 바뀐다 (시트의 노란 입력칸) */}
+            <div className="flex flex-col gap-2.5 rounded-[20px] bg-white p-3.5" style={{ boxShadow: "0 3px 0 #E6E2DA" }}>
+              <div className="text-[15px] font-extrabold">몇 가지만 확인해 주세요 — 답할수록 판정이 정확해집니다</div>
+              {ASK_GUARDIAN.map((q) => {
+                const cur = answers[q.key];
+                const opts = q.options || ["Y", "N"];
+                const label = (o) => (o === "Y" ? "예" : o === "N" ? "아니요" : o);
+                return (
+                  <div key={q.key} role="group" aria-label={q.q} className="flex flex-wrap items-center gap-x-2 gap-y-1.5">
+                    <span className="min-w-[150px] flex-1 text-[14px]">{q.q}</span>
+                    <span className="flex gap-1.5">
+                      {opts.map((o) => (
+                        <button
+                          key={o}
+                          type="button"
+                          onClick={() => dispatch({ type: "welfareAnswer", key: q.key, value: o })}
+                          aria-pressed={cur === o}
+                          className="ds-press min-h-[40px] rounded-[12px] px-3 text-[14px] font-extrabold"
+                          style={cur === o ? { background: "#1B2340", color: "#FFFFFF" } : { background: "#F3F1EC", color: "#3A3F50" }}
+                        >
+                          {label(o)}
+                        </button>
+                      ))}
+                    </span>
+                  </div>
+                );
+              })}
+              <p className="text-[12px] leading-[1.6]" style={{ color: "#5E6270" }}>
                 답은 관제·담당 컨시어지에게만 보이고, 자동판정에만 씁니다. 모르시면 비워 두세요 — 방문 때 확인합니다.
               </p>
             </div>
-            <div className="mt-3">
+            <div className="rounded-[20px] bg-white p-3" style={{ boxShadow: "0 3px 0 #E6E2DA" }}>
               <WelfareList
                 matches={welfareMatches}
                 statuses={state.welfare?.status}
@@ -137,148 +386,22 @@ export default function RequestsPage() {
                 sent={welfareSent}
               />
             </div>
-          </Collapse>
-        </Card>
-
-        {/* 서비스 메뉴 — 실무자 피드백 (2026-08-09): no1~6 활성 · no7~11 예고 · no12 응급
-            메뉴가 15개까지 늘어 한 장에 다 펼치면 3.8화면 분량이 된다. 분류로 묶고
-            접어 둔다 — 제목줄의 개수만 봐도 안에 뭐가 몇 개 있는지 알 수 있게. */}
-        <Card className="p-4">
-          <SectionLabel>무엇을 부탁드릴까요</SectionLabel>
-          <div className="mt-2.5 space-y-2">
-            {ACTIVE_CATS.map((cat) => {
-              const rows = SERVICE_MENU.filter((x) => x.active && x.cat === cat);
-              if (!rows.length) return null;
-              return (
-                <Collapse key={cat} title={cat} count={`${rows.length}가지`}>
-                  <div className="space-y-2">
-                    {rows.map((s) => (
-                      <button
-                        key={s.no}
-                        onClick={() => setCreating(s)}
-                        className="btn-press w-full rounded-xl border border-navy/12 p-3 text-left"
-                      >
-                        <div className="text-[15px] font-bold text-navy">{s.name}</div>
-                        <div className="mt-1 font-num text-[12.5px] font-bold text-gold">{s.priceLabel}</div>
-                        <div className="mt-0.5 text-[12px] leading-[1.6] text-muted">{s.scope}</div>
-                        {s.point && <div className="mt-0.5 text-[12px] leading-[1.6] text-green">{s.point}</div>}
-                      </button>
-                    ))}
-                  </div>
-                </Collapse>
-              );
-            })}
-
-            {/* 해주세요 PLUS — 외주 파트너 연계 (개편안 V2 ONE STOP 축) */}
-            <Collapse
-              title="해주세요 PLUS — 전문업체 연결"
-              count={`${SERVICE_PLUS.length}가지`}
-              note="직접 못 하는 일은 전문업체로 연결하고 진행 상황을 보고합니다. 공사·수리의 책임은 시공 업체에 있습니다."
-              tone="gold"
-            >
-              <div className="space-y-2">
-                {SERVICE_PLUS.map((s) => (
-                  <button
-                    key={s.key}
-                    onClick={() =>
-                      setCreating({
-                        no: `plus-${s.key}`,
-                        name: s.name,
-                        priceLabel: s.priceLabel,
-                        amount: s.amount,
-                      })
-                    }
-                    className="btn-press w-full rounded-xl border border-gold/25 bg-white/70 p-3 text-left"
-                  >
-                    <div className="flex items-center gap-2">
-                      <span className="text-[15px] font-bold text-navy">{s.name}</span>
-                      <span className="ml-auto shrink-0 rounded-full bg-navy/[.06] px-2 py-[3px] text-[11px] font-bold text-muted">
-                        {s.tag}
-                      </span>
-                    </div>
-                    <div className={`mt-1 font-num text-[12.5px] font-bold ${s.confirmed ? "text-gold" : "text-muted"}`}>
-                      {s.priceLabel}
-                    </div>
-                    <div className="mt-0.5 text-[12px] leading-[1.6] text-muted">{s.scope}</div>
-                    <div className="mt-0.5 text-[11.5px] leading-[1.55] text-amber">{s.note}</div>
-                  </button>
-                ))}
-              </div>
-            </Collapse>
-
-            {/* 미개시 서비스 — 표기만 하고 비활성. "이런 서비스도 앞으로 이용할 수
-                있구나"를 보여주고, 필요 신호로 수요를 잰다 (실무자 요청 그대로) */}
-            <Collapse
-              title="준비 중인 서비스"
-              count={`${INACTIVE.length}가지`}
-              note="곧 열립니다 — 필요하시면 알려 주세요"
-            >
-              <div className="space-y-2">
-                {INACTIVE.map((s) => {
-                  const sent = !!wanted[s.no];
-                  return (
-                    <div key={s.no} className="rounded-xl border border-dashed border-navy/15 bg-navy/[.025] p-3">
-                      <div className="text-[14.5px] font-bold text-muted">{s.name}</div>
-                      <div className="mt-0.5 text-[12px] leading-[1.6] text-muted/80">{s.scope}</div>
-                      <button
-                        onClick={() => {
-                          if (sent) return;
-                          setWanted((w) => ({ ...w, [s.no]: true }));
-                          dispatch({
-                            type: "pushEvent",
-                            payload: { kind: "수요", text: `미개시 서비스 수요 신호 — ${s.name}`, color: "#8FA9CC" },
-                          });
-                        }}
-                        className={`btn-press mt-2 w-full rounded-lg border px-3 py-2 text-[12px] font-bold ${
-                          sent ? "border-green/30 bg-green/10 text-green" : "border-navy/20 text-navy"
-                        }`}
-                      >
-                        {sent ? "✓ 알려주셔서 감사합니다 — 열리면 먼저 안내드릴게요" : "이 서비스가 필요하신가요?"}
-                      </button>
-                    </div>
-                  );
-                })}
-              </div>
-            </Collapse>
-          </div>
-        </Card>
-
-        {active.length === 0 && (
-          <Card className="p-5 text-center text-[15px] text-muted">진행 중인 요청이 없습니다.</Card>
+            {welfareItem && (
+              <WhiteBtn
+                className="text-[16px]"
+                onClick={() => {
+                  setWelfareOpen(false);
+                  setCreating(welfareItem);
+                }}
+              >
+                복지 혜택 확인 부탁하기
+              </WhiteBtn>
+            )}
+            <Btn tone="navy" h={54} className="text-[16px]" onClick={() => setWelfareOpen(false)}>
+              닫기
+            </Btn>
+          </Sheet>
         )}
-
-        {active.map((r) => (
-          <RequestCard
-            key={r.id}
-            req={r}
-            open={openId === r.id}
-            onToggle={() => setOpenId(openId === r.id ? null : r.id)}
-            onboarding={ob}
-            dispatch={dispatch}
-            isPrimary={isPrimary}
-            payments={state.payments}
-          />
-        ))}
-
-        {closed.length > 0 && (
-          <>
-            <SectionLabel>완료 · 종결</SectionLabel>
-            {closed.map((r) => (
-              <RequestCard
-                key={r.id}
-                req={r}
-                open={openId === r.id}
-                onToggle={() => setOpenId(openId === r.id ? null : r.id)}
-                onboarding={ob}
-                dispatch={dispatch}
-                isPrimary={isPrimary}
-                payments={state.payments}
-              />
-            ))}
-          </>
-        )}
-
-        <PrimaryButton onClick={() => setCreating(true)}>해주세요 요청하기</PrimaryButton>
 
         {creating && (
           <CreateRequestSheet
@@ -328,11 +451,10 @@ function stepOf(r) {
   }
 }
 
-function RequestCard({ req, open, onToggle, onboarding, dispatch, isPrimary, payments }) {
+// 요청 한 건의 공통 계산 — 큰 카드 · 한 줄 카드가 같이 쓴다
+function useReq(req, onboarding, payments) {
   const router = useRouter();
   const honor = honorific(onboarding); // 고객 호칭 — 전부 "~~님" (2026-08-12 시트)
-  const [notified, setNotified] = useState(false); // 부 보호자 → 주 보호자 결제 알림
-  const [confirming, setConfirming] = useState(null); // "cancel" | "decline"
   const st = STATUS[req.status] || STATUS.requested;
   const approver = approverOf(req);
   const proposal = approver !== "concierge";
@@ -350,221 +472,273 @@ function RequestCard({ req, open, onToggle, onboarding, dispatch, isPrimary, pay
         fromGuardian: "보호자 → 담당 컨시어지",
         fromOps: "관제 → 보호자", // 복지혜택 안내 (2026-09-04)
       }[req.dir];
+  // 누가 낸 요청인가 — 큰 카드 오른쪽 위
+  const who =
+    req.dir === "fromConcierge" ? `${req.assignee || "담당"} 선생님 제안` : req.dir === "fromElder" ? `${honor} 부탁` : req.dir === "fromOps" ? "관제 안내" : "보호자 요청";
   // 보호자가 할 수 있는 것 — 결제(결제 대기) · 제안 수락/거절(승인 대상이 보호자일 때) · 취소(규칙대로)
   const canAnswer = req.status === "requested" && approver === "guardian";
   const canPay = req.status === "awaitingPayment";
   const canCancel = !visitCall && !isStoreOrder(req) && req.dir !== "fromOps" && !canAnswer && ["free", "ops"].includes(rule.mode) && !(proposal && req.status === "requested");
   const goPay = () => router.push(payHref({ kind: "request", amount: req.amount, orderName: req.type, ref: req.id }));
+  return { honor, st, approver, proposal, stepIdx, steps, pay, rule, scheduled, visitCall, route, who, canAnswer, canPay, canCancel, goPay };
+}
 
+// 단계 막대 — 지난 단계 초록 · 지금 금색 · 남은 것 옅게
+function Steps({ steps, at, track = "#EAD9AC" }) {
   return (
-    <Card className="overflow-hidden">
-      <button onClick={onToggle} className="btn-press w-full p-4 text-left">
-        <div className="flex items-center gap-2">
-          <Badge fg={st.fg} bg={st.bg}>
-            {st.label}
-          </Badge>
-          {req.urgency === "urgent" && (
-            <Badge fg={URGENCY.urgent.fg} bg={URGENCY.urgent.bg}>
-              긴급
-            </Badge>
-          )}
-          <span className="ml-auto text-right text-[11px] font-bold text-muted/70">{route}</span>
-        </div>
-        <div className="mt-2 text-[17px] font-bold leading-[1.45] text-navy">{req.type}</div>
-        <div className="mt-0.5 line-clamp-2 text-[13px] leading-[1.65] text-muted">
-          {req.detail}
-        </div>
-        <div className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-[12px] text-muted">
-          <span>
-            금액 <b className="font-num text-ink">{req.amount != null ? fmtWon(req.amount) : "확정 전"}</b>
+    <ol className="m-0 grid list-none gap-1 p-0" style={{ gridTemplateColumns: `repeat(${steps.length}, minmax(0, 1fr))` }} aria-label={`진행 단계 — 지금 ${steps[at]}`}>
+      {steps.map((l, i) => (
+        <li key={l} className="flex flex-col items-center gap-1" aria-current={i === at ? "step" : undefined}>
+          <span className="block h-2 w-full rounded-[4px]" style={{ background: i < at ? TONE.green.solid : i === at ? TONE.gold.solid : track }} />
+          <span className="text-center text-[12px] font-extrabold leading-[1.25]" style={{ color: i <= at ? "#1B2340" : "#8A7468" }}>
+            {l}
           </span>
-          {scheduled ? (
-            <span>
-              확정 <b className="font-num text-ink">{scheduled}</b>
-            </span>
-          ) : (
-            (req.preferredDate || req.preferredWhen) && <span>희망 {fmtPreferred(req)}</span>
-          )}
-          {req.hospital && <span>병원 {req.hospital}</span>}
-          <span>담당 {req.assignee || "미배정"}</span>
-          {req.photos?.length > 0 && <span>사진 {req.photos.length}장</span>}
-        </div>
-        {(pay || req.payBy === "elder") && (
-          <div className="mt-1.5 text-[12px] font-bold">
-            {pay?.refund ? (
-              <span className={pay.refund.status === "done" ? "text-green" : "text-amber"}>
-                {pay.refund.status === "done" ? `환불 완료 ${fmtWon(pay.refund.amount)}` : `환불 대기 ${fmtWon(pay.refund.amount)} — 관제가 처리합니다`}
-              </span>
-            ) : pay ? (
-              <span className="text-green">
-                결제 완료 {fmtWon(pay.amount)}
-                {pay.demo ? " (데모 · 실제 결제 없음)" : ""}
-              </span>
-            ) : (
-              <span className="text-muted">{honor} 직접 결제 (하루 한도 안)</span>
-            )}
-          </div>
-        )}
-        {/* 진행 스텝퍼 — 지금 어디까지 왔는지 한눈에 */}
-        {stepIdx >= 0 && (
-          <div className="mt-3 flex items-center gap-1">
-            {steps.map((l, i) => (
-              <div key={l} className="flex-1">
-                <div
-                  className="h-[5px] rounded-full"
-                  style={{
-                    background:
-                      i < stepIdx ? "#0A1F3C" : i === stepIdx ? "#B08D57" : "rgba(10,31,60,.1)",
-                  }}
-                />
-                <div
-                  className={`mt-1 text-center text-[10px] font-bold leading-[1.3] ${
-                    i === stepIdx ? "text-[#7A5C28]" : i < stepIdx ? "text-navy" : "text-muted/50"
-                  }`}
-                >
-                  {l}
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-        {req.status === "cancelRequested" && (
-          <div className="mt-2.5 rounded-lg bg-amber/10 px-3 py-2 text-[12px] font-bold text-amber">
-            취소 요청 — 관제가 확인하고 있습니다
-          </div>
-        )}
-        {req.status === "requested" && approver === "concierge" && !visitCall && (
-          <div className="mt-2.5 rounded-lg bg-navy/[.05] px-3 py-2 text-[12px] font-bold text-navy">
-            {req.assignee || "담당 컨시어지"} 컨시어지가 일정을 보고 승인합니다
-          </div>
-        )}
-        {req.status === "requested" && approver === "elder" && (
-          <div className="mt-2.5 rounded-lg bg-navy/[.05] px-3 py-2 text-[12px] font-bold text-navy">
-            {honor}이 수락하시면 진행됩니다
-          </div>
-        )}
-      </button>
+        </li>
+      ))}
+    </ol>
+  );
+}
 
-      {/* 할 일 — 접지 않고 바로 보인다 */}
-      {(canPay || canAnswer || canCancel) && (
-        <div className="border-t border-navy/10 px-4 pb-4 pt-3">
+// 결제 · 수락 · 취소 버튼과 확인 — 큰 카드와 펼친 한 줄 카드가 같이 쓴다
+function Actions({ req, x, dispatch, isPrimary, big }) {
+  const [notified, setNotified] = useState(false); // 부 보호자 → 주 보호자 결제 알림
+  const [confirming, setConfirming] = useState(null); // "cancel" | "decline"
+  const { canPay, canAnswer, canCancel, rule, pay, goPay, proposal } = x;
+  if (!(canPay || canAnswer || canCancel)) return null;
+  const cancelLabel = proposal && req.status === "awaitingPayment" ? "거절" : rule.mode === "ops" ? "취소 요청 (관제 승인)" : "취소하기";
+  return (
+    <div className="flex flex-col gap-2">
+      {!confirming && (
+        <div className="grid gap-2.5" style={{ gridTemplateColumns: (canPay || canAnswer) && (canCancel || canAnswer) ? "2fr 1fr" : "1fr" }}>
           {canPay &&
             (isPrimary ? (
-              <PrimaryButton onClick={goPay}>{fmtWon(req.amount)} 결제하기</PrimaryButton>
+              <Btn tone="gold" h={big ? 56 : 52} className="text-[17px]" onClick={goPay}>
+                {big ? "결제하기" : `${fmtWon(req.amount)} 결제하기`}
+              </Btn>
             ) : (
               // 부 보호자 — 결제 권한 없음. 주 보호자 호출만
               <button
+                type="button"
                 onClick={() => {
                   if (notified) return;
                   setNotified(true);
-                  dispatch({
-                    type: "pushEvent",
-                    payload: { kind: "승인", text: "부 보호자 → 주 보호자 결제 요청 알림", color: "#8FA9CC" },
-                  });
+                  dispatch({ type: "pushEvent", payload: { kind: "승인", text: "부 보호자 → 주 보호자 결제 요청 알림", color: "#8FA9CC" } });
                 }}
-                className={`btn-press w-full rounded-xl border py-3 text-[15px] font-bold ${
-                  notified ? "border-green/30 bg-green/10 text-green" : "border-navy/20 text-navy"
-                }`}
+                className="ds-press ds-btn3d flex min-h-[52px] items-center justify-center gap-1.5 rounded-[18px] px-2 text-[15px]"
+                style={notified ? { background: TONE.green.bg, color: TONE.green.fg, boxShadow: "none" } : { background: "#FFFFFF", color: "#1B2340", boxShadow: "0 4px 0 #E3DED3" }}
               >
-                {notified ? "✓ 주 보호자(민수)에게 알림 보냄" : "결제는 주 보호자 권한 — 알림 보내기"}
+                {notified && <Line name="check" size={18} />}
+                {notified ? "주 보호자(민수)에게 알림 보냄" : "결제는 주 보호자 — 알림 보내기"}
               </button>
             ))}
           {canAnswer && (
-            <div className="flex gap-2">
-              <GhostButton className="flex-1" onClick={() => setConfirming("decline")}>
-                거절
-              </GhostButton>
-              <PrimaryButton
-                className="flex-[2]"
-                disabled={!isPrimary && req.amount > 0}
-                onClick={() => {
-                  dispatch({ type: "respondProposal", id: req.id, accept: true, role: "guardian" });
-                  dispatch({ type: "pushEvent", payload: { kind: "해주세요", text: `보호자 컨시어지 제안 수락 — ${req.type}`, color: "#8FE3C0" } });
-                  if (req.amount > 0 && isPrimary) goPay();
-                }}
-              >
-                {req.amount > 0 ? `수락 · ${fmtWon(req.amount)} 결제` : "수락"}
-              </PrimaryButton>
-            </div>
+            <Btn
+              tone="gold"
+              h={big ? 56 : 52}
+              className="text-[17px] disabled:opacity-50"
+              disabled={!isPrimary && req.amount > 0}
+              onClick={() => {
+                dispatch({ type: "respondProposal", id: req.id, accept: true, role: "guardian" });
+                dispatch({ type: "pushEvent", payload: { kind: "해주세요", text: `보호자 컨시어지 제안 수락 — ${req.type}`, color: "#8FE3C0" } });
+                if (req.amount > 0 && isPrimary) goPay();
+              }}
+            >
+              {req.amount > 0 ? `수락 · ${fmtWon(req.amount)} 결제` : "수락"}
+            </Btn>
           )}
-          {canCancel && !confirming && (
-            <GhostButton className={canPay || canAnswer ? "mt-2" : ""} onClick={() => setConfirming("cancel")}>
-              {rule.mode === "ops" ? "취소 요청 (관제 승인)" : "취소하기"}
-            </GhostButton>
+          {canAnswer && (
+            <WhiteBtn h={big ? 56 : 52} sh="#EAD9AC" color="#6B4A3A" className="text-[16px]" onClick={() => setConfirming("decline")}>
+              거절
+            </WhiteBtn>
           )}
-          {confirming && (
-            <div className="mt-2 rounded-xl border border-navy/12 bg-white p-3">
-              <p className="text-[13px] leading-[1.65] text-ink">
-                {confirming === "decline"
-                  ? "이 제안을 거절할까요? 컨시어지에게 거절로 전달됩니다."
-                  : rule.mode === "ops"
-                    ? `${req.status === "inProgress" ? "이미 진행 중이라" : rule.days == null ? "확정 날짜가 없어" : `서비스일까지 ${CANCEL_FREE_DAYS}일이 안 남아`} 관제가 확인한 뒤 취소됩니다.${pay ? " 승인되면 결제하신 금액은 관제가 환불합니다." : ""}`
-                    : `지금 취소하면 바로 취소됩니다.${pay ? (pay.demo ? ` 데모 결제 ${fmtWon(pay.amount)}은 바로 환불 처리됩니다.` : ` 결제하신 ${fmtWon(pay.amount)}은 관제가 환불 처리합니다.`) : ""}`}
-              </p>
-              <div className="mt-2.5 flex gap-2">
-                <GhostButton className="flex-1" onClick={() => setConfirming(null)}>
-                  아니요
-                </GhostButton>
-                <PrimaryButton
-                  className="flex-[2]"
-                  onClick={() => {
-                    if (confirming === "decline") {
-                      dispatch({ type: "respondProposal", id: req.id, accept: false, role: "guardian" });
-                      dispatch({ type: "pushEvent", payload: { kind: "해주세요", text: `보호자 컨시어지 제안 거절 — ${req.type}`, color: "#8FA9CC" } });
-                    } else {
-                      dispatch({ type: "cancelRequest", id: req.id, by: "보호자" });
-                      dispatch({
-                        type: "pushEvent",
-                        payload: { kind: "해주세요", text: `보호자 ${rule.mode === "ops" ? "취소 요청 (관제 승인 필요)" : "취소"} — ${req.type}`, color: "#B08D57" },
-                      });
-                    }
-                    setConfirming(null);
-                  }}
-                >
-                  {confirming === "decline" ? "네, 거절합니다" : rule.mode === "ops" ? "네, 취소 요청합니다" : "네, 취소합니다"}
-                </PrimaryButton>
-              </div>
-            </div>
+          {canCancel && !canAnswer && (
+            <WhiteBtn h={big ? 56 : 52} sh={big ? "#EAD9AC" : "#E3DED3"} color="#6B4A3A" className="text-[16px]" onClick={() => setConfirming("cancel")}>
+              {cancelLabel}
+            </WhiteBtn>
           )}
         </div>
       )}
-
-      {open && (
-        <div className="border-t border-navy/10 bg-paper/60 p-4">
-          {/* 상태 타임라인 */}
-          <SectionLabel>처리 이력</SectionLabel>
-          <div className="mt-2.5 space-y-2">
-            {req.history.map((h, i) => (
-              <div key={i} className="flex items-start gap-2.5">
-                <span
-                  className="mt-[5px] h-[8px] w-[8px] shrink-0 rounded-full"
-                  style={{ background: (STATUS[h.status] || STATUS.requested).fg }}
-                />
-                <div className="min-w-0 flex-1">
-                  <span className="text-[13px] font-bold text-ink">
-                    {(STATUS[h.status] || STATUS.requested).label}
-                  </span>
-                  <span className="ml-2 font-num text-[11px] text-muted">
-                    {new Date(h.at).toLocaleString("ko-KR", { month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit", hour12: false })}
-                  </span>
-                  {h.note && (
-                    <div className="text-[12px] leading-[1.6] text-muted">{h.note}</div>
-                  )}
-                </div>
-              </div>
-            ))}
+      {confirming && (
+        <div className="ds-swap flex flex-col gap-2.5 rounded-[18px] bg-white p-3.5">
+          <p className="text-[15px] leading-[1.6]">
+            {confirming === "decline"
+              ? "이 제안을 거절할까요? 컨시어지에게 거절로 전달됩니다."
+              : rule.mode === "ops"
+                ? `${req.status === "inProgress" ? "이미 진행 중이라" : rule.days == null ? "확정 날짜가 없어" : `서비스일까지 ${CANCEL_FREE_DAYS}일이 안 남아`} 관제가 확인한 뒤 취소됩니다.${pay ? " 승인되면 결제하신 금액은 관제가 환불합니다." : ""}`
+                : `${cancelLabel === "거절" ? "거절하면 이 제안이 취소됩니다." : "지금 취소하면 바로 취소됩니다."}${pay ? (pay.demo ? ` 데모 결제 ${fmtWon(pay.amount)}은 바로 환불 처리됩니다.` : ` 결제하신 ${fmtWon(pay.amount)}은 관제가 환불 처리합니다.`) : ""}`}
+          </p>
+          <div className="grid grid-cols-[1fr_2fr] gap-2">
+            <WhiteBtn h={50} className="text-[15px]" onClick={() => setConfirming(null)}>
+              아니요
+            </WhiteBtn>
+            <Btn
+              tone="navy"
+              h={50}
+              className="text-[15px]"
+              onClick={() => {
+                if (confirming === "decline") {
+                  dispatch({ type: "respondProposal", id: req.id, accept: false, role: "guardian" });
+                  dispatch({ type: "pushEvent", payload: { kind: "해주세요", text: `보호자 컨시어지 제안 거절 — ${req.type}`, color: "#8FA9CC" } });
+                } else {
+                  dispatch({ type: "cancelRequest", id: req.id, by: "보호자" });
+                  dispatch({
+                    type: "pushEvent",
+                    payload: { kind: "해주세요", text: `보호자 ${rule.mode === "ops" ? "취소 요청 (관제 승인 필요)" : cancelLabel === "거절" ? "제안 거절" : "취소"} — ${req.type}`, color: "#B08D57" },
+                  });
+                }
+                setConfirming(null);
+              }}
+            >
+              {confirming === "decline" || cancelLabel === "거절" ? "네, 거절합니다" : rule.mode === "ops" ? "네, 취소 요청합니다" : "네, 취소합니다"}
+            </Btn>
           </div>
-
-          {req.proof && (
-            <div className="mt-3 rounded-xl border border-green/25 bg-green/5 p-3 text-[12px] text-green">
-              완료증빙 첨부됨 · {req.proof}
-            </div>
-          )}
         </div>
       )}
-    </Card>
+    </div>
   );
 }
+
+// 펼친 내용 — 금액 · 일정 · 결제 · 처리 이력 · 완료 증빙
+function Details({ req, x }) {
+  const { pay, scheduled, honor } = x;
+  return (
+    <div className="flex flex-col gap-2.5">
+      <div className="flex flex-wrap gap-x-3 gap-y-1 text-[13px]" style={{ color: "#5E6270" }}>
+        <span>
+          금액 <b className="ds-num" style={{ color: "#1B2340" }}>{req.amount != null ? fmtWon(req.amount) : "확정 전"}</b>
+        </span>
+        {scheduled ? (
+          <span>
+            확정 <b className="ds-num" style={{ color: "#1B2340" }}>{scheduled}</b>
+          </span>
+        ) : (
+          (req.preferredDate || req.preferredWhen) && <span>희망 {fmtPreferred(req)}</span>
+        )}
+        {req.hospital && <span>병원 {req.hospital}</span>}
+        <span>담당 {req.assignee || "미배정"}</span>
+        {req.photos?.length > 0 && <span>사진 {req.photos.length}장</span>}
+        {req.urgency === "urgent" && <b style={{ color: TONE.gold.fg }}>긴급</b>}
+      </div>
+      {(pay || req.payBy === "elder") && (
+        <div className="text-[13px] font-extrabold">
+          {pay?.refund ? (
+            <span style={{ color: pay.refund.status === "done" ? TONE.green.fg : TONE.gold.fg }}>
+              {pay.refund.status === "done" ? `환불 완료 ${fmtWon(pay.refund.amount)}` : `환불 대기 ${fmtWon(pay.refund.amount)} — 관제가 처리합니다`}
+            </span>
+          ) : pay ? (
+            <span style={{ color: TONE.green.fg }}>
+              결제 완료 {fmtWon(pay.amount)}
+              {pay.demo ? " (데모 · 실제 결제 없음)" : ""}
+            </span>
+          ) : (
+            <span style={{ color: "#5E6270" }}>{honor} 직접 결제 (하루 한도 안)</span>
+          )}
+        </div>
+      )}
+      <div className="flex flex-col gap-2 rounded-[16px] p-3" style={{ background: "#F8F7F4" }}>
+        <div className="text-[14px] font-extrabold">처리 이력</div>
+        {req.history.map((h, i) => {
+          const hs = STATUS[h.status] || STATUS.requested;
+          return (
+            <div key={i} className="flex items-start gap-2.5">
+              <span aria-hidden="true" className="mt-[6px] h-2 w-2 flex-none rounded-full" style={{ background: hs.fg }} />
+              <div className="min-w-0 flex-1 text-[13px]">
+                <b>{hs.label}</b>
+                <span className="ds-num ml-2 text-[12px]" style={{ color: "#5E6270" }}>
+                  {new Date(h.at).toLocaleString("ko-KR", { month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit", hour12: false })}
+                </span>
+                {h.note && <div className="leading-[1.6]" style={{ color: "#5E6270" }}>{h.note}</div>}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+      {req.proof && (
+        <div className="rounded-[14px] px-3 py-2.5 text-[13px] font-bold" style={{ background: TONE.green.bg, color: TONE.green.fg }}>
+          완료증빙 첨부됨 · {req.proof}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// 보호자가 할 일 — 시안의 큰 결제 카드 (금색)
+function TodoCard({ req, open, onToggle, onboarding, dispatch, isPrimary, payments, d = 40 }) {
+  const x = useReq(req, onboarding, payments);
+  return (
+    <div className="ds-r flex flex-col gap-3.5 rounded-[26px] p-[18px]" style={{ "--d": `${d}ms`, background: TONE.gold.bg }}>
+      <div className="flex items-center justify-between gap-2">
+        <span className="rounded-full px-3 py-1 text-[14px] font-extrabold text-white" style={{ background: TONE.gold.fg }}>
+          {req.status === "awaitingPayment" ? "결제 대기" : "수락 대기"}
+        </span>
+        <span className="text-[14px] font-bold" style={{ color: "#6B4A3A" }}>
+          {x.who}
+        </span>
+      </div>
+      <div className="flex items-center gap-3">
+        <Clay name={reqClay(req)} size={48} className="flex-none" />
+        <div className="min-w-0 flex-1">
+          <div className="text-[20px] font-extrabold leading-[1.3]">{req.type}</div>
+          <div className="line-clamp-2 text-[15px] leading-[1.5]" style={{ color: "#6B4A3A" }}>
+            {req.detail}
+          </div>
+        </div>
+        {req.amount != null && <div className="ds-num flex-none text-[19px] font-black">{fmtWon(req.amount)}</div>}
+      </div>
+      {x.stepIdx >= 0 && <Steps steps={x.steps} at={x.stepIdx} />}
+      {req.status === "requested" && x.approver === "elder" && (
+        <div className="rounded-[14px] bg-white px-3 py-2 text-[14px] font-bold">{x.honor}이 수락하시면 진행됩니다</div>
+      )}
+      <Actions req={req} x={x} dispatch={dispatch} isPrimary={isPrimary} big />
+      <button type="button" onClick={onToggle} aria-expanded={open} className="flex min-h-[40px] items-center gap-1 self-start text-[14px] font-extrabold underline underline-offset-2" style={{ color: "#6B4A3A" }}>
+        {open ? "자세히 접기" : "자세히 보기"}
+      </button>
+      {open && <Details req={req} x={x} />}
+    </div>
+  );
+}
+
+// 진행 중 · 끝난 요청 — 한 줄 카드. 누르면 단계 · 이력 · 취소가 펼쳐진다
+function RequestRow({ req, open, onToggle, onboarding, dispatch, isPrimary, payments, d = 80 }) {
+  const x = useReq(req, onboarding, payments);
+  const sub =
+    req.status === "cancelRequested"
+      ? "취소 요청 — 관제가 확인하고 있습니다"
+      : req.status === "requested" && x.approver === "concierge" && !x.visitCall
+        ? `${req.assignee || "담당 컨시어지"} 컨시어지가 일정을 보고 승인합니다`
+        : x.scheduled
+          ? `${x.scheduled} 확정`
+          : req.detail;
+  return (
+    <div className="ds-r overflow-hidden rounded-[22px] bg-white" style={{ "--d": `${d}ms`, boxShadow: "0 4px 0 #E6E2DA" }}>
+      <button type="button" onClick={onToggle} aria-expanded={open} className="ds-press flex w-full items-center gap-3 px-4 py-3.5 text-left">
+        <Clay name={reqClay(req)} size={44} className="flex-none" />
+        <span className="min-w-0 flex-1">
+          <b className="block text-[17px] font-extrabold leading-[1.35]">{req.type}</b>
+          <span className="line-clamp-1 block text-[14px]" style={{ color: "#5E6270" }}>
+            {sub}
+          </span>
+        </span>
+        <span className="flex-none rounded-full px-2.5 py-1 text-[13px] font-extrabold" style={chipTone(req.status)}>
+          {x.st.label}
+        </span>
+      </button>
+      {open && (
+        <div className="ds-swap flex flex-col gap-3 border-t px-4 pb-4 pt-3" style={{ borderColor: "#F0ECE4" }}>
+          <div className="text-[12px] font-bold" style={{ color: "#5E6270" }}>
+            {x.route}
+          </div>
+          <p className="text-[14px] leading-[1.6]">{req.detail}</p>
+          {x.stepIdx >= 0 && <Steps steps={x.steps} at={x.stepIdx} track="#EEEDEA" />}
+          <Actions req={req} x={x} dispatch={dispatch} isPrimary={isPrimary} />
+          <Details req={req} x={x} />
+        </div>
+      )}
+    </div>
+  );
+}
+
+const fieldCls = "w-full rounded-[16px] border-2 border-[#E3DED3] bg-white px-3.5 text-[16px] outline-none focus:border-[#1B2340]";
 
 function CreateRequestSheet({ preset, onClose, onCreate, myHospitals = [], isPrimary = true }) {
   const [type, setType] = useState(preset ? preset.name : GUARDIAN_PRESETS[0]);
@@ -581,167 +755,147 @@ function CreateRequestSheet({ preset, onClose, onCreate, myHospitals = [], isPri
   const onMenu = !!preset && type === preset.name;
   const amount = onMenu && preset.amount != null ? Number(preset.amount) : null;
   const payNow = amount > 0;
+  const chip = (on) => (on ? { background: "#1B2340", color: "#FFFFFF" } : { background: "#FFFFFF", color: "#3A3F50", boxShadow: "inset 0 0 0 1.5px #E3DED3" });
 
   return (
-    <div className="fixed inset-0 z-40 flex items-end justify-center bg-[rgba(8,23,45,.45)]">
-      <div className="max-h-[92vh] w-full max-w-[430px] overflow-y-auto rounded-t-3xl bg-white p-6 pb-8">
-        <div className="mx-auto mb-4 h-[4px] w-[38px] rounded-full bg-navy/15" />
-        <div className="text-[19px] font-black text-navy">{preset ? preset.name : "해주세요 요청"}</div>
-        <p className="mt-1 text-[12px] leading-[1.6] text-muted">
-          {assigneeNow() ? `담당 컨시어지(${assigneeNow()})가 일정을 보고 승인하면 확정됩니다.` : "아직 담당 컨시어지가 없습니다 — 센터 관제가 담당을 정하고 승인하면 확정됩니다."}
-          {payNow ? " 요청할 때 결제하고, 승인되지 않으면 환불됩니다." : amount === 0 ? " 따로 내실 금액이 없습니다." : " 요금은 컨시어지가 승인하며 알려 드리고, 그 뒤 결제합니다."}
+    <Sheet onClose={onClose} label={preset ? preset.name : "해주세요 요청"}>
+      <SheetTitle sub="해주세요" title={preset ? preset.name : "직접 적어서 부탁하기"} />
+      <p className="text-[14px] leading-[1.6]" style={{ color: "#5E6270" }}>
+        {assigneeNow() ? `담당 컨시어지(${assigneeNow()})가 일정을 보고 승인하면 확정됩니다.` : "아직 담당 컨시어지가 없습니다 — 센터 관제가 담당을 정하고 승인하면 확정됩니다."}
+        {payNow ? " 요청할 때 결제하고, 승인되지 않으면 환불됩니다." : amount === 0 ? " 따로 내실 금액이 없습니다." : " 요금은 컨시어지가 승인하며 알려 드리고, 그 뒤 결제합니다."}
+      </p>
+      {preset?.priceLabel && (
+        <p className="ds-num rounded-[16px] px-3.5 py-2.5 text-[14px] font-extrabold" style={{ background: TONE.gold.bg, color: TONE.gold.fg }}>
+          {preset.priceLabel}
         </p>
-        {preset?.priceLabel && (
-          <p className="mt-2 rounded-xl bg-gold/[.08] px-3 py-2 font-num text-[12.5px] font-bold text-gold">
-            {preset.priceLabel}
-          </p>
-        )}
+      )}
+      {(preset?.scope || preset?.note) && (
+        <p className="text-[14px] leading-[1.6]" style={{ color: "#3A3F50" }}>
+          {[preset.scope, preset.note].filter(Boolean).join(" · ")}
+        </p>
+      )}
 
-        <div className="mt-4">
-          <SectionLabel>요청 종류</SectionLabel>
-          <div className="mt-2 flex flex-wrap gap-1.5">
-            {(preset ? [preset.name, ...GUARDIAN_PRESETS] : GUARDIAN_PRESETS).map((p) => (
-              <button
-                key={p}
-                onClick={() => setType(p)}
-                className={`btn-press rounded-full border px-3 py-1.5 text-[13px] font-bold ${
-                  type === p ? "border-gold bg-gold/10 text-navy" : "border-navy/15 text-muted"
-                }`}
-              >
-                {p}
+      <div role="group" aria-label="요청 종류" className="flex flex-col gap-2">
+        <div className="text-[15px] font-extrabold">요청 종류</div>
+        <div className="flex flex-wrap gap-1.5">
+          {(preset ? [preset.name, ...GUARDIAN_PRESETS] : GUARDIAN_PRESETS).map((p) => (
+            <button key={p} type="button" onClick={() => setType(p)} aria-pressed={type === p} className="ds-press min-h-[40px] rounded-full px-3.5 text-[14px] font-extrabold" style={chip(type === p)}>
+              {p}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-2">
+        <label htmlFor="rq-detail" className="text-[15px] font-extrabold">
+          상세 내용
+        </label>
+        <textarea
+          id="rq-detail"
+          value={detail}
+          onChange={(e) => setDetail(e.target.value)}
+          rows={3}
+          placeholder={preset?.detail || "무엇을 어떻게 해드리면 될까요?"}
+          className={`${fieldCls} resize-none py-3 leading-[1.6]`}
+        />
+      </div>
+
+      <div className="grid grid-cols-2 gap-2.5">
+        <div className="flex flex-col gap-2">
+          <label htmlFor="rq-date" className="text-[15px] font-extrabold">
+            희망일 (선택)
+          </label>
+          <input id="rq-date" type="date" value={preferredDate} onChange={(e) => setPreferredDate(e.target.value)} className={`${fieldCls} min-h-[50px]`} />
+        </div>
+        <div className="flex flex-col gap-2">
+          <label htmlFor="rq-time" className="text-[15px] font-extrabold">
+            희망 시간 (선택)
+          </label>
+          <input id="rq-time" type="time" value={preferredTime} onChange={(e) => setPreferredTime(e.target.value)} className={`${fieldCls} min-h-[50px]`} />
+        </div>
+      </div>
+      {hospitalAsk && (
+        <div className="flex flex-col gap-2">
+          <label htmlFor="rq-hospital" className="text-[15px] font-extrabold">
+            병원 (선택)
+          </label>
+          <input id="rq-hospital" list="req-hospitals" value={hospital} onChange={(e) => setHospital(e.target.value)} placeholder="병원 · 진료과" className={`${fieldCls} min-h-[50px]`} />
+          <datalist id="req-hospitals">
+            {myHospitals.map((h) => (
+              <option key={h} value={h} />
+            ))}
+          </datalist>
+        </div>
+      )}
+
+      <div className="grid grid-cols-2 gap-2.5">
+        <div role="group" aria-label="긴급도" className="flex flex-col gap-2">
+          <div className="text-[15px] font-extrabold">긴급도</div>
+          <div className="flex gap-1.5">
+            {Object.entries(URGENCY).map(([k, v]) => (
+              <button key={k} type="button" onClick={() => setUrgency(k)} aria-pressed={urgency === k} className="ds-press min-h-[44px] flex-1 rounded-[14px] text-[14px] font-extrabold" style={chip(urgency === k)}>
+                {v.label}
               </button>
             ))}
           </div>
         </div>
-
-        <div className="mt-4">
-          <SectionLabel>상세 내용</SectionLabel>
-          <textarea
-            value={detail}
-            onChange={(e) => setDetail(e.target.value)}
-            rows={3}
-            placeholder="무엇을 어떻게 해드리면 될까요?"
-            className="mt-2 w-full resize-none rounded-xl border border-navy/15 px-3.5 py-3 text-[16px] leading-[1.6] outline-none focus:border-gold"
-          />
-        </div>
-
-        <div className="mt-4 grid grid-cols-2 gap-3">
-          <div>
-            <SectionLabel>희망일 (선택)</SectionLabel>
-            <input
-              aria-label="희망일 (선택)"
-              type="date"
-              value={preferredDate}
-              onChange={(e) => setPreferredDate(e.target.value)}
-              className="mt-2 w-full rounded-xl border border-navy/15 px-3.5 py-3 text-[15px] outline-none focus:border-gold"
-            />
-          </div>
-          <div>
-            <SectionLabel>희망 시간 (선택)</SectionLabel>
-            <input
-              aria-label="희망 시간 (선택)"
-              type="time"
-              value={preferredTime}
-              onChange={(e) => setPreferredTime(e.target.value)}
-              className="mt-2 w-full rounded-xl border border-navy/15 px-3.5 py-3 text-[15px] outline-none focus:border-gold"
-            />
-          </div>
-        </div>
-        {hospitalAsk && (
-          <div className="mt-3">
-            <SectionLabel>병원 (선택)</SectionLabel>
-            <input
-              aria-label="병원 (선택)"
-              list="req-hospitals"
-              value={hospital}
-              onChange={(e) => setHospital(e.target.value)}
-              placeholder="병원 · 진료과"
-              className="mt-2 w-full rounded-xl border border-navy/15 px-3.5 py-3 text-[15px] outline-none focus:border-gold"
-            />
-            <datalist id="req-hospitals">
-              {myHospitals.map((h) => (
-                <option key={h} value={h} />
-              ))}
-            </datalist>
-          </div>
-        )}
-
-        <div className="mt-4 flex items-center gap-4">
-          <div>
-            <SectionLabel>긴급도</SectionLabel>
-            <div className="mt-2 flex gap-1.5">
-              {Object.entries(URGENCY).map(([k, v]) => (
-                <button
-                  key={k}
-                  onClick={() => setUrgency(k)}
-                  className={`btn-press rounded-lg border px-3 py-1.5 text-[13px] font-bold ${
-                    urgency === k
-                      ? "border-gold bg-gold/10 text-navy"
-                      : "border-navy/15 text-muted"
-                  }`}
-                >
-                  {v.label}
-                </button>
-              ))}
-            </div>
-          </div>
-          <div className="flex-1">
-            <SectionLabel>사진 첨부</SectionLabel>
-            <button
-              onClick={() => setPhoto((v) => !v)}
-              className={`btn-press mt-2 w-full rounded-lg border px-3 py-1.5 text-[13px] font-bold ${
-                photo ? "border-gold bg-gold/10 text-navy" : "border-navy/15 text-muted"
-              }`}
-            >
-              {photo ? "첨부됨 (데모)" : "사진 선택 (데모)"}
-            </button>
-          </div>
-        </div>
-
-        <div className="mt-4 rounded-xl bg-navy/[.04] px-3.5 py-3 text-[12px] leading-[1.65] text-muted">
-          <div className="flex items-center justify-between">
-            <span className="font-bold text-navy">결제 금액</span>
-            <b className="font-num text-[15px] text-navy">{amount == null ? "요금 확정 전" : fmtWon(amount)}</b>
-          </div>
-          확정 뒤 취소는 서비스일 {CANCEL_FREE_DAYS}일 전까지 바로, 그 안에는 관제 승인을 거쳐 취소됩니다.
-          {payNow && !isPrimary ? " 결제는 주 보호자가 합니다 — 요청은 결제 대기로 남습니다." : ""}
-        </div>
-
-        <div className="mt-5 flex gap-2">
-          <GhostButton onClick={onClose} className="flex-1">
-            닫기
-          </GhostButton>
-          <PrimaryButton
-            className="flex-[2]"
-            disabled={!detail.trim()}
-            onClick={() => {
-              const now = Date.now();
-              onCreate({
-                id: `rq-${now}`,
-                dir: "fromGuardian",
-                type,
-                detail: detail.trim(),
-                amount,
-                preferredDate: preferredDate ? new Date(preferredDate).getTime() : null,
-                preferredTime: preferredTime || null,
-                hospital: hospitalAsk && hospital.trim() ? hospital.trim() : null,
-                urgency,
-                // 가구 담당 컨시어지가 받아 승인한다 — 관제는 바꿀 수 있다 (2026-10-05)
-                assignee: assigneeNow() || "",
-                photos: photo ? ["첨부사진.jpg"] : [],
-                status: payNow ? "awaitingPayment" : "requested",
-                history: [
-                  { at: now, status: "requested", note: "보호자 요청" },
-                  ...(payNow ? [{ at: now, status: "awaitingPayment", note: `요청과 함께 결제 ${fmtWon(amount)}` }] : []),
-                ],
-                proof: null,
-              });
-            }}
-          >
-            {payNow ? (isPrimary ? `${fmtWon(amount)} 결제하고 요청` : "요청 보내기 (주 보호자 결제)") : "요청 보내기"}
-          </PrimaryButton>
+        <div className="flex flex-col gap-2">
+          <div className="text-[15px] font-extrabold">사진 첨부</div>
+          <button type="button" onClick={() => setPhoto((v) => !v)} aria-pressed={photo} className="ds-press min-h-[44px] rounded-[14px] text-[14px] font-extrabold" style={chip(photo)}>
+            {photo ? "첨부됨 (데모)" : "사진 선택 (데모)"}
+          </button>
         </div>
       </div>
-    </div>
+
+      <div className="rounded-[16px] bg-white px-3.5 py-3 text-[13px] leading-[1.65]" style={{ color: "#5E6270", boxShadow: "0 3px 0 #E6E2DA" }}>
+        <div className="flex items-center justify-between">
+          <span className="text-[15px] font-extrabold" style={{ color: "#1B2340" }}>
+            결제 금액
+          </span>
+          <b className="ds-num text-[17px]" style={{ color: "#1B2340" }}>
+            {amount == null ? "요금 확정 전" : fmtWon(amount)}
+          </b>
+        </div>
+        확정 뒤 취소는 서비스일 {CANCEL_FREE_DAYS}일 전까지 바로, 그 안에는 관제 승인을 거쳐 취소됩니다.
+        {payNow && !isPrimary ? " 결제는 주 보호자가 합니다 — 요청은 결제 대기로 남습니다." : ""}
+      </div>
+
+      <div className="flex gap-2">
+        <WhiteBtn className="flex-1 text-[17px]" onClick={onClose}>
+          닫기
+        </WhiteBtn>
+        <Btn
+          tone="navy"
+          h={56}
+          className="flex-[2] text-[16px] disabled:opacity-50"
+          disabled={!detail.trim()}
+          onClick={() => {
+            const now = Date.now();
+            onCreate({
+              id: `rq-${now}`,
+              dir: "fromGuardian",
+              type,
+              detail: detail.trim(),
+              amount,
+              preferredDate: preferredDate ? new Date(preferredDate).getTime() : null,
+              preferredTime: preferredTime || null,
+              hospital: hospitalAsk && hospital.trim() ? hospital.trim() : null,
+              urgency,
+              // 가구 담당 컨시어지가 받아 승인한다 — 관제는 바꿀 수 있다 (2026-10-05)
+              assignee: assigneeNow() || "",
+              photos: photo ? ["첨부사진.jpg"] : [],
+              status: payNow ? "awaitingPayment" : "requested",
+              history: [
+                { at: now, status: "requested", note: "보호자 요청" },
+                ...(payNow ? [{ at: now, status: "awaitingPayment", note: `요청과 함께 결제 ${fmtWon(amount)}` }] : []),
+              ],
+              proof: null,
+            });
+          }}
+        >
+          {payNow ? (isPrimary ? `${fmtWon(amount)} 결제하고 요청` : "요청 보내기 (주 보호자 결제)") : "요청 보내기"}
+        </Btn>
+      </div>
+    </Sheet>
   );
 }

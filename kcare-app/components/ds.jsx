@@ -26,6 +26,11 @@ export const TONE = {
 };
 
 export const INK = "#1B2340";
+
+// 일정 종류 → 색 (시안 예약 달력: 병원 초록 · 안심방문 베이지 · 배송 파랑 · 가족 보라). 어르신 · 보호자 화면이 같은 색을 쓴다.
+// lib/mock.js EVENT_KINDS 의 color 는 관제 콘솔 점 색이다 (병원 = 빨강) — 이 화면들에서는 빨강을 위험 신호에만 쓴다.
+export const eventTone = (kind) =>
+  ["hospital", "checkup", "nextAppt", "medication"].includes(kind) ? "green" : kind === "visit" ? "beige" : kind === "delivery" ? "blue" : kind === "family" ? "purple" : "blue";
 export const MUTE = "#5E6270";
 
 // 3D 버튼 · 카드의 바탕 + 아래 그림자

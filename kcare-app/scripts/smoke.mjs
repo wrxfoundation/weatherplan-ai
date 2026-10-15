@@ -141,8 +141,8 @@ for (const route of ROUTES) {
   // 바텀시트·모달은 눌러야 열린다 — 안 열면 그 안의 접근성은 한 번도 검사되지 않는다.
   // 실제로 시트 안 입력에 라벨 연결이 빠진 채로 오래 있었다.
   const SHEET_OPENERS = {
-    "/family/calendar": "일정 등록 요청",
-    "/family/requests": "해주세요 요청하기",
+    "/family/calendar": "일정 등록하기",
+    "/family/requests": "직접 적어서 부탁하기",
     "/family/my": "우선 요소 설정",
   };
   const opener = SHEET_OPENERS[route];

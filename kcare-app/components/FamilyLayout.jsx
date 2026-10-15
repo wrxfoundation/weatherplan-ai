@@ -17,6 +17,7 @@ import { GuardianNav, INK } from "./ds";
 // action — 오른쪽 위 자리에 얼굴 대신 넣을 것 (스토어 '주문내역' · 마이 '내 정보')
 // back   — 뒤로 갈 주소 (하위 화면)
 // tab    — 아래 메뉴에서 켤 칸 (하위 화면이 어느 탭 아래인지)
+// face   — false 면 오른쪽 위 얼굴을 그리지 않는다 (시안의 예약 · 해주세요 화면)
 const TAB_OF = {
   "/family/sleep": "/family",
   "/family/activity": "/family",
@@ -32,7 +33,7 @@ const TAB_OF = {
   "/family/report": "/family/my",
 };
 
-export default function FamilyLayout({ children, title, sub, action, back, backLabel, tab, h1Size }) {
+export default function FamilyLayout({ children, title, sub, action, back, backLabel, tab, h1Size, face = true }) {
   const router = useRouter();
   const { state, dispatch } = useAppState();
   const elderName = elderNameOf(state.onboarding);
@@ -90,11 +91,11 @@ export default function FamilyLayout({ children, title, sub, action, back, backL
                   </h1>
                 </div>
                 {/* 성 제외 이름 — 화면이 오른쪽 위 버튼을 주면 그것이 대신 선다 */}
-                {action || (
+                {action || (face && (
                   <span aria-hidden="true" className="flex h-14 w-14 flex-none items-center justify-center rounded-full text-[15px] font-extrabold text-white" style={{ background: INK }}>
                     {avatarText(elderName)}
                   </span>
-                )}
+                ))}
               </div>
             )}
             {children}
