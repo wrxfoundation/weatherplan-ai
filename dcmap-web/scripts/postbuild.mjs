@@ -256,11 +256,18 @@ prerender('/data', '데이터 탐색기 — AI InfraMap', '발전 허가대장·
   creator: { '@type': 'Organization', name: 'AI InfraMap' },
 })
 
+prerender('/verify', '웨더팩트 — 기상 사실확인·감정지원 리포트', '좌표·기간 입력으로 관측지점 근거와 기상 사실확인 리포트 초안을 — 보험 손해사정·건설 공기연장 클레임·소송 감정 지원. 감정사 검수 전 초안은 법적 효력 없음.', {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  name: '웨더팩트 기상 사실확인 리포트',
+})
+
 const urls = [
   '/',
   '/about',
   '/roadmap',
   '/pricing',
+  '/verify',
   '/data',
   '/map3d',
   '/land',

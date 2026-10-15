@@ -64,13 +64,15 @@ const TASK_SYSTEM = {
     '작업: 운영자를 위한 인사이트 기사 **초안**을 작성한다(발행 전 검토용). 주제와 참고 데이터(JSON)를 받아 마크다운 초안을 쓴다: ### 소제목 2~4개, 데이터에 있는 수치만 인용(없으면 "확인 필요"로 표시), 마지막에 "출처·확인 필요 항목" 목록. 과장·미확인 단정 금지. 이것은 초안이며 사실 확인 후 발행해야 함을 전제로.',
   calc:
     '작업: GPU 용량 계산 결과(JSON: GPU모델·수량·워크로드·PUE·냉각·이중화·IT부하·계약전력·랙수·상면·연간전력량·연간전력비·연간탄소·인허가 트랙 등)를 받아 부지·전력 검토자를 위한 해설을 작성한다. 구성: ① **규모 성격 한줄**(예: 중형 학습 클러스터) ② **전력·계약 시사점**(수전전압 트랙·계통영향평가·계약전력) ③ **냉각·상면·경제성 코멘트** ④ **유의점 1~2개**. 제공된 계산값만 인용하고 없는 값은 언급하지 않는다. 전력비·탄소는 편집 가능한 대표 단가/계수 기반 추정임을 전제로 명시. 300~450자.',
+  wxfact:
+    '작업: 기상 사실확인 감정 서술문 **초안**을 작성한다(기상감정사 검수 전 문서). 입력 data(JSON: 관측지점·거리·커버리지·대상 기간·용도·일자료 rows·시간자료 rows 일부)에 실제로 있는 수치만 인용하며, 없는 값의 창작·추정을 절대 금지한다. 구성: ① 확인 대상 한 줄(좌표·기간·용도) ② 관측 사실 서술 — 핵심 일자·시각의 값 위주, 서술체(표 재나열 금지) ③ 용도 관점 참고 사항 — 단정 금지, 최종 판단은 기상감정사 검수에 따름을 전제 ④ 한계·출처 한 줄(관측지점 거리·대표성 한계, 출처는 데이터에 명시된 것만). 400~700자.',
 }
 
-const MODEL_FOR = { report: MODEL_SONNET, brief: MODEL_SONNET, compare: MODEL_SONNET, draft: MODEL_SONNET, calc: MODEL_SONNET, search: MODEL_HAIKU, qa: MODEL_HAIKU }
+const MODEL_FOR = { report: MODEL_SONNET, brief: MODEL_SONNET, compare: MODEL_SONNET, draft: MODEL_SONNET, calc: MODEL_SONNET, wxfact: MODEL_SONNET, search: MODEL_HAIKU, qa: MODEL_HAIKU }
 // 출력 잘림 방지 — 초안·리포트류 상향(2026.7 잘림 피드백 반영). Sonnet 기준 여유.
-const MAXTOK_FOR = { report: 2800, brief: 2000, compare: 2800, draft: 4096, calc: 1600, search: 1200, qa: 1200 }
+const MAXTOK_FOR = { report: 2800, brief: 2000, compare: 2800, draft: 4096, calc: 1600, wxfact: 2000, search: 1200, qa: 1200 }
 
-const ALLOWED = new Set(['report', 'search', 'qa', 'brief', 'compare', 'draft', 'calc'])
+const ALLOWED = new Set(['report', 'search', 'qa', 'brief', 'compare', 'draft', 'calc', 'wxfact'])
 
 // 본문을 사람 프롬프트로 — 데이터는 JSON 코드블록으로 명확히 구분
 function buildUserContent(task, body) {
@@ -82,7 +84,7 @@ function buildUserContent(task, body) {
   if (task === 'search') {
     return `사용자 질의: ${q || '(없음)'}\n\n후보지 목록(JSON):\n\`\`\`json\n${data}\n\`\`\``
   }
-  // report / brief
+  // report / brief / compare / draft / calc / wxfact
   return `${q ? `요청: ${q}\n\n` : ''}데이터(JSON):\n\`\`\`json\n${data}\n\`\`\``
 }
 
