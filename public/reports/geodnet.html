@@ -1,0 +1,314 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<title>GEODNET 해부 · DePIN 케이스 스터디 | 웰비안 토크노믹스</title>
+<meta name="description" content="TGE(2023-09-07)부터의 일별 가격 · 반감기 · 언락 스케줄 · 분기 매출/소각을 합쳐, GEODNET의 제네시스 회수 시점과 가격 하락 원인을 실측으로 정리한 케이스 스터디. 웰비안 토크노믹스 결정용.">
+<meta name="author" content="KWeather 디지털사업본부">
+
+<!-- 내부 검토용 문서 — 색인 금지. robots.txt · vercel.json 의 X-Robots-Tag 와 3중으로 막습니다. -->
+<meta name="robots" content="noindex, nofollow, noarchive">
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:title" content="GEODNET 해부: 제네시스는 언제 회수했고, 가격은 왜 떨어졌나">
+<meta property="og:description" content="가격 하락은 수요 부재가 아니라 언락 공급 과잉이었고, 제네시스의 회수는 리워드 수량이 아니라 '가격이 오르기 전 진입'에서 나왔습니다.">
+
+<meta name="theme-color" content="#f4f6f3" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0d0d0d" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="/favicon.ico">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="geodnet/report.css">
+</head>
+<body>
+
+<div class="wrap">
+<header class="masthead">
+  <div>
+    <div class="eyebrow">DePIN 케이스 스터디 · 웰비안 토크노믹스 결정용</div>
+    <h1>GEODNET 해부: 제네시스는 언제 회수했고, 가격은 왜 떨어졌나</h1>
+    <p class="lede">TGE(2023-09-07)부터 오늘까지 일별 가격 · 반감기 · 언락 스케줄 · 분기 매출/소각을 합쳐, 미팅에서 결정해야 할 다섯 가지에 대한 GEODNET의 실측 답을 정리했습니다.</p>
+  </div>
+  <div class="meta">데이터 기준 2026-09-04<br>기기 가격 가정 $695 (트리플밴드 정가)<br>가격: CoinCodex 일별 · Gate.io 교차검증</div>
+</header>
+
+<div class="verdict">
+  <h2>한 줄 결론</h2>
+  <p><b>가격 하락은 수요 부재가 아니라 언락 공급 과잉이었고, 제네시스의 회수는 리워드 수량이 아니라 "가격이 오르기 전 진입"에서 나왔습니다.</b> 매출·기기 수는 ATH 이후에도 계속 성장했지만, 투자자 언락(2024-12-28)이 시작된 지 4주 만에 ATH를 찍고 9개월간 −73%를 갔습니다. 지금도 월 발행량의 약 9%만 소각됩니다.</p>
+</div>
+
+<div class="tiles">
+  <div class="tile"><div class="k">TGE 진입 코호트 회수 (보유)</div><div class="v good">104일</div><div class="d">48 GEOD/일 × 가격 9배 상승. 매일 매도 시에도 178일</div></div>
+  <div class="tile"><div class="k">지금 진입 시 회수 (현재가)</div><div class="v crit">527일</div><div class="d">6 GEOD/일 × $0.224. 2027-07 반감 시 3 GEOD/일로 더 길어짐</div></div>
+  <div class="tile"><div class="k">월 발행 대비 소각 비율</div><div class="v crit">약 9%</div><div class="d">월 2,357만 발행 vs 217만 소각 (ARR $7.3M의 80%)</div></div>
+  <div class="tile"><div class="k">ATH 대비 현재가</div><div class="v acc">−40%</div><div class="d">$0.373 (2025-01-26) → $0.224. 저점 $0.103에서 +118% 반등</div></div>
+</div>
+
+<section>
+  <div class="eyebrow">Q1 · 타임라인</div>
+  <h2>가격 위에 반감기·언락·상장을 겹쳐 보면 인과가 보입니다</h2>
+  <p class="sub">세로선은 토크노믹스 이벤트입니다. ATH는 투자자 언락 개시 4주 뒤, 저점은 팀 언락 개시 3.5개월 뒤, 반등은 코인베이스·업비트 상장과 4차 반감기가 겹친 구간입니다.</p>
+  <div class="panel">
+    <div class="ttl"><h3>GEOD 주간 종가</h3><span class="unit">USD · 2023-09 → 2026-09</span></div>
+    <div class="chart tall"><canvas id="cPrice"></canvas></div>
+    <div class="legend"><span><i style="background:var(--s1)"></i>GEOD 가격</span><span><i class="line" style="background:var(--s8)"></i>공급 이벤트 (언락·반감)</span><span><i class="line" style="background:var(--s3)"></i>수요 이벤트 (상장)</span></div>
+  </div>
+</section>
+
+<section>
+  <div class="eyebrow">Q2 · 왜 떨어졌나</div>
+  <h2>펀더멘털은 올랐고, 토큰 공급이 더 빨리 늘었습니다</h2>
+  <p class="sub">왼쪽은 분기별 기기 수·매출·가격을 2025년 1분기=100으로 지수화한 것, 오른쪽은 월간 신규 공급의 구성과 소각량입니다.</p>
+  <div class="grid2">
+    <div class="panel">
+      <div class="ttl"><h3>펀더멘털 vs 가격 (Q1'25 = 100)</h3><span class="unit">지수</span></div>
+      <div class="chart"><canvas id="cFund"></canvas></div>
+      <div class="legend"><span><i class="line" style="background:var(--s3)"></i>활성 기기 수</span><span><i class="line" style="background:var(--s2)"></i>분기 매출</span><span><i class="line" style="background:var(--s1)"></i>토큰 가격</span></div>
+    </div>
+    <div class="note">
+      <h4>읽는 법</h4>
+      <p>2025년 1분기 → 2026년 1분기: 매출 <b>$812K → $1.8M (2.2배)</b>, 기기 <b>14K → 21.5K</b>. 같은 기간 가격은 <b>$0.26 → $0.14</b>.</p>
+      <p>"리얼 일드"라는 내러티브가 있어도 <b>소각이 발행을 못 따라가면 가격은 공급 스케줄이 정합니다.</b> Blockworks 추정: 순디플레이션에 필요한 ARR은 <b>$15.1M</b>, 현재 $7.3M.</p>
+    </div>
+  </div>
+  <div class="grid2" style="margin-top:16px">
+    <div class="panel">
+      <div class="ttl"><h3>월간 신규 공급 구성 vs 소각</h3><span class="unit">백만 GEOD / 월</span></div>
+      <div class="chart"><canvas id="cSupply"></canvas></div>
+      <div class="legend"><span><i style="background:var(--s7)"></i>투자자 언락</span><span><i style="background:var(--s5)"></i>팀 언락</span><span><i style="background:var(--s4)"></i>생태계</span><span><i style="background:var(--s3)"></i>벤더·퍼블릭</span><span><i style="background:var(--s1)"></i>채굴 방출</span><span><i style="background:var(--s8)"></i>소각</span></div>
+    </div>
+    <div class="note">
+      <h4>숫자의 출처</h4>
+      <p>투자자 2.5억 개를 24개월 선형 언락 = <b>월 1,042만</b>. 팀 2.5억 개를 48개월 = <b>월 521만</b>. 채굴은 기기 수 × 일 리워드 × 30일 × 가동률 0.85로 추정.</p>
+      <p>반감기가 채굴 방출을 4년간 1/8로 줄였는데도, <b>언락이 채굴의 5배</b>라 총 공급은 오히려 늘었습니다. 2025-01 월 2,000만 → 2026-09 월 2,357만.</p>
+      <p>소각은 매출의 80%를 시장 매수 후 소각. 매출이 2배가 됐지만 발행의 <b>9%</b>를 상쇄할 뿐입니다.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="eyebrow">Q3 · 제네시스 엑싯</div>
+  <h2>진입 시점별 회수 기간: 초기 코호트는 반년 안에, 지금은 1.5년</h2>
+  <p class="sub">코호트별로 실제 일별 리워드 스케줄(96 → 48 → 24 → 12 → 6 GEOD/일)과 실제 일별 가격을 적용해 $695 회수 시점을 계산했습니다. "보유"는 받은 토큰을 팔지 않고 시가로 평가, "매일 매도"는 받는 즉시 시장가로 판 경우입니다.</p>
+  <div class="panel">
+    <div class="ttl"><h3>기기 $695 회수까지 걸린 일수</h3><span class="unit">일 · 회수 못 한 코호트는 "미회수"</span></div>
+    <div class="chart tall"><canvas id="cCohort"></canvas></div>
+    <div class="legend"><span><i style="background:var(--s1)"></i>보유 (시가 평가)</span><span><i style="background:var(--s2)"></i>매일 매도</span></div>
+  </div>
+  <div class="tblwrap" style="margin-top:16px">
+  <table>
+    <thead><tr><th>진입 시점 (일 리워드)</th><th class="num">누적 GEOD</th><th class="num">회수 · 보유</th><th class="num">회수 · 매일매도</th><th class="num">보유 시 현재 가치</th><th class="num">보유 최고점 가치</th><th>비고</th></tr></thead>
+    <tbody id="cohortRows"></tbody>
+  </table>
+  </div>
+  <div class="grid2" style="margin-top:16px">
+    <div class="note">
+      <h4>제네시스가 회수한 진짜 이유</h4>
+      <p>TGE 코호트는 <b>104일</b> 만에 회수했지만, 리워드 수량(48/일)만으로는 설명이 안 됩니다. 같은 수량을 받은 2024-01 코호트는 68일, ATH에 산 2025-01 코호트(24/일)는 137일 — <b>회수 속도를 결정한 건 "받은 뒤 가격이 얼마나 올랐나"</b>입니다.</p>
+      <p>TGE 시점 가격 $0.041 → ATH $0.373, <b>9.1배</b>. 그 사이 BTC는 4.0배. 초기 코호트는 리워드 × 가격 상승을 둘 다 먹었습니다.</p>
+    </div>
+    <div class="note">
+      <h4>엑싯 창이 열려 있던 조건 세 가지</h4>
+      <p><b>① 유동성이 빨랐다.</b> 채굴 개시(2022-07) 14개월 뒤 TGE, 즉시 DEX·Gate 거래. 쌓인 토큰을 팔 곳이 있었습니다.</p>
+      <p><b>② 언락이 늦었다.</b> 투자자 언락은 TGE 후 <b>15.7개월</b>, 팀은 <b>21.7개월</b> 뒤 시작. 그 사이 매도 압력은 채굴자뿐이었습니다.</p>
+      <p><b>③ ATH 때 유통량이 작았다.</b> 2025-01 유통 약 1.4억 개(14%). 소액 수요로도 가격이 크게 움직였습니다.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="eyebrow">Q4 · 수요는 있나</div>
+  <h2>토큰 수요와 네트워크 수요를 분리해서 봐야 합니다</h2>
+  <p class="sub">GEOD와 BTC를 TGE=100으로 놓고 같은 축(로그)에 그렸습니다. 시장 전체 흐름과 GEOD 고유의 움직임을 분리하기 위한 그림입니다.</p>
+  <div class="grid2">
+    <div class="panel">
+      <div class="ttl"><h3>GEOD vs BTC (TGE 2023-09-07 = 100)</h3><span class="unit">지수 · 로그 축</span></div>
+      <div class="chart"><canvas id="cBtc"></canvas></div>
+      <div class="legend"><span><i class="line" style="background:var(--s1)"></i>GEOD</span><span><i class="line" style="background:var(--s2)"></i>BTC</span></div>
+    </div>
+    <div class="note">
+      <h4>해석</h4>
+      <p><b>네트워크 수요는 실재합니다.</b> 매출 QoQ +45% (Q1'26), ARR $5M → $7.3M (2025 하반기), 기기 22.5K대·136개국.</p>
+      <p><b>토큰 수요는 공급을 못 이겼습니다.</b> 2025-01 → 2025-10 구간 GEOD −73%, BTC +8%. 시장 탓이 아니라 <b>GEOD 고유의 공급 압력</b>입니다.</p>
+      <p><b>거래소 상장은 수요 이벤트로 작동했습니다.</b> 코인베이스(6/23)·업비트/빗썸(7/27) 이후 저점 대비 +118%. 지금 거래량의 34%가 한국 원화 마켓(업비트 30% + 빗썸 4%).</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="eyebrow">Q5 · 웰비안 시사점</div>
+  <h2>내일 결정할 다섯 가지에 대한 GEODNET의 답</h2>
+  <p class="sub">덱의 현재 설계(100억 발행 · 25,000 지점 · 일 7개 · 단계 22% 체감 · 달성 기준 게이트 · 제네시스 6.5배)를 위 실측에 대조했습니다.</p>
+  <div class="decisions">
+    <div class="dec">
+      <div class="q">제네시스 우대를 어떻게 설계할까<small>덱: 7단계 대비 6.5배 수량</small></div>
+      <div class="a">
+        <p>GEODNET에서 제네시스 우대의 실질은 수량이 아니라 <b>"가격이 오르기 전에 쌓아둘 시간"</b>이었습니다. 수량 배수를 아무리 높여도 유동성 시점이 늦으면 우대가 아니라 잠금입니다.</p>
+        <div class="rec">권고: 수량 배수는 유지하되, <b>제네시스 토큰의 유동성 개시 시점을 날짜로 약속</b>하는 게 우대의 핵심입니다. 그리고 GEODNET처럼 팀·투자자 언락은 유동성 개시 후 최소 12개월 뒤에 시작해야 제네시스가 먼저 나갈 창이 생깁니다.</div>
+      </div>
+    </div>
+    <div class="dec">
+      <div class="q">반감 50% vs 체감 22%<small>덱: 단계별 22% 체감</small></div>
+      <div class="a">
+        <p>GEODNET은 매년 50% 반감으로 채굴 방출을 4년간 1/8로 줄였습니다. 그런데도 총 공급이 는 이유는 언락 때문입니다. 22% 체감은 반감보다 훨씬 완만해서 <b>채굴 방출 자체가 GEODNET보다 커집니다</b>.</p>
+        <div class="rec">권고: 시뮬레이터에서 22% 체감과 50% 반감의 누적 방출을 나란히 놓고, <b>소각(매출 연동)이 총 발행(리워드 + 언락) 대비 몇 %를 상쇄하는지</b>를 기준으로 고르세요. GEODNET은 매출 80% 소각으로도 언락 집중 구간(2025~2026)에는 총 발행의 9%만 상쇄됐고, 그 2년의 비용이 −73%였습니다. 투자자 언락이 끝나는 2027년부터는 24% 이상, 팀 언락이 끝나는 2029년 이후 순 디플레이션으로 설계돼 있습니다.</div>
+      </div>
+    </div>
+    <div class="dec">
+      <div class="q">시간 기준 vs 달성 기준<small>덱: G4 = 완판 25,000 + 가동률 80% 3개월</small></div>
+      <div class="a">
+        <p>GEODNET은 <b>날짜 고정(매년 6/30)</b>입니다. 커뮤니티가 다음 반감을 알고 미리 움직이고, 팀은 "언제 열리냐"는 질문을 안 받습니다. 달성 기준은 미달 시 무기한 공백이 생깁니다.</p>
+        <div class="rec">권고: 게이트 조건은 두되 <b>최대 대기 기한(예: 달성 or 12개월 중 먼저 오는 것)</b>을 붙여서 날짜 예측 가능성을 확보하세요.</div>
+      </div>
+    </div>
+    <div class="dec">
+      <div class="q">소각을 어떻게 걸까<small>덱: 총 50억 소각 (연동 방식 미정)</small></div>
+      <div class="a">
+        <p>GEODNET의 "매출 80% 소각"은 좋은 내러티브지만 규모가 작았습니다. 소각량은 <b>매출 ÷ 가격</b>이라 가격이 오르면 소각 개수가 줄어드는 역설도 있습니다.</p>
+        <div class="rec">권고: 총량(50억)보다 <b>"기기 판매대금의 X% + 데이터 매출의 Y%"</b>라는 비율로 정의하고, 시뮬레이터에서 월 발행(리워드 + 언락) 대비 소각 비율이 최소 30% 이상 나오는 X·Y를 찾으세요. GEODNET의 언락 구간 9%는 가격을 못 지켰습니다.</div>
+      </div>
+    </div>
+    <div class="dec">
+      <div class="q">유동성 · 상장 순서<small>덱: 포인트 → 클레임 → 유동성 (시점 미정)</small></div>
+      <div class="a">
+        <p>GEODNET의 반등은 상장(코인베이스 → 업비트·빗썸)에서 왔고, 현재 거래량의 1/3이 원화 마켓입니다. 국내 XRP 홀더가 주 고객인 웰비안에게 <b>국내 상장은 수요 이벤트 그 자체</b>입니다.</p>
+        <div class="rec">권고: DEX 유동성 → 국내 상장까지의 순서와 목표 시점을 토크노믹스 문서에 포함하고, 상장 시점의 유통 비율을 <b>15% 이하</b>로 설계하세요. GEODNET ATH 당시 유통 14%가 참고점입니다.</div>
+      </div>
+    </div>
+  </div>
+  <div class="warnbox"><b>주의.</b> GEODNET의 회수 기간은 "가격이 9배 오른 사이클"의 결과입니다. 같은 구조를 따라도 가격 상승이 없으면 TGE 코호트조차 178일(매일 매도 기준)이 아니라 수년이 됩니다. 시뮬레이터에서 가격 시나리오를 반드시 나란히 놓고 보세요.</div>
+</section>
+
+<section>
+  <div class="eyebrow">Q6 · 배분 비교</div>
+  <h2>토큰 분배 계획: GEODNET 10억 vs 웰비안 덱 100억</h2>
+  <p class="sub">버킷 이름이 달라서 같은 역할끼리 묶어 비율로 비교했습니다. 웰비안은 덱 8p 기준, 미기재 항목은 표시했습니다.</p>
+  <div class="panel">
+    <div class="ttl"><h3>총 발행 대비 배분 구성</h3><span class="unit">% · 같은 색 = 같은 역할</span></div>
+    <div class="chart short"><canvas id="cAlloc"></canvas></div>
+    <div class="legend"><span><i style="background:var(--s1)"></i>노드 리워드</span><span><i style="background:var(--s7)"></i>투자자</span><span><i style="background:var(--s5)"></i>팀</span><span><i style="background:var(--s4)"></i>생태계 · 벤더</span><span><i style="background:var(--s3)"></i>유동성 · LP</span><span><i style="background:var(--s6)"></i>퍼블릭 · 기타</span><span><i style="background:var(--s8)"></i>소각 예정</span></div>
+  </div>
+  <div class="tblwrap" style="margin-top:16px">
+  <table>
+    <thead><tr><th>역할</th><th>GEODNET</th><th class="num">비율</th><th>웰비안 덱</th><th class="num">비율</th><th>차이가 뜻하는 것</th></tr></thead>
+    <tbody>
+      <tr><td>노드 리워드</td><td>마이닝 3.5억 · 10년 · 매년 6/30 50% 반감</td><td class="num">35%</td><td>1기 28억 (Phase 1~10, 26.65억 상한) + 2기 18억 (Phase 11~18, 10단계 게이트 통과 시에만 개방 · 미통과 시 소각 전환)</td><td class="num">46%</td><td>웰비안이 11%p 많음. 단 2기 18%는 조건부라 실질 28~46%</td></tr>
+      <tr><td>투자자</td><td>2.5억 · TGE+15.7개월부터 24개월 선형</td><td class="num">25%</td><td>전략투자 · 프라이빗 5억 · 6~12개월 클리프 + 24~36개월 베스팅 · TGE 언락 0 <span class="tag">범위값</span></td><td class="num">5%</td><td>GEODNET은 이 버킷으로 $15M 조달. 웰비안은 조달 한도가 1/5. 클리프 · 베스팅은 범위라 확정 필요</td></tr>
+      <tr><td>팀</td><td>2.5억 · TGE+21.7개월부터 48개월 선형</td><td class="num">25%</td><td>팀 · 기여자 6억 · 12개월 클리프 + 48개월 선형 · 일정 전체 공개</td><td class="num">6%</td><td>홀더 친화. 클리프 기준점(TGE? 유동성 개시?)만 확정하면 됨</td></tr>
+      <tr><td>생태계 · 벤더</td><td>생태계 1억 (48개월) + 벤더·마케팅 3천만 (10% 즉시 + 36개월)</td><td class="num">13%</td><td>생태계 · 지역 파트너 5억 · 권역 진입 마일스톤</td><td class="num">5%</td><td>—</td></tr>
+      <tr><td>유동성 · LP</td><td>버킷 없음 (재단 재량)</td><td class="num">0%</td><td>LP 리워드 · 유동성 마이닝 8억 (수량 고정 · 최소 예치 · 조기 인출 몰수) + 유동성 · 준비금 5억 (AMM 시드 · 매수벽 · 매입분 전량 소각)</td><td class="num">13%</td><td>웰비안만 명시. DEX 유동성 = 제네시스 엑싯 창이라 좋은 선택. 준비금 5%가 사실상 "매입 소각 실탄"</td></tr>
+      <tr><td>퍼블릭 · 기타</td><td>퍼블릭 세일 2천만 (12개월)</td><td class="num">2%</td><td>없음 · 판매는 NFT 라이선스, 토큰 세일 아님</td><td class="num">0%</td><td>웰비안은 퍼블릭 토큰 세일 자체가 없음</td></tr>
+      <tr class="hl"><td>소각 예정</td><td>없음 · 소각은 전부 매출로 시장 매입</td><td class="num">0%</td><td>소각 예정 25억 · 마일스톤 분할 소각. 매입 소각 24.65억과 합해 총 50억</td><td class="num">25%</td><td>예정 소각은 "발행 안 한 것"과 같음. 가격을 지키는 건 매입 소각뿐</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="tblwrap" style="margin-top:16px">
+  <table>
+    <thead><tr><th>구조</th><th>GEODNET 실측</th><th>웰비안 덱</th><th>상태</th></tr></thead>
+    <tbody>
+      <tr><td>리워드 감소 규칙</td><td>날짜 고정 · 매년 6/30 50% 반감 · 거버넌스(GIP-6)로 중간 조정</td><td>달성 기준 · 게이트 통과마다 22% 체감 · 10단계 (7.00 → 0.75/일)</td><td><span class="tag good">논의</span></td></tr>
+      <tr><td>제네시스 우대</td><td>별도 없음 · 조기 진입 = 높은 일 리워드(96 → 48)</td><td>1단계 7/일 = 10단계의 9.3배 · 제네시스 공급 비율 2.66%</td><td><span class="tag good">논의</span></td></tr>
+      <tr><td>매입 소각 재원</td><td>데이터 매출의 80% (운영 정책, 문서 외)</td><td>총량 24.65억만 명시 · 비율 · 시점 없음 · Day 1 재원 = 기기 판매대금</td><td><span class="tag good">논의</span></td></tr>
+      <tr><td>팀 · 투자자 언락 시작</td><td>TGE 후 15.7개월 / 21.7개월</td><td>팀 12개월 클리프 · 투자자 6~12개월 클리프 + 24~36개월 · 기준점(TGE인지 유동성 개시인지) 미정</td><td><span class="tag">확인</span></td></tr>
+      <tr><td>상장 시점 유통 비율</td><td>ATH 당시 약 14%</td><td>미정 (유동성 개시 시점 미정)</td><td><span class="tag good">논의</span></td></tr>
+      <tr><td>실질 최대 유통</td><td>10억 − 누적 매입 소각</td><td>100억 − 25억(예정 소각) − 2기 미개방분(최대 18억) = 57~75억</td><td>—</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="grid2" style="margin-top:16px">
+    <div class="note">
+      <h4>비교에서 읽히는 것</h4>
+      <p><b>팀 + 투자자 11% vs 50%.</b> 웰비안이 훨씬 홀더 친화적이고, GEODNET 가격 하락의 원인이었던 언락 물량 자체가 작습니다. 대신 투자자 버킷 5%로 조달할 수 있는 돈도 1/5입니다.</p>
+      <p><b>소각 50%는 두 종류가 섞여 있습니다.</b> 예정 소각 25억은 시장에서 사는 게 아니라 발행을 안 하는 것이고, 매입 소각 24.65억만 매도 압력을 상쇄합니다. 덱은 후자의 규칙이 비어 있습니다.</p>
+    </div>
+    <div class="note">
+      <h4>덱에서 비어 있는 칸</h4>
+      <p>① 팀 · 투자자 클리프의 기준점(TGE인지 유동성 개시인지) ② 투자자 "6~12개월 + 24~36개월" 범위를 하나의 숫자로 ③ 매입 소각 24.65억의 재원 비율과 시점 ④ 2기 18% 게이트의 최대 대기 기한 ⑤ 준비금 5%의 매수벽 운용 규칙(언제 · 얼마).</p>
+      <p>①~②는 확인이고 ③~⑤가 미팅 논의입니다.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="eyebrow">미팅 아젠다 · 확인할 것 / 논의할 것</div>
+  <h2>토큰 얘기 전에 답해야 할 일곱 가지</h2>
+  <p class="sub">순서가 곧 인과입니다. 1~2번은 미팅에서 토론할 게 아니라 케이웨더 숫자로 채우는 <span class="tag">확인</span> 항목, 3~6번이 <span class="tag good">논의</span> 항목, 7번은 둘 다입니다. 각 줄에 GEODNET의 실측 답을 붙였습니다.</p>
+  <div class="tblwrap">
+  <table>
+    <thead><tr><th>#</th><th>질문</th><th>GEODNET 실측</th><th>웰비안 현재</th><th>구분</th><th>미팅에 가져올 것</th></tr></thead>
+    <tbody>
+      <tr><td class="num">1</td><td><b>누가 지금 이 데이터를 돈 주고 사고 있나</b> (토큰 얘기 전에)</td><td>드론 · 정밀농업 · 측량 · 자율주행. 이미 Trimble 등 RTK 보정 구독료를 내던 시장. 고객 결제는 법정화폐, 토큰 결제 요구 없음</td><td>실내공기질관리법 의무 시설(학원 · 병원 · 어린이집)과 케이웨더 기존 데이터 고객. 단가 · 계약 형태 미확인</td><td><span class="tag">확인</span></td><td>케이웨더 기존 데이터 상품의 고객 수 · 단가 · 계약 형태 한 장</td></tr>
+      <tr><td class="num">2</td><td><b>그 시장에서 기기당 연 매출은 얼마인가</b></td><td>ARR $7.3~8.3M ÷ 22,500대 = <b>$325~368/대/년</b>. 기기값 $695 대비 2년 내 하드웨어 원가 회수</td><td>미정. 시뮬레이터 디폴트 ₩300,000(≈$220)/지점/년은 가정값</td><td><span class="tag">확인</span></td><td>지점당 연 데이터 매출 범위(보수 · 기본 · 낙관) 세 숫자</td></tr>
+      <tr><td class="num">3</td><td><b>그 매출로 리워드를 몇 년 안에 감당할 수 있나</b></td><td>범위에 따라 답이 갈림. 채굴 리워드만: 매출 $5.8M 소각 vs 연 $9.2M 발행 = <b>63% (4년차)</b>. 팀 · 투자자 언락까지: <b>9%</b>. 순디플레이션 필요 ARR $15.1M</td><td>"리워드" 범위 미정의 (1기 28%만? 2기 · LP 포함? 팀 · 투자자 포함?). 교차 시점 계산 불가</td><td><span class="tag good">논의</span></td><td>리워드 범위 정의 → 시뮬레이터에서 매출 시나리오별 교차 연도</td></tr>
+      <tr><td class="num">4</td><td><b>그 전까지 보조금을 누가 얼마나 댈 것인가</b></td><td>기기 $15.7M은 채굴자 자부담. 리워드는 토큰 = 매수자가 희석으로 부담. 조달 $15M은 수요 쪽(데이터 상품 · 영업 · 상장 · R&D)에만</td><td>기기 1만 대는 케이웨더 부담. 리워드 46%는 희석. 기기 판매 마진(NFT 가격 − 원가)과 전략투자 5% 조달의 용처 미정</td><td><span class="tag good">논의</span></td><td>보조금 재원 3개(판매 마진 · 희석 · 조달)의 규모와 용처. "보조금 지급자 = 토큰 매수자"를 한 문장으로 명시</td></tr>
+      <tr><td class="num">5</td><td><b>그 보조금이 어떤 규칙으로 줄어들 것인가</b></td><td>날짜 고정 50% 반감(첫날부터 공표) + 거버넌스로 중간 조정(GIP-6 수수료 50% 감축). 규칙이 바뀌는 절차가 있었음</td><td>달성 기준 22% 체감. 미달 시 무기한 정지. 규칙 변경 절차 없음</td><td><span class="tag good">논의</span></td><td>달성 or N개월 상한의 N · 규칙 변경 절차(누가 · 어떻게) · <b>1기 풀 소진 시 규칙</b>(에폭당 방출 상한 / 소각분 재방출 / 매출 분배 전환 중 택1 — 지금 덱은 "소진되면 안 준다"가 기본값)</td></tr>
+      <tr><td class="num">6</td><td><b>홀더가 몇 년에 회수하고, 그걸 어떻게 말하지 않을 것인가</b></td><td>공식 채널은 회수 기간 미공표. DePINscan 등 제3자가 계산(385일). 실측은 TGE 코호트 104~178일, 현재 진입 527일</td><td>환산가 비공개 원칙 합의(디센트 미팅). "많이 확보하라"는 남이 말하게(카탈라이즈). 내부 ↔ 외부 분리 규칙은 미문서화</td><td><span class="tag good">논의</span></td><td>내부 시뮬레이터 ↔ 외부 메시지 분리 원칙 한 장. 회수 기간 언급 = 증권성 근거라는 점 명시</td></tr>
+      <tr><td class="num">7</td><td><b>매출은 어디서 발생하고, 어떻게 공개 · 검증되나</b> (케이웨더 → 웰비안 경로)</td><td>재단이 직접 계약 · 수금. 매출의 80%를 매입 소각해 <b>온체인(Dune)에 찍히고 매출은 거기서 역산</b>. 분기 리포트는 재단 의뢰(Messari, 편집권은 Messari). 감사 재무제표 없음</td><td>국내 데이터 매출은 <b>케이웨더(별도 법인)</b>에서 발생. 재단으로 넘어오는 경로(라이선스료 · 수익 배분 · 데이터 구매) 미정 → 지금 구조로는 "매출 연동 소각"이 온체인에 아무것도 안 남김</td><td><span class="tag">확인</span> <span class="tag good">논의</span></td><td>케이웨더 → 웰비안 매출 이전 방식 후보 3개와 법적 · 세무 가능 여부(케이웨더 확인) · 소각 대시보드로 공개할지 결정. 결정 ③(소각 정의)의 전제 조건</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="grid2" style="margin-top:16px">
+    <div class="note">
+      <h4>미팅 전 숙제 (1 · 2)</h4>
+      <p>케이웨더에서 두 숫자를 받아 첫 슬라이드에 박아둡니다. 못 받으면 미팅 성격을 "결정"이 아니라 "가정 범위 설정"으로 낮춰 선언하고 시작합니다.</p>
+    </div>
+    <div class="note">
+      <h4>미팅 결정 (3 ~ 7)</h4>
+      <p>3번에서 리워드 범위를 먼저 갈라야 4번 숫자가 서고, 5번 N은 6번 여정 날짜와 같이 정해야 합니다. 7번은 케이웨더 확인이 선행돼야 하지만, 매출 이전 경로가 없으면 3번 · 결정 ③이 성립하지 않으니 이번에 최소한 후보를 좁혀야 합니다. 결정 기록은 <span class="mono">WLBN_토크노믹스_결정.pptx</span> 10번 표에, 숫자는 <span class="mono">WLBN_Tokenomics_Simulator.xlsx</span>에 반영합니다.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="eyebrow">참고 · 거버넌스</div>
+  <h2 style="font-size:20px">별도 거버넌스 토큰 없음 · GEOD 보유 형태가 투표권</h2>
+  <p class="sub">재단이 제안하고 사전 심사를 거친 것만 투표에 오르며, 공개된 제안은 전부 통과. "재단 설계 → 홀더 승인" 구조로 읽는 게 정확합니다. 거래소 보유만으로는 투표권이 없습니다.</p>
+  <div class="grid2">
+    <div class="tblwrap">
+    <table>
+      <thead><tr><th>항목</th><th>값</th></tr></thead>
+      <tbody>
+        <tr><td>투표권 원천 (veNFT)</td><td>Location NFT 1개 = 1 veNFT (채굴자) · SuperHex 스테이킹 GEOD · 락업 GEOD (팀 · 투자자 = "재단 멤버")</td></tr>
+        <tr><td>제안 자격</td><td>위 셋 중 하나 보유 · 재단 사전 심사 후 투표</td></tr>
+        <tr><td>투표 기간 · 정족수</td><td>14일 · 총 veNFT의 20%</td></tr>
+        <tr><td>통과 기준</td><td>67% 또는 90% 찬성 (기준 구분은 문서에 없음)</td></tr>
+        <tr><td>가중치 비율</td><td>지갑 연결 없이는 미표시 → 채굴자 vs 팀 · 투자자 실제 비중 미확인</td></tr>
+        <tr><td>통과 GIP</td><td>1 플랫폼 구축 · 2 헥스 첫 설치자 우선권 · 3 크로스체인 에어드랍 1% · 4 앱 · SDK 700만 · 5 SuperHex 조건 · 6 성과 페널티 · 듀얼밴드 폐지 · 7 Solana 이전 · 8 NFT 상한 20,000 · 13 StableHex 보너스. 부결 사례 공개 없음</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <div class="note">
+      <h4>웰비안에 볼 점</h4>
+      <p>덱에 거버넌스 항목이 없습니다. 리워드 규칙 변경(체감 · 품질 게이트 · 소각 비율)을 투표에 올릴지 재단이 정할지는 이번 결정 항목은 아니지만, 카탈라이즈 요구 ⑤ "프로젝트 지갑 운영 방식"에 한 줄은 필요합니다. 승인권을 기기 설치자(제네시스)에게 주면 덱의 제네시스 우대 서사와 맞습니다.</p>
+      <h4 style="margin-top:12px">링크</h4>
+      <p class="src" style="margin:0"><a href="https://vote.geodnet.com">vote.geodnet.com</a> · <a href="https://vote.geodnet.com/about">veNFT 계산</a> · <a href="https://docs.geodnet.com/geod-governance/introduction">거버넌스 문서</a> · <a href="https://docs.geodnet.com/geod-governance/about-venft">veNFT 문서</a> · <a href="https://github.com/geodnet/GIP">GIP 저장소</a> · <a href="https://medium.com/geodnet/geodnet-improvement-proposal-7-c2313f643b9b">GIP-7 원문</a></p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="eyebrow">데이터 출처 · 가정</div>
+  <h2 style="font-size:18px">검증 가능한 것과 추정한 것</h2>
+  <ul class="src">
+    <li><b>가격</b>: CoinCodex 일별 종가(2023-09-07~), Gate.io GEOD_USDT 일봉으로 교차검증(ATH 일자 ±1일, 값 ±4% 이내 일치). ATH $0.3731 (2025-01-26), 저점 $0.1027 (2025-10-12).</li>
+    <li><b>리워드 스케줄</b>: <a href="https://docs.geodnet.com/geod-token/tokenomics">GEODNET Docs · Tokenomics</a> — 트리플밴드 96/48/24/12/6 GEOD/일, 매년 6/30 반감.</li>
+    <li><b>배분·언락</b>: 채굴 35% / 투자자 25% (2024-12-28~2026-12-28 선형) / 팀 25% (2025-06-28~2029-06-28) / 생태계 10% / 벤더 3% / 퍼블릭 2% — <a href="https://tokenradar.ai/tokens/geodnet/tokenomics">TokenRadar</a>, <a href="https://messari.io/project/geodnet/token-unlocks">Messari</a>.</li>
+    <li><b>매출·소각·기기 수</b>: Messari State of GEODNET <a href="https://messari.io/report/state-of-geodnet-q2-2025">Q2'25</a> · <a href="https://messari.io/report/state-of-geodnet-q3-2025">Q3'25</a>, <a href="https://app.blockworksresearch.com/unlocked/geodnet-strengthening-rtk-leadership">Blockworks Research</a>. Q4'25 매출은 Q1'26 +45% QoQ에서 역산(추정).</li>
+    <li><b>상장</b>: <a href="https://cryptobriefing.com/geodnet-geod-coinbase-listing/">코인베이스 2026-06-23</a>, <a href="https://www.upbit.com/service_center/notice?id=6415">업비트</a>·<a href="https://feed.bithumb.com/notice/1654221">빗썸 2026-07-27</a>.</li>
+    <li><b>웰비안 덱</b>: 8p 배분표(8개 버킷 · 총 100억) · 5p 리워드 구조(기본 7개 · 0.78^(단계−1)) · 9p 소각 총량. 제네시스 공급 비율 2.66%와 필요 FDV는 "모든것" 세션의 결정용 PPT 계산값.</li>
+    <li><b>가정</b>: 기기 $695 고정(초기 듀얼밴드 $495는 리워드도 절반이라 비율 동일). 채굴 방출 = 기기 수 × 일 리워드 × 0.85 가동률 (보너스 리워드 제외). 코호트 "보유"는 시가 평가이며 실제 매도 슬리피지 미반영.</li>
+  </ul>
+</section>
+</div>
+
+<!-- Chart.js 4.4.1 (MIT) — 원본 리포트에 인라인돼 있던 200KB 번들을 분리했습니다. -->
+<script src="geodnet/vendor/chart.umd-4.4.1.min.js"></script>
+<script src="geodnet/report.js"></script>
+
+</body>
+</html>
