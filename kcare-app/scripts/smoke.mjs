@@ -30,6 +30,8 @@ const ROUTES = [
   "/family/store", "/family/watch", "/family/hospitals",
   // 보호자 홈 네 칸의 세부 화면 — 2026-10-15 디자인 시안
   "/family/sleep", "/family/activity", "/family/meds", "/family/outing",
+  // 마이 세부 화면 — 2026-10-15 디자인 시안 (건강 · 방문 영상 · 가족 · 정보 동의 · 멤버십 · 방문 리포트)
+  "/family/health", "/family/videos", "/family/members", "/family/consent", "/family/membership", "/family/report",
   "/concierge", "/concierge-onboarding", "/safety-check", "/dispatch", "/admin",
   // 영업자 (회원 유치) — 2026-09-23 신설. 보호자·어르신처럼 별도 역할 화면이다.
   "/sales",
@@ -143,7 +145,9 @@ for (const route of ROUTES) {
   const SHEET_OPENERS = {
     "/family/calendar": "일정 등록하기",
     "/family/requests": "직접 적어서 부탁하기",
-    "/family/my": "우선 요소 설정",
+    "/family/my": "내 정보",
+    "/family/health": "바꾸기",
+    "/family/membership": "바꾸기",
   };
   const opener = SHEET_OPENERS[route];
   if (opener) {
