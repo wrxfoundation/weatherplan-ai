@@ -168,7 +168,7 @@ export const ELDER_NOW = {
 // 어제와 비교할 수 있게 한다. 좋다/나쁘다로 판정하지 않고 어제 숫자를 나란히 둔다 —
 // 어르신 화면에서 '나빠졌다'는 판정은 불안만 남긴다 (06 §7).
 export const TODAY_ME = {
-  line: "어제보다 조금 더 걸으셨습니다.",
+  line: "어제보다 조금 더 걸으셨어요", // 2026-10-15 시안 말투 (어르신 화면은 '-어요')
   rows: [
     { name: "걸음", today: "3,140", yesterday: "2,880", unit: "걸음", dir: "up" },
     { name: "잠", today: "6.2", yesterday: "6.6", unit: "시간", dir: "down" },

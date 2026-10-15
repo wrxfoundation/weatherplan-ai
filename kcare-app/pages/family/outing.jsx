@@ -47,6 +47,7 @@ export default function OutingPage() {
   const sleepShort = LAST_NIGHT.hours < USUAL_SLEEP - 0.5;
 
   // 점수에 들어간 것 — 날씨 셋은 예시 날씨에서, 잠 · 걸음은 워치(데모만)
+  const priority = state.priority?.factors || [];
   const rows = [
     { k: "미세먼지", v: dust, minus: true },
     { k: "자외선", v: uv, minus: true },
@@ -114,7 +115,11 @@ export default function OutingPage() {
             {rows.map((r) => (
               <div key={r.k} className="ds-row">
                 <span className="ds-k">
-                  <b>{r.k}</b>
+                  {/* 마이 › 건강에서 보호자가 고른 '먼저 볼 날씨'는 그렇다고 붙인다 (시안 '기온 (먼저 볼 날씨)') */}
+                  <b>
+                    {r.k}
+                    {priority.includes(r.k) ? " (먼저 볼 날씨)" : ""}
+                  </b>
                 </span>
                 <span className="flex-none text-[15px] font-extrabold" style={{ color: r.minus ? BROWN.fg : TONE.green.fg }}>
                   {r.v}
