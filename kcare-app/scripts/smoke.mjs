@@ -28,6 +28,8 @@ const ROUTES = [
   "/", "/service", "/onboarding", "/elder", "/care-profile",
   "/family", "/family/calendar", "/family/requests", "/family/my",
   "/family/store", "/family/watch", "/family/hospitals",
+  // 보호자 홈 네 칸의 세부 화면 — 2026-10-15 디자인 시안
+  "/family/sleep", "/family/activity", "/family/meds", "/family/outing",
   "/concierge", "/concierge-onboarding", "/safety-check", "/dispatch", "/admin",
   // 영업자 (회원 유치) — 2026-09-23 신설. 보호자·어르신처럼 별도 역할 화면이다.
   "/sales",

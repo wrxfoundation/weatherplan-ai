@@ -877,3 +877,245 @@ a.btn-press {
     height: 36px;
   }
 }
+
+/* ══════════════════════════════════════════════════════════════════════════
+   2026-10-15 디자인 시안 — 어르신 · 보호자 화면 (클레이 3D)
+   ──────────────────────────────────────────────────────────────────────────
+   모든 이름에 ds- 를 붙였다 — 관제 · 컨시어지 · 리포트 화면의 기존 클래스(.tap · .chip …)와
+   부딪히지 않게. @layer components 안이라 Tailwind 유틸리티가 이긴다 (한 자리만 바꿀 때 편하다).
+   입체감은 그림자 '덩어리' 하나로 낸다: 아래로 4~5px 같은 색 계열의 진한 그림자 (0 5px 0 #…).
+   누르면 그만큼 내려간다 (.ds-press) — 손가락이 실제로 눌렀다는 느낌.
+   빨강은 위험 신호(SOS · 낙상 · 응급) 전용이다 — 시안의 빨간 알림 점 · 주황 배지는 금색으로 바꿔 썼다.
+   ══════════════════════════════════════════════════════════════════════════ */
+@layer components {
+  .ds-app {
+    background: #f8f7f4;
+    color: #1b2340;
+    font-family: "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+    word-break: keep-all;
+    overflow-wrap: anywhere;
+  }
+  .ds-app button { color: inherit; font-family: inherit; }
+  .ds-app button:focus-visible,
+  .ds-app a:focus-visible,
+  .ds-app summary:focus-visible { outline: 3px solid #b79b52; outline-offset: 2px; }
+  .ds-num { font-variant-numeric: tabular-nums; }
+
+  /* 한 화면 — 위 24 · 옆 18 · 아래 112(떠 있는 탭바 자리) · 사이 16 */
+  .ds-scr { display: flex; flex-direction: column; gap: 16px; padding: 24px 18px 112px; }
+
+  /* 화면에 들어올 때 차례로 떠오른다 (--d 로 순서) */
+  .ds-play .ds-r { animation: dsRise 0.42s ease-out both; animation-delay: var(--d, 0ms); }
+
+  /* 눌림 — 타일은 살짝 줄고(아이콘은 통통 튄다), 3D 버튼은 그림자만큼 내려간다 */
+  .ds-tap { transition: transform 0.15s ease, filter 0.15s ease; }
+  .ds-tap:active { transform: scale(0.95); filter: brightness(0.95); }
+  .ds-tap .ds-ico { transition: transform 0.22s cubic-bezier(0.2, 1.6, 0.4, 1); }
+  .ds-tap:active .ds-ico { transform: scale(1.12) rotate(-5deg); }
+  .ds-press { transition: transform 0.12s ease; }
+  .ds-press:active { transform: translateY(4px); }
+  .ds-press:disabled:active { transform: none; }
+  .ds-swap { animation: dsSwap 0.3s ease-out both; }
+  .ds-pop { animation: dsPop 0.4s cubic-bezier(0.2, 1.4, 0.4, 1) both; }
+  .ds-starpop { animation: dsStarpop 0.6s cubic-bezier(0.2, 1.6, 0.4, 1) 0.15s both; }
+  .ds-beat { transform-box: fill-box; transform-origin: center; animation: dsBeat 0.7s ease-in-out 1s 1; }
+  .ds-glow { animation: dsGlow 1s ease-in-out 0.6s 2; }
+  .ds-draw { stroke-dasharray: 40; stroke-dashoffset: 40; animation: dsDraw 0.5s 0.15s ease-out forwards; }
+  /* 반원 게이지 — pathLength 100 기준으로 그려 나간다 (보호자 외출 컨디션) */
+  .ds-arc { stroke-dasharray: 100; stroke-dashoffset: 100; animation: dsDraw 0.9s 0.2s ease-out forwards; }
+  .ds-fill { transform-origin: left; animation: dsFill 1.2s cubic-bezier(0.2, 0.8, 0.3, 1) 0.4s both; }
+  /* 새 소식 점 — 시안은 빨강, 우리는 금색 (빨강은 위험 신호 전용) */
+  .ds-ping { animation: dsPing 1.2s ease-out 0.8s 2; }
+  .ds-dot { display: inline-block; flex: none; width: 10px; height: 10px; border-radius: 50%; background: #c9a064; }
+  /* 듣는 중 · 말하는 중 파형 막대 */
+  .ds-bar { display: block; width: 6px; height: 40px; border-radius: 3px; transform-origin: center; animation: dsWave 0.8s ease-in-out infinite alternate; }
+  .ds-bar-sm { display: block; width: 4px; border-radius: 2px; }
+  .ds-bar-sm.on { animation: dsWave 0.8s ease-in-out infinite alternate; }
+  .ds-mic { animation: dsMic 1.6s ease-in-out infinite; }
+  /* 도와줘요 · 전화 — 동그라미 밖으로 퍼지는 물결 두 겹 */
+  .ds-ring { animation: dsRing 1.8s ease-out infinite; }
+  .ds-ring2 { animation-delay: 0.9s; }
+  .ds-car { animation: dsCar 1.6s ease-out infinite; }
+  /* 녹음 중 점 — 금색 (빨강은 SOS 전용) */
+  .ds-recdot { flex: none; width: 14px; height: 14px; border-radius: 50%; background: #c9a064; animation: dsGlow 1s ease-in-out infinite; }
+
+  /* 글자 */
+  .ds-hsub { font-size: 15px; font-weight: 700; color: #8f7f63; }
+  .ds-h1 { margin: 6px 0 0; font-size: 29px; font-weight: 800; letter-spacing: -0.5px; line-height: 1.35; }
+  .ds-sect { margin: 0; display: flex; align-items: center; gap: 8px; font-size: 18px; font-weight: 900; }
+  .ds-sect > i { width: 12px; height: 12px; border-radius: 50%; }
+  .ds-src { font-size: 12px; font-weight: 700; color: #6b6658; }
+  .ds-tbd { padding: 0 5px; border-radius: 5px; background: #fbf1da; color: #86621f; font-weight: 800; }
+
+  /* 카드 · 2열 · 타일 */
+  .ds-card { border-radius: 26px; background: #ffffff; box-shadow: 0 5px 0 #e6e2da; }
+  .ds-g2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  .ds-g3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+  .ds-btn3d { border: none; font-weight: 800; }
+  .ds-stile { min-height: 88px; border-radius: 24px; border: none; padding: 10px 12px; display: flex; align-items: center; gap: 10px; text-align: left; }
+  .ds-stile b { display: block; font-size: 19px; font-weight: 800; line-height: 1.25; }
+  .ds-stile small { display: block; font-size: 15px; font-weight: 500; line-height: 1.3; }
+
+  /* 뒤로 · 얼굴 · 칩 · 날짜 블록 · 고르기 */
+  .ds-back { flex: none; width: 52px; height: 52px; border-radius: 18px; border: none; background: #ffffff; box-shadow: 0 4px 0 #e3ded3; display: flex; align-items: center; justify-content: center; }
+  .ds-face { flex: none; width: 40px; height: 40px; border-radius: 50%; border: 2px solid #ffffff; font-size: 13px; font-weight: 800; display: flex; align-items: center; justify-content: center; white-space: nowrap; }
+  .ds-chip { display: inline-flex; align-items: center; padding: 8px 14px; border-radius: 999px; background: #ffffff; font-size: 16px; font-weight: 800; color: #5e4a1e; }
+  .ds-dblock { flex: none; width: 56px; height: 56px; border-radius: 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; font-weight: 800; }
+  .ds-dblock span { font-size: 13px; }
+  .ds-dblock b { font-size: 21px; font-weight: 900; line-height: 1; }
+  .ds-pick { min-height: 60px; border-radius: 18px; border: none; font-size: 19px; font-weight: 800; transition: background-color 0.2s ease, transform 0.12s ease; }
+  .ds-pick:active { transform: translateY(3px); }
+
+  /* 떠 있는 탭바 — 어르신(3칸 · 따로 떠 있는 큰 칸) · 보호자(5칸 · 흰 막대 하나) */
+  .ds-nav { position: fixed; left: 12px; right: 12px; bottom: calc(12px + env(safe-area-inset-bottom, 0px)); z-index: 20; display: grid; gap: 6px; padding: 6px; border-radius: 26px; background: #ffffff; box-shadow: 0 4px 0 #e3ded3, 0 10px 24px -10px rgba(27, 35, 64, 0.25); }
+  .ds-nav > a,
+  .ds-nav > button { position: relative; height: 58px; border: none; border-radius: 20px; background: transparent; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; font-size: 13px; font-weight: 800; color: #1b2340; text-decoration: none; }
+  .ds-nav > [aria-current="page"] { background: #1b2340; color: #ffffff; }
+  .ds-nav-s { grid-template-columns: repeat(3, minmax(0, 1fr)); background: transparent; box-shadow: none; padding: 0; gap: 12px; }
+  .ds-nav-s > button { height: 66px; border-radius: 22px; background: #ffffff; box-shadow: 0 4px 0 #e3ded3; font-size: 18px; transition: transform 0.12s ease; }
+  .ds-nav-s > button:active { transform: translateY(4px); }
+  .ds-nav-s > button[aria-current="page"] { background: #1b2340; box-shadow: 0 4px 0 #0e1428; }
+  .ds-nav-g { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+  .ds-nav-g > a { white-space: nowrap; letter-spacing: -0.3px; }
+  /* 폰 폭보다 넓은 화면에서는 가운데 430px 기둥에 맞춘다 */
+  @media (min-width: 455px) {
+    .ds-nav { left: 50%; right: auto; width: 406px; transform: translateX(-50%); }
+  }
+
+  /* 아래에서 올라오는 시트 · 가운데 창 · 알림 한 줄 */
+  .ds-sheetwrap { position: fixed; inset: 0; z-index: 50; }
+  .ds-backdrop { position: absolute; inset: 0; width: 100%; border: none; background: rgba(27, 35, 64, 0.45); animation: dsFadeIn 0.25s ease both; }
+  .ds-sheet { position: absolute; left: 0; right: 0; bottom: 0; margin: 0 auto; max-width: 430px; max-height: 88%; overflow-y: auto; box-sizing: border-box; background: #f8f7f4; border-radius: 30px 30px 0 0; padding: 26px 20px calc(28px + env(safe-area-inset-bottom, 0px)); display: flex; flex-direction: column; gap: 14px; animation: dsSheetUp 0.36s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+  .ds-overlay { position: fixed; inset: 0; z-index: 50; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 40px 24px 28px; gap: 16px; box-sizing: border-box; }
+  .ds-toast { position: fixed; left: 50%; bottom: calc(96px + env(safe-area-inset-bottom, 0px)); z-index: 60; transform: translate(-50%, 20px); opacity: 0; pointer-events: none; padding: 12px 18px; border-radius: 16px; background: #1b2340; color: #ffffff; font-size: 15px; font-weight: 700; max-width: calc(100% - 32px); text-align: center; transition: opacity 0.25s ease, transform 0.25s ease; }
+  .ds-toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+  /* 달력 */
+  .ds-cal { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; }
+  .ds-cal > button,
+  .ds-cal > span { height: 46px; border-radius: 14px; border: 2px solid transparent; background: transparent; font-size: 16px; font-weight: 800; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; padding: 0; }
+  .ds-cal i { width: 6px; height: 6px; border-radius: 50%; }
+
+  /* 점수 밀대 (동행 평가) */
+  .ds-app input[type="range"].ds-range { -webkit-appearance: none; appearance: none; width: 100%; height: 12px; border-radius: 6px; background: #d6cde6; outline: none; margin: 6px 0; }
+  .ds-app input[type="range"].ds-range::-webkit-slider-thumb { -webkit-appearance: none; width: 34px; height: 34px; border-radius: 50%; background: #6a4d9c; border: 5px solid #ffffff; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25); cursor: pointer; }
+  .ds-app input[type="range"].ds-range::-moz-range-thumb { width: 26px; height: 26px; border-radius: 50%; background: #6a4d9c; border: 5px solid #ffffff; cursor: pointer; }
+
+  /* ── 보호자 세부 (홈 4칸 · 마이) ── */
+  .ds-hero { border-radius: 28px; padding: 20px; display: flex; flex-direction: column; gap: 10px; }
+  .ds-big { font-size: 44px; font-weight: 900; line-height: 1.1; font-variant-numeric: tabular-nums; }
+  .ds-big small { font-size: 18px; font-weight: 800; }
+  .ds-gcard { border-radius: 26px; padding: 18px; display: flex; flex-direction: column; gap: 12px; }
+  .ds-lab { font-size: 15px; font-weight: 800; }
+  .ds-row { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-top: 1.5px solid rgba(27, 35, 64, 0.08); }
+  .ds-row:first-of-type { border-top: none; }
+  .ds-k { flex: 1; min-width: 0; }
+  .ds-k b { display: block; font-size: 17px; font-weight: 800; color: #1b2340; }
+  .ds-k small { display: block; font-size: 14px; color: #5e6270; margin-top: 2px; }
+  .ds-gchip { display: inline-flex; align-items: center; min-height: 34px; padding: 0 14px; border-radius: 999px; background: #ffffff; font-size: 15px; font-weight: 800; }
+  .ds-btn { min-height: 54px; border-radius: 18px; font-size: 17px; }
+  .ds-mini { flex: none; min-height: 40px; padding: 0 14px; border-radius: 14px; background: #ffffff; font-size: 15px; }
+  .ds-gface { flex: none; width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 900; background: #ffffff; }
+  .ds-tog { display: inline-flex; padding: 3px; border-radius: 999px; background: #ffffff; gap: 2px; }
+  .ds-tog button { min-height: 32px; padding: 0 12px; border: none; border-radius: 999px; font-size: 13px; font-weight: 800; background: transparent; color: #5e6270; }
+  .ds-tog button[aria-pressed="true"] { background: #1b2340; color: #ffffff; }
+  .ds-bars { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; align-items: end; height: 150px; }
+  .ds-bars > div { display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 4px; height: 100%; font-size: 12px; font-weight: 800; color: #3a3f50; }
+  .ds-bars i { display: block; width: 100%; border-radius: 8px 8px 0 0; box-sizing: border-box; transform-origin: bottom; }
+  .ds-bars b { font-size: 12px; font-weight: 700; color: #5e6270; }
+  .ds-play .ds-bars i,
+  .ds-play .ds-m30 i,
+  .ds-play .ds-rpbars i { animation: dsGrow 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+  .ds-m30 { position: relative; display: grid; grid-template-columns: repeat(30, minmax(0, 1fr)); gap: 2px; align-items: end; height: 130px; }
+  .ds-m30 i { display: block; border-radius: 3px 3px 0 0; transform-origin: bottom; }
+  .ds-tile3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+  .ds-tile3 > div { border-radius: 20px; background: #ffffff; padding: 12px 10px; text-align: center; }
+  .ds-tile3 b { display: block; font-size: 22px; font-weight: 900; font-variant-numeric: tabular-nums; }
+  .ds-tile3 span { display: block; font-size: 13px; font-weight: 700; color: #5e6270; }
+  .ds-seg { display: flex; height: 30px; border-radius: 10px; overflow: hidden; }
+  .ds-seg i { display: block; height: 100%; }
+  .ds-leg { display: flex; flex-wrap: wrap; gap: 10px; font-size: 13px; font-weight: 800; color: #3a3f50; }
+  .ds-leg span { display: inline-flex; align-items: center; gap: 5px; }
+  .ds-leg i { width: 10px; height: 10px; border-radius: 3px; display: inline-block; }
+  .ds-dots { display: grid; grid-template-columns: 44px repeat(3, minmax(0, 1fr)); gap: 6px 8px; align-items: center; font-size: 14px; font-weight: 800; color: #3a3f50; }
+  .ds-dotcell { min-height: 30px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800; }
+  /* 복약 30일 달력 — 칸마다 날짜 + 시간대 막대 (먹음 · 놓침 · 오늘 남은 것) */
+  .ds-mcal { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 5px; }
+  .ds-mcal > div { border-radius: 10px; background: #ffffff; padding: 5px 4px 6px; display: flex; flex-direction: column; align-items: center; gap: 4px; min-height: 42px; }
+  .ds-mcal > div.blank { background: transparent; }
+  .ds-mcal small { font-size: 11px; font-weight: 800; color: #5e6270; }
+  .ds-mcal .m { display: flex; gap: 2px; }
+  .ds-mcal .m i { width: 7px; height: 12px; border-radius: 2px; display: block; }
+  .ds-acc { border-radius: 22px; background: #f3f1ec; overflow: hidden; }
+  .ds-acc summary { list-style: none; cursor: pointer; min-height: 62px; padding: 0 16px; display: flex; align-items: center; gap: 12px; font-size: 17px; font-weight: 800; color: #1b2340; }
+  .ds-acc summary::-webkit-details-marker { display: none; }
+  .ds-acc summary .ic { flex: none; width: 38px; height: 38px; border-radius: 12px; display: flex; align-items: center; justify-content: center; }
+  .ds-acc summary .tt { flex: 1; min-width: 0; }
+  .ds-acc summary .cv { flex: none; transition: transform 0.25s ease; }
+  .ds-acc[open] summary .cv { transform: rotate(180deg); }
+  .ds-acc .ds-accbody { padding: 2px 18px 18px; display: flex; flex-direction: column; gap: 12px; font-size: 15px; line-height: 1.65; color: #3a3f50; }
+  .ds-acc[open] .ds-accbody { animation: dsFadeIn 0.3s ease both; }
+  .ds-acc h4 { margin: 0 0 2px; font-size: 15px; font-weight: 900; color: #1b2340; }
+  .ds-acc ul { margin: 0; padding-left: 18px; list-style: disc; }
+
+  /* ── 보호자 리포트 (A4 → 폰 폭) ── */
+  .ds-rpchip { display: inline-flex; align-items: center; gap: 5px; border-radius: 999px; padding: 4px 10px; font-size: 12px; font-weight: 700; white-space: nowrap; }
+  .ds-rpok { background: #e2f0e8; color: #1f5537; border: 1.5px solid #2e7356; }
+  .ds-rpwatch { background: #e6ebf3; color: #2f3f5c; border: 1.5px solid #4f6383; }
+  .ds-rpdot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; flex: none; }
+  .ds-rpcol { background: #ffffff; border: 1.5px solid #a79f8e; border-radius: 14px; padding: 14px; display: flex; flex-direction: column; gap: 8px; }
+  .ds-rpcolh { display: flex; align-items: center; gap: 8px; padding-bottom: 9px; border-bottom: 2px solid #1e2b4a; }
+  .ds-rpcolh h2 { margin: 0; font-size: 17px; font-weight: 800; color: #17233a; }
+  .ds-rplab { font-size: 12px; font-weight: 700; color: #5e6676; letter-spacing: 0.04em; }
+  .ds-rpli { display: flex; gap: 7px; font-size: 14px; line-height: 1.55; }
+  .ds-rpbul { flex: none; width: 5px; height: 5px; border-radius: 50%; background: #0e5a5a; margin-top: 9px; }
+  .ds-rpbox { background: #f3f0e8; border: 1px solid #a79f8e; border-radius: 10px; padding: 9px 11px; display: flex; flex-direction: column; gap: 3px; font-size: 14px; line-height: 1.5; }
+  .ds-rprow { display: flex; justify-content: space-between; align-items: baseline; padding: 7px 0; border-bottom: 1px solid #c9c2b1; }
+  .ds-rprow.hl { background: #e6ebf3; border-radius: 8px; padding: 7px 8px; border: 1.5px solid #4f6383; }
+  .ds-rprk { font-size: 14px; color: #3a4558; }
+  .ds-rprow.hl .ds-rprk { color: #2f3f5c; font-weight: 700; }
+  .ds-rprv { font-size: 17px; font-weight: 800; }
+  .ds-rprv small { font-size: 12px; font-weight: 600; color: #5e6676; }
+  .ds-rpnote { font-size: 12px; line-height: 1.5; color: #5e6676; }
+  .ds-rpweek { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; text-align: center; font-size: 12px; font-weight: 700; }
+  .ds-rpweek > div { display: flex; flex-direction: column; align-items: center; gap: 5px; }
+  .ds-rpon { width: 12px; height: 12px; border-radius: 50%; background: #4f6383; }
+  .ds-rpoff { width: 12px; height: 12px; border-radius: 50%; border: 1.5px solid #6e7584; box-sizing: border-box; }
+  .ds-rpbars { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; align-items: end; height: 96px; border-bottom: 1px solid #cfc8b8; }
+  .ds-rpbars > div { display: flex; flex-direction: column; align-items: center; gap: 3px; font-size: 12px; font-weight: 700; }
+  .ds-rpbars i { display: block; width: 100%; border-radius: 4px 4px 0 0; box-sizing: border-box; transform-origin: bottom; }
+
+  /* 클레이 3D — 48 격자 그림에 필터 하나 (components/clay.jsx ClayDefs) */
+  .ds-clay { filter: url(#ds-clay3d); overflow: visible; }
+
+  @keyframes dsRise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+  @keyframes dsFadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+  @keyframes dsSwap { from { opacity: 0; transform: scale(0.97); } to { opacity: 1; transform: none; } }
+  @keyframes dsPop { from { transform: scale(0.6); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+  @keyframes dsStarpop { 0% { transform: scale(0) rotate(-40deg); opacity: 0; } 100% { transform: scale(1) rotate(0); opacity: 1; } }
+  @keyframes dsBeat { 0%, 100% { transform: scale(1); } 30% { transform: scale(1.25); } 60% { transform: scale(0.95); } }
+  @keyframes dsGlow { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+  @keyframes dsDraw { to { stroke-dashoffset: 0; } }
+  @keyframes dsFill { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+  @keyframes dsPing { 0% { box-shadow: 0 0 0 0 rgba(201, 160, 100, 0.6); } 100% { box-shadow: 0 0 0 14px rgba(201, 160, 100, 0); } }
+  @keyframes dsWave { from { transform: scaleY(0.25); } to { transform: scaleY(1); } }
+  @keyframes dsMic { 0%, 100% { box-shadow: 0 0 0 0 rgba(106, 77, 156, 0.4); } 50% { box-shadow: 0 0 0 10px rgba(106, 77, 156, 0); } }
+  @keyframes dsCar { 0% { box-shadow: 0 0 0 0 rgba(59, 107, 71, 0.45); } 100% { box-shadow: 0 0 0 10px rgba(59, 107, 71, 0); } }
+  @keyframes dsGrow { from { transform: scaleY(0); } to { transform: scaleY(1); } }
+  @keyframes dsRing { 0% { transform: scale(1); opacity: 0.45; } 100% { transform: scale(2.1); opacity: 0; } }
+  @keyframes dsSheetUp { from { transform: translateY(100%); } to { transform: none; } }
+}
+
+/* 움직임 줄이기 — 시안 그대로 어르신 · 보호자 화면의 움직임을 모두 끈다 */
+@media (prefers-reduced-motion: reduce) {
+  .ds-app *,
+  .ds-app *::before,
+  .ds-app *::after,
+  .ds-sheetwrap *,
+  .ds-overlay * {
+    animation: none !important;
+    transition: none !important;
+  }
+  .ds-draw,
+  .ds-arc { stroke-dashoffset: 0; }
+}

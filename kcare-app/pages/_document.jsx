@@ -22,7 +22,7 @@ export default function Document() {
             display=swap 이라 폰트가 늦어도 시스템 폰트로 먼저 그린다. */}
         <link
           rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=Montserrat:wght@500;600;700;800&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800;900&family=Montserrat:wght@500;600;700;800&display=swap"
         />
       </Head>
       <body>

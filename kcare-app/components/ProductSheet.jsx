@@ -1,5 +1,6 @@
-import Icon from "./icons";
 import { fmtWon } from "../lib/config";
+import { Clay } from "./clay";
+import { Pill, Sheet, SheetTitle, TONE, WhiteBtn, solid } from "./ds";
 
 // 스토어 상품 상세 시트 — 상품을 누르면 바로 담기지 않고 먼저 이 시트가 열린다
 // (2026-09-22 상담실장 확인: "상세설명이 안 들어가면 신고 대상" — 전자상거래법상
@@ -10,7 +11,19 @@ import { fmtWon } from "../lib/config";
 // 채운다 (2026-09-11 결정 4번 "상품 가격과 이미지 파일 준비해서 따로 보내겠다").
 // 그때까지는 "확인 중"으로 정직하게 두고, 그 상태를 화면에 그대로 말한다.
 //
-// elder=true 면 어르신 규격(글자 19px 이상 · 버튼 높이 64px) 으로 커진다.
+// 2026-10-15 시안 — 위에 상품 그림(분류 색 바탕), 이름 · 가격 · '배송비 없음', 상품 정보 카드, 큰 담기 버튼, 닫기.
+// elder=true 면 어르신 규격(글자 17px 이상 · 버튼 높이 66px) 으로 커진다.
+
+// 상품별 그림 · 색 (시안의 스토어 칸) — 공급처 사진이 오면 사진이 먼저다 (콘솔 업로드 state.productImages)
+// 슬리퍼는 시안의 산호색 대신 금색 바탕 — 빨강 계열은 위험 신호 전용
+export const GOODS_LOOK = {
+  mat: { tone: "blue", clay: "goods_mat" },
+  slippers: { tone: "gold", clay: "goods_slippers" },
+  grabBar: { tone: "green", clay: "goods_grabBar" },
+  sensorLight: { tone: "beige", clay: "goods_sensorLight" },
+  magnifier: { tone: "purple", clay: "goods_magnifier" },
+  swivel: { tone: "blue", clay: "goods_swivel" },
+};
 
 // 전자상거래법 표시·광고 고시(2020) 중 소비자에게 보여야 하는 항목 — 카탈로그 필드가
 // 있으면 그 값을, 없으면 '확인 중'. 분류별로 항목이 조금 다르다.
@@ -47,118 +60,99 @@ export default function ProductSheet({ item, image, category, selected = false, 
   const catId = category?.id || "daily";
   const rows = DISCLOSURE[catId] || DISCLOSURE.daily;
   const canBuy = !!item.price;
-  const body = elder ? "text-[19px] leading-[1.55]" : "text-[14px] leading-[1.7]";
-  const small = elder ? "text-[17px]" : "text-[12.5px]";
-  const label = elder ? "text-[17px]" : "text-[12px]";
+  const look = GOODS_LOOK[item.id] || { tone: "stone", clay: null };
+  const tn = TONE[look.tone];
+  const body = elder ? "text-[17px] leading-[1.6]" : "text-[14px] leading-[1.7]";
+  const small = elder ? "text-[15px]" : "text-[12.5px]";
 
   return (
-    <div className="fixed inset-0 z-[1100] flex items-end justify-center bg-navy/45 sm:items-center" onClick={onClose}>
-      <div
-        role="dialog"
-        aria-modal="true"
-        aria-label={`${item.name} 상품 정보`}
-        onClick={(e) => e.stopPropagation()}
-        className="flex max-h-[92dvh] w-full max-w-[520px] flex-col overflow-hidden rounded-t-[24px] bg-white sm:rounded-[24px]"
-      >
-        {/* 머리 — 분류 · 닫기 */}
-        <div className="flex items-center justify-between gap-3 border-b border-navy/[.08] px-5 py-3.5">
-          <span className={`font-bold text-muted ${label}`}>{category?.name || "스토어"} · 상품 정보</span>
-          <button
-            onClick={onClose}
-            aria-label="닫기"
-            className={`btn-press rounded-full px-4 font-bold text-navy ${elder ? "py-[12px] text-[17px]" : "py-2 text-[13px]"}`}
-            style={{ background: "rgba(10,31,60,.07)" }}
-          >
-            닫기
-          </button>
-        </div>
-
-        <div className="min-h-0 flex-1 overflow-y-auto px-5 pb-4 pt-4">
-          {/* 사진 */}
-          <div className="relative aspect-[4/3] w-full overflow-hidden rounded-[18px] bg-[#EDF1EA]">
-            {image ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={image} alt={`${item.name} 사진`} className="absolute inset-0 h-full w-full object-cover" />
-            ) : (
-              <span className="absolute inset-0 flex items-center justify-center">
-                <span className={`rounded-full bg-white/80 px-4 py-2 font-bold text-navy/45 ${elder ? "text-[17px]" : "text-[12px]"}`}>
-                  사진 준비 중 — 공급처 이미지 수령 후 표시
-                </span>
-              </span>
-            )}
-          </div>
-
-          {/* 이름 · 가격 */}
-          <h3 className={`mt-4 font-bold text-ink ${elder ? "text-[24px] leading-[1.35]" : "text-[19px] leading-[1.4]"}`}>{item.name}</h3>
-          {item.note && <p className={`mt-1 text-muted ${body}`}>{item.note}</p>}
-          <div className="mt-2 flex flex-wrap items-baseline gap-x-3 gap-y-1">
-            {canBuy ? (
-              <>
-                <span className={`font-num font-bold text-navy ${elder ? "text-[28px]" : "text-[22px]"}`}>{fmtWon(item.price)}</span>
-                <span className={`font-num text-muted ${small}`}>배송비 {item.ship ? fmtWon(item.ship) : "무료"}</span>
-              </>
-            ) : (
-              <span className={`font-bold text-amber ${elder ? "text-[20px]" : "text-[15px]"}`}>{item.pending || "가격 확정 전"} — 아직 담을 수 없습니다</span>
-            )}
-          </div>
-
-          {/* 어떤 물건인가 — 카탈로그에 있는 용도만 */}
-          <section className="mt-4 rounded-[16px] bg-navy/[.04] px-4 py-3.5">
-            <div className={`font-bold text-navy ${label}`}>어떤 물건인가요</div>
-            <p className={`mt-1 text-ink ${body}`}>
-              {item.effect || item.desc || "상세 설명은 공급처 자료를 받은 뒤 표시됩니다."}
-            </p>
-            {catId === "vitamin" && (
-              <p className={`mt-2 text-muted ${small} leading-[1.6]`}>
-                건강기능식품은 질병의 예방 및 치료를 위한 의약품이 아닙니다. 복용 중인 약이 있으면 의사·약사와
-                상의하세요.
-              </p>
-            )}
-          </section>
-
-          {/* 상품 정보 고시 — 없는 값은 확인 중 */}
-          <section className="mt-3">
-            <div className={`font-bold text-navy ${label}`}>상품 정보</div>
-            <dl className="mt-1.5 divide-y divide-navy/[.07] rounded-[16px] border border-navy/[.08]">
-              {rows.map(([k, field]) => {
-                const v = item[field];
-                return (
-                  <div key={k} className="flex items-baseline gap-3 px-4 py-2.5">
-                    <dt className={`w-[112px] shrink-0 text-muted ${small}`}>{k}</dt>
-                    <dd className={`min-w-0 flex-1 ${elder ? "text-[17px]" : "text-[13px]"} ${v ? "text-ink" : "text-muted/80"}`}>{v || "확인 중"}</dd>
-                  </div>
-                );
-              })}
-            </dl>
-            <p className={`mt-1.5 text-muted ${small} leading-[1.6]`}>
-              &lsquo;확인 중&rsquo;인 항목은 공급처 자료를 받는 대로 채웁니다. 교환·환불·배송 안내도 같이 표시됩니다.
-            </p>
-          </section>
-        </div>
-
-        {/* 담기 — 상세를 본 뒤에만 */}
-        <div className="border-t border-navy/[.08] px-5 py-3.5">
-          {canBuy ? (
-            <button
-              onClick={() => {
-                onToggle?.(item);
-                onClose?.();
-              }}
-              className={`btn-press flex w-full items-center justify-center gap-2 rounded-[18px] font-bold text-white ${
-                elder ? "py-[19px] text-[20px]" : "py-[14px] text-[15px]"
-              }`}
-              style={{ background: selected ? "#5C5A54" : "#1E7A5A" }}
-            >
-              <Icon name={selected ? "check" : "bag"} size={elder ? 24 : 18} strokeWidth={2} />
-              {selected ? "담은 것 빼기" : "장바구니에 담기"}
-            </button>
-          ) : (
-            <p className={`text-center font-bold text-muted ${elder ? "text-[18px]" : "text-[13px]"}`}>
-              가격이 확정되면 담을 수 있습니다.
-            </p>
-          )}
-        </div>
+    <Sheet onClose={onClose} label={`${item.name} 상품 정보`}>
+      {/* 사진 — 공급처 사진이 없으면 상품 그림 */}
+      <div className="relative flex h-[150px] flex-none items-center justify-center overflow-hidden rounded-[22px]" style={{ background: tn.bg }}>
+        {image ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={image} alt={`${item.name} 사진`} className="absolute inset-0 h-full w-full object-cover" />
+        ) : look.clay ? (
+          <Clay name={look.clay} size={96} />
+        ) : (
+          <span className={`rounded-full bg-white/80 px-4 py-2 font-bold ${small}`} style={{ color: "#5E6270" }}>
+            사진 준비 중 — 공급처 이미지 수령 후 표시
+          </span>
+        )}
       </div>
-    </div>
+
+      <SheetTitle sub={category?.name || "스토어"} title={item.name} />
+      {item.note && <p className={`-mt-1.5 ${body}`} style={{ color: "#5E6270" }}>{item.note}</p>}
+      <div className="flex flex-wrap items-center gap-2.5">
+        {canBuy ? (
+          <>
+            <span className={`ds-num font-black ${elder ? "text-[24px]" : "text-[21px]"}`}>{fmtWon(item.price)}</span>
+            <Pill bg={TONE.green.bg} fg="#2A4D33">
+              {item.ship ? `배송비 ${fmtWon(item.ship)}` : "배송비 없음"}
+            </Pill>
+          </>
+        ) : (
+          <span className={`font-bold ${elder ? "text-[18px]" : "text-[15px]"}`} style={{ color: TONE.gold.fg }}>
+            {item.pending || "가격 확정 전"} — 아직 담을 수 없습니다
+          </span>
+        )}
+      </div>
+
+      {/* 어떤 물건인가 — 카탈로그에 있는 용도만 */}
+      <div className="rounded-[20px] px-4 py-3.5" style={{ background: tn.bg }}>
+        <div className={`font-extrabold ${elder ? "text-[16px]" : "text-[13px]"}`} style={{ color: tn.fg }}>
+          어떤 물건인가요
+        </div>
+        <p className={`mt-1 ${body}`}>{item.effect || item.desc || "상세 설명은 공급처 자료를 받은 뒤 표시됩니다."}</p>
+        {catId === "vitamin" && (
+          <p className={`mt-2 ${small} leading-[1.6]`} style={{ color: "#5E6270" }}>
+            건강기능식품은 질병의 예방 및 치료를 위한 의약품이 아닙니다. 복용 중인 약이 있으면 의사·약사와 상의하세요.
+          </p>
+        )}
+      </div>
+
+      {/* 상품 정보 고시 — 없는 값은 확인 중 */}
+      <div>
+        <div className={`font-extrabold ${elder ? "text-[16px]" : "text-[13px]"}`}>상품 정보</div>
+        <dl className="mt-1.5 rounded-[20px] bg-white px-4 py-1" style={{ boxShadow: "0 3px 0 #E6E2DA" }}>
+          {rows.map(([k, field], i) => {
+            const v = item[field];
+            return (
+              <div key={k} className="flex items-baseline justify-between gap-3 py-3" style={i ? { borderTop: "1px solid #F0ECE4" } : undefined}>
+                <dt className={`flex-none font-bold ${elder ? "text-[16px]" : "text-[13px]"}`}>{k}</dt>
+                <dd className={`min-w-0 text-right ${elder ? "text-[15px]" : "text-[13px]"}`} style={{ color: v ? "#1B2340" : "#5E6270" }}>
+                  {v || "확인 중"}
+                </dd>
+              </div>
+            );
+          })}
+        </dl>
+        <p className={`mt-1.5 ${small} leading-[1.6]`} style={{ color: "#5E6270" }}>
+          &lsquo;확인 중&rsquo;인 항목은 공급처 자료를 받는 대로 채웁니다. 교환·환불·배송 안내도 같이 표시됩니다.
+        </p>
+      </div>
+
+      {/* 담기 — 상세를 본 뒤에만 */}
+      {canBuy ? (
+        <button
+          type="button"
+          onClick={() => {
+            onToggle?.(item);
+            onClose?.();
+          }}
+          className={`ds-press ds-btn3d flex w-full items-center justify-center gap-2 ${elder ? "min-h-[66px] rounded-[22px] text-[20px]" : "min-h-[56px] rounded-[18px] text-[16px]"}`}
+          style={selected ? solid("green", 5) : solid("navy", 5)}
+        >
+          {selected ? "담았어요 ✓ · 빼기" : "장바구니에 담기"}
+        </button>
+      ) : (
+        <p className={`text-center font-bold ${elder ? "text-[17px]" : "text-[13px]"}`} style={{ color: "#5E6270" }}>
+          가격이 확정되면 담을 수 있습니다.
+        </p>
+      )}
+      <WhiteBtn h={elder ? 56 : 50} className={elder ? "text-[18px]" : "text-[15px]"} onClick={onClose}>
+        닫기
+      </WhiteBtn>
+    </Sheet>
   );
 }

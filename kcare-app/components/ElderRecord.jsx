@@ -1,12 +1,14 @@
-// 어르신 목소리 녹음 창 — 마음사서함 '선생님께 목소리 보내기' · 해주세요 '말로 부탁하기' ·
-// 건강 '오늘 여쭤볼 것' 말로 남기기 · 다시 말하기가 같은 창을 쓴다 (2026-10-14 현장 테스트:
+// 어르신 목소리 녹음 창 — 마음사서함 '선생님께 말하기' · 해주세요 '말로 부탁하기' ·
+// 건강 '병원에 여쭤볼 것' 말로 남기기 · 다시 말하기가 같은 창을 쓴다 (2026-10-14 현장 테스트:
 // "녹음 기능이 활성화되지 않고 바로 '말씀하신 내용이 담겼습니다'로 나옴").
 //
 // 창이 열리면 바로 마이크를 켠다 — 어르신은 이미 '말로 …'를 누르셨다. 처음 한 번은 브라우저가 허용을 묻는다.
 // 보내기를 눌러야(또는 1분이 차야) 보낸다. 서버가 받았다고 답해야 '보냈습니다'가 된다 — 누른 것만으로 끝내지 않는다.
-// 빨강은 SOS 전용이라 녹음 중 색은 초록 · 금색이다 (06 §4.2).
+// 2026-10-15 시안 — 화면 전체 한 색(듣는 중 보라 · 보냄 초록 · 문제 금색), 가운데 큰 동그라미와 퍼지는 물결, 아래 큰 버튼.
+// 빨강은 SOS 전용이라 녹음 중 색은 보라 · 금색이다 (06 §4.2 · 시안의 '말씀하세요' 산호색은 쓰지 않는다).
 import { useEffect, useRef, useState } from "react";
-import Icon from "./icons";
+import { Line } from "./clay";
+import { Btn, TONE, WhiteBtn } from "./ds";
 import { MAX_SECS, RECORD_ERRORS, clock, saveClip, sendErrorText, useRecorder } from "../lib/voice-client";
 
 export default function ElderRecord({ label, to, sentTitle = "보냈습니다", sentBody, server = false, onSend, onClose }) {
@@ -57,126 +59,150 @@ export default function ElderRecord({ label, to, sentTitle = "보냈습니다", 
     onClose?.();
   };
 
-  const btn = "btn-press w-full rounded-[18px] py-[19px] text-[21px] font-bold";
+  const wide = "w-full max-w-[400px]";
+  let tone = TONE.purple;
   let body;
   if (stage === "sending") {
     body = (
       <>
-        <Ring tone="green" pulse>
-          <Icon name="speaker" size={34} strokeWidth={2} />
-        </Ring>
-        <p className="mt-5 text-[26px] font-black leading-[1.3] text-navy">보내는 중입니다</p>
-        <p className="mt-1.5 text-[17px] leading-[1.5] text-muted">잠시만 기다려 주세요.</p>
+        <Circle color={TONE.purple.solid} rings>
+          <Line name="speaker" size={52} />
+        </Circle>
+        <Title color={TONE.purple.fg}>보내는 중입니다</Title>
+        <Sub color={TONE.purple.sub}>잠시만 기다려 주세요.</Sub>
       </>
     );
   } else if (stage === "sent") {
+    tone = TONE.green;
     body = (
       <>
-        <Ring tone="green">
-          <Icon name="check" size={40} strokeWidth={2.4} />
-        </Ring>
-        <p className="mt-5 text-[28px] font-black leading-[1.25] text-navy">{sentTitle}</p>
-        {sentBody && <p className="mt-1.5 text-[18px] leading-[1.55] text-muted">{sentBody}</p>}
-        {autoSent && (
-          <p className="mt-1 text-[16px] leading-[1.5] text-muted">
-            {autoSent === "ended" ? "마이크가 끊겨 거기까지 보냈습니다." : "1분이 차서 거기까지 보냈습니다."}
-          </p>
-        )}
-        {!server && <p className="mt-2 text-[15px] leading-[1.5] text-muted">데모 — 이 기기에서만 들을 수 있습니다.</p>}
-        <button autoFocus onClick={onClose} className={`${btn} mt-6 text-navy`} style={{ background: "rgba(10,31,60,.06)" }}>
+        <Circle color={TONE.green.solid} pop>
+          <Line name="check" size={64} />
+        </Circle>
+        <Title color="#2A4D33">{sentTitle}</Title>
+        {sentBody && <Sub color="#3B5A44">{sentBody}</Sub>}
+        {autoSent && <Sub color="#3B5A44">{autoSent === "ended" ? "마이크가 끊겨 거기까지 보냈습니다." : "1분이 차서 거기까지 보냈습니다."}</Sub>}
+        {!server && <Sub color="#3B5A44">데모 — 이 기기에서만 들을 수 있습니다.</Sub>}
+        <Btn autoFocus tone="navy" h={70} r={22} className={`${wide} mt-auto text-[22px]`} onClick={onClose}>
           닫기
-        </button>
+        </Btn>
       </>
     );
   } else if (stage === "send-error") {
+    tone = TONE.gold;
     body = (
       <>
-        <Ring tone="gold">
-          <Icon name="alert" size={36} strokeWidth={2} />
-        </Ring>
-        <p className="mt-5 text-[24px] font-black leading-[1.35] text-navy">보내지 못했습니다</p>
-        <p role="alert" className="mt-1.5 text-[17px] leading-[1.55] text-ink">{sendErrorText(sendErr)}</p>
-        <button autoFocus onClick={() => deliver(outRef.current)} className={`${btn} mt-6 text-white`} style={{ background: "#1E7A5A" }}>
-          다시 보내기
-        </button>
-        <button onClick={close} className={`${btn} mt-2 py-[15px] text-[19px] text-muted`}>
-          그만두기
-        </button>
+        <Circle color="#C9A064">
+          <Line name="speaker" size={52} />
+        </Circle>
+        <Title color="#5E4A1E">보내지 못했습니다</Title>
+        <p role="alert" className="text-[18px] leading-[1.55]" style={{ color: "#5E4A1E" }}>
+          {sendErrorText(sendErr)}
+        </p>
+        <div className={`${wide} mt-auto flex flex-col gap-2`}>
+          <Btn autoFocus tone="green" h={70} r={22} className="text-[22px]" onClick={() => deliver(outRef.current)}>
+            다시 보내기
+          </Btn>
+          <button type="button" onClick={close} className="min-h-[56px] text-[19px] font-extrabold" style={{ color: "#5E5A52" }}>
+            그만두기
+          </button>
+        </div>
       </>
     );
   } else if (rec.phase === "error") {
+    tone = TONE.gold;
     body = (
       <>
-        <Ring tone="gold">
-          <Icon name="mic" size={34} strokeWidth={2} />
-        </Ring>
-        <p className="mt-5 text-[24px] font-black leading-[1.35] text-navy">{rec.error === "short" ? "다시 말씀해 주세요" : "녹음을 할 수 없습니다"}</p>
-        <p role="alert" className="mt-1.5 text-[17px] leading-[1.55] text-ink">{RECORD_ERRORS[rec.error] || RECORD_ERRORS.failed}</p>
-        <button autoFocus onClick={() => rec.start()} className={`${btn} mt-6 text-white`} style={{ background: "#1E7A5A" }}>
-          다시 하기
-        </button>
-        <button onClick={close} className={`${btn} mt-2 py-[15px] text-[19px] text-muted`}>
-          닫기
-        </button>
+        <Circle color="#C9A064">
+          <Line name="mic" size={56} />
+        </Circle>
+        <Title color="#5E4A1E">{rec.error === "short" ? "다시 말씀해 주세요" : "녹음을 할 수 없습니다"}</Title>
+        <p role="alert" className="text-[18px] leading-[1.55]" style={{ color: "#5E4A1E" }}>
+          {RECORD_ERRORS[rec.error] || RECORD_ERRORS.failed}
+        </p>
+        <div className={`${wide} mt-auto flex flex-col gap-2`}>
+          <Btn autoFocus tone="green" h={70} r={22} className="text-[22px]" onClick={() => rec.start()}>
+            다시 하기
+          </Btn>
+          <button type="button" onClick={close} className="min-h-[56px] text-[19px] font-extrabold" style={{ color: "#5E5A52" }}>
+            닫기
+          </button>
+        </div>
       </>
     );
   } else {
     const live = rec.phase === "rec";
     body = (
       <>
-        <Ring tone="green" pulse={live}>
-          <Icon name="mic" size={32} strokeWidth={2} />
-        </Ring>
-        <p className="mt-5 text-[30px] font-black leading-[1.25] text-navy">{live ? "말씀하세요" : "마이크를 켜고 있습니다"}</p>
-        <p className="mt-1.5 text-[17px] leading-[1.5] text-muted">
-          {live ? to : "‘허용’이 뜨면 눌러 주세요"}
-        </p>
+        <Circle color={TONE.purple.solid} rings={live}>
+          <Line name="mic" size={56} />
+        </Circle>
+        <Title color={TONE.purple.fg}>{live ? "말씀하세요" : "마이크를 켜고 있습니다"}</Title>
+        <Sub color={TONE.purple.sub}>{live ? to : "‘허용’이 뜨면 눌러 주세요"}</Sub>
         {live && (
-          <p aria-live="off" className="mt-3 font-num text-[26px] font-bold text-[#1E7A5A]">
-            {clock(rec.secs)} <span className="text-[16px] font-medium text-muted">/ {clock(MAX_SECS)}</span>
-          </p>
+          <>
+            <span aria-hidden="true" className="flex h-11 items-center gap-1">
+              {[0, 0.3, 0.12, 0.4, 0.2].map((d, i) => (
+                <span key={i} className="ds-bar" style={{ background: TONE.purple.solid, animationDelay: `${d}s` }} />
+              ))}
+            </span>
+            <p aria-live="off" className="ds-num text-[28px] font-black" style={{ color: TONE.purple.fg }}>
+              {clock(rec.secs)} <span className="text-[17px] font-bold" style={{ color: TONE.purple.sub }}>/ {clock(MAX_SECS)}</span>
+            </p>
+          </>
         )}
-        <button
-          autoFocus
-          onClick={finish}
-          disabled={!live}
-          className={`${btn} mt-6 text-white disabled:opacity-50`}
-          style={{ background: "#1E7A5A" }}
-        >
-          보내기
-        </button>
-        <button onClick={close} className={`${btn} mt-2 py-[15px] text-[19px] text-muted`}>
-          그만두기
-        </button>
+        <div className={`${wide} mt-auto flex flex-col gap-2`}>
+          <Btn autoFocus tone="purple" h={78} r={24} px={5} disabled={!live} className="text-[24px] disabled:opacity-50" onClick={finish}>
+            보내기
+          </Btn>
+          <WhiteBtn h={58} sh={TONE.purple.sh} color={TONE.purple.fg} className="text-[19px]" onClick={close}>
+            그만두기
+          </WhiteBtn>
+        </div>
       </>
     );
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[rgba(8,23,45,.72)] px-6">
-      <div
-        className="w-full max-w-[360px] rounded-[26px] bg-white px-6 pb-6 pt-8 text-center break-keep"
-        style={{ boxShadow: "0 30px 60px -20px rgba(8,23,45,.6)" }}
-        role="dialog"
-        aria-modal="true"
-        aria-label={label}
-      >
-        <span className="sr-only" aria-live="polite">
-          {stage === "sent" ? sentTitle : stage === "sending" ? "보내는 중" : rec.phase === "rec" ? "녹음 중입니다" : ""}
-        </span>
-        {body}
-      </div>
+    <div className="ds-overlay ds-app z-[60]" style={{ background: tone === TONE.purple ? "#F4F1F9" : tone.bg }} role="dialog" aria-modal="true" aria-label={label}>
+      <span className="sr-only" aria-live="polite">
+        {stage === "sent" ? sentTitle : stage === "sending" ? "보내는 중" : rec.phase === "rec" ? "녹음 중입니다" : ""}
+      </span>
+      <span className="text-[17px] font-extrabold" style={{ color: "#8F7F63" }}>
+        {label}
+      </span>
+      {body}
     </div>
   );
 }
 
-function Ring({ tone, pulse = false, children }) {
-  const c = tone === "gold" ? { bg: "rgba(176,141,87,.16)", fg: "#8A5D12", solid: "#B08D57" } : { bg: "rgba(30,122,90,.12)", fg: "#1E7A5A", solid: "#1E7A5A" };
+// 가운데 큰 동그라미 — 듣는 중이면 물결이 퍼진다
+function Circle({ color, rings = false, pop = false, children }) {
   return (
-    <span aria-hidden className="mx-auto flex h-[92px] w-[92px] items-center justify-center rounded-full" style={{ background: c.bg, color: c.fg }}>
-      <span className={`flex h-[68px] w-[68px] items-center justify-center rounded-full ${pulse ? "animate-livePing" : ""}`} style={{ background: c.solid, color: "#FFFFFF" }}>
+    <span className={`relative my-4 block h-[124px] w-[124px] ${pop ? "ds-pop" : ""}`} aria-hidden="true">
+      {rings && (
+        <>
+          <span className="ds-ring absolute inset-0 rounded-full" style={{ background: color }} />
+          <span className="ds-ring ds-ring2 absolute inset-0 rounded-full" style={{ background: color }} />
+        </>
+      )}
+      <span className="absolute inset-0 flex items-center justify-center rounded-full text-white" style={{ background: color }}>
         {children}
       </span>
     </span>
+  );
+}
+function Title({ color, children }) {
+  return (
+    <p className="text-[30px] font-black leading-[1.3]" style={{ color }}>
+      {children}
+    </p>
+  );
+}
+function Sub({ color, children }) {
+  return (
+    <p className="text-[18px] leading-[1.55]" style={{ color }}>
+      {children}
+    </p>
   );
 }
