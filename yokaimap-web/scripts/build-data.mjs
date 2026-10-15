@@ -1,0 +1,221 @@
+/**
+ * 시드 → 배포 데이터 빌드.
+ *   data/yokai/*.json  (진실 원천, 카테고리별 분할)
+ *     → public/data/yokai.json      앱이 읽는 병합본(기본값 주입 + 정렬)
+ *     → public/data/yokai.min.json  오픈데이터셋 배포본(CC BY 4.0)
+ *
+ * 검증을 통과하지 못하면 빌드가 실패한다 — 출처 없는 레코드가 배포되는 경로를 원천 차단.
+ */
+import { writeFileSync, mkdirSync, readFileSync, existsSync } from 'node:fs'
+import { join } from 'node:path'
+import { ROOT, runValidation } from './validate.mjs'
+
+const DATA_VERSION = '0.1.0'
+const LICENSE = 'CC BY 4.0'
+const ART_DEFAULT = { status: 'pending', direction: 'minhwa-v1', file: null, license: 'CC BY 4.0 (AI 생성 · 원본 도상 없음)' }
+
+const { entries, tales, songs, errors, warnings, stats } = runValidation()
+for (const w of warnings) console.warn(`⚠️  ${w}`)
+if (errors.length) {
+  for (const e of errors) console.error(`❌ ${e}`)
+  console.error(`\n빌드 중단 — 검증 오류 ${errors.length}건`)
+  process.exit(1)
+}
+
+const categories = JSON.parse(readFileSync(join(ROOT, 'data/categories.json'), 'utf8'))
+const regions = JSON.parse(readFileSync(join(ROOT, 'data/regions.json'), 'utf8'))
+
+/**
+ * 도상 매니페스트 — 생성 기록의 유일한 원천.
+ *
+ * 이미지 파일은 생성 세션에서 리포로 못 들어온다(CDN 차단). 그래서 시드의 art.status를
+ * 손으로 final로 올려 두면, 매니페스트에 없는 그림을 있다고 주장하는 레코드가 배포된다.
+ * 상태는 시드가 아니라 매니페스트에서 계산한다. 검수를 통과한 것만 final이다.
+ */
+const jobs = JSON.parse(readFileSync(join(ROOT, 'data/art/jobs.json'), 'utf8'))
+const artById = new Map(jobs.items.filter((i) => i.kind === 'plate').map((i) => [i.id, i]))
+
+const missingArt = []
+
+function artFor(entry) {
+  const seed = entry.art ?? {}
+  const job = artById.get(entry.id)
+  if (!job) return { ...ART_DEFAULT, ...seed, status: 'pending', file: null }
+  const passed = job.review?.result === 'pass'
+  // 파일이 실제로 리포에 있어야 경로를 낸다. 도상 반입은 별도 단계(GitHub Actions)라
+  // 검수를 통과했어도 아직 안 들어와 있을 수 있고, 그때 경로를 내면 깨진 이미지가 배포된다.
+  const onDisk = existsSync(join(ROOT, job.target))
+  if (passed && !onDisk) missingArt.push(entry.id)
+  return {
+    ...ART_DEFAULT,
+    ...seed,
+    direction: jobs.direction ?? seed.direction ?? ART_DEFAULT.direction,
+    // 검수 전에는 generated — 앱은 file이 있는 것만 그리고 나머지는 인장으로 떨어진다.
+    status: passed ? 'final' : 'generated',
+    // 경로는 매니페스트의 target에서 그대로 끌어온다 — 여기서 확장자를 다시 조립하면
+    // fetch-art가 쓰는 경로와 어긋나서, 있는 파일을 못 찾는 사고가 난다.
+    file: passed && onDisk ? '/' + job.target.replace(/^public\//, '') : null,
+    job_id: job.job_id,
+  }
+}
+
+const normalized = entries
+  .map(({ _file, ...e }) => ({
+    ...e,
+    aliases: e.aliases ?? [],
+    names: e.names ?? {},
+    traits: e.traits ?? [],
+    habitat: e.habitat ?? [],
+    omens: { time: [], weather: [], season: [], ...(e.omens ?? {}) },
+    sites: e.sites ?? [],
+    related: e.related ?? [],
+    sensitivity: e.sensitivity ?? null,
+    art: artFor(e),
+  }))
+  .sort((a, b) => a.id.localeCompare(b.id))
+
+const byCategory = Object.fromEntries(
+  categories.categories.map((c) => [c.id, normalized.filter((e) => e.category === c.id).length]),
+)
+const bySido = Object.fromEntries(
+  regions.sido.map((s) => [s.name, normalized.filter((e) => e.sites.some((x) => x.sido === s.name)).length]),
+)
+const byVerification = normalized.reduce((acc, e) => ({ ...acc, [e.verification]: (acc[e.verification] ?? 0) + 1 }), {})
+const siteCount = normalized.reduce((n, e) => n + e.sites.length, 0)
+
+const bundle = {
+  version: DATA_VERSION,
+  generated_at: new Date().toISOString().slice(0, 10),
+  license: LICENSE,
+  attribution: '한국요괴지도 (Korean Yokai Map)',
+  count: normalized.length,
+  site_count: siteCount,
+  stats: { byCategory, bySido, byVerification },
+  categories: categories.categories,
+  rarity: categories.rarity,
+  verification: categories.verification,
+  regions: regions.sido,
+  entries: normalized,
+}
+
+/* ─── 설화 번들 ────────────────────────────────────────────
+   요괴 번들과 파일을 나눈다. 오픈데이터로 배포하는 yokai.json은 개체 데이터셋으로
+   두고, 이야기는 tales.json으로 따로 받아 갈 수 있게 한다. 스키마가 다르므로
+   한 파일에 섞으면 소비하는 쪽이 매번 분기해야 한다. */
+const TALE_KIND = {
+  myth: { id: 'myth', name: '신화', blurb: '신성하다고 믿어지고 태초·건국을 다룬다. 증거물보다 믿음이 기준이다.' },
+  legend: { id: 'legend', name: '전설', blurb: '장소·물건·인물에 고정되고 증거물이 남는다. 그래서 좌표가 붙는다.' },
+  folktale: { id: 'folktale', name: '민담', blurb: '때와 곳이 특정되지 않는다. 좌표가 없는 것이 정상이다.' },
+}
+
+const talesOut = tales
+  .map(({ _file, _declared, ...t }) => ({
+    ...t,
+    aliases: t.aliases ?? [],
+    motifs: t.motifs ?? [],
+    characters: t.characters ?? [],
+    sites: t.sites ?? [],
+    related: t.related ?? [],
+    sensitivity: t.sensitivity ?? null,
+    foreign_origin: t.foreign_origin ?? null,
+  }))
+  .sort((a, b) => a.id.localeCompare(b.id))
+
+const taleSiteCount = talesOut.reduce((n, t) => n + t.sites.length, 0)
+const byKind = Object.fromEntries(Object.keys(TALE_KIND).map((k) => [k, talesOut.filter((t) => t.kind === k).length]))
+const taleByVerification = talesOut.reduce((a, t) => ({ ...a, [t.verification]: (a[t.verification] ?? 0) + 1 }), {})
+
+const taleBundle = {
+  version: DATA_VERSION,
+  generated_at: new Date().toISOString().slice(0, 10),
+  license: LICENSE,
+  attribution: '한국요괴지도 (Korean Yokai Map)',
+  count: talesOut.length,
+  site_count: taleSiteCount,
+  stats: { byKind, byVerification: taleByVerification },
+  kinds: Object.values(TALE_KIND),
+  tales: talesOut,
+}
+
+/* ─── 시가 번들 ────────────────────────────────────────────
+   세 번째 컬렉션. 개체도 이야기도 아닌 '텍스트'다. 원문이 남아 있어 인용 가치가
+   가장 크지만, 그래서 저작권 경계도 가장 까다롭다 — 향찰·한문 원문은 퍼블릭
+   도메인이고 gloss는 우리가 직접 쓴 산문 풀이다. 특정 학자의 해독안은 옮기지 않는다. */
+const SONG_GENRE = {
+  hyangga: { id: 'hyangga', name: '향가', blurb: '신라·고려 초의 우리말 노래. 향찰로 표기되어 해독안이 학자마다 갈린다.' },
+  goga: { id: 'goga', name: '고대가요', blurb: '삼국 이전까지 거슬러 전하는 짧은 노래. 배경 설화와 함께 실려 있다.' },
+  goryeo: { id: 'goryeo', name: '고려가요', blurb: '고려의 노래. 한글 창제 뒤 악서에 실려 전한다.' },
+  hansi: { id: 'hansi', name: '한시', blurb: '한문 시. 문헌에 그대로 실려 원문이 확실하다.' },
+  muga: { id: 'muga', name: '무가', blurb: '굿에서 구송하는 노래. 정본이 없고 무당마다 달라진다.' },
+  bonpuri: { id: 'bonpuri', name: '본풀이', blurb: '신의 내력을 처음부터 푸는 제주 무가. 신을 소개하는 것이 아니라 어떻게 신이 되었는지를 말한다.' },
+  pansori: { id: 'pansori', name: '판소리', blurb: '소리꾼 하나와 고수 하나로 몇 시간을 끌고 가는 서사 음악. 설화를 받아 다시 짠 것이 많다.' },
+  minyo: { id: 'minyo', name: '민요', blurb: '마을에서 부르던 노래. 의례와 노동에 붙어 전한다.' },
+  chamyo: { id: 'chamyo', name: '참요', blurb: '앞일을 예언한다고 여겨진 노래. 대개 이긴 쪽의 기록으로 남는다.' },
+}
+
+const songsOut = songs
+  .map(({ _file, ...g }) => ({
+    ...g,
+    aliases: g.aliases ?? [],
+    original: g.original ?? null,
+    function: g.function ?? [],
+    characters: g.characters ?? [],
+    tales: g.tales ?? [],
+    sites: g.sites ?? [],
+    related: g.related ?? [],
+    sensitivity: g.sensitivity ?? null,
+  }))
+  .sort((a, b) => a.id.localeCompare(b.id))
+
+const songSiteCount = songsOut.reduce((n, g) => n + g.sites.length, 0)
+const byGenre = Object.fromEntries(
+  Object.keys(SONG_GENRE).map((k) => [k, songsOut.filter((g) => g.genre === k).length]),
+)
+const withOriginal = songsOut.filter((g) => g.original).length
+
+const songBundle = {
+  version: DATA_VERSION,
+  generated_at: new Date().toISOString().slice(0, 10),
+  license: LICENSE,
+  attribution: '한국요괴지도 (Korean Yokai Map)',
+  note: '원문(original)은 향찰·한문 퍼블릭 도메인 텍스트다. 뜻풀이(gloss)는 이 프로젝트가 직접 쓴 산문 풀이이며 특정 학자의 해독안이나 번역이 아니다.',
+  count: songsOut.length,
+  site_count: songSiteCount,
+  with_original: withOriginal,
+  stats: { byGenre },
+  genres: Object.values(SONG_GENRE),
+  songs: songsOut,
+}
+
+mkdirSync(join(ROOT, 'public/data'), { recursive: true })
+writeFileSync(join(ROOT, 'public/data/yokai.json'), JSON.stringify(bundle, null, 1))
+writeFileSync(join(ROOT, 'public/data/yokai.min.json'), JSON.stringify(bundle))
+writeFileSync(join(ROOT, 'public/data/tales.json'), JSON.stringify(taleBundle, null, 1))
+writeFileSync(join(ROOT, 'public/data/songs.json'), JSON.stringify(songBundle, null, 1))
+
+console.log(`✅ 빌드 완료 — ${normalized.length}체 / 전승지 ${siteCount}곳 / 시도 커버리지 ${stats.sidoCovered}/17`)
+console.log(`   카테고리: ${Object.entries(byCategory).map(([k, v]) => `${k}:${v}`).join(' ')}`)
+console.log(`   검증등급: ${Object.entries(byVerification).map(([k, v]) => `${k}:${v}`).join(' ')}`)
+console.log(
+  `   설화: ${talesOut.length}편 (${Object.entries(byKind).map(([k, v]) => `${TALE_KIND[k].name} ${v}`).join(' · ')})` +
+    ` / 배경지 ${taleSiteCount}곳`,
+)
+console.log(
+  `   시가: ${songsOut.length}편 (${Object.entries(byGenre).filter(([, v]) => v).map(([k, v]) => `${SONG_GENRE[k].name} ${v}`).join(' · ')})` +
+    ` / 원문 수록 ${withOriginal}편`,
+)
+
+const artStat = normalized.reduce((a, e) => ({ ...a, [e.art.status]: (a[e.art.status] ?? 0) + 1 }), {})
+console.log(
+  `   도상: ${Object.entries(artStat).map(([k, v]) => `${k}:${v}`).join(' ')}` +
+    ` · 파일 반입 ${normalized.filter((e) => e.art.file).length}/${normalized.length}`,
+)
+if (missingArt.length) {
+  // 검수는 통과했는데 파일이 없다 = 반입이 안 끝났다. 배포는 인장 폴백으로 정상 동작하므로
+  // 빌드를 세우지는 않지만, 조용히 넘어가면 "왜 그림이 안 나오지"로 시간을 버린다.
+  console.warn(
+    `⚠️  검수 통과했으나 파일이 없는 도상 ${missingArt.length}건 — 인장 폴백으로 표시됩니다.\n` +
+      `   반입: Actions 탭 → yokai-art 실행 (또는 CDN 접근 가능한 곳에서 node scripts/fetch-art.mjs)\n` +
+      `   ${missingArt.slice(0, 8).join(' ')}${missingArt.length > 8 ? ` 외 ${missingArt.length - 8}건` : ''}`,
+  )
+}
