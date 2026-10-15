@@ -45,7 +45,7 @@ npm run dev                  # http://localhost:3100
 ```bash
 npm run verify    # 린트(경고 0) + 빌드
 npm start &       # 운영 모드로 기동 (http://localhost:3100)
-npm run smoke     # 24개 화면을 모바일·데스크톱으로 실제로 열어 검사
+npm run smoke     # 40개 화면을 모바일·데스크톱으로 실제로 열어 검사
 ```
 
 빌드는 렌더 시점 오류 · 빈 화면 · 접근성 회귀 · 터치 타깃 축소를 못 잡는다. 스모크가 그 그물이다.

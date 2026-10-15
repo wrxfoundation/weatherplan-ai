@@ -404,21 +404,6 @@ a.btn-press {
   padding-bottom: max(0px, env(safe-area-inset-bottom));
 }
 
-/* 어르신 홈 본문 스크롤 —
-   ① 스크롤바를 숨긴다. 스크롤바가 뜨면 그 폭만큼 오른쪽에서만 내용이 밀려
-      카드가 왼쪽으로 치우치고 우측 테두리가 잘린 것처럼 보인다 (좌우 여백 비대칭).
-   ② 페이드 마스크는 쓰지 않는다 — 어르신 화면에서 글자가 흐려지면 안 된다.
-      대신 아래 여백을 넉넉히 둬서 카드가 푸터에 맞닿아 잘리지 않게 한다. */
-.elder-scroll {
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* 구형 Edge */
-  overscroll-behavior: contain;
-}
-.elder-scroll::-webkit-scrollbar {
-  width: 0;
-  height: 0;
-}
-
 /* ─── 펼침 애니메이션 (관제 · 경영 콘솔) ───
    높이를 모르는 영역을 부드럽게 여닫는다. grid-template-rows 0fr → 1fr 방식이라
    max-height 어림값 없이도 내용 높이 그대로 열린다.
@@ -814,70 +799,6 @@ a.btn-press {
   box-shadow: 0 2px 6px rgba(10, 31, 60, 0.28);
 }
 
-/* 어르신 홈 — 아주 낮은 화면(≤660px)에서만 한 번 더 조인다 (2026-08-28 요청:
-   "첫화면 스크롤 안 하게").
-   기본 여백만으로 375x667(iPhone SE·8)까지는 스크롤 없이 들어오지만, 360x640
-   같은 구형 소형폰은 25px 이 모자란다. 모든 기기를 최저 사양에 맞춰 좁히면
-   큰 화면이 답답해지므로, 모자란 화면에서만 여기서 더 줄인다.
-   @layer 밖이라 Tailwind 유틸리티(gap-[10px]·py-2)를 이긴다 — .btn-press 와 같은 이유. */
-@media screen and (max-height: 660px) {
-  .elder-scroll {
-    gap: 7px;
-    padding-bottom: 4px;
-  }
-  .elder-tile {
-    padding-top: 4px;
-    padding-bottom: 4px;
-  }
-}
-
-/* 어르신 홈 사분면 — 기기와 무관하게 남는 세로 공간을 항상 채운다
-   (2026-08-28 "핸드폰 화면에 맞춰 유동적으로, 위아래로 꽉 보여야 한다").
-   화면마다 높이가 다른데 타일 높이를 고정해 두면 어떤 기기에서는 아래가 비고
-   어떤 기기에서는 잘린다. 인사·다음 일정은 내용만큼만 쓰고, 남는 것은 전부
-   타일이 가져간다 — 어르신 화면에서 큰 버튼은 그 자체로 이득이다.
-
-   flex-grow 1 / flex-shrink 0: 남으면 커지고, 모자라도 줄지는 않는다.
-   줄어들게 두면 작은 화면에서 타일 글자가 잘린다 (스크롤이 맞다).
-   grid-auto-rows 1fr: 두 줄이 같은 높이로 늘어난다.
-   max-height: 태블릿·데스크톱처럼 아주 긴 화면에서 타일만 기괴하게 커지지
-   않게 하는 상한. 폰(≤900px 높이)에서는 걸리지 않는다.
-   홈 탭에서만 적용된다(.elder-home) — 다른 탭은 카드가 많아 어차피 스크롤된다. */
-.elder-home .elder-hub {
-  flex-grow: 1;
-  /* 짧은 화면에서는 줄어들어도 된다 — 띠배너가 둘로 늘면서(2026-08-29) SE 급에서
-     33px 이 모자랐다. 다만 min-height 아래로는 안 줄인다: 아이콘 56 + 이름 28 +
-     설명 22 + 안쪽 여백이 한 칸 120px 이라, 그 밑으로 가면 글자가 잘린다. */
-  flex-shrink: 1;
-  flex-basis: auto;
-  min-height: 250px;
-  max-height: 480px;
-  grid-auto-rows: 1fr;
-}
-
-/* 높은 화면에서는 카드 사이 간격과 타일 안쪽 여백도 같이 넉넉하게 —
-   타일만 커지고 여백이 그대로면 위쪽이 답답해 보인다. */
-@media screen and (min-height: 700px) {
-  .elder-home {
-    gap: 14px;
-    padding-bottom: 10px;
-    /* 남는 공간은 인사와 타일 '사이'로 보낸다 (2026-08-28 시안).
-       아래에 몰아 두면 "위로 다 몰렸다"는 그 모양이 된다. 인사는 위에,
-       타일은 엄지가 닿는 아래에 — 시안의 배치가 이것이다. */
-    justify-content: space-between;
-  }
-  .elder-home .elder-tile {
-    padding-top: 12px;
-    padding-bottom: 12px;
-  }
-  /* 타일이 커진 만큼 아이콘도 키운다 — 크기만 늘리고 아이콘이 그대로면
-     가운데가 휑해 보인다. SVG 는 width/height 속성으로 그려지므로 CSS 로 덮는다. */
-  .elder-home .elder-tile svg {
-    width: 36px;
-    height: 36px;
-  }
-}
-
 /* ══════════════════════════════════════════════════════════════════════════
    2026-10-15 디자인 시안 — 어르신 · 보호자 화면 (클레이 3D)
    ──────────────────────────────────────────────────────────────────────────
@@ -895,6 +816,8 @@ a.btn-press {
     word-break: keep-all;
     overflow-wrap: anywhere;
   }
+  /* 문서 바탕도 같은 색 — 위아래로 당겼을 때(휴대폰 고무줄 스크롤) 기본 남색 바탕이 비치지 않게 */
+  html:has(.ds-app) body { background-color: #f8f7f4; }
   .ds-app button { color: inherit; font-family: inherit; }
   .ds-app button:focus-visible,
   .ds-app a:focus-visible,
@@ -997,9 +920,13 @@ a.btn-press {
   .ds-cal i { width: 6px; height: 6px; border-radius: 50%; }
 
   /* 점수 밀대 (동행 평가) */
-  .ds-app input[type="range"].ds-range { -webkit-appearance: none; appearance: none; width: 100%; height: 12px; border-radius: 6px; background: #d6cde6; outline: none; margin: 6px 0; }
-  .ds-app input[type="range"].ds-range::-webkit-slider-thumb { -webkit-appearance: none; width: 34px; height: 34px; border-radius: 50%; background: #6a4d9c; border: 5px solid #ffffff; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25); cursor: pointer; }
-  .ds-app input[type="range"].ds-range::-moz-range-thumb { width: 26px; height: 26px; border-radius: 50%; background: #6a4d9c; border: 5px solid #ffffff; cursor: pointer; }
+  /* 점수 막대 — 보이는 막대는 12px, 누르는 칸은 40px (터치 타깃 24px 이상 · 스모크 검사). 손잡이는 막대 가운데 */
+  .ds-app input[type="range"].ds-range { -webkit-appearance: none; appearance: none; width: 100%; height: 40px; background: transparent; outline: none; margin: 0; cursor: pointer; }
+  .ds-app input[type="range"].ds-range::-webkit-slider-runnable-track { height: 12px; border-radius: 6px; background: #d6cde6; }
+  .ds-app input[type="range"].ds-range::-moz-range-track { height: 12px; border-radius: 6px; background: #d6cde6; }
+  .ds-app input[type="range"].ds-range::-webkit-slider-thumb { -webkit-appearance: none; box-sizing: border-box; width: 34px; height: 34px; margin-top: -11px; border-radius: 50%; background: #6a4d9c; border: 5px solid #ffffff; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25); cursor: pointer; }
+  .ds-app input[type="range"].ds-range::-moz-range-thumb { box-sizing: border-box; width: 34px; height: 34px; border-radius: 50%; background: #6a4d9c; border: 5px solid #ffffff; cursor: pointer; }
+  .ds-app input[type="range"].ds-range:focus-visible { outline: 3px solid #1b2340; outline-offset: 2px; border-radius: 12px; }
 
   /* ── 보호자 세부 (홈 4칸 · 마이) ── */
   .ds-hero { border-radius: 28px; padding: 20px; display: flex; flex-direction: column; gap: 10px; }

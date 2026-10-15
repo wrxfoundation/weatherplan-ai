@@ -706,9 +706,11 @@ function RequestRow({ req, open, onToggle, onboarding, dispatch, isPrimary, paym
       ? "취소 요청 — 관제가 확인하고 있습니다"
       : req.status === "requested" && x.approver === "concierge" && !x.visitCall
         ? `${req.assignee || "담당 컨시어지"} 컨시어지가 일정을 보고 승인합니다`
-        : x.scheduled
-          ? `${x.scheduled} 확정`
-          : req.detail;
+        : req.status === "requested" && x.approver === "elder"
+          ? `${x.honor}이 수락하시면 진행됩니다`
+          : x.scheduled
+            ? `확정 ${x.scheduled}`
+            : req.detail;
   return (
     <div className="ds-r overflow-hidden rounded-[22px] bg-white" style={{ "--d": `${d}ms`, boxShadow: "0 4px 0 #E6E2DA" }}>
       <button type="button" onClick={onToggle} aria-expanded={open} className="ds-press flex w-full items-center gap-3 px-4 py-3.5 text-left">

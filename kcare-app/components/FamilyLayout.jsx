@@ -1,3 +1,4 @@
+import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { avatarText, elderNameOf } from "../lib/people";
@@ -60,6 +61,10 @@ export default function FamilyLayout({ children, title, sub, action, back, backL
 
   return (
     <RoleGate role="guardian" title="보호자">
+      {/* 휴대폰 주소창 · 상태 표시줄 색을 밝은 바탕에 맞춘다 (다른 화면은 기본 남색) */}
+      <Head>
+        <meta name="theme-color" content="#F8F7F4" />
+      </Head>
       <Splash service="family" />
       <ClayDefs />
       <div className="ds-app min-h-dvh">

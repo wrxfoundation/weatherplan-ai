@@ -770,6 +770,8 @@ function ElderHome() {
     <>
       <Head>
         <title>K-CARE</title>
+        {/* 휴대폰 주소창 · 상태 표시줄 색을 밝은 바탕에 맞춘다 (다른 화면은 기본 남색) */}
+        <meta name="theme-color" content="#F8F7F4" />
       </Head>
       <Splash service="elder" />
       <ClayDefs />

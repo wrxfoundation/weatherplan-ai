@@ -1,4 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useReducer, useRef, useState } from "react";
+import { useRouter } from "next/router";
 // mock.js 가 아니라 seed.js 에서 가져온다 — state 는 _app 에서 import 되므로
 // 여기서 mock.js 를 참조하면 콘솔 목데이터 전체가 모든 페이지에 실린다 (seed.js 주석 참고).
 import { INITIAL_EVENTS, INITIAL_REQUESTS, SEED_ASK_DOCTOR, SEED_EVENTS, SEED_ORDERS, SEED_REPORTS } from "./seed";
@@ -827,6 +828,9 @@ const saveCache = (hh, state, version) => hh && state && writeLocal(cacheKey(hh)
 
 export function AppStateProvider({ children }) {
   const auth = useAuth();
+  // 저장소를 읽는 동안의 빈 화면 색 — 어르신 화면은 밝은 바탕 · 밝은 스플래시라 같은 색으로 (남색이 번쩍이지 않게).
+  // 보호자 화면은 남색 스플래시(components/Splash.jsx)로 이어지므로 남색 그대로 둔다.
+  const lightShell = /^\/elder(\/|$)/.test(useRouter().pathname);
   const household = auth.user?.household || null;
   // 관제 PC 는 창이 다른 창에 가려져도(브라우저가 '숨김'으로 본다) 계속 가져온다 — SOS 팝업 · 알림음이
   // 창을 앞으로 꺼내야만 뜨면 늦는다 (2026-10-02 QA "관제 화면을 열어 둔 채 1분 넘게 새 요청이 안 뜸")
@@ -1148,7 +1152,7 @@ export function AppStateProvider({ children }) {
             <SyncNotice sync={syncValue} />
           </>
         ) : (
-          <div className="min-h-screen bg-nav" />
+          <div className={lightShell ? "min-h-screen bg-[#F8F7F4]" : "min-h-screen bg-nav"} />
         )}
       </SyncCtx.Provider>
     </Ctx.Provider>
