@@ -1,0 +1,64 @@
+# Chronicle #18 AI 랩 채용 원장 (ai-jobs-ledger) — standalone 리포용.
+#
+# 일 1회 AI 랩들의 공개 잡보드(Greenhouse·Lever·Ashby)에서 채용공고를 박제한다.
+# 공고는 마감 즉시 소멸 — 지금 찍은 자만 소유. 무인증 공개 API, Secret 불필요.
+# Manual: Actions tab -> "jobs" -> Run workflow.
+name: jobs
+
+on:
+  workflow_dispatch: {}
+  schedule:
+    - cron: "43 21 * * *" # daily ~06:43 KST
+
+permissions:
+  contents: write
+
+concurrency:
+  group: chronicle-cron # 전 수집 크론 직렬화 — docs 동시 재생성 경합 방지
+  cancel-in-progress: false
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Install deps
+        run: npm ci
+
+      - name: Collect + seal (변경 없으면 아무것도 쓰지 않음)
+        run: npm run collect -- ai-jobs-ledger
+
+      - name: Verify hash chain
+        run: npm run verify -- ai-jobs-ledger
+
+      - name: Anchor chain head to RFC 3161 TSA (best-effort)
+        run: npm run anchor -- ai-jobs-ledger
+
+      - name: Publish site (docs/)
+        run: |
+          npm run site
+          test -f docs/index.html && test -f docs/.nojekyll  # 산출물 없으면 여기서 실패
+
+      - name: Commit accumulated data
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data docs
+          if git diff --cached --quiet; then
+            echo "no data change"
+          else
+            git commit -m "data(ai-jobs-ledger): daily AI jobs ledger [skip ci]"
+            n=0
+            until git push; do
+              n=$((n+1))
+              if [ "$n" -ge 3 ]; then echo "push failed after $n attempts" >&2; exit 1; fi
+              git pull --rebase origin "$GITHUB_REF_NAME"
+            done
+          fi

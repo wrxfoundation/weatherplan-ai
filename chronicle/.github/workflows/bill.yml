@@ -1,0 +1,67 @@
+# Chronicle #9 국회 입법 diff (bill-diff) — standalone 리포용.
+#
+# 주 1회 열린국회정보 발의법률안 API로 AI·데이터·플랫폼 규제 의안을 박제.
+# 발의(생성)·처리상태 전환(계류→가결/부결/폐기)을 소유 — 규제 인텔.
+# ★ 새 시크릿 필요: ASSEMBLY_API_KEY (열린국회정보 인증키). 키 없으면 휴면.
+# Manual: Actions tab -> "bill" -> Run workflow.
+name: bill
+
+on:
+  workflow_dispatch: {}
+  schedule:
+    - cron: "31 19 * * 1" # 매주 월요일 ~04:31 KST
+
+permissions:
+  contents: write
+
+concurrency:
+  group: chronicle-cron # 전 수집 크론 직렬화 — docs 동시 재생성 경합 방지
+  cancel-in-progress: false
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Install deps
+        run: npm ci
+
+      - name: Collect + seal (무키면 휴면·0건, 변경 없으면 아무것도 쓰지 않음)
+        env:
+          ASSEMBLY_API_KEY: ${{ secrets.ASSEMBLY_API_KEY }}
+        run: npm run collect -- bill-diff
+
+      - name: Verify hash chain
+        run: npm run verify -- bill-diff
+
+      - name: Anchor chain head to RFC 3161 TSA (best-effort)
+        run: npm run anchor -- bill-diff
+
+      - name: Publish site (docs/)
+        run: |
+          npm run site
+          test -f docs/index.html && test -f docs/.nojekyll  # 산출물 없으면 여기서 실패
+
+      - name: Commit accumulated data
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data docs
+          if git diff --cached --quiet; then
+            echo "no data change"
+          else
+            git commit -m "data(bill-diff): weekly regulatory bill ledger [skip ci]"
+            n=0
+            until git push; do
+              n=$((n+1))
+              if [ "$n" -ge 3 ]; then echo "push failed after $n attempts" >&2; exit 1; fi
+              git pull --rebase origin "$GITHUB_REF_NAME"
+            done
+          fi

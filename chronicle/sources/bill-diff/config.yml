@@ -1,0 +1,43 @@
+# 국회 입법 diff — 스펙 v4 #9 (bill-diff), API 레코드형. 한국.
+#
+# 열린국회정보 발의법률안 API로 AI·데이터·플랫폼 규제 의안을 주간 박제 — 발의(생성),
+# 처리상태 전환(계류→가결/부결/폐기·철회)을 소유한다. 규제 인텔(FiscalNote 모델).
+# 조용히 발의·철회·수정되는 규제안의 타임라인을 원장이 소유. 키워드로 규제 영역 한정.
+#
+# ── 활성화 ─────────────────────────────────────────────────────────────────
+#   ★ 새 시크릿 필요: ASSEMBLY_API_KEY (열린국회정보 open.assembly.go.kr 인증키 신청).
+#   키 없으면 휴면(0건, 정상). 데이터 자체는 무료·무제한.
+# ★ 미지(첫 키드 실행이 자백 → 핫에디트): open.assembly.go.kr 해외(러너) 지오블록
+#   여부, 서비스명(nzmimeepazxkubdpn = 발의법률안 최선추정), AGE(대수)·응답 코드.
+# ──────────────────────────────────────────────────────────────────────────
+id: bill-diff
+family: api-records
+title: 국회 입법 diff — AI·데이터·플랫폼 규제 의안 (주간)
+
+endpoint: https://open.assembly.go.kr/portal/openapi/nzmimeepazxkubdpn
+key_env: ASSEMBLY_API_KEY
+key_param: KEY
+user_agent: "chronicle-bill-diff/0.1 (+https://github.com/kwangdol-star/aiagentlabs)"
+rate_limit_ms: 400
+
+page_size: 100 # pSize
+max_pages: 40 # 대수 전량 순회 상한. 키워드 후필터.
+# 의안은 소멸하지 않고 처리상태로 종결된다 — 삭제 신호가 아니라 상태 전환·신규가 핵심.
+# 부분수집이 삭제로 오탐되지 않게 이 소스는 삭제 판정을 하지 않는다(removalScope=false).
+allow_empty: true
+
+# 핫에디트 가능한 고정 쿼리 (KEY·pIndex·pSize는 어댑터가 주입)
+query:
+  Type: json
+  AGE: "22" # 22대 국회. 대 교체 시 갱신.
+
+# 의안명에 이 키워드 중 하나라도 포함되면 추적(규제 인텔 한정, 부분일치).
+keywords:
+  - 인공지능
+  - 데이터
+  - 플랫폼
+  - 알고리즘
+  - 디지털
+  - 개인정보
+  - 가상자산
+  - 온라인

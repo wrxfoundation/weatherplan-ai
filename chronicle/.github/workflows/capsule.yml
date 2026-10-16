@@ -1,0 +1,75 @@
+# Chronicle #1 LLM 한국팩트 타임캡슐 (llm-korea-capsule) — standalone 리포용. 플래그십.
+#
+# 월 1회 고정 질문셋을 모델들에 물어 raw 응답·정오답을 해시체인에 봉인한다.
+# 폐기 모델은 재측정 불가 — 그때 그 정오답은 지금 찍은 자만 소유(CARFAX 아날로그).
+#
+# ── 활성화 ─────────────────────────────────────────────────────────────────
+#   ANTHROPIC_API_KEY 시크릿이 없으면 collect는 "휴면"(0건, 정상 종료) — 워크플로는
+#   초록불이나 아무것도 기록하지 않는다. Settings > Secrets > Actions 에서 키를 넣는
+#   순간 config의 anthropic 2모델이 다음 실행부터 라이브. OpenAI·Google은 각 키
+#   (OPENAI_API_KEY·GEMINI_API_KEY) 추가 + config 주석 해제로 확장.
+#   Manual: Actions tab -> "capsule" -> Run workflow.
+# ──────────────────────────────────────────────────────────────────────────
+name: capsule
+
+on:
+  workflow_dispatch: {}
+  schedule:
+    - cron: "17 20 1 * *" # 매월 1일 ~05:17 KST
+
+permissions:
+  contents: write
+
+concurrency:
+  group: chronicle-cron # 전 수집 크론 직렬화 — docs 동시 재생성 경합 방지
+  cancel-in-progress: false
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Install deps
+        run: npm ci
+
+      - name: Collect + seal (무키면 휴면·0건, 변경 없으면 아무것도 쓰지 않음)
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: npm run collect -- llm-korea-capsule
+
+      - name: Verify hash chain
+        run: npm run verify -- llm-korea-capsule
+
+      - name: Anchor chain head to RFC 3161 TSA (best-effort)
+        run: npm run anchor -- llm-korea-capsule
+
+      - name: Publish site (docs/)
+        run: |
+          npm run site
+          test -f docs/index.html && test -f docs/.nojekyll  # 산출물 없으면 여기서 실패
+
+      - name: Commit accumulated data
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data docs
+          if git diff --cached --quiet; then
+            echo "no data change"
+          else
+            git commit -m "data(llm-korea-capsule): monthly LLM Korea-fact capsule [skip ci]"
+            n=0
+            until git push; do
+              n=$((n+1))
+              if [ "$n" -ge 3 ]; then echo "push failed after $n attempts" >&2; exit 1; fi
+              git pull --rebase origin "$GITHUB_REF_NAME"
+            done
+          fi

@@ -1,0 +1,28 @@
+# 청약·분양가 박제 — 스펙 v4 #4 (PLAN.md), Week 1 첫 어댑터.
+#
+# 소스: 공공데이터포털(data.go.kr) "한국부동산원_청약홈 분양정보 조회 서비스"
+#   활용신청 후 발급받은 "디코딩(Decoding)" 인증키를 GitHub Secrets의
+#   DATA_GO_KR_KEY 로 등록한다. 호출은 Authorization: Infuser 헤더를 쓰므로
+#   키 URL 인코딩 문제가 없다.
+id: bunyang-capsule
+family: api-records
+title: 청약홈 APT 분양공고·주택형별 분양가 일간 박제
+
+endpoints:
+  # APT 분양정보 상세 (공고 단위)
+  apt_detail: https://api.odcloud.kr/api/ApplyhomeInfoDetailSvc/v1/getAPTLttotPblancDetail
+  # APT 분양정보 주택형별 상세 (타입별 공급세대수·분양최고금액)
+  apt_model: https://api.odcloud.kr/api/ApplyhomeInfoDetailSvc/v1/getAPTLttotPblancMdl
+
+# 모집공고일(RCRIT_PBLANC_DE) 기준 수집·삭제감지 윈도(일).
+# 윈도를 벗어난 과거 공고는 latest.json에 마지막 관측 상태로 박제되어 남고,
+# 이번 수집분에 없다는 이유로 "삭제" 이벤트가 되지는 않는다.
+window_days: 180
+page_size: 100
+rate_limit_ms: 250 # 요청 간 최소 간격 — 공공 API 예의
+# max_removal_ratio: 0.3   # (기본값) 한 실행의 삭제 이벤트 비율 상한 — 초과 시 장애 의심 중단
+
+# 로드맵(어댑터 확장 후보 — 같은 서비스의 다른 오퍼레이션):
+#   - getUrbtyOfctlLttotPblancDetail  오피스텔/도시형/민간임대 분양정보
+#   - getRemndrLttotPblancDetail      잔여세대(무순위) 분양정보
+#   - ApplyhomeInfoCmpetRtSvc         청약 경쟁률 (별도 서비스)
