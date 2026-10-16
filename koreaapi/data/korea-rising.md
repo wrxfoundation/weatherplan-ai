@@ -1,14 +1,14 @@
-# Korea Rising — verified K-pop snapshot (2026-10-15)
+# Korea Rising — verified K-pop snapshot (2026-10-16)
 
 Every line is **cross-verified** (≥2 independent sources agree on the canonical name) and carries its source + Skill Score. Full data + Schema.org JSON-LD: <https://aiagentlabs.co.kr/> · via KoreaAPI (MCP).
 
 ## 🎬 Latest official releases (YouTube)
 - **BoA** — You still our No.1 BoA
-- **QWER** — QWER 3RD ANNIVERSARY POP-UP OPEN!🎁
-- **Xdinary Heroes** — Obsessed with #XdinaryHeroes❤️‍🔥
-- **NCT Dream** — ⤝♡지성이 시구 차원이 달라병 걸림♡⤛ | 지성 LG TWINS 시구 비하인드
+- **QWER** — Upside down🙌 @mountaindew_korea
+- **Xdinary Heroes** — Obsessed with #KickFlip #동현❤️‍🔥
+- **tripleS** — Lah, Honda CRF150L Punya 2 Filter Oli?! Jangan Sampai Lu Lupa Bersihin! 😱
+- **NCT Dream** — 2027 NCT DREAM SEASON’S GREETINGS BEHIND
 - **AKMU** — 2026 AKMU CONCERT TOUR [소문의 낙원 (Paradise of Rumors)] HIGHLIGHT
-- **BOYNEXTDOOR** — 한 번 싸우면 이틀은 가는 이리온즈 #BOYNEXTDOOR #보이넥스트도어 #BND #Count_To_Love #CountToLove_Challenge
 
 ## 🎤 Verified roster (640 acts)
 - **2NE1**: I Am the Best
