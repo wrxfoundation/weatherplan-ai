@@ -1,4 +1,4 @@
-import sys
+import sys, datetime
 from openpyxl import Workbook
 from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
 from openpyxl.utils import get_column_letter
@@ -55,6 +55,7 @@ rows = [
     (16, "계정당 보유 상한 (장)", 100, NUM0, True, "정본 §4-1 — 계정당 최대 100장"),
     (17, "재구매 1장에 필요한 WLBN", "=B13/(B10*(1-B14)*(1-B15))", NUM2, False, "재구매 단가 ÷ (가격 × (1 − 수수료) × (1 − 슬리피지))"),
     (18, "클레임 보류 (일)", 1, NUM0, False, "정본 §4-1 — 적립분 24시간 보류. 일별 시트 수식에 1일로 들어 있다(값만 바꿔도 반영 안 됨)"),
+    (19, "첫 구매일 (09:00 KST 스냅샷 뒤 구매 가정)", datetime.date(2026, 10, 16), 'yyyy-mm-dd', True, "날짜 계산용 — 09:00 전에 사면 하루 당겨진다"),
 ]
 for r, lab, val, fmt, is_in, src in rows:
     a.cell(row=r, column=1, value=lab).font = BLACK
@@ -64,7 +65,7 @@ for r, lab, val, fmt, is_in, src in rows:
     else:
         c.font = BLACK
     a.cell(row=r, column=3, value=src).font = NOTE
-a["A20"] = "계산 규칙"; a["A20"].font = BOLD
+a["A21"] = "계산 규칙"; a["A21"].font = BOLD
 rules = [
     "① 첫 구매일 = 0일차. 매일 09:00 KST(00:00 UTC) 스냅샷에 보유 장수 × 5 WLBN 이 적립된다(첫 적립 = 1일차).",
     "② 적립분은 24시간 보류 → 다음 날부터 쓸 수 있다. 쓸 수 있는 잔고가 재구매 1장 값 이상이면 그날 바로 정수 장만큼 산다(상한 100장까지).",
@@ -72,9 +73,9 @@ rules = [
     "④ 「평가액」은 손에 남은 WLBN(보류분 포함) × 가격이다. 재구매에 쓴 WLBN 과 이용권 자체의 남은 가치는 넣지 않는다.",
 ]
 for i, t in enumerate(rules):
-    c = a.cell(row=21 + i, column=1, value=t); c.font = BLACK; c.alignment = WRAP
-    a.merge_cells(start_row=21 + i, start_column=1, end_row=21 + i, end_column=3)
-    a.row_dimensions[21 + i].height = 28
+    c = a.cell(row=22 + i, column=1, value=t); c.font = BLACK; c.alignment = WRAP
+    a.merge_cells(start_row=22 + i, start_column=1, end_row=22 + i, end_column=3)
+    a.row_dimensions[22 + i].height = 28
 a.column_dimensions["A"].width = 34; a.column_dimensions["B"].width = 14; a.column_dimensions["C"].width = 70
 
 # ---------------- 일별 ----------------
@@ -166,20 +167,22 @@ summ = [
     (14, "상한 도달 뒤 하루 적립 (WLBN)", "=가정!B7*가정!B8", "=가정!B16*가정!B8", NUM0, ""),
     (15, "3년 뒤에도 남는 적립 권리 (WLBN)", 0, f"=SUMPRODUCT(일별!F{FIRST}:F{L},일별!A{FIRST}:A{L})*가정!B8", NUM0, "재구매분은 산 날부터 1,095일이라 3년 창 밖으로 이어진다(평가액에 넣지 않음)"),
     (16, "재구매에 필요한 RLUSD (합계)", 0, "=C8*가정!B13", USD0, "현실 점검 시트의 풀 깊이와 비교"),
+    (17, "첫 재구매 일차", "-", f"=IFERROR(INDEX(일별!A{FIRST}:A{L},MATCH(TRUE,INDEX(일별!F{FIRST}:F{L}>0,0),0)),\"없음\")", NUM0, "적립분이 재구매 1장 값에 닿고 24시간 보류가 풀린 날"),
+    (18, "첫 재구매 날짜", "-", "=IF(ISNUMBER(C17),가정!B19+C17,\"-\")", 'yyyy-mm-dd', "가정 시트 첫 구매일 기준"),
 ]
 for r, lab, b, c, fmt, memo in summ:
     s.cell(row=r, column=1, value=lab).font = BLACK
     for col, v in ((2, b), (3, c)):
         cell = s.cell(row=r, column=col, value=v); cell.font = BLACK; cell.number_format = fmt
     s.cell(row=r, column=4, value=memo).font = NOTE
-for r in (11, 12):
+for r in (11, 12, 17, 18):
     for col in (1, 2, 3):
         s.cell(row=r, column=col).font = BOLD
 
-s["A18"] = "연도별"; s["A18"].font = BOLD
-header(s, 19, ["연차", "재구매 없이 누적 WLBN", "재구매 누적 적립 WLBN", "재구매 연말 손에 남은 WLBN", "재구매 연말 보유 장수", "재구매 연말 평가액 USD", "재구매 없이 평가액 USD"])
+s["A20"] = "연도별"; s["A20"].font = BOLD
+header(s, 21, ["연차", "재구매 없이 누적 WLBN", "재구매 누적 적립 WLBN", "재구매 연말 손에 남은 WLBN", "재구매 연말 보유 장수", "재구매 연말 평가액 USD", "재구매 없이 평가액 USD"])
 for i, mrow in enumerate((17, 29, 41)):
-    r = 20 + i
+    r = 22 + i
     s.cell(row=r, column=1, value=f"{i+1}년차").font = BLACK
     for col, src, fmt in ((2, f"=월별!J{mrow}", NUM0), (3, f"=월별!G{mrow}", NUM0), (4, f"=월별!H{mrow}", NUM0), (5, f"=월별!D{mrow}", NUM0), (6, f"=월별!I{mrow}", USD0), (7, f"=월별!K{mrow}", USD0)):
         c = s.cell(row=r, column=col, value=src); c.font = GREEN; c.number_format = fmt
@@ -215,7 +218,7 @@ for r, lab, v, fmt, is_in, memo in zr:
     z.cell(row=r, column=3, value=memo).font = NOTE
 z["A17"] = "막히는 지점"; z["A17"].font = BOLD
 blocks = [
-    "① 교환: 이용권은 RLUSD 결제만(정본 §4-1). 재구매하려면 WLBN 을 RLUSD 로 바꿔야 하는데, 정본은 G4 전 거래 금지 · 10/14 라이브 AMM 풀과 충돌(정본 §8 확인 필요). 교환이 막혀 있으면 재구매(복리)는 0 이다.",
+    "① 교환: 이용권은 RLUSD 결제만(정본 §4-1) → 재구매하려면 WLBN 을 RLUSD 로 바꿔야 한다. 10/16 서우 확인 — 교환 정상 작동, 재구매는 보유자 선택. 남은 것 = 사이트 문구(G4 전 거래 금지)와 라이브 풀의 정리(정본 §8).",
     "② 출금 · 클레임: 적립분이 계정 포인트로만 쌓이는 단계면(FAQ 「출금 개시 전 계정 포인트」) 지갑으로 꺼내 팔 수 없다(정본 §4-1 확인 필요 ②).",
     "③ 가격: 시트는 WLBN $1.0 을 고정으로 둔다. 재구매가 늘수록 같은 사람이 계속 파는 쪽이라 가격을 누른다 — 고정 가격은 낙관 쪽 가정이다.",
     "④ 할인: 첫 구매 30% 할인이 재구매에도 된다고 뒀다. 할인 코드 조건이 1회 · 1인이면 재구매 단가는 380 → 필요한 WLBN 이 약 1.4배.",
