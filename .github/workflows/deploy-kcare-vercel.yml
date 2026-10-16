@@ -1,0 +1,70 @@
+# K-CARE 앱을 Vercel 새 프로젝트로 배포하는 수동 트리거 워크플로.
+# 샌드박스에서 api.vercel.com 이 이그레스 정책으로 차단되어, 토큰을 커밋하지 않고
+# 실행 시점 입력(workflow_dispatch input)으로만 받아 Actions 러너에서 배포한다.
+name: Deploy K-CARE app (Vercel)
+
+on:
+  workflow_dispatch:
+    inputs:
+      vercel_token:
+        description: "Vercel access token (저장소 시크릿 VERCEL_TOKEN 등록 시 생략 가능)"
+        required: false
+        default: ""
+        type: string
+      project:
+        description: "Vercel project name"
+        required: false
+        default: "k-care-app"
+        type: string
+      scope:
+        description: "Vercel team slug"
+        required: false
+        default: "wrxfoundation-9725s-projects"
+        type: string
+
+permissions:
+  contents: read
+
+concurrency: deploy-kcare-vercel
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      VERCEL_TOKEN: ${{ inputs.vercel_token != '' && inputs.vercel_token || secrets.VERCEL_TOKEN }}
+    steps:
+      - name: Check token
+        run: |
+          echo "::add-mask::$VERCEL_TOKEN"
+          if [ -z "$VERCEL_TOKEN" ]; then
+            echo "::error::vercel_token 입력 또는 저장소 시크릿 VERCEL_TOKEN이 필요합니다."
+            exit 1
+          fi
+
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install Vercel CLI
+        run: npm install -g vercel@latest
+
+      - name: Link or create project
+        working-directory: kcare-app
+        run: |
+          vercel link --yes \
+            --scope "${{ inputs.scope }}" \
+            --project "${{ inputs.project }}" \
+            --token "$VERCEL_TOKEN"
+
+      - name: Deploy to production
+        working-directory: kcare-app
+        run: |
+          vercel deploy --prod --yes \
+            --scope "${{ inputs.scope }}" \
+            --token "$VERCEL_TOKEN" \
+            > deploy-url.txt 2> deploy-log.txt || { cat deploy-log.txt; exit 1; }
+          echo "### K-CARE 배포 완료" >> "$GITHUB_STEP_SUMMARY"
+          echo "URL: $(cat deploy-url.txt)" >> "$GITHUB_STEP_SUMMARY"
+          echo "DEPLOY_URL=$(cat deploy-url.txt)"

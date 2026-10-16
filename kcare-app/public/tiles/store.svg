@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="스토어">
+  <path d="M21 27v-5a11 11 0 0 1 22 0v5" fill="none" stroke="#7A5210" stroke-width="3.2" stroke-linecap="round"/>
+  <path d="M12 27h40l-3.3 25.6A5.5 5.5 0 0 1 43.2 57H20.8a5.5 5.5 0 0 1-5.5-4.4z" fill="#FFFFFF" stroke="#7A5210" stroke-width="3" stroke-linejoin="round"/>
+  <rect x="15.6" y="36" width="32.8" height="5.6" rx="2.8" fill="#B08D57" opacity=".55"/>
+</svg>
