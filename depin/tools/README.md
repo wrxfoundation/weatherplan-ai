@@ -45,3 +45,8 @@
 
 제거: 회수 시점 KPI · "순수익" 표현 · 시나리오 프리셋. 유지: 분배 공식 구조와
 "노드가 늘면 몫이 줄고, 매출이 늘면 예산이 커집니다" 문구. (금지표현: 수익 약속·회수기간·월수익)
+
+## build-pass-compound-xlsx.py — AI 이용권 재구매(복리) 시트 (10/16, 내부 검토용)
+
+`python3 depin/tools/build-pass-compound-xlsx.py depin/content/ai-pass-compound-1016.xlsx` 뒤 xlsx 스킬의 `recalc.py` 로 값을 채운다.
+시트: 가정(파란 글씨 · 노란 칸만 수정) · 요약 · 일별(1,095일) · 월별(36) · 현실 점검. 대외 금지 — 「복리 · 수익률 · 월 ○달러」 표현 그대로 쓰지 않는다.
