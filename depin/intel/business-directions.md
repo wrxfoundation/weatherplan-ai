@@ -4634,3 +4634,15 @@ Thanks Clyde, good to have you on it. HK is just an hour behind Seoul, so timing
   ③ 「eleven weather feeds」는 Lacey · Lynn 판과 같게(Open-Meteo 이중 집계 보류 건 — 확인 전이면 「multiple weather feeds」).
 - 문안(영문 992자)은 채팅. 서명 「Logan (Seowoo Park)」.
 - **발송 여부는 Claude 가 관리하지 않는다** — 서우 통보 시 갱신.
+
+## Disha Sharma (인도 솔란 · 마케팅 MBA · 어필리에이트 · 퍼포먼스 마케팅 지망) — 기기 어필리에이트 제안 (2026-10-17, 서우 프로필 캡처 2장 + 「우리 디바이스 어필리에이트 제안해 보자」)
+
+- **자리**(캡처 기준): Himachal Pradesh University MBA(마케팅, 2021-12~2023-12) · Shoolini University 경제학 학사(2018~2021) · 헤드라인 「Digital Marketing · Affiliate Marketing · Performance Marketing」 ·
+  소개 「SEO 키워드 · 이메일 캠페인 등 자기 주도 프로젝트로 실무를 익히는 중」 · 1촌 107 · 팔로워 113 · 최근 게시물 없음. **새 1촌.**
+- **판정 — 보내도 되지만 기대값은 작다.** 경력 초기 · 자기 채널(청중) 없음 → 수수료형 어필리에이트로는 전환이 거의 안 나올 수 있다. 대신 「실제 숫자로 연습할 진짜 프로그램」이라는 각도는 그쪽에 맞다(소개 글과 맞물림).
+  **보내기 전 서우가 정할 것 둘:** ① **배송 국가** — 인도로 기기를 보낼 수 있나(해외는 배송 확정 전 대기 명단 원칙 · 인도는 무선 기기 WPC 인증 등 확인 필요). 안 되면 「배송 국가 대상 캠페인」 한 줄을 넣거나 보내지 않는다.
+  ② **수수료율** — 9/11 정본 5%+5% vs 10/15 Isadora 10%+10% 미정리 → 메시지에 숫자 0, 「details」로 넘김.
+  ③ 문구 규칙: 기기 · 데이터로만 소개, 보상 · 토큰 · 수익 0 · #ad 표시 · 수익 주장 금지를 첫 메시지에 명시(playbook UGC ④). 인도 가상자산 광고 지침(ASCI, 2022 — 면책 문구 의무) 해당 여부 확인 필요.
+  ④ 케이웨더는 「Together with KWeather」(기기 파트너) — 제조사 단독 주어 0.
+- 문안(영문 927자 + 배송 국가 선택 줄 80자)은 채팅.
+- **발송 여부는 Claude 가 관리하지 않는다** — 서우 통보 시 갱신.
