@@ -4646,3 +4646,12 @@ Thanks Clyde, good to have you on it. HK is just an hour behind Seoul, so timing
   ④ 케이웨더는 「Together with KWeather」(기기 파트너) — 제조사 단독 주어 0.
 - 문안(영문 927자 + 배송 국가 선택 줄 80자)은 채팅.
 - **발송 여부는 Claude 가 관리하지 않는다** — 서우 통보 시 갱신.
+
+## Juyoung Lee (Altos Ventures 투자팀 · 새 1촌) — 판정 · 인사 (2026-10-17, 서우 프로필 캡처 3장)
+
+- **자리**(캡처 기준): Altos Ventures Investment Team(2026-06~) · Hahn & Company CSG General Manager(2026-01~06) · Senior Manager(2024-01~2026-01) · McKinsey BA · Associate(2022-02~2024-01, 서울) ·
+  GSK Regulatory Affairs(2021) · 약국 관리약사(2020~2021) · 이화여대 약학 PharmD(2016~2020) · 고려대 식품생명공학(2013~2015) · 약사 면허(2020-03). 공통 1촌 1. 1촌 수락 직후.
+- **판정 — VC 기본값 ②: 맺되 먼저 사업 · 투자 얘기 0.** Lynn 국문 기본값 + 개인 훅 한 줄(약학 배경 → 「집 안 공기도 결국 건강 데이터」). 요청 0 · 라운드 · 토큰 · 가격 0.
+  기본값의 「인증 측정기」 · 「11개 독립 출처」는 「측정기」 · 「11개 출처의 합의값」으로(문구 보류 건). 한글 이름 미확인 → 「Juyoung님」.
+- 문안(국문 349자)은 채팅. 투자 질문이 오면 Lacey · Mirana 선대로 대표 · 경영진 몫으로 넘긴다.
+- **발송 여부는 Claude 가 관리하지 않는다** — 서우 통보 시 갱신.
