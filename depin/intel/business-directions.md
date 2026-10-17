@@ -4655,3 +4655,12 @@ Thanks Clyde, good to have you on it. HK is just an hour behind Seoul, so timing
   기본값의 「인증 측정기」 · 「11개 독립 출처」는 「측정기」 · 「11개 출처의 합의값」으로(문구 보류 건). 한글 이름 미확인 → 「Juyoung님」.
 - 문안(국문 349자)은 채팅. 투자 질문이 오면 Lacey · Mirana 선대로 대표 · 경영진 몫으로 넘긴다.
 - **발송 여부는 Claude 가 관리하지 않는다** — 서우 통보 시 갱신.
+
+## Hannah Ovaisi (Clifford Chance 소송 · 분쟁 Senior Associate · 전 Coinbase 국제 소송 AGC · 런던 · 새 1촌) — 판정 · 인사 (2026-10-17, 서우 캡처 4장)
+
+- **자리**(캡처 기준): Coinbase Associate General Counsel, International Litigation(2025-08~, 15개월 — 19시간 전 「오늘이 마지막 날」 글) · Clifford Chance(2014~ · Senior Associate 2021-07~, 런던 — 헤드라인이 다시 CC) ·
+  Barclays 파견 법무(2018) · BPP 법정 변론권(Solicitor Advocate, 2020) · University of Law LPC. 공통 1촌 1. 1촌 수락 직후.
+- **판정 — 인사만, 사업 · 법률 질문 0.** 소송 · 분쟁 변호사라 우리 레인(데이터 · 예측시장 · 결제)과 닿지 않고, 막 떠난 코인베이스(거래소) 맥락은 「거래소 1촌 = 인사만」 선과 같다.
+  첫 인사에 법률 자문 성격의 질문(싱가포르 법인 · 규제)을 얹지 않는다 — 필요해지면 정식 의뢰 경로로.
+- 문안(영문 약 530자 — 코인베이스 마무리 · CC 복귀 축하 + Lynn 한 문단)은 채팅. 게시물 공개 축하 댓글은 해도 되나 회사 언급 0.
+- **발송 여부는 Claude 가 관리하지 않는다** — 서우 통보 시 갱신.
