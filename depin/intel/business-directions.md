@@ -4623,3 +4623,14 @@ Thanks Clyde, good to have you on it. HK is just an hour behind Seoul, so timing
 - 문안(채팅): 1촌 메모 영문 292자(국문 대안 147자 — 한글 이름 미확인이라 「대표님」) · 수락 뒤 메시지 742자(관측망 + 지문 · 작은 방 밤사이 CO2 · 습도 · 고려대 옆 한 곳 파일럿 · 커피).
   → 서우 「300자로 맞춰줘」: 1촌 메모에 파일럿 한 줄까지 넣은 판 — 영문 294자 · 국문 272자(작은 방 밤사이 CO2 · 습도 → 고려대 인근 한 곳 · 공용부 + 동의한 방 · 운영팀 조치 · 투자자 확인).
 - **발송 여부는 Claude 가 관리하지 않는다** — 서우 통보 시 갱신.
+
+## Jeff Bandman (Kalshi Prime CEO · 뉴욕 · 2촌 · 1촌 신청 대기중) — 프로필 조회 뒤 인사 (2026-10-17, 서우 프로필 캡처 3장 + 「내 프로필을 조회했어, 인사 나누자」)
+
+- **자리**(캡처 기준): Kalshi Prime CEO(2026-08~ · FCM · 증거금 무기한 선물 사업 — 채용 글 기준) · 「Jeff got Kalshi regulated」(칼시 규제 전략 총괄 · CFTC 승인 과정) · Bandman Advisors(2017~) ·
+  GBBC 이사회 의장(2023-12~) · ESMA 협의 그룹 위원 · Stanford Law. 9시간 전 첫 CEO 팟캐스트(Prediction Markets Report 「Perpetuals, Prediction Markets, and What Comes Next」). 공통 1촌 7(이름은 적지 않음).
+- **판정 — 인사만.** 서우 프로필을 먼저 본 신호라 대기 중인 1촌 신청과 별개로 메시지로 인사한다. 칼시 사업 문은 여전히 Will Brackett(전수 리스트 5번) — Jeff 는 Kalshi Prime(FCM · 선물) 쪽이라 날씨 시장 제안 대상이 아니다.
+  ① 예측시장은 정본 문장 한 줄 + 그의 규제 이력에 닿는 「정산 출처가 관건」 한 줄까지. 칼시 · TWC · 한국 도시 · 서울 시장 언급 0 · 공개 댓글 0(전수 리스트 규칙).
+  ② 뉴욕 한 줄(Swell 10/27~29 인사)은 선택 — Will 과 대면이 잡히면 빼도 된다(같은 회사 두 사람에게 겹치는 요청이 되지 않게).
+  ③ 「eleven weather feeds」는 Lacey · Lynn 판과 같게(Open-Meteo 이중 집계 보류 건 — 확인 전이면 「multiple weather feeds」).
+- 문안(영문 992자)은 채팅. 서명 「Logan (Seowoo Park)」.
+- **발송 여부는 Claude 가 관리하지 않는다** — 서우 통보 시 갱신.
