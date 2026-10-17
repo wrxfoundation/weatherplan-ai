@@ -1,0 +1,1674 @@
+/* wellbian_promotion(판매 랜딩 S0~S9 + 대기·주문 서브페이지) 이식 전용 스타일.
+   원본 app/globals.css의 :root/html/body/전역 리셋을 .wb-store 래퍼로 스코프해
+   kweather-depin 사이트 전역 CSS 변수(--line, --mono 등)와 충돌하지 않게 했다.
+   원본 파일: wellbian_promotion/app/globals.css - 규칙 자체는 그대로, 선택자만 스코프. */
+.wb-store {
+  --w-main: #4d4dce;
+  --w-deep: #1b1b48;
+  --w-tint: #eeeefb;
+
+  --ink-1: #22223a; --ink-2: #44445e; --ink-3: #5b5b74; --ink-4: #6b6b85;
+  --cap: #8a8aa3; --hint: #9a9ab5; --dis: #b5b5c9; --arrow: #c9c9dd;
+  --bd-input: #d8d8e6; --bd-btn: #e2e2ee; --bd-card: #e5e5ef;
+  --line: #ececf3; --line-2: #f2f2f7; --chip: #f0f0f6;
+  --sec-alt: #f6f6fa; --panel: #fafafd; --card-dis: #fafafb;
+
+  --ok-text: #1e8e5a; --ok-dot: #4ade80; --ok-bg: #e9f7f0;
+  --warn-text: #8a3535; --warn-icon: #c0392b; --warn-bg: #fdf3f2; --warn-bd: #f2c9c9;
+
+  /* 로컬 설치 Montserrat에 의존하지 않도록 next/font 셀프호스팅본(--font-montserrat)을
+     최우선으로 둔다 - 일부 PC에 이탤릭 컷만 설치돼 숫자가 기울어 보이던 문제의 원인 */
+  --mono: var(--font-montserrat), "Pretendard Variable", Pretendard, sans-serif;
+
+  color: var(--ink-1);
+  background: #fff;
+  -webkit-font-smoothing: antialiased;
+  word-break: keep-all;
+  font-family: "Pretendard Variable", Pretendard, -apple-system, "Apple SD Gothic Neo", sans-serif;
+}
+.wb-store[data-theme="teal"] {
+  --w-main: #00a991; --w-deep: #003b33; --w-tint: #e7f5f1;
+}
+
+.wb-store * { box-sizing: border-box; }
+.wb-store a { color: var(--w-main); text-decoration: none; }
+.wb-store a:hover { color: var(--w-deep); text-decoration: underline; }
+.wb-store button { font: inherit; cursor: pointer; border: 0; background: none; color: inherit; padding: 0; }
+.wb-store input { font: inherit; }
+.wb-store h1, .wb-store h2, .wb-store h3, .wb-store p { margin: 0; }
+.wb-store .mono { font-family: var(--mono); font-style: normal; font-weight: 700; letter-spacing: .01em; font-variant-numeric: tabular-nums; }
+.wb-store .count-slot { display: inline-block; text-align: right; }
+
+.wb-store .lang-sel { font-size: 15.5px; padding: 6px 30px 6px 11px; }
+@media (max-width: 356px) { .wb-store .lang-sel { font-size: 13px; padding: 5px 23px 5px 8px; } }
+
+.wb-store .btn-main {
+  display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+  background: var(--w-main); color: #fff; font-weight: 800; border-radius: 12px;
+  transition: filter .15s;
+}
+.wb-store .btn-main:hover { filter: brightness(.94); }
+.wb-store .btn-main:disabled { background: #d8d8e0; color: var(--cap); cursor: not-allowed; filter: none; }
+.wb-store .btn-outline-deep {
+  display: inline-flex; align-items: center; justify-content: center; gap: 9px;
+  border: 1.5px solid var(--w-deep); color: var(--w-deep); font-weight: 800; border-radius: 10px;
+  transition: background .15s;
+}
+.wb-store .btn-outline-deep:hover { background: var(--sec-alt); }
+.wb-store .btn-ghost {
+  display: inline-flex; align-items: center; justify-content: center; gap: 9px;
+  border: 1px solid var(--bd-btn); color: var(--w-deep); font-weight: 700; border-radius: 12px;
+  transition: background .15s;
+}
+.wb-store .btn-ghost:hover { background: var(--panel); }
+
+.wb-store .track {
+  position: relative; border-radius: 99px; overflow: hidden;
+  background: rgba(27, 27, 72, .07);
+  border: 1px solid rgba(27, 27, 72, .09);
+  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+  box-shadow: inset 0 1px 3px rgba(27, 27, 72, .1);
+}
+.wb-store .track > i {
+  display: block; height: 100%; border-radius: 99px;
+  position: relative; overflow: hidden;
+  background: linear-gradient(90deg, var(--w-main), color-mix(in oklab, var(--w-main) 68%, white));
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, .35), 0 0 10px color-mix(in oklab, var(--w-main) 35%, transparent);
+  animation: track-fill 1.1s cubic-bezier(.25, .8, .3, 1) both;
+  transition: width .4s ease-out;
+}
+.wb-store .track > i::after {
+  content: ""; position: absolute; top: 0; bottom: 0; width: 42%;
+  background: linear-gradient(105deg, transparent, rgba(255, 255, 255, .55), transparent);
+  animation: track-shine 2.4s ease-in-out infinite;
+}
+@keyframes track-fill { from { width: 0; } }
+@keyframes track-shine { 0% { left: -45%; } 60%, 100% { left: 110%; } }
+.wb-store .track.on-dark {
+  background: rgba(255, 255, 255, .12);
+  border-color: rgba(255, 255, 255, .22);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, .28);
+}
+.wb-store .track.on-dark > i {
+  background: linear-gradient(90deg, color-mix(in oklab, var(--w-main) 60%, white), color-mix(in oklab, var(--w-main) 28%, white));
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, .45), 0 0 12px rgba(255, 255, 255, .18);
+}
+.wb-store .track.on-light { background: rgba(27, 27, 72, .1); }
+.wb-store .track.gray > i { background: #8a8aa3; box-shadow: none; }
+.wb-store .track.gray > i::after { display: none; }
+@media (prefers-reduced-motion: reduce) {
+  .wb-store .track > i { animation: none; }
+  .wb-store .track > i::after { animation: none; display: none; }
+}
+
+.wb-store .pill { display: inline-flex; align-items: center; border-radius: 99px; font-weight: 800; }
+
+/* 컨테이너 폭 - 하단 전 섹션을 사이트 공용 1280 으로 통일(요청, 9/2).
+   1920 기준 좌우 320 여백 = Figma "사전구매_페이지01" 의 1280 컨테이너(x=320~1600)와 일치한다.
+   이전에는 1080 이었고 커뮤니티 배너·제품 갤러리만 1280 으로 따로 덮어썼다 - 이제 불필요. */
+.wb-store .wrap { max-width: 1280px; margin: 0 auto; }
+
+/* 배너 섹션과 사이트 푸터 사이에 보이던 색 띠 제거(요청).
+   원인은 .main-wrap 의 padding-bottom(48px / 768px 이하 56px) 이다. 풀블리드인 .wb-store 는
+   그 여백 '안쪽'에서 끝나므로, 남은 여백에 body 배경(--bg: #ecedf5)이 그대로 드러나
+   배너 섹션(--sec-alt #f6f6fa)과 다크 푸터 사이에 한 줄이 끼어 보였다.
+   LaunchShell 이 상단을 -mt-6 으로 끌어올려 같은 띠를 없앤 것과 대칭으로, 하단은 여기서 되돌린다.
+   ※ .main-wrap 의 여백을 직접 건드리면 사이트 전 페이지에 영향이 간다 - 그래서 이쪽만 상쇄한다. */
+.wb-store.full-bleed { margin-bottom: -48px; }
+@media (max-width: 768px) { .wb-store.full-bleed { margin-bottom: -56px; } }
+.wb-store .sec-pad { padding: 80px 64px; }
+@media (max-width: 720px) { .wb-store .sec-pad { padding: 36px 20px; } }
+
+.wb-store .acc-body { overflow: hidden; transition: height .2s ease; }
+.wb-store .acc-chev { transition: transform .2s ease; }
+.wb-store .acc-open .acc-chev { transform: rotate(180deg); }
+
+@keyframes modal-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@keyframes sheet-in { from { transform: translateY(100%); } to { transform: none; } }
+@keyframes overlay-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes pulse-dot { 0%,100% { opacity: 1; } 50% { opacity: .3; } }
+.wb-store .overlay {
+  position: fixed; inset: 0; z-index: 90; background: rgba(20,20,52,.55);
+  display: flex; align-items: center; justify-content: center;
+  animation: overlay-in .15s ease; padding: 24px;
+}
+.wb-store .modal-card {
+  width: 560px; max-width: 100%; max-height: 92vh; overflow: auto;
+  background: #fff; border-radius: 20px; padding: 32px 36px;
+  display: flex; flex-direction: column; gap: 20px;
+  box-shadow: 0 24px 64px rgba(0,0,0,.35);
+  animation: modal-in .2s ease;
+}
+@media (max-width: 720px) {
+  .wb-store .overlay { align-items: flex-end; padding: 0; }
+  .wb-store .modal-card {
+    width: 100%; border-radius: 20px 20px 0 0; padding: 12px 20px 24px;
+    animation: sheet-in .26s ease; max-height: 88vh;
+  }
+  .wb-store .sheet-handle { width: 40px; height: 4px; border-radius: 99px; background: var(--bd-input); margin: 0 auto; }
+}
+@media (min-width: 721px) { .wb-store .sheet-handle { display: none; } }
+.wb-store .pulse { animation: pulse-dot 1.2s ease-in-out infinite; }
+
+@keyframes live-ping { 0% { transform: scale(1); opacity: .65; } 75%, 100% { transform: scale(2.6); opacity: 0; } }
+.wb-store .live-dot { position: relative; display: inline-flex; width: 8px; height: 8px; flex: none; }
+.wb-store .live-dot::before { content: ""; position: absolute; inset: 0; border-radius: 99px; background: var(--ok-dot); animation: live-ping 1.6s cubic-bezier(0, 0, .2, 1) infinite; }
+.wb-store .live-dot::after { content: ""; position: absolute; inset: 0; border-radius: 99px; background: var(--ok-dot); }
+
+@keyframes step-in { from { opacity: 0; transform: translateX(8px); } to { opacity: 1; transform: none; } }
+.wb-store .step-in { animation: step-in .15s ease; }
+
+.wb-store .mstep-ind { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
+.wb-store .mstep-dot {
+  width: 28px; height: 28px; border-radius: 99px; font-size: 14px; font-weight: 800;
+  display: inline-flex; align-items: center; justify-content: center; flex: none;
+}
+.wb-store .mstep-dot.cur { background: var(--w-main); color: #fff; }
+.wb-store .mstep-dot.done { background: var(--w-tint); color: var(--w-main); }
+.wb-store .mstep-dot.todo { background: var(--chip); color: var(--dis); }
+.wb-store .mstep-line { width: 16px; height: 2px; background: var(--bd-card); flex: none; }
+.wb-store .mstep-line.done { background: var(--w-main); }
+.wb-store .mstep-label { font-size: 14.5px; color: var(--dis); }
+.wb-store .mstep-label.cur { font-weight: 700; color: var(--w-deep); }
+@media (max-width: 560px) { .wb-store .mstep-label:not(.cur) { display: none; } }
+
+@media (min-width: 721px) { .wb-store .hero-h1-en { white-space: nowrap; } }
+@media (min-width: 721px) { .wb-store .hero-h1-ko { white-space: nowrap; font-size: clamp(29px, 3.95vw, 54px) !important; } }
+.wb-store .pre-stat { display: inline-flex; align-items: center; gap: 18px; align-self: flex-start; }
+.wb-store .pre-stat .ps-div { width: 1px; height: 22px; background: rgba(255, 255, 255, .45); flex: none; }
+@media (max-width: 720px) {
+  .wb-store .pre-stat { flex-direction: column; align-items: stretch; gap: 11px; align-self: stretch; text-align: center; }
+  .wb-store .pre-stat .ps-div { width: 100%; height: 1px; }
+}
+
+.wb-store .hero-lockup { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.wb-store .hero-lockup .lk-wb { height: 36px; width: auto; }
+.wb-store .hero-lockup .lk-x { font-size: 22px; font-weight: 700; color: color-mix(in oklab, var(--w-main) 45%, white); line-height: 1; }
+.wb-store .hero-lockup .lk-xrpl { height: 27px; width: auto; opacity: .92; }
+.wb-store .gnb-logo { height: 58px; width: auto; flex-shrink: 0; }
+@media (max-width: 720px) {
+  .wb-store .hero-lockup { gap: 9px; }
+  .wb-store .hero-lockup .lk-wb { height: 24px; }
+  .wb-store .hero-lockup .lk-x { font-size: 15px; }
+  .wb-store .hero-lockup .lk-xrpl { height: 18px; }
+}
+
+.wb-store .feed-roll {
+  height: 280px; overflow: hidden;
+  mask-image: linear-gradient(180deg, transparent 0%, #000 20%, #000 76%, transparent 100%);
+  -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 20%, #000 76%, transparent 100%);
+}
+.wb-store .feed-track { display: grid; grid-template-columns: repeat(3, 1fr); column-gap: 32px; row-gap: 14px; animation: feed-up 32s linear infinite; }
+@media (max-width: 900px) { .wb-store .feed-track { grid-template-columns: 1fr 1fr; column-gap: 36px; } }
+.wb-store .feed-row {
+  display: flex; align-items: baseline; gap: 18px; justify-content: center;
+  font-size: 17px; letter-spacing: .01em;
+}
+@keyframes feed-up { from { transform: translateY(0); } to { transform: translateY(-50%); } }
+@media (max-width: 720px) { .wb-store .feed-roll { height: 220px; } .wb-store .feed-row { gap: 10px; font-size: 15px; } .wb-store .feed-track { grid-template-columns: 1fr; } }
+@media (min-width: 901px) { .wb-store .feed-row { gap: 12px; font-size: 16px; } }
+@media (prefers-reduced-motion: reduce) { .wb-store .feed-track { animation: none; } }
+
+
+/* ── S3 제품 2단 갤러리 (Figma "사전구매_페이지01" · 9/2) ────────────────────
+   1280 컨테이너(x=320~1600) 안에서 좌 610 / 우 나머지.
+     큰 이미지  610x396      (Figma 24:33)
+     썸네일     116x88 x5    (Figma 24:35/24:39, y=1874 - 큰 이미지 아래 23px)
+   썸네일 5개(116*5=580)를 610 에 꽉 채우려면 간격이 (610-580)/4 = 7.5px 다.
+   좌측 열 전체 높이 396 + 23 + 88 = 507 - 우측 스펙표를 여기에 맞춰 자른다. */
+/* Figma Rectangle 36(24:31) 의 채움색. 다른 섹션이 쓰는 --sec-alt(#f6f6fa)보다 진하다. */
+.wb-store #spec { --spec-bg: #e4e4f8; }
+/* 하단 여백: PC 는 .sec-pad 기본 80 + 35 = 115(요청 누적).
+   모바일은 그 값이 그대로 남으면 스펙표 아래가 텅 빈다 - 여기서만 줄인다. */
+.wb-store #spec { padding-bottom: 115px; }
+@media (max-width: 720px) { .wb-store #spec { padding-bottom: 40px; } }
+.wb-store .spec-cols {
+  --spec-left-w: 610px;
+  /* 좌측 열 높이 = 큰 이미지(610x458) + 23 + 썸네일(88). 시안은 396 이었다 - 차이는
+     원본 사진의 좌우 블러 밴드 때문이다(아래 .spec-main 주석). */
+  --spec-left-h: 569px;
+  display: grid;
+  grid-template-columns: var(--spec-left-w) 1fr;
+  gap: 50px;
+  align-items: start;
+}
+.wb-store .spec-main {
+  width: 100%;
+  /* 원본 5장은 파일상 2000x1125(16:9)지만, 실제 사진은 가운데 1500x1125(4:3) 이고
+     좌우 250px 씩은 사진을 늘려 흐린 '블러 밴드'다(product-1/2/3 에서 확인).
+     그래서 16:9 로 꽉 채우면 양옆에 흐릿한 띠가 그대로 보인다 - 잘린 것처럼 읽힌다.
+
+     박스를 4:3 으로 두면 cover 가 세로를 기준으로 맞추면서 좌우 250px 씩을 정확히
+     덜어낸다 = 블러 밴드만 잘리고 사진은 세로로 온전히 들어온다(요청: 좌우 잘림이
+     안 보이는 쪽 우선). 폭 610 기준 높이 458px - 16:9(343px)보다 커져 사진도 커진다.
+     product-4/5 는 밴드가 없어 좌우가 조금 잘리지만, 갤러리는 한 비율로 통일해야 한다. */
+  aspect-ratio: 4 / 3;
+  border-radius: 16px;
+  background: var(--w-deep) center / cover no-repeat;
+  transition: background-image .25s ease;
+}
+
+.wb-store .spec-thumbs { display: flex; gap: 7.5px; margin-top: 23px; }
+.wb-store .spec-thumb {
+  flex: 1 1 0;               /* 116px 고정 대신 5등분 - 좁은 화면에서 같이 줄어든다 */
+  aspect-ratio: 116 / 88;
+  border-radius: 10px;
+  /* background-clip 기본값이 border-box 라 이미지는 padding-box 기준으로 깔리고
+     테두리 2px 자리에는 '배경색'만 칠해진다 - 그게 위아래 검은 띠로 보였다(색이 --w-deep).
+     background-origin: border-box 로 이미지가 테두리 자리까지 덮게 하고,
+     로딩 중 잠깐 보이는 바탕색도 어두운 남색 대신 옅은 색으로 바꾼다. */
+  background: #e9e9f5 center / cover no-repeat;
+  background-origin: border-box;
+  border: 2px solid transparent;
+  opacity: .62;
+  cursor: pointer;
+  transition: opacity .18s, border-color .18s;
+}
+.wb-store .spec-thumb:hover, .wb-store .spec-thumb:focus-visible { opacity: 1; }
+.wb-store .spec-thumb.on { opacity: 1; border-color: var(--w-main); }
+
+.wb-store .spec-right { display: flex; flex-direction: column; gap: 12px; }
+/* 접힘: 좌측 열 높이에서 '더보기' 버튼 자리(약 52px)를 뺀 만큼만 보여준다. */
+.wb-store .spec-table-clip {
+  position: relative;
+  max-height: calc(var(--spec-left-h) - 52px);
+  overflow: hidden;
+}
+.wb-store .spec-table-clip.open { max-height: none; overflow: visible; }
+.wb-store .spec-row {
+  display: grid; grid-template-columns: 150px 1fr; gap: 14px;
+  padding: 9px 4px; border-bottom: 1px solid var(--line);
+  font-size: 17.5px; line-height: 1.45;
+}
+.wb-store .spec-k { font-weight: 800; color: var(--w-deep); }
+.wb-store .spec-v { color: var(--ink-2); }
+/* 잘린 자리에 페이드를 얹어 '더 있다'를 보이게 한다 - 배경색과 같은 색으로 흘린다. */
+.wb-store .spec-fade {
+  position: absolute; left: 0; right: 0; bottom: 0; height: 64px; pointer-events: none;
+  background: linear-gradient(180deg, rgba(228,228,248,0), var(--spec-bg));
+}
+.wb-store .spec-more {
+  display: inline-flex; align-items: center; gap: 7;
+  align-self: flex-start;
+  font-size: 18px; font-weight: 800; color: var(--w-main);
+}
+
+/* 좁은 화면 - 1단으로 쌓고, 우측 스펙표의 높이 제한을 푼다
+   (좌측 열과 나란히 있을 때만 의미가 있는 제약이다) */
+@media (max-width: 900px) {
+  .wb-store .spec-cols { grid-template-columns: 1fr; gap: 28px; }
+  /* 모바일은 스펙을 절반만 보여준다(요청). 1단으로 쌓이면서 좌측 열과 나란히 있을 때의
+     높이 제약이 의미가 없어져 420 을 뒀는데, 값이 값 자체로 길었다.
+     나머지는 '전체 15항목 보기' 로 펼친다. */
+  .wb-store .spec-table-clip { max-height: 210px; }
+}
+
+.wb-store .spec-hero { position: relative; overflow: hidden; background: var(--w-deep); }
+.wb-store .spec-bg {
+  position: absolute; inset: 0; z-index: 0;
+  background-position: center; background-size: cover; background-repeat: no-repeat;
+  opacity: 0; transition: opacity 1.2s ease;
+}
+.wb-store .spec-bg.on { opacity: 1; }
+.wb-store .spec-hero-scrim {
+  position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  background: linear-gradient(180deg, rgba(27, 27, 72, .72) 0%, rgba(27, 27, 72, .2) 30%, rgba(27, 27, 72, .16) 62%, rgba(27, 27, 72, .74) 100%);
+}
+.wb-store .spec-hero .spec-nav { position: absolute; top: 50%; transform: translateY(-50%); }
+@media (max-width: 720px) { .wb-store .spec-hero .wrap { min-height: 400px !important; } }
+@media (prefers-reduced-motion: reduce) { .wb-store .spec-bg { transition: none; } }
+
+.wb-store .spec-gallery { position: relative; width: 100%; max-width: 880px; margin: 0 auto; height: 430px; border-radius: 16px; overflow: hidden; border: 1px solid var(--bd-card); background: #fff; }
+.wb-store .spec-slide { position: absolute; inset: 0; opacity: 0; transition: opacity .8s ease; }
+.wb-store .spec-slide.on { opacity: 1; }
+.wb-store .spec-slide img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.wb-store .spec-slide.fit-contain img { object-fit: contain; padding: 24px; }
+.wb-store .spec-nav {
+  position: absolute; top: 50%; transform: translateY(-50%); z-index: 2;
+  width: 42px; height: 42px; border-radius: 99px; background: rgba(27, 27, 72, .55); color: #fff;
+  display: inline-flex; align-items: center; justify-content: center; font-size: 21px; font-weight: 800;
+  transition: background .15s;
+}
+.wb-store .spec-nav:hover { background: rgba(27, 27, 72, .8); }
+.wb-store .spec-nav.prev { left: 14px; }
+.wb-store .spec-nav.next { right: 14px; }
+.wb-store .spec-dots { position: absolute; bottom: 14px; left: 0; right: 0; z-index: 2; display: flex; justify-content: center; gap: 8px; }
+.wb-store .spec-dot { width: 9px; height: 9px; border-radius: 99px; background: rgba(27, 27, 72, .25); transition: background .15s, transform .15s; }
+.wb-store .spec-dot.on { background: var(--w-main); transform: scale(1.25); }
+@media (max-width: 720px) { .wb-store .spec-gallery { height: 250px; } .wb-store .spec-nav { width: 36px; height: 36px; } }
+@media (prefers-reduced-motion: reduce) { .wb-store .spec-slide { transition: none; } }
+
+@media (max-width: 720px) {
+  .wb-store .hero-cta-row .hero-buy-btn { width: 100%; }
+  .wb-store .hero-cta-row .hero-social { flex-basis: 100%; }
+}
+
+.wb-store .hero-grid { display: grid; grid-template-columns: 1fr 480px; gap: 56px; align-items: center; max-width: 1080px; margin: 0 auto; }
+
+.wb-store .btn-shine { position: relative; overflow: hidden; }
+.wb-store .btn-shine::after {
+  content: "";
+  position: absolute; top: -4px; bottom: -4px; left: -70%;
+  width: 45%;
+  background: linear-gradient(105deg, transparent 15%, rgba(255, 255, 255, .5) 50%, transparent 85%);
+  transform: skewX(-18deg);
+  animation: btn-shine-sweep 3.2s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes btn-shine-sweep {
+  0% { left: -70%; }
+  45% { left: 130%; }
+  100% { left: 130%; }
+}
+@media (prefers-reduced-motion: reduce) { .wb-store .btn-shine::after { animation: none; display: none; } }
+
+.wb-store .hero-photo { position: relative; overflow: hidden; background: var(--w-deep); }
+.wb-store .hero-bg-slide {
+  position: absolute; inset: 0; z-index: 0;
+  background-position: right center; background-size: cover; background-repeat: no-repeat;
+  opacity: 0; transition: opacity 1.4s ease;
+}
+.wb-store .hero-bg-slide.on { opacity: 1; }
+.wb-store .hero-bg-vid {
+  position: absolute; inset: 0; z-index: 0;
+  width: 100%; height: 100%; object-fit: cover; object-position: right center;
+  opacity: 0; transition: opacity .7s ease; pointer-events: none;
+}
+.wb-store .hero-bg-vid.on { opacity: 1; }
+.wb-store .hero-fx {
+  position: absolute; inset: 0; z-index: 0;
+  width: 100%; height: 100%; display: block;
+  opacity: 0; transition: opacity .6s ease; pointer-events: none;
+}
+.wb-store .hero-fx.on { opacity: 1; }
+.wb-store .hero-scrim {
+  position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  /* 텍스트 컬럼(좌측 ~40%)은 완전 불투명 단색으로 깔아 뒤 배경이 전혀 비치지 않게 하고,
+     그 오른쪽에서 제품 사진으로 자연스럽게 풀어준다 - 글씨 가독성 최우선(사용자 지시) */
+  background: linear-gradient(92deg, #1b1b48 0%, #1b1b48 38%, rgba(27, 27, 72, .97) 46%, rgba(27, 27, 72, .72) 56%, rgba(27, 27, 72, .3) 68%, rgba(27, 27, 72, 0) 80%, rgba(27, 27, 72, 0) 100%);
+}
+.wb-store .hero-photo .hero-grid { position: relative; z-index: 2; min-height: 440px; }
+@media (max-width: 720px) {
+  .wb-store .hero-bg-slide { background-position: 65% center; }
+  .wb-store .hero-bg-vid { object-position: 65% center; }
+  /* 모바일: 텍스트가 차지하는 상단부는 완전 불투명, 하단으로 갈수록 제품이 비치게 */
+  .wb-store .hero-scrim { background: linear-gradient(180deg, #1b1b48 0%, #1b1b48 34%, rgba(27, 27, 72, .96) 52%, rgba(27, 27, 72, .72) 74%, rgba(27, 27, 72, .45) 100%); }
+  .wb-store .hero-photo .hero-grid { min-height: 0; }
+}
+@media (prefers-reduced-motion: reduce) { .wb-store .hero-bg-slide { transition: none; } .wb-store .hero-bg-vid, .wb-store .hero-fx { display: none; } }
+/* 카드 그리드 간격 - 컨테이너를 1080 -> 1280 으로 넓히면서(9/2) 카드가 같이 커져
+   기존 gap(14~24)이 상대적으로 좁아 붙어 보였다(요청). 한 단계씩 벌린다. */
+.wb-store .price-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
+.wb-store .spec-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: start; }
+/* 9/2: 4단계 + 사이 화살표(1fr 34px ...) -> 3단계 균등. 간격은 RLUSD 스텝 카드와 같은 28px. */
+.wb-store .how-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; align-items: stretch; }
+.wb-store .link-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 22px; }
+.wb-store .rl-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
+
+/* RLUSD 스텝 카드 - 레이아웃을 인라인 style 로 두면 미디어쿼리가 못 덮는다(인라인이 우선).
+   그래서 여기로 옮겼다. */
+.wb-store .rl-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  border: 1px solid var(--bd-card);
+  border-radius: 14px;
+  padding: 24px;
+  box-shadow: 0 10px 28px rgba(27, 27, 72, .05);
+}
+.wb-store .rl-card > img { flex: none; }
+/* STEP 라벨: 아이콘에서 떼고(위 +8) 주 타이틀과는 붙인다(아래 -6). gap 10 이 균일해서 개별로 준다. */
+.wb-store .rl-step { font-size: 15.5px; font-weight: 800; color: var(--w-main); margin: 8px 0 -6px; }
+.wb-store .rl-title { font-size: 21px; font-weight: 800; color: var(--w-deep); }
+.wb-store .rl-desc { font-size: 17px; line-height: 1.6; color: var(--ink-4); }
+
+/* 모바일: 아이콘 왼쪽 / STEP·타이틀 오른쪽, 설명은 그 아래 전체 폭(요청).
+   1단으로 쌓이면 세로 배치는 아이콘 오른쪽이 텅 비어 카드만 길어진다. */
+@media (max-width: 900px) {
+  .wb-store .rl-card {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-template-areas: "icon step" "icon title" "desc desc";
+    align-content: start;
+    column-gap: 16px;
+    row-gap: 0;
+  }
+  .wb-store .rl-card > img { grid-area: icon; align-self: center; }
+  .wb-store .rl-step  { grid-area: step;  align-self: end;   margin: 0; }
+  .wb-store .rl-title { grid-area: title; align-self: start; margin-top: 4px; }
+  .wb-store .rl-desc  { grid-area: desc;  margin-top: 14px; }
+}
+
+/* 작동 원리 카드의 점선 구분선 - 시안 Line 1(24:215): #BEBEBE · stroke-dasharray 2 2 · 1px.
+   border-style: dashed 는 브라우저마다 대시 길이가 달라 2/2 를 재현하지 못한다
+   - repeating-linear-gradient 로 2px 칠 / 2px 공백을 정확히 그린다. */
+.wb-store .how-divider {
+  height: 1px;
+  background-image: repeating-linear-gradient(to right, #BEBEBE 0 2px, transparent 2px 4px);
+}
+
+/* FAQ 상위 2문항 - 접지 않고 나란히 두는 박스(9/2 요청) */
+.wb-store .faq-top { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.wb-store .faq-card {
+  background: #fff;
+  border: 1px solid var(--bd-card);
+  border-radius: 16px;
+  /* 질문 줄을 모서리까지 닿는 '타이틀 바'로 깔기 위해 카드 자체 여백은 0 - 안쪽에서 준다.
+     overflow:hidden 이 없으면 각진 바 모서리가 둥근 테두리 밖으로 삐져나온다. */
+  padding: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+/* 질문 타이틀 바 - 표 헤더와 같은 진한 네이비(요청).
+   #23235d 는 작동 원리의 단계 배지(Figma 24:213)와 같은 값이라 페이지 안에서 톤이 맞는다. */
+.wb-store .faq-card-bar {
+  background: #23235d;
+  color: #fff;
+  padding: 16px 26px;
+}
+.wb-store .faq-card-bar > b { color: rgba(255, 255, 255, .72); }
+.wb-store .faq-card-body { padding: 20px 26px; }
+@media (max-width: 900px) { .wb-store .faq-top { grid-template-columns: 1fr; gap: 16px; } }
+
+/* 질문 앞 Q 표식(9/2 요청) - 질문이 두 줄로 넘어가도 둘째 줄이 Q 아래로 파고들지 않게
+   flex 로 분리하고 Q 폭을 고정한다(글자만 두면 줄바꿈 시 들여쓰기가 무너진다). */
+.wb-store .faq-q {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  text-align: left;
+}
+.wb-store .faq-q > b {
+  flex: none;
+  width: 18px;
+  color: var(--w-main);
+  font-weight: 800;
+  font-style: normal;
+}
+/* flex 자식은 기본 min-width:auto 라 콘텐츠보다 작아지지 못한다. 일본어처럼 끊을 곳이
+   적은 문장은 그대로 카드를 뚫고 나간다(.wb-store 의 word-break:keep-all 이 겹친다).
+   min-width:0 으로 줄어들 수 있게 하고, 그래도 안 되는 긴 토큰은 강제로 접는다. */
+.wb-store .faq-q > span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  word-break: normal;
+}
+.wb-store .tier-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 22px; }
+.wb-store .wl-hero-grid { display: grid; grid-template-columns: 1fr 420px; gap: 56px; align-items: center; }
+.wb-store .dash-top { display: grid; grid-template-columns: 1fr 1fr 1.4fr; gap: 16px; }
+.wb-store .dash-main { display: grid; grid-template-columns: 1.6fr 1fr; gap: 16px; align-items: start; }
+.wb-store .me-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media (max-width: 980px) {
+  .wb-store .hero-grid, .wb-store .spec-grid, .wb-store .wl-hero-grid, .wb-store .dash-top, .wb-store .dash-main { grid-template-columns: 1fr; }
+  .wb-store .how-grid { grid-template-columns: 1fr; gap: 16px; }
+  .wb-store .link-grid { grid-template-columns: 1fr; }
+  .wb-store .tier-grid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 720px) {
+  .wb-store .price-grid, .wb-store .rl-grid, .wb-store .me-2col { grid-template-columns: 1fr; }
+  .wb-store .order-steps-h { display: none !important; }
+  .wb-store .order-steps-v { display: flex !important; }
+}
+@media (min-width: 721px) {
+  .wb-store .order-steps-v { display: none !important; }
+}
+
+.wb-store .w720 { width: 720px; max-width: 100%; }
+.wb-store .w440 { width: 440px; max-width: 100%; }
+.wb-store .big-title { font-size: 39px; }
+.wb-store .wl-hero-pad { padding: 60px 64px; }
+.wb-store .wl-sec-pad { padding: 56px 64px; }
+.wb-store .dash-pad { padding: 36px; }
+.wb-store .tint-strip { padding: 12px 36px; }
+.wb-store .strip-in { display: flex; align-items: center; justify-content: space-between; gap: 16px; max-width: 1080px; margin: 0 auto; width: 100%; }
+.wb-store .stat4 { display: grid; grid-template-columns: repeat(4, 1fr); }
+.wb-store .stat4 > div { border-right: 1px solid var(--line-2); }
+.wb-store .stat4 > div:last-child { border-right: 0; }
+@media (max-width: 720px) {
+  .wb-store .big-title { font-size: 27px; line-height: 1.35; }
+  .wb-store .wl-hero-pad { padding: 36px 20px; }
+  .wb-store .wl-sec-pad { padding: 36px 20px; }
+  .wb-store .dash-pad { padding: 20px 16px; }
+  .wb-store .tint-strip { padding: 12px 16px; }
+  .wb-store .strip-in { flex-direction: column; align-items: flex-start; gap: 4px; }
+  .wb-store .stat4 { grid-template-columns: repeat(2, 1fr); }
+  .wb-store .stat4 > div:nth-child(2n) { border-right: 0; }
+}
+
+@media (max-width: 720px) { .wb-store .desk-only { display: none !important; } }
+@media (min-width: 721px) { .wb-store .mob-only { display: none !important; } }
+
+.wb-store .stickybar-in {
+  display: flex; align-items: center;
+  width: 100%; justify-content: space-between; gap: 12px;
+  padding: 12px 16px;
+}
+@media (min-width: 721px) {
+  .wb-store .stickybar-in { width: auto; justify-content: center; gap: 26px; padding: 14px 40px; }
+}
+.wb-store .stickybar-in .btn-main { flex: none; }
+.wb-store .sb-count { display: flex; align-items: baseline; gap: 5px; white-space: nowrap; min-width: 0; }
+.wb-store .sb-count .sb-lab { font-size: 15px; color: var(--cap); }
+.wb-store .sb-count .sb-num { font-size: 22px; font-weight: 800; color: var(--w-deep); }
+.wb-store .sb-count .sb-dday { font-size: 16.5px; font-weight: 800; color: var(--w-main); margin-left: 3px; }
+@media (max-width: 440px) {
+  .wb-store .sb-count { gap: 3px; }
+  .wb-store .sb-count .sb-lab { font-size: 13px; }
+  .wb-store .sb-count .sb-num { font-size: 18px; }
+  .wb-store .sb-count .sb-dday { font-size: 14.5px; margin-left: 2px; }
+}
+@media (max-width: 380px) {
+  .wb-store .sb-count .sb-lab { font-size: 12px; }
+  .wb-store .sb-count .sb-num { font-size: 16.5px; }
+  .wb-store .sb-count .sb-dday { font-size: 13.5px; }
+}
+@media (max-width: 356px) {
+  .wb-store .sb-count { flex-wrap: wrap; row-gap: 0; }
+  .wb-store .sb-count .sb-lab { font-size: 11.5px; }
+  .wb-store .sb-count .sb-num { font-size: 15.5px; }
+  .wb-store .sb-count .sb-dday { font-size: 12.5px; }
+}
+
+@media (max-width: 720px) {
+  .wb-store .gnb-root { height: 60px !important; padding: 0 14px !important; }
+  .wb-store .gnb-logo { height: 36px !important; }
+  .wb-store .gnb-root .pill { font-size: 12.5px !important; padding: 3px 6px !important; }
+  .wb-store .gnb-root > div:last-child { gap: 6px !important; }
+  .wb-store .gnb-root > div:last-child > a,
+  .wb-store .gnb-root > div:last-child > button { font-size: 13.5px !important; padding: 6px 10px !important; }
+  .wb-store .s9-root { padding: 40px 20px !important; }
+  .wb-store .s9-invite { flex-direction: column; align-items: flex-start !important; padding: 22px !important; }
+}
+
+.wb-store .loop-row {
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: nowrap;
+  width: 100%;
+  margin: 2px auto 0;
+}
+/* 칩은 원래대로 세로형(아이콘 위 / 글씨 아래)이다. 9/2 에 가로형으로 바꿨다가 되돌렸다
+   - 요청은 '칩 안'이 아니라 '상자 안'을 좌우로 나누는 것이었다(.loop-2col).
+   배경만 글래스(반투명+blur) -> 흰 카드 + 옅은 그림자로 통일했다(HowCard 와 같은 값).
+   좌측 열이 좁아졌으므로 max-width/aspect-ratio 제약은 두지 않는다 - 열 폭에 맞춰 4등분된다. */
+/* 아이콘 상자만 5px 위로(요청). margin 이 아니라 relative/top 을 쓰는 이유:
+   margin 을 주면 칩의 콘텐츠 높이가 바뀌어 justify-content:center 가 다시 계산되고,
+   결과적으로 절반만 올라간다. 위치만 밀면 레이아웃은 그대로 두고 정확히 5px 올라간다. */
+.wb-store .loop-chip > img { flex: none; position: relative; top: -5px; }
+/* 글씨는 반대로 2px 아래로(요청). 아이콘과 같은 이유로 margin 이 아니라 위치만 민다. */
+.wb-store .loop-chip > span { position: relative; top: 2px; }
+.wb-store .loop-chip {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  /* '아이콘 + 글씨' 를 한 덩어리로 가운데 묶는다.
+     ※ flex-start 로 바꿔 본 적이 있는데(영문 2줄 칩의 아이콘 높이를 맞추려고),
+       한국어처럼 전부 1줄인 경우 아이콘이 위로 붙고 아래가 비어 보여 되돌렸다.
+       영문 정렬까지 맞추려면 글씨 자리를 2줄로 고정해야 한다(칩 높이가 168 로 커진다). */
+  justify-content: center;
+  /* 아이콘 상자와 글씨 사이(요청): 10 -> 18 */
+  gap: 18px;
+  flex: 1 1 0;
+  min-width: 0;
+  background: #fff;
+  color: var(--w-deep);
+  border: 1px solid var(--bd-card);
+  border-radius: 15px;
+  padding: 18px 12px;
+  /* 시안 아이콘은 104x68 이다.
+     18(패딩) + 68(아이콘) + 18(gap) + 22(글씨 15.5x1.42) + 18(패딩) + 2(테두리) = 146 */
+  min-height: 146px;
+  /* 9/2 요청: 그림자 한 겹으로 통일. 두 겹은 가장자리가 탁해 보인다. */
+  box-shadow: 0 10px 28px rgba(27, 27, 72, .05);
+  font-size: 15.5px;
+  font-weight: 700;
+  line-height: 1.42;
+  text-align: center;
+}
+
+/* 선순환 바깥 상자. 인라인 style 로 두면 모바일 미디어쿼리가 못 덮어 CSS 로 옮겼다. */
+.wb-store .loop-box {
+  width: 100%;
+  border: 1px solid var(--bd-card);
+  background: #fff;
+  border-radius: 16px;
+  padding: 26px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  box-shadow: 0 10px 28px rgba(27, 27, 72, .05);
+}
+/* 모바일: 칩이 이미 흰 카드라 바깥 상자까지 있으면 '박스 안 박스'가 된다(요청).
+   껍데기(테두리·배경·그림자·여백)만 걷어낸다. */
+@media (max-width: 760px) {
+  .wb-store .loop-box { border: 0; background: transparent; box-shadow: none; padding: 0; border-radius: 0; }
+}
+
+/* 9/2 요청: 상자 안을 좌(칩 흐름) / 우(본문·고지)로 나눈다. */
+.wb-store .loop-2col {
+  display: grid;
+  grid-template-columns: 1.35fr 1fr;
+  gap: 36px;
+  align-items: center;
+}
+.wb-store .loop-2col > * { min-width: 0; }
+.wb-store .loop-right { text-align: left; display: flex; flex-direction: column; gap: 14px; }
+/* 선순환 제목. 인라인 style 로 두면 모바일 미디어쿼리가 못 덮어 CSS 로 옮겼다. */
+.wb-store .loop-title { font-size: 21px; font-weight: 800; color: var(--w-deep); }
+@media (max-width: 980px) {
+  /* 모바일은 1단이라 이 gap 이 곧 '안내문 -> 주 타이틀' 간격이다. 5px 로 붙인다(요청). */
+  .wb-store .loop-2col { grid-template-columns: 1fr; gap: 5px; }
+  .wb-store .loop-right { text-align: center; gap: 10px; }
+}
+.wb-store .loop-arrow {
+  display: inline-flex;
+  align-items: center;
+  flex: 0 0 auto;
+  align-self: center;
+  color: var(--arrow);
+  font-weight: 800;
+  font-size: 19px;
+}
+.wb-store .loop-back {
+  display: inline-flex;
+  align-items: center;
+  padding: 0 2px;
+}
+@media (max-width: 760px) {
+  /* 2개씩 두 줄(요청). 세로 한 줄이면 칩 4개가 화면을 다 잡아먹는다.
+     칩이 좁아지므로 가로형(아이콘 좌/글씨 우) 대신 세로형으로 되돌려 글씨가 안 눌리게 한다.
+     흐름 화살표는 2열에서 자리를 못 잡아 감춘다 - 순환은 아래 곡선 화살표가 보여 준다. */
+  .wb-store .loop-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .wb-store .loop-arrow { display: none; }
+  .wb-store .loop-chip {
+    flex-direction: column;
+    aspect-ratio: auto;
+    width: auto;
+    max-width: none;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    padding: 20px 12px;
+    min-height: 0;
+    /* 2열이 되면서 칩 폭이 넉넉해졌다 - 글씨·아이콘을 키운다(요청). */
+    font-size: 16.5px;
+    text-align: center;
+  }
+  .wb-store .loop-chip > img { width: 104px; height: auto; top: 0; }
+  .wb-store .loop-chip > span { top: 0; }
+}
+
+.wb-store .loop-return {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  color: var(--arrow);
+  margin-top: 2px;
+}
+.wb-store .loop-return .lr-u {
+  align-self: stretch;
+  height: 28px;
+  margin: 0 calc((100% - 99px) / 8);
+  border: 2px solid currentColor;
+  border-top: 0;
+  border-radius: 0 0 15px 15px;
+  position: relative;
+}
+.wb-store .loop-return .lr-u::before {
+  content: "";
+  position: absolute;
+  left: -4px;
+  top: -1px;
+  width: 10px;
+  height: 10px;
+  border-left: 2px solid currentColor;
+  border-top: 2px solid currentColor;
+  transform: rotate(45deg);
+}
+.wb-store .loop-return span {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: var(--w-deep);
+  opacity: .78;
+}
+@media (min-width: 761px) {
+  .wb-store .loop-chip { padding: 14px 12px; font-size: 15.5px; gap: 9px; }
+  .wb-store .loop-row { gap: 8px; }
+  .wb-store .loop-arrow { font-size: 17px; width: 17px; flex: none; text-align: center; }
+}
+@media (max-width: 760px) {
+  .wb-store .loop-return .lr-u { display: none; }
+  /* 칩 상자와 10px(요청). 아래 주 타이틀과의 간격은 .loop-2col 의 gap(5px)이 담당한다. */
+  .wb-store .loop-return { margin-top: 10px; margin-bottom: 0; }
+  /* 두께 한 단계 얇게(요청) */
+  .wb-store .loop-return span { font-weight: 600; }
+  /* 주 타이틀 2pt 크게(요청) */
+  .wb-store .loop-title { font-size: 23px; }
+}
+
+@media (max-width: 380px) {
+  .wb-store .gnb-logo { height: 32px !important; }
+  .wb-store .gnb-root .pill { font-size: 12px !important; padding: 3px 5px !important; }
+  .wb-store .gnb-root > div:last-child { gap: 5px !important; }
+  .wb-store .gnb-root > div:last-child > a,
+  .wb-store .gnb-root > div:last-child > button { font-size: 12.5px !important; padding: 5px 8px !important; }
+}
+
+.wb-store .hero-ico {
+  border: 1px solid rgba(255, 255, 255, .28);
+  background: transparent;
+  transition: background .18s ease, border-color .18s ease, box-shadow .18s ease;
+}
+@media (hover: hover) {
+  .wb-store .hero-ico:hover {
+    background: rgba(255, 255, 255, .15);
+    backdrop-filter: blur(14px);
+    border-color: rgba(255, 255, 255, .45);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, .18);
+  }
+}
+.wb-store .hero-ico:focus-visible {
+  background: rgba(255, 255, 255, .15);
+  backdrop-filter: blur(14px);
+  border-color: rgba(255, 255, 255, .55);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, .18);
+  outline: 2px solid rgba(255, 255, 255, .7);
+  outline-offset: 2px;
+}
+
+.wb-store .foot-logo {
+  display: inline-flex;
+  opacity: .9;
+  transition: opacity .16s ease;
+}
+@media (hover: hover) {
+  .wb-store .foot-logo:hover { opacity: 1; }
+}
+.wb-store .foot-logo:focus-visible {
+  opacity: 1;
+  outline: 2px solid rgba(255, 255, 255, .7);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+.wb-store .rv {
+  opacity: 0;
+  transform: translateY(14px);
+  will-change: opacity, transform;
+}
+.wb-store .rv.in {
+  opacity: 1;
+  transform: none;
+  transition: opacity .58s cubic-bezier(.22, .61, .36, 1), transform .58s cubic-bezier(.22, .61, .36, 1);
+}
+@media (prefers-reduced-motion: reduce) {
+  .wb-store .rv { opacity: 1; transform: none; transition: none; }
+}
+
+@media (max-width: 356px) {
+  .wb-store .gnb-root { gap: 8px !important; padding-left: 10px !important; padding-right: 10px !important; }
+  .wb-store .gnb-logo { height: 30px !important; }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   사전구매 히어로 v2 (BEFORE·LOCKED 페이즈) — Figma 사전구매_페이지01 (node 18:12)
+   ═══════════════════════════════════════════════════════════════════════ */
+/* [로컬 전용] 사전예약 히어로 v2 — .gitignore 대상.
+   Figma: wellbian / 사전구매_페이지01 (node 18:12, 1920×752)
+   https://www.figma.com/design/GAq24vA7THP2447X1c2nEI/wellbian?node-id=18-12
+
+   시안 좌표를 1:1로 옮긴다. 프레임이 1920×752 이므로 컨테이너에 같은 종횡비를 주고
+   모든 치수를 --s(= 100cqw / 1920) 배수로 적으면, 화면 폭이 얼마든 시안과 같은 비율로
+   놓인다. 아래 숫자는 전부 Figma 의 px 값 그대로다 - 눈대중 보정 없음. */
+
+
+/* 시안 프레임 1920×752 는 "헤더를 포함한" 크기다(사용자 확인). 그래서 히어로를
+   페이지 최상단(y=0)까지 끌어올려 헤더가 배경 위에 겹치게 한다 - 그러면 Figma 의
+   y 좌표(락업 157, 라벨 99 …)가 그대로 맞고, 헤더도 배경의 보라톤을 그대로 받는다.
+
+   끌어올릴 양 = 지금 히어로 상단이 페이지 top 에서 떨어진 거리:
+     lg(≥1024): 헤더 fixed(흐름 밖) + .main-wrap padding-top 90 + LaunchShell -mt-6(-24) = 66
+     768~1023 : 헤더 sticky(64, 흐름 안) + padding-top 24 - 24                          = 64
+     ≤768     : 헤더 sticky(64)          + padding-top 20 - 24                          = 60 */
+.wb-store .v2-hero {
+  /* 기존 메인 히어로(parts.ts HERO_HTML)와 같은 규칙:
+       max-w-[1920px] + aspect-[1920/752] + 배경 object-cover
+     = 1920 을 넘는 해상도에서는 더 커지지 않고, 배경만 cover 로 잘린다.
+
+     --w      : 무대 폭. 1920 에서 멈춘다.
+     --s      : 시안 1px. 1920 이상에서는 정확히 1px 로 고정된다.
+     --gutter : 1920 초과분의 좌우 여백. 콘텐츠를 무대 안에 가둬 가운데 정렬시킨다. */
+  --w: min(100vw, 1920px);
+  --s: calc(var(--w) / 1920);
+  --gutter: calc((100vw - var(--w)) / 2);
+  height: calc(752 * var(--s)); /* 1920 이상 = 752px 고정 */
+  container-type: inline-size;
+  position: relative;
+  overflow: hidden;
+  background: #1a0b3d;
+  color: #fff;
+  padding: 0;
+}
+
+
+
+
+/* 시안 프레임(1920×752)은 헤더를 포함한 크기다. 히어로를 페이지 최상단(y0)까지 끌어올려
+   헤더가 배경 위에 겹치게 한다 - 그래야 Figma y 좌표(락업 157, 라벨 99 …)가 그대로 맞는다.
+
+   margin-top 이 아니라 position:relative + top 을 쓴다. 음수 margin-top 은 부모
+   .wb-store.full-bleed 의 -mt-6 과 상쇄(margin collapsing)돼 의도한 만큼 안 올라간다.
+   대신 아래 콘텐츠가 그만큼 내려가므로 margin-bottom 으로 같은 값을 되돌린다.
+
+   끌어올릴 양 = 흐름상 히어로 상단이 페이지 top 에서 떨어진 거리:
+     lg(≥1024): 헤더 fixed(흐름 밖) + .main-wrap padding-top 90 + LaunchShell -mt-6(-24) = 66
+     769~1023 : 헤더 sticky(64, 흐름 안) + padding-top 24 - 24                          = 64
+     ≤768     : 헤더 sticky(64)          + padding-top 20 - 24                          = 60 */
+.wb-store .v2-hero { top: -64px; margin-bottom: -64px; }
+@media (min-width: 1024px) { .wb-store .v2-hero { top: -66px; margin-bottom: -66px; } }
+@media (max-width: 768px)  { .wb-store .v2-hero { top: -60px; margin-bottom: -60px; } }
+
+/* ── 레이어 0: 배경 (18:10 · 0,0 1920×752 = 프레임 전체) ── */
+.wb-store .v2-hero .v2-bg {
+  position: absolute;
+  inset: 0;
+  /* 2400×752 와이드 원본 bgre(디자이너 제공, 최종). 원본 1920 구도가 정확히 가운데(x=240)에 있음을
+     픽셀 대조로 확인했다 - 좌우 240 씩이 여유분.
+     background-size: auto 100% = '높이 맞춤' - 세로를 절대 자르지 않는다.
+     따라서 배경의 세로 구도(단상 위치)가 어떤 해상도에서도 그대로이고,
+     가운데 1920 구간이 무대와 겹치므로 제품 컷도 --s 좌표 그대로 맞는다.
+     1920 폭만 cover 로 깔면 넓은 화면에서 세로가 잘려 단상·제품이 함께 잘렸다. */
+  background-image: url("/images/pre_01product_bgre.jpg");
+  background-size: auto 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-color: #0f0d2a; /* 3840*--s 를 넘는 초광폭 대비 */
+  z-index: 0;
+}
+
+/* 모바일 히어로 딤(요청) - 좁은 화면에서는 배경의 파티클·웨이브가 글씨와 겹쳐 산만하다.
+   배경 레이어에만 얹어 제품 컷·글씨는 그대로 둔다(.v2-bg 가 position:absolute 라 ::after 로 충분). */
+@media (max-width: 768px) {
+  .wb-store .v2-hero .v2-bg::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(15, 13, 42, .38);
+    pointer-events: none;
+  }
+}
+
+/* ── 레이어 1: 제품 언베일 컷 (18:13 · left 828 top 161 · 980×577) ── */
+.wb-store .v2-hero .v2-product {
+  position: absolute;
+  /* 배경의 가운데 1920 구간 = 무대 이므로 무대 좌표(--s + --gutter)로 맞는다.
+
+     9/2 수정본2(_re) - Figma "사전구매_페이지01" node 24:30 실측 좌표 그대로다.
+       left 838 / top 219 / 812x455 (원본 캔버스 크기, 배율 없음)
+     하단 y=674 가 배경 단상 상판(실측 656~688, 타원 중앙 672)에 얹힌다.
+
+     PNG 원본도 812x455 라 박스와 비율이 정확히 같다 - contain 여백이 생기지 않는다.
+     이미지가 교체되면 이 4개 값도 같이 갱신해야 한다(캔버스 여백 구성이 매번 다르다). */
+  left: calc(var(--gutter) + 838 * var(--s));
+  top: calc(219 * var(--s));
+  width: calc(812 * var(--s));
+  height: calc(455 * var(--s));
+  object-fit: contain;
+  z-index: 1;
+  pointer-events: none;
+  /* 94% 축소(요청 - 95% -> 92% -> 94% 로 조정). 배경 단상 위에 그대로 서 있어야 하므로 '아래·가운데'를
+     고정한다 - 하단 y=674(단상 상판)과 가로 중심 x=1244 는 그대로 두고 크기만 줄어든다.
+     (구본 커튼 컷은 같은 방식으로 98% 를 썼다) */
+  transform: scale(.94);
+  transform-origin: 50% 100%;
+}
+
+/* ── 인터랙션 ─────────────────────────────────────────────────────────
+   1) 제품 컷: 마운트 직후 아래에서 떠오르며 나타난다.
+      .v2-product 는 이미 축소 scale + origin 을 쓰고 있으므로 그 위에 얹는다.
+   2) D-day 숫자: 0~9 릴이 차르륵 돌다가 감속하며 목표 숫자에 멈춘다(아래 .v2-reel).
+   동작 최소화(prefers-reduced-motion)를 켠 사용자에게는 둘 다 걸지 않는다. */
+/* 제품 컷 - 메인 히어로의 .hero-lift 와 같은 모션(26px 상승 + 페이드, 1.05s).
+   .v2-product 는 scale(.94) 를 계속 유지해야 해서 .hero-lift 클래스를 그대로 쓸 수 없다
+   (transform 이 통째로 덮여 축소가 풀린다). 같은 값·이징·지속시간의 전용 키프레임을 쓴다.
+   ※ 위 .v2-product 의 scale 을 바꾸면 이 두 줄도 같이 바꿔야 한다. */
+@keyframes v2ProductLift {
+  0% { opacity: 0; transform: scale(.94) translateY(26px); }
+  to { opacity: 1; transform: scale(.94) translateY(0); }
+}
+.wb-store .v2-hero .v2-product {
+  animation: v2ProductLift 1.05s cubic-bezier(.22, 1, .36, 1) both;
+}
+
+/* 헤드라인 줄 마스크 - .hero-line 의 padding-bottom 4px 를 없애 시안 행간(59)을 지킨다.
+   50px 글자 / 59px 행간이면 위아래 여백이 4.5px 씩이라 디센더가 잘리지 않는다. */
+.wb-store .v2-hero .v2-h1 .hero-line { padding-bottom: 0; }
+
+/* 숫자 릴 */
+.wb-store .v2-hero .v2-reel-group { display: inline-flex; font-variant-numeric: tabular-nums; }
+.wb-store .v2-hero .v2-reel {
+  position: relative;      /* overflow 를 걸지 않는다 - 베이스라인이 아래 모서리로 바뀐다 */
+  display: inline-block;
+}
+.wb-store .v2-hero .v2-reel-ghost { visibility: hidden; } /* 폭·높이·베이스라인만 담당 */
+.wb-store .v2-hero .v2-reel-clip {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;        /* 잘라내기는 흐름 밖의 이 상자가 맡는다 */
+}
+.wb-store .v2-hero .v2-reel-track {
+  position: absolute;
+  left: 0;
+  top: 0;                  /* top 의 % = 담는 상자(한 줄) 높이 -> -100% 가 한 칸 */
+  width: 100%;
+  transition-property: top;
+  transition-timing-function: cubic-bezier(.16, 1, .3, 1); /* 빠르게 돌다 길게 감속 */
+}
+.wb-store .v2-hero .v2-reel-track > span { display: block; }
+
+@media (prefers-reduced-motion: reduce) {
+  .wb-store .v2-hero .v2-product { animation: none; }
+  .wb-store .v2-hero .v2-reel-track { transition: none; }
+  /* 전역 hero-* 클래스도 이 섹션 안에서는 끈다 */
+  .wb-store .v2-hero .hero-lift,
+  .wb-store .v2-hero .hero-cta,
+  .wb-store .v2-hero .hero-line-inner { animation: none; }
+}
+
+/* ── 레이어 2: 텍스트 ── */
+.wb-store .v2-hero .v2-left { position: absolute; z-index: 2; }
+
+/* 좌측 블록 — 락업 top 159 / 헤드라인 top 211 / 서브카피, 모두 left 302 */
+.wb-store .v2-hero .v2-left {
+  /* 시안 302 + 10(요청) - 락업·헤드라인·서브카피가 같은 블록이라 한 번에 움직인다 */
+  left: calc(var(--gutter) + 312 * var(--s));
+  top: calc(144 * var(--s)); /* 시안 159 - 15(요청) */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+/* 락업 — 푸터와 같은 합본 로고(/brand/logo_w_medium.svg, 532×75)를 그대로 쓴다.
+   흰색 SVG 라서 CSS mask 로 색만 갈아끼운다: 도형이 fill="white" + 배경 투명이므로
+   알파 마스크가 그대로 로고 실루엣이 되고, background-color 가 최종 색이 된다.
+   시안 실측 290×41(비율 7.073) ≒ SVG 532/75(7.093) - 같은 락업이 맞다. */
+.wb-store .v2-hero .v2-lockup {
+  width: calc(290 * var(--s));
+  aspect-ratio: 532 / 75;
+  background-color: #7172fe; /* 시안 실측 라벤더 */
+  -webkit-mask: url("/brand/logo_w_medium.svg") no-repeat center / contain;
+  mask: url("/brand/logo_w_medium.svg") no-repeat center / contain;
+}
+
+/* 18:19 · Paperlogy 4 Regular 50px / 행간 59px (시안 61 -> 54 축소 -> +5 재조정) */
+.wb-store .v2-hero .v2-h1 {
+  margin: calc(16 * var(--s)) 0 0; /* 락업과의 간격 21 - 5(요청) */
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: calc(50 * var(--s));
+  line-height: calc(59 * var(--s));
+  letter-spacing: 0;
+  color: #fff;
+  white-space: nowrap;
+}
+
+/* 좌측 서브카피 — 시안에선 래스터로 구워져 있어 실측값(글자색 #cac8f1, 20px)을 쓴다.
+   주타이틀과의 간격 12px(요청) - 글자끼리는 half-leading 포함 19px. */
+.wb-store .v2-hero .v2-sub {
+  margin: calc(12 * var(--s)) 0 0;
+  font-weight: 300;
+  font-size: calc(20 * var(--s));
+  line-height: 1.5;
+  color: #cac8f1;
+  white-space: nowrap;
+}
+
+/* 커뮤니티 CTA — 서브카피 아래. 크기·색·상태는 ActionButton(large) 규격을 그대로 쓰고
+   여기서는 위치만 준다. 버튼은 --s 로 스케일하지 않는다: 조작 요소라 화면이 커져도
+   같은 크기여야 하고, action-button.tsx 가 size 로 치수를 고정하는 것이 그 취지다. */
+/* 커뮤니티 CTA. 디자인 시스템 ActionButton(brandSolid · large)의 규격을 값으로 옮겼다
+   - 이 브랜치엔 그 컴포넌트와 --accent/--g* 토큰이 아직 없어 의존을 만들지 않는다.
+   인라인 style 로 두면 :hover 가 인라인에 밀려 먹지 않으므로 전부 CSS 로 둔다. */
+.wb-store .v2-hero .v2-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 56px;
+  padding-inline: 24px;
+  font-size: 20px;
+  font-weight: 700;
+  border-radius: 12px;
+  white-space: nowrap;
+  text-decoration: none;
+  cursor: pointer;
+  color: #fff;
+  background: #4d4dce;                       /* CI Normal */
+  border: 1px solid transparent;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, .32); /* 사진 배경 위라 그림자는 검정 */
+  transition: background .15s;
+}
+.wb-store .v2-hero .v2-cta:hover { background: #4545b9; }  /* CI Normal:hover */
+.wb-store .v2-hero .v2-cta:active { background: #3e3ea5; } /* CI Normal:active */
+
+.wb-store .v2-hero .v2-cta-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: calc(23 * var(--s)); /* 28 - 5(요청) */
+  align-self: flex-start;
+}
+
+/* 링크 복사 · X — CTA(large, 56px)와 같은 높이의 정사각 아웃라인 버튼 */
+.wb-store .v2-hero .v2-ico {
+  width: 56px;
+  height: 56px;
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 255, 255, .22);
+  border-radius: 14px;
+  background: transparent;
+  color: #fff;
+  cursor: pointer;
+  transition: border-color .15s, background .15s;
+}
+.wb-store .v2-hero .v2-ico:hover {
+  border-color: rgba(255, 255, 255, .45);
+  background: rgba(255, 255, 255, .08);
+}
+
+/* 우측 블록 - 두 줄의 좌·우 끝을 모두 맞춘다(요청).
+   넓은 쪽(2행 "사전예약 D-6")이 컨테이너 폭을 정하고, 1행은 그 폭에 걸쳐
+   space-between 으로 벌린다. 그러면
+     좌: "9월 7일 사전예약 오픈"  =  "사전예약"
+     우: "01:51:17"             =  "D-6"
+   가 정확히 같은 x 에서 시작/끝난다. 1행 사이 간격은 남는 폭이 자동으로 채운다. */
+.wb-store .v2-hero .v2-right {
+  position: absolute;
+  z-index: 2;
+  /* 시안 y=99 에서 아래로 10px(요청) -> 109 */
+  top: calc(109 * var(--s));
+  /* 우측 끝 x=1477(시안) 에서 왼쪽으로 5 + 10 + 10px(요청 누적) -> 1452.
+     right 기준이라 값을 키우면 블록이 왼쪽으로 간다. */
+  right: calc(var(--gutter) + 468 * var(--s));
+  width: max-content; /* = 2행 폭 */
+}
+.wb-store .v2-hero .v2-r1,
+.wb-store .v2-hero .v2-r2 {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  white-space: nowrap;
+}
+/* 2행이 흐름에 남아 컨테이너 폭을 정한다. margin-top 32 -> 시안 top 131 */
+.wb-store .v2-hero .v2-r2 { margin-top: calc(32 * var(--s)); gap: calc(20 * var(--s)); }
+/* 1행은 그 폭에 겹쳐 올린다.
+   top 3: 시안 99 -> 102 로 3px 내려 아래 "사전예약 D-6"(131 고정)과의 행간을 좁힌다(요청).
+   라벨과 시계가 같은 행이라 둘이 함께 내려가고, 행 안의 정렬은 그대로 유지된다. */
+.wb-store .v2-hero .v2-r1 { position: absolute; top: calc(3 * var(--s)); left: 0; right: 0; gap: calc(21 * var(--s)); }
+
+/* 영문: 블록 자체를 "우측 고정" 에서 "중앙 고정" 으로 바꾼다 (요청).
+
+   기본은 right 앵커라 2행이 길어지면 오른쪽 끝은 그대로고 왼쪽으로만 자란다.
+   한국어("사전예약 D-6")를 기준으로 잡은 값이라 영문("Reservations D-6")에서는
+   왼쪽으로 튀어나와 좌측 텍스트 쪽을 침범한다.
+
+   그래서 영문은 한국어 블록의 '가운데'(우측끝 1452 - 한국어 폭 369.5/2 ≒ x 1267)에
+   중심을 고정한다. 길이가 늘어나면 좌우로 고르게 벌어지고, 위치 자체는 한국어와
+   같은 자리에 남는다.
+   ※ 한국어 블록을 5px 옮기면 이 값도 같이 옮겨야 둘이 같은 자리에 선다. */
+/* 중국어는 반대로 문구가 짧아(예: "9月7日 开放预订" / "预订 D-5") 우측 정렬로 두면
+   블록이 오른쪽으로 쏠려 보인다. 영문과 같은 '중앙 고정'을 쓴다 - 길든 짧든 한국어와 같은 자리다. */
+.wb-store .v2-hero[data-lang="en"] .v2-right,
+.wb-store .v2-hero[data-lang="zh"] .v2-right {
+  right: auto;
+  left: calc(var(--gutter) + 1267 * var(--s));
+  transform: translateX(-50%);
+}
+
+/* 영문: 1행을 오른쪽 끝에 붙인다 (요청 - 시계를 D-6 위로).
+   space-between 은 1행을 양끝으로 벌려 가운데가 비고, center 는 시계가 D-6 보다
+   왼쪽에 선다. flex-end 면 시계의 오른쪽 끝이 D-6 의 오른쪽 끝과 같아진다
+   - 두 글자 폭이 거의 같아(01:50:49 ≒ D-6) 시계가 D-6 바로 위에 얹힌다.
+   같은 행이라 라벨도 함께 오른쪽으로 밀린다(간격 21px 유지).
+   ※ ja/zh/es 도 같은 구조 - 필요하면 선택자에 추가하면 된다. */
+.wb-store .v2-hero[data-lang="en"] .v2-r1,
+.wb-store .v2-hero[data-lang="zh"] .v2-r1 { justify-content: flex-end; }
+
+/* 18:18 · Pretendard Light 25px · #e3e844 */
+.wb-store .v2-hero .v2-label {
+  font-weight: 400; /* 시안 Pretendard Light(300) -> 한 단계 굵게(요청) */
+  /* 시안은 25px 이지만 옆 시계(Paperlogy)보다 작아 보인다는 지적 - 글리프 높이를
+     맞춘다. 26px 이면 한글 글리프 21.8 ≒ 시계 28px 의 숫자 글리프 21.5. */
+  font-size: calc(26 * var(--s));
+  line-height: normal;
+  color: #e3e844;
+}
+/* 18:17 · Paperlogy 3 Light 30px */
+.wb-store .v2-hero .v2-clock {
+  font-family: var(--serif);
+  font-weight: 300;
+  font-size: calc(28 * var(--s));
+  line-height: normal;
+  letter-spacing: 0; /* 요청 - .wb-store 계열의 .01em 상속을 끊는다 */
+  color: #fff;
+  font-variant-numeric: tabular-nums;
+}
+/* 18:15 · Paperlogy 7 Bold 65px */
+.wb-store .v2-hero .v2-big-label {
+  font-family: var(--serif);
+  font-weight: 700;
+  font-size: calc(62 * var(--s));
+  line-height: normal;
+  color: #fff;
+}
+/* 18:16 · Paperlogy 7 Bold 72px (-2px 요청 -> 70) */
+.wb-store .v2-hero .v2-big-dday {
+  font-family: var(--serif);
+  font-weight: 700;
+  font-size: calc(70 * var(--s));
+  line-height: normal;
+  color: #fff;
+  /* 베이스라인 정렬만으로는 D-n 이 살짝 위로 뜬다(라틴 대문자가 한글보다 em 대비 큼).
+     시안 실측: 사전예약 글리프 top144/bottom200, D-6 top145/bottom202 - D-6 가 2px 아래.
+     그만큼 내린다. 더/덜 내리려면 이 값만 조절. */
+  position: relative;
+  top: calc(2 * var(--s));
+}
+
+/* ── 모바일: 시안이 없어 1920 비율을 버리고 세로로 쌓는다 ──
+   좌표계(--s)를 vw 기준으로 바꾸지 않고, 절대배치를 통째로 해제한다. */
+@media (max-width: 720px) {
+  .wb-store .v2-hero {
+    height: auto;
+    min-height: 560px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding: 96px 20px 0; /* 헤더(64) + 시안 여백(32) */
+  }
+  /* 모바일은 제품이 별도 레이어로 아래에 흐르므로 배경 속 단상을 맞출 이유가 없다(요청).
+     아래쪽 단상 대신 위쪽 결이 보이도록 올려서, 커진 제품과 겹치지 않게 한다. */
+  .wb-store .v2-hero .v2-bg { background-position: 62% 22%; }
+  .wb-store .v2-hero .v2-left,
+  .wb-store .v2-hero .v2-right,
+  .wb-store .v2-hero .v2-r1,
+  .wb-store .v2-hero .v2-r2 {
+    position: static;
+    width: auto;
+    left: auto; right: auto; top: auto;
+  }
+  .wb-store .v2-hero .v2-right { order: 1; }
+  .wb-store .v2-hero .v2-r2 { margin-top: 2px; }
+  .wb-store .v2-hero .v2-r1 { gap: 12px; justify-content: flex-start; }
+  .wb-store .v2-hero .v2-r2 { gap: 12px; justify-content: flex-start; }
+  .wb-store .v2-hero .v2-left { order: 3; margin-top: 12px; }
+
+  /* 모바일은 요소를 덜어낸다(요청): 락업·주타이틀 제거.
+     좁은 화면에서 D-day / 서브카피 / CTA / 제품 넷만 남겨 위계를 단순하게. */
+  .wb-store .v2-hero .v2-lockup,
+  .wb-store .v2-hero .v2-h1 { display: none; }
+
+  /* 덜어낸 만큼 D-day 를 화면의 주인공으로 키운다 */
+  .wb-store .v2-hero .v2-label { font-size: 18px; }
+  .wb-store .v2-hero .v2-clock { font-size: 26px; }
+  .wb-store .v2-hero .v2-big-label { font-size: 50px; }
+  .wb-store .v2-hero .v2-big-dday { font-size: 54px; }
+
+  .wb-store .v2-hero .v2-sub { margin-top: 0; font-size: 15px; white-space: normal; }
+  /* 모바일: 아이콘 버튼을 CTA(ActionButton large = 56px)와 같은 높이로 맞추고,
+     손가락으로 눌러야 하므로 간격을 넓힌다. */
+  .wb-store .v2-hero .v2-cta-row { margin-top: 18px; gap: 14px; }
+  .wb-store .v2-hero .v2-ico { width: 56px; height: 56px; border-radius: 14px; }
+
+  /* 영문: 데스크톱에서 쓰는 '중앙 고정'(left + translateX(-50%))을 모바일에선 해제한다.
+     모바일은 세로 스택(position:static)인데 transform 이 그대로 남아 블록이 자기 폭의
+     절반만큼 왼쪽으로 밀려 화면 밖으로 잘렸다. 선택자 특정성이 높아 기본 모바일 규칙으로는
+     덮이지 않으므로 같은 특정성으로 되돌린다. */
+  .wb-store .v2-hero[data-lang="en"] .v2-right,
+  .wb-store .v2-hero[data-lang="zh"] .v2-right {
+    position: static;
+    left: auto;
+    right: auto;
+    transform: none;
+  }
+  .wb-store .v2-hero[data-lang="en"] .v2-r1,
+  .wb-store .v2-hero[data-lang="en"] .v2-r2,
+  .wb-store .v2-hero[data-lang="zh"] .v2-r1,
+  .wb-store .v2-hero[data-lang="zh"] .v2-r2 { justify-content: flex-start; }
+
+  /* 좁은 폭에서 한 줄에 안 들어가면 줄을 바꾼다 - 잘려 사라지는 것보다 낫다.
+     영문/스페인어처럼 문구가 긴 언어의 안전망. */
+  .wb-store .v2-hero .v2-r1,
+  .wb-store .v2-hero .v2-r2 { flex-wrap: wrap; white-space: normal; }
+
+  /* 영문은 단어가 길어 한글과 같은 크기로는 넘친다 - 한 단계 낮춘다 */
+  .wb-store .v2-hero[data-lang="en"] .v2-label { font-size: 15px; }
+  .wb-store .v2-hero[data-lang="en"] .v2-clock { font-size: 22px; }
+  .wb-store .v2-hero[data-lang="en"] .v2-big-label { font-size: 34px; }
+  .wb-store .v2-hero[data-lang="en"] .v2-big-dday { font-size: 38px; }
+
+  /* 제품도 같이 키운다 - 화면 밖으로 조금 흘려 보내 크게 보이게 */
+  .wb-store .v2-hero .v2-product {
+    position: relative;
+    left: auto; top: auto;
+    /* 왼쪽으로 넘치면 기기 본체가 화면 끝에 붙는다(컷 안에서 기기가 좌측 끝에 있음).
+       왼쪽 오버플로를 0 으로 두고 오른쪽으로만 흘려서 좌측 여백을 만든다. */
+    width: 138%;
+    height: auto;
+    margin: 2px -38% 0 0;
+    order: 4;
+  }
+}
+
+/* 초소형(320px) - 8/31 넘침 수정 이력 구간 */
+@media (max-width: 380px) {
+  .wb-store .v2-hero .v2-big-label { font-size: 42px; }
+  .wb-store .v2-hero .v2-big-dday { font-size: 46px; }
+  .wb-store .v2-hero .v2-label { font-size: 16px; }
+  .wb-store .v2-hero .v2-clock { font-size: 22px; }
+}
+
+/* ═══ 9/3 최종 시안(wellbian.vercel.app) 이식 ═══
+   .v2-bub  : 히어로 공기 방울 4개(air_bubble.png) - 등장 후 각자 다른 주기로 떠다닌다.
+   .v2b-*   : 판매 개시 페이즈용 히어로 v2b(pre_02product_bg.jpg · 가격 릴 · 시트) - 시안 CSS 선반영, 마크업은 추후.
+   시안 빌드 CSS에서 그대로 추출(축약 형태). */
+@media (prefers-reduced-motion:reduce){
+  .wb-store .v2-hero .v2-bub{opacity:1;animation:none}
+}
+@media (prefers-reduced-motion:reduce){
+}
+@media (min-width:1024px){
+}
+@media (max-width:768px){
+}
+@media (prefers-reduced-motion:reduce){
+}
+.wb-store .v2-hero .v2-bub{z-index:1;pointer-events:none;opacity:0;background:url(/images/air_bubble.png) 50%/100% 100% no-repeat;justify-content:center;align-items:center;animation:1.05s cubic-bezier(.22,1,.36,1) forwards v2BubIn;display:flex;position:absolute}
+.wb-store .v2-hero .v2-bub span{font-family:var(--sans);color:#fff;letter-spacing:0;transform:translateY(calc(-4 * var(--s)));text-shadow:0 calc(1 * var(--s)) calc(6 * var(--s)) #140c3c8c;font-weight:600;line-height:1}
+.wb-store .v2-hero .v2-bub sub{vertical-align:baseline;font-size:.62em;position:relative;top:.22em}
+.wb-store .v2-hero .v2-bub-1{left:calc(var(--gutter) + 791.568 * var(--s));top:calc(109.047 * var(--s));width:calc(100.219 * var(--s));height:calc(126.853 * var(--s))}
+.wb-store .v2-hero .v2-bub-2{left:calc(var(--gutter) + 1533.7 * var(--s));top:calc(186.14 * var(--s));width:calc(77.948 * var(--s));height:calc(98.664 * var(--s))}
+.wb-store .v2-hero .v2-bub-3{left:calc(var(--gutter) + 747 * var(--s));top:calc(438 * var(--s));width:calc(77.948 * var(--s));height:calc(98.664 * var(--s))}
+.wb-store .v2-hero .v2-bub-4{left:calc(var(--gutter) + 1643.69 * var(--s));top:calc(518.8 * var(--s));width:calc(54.563 * var(--s));height:calc(69.065 * var(--s))}
+.wb-store .v2-hero .v2-bub-1 span{font-size:calc(32.4 * var(--s))}
+.wb-store .v2-hero .v2-bub-2 span,.wb-store .v2-hero .v2-bub-3 span,.wb-store .v2-hero .v2-bub-4 span{font-size:calc(18 * var(--s))}
+.wb-store .v2-hero .v2-bub-1{animation:1.05s cubic-bezier(.22,1,.36,1) forwards v2BubIn,8s ease-in-out -2s infinite v2BubFloat1}
+.wb-store .v2-hero .v2-bub-2{animation:1.05s cubic-bezier(.22,1,.36,1) forwards v2BubIn,11s ease-in-out -5s infinite v2BubFloat2}
+.wb-store .v2-hero .v2-bub-3{animation:1.05s cubic-bezier(.22,1,.36,1) forwards v2BubIn,13s ease-in-out -8.5s infinite v2BubFloat3}
+.wb-store .v2-hero .v2-bub-4{animation:1.05s cubic-bezier(.22,1,.36,1) forwards v2BubIn,9s ease-in-out -3.5s infinite v2BubFloat4}
+@keyframes v2BubIn{to{opacity:1}}
+@keyframes v2BubFloat1{0%,to{transform:translate(0,0)}25%{transform:translate3d(calc(-14 * var(--s)), calc(-26 * var(--s)), 0)}50%{transform:translate3d(calc(9 * var(--s)), calc(-40 * var(--s)), 0)}75%{transform:translate3d(calc(16 * var(--s)), calc(-15 * var(--s)), 0)}}
+@keyframes v2BubFloat2{0%,to{transform:translate(0,0)}25%{transform:translate3d(calc(15 * var(--s)), calc(-18 * var(--s)), 0)}50%{transform:translate3d(calc(-8 * var(--s)), calc(-36 * var(--s)), 0)}75%{transform:translate3d(calc(-17 * var(--s)), calc(-12 * var(--s)), 0)}}
+@keyframes v2BubFloat3{0%,to{transform:translate(0,0)}25%{transform:translate3d(calc(-12 * var(--s)), calc(-22 * var(--s)), 0)}50%{transform:translate3d(calc(14 * var(--s)), calc(-42 * var(--s)), 0)}75%{transform:translate3d(calc(18 * var(--s)), calc(-17 * var(--s)), 0)}}
+@keyframes v2BubFloat4{0%,to{transform:translate(0,0)}25%{transform:translate3d(calc(13 * var(--s)), calc(-20 * var(--s)), 0)}50%{transform:translate3d(calc(-10 * var(--s)), calc(-34 * var(--s)), 0)}75%{transform:translate3d(calc(-16 * var(--s)), calc(-13 * var(--s)), 0)}}
+/* ── 9/6 시안(preorder-02) 타이포 기준: 런치 페이지 본문은 굵기 400 · 행간 1.5 (전역 body 450/1.6 을 덮는다) ── */
+.wb-store { font-weight: 400; line-height: 1.5; }
+
+/* ── v2b 히어로(사전예약·판매 화면) - wellbian.vercel.app/preorder-02 시안 CSS 원문(2026-09-07 갱신본 그대로).
+   시안 빌드 CSS 에 이미 .wb-store 스코프가 붙어 있어 그대로 옮긴다. 데스크톱은 1920 기준 절대 배치,
+   768px 이하는 시안이 새로 짠 세로 흐름(--bw/--bs/--bsv · .v2b-board 현황판 · order) 을 쓴다. 손대지 말 것 - 갱신 시 통째로 교체. ── */
+.wb-store .v2b-hero{--w:min(100vw, 1920px);--s:calc(var(--w) / 1920);--gutter:calc((100vw - var(--w)) / 2);height:calc(752 * var(--s));color:#fff;margin-bottom:-64px;position:relative;top:-64px;overflow:hidden}
+.wb-store .v2b-hero .v2b-board{display:contents}
+.wb-store .v2b-hero>*,.wb-store .v2b-hero .v2b-board>*{white-space:nowrap;z-index:1;margin:0;position:absolute}
+.wb-store .v2b-hero .v2b-bg{z-index:0;background-color:#0f0d2a;background-image:url(/images/pre_02product_bg.jpg);background-position:50%;background-repeat:no-repeat;background-size:auto 100%;inset:0}
+.wb-store .v2b-hero .v2b-live{left:calc(var(--gutter) + 271 * var(--s));top:calc(283 * var(--s));width:calc(500 * var(--s));height:calc(310 * var(--s))}
+.wb-store .v2b-hero .v2b-product-stack{left:calc(var(--gutter) + 914 * var(--s));top:calc(184 * var(--s));width:calc(760 * var(--s));height:calc(520 * var(--s))}
+.wb-store .v2b-hero .v2b-product-stack>*{width:100%;height:100%;position:absolute;inset:0}
+.wb-store .v2b-hero .v2b-oldprice{--od-top:210;--od-x1:89.57;--od-x2:144.07;--od-x3:198.07}
+.wb-store .v2b-hero .v2b-od{top:calc(var(--od-top) * var(--s));width:calc(56.86 * var(--s));height:calc(100 * var(--s));font-family:var(--font-roboto), "Roboto", system-ui, sans-serif;font-weight:500;font-size:calc(100 * var(--s));line-height:calc(100 * var(--s));letter-spacing:0;font-variant-numeric:tabular-nums;text-align:center;color:#484472;position:absolute;overflow:hidden}
+.wb-store .v2b-hero .v2b-od-1{left:calc(var(--od-x1) * var(--s))}
+.wb-store .v2b-hero .v2b-od-2{left:calc(var(--od-x2) * var(--s))}
+.wb-store .v2b-hero .v2b-od-3{left:calc(var(--od-x3) * var(--s))}
+.wb-store .v2b-hero .v2b-od-track{will-change:transform;display:block}
+.wb-store .v2b-hero .v2b-od-track>span{height:calc(100 * var(--s));display:block}
+.wb-store .v2b-hero .v2b-od-1 .v2b-od-track{--od-from:-700;animation:.45s cubic-bezier(.16,1,.3,1) 50ms both v2bReel}
+.wb-store .v2b-hero .v2b-od-2 .v2b-od-track{--od-from:-400;animation:.55s cubic-bezier(.16,1,.3,1) 50ms both v2bReel}
+.wb-store .v2b-hero .v2b-od-3 .v2b-od-track{--od-from:-100;animation:.65s cubic-bezier(.16,1,.3,1) 50ms both v2bReel}
+.wb-store .v2b-hero .v2b-oldline{left:calc(71 * var(--s));top:calc(261 * var(--s));width:calc(192 * var(--s));height:calc(4 * var(--s));transform-origin:0;background:#8756ff;animation:.25s cubic-bezier(.65,0,.35,1) .55s both v2bStrike;position:absolute}
+.wb-store .v2b-hero .v2b-price-sheen{pointer-events:none;mix-blend-mode:screen;overflow:hidden;-webkit-mask-image:url(/images/pre_02product_450mask.png);mask-image:url(/images/pre_02product_450mask.png);-webkit-mask-size:100% 100%;mask-size:100% 100%;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat}
+.wb-store .v2b-hero .v2b-price-sheen:before{content:"";width:14%;filter:blur(calc(1.5 * var(--s)));background:linear-gradient(100deg,#fff0 0%,#c6d0ff73 35%,#fffffff2 50%,#c6d0ff73 65%,#fff0 100%);animation:.9s cubic-bezier(.35,0,.25,1) 1.05s both v2bSheen;position:absolute;top:0;bottom:0;left:0}
+@media (prefers-reduced-motion:reduce){.wb-store .v2b-hero .v2b-od-track{transform:translateY(calc(-2000 * var(--s)));animation:none}.wb-store .v2b-hero .v2b-oldline{animation:none}.wb-store .v2b-hero .v2b-price-sheen:before{opacity:0;animation:none}}
+.wb-store .v2b-hero .v2b-eyebrow{left:calc(var(--gutter) + 282 * var(--s));top:calc(121 * var(--s));font-size:calc(24 * var(--s));color:#c8c8f0;font-weight:400}
+.wb-store .v2b-hero .v2b-h1{left:calc(var(--gutter) + 276 * var(--s));top:calc(160 * var(--s));font-size:calc(58 * var(--s));font-weight:700;font-family:var(--serif);line-height:1.18}
+.wb-store .v2b-hero .v2b-note{left:calc(var(--gutter) + 281 * var(--s));top:calc(235 * var(--s));font-size:calc(22 * var(--s));color:#e3e844;font-weight:300}
+.wb-store .v2b-hero .v2b-period{left:calc(var(--gutter) + 1153 * var(--s));top:calc(110 * var(--s));font-size:calc(25 * var(--s));color:#a17bff;font-weight:300}
+.wb-store .v2b-hero .v2b-h2{left:calc(var(--gutter) + 1051 * var(--s));top:calc(148 * var(--s));font-size:calc(52 * var(--s));font-weight:600;font-family:var(--serif);line-height:1.18}
+.wb-store .v2b-hero .v2b-bang{transform-origin:50% 100%;margin-left:calc(-3 * var(--s));display:inline-block;transform:skew(-12deg)}
+.wb-store .v2b-hero .v2b-live-title{left:calc(var(--gutter) + 293 * var(--s));top:calc(300 * var(--s));font-size:calc(18 * var(--s));font-weight:400;font-family:var(--serif)}
+.wb-store .v2b-hero .v2b-live-count{left:calc(var(--gutter) + 661 * var(--s));top:calc(303 * var(--s));font-size:calc(16 * var(--s));font-weight:400}
+@media (min-width:1024px){.wb-store .v2b-hero{margin-bottom:-66px;top:-66px}}
+@media (max-width:768px){.wb-store .v2b-hero{margin-bottom:-60px;top:-60px}}
+.wb-store .v2b-hero .v2b-feed{left:calc(var(--gutter) + 295 * var(--s));top:calc(346 * var(--s));width:calc(452 * var(--s));height:calc(232 * var(--s));overflow:hidden;-webkit-mask-image:linear-gradient(#000 0% 85%,#0000 100%);mask-image:linear-gradient(#000 0% 85%,#0000 100%)}
+.wb-store .v2b-hero .v2b-feed-track{column-gap:0;row-gap:calc(9 * var(--s));grid-template-columns:1fr 1fr;animation:18s linear infinite feed-up;display:grid}
+.wb-store .v2b-hero .v2b-feed-row:nth-child(odd){justify-content:flex-start}
+.wb-store .v2b-hero .v2b-feed-row:nth-child(2n){justify-content:flex-end}
+.wb-store .v2b-hero .v2b-feed-row{justify-content:space-between;align-items:baseline;gap:calc(5 * var(--s));height:calc(28 * var(--s));font-size:calc(14 * var(--s));letter-spacing:-.02em;color:#ffffff9e;display:flex}
+.wb-store .v2b-hero .v2b-feed-row .mono{letter-spacing:-.02em}
+.wb-store .v2b-hero .v2b-feed-t{color:#fff6}
+.wb-store .v2b-hero .v2b-feed-q{color:#fff;font-weight:700}
+@media (prefers-reduced-motion:reduce){.wb-store .v2b-hero .v2b-feed-track{animation:none}}
+.wb-store .v2b-hero .v2b-cta-row{left:calc(var(--gutter) + 263 * var(--s));top:calc(617 * var(--s));align-items:center;gap:calc(10 * var(--s));display:flex}
+.wb-store .v2b-hero .v2b-cta{justify-content:center;align-items:center;gap:calc(8 * var(--s));height:calc(56 * var(--s));padding-inline:calc(28 * var(--s));font-size:calc(20 * var(--s));border-radius:calc(12 * var(--s));white-space:nowrap;cursor:pointer;color:#fff;box-shadow:0 calc(10 * var(--s)) calc(28 * var(--s)) #00000052;background:#4d4dce;border:1px solid #0000;font-weight:700;text-decoration:none;transition:background .15s;display:inline-flex}
+.wb-store .v2b-hero .v2b-cta.btn-shine:after{animation-delay:6.95s}
+.wb-store .v2b-hero .v2b-cta:hover{background:#4545b9}
+.wb-store .v2b-hero .v2b-cta:active{background:#3e3ea5}
+.wb-store .v2b-hero .v2-ico{width:calc(56 * var(--s));height:calc(56 * var(--s));border-radius:calc(14 * var(--s));color:#fff;cursor:pointer;background:0 0;border:1px solid #ffffff38;flex:none;justify-content:center;align-items:center;transition:border-color .15s,background .15s;display:inline-flex}
+.wb-store .v2b-hero .v2-ico:hover{background:#ffffff14;border-color:#ffffff73}
+@media (max-width:768px){.wb-store .v2b-hero{--bw:min(calc(100vw - 40px), 520px);--bs:calc(var(--bw) / 500);--bh:calc(252 * var(--bs));--bsv:calc(var(--bh) / 310);flex-direction:column;align-items:center;height:auto;padding:96px 20px 32px;display:flex}.wb-store .v2b-hero .v2b-bg{background-position:50% 0;background-size:260%}.wb-store .v2b-hero .v2b-bg:after{content:"";pointer-events:none;background:linear-gradient(#0f0d2a6b 0% 26%,#0f0d2a 62%);position:absolute;inset:0}.wb-store .v2b-hero>.v2b-period,.wb-store .v2b-hero>.v2b-eyebrow,.wb-store .v2b-hero>.v2b-h1,.wb-store .v2b-hero>.v2b-note,.wb-store .v2b-hero>.v2b-board,.wb-store .v2b-hero>.v2b-cta-row,.wb-store .v2b-hero>.v2b-product-stack{width:var(--bw);white-space:normal;position:relative;top:auto;left:auto;right:auto}.wb-store .v2b-hero .v2b-h2{display:none}.wb-store .v2b-hero .v2b-period{text-shadow:0 1px 10px #0a08228c;order:1;margin-bottom:6px;font-size:clamp(15px,4.3vw,19px);line-height:1.4}.wb-store .v2b-hero .v2b-eyebrow{z-index:2;padding-left:10px;padding-right:max(0px, calc(var(--bw) - 7.4em - 10px));margin-top:14px;margin-bottom:calc(20px - 223 * var(--bw) / 760);order:6;font-size:clamp(16px,4.6vw,20px);line-height:1.4;position:relative}.wb-store .v2b-hero[data-lang=en] .v2b-eyebrow,.wb-store .v2b-hero[data-lang=es] .v2b-eyebrow{padding-right:max(0px, calc(var(--bw) - 11em - 10px));text-shadow:0 1px 12px #0a0822b3;font-size:clamp(13px,3.7vw,16px)}.wb-store .v2b-hero .v2b-h1{text-shadow:0 2px 14px #0a082280;order:2;margin-bottom:8px;font-size:clamp(30px,10vw,48px);line-height:1.2}.wb-store .v2b-hero .v2b-note{text-shadow:0 1px 10px #0a08228c;order:3;margin-bottom:18px;font-size:clamp(13px,3.8vw,17px);line-height:1.45}.wb-store .v2b-hero .v2b-board{width:var(--bw);height:var(--bh);order:4;display:block;position:relative}.wb-store .v2b-hero .v2b-live{width:100%;height:100%;top:0;left:0}.wb-store .v2b-hero .v2b-live-title{left:calc(22 * var(--bs));top:calc(13 * var(--bsv));font-size:clamp(15px, calc(18 * var(--bs)), 22px)}.wb-store .v2b-hero .v2b-live-count{left:auto;right:calc(24 * var(--bs));top:calc(16 * var(--bsv));font-size:clamp(14px, calc(16 * var(--bs)), 20px)}.wb-store .v2b-hero .v2b-feed{left:calc(24 * var(--bs) + 15px);top:calc(63 * var(--bsv));width:calc(var(--bw) - 48 * var(--bs) - 15px);height:calc(232 * var(--bsv))}.wb-store .v2b-hero .v2b-feed-track{justify-content:stretch;align-items:baseline;column-gap:0;row-gap:clamp(9px, calc(12 * var(--bs)), 16px);grid-template-columns:max-content max-content 1fr}.wb-store .v2b-hero .v2b-feed-row{font-size:clamp(15px, calc(16 * var(--bs)), 20px);display:contents}.wb-store .v2b-hero .v2b-feed-row .mono:first-child{margin-right:50px}.wb-store .v2b-hero .v2b-feed-row,.wb-store .v2b-hero .v2b-feed-row .mono{letter-spacing:.03em}.wb-store .v2b-hero .v2b-feed-row .mono:first-child{letter-spacing:.05em}.wb-store .v2b-hero[data-lang=en] .v2b-feed-row .mono:first-child,.wb-store .v2b-hero[data-lang=zh] .v2b-feed-row .mono:first-child,.wb-store .v2b-hero[data-lang=es] .v2b-feed-row .mono:first-child{margin-right:20px}.wb-store .v2b-hero[data-lang=es] .v2b-feed-row{font-size:clamp(13px, calc(14 * var(--bs)), 18px)}.wb-store .v2b-hero .v2b-feed-q{padding-right:clamp(0px, calc(var(--bw) - 335px), 50px);justify-self:end}.wb-store .v2b-hero .v2b-cta-row{width:var(--bw);flex-wrap:wrap;order:5;gap:12px;margin-top:20px}.wb-store .v2b-hero .v2b-cta{border-radius:12px;flex:1 0 100%;gap:8px;height:56px;padding-inline:24px;font-size:17px;box-shadow:0 10px 28px #00000052}.wb-store .v2b-hero .v2-ico{border-radius:14px;width:56px;height:56px}.wb-store .v2b-hero .v2b-product-stack{--s:calc(var(--bw) / 760);order:7;margin-top:0}}
+@media (max-width:360px){.wb-store .v2b-hero .v2b-feed-row .mono:first-child{margin-right:30px}.wb-store .v2b-hero .v2b-feed-row{font-size:14px}.wb-store .v2b-hero[data-lang=en] .v2b-feed-row .mono:first-child,.wb-store .v2b-hero[data-lang=zh] .v2b-feed-row .mono:first-child,.wb-store .v2b-hero[data-lang=es] .v2b-feed-row .mono:first-child{margin-right:8px}.wb-store .v2b-hero[data-lang=en] .v2b-feed-row,.wb-store .v2b-hero[data-lang=zh] .v2b-feed-row{font-size:13px}.wb-store .v2b-hero[data-lang=es] .v2b-feed-row{font-size:12px}}
+@media (max-width:380px){.wb-store .v2b-hero{--bw:calc(100vw - 32px);padding-left:16px;padding-right:16px}}
+@keyframes v2bReel{0%{transform:translateY(calc(var(--od-from) * var(--s)))}to{transform:translateY(calc(-2000 * var(--s)))}}
+@keyframes v2bStrike{0%{transform:scaleX(0)}to{transform:scaleX(1)}}
+@keyframes v2bSheen{0%{opacity:0;transform:translate(-130%)skew(-12deg)}15%{opacity:1}85%{opacity:1}to{opacity:0;transform:translate(340%)skew(-12deg)}}
+
+/* 시안 사이트에는 Montserrat 이 로드되지 않아 현황판 피드가 Pretendard 로 보인다(승인된 모습). 우리 쪽 .mono 는 Montserrat 이라
+   글자가 8% 넓어져 모바일에서 "10대 예약" 이 잘렸다(2026-09-07 확인). 히어로 피드만 시안과 같은 글꼴로 맞춘다. */
+.wb-store .v2b-hero .v2b-feed-row .mono { font-family: "Pretendard Variable", Pretendard, -apple-system, "Apple SD Gothic Neo", sans-serif; }
+/* 시안 표본은 한 자리 수량뿐인데 실제 예약은 "10대" 가 흔하다 - 모바일 수량 칸 오른쪽 여백을 없애 잘림을 막는다 */
+/* 좁은 화면(375px 이하)에서는 0 이라 예전처럼 수량이 잘리지 않고, 화면이 넓어지는 만큼만 여백이 붙는다 */
+@media (max-width:768px){ .wb-store .v2b-hero .v2b-feed-q { padding-right: clamp(0px, calc(var(--bw) - 335px), 50px); } }
+/* ═══ 쉬운 예약·결제 (어르신 UX, 9/4) ═══
+   한 화면 한 가지 일 · 글씨 18px 이상 · 터치 영역 56px · 진한 대비. 예약·구매 모달에만 붙는다(.modal-card.easy). */
+.wb-store .modal-card.easy { font-size: 18px; line-height: 1.7; gap: 22px; padding: 30px 30px 34px; }
+.wb-store .modal-card.easy .field-input { font-size: 18px; min-height: 54px; padding: 14px 16px; border-width: 1.5px; }
+.wb-store .modal-card.easy .field-input::placeholder { color: #8a8aa3; }
+.wb-store .modal-card.easy .btn-main { min-height: 56px; font-size: 19px; }
+.wb-store .modal-card.easy .btn-ghost { min-height: 50px; font-size: 17px; }
+.wb-store .modal-card.easy .mstep-dot { width: 32px; height: 32px; font-size: 15px; }
+.wb-store .modal-card.easy .mstep-label { font-size: 16px; }
+.wb-store .modal-card.easy .mstep-label.cur { font-size: 17px; }
+.wb-store .modal-card.easy .note { font-size: 16.5px; line-height: 1.7; }
+.wb-store .modal-card.easy input[type="checkbox"] { width: 24px; height: 24px; }
+@media (max-width: 720px) {
+  .wb-store .modal-card.easy { padding: 22px 18px 30px; }
+  .wb-store .modal-card.easy .mstep-label:not(.cur) { display: none; }
+}
+
+
+
+/* ── 가격·구매 패널 (wellbian.vercel.app/preorder-02 시안 2026-09-08 갱신본 CSS 원문) ──
+   .buy-card(연보라 바탕) > .buy-title > .buy-body(1fr 430px) > [.buy-panel: 배지·정상가·큰 가격(Roboto 68px)·RLUSD·버튼·점선·결제 안내 | .buy-side: 기기 NFT/제네시스 상자]
+   .price-notes(제네시스 넘버·출고·XRP SEOUL) · .dcent-card(.dcent-split 사진 470px | 내용). .wb-lab 은 LaunchShell 이 씌운다. */
+.wb-store .price-grid{grid-template-columns:1fr 1fr;gap:32px;display:grid}
+@media (max-width:720px){.wb-store .price-grid,.wb-store .rl-grid,.wb-store .me-2col{grid-template-columns:1fr}.wb-store .order-steps-h{display:none!important}.wb-store .order-steps-v{display:flex!important}}
+.wb-store .price-split{align-items:start;gap:28px;display:grid}
+.wb-store .price-notes{flex-direction:column;gap:20px;display:flex}
+@media (min-width:1280px){.wb-store .wb-lab .price-split{grid-template-columns:minmax(0,1fr) 420px}}
+.wb-store .dcent-split{align-items:start;gap:34px;display:grid}
+.wb-store .dcent-left,.wb-store .dcent-right{flex-direction:column;gap:12px;display:flex}
+@media (min-width:1024px){.wb-store .wb-lab .dcent-split{grid-template-columns:470px minmax(0,1fr)}}
+.wb-store .buy-split{align-items:center;gap:20px;display:grid}
+.wb-store .buy-price,.wb-store .buy-cta{flex-direction:column;gap:12px;display:flex}
+@media (min-width:720px){.wb-store .wb-lab .buy-split{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}}
+.wb-store .buy-card,.wb-store .dcent-card{max-width:520px;margin:0 auto}
+.wb-store .wb-lab .buy-card,.wb-store .wb-lab .dcent-card{max-width:900px}
+@media (min-width:1280px){.wb-store .wb-lab .dcent-card{max-width:calc(100% - 448px);margin-left:0;margin-right:auto}}
+.wb-store .wb-lab .buy-split{align-items:stretch}
+.wb-store .wb-lab .buy-cta{justify-content:flex-end}
+.wb-store .wb-lab .buy-cta>.btn-main,.wb-store .wb-lab .buy-cta>*>.btn-main{flex:1}
+.wb-store .wb-lab .price-notes{border:1px solid var(--bd-card);background:#fff;border-radius:14px;gap:0;padding:6px 20px}
+@media (min-width:1280px){.wb-store .wb-lab .price-split{align-items:stretch}.wb-store .wb-lab .price-notes{height:100%}}
+.wb-store .wb-lab .buy-cta>.btn-main,.wb-store .wb-lab .buy-cta>*>.btn-main{flex:none;height:84px}
+.wb-store .buy-title{letter-spacing:-.6px;color:#333;text-align:center;font-family:Paperlogy,Pretendard Variable,Pretendard,sans-serif;font-size:30px;font-weight:700}
+.wb-store .buy-panel{background:#fff;border-radius:10px;flex-direction:column;padding:38px 34px 42px 40px;display:flex}
+@media (min-width:720px){.wb-store .buy-split{grid-template-columns:max-content minmax(280px,1fr);gap:30px}.wb-store .buy-cta{align-items:flex-end}}
+.wb-store .buy-price{flex-flow:wrap;align-items:baseline;gap:5px 14px}
+.wb-store .buy-was{flex:0 0 100%}
+.wb-store .buy-badge{color:#fff;background:#e05bb6;border-radius:6px;justify-content:center;align-self:flex-start;align-items:center;min-width:75.2px;height:32.5px;margin-bottom:17px;padding:0 10.3px;font-size:18.8px;font-weight:700;display:inline-flex}
+.wb-store .buy-was{color:#969696;font-size:21.6px}
+.wb-store .buy-now-num,.wb-store .buy-was s,.wb-store .buy-badge{font-family:var(--font-roboto), "Roboto", system-ui, sans-serif;font-variant-numeric:tabular-nums;letter-spacing:0}
+.wb-store .buy-was s{padding:0 8px 0 2px;font-weight:400}
+.wb-store .buy-now{align-items:baseline;gap:5px;line-height:1;display:flex}
+.wb-store .buy-now-num{letter-spacing:-2px;color:#1e1e5b;font-size:68px;font-weight:900;line-height:1}
+.wb-store .buy-now-unit{color:var(--ink-4);font-size:34px;font-weight:500}
+.wb-store .buy-alt{letter-spacing:-2px;color:#4d4dce;white-space:nowrap;flex-direction:row;align-items:baseline;gap:3px;font-size:34px;font-weight:700;display:inline-flex}
+.wb-store .buy-alt .mono{letter-spacing:-2px;margin-left:6px;font-family:inherit;font-weight:700}
+.wb-store .buy-alt-note{letter-spacing:0;color:#969696;font-size:15px;font-weight:400}
+.wb-store .buy-cta>.buy-btn,.wb-store .buy-cta>*>.buy-btn{border-radius:10px;flex:none;width:280px;max-width:100%;height:104px;font-size:25px;font-weight:700;transform:translateY(-4px)}
+.wb-store .buy-dash{border-top:1px dotted #c9c9dd;margin:30px 0 20px}
+.wb-store .buy-pay{color:#333;font-size:18px}
+.wb-store .buy-pay:before,.wb-store .buy-free:before{content:"· "}
+.wb-store .buy-pay,.wb-store .buy-free{text-indent:-.85em;padding-left:.85em}
+.wb-store .buy-free{color:#333;margin-top:10px;font-size:18px}
+@media (max-width:900px){.wb-store .buy-card{padding:32px 24px 28px!important}.wb-store .buy-panel{padding:20px 22px 24px}.wb-store .buy-title{font-size:23px}.wb-store .buy-now-num{font-size:54px}.wb-store .buy-now-unit{font-size:28px}.wb-store .buy-alt{white-space:normal;font-size:21px}
+  .wb-store .buy-alt, .wb-store .buy-alt .mono{letter-spacing:0}.wb-store .buy-alt-note{margin-left:7px}.wb-store .buy-was{font-size:18px}.wb-store .buy-pay,.wb-store .buy-free{font-size:15.5px}.wb-store .buy-badge{min-width:70px;height:32px;font-size:18px}.wb-store .buy-cta>.buy-btn,.wb-store .buy-cta>*>.buy-btn{width:100%;height:72px;font-size:20px}}
+.wb-store .buy-body{align-items:stretch;gap:24px;display:grid}
+.wb-store .buy-side{flex-direction:column;gap:24px;display:flex}
+.wb-store .buy-panel{height:100%}
+.wb-store .buy-side>*{flex:1;grid-auto-rows:1fr}
+@media (min-width:1024px){.wb-store .buy-body{grid-template-columns:minmax(0,1fr) 430px}.wb-store .buy-body .buy-split{grid-template-columns:minmax(0,1fr);gap:18px}.wb-store .buy-body .buy-cta{align-items:stretch}.wb-store .buy-body .buy-cta>.buy-btn,.wb-store .buy-body .buy-cta>*>.buy-btn{width:100%;transform:none}}
+@media (min-width:1280px){.wb-store .price-split{grid-template-columns:minmax(0,1fr);align-items:start}.wb-store .wb-lab .price-split{grid-template-columns:minmax(0,1fr)}.wb-store .dcent-card,.wb-store .wb-lab .dcent-card{max-width:none;margin:0}}
+.wb-store .buy-card,.wb-store .wb-lab .buy-card{max-width:none}
+.wb-store .price-notes,.wb-store .wb-lab .price-notes{background:0 0;border:0;border-radius:0;gap:20px;height:auto;margin-bottom:20px;padding:0}
+.wb-store .price-notes .note-ico,.wb-store .wb-lab .price-notes .note-ico{display:none!important}
+.wb-store .dcent-num{font-family:var(--font-roboto), "Roboto", system-ui, sans-serif;font-variant-numeric:tabular-nums;letter-spacing:0}
+.wb-store .price-notes,.wb-store .price-notes>*,.wb-store .price-notes>*>*,.wb-store .buy-side,.wb-store .buy-side>*,.wb-store .buy-side>*>*{word-break:normal;overflow-wrap:anywhere;min-width:0}
+.wb-store .buy-card,.wb-store .buy-card *{min-width:0}
+.wb-store .buy-title,.wb-store .buy-was,.wb-store .buy-alt,.wb-store .buy-pay,.wb-store .buy-free,.wb-store .buy-btn{word-break:normal;overflow-wrap:anywhere}
+.wb-store .buy-alt{white-space:normal;flex-wrap:wrap}
+.wb-store .buy-alt .mono,.wb-store .buy-alt-note{white-space:nowrap}
+/* ── 히어로 우측 문구(단 7일…/단 24시간…) 영문·기타 언어 넘침 방지 (2026-09-08 확인: EN "7 days only: claim priority access!" 이 1280px 에서 오른쪽 끝을 넘음).
+   한국어는 시안 좌표 그대로(왼쪽 1051 기준). 한국어가 아니면 오른쪽 끝(1900/1920)에 맞춰 붙이고 글자를 52→42 로 줄여 왼쪽 제목과 겹치지 않게 한다. 모바일(≤768)은 시안이 숨긴다. ── */
+@media (min-width: 769px) {
+  .wb-store .v2b-hero:not([data-lang="ko"]) .v2b-h2 { left: auto; right: calc(var(--gutter) + 20 * var(--s)); text-align: right; font-size: calc(42 * var(--s)); }
+  .wb-store .v2b-hero:not([data-lang="ko"]) .v2b-period { left: auto; right: calc(var(--gutter) + 20 * var(--s)); text-align: right; }
+}
+/* 시안: 가격 섹션 아래·비전 섹션 위 여백 축소 */
+.wb-store #price { padding-bottom: 40px; }
+@media (max-width: 720px) { .wb-store #price { padding-bottom: 18px; } }
+.wb-store #how { padding-top: 40px; }
+@media (max-width: 720px) { .wb-store #how { padding-top: 18px; } }
+
+
+/* ───────── 가격 패널: 카드 그림 + 가격 (시안 preorder-02 갱신본, 2026-09-11) ─────────
+   왼쪽에 제네시스 라이선스 카드(205px)를 세우고 오른쪽에 할인 뱃지·가격·버튼을 쌓는다.
+   720px 아래에서는 2열 격자로 바꿔 카드를 138px 로 줄이고 버튼만 아래 한 줄을 다 쓴다. */
+.wb-store .buy-lead{display:flex;align-items:flex-start;gap:35px}
+.wb-store .buy-cardart{flex:none}
+.wb-store .buy-cardart img{display:block;width:205px;height:auto;border-radius:8px}
+.wb-store .buy-main{display:flex;flex-direction:column;flex:1;min-width:0}
+.wb-store .buy-lead .buy-alt{display:flex;align-self:flex-start;margin-top:2px}
+.wb-store .buy-lead .buy-alt-note{margin-left:4px;position:relative;top:-2px}
+.wb-store .buy-lead .buy-cta{margin-top:22px}
+.wb-store .buy-lead .buy-cta>.buy-btn,
+.wb-store .buy-lead .buy-cta>*>.buy-btn{width:calc(100% - 10px);height:72px}
+
+@media (max-width:720px){
+  .wb-store .buy-lead{display:grid;grid-template-columns:138px minmax(0,1fr);align-items:start;gap:4px 16px}
+  .wb-store .buy-cardart{grid-area:1/1/span 2}
+  .wb-store .buy-cardart img{width:100%;height:auto}
+  /* .buy-main 은 껍데기만 사라지고 자식들이 바로 격자 칸에 앉는다 */
+  .wb-store .buy-main{display:contents}
+  .wb-store .buy-lead .buy-badge{grid-area:1/2;justify-self:start;margin-bottom:0}
+  .wb-store .buy-lead .buy-price{grid-area:2/2}
+  .wb-store .buy-lead .buy-cta{grid-area:3/1/auto/-1;margin-top:14px}
+  .wb-store .buy-lead .buy-cta>.buy-btn,
+  .wb-store .buy-lead .buy-cta>*>.buy-btn{width:100%}
+  .wb-store .buy-lead .buy-now-num{font-size:44px}
+  .wb-store .buy-lead .buy-now-unit{font-size:23px}
+  .wb-store .buy-lead .buy-alt{font-size:18px}
+  .wb-store .buy-lead .buy-was{font-size:17px}
+}
+
+/* 폰 너비 - 가격 칸이 160px 아래로 내려가면 금액이 두세 줄로 쪼개진다.
+   카드 그림을 한 줄 차지하게 두고 금액·버튼을 아래에 온전히 펼친다. */
+@media (max-width:520px){
+  .wb-store .buy-lead{grid-template-columns:minmax(0,1fr);gap:14px}
+  .wb-store .buy-cardart{grid-area:auto;justify-self:start}
+  .wb-store .buy-cardart img{width:138px}
+  .wb-store .buy-lead .buy-badge{grid-area:auto}
+  .wb-store .buy-lead .buy-price{grid-area:auto}
+  .wb-store .buy-lead .buy-cta{grid-area:auto}
+}
+
+/* 언어를 바꿔도 글이 상자를 넘지 않게 (시안 동일 규칙)
+   .wb-store 는 한국어를 위해 word-break:keep-all 인데, 띄어쓰기가 없는 중국어·일본어에서는
+   그 때문에 한 문단이 통째로 한 덩어리가 되어 상자를 넘는다. 두 언어에서만 풀어 준다. */
+html[lang=zh] .wb-store :is(h1,h2,h3,h4,p,li,dt,dd),
+html[lang=ja] .wb-store :is(h1,h2,h3,h4,p,li,dt,dd){word-break:normal}
+/* 히어로는 좌표로 배치해 예외, 나머지 섹션의 글은 어디서든 접히게 둔다(:where 라 우선순위 0) */
+.wb-store :where(section:not(.v2b-hero):not(.v2-hero)) :where(p,li,span,div,h1,h2,h3,h4,td,th,dt,dd){word-break:normal;overflow-wrap:anywhere;min-width:0}
+
+/* ---- designer sync 2026-09-15: preorder-03/04/05/06 hero variants (wellbian.vercel.app build output).
+   Rules the designer changed or added since the preorder-02 port. Appended so they win the cascade;
+   variants are selected by data-variant on .v2-hero (p03 LOCKED, p06 CLOSED) and .v2b-hero (p02 pre, p04 voucher, p05 general). ---- */
+.wb-store .btn-shine{position:relative;overflow:hidden}
+.wb-store .btn-shine:after{content:"";pointer-events:none;background:linear-gradient(105deg,#0000 15%,#ffffff80 50%,#0000 85%);width:45%;animation:3.2s ease-in-out infinite btn-shine-sweep;position:absolute;top:-4px;bottom:-4px;left:-70%;transform:skew(-18deg)}
+.wb-store .v2-hero{--w:min(100vw, 1920px);--s:calc(var(--w) / 1920);--gutter:calc((100vw - var(--w)) / 2);height:calc(752 * var(--s));color:#fff;background:#1a0b3d;margin-bottom:-64px;padding:0;position:relative;top:-64px;overflow:hidden;container-type:inline-size}
+.wb-store .v2-hero .v2-bg{z-index:0;background-color:#0f0d2a;background-image:url(/images/pre_01product_bgre.jpg);background-position:50%;background-repeat:no-repeat;background-size:auto 100%;position:absolute;inset:0}
+.wb-store .v2-hero .v2-product{left:calc(var(--gutter) + 990 * var(--s));top:calc(208 * var(--s));width:calc(540 * var(--s));height:calc(485 * var(--s));object-fit:contain;z-index:1;pointer-events:none;transform-origin:50% 100%;position:absolute;transform:scale(.95)}
+.wb-store .v2-hero .v2-product{animation:1.05s cubic-bezier(.22,1,.36,1) both v2ProductLift}
+.wb-store .v2-hero .v2-h1 .hero-line{padding-bottom:0}
+.wb-store .v2-hero .v2-reel-group{font-variant-numeric:tabular-nums;display:inline-flex}
+.wb-store .v2-hero .v2-reel{display:inline-block;position:relative}
+.wb-store .v2-hero .v2-reel-ghost{visibility:hidden}
+.wb-store .v2-hero .v2-reel-clip{position:absolute;inset:0;overflow:hidden}
+.wb-store .v2-hero .v2-reel-track{width:100%;transition-property:top;transition-timing-function:cubic-bezier(.16,1,.3,1);position:absolute;top:0;left:0}
+.wb-store .v2-hero .v2-reel-track>span{display:block}
+.wb-store .v2-hero .v2-left{z-index:2;left:calc(var(--gutter) + 312 * var(--s));top:calc(144 * var(--s));flex-direction:column;align-items:flex-start;display:flex;position:absolute}
+.wb-store .v2-hero .v2-lockup{width:calc(290 * var(--s));aspect-ratio:532/75;background-color:#7172fe;-webkit-mask:url(/brand/logo_w_medium.svg) 50%/contain no-repeat;mask:url(/brand/logo_w_medium.svg) 50%/contain no-repeat}
+.wb-store .v2-hero .v2-h1{margin:calc(16 * var(--s)) 0 0;font-family:var(--serif);font-weight:400;font-size:calc(50 * var(--s));line-height:calc(59 * var(--s));letter-spacing:0;color:#fff;white-space:nowrap}
+.wb-store .v2-hero .v2-sub{margin:calc(12 * var(--s)) 0 0;font-weight:300;font-size:calc(20 * var(--s));color:#cac8f1;white-space:nowrap;line-height:1.5}
+.wb-store .v2-hero .v2-cta{white-space:nowrap;cursor:pointer;color:#fff;background:#4d4dce;border:1px solid #0000;border-radius:12px;justify-content:center;align-items:center;gap:8px;height:56px;padding-inline:24px;font-size:20px;font-weight:700;text-decoration:none;transition:background .15s;display:inline-flex;box-shadow:0 10px 28px #00000052}
+.wb-store .v2-hero .v2-cta:hover{background:#4545b9}
+.wb-store .v2-hero .v2-cta:active{background:#3e3ea5}
+.wb-store .v2-hero .v2-cta-row{margin-top:calc(23 * var(--s));align-self:flex-start;align-items:center;gap:12px;display:flex}
+.wb-store .v2-hero .v2-ico{color:#fff;cursor:pointer;background:0 0;border:1px solid #ffffff38;border-radius:14px;flex:none;justify-content:center;align-items:center;width:56px;height:56px;transition:border-color .15s,background .15s;display:inline-flex}
+.wb-store .v2-hero .v2-ico:hover{background:#ffffff14;border-color:#ffffff73}
+.wb-store .v2-hero .v2-right{z-index:2;top:calc(109 * var(--s));right:calc(var(--gutter) + 468 * var(--s));width:max-content;position:absolute}
+.wb-store .v2-hero .v2-r1,.wb-store .v2-hero .v2-r2{white-space:nowrap;justify-content:space-between;align-items:baseline;display:flex}
+.wb-store .v2-hero .v2-r2{margin-top:calc(32 * var(--s));gap:calc(20 * var(--s))}
+.wb-store .v2-hero .v2-r1{top:calc(3 * var(--s));gap:calc(21 * var(--s));position:absolute;left:0;right:0}
+.wb-store .v2-hero[data-lang=en] .v2-right,.wb-store .v2-hero[data-lang=zh] .v2-right{right:auto;left:calc(var(--gutter) + 1267 * var(--s));transform:translate(-50%)}
+.wb-store .v2-hero[data-lang=en] .v2-r1,.wb-store .v2-hero[data-lang=zh] .v2-r1{justify-content:flex-end}
+.wb-store .v2-hero .v2-label{font-weight:400;font-size:calc(26 * var(--s));color:#e3e844;line-height:normal}
+.wb-store .v2-hero .v2-clock{font-family:var(--serif);font-weight:300;font-size:calc(28 * var(--s));letter-spacing:0;color:#fff;font-variant-numeric:tabular-nums;line-height:normal}
+.wb-store .v2-hero .v2-big-label{font-family:var(--serif);font-weight:700;font-size:calc(62 * var(--s));color:#fff;line-height:normal}
+.wb-store .v2-hero .v2-big-dday{font-family:var(--serif);font-weight:700;font-size:calc(70 * var(--s));color:#fff;top:calc(2 * var(--s));line-height:normal;position:relative}
+.wb-store .v2-hero[data-variant=p03] .v2-bg{background-image:url(/images/pre_03product_bg.jpg)}
+.wb-store .v2b-hero[data-variant=p05] .v2b-product-stack{width:calc(885 * var(--s));height:calc(472 * var(--s))}
+.wb-store .v2b-hero[data-variant=p05] .v2b-oldprice{--od-top:187}
+.wb-store .v2b-hero[data-variant=p05] .v2b-oldline{top:calc(238 * var(--s))}
+.wb-store .v2b-hero[data-variant=p05] .v2b-price-sheen{-webkit-mask-image:url(/images/pre_05product_450mask.png);mask-image:url(/images/pre_05product_450mask.png)}
+.wb-store .v2b-hero .v2b-cta:disabled{color:var(--cap);cursor:not-allowed;box-shadow:none;background:#d8d8e0}
+.wb-store .v2b-hero[data-variant=p04] .v2b-cta:disabled{color:#ffffff1a;background:#231452;border-color:#ffffff0d}
+.wb-store .v2b-hero .v2b-cta-icons{display:contents}
+@media (prefers-reduced-motion:reduce){
+  .wb-store .btn-shine:after{animation:none;display:none}
+  .wb-store .v2-hero .v2-product,.wb-store .v2-hero .hero-lift,.wb-store .v2-hero .hero-cta,.wb-store .v2-hero .hero-line-inner{animation:none}
+  .wb-store .v2-hero .v2-reel-track{transition:none}
+}
+@media (min-width:1024px){
+  .wb-store .v2-hero{margin-bottom:-66px;top:-66px}
+}
+@media (max-width:768px){
+  .wb-store .v2-hero{margin-bottom:-60px;top:-60px}
+  .wb-store .v2-hero .v2-bg:after{content:"";pointer-events:none;background:#0f0d2a61;position:absolute;inset:0}
+  .wb-store .v2b-hero>.v2b-product-flat{width:var(--bw);white-space:normal;position:relative;top:auto;left:auto;right:auto}
+  .wb-store .v2b-hero[data-variant=p04] .v2b-notice{display:none}
+  .wb-store .v2b-hero[data-variant=p04] .v2b-period{font-size:18px}
+  .wb-store .v2b-hero[data-variant=p04] .v2b-h1{font-size:48px}
+  .wb-store .v2b-hero[data-variant=p04][data-lang=ko] .v2b-h1{font-size:46px}
+  .wb-store .v2b-hero[data-variant=p04][data-lang=en] .v2b-h1,.wb-store .v2b-hero[data-variant=p04][data-lang=es] .v2b-h1{font-size:43px}
+  .wb-store .v2b-hero[data-variant=p04] .v2b-note{font-size:17px}
+  .wb-store .v2b-hero[data-variant=p04] .v2b-cta,.wb-store .v2b-hero[data-variant=p05] .v2b-cta{border-radius:10.8px;height:53.4px;padding-inline:21.6px;font-size:17.3px}
+  .wb-store .v2b-hero[data-variant=p04] .v2b-cta-row,.wb-store .v2b-hero[data-variant=p05] .v2b-cta-row{row-gap:17px;margin-top:0}
+  .wb-store .v2b-hero[data-variant=p04] .v2-ico,.wb-store .v2b-hero[data-variant=p05] .v2-ico{border-radius:13.3px;width:53.2px;height:53.2px}
+  .wb-store .v2b-hero[data-variant=p04] .v2b-eyebrow,.wb-store .v2b-hero[data-variant=p05] .v2b-eyebrow{margin-top:36.8px}
+  .wb-store .v2b-hero[data-variant=p05] .v2b-product-stack{--s:calc(var(--bw) / 885);margin-top:8px}
+  .wb-store .v2b-hero[data-variant=p05] .v2b-eyebrow{margin-bottom:calc(12px - 200 * var(--bw) / 885)}
+}
+@media (min-width:721px){
+  .wb-store .v2-hero[data-variant=p03] .v2-product{left:calc(var(--gutter) + 863 * var(--s));top:calc(210 * var(--s));width:calc(790 * var(--s));height:calc(485 * var(--s))}
+  .wb-store .v2-hero[data-variant=p03] .v2-sub{font-size:calc(21 * var(--s))}
+  .wb-store .v2-hero[data-variant=p03] .v2-label{font-size:calc(23 * var(--s))}
+  .wb-store .v2-hero[data-variant=p03] .v2-right{top:calc(114 * var(--s));right:calc(var(--gutter) + 478 * var(--s))}
+  .wb-store .v2-hero[data-variant=p03] .v2-r1{left:auto;right:calc(13 * var(--s));width:max-content}
+  .wb-store .v2-hero[data-variant=p06] .v2-right{right:calc(var(--gutter) + 482 * var(--s));top:calc(110 * var(--s))}
+  .wb-store .v2-hero[data-variant=p06] .v2-r1,.wb-store .v2-hero[data-variant=p06] .v2-r2{justify-content:center}
+  .wb-store .v2-hero[data-variant=p06] .v2-label{font-size:calc(25 * var(--s));color:#a17bff}
+  .wb-store .v2-hero[data-variant=p06] .v2-big-label{font-size:calc(65 * var(--s))}
+  .wb-store .v2-hero[data-variant=p06] .v2-note{margin:calc(20 * var(--s)) 0 0;font-weight:400;font-size:calc(17 * var(--s));color:#cac8f1;line-height:1.5}
+  .wb-store .v2-hero[data-variant=p06] .v2-product{left:calc(var(--gutter) + 875 * var(--s));top:calc(199 * var(--s));width:calc(790 * var(--s));height:calc(485 * var(--s))}
+  .wb-store .v2-hero[data-variant=p06] .v2-bub-2{left:calc(var(--gutter) + 1573.7 * var(--s));top:calc(136.14 * var(--s))}
+  .wb-store .v2b-hero[data-variant=p04] .v2b-eyebrow{top:calc(118 * var(--s))}
+  .wb-store .v2b-hero[data-variant=p04] .v2b-h1{top:calc(155 * var(--s));font-size:calc(60 * var(--s))}
+  .wb-store .v2b-hero[data-variant=p04] .v2b-note{top:calc(233 * var(--s));font-size:calc(24 * var(--s))}
+  .wb-store .v2b-hero[data-variant=p05] .v2b-eyebrow{left:calc(var(--gutter) + 280 * var(--s));top:calc(168 * var(--s))}
+  .wb-store .v2b-hero[data-variant=p05] .v2b-h1{top:calc(210 * var(--s));font-size:calc(60 * var(--s))}
+  .wb-store .v2b-hero[data-variant=p05] .v2b-note{top:calc(288 * var(--s));font-size:calc(23 * var(--s))}
+  .wb-store .v2b-hero[data-variant=p05] .v2b-period,.wb-store .v2b-hero[data-variant=p05] .v2b-h2{left:calc(var(--gutter) + 955.5 * var(--s));width:calc(600 * var(--s));text-align:center;right:auto}
+  .wb-store .v2b-hero[data-variant=p04] .v2b-period,.wb-store .v2b-hero[data-variant=p04] .v2b-h2{left:calc(var(--gutter) + 927.5 * var(--s));width:calc(600 * var(--s));text-align:center;right:auto}
+  .wb-store .v2b-hero[data-variant=p04] .v2b-period{top:calc(113 * var(--s))}
+  .wb-store .v2b-hero[data-variant=p04] .v2b-h2{top:calc(151 * var(--s))}
+  .wb-store .v2b-hero[data-variant]:not([data-lang=ko]) .v2b-h2,.wb-store .v2b-hero[data-variant]:not([data-lang=ko]) .v2b-period{width:calc(600 * var(--s));text-align:center;right:auto}
+  .wb-store .v2b-hero[data-variant=p02]:not([data-lang=ko]) .v2b-period{left:calc(var(--gutter) + 1004 * var(--s))}
+  .wb-store .v2b-hero[data-variant=p02]:not([data-lang=ko]) .v2b-h2{left:calc(var(--gutter) + 989 * var(--s))}
+  .wb-store .v2b-hero[data-variant=p05]:not([data-lang=ko]) .v2b-period,.wb-store .v2b-hero[data-variant=p04]:not([data-lang=ko]) .v2b-period,.wb-store .v2b-hero[data-variant=p04]:not([data-lang=ko]) .v2b-h2{left:calc(var(--gutter) + 927.5 * var(--s))}
+  .wb-store .v2b-hero[data-variant=p05]:not([data-lang=ko]) .v2b-h2{left:calc(var(--gutter) + 955.5 * var(--s));font-size:calc(52 * var(--s))}
+  .wb-store .v2b-hero[data-variant=p04][data-lang=en] .v2b-h1,.wb-store .v2b-hero[data-variant=p04][data-lang=es] .v2b-h1{white-space:normal;width:calc(620 * var(--s))}
+  .wb-store .v2b-hero[data-variant=p04][data-lang=en] .v2b-note,.wb-store .v2b-hero[data-variant=p04][data-lang=es] .v2b-note{top:calc(304 * var(--s))}
+  .wb-store .v2b-hero[data-variant=p04][data-lang=en] .v2b-notice,.wb-store .v2b-hero[data-variant=p04][data-lang=es] .v2b-notice{top:calc(357 * var(--s))}
+  .wb-store .v2b-hero[data-variant=p04][data-lang=en] .v2b-cta-row,.wb-store .v2b-hero[data-variant=p04][data-lang=es] .v2b-cta-row{top:calc(613 * var(--s))}
+  .wb-store .v2b-hero[data-variant=p05] .v2b-product-stack{left:calc(var(--gutter) + 764 * var(--s));top:calc(203 * var(--s))}
+  .wb-store .v2b-hero[data-variant=p04] .v2b-notice{left:calc(var(--gutter) + 277 * var(--s));top:calc(286 * var(--s));width:calc(500 * var(--s));height:calc(226 * var(--s));z-index:1;background:url(/images/pre_04product_box.png) 50%/100% 100% no-repeat}
+  .wb-store .v2b-hero[data-variant=p04] .v2b-notice-h{left:calc(27 * var(--s));top:calc(19 * var(--s));font-family:var(--serif);font-weight:400;font-size:calc(20 * var(--s));color:#fff;line-height:normal;position:absolute}
+  .wb-store .v2b-hero[data-variant=p04] .v2b-notice-p{left:calc(37 * var(--s));top:calc(79 * var(--s));width:calc(430 * var(--s));font-weight:300;font-size:calc(21 * var(--s));line-height:calc(33 * var(--s));color:#fff;white-space:normal;position:absolute}
+  .wb-store .v2b-hero[data-variant=p04] .v2b-notice-p2{top:calc(160 * var(--s))}
+  .wb-store .v2b-hero[data-variant=p04] .v2b-cta-row{left:calc(var(--gutter) + 276 * var(--s));top:calc(542 * var(--s))}
+  .wb-store .v2b-hero[data-variant=p04] .v2b-cta,.wb-store .v2b-hero[data-variant=p05] .v2b-cta{height:calc(64 * var(--s))}
+  .wb-store .v2b-hero[data-variant=p05] .v2b-cta-row{left:calc(var(--gutter) + 276 * var(--s));top:calc(347 * var(--s));align-items:flex-start;gap:calc(19 * var(--s));flex-direction:column}
+  .wb-store .v2b-hero[data-variant=p05] .v2b-cta-icons{align-items:center;gap:calc(10 * var(--s));display:flex}
+}
+@media (max-width:720px){
+  .wb-store .v2-hero{flex-direction:column;justify-content:flex-start;height:auto;min-height:560px;padding:96px 20px 0;display:flex}
+  .wb-store .v2-hero .v2-bg{background-position:62% 22%}
+  .wb-store .v2-hero .v2-left,.wb-store .v2-hero .v2-right,.wb-store .v2-hero .v2-r1,.wb-store .v2-hero .v2-r2{width:auto;position:static;top:auto;left:auto;right:auto}
+  .wb-store .v2-hero .v2-right{order:1}
+  .wb-store .v2-hero .v2-r2{margin-top:2px}
+  .wb-store .v2-hero .v2-r1,.wb-store .v2-hero .v2-r2{justify-content:flex-start;gap:12px}
+  .wb-store .v2-hero .v2-left{order:3;margin-top:12px}
+  .wb-store .v2-hero .v2-lockup,.wb-store .v2-hero .v2-h1,.wb-store .v2-hero[data-variant=p06] .v2-sub,.wb-store .v2-hero .v2-bub-2,.wb-store .v2-hero .v2-bub-3{display:none}
+  .wb-store .v2-hero .v2-label{font-size:18px}
+  .wb-store .v2-hero .v2-clock{font-size:26px}
+  .wb-store .v2-hero .v2-big-label,.wb-store .v2-hero[data-variant=p03][data-lang=en] .v2-big-label,.wb-store .v2-hero[data-variant=p06][data-lang=en] .v2-big-label{font-size:50px}
+  .wb-store .v2-hero .v2-big-dday,.wb-store .v2-hero[data-variant=p03][data-lang=en] .v2-big-dday{font-size:54px}
+  .wb-store .v2-hero .v2-sub{white-space:normal;margin-top:0;font-size:15px}
+  .wb-store .v2-hero .v2-cta-row{gap:14px;margin-top:18px}
+  .wb-store .v2-hero .v2-ico{border-radius:14px;width:56px;height:56px}
+  .wb-store .v2-hero[data-lang=en] .v2-right,.wb-store .v2-hero[data-lang=zh] .v2-right{position:static;left:auto;right:auto;transform:none}
+  .wb-store .v2-hero[data-lang=en] .v2-r1,.wb-store .v2-hero[data-lang=en] .v2-r2,.wb-store .v2-hero[data-lang=zh] .v2-r1,.wb-store .v2-hero[data-lang=zh] .v2-r2{justify-content:flex-start}
+  .wb-store .v2-hero .v2-r1,.wb-store .v2-hero .v2-r2{white-space:normal;flex-wrap:wrap}
+  .wb-store .v2-hero[data-lang=en] .v2-label{font-size:15px}
+  .wb-store .v2-hero[data-lang=en] .v2-clock{font-size:22px}
+  .wb-store .v2-hero[data-lang=en] .v2-big-label{font-size:34px}
+  .wb-store .v2-hero[data-lang=en] .v2-big-dday{font-size:38px}
+  .wb-store .v2-hero .v2-product{order:4;width:138%;height:auto;margin:2px -38% 0 0;position:relative;top:auto;left:auto}
+  .wb-store .v2-hero[data-variant=p03] .v2-product{width:124.45%;margin:-9px -24.45% 0 0}
+  .wb-store .v2-hero[data-variant=p06] .v2-label{color:#a17bff}
+  .wb-store .v2-hero[data-variant=p06] .v2-left{margin-top:4px}
+  .wb-store .v2-hero[data-variant=p06] .v2-note{color:#cac8f1;margin:18px 0 0}
+  .wb-store .v2-hero[data-variant=p06] .v2-note{order:-1;margin:0;font-size:15px;font-weight:300;line-height:1.5}
+  .wb-store .v2-hero[data-variant=p06] .v2-product{width:118.318%;margin:-13px -18.318% 0 0}
+  .wb-store .v2-hero .v2-bub-1{width:71px;height:90px;top:84px;left:auto;right:14px}
+  .wb-store .v2-hero .v2-bub-4{width:47px;height:59px;top:200px;left:auto;right:60px}
+  .wb-store .v2-hero .v2-bub-1 span{font-size:12px}
+  .wb-store .v2-hero .v2-bub-4 span{font-size:9px}
+}
+@media (max-width:380px){
+  .wb-store .v2-hero .v2-big-label,.wb-store .v2-hero[data-variant=p03][data-lang=en] .v2-big-label{font-size:42px}
+  .wb-store .v2-hero .v2-big-dday,.wb-store .v2-hero[data-variant=p03][data-lang=en] .v2-big-dday{font-size:46px}
+  .wb-store .v2-hero .v2-label{font-size:16px}
+  .wb-store .v2-hero .v2-clock{font-size:22px}
+}
+@media (min-width:769px){
+  .wb-store .v2b-hero:not([data-lang=ko]) .v2b-h2{left:auto;right:calc(var(--gutter) + 20 * var(--s));text-align:right;font-size:calc(42 * var(--s))}
+  .wb-store .v2b-hero:not([data-lang=ko]) .v2b-period{left:auto;right:calc(var(--gutter) + 20 * var(--s));text-align:right}
+}

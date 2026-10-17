@@ -1,0 +1,121 @@
+/* XRP SEOUL 2026 래플 - 히어로 + 스탯 줄 (2026-09-21, 정적 시안 xrpseoul-raffle/index.html 이식).
+   시안의 토큰은 사이트 globals.css 값 그대로였으므로 여기서는 사이트 변수를 읽고(--amber = 브랜드 보라, --navy, --serif = Paperlogy)
+   없을 때만 같은 값으로 떨어진다. 클래스는 rf- 접두로 스코프해 .wb-page/.wb-store 의 .btn·.wrap 과 섞이지 않게 한다. */
+.rf-hero, .rf-stats {
+  --rf-brand: var(--amber, #4d4dce); --rf-brand-dim: #6c6cd7; --rf-navy: var(--navy, #1b1b48);
+  --rf-ink-faint: var(--ink-faint, #7d82a8); --rf-line: var(--line, #e3e4f0); --rf-bg-1: var(--bg-1, #ffffff);
+  --rf-display: var(--serif, "Paperlogy", "Pretendard Variable", Pretendard, system-ui, sans-serif);
+  --rf-sans: var(--sans, "Pretendard Variable", Pretendard, system-ui, sans-serif);
+  --rf-wrap: 1180px;
+}
+.rf-wrap { max-width: var(--rf-wrap); margin: 0 auto; padding: 0 clamp(16px, 4vw, 40px); }
+.rf-tnum { font-variant-numeric: tabular-nums; }
+
+/* ── 히어로 ── */
+.rf-hero {
+  position: relative; color: #fff; overflow: hidden; display: flex; align-items: center;
+  min-height: clamp(520px, 40vw, 690px);
+  /* 이미지 좌측 가장자리 표본색(상·중·하) - 이미지가 끝난 뒤에도 같은 색으로 이어진다 */
+  background: linear-gradient(180deg, #4c2bbf 0%, #472fc1 34%, #472eb4 66%, #4b3ac9 100%);
+}
+.rf-hero-bg { position: absolute; inset: 0; z-index: 0; display: flex; justify-content: flex-end; pointer-events: none; }
+/* 세로를 기준으로 통째로 넣는다 - 위아래가 잘리지 않는다 */
+.rf-hero-bg img {
+  height: 100%; width: auto; max-width: none; display: block;
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 7%); mask-image: linear-gradient(90deg, transparent 0, #000 7%);
+}
+/* 텍스트 뒤 어두운 그라데이션 - 좌측 60% 까지 진하게 */
+.rf-hero-veil {
+  position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  background: linear-gradient(90deg, rgba(10,4,44,.94) 0%, rgba(10,4,44,.9) 26%, rgba(12,5,50,.68) 44%, rgba(14,6,56,.3) 56%, rgba(0,0,0,0) 66%);
+}
+.rf-hero-grid {
+  position: relative; z-index: 2; width: 100%; display: grid;
+  grid-template-columns: minmax(0, .55fr) minmax(0, .45fr);
+  padding-top: clamp(44px, 5.5vw, 76px); padding-bottom: clamp(44px, 5.5vw, 76px);
+}
+.rf-hero h1 { font-family: var(--rf-display); font-size: clamp(32px, 4.6vw, 58px); font-weight: 800; line-height: 1.1; letter-spacing: -.02em; margin: 0 0 20px; color: #fff; text-wrap: balance; }
+.rf-hero h1 .rf-sub { display: block; font-size: .6em; line-height: 1.28; margin-top: 10px; font-weight: 700; letter-spacing: -.015em; color: #efeaff; }
+.rf-hero h1 em { font-style: normal; color: #c4a6ff; }
+.rf-hero-lead { font-size: clamp(15.5px, 1.45vw, 17.5px); line-height: 1.65; color: #e8e4fb; max-width: 36em; margin: 0; font-weight: 500; }
+.rf-hero-lead b { color: #fff; font-weight: 800; }
+.rf-lockup { margin: 0 0 22px; }
+.rf-lockup img { height: clamp(30px, 2.4vw, 42px); width: auto; display: block; }
+.rf-hero-facts { display: flex; flex-wrap: wrap; gap: 10px; margin: 0 0 20px; align-items: center; }
+.rf-fact {
+  display: inline-flex; align-items: center; border-radius: 9999px; padding: 10px 18px;
+  font-size: clamp(15px, 1.25vw, 17px); font-weight: 800; color: #fff; letter-spacing: -.01em;
+  background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.28); backdrop-filter: blur(6px);
+}
+.rf-fact.when { font-weight: 700; color: #efeaff; }
+.rf-hero-cta { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-top: 26px; }
+.rf-hero-sub { margin: 12px 0 0; font-size: 14px; color: #c9c3ee; font-weight: 600; }
+.rf-hero-cd { font-family: var(--rf-sans); font-size: 14.5px; font-weight: 700; color: #c8c8f0; font-variant-numeric: tabular-nums; }
+.rf-hero-link {
+  display: inline-flex; align-items: center; gap: 6px; margin-top: 18px; font-size: 14.5px; font-weight: 700;
+  color: rgba(255,255,255,.86); text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1.5px;
+}
+.rf-hero-link svg { width: 15px; height: 15px; }
+.rf-hero-link:hover { color: #fff; }
+.rf-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-family: var(--rf-sans);
+  font-size: 15.5px; font-weight: 700; line-height: 1; border-radius: 12px; height: 52px; padding: 0 28px;
+  border: 1px solid transparent; cursor: pointer; box-sizing: border-box; background: none; color: inherit; text-decoration: none;
+  transition: transform .16s ease, background .16s ease;
+}
+.rf-btn.fill { background: var(--rf-brand); border-color: var(--rf-brand); color: #fff; box-shadow: 0 8px 24px rgba(20,8,70,.35); }
+.rf-btn.fill:hover { background: var(--rf-brand-dim); transform: translateY(-2px); }
+.rf-btn.fill:disabled { background: rgba(255,255,255,.14); color: rgba(255,255,255,.66); border: 1px solid rgba(255,255,255,.26); box-shadow: none; cursor: not-allowed; transform: none; }
+.rf-btn.done { background: #16a34a; border-color: #16a34a; }
+.rf-btn.ghost { background: rgba(255,255,255,.06); color: #fff; border-color: rgba(255,255,255,.36); }
+.rf-btn.ghost:hover { background: rgba(255,255,255,.14); }
+/* 참여 유도 - 빛띠 스윕 하나만 (2026-09-19 지시: 효과는 한 가지만) */
+.rf-btn.shine { position: relative; overflow: hidden; }
+.rf-btn.shine::after {
+  content: ""; position: absolute; top: -60%; bottom: -60%; left: -80%; width: 45%;
+  background: linear-gradient(105deg, rgba(255,255,255,0) 0%, rgba(255,255,255,.7) 50%, rgba(255,255,255,0) 100%);
+  transform: skewX(-22deg); animation: rfBtnSheen 2.4s ease-in-out infinite; pointer-events: none;
+}
+@keyframes rfBtnSheen { 0% { left: -80%; } 50%, 100% { left: 150%; } }
+@media (prefers-reduced-motion: reduce) { .rf-btn.shine::after { animation: none; display: none; } }
+.rf-hero-cap { position: absolute; right: clamp(16px, 4vw, 40px); bottom: 12px; z-index: 2; font-size: 11.5px; font-weight: 700; letter-spacing: .06em; color: rgba(255,255,255,.62); }
+@media (max-width: 920px) {
+  .rf-hero { display: block; min-height: 0; background: linear-gradient(180deg, #0b0430 0%, #120a46 60%, #1a0e5a 100%); }
+  .rf-hero-bg { position: relative; inset: auto; justify-content: center; margin-top: 6px; }
+  .rf-hero-bg img { height: auto; width: 100%; -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 26%); mask-image: linear-gradient(180deg, transparent 0, #000 26%); }
+  .rf-hero-veil { display: none; }
+  .rf-btn.ghost { background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.4); }
+  .rf-hero-grid { grid-template-columns: minmax(0, 1fr); padding-top: clamp(34px, 8vw, 56px); padding-bottom: 8px; }
+  .rf-hero-cap { position: static; display: block; text-align: center; padding: 8px 0 12px; }
+}
+@media (max-width: 640px) {
+  .rf-hero-grid { padding-top: 28px; padding-bottom: 4px; }
+  .rf-hero h1 { font-size: 30px; }
+  .rf-hero-lead br { display: none; }
+  .rf-hero-facts { gap: 8px; }
+  .rf-fact { padding: 9px 14px; font-size: 14px; }
+  .rf-hero-cta { flex-direction: column; align-items: stretch; gap: 10px; margin-top: 20px; }
+  .rf-hero-cta .rf-btn { width: 100%; padding: 0 20px; }
+  .rf-hero-cap { font-size: 11px; padding: 6px 0 10px; }
+}
+
+/* ── 스탯 줄 (히어로 바로 아래, 흰 카드 5칸) ── */
+.rf-stats {
+  display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: clamp(10px, 1.4vw, 16px);
+  margin: clamp(28px, 3.6vw, 44px) 0 0; position: relative; z-index: 3; padding: 0;
+}
+.rf-stat { background: var(--rf-bg-1); border: 1px solid var(--rf-line); border-radius: 20px; padding: 20px 22px; box-shadow: 0 2px 6px rgba(13,15,25,.06), 0 18px 44px rgba(27,27,72,.13); }
+.rf-stat dt { font-family: var(--rf-sans); font-size: 12.5px; font-weight: 700; letter-spacing: .05em; color: var(--rf-ink-faint); margin: 0 0 6px; }
+.rf-stat dd { margin: 0; font-family: var(--rf-display); font-weight: 800; font-size: clamp(21px, 2.1vw, 27px); white-space: nowrap; line-height: 1.1; color: var(--rf-navy); letter-spacing: -.02em; }
+.rf-stat dd small { font-family: var(--rf-sans); font-size: 13px; font-weight: 700; color: var(--rf-ink-faint); margin-left: 4px; }
+.rf-stat .rf-stat-sub { font-family: var(--rf-sans); font-size: 12.5px; color: var(--rf-ink-faint); font-weight: 500; margin-top: 6px; line-height: 1.4; }
+.rf-stat.accent dd { color: var(--rf-brand); }
+@media (max-width: 1000px) { .rf-stats { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 760px) { .rf-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); margin-top: 20px; } .rf-stat:nth-child(5) { grid-column: 1 / -1; } }
+@media (max-width: 480px) {
+  .rf-stats { gap: 10px; }
+  .rf-stat { padding: 14px 14px 13px; border-radius: 14px; }
+  .rf-stat dt { font-size: 11.5px; margin-bottom: 4px; }
+  .rf-stat dd { font-size: 21px; }
+  .rf-stat dd small { font-size: 12px; margin-left: 3px; }
+}
