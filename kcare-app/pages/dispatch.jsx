@@ -857,7 +857,8 @@ function DispatchConsole() {
         id: `elder-ops-${m.id}`,
         level: "high",
         title: `관제 연락 — ${m.from}`,
-        meta: `${m.text} · ${new Date(m.at).toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit", hour12: false })}`,
+        // 가족 구성원 빼기 요청은 계정 · 권한에서 처리한다 (정지 — '다시 사용'으로 되돌린다 · 2026-10-18)
+        meta: `${m.text}${m.kind === "member" ? " — 계정·권한에서 사용 정지 (다시 사용으로 되돌림)" : ""} · ${new Date(m.at).toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit", hour12: false })}`,
         act: "확인",
         ticker: ["관제", `관제 연락 확인 — ${m.from}: ${m.text}`, "#8FA9CC"],
         onAct: () => dispatch({ type: "ackOpsMessage", id: m.id, by: "관제" }),
