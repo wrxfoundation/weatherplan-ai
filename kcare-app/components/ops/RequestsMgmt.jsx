@@ -366,8 +366,13 @@ function Detail({ r, m, real, payments, dispatch, onClose, onTransition, onPatch
 
         <section>
           <h4 className="mb-2 text-[13px] font-bold text-navy">담당자 배정</h4>
-          <Field id={`req-assignee-${r.id}`} label="담당 컨시어지" value={assignee || "미배정"} options={["미배정", ...conciergeChoices(CONCIERGES)]}
-            onChange={(v) => v !== (assignee || "미배정") && onPatch(r.id, "assignee", "담당자", v === "미배정" ? "" : v, assignee || "미배정")} />
+          {/* 끝난 요청의 담당은 처리 기록이라 바꾸지 않는다 (2026-10-18) */}
+          {real && ["done", "cancelled", "rejected"].includes(r.status) ? (
+            <KV k="담당 컨시어지" v={`${assignee || "미배정"} — 종결된 요청이라 기록으로 남습니다`} />
+          ) : (
+            <Field id={`req-assignee-${r.id}`} label="담당 컨시어지" value={assignee || "미배정"} options={["미배정", ...conciergeChoices(CONCIERGES)]}
+              onChange={(v) => v !== (assignee || "미배정") && onPatch(r.id, "assignee", "담당자", v === "미배정" ? "" : v, assignee || "미배정")} />
+          )}
         </section>
 
         {real ? (
@@ -384,6 +389,11 @@ function Detail({ r, m, real, payments, dispatch, onClose, onTransition, onPatch
                 </p>
                 <Field id={`req-opsnote-${r.id}`} label="관제 메모 (이력에 남고 요청자에게 보입니다)" value={opsNote} onChange={setOpsNote} placeholder="예: 보호자와 통화 후 취소 승인" />
                 <div className="mt-2 flex flex-wrap gap-2">
+                  {/* 메모만 — 상태는 그대로 두고 처리 이력에 한 줄 (남긴 메모는 기록이라 고치거나 지우지 않는다 · 2026-10-18) */}
+                  <Btn small ghost disabled={!opsNote.trim()} onClick={() => {
+                    dispatch?.({ type: "noteRequest", id: r.id, note: `관제 메모 (${OPERATOR}) — ${opsNote.trim()}`, by: OPERATOR });
+                    setOpsNote("");
+                  }}>메모만 남기기</Btn>
                   {r.status === "needsAdmin" && (
                     <Btn small tone="navy" onClick={() => dispatch?.({ type: "transitionRequest", id: r.id, to: "requested", note: `관제 확인 — 담당 컨시어지 승인 대기로 (${OPERATOR})`, by: OPERATOR })}>승인 대기로 돌려보내기</Btn>
                   )}

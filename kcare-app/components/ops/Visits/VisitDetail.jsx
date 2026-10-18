@@ -29,13 +29,15 @@ function Tile({ title, right, children }) {
   );
 }
 
-export default function VisitDetail({ visit: v, onChange, openProfile, escort = null, submitted = false, onEscortSend }) {
+export default function VisitDetail({ visit: v, onChange, openProfile, escort = null, submitted = false, onEscortSend, onReturn = null }) {
   const [showAll, setShowAll] = useState(false);
   const [confirm, setConfirm] = useState(null);
   const [svcOpen, setSvcOpen] = useState(false);
   const [svcName, setSvcName] = useState(SERVICES[0].name);
   const [fu, setFu] = useState("");
   const [msg, setMsg] = useState("");
+  const [retOpen, setRetOpen] = useState(false); // 반려 사유 적는 칸
+  const [retReason, setRetReason] = useState("");
 
   const axes = checkupFor(v.loc);
   const required = requiredFor(v.loc);
@@ -60,7 +62,7 @@ export default function VisitDetail({ visit: v, onChange, openProfile, escort = 
   const BODIES = {
     start: `${v.name} 님 주소 반경에서 GPS 체크인을 기록합니다. 주 ${v.pair.pri.name} · 부 ${v.pair.sub.name}.`,
     complete: `${done}/${total} 항목 점검 · 후속조치 ${v.followups.length}건. 완료 후에는 점검 내용을 바꿀 수 없고 관제 검수로 넘어갑니다.`,
-    approve: "검수 승인 후 보호자 리포트 발송 단계로 넘어갑니다. 반려하려면 취소하고 상담·관제메모에 사유를 남기세요.",
+    approve: "검수 승인 후 보호자 리포트 발송 단계로 넘어갑니다. 고칠 것이 있으면 취소하고 '반려'로 컨시어지에게 되돌리세요 (발송 전까지 가능).",
     send: "발송 후에는 회수할 수 없습니다. 리포트에는 관찰 사실만 담기고 진단·판단은 들어가지 않습니다.",
   };
 
@@ -205,6 +207,12 @@ export default function VisitDetail({ visit: v, onChange, openProfile, escort = 
                 <Pill tone={f.kind === "service" ? "gold" : "warn"}>{f.kind === "service" ? "해주세요 전환" : "조치 필요"}</Pill>
                 <span className="min-w-0 flex-1">{f.text}</span>
                 {f.at && <Stamp at={f.at} prefix="등록" />}
+                {/* 보호자에게 보내기 전에는 잘못 적은 조치를 지울 수 있다 — 보낸 뒤에는 리포트와 함께 기록으로 남는다 */}
+                {!v.sentAt && (
+                  <Btn small ghost tone="muted" onClick={() => onChange({ followups: v.followups.filter((_, j) => j !== i), followup: v.followups.length > 1 })}>
+                    삭제
+                  </Btn>
+                )}
               </li>
             ))}
           </ul>
@@ -254,7 +262,37 @@ export default function VisitDetail({ visit: v, onChange, openProfile, escort = 
           {v.status === "done" && v.review === "검수 대기" && <Btn className="ml-auto" tone="info" disabled={missing.length > 0} title={missing.length ? "필수 항목 미점검 — 검수 승인 불가" : undefined} onClick={() => setConfirm("approve")}>관제 검수 승인</Btn>}
           {v.status === "done" && v.review === "검수 완료" && v.stepIdx < 5 && <Btn className="ml-auto" onClick={() => setConfirm("send")}>보호자 리포트 발송</Btn>}
           {v.status === "done" && v.stepIdx === 5 && v.viewed === "미열람" && <Btn className="ml-auto" ghost tone="warn" onClick={() => setMsg(`보호자 미열람 재알림 발송 ${stampNow()}`)}>미열람 재알림</Btn>}
+          {/* 반려 — 발송 전의 실제 리포트만. 컨시어지 점검표가 다시 열리고, 고쳐서 다시 내면 검수부터 다시 (2026-10-18) */}
+          {onReturn && v.status === "done" && !v.sentAt && !retOpen && (
+            <Btn ghost tone="warn" onClick={() => setRetOpen(true)}>반려 — 컨시어지에게 되돌리기</Btn>
+          )}
         </div>
+        {retOpen && (
+          <div className="mt-2 flex flex-wrap items-center gap-2">
+            <input
+              aria-label="반려 사유"
+              value={retReason}
+              onChange={(e) => setRetReason(e.target.value)}
+              placeholder="반려 사유 (예: 필수 점검 '혈압' 수치 누락 — 다시 확인)"
+              className="card-glass min-w-[240px] flex-1 rounded-[10px] px-3 py-2 text-[13px] text-navy outline-none focus:ring-1 focus:ring-gold"
+            />
+            <Btn small ghost tone="muted" onClick={() => (setRetOpen(false), setRetReason(""))}>그만두기</Btn>
+            <Btn
+              small
+              tone="warn"
+              disabled={!retReason.trim()}
+              onClick={() => {
+                onReturn(retReason.trim());
+                setMsg(`반려 ${stampNow()} — 컨시어지가 고쳐서 다시 제출합니다`);
+                setRetOpen(false);
+                setRetReason("");
+              }}
+            >
+              반려 보내기
+            </Btn>
+          </div>
+        )}
+        {v.returned && <div className="mt-2"><Note tone="warn">반려됨 — {v.returned.reason} · 컨시어지가 고쳐서 다시 제출하면 검수부터 다시 합니다.</Note></div>}
         {/* 병원 동행 기록 — 방문 21항목과 따로 검토 · 발송한다. 동행만 있는 날은 필수 점검이 없으므로 여기서 바로 보낸다 */}
         {escort?.savedAt && (
           <div className="mt-3 flex flex-wrap items-center gap-2 rounded-xl border border-navy/[.08] bg-white/60 px-3 py-2.5 text-[12.5px]">

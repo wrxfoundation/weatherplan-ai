@@ -162,6 +162,8 @@ export default function ElderMgmt() {
   const runConfirm = () => {
     const c = confirm;
     if (!c.reason?.trim()) return setConfirm({ ...c, err: true });
+    // 주 · 부 담당이 같으면 실행하지 않는다 — 한 사람이 두 자리를 맡으면 2인 1조가 깨진다 (단독 배차 0 · 2026-10-18)
+    if (c.type === "concierge" && c.pri === c.sub) return;
     if (c.type === "service") update(cur.name, (e) => log({ ...e, service: { ...e.service, state: c.to } }, "서비스 상태", SERVICE_STATE[e.service.state].label, SERVICE_STATE[c.to].label, c.reason));
     if (c.type === "concierge") update(cur.name, (e) => log({ ...e, pri: c.pri, sub: c.sub }, "담당 컨시어지", `${e.pri} · ${e.sub}`, `${c.pri} · ${c.sub}`, c.reason));
     if (c.type === "guardian") update(cur.name, (e) => log({ ...e, guardians: [...e.guardians, { name: c.name.trim(), rel: c.rel, role: `${c.role} 보호자`, region: "—", tel: "연락처 등록 필요", consent: consentAll }] }, "보호자 연결", e.guardians.map((g) => g.name).join(" · ") || "—", [...e.guardians.map((g) => g.name), c.name.trim()].join(" · "), c.reason));
@@ -268,7 +270,7 @@ export default function ElderMgmt() {
             {confirm.type === "concierge" && (
               <div className="grid gap-2 sm:grid-cols-2">
                 <Field id="cf-pri" label="주 담당" value={confirm.pri} onChange={setC("pri")} options={STAFF} />
-                <Field id="cf-sub" label="부 담당" value={confirm.sub} onChange={setC("sub")} options={STAFF} hint={confirm.pri === confirm.sub ? "주·부가 같을 수 없습니다" : undefined} />
+                <Field id="cf-sub" label="부 담당" value={confirm.sub} onChange={setC("sub")} options={STAFF} hint={confirm.pri === confirm.sub ? "주·부가 같을 수 없습니다 — 다른 사람을 고르기 전에는 실행되지 않습니다" : undefined} />
               </div>
             )}
             {confirm.type === "guardian" && (

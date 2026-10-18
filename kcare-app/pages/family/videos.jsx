@@ -7,6 +7,7 @@ import { VIDEO_RETENTION_DAYS, VISIT_VIDEOS } from "../../lib/mock";
 import { VIDEO_POLICY, VIDEO_SEGMENTS } from "../../lib/console";
 import { useAppState } from "../../lib/state";
 import { useAuth } from "../../lib/auth";
+import { videoConsentOf } from "../../lib/consent";
 
 // 마이 › 방문 영상 (2026-10-15 디자인 시안) — 안심방문 바디캠 영상 (2026-09-04 시트 보호자 마이 2번).
 // 규칙: 30일 보관 후 자동 삭제 · 분쟁이 생기면 관리자가 보관 기간을 따로 정한다 · 찍지 않는 곳을 화면에 밝힌다.
@@ -17,8 +18,7 @@ const LOOKS = [TONE.purple, TONE.beige, TONE.green];
 export default function VideosPage() {
   const { state } = useAppState();
   const live = !!useAuth().user?.household;
-  const ob = state.onboarding;
-  const consent = ob?.joinedAt ? !!ob.videoConsent : true; // 가입 상담 전에는 동의로 본다 (컨시어지 화면과 같은 기본값)
+  const consent = videoConsentOf(state); // 정보 동의 철회 · 가입 상담 값 · 기본(동의) 순 — lib/consent.js
   const [video, setVideo] = useState(null);
   // 30일이 지난 것은 목록에서 빠진다 — 관리자가 보관을 지정한 건만 남는다
   const list = VISIT_VIDEOS.map((v) => ({ ...v, left: VIDEO_RETENTION_DAYS - v.daysAgo })).filter((v) => v.left > 0 || v.hold);

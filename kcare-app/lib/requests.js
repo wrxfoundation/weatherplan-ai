@@ -110,6 +110,16 @@ export const isVisitCall = (r) => r?.type === "즉시 방문 요청";
 // 스토어 주문의 배송 요청 — 결제가 주문(스토어)에 묶여 있어 해주세요 취소 · 환불로 다루지 않는다 (주문 취소는 관제 · 고객센터)
 export const isStoreOrder = (r) => ["물품 전달해 주세요", "물건을 담았어요", "물건 승인 부탁해요"].includes(r?.type);
 
+// 낸 사람이 내용을 고칠 수 있나 (2026-10-18) — 담당 컨시어지가 승인하기 전(제안이면 받는 분이 수락하기 전)까지만.
+// 승인 · 완료 뒤의 내용은 기록이라 고치지 않는다 — 취소하고 다시 부탁한다. 먼저 결제한 요청(보호자 선결제)도 승인 전이면
+// 내용 · 희망 일시는 고칠 수 있다 — 결제가 묶인 종류 · 금액은 처음부터 고치지 않는다 (state.js editRequest).
+// 도와줘요(관제가 바로 전화) · 스토어 배송(주문에 묶임) · 관제 안내는 고치지 않는다.
+export function canEditRequest(r) {
+  if (!r || r.approvedAt || isVisitCall(r) || isStoreOrder(r) || r.dir === "fromOps") return false;
+  if (r.dir === "fromConcierge") return r.status === "requested";
+  return r.status === "requested" || r.status === "awaitingPayment";
+}
+
 // ── 보호자 '해주세요' 서비스 메뉴 — kcare팀 실무자 피드백 (2026-08-09 엑셀) ──
 //
 // 분류는 2026-08-28 실무진 제안대로 5개 축이다:

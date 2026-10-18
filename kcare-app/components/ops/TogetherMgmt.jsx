@@ -236,6 +236,107 @@ function ServiceCard({ title, price, scope, note, icon, badge }) {
   );
 }
 
+const lineInput = "card-glass min-w-0 flex-1 rounded-[10px] px-3 py-2 text-[13px] text-navy outline-none focus:ring-1 focus:ring-gold";
+
+// 비공개 메모 한 줄 — 고치기(이전 글 보존) · 지우기(확인 한 번)
+function MemoItem({ m, onEdit, onRemove }) {
+  const [mode, setMode] = useState(null); // null | "edit" | "remove"
+  const [text, setText] = useState(m.text);
+  return (
+    <li className="rounded-xl bg-navy/[.05] px-3 py-2 text-[13px] leading-[1.6] text-ink">
+      {mode === "edit" ? (
+        <div className="flex flex-col gap-1.5">
+          <input aria-label="비공개 메모 고치기" value={text} onChange={(e) => setText(e.target.value)} className={lineInput} />
+          <div className="flex justify-end gap-1.5">
+            <Btn small ghost tone="muted" onClick={() => setMode(null)}>그만두기</Btn>
+            <Btn small disabled={!text.trim() || text.trim() === m.text} onClick={() => { onEdit(text.trim()); setMode(null); }}>고친 메모 저장</Btn>
+          </div>
+        </div>
+      ) : (
+        m.text
+      )}
+      <div className="mt-0.5 font-num text-[11px] text-muted">{fmtDT(m.at)} · {m.by}{m.editedAt ? ` · 고침 ${fmtDT(m.editedAt)}${m.editedBy ? ` ${m.editedBy}` : ""}` : ""}</div>
+      {m.prev?.length > 0 && mode !== "edit" && (
+        <details className="mt-0.5 text-[11px] text-muted">
+          <summary className="cursor-pointer">이전 글 {m.prev.length}개</summary>
+          <ul className="mt-1 space-y-0.5">{m.prev.map((p, i) => <li key={i} className="line-through decoration-navy/30">{p.text}</li>)}</ul>
+        </details>
+      )}
+      {mode === "remove" ? (
+        <div className="mt-1.5 flex flex-wrap items-center justify-end gap-1.5">
+          <span className="mr-auto text-[12px]">이 메모를 지울까요?</span>
+          <Btn small ghost tone="muted" onClick={() => setMode(null)}>그대로 두기</Btn>
+          <Btn small onClick={() => { onRemove(); setMode(null); }}>지우기</Btn>
+        </div>
+      ) : (
+        !mode && (
+          <div className="mt-1 flex justify-end gap-1.5">
+            <Btn small ghost onClick={() => { setText(m.text); setMode("edit"); }}>수정</Btn>
+            <Btn small ghost tone="muted" onClick={() => setMode("remove")}>삭제</Btn>
+          </div>
+        )
+      )}
+    </li>
+  );
+}
+
+// 약속 한 줄 — 이행 전에는 고치고 지운다. 이행 완료는 한 번 확인하면 기록으로 남는다 (되돌리지 않는다)
+function PromiseItem({ p, onDone, onEdit, onRemove }) {
+  const [mode, setMode] = useState(null); // null | "done" | "edit" | "remove"
+  const [text, setText] = useState(p.text);
+  const [due, setDue] = useState(p.due);
+  return (
+    <li className="text-[13px]">
+      <div className="flex items-start gap-2">
+        <button
+          type="button"
+          role="checkbox"
+          aria-checked={p.done}
+          aria-label={p.done ? `${p.text} 이행 완료 — 기록` : `${p.text} 이행 완료로 표시`}
+          disabled={p.done}
+          onClick={() => setMode("done")}
+          className="btn-press btn-inline mt-0.5 flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-[5px] border disabled:cursor-default"
+          style={{ borderColor: p.done ? "#1E7A5A" : "rgba(10,31,60,.3)", background: p.done ? "#1E7A5A" : "transparent", color: "#fff" }}
+        >
+          {p.done && <Icon name="check" size={12} strokeWidth={2.5} />}
+        </button>
+        <span className={`min-w-0 flex-1 ${p.done ? "text-muted line-through" : "text-ink"}`}>
+          {p.text} <span className="font-num text-[11px] text-muted">기한 {p.due.slice(5)}{p.by ? ` · ${p.by}` : ""}{p.done && p.doneAt ? ` · 이행 ${fmtDT(p.doneAt)}` : ""}</span>
+        </span>
+        {!p.done && dayDiff(p.due) < 0 && <Pill tone="warn">기한 지남</Pill>}
+        {!p.done && !mode && (
+          <span className="flex shrink-0 gap-1">
+            <Btn small ghost onClick={() => { setText(p.text); setDue(p.due); setMode("edit"); }}>수정</Btn>
+            <Btn small ghost tone="muted" onClick={() => setMode("remove")}>삭제</Btn>
+          </span>
+        )}
+      </div>
+      {mode === "done" && (
+        <div className="ml-[26px] mt-1.5 flex flex-wrap items-center justify-end gap-1.5">
+          <span className="mr-auto text-[12px]">이행 완료로 표시할까요? 표시하면 기록으로 남아 되돌리지 않습니다.</span>
+          <Btn small ghost tone="muted" onClick={() => setMode(null)}>아니요</Btn>
+          <Btn small tone="ok" onClick={() => { onDone(); setMode(null); }}>이행 완료</Btn>
+        </div>
+      )}
+      {mode === "edit" && (
+        <div className="ml-[26px] mt-1.5 flex flex-wrap items-center gap-1.5">
+          <input aria-label="약속 고치기" value={text} onChange={(e) => setText(e.target.value)} className={lineInput} />
+          <input aria-label="약속 기한" type="date" value={due} onChange={(e) => setDue(e.target.value)} className="card-glass rounded-[10px] px-2 py-2 text-[13px] text-navy outline-none focus:ring-1 focus:ring-gold" />
+          <Btn small ghost tone="muted" onClick={() => setMode(null)}>그만두기</Btn>
+          <Btn small disabled={!text.trim() || !due || (text.trim() === p.text && due === p.due)} onClick={() => { onEdit(text.trim(), due); setMode(null); }}>저장</Btn>
+        </div>
+      )}
+      {mode === "remove" && (
+        <div className="ml-[26px] mt-1.5 flex flex-wrap items-center justify-end gap-1.5">
+          <span className="mr-auto text-[12px]">이 약속을 지울까요?</span>
+          <Btn small ghost tone="muted" onClick={() => setMode(null)}>그대로 두기</Btn>
+          <Btn small onClick={() => { onRemove(); setMode(null); }}>지우기</Btn>
+        </div>
+      )}
+    </li>
+  );
+}
+
 function ClientDetail({ c, tab, setTab, patch }) {
   const OPERATOR = useOperator();
   const e = elderOf(c.elder);
@@ -251,12 +352,22 @@ function ClientDetail({ c, tab, setTab, patch }) {
     patch(c.elder, (x) => ({ ...x, privateMemos: [...memos, { at: Date.now(), by: OPERATOR, text: memo.trim() }] }));
     setMemo("");
   };
+  // 비공개 메모 고치기 · 지우기 (2026-10-18) — 고치면 이전 글을 prev 에 남긴다
+  const editMemo = (i, text) =>
+    patch(c.elder, (x) => ({
+      ...x,
+      privateMemos: memos.map((m, j) => (j === i ? { ...m, text, editedAt: Date.now(), editedBy: OPERATOR, prev: [{ text: m.text, at: m.editedAt || m.at }, ...(m.prev || [])] } : m)),
+    }));
+  const removeMemo = (i) => patch(c.elder, (x) => ({ ...x, privateMemos: memos.filter((_, j) => j !== i) }));
   const addPromise = () => {
     if (!promise.trim()) return;
     patch(c.elder, (x) => ({ ...x, promises: [...x.promises, { text: promise.trim(), due: promiseDue, done: false, by: OPERATOR }] }));
     setPromise("");
   };
-  const togglePromise = (i) => patch(c.elder, (x) => ({ ...x, promises: x.promises.map((p, j) => (j === i ? { ...p, done: !p.done, doneAt: !p.done ? Date.now() : null } : p)) }));
+  // 약속 — 이행 전에는 고치고 지운다. 이행 완료는 기록이라 한 번 확인하고 나면 되돌리지 않는다 (2026-10-18)
+  const completePromise = (i) => patch(c.elder, (x) => ({ ...x, promises: x.promises.map((p, j) => (j === i && !p.done ? { ...p, done: true, doneAt: Date.now(), doneBy: OPERATOR } : p)) }));
+  const editPromise = (i, text, due) => patch(c.elder, (x) => ({ ...x, promises: x.promises.map((p, j) => (j === i && !p.done ? { ...p, text, due, editedAt: Date.now() } : p)) }));
+  const removePromise = (i) => patch(c.elder, (x) => ({ ...x, promises: x.promises.filter((p, j) => j !== i || p.done) }));
   const saveNext = () => {
     if (!nextCheck || nextCheck === c.nextCheck) return;
     patch(c.elder, (x) => ({ ...x, nextCheck, nextCheckLog: [...nextLog, { at: Date.now(), by: OPERATOR, before: x.nextCheck, after: nextCheck }] }));
@@ -297,14 +408,7 @@ function ClientDetail({ c, tab, setTab, patch }) {
             <div className="mb-1 text-[12px] font-bold text-muted">고객과의 약속사항</div>
             <ul className="space-y-1.5">
               {c.promises.map((p, i) => (
-                <li key={i} className="flex items-start gap-2 text-[13px]">
-                  <button type="button" role="checkbox" aria-checked={p.done} aria-label={`${p.text} ${p.done ? "이행 취소" : "이행 완료"}`} onClick={() => togglePromise(i)}
-                    className="btn-press btn-inline mt-0.5 flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-[5px] border" style={{ borderColor: p.done ? "#1E7A5A" : "rgba(10,31,60,.3)", background: p.done ? "#1E7A5A" : "transparent", color: "#fff" }}>
-                    {p.done && <Icon name="check" size={12} strokeWidth={2.5} />}
-                  </button>
-                  <span className={`min-w-0 flex-1 ${p.done ? "text-muted line-through" : "text-ink"}`}>{p.text} <span className="font-num text-[11px] text-muted">기한 {p.due.slice(5)}{p.by ? ` · ${p.by}` : ""}</span></span>
-                  {!p.done && dayDiff(p.due) < 0 && <Pill tone="warn">기한 지남</Pill>}
-                </li>
+                <PromiseItem key={`${p.text}-${i}`} p={p} onDone={() => completePromise(i)} onEdit={(text, due) => editPromise(i, text, due)} onRemove={() => removePromise(i)} />
               ))}
             </ul>
             <div className="mt-2 flex flex-wrap items-end gap-2">
@@ -334,10 +438,10 @@ function ClientDetail({ c, tab, setTab, patch }) {
           <div>
             <div className="mb-1 flex items-center gap-1.5 text-[12px] font-bold text-muted"><Icon name="shield" size={14} /> 내부 비공개 메모 <Pill tone="muted">보호자 미공유</Pill></div>
             {memos.length === 0 ? <Empty>비공개 메모가 없습니다.</Empty> : (
-              <ul className="space-y-1.5">{memos.map((m, i) => <li key={i} className="rounded-xl bg-navy/[.05] px-3 py-2 text-[13px] leading-[1.6] text-ink">{m.text}<div className="mt-0.5 font-num text-[11px] text-muted">{fmtDT(m.at)} · {m.by}</div></li>)}</ul>
+              <ul className="space-y-1.5">{memos.map((m, i) => <MemoItem key={`${m.at}-${i}`} m={m} onEdit={(text) => editMemo(i, text)} onRemove={() => removeMemo(i)} />)}</ul>
             )}
             <div className="mt-2 flex items-end gap-2">
-              <div className="flex-1"><Field id={`tg-memo-${c.elder}`} label="메모 추가 (덮어쓰지 않고 쌓입니다)" value={memo} onChange={setMemo} placeholder="관제 · 컨시어지만 봅니다" /></div>
+              <div className="flex-1"><Field id={`tg-memo-${c.elder}`} label="메모 추가 (고치면 이전 글이 남습니다)" value={memo} onChange={setMemo} placeholder="관제 · 컨시어지만 봅니다" /></div>
               <Btn small onClick={addMemo}>추가</Btn>
             </div>
           </div>

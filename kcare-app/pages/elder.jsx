@@ -21,7 +21,7 @@ import {
 import { PRICING, fmtWon } from "../lib/config";
 import { STORE_CATALOG } from "../lib/store";
 import ProductSheet, { GOODS_LOOK } from "../components/ProductSheet";
-import { CLOSED, SERVICE_MENU, SERVICE_PLUS, approverOf, cancelRule, fmtScheduled, isStoreOrder, isVisitCall } from "../lib/requests";
+import { CLOSED, SERVICE_MENU, SERVICE_PLUS, approverOf, canEditRequest, cancelRule, fmtScheduled, isStoreOrder, isVisitCall, preferredYmd } from "../lib/requests";
 import { assigneeNow, avatarText, elderNameOf, givenName, inCenter, voiceTargetsCenter } from "../lib/people";
 import { MED_STREAK, SUPPLEMENTS, daysLeft, healthOf, medProgress, needsReorder, slotHour } from "../lib/meds";
 import { medStreakWeek } from "../lib/demo-health";
@@ -30,7 +30,8 @@ import { elderSpentToday, eventsFor, needsGuardianApproval, useAppState, useSync
 import { clipUrlNow, clock, playErrorText, saveClip, sendErrorText, RECORD_ERRORS, usePrefetchClips, useRecorder, useVoicePlayer } from "../lib/voice-client";
 import ElderRecord from "../components/ElderRecord";
 import InviteLink from "../components/InviteLink";
-import ElderDateTime, { atOf, spokenDateTime } from "../components/ElderDateTime";
+import ElderDateTime, { atOf, spokenDateTime, ymdOf } from "../components/ElderDateTime";
+import { eventRights } from "../lib/event-rights";
 import Splash from "../components/Splash";
 import ElderHealthReport from "../components/ElderHealthReport";
 import RoleGate from "../components/RoleGate";
@@ -266,6 +267,8 @@ function ElderHome() {
   const [storeSent, setStoreSent] = useState(null); // 'approval' | 'ordered'
   const [storeDetail, setStoreDetail] = useState(null); // 상품 상세 시트 — 담기 전 설명을 먼저 본다 (2026-09-22)
   const [calSel, setCalSel] = useState(null); // 이번 달 시트에서 고른 날 (null = 이번 달 전체)
+  const [evEdit, setEvEdit] = useState(null); // 바꾸는 일정 — 본인이 남긴 것만 (lib/event-rights.js)
+  const [evConfirm, setEvConfirm] = useState(null); // 지우기 · 취소하기 한 번 더 묻는 일정 id
   const [askSel, setAskSel] = useState(null); // '해주세요' 선택 항목
   const [askSent, setAskSent] = useState(null); // { name, mode, amount }
   const callTimer = useRef(null);
@@ -318,6 +321,7 @@ function ElderHome() {
   })();
   // 내 부탁 + 내가 수락한 선생님 제안 (수락한 뒤에도 보이고 취소할 수 있게)
   const myRequests = (state.requests || []).filter((r) => r.dir === "fromElder" || (approverOf(r) === "elder" && r.status !== "requested"));
+  const myOpen = myRequests.filter((r) => !CLOSED.includes(r.status));
   // 선생님(컨시어지)이 어르신에게 수락을 물은 제안 (2026-10-05 — 승인 대상은 컨시어지가 정한다)
   const proposalsForMe = (state.requests || []).filter((r) => r.status === "requested" && approverOf(r) === "elder");
   const [elderConfirm, setElderConfirm] = useState(null); // { id, kind: "cancel" | "decline" }
@@ -359,6 +363,36 @@ function ElderHome() {
     return cells;
   })();
   const monthList = calSel ? monthEvents.filter((e) => new Date(e.at).getDate() === calSel) : monthEvents;
+  // 다음 달 이후로 남기신 일정 — 이번 달 시트에서도 바꾸고 지울 수 있게 (일정 남기기는 두 달 앞까지 된다)
+  const laterMine = myEvents
+    .filter((e) => eventRights(e, "elder").edit || eventRights(e, "elder").remove)
+    .filter((e) => {
+      const d = new Date(e.at);
+      return d.getFullYear() * 12 + d.getMonth() > now.getFullYear() * 12 + now.getMonth();
+    })
+    .sort((a, b) => a.at - b.at);
+  // 일정 지우기 · 취소하기 — 확정된 것은 '취소'(관제에 알림 · 기록 남김), 그 밖은 지운다
+  const removeMyEvent = (e) => {
+    const r = eventRights(e, "elder");
+    if (!r.remove) return;
+    const cancel = r.remove === "cancel";
+    dispatch({ type: "removeEvent", id: e.id, mode: r.remove, by: "어르신", title: e.title });
+    dispatch({
+      type: "pushEvent",
+      payload: cancel
+        ? { kind: "일정", text: `어르신 일정 취소 — ${cleanTitle(e.title)} · 동행 · 차량 정리 필요`, color: "#F0D9A8" }
+        : { kind: "일정", text: `${e.approval === "pending" ? "어르신 일정요청 철회" : "어르신 일정 삭제"} — ${cleanTitle(e.title)}`, color: "#8FA9CC" },
+    });
+    setEvConfirm(null);
+    toast(cancel ? "취소했어요 · 관제에 알렸어요" : "지웠어요");
+  };
+  const saveMyEvent = (e, at) => {
+    const moved = e.approval === "approved" && at !== e.at; // 확정된 일정의 시간을 바꾸면 관제 재승인 (리듀서가 승인 대기로 돌린다)
+    dispatch({ type: "updateEvent", id: e.id, patch: { at }, by: "어르신", title: e.title });
+    if (moved) dispatch({ type: "pushEvent", payload: { kind: "일정", text: `어르신 일정 변경 — ${cleanTitle(e.title)} · 관제 재승인 대기`, color: "#B08D57" } });
+    setEvEdit(null);
+    toast(moved ? "바꿨어요 · 관제가 다시 확인해요" : "바꿨어요");
+  };
 
   // 오늘 약 — 첫 안심방문에서 등록한 복약 계획(lib/meds.js)을 어르신이 직접 체크한다.
   // 복약 계획 — 가구 상태의 건강 정보(관제 · 컨시어지가 고친 값)를 그대로 쓴다 (lib/meds.js healthOf)
@@ -393,7 +427,15 @@ function ElderHome() {
       : null;
   // 관제 승인 전 · 반려된 일정은 그렇다고 말한다 — '그다음' 한 줄도 확정된 일정처럼 보이면 안 된다
   // (2026-10-02 QA '관제 승인 전에는 확정이 아니다' · 이번 달 목록과 같은 말)
-  const approvalWord = (ev) => (ev?.approval === "pending" ? "관제 확인 중" : ev?.approval === "rejected" ? "관제에서 다시 연락드립니다" : "");
+  // 확정 일정을 바꿨는데 관제가 반려해 원래대로 돌아간 것도 — '지금 할 일' 카드가 아닐 때에도 알 수 있게 (2026-10-18)
+  const approvalWord = (ev) =>
+    ev?.approval === "pending"
+      ? "관제 확인 중"
+      : ev?.approval === "rejected"
+        ? "관제에서 다시 연락드립니다"
+        : ev?.approval === "approved" && ev.changeRejected
+          ? "바꾼 날짜 · 시간은 어려워 원래대로입니다"
+          : "";
   const taskLabel = (t) =>
     t.kind === "med"
       ? `${t.slot} ${spokenClock(t.time)} · ${medDoseNames(t.slot, medPlan)}`
@@ -740,7 +782,8 @@ function ElderHome() {
   // 복지혜택 — 이 댁에 맞는 것 (앱 전체 3번). 보호자가 답한 것(state.welfare.answers)이 얹힌다.
   const welfareMatches = matchWelfare(profileFor(elderNameOf(state.onboarding), state.welfare?.answers));
   const welfareN = welfareCounts(welfareMatches);
-  const welfareAsked = (state.requests || []).some((r) => r.dir === "fromElder" && r.type === "복지혜택 안내 부탁");
+  // 열려 있는 부탁이 있을 때만 '부탁했어요' — 취소 · 거절 · 끝난 뒤에는 다시 부탁할 수 있다 (2026-10-18)
+  const welfareAsked = (state.requests || []).some((r) => r.dir === "fromElder" && r.type === "복지혜택 안내 부탁" && !CLOSED.includes(r.status));
 
   // 해주세요 타일 누름 — 복지 혜택은 혜택 목록, 나머지는 상세 시트
   const openAsk = (item) => {
@@ -763,8 +806,21 @@ function ElderHome() {
     if (r.status === "needsAdmin") return { text: "관제에서 확인하고 있습니다", tone: "gold", icon: "clock" };
     if (r.status === "done") return { text: "끝났습니다", tone: "gray", icon: "check" };
     if (r.status === "rejected") return { text: "이번에는 어렵다고 합니다", tone: "gray", icon: "clock" };
-    if (r.status === "cancelled") return { text: "취소되었습니다", tone: "gray", icon: "clock" };
+    if (r.status === "cancelled")
+      return { text: isStoreOrder(r) && r.history?.[r.history.length - 1]?.by === "보호자" ? "가족이 이번에는 사지 않기로 했습니다" : "취소되었습니다", tone: "gray", icon: "clock" };
     return { text: "선생님이 진행 중입니다", tone: "green", icon: "check" };
+  };
+  // 부탁한 날짜 바꾸기 (2026-10-18) — 선생님이 정하기 전까지만. 글의 '희망: …'도 같이 바꾼다
+  const [reqDateEdit, setReqDateEdit] = useState(null);
+  const saveReqDate = (r, ymd, hm) => {
+    const whenText = spokenDateTime(ymd, hm);
+    const detail = /희망: [^·]*/.test(r.detail || "")
+      ? String(r.detail).replace(/희망: [^·]*/, `희망: ${whenText} `).replace(/\s+·/g, " ·").trim()
+      : String(r.detail || "").replace("일정은 선생님이 연락드려 정함", `희망: ${whenText}`);
+    dispatch({ type: "editRequest", id: r.id, patch: { preferredDate: ymd, preferredTime: hm, preferredWhen: whenText, detail }, by: "어르신", title: r.type });
+    dispatch({ type: "pushEvent", payload: { kind: "해주세요", text: `${ELDER.name} 해주세요 날짜 바꿈 — ${r.type} · 희망 ${whenText}`, color: "#B08D57" } });
+    setReqDateEdit(null);
+    toast("날짜를 바꿨어요 · 선생님이 보고 정해 드려요");
   };
 
   const famTargets = inCenter() ? voiceTargetsCenter() : VOICE_TO;
@@ -1027,6 +1083,7 @@ function ElderHome() {
                     {shortDay(next.at, now)} {spokenTime(next.at)} {cleanTitle(next.title)}
                     {next.approval === "pending" && " · 확인 중"}
                     {next.approval === "rejected" && " · 다시 연락드림"}
+                    {next.approval === "approved" && next.changeRejected && " · 원래대로"}
                   </span>
                   <Line name="chevR" size={20} />
                 </R>
@@ -1128,6 +1185,9 @@ function ElderHome() {
                       </div>
                       {ev.approval === "pending" && <p className="text-[17px] font-bold leading-[1.5]" style={{ color: tn.fg }}>관제에서 확인하고 있습니다. 정해지면 선생님이 알려드립니다.</p>}
                       {ev.approval === "rejected" && <p className="text-[17px] font-bold leading-[1.5]" style={{ color: tn.fg }}>이대로는 어렵습니다. 관제에서 다시 연락드립니다.</p>}
+                      {ev.changeRejected && ev.approval === "approved" && (
+                        <p className="text-[17px] font-bold leading-[1.5]" style={{ color: tn.fg }}>바꾼 날짜 · 시간은 어렵다고 해서 원래대로입니다. 관제에서 연락드립니다.</p>
+                      )}
                       {ev.note && <p className="text-[17px] leading-[1.5]" style={{ color: tn.sub }}>{ev.note}</p>}
                       {/* 오늘 찾아뵙는 분 — 방문일에만. 문 열기 전 얼굴 확인은 방문 사기 방어라 남긴다 */}
                       {isVisitToday && (
@@ -1613,7 +1673,7 @@ function ElderHome() {
               <div className="flex items-center justify-between">
                 <h2 className="m-0 text-[20px] font-black">부탁해 둔 것</h2>
                 <span className="text-[15px] font-extrabold" style={{ color: "#5E6270" }}>
-                  {myRequests.length}건
+                  진행 중 {myOpen.length}건
                 </span>
               </div>
               {myRequests.length === 0 ? (
@@ -1621,11 +1681,15 @@ function ElderHome() {
                   아직 부탁하신 것이 없어요
                 </div>
               ) : (
-                myRequests.slice(0, 6).map((r) => {
+                // 진행 중인 것은 모두 (6건에서 잘려 취소할 길이 없던 것) + 끝난 것은 최근 3건만
+                [...myOpen, ...myRequests.filter((r) => CLOSED.includes(r.status)).slice(0, 3)].map((r) => {
                   const look = reqLook(r);
                   const tn = TONE[look.tone];
                   const rule = cancelRule(r);
-                  const canCancel = !isVisitCall(r) && !isStoreOrder(r) && !CLOSED.includes(r.status) && ["free", "ops"].includes(rule.mode);
+                  // 물건 승인 부탁은 가족이 결제하기 전까지만 거둘 수 있다 (결제 뒤에는 주문 — 관제 · 고객센터)
+                  const storeAsk = isStoreOrder(r) && r.status === "awaitingPayment";
+                  const canCancel = !isVisitCall(r) && (!isStoreOrder(r) || storeAsk) && !CLOSED.includes(r.status) && ["free", "ops"].includes(rule.mode);
+                  const canRedate = r.dir === "fromElder" && !r.voice && canEditRequest(r) && !!preferredYmd(r);
                   const asking = elderConfirm?.id === r.id && elderConfirm.kind === "cancel";
                   const vkey = `rq-${r.id}`;
                   return (
@@ -1675,7 +1739,11 @@ function ElderHome() {
                         (asking ? (
                           <div className="rounded-[18px] bg-white p-3">
                             <p className="text-[16px] leading-[1.5]">
-                              {rule.mode === "ops" ? "날짜가 가까워 관제에서 확인한 뒤 취소됩니다." : "지금 취소하면 바로 취소됩니다."}
+                              {storeAsk
+                                ? "가족에게 한 부탁을 거둡니다. 아직 결제 전이라 바로 취소됩니다."
+                                : rule.mode === "ops"
+                                  ? "날짜가 가까워 관제에서 확인한 뒤 취소됩니다."
+                                  : "지금 취소하면 바로 취소됩니다."}
                             </p>
                             <div className="mt-2 grid grid-cols-2 gap-2">
                               <WhiteBtn h={54} className="text-[17px]" style={{ background: "#F3F1EC" }} onClick={() => setElderConfirm(null)}>
@@ -1686,10 +1754,10 @@ function ElderHome() {
                                 h={54}
                                 className="text-[17px]"
                                 onClick={() => {
-                                  dispatch({ type: "cancelRequest", id: r.id, by: "어르신" });
+                                  dispatch({ type: "cancelRequest", id: r.id, by: "어르신", ...(storeAsk ? { reason: "어르신이 물건 승인 부탁을 거둠" } : {}) });
                                   dispatch({
                                     type: "pushEvent",
-                                    payload: { kind: "해주세요", text: `${ELDER.name} ${rule.mode === "ops" ? "취소 요청 (관제 승인 필요)" : "취소"} — ${r.type}`, color: "#B08D57" },
+                                    payload: { kind: "해주세요", text: `${ELDER.name} ${storeAsk ? "물건 승인 부탁 거둠" : rule.mode === "ops" ? "취소 요청 (관제 승인 필요)" : "취소"} — ${r.type}`, color: "#B08D57" },
                                   });
                                   setElderConfirm(null);
                                 }}
@@ -1699,14 +1767,28 @@ function ElderHome() {
                             </div>
                           </div>
                         ) : (
-                          <button
-                            type="button"
-                            onClick={() => setElderConfirm({ id: r.id, kind: "cancel" })}
-                            className="min-h-[48px] self-start px-1 text-[16px] font-bold underline underline-offset-4"
-                            style={{ color: "#5E6270" }}
-                          >
-                            {rule.mode === "ops" ? "취소 부탁하기" : "취소하기"}
-                          </button>
+                          <div className="flex flex-wrap items-center gap-x-4">
+                            {canRedate && (
+                              <button
+                                type="button"
+                                onClick={() => setReqDateEdit(r)}
+                                aria-label={`${r.type} 날짜 바꾸기`}
+                                className="min-h-[48px] px-1 text-[16px] font-bold underline underline-offset-4"
+                                style={{ color: TONE.purple.fg }}
+                              >
+                                날짜 바꾸기
+                              </button>
+                            )}
+                            <button
+                              type="button"
+                              onClick={() => setElderConfirm({ id: r.id, kind: "cancel" })}
+                              aria-label={`${r.type} ${rule.mode === "ops" ? "취소 부탁하기" : "취소하기"}`}
+                              className="min-h-[48px] px-1 text-[16px] font-bold underline underline-offset-4"
+                              style={{ color: "#5E6270" }}
+                            >
+                              {rule.mode === "ops" ? "취소 부탁하기" : "취소하기"}
+                            </button>
+                          </div>
                         ))}
                     </div>
                   );
@@ -2163,23 +2245,17 @@ function ElderHome() {
               {calSel ? `${calSel}일에는 잡힌 일정이 없습니다.` : "이번 달에 잡힌 일정이 없습니다."}
             </p>
           ) : (
-            monthList.map((e) => {
-              const d = new Date(e.at);
-              const tn = TONE[eventTone(e.kind)];
-              return (
-                <div key={e.id} className="flex items-center gap-3.5 rounded-[20px] p-3" style={{ background: tn.bg }}>
-                  <DBlock top={["일", "월", "화", "수", "목", "금", "토"][d.getDay()]} day={d.getDate()} topFg={tn.fg} />
-                  <div className="min-w-0 flex-1">
-                    <div className="text-[17px] font-extrabold leading-[1.35]">{cleanTitle(e.title)}</div>
-                    <div className="text-[15px]" style={{ color: "#4A4F5E" }}>
-                      {spokenTime(e.at)}
-                      {approvalWord(e) && ` · ${approvalWord(e)}`}
-                    </div>
-                  </div>
-                  {isToday(e.at) && <Pill bg="#1B2340" fg="#FFFFFF">오늘</Pill>}
-                </div>
-              );
-            })
+            monthList.map((e) => (
+              <MyEventRow key={e.id} e={e} today={isToday(e.at)} approvalWord={approvalWord} confirming={evConfirm === e.id} onEdit={() => (setMonthOpen(false), setEvEdit(e))} onAskRemove={() => setEvConfirm(e.id)} onCancelRemove={() => setEvConfirm(null)} onRemove={() => removeMyEvent(e)} />
+            ))
+          )}
+          {!calSel && laterMine.length > 0 && (
+            <>
+              <div className="pt-1 text-[17px] font-extrabold">다음 달 이후 남기신 일정</div>
+              {laterMine.map((e) => (
+                <MyEventRow key={e.id} e={e} month approvalWord={approvalWord} confirming={evConfirm === e.id} onEdit={() => (setMonthOpen(false), setEvEdit(e))} onAskRemove={() => setEvConfirm(e.id)} onCancelRemove={() => setEvConfirm(null)} onRemove={() => removeMyEvent(e)} />
+              ))}
+            </>
           )}
         </div>
         <WhiteBtn className="text-[18px]" onClick={() => setMonthOpen(false)}>
@@ -2236,7 +2312,9 @@ function ElderHome() {
         )}
         {supplements.map((s) => {
           const left = daysLeft(s);
-          const done = !!reordered[s.id];
+          // 재구매 부탁 — 그 요청이 취소 · 거절되면 다시 부탁할 수 있게 요청 상태로 읽는다 (요청이 없는 옛 표시는 그대로)
+          const ask = (state.requests || []).find((r) => r.type === "건강식품 재구매" && String(r.detail || "").startsWith(`${s.name} —`));
+          const done = ask ? !["cancelled", "rejected"].includes(ask.status) : !!reordered[s.id];
           return (
             <Card key={s.id} r={20} pad={14} className="flex flex-col gap-2.5" style={{ boxShadow: "0 3px 0 #E6E2DA" }}>
               <div className="flex items-start gap-2.5">
@@ -2395,6 +2473,18 @@ function ElderHome() {
           닫기
         </WhiteBtn>
       </Sheet>
+
+      {/* 일정 바꾸기 — 본인이 남긴 일정의 날짜 · 시간만 (무슨 일인지는 지우고 다시 남긴다) */}
+      {evEdit && <ElderEventSheet initial={evEdit} onClose={() => setEvEdit(null)} onCreate={(ev) => saveMyEvent(evEdit, ev.at)} />}
+
+      {/* 부탁한 날짜 바꾸기 — 선생님이 정하기 전까지만. 그사이 선생님이 정하면 '이미 정해졌어요'로 */}
+      {reqDateEdit && (
+        <ElderReqDateSheet
+          req={(state.requests || []).find((x) => x.id === reqDateEdit.id) || reqDateEdit}
+          onClose={() => setReqDateEdit(null)}
+          onSave={saveReqDate}
+        />
+      )}
 
       {/* 일정 남기기 — 큰 칸 · 달력. 자유 입력 없음 (저인지부하) */}
       {eventSheet && (
@@ -2569,14 +2659,78 @@ function Pick({ on, children, className = "", ...rest }) {
   );
 }
 
-function ElderEventSheet({ onClose, onCreate }) {
-  const [kind, setKind] = useState(null);
-  const [when, setWhen] = useState({ ymd: null, hm: null });
+// 본인이 남긴 일정 한 줄 (이번 달 시트) — 큰 버튼: 바꾸기 · 지우기(승인 전 · 가족 일정 · 반려) / 취소하기(확정된 것, 관제에 알림).
+// 남이 정한 일정(가족 · 선생님 · 관제)은 보기만 한다. 규칙은 lib/event-rights.js
+function MyEventRow({ e, today = false, month = false, approvalWord, confirming, onEdit, onAskRemove, onCancelRemove, onRemove }) {
+  const d = new Date(e.at);
+  const tn = TONE[eventTone(e.kind)];
+  const r = eventRights(e, "elder");
+  const cancel = r.remove === "cancel";
+  const big = "ds-press ds-btn3d flex min-h-[54px] items-center justify-center rounded-[16px] px-2 text-[17px]";
+  return (
+    <div className="flex flex-col gap-2.5 rounded-[20px] p-3" style={{ background: tn.bg }}>
+      <div className="flex items-center gap-3.5">
+        <DBlock top={month ? `${d.getMonth() + 1}월` : ["일", "월", "화", "수", "목", "금", "토"][d.getDay()]} day={d.getDate()} topFg={tn.fg} />
+        <div className="min-w-0 flex-1">
+          <div className="text-[17px] font-extrabold leading-[1.35]">{cleanTitle(e.title)}</div>
+          <div className="text-[15px]" style={{ color: "#4A4F5E" }}>
+            {spokenTime(e.at)}
+            {approvalWord(e) && ` · ${approvalWord(e)}`}
+          </div>
+        </div>
+        {today && <Pill bg="#1B2340" fg="#FFFFFF">오늘</Pill>}
+      </div>
+      {confirming ? (
+        <div className="rounded-[16px] bg-white p-3">
+          <p className="text-[17px] font-extrabold">{cancel ? "이 일정을 취소할까요?" : "이 일정을 지울까요?"}</p>
+          {cancel && (
+            <p className="mt-0.5 text-[15px] leading-[1.5]" style={{ color: "#5E6270" }}>
+              관제에 바로 알려 드려요.
+            </p>
+          )}
+          <div className="mt-2 grid grid-cols-2 gap-2">
+            <button type="button" onClick={onCancelRemove} className={big} style={{ background: "#F3F1EC", boxShadow: "0 4px 0 #E3DED3" }}>
+              아니요
+            </button>
+            <button type="button" onClick={onRemove} className={big} style={solid("navy", 4)}>
+              {cancel ? "취소할게요" : "지울게요"}
+            </button>
+          </div>
+        </div>
+      ) : (
+        (r.edit || r.remove) && (
+          <div className="grid grid-cols-2 gap-2">
+            {r.edit && (
+              <button type="button" onClick={onEdit} aria-label={`${cleanTitle(e.title)} 바꾸기`} className={big} style={{ background: "#FFFFFF", boxShadow: "0 4px 0 rgba(0,0,0,.08)" }}>
+                바꾸기
+              </button>
+            )}
+            {r.remove && (
+              <button type="button" onClick={onAskRemove} aria-label={`${cleanTitle(e.title)} ${cancel ? "취소하기" : "지우기"}`} className={big} style={{ background: "#FFFFFF", boxShadow: "0 4px 0 rgba(0,0,0,.08)" }}>
+                {cancel ? "취소하기" : "지우기"}
+              </button>
+            )}
+          </div>
+        )
+      )}
+    </div>
+  );
+}
+
+function ElderEventSheet({ onClose, onCreate, initial = null }) {
+  // 바꿀 때는 무슨 일인지는 그대로 두고 날짜 · 시간만 고른다 — 다른 일로 바꾸려면 지우고 다시 남긴다
+  const [kind, setKind] = useState(() => (initial ? ELDER_EVENT_KINDS.find((o) => o.kind === initial.kind) || { kind: initial.kind, label: cleanTitle(initial.title) } : null));
+  const [when, setWhen] = useState(() => {
+    if (!initial) return { ymd: null, hm: null };
+    const d = new Date(initial.at);
+    return { ymd: ymdOf(d), hm: `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}` };
+  });
 
   const ready = !!kind && !!when.ymd && !!when.hm;
+  const changed = !initial || atOf(when.ymd, when.hm) !== initial.at;
 
   const save = () => {
-    if (!ready) return;
+    if (!ready || !changed) return;
     // 병원 · 부탁할 일은 K-CARE 가 움직여야 하는 일이라 관제 승인을 거친다 (보호자 일정등록과 같은 규칙).
     // 가족이 오는 일정만 바로 올라간다.
     const needsOps = kind.kind !== "family";
@@ -2587,27 +2741,40 @@ function ElderEventSheet({ onClose, onCreate }) {
       at: atOf(when.ymd, when.hm),
       source: "어르신 등록",
       note: "",
-      ...(needsOps ? { approval: "pending", by: "elder", escort: kind.kind === "hospital" } : {}),
+      by: "elder", // 누가 남긴 일정인가 — 바꾸기 · 지우기 권한이 이것을 본다
+      ...(needsOps ? { approval: "pending", escort: kind.kind === "hospital" } : {}),
     });
   };
 
   return (
-    <Sheet onClose={onClose} label="일정 남기기">
-      <SheetTitle sub="가족에게 함께 보여요" title="일정 남기기" />
+    <Sheet onClose={onClose} label={initial ? "일정 바꾸기" : "일정 남기기"}>
+      <SheetTitle sub="가족에게 함께 보여요" title={initial ? "일정 바꾸기" : "일정 남기기"} />
       <p className="-mt-1 text-[16px] leading-[1.5]" style={{ color: "#5E6270" }}>
-        병원 · 부탁할 일은 관제가 확인한 뒤 확정됩니다.
+        {initial
+          ? initial.approval === "approved"
+            ? "관제가 확정한 일정이라, 날짜 · 시간을 바꾸면 관제가 다시 확인해요."
+            : "날짜 · 시간만 바꿀 수 있어요. 다른 일로 바꾸시려면 지우고 다시 남겨 주세요."
+          : "병원 · 부탁할 일은 관제가 확인한 뒤 확정됩니다."}
       </p>
-      <div className="text-[19px] font-extrabold">무슨 일인가요?</div>
-      <div className="grid grid-cols-3 gap-2" role="group" aria-label="무슨 일인가요">
-        {ELDER_EVENT_KINDS.map((o) => (
-          <Pick key={o.kind} on={kind === o} onClick={() => setKind(o)}>
-            {o.label}
-          </Pick>
-        ))}
-      </div>
+      {initial ? (
+        <div className="text-[19px] font-extrabold">
+          무슨 일: <span style={{ color: TONE.purple.fg }}>{kind?.label}</span>
+        </div>
+      ) : (
+        <>
+          <div className="text-[19px] font-extrabold">무슨 일인가요?</div>
+          <div className="grid grid-cols-3 gap-2" role="group" aria-label="무슨 일인가요">
+            {ELDER_EVENT_KINDS.map((o) => (
+              <Pick key={o.kind} on={kind === o} onClick={() => setKind(o)}>
+                {o.label}
+              </Pick>
+            ))}
+          </div>
+        </>
+      )}
       <ElderDateTime ymd={when.ymd} hm={when.hm} onChange={setWhen} title="언제인가요?" />
-      <Btn tone={ready ? "navy" : "stone"} h={64} r={22} px={5} disabled={!ready} onClick={save} className="text-[20px]" style={ready ? undefined : { background: "#D8D3C7", boxShadow: "0 5px 0 #C4BEB1", color: "#5E5A52" }}>
-        {ready ? "남기기" : !kind ? "무슨 일인지 골라 주세요" : "날짜 · 시간을 골라 주세요"}
+      <Btn tone={ready && changed ? "navy" : "stone"} h={64} r={22} px={5} disabled={!ready || !changed} onClick={save} className="text-[20px]" style={ready && changed ? undefined : { background: "#D8D3C7", boxShadow: "0 5px 0 #C4BEB1", color: "#5E5A52" }}>
+        {!ready ? (!kind ? "무슨 일인지 골라 주세요" : "날짜 · 시간을 골라 주세요") : !changed ? "바꿀 날짜 · 시간을 골라 주세요" : initial ? "바꾸기" : "남기기"}
       </Btn>
       <WhiteBtn className="text-[18px]" onClick={onClose}>
         닫기
@@ -2989,6 +3156,45 @@ function ElderWelfareSheet({ matches, counts, asked, onAsk, onClose }) {
 // 2026-10-14 현장 요청 6번: 날짜 · 시간은 달력에서 고른다 (components/ElderDateTime.jsx) — 담당 컨시어지 승인 화면의 기본값이 된다.
 // 응급 상황 대응(no12)은 예약서가 아니다 — 1시간당 요금과 설명, '관제와 통화하기' 하나만 둔다 (같은 요청 7번).
 const isHospitalItem = (item) => /병원|진료|검진/.test(`${item?.name || ""} ${item?.scope || ""}`);
+
+// 부탁한 날짜 바꾸기 (2026-10-18) — 달력에서 다시 고른다. 바꾼 날짜는 담당 선생님 승인 화면의 기본값이 된다
+function ElderReqDateSheet({ req, onClose, onSave }) {
+  const [when, setWhen] = useState({ ymd: preferredYmd(req), hm: req.preferredTime || null });
+  const open = canEditRequest(req);
+  const changed = when.ymd !== preferredYmd(req) || when.hm !== (req.preferredTime || null);
+  const ready = open && !!when.ymd && !!when.hm && changed;
+  return (
+    <Sheet onClose={onClose} label={`${req.type} 날짜 바꾸기`}>
+      <SheetTitle sub="날짜 바꾸기" title={req.type} />
+      {open ? (
+        <>
+          <p className="text-[17px] leading-[1.5]" style={{ color: "#5E6270" }}>
+            지금 희망: <b style={{ color: "#1B2340" }}>{req.preferredWhen || preferredYmd(req)}</b>
+          </p>
+          <ElderDateTime ymd={when.ymd} hm={when.hm} onChange={setWhen} title="언제로 바꿀까요?" />
+          <Btn
+            tone="navy"
+            h={62}
+            r={20}
+            disabled={!ready}
+            className="text-[19px]"
+            style={ready ? undefined : { background: "#D8D3C7", boxShadow: "0 4px 0 #C4BEB1", color: "#5E5A52" }}
+            onClick={() => ready && onSave(req, when.ymd, when.hm)}
+          >
+            {ready ? "이 날짜로 바꾸기" : "바꿀 날짜 · 시간을 골라 주세요"}
+          </Btn>
+        </>
+      ) : (
+        <p className="rounded-[18px] p-4 text-[18px] font-extrabold leading-[1.5]" style={{ background: TONE.green.bg, color: "#2A4D33" }}>
+          선생님이 이미 날짜를 정했어요. 바꾸시려면 취소하고 다시 부탁해 주세요.
+        </p>
+      )}
+      <WhiteBtn className="text-[18px]" onClick={onClose}>
+        닫기
+      </WhiteBtn>
+    </Sheet>
+  );
+}
 
 function ElderAskSheet({ item, plan, sent, approver, onAsk, onCallOps, onClose, hospitals = [] }) {
   const off = !item.active;

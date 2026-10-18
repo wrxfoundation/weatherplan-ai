@@ -5,7 +5,7 @@ import { payHref } from "../../lib/payments";
 import FamilyLayout from "../../components/FamilyLayout";
 import { Clay, Line } from "../../components/clay";
 import { Btn, Card, Sheet, SheetTitle, TONE, WhiteBtn } from "../../components/ds";
-import { STATUS, GUARDIAN_PRESETS, SERVICE_MENU, SERVICE_PLUS, URGENCY, CANCEL_FREE_DAYS, CLOSED, approverOf, cancelRule, fmtPreferred, fmtScheduled, isStoreOrder, isVisitCall, paymentOf } from "../../lib/requests";
+import { STATUS, GUARDIAN_PRESETS, SERVICE_MENU, SERVICE_PLUS, URGENCY, CANCEL_FREE_DAYS, CLOSED, approverOf, canEditRequest, cancelRule, fmtPreferred, fmtScheduled, isStoreOrder, isVisitCall, kstYmd, paymentOf } from "../../lib/requests";
 import { fmtWon, PRICING } from "../../lib/config";
 import { useAppState } from "../../lib/state";
 import { assigneeNow, elderNameOf } from "../../lib/people";
@@ -112,6 +112,7 @@ export default function RequestsPage() {
   const [wanted, setWanted] = useState({}); // 미개시 서비스 수요 신호 — no 별 1회
   const [welfareOpen, setWelfareOpen] = useState(false);
   const [closedOpen, setClosedOpen] = useState(false);
+  const [editing, setEditing] = useState(null); // 내용을 고치는 요청 (승인 전 · 보호자가 낸 것)
   const ob = state.onboarding;
   const honor = honorific(ob); // 고객 호칭 — "~~님" (2026-08-12 시트)
   const router = useRouter();
@@ -142,9 +143,14 @@ export default function RequestsPage() {
   const answers = state.welfare?.answers || {};
   const welfareMatches = matchWelfare(profileFor(honorName, answers));
   const welfareN = welfareCounts(welfareMatches);
-  const [welfareSent, setWelfareSent] = useState({});
+  // 이미 보낸 신청 도움 — 열려 있는 요청에서 읽는다 (화면 기억이면 새로고침 뒤 같은 요청이 또 갔다 · 취소하면 다시 보낼 수 있다)
+  const welfareSent = Object.fromEntries(
+    welfareMatches
+      .filter((m) => state.requests.some((r) => r.type === `복지혜택 신청 도움 · ${m.policy.name}` && !CLOSED.includes(r.status)))
+      .map((m) => [m.policy.id, true])
+  );
   const askWelfare = (m) => {
-    setWelfareSent((s) => ({ ...s, [m.policy.id]: true }));
+    if (welfareSent[m.policy.id]) return;
     dispatch({
       type: "addRequest",
       payload: {
@@ -175,6 +181,7 @@ export default function RequestsPage() {
     dispatch,
     isPrimary,
     payments: state.payments,
+    onEdit: () => setEditing(r),
   });
 
   return (
@@ -366,12 +373,23 @@ export default function RequestsPage() {
                           {label(o)}
                         </button>
                       ))}
+                      {/* 모름 — 잘못 누른 답을 지워 다시 미확인으로 (방문 때 확인 · 2026-10-18) */}
+                      <button
+                        type="button"
+                        onClick={() => cur != null && dispatch({ type: "welfareAnswer", key: q.key, value: null })}
+                        aria-pressed={cur == null}
+                        aria-label={`${q.q} — 모름`}
+                        className="ds-press min-h-[40px] rounded-[12px] px-3 text-[14px] font-extrabold"
+                        style={cur == null ? { background: "#5E6270", color: "#FFFFFF" } : { background: "#F3F1EC", color: "#3A3F50" }}
+                      >
+                        모름
+                      </button>
                     </span>
                   </div>
                 );
               })}
               <p className="text-[12px] leading-[1.6]" style={{ color: "#5E6270" }}>
-                답은 관제·담당 컨시어지에게만 보이고, 자동판정에만 씁니다. 모르시면 비워 두세요 — 방문 때 확인합니다.
+                답은 관제·담당 컨시어지에게만 보이고, 자동판정에만 씁니다. 모르시면 &lsquo;모름&rsquo;으로 두세요 — 방문 때 확인합니다. 잘못 누른 답도 &lsquo;모름&rsquo;을 누르면 지워집니다.
               </p>
             </div>
             <div className="rounded-[20px] bg-white p-3" style={{ boxShadow: "0 3px 0 #E6E2DA" }}>
@@ -421,6 +439,25 @@ export default function RequestsPage() {
             }}
           />
         )}
+
+        {/* 내용 고치기 — 담당 컨시어지가 승인하기 전까지만. 그사이 승인되면 시트가 닫힌다 (승인 뒤에는 취소하고 다시 부탁) */}
+        {editing && (() => {
+          const cur = state.requests.find((x) => x.id === editing.id);
+          if (!cur || !canEditRequest(cur)) return <EditLockedNote req={cur || editing} onClose={() => setEditing(null)} />;
+          return (
+            <CreateRequestSheet
+              initial={cur}
+              myHospitals={(state.myHospitals || []).map((h) => h.name).filter(Boolean)}
+              onClose={() => setEditing(null)}
+              isPrimary={isPrimary}
+              onSave={(patch) => {
+                dispatch({ type: "editRequest", id: cur.id, patch, by: "보호자", title: cur.type });
+                dispatch({ type: "pushEvent", payload: { kind: "해주세요", text: `보호자 해주세요 내용 수정 — ${cur.type} · 담당 컨시어지 승인 전`, color: "#8FA9CC" } });
+                setEditing(null);
+              }}
+            />
+          );
+        })()}
       </FamilyLayout>
     </>
   );
@@ -478,9 +515,30 @@ function useReq(req, onboarding, payments) {
   // 보호자가 할 수 있는 것 — 결제(결제 대기) · 제안 수락/거절(승인 대상이 보호자일 때) · 취소(규칙대로)
   const canAnswer = req.status === "requested" && approver === "guardian";
   const canPay = req.status === "awaitingPayment";
-  const canCancel = !visitCall && !isStoreOrder(req) && req.dir !== "fromOps" && !canAnswer && ["free", "ops"].includes(rule.mode) && !(proposal && req.status === "requested");
+  // 어르신 '물건 승인 부탁' — 결제 전이면 사지 않기로 닫을 수 있다 (결제 뒤에는 주문이라 관제 · 고객센터)
+  const storeAsk = isStoreOrder(req) && req.status === "awaitingPayment" && !pay;
+  const canCancel = !visitCall && (!isStoreOrder(req) || storeAsk) && req.dir !== "fromOps" && !canAnswer && ["free", "ops"].includes(rule.mode) && !(proposal && req.status === "requested");
+  // 내용 고치기 — 보호자가 낸 요청을, 담당 컨시어지가 승인하기 전까지만 (2026-10-18)
+  const canEdit = req.dir === "fromGuardian" && canEditRequest(req);
   const goPay = () => router.push(payHref({ kind: "request", amount: req.amount, orderName: req.type, ref: req.id }));
-  return { honor, st, approver, proposal, stepIdx, steps, pay, rule, scheduled, visitCall, route, who, canAnswer, canPay, canCancel, goPay };
+  return { honor, st, approver, proposal, stepIdx, steps, pay, rule, scheduled, visitCall, route, who, canAnswer, canPay, canCancel, canEdit, storeAsk, goPay };
+}
+
+// 고치려던 사이 승인 · 취소된 요청 — 시트 대신 한 줄 안내
+function EditLockedNote({ req, onClose }) {
+  return (
+    <Sheet onClose={onClose} label="내용 고치기">
+      <SheetTitle sub={req?.type || "해주세요"} title="이제 고칠 수 없어요" />
+      <p className="text-[15px] leading-[1.6]" style={{ color: "#3A3F50" }}>
+        {req && ["confirmed", "inProgress", "awaitingPayment"].includes(req.status)
+          ? "담당 컨시어지가 방금 승인했습니다. 승인된 내용은 기록으로 남습니다 — 바꾸시려면 취소하고 다시 부탁해 주세요."
+          : "이 요청은 이미 끝났습니다. 끝난 요청의 내용은 기록으로 남습니다."}
+      </p>
+      <Btn tone="navy" h={54} className="text-[16px]" onClick={onClose}>
+        닫기
+      </Btn>
+    </Sheet>
+  );
 }
 
 // 단계 막대 — 지난 단계 초록 · 지금 금색 · 남은 것 옅게
@@ -500,15 +558,26 @@ function Steps({ steps, at, track = "#EAD9AC" }) {
 }
 
 // 결제 · 수락 · 취소 버튼과 확인 — 큰 카드와 펼친 한 줄 카드가 같이 쓴다
-function Actions({ req, x, dispatch, isPrimary, big }) {
+function Actions({ req, x, dispatch, isPrimary, big, onEdit }) {
   const [notified, setNotified] = useState(false); // 부 보호자 → 주 보호자 결제 알림
   const [confirming, setConfirming] = useState(null); // "cancel" | "decline"
-  const { canPay, canAnswer, canCancel, rule, pay, goPay, proposal } = x;
-  if (!(canPay || canAnswer || canCancel)) return null;
-  const cancelLabel = proposal && req.status === "awaitingPayment" ? "거절" : rule.mode === "ops" ? "취소 요청 (관제 승인)" : "취소하기";
+  const { canPay, canAnswer, canCancel, canEdit, storeAsk, rule, pay, goPay, proposal } = x;
+  if (!(canPay || canAnswer || canCancel || canEdit)) return null;
+  const cancelLabel = storeAsk ? "사지 않기" : proposal && req.status === "awaitingPayment" ? "거절" : rule.mode === "ops" ? "취소 요청 (관제 승인)" : "취소하기";
   return (
     <div className="flex flex-col gap-2">
-      {!confirming && (
+      {!confirming && canEdit && onEdit && (
+        <button
+          type="button"
+          onClick={onEdit}
+          aria-label={`${req.type} 내용 고치기`}
+          className="ds-press flex min-h-[44px] items-center gap-1.5 self-start px-1 text-[15px] font-extrabold underline underline-offset-4"
+          style={{ color: "#3A3F50" }}
+        >
+          내용 고치기 <span className="font-bold no-underline" style={{ color: "#5E6270" }}>· 승인 전까지</span>
+        </button>
+      )}
+      {!confirming && (canPay || canAnswer || canCancel) && (
         <div className="grid gap-2.5" style={{ gridTemplateColumns: (canPay || canAnswer) && (canCancel || canAnswer) ? "2fr 1fr" : "1fr" }}>
           {canPay &&
             (isPrimary ? (
@@ -563,7 +632,9 @@ function Actions({ req, x, dispatch, isPrimary, big }) {
           <p className="text-[15px] leading-[1.6]">
             {confirming === "decline"
               ? "이 제안을 거절할까요? 컨시어지에게 거절로 전달됩니다."
-              : rule.mode === "ops"
+              : storeAsk
+                ? `이번에는 사지 않을까요? ${x.honor} 화면에 '가족이 이번에는 사지 않기로 했습니다'로 보입니다. 결제된 돈은 없습니다.`
+                : rule.mode === "ops"
                 ? `${req.status === "inProgress" ? "이미 진행 중이라" : rule.days == null ? "확정 날짜가 없어" : `서비스일까지 ${CANCEL_FREE_DAYS}일이 안 남아`} 관제가 확인한 뒤 취소됩니다.${pay ? " 승인되면 결제하신 금액은 관제가 환불합니다." : ""}`
                 : `${cancelLabel === "거절" ? "거절하면 이 제안이 취소됩니다." : "지금 취소하면 바로 취소됩니다."}${pay ? (pay.demo ? ` 데모 결제 ${fmtWon(pay.amount)}은 바로 환불 처리됩니다.` : ` 결제하신 ${fmtWon(pay.amount)}은 관제가 환불 처리합니다.`) : ""}`}
           </p>
@@ -580,16 +651,16 @@ function Actions({ req, x, dispatch, isPrimary, big }) {
                   dispatch({ type: "respondProposal", id: req.id, accept: false, role: "guardian" });
                   dispatch({ type: "pushEvent", payload: { kind: "해주세요", text: `보호자 컨시어지 제안 거절 — ${req.type}`, color: "#8FA9CC" } });
                 } else {
-                  dispatch({ type: "cancelRequest", id: req.id, by: "보호자" });
+                  dispatch({ type: "cancelRequest", id: req.id, by: "보호자", ...(storeAsk ? { reason: "보호자가 이번에는 사지 않기로 함" } : {}) });
                   dispatch({
                     type: "pushEvent",
-                    payload: { kind: "해주세요", text: `보호자 ${rule.mode === "ops" ? "취소 요청 (관제 승인 필요)" : cancelLabel === "거절" ? "제안 거절" : "취소"} — ${req.type}`, color: "#B08D57" },
+                    payload: { kind: "해주세요", text: `보호자 ${storeAsk ? "물건 승인 부탁 — 사지 않기" : rule.mode === "ops" ? "취소 요청 (관제 승인 필요)" : cancelLabel === "거절" ? "제안 거절" : "취소"} — ${req.type}`, color: "#B08D57" },
                   });
                 }
                 setConfirming(null);
               }}
             >
-              {confirming === "decline" || cancelLabel === "거절" ? "네, 거절합니다" : rule.mode === "ops" ? "네, 취소 요청합니다" : "네, 취소합니다"}
+              {storeAsk ? "네, 사지 않습니다" : confirming === "decline" || cancelLabel === "거절" ? "네, 거절합니다" : rule.mode === "ops" ? "네, 취소 요청합니다" : "네, 취소합니다"}
             </Btn>
           </div>
         </div>
@@ -663,7 +734,7 @@ function Details({ req, x }) {
 }
 
 // 보호자가 할 일 — 시안의 큰 결제 카드 (금색)
-function TodoCard({ req, open, onToggle, onboarding, dispatch, isPrimary, payments, d = 40 }) {
+function TodoCard({ req, open, onToggle, onboarding, dispatch, isPrimary, payments, onEdit, d = 40 }) {
   const x = useReq(req, onboarding, payments);
   return (
     <div className="ds-r flex flex-col gap-3.5 rounded-[26px] p-[18px]" style={{ "--d": `${d}ms`, background: TONE.gold.bg }}>
@@ -689,7 +760,7 @@ function TodoCard({ req, open, onToggle, onboarding, dispatch, isPrimary, paymen
       {req.status === "requested" && x.approver === "elder" && (
         <div className="rounded-[14px] bg-white px-3 py-2 text-[14px] font-bold">{x.honor}이 수락하시면 진행됩니다</div>
       )}
-      <Actions req={req} x={x} dispatch={dispatch} isPrimary={isPrimary} big />
+      <Actions req={req} x={x} dispatch={dispatch} isPrimary={isPrimary} big onEdit={onEdit} />
       <button type="button" onClick={onToggle} aria-expanded={open} className="flex min-h-[40px] items-center gap-1 self-start text-[14px] font-extrabold underline underline-offset-2" style={{ color: "#6B4A3A" }}>
         {open ? "자세히 접기" : "자세히 보기"}
       </button>
@@ -699,7 +770,7 @@ function TodoCard({ req, open, onToggle, onboarding, dispatch, isPrimary, paymen
 }
 
 // 진행 중 · 끝난 요청 — 한 줄 카드. 누르면 단계 · 이력 · 취소가 펼쳐진다
-function RequestRow({ req, open, onToggle, onboarding, dispatch, isPrimary, payments, d = 80 }) {
+function RequestRow({ req, open, onToggle, onboarding, dispatch, isPrimary, payments, onEdit, d = 80 }) {
   const x = useReq(req, onboarding, payments);
   const sub =
     req.status === "cancelRequested"
@@ -732,7 +803,7 @@ function RequestRow({ req, open, onToggle, onboarding, dispatch, isPrimary, paym
           </div>
           <p className="text-[14px] leading-[1.6]">{req.detail}</p>
           {x.stepIdx >= 0 && <Steps steps={x.steps} at={x.stepIdx} track="#EEEDEA" />}
-          <Actions req={req} x={x} dispatch={dispatch} isPrimary={isPrimary} />
+          <Actions req={req} x={x} dispatch={dispatch} isPrimary={isPrimary} onEdit={onEdit} />
           <Details req={req} x={x} />
         </div>
       )}
@@ -742,31 +813,52 @@ function RequestRow({ req, open, onToggle, onboarding, dispatch, isPrimary, paym
 
 const fieldCls = "w-full rounded-[16px] border-2 border-[#E3DED3] bg-white px-3.5 text-[16px] outline-none focus:border-[#1B2340]";
 
-function CreateRequestSheet({ preset, onClose, onCreate, myHospitals = [], isPrimary = true }) {
-  const [type, setType] = useState(preset ? preset.name : GUARDIAN_PRESETS[0]);
-  const [detail, setDetail] = useState("");
-  const [preferredDate, setPreferredDate] = useState("");
+// initial 이 있으면 '내용 고치기' — 종류 · 금액 · 사진은 그대로 두고 내용 · 희망 일시 · 병원 · 긴급도만 (2026-10-18)
+const ymdOfPreferred = (v) => (typeof v === "number" && Number.isFinite(v) ? kstYmd(v) : /^\d{4}-\d{2}-\d{2}$/.test(String(v || "")) ? v : "");
+function CreateRequestSheet({ preset, initial = null, onClose, onCreate, onSave, myHospitals = [], isPrimary = true }) {
+  const editing = !!initial;
+  const [type, setType] = useState(initial ? initial.type : preset ? preset.name : GUARDIAN_PRESETS[0]);
+  const [detail, setDetail] = useState(initial?.detail || "");
+  const [preferredDate, setPreferredDate] = useState(ymdOfPreferred(initial?.preferredDate));
   // 시간 · 병원 — 병원 동행처럼 '어디서 · 언제'가 있어야 배차하는 요청 (2026-10-02 QA "날짜·시간·병원 선택 단계 없음")
-  const [preferredTime, setPreferredTime] = useState("");
-  const [hospital, setHospital] = useState("");
-  const hospitalAsk = /병원|진료|검진/.test(String(type || ""));
-  const [urgency, setUrgency] = useState("normal");
+  const [preferredTime, setPreferredTime] = useState(initial?.preferredTime || "");
+  const [hospital, setHospital] = useState(initial?.hospital || "");
+  const hospitalAsk = /병원|진료|검진/.test(String(type || "")) || !!initial?.hospital;
+  const [urgency, setUrgency] = useState(initial?.urgency || "normal");
   const [photo, setPhoto] = useState(false);
   // 금액은 서비스 메뉴 값 그대로 — 메뉴 항목을 골랐을 때만. 보호자가 적는 금액으로 결제하지 않는다
   // (요청할 때 결제하므로). 메뉴 밖 요청 · 요금 확정 전 항목은 담당 컨시어지가 승인하며 정하고 그 뒤 결제한다.
   const onMenu = !!preset && type === preset.name;
-  const amount = onMenu && preset.amount != null ? Number(preset.amount) : null;
-  const payNow = amount > 0;
+  const amount = editing ? initial.amount ?? null : onMenu && preset.amount != null ? Number(preset.amount) : null;
+  const payNow = !editing && amount > 0;
   const chip = (on) => (on ? { background: "#1B2340", color: "#FFFFFF" } : { background: "#FFFFFF", color: "#3A3F50", boxShadow: "inset 0 0 0 1.5px #E3DED3" });
+  // 고친 칸만 보낸다 — 손대지 않은 희망일이 다른 꼴(숫자 ↔ 날짜 글)로 바뀌어 '고침'으로 남지 않게
+  const patch = {};
+  if (editing) {
+    if (detail.trim() !== String(initial.detail || "").trim()) patch.detail = detail.trim();
+    if (preferredDate !== ymdOfPreferred(initial.preferredDate) || preferredTime !== (initial.preferredTime || "")) {
+      patch.preferredDate = preferredDate ? new Date(preferredDate).getTime() : null;
+      patch.preferredTime = preferredTime || null;
+    }
+    if (hospitalAsk && hospital.trim() !== (initial.hospital || "")) patch.hospital = hospital.trim() || null;
+    if (urgency !== (initial.urgency || "normal")) patch.urgency = urgency;
+  }
+  const changed = Object.keys(patch).length > 0;
 
   return (
-    <Sheet onClose={onClose} label={preset ? preset.name : "해주세요 요청"}>
-      <SheetTitle sub="해주세요" title={preset ? preset.name : "직접 적어서 부탁하기"} />
-      <p className="text-[14px] leading-[1.6]" style={{ color: "#5E6270" }}>
-        {assigneeNow() ? `담당 컨시어지(${assigneeNow()})가 일정을 보고 승인하면 확정됩니다.` : "아직 담당 컨시어지가 없습니다 — 센터 관제가 담당을 정하고 승인하면 확정됩니다."}
-        {payNow ? " 요청할 때 결제하고, 승인되지 않으면 환불됩니다." : amount === 0 ? " 따로 내실 금액이 없습니다." : " 요금은 컨시어지가 승인하며 알려 드리고, 그 뒤 결제합니다."}
-      </p>
-      {preset?.priceLabel && (
+    <Sheet onClose={onClose} label={editing ? `${initial.type} 내용 고치기` : preset ? preset.name : "해주세요 요청"}>
+      <SheetTitle sub={editing ? "내용 고치기" : "해주세요"} title={editing ? initial.type : preset ? preset.name : "직접 적어서 부탁하기"} />
+      {editing ? (
+        <p className="text-[14px] leading-[1.6]" style={{ color: "#5E6270" }}>
+          담당 컨시어지가 승인하기 전까지 고칠 수 있습니다. 고친 내용은 컨시어지 · 관제 화면에 바로 보이고 처리 이력에 남습니다. 서비스 종류 · 금액은 그대로입니다 — 바꾸시려면 취소하고 다시 부탁해 주세요.
+        </p>
+      ) : (
+        <p className="text-[14px] leading-[1.6]" style={{ color: "#5E6270" }}>
+          {assigneeNow() ? `담당 컨시어지(${assigneeNow()})가 일정을 보고 승인하면 확정됩니다.` : "아직 담당 컨시어지가 없습니다 — 센터 관제가 담당을 정하고 승인하면 확정됩니다."}
+          {payNow ? " 요청할 때 결제하고, 승인되지 않으면 환불됩니다." : amount === 0 ? " 따로 내실 금액이 없습니다." : " 요금은 컨시어지가 승인하며 알려 드리고, 그 뒤 결제합니다."}
+        </p>
+      )}
+      {!editing && preset?.priceLabel && (
         <p className="ds-num rounded-[16px] px-3.5 py-2.5 text-[14px] font-extrabold" style={{ background: TONE.gold.bg, color: TONE.gold.fg }}>
           {preset.priceLabel}
         </p>
@@ -777,16 +869,18 @@ function CreateRequestSheet({ preset, onClose, onCreate, myHospitals = [], isPri
         </p>
       )}
 
-      <div role="group" aria-label="요청 종류" className="flex flex-col gap-2">
-        <div className="text-[15px] font-extrabold">요청 종류</div>
-        <div className="flex flex-wrap gap-1.5">
-          {(preset ? [preset.name, ...GUARDIAN_PRESETS] : GUARDIAN_PRESETS).map((p) => (
-            <button key={p} type="button" onClick={() => setType(p)} aria-pressed={type === p} className="ds-press min-h-[40px] rounded-full px-3.5 text-[14px] font-extrabold" style={chip(type === p)}>
-              {p}
-            </button>
-          ))}
+      {!editing && (
+        <div role="group" aria-label="요청 종류" className="flex flex-col gap-2">
+          <div className="text-[15px] font-extrabold">요청 종류</div>
+          <div className="flex flex-wrap gap-1.5">
+            {(preset ? [preset.name, ...GUARDIAN_PRESETS] : GUARDIAN_PRESETS).map((p) => (
+              <button key={p} type="button" onClick={() => setType(p)} aria-pressed={type === p} className="ds-press min-h-[40px] rounded-full px-3.5 text-[14px] font-extrabold" style={chip(type === p)}>
+                {p}
+              </button>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
 
       <div className="flex flex-col gap-2">
         <label htmlFor="rq-detail" className="text-[15px] font-extrabold">
@@ -841,18 +935,27 @@ function CreateRequestSheet({ preset, onClose, onCreate, myHospitals = [], isPri
             ))}
           </div>
         </div>
-        <div className="flex flex-col gap-2">
-          <div className="text-[15px] font-extrabold">사진 첨부</div>
-          <button type="button" onClick={() => setPhoto((v) => !v)} aria-pressed={photo} className="ds-press min-h-[44px] rounded-[14px] text-[14px] font-extrabold" style={chip(photo)}>
-            {photo ? "첨부됨 (데모)" : "사진 선택 (데모)"}
-          </button>
-        </div>
+        {editing ? (
+          <div className="flex flex-col gap-2">
+            <div className="text-[15px] font-extrabold">사진</div>
+            <p className="flex min-h-[44px] items-center text-[14px]" style={{ color: "#5E6270" }}>
+              {initial.photos?.length ? `${initial.photos.length}장 그대로` : "없음"}
+            </p>
+          </div>
+        ) : (
+          <div className="flex flex-col gap-2">
+            <div className="text-[15px] font-extrabold">사진 첨부</div>
+            <button type="button" onClick={() => setPhoto((v) => !v)} aria-pressed={photo} className="ds-press min-h-[44px] rounded-[14px] text-[14px] font-extrabold" style={chip(photo)}>
+              {photo ? "첨부됨 (데모)" : "사진 선택 (데모)"}
+            </button>
+          </div>
+        )}
       </div>
 
       <div className="rounded-[16px] bg-white px-3.5 py-3 text-[13px] leading-[1.65]" style={{ color: "#5E6270", boxShadow: "0 3px 0 #E6E2DA" }}>
         <div className="flex items-center justify-between">
           <span className="text-[15px] font-extrabold" style={{ color: "#1B2340" }}>
-            결제 금액
+            {editing ? "금액 (그대로)" : "결제 금액"}
           </span>
           <b className="ds-num text-[17px]" style={{ color: "#1B2340" }}>
             {amount == null ? "요금 확정 전" : fmtWon(amount)}
@@ -864,14 +967,18 @@ function CreateRequestSheet({ preset, onClose, onCreate, myHospitals = [], isPri
 
       <div className="flex gap-2">
         <WhiteBtn className="flex-1 text-[17px]" onClick={onClose}>
-          닫기
+          {editing ? "그만두기" : "닫기"}
         </WhiteBtn>
         <Btn
           tone="navy"
           h={56}
           className="flex-[2] text-[16px] disabled:opacity-50"
-          disabled={!detail.trim()}
+          disabled={!detail.trim() || (editing && !changed)}
           onClick={() => {
+            if (editing) {
+              if (changed && detail.trim()) onSave?.(patch);
+              return;
+            }
             const now = Date.now();
             onCreate({
               id: `rq-${now}`,
@@ -895,7 +1002,7 @@ function CreateRequestSheet({ preset, onClose, onCreate, myHospitals = [], isPri
             });
           }}
         >
-          {payNow ? (isPrimary ? `${fmtWon(amount)} 결제하고 요청` : "요청 보내기 (주 보호자 결제)") : "요청 보내기"}
+          {editing ? (changed ? "고친 내용 저장" : "고친 곳이 없어요") : payNow ? (isPrimary ? `${fmtWon(amount)} 결제하고 요청` : "요청 보내기 (주 보호자 결제)") : "요청 보내기"}
         </Btn>
       </div>
     </Sheet>

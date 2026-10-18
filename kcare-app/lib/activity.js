@@ -31,15 +31,19 @@ export function summarize(a) {
     case "addEvent":
       return `일정 등록 · ${clip(p.title, 60)}`;
     case "updateEvent":
-      return "일정 수정";
+      return `일정 수정${a.title ? ` · ${clip(a.title, 60)}` : ""}`;
+    case "removeEvent":
+      return `일정 ${a.mode === "cancel" ? "취소" : "삭제"}${a.title ? ` · ${clip(a.title, 60)}` : ""}${a.reason ? ` — ${clip(a.reason, 60)}` : ""}`;
     case "decideEvent":
-      return a.approval === "approved" ? "일정 요청 승인" : "일정 요청 반려";
+      return a.approval === "approved" ? "일정 요청 승인" : `일정 요청 반려${a.reason ? ` — ${clip(a.reason, 60)}` : ""}`;
     case "setPriority":
       return "우선 날씨 설정";
     case "addReport":
       return "관찰 리포트 작성";
     case "addRequest":
       return `해주세요 요청 · ${clip(p.type, 40)}`;
+    case "editRequest":
+      return `해주세요 내용 수정 · ${clip(a.by, 12)}${a.title ? ` · ${clip(a.title, 40)}` : ""}`;
     case "transitionRequest":
       return `요청 상태 → ${clip(STATUS[a.to]?.label || a.to, 20)}`;
     case "assignRequest":
@@ -83,7 +87,11 @@ export function summarize(a) {
     case "visitGrade":
       return `방문 항목 상태 · ${clip(String(a.key || "").replace(/^[^-]*-/, ""), 30)} ${a.grade ? clip(a.grade, 8) : "지움"}`;
     case "visitPhoto":
-      return "방문 사진 첨부";
+      return a.remove ? "방문 사진 한 장 뺌" : "방문 사진 첨부";
+    case "returnVisit":
+      return `방문 리포트 반려 · ${clip(a.by, 12)} — ${clip(a.reason, 80)}`;
+    case "startNextVisit":
+      return `다음 방문 기록 시작 · 지난 리포트 보관${a.by ? ` · ${clip(a.by, 12)}` : ""}`;
     case "visitLoc":
       return `방문 거주 형태 → ${a.loc === "hospital" ? "요양병원" : "자택"}`;
     case "escortSave":
@@ -114,6 +122,8 @@ export function summarize(a) {
       return "스토어 주문 확정";
     case "addVoice":
       return `음성 메시지 · ${clip(p.from, 20)} → ${clip(p.to, 20)} · ${Number(p.secs) || 0}초${p.clip ? " · 녹음" : ""}`;
+    case "unsendVoice":
+      return `음성 메시지 보내기 취소 · ${clip(a.from, 20)} → ${clip(a.to, 20)}`;
     case "askDoctorAdd":
       return "오늘 여쭤볼 것 · 말로 남김";
     case "askDoctorEdit":
@@ -122,16 +132,34 @@ export function summarize(a) {
       return `오늘 여쭤볼 것 · ${a.status === "resolved" ? "해결" : "다시 여쭤보기"}`;
     case "askDoctorRemove":
       return "오늘 여쭤볼 것 · 지움";
+    case "addOpsNote":
+      return `관제 메모 · ${clip(p.who, 20)} — ${clip(p.text, 80)}`;
+    case "editOpsNote":
+      return `관제 메모 수정 · ${clip(a.by, 20)} — ${clip(a.text, 80)}`;
+    case "removeOpsNote":
+      return `관제 메모 삭제 · ${clip(a.by, 20)}${a.text ? ` — ${clip(a.text, 80)}` : ""}`;
     case "requestSummary":
       return `말로 부탁 요약 · ${clip(a.by, 12)}${a.text ? ` — ${clip(a.text, 60)}` : " (지움)"}`;
     case "opsAckRequest":
       return `해주세요 관제 확인 · ${clip(a.by, 12)}`;
     case "addReview":
       return "동행 후기";
+    case "editReview":
+      return `동행 후기 수정 — ${clip(a.text, 80)}`;
+    case "removeReview":
+      return `동행 후기 삭제${a.text ? ` — ${clip(a.text, 80)}` : ""}`;
+    case "rateEscort":
+      return `지난 동행 점수 ${Number(a.score)}점${a.reason ? ` · ${clip(a.reason, 20)}` : ""}${a.edit ? " (고침)" : ""}`;
+    case "setConsent":
+      return a.on ? `동의 다시 함 · ${clip(a.k, 30)}` : `동의 철회 · ${clip(a.k, 30)} · 지난 기록 ${a.purge === "delete" ? "파기 요청" : "보관"}`;
     case "addOrder":
       return "스토어 주문";
     case "addMyHospital":
       return `다니는 병원 등록 · ${clip(p.name, 30)}`;
+    case "editMyHospital":
+      return `다니는 병원 수정 · ${clip(a.patch?.name, 30)}`;
+    case "removeMyHospital":
+      return `다니는 병원 삭제 · ${clip(a.name, 30)}`;
     case "welfareStatus":
       return `복지혜택 ${clip(a.id, 20)} → ${clip(a.status, 20)}`;
     case "welfareAnswer":

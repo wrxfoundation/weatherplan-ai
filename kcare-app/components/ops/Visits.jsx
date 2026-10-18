@@ -1,5 +1,6 @@
 // 방문관리 — 월 1회 2인 1조 방문 일정부터 21항목 점검 · 결과보고까지 (요청서 11절 · 시안 방문관리).
 // 배차 완료로 끝나지 않는다: 수행 → 결과입력 → 관제검수 → 보호자 보고까지 상태가 이어진다 (Visits/VisitDetail).
+import Link from "next/link";
 import { useState } from "react";
 import { useAppState } from "../../lib/state";
 import { useAuth } from "../../lib/auth";
@@ -171,9 +172,33 @@ export default function Visits({ openProfile }) {
             escort={cur.live ? appState?.escort : null}
             submitted={!!(cur.live && appState?.visit?.reportSent)}
             onEscortSend={() => dispatch?.({ type: "escortSend" })}
+            // 반려 — 보호자에게 보내기 전의 실제 리포트를 컨시어지에게 되돌린다 (사유 필수 · 2026-10-18)
+            onReturn={cur.live ? (reason) => dispatch?.({ type: "returnVisit", reason, by: "관제" }) : null}
           />
         ) : <Panel><Empty>방문을 선택하면 상세가 여기 표시됩니다.</Empty></Panel>}
       </div>
+
+      {/* 보관된 지난 방문 — 컨시어지가 '다음 방문 기록 시작'을 누르면 보낸 리포트는 여기로 (증명 기록 · 고치지 않는다 · 2026-10-18) */}
+      {liveOn && (appState?.visitHistory || []).length > 0 && (
+        <Panel>
+          <PanelHead title="보관된 지난 방문" sub="보호자에게 발송한 리포트 — 고치지 않는 기록입니다" right={<Link href="/report/visit" className="text-[12px] font-bold text-navy underline underline-offset-2">가장 최근 보낸 리포트 (A4)</Link>} />
+          <ul className="mt-2 space-y-1.5">
+            {appState.visitHistory.map((h, i) => {
+              const o = h.visit?.ops || {};
+              const checks = Object.values(h.visit?.checks || {}).filter(Boolean).length;
+              return (
+                <li key={`${h.closedAt}-${i}`} className="flex flex-wrap items-center gap-x-3 gap-y-1 rounded-xl bg-navy/[.03] px-3 py-2 text-[12.5px] text-ink">
+                  <span className="font-num font-bold text-navy">{o.sentTs ? new Date(o.sentTs).toLocaleDateString("ko-KR", { month: "numeric", day: "numeric" }) : "—"} 발송</span>
+                  <span>점검 {checks}</span>
+                  <span>{o.viewed === "열람 완료" ? "보호자 열람" : "보호자 미열람"}</span>
+                  {h.escort?.sentAt && <span>동행 리포트 함께</span>}
+                  <span className="ml-auto text-[11px] text-muted">{new Date(h.closedAt).toLocaleDateString("ko-KR", { month: "numeric", day: "numeric" })} 보관 · {h.by || "컨시어지"}</span>
+                </li>
+              );
+            })}
+          </ul>
+        </Panel>
+      )}
 
       <Note>건강·센서 데이터는 참고자료이며 의료진의 진단을 대신하지 않습니다.</Note>
 

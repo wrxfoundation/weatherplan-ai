@@ -10,6 +10,7 @@ import { PAYMENT_MODES, PRICING, fmtWon } from "../../lib/config";
 import { fmtCard, payHref } from "../../lib/payments";
 import { PROVIDER_LABEL, logout, useAuth } from "../../lib/auth";
 import { storageText, useAppState, useSync } from "../../lib/state";
+import { videoConsentOf } from "../../lib/consent";
 import { honorific } from "../../lib/tracks";
 import { monthlyLabel } from "../../lib/membership";
 import { policyOf } from "../../lib/policies";
@@ -19,6 +20,8 @@ import { policyOf } from "../../lib/policies";
 // 결제수단 등록은 토스페이먼츠 결제창 (/pay) 한 곳 — 카드정보는 K-CARE 서버에 저장되지 않는다.
 // 가입 및 설치비는 확정 전이면 결제 버튼을 열지 않는다 (2026-10-02 케어박스 제외 · lib/config.js).
 // 시안의 산호색(결제수단 카드 · 카드 등록 버튼)은 금색으로 — 빨강 계열은 위험 신호 전용.
+
+const md = (t) => new Date(t).toLocaleDateString("ko-KR", { month: "long", day: "numeric" });
 
 // 결제권한 — 시안처럼 사람 말로
 function permText(ob, honor) {
@@ -36,11 +39,15 @@ export default function MembershipPage() {
   const isPrimary = (state.demo.guardianRole || "primary") === "primary";
   const [permOpen, setPermOpen] = useState(false);
   const [refundOpen, setRefundOpen] = useState(false);
+  const [cancelOpen, setCancelOpen] = useState(false);
+  const [cancelTopic, setCancelTopic] = useState("해지");
+  // 마지막으로 보낸 해지 · 변경 상담 요청 (관제 연락 기록에서 읽는다)
+  const cancelAsk = (state.opsMessages || []).find((m) => m.role === "guardian" && m.kind === "membership") || null;
   const payments = state.payments || [];
   const billing = state.billing;
   const region = ob ? `${ob.district} · ${ob.tier === 2 ? "2급지" : "1급지"}` : `${ELDER.district} · 1급지`;
   const nextBill = ob?.joinedAt ? new Date(new Date(ob.joinedAt).setMonth(new Date(ob.joinedAt).getMonth() + 1)).toLocaleDateString("ko-KR", { month: "long", day: "numeric" }) : null;
-  const videoConsent = ob?.videoConsent ? "동의함" : ob ? "동의 안 함" : "동의함";
+  const videoConsent = videoConsentOf(state) ? "동의함" : "동의 안 함"; // 정보 동의와 같은 값 (lib/consent.js)
   const entryPaid = payments.some((p) => p.kind === "entry");
   const mini = "ds-press ds-btn3d flex h-10 flex-none items-center gap-1 rounded-[14px] bg-white px-3.5 text-[15px]";
 
@@ -143,6 +150,70 @@ export default function MembershipPage() {
               <button type="button" onClick={() => setRefundOpen(true)} className={mini} style={{ boxShadow: `0 3px 0 ${TONE.green.sh}`, color: TONE.green.fg }}>
                 보기 <Line name="chevR" size={16} />
               </button>
+            </li>
+            {/* 해지 · 변경 — 해지 기준(약정 · 위약금)이 확정 전이라 앱에서 바로 해지하지 않고 상담을 요청한다 (2026-10-18).
+                요청은 관제 '지금 처리할 일'에 뜨고, 관제가 확인하면 다시 요청할 수 있다 */}
+            <li className="ds-row flex-wrap">
+              <span className="ds-k">
+                <b>해지 · 변경 상담</b>
+                <small>{cancelAsk ? `${md(cancelAsk.at)} 요청 · ${cancelAsk.ackAt ? "관제 확인 — 연락드립니다" : "관제 확인 전"}` : "해지 기준은 확정 전이라 상담으로 안내해 드려요"}</small>
+              </span>
+              {isPrimary ? (
+                cancelAsk && !cancelAsk.ackAt ? (
+                  <span className="flex-none text-[14px] font-extrabold" style={{ color: TONE.green.fg }}>
+                    요청됨
+                  </span>
+                ) : (
+                  <button type="button" onClick={() => setCancelOpen((v) => !v)} aria-expanded={cancelOpen} className={mini} style={{ boxShadow: `0 3px 0 ${TONE.green.sh}`, color: TONE.green.fg }}>
+                    상담 요청
+                  </button>
+                )
+              ) : (
+                <span className="flex-none text-[14px] font-bold" style={{ color: "#5E6270" }}>
+                  주 보호자만
+                </span>
+              )}
+              {cancelOpen && !(cancelAsk && !cancelAsk.ackAt) && (
+                <div className="flex basis-full flex-col gap-2.5 rounded-[18px] bg-white p-3.5">
+                  <div role="group" aria-label="무엇을 상담할까요" className="flex flex-wrap gap-1.5">
+                    {["해지", "일시 중지", "요금제 변경"].map((t) => (
+                      <button
+                        key={t}
+                        type="button"
+                        aria-pressed={cancelTopic === t}
+                        onClick={() => setCancelTopic(t)}
+                        className="ds-press min-h-[40px] rounded-full px-3.5 text-[14px] font-extrabold"
+                        style={cancelTopic === t ? { background: "#1B2340", color: "#FFFFFF" } : { background: "#F3F1EC", color: "#3A3F50" }}
+                      >
+                        {t}
+                      </button>
+                    ))}
+                  </div>
+                  <p className="text-[14px] leading-[1.6]" style={{ color: "#5E6270" }}>
+                    요청하면 관제가 연락드려 약정 · 환불을 안내합니다. 상담 전에는 아무것도 바뀌지 않습니다.
+                  </p>
+                  <div className="grid grid-cols-[1fr_2fr] gap-2">
+                    <WhiteBtn h={48} className="text-[15px]" onClick={() => setCancelOpen(false)}>
+                      닫기
+                    </WhiteBtn>
+                    <Btn
+                      tone="navy"
+                      h={48}
+                      className="text-[15px]"
+                      onClick={() => {
+                        dispatch({
+                          type: "addOpsMessage",
+                          payload: { from: `보호자 ${auth.user?.name || "주 보호자"}`, role: "guardian", kind: "membership", text: `멤버십 ${cancelTopic} 상담 요청 — 연락 부탁드립니다` },
+                        });
+                        dispatch({ type: "pushEvent", payload: { kind: "설정", text: `멤버십 ${cancelTopic} 상담 요청`, color: "#8FA9CC" } });
+                        setCancelOpen(false);
+                      }}
+                    >
+                      {cancelTopic} 상담 요청
+                    </Btn>
+                  </div>
+                </div>
+              )}
             </li>
             {/* 로그인 계정 — 테스트 계정 · 구글 (설정 전이면 '설정 전'). 로그인하면 기록이 서버에 저장된다 */}
             <li className="ds-row">

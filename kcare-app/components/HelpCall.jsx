@@ -135,6 +135,8 @@ export function HelpCallPopup({ role }) {
 // 진행 중 카드 — 보호자 홈 · 컨시어지 오늘 탭. 팝업을 닫아도 여기 남는다.
 export function HelpCallCard({ role, me = LIVE_CONCIERGE }) {
   const { state, dispatch } = useAppState();
+  // 처리 완료는 되돌릴 수 없는 기록이라 한 번 더 묻는다 (2026-10-18)
+  const [closing, setClosing] = useState(null);
   const calls = helpCalls(state.requests);
   if (calls.length === 0) return null;
   return (
@@ -154,23 +156,39 @@ export function HelpCallCard({ role, me = LIVE_CONCIERGE }) {
             <div className="mt-2.5">
               <Timeline r={r} from={r.history.length} />
             </div>
-            {mine && (
-              <div className="mt-3 flex gap-2">
-                <button
-                  disabled={arrived}
-                  onClick={() => dispatch({ type: "helpCall", id: r.id, step: "arrive", by: me })}
-                  className="btn-press flex-1 rounded-xl border border-navy/20 py-2.5 text-[13px] font-bold text-navy disabled:opacity-50"
-                >
-                  {arrived ? "✓ 도착 알림" : "현장 도착"}
-                </button>
-                <button
-                  onClick={() => dispatch({ type: "helpCall", id: r.id, step: "resolve", by: me, note: "현장 처리 완료" })}
-                  className="btn-press flex-[2] rounded-xl bg-green py-2.5 text-[13px] font-bold text-white"
-                >
-                  처리 완료
-                </button>
-              </div>
-            )}
+            {mine &&
+              (closing === r.id ? (
+                <div className="mt-3 rounded-xl border border-green/30 bg-white p-3">
+                  <p className="text-[13px] leading-[1.6] text-ink">처리 완료로 닫습니다. 닫은 뒤에는 되돌릴 수 없고 관제 · 보호자 화면에 완료로 보입니다.</p>
+                  <div className="mt-2 flex gap-2">
+                    <button onClick={() => setClosing(null)} className="btn-press flex-1 rounded-xl border border-navy/20 py-2.5 text-[13px] font-bold text-navy">
+                      아니요
+                    </button>
+                    <button
+                      onClick={() => {
+                        dispatch({ type: "helpCall", id: r.id, step: "resolve", by: me, note: "현장 처리 완료" });
+                        setClosing(null);
+                      }}
+                      className="btn-press flex-[2] rounded-xl bg-green py-2.5 text-[13px] font-bold text-white"
+                    >
+                      네, 처리 완료
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="mt-3 flex gap-2">
+                  <button
+                    disabled={arrived}
+                    onClick={() => dispatch({ type: "helpCall", id: r.id, step: "arrive", by: me })}
+                    className="btn-press flex-1 rounded-xl border border-navy/20 py-2.5 text-[13px] font-bold text-navy disabled:opacity-50"
+                  >
+                    {arrived ? "✓ 도착 알림" : "현장 도착"}
+                  </button>
+                  <button onClick={() => setClosing(r.id)} className="btn-press flex-[2] rounded-xl bg-green py-2.5 text-[13px] font-bold text-white">
+                    처리 완료
+                  </button>
+                </div>
+              ))}
             {role === "guardian" && open && <p className="mt-2 text-[12px] leading-[1.6] text-muted">관제센터가 처리하고 있습니다. 단계가 바뀌면 팝업으로 알려 드립니다.</p>}
           </section>
         );
@@ -191,6 +209,8 @@ export function HelpCallOps({ openId, onClose }) {
   const r = (openId && calls.find((x) => x.id === openId)) || auto;
   const [memo, setMemo] = useState("");
   const [who, setWho] = useState(LIVE_CONCIERGE);
+  // 해결 완료로 닫기 전 한 번 더 — 닫은 도와줘요는 기록이라 되돌리거나 고치지 않는다 (2026-10-18)
+  const [closing, setClosing] = useState(null); // { step, extra, label }
   // 센터 공간은 그 센터 컨시어지만 — 아직 승인된 컨시어지가 없으면 출동 지시를 막는다 (자리 이름을 담당으로 저장하지 않게)
   const choices = conciergeChoices(CONCIERGES);
   const pick = choices.includes(who) ? who : choices[0] || "";
@@ -204,6 +224,7 @@ export function HelpCallOps({ openId, onClose }) {
   const close = () => {
     mark(r.id, Math.max(1, r.history.length));
     setMemo("");
+    setClosing(null);
     onClose?.();
   };
   const act = (step, extra = {}) => {
@@ -243,10 +264,32 @@ export function HelpCallOps({ openId, onClose }) {
               />
             </label>
 
+            {closing ? (
+              <div role="group" aria-label="해결 완료 확인" className="mt-4 rounded-xl border border-green/30 bg-green/5 p-3.5">
+                <p className="text-[13px] leading-[1.6] text-ink">
+                  도와줘요를 <b>{closing.label}</b>(으)로 닫습니다. 닫은 뒤에는 되돌리거나 고칠 수 없고, 보호자 · 컨시어지 화면에 완료로 보입니다.
+                </p>
+                <div className="mt-2.5 flex gap-2">
+                  <button onClick={() => setClosing(null)} className="btn-press flex-1 rounded-xl border border-navy/20 py-2.5 text-[13px] font-bold text-navy">
+                    아니요
+                  </button>
+                  <button
+                    onClick={() => {
+                      act(closing.step, closing.extra);
+                      setClosing(null);
+                    }}
+                    className="btn-press flex-[2] rounded-xl bg-green py-2.5 text-[13px] font-bold text-white"
+                  >
+                    네, 해결 완료로 닫습니다
+                  </button>
+                </div>
+              </div>
+            ) : (
+            <>
             <div className="mt-4">
               <div className="text-[13px] font-black text-navy">1. 확인 전화</div>
               <div className="mt-2 grid grid-cols-3 gap-2">
-                <button onClick={() => act("call", { result: "fine" })} className="btn-press rounded-xl border border-green/40 py-2.5 text-[13px] font-bold text-green">
+                <button onClick={() => setClosing({ step: "call", extra: { result: "fine" }, label: "전화로 해결" })} className="btn-press rounded-xl border border-green/40 py-2.5 text-[13px] font-bold text-green">
                   연결 · 전화로 해결
                 </button>
                 <button onClick={() => act("call", { result: "visit" })} className="btn-press rounded-xl border border-navy/20 py-2.5 text-[13px] font-bold text-navy">
@@ -291,10 +334,12 @@ export function HelpCallOps({ openId, onClose }) {
 
             <div className="mt-4">
               <div className="text-[13px] font-black text-navy">3. 해결 완료</div>
-              <button onClick={() => act("resolve")} className="btn-press mt-2 w-full rounded-xl bg-green py-3 text-[14px] font-bold text-white">
+              <button onClick={() => setClosing({ step: "resolve", extra: {}, label: "해결 완료" })} className="btn-press mt-2 w-full rounded-xl bg-green py-3 text-[14px] font-bold text-white">
                 해결 완료로 닫기
               </button>
             </div>
+            </>
+            )}
           </>
         )}
 

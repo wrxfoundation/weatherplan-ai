@@ -4,11 +4,12 @@ import { useState } from "react";
 import { payHref } from "../../lib/payments";
 import FamilyLayout from "../../components/FamilyLayout";
 import { Clay, Line } from "../../components/clay";
-import { Card, TONE, solid } from "../../components/ds";
+import { Btn, Card, TONE, WhiteBtn, solid } from "../../components/ds";
 import { STORE_CATALOG, STORE_INDEX } from "../../lib/store";
 import ProductSheet, { GOODS_LOOK } from "../../components/ProductSheet";
 import { fmtWon } from "../../lib/config";
 import { useAppState } from "../../lib/state";
+import { useAuth } from "../../lib/auth";
 import { honorific } from "../../lib/tracks";
 
 // 보호자 스토어 — 실무자 피드백 (2026-08-09) '쇼핑몰 제안' 시트 구조 + 2026-10-15 디자인 시안.
@@ -27,6 +28,7 @@ const ORDER_STATUS = {
 
 export default function StorePage() {
   const { state, dispatch } = useAppState();
+  const auth = useAuth();
   const router = useRouter();
   const images = state.productImages || {};
   // 첫 방문 안전진단(컨시어지)이 담아 둔 생활안전용품 — 자동으로 선택된 채 시작
@@ -85,7 +87,18 @@ export default function StorePage() {
       </Head>
       <FamilyLayout sub={`${honor} 댁에 필요한 물건`} title={tab === "orders" ? "주문내역" : "스토어"} action={ordersBtn}>
         {tab === "orders" ? (
-          <OrderHistory orders={orders} />
+          <OrderHistory
+            orders={orders}
+            asks={(state.opsMessages || []).filter((m) => m.kind === "order")}
+            onAsk={(o, topic) => {
+              const what = o.items.length === 1 ? o.items[0].name : `${o.items[0]?.name || "물품"} 외 ${o.items.length - 1}건`;
+              dispatch({
+                type: "addOpsMessage",
+                payload: { from: `보호자 ${auth.user?.name || "보호자"}`, role: "guardian", kind: "order", orderId: o.id, topic, text: `스토어 주문 ${topic} 문의 — ${what} (${new Date(o.at).toLocaleDateString("ko-KR", { month: "numeric", day: "numeric" })} 주문)` },
+              });
+              dispatch({ type: "pushEvent", payload: { kind: "주문", text: `보호자 스토어 주문 ${topic} 문의 — ${what}`, color: "#8FA9CC" } });
+            }}
+          />
         ) : (
           <>
             {/* 안전진단 연동 — 컨시어지 첫 방문 진단과 연결 (실무자 요청). 담겨 있으면 그렇다고 먼저 말한다 */}
@@ -192,7 +205,9 @@ export default function StorePage() {
 }
 
 // 구매내역 조회 — 누가 · 어떤 경로로 · 무엇을 · 얼마에 샀는지.
-function OrderHistory({ orders }) {
+// 결제된 주문은 기록이라 앱에서 고치거나 지우지 않는다 — 취소 · 반품은 문의로 관제에 보낸다 (2026-10-18 · 주문 취소는 관제 · 고객센터)
+function OrderHistory({ orders, asks = [], onAsk }) {
+  const [asking, setAsking] = useState(null); // 문의를 고르는 주문 id
   if (orders.length === 0)
     return (
       <Card tone="stone" shadow={false} pad={22} className="text-center text-[16px] font-bold" style={{ color: "#5E6270" }}>
@@ -243,6 +258,44 @@ function OrderHistory({ orders }) {
             {o.note}
           </p>
         )}
+        {(() => {
+          const ask = asks.find((m) => m.orderId === o.id);
+          if (ask)
+            return (
+              <p className="rounded-[14px] px-3 py-2 text-[13px] font-bold leading-[1.6]" style={{ background: TONE.blue.bg, color: TONE.blue.fg }}>
+                {ask.topic || "취소 · 반품"} 문의함 · {ask.ackAt ? "관제 확인 — 연락드립니다" : "관제 확인 전"}
+              </p>
+            );
+          if (!onAsk) return null;
+          return asking === o.id ? (
+            <div className="flex flex-col gap-2 rounded-[14px] p-3" style={{ background: "#F3F1EC" }}>
+              <p className="text-[14px] leading-[1.6]">무엇을 문의할까요? 관제가 확인하고 연락드립니다 — 문의만으로 결제가 취소되지는 않습니다.</p>
+              <div className="grid grid-cols-3 gap-2">
+                {["취소", "반품", "교환"].map((t) => (
+                  <Btn
+                    key={t}
+                    tone="navy"
+                    h={44}
+                    className="text-[15px]"
+                    onClick={() => {
+                      onAsk(o, t);
+                      setAsking(null);
+                    }}
+                  >
+                    {t}
+                  </Btn>
+                ))}
+              </div>
+              <WhiteBtn h={44} className="text-[15px]" onClick={() => setAsking(null)}>
+                닫기
+              </WhiteBtn>
+            </div>
+          ) : (
+            <button type="button" onClick={() => setAsking(o.id)} className="min-h-[40px] self-start text-[14px] font-extrabold underline underline-offset-2" style={{ color: "#5E6270" }}>
+              취소 · 반품 문의
+            </button>
+          );
+        })()}
       </Card>
     );
   });

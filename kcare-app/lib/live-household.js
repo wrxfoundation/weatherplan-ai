@@ -68,6 +68,15 @@ export function liveElder(e, state) {
     requests: liveRequests(state),
     // 예시 SOS 이력(09-01 심박 경보 등)을 실제 뒤에 붙이지 않는다 — 실제 가구에는 실제 SOS 만
     sos,
+    // 상담 · 관제 메모 — 관제가 이 가구에 남긴 것만 (예시 메모를 붙이지 않는다 · 2026-10-18)
+    notes: (state?.opsNotes || []).map((n) => ({
+      id: n.id,
+      at: mdhm(n.at),
+      who: n.who,
+      text: n.text,
+      edited: n.editedAt ? `${mdhm(n.editedAt)}${n.editedBy ? ` ${n.editedBy}` : ""}` : null,
+      prev: n.prev || [],
+    })),
   };
   if (!ob) return live;
   const guardianPhone = ob.forSelf ? "" : fmtPhone(ob.phone || "");
@@ -94,22 +103,36 @@ export function liveElder(e, state) {
   };
 }
 
+// 마지막으로 보호자에게 보낸 동행 기록 — 다음 방문을 시작하면 지금 칸은 비고 지난 것은 visitHistory 에 보관된다 (2026-10-18)
+export function sentEscortOf(state) {
+  if (state?.escort?.sentAt) return state.escort;
+  const h = (state?.visitHistory || []).find((x) => x.escort?.sentAt);
+  return h ? h.escort : state?.escort || null;
+}
+
+// 보호자에게 보낸 안심방문 리포트들 — 지금 방문 + 보관된 지난 방문 (최근 것부터)
+function sentVisitOps(state) {
+  const cur = state?.visit?.ops?.sentTs || state?.visit?.ops?.sentAt ? [state.visit.ops] : [];
+  return [...cur, ...(state?.visitHistory || []).map((h) => h.visit?.ops || {}).filter((o) => o.sentTs || o.sentAt)];
+}
+
 export function liveGuardian(g, state, account) {
   if (!g || g.name !== LIVE_GUARDIAN) return g;
   const ob = signedUp(state);
   const mine = (state?.requests || []).filter((r) => r.dir === "fromGuardian");
-  const vops = state?.visit?.ops || {};
-  const esc = state?.escort || {};
+  // 보낸 리포트 — 지금 방문 · 동행과 '다음 방문 기록 시작'으로 보관된 지난 것까지 (2026-10-18 · 전에는 다음 방문을 열면 '보낸 보고서 없음')
+  const visitOps = sentVisitOps(state).filter((o) => o.sentTs);
+  const escorts = [state?.escort, ...(state?.visitHistory || []).map((h) => h.escort)].filter((e) => e?.sentAt);
   // 보호자에게 실제로 간 것 · 보호자가 실제로 보낸 것만 — 예시 연락 · 보고서 · 결제 이력은 쓰지 않는다 (2026-10-02 코드 점검)
   const log = [
     ...(state?.voices || []).filter((v) => v.from === "보호자").map((v) => ({ ts: v.at, at: mdhm(v.at), ch: "앱 음성", text: `안부 음성 ${Number(v.secs) || 0}초 → ${v.to}`, state: "sent" })),
-    ...(vops.sentTs ? [{ ts: vops.sentTs, at: mdhm(vops.sentTs), ch: "보고서", text: "안심방문 리포트 발송", state: vops.viewed === "열람 완료" ? "read" : "delivered" }] : []),
-    ...(esc.sentAt ? [{ ts: esc.sentAt, at: mdhm(esc.sentAt), ch: "보고서", text: "동행 리포트 전달", state: esc.viewedAt ? "read" : "delivered" }] : []),
+    ...visitOps.map((o) => ({ ts: o.sentTs, at: mdhm(o.sentTs), ch: "보고서", text: "안심방문 리포트 발송", state: o.viewed === "열람 완료" ? "read" : "delivered" })),
+    ...escorts.map((e) => ({ ts: e.sentAt, at: mdhm(e.sentAt), ch: "보고서", text: "동행 리포트 전달", state: e.viewedAt ? "read" : "delivered" })),
     ...(state?.payments || []).map((p) => ({ ts: p.at, at: mdhm(p.at), ch: "결제", text: `${p.orderName || "결제"} 승인`, state: "approved" })),
   ].sort((a, b) => (b.ts || 0) - (a.ts || 0));
   const reports = [
-    ...(vops.sentTs ? [{ at: mdhm(vops.sentTs), title: "안심방문 리포트", state: vops.viewed === "열람 완료" ? "read" : "delivered" }] : []),
-    ...(esc.sentAt ? [{ at: mdhm(esc.sentAt), title: "동행 리포트", state: esc.viewedAt ? "read" : "delivered" }] : []),
+    ...visitOps.map((o) => ({ at: mdhm(o.sentTs), title: "안심방문 리포트", state: o.viewed === "열람 완료" ? "read" : "delivered" })),
+    ...escorts.map((e) => ({ at: mdhm(e.sentAt), title: "동행 리포트", state: e.viewedAt ? "read" : "delivered" })),
   ];
   const base = {
     ...g,
@@ -163,9 +186,14 @@ export function liveVisit(base, state) {
   const pending = d.keys.filter((k) => !doneNames.has(k));
   const gps = (v.audit || []).find((e) => e.kind === "gps");
   const checkinAt = gps?.at || (plan.gpsAt ? Number(plan.gpsAt) || null : null);
-  const report = (state?.reports || [])[0] || null;
-  const done = !!report || plan.status === "done";
-  const active = !done && (!!v.checkedIn || !!checkinAt || doneNames.size > 0 || ["arrived", "recording"].includes(plan.status));
+  // 이번 방문의 리포트만 — 지난 방문(visitHistory 로 넘어간 것)의 리포트를 이번 것으로 읽지 않는다
+  const since = (state?.visitHistory || [])[0]?.closedAt || 0;
+  const latest = (state?.reports || [])[0] || null;
+  const report = latest && latest.at > since ? latest : null;
+  // 관제가 반려해 컨시어지가 고치는 중 — 다시 낼 때까지는 '방문 중'으로 본다
+  const returnedOpen = !!v.returned && !(report && report.at > v.returned.at);
+  const done = !returnedOpen && (!!report || plan.status === "done");
+  const active = !done && (returnedOpen || !!v.checkedIn || !!checkinAt || doneNames.size > 0 || ["arrived", "recording"].includes(plan.status));
   const status = done ? "done" : active ? "active" : "planned";
   const followups = Array.isArray(ops.followups) ? ops.followups : [];
   // 항목 메모 · 상태 — 컨시어지가 적거나 고른 것만 (상태가 없으면 지어 붙이지 않는다)
@@ -187,7 +215,8 @@ export function liveVisit(base, state) {
     completedAt: report ? hhmm(report.at) : null,
     // 컨시어지 화면의 리포트 문장은 아직 동행 예시 초안(AI_REPORT.draft)이다 — 실제 방문 기록처럼 보이면 안 되므로 뺀다
     reportNote: report?.note && report.note !== AI_REPORT.draft ? report.note : null,
-    review: done ? ops.review || "검수 대기" : active ? "수행 중" : "—",
+    review: done ? ops.review || "검수 대기" : returnedOpen ? "반려 — 컨시어지 수정 중" : active ? "수행 중" : "—",
+    returned: returnedOpen ? v.returned : null,
     stepIdx: done ? (ops.stepIdx ?? 3) : active ? 1 : 0,
     viewed: ops.viewed || "—",
     reviewedAt: ops.reviewedAt || null,
@@ -223,6 +252,20 @@ export const STAGE_LABEL = {
   ready: "관제 검수 완료 — 곧 보내 드립니다",
   sent: "발송됨",
 };
+// 보호자가 볼 리포트 — 이번 방문을 아직 보내지 않았으면 마지막으로 보낸 방문(visitHistory[0])을 그대로 보여 준다.
+// 보낸 기록은 증명이라 다음 방문을 시작해도 사라지거나 바뀌지 않는다 (2026-10-18)
+export function sentReportState(state) {
+  const h = (state?.visitHistory || [])[0];
+  if (!h || state?.visit?.ops?.sentAt) return state;
+  return {
+    ...state,
+    visit: h.visit,
+    reports: h.report ? [h.report] : [],
+    visitHistory: (state.visitHistory || []).slice(1),
+    visitPlan: { ...(state.visitPlan || {}), status: "done", gpsAt: h.gpsAt },
+  };
+}
+
 export function visitReportOf(state) {
   const base = liveVisitBase();
   const v = liveVisit(base, state);

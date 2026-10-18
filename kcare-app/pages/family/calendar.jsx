@@ -6,6 +6,7 @@ import { Clay, Line } from "../../components/clay";
 import { Btn, Card, Sheet, SheetTitle, TONE, WhiteBtn, eventTone } from "../../components/ds";
 import { EVENT_KINDS, MOU_HOSPITALS } from "../../lib/mock";
 import { useAppState } from "../../lib/state";
+import { REAPPROVE_KEYS, eventRights } from "../../lib/event-rights";
 import { honorific } from "../../lib/tracks";
 
 // 공유 캘린더 — REQ-02 · 2026-10-15 디자인 시안 '예약'
@@ -19,6 +20,122 @@ const DOT = { green: "#3B6B47", beige: "#B08A4A", blue: "#5470B8", purple: "#6A4
 // 일정 카드 왼쪽 작은 꼬리표 — EVENT_KINDS 이름이 길면(다음 진료 예정일) 줄인다
 const SHORT = { hospital: "병원", checkup: "검진", nextAppt: "진료 예정", medication: "복약", visit: "안심방문", family: "가족", delivery: "배송", request: "해주세요", daily: "일상동행" };
 const hm = (at) => new Date(at).toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit", hour12: false });
+const md = (at) => new Date(at).toLocaleDateString("ko-KR", { month: "numeric", day: "numeric" });
+const smallBtn = "ds-press ds-btn3d h-11 flex-none rounded-[14px] bg-white px-3.5 text-[14px]";
+
+// 고른 날 일정 한 줄 — 수정 · 삭제(승인 전 · 가족 일정 · 반려) · 취소(확정된 일정, 관제에 알림). 규칙은 lib/event-rights.js
+function EventRow({ e, rights, onEdit, onRemove }) {
+  const [confirm, setConfirm] = useState(false);
+  const [reason, setReason] = useState("");
+  const tn = TONE[eventTone(e.kind)];
+  const cancel = rights.remove === "cancel";
+  return (
+    <div className="ds-swap flex flex-col gap-2.5 rounded-[22px] px-4 py-3.5" style={{ background: tn.bg }}>
+      <div className="flex items-center gap-3.5">
+        <div className="w-[62px] flex-none text-center">
+          <div className="text-[12px] font-extrabold" style={{ color: tn.fg }}>
+            {SHORT[e.kind] || EVENT_KINDS[e.kind]?.label || "일정"}
+          </div>
+          <div className="ds-num text-[18px] font-black">{hm(e.at)}</div>
+        </div>
+        <div className="min-w-0 flex-1">
+          <div className="text-[18px] font-extrabold leading-[1.35]">{e.title}</div>
+          <div className="text-[14px] leading-[1.5]" style={{ color: "#4A4F5E" }}>
+            {/* 자동으로 붙은 '동행 필요 / 불필요'는 지금 동행 값으로 읽는다 (예전 기록의 메모가 바뀐 동행과 어긋나지 않게) */}
+            {[e.source, /^동행 (불)?필요$/.test(e.note || "") ? (e.escort ? "동행 필요" : "동행 불필요") : e.note, e.editedAt ? "수정됨" : ""].filter(Boolean).join(" · ")}
+          </div>
+          {/* 확정 뒤 바꾼 것을 관제가 반려 — 일정은 원래 확정 값으로 돌아갔다 */}
+          {e.changeRejected && e.approval === "approved" && (
+            <span className="mt-1 inline-flex rounded-full bg-white px-2.5 py-0.5 text-[12px] font-extrabold" style={{ color: "#5E6270" }}>
+              바꾼 내용 관제 반려{e.changeRejected.reason ? ` — ${e.changeRejected.reason}` : ""} · 원래 일정 그대로
+            </span>
+          )}
+          {/* 승인 상태 — 승인 전에는 확정된 일정처럼 보이면 안 된다 */}
+          {e.approval === "pending" && (
+            <span className="mt-1 inline-flex rounded-full bg-white px-2.5 py-0.5 text-[12px] font-extrabold" style={{ color: TONE.gold.fg }}>
+              {e.reapproval ? "바뀐 내용 관제 재승인 대기" : "관제 승인 대기"} {e.escort ? "· 동행 필요" : "· 동행 불필요"}
+            </span>
+          )}
+          {/* 반려는 위험 신호가 아니다 — 빨강 대신 회색 */}
+          {e.approval === "rejected" && (
+            <span className="mt-1 inline-flex rounded-full bg-white px-2.5 py-0.5 text-[12px] font-extrabold" style={{ color: "#5E6270" }}>
+              관제 반려{e.rejectReason ? ` — ${e.rejectReason}` : ""}
+            </span>
+          )}
+          {/* 병원 일정 — 관제가 승인한 동행 건만 '동행 확정'. 누가 가는지는 배차가 정해지기 전엔 지어내지 않는다 */}
+          {e.kind === "hospital" && e.approval === "approved" && e.escort && (
+            <span className="mt-1 inline-flex rounded-full bg-white px-2.5 py-0.5 text-[12px] font-extrabold" style={{ color: TONE.green.fg }}>
+              동행 확정{e.escortTeam ? ` — ${e.escortTeam}` : " — 담당자는 관제가 배정 후 안내"}
+            </span>
+          )}
+          {e.reqId && (
+            <Link href="/family/requests" className="mt-1 inline-flex min-h-[32px] items-center text-[13px] font-extrabold underline underline-offset-4" style={{ color: "#3A3F50" }}>
+              해주세요에서 바꾸거나 취소해요
+            </Link>
+          )}
+        </div>
+      </div>
+      {(rights.edit || rights.remove) && !confirm && (
+        <div className="flex justify-end gap-2">
+          {rights.edit && (
+            <button type="button" onClick={onEdit} aria-label={`${e.title} 수정`} className={smallBtn} style={{ boxShadow: "0 3px 0 rgba(0,0,0,.08)" }}>
+              수정
+            </button>
+          )}
+          {rights.remove && (
+            <button type="button" onClick={() => setConfirm(true)} aria-label={`${e.title} ${cancel ? "취소" : "삭제"}`} className={smallBtn} style={{ boxShadow: "0 3px 0 rgba(0,0,0,.08)", color: "#6E5A4A" }}>
+              {cancel ? "취소" : "삭제"}
+            </button>
+          )}
+        </div>
+      )}
+      {confirm && (
+        <div className="rounded-[16px] bg-white p-3.5">
+          <p className="text-[16px] font-extrabold">{cancel ? "확정된 일정을 취소할까요?" : "이 일정을 지울까요?"}</p>
+          <p className="mt-0.5 text-[13px] leading-[1.6]" style={{ color: "#5E6270" }}>
+            {cancel
+              ? "관제에 바로 알리고, 잡혀 있던 동행 · 차량도 함께 거둡니다. 기록에는 '취소'로 남습니다."
+              : e.approval === "pending"
+                ? "관제에 보낸 승인 요청도 함께 거둡니다."
+                : "가족 달력에서 빠집니다."}
+          </p>
+          {cancel && (
+            <>
+              <label htmlFor={`cx-${e.id}`} className="mt-2 block text-[13px] font-extrabold" style={{ color: "#3A3F50" }}>
+                취소 사유 (선택)
+              </label>
+              <input
+                id={`cx-${e.id}`}
+                value={reason}
+                onChange={(x) => setReason(x.target.value)}
+                placeholder="예: 병원 예약이 바뀌었어요"
+                className="mt-1 min-h-[46px] w-full rounded-[14px] border-2 border-[#E3DED3] bg-white px-3 text-[15px] outline-none focus:border-[#1B2340]"
+              />
+            </>
+          )}
+          <div className="mt-2.5 grid grid-cols-2 gap-2">
+            <button type="button" onClick={() => setConfirm(false)} className="ds-press flex min-h-[46px] items-center justify-center rounded-[14px] text-[15px] font-extrabold" style={{ background: "#F3F1EC", boxShadow: "0 3px 0 #E3DED3" }}>
+              그대로 두기
+            </button>
+            <button
+              type="button"
+              onClick={() => (onRemove(reason), setConfirm(false))}
+              className="ds-press flex min-h-[46px] items-center justify-center rounded-[14px] text-[15px] font-extrabold text-white"
+              style={{ background: "#1B2340", boxShadow: "0 3px 0 #0E1428" }}
+            >
+              {cancel ? "일정 취소" : "지우기"}
+            </button>
+          </div>
+        </div>
+      )}
+      {!rights.edit && !rights.remove && rights.why && !e.reqId && (
+        <p className="text-right text-[12px] font-bold" style={{ color: "#5E6270" }}>
+          {rights.why}
+        </p>
+      )}
+    </div>
+  );
+}
 
 export default function CalendarPage() {
   const { state, dispatch } = useAppState();
@@ -64,6 +181,20 @@ export default function CalendarPage() {
     .filter((e) => e.approval !== "rejected" && e.at > Date.now() && e.at < Date.now() + 7 * 86400000)
     .sort((a, b) => a.at - b.at);
 
+  // 지운 · 취소한 일정 — 취소(확정된 것을 거둔 것)만 30일 동안 보여 준다
+  const cancelled = (state.eventsRemoved || []).filter((x) => x.removed?.mode === "cancel" && x.removed.at > Date.now() - 30 * 86400000).slice(0, 8);
+  const removeEvent = (e, reason) => {
+    const rights = eventRights(e, "guardian", { primary: isPrimary });
+    if (!rights.remove) return;
+    const cancel = rights.remove === "cancel";
+    dispatch({ type: "removeEvent", id: e.id, mode: rights.remove, by: "보호자", reason, title: e.title });
+    dispatch({
+      type: "pushEvent",
+      payload: cancel
+        ? { kind: "일정", text: `보호자 일정 취소 — ${e.title}${reason?.trim() ? ` · ${reason.trim()}` : ""} · 동행 · 차량 정리 필요`, color: "#F0D9A8" }
+        : { kind: "일정", text: `${e.approval === "pending" ? "보호자 일정요청 철회" : "가족 일정 삭제"} — ${e.title}`, color: "#8FA9CC" },
+    });
+  };
   const isToday = (d) => d === today.getDate() && ym.m === today.getMonth() && ym.y === today.getFullYear();
   const moveMonth = (delta) => {
     const m = ym.m + delta;
@@ -231,56 +362,27 @@ export default function CalendarPage() {
               이날은 일정이 없어요
             </div>
           ) : (
-            dayEvents.map((e) => {
-              const tn = TONE[eventTone(e.kind)];
-              return (
-                <div key={e.id} className="ds-swap flex items-center gap-3.5 rounded-[22px] px-4 py-3.5" style={{ background: tn.bg }}>
-                  <div className="w-[62px] flex-none text-center">
-                    <div className="text-[12px] font-extrabold" style={{ color: tn.fg }}>
-                      {SHORT[e.kind] || EVENT_KINDS[e.kind]?.label || "일정"}
-                    </div>
-                    <div className="ds-num text-[18px] font-black">{hm(e.at)}</div>
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <div className="text-[18px] font-extrabold leading-[1.35]">{e.title}</div>
-                    <div className="text-[14px] leading-[1.5]" style={{ color: "#4A4F5E" }}>
-                      {[e.source, e.note].filter(Boolean).join(" · ")}
-                    </div>
-                    {/* 승인 상태 — 승인 전에는 확정된 일정처럼 보이면 안 된다 */}
-                    {e.approval === "pending" && (
-                      <span className="mt-1 inline-flex rounded-full bg-white px-2.5 py-0.5 text-[12px] font-extrabold" style={{ color: TONE.gold.fg }}>
-                        관제 승인 대기 {e.escort ? "· 동행 필요" : "· 동행 불필요"}
-                      </span>
-                    )}
-                    {/* 반려는 위험 신호가 아니다 — 빨강 대신 회색 */}
-                    {e.approval === "rejected" && (
-                      <span className="mt-1 inline-flex rounded-full bg-white px-2.5 py-0.5 text-[12px] font-extrabold" style={{ color: "#5E6270" }}>
-                        관제 반려 — 해주세요로 사유가 전달됩니다
-                      </span>
-                    )}
-                    {/* 병원 일정 — 관제가 승인한 동행 건만 '동행 확정'. 누가 가는지는 배차가 정해지기 전엔 지어내지 않는다 */}
-                    {e.kind === "hospital" && e.approval === "approved" && e.escort && (
-                      <span className="mt-1 inline-flex rounded-full bg-white px-2.5 py-0.5 text-[12px] font-extrabold" style={{ color: TONE.green.fg }}>
-                        동행 확정{e.escortTeam ? ` — ${e.escortTeam}` : " — 담당자는 관제가 배정 후 안내"}
-                      </span>
-                    )}
-                  </div>
-                  {isPrimary && (
-                    <button
-                      type="button"
-                      onClick={() => setEditing(e)}
-                      aria-label={`${e.title} 수정`}
-                      className="ds-press ds-btn3d h-11 flex-none rounded-[14px] bg-white px-3.5 text-[14px]"
-                      style={{ boxShadow: "0 3px 0 rgba(0,0,0,.08)" }}
-                    >
-                      수정
-                    </button>
-                  )}
-                </div>
-              );
-            })
+            dayEvents.map((e) => (
+              <EventRow key={e.id} e={e} rights={eventRights(e, "guardian", { primary: isPrimary })} onEdit={() => setEditing(e)} onRemove={(reason) => removeEvent(e, reason)} />
+            ))
           )}
         </div>
+
+        {/* 최근 취소된 일정 — 달력에서는 빠지지만 누가 · 왜 취소했는지는 남긴다 (2026-10-18) */}
+        {cancelled.length > 0 && (
+          <details className="ds-r rounded-[20px] px-4 py-3" style={{ "--d": "180ms", background: "#F3F1EC" }}>
+            <summary className="min-h-[40px] cursor-pointer py-2 text-[15px] font-extrabold" style={{ color: "#3A3F50" }}>
+              최근 취소된 일정 {cancelled.length}건
+            </summary>
+            <ul className="m-0 flex list-none flex-col gap-1.5 p-0 pb-1">
+              {cancelled.map((x) => (
+                <li key={`${x.id}-${x.removed.at}`} className="text-[14px] leading-[1.6]" style={{ color: "#4A4F5E" }}>
+                  <b className="ds-num">{md(x.at)}</b> {x.title} — {x.removed.by || "취소"} 취소{x.removed.reason ? ` · ${x.removed.reason}` : ""}
+                </li>
+              ))}
+            </ul>
+          </details>
+        )}
 
         <Btn tone="navy" h={64} r={22} className="ds-r text-[19px]" style={{ "--d": "200ms" }} onClick={() => setCreating(true)}>
           <span aria-hidden="true">+</span> 일정 등록하기
@@ -323,11 +425,21 @@ export default function CalendarPage() {
             defaultDate={new Date(editing.at)}
             onClose={() => setEditing(null)}
             onCreate={(ev) => {
-              dispatch({
-                type: "updateEvent",
-                id: editing.id,
-                patch: { kind: ev.kind, title: ev.title, at: ev.at, note: `보호자 수정 · ${editing.source}` },
-              });
+              // 종류 · 내용 · 시간 · (K-CARE 일정이면) 동행 — 메모는 덮어쓰지 않는다. 확정된 일정의 시간 · 종류 · 동행이 바뀌면 관제 재승인
+              // '동행 필요 / 불필요' 메모는 등록 때 자동으로 붙은 글이라 동행을 바꾸면 같이 바꾼다 (손으로 쓴 메모는 그대로)
+              const autoNote = /^동행 (불)?필요$/.test(editing.note || "");
+              const patch = {
+                kind: ev.kind,
+                title: ev.title,
+                at: ev.at,
+                ...(editing.approval ? { escort: ev.escort } : {}),
+                ...(editing.approval && autoNote ? { note: ev.escort ? "동행 필요" : "동행 불필요" } : {}),
+              };
+              const moved = editing.approval === "approved" && REAPPROVE_KEYS.some((k) => k in patch && patch[k] !== editing[k]);
+              dispatch({ type: "updateEvent", id: editing.id, patch, by: "보호자", title: ev.title });
+              if (moved) {
+                dispatch({ type: "pushEvent", payload: { kind: "일정", text: `보호자 일정 변경 — ${ev.title} · ${md(ev.at)} ${hm(ev.at)} · 관제 재승인 대기`, color: "#B08D57" } });
+              }
               const d = new Date(ev.at);
               setYm({ y: d.getFullYear(), m: d.getMonth() });
               setSelected(d.getDate());
@@ -375,14 +487,23 @@ function CreateEventSheet({ defaultDate, initial, onClose, onCreate, honor }) {
       <SheetTitle sub={`${honor} 일정`} title={head} />
       <p className="text-[14px] leading-[1.6]" style={{ color: "#5E6270" }}>
         {initial
-          ? `수정 내용은 ${honor}·컨시어지 달력에 바로 반영됩니다.`
+          ? initial.approval === "approved"
+            ? "확정된 일정입니다 — 날짜 · 시간 · 종류 · 동행을 바꾸면 관제가 다시 확인한 뒤 확정됩니다. 내용만 고치면 바로 반영됩니다."
+            : `수정 내용은 ${honor}·컨시어지 달력에 바로 반영됩니다.`
           : needsApproval
             ? "관제가 팀 배정과 배차를 검토한 뒤 승인하면 모든 화면의 달력에 올라갑니다."
             : "가족끼리 보는 일정입니다 — 승인 없이 바로 등록됩니다."}
       </p>
 
+      {/* 수정할 때는 일정 종류(가족 · K-CARE)를 바꾸지 않는다 — 바꾸려면 지우고 다시 등록 (승인 흐름이 섞이지 않게) */}
+      {initial && (
+        <div className="rounded-[16px] px-3.5 py-2.5 text-[14px] font-extrabold" style={{ background: "#F3F1EC", color: "#3A3F50" }}>
+          {needsApproval ? "K-CARE 일정 · 관제 승인 일정" : "가족 일정 · 승인 없이 바로"}
+        </div>
+      )}
+
       {/* 어떤 일정인가 — 이걸 먼저 고르면 아래 폼의 의미가 달라진다 */}
-      <div role="group" aria-label="일정 종류" className="grid grid-cols-2 gap-2">
+      {!initial && <div role="group" aria-label="일정 종류" className="grid grid-cols-2 gap-2">
         {[
           ["family", "가족 일정", "생일 · 방문 · 모임", false],
           ["kcare", "K-CARE 일정", "방문 · 동행 · 병원", true],
@@ -397,7 +518,7 @@ function CreateEventSheet({ defaultDate, initial, onClose, onCreate, honor }) {
             </span>
           </Choice>
         ))}
-      </div>
+      </div>}
 
       {/* 동행 서비스 필요 유무 — K-CARE 일정일 때만 의미가 있다 */}
       {needsApproval && (
@@ -476,6 +597,7 @@ function CreateEventSheet({ defaultDate, initial, onClose, onCreate, honor }) {
               title: title.trim(),
               at: new Date(dt).getTime(),
               source: needsApproval ? "보호자 요청" : "보호자 등록",
+              by: "guardian", // 누가 만든 일정인가 — 수정 · 삭제 권한이 이것을 본다 (lib/event-rights.js)
               note: needsApproval ? (escort ? "동행 필요" : "동행 불필요") : "",
               // approval 이 있는 일정만 관제 승인 큐에 뜬다
               ...(needsApproval ? { approval: "pending", escort } : {}),

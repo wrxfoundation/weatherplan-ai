@@ -192,7 +192,8 @@ export default function GuardianMgmt({ openProfile }) {
               {[["전화", cur.consent.call], ["문자", cur.consent.sms], ["앱 푸시", cur.consent.push], ["야간 연락", cur.night]].map(([l, on]) => <Pill key={l} tone={on ? "ok" : "muted"} dot>{l} {on ? "ON" : "OFF"}</Pill>)}
             </div>
           </Sec>
-          <Sec title="연결 어르신 (복수 연결)" right={<Btn small ghost onClick={() => setLink({ elder: ELDERS[0], role: "부", reason: "" })}>+ 어르신 연결</Btn>}>
+          {/* 실제 가구 · 센터 회원 줄은 가입 · 초대로 연결된다 — 여기서 누르면 화면에만 붙고 저장되지 않아 버튼을 두지 않는다 (2026-10-18) */}
+          <Sec title="연결 어르신 (복수 연결)" right={cur.live || center ? <span className="text-[11px] text-muted">가입 · 초대로 연결됩니다</span> : <Btn small ghost onClick={() => setLink({ elder: ELDERS[0], role: "부", reason: "" })}>+ 어르신 연결</Btn>}>
             <ul className="space-y-1">
               {cur.elders.map((e) => <li key={e.name} className="flex items-center gap-2 text-[13px]"><Pill tone={ROLE_TONE[e.role]}>{e.role} 보호자</Pill>{elderBtn(e)}</li>)}
             </ul>
@@ -221,10 +222,15 @@ export default function GuardianMgmt({ openProfile }) {
           <div className="mt-2">
             <Table dense cols={[{ k: "at", label: "일시", render: (l) => <span className="font-num whitespace-nowrap">{l.at}</span> }, { k: "ch", label: "채널" }, { k: "text", label: "내용" }, { k: "state", label: "상태", render: (l) => <NotifyPill s={l.state} /> }]} rows={cur.log} rowKey={(l, i) => `${l.at}-${i}`} empty="연락 · 통보 이력이 없습니다." />
           </div>
-          <div className="mt-2 flex flex-wrap gap-2">
-            <Btn small ghost onClick={() => { addLog(cur.id, { ch: "전화", text: "관제사 확인 전화 시도", state: "called" }); setMsg("전화 시도 기록 · 결과(연결·미연결)는 통화 후 갱신"); }}>전화 연결 기록</Btn>
-            <Btn small ghost onClick={() => addLog(cur.id, { ch: "앱 푸시", text: "확인 요청 재알림", state: "sent" })}>재알림 발송</Btn>
-          </div>
+          {/* 실제 보호자 줄의 연락이력은 앱에서 실제로 오간 것만 — 여기서 '보냄'을 지어 넣지 않는다 (예전에는 눌러도 저장되지 않은 채 '기록'이라고 떴다 · 2026-10-18) */}
+          {cur.live || center ? (
+            <p className="mt-2 text-[11px] leading-[1.6] text-muted">실제 보호자 줄은 앱에서 실제로 오간 연락만 쌓입니다. 전화는 휴대폰으로 걸고, 결과는 어르신 관리 › 상담·관제메모에 남겨 주세요.</p>
+          ) : (
+            <div className="mt-2 flex flex-wrap gap-2">
+              <Btn small ghost onClick={() => { addLog(cur.id, { ch: "전화", text: "관제사 확인 전화 시도", state: "called" }); setMsg("전화 시도 기록 · 결과(연결·미연결)는 통화 후 갱신"); }}>전화 연결 기록</Btn>
+              <Btn small ghost onClick={() => addLog(cur.id, { ch: "앱 푸시", text: "확인 요청 재알림", state: "sent" })}>재알림 발송</Btn>
+            </div>
+          )}
           <Sec title="상담 · 민원 이력">
             {cur.complaints.length ? <Table dense cols={[{ k: "at", label: "일자" }, { k: "type", label: "구분" }, { k: "text", label: "내용" }, { k: "state", label: "처리", render: (c) => <Pill tone="ok">{c.state}</Pill> }]} rows={cur.complaints} rowKey={(c, i) => `${c.at}-${i}`} /> : <Empty>상담 · 민원 이력이 없습니다.</Empty>}
           </Sec>
@@ -236,7 +242,8 @@ export default function GuardianMgmt({ openProfile }) {
           <KV k="수신방법" v={cur.reportVia} />
           <KV k="최근 열람" v={cur.report} tone={isUnread(cur) ? "warn" : "ok"} />
           <div className="mt-2"><Table dense cols={[{ k: "at", label: "일자", render: (r) => <span className="font-num">{r.at}</span> }, { k: "title", label: "보고서" }, { k: "state", label: "열람 상태", render: (r) => <NotifyPill s={r.state} /> }]} rows={cur.reports} rowKey={(r, i) => `${r.at}-${i}`} empty="발송된 보고서가 없습니다." /></div>
-          {isUnread(cur) && <div className="mt-2"><Btn small ghost tone="warn" onClick={() => { addLog(cur.id, { ch: "보고서", text: "미열람 보고서 재발송", state: "sent" }); setMsg("보고서 재발송 · 열람되면 상태가 바뀝니다"); }}>미열람 보고서 재발송</Btn></div>}
+          {isUnread(cur) && !(cur.live || center) && <div className="mt-2"><Btn small ghost tone="warn" onClick={() => { addLog(cur.id, { ch: "보고서", text: "미열람 보고서 재발송", state: "sent" }); setMsg("보고서 재발송 · 열람되면 상태가 바뀝니다"); }}>미열람 보고서 재발송</Btn></div>}
+          {isUnread(cur) && (cur.live || center) && <p className="mt-2 text-[11px] text-muted">아직 열어 보지 않았습니다 — 보호자 앱 홈에 리포트가 그대로 떠 있습니다.</p>}
         </div>
       );
     return (

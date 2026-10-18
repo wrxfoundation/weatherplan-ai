@@ -11,8 +11,9 @@ import { useAuth } from "../../lib/auth";
 import { useAppState } from "../../lib/state";
 import { subjectLabel, trackOf } from "../../lib/tracks";
 import { healthOf, medDrugs } from "../../lib/meds";
-import { visitReportOf } from "../../lib/live-household";
+import { sentEscortOf, sentReportState, visitReportOf } from "../../lib/live-household";
 import { familyOf, meOf, monthlyLabel, shortName } from "../../lib/membership";
+import { consentOn, videoConsentOf } from "../../lib/consent";
 
 // 마이 — 2026-10-15 디자인 시안: 머리('마이' + 오른쪽 위 '내 정보') → 지난 동행 평가 → 여섯 칸
 // (동행 리포트 · 방문 리포트 · 건강 · 방문 영상 · 가족 · 정보 동의) → 멤버십 막대.
@@ -32,17 +33,22 @@ export default function MyPage() {
   const [editOpen, setEditOpen] = useState(false); // 내 정보 수정
   const [escortOpen, setEscortOpen] = useState(false); // 동행 리포트
   const [reviewOpen, setReviewOpen] = useState(false); // 후기 쓰기
-  const [score, setScore] = useState(null); // 지난 동행 점수 — 후기와 같이 남긴다
+  // 지난 동행 점수 — 가구 기록(escort.rating)에 남는다 (화면 기억이라 새로고침하면 다시 묻던 것 · 2026-10-18).
+  // 지금 동행 리포트에 매긴 점수만 — 새 동행 리포트가 오면 다시 묻는다
+  const rating = state.escort?.rating && (state.escort.rating.forSentAt ?? null) === (state.escort?.sentAt ?? null) ? state.escort.rating : null;
+  // 마지막으로 받은 동행 리포트 — 다음 방문을 시작해 동행 칸이 비어도 지난 것을 계속 본다 (lib/live-household.js)
+  const lastEscort = sentEscortOf(state);
   const isPrimary = (state.demo.guardianRole || "primary") === "primary";
   const subj = subjectLabel(trackOf(ob?.track), ob);
   const me = meOf(auth.user);
   const family = familyOf(me);
   const health = healthOf(state);
   const drugs = medDrugs(health.meds);
-  const videoConsent = ob?.joinedAt ? !!ob.videoConsent : true; // 가입 상담 전에는 동의로 본다 (컨시어지 화면과 같은 기본값)
+  const videoConsent = videoConsentOf(state); // 정보 동의 철회 · 가입 상담 값 · 기본(동의) 순 — lib/consent.js
   const videos = VISIT_VIDEOS.filter((v) => VIDEO_RETENTION_DAYS - v.daysAgo > 0 || v.hold);
-  const renewNeeded = state.guardian?.consentRenewedAt ? 0 : CONSENTS.filter((c) => c.expiring).length;
-  const visit = live ? visitReportOf(state) : null;
+  // 철회한 동의는 갱신할 것이 아니다 (2026-10-18)
+  const renewNeeded = state.guardian?.consentRenewedAt ? 0 : CONSENTS.filter((c) => c.expiring && consentOn(state, c.k, c.on)).length;
+  const visit = live ? visitReportOf(sentReportState(state)) : null; // 마지막으로 보낸 방문 리포트 (다음 방문을 시작해도 남는다)
   const [, vm, vd] = VISIT_REPORT.head.visitedAt.split(".").map(Number);
 
   // 동행 평가 — 테스트 가구는 컨시어지가 동행 리포트를 보낸 뒤에만 묻는다 (없던 동행을 '끝났습니다'라고 하지 않는다 · 2026-10-02 UX 점검)
@@ -56,7 +62,7 @@ export default function MyPage() {
     {
       key: "escort",
       label: "동행 리포트",
-      sub: live ? (state.escort?.sentAt ? `${md(state.escort.sentAt)} 받음` : "아직 받은 리포트 없음") : OUTING.legs[1]?.place,
+      sub: live ? (lastEscort?.sentAt ? `${md(lastEscort.sentAt)} 받음` : "아직 받은 리포트 없음") : OUTING.legs[1]?.place,
       clay: "reportDoc",
       tone: TONE.green,
       onClick: () => setEscortOpen(true),
@@ -122,8 +128,8 @@ export default function MyPage() {
         {rateWhen && (
           <RateCard
             when={rateWhen}
-            score={score}
-            setScore={setScore}
+            rating={rating}
+            onRate={(s, reason) => dispatch({ type: "rateEscort", score: s, reason, by: me.name, edit: !!rating })}
             onWriteReview={() => setReviewOpen(true)}
             onEvent={(text, color) => dispatch({ type: "pushEvent", payload: { kind: "CS", text, color } })}
             onDetractor={(s, reason) => dispatch({ type: "opsPatch", patch: { npsDetractor: { score: s, reason } } })}
@@ -214,14 +220,23 @@ export default function MyPage() {
             }}
           />
         )}
-        {escortOpen && <EscortReportSheet live={live} escort={state.escort} onClose={() => setEscortOpen(false)} />}
+        {escortOpen && <EscortReportSheet live={live} escort={lastEscort} onClose={() => setEscortOpen(false)} />}
         {reviewOpen && (
           <ReviewSheet
             reviews={state.reviews || []}
+            me={me.name}
             onClose={() => setReviewOpen(false)}
             onSend={(text) => {
-              dispatch({ type: "addReview", payload: { by: me.name, score, text } });
+              dispatch({ type: "addReview", payload: { by: me.name, score: rating?.score ?? null, text } });
               dispatch({ type: "pushEvent", payload: { kind: "CS", text: `보호자 후기 등록 — ${text.slice(0, 24)}…`, color: "#C9A46B" } });
+            }}
+            onEdit={(r, text) => {
+              dispatch({ type: "editReview", id: r.id, text });
+              dispatch({ type: "pushEvent", payload: { kind: "CS", text: `보호자 후기 수정 — ${text.slice(0, 24)}…`, color: "#C9A46B" } });
+            }}
+            onRemove={(r) => {
+              dispatch({ type: "removeReview", id: r.id, text: r.text });
+              dispatch({ type: "pushEvent", payload: { kind: "CS", text: "보호자 후기 삭제", color: "#C9A46B" } });
             }}
           />
         )}
@@ -233,9 +248,12 @@ export default function MyPage() {
 // 지난 동행 평가 — NPS 루프: 0–10 → 비추천(≤6)은 사유 + 24h 회복 안내.
 // 점수는 정수만 (step=1) — 추천(9·10) / 중립(7·8) / 비추천(0~6) 분류가 정수 위에 서 있다.
 // 손잡이는 처음에 8을 가리키지만 막대를 움직이기 전에는 고른 점수가 아니다 (회색 숫자 · '점수 남기기' 잠김).
-function RateCard({ when, score, setScore, onEvent, onDetractor, onWriteReview }) {
-  const [reason, setReason] = useState(null);
-  const [done, setDone] = useState(false);
+// 남긴 점수는 가구 기록(rating)에서 읽는다 — '고치기'로 다시 매기면 이전 점수는 기록에 남는다 (2026-10-18)
+function RateCard({ when, rating, onRate, onEvent, onDetractor, onWriteReview }) {
+  const [score, setScore] = useState(rating?.score ?? null);
+  const [reason, setReason] = useState(rating?.reason ?? null);
+  const [editing, setEditing] = useState(false);
+  const done = !!rating && !editing;
   const shown = score ?? 8;
   if (done)
     return (
@@ -245,12 +263,13 @@ function RateCard({ when, score, setScore, onEvent, onDetractor, onWriteReview }
         </span>
         <div className="min-w-0 flex-1">
           <div className="text-[19px] font-extrabold" style={{ color: TONE.purple.fg }}>
-            {score}점, 고맙습니다
+            {rating.score}점, 고맙습니다
           </div>
           <div className="text-[14px] leading-[1.5]" style={{ color: TONE.purple.sub }}>
-            {score <= 6
+            {rating.prev?.length ? "고친 점수예요 · " : ""}
+            {rating.score <= 6
               ? "24시간 안에 담당 매니저가 연락드립니다 — 조치 결과를 다시 알려 드려요"
-              : score >= 9
+              : rating.score >= 9
                 ? "주변에 비슷한 고민을 하는 가족이 있다면 소개해 주세요"
                 : "의견은 서비스 개선에 반영됩니다"}
           </div>
@@ -259,7 +278,18 @@ function RateCard({ when, score, setScore, onEvent, onDetractor, onWriteReview }
             후기 쓰기
           </button>
         </div>
-        <WhiteBtn h={44} r={14} sh={TONE.purple.sh} color={TONE.purple.fg} className="flex-none px-3.5 text-[14px]" onClick={() => setDone(false)}>
+        <WhiteBtn
+          h={44}
+          r={14}
+          sh={TONE.purple.sh}
+          color={TONE.purple.fg}
+          className="flex-none px-3.5 text-[14px]"
+          onClick={() => {
+            setScore(rating.score);
+            setReason(rating.reason ?? null);
+            setEditing(true);
+          }}
+        >
           고치기
         </WhiteBtn>
       </div>
@@ -329,28 +359,123 @@ function RateCard({ when, score, setScore, onEvent, onDetractor, onWriteReview }
           tone="purple"
           h={52}
           className="text-[17px] disabled:opacity-50"
-          disabled={score == null || (score <= 6 && !reason)}
+          disabled={score == null || (score <= 6 && !reason) || (editing && score === rating?.score && (score > 6 || reason === rating?.reason))}
           onClick={() => {
-            setDone(true);
+            const again = !!rating;
+            onRate(score, score <= 6 ? reason : null);
+            setEditing(false);
             if (score <= 6) onDetractor?.(score, reason);
             onEvent(
-              score <= 6 ? `만족도 ${score}점 접수 — 회복 플로우 시작 (${reason || "사유 미선택"} · 24h 내 연락)` : `만족도 ${score}점 접수 — 감사 인사 발송`,
+              score <= 6
+                ? `만족도 ${score}점 ${again ? "고침" : "접수"} — 회복 플로우 시작 (${reason || "사유 미선택"} · 24h 내 연락)`
+                : `만족도 ${score}점 ${again ? "고침" : "접수 — 감사 인사 발송"}`,
               score <= 6 ? "#FF8A80" : "#8FE3C0"
             );
           }}
         >
-          점수 남기기
+          {editing ? "고친 점수 남기기" : "점수 남기기"}
         </Btn>
-        <WhiteBtn h={52} sh={TONE.purple.sh} color={TONE.purple.fg} className="text-[16px]" onClick={onWriteReview}>
-          후기 쓰기
-        </WhiteBtn>
+        {editing ? (
+          <WhiteBtn h={52} sh={TONE.purple.sh} color={TONE.purple.fg} className="text-[16px]" onClick={() => setEditing(false)}>
+            그만두기
+          </WhiteBtn>
+        ) : (
+          <WhiteBtn h={52} sh={TONE.purple.sh} color={TONE.purple.fg} className="text-[16px]" onClick={onWriteReview}>
+            후기 쓰기
+          </WhiteBtn>
+        )}
       </div>
     </div>
   );
 }
 
+// 남긴 후기 한 개 — 내가 쓴 것은 고치고 지울 수 있다 (2026-10-18 · 의견이라 증명 기록이 아니다. 고치기 전 글은 기록에 남는다)
+function ReviewItem({ r, mine, onEdit, onRemove }) {
+  const [mode, setMode] = useState(null); // null | "edit" | "remove"
+  const [text, setText] = useState(r.text);
+  return (
+    <div>
+      <div className="text-[13px] font-bold" style={{ color: "#5E6270" }}>
+        {r.by} · {new Date(r.at).toLocaleDateString("ko-KR", { month: "numeric", day: "numeric" })}
+        {r.score != null && ` · ${r.score}점`}
+        {r.editedAt ? " · 고침" : ""}
+      </div>
+      {mode === "edit" ? (
+        <div className="mt-1 flex flex-col gap-2">
+          <textarea
+            aria-label="후기 고치기"
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            rows={3}
+            className="w-full resize-none rounded-[14px] border-2 border-[#E3DED3] bg-white px-3 py-2.5 text-[15px] leading-[1.6] outline-none focus:border-[#1B2340]"
+          />
+          <div className="grid grid-cols-[1fr_2fr] gap-2">
+            <WhiteBtn h={46} className="text-[15px]" onClick={() => setMode(null)}>
+              그만두기
+            </WhiteBtn>
+            <Btn
+              tone="purple"
+              h={46}
+              className="text-[15px] disabled:opacity-50"
+              disabled={!text.trim() || text.trim() === r.text}
+              onClick={() => {
+                onEdit?.(r, text.trim());
+                setMode(null);
+              }}
+            >
+              고친 후기 저장
+            </Btn>
+          </div>
+        </div>
+      ) : (
+        <p className="text-[15px] leading-[1.6]">{r.text}</p>
+      )}
+      {mode === "remove" && (
+        <div className="mt-1.5 flex flex-col gap-2 rounded-[14px] p-3" style={{ background: "#F3F1EC" }}>
+          <p className="text-[14px] leading-[1.5]">이 후기를 지울까요? 컨시어지 · 관제 화면에서도 빠집니다.</p>
+          <div className="grid grid-cols-[1fr_2fr] gap-2">
+            <WhiteBtn h={46} className="text-[15px]" onClick={() => setMode(null)}>
+              그대로 두기
+            </WhiteBtn>
+            <Btn
+              tone="navy"
+              h={46}
+              className="text-[15px]"
+              onClick={() => {
+                onRemove?.(r);
+                setMode(null);
+              }}
+            >
+              지우기
+            </Btn>
+          </div>
+        </div>
+      )}
+      {mine && !mode && (
+        <div className="flex gap-4">
+          <button
+            type="button"
+            onClick={() => {
+              setText(r.text);
+              setMode("edit");
+            }}
+            aria-label="이 후기 고치기"
+            className="min-h-[40px] text-[14px] font-extrabold underline underline-offset-2"
+            style={{ color: TONE.purple.fg }}
+          >
+            고치기
+          </button>
+          <button type="button" onClick={() => setMode("remove")} aria-label="이 후기 지우기" className="min-h-[40px] text-[14px] font-extrabold underline underline-offset-2" style={{ color: "#5E6270" }}>
+            지우기
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
 // 후기 — 점수만으로는 무엇을 고쳐야 하는지 알 수 없다. 문장이 남아야 컨시어지에게 전달된다 (2026-08-12 시트 홈 5번)
-function ReviewSheet({ reviews, onClose, onSend }) {
+function ReviewSheet({ reviews, me, onClose, onSend, onEdit, onRemove }) {
   const [memo, setMemo] = useState("");
   const [sent, setSent] = useState(false);
   return (
@@ -388,15 +513,9 @@ function ReviewSheet({ reviews, onClose, onSend }) {
         </>
       )}
       {reviews.length > 0 && (
-        <div className="flex flex-col gap-2 rounded-[18px] bg-white p-3.5">
-          {reviews.slice(0, 3).map((r) => (
-            <div key={r.id}>
-              <div className="text-[13px] font-bold" style={{ color: "#5E6270" }}>
-                {r.by} · {new Date(r.at).toLocaleDateString("ko-KR", { month: "numeric", day: "numeric" })}
-                {r.score != null && ` · ${r.score}점`}
-              </div>
-              <p className="text-[15px] leading-[1.6]">{r.text}</p>
-            </div>
+        <div className="flex flex-col gap-3 rounded-[18px] bg-white p-3.5">
+          {reviews.slice(0, 5).map((r) => (
+            <ReviewItem key={r.id} r={r} mine={r.by === me} onEdit={onEdit} onRemove={onRemove} />
           ))}
         </div>
       )}

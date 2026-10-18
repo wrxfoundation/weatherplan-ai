@@ -48,6 +48,7 @@ import {
   mapPeople,
 } from "../lib/console";
 import { useAppState } from "../lib/state";
+import { eventRights } from "../lib/event-rights";
 import { CLOSED, approverOf, fmtPreferred, isVisitCall } from "../lib/requests";
 import { HelpCallOps, HELP_STAGE } from "../components/HelpCall";
 import { relMd } from "../lib/reltime";
@@ -749,6 +750,8 @@ function DispatchConsole() {
   const [guardianPinged, setGuardianPinged] = useState(false);
   const [nightCalled, setNightCalled] = useState(false); // 야간 출동(외주) 호출 — REQ-04
   const pendingEvents = (state.events || []).filter((e) => e.approval === "pending").length;
+  // 하루 안에 가족 · 컨시어지가 취소한 확정 일정 — 배정된 동행 · 차량을 정리해야 하므로 접어 두지 않는다 (2026-10-18)
+  const freshCancels = (state.eventsRemoved || []).filter((x) => x.removed?.mode === "cancel" && x.removed.by !== "관제" && x.removed.at > Date.now() - 86400000).length;
   const actions = [];
   // 만족도를 남긴 보호자 — 테스트 가구는 '김순자 님 보호자 (관계)'로 (예시 보호자 '김민수'로 찍지 않는다)
   const npsWho = liveOn ? `${ELDER.name} 님 보호자${state.onboarding?.rel ? ` (${state.onboarding.relDetail || state.onboarding.rel})` : ""}` : "김민수";
@@ -1370,8 +1373,8 @@ function DispatchConsole() {
               // 어르신 앱은 "관제센터에서 확인 전화를 드립니다"라고 약속한다 — 그 부탁이 들어와 있으면 접어 두지 않는다.
               // 보호자 일정등록 요청도 같다 — 관제가 승인해야 캘린더에 오르는데, 접혀 있으면 아무도 못 본다 (2026-10-01 관제 테스트).
               // 도와줘요 · 해주세요 취소 요청 · 환불 대기도 관제가 직접 할 일이라 펼친다 (2026-10-05)
-              opsOpen={actions.some((a) => a.level === "critical" || /^(elder-|help-|cancel-|refunds|members-)/.test(a.id)) || pendingEvents > 0}
-              opsNote={pendingEvents > 0 ? `일정 승인 대기 ${pendingEvents}건` : null}
+              opsOpen={actions.some((a) => a.level === "critical" || /^(elder-|help-|cancel-|refunds|members-)/.test(a.id)) || pendingEvents > 0 || freshCancels > 0}
+              opsNote={[pendingEvents > 0 && `일정 승인 대기 ${pendingEvents}건`, freshCancels > 0 && `일정 취소 ${freshCancels}건 — 배차 정리`].filter(Boolean).join(" · ") || null}
               opsSlot={<>
           {/* ── 방문 업무흐름 8단계 — 일정 수립 알람이 여기로 온다 (2026-08-13 미팅) ── */}
           <section className="mt-[18px]">
@@ -2448,14 +2451,52 @@ function DispatchConsole() {
 // 보호자가 K-CARE 일정을 등록하면 바로 캘린더에 뜨지 않는다. 관제가 팀 배정과
 // 배차가 가능한지 보고 승인해야 어르신·컨시어지 화면에 올라간다. 승인 없이
 // 캘린더에 뜨면 아무도 안 가는 일정이 확정된 것처럼 보인다 — 그게 이 큐의 이유다.
+const evWhen = (at) => new Date(at).toLocaleString("ko-KR", { month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit", hour12: false });
+const evBy = (e) => (e.by === "elder" ? "어르신 직접 등록" : e.by === "guardian" ? "보호자 등록" : e.source);
+
+// 관제가 일정 한 줄에 사유를 달아 결정한다 — 반려 · 취소는 사유가 있어야 보낸다 (등록한 쪽이 달력에서 사유를 본다)
+function ReasonAction({ label, placeholder, onDone, dark = false }) {
+  const [open, setOpen] = useState(false);
+  const [reason, setReason] = useState("");
+  if (!open) {
+    return (
+      <button onClick={() => setOpen(true)} className={`btn-press min-h-[40px] rounded-lg px-3.5 text-[13px] font-bold ${dark ? "btn-dark bg-navy text-white" : "border border-navy/15 text-muted"}`}>
+        {label}
+      </button>
+    );
+  }
+  return (
+    <div className="flex w-full flex-wrap items-center gap-2">
+      <input
+        value={reason}
+        onChange={(x) => setReason(x.target.value)}
+        aria-label={`${label} 사유`}
+        placeholder={placeholder}
+        className="min-h-[40px] min-w-[200px] flex-1 rounded-lg border border-navy/15 bg-white px-3 text-[13px] outline-none focus:border-gold"
+      />
+      <button onClick={() => (setOpen(false), setReason(""))} className="btn-press min-h-[40px] rounded-lg border border-navy/15 px-3 text-[13px] font-bold text-muted">
+        그만두기
+      </button>
+      <button disabled={!reason.trim()} onClick={() => onDone(reason.trim())} className="btn-press min-h-[40px] rounded-lg bg-navy px-3.5 text-[13px] font-bold text-white disabled:opacity-40">
+        {label} 보내기
+      </button>
+    </div>
+  );
+}
+
 function EventApprovals() {
   const { state, dispatch } = useAppState();
   const pending = state.events
     .filter((e) => e.approval === "pending")
     .sort((a, b) => a.at - b.at);
+  // 확정된 앞으로의 K-CARE 일정 — 관제가 사유를 달아 취소할 수 있다 (해주세요에 묶인 것은 해주세요 관리에서)
+  const approved = state.events.filter((e) => eventRights(e, "ops").remove === "cancel").sort((a, b) => a.at - b.at);
+  // 지우거나 취소된 일정 — 가족 · 컨시어지가 거둔 것도 여기서 본다 (배차 정리)
+  const removed = (state.eventsRemoved || []).slice(0, 8);
+  const [showApproved, setShowApproved] = useState(false);
 
-  const decide = (e, approval) => {
-    dispatch({ type: "decideEvent", id: e.id, approval });
+  const decide = (e, approval, reason = "") => {
+    dispatch({ type: "decideEvent", id: e.id, approval, reason, title: e.title });
     dispatch({
       type: "pushEvent",
       payload: {
@@ -2463,13 +2504,17 @@ function EventApprovals() {
         text:
           approval === "approved"
             ? `일정등록 요청 승인 — ${e.title} · 어르신·보호자·컨시어지 캘린더 반영`
-            : `일정등록 요청 반려 — ${e.title} · 사유는 해주세요로 전달`,
+            : `일정등록 요청 반려 — ${e.title} · 사유: ${reason}`,
         color: approval === "approved" ? "#8FE3C0" : "#F0D9A8", // 반려는 위험 신호가 아니다 — 빨강 대신 금색
       },
     });
   };
+  const cancel = (e, reason) => {
+    dispatch({ type: "removeEvent", id: e.id, mode: "cancel", by: "관제", reason, title: e.title });
+    dispatch({ type: "pushEvent", payload: { kind: "일정", text: `관제 일정 취소 — ${e.title} · 사유: ${reason}`, color: "#F0D9A8" } });
+  };
 
-  if (pending.length === 0) return null;
+  if (pending.length === 0 && approved.length === 0 && removed.length === 0) return null;
 
   return (
     <section className="card-glass mt-[18px] rounded-[14px] px-5 py-4">
@@ -2479,7 +2524,8 @@ function EventApprovals() {
       </div>
       <p className="mt-1 text-[12px] leading-[1.7] text-muted">
         승인해야 어르신 · 보호자 · 컨시어지 캘린더에 올라갑니다. 동행이 필요한 건은 팀 배정과
-        배차가 가능한지 먼저 확인하세요.
+        배차가 가능한지 먼저 확인하세요. 반려 · 취소는 사유를 적어야 보내지고, 보호자는 달력에서 사유를 봅니다 (어르신 화면에는
+        &lsquo;관제에서 다시 연락드립니다&rsquo; — 어르신께는 전화로 알려 주세요). 확정 뒤 바뀐 일정을 반려하면 원래 확정 일정으로 돌아갑니다.
       </p>
       <div className="mt-3 space-y-2">
         {pending.map((e) => (
@@ -2487,31 +2533,19 @@ function EventApprovals() {
             key={e.id}
             className="flex flex-wrap items-center gap-3 rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-3"
           >
-            <span className="w-[92px] shrink-0 font-num text-[13px] font-bold text-navy">
-              {new Date(e.at).toLocaleString("ko-KR", {
-                month: "numeric",
-                day: "numeric",
-                hour: "2-digit",
-                minute: "2-digit",
-                hour12: false,
-              })}
-            </span>
+            <span className="w-[92px] shrink-0 font-num text-[13px] font-bold text-navy">{evWhen(e.at)}</span>
             <div className="min-w-[160px] flex-1">
               <div className="text-[15px] font-bold text-navy">{e.title}</div>
               <div className="text-[12px] text-muted">
-                {e.by === "elder" ? "어르신 직접 등록" : e.source} ·{" "}
+                {evBy(e)} ·{" "}
                 <span className={e.escort ? "font-bold text-amber" : ""}>
                   {e.escort ? "동행 필요 — 배차 검토" : "동행 불필요 — 일정 공유만"}
                 </span>
+                {e.reapproval ? ` · 확정 뒤 날짜 · 동행이 바뀌어 다시 확인${e.prevApproved?.at ? ` (원래 ${evWhen(e.prevApproved.at)}${e.prevApproved.escort ? " · 동행" : ""})` : ""} — 반려하면 원래대로` : ""}
               </div>
             </div>
-            <div className="flex shrink-0 gap-2">
-              <button
-                onClick={() => decide(e, "rejected")}
-                className="btn-press min-h-[40px] rounded-lg border border-navy/15 px-3.5 text-[13px] font-bold text-muted"
-              >
-                반려
-              </button>
+            <div className="flex shrink-0 flex-wrap gap-2">
+              <ReasonAction label="반려" placeholder="반려 사유 (예: 그 시간 배차 불가 — 다른 시간 제안)" onDone={(r) => decide(e, "rejected", r)} />
               <button
                 onClick={() => decide(e, "approved")}
                 className="btn-press btn-dark min-h-[40px] rounded-lg bg-navy px-4 text-[13px] font-bold text-white"
@@ -2522,6 +2556,43 @@ function EventApprovals() {
           </div>
         ))}
       </div>
+
+      {approved.length > 0 && (
+        <div className="mt-3 border-t border-navy/[.06] pt-3">
+          <button onClick={() => setShowApproved((v) => !v)} aria-expanded={showApproved} className="btn-press min-h-[36px] text-[13px] font-bold text-navy">
+            확정된 일정 {approved.length}건 {showApproved ? "접기" : "보기 · 취소"}
+          </button>
+          {showApproved && (
+            <div className="mt-2 space-y-2">
+              {approved.map((e) => (
+                <div key={e.id} className="flex flex-wrap items-center gap-3 rounded-xl border border-navy/[.06] bg-white/60 px-3.5 py-2.5">
+                  <span className="w-[92px] shrink-0 font-num text-[13px] font-bold text-navy">{evWhen(e.at)}</span>
+                  <div className="min-w-[160px] flex-1">
+                    <div className="text-[14px] font-bold text-navy">{e.title}</div>
+                    <div className="text-[12px] text-muted">{evBy(e)}{e.escort ? " · 동행" : ""}</div>
+                  </div>
+                  <ReasonAction label="취소" placeholder="취소 사유 (보호자 달력에 보입니다 · 어르신께는 전화로)" onDone={(r) => cancel(e, r)} />
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      {removed.length > 0 && (
+        <div className="mt-3 border-t border-navy/[.06] pt-3">
+          <div className="text-[12px] font-bold text-muted">최근 지우거나 취소된 일정 — 배정된 동행 · 차량이 있으면 정리하세요</div>
+          <ul className="mt-1.5 space-y-1">
+            {removed.map((x) => (
+              <li key={`${x.id}-${x.removed?.at}`} className="text-[12.5px] text-ink">
+                <span className="font-num font-bold">{evWhen(x.at)}</span> {x.title} —{" "}
+                <b className={x.removed?.mode === "cancel" ? "text-amber" : "text-muted"}>{x.removed?.mode === "cancel" ? "취소" : "삭제"}</b> · {x.removed?.by || "—"}
+                {x.removed?.reason ? ` · ${x.removed.reason}` : ""}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </section>
   );
 }

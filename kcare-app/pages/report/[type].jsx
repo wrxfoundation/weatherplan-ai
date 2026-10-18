@@ -7,7 +7,7 @@ import { GLOSSARY, sha256Hex } from "../../lib/glossary";
 import { ALL_ITEMS, RESULT_TONE, STATE_ORDER, VISIT_GRADES, VISIT_REPORT, countStates } from "../../lib/visit-report";
 import { useAppState } from "../../lib/state";
 import { useAuth } from "../../lib/auth";
-import { LIVE_TAG, STAGE_LABEL, visitReportOf } from "../../lib/live-household";
+import { LIVE_TAG, STAGE_LABEL, sentEscortOf, sentReportState, visitReportOf } from "../../lib/live-household";
 import { LIVE_ELDER } from "../../lib/ops-health";
 import {
   AI_REPORT,
@@ -479,14 +479,14 @@ function VisitReport() {
 const ymdDot = (t) => (t ? new Date(Number(t) + 9 * 3600 * 1000).toISOString().slice(0, 10).replace(/-/g, ".") : "—");
 function LiveVisitReport() {
   const { state, dispatch } = useAppState();
-  const r = visitReportOf(state);
+  const r = visitReportOf(sentReportState(state)); // 이번 방문을 안 보냈으면 마지막으로 보낸 방문 기록 (증명 — 바뀌지 않는다)
   const { query } = useRouter();
   const fromFamily = query.from === "family";
   const viewed = r.viewed;
   // '보호자 열람'은 보호자 계정이 열었을 때만 — 컨시어지 · 관제가 같은 주소를 열어도 열람으로 치지 않는다 (2026-10-02 코드 점검)
   const asGuardian = useAuth().user?.role === "guardian";
   useEffect(() => {
-    if (fromFamily && asGuardian && r.sent && !viewed) dispatch({ type: "visitViewed" });
+    if (fromFamily && asGuardian && r.sent && !viewed) dispatch({ type: "visitViewed" }); // 보이는 리포트에 찍힌다 (lib/state.js)
   }, [fromFamily, asGuardian, r.sent, viewed, dispatch]);
   const back = { backHref: fromFamily ? "/family/my" : "/concierge", backLabel: fromFamily ? "마이로" : "컨시어지로" };
   if (!r.sent)
@@ -613,7 +613,7 @@ function VisitReportPage() {
 const hmDot = (t) => (t ? new Date(Number(t) + 9 * 3600 * 1000).toISOString().slice(11, 16) : "—");
 function LiveEscortReport() {
   const { state, dispatch } = useAppState();
-  const e = state.escort || {};
+  const e = sentEscortOf(state) || {}; // 지난 방문으로 보관된 것까지 — 마지막으로 보낸 동행 기록
   const { query } = useRouter();
   const fromFamily = query.from === "family";
   const sent = !!e.sentAt;

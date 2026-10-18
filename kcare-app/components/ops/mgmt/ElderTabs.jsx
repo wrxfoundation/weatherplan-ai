@@ -30,6 +30,54 @@ function Sec({ title, right, children }) {
 
 const num = (k, label) => ({ k, label, render: (r) => <span className="font-num">{r[k]}</span> });
 
+// 메모 한 줄 — 고치기(이전 글은 아래 '이전 글'로 남는다) · 지우기(확인 한 번 · 감사로그에 글이 남는다)
+function NoteRow({ n, ops }) {
+  const [mode, setMode] = useState(null); // null | "edit" | "remove"
+  const [text, setText] = useState(n.text);
+  return (
+    <li className="rounded-xl bg-navy/[.04] px-3 py-2 text-[12px]">
+      <div className="flex justify-between gap-2 text-[11px] text-muted">
+        <span>{n.who}</span>
+        <span className="font-num">{n.at}{n.edited ? ` · 고침 ${n.edited}` : ""}</span>
+      </div>
+      {mode === "edit" ? (
+        <div className="mt-1.5 flex flex-col gap-1.5">
+          <input aria-label="메모 고치기" value={text} onChange={(ev) => setText(ev.target.value)} className={input} />
+          <div className="flex justify-end gap-1.5">
+            <Btn small ghost tone="muted" onClick={() => setMode(null)}>그만두기</Btn>
+            <Btn small disabled={!text.trim() || text.trim() === n.text} onClick={() => { ops?.edit(n, text.trim()); setMode(null); }}>고친 메모 저장</Btn>
+          </div>
+        </div>
+      ) : (
+        <div className="mt-0.5 text-ink">{n.text}</div>
+      )}
+      {n.prev?.length > 0 && mode !== "edit" && (
+        <details className="mt-1 text-[11px] text-muted">
+          <summary className="cursor-pointer">이전 글 {n.prev.length}개</summary>
+          <ul className="mt-1 space-y-0.5">
+            {n.prev.map((p, i) => (
+              <li key={i} className="line-through decoration-navy/30">{p.text}</li>
+            ))}
+          </ul>
+        </details>
+      )}
+      {mode === "remove" && (
+        <div className="mt-1.5 flex flex-wrap items-center justify-end gap-1.5">
+          <span className="mr-auto text-[11.5px] text-ink">이 메모를 지울까요? 감사로그에는 글이 남습니다.</span>
+          <Btn small ghost tone="muted" onClick={() => setMode(null)}>그대로 두기</Btn>
+          <Btn small tone="navy" onClick={() => { ops?.remove(n); setMode(null); }}>지우기</Btn>
+        </div>
+      )}
+      {!mode && ops && (
+        <div className="mt-1 flex justify-end gap-1.5">
+          <Btn small ghost onClick={() => { setText(n.text); setMode("edit"); }}>수정</Btn>
+          <Btn small ghost tone="muted" onClick={() => setMode("remove")}>삭제</Btn>
+        </div>
+      )}
+    </li>
+  );
+}
+
 export default function ElderTabs({ e, tab, onChange }) {
   const [range, setRange] = useState(1);
   // 김순자 님(테스트 가구)의 복용약 · 질환 · 알레르기는 가구 상태 한 벌을 쓴다 — 여기서 고치면
@@ -233,24 +281,36 @@ export default function ElderTabs({ e, tab, onChange }) {
           <div className="mt-2 text-[11px] text-muted">긴급조치(119 신고 · 병원 이송) · 출입(도어락) 동의가 없으면 SOS 대응 시 현장 진입이 지연됩니다.</div>
         </div>
       );
-    case "상담·관제메모":
+    case "상담·관제메모": {
+      // 실제 가구(e.live)는 가구 기록(opsNotes)에 — 관제 기기끼리 같이 보고 새로고침해도 남는다. 예시 어르신은 이 화면에서만 (2026-10-18)
+      const who = e.live ? operator : `${OPERATOR.name} (${OPERATOR.role})`;
+      const ops = e.live
+        ? app?.dispatch && {
+            add: (text) => app.dispatch({ type: "addOpsNote", payload: { text, who } }),
+            edit: (n, text) => app.dispatch({ type: "editOpsNote", id: n.id, text, by: who }),
+            remove: (n) => app.dispatch({ type: "removeOpsNote", id: n.id, by: who, text: n.text }),
+          }
+        : {
+            add: (text) => onChange((x) => ({ ...x, notes: [{ id: `n-${Date.now()}`, at: stampNow().slice(5), who, text }, ...x.notes] })),
+            edit: (n, text) => onChange((x) => ({ ...x, notes: x.notes.map((m) => (m === n || (n.id && m.id === n.id) ? { ...m, text, edited: `${stampNow().slice(5)} ${who}`, prev: [{ text: m.text, at: m.at }, ...(m.prev || [])] } : m)) })),
+            remove: (n) => onChange((x) => ({ ...x, notes: x.notes.filter((m) => m !== n && !(n.id && m.id === n.id)) })),
+          };
       return (
         <div>
           <div className="flex gap-2">
             <input id={`memo-${e.name}`} aria-label="상담 · 관제메모" value={memo} onChange={(ev) => setMemo(ev.target.value)} placeholder="상담 · 관제 메모 (관찰 사실만)" className={input} />
-            <Btn small disabled={!memo.trim()} onClick={() => { onChange((x) => ({ ...x, notes: [{ at: stampNow().slice(5), who: `${OPERATOR.name} (${OPERATOR.role})`, text: memo.trim() }, ...x.notes] })); setMemo(""); }}>메모 추가</Btn>
+            <Btn small disabled={!memo.trim() || !ops} onClick={() => { ops?.add(memo.trim()); setMemo(""); }}>메모 추가</Btn>
           </div>
+          <p className="mt-1.5 text-[11px] text-muted">고치면 이전 글이 아래에 남고, 지우면 목록에서 빠지되 감사로그에 글이 남습니다.</p>
           <ul className="mt-3 space-y-2">
             {e.notes.length === 0 && <li><Empty>상담 · 관제 메모가 없습니다.</Empty></li>}
             {e.notes.map((n, i) => (
-              <li key={`${n.at}-${i}`} className="rounded-xl bg-navy/[.04] px-3 py-2 text-[12px]">
-                <div className="flex justify-between text-[11px] text-muted"><span>{n.who}</span><span className="font-num">{n.at}</span></div>
-                <div className="mt-0.5 text-ink">{n.text}</div>
-              </li>
+              <NoteRow key={n.id || `${n.at}-${i}`} n={n} ops={ops} />
             ))}
           </ul>
         </div>
       );
+    }
     case "수정이력":
       return <HistoryTable rows={e.history} />;
     default:

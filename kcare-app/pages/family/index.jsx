@@ -87,6 +87,8 @@ export default function FamilyHome() {
   const morningMed = medPlan.find((d) => d.slot === "아침") || null;
   const voicesToElder = (state.voices || []).filter((v) => v.from === "보호자");
   const heard = voicesToElder.filter((v) => state.elder?.msgPlayed?.[v.id]).length;
+  const unheardSent = voicesToElder.filter((v) => !state.elder?.msgPlayed?.[v.id]).sort((a, b) => b.at - a.at);
+  const [unsendAsk, setUnsendAsk] = useState(null); // 보내기 취소를 묻는 음성 id
   // 어르신 → 주 보호자(아들 민수) · 가족 모두에게 온 목소리 — 최근 것부터
   const fromElder = (state.voices || [])
     // 관제 센터 공간은 그 센터 보호자 이름 앞으로 온 것 (lib/people.js voiceTargetsCenter)
@@ -423,6 +425,48 @@ export default function FamilyHome() {
                 </div>
               ))}
             </div>
+            {/* 아직 안 들으신 안부 음성 — 보내기 취소할 수 있다 (2026-10-18 · 들으신 것은 기록으로 남는다) */}
+            {unheardSent.length > 0 && (
+              <div className="flex flex-col gap-1.5">
+                <div className="text-[14px] font-extrabold">아직 안 들으신 안부 음성 {unheardSent.length}개</div>
+                {unheardSent.slice(0, 3).map((v) => (
+                  <div key={v.id} className="flex flex-col gap-1.5 rounded-[16px] px-3 py-2" style={{ background: "#F3F1EC" }}>
+                    <div className="flex items-center gap-2">
+                      <span className="ds-num min-w-0 flex-1 text-[14px]">
+                        {new Date(v.at).toLocaleString("ko-KR", { month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit", hour12: false })} · {Number(v.secs) || 0}초{v.context ? ` · ${v.context}` : ""}
+                      </span>
+                      {unsendAsk !== v.id && (
+                        <button type="button" onClick={() => setUnsendAsk(v.id)} className="min-h-[40px] flex-none text-[14px] font-extrabold underline underline-offset-2" style={{ color: "#5E6270" }}>
+                          보내기 취소
+                        </button>
+                      )}
+                    </div>
+                    {unsendAsk === v.id && (
+                      <div className="flex flex-col gap-2">
+                        <p className="text-[14px] leading-[1.5]">이 음성을 거둘까요? {honor} 화면에서 빠집니다. 녹음 파일은 서버에 30일 보관 뒤 지워집니다.</p>
+                        <div className="grid grid-cols-[1fr_2fr] gap-2">
+                          <WhiteBtn h={44} className="text-[14px]" onClick={() => setUnsendAsk(null)}>
+                            그대로 두기
+                          </WhiteBtn>
+                          <Btn
+                            tone="navy"
+                            h={44}
+                            className="text-[14px]"
+                            onClick={() => {
+                              dispatch({ type: "unsendVoice", id: v.id, from: "보호자", to: v.to });
+                              dispatch({ type: "pushEvent", payload: { kind: "음성", text: `보호자 안부 음성 보내기 취소 (${honor} 듣기 전)`, color: "#8FA9CC" } });
+                              setUnsendAsk(null);
+                            }}
+                          >
+                            보내기 취소
+                          </Btn>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
             <p className="text-[13px] leading-[1.6]" style={{ color: "#5E6270" }}>
               워치 · 센서 없이 테스트 중이라 수면 · 걸음 같은 건강 수치는 받지 않습니다.
             </p>

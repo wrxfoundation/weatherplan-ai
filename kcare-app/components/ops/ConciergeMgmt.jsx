@@ -231,10 +231,14 @@ export default function ConciergeMgmt({ openProfile }) {
           </Sec>
           <Sec title="교육이수">
             <ul className="space-y-1 text-[13px] text-ink">{cur.trainings.map((t) => <li key={t} className="flex items-center gap-1.5"><Icon name="check" size={13} className="text-green" />{t}</li>)}</ul>
-            <div className="mt-2 flex gap-2">
-              <input id={`tr-${cur.name}`} aria-label="교육 이수 등록" value={training} onChange={(e) => setTraining(e.target.value)} placeholder="교육명 (이수 연월)" className="card-glass min-w-0 flex-1 rounded-[10px] px-3 py-2 text-[13px] text-navy outline-none focus:ring-1 focus:ring-gold" />
-              <Btn small disabled={!training.trim()} onClick={() => { update(cur.name, (c) => log({ ...c, trainings: [...c.trainings, training.trim()] }, "교육이수", c.trainings.join(" · "), [...c.trainings, training.trim()].join(" · "), "교육 이수 등록")); setTraining(""); }}>이수 등록</Btn>
-            </div>
+            {center ? (
+              <p className="mt-2 text-[11px] text-muted">센터 회원의 교육 이수 기록은 베타에서 아직 저장하지 않습니다.</p>
+            ) : (
+              <div className="mt-2 flex gap-2">
+                <input id={`tr-${cur.name}`} aria-label="교육 이수 등록" value={training} onChange={(e) => setTraining(e.target.value)} placeholder="교육명 (이수 연월)" className="card-glass min-w-0 flex-1 rounded-[10px] px-3 py-2 text-[13px] text-navy outline-none focus:ring-1 focus:ring-gold" />
+                <Btn small disabled={!training.trim()} onClick={() => { update(cur.name, (c) => log({ ...c, trainings: [...c.trainings, training.trim()] }, "교육이수", c.trainings.join(" · "), [...c.trainings, training.trim()].join(" · "), "교육 이수 등록")); setTraining(""); }}>이수 등록</Btn>
+              </div>
+            )}
           </Sec>
         </div>
       );
@@ -305,10 +309,15 @@ export default function ConciergeMgmt({ openProfile }) {
                 </div>
                 <div className="mt-0.5 text-[12px] text-muted">{cur.branch} · {cur.roleType} · 평점 <span className="font-num">{cur.rating}</span> · {cur.cert}</div>
               </div>
-              <div className="flex gap-2">
-                <Btn small onClick={() => setEdit(true)}>정보 수정</Btn>
-                <Btn small ghost tone={cur.account === "활성" ? "muted" : "ok"} onClick={() => setConfirm({ reason: "" })}>{cur.account === "활성" ? "계정 비활성화" : "계정 활성화"}</Btn>
-              </div>
+              {/* 센터 회원은 '회원 · 권한'에서 승인 · 정지한다 — 여기서 누르면 화면에만 바뀌고 저장되지 않았다 (2026-10-18) */}
+              {center ? (
+                <span className="text-[11px] text-muted">센터 회원 — 계정 · 역할은 &lsquo;회원 · 권한&rsquo;에서 바꿉니다</span>
+              ) : (
+                <div className="flex gap-2">
+                  <Btn small onClick={() => setEdit(true)}>정보 수정</Btn>
+                  <Btn small ghost tone={cur.account === "활성" ? "muted" : "ok"} onClick={() => setConfirm({ reason: "" })}>{cur.account === "활성" ? "계정 비활성화" : "계정 활성화"}</Btn>
+                </div>
+              )}
             </div>
             {cur.live && (
               <div className="mt-3">

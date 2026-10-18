@@ -6,7 +6,7 @@ import { WeekBars } from "../../components/GuardianCharts";
 import { Clay, Line } from "../../components/clay";
 import { Card, TONE } from "../../components/ds";
 import { RESULT_TONE, STATE_ORDER, VISIT_REPORT } from "../../lib/visit-report";
-import { STAGE_LABEL, visitReportOf } from "../../lib/live-household";
+import { STAGE_LABEL, sentReportState, visitReportOf } from "../../lib/live-household";
 import { FIT3_INFO } from "../../lib/mock";
 import { fitMonth } from "../../lib/demo-health";
 import { useAppState } from "../../lib/state";
@@ -168,8 +168,10 @@ function DemoReport() {
 
 function LiveReport() {
   const { state, dispatch } = useAppState();
-  const r = visitReportOf(state);
-  // '보호자 열람'은 보호자 계정이 열었을 때만 — 컨시어지 · 관제가 같은 주소를 열어도 열람으로 치지 않는다 (2026-10-02 코드 점검)
+  // 이번 방문을 아직 안 보냈으면 마지막으로 보낸 방문 기록을 그대로 (다음 방문을 시작해도 보낸 리포트는 남는다)
+  const r = visitReportOf(sentReportState(state));
+  // '보호자 열람'은 보호자 계정이 열었을 때만 — 컨시어지 · 관제가 같은 주소를 열어도 열람으로 치지 않는다 (2026-10-02 코드 점검).
+  // 보이는 리포트(이번 방문 또는 보관된 지난 방문)에 찍힌다 — 어느 쪽인지는 reducer 가 고른다 (lib/state.js visitViewed)
   const asGuardian = useAuth().user?.role === "guardian";
   useEffect(() => {
     if (asGuardian && r.sent && !r.viewed) dispatch({ type: "visitViewed" });

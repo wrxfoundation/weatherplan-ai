@@ -181,7 +181,7 @@ export default function PayPage() {
                   </div>
                   <p className="mt-2 text-[12.5px] leading-[1.7] text-muted">
                     지금은 카드만 등록하고 결제되지 않습니다. 매월 결제일에 등록하신 카드로 자동
-                    청구되며, 해지는 마이 탭에서 언제든 하실 수 있습니다.
+                    청구되며, 해지는 마이 › 멤버십에서 언제든 상담을 요청하실 수 있습니다.
                   </p>
                 </>
               ) : (

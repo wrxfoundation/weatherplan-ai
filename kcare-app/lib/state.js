@@ -4,13 +4,14 @@ import { useRouter } from "next/router";
 // 여기서 mock.js 를 참조하면 콘솔 목데이터 전체가 모든 페이지에 실린다 (seed.js 주석 참고).
 import { INITIAL_EVENTS, INITIAL_REQUESTS, SEED_ASK_DOCTOR, SEED_EVENTS, SEED_ORDERS, SEED_REPORTS } from "./seed";
 import { PRICING } from "./config";
-import { approverOf, cancelRule, paymentOf, transition } from "./requests";
+import { URGENCY, approverOf, canEditRequest, cancelRule, fmtPreferred, paymentOf, transition } from "./requests";
 import { SEED_VISIT, advance } from "./workflow";
 import { logout, useAuth } from "./auth";
 import { setStorageScope } from "./scope";
 import { cleanMedSlot } from "./meds";
 import { AREAS, areaOfRole, centerOfHousehold, isCenterHousehold } from "./centers";
 import { applyPeople, peopleFor } from "./people";
+import { REAPPROVE_KEYS, eventLocked } from "./event-rights";
 
 // 앱 전역 상태.
 // 역할 간 연동: 어르신 SOS → 가족 배너 / 컨시어지 보충 요청 → 가족 결제 승인.
@@ -89,11 +90,18 @@ const DEFAULT = {
   // ops — 관제가 이 방문에 한 것 (검수 · 보호자 발송 · 중간 알림 · 후속조치).
   // grades — 항목 상태(양호 · 관찰 · 주의). 컨시어지가 고른 것만 있다 — 고르지 않은 항목에 상태를 지어 붙이지 않는다.
   visit: { checkedIn: false, reportSent: false, audit: [], checks: {}, notes: {}, grades: {}, memo: "", photos: 0, ops: {} },
+  // 지난 방문 기록 — 보호자에게 발송한 방문은 '다음 방문 시작' 때 여기로 넘어가 그대로 보관된다 (2026-10-18 · 증명 기록)
+  //   [{ visit, report, gpsAt, closedAt }]
+  visitHistory: [],
   // 병원 동행 기록 — 컨시어지 '동행 기록 저장' → '리포트 제출' → 관제 '보호자 리포트 발송' → 보호자 홈 · 마이 '동행 리포트' (2026-10-02).
   // 녹화 여부는 컨시어지가 직접 체크한 값 그대로다 (없는 영상을 있다고 하지 않는다).
   escort: { note: "", photos: 0, recorded: false, by: "", savedAt: null, sentAt: null, viewedAt: null },
   // 관제 연락 — 컨시어지 '관제에 알리기'. 관제가 확인(·답장)하면 컨시어지 화면에 그대로 보인다 (2026-10-02).
   opsMessages: [],
+  // 관제 상담 · 관제 메모 — 관제 어르신 관리 › 상담·관제메모 (2026-10-18). 관제 기기끼리 같은 값을 본다.
+  // 고치면 이전 글을 prev 에 남기고, 지우면 목록에서 빠지되 감사로그에 글이 남는다.
+  //   [{ id, at, who, text, editedAt?, editedBy?, prev?: [{ text, at }] }]
+  opsNotes: [],
   // 스토어 상품 이미지 — 경영 콘솔에서 올리면 스토어 썸네일이 바뀐다 (실무자 요청).
   // { [상품id]: dataURL }. 업로드 시 320px 로 줄여 저장한다 — localStorage 5MB 한도.
   productImages: {},
@@ -113,6 +121,8 @@ const DEFAULT = {
   orders: SEED_ORDERS.map((o) => ({ ...o, at: Date.now() - o.daysAgo * 86400000 })),
   // 기존에 다니시던 병원 — 제휴 병원이 아니어도 등록해 둔다 (2026-08-12 시트 예약 3번)
   myHospitals: [],
+  // 지우거나 취소한 일정 — 달력에서는 빠지고 여기 남는다 (누가 · 언제 · 왜). 관제 · 보호자가 '취소된 일정'으로 본다 (2026-10-18)
+  eventsRemoved: [],
   // 토스페이먼츠 결제 (2026-09-23) — 승인이 끝난 건만 쌓인다.
   //   payments: [{ id, kind, ref, orderId, orderName, amount, method, card, approvedAt, receiptUrl, status }]
   //   billing:  월 구독 자동결제로 등록한 카드 표기 정보. billingKey 원본은 서버 보관 대상이라 여기 없다.
@@ -145,7 +155,10 @@ export function freshState() {
     reviews: [],
     payments: [],
     myHospitals: [],
+    eventsRemoved: [],
+    visitHistory: [],
     opsMessages: [],
+    opsNotes: [],
     askDoctor: [],
   };
 }
@@ -185,6 +198,19 @@ function rebaseSeedEvents(events) {
 // Date.now() 가 겹쳐 id 가 같아지는 일도 없다. 데모에서는 붙지 않으니 지금 시각을 쓴다.
 const nowOf = (a) => (Number.isFinite(a?._at) ? a._at : Date.now());
 const idOf = (prefix, a) => (a?._op ? `${prefix}${a._op}` : `${prefix}${Date.now()}`);
+
+// 방문 리포트 잠금 (2026-10-18) — 컨시어지가 제출하면 21항목 · 등급 · 내용 · 사진 · 장소를 고칠 수 없다.
+// 관제가 보호자에게 보내기 전에는 '반려'(returnVisit)로 되돌려 다시 고치게 하고, 보낸 뒤에는 증명 기록이라 영원히 잠근다.
+// 돌려주는 값: "sent"(보호자에게 발송됨) | "submitted"(제출 · 관제 검수 중) | null(고칠 수 있음)
+export const visitLock = (visit) => (visit?.ops?.sentAt ? "sent" : visit?.reportSent ? "submitted" : null);
+
+// 다니시던 병원 한 줄의 열쇠 — 예전 항목(id 없음)은 이름 + 등록 시각으로 찾는다
+export const hospitalKey = (h) => h?.id || `${h?.name}@${h?.at}`;
+const cleanHospital = (p) => ({
+  name: String(p?.name || "").trim().slice(0, 60),
+  dept: String(p?.dept || "").trim().slice(0, 60),
+  note: String(p?.note || "").trim().slice(0, 120),
+});
 
 // 녹음 하나의 표식 — 여러 폰이 쓰는 값이라 모양을 거른다 (서버 녹음 vc_… · 데모 녹음 mem:…)
 function cleanClip(c) {
@@ -277,6 +303,7 @@ function reducer(state, action) {
         },
         escort: { ...state.escort, ...obj(p.escort, {}) },
         opsMessages: arr(p.opsMessages, state.opsMessages),
+        opsNotes: arr(p.opsNotes, state.opsNotes),
         ticker: arr(p.ticker, state.ticker),
         events: rebaseSeedEvents(arr(p.events, state.events)),
         reports: arr(p.reports, state.reports),
@@ -296,6 +323,8 @@ function reducer(state, action) {
         reviews: arr(p.reviews, state.reviews),
         orders: arr(p.orders, state.orders),
         myHospitals: arr(p.myHospitals, state.myHospitals),
+        eventsRemoved: arr(p.eventsRemoved, state.eventsRemoved),
+        visitHistory: arr(p.visitHistory, state.visitHistory),
         payments: arr(p.payments, state.payments),
         billing: p.billing ?? state.billing,
         pendingOrder: p.pendingOrder ?? state.pendingOrder,
@@ -310,28 +339,188 @@ function reducer(state, action) {
       return { ...state, onboarding: { ...(state.onboarding || {}), ...action.patch } };
     case "addEvent":
       return { ...state, events: [...state.events, action.payload] };
-    case "updateEvent":
-      // 보호자 권한: 조회·등록·수정 (REQ-02 권한표)
+    // 일정 고치기 — 누가 무엇을 고칠 수 있는지는 lib/event-rights.js (2026-10-18).
+    // 해주세요에 묶인 일정은 해주세요가 다시 만들기 때문에 여기서 바꾸지 않는다. 확정된 일정의 시간 · 종류 · 동행이
+    // 바뀌면 관제가 사람 · 차를 다시 봐야 하므로 '승인 대기'로 돌린다 (전에는 바꿔도 '승인'이 그대로 남았다).
+    case "updateEvent": {
+      const src = action.patch || {};
+      const patch = {};
+      if (typeof src.title === "string" && src.title.trim()) patch.title = src.title.trim().slice(0, 80);
+      if (Number.isFinite(src.at)) patch.at = src.at;
+      if (typeof src.kind === "string" && src.kind) patch.kind = src.kind.slice(0, 20);
+      if (typeof src.escort === "boolean") patch.escort = src.escort;
+      if (typeof src.note === "string") patch.note = src.note.slice(0, 160);
       return {
         ...state,
-        events: state.events.map((e) =>
-          e.id === action.id ? { ...e, ...action.patch } : e
-        ),
+        events: state.events.map((e) => {
+          if (e.id !== action.id || e.reqId || eventLocked(e, nowOf(action))) return e;
+          const moved = e.approval === "approved" && REAPPROVE_KEYS.some((k) => k in patch && patch[k] !== e[k]);
+          return {
+            ...e,
+            ...patch,
+            // 확정 값은 prevApproved 에 남겨 둔다 — 관제가 바뀐 내용을 반려하면 원래 확정 일정으로 돌아간다
+            ...(moved ? { approval: "pending", reapproval: true, prevApproved: { at: e.at, kind: e.kind, escort: e.escort, title: e.title, note: e.note } } : {}),
+            changeRejected: null,
+            editedAt: nowOf(action),
+            editedBy: String(action.by || "").slice(0, 30) || null,
+          };
+        }),
       };
+    }
+    // 일정 지우기 · 취소 — 달력에서 빼고 eventsRemoved 에 남긴다. 'cancel' 은 확정된 일정을 거두는 것(관제에 알린다),
+    // 'delete' 는 승인 전 · 가족 일정 · 반려된 것을 정리하는 것. 해주세요에 묶인 일정은 해주세요 취소로만 빠진다.
+    case "removeEvent": {
+      const e = state.events.find((x) => x.id === action.id);
+      if (!e || e.reqId || eventLocked(e, nowOf(action))) return state;
+      // 확정됐던 일정(재확인 중 포함)은 사람 · 차가 잡혀 있었으니 '취소'로 남긴다 — 관제 지금 처리할 일 · 취소된 일정 목록에 뜬다
+      const mode = action.mode === "cancel" || e.approval === "approved" || e.reapproval ? "cancel" : "delete";
+      const removed = {
+        mode,
+        at: nowOf(action),
+        by: String(action.by || "").slice(0, 30),
+        reason: String(action.reason || "").replace(/\s+/g, " ").trim().slice(0, 120),
+      };
+      return {
+        ...state,
+        events: state.events.filter((x) => x.id !== e.id),
+        eventsRemoved: [{ ...e, removed }, ...(state.eventsRemoved || [])].slice(0, 60),
+      };
+    }
     case "setPriority":
       return { ...state, priority: { ...action.payload, setAt: nowOf(action) } };
     // closesVisit — 컨시어지 '리포트 제출'. 오늘 방문의 리포트를 냈다는 표시(visit.reportSent)도 같이 켠다
     // (오늘 탭 '마무리 필요'가 이 값을 본다. 전에는 켜는 곳이 없어서 리포트를 내도 '마무리 필요'가 남았다).
     case "addReport": {
       const { closesVisit, ...report } = action.payload || {};
+      const v = state.visit || {};
+      // 제출해 검수 중이거나 보호자에게 보낸 방문에는 리포트를 더 얹지 않는다 — 보낸 리포트(증명)가 뒤에 온 것으로 바뀌지 않게.
+      // 고칠 것은 관제 반려 → 다시 제출로 (2026-10-18 리뷰)
+      if (closesVisit && visitLock(v)) return state;
+      // 반려받아 고친 뒤 다시 낸 것이면 관제 검수를 처음부터 (반려 기록은 returns 에 남는다)
+      const again = closesVisit && v.returned ? { returned: null, ops: { ...(v.ops || {}), review: "검수 대기", stepIdx: 3, reviewedAt: null, reviewedTs: null } } : {};
       return {
         ...state,
         reports: [{ ...report, at: nowOf(action) }, ...state.reports],
-        visit: closesVisit ? { ...state.visit, reportSent: true } : state.visit,
+        visit: closesVisit ? { ...v, reportSent: true, ...again } : state.visit,
+      };
+    }
+    // 다음 방문 시작 — 보호자에게 발송한 방문 기록을 visitHistory 로 넘기고(그대로 보관) 새 점검표를 연다.
+    // 보내지 않은 기록은 넘기지 않는다 (제출 · 검수 중인 것은 반려 → 수정 → 재제출 → 발송을 먼저)
+    case "startNextVisit": {
+      const v = state.visit || {};
+      if (!v.ops?.sentAt) return state;
+      const at = nowOf(action);
+      const by = String(action.by || "").slice(0, 30);
+      // 보호자에게 보낸 동행 기록도 이 방문과 함께 보관하고 동행 칸을 비운다 — 다음 동행을 새로 적을 수 있고,
+      // 다음 방문 리포트에 지난 동행 글이 다시 실리지 않게 (리포트 발송 때 저장된 동행은 같이 발송된다 · components/ops/Visits.jsx)
+      const esc = state.escort || {};
+      const escDone = !!esc.sentAt;
+      const rec = { visit: v, report: (state.reports || [])[0] || null, gpsAt: state.visitPlan?.gpsAt || null, closedAt: at, by, ...(escDone ? { escort: esc } : {}) };
+      // 방문 업무흐름도 새 초안으로 — 배차 유형(kind)은 그대로 둔다 (인원 기준을 여기서 바꾸지 않는다 · 단독 배차 0)
+      const ymd = new Date(at + 28 * 86400000 + 9 * 3600000).toISOString().slice(0, 10);
+      const cur = state.visitPlan || SEED_VISIT;
+      const visitPlan = {
+        ...SEED_VISIT,
+        elderName: cur.elderName,
+        district: cur.district,
+        kind: cur.kind,
+        id: `vs-${ymd}`,
+        at: `${ymd} 14:00`,
+        status: "draft",
+        crew: [],
+        vehicle: null,
+        calls: { elder: false, guardian: false },
+        gpsAt: null,
+        recordingAt: null,
+        trail: [{ at, status: "draft", note: "월 정기 안심방문 — 다음 방문", actor: by || "컨시어지" }],
+      };
+      return {
+        ...state,
+        visitHistory: [rec, ...(state.visitHistory || [])].slice(0, 12),
+        visit: { ...DEFAULT.visit, loc: v.loc },
+        visitPlan,
+        ...(escDone ? { escort: { ...DEFAULT.escort } } : {}),
+      };
+    }
+    // 관제 반려 — 보호자에게 보내기 전의 리포트를 컨시어지에게 되돌린다 (사유 필수). 보낸 리포트는 되돌리지 않는다 (증명)
+    case "returnVisit": {
+      const v = state.visit || {};
+      const reason = String(action.reason || "").replace(/\s+/g, " ").trim().slice(0, 160);
+      if (v.ops?.sentAt || !v.reportSent || !reason) return state;
+      const ret = { at: nowOf(action), by: String(action.by || "관제").slice(0, 30), reason };
+      return {
+        ...state,
+        visit: {
+          ...v,
+          reportSent: false,
+          returned: ret,
+          returns: [ret, ...(v.returns || [])].slice(0, 10),
+          ops: { ...(v.ops || {}), review: "반려 — 컨시어지 수정 중", stepIdx: 1, reviewedAt: null, reviewedTs: null },
+        },
       };
     }
     case "addRequest":
       return { ...state, requests: [action.payload, ...state.requests] };
+    // 해주세요 내용 고치기 (2026-10-18) — 승인 전까지만, 낸 사람이 (lib/requests.js canEditRequest).
+    // 종류 · 금액은 서비스 메뉴 값이라 그대로 둔다. 고친 것은 처리 이력에 한 줄로 남는다 (고치기 전 내용은 감사로그에)
+    case "editRequest": {
+      const r = state.requests.find((x) => x.id === action.id);
+      if (!r || !canEditRequest(r)) return state;
+      const p = action.patch || {};
+      const txt = (v, n) => String(v ?? "").replace(/\s+/g, " ").trim().slice(0, n);
+      const hhmm = (v) => (/^\d{2}:\d{2}$/.test(String(v || "")) ? String(v) : null);
+      const next = { ...r };
+      const said = [];
+      if (p.detail != null) {
+        const d = txt(p.detail, 400);
+        if (d && d !== r.detail) {
+          next.detail = d;
+          said.push("내용");
+        }
+      }
+      if (r.dir === "fromConcierge") {
+        // 컨시어지 제안 — 제안 일정 (받는 분이 수락하면 그대로 확정된다)
+        if (p.scheduledDate !== undefined && /^\d{4}-\d{2}-\d{2}$/.test(String(p.scheduledDate || ""))) {
+          const time = hhmm(p.scheduledTime) || r.scheduledTime || "";
+          if (p.scheduledDate !== r.scheduledDate || time !== r.scheduledTime) {
+            next.scheduledDate = p.scheduledDate;
+            next.scheduledTime = time;
+            said.push(`제안 일정 ${p.scheduledDate}${time ? ` ${time}` : ""}`);
+          }
+        }
+      } else {
+        if (p.preferredDate !== undefined) {
+          const d = p.preferredDate ?? null;
+          const ok = d == null || (typeof d === "number" && Number.isFinite(d)) || /^\d{4}-\d{2}-\d{2}$/.test(String(d));
+          const time = p.preferredTime !== undefined ? hhmm(p.preferredTime) : r.preferredTime || null;
+          const when = p.preferredWhen !== undefined ? txt(p.preferredWhen, 40) || null : r.preferredWhen ?? null;
+          if (ok && (d !== (r.preferredDate ?? null) || time !== (r.preferredTime || null) || when !== (r.preferredWhen ?? null))) {
+            next.preferredDate = d;
+            next.preferredTime = time;
+            if (p.preferredWhen !== undefined) next.preferredWhen = when;
+            said.push(`희망 ${fmtPreferred(next)}`);
+          }
+        }
+        if (p.hospital !== undefined) {
+          const h = txt(p.hospital, 60) || null;
+          if (h !== (r.hospital || null)) {
+            next.hospital = h;
+            said.push(h ? `병원 ${h}` : "병원 지움");
+          }
+        }
+        if (URGENCY[p.urgency] && p.urgency !== (r.urgency || "normal")) {
+          next.urgency = p.urgency;
+          said.push(`긴급도 ${URGENCY[p.urgency].label}`);
+        }
+      }
+      if (!said.length) return state;
+      const at = nowOf(action);
+      const by = txt(action.by, 30);
+      next.editedAt = at;
+      next.editedBy = by;
+      next.history = [...(r.history || []), { at, status: r.status, note: `${by || "요청자"} 내용 수정 — ${said.join(" · ")}`, by }];
+      return { ...state, requests: state.requests.map((x) => (x.id === r.id ? next : x)) };
+    }
     case "transitionRequest":
       return {
         ...state,
@@ -479,11 +668,12 @@ function reducer(state, action) {
       };
     // 관제가 담당 컨시어지를 바꾼다 — 보호자 해주세요 카드의 '담당'이 같이 바뀐다 (2026-10-01).
     // 빈 문자열이면 미배정. 상태는 그대로 두고, 바꾼 기록은 관제 화면의 변경 이력에 남는다.
+    // 끝난 요청(완료 · 취소 · 거절)의 담당은 기록이라 바꾸지 않는다 (2026-10-18)
     case "assignRequest":
       return {
         ...state,
         requests: state.requests.map((r) =>
-          r.id === action.id ? { ...r, assignee: String(action.assignee || "") } : r
+          r.id === action.id && !CLOSED_REQ.includes(r.status) ? { ...r, assignee: String(action.assignee || "") } : r
         ),
       };
     // 새 SOS 가 켜지면 지난 SOS 의 급파 · 119 · 수락 표시를 지운다 — 남아 있으면 새 SOS 가 처음부터 '급파 · 수락됨'으로 보인다
@@ -537,19 +727,27 @@ function reducer(state, action) {
         },
       };
     // 21항목 점검 하나 — done 이 아니면 지운다 (컨시어지 화면과 관제 방문관리가 같이 본다)
+    // 아래 visit* 다섯 가지는 리포트를 제출한 뒤에는 받지 않는다 (visitLock — 증명 기록)
     case "visitCheck": {
+      if (visitLock(state.visit)) return state;
       const checks = { ...(state.visit.checks || {}) };
+      const grades = { ...(state.visit.grades || {}) };
       if (action.done) checks[action.key] = { at: nowOf(action) };
-      else delete checks[action.key];
-      return { ...state, visit: { ...state.visit, checks } };
+      else {
+        delete checks[action.key];
+        delete grades[action.key]; // 점검을 끄면 그 항목 상태(양호 · 관찰 · 주의)도 함께 — 보지 않은 항목에 상태가 남지 않게
+      }
+      return { ...state, visit: { ...state.visit, checks, grades } };
     }
     // 항목 메모(key) 또는 총평(key 없음) — 입력을 마칠 때 한 번 보낸다
     case "visitNote":
+      if (visitLock(state.visit)) return state;
       return action.key
         ? { ...state, visit: { ...state.visit, notes: { ...(state.visit.notes || {}), [action.key]: String(action.text || "") } } }
         : { ...state, visit: { ...state.visit, memo: String(action.text || "") } };
     // 항목 상태 — 컨시어지가 직접 고른다. 상태를 고르면 그 항목은 본 것이므로 점검도 같이 켠다. 빈 값이면 지운다.
     case "visitGrade": {
+      if (visitLock(state.visit)) return state;
       const grades = { ...(state.visit.grades || {}) };
       const checks = { ...(state.visit.checks || {}) };
       if (action.grade) {
@@ -558,10 +756,13 @@ function reducer(state, action) {
       } else delete grades[action.key];
       return { ...state, visit: { ...state.visit, grades, checks } };
     }
+    // 사진 — 한 장 더 / 한 장 빼기(remove). 제출 전까지만
     case "visitPhoto":
-      return { ...state, visit: { ...state.visit, photos: (state.visit.photos || 0) + 1 } };
+      if (visitLock(state.visit)) return state;
+      return { ...state, visit: { ...state.visit, photos: Math.max(0, (state.visit.photos || 0) + (action.remove ? -1 : 1)) } };
     // 거주 형태(자택 · 요양병원) — 컨시어지 점검표와 관제 방문관리 · 보호자 리포트가 같은 21항목을 쓰게 가구 기록에 둔다
     case "visitLoc":
+      if (visitLock(state.visit)) return state;
       return action.loc === "home" || action.loc === "hospital" ? { ...state, visit: { ...state.visit, loc: action.loc } } : state;
     // 동행 기록 — 저장 한 번 (보낸 뒤에는 고치지 않는다 — 보호자가 본 것과 기록이 달라지면 안 된다)
     case "escortSave": {
@@ -589,10 +790,17 @@ function reducer(state, action) {
     case "visitOps":
       return { ...state, visit: { ...state.visit, ops: { ...(state.visit.ops || {}), ...(action.patch || {}) } } };
     // 보호자가 안심방문 리포트를 열었다 — 관제 방문관리에 '열람 완료' (한 번만)
+    // 이번 방문을 아직 안 보냈으면(다음 방문을 시작한 뒤) 보호자가 보는 것은 보관된 지난 리포트다 — 그쪽에 찍는다 (2026-10-18 리뷰)
     case "visitViewed": {
-      const ops = state.visit.ops || {};
-      if (ops.viewed === "열람 완료") return state;
-      return { ...state, visit: { ...state.visit, ops: { ...ops, viewed: "열람 완료", viewedTs: nowOf(action) } } };
+      const ops = state.visit?.ops || {};
+      if (ops.sentAt) {
+        if (ops.viewed === "열람 완료") return state;
+        return { ...state, visit: { ...state.visit, ops: { ...ops, viewed: "열람 완료", viewedTs: nowOf(action) } } };
+      }
+      const h = (state.visitHistory || [])[0];
+      const hops = h?.visit?.ops;
+      if (!hops?.sentAt || hops.viewed === "열람 완료") return state;
+      return { ...state, visitHistory: [{ ...h, visit: { ...h.visit, ops: { ...hops, viewed: "열람 완료", viewedTs: nowOf(action) } } }, ...state.visitHistory.slice(1)] };
     }
     case "addOpsMessage":
       return {
@@ -628,15 +836,29 @@ function reducer(state, action) {
       return { ...state, visitPlan: { ...state.visitPlan, ...action.patch } };
     // 보호자 · 어르신 일정등록 '요청' 승인 — 관제만 할 수 있다 (2026-08-12 시트 예약 1번).
     // approval 이 "pending" 인 동안에는 컨시어지 캘린더에 뜨지 않는다 (누가 무엇을 보나: eventsFor).
-    case "decideEvent":
+    case "decideEvent": {
+      const reason = String(action.reason || "").replace(/\s+/g, " ").trim().slice(0, 120);
       return {
         ...state,
-        events: state.events.map((e) =>
-          e.id === action.id
-            ? { ...e, approval: action.approval, source: action.approval === "approved" ? "관제 승인" : "관제 반려", note: action.note ?? e.note }
-            : e
-        ),
+        events: state.events.map((e) => {
+          if (e.id !== action.id) return e;
+          // 확정 뒤 고친 것을 반려 — 일정을 없애지 않고 원래 확정 값으로 돌린다 (사유는 등록한 쪽 달력에 · 2026-10-18 리뷰)
+          if (action.approval === "rejected" && e.reapproval && e.prevApproved) {
+            return { ...e, ...e.prevApproved, approval: "approved", source: "관제 승인", reapproval: false, prevApproved: null, changeRejected: { at: nowOf(action), reason } };
+          }
+          return {
+            ...e,
+            approval: action.approval,
+            source: action.approval === "approved" ? "관제 승인" : "관제 반려",
+            note: action.note ?? e.note,
+            reapproval: false,
+            prevApproved: null,
+            // 반려 사유 — 등록한 쪽이 달력에서 본다 (2026-10-18 · 전에는 '사유는 해주세요로'라 해 놓고 받지 않았다)
+            ...(action.approval === "rejected" ? { rejectReason: reason } : {}),
+          };
+        }),
       };
+    }
     // 결제 승인이 끝난 건만 들어온다 (pages/pay/result.jsx). 같은 주문번호는 한 번만 쌓는다 —
     // 결과 화면을 새로고침해도 내역이 겹치지 않게.
     case "addPayment": {
@@ -694,6 +916,14 @@ function reducer(state, action) {
       const clip = cleanClip(p.clip);
       return { ...state, voices: [{ id: idOf("vo", action), at: nowOf(action), ...p, ...(p.clip ? { clip } : {}) }, ...state.voices].slice(0, 30) };
     }
+    // 보낸 음성 거두기 (2026-10-18) — 받는 분이 아직 듣지 않은 것만, 보낸 사람이. 가구 기록에서 빠져 받는 화면에서도 사라진다.
+    // 녹음 파일 자체는 서버 voice_clips 표에 30일 보관 뒤 지워진다 (바로 지우는 서버 API 는 다음 단계 — docs 결정 기록)
+    case "unsendVoice": {
+      const v = (state.voices || []).find((x) => x.id === action.id);
+      if (!v || state.elder?.msgPlayed?.[v.id] || state.guardian?.voiceHeard?.[v.id]) return state;
+      if (action.from && v.from !== action.from) return state;
+      return { ...state, voices: state.voices.filter((x) => x.id !== v.id) };
+    }
     // ── 오늘 여쭤볼 것 (2026-10-14) — 어르신이 말로 남긴 질문. 다시 말하기 · 해결 · 지우기 ──
     case "askDoctorAdd": {
       const p = action.payload || {};
@@ -728,11 +958,36 @@ function reducer(state, action) {
     case "askDoctorRemove":
       return { ...state, askDoctor: (state.askDoctor || []).filter((q) => q.id !== action.id) };
     // 말로 남기신 부탁의 글 요약 — 담당 컨시어지가 듣고 적는다. 어르신 '부탁해 둔 것' · 보호자 · 관제가 이 한 줄을 본다 (2026-10-14)
+    // ── 관제 상담 · 관제 메모 (2026-10-18) — 관제가 남기고 고치고 지운다. 고친 글의 이전 내용은 prev 에, 지운 글은 감사로그에 ──
+    case "addOpsNote": {
+      const text = String(action.payload?.text || "").replace(/\s+/g, " ").trim().slice(0, 300);
+      if (!text) return state;
+      const note = { id: idOf("on", action), at: nowOf(action), who: String(action.payload?.who || "관제").slice(0, 40), text };
+      return { ...state, opsNotes: [note, ...(state.opsNotes || [])].slice(0, 100) };
+    }
+    case "editOpsNote": {
+      const text = String(action.text || "").replace(/\s+/g, " ").trim().slice(0, 300);
+      if (!text) return state;
+      const at = nowOf(action);
+      return {
+        ...state,
+        opsNotes: (state.opsNotes || []).map((n) =>
+          n.id === action.id && n.text !== text
+            ? { ...n, text, editedAt: at, editedBy: String(action.by || "").slice(0, 40), prev: [{ text: n.text, at: n.editedAt || n.at }, ...(n.prev || [])].slice(0, 5) }
+            : n
+        ),
+      };
+    }
+    case "removeOpsNote":
+      return { ...state, opsNotes: (state.opsNotes || []).filter((n) => n.id !== action.id) };
+    // 끝난 요청의 요약은 처리 기록이라 그대로 둔다 (2026-10-18)
     case "requestSummary": {
       const text = String(action.text || "").replace(/\s+/g, " ").trim().slice(0, 120);
       return {
         ...state,
-        requests: state.requests.map((r) => (r.id === action.id ? { ...r, summary: text ? { text, by: String(action.by || "").slice(0, 30), at: nowOf(action) } : null } : r)),
+        requests: state.requests.map((r) =>
+          r.id === action.id && !CLOSED_REQ.includes(r.status) ? { ...r, summary: text ? { text, by: String(action.by || "").slice(0, 30), at: nowOf(action) } : null } : r
+        ),
       };
     }
     // 관제가 새 해주세요를 봤다 — 승인은 담당 컨시어지가 하고, 관제는 확인만 한다 (2026-10-14 현장 '기본 로직' 5번)
@@ -743,10 +998,62 @@ function reducer(state, action) {
       };
     case "addReview":
       return { ...state, reviews: [{ id: idOf("rv", action), at: nowOf(action), ...action.payload }, ...state.reviews] };
+    // 동행 후기 고치기 · 지우기 (2026-10-18) — 쓴 사람의 의견이라 증명 기록이 아니다. 고치면 이전 글은 prev 에, 지우면 감사로그에 글이 남는다
+    case "editReview": {
+      const text = String(action.text || "").replace(/\s+/g, " ").trim().slice(0, 500);
+      if (!text) return state;
+      return {
+        ...state,
+        reviews: state.reviews.map((r) =>
+          r.id === action.id && r.text !== text ? { ...r, text, editedAt: nowOf(action), prev: [{ text: r.text, at: r.editedAt || r.at }, ...(r.prev || [])].slice(0, 5) } : r
+        ),
+      };
+    }
+    case "removeReview":
+      return { ...state, reviews: state.reviews.filter((r) => r.id !== action.id) };
+    // 지난 동행 점수 (2026-10-18) — 화면에만 있어서 새로고침하면 다시 물었다. 보호자가 고칠 수 있고 이전 점수는 prev 에 남는다.
+    // forSentAt — 어느 동행 리포트에 매긴 점수인지 (새 동행 리포트가 오면 다시 묻는다)
+    case "rateEscort": {
+      const score = Math.round(Number(action.score));
+      if (!Number.isFinite(score) || score < 0 || score > 10) return state;
+      const old = state.escort?.rating;
+      const rating = {
+        score,
+        reason: score <= 6 ? String(action.reason || "").slice(0, 40) || null : null,
+        at: nowOf(action),
+        by: String(action.by || "보호자").slice(0, 30),
+        forSentAt: state.escort?.sentAt || null,
+        prev: old && old.forSentAt === (state.escort?.sentAt || null) ? [{ score: old.score, reason: old.reason, at: old.at }, ...(old.prev || [])].slice(0, 5) : [],
+      };
+      return { ...state, escort: { ...(state.escort || {}), rating } };
+    }
+    // 동의 철회 · 다시 동의 (2026-10-18 · lib/lifecycle.js CONSENT_WITHDRAW) — 접수 즉시 효력. 파기 여부는 따로 고른다 (철회 ≠ 자동 파기).
+    // 방문 영상 동의는 가입 상담의 videoConsent 와 같은 값이라 같이 바꾼다 (컨시어지 바디캠 화면이 그 값을 본다)
+    case "setConsent": {
+      const k = String(action.k || "").slice(0, 60);
+      if (!k) return state;
+      const at = nowOf(action);
+      const by = String(action.by || "보호자").slice(0, 30);
+      const rec = action.on ? { on: true, at, by } : { on: false, at, by, purge: action.purge === "delete" ? "delete" : "keep" };
+      const video = /^방문기록 영상/.test(k) && state.onboarding ? { onboarding: { ...state.onboarding, videoConsent: !!action.on } } : {};
+      return { ...state, ...video, guardian: { ...state.guardian, consents: { ...(state.guardian?.consents || {}), [k]: rec } } };
+    }
     case "addOrder":
       return { ...state, orders: [{ id: idOf("od", action), at: nowOf(action), ...action.payload }, ...state.orders] };
-    case "addMyHospital":
-      return { ...state, myHospitals: [...state.myHospitals, action.payload] };
+    case "addMyHospital": {
+      const p = cleanHospital(action.payload);
+      if (!p.name) return state;
+      return { ...state, myHospitals: [...state.myHospitals, { id: idOf("mh", action), at: action.payload?.at || nowOf(action), ...p }] };
+    }
+    // 다니시던 병원 고치기 · 지우기 (2026-10-18) — 보호자가 적어 둔 메모라 증명 기록이 아니다.
+    // 이미 잡힌 일정 · 해주세요는 병원 이름을 글로 갖고 있어서 여기서 지워도 그대로 남는다.
+    case "editMyHospital": {
+      const p = cleanHospital(action.patch);
+      if (!p.name) return state;
+      return { ...state, myHospitals: state.myHospitals.map((h) => (hospitalKey(h) === action.key ? { ...h, id: h.id || idOf("mh", action), ...p, editedAt: nowOf(action) } : h)) };
+    }
+    case "removeMyHospital":
+      return { ...state, myHospitals: state.myHospitals.filter((h) => hospitalKey(h) !== action.key) };
     // 복지혜택 진행상태 — 관제·보호자·컨시어지 누가 바꿔도 같은 값 (lib/welfare.js WELFARE_STATUS)
     case "welfareStatus":
       return {
@@ -756,9 +1063,13 @@ function reducer(state, action) {
           status: { ...state.welfare.status, [action.id]: { status: action.status, at: nowOf(action), by: action.by || "" } },
         },
       };
-    // 보호자가 미확인 항목에 답한다 — 답이 바뀌면 자동판정이 바뀐다
-    case "welfareAnswer":
-      return { ...state, welfare: { ...state.welfare, answers: { ...state.welfare.answers, [action.key]: action.value } } };
+    // 보호자가 미확인 항목에 답한다 — 답이 바뀌면 자동판정이 바뀐다. 값이 없으면(모름) 답을 지워 다시 미확인으로 (2026-10-18)
+    case "welfareAnswer": {
+      const answers = { ...state.welfare.answers };
+      if (action.value == null || action.value === "") delete answers[action.key];
+      else answers[action.key] = action.value;
+      return { ...state, welfare: { ...state.welfare, answers } };
+    }
     case "guardianPatch":
       return { ...state, guardian: { ...state.guardian, ...action.patch } };
     case "setProductImage": {

@@ -24,6 +24,7 @@ import {
   STATUS,
   URGENCY,
   approverOf,
+  canEditRequest,
   fmtPreferred,
   fmtScheduled,
   isStoreOrder,
@@ -133,6 +134,12 @@ function ApproveRow({ r, me, requests, payments, dispatch, push }) {
   const [amount, setAmount] = useState("");
   const [declining, setDeclining] = useState(false);
   const [reason, setReason] = useState("");
+  // 요청한 분이 희망 일시를 고치면(승인 전) 승인 칸의 기본값도 새 희망으로 (2026-10-18)
+  useEffect(() => {
+    if (!r.editedAt) return;
+    setDate(preferredYmd(r) || tomorrow);
+    setTime(r.preferredTime || "10:00");
+  }, [r.editedAt]); // eslint-disable-line react-hooks/exhaustive-deps
   const day = useMemo(() => scheduleOn(date, me, requests, r.id), [date, me, requests, r.id]);
   const clash = day.some((d) => d.t && time && d.t.slice(0, 2) === time.slice(0, 2));
   const past = date < kstYmd(Date.now());
@@ -152,6 +159,11 @@ function ApproveRow({ r, me, requests, payments, dispatch, push }) {
       </div>
       <div className="mt-1.5 text-[14px] font-bold text-navy">{r.type}</div>
       {r.detail && <div className="mt-0.5 text-[12px] leading-[1.6] text-muted">{r.detail}</div>}
+      {r.editedAt && (
+        <div className="mt-1 rounded-lg bg-amber/10 px-2.5 py-1.5 text-[11.5px] font-bold text-amber">
+          {r.editedBy || who} {hm(r.editedAt)} 내용 수정 — 지금 보이는 내용이 최신입니다
+        </div>
+      )}
       {r.voice && <VoiceAsk r={r} me={me} dispatch={dispatch} push={push} />}
       <div className="mt-1 text-[12px] text-ink">
         희망 <b>{fmtPreferred(r)}</b>
@@ -259,6 +271,108 @@ function ApproveRow({ r, me, requests, payments, dispatch, push }) {
   );
 }
 
+// 보낸 제안 — 받는 분이 수락하기 전까지 내용 · 제안 일정을 고치거나 철회한다 (2026-10-18).
+// 수락 · 결제 뒤에는 기록이라 고치지 않는다 (lib/requests.js canEditRequest)
+function SentRow({ r, me, dispatch, push }) {
+  const [mode, setMode] = useState(null); // null | "edit" | "withdraw"
+  const [detail, setDetail] = useState(r.detail || "");
+  const [date, setDate] = useState(r.scheduledDate || "");
+  const [time, setTime] = useState(r.scheduledTime || "14:00");
+  const to = APPROVER_LABEL[approverOf(r)];
+  const begin = () => {
+    setDetail(r.detail || "");
+    setDate(r.scheduledDate || "");
+    setTime(r.scheduledTime || "14:00");
+    setMode("edit");
+  };
+  const patch = {};
+  if (detail.trim() && detail.trim() !== String(r.detail || "").trim()) patch.detail = detail.trim();
+  if (date && (date !== r.scheduledDate || time !== (r.scheduledTime || ""))) {
+    patch.scheduledDate = date;
+    patch.scheduledTime = time;
+  }
+  const past = !!date && date < kstYmd(Date.now());
+  const ok = Object.keys(patch).length > 0 && !past && canEditRequest(r);
+  const input = "mt-1 w-full rounded-lg border border-navy/15 bg-white px-2.5 py-2 text-[13px] text-ink outline-none focus:border-gold";
+  return (
+    <div className="rounded-lg bg-navy/[.04] px-3 py-2 text-[12.5px] text-ink">
+      <div className="flex items-center gap-2">
+        <span className="min-w-0 flex-1">
+          <b>{r.type}</b> · {to} 수락 대기{fmtScheduled(r) ? ` · ${fmtScheduled(r)}` : ""}
+          {r.editedAt ? <span className="text-muted"> · {hm(r.editedAt)} 고침</span> : null}
+        </span>
+        {!mode && (
+          <>
+            <button type="button" onClick={begin} aria-label={`${r.type} 제안 고치기`} className="btn-press shrink-0 rounded-lg border border-navy/15 px-2.5 py-1.5 text-[12px] font-bold text-navy">
+              고치기
+            </button>
+            <button type="button" onClick={() => setMode("withdraw")} aria-label={`${r.type} 제안 철회`} className="btn-press shrink-0 rounded-lg border border-navy/15 px-2.5 py-1.5 text-[12px] font-bold text-muted">
+              철회
+            </button>
+          </>
+        )}
+      </div>
+      {mode === "edit" && (
+        <div className="mt-2 space-y-2">
+          <label className="block text-[11px] font-bold text-muted">
+            제안 내용
+            <textarea value={detail} onChange={(e) => setDetail(e.target.value)} rows={2} maxLength={400} className={`${input} resize-none leading-[1.5]`} />
+          </label>
+          <div className="grid grid-cols-2 gap-2">
+            <label className="block text-[11px] font-bold text-muted">
+              제안 날짜
+              <input type="date" value={date} min={kstYmd(Date.now())} onChange={(e) => setDate(e.target.value)} className={input} />
+            </label>
+            <label className="block text-[11px] font-bold text-muted">
+              시간
+              <input type="time" value={time} onChange={(e) => setTime(e.target.value)} className={input} />
+            </label>
+          </div>
+          <p className="text-[11px] leading-[1.5] text-muted">종류 · 금액은 그대로입니다 — 바꾸려면 철회하고 새로 제안합니다. 고친 내용은 {to} 화면에 바로 보이고 처리 이력에 남습니다.</p>
+          <div className="flex gap-2">
+            <button type="button" onClick={() => setMode(null)} className="btn-press flex-1 rounded-xl border border-navy/15 py-2 text-[12.5px] font-bold text-muted">
+              그만두기
+            </button>
+            <button
+              type="button"
+              disabled={!ok}
+              onClick={() => {
+                dispatch({ type: "editRequest", id: r.id, patch, by: me, title: r.type });
+                push("해주세요", `${me} 제안 수정 — ${r.type}${patch.scheduledDate ? ` · ${patch.scheduledDate} ${patch.scheduledTime}` : ""}`, "#8FA9CC");
+                setMode(null);
+              }}
+              className="btn-press flex-[2] rounded-xl bg-navy py-2 text-[12.5px] font-bold text-white disabled:opacity-40"
+            >
+              고친 제안 저장
+            </button>
+          </div>
+        </div>
+      )}
+      {mode === "withdraw" && (
+        <div className="mt-2 space-y-2">
+          <p className="text-[12px] leading-[1.5]">이 제안을 철회할까요? {to} 화면에서 &lsquo;취소&rsquo;로 바뀝니다.</p>
+          <div className="flex gap-2">
+            <button type="button" onClick={() => setMode(null)} className="btn-press flex-1 rounded-xl border border-navy/15 py-2 text-[12.5px] font-bold text-muted">
+              그대로 두기
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                dispatch({ type: "cancelRequest", id: r.id, by: me, reason: "제안 철회" });
+                push("해주세요", `${me} 제안 철회 — ${r.type}`, "#8FA9CC");
+                setMode(null);
+              }}
+              className="btn-press flex-[2] rounded-xl bg-navy py-2 text-[12.5px] font-bold text-white"
+            >
+              제안 철회
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function ConciergeRequests({ requests, payments, me, dispatch, push }) {
   // 베타에서 앱을 쓰는 컨시어지는 한 사람(테스트 컨시어지 계정)이라, 관제가 다른 컨시어지로 바꾼 건도 여기서 받는다
   // (안 그러면 아무 큐에도 없어 승인 대기로 멈춘다 — 2026-10-05 리뷰). 담당이 다르면 카드에 이름을 단다.
@@ -347,20 +461,7 @@ export default function ConciergeRequests({ requests, payments, me, dispatch, pu
         <div className="mt-3 space-y-1.5">
           <div className="text-[12px] font-bold text-navy">보낸 제안 — 수락 대기</div>
           {sent.map((r) => (
-            <div key={r.id} className="flex items-center gap-2 rounded-lg bg-navy/[.04] px-3 py-2 text-[12.5px] text-ink">
-              <span className="min-w-0 flex-1">
-                <b>{r.type}</b> · {APPROVER_LABEL[approverOf(r)]} 수락 대기{fmtScheduled(r) ? ` · ${fmtScheduled(r)}` : ""}
-              </span>
-              <button
-                onClick={() => {
-                  dispatch({ type: "cancelRequest", id: r.id, by: me, reason: "제안 철회" });
-                  push("해주세요", `${me} 제안 철회 — ${r.type}`, "#8FA9CC");
-                }}
-                className="btn-press shrink-0 rounded-lg border border-navy/15 px-2.5 py-1.5 text-[12px] font-bold text-muted"
-              >
-                철회
-              </button>
-            </div>
+            <SentRow key={r.id} r={r} me={me} dispatch={dispatch} push={push} />
           ))}
         </div>
       )}
