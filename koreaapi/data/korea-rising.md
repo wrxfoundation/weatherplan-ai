@@ -1,14 +1,14 @@
-# Korea Rising — verified K-pop snapshot (2026-10-17)
+# Korea Rising — verified K-pop snapshot (2026-10-18)
 
 Every line is **cross-verified** (≥2 independent sources agree on the canonical name) and carries its source + Skill Score. Full data + Schema.org JSON-LD: <https://aiagentlabs.co.kr/> · via KoreaAPI (MCP).
 
 ## 🎬 Latest official releases (YouTube)
 - **BoA** — You still our No.1 BoA
-- **PLAVE** — Plave - PLAYER 4 LIFEEE
-- **QWER** — 이번 소년만화는 도라도님과 함께 달려나가 🏃🏃🏃🏃 #QWER #소년만화 #그윈도라도 #GwynDorado
-- **Xdinary Heroes** — Obsessed with #GlenCheck #김준원❤️‍🔥
+- **QWER** — [3주년 특집] 친해지길 바래..
+- **Xdinary Heroes** — Obsessed with #지웅 #P1Harmony❤️‍🔥
 - **tripleS** — Lah, Honda CRF150L Punya 2 Filter Oli?! Jangan Sampai Lu Lupa Bersihin! 😱
-- **NCT Dream** — ⤜♡재민이 시구 차원이 달라병도 걸림♡⤞ | 재민 키움 히어로즈 시구 비하인드
+- **NCT Dream** — ˚*⊹ 내년에도 불러주신다면 달려오도록 하겠습니다 ⊹*˚ | 2026 대학 축제 Behind
+- **AKMU** — 2026 AKMU CONCERT TOUR [소문의 낙원 (Paradise of Rumors)] HIGHLIGHT
 
 ## 🎤 Verified roster (640 acts)
 - **2NE1**: I Am the Best
