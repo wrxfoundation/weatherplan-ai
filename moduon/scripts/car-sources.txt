@@ -1,0 +1,11 @@
+# 제휴사 차량 목록 페이지 URL — 한 줄에 하나. #으로 시작하면 주석.
+# scripts/map-car-images.mjs 와 GitHub Actions 자동 갱신이 이 목록을 읽는다.
+#
+# 제조사별 목록 페이지 주소를 여기에 채우면 매핑이 자동으로 유지된다.
+# 비워 두면 자동 갱신은 아무것도 하지 않는다(현재 매핑을 그대로 쓴다).
+#
+# 예시:
+# https://autoclass.co.kr/…현대 목록
+# https://autoclass.co.kr/…기아 목록
+# https://autoclass.co.kr/…제네시스 목록
+# https://autoclass.co.kr/…수입차 목록
