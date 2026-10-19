@@ -4837,6 +4837,9 @@ Thanks Clyde, good to have you on it. HK is just an hour behind Seoul, so timing
 
 **회사(자기소개 · 검색 요약 — 원문 대조 전)**: 인도 어필리에이트 네트워크 · 인도 · 싱가포르 · UAE · 영국 · 미국 거점 · 「어필리에이트 10만+」 ·
 Adways VC India 100% 자회사(일본 상장사 Adways Inc. 합작) · 인터뷰에서 신규 업종으로 「크립토」 언급 · 어필리에이트 지급에 크립토 옵션 · 30일 주기.
+**규모(10/19 서우 「vcommission 규모」 — 자체 주장 · 3자 추정, 대외 인용 금지)**: 2007 VC Internet Media 설립 · 2008 vCommission 출범(공동창업 Tarang Bhargava · Parul Bhargava) · 2013 Adways 13.8% 인수(단계별 66% 옵션) → 지금은 Adways VC India(Adways 합작) 100% 자회사 ·
+직원 51~500 (자료마다 다름, Built In 257) · 매출 3자 추정 약 3,900만 달러(Prospeo, 공시 아님) · FY2021-22 ₹33.95 Cr 조각(RegisterKaro, 항목 불명) · 어필리에이트 10만+(2013 1.1만 → 자체) · 캠페인 1,000+ · 광고주 예 Myntra · Ajio · Flipkart · Cleartrip · GoDaddy · Fiverr(자체 블로그) ·
+「월 전환 7.5만 · GMV ₹14 Cr · 검증률 70%+」(자체 사례 글 — 어떤 캠페인 기준인지 불명). **판단: 인도 중견 네트워크(Admitad · Awin 급 아님), 인도 이커머스 · 앱 · 금융 중심.** 정확한 매출은 MCA AOC-4 공시로만 확인 가능.
 크립토 광고주 정책 문서는 못 찾음 → 첫 통화에서 확인. 출처: vcommission.com FAQ · 광고주 글(https://www.vcommission.com/faq/ ·
 https://www.vcommission.com/advertiser/expanding-to-new-markets-know-how-vcommission-can-help-you-launch-in-india/) · affilitizer 디렉터리.
 
