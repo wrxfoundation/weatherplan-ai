@@ -2399,3 +2399,4 @@ Thanks Odelia — writing to you at that address today. Mine is support@wellbian
 - **vCommission — 메일 발송 예고(10/19, 서우 「우선 메일 보낸다 하자」)** — 링크드인 답 갱신(오늘 메일 · 랜딩 · 덱은 뒤따름 · 메일 주소 요청 · 회수 기간 문장 철회). 메일 최종본은 주소 받은 뒤 서우 발송.
 - **vCommission 메일 수정(10/19, 서우 「랜딩 · 덱은 당장 주지 말고 사이트 보라 하자」)** — 랜딩 = wellbian.io · 덱 = 당분간 wellbian.io(사이트에 없는 건 답하겠다). 나머지 그대로. 랜딩 · 덱 제작 약속 문장 삭제.
 - **vCommission 규모 조사(10/19, 서우)** — 2008 출범 · Adways 계열 · 직원 51~500(자료별) · 매출 3자 추정 약 3,900만 달러 · 어필리에이트 10만+ · 캠페인 1,000+ · 대형 인도 이커머스 광고주. 판단: 인도 중견 네트워크. business-directions vCommission 절.
+- **어필리에이트 컨택 리스트 xlsx(10/19, 서우 「컨택리스트 엑셀로」)** — `content/affiliate-contacts-1019.xlsx`(빌더 `tools/build-affiliate-contacts-xlsx.py` · 수식 27 · 오류 0): 네트워크 14(진행 중 vCommission 1 · 미접촉 12 · 보류 1) · 사람 4(Disha 진행 중 · Rakshit · Himanshi 1촌 대기 · Hamza 보류) · 우리 준비 12(완료 2 · 미정 5 · 확인 중 4 · 보류 1) · 참고 요율 · 요약. 연락처 미기재.

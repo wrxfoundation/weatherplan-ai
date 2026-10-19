@@ -59,3 +59,9 @@
 `python3 depin/tools/build-industry-table-docx.py "reports/업종별 측정기 영업 핵심 메시지 — 100개 업종.md" "reports/업종별 측정기 영업 핵심 메시지 — 100개 업종 표.docx" --seo --title "업종별 측정기 영업 핵심 메시지 — 100개 업종 표"`
 md 의 `## 그룹 (n)` 숫자와 실제 줄 수가 다르면 멈춘다.
 md 의 업종 표 6개(30행)만 읽어 가로 A4 한 표로(분류 줄 · 머리글 반복 · 고정 열 너비). 정본은 md — 업종 문구는 md 에서 고친다.
+
+## build-affiliate-contacts-xlsx.py — 어필리에이트 컨택 리스트 xlsx (10/19)
+
+`python3 depin/tools/build-affiliate-contacts-xlsx.py depin/content/affiliate-contacts-1019.xlsx` 뒤 recalc(요약 시트 COUNTIF).
+시트 다섯: 네트워크 14 · 사람 4 · 우리 준비 12 · 참고 요율 · 요약(상태별 개수). 상태 칸은 목록 선택 · 가로 A4 한 장 폭.
+정본은 `intel/business-directions.md` 어필리에이트 절들 — 행을 바꾸면 거기도 같이. 메일 · 전화 · 프로필 주소는 넣지 않는다.
