@@ -4693,6 +4693,15 @@ Thanks Clyde, good to have you on it. HK is just an hour behind Seoul, so timing
   **서우가 채울 것**: ① 영문 상품 랜딩 URL ② 배송 국가 ③ 현재 판매가 ④ 구글/메타 유료 광고를 정말 안 하는지 ⑤ 네트워크 요율 — 「순매출 최대 20% CPS」 그대로 줄지(네트워크는 보통 이 안에서 퍼블리셔 몫을 떼 간다) ·
   할인 코드를 열지 ⑥ 서버 간 포스트백(S2S) 가능 여부(개발) ⑦ 쿠키 기간 · 검증(환불) 기간 ⑧ 네트워크에 낼 통화 — 네트워크 정산은 보통 법정화폐 인보이스라 RLUSD 만으로는 안 될 수 있음 ⑨ 영문 제품 덱(없음 — 대외 덱 새로 필요, 9/27 슬라이드는 파트너 이름이 있어 대외비).
   **Rakshit(Director) 경로**: 1촌 요청은 두되 「통화 요청」 후속은 보류 — 같은 회사에 두 창구를 동시에 열지 않는다. 수락하면 「Disha 를 통해 광고주 팀과 이야기 중」 한 줄만.
+- **10/19 서우 「광고주에게 커미션 형태로만인지 · 링크프라이스 스타일 레퍼럴 코드인지」 확인** — vCommission 광고주 안내 글(자체 블로그 · FAQ) 기준:
+  · **성과형만 맞다**: 「판매가 일어날 때만 낸다」 · 보통 CPS(확정 주문당 % 또는 정액), 리드면 CPL · CPA(온보딩 글은 CPI · CPR · CPT 도 나열) · 요율은 광고주가 정함 · 행사 보너스 가능 · **광고주 가입 · 셋업 비용 없음**(FAQ).
+  · **구조는 링크프라이스와 같은 「추적 링크 + 실적 전송」형이다, 「레퍼럴 코드」형이 아니다**: 퍼블리셔 링크에 클릭 ID 가 붙고(링크프라이스 LPINFO 쿠키와 같은 역할) → 결제 확정 시 **우리 서버가 포스트백(S2S)으로 주문번호 · 금액 · 시각을 보냄**(링크프라이스의 실적 전송) 또는 픽셀 ·
+    쿠키 기간 보통 14~30일(광고주 선택) · 반품 · 취소 검증 기간도 광고주가 정함 · 승인분을 월 인보이스로 청구 → 우리가 내면 네트워크가 퍼블리셔에게 지급 · 통화 기본값 INR(변경 가능).
+    쿠폰 코드는 「홍보 자산 · 전용 쿠폰」으로만 언급 — 코드로 실적을 잡는지는 안 적혀 있음.
+  · **우리 쪽에 걸리는 것**: 지금 장치는 「파트너별 전용 결제 URL」(사람 단위 귀속)이라 수천 명 퍼블리셔를 받으려면 **클릭 ID 를 결제까지 들고 가서 포스트백을 쏘는 개발**이 필요하다 · 20% 중 구매자 할인 몫은 쿠폰 코드가 있어야 나눌 수 있다.
+  · **안 적혀 있는 것(메일에서 묻는다)**: 네트워크 수수료가 우리가 정한 요율 안인지 별도인지 · 최소 예산 · 선입금 · 청구 통화 · 지급 조건 · 쿠폰 코드 귀속 · 크립토 연관 제한 업종. 질문 다섯(506자)을 메일 끝에 붙인다.
+  출처: https://www.vcommission.com/blog/advertiser/top-20-advertiser-faqs-in-affiliate-marketing/ · https://www.vcommission.com/blog/advertiser/simplified-advertiser-onboarding-vcommissions-step-by-step-process/ ·
+  https://www.vcommission.com/blog/affiliate-marketing/how-to-set-up-server-to-server-s2s-postbacks-on-vcommission/ · https://www.vcommission.com/faq/ · 링크프라이스 광고주 셋업(https://github.com/linkprice/MerchantSetup/blob/master/CPS/README.md).
 
 ## Juyoung Lee (Altos Ventures 투자팀 · 새 1촌) — 판정 · 인사 (2026-10-17, 서우 프로필 캡처 3장)
 
