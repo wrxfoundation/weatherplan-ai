@@ -4900,3 +4900,11 @@ Logan
 A8.net(https://www.a8.net/en/whya8/) · ValueCommerce 보도자료(https://valuecommerce.co.jp/en/news/c_press/2058) · Optimise Media(https://optimisemedia.com/blog/best-affiliate-marketing-platforms-in-malaysia/ · https://optimisemedia.com/blog/vietnam-and-philippines-office-launch/) ·
 Ecomobi × Lazada(https://ecomobi.com/ecomobi-x-lazada-affiliate-from-ground-zero-to-a-regional-force-in-southeast-asias-affiliate-landscape/) · ArabClicks(https://arabclicks.com/about/) · Admitad 디렉터리(https://www.affilitizer.com/networks/admitad) ·
 Hivemapper 리셀러(https://blog.hivemapper.com/introducing-one-of-hivemappers-authorized-resellers-in-europe-825c55d6d349) · vCommission FAQ(https://www.vcommission.com/faq/).
+
+## impact.com 입점 문의 (2026-10-19, 서우 「임팩트에 입점 물어보기」)
+
+- **성격**: 네트워크가 아니라 **우리 프로그램을 올리는 플랫폼** — 퍼블리셔가 자동으로 붙지 않고, 마켓플레이스에서 우리가 파트너를 모집 · 승인한다. 비용 = 구독 + 거래 수수료 + 커미션.
+- **요금(3자 집계 — impact.com 공식 페이지 미확인, 문의로 확인)**: Starter 월 30달러 또는 플랫폼 경유 매출의 3% 중 큰 쪽(30일 체험) · Essential 월 500달러 · Pro 월 2,500달러 · Enterprise 별도 견적 + 파트너 거래 2.5% 수수료 · 일회성 셋업비(금액 비공개). 출처: costbench.com · archive.com.
+- **판단**: 시험은 Starter 로 충분 — vCommission(성과형 · 가입비 0)과 비용 구조가 다르다는 점을 서우가 알고 시작. 크립토 브랜드 선례(Kraken 매체 트랙)는 있지만 우리 보상 프로그램 · RLUSD 결제가 심사에 걸리는지가 핵심 질문.
+- 문안(채팅): 문의 메일 · 문의 양식 1,303자(회사 · 기기 · 케이웨더 · 원장 지문 · wellbian.io → CPS · 30% 배분 · 「수익 주장 없음」 → 질문 5: 요금제 · 셋업/거래 수수료 / 보상 프로그램 · RLUSD 제한 업종 / 자체 결제 연동 · 쿠폰 귀속 / 현지 통화 지급(한 · 싱 · 일) / APAC 지원) ·
+  링크드인 짧은 판 268자(Partnerships · Strategic Accounts — APAC 직함에게 「브랜드 온보딩 담당자」 묻기). Kraken 사례는 문안에 넣지 않음.
