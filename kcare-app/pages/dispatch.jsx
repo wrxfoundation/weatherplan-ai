@@ -49,7 +49,7 @@ import {
 } from "../lib/console";
 import { useAppState } from "../lib/state";
 import { eventRights } from "../lib/event-rights";
-import { CLOSED, approverOf, fmtPreferred, isVisitCall } from "../lib/requests";
+import { CLOSED, approverOf, fmtPreferred, isVisitCall, soloDispatches } from "../lib/requests";
 import { HelpCallOps, HELP_STAGE } from "../components/HelpCall";
 import { relMd } from "../lib/reltime";
 import AiChat from "../components/AiChat";
@@ -61,7 +61,8 @@ import MobileSectionNav from "../components/MobileSectionNav";
 import StaggerIn from "../components/StaggerIn";
 import { CREW_RULES } from "../lib/dispatch-policy";
 // 사이드바 배지 — 각 관리 화면의 머릿수 Stat 과 같은 출처를 쓴다 (화면 200명 · 배지 20명처럼 어긋나지 않게)
-import { TOTAL_ELDERS, liveCustomer } from "../lib/ops-health";
+import { TOTAL_ELDERS, dispatchCandidates, liveCustomer } from "../lib/ops-health";
+import { Confirm, useOperator } from "../components/ops/ui";
 import { LIVE_CONCIERGE, LIVE_GUARDIAN, LIVE_TAG } from "../lib/live-household";
 import { centerNow } from "../lib/people-store";
 import { assigneeNow, isPlaceholder, people } from "../lib/people";
@@ -489,6 +490,7 @@ function DispatchConsole() {
     }
   }, [router.query.menu]);
   const [sent, setSent] = useState({}); // 발송 센터 원샷
+  const [sendAsk, setSendAsk] = useState(null); // 발송 확인 중인 템플릿
   const [briefRead, setBriefRead] = useState(false); // 아침 브리핑 읽음
   const [hoStage, setHoStage] = useState("accept"); // 핸드오프 정체 — 선택 단계 (기본: 최대 정체)
   const [hoDone, setHoDone] = useState({}); // 정체 건 처리 원샷
@@ -605,18 +607,45 @@ function DispatchConsole() {
   // 배너 · 팝업의 '급파 지시' — 가구 기록(ops.sosDispatched)과 SOS 센터 사건의 파견 기록을 같이 남긴다.
   // 전에는 가구 기록만 바뀌어서 SOS 센터 6-5 파견 칸이 비어 있고, 컨시어지 수락 시각이 붙을 자리가 없었다 (2026-10-02).
   // 센터 공간은 그 센터 컨시어지에게 — 승인된 컨시어지가 없으면 급파하지 않는다 (자리 이름을 담당으로 남기지 않게)
-  const sosTarget = centerNow() ? assigneeNow() : LIVE_CONCIERGE;
+  // 대상은 SOS 센터 6-5 파견 목록과 같은 기준 — 긴급출동 가능 · 가까운 순 1순위 중 이 가구 앱을 쓰는 컨시어지.
+  // 거리 · 도착 예상도 그 목록의 값 (전에는 SOS 센터가 '긴급출동 불가'로 보인 사람을 1.2km · 6분 · 2인으로 박아 보냈다 · 2026-10-19 점검 OPS-02)
+  const OPERATOR = useOperator();
+  const sosOurs = centerNow() ? people().concierges : [LIVE_CONCIERGE];
+  const sosCand = dispatchCandidates(ELDER.district).find((c) => c.emergency && sosOurs.includes(c.name)) || null;
+  const sosTarget = sosCand?.name || null;
+  const [sosAsk, setSosAsk] = useState(false); // 급파 지시 확인 — SOS 센터의 파견과 같이 한 번 묻는다
   const orderSosDispatch = () => {
     if (sosDispatched) return;
     if (!sosTarget) {
       push("대응", "급파할 컨시어지가 없습니다 — 계정·권한에서 컨시어지 가입을 승인하세요 · 119 연계는 바로 할 수 있습니다", "#FF8A80");
       return;
     }
+    setSosAsk(true);
+  };
+  const confirmSosDispatch = () => {
+    setSosAsk(false);
+    if (sosDispatched || !sosTarget) return;
     dispatch({ type: "opsPatch", patch: { sosDispatched: true, sosDispatchedTo: sosTarget } });
-    push("대응", `${sosTarget} 급파 지시 · 119 연계 대기`, "#FF8A80");
+    push("대응", `${sosTarget} 급파 지시${sosCand?.etaMin != null ? ` · 도착 예정 ${sosCand.etaMin}분` : ""} · 119 연계 대기`, "#FF8A80");
     const inc = sosOpen.find((i) => i.customer === ELDER.name);
     if (inc && !inc.steps?.dispatch?.dispatch) {
-      setIncidentStep(inc.id, "dispatch", { result: "done", dispatch: { name: sosTarget, two: !centerNow(), orderedAt: Date.now(), acceptedAt: sosAcceptedAt, departedAt: null, arrivedAt: null, actions: "", accompany: false, etaMin: centerNow() ? null : 6, distKm: centerNow() ? null : 1.2 } }, { advance: false });
+      // 1인 출동으로 남긴다 — 짝을 정하지 않은 급파를 '2인'으로 적지 않는다 (2인 출동은 SOS 센터 파견에서 고른다)
+      setIncidentStep(inc.id, "dispatch", { result: "done", dispatch: { name: sosTarget, two: false, orderedAt: Date.now(), acceptedAt: sosAcceptedAt, departedAt: null, arrivedAt: null, actions: "", accompany: false, etaMin: sosCand?.etaMin ?? null, distKm: sosCand?.distKm ?? null } }, { advance: false });
+    }
+  };
+  // 배너 '119 연계' — 사건 기록(6-4 119 신고)에도 남긴다. 전에는 배너만 '✓ 119 연계'가 되고 SOS 센터는 그 단계를 대기로 보였다 (OPS-03)
+  const recordSos119 = () => {
+    if (sos119) return;
+    dispatch({ type: "opsPatch", patch: { sos119: true } });
+    push("대응", "119 연계 기록 · 기본 보증 범위 내 조치", "#FF8A80");
+    const inc = sosOpen.find((i) => i.customer === ELDER.name);
+    if (inc && !inc.steps?.call119?.result) {
+      setIncidentStep(
+        inc.id,
+        "call119",
+        { try: { result: "reported", note: "관제 배너에서 119 연계" }, result: "done", memo: `${OPERATOR} — 배너에서 119 연계 기록. 접수번호 · 출동기관 · 도착은 이 단계 메모에 남겨 주세요` },
+        { advance: false }
+      );
     }
   };
   useEffect(() => {
@@ -714,6 +743,7 @@ function DispatchConsole() {
   // 페어 KPI — JOBS에서 계산 (09 §8.1)
   const paired = jobs.filter((j) => j.sup).length;
   const rotationWarns = jobs.filter((j) => j.state === "순환 경고").length;
+  const soloNow = soloDispatches(state.requests);
   const pairKpis = [
     {
       k: "오늘 페어 편성",
@@ -723,8 +753,9 @@ function DispatchConsole() {
     },
     { k: "순환 경고", v: String(rotationWarns), note: "동일 페어 3회 연속 · 다음 배정 순환", color: "#8A5D12" },
     { k: "평균 편성 소요", v: "38초", note: "AI 제안 → 승인", color: "#1E7A5A" },
-    // 불변량 — 이 값이 0이 아니게 되는 코드 경로를 만들지 않는다 (예외 승인 절차 없음)
-    { k: "단독 배차", v: "0", note: "예외 승인 절차 없음", color: "#1E7A5A" },
+    // 불변량 — 이 값이 0이 아니게 되는 코드 경로를 만들지 않는다 (예외 승인 절차 없음).
+    // 박아 둔 '0'이 아니라 기록에서 센다: 2인 해주세요가 짝 없이 확정 · 진행 중인 수 (lib/requests.js soloDispatches · 2026-10-19 점검)
+    { k: "단독 배차", v: String(soloNow), note: soloNow ? "2인 해주세요 짝 없음 — 해주세요 관리에서 짝 배정" : "2인 해주세요 · 방문 기준 · 예외 승인 절차 없음", color: soloNow ? "#8A5D12" : "#1E7A5A" },
   ];
 
   // KPI — 실시간 계산 · 클릭 시 해당 화면으로 점프
@@ -763,7 +794,8 @@ function DispatchConsole() {
     });
   // 예시 고객(한복자 · 이영호 · 박말순 · 최정자)의 할 일 — 관제 센터 공간에는 올리지 않는다 (2026-10-06 UX 점검:
   // 실제 할 일이 예시 사이에 묻히고 '처리 대기 n건'이 예시까지 셌다)
-  const demoQ = !centerNow();
+  // 테스트 가구도 같다 — 실제 기록만 '처리 대기'로 센다 (2026-10-19 점검 L-21 · 예시 콜이 '컨디션 양호' 같은 결과를 지어 남겼다)
+  const demoQ = !centerNow() && !opsUser?.household;
   if (demoQ && unmatchedCount > 0)
     actions.push({
       id: "unmatch", level: "high", title: "짝 미매칭 — 한복자 (79) 투석 16:20",
@@ -855,8 +887,9 @@ function DispatchConsole() {
     .forEach((m) =>
       actions.push({
         id: `elder-ops-${m.id}`,
-        level: "high",
-        title: `관제 연락 — ${m.from}`,
+        // 어르신 '잘못 눌렀어요'는 열린 SOS 에 대한 것이라 맨 위로 (2026-10-19 점검 E06)
+        level: m.kind === "sosMistake" ? "critical" : "high",
+        title: m.kind === "sosMistake" ? `SOS 잘못 누름 — ${m.from}` : `관제 연락 — ${m.from}`,
         // 가족 구성원 빼기 요청은 계정 · 권한에서 처리한다 (정지 — '다시 사용'으로 되돌린다 · 2026-10-18)
         meta: `${m.text}${m.kind === "member" ? " — 계정·권한에서 사용 정지 (다시 사용으로 되돌림)" : ""} · ${new Date(m.at).toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit", hour12: false })}`,
         act: "확인",
@@ -1202,10 +1235,37 @@ function DispatchConsole() {
                 setSosFocus(sosOpen.find((i) => i.customer === ELDER.name)?.id || null);
                 setMenu("sos");
               }}
-              onDispatch={orderSosDispatch}
+              onDispatch={() => {
+                // 확인 창이 팝업 아래에 깔리지 않게 팝업을 닫고 묻는다 (배너는 남는다)
+                closeSosPopup();
+                orderSosDispatch();
+              }}
               onClose={closeSosPopup}
             />
           )}
+          <Confirm
+            open={!!sendAsk}
+            title={`${sendAsk?.title || ""} — 보낼까요?`}
+            body={sendAsk ? `${sendAsk.log}. 예시 템플릿이라 실제 문자 · 푸시는 나가지 않고 발송 기록만 남습니다.` : ""}
+            confirmLabel="발송"
+            onCancel={() => setSendAsk(null)}
+            onConfirm={() => {
+              const t = sendAsk;
+              setSendAsk(null);
+              if (!t || sent[t.id]) return;
+              setSent((v) => ({ ...v, [t.id]: true }));
+              push(t.kind, t.log, t.color);
+            }}
+          />
+          <Confirm
+            open={sosAsk}
+            title={`${sosTarget || "컨시어지"} 컨시어지를 현장에 급파합니다`}
+            body={`${ELDER.name} 어르신 자택(${ELDER.district})${sosCand?.distKm != null ? `까지 ${sosCand.distKm}km · 예상 ${sosCand.etaMin}분` : ""} · 1인 출동. 컨시어지 앱에 급파 지시가 가고, 지시 시각이 SOS 사건에 기록됩니다.${sosCand?.where ? ` 지금: ${sosCand.where}` : ""}`}
+            confirmLabel="급파 지시"
+            tone="danger"
+            onCancel={() => setSosAsk(false)}
+            onConfirm={confirmSosDispatch}
+          />
           {/* ── SOS 배너 (09 §2 + REQ-04 경계) — SOS 섹션에는 전용 배너가 있으므로 중복 제외 ── */}
           {sos && menu !== "sos" && (
             <section
@@ -1270,56 +1330,49 @@ function DispatchConsole() {
                     : "급파할 컨시어지 없음 — 계정·권한"}
                 </button>
                 <button
-                  onClick={() => {
-                    if (sos119) return;
-                    dispatch({ type: "opsPatch", patch: { sos119: true } });
-                    push("대응", "119 연계 기록 · 기본 보증 범위 내 조치", "#FF8A80");
-                  }}
+                  onClick={recordSos119}
                   disabled={sos119}
                   className="btn-press rounded-xl border border-white/70 px-4 py-2.5 text-[15px] font-bold disabled:opacity-70"
                 >
                   {sos119 ? "119 연계 기록됨" : "119 연계"}
                 </button>
+                {/* '알림 해제'는 뺐다 — 사건이 열린 채로 누르면 급파 · 수락 기록까지 지워져 컨시어지 폰의 급파 배너가 사라지고
+                    SOS 센터는 수락을 끝없이 기다렸다 (2026-10-19 점검 OPS-01). 알림은 SOS 센터에서 사건을 종료(결과 · 사유)하면 함께 꺼진다 */}
                 <button
                   onClick={() => {
                     setSosFocus(sosOpen.find((i) => i.customer === ELDER.name)?.id || null);
                     setMenu("sos");
                   }}
+                  title="대응 절차 · 사건 종료(결과 · 사유)는 SOS 센터에서 합니다. 종료하면 어르신 · 가족 앱 알림도 함께 꺼집니다."
                   className="btn-press rounded-xl border border-white/70 px-4 py-2.5 text-[15px] font-bold"
                 >
-                  SOS 센터에서 대응 절차
+                  SOS 센터에서 대응 · 종료
                 </button>
-                <button
-                  onClick={() => {
-                    dispatch({ type: "ackSos" });
-                    push("대응", "SOS 알림 해제 — 어르신·가족 앱 점등 종료 (사건은 SOS 센터에서 종료)", "#8FA9CC");
-                  }}
-                  title="어르신·가족 앱의 SOS 알림만 해제합니다. 사건 종료는 SOS 센터의 종료 절차(결과·사유 필수)로 합니다."
-                  className="btn-press rounded-xl border border-white/40 px-4 py-2.5 text-[15px] font-medium"
-                >
-                  알림 해제
-                </button>
-                <button
-                  onClick={() => {
-                    if (watchCalled) return;
-                    setWatchCalled(true);
-                    push("대응", `${ELDER.name} 워치 자동 통화 시도 — 응답 대기`, "#FF8A80");
-                  }}
-                  disabled={watchCalled}
-                  className="btn-press rounded-xl border border-white/40 px-4 py-2.5 text-[15px] font-medium disabled:opacity-70"
-                >
-                  {watchCalled ? "워치 통화 시도됨" : "워치 통화"}
-                </button>
+                {/* 워치 통화는 워치가 연결된 데모에서만 — 테스트 가구 · 센터 공간에는 워치가 없다 (2026-10-19 점검 L-05) */}
+                {!opsUser?.household && (
+                  <button
+                    onClick={() => {
+                      if (watchCalled) return;
+                      setWatchCalled(true);
+                      push("대응", `${ELDER.name} 워치 자동 통화 시도 — 응답 대기 (데모)`, "#FF8A80");
+                    }}
+                    disabled={watchCalled}
+                    className="btn-press rounded-xl border border-white/40 px-4 py-2.5 text-[15px] font-medium disabled:opacity-70"
+                  >
+                    {watchCalled ? "워치 통화 시도됨" : "워치 통화"}
+                  </button>
+                )}
+                {/* 보호자 앱에는 SOS 경보가 모든 탭에 이미 떠 있다 — 이 버튼은 관제가 보호자와 통화했다는 기록이다 ('알림 발송'이라 하지 않는다) */}
                 <button
                   onClick={() => {
                     if (guardianPinged) return;
                     setGuardianPinged(true);
-                    push("대응", `보호자 ${LIVE_GUARDIAN}에게 상황 확인 알림 발송`, "#8FA9CC");
+                    push("대응", `보호자 ${LIVE_GUARDIAN}에게 연락함 — 관제 기록`, "#8FA9CC");
                   }}
                   disabled={guardianPinged}
                   className="btn-press rounded-xl border border-white/40 px-4 py-2.5 text-[15px] font-medium disabled:opacity-70"
                 >
-                  {guardianPinged ? "보호자 알림 발송됨" : "보호자 알림"}
+                  {guardianPinged ? "보호자 연락 기록됨" : "보호자 연락함 (기록)"}
                 </button>
                 {/* REQ-04 — 야간 출동은 기본 상품 밖이라 가입 가구에서만 조치로 뜬다.
                     미가입 가구에 이 버튼이 보이면 관제가 없는 자원을 부르게 된다. */}
@@ -2337,6 +2390,8 @@ function DispatchConsole() {
             <div className="mt-4 grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(360px, 100%), 1fr))" }}>
               <Panel className="min-w-0">
                 <PanelHead title="발송 센터" right="보호자 · 어르신 · 컨시어지 일괄 커뮤니케이션" />
+                {/* 예시 템플릿 — 문자 · 푸시가 실제로 나가지 않고 기록만 남는다. 보내기 전에 한 번 묻는다 (2026-10-19 점검 OPS-07) */}
+                <p className="mt-1 text-[11.5px] leading-[1.6] text-muted">예시 템플릿입니다 — 실제 문자 · 푸시는 나가지 않고 발송 기록만 남습니다. 보내기 전에 대상 수를 한 번 더 확인합니다.</p>
                 <div className="mt-3 space-y-2">
                   {COMMS_TEMPLATES.map((t) => {
                     const tr = COMMS_TRACKING[t.id];
@@ -2350,8 +2405,7 @@ function DispatchConsole() {
                           <button
                             onClick={() => {
                               if (sent[t.id]) return;
-                              setSent((v) => ({ ...v, [t.id]: true }));
-                              push(t.kind, t.log, t.color);
+                              setSendAsk(t);
                             }}
                             disabled={!!sent[t.id]}
                             className="btn-press shrink-0 rounded-[10px] border border-navy/20 px-3.5 py-2 text-[13px] font-bold text-navy disabled:opacity-50"

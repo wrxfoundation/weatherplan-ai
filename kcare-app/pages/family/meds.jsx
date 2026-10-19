@@ -8,7 +8,7 @@ import { Card, Star, Tog, TONE } from "../../components/ds";
 import { useAppState } from "../../lib/state";
 import { useAuth } from "../../lib/auth";
 import { honorific, subjectLabel, trackOf } from "../../lib/tracks";
-import { MED_REGISTRY, MED_STREAK, healthOf } from "../../lib/meds";
+import { MED_REGISTRY, MED_STREAK, healthOf, medTakenToday } from "../../lib/meds";
 import { medMonth, medTally, pastWeek } from "../../lib/demo-health";
 
 // 보호자 홈 '복약' 칸 → 복약 미션 (2026-10-15 디자인 시안) — 지난 7일 · 오늘 미션 · 7일 표 / 30일 달력.
@@ -27,7 +27,7 @@ export default function MedsPage() {
   const honor = honorific(ob);
   const health = healthOf(state);
   const plan = health.meds;
-  const taken = state.elder?.medSlots || {};
+  const taken = medTakenToday(state.elder); // 오늘 날짜의 체크만 (어제 것은 남아 있어도 오늘이 아니다)
   const [per, setPer] = useState(7);
 
   const days = medMonth(plan, taken);

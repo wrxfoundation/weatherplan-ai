@@ -4,14 +4,17 @@ import { useRouter } from "next/router";
 // 여기서 mock.js 를 참조하면 콘솔 목데이터 전체가 모든 페이지에 실린다 (seed.js 주석 참고).
 import { INITIAL_EVENTS, INITIAL_REQUESTS, SEED_ASK_DOCTOR, SEED_EVENTS, SEED_ORDERS, SEED_REPORTS } from "./seed";
 import { PRICING } from "./config";
-import { URGENCY, approverOf, canEditRequest, cancelRule, fmtPreferred, paymentOf, transition } from "./requests";
+import { URGENCY, approverOf, canEditRequest, cancelRule, crewOf, crewReady, fmtPreferred, paymentOf, transition } from "./requests";
 import { SEED_VISIT, advance } from "./workflow";
+import { crewFor } from "./dispatch-policy";
 import { logout, useAuth } from "./auth";
 import { setStorageScope } from "./scope";
-import { cleanMedSlot } from "./meds";
+import { cleanMedSlot, kstToday } from "./meds";
 import { AREAS, areaOfRole, centerOfHousehold, isCenterHousehold } from "./centers";
 import { applyPeople, peopleFor } from "./people";
-import { REAPPROVE_KEYS, eventLocked } from "./event-rights";
+import { REAPPROVE_KEYS, eventLocked, eventOwner } from "./event-rights";
+import { normalizePayStatus } from "./payments";
+import { orderTotal } from "./store";
 
 // 앱 전역 상태.
 // 역할 간 연동: 어르신 SOS → 가족 배너 / 컨시어지 보충 요청 → 가족 결제 승인.
@@ -145,7 +148,7 @@ export function freshState() {
     visitPlan: { ...SEED_VISIT, id: `vs-${ymd}`, at: `${ymd} 14:00`, trail: [{ at: Date.now(), status: "draft", note: "월 정기 안심방문", actor: "박지현" }] },
     // AI 이상 징후 카드는 센서가 없는 테스트 가구에서 지어낸 알림이 된다 — 닫아 둔다
     // (보호자 화면 아래 데모 조작으로 다시 띄울 수 있다)
-    demo: { ...DEFAULT.demo, anomaly: "dismissed" },
+    demo: { ...DEFAULT.demo, anomaly: "none" },
     events: [],
     requests: [],
     reports: [],
@@ -325,7 +328,10 @@ function reducer(state, action) {
         myHospitals: arr(p.myHospitals, state.myHospitals),
         eventsRemoved: arr(p.eventsRemoved, state.eventsRemoved),
         visitHistory: arr(p.visitHistory, state.visitHistory),
-        payments: arr(p.payments, state.payments),
+        // 토스 대문자 상태("DONE")로 저장된 옛 기록도 앱 규칙(소문자 done)으로 — 결제 완료가 '없는 결제'로 보이지 않게 (2026-10-19 점검 F-01)
+        payments: arr(p.payments, state.payments).map((x) =>
+          x && typeof x === "object" && typeof x.status === "string" && x.status !== x.status.toLowerCase() ? { ...x, status: normalizePayStatus(x.status) } : x
+        ),
         billing: p.billing ?? state.billing,
         pendingOrder: p.pendingOrder ?? state.pendingOrder,
         health: obj(p.health, state.health),
@@ -338,6 +344,8 @@ function reducer(state, action) {
     case "onboardingPatch":
       return { ...state, onboarding: { ...(state.onboarding || {}), ...action.patch } };
     case "addEvent":
+      // 날짜 · 시간이 숫자가 아닌 일정은 받지 않는다 — 달력 · 오늘 화면이 이 값으로 날짜를 만든다 (2026-10-19 점검 G2)
+      if (!action.payload || !Number.isFinite(action.payload.at)) return state;
       return { ...state, events: [...state.events, action.payload] };
     // 일정 고치기 — 누가 무엇을 고칠 수 있는지는 lib/event-rights.js (2026-10-18).
     // 해주세요에 묶인 일정은 해주세요가 다시 만들기 때문에 여기서 바꾸지 않는다. 확정된 일정의 시간 · 종류 · 동행이
@@ -373,7 +381,8 @@ function reducer(state, action) {
       const e = state.events.find((x) => x.id === action.id);
       if (!e || e.reqId || eventLocked(e, nowOf(action))) return state;
       // 확정됐던 일정(재확인 중 포함)은 사람 · 차가 잡혀 있었으니 '취소'로 남긴다 — 관제 지금 처리할 일 · 취소된 일정 목록에 뜬다
-      const mode = action.mode === "cancel" || e.approval === "approved" || e.reapproval ? "cancel" : "delete";
+      // 컨시어지가 동행까지 잡은 진료 예약을 지운 것도 '취소'로 — 관제 '일정 취소 · 배차 정리'에 뜬다 (2026-10-19 점검)
+      const mode = action.mode === "cancel" || e.approval === "approved" || e.reapproval || (eventOwner(e) === "concierge" && e.escort) ? "cancel" : "delete";
       const removed = {
         mode,
         at: nowOf(action),
@@ -459,8 +468,13 @@ function reducer(state, action) {
         },
       };
     }
-    case "addRequest":
-      return { ...state, requests: [action.payload, ...state.requests] };
+    case "addRequest": {
+      const r = action.payload;
+      if (!r || !r.id) return state;
+      // 2인 해주세요 제안은 짝을 정해서만 보낸다 — 수락되면 바로 확정되므로 그때는 늦다 (2026-10-19 점검 C-06)
+      if (r.dir === "fromConcierge" && crewOf(r) === 2 && !crewReady(r)) return state;
+      return { ...state, requests: [r, ...state.requests] };
+    }
     // 해주세요 내용 고치기 (2026-10-18) — 승인 전까지만, 낸 사람이 (lib/requests.js canEditRequest).
     // 종류 · 금액은 서비스 메뉴 값이라 그대로 둔다. 고친 것은 처리 이력에 한 줄로 남는다 (고치기 전 내용은 감사로그에)
     case "editRequest": {
@@ -521,18 +535,37 @@ function reducer(state, action) {
       next.history = [...(r.history || []), { at, status: r.status, note: `${by || "요청자"} 내용 수정 — ${said.join(" · ")}`, by }];
       return { ...state, requests: state.requests.map((x) => (x.id === r.id ? next : x)) };
     }
-    case "transitionRequest":
-      return {
-        ...state,
-        requests: state.requests.map((r) =>
-          r.id === action.id ? transition(r, action.to, action.note, nowOf(action), action.by ? { by: action.by } : {}) : r
-        ),
-      };
+    case "transitionRequest": {
+      const r = state.requests.find((x) => x.id === action.id);
+      if (!r) return state;
+      // 2인 해주세요는 짝이 정해지기 전에 확정 · 진행 · 완료로 넘기지 않는다 (관제 상태 바꾸기 포함 · 2026-10-19 점검)
+      if (["confirmed", "inProgress", "done"].includes(action.to) && !crewReady(r)) return state;
+      const next = transition(r, action.to, action.note, nowOf(action), action.by ? { by: action.by } : {});
+      if (next === r) return state;
+      // 관제가 확정한 것(관리자 확인 → 확정)도 달력에 — 다른 확정 경로와 같이
+      if (action.to === "confirmed") return withRequest(state, next, true);
+      return { ...state, requests: state.requests.map((x) => (x.id === r.id ? next : x)) };
+    }
     // ── 해주세요 승인 · 결제 · 취소 (2026-10-05 결정 — lib/requests.js 머리말) ──
     // 결제가 끝났다 — 승인 전이면 담당 컨시어지 승인 대기로, 이미 승인됐거나(요금 확정 전 항목) 제안을 수락한 것이면 확정으로
     case "requestPaid": {
       const r = state.requests.find((x) => x.id === action.id);
       if (!r) return state;
+      // 낸 금액이 요청 요금과 다르면(주소의 금액을 고친 결제 등) 확정으로 넘기지 않는다 — 그 결제는 환불 대기로,
+      // 요청은 결제 대기 그대로 (2026-10-19 점검 — '금액 90,000원 · 결제 완료 100원'으로 승인 대기에 올라갔다)
+      const paidAmt = action.amount == null ? null : Number(action.amount);
+      if (r.status === "awaitingPayment" && paidAmt != null && Number(r.amount) > 0 && paidAmt !== Number(r.amount)) {
+        const at = nowOf(action);
+        const hit = (p) => p.ref === r.id && p.status === "done" && !p.refund && (!action.orderId || p.orderId === action.orderId);
+        return {
+          ...state,
+          payments: (state.payments || []).map((p) =>
+            hit(p)
+              ? { ...p, refund: { status: p.demo ? "done" : "pending", amount: p.amount, reason: `결제 금액(${paidAmt.toLocaleString("ko-KR")}원)이 요금(${Number(r.amount).toLocaleString("ko-KR")}원)과 다름 — 환불`, at, by: "자동", ...(p.demo ? { doneAt: at, doneBy: "데모 (실제 결제 없음)" } : {}) } }
+              : p
+          ),
+        };
+      }
       // 결제창에 있는 사이 취소 · 거절됐거나 이미 결제된 건(두 번 결제) — 방금 들어온 결제는 환불 대기로 (돈만 받고 끝나지 않게)
       if (r.status !== "awaitingPayment") {
         const at = nowOf(action);
@@ -547,8 +580,18 @@ function reducer(state, action) {
       const proposal = r.dir === "fromConcierge" || r.dir === "fromOps";
       const approved = !!r.approvedAt || proposal;
       const base = approved && !r.approvedAt ? { ...r, approvedAt: at, approvedBy: "보호자" } : r;
+      // 짝이 없는 2인 해주세요(규칙 전에 만든 제안 등)는 확정하지 않고 관제 확인으로 — 짝을 정한 뒤 관제가 확정한다
+      if (approved && !crewReady(base)) {
+        return withRequest(state, transition(base, "needsAdmin", `${action.note || "결제 완료"} · 2인 짝 배정 필요 — 관제 확인`, at, { by: "보호자" }), false);
+      }
       const next = transition(base, approved ? "confirmed" : "requested", action.note || "결제 완료", at, { by: "보호자" });
       return withRequest(state, next, approved);
+    }
+    // 부 보호자 → 주 보호자 결제 부탁 — 요청에 남겨 주 보호자 화면에 보인다 (전에는 버튼 글자만 바뀌고 새로고침하면 사라졌다 · 2026-10-19 점검)
+    case "askPrimaryPay": {
+      const r = state.requests.find((x) => x.id === action.id);
+      if (!r || r.status !== "awaitingPayment" || r.payAsk) return state;
+      return { ...state, requests: state.requests.map((x) => (x.id === r.id ? { ...x, payAsk: { by: String(action.by || "부 보호자").slice(0, 30), at: nowOf(action) } } : x)) };
     }
     // 담당 컨시어지 승인 — 자기 일정을 보고 날짜 · 시간을 정한다. 요금 확정 전 항목은 금액도 여기서 정해 결제로 보낸다
     case "approveRequest": {
@@ -565,8 +608,11 @@ function reducer(state, action) {
         else to = "awaitingPayment";
       }
       const when = `${action.date || ""}${action.time ? ` ${action.time}` : ""}`.trim();
-      const base = { ...r, amount, payBy, assignee: by || r.assignee, scheduledDate: action.date || null, scheduledTime: action.time || "", approvedAt: at, approvedBy: by };
-      const next = transition(base, to, `${by} 승인${when ? ` · ${when}` : ""}${to === "awaitingPayment" ? ` · 결제 대기 ${amount.toLocaleString("ko-KR")}원` : ""}`, at, { by });
+      // 2인 해주세요는 함께 갈 짝(다른 컨시어지)을 정해야 승인된다 (2026-10-19 점검 F-05 · C-06)
+      const partner = crewOf(r) === 2 ? String(action.partner || r.partner || "").trim() : r.partner || "";
+      const base = { ...r, amount, payBy, assignee: by || r.assignee, partner: partner || null, scheduledDate: action.date || null, scheduledTime: action.time || "", approvedAt: at, approvedBy: by };
+      if (!crewReady(base)) return state;
+      const next = transition(base, to, `${by} 승인${partner && crewOf(r) === 2 ? ` · 짝 ${partner}` : ""}${when ? ` · ${when}` : ""}${to === "awaitingPayment" ? ` · 결제 대기 ${amount.toLocaleString("ko-KR")}원` : ""}`, at, { by });
       return withRequest(state, next, to === "confirmed");
     }
     // 담당 컨시어지 거절 — 결제했으면 환불 대기로
@@ -589,7 +635,9 @@ function reducer(state, action) {
         if (action.role === "elder" && !needsGuardianApproval(state.onboarding, r.amount, elderSpentToday(state, at))) payBy = "elder";
         else to = "awaitingPayment";
       }
-      const next = transition({ ...r, payBy, approvedAt: at, approvedBy: who }, to, `${who} 수락${to === "awaitingPayment" ? " · 보호자 결제 대기" : ""}`, at, { by: who });
+      // 짝 없는 2인 제안(규칙 전에 보낸 것) — 수락은 받되 확정하지 않고 관제 확인으로 (결제가 있으면 결제 뒤에)
+      if (to === "confirmed" && !crewReady(r)) to = "needsAdmin";
+      const next = transition({ ...r, payBy, approvedAt: at, approvedBy: who }, to, `${who} 수락${to === "awaitingPayment" ? " · 보호자 결제 대기" : to === "needsAdmin" ? " · 2인 짝 배정 필요 — 관제 확인" : ""}`, at, { by: who });
       return withRequest(state, next, to === "confirmed");
     }
     // 취소 — 확정 전이거나 서비스일 3일 이상 남았으면 바로, 그 안(2일 전 · 전날 · 당일 · 진행 중)은 관제 승인 요청
@@ -669,12 +717,20 @@ function reducer(state, action) {
     // 관제가 담당 컨시어지를 바꾼다 — 보호자 해주세요 카드의 '담당'이 같이 바뀐다 (2026-10-01).
     // 빈 문자열이면 미배정. 상태는 그대로 두고, 바꾼 기록은 관제 화면의 변경 이력에 남는다.
     // 끝난 요청(완료 · 취소 · 거절)의 담당은 기록이라 바꾸지 않는다 (2026-10-18)
+    // 담당 · 짝 바꾸기 (관제). 확정 · 진행 중인 2인 해주세요는 두 사람이 다르게 남아 있어야 바뀐다 — 한 명으로 줄이지 않는다
     case "assignRequest":
       return {
         ...state,
-        requests: state.requests.map((r) =>
-          r.id === action.id && !CLOSED_REQ.includes(r.status) ? { ...r, assignee: String(action.assignee || "") } : r
-        ),
+        requests: state.requests.map((r) => {
+          if (r.id !== action.id || CLOSED_REQ.includes(r.status)) return r;
+          const next = {
+            ...r,
+            ...(action.assignee !== undefined ? { assignee: String(action.assignee || "") } : {}),
+            ...(action.partner !== undefined ? { partner: String(action.partner || "") || null } : {}),
+          };
+          if (["confirmed", "inProgress", "cancelRequested"].includes(r.status) && !crewReady(next)) return r;
+          return next;
+        }),
       };
     // 새 SOS 가 켜지면 지난 SOS 의 급파 · 119 · 수락 표시를 지운다 — 남아 있으면 새 SOS 가 처음부터 '급파 · 수락됨'으로 보인다
     case "demo": {
@@ -689,11 +745,18 @@ function reducer(state, action) {
     case "elderPatch":
       return { ...state, elder: { ...state.elder, ...action.patch } };
     // 오늘 복약 체크 · 건기식 재구매 — 되돌리지 않는다 (06 §5). 키만 켜 준다.
-    case "elderMark":
+    case "elderMark": {
+      // 복약 체크는 날짜와 함께 — 날이 바뀌면 어제 체크 위에 쌓지 않고 새로 시작한다 (2026-10-19 점검 F-07 · lib/meds.js medTakenToday)
+      if (action.key === "medSlots") {
+        const day = kstToday(nowOf(action));
+        const prev = state.elder.medSlotsDate === day && state.elder.medSlots && typeof state.elder.medSlots === "object" ? state.elder.medSlots : {};
+        return { ...state, elder: { ...state.elder, medSlots: { ...prev, [action.id]: true }, medSlotsDate: day } };
+      }
       return {
         ...state,
         elder: { ...state.elder, [action.key]: { ...state.elder[action.key], [action.id]: true } },
       };
+    }
     case "opsPatch":
       return { ...state, ops: { ...state.ops, ...action.patch } };
     case "pushEvent":
@@ -706,10 +769,17 @@ function reducer(state, action) {
         ].slice(0, 40),
       };
     case "ackSos":
-      // SOS 해제 — 관제 전용. 급파·연계 · 컨시어지 수락 플래그도 함께 초기화
+      // SOS 해제 — 관제 전용(SOS 센터에서 사건을 종료할 때). 급파·연계 · 컨시어지 수락 플래그도 함께 초기화.
+      // 어느 SOS 를 끄는지(sosAt)를 같이 받는다 — 다른 폰이 그 사이 새 SOS 를 눌렀으면 지난 사건의 종료가 새 SOS 를 끄지 않게 (2026-10-19 점검 F-06)
+      if (action.sosAt != null && state.demo.sosAt && action.sosAt !== state.demo.sosAt) return state;
       return {
         ...state,
-        demo: { ...state.demo, sos: false },
+        // 끝난 SOS 한 줄을 남긴다 — 보호자 · 어르신 화면에 '어떻게 끝났는지', 관제 어르신 관리에 기록 (2026-10-19 점검 L-04)
+        demo: {
+          ...state.demo,
+          sos: false,
+          sosLast: state.demo.sos ? { sosAt: state.demo.sosAt || null, closedAt: nowOf(action), result: String(action.result || "해결 완료").slice(0, 60), dispatchedTo: state.ops.sosDispatchedTo || "" } : state.demo.sosLast || null,
+        },
         ops: { ...state.ops, sosDispatched: false, sosDispatchedTo: "", sos119: false, sosAcceptedAt: null, sosAcceptedBy: "" },
       };
     // 컨시어지가 급파를 수락했다 — 관제 SOS 대응과 컨시어지 관리에 같은 시각이 뜬다 (한 번만).
@@ -766,7 +836,9 @@ function reducer(state, action) {
       return action.loc === "home" || action.loc === "hospital" ? { ...state, visit: { ...state.visit, loc: action.loc } } : state;
     // 동행 기록 — 저장 한 번 (보낸 뒤에는 고치지 않는다 — 보호자가 본 것과 기록이 달라지면 안 된다)
     case "escortSave": {
-      if (state.escort?.sentAt) return state;
+      // 보낸 뒤에는 물론, 안심방문 리포트를 제출해 검수 중일 때도 받지 않는다 — 관제가 검수한 것과 보호자에게 갈 것이 같아야 한다
+      // (같이 제출된 동행 기록은 관제 발송 때 함께 간다 · 2026-10-19 점검 C-02 · F-14)
+      if (state.escort?.sentAt || visitLock(state.visit)) return state;
       const p = action.payload || {};
       return {
         ...state,
@@ -787,8 +859,27 @@ function reducer(state, action) {
       if (!state.escort?.sentAt || state.escort.viewedAt) return state;
       return { ...state, escort: { ...state.escort, viewedAt: nowOf(action) } };
     // 관제가 이 방문에 한 것 — 검수 · 보호자 발송 · 중간 알림 · 후속조치 (관제 방문관리 상세)
-    case "visitOps":
-      return { ...state, visit: { ...state.visit, ops: { ...(state.visit.ops || {}), ...(action.patch || {}) } } };
+    case "visitOps": {
+      const v = state.visit || {};
+      const ops = v.ops || {};
+      const p = { ...(action.patch || {}) };
+      // 열람은 보호자가 리포트를 열 때만 남는다 (visitViewed) — 관제 화면의 값으로 바뀌지 않게
+      delete p.viewed;
+      delete p.viewedTs;
+      if (ops.sentAt) {
+        // 보호자에게 보낸 방문은 증명 — 검수 · 발송 기록을 다시 쓰지 않는다. 중간 알림 · 후속조치만 더한다 (2026-10-19 점검 F-10)
+        for (const k of ["review", "reviewedAt", "reviewedTs", "sentAt", "sentTs", "stepIdx"]) delete p[k];
+      } else if (p.sentAt) {
+        // 발송은 제출된 리포트를 검수 완료했을 때만 — 반려된 뒤 늦게 온 '발송'으로 잠기지 않게
+        const review = p.review ?? ops.review;
+        if (!v.reportSent || v.returned || review !== "검수 완료") {
+          delete p.sentAt;
+          delete p.sentTs;
+        }
+      }
+      if (!Object.keys(p).length) return state;
+      return { ...state, visit: { ...v, ops: { ...ops, ...p } } };
+    }
     // 보호자가 안심방문 리포트를 열었다 — 관제 방문관리에 '열람 완료' (한 번만)
     // 이번 방문을 아직 안 보냈으면(다음 방문을 시작한 뒤) 보호자가 보는 것은 보관된 지난 리포트다 — 그쪽에 찍는다 (2026-10-18 리뷰)
     case "visitViewed": {
@@ -814,9 +905,13 @@ function reducer(state, action) {
           m.id === action.id && !m.ackAt ? { ...m, ackAt: nowOf(action), ackBy: action.by || "관제", reply: String(action.reply || "") } : m
         ),
       };
-    case "advanceVisit":
-      // 8단계 전이 — 단계를 건너뛰면 workflow.advance 가 그대로 돌려보낸다
-      return { ...state, visitPlan: advance(state.visitPlan, action.to, action.note, action.actor) };
+    case "advanceVisit": {
+      // 8단계 전이 — 단계를 건너뛰면 workflow.advance 가 그대로 돌려보낸다.
+      // 승인은 정책 인원(2인 방문이면 서로 다른 두 사람)이 채워져야 — 화면만이 아니라 여기서도 막는다 (단독 배차 0 · 2026-10-19 점검 F-05)
+      const v = state.visitPlan;
+      if (action.to === "approved" && new Set((v.crew || []).filter(Boolean)).size < crewFor(v.kind)) return state;
+      return { ...state, visitPlan: advance(v, action.to, action.note, action.actor, nowOf(action)) };
+    }
     // 건강 정보 저장 — 관제 · 컨시어지 화면의 '복용약 · 질환 수정'. 모양을 여기서 한 번 더 거른다 (여러 폰이 쓰는 값).
     case "setHealth": {
       const pl = action.payload || {};
@@ -832,8 +927,16 @@ function reducer(state, action) {
         },
       };
     }
-    case "patchVisit":
-      return { ...state, visitPlan: { ...state.visitPlan, ...action.patch } };
+    case "patchVisit": {
+      const v = state.visitPlan;
+      const patch = { ...(action.patch || {}) };
+      // 승인된 뒤에는 늦게 온 화면의 값으로 인원을 정책 아래로 줄이지 않는다 (2026-10-19 점검 F-05)
+      if ("crew" in patch && !["draft", "review", "rejected"].includes(v.status)) {
+        const n = Array.isArray(patch.crew) ? new Set(patch.crew.filter(Boolean)).size : 0;
+        if (n < crewFor(v.kind)) delete patch.crew;
+      }
+      return { ...state, visitPlan: { ...v, ...patch } };
+    }
     // 보호자 · 어르신 일정등록 '요청' 승인 — 관제만 할 수 있다 (2026-08-12 시트 예약 1번).
     // approval 이 "pending" 인 동안에는 컨시어지 캘린더에 뜨지 않는다 (누가 무엇을 보나: eventsFor).
     case "decideEvent": {
@@ -864,8 +967,10 @@ function reducer(state, action) {
     case "addPayment": {
       const list = state.payments || [];
       if (action.payload.orderId && list.some((p) => p.orderId === action.payload.orderId)) return state;
+      // 상태는 앱 규칙(소문자)으로 — 토스는 "DONE" 으로 준다 (2026-10-19 점검 F-01)
+      const pay = { ...action.payload, status: normalizePayStatus(action.payload.status) };
       // 환불 · '이미 결제' 판단이 이 기록을 본다 — 넉넉히 남긴다
-      return { ...state, payments: [{ id: idOf("pay", action), at: nowOf(action), ...action.payload }, ...list].slice(0, 200) };
+      return { ...state, payments: [{ id: idOf("pay", action), at: nowOf(action), ...pay }, ...list].slice(0, 200) };
     }
     case "setBilling":
       return { ...state, billing: action.payload };
@@ -879,6 +984,18 @@ function reducer(state, action) {
       const now = nowOf(action);
       const key = action._op || now;
       const pay = action.payload || {};
+      // 낸 금액이 담은 물건의 카탈로그 합계와 다르면 주문을 세우지 않는다 — 그 결제는 환불 대기로 (2026-10-19 점검)
+      const want = orderTotal(po.items);
+      if (pay.amount != null && want != null && Number(pay.amount) !== want) {
+        return {
+          ...state,
+          payments: (state.payments || []).map((p) =>
+            pay.orderId && p.orderId === pay.orderId && !p.refund
+              ? { ...p, refund: { status: p.demo ? "done" : "pending", amount: p.amount, reason: `결제 금액이 주문 합계(${want.toLocaleString("ko-KR")}원)와 다름 — 환불`, at: now, by: "자동" } }
+              : p
+          ),
+        };
+      }
       return {
         ...state,
         pendingOrder: null,
@@ -1530,7 +1647,11 @@ function SyncNotice({ sync }) {
       <span aria-hidden className="h-[7px] w-[7px] shrink-0 animate-pulse rounded-full bg-amber" />
       <span>{text}</span>
       {sync.error === "login-required" && (
-        <a href={`${loginAt}?callbackUrl=${encodeURIComponent(here)}`} className="tap shrink-0 underline underline-offset-2">
+        // 테스트 가구는 '베타 테스트 계정' 탭으로 — 영역 입구 · 기본 탭은 가입한 아이디 로그인이라 헤맨다 (2026-10-19 점검 L-20)
+        <a
+          href={`${isCenterHousehold(sync.household) ? `${loginAt}?` : "/login?tab=test&"}callbackUrl=${encodeURIComponent(here)}`}
+          className="tap shrink-0 underline underline-offset-2"
+        >
           로그인
         </a>
       )}
@@ -1591,11 +1712,15 @@ export function elderSpentToday(state, now = Date.now()) {
 // 누가 어떤 일정을 보나 — 관제 승인 전 · 반려된 일정이 확정된 것처럼 보이면 안 된다.
 // 보호자: 전부 (캘린더가 '승인 대기 · 반려' 칩을 단다). 어르신: 확정된 것 + 본인이 남긴 승인 대기 · 반려 건
 // ('관제 확인 중' · '관제에서 다시 연락드립니다'로 표시 — 말없이 사라지지 않게). 그 밖(컨시어지 · 집계): 확정된 것만.
+// 확정된 일정을 고쳐 관제가 다시 보는 중(reapproval)이면 — 보호자 말고는 아직 바뀌기 전의 확정 값(prevApproved)을 본다.
+// 고친 쪽 말고는 '변경 확인 중'인 원래 약속이 그대로 유효하다 (전에는 어르신 달력에서 통째로 사라졌다 · 2026-10-19 점검 L-07)
 export function eventsFor(events, who) {
-  return (events || []).filter((e) => {
-    if (!e.approval || e.approval === "approved") return true;
-    if (who === "guardian") return true;
-    if (who === "elder") return e.by === "elder" && (e.approval === "pending" || e.approval === "rejected");
-    return false;
-  });
+  return (events || [])
+    .map((e) => (e.approval === "pending" && e.reapproval && e.prevApproved && who !== "guardian" && !(who === "elder" && e.by === "elder") ? { ...e, ...e.prevApproved, approval: "approved", changePending: true } : e))
+    .filter((e) => {
+      if (!e.approval || e.approval === "approved") return true;
+      if (who === "guardian") return true;
+      if (who === "elder") return e.by === "elder" && (e.approval === "pending" || e.approval === "rejected");
+      return false;
+    });
 }

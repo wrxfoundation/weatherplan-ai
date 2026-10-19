@@ -6,6 +6,7 @@ import { Line } from "../../components/clay";
 import { Btn, Card, TONE, WhiteBtn } from "../../components/ds";
 import { INVITE } from "../../lib/mock";
 import { useAppState } from "../../lib/state";
+import { useGuardianRole } from "../../lib/guardian-role";
 import { useAuth } from "../../lib/auth";
 import { familyOf, meOf, shortName } from "../../lib/membership";
 
@@ -19,10 +20,9 @@ export default function MembersPage() {
   const auth = useAuth();
   const me = meOf(auth.user);
   const family = familyOf(me);
-  const member = auth.user?.provider === "member";
-  const isPrimary = (state.demo.guardianRole || "primary") === "primary";
-  // 센터 회원은 명단 맨 앞(주 보호자 표시)이 나일 때만 — 데모는 보는 역할(주 · 부)대로
-  const canAskRemove = member ? family[0]?.name === me.name : isPrimary;
+  const { isPrimary } = useGuardianRole(); // 로그인한 가구는 계정 기준 (lib/guardian-role.js)
+  // 센터 회원은 명단 맨 앞(주 보호자 표시)이 나일 때만 — 데모는 보는 역할(주 · 부)대로 (둘 다 useGuardianRole 이 정한다)
+  const canAskRemove = isPrimary;
   const removeAsks = (state.opsMessages || []).filter((m) => m.kind === "member");
   const [invited, setInvited] = useState(false);
   const [confirm, setConfirm] = useState(null); // 빼기 요청을 묻는 사람 이름

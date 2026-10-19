@@ -12,7 +12,7 @@ import { playErrorText, usePrefetchClips, useVoicePlayer } from "../../lib/voice
 import { useAuth } from "../../lib/auth";
 import { scopedKey } from "../../lib/scope";
 import { useLastActivity } from "../../lib/last-activity";
-import { healthOf } from "../../lib/meds";
+import { healthOf, medTakenToday } from "../../lib/meds";
 import { LIVE_CONCIERGE, LIVE_TAG, STAGE_LABEL, visitReportOf } from "../../lib/live-household";
 import { centerNow } from "../../lib/people-store";
 import { approverOf } from "../../lib/requests";
@@ -55,6 +55,26 @@ export default function FamilyHome() {
       /* 저장이 막힌 브라우저 — 이 화면에서만 기억 */
     }
   }, []);
+  // 끝난 SOS — 어떻게 끝났는지 12시간 동안 보인다. '확인'을 누르면 이 기기에서 접는다 (2026-10-19 점검 L-04)
+  const sosLast = state.demo.sosLast;
+  const doneKey = sosLast?.closedAt ? String(sosLast.sosAt || sosLast.closedAt) : "";
+  const [sosDoneAck, setSosDoneAck] = useState("");
+  useEffect(() => {
+    try {
+      setSosDoneAck(window.localStorage.getItem(scopedKey("kcare-guardian-sos-done-v1")) || "");
+    } catch {
+      /* 저장이 막힌 브라우저 — 이 화면에서만 기억 */
+    }
+  }, []);
+  const showSosDone = !state.demo.sos && !!doneKey && sosDoneAck !== doneKey && Date.now() - sosLast.closedAt < 12 * 3600000;
+  const ackSosDone = () => {
+    setSosDoneAck(doneKey);
+    try {
+      window.localStorage.setItem(scopedKey("kcare-guardian-sos-done-v1"), doneKey);
+    } catch {
+      /* 위와 같음 */
+    }
+  };
   const ackSosHere = () => {
     setSosAck(sosKey);
     try {
@@ -81,7 +101,8 @@ export default function FamilyHome() {
   const FAKE_IN_TEST = ["weekly", "vitals", "assistant"];
   const has = (b) => track.home.blocks.includes(b) && !(live && FAKE_IN_TEST.includes(b));
   const elderLast = useLastActivity("elder", live);
-  const medDone = Object.keys(state.elder?.medSlots || {}).filter((k) => state.elder.medSlots[k]);
+  const medTaken = medTakenToday(state.elder); // 오늘 날짜의 체크만
+  const medDone = Object.keys(medTaken).filter((k) => medTaken[k]);
   // 복약 계획 — 관제 · 컨시어지가 고친 건강 정보 그대로 (어르신 앱과 같은 값, lib/meds.js healthOf)
   const medPlan = healthOf(state).meds;
   const morningMed = medPlan.find((d) => d.slot === "아침") || null;
@@ -151,7 +172,7 @@ export default function FamilyHome() {
   const month = fitMonth();
   const today = month[month.length - 1];
   const lastWeekSteps = WEEKLY.find((w) => w.name === "활동");
-  const meds30 = medMonth(medPlan, state.elder?.medSlots || {});
+  const meds30 = medMonth(medPlan, medTaken);
   const med7 = medTally(pastWeek(meds30)); // 어제까지 7일 — 복약 미션 화면 머리와 같은 수
   const medPrev7 = medTally(weekBefore(meds30));
   const medDiff = med7.taken - medPrev7.taken;
@@ -200,6 +221,8 @@ export default function FamilyHome() {
     ? `${josa(subj, "이", "가")} 도움을\n요청했어요`
     : anomaly === "open"
       ? `${subj}께 확인이\n필요해요`
+      : anomaly === "sent"
+        ? `${subj} 확인을\n요청했어요`
       : live
         ? `${josa(subj, "의", "의")} 오늘\n앱 기록이에요`
         : `${josa(subj, "은", "는")} 오늘\n평소와 같아요`;
@@ -242,12 +265,28 @@ export default function FamilyHome() {
                   dispatch({ type: "addVoice", payload: { from: "보호자", to: honor, secs, context: "긴급", clip } });
                   dispatch({
                     type: "pushEvent",
-                    payload: { kind: "음성", text: `보호자 긴급 안부 음성 ${secs}초 — 컨시어지 단말로 전달`, color: "#FF8A80" },
+                    payload: { kind: "음성", text: `보호자 긴급 안부 음성 ${secs}초 — ${honor} 앱으로 전달`, color: "#FF8A80" },
                   });
                 }}
               />
-              <p className="mt-1.5 text-[12px] leading-[1.6] text-white/75">도착 전까지 급파 중인 컨시어지 단말로도 함께 재생됩니다.</p>
+              {/* 목소리는 어르신 앱으로 간다 — 전에는 '컨시어지 단말로도 재생'이라 했지만 컨시어지에게는 가지 않았다 (2026-10-19 점검 L-05) */}
+              <p className="mt-1.5 text-[12px] leading-[1.6] text-white/75">{honor} 앱으로 바로 갑니다. 컨시어지에게 전할 말은 관제센터 전화로 알려 주세요.</p>
             </div>
+          </div>
+        )}
+
+        {showSosDone && (
+          <div role="status" className="flex items-center gap-3 rounded-[22px] bg-white p-4" style={{ boxShadow: "0 4px 0 #E6E2DA" }}>
+            <span className="min-w-0 flex-1">
+              <b className="block text-[17px] font-extrabold">SOS 대응이 끝났어요</b>
+              <span className="text-[14px] leading-[1.55]" style={{ color: "#5E6270" }}>
+                {new Date(sosLast.closedAt).toLocaleTimeString("ko-KR", { hour: "numeric", minute: "2-digit" })} · 관제센터 결과: {sosLast.result}
+                {sosLast.dispatchedTo ? ` · ${sosLast.dispatchedTo} 컨시어지 출동` : ""}
+              </span>
+            </span>
+            <WhiteBtn h={46} r={14} sh="#E3DED3" color="#3A3F50" className="flex-none px-4 text-[15px]" onClick={ackSosDone}>
+              확인
+            </WhiteBtn>
           </div>
         )}
 
@@ -288,6 +327,12 @@ export default function FamilyHome() {
               <span className="text-[14px] leading-[1.55]" style={{ color: "#3B5A44" }}>
                 {/* 실제 체크인 시각 — 고정 '13:50 출발'은 체크인 시각과 어긋났다 (2026-10-02 QA) */}
                 {checkinHm ? `${checkinHm} 체크인` : "체크인"} · 방문을 마치고 관제 검수가 끝나면 리포트가 도착합니다
+                {/* 관제 중간 알림 — 방문 도중 관제가 보낸 진행 소식 (2026-10-19 점검 L-05) */}
+                {state.visit.ops?.interimAt && (
+                  <b className="mt-1 block" style={{ color: "#2A4D33" }}>
+                    관제 중간 알림 {state.visit.ops.interimAt} · 점검 {state.visit.ops.interimDone ?? "—"}/{state.visit.ops.interimTotal ?? 21} 진행 중
+                  </b>
+                )}
               </span>
             </span>
           </R>
@@ -328,7 +373,20 @@ export default function FamilyHome() {
               {honor}은 아직 SOS를 누르지 않았습니다. AI는 감지·제안만 하고 조치는 사람이 결정합니다.
             </p>
             <div className="ds-g2" style={{ gap: 10 }}>
-              <Btn tone="danger" h={58} className="text-[17px]" onClick={() => dispatch({ type: "demo", payload: { anomaly: "sent" } })}>
+              <Btn
+                tone="danger"
+                h={58}
+                className="text-[17px]"
+                onClick={() => {
+                  // 관제 '지금 처리할 일'에 실제로 올린다 — 전에는 이 화면의 표시만 바뀌고 아무에게도 가지 않았다 (2026-10-19 점검)
+                  dispatch({ type: "demo", payload: { anomaly: "sent" } });
+                  dispatch({
+                    type: "addOpsMessage",
+                    payload: { from: `보호자 ${meAs(authUser, "guardian")}`, role: "guardian", kind: "check", text: `${honor} 낙상 의심 알림(새벽 3:12) — 확인 전화 요청` },
+                  });
+                  dispatch({ type: "pushEvent", payload: { kind: "보호자", text: `보호자 확인 요청 — ${honor} 낙상 의심 알림`, color: "#FF8A80" } });
+                }}
+              >
                 지금 확인 요청
               </Btn>
               <WhiteBtn h={58} sh={TONE.danger.sh} color={TONE.danger.title} className="text-[17px]" onClick={() => dispatch({ type: "demo", payload: { anomaly: "dismissed" } })}>
@@ -352,7 +410,8 @@ export default function FamilyHome() {
             </div>
           </R>
         )}
-        {anomaly === "dismissed" && (
+        {/* 알림을 닫았다 — 데모에서만 되돌린다 (테스트 가구에는 센서가 없어 되돌리면 지어낸 알림이 뜬다 · 2026-10-19 점검) */}
+        {anomaly === "dismissed" && !live && (
           <R d={60} className="ds-swap flex items-center gap-3 rounded-[22px] bg-white py-3 pl-[18px] pr-3" style={{ boxShadow: "0 4px 0 #E6E2DA" }}>
             <span className="flex-1 text-[16px] font-bold" style={{ color: "#3A3F50" }}>
               알림을 닫았어요
@@ -695,7 +754,7 @@ export default function FamilyHome() {
 
         {/* 다가오는 일정 — 어르신과 같은 캘린더 (REQ-02). 승인 대기 건은 '승인 대기' */}
         <R d={300}>
-          <Card pad={0} className="px-4 py-1.5">
+          <Card pad="6px 16px">
             <div className="flex items-center justify-between pb-1.5 pt-3">
               <h2 className="m-0 text-[18px] font-extrabold">다가오는 일정</h2>
               <Link href="/family/calendar" className="flex min-h-[44px] items-center text-[14px] font-bold" style={{ color: "#5E6270" }}>

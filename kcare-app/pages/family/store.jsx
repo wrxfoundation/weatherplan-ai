@@ -9,6 +9,7 @@ import { STORE_CATALOG, STORE_INDEX } from "../../lib/store";
 import ProductSheet, { GOODS_LOOK } from "../../components/ProductSheet";
 import { fmtWon } from "../../lib/config";
 import { useAppState } from "../../lib/state";
+import { useGuardianRole } from "../../lib/guardian-role";
 import { useAuth } from "../../lib/auth";
 import { honorific } from "../../lib/tracks";
 
@@ -28,6 +29,8 @@ const ORDER_STATUS = {
 
 export default function StorePage() {
   const { state, dispatch } = useAppState();
+  // 결제는 주 보호자만 (docs/kcare/guardian-invite-policy.md — 부 보호자는 담아 두고 주 보호자에게 맡긴다 · 2026-10-19 점검)
+  const { isPrimary } = useGuardianRole();
   const auth = useAuth();
   const router = useRouter();
   const images = state.productImages || {};
@@ -52,7 +55,7 @@ export default function StorePage() {
   // 결제 — 토스페이먼츠 결제창으로 보낸다 (2026-09-23). 승인이 끝나야 주문이 선다.
   // 여기서는 무엇을 살지만 정하고, 돈이 오가는 자리는 /pay 한 곳이다.
   const payNow = () => {
-    if (items.length === 0) return;
+    if (items.length === 0 || !isPrimary) return;
     const name = items.length === 1 ? items[0].name : `${items[0].name} 외 ${items.length - 1}건`;
     // 결제 성공 뒤에 주문을 세우려면 무엇을 담았는지가 남아 있어야 한다 (/pay/result 가 이걸 본다)
     dispatch({
@@ -176,17 +179,18 @@ export default function StorePage() {
                 <button
                   type="button"
                   onClick={payNow}
-                  className="ds-press ds-btn3d flex h-[66px] w-full items-center gap-3 rounded-[22px] px-5 text-left text-white"
+                  disabled={!isPrimary}
+                  className="ds-press ds-btn3d flex h-[66px] w-full items-center gap-3 rounded-[22px] px-5 text-left text-white disabled:opacity-60"
                   style={{ background: "#1B2340", boxShadow: "0 5px 0 #0E1428" }}
                 >
                   <span className="flex h-8 min-w-[32px] flex-none items-center justify-center rounded-2xl px-2 text-[16px] font-black" style={{ background: TONE.gold.solid, color: "#1B2340" }}>
                     {items.length}
                   </span>
-                  <span className="flex-1 text-[18px]">{fmtWon(total)} 결제하기</span>
+                  <span className="flex-1 text-[18px]">{isPrimary ? `${fmtWon(total)} 결제하기` : `${fmtWon(total)} · 결제는 주 보호자`}</span>
                   <Line name="chevR" size={22} />
                 </button>
                 <p className="text-center text-[13px]" style={{ color: "#5E6270" }}>
-                  배송비 무료 · 다음 안심방문 또는 택배로 배송됩니다
+                  배송비 무료 · 다음 안심방문 또는 택배로 배송됩니다 · 받은 날부터 7일 안에 취소 · 반품 문의
                 </p>
               </div>
             ) : (

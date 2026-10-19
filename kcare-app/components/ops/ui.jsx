@@ -7,6 +7,7 @@
 //   · 정상 정보보다 예외 정보를 먼저 보이게 한다 — 목록은 위험도·발생시각순.
 // 모든 실시간 값에는 마지막 수신 시각을 같이 쓴다 (요청서 3절) — <Stamp/> 로 붙인다.
 
+import { useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { useAuth } from "../../lib/auth";
 
@@ -66,7 +67,8 @@ export function PanelHead({ title, sub, right, className = "" }) {
         <h2 className="text-[15px] font-bold text-navy">{title}</h2>
         {sub && <div className="mt-0.5 text-[12px] text-muted">{sub}</div>}
       </div>
-      {right && <div className="flex shrink-0 flex-wrap items-center gap-2 text-[12px] text-muted">{right}</div>}
+      {/* 오른쪽 조작 묶음은 휴대폰에서 줄어들고 접힌다 — 줄지 않아 SOS 대응 화면이 778px 로 넘쳤다 (2026-10-19 점검 OPS-12) */}
+      {right && <div className="flex min-w-0 max-w-full flex-wrap items-center gap-2 text-[12px] text-muted">{right}</div>}
     </div>
   );
 }
@@ -157,14 +159,14 @@ export function Avatar({ name, size = 40, tone = "navy" }) {
   );
 }
 
-export function Btn({ children, onClick, tone = "navy", ghost = false, small = false, disabled = false, className = "", type = "button", title }) {
+export function Btn({ children, onClick, tone = "navy", ghost = false, small = false, disabled = false, className = "", type = "button", title, ...rest }) {
   const t = TONE[tone];
   const pad = small ? "px-3 py-1.5 text-[12px]" : "px-4 py-2.5 text-[13px]";
   const style = ghost
     ? { color: t.fg, border: `1px solid ${t.fg}55`, background: "transparent" }
     : { background: t.fg, color: "#FFFFFF" };
   return (
-    <button type={type} onClick={onClick} disabled={disabled} title={title} className={`btn-press rounded-[10px] font-bold disabled:opacity-40 ${pad} ${className}`} style={style}>
+    <button {...rest} type={type} onClick={onClick} disabled={disabled} title={title} className={`btn-press rounded-[10px] font-bold disabled:opacity-40 ${pad} ${className}`} style={style}>
       {children}
     </button>
   );
@@ -221,7 +223,19 @@ export function Table({ cols, rows, onRow, rowKey = (r, i) => r.id ?? i, selecte
               <tr
                 key={k}
                 onClick={onRow ? () => onRow(r) : undefined}
-                className={`border-b border-navy/[.06] ${onRow ? "cursor-pointer hover:bg-navy/[.03]" : ""}`}
+                // 키보드로도 연다 — Tab 으로 줄에 와서 Enter · Space (2026-10-19 점검 OPS-13 · 전에는 마우스로만 상세가 열렸다)
+                tabIndex={onRow ? 0 : undefined}
+                onKeyDown={
+                  onRow
+                    ? (e) => {
+                        if (e.target !== e.currentTarget || (e.key !== "Enter" && e.key !== " ")) return;
+                        e.preventDefault();
+                        onRow(r);
+                      }
+                    : undefined
+                }
+                aria-selected={onRow && selected != null ? on : undefined}
+                className={`border-b border-navy/[.06] ${onRow ? "cursor-pointer outline-none hover:bg-navy/[.03] focus-visible:bg-navy/[.05] focus-visible:shadow-[inset_3px_0_0_#B08D57]" : ""}`}
                 style={on ? { background: "rgba(176,141,87,.12)" } : undefined}
               >
                 {cols.map((c) => (
@@ -298,11 +312,65 @@ export function Toggle({ id, on, onChange, label }) {
 // 화면이 아니라 그 카드를 기준으로 잡혀 확인창이 화면 밖(위)으로 열렸다 (2026-10-06 UX 점검 · 계정·권한 정지 확인)
 const toBody = (el) => (typeof document === "undefined" ? el : createPortal(el, document.body));
 
+// 대화상자 초점 (2026-10-19 점검 OPS-13 — 서랍 · 확인 창이 키보드로 쓸 수 없었다):
+// 열리면 안으로 초점을 옮기고(확인 창은 '닫기'에 — Enter 한 번에 되돌릴 수 없는 일이 실행되지 않게), Tab 은 안에서만 돌고,
+// Esc 로 닫고, 닫히면 연 자리로 돌려준다. 겹쳐 열리면(서랍 위 확인 창) 맨 위 창만 키를 받는다.
+const DIALOGS = [];
+function useDialogFocus(open, onClose, initial) {
+  const ref = useRef(null);
+  const closeRef = useRef(onClose);
+  closeRef.current = onClose;
+  useEffect(() => {
+    if (!open || typeof document === "undefined") return undefined;
+    const me = {};
+    DIALOGS.push(me);
+    const prev = document.activeElement;
+    const focusables = () =>
+      Array.from(
+        ref.current?.querySelectorAll('button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])') || []
+      );
+    const t = setTimeout(() => {
+      const first = (initial && ref.current?.querySelector(initial)) || focusables()[0];
+      first?.focus();
+    }, 0);
+    const onKey = (e) => {
+      if (DIALOGS[DIALOGS.length - 1] !== me) return;
+      if (e.key === "Escape") {
+        e.stopPropagation();
+        closeRef.current?.();
+        return;
+      }
+      if (e.key !== "Tab") return;
+      const list = focusables();
+      if (!list.length) return;
+      const i = list.indexOf(document.activeElement);
+      if (e.shiftKey && i <= 0) {
+        e.preventDefault();
+        list[list.length - 1].focus();
+      } else if (!e.shiftKey && (i === -1 || i === list.length - 1)) {
+        e.preventDefault();
+        list[0].focus();
+      }
+    };
+    document.addEventListener("keydown", onKey, true);
+    return () => {
+      clearTimeout(t);
+      document.removeEventListener("keydown", onKey, true);
+      const at = DIALOGS.indexOf(me);
+      if (at >= 0) DIALOGS.splice(at, 1);
+      if (prev && typeof prev.focus === "function" && document.contains(prev)) prev.focus();
+    };
+  }, [open, initial]);
+  return ref;
+}
+
 export function Drawer({ open, onClose, title, sub, children, width = 520, footer }) {
+  const ref = useDialogFocus(open, onClose);
   if (!open) return null;
   return toBody(
     <div className="fixed inset-0 z-[1200] flex justify-end bg-navy/30" onClick={onClose}>
       <div
+        ref={ref}
         role="dialog"
         aria-modal="true"
         aria-label={title}
@@ -327,16 +395,18 @@ export function Drawer({ open, onClose, title, sub, children, width = 520, foote
 }
 
 // 확인 절차 — 출동·종료처럼 되돌리기 어려운 실행 전에 한 번 더 묻는다 (요청서 19절)
-export function Confirm({ open, title, body, confirmLabel = "실행", tone = "navy", onConfirm, onCancel, children }) {
+// 물러나는 버튼은 '닫기' — 확인 버튼이 '취소'인 창(예: 요청 취소)에서 [취소][취소]로 보이던 것 (2026-10-19 점검 OPS-18)
+export function Confirm({ open, title, body, confirmLabel = "실행", cancelLabel = "닫기", tone = "navy", onConfirm, onCancel, children }) {
+  const ref = useDialogFocus(open, onCancel, "[data-dialog-cancel]");
   if (!open) return null;
   return toBody(
     <div className="fixed inset-0 z-[1300] flex items-center justify-center bg-navy/40 px-4" onClick={onCancel}>
-      <div role="alertdialog" aria-modal="true" aria-label={title} onClick={(e) => e.stopPropagation()} className="card-frost w-full max-w-[440px] rounded-[16px] p-5">
+      <div ref={ref} role="alertdialog" aria-modal="true" aria-label={title} onClick={(e) => e.stopPropagation()} className="card-frost w-full max-w-[440px] rounded-[16px] p-5">
         <h3 className="text-[16px] font-bold text-navy">{title}</h3>
         {body && <p className="mt-2 text-[13px] leading-[1.7] text-ink">{body}</p>}
         {children}
         <div className="mt-4 flex justify-end gap-2">
-          <Btn ghost tone="muted" onClick={onCancel}>취소</Btn>
+          <Btn ghost tone="muted" onClick={onCancel} data-dialog-cancel="">{cancelLabel}</Btn>
           <Btn tone={tone} onClick={onConfirm}>{confirmLabel}</Btn>
         </div>
       </div>

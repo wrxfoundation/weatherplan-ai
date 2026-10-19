@@ -7,9 +7,10 @@ import { Line } from "../../components/clay";
 import { Btn, Sheet, SheetTitle, TONE, WhiteBtn } from "../../components/ds";
 import { ELDER } from "../../lib/mock";
 import { PAYMENT_MODES, PRICING, fmtWon } from "../../lib/config";
-import { fmtCard, payHref } from "../../lib/payments";
+import { fmtCard, payHref, safeReceiptUrl } from "../../lib/payments";
 import { PROVIDER_LABEL, logout, useAuth } from "../../lib/auth";
 import { storageText, useAppState, useSync } from "../../lib/state";
+import { useGuardianRole } from "../../lib/guardian-role";
 import { videoConsentOf } from "../../lib/consent";
 import { honorific } from "../../lib/tracks";
 import { monthlyLabel } from "../../lib/membership";
@@ -30,13 +31,25 @@ function permText(ob, honor) {
   return { both: "어르신과 보호자 모두 결제할 수 있어요", guardianOnly: "보호자만 결제해요", elderOnly: `${honor}만 결제해요` }[mode] || "";
 }
 
+// 가입일 기준 다음 달 결제일 — 오늘 이후 첫 날짜. 그 달에 같은 날이 없으면 말일로 맞춘다
+function nextMonthly(joinedAt, now = Date.now()) {
+  const j = new Date(joinedAt);
+  const day = j.getDate();
+  for (let k = 1; k < 600; k++) {
+    const d = new Date(j.getFullYear(), j.getMonth() + k, 1);
+    d.setDate(Math.min(day, new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate()));
+    if (d.getTime() > now) return d;
+  }
+  return j;
+}
+
 export default function MembershipPage() {
   const { state, dispatch } = useAppState();
   const auth = useAuth();
   const sync = useSync();
   const ob = state.onboarding;
   const honor = honorific(ob);
-  const isPrimary = (state.demo.guardianRole || "primary") === "primary";
+  const { isPrimary } = useGuardianRole(); // 로그인한 가구는 계정 기준 (lib/guardian-role.js)
   const [permOpen, setPermOpen] = useState(false);
   const [refundOpen, setRefundOpen] = useState(false);
   const [cancelOpen, setCancelOpen] = useState(false);
@@ -46,7 +59,8 @@ export default function MembershipPage() {
   const payments = state.payments || [];
   const billing = state.billing;
   const region = ob ? `${ob.district} · ${ob.tier === 2 ? "2급지" : "1급지"}` : `${ELDER.district} · 1급지`;
-  const nextBill = ob?.joinedAt ? new Date(new Date(ob.joinedAt).setMonth(new Date(ob.joinedAt).getMonth() + 1)).toLocaleDateString("ko-KR", { month: "long", day: "numeric" }) : null;
+  // 다음 결제일 — 가입일과 같은 날짜로 매달, 그 달에 그 날이 없으면 말일 (1월 31일 → 2월 28일 · 전에는 3월 3일로 넘쳤다 · 2026-10-19 점검)
+  const nextBill = ob?.joinedAt ? nextMonthly(ob.joinedAt).toLocaleDateString("ko-KR", { month: "long", day: "numeric" }) : null;
   const videoConsent = videoConsentOf(state) ? "동의함" : "동의 안 함"; // 정보 동의와 같은 값 (lib/consent.js)
   const entryPaid = payments.some((p) => p.kind === "entry");
   const mini = "ds-press ds-btn3d flex h-10 flex-none items-center gap-1 rounded-[14px] bg-white px-3.5 text-[15px]";
@@ -83,15 +97,22 @@ export default function MembershipPage() {
               {billing ? fmtCard(billing) : "미등록"}
             </span>
           </div>
-          <Link
-            href={payHref({ kind: "billing", orderName: "월 구독료 자동결제" })}
-            className="ds-press ds-btn3d ds-btn flex items-center justify-center"
-            style={{ background: TONE.gold.solid, boxShadow: `0 4px 0 ${TONE.gold.solidSh}`, color: TONE.gold.solidFg }}
-          >
-            {billing ? "등록된 카드 바꾸기" : "카드 등록하기"}
-          </Link>
+          {/* 결제수단 등록 · 변경은 주 보호자만 — 계약 · 결제의 단일 주체 (docs/kcare/guardian-invite-policy.md · 2026-10-19 점검) */}
+          {isPrimary ? (
+            <Link
+              href={payHref({ kind: "billing", orderName: "월 구독료 자동결제" })}
+              className="ds-press ds-btn3d ds-btn flex items-center justify-center"
+              style={{ background: TONE.gold.solid, boxShadow: `0 4px 0 ${TONE.gold.solidSh}`, color: TONE.gold.solidFg }}
+            >
+              {billing ? "등록된 카드 바꾸기" : "카드 등록하기"}
+            </Link>
+          ) : (
+            <p className="rounded-[14px] bg-white px-3 py-2.5 text-[14px] font-bold" style={{ color: "#5E6270" }}>
+              결제수단 등록 · 변경은 주 보호자만 할 수 있습니다
+            </p>
+          )}
           <div className="text-center text-[13px] font-bold" style={{ color: "#6B5A35" }}>
-            토스페이먼츠 · 카드정보는 K-CARE 서버에 저장되지 않아요{billing ? " · 매월 자동 청구" : ""}
+            토스페이먼츠 · 카드정보는 K-CARE 서버에 저장되지 않아요{billing ? " · 자동 청구는 아직 하지 않아요" : ""}
           </div>
         </div>
 
@@ -125,7 +146,7 @@ export default function MembershipPage() {
                 <span className="flex-none text-[14px] font-extrabold" style={{ color: TONE.green.fg }}>
                   결제 완료
                 </span>
-              ) : PRICING.entryFee.total != null ? (
+              ) : PRICING.entryFee.total != null && isPrimary ? (
                 <Link href={payHref({ kind: "entry", amount: PRICING.entryFee.total, orderName: "K-CARE 가입 및 설치비" })} className={mini} style={{ boxShadow: `0 3px 0 ${TONE.green.sh}`, color: TONE.green.fg }}>
                   {fmtWon(PRICING.entryFee.total)} 결제
                 </Link>
@@ -272,8 +293,8 @@ export default function MembershipPage() {
                   </span>
                   <span className="flex-none text-right">
                     <span className="ds-num block text-[15px] font-black">{fmtWon(p.amount)}</span>
-                    {p.receiptUrl && (
-                      <a href={p.receiptUrl} target="_blank" rel="noreferrer" className="inline-flex min-h-[28px] items-center text-[13px] font-extrabold underline underline-offset-2" style={{ color: TONE.green.fg }}>
+                    {safeReceiptUrl(p.receiptUrl) && (
+                      <a href={safeReceiptUrl(p.receiptUrl)} target="_blank" rel="noreferrer" className="inline-flex min-h-[28px] items-center text-[13px] font-extrabold underline underline-offset-2" style={{ color: TONE.green.fg }}>
                         영수증
                       </a>
                     )}

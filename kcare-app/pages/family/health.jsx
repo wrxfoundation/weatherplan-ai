@@ -5,6 +5,7 @@ import FamilyLayout from "../../components/FamilyLayout";
 import { Btn, Sheet, SheetTitle, TONE, WhiteBtn } from "../../components/ds";
 import { PRIORITY_PRESETS, WEATHER_FACTORS } from "../../lib/mock";
 import { useAppState } from "../../lib/state";
+import { useGuardianRole } from "../../lib/guardian-role";
 import { honorific, subjectLabel, trackOf } from "../../lib/tracks";
 import { healthOf } from "../../lib/meds";
 
@@ -20,7 +21,7 @@ export default function HealthPage() {
   const ob = state.onboarding;
   const subj = subjectLabel(trackOf(ob?.track), ob);
   const honor = honorific(ob);
-  const isPrimary = (state.demo.guardianRole || "primary") === "primary";
+  const { isPrimary } = useGuardianRole(); // 로그인한 가구는 계정 기준 (lib/guardian-role.js)
   const health = healthOf(state);
   const [settingOpen, setSettingOpen] = useState(false);
 

@@ -16,7 +16,8 @@ import { ringAlarm } from "../lib/alarm";
 import { ELDER, elderWho } from "../lib/mock";
 import { LIVE_CONCIERGE } from "../lib/live-household";
 import { CONCIERGES } from "../lib/ops-admin";
-import { conciergeChoices, meAs } from "../lib/people";
+import { conciergeChoices, inCenter, meAs } from "../lib/people";
+import { LIVE_ELDER, liveCustomer, telHref } from "../lib/ops-health";
 
 const RECENT_MS = 12 * 3600 * 1000; // 끝난 도와줘요도 12시간은 팝업 · 카드에 남긴다 (결과를 알려야 하므로)
 const lastAt = (r) => r.history?.[r.history.length - 1]?.at || 0;
@@ -80,8 +81,9 @@ function Timeline({ r, from = 0 }) {
   );
 }
 
-// 보호자 · 컨시어지 팝업 — 새 도와줘요 · 관제 처리 단계마다 뜬다
-export function HelpCallPopup({ role }) {
+// 보호자 · 컨시어지 팝업 — 새 도와줘요 · 관제 처리 단계마다 뜬다.
+// onGo — 진행 카드로 데려가기 (컨시어지: 오늘 탭 '도와줘요' 카드 · 전에는 닫기뿐이라 화면 아래쪽 카드를 찾아야 했다 · 2026-10-19 점검 C-11)
+export function HelpCallPopup({ role, onGo }) {
   const { state } = useAppState();
   // 이 기기의 컨시어지 이름 — 센터 공간에서 컨시어지가 여럿이면 로그인한 사람 (2026-10-06 점검)
   const me = meAs(useAuth().user, "concierge");
@@ -121,12 +123,32 @@ export function HelpCallPopup({ role }) {
                 ? "관제센터가 대응하고 있습니다. 출동 지시가 오면 다시 알려 드립니다."
                 : "관제센터가 대응하고 있습니다. 진행될 때마다 알려 드립니다."}
         </p>
-        <button
-          onClick={() => mark(pending.id, pending.history.length)}
-          className="btn-press mt-4 w-full rounded-xl bg-navy py-3 text-[15px] font-bold text-white"
-        >
-          닫기
-        </button>
+        {onGo && pending.status !== "done" ? (
+          <div className="mt-4 flex gap-2">
+            <button
+              onClick={() => mark(pending.id, pending.history.length)}
+              className="btn-press flex-1 rounded-xl border border-navy/15 py-3 text-[15px] font-bold text-muted"
+            >
+              닫기
+            </button>
+            <button
+              onClick={() => {
+                mark(pending.id, pending.history.length);
+                onGo();
+              }}
+              className="btn-press flex-[2] rounded-xl bg-navy py-3 text-[15px] font-bold text-white"
+            >
+              도와줘요 카드로 가기
+            </button>
+          </div>
+        ) : (
+          <button
+            onClick={() => mark(pending.id, pending.history.length)}
+            className="btn-press mt-4 w-full rounded-xl bg-navy py-3 text-[15px] font-bold text-white"
+          >
+            닫기
+          </button>
+        )}
       </div>
     </div>
   );
@@ -140,7 +162,7 @@ export function HelpCallCard({ role, me = LIVE_CONCIERGE }) {
   const calls = helpCalls(state.requests);
   if (calls.length === 0) return null;
   return (
-    <div className="space-y-2">
+    <div id={`help-call-${role}`} className="scroll-mt-4 space-y-2">
       {calls.map((r) => {
         const open = !CLOSED.includes(r.status);
         const mine = role === "concierge" && r.status === "inProgress" && r.assignee === me;
@@ -211,8 +233,13 @@ export function HelpCallOps({ openId, onClose }) {
   const [who, setWho] = useState(LIVE_CONCIERGE);
   // 해결 완료로 닫기 전 한 번 더 — 닫은 도와줘요는 기록이라 되돌리거나 고치지 않는다 (2026-10-18)
   const [closing, setClosing] = useState(null); // { step, extra, label }
-  // 센터 공간은 그 센터 컨시어지만 — 아직 승인된 컨시어지가 없으면 출동 지시를 막는다 (자리 이름을 담당으로 저장하지 않게)
-  const choices = conciergeChoices(CONCIERGES);
+  // 센터 공간은 그 센터 컨시어지만 — 아직 승인된 컨시어지가 없으면 출동 지시를 막는다 (자리 이름을 담당으로 저장하지 않게).
+  // 테스트 가구는 앱을 쓰는 컨시어지(박지현) 한 사람 — 예시 인력(서다인 등)을 보내면 어르신은 '오고 있다'고 듣는데
+  // 실제로 움직일 폰이 없다 (2026-10-19 점검 L-14)
+  const choices = user?.household && !inCenter() ? [LIVE_CONCIERGE] : conciergeChoices(CONCIERGES);
+  // 확인 전화 — 가입 상담에서 받은 어르신 번호. SOS 팝업처럼 바로 건다 (L-06)
+  const elderTel = telHref(liveCustomer(LIVE_ELDER, state.onboarding, state.health).phone);
+  const elderPhone = liveCustomer(LIVE_ELDER, state.onboarding, state.health).phone;
   const pick = choices.includes(who) ? who : choices[0] || "";
   const rang = useRef("");
   useEffect(() => {
@@ -247,6 +274,13 @@ export function HelpCallOps({ openId, onClose }) {
           {elderWho(" ")} 님이 {pressed(r)}
         </div>
         <p className="mt-1 text-[13px] text-muted">어르신 화면 · {hm(r.history[0].at)} 접수 — 확인 전화부터. 어느 단계에서든 해결되면 해결 완료로 닫습니다.</p>
+        {elderTel ? (
+          <a href={elderTel} className="btn-press mt-2 inline-flex min-h-[44px] items-center gap-2 rounded-xl border border-navy/20 px-3.5 text-[14px] font-bold text-navy">
+            어르신께 전화 · <span className="font-num">{elderPhone}</span>
+          </a>
+        ) : (
+          <p className="mt-2 text-[12.5px] font-bold text-amber">어르신 번호가 아직 없습니다 — 가입 상담에서 번호를 받으면 여기서 바로 겁니다</p>
+        )}
 
         <div className="mt-4 rounded-xl bg-[#FBF6EC] p-3.5">
           <Timeline r={r} from={r.history.length} />

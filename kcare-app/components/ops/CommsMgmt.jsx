@@ -147,11 +147,12 @@ function DemoComms() {
               const st = COMM_STATUS[m.status];
               const wasResent = resent[m.id];
               return (
-                <li key={m.id} className="flex items-stretch gap-3 rounded-xl px-2 py-2 hover:bg-navy/[.03]">
+                // 휴대폰에서는 시각 · 채널을 위로 접어 본문 칸이 한 글자씩 꺾이지 않게 (2026-10-19 점검 OPS-12)
+                <li key={m.id} className="flex flex-wrap items-stretch gap-x-3 gap-y-1 rounded-xl px-2 py-2 hover:bg-navy/[.03] sm:flex-nowrap">
                   {m.sos ? <SevBar sev="sev1" /> : <span className="w-[4px] shrink-0 rounded-full" style={{ background: m.status === "unread" || m.status === "failed" || m.status === "noAnswer" ? "#C9862B" : "rgba(10,31,60,.08)" }} aria-hidden />}
                   <span className="w-[86px] shrink-0 pt-0.5 font-num text-[11px] text-muted">{fmtDT(m.at)}</span>
                   <span className="flex w-[130px] shrink-0 items-center gap-1 self-start rounded-full px-2 py-[2px] text-[11px] font-bold text-navy" style={{ background: "rgba(10,31,60,.06)" }}><Icon name={ch.icon} size={12} /> {ch.label}</span>
-                  <div className="min-w-0 flex-1">
+                  <div className="min-w-0 basis-full sm:flex-1 sm:basis-auto">
                     <div className="text-[13px] text-ink"><b className="text-navy">{m.elder}</b>{m.to !== m.elder && <span className="text-muted"> → {m.to}</span>} · {m.text}</div>
                     {m.fail && <div className="text-[11px] text-muted">실패 사유: {m.fail}{wasResent ? ` · 재발송 완료 ${fmtRel(wasResent)}` : ""}</div>}
                   </div>

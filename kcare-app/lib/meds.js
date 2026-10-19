@@ -143,6 +143,33 @@ export function needsReorder(s, now = new Date()) {
   return months <= 6 ? "유통기한 임박" : null;
 }
 
+// 오늘(한국 날짜) 드신 때 — 어르신이 누른 기록은 날짜와 함께 남는다 (state.elder.medSlotsDate · state.js elderMark).
+// 날짜가 지난 기록은 빈 기록으로 읽는다 — 전에는 자정이 지나도 어제 체크가 남아 둘째 날 알람이 뜨지 않고
+// 가족 앱 · 관제에 '다 드심'으로 보였다 (2026-10-19 점검 F-07). 날짜가 없는 옛 기록도 오늘 것으로 치지 않는다.
+export const kstToday = (t = Date.now()) => new Date(t + 9 * 3600000).toISOString().slice(0, 10);
+export function medTakenToday(elder, now = Date.now()) {
+  const slots = elder?.medSlots;
+  if (!slots || typeof slots !== "object" || Array.isArray(slots)) return {};
+  return elder.medSlotsDate === kstToday(now) ? slots : {};
+}
+
+// 때마다 지금 상태 (2026-10-19 점검 E02) — 전에는 안 드신 첫 때를 언제나 '지금 드실 약'으로 보여서,
+// 저녁 8시에 처음 연 앱이 아침 약 알람을 띄우고(같은 혈압약이 저녁에도 있다) 한꺼번에 드실 위험이 있었다.
+//   taken    드심
+//   upcoming 아직 그 때가 아니다
+//   due      지금 드실 때 — 그 때부터 다음 때 전까지 (마지막 때는 자정까지)
+//   missed   다음 때가 와서 놓쳤다 — 알람을 띄우지 않고 '한꺼번에 드시지 마세요'로 알린다
+export function slotStates(plan, taken = {}, now = new Date()) {
+  const h = now.getHours() + now.getMinutes() / 60;
+  const sorted = sortSlots(plan);
+  return sorted.map((d, i) => {
+    const start = slotHour(d.time);
+    const end = i + 1 < sorted.length ? slotHour(sorted[i + 1].time) : 24;
+    const state = taken[d.slot] ? "taken" : h < start ? "upcoming" : h < end ? "due" : "missed";
+    return { ...d, state };
+  });
+}
+
 // 오늘 몇 번 중 몇 번 드셨는지 — 진행바에 그대로 쓴다.
 // taken 은 { "아침": true, ... } 형태의 state.elder.medSlots · plan 은 healthOf(state).meds
 export function medProgress(taken = {}, plan = MED_PLAN) {

@@ -1,6 +1,6 @@
 import ModeLink from "../components/ModeLink";
 import Head from "next/head";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   ELDER,
   ELDER_NOW,
@@ -23,7 +23,7 @@ import { STORE_CATALOG } from "../lib/store";
 import ProductSheet, { GOODS_LOOK } from "../components/ProductSheet";
 import { CLOSED, SERVICE_MENU, SERVICE_PLUS, approverOf, canEditRequest, cancelRule, fmtScheduled, isStoreOrder, isVisitCall, preferredYmd } from "../lib/requests";
 import { assigneeNow, avatarText, elderNameOf, givenName, inCenter, voiceTargetsCenter } from "../lib/people";
-import { MED_STREAK, SUPPLEMENTS, daysLeft, healthOf, medProgress, needsReorder, slotHour } from "../lib/meds";
+import { MED_STREAK, SUPPLEMENTS, daysLeft, healthOf, medProgress, medTakenToday, needsReorder, slotHour, slotStates } from "../lib/meds";
 import { medStreakWeek } from "../lib/demo-health";
 import { VERDICT, matchWelfare, profileFor, welfareCounts } from "../lib/welfare";
 import { elderSpentToday, eventsFor, needsGuardianApproval, useAppState, useSync } from "../lib/state";
@@ -253,6 +253,7 @@ function ElderHome() {
   };
   const goHome = () => setTab("home");
   const [helpPhase, setHelpPhase] = useState(null); // 도와줘요 창 — asking(취소 가능) | sent | already
+  const [helpLeft, setHelpLeft] = useState(0); // 보내기까지 남은 초 — 화면에 보여 준다 (2026-10-19 점검 E11)
   const helpTimer = useRef(null);
   const [famSel, setFamSel] = useState(0); // 가족 탭 — 고른 자녀 칸 (시안: 한 사람씩)
   const [welfareOpen, setWelfareOpen] = useState(false); // 해주세요 — 복지혜택 시트 (앱 전체 3번)
@@ -265,6 +266,7 @@ function ElderHome() {
   const [pillDone, setPillDone] = useState(null); // 방금 '다 먹었어요'를 누른 시간대 — 칭찬 화면
   const [storeSel, setStoreSel] = useState({});
   const [storeSent, setStoreSent] = useState(null); // 'approval' | 'ordered'
+  const [storeAsk, setStoreAsk] = useState(false); // 직접 결제 한 번 더 묻기 (2026-10-19 점검 E09)
   const [storeDetail, setStoreDetail] = useState(null); // 상품 상세 시트 — 담기 전 설명을 먼저 본다 (2026-09-22)
   const [calSel, setCalSel] = useState(null); // 이번 달 시트에서 고른 날 (null = 이번 달 전체)
   const [evEdit, setEvEdit] = useState(null); // 바꾸는 일정 — 본인이 남긴 것만 (lib/event-rights.js)
@@ -274,7 +276,10 @@ function ElderHome() {
   const callTimer = useRef(null);
 
   // 새로고침을 견뎌야 하는 것들은 전부 state.elder 에 있다 (lib/state.js 주석 참고).
-  const { voicePlayed, medSlots, reordered } = state.elder;
+  const { voicePlayed, reordered } = state.elder;
+  // 오늘 드신 때 — 날짜가 지난 체크는 오늘 것이 아니다 (lib/meds.js medTakenToday · 2026-10-19 점검 F-07)
+  const medDay = kstDate();
+  const medSlots = useMemo(() => medTakenToday(state.elder), [state.elder.medSlots, state.elder.medSlotsDate, medDay]); // eslint-disable-line react-hooks/exhaustive-deps
   // 목소리 — 테스트 계정은 서버에 올리고, 데모는 이 기기에만 (lib/voice-client.js)
   const serverVoice = useSync().mode === "server";
   const player = useVoicePlayer();
@@ -324,7 +329,7 @@ function ElderHome() {
   const myOpen = myRequests.filter((r) => !CLOSED.includes(r.status));
   // 선생님(컨시어지)이 어르신에게 수락을 물은 제안 (2026-10-05 — 승인 대상은 컨시어지가 정한다)
   const proposalsForMe = (state.requests || []).filter((r) => r.status === "requested" && approverOf(r) === "elder");
-  const [elderConfirm, setElderConfirm] = useState(null); // { id, kind: "cancel" | "decline" }
+  const [elderConfirm, setElderConfirm] = useState(null); // { id, kind: "cancel" | "decline" | "accept"(돈이 드는 제안) }
 
   // 관제 센터 공간에 어르신이 둘 이상 가입했으면 — 인사는 로그인한 본인 이름으로, 기록은 먼저 가입한 어르신 기준이라고 알린다
   // (2026-10-08 현장 테스트: 두 번째로 가입한 어르신에게 첫 어르신 이름으로 인사했다)
@@ -405,8 +410,12 @@ function ElderHome() {
   // 요일은 날짜에서 — 보호자 '복약 미션'과 같은 요일에 '놓침'이 찍힌다 (lib/demo-health.js)
   const streak = inCenter() || liveHH ? { days: 0, week: [] } : { ...MED_STREAK, week: medStreakWeek() };
   const medStreak = streak.days + (medAllDone ? 1 : 0);
-  // 아직 안 드신 것 중 첫 번째 = 지금 드실 약. 그 다음 것은 한 줄로만 예고한다.
-  const medPending = medPlan.filter((d) => !medSlots[d.slot]);
+  // 때마다 지금 상태 — 지금 드실 때(due) · 아직(upcoming) · 놓침(missed). 놓친 약은 '지금 드실 약'으로 올리지 않는다 —
+  // 다음 때 약과 한꺼번에 드시는 일이 없게 (lib/meds.js slotStates · 2026-10-19 점검 E02)
+  const medStates = slotStates(medPlan, medSlots, now);
+  const medDue = medStates.find((d) => d.state === "due") || null;
+  const medMissed = medStates.filter((d) => d.state === "missed");
+  const medPending = [...(medDue ? [medDue] : []), ...medStates.filter((d) => d.state === "upcoming")];
   const medNext = medPending[0] || null;
   const medAfter = medPending[1] || null;
   const [medPop, setMedPop] = useState(null); // 알람 팝업이 띄운 시간대 (null이면 닫힘)
@@ -415,9 +424,14 @@ function ElderHome() {
   // 약은 드실 때까지 남고, 일정은 시작 뒤 한 시간이 지나면 빠진다.
   const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
   const tasks = [
-    ...medPending.map((d) => ({ kind: "med", key: `m-${d.slot}`, slot: d.slot, time: d.time, at: todayStart + slotHour(d.time) * 3600000 })),
+    ...medPending.map((d) => ({ kind: "med", key: `m-${d.slot}`, slot: d.slot, time: d.time, due: d.state === "due", at: todayStart + slotHour(d.time) * 3600000 })),
     ...myEvents.filter((e) => isToday(e.at) && e.at > Date.now() - 3600000).map((e) => ({ kind: "event", key: e.id, ev: e, at: e.at })),
-  ].sort((a, b) => a.at - b.at);
+  ].sort((a, b) => {
+    // 2시간 안에 시작하는 일정(병원 동행 픽업 등)은 맨 앞 — 약은 그 때 안에 드시면 되지만 약속 시간은 지나가 버린다 (2026-10-19 점검 E04)
+    const soon = (t) => t.kind === "event" && t.at > Date.now() - 15 * 60000 && t.at - Date.now() < 2 * 3600000;
+    if (soon(a) !== soon(b)) return soon(a) ? -1 : 1;
+    return a.at - b.at;
+  });
   const laterEvents = upcoming.filter((e) => !isToday(e.at));
   const nowTask = tasks[0] || (laterEvents[0] ? { kind: "later", key: laterEvents[0].id, ev: laterEvents[0], at: laterEvents[0].at } : null);
   const thenTask = tasks.length
@@ -429,7 +443,9 @@ function ElderHome() {
   // (2026-10-02 QA '관제 승인 전에는 확정이 아니다' · 이번 달 목록과 같은 말)
   // 확정 일정을 바꿨는데 관제가 반려해 원래대로 돌아간 것도 — '지금 할 일' 카드가 아닐 때에도 알 수 있게 (2026-10-18)
   const approvalWord = (ev) =>
-    ev?.approval === "pending"
+    ev?.changePending
+      ? "가족이 바꾸는 중 — 관제가 확인할 때까지 이대로입니다"
+      : ev?.approval === "pending"
       ? "관제 확인 중"
       : ev?.approval === "rejected"
         ? "관제에서 다시 연락드립니다"
@@ -461,7 +477,8 @@ function ElderHome() {
   const pickMood = (k) => {
     const keep = Object.keys(moods).filter((d) => d !== todayK).sort().slice(-6);
     const nextMoods = Object.fromEntries(keep.map((d) => [d, moods[d]]));
-    nextMoods[todayK] = { v: k, at: Date.now(), told: moodToday?.v === k ? !!moodToday.told : false };
+    // 오늘 이미 관제에 알렸으면 기분을 바꿔도 '알렸어요'가 남는다 — 바꿨다 되돌리면 같은 알림이 또 가던 것 (2026-10-19 점검 E30)
+    nextMoods[todayK] = { v: k, at: Date.now(), told: !!moodToday?.told };
     dispatch({ type: "elderPatch", patch: { moods: nextMoods } });
   };
   const tellMood = () => {
@@ -493,22 +510,54 @@ function ElderHome() {
   useEffect(
     () => () => {
       clearTimeout(callTimer.current);
-      clearTimeout(helpTimer.current);
+      clearInterval(helpTimer.current);
     },
     []
   );
 
   // 바탕화면 SOS 바로가기 — /elder?sos=1 로 열리면 5초 취소 유예 화면이 바로 뜬다.
   // (public/manifest.webmanifest 의 shortcuts 가 이 주소를 가리킨다)
+  // 주소의 sos=1 은 읽고 바로 지운다 — 새로고침 · 뒤로 가기로 SOS 가 다시 보내지지 않게. 이미 보낸 SOS 가 진행 중이면
+  // 다시 보내지 않고 지금 상태 화면을 보인다 (2026-10-19 점검 E05)
   useEffect(() => {
     if (typeof window === "undefined") return;
-    if (new URLSearchParams(window.location.search).get("sos") === "1") setSosPhase("confirm");
-  }, []);
+    const q = new URLSearchParams(window.location.search);
+    if (q.get("sos") !== "1") return;
+    q.delete("sos");
+    const rest = q.toString();
+    window.history.replaceState(window.history.state, "", `${window.location.pathname}${rest ? `?${rest}` : ""}${window.location.hash}`);
+    setSosPhase(state.demo.sos ? "sent" : "confirm");
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // 잘못 눌렀어요 — SOS 를 앱에서 끄지는 않는다(관제가 확인하고 종료한다). 관제에 알리기만 한다 (E06)
+  const sosMistakeSent = (state.opsMessages || []).some((m) => m.kind === "sosMistake" && m.sosAt === state.demo.sosAt);
+  const tellSosMistake = () => {
+    if (sosMistakeSent || !state.demo.sos) return;
+    dispatch({
+      type: "addOpsMessage",
+      payload: { from: `어르신 ${ELDER.name}`, role: "elder", kind: "sosMistake", sosAt: state.demo.sosAt || null, text: "SOS 를 잘못 눌렀다고 하셨습니다 — 확인 전화 후 SOS 센터에서 종료해 주세요" },
+    });
+    dispatch({ type: "pushEvent", payload: { kind: "SOS", text: `${elderWho()} '잘못 눌렀어요' — 관제 확인 필요`, color: "#B08D57" } });
+  };
+
+  // 선생님께 전화 — 앱에 선생님 번호가 없어 직접 걸 수는 없다. '연결 중입니다'라고 지어내지 않고, 관제센터에
+  // 전화 부탁을 남긴다 (관제가 선생님께 전하거나 직접 전화). 오늘 한 번이면 된다 (2026-10-19 점검 E07)
+  const callAskedToday = (state.opsMessages || []).some((m) => m.kind === "callBack" && m.role === "elder" && kstDate(m.at) === kstDate());
   const callTeacher = () => {
-    if (calling) return;
+    if (calling || callAskedToday) {
+      setCalling(true);
+      clearTimeout(callTimer.current);
+      callTimer.current = setTimeout(() => setCalling(false), 4000);
+      return;
+    }
+    dispatch({
+      type: "addOpsMessage",
+      payload: { from: `어르신 ${ELDER.name}`, role: "elder", kind: "callBack", text: `${TEACHER.name} 선생님 전화를 부탁하셨습니다 — 오늘 방문 관련` },
+    });
+    dispatch({ type: "pushEvent", payload: { kind: "어르신", text: `${elderWho()} ${TEACHER.name} 선생님 전화 부탁 — 관제 전달`, color: "#8FA9CC" } });
     setCalling(true);
-    callTimer.current = setTimeout(() => setCalling(false), 2600);
+    clearTimeout(callTimer.current);
+    callTimer.current = setTimeout(() => setCalling(false), 4000);
   };
 
   // 시간대 인사 (2026-08-28 시안) — 하루 중 언제 여시든 그 시간의 말로 맞는다.
@@ -533,7 +582,9 @@ function ElderHome() {
     }
     const say = (t) =>
       t.kind === "med"
-        ? `${t.slot} ${spokenClock(t.time)}, ${medDoseNames(t.slot, medPlan)} 드실 시간입니다.`
+        ? t.due
+          ? `${t.slot} ${spokenClock(t.time)}, ${medDoseNames(t.slot, medPlan)} 드실 시간입니다.`
+          : `${t.slot} ${spokenClock(t.time)}에 ${medDoseNames(t.slot, medPlan)} 드실 예정입니다.`
         : `${t.kind === "later" ? spokenDay(t.at) : "오늘"} ${spokenTime(t.at)}, ${cleanTitle(t.ev.title)}. ${t.ev.note || ""}`;
     const text = nowTask ? `지금 할 일은 ${say(nowTask)} ${thenTask ? `그다음은 ${say(thenTask)}` : ""}` : "오늘은 잡힌 일정이 없습니다.";
     const u = new SpeechSynthesisUtterance(text);
@@ -635,28 +686,46 @@ function ElderHome() {
   const medPopShown = state.elder.medPopShown || { date: "", slots: {} };
   const otherModal =
     !!medPop || !!pillDone || !!recFor || !!helpPhase || !!askSel || eventSheet || welfareOpen || !!storeDetail || monthOpen || !!infoSheet || sosPhase !== "idle";
+  // 지금 드실 때(due) 하나만 띄운다 — 지난 때(놓친 약)는 띄우지 않는다. 띄운 때만 '띄움'으로 남겨서 다음 때 알람이 그대로 뜬다
+  // (전에는 앱을 처음 연 순간 지난 때를 모두 '띄움'으로 막아 저녁 알람이 오지 않았다 · 2026-10-19 점검 E02).
+  // '조금 있다가'를 누른 때는 30분 뒤 한 번 더 — 두 번까지 (E03)
   useEffect(() => {
     const check = () => {
       if (otherModal) return;
       const d = new Date();
       const today = kstDate(d.getTime());
-      const shown = medPopShown.date === today ? medPopShown.slots || {} : {};
-      const h = d.getHours() + d.getMinutes() / 60;
-      const passed = medPlan.filter((s) => h >= slotHour(s.time));
-      const due = passed.find((s) => !medSlots[s.slot] && !shown[s.slot]);
+      const same = medPopShown.date === today;
+      const shown = same ? medPopShown.slots || {} : {};
+      const snooze = same ? medPopShown.snooze || {} : {};
+      const due = slotStates(medPlan, medSlots, d).find((s) => s.state === "due");
       if (!due) return;
+      const sn = snooze[due.slot];
+      const again = !!(sn && sn.until && sn.until <= d.getTime());
+      if (shown[due.slot] && !again) return;
       setMedPop(due.slot);
-      const slots = { ...shown };
-      passed.forEach((s) => {
-        slots[s.slot] = true;
+      dispatch({
+        type: "elderPatch",
+        patch: { medPopShown: { date: today, slots: { ...shown, [due.slot]: true }, snooze: again ? { ...snooze, [due.slot]: { ...sn, until: null } } : snooze } },
       });
-      dispatch({ type: "elderPatch", patch: { medPopShown: { date: today, slots } } });
     };
     check();
     const t = setInterval(check, 60000);
     return () => clearInterval(t);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [otherModal, medSlots, medPopShown.date, medPopShown.slots, medPlanKey]);
+
+  // 조금 있다가 — 30분 뒤 한 번 더 알린다 (두 번까지). 미룬 것은 체크가 아니다 (06 §5)
+  const snoozeCount = (slot) => (medPopShown.date === kstDate() ? medPopShown.snooze?.[slot]?.n || 0 : 0);
+  const snoozeMed = (slot) => {
+    const today = kstDate();
+    const base = medPopShown.date === today ? medPopShown : { date: today, slots: {}, snooze: {} };
+    const n = snoozeCount(slot) + 1;
+    dispatch({
+      type: "elderPatch",
+      patch: { medPopShown: { ...base, slots: { ...(base.slots || {}), [slot]: true }, snooze: { ...(base.snooze || {}), [slot]: { n, until: n <= 2 ? Date.now() + 30 * 60000 : null } } } },
+    });
+    setMedPop(null);
+  };
 
   // 다 먹었어요 — 체크는 되돌리지 않는다 (06 §5). 칭찬 화면(별)을 띄운다 (시안)
   const takeMed = (slot) => {
@@ -753,14 +822,23 @@ function ElderHome() {
       return;
     }
     setHelpPhase("asking");
-    clearTimeout(helpTimer.current);
-    helpTimer.current = setTimeout(() => {
+    // 3초를 세어 보여 주고 보낸다 — 잘못 누르셨으면 그 사이에 '취소하기' (전에는 숫자 없이 2.6초)
+    let left = 3;
+    setHelpLeft(left);
+    clearInterval(helpTimer.current);
+    helpTimer.current = setInterval(() => {
+      left -= 1;
+      if (left > 0) {
+        setHelpLeft(left);
+        return;
+      }
+      clearInterval(helpTimer.current);
       askVisit();
       setHelpPhase("sent");
-    }, 2600);
+    }, 1000);
   };
   const cancelHelp = () => {
-    clearTimeout(helpTimer.current);
+    clearInterval(helpTimer.current);
     setHelpPhase(null);
   };
   const helpLabel = !visitOpen
@@ -825,6 +903,30 @@ function ElderHome() {
 
   const famTargets = inCenter() ? voiceTargetsCenter() : VOICE_TO;
 
+  // 놓친 약 — 알람으로 띄우지 않고 한 줄로 알린다. '두 번 치를 한꺼번에'가 가장 위험하다 (2026-10-19 점검 E02).
+  // 그때 드셨는데 누르지 못하신 거면 눌러서 기록할 수 있다
+  const missedMeds = medMissed.length ? (
+    <div className="flex flex-col gap-2">
+      {medMissed.map((d) => (
+        <button
+          key={d.slot}
+          type="button"
+          onClick={() => setMedPop(d.slot)}
+          className="ds-press flex w-full items-center gap-3 rounded-[22px] px-[18px] py-3.5 text-left"
+          style={{ background: "#F3F1EC", color: "#3A3F50" }}
+        >
+          <Clay name={timeArt(d.time)} size={40} className="flex-none" />
+          <span className="min-w-0 flex-1 text-[18px] font-extrabold leading-[1.45]">
+            {d.slot} 약을 놓치셨어요
+            <span className="block text-[16px] font-bold" style={{ color: "#5E5A52" }}>
+              두 번 치를 한꺼번에 드시지 마세요
+            </span>
+          </span>
+        </button>
+      ))}
+    </div>
+  ) : null;
+
   return (
     <>
       <Head>
@@ -872,7 +974,50 @@ function ElderHome() {
       {/* ── 약 알람 (2026-10-15 시안) — 시간대 그림 · 큰 글씨 · '다 먹었어요!' 하나.
           '조금 있다가 먹을게요'는 닫기만 한다 — 체크는 되돌리지 않는 원칙(06 §5)이라 미룬 것을 기록하지 않는다. */}
       {medPop && (() => {
-        const slot = medPlan.find((d) => d.slot === medPop);
+        const slot = medStates.find((d) => d.slot === medPop) || medPlan.find((d) => d.slot === medPop);
+        const st = slot?.state || "due";
+        const snoozed = snoozeCount(medPop);
+        // 놓친 때 — '드실 시간'이라고 하지 않는다. 다음 때 약과 한꺼번에 드시지 않게 먼저 말한다 (2026-10-19 점검 E02)
+        if (st === "missed" || st === "upcoming") {
+          return (
+            <div className="ds-overlay ds-app" style={{ background: "#FBF5E6" }} role="dialog" aria-modal="true" aria-label={`${medPop} 약 알림`}>
+              <span className="ds-pop flex h-[132px] w-[132px] items-center justify-center rounded-full bg-white" style={{ boxShadow: "0 0 0 12px #F6EAC8" }}>
+                <Clay name={timeArt(slot?.time || "08:00")} size={84} />
+              </span>
+              <div className="mt-2 text-[22px] font-extrabold" style={{ color: "#86621F" }}>
+                {medPop} {slot ? spokenClock(slot.time) : ""}
+              </div>
+              <div className="text-[30px] font-black leading-[1.3]">
+                {st === "missed" ? (
+                  <>
+                    {medPop} 약을
+                    <br />
+                    놓치셨어요
+                  </>
+                ) : (
+                  <>
+                    아직 드실
+                    <br />
+                    시간이 아니에요
+                  </>
+                )}
+              </div>
+              <p className="max-w-[360px] text-[20px] font-bold leading-[1.5]" style={{ color: "#5E5A52" }}>
+                {st === "missed" ? "두 번 치를 한꺼번에 드시지 마세요. 궁금하시면 선생님께 여쭤보세요." : `${spokenClock(slot?.time || "08:00")}에 알려 드릴게요.`}
+              </p>
+              <div className="mt-auto flex w-full max-w-[400px] flex-col gap-2 pt-6">
+                {st === "missed" && (
+                  <Btn tone="green" h={70} r={24} px={5} className="w-full text-[22px]" onClick={() => takeMed(medPop)}>
+                    그때 먹었어요
+                  </Btn>
+                )}
+                <button type="button" onClick={() => setMedPop(null)} className="min-h-[56px] w-full text-[19px] font-extrabold" style={{ color: "#5E5A52" }}>
+                  {st === "missed" ? "닫기" : "알겠어요"}
+                </button>
+              </div>
+            </div>
+          );
+        }
         return (
           <div className="ds-overlay ds-app" style={{ background: "#FBF5E6" }} role="dialog" aria-modal="true" aria-label={`${medPop} 약 알림`}>
             <span className="rounded-full px-4 py-1.5 text-[16px] font-extrabold text-white" style={{ background: "#1B2340" }}>
@@ -893,9 +1038,14 @@ function ElderHome() {
               <Btn tone="green" h={78} r={24} px={5} className="w-full text-[24px]" onClick={() => takeMed(medPop)}>
                 다 먹었어요!
               </Btn>
-              <button type="button" onClick={() => setMedPop(null)} className="min-h-[56px] w-full text-[18px] font-extrabold" style={{ color: "#5E5A52" }}>
-                조금 있다가 먹을게요
+              <button type="button" onClick={() => (snoozed >= 2 ? setMedPop(null) : snoozeMed(medPop))} className="min-h-[56px] w-full text-[18px] font-extrabold" style={{ color: "#5E5A52" }}>
+                {snoozed >= 2 ? "닫기" : "조금 있다가 먹을게요"}
               </button>
+              {snoozed < 2 && (
+                <p className="text-center text-[16px] font-bold" style={{ color: "#6F6A60" }}>
+                  30분 뒤에 한 번 더 알려 드릴게요
+                </p>
+              )}
             </div>
           </div>
         );
@@ -966,7 +1116,7 @@ function ElderHome() {
                 요청하고 있어요
               </p>
               <p className="text-[19px] font-medium" style={{ color: "#8A4A2A" }}>
-                잠시만 기다려 주세요
+                <b className="font-num text-[24px] font-black">{helpLeft}</b>초 뒤에 관제센터로 보내요
               </p>
               <WhiteBtn h={70} r={22} sh="#EFD2BE" color="#8A3712" className="mt-auto w-full max-w-[400px] text-[22px]" onClick={cancelHelp}>
                 취소하기
@@ -994,6 +1144,11 @@ function ElderHome() {
                 <br />
                 곁에 두세요
               </p>
+              {helpPhase === "sent" && (
+                <p className="mt-3 text-[16px] font-medium leading-[1.5]" style={{ color: "#3B5A44" }}>
+                  잘못 누르셨으면 전화가 오면 괜찮다고 말씀해 주세요
+                </p>
+              )}
               <Btn tone="navy" h={70} r={22} className="mt-auto w-full max-w-[400px] text-[22px]" onClick={() => setHelpPhase(null)}>
                 확인
               </Btn>
@@ -1006,6 +1161,28 @@ function ElderHome() {
         <main className="relative mx-auto w-full max-w-[430px]">
           {/* ══ 홈 — 인사 · 도와줘요 · 선생님 소식 · 네 칸 (2026-10-15 시안) ══ */}
           <Screen show={tab === "home"} label="어르신 메인" style={{ minHeight: "100dvh" }}>
+            {/* SOS 를 보낸 뒤 — 화면을 닫아도 지금 상태가 남는다. 관제가 사건을 종료하면 사라진다 (2026-10-19 점검 E06) */}
+            {state.demo.sos && (
+              <div role="status" className="flex flex-col gap-2.5 rounded-[24px] px-5 py-4" style={{ background: "#1B2340", color: "#FFFFFF" }}>
+                <div className="text-[21px] font-black leading-[1.4]">
+                  {state.ops.sosDispatched ? "도움 요청을 받았어요 · 선생님이 오고 있습니다" : "도움 요청을 받았어요 · 관제센터가 확인하고 있습니다"}
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  <button type="button" onClick={() => setSosPhase("sent")} className="ds-press min-h-[52px] flex-1 rounded-[16px] bg-white px-4 text-[18px] font-extrabold" style={{ color: "#1B2340" }}>
+                    자세히 보기
+                  </button>
+                  <button
+                    type="button"
+                    onClick={tellSosMistake}
+                    disabled={sosMistakeSent}
+                    className="ds-press min-h-[52px] flex-1 rounded-[16px] px-4 text-[18px] font-extrabold disabled:opacity-80"
+                    style={{ background: "rgba(255,255,255,.14)", color: "#FFFFFF" }}
+                  >
+                    {sosMistakeSent ? "잘못 누른 것을 알렸어요" : "잘못 눌렀어요"}
+                  </button>
+                </div>
+              </div>
+            )}
             {/* 브랜드 · 계정 — 폰 여러 대로 테스트할 때 지금 어느 계정인지 (2026-09-30). 글자 하한 15px */}
             <div className="-mb-2 flex items-center justify-between">
               <span className="text-[15px] font-extrabold tracking-[.16em]" style={{ color: "#B79B52" }}>
@@ -1121,6 +1298,7 @@ function ElderHome() {
           {/* ══ 오늘 — 지금 할 일 · 그다음 · 소리로 듣기 · 일정 남기기 · 이번 달 · 날씨 ══ */}
           <Screen show={tab === "today"} label="어르신 오늘">
             <BackHead onBack={goHome} sub={dateMd} title="오늘" color={TONE.blue.title} h1 right={helpMini} />
+            {missedMeds}
             <R d={60} className="text-[17px] font-extrabold" style={{ color: "#5E6270" }}>
               지금 할 일
             </R>
@@ -1140,9 +1318,19 @@ function ElderHome() {
                       {nowTask.slot} {spokenClock(nowTask.time)}
                     </span>
                     <span className="block text-[26px] font-black leading-[1.3]" style={{ color: TONE.purple.fg }}>
-                      약 드실
-                      <br />
-                      시간이에요
+                      {nowTask.due ? (
+                        <>
+                          약 드실
+                          <br />
+                          시간이에요
+                        </>
+                      ) : (
+                        <>
+                          {spokenClock(nowTask.time)}에
+                          <br />
+                          드실 약이에요
+                        </>
+                      )}
                     </span>
                     <span className="block text-[16px] font-semibold" style={{ color: TONE.purple.sub }}>
                       {medDoseNames(nowTask.slot, medPlan)}
@@ -1210,7 +1398,7 @@ function ElderHome() {
                           {/* 오늘 오시는 분에게만 전화 — 방문일이 아닌 날에 열려 있으면 아무 때나 걸게 된다 (시트 '오늘' 1번) */}
                           <Btn tone="green" h={64} r={20} className="w-full text-[20px]" onClick={callTeacher}>
                             <Line name="phone" size={22} />
-                            {calling ? `${TEACHER.name} 선생님께 연결 중입니다` : `${TEACHER.name} 선생님께 전화`}
+                            {calling || callAskedToday ? "선생님이 곧 전화드려요" : `${TEACHER.name} 선생님 전화 부탁`}
                           </Btn>
                         </>
                       )}
@@ -1364,6 +1552,7 @@ function ElderHome() {
                   </span>
                 </div>
               )}
+              {missedMeds}
               {medNext ? (
                 <button type="button" onClick={() => setMedPop(medNext.slot)} className="ds-press ds-tap flex w-full items-center gap-3.5 rounded-[28px] px-[18px] py-5 text-left" style={soft("purple")}>
                   <span className="ds-ico flex h-[72px] w-[72px] flex-none items-center justify-center rounded-full bg-white">
@@ -1552,6 +1741,13 @@ function ElderHome() {
                 </div>
                 {proposalsForMe.map((r) => {
                   const asking = elderConfirm?.id === r.id && elderConfirm.kind === "decline";
+                  // 돈이 드는 제안은 한 번 더 묻는다 — 한 번 눌러 바로 결제 · 확정되지 않게 (2026-10-19 점검 E21)
+                  const askingPay = elderConfirm?.id === r.id && elderConfirm.kind === "accept";
+                  const accept = () => {
+                    dispatch({ type: "respondProposal", id: r.id, accept: true, role: "elder" });
+                    dispatch({ type: "pushEvent", payload: { kind: "해주세요", text: `${ELDER.name} 선생님 제안 수락 — ${r.type}`, color: "#8FE3C0" } });
+                    setElderConfirm(null);
+                  };
                   return (
                     <Card key={r.id} r={20} pad={16} style={{ boxShadow: "0 3px 0 #EAD9AC" }}>
                       <div className="text-[19px] font-extrabold leading-[1.35]">{r.type}</div>
@@ -1581,20 +1777,25 @@ function ElderHome() {
                             </Btn>
                           </div>
                         </div>
+                      ) : askingPay ? (
+                        <div className="mt-3">
+                          <p className="text-[17px] font-extrabold leading-[1.5]">{fmtWon(r.amount)}이 들어요. 해 드릴까요?</p>
+                          <div className="mt-2 grid grid-cols-2 gap-2">
+                            <WhiteBtn h={56} className="text-[18px]" onClick={() => setElderConfirm(null)}>
+                              아니요
+                            </WhiteBtn>
+                            <Btn tone="green" h={56} className="text-[18px]" onClick={accept}>
+                              네, 해 주세요
+                            </Btn>
+                          </div>
+                        </div>
                       ) : (
                         <div className="mt-3 grid grid-cols-2 gap-2">
+                          {/* '괜찮아요'는 '좋아요'로도 들려서 거절 버튼은 '안 할래요' (2026-10-19 점검 E21) */}
                           <WhiteBtn h={56} className="text-[18px]" style={{ boxShadow: "0 4px 0 #E3DED3", background: "#F3F1EC" }} onClick={() => setElderConfirm({ id: r.id, kind: "decline" })}>
-                            괜찮아요
+                            안 할래요
                           </WhiteBtn>
-                          <Btn
-                            tone="green"
-                            h={56}
-                            className="text-[18px]"
-                            onClick={() => {
-                              dispatch({ type: "respondProposal", id: r.id, accept: true, role: "elder" });
-                              dispatch({ type: "pushEvent", payload: { kind: "해주세요", text: `${ELDER.name} 선생님 제안 수락 — ${r.type}`, color: "#8FE3C0" } });
-                            }}
-                          >
+                          <Btn tone="green" h={56} className="text-[18px]" onClick={() => (r.amount > 0 ? setElderConfirm({ id: r.id, kind: "accept" }) : accept())}>
                             해 주세요
                           </Btn>
                         </div>
@@ -1884,12 +2085,28 @@ function ElderHome() {
                 <div className="text-[15px]" style={{ color: TONE.gold.sub }}>
                   {storeItems.map((i) => i.name).join(" · ")}
                 </div>
+                {/* 직접 결제는 한 번 더 묻는다 — 한 번 눌러 바로 돈이 나가지 않게 (2026-10-19 점검 E09). 보호자에게 부탁하는 것은 바로 */}
+                {storeAsk && !storeApproval && (
+                  <p className="rounded-[16px] bg-white px-4 py-3 text-[18px] font-extrabold leading-[1.5]" role="status">
+                    {fmtWon(storeTotal)}을 결제하고 주문할까요?
+                  </p>
+                )}
+                {storeAsk && !storeApproval && (
+                  <WhiteBtn h={56} className="text-[18px]" onClick={() => setStoreAsk(false)}>
+                    아니요, 다시 볼게요
+                  </WhiteBtn>
+                )}
                 <Btn
                   tone="gold"
                   h={62}
                   r={20}
                   className="text-[20px]"
                   onClick={() => {
+                    if (!storeApproval && !storeAsk) {
+                      setStoreAsk(true);
+                      return;
+                    }
+                    setStoreAsk(false);
                     const mode = storeApproval ? "approval" : "ordered";
                     setStoreSent(mode);
                     setStoreSel({});
@@ -1944,7 +2161,7 @@ function ElderHome() {
                     });
                   }}
                 >
-                  {storeApproval ? `${payRule.approver}에게 부탁하기` : "주문하기"}
+                  {storeApproval ? `${payRule.approver}에게 부탁하기` : storeAsk ? "네, 결제하고 주문해요" : "주문하기"}
                 </Btn>
               </R>
             ) : null}
@@ -1968,14 +2185,14 @@ function ElderHome() {
               </div>
               {/* 전화는 오늘 오시는 날에만 (시트 '오늘' 1번) — 아무 때나 거는 자리가 아니다 */}
               {visitToday && (
-                <Btn tone="green" h={56} r={18} px={4} className="w-[56px] flex-none" aria-label={`${TEACHER.name} 선생님께 전화하기`} onClick={callTeacher}>
+                <Btn tone="green" h={56} r={18} px={4} className="w-[56px] flex-none" aria-label={`${TEACHER.name} 선생님께 전화 부탁하기`} onClick={callTeacher}>
                   <Line name="phone" size={24} />
                 </Btn>
               )}
             </R>
             {calling && (
               <p className="-mt-2 text-center text-[16px] font-bold" style={{ color: TONE.green.fg }} role="status">
-                {TEACHER.name} 선생님께 연결 중입니다
+                관제센터에 전했어요 — {TEACHER.name} 선생님이 곧 전화드려요
               </p>
             )}
             <R d={90} className="flex flex-col gap-3">
@@ -2108,6 +2325,7 @@ function ElderHome() {
               {helpMini}
             </R>
             <FamilyVoices
+              active={tab === "family"}
               targets={famTargets}
               sel={Math.min(famSel, famTargets.length - 1)}
               onSelect={setFamSel}
@@ -2623,6 +2841,8 @@ function ElderHome() {
         phase={sosPhase}
         setPhase={setSosPhase}
         dispatched={!!state.ops.sosDispatched}
+        active={!!state.demo.sos}
+        last={state.demo.sosLast}
         onDispatch={() => {
           // sosAt — 관제가 이 발신을 사건 저장소에 한 번만 잇기 위한 표식 (pages/dispatch.jsx)
           dispatch({ type: "demo", payload: { sos: true, sosAt: Date.now() } });
@@ -2880,7 +3100,7 @@ function localPart(tz) {
 // 녹음은 눌렀다 떼는 토글이다 (2026-08-12 시트 가족 1번) — 꾹 누르기는 손 떨림에 끊긴다.
 // 2026-10-14부터 실제로 녹음한다 — 누르면 마이크가 켜지고, 다시 누르면 서버에 올린 뒤에 보낸다 (lib/voice-client.js).
 // 녹음 중 색은 금색 (시안은 빨강 — 빨강은 SOS 전용 · 06 §4.2).
-function FamilyVoices({ targets, sel, onSelect, threadFor, onPlay, onSend, server = false, player }) {
+function FamilyVoices({ targets, sel, onSelect, threadFor, onPlay, onSend, server = false, player, active = true }) {
   const [recId, setRecId] = useState(null); // 녹음 중인 사람 id
   const [sending, setSending] = useState(null); // 보내는 중인 사람 id
   const [problem, setProblem] = useState(null); // { id, text, retry? } — 못 보낸 이유
@@ -2921,6 +3141,19 @@ function FamilyVoices({ targets, sel, onSelect, threadFor, onPlay, onSend, serve
     }
     deliver(v.id, out);
   };
+  // 다른 사람을 고르거나 가족 화면을 떠나면 녹음을 멈추고 보내지 않는다 — 화면을 떠난 뒤에도 마이크가 켜져 있다가
+  // 1분이 차면 저절로 보내지던 것 (2026-10-19 점검 E08 · 개인정보)
+  const selId = (targets[sel] || targets[0])?.id;
+  useEffect(() => {
+    const id = recIdRef.current;
+    if (!id) return;
+    if (!active || id !== selId) {
+      recorder.cancel();
+      setRecId(null);
+      setProblem({ id, text: active ? "다른 분을 고르셔서 녹음을 멈췄어요 — 보내지 않았어요" : "화면을 옮기셔서 녹음을 멈췄어요 — 보내지 않았어요" });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [active, selId]);
   // 녹음기가 오류로 끝났다(마이크 거부 · 너무 짧음) — 그 사람 칸에 이유를 띄운다
   useEffect(() => {
     if (recorder.phase === "error" && recorder.error) {
@@ -3356,7 +3589,7 @@ function ElderAskSheet({ item, plan, sent, approver, onAsk, onCallOps, onClose, 
 // SOS — REQ-06 확정: 5초 취소 카운트다운 → 자동 접수.
 // 2026-08-12 시트로 화면 안 트리거 버튼은 없앴다. 이제 진입점은 바탕화면 바로가기(/elder?sos=1) 하나뿐이라,
 // 이 컴포넌트는 취소 유예 화면과 접수 화면만 그린다. 빨강은 여기서 쓴다 — 위험 신호다.
-function SosButton({ phase, setPhase, onDispatch, dispatched = false }) {
+function SosButton({ phase, setPhase, onDispatch, dispatched = false, active = true, last = null }) {
   const [count, setCount] = useState(5);
   const countTimer = useRef(null);
 
@@ -3410,6 +3643,28 @@ function SosButton({ phase, setPhase, onDispatch, dispatched = false }) {
         >
           취소합니다
         </WhiteBtn>
+      </div>
+    );
+  // 관제가 사건을 마쳤다 — '곧 전화를 드립니다'로 되돌아가지 않고 끝났다고 말한다 (2026-10-19 점검 L-03)
+  if (phase === "sent" && !active && last?.closedAt)
+    return (
+      <div className="ds-overlay ds-app" style={{ background: "#1B2340" }} role="dialog" aria-modal="true" aria-label="도움 요청 확인 끝">
+        <span className="ds-pop mt-10 flex h-[110px] w-[110px] items-center justify-center rounded-full text-white" style={{ background: "#3B6B47" }}>
+          <Line name="check" size={56} />
+        </span>
+        <div className="mt-4 text-[30px] font-black leading-[1.45] text-white">
+          관제센터가
+          <br />
+          확인을 마쳤어요
+        </div>
+        <p className="text-[20px] leading-[1.65]" style={{ color: "#C9CFDB" }}>
+          {last.result}
+          <br />
+          또 도움이 필요하시면 언제든 누르세요.
+        </p>
+        <Btn tone="gold" h={70} r={22} className="mt-auto w-full max-w-[400px] text-[22px]" onClick={() => setPhase("idle")}>
+          화면 닫기
+        </Btn>
       </div>
     );
   if (phase === "sent")

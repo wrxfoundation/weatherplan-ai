@@ -115,7 +115,7 @@ export default function SafetyCheckPage() {
                                 on
                                   ? v
                                     ? "border-green/50 bg-green/10 text-green"
-                                    : "border-danger/40 bg-danger/[.07] text-danger"
+                                    : "border-amber/40 bg-amber/[.08] text-amber"
                                   : "border-navy/15 text-muted"
                               }`}
                             >

@@ -10,7 +10,7 @@ import Icon from "../icons";
 import { useAppState } from "../../lib/state";
 import { useAuth } from "../../lib/auth";
 import { LiveToggle } from "./LiveToggle";
-import { APPROVER_LABEL, STATUS, SERVICE_MENU, URGENCY, approverOf, canTransition, fmtPreferred, fmtScheduled, isVisitCall, paymentOf, transition } from "../../lib/requests";
+import { APPROVER_LABEL, STATUS, SERVICE_MENU, URGENCY, approverOf, canTransition, crewOf, crewReady, fmtPreferred, fmtScheduled, isVisitCall, paymentOf, transition } from "../../lib/requests";
 import { PRICING, fmtWon } from "../../lib/config";
 import { Panel, PanelHead, Stat, Pill, Btn, Table, KV, Field, Toggle, Drawer, Confirm, Note, Empty, useOperator } from "./ui";
 import { CONCIERGES, OPS_REQUEST_EXTRAS, OPS_REQUEST_META, REQ_DIR, REPEAT_OPTIONS, elderOf, fmtDT, fmtRel } from "../../lib/ops-admin";
@@ -310,6 +310,7 @@ function Detail({ r, m, real, payments, dispatch, onClose, onTransition, onPatch
   const [confirm, setConfirm] = useState(null); // { kind: 'transition'|'refund', to, reason }
   const [refundReason, setRefundReason] = useState("");
   const pay = payState(r, payments);
+  const reqPays = (payments || []).filter((p) => p.ref === r.id && p.status === "done");
   const assignee = m.assignee || r.assignee || "";
   const nextStates = Object.keys(STATUS).filter((k) => canTransition(r.status, k));
   const refundable = r.amount > 0 && !m.refund && ["awaitingPayment", "inProgress", "done"].includes(r.status);
@@ -322,8 +323,11 @@ function Detail({ r, m, real, payments, dispatch, onClose, onTransition, onPatch
   const runConfirm = () => {
     if (!confirm) return;
     if (confirm.kind === "transition") onTransition(r, confirm.to, note || confirm.label);
-    if (confirm.kind === "force") dispatch?.({ type: "forceCancel", id: r.id, by: OPERATOR, reason: opsNote.trim() || "관제 판단" });
+    // 강제 취소 · 취소 요청 반려는 사유가 있어야 한다 — 요청한 분에게 보이는 이력에 남는다 (2026-10-19 점검 OPS-06 · L-09)
+    if (confirm.kind === "force" && opsNote.trim()) dispatch?.({ type: "forceCancel", id: r.id, by: OPERATOR, reason: opsNote.trim() });
+    if (confirm.kind === "cancelReject" && opsNote.trim()) dispatch?.({ type: "decideCancel", id: r.id, approve: false, by: OPERATOR, note: opsNote.trim() });
     if (confirm.kind === "cancelOk") dispatch?.({ type: "decideCancel", id: r.id, approve: true, by: OPERATOR, note: opsNote.trim() });
+    if (confirm.kind === "refundDone") dispatch?.({ type: "refundDone", paymentId: confirm.paymentId, by: OPERATOR });
     if (confirm.kind === "refund") {
       onPatch(r.id, "refund", "취소 · 환불", { status: "환불 요청", amount: m.cost ?? r.amount, reason: refundReason, at: Date.now() });
       if (canTransition(r.status, "cancelled")) onTransition(r, "cancelled", `환불 요청 · ${refundReason || "사유 미입력"}`);
@@ -373,6 +377,26 @@ function Detail({ r, m, real, payments, dispatch, onClose, onTransition, onPatch
             <Field id={`req-assignee-${r.id}`} label="담당 컨시어지" value={assignee || "미배정"} options={["미배정", ...conciergeChoices(CONCIERGES)]}
               onChange={(v) => v !== (assignee || "미배정") && onPatch(r.id, "assignee", "담당자", v === "미배정" ? "" : v, assignee || "미배정")} />
           )}
+          {/* 2인 해주세요의 짝 — 확정 · 진행 중에는 두 사람이 다르게 남아 있어야 바뀐다 (단독 배차 0 · 2026-10-19 점검) */}
+          {real && crewOf(r) === 2 && !["done", "cancelled", "rejected"].includes(r.status) && (
+            <div className="mt-2">
+              <Field
+                id={`req-partner-${r.id}`}
+                label="짝 (2인 1조)"
+                value={r.partner || "미정"}
+                options={["미정", ...conciergeChoices(CONCIERGES).filter((n) => n !== assignee)]}
+                onChange={(v) => {
+                  const next = v === "미정" ? "" : v;
+                  if (next === (r.partner || "")) return;
+                  dispatch?.({ type: "assignRequest", id: r.id, partner: next });
+                  onPatch(r.id, "partner", "짝", next || "미정", r.partner || "미정");
+                }}
+              />
+              {!crewReady({ ...r, assignee }) && (
+                <p className="mt-1 text-[11.5px] font-bold text-amber">2인 1조 서비스 — 담당과 다른 짝이 정해져야 확정 · 진행됩니다.</p>
+              )}
+            </div>
+          )}
         </section>
 
         {real ? (
@@ -394,17 +418,25 @@ function Detail({ r, m, real, payments, dispatch, onClose, onTransition, onPatch
                     dispatch?.({ type: "noteRequest", id: r.id, note: `관제 메모 (${OPERATOR}) — ${opsNote.trim()}`, by: OPERATOR });
                     setOpsNote("");
                   }}>메모만 남기기</Btn>
-                  {r.status === "needsAdmin" && (
+                  {r.status === "needsAdmin" && crewOf(r) === 2 && r.approvedAt ? (
+                    // 수락 · 결제까지 끝난 2인 제안 — 짝을 정하면 관제가 확정한다 (컨시어지 승인 대기로 보내면 다시 보호자 수락을 기다린다)
+                    <Btn small tone="navy" disabled={!crewReady({ ...r, assignee })} onClick={() => dispatch?.({ type: "transitionRequest", id: r.id, to: "confirmed", note: `관제 확인 — 짝 ${r.partner} 배정 · 확정 (${OPERATOR})`, by: OPERATOR })}>
+                      짝 배정 확인 · 확정
+                    </Btn>
+                  ) : r.status === "needsAdmin" ? (
                     <Btn small tone="navy" onClick={() => dispatch?.({ type: "transitionRequest", id: r.id, to: "requested", note: `관제 확인 — 담당 컨시어지 승인 대기로 (${OPERATOR})`, by: OPERATOR })}>승인 대기로 돌려보내기</Btn>
-                  )}
+                  ) : null}
                   {r.status === "cancelRequested" && (
                     <>
                       <Btn small tone="navy" onClick={() => setConfirm({ kind: "cancelOk", label: "취소 승인" })}>취소 요청 승인{paid ? " (환불 대기로)" : ""}</Btn>
-                      <Btn small ghost onClick={() => dispatch?.({ type: "decideCancel", id: r.id, approve: false, by: OPERATOR, note: opsNote.trim() })}>취소 요청 반려</Btn>
+                      <Btn small ghost disabled={!opsNote.trim()} title={opsNote.trim() ? "" : "관제 메모에 반려 사유를 적어 주세요"} onClick={() => setConfirm({ kind: "cancelReject", label: "취소 요청 반려" })}>취소 요청 반려</Btn>
                     </>
                   )}
-                  <Btn small ghost tone="muted" onClick={() => setConfirm({ kind: "force", label: "강제 취소" })}>강제 취소{paid && !paid.refund ? " (환불 대기로)" : ""}</Btn>
+                  <Btn small ghost tone="muted" disabled={!opsNote.trim()} title={opsNote.trim() ? "" : "관제 메모에 취소 사유를 적어 주세요"} onClick={() => setConfirm({ kind: "force", label: "강제 취소" })}>강제 취소{paid && !paid.refund ? " (환불 대기로)" : ""}</Btn>
                 </div>
+                <p className="mt-1.5 text-[11.5px] text-muted">
+                  {r.status === "cancelRequested" ? "취소 요청 반려 · " : ""}강제 취소는 관제 메모(사유)를 적어야 누를 수 있습니다 — 사유는 요청한 분의 이력에 남습니다.
+                </p>
               </>
             )}
           </section>
@@ -461,16 +493,25 @@ function Detail({ r, m, real, payments, dispatch, onClose, onTransition, onPatch
         <section>
           <h4 className="mb-2 text-[13px] font-bold text-navy">취소 · 환불</h4>
           {real ? (
-            paid?.refund ? (
-              <div className="flex flex-wrap items-center gap-2">
-                <Pill tone={paid.refund.status === "done" ? "ok" : "warn"}>{paid.refund.status === "done" ? "환불 완료" : "환불 대기"} {fmtWon(paid.refund.amount)}</Pill>
-                <span className="text-[11px] text-muted">{paid.refund.reason}</span>
-                {paid.refund.status !== "done" && (
-                  <Btn small tone="ok" onClick={() => dispatch?.({ type: "refundDone", paymentId: paid.id, by: OPERATOR })}>토스에서 환불함 · 환불 완료</Btn>
-                )}
-              </div>
-            ) : paid ? (
-              <Empty>결제 완료 {fmtWon(paid.amount)} — 거절 · 취소되면 여기서 환불 대기로 넘어옵니다.</Empty>
+            // 이 요청의 결제를 모두 보인다 — 금액이 다른 결제 · 두 번 결제처럼 환불 대기가 최신 결제 뒤에 가려지지 않게 (2026-10-19 점검)
+            reqPays.length ? (
+              <ul className="space-y-2">
+                {reqPays.map((p) => (
+                  <li key={p.id} className="flex flex-wrap items-center gap-2">
+                    {p.refund ? (
+                      <>
+                        <Pill tone={p.refund.status === "done" ? "ok" : "warn"}>{p.refund.status === "done" ? "환불 완료" : "환불 대기"} {fmtWon(p.refund.amount)}</Pill>
+                        <span className="text-[11px] text-muted">{p.refund.reason}</span>
+                        {p.refund.status !== "done" && (
+                          <Btn small tone="ok" onClick={() => setConfirm({ kind: "refundDone", paymentId: p.id, amount: p.refund.amount, label: "환불 완료" })}>토스에서 환불함 · 환불 완료</Btn>
+                        )}
+                      </>
+                    ) : (
+                      <span className="text-[12px] text-ink">결제 완료 {fmtWon(p.amount)}{p.demo ? " (데모)" : ""} — 거절 · 취소되면 여기서 환불 대기로 넘어옵니다.</span>
+                    )}
+                  </li>
+                ))}
+              </ul>
             ) : (
               <Empty>{r.payBy === "elder" ? "어르신 직접 결제 — 카드 결제 기록이 없어 환불 처리 대상이 아닙니다." : "결제 기록 없음."}</Empty>
             )
@@ -510,8 +551,8 @@ function Detail({ r, m, real, payments, dispatch, onClose, onTransition, onPatch
       </div>
 
       <Confirm open={!!confirm} onCancel={() => setConfirm(null)} onConfirm={runConfirm}
-        title={confirm?.kind === "refund" ? "취소 · 환불을 요청합니다" : confirm?.kind === "force" ? "강제 취소합니다" : confirm?.kind === "cancelOk" ? "취소 요청을 승인합니다" : `상태를 '${confirm?.label}'로 바꿉니다`}
-        body={confirm?.kind === "refund" ? `${r.elder} · ${r.type} — 환불 요청이 기록되고, 가능하면 요청이 취소 상태로 바뀝니다. 되돌릴 수 없습니다.` : confirm?.kind === "force" || confirm?.kind === "cancelOk" ? `${r.elder} · ${r.type} — 요청이 취소되고${paid && !paid.refund ? `, 결제 ${fmtWon(paid.amount)}은 환불 대기로 넘어갑니다` : ""}. 보호자 · 어르신 · 컨시어지 화면에 같이 반영되고 되돌릴 수 없습니다.` : "종결 상태로 바뀌면 다시 진행할 수 없습니다. 메모가 이력에 남습니다."}
+        title={confirm?.kind === "refundDone" ? `${fmtWon(confirm.amount)} 환불을 완료로 기록합니다` : confirm?.kind === "cancelReject" ? "취소 요청을 반려합니다" : confirm?.kind === "refund" ? "취소 · 환불을 요청합니다" : confirm?.kind === "force" ? "강제 취소합니다" : confirm?.kind === "cancelOk" ? "취소 요청을 승인합니다" : `상태를 '${confirm?.label}'로 바꿉니다`}
+        body={confirm?.kind === "refundDone" ? "토스페이먼츠 상점관리자에서 이 결제를 실제로 환불(취소)한 뒤에 누르세요. 보호자 화면에 '환불 완료'로 바뀌고 되돌릴 수 없습니다." : confirm?.kind === "cancelReject" ? `${r.elder} · ${r.type} — 요청은 원래 상태(확정 · 진행)로 돌아가고, 사유 "${opsNote.trim()}"가 요청한 분의 이력에 남습니다.` : confirm?.kind === "refund" ? `${r.elder} · ${r.type} — 환불 요청이 기록되고, 가능하면 요청이 취소 상태로 바뀝니다. 되돌릴 수 없습니다.` : confirm?.kind === "force" || confirm?.kind === "cancelOk" ? `${r.elder} · ${r.type} — 요청이 취소됩니다${paid && !paid.refund ? ` (결제 ${fmtWon(paid.amount)}은 환불 대기로 넘어갑니다)` : ""}. 사유: ${opsNote.trim() || "—"} · 보호자 · 어르신 · 컨시어지 화면에 같이 반영되고 되돌릴 수 없습니다.` : "종결 상태로 바뀌면 다시 진행할 수 없습니다. 메모가 이력에 남습니다."}
         confirmLabel={confirm?.kind === "refund" ? "환불 요청" : confirm?.label} tone="navy" />
     </Drawer>
   );

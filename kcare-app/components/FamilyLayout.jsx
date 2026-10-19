@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import { avatarText, elderNameOf } from "../lib/people";
 import { trackOf, honorific } from "../lib/tracks";
 import { useAppState } from "../lib/state";
+import { useGuardianRole } from "../lib/guardian-role";
 import Splash from "./Splash";
 import RoleGate from "./RoleGate";
 import { HelpCallPopup } from "./HelpCall";
@@ -38,7 +39,7 @@ export default function FamilyLayout({ children, title, sub, action, back, backL
   const router = useRouter();
   const { state, dispatch } = useAppState();
   const elderName = elderNameOf(state.onboarding);
-  const role = state.demo.guardianRole || "primary";
+  const { role, demo } = useGuardianRole();
   // 정기 케어는 "김순자 님 가족", 나머지 트랙은 "병원 동행 · 이정민" — 무엇으로 쓰고 있는지가 제목에 드러나야 한다.
   // 옆의 '주 보호자' 배지가 이름에 붙어 '김순자 님 · 주 보호자'로 읽히지 않게 — '김순자 님 가족' (2026-10-02 QA)
   const track = trackOf(state.onboarding?.track);
@@ -46,17 +47,24 @@ export default function FamilyLayout({ children, title, sub, action, back, backL
   const today = new Date().toLocaleDateString("ko-KR", { month: "long", day: "numeric", weekday: "long" });
   const current = tab || TAB_OF[router.pathname] || (router.pathname === "/family" ? "/family" : `/family/${router.pathname.split("/")[2] || ""}`);
 
-  // 역할 배지 — 탭하면 주/부 전환 (시연)
-  const roleChip = (
+  // 역할 배지 — 데모에서만 탭해 주/부 전환(시연). 로그인한 가구는 계정으로 정해진 역할을 보이기만 한다 —
+  // 전에는 누르면 가구 전체의 값이 바뀌어 누구나 주 보호자가 될 수 있었다 (2026-10-19 점검 F-08)
+  const chipStyle = role === "primary" ? { background: "#FBF1DA", color: "#86621F" } : { background: "#EEEDEA", color: "#5E5A52" };
+  const roleChip = demo ? (
     <button
       type="button"
       onClick={() => dispatch({ type: "demo", payload: { guardianRole: role === "primary" ? "secondary" : "primary" } })}
       title="시연 — 주/부 보호자 전환"
-      className="ml-1.5 inline-flex min-h-[26px] items-center rounded-full px-2.5 text-[12px] font-extrabold align-middle"
-      style={role === "primary" ? { background: "#FBF1DA", color: "#86621F" } : { background: "#EEEDEA", color: "#5E5A52" }}
+      aria-label={`${role === "primary" ? "주 보호자" : "부 보호자"} — 눌러서 ${role === "primary" ? "부" : "주"} 보호자 화면 보기 (시연)`}
+      className="relative ml-1.5 inline-flex min-h-[26px] items-center rounded-full px-2.5 text-[12px] font-extrabold align-middle before:absolute before:-inset-x-1 before:-inset-y-[9px] before:content-['']"
+      style={chipStyle}
     >
       {role === "primary" ? "주 보호자" : "부 보호자"}
     </button>
+  ) : (
+    <span className="ml-1.5 inline-flex min-h-[26px] items-center rounded-full px-2.5 text-[12px] font-extrabold align-middle" style={chipStyle}>
+      {role === "primary" ? "주 보호자" : "부 보호자"}
+    </span>
   );
 
   return (
@@ -102,6 +110,16 @@ export default function FamilyLayout({ children, title, sub, action, back, backL
                   </span>
                 ))}
               </div>
+            )}
+            {/* SOS — 홈이 아닌 탭에서도 맨 위에 (2026-10-19 점검 L-02 · 전에는 홈 탭에만 떴다). 누르면 홈의 SOS 카드로 */}
+            {state.demo.sos && router.pathname !== "/family" && (
+              <Link href="/family" role="alert" className="ds-press animate-sosPulse flex items-center gap-3 rounded-[22px] p-4 text-white" style={{ background: "#C0392B" }}>
+                <span className="min-w-0 flex-1">
+                  <b className="block text-[17px] font-black">긴급 · {honorific(state.onboarding)}이 도움을 요청했습니다</b>
+                  <span className="text-[14px] opacity-90">관제센터가 대응하고 있습니다 · 눌러서 홈에서 보기</span>
+                </span>
+                <Line name="chevR" size={22} />
+              </Link>
             )}
             {children}
           </main>

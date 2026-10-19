@@ -18,6 +18,8 @@ import { scopedKey } from "../lib/scope";
 import { ringAlarm } from "../lib/alarm";
 import { fmtWon } from "../lib/config";
 import { CONCIERGE_CAL } from "../lib/console";
+import { CONCIERGES } from "../lib/ops-admin";
+import { conciergeChoices } from "../lib/people";
 import {
   APPROVER_LABEL,
   CLOSED,
@@ -25,6 +27,7 @@ import {
   URGENCY,
   approverOf,
   canEditRequest,
+  crewOf,
   fmtPreferred,
   fmtScheduled,
   isStoreOrder,
@@ -134,6 +137,10 @@ function ApproveRow({ r, me, requests, payments, dispatch, push }) {
   const [amount, setAmount] = useState("");
   const [declining, setDeclining] = useState(false);
   const [reason, setReason] = useState("");
+  // 2인 해주세요 — 함께 갈 짝(나 말고 다른 컨시어지)을 골라야 승인된다 (2026-10-19 점검 C-06 · 단독 배차 0)
+  const two = crewOf(r) === 2;
+  const mates = conciergeChoices(CONCIERGES).filter((n) => n && n !== me);
+  const [partner, setPartner] = useState(r.partner && r.partner !== me ? r.partner : "");
   // 요청한 분이 희망 일시를 고치면(승인 전) 승인 칸의 기본값도 새 희망으로 (2026-10-18)
   useEffect(() => {
     if (!r.editedAt) return;
@@ -193,6 +200,30 @@ function ApproveRow({ r, me, requests, payments, dispatch, push }) {
           />
         </label>
       </div>
+      {past && <div className="mt-1 text-[11.5px] font-bold text-amber">희망일이 지났어요 — 오늘 이후로 날짜를 정해 주세요</div>}
+      {two && (
+        <label className="mt-2 block text-[11px] font-bold text-muted">
+          함께 갈 짝 — 2인 1조 서비스라 두 사람이 정해져야 승인됩니다
+          {mates.length ? (
+            <select
+              value={partner}
+              onChange={(e) => setPartner(e.target.value)}
+              className="mt-1 w-full rounded-lg border border-navy/15 bg-white px-2.5 py-2 text-[14px] text-ink outline-none focus:border-gold"
+            >
+              <option value="">짝을 고르세요</option>
+              {mates.map((n) => (
+                <option key={n} value={n}>
+                  {n}
+                </option>
+              ))}
+            </select>
+          ) : (
+            <span className="mt-1 block rounded-lg bg-amber/10 px-2.5 py-2 text-[12px] font-bold text-amber">
+              함께 갈 컨시어지가 없습니다 — 관제에 알려 짝을 정한 뒤 승인해 주세요
+            </span>
+          )}
+        </label>
+      )}
       {needPrice && (
         <label className="mt-2 block text-[11px] font-bold text-muted">
           요금 (원) — 승인 전에 꼭 정해 주세요 (무료면 0). 금액이 있으면 승인 뒤 보호자가 결제합니다
@@ -256,14 +287,14 @@ function ApproveRow({ r, me, requests, payments, dispatch, push }) {
             거절
           </button>
           <button
-            disabled={!date || past || !priceOk}
+            disabled={!date || past || !priceOk || (two && !partner)}
             onClick={() => {
-              dispatch({ type: "approveRequest", id: r.id, by: me, date, time, amount: needPrice ? amount : undefined });
-              push("해주세요", `${me} 승인 — ${r.type} · ${date} ${time}`, "#8FE3C0");
+              dispatch({ type: "approveRequest", id: r.id, by: me, date, time, amount: needPrice ? amount : undefined, ...(two ? { partner } : {}) });
+              push("해주세요", `${me}${two ? ` · ${partner}` : ""} 승인 — ${r.type} · ${date} ${time}`, "#8FE3C0");
             }}
             className="btn-press flex-[2] rounded-xl bg-navy py-2.5 text-[13px] font-bold text-white disabled:opacity-40"
           >
-            승인 · {date.slice(5).replace("-", "/")} {time}
+            {two && !partner ? "짝을 고르면 승인할 수 있어요" : `승인 · ${date.slice(5).replace("-", "/")} ${time}`}
           </button>
         </div>
       )}
@@ -373,6 +404,42 @@ function SentRow({ r, me, dispatch, push }) {
   );
 }
 
+// 진행 시작 · 완료 — 시작은 서비스일부터, 완료는 한 번 더 묻는다 (완료는 되돌릴 수 없는 기록이다).
+// 전에는 '진행 시작'을 두 번 누르면 바로 '완료'가 됐고, 며칠 전에도 시작할 수 있었다 (2026-10-19 점검 C-07)
+function StepButton({ r, next, me, dispatch, push }) {
+  const [asking, setAsking] = useState(false);
+  const today = kstYmd(Date.now());
+  const early = next[1] === "inProgress" && r.scheduledDate && r.scheduledDate > today;
+  const run = () => {
+    dispatch({ type: "transitionRequest", id: r.id, to: next[1], note: next[2], by: me });
+    push("해주세요", `${r.type} — ${next[2]}`, "#8FE3C0");
+    setAsking(false);
+  };
+  if (asking)
+    return (
+      <div className="mt-2 rounded-xl border border-green/30 bg-green/5 p-2.5">
+        <p className="text-[12.5px] font-bold text-ink">완료로 남길까요? 완료는 되돌릴 수 없고, 요청한 분 화면에 &lsquo;완료&rsquo;로 보입니다.</p>
+        <div className="mt-2 flex gap-2">
+          <button onClick={() => setAsking(false)} className="btn-press flex-1 rounded-lg border border-navy/15 py-2 text-[13px] font-bold text-muted">
+            아직이에요
+          </button>
+          <button onClick={run} className="btn-press flex-[2] rounded-lg bg-green py-2 text-[13px] font-bold text-white">
+            네, 완료했어요
+          </button>
+        </div>
+      </div>
+    );
+  return (
+    <button
+      disabled={!!early}
+      onClick={() => (next[1] === "done" ? setAsking(true) : run())}
+      className={`btn-press mt-2 w-full rounded-xl border py-2.5 text-[13px] font-bold disabled:opacity-50 ${next[1] === "done" ? "border-green/40 text-green" : "border-navy/20 text-navy"}`}
+    >
+      {early ? `서비스일(${r.scheduledDate.slice(5).replace("-", "/")})에 시작할 수 있어요` : next[0]}
+    </button>
+  );
+}
+
 export default function ConciergeRequests({ requests, payments, me, dispatch, push }) {
   // 베타에서 앱을 쓰는 컨시어지는 한 사람(테스트 컨시어지 계정)이라, 관제가 다른 컨시어지로 바꾼 건도 여기서 받는다
   // (안 그러면 아무 큐에도 없어 승인 대기로 멈춘다 — 2026-10-05 리뷰). 담당이 다르면 카드에 이름을 단다.
@@ -384,6 +451,15 @@ export default function ConciergeRequests({ requests, payments, me, dispatch, pu
     .filter((r) => ["confirmed", "inProgress", "cancelRequested"].includes(r.status) && mine(r))
     .sort((a, b) => `${a.scheduledDate || ""}${a.scheduledTime || ""}`.localeCompare(`${b.scheduledDate || ""}${b.scheduledTime || ""}`));
   const sent = asks.filter((r) => r.status === "requested" && approverOf(r) !== "concierge" && r.dir === "fromConcierge" && mine(r));
+  // 확정됐다가 취소된 것 — 사흘 동안 알려 둔다. 내 일정에서 말없이 사라지면 그날 찾아가게 된다 (2026-10-19 점검 L-15)
+  const lastOf = (r) => (r.history || [])[(r.history || []).length - 1] || null;
+  const dropped = (requests || []).filter(
+    (r) =>
+      r.status === "cancelled" &&
+      !isVisitCall(r) &&
+      (r.history || []).some((h) => h.status === "confirmed" || h.status === "inProgress") &&
+      Date.now() - Number(lastOf(r)?.at || 0) < 3 * 86400000
+  );
   const total = toApprove.length + waitingPay.length + booked.length + sent.length;
   usePrefetchClips(toApprove.map((r) => r.voice?.clip));
 
@@ -424,20 +500,11 @@ export default function ConciergeRequests({ requests, payments, me, dispatch, pu
                 <div className="mt-1.5 text-[14px] font-bold text-navy">{r.type}</div>
                 {r.summary?.text && <div className="mt-0.5 text-[12px] leading-[1.6] text-ink">&ldquo;{r.summary.text}&rdquo;</div>}
                 <PayLine r={r} payments={payments} />
+                {r.partner && <div className="mt-0.5 text-[11.5px] text-muted">2인 1조 · {r.assignee} · {r.partner}</div>}
                 {r.status === "cancelRequested" ? (
                   <p className="mt-1.5 text-[12px] font-bold text-amber">취소 요청 — 관제 승인 대기 ({r.cancelReq?.by || "요청자"})</p>
                 ) : (
-                  next && (
-                    <button
-                      onClick={() => {
-                        dispatch({ type: "transitionRequest", id: r.id, to: next[1], note: next[2], by: me });
-                        push("해주세요", `${r.type} — ${next[2]}`, "#8FE3C0");
-                      }}
-                      className={`btn-press mt-2 w-full rounded-xl border py-2.5 text-[13px] font-bold ${next[1] === "done" ? "border-green/40 text-green" : "border-navy/20 text-navy"}`}
-                    >
-                      {next[0]}
-                    </button>
-                  )
+                  next && <StepButton r={r} next={next} me={me} dispatch={dispatch} push={push} />
                 )}
               </div>
             );
@@ -462,6 +529,18 @@ export default function ConciergeRequests({ requests, payments, me, dispatch, pu
           <div className="text-[12px] font-bold text-navy">보낸 제안 — 수락 대기</div>
           {sent.map((r) => (
             <SentRow key={r.id} r={r} me={me} dispatch={dispatch} push={push} />
+          ))}
+        </div>
+      )}
+
+      {dropped.length > 0 && (
+        <div className="mt-3 space-y-1.5">
+          <div className="text-[12px] font-bold text-navy">취소된 것 — 가지 않아도 됩니다</div>
+          {dropped.map((r) => (
+            <div key={r.id} className="rounded-lg bg-navy/[.04] px-3 py-2 text-[12.5px] leading-[1.6] text-ink">
+              <b>{r.type}</b>
+              {fmtScheduled(r) ? ` · ${fmtScheduled(r)}` : ""} — {lastOf(r)?.note || "취소"}
+            </div>
           ))}
         </div>
       )}

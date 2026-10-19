@@ -2,6 +2,7 @@
 // 시각은 "지금 기준 n분 전" 상대값으로 두어 화면의 시계와 항상 맞물린다.
 import { DEFAULT_HEALTH, healthOf, medSummary } from "./meds";
 import { onPeople, peopleNow } from "./people-store";
+import { isAccountScope } from "./scope";
 
 // 데모 인물 — 기존 앱과 같은 어르신·컨시어지·보호자
 export const CUSTOMERS = {
@@ -111,15 +112,21 @@ export function liveCustomer(name, onboarding, health) {
   const ob = onboarding;
   // 관제 센터 공간 — 예시 인물의 보호자 · 담당자 대신 그 센터 회원 (주 보호자 = 먼저 가입한 보호자)
   const p = peopleNow();
+  // 테스트 가구 · 센터 공간의 실제 어르신 — 예시 인물의 동의(문 개방 · 2025-05-12) · 장기요양 등급 · 개별 기준을 붙이지 않는다.
+  // SOS 중에 관제가 그대로 믿을 수 있는 값이다 (2026-10-19 점검 L-10)
+  const acct = isAccountScope();
+  const c1b = acct
+    ? { ...c1, consent: { entry: "동의 확인 필요 (앱에 기록 없음)", measure: "동의 확인 필요", door: "—" }, ltc: "미등록 (베타)", personal: null }
+    : c1;
   const c = p
     ? {
-        ...c1,
+        ...c1b,
         branch: p.tag,
         district: ob?.district || "지역 미등록",
         concierge: { main: p.concierge, sub: "—" },
         guardians: p.guardians.map((name, i) => ({ name, rel: i === 0 && ob && !ob.forSelf ? ob.relDetail || ob.rel || "—" : "—", role: i === 0 ? "주" : "부", place: "—", tz: 0, phone: "—" })),
       }
-    : c1;
+    : c1b;
   if (!ob) return c;
   const elderPhone = fmtPhone(ob.elderPhone || (ob.forSelf ? ob.phone : "") || "");
   const guardianPhone = ob.forSelf ? "" : fmtPhone(ob.phone || "");
@@ -128,9 +135,10 @@ export function liveCustomer(name, onboarding, health) {
     ...c,
     ...(elderPhone ? { phone: elderPhone, phoneSource: "가입 상담" } : {}),
     ...(address ? { address } : {}),
+    // 주 보호자의 관계도 가입 상담 값으로 — 상담에는 '딸'인데 SOS 화면에는 예시의 '아들'이 뜨던 것 (L-13)
     guardians:
-      guardianPhone && c.guardians.length
-        ? [{ ...c.guardians[0], phone: guardianPhone, phoneSource: "가입 상담" }, ...c.guardians.slice(1)]
+      c.guardians.length && (guardianPhone || (!ob.forSelf && (ob.relDetail || ob.rel)))
+        ? [{ ...c.guardians[0], ...(guardianPhone ? { phone: guardianPhone, phoneSource: "가입 상담" } : {}), ...(!ob.forSelf && (ob.relDetail || ob.rel) ? { rel: ob.relDetail || ob.rel } : {}) }, ...c.guardians.slice(1)]
         : c.guardians,
   };
 }
@@ -339,7 +347,8 @@ export const DISPATCH_POOL = [
   { name: "윤세라", role: "주 담당", home: "강동", where: "강동구 천호동 · 사무실 대기", car: false, emergency: true, two: true, dist: { 강동: 2.4, 송파: 5.1, 강남: 9.8, 서초: 13.0 } },
   { name: "이수민", role: "주 담당", home: "송파", where: "송파구 잠실동 · 방문 중 (18:00 종료)", car: false, emergency: false, two: false, dist: { 송파: 1.2, 강동: 4.9, 강남: 6.0, 서초: 9.2 } },
   { name: "서다인", role: "주·부 담당 · 차량 보유", home: "강남", where: "강남구 역삼동 · 이동 중", car: true, emergency: true, two: true, dist: { 강남: 1.6, 서초: 3.2, 송파: 6.4, 강동: 9.5 } },
-  { name: "박지현", role: "주 담당 · 간호사 14년", home: "강남", where: "강남구 대치동 · 방문 중 (18:30 종료)", car: false, emergency: false, two: false, dist: { 강남: 0.9, 서초: 4.1, 송파: 7.2, 강동: 10.3 } },
+  // 박지현 — 컨시어지 관리(긴급출동 가능 · 예) · 지도(가능)와 같은 값으로 (2026-10-19 점검 OPS-02 · 세 화면이 서로 달랐다)
+  { name: "박지현", role: "주 담당 · 간호사 14년", home: "강남", where: "강남구 대치동 · 방문 중 (18:30 종료) · 긴급 시 이동 가능", car: false, emergency: true, two: false, dist: { 강남: 0.9, 서초: 4.1, 송파: 7.2, 강동: 10.3 } },
   { name: "오하늘", role: "부 담당", home: "강남", where: "강남구 삼성동 · 사무실 대기", car: false, emergency: true, two: true, dist: { 강남: 2.2, 서초: 4.8, 송파: 6.9, 강동: 10.1 } },
   { name: "한서연", role: "주 담당", home: "서초", where: "서초구 방배동 · 사무실 대기", car: false, emergency: true, two: false, dist: { 서초: 1.4, 강남: 3.9, 송파: 9.8, 강동: 13.6 } },
 ];

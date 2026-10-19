@@ -75,7 +75,7 @@ export function TodayHeader({ name, now, today, urgentCount, reportDue }) {
               ["완료", today.counts.done, "#1E7A5A"],
               ["진행", today.counts.active, "#0A1F3C"],
               ["예정", today.counts.ahead, "#3B5C8A"],
-              ["긴급확인", urgentCount, urgentCount > 0 ? "#C0392B" : "#5C5A54"],
+              ["긴급확인", urgentCount, urgentCount > 0 ? "#8A5D12" : "#5C5A54"],
             ].map(([k, v, c]) => (
               <div key={k} className="text-center">
                 <div className="font-num text-[22px] font-black leading-none" style={{ color: c }}>{v}</div>
@@ -99,10 +99,11 @@ export function UrgentBanner({ u, done, onOpen }) {
   return (
     <div
       className="rounded-2xl border p-4"
-      style={done ? { borderColor: "rgba(30,122,90,.3)", background: "#F1FAF6" } : { borderColor: "rgba(192,57,43,.35)", background: "#FDF3F2" }}
+      // 긴급확인은 금색 — 빨강은 SOS · 낙상 전용, 해주세요 '긴급'도 금색이다 (2026-10-19 점검)
+      style={done ? { borderColor: "rgba(30,122,90,.3)", background: "#F1FAF6" } : { borderColor: "rgba(138,93,18,.35)", background: "#FFF7E8" }}
     >
       <div className="flex flex-wrap items-center gap-2">
-        <Badge fg="#FFFFFF" bg={done ? "#1E7A5A" : "#C0392B"}>{done ? "확인 완료" : "긴급확인"}</Badge>
+        <Badge fg="#FFFFFF" bg={done ? "#1E7A5A" : "#8A5D12"}>{done ? "확인 완료" : "긴급확인"}</Badge>
         <span className="text-[15px] font-bold text-navy">
           {u.client} 고객 · {u.title}
         </span>
@@ -110,7 +111,7 @@ export function UrgentBanner({ u, done, onOpen }) {
       <p className="mt-1.5 text-[12.5px] leading-[1.6] text-muted">{u.facts.join(" · ")}</p>
       <button
         onClick={onOpen}
-        className={`btn-press btn-dark mt-3 w-full rounded-xl py-3 text-[15px] font-bold text-white ${done ? "bg-green" : "bg-danger"}`}
+        className={`btn-press btn-dark mt-3 w-full rounded-xl py-3 text-[15px] font-bold text-white ${done ? "bg-green" : "bg-amber"}`}
       >
         {done ? "처리 내용 보기" : "긴급업무 열기"}
       </button>

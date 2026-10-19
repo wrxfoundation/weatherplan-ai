@@ -244,14 +244,16 @@ export default function VisitDetail({ visit: v, onChange, openProfile, escort = 
         <div className="mt-3 flex flex-wrap gap-2">
           {editable && (
             <>
-              <Btn ghost onClick={() => setMsg(`임시 저장 ${stampNow()} · 새로고침 후에도 입력내용이 유지됩니다`)}>임시 저장</Btn>
-              <Btn ghost tone="info" onClick={() => { onChange({ interimAt: clock() }); setMsg(`보호자 중간 알림 발송 ${stampNow()} · 점검 ${done}/${total} · 발송 상태는 보호자 관리 연락이력에서 확인`); }}>보호자에게 중간 알림</Btn>
+              {/* 예시 방문의 입력은 이 화면에만 있다 — '새로고침 후에도 유지'라고 하지 않는다 (2026-10-19 점검 OPS-11) */}
+              <Btn ghost onClick={() => setMsg(`임시 저장 ${stampNow()} · 예시 방문이라 이 화면을 닫거나 새로고침하면 입력이 사라집니다`)}>임시 저장</Btn>
+              <Btn ghost tone="info" onClick={() => { onChange({ interimAt: clock() }); setMsg(`보호자 중간 알림 기록 ${stampNow()} · 점검 ${done}/${total} (예시 방문)`); }}>보호자에게 중간 알림</Btn>
               <Btn className="ml-auto" disabled={missing.length > 0} onClick={() => setConfirm("complete")} title={missing.length ? "필수 항목 누락 — 완료 불가" : undefined}>점검 완료 및 보고서 작성</Btn>
             </>
           )}
           {v.live && v.status === "active" && (
             <>
-              <Btn ghost tone="info" onClick={() => { onChange({ interimAt: clock() }); setMsg(`보호자 중간 알림 발송 ${stampNow()} · 점검 ${done}/${total}`); }}>보호자에게 중간 알림</Btn>
+              {/* 실제 방문 — 보호자 홈의 방문 카드에 '관제 중간 알림'으로 뜬다 (2026-10-19 점검 L-05 · 전에는 기록만 되고 보호자에게 보이지 않았다) */}
+              <Btn ghost tone="info" onClick={() => { onChange({ interimAt: clock(), interimDone: done, interimTotal: total }); setMsg(`보호자 중간 알림 ${stampNow()} · 점검 ${done}/${total} — 보호자 홈 방문 카드에 표시됩니다`); }}>보호자에게 중간 알림</Btn>
               <span className="self-center text-[12px] text-muted">점검이 끝나면 컨시어지 앱의 '리포트 제출'로 넘어옵니다</span>
             </>
           )}
@@ -261,7 +263,11 @@ export default function VisitDetail({ visit: v, onChange, openProfile, escort = 
           )}
           {v.status === "done" && v.review === "검수 대기" && <Btn className="ml-auto" tone="info" disabled={missing.length > 0} title={missing.length ? "필수 항목 미점검 — 검수 승인 불가" : undefined} onClick={() => setConfirm("approve")}>관제 검수 승인</Btn>}
           {v.status === "done" && v.review === "검수 완료" && v.stepIdx < 5 && <Btn className="ml-auto" onClick={() => setConfirm("send")}>보호자 리포트 발송</Btn>}
-          {v.status === "done" && v.stepIdx === 5 && v.viewed === "미열람" && <Btn className="ml-auto" ghost tone="warn" onClick={() => setMsg(`보호자 미열람 재알림 발송 ${stampNow()}`)}>미열람 재알림</Btn>}
+          {v.status === "done" && v.stepIdx === 5 && v.viewed === "미열람" && (
+            <Btn className="ml-auto" ghost tone="warn" onClick={() => setMsg(v.live ? `재알림은 아직 자동으로 보내지 않습니다 — 보호자에게 전화로 안내해 주세요 (${stampNow()})` : `보호자 미열람 재알림 기록 ${stampNow()} (예시 방문)`)}>
+              미열람 재알림
+            </Btn>
+          )}
           {/* 반려 — 발송 전의 실제 리포트만. 컨시어지 점검표가 다시 열리고, 고쳐서 다시 내면 검수부터 다시 (2026-10-18) */}
           {onReturn && v.status === "done" && !v.sentAt && !retOpen && (
             <Btn ghost tone="warn" onClick={() => setRetOpen(true)}>반려 — 컨시어지에게 되돌리기</Btn>

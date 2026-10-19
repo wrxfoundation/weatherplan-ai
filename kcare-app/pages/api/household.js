@@ -140,6 +140,8 @@ export default async function handler(req, res) {
       }
       if (JSON.stringify(state).length > MAX_STATE_CHARS) return res.status(413).json({ error: "state-too-large" });
       const list = actions.filter((a) => isPlainObject(a) && typeof a.type === "string" && ACTION_TYPE_RE.test(a.type) && !SERVER_ONLY.has(a.type)).slice(0, MAX_ACTIONS);
+      // 가구 기록 비우기는 관제 계정만 (2026-10-19 점검 F-02) — 화면도 관제에게만 버튼을 보인다
+      if (user.role !== "ops" && list.some((a) => a.type === "reset")) return res.status(400).json({ error: "reset-ops-only" });
 
       if (baseVersion === 0) await ensureHousehold(user.household);
       const { data, error } = await db()

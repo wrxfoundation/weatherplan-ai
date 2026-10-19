@@ -22,7 +22,7 @@ export const PAY_KINDS = {
   entry: { label: "가입 및 설치비", note: "최초 1회", back: "/family/my" },
   store: { label: "스토어 주문", note: "물품 구매", back: "/family/store" },
   request: { label: "해주세요 요금", note: "서비스 이용료", back: "/family/requests" },
-  billing: { label: "결제수단 등록", note: "월 구독 자동결제", back: "/family/my" },
+  billing: { label: "결제수단 등록", note: "월 구독 자동결제", back: "/family/membership" },
 };
 
 // 주문번호 — 토스 규격: 영문 대소문자·숫자·`-`·`_` 로 6~64자.
@@ -51,12 +51,40 @@ export function customerKey() {
   }
 }
 
-// 결제 화면으로 보내는 링크. 금액은 서버가 서명한 값과 대조하므로 여기서 조작해도 승인되지 않는다.
+// 주문 서명 범위 — 어떤 결제(종류)가 무엇(해주세요 번호)을 위한 것인지. 금액과 함께 서명해서,
+// 돌아오는 주소의 ref 를 다른 요청으로 바꿔 '싼 결제로 비싼 요청 결제 완료'를 만들지 못하게 한다 (2026-10-19 점검).
+export const orderScope = (kind, ref) => `${String(kind || "")}:${String(ref || "")}`;
+
+// 토스 결제 상태 → 앱 기록 상태. 토스는 대문자(DONE · WAITING_FOR_DEPOSIT …)로 준다 —
+// 앱의 결제 판단(paymentOf · 환불)은 소문자 "done" 만 보므로 기록할 때 한 번 맞춘다 (2026-10-19 점검 F-01).
+export function normalizePayStatus(s) {
+  const v = String(s || "").toUpperCase();
+  if (v === "DONE") return "done";
+  if (v === "WAITING_FOR_DEPOSIT") return "waiting"; // 가상계좌 — 입금 전이라 돈이 들어오지 않았다
+  if (v === "CANCELED" || v === "PARTIAL_CANCELED") return "canceled";
+  if (v === "ABORTED" || v === "EXPIRED") return "failed";
+  if (v === "READY" || v === "IN_PROGRESS") return "ready";
+  return String(s || "").toLowerCase() || "done";
+}
+
+// 결제 화면으로 보내는 링크. 금액은 서버가 정하고 서명한다 — 여기 실린 금액은 화면 표시용 참고값일 뿐이다
+// (해주세요는 요청의 요금, 스토어는 카탈로그 가격으로 서버가 다시 계산한다 · pages/api/payments/order.js).
 export function payHref({ kind, amount, orderName, ref = "" }) {
   const q = new URLSearchParams({ kind, orderName });
   if (amount != null) q.set("amount", String(amount));
   if (ref) q.set("ref", ref);
   return `/pay?${q.toString()}`;
+}
+
+// 영수증 링크 — 토스가 준 https 주소만 링크로 연다. 가구 기록은 가구 구성원이 저장하는 값이라
+// javascript: 같은 주소가 섞여 들어와도 누르는 사람 화면에서 실행되지 않게 (2026-10-19 점검 F-23)
+export function safeReceiptUrl(u) {
+  try {
+    const url = new URL(String(u || ""));
+    return url.protocol === "https:" && /(^|\.)(tosspayments\.com|toss\.im)$/.test(url.hostname) ? url.href : null;
+  } catch {
+    return null;
+  }
 }
 
 export const fmtCard = (c) =>
@@ -65,6 +93,7 @@ export const fmtCard = (c) =>
 // 결제 상태 표기 — 빨강은 SOS·낙상 전용이라 실패도 호박색을 쓴다.
 export const PAY_STATUS = {
   ready: { label: "결제 진행 중", fg: "#3B5C8A", bg: "rgba(59,92,138,.12)" },
+  waiting: { label: "입금 대기", fg: "#8A5D12", bg: "rgba(138,93,18,.14)" },
   done: { label: "결제 완료", fg: "#1E7A5A", bg: "rgba(30,122,90,.12)" },
   failed: { label: "결제 실패", fg: "#8A5D12", bg: "rgba(138,93,18,.14)" },
   canceled: { label: "결제 취소", fg: "#5C5A54", bg: "rgba(10,31,60,.06)" },

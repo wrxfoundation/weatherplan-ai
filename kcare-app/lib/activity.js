@@ -50,6 +50,8 @@ export function summarize(a) {
       return `요청 담당 → ${clip(a.assignee || "미배정", 20)}`;
     case "requestPaid":
       return "해주세요 결제 완료";
+    case "askPrimaryPay":
+      return `주 보호자에게 결제 부탁 · ${clip(a.by, 20)}`;
     case "approveRequest":
       return `해주세요 승인 · ${clip(a.by, 12)} · ${clip(a.date, 10)}${a.time ? ` ${clip(a.time, 5)}` : ""}`;
     case "declineRequest":

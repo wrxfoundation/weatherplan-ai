@@ -8,6 +8,9 @@ import { Btn, Card, Sheet, SheetTitle, TONE, WhiteBtn } from "../../components/d
 import { STATUS, GUARDIAN_PRESETS, SERVICE_MENU, SERVICE_PLUS, URGENCY, CANCEL_FREE_DAYS, CLOSED, approverOf, canEditRequest, cancelRule, fmtPreferred, fmtScheduled, isStoreOrder, isVisitCall, kstYmd, paymentOf } from "../../lib/requests";
 import { fmtWon, PRICING } from "../../lib/config";
 import { useAppState } from "../../lib/state";
+import { useGuardianRole } from "../../lib/guardian-role";
+import { useAuth } from "../../lib/auth";
+import { meOf } from "../../lib/membership";
 import { assigneeNow, elderNameOf } from "../../lib/people";
 import { honorific } from "../../lib/tracks";
 import WelfareList from "../../components/WelfareList";
@@ -84,7 +87,7 @@ function reqClay(r) {
   if (/확대경/.test(t)) return "goods_magnifier";
   if (/응급/.test(t)) return "siren";
   if (/복지/.test(t)) return "welfareDoc";
-  if (/약/.test(r.type)) return "pill";
+  if (/(^|[^예])약/.test(r.type)) return "pill"; // '예약'의 약은 빼고 (병원 예약 대행이 알약으로 나오던 것)
   if (/병원|진료|검진/.test(t)) return "hospitalBook";
   if (/동행/.test(t)) return "escort1";
   if (/집|곰팡이|환기|수리|핸디맨|공사/.test(t)) return "houseSearch";
@@ -106,7 +109,7 @@ const chipTone = (s) =>
 
 export default function RequestsPage() {
   const { state, dispatch } = useAppState();
-  const isPrimary = (state.demo.guardianRole || "primary") === "primary";
+  const { isPrimary } = useGuardianRole(); // 로그인한 가구는 계정 기준 (lib/guardian-role.js)
   const [creating, setCreating] = useState(false); // false | true | 서비스 메뉴 항목
   const [openId, setOpenId] = useState(null);
   const [wanted, setWanted] = useState({}); // 미개시 서비스 수요 신호 — no 별 1회
@@ -496,7 +499,9 @@ function useReq(req, onboarding, payments) {
   const approver = approverOf(req);
   const proposal = approver !== "concierge";
   const stepIdx = stepOf(req);
-  const steps = proposal ? STEPS_PROPOSAL : STEPS_ASK;
+  // 요금이 없는(무료 · 미정) 요청은 첫 단계를 '요청'으로 — '결제'에 완료 표시가 붙어 낸 것처럼 보이지 않게 (2026-10-19 점검)
+  const free = !(Number(req.amount) > 0);
+  const steps = proposal ? (free ? ["제안", "수락", ...STEPS_PROPOSAL.slice(2)] : STEPS_PROPOSAL) : free ? ["요청", ...STEPS_ASK.slice(1)] : STEPS_ASK;
   const pay = paymentOf(payments, req.id);
   const rule = cancelRule(req);
   const scheduled = fmtScheduled(req);
@@ -559,7 +564,9 @@ function Steps({ steps, at, track = "#EAD9AC" }) {
 
 // 결제 · 수락 · 취소 버튼과 확인 — 큰 카드와 펼친 한 줄 카드가 같이 쓴다
 function Actions({ req, x, dispatch, isPrimary, big, onEdit }) {
-  const [notified, setNotified] = useState(false); // 부 보호자 → 주 보호자 결제 알림
+  const auth = useAuth();
+  // 부 보호자 → 주 보호자 결제 부탁 — 요청에 남는다 (새로고침해도 · 주 보호자 화면에도 보인다)
+  const notified = !!req.payAsk;
   const [confirming, setConfirming] = useState(null); // "cancel" | "decline"
   const { canPay, canAnswer, canCancel, canEdit, storeAsk, rule, pay, goPay, proposal } = x;
   if (!(canPay || canAnswer || canCancel || canEdit)) return null;
@@ -590,14 +597,15 @@ function Actions({ req, x, dispatch, isPrimary, big, onEdit }) {
                 type="button"
                 onClick={() => {
                   if (notified) return;
-                  setNotified(true);
-                  dispatch({ type: "pushEvent", payload: { kind: "승인", text: "부 보호자 → 주 보호자 결제 요청 알림", color: "#8FA9CC" } });
+                  const by = meOf(auth.user).name;
+                  dispatch({ type: "askPrimaryPay", id: req.id, by });
+                  dispatch({ type: "pushEvent", payload: { kind: "승인", text: `부 보호자 ${by} → 주 보호자 결제 부탁 — ${req.type}`, color: "#8FA9CC" } });
                 }}
                 className="ds-press ds-btn3d flex min-h-[52px] items-center justify-center gap-1.5 rounded-[18px] px-2 text-[15px]"
                 style={notified ? { background: TONE.green.bg, color: TONE.green.fg, boxShadow: "none" } : { background: "#FFFFFF", color: "#1B2340", boxShadow: "0 4px 0 #E3DED3" }}
               >
                 {notified && <Line name="check" size={18} />}
-                {notified ? "주 보호자(민수)에게 알림 보냄" : "결제는 주 보호자 — 알림 보내기"}
+                {notified ? "주 보호자에게 결제 부탁 보냄" : "결제는 주 보호자 — 알림 보내기"}
               </button>
             ))}
           {canAnswer && (
@@ -760,6 +768,12 @@ function TodoCard({ req, open, onToggle, onboarding, dispatch, isPrimary, paymen
       {req.status === "requested" && x.approver === "elder" && (
         <div className="rounded-[14px] bg-white px-3 py-2 text-[14px] font-bold">{x.honor}이 수락하시면 진행됩니다</div>
       )}
+      {/* 부 보호자가 결제를 부탁했다 — 주 보호자 화면에 보인다 */}
+      {req.status === "awaitingPayment" && req.payAsk && isPrimary && (
+        <div className="rounded-[14px] bg-white px-3 py-2 text-[14px] font-bold">
+          {req.payAsk.by} 님이 결제를 부탁했어요 · {new Date(req.payAsk.at).toLocaleString("ko-KR", { month: "numeric", day: "numeric", hour: "numeric", minute: "2-digit" })}
+        </div>
+      )}
       <Actions req={req} x={x} dispatch={dispatch} isPrimary={isPrimary} big onEdit={onEdit} />
       <button type="button" onClick={onToggle} aria-expanded={open} className="flex min-h-[40px] items-center gap-1 self-start text-[14px] font-extrabold underline underline-offset-2" style={{ color: "#6B4A3A" }}>
         {open ? "자세히 접기" : "자세히 보기"}
@@ -772,10 +786,14 @@ function TodoCard({ req, open, onToggle, onboarding, dispatch, isPrimary, paymen
 // 진행 중 · 끝난 요청 — 한 줄 카드. 누르면 단계 · 이력 · 취소가 펼쳐진다
 function RequestRow({ req, open, onToggle, onboarding, dispatch, isPrimary, payments, onEdit, d = 80 }) {
   const x = useReq(req, onboarding, payments);
+  // 끝난 요청은 어떻게 끝났는지(마지막 이력 — 거절 · 취소 사유)를 보인다. 전에는 취소된 줄에도 '확정 날짜'가 남았다 (2026-10-19 점검 L-17)
+  const lastNote = [...(req.history || [])].reverse().find((h) => h.note)?.note || "";
   const sub =
     req.status === "cancelRequested"
       ? "취소 요청 — 관제가 확인하고 있습니다"
-      : req.status === "requested" && x.approver === "concierge" && !x.visitCall
+      : ["cancelled", "rejected"].includes(req.status)
+        ? lastNote || (req.status === "cancelled" ? "취소됨" : "거절됨")
+        : req.status === "requested" && x.approver === "concierge" && !x.visitCall
         ? `${req.assignee || "담당 컨시어지"} 컨시어지가 일정을 보고 승인합니다`
         : req.status === "requested" && x.approver === "elder"
           ? `${x.honor}이 수락하시면 진행됩니다`

@@ -6,7 +6,8 @@ import { Clay, Line } from "../../components/clay";
 import { Btn, Card, Sheet, SheetTitle, TONE, WhiteBtn, eventTone } from "../../components/ds";
 import { EVENT_KINDS, MOU_HOSPITALS } from "../../lib/mock";
 import { useAppState } from "../../lib/state";
-import { REAPPROVE_KEYS, eventRights } from "../../lib/event-rights";
+import { useGuardianRole } from "../../lib/guardian-role";
+import { REAPPROVE_KEYS, eventOwner, eventRights } from "../../lib/event-rights";
 import { honorific } from "../../lib/tracks";
 
 // 공유 캘린더 — REQ-02 · 2026-10-15 디자인 시안 '예약'
@@ -139,7 +140,7 @@ function EventRow({ e, rights, onEdit, onRemove }) {
 
 export default function CalendarPage() {
   const { state, dispatch } = useAppState();
-  const isPrimary = (state.demo.guardianRole || "primary") === "primary";
+  const { isPrimary } = useGuardianRole(); // 로그인한 가구는 계정 기준 (lib/guardian-role.js)
   const honor = honorific(state.onboarding); // 고객 호칭 — 전부 "~~님" (2026-08-12 시트)
   const today = new Date();
   const [ym, setYm] = useState({ y: today.getFullYear(), m: today.getMonth() });
@@ -188,6 +189,13 @@ export default function CalendarPage() {
     if (!rights.remove) return;
     const cancel = rights.remove === "cancel";
     dispatch({ type: "removeEvent", id: e.id, mode: rights.remove, by: "보호자", reason, title: e.title });
+    // 컨시어지가 병원과 잡은 진료 예약 — 보호자가 지우면 담당 컨시어지 · 관제가 알아야 한다 (동행 배차가 걸려 있을 수 있다 · 2026-10-19 점검)
+    if (eventOwner(e) === "concierge") {
+      dispatch({
+        type: "addOpsMessage",
+        payload: { from: "보호자", role: "guardian", kind: "event", text: `컨시어지가 등록한 진료 예약을 보호자가 지웠습니다 — ${e.title} · ${md(e.at)} ${hm(e.at)}${e.escort ? " · 동행 배차 정리 필요" : ""}${reason?.trim() ? ` · ${reason.trim()}` : ""}` },
+      });
+    }
     dispatch({
       type: "pushEvent",
       payload: cancel
@@ -411,8 +419,10 @@ export default function CalendarPage() {
                     : { kind: "일정", text: `가족 일정 등록 — ${ev.title}`, color: "#8FA9CC" },
               });
               const d = new Date(ev.at);
-              setYm({ y: d.getFullYear(), m: d.getMonth() });
-              setSelected(d.getDate());
+              if (Number.isFinite(d.getTime())) {
+                setYm({ y: d.getFullYear(), m: d.getMonth() });
+                setSelected(d.getDate());
+              }
               setCreating(false);
             }}
           />
@@ -437,12 +447,21 @@ export default function CalendarPage() {
               };
               const moved = editing.approval === "approved" && REAPPROVE_KEYS.some((k) => k in patch && patch[k] !== editing[k]);
               dispatch({ type: "updateEvent", id: editing.id, patch, by: "보호자", title: ev.title });
+              // 컨시어지가 잡은 진료 예약의 날짜 · 시간을 보호자가 바꿨다 — 담당 컨시어지 · 관제에 알린다 (2026-10-19 점검)
+              if (eventOwner(editing) === "concierge" && ev.at !== editing.at) {
+                dispatch({
+                  type: "addOpsMessage",
+                  payload: { from: "보호자", role: "guardian", kind: "event", text: `컨시어지가 등록한 진료 예약 시간을 보호자가 바꿨습니다 — ${ev.title} · ${md(editing.at)} ${hm(editing.at)} → ${md(ev.at)} ${hm(ev.at)}${editing.escort ? " · 동행 배차 확인" : ""}` },
+                });
+              }
               if (moved) {
                 dispatch({ type: "pushEvent", payload: { kind: "일정", text: `보호자 일정 변경 — ${ev.title} · ${md(ev.at)} ${hm(ev.at)} · 관제 재승인 대기`, color: "#B08D57" } });
               }
               const d = new Date(ev.at);
-              setYm({ y: d.getFullYear(), m: d.getMonth() });
-              setSelected(d.getDate());
+              if (Number.isFinite(d.getTime())) {
+                setYm({ y: d.getFullYear(), m: d.getMonth() });
+                setSelected(d.getDate());
+              }
               setEditing(null);
             }}
           />
@@ -479,6 +498,9 @@ function CreateEventSheet({ defaultDate, initial, onClose, onCreate, honor }) {
     const d = new Date(defaultDate.getTime() - defaultDate.getTimezoneOffset() * 60000);
     return d.toISOString().slice(0, 16);
   });
+  // 휴대폰 날짜 칸의 '지우기'로 비울 수 있다 — 빈 날짜로 저장하면 달력 전체가 멈췄다 (2026-10-19 점검 G2)
+  const atMs = dt ? new Date(dt).getTime() : NaN;
+  const dtOk = Number.isFinite(atMs);
   const needsApproval = mode === "kcare";
   const head = initial ? "일정 수정" : needsApproval ? "일정 등록 요청" : "일정 등록";
 
@@ -498,7 +520,11 @@ function CreateEventSheet({ defaultDate, initial, onClose, onCreate, honor }) {
       {/* 수정할 때는 일정 종류(가족 · K-CARE)를 바꾸지 않는다 — 바꾸려면 지우고 다시 등록 (승인 흐름이 섞이지 않게) */}
       {initial && (
         <div className="rounded-[16px] px-3.5 py-2.5 text-[14px] font-extrabold" style={{ background: "#F3F1EC", color: "#3A3F50" }}>
-          {needsApproval ? "K-CARE 일정 · 관제 승인 일정" : "가족 일정 · 승인 없이 바로"}
+          {needsApproval
+            ? "K-CARE 일정 · 관제 승인 일정"
+            : eventOwner(initial) === "concierge"
+              ? "컨시어지가 병원과 잡은 진료 예약 · 바꾸면 담당 컨시어지 · 관제에 알립니다"
+              : "가족 일정 · 승인 없이 바로"}
         </div>
       )}
 
@@ -581,6 +607,11 @@ function CreateEventSheet({ defaultDate, initial, onClose, onCreate, honor }) {
           className="min-h-[52px] w-full rounded-[16px] border-2 border-[#E3DED3] bg-white px-3.5 text-[17px] outline-none focus:border-[#1B2340]"
         />
       </div>
+      {!dtOk && (
+        <p role="status" className="-mt-2 text-[14px] font-bold" style={{ color: "#8A5D12" }}>
+          날짜와 시간을 골라 주세요
+        </p>
+      )}
       <div className="flex gap-2">
         <WhiteBtn className="flex-1 text-[17px]" onClick={onClose}>
           닫기
@@ -589,13 +620,14 @@ function CreateEventSheet({ defaultDate, initial, onClose, onCreate, honor }) {
           tone="navy"
           h={56}
           className="flex-[2] text-[17px] disabled:opacity-50"
-          disabled={!title.trim()}
+          disabled={!title.trim() || !dtOk}
           onClick={() =>
+            dtOk &&
             onCreate({
               id: `ev-${Date.now()}`,
               kind,
               title: title.trim(),
-              at: new Date(dt).getTime(),
+              at: atMs,
               source: needsApproval ? "보호자 요청" : "보호자 등록",
               by: "guardian", // 누가 만든 일정인가 — 수정 · 삭제 권한이 이것을 본다 (lib/event-rights.js)
               note: needsApproval ? (escort ? "동행 필요" : "동행 불필요") : "",

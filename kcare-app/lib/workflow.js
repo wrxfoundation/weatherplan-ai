@@ -32,7 +32,7 @@ export const VISIT_STATUS = {
   arrived: { label: "현장 도착", fg: "#B08D57", bg: "rgba(176,141,87,.16)", step: 6 },
   recording: { label: "녹화 · 업무 중", fg: "#B08D57", bg: "rgba(176,141,87,.16)", step: 7 },
   done: { label: "방문 완료", fg: "#1E7A5A", bg: "rgba(30,122,90,.12)", step: 8 },
-  rejected: { label: "반려", fg: "#C0392B", bg: "rgba(192,57,43,.1)", step: 0 },
+  rejected: { label: "반려", fg: "#8A5D12", bg: "rgba(138,93,18,.14)", step: 0 }, // 반려는 위험 신호가 아니라 호박색
 };
 
 // 허용 전이 — 단계를 건너뛰지 못하게 한다. 반려는 검토 단계에서만.
@@ -50,12 +50,13 @@ const NEXT = {
 
 export const canAdvance = (from, to) => (NEXT[from] || []).includes(to);
 
-export function advance(visit, to, note, actor) {
+// at — 동작 시각 (서버 저장 모드에서 다른 기기가 다시 적용해도 같은 기록이 되게 · 2026-10-19 점검 F-11)
+export function advance(visit, to, note, actor, at = Date.now()) {
   if (!canAdvance(visit.status, to)) return visit;
   return {
     ...visit,
     status: to,
-    trail: [...(visit.trail || []), { at: Date.now(), status: to, note: note || "", actor: actor || "" }],
+    trail: [...(visit.trail || []), { at, status: to, note: note || "", actor: actor || "" }],
   };
 }
 

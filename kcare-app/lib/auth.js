@@ -59,7 +59,23 @@ export async function testSignIn({ id, password, via = "test" }) {
   return { ok: !!r?.ok && !r?.error, error: r?.error || null };
 }
 
-export const logout = (callbackUrl = "/") => signOut({ callbackUrl: safeCallback(callbackUrl) });
+// 로그아웃하면 이 기기에 받아 둔 가구 기록 사본(전화번호 · 주소가 들어 있다)을 지운다 — 같은 폰을 다른 사람이 쓸 수 있다
+// (2026-10-19 점검 L-19). 서버에 아직 못 보낸 동작은 지우지 않는다 — 다시 로그인하면 이어서 보낸다. 그런 게 있으면 먼저 알린다.
+export function logout(callbackUrl = "/") {
+  if (typeof window !== "undefined") {
+    try {
+      const keys = Object.keys(window.localStorage);
+      const unsent = keys.some((k) => k.startsWith("kcare-acct-pending-"));
+      if (unsent && !window.confirm("아직 서버에 보내지 못한 기록이 있습니다.\n이 기기에 남겨 두었다가 다시 로그인하면 이어서 보냅니다.\n지금 로그아웃할까요?")) {
+        return Promise.resolve();
+      }
+      keys.filter((k) => k.startsWith("kcare-acct-cache-")).forEach((k) => window.localStorage.removeItem(k));
+    } catch (_) {
+      /* 저장소가 막힌 브라우저 — 지울 것도 없다 */
+    }
+  }
+  return signOut({ callbackUrl: safeCallback(callbackUrl) });
+}
 
 export const PROVIDER_LABEL = { test: "테스트 아이디", "google-sim": "Google (시뮬레이션)", google: "Google", member: "회원 아이디", center: "센터 관리자" };
 

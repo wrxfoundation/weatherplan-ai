@@ -13,18 +13,19 @@ export const hasSecret = () => secret().length > 0;
 const authHeader = () => `Basic ${Buffer.from(`${secret()}:`).toString("base64")}`;
 
 // ── 금액 서명 ───────────────────────────────────────────────────────────
-// 이 앱에는 주문을 보관하는 DB 가 없다. 그래서 결제 요청 때 서버가 (주문번호 + 금액)에
-// 서명을 만들어 주고, 승인 때 그 서명을 다시 검증한다. 브라우저에서 금액을 1원으로 바꿔
-// 결제하고 승인을 부르면 서명이 깨져 거부된다.
+// 이 앱에는 주문을 보관하는 DB 가 없다. 그래서 결제 요청 때 서버가 (주문번호 + 금액 + 범위)에
+// 서명을 만들어 주고, 승인 때 그 서명을 다시 검증한다. 금액은 서버가 정한다 (pages/api/payments/order.js) —
+// 브라우저에서 금액을 1원으로 바꿔 결제하고 승인을 부르면 서명이 깨져 거부된다.
+// 범위(scope)는 '무엇을 위한 결제인가'(종류:해주세요 번호) — 돌아오는 주소의 ref 를 바꿔치기하지 못하게.
 //
 // 실서비스에서는 이 서명 대신 주문 테이블을 두고 서버가 보관한 금액과 대조해야 한다.
 const signingKey = () => process.env.TOSS_SECRET_KEY || process.env.PAY_SIGNING_SECRET || "";
-export function signOrder(orderId, amount) {
-  return crypto.createHmac("sha256", signingKey()).update(`${orderId}|${amount}`).digest("hex").slice(0, 32);
+export function signOrder(orderId, amount, scope = "") {
+  return crypto.createHmac("sha256", signingKey()).update(`${orderId}|${amount}|${scope}`).digest("hex").slice(0, 32);
 }
-export function verifyOrder(orderId, amount, sig) {
+export function verifyOrder(orderId, amount, sig, scope = "") {
   if (!sig || !signingKey()) return false;
-  const want = Buffer.from(signOrder(orderId, amount));
+  const want = Buffer.from(signOrder(orderId, amount, scope));
   const got = Buffer.from(String(sig));
   return want.length === got.length && crypto.timingSafeEqual(want, got);
 }

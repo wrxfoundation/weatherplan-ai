@@ -119,9 +119,9 @@ export default function SosCenter({ focusId }) {
         }
       />
 
-      <div className="grid gap-4 lg:grid-cols-12">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-12">
         {/* 왼쪽 — 긴급사건 목록 */}
-        <div className="space-y-4 lg:col-span-3">
+        <div className="min-w-0 space-y-4 lg:col-span-3">
           <Panel>
             <PanelHead title="긴급사건 목록" sub="위험도·발생시각 순" right={open.some((i) => i.state === "new") && <Pill tone="danger">미확인 {open.filter((i) => i.state === "new").length}</Pill>} />
             {open.length === 0 ? (
@@ -168,7 +168,7 @@ export default function SosCenter({ focusId }) {
         </div>
 
         {/* 가운데 — 사건 상세 */}
-        <div className="lg:col-span-6">
+        <div className="min-w-0 lg:col-span-6">
           {current ? (
             <IncidentDetail key={current.id} inc={current} now={now} api={store} role={role} onClosePopup={() => setSelected("__none__")} />
           ) : (
@@ -180,7 +180,7 @@ export default function SosCenter({ focusId }) {
         </div>
 
         {/* 오른쪽 — 고객·보호자·출동·119 */}
-        <div className="lg:col-span-3">
+        <div className="min-w-0 lg:col-span-3">
           {current ? <SidePanels key={current.id} inc={current} now={now} api={store} role={role} /> : <Panel><Empty>사건을 선택하면 고객 핵심정보·보호자 연락·출동 추천·119 요약이 여기에 열립니다.</Empty></Panel>}
         </div>
       </div>

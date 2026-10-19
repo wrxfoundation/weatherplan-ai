@@ -240,16 +240,20 @@ export default function Home() {
                 {l.label}
               </span>
             ))}
-            <button
-              onClick={() => {
-                // 테스트 가구는 테스트 계정 모두가 같이 쓰는 서버 기록이라 한 번 묻는다
-                if (account && !window.confirm(t.resetConfirm)) return;
-                dispatch({ type: "reset" });
-              }}
-              className="btn-press ml-auto rounded-full border border-white/25 px-4 py-1.5 text-[12px] font-bold text-white/80"
-            >
-              {account ? t.resetAcct : t.reset}
-            </button>
+            {/* 테스트 가구 기록 비우기는 관제 계정만 — 가구 전체(요청 · 결제 · 리포트 · SOS)를 지우는 일이라 보호자 · 어르신 ·
+                컨시어지 폰에서 실수로 누르지 않게 (2026-10-19 점검 F-02 · 서버도 관제가 아닌 계정의 비우기를 받지 않는다) */}
+            {(!account || auth.user?.role === "ops") && (
+              <button
+                onClick={() => {
+                  // 테스트 가구는 테스트 계정 모두가 같이 쓰는 서버 기록이라 한 번 묻는다
+                  if (account && !window.confirm(t.resetConfirm)) return;
+                  dispatch({ type: "reset" });
+                }}
+                className="btn-press ml-auto min-h-[36px] rounded-full border border-white/25 px-4 py-1.5 text-[12px] font-bold text-white/80"
+              >
+                {account ? t.resetAcct : t.reset}
+              </button>
+            )}
           </div>
 
           {/* 시연 동선 6단계 — 슬라이드와 동일한 순서. 테스트 계정에서는 숨긴다 — '시연 컨트롤로 SOS 발생'처럼

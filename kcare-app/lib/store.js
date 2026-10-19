@@ -87,3 +87,17 @@ export const STORE_INDEX = Object.fromEntries(
   STORE_CATALOG.flatMap((c) => c.groups.flatMap((g) => g.items.map((i) => [i.id, i])))
 );
 
+
+// 주문 합계 — 카탈로그 가격으로만 계산한다 (결제 금액은 서버가 이 값으로 정한다 · pages/api/payments/order.js).
+// 카탈로그에 없는 상품이 하나라도 있으면 null — 가격을 모르는 물건은 결제하지 않는다.
+export function orderTotal(items) {
+  if (!Array.isArray(items) || items.length === 0 || items.length > 50) return null;
+  let sum = 0;
+  for (const it of items) {
+    const g = STORE_INDEX[it && it.id];
+    if (!g || !Number.isFinite(g.price)) return null;
+    const qty = Math.max(1, Math.min(10, Math.round(Number(it.qty) || 1)));
+    sum += g.price * qty + (g.ship || 0);
+  }
+  return sum;
+}

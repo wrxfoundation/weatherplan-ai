@@ -1,14 +1,14 @@
 // 통합 알림센터 첫 화면 — 요청서 2절 · 시안 "통합 건강·안전 관제".
 // 첫 화면의 최우선 목적은 전체 어르신의 실시간 건강·안전상태 확인이다. 운영관리 영역(2-3)은 삭제하지 않고 맨 아래 접이식으로 내린다.
 import { useMemo, useState } from "react";
-import { Avatar, Btn, Empty, FeedPill, Note, Panel, PanelHead, Pill, SEV, SevBar, SevPill, Stamp, Stat, StatePill, TONE, useOperator } from "./ui";
+import { Avatar, Btn, Confirm, Empty, FeedPill, Note, Panel, PanelHead, Pill, SEV, SevBar, SevPill, Stamp, Stat, StatePill, TONE, useOperator } from "./ui";
 import { centerNow } from "../../lib/people-store";
 import { people } from "../../lib/people";
 import HealthDrawer from "./OpsDashboard/HealthDrawer";
 import LiveStrip from "./OpsDashboard/LiveStrip";
 import { useAuth } from "../../lib/auth";
 import { STEP_ORDER, useIncidents } from "../../lib/ops-sos";
-import { NORMAL_SAMPLE, OPS_TODAY, PRIORITY, SYSTEMS, SYSTEM_STATE, TILES, TOTAL_ELDERS, WATCH_LINKED } from "../../lib/ops-health";
+import { LIVE_ELDER, NORMAL_SAMPLE, OPS_TODAY, PRIORITY, SYSTEMS, SYSTEM_STATE, TILES, TOTAL_ELDERS, WATCH_LINKED } from "../../lib/ops-health";
 import { fmtClock, fmtDur, fmtElapsed, fmtTime, MIN, useNow } from "../../lib/ops-time";
 import { relKoLong } from "../../lib/reltime";
 
@@ -39,6 +39,7 @@ export default function OpsDashboard({ onStartSos, onOpenSos, onMenu, mapSlot, o
   const operator = String(useOperator()).replace(/\s*\(.*\)$/, "");
   // 관제 센터 공간 — 아래 '우선 확인 대상'은 예시 인물이라 실제 SOS 사건을 열지 않는다 (2026-10-06 누수 점검)
   const center = centerNow();
+  const acct = liveOn;
   const { open, start } = useIncidents();
   const now = useNow(1000);
   const [tile, setTile] = useState("all");
@@ -49,7 +50,8 @@ export default function OpsDashboard({ onStartSos, onOpenSos, onMenu, mapSlot, o
   const rows = useMemo(() => {
     const byName = Object.fromEntries(open.map((i) => [i.customer, i]));
     // 관제 센터 공간 — 예시 대상자(200명 · 우선 확인 19명)를 늘어놓지 않는다. SOS 사건은 아래 '진행 중 SOS'로 (2026-10-06 누수 점검)
-    return (center ? [] : PRIORITY).map((r) => {
+    // 테스트 가구 — 실제 어르신(김순자)에게 예시 신호(심박 132 · 위험)를 붙이지 않는다. 그 이름의 줄은 실제 SOS 사건으로만 (2026-10-19 점검 L-10)
+    return (center ? [] : acct ? PRIORITY.filter((r) => r.name !== LIVE_ELDER) : PRIORITY).map((r) => {
       const inc = byName[r.name];
       if (!inc) return r;
       const sev = (SEV[inc.sev]?.rank ?? 9) < (SEV[r.sev]?.rank ?? 9) ? inc.sev : r.sev;
@@ -58,7 +60,7 @@ export default function OpsDashboard({ onStartSos, onOpenSos, onMenu, mapSlot, o
       const d = (SEV[a.sev]?.rank ?? 9) - (SEV[b.sev]?.rank ?? 9);
       return d !== 0 ? d : (a.startedAt ?? -a.agoMin) - (b.startedAt ?? -b.agoMin);
     });
-  }, [open, center]);
+  }, [open, center, acct]);
 
   const ctx = useMemo(() => ({
     sosNames: new Set(open.map((i) => i.customer)),
@@ -89,8 +91,13 @@ export default function OpsDashboard({ onStartSos, onOpenSos, onMenu, mapSlot, o
 
   const rowAt = (r) => (r.startedAt ?? (now ? now - r.agoMin * MIN : null));
 
+  // 기기 줄(센서 오프라인 · 배터리 등)은 SOS 로 올리지 않는다 — 기기 관리로 보낸다 (2026-10-19 점검 OPS-05).
+  // 주의 줄은 사건을 열 수 있지만 위험도를 '위험'으로 부풀리지 않고 주의 그대로 연다. 여는 것은 한 번 묻는다.
+  const [askSos, setAskSos] = useState(null); // SOS 대응을 열지 묻는 줄
   function startSos(r) {
-    const id = start({ name: r.name, age: r.age, sev: r.sev === "warn" || r.sev === "device" ? "danger" : r.sev, value: r.value, threshold: r.threshold, controller: operator }, r.signal);
+    setAskSos(null);
+    if (r.sev === "device") return;
+    const id = start({ name: r.name, age: r.age, sev: r.sev, value: r.value, threshold: r.threshold, controller: operator }, r.signal);
     setDetail(null);
     onStartSos?.(r.name, id);
   }
@@ -183,8 +190,12 @@ export default function OpsDashboard({ onStartSos, onOpenSos, onMenu, mapSlot, o
                       <Btn ghost small tone="navy" onClick={() => setDetail(r.name)}>상세 확인</Btn>
                       {r.incidentId ? (
                         <Btn small tone="danger" onClick={() => onOpenSos?.(r.incidentId)}>SOS 대응 보기</Btn>
+                      ) : center ? (
+                        <Pill tone="muted">예시</Pill>
+                      ) : r.sev === "device" ? (
+                        <Btn small ghost tone="device" onClick={() => onMenu?.("wearable")}>기기 관리에서 점검</Btn>
                       ) : (
-                        center ? <Pill tone="muted">예시</Pill> : <Btn small tone="danger" onClick={() => startSos(r)}>SOS 대응 시작</Btn>
+                        <Btn small tone={r.sev === "warn" ? "navy" : "danger"} onClick={() => setAskSos(r)}>SOS 대응 시작</Btn>
                       )}
                     </div>
                   </li>
@@ -296,7 +307,16 @@ export default function OpsDashboard({ onStartSos, onOpenSos, onMenu, mapSlot, o
 
       <Note>건강·센서 데이터는 참고자료이며 의료진의 진단을 대신하지 않습니다.</Note>
 
-      <HealthDrawer name={detail} row={detailRow} open={!!detail} onClose={() => setDetail(null)} onStartSos={detailRow && !detailRow.incidentId && !center ? () => startSos(detailRow) : null} />
+      <HealthDrawer name={detail} row={detailRow} open={!!detail} onClose={() => setDetail(null)} onStartSos={detailRow && !detailRow.incidentId && !center && detailRow.sev !== "device" ? () => setAskSos(detailRow) : null} />
+      <Confirm
+        open={!!askSos}
+        title={`${askSos?.name || ""} 님 SOS 대응을 엽니다`}
+        body={askSos ? `${askSos.signal} — ${SEV[askSos.sev]?.label || "주의"} 사건으로 SOS 센터에 열리고, 대응 절차(확인 전화 · 파견 · 119)가 시작됩니다. 사건 수에 바로 들어갑니다.` : ""}
+        confirmLabel="SOS 대응 시작"
+        tone={askSos?.sev === "warn" ? "navy" : "danger"}
+        onCancel={() => setAskSos(null)}
+        onConfirm={() => askSos && startSos(askSos)}
+      />
     </div>
   );
 }

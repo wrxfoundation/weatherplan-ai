@@ -16,7 +16,7 @@ function useReleaseSos() {
   const ctx = useAppState();
   return (inc, result) => {
     if (!ctx?.state?.demo?.sos || inc.customer !== LIVE_ELDER) return;
-    ctx.dispatch({ type: "ackSos" });
+    ctx.dispatch({ type: "ackSos", sosAt: ctx.state.demo.sosAt ?? null, result: String(result || "해결 완료") });
     ctx.dispatch({ type: "pushEvent", payload: { kind: "대응", text: `SOS 사건 종료 — ${result || "해결 완료"} · 어르신 · 가족 앱 알림 해제`, color: "#8FE3C0" } });
   };
 }
@@ -192,6 +192,8 @@ export function ReportView({ inc, api, role }) {
   const timeline = buildTimeline(inc);
   const [draft, setDraft] = useState(() => draftForGuardian(inc, c, timeline));
   const [copied, setCopied] = useState(false);
+  // 사건 재개는 한 번 묻는다 — 끝난 사건을 실수로 다시 열지 않게 (2026-10-19 점검 OPS-23)
+  const [askReopen, setAskReopen] = useState(false);
   const copy = () => {
     try {
       navigator.clipboard?.writeText(draft);
@@ -232,9 +234,21 @@ export function ReportView({ inc, api, role }) {
         <div className="mt-2 flex flex-wrap justify-end gap-2">
           <Btn ghost small tone="navy" onClick={copy}>{copied ? "복사됨" : "문구 복사"}</Btn>
           <Btn small tone="muted" disabled title="보호자 앱 발송 연동 대기">보호자 앱으로 발송 (연동 대기)</Btn>
-          {api && role === "controller" && <Btn ghost small tone="warn" onClick={() => api.reopen(inc.id)}>사건 재개</Btn>}
+          {api && role === "controller" && <Btn ghost small tone="warn" onClick={() => setAskReopen(true)}>사건 재개</Btn>}
         </div>
       </div>
+      <Confirm
+        open={askReopen}
+        title={`${inc.id} 사건을 다시 엽니다`}
+        body="첫 종료는 보고서에 '사건 종료 (재개됨)'으로 남고, 해결로 닫은 단계가 다시 열립니다."
+        confirmLabel="재개"
+        tone="warn"
+        onCancel={() => setAskReopen(false)}
+        onConfirm={() => {
+          api.reopen(inc.id);
+          setAskReopen(false);
+        }}
+      />
     </div>
   );
 }

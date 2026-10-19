@@ -52,11 +52,12 @@ import { checkupFor, REPORT_HEADLINE } from "../lib/checkup";
 import { requiredFor } from "../lib/ops-mgmt";
 import { RESULT_TONE, VISIT_GRADES } from "../lib/visit-report";
 import { STORE_CATALOG } from "../lib/store";
-import { SERVICE_MENU, daysUntil, kstYmd } from "../lib/requests";
+import { SERVICE_MENU, crewOf, daysUntil, kstYmd } from "../lib/requests";
+import { CONCIERGES } from "../lib/ops-admin";
 import ConciergeRequests, { NewRequestAlert, newRequestsFor } from "../components/ConciergeRequests";
 import { HelpCallCard, HelpCallPopup } from "../components/HelpCall";
 import { LIVE_TAG } from "../lib/live-household";
-import { elderNameOf, inCenter, meAs, people } from "../lib/people";
+import { conciergeChoices, elderNameOf, inCenter, meAs, people } from "../lib/people";
 import { eventOwner } from "../lib/event-rights";
 import { fmtWon } from "../lib/config";
 import { useAppState, visitLock } from "../lib/state";
@@ -97,6 +98,11 @@ function ConciergePage() {
   const authUser = useAuth().user;
   const live = !!authUser?.household; // 테스트 계정 — 가구 기록에 실제로 남는다
   const [tab, setTab] = useState("today");
+  // 탭을 바꾸면 맨 위부터 — 전에는 앞 탭의 스크롤 위치에 머물러 새 탭의 중간이 보였다 (2026-10-19 점검 C-14)
+  const mainRef = useRef(null);
+  useEffect(() => {
+    mainRef.current?.scrollTo?.(0, 0);
+  }, [tab]);
   const [healthEdit, setHealthEdit] = useState(false); // 고객 탭 건강 정보 수정
   const [calOpen, setCalOpen] = useState(false); // 오늘 탭 일정 달력
   const [calDay, setCalDay] = useState(null); // 달력에서 고른 날 — 시트로 뜬다
@@ -144,6 +150,9 @@ function ConciergePage() {
   const [propTo, setPropTo] = useState("guardian");
   const [propDate, setPropDate] = useState(() => kstYmd(Date.now() + 3 * 86400000));
   const [propTime, setPropTime] = useState("14:00");
+  // 2인 1조 서비스 제안의 짝 — 수락되면 바로 확정되므로 보낼 때 정한다 (2026-10-19 점검 C-06 · 단독 배차 0)
+  const [propPartner, setPropPartner] = useState("");
+  const propMates = conciergeChoices(CONCIERGES).filter((n) => n && n !== ME);
   const propLabel = propTo === "elder" ? "어르신" : "보호자";
   const withProposal = (p) => {
     const at = Date.now();
@@ -213,7 +222,12 @@ function ConciergePage() {
   const checkDone = state.visit.checks || {}; // 21항목 체크 — {"몸-혈압": {at}}
   // 필수 점검 — 관제 방문관리와 같은 기준 (lib/ops-mgmt requiredFor). 빠지면 관제가 검수 승인을 못 한다
   const doneNamesHere = new Set(Object.keys(checkDone).map((k) => k.slice(k.indexOf("-") + 1)));
-  const missingRequired = requiredFor(state.visit.loc || state.onboarding?.careLocation || "home").filter((k) => !doneNamesHere.has(k));
+  const requiredNames = new Set(requiredFor(state.visit.loc || state.onboarding?.careLocation || "home"));
+  const missingRequired = [...requiredNames].filter((k) => !doneNamesHere.has(k));
+  // 제출 조건 — 필수 점검을 다 채우고, 보호자에게 갈 글(총평 · 동행 기록)이 있어야 한다. 전에는 0/21 · 총평 없이도 제출돼
+  // 관제는 승인할 수 없고 반려만 오갔다 (2026-10-19 점검 C-01). 데모는 예시 초안이 총평이 된다
+  const hasSummary = !!(escort.savedAt ? escort.note : live ? state.visit.memo : "예시 초안")?.trim?.();
+  const canSubmitReport = missingRequired.length === 0 && hasSummary;
   const [openItem, setOpenItem] = useState(null); // 항목별 내용 입력 열림
   const [itemDraft, setItemDraft] = useState({}); // 쓰는 중인 항목 메모
   const itemNote = { ...(state.visit.notes || {}), ...itemDraft };
@@ -310,8 +324,9 @@ function ConciergePage() {
     ? [{ name: LIVE_ELDER, age: null, where: people().district, loc: "자택", note: "앱에 남은 기록만", proposed: 0, accepted: 0, referredBy: null }]
     : MY_CLIENTS;
   const ClientRow = center ? "div" : Link;
+  // 내가 주 담당이거나 짝(2인 1조)인 것 모두 — 짝으로 가는 일도 내 일정이다 (2026-10-19 점검)
   const reqJobs = (state.requests || [])
-    .filter((r) => r.scheduledDate && r.assignee === ME && ["confirmed", "inProgress", "cancelRequested"].includes(r.status))
+    .filter((r) => r.scheduledDate && (r.assignee === ME || r.partner === ME) && ["confirmed", "inProgress", "cancelRequested"].includes(r.status))
     .map((r) => ({
       id: `rq-cal-${r.id}`,
       off: daysUntil(r.scheduledDate),
@@ -321,7 +336,7 @@ function ConciergePage() {
       time: r.scheduledTime || "시간 미정",
       where: r.hospital || "",
       detail: `해주세요 — ${r.type}`,
-      crew: `${ME} 1인`,
+      crew: r.partner ? `${r.assignee} · ${r.partner} (2인)` : `${r.assignee || ME} 1인`,
       memo: r.detail || "",
     }));
   const calMonthLabel = `${cNow.getFullYear()}년 ${cNow.getMonth() + 1}월`;
@@ -364,7 +379,9 @@ function ConciergePage() {
   const checkTotal = checkList.reduce((n, g) => n + g.items.length, 0);
   const checkCount = Object.values(checkDone).filter(Boolean).length;
   // 마무리 필요 — 오늘 끝난 건 중 리포트가 아직 안 나간 것
-  const wrapUp = today.rows.find((r) => r.state === "done" && !v.reportSent)?.client || null;
+  // 이 앱의 방문 리포트는 이 가구 어르신 한 분 것이다 — 다른 (예시) 고객의 일정이 끝났다고 '작성하기'가 김순자 님 리포트를 열지 않게 (2026-10-19 점검 C-08)
+  const myElder = live || center ? LIVE_ELDER : ELDER.name;
+  const wrapUp = today.rows.find((r) => r.state === "done" && r.client === myElder && !v.reportSent)?.client || null;
 
   // ── 마음사서함 (2026-09-22 명세) ──
   // 어르신이 앱에서 보낸 목소리(→ 컨시어지)를 받은 음성메시지에 붙인다
@@ -428,11 +445,12 @@ function ConciergePage() {
             </button>
           </header>
 
-          <main className="flex-1 space-y-3.5 overflow-y-auto px-4 pb-28 pt-4">
+          <main ref={mainRef} className="flex-1 space-y-3.5 overflow-y-auto px-4 pb-28 pt-4">
             {/* ── 어르신 SOS — 어느 탭에 있든 맨 위에 (2026-10-02 현장 요청: "어르신 SOS 가 컨시어지에 알람 안 뜸").
                 급파 지시 전에는 '관제 확인 중' + 어르신께 바로 전화, 급파 지시가 오면 수락 버튼. ── */}
+            {/* 스크롤해도 맨 위에 붙어 있다 — 아래 카드를 보다가 SOS 를 놓치지 않게. 급파를 수락한 뒤에는 붙이지 않는다 (2026-10-19 점검 C-10) */}
             {state.demo.sos && !state.ops.sosDispatched && (
-              <div role="alert" className="animate-sosPulse rounded-2xl bg-danger p-4 text-white">
+              <div role="alert" className="animate-sosPulse sticky top-0 z-30 rounded-2xl bg-danger p-4 text-white shadow-lg">
                 <div className="text-[12px] font-bold tracking-[.14em] opacity-85">긴급 · 어르신 SOS</div>
                 <div className="mt-1 text-[18px] font-bold leading-[1.4]">{LIVE_ELDER}님이 SOS를 눌렀습니다</div>
                 <div className="mt-0.5 text-[13px] opacity-90">
@@ -455,20 +473,21 @@ function ConciergePage() {
             )}
             {/* 관제 급파 → 컨시어지 긴급 배너 — 역할 간 실시간 연동 (SOS + 급파 지시 시) · 모든 탭 맨 위 */}
             {state.demo.sos && state.ops.sosDispatched && (
-              <div role="alert" className="animate-sosPulse rounded-2xl bg-danger p-4 text-white">
+              <div role="alert" className={`animate-sosPulse rounded-2xl bg-danger p-4 text-white ${sosAck ? "" : "sticky top-0 z-30 shadow-lg"}`}>
                 <div className="text-[12px] font-bold tracking-[.14em] opacity-85">긴급 급파 · 관제 지시</div>
                 <div className="mt-1 text-[18px] font-bold leading-[1.4]">
                   {LIVE_ELDER}님 SOS — {center ? "관제가 출동을 지시했습니다" : "최근접 동행자로 지정되었습니다"}
                 </div>
                 <div className="mt-0.5 text-[13px] opacity-90">
                   {/* 센터 공간은 거리 · 도착 예정을 계산하지 않는다 — 예시 값을 보이지 않는다 */}
-                  {center ? `${LIVE_ELDER} 님 댁으로 · 거리 · 도착 예정은 베타에서 계산하지 않습니다` : "대치동 자택 1.2km · 서다인(부)과 2인 급파 · 도착 예정 6분"}
+                  {/* 테스트 가구도 센터 공간처럼 — 예시 거리 · 짝(서다인) · 도착 예정을 실제 급파에 붙이지 않는다 (2026-10-19 점검 L-10) */}
+                  {center || live ? `${LIVE_ELDER} 님 댁으로 · 거리 · 도착 예정은 베타에서 계산하지 않습니다` : "대치동 자택 1.2km · 도착 예정 6분 (예시)"}
                 </div>
                 <button
                   onClick={() => {
                     if (sosAck) return;
                     dispatch({ type: "sosAccept", by: ME });
-                    push("대응", `${ME} 급파 수락 — 이동 시작${center ? "" : " (도착 예정 6분)"}`, "#FF8A80");
+                    push("대응", `${ME} 급파 수락 — 이동 시작${center || live ? "" : " (도착 예정 6분 · 예시)"}`, "#FF8A80");
                   }}
                   disabled={sosAck}
                   className="btn-press mt-3 w-full rounded-[10px] bg-white py-3 text-[16px] font-bold text-danger disabled:opacity-80"
@@ -499,6 +518,19 @@ function ConciergePage() {
                   urgentCount={center || urgentDone ? 0 : 1}
                   reportDue={wrapUp ? `${wrapUp} 고객` : null}
                 />
+
+                {/* 관제가 리포트를 반려했다 — 방문 카드 안에만 있던 사유를 오늘 탭 맨 위에서 알린다 (2026-10-19 점검 C-09) */}
+                {state.visit.returned && !state.visit.reportSent && (
+                  <div role="status" className="rounded-2xl border border-amber/40 bg-[#FFF7E8] p-4">
+                    <div className="text-[12px] font-bold tracking-[.08em] text-amber">관제 반려 — 고쳐서 다시 제출</div>
+                    <p className="mt-1 text-[14px] leading-[1.6] text-[#5A4A22]">
+                      {state.visit.returned.by} · 사유: {state.visit.returned.reason}
+                    </p>
+                    <button onClick={() => setTab("visit")} className="btn-press mt-2 rounded-xl border border-amber/40 bg-white/70 px-3 py-2.5 text-[13px] font-bold text-amber">
+                      고치러 가기 ›
+                    </button>
+                  </div>
+                )}
 
                 {!center && <UrgentBanner u={CONCIERGE_URGENT} done={urgentDone} onOpen={() => setUrgentOpen(true)} />}
 
@@ -1070,6 +1102,7 @@ function ConciergePage() {
             {tab === "mailbox" && (
               <Mailbox
                 mb={mb}
+                telOf={(name) => (name === LIVE_ELDER && elderTel ? elderTel : null)}
                 onEvent={push}
                 onToOps={(name, memo) => sendOpsMsg(`마음사서함 — ${name} 고객 음성 확인 요청${memo ? ` · 청취 메모: ${memo}` : ""}`)}
                 onMemoSync={(reqId, text) => {
@@ -1228,6 +1261,7 @@ function ConciergePage() {
                     <input
                       type="date"
                       value={apptDate}
+                      min={kstYmd(Date.now())}
                       onChange={(e) => setApptDate(e.target.value)}
                       disabled={apptDone}
                       aria-label="진료 날짜"
@@ -1267,18 +1301,15 @@ function ConciergePage() {
                       </button>
                     ))}
                   </div>
+                  {!apptDone && (!apptDate || apptDate < kstYmd(Date.now())) && (
+                    <p className="mt-2 text-[11.5px] font-bold text-amber">{apptDate ? "지난 날짜는 등록할 수 없어요 — 병원에서 잡은 날짜를 골라 주세요" : "진료 날짜를 골라야 등록됩니다"}</p>
+                  )}
                   <button
                     onClick={() => {
-                      if (apptDone) return;
+                      // 날짜 없이 '3주 뒤'로 지어 넣지 않는다 · 지난 날짜는 받지 않는다 · 시각은 한국 시간으로 (2026-10-19 점검 C-16 · F-21)
+                      if (apptDone || !apptDate || apptDate < kstYmd(Date.now())) return;
                       setApptDone(true);
-                      // 날짜를 안 고르면 데모 기본값(3주 뒤)을 쓴다 — 빈 등록을 막는
-                      // 것보다 흐름이 끊기지 않는 것이 시연에서는 중요하다
-                      const at = apptDate ? new Date(`${apptDate}T${apptTime || "09:30"}`) : new Date();
-                      if (!apptDate) {
-                        at.setDate(at.getDate() + 21);
-                        const [hh, mm] = (apptTime || "09:30").split(":");
-                        at.setHours(+hh, +mm, 0, 0);
-                      }
+                      const at = new Date(`${apptDate}T${/^\d{2}:\d{2}$/.test(apptTime) ? apptTime : "09:30"}:00+09:00`);
                       dispatch({
                         type: "addEvent",
                         payload: {
@@ -1289,6 +1320,7 @@ function ConciergePage() {
                           source: "컨시어지 등록",
                           by: "concierge", // 수정 · 삭제 권한 (lib/event-rights.js)
                           byName: ME,
+                          escort: apptEscort,
                           note: [
                             apptEscort
                               ? "병원 접수처에서 예약 확정 · 동행 배차 요청됨"
@@ -1303,10 +1335,17 @@ function ConciergePage() {
                         type: "audit",
                         event: { kind: "check", label: "다음 진료 예약 등록 · 캘린더 공유" },
                       });
-                      push("예약", "다음 진료 예약 등록 · 보호자·어르신 캘린더 공유", "#8FA9CC");
+                      // '동행 배차 요청됨'을 실제로 — 관제 지금 처리할 일에 올린다 (전에는 글로만 적혔다 · C-16)
+                      if (apptEscort) {
+                        dispatch({
+                          type: "addOpsMessage",
+                          payload: { from: `컨시어지 ${ME}`, role: "concierge", kind: "dispatch", text: `다음 진료 동행 배차 요청 — ${apptDept || "진료"} · ${apptHosp || "병원"} · ${apptDate} ${apptTime || "09:30"}` },
+                        });
+                      }
+                      push("예약", `다음 진료 예약 등록 · 보호자·어르신 캘린더 공유${apptEscort ? " · 관제에 동행 배차 요청" : ""}`, "#8FA9CC");
                     }}
-                    disabled={apptDone}
-                    className={`btn-press mt-3 w-full rounded-xl border py-3 text-[15px] font-bold ${
+                    disabled={apptDone || !apptDate || apptDate < kstYmd(Date.now())}
+                    className={`btn-press mt-3 w-full rounded-xl border py-3 text-[15px] font-bold disabled:opacity-60 ${
                       apptDone ? "border-green/30 bg-green/10 text-green" : "border-navy bg-navy text-white"
                     }`}
                   >
@@ -1460,12 +1499,20 @@ function ConciergePage() {
                                     <button
                                       onClick={() => dispatch({ type: "visitCheck", key, done: !on })}
                                       disabled={!!lock}
+                                      title={requiredNames.has(i.k) ? "필수 점검 — 빠지면 리포트를 제출할 수 없습니다" : undefined}
                                       className={`btn-press btn-inline btn-chip shrink-0 rounded-full border px-2.5 py-1.5 text-[12px] font-bold ${
                                         on ? "border-green/40 bg-green/10 text-green" : "border-navy/15 text-muted"
                                       }`}
                                     >
                                       {on ? "✓ " : ""}
                                       {i.k}
+                                      {/* 필수 — 빠지면 제출할 수 없다 (관제 검수와 같은 기준 · 2026-10-19 점검 C-01) */}
+                                      {/* 이름은 항목 그대로 두고(읽기 · 찾기), '필수'는 보이는 표시 + 설명(title)으로 */}
+                                      {requiredNames.has(i.k) && (
+                                        <span aria-hidden="true" className="ml-1 text-[10.5px] font-black text-[#8A5D12]">
+                                          필수
+                                        </span>
+                                      )}
                                     </button>
                                     <button
                                       onClick={() => setOpenItem(open ? null : key)}
@@ -1605,6 +1652,14 @@ function ConciergePage() {
                       녹화 여부는 나중에 분쟁이 났을 때 "영상이 있느냐"를 먼저 보기
                       때문에 리포트에 같이 남긴다 (REQ-12 방문기록 모드). */}
                   <div className="mt-3.5 rounded-xl border border-navy/12 p-3.5">
+                    {/* 안심방문 리포트를 낸 뒤에는 동행 기록도 잠긴다 — 같이 낸 기록이 관제 검수 없이 바뀌어 보호자에게 가지 않게 (2026-10-19 점검 C-02) */}
+                    {lock && !escort.sentAt && (
+                      <p role="status" className="mb-2 rounded-lg bg-amber/10 px-3 py-2 text-[12px] font-bold leading-[1.6] text-amber">
+                        {lock === "sent"
+                          ? "이번 방문 리포트는 보호자에게 보냈습니다 — 다음 동행 기록은 '다음 방문 시작' 뒤에 적습니다."
+                          : "방문 리포트를 제출해 관제가 검수 중입니다 — 동행 기록은 지금 고칠 수 없습니다 (반려되어 돌아오면 고칩니다)."}
+                      </p>
+                    )}
                     <div className="flex flex-wrap items-center gap-2">
                       <SectionLabel>동행 기록 — 직접 작성</SectionLabel>
                       {/* 테스트 가구에서는 예시 초안을 불러오지 않는다 — 그대로 보내면 지어낸 동행이 보호자에게 실제 기록으로 간다 */}
@@ -1620,7 +1675,7 @@ function ConciergePage() {
                     <textarea
                       rows={4}
                       value={escortNote}
-                      readOnly={escortShowSaved}
+                      readOnly={escortShowSaved || !!lock}
                       aria-label="동행 기록"
                       onChange={(e) => setEscortNote(e.target.value)}
                       placeholder="접수·진료·수납에서 있었던 일, 의료진이 하신 말씀 그대로, 다음 진료까지 챙길 것을 적습니다. 판단·진단은 적지 않습니다."
@@ -1678,7 +1733,7 @@ function ConciergePage() {
                     </p>
                     <button
                       onClick={() => {
-                        if (!escortNote.trim() || escortShowSaved) return;
+                        if (!escortNote.trim() || escortShowSaved || lock) return;
                         dispatch({
                           type: "escortSave",
                           payload: { note: escortNote.trim(), photos: escortPhotos.length, recorded: escortRecorded, by: ME },
@@ -1690,7 +1745,7 @@ function ConciergePage() {
                         );
                         setEscortEditing(false);
                       }}
-                      disabled={!escortNote.trim() || escortShowSaved}
+                      disabled={!escortNote.trim() || escortShowSaved || !!lock}
                       className={`btn-press mt-2.5 w-full rounded-xl border py-3 text-[15px] font-bold disabled:opacity-40 ${
                         escortShowSaved ? "border-green/30 bg-green/10 text-green" : "border-navy/20 text-navy"
                       }`}
@@ -1787,7 +1842,7 @@ function ConciergePage() {
                   </button>
                   <button
                     onClick={() => {
-                      if (aiSent) return;
+                      if (aiSent || !canSubmitReport) return;
                       // 테스트 가구에서는 컨시어지가 실제로 적은 것(동행 기록 → 총평)만 싣는다 — 예시 초안을 실제 기록처럼 보내지 않는다
                       const note = escortSaved ? escort.note : live ? state.visit.memo || "" : AI_REPORT.draft;
                       dispatch({
@@ -1798,16 +1853,31 @@ function ConciergePage() {
                       // 전에는 이 버튼을 누르자마자 '가족에게 전달됨'이라고 했지만 실제로는 관제 검수 대기였다 (2026-10-02 QA)
                       push("리포트", escortSaved ? "방문 · 동행 리포트 제출 — 관제 검수 대기" : "방문 리포트 제출 — 관제 검수 대기", "#8FA9CC");
                     }}
-                    disabled={aiSent}
+                    disabled={aiSent || !canSubmitReport}
                     className={`btn-press btn-dark mt-2 w-full rounded-xl py-3.5 text-[16px] font-bold text-white ${
                       aiSent ? "bg-muted" : "bg-green"
                     } disabled:opacity-50`}
                   >
-                    {aiSent ? (state.visit.ops?.sentAt ? "✓ 관제 검수 · 가족에게 발송됨" : "✓ 제출됨 — 관제 검수 대기") : state.visit.returned ? "고친 리포트 다시 제출 (관제 검수 후 가족에게)" : "리포트 제출 (관제 검수 후 가족에게)"}
+                    {aiSent
+                      ? state.visit.ops?.sentAt
+                        ? "✓ 관제 검수 · 가족에게 발송됨"
+                        : "✓ 제출됨 — 관제 검수 대기"
+                      : missingRequired.length > 0
+                        ? `필수 점검 ${missingRequired.length}개 남음 — 채우면 제출할 수 있어요`
+                        : !hasSummary
+                          ? "총평을 적으면 제출할 수 있어요"
+                          : state.visit.returned
+                            ? "고친 리포트 다시 제출 (관제 검수 후 가족에게)"
+                            : "리포트 제출 (관제 검수 후 가족에게)"}
                   </button>
                   {!aiSent && missingRequired.length > 0 && (
                     <p className="mt-1.5 text-[12px] leading-[1.6] text-[#8A5D12]">
-                      필수 점검 {missingRequired.length}개가 남았습니다 ({missingRequired.join(" · ")}) — 관제 검수 승인이 막힙니다.
+                      필수 점검 {missingRequired.length}개가 남았습니다 ({missingRequired.join(" · ")}) — 관제 검수와 같은 기준이라 채워야 제출됩니다.
+                    </p>
+                  )}
+                  {!aiSent && missingRequired.length === 0 && !hasSummary && (
+                    <p className="mt-1.5 text-[12px] leading-[1.6] text-[#8A5D12]">
+                      보호자에게 갈 총평(또는 동행 기록)이 비어 있습니다 — 위 총평 칸에 오늘 본 것을 한두 줄 적어 주세요.
                     </p>
                   )}
                 </Card>
@@ -1890,6 +1960,21 @@ function ConciergePage() {
                   {propTo === "elder" && (
                     <p className="mt-2 text-[11.5px] leading-[1.6] text-amber">어르신 하루 한도를 넘는 금액은 어르신이 수락한 뒤 보호자가 결제합니다.</p>
                   )}
+                  <label className="mt-2 block text-[11px] font-bold text-muted">
+                    2인 1조 서비스의 짝 (병원 동행 프리미엄 · 함께가요)
+                    <select
+                      value={propPartner}
+                      onChange={(e) => setPropPartner(e.target.value)}
+                      className="mt-1 w-full rounded-lg border border-navy/15 bg-white px-2.5 py-2 text-[14px] text-ink outline-none focus:border-gold"
+                    >
+                      <option value="">{propMates.length ? "짝을 고르세요 — 2인 서비스 제안에만 붙습니다" : "함께 갈 컨시어지가 없습니다"}</option>
+                      {propMates.map((n) => (
+                        <option key={n} value={n}>
+                          {n}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
                 </Card>
 
                 {/* 케어 제안 — 제안은 반드시 근거(trigger)를 동반 (도메인 규칙 1.1) */}
@@ -1938,7 +2023,7 @@ function ConciergePage() {
                           : "border-navy/20 text-navy"
                       }`}
                     >
-                      {suggested[sg.item] ? "제안 전송됨" : "보호자에게 제안 보내기"}
+                      {suggested[sg.item] ? "제안 전송됨" : `${propLabel}에게 제안 보내기`}
                     </button>
                   </Card>
                 ))}
@@ -2159,12 +2244,14 @@ function ConciergePage() {
                   <div className="space-y-1.5">
                     {SERVICE_MENU.map((m) => {
                       const on = pendingProposals.has(m.name);
+                      const two = crewOf({ type: m.name }) === 2;
+                      const noMate = two && !propPartner;
                       return (
                         <button
                           key={m.no}
-                          disabled={!m.active || on}
+                          disabled={!m.active || on || noMate}
                           onClick={() => {
-                            if (on) return;
+                            if (on || noMate) return;
                             dispatch({
                               type: "addRequest",
                               payload: withProposal({
@@ -2175,6 +2262,7 @@ function ConciergePage() {
                                 preferredDate: null,
                                 urgency: "normal",
                                 assignee: ME,
+                                ...(two ? { partner: propPartner } : {}),
                                 photos: [],
                                 status: "requested",
                                 history: [
@@ -2193,6 +2281,7 @@ function ConciergePage() {
                             <span className="block text-[13px] font-bold text-ink">{m.name}</span>
                             <span className="mt-0.5 block text-[11.5px] leading-[1.5] text-muted">
                               {m.active ? m.priceLabel : "곧 시작합니다"}
+                              {m.active && two ? (propPartner ? ` · 짝 ${propPartner}` : " · 위에서 짝을 먼저 고르세요") : ""}
                             </span>
                           </span>
                           <span className="shrink-0 text-[11.5px] font-bold text-green">
@@ -2615,7 +2704,8 @@ function ConciergePage() {
                 const active = tab === t.key;
                 // 마음사서함에 답장 필요가 남아 있으면 숫자를 띄운다 (명세 2절 · 미처리 우선).
                 // 오늘 탭에는 승인할 해주세요 수 (2026-10-14 — 새 부탁이 온 것을 탭에서도 알 수 있게)
-                const badge = t.key === "mailbox" ? mb.counts.needReply : t.key === "today" ? newRequestsFor(state.requests).length : 0;
+                // 방문 · 리포트 탭에는 관제 반려 표시 (C-09)
+                const badge = t.key === "mailbox" ? mb.counts.needReply : t.key === "today" ? newRequestsFor(state.requests).length : t.key === "visit" ? (state.visit.returned && !state.visit.reportSent ? 1 : 0) : 0;
                 return (
                   <button
                     key={t.key}
@@ -2785,6 +2875,14 @@ function ConciergePage() {
           )}
         </div>
       </div>
+      {/* 도와줘요 — 어느 탭에서든 팝업 (2026-10-05). '카드로 가기'는 오늘 탭의 진행 카드로 (2026-10-19 점검 C-11) */}
+      <HelpCallPopup
+        role="concierge"
+        onGo={() => {
+          setTab("today");
+          setTimeout(() => document.getElementById("help-call-concierge")?.scrollIntoView({ behavior: "smooth", block: "start" }), 120);
+        }}
+      />
     </>
   );
 }
@@ -2900,8 +2998,6 @@ export default function ConciergePageGated() {
   return (
     <RoleGate role="concierge" title="컨시어지">
       <ConciergePage />
-      {/* 도와줘요 — 어느 탭에서든 팝업 (2026-10-05) */}
-      <HelpCallPopup role="concierge" />
     </RoleGate>
   );
 }

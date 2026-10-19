@@ -110,6 +110,19 @@ export const isVisitCall = (r) => r?.type === "즉시 방문 요청";
 // 스토어 주문의 배송 요청 — 결제가 주문(스토어)에 묶여 있어 해주세요 취소 · 환불로 다루지 않는다 (주문 취소는 관제 · 고객센터)
 export const isStoreOrder = (r) => ["물품 전달해 주세요", "물건을 담았어요", "물건 승인 부탁해요"].includes(r?.type);
 
+// 몇 명이 가는 해주세요인가 — 카탈로그의 crew (병원 동행 프리미엄 · 함께가요는 2). 이름에 '2인'이 붙은 것도 2.
+// 2인 해주세요는 주 담당(assignee)과 짝(partner)이 서로 다른 두 사람으로 정해져야 확정 · 진행된다 —
+// '단독 배차 0'을 화면 숫자가 아니라 규칙으로 지킨다 (2026-10-19 점검 F-05 · C-06 · OPS-08)
+export function crewOf(r) {
+  const m = SERVICE_MENU.find((s) => s.name === r?.type);
+  if (m?.crew) return m.crew;
+  return /2인/.test(String(r?.type || "")) ? 2 : 1;
+}
+export const crewReady = (r) => crewOf(r) < 2 || (!!r?.assignee && !!r?.partner && r.partner !== r.assignee);
+// 단독 배차 — 두 사람이 가야 하는데 짝 없이 확정 · 진행 중인 해주세요 수 (관제 KPI). 0 이 아니면 규칙이 뚫린 것이다
+export const soloDispatches = (requests) =>
+  (requests || []).filter((r) => ["confirmed", "inProgress", "cancelRequested"].includes(r?.status) && !crewReady(r)).length;
+
 // 낸 사람이 내용을 고칠 수 있나 (2026-10-18) — 담당 컨시어지가 승인하기 전(제안이면 받는 분이 수락하기 전)까지만.
 // 승인 · 완료 뒤의 내용은 기록이라 고치지 않는다 — 취소하고 다시 부탁한다. 먼저 결제한 요청(보호자 선결제)도 승인 전이면
 // 내용 · 희망 일시는 고칠 수 있다 — 결제가 묶인 종류 · 금액은 처음부터 고치지 않는다 (state.js editRequest).
@@ -151,6 +164,7 @@ export const SERVICE_MENU = [
     name: "병원 동행 프리미엄 (2인 1조)",
     priceLabel: "기본 2시간 · 시간당 45,000원 (VAT 별도) · 추가 30분 10,000원",
     amount: 90000, // 기본 2시간 기준
+    crew: 2, // 배차 정책 escortPremium (lib/dispatch-policy.js) — 짝 없이 확정하지 않는다
     cat: "건강지원",
     scope: "자택 픽업 · 드랍, 차량 지원, 기본 2시간 이후 30분 단위 연장",
     point: "동행 상세 리포트 제공",
@@ -327,7 +341,9 @@ export const SERVICE_PLUS = [
 ];
 
 // 요청 유형 프리셋 (회의 예시 그대로)
+// 맨 앞은 '기타' — 직접 적은 부탁이 저절로 '약 구매해 주세요'로 묶이지 않게 (2026-10-19 점검 L-12)
 export const GUARDIAN_PRESETS = [
+  "직접 적은 부탁",
   "약 구매해 주세요",
   "병원 예약 확인해 주세요",
   "집 상태 확인해 주세요",

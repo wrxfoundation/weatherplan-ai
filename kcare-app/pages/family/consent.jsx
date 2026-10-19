@@ -6,6 +6,7 @@ import { Btn, TONE, WhiteBtn } from "../../components/ds";
 import { ACCESS_LOG, CONSENTS } from "../../lib/mock";
 import { POLICIES } from "../../lib/policies";
 import { useAppState } from "../../lib/state";
+import { useGuardianRole } from "../../lib/guardian-role";
 import { useAuth } from "../../lib/auth";
 import { CONSENT_WITHDRAW } from "../../lib/lifecycle";
 import { meOf } from "../../lib/membership";
@@ -28,6 +29,8 @@ export default function ConsentPage() {
   const auth = useAuth();
   const live = !!auth.user?.household;
   const me = meOf(auth.user);
+  // 동의 · 철회 · 갱신은 주 보호자만 — 계약 · 법적 동의의 단일 주체 (docs/kcare/guardian-invite-policy.md · 2026-10-19 점검)
+  const { isPrimary } = useGuardianRole();
   const renewedAt = state.guardian?.consentRenewedAt || null;
   const decided = state.guardian?.consents || {};
   const [asking, setAsking] = useState(null); // 철회를 묻고 있는 동의 k
@@ -73,8 +76,8 @@ export default function ConsentPage() {
               // 계속 유지되는 동의만 철회 · 다시 동의 (건별 동의는 그때그때). 지금 값은 철회 기록 · 가입 상담 값 · 예시 순 (lib/consent.js)
               const standing = !!effect;
               const off = standing && !consentOn(state, c.k, c.on); // 철회했거나 가입 때 동의하지 않음
-              const renewable = c.expiring && !renewedAt && !off;
-              const canWithdraw = standing && !off;
+              const renewable = isPrimary && c.expiring && !renewedAt && !off;
+              const canWithdraw = isPrimary && standing && !off;
               return (
                 <li key={c.k} className="ds-row flex-wrap">
                   <span className="ds-k">
@@ -86,19 +89,21 @@ export default function ConsentPage() {
                       <span className="text-[14px] font-extrabold" style={{ color: "#5E6270" }}>
                         {mine?.on === false ? `철회 · ${md(mine.at)}` : "동의 안 함"}
                       </span>
-                      <WhiteBtn
-                        h={40}
-                        r={12}
-                        sh={TONE.blue.sh}
-                        color={TONE.blue.fg}
-                        className="px-3 text-[14px]"
-                        onClick={() => {
-                          dispatch({ type: "setConsent", k: c.k, on: true, by: me.name });
-                          dispatch({ type: "pushEvent", payload: { kind: "설정", text: `${title} ${mine?.on === false ? "다시 동의" : "동의"}`, color: "#8FA9CC" } });
-                        }}
-                      >
-                        {mine?.on === false ? "다시 동의" : "동의하기"}
-                      </WhiteBtn>
+                      {isPrimary && (
+                        <WhiteBtn
+                          h={40}
+                          r={12}
+                          sh={TONE.blue.sh}
+                          color={TONE.blue.fg}
+                          className="px-3 text-[14px]"
+                          onClick={() => {
+                            dispatch({ type: "setConsent", k: c.k, on: true, by: me.name });
+                            dispatch({ type: "pushEvent", payload: { kind: "설정", text: `${title} ${mine?.on === false ? "다시 동의" : "동의"}`, color: "#8FA9CC" } });
+                          }}
+                        >
+                          {mine?.on === false ? "다시 동의" : "동의하기"}
+                        </WhiteBtn>
+                      )}
                     </span>
                   ) : renewable ? (
                     <span className="flex flex-none items-center gap-2">
@@ -210,7 +215,7 @@ export default function ConsentPage() {
         </div>
 
         <p className="ds-r px-1 text-[14px] font-bold leading-[1.6]" style={{ "--d": "140ms", color: "#5E6270" }}>
-          언제든 바꿀 수 있어요 · 만료 30일 전 미리 알려 드려요 · 철회해도 기본 케어는 그대로 · 탈퇴하면 24시간 안에 삭제
+          {isPrimary ? "언제든 바꿀 수 있어요" : "동의 · 철회 · 갱신은 주 보호자가 해요"} · 만료 30일 전 미리 알려 드려요 · 철회해도 기본 케어는 그대로 · 탈퇴하면 24시간 안에 삭제
         </p>
       </FamilyLayout>
     </>

@@ -57,9 +57,22 @@ export default function ElderDateTime({ ymd, hm, onChange, maxDays = 60, title =
     const d = new Date(v.y, v.m + n, 1);
     return { y: d.getFullYear(), m: d.getMonth() };
   });
-  const pickDay = (d) => onChange?.({ ymd: ymdOf(new Date(view.y, view.m, d)), hm: hm || null });
-  const pickHour = (h) => onChange?.({ ymd: ymd || null, hm: `${pad(h)}:${half ? "30" : "00"}` });
-  const pickHalf = (v) => hour != null && onChange?.({ ymd: ymd || null, hm: `${pad(hour)}:${v ? "30" : "00"}` });
+  // 오늘을 고르면 이미 지난 시각은 고를 수 없다 — 오후 3시에 '오늘 오전 9시'로 예약되던 것 (2026-10-19 점검 E15)
+  const now = new Date();
+  const isToday = (k) => k === ymdOf(today);
+  const past = (k, h, m) => isToday(k) && (h < now.getHours() || (h === now.getHours() && m <= now.getMinutes()));
+  const pickDay = (d) => {
+    const k = ymdOf(new Date(view.y, view.m, d));
+    const keep = hm && !past(k, hour, half ? 30 : 0) ? hm : null;
+    onChange?.({ ymd: k, hm: keep });
+  };
+  const pickHour = (h) => {
+    // 정각이 지났으면 30분으로, 둘 다 지났으면 고르지 않는다 (버튼도 꺼져 있다)
+    const m = half || past(ymd, h, 0) ? 30 : 0;
+    if (past(ymd, h, m)) return;
+    onChange?.({ ymd: ymd || null, hm: `${pad(h)}:${m ? "30" : "00"}` });
+  };
+  const pickHalf = (v) => hour != null && !past(ymd, hour, v ? 30 : 0) && onChange?.({ ymd: ymd || null, hm: `${pad(hour)}:${v ? "30" : "00"}` });
 
   const navBtn = "ds-press flex h-[48px] min-w-[48px] items-center justify-center rounded-[16px] disabled:opacity-25";
   // 고르기 칸 — 고른 것은 보라로 찬다 (시안 chipBtn)
@@ -121,7 +134,15 @@ export default function ElderDateTime({ ymd, hm, onChange, maxDays = 60, title =
       <div className="mt-2 text-[19px] font-extrabold">{timeTitle}</div>
       <div className="grid grid-cols-3 gap-2" role="group" aria-label="몇 시">
         {ELDER_HOURS.map((h) => (
-          <button key={h} type="button" onClick={() => pickHour(h)} aria-pressed={hour === h} className="ds-pick px-1 text-[17px] leading-[1.25]" style={pick(hour === h)}>
+          <button
+            key={h}
+            type="button"
+            onClick={() => pickHour(h)}
+            disabled={past(ymd, h, 30)}
+            aria-pressed={hour === h}
+            className="ds-pick px-1 text-[17px] leading-[1.25] disabled:opacity-30"
+            style={pick(hour === h)}
+          >
             {hourLabel(h)}
           </button>
         ))}
@@ -133,7 +154,7 @@ export default function ElderDateTime({ ymd, hm, onChange, maxDays = 60, title =
         ].map(([v, label]) => {
           const on = hour != null && half === v;
           return (
-            <button key={label} type="button" disabled={hour == null} onClick={() => pickHalf(v)} aria-pressed={on} className="ds-pick px-2 text-[17px] disabled:opacity-40" style={pick(on)}>
+            <button key={label} type="button" disabled={hour == null || past(ymd, hour, v ? 30 : 0)} onClick={() => pickHalf(v)} aria-pressed={on} className="ds-pick px-2 text-[17px] disabled:opacity-40" style={pick(on)}>
               {label}
             </button>
           );

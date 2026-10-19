@@ -1,3 +1,4 @@
+import { useState } from "react";
 import Icon from "./icons";
 import { FLOW_STEPS, REMINDERS, FOLLOWUP_ROUTES, VISIT_STATUS } from "../lib/workflow";
 import { crewFor, crewLabel, crewReason } from "../lib/dispatch-policy";
@@ -22,6 +23,15 @@ export default function VisitFlow({ role = "ops" }) {
   const cur = STEP_OF(v.status);
   const crew = crewFor(v.kind);
   const isOps = role === "ops";
+  // 일정계획 반려 사유 — null 이면 닫힘. 정해 둔 글('일정 부적절')로 반려하지 않는다 (2026-10-19 점검 OPS-06)
+  const [rejectWhy, setRejectWhy] = useState(null);
+  // 현장 단계는 방문일에만 — 며칠 전에 '현장 도착'을 누를 수 없게 (2026-10-19 점검 C-04)
+  const visitYmd = String(v.at || "").slice(0, 10);
+  const todayYmd = new Date(Date.now() + 9 * 3600000).toISOString().slice(0, 10);
+  const beforeDay = /^\d{4}-\d{2}-\d{2}$/.test(visitYmd) && visitYmd > todayYmd;
+  // ⑧ 방문 완료는 점검표 리포트를 제출한 뒤에만 — 0개 체크로 '21항목 체크 완료 · 리포트 발행'이 남던 것 (C-04)
+  const doneN = Object.keys(state.visit?.checks || {}).length;
+  const reportIn = !!state.visit?.reportSent || !!state.visit?.ops?.sentAt;
 
   const go = (to, note) => {
     dispatch({ type: "advanceVisit", to, note, actor: isOps ? "관제" : "컨시어지" });
@@ -137,12 +147,41 @@ export default function VisitFlow({ role = "ops" }) {
                 : "일정계획 승인 — 4개 화면에 반영"}
             </button>
             <button
-              onClick={() => go("rejected", "일정 부적절 — 재수립 요청")}
-              className="btn-press btn-inline btn-chip rounded-xl border border-danger/30 px-3 py-2.5 text-[13px] font-bold text-danger"
+              onClick={() => setRejectWhy(rejectWhy === null ? "" : null)}
+              aria-expanded={rejectWhy !== null}
+              className="btn-press btn-inline btn-chip rounded-xl border border-amber/40 px-3 py-2.5 text-[13px] font-bold text-amber"
             >
               반려
             </button>
           </div>
+          {rejectWhy !== null && (
+            <div className="mt-2 rounded-lg border border-amber/30 bg-white/70 p-2.5">
+              <label className="block text-[11.5px] font-bold text-muted">
+                반려 사유 — 방문 이력에 남고, 일정을 다시 잡는 데 쓰입니다
+                <input
+                  value={rejectWhy}
+                  onChange={(e) => setRejectWhy(e.target.value)}
+                  placeholder="예: 그날 차량이 없습니다 · 오후로 다시 잡아 주세요"
+                  className="mt-1 w-full rounded-lg border border-navy/15 bg-white px-2.5 py-2 text-[13px] font-medium text-ink outline-none focus:border-gold"
+                />
+              </label>
+              <div className="mt-2 flex gap-2">
+                <button onClick={() => setRejectWhy(null)} className="btn-press flex-1 rounded-lg border border-navy/15 py-2 text-[12.5px] font-bold text-muted">
+                  닫기
+                </button>
+                <button
+                  disabled={!rejectWhy.trim()}
+                  onClick={() => {
+                    go("rejected", `일정 반려 — ${rejectWhy.trim()}`);
+                    setRejectWhy(null);
+                  }}
+                  className="btn-press flex-[2] rounded-lg bg-amber py-2 text-[12.5px] font-bold text-white disabled:opacity-40"
+                >
+                  반려 — 다시 잡게 하기
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       )}
 
@@ -215,13 +254,18 @@ export default function VisitFlow({ role = "ops" }) {
       {/* ⑥⑦ GPS · 녹화 — 컨시어지만 */}
       {!isOps && (v.status === "called" || v.status === "arrived") && (
         <div className="mt-3 space-y-2">
+          {v.status === "called" && beforeDay && (
+            <p className="rounded-lg bg-navy/[.04] px-3 py-2 text-[12px] font-bold text-muted">방문일({visitYmd.slice(5).replace("-", "/")})에 현장에서 체크인합니다</p>
+          )}
           {v.status === "called" && (
             <button
+              disabled={beforeDay}
               onClick={() => {
+                if (beforeDay) return;
                 dispatch({ type: "patchVisit", patch: { gpsAt: Date.now() } });
                 go("arrived", "GPS 도착 확인 — 관제 · 보호자 알림");
               }}
-              className="btn-press flex w-full items-center gap-2 rounded-xl bg-navy py-3 text-[14px] font-bold text-white"
+              className="btn-press flex w-full items-center gap-2 rounded-xl bg-navy py-3 text-[14px] font-bold text-white disabled:opacity-40"
             >
               <span className="ml-3">
                 <Icon name="pin" size={17} />
@@ -235,9 +279,10 @@ export default function VisitFlow({ role = "ops" }) {
                 dispatch({ type: "patchVisit", patch: { recordingAt: Date.now() } });
                 go("recording", "초인종 전 녹화 시작");
               }}
-              className="btn-press flex w-full items-center gap-2 rounded-xl border-2 border-danger bg-danger/[.06] py-3 text-[14px] font-bold text-danger"
+              className="btn-press flex w-full items-center gap-2 rounded-xl border-2 border-gold bg-gold/[.08] py-3 text-[14px] font-bold text-[#86621F]"
             >
-              <span className="ml-3 h-[9px] w-[9px] animate-livePing rounded-full bg-danger" />
+              {/* 녹화 중 표시는 금색 — 빨강은 위험 신호(SOS · 낙상) 전용 (2026-10-19 점검) */}
+              <span className="ml-3 h-[9px] w-[9px] animate-livePing rounded-full bg-gold" />
               녹화 시작 — 초인종은 그 다음입니다
             </button>
           )}
@@ -258,12 +303,18 @@ export default function VisitFlow({ role = "ops" }) {
             ))}
           </div>
           {!isOps && (
-            <button
-              onClick={() => go("done", "21항목 체크 완료 · 리포트 발행")}
-              className="btn-press mt-3 w-full rounded-xl bg-navy py-2.5 text-[13.5px] font-bold text-white"
-            >
-              방문 완료 — 리포트 발행
-            </button>
+            <>
+              <button
+                disabled={!reportIn}
+                onClick={() => reportIn && go("done", `21항목 중 ${doneN}개 확인 · 리포트 제출됨`)}
+                className="btn-press mt-3 w-full rounded-xl bg-navy py-2.5 text-[13.5px] font-bold text-white disabled:opacity-40"
+              >
+                방문 완료 — 업무흐름 닫기
+              </button>
+              {!reportIn && (
+                <p className="mt-1.5 text-[11.5px] leading-[1.6] text-muted">점검표에서 리포트를 제출하면 닫을 수 있습니다 (지금 {doneN}개 확인).</p>
+              )}
+            </>
           )}
         </div>
       )}

@@ -513,6 +513,10 @@ function AdminConsole() {
               </Link>
             </div>
             <h1 className="mt-0.5 text-[29px] font-bold tracking-[-.01em] text-navy">사람 · 경영 총괄</h1>
+            {/* 이 화면의 숫자는 경영 화면 설계용 예시다 — 확정 가격(월 구독 55,000원)과 다른 매출 · 원가 · LTV 를 실제처럼 읽지 않게 (2026-10-19 점검 OPS-14) */}
+            <p role="note" className="mt-2 max-w-[84ch] rounded-xl border border-gold/40 bg-gold/[.08] px-3.5 py-2.5 text-[13px] font-bold leading-[1.6] text-ink">
+              예시 화면입니다 — 매출 · ARPU · LTV · 손익 · 인원 숫자는 설계용 예시이며 실제 실적이나 확정 가격이 아닙니다 (확정 가격: 1인 월 구독 55,000원 · 부부 77,000원).
+            </p>
           </div>
 
           {/* 모바일 — 현재 섹션 표시 + 눌러서 그룹 목록 (칩 18개를 옆으로 미는 것보다 빠르다) */}

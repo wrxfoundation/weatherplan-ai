@@ -9,6 +9,7 @@ import { VISIT_REPORT } from "../../lib/visit-report";
 import { fmtCard } from "../../lib/payments";
 import { useAuth } from "../../lib/auth";
 import { useAppState } from "../../lib/state";
+import { useGuardianRole } from "../../lib/guardian-role";
 import { subjectLabel, trackOf } from "../../lib/tracks";
 import { healthOf, medDrugs } from "../../lib/meds";
 import { sentEscortOf, sentReportState, visitReportOf } from "../../lib/live-household";
@@ -38,7 +39,7 @@ export default function MyPage() {
   const rating = state.escort?.rating && (state.escort.rating.forSentAt ?? null) === (state.escort?.sentAt ?? null) ? state.escort.rating : null;
   // 마지막으로 받은 동행 리포트 — 다음 방문을 시작해 동행 칸이 비어도 지난 것을 계속 본다 (lib/live-household.js)
   const lastEscort = sentEscortOf(state);
-  const isPrimary = (state.demo.guardianRole || "primary") === "primary";
+  const { isPrimary } = useGuardianRole(); // 로그인한 가구는 계정 기준 (lib/guardian-role.js)
   const subj = subjectLabel(trackOf(ob?.track), ob);
   const me = meOf(auth.user);
   const family = familyOf(me);

@@ -617,12 +617,12 @@ function Onboarding() {
               </Card>
 
               {result && (
-                <Card className={`animate-tickIn p-5 ${restricted ? "border-danger/30" : "border-green/30"}`}>
+                <Card className={`animate-tickIn p-5 ${restricted ? "border-amber/30" : "border-green/30"}`}>
                   <div className="flex items-center justify-between">
                     <SectionLabel>심사 결과</SectionLabel>
                     <Badge
-                      fg={restricted ? "#C0392B" : "#1E7A5A"}
-                      bg={restricted ? "rgba(192,57,43,.1)" : "rgba(30,122,90,.12)"}
+                      fg={restricted ? "#8A5D12" : "#1E7A5A"}
+                      bg={restricted ? "rgba(138,93,18,.14)" : "rgba(30,122,90,.12)"}
                     >
                       {result.label}
                     </Badge>
@@ -893,7 +893,7 @@ function Onboarding() {
                       </span>
                       <span>
                         <span className="text-[15px] font-bold text-navy">
-                          {label} <span className="text-danger">(필수)</span>
+                          {label} <span className="text-[#8A5D12]">(필수)</span>
                         </span>
                         <span className="mt-0.5 block text-[12px] leading-[1.6] text-muted">{desc}</span>
                       </span>

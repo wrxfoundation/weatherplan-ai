@@ -218,7 +218,7 @@ export default function ConciergeOnboarding() {
                   </span>
                   <span>
                     <span className="text-[14px] font-bold text-navy">
-                      범죄경력 조회 동의 <span className="text-danger">(필수)</span>
+                      범죄경력 조회 동의 <span className="text-[#8A5D12]">(필수)</span>
                     </span>
                     <span className="mt-0.5 block text-[12px] leading-[1.6] text-muted">
                       노인복지법에 따라 회사가 취업 제한 여부를 조회하는 데 동의합니다.
@@ -257,7 +257,7 @@ export default function ConciergeOnboarding() {
                       </span>
                       <span>
                         <span className="text-[14px] font-bold text-navy">
-                          {label} <span className="text-danger">(필수)</span>
+                          {label} <span className="text-[#8A5D12]">(필수)</span>
                         </span>
                         <span className="mt-0.5 block text-[12px] leading-[1.6] text-muted">{desc}</span>
                       </span>

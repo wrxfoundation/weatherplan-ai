@@ -325,7 +325,7 @@ export const CONCIERGE_URGENT = {
 //
 // day 는 이번 달 며칠인지 (달 경계는 데모라 다루지 않는다).
 export const CONCIERGE_JOB_KINDS = {
-  escort: { label: "병원동행", color: "#C0392B" },
+  escort: { label: "병원동행", color: "#1E7A5A" }, // 빨강은 위험 신호(SOS · 낙상) 전용 (2026-10-19 점검)
   daily: { label: "일상동행", color: "#3B5C8A" },
   request: { label: "해주세요", color: "#7A4C8A" },
   visit: { label: "안심방문", color: "#B08D57" },
@@ -1405,7 +1405,7 @@ export const EXEC_OVERVIEW = [
   { menu: "cs", label: "CS · 문의", headline: "회복 콜 24h 내 92%", sub: "문의 1위 바우처 대행 — 기능화 완료" },
   { menu: "family", label: "보호자 · 가구", headline: "128가구 · NPS 62", sub: "부보호자 열람 64% — 주의 신호" },
   { menu: "growth", label: "그로스 · 바이럴", headline: "K-factor 0.42", sub: "LTV/CAC 14.7x · 병목은 초대 발송" },
-  { menu: "pricing", label: "가격 · 상품", headline: "ARPU 70만", sub: "가입비 미확정 — 퍼널 최대 병목" },
+  { menu: "pricing", label: "가격 · 상품", headline: "ARPU 70만 (예시)", sub: "가입비 미확정 — 퍼널 최대 병목" },
   { menu: "cash", label: "자금 흐름", headline: "순현금 +2,340만", sub: "유입 1.42억 · 미수 870만" },
   { menu: "pl", label: "예산 · 손익", headline: "영업이익 2,340만", sub: "GPM 29.4% — 목표 32% 미달" },
   { menu: "care", label: "케어 성과", headline: "동행 정시율 91%", sub: "SOS 오인율 0 · 야간 공백 3건" },
@@ -2146,7 +2146,7 @@ export const IR_METRICS = [
 
 // LTV 정의 — 슬라이드마다 다른 값이 나오는 것이 실사에서 가장 흔한 사고
 export const IR_LTV_DEF = [
-  { k: "LTV (매출 기준)", v: "980만", how: "가구당 월 구독 70만 × 평균 유지 14개월", use: "시장 규모 · 가격 논의에만" },
+  { k: "LTV (매출 기준 · 예시)", v: "980만", how: "가구당 월 매출(구독 + 동행 · 예시) 70만 × 평균 유지 14개월", use: "시장 규모 · 가격 논의에만" },
   { k: "LTV (기여이익 기준)", v: "98만", how: "가구당 월 기여이익 7만 × 평균 유지 14개월", use: "IR · LTV/CAC는 이 값만 사용" },
 ];
 
@@ -2232,7 +2232,7 @@ export const CHANNELS = [
 ];
 
 export const UNIT_ECON = [
-  { k: "가구당 월 구독", v: "+70만", tone: "ok" },
+  { k: "가구당 월 매출 (구독 + 동행 · 예시)", v: "+70만", tone: "ok" },
   { k: "동행 원가 (정산·수당)", v: "−48만", tone: "bad" },
   { k: "지분 지급 (구독 8%)", v: "−5.6만", tone: "bad" },
   { k: "운영 배부 (지점·보험)", v: "−9.4만", tone: "bad" },

@@ -218,7 +218,9 @@ function UnsentCard({ c, onSend, onOpen }) {
 }
 
 // ── 4. 소통이 끊긴 고객 ──
-function AlertCard({ c, onOps, onOpen }) {
+function AlertCard({ c, onOps, onOpen, telOf }) {
+  // 고객 전화 — 번호를 아는 고객(이 가구 어르신)만 실제로 건다. 모르면 누를 수 없게 (2026-10-19 점검 C-19 · 전에는 href="tel:" 이 아무 데도 걸지 않았다)
+  const tel = telOf?.(c.name) || null;
   const ops = c.comm === "opsNeeded";
   return (
     <div className="rounded-xl border border-amber/35 bg-[#FFF7E8] p-3">
@@ -233,13 +235,15 @@ function AlertCard({ c, onOps, onOpen }) {
         {c.opsNote && ` · ${c.opsNote}`}
       </p>
       <div className="mt-2.5 flex gap-2">
-        <a
-          href="tel:"
-          onClick={(e) => e.preventDefault()}
-          className="tap flex flex-1 items-center justify-center rounded-xl border border-navy/20 bg-white/70 py-2.5 text-[13px] font-bold text-navy"
-        >
-          고객 전화
-        </a>
+        {tel ? (
+          <a href={tel} className="tap flex flex-1 items-center justify-center rounded-xl border border-navy/20 bg-white/70 py-2.5 text-[13px] font-bold text-navy">
+            고객 전화
+          </a>
+        ) : (
+          <span aria-disabled="true" className="flex flex-1 items-center justify-center rounded-xl border border-navy/10 bg-white/40 py-2.5 text-center text-[12px] font-bold text-muted">
+            번호 미등록
+          </span>
+        )}
         <button onClick={onOpen} className="btn-press flex-1 rounded-xl border border-navy/20 bg-white/70 py-2.5 text-[13px] font-bold text-navy">
           대화 보기
         </button>
@@ -788,7 +792,7 @@ export function RecordSheet({ client, onClose, onSend }) {
 }
 
 // ── 탭 본문 ──
-export default function Mailbox({ mb, onEvent, onSent, onToOps, onMemoSync }) {
+export default function Mailbox({ mb, onEvent, onSent, onToOps, onMemoSync, telOf }) {
   const { clients, counts, openInbox, unsentList, alerts, threadFor, hear, setMemo, complete, toOps, send } = mb;
   const [open, setOpen] = useState(null); // 대화 열린 고객 이름
   const [recFor, setRecFor] = useState(null); // 녹음 시트 대상
@@ -909,7 +913,7 @@ export default function Mailbox({ mb, onEvent, onSent, onToOps, onMemoSync }) {
             </div>
             <div className="mt-3 space-y-2">
               {alerts.map((c) => (
-                <AlertCard key={c.name} c={c} onOps={() => doOps(c.name, null)} onOpen={() => setOpen(c.name)} />
+                <AlertCard key={c.name} c={c} telOf={telOf} onOps={() => doOps(c.name, null)} onOpen={() => setOpen(c.name)} />
               ))}
             </div>
             <p className="mt-3 text-[11px] leading-[1.7] text-muted">

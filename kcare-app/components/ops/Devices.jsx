@@ -11,6 +11,7 @@ import { LIVE_TAG } from "../../lib/live-household";
 import { LIVE_ELDER } from "../../lib/ops-health";
 import { centerNow } from "../../lib/people-store";
 import { lastText, useLastActivity } from "../../lib/last-activity";
+import { medTakenToday } from "../../lib/meds";
 
 const STATUS_OPTS = ["전체 상태", "위험", "점검", "주의", "정상"];
 const TYPE_OPTS = ["장비 유형 전체", "갤럭시 Fit3 이슈", "mmWave 센서 이슈", "이슈 없음"];
@@ -29,7 +30,8 @@ function issueSource(r) {
 function LiveDevicePanel() {
   const { state } = useAppState();
   const last = useLastActivity("elder");
-  const slots = Object.keys(state.elder?.medSlots || {}).filter((k) => state.elder.medSlots[k]);
+  const taken = medTakenToday(state.elder); // 오늘 날짜의 체크만
+  const slots = Object.keys(taken).filter((k) => taken[k]);
   const played = Object.keys(state.elder?.msgPlayed || {}).length;
   const sosAt = state.demo?.sos && state.demo.sosAt ? new Date(state.demo.sosAt).toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit", hour12: false }) : null;
   const cells = [

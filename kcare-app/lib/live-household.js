@@ -53,9 +53,12 @@ export function liveElder(e, state) {
   if (!e || e.name !== LIVE_ELDER) return e;
   const ob = signedUp(state);
   const elderPhone = ob ? fmtPhone(ob.elderPhone || (ob.forSelf ? ob.phone : "") || "") : "";
-  const sos = state?.demo?.sos
-    ? [{ no: "진행 중 (실제)", at: mdhm(state.demo.sosAt), cause: "어르신 SOS 버튼", result: state.ops?.sosDispatched ? "급파 지시됨 · 대응 중" : "관제 확인 중" }]
-    : [];
+  const last = state?.demo?.sosLast;
+  const sos = [
+    ...(state?.demo?.sos ? [{ no: "진행 중 (실제)", at: mdhm(state.demo.sosAt), cause: "어르신 SOS 버튼", result: state.ops?.sosDispatched ? "급파 지시됨 · 대응 중" : "관제 확인 중" }] : []),
+    // 지난 SOS — 끝나도 기록이 남는다 (2026-10-19 점검 L-04)
+    ...(last?.closedAt ? [{ no: "종료 (실제)", at: mdhm(last.sosAt || last.closedAt), cause: "어르신 SOS 버튼", result: `${last.result}${last.dispatchedTo ? ` · ${last.dispatchedTo} 출동` : ""}` }] : []),
+  ];
   const live = {
     ...e,
     live: true,
@@ -238,7 +241,7 @@ export function liveVisit(base, state) {
 }
 
 // 관제 방문 상세에서 바꾼 것 중 관제 몫만 가구 기록으로 (점검 · 사진 · 메모 · 체크인은 컨시어지 몫)
-const OPS_KEYS = ["review", "stepIdx", "reviewedAt", "sentAt", "viewed", "interimAt", "followups", "followup", "reviewedTs", "sentTs"];
+const OPS_KEYS = ["review", "stepIdx", "reviewedAt", "sentAt", "viewed", "interimAt", "interimDone", "interimTotal", "followups", "followup", "reviewedTs", "sentTs"];
 export const visitOpsPatch = (p) => Object.fromEntries(Object.entries(p || {}).filter(([k]) => OPS_KEYS.includes(k)));
 
 // ── 보호자 안심방문 리포트 (2026-10-02 관제 연동 — "보호자 리포트도 연동") ──
