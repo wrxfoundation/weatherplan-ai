@@ -98,10 +98,10 @@ function ConciergePage() {
   const authUser = useAuth().user;
   const live = !!authUser?.household; // 테스트 계정 — 가구 기록에 실제로 남는다
   const [tab, setTab] = useState("today");
-  // 탭을 바꾸면 맨 위부터 — 전에는 앞 탭의 스크롤 위치에 머물러 새 탭의 중간이 보였다 (2026-10-19 점검 C-14)
-  const mainRef = useRef(null);
+  // 탭을 바꾸면 맨 위부터 — 전에는 앞 탭의 스크롤 위치에 머물러 새 탭의 중간이 보였다 (2026-10-19 점검 C-14).
+  // 이 화면은 본문이 아니라 문서 전체가 스크롤된다
   useEffect(() => {
-    mainRef.current?.scrollTo?.(0, 0);
+    window.scrollTo(0, 0);
   }, [tab]);
   const [healthEdit, setHealthEdit] = useState(false); // 고객 탭 건강 정보 수정
   const [calOpen, setCalOpen] = useState(false); // 오늘 탭 일정 달력
@@ -227,7 +227,10 @@ function ConciergePage() {
   // 제출 조건 — 필수 점검을 다 채우고, 보호자에게 갈 글(총평 · 동행 기록)이 있어야 한다. 전에는 0/21 · 총평 없이도 제출돼
   // 관제는 승인할 수 없고 반려만 오갔다 (2026-10-19 점검 C-01). 데모는 예시 초안이 총평이 된다
   const hasSummary = !!(escort.savedAt ? escort.note : live ? state.visit.memo : "예시 초안")?.trim?.();
-  const canSubmitReport = missingRequired.length === 0 && hasSummary;
+  // 동행만 한 날 — 방문 점검을 하나도 하지 않고 동행 기록만 저장했으면 동행 기록만 제출한다. 관제가 '동행 리포트 발송'으로
+  // 따로 보낸다(방문 리포트 검수 승인은 잠긴 채). 점검을 시작한 방문은 필수를 다 채워야 한다
+  const escortOnly = doneNamesHere.size === 0 && escortSaved && !!escort.note?.trim();
+  const canSubmitReport = escortOnly || (missingRequired.length === 0 && hasSummary);
   const [openItem, setOpenItem] = useState(null); // 항목별 내용 입력 열림
   const [itemDraft, setItemDraft] = useState({}); // 쓰는 중인 항목 메모
   const itemNote = { ...(state.visit.notes || {}), ...itemDraft };
@@ -400,6 +403,34 @@ function ConciergePage() {
     0
   );
 
+  // 관제 급파 → 컨시어지 긴급 배너 — 역할 간 실시간 연동 (SOS + 급파 지시 시) · 모든 탭 맨 위.
+  // 수락 전에는 머리(스크롤해도 붙어 있는 곳)에, 수락한 뒤에는 본문 맨 위에 둔다 — 아래 카드를 보다가 SOS 를 놓치지 않게 (2026-10-19 점검 C-10)
+  const sosDispatchBanner =
+    state.demo.sos && state.ops.sosDispatched ? (
+      <div role="alert" className={`animate-sosPulse rounded-2xl bg-danger p-4 text-white ${sosAck ? "" : "mt-3"}`}>
+        <div className="text-[12px] font-bold tracking-[.14em] opacity-85">긴급 급파 · 관제 지시</div>
+        <div className="mt-1 text-[18px] font-bold leading-[1.4]">
+          {LIVE_ELDER}님 SOS — {center ? "관제가 출동을 지시했습니다" : "최근접 동행자로 지정되었습니다"}
+        </div>
+        <div className="mt-0.5 text-[13px] opacity-90">
+          {/* 센터 공간은 거리 · 도착 예정을 계산하지 않는다 — 예시 값을 보이지 않는다 */}
+          {/* 테스트 가구도 센터 공간처럼 — 예시 거리 · 짝(서다인) · 도착 예정을 실제 급파에 붙이지 않는다 (2026-10-19 점검 L-10) */}
+          {center || live ? `${LIVE_ELDER} 님 댁으로 · 거리 · 도착 예정은 베타에서 계산하지 않습니다` : "대치동 자택 1.2km · 도착 예정 6분 (예시)"}
+        </div>
+        <button
+          onClick={() => {
+            if (sosAck) return;
+            dispatch({ type: "sosAccept", by: ME });
+            push("대응", `${ME} 급파 수락 — 이동 시작${center || live ? "" : " (도착 예정 6분 · 예시)"}`, "#FF8A80");
+          }}
+          disabled={sosAck}
+          className="btn-press mt-3 w-full rounded-[10px] bg-white py-3 text-[16px] font-bold text-danger disabled:opacity-80"
+        >
+          {sosAck ? "✓ 수락됨 — 이동 중 (관제 공유)" : "급파 수락 · 이동 시작"}
+        </button>
+      </div>
+    ) : null;
+
   return (
     <>
       <Head>
@@ -443,14 +474,11 @@ function ConciergePage() {
             >
               {state.demo.offline ? "온라인 전환" : "오프라인 시연"}
             </button>
-          </header>
-
-          <main ref={mainRef} className="flex-1 space-y-3.5 overflow-y-auto px-4 pb-28 pt-4">
             {/* ── 어르신 SOS — 어느 탭에 있든 맨 위에 (2026-10-02 현장 요청: "어르신 SOS 가 컨시어지에 알람 안 뜸").
-                급파 지시 전에는 '관제 확인 중' + 어르신께 바로 전화, 급파 지시가 오면 수락 버튼. ── */}
-            {/* 스크롤해도 맨 위에 붙어 있다 — 아래 카드를 보다가 SOS 를 놓치지 않게. 급파를 수락한 뒤에는 붙이지 않는다 (2026-10-19 점검 C-10) */}
+                급파 지시 전에는 '관제 확인 중' + 어르신께 바로 전화, 급파 지시가 오면 수락 버튼.
+                머리 안에 둔다 — 머리는 스크롤해도 붙어 있다. 본문 안에서는 아래로 내리면 사라졌다 (2026-10-19 점검 C-10) ── */}
             {state.demo.sos && !state.ops.sosDispatched && (
-              <div role="alert" className="animate-sosPulse sticky top-0 z-30 rounded-2xl bg-danger p-4 text-white shadow-lg">
+              <div role="alert" className="animate-sosPulse mt-3 rounded-2xl bg-danger p-4 text-white">
                 <div className="text-[12px] font-bold tracking-[.14em] opacity-85">긴급 · 어르신 SOS</div>
                 <div className="mt-1 text-[18px] font-bold leading-[1.4]">{LIVE_ELDER}님이 SOS를 눌렀습니다</div>
                 <div className="mt-0.5 text-[13px] opacity-90">
@@ -471,32 +499,11 @@ function ConciergePage() {
                 </div>
               </div>
             )}
-            {/* 관제 급파 → 컨시어지 긴급 배너 — 역할 간 실시간 연동 (SOS + 급파 지시 시) · 모든 탭 맨 위 */}
-            {state.demo.sos && state.ops.sosDispatched && (
-              <div role="alert" className={`animate-sosPulse rounded-2xl bg-danger p-4 text-white ${sosAck ? "" : "sticky top-0 z-30 shadow-lg"}`}>
-                <div className="text-[12px] font-bold tracking-[.14em] opacity-85">긴급 급파 · 관제 지시</div>
-                <div className="mt-1 text-[18px] font-bold leading-[1.4]">
-                  {LIVE_ELDER}님 SOS — {center ? "관제가 출동을 지시했습니다" : "최근접 동행자로 지정되었습니다"}
-                </div>
-                <div className="mt-0.5 text-[13px] opacity-90">
-                  {/* 센터 공간은 거리 · 도착 예정을 계산하지 않는다 — 예시 값을 보이지 않는다 */}
-                  {/* 테스트 가구도 센터 공간처럼 — 예시 거리 · 짝(서다인) · 도착 예정을 실제 급파에 붙이지 않는다 (2026-10-19 점검 L-10) */}
-                  {center || live ? `${LIVE_ELDER} 님 댁으로 · 거리 · 도착 예정은 베타에서 계산하지 않습니다` : "대치동 자택 1.2km · 도착 예정 6분 (예시)"}
-                </div>
-                <button
-                  onClick={() => {
-                    if (sosAck) return;
-                    dispatch({ type: "sosAccept", by: ME });
-                    push("대응", `${ME} 급파 수락 — 이동 시작${center || live ? "" : " (도착 예정 6분 · 예시)"}`, "#FF8A80");
-                  }}
-                  disabled={sosAck}
-                  className="btn-press mt-3 w-full rounded-[10px] bg-white py-3 text-[16px] font-bold text-danger disabled:opacity-80"
-                >
-                  {sosAck ? "✓ 수락됨 — 이동 중 (관제 공유)" : "급파 수락 · 이동 시작"}
-                </button>
-              </div>
-            )}
+            {!sosAck && sosDispatchBanner}
+          </header>
 
+          <main className="flex-1 space-y-3.5 overflow-y-auto px-4 pb-28 pt-4">
+            {sosAck && sosDispatchBanner}
             {/* ════ 오늘 — 출근해서 제일 먼저 보는 것 ════ */}
             {tab === "today" && (
               <>
@@ -1862,7 +1869,9 @@ function ConciergePage() {
                       ? state.visit.ops?.sentAt
                         ? "✓ 관제 검수 · 가족에게 발송됨"
                         : "✓ 제출됨 — 관제 검수 대기"
-                      : missingRequired.length > 0
+                      : escortOnly
+                        ? "동행 기록 제출 (관제 확인 후 가족에게)"
+                        : missingRequired.length > 0
                         ? `필수 점검 ${missingRequired.length}개 남음 — 채우면 제출할 수 있어요`
                         : !hasSummary
                           ? "총평을 적으면 제출할 수 있어요"
@@ -1872,7 +1881,9 @@ function ConciergePage() {
                   </button>
                   {!aiSent && missingRequired.length > 0 && (
                     <p className="mt-1.5 text-[12px] leading-[1.6] text-[#8A5D12]">
-                      필수 점검 {missingRequired.length}개가 남았습니다 ({missingRequired.join(" · ")}) — 관제 검수와 같은 기준이라 채워야 제출됩니다.
+                      {escortOnly
+                        ? "방문 점검 없이 동행만 한 날 — 동행 기록만 제출되고, 관제가 동행 리포트를 따로 보냅니다. 방문 점검을 시작하면 필수 점검을 모두 채워야 제출됩니다."
+                        : `필수 점검 ${missingRequired.length}개가 남았습니다 (${missingRequired.join(" · ")}) — 관제 검수와 같은 기준이라 채워야 제출됩니다.`}
                     </p>
                   )}
                   {!aiSent && missingRequired.length === 0 && !hasSummary && (
