@@ -1,12 +1,12 @@
-# Korea Rising — verified K-pop snapshot (2026-10-18)
+# Korea Rising — verified K-pop snapshot (2026-10-19)
 
 Every line is **cross-verified** (≥2 independent sources agree on the canonical name) and carries its source + Skill Score. Full data + Schema.org JSON-LD: <https://aiagentlabs.co.kr/> · via KoreaAPI (MCP).
 
 ## 🎬 Latest official releases (YouTube)
 - **BoA** — You still our No.1 BoA
-- **QWER** — [3주년 특집] 친해지길 바래..
-- **Xdinary Heroes** — Obsessed with #지웅 #P1Harmony❤️‍🔥
-- **tripleS** — Lah, Honda CRF150L Punya 2 Filter Oli?! Jangan Sampai Lu Lupa Bersihin! 😱
+- **Younha** — ISHOWSPEED Reaction the last minute of The World Cup Final
+- **QWER** — 🌬️💨💨💨💨
+- **Xdinary Heroes** — Obsessed with #WOODZ #우즈❤️‍🔥
 - **NCT Dream** — ˚*⊹ 내년에도 불러주신다면 달려오도록 하겠습니다 ⊹*˚ | 2026 대학 축제 Behind
 - **AKMU** — 2026 AKMU CONCERT TOUR [소문의 낙원 (Paradise of Rumors)] HIGHLIGHT
 
