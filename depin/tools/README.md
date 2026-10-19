@@ -54,4 +54,8 @@
 ## build-industry-table-docx.py — 업종별 영업 메시지 「표만」 docx (10/19)
 
 `python3 depin/tools/build-industry-table-docx.py "reports/업종별 측정기 영업 핵심 메시지.md" "reports/업종별 측정기 영업 핵심 메시지 — 30개 업종 표.docx"`
+
+100개 판(10/19 · 서우 정리본 형식 — 머리글 · 부제 없음, 업종 번호, 마지막 열 「비고」 빈칸, md 의 「주의」 열은 싣지 않음):
+`python3 depin/tools/build-industry-table-docx.py "reports/업종별 측정기 영업 핵심 메시지 — 100개 업종.md" "reports/업종별 측정기 영업 핵심 메시지 — 100개 업종 표.docx" --seo --title "업종별 측정기 영업 핵심 메시지 — 100개 업종 표"`
+md 의 `## 그룹 (n)` 숫자와 실제 줄 수가 다르면 멈춘다.
 md 의 업종 표 6개(30행)만 읽어 가로 A4 한 표로(분류 줄 · 머리글 반복 · 고정 열 너비). 정본은 md — 업종 문구는 md 에서 고친다.
