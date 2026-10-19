@@ -4841,3 +4841,36 @@ Would a short call in the coming weeks work? I'd mainly like to hear what you'd 
 Best,
 Logan
 ```
+
+## 어필리에이트 네트워크 — 전 세계 유력 리스트 (2026-10-19, 서우 「꼭 인도 아니어도 이런 업체 전 세계에 많을 듯 — 유력한 곳 리스팅」)
+
+10/18 후보표(위 「어필리에이트 회사 임직원 컨택 후보」)를 지역 · 경로별로 넓힌 판. 웹 검색 9회 — 대부분 회사 자기소개 · 디렉터리 요약이라 **규모 수치 · 크립토 정책은 원문 대조 전**.
+사람 이름은 적지 않고 링크드인에서 찾을 직함만(회사당 레인 다른 2명까지).
+
+**길이 셋이다** — ① **네트워크**(vCommission 같은 곳: 퍼블리셔 수천~수십만을 한 번에, 대신 광고주 온보딩 · 심사 · 추적 연동이 필요) ② **우리 프로그램을 플랫폼 위에**(Kraken 이 크리에이터는 직접(USDC 지급) · 매체 · 전통 어필리에이트는 impact.com(법정화폐 지급)으로 나눠 운영 — 크립토 브랜드 선례) ③ **현장 전문가 추천**(Airthings 는 자체 프로그램으로 「집주인을 직접 만나는 사람」(점검 · 시공 업자 등)에게 25% — 우리 100개 업종 표의 「판매 채널이 되는 업종」과 같은 그림).
+
+| 순위 | 회사 | 지역 | 왜 유력 | 걸리는 것 | 찾을 직함 |
+|---|---|---|---|---|---|
+| 1 | **impact.com** | 전 세계 | 크립토 브랜드가 실제로 씀(Kraken 매체 · 어필리에이트 트랙 = impact.com · 법정화폐 지급) · 네트워크가 아니라 **우리 프로그램을 올리는 플랫폼** → 나라 · 퍼블리셔를 우리가 고른다 | 플랫폼 비용 · 크립토 연관 광고주 심사 | Partnerships / Strategic Accounts — APAC |
+| 2 | **Involve Asia** | 동남아(말레이 본사) | Trezor(하드웨어 지갑) 프로그램이 이 네트워크로도 돈다 = 「크립토 연관 하드웨어」 선례(10/18) | 동남아 배송 국가 | Head of Partnerships · Advertiser BD · Country Manager |
+| 3 | **vCommission** | 인도 · 싱가포르 · UAE · 영국 · 미국 | 크립토 업종 언급 · 크립토 지급 옵션 · Adways(일본 상장사) 계열 · **Rakshit(Director) 경로가 이미 열림** | 크립토 광고주 정책 문서 없음 · 인도 배송 | Director · Advertiser BD |
+| 4 | **Optimise Media** | 싱가포르 · 인도네시아 · 홍콩 · 베트남 · 필리핀 · 영국 | 싱가포르 거점(우리 법인과 같은 도시) · 아시아 다국가 | 크립토 정책 미확인 · 사무소 정보는 2019 글 기준 | Client Partnerships · Advertiser Sales |
+| 5 | **ACCESSTRADE** | 일본 · 동남아 | 일본 · 말레이 · 베트남 · 인도네시아 강세(Optimise 블로그 서술) · 일본 확장 때 그대로 | 일본은 전파법 인증(기기) 전 캠페인 0 | Global BD · Advertiser Sales |
+| 6 | **Awin**(+ APAC = Commission Factory) | 유럽 · 미국 · 호주 | 실물 상품 광고주 강함 · 대형 퍼블리셔 풀 | 크립토 연관 심사 보수적일 가능성 · CE/RED 등 유럽 기기 요건(WeatherXM 조사 체크리스트) | New Business — APAC / EU |
+| 7 | **A8.net · ValueCommerce** | 일본 | A8 은 광고주 대시보드 영문 제공 · 광고주 2.7만(자체) · ValueCommerce 는 해외 광고주 일본 진출 제휴 이력 | 일본 법인 · 세무 요건 미확인 · 전파법 인증 | Global / Overseas Sales |
+| 8 | **Admitad** | 전 세계(인도 · 중동 · 동유럽 강) | 다국가 · 지급에 크립토 지갑 옵션(디렉터리) · Rakshit 의 전 직장 | 본사 정보가 자료마다 다름 · 퍼블리셔 지급 지연 후기 | Advertiser BD · Country Manager |
+| 9 | **Ecomobi** | 베트남 · 필리핀 · 태국 · 말레이 · 인니 | 크리에이터 · 퍼블리셔 100만+ (자체) · 핀테크로 확장 계획 | 라자다 등 마켓 중심 — 우리 자체 결제 · 지갑 결제와 결이 약함 | Brand Partnerships |
+| 10 | **ArabClicks** | GCC(UAE · 사우디) | 두바이 성과형 네트워크 · 판매 완료만 지급 | UAE 가상자산 마케팅 규정 · 배송 | Advertiser Partnerships |
+| — | **Fuul** · **Galxe** · **링크프라이스** · **애드픽** | 크립토 · 국내 | 10/18 표 그대로(Fuul 은 XRPL 미지원 · 국내는 기기 · 데이터로만) | | |
+
+**경로 ③ 현장 전문가 추천 — 네트워크보다 먼저 해볼 만하다**: Airthings 25% 모델처럼 「집 · 공간을 직접 만지는 사람」(공기청정기 · 가전 매장, 환기 · 공조 시공, 에어컨 청소, 곰팡이 시공, 공인중개사 · 숙박업 운영자 카페)에게 전용 링크 + 20% 배분을 준다. 우리 100개 업종 표와 카페 주인장 접근이 바로 이 길 — 국내에서 먼저 돌리고 해외 네트워크에 들고 간다.
+**DePIN 선례**: Hivemapper 는 대시캠을 공인 리셀러(북미 · 유럽 · 아시아 · 남미 5곳, 예 Dailyminers)로 판다 → 리셀러 경로는 `reports/DePIN 하드웨어 리셀러 유통사 리스트.md` 쪽.
+**참고 요율(디렉터리 · 공식 페이지)**: Airthings 25%(공식) · Ledger 약 10%(디렉터리 · 자체 운영 · 크립토 지급) · Kraken 최대 50%(공식 · 거래소라 비교 대상 아님) → 우리 20% 배분은 하드웨어 기준으로 낮지 않다.
+
+**네트워크에 가기 전 우리가 먼저 갖출 것(없으면 심사에서 떨어지거나 첫인상만 쓴다)**: ① 배송 국가 목록 — 순위가 이걸로 갈린다 ② 추적(전용 링크 → 포스트백/서버 연동) ③ 결제(해외 카드 가능 여부 — RLUSD 만이면 전환 낮음) ④ 크리에이티브 가이드 — 수익 · ROI · 회수 기간 · 토큰 가격 0, 광고 표시(10/19 Disha 발송판의 ROI 문장은 네트워크 컴플라이언스에서 바로 걸린다) ⑤ 지급 통화 · 주기 ⑥ 상품 페이지 영문.
+**넣지 않은 곳**: 거래소 어필리에이트 · 크립토 CPA 네트워크(외환 · 도박과 묶임) · 크립토 배너 광고망(10/18 판단 그대로).
+
+출처(검색 요약 · 2차): Kraken 어필리에이트 페이지(https://www.kraken.com/affiliate) · Airthings 어필리에이트(https://airthings.com/affiliate-program) · Ledger 파트너(https://www.ledger.com/partner/) ·
+A8.net(https://www.a8.net/en/whya8/) · ValueCommerce 보도자료(https://valuecommerce.co.jp/en/news/c_press/2058) · Optimise Media(https://optimisemedia.com/blog/best-affiliate-marketing-platforms-in-malaysia/ · https://optimisemedia.com/blog/vietnam-and-philippines-office-launch/) ·
+Ecomobi × Lazada(https://ecomobi.com/ecomobi-x-lazada-affiliate-from-ground-zero-to-a-regional-force-in-southeast-asias-affiliate-landscape/) · ArabClicks(https://arabclicks.com/about/) · Admitad 디렉터리(https://www.affilitizer.com/networks/admitad) ·
+Hivemapper 리셀러(https://blog.hivemapper.com/introducing-one-of-hivemappers-authorized-resellers-in-europe-825c55d6d349) · vCommission FAQ(https://www.vcommission.com/faq/).
