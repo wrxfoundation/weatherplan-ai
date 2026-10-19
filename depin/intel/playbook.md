@@ -715,6 +715,13 @@ Hi {Name}, I run partnerships at wellbian. KWeather has measured weather in Kore
 `wellbian is the network built on top of that, turning weather and indoor-air readings into data anyone can check, with every input fingerprinted to a public ledger.`
 스펙 숫자는 빼도 **데이터 층은 남긴다**(Kritda 판).
 
+## 「오늘 맞는 숫자」 ≠ 공표 가능한 숫자 — ROI · 회수 기간 (2026-10-19 신설, 서우 「DEX 거래가 되니 실제 맞아서 공표 가능」)
+
+- 회수 기간 · ROI · 월 환산 금액은 **오늘 가격 × 현재 단계 지급량**의 스냅숏이다. 사는 시점 · 단계 · 가격 · 품질 · 전송률이 바뀌면 같이 바뀐다 → 「약 ○개월」은 예측을 사실처럼 말하는 문장이다.
+- DEX 에서 실제로 팔린다는 사실은 「교환 가능」까지만 말하게 해 준다(AMM 규칙 그대로). 가격 · 풀 깊이 · 회수 기간 · 원가 대비 시세는 여전히 0.
+- 이유는 숫자의 정확도가 아니라 **범주**다 — 발행사가 자기 토큰 보상으로 회수 기간을 제시하면 기기가 투자 상품으로 읽힌다(표시광고 · 유사수신 · 해외 가상자산 광고 지침 · 증권성). 사이트의 「양 · 가치 비보장」 고지와도 부딪힌다.
+- 어필리에이트 · KOL · 카페 운영자에게 1:1 로 줘도 같다 — 그들의 광고 문구 책임은 우리에게 온다. 내부 시트(`content/device-nft-payback-1015.xlsx` 등)는 내부 검토용으로만.
+
 ## 행사 · 홍보 이력(XRP SEOUL 2026 · 남산타워 조명) — 어디서 빼고 어디서 쓰나 (2026-10-12 신설 — 서우 「xrp seoul 이나 남산타워 띄운 거 얘기하지 말까」)
 
 **예측시장 · 정산 데이터 · 기관 상대 첫 메시지에서는 뺀다.** (예측시장 플랫폼 · HIP-4 배포자 · Hyperion 같은 상장사 · 재보험 · ILS · 지수형 보험 · 거래소 임원)
