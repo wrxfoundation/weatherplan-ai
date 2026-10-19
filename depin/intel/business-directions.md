@@ -4799,3 +4799,35 @@ Thanks Clyde, good to have you on it. HK is just an hour behind Seoul, so timing
 - 출처(2차 · 검색 요약): 아이러브고시원 = 경인일보 고수플러스 기사(https://www.kyeongin.com/article/1621097) ·
   외도민협회 3자 협약 = 에어비앤비 뉴스룸(https://news.airbnb.com/?p=429929) · 룸앤스페이스 파트너 사이트(https://partner.roomnspace.co.kr/board/list) ·
   영업신고 의무화 시행 2025-10-16 = 에어비앤비 뉴스룸(검색 요약 — 원문 확인 전).
+
+## vCommission 묶음 — Rakshit Ahuja · Himanshi Kasnia · Hamza Jangda (2026-10-19, 서우 프로필 캡처 8장)
+
+**회사(자기소개 · 검색 요약 — 원문 대조 전)**: 인도 어필리에이트 네트워크 · 인도 · 싱가포르 · UAE · 영국 · 미국 거점 · 「어필리에이트 10만+」 ·
+Adways VC India 100% 자회사(일본 상장사 Adways Inc. 합작) · 인터뷰에서 신규 업종으로 「크립토」 언급 · 어필리에이트 지급에 크립토 옵션 · 30일 주기.
+크립토 광고주 정책 문서는 못 찾음 → 첫 통화에서 확인. 출처: vcommission.com FAQ · 광고주 글(https://www.vcommission.com/faq/ ·
+https://www.vcommission.com/advertiser/expanding-to-new-markets-know-how-vcommission-can-help-you-launch-in-india/) · affilitizer 디렉터리.
+
+| 사람 | 자리(캡처 기준) | 판정 |
+|---|---|---|
+| **Rakshit Ahuja** | vCommission Director(2026-09~, 구루그람) · 전 NYX Partner-Revenue · iCubesWire 앱 퍼포먼스 Sr Director · **Admitad India 9년**(퍼블리셔 모집 → 고객 BD(Nykaa · Myntra · Paytm · Samsung 등) → 인도 네트워크 총괄 · ARR ₹6.5억 → ₹11억, 본인 기재) · 2촌 · 팔로워 8,283 · 인증 배지 · 서우 팔로우 중 | **1순위.** 광고주(우리) 쪽 결정권 레인 · 부임 2개월이라 새 광고주를 찾을 시기. 10/18 후보표의 「네트워크 = 광고주 온보딩」 경로와 맞는다. 지금은 1촌 요청 + 수락 뒤 「온보딩에 뭐가 필요한지 묻는」 통화 요청까지 — 우리 준비(추적 방식 · 배송 국가 · 크리에이티브 규칙)가 덜 됐으니 **제안이 아니라 질문**으로 연다. |
+| **Himanshi Kasnia** | vCommission Executive(2026-09~, 모할리) · 퍼블리셔 모집 · 온보딩 · 파트너 관리 · Amity MBA(2024~2026) · 2촌 · 공통 1촌 Disha · **서우 1촌 요청 대기 중** | 같은 회사 다른 레인(퍼블리셔 쪽) — 회사당 2명까지 규칙 안. 수락되면 1촌 인사 기본값만, 사업 이야기는 Rakshit 경로가 열린 뒤. |
+| **Hamza Jangda** | 두바이 퍼블리셔 · Awin · YeahPromos · PartnerBoost · vCommission · Adpump 에 퍼블리셔로 등록(경력란 「정규직」은 계정 표기) · 3촌 | **보류.** 개별 퍼블리셔와 직접 계약하면 추적 · 사기 방지 · 지급을 우리가 다 떠안는다. 네트워크에 들어가면 이런 퍼블리셔는 그쪽으로 온다(이미 vCommission 퍼블리셔). 딜 · 쿠폰형 트래픽은 지갑 결제와 전환이 약하고, UAE 는 가상자산 마케팅 규정 확인 대상. |
+
+**Rakshit 1촌 요청 메모(298자)** — 기본값에서 「인증 · 독립」을 피한 짧은 데이터 층 + 연결 이유 한 줄(제안 아님):
+```
+Hi Rakshit, I run partnerships at wellbian. KWeather has measured weather in Korea for 30 years; wellbian builds on it with home air sensors and city-level weather data anyone can check, every input fingerprinted to a public ledger. We're setting up affiliate sales for the sensor. Glad to connect.
+```
+
+**수락 뒤 첫 메시지(681자)** — {countries} 는 배송 국가 확정 뒤 채운다:
+```
+Thanks for connecting, Rakshit.
+
+Your path from publisher recruitment to running Admitad India's network, and now vCommission, is exactly the experience I wanted to learn from.
+
+We're preparing affiliate sales for our indoor air-quality sensor (made together with KWeather), and I'd like to understand how a network like yours onboards an international hardware advertiser. A few specifics on our side: the commission budget is 20% per sale, international checkout settles in RLUSD (a USD stablecoin), and shipping is currently limited to {countries}.
+
+Would a short call in the coming weeks work? I'd mainly like to hear what you'd need from us before it makes sense.
+
+Best,
+Logan
+```
