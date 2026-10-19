@@ -4702,6 +4702,11 @@ Thanks Clyde, good to have you on it. HK is just an hour behind Seoul, so timing
   · **안 적혀 있는 것(메일에서 묻는다)**: 네트워크 수수료가 우리가 정한 요율 안인지 별도인지 · 최소 예산 · 선입금 · 청구 통화 · 지급 조건 · 쿠폰 코드 귀속 · 크립토 연관 제한 업종. 질문 다섯(506자)을 메일 끝에 붙인다.
   출처: https://www.vcommission.com/blog/advertiser/top-20-advertiser-faqs-in-affiliate-marketing/ · https://www.vcommission.com/blog/advertiser/simplified-advertiser-onboarding-vcommissions-step-by-step-process/ ·
   https://www.vcommission.com/blog/affiliate-marketing/how-to-set-up-server-to-server-s2s-postbacks-on-vcommission/ · https://www.vcommission.com/faq/ · 링크프라이스 광고주 셋업(https://github.com/linkprice/MerchantSetup/blob/master/CPS/README.md).
+- **10/19 서우 답 7항목 → 메일 최종본(3,018자, 채팅)**: 랜딩 = 전용 랜딩을 만들어 보냄(그 전엔 wellbian.io) · 목표 = 판매 CPS · 지역 = **글로벌**(주문은 전 세계 · 나라별 배송 열리는 대로 · 배송 전 기기 NFT 포인트 적립 — 사이트 문구 · 테스트 중 · 비보장) ·
+  구글/메타 = 안 함 · 할 계획 없음 · **요율 = 순매출 최대 30% 를 구매자 할인 · 커미션으로 유연 배분(예 할인 10% + 커미션 20%) — 같은 날 20% 에서 30% 로 올림(서우)** · 판매량 구간 추가 요율 예정 · 다른 네트워크 없음 · 덱 = 준비해 랜딩과 함께.
+  상세: 광고주 Wellbian Labs(직접 광고주) · 기기 파트너 케이웨더 · 가격은 wellbian.io · 결제 국내 카드 / 해외 RLUSD · 추적 = 지금은 파트너별 결제 링크, 온보딩 때 포스트백 연동 · 쿠키 · 검증 기간은 협의.
+  크리에이티브 가이드 5(보상 프로그램은 크리에이티브에서 제외 · 앞선 회수 기간 문장 대체 명시) + 질문 5.
+  **남은 일**: 영문 랜딩 · 영문 덱 제작 · 포스트백 연동 가능 여부(개발) · 쿠폰 코드 귀속(할인 몫) · 「글로벌 주문 · 배송 미확정 국가」 구매자 고지와 미배송 시 환불 · 대체 원칙(10/19 Disha 지역 B 메모와 같은 위험).
 
 ## Juyoung Lee (Altos Ventures 투자팀 · 새 1촌) — 판정 · 인사 (2026-10-17, 서우 프로필 캡처 3장)
 
