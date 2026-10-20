@@ -4940,6 +4940,31 @@ Hivemapper 리셀러(https://blog.hivemapper.com/introducing-one-of-hivemappers-
 - **멘트 공통 선**: 「보상」(코인 X) · 「월 ○원 · 원금 회수 · 알아서 갚아진다」 0 · 보상 말할 땐 「테스트 중 · 양 · 가치 비보장」 한 줄.
 - 정할 것(대표): D 임대료 주기(1회 · 월 · 연) · D 노드 명의 · C 체험 대수 상한 · B 기간 · 이자 여부. 같은 건물 방 판정(개발)이 모든 갈래의 전제.
 
+## Commission Factory(Awin 그룹 · 호주 · 동남아) — 누구에게 · 첫 메모 (2026-10-20, 서우 링크드인 회사 직원 검색 캡처 5장)
+
+10/19 전 세계 리스트 6위(Awin + APAC = Commission Factory). 사람 이름은 적지 않는다 — 공개 직함 · 판정만(링크드인 검색 목록의 이름은 저장소 밖).
+
+**회사(검색 요약 — 회사 · Awin 보도자료 기준)**: 2011 호주 설립 · 「호주 최대 어필리에이트 네트워크」(자칭) · Awin 이 2019.9 지분 25% → 2020.9 나머지 75% 인수(전량) · 인수 뒤에도 CEO · 일상 운영 유지 · 말레이시아 · 싱가포르 사무소 · 브랜드 600+(2020 보도자료 수치) · 리테일 · 패션 · 뷰티 · 통신 · 여행 위주. 크립토 연관 광고주 정책은 공개 자료에서 못 찾음 → 첫 대화에서 확인.
+
+**판정 — 광고주(브랜드) 쪽 2명까지, 레인을 나눠서**
+| 순서 | 공개 직함(캡처 기준) | 왜 |
+|---|---|---|
+| 1 | Enterprise Commercial Manager(호주) | 「Commercial」 = 계약 · 신규 광고주 조건을 다루는 자리 — 「새 광고주는 누가 맡나」에 가장 가깝다 |
+| 2 | Affiliate Marketing · Account Management & Strategic Partnerships(쿠알라룸푸르) | 동남아 데스크 · 「Strategic Partnerships」 — 호주가 아닌 동남아 배송부터 갈 때 맞는 창구 |
+| 예비 | Client Services Team Leader(시드니) | 팀장이라 담당자에게 넘겨 줄 수 있음 — 1 · 2 가 일주일 무응답일 때만 |
+
+**지금 안 보내는 쪽**: 어카운트 매니저 · 이그제큐티브 여럿(기존 고객 담당 — 같은 회사에 여러 장 뿌리면 스팸으로 보이고 내부에서 서로 묻는다) · 퍼블리셔 개발 쪽(헤드 · 매니저 — 입점이 정해진 뒤 「어떤 퍼블리셔가 기기를 파나」 물을 때) · 재무 · 마케팅 헤드(창구 아님) · 「ex-」 · 소속 불분명 프로필.
+
+**첫 메모(1촌 요청 300자 · ArabClicks 판과 같은 틀)** — `{이름}` 만 바꾼다:
+> Hi {이름}, I run partnerships at Wellbian Labs. We sell an indoor air-quality monitor made with KWeather (30 years of weather measurement in Korea), every reading fingerprinted to a public ledger. We're setting up CPS affiliate sales in APAC. Who handles new advertisers at Commission Factory?
+
+(1번 이름 기준 295자 · 2번 292자. 보상 · 토큰 · 수익 0 — 입점 판정 전에 크립토 단어로 먼저 걸리지 않게.)
+
+**보내기 전 · 답 오기 전에 우리 쪽에서 정할 것**: ① 호주 · 뉴질랜드 · 말레이 · 싱가포르 배송 여부(동남아만이면 2번만 보낸다) ② 호주 · 뉴질랜드 판매 시 기기 인증 표시(RCM 등) 필요 여부 — 케이웨더에 ARC-600DA 인증 현황 문의(유럽 CE/RED 문의와 한 번에) ③ 현지 통화 · 해외 카드 결제 ④ 추적 — 클릭 ID → 포스트백(vCommission 과 같은 개발) ⑤ 네트워크 비용 구조(셋업 · 월 이용료 · 네트워크 수수료)는 모름 → 답 오면 질문.
+**순서**: vCommission 메일이 먼저(진행 중 1건을 먼저 굴린다) → 같은 날 보내도 되지만 회사당 2명에서 멈춘다.
+
+출처(검색 요약): https://www.commissionfactory.com/market-insights/news-events/awin-fully-acquires-commission-factory · https://www.commissionfactory.com/market-insights/news-events/awin-acquires-equity-stake-commission-factory · https://performancein.com/news/2020/09/09/awin-completes-acquisition-of-australia-affiliate-network-commission-factory/
+
 ## MEXC 상장팀 — 텔레그램 그룹 인사 (2026-10-19 20:38, 서우 캡처)
 
 - **상황**: 「Wellbian (WLBN) <> MEXC」 그룹(3인)에 MEXC 상장팀 리스팅 매니저가 들어와 인사 · 공식 채널 목록(텔레그램 · X · 메일 · 디스코드)과 확인 페이지(mexc.com/official-verify) 안내 ·
