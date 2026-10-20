@@ -5020,6 +5020,9 @@ Hivemapper 리셀러(https://blog.hivemapper.com/introducing-one-of-hivemappers-
 ② 본인이 「affiliate agent」라고 한 것과 「바이낸스 공식 계정」이 맞지 않는다 — @BResearchBD 가 상대 본인인지, 그룹에 넣겠다던 「binance member」인지 확인.
 ③ 확인돼도 Verify 화면 고지 그대로: **신원 확인일 뿐 상장 · 어떤 행위의 승인 아님 · 바이낸스는 개인 대화로 자금 · 토큰을 요구하지 않는다.** → 돈 · 토큰 · 지갑 0, 상장은 대표 결정, 요건은 메일로 받아 전달(답 300자, 채팅).
 listing@binance.com 도 같은 화면(이메일)에서 조회해 둔다.
+**10/20 저녁 갱신** — 링크드인은 「개인적이라」 거절, 회사 메일은 「구글은 미국 거라 못 보낸다」며 거절(우리 지원 메일이 구글 기반이라는 뜻으로 보임). 프로필 바이오에 공식 상장 신청 링크(binance.com/en/my/coin-apply) · 사용자명 @BResearchBD 캡처를 디지털전략(본부장) 방에 공유 · 본부장 「마지막까지 확인」.
+판정: **「구글이라 못 보낸다」는 성립하지 않는 이유** — 회사 메일의 증거는 받는 주소가 아니라 **보내는 도메인(binance.com)**이다. 서우 안대로 네이버 주소로 한 줄 메일을 다시 요청(257자, 채팅 · 주소는 저장소 밖). **이것도 거절하면 대화 종료.**
+어느 쪽이든 실제 신청은 상대 없이 우리가 공식 링크로 직접 한다(창업자 · 핵심 팀원 · KYC) — 이 사람을 거칠 이유가 없다. 상장은 대표 결정.
 
 출처(검색 요약): https://cointelegraph.com/news/binance-crackdown-fake-token-agents-listing-process · https://www.theblock.co/post/382928/binance-5-million-usd-whistleblower-reward-fraudulent-token-listing-agents
 
