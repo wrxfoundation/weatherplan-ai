@@ -14,13 +14,14 @@ html[lang=ko] body{word-break:keep-all}
 .L::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(6,7,12,.82) 0%,rgba(6,7,12,.55) 26%,rgba(6,7,12,.38) 46%,rgba(6,7,12,.45) 70%,rgba(6,7,12,.7) 100%)}
 .R::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(255,255,255,.6) 0%,rgba(255,255,255,.22) 34%,rgba(255,255,255,0) 52%)}
 .c{position:absolute;inset:0;padding:58px 84px 0}
-h1{font-size:66px;font-weight:700;letter-spacing:-0.028em;line-height:1.04}
+h1{font-size:{{h1size}};font-weight:700;letter-spacing:-0.028em;line-height:1.04}
 .R h1{color:var(--accent)}
 .tag{position:absolute;left:84px;top:236px;font-size:18px;font-weight:600;letter-spacing:.14em;text-transform:uppercase}
 .L .tag{color:var(--mutedL)} .R .tag{color:var(--mutedR)}
 .power{position:absolute;left:78px;top:258px;font-size:122px;font-weight:700;letter-spacing:-0.04em;line-height:1;font-variant-numeric:tabular-nums}
 .R .power{color:var(--accent)}
-.cost{position:absolute;left:84px;right:84px;top:390px;font-size:27px;font-weight:600;line-height:1.3}
+.cost{position:absolute;left:84px;right:84px;top:386px;font-size:34px;font-weight:700;letter-spacing:-0.01em;line-height:1.25}
+.L .cost b{color:#FF7A59}.R .cost b{color:var(--accent)}
 .cost small{display:block;font-size:18px;font-weight:500;margin-top:2px}
 .L .cost small{color:var(--mutedL)} .R .cost small{color:var(--mutedR)}
 .shadow{position:absolute;left:1232px;top:730px;width:364px;height:34px;border-radius:50%;background:radial-gradient(ellipse at center,rgba(30,22,40,.55) 0%,rgba(30,22,40,.28) 42%,rgba(30,22,40,0) 70%);filter:blur(4px)}
@@ -46,21 +47,21 @@ html[lang=ko] .tag,html[lang=ko] .row span{letter-spacing:.02em}
 <div class="half L"><div class="c">
   <h1>{{h1a}}<br>{{h1b}}</h1>
   <div class="tag">{{lt}}</div><div class="power">{{lp}}</div>
-  <div class="cost">{{lc}}<small>{{lcs}}</small></div>
+  <div class="cost"><b>{{lc}}</b><small>{{lcs}}</small></div>
   <div class="rows">
-    <div class="row"><span>{{k1}}</span><div>{{l1}}</div></div>
+    <div class="row"><span>{{k1}}</span><div>{{l1}} <small>{{l1s}}</small></div></div>
     <div class="row"><span>{{k2}}</span><div>{{l2}} <small>{{l2s}}</small></div></div>
-    <div class="row"><span>{{k3}}</span><div>{{l3}}</div></div>
+    <div class="row"><span>{{k3}}</span><div>{{l3}} <small>{{l3s}}</small></div></div>
     <div class="row"><span>{{k4}}</span><div>{{l4}}</div></div>
   </div></div></div>
 <div class="half R"><div class="c">
   <h1>{{h2a}}<br>{{h2b}}</h1>
   <div class="tag">{{rt}}</div><div class="power">{{rp}}</div>
-  <div class="cost">{{rc}}<small>{{rcs}}</small></div>
+  <div class="cost"><b>{{rc}}</b><small>{{rcs}}</small></div>
   <div class="rows">
-    <div class="row"><span>{{k1}}</span><div>{{r1}}</div></div>
+    <div class="row"><span>{{k1}}</span><div>{{r1}} <small>{{r1s}}</small></div></div>
     <div class="row"><span>{{k2}}</span><div>{{r2}} <small>{{r2s}}</small></div></div>
-    <div class="row"><span>{{k3}}</span><div>{{r3}}</div></div>
+    <div class="row"><span>{{k3}}</span><div>{{r3}} <small>{{r3s}}</small></div></div>
     <div class="row"><span>{{k4}}</span><div>{{r4}}</div></div>
   </div></div></div>
 <div class="shadow2"></div><div class="shadow"></div><div class="contact"></div>
