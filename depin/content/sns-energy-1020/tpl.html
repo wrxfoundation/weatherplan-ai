@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="{{lang}}"><head><meta charset="utf-8"><title>Warehouse or Shelf</title>
+<style>
+@font-face{font-family:'Pretendard';src:url('assets/PretendardVariable.woff2') format('woff2');font-weight:100 900}
+:root{--ink:#0E0E1A;--muted:#7A7A92;--accent:#4A3AF0;--paper:#FFFFFF;--line:#E6E5F0}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1920px;height:1080px;background:var(--paper);font-family:{{font}};color:var(--ink);-webkit-font-smoothing:antialiased}
+.wrap{position:relative;width:1920px;height:1080px;padding:54px 96px 0}
+header{text-align:center;margin-bottom:34px}
+h1{font-size:72px;font-weight:700;letter-spacing:-0.025em;line-height:1.08}
+h1 .b{display:block;color:var(--accent)}
+.cols{display:grid;grid-template-columns:1fr 1fr;column-gap:40px}
+.card{height:352px;border-radius:28px;overflow:hidden;position:relative;background:#111}
+.card.l{background:url('assets/farm.webp') center 40%/cover}
+.card.l::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0) 55%,rgba(0,0,0,.25))}
+.card.r{background:#EEF0FA url('assets/scene.webp') no-repeat;background-size:1634px auto;background-position:100% -345px}
+.spec{padding:26px 8px 0}
+.tag{font-size:20px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.power{font-size:124px;font-weight:700;letter-spacing:-0.04em;line-height:1;margin:6px 0 14px;font-variant-numeric:tabular-nums}
+.r .power,.power.r{color:var(--accent)}
+.row{display:grid;grid-template-columns:150px 1fr;align-items:baseline;border-top:1px solid var(--line);padding:10px 0;font-size:27px;font-weight:500}
+.row span{font-size:16px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+footer{position:absolute;left:96px;right:96px;bottom:46px;display:flex;align-items:center;justify-content:space-between}
+.brand{display:flex;align-items:center;gap:12px;font-size:32px;font-weight:700;letter-spacing:-0.02em}
+.brand i{display:inline-block;width:28px;height:28px;border-radius:50%;border:3px solid var(--ink);position:relative}
+.brand i::after{content:"";position:absolute;inset:6px;border-radius:50%;background:var(--accent)}
+.sig{font-size:29px;font-weight:600;letter-spacing:-0.01em}
+html[lang=ko] .tag,html[lang=ko] .row span{letter-spacing:.02em}
+.note{position:absolute;left:96px;right:96px;bottom:16px;font-size:13px;color:#A3A3B8;text-align:center}
+</style></head>
+<body><div class="wrap">
+<header><h1>{{h1}}<span class="b">{{h2}}</span></h1></header>
+<section class="cols">
+  <div><div class="card l" role="img" aria-label="Bitcoin mining farm"></div>
+    <div class="spec"><div class="tag">{{lt}}</div><div class="power">{{lp}}</div>
+      <div class="row"><span>{{k1}}</span>{{l1}}</div><div class="row"><span>{{k2}}</span>{{l2}}</div><div class="row"><span>{{k3}}</span>{{l3}}</div></div></div>
+  <div><div class="card r" role="img" aria-label="Wellbian air monitor on a shelf"></div>
+    <div class="spec"><div class="tag">{{rt}}</div><div class="power r">{{rp}}</div>
+      <div class="row"><span>{{k1}}</span>{{r1}}</div><div class="row"><span>{{k2}}</span>{{r2}}</div><div class="row"><span>{{k3}}</span>{{r3}}</div></div></div>
+</section>
+<footer><div class="brand"><i></i>wellbian</div><div class="sig">{{sig}}</div></footer>
+<div class="note">{{note}}</div>
+</div></body></html>

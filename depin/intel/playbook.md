@@ -266,7 +266,7 @@ shelf.`)는 그대로 두고, **새 문구부터** 적용한다. 이유: "센서
   — 온체인 데이터 분석·트래커 불일치 글 대응용. `Verification is the value.` 의 변주이되 더 구체적.
 - (후보, 8/30 신설) "Ownership becomes participation the moment the object has something to report."
   — 토큰화·"자산이 노드가 된다" 담론 대응용. 물리 기기가 실제 노드인 우리만 땅에 내려놓을 수 있다.
-- ⚠️ (미사용, 원글 예정) "An air-quality network shouldn't cost the air." — 에너지 원글(5f)에서
+- (10/20 「창고 vs 선반」 SNS 이미지 하단에 첫 사용 — `content/sns-energy-1020/`) "An air-quality network shouldn't cost the air." — 에너지 원글(5f)에서
   초연 예정. 답글에서 먼저 소진하지 말 것.
 - (후보, 9/1 신설) "The incentive that installs the sensor decides what the data is worth."
   — DePIN 설치 동기·노드 품질 담론 대응용. 5g 원글에서 초연 예정, 답글 선소진 금지.
