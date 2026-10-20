@@ -20,6 +20,8 @@ h1{font-size:{{h1size}};font-weight:700;letter-spacing:-0.028em;line-height:1.04
 .L .tag{color:var(--mutedL)} .R .tag{color:var(--mutedR)}
 .power{position:absolute;left:78px;top:258px;font-size:122px;font-weight:700;letter-spacing:-0.04em;line-height:1;font-variant-numeric:tabular-nums}
 .R .power{color:var(--accent)}
+.pct{display:inline-block;vertical-align:middle;margin-left:26px;transform:translateY(-14px);font-size:30px;font-weight:700;letter-spacing:-0.01em;padding:10px 20px;border-radius:999px;background:var(--accent);color:#fff;box-shadow:0 8px 24px rgba(74,58,240,.28)}
+.pct:empty{display:none}
 .cost{position:absolute;left:84px;right:84px;top:386px;font-size:34px;font-weight:700;letter-spacing:-0.01em;line-height:1.25}
 .L .cost b{color:#FF7A59}.R .cost b{color:var(--accent)}
 .cost small{display:block;font-size:18px;font-weight:500;margin-top:2px}
@@ -46,7 +48,7 @@ html[lang=ko] .tag,html[lang=ko] .row span{letter-spacing:.02em}
 <body>
 <div class="half L"><div class="c">
   <h1>{{h1a}}<br>{{h1b}}</h1>
-  <div class="tag">{{lt}}</div><div class="power">{{lp}}</div>
+  <div class="tag">{{lt}}</div><div class="power">{{lp}}<span class="pct">{{lpct}}</span></div>
   <div class="cost"><b>{{lc}}</b><small>{{lcs}}</small></div>
   <div class="rows">
     <div class="row"><span>{{k1}}</span><div>{{l1}} <small>{{l1s}}</small></div></div>
@@ -56,7 +58,7 @@ html[lang=ko] .tag,html[lang=ko] .row span{letter-spacing:.02em}
   </div></div></div>
 <div class="half R"><div class="c">
   <h1>{{h2a}}<br>{{h2b}}</h1>
-  <div class="tag">{{rt}}</div><div class="power">{{rp}}</div>
+  <div class="tag">{{rt}}</div><div class="power">{{rp}}<span class="pct">{{rpct}}</span></div>
   <div class="cost"><b>{{rc}}</b><small>{{rcs}}</small></div>
   <div class="rows">
     <div class="row"><span>{{k1}}</span><div>{{r1}} <small>{{r1s}}</small></div></div>
