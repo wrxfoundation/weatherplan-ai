@@ -5006,6 +5006,17 @@ Hivemapper 리셀러(https://blog.hivemapper.com/introducing-one-of-hivemappers-
 
 출처(검색 요약): https://mmaglobal.com/node/32936 · https://advertisingvietnam.com/network/accesstrade-vietnam · https://glints.com/vn/en/companies/interspace-vietnam/44df51db-8224-4a6d-92f4-f9c6cdb11ac0
 
+## 「Binance 상장 검토」 텔레그램 접근 — 자칭 어필리에이트 에이전트 (2026-10-20 18:21~18:48, 서우 캡처)
+
+이름 옆에 바이낸스 로고를 단 텔레그램 계정이 「상장 검토하고 싶다 · listing@binance.com 으로 연락하거나 메일 주소를 달라」로 시작 → 서우가 지원 메일 주소를 주고 직원 인증을 요구 → 「나는 **affiliate agent** 다 · 바이낸스 쪽 사람과 그룹을 만들어 주면 그가 다 인증해 준다」.
+
+**판정: 바이낸스 직원 아님(본인이 인정) — 바이낸스가 공개적으로 경고하는 「상장 에이전트」 유형.** 근거(검색 요약 · 매체 보도): 바이낸스는 제3자 개인 · 대행사를 통한 상장 신청 · 협상을 받지도 인정하지도 않는다 · 신청은 바이낸스 홈페이지 하단 공식 상장 신청 링크로 **창업자나 핵심 팀원이 직접**(KYC 필수) · 수상한 상대는 **Binance Verify**(메일 · 전화 · 텔레그램 · SNS 조회)로 확인 · 제보 audit@binance.com(포상 최대 500만 달러 공지). 첫 메시지에 공식 주소(listing@)를 붙인 건 공식처럼 보이게 하는 흔한 수법.
+
+**서우 지시(답)**: 직원 인증 필요 · 지금은 기초 체력 만드는 중 · 요건을 먼저 말해 달라 — 여기에 「제3자에게 수수료 · 예치금 안 냄」 한 줄을 더해 다음 수(수수료 제안)를 미리 막는다(358자, 채팅).
+**그다음 규칙**: ① 「바이낸스 쪽 사람」 그룹 초대가 오면 들어가기 전에 그 사람 텔레그램 아이디를 Binance Verify 로 조회 — 안 나오면 나간다 ② 수수료 · 예치금 · 마케팅 패키지 · 지갑 연결 · 시드 · 서명 · 「NDA」 파일 · 링크 0 ③ 상장은 대표 결정(게이트 G9 글로벌 거래소 검토) — 이 대화에서 일정 · 의사를 말하지 않는다 ④ 지원 메일 주소를 이미 줬다 → 「바이낸스」 명의 메일이 오면 발신 도메인부터 확인, 첨부 · 링크 열지 않기(지원 메일 받는 사람에게 알림).
+
+출처(검색 요약): https://cointelegraph.com/news/binance-crackdown-fake-token-agents-listing-process · https://www.theblock.co/post/382928/binance-5-million-usd-whistleblower-reward-fraudulent-token-listing-agents
+
 ## MEXC 상장팀 — 텔레그램 그룹 인사 (2026-10-19 20:38, 서우 캡처)
 
 - **상황**: 「Wellbian (WLBN) <> MEXC」 그룹(3인)에 MEXC 상장팀 리스팅 매니저가 들어와 인사 · 공식 채널 목록(텔레그램 · X · 메일 · 디스코드)과 확인 페이지(mexc.com/official-verify) 안내 ·
