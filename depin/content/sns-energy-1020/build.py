@@ -14,7 +14,7 @@ COPY = {
    r3="A tabletop", r3s="(43 cm², 260 g — 5.5% of the floor, 1.7% of the weight)", r4="Air data anyone can check"),
  "ko": dict(lang="ko", font="'Pretendard','Inter',sans-serif", h1size="60px",
    h1a="비트코인 채굴엔", h1b="거대한 창고에서 시끄럽게", h2a="웰비안은", h2b="테이블 위에서 조용히",
-   lt="비트코인 채굴기 · 220–240 V 교류 · 약 15 A", lp="3,500 W", rt="웰비안 공기질 측정기 · 12 V 직류 · 0.3 A", rp="3.6 W", lpct="", rpct="", ratio="약 1/1,000 · 0.1%",
+   lt="비트코인 채굴기 · 220–240 V 교류 · 약 15 A", lp="3,500 W", rt="웰비안 공기질 측정기 · 12 V 직류 · 0.3 A", rp="3.6 W", lpct="", rpct="", ratio="약 1/1,000 · 0.1% 수준",
    lc="월 전기료 약 37만 8천 원", lcs="(2,520 kWh = 3.5 kW × 24시간 × 30일, kWh당 150원 가정)",
    rc="월 전기료 약 390원", rcs="(2.6 kWh, 같은 기준)",
    k1="발열", k2="소음", k3="어디에", k4="만드는 것",
