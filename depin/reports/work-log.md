@@ -2441,4 +2441,5 @@ Thanks Odelia — writing to you at that address today. Mine is support@wellbian
 - **바이낸스 접근 — 「보안팀 최종 확인 중」(10/20 저녁, 서우 「영어로」)** — 영문 107자. 날짜 · 다음 단계 약속 없음. 보안팀(디지털전략) 판정 나오기 전엔 링크 · 파일 · 그룹 초대 응하지 않음.
 - **바이낸스 접근 — 메일 재발송 요청(10/20 저녁, 서우 「개인 메일이 휴면이라 다시 보내 달라 · 휴면 풀었다」)** — 영문 180자. 받으면 확인 순서 그대로(발신 도메인 binance.com · Binance Verify 이메일 조회 · 첨부 · 링크 열지 않기 · SPF/DKIM).
 - **바이낸스 접근 — 사기 판정(10/20 밤, 서우 그룹 캡처 3장 + 「기다려 보자 · 발신 메일까지 속일 순 없을 테니」)** — 상대 주장 「너희 메일은 구글 = 미국 · 미국은 바이낸스 금지 → 한국 메일로」는 거짓: **binance.com 자체 메일이 구글**(MX = 구글 워크스페이스 · SPF include:_spf.google.com · DMARC quarantine, 10/20 DNS 조회). 발신 주소는 위조 가능 — 증거는 헤더의 DKIM/SPF/DMARC(binance.com pass)뿐. 구글을 피하게 한 건 위조 메일을 덜 거르는 곳으로 받게 하려는 수법일 가능성. 조치: 메일 링크 · 첨부 0 · 헤더만 보안팀 · 노출된 개인 메일 2단계 인증 · 그룹 나가기 · 끝맺음 183자. business-directions 바이낸스 절.
+- **바이낸스 메일 헤더 확인 준비(10/20 밤, 서우 「한메일에서 확인해 보자 · 오면」)** — 볼 것 5(From 도메인 · Authentication-Results · DKIM-Signature d=binance.com · 첫 Received 가 구글 · Reply-To). binance.com 은 구글 DKIM 선택자(google._domainkey) 있음(10/20 DNS). 원문을 붙여 주면 DKIM 서명을 직접 검증하는 스크립트(스크래치 · 자체 시험 통과: 서명 원본 True · 변조 False) 준비 — 원문 · 메일 주소는 저장소 밖.
 
