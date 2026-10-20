@@ -4965,6 +4965,24 @@ Hivemapper 리셀러(https://blog.hivemapper.com/introducing-one-of-hivemappers-
 
 출처(검색 요약): https://www.commissionfactory.com/market-insights/news-events/awin-fully-acquires-commission-factory · https://www.commissionfactory.com/market-insights/news-events/awin-acquires-equity-stake-commission-factory · https://performancein.com/news/2020/09/09/awin-completes-acquisition-of-australia-affiliate-network-commission-factory/
 
+## Involve Asia(쿠알라룸푸르 · 동남아) — 누구에게 · 첫 메모 (2026-10-20, 서우 링크드인 검색 캡처 3장 + 프로필 2장)
+
+10/19 전 세계 리스트 2위 · 10/18 후보 A1(Trezor 프로그램 = 크립토 연관 하드웨어 선례, 디렉터리 자료). 사람 이름은 적지 않는다 — 공개 직함 · 판정만.
+
+**검색 결과 읽기**: 「Involve Asia」로 걸린 사람 대부분이 이 회사 직원이 아니다(가상 비서 · 크립토 트레이더 겸 브이로거 · 학생 · 다른 네트워크 퍼블리셔 — 키워드 매칭). 현직으로 확인되는 건 넷: 주니어 소프트웨어 엔지니어(2촌) · 재무 분석가(비공개) · 운영 매니저(비공개 — 메시지 불가) · **Senior Associate, Partner Growth(2025.1~) 겸 Senior Business Development Associate(2024.7~)**(쿠알라룸푸르 · 헤드라인 「Performance Marketing · CPS · Account Management · Loyalty」 · 전 직장 말레이 로열티 프로그램 BD).
+
+**판정 — BD 시니어 1명에게 먼저**: 직함에 BD + CPS 가 같이 있어 「새 광고주」 질문을 직접 받거나 담당 팀으로 넘길 수 있는 자리. 중간 직급이라 결정권자는 아님 → 메모는 「당신이 맡나요」로 묻는다. 엔지니어 · 재무는 창구 아님. 크립토 트레이더 프로필(2촌 · 팔로워 2만)은 이 회사와 무관하고 청중이 투기 쪽이라 연결하지 않는다. 같은 검색에 나온 ACCESSTRADE 퍼블리셔 · KOL 담당도 광고주 창구가 아님(ACCESSTRADE 는 일본 인증 뒤).
+
+**첫 메모(1촌 요청 300자 · Commission Factory · ArabClicks 와 같은 틀)**:
+> Hi {이름}, I run partnerships at Wellbian Labs. We sell an indoor air-quality monitor made with KWeather (30 years of weather measurement in Korea), every reading fingerprinted to a public ledger. We're setting up CPS affiliate sales in Southeast Asia. Do you handle new advertisers at Involve Asia?
+
+(297자. 프로필에 「메시지」 버튼이 열려 있으면 같은 글을 메시지로 보내도 된다.)
+
+**다른 길 — 셀프 가입이 있다**: Involve Asia 도움말에 광고주 가입 절차(회사 정보 → 로그인 → 스토어 · 웹사이트 → 약관 동의 → 확인 메일 → 광고주 대시보드에서 캠페인 생성)가 공개돼 있다. 다만 크립토 연관 상품을 심사 없이 올리면 첫 심사에서 걸릴 수 있으니 **사람과 먼저 얘기하고 가입**한다. 일주일 무응답이면 가입 양식으로(그 전에 영문 상품 페이지 · 배송 국가 · 크리에이티브 가이드 준비).
+**보내기 전 · 답 오기 전에 정할 것**: 말레이 · 싱가포르 · 인니 · 태국 · 필리핀 · 베트남 중 배송 가능 국가 · 현지 결제 · 포스트백(vCommission 과 같은 개발) · 크립토 연관 광고주 심사 기준(첫 대화에서 질문) · 광고주 요금 구조(공개 자료 없음).
+
+출처(검색 요약): https://helpcentre.involve.asia/portal/en/kb/articles/involve-asia-advertiser-sign-up · https://helpcentre.involve.asia/portal/en/kb/articles/who-are-advertisers
+
 ## MEXC 상장팀 — 텔레그램 그룹 인사 (2026-10-19 20:38, 서우 캡처)
 
 - **상황**: 「Wellbian (WLBN) <> MEXC」 그룹(3인)에 MEXC 상장팀 리스팅 매니저가 들어와 인사 · 공식 채널 목록(텔레그램 · X · 메일 · 디스코드)과 확인 페이지(mexc.com/official-verify) 안내 ·
