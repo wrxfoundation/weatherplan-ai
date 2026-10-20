@@ -4983,6 +4983,29 @@ Hivemapper 리셀러(https://blog.hivemapper.com/introducing-one-of-hivemappers-
 
 출처(검색 요약): https://helpcentre.involve.asia/portal/en/kb/articles/involve-asia-advertiser-sign-up · https://helpcentre.involve.asia/portal/en/kb/articles/who-are-advertisers
 
+## ACCESSTRADE GLOBAL — 누구에게 · 첫 메모 (2026-10-20, 서우 링크드인 검색 캡처 3장)
+
+10/19 전 세계 리스트 5위(일본 · 동남아). 사람 이름은 적지 않는다 — 공개 직함 · 판정만. 캡처 속 개인 연락처(Skype · 전화번호)도 옮기지 않는다.
+
+**회사(검색 요약 — 회사 자료 · 디렉터리, 수치는 자료마다 다름)**: 운영사 Interspace(일본) · 베트남 법인은 MOG Vietnam × Interspace 합작 · 일본 · 인도네시아 · 태국 · 베트남 · 싱가포르 · 말레이 6개국 · 광고주 · 퍼블리셔 수는 자료별로 크게 달라 인용하지 않는다. 베트남 법인은 「동남아로 나가는 기업의 관문」을 내세운다.
+
+**검색 결과 읽기**: 현직으로 보이는 사람 대부분이 엔지니어 · 디자이너 · 인사 · 비공개(세일즈 · CPA/CPI · 마케팅). 창구 후보는 둘.
+| 순서 | 공개 직함 | 판정 |
+|---|---|---|
+| 1 | **Director of Global Business**(호치민 · 3촌 · 메시지 버튼) | 해외 광고주를 받는 자리 그대로 — 지금 보낸다(동남아) |
+| 보류 | Media Sales Leader(도쿄) | 일본 레인 — 전파법 인증(기기) 전에는 일본 캠페인 0 → 인증 확인 뒤 |
+| 아님 | CTO(2촌 · 공통 1촌 1명) · 엔지니어 · 디자이너 · 인사 | 창구 아님(공통 1촌 소개는 1번이 일주일 무응답일 때만 검토) |
+| 아님 | 「베트남 CPL · CPS 오퍼에 트래픽 구함」 프로필 · 퍼블리셔 & KOL(말레이) | 퍼블리셔 모집 쪽 — 광고주 입점 창구가 아님 |
+
+**첫 메모(1촌 요청 300자 · 같은 틀)** — 베트남 이름은 성이 앞, 이름이 끝(인사는 끝 이름으로):
+> Hi {이름}, I run partnerships at Wellbian Labs. We sell an indoor air-quality monitor made with KWeather (30 years of weather measurement in Korea), every reading fingerprinted to a public ledger. We're setting up CPS affiliate sales in Southeast Asia. Who handles foreign advertisers at ACCESSTRADE?
+
+(298자. 메시지 버튼이 열려 있으면 같은 글로.)
+
+**네 곳 동시 진행 주의(10/20 기준 vCommission · Commission Factory · Involve Asia · ACCESSTRADE + impact.com 문의)**: 다 같은 걸 묻는다(배송 국가 · 추적 · 결제 · 크립토 심사 · 요율) → vCommission 메일 답변을 정본 답지로 쓰고 회사마다 다르게 말하지 않는다. 동남아는 Involve Asia 와 겹침 — 어느 쪽이 독점을 요구하면 바로 답하지 않고 서우 · 대표 결정.
+
+출처(검색 요약): https://mmaglobal.com/node/32936 · https://advertisingvietnam.com/network/accesstrade-vietnam · https://glints.com/vn/en/companies/interspace-vietnam/44df51db-8224-4a6d-92f4-f9c6cdb11ac0
+
 ## MEXC 상장팀 — 텔레그램 그룹 인사 (2026-10-19 20:38, 서우 캡처)
 
 - **상황**: 「Wellbian (WLBN) <> MEXC」 그룹(3인)에 MEXC 상장팀 리스팅 매니저가 들어와 인사 · 공식 채널 목록(텔레그램 · X · 메일 · 디스코드)과 확인 페이지(mexc.com/official-verify) 안내 ·
