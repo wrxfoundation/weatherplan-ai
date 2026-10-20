@@ -4289,5 +4289,10 @@ Thanks Winkle! Nice to meet you too. I spend my time building rather than tradin
 판정: **인용 — 서우 요청**(이 계정 9/6 · 9/9 글은 시세 정서라 패스였지만 이번은 우리 만남 · 우리 소개 글). 다만 「이제 경제를 구동」은 현재형 과장 → **우리 인용은 정정하지 않고 정확한 판을 옆에 둔다**(9/2 @ifureJack 인용 정정 답글과 같은 방식): 방 안의 센서 · 원장 지문 · 보상 테스트 중. 「Web3 economy」 · 「Join」 · 해시태그 · 태그(@sentosumosaba 포함) 반복 0.
 - A(230자): `Great meeting you, Mr. Moon. The plain version of what runs today: a sensor in a real room, each reading fingerprinted on the XRP Ledger before it goes anywhere. Rewards are still in testing. Small start, and every step checkable.`
 - B(154자): `Thanks, Mr. Moon. Plainly: sensors in real rooms, every reading fingerprinted on XRPL, rewards still in testing. Small, real, checkable. That's the start.`
+**10/20 수정(서우 「보상 테스트는 없애 — 실제 보상되고 있고 DEX 풀도 돌아가니까 · 참신한 말로」)** — 「테스트 중」 삭제, 새 축 = 「방 안 공기는 흔적 없이 사라졌다 → 이제 영수증을 남긴다」:
+- A2(230자): `Great meeting you, Mr. Moon. The loop as it runs today: a sensor reads the air in a real room, the XRP Ledger keeps the receipt, and the room that reported gets rewarded. Room air used to vanish without a trace. Now it leaves one.`
+- B2(189자 · 추천): `Thanks, Mr. Moon. Room air used to vanish without a trace. Now a sensor reads it, the XRP Ledger keeps the receipt, and the room that reported gets rewarded. Live today, one room at a time.`
+- C2(194자 · DEX 넣은 판, 비추천): B2 의 보상 구절을 `the reward can be swapped on the XRPL AMM` 으로 — 사실(10/17 확인)이라 쓸 수는 있으나 #XRP 청중 · KOL 글 아래에선 시세 · 「얼마에 팔리나」 답글을 부른다.
+보상량 · 가치 · 가격 · 풀 깊이 · 수익 0 은 그대로.
 **게시 전 확인**: ① 오늘 이미 원글(11:31 「웰비안 카페」) — 인용도 원글로 센다 → 6시간 뒤(17:31 이후)나 내일 ② 문창훈 쪽에 기기 · 비용 · 리퍼럴 코드 등 경제적 대가가 있었다면 원글에 광고 표시가 있어야 한다 — 표시 없는 글을 우리가 인용하면 같이 걸린다 ③ 책 언급은 하지 않음(누구 책인지 미확인).
 
