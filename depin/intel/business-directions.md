@@ -5023,6 +5023,12 @@ listing@binance.com 도 같은 화면(이메일)에서 조회해 둔다.
 **10/20 저녁 갱신** — 링크드인은 「개인적이라」 거절, 회사 메일은 「구글은 미국 거라 못 보낸다」며 거절(우리 지원 메일이 구글 기반이라는 뜻으로 보임). 프로필 바이오에 공식 상장 신청 링크(binance.com/en/my/coin-apply) · 사용자명 @BResearchBD 캡처를 디지털전략(본부장) 방에 공유 · 본부장 「마지막까지 확인」.
 판정: **「구글이라 못 보낸다」는 성립하지 않는 이유** — 회사 메일의 증거는 받는 주소가 아니라 **보내는 도메인(binance.com)**이다. 서우 안대로 네이버 주소로 한 줄 메일을 다시 요청(257자, 채팅 · 주소는 저장소 밖). **이것도 거절하면 대화 종료.**
 어느 쪽이든 실제 신청은 상대 없이 우리가 공식 링크로 직접 한다(창업자 · 핵심 팀원 · KYC) — 이 사람을 거칠 이유가 없다. 상장은 대표 결정.
+**10/20 밤 — 사기 판정(결정적 근거 확보)**: 상대가 「Binance <> WellBian」 텔레그램 그룹(3명: 서우 · 자칭 에이전트 · 표시 이름 「Amber (ResearchBD)」)을 만들고, 우리 지원 메일 도메인의 MX 조회 화면(smtp.google.com)을 올리며 **「너희 메일 서버는 구글 = 미국 · 미국은 바이낸스를 금지 → 한국 메일(Hiworks 등)로」**라고 함. 이후 개인 한메일로 「보냈다」.
+- **사실 확인(10/20 DNS 조회 — dns.google)**: **binance.com 자체 메일이 구글이다** — MX = aspmx.l.google.com 등 구글 워크스페이스 · SPF = `include:_spf.google.com`(+ 자체 smail) · DMARC = `p=quarantine`. → 「구글이라 못 보낸다」는 거짓. 미국 규제는 미국 이용자 서비스 문제지 메일 전송과 무관.
+- 구글을 피하려는 이유로 볼 수 있는 것: 구글은 발신 주소 위조(From: …@binance.com)를 SPF · DKIM · DMARC 로 엄격히 거른다 → 위조 메일이 덜 걸리는 곳으로 받게 하려는 수법일 가능성.
+- **「발신 메일은 못 속인다」는 반만 맞다** — 화면에 보이는 발신 주소는 위조할 수 있다. 증거는 메일 원문(헤더)의 인증 결과뿐: DKIM 서명 도메인 = binance.com 이고 SPF · DMARC 가 pass. 비슷한 도메인(blnance · binance-xx · 무료 메일 · 표시 이름만 Binance)이면 끝.
+- 표시 이름 「(ResearchBD)」는 아무 의미 없다 — 그룹에서 그 사람을 눌러 **사용자명(username) 칸**이 정확히 @BResearchBD 인지 본다. 같아도 위 거짓말 때문에 진행하지 않는다(사용자명 재등록 · 계정 탈취 가능성).
+- **조치**: 메일이 와도 링크 · 첨부 열지 않고 헤더만 보안팀(디지털전략)에 전달 · 개인 메일 두 곳이 노출됨 → 2단계 인증 켜기 · 「계정 확인 · 로그인」 피싱 주의(특히 방금 휴면 해제한 계정) · 그룹 나가기 · 바이낸스 제보(audit@binance.com — 공식 공지 기준) 선택 · 끝맺음 한 줄(176자, 채팅).
 
 출처(검색 요약): https://cointelegraph.com/news/binance-crackdown-fake-token-agents-listing-process · https://www.theblock.co/post/382928/binance-5-million-usd-whistleblower-reward-fraudulent-token-listing-agents
 
