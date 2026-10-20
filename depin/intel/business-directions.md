@@ -5016,9 +5016,9 @@ Hivemapper 리셀러(https://blog.hivemapper.com/introducing-one-of-hivemappers-
 **그다음 규칙**: ① 「바이낸스 쪽 사람」 그룹 초대가 오면 들어가기 전에 그 사람 텔레그램 아이디를 Binance Verify 로 조회 — 안 나오면 나간다 ② 수수료 · 예치금 · 마케팅 패키지 · 지갑 연결 · 시드 · 서명 · 「NDA」 파일 · 링크 0 ③ 상장은 대표 결정(게이트 G9 글로벌 거래소 검토) — 이 대화에서 일정 · 의사를 말하지 않는다 ④ 지원 메일 주소를 이미 줬다 → 「바이낸스」 명의 메일이 오면 발신 도메인부터 확인, 첨부 · 링크 열지 않기(지원 메일 받는 사람에게 알림).
 
 **10/20 갱신 — 서우가 Binance Verify(binance.com/en/official-verification)에서 텔레그램 @BResearchBD 를 조회 → 「Verified Telegram — official Telegram from Binance」.** 판정 보류 → 조건부 진짜:
-① 지금 대화 상대의 **사용자명(username 칸)이 정확히 @BResearchBD 인지** 확인 — 표시 이름 · 사진 · 바이로그는 누구나 베낀다. 가장 확실한 방법은 텔레그램 검색에서 @BResearchBD 를 직접 찾아 들어가 그 창이 같은 대화인지 보는 것.
+① 지금 대화 상대의 **사용자명(username 칸)이 정확히 @BResearchBD 인지** 확인 — 표시 이름 · 사진 · 바이오는 누구나 베낀다. 가장 확실한 방법은 텔레그램 검색에서 @BResearchBD 를 직접 찾아 들어가 그 창이 같은 대화인지 보는 것.
 ② 본인이 「affiliate agent」라고 한 것과 「바이낸스 공식 계정」이 맞지 않는다 — @BResearchBD 가 상대 본인인지, 그룹에 넣겠다던 「binance member」인지 확인.
-③ 확인돼도 Verify 화면 고지 그대로: **신원 확인일 뿐 상장 · 어떤 행위의 승인 아님 · 바이낸스는 개인 대화로 자금 · 토큰을 요구하지 않는다.** → 돈 · 토큰 · 지갑 0, 상장은 대표 결정, 요건은 메일로 받아 전달(답 299자, 채팅).
+③ 확인돼도 Verify 화면 고지 그대로: **신원 확인일 뿐 상장 · 어떤 행위의 승인 아님 · 바이낸스는 개인 대화로 자금 · 토큰을 요구하지 않는다.** → 돈 · 토큰 · 지갑 0, 상장은 대표 결정, 요건은 메일로 받아 전달(답 300자, 채팅).
 listing@binance.com 도 같은 화면(이메일)에서 조회해 둔다.
 
 출처(검색 요약): https://cointelegraph.com/news/binance-crackdown-fake-token-agents-listing-process · https://www.theblock.co/post/382928/binance-5-million-usd-whistleblower-reward-fraudulent-token-listing-agents
