@@ -85,8 +85,12 @@ h1{margin-top:18px;font-size:70px;font-weight:700;letter-spacing:-.025em;line-he
 .tile h2{margin-top:14px;font-size:34px;font-weight:700;letter-spacing:-.02em;line-height:1.15;word-break:keep-all}
 .steps{margin-top:30px;display:grid;grid-template-columns:1fr auto 1fr auto 1fr;column-gap:14px;align-items:start}
 .step{position:relative}
-.ico{display:grid;place-items:center;width:68px;height:68px;margin-bottom:20px;border-radius:12px;border:1px solid rgba(163,155,255,.42);background:rgba(163,155,255,.09);color:var(--acc);box-shadow:inset 0 1px 0 rgba(255,255,255,.18)}
-.ico svg{width:36px;height:36px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+/* 아이콘 칸 — 유리(사선 채움 · 위 하이라이트 · 블러) + 좌상단 테두리에 아주 옅은 무지갯빛 · 선 1.9(10/21 서우 「약간 도톰하게 · 유리 질감 · 아주 약간의 무지갯빛」) */
+.ico,.ico-s{position:relative;display:grid;place-items:center;color:var(--acc);background:linear-gradient(145deg,rgba(255,255,255,.17),rgba(255,255,255,.04) 52%,rgba(163,155,255,.10)),linear-gradient(120deg,rgba(255,176,226,.07),rgba(150,200,255,.06) 40%,rgba(255,255,255,0) 70%);border:1px solid rgba(255,255,255,.20);box-shadow:inset 0 1px 0 rgba(255,255,255,.38),inset 0 -1px 0 rgba(13,11,38,.25);backdrop-filter:blur(12px) saturate(150%);-webkit-backdrop-filter:blur(12px) saturate(150%)}
+.ico::after,.ico-s::after{content:"";position:absolute;inset:-1px;border-radius:inherit;padding:1px;pointer-events:none;background:radial-gradient(ellipse 80% 70% at 0 0,rgba(255,255,255,.75),rgba(255,170,224,.65) 22%,rgba(182,152,255,.55) 42%,rgba(120,200,255,.45) 60%,rgba(140,255,210,.2) 74%,rgba(255,255,255,0) 86%);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude}
+.ico svg,.ico-s svg{fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 6px rgba(163,155,255,.25))}
+.ico{width:68px;height:68px;margin-bottom:20px;border-radius:14px}
+.ico svg{width:36px;height:36px}
 .step b{display:block;font-size:22px;font-weight:600;letter-spacing:-.01em;line-height:1.2;word-break:keep-all;text-wrap:balance}
 .step .d{display:block;margin-top:10px;font-size:17px;line-height:1.4;color:var(--t2);word-break:keep-all;text-wrap:balance}
 .step .n{display:block;margin-top:7px;font-size:14.5px;line-height:1.4;color:var(--t3);word-break:keep-all;text-wrap:balance}
@@ -99,8 +103,8 @@ h1{margin-top:18px;font-size:70px;font-weight:700;letter-spacing:-.025em;line-he
 .join .s i{background:var(--p1)} .join .d i{background:var(--p2)}
 .ops{width:100%;height:60px;border-radius:12px;display:flex;align-items:center;justify-content:center;gap:16px;font-size:20px;color:var(--t2);background:rgba(77,77,206,.20);border:1px solid rgba(163,155,255,.38);box-shadow:inset 0 1px 0 rgba(255,255,255,.22)}
 .ops b{color:var(--t1);font-weight:700}
-.ops .ico-s{display:grid;place-items:center;width:38px;height:38px;border-radius:9px;border:1px solid rgba(163,155,255,.5);color:var(--p1)}
-.ops .ico-s svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.ops .ico-s{width:40px;height:40px;border-radius:10px;color:var(--p1)}
+.ops .ico-s svg{width:24px;height:24px}
 .join2{width:100%;display:grid;grid-template-columns:repeat(4,1fr);gap:0;height:26px;padding:0 36px}
 .join2 i{justify-self:center;width:1px;height:26px;background:rgba(163,155,255,.55)}
 .ledger{width:100%;border-radius:16px;padding:32px 36px;display:grid;grid-template-columns:360px 1fr;column-gap:40px;align-items:center;background:var(--glass2)}
@@ -108,7 +112,7 @@ h1{margin-top:18px;font-size:70px;font-weight:700;letter-spacing:-.025em;line-he
 .ledger p{margin-top:8px;font-size:18px;color:var(--t2)}
 .feats{display:grid;grid-template-columns:repeat(4,1fr);column-gap:16px}
 .feat{display:grid;grid-template-columns:56px 1fr;column-gap:14px;align-items:start}
-.feat .ico{width:56px;height:56px;margin:0;color:var(--p1)}
+.feat .ico{width:56px;height:56px;margin:0;border-radius:12px;color:var(--p1)}
 .feat .ico svg{width:30px;height:30px}
 .feat b{display:block;margin-top:2px;font-size:21px;font-weight:600;letter-spacing:-.01em;word-break:keep-all}
 .feat .tag{display:inline-block;margin-top:9px;font-size:13px;font-weight:700;letter-spacing:.06em;color:var(--p1);border:1px solid rgba(163,155,255,.45);border-radius:6px;padding:2px 7px}

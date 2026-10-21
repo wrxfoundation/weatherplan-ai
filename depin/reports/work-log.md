@@ -2485,3 +2485,4 @@ Thanks Odelia — writing to you at that address today. Mine is support@wellbian
 - **Jenny Johnson(프랭클린템플턴 CEO) 인사(10/21, 서우 「템플턴 아주머니에게 인사하자」)** — 1촌 요청 대기 중 → 수락 뒤 메시지: Lynn 기본값 + 그의 우즈베키스탄 글 마지막 문장 인용 한 줄(746자). 투자 · 토큰 · 체인 · 리플 · sgBENJI 0 · InMail 선발송 0. `intel/business-directions.md`.
 - **Jenny Johnson 인사 2차(10/21, 서우 「리플 관련 포트폴리오 있으니 XRP SEOUL · 남산타워 · Swell · 글로벌 기상관측 포부도」)** — XRPZ(2025-11-24) · sgBENJI 근거로 기관 첫 메시지 예외 → playbook 「써도 되는 자리」에 한 줄. 메시지 1113자 · Swell 뒤 수락 시 교체 문장.
 - **구조 그래픽 영문 — 라인 아이콘 재제작(10/21, 서우 「라인 svg 아이콘을 넣어 재제작 · 너무 텍스트 위주」)** — 단계 6 · 운영 지갑 · 원장 4 요소에 보라 선 아이콘(유리 칸) + 단계 사이 흐름선. 글 내용은 그대로. `architecture-en` 만.
+- **구조 그래픽 영문 — 아이콘 도톰 · 유리 · 옅은 무지갯빛(10/21, 서우)** — 선 1.9 · 유리 칸 · 좌상단 테두리 무지갯빛. `architecture-en` 만.
