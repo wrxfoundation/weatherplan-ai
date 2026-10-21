@@ -4306,3 +4306,23 @@ Thanks Winkle! Nice to meet you too. I spend my time building rather than tradin
 게시 전: 인용도 원글로 센다 — 개인 계정에 오늘 원글 · 인용이 이미 있으면 내일로.
 **서우 수정(「그냥 프로젝트 기대된다 · 응원한다 정도로만」) → 최종(73자)**: `Rooting for you and the Onami team, Eri. Can't wait to see what you ship!`
 
+## 서우 개인 계정 — @wellbianlabs 「Weather AI Factory」 원글 인용 (2026-10-21, 서우 캡처 + 인포그래픽 + 「인용 개인글 써줘」)
+
+원글(브랜드, 52분 전): AI 데이터센터를 넘어 Weather AI Factory — 전 세계 날씨 빅데이터 → AI 모델 → GPU → 「Weather Intelligence Tokens」 · 인포그래픽 「makes valuable Weather Intelligence Tokens」.
+근거: 정본 §4-1 「B300 8-GPU AI Factory — 구축을 마치고 운영 중」(이용권 상품 페이지).
+판정: **인용 — 「데이터센터 → 공장」의 차이를 한 줄로 받는다.** 원글의 「valuable … Tokens」는 크립토 청중에게 토큰 가치로 읽힐 수 있다 → 개인 인용은 **「가치 · 토큰」을 되풀이하지 않고** 산출물(예보 · 답)로 옮긴다.
+넣지 않은 것: 이용권 · 적립량 · 가격 · WLBN · 판매 · 링크 · 「valuable」 · B300 · GPU 대수(브랜드 원글에 없는 사양을 개인 계정이 먼저 꺼내지 않는다) · NVIDIA(「built on Earth-2」는 케이웨더 예보 상품 얘기라 섞지 않는다).
+- **A 추천(223자)** — 「token」이라는 말 0:
+```
+A data center stores and computes. A factory ships something.
+
+Ours ships weather intelligence: forecasts and answers made from real readings, from city stations down to the air in a single room, running on GPUs we operate.
+```
+- B(257자) — 「Tokens = 모델이 답할 때 내는 것」으로 뜻을 먼저 정리하는 판. 이용권이 실제로 WLBN 을 주기 때문에 「AI 의 토큰」만으로 정리하면 반쪽 설명이 될 수 있다 → 차선.
+```
+"Tokens" in the AI sense: what a model produces when it answers.
+
+Weather data goes in, GPUs do the work, and out come forecasts and answers people can actually use. A data center stores and computes. A factory ships something. That's the step we're taking.
+```
+게시 전: 인용 = 원글. 오늘 Eri 인용을 이미 올렸다면 6시간 뒤 또는 내일(계정당 1일 1원글).
+
