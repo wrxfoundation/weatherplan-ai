@@ -2486,3 +2486,4 @@ Thanks Odelia — writing to you at that address today. Mine is support@wellbian
 - **Jenny Johnson 인사 2차(10/21, 서우 「리플 관련 포트폴리오 있으니 XRP SEOUL · 남산타워 · Swell · 글로벌 기상관측 포부도」)** — XRPZ(2025-11-24) · sgBENJI 근거로 기관 첫 메시지 예외 → playbook 「써도 되는 자리」에 한 줄. 메시지 1113자 · Swell 뒤 수락 시 교체 문장.
 - **구조 그래픽 영문 — 라인 아이콘 재제작(10/21, 서우 「라인 svg 아이콘을 넣어 재제작 · 너무 텍스트 위주」)** — 단계 6 · 운영 지갑 · 원장 4 요소에 보라 선 아이콘(유리 칸) + 단계 사이 흐름선. 글 내용은 그대로. `architecture-en` 만.
 - **구조 그래픽 영문 — 아이콘 도톰 · 유리 · 옅은 무지갯빛(10/21, 서우)** — 선 1.9 · 유리 칸 · 좌상단 테두리 무지갯빛. `architecture-en` 만.
+- **문창훈(타임레버리지)이 다룬 XRP · 리플 인물 — 링크드인 후보(10/21, 서우)** — 채널 영상 1,232개 제목 · xignal.live 확인 → A: Adam Traidman(전 리플 이사 · VivoPower) · Asheesh Birla(Evernorth CEO) · Stefan Thomas(Interledger) / B: Monica Long · David Schwartz · Brad Garlinghouse(팔로우) / C: McClurg · Tria · Doppler · CME. 문창훈 소개 → Swell(10/27~29) 동선 · 1촌 메모 2종. `intel/linkedin-xrp-targets-1021.md`.
