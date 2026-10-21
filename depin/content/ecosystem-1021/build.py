@@ -1,9 +1,9 @@
 """wellbian 백서 Fig 0 — 3주체 선순환 구조 그래픽 (2026-10-21).
 
 서우 「아래 내용도 동일한 톤앤매너로」 — 구조 그래픽 v3(`../architecture-1021/`)와 같은 바탕 · 유리 타일 · 보라 포인트 · 모서리 반짝임.
-Usage: python3 build.py → ecosystem-{ko,en}.html · .png(1920×1080 @2x). PNG → JPEG 변환은 README.
+Usage: python3 build.py [en|ko …] → ecosystem-{ko,en}.html · .png(1920×1080 @2x). PNG → JPEG 변환은 README.
 """
-import pathlib, subprocess, os
+import pathlib, subprocess, os, sys
 
 HERE = pathlib.Path(__file__).resolve().parent
 LOGO = (HERE / "../../site/xrpseoul-raffle-static/www/brand/wellbian-nav.svg").read_text()
@@ -79,14 +79,11 @@ body{background:var(--bg);color:var(--t1);font-family:"Pretendard",-apple-system
 h1{margin-top:16px;font-size:72px;font-weight:700;letter-spacing:-.025em;line-height:1.05}
 .sub{margin-top:14px;max-width:1180px;text-align:center;font-size:23px;line-height:1.45;color:var(--t2);word-break:keep-all;text-wrap:balance}
 .glass{background:linear-gradient(140deg,rgba(255,255,255,.10),rgba(255,255,255,.03) 60%);border:1px solid var(--edge);backdrop-filter:blur(22px) saturate(140%);-webkit-backdrop-filter:blur(22px) saturate(140%);box-shadow:inset 0 1px 0 var(--hi)}
-/* 햇빛 반사 — 좌상단 모서리에만(구조 그래픽과 같은 Higgsfield 글린트 · ../architecture-1021/assets/glint-corner.png) */
-.glint{position:relative;--gs:.38;--gw:220px;--gh:120px}
+/* 햇빛 반사 — 좌상단 테두리 선(1px) 위에만 무지갯빛. 반짝임 · 번짐 없음(10/21 서우 「빛나는 효과 없애고 테두리에 맞춰」). */
+.glint{position:relative;--gw:260px;--gh:140px}
 .glint::after{content:"";position:absolute;inset:-1px;border-radius:inherit;padding:1px;pointer-events:none;
- background:radial-gradient(ellipse var(--gw) var(--gh) at 0 0,rgba(255,255,255,.55) 0%,rgba(255,172,222,.50) 14%,rgba(182,152,255,.45) 30%,rgba(122,192,255,.35) 46%,rgba(122,255,202,.2) 60%,rgba(255,255,255,0) 76%);
+ background:radial-gradient(ellipse var(--gw) var(--gh) at 0 0,rgba(255,255,255,.85) 0%,rgba(255,172,222,.85) 12%,rgba(182,152,255,.80) 28%,rgba(122,192,255,.70) 44%,rgba(122,255,202,.45) 60%,rgba(255,255,255,0) 78%);
  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude}
-.glint::before{content:"";position:absolute;pointer-events:none;z-index:2;
- width:calc(400px * var(--gs));height:calc(400px * var(--gs));left:calc(-1.5px - 150px * var(--gs));top:calc(-1.5px - 150px * var(--gs));
- background:url("../architecture-1021/assets/glint-corner.png") no-repeat center/contain;opacity:.85}
 .row{margin-top:40px;width:100%;display:grid;grid-template-columns:1fr 200px 1.12fr 200px 1fr;align-items:stretch}
 .tile{border-radius:16px;padding:30px 32px 30px;display:flex;flex-direction:column}
 .tile.provider{--acc:var(--p1)} .tile.hub{--acc:var(--p3)} .tile.consumer{--acc:var(--p2)}
@@ -164,7 +161,7 @@ def page(lang):
 if __name__ == "__main__":
     env = dict(os.environ)
     env["NODE_PATH"] = subprocess.run(["npm", "root", "-g"], capture_output=True, text=True).stdout.strip()
-    for lang in ("ko", "en"):
+    for lang in (sys.argv[1:] or ("en", "ko")):
         html = HERE / f"ecosystem-{lang}.html"
         html.write_text(page(lang), encoding="utf-8")
         subprocess.run(["node", str(HERE / "shot.js"), str(html), str(HERE / f"ecosystem-{lang}.png"), "1920"], check=True, env=env)

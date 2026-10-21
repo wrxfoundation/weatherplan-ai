@@ -1,9 +1,9 @@
 """wellbian 구조 그래픽 v3 (2026-10-21) — 보라 포인트 · 플랫 · 엣지 있는 글라스모피즘 + 세부 설명.
 
 v1(카드 · 화살표 그물) → v2(애플 스타일, 서우 「AI 티」) → v3(서우 「세부 설명 자그맣게 · 보라색 포인트 · 플랫하고 엣지 있는 글라스모피즘」).
-Usage: python3 build.py → architecture-{en,ko}.html · .png(1920×1080 @2x). PNG → JPEG 변환은 README.
+Usage: python3 build.py [en|ko …] → architecture-{en,ko}.html · .png(1920×1080 @2x). PNG → JPEG 변환은 README.
 """
-import pathlib, re, subprocess, os
+import pathlib, re, subprocess, os, sys
 
 HERE = pathlib.Path(__file__).resolve().parent
 LOGO = (HERE / "../../site/xrpseoul-raffle-static/www/brand/wellbian-nav.svg").read_text()
@@ -73,16 +73,12 @@ h1{margin-top:20px;font-size:76px;font-weight:700;letter-spacing:-.025em;line-he
 .sub{margin-top:16px;max-width:1180px;text-align:center;font-size:24px;line-height:1.45;color:var(--t2);word-break:keep-all;text-wrap:balance}
 .glass{background:linear-gradient(140deg,rgba(255,255,255,.10),rgba(255,255,255,.03) 60%);border:1px solid var(--edge);backdrop-filter:blur(22px) saturate(140%);-webkit-backdrop-filter:blur(22px) saturate(140%);box-shadow:inset 0 1px 0 var(--hi)}
 .row{margin-top:40px;width:100%;display:grid;grid-template-columns:1fr 1fr;gap:20px}
-/* 햇빛 반사 — 좌상단 모서리에만. 반짝임 = Higgsfield 생성 유리 모서리 글린트(assets/glint-corner.png, 400px 정사각 · 모서리 꼭짓점 (150,150) · 호 반지름 ≈42px)
-   를 타일 모서리 반지름에 맞춰 줄여 얹음(--gs = 반지름/42). 테두리 무지갯빛은 모서리 근처만 옅게. */
-.glint{position:relative;--gs:.38;--gw:220px;--gh:120px}
-.ops.glint{--gs:.29;--gw:150px;--gh:44px}
+/* 햇빛 반사 — 좌상단 테두리 선(1px) 위에만 무지갯빛. 반짝임 · 번짐 없음(10/21 서우 「빛나는 효과 없애고 테두리에 맞춰」). */
+.glint{position:relative;--gw:260px;--gh:140px}
+.ops.glint{--gw:180px;--gh:52px}
 .glint::after{content:"";position:absolute;inset:-1px;border-radius:inherit;padding:1px;pointer-events:none;
- background:radial-gradient(ellipse var(--gw) var(--gh) at 0 0,rgba(255,255,255,.55) 0%,rgba(255,172,222,.50) 14%,rgba(182,152,255,.45) 30%,rgba(122,192,255,.35) 46%,rgba(122,255,202,.2) 60%,rgba(255,255,255,0) 76%);
+ background:radial-gradient(ellipse var(--gw) var(--gh) at 0 0,rgba(255,255,255,.85) 0%,rgba(255,172,222,.85) 12%,rgba(182,152,255,.80) 28%,rgba(122,192,255,.70) 44%,rgba(122,255,202,.45) 60%,rgba(255,255,255,0) 78%);
  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude}
-.glint::before{content:"";position:absolute;pointer-events:none;z-index:2;
- width:calc(400px * var(--gs));height:calc(400px * var(--gs));left:calc(-1.5px - 150px * var(--gs));top:calc(-1.5px - 150px * var(--gs));
- background:url("assets/glint-corner.png") no-repeat center/contain;opacity:.85}
 .tile{border-radius:16px;padding:32px 36px 34px;position:relative}
 .tile.supply{--acc:var(--p1)} .tile.demand{--acc:var(--p2)}
 .eyebrow{display:inline-block;font-size:13px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--acc);border:1px solid var(--acc);border-radius:6px;padding:4px 9px;background:rgba(163,155,255,.10)}
@@ -152,7 +148,7 @@ def page(lang):
 if __name__ == "__main__":
     env = dict(os.environ)
     env["NODE_PATH"] = subprocess.run(["npm", "root", "-g"], capture_output=True, text=True).stdout.strip()
-    for lang in ("en", "ko"):
+    for lang in (sys.argv[1:] or ("en", "ko")):
         html = HERE / f"architecture-{lang}.html"
         html.write_text(page(lang), encoding="utf-8")
         subprocess.run(["node", str(HERE / "shot.js"), str(html), str(HERE / f"architecture-{lang}.png"), "1920"], check=True, env=env)
