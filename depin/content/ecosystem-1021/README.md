@@ -83,6 +83,26 @@ Every new room adds data. Every call is paid.
 
 「The model:」 · 화살표 흐름 = 사업 모델 설명(계약 · 고객 주장 아님). 보상 재유입 · 원장 지문 · 가격 · WLBN 0.
 
+### X 타래 — A 원글 아래 답글 2개 (10/21, 서우 「타래 댓글로 2개 더」)
+
+**② 왜 사는가 (가중 267)**
+```
+Why would a maker pay? ACs, dehumidifiers, purifiers and ventilation all run in real rooms. Their teams want to know when humidity climbs, how fast CO₂ builds after the window closes, what PM does while dinner cooks.
+
+If you build appliances, what would you measure?
+```
+
+**③ 깨끗하게 · 돈이 도는 길 (가중 271)**
+```
+How it stays clean: data is de-identified before it's sold, and every aggregate must pass a k-anonymity gate.
+
+How the money moves: request, 402, pay in RLUSD, check on-chain, data back. Verified on XRPL mainnet in August.
+
+Rewards are quantities, never a promised value.
+```
+
+근거: ③ 「Verified on XRPL mainnet in August」 = 정본 §5 메인넷 검증(x402 자율 결제). 비식별 · k-익명 관문 = 설계 원칙. 이미지는 ①에만.
+
 ## 확인 필요(서우)
 
 - **「보상 → 가전 구매 할인 · 필터 구독 결제 재유입」은 지금 되는 기능인가, 계획인가.** 백서 원문 그대로 넣었다. 아직 계획이면 SNS 게시 전에 「설계」 · 「예정」 표기(미공표 · 미확정 기능을 현재형으로 말하지 않는다 — playbook).

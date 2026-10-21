@@ -2480,3 +2480,4 @@ Thanks Odelia — writing to you at that address today. Mine is support@wellbian
 - **링크드인 영문 — 수익 구조 글(10/21, 서우 「링크드인 스크립트」)** — 「who pays」 훅 · 3주체 → 제조사 구매 · API 구독 + 에이전트 호출당 RLUSD · 8월 메인넷 x402 검증 · 보상 재유입은 designed to · 비식별 · k-익명 · 보상 개수 원칙. 1,406자 · 이미지 2장(Fig 0 → 구조). `content/ecosystem-1021/README.md`.
 - **링크드인 연재 제목(10/21, 서우 「연재 형태로 — 앞에 제목을 대괄호 안에」)** — `[Building wellbian · Part 1] Where the revenue comes from` · 형식 `[Building wellbian · Part N] 소제목` · 본문 포함 1465자.
 - **X 영문 — 연재 1편 짧은 판(10/21, 서우 「X용 짧은 버전도」)** — A 「Who pays?」(가중 277) 추천 · B 「Where the revenue comes from」(가중 248). `content/ecosystem-1021/README.md`.
+- **X 타래 답글 2개(10/21, 서우 「타래 댓글로 2개 더」)** — ② 왜 제조사가 사는가 + 질문(가중 267) · ③ 비식별 · k-익명 / request → 402 → RLUSD → 온체인 확인 → 데이터 · 8월 메인넷 검증 / 보상 = 개수(가중 271).
