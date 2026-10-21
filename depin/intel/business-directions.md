@@ -5090,6 +5090,43 @@ sgBENJI(XRPL · RLUSD 나란히 상장, DBS MOU) · 리플은 꺼내지 않는�
   Good to be connected.
   ```
 
+## Dyson — 누구에게 · 첫 메모 (2026-10-21, 서우 링크드인 회사 직원 검색 캡처 10장 · 1~6쪽)
+
+이름은 적지 않는다(링크드인 검색 목록) — 공개 직함 · 지역 · 촌수만.
+
+**먼저 알아 둘 것 — 다이슨은 이미 실내공기 데이터를 갖고 있다.** 2024-01 「Global Connected Air Quality Data」: 자사 연결형 공기청정기 250만~340만 대 · 2022~2023 PM2.5 · VOC
+(다이슨 뉴스룸 원문). 다이슨 스스로 「다이슨 청정기가 있는 집만 — 전국 대표성 없음」이라고 적었다. → 우리가 줄 수 있는 것은 **브랜드와 무관한 인증 측정기의 실제 가정 값**
+(청정기 유무와 상관없는 기준선) + 케이웨더 실외 값과 같은 자리의 비교 + 제3자 측정. 「데이터를 판다」가 아니라 이 차이를 한 줄로만.
+
+**검색 결과 판정**: 한국 사무소는 영업 · 마케팅 · 커뮤니케이션 · HR · 재무 · 이커머스 · 리테일이 대부분 — 청정기 R&D · 데이터는 영국(맘즈버리)과 싱가포르 본사.
+이번 결과에서 레인에 닿는 자리:
+
+| 순위 | 공개 직함 | 지역 · 촌수 | 왜 |
+|---|---|---|---|
+| 1 | Senior Manager – Strategic Insights, Claims, and Go-To-Market Execution | 영국 맘즈버리(본사) · 2촌 | **인사이트 + 제품 주장(claims) 근거** — 제3자 실측 기준선이 바로 닿는 자리 |
+| 2 | Head of Communications, Dyson Korea | 한국 · 3촌(메시지 버튼) | 다이슨은 공기질 데이터 리포트를 홍보 소재로 쓴다 — 한국 실내공기 이야기의 상대 |
+| 3 | Managing Director at Dyson(한국) | 한국 · 2촌(공통 1촌 1명) | 국내 결정권자 — **공통 1촌에게 소개 부탁** · 케이웨더 B2B 라인과 겹치는지 먼저 확인 |
+| 4 | Assistant Claims Manager | 서울 · 3촌 | 1번과 같은 claims 기능의 한국 쪽 — 1번 뒤 |
+| 5 | Senior Manager B2B & In-Direct | 서울 · 3촌 | 사무실 · 상업시설(Fig 0) — 나중 |
+
+넣지 않음: HR · 재무 · 이커머스 · 리테일 · 공급망 · 플로어케어 · 뷰티 · 마테크 · 품질 트레이너 · 법무(데이터 계약 단계에서) · 익명 「Business Development Manager」(이름 공개 뒤 재검토).
+
+**더 찾을 검색어**(지역 = 영국 · 싱가포르): `Environmental Care` · `Air Treatment` · `Air Quality` · `Research Scientist` · `Sensor` · `Connected` · `Data Scientist` · `Purifier`.
+
+**메모** — 기본값(체인 이름 · XRP · 토큰 0) · 원장 지문 문장 0(IAQ 기록 상태 확인 전) · 다이슨 데이터에 대한 평가 · 비교 · 제안 0.
+1번(영문 295자)
+```
+Hi Herbert, I run partnerships at wellbian, built on KWeather's 30 years of weather data. Our certified sensors measure indoor air in real homes, independent of any appliance brand, and we build de-identified datasets on how rooms behave. Close to your insights and claims work. Glad to connect.
+```
+2번(국문 164자)
+```
+안녕하세요. 케이웨더 디지털사업본부에서 wellbian 파트너십을 맡고 있는 박서우입니다. 케이웨더 30년 날씨 데이터 위에, 실제 가정의 실내공기를 재는 인증 측정기 네트워크를 만들고 있습니다. 다이슨의 글로벌 실내공기 데이터 리포트를 흥미롭게 봤습니다. 인사드리고 싶어 연결을 요청드립니다.
+```
+3번(국문 157자) — 공통 1촌 소개가 먼저, 케이웨더 확인 뒤
+```
+안녕하세요. 케이웨더 디지털사업본부에서 wellbian 파트너십을 맡고 있는 박서우입니다. 케이웨더 30년 날씨 데이터 위에, 가전 브랜드와 상관없이 실제 가정의 실내공기를 재는 인증 측정기 네트워크를 만들고 있습니다. 실내공기를 다루시는 분께 인사드리고 싶어 연결을 요청드립니다.
+```
+
 ## MEXC 상장팀 — 텔레그램 그룹 인사 (2026-10-19 20:38, 서우 캡처)
 
 - **상황**: 「Wellbian (WLBN) <> MEXC」 그룹(3인)에 MEXC 상장팀 리스팅 매니저가 들어와 인사 · 공식 채널 목록(텔레그램 · X · 메일 · 디스코드)과 확인 페이지(mexc.com/official-verify) 안내 ·
