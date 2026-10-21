@@ -5326,6 +5326,24 @@ We work on two layers: certified air-quality sensors that people run in their ow
 Good to be connected.
 ```
 
+## Jingyi Zhang (Binance · VIP and Institutional Growth Specialist · 두바이 · 1촌) — 인사 (2026-10-21, 서우 프로필 · 경력 · 학력 캡처 3장)
+
+공개 프로필: 바이낸스 VIP · 기관 고객 성장(2025-12~, 두바이 — Paola 와 같은 팀) · 전 Lingfeng Capital IR 매니저(2024-12~2025-11, 홍콩) · 스타트업 액셀러레이터 과정(2024) · J.P. Morgan 홍콩 투자은행 애널리스트 → 어소시에이트(2020-09~2024-04) · 와튼 재무 학사. 이미 1촌 · 공통 1촌 7명(이름 쓰지 않음).
+판정: **기본은 Paola(9/24)와 같은 자리 — 레인 없음(우리는 거래 고객이 아니다) · 바이낸스 상한 초과(10/11 「바이낸스 새 사람 0」).** 발신 다섯(Emily · Max · Alexander · Jenny · Jack) + 1촌만 넷(Hazel · Paola · Ilie · Vi).
+보낸다면 **Jack 판(10/13) 그대로 인사만** — 선택 줄 · 관심의 이유 · 상장 · 토큰 · 유동성 · 기관 상품 0. IR · 투자은행 이력이라 「토큰 프로젝트가 기관 쪽을 두드린다」로 읽히기 쉬운 자리 → 숫자 · 원장 이름도 기본값 이상 넣지 않는다.
+「eleven weather feeds」(금융권 상대 · 바이낸스 Jack 판과 같은 말) · 「certified」 뺌. 10/20 「Binance 상장」 사칭 건은 이 사람에게 꺼내지 않는다(제보는 audit@ 경로).
+상대가 먼저 사업 이야기를 꺼내면 Jack 답(10/13 A판)과 같은 선: 「올해는 측정망과 데이터 고객에 집중 — 거래소 단계 아님」 + 질문, 제안이 오면 대표 · 경영진에게.
+메시지(545자)
+```
+Jingyi — thanks for connecting.
+
+I run partnerships at wellbian. KWeather has measured weather in South Korea for thirty years and supplies data to 4,000+ enterprise clients; wellbian is the network built on top of that.
+
+We work on two layers: air-quality sensors that people run in their own rooms, and city-level weather across 91 countries and 172 cities, where each value is a consensus across eleven weather feeds rather than a single reading. Every input is fingerprinted to a public ledger before it goes anywhere.
+
+Good to be connected.
+```
+
 ## MEXC 상장팀 — 텔레그램 그룹 인사 (2026-10-19 20:38, 서우 캡처)
 
 - **상황**: 「Wellbian (WLBN) <> MEXC」 그룹(3인)에 MEXC 상장팀 리스팅 매니저가 들어와 인사 · 공식 채널 목록(텔레그램 · X · 메일 · 디스코드)과 확인 페이지(mexc.com/official-verify) 안내 ·
