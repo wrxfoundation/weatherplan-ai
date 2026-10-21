@@ -73,6 +73,17 @@ h1{margin-top:20px;font-size:76px;font-weight:700;letter-spacing:-.025em;line-he
 .sub{margin-top:16px;max-width:1180px;text-align:center;font-size:24px;line-height:1.45;color:var(--t2);word-break:keep-all;text-wrap:balance}
 .glass{background:linear-gradient(140deg,rgba(255,255,255,.10),rgba(255,255,255,.03) 60%);border:1px solid var(--edge);backdrop-filter:blur(22px) saturate(140%);-webkit-backdrop-filter:blur(22px) saturate(140%);box-shadow:inset 0 1px 0 var(--hi)}
 .row{margin-top:40px;width:100%;display:grid;grid-template-columns:1fr 1fr;gap:20px}
+/* 햇빛 반사 — 좌상단 테두리에 무지갯빛(테두리만) + 작은 반짝임 */
+.glint{position:relative;--gw:440px;--gh:200px}
+.ops.glint{--gw:320px;--gh:72px}
+.glint::after{content:"";position:absolute;inset:-1px;border-radius:inherit;padding:1.5px;pointer-events:none;
+ background:radial-gradient(ellipse var(--gw) var(--gh) at 0 0,rgba(255,255,255,.95) 0%,rgba(255,172,222,.90) 10%,rgba(182,152,255,.85) 20%,rgba(122,192,255,.75) 31%,rgba(122,255,202,.55) 43%,rgba(255,228,130,.35) 56%,rgba(255,255,255,0) 72%);
+ -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude}
+.glint::before{content:"";position:absolute;left:36px;top:-1px;width:120px;height:34px;transform:translate(-50%,-50%);pointer-events:none;
+ background:radial-gradient(circle,#fff 0,rgba(255,255,255,.9) 1.5px,rgba(222,208,255,.45) 6px,rgba(222,208,255,0) 14px),
+  linear-gradient(90deg,rgba(255,255,255,0),rgba(150,205,255,.55) 32%,#fff 50%,rgba(255,190,232,.55) 68%,rgba(255,255,255,0)) center/120px 1.5px no-repeat,
+  linear-gradient(rgba(255,255,255,0),rgba(255,255,255,.8) 50%,rgba(255,255,255,0)) center/1.5px 34px no-repeat}
+.ops.glint::before{transform:translate(-50%,-50%) scale(.75)}
 .tile{border-radius:16px;padding:32px 36px 34px;position:relative}
 .tile.supply{--acc:var(--p1)} .tile.demand{--acc:var(--p2)}
 .eyebrow{display:inline-block;font-size:13px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--acc);border:1px solid var(--acc);border-radius:6px;padding:4px 9px;background:rgba(163,155,255,.10)}
@@ -122,7 +133,7 @@ def page(lang):
         for i, (b, d, n) in enumerate(steps):
             if i: parts.append('<div class="chev">→</div>')
             parts.append(f'<div class="step"><b>{nw(b)}</b><span class="d">{nw(d)}</span><span class="n">{nw(n)}</span></div>')
-        tiles.append(f'<section class="tile glass {cls}"><div class="eyebrow">{eyebrow}</div><h2>{title}</h2><div class="steps">{"".join(parts)}</div></section>')
+        tiles.append(f'<section class="tile glass glint {cls}"><div class="eyebrow">{eyebrow}</div><h2>{title}</h2><div class="steps">{"".join(parts)}</div></section>')
         joins.append(f'<div class="{cls[0]}"><i></i>{flow}</div>')
     feats = "".join(f'<div class="feat"><b>{a}</b><span class="tag">{b}</span><span class="n">{c}</span></div>' for a, b, c in t["feats"])
     ops_name, ops_desc = t["ops"]
@@ -133,9 +144,9 @@ def page(lang):
 <h1>{t['h1']}</h1><p class="sub">{t['sub']}</p>
 <div class="row">{"".join(tiles)}</div>
 <div class="join">{"".join(joins)}</div>
-<div class="ops"><span class="dot"></span><b>{ops_name}</b>{ops_desc}</div>
+<div class="ops glint"><span class="dot"></span><b>{ops_name}</b>{ops_desc}</div>
 <div class="join2"><i></i><i></i><i></i><i></i></div>
-<div class="ledger glass"><div><h3>{t['ledger']}</h3><p>{t['ledger_sub']}</p></div><div class="feats">{feats}</div></div>
+<div class="ledger glass glint"><div><h3>{t['ledger']}</h3><p>{t['ledger_sub']}</p></div><div class="feats">{feats}</div></div>
 <p class="foot">{t['foot']}</p>
 </div></body></html>"""
 
