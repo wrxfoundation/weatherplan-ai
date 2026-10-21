@@ -5165,6 +5165,39 @@ Best,
 Logan
 ```
 
+- **2차(10/21, 서우 「20% 에서 시작하자 · XRP SEOUL · 남산타워로 XRP 아미에게 입지 · 다음 주 Swell 로 본격 알려지는 계기 — 미리 선점하면 도움」)**:
+  ① 요율 = **순매출 20% 를 할인 · 커미션으로 배분(예 10% + 10% · 전부 커미션 20%)** + 판매량 구간 추가(미정). 10/19 vCommission 메일은 최대 30% — **네트워크(그 안에서 네트워크 몫을 떼 감) 30% · 개인 20% 로 갈리는 것**은 서우 결정으로 기록.
+  ② 「왜 지금」 문단: 케이웨더 XRP SEOUL 2026 키노트 · 남산타워 점등 → XRP 아미 안 입지 · 다음 주 Swell(뉴욕) → 더 넓은 청중 · 「그 전에 링크를 열어 둔 파트너는 관심이 올 때 링크가 살아 있다」.
+     선점의 이득은 **링크가 먼저 열려 있다는 사실로만** 말했다 — 판매량 · 수익 예측 0. Swell 은 「참석」만(연사 · 스폰서 · 리플 관계 표현 0).
+     XRP SEOUL · 남산은 크립토 성장 담당 · 크리에이터 상대라 「써도 되는 자리」(playbook 10/12 절).
+  ③ InMail 본문 상한 1,900자 → 케이웨더 괄호를 30년만 남기고(4,000+ 뺌) · 링크 문장 · 「왜 지금」을 줄여 1867자.
+
+  메시지 2차(영문 1867자)
+  ```
+  Hi Hollie,
+
+  I read your note on BitMEX. Building an affiliate programme from zero to 200+ partners is real work, and congratulations on the run.
+
+  I run partnerships at wellbian. Together with our device partner KWeather (30 years of weather data in Korea), we make a certified indoor air-quality sensor for homes. Each device is registered on the XRP Ledger, and its readings feed a data network that manufacturers and AI agents can buy from, call by call.
+
+  Why now: in early October, KWeather gave a keynote at XRP SEOUL 2026 and N Seoul Tower lit up for it, which gave us real footing with the XRP Army. Next week we're in New York for Swell, where we take wellbian to a much wider audience. Partners who are set up before then have their links live when that attention arrives.
+
+  While you're taking a breather, would you be open to selling it as an affiliate, to your audience or through your partner network?
+
+  How it works today:
+  - 20% of net sales per order, split however you like between a buyer discount and your commission (for example 10% off and 10% to you, or the full 20% as commission). Higher tiers for volume, details to follow.
+  - Commission paid in RLUSD after the order settles.
+  - A dedicated checkout link per partner.
+  - Orders are open worldwide and shipping opens country by country; buyers see their country's shipping status before they pay. Overseas checkout is in RLUSD.
+
+  The rules every partner works under: talk about the device and the data, not earnings. No income, payback or token-price claims, an ad label on every post, no campaigns aimed at mainland China, and we review the first two weeks of content together.
+
+  If it sounds interesting, I'll send the deck and set up your link. And if you'd rather help us build the Chinese-speaking side of the programme, the way you did at BitMEX, I'd be glad to talk about that too.
+
+  Best,
+  Logan
+  ```
+
 ## MEXC 상장팀 — 텔레그램 그룹 인사 (2026-10-19 20:38, 서우 캡처)
 
 - **상황**: 「Wellbian (WLBN) <> MEXC」 그룹(3인)에 MEXC 상장팀 리스팅 매니저가 들어와 인사 · 공식 채널 목록(텔레그램 · X · 메일 · 디스코드)과 확인 페이지(mexc.com/official-verify) 안내 ·
