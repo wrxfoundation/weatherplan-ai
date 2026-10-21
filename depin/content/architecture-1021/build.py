@@ -7,12 +7,12 @@ import pathlib, re, subprocess, os
 
 HERE = pathlib.Path(__file__).resolve().parent
 LOGO = (HERE / "../../site/xrpseoul-raffle-static/www/brand/wellbian-nav.svg").read_text()
-LOGO = LOGO.replace('width="416" height="151"', 'width="110" height="40"', 1)   # 흰 로고 그대로
+LOGO = LOGO.replace('width="416" height="151"', 'width="165" height="60"', 1)   # 흰 로고 그대로
 
 T = {
  "en": dict(
-  lang="en", h1="One ledger. Two loops.",
-  sub="Sensors in real rooms supply verified readings. Manufacturers and AI agents pay per call. Everything settles on the XRP Ledger.",
+  lang="en", h1="Every room is data. Every call is revenue.",
+  sub="Each new room adds verified air data to sell. Manufacturers, AI agents and smart homes pay for every call in RLUSD, a dollar stablecoin, settled on the XRP Ledger.",
   tiles=[
    ("supply", "Supply", "Devices earn for verified data.", [
      ("Air sensor", "PM · CO₂ · TVOC · temperature · humidity", "Outdoor line next:\nPM · O₃ · NO₂ · SO₂ · CO"),
@@ -32,8 +32,8 @@ T = {
   foot="Simplified from the wellbian DePIN technical specification v0.3 · Rewards are fixed quantities; no value is promised.",
  ),
  "ko": dict(
-  lang="ko", h1="원장 하나. 순환 둘.",
-  sub="실제 방의 측정기가 검증된 측정값을 보내고, 제조사와 AI 에이전트는 호출할 때마다 값을 냅니다. 모두 XRP 원장에서 정산됩니다.",
+  lang="ko", h1="방마다 데이터. 호출마다 매출.",
+  sub="방이 늘수록 팔 수 있는 검증 데이터가 늘고, 제조사 · AI 에이전트 · 스마트홈은 호출할 때마다 달러 스테이블코인 RLUSD로 값을 냅니다. 정산은 XRP 원장에서.",
   tiles=[
    ("supply", "공급", "측정기는 검증된 데이터로 보상받습니다.", [
      ("공기질 측정기", "PM · CO₂ · TVOC · 온도 · 습도", "실외 라인은 다음:\nPM · O₃ · NO₂ · SO₂ · CO"),
@@ -68,22 +68,21 @@ body{background:var(--bg);color:var(--t1);font-family:"Pretendard",-apple-system
 .bgfx .g4{position:absolute;width:760px;height:520px;right:6%;top:30%;border-radius:50%;background:radial-gradient(closest-side,rgba(160,110,255,.36),rgba(160,110,255,0))}
 .bgfx .grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);background-size:48px 48px;mask-image:radial-gradient(ellipse at 50% 40%,#000 30%,transparent 80%)}
 .wrap{position:relative;z-index:1;width:100%;display:flex;flex-direction:column;align-items:center}
-.logo{height:40px}
+.logo{height:60px}
 h1{margin-top:20px;font-size:76px;font-weight:700;letter-spacing:-.025em;line-height:1.05}
 .sub{margin-top:16px;max-width:1180px;text-align:center;font-size:24px;line-height:1.45;color:var(--t2);word-break:keep-all;text-wrap:balance}
 .glass{background:linear-gradient(140deg,rgba(255,255,255,.10),rgba(255,255,255,.03) 60%);border:1px solid var(--edge);backdrop-filter:blur(22px) saturate(140%);-webkit-backdrop-filter:blur(22px) saturate(140%);box-shadow:inset 0 1px 0 var(--hi)}
 .row{margin-top:40px;width:100%;display:grid;grid-template-columns:1fr 1fr;gap:20px}
-/* 햇빛 반사 — 좌상단 테두리에 무지갯빛(테두리만) + 작은 반짝임 */
-.glint{position:relative;--gw:440px;--gh:200px}
-.ops.glint{--gw:320px;--gh:72px}
-.glint::after{content:"";position:absolute;inset:-1px;border-radius:inherit;padding:1.5px;pointer-events:none;
- background:radial-gradient(ellipse var(--gw) var(--gh) at 0 0,rgba(255,255,255,.95) 0%,rgba(255,172,222,.90) 10%,rgba(182,152,255,.85) 20%,rgba(122,192,255,.75) 31%,rgba(122,255,202,.55) 43%,rgba(255,228,130,.35) 56%,rgba(255,255,255,0) 72%);
+/* 햇빛 반사 — 좌상단 모서리에만. 반짝임 = Higgsfield 생성 유리 모서리 글린트(assets/glint-corner.png, 400px 정사각 · 모서리 꼭짓점 (150,150) · 호 반지름 ≈42px)
+   를 타일 모서리 반지름에 맞춰 줄여 얹음(--gs = 반지름/42). 테두리 무지갯빛은 모서리 근처만 옅게. */
+.glint{position:relative;--gs:.38;--gw:220px;--gh:120px}
+.ops.glint{--gs:.29;--gw:150px;--gh:44px}
+.glint::after{content:"";position:absolute;inset:-1px;border-radius:inherit;padding:1px;pointer-events:none;
+ background:radial-gradient(ellipse var(--gw) var(--gh) at 0 0,rgba(255,255,255,.55) 0%,rgba(255,172,222,.50) 14%,rgba(182,152,255,.45) 30%,rgba(122,192,255,.35) 46%,rgba(122,255,202,.2) 60%,rgba(255,255,255,0) 76%);
  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude}
-.glint::before{content:"";position:absolute;left:36px;top:-1px;width:120px;height:34px;transform:translate(-50%,-50%);pointer-events:none;
- background:radial-gradient(circle,#fff 0,rgba(255,255,255,.9) 1.5px,rgba(222,208,255,.45) 6px,rgba(222,208,255,0) 14px),
-  linear-gradient(90deg,rgba(255,255,255,0),rgba(150,205,255,.55) 32%,#fff 50%,rgba(255,190,232,.55) 68%,rgba(255,255,255,0)) center/120px 1.5px no-repeat,
-  linear-gradient(rgba(255,255,255,0),rgba(255,255,255,.8) 50%,rgba(255,255,255,0)) center/1.5px 34px no-repeat}
-.ops.glint::before{transform:translate(-50%,-50%) scale(.75)}
+.glint::before{content:"";position:absolute;pointer-events:none;z-index:2;
+ width:calc(400px * var(--gs));height:calc(400px * var(--gs));left:calc(-1.5px - 150px * var(--gs));top:calc(-1.5px - 150px * var(--gs));
+ background:url("assets/glint-corner.png") no-repeat center/contain;opacity:.85}
 .tile{border-radius:16px;padding:32px 36px 34px;position:relative}
 .tile.supply{--acc:var(--p1)} .tile.demand{--acc:var(--p2)}
 .eyebrow{display:inline-block;font-size:13px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--acc);border:1px solid var(--acc);border-radius:6px;padding:4px 9px;background:rgba(163,155,255,.10)}
