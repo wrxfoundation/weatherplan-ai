@@ -34,7 +34,7 @@
 
 ## 연재 Part 2 — 수익 구조판 게시 문안 (10/21, 서우 「이것도 링크드인 · X 스크립트 각각」)
 
-이미지: `architecture-en.jpg` 한 장(Part 1 은 `../ecosystem-1021/ecosystem-en.jpg` 한 장으로). 아래 「게시 문안」(Two loops, one ledger)은 구조 설명판 — 연재에는 이 Part 2 를 쓴다.
+이미지: `architecture-en.jpg` 한 장(Part 1 은 `../ecosystem-1021/ecosystem-en.jpg` 한 장으로). 모바일용 세로판 `architecture-en-9x16.jpg` 에도 문안은 그대로(10/21 서우 「스크립트도 다시」). 아래 「게시 문안」(Two loops, one ledger)은 구조 설명판 — 연재에는 이 Part 2 를 쓴다.
 
 ### 링크드인 — 영문 (1482자)
 ```
