@@ -2478,3 +2478,4 @@ Thanks Odelia — writing to you at that address today. Mine is support@wellbian
 - **구조 그래픽 · 백서 Fig 0 — 반짝임 제거, 무지갯빛을 테두리 선에 맞춤 · 영문판만(10/21, 서우 「빛나는 효과 없애고 · 빛깔이 번져 보이니 테두리에 맞춰 · 영문판들만 제작」)** — 글린트 이미지 뺌 · 좌상단 1px 테두리 선 위에만 무지갯빛. `architecture-en` · `ecosystem-en` 다시 뽑음(국문은 이전 판 유지).
 - **백서 Fig 0 영문 — 수익화 초점(10/21, 서우 「이것도 수익화에 초점」)** — 「Rooms make data. Makers pay for it.」 · 칩 Business model · 부제(원시 측정값 → 비식별 메타데이터 → 제조사 구매 · API 구독) · Data fees 레인 「Revenue」 칩 강조 · 순환선 문구 정리. 국문 문구는 소스만 맞춤(렌더 안 함).
 - **링크드인 영문 — 수익 구조 글(10/21, 서우 「링크드인 스크립트」)** — 「who pays」 훅 · 3주체 → 제조사 구매 · API 구독 + 에이전트 호출당 RLUSD · 8월 메인넷 x402 검증 · 보상 재유입은 designed to · 비식별 · k-익명 · 보상 개수 원칙. 1,406자 · 이미지 2장(Fig 0 → 구조). `content/ecosystem-1021/README.md`.
+- **링크드인 연재 제목(10/21, 서우 「연재 형태로 — 앞에 제목을 대괄호 안에」)** — `[Building wellbian · Part 1] Where the revenue comes from` · 형식 `[Building wellbian · Part N] 소제목` · 본문 포함 1465자.

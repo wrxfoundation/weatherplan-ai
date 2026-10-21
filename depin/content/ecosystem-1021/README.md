@@ -25,11 +25,15 @@
 - 「기여도 기반 리워드」는 그대로 두고, 출처 줄에 「보상은 정해진 개수이며 가치는 약속하지 않습니다」.
 - 링크 4개는 그림 안에서 칩 이름으로만(이미지라 클릭 불가) — 출처 줄에 paper.wellbianlabs.io/depin.
 
-## 링크드인 — 영문 (1406자 · 서우 개인 계정 · 10/21)
+## 링크드인 — 영문 (1465자 · 서우 개인 계정 · 10/21 · 연재 1편)
+
+연재 제목 형식: `[Building wellbian · Part N] 소제목` — 서우 「연재 형태로 할 거라 앞에 제목을 대괄호 안에」.
 
 이미지 순서: ① `ecosystem-en.jpg`(Rooms make data. Makers pay for it.) ② `../architecture-1021/architecture-en.jpg`(Every room is data. Every call is revenue.)
 
 ```
+[Building wellbian · Part 1] Where the revenue comes from
+
 The question I get most about wellbian isn't how it works. It's who pays.
 
 Short answer: the companies that need to know what indoor air actually does.
