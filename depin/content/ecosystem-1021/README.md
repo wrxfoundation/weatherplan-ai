@@ -8,6 +8,8 @@
 
 - **10/21 3차(서우 「빛나는 효과 없애고 · 테두리에 맞춰 · 영문판들만」)**: 모서리 반짝임 이미지 뺌 · 무지갯빛은 좌상단 테두리 선 1px 위에만. 영문만 다시 뽑음(`python3 build.py en`) — 국문은 반짝임 판 그대로.
 
+- **10/21 4차 — 수익화 초점(서우 「이것도 수익화에 초점」)**: 칩 「Whitepaper · Fig 0 · Business model」 · 제목 「Rooms make data. Makers pay for it.」 · 부제 「기여자 측정기 → 원시 측정값 → 허브가 비식별 메타데이터로 → 가전 제조사가 구매 또는 API 구독」 · 「Data fees」 레인을 굵은 흰 글자 + 「Revenue」 칩으로 강조 · 순환선 문구 「Rewards are spent back on appliance discounts and filter subscriptions, so the value stays inside the ecosystem.」 사업 모델 설명이지 계약 · 고객 주장이 아님(칩에 Business model). 영문만 다시 뽑음 — 국문 문구는 build.py 에 맞춰 두었고(「방은 데이터를 만들고, 제조사는 값을 냅니다.」) 렌더는 `python3 build.py ko`.
+
 ## 구성
 
 | 자리 | 내용 |

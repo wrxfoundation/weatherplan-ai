@@ -11,8 +11,8 @@ LOGO = LOGO.replace('width="416" height="151"', 'width="165" height="60"', 1)
 
 T = {
  "ko": dict(
-  lang="ko", kicker="백서 · Fig 0", h1="3주체 선순환 구조",
-  sub="본 생태계는 세 주체로 구성되며, 데이터의 수집 – 정제 – 활용이 선순환을 이룹니다.",
+  lang="ko", kicker="백서 · Fig 0 · 사업 모델", h1="방은 데이터를 만들고, 제조사는 값을 냅니다.",
+  sub="기여자의 측정기가 실내 공기 원시 측정값을 만들고, 허브가 이를 비식별 메타데이터로 가공해 가전 제조사에 판매하거나 구독형 API로 제공합니다.",
   tiles=[
    ("provider", "Data Provider", "데이터 기여자",
     ["가정 · 사무실 · 상업시설", "IAQ 측정 IoT 디바이스 설치", "기여도 기반 리워드 획득"],
@@ -27,15 +27,15 @@ T = {
     "정제된 데이터를 구매하거나 구독형 API로 받아 R&D · 마케팅에 활용합니다.",
     ["과금 → x402 데이터 상품"]),
   ],
-  lanes=[("원시 측정값", "기여 보상"), ("정제 메타데이터", "데이터 이용료")],
+  lanes=[("원시 측정값", "기여 보상", ""), ("정제 메타데이터", "데이터 이용료", "매출")],
   tech="기술 대응",
-  loop="보상은 가전 구매 할인 · 필터 구독 결제로 재유입되어 생태계 안에서 순환합니다.",
+  loop="보상은 가전 구매 할인 · 필터 구독 결제로 다시 쓰여, 가치가 생태계 안에 머뭅니다.",
   legend=("데이터 흐름", "가치 흐름"),
   foot="Fig 0. 3주체 선순환 구조 · wellbian 백서 · 기술 대응 상세 paper.wellbianlabs.io/depin · 보상은 정해진 개수이며 가치는 약속하지 않습니다.",
  ),
  "en": dict(
-  lang="en", kicker="Whitepaper · Fig 0", h1="Three parties. One loop.",
-  sub="The ecosystem has three parties. Data is collected, refined and put to use, and the value flows back around.",
+  lang="en", kicker="Whitepaper · Fig 0 · Business model", h1="Rooms make data. Makers pay for it.",
+  sub="Contributors’ sensors produce raw indoor-air readings. The hub turns them into de‑identified metadata that appliance makers buy outright or subscribe to by API.",
   tiles=[
    ("provider", "Data Provider", "Data contributors",
     ["Homes · offices · commercial spaces", "Indoor-air (IAQ) IoT sensors installed", "Rewards by contribution"],
@@ -50,9 +50,9 @@ T = {
     "Buy refined data or subscribe by API, for R&D and marketing.",
     ["Billing → x402 data products"]),
   ],
-  lanes=[("Raw readings", "Contribution rewards"), ("Refined metadata", "Data fees")],
+  lanes=[("Raw readings", "Contribution rewards", ""), ("Refined metadata", "Data fees", "Revenue")],
   tech="Built on",
-  loop="Rewards flow back as appliance discounts and filter subscriptions, circulating inside the ecosystem.",
+  loop="Rewards are spent back on appliance discounts and filter subscriptions, so the value stays inside the ecosystem.",
   legend=("Data flow", "Value flow"),
   foot="Fig 0. Three-party loop · wellbian whitepaper · Technical detail at paper.wellbianlabs.io/depin · Rewards are fixed quantities; no value is promised.",
  ),
@@ -102,6 +102,8 @@ h1{margin-top:16px;font-size:72px;font-weight:700;letter-spacing:-.025em;line-he
 .lane svg{width:180px;height:56px;display:block;overflow:visible}
 .lbl{font-size:15px;font-weight:600;letter-spacing:-.005em;word-break:keep-all;text-align:center;line-height:1.25}
 .lbl.data{color:var(--p1)} .lbl.value{color:var(--p2)}
+.lbl.value.money{color:var(--t1);font-size:17px;font-weight:700;line-height:1.1}
+.rev{margin-top:-2px;font-size:12px;font-weight:700;letter-spacing:.06em;color:var(--p2);border:1px solid rgba(205,184,255,.55);border-radius:6px;padding:3px 8px;background:rgba(205,184,255,.12);text-align:center;line-height:1.3}
 .loop{position:relative;width:100%;height:78px}
 .loop svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
 .loop .pill{position:absolute;left:50%;top:44px;transform:translate(-50%,-50%);white-space:nowrap;font-size:16px;color:var(--t2);background:#17143A;border:1px solid rgba(205,184,255,.42);border-radius:8px;padding:8px 16px}
@@ -141,8 +143,10 @@ def page(lang):
         cells.append(f'<section class="tile glass glint {cls}"><div class="eyebrow">{eyebrow}</div><h2>{title}</h2>'
                      f'<ul class="items">{lis}</ul><p class="n">{note}</p><div class="tech"><span class="tl">{t["tech"]}</span>{tags}</div></section>')
         if i < 2:
-            top, bottom = t["lanes"][i]
-            cells.append(f'<div class="lane"><span class="lbl data">{top}</span><svg viewBox="0 0 180 56">{ARROW_DATA}{ARROW_VALUE}</svg><span class="lbl value">{bottom}</span></div>')
+            top, bottom, rev = t["lanes"][i]
+            money = f'<span class="rev">{rev}</span>' if rev else '<span class="rev" style="visibility:hidden">·</span>'   # 두 레인 높이를 맞춰 화살표 높이 정렬
+            cells.append(f'<div class="lane"><span class="lbl data">{top}</span><svg viewBox="0 0 180 56">{ARROW_DATA}{ARROW_VALUE}</svg>'
+                         f'<span class="lbl value{" money" if rev else ""}">{bottom}</span>{money}</div>')
     solid, dashed = t["legend"]
     legend = (f'<div class="legend"><span><svg viewBox="0 0 40 4"><line x1="0" y1="2" x2="40" y2="2" stroke="#A39BFF" stroke-width="2"/></svg>{solid}</span>'
               f'<span><svg viewBox="0 0 40 4"><line x1="0" y1="2" x2="40" y2="2" stroke="#CDB8FF" stroke-width="2" stroke-dasharray="6 6"/></svg>{dashed}</span></div>')
