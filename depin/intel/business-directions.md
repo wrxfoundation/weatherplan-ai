@@ -4909,6 +4909,32 @@ Hivemapper 리셀러(https://blog.hivemapper.com/introducing-one-of-hivemappers-
 - 문안(채팅): 문의 메일 · 문의 양식 1,303자(회사 · 기기 · 케이웨더 · 원장 지문 · wellbian.io → CPS · 30% 배분 · 「수익 주장 없음」 → 질문 5: 요금제 · 셋업/거래 수수료 / 보상 프로그램 · RLUSD 제한 업종 / 자체 결제 연동 · 쿠폰 귀속 / 현지 통화 지급(한 · 싱 · 일) / APAC 지원) ·
   링크드인 짧은 판 268자(Partnerships · Strategic Accounts — APAC 직함에게 「브랜드 온보딩 담당자」 묻기). Kraken 사례는 문안에 넣지 않음.
 
+- **10/21 답(티켓 #898925, Solutions Hub) + 공식 요금 페이지 캡처** — 「지금 계정은 파트너(남의 상품을 홍보하는 쪽) 계정 · 브랜드는 요금 페이지에서 가입 · 데모 예약」 · 질문 1~3(요금 · 수수료 · 제한)은 요금제에 따라 다름 ·
+  파트너 지급은 **파트너 계정에 설정된 통화**로 · APAC 지원 있음.
+  공식 요금(impact.com/pricing, 서우 캡처): **Starter 월 30달러 + 매출 2.5% — Shopify · WooCommerce · BigCommerce · Adobe Commerce · Squarespace · Ecwid · Shoplazza · nopCommerce · Zoho 전용** ·
+  Essentials 월 500달러(이커머스 매출 연 200만 달러까지 · 파트너 지급 월 2,500달러까지 포함 · 「월 2,500달러 이상 처리」 문구 · 마켓플레이스 · 크리에이터 관리) · Pro 월 2,500달러(API 추적 · 맞춤 요율) · Enterprise 월 1만 달러.
+  **10/19 판단 정정 — 「시험은 Starter 로 충분」은 틀렸다**: 우리 판매 사이트는 자체 결제(Next.js)라 Starter 대상이 아니다.
+- **경제성(20% 요율 · 기기 450 / 650 RLUSD)**: 판매당 커미션 90 / 130달러 → 파트너 지급 월 2,500달러 = 월 28 / 19대. Essentials 고정 500달러를 판매당으로 나누면 월 5대 100달러 · 10대 50달러 · 20대 25달러 →
+  채널 비용(커미션 + 고정비) 월 5대 약 35~42% · 10대 약 28~31% · 20대 약 24~26%. **월 10대 이상이 보이기 전엔 Essentials 이르다.**
+- **impact 에서 팔려면 먼저 서야 할 것**: ① **해외 카드 결제** — impact 퍼블리셔 청중(매체 · 크리에이터)은 RLUSD 지갑으로 사지 않는다(vCommission · Hollie 도 같은 장벽) ② 주문 완료 페이지 추적 태그 · 반품 검증 기간 ③ 지급은 파트너 통화(법정화폐) — **impact 경유 커미션은 RLUSD 가 아니다**, 싱가포르 법인의 달러 지급 수단 ④ 업종 심사(블록체인 등록 · 토큰 보상 — 크리에이티브에서 뺀다는 전제로 정직하게 묻는다) ⑤ 영문 랜딩 · 덱.
+- **두 갈래(서우 · 대표 결정)**: A **Shopify 해외 스토어**(카드 결제) → Starter 월 30달러 + 2.5% · 단, 주문 ↔ 기기 NFT · 예약권 연결 개발 / B 지금 사이트에 해외 카드 결제 추가 → Essentials(월 500달러~).
+  그 전까지는 고정비 0 인 개인 어필리에이트(Hollie) · vCommission(성과형)으로 전환이 나는지 먼저 본다.
+- 답장(영문 1072자, Cole 에게 — 데모 전에 질문 5: 자체 결제 추적이 Essentials 로 되나 · 「최소 2,500달러」 뜻 · 업종 제한 · 지급 재원 · 통화 · 싱가포르 법인 · 계정 전환)
+```
+Hi Cole,
+
+Thank you, that helps. We'll set up a Brand account and book a demo. A few questions first, so we come to the demo with the right plan in mind:
+
+1. Our store runs on a custom checkout, not one of the Starter platforms. On Essentials, can we track sales with your JavaScript tag on the order-confirmation page, or is API-based tracking (Pro) required?
+2. Essentials lists "a minimum of $2,500/mo in processed partner payouts." Is that a monthly minimum we are billed even if commissions come in lower, or the payout volume included in the $500 fee?
+3. The product is an indoor air-quality monitor. Each unit is registered on a blockchain, and owners can receive token rewards for contributing data. We keep that program out of partner creatives. Are there category restrictions or extra reviews for a brand like this?
+4. How are partner payouts funded (USD invoice, card or prepaid balance), and can our Singapore entity, Wellbian Labs Pte. Ltd., be the paying party?
+5. Should we convert the existing partner account, or open a new Brand account?
+
+Thanks,
+Seowoo
+```
+
 ## 대표 전략 논의 — 자영업 공간 오퍼 (2026-10-19, 서우가 받은 음성 기록(AI 받아쓰기 · 오인식 많음) + 「이해를 못 해서 체크」)
 
 **복원(확신도 표시)** — 숙박업 카페 테스트(모아하)의 연장으로 읽힌다. 대표 지시 = 「일단 그렇게 해서 영업해 봐 · 자영업 카페를 다 찾아」(중).
