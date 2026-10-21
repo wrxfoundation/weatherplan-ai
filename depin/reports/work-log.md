@@ -2481,3 +2481,4 @@ Thanks Odelia — writing to you at that address today. Mine is support@wellbian
 - **링크드인 연재 제목(10/21, 서우 「연재 형태로 — 앞에 제목을 대괄호 안에」)** — `[Building wellbian · Part 1] Where the revenue comes from` · 형식 `[Building wellbian · Part N] 소제목` · 본문 포함 1465자.
 - **X 영문 — 연재 1편 짧은 판(10/21, 서우 「X용 짧은 버전도」)** — A 「Who pays?」(가중 277) 추천 · B 「Where the revenue comes from」(가중 248). `content/ecosystem-1021/README.md`.
 - **X 타래 답글 2개(10/21, 서우 「타래 댓글로 2개 더」)** — ② 왜 제조사가 사는가 + 질문(가중 267) · ③ 비식별 · k-익명 / request → 402 → RLUSD → 온체인 확인 → 데이터 · 8월 메인넷 검증 / 보상 = 개수(가중 271).
+- **연재 Part 2 — 구조 그래픽 링크드인 · X(10/21, 서우 「이것도 링크드인, X 스크립트 각각」)** — 「How a call becomes revenue」: x402 요청 → 402 → RLUSD → 원장 확인 → 데이터 · 에이전트는 계약 · 청구서를 못 다룸 · 공급 루프(라이선스 NFT · 하루 정산 · 24시간) · 운영 지갑 · 공개 기록. 링크드인 1482자 · X 원글 + 답글 2(가중 242/267/267). Part 1 은 Fig 0 한 장으로 분리. `content/architecture-1021/README.md`.

@@ -22,6 +22,54 @@
 | 스마트홈 「RLUSD → WLBN 스왑」 | 「RLUSD 로 결제」 | 결제 통화만 · 스왑은 AMM 카드에 |
 하단에 「보상은 정해진 개수이며 가치는 약속하지 않습니다」 고정.
 
+## 연재 Part 2 — 수익 구조판 게시 문안 (10/21, 서우 「이것도 링크드인 · X 스크립트 각각」)
+
+이미지: `architecture-en.jpg` 한 장(Part 1 은 `../ecosystem-1021/ecosystem-en.jpg` 한 장으로). 아래 「게시 문안」(Two loops, one ledger)은 구조 설명판 — 연재에는 이 Part 2 를 쓴다.
+
+### 링크드인 — 영문 (1482자)
+```
+[Building wellbian · Part 2] How a call becomes revenue
+
+Part 1 was who pays. This one is how the money actually moves.
+
+The headline on the chart is the whole model: every room is data, every call is revenue.
+
+Demand side. A manufacturer, an AI agent or a smart-home platform asks for data over x402. The request comes back with a 402, the buyer pays in RLUSD, a dollar stablecoin, the gateway checks the payment on the XRP Ledger, and the data is returned. No contract per call, no invoice, no one chasing payment. The first product is aggregates; cohorts and AI reports come next.
+
+That matters most for AI agents. They can pay, but they can't sign a contract or wait on an invoice. Per-call payment lets them buy one request at a time.
+
+Supply side. A sensor runs in a real room, and each device holds a license NFT. Once a day the oracle checks the license and the data quality, then settles a fixed quantity of rewards, claimable after 24 hours.
+
+One operations wallet sits between the two loops. It receives the payments and pays the rewards, and both settle on the same ledger, so every payment and every reward leaves a public record.
+
+So the revenue is per call and settled in dollars, and every new room adds verified data to sell.
+
+Two rules stay fixed. Data is de-identified before it's sold, and every aggregate has to pass a k-anonymity gate. Rewards are quantities, never a promised value.
+
+If you work on agent payments or data licensing, I'd like to compare notes.
+```
+
+### X — 원글 + 타래 답글 2 (가중 242 · 267 · 267)
+```
+[Building wellbian · Part 2] How a call becomes revenue
+
+A buyer asks for data, gets a 402, pays in RLUSD, the payment is checked on the XRP Ledger, and the data comes back. No contract, no invoice.
+
+Every room is data. Every call is revenue.
+```
+```
+The other loop: a sensor in a real room, one license NFT per device, and an oracle that checks the license and data quality, then settles a fixed quantity of rewards once a day, claimable after 24 hours.
+
+One operations wallet takes the payments and pays the rewards.
+```
+```
+Why per call? AI agents can pay, but they can't sign a contract or wait on an invoice. x402 lets them buy one request at a time, in RLUSD.
+
+Data is de-identified before it's sold, and aggregates pass a k-anonymity gate. Rewards are quantities, never a promised value.
+```
+
+근거 · 선: 하루 정산 · 24시간 뒤 인출 = 정본 §5 구현 현황 · 「first product is aggregates; cohorts and AI reports next」 = 그림 표기와 같음 · 제조사 계약 · 고객 0(「a manufacturer … asks」는 흐름 설명) · 소각 · AMM · 가격 · WLBN 이름 0(가격 얘기로 번지지 않게) · 원장 지문(머클루트) 0 · 보상 = 개수.
+
 ## 게시 문안 — 서우 개인 계정(내부자 발언 = playbook 그대로: 가격 · 수익 · 상장 0)
 
 ### 링크드인 — 영문 (1028자)

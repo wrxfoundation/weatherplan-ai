@@ -29,7 +29,7 @@
 
 연재 제목 형식: `[Building wellbian · Part N] 소제목` — 서우 「연재 형태로 할 거라 앞에 제목을 대괄호 안에」.
 
-이미지 순서: ① `ecosystem-en.jpg`(Rooms make data. Makers pay for it.) ② `../architecture-1021/architecture-en.jpg`(Every room is data. Every call is revenue.)
+이미지: `ecosystem-en.jpg` 한 장(10/21 — 구조 그래픽은 연재 Part 2 로 분리).
 
 ```
 [Building wellbian · Part 1] Where the revenue comes from
@@ -61,7 +61,7 @@ If you build appliances or run R&D on indoor environments, I'd like to hear what
 
 ## X — 영문 (서우 개인 계정 · 연재 1편 · 상한 280)
 
-이미지: `ecosystem-en.jpg` → `../architecture-1021/architecture-en.jpg`(2장).
+이미지: `ecosystem-en.jpg` 한 장(구조 그래픽은 Part 2).
 
 **A (추천 · 가중 277)**
 ```
