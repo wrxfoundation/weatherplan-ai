@@ -4304,4 +4304,5 @@ Thanks Winkle! Nice to meet you too. I spend my time building rather than tradin
 - A 추천(155자): `Heads-down over hallway chats: the builder's call. Swell will miss you, Eri, but I'd rather see Onami cross that finish line. Can't wait to see what ships.`
 - C 짧은 판(83자): `The best reason to miss Swell: shipping. Can't wait to see what Onami unveils, Eri.`
 게시 전: 인용도 원글로 센다 — 개인 계정에 오늘 원글 · 인용이 이미 있으면 내일로.
+**서우 수정(「그냥 프로젝트 기대된다 · 응원한다 정도로만」) → 최종(73자)**: `Rooting for you and the Onami team, Eri. Can't wait to see what you ship!`
 
