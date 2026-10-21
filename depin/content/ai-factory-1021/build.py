@@ -8,6 +8,7 @@ import pathlib, subprocess, os, sys
 
 HERE = pathlib.Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE.parent / "architecture-1021"))
+sys.dont_write_bytecode = True
 import build as A  # noqa: E402  — CSS · LOGO · ICON · ico · nw 재사용
 
 A.ICON.update({
