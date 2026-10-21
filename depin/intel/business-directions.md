@@ -5064,6 +5064,16 @@ listing@binance.com 도 같은 화면(이메일)에서 조회해 둔다.
 - 선택 줄 판(775자): 「톰슨로이터 제3자 콘텐츠 · 나스닥 데이터 경력이 우리가 다루는 질문(외부 데이터가 라이선스될 만큼 믿을 만해지는 조건)과 가깝다」 — 요청은 없지만 거래소 자리 선택 줄 0 규칙의 예외라 서우 판단.
 - 뉴욕(10/24~29) 미팅은 첫 인사에 넣지 않는다 — 답이 오면 그때. 데이터 전문가라 「eleven independent sources」 반박 여지(11개 중 8개 Open-Meteo 경유)가 특히 크다 → 「eleven weather feeds」 결정(서우 대기)을 이 사람부터 적용할지.
 
+## Jenny Johnson (Franklin Templeton · CEO · 미국 · 3촌, 1촌 요청 대기 중) — 인사 (2026-10-21, 서우 프로필 · 최근 글 캡처 3장)
+
+공개 프로필: 프랭클린템플턴 1988~ (Co-President → President · COO 2016.12 → CEO 2020.2~) · UC Davis 경제학 · 팔로워 3.2만.
+최근 글(10/21, 9시간 전): 미국 기업 사절단으로 우즈베키스탄 방문 · 자본시장 · 기업 지배구조 · IPO 얘기 · 마지막 줄 「We're not just investing in markets. We're helping build them.」
+판정: **기관(자산운용사) CEO — 인사만.** 자금 · 투자 · 토큰 · 상장 신호 0(자금은 우리가 먼저 열지 않는다 — playbook). 기관 상대 첫 메시지라 XRP SEOUL · 남산타워 0 · 체인 이름 0.
+sgBENJI(XRPL · RLUSD 나란히 상장, DBS MOU) · 리플은 꺼내지 않는다(리플 선 · 「가동 중」 미확인 · 상대 회사 사업을 우리 이야기에 끌어오는 모양).
+- 1촌 요청이 **이미 대기 중**(캡처 「대기중」) → 수락되면 아래 메시지. 철회 후 메모 붙여 재요청은 하지 않는다(재요청 제한 · 대기 중 요청이 사라짐). InMail 로 먼저 보내지 않는다(CEO 상대 콜드 InMail = 영업으로 읽힘).
+- 메시지 = Lynn 기본값 + 선택 줄(그의 최근 글 마지막 문장 인용 → 「a market is only as good as the record underneath it」) · 746자. 선택 줄을 빼면 기본값 561자.
+- 「eleven independent sources」(11개 중 8개 Open-Meteo 경유) 결정 대기 — 기관 상대라 반박 여지가 크다. 서우가 「eleven weather feeds」로 정하면 이 메시지부터 바꾼다.
+
 ## MEXC 상장팀 — 텔레그램 그룹 인사 (2026-10-19 20:38, 서우 캡처)
 
 - **상황**: 「Wellbian (WLBN) <> MEXC」 그룹(3인)에 MEXC 상장팀 리스팅 매니저가 들어와 인사 · 공식 채널 목록(텔레그램 · X · 메일 · 디스코드)과 확인 페이지(mexc.com/official-verify) 안내 ·
