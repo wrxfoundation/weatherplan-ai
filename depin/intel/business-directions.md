@@ -5127,6 +5127,44 @@ Hi Herbert, I run partnerships at wellbian, built on KWeather's 30 years of weat
 안녕하세요. 케이웨더 디지털사업본부에서 wellbian 파트너십을 맡고 있는 박서우입니다. 케이웨더 30년 날씨 데이터 위에, 가전 브랜드와 상관없이 실제 가정의 실내공기를 재는 인증 측정기 네트워크를 만들고 있습니다. 실내공기를 다루시는 분께 인사드리고 싶어 연결을 요청드립니다.
 ```
 
+## Hollie Chan (Growth & Partnerships · 크리에이터 · 일본 · 2촌, 1촌 요청 대기 중) — 어필리에이트 제안 (2026-10-21, 서우 프로필 · 경력 · 글 캡처 3장 + 「쉬는 동안 우리 어필리에이트 판매 어떤지 제안해 보자」)
+
+공개 프로필: APAC 핀테크 · 디지털자산 성장 · 파트너십 5년+ · **중국어 유튜브 채널(구독 120만+) 파트너 겸 진행자**(2024-01~, 일본 재택) · BitMEX APAC Retail Growth(VIP · 2022-09~2026-07, 홍콩) ·
+Crypto.com Affiliate Executive(퍼블리셔 제휴 — Forbes · Investopedia · CNET · NerdWallet 등) · OKX(어필리에이트 온보딩 · P2P). 10/1 글: BitMEX 3년 회고 — **어필리에이트 프로그램을 0 → 200+ 파트너로**, 타이베이 커뮤니티 행사 600+ · BitMEX 거래소 운영 종료.
+판정: **맞는 상대다 — 개인 어필리에이트(중국어권 청중) + 「프로그램을 만들어 본 사람」 둘 다.** Disha 건처럼 청중 0 이 아니다. 다만 채널은 「파트너 겸 진행자」라 채널 주인의 동의가 따로 필요할 수 있다.
+
+- 경로: 1촌 요청이 대기 중 → 「메시지」 버튼(InMail · 오픈 프로필)으로 지금 보내도 된다 — 프리랜서에게 일 제안은 콜드 InMail 이 정상 경로. 공통 1촌 이름은 쓰지 않는다.
+- 조건은 10/19 서우 결정 그대로: 순매출 최대 30% 를 구매자 할인 · 커미션으로 자유 배분(예 10% + 20%) · 판매량 구간 추가 요율(미정 — 숫자 · 시점 0) · RLUSD 지급(WLBN 0) · 파트너별 전용 결제 링크 ·
+  글로벌 주문 · 나라별 배송 순차 · 해외 결제 RLUSD.
+- 홍보 요건(Disha 판 5 → 압축): 기기 · 데이터로만 · 수익 · 회수 기간 · 토큰 가격 0 · 모든 글 광고 표시 · 첫 2주 공동 검토 · **중국 본토 대상 캠페인 금지**(본토 가상자산 금지 — 서우 확인).
+- 「중국어권 프로그램을 같이 만들자」는 한 줄 열어 둠 — 고용 · 오버라이드 요율 같은 약속 0. 진행되면 보상 구조는 서우 · 대표 결정.
+
+**서우가 보내기 전 확인할 것**: ① 「결제 전에 그 나라 배송 상태를 보여 준다」 — 문안에 약속으로 넣었다. 판매 사이트가 실제로 그렇게 하는지(10/19 Disha 지역 B 위험 그대로) ② 대만 · 홍콩 · 일본 · 싱가포르 · 말레이시아 배송 상태 ③ 본토 제외 문장 유지 여부 ④ 영문 덱 · 영문 랜딩(vCommission 건과 같은 미완료 항목).
+
+메시지(영문 1570자, InMail 본문)
+```
+Hi Hollie,
+
+I read your note on BitMEX. Building an affiliate programme from zero to 200+ partners is real work, and congratulations on the run.
+
+I run partnerships at wellbian. Together with our device partner KWeather (30 years of weather data in Korea, 4,000+ enterprise clients), we make a certified indoor air-quality sensor for homes. Each device is registered on the XRP Ledger, and its readings feed a data network that manufacturers and AI agents can buy from, call by call.
+
+While you're taking a breather, would you be open to selling it as an affiliate, to your audience or through your partner network?
+
+How it works today:
+- Up to 30% of net sales per order, split however you like between a buyer discount and your commission (for example 10% off and 20% to you). Higher tiers for volume, details to follow.
+- Commission paid in RLUSD after the order settles.
+- A dedicated checkout link per partner, so attribution is clean.
+- Orders are open worldwide and shipping opens country by country; buyers see their country's shipping status before they pay. Overseas checkout is in RLUSD.
+
+The rules every partner works under: talk about the device and the data, not earnings. No income, payback or token-price claims, an ad label on every post, no campaigns aimed at mainland China, and we review the first two weeks of content together.
+
+If it sounds interesting, I'll send the deck and set up your link. And if you'd rather help us build the Chinese-speaking side of the programme, the way you did at BitMEX, I'd be glad to talk about that too.
+
+Best,
+Logan
+```
+
 ## MEXC 상장팀 — 텔레그램 그룹 인사 (2026-10-19 20:38, 서우 캡처)
 
 - **상황**: 「Wellbian (WLBN) <> MEXC」 그룹(3인)에 MEXC 상장팀 리스팅 매니저가 들어와 인사 · 공식 채널 목록(텔레그램 · X · 메일 · 디스코드)과 확인 페이지(mexc.com/official-verify) 안내 ·
