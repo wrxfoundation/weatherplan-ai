@@ -1,14 +1,14 @@
-# Korea Rising — verified K-pop snapshot (2026-10-20)
+# Korea Rising — verified K-pop snapshot (2026-10-21)
 
 Every line is **cross-verified** (≥2 independent sources agree on the canonical name) and carries its source + Skill Score. Full data + Schema.org JSON-LD: <https://aiagentlabs.co.kr/> · via KoreaAPI (MCP).
 
 ## 🎬 Latest official releases (YouTube)
 - **BoA** — You still our No.1 BoA
-- **QWER** — 🫢
-- **Xdinary Heroes** — Obsessed with #FLAREU #강우진❤️‍🔥
-- **NCT Dream** — ˚*⊹ 내년에도 불러주신다면 달려오도록 하겠습니다 ⊹*˚ | 2026 대학 축제 Behind
+- **PLAVE** — Plave - PLAYER 4 LIFEEE
+- **QWER** — HOLD TO GO FASTER! 💚💨 ​⁠
+- **Xdinary Heroes** — POV. 😈 during band practice
+- **NCT Dream** — GO DREAM 🫱 #NCTDREAM
 - **AKMU** — 2026 AKMU CONCERT TOUR [소문의 낙원 (Paradise of Rumors)] HIGHLIGHT
-- **BOYNEXTDOOR** — Guinea Pig With Me 🐹ㅣLEEHAN’s Day
 
 ## 🎤 Verified roster (640 acts)
 - **2NE1**: I Am the Best
