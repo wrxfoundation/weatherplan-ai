@@ -5073,6 +5073,22 @@ sgBENJI(XRPL · RLUSD 나란히 상장, DBS MOU) · 리플은 꺼내지 않는�
 - 1촌 요청이 **이미 대기 중**(캡처 「대기중」) → 수락되면 아래 메시지. 철회 후 메모 붙여 재요청은 하지 않는다(재요청 제한 · 대기 중 요청이 사라짐). InMail 로 먼저 보내지 않는다(CEO 상대 콜드 InMail = 영업으로 읽힘).
 - 메시지 = Lynn 기본값 + 선택 줄(그의 최근 글 마지막 문장 인용 → 「a market is only as good as the record underneath it」) · 746자. 선택 줄을 빼면 기본값 561자.
 - 「eleven independent sources」(11개 중 8개 Open-Meteo 경유) 결정 대기 — 기관 상대라 반박 여지가 크다. 서우가 「eleven weather feeds」로 정하면 이 메시지부터 바꾼다.
+- **2차(10/21, 서우 「리플 관련 투자 포트폴리오도 있으니 XRP SEOUL · 남산타워 · Swell 가는 것 · 글로벌 기상관측 포부도」)** — 기관 첫 메시지 규칙(XRP SEOUL · 남산 · 체인 이름 0)의 **예외로 서우 결정**: 프랭클린은 XRP 현물 ETF(Franklin XRP ETF · XRPZ, NYSE Arca, 2025-11-24 출시 — 프랭클린 보도자료)와 XRPL 위 sgBENJI(DBS MOU)를 가진 회사라 XRP 생태계 이력이 공통 기반이 된다. 넣은 것: XRP Ledger 이름 · 케이웨더 XRP SEOUL 2026 키노트(날씨 데이터 경제) · 남산타워 점등 한 구절 · Swell 뉴욕 10/27~29(The Shed · Hudson Yards, 2차 보도 기준) 참석 + 「디지털자산팀 누가 오면 인사」 · 「글로벌 관측망」 포부(사람이 사는 곳에서, 사는 사람이 잰다). 여전히 0: 그쪽 상품(XRPZ · sgBENJI) 이름 · 리플과의 관계 · 토큰 · 투자 · 자금. {n}자.
+  - 수락이 Swell(10/29) 뒤면 Swell 문장을 「I was in New York for Swell last week.」로 바꾸고 「say hello」 문장은 뺀다.
+
+  ```
+  Jenny — thanks for connecting.
+
+  I run partnerships at wellbian. KWeather has measured weather in South Korea for thirty years and supplies data to 4,000+ enterprise clients; wellbian is the network built on top of that, on the XRP Ledger.
+
+  We work on two layers: certified air-quality sensors that people run in their own rooms, and city-level weather across 91 countries and 172 cities, each value a consensus across eleven independent sources. Every input is fingerprinted to the ledger before it goes anywhere.
+
+  Your Uzbekistan post ended with "We're not just investing in markets. We're helping build them." We think about data the same way: a market is only as good as the record underneath it. Our longer ambition is a global observation network, with weather and air measured where people actually live, by the people who live there.
+
+  In early October, KWeather gave a keynote on the weather-data economy at XRP SEOUL 2026, and N Seoul Tower lit up for it. I'll be at Swell in New York, October 27–29. If anyone from Franklin's digital assets team is there, I'd be glad to say hello.
+
+  Good to be connected.
+  ```
 
 ## MEXC 상장팀 — 텔레그램 그룹 인사 (2026-10-19 20:38, 서우 캡처)
 

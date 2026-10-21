@@ -2483,3 +2483,4 @@ Thanks Odelia — writing to you at that address today. Mine is support@wellbian
 - **X 타래 답글 2개(10/21, 서우 「타래 댓글로 2개 더」)** — ② 왜 제조사가 사는가 + 질문(가중 267) · ③ 비식별 · k-익명 / request → 402 → RLUSD → 온체인 확인 → 데이터 · 8월 메인넷 검증 / 보상 = 개수(가중 271).
 - **연재 Part 2 — 구조 그래픽 링크드인 · X(10/21, 서우 「이것도 링크드인, X 스크립트 각각」)** — 「How a call becomes revenue」: x402 요청 → 402 → RLUSD → 원장 확인 → 데이터 · 에이전트는 계약 · 청구서를 못 다룸 · 공급 루프(라이선스 NFT · 하루 정산 · 24시간) · 운영 지갑 · 공개 기록. 링크드인 1482자 · X 원글 + 답글 2(가중 242/267/267). Part 1 은 Fig 0 한 장으로 분리. `content/architecture-1021/README.md`.
 - **Jenny Johnson(프랭클린템플턴 CEO) 인사(10/21, 서우 「템플턴 아주머니에게 인사하자」)** — 1촌 요청 대기 중 → 수락 뒤 메시지: Lynn 기본값 + 그의 우즈베키스탄 글 마지막 문장 인용 한 줄(746자). 투자 · 토큰 · 체인 · 리플 · sgBENJI 0 · InMail 선발송 0. `intel/business-directions.md`.
+- **Jenny Johnson 인사 2차(10/21, 서우 「리플 관련 포트폴리오 있으니 XRP SEOUL · 남산타워 · Swell · 글로벌 기상관측 포부도」)** — XRPZ(2025-11-24) · sgBENJI 근거로 기관 첫 메시지 예외 → playbook 「써도 되는 자리」에 한 줄. 메시지 1113자 · Swell 뒤 수락 시 교체 문장.
