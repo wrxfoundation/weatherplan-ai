@@ -119,6 +119,41 @@ Hi Ayo, your posts on x402 volume on the XRP Ledger are why I'm writing. I run p
 ```
 「AI agents can buy」 · 「available per call」 = 8월 메인넷 x402 검증 근거(고객 주장 아님). Swell 뒤엔 Swell 문장 삭제.
 
+## 추천 3차 — 리플 밖 (10/21, 서우 「리플 외에 인사도 필요해」)
+
+이미 진행 중인 리플 밖 라인은 겹치지 않게 뺐다: 예측시장(SIG Nick Volbi 10/29 대면 · Kalshi Prime Jeff Bandman · Limitless · 크립토닷컴) · Water.org Gary White · Nasdaq Garrick · 프랭클린 Jenny · Mastercard Paul Wolf · 유럽 DePIN 유통사.
+**인사 기본값**: XRP 쪽이 아닌 상대는 Lynn 기본값 그대로(체인 이름 · XRP SEOUL · 남산 0). 예외는 x402 쪽(Erik) — 결제 방식이 화제라 XRP Ledger 이름은 기술 사실로 넣는다.
+IAQ(실내공기) 상대에게는 「원장 지문」 문장을 넣지 않는다 — IAQ 배치 머클루트 기록 상태 확인 전(구조 그래픽 README 주의와 같은 이유).
+
+| 레인 | 인물 | 지금 자리(확인) | 왜 |
+|---|---|---|---|
+| x402 · 에이전트 결제 | **Erik Reppel** | Coinbase Developer Platform Head of Engineering · **x402 창시자**(x402 Foundation — 2026-04 Linux Foundation 산하, Coinbase · Cloudflare · Stripe 창립 — 2차 보도) | 우리 데이터 판매 방식의 원조. 리플 밖에서 x402 를 보는 가장 큰 창 |
+| 실내공기 기준 · 건물 | **Rachel Hodgdon**(옛 성 Gutter) | IWBI(WELL 빌딩 기준) President & CEO · 2026-06 Indoor Air 2026(싱가포르) 기조 | Fig 0 의 「사무실 · 상업시설」 — 건물 쪽 실내공기 기준을 쥔 곳. 데이터 신뢰의 바깥 기준 |
+| DePIN 동료 | **Leonard Dorlöchter** | peaq 공동창업(DePIN · 머신 RWA L1) · EoT Labs | 「DePIN 이 실제 매출을 보이기 시작했다」 발언 — 우리 연재(수익 구조)와 같은 결. **체인 · 통합 언급 0**(Flare 와 같은 선) |
+| 데이터 수요자(Fig 0) | 가전 · 공조 회사 **실내공기 R&D · 제품 책임자**(직함으로 찾기) | 해외: Daikin · Carrier · Trane · Blueair · Dyson 의 「Indoor Air Quality」 · 「Air Purifier R&D」 · 「HVAC Product Management」 | Fig 0 의 돈 내는 쪽 그 자체. **국내(코웨이 · LG · 삼성 · 위닉스 · 쿠쿠)는 케이웨더 B2B 영업 라인과 겹치는지 먼저 확인 — 케이웨더 경유** |
+| (낮음) 실내공기 기기 | Ivar Kroghrud | Airthings CEO(2026-01~) | 유럽 실내공기 측정 기업 — 경쟁이자 데이터 이웃. 인사만, 급하지 않음 |
+
+이름 확인 안 됨: RESET Air(건물 IAQ 모니터 인증) — 설립자 · 현 대표 웹 확인 실패 → 링크드인에서 회사 페이지로.
+투자자(DePIN 펀드)는 넣지 않았다 — 자금은 우리가 먼저 열지 않는다(playbook) · 날씨 DePIN 포트폴리오 VC 는 이해충돌로 막힘(10/18 레이시 교훈).
+
+### 1촌 요청 메모
+Erik(261자)
+```
+Hi Erik, x402 is how AI agents can buy our data: indoor-air and weather readings, one call at a time, paid in RLUSD on the XRP Ledger. I run partnerships at wellbian, built on KWeather's 30 years of weather data. Thank you for giving 402 a job. Glad to connect.
+```
+Rachel(279자)
+```
+Hi Rachel, I run partnerships at wellbian, built on KWeather's 30 years of weather data. We put certified indoor-air sensors in real rooms and turn the readings into data that building and product teams can use. Your Indoor Air 2026 keynote is close to our work. Glad to connect.
+```
+Leonard(298자)
+```
+Hi Leonard, your point that DePIN is starting to show real revenue is the one we build around. I run partnerships at wellbian: certified indoor-air sensors in real rooms, with the data available per call to manufacturers and AI agents. Built on KWeather's 30 years of weather data. Glad to connect.
+```
+가전 · 공조 R&D — 직함으로 찾은 사람용(269자) · 이름은 저장소에 적지 않는다(링크드인 검색 목록)
+```
+Hi {Name}, I run partnerships at wellbian, built on KWeather's 30 years of weather data. Our certified sensors measure indoor air in real homes (PM, CO₂, TVOC, temperature, humidity), and we're building de-identified datasets for product and R&D teams. Glad to connect.
+```
+
 ## 출처
 
 - Adam Traidman — VivoPower 인물 소개 https://vivopower.com/our-people/adam-traidman · Pomp Podcast #283 · MEXC 뉴스(Swell 주간 XRP 밋업 NYC 발언)
@@ -135,3 +170,7 @@ Hi Ayo, your posts on x402 volume on the XRP Ledger are why I'm writing. I run p
 - Jack McDonald — Blockworks · CoinDesk Consensus 연사 소개
 - Ayo Akinyele — teamz.co.jp 연사 소개 · cryptonews.net(2026-08, Senior Director)
 - XRP SEOUL 2026 연사 — DigitalToday(Markus Infanger · Tats Kohrogi · Sabrina)
+- Erik Reppel — CoinDesk Consensus · ETHDenver 연사 소개 · Solana Talking Tokens(2026-05)
+- Rachel Hodgdon — 3BL Media(2026-06 Indoor Air 2026 기조) · EDF 인터뷰(2025-07)
+- Leonard Dorlöchter — CoinDesk 필자 소개 · Cointelegraph · MEXC 뉴스(「real revenue」)
+- Ivar Kroghrud — Airthings 뉴스룸(2025-12 선임 · 2026-01 취임)
