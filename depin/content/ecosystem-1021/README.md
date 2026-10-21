@@ -59,6 +59,30 @@ If you build appliances or run R&D on indoor environments, I'd like to hear what
 
 근거 · 선: 「per-call rail verified on XRPL mainnet in August」 = 정본 §5(2026-08-13 메인넷 검증 5건 중 AI 에이전트 x402 자율 결제). 제조사 계약 · 고객 · MOU 0 — 「the model」로만. 원장 지문(머클루트 기록) 문장 0 — 기록 상태 확인 전. 보상 → 가전 할인 · 필터 구독은 「designed to」(현재 기능인지 미확인). 가격 · 상장 · WLBN 언급 0 · 보상 = 개수, 가치 비보장.
 
+## X — 영문 (서우 개인 계정 · 연재 1편 · 상한 280)
+
+이미지: `ecosystem-en.jpg` → `../architecture-1021/architecture-en.jpg`(2장).
+
+**A (추천 · 가중 277)**
+```
+[Building wellbian · Part 1] Who pays?
+
+The model: appliance makers who want to see how real rooms behave. They buy de-identified indoor-air data or subscribe by API. AI agents pay per call in RLUSD on the XRP Ledger, no invoices.
+
+Every new room adds data. Every call is paid.
+```
+
+**B (링크드인과 같은 소제목 · 가중 248)**
+```
+[Building wellbian · Part 1] Where the revenue comes from
+
+Sensors in real rooms → de-identified air data → appliance makers buy it or subscribe by API. Agents pay per call in RLUSD, settled on XRPL.
+
+Every new room adds data. Every call is paid.
+```
+
+「The model:」 · 화살표 흐름 = 사업 모델 설명(계약 · 고객 주장 아님). 보상 재유입 · 원장 지문 · 가격 · WLBN 0.
+
 ## 확인 필요(서우)
 
 - **「보상 → 가전 구매 할인 · 필터 구독 결제 재유입」은 지금 되는 기능인가, 계획인가.** 백서 원문 그대로 넣었다. 아직 계획이면 SNS 게시 전에 「설계」 · 「예정」 표기(미공표 · 미확정 기능을 현재형으로 말하지 않는다 — playbook).
