@@ -5285,6 +5285,28 @@ Part of why I reached out: KWeather recently launched AI forecasts built on NVID
 Good to be connected.
 ```
 
+## Eva Wasielewski (NVIDIA · VP Enterprise Cloud Partner Marketing · 시애틀 · 3촌) — 1촌 요청 메모 · 수락 뒤 인사 (2026-10-21, 서우 프로필 · 경력 캡처 2장)
+
+공개 프로필: NVIDIA 17년 10개월 — VP 엔터프라이즈 클라우드 파트너 마케팅(2025-04~, 시애틀) · **APAC 기업 · 엔터프라이즈 마케팅 시니어 디렉터(2015-10~, 타이완 — PR · 소셜 · 디지털 · 행사 · 브랜딩 · 다국적 파트너)** · 기업 마케팅 디렉터(2009~2015 타이베이) · 전 Intel 타이완 APAC OEM 마케팅 · RealNetworks · 시애틀대.
+판정: **인사 — APAC 마케팅을 오래 쥔 사람이라 「한국 사례」 각도.** Randa 건과 같은 근거(9/18 케이웨더 Earth-2 AI 예보 10종) · 같은 선(「built on NVIDIA Earth-2」 · 파트너 · 협업 · 사례 소개 제안 0).
+두 사람 다 NVIDIA 라 문장이 겹치지 않게 Eva 판은 「모델이 우주에서 못 보는 것 = 실제 방의 값」으로 바꿨다.
+- 메모(178자 · 무료 계정 200자 안)
+```
+Hi Eva, I run partnerships at wellbian in Korea. Our device partner KWeather runs AI weather forecasts on NVIDIA Earth-2, and our sensors add real-room air data. Glad to connect.
+```
+- 수락 뒤(980자)
+```
+Eva — thanks for connecting.
+
+I run partnerships at wellbian. KWeather has measured weather in South Korea for thirty years and supplies data to 4,000+ enterprise clients; wellbian is the network built on top of that.
+
+We work on two layers: certified air-quality sensors that people run in their own rooms, and city-level weather across 91 countries and 172 cities, where each value is a consensus across eleven independent sources rather than a single reading. Every input is fingerprinted to a public ledger before it goes anywhere.
+
+Given your years leading NVIDIA's APAC marketing, a Korean data point you may enjoy: KWeather recently launched AI forecasts built on NVIDIA Earth-2, with FourCastNet3 and Atlas for global outlooks out to 60 days, CorrDiff for kilometre-scale grids over Korea and StormScope for radar nowcasts. wellbian adds what the models can't see from space: readings from real rooms, which AI agents can pay for one call at a time.
+
+Good to be connected.
+```
+
 ## MEXC 상장팀 — 텔레그램 그룹 인사 (2026-10-19 20:38, 서우 캡처)
 
 - **상황**: 「Wellbian (WLBN) <> MEXC」 그룹(3인)에 MEXC 상장팀 리스팅 매니저가 들어와 인사 · 공식 채널 목록(텔레그램 · X · 메일 · 디스코드)과 확인 페이지(mexc.com/official-verify) 안내 ·
