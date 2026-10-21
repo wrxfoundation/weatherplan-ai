@@ -93,6 +93,32 @@ Good to be connected.
 ```
 Swell 뒤(10/29~) 수락이면 마지막 Swell 문장 삭제.
 
+## 추천 2차 — 문창훈 목록 밖 (10/21, 서우 「그 외에 다른 사람도 추천」)
+
+기준: ① 우리 레인(x402 호출당 결제 · RLUSD · XRPL 개발 생태계)에 바로 닿는가 ② **10/3 XRP SEOUL 2026 연사 명단을 같이 쓴 사람**(케이웨더 = 「XRPL 위 DePIN 기기」 연사 — 2차 보도 기준 명단, ecosystem-log 10/3 항목) ③ Swell(10/27~29)에서 대면으로 올릴 수 있는가.
+이미 아는 사람(Christina · Tats · Sabrina — 리플 에코시스템 팀, Odelia Torteman — XRPL Commons, Takafumi Shimoyama — SBI Ripple Asia, Kleber Niza — 리플)은 뺐다. 오히려 **이 셋에게 아래 리플 쪽 사람 소개를 부탁하는 게 가장 따뜻한 길**이다.
+
+| 순위 | 인물 | 지금 자리(확인) | 왜 | 길 |
+|---|---|---|---|---|
+| **1** | **J. Ayo Akinyele** | 리플 Senior Director of Engineering(2026-08 보도) · 전 RippleX Head of Engineering · 전 Bolt Labs 공동창업 | XRPL x402 · 에이전트 결제 숫자(1천만 건+ — 그가 X 에 올린 회사 발표치)를 직접 올리는 사람 = **우리 x402 레인 정중앙** · XRP SEOUL 같은 명단 | 아래 Ayo 메모 · 또는 Tats/Christina 소개 |
+| 2 | Markus Infanger | RippleX SVP(XRPL 제품 · 파트너 네트워크 · 개발자 생태계) · XRP SEOUL 연사 | XRPL 위 실물 기기 사례로 기억될 자리 | 같은 명단 메모 |
+| 3 | t54 Labs(창업자 이름 미확인 — 링크드인 회사 페이지에서) | XRPL 첫 x402 촉진자(2026-02) · XRP · RLUSD 에이전트 결제 · XRPL Foundation 과 XRPL AI Hub · 시드 500만 달러 · XRP SEOUL 명단 | 우리 게이트웨이가 쓰는 결제 방식의 촉진자 — business-directions 「t54 = 잠재 정산 파트너 · 데이터 공고 가동 후 접촉」 | **게이트(데이터 공고 가동) 확인 뒤** · 인사는 지금 해도 됨 |
+| 4 | Jack McDonald | 리플 SVP Stablecoins(RLUSD) · Standard Custody & Trust CEO | 우리 결제 통화 RLUSD 책임자 | 1촌 요청만 · 리플 선 그대로(관계 · 협업 표현 0) |
+| 5 | Vijit Katta(Tria) | 앞 C2 → **XRP SEOUL 같은 명단이라 위로** | 보상을 받은 뒤 쓰는 쪽 | 같은 명단 메모 |
+
+### 9/10 Swell 사전 컨택 목록 — 보류 중인 것 다시 보기
+business-directions 「Swell 2026 연사 사전 컨택」: David Bchiri(XRPL Commons President · NYC 해커톤 10/24~25) · Thomas Hussenet(XRPL Commons Technical Partner) · Brett Mollin(XRPLF Executive Director) · Mai Furukawa(XRPL Japan) — **「XRPL 빌더 파이프라인 등록 결과가 나온 뒤 웜하게」로 보류**. 등록이 끝났으면 Swell 전 지금이 열 때 — 서우 확인.
+
+### 1촌 요청 메모 — XRP SEOUL 같은 명단(280자)
+```
+Hi {Name}, we shared the XRP SEOUL 2026 lineup, where KWeather spoke on DePIN devices on the XRP Ledger. I run partnerships at wellbian: home air sensors plus city-level weather, available per call over x402, paid in RLUSD. I'll be at Swell in New York next week. Glad to connect.
+```
+### 1촌 요청 메모 — Ayo(270자)
+```
+Hi Ayo, your posts on x402 volume on the XRP Ledger are why I'm writing. I run partnerships at wellbian (KWeather's 30 years of weather data): AI agents can buy our indoor-air and weather readings per call in RLUSD. We were both on the XRP SEOUL lineup. Glad to connect.
+```
+「AI agents can buy」 · 「available per call」 = 8월 메인넷 x402 검증 근거(고객 주장 아님). Swell 뒤엔 Swell 문장 삭제.
+
 ## 출처
 
 - Adam Traidman — VivoPower 인물 소개 https://vivopower.com/our-people/adam-traidman · Pomp Podcast #283 · MEXC 뉴스(Swell 주간 XRP 밋업 NYC 발언)
@@ -105,3 +131,7 @@ Swell 뒤(10/29~) 수락이면 마지막 Swell 문장 삭제.
 - Doppler Finance — The Block 보도자료 · Hex Trust · Cointelegraph · Barchart
 - CME — The Block · CryptoSlate(2025-05) · Markets Media(2025-12) · CME 보도자료 2022-10(Vicioso 임명) · CME 「Overview of Weather Markets」(HDD · CDD)
 - Stefan Thomas — interledger.org Summit 2025 연사 소개
+- XRPL x402 · t54 — The Block 2026-06-10(XRPL AI 툴킷) · KuCoin 뉴스(1천만 · 1,340만 건, 아킨옐레 X 발표 인용) · CB Insights(t54) · boerse-express(리플 x402 Foundation 가입)
+- Jack McDonald — Blockworks · CoinDesk Consensus 연사 소개
+- Ayo Akinyele — teamz.co.jp 연사 소개 · cryptonews.net(2026-08, Senior Director)
+- XRP SEOUL 2026 연사 — DigitalToday(Markus Infanger · Tats Kohrogi · Sabrina)
