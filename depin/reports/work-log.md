@@ -2509,3 +2509,4 @@ Thanks Odelia — writing to you at that address today. Mine is support@wellbian
 - **Lindsay Marano(Jupiter Growth · 시드니 · 새 1촌, 전 BlackRock) 인사(10/21, 서우 캡처 3장)** — 다른 체인(솔라나) 거래 자리 → 인사만 · 솔라나 글 · 블랙록 이력 인용 0 · Jack · Jingyi 판 그대로(546자). `intel/business-directions.md` Lindsay 절.
 - **Laura Hillgren(Nasdaq 기업 이벤트 총괄 · 런던 · 새 1촌) 인사(10/21, 서우 캡처 3장)** — 거래소 운영사 · 행사 자리 → 인사만(544자, 선택 줄 · 연사 · 뉴욕 0). 나스닥 둘째(Garrick 과 함께, 둘 다 인사만). 덤: Jenny 2차 절의 글자 수 자리표시 「{n}자」 → 1,113자로 채움. `intel/business-directions.md` Laura 절.
 - **Eri 「Swell 불참 · Onami 시험 중」 인용(10/21, 서우 개인 계정 작성 화면)** — 칭찬 · 기대 한 줄 A(155자) · C(83자). 우리 Swell 참석 · Earn · 토큰 · 기능 이름 · 날씨 「전망」 말장난 0. 인용 = 원글 1/일. `intel/x-activity-log.md` 끝 절. 서우 수정 → 응원 · 기대 한 줄(73자).
+- **Ying Fei Tan(Binance 유럽 전략 · 운영 리드 · 새 1촌) 인사(10/21, 서우 캡처 3장)** — Jingyi 와 같은 선(인사만 · 선택 줄 0 · 상장 · 토큰 0), 547자. 같은 날 바이낸스 둘 → 원하면 하루 간격. `intel/business-directions.md` Ying Fei 절.

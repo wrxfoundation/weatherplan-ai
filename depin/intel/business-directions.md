@@ -5379,6 +5379,22 @@ We work on two layers: air-quality sensors that people run in their own rooms, a
 Good to be connected.
 ```
 
+## Ying Fei Tan (Binance · Strategy & Operation Lead, Europe · 새 1촌) — 인사 (2026-10-21, 서우 프로필 · 경력 · 학력 캡처 3장)
+
+공개 프로필: 바이낸스 유럽 전략 · 운영 리드(2022-01~) · 전 Lazada 3년 7개월(CEO · COO 전략 PM → 말레이시아 제품 · 기술 총괄 → 혁신 · 전략 프로젝트 총괄 → 커머셜 · 셀러 전략 총괄, 쿠알라룸푸르) · Citi 3년 11개월(매니지먼트 어소시에이트 → 기업금융 RM) · 임페리얼 칼리지 항공공학 석사(MEng). 공통 1촌 11명(이름 쓰지 않음).
+판정: **Jingyi(같은 날)와 같은 선 — 바이낸스 · 레인 없음 · 상한 초과 → 보낸다면 인사만.** 선택 줄 0(공학 · 센서 연구 이력이 걸리지만 거래소 자리라 꺼내지 않는다) · 유럽 · MiCA · 상장 · 토큰 0.
+같은 날 바이낸스 두 사람(Jingyi · Ying Fei)에게 같은 문안 — 팀 · 지역이 달라 겹칠 일은 적지만, 원하면 하루 간격.
+메시지(547자)
+```
+Ying Fei — thanks for connecting.
+
+I run partnerships at wellbian. KWeather has measured weather in South Korea for thirty years and supplies data to 4,000+ enterprise clients; wellbian is the network built on top of that.
+
+We work on two layers: air-quality sensors that people run in their own rooms, and city-level weather across 91 countries and 172 cities, where each value is a consensus across eleven weather feeds rather than a single reading. Every input is fingerprinted to a public ledger before it goes anywhere.
+
+Good to be connected.
+```
+
 ## MEXC 상장팀 — 텔레그램 그룹 인사 (2026-10-19 20:38, 서우 캡처)
 
 - **상황**: 「Wellbian (WLBN) <> MEXC」 그룹(3인)에 MEXC 상장팀 리스팅 매니저가 들어와 인사 · 공식 채널 목록(텔레그램 · X · 메일 · 디스코드)과 확인 페이지(mexc.com/official-verify) 안내 ·
