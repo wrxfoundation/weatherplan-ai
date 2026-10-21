@@ -47,6 +47,52 @@ Hi {Name}, Moon at Time Leverage suggested I reach out. I run partnerships at we
 Swell 이 끝나면(10/29 뒤) 「I'll be at Swell in New York next week」 → 「We met around Swell in New York」(만났을 때만) 또는 문장 삭제.
 「11 independent sources」는 결정 대기(11개 중 8개 Open-Meteo 경유) — 데이터 쪽 사람(A3 · C4)에게는 특히 반박 여지.
 
+## 실행 1 — Stefan Thomas · Giovanni Vicioso (10/21, 서우 「Stefan Thomas 이 사람부터 · Giovanni Vicioso 여기도」)
+
+공통: 데이터에 밝은 상대라 「eleven independent sources」 대신 **「a consensus across multiple weather feeds」**(11개 중 8개 Open-Meteo 경유 — 반박 여지 제거). 서우가 표현을 정하면 기본값도 같이 바꾼다.
+
+### Stefan Thomas — 각도: 기계 간 소액 결제(Interledger · Web Monetization) ↔ 우리 x402 호출당 결제
+직함은 Interledger Foundation 이사회 의장(Summit 2025 연사 소개 기준) — 메시지에 직함은 안 쓴다. 「AI agents can pay」 = 8월 메인넷 x402 자율 결제 검증 근거, 고객 주장 아님.
+
+1촌 요청 메모(291자)
+```
+Hi Stefan, I run partnerships at wellbian, built on KWeather's 30 years of weather data. AI agents can pay for our indoor-air and weather data one call at a time, settled on the XRP Ledger. Interledger and Web Monetization asked how machines pay each other long before x402. Glad to connect.
+```
+수락 뒤 메시지(845자) — 질문 한 줄로 닫음(요청 · 미팅 0)
+```
+Stefan — thanks for connecting.
+
+I run partnerships at wellbian. KWeather has measured weather in South Korea for thirty years and supplies data to 4,000+ enterprise clients; wellbian is the network built on top of that.
+
+We work on two layers: certified air-quality sensors that people run in their own rooms, and city-level weather across 91 countries and 172 cities, each value a consensus across multiple weather feeds. Every input is fingerprinted to a public ledger before it goes anywhere.
+
+The part you'd recognize: buyers, including AI agents, pay per call. A request gets a 402, the payment settles in RLUSD on the XRP Ledger, and the data comes back. Interledger and Web Monetization were working on that problem, small payments between machines, years before x402 had a name. I'd be curious how you see it now.
+
+Good to be connected.
+```
+
+### Giovanni Vicioso — 각도: CME 에 XRP 선물과 날씨 선물(HDD · CDD, 1999 CFTC 승인 · 미국 13개 · 유럽 4개 도시)이 함께 있다
+직함은 CME 글로벌 크립토 상품 총괄(2022-10 임명 · 2026 변경 발표 없음). 날씨 선물은 그의 담당이 아니다 — 「참조값(정산 숫자)」이라는 공통 질문으로만 잇고, CME 데이터에 대한 평가 · 제안 0.
+정산 데이터 상대라 XRP SEOUL · 남산 0(10/12 규칙), XRP 선물 기관이라 XRP Ledger · Swell 은 씀(10/21 예외).
+
+1촌 요청 메모(279자)
+```
+Hi Giovanni, I run partnerships at wellbian, built on KWeather's 30 years of weather data: city-level weather where each value is a consensus across multiple feeds, fingerprinted on the XRP Ledger. CME lists both XRP futures and weather futures, which is why I wanted to connect.
+```
+수락 뒤 메시지(871자)
+```
+Giovanni — thanks for connecting.
+
+I run partnerships at wellbian. KWeather has measured weather in South Korea for thirty years and supplies data to 4,000+ enterprise clients; wellbian is the network built on top of that.
+
+We work on two layers: certified air-quality sensors that people run in their own rooms, and city-level weather across 91 countries and 172 cities, each value a consensus across multiple weather feeds. Every input is fingerprinted to a public ledger before it goes anywhere.
+
+CME is one of the rare venues where XRP and weather both trade: XRP futures on your desk, and HDD and CDD contracts that settle on temperature indices. Both depend on a reference number everyone accepts, and that is the layer we work on: values anyone can check after the fact. I'll be in New York for Swell, October 27–29, in case our paths cross.
+
+Good to be connected.
+```
+Swell 뒤(10/29~) 수락이면 마지막 Swell 문장 삭제.
+
 ## 출처
 
 - Adam Traidman — VivoPower 인물 소개 https://vivopower.com/our-people/adam-traidman · Pomp Podcast #283 · MEXC 뉴스(Swell 주간 XRP 밋업 NYC 발언)
@@ -57,4 +103,5 @@ Swell 이 끝나면(10/29 뒤) 「I'll be at Swell in New York next week」 → 
 - Steven McClurg — SEC EDGAR Canary XRP ETF 10-Q(2026)
 - Tria — Chainwire 2026-09-30 보도자료
 - Doppler Finance — The Block 보도자료 · Hex Trust · Cointelegraph · Barchart
-- CME — The Block · CryptoSlate(2025-05) · Markets Media(2025-12)
+- CME — The Block · CryptoSlate(2025-05) · Markets Media(2025-12) · CME 보도자료 2022-10(Vicioso 임명) · CME 「Overview of Weather Markets」(HDD · CDD)
+- Stefan Thomas — interledger.org Summit 2025 연사 소개
