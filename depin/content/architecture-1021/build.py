@@ -1,7 +1,7 @@
 """wellbian 구조 그래픽 v3 (2026-10-21) — 보라 포인트 · 플랫 · 엣지 있는 글라스모피즘 + 세부 설명.
 
 v1(카드 · 화살표 그물) → v2(애플 스타일, 서우 「AI 티」) → v3(서우 「세부 설명 자그맣게 · 보라색 포인트 · 플랫하고 엣지 있는 글라스모피즘」).
-Usage: python3 build.py [en|ko …] → architecture-{en,ko}.html · .png(1920×1080 @2x). PNG → JPEG 변환은 README.
+Usage: python3 build.py [en|ko|en-9x16|ko-9x16 …] → architecture-<인자>.html · .png(가로 1920×1080 · 세로 1080×1920, @2x). PNG → JPEG 변환은 README.
 """
 import pathlib, re, subprocess, os, sys
 
@@ -175,11 +175,88 @@ def page(lang):
 <p class="foot">{t['foot']}</p>
 </div></body></html>"""
 
+
+# 세로 9:16(1080×1920) — 10/21 서우 「9:16 세로형으로, 모바일에서 잘 보이게」. 같은 문구(T)를 세로로 쌓는다:
+# 머리 → 공급 → 수요 → 보상 · 결제 → 운영 지갑 → 원장(2×2). 글자는 가로판의 약 1.4배.
+VCSS = """
+html,body{width:1080px;height:1920px}
+body{padding:0 44px;justify-content:center}
+.bgfx .g1{width:900px;height:900px;left:-300px;top:-380px}
+.bgfx .g2{width:900px;height:900px;right:-320px;bottom:-360px}
+.bgfx .g3{width:700px;height:600px;left:-160px;top:30%}
+.bgfx .g4{width:700px;height:600px;right:-200px;top:52%}
+.logo{height:52px}
+.logo svg{width:143px;height:52px}
+h1{margin-top:16px;font-size:74px;line-height:1.04;text-align:center;letter-spacing:-.03em}
+.sub{margin-top:14px;max-width:960px;font-size:26px;line-height:1.4}
+.vtile{width:100%;margin-top:24px;border-radius:18px;padding:24px 32px 26px}
+.vtile + .vtile{margin-top:14px}
+.vtile.supply{--acc:var(--p1)} .vtile.demand{--acc:var(--p2)}
+.vtile .eyebrow{font-size:16px;padding:4px 10px}
+.vtile h2{margin-top:10px;font-size:38px}
+.vsteps{margin-top:18px;display:flex;flex-direction:column}
+.vstep{position:relative;display:grid;grid-template-columns:72px 1fr;column-gap:22px;align-items:start;padding-bottom:16px}
+.vstep:last-child{padding-bottom:0}
+.vstep .ico{width:72px;height:72px;margin:0;border-radius:15px}
+.vstep .ico svg{width:38px;height:38px}
+.vstep:not(:last-child)::after{content:"";position:absolute;left:35px;top:80px;bottom:6px;width:2px;background:linear-gradient(180deg,rgba(163,155,255,.35),var(--acc))}
+.vstep:not(:last-child)::before{content:"";position:absolute;left:30px;bottom:7px;width:10px;height:10px;border-right:2px solid var(--acc);border-bottom:2px solid var(--acc);transform:rotate(45deg)}
+.vstep b{display:block;margin-top:2px;font-size:31px;font-weight:600;letter-spacing:-.01em;line-height:1.18;word-break:keep-all}
+.vstep .d{display:block;margin-top:6px;font-size:24.5px;line-height:1.36;color:var(--t2);word-break:keep-all}
+.vstep .n{display:block;margin-top:4px;font-size:20.5px;line-height:1.36;color:var(--t3);word-break:keep-all}
+.join{height:28px;margin-top:0}
+.join div{font-size:19px}
+.join i{height:28px}
+.ops{height:auto;min-height:74px;padding:12px 20px;font-size:23px;gap:14px;border-radius:14px}
+.ops b{font-size:25px}
+.ops .ico-s{width:46px;height:46px;border-radius:11px}
+.ops .ico-s svg{width:26px;height:26px}
+.join2{grid-template-columns:repeat(2,1fr);height:18px;padding:0 120px}
+.join2 i{height:18px}
+.vledger{width:100%;border-radius:18px;padding:22px 30px 24px;background:var(--glass2)}
+.vledger .hd{display:flex;align-items:baseline;gap:18px;flex-wrap:wrap}
+.vledger h3{font-size:46px;font-weight:700;letter-spacing:-.02em}
+.vledger p{font-size:24px;color:var(--t2)}
+.vfeats{margin-top:16px;display:grid;grid-template-columns:1fr 1fr;gap:18px 22px}
+.vfeats .feat{grid-template-columns:58px 1fr}
+.vfeats .feat .ico{width:58px;height:58px}
+.vfeats .feat .ico svg{width:31px;height:31px}
+.vfeats .feat b{display:inline;font-size:26px;margin-top:0}
+.vfeats .feat .tag{font-size:15px;margin:0 0 0 10px;vertical-align:4px}
+.vfeats .feat .n{font-size:21px;margin-top:6px;line-height:1.35}
+.foot{margin-top:14px;max-width:960px;text-align:center;font-size:18px;line-height:1.45;text-wrap:balance}
+"""
+
+def page_v(lang):
+    t = T[lang]
+    tiles, joins = [], []
+    for cls, eyebrow, title, steps, flow in t["tiles"]:
+        rows = "".join(f'<div class="vstep">{ico(STEP_ICONS[cls][i])}<div><b>{nw(b)}</b><span class="d">{nw(d)}</span><span class="n">{nw(n.replace(chr(10), chr(32)))}</span></div></div>' for i, (b, d, n) in enumerate(steps))
+        tiles.append(f'<section class="vtile glass glint {cls}"><div class="eyebrow">{eyebrow}</div><h2>{title}</h2><div class="vsteps">{rows}</div></section>')
+        joins.append(f'<div class="{cls[0]}"><i></i>{flow}</div>')
+    feats = "".join(f'<div class="feat">{ico(FEAT_ICONS[i])}<div><b>{a}</b><span class="tag">{b}</span><span class="n">{c}</span></div></div>' for i, (a, b, c) in enumerate(t["feats"]))
+    ops_name, ops_desc = t["ops"]
+    h1 = t["h1"].replace(". ", ".<br>", 1)
+    return f"""<!doctype html><html lang="{t['lang']}"><head><meta charset="utf-8"><title>wellbian — {t['h1']}</title><style>{CSS}{VCSS}</style></head><body>
+<div class="bgfx"><div class="g1"></div><div class="g2"></div><div class="g3"></div><div class="g4"></div><div class="grid"></div></div>
+<div class="wrap">
+<div class="logo">{LOGO}</div>
+<h1>{h1}</h1><p class="sub">{t['sub']}</p>
+{"".join(tiles)}
+<div class="join">{"".join(joins)}</div>
+<div class="ops glint">{ico("vault", "ico-s")}<b>{ops_name}</b><span class="nw">{ops_desc}</span></div>
+<div class="join2"><i></i><i></i></div>
+<div class="vledger glass glint"><div class="hd"><h3>{t['ledger']}</h3><p>{t['ledger_sub']}</p></div><div class="vfeats">{feats}</div></div>
+<p class="foot">{t['foot']}</p>
+</div></body></html>"""
+
 if __name__ == "__main__":
     env = dict(os.environ)
     env["NODE_PATH"] = subprocess.run(["npm", "root", "-g"], capture_output=True, text=True).stdout.strip()
-    for lang in (sys.argv[1:] or ("en", "ko")):
-        html = HERE / f"architecture-{lang}.html"
-        html.write_text(page(lang), encoding="utf-8")
-        subprocess.run(["node", str(HERE / "shot.js"), str(html), str(HERE / f"architecture-{lang}.png"), "1920"], check=True, env=env)
-        print("built", lang)
+    for arg in (sys.argv[1:] or ("en", "ko")):
+        lang, _, fmt = arg.partition("-")          # en · ko · en-9x16 · ko-9x16
+        name = f"architecture-{arg}"
+        html = HERE / f"{name}.html"
+        html.write_text(page_v(lang) if fmt == "9x16" else page(lang), encoding="utf-8")
+        subprocess.run(["node", str(HERE / "shot.js"), str(html), str(HERE / f"{name}.png"), "1080" if fmt == "9x16" else "1920"], check=True, env=env)
+        print("built", arg)
