@@ -5395,6 +5395,27 @@ We work on two layers: air-quality sensors that people run in their own rooms, a
 Good to be connected.
 ```
 
+## Wy-Lin Tan (Elliptic · Regional Lead, Crypto Compliance & Investigations · 싱가포르 · 1촌) — 인사 (2026-10-21, 서우 프로필 · 경력 · 2024-11 글 캡처)
+
+공개 프로필: 엘립틱(블록체인 분석 · 컴플라이언스) 지역 리드(2026-08~) · 전 Feedzai 엔터프라이즈 AE — 사기 · 금융범죄 컴플라이언스(2022-09~2026-07) · AI Rudder 영업 개발 · Marina Bay Sands · Fairmont 영업. 헤드라인 「Crypto Compliance | Fraud & Financial Crime Prevention | AML | AI & ML」.
+글(2024-11 — 2년 전): 싱가포르 핀테크 페스티벌 규제 무대 3분 피치 · Global Anti-Scam Alliance 아시아 서밋 · Women in Payments ASEAN.
+판정: **거래소가 아니다(분석 · 컴플라이언스 벤더) → Lynn 기본값 + 새 직장 축하 첫 줄, 선택 줄은 서우 판단.** 요청 · 미팅 · 제안 0.
+- 2년 전 글은 인용하지 않는다(오래된 글을 끌어오면 어색). 새 직장 3개월 → 축하 한 줄(Lindsay · Garrick 류, 요청 아님).
+- 선택 줄 = 「사기 · 금융범죄 쪽에서 왔으니 우리가 가장 신경 쓰는 질문(기록이 나중에도 믿을 만한가)을 잘 알 것」 — 원장 지문과 닿는 한 줄, 요청 0.
+- 넣지 않은 것: 10/20 「바이낸스 상장」 사칭 건(첫 인사에 사건 · 조사 의뢰처럼 읽힘 — 제보는 audit@ 경로) · 토큰 · 지갑 · 거래소 · AML 서비스 관심(엘립틱 영업 리드로 등록됨).
+- A 기본값 + 축하(590자) · B 선택 줄 포함(734자, 추천).
+```
+Wy-Lin — thanks for connecting, and congratulations on the move to Elliptic.
+
+I run partnerships at wellbian. KWeather has measured weather in South Korea for thirty years and supplies data to 4,000+ enterprise clients; wellbian is the network built on top of that.
+
+We work on two layers: air-quality sensors that people run in their own rooms, and city-level weather across 91 countries and 172 cities, where each value is a consensus across eleven weather feeds rather than a single reading. Every input is fingerprinted to a public ledger before it goes anywhere.
+
+Coming from fraud and financial-crime work, you'll know the question we care about most: whether a record can still be trusted after the fact.
+
+Good to be connected.
+```
+
 ## MEXC 상장팀 — 텔레그램 그룹 인사 (2026-10-19 20:38, 서우 캡처)
 
 - **상황**: 「Wellbian (WLBN) <> MEXC」 그룹(3인)에 MEXC 상장팀 리스팅 매니저가 들어와 인사 · 공식 채널 목록(텔레그램 · X · 메일 · 디스코드)과 확인 페이지(mexc.com/official-verify) 안내 ·

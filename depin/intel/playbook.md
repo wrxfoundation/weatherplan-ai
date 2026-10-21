@@ -698,6 +698,7 @@ Good to be connected.
 ### 1촌 요청 메모판 (링크드인 상한 300자 — 250자)
 
 > ⚠ 10/21 확인 — 서우 계정에서 「프리미엄으로 무제한 필기」 안내가 뜬다 = **무료 계정 메모는 200자 · 월 횟수 제한**. 메모는 200자 안으로 쓴다(300자판은 프리미엄일 때만).
+> 10/21 저녁 — 서우 링크드인 캡처에서 이름 옆 **금색 in 배지(프리미엄 표시)** 확인 → 프리미엄이 유지되는 동안은 300자판도 쓸 수 있다(구독 종료 시 200자로 돌아감).
 ```
 Hi {Name}, I run partnerships at wellbian. KWeather has measured weather in Korea for 30 years; wellbian builds on it: home air sensors plus city-level weather from 11 independent sources, every input fingerprinted to a public ledger. Glad to connect.
 ```
