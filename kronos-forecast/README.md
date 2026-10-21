@@ -1,0 +1,120 @@
+# Kronos 캔들 예측 도구 (연구·학습용)
+
+[Kronos](https://github.com/shiyu-coder/Kronos)(금융 캔들 전용 오픈소스 파운데이션 모델, [arXiv:2508.02739](https://arxiv.org/abs/2508.02739))로
+원하는 티커의 다음 캔들을 **여러 개의 가능한 경로**로 예측합니다. 결과는 차트(PNG)와 짧은 영어 요약으로 나옵니다.
+테스트 모드는 과거 구간을 가린 채 예측하고 실제 결과와 비교해서, 얼마나 자주 맞았는지 있는 그대로 보여줍니다.
+
+> ⚠️ 연구·학습용입니다. 매매를 하지 않고, 브로커·거래소 계정에 연결하지 않으며, API 키도 쓰지 않습니다.
+> 출력은 투자 조언이 아닙니다.
+
+## 설치 (내 컴퓨터, 한 번만)
+
+필요한 것: **Python 3.10–3.12**, git.
+Kronos가 `pandas==2.2.2`를 고정하는데, 이 버전에는 Python 3.13용 설치 파일이 없어서 3.12 이하가 필요합니다.
+
+**macOS / Linux**
+
+```bash
+cd kronos-forecast
+./setup.sh
+```
+
+`setup.sh`가 하는 일은 다음과 같습니다.
+
+1. OS, Python, GPU(NVIDIA / Apple Silicon)를 확인합니다.
+2. 공식 Kronos 저장소를 `Kronos/`에 클론합니다. 테스트한 커밋으로 고정합니다.
+3. `.venv` 가상환경을 만듭니다.
+4. 공식 README대로 `pip install -r Kronos/requirements.txt`를 실행합니다.
+5. 데이터용 `yfinance`와 `ccxt`를 설치합니다.
+
+GPU가 없는 Linux에서는 공식 PyTorch CPU 빌드를 먼저 설치해서 약 3GB의 CUDA 파일을 받지 않습니다.
+
+**Windows (PowerShell)**
+
+```powershell
+cd kronos-forecast
+git clone https://github.com/shiyu-coder/Kronos.git Kronos
+git -C Kronos checkout 67b630e67f6a18c9e9be918d9b4337c960db1e9a
+py -3.12 -m venv .venv
+.venv\Scripts\python -m pip install -r Kronos\requirements.txt
+.venv\Scripts\python -m pip install yfinance ccxt
+```
+
+Windows에서 PyPI 기본 torch는 CPU 전용입니다. NVIDIA GPU를 쓰려면 위 설치 전에
+[pytorch.org](https://pytorch.org/get-started/locally/)에서 안내하는 CUDA용 torch 설치 명령을 먼저 실행하세요.
+
+처음 실행할 때 Hugging Face에서 모델을 내려받습니다(Kronos-small 약 100MB).
+
+## 치트시트
+
+macOS/Linux 기준입니다. Windows에서는 `.venv/bin/python` 대신 `.venv\Scripts\python`을 쓰세요.
+
+| 하고 싶은 것 | 명령 |
+|---|---|
+| 금(XAU/USD) 예측 | `.venv/bin/python forecast.py XAU` |
+| 새 티커 예측 | `.venv/bin/python forecast.py NVDA` (`TSLA`, `^GSPC` S&P 500, `005930.KS` 삼성전자, `GLD` 등) |
+| 크립토 페어 | `.venv/bin/python forecast.py BTC/USDT` (`ETH/USDT`, `BTC/KRW` 업비트 등) |
+| 테스트 모드 (과거 20개 구간 채점) | 위 명령 끝에 `--test` |
+| 시간 프레임 바꾸기 | `--interval 1h` (기본 `1d`. 주식은 `5m 15m 30m 1h 1d 1wk 1mo`, 크립토는 `4h`도 가능) |
+| 예측 길이 바꾸기 | `--horizon 10` (기본 20캔들) |
+| 모델 크기 바꾸기 | `--model mini` (빠름, 4.1M) / `small` (기본, 24.7M) / `base` (느림, 102.3M) |
+| 경로 개수 | `--samples 50` (기본 20) |
+| 크립토 거래소 지정 | `--exchange upbit` (기본 `auto`: binance → okx → coinbase → kraken → bybit → upbit → bithumb 순서) |
+| CPU 강제 | `--device cpu` (기본 auto: NVIDIA → Apple Silicon → CPU) |
+| 차트 자동 열기 끄기 | `--no-open` |
+| 전체 옵션 | `.venv/bin/python forecast.py --help` |
+
+예를 들어 비트코인 1시간봉 다음 24개를 빠른 모델로 예측하고 테스트까지 하려면:
+
+```bash
+.venv/bin/python forecast.py BTC/USDT --interval 1h --horizon 24 --model mini --test
+```
+
+## 결과물 (`charts/` 폴더)
+
+- `<티커>_<봉>_<모델>_forecast_<마지막캔들날짜>.png`: 과거 캔들, 샘플 경로 20개, 중간 50%·80% 범위, 중앙값.
+- 테스트 모드:
+  - `..._test_latest_*.png`: 가장 최근 구간의 예측과 실제 비교.
+  - `..._test_windows_*.png`: 20개 구간 전체.
+  - `..._test_windows_*.csv`: 구간별 수치.
+- 터미널에는 짧은 영어 요약이 나오고, 첫 번째 차트가 자동으로 열립니다.
+
+## 테스트 모드가 재는 것
+
+마지막 N개(`--horizon`) 캔들을 가리고 예측한 뒤 실제와 비교합니다. 이것을 서로 겹치지 않는 과거 구간 20개 이상에서 반복합니다.
+
+- **방향 적중률**: N캔들 뒤 중앙값 경로가 오를지 내릴지 맞혔는지. 시도가 20번뿐이라 95% 신뢰구간을 함께 보여주고,
+  "항상 상승"으로 찍는 경우와 동전 던지기(50%)와 비교합니다.
+- **평균 오차**: 중앙값 경로의 평균 절대 % 오차를, "변화 없음"(마지막 종가 유지) 예측의 오차와 비교합니다.
+- **80% 범위 적중률**: 실제 종가가 80% 범위 안에 들어간 비율입니다. 잘 보정된 모델이라면 약 80%가 나와야 합니다.
+
+## 금(XAU) 메모
+
+- Yahoo Finance에는 현물 XAU/USD 시세가 없습니다(`XAUUSD=X` → "Quote not found").
+  그래서 `XAU`, `XAUUSD`, `XAU/USD`는 **COMEX 금 선물 `GC=F`(USD/트로이온스)**로 연결됩니다.
+  현물과의 차이는 작지만, 근월물이 바뀔 때(롤오버) 가격이 조금 튈 수 있습니다. 은도 같은 방식입니다(`XAG` → `SI=F`).
+- `^XAU`는 금 가격이 아니라 **금광주 지수**(PHLX Gold/Silver Sector)이니 주의하세요.
+- 대안: `GLD`(금 ETF), `PAXG/USDT`·`XAUT/USDT`(금 1온스 토큰, 24시간 거래).
+
+## 소요 시간 (참고: 4코어 CPU, GPU 없음)
+
+| | Kronos-mini | Kronos-small |
+|---|---|---|
+| 예측 (경로 20개 × 20캔들) | 약 20초 | 약 70초 |
+| 테스트 (20구간 × 경로 20개 × 20캔들) | 약 6분 | 약 25분 |
+
+NVIDIA GPU나 Apple Silicon에서는 훨씬 빠릅니다. 느리면 `--model mini`나 `--samples 10`을 쓰세요.
+
+## 구현 메모
+
+- 공식 README의 사용법(`KronosTokenizer` / `Kronos.from_pretrained` → `KronosPredictor`)을 그대로 따릅니다.
+  모델 이름은 README의 Model Zoo 표에서 가져왔고, 실제로 내려받아 확인했습니다.
+- `.eval()` 추가: Hugging Face의 safetensors 로더는 모델을 학습 모드(드롭아웃이 켜진 상태)로 남겨 둡니다.
+  Kronos 저자들의 추론 코드(`finetune/qlib_test.py`, `tests/`)와 똑같이 `.eval()`을 붙였습니다.
+  이 설정으로 공식 회귀 테스트(context 512)를 재현해 통과했습니다(최대 상대오차 6e-7, 허용치 1e-5).
+- 경로 분포: `predict(sample_count=k)`는 k개 샘플의 **평균 한 줄**만 돌려줍니다.
+  그래서 같은 입력을 `predict_batch`에 N번 넣어(`sample_count=1`) 독립된 경로 N개를 얻습니다.
+- 입력 길이는 모델의 컨텍스트 한도(small/base 512, mini 2048) 안으로 맞춥니다.
+  아직 만들어지는 중인 마지막 캔들(장중 일봉 등)은 빼고 예측합니다.
+- 미래 날짜는 최근 8주 동안 실제로 거래가 있었던 요일과 시간대를 따라 만듭니다. 휴장일은 반영하지 않습니다.
+- 같은 명령은 항상 같은 결과를 냅니다(`--seed 42`).
