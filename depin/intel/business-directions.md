@@ -5224,6 +5224,26 @@ Logan
   Logan
   ```
 
+## Maggie LIU (Fireblocks · Sales Director — 스테이블코인 결제 · Web3 · 홍콩 · 새 1촌) — 인사 (2026-10-21, 서우 프로필 · 경력 캡처 3장)
+
+공개 프로필: Fireblocks 영업 이사(전통 금융기관의 블록체인 · 스테이블코인 전환) · 전 Swift · 전 Thunes · PMI-PMP/ACP · 베이징대 · 전 Platinum Analytics(외환 · 금 거래 솔루션, 베이징 기술개발 이사) ·
+**전 Schlumberger(SLB) 5년 2개월 — 완결 현장 엔지니어(나이지리아, 2010~2012 · 영구 다운홀 게이지 · 유량 제어 밸브 설치 · 저류층 모니터링)** → 상용화 · 프로젝트 엔지니어(베이징 · 프랑스 몽펠리에).
+판정: **인사만 — 결제 인프라 영업 자리.** Fireblocks 는 기관 수탁 · 결제 인프라 회사라 그쪽이 우리에게 팔 수 있는 자리(9/27 「파트너 신뢰 레이어」 명단과 같은 부류) — 우리가 먼저 수탁 · 결제 사업 이야기를 열지 않는다.
+- 메시지 = Lynn 기본값 + 선택 줄(현장 센서 → 스테이블코인 결제로 온 그의 경력 = 우리 경로와 같다 · 「dollar stablecoin」 — x402 RLUSD 호출당 결제는 8월 메인넷 검증) · 체인 이름 · RLUSD · Fireblocks 지원 여부 · XRP SEOUL 0. 786자.
+- 「eleven independent sources」는 결정 대기 그대로(데이터 쪽 상대가 아니라 기본값 유지 — 서우가 「multiple weather feeds」로 정하면 바꿈).
+
+```
+Maggie — thanks for connecting.
+
+I run partnerships at wellbian. KWeather has measured weather in South Korea for thirty years and supplies data to 4,000+ enterprise clients; wellbian is the network built on top of that.
+
+We work on two layers: certified air-quality sensors that people run in their own rooms, and city-level weather across 91 countries and 172 cities, where each value is a consensus across eleven independent sources rather than a single reading. Every input is fingerprinted to a public ledger before it goes anywhere.
+
+I noticed you started out installing downhole gauges at Schlumberger before moving into stablecoin payments. That's roughly our path too: sensors in real places at one end, data paid for in a dollar stablecoin at the other.
+
+Good to be connected.
+```
+
 ## MEXC 상장팀 — 텔레그램 그룹 인사 (2026-10-19 20:38, 서우 캡처)
 
 - **상황**: 「Wellbian (WLBN) <> MEXC」 그룹(3인)에 MEXC 상장팀 리스팅 매니저가 들어와 인사 · 공식 채널 목록(텔레그램 · X · 메일 · 디스코드)과 확인 페이지(mexc.com/official-verify) 안내 ·
