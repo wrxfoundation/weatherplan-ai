@@ -77,6 +77,11 @@ XCSS = """
 .eng .ico-s svg{width:23px;height:23px}
 .band{margin-top:22px}
 .band .ico-s{color:var(--p1)}
+.ill{position:absolute;top:20px;right:22px;width:140px;height:140px;color:var(--acc);pointer-events:none}
+.ft .hd{min-height:118px;padding-right:150px}
+.ill svg{width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 8px rgba(163,155,255,.35))}
+.ill .l2{stroke:rgba(226,224,255,.55)}
+.ill .dot{stroke:currentColor;stroke-width:2.2;stroke-dasharray:0 5;opacity:.85}
 .note{margin-top:16px;font-size:16px;color:var(--t2)}
 .note b{color:var(--t1);font-weight:600}
 .foot{margin-top:10px}
@@ -122,9 +127,40 @@ h1{margin-top:14px;font-size:76px;line-height:1.04;text-align:center;letter-spac
 .band b{font-size:24px}
 .band .ico-s{width:46px;height:46px;border-radius:11px}
 .band .ico-s svg{width:26px;height:26px}
+.ill{top:16px;right:24px;width:150px;height:150px}
+.ft .hd{min-height:0;padding-right:170px}
+.ft.hub .hd{min-height:130px}
 .note{margin-top:14px;font-size:21px;text-align:center;max-width:960px;text-wrap:balance}
 .foot{margin-top:10px;max-width:960px;text-align:center;font-size:18px;line-height:1.45;text-wrap:balance}
 """
+
+
+# 큰 라인 일러스트(120 그리드) — 타일 우상단. 10/21 서우 「큰 테이블 우측 상단에 큰 svg 일러스트 라인 아이콘」.
+ILLUS = {
+ "data": (
+  '<ellipse cx="84" cy="38" rx="22" ry="7"/><path d="M62 38v52c0 3.9 9.8 7 22 7s22-3.1 22-7V38"/>'
+  '<path d="M62 55.5c0 3.9 9.8 7 22 7s22-3.1 22-7"/><path d="M62 73c0 3.9 9.8 7 22 7s22-3.1 22-7"/>'
+  '<g class="l2"><circle cx="15" cy="20" r="5"/><path d="M15 10.5v2.5M5.5 20H8M8.3 13.3l1.8 1.8M21.7 13.3l-1.8 1.8"/>'
+  '<path d="M11 36h15a5.5 5.5 0 0 0 0-11 7.5 7.5 0 0 0-14-1.5A6 6 0 0 0 11 36z"/>'
+  '<path d="M15 50c-3.2 4.3-5 7.2-5 9.3a5 5 0 0 0 10 0c0-2.1-1.8-5-5-9.3z"/><path d="M27 56c-1.9 2.6-3 4.3-3 5.6a3 3 0 0 0 6 0c0-1.3-1.1-3-3-5.6z"/>'
+  '<rect x="10" y="78" width="13" height="21" rx="3"/><circle cx="16.5" cy="92.5" r="2.6"/><path d="M27 84c1.5 1.3 1.5 3.7 0 5M30.5 81.5c3 2.7 3 7.3 0 10"/></g>'
+  '<g class="dot"><path d="M31 29c12 0 18 6 30 12"/><path d="M33 57c10 0 17-1 28 1"/><path d="M35 88c10 0 16-5 26-12"/></g>'),
+ "factory": (
+  '<rect x="38" y="50" width="46" height="46" rx="6"/><rect x="50" y="62" width="22" height="22" rx="3"/>'
+  '<path d="M49 44v6M61 44v6M73 44v6M49 96v6M61 96v6M73 96v6M32 61h6M32 73h6M32 85h6M84 61h6M84 73h6M84 85h6"/>'
+  '<g class="l2"><circle cx="24" cy="24" r="13"/><path d="M11 24h26"/><path d="M24 11c4 3.9 5.6 8.3 5.6 13S28 33.1 24 37c-4-3.9-5.6-8.3-5.6-13S20 14.9 24 11z"/>'
+  '<path d="M97 10l-9 16h8l-6 14"/></g>'
+  '<g class="dot"><path d="M34 37c4 5 7 8 13 12"/><path d="M90 42c-2 4-4 6-8 9"/></g>'),
+ "intel": (
+  '<circle cx="42" cy="44" r="11"/><path d="M42 26v-4M42 66v-1M24 44h-4M29.3 31.3l-2.8-2.8M54.7 31.3l2.8-2.8M29.3 56.7l-2.8 2.8"/>'
+  '<path d="M44 80h38a12.5 12.5 0 0 0 0-25 17 17 0 0 0-32-3.5A11.5 11.5 0 0 0 44 80z"/>'
+  '<g class="l2"><path d="M98 12l3.4 8.6L110 24l-8.6 3.4L98 36l-3.4-8.6L86 24l8.6-3.4z"/><path d="M82 36l1.6 4 4 1.6-4 1.6-1.6 4-1.6-4-4-1.6 4-1.6z"/></g>'
+  '<polyline class="l2" points="14,106 36,95 56,100 80,86 106,78"/>'
+  '<g class="l2"><circle cx="36" cy="95" r="2.4"/><circle cx="56" cy="100" r="2.4"/><circle cx="80" cy="86" r="2.4"/><circle cx="106" cy="78" r="2.4"/></g>'),
+}
+
+def illus(name):
+    return f'<div class="ill"><svg viewBox="0 0 120 120" aria-hidden="true">{ILLUS[name]}</svg></div>'
 
 CHEV = '<div class="chev"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M0 12h21M16 7l5 5-5 5"/></svg></div>'
 
@@ -149,11 +185,11 @@ def page(lang, vertical=False):
 <div class="kicker">{t['kicker']}</div>
 <h1>{t['h1']}</h1><p class="sub">{t['sub']}</p>
 <div class="fab">
-<section class="ft glass glint"><div class="eyebrow">{ie}</div><h2>{ih}</h2><div class="items">{inp}</div></section>
+<section class="ft glass glint">{illus("data")}<div class="hd"><div class="eyebrow">{ie}</div><h2>{ih}</h2></div><div class="items">{inp}</div></section>
 {CHEV}
-<section class="ft hub glass glint"><div class="eyebrow">{re_}</div><h2>{rh}</h2><div class="proc">{proc}</div><div class="eng">{engs}</div></section>
+<section class="ft hub glass glint">{illus("factory")}<div class="hd"><div class="eyebrow">{re_}</div><h2>{rh}</h2></div><div class="proc">{proc}</div><div class="eng">{engs}</div></section>
 {CHEV}
-<section class="ft glass glint"><div class="eyebrow">{oe}</div><h2>{oh}</h2><div class="items">{out}</div></section>
+<section class="ft glass glint">{illus("intel")}<div class="hd"><div class="eyebrow">{oe}</div><h2>{oh}</h2></div><div class="items">{out}</div></section>
 </div>
 <div class="ops band glint">{A.ico("coins", "ico-s")}<b>{bn}</b><span>{bd}</span></div>
 <p class="note">{t['note']}</p>
