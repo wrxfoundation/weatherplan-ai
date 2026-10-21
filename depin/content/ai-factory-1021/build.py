@@ -25,8 +25,8 @@ A.ICON.update({
 T = {
  "en": dict(
   lang="en", kicker="Wellbian AI · AI factory",
-  h1="Data in. Intelligence out.",
-  sub="Our AI factory refines readings from real rooms and 30 years of KWeather observation and forecast data into indexes, forecasts and agents. One dataset, two things to sell: the data, and what the models make of it.",
+  h1="Same data. Sold twice.",
+  sub="First as verified data, by the call. Then as intelligence: our AI factory refines the same readings, with 30 years of KWeather observation and forecast data, into indexes, forecasts and agents.",
   inp=("Input", "Weather big data", [
     ("sensor",  "Sensors in real rooms", "PM · CO₂ · TVOC · temperature · humidity"),
     ("history", "30 years of KWeather data", "Observation and forecast archive"),
@@ -41,13 +41,15 @@ T = {
     ("agent",   "60-day hyper-local forecast agent", "A decision for your plans · evidence on request", ("live", "Live · demo")),
     ("api",     "Inference API", "Indexes, forecasts, risk indexes", ("soon", "Coming")),
     ("factory", "Industry packages", "Energy · construction · retail · public sector", ("soon", "Coming"))]),
-  band=("How it earns", "inference API by the call · agent plans after launch · industry packages"),
+  band=("Revenue", "data by the call · agent plans after launch · inference API · industry packages"),
   note="“Intelligence tokens” is AI-factory language for model output. They are not WLBN.",
   foot="From the Wellbian Labs whitepaper v1.0 draft (2026-09-28) and wellbianai.io · Live = available today, Coming = not yet released · No price or return is promised.",
  ),
 }
 
 XCSS = """
+.logo{height:78px}
+.logo svg{width:215px;height:78px}
 .kicker{margin-top:16px;font-size:14px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--p1);border:1px solid rgba(163,155,255,.55);border-radius:999px;padding:6px 14px;background:rgba(163,155,255,.10)}
 .fab{margin-top:36px;width:100%;display:grid;grid-template-columns:1fr auto 1.18fr auto 1fr;column-gap:16px;align-items:stretch}
 .fab .chev{align-self:center;padding:0;color:var(--p1)}
@@ -87,8 +89,8 @@ body{padding:0 44px;justify-content:center}
 .bgfx .g2{width:900px;height:900px;right:-320px;bottom:-360px}
 .bgfx .g3{width:700px;height:600px;left:-160px;top:30%}
 .bgfx .g4{width:700px;height:600px;right:-200px;top:52%}
-.logo{height:52px}
-.logo svg{width:143px;height:52px}
+.logo{height:68px}
+.logo svg{width:186px;height:68px}
 .kicker{font-size:16px;margin-top:18px}
 h1{margin-top:14px;font-size:76px;line-height:1.04;text-align:center;letter-spacing:-.03em}
 .sub{margin-top:14px;max-width:960px;font-size:25px;line-height:1.42}

@@ -4,7 +4,9 @@
 
 - 산출물: `ai-factory-en.jpg`(1920×1080) · `ai-factory-en-9x16.jpg`(1080×1920, 모바일) · 각 `@2x.jpg` · `.html`(원본 틀).
 - 다시 만들기: `python3 build.py`(en · en-9x16) → PNG → JPEG 92(4:4:4)는 `../architecture-1021/README.md` 와 같은 명령. CSS · 아이콘 · 로고는 `../architecture-1021/build.py` 를 import 해서 같은 톤.
-- 구성: 칩 「Wellbian AI · AI factory」 · 제목 「Data in. Intelligence out.」 · 입력(방 안 측정기 · 케이웨더 30년 관측 · 예보 자료 · 172개 도시 날씨) → 정제(수집 → 정리 → 구조화 → 생성 4단계 · 날씨 AI 모델 · B300 GPU 추론) → 출력(60일 초지역 예보 에이전트 「Live · demo」 · 추론 API 「Coming」 · 산업 패키지 「Coming」) · 「How it earns」 띠 · 토큰 뜻 한 줄 · 출처 줄.
+- 구성: 칩 「Wellbian AI · AI factory」 · 제목 「Same data. Sold twice.」(10/21 2차 — 수익 각도) · 입력(방 안 측정기 · 케이웨더 30년 관측 · 예보 자료 · 172개 도시 날씨) → 정제(수집 → 정리 → 구조화 → 생성 4단계 · 날씨 AI 모델 · B300 GPU 추론) → 출력(60일 초지역 예보 에이전트 「Live · demo」 · 추론 API 「Coming」 · 산업 패키지 「Coming」) · 「Revenue」 띠(데이터 호출 · 에이전트 요금제(출시 뒤) · 추론 API · 산업 패키지) · 토큰 뜻 한 줄 · 출처 줄.
+
+- **10/21 2차(서우 「로고 30% 더 키워 · 수익성 기반으로 카피」)**: 로고 165×60 → 215×78(세로판 143×52 → 186×68) · 제목 「Same data. Sold twice.」 · 부제 「먼저 검증 데이터로 호출마다, 다음엔 AI 팩토리가 정제한 지능으로」 · 띠 「Revenue」로 네 줄. 추론 API 는 단가 · 과금 방식이 공개되지 않아 「by the call」을 붙이지 않았다(데이터 호출만 「by the call」 — 2편 x402). 1차 카피 「Data in. Intelligence out.」은 버림.
 
 ## 백서 대조 (Company whitepaper v1.0 초안 2026-09-28 · wellbianai.io, 10/21 열람)
 
@@ -19,49 +21,54 @@
 
 넣지 않은 것: 이용권 · 적립 · 가격(에이전트 요금 · API 단가) · GPU 대수 · 위치 · 운영 주체 · NVIDIA(케이웨더 Earth-2 예보 상품과 섞지 않는다) · 「valuable」 · 「asset」.
 
-## 링크드인 — 영문 (1362자 · 서우 개인 계정 · 연재 3편)
+## 링크드인 — 영문 (1240자 · 서우 개인 계정 · 연재 3편 · 10/21 2차 수익 각도)
 
 이미지: 가로 `ai-factory-en.jpg` 또는 모바일 세로 `ai-factory-en-9x16.jpg` 한 장.
 
 ```
-[Building wellbian · Part 3] What the AI factory makes
+[Building wellbian · Part 3] Same data, sold twice
 
-Part 1 was who pays. Part 2 was how the money moves. Part 3 is what we build on top of the data.
+Part 1 was who pays. Part 2 was how a call becomes revenue. Part 3 is the second revenue line, built on the same data.
 
-"AI factory" is a term from the GPU world: a data center built to produce intelligence, not just to store files. Ours runs weather AI models on B300 GPU inference.
+The first line sells verified data by the call. The second refines that data into something people pay for directly: indexes, forecasts and agents. That's the job of our AI factory, weather AI models running on B300 GPU inference.
 
 What goes in: readings from sensors in real rooms, KWeather's 30 years of observation and forecast data, and city weather for 172 cities, each value a consensus of eleven weather feeds.
 
-What happens inside: the raw data is collected, cleaned of bad and missing readings, structured for the models, and turned into output.
+What comes out, and how it's sold:
+· A 60-day hyper-local forecast agent. Live today, free during the demo, with paid plans after launch.
+· An inference API for indexes, forecasts and risk indexes. Coming next.
+· Industry packages for energy, construction, retail and the public sector. Coming next.
 
-What comes out: indexes, forecasts and agents. The first is live today, a 60-day hyper-local forecast agent that answers with a decision for your plans and shows the evidence only when you ask. It's free during the demo. An inference API and industry packages for energy, construction, retail and the public sector come next.
+Every new room feeds both lines: more data to sell, and more for the models to learn from.
 
 A note on the word "tokens". In AI-factory language, tokens are what a model produces when it answers. They are model output, not WLBN.
 
-Why this matters for the business: one dataset, two things to sell. The data itself, by the call, and what the models make of it.
-
-If you plan around weather in energy, construction or retail, I'd like to hear the first question you'd ask a weather agent.
+If you buy forecasts for energy, construction or retail, I'd like to hear the first question you'd ask a weather agent.
 ```
 
-## X — 원글 + 타래 답글 2 (가중 256 · 270 · 192)
+## X — 원글 + 타래 답글 2 (가중 263 · 232 · 212)
 
 ```
-[Building wellbian · Part 3] What the AI factory makes
+[Building wellbian · Part 3] Same data, sold twice
 
-In: readings from real rooms, 30 years of KWeather data, city weather for 172 cities.
-Out: indexes, forecasts and agents.
+Line one: verified data, by the call.
+Line two: our AI factory refines the same data, with 30 years of KWeather data, into indexes, forecasts and agents.
 
-The first is live: a 60-day hyper-local forecast agent, free during the demo.
+First product live: a 60-day hyper-local forecast agent.
 ```
 ```
-Inside the factory: collect the raw data, clean out bad and missing readings, structure it for the models, generate the output. Weather AI models on B300 GPU inference.
-
-Next: an inference API and industry packages for energy, construction, retail and the public sector.
+How line two is sold:
+· Forecast agent: free during the demo, paid plans after launch
+· Inference API for indexes, forecasts and risk indexes: coming
+· Industry packages for energy, construction, retail and the public sector: coming
 ```
 ```
-On the word "tokens": in AI-factory language it means what a model produces when it answers. Model output, not WLBN.
+Inside: weather AI models on B300 GPU inference, fed by sensors in real rooms and city weather for 172 cities.
 
-One dataset, two things to sell: the data, and what the models make of it.
+Every new room feeds both lines.
+
+On "tokens": in AI-factory language that's model output. Not WLBN.
 ```
 
-게시 전: 인용 · 원글은 계정당 1일 1건 — 오늘 개인 계정에 이미 올렸으면 내일. 원글엔 세로판, 피드 미리보기에서 잘리면 가로판을 원글 · 세로판을 답글 1에.
+게시 전: 원글(인용 포함)은 계정당 1일 1건 — 오늘 개인 계정에 이미 올렸으면 내일. 원글엔 세로판, 피드 미리보기에서 잘리면 가로판을 원글 · 세로판을 답글 1에.
+근거 · 선: 「paid plans after launch」 = wellbianai.io 「Free during the demo; paid plans follow the official launch」 · API · 패키지 = 「Coming」 · 가격 · 단가 · 이용권 · 적립 0 · 「sold twice」는 사업 모델 문장(2편 「Every call is revenue」와 같은 결)이지 매출 실적 주장이 아님.
