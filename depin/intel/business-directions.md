@@ -5099,7 +5099,7 @@ sgBENJI(XRPL · RLUSD 나란히 상장, DBS MOU) · 리플은 꺼내지 않는�
 - 1촌 요청이 **이미 대기 중**(캡처 「대기중」) → 수락되면 아래 메시지. 철회 후 메모 붙여 재요청은 하지 않는다(재요청 제한 · 대기 중 요청이 사라짐). InMail 로 먼저 보내지 않는다(CEO 상대 콜드 InMail = 영업으로 읽힘).
 - 메시지 = Lynn 기본값 + 선택 줄(그의 최근 글 마지막 문장 인용 → 「a market is only as good as the record underneath it」) · 746자. 선택 줄을 빼면 기본값 561자.
 - 「eleven independent sources」(11개 중 8개 Open-Meteo 경유) 결정 대기 — 기관 상대라 반박 여지가 크다. 서우가 「eleven weather feeds」로 정하면 이 메시지부터 바꾼다.
-- **2차(10/21, 서우 「리플 관련 투자 포트폴리오도 있으니 XRP SEOUL · 남산타워 · Swell 가는 것 · 글로벌 기상관측 포부도」)** — 기관 첫 메시지 규칙(XRP SEOUL · 남산 · 체인 이름 0)의 **예외로 서우 결정**: 프랭클린은 XRP 현물 ETF(Franklin XRP ETF · XRPZ, NYSE Arca, 2025-11-24 출시 — 프랭클린 보도자료)와 XRPL 위 sgBENJI(DBS MOU)를 가진 회사라 XRP 생태계 이력이 공통 기반이 된다. 넣은 것: XRP Ledger 이름 · 케이웨더 XRP SEOUL 2026 키노트(날씨 데이터 경제) · 남산타워 점등 한 구절 · Swell 뉴욕 10/27~29(The Shed · Hudson Yards, 2차 보도 기준) 참석 + 「디지털자산팀 누가 오면 인사」 · 「글로벌 관측망」 포부(사람이 사는 곳에서, 사는 사람이 잰다). 여전히 0: 그쪽 상품(XRPZ · sgBENJI) 이름 · 리플과의 관계 · 토큰 · 투자 · 자금. {n}자.
+- **2차(10/21, 서우 「리플 관련 투자 포트폴리오도 있으니 XRP SEOUL · 남산타워 · Swell 가는 것 · 글로벌 기상관측 포부도」)** — 기관 첫 메시지 규칙(XRP SEOUL · 남산 · 체인 이름 0)의 **예외로 서우 결정**: 프랭클린은 XRP 현물 ETF(Franklin XRP ETF · XRPZ, NYSE Arca, 2025-11-24 출시 — 프랭클린 보도자료)와 XRPL 위 sgBENJI(DBS MOU)를 가진 회사라 XRP 생태계 이력이 공통 기반이 된다. 넣은 것: XRP Ledger 이름 · 케이웨더 XRP SEOUL 2026 키노트(날씨 데이터 경제) · 남산타워 점등 한 구절 · Swell 뉴욕 10/27~29(The Shed · Hudson Yards, 2차 보도 기준) 참석 + 「디지털자산팀 누가 오면 인사」 · 「글로벌 관측망」 포부(사람이 사는 곳에서, 사는 사람이 잰다). 여전히 0: 그쪽 상품(XRPZ · sgBENJI) 이름 · 리플과의 관계 · 토큰 · 투자 · 자금. 1,113자.
   - 수락이 Swell(10/29) 뒤면 Swell 문장을 「I was in New York for Swell last week.」로 바꾸고 「say hello」 문장은 뺀다.
 
   ```
@@ -5354,6 +5354,23 @@ Good to be connected.
 메시지(546자)
 ```
 Lindsay — thanks for connecting.
+
+I run partnerships at wellbian. KWeather has measured weather in South Korea for thirty years and supplies data to 4,000+ enterprise clients; wellbian is the network built on top of that.
+
+We work on two layers: air-quality sensors that people run in their own rooms, and city-level weather across 91 countries and 172 cities, where each value is a consensus across eleven weather feeds rather than a single reading. Every input is fingerprinted to a public ledger before it goes anywhere.
+
+Good to be connected.
+```
+
+## Laura Hillgren (Nasdaq · Head of Enterprise Events · 런던 · 새 1촌) — 인사 (2026-10-21, 서우 프로필 · 경력 · 학력 캡처 3장)
+
+공개 프로필: 나스닥 11년 3개월 — 마케팅 · 이벤트 · 전략 제휴 매니저(2015-08~2020-03, 뉴욕) → 유럽 이벤트 총괄(2020-03~2024-03, 런던) → 기업 이벤트 총괄(2024-03~) · 전 Mercer Advisors · 버지니아대 국제관계 · FINRA Series 65. 공통 1촌 1명(Garrick — 이름은 메시지에 쓰지 않음).
+판정: **거래소 운영사 · 행사 자리 → 인사만**(Garrick 10/20 과 같은 선 — 선택 줄 · 미팅 · 제안 0). 나스닥 두 번째 사람이지만 둘 다 인사만이라 「같은 제안 2명」 상한에 걸리지 않는다.
+행사 자리라 연사 · 무대 이야기가 떠오르지만 **우리가 먼저 열지 않는다**(요청이 된다) — 그가 행사 얘기를 먼저 꺼내면 그때. 뉴욕(10/24~29)도 넣지 않는다(그는 런던).
+문안 = Jack · Jingyi · Lindsay 판(「eleven weather feeds」 · 「certified」 뺌). Garrick 판은 기본값 문구였다 — 나스닥 둘이 다른 말을 들어도 내용은 같다.
+메시지(544자)
+```
+Laura — thanks for connecting.
 
 I run partnerships at wellbian. KWeather has measured weather in South Korea for thirty years and supplies data to 4,000+ enterprise clients; wellbian is the network built on top of that.
 
