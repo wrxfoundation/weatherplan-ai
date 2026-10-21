@@ -5266,6 +5266,25 @@ Much of the physical-AI conversation is about what models can do once they have 
 Good to be connected.
 ```
 
+- **2차(10/21, 서우 「AI 개발도 실제 NVIDIA 로 하고 있으니 언급하자」 + 케이웨더 카드뉴스 · 보도 2건)** — 근거: 딜사이트 2026-09-18 「케이웨더, 엔비디아 기반 AI 기상예보 10종 출시」(날씨 AI 팩토리 첫 상품 ·
+  Earth-2 · FourCastNet3 60일 · Atlas 15일 전지구 25km · CorrDiff 한반도 1.5km · StormScope 레이더 1km 2시간/12시간 · GFS · KIM 초기장 · API 공급) + 같은 달 보도(60일 예보 · 내년 상반기 시범 · 「기상 AI 에이전트 웰비안」 프로젝트 · GPU 는 엔비디아 국내 총판 경유).
+  쓰는 선: 「KWeather runs / launched AI forecasts **built on NVIDIA Earth-2**」 — **엔비디아 파트너 · 협업 · 인증 표현 0**(모델 · GPU 를 쓰는 고객 관계). 격자는 카드뉴스(2km 「예정」)와 보도(1.5km)가 달라 「kilometre-scale」로.
+  메모(186자) · 수락 뒤(947자 — 물리 AI 한 줄을 Earth-2 문단으로 바꿈).
+```
+Hi Randa, I run partnerships at wellbian. Our device partner KWeather runs AI weather forecasts on NVIDIA Earth-2, and AI agents can buy our real-room air data per call. Glad to connect.
+```
+```
+Randa — thanks for connecting.
+
+I run partnerships at wellbian. KWeather has measured weather in South Korea for thirty years and supplies data to 4,000+ enterprise clients; wellbian is the network built on top of that.
+
+We work on two layers: certified air-quality sensors that people run in their own rooms, and city-level weather across 91 countries and 172 cities, where each value is a consensus across eleven independent sources rather than a single reading. Every input is fingerprinted to a public ledger before it goes anywhere.
+
+Part of why I reached out: KWeather recently launched AI forecasts built on NVIDIA Earth-2. FourCastNet3 and Atlas run the global outlooks out to 60 days, CorrDiff brings them down to kilometre-scale grids over Korea, and StormScope handles radar nowcasts. Our sensors sit at the other end of that stack: honest readings from real rooms, which AI agents can pay for one call at a time.
+
+Good to be connected.
+```
+
 ## MEXC 상장팀 — 텔레그램 그룹 인사 (2026-10-19 20:38, 서우 캡처)
 
 - **상황**: 「Wellbian (WLBN) <> MEXC」 그룹(3인)에 MEXC 상장팀 리스팅 매니저가 들어와 인사 · 공식 채널 목록(텔레그램 · X · 메일 · 디스코드)과 확인 페이지(mexc.com/official-verify) 안내 ·
