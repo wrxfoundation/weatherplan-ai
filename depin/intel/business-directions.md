@@ -5307,6 +5307,25 @@ Given your years leading NVIDIA's APAC marketing, a Korean data point you may en
 Good to be connected.
 ```
 
+## MaryKate Collins (Coinbase · Head of Communications, International Markets · 더블린 · 1촌) — 인사 (2026-10-21, 서우 프로필 · 경력 · 활동 캡처 3장)
+
+공개 프로필: 코인베이스 미국 밖 커뮤니케이션 총괄(2022-05~, 영국 · 독일 · 프랑스 · UAE · 인도 · 싱가포르 · 호주 · 아르헨티나 · 브라질 · 캐나다 10개 시장) · 전 Vulcan Consulting 브뤼셀 대표(규제 · 정책 소통) · AmCham EU · EU 이사회 · 트리니티 칼리지 더블린.
+활동: 7/17 글 — 인도 재출시 · 「WTF」 팟캐스트(브라이언 암스트롱 × 니킬 카마스) 「스폰서십도 유료 게재도 아니다 — 자리는 스스로 얻는 것(You earn your place)」.
+판정: **거래소 소속 → 인사만**(playbook 거래소 자리: 선택 줄 · 관심의 이유 · 다른 거래소 · XRP SEOUL 0). 그의 글 한 줄 인용은 Garrick 10년 축하와 같은 결(요청 아님)로 첫 줄에.
+x402(코인베이스 출신 프로토콜) 연결은 넣지 않는다 — 거래소 상대에게 사업 이야기를 먼저 여는 모양.
+메시지(693자)
+```
+MaryKate — thanks for connecting.
+
+Your note on the WTF episode with Brian and Nikhil stayed with me: not a sponsorship, not a paid placement, you earn your place.
+
+I run partnerships at wellbian. KWeather has measured weather in South Korea for thirty years and supplies data to 4,000+ enterprise clients; wellbian is the network built on top of that.
+
+We work on two layers: certified air-quality sensors that people run in their own rooms, and city-level weather across 91 countries and 172 cities, where each value is a consensus across eleven independent sources rather than a single reading. Every input is fingerprinted to a public ledger before it goes anywhere.
+
+Good to be connected.
+```
+
 ## MEXC 상장팀 — 텔레그램 그룹 인사 (2026-10-19 20:38, 서우 캡처)
 
 - **상황**: 「Wellbian (WLBN) <> MEXC」 그룹(3인)에 MEXC 상장팀 리스팅 매니저가 들어와 인사 · 공식 채널 목록(텔레그램 · X · 메일 · 디스코드)과 확인 페이지(mexc.com/official-verify) 안내 ·

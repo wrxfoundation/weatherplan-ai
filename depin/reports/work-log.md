@@ -2502,3 +2502,4 @@ Thanks Odelia — writing to you at that address today. Mine is support@wellbian
 - **Randa Hinton(NVIDIA AI 산업 소통 리더십 총괄 · 3촌) 1촌 메모 · 수락 뒤 인사(10/21, 서우 메모 추가 창)** — 물리 AI 각도 · 메모 193자(무료 계정 200자 상한) · 수락 뒤 790자. 앞선 260~300자 메모들은 무료 계정이면 잘림 → playbook 메모판에 200자 경고.
 - **Randa Hinton 인사 2차 — 케이웨더 × NVIDIA Earth-2(10/21, 서우 「AI 개발도 실제 NVIDIA 로 하니 언급」)** — 9/18 딜사이트 「AI 기상예보 10종(Earth-2 · FourCastNet3 · Atlas · CorrDiff · StormScope)」 근거로 메모 186자 · 수락 뒤 947자. 「built on NVIDIA Earth-2」까지 · 파트너 · 협업 표현 0 · 격자는 kilometre-scale(카드 2km 예정 vs 보도 1.5km).
 - **Eva Wasielewski(NVIDIA VP · 전 APAC 마케팅 총괄 · 3촌) 인사(10/21, 서우 「이분은」)** — 케이웨더 Earth-2 AI 예보 한국 사례 각도 · 메모 178자 · 수락 뒤 980자 · Randa 판과 문장 겹치지 않게.
+- **MaryKate Collins(코인베이스 국제 커뮤니케이션 총괄 · 1촌) 인사(10/21, 서우 캡처)** — 거래소 소속 = 인사만 · Lynn 기본값 + 그의 7/17 글(「You earn your place」) 한 줄 · x402 · 거래소 · XRP SEOUL 0. 693자.
