@@ -5344,6 +5344,24 @@ We work on two layers: air-quality sensors that people run in their own rooms, a
 Good to be connected.
 ```
 
+## Lindsay Marano (Jupiter · Growth · 시드니 · 새 1촌) — 인사 (2026-10-21, 서우 프로필 · 활동 · 경력 캡처 3장)
+
+공개 프로필: Jupiter Growth(2025-06~ — 솔라나 DEX 애그리게이터) · 전 BlackRock 5년 11개월(기업전략 · 개발, 뉴욕 애널리스트 → 시드니 APAC Executive COO 팀 어소시에이트 → VP 2023) · 코넬. 팔로워 2,697 · 공통 1촌 3명(이름 쓰지 않음).
+활동: 8/20 「솔라나의 이야기를 전하는 데 마음을 다했다 — 몇 년 전 … 경력을 떠나」 영상 글(본문 접힘 · 영상 미열람).
+판정: **다른 체인 진영의 거래(스왑 · 무기한) 자리 → 인사만.** 거래소 소속과 같은 선(선택 줄 · 관심의 이유 0) + 멀티체인 신호 0.
+그의 솔라나 글은 인용하지 않는다 — 첫 메시지 한가운데 다른 체인이 놓이고, 본문 · 영상을 다 보지 못했다. 블랙록 이력도 꺼내지 않는다(금융권 연결로 읽히는 선택 줄).
+문안 = Jack · Jingyi 판 그대로(「eleven weather feeds」 · 「certified」 뺌 · 체인 이름 0). 상대가 먼저 묻는 경우에도 체인 · 토큰 · 유동성 · 상장 0, 「올해는 측정망과 데이터 고객에 집중」까지.
+메시지(546자)
+```
+Lindsay — thanks for connecting.
+
+I run partnerships at wellbian. KWeather has measured weather in South Korea for thirty years and supplies data to 4,000+ enterprise clients; wellbian is the network built on top of that.
+
+We work on two layers: air-quality sensors that people run in their own rooms, and city-level weather across 91 countries and 172 cities, where each value is a consensus across eleven weather feeds rather than a single reading. Every input is fingerprinted to a public ledger before it goes anywhere.
+
+Good to be connected.
+```
+
 ## MEXC 상장팀 — 텔레그램 그룹 인사 (2026-10-19 20:38, 서우 캡처)
 
 - **상황**: 「Wellbian (WLBN) <> MEXC」 그룹(3인)에 MEXC 상장팀 리스팅 매니저가 들어와 인사 · 공식 채널 목록(텔레그램 · X · 메일 · 디스코드)과 확인 페이지(mexc.com/official-verify) 안내 ·
