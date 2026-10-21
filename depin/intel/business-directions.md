@@ -5244,6 +5244,28 @@ I noticed you started out installing downhole gauges at Schlumberger before movi
 Good to be connected.
 ```
 
+## Randa Hinton (NVIDIA · Head of AI Industry Thought Leadership · 미국 산타클라라 · 3촌) — 1촌 요청 메모 · 수락 뒤 인사 (2026-10-21, 서우 프로필 · 경력 캡처 + 메모 추가 창)
+
+공개 프로필: NVIDIA 6년 2개월 — AI 산업 소통 리더십 총괄(2026-02~) · 엔터프라이즈 마케팅 시니어 매니저(CSP · NVIDIA 클라우드 파트너, 2025-03~2026-02) · 파트너 마케팅 매니저(글로벌 CSP, 2020-09~2025-03) · 전 브랜드 전략 컨설팅 · USC.
+판정: **인사 — 「AI 업계 이야기」를 만드는 자리.** 우리 각도 = 「물리 AI(physical AI)는 실제 세계 데이터로 돈다 — 우리는 실제 방의 값을 에이전트가 호출당 사는 쪽」. 제안 · 협업 · 사례 소개 요청 0.
+- **메모 상한 200자**: 서우 화면의 「프리미엄으로 무제한 필기 활용」 = 무료 계정의 개인 메모는 **200자 · 월 횟수 제한**. 앞서 쓴 260~300자 메모(Stefan 291 · Giovanni 279 · XRP SEOUL 명단 280 · Ayo 270 · Erik 261 등)는 무료 계정이면 잘린다 → 200자판이 필요하면 다시 줄인다.
+- 메모(193자)
+```
+Hi Randa, I run partnerships at wellbian, built on KWeather's 30 years of weather data. AI agents can buy our real-room air and weather readings per call: data for physical AI. Glad to connect.
+```
+- 수락 뒤 메시지(Lynn 기본값 + 물리 AI 한 줄, 790자)
+```
+Randa — thanks for connecting.
+
+I run partnerships at wellbian. KWeather has measured weather in South Korea for thirty years and supplies data to 4,000+ enterprise clients; wellbian is the network built on top of that.
+
+We work on two layers: certified air-quality sensors that people run in their own rooms, and city-level weather across 91 countries and 172 cities, where each value is a consensus across eleven independent sources rather than a single reading. Every input is fingerprinted to a public ledger before it goes anywhere.
+
+Much of the physical-AI conversation is about what models can do once they have real-world data. We work on the other end of that: getting honest readings out of real rooms, and letting AI agents pay for them one call at a time.
+
+Good to be connected.
+```
+
 ## MEXC 상장팀 — 텔레그램 그룹 인사 (2026-10-19 20:38, 서우 캡처)
 
 - **상황**: 「Wellbian (WLBN) <> MEXC」 그룹(3인)에 MEXC 상장팀 리스팅 매니저가 들어와 인사 · 공식 채널 목록(텔레그램 · X · 메일 · 디스코드)과 확인 페이지(mexc.com/official-verify) 안내 ·
