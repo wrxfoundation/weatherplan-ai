@@ -2518,3 +2518,4 @@ Thanks Odelia — writing to you at that address today. Mine is support@wellbian
 - **연재 Part 3 2차(10/21, 서우 「로고 30% 더 · 수익성 기반 카피」)** — 로고 1.3배 · 제목 「Same data. Sold twice.」 · 띠 「Revenue」(데이터 호출 · 에이전트 요금제 출시 뒤 · 추론 API · 산업 패키지) · 문안 다시(링크드인 1240자 · X 263/232/212). 추론 API 단가 · 과금 방식은 미공개라 「by the call」 0. `content/ai-factory-1021/`.
 - **연재 Part 3 3차(10/21, 서우 「큰 테이블 우측 상단에 큰 svg 일러스트」)** — 세 타일 우상단 라인 일러스트(데이터 모임 → DB · 지구 네트워크 + 번개 → GPU · 해 구름 + 상승선) · 제목 칸 높이 확보로 겹침 0 · 큐브(토큰 연상) 0. `content/ai-factory-1021/`.
 - **연재 Part 3 4차(10/21, 서우 「AI factory 는 건물처럼 · intelligence 는 뇌 형태 · 날씨」)** — 정제 = 공장 건물(톱니 지붕 · 서버 동 · 정면 GPU 칩 · 구름 · 번개) · 출력 = 뇌(왼쪽 회로 · 오른쪽 해 · 구름 · 비). `content/ai-factory-1021/`.
+- **연재 Part 3 5차(10/21, 서우 「최상단에서 메인 카피까지 햇살」)** — 배경층 빛줄기 + 위 가운데 빛 번짐, 첫 판은 로고 근처에서 끊겨 길이 · 밝기를 늘려 제목 줄까지. `content/ai-factory-1021/`.
