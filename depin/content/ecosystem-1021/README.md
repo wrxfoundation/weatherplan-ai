@@ -25,6 +25,36 @@
 - 「기여도 기반 리워드」는 그대로 두고, 출처 줄에 「보상은 정해진 개수이며 가치는 약속하지 않습니다」.
 - 링크 4개는 그림 안에서 칩 이름으로만(이미지라 클릭 불가) — 출처 줄에 paper.wellbianlabs.io/depin.
 
+## 링크드인 — 영문 (1406자 · 서우 개인 계정 · 10/21)
+
+이미지 순서: ① `ecosystem-en.jpg`(Rooms make data. Makers pay for it.) ② `../architecture-1021/architecture-en.jpg`(Every room is data. Every call is revenue.)
+
+```
+The question I get most about wellbian isn't how it works. It's who pays.
+
+Short answer: the companies that need to know what indoor air actually does.
+
+Air conditioners, dehumidifiers, purifiers and ventilation systems all live inside homes, offices and shops. The teams designing them want to see how real rooms behave: when humidity climbs, how fast CO₂ builds up, what happens after the window closes.
+
+So the model has three parties.
+
+Contributors install indoor-air sensors and earn rewards by contribution.
+
+The platform hub de-identifies the raw readings and turns them into metadata a product team can use.
+
+Appliance makers buy that data outright or subscribe by API. AI agents and smart-home platforms can pay per call in RLUSD, a dollar stablecoin, settled on the XRP Ledger. We verified that per-call rail on XRPL mainnet in August: request, pay, check on-chain, data back. No invoices.
+
+Every new room adds data worth buying. Every call is paid. That's the business.
+
+Rewards are designed to come back around as appliance discounts and filter subscriptions, so the value stays inside the network.
+
+Two things stay fixed. Data is de-identified before anyone can buy it, and every aggregate has to pass a k-anonymity gate. Rewards are defined as quantities, never as a promised value.
+
+If you build appliances or run R&D on indoor environments, I'd like to hear what room data you wish you had.
+```
+
+근거 · 선: 「per-call rail verified on XRPL mainnet in August」 = 정본 §5(2026-08-13 메인넷 검증 5건 중 AI 에이전트 x402 자율 결제). 제조사 계약 · 고객 · MOU 0 — 「the model」로만. 원장 지문(머클루트 기록) 문장 0 — 기록 상태 확인 전. 보상 → 가전 할인 · 필터 구독은 「designed to」(현재 기능인지 미확인). 가격 · 상장 · WLBN 언급 0 · 보상 = 개수, 가치 비보장.
+
 ## 확인 필요(서우)
 
 - **「보상 → 가전 구매 할인 · 필터 구독 결제 재유입」은 지금 되는 기능인가, 계획인가.** 백서 원문 그대로 넣었다. 아직 계획이면 SNS 게시 전에 「설계」 · 「예정」 표기(미공표 · 미확정 기능을 현재형으로 말하지 않는다 — playbook).
