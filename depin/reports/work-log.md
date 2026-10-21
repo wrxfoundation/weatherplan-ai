@@ -2512,3 +2512,4 @@ Thanks Odelia — writing to you at that address today. Mine is support@wellbian
 - **Ying Fei Tan(Binance 유럽 전략 · 운영 리드 · 새 1촌) 인사(10/21, 서우 캡처 3장)** — Jingyi 와 같은 선(인사만 · 선택 줄 0 · 상장 · 토큰 0), 547자. 같은 날 바이낸스 둘 → 원하면 하루 간격. `intel/business-directions.md` Ying Fei 절.
 - **Wy-Lin Tan(Elliptic 크립토 컴플라이언스 · 조사 지역 리드 · 싱가포르 · 1촌) 인사(10/21, 서우 캡처 2장)** — 거래소 아님 → 기본값 + 새 직장 축하 A(590자) · 선택 줄(기록이 나중에도 믿을 만한가) B(734자, 추천). 2년 전 글 · 사칭 건 · AML 관심 0. 덤: 서우 프로필 금색 배지(프리미엄) → playbook 메모 상한 주석. `intel/business-directions.md` Wy-Lin 절.
 - **@wellbianlabs 「Weather AI Factory」 원글 개인 인용(10/21, 서우 캡처)** — 「데이터센터는 저장 · 계산, 공장은 내보낸다」 A(223자, token 단어 0 · 추천) · B(257자, 토큰 뜻 정리판). valuable · 이용권 · 적립 · 가격 · B300 · NVIDIA 0. Eri 인용과 같은 날이면 간격. `intel/x-activity-log.md` 끝 절.
+- **Sam Hill(Citi 디지털자산 운영 총괄 · 런던 · 새 1촌, 전 Zodia Custody) 인사(10/21, 서우 캡처 3장)** — 기관 첫 메시지 규칙 + 새 직장 축하 A(583자) · 선택 줄(기록은 남는 흔적만큼) B(715자, 추천). 수탁 · 토큰화 · RLUSD · 전 직장 이름 0. `intel/business-directions.md` Sam 절.

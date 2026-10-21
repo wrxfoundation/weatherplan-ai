@@ -5416,6 +5416,25 @@ Coming from fraud and financial-crime work, you'll know the question we care abo
 Good to be connected.
 ```
 
+## Sam Hill (Citi · Head of Digital Assets Operations · 런던 · 새 1촌) — 인사 (2026-10-21, 서우 프로필 · 경력 · 학력 캡처 3장)
+
+공개 프로필: 씨티 디지털자산 운영 총괄(2026-08~) · 전 Zodia Custody 3년(RM → 고객 구축 총괄 → 운영 총괄 → 운영 디렉터) · Motive Partners 디지털자산 전략 컨설턴트 · Deloitte 디지털자산 컨설턴트 · 워릭 경영 석사 · 철학 · 심리 학사. 보유기술 기술 리스크 · DLT. 공통 1촌 3명(이름 쓰지 않음).
+판정: **은행 디지털자산 운영 자리 — 기관 첫 메시지 규칙**(XRP SEOUL · 남산 · 체인 이름 0 · 요청 0) **+ 새 직장 축하 첫 줄, 선택 줄은 서우 판단.** 거래소가 아니라 선택 줄 가능.
+- 선택 줄 = 수탁 운영 이력 → 「기록은 그 뒤에 남는 흔적만큼만 믿을 만하다」(원장 지문과 닿는 한 줄, 요청 0). Wy-Lin 판과 결은 같고 말은 다르게.
+- 넣지 않은 것: 수탁 · 토큰화 · RLUSD · 결제 · 이용권 · 씨티 상품 · 전 직장 이름(Zodia) · 공통 1촌 이름.
+- A 기본값 + 축하(583자) · B 선택 줄 포함(715자, 추천).
+```
+Sam — thanks for connecting, and congratulations on the move to Citi.
+
+I run partnerships at wellbian. KWeather has measured weather in South Korea for thirty years and supplies data to 4,000+ enterprise clients; wellbian is the network built on top of that.
+
+We work on two layers: air-quality sensors that people run in their own rooms, and city-level weather across 91 countries and 172 cities, where each value is a consensus across eleven weather feeds rather than a single reading. Every input is fingerprinted to a public ledger before it goes anywhere.
+
+Coming from custody operations, you'll know the unglamorous part we build around: a record is only as good as the trail behind it.
+
+Good to be connected.
+```
+
 ## MEXC 상장팀 — 텔레그램 그룹 인사 (2026-10-19 20:38, 서우 캡처)
 
 - **상황**: 「Wellbian (WLBN) <> MEXC」 그룹(3인)에 MEXC 상장팀 리스팅 매니저가 들어와 인사 · 공식 채널 목록(텔레그램 · X · 메일 · 디스코드)과 확인 페이지(mexc.com/official-verify) 안내 ·
