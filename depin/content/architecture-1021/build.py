@@ -69,7 +69,7 @@ body{background:var(--bg);color:var(--t1);font-family:"Pretendard",-apple-system
 .bgfx .grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);background-size:48px 48px;mask-image:radial-gradient(ellipse at 50% 40%,#000 30%,transparent 80%)}
 .wrap{position:relative;z-index:1;width:100%;display:flex;flex-direction:column;align-items:center}
 .logo{height:60px}
-h1{margin-top:20px;font-size:76px;font-weight:700;letter-spacing:-.025em;line-height:1.05}
+h1{margin-top:18px;font-size:70px;font-weight:700;letter-spacing:-.025em;line-height:1.05}
 .sub{margin-top:16px;max-width:1180px;text-align:center;font-size:24px;line-height:1.45;color:var(--t2);word-break:keep-all;text-wrap:balance}
 .glass{background:linear-gradient(140deg,rgba(255,255,255,.10),rgba(255,255,255,.03) 60%);border:1px solid var(--edge);backdrop-filter:blur(22px) saturate(140%);-webkit-backdrop-filter:blur(22px) saturate(140%);box-shadow:inset 0 1px 0 var(--hi)}
 .row{margin-top:40px;width:100%;display:grid;grid-template-columns:1fr 1fr;gap:20px}
@@ -83,33 +83,59 @@ h1{margin-top:20px;font-size:76px;font-weight:700;letter-spacing:-.025em;line-he
 .tile.supply{--acc:var(--p1)} .tile.demand{--acc:var(--p2)}
 .eyebrow{display:inline-block;font-size:13px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--acc);border:1px solid var(--acc);border-radius:6px;padding:4px 9px;background:rgba(163,155,255,.10)}
 .tile h2{margin-top:14px;font-size:34px;font-weight:700;letter-spacing:-.02em;line-height:1.15;word-break:keep-all}
-.steps{margin-top:28px;display:grid;grid-template-columns:1fr auto 1fr auto 1fr;column-gap:14px;align-items:start}
-.step{border-top:1px solid rgba(255,255,255,.14);padding-top:16px;position:relative}
-.step::before{content:"";position:absolute;left:0;top:-1px;width:22px;height:2px;background:var(--acc)}
+.steps{margin-top:30px;display:grid;grid-template-columns:1fr auto 1fr auto 1fr;column-gap:14px;align-items:start}
+.step{position:relative}
+.ico{display:grid;place-items:center;width:68px;height:68px;margin-bottom:20px;border-radius:12px;border:1px solid rgba(163,155,255,.42);background:rgba(163,155,255,.09);color:var(--acc);box-shadow:inset 0 1px 0 rgba(255,255,255,.18)}
+.ico svg{width:36px;height:36px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
 .step b{display:block;font-size:22px;font-weight:600;letter-spacing:-.01em;line-height:1.2;word-break:keep-all;text-wrap:balance}
 .step .d{display:block;margin-top:10px;font-size:17px;line-height:1.4;color:var(--t2);word-break:keep-all;text-wrap:balance}
 .step .n{display:block;margin-top:7px;font-size:14.5px;line-height:1.4;color:var(--t3);word-break:keep-all;text-wrap:balance}
-.chev{font-size:22px;color:var(--acc);padding-top:18px}
+.chev{color:var(--acc);padding-top:22px}
+.chev svg{width:24px;height:24px;display:block;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.step:not(:last-child)::after{content:"";position:absolute;left:82px;right:-14px;top:34px;height:1px;background:linear-gradient(90deg,rgba(163,155,255,.15),var(--acc))}
 .join{width:100%;display:grid;grid-template-columns:1fr 1fr;gap:20px;height:34px}
 .join div{display:flex;justify-content:center;align-items:center;gap:10px;font-size:14px;letter-spacing:.04em;color:var(--t3)}
 .join i{width:1px;height:34px;display:block}
 .join .s i{background:var(--p1)} .join .d i{background:var(--p2)}
 .ops{width:100%;height:60px;border-radius:12px;display:flex;align-items:center;justify-content:center;gap:16px;font-size:20px;color:var(--t2);background:rgba(77,77,206,.20);border:1px solid rgba(163,155,255,.38);box-shadow:inset 0 1px 0 rgba(255,255,255,.22)}
 .ops b{color:var(--t1);font-weight:700}
-.ops .dot{width:6px;height:6px;border-radius:50%;background:var(--p1)}
+.ops .ico-s{display:grid;place-items:center;width:38px;height:38px;border-radius:9px;border:1px solid rgba(163,155,255,.5);color:var(--p1)}
+.ops .ico-s svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
 .join2{width:100%;display:grid;grid-template-columns:repeat(4,1fr);gap:0;height:26px;padding:0 36px}
 .join2 i{justify-self:center;width:1px;height:26px;background:rgba(163,155,255,.55)}
 .ledger{width:100%;border-radius:16px;padding:32px 36px;display:grid;grid-template-columns:360px 1fr;column-gap:40px;align-items:center;background:var(--glass2)}
 .ledger h3{font-size:44px;font-weight:700;letter-spacing:-.02em}
 .ledger p{margin-top:8px;font-size:18px;color:var(--t2)}
 .feats{display:grid;grid-template-columns:repeat(4,1fr);column-gap:16px}
-.feat{border-left:1px solid rgba(255,255,255,.14);padding-left:18px}
-.feat b{display:block;font-size:22px;font-weight:600;letter-spacing:-.01em;word-break:keep-all}
+.feat{display:grid;grid-template-columns:56px 1fr;column-gap:14px;align-items:start}
+.feat .ico{width:56px;height:56px;margin:0;color:var(--p1)}
+.feat .ico svg{width:30px;height:30px}
+.feat b{display:block;margin-top:2px;font-size:21px;font-weight:600;letter-spacing:-.01em;word-break:keep-all}
 .feat .tag{display:inline-block;margin-top:9px;font-size:13px;font-weight:700;letter-spacing:.06em;color:var(--p1);border:1px solid rgba(163,155,255,.45);border-radius:6px;padding:2px 7px}
 .feat .n{display:block;margin-top:9px;font-size:15.5px;line-height:1.4;color:var(--t2);word-break:keep-all}
 .nw{white-space:nowrap}
 .foot{margin-top:22px;font-size:14px;color:var(--t3)}
 """
+
+# 라인 아이콘(24 그리드 · 선 1.6 · 끝 둥글게) — 10/21 서우 「라인 svg 아이콘을 넣어 재제작 · 너무 텍스트 위주」
+ICON = {
+ "sensor":  '<rect x="5" y="3" width="10" height="18" rx="2.5"/><circle cx="10" cy="15.5" r="2"/><path d="M8 7.5h4"/><path d="M18 9.5c1 .8 1 2.2 0 3"/><path d="M20.5 7.5c2 1.7 2 5.3 0 7"/>',
+ "wallet":  '<path d="M4 8V7a2.5 2.5 0 0 1 2.5-2.5H17V8"/><rect x="4" y="8" width="16" height="11.5" rx="2.5"/><path d="M15.5 13.75h2"/>',
+ "oracle":  '<path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z"/><path d="M9 12l2.2 2.2L15.5 10"/>',
+ "buyers":  '<path d="M3.5 11L12 4l8.5 7"/><path d="M6 9.5v10h12v-10"/><rect x="9.5" y="12.5" width="5" height="5" rx="1"/><path d="M12 10.5v2M12 17.5v2"/>',
+ "gateway": '<path d="M5 20V6a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v14"/><path d="M3 20h18"/><path d="M8.5 12h7"/><path d="M13 9.5l2.5 2.5-2.5 2.5"/>',
+ "layers":  '<path d="M12 3.5l8.5 4.5-8.5 4.5L3.5 8z"/><path d="M3.5 12l8.5 4.5 8.5-4.5"/><path d="M3.5 16l8.5 4.5 8.5-4.5"/>',
+ "vault":   '<rect x="3.5" y="4.5" width="17" height="15" rx="2.5"/><circle cx="12" cy="12" r="3.5"/><path d="M12 7v1.5M12 15.5V17M7 12h1.5M15.5 12H17"/>',
+ "nft":     '<path d="M12 2.8l7.8 4.5v9.4L12 21.2l-7.8-4.5V7.3z"/><path d="M9 10.5h6M9 13.5h4"/>',
+ "coins":   '<circle cx="9.5" cy="9.5" r="5.5"/><path d="M15.4 9.6a5.5 5.5 0 1 1-5.8 5.8"/>',
+ "swap":    '<path d="M4 8h15"/><path d="M15.5 4.5L19 8l-3.5 3.5"/><path d="M20 16H5"/><path d="M8.5 12.5L5 16l3.5 3.5"/>',
+ "cold":    '<path d="M12 3v18M4.2 7.5l15.6 9M4.2 16.5l15.6-9"/><path d="M9.5 4.6L12 6.6l2.5-2M9.5 19.4L12 17.4l2.5 2"/>',
+}
+STEP_ICONS = {"supply": ["sensor", "wallet", "oracle"], "demand": ["buyers", "gateway", "layers"]}
+FEAT_ICONS = ["nft", "coins", "swap", "cold"]
+
+def ico(name, cls="ico"):
+    return f'<span class="{cls}"><svg viewBox="0 0 24 24" aria-hidden="true">{ICON[name]}</svg></span>'
 
 def nw(text):
     """「 · 」로 끊은 덩어리는 한 줄에 — 줄바꿈은 구분점 뒤에서만. \n 은 강제 줄바꿈."""
@@ -126,11 +152,11 @@ def page(lang):
     for cls, eyebrow, title, steps, flow in t["tiles"]:
         parts = []
         for i, (b, d, n) in enumerate(steps):
-            if i: parts.append('<div class="chev">→</div>')
-            parts.append(f'<div class="step"><b>{nw(b)}</b><span class="d">{nw(d)}</span><span class="n">{nw(n)}</span></div>')
+            if i: parts.append('<div class="chev"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M0 12h21M16 7l5 5-5 5"/></svg></div>')
+            parts.append(f'<div class="step">{ico(STEP_ICONS[cls][i])}<b>{nw(b)}</b><span class="d">{nw(d)}</span><span class="n">{nw(n)}</span></div>')
         tiles.append(f'<section class="tile glass glint {cls}"><div class="eyebrow">{eyebrow}</div><h2>{title}</h2><div class="steps">{"".join(parts)}</div></section>')
         joins.append(f'<div class="{cls[0]}"><i></i>{flow}</div>')
-    feats = "".join(f'<div class="feat"><b>{a}</b><span class="tag">{b}</span><span class="n">{c}</span></div>' for a, b, c in t["feats"])
+    feats = "".join(f'<div class="feat">{ico(FEAT_ICONS[i])}<div><b>{a}</b><span class="tag">{b}</span><span class="n">{c}</span></div></div>' for i, (a, b, c) in enumerate(t["feats"]))
     ops_name, ops_desc = t["ops"]
     return f"""<!doctype html><html lang="{t['lang']}"><head><meta charset="utf-8"><title>wellbian — {t['h1']}</title><style>{CSS}</style></head><body>
 <div class="bgfx"><div class="g1"></div><div class="g2"></div><div class="g3"></div><div class="g4"></div><div class="grid"></div></div>
@@ -139,7 +165,7 @@ def page(lang):
 <h1>{t['h1']}</h1><p class="sub">{t['sub']}</p>
 <div class="row">{"".join(tiles)}</div>
 <div class="join">{"".join(joins)}</div>
-<div class="ops glint"><span class="dot"></span><b>{ops_name}</b>{ops_desc}</div>
+<div class="ops glint">{ico("vault", "ico-s")}<b>{ops_name}</b>{ops_desc}</div>
 <div class="join2"><i></i><i></i><i></i><i></i></div>
 <div class="ledger glass glint"><div><h3>{t['ledger']}</h3><p>{t['ledger_sub']}</p></div><div class="feats">{feats}</div></div>
 <p class="foot">{t['foot']}</p>
