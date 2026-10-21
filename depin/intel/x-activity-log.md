@@ -4296,3 +4296,12 @@ Thanks Winkle! Nice to meet you too. I spend my time building rather than tradin
 보상량 · 가치 · 가격 · 풀 깊이 · 수익 0 은 그대로.
 **게시 전 확인**: ① 오늘 이미 원글(11:31 「웰비안 카페」) — 인용도 원글로 센다 → 6시간 뒤(17:31 이후)나 내일 ② 문창훈 쪽에 기기 · 비용 · 리퍼럴 코드 등 경제적 대가가 있었다면 원글에 광고 표시가 있어야 한다 — 표시 없는 글을 우리가 인용하면 같이 걸린다 ③ 책 언급은 하지 않음(누구 책인지 미확인).
 
+## 서우 개인 계정 — Eri(@sentosum…) 「Swell 불참 · Onami 새 기능 시험 중」 인용 (2026-10-21, 서우 인용 작성 화면 캡처 + 「기대된다 칭찬해두자」)
+
+원글: 올해 @RippleSwell 을 못 간다 · @OnamiPress 팀이 새 기능의 핵심 시험 단계라 마무리에 집중(Onami 화면 캡처 — Publish · Share · Earn · Agents · MCP/API 메뉴).
+판정: **인용 — 칭찬 · 기대 한 줄.** 무대보다 출시를 고른 것을 칭찬한다(빌더 결). 넣지 않은 것: 우리 Swell 참석(공개 일정 약속 0) · Onami 의 Earn · 보상 · 토큰 · 기능 이름(아직 안 보인 것을 단정하지 않는다) · 웰비안 · 브랜드 태그 · 링크.
+날씨 말장난(「forecast looks bright」)은 뺐다 — 날씨 회사가 Earn 메뉴가 있는 프로젝트에 「전망 밝다」를 쓰면 회의적 독자는 시세 전망으로 읽는다.
+- A 추천(155자): `Heads-down over hallway chats: the builder's call. Swell will miss you, Eri, but I'd rather see Onami cross that finish line. Can't wait to see what ships.`
+- C 짧은 판(83자): `The best reason to miss Swell: shipping. Can't wait to see what Onami unveils, Eri.`
+게시 전: 인용도 원글로 센다 — 개인 계정에 오늘 원글 · 인용이 이미 있으면 내일로.
+
