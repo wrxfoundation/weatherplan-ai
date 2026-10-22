@@ -195,7 +195,7 @@ def illus(name):
 
 
 def streams(w=200, h=300, seed=11, n=9):
-    """레이더에서 하늘로 오르는 가랑비 같은 점선 몇 줄(10/22 서우 「폭포 말고 가랑비처럼 상징적으로」).
+    """레이더에서 하늘로 오르는 가는 실선 몇 가닥(10/22 서우 「폭포 말고 가랑비처럼」 → 「실선 몇 가지만 상징적으로」).
     아래는 0에서 서서히 켜지고 위로 갈수록 사라진다. 같은 seed 면 같은 그림."""
     import random
     r = random.Random(seed)
@@ -205,7 +205,8 @@ def streams(w=200, h=300, seed=11, n=9):
     for i in range(n):
         x = w * (0.5 + (i - (n - 1) / 2) / n * 0.8 + r.uniform(-0.03, 0.03))
         hh = h * r.uniform(0.45, 0.95) * (1 - abs(i - (n - 1) / 2) / n * 0.8)
-        parts.append(f'<line x1="{x:.1f}" y1="{h}" x2="{x:.1f}" y2="{h-hh:.0f}" stroke="url(#up)" stroke-width="{r.choice([1.6, 2.0])}" stroke-linecap="round" stroke-dasharray="0.1 {r.choice([11, 13, 15])}" stroke-dashoffset="{r.randint(0, 12)}" opacity="{r.uniform(.45, .8):.2f}"/>')
+        # 10/22 서우 「데이터 기둥 없애고 건물 + 레이더만, 실선 몇 가닥만 상징적으로」 — 점선 → 가는 실선
+        parts.append(f'<line x1="{x:.1f}" y1="{h}" x2="{x:.1f}" y2="{h-hh:.0f}" stroke="url(#up)" stroke-width="{r.choice([1.1, 1.4])}" stroke-linecap="round" opacity="{r.uniform(.55, .9):.2f}"/>')
     return f'<div class="streams"><svg viewBox="0 0 {w} {h}" preserveAspectRatio="none" aria-hidden="true">{"".join(parts)}</svg></div>'
 
 CHEV = '<div class="chev"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M0 12h21M16 7l5 5-5 5"/></svg></div>'
@@ -241,7 +242,7 @@ def page(lang, vertical=False):
 <p class="note">{t['note']}</p>
 <p class="foot">{A.nw(t['foot'])}</p>
 </div>
-<div class="fg">{streams(70, 280, 11, 6) if not vertical else streams(60, 80, 11, 5)}<div class="dc"></div></div></body></html>"""
+<div class="fg">{streams(70, 280, 11, 4) if not vertical else streams(60, 80, 11, 3)}<div class="dc"></div></div></body></html>"""
 
 if __name__ == "__main__":
     env = dict(os.environ)
