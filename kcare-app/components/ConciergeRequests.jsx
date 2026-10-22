@@ -781,6 +781,59 @@ export default function ConciergeRequests({ requests, payments, extraCharges = [
   );
 }
 
+// ── 추가 이용 금액 결제 알림 (2026-10-22 시제품 v17) ──
+// 보낸 청구가 결제되면 — 받는 분이 앱에서 냈든, 기한이 지나 등록 카드로 결제됐든 — 어느 탭에 있든 화면 위에 알린다.
+// 이 기기에서 확인한 것은 다시 띄우지 않고, 결제된 지 사흘이 지난 것은 띄우지 않는다 (카드의 상태 줄은 그대로 남는다)
+const PAID_SEEN_KEY = "kcare-concierge-extra-paid-v1";
+const PAID_NOTICE_DAYS = 3;
+export function ExtraPaidNotice({ charges }) {
+  const [seen, setSeen] = useState(null);
+  const key = scopedKey(PAID_SEEN_KEY);
+  useEffect(() => {
+    try {
+      setSeen(JSON.parse(localStorage.getItem(key) || "{}") || {});
+    } catch {
+      setSeen({});
+    }
+  }, [key]);
+  const now = Date.now();
+  const fresh = seen ? (charges || []).filter((x) => x.status === "paid" && now - Number(x.paidAt || 0) < PAID_NOTICE_DAYS * 86400000 && !seen[x.id]) : [];
+  if (!fresh.length) return null;
+  const close = () => {
+    const next = { ...(seen || {}) };
+    fresh.forEach((x) => {
+      next[x.id] = Date.now();
+    });
+    const ids = Object.keys(next).sort((a, b) => next[b] - next[a]).slice(0, 200);
+    const trimmed = Object.fromEntries(ids.map((id) => [id, next[id]]));
+    setSeen(trimmed);
+    try {
+      localStorage.setItem(key, JSON.stringify(trimmed));
+    } catch {
+      /* 저장이 막힌 브라우저 — 이 화면에서만 기억 */
+    }
+  };
+  return (
+    <div role="status" aria-label="추가 이용 금액 결제 알림" className="rounded-xl border border-green/30 bg-[#EEF6F1] p-3">
+      <div className="text-[11px] font-bold tracking-[.08em] text-green">추가 이용 금액 · 결제 알림</div>
+      <ul className="mt-1 space-y-1">
+        {fresh.slice(0, 3).map((x) => (
+          <li key={x.id} className="text-[13px] leading-[1.5] text-ink">
+            <b className="text-navy">
+              {x.customer || "고객"} · {svcTitle(x.service)} {fmtWon(x.amount)}
+            </b>{" "}
+            — {x.auto ? "기한이 지나 등록된 카드로 결제됐어요" : `${x.payer || extraToText(x)} 결제 완료`}
+          </li>
+        ))}
+      </ul>
+      {fresh.length > 3 && <p className="mt-0.5 text-[12px] text-muted">그 밖에 {fresh.length - 3}건</p>}
+      <button type="button" onClick={close} className="btn-press mt-2 w-full rounded-lg border border-green/40 bg-white py-2 text-[13px] font-bold text-green">
+        알림 확인
+      </button>
+    </div>
+  );
+}
+
 // ── 새 해주세요 알림 (2026-10-14 현장 '기본 로직' 5번 · 연동 확인 3번) ──
 // 어르신 · 보호자가 해주세요(말로 부탁 포함)를 보내면 담당 컨시어지 화면에 — 어느 탭에 있든 — 창이 뜨고 알림음이 한 번 울린다.
 // 이 기기에서 본 요청은 다시 띄우지 않는다. 확인 · 거절은 오늘 탭 '해주세요'에서 한다.

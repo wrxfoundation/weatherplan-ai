@@ -1728,7 +1728,7 @@ function ElderHome() {
               </span>
             </R>
             <R d={80} className="-mt-1 px-1 text-[16px] leading-[1.5]" style={{ color: "#5E6270" }}>
-              저도, 가족도 누구나 낼 수 있어요. 결제하면 선생님이 일정을 확인하고 관제가 승인해 확정돼요.
+              가족 누구나 금액 제한 없이 결제해요. 결제하면 선생님이 일정을 확인하고 관제가 승인해 확정돼요.
             </R>
 
             {/* 선생님이 제안한 것 — 어르신이 수락 · 거절 (2026-10-05: 승인 대상은 선생님이 정한다) */}
@@ -3435,7 +3435,7 @@ function ElderWelfareSheet({ matches, counts, asked, onAsk, onClose }) {
 }
 
 // 해주세요 상세 시트 — 타일을 누르면 열린다. 무엇이 얼마인지가 첫 정보다.
-// 보내면 시트 안에서 바로 "부탁했어요"로 바뀐다 — 화면 이동 없이 결과를 확인한다.
+// 보내면 시트 안에서 바로 "요청했어요"로 바뀐다 — 화면 이동 없이 결과를 확인한다.
 // 2026-10-14 현장 요청 6번: 날짜 · 시간은 달력에서 고른다 (components/ElderDateTime.jsx) — 담당 컨시어지 승인 화면의 기본값이 된다.
 // 응급 상황 대응(no12)은 예약서가 아니다 — 1시간당 요금과 설명, '관제와 통화하기' 하나만 둔다 (같은 요청 7번).
 const isHospitalItem = (item) => /병원|진료|검진/.test(`${item?.name || ""} ${item?.scope || ""}`);
@@ -3482,7 +3482,7 @@ function ElderReqDateSheet({ req, onClose, onSave }) {
 
 // 해주세요 신청 (2026-10-22 시제품 v17) — 보호자 신청서와 같은 순서를 큰 글씨로:
 //   (병원 동행이면) 어느 진료에 → 날짜 · 시간(내일 ~ 1년 · 오전 7시 ~ 오후 8시) → 이용 시간(− / +) → (함께가요) 누가 가나요
-//   → 결제 방법(내가 결제 · 가족에게 부탁) → 'N원 결제하고 부탁하기'. 날짜와 시간을 다 골라야 버튼이 켜진다.
+//   → 결제 방법(내가 결제 · 가족에게 부탁) → 'N원 결제하고 요청'(무료는 '요청하기' — 보호자 신청서와 같은 말). 날짜와 시간을 다 골라야 버튼이 켜진다.
 function ElderAskSheet({ item, sent, approver, onAsk, onCallOps, onClose, hospitals = [], events = [] }) {
   const off = !item.active;
   const emergency = item.no === 12;
@@ -3514,7 +3514,7 @@ function ElderAskSheet({ item, sent, approver, onAsk, onCallOps, onClose, hospit
           : null;
   const price = amount === 0 ? "비용 없음" : amount == null ? "요금 확인 후 안내" : fmtWon(amount);
   const optStyle = (on) => (on ? { background: "#FFFFFF", boxShadow: `inset 0 0 0 3px ${TONE.purple.solid}` } : { background: "#FFFFFF", boxShadow: "0 4px 0 #E3DED3" });
-  const cta = missing ? missing : amount > 0 ? (pay === "family" ? `${approver} 님께 결제 부탁하기` : `${fmtWon(amount)} 결제하고 부탁하기`) : "부탁하기";
+  const cta = missing ? missing : amount > 0 ? (pay === "family" ? `${approver} 님께 결제 부탁하기` : `${fmtWon(amount)} 결제하고 요청`) : "요청하기";
   return (
     <Sheet onClose={onClose} label={item.title || item.name}>
       {sent?.mode === "callOps" ? (
@@ -3540,7 +3540,7 @@ function ElderAskSheet({ item, sent, approver, onAsk, onCallOps, onClose, hospit
             <Line name="check" size={44} />
           </span>
           <div className="text-[24px] font-black" style={{ color: "#2A4D33" }}>
-            {sent.mode === "family" ? `${approver} 님께 결제를 부탁했어요` : sent.mode === "self" ? "결제하러 갈게요" : "부탁했어요"}
+            {sent.mode === "family" ? `${approver} 님께 결제를 부탁했어요` : sent.mode === "self" ? "결제하러 갈게요" : "요청했어요"}
           </div>
           <div className="text-[19px] font-extrabold leading-[1.4]">{sent.title || sent.name}</div>
           <div className="text-[17px] leading-[1.5]" style={{ color: "#3B5A44" }}>
@@ -3663,7 +3663,7 @@ function ElderAskSheet({ item, sent, approver, onAsk, onCallOps, onClose, hospit
                   이용 시간 {fmtWon(priceOf(item.name, dur, 0))} + 추가 {people}명 {fmtWon(people * EXTRA_PERSON_FEE)}
                 </p>
               )}
-              {/* 결제 — 저도, 가족도 누구나 낼 수 있어요 (금액 제한 없음 · 2026-10-22) */}
+              {/* 결제 — 가족 누구나 금액 제한 없이 (2026-10-22) */}
               {amount > 0 && (
                 <>
                   <div className="text-[19px] font-extrabold">어떻게 결제할까요?</div>

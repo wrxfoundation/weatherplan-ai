@@ -55,7 +55,7 @@ import { RESULT_TONE, VISIT_GRADES } from "../lib/visit-report";
 import { STORE_CATALOG } from "../lib/store";
 import { SERVICE_MENU, crewOf, daysUntil, kstYmd } from "../lib/requests";
 import { CONCIERGES } from "../lib/ops-admin";
-import ConciergeRequests, { NewRequestAlert, newRequestsFor } from "../components/ConciergeRequests";
+import ConciergeRequests, { ExtraPaidNotice, NewRequestAlert, newRequestsFor } from "../components/ConciergeRequests";
 import { HelpCallCard, HelpCallPopup } from "../components/HelpCall";
 import { LIVE_TAG } from "../lib/live-household";
 import { conciergeChoices, elderNameOf, inCenter, meAs, people } from "../lib/people";
@@ -508,6 +508,8 @@ function ConciergePage() {
 
           <main className="flex-1 space-y-3.5 overflow-y-auto px-4 pb-28 pt-4">
             {sosAck && sosDispatchBanner}
+            {/* 추가 이용 금액이 결제되면(받는 분 결제 · 기한 지나 등록 카드) 어느 탭에서든 알린다 (2026-10-22) */}
+            <ExtraPaidNotice charges={state.extraCharges} />
             {/* ════ 오늘 — 출근해서 제일 먼저 보는 것 ════ */}
             {tab === "today" && (
               <>
