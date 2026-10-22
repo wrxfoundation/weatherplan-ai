@@ -2534,3 +2534,4 @@ Thanks Odelia — writing to you at that address today. Mine is support@wellbian
 - **연재 Part 3 18차(10/22, 서우 「테이블 안 우측 아이콘 에칭 스타일로」)** — 데이터 · 공장 · 뇌 세 그림을 에칭(해칭) 선화로(Higgsfield 6크레딧 → 라벤더 · 투명 배경, 테두리 제거). 같은 턴에 17차(세로판 건물 올림)도 반영. `content/ai-factory-1021/`.
 - **연재 Part 3 19차(10/22, 서우 「아이콘 옅게 · 건물 약간 내려 · 실선 없애」)** — 에칭 .5 · 건물 20~22px 내림 · 실선 삭제. `content/ai-factory-1021/`.
 - **연재 Part 3 20차(10/22, 서우 「레이더 건물도 구름처럼 옅게」)** — 건물 .62 · 대비 · 채도 낮춤 · 번짐 약하게. `content/ai-factory-1021/`.
+- **연재 Part 3 21차(10/22, 서우 「건물 테두리선 어색 · 지저분」)** — 오려낸 건물의 흰 가장자리 제거(알파 2.5px 깎고 흐림) → 배경에 부드럽게 녹음. `content/ai-factory-1021/`.
