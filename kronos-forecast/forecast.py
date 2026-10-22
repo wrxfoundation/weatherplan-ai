@@ -127,14 +127,17 @@ def load_yahoo(symbol, interval):
     # Leave out a candle that is still forming (e.g. today's daily bar while the market is open).
     now, last = pd.Timestamp.now(tz="UTC"), df["timestamps"].iloc[-1]
     regular = (md.get("currentTradingPeriod") or {}).get("regular") or {}
-    if interval == "1d" and regular:
+    dropped = None
+    if interval == "1d" and symbol.endswith("=F"):
+        df, dropped = rebuild_futures_session(tk, df, tz)
+        forming = False
+    elif interval == "1d" and regular:
         start, end = utc(regular["start"]).tz_convert(tz), utc(regular["end"])
         forming = last.date() == start.date() and now < end
     elif interval == "1d":
         forming = last.date() >= now.tz_convert(tz).date()
     else:
         forming = now < last + interval_step(interval)
-    dropped = None
     if forming:
         dropped, df = last, df.iloc[:-1]
 
@@ -144,6 +147,27 @@ def load_yahoo(symbol, interval):
     df = df.assign(timestamps=df["timestamps"].dt.tz_localize(None)).reset_index(drop=True)  # exchange-local time
     return {"df": df, "name": name, "currency": md.get("currency") or "", "source": "Yahoo Finance via yfinance",
             "dropped": dropped, "symbol": symbol}
+
+
+def rebuild_futures_session(tk, df, tz):
+    """CME futures trade in sessions from 18:00 ET to 17:00 ET. After the 18:00 reopen Yahoo's daily
+    bar holds only the new evening session under the old date, so the session that just finished
+    would be lost. Rebuild the last finished session from 1-hour bars and leave out the one still
+    trading. Returns (candles, label of the left-out session)."""
+    h = tk.history(period="5d", interval="1h")
+    if h.empty:
+        return df.iloc[:-1], df["timestamps"].iloc[-1]
+    session = (h.index.tz_convert("America/New_York") + pd.Timedelta(hours=6)).normalize()  # 18:00 opens tomorrow
+    current = (pd.Timestamp.now(tz="America/New_York") + pd.Timedelta(hours=6)).normalize()
+    done = sorted(s for s in session.unique() if s < current)
+    if len(done) < 2:  # the oldest session in the 5-day window may be cut off
+        return df.iloc[:-1], df["timestamps"].iloc[-1]
+    bars = h[session == done[-1]]
+    candle = pd.DataFrame([{"timestamps": done[-1].tz_convert(tz), "open": bars["Open"].iloc[0],
+                            "high": bars["High"].max(), "low": bars["Low"].min(), "close": bars["Close"].iloc[-1],
+                            "volume": float(bars["Volume"].sum())}])
+    df = pd.concat([df[df["timestamps"] < candle["timestamps"].iloc[0]], candle], ignore_index=True)
+    return df, current.tz_convert(tz)
 
 
 def load_csv(path, extra=()):
@@ -598,7 +622,7 @@ def run_forecast(args, mk, predictor, df, lookback, word, intraday, model_label,
     p10, p50, p90 = np.percentile(ends, [10, 50, 90])
     n_up = int((ends > last_close).sum())
     verb = "ends" if n_up == 1 else "end"
-    unit = "" if prefix else f" (prices in {mk['currency']})"
+    unit = "" if prefix or not mk["currency"] else f" (prices in {mk['currency']})"
 
     title = f"{mk['name']} · next {args.horizon} {word} candles"
     subtitle = (f"{model_label} read the last {len(hist)} candles (to {day(last_ts, intraday)}) and sampled {args.samples} "
