@@ -88,10 +88,10 @@ XCSS = """
 .paintfade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(13,11,38,0) 0%,rgba(13,11,38,.10) 24%,rgba(13,11,38,.55) 40%,rgba(13,11,38,.88) 56%,#0D0B26 74%)}
 /* 오른쪽 아래 AI 데이터센터 건물(10/22 서우 「우측 하단에 과하지 않게」) — 같은 회화풍(Higgsfield) 그림을 잘라 배경층 맨 위에. 밝은 부분만 보이게(lighten). */
 .fg{position:absolute;inset:0;z-index:2;pointer-events:none;overflow:hidden}
-.dc{position:absolute;right:-40px;bottom:-84px;width:660px;height:330px;background:url("assets/datacenter-radar.jpg") center/cover no-repeat;opacity:.96;filter:brightness(1.08) saturate(1.05);
- -webkit-mask-image:radial-gradient(ellipse 88% 96% at 60% 100%,#000 56%,transparent 88%);mask-image:radial-gradient(ellipse 88% 96% at 60% 100%,#000 56%,transparent 88%)}
+.dc{position:absolute;right:-150px;bottom:-12px;width:560px;height:251px;background:url("assets/datacenter-radar.png") center bottom/contain no-repeat;filter:brightness(.66) saturate(.92) contrast(1.06);-webkit-mask-image:linear-gradient(0deg,transparent 0%,#000 14%);mask-image:linear-gradient(0deg,transparent 0%,#000 14%)}
+.dchaze{position:absolute;right:-60px;bottom:-120px;width:760px;height:420px;border-radius:50%;background:radial-gradient(closest-side,rgba(255,196,120,.14),rgba(163,120,255,.08) 55%,rgba(163,120,255,0))}
 /* 데이터센터 지붕에서 하늘로 솟는 디지털 정보(점선 기둥) — 10/22 서우 「하늘로 디지털 정보를 쏘는 듯한 효과」(참고 이미지: 지구에서 솟는 점 기둥). 금빛 → 라벤더로 옅어진다. */
-.streams{position:absolute;right:177px;bottom:210px;width:200px;height:330px;pointer-events:none;mix-blend-mode:screen;opacity:1;filter:drop-shadow(0 0 4px rgba(255,214,150,.5))}
+.streams{position:absolute;right:84px;bottom:219px;width:70px;height:280px;pointer-events:none;mix-blend-mode:screen;opacity:.9;filter:drop-shadow(0 0 3px rgba(255,214,150,.45))}
 .streams svg{width:100%;height:100%;display:block}
 .logo,h1,.sub{text-shadow:0 2px 22px rgba(13,11,38,.55)}
 .note,.foot{text-shadow:0 0 6px #0D0B26,0 0 14px #0D0B26}
@@ -106,8 +106,9 @@ XCSS = """
 VCSS = """
 html,body{width:1080px;height:1920px}
 body{padding:30px 44px 0;justify-content:flex-start}
-.dc{width:540px;height:270px;right:-60px;bottom:-70px}
-.streams{right:110px;bottom:170px;width:180px;height:320px;-webkit-mask-image:linear-gradient(180deg,#000 0%,#000 64%,rgba(0,0,0,.3) 69%,rgba(0,0,0,.3) 90%,#000 95%);mask-image:linear-gradient(180deg,#000 0%,#000 64%,rgba(0,0,0,.3) 69%,rgba(0,0,0,.3) 90%,#000 95%)}
+.dc{width:470px;height:210px;right:-106px;bottom:-70px}
+.dchaze{width:620px;height:360px;right:-90px;bottom:-130px}
+.streams{right:90px;bottom:122px;width:60px;height:80px}
 .bgfx .g1{width:900px;height:900px;left:-300px;top:-380px}
 .bgfx .g2{width:900px;height:900px;right:-320px;bottom:-360px}
 .bgfx .g3{width:700px;height:600px;left:-160px;top:30%}
@@ -193,29 +194,18 @@ def illus(name):
     return f'<div class="ill"><svg viewBox="0 0 120 120" aria-hidden="true">{ILLUS[name]}</svg></div>'
 
 
-def streams(w=460, h=760, seed=11, n_dots=34, n_lines=9):
-    """지붕에서 위로 솟는 점선 기둥 — 가운데가 촘촘하고 키가 크며, 몇 줄은 가는 실선. 같은 seed 면 같은 그림."""
+def streams(w=200, h=300, seed=11, n=9):
+    """레이더에서 하늘로 오르는 가랑비 같은 점선 몇 줄(10/22 서우 「폭포 말고 가랑비처럼 상징적으로」).
+    아래는 0에서 서서히 켜지고 위로 갈수록 사라진다. 같은 seed 면 같은 그림."""
     import random
     r = random.Random(seed)
     parts = [f'<defs><linearGradient id="up" gradientUnits="userSpaceOnUse" x1="0" y1="{h}" x2="0" y2="0">'
-             '<stop offset="0" stop-color="#FFE1A6" stop-opacity="0"/><stop offset=".12" stop-color="#FFE1A6" stop-opacity=".9"/>'
-             '<stop offset=".45" stop-color="#E9D7FF" stop-opacity=".5"/><stop offset=".8" stop-color="#CDB8FF" stop-opacity=".12"/><stop offset="1" stop-color="#CDB8FF" stop-opacity="0"/></linearGradient>'
-             f'<radialGradient id="base" cx=".5" cy="1" r=".5"><stop offset="0" stop-color="#FFD58F" stop-opacity=".55"/><stop offset="1" stop-color="#FFD58F" stop-opacity="0"/></radialGradient></defs>']
-    parts.append(f'<defs><linearGradient id="col" gradientUnits="userSpaceOnUse" x1="0" y1="{h}" x2="0" y2="0"><stop offset="0" stop-color="#FFD58F" stop-opacity="0"/><stop offset=".1" stop-color="#FFD58F" stop-opacity=".3"/><stop offset=".55" stop-color="#E9D7FF" stop-opacity=".16"/><stop offset="1" stop-color="#CDB8FF" stop-opacity="0"/></linearGradient>'
-                 f'<filter id="soft" x="-50%" y="-10%" width="200%" height="120%"><feGaussianBlur stdDeviation="{w*.06:.1f}"/></filter></defs>')
-    parts.append(f'<rect x="{w*.22:.0f}" y="0" width="{w*.56:.0f}" height="{h}" fill="url(#col)" filter="url(#soft)"/>')
-    parts.append(f'<ellipse cx="{w*.52:.0f}" cy="{h}" rx="{w*.42:.0f}" ry="70" fill="url(#base)"/>')
-    for i in range(n_dots):
-        x = w * (0.5 + (r.random() - 0.5) * (0.9 if i % 3 else 0.5))
-        centre = 1 - abs(x / w - 0.52) * 1.6
-        hh = h * max(0.18, min(0.98, centre * r.uniform(0.55, 1.0)))
-        sw = r.choice([1.8, 2.2, 2.6])
-        op = r.uniform(.45, 1)
-        parts.append(f'<line x1="{x:.1f}" y1="{h}" x2="{x:.1f}" y2="{h-hh:.0f}" stroke="url(#up)" stroke-width="{sw}" stroke-linecap="round" stroke-dasharray="0.1 {r.choice([6, 7, 9])}" opacity="{op:.2f}"/>')
-    for i in range(n_lines):
-        x = w * (0.5 + (r.random() - 0.5) * 0.85)
-        hh = h * r.uniform(0.35, 0.9)
-        parts.append(f'<line x1="{x:.1f}" y1="{h}" x2="{x:.1f}" y2="{h-hh:.0f}" stroke="url(#up)" stroke-width="1" opacity="{r.uniform(.25, .6):.2f}"/>')
+             '<stop offset="0" stop-color="#FFE1A6" stop-opacity="0"/><stop offset=".15" stop-color="#FFE1A6" stop-opacity=".85"/>'
+             '<stop offset=".5" stop-color="#E9D7FF" stop-opacity=".45"/><stop offset="1" stop-color="#CDB8FF" stop-opacity="0"/></linearGradient></defs>']
+    for i in range(n):
+        x = w * (0.5 + (i - (n - 1) / 2) / n * 0.8 + r.uniform(-0.03, 0.03))
+        hh = h * r.uniform(0.45, 0.95) * (1 - abs(i - (n - 1) / 2) / n * 0.8)
+        parts.append(f'<line x1="{x:.1f}" y1="{h}" x2="{x:.1f}" y2="{h-hh:.0f}" stroke="url(#up)" stroke-width="{r.choice([1.6, 2.0])}" stroke-linecap="round" stroke-dasharray="0.1 {r.choice([11, 13, 15])}" stroke-dashoffset="{r.randint(0, 12)}" opacity="{r.uniform(.45, .8):.2f}"/>')
     return f'<div class="streams"><svg viewBox="0 0 {w} {h}" preserveAspectRatio="none" aria-hidden="true">{"".join(parts)}</svg></div>'
 
 CHEV = '<div class="chev"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M0 12h21M16 7l5 5-5 5"/></svg></div>'
@@ -235,7 +225,7 @@ def page(lang, vertical=False):
     bn, bd = t["band"]
     css = A.CSS + XCSS + (VCSS if vertical else "")
     return f"""<!doctype html><html lang="{t['lang']}"><head><meta charset="utf-8"><title>wellbian — {t['h1']}</title><style>{css}</style></head><body>
-<div class="bgfx"><div class="paint"></div><div class="paintfade"></div><div class="g1"></div><div class="g2"></div><div class="g3"></div><div class="g4"></div><div class="grid"></div>{streams(200, 330, 11, 30, 7) if not vertical else streams(180, 320, 11, 28, 6)}</div>
+<div class="bgfx"><div class="paint"></div><div class="paintfade"></div><div class="g1"></div><div class="g2"></div><div class="g3"></div><div class="g4"></div><div class="grid"></div><div class="dchaze"></div></div>
 <div class="wrap">
 <div class="logo">{A.LOGO}</div>
 <div class="kicker">{t['kicker']}</div>
@@ -251,7 +241,7 @@ def page(lang, vertical=False):
 <p class="note">{t['note']}</p>
 <p class="foot">{A.nw(t['foot'])}</p>
 </div>
-<div class="fg"><div class="dc"></div></div></body></html>"""
+<div class="fg">{streams(70, 280, 11, 6) if not vertical else streams(60, 80, 11, 5)}<div class="dc"></div></div></body></html>"""
 
 if __name__ == "__main__":
     env = dict(os.environ)
