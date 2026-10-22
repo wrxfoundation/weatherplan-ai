@@ -1,5 +1,6 @@
 import Head from "next/head";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import FamilyLayout from "../../components/FamilyLayout";
 import { AI_ASSISTANT_QA, CARE_TEAM, ELDER, EVENT_KINDS, FEED_TONE, NEIGHBORHOOD_FEED, OUTING, VITALS, WEEKLY, elderWho } from "../../lib/mock";
@@ -22,6 +23,9 @@ import { avatarText, meAs } from "../../lib/people";
 import { USUAL_SLEEP, fitMonth, medMonth, medTally, pastWeek, weekBefore } from "../../lib/demo-health";
 import { Clay, Line } from "../../components/clay";
 import { Btn, Card, Face, Pill, R, TONE, WhiteBtn, eventTone } from "../../components/ds";
+import { ExtraChargeCard, ExtraChargeSheet, myExtraCharges } from "../../components/ExtraCharge";
+import { payHref } from "../../lib/payments";
+import { svcTitle } from "../../lib/booking";
 
 // 받은 음성 '받은 때' — 오늘 · 어제는 말로, 그 전은 날짜로 (시각만 쓰면 며칠 전 것도 오늘처럼 읽힌다)
 const whenLabel = (at) => {
@@ -45,6 +49,11 @@ export default function FamilyHome() {
   const [demoOpen, setDemoOpen] = useState(false);
   const authUser = useAuth().user;
   const live = !!authUser?.household; // 테스트 계정 — 시연 컨트롤(SOS 켜기 · 이상 징후 재현)을 숨긴다
+  const router = useRouter();
+  // 추가 이용 금액 결제 요청 (2026-10-22) — 컨시어지가 이 보호자에게 보낸 것만 (받는 분에게만 보인다 · lib/booking.js extraIsFor)
+  const myExtras = myExtraCharges(state.extraCharges, "guardian", meAs(authUser, "guardian"));
+  const [xOpen, setXOpen] = useState(null);
+  const xSel = (state.extraCharges || []).find((x) => x.id === xOpen) || null;
   // SOS '확인했습니다' — 이 기기에서만 배너를 접는다. SOS 해제는 관제만 한다 (ackSos).
   const sosKey = state.demo.sos ? String(state.demo.sosAt || "on") : "";
   const [sosAck, setSosAck] = useState("");
@@ -288,6 +297,22 @@ export default function FamilyHome() {
               확인
             </WhiteBtn>
           </div>
+        )}
+
+        {/* 추가 이용 금액 결제 요청 — 결제하면 '결제 완료'로 사흘 남는다 (2026-10-22) */}
+        {myExtras.map((x, i) => (
+          <R key={x.id} d={30 + i * 20}>
+            <ExtraChargeCard x={x} onOpen={setXOpen} />
+          </R>
+        ))}
+        {xSel && (
+          <ExtraChargeSheet
+            x={xSel}
+            r={(state.requests || []).find((q) => q.id === xSel.reqId) || null}
+            demo={!live}
+            onPay={(x) => router.push(payHref({ kind: "extra", amount: x.amount, orderName: `추가 이용 금액 · ${svcTitle(x.service)}`, ref: x.id, back: "/family" }))}
+            onClose={() => setXOpen(null)}
+          />
         )}
 
         {/* 관제가 보낸 안심방문 리포트 · 컨시어지가 보낸 동행 리포트 — 열어 보기 전까지 위쪽에 (2026-10-02 연동) */}

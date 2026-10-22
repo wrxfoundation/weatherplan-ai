@@ -7,7 +7,7 @@ import { authConfigured } from "../../../lib/auth-server";
 import { db, dbConfigured, dbErrorCode } from "../../../lib/db";
 import { authOptions } from "../auth/[...nextauth]";
 import { memberStillValid } from "../../../lib/members";
-import { householdState, requestPayable } from "../../../lib/pay-server";
+import { extraPayable, householdState, requestPayable } from "../../../lib/pay-server";
 import { orderScope } from "../../../lib/payments";
 
 // 테스트 계정으로 로그인한 결제는 서버(Supabase payments 표)에도 남긴다 — 금액·상태는 토스 응답 기준.
@@ -72,13 +72,15 @@ export default async function handler(req, res) {
   }
   // 로그인한 가구의 해주세요 — 승인(청구) 직전에 한 번 더 본다. 결제창에 있는 사이 다른 폰에서 이미 결제했거나
   // 요청이 취소 · 변경됐으면 토스를 부르지 않는다 — 돈을 받고 나서 환불 대기로 돌리는 것보다 안 받는 게 맞다 (2026-10-19 점검).
-  if (kind === "request" && refId && authConfigured() && dbConfigured()) {
+  // 추가 이용 금액도 같다 — 청구받은 당사자 · 결제 대기 · 같은 금액일 때만 (2026-10-22)
+  if ((kind === "request" || kind === "extra") && refId && authConfigured() && dbConfigured()) {
     try {
       const user = (await getServerSession(req, res, authOptions))?.user;
       if (user?.household) {
-        const p = requestPayable(await householdState(user.household), refId);
+        const st = await householdState(user.household);
+        const p = kind === "extra" ? extraPayable(st, refId, user) : requestPayable(st, refId);
         if (p.error) return res.status(p.status).json({ error: p.error, message: p.message });
-        if (p.amount !== value) return res.status(409).json({ error: "AMOUNT_CHANGED", message: "그 사이 요금이 바뀌었습니다. 해주세요 탭에서 다시 결제해 주세요." });
+        if (p.amount !== value) return res.status(409).json({ error: "AMOUNT_CHANGED", message: "그 사이 금액이 바뀌었습니다. 화면을 새로 고친 뒤 다시 결제해 주세요." });
       }
     } catch (e) {
       console.error("[payments/confirm] 가구 기록 확인 실패", dbErrorCode(e));

@@ -27,13 +27,8 @@ const KST = 9 * 3600 * 1000;
 const ymd = (t) => (t ? new Date(Number(t) + KST).toISOString().slice(0, 10) : null);
 const mdhm = (t) => (t ? new Date(Number(t) + KST).toISOString().slice(5, 16).replace("T", " ") : "—");
 
-export const PAY_MODE = {
-  limit: (ob) => `한도형 — 하루 ${Number(ob.limitAmount ?? 50000).toLocaleString("ko-KR")}원까지 어르신 직접`,
-  both: () => "양쪽 모두 결제",
-  guardianOnly: () => "보호자만 결제",
-  elderOnly: () => "어르신만 결제",
-};
-const payText = (ob) => (PAY_MODE[ob.paymentMode] || PAY_MODE.limit)(ob);
+// 결제 권한 — 2026-10-22부터 한 가족 그룹이면 누구나 금액 제한 없이 결제한다 (가입 상담의 예전 결제권한 · 하루 한도 값은 쓰지 않는다)
+const PAY_TEXT = "가족 누구나 · 금액 제한 없이";
 
 // 해주세요 — 관제 어르신 상세 '해주세요' 탭 모양으로
 export function liveRequests(state) {
@@ -95,7 +90,7 @@ export function liveElder(e, state) {
       state: "active",
       since: ymd(ob.joinedAt) || e.service.since,
       product: `K-CARE 멤버십 티어${ob.tier || 1}${ob.household === "couple" ? " · 부부 가구" : ""}`,
-      pay: `정상 · ${payText(ob)}`,
+      pay: `정상 · ${PAY_TEXT}`,
     },
     guardians: guardianPhone
       ? [
@@ -152,16 +147,15 @@ export function liveGuardian(g, state, account) {
     payments: (state?.payments || []).map((p) => ({ at: mdhm(p.at), item: p.orderName || "결제", amount: p.amount, state: "approved" })),
   };
   if (!ob || ob.forSelf) return base;
-  const limit = Number(ob.limitAmount ?? 50000);
   return {
     ...base,
     rel: ob.rel || g.rel,
     tel: fmtPhone(ob.phone || "") || g.tel,
     telSource: ob.phone ? "가입 상담" : null,
     region: ob.district || g.region,
-    payer: ob.paymentMode !== "elderOnly",
-    payLimit: ob.paymentMode === "limit" ? limit : g.payLimit,
-    payMode: payText(ob),
+    payer: true,
+    payLimit: null,
+    payMode: PAY_TEXT,
   };
 }
 

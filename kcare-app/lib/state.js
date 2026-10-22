@@ -3,8 +3,8 @@ import { useRouter } from "next/router";
 // mock.js 가 아니라 seed.js 에서 가져온다 — state 는 _app 에서 import 되므로
 // 여기서 mock.js 를 참조하면 콘솔 목데이터 전체가 모든 페이지에 실린다 (seed.js 주석 참고).
 import { INITIAL_EVENTS, INITIAL_REQUESTS, SEED_ASK_DOCTOR, SEED_EVENTS, SEED_ORDERS, SEED_REPORTS } from "./seed";
-import { PRICING } from "./config";
 import { URGENCY, approverOf, canEditRequest, cancelRule, crewOf, crewReady, fmtPreferred, paymentOf, transition } from "./requests";
+import { canChargeExtra, durOf, durText, extraAmountOf, extraDueAt, extraToText } from "./booking";
 import { SEED_VISIT, advance } from "./workflow";
 import { crewFor } from "./dispatch-policy";
 import { logout, useAuth } from "./auth";
@@ -131,6 +131,15 @@ const DEFAULT = {
   //   billing:  월 구독 자동결제로 등록한 카드 표기 정보. billingKey 원본은 서버 보관 대상이라 여기 없다.
   payments: [],
   billing: null,
+  // 멤버십 이용료를 누가 · 어떻게 내나 (2026-10-22) — 보호자 멤버십과 어르신 마이가 같은 값을 보고 고친다.
+  //   { who: "어르신 본인" | 보호자 이름 | "다른 가족 · 기관", how: "card" | "autoTransfer" | "bankDeposit", by, at }
+  memberPay: null,
+  // 추가 이용 금액 — 예약한 시간보다 길어진 해주세요를 컨시어지가 청구하고, 지정한 분이 결제한다 (2026-10-22).
+  //   [{ id, reqId, service, title, customer, by, sentAt, bookedMin, usedMin, startTime, amount, base, memo,
+  //      to: { role: "elder"|"guardian", name }, status: "pending"|"paid"|"cancelled",
+  //      paidAt?, payer?, method?, auto?, demo?, orderId?, cancel? }]
+  //   금액은 서비스 · 예약 · 실제 이용 시간으로 lib/booking.js extraAmountOf 가 정한다 (결제 서버도 같은 계산)
+  extraCharges: [],
   // 결제창으로 넘어가기 전에 담아 둔 스토어 주문. 승인이 끝나야 orders·requests 로 선다.
   pendingOrder: null,
   // 건강 정보 한 벌 — 복용약 · 질환 · 알레르기 (2026-10-02 QA). null 이면 lib/meds.js 기본값.
@@ -163,6 +172,7 @@ export function freshState() {
     opsMessages: [],
     opsNotes: [],
     askDoctor: [],
+    extraCharges: [],
   };
 }
 
@@ -333,6 +343,8 @@ function reducer(state, action) {
           x && typeof x === "object" && typeof x.status === "string" && x.status !== x.status.toLowerCase() ? { ...x, status: normalizePayStatus(x.status) } : x
         ),
         billing: p.billing ?? state.billing,
+        memberPay: obj(p.memberPay, null),
+        extraCharges: arr(p.extraCharges, state.extraCharges).filter((x) => x && typeof x === "object" && x.id),
         pendingOrder: p.pendingOrder ?? state.pendingOrder,
         health: obj(p.health, state.health),
       };
@@ -577,43 +589,163 @@ function reducer(state, action) {
         return { ...state, payments: state.payments.map((p) => (ids.has(p.id) ? { ...p, refund: { status: p.demo ? "done" : "pending", amount: p.amount, reason: why, at, by: "자동" } } : p)) };
       }
       const at = nowOf(action);
+      // 누가 냈나 — 가족 그룹 누구나 낸다 (2026-10-22). 결과 화면이 낸 사람을 넘긴다
+      const payer = String(action.by || "보호자").slice(0, 40);
       const proposal = r.dir === "fromConcierge" || r.dir === "fromOps";
       const approved = !!r.approvedAt || proposal;
-      const base = approved && !r.approvedAt ? { ...r, approvedAt: at, approvedBy: "보호자" } : r;
+      const base = approved && !r.approvedAt ? { ...r, approvedAt: at, approvedBy: payer } : r;
       // 짝이 없는 2인 해주세요(규칙 전에 만든 제안 등)는 확정하지 않고 관제 확인으로 — 짝을 정한 뒤 관제가 확정한다
       if (approved && !crewReady(base)) {
-        return withRequest(state, transition(base, "needsAdmin", `${action.note || "결제 완료"} · 2인 짝 배정 필요 — 관제 확인`, at, { by: "보호자" }), false);
+        return withRequest(state, transition(base, "needsAdmin", `${action.note || "결제 완료"} · 2인 짝 배정 필요 — 관제 확인`, at, { by: payer }), false);
       }
-      const next = transition(base, approved ? "confirmed" : "requested", action.note || "결제 완료", at, { by: "보호자" });
-      return withRequest(state, next, approved);
+      // 결제 뒤 — 아직 컨시어지 확인 전이면 승인 대기, 컨시어지가 확인한 요청(요금을 정하고 결제로 보낸 것)이면 관제 승인 대기,
+      // 수락한 제안이면 확정 (2026-10-22 · 결제 → 컨시어지 확인 → 관제 승인 → 일정 확정)
+      const to = !approved ? "requested" : proposal ? "confirmed" : "opsReview";
+      const next = transition(base, to, action.note || "결제 완료", at, { by: payer });
+      return withRequest(state, next, to === "confirmed");
     }
-    // 부 보호자 → 주 보호자 결제 부탁 — 요청에 남겨 주 보호자 화면에 보인다 (전에는 버튼 글자만 바뀌고 새로고침하면 사라졌다 · 2026-10-19 점검)
+    // 가족에게 결제 부탁 — 요청에 남겨 가족 화면에 보인다 (전에는 버튼 글자만 바뀌고 새로고침하면 사라졌다 · 2026-10-19 점검).
+    // 2026-10-22부터 가족 누구나 결제하므로 부 보호자는 직접 낸다 — 지금은 어르신이 '가족에게 결제 부탁'으로 쓴다
     case "askPrimaryPay": {
       const r = state.requests.find((x) => x.id === action.id);
       if (!r || r.status !== "awaitingPayment" || r.payAsk) return state;
       return { ...state, requests: state.requests.map((x) => (x.id === r.id ? { ...x, payAsk: { by: String(action.by || "부 보호자").slice(0, 30), at: nowOf(action) } } : x)) };
     }
-    // 담당 컨시어지 승인 — 자기 일정을 보고 날짜 · 시간을 정한다. 요금 확정 전 항목은 금액도 여기서 정해 결제로 보낸다
+    // 담당 컨시어지 확인 — 자기 일정을 보고 날짜 · 시간(· 2인이면 짝)을 정한다. 그다음은 관제 승인 (2026-10-22 결제 → 컨시어지 확인 →
+    // 관제 승인 → 일정 확정). 요금 확정 전 항목은 금액도 여기서 정해 결제로 보낸다 — 결제가 끝나면 관제 승인 대기로.
+    // 이용 시간 · 인원은 신청한 대로 둔다 (금액이 걸려 있다 — 바꾸려면 취소하고 다시 신청)
     case "approveRequest": {
       const r = state.requests.find((x) => x.id === action.id);
       if (!r || r.status !== "requested" || approverOf(r) !== "concierge") return state;
       const at = nowOf(action);
       const by = String(action.by || r.assignee || "");
       const amount = r.amount == null && action.amount !== "" && action.amount != null && Number.isFinite(Number(action.amount)) ? Number(action.amount) : r.amount;
-      let payBy = r.payBy || null;
-      let to = "confirmed";
-      const paid = !!paymentOf(state.payments, r.id) || payBy === "elder";
-      if (!paid && amount > 0) {
-        if (r.dir === "fromElder" && !needsGuardianApproval(state.onboarding, amount, elderSpentToday(state, at))) payBy = "elder";
-        else to = "awaitingPayment";
-      }
+      const paid = !!paymentOf(state.payments, r.id) || r.payBy === "elder";
+      const to = !paid && amount > 0 ? "awaitingPayment" : "opsReview";
       const when = `${action.date || ""}${action.time ? ` ${action.time}` : ""}`.trim();
-      // 2인 해주세요는 함께 갈 짝(다른 컨시어지)을 정해야 승인된다 (2026-10-19 점검 F-05 · C-06)
+      // 2인 해주세요는 함께 갈 짝(다른 컨시어지)을 정해야 확인된다 (2026-10-19 점검 F-05 · C-06)
       const partner = crewOf(r) === 2 ? String(action.partner || r.partner || "").trim() : r.partner || "";
-      const base = { ...r, amount, payBy, assignee: by || r.assignee, partner: partner || null, scheduledDate: action.date || null, scheduledTime: action.time || "", approvedAt: at, approvedBy: by };
+      const base = { ...r, amount, assignee: by || r.assignee, partner: partner || null, scheduledDate: action.date || null, scheduledTime: action.time || "", approvedAt: at, approvedBy: by, opsReturn: null };
       if (!crewReady(base)) return state;
-      const next = transition(base, to, `${by} 승인${partner && crewOf(r) === 2 ? ` · 짝 ${partner}` : ""}${when ? ` · ${when}` : ""}${to === "awaitingPayment" ? ` · 결제 대기 ${amount.toLocaleString("ko-KR")}원` : ""}`, at, { by });
-      return withRequest(state, next, to === "confirmed");
+      const next = transition(
+        base,
+        to,
+        `${by} 확인${partner && crewOf(r) === 2 ? ` · 짝 ${partner}` : ""}${when ? ` · ${when}` : ""}${to === "awaitingPayment" ? ` · 결제 대기 ${amount.toLocaleString("ko-KR")}원` : " · 관제 승인 대기"}`,
+        at,
+        { by }
+      );
+      // 달력에는 관제가 승인해 확정될 때 들어간다
+      return withRequest(state, next, false);
+    }
+    // 관제 승인 (2026-10-22) — 담당 컨시어지가 확인한 일정을 관제가 승인하면 확정되고 달력에 들어간다.
+    // 2인 해주세요는 두 사람이 정해져 있어야 승인된다 (단독 배차 0)
+    case "opsApproveRequest": {
+      const r = state.requests.find((x) => x.id === action.id);
+      if (!r || r.status !== "opsReview" || !crewReady(r)) return state;
+      const at = nowOf(action);
+      const by = String(action.by || "관제").slice(0, 30);
+      const next = transition({ ...r, opsApprovedAt: at, opsApprovedBy: by }, "confirmed", `관제 승인 (${by}) · 일정 확정${action.note ? ` — ${String(action.note).slice(0, 200)}` : ""}`, at, { by });
+      return withRequest(state, next, true);
+    }
+    // 관제가 일정을 다시 맞추게 한다 — 컨시어지 확인으로 돌아간다. 사유는 컨시어지 확인 칸 · 요청한 분 이력에 보인다. 결제는 그대로
+    case "opsReturnRequest": {
+      const r = state.requests.find((x) => x.id === action.id);
+      const reason = String(action.reason || "").trim().slice(0, 200);
+      if (!r || r.status !== "opsReview" || !reason) return state;
+      const at = nowOf(action);
+      const by = String(action.by || "관제").slice(0, 30);
+      const next = transition({ ...r, approvedAt: null, approvedBy: null, opsReturn: { by, at, reason } }, "requested", `관제가 일정을 다시 맞추게 함 (${by}) — ${reason}`, at, { by });
+      return withRequest(state, next, false);
+    }
+    // ── 추가 이용 금액 (2026-10-22) ──
+    // 컨시어지 청구 — 진행 중이거나 끝난 해주세요가 예약한 시간보다 길어졌을 때. 실제 이용 시간(30분 단위)과 받는 분(어르신 ·
+    // 구두로 동의한 보호자)을 정해 보낸다. 금액은 lib/booking.js 가 정한다 (보낸 금액을 믿지 않는다). 한 해주세요에 청구는 한 번 —
+    // 결제 대기 · 결제 완료 청구가 있으면 또 보내지 않는다 (두 번 청구 막기). 잘못 보냈으면 관제가 취소한 뒤 다시 보낸다
+    case "sendExtraCharge": {
+      const p = action.payload || {};
+      const r = state.requests.find((x) => x.id === p.reqId);
+      if (!r || !["inProgress", "done"].includes(r.status) || !canChargeExtra(r.type)) return state;
+      if ((state.extraCharges || []).some((x) => x.reqId === r.id && x.status !== "cancelled")) return state;
+      const role = p.to?.role === "elder" || p.to?.role === "guardian" ? p.to.role : null;
+      const bookedMin = Number(r.durationMin) || durOf(r.type)?.min || 0;
+      const usedMin = Math.round(Number(p.usedMin));
+      const amount = extraAmountOf({ service: r.type, bookedMin, usedMin });
+      if (!role || !amount) return state;
+      const at = nowOf(action);
+      const x = {
+        id: idOf("xc-", action),
+        reqId: r.id,
+        service: r.type,
+        customer: String(p.customer || "").slice(0, 40),
+        by: String(action.by || r.assignee || "").slice(0, 30),
+        sentAt: at,
+        bookedMin,
+        usedMin,
+        startTime: r.scheduledTime || r.preferredTime || "",
+        amount,
+        base: Number(r.amount) || 0,
+        memo: String(p.memo || "").trim().slice(0, 200),
+        to: { role, name: String(p.to?.name || "").trim().slice(0, 40) },
+        status: "pending",
+      };
+      const line = { at, status: r.status, note: `${x.by} 추가 이용 금액 청구 ${amount.toLocaleString("ko-KR")}원 (예약 ${durText(bookedMin)} → 실제 ${durText(usedMin)}) — 받는 분 ${extraToText(x)}`, by: x.by };
+      return {
+        ...state,
+        extraCharges: [x, ...(state.extraCharges || [])].slice(0, 200),
+        requests: state.requests.map((q) => (q.id === r.id ? { ...q, history: [...(q.history || []), line] } : q)),
+      };
+    }
+    // 받는 분이 결제창(토스 · 데모 가상 승인)에서 냈다. 이미 냈거나 취소된 청구 · 금액이 다른 결제는 받지 않고 환불 대기로
+    case "extraChargePaid": {
+      const x = (state.extraCharges || []).find((c) => c.id === action.id);
+      if (!x) return state;
+      const at = nowOf(action);
+      const paidAmt = Number(action.amount);
+      const refund = (pick, why) => ({
+        ...state,
+        payments: (state.payments || []).map((p) =>
+          p.kind === "extra" && p.ref === x.id && p.status === "done" && !p.refund && pick(p)
+            ? { ...p, refund: { status: p.demo ? "done" : "pending", amount: p.amount, reason: why, at, by: "자동", ...(p.demo ? { doneAt: at, doneBy: "데모 (실제 결제 없음)" } : {}) } }
+            : p
+        ),
+      });
+      const thisOne = (p) => !action.orderId || p.orderId === action.orderId;
+      if (x.status === "cancelled") return refund(thisOne, "취소된 추가 이용 금액에 결제 — 환불");
+      if (x.status === "paid") return refund((p) => p.orderId !== x.orderId && thisOne(p), "같은 추가 이용 금액 두 번 결제 — 환불");
+      if (!Number.isFinite(paidAmt) || paidAmt !== Number(x.amount)) return refund(thisOne, `결제 금액(${paidAmt.toLocaleString("ko-KR")}원)이 청구(${Number(x.amount).toLocaleString("ko-KR")}원)와 다름 — 환불`);
+      const next = { ...x, status: "paid", paidAt: at, payer: String(action.by || x.to?.name || "").slice(0, 40), method: String(action.method || "카드").slice(0, 30), auto: false, demo: !!action.demo, orderId: action.orderId || null };
+      return { ...state, extraCharges: state.extraCharges.map((c) => (c.id === x.id ? next : c)) };
+    }
+    // 결제 기한(청구일 + 3일)이 지나 받는 분의 등록 카드로 결제 — 자동 청구(카드 키 서버 보관)가 붙기 전에는 관제가 토스 상점관리자에서
+    // 청구한 뒤 이 버튼으로 남긴다 (환불 완료와 같은 방식). 기한 전에는 하지 않는다 — 데모 시연만 예외
+    case "autoChargeExtra": {
+      const x = (state.extraCharges || []).find((c) => c.id === action.id);
+      if (!x || x.status !== "pending") return state;
+      const at = nowOf(action);
+      if (!action.demo && at <= extraDueAt(x.sentAt)) return state;
+      const next = { ...x, status: "paid", paidAt: at, payer: x.to?.name || "", method: "등록 카드 자동 결제", auto: true, demo: !!action.demo, autoBy: String(action.by || "관제").slice(0, 30) };
+      return { ...state, extraCharges: state.extraCharges.map((c) => (c.id === x.id ? next : c)) };
+    }
+    // 잘못 보낸 청구를 거둔다 (관제) — 결제 전만. 사유를 남긴다
+    case "cancelExtraCharge": {
+      const x = (state.extraCharges || []).find((c) => c.id === action.id);
+      const reason = String(action.reason || "").trim().slice(0, 200);
+      if (!x || x.status !== "pending" || !reason) return state;
+      const next = { ...x, status: "cancelled", cancel: { by: String(action.by || "관제").slice(0, 30), at: nowOf(action), reason } };
+      return { ...state, extraCharges: state.extraCharges.map((c) => (c.id === x.id ? next : c)) };
+    }
+    // 관제가 수납 완료 · 취소된 청구를 봤다 — '지금 처리할 일'에서 내린다 (결제 대기 청구는 확인으로 닫지 않는다)
+    case "ackExtraCharge": {
+      const x = (state.extraCharges || []).find((c) => c.id === action.id);
+      if (!x || x.status === "pending" || x.opsAck) return state;
+      return { ...state, extraCharges: state.extraCharges.map((c) => (c.id === x.id ? { ...c, opsAck: { by: String(action.by || "관제").slice(0, 30), at: nowOf(action) } } : c)) };
+    }
+    // 멤버십 이용료를 누가 · 어떻게 — 보호자 멤버십 · 어르신 마이 어느 쪽에서 정해도 같은 값 (2026-10-22)
+    case "setMemberPay": {
+      const who = String(action.who || "").trim().slice(0, 40);
+      const how = ["card", "autoTransfer", "bankDeposit"].includes(action.how) ? action.how : null;
+      if (!who || !how) return state;
+      return { ...state, memberPay: { who, how, by: String(action.by || "").slice(0, 40), at: nowOf(action) } };
     }
     // 담당 컨시어지 거절 — 결제했으면 환불 대기로
     case "declineRequest": {
@@ -629,15 +761,11 @@ function reducer(state, action) {
       const at = nowOf(action);
       const who = action.role === "elder" ? "어르신" : "보호자";
       if (!action.accept) return closeRequest(state, r, "rejected", `${who} 거절${action.reason ? ` — ${action.reason}` : ""}`, at, who);
-      let payBy = r.payBy || null;
-      let to = "confirmed";
-      if (r.amount > 0) {
-        if (action.role === "elder" && !needsGuardianApproval(state.onboarding, r.amount, elderSpentToday(state, at))) payBy = "elder";
-        else to = "awaitingPayment";
-      }
+      // 금액이 있으면 결제 대기 — 수락한 분이든 가족 누구든 결제하면 확정 (2026-10-22 · 어르신 하루 한도는 없앴다)
+      let to = r.amount > 0 ? "awaitingPayment" : "confirmed";
       // 짝 없는 2인 제안(규칙 전에 보낸 것) — 수락은 받되 확정하지 않고 관제 확인으로 (결제가 있으면 결제 뒤에)
       if (to === "confirmed" && !crewReady(r)) to = "needsAdmin";
-      const next = transition({ ...r, payBy, approvedAt: at, approvedBy: who }, to, `${who} 수락${to === "awaitingPayment" ? " · 보호자 결제 대기" : to === "needsAdmin" ? " · 2인 짝 배정 필요 — 관제 확인" : ""}`, at, { by: who });
+      const next = transition({ ...r, approvedAt: at, approvedBy: who }, to, `${who} 수락${to === "awaitingPayment" ? " · 결제 대기" : to === "needsAdmin" ? " · 2인 짝 배정 필요 — 관제 확인" : ""}`, at, { by: who });
       return withRequest(state, next, to === "confirmed");
     }
     // 취소 — 확정 전이거나 서비스일 3일 이상 남았으면 바로, 그 안(2일 전 · 전날 · 당일 · 진행 중)은 관제 승인 요청
@@ -986,6 +1114,7 @@ function reducer(state, action) {
       const pay = action.payload || {};
       // 낸 금액이 담은 물건의 카탈로그 합계와 다르면 주문을 세우지 않는다 — 그 결제는 환불 대기로 (2026-10-19 점검)
       const want = orderTotal(po.items);
+      const elderOrder = po.from === "elder";
       if (pay.amount != null && want != null && Number(pay.amount) !== want) {
         return {
           ...state,
@@ -1001,16 +1130,17 @@ function reducer(state, action) {
         pendingOrder: null,
         demo: { ...state.demo, cart: true, safetyCart: [] },
         orders: [
-          { id: `od${key}`, at: now, by: String(action.by || "보호자"), channel: po.channel, items: po.items, ship: po.ship, status: "preparing", receipt: pay.receiptUrl || null, note: "" },
+          { id: `od${key}`, at: now, by: String(action.by || (elderOrder ? "어르신" : "보호자")), channel: po.channel, items: po.items, ship: po.ship, status: "preparing", receipt: pay.receiptUrl || null, note: "" },
           ...state.orders,
         ],
         requests: [
           {
             id: `rq-${key}`,
-            dir: "fromGuardian",
-            type: "물품 전달해 주세요",
+            // 어르신 스토어에서 어르신이 직접 결제한 주문도 같은 길로 선다 (2026-10-22 · 금액 제한 없음)
+            dir: elderOrder ? "fromElder" : "fromGuardian",
+            type: elderOrder ? "물건을 담았어요" : "물품 전달해 주세요",
             // 담당은 관제가 정한다 (2026-10-02 QA — 박지현으로 미리 박지 않는다)
-            detail: `보호자 주문: ${po.items.map((i) => i.name).join(", ")} — 다음 배송일에 전달해 주세요.`,
+            detail: `${elderOrder ? "어르신" : "보호자"} 주문: ${po.items.map((i) => i.name).join(", ")} — 다음 배송일에 전달해 주세요.`,
             amount: po.total,
             preferredDate: null,
             urgency: "normal",
@@ -1020,7 +1150,7 @@ function reducer(state, action) {
             history: [
               { at: now, status: "requested", note: "스토어 주문" },
               { at: now, status: "confirmed", note: "" },
-              { at: now, status: "inProgress", note: `보호자 결제 완료 · ${pay.method || "카드"}` },
+              { at: now, status: "inProgress", note: `${elderOrder ? "어르신" : "보호자"} 결제 완료 · ${pay.method || "카드"}` },
             ],
             proof: null,
           },
@@ -1688,26 +1818,8 @@ export function storageText(sync) {
   return "데모 (시뮬레이션) — 이 브라우저에만 저장";
 }
 
-// 결제권한 판정 — REQ-07. 금액이 보호자 승인을 필요로 하는지.
-// spentToday — 오늘(한국 날짜) 어르신이 직접 결제한 합계. 한도는 하루 누적으로 센다 (2026-10-02 결정:
-// 30,000원 + 25,000원을 같은 날 내면 둘째 것은 보호자 승인으로 간다).
-export function needsGuardianApproval(onboarding, amount, spentToday = 0) {
-  const mode = onboarding?.paymentMode || "limit";
-  const limit = onboarding?.limitAmount ?? PRICING.paymentLimitDefault;
-  if (mode === "guardianOnly") return true;
-  if (mode === "elderOnly" || mode === "both") return false;
-  return amount == null ? false : amount + (Number(spentToday) || 0) > limit;
-}
-
-// 오늘 어르신이 직접 결제한 합계 — 해주세요 · 스토어에서 payBy:"elder" 로 들어간 것 (취소 · 처리불가는 빼고)
-const kstDay = (t) => new Date(Number(t) + 9 * 3600000).toISOString().slice(0, 10);
-export function elderSpentToday(state, now = Date.now()) {
-  const today = kstDay(now);
-  return (state?.requests || [])
-    .filter((r) => r.payBy === "elder" && Number(r.amount) > 0 && !["cancelled", "rejected"].includes(r.status))
-    .filter((r) => kstDay(r.history?.[0]?.at || 0) === today)
-    .reduce((s, r) => s + Number(r.amount), 0);
-}
+// 결제권한 판정(REQ-07 · 어르신 하루 누적 한도 → 보호자 승인)은 2026-10-22에 없앴다 — 한 가족 그룹(어르신 · 주 보호자 ·
+// 부 보호자)이면 누구나 금액 제한 없이 결제한다. 예전 기록의 paymentMode · limitAmount 는 남아 있지만 쓰지 않는다.
 
 // 누가 어떤 일정을 보나 — 관제 승인 전 · 반려된 일정이 확정된 것처럼 보이면 안 된다.
 // 보호자: 전부 (캘린더가 '승인 대기 · 반려' 칩을 단다). 어르신: 확정된 것 + 본인이 남긴 승인 대기 · 반려 건

@@ -44,8 +44,8 @@ export const TRACKS = [
     who: "요양등급을 받기 전, 스스로 지내시는 어르신",
     subject: "어르신",
     needsRelation: true,
-    // 이 트랙만 결제권한 단계가 있다 — 어르신이 스토어에서 직접 담기 때문
-    flow: ["track", "subject", "region", "payment", "plan", "done"],
+    // 결제권한 단계는 없앴다 (2026-10-22) — 한 가족 그룹이면 누구나 금액 제한 없이 결제한다
+    flow: ["track", "subject", "region", "plan", "done"],
     checkTitle: "매달 21항목",
     checkNote: "몸 7 · 마음 7 · 집 7 을 매달 같은 기준으로 확인하고 지난달과 무엇이 달라졌는지 적어 보냅니다.",
     billing: {

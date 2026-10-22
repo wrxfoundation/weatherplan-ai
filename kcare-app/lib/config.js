@@ -10,7 +10,7 @@ export const PRICING = {
   // "확정 전 · 상담에서 안내"로 쓰고, 결제 버튼을 열지 않는다. 지어내지 않는다.
   entryFee: { amount: null, vat: null, total: null, confirmed: false, label: "가입 및 설치비", pendingNote: "케어박스 제외로 다시 정하는 중" },
   subscription: { monthly: 55000, term: 12, confirmed: true }, // 1인 월 구독료 · 최소 약정 12개월
-  paymentLimitDefault: 50000, // 권장 기본값: 5만원 이하 사용자 직접 결제
+  // 어르신 직접 결제 하루 한도(5만원)는 2026-10-22에 없앴다 — 한 가족 그룹이면 누구나 금액 제한 없이 결제한다
 
   // 유통 경로별 수당 — 회사 실입금이 갈린다 (2026-08-01 회의 가정치).
   // 2026-09-23 이성준 님: 직판으로 결정, 수수료 제도는 별도 문서로 전달 예정 → lib/sales.js SALES_COMMISSION.
@@ -76,30 +76,8 @@ export const CARE_LOCATIONS = [
 ];
 
 
-// 결제권한 4모드 — REQ-07 (가입 시 선택)
-export const PAYMENT_MODES = [
-  {
-    key: "limit",
-    label: "한도 기반 (권장)",
-    desc: "하루 동안 쓴 금액을 합쳐 한도까지는 어르신이 직접 결제하고, 넘는 건은 보호자가 승인합니다.",
-    recommended: true,
-  },
-  {
-    key: "both",
-    label: "양쪽 모두 결제",
-    desc: "어르신과 보호자 모두 금액 제한 없이 결제할 수 있습니다.",
-  },
-  {
-    key: "guardianOnly",
-    label: "보호자만 결제",
-    desc: "모든 결제를 보호자가 승인·결제합니다.",
-  },
-  {
-    key: "elderOnly",
-    label: "어르신만 결제",
-    desc: "어르신 본인이 모든 결제를 직접 합니다.",
-  },
-];
+// 결제권한 4모드(REQ-07 · 가입 시 선택)는 2026-10-22에 없앴다 — 한 가족 그룹이면 누구나 금액 제한 없이 결제한다
+// (docs/kcare/decisions/2026-10-22-booking-pay.md). 예전 가구 기록의 paymentMode · limitAmount 는 남아 있어도 쓰지 않는다.
 
 // AI 설정 — 기본 모델은 Claude Sonnet (서버 내부 값).
 // 외부(사용자 노출) 명칭은 항상 "AI"로 통일한다 — 모델·제공사 이름을 UI·응답에 노출하지 않는다.

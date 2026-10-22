@@ -1,5 +1,6 @@
 import ModeLink from "../components/ModeLink";
 import Head from "next/head";
+import { useRouter } from "next/router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
   ELDER,
@@ -18,15 +19,20 @@ import {
   rollingTopics,
   elderWho,
 } from "../lib/mock";
-import { PRICING, fmtWon } from "../lib/config";
+import { fmtWon } from "../lib/config";
 import { STORE_CATALOG } from "../lib/store";
 import ProductSheet, { GOODS_LOOK } from "../components/ProductSheet";
-import { CLOSED, SERVICE_MENU, SERVICE_PLUS, approverOf, canEditRequest, cancelRule, fmtScheduled, isStoreOrder, isVisitCall, preferredYmd } from "../lib/requests";
+import { CLOSED, SERVICE_MENU, SERVICE_PLUS, approverOf, canEditRequest, cancelRule, fmtScheduled, isStoreOrder, isVisitCall, kstYmd, preferredYmd } from "../lib/requests";
+import { EXTRA_PERSON_FEE, clock12, dateLabel, durStart, kstHm, nextAppt, nextApptStart, priceOf, reqTitle, svcTitle } from "../lib/booking";
+import { payHref } from "../lib/payments";
+import { ConfirmSteps, DurationStepper, PeoplePick } from "../components/BookingParts";
+import { ExtraChargeCard, ExtraChargeSheet, myExtraCharges } from "../components/ExtraCharge";
+import ElderMy from "../components/ElderMy";
 import { assigneeNow, avatarText, elderNameOf, givenName, inCenter, voiceTargetsCenter } from "../lib/people";
 import { MED_STREAK, SUPPLEMENTS, daysLeft, healthOf, medProgress, medTakenToday, needsReorder, slotHour, slotStates } from "../lib/meds";
 import { medStreakWeek } from "../lib/demo-health";
 import { VERDICT, matchWelfare, profileFor, welfareCounts } from "../lib/welfare";
-import { elderSpentToday, eventsFor, needsGuardianApproval, useAppState, useSync } from "../lib/state";
+import { eventsFor, useAppState, useSync } from "../lib/state";
 import { clipUrlNow, clock, playErrorText, saveClip, sendErrorText, RECORD_ERRORS, usePrefetchClips, useRecorder, useVoicePlayer } from "../lib/voice-client";
 import ElderRecord from "../components/ElderRecord";
 import InviteLink from "../components/InviteLink";
@@ -90,12 +96,13 @@ const plusItem = (p) => ({
   askWhen: p.key === "handyman",
 });
 
-// GNB — 2026-09-04 시트 어르신 전체 7·8번: 하단은 마음사서함 · 홈 · 가족 셋뿐이다.
-// 오늘/건강/해주세요/스토어 진입은 홈의 사분면 타일이 맡는다. 2026-10-15 시안: 따로 떠 있는 큰 칸 셋.
+// GNB — 2026-09-04 시트 어르신 전체 7·8번: 하단은 마음사서함 · 홈 · 가족. 2026-10-22 시제품 v17: 오른쪽 끝에 마이(내 멤버십)를
+// 더해 네 칸. 오늘/건강/해주세요/스토어 진입은 홈의 사분면 타일이 맡는다. 2026-10-15 시안: 따로 떠 있는 큰 칸.
 const TABS = [
   { key: "teacher", label: "마음사서함" },
   { key: "home", label: "홈" },
   { key: "family", label: "가족" },
+  { key: "my", label: "마이" },
 ];
 
 // 선생님 메시지함 보관 기간 — 24시간이 지나면 목록에서 사라진다 (2026-08-28 요청).
@@ -273,6 +280,7 @@ function ElderHome() {
   const [evConfirm, setEvConfirm] = useState(null); // 지우기 · 취소하기 한 번 더 묻는 일정 id
   const [askSel, setAskSel] = useState(null); // '해주세요' 선택 항목
   const [askSent, setAskSent] = useState(null); // { name, mode, amount }
+  const [xOpen, setXOpen] = useState(null); // 추가 이용 금액 자세히 — 청구 id
   const callTimer = useRef(null);
 
   // 새로고침을 견뎌야 하는 것들은 전부 state.elder 에 있다 (lib/state.js 주석 참고).
@@ -293,37 +301,23 @@ function ElderHome() {
   // 홈 '오늘' 타일의 점 — 마지막으로 오늘 탭을 본 뒤 일정이 늘었으면 켜진다 (시트 전체 9번)
   const newSchedule = eventsFor(state.events, "elder").length > todaySeen; // 어르신에게 보이는 일정만 센다
 
-  // ── 해주세요: 결제권한(REQ-07)을 어르신 말로 옮긴다 ──
-  // 결제 모드는 온보딩에서 정해진 값을 그대로 따른다. 여기서 바꾸지 않는다.
-  const payMode = state.onboarding?.paymentMode || "limit";
-  const payLimit = state.onboarding?.limitAmount ?? PRICING.paymentLimitDefault;
-  // 승인하는 가족 — 가입 상담을 거친 가구는 보호자 이름을 받지 않으므로 '보호자'로 부른다 (예시 '민수'로 지어내지 않는다)
+  // ── 해주세요 · 스토어 결제 (2026-10-22 시제품 v17) ──
+  // 한 가족 그룹이면 누구나 금액 제한 없이 결제한다 — '5만원이 넘으면 보호자 승인'(하루 한도)은 없앴다.
+  // 어르신은 직접 결제(결제창)하거나 가족에게 결제를 부탁한다. 결제하면 컨시어지 확인 → 관제 승인 → 일정 확정.
+  // 부탁받는 가족 — 가입 상담을 거친 가구는 보호자 이름을 받지 않으므로 '보호자'로 부른다 (예시 '민수'로 지어내지 않는다)
   const approver = state.onboarding?.rel || inCenter() ? "보호자" : "민수";
-  const payRule = {
-    approver,
-    headline: {
-      limit: `${fmtWon(payLimit)}까지는 바로 해드리고, 그보다 크면 ${approver} 님이 확인해 줍니다.`,
-      both: "어르신도 가족도 바로 결제할 수 있습니다.",
-      guardianOnly: `${approver} 님이 확인해 주면 바로 시작합니다.`,
-      elderOnly: "어르신이 직접 결제하십니다.",
-    }[payMode],
+  const router = useRouter();
+  // 결제창으로 — 결제를 마치면 어르신 화면으로 돌아온다
+  const payNow = (r) => router.push(payHref({ kind: "request", amount: r.amount, orderName: reqTitle(r), ref: r.id, back: "/elder" }));
+  // 추가 이용 금액 (2026-10-22) — 선생님이 어르신께 보낸 결제 요청만 (받는 분에게만 보인다)
+  const myExtras = myExtraCharges(state.extraCharges, "elder");
+  const xSel = (state.extraCharges || []).find((x) => x.id === xOpen) || null;
+  const payExtra = (x) => router.push(payHref({ kind: "extra", amount: x.amount, orderName: `추가 이용 금액 · ${svcTitle(x.service)}`, ref: x.id, back: "/elder" }));
+  const askFamilyPay = (r) => {
+    if (r.payAsk) return;
+    dispatch({ type: "askPrimaryPay", id: r.id, by: `${ELDER.name} 님` });
+    dispatch({ type: "pushEvent", payload: { kind: "해주세요", text: `${ELDER.name} 가족에게 결제 부탁 — ${reqTitle(r)} · ${fmtWon(r.amount)}`, color: "#B08D57" } });
   };
-  // 선택 항목의 결제 분기 — 무료(멤버십 포함) / 본인 결제 / 보호자 승인.
-  // 보호자 메뉴(SERVICE_MENU)는 amount 가 null 인 것도 있다 — 요금 확정 전이라 금액을 지어내지 않는다.
-  const spentToday = elderSpentToday(state); // 하루 누적 한도 (2026-10-02 결정)
-  const askPlan = (() => {
-    if (!askSel) return { mode: null, approval: false, notice: "", cta: "" };
-    if (askSel.amount === 0) {
-      return { mode: "free", approval: false, notice: "멤버십에 포함된 것이라 따로 내실 돈이 없습니다. 선생님이 일정을 보고 정해 드립니다.", cta: "부탁하기" };
-    }
-    if (askSel.amount == null) {
-      return { mode: "quote", approval: false, notice: "요금이 아직 정해지지 않은 것이라, 선생님이 일정과 요금을 정해 먼저 알려드립니다.", cta: "부탁하기" };
-    }
-    const approval = needsGuardianApproval(state.onboarding, askSel.amount, spentToday);
-    return approval
-      ? { mode: "approval", approval: true, notice: `${approver} 님이 먼저 결제해 주시면 선생님이 일정을 정해 드립니다.`, cta: "가족에게 부탁하기" }
-      : { mode: "self", approval: false, notice: `오늘 쓰신 돈과 합쳐 ${fmtWon(payLimit)} 안이라 직접 내십니다. 선생님이 일정을 보고 정해 드립니다.`, cta: "바로 부탁하기" };
-  })();
   // 내 부탁 + 내가 수락한 선생님 제안 (수락한 뒤에도 보이고 취소할 수 있게)
   const myRequests = (state.requests || []).filter((r) => r.dir === "fromElder" || (approverOf(r) === "elder" && r.status !== "requested"));
   const myOpen = myRequests.filter((r) => !CLOSED.includes(r.status));
@@ -496,7 +490,6 @@ function ElderHome() {
   const storeAll = STORE_CATALOG.flatMap((c) => c.groups.flatMap((g) => g.items));
   const storeItems = storeAll.filter((i) => storeSel[i.id] && i.price);
   const storeTotal = storeItems.reduce((s, i) => s + i.price + (i.ship || 0), 0);
-  const storeApproval = needsGuardianApproval(state.onboarding, storeTotal, spentToday);
   // 선생님 제안 — 첫 방문 안전진단에서 '아니오'가 나와 담아 둔 용품 (lib/safety.js · 보호자 스토어와 같은 목록)
   const safetyPick = new Set(state.demo?.safetyCart || []);
 
@@ -877,11 +870,14 @@ function ElderHome() {
   const reqLook = (r) => {
     const when = fmtScheduled(r);
     if (isVisitCall(r) && !CLOSED.includes(r.status)) return { text: r.status === "inProgress" ? `${r.assignee || "선생님"} 선생님이 가고 있습니다` : "관제센터에서 확인 전화를 드립니다", tone: "help", icon: "phone" };
-    if (r.status === "awaitingPayment") return { text: `${payRule.approver} 님 결제 기다리는 중`, tone: "gold", icon: "clock" };
-    if (r.status === "requested") return { text: r.voice && !r.summary?.text ? "선생님이 듣고 정리하고 있습니다" : "선생님이 일정을 보고 정해 드립니다", tone: "gold", icon: "clock" };
+    if (r.status === "awaitingPayment") return { text: r.payAsk ? "가족 결제를 기다리고 있어요" : "결제하시면 선생님이 일정을 확인해요", tone: "gold", icon: "clock" };
+    if (r.status === "requested" && approverOf(r) === "concierge")
+      return { text: r.voice && !r.summary?.text ? "선생님이 듣고 정리하고 있습니다" : "확정 대기 · 선생님이 일정을 확인하고 있어요", tone: "gold", icon: "clock" };
+    if (r.status === "requested") return { text: "선생님 제안 · 수락하시면 진행돼요", tone: "gold", icon: "clock" };
+    if (r.status === "opsReview") return { text: "확정 대기 · 관제에서 일정을 승인하고 있어요", tone: "gold", icon: "clock" };
     if (r.status === "confirmed") return { text: when ? `${when}에 해 드립니다` : "선생님이 하기로 했습니다", tone: "green", icon: "check" };
     if (r.status === "cancelRequested") return { text: "취소를 관제에서 확인하고 있습니다", tone: "gold", icon: "clock" };
-    if (r.status === "needsAdmin") return { text: "관제에서 확인하고 있습니다", tone: "gold", icon: "clock" };
+    if (r.status === "needsAdmin") return { text: "확정 대기 · 관제에서 확인하고 있어요", tone: "gold", icon: "clock" };
     if (r.status === "done") return { text: "끝났습니다", tone: "gray", icon: "check" };
     if (r.status === "rejected") return { text: "이번에는 어렵다고 합니다", tone: "gray", icon: "clock" };
     if (r.status === "cancelled")
@@ -1266,6 +1262,12 @@ function ElderHome() {
                 </R>
               )
             )}
+            {/* 추가 이용 금액 결제 요청 — 선생님이 보낸 것 · 결제하면 '결제 완료'로 사흘 남는다 (2026-10-22) */}
+            {myExtras.map((x, i) => (
+              <R key={x.id} d={90 + i * 20}>
+                <ExtraChargeCard x={x} big onOpen={setXOpen} />
+              </R>
+            ))}
             {/* 네 칸 — 남는 세로 공간을 모두 가져간다 (2026-08-28 "위아래로 꽉") */}
             <div className="ds-g2 mt-1.5 flex-1" style={{ minHeight: 380, gridAutoRows: "1fr" }}>
               {HOME_TILES.map((t, i) => (
@@ -1725,7 +1727,7 @@ function ElderHome() {
               </span>
             </R>
             <R d={80} className="-mt-1 px-1 text-[16px] leading-[1.5]" style={{ color: "#5E6270" }}>
-              {payRule.headline}
+              저도, 가족도 누구나 낼 수 있어요. 결제하면 선생님이 일정을 확인하고 관제가 승인해 확정돼요.
             </R>
 
             {/* 선생님이 제안한 것 — 어르신이 수락 · 거절 (2026-10-05: 승인 대상은 선생님이 정한다) */}
@@ -1901,7 +1903,7 @@ function ElderHome() {
                         </span>
                         <span className="min-w-0 flex-1">
                           <b className="block text-[18px] font-extrabold leading-[1.35]" style={{ color: tn.title }}>
-                            {r.via === "응급 대응" ? "응급 상황 대응 — 관제와 통화" : r.type}
+                            {r.via === "응급 대응" ? "응급 상황 대응 — 관제와 통화" : reqTitle(r)}
                           </b>
                           <span className="text-[16px] font-bold" style={{ color: tn.fg }}>
                             {look.text}
@@ -1933,6 +1935,23 @@ function ElderHome() {
                             <p role="alert" className="mt-1 text-[16px] font-bold" style={{ color: TONE.gold.fg }}>
                               {playErrorText(player.failed.code)}
                             </p>
+                          )}
+                        </div>
+                      )}
+                      {/* 결제 대기 — 어르신도 직접 결제하거나 가족에게 부탁한다 (2026-10-22 · 금액 제한 없음) */}
+                      {r.status === "awaitingPayment" && !storeAsk && Number(r.amount) > 0 && !asking && (
+                        <div className="flex flex-col gap-2">
+                          <Btn tone="navy" h={58} r={18} className="text-[18px]" onClick={() => payNow(r)}>
+                            {fmtWon(r.amount)} 결제하기
+                          </Btn>
+                          {r.payAsk ? (
+                            <p className="text-center text-[16px] font-bold" style={{ color: TONE.gold.fg }}>
+                              가족에게 결제를 부탁했어요 · 가족이 내면 바로 진행돼요
+                            </p>
+                          ) : (
+                            <WhiteBtn h={54} className="text-[17px]" onClick={() => askFamilyPay(r)}>
+                              가족에게 결제 부탁하기
+                            </WhiteBtn>
                           )}
                         </div>
                       )}
@@ -2060,17 +2079,17 @@ function ElderHome() {
                 );
               })}
             </R>
-            {/* 담은 물건 · 주문 — 결제권한대로 문구가 갈린다 */}
+            {/* 담은 물건 · 주문 — 어르신도 금액 제한 없이 직접 결제하거나(결제창) 가족에게 결제를 부탁한다 (2026-10-22) */}
             {storeSent ? (
               <R className="ds-swap flex flex-col gap-3 rounded-[26px] p-[18px] text-center" style={{ background: TONE.green.bg }}>
                 <span className="ds-pop mx-auto flex h-[72px] w-[72px] items-center justify-center rounded-full text-white" style={{ background: TONE.green.solid }}>
                   <Line name="check" size={40} />
                 </span>
                 <div className="text-[22px] font-black" style={{ color: "#2A4D33" }}>
-                  {storeSent === "approval" ? "가족에게 전달했어요" : "주문했어요"}
+                  {storeSent === "approval" ? `${approver} 님께 결제를 부탁했어요` : "주문했어요"}
                 </div>
                 <div className="text-[17px]" style={{ color: "#3B5A44" }}>
-                  {storeSent === "approval" ? "승인되면 배송으로 옵니다." : "다음 배송 때 함께 옵니다."}
+                  {storeSent === "approval" ? "가족이 결제하면 배송으로 옵니다." : "다음 배송 때 함께 옵니다."}
                 </div>
                 <WhiteBtn h={56} className="text-[18px]" onClick={() => setStoreSent(null)}>
                   더 담기
@@ -2085,13 +2104,13 @@ function ElderHome() {
                 <div className="text-[15px]" style={{ color: TONE.gold.sub }}>
                   {storeItems.map((i) => i.name).join(" · ")}
                 </div>
-                {/* 직접 결제는 한 번 더 묻는다 — 한 번 눌러 바로 돈이 나가지 않게 (2026-10-19 점검 E09). 보호자에게 부탁하는 것은 바로 */}
-                {storeAsk && !storeApproval && (
+                {/* 직접 결제는 한 번 더 묻는다 — 한 번 눌러 바로 결제창이 뜨지 않게 (2026-10-19 점검 E09) */}
+                {storeAsk && (
                   <p className="rounded-[16px] bg-white px-4 py-3 text-[18px] font-extrabold leading-[1.5]" role="status">
-                    {fmtWon(storeTotal)}을 결제하고 주문할까요?
+                    {fmtWon(storeTotal)}을 결제하고 주문할까요? 결제창이 열려요.
                   </p>
                 )}
-                {storeAsk && !storeApproval && (
+                {storeAsk && (
                   <WhiteBtn h={56} className="text-[18px]" onClick={() => setStoreAsk(false)}>
                     아니요, 다시 볼게요
                   </WhiteBtn>
@@ -2102,67 +2121,69 @@ function ElderHome() {
                   r={20}
                   className="text-[20px]"
                   onClick={() => {
-                    if (!storeApproval && !storeAsk) {
+                    if (!storeAsk) {
                       setStoreAsk(true);
                       return;
                     }
                     setStoreAsk(false);
-                    const mode = storeApproval ? "approval" : "ordered";
-                    setStoreSent(mode);
-                    setStoreSel({});
-                    dispatch({ type: "demo", payload: { cart: true } });
+                    // 담은 것을 결제창으로 — 결제가 끝나야 주문 · 배송 요청이 선다 (보호자 스토어와 같은 길 · state.js commitPendingOrder)
+                    const orderName = storeItems.length > 1 ? `${storeItems[0].name} 외 ${storeItems.length - 1}건` : storeItems[0].name;
                     dispatch({
-                      type: "addRequest",
+                      type: "setPendingOrder",
                       payload: {
-                        id: `rq-${Date.now()}`,
-                        dir: "fromElder",
-                        type: storeApproval ? "물건 승인 부탁해요" : "물건을 담았어요",
-                        detail: `스토어에서 담으신 물품: ${storeItems.map((i) => i.name).join(", ")}`,
-                        amount: storeTotal,
-                        payBy: storeApproval ? null : "elder", // 하루 누적 한도에 들어간다
-                        preferredDate: null,
-                        urgency: "normal",
-                        assignee: assigneeNow() || "",
-                        photos: [],
-                        status: storeApproval ? "awaitingPayment" : "inProgress",
-                        history: [
-                          { at: Date.now(), status: "requested", note: "어르신 스토어" },
-                          { at: Date.now(), status: "confirmed", note: "" },
-                          storeApproval
-                            ? { at: Date.now(), status: "awaitingPayment", note: `한도 초과 · ${fmtWon(storeTotal)}` }
-                            : { at: Date.now(), status: "inProgress", note: `어르신 직접 결제 ${fmtWon(storeTotal)} (한도 내 · 데모)` },
-                        ],
-                        proof: null,
+                        items: storeItems.map((i) => ({ id: i.id, name: i.name, qty: 1, price: i.price })),
+                        ship: storeItems.reduce((s, i) => s + (i.ship || 0), 0),
+                        total: storeTotal,
+                        channel: "어르신 스토어",
+                        orderName,
+                        from: "elder",
                       },
                     });
-                    if (!storeApproval) {
-                      dispatch({
-                        type: "addOrder",
-                        payload: {
-                          by: `${ELDER.name} 님`,
-                          channel: "어르신 스토어",
-                          items: storeItems.map((i) => ({ id: i.id, name: i.name, qty: 1, price: i.price })),
-                          ship: storeItems.reduce((s, i) => s + (i.ship || 0), 0),
-                          status: "preparing",
-                          receipt: null,
-                          note: "",
-                        },
-                      });
-                    }
-                    dispatch({
-                      type: "pushEvent",
-                      payload: {
-                        kind: "장바구니",
-                        text: storeApproval
-                          ? `${ELDER.name} 스토어 ${storeItems.length}건 · 보호자 승인 요청 (${fmtWon(storeTotal)})`
-                          : `${ELDER.name} 직접 주문 ${storeItems.length}건 · ${fmtWon(storeTotal)} (한도 내)`,
-                        color: "#B08D57",
-                      },
-                    });
+                    router.push(payHref({ kind: "store", amount: storeTotal, orderName, back: "/elder" }));
                   }}
                 >
-                  {storeApproval ? `${payRule.approver}에게 부탁하기` : storeAsk ? "네, 결제하고 주문해요" : "주문하기"}
+                  {storeAsk ? "네, 결제할게요" : `${fmtWon(storeTotal)} 결제하고 주문하기`}
                 </Btn>
+                {!storeAsk && (
+                  <WhiteBtn
+                    h={56}
+                    className="text-[18px]"
+                    onClick={() => {
+                      // 가족에게 결제 부탁 — 가족이 해주세요 화면에서 결제하면 주문된다
+                      setStoreSent("approval");
+                      setStoreSel({});
+                      dispatch({ type: "demo", payload: { cart: true } });
+                      dispatch({
+                        type: "addRequest",
+                        payload: {
+                          id: `rq-${Date.now()}`,
+                          dir: "fromElder",
+                          type: "물건 승인 부탁해요",
+                          detail: `스토어에서 담으신 물품: ${storeItems.map((i) => i.name).join(", ")}`,
+                          amount: storeTotal,
+                          payBy: null,
+                          preferredDate: null,
+                          urgency: "normal",
+                          assignee: assigneeNow() || "",
+                          photos: [],
+                          status: "awaitingPayment",
+                          payAsk: { by: `${ELDER.name} 님`, at: Date.now() },
+                          history: [
+                            { at: Date.now(), status: "requested", note: "어르신 스토어" },
+                            { at: Date.now(), status: "awaitingPayment", note: `가족에게 결제 부탁 · ${fmtWon(storeTotal)}` },
+                          ],
+                          proof: null,
+                        },
+                      });
+                      dispatch({
+                        type: "pushEvent",
+                        payload: { kind: "장바구니", text: `${ELDER.name} 스토어 ${storeItems.length}건 · 가족에게 결제 부탁 (${fmtWon(storeTotal)})`, color: "#B08D57" },
+                      });
+                    }}
+                  >
+                    가족에게 결제 부탁하기
+                  </WhiteBtn>
+                )}
               </R>
             ) : null}
           </Screen>
@@ -2385,9 +2406,14 @@ function ElderHome() {
               </R>
             )}
           </Screen>
+
+          {/* ══ 마이 — 내 멤버십 (2026-10-22 시제품 v17 · components/ElderMy.jsx) ══ */}
+          <Screen show={tab === "my"} label="어르신 마이">
+            {tab === "my" && <ElderMy elderName={mainElder} right={helpMini} />}
+          </Screen>
         </main>
 
-        {/* ── 하단 메뉴 — 따로 떠 있는 큰 칸 셋 (2026-10-15 시안). 지금 탭만 남색.
+        {/* ── 하단 메뉴 — 따로 떠 있는 큰 칸 넷 (2026-10-15 시안 · 2026-10-22 마이). 지금 탭만 남색.
             안 들은 메시지는 금색 숫자 (점은 무엇인지 알기 어렵다는 피드백 · 2026-09-10) ── */}
         <nav className="ds-nav ds-nav-s" aria-label="어르신 메뉴">
           {TABS.map((t) => {
@@ -2410,7 +2436,15 @@ function ElderHome() {
                     {n}
                   </span>
                 )}
-                {t.key === "teacher" ? <Line name="chat" size={24} /> : t.key === "home" ? <Line name="homeFill" size={24} /> : <Art name="family" width={30} height={24} />}
+                {t.key === "teacher" ? (
+                  <Line name="chat" size={24} />
+                ) : t.key === "home" ? (
+                  <Line name="homeFill" size={24} />
+                ) : t.key === "my" ? (
+                  <Line name="gUser" size={24} />
+                ) : (
+                  <Art name="family" width={30} height={24} />
+                )}
                 {t.label}
               </button>
             );
@@ -2420,6 +2454,17 @@ function ElderHome() {
       {toastEl}
 
       {/* ── 시트들 ── */}
+      {/* 추가 이용 금액 자세히 — 예약 → 실제 → 추가 시간 → 기한 → 금액 · 메모 · 결제 (문의하기 버튼 없음) */}
+      {xSel && (
+        <ExtraChargeSheet
+          x={xSel}
+          r={(state.requests || []).find((q) => q.id === xSel.reqId) || null}
+          big
+          demo={!liveHH}
+          onPay={payExtra}
+          onClose={() => setXOpen(null)}
+        />
+      )}
       {/* 이번 달 일정 (오늘 탭) — 날짜를 누르면 그날 것만, 다시 누르면 전체 */}
       <Sheet open={monthOpen} onClose={() => setMonthOpen(false)} label="이번 달 일정">
         <SheetTitle sub={`${now.getMonth() + 1}월`} title="이번 달 일정" />
@@ -2740,9 +2785,9 @@ function ElderHome() {
       {askSel && (
         <ElderAskSheet
           item={askSel}
-          plan={askPlan}
           sent={askSent}
-          approver={payRule.approver}
+          approver={approver}
+          events={state.events}
           onClose={() => {
             setAskSel(null);
             setAskSent(null);
@@ -2754,48 +2799,52 @@ function ElderHome() {
             askVisit("응급 대응");
             setAskSent({ name: askSel.name, mode: "callOps", already });
           }}
-          onAsk={({ ymd, hm, hospital }) => {
-            const amount = askSel.amount;
-            // 달력에서 고른 날짜 · 시간 (2026-10-14 현장 요청 6번) — 담당 컨시어지 승인 화면에 그대로 기본값이 된다
-            const whenText = ymd && hm ? spokenDateTime(ymd, hm) : null;
-            setAskSent({ name: askSel.name, mode: askPlan.mode, amount, when: whenText });
+          onAsk={({ ymd, hm, hospital, dur, people, pay, next: appt }) => {
+            // 금액 — 이용 시간 · 인원으로 (lib/booking.js · 2026-10-22). 이용 시간 규칙이 없는 서비스는 메뉴 금액 그대로
+            const d = askSel.dur || null;
+            const amount = d ? priceOf(askSel.name, dur, people || 0) : askSel.amount;
+            const paid = amount > 0;
+            // 달력에서 고른 날짜 · 시간 (2026-10-14 현장 요청 6번) — 담당 컨시어지 확인 화면에 그대로 기본값이 된다
+            const whenSaid = ymd && hm ? spokenDateTime(ymd, hm) : null;
             const now0 = Date.now();
             // 서비스 이름을 그대로 남긴다 — 전에는 '부탁' · '부탁 · 승인 필요'로 들어가 관제에서 '메뉴 외 요청'이 됐다 (2026-10-02 QA).
-            // 담당 컨시어지가 자기 일정을 보고 승인한다 (2026-10-05). 한도를 넘는 것은 보호자가 먼저 결제한다.
-            dispatch({
-              type: "addRequest",
-              payload: {
-                id: `rq-${now0}`,
-                dir: "fromElder",
-                type: askSel.name,
-                detail: [askSel.scope, whenText ? `희망: ${whenText}` : "일정은 선생님이 연락드려 정함", hospital ? `병원: ${hospital}` : null].filter(Boolean).join(" · "),
-                amount,
-                preferredDate: ymd || null,
-                preferredTime: hm || null,
-                preferredWhen: whenText || "선생님과 통화해서 정하기",
-                hospital: hospital || null,
-                payBy: askPlan.approval || !amount ? null : "elder",
-                urgency: "normal",
-                assignee: assigneeNow() || "",
-                photos: [],
-                status: askPlan.approval ? "awaitingPayment" : "requested",
-                history: [
-                  { at: now0, status: "requested", note: `어르신 해주세요 · 희망 ${whenText || "선생님과 정함"}${hospital ? ` · ${hospital}` : ""}` },
-                  ...(askPlan.approval ? [{ at: now0, status: "awaitingPayment", note: `보호자 결제 대기 · ${fmtWon(amount)} (오늘 한도 초과)` }] : []),
-                ],
-                proof: null,
-              },
-            });
+            // 결제(무료면 부탁) → 담당 컨시어지 확인 → 관제 승인 → 일정 확정 (2026-10-22). 어르신도 금액 제한 없이 직접 낸다
+            const req = {
+              id: `rq-${now0}`,
+              dir: "fromElder",
+              type: askSel.name,
+              detail: [askSel.scope, whenSaid ? `희망: ${whenSaid}` : "일정은 선생님이 연락드려 정함", appt ? `다음 외래 동행: ${appt.title || "진료"}` : hospital ? `병원: ${hospital}` : null].filter(Boolean).join(" · "),
+              amount,
+              preferredDate: ymd || null,
+              preferredTime: hm || null,
+              preferredWhen: whenSaid || "선생님과 통화해서 정하기",
+              ...(d ? { durationMin: d.fixed ? d.min : dur } : {}),
+              ...(d?.people ? { extraPeople: people || 0 } : {}),
+              ...(appt ? { nextAppt: { at: appt.at, title: appt.title || "", eventId: appt.id || null } } : {}),
+              hospital: appt ? appt.title || null : hospital || null,
+              urgency: "normal",
+              assignee: assigneeNow() || "",
+              photos: [],
+              status: paid ? "awaitingPayment" : "requested",
+              ...(paid && pay === "family" ? { payAsk: { by: `${ELDER.name} 님`, at: now0 } } : {}),
+              history: [
+                { at: now0, status: "requested", note: `어르신 해주세요 · 희망 ${whenSaid || "선생님과 정함"}${appt ? " · 다음 외래 동행" : hospital ? ` · ${hospital}` : ""}` },
+                ...(paid ? [{ at: now0, status: "awaitingPayment", note: pay === "family" ? `가족에게 결제 부탁 · ${fmtWon(amount)}` : `어르신 결제 · ${fmtWon(amount)}` }] : []),
+              ],
+              proof: null,
+            };
+            dispatch({ type: "addRequest", payload: req });
             dispatch({
               type: "pushEvent",
               payload: {
                 kind: "부탁",
-                text: askPlan.approval
-                  ? `${ELDER.name} 해주세요 — ${askSel.name} · 보호자 결제 요청 (${fmtWon(amount)})`
-                  : `${ELDER.name} 해주세요 — ${askSel.name} · ${amount === 0 ? "멤버십 포함" : amount == null ? "요금 확인 후 안내" : `직접 결제 ${fmtWon(amount)}`}`,
+                text: `${ELDER.name} 해주세요 — ${reqTitle(req)} · ${!paid ? (amount === 0 ? "무료" : "요금 확인 후 안내") : pay === "family" ? `가족에게 결제 부탁 ${fmtWon(amount)}` : `어르신 결제 ${fmtWon(amount)}`}`,
                 color: "#B08D57",
               },
             });
+            setAskSent({ name: askSel.name, title: reqTitle(req), mode: !paid ? (amount === 0 ? "free" : "quote") : pay, amount, when: whenSaid });
+            // 직접 결제 — 바로 결제창으로 (결제를 마치면 어르신 화면으로 돌아온다)
+            if (paid && pay === "self") payNow(req);
           }}
         />
       )}
@@ -3429,19 +3478,43 @@ function ElderReqDateSheet({ req, onClose, onSave }) {
   );
 }
 
-function ElderAskSheet({ item, plan, sent, approver, onAsk, onCallOps, onClose, hospitals = [] }) {
+// 해주세요 신청 (2026-10-22 시제품 v17) — 보호자 신청서와 같은 순서를 큰 글씨로:
+//   (병원 동행이면) 어느 진료에 → 날짜 · 시간(내일 ~ 1년 · 오전 7시 ~ 오후 8시) → 이용 시간(− / +) → (함께가요) 누가 가나요
+//   → 결제 방법(내가 결제 · 가족에게 부탁) → 'N원 결제하고 부탁하기'. 날짜와 시간을 다 골라야 버튼이 켜진다.
+function ElderAskSheet({ item, sent, approver, onAsk, onCallOps, onClose, hospitals = [], events = [] }) {
   const off = !item.active;
   const emergency = item.no === 12;
   // 날짜 · 시간 — 사람이 가는 서비스만 고른다 (공사맨 견적 · 가전 렌탈은 알아본 뒤 선생님이 연락)
   const askWhen = item.askWhen !== false;
+  const d = item.dur || null;
+  // 병원 동행 — 다음 외래를 고르면 날짜 · 시작 시각이 정해져 있어 이용 시간만 고른다
+  const escort = d?.nextApptLead != null;
+  const appt = escort ? nextAppt(events) : null;
+  const [pick, setPick] = useState(escort && !appt ? "direct" : null); // "next" | "direct"
+  const useNext = escort && pick === "next" && !!appt;
   const [when, setWhen] = useState({ ymd: null, hm: null });
-  const askHospital = isHospitalItem(item);
+  const [dur, setDur] = useState(d ? durStart(d) : null);
+  const [people, setPeople] = useState(d?.people ? null : 0);
+  const [pay, setPay] = useState("self"); // self 내가 결제 · family 가족에게 결제 부탁
+  const askHospital = isHospitalItem(item) && !useNext;
   const hospitalOpts = [...hospitals.slice(0, 3), "선생님과 통화해서 정하기"];
   const [hospital, setHospital] = useState(hospitalOpts[hospitalOpts.length - 1]);
-  const ready = !askWhen || (!!when.ymd && !!when.hm);
-  const price = item.amount === 0 ? "비용 없음" : item.amount == null ? "요금 확인 후 안내" : fmtWon(item.amount);
+  const ymd = useNext ? kstYmd(appt.at) : when.ymd;
+  const start = useNext ? nextApptStart(item.name, appt) : when.hm;
+  const amount = d ? priceOf(item.name, dur, people || 0) : item.amount;
+  const missing =
+    escort && !pick
+      ? "어느 진료인지 골라 주세요"
+      : askWhen && !(ymd && start)
+        ? "날짜와 시간을 골라 주세요"
+        : d?.people && people == null
+          ? "누가 가는지 골라 주세요"
+          : null;
+  const price = amount === 0 ? "비용 없음" : amount == null ? "요금 확인 후 안내" : fmtWon(amount);
+  const optStyle = (on) => (on ? { background: "#FFFFFF", boxShadow: `inset 0 0 0 3px ${TONE.purple.solid}` } : { background: "#FFFFFF", boxShadow: "0 4px 0 #E3DED3" });
+  const cta = missing ? missing : amount > 0 ? (pay === "family" ? `${approver} 님께 결제 부탁하기` : `${fmtWon(amount)} 결제하고 부탁하기`) : "부탁하기";
   return (
-    <Sheet onClose={onClose} label={item.name}>
+    <Sheet onClose={onClose} label={item.title || item.name}>
       {sent?.mode === "callOps" ? (
         <div className="ds-swap flex flex-col items-center gap-3 py-2 text-center">
           <span className="ds-pop flex h-[84px] w-[84px] items-center justify-center rounded-full text-white" style={{ background: TONE.green.solid }}>
@@ -3465,20 +3538,18 @@ function ElderAskSheet({ item, plan, sent, approver, onAsk, onCallOps, onClose, 
             <Line name="check" size={44} />
           </span>
           <div className="text-[24px] font-black" style={{ color: "#2A4D33" }}>
-            {sent.mode === "approval" ? `${approver} 님께 부탁했어요` : "부탁했어요"}
+            {sent.mode === "family" ? `${approver} 님께 결제를 부탁했어요` : sent.mode === "self" ? "결제하러 갈게요" : "부탁했어요"}
           </div>
-          <div className="text-[19px] font-extrabold">{sent.name}</div>
-          {sent.when && (
-            <div className="text-[17px] font-bold" style={{ color: TONE.beige.fg }}>
-              희망 {sent.when}
-            </div>
-          )}
+          <div className="text-[19px] font-extrabold leading-[1.4]">{sent.title || sent.name}</div>
           <div className="text-[17px] leading-[1.5]" style={{ color: "#3B5A44" }}>
-            {sent.mode === "approval"
-              ? `${approver} 님이 결제하면 선생님이 일정을 정해 드립니다.`
-              : sent.when
-                ? "선생님이 일정을 보고 확정해 드립니다."
-                : "선생님이 알아보고 연락드립니다."}
+            {sent.mode === "family"
+              ? `${approver} 님이 결제하면 선생님이 일정을 확인하고 관제가 승인해 확정돼요.`
+              : sent.mode === "quote"
+                ? "선생님이 요금을 정해 먼저 알려 드려요."
+                : "선생님이 일정을 확인하고 관제가 승인하면 확정돼요."}
+          </div>
+          <div className="w-full pt-1">
+            <ConfirmSteps at={sent.mode === "family" || sent.mode === "self" ? 0 : 1} free={sent.mode !== "family" && sent.mode !== "self"} big />
           </div>
           <Btn tone="navy" h={60} r={20} className="mt-1 w-full text-[19px]" onClick={onClose}>
             확인
@@ -3486,7 +3557,7 @@ function ElderAskSheet({ item, plan, sent, approver, onAsk, onCallOps, onClose, 
         </div>
       ) : (
         <>
-          <SheetTitle sub="해주세요" title={item.name} />
+          <SheetTitle sub="해주세요" title={item.title || item.name} />
           {emergency && item.rates ? (
             <div className="rounded-[18px] px-4 py-3" style={{ background: TONE.danger.bg }}>
               {/* 한 줄에 한 요금 — 두 요금을 한 줄에 두면 좁은 폰에서 '야간 / 50,000원'으로 꺾였다 */}
@@ -3545,8 +3616,33 @@ function ElderAskSheet({ item, plan, sent, approver, onAsk, onCallOps, onClose, 
             </>
           ) : (
             <>
-              {askWhen && <ElderDateTime ymd={when.ymd} hm={when.hm} onChange={setWhen} title="언제가 좋으세요?" />}
-              {askHospital && (
+              {escort && (
+                <>
+                  <div className="text-[19px] font-extrabold">어느 진료에 함께 갈까요?</div>
+                  <div className="grid gap-2" role="group" aria-label="어느 진료에 함께 갈까요">
+                    {appt && (
+                      <button type="button" aria-pressed={pick === "next"} onClick={() => setPick("next")} className="ds-press rounded-[20px] px-4 py-3.5 text-left" style={optStyle(pick === "next")}>
+                        <span className="block text-[19px] font-extrabold leading-[1.35]">
+                          {dateLabel(kstYmd(appt.at))} {clock12(kstHm(appt.at))}
+                        </span>
+                        <span className="block text-[17px] font-bold" style={{ color: "#5E6270" }}>
+                          다음 외래 · {appt.title} · {clock12(nextApptStart(item.name, appt))} {d.nextApptMeet || "시작"}
+                        </span>
+                      </button>
+                    )}
+                    <button type="button" aria-pressed={pick === "direct"} onClick={() => setPick("direct")} className="ds-press rounded-[20px] px-4 py-3.5 text-left" style={optStyle(pick === "direct")}>
+                      <span className="block text-[19px] font-extrabold">병원 · 날짜 직접 고르기</span>
+                      {!appt && (
+                        <span className="block text-[17px] font-bold" style={{ color: "#5E6270" }}>
+                          등록된 다음 외래가 없어요
+                        </span>
+                      )}
+                    </button>
+                  </div>
+                </>
+              )}
+              {askWhen && !useNext && (!escort || pick === "direct") && <ElderDateTime ymd={when.ymd} hm={when.hm} onChange={setWhen} title="언제가 좋으세요?" book />}
+              {askHospital && (!escort || pick === "direct") && (
                 <>
                   <div className="text-[19px] font-extrabold">어느 병원이세요?</div>
                   <div className="grid gap-2" role="group" aria-label="어느 병원이세요">
@@ -3558,23 +3654,68 @@ function ElderAskSheet({ item, plan, sent, approver, onAsk, onCallOps, onClose, 
                   </div>
                 </>
               )}
-              <p className="rounded-[18px] p-4 text-[17px] font-extrabold leading-[1.5]" style={plan.approval ? { background: TONE.gold.bg, color: TONE.gold.fg } : { background: TONE.green.bg, color: "#2A4D33" }}>
-                {plan.notice}
-              </p>
-              <div className="flex items-center gap-2.5">
-                <span className="ds-num flex-none text-[20px] font-black">{price}</span>
-                <Btn
-                  tone="navy"
-                  h={62}
-                  r={20}
-                  disabled={!ready}
-                  className="flex-1 text-[19px]"
-                  style={ready ? undefined : { background: "#D8D3C7", boxShadow: "0 4px 0 #C4BEB1", color: "#5E5A52" }}
-                  onClick={() => ready && onAsk({ ymd: askWhen ? when.ymd : null, hm: askWhen ? when.hm : null, hospital: askHospital && hospital !== hospitalOpts[hospitalOpts.length - 1] ? hospital : null })}
-                >
-                  {ready ? plan.cta : "날짜와 시간을 골라 주세요"}
-                </Btn>
+              {d && (!escort || pick) && <DurationStepper d={d} value={dur} onChange={setDur} start={start} big tone="purple" title="얼마나 걸려요?" />}
+              {d?.people && <PeoplePick alone="혼자" value={people} onChange={setPeople} big tone="purple" />}
+              {d?.people && people > 0 && (
+                <p className="ds-num text-center text-[16px] font-bold" style={{ color: "#5E6270" }}>
+                  이용 시간 {fmtWon(priceOf(item.name, dur, 0))} + 추가 {people}명 {fmtWon(people * EXTRA_PERSON_FEE)}
+                </p>
+              )}
+              {/* 결제 — 저도, 가족도 누구나 낼 수 있어요 (금액 제한 없음 · 2026-10-22) */}
+              {amount > 0 && (
+                <>
+                  <div className="text-[19px] font-extrabold">어떻게 결제할까요?</div>
+                  <div className="grid gap-2" role="group" aria-label="어떻게 결제할까요">
+                    <button type="button" aria-pressed={pay === "self"} onClick={() => setPay("self")} className="ds-press rounded-[20px] px-4 py-3.5 text-left" style={optStyle(pay === "self")}>
+                      <span className="block text-[19px] font-extrabold">제가 결제할게요</span>
+                      <span className="block text-[16px] font-bold" style={{ color: "#5E6270" }}>
+                        카드 · 계좌이체 (결제창이 열려요)
+                      </span>
+                    </button>
+                    <button type="button" aria-pressed={pay === "family"} onClick={() => setPay("family")} className="ds-press rounded-[20px] px-4 py-3.5 text-left" style={optStyle(pay === "family")}>
+                      <span className="block text-[19px] font-extrabold">가족에게 결제 부탁</span>
+                      <span className="block text-[16px] font-bold" style={{ color: "#5E6270" }}>
+                        {approver} 님이 대신 결제해요
+                      </span>
+                    </button>
+                  </div>
+                </>
+              )}
+              <div className="flex items-center justify-between rounded-[18px] bg-white px-4 py-3" style={{ boxShadow: "0 4px 0 #E3DED3" }}>
+                <span className="text-[17px] font-extrabold" style={{ color: "#5E6270" }}>
+                  결제 금액
+                </span>
+                <span className="ds-num text-[24px] font-black" aria-live="polite">
+                  {price}
+                </span>
               </div>
+              <Btn
+                tone="navy"
+                h={64}
+                r={20}
+                disabled={!!missing}
+                className="text-[19px]"
+                style={missing ? { background: "#D8D3C7", boxShadow: "0 4px 0 #C4BEB1", color: "#5E5A52" } : undefined}
+                onClick={() =>
+                  !missing &&
+                  onAsk({
+                    ymd: askWhen || useNext ? ymd : null,
+                    hm: askWhen || useNext ? start : null,
+                    hospital: askHospital && hospital !== hospitalOpts[hospitalOpts.length - 1] ? hospital : null,
+                    dur,
+                    people,
+                    pay: amount > 0 ? pay : null,
+                    next: useNext ? appt : null,
+                  })
+                }
+              >
+                {cta}
+              </Btn>
+              {amount > 0 && (
+                <p className="-mt-1 text-center text-[16px] font-bold" style={{ color: "#5E6270" }}>
+                  일정이 확정되지 않으면 전액 환불돼요
+                </p>
+              )}
               <WhiteBtn className="text-[18px]" onClick={onClose}>
                 닫기
               </WhiteBtn>

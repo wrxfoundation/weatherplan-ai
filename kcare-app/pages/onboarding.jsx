@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
 import { Card, SectionLabel, PrimaryButton, GhostButton, Badge } from "../components/ui";
 import Icon from "../components/icons";
-import { PRICING, HOUSEHOLD, BASE_BENEFITS, HOSPITAL_BENEFITS, CARE_LOCATIONS, PAYMENT_MODES, fmtWon } from "../lib/config";
+import { HOUSEHOLD, BASE_BENEFITS, HOSPITAL_BENEFITS, CARE_LOCATIONS, fmtWon } from "../lib/config";
 
 // 가구 구성 — 한 분 / 부부 두 분. 2026-09-11 실무진 결정 3번: 부부 가구 월 77,000원 (lib/config.js HOUSEHOLD)
 const HOUSEHOLDS = [
@@ -53,8 +53,6 @@ function Onboarding() {
     elderName: "",
     household: "single", // 가구 구성 — 한 분 / 부부 (정기 케어만 · 월 구독료가 갈린다)
     district: null,
-    paymentMode: "limit",
-    limitAmount: PRICING.paymentLimitDefault,
     agreeTerms: false, // 필수 — 이용약관 (임시보호자 범위 · 119 연계 한계 포함)
     agreePrivacy: false, // 필수 — 개인정보·건강정보 처리
     videoConsent: false, // 선택 — 방문기록 영상
@@ -131,8 +129,6 @@ function Onboarding() {
         elderName: lockName ? LIVE_ELDER : form.elderName || (track?.needsRelation ? LIVE_ELDER : "본인"),
         district: form.district,
         tier: result?.tier ?? 1,
-        paymentMode: form.paymentMode,
-        limitAmount: form.limitAmount,
         videoConsent: form.videoConsent,
         salesRef, // 추천 영업자 — 영업자 화면 '내가 모집한 고객'이 이 값을 본다
         joinedAt: Date.now(),
@@ -682,77 +678,6 @@ function Onboarding() {
             </section>
           )}
 
-          {/* ── 결제권한 (정기 케어 전용) ── */}
-          {stepKey === "payment" && (
-            <section className="animate-tickIn space-y-4">
-              <h1 className="text-[27px] font-black leading-[1.4] text-navy">
-                결제권한을
-                <br />
-                선택해 주세요
-              </h1>
-              <p className="text-[13px] leading-[1.7] text-muted">
-                어르신이 스토어에 담은 물품을 누가 결제할지 정합니다. 가입 후에도 보호자가
-                변경할 수 있습니다.
-              </p>
-              <div className="space-y-2.5">
-                {PAYMENT_MODES.map((m) => {
-                  const on = form.paymentMode === m.key;
-                  return (
-                    <Card
-                      key={m.key}
-                      onClick={() => set({ paymentMode: m.key })}
-                      className={`p-4 ${on ? "border-gold ring-1 ring-gold/50" : ""}`}
-                    >
-                      <div className="flex items-center gap-2">
-                        <span
-                          className={`inline-block h-[16px] w-[16px] rounded-full border-[5px] ${
-                            on ? "border-gold" : "border-navy/20"
-                          }`}
-                        />
-                        <span className="text-[16px] font-bold text-navy">{m.label}</span>
-                        {m.recommended && (
-                          <Badge fg="#8A5D12" bg="rgba(176,141,87,.16)">
-                            권장
-                          </Badge>
-                        )}
-                      </div>
-                      <p className="mt-1.5 pl-6 text-[13px] leading-[1.65] text-muted">{m.desc}</p>
-                      {m.key === "limit" && on && (
-                        <div className="mt-3 flex items-center gap-2 pl-6">
-                          <span className="text-[13px] text-muted">하루 한도</span>
-                          {[30000, 50000, 100000].map((v) => (
-                            <button
-                              key={v}
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                set({ limitAmount: v });
-                              }}
-                              className={`btn-press rounded-lg border px-2.5 py-1.5 font-num text-[13px] font-bold ${
-                                form.limitAmount === v
-                                  ? "border-gold bg-gold/10 text-navy"
-                                  : "border-navy/15 text-muted"
-                              }`}
-                            >
-                              {fmtWon(v)}
-                            </button>
-                          ))}
-                        </div>
-                      )}
-                    </Card>
-                  );
-                })}
-              </div>
-              <div className="flex gap-2">
-                <GhostButton onClick={() => go(-1)} className="flex-1">
-                  이전
-                </GhostButton>
-                <PrimaryButton className="flex-[2]" onClick={() => go(1)}>
-                  다음
-                </PrimaryButton>
-              </div>
-            </section>
-          )}
-
           {/* ── 요금 확인 + 동의 ── */}
           {stepKey === "plan" && (
             <section className="animate-tickIn space-y-4">
@@ -980,17 +905,8 @@ function Onboarding() {
                     ...(form.address.trim() ? [["주소", form.address.trim()]] : []),
                     ...(track.needsRelation && form.elderPhone.trim() ? [["어르신 전화", form.elderPhone.trim()]] : []),
                     ["서비스 지역", result?.tier === 2 ? "2급지 (별도 산정)" : "1급지"],
-                    priced
-                      ? [
-                          "결제권한",
-                          {
-                            limit: `하루 ${(form.limitAmount ?? 50000).toLocaleString()}원까지 어르신 직접`,
-                            both: "양쪽 모두",
-                            guardianOnly: "보호자만",
-                            elderOnly: "어르신만",
-                          }[form.paymentMode] || "한도형",
-                        ]
-                      : ["요금", "상담 후 확정 (아직 청구 없음)"],
+                    // 결제권한 — 한 가족 그룹이면 누구나 금액 제한 없이 (2026-10-22)
+                    priced ? ["결제권한", "가족 누구나 · 금액 제한 없이"] : ["요금", "상담 후 확정 (아직 청구 없음)"],
                     ["방문기록 영상", form.videoConsent ? "동의" : "미동의 (언제든 변경 가능)"],
                     ...(salesRefLabel ? [["추천 영업자", salesRefLabel]] : []),
                   ].map(([k, v]) => (

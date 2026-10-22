@@ -894,8 +894,9 @@ a.btn-press {
   .ds-nav > a,
   .ds-nav > button { position: relative; height: 58px; border: none; border-radius: 20px; background: transparent; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; font-size: 13px; font-weight: 800; color: #1b2340; text-decoration: none; }
   .ds-nav > [aria-current="page"] { background: #1b2340; color: #ffffff; }
-  .ds-nav-s { grid-template-columns: repeat(3, minmax(0, 1fr)); background: transparent; box-shadow: none; padding: 0; gap: 12px; }
-  .ds-nav-s > button { height: 66px; border-radius: 22px; background: #ffffff; box-shadow: 0 4px 0 #e3ded3; font-size: 18px; transition: transform 0.12s ease; }
+  /* 어르신 아래 메뉴 — 마음사서함 · 홈 · 가족 · 마이 네 칸 (2026-10-22 시제품 v17) */
+  .ds-nav-s { grid-template-columns: repeat(4, minmax(0, 1fr)); background: transparent; box-shadow: none; padding: 0; gap: 8px; }
+  .ds-nav-s > button { height: 66px; border-radius: 22px; background: #ffffff; box-shadow: 0 4px 0 #e3ded3; font-size: 16px; letter-spacing: -0.5px; white-space: nowrap; transition: transform 0.12s ease; }
   .ds-nav-s > button:active { transform: translateY(4px); }
   .ds-nav-s > button[aria-current="page"] { background: #1b2340; box-shadow: 0 4px 0 #0e1428; }
   .ds-nav-g { grid-template-columns: repeat(5, minmax(0, 1fr)); }
@@ -982,6 +983,10 @@ a.btn-press {
   .ds-acc[open] summary .cv { transform: rotate(180deg); }
   .ds-acc .ds-accbody { padding: 2px 18px 18px; display: flex; flex-direction: column; gap: 12px; font-size: 15px; line-height: 1.65; color: #3a3f50; }
   .ds-acc[open] .ds-accbody { animation: dsFadeIn 0.3s ease both; }
+  /* 어르신 정보 동의 · 환불 정책 — 약관 글씨를 조금 키운다 (2026-10-22) */
+  .ds-accbig .ds-acc summary { font-size: 19px; }
+  .ds-accbig .ds-acc .ds-accbody,
+  .ds-acc.ds-accbig .ds-accbody { font-size: 17px; }
   .ds-acc h4 { margin: 0 0 2px; font-size: 15px; font-weight: 900; color: #1b2340; }
   .ds-acc ul { margin: 0; padding-left: 18px; list-style: disc; }
 

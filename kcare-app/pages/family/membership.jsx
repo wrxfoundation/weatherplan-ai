@@ -6,30 +6,26 @@ import { PolicyBody } from "../../components/Policy";
 import { Line } from "../../components/clay";
 import { Btn, Sheet, SheetTitle, TONE, WhiteBtn } from "../../components/ds";
 import { ELDER } from "../../lib/mock";
-import { PAYMENT_MODES, PRICING, fmtWon } from "../../lib/config";
+import { PRICING, fmtWon } from "../../lib/config";
 import { fmtCard, payHref, safeReceiptUrl } from "../../lib/payments";
 import { PROVIDER_LABEL, logout, useAuth } from "../../lib/auth";
+import { elderNameOf, meAs } from "../../lib/people";
 import { storageText, useAppState, useSync } from "../../lib/state";
 import { useGuardianRole } from "../../lib/guardian-role";
 import { videoConsentOf } from "../../lib/consent";
-import { honorific } from "../../lib/tracks";
-import { monthlyLabel } from "../../lib/membership";
+import { monthlyLabel, payGroup } from "../../lib/membership";
+import { MemberPayCard, MemberPaySheet, PAY_HOW, PermCard, payWhoOptions } from "../../components/MemberPay";
 import { policyOf } from "../../lib/policies";
 
-// 마이 › 멤버십 (2026-10-15 디자인 시안) — 월 구독료 · 결제수단 · 결제 권한 · 가입 및 설치비 · 동의 · 환불 정책 · 로그인 계정.
+// 마이 › 멤버십 (2026-10-15 디자인 시안) — 월 구독료 · 이용료 결제 · 결제 권한 · 가입 및 설치비 · 동의 · 환불 정책 · 로그인 계정.
 // 전에 마이의 '결제 관리' 시트와 '멤버십' 카드에 있던 것을 한 화면에 모았다 (기능은 그대로).
-// 결제수단 등록은 토스페이먼츠 결제창 (/pay) 한 곳 — 카드정보는 K-CARE 서버에 저장되지 않는다.
+// 2026-10-22 시제품 v17 — 이용료 결제(누가 · 어떻게)는 어르신 마이와 같은 값(state.memberPay · components/MemberPay.jsx),
+// 결제 권한은 '가족 누구나 금액 제한 없이' 한 줄 + 가족 칩 (하루 한도 · 보호자 승인 단계와 바꾸기 시트는 없앴다).
+// 카드 등록은 토스페이먼츠 결제창 (/pay) 한 곳 — 카드정보는 K-CARE 서버에 저장되지 않는다.
 // 가입 및 설치비는 확정 전이면 결제 버튼을 열지 않는다 (2026-10-02 케어박스 제외 · lib/config.js).
 // 시안의 산호색(결제수단 카드 · 카드 등록 버튼)은 금색으로 — 빨강 계열은 위험 신호 전용.
 
 const md = (t) => new Date(t).toLocaleDateString("ko-KR", { month: "long", day: "numeric" });
-
-// 결제권한 — 시안처럼 사람 말로
-function permText(ob, honor) {
-  const mode = ob?.paymentMode || "limit";
-  if (mode === "limit") return `하루 ${fmtWon(ob?.limitAmount ?? PRICING.paymentLimitDefault)}까지 ${honor}께서 직접, 넘으면 보호자가 승인해요`;
-  return { both: "어르신과 보호자 모두 결제할 수 있어요", guardianOnly: "보호자만 결제해요", elderOnly: `${honor}만 결제해요` }[mode] || "";
-}
 
 // 가입일 기준 다음 달 결제일 — 오늘 이후 첫 날짜. 그 달에 같은 날이 없으면 말일로 맞춘다
 function nextMonthly(joinedAt, now = Date.now()) {
@@ -48,9 +44,8 @@ export default function MembershipPage() {
   const auth = useAuth();
   const sync = useSync();
   const ob = state.onboarding;
-  const honor = honorific(ob);
   const { isPrimary } = useGuardianRole(); // 로그인한 가구는 계정 기준 (lib/guardian-role.js)
-  const [permOpen, setPermOpen] = useState(false);
+  const [payOpen, setPayOpen] = useState(false);
   const [refundOpen, setRefundOpen] = useState(false);
   const [cancelOpen, setCancelOpen] = useState(false);
   const [cancelTopic, setCancelTopic] = useState("해지");
@@ -58,6 +53,8 @@ export default function MembershipPage() {
   const cancelAsk = (state.opsMessages || []).find((m) => m.role === "guardian" && m.kind === "membership") || null;
   const payments = state.payments || [];
   const billing = state.billing;
+  const memberPay = state.memberPay || null;
+  const group = payGroup(elderNameOf(ob));
   const region = ob ? `${ob.district} · ${ob.tier === 2 ? "2급지" : "1급지"}` : `${ELDER.district} · 1급지`;
   // 다음 결제일 — 가입일과 같은 날짜로 매달, 그 달에 그 날이 없으면 말일 (1월 31일 → 2월 28일 · 전에는 3월 3일로 넘쳤다 · 2026-10-19 점검)
   const nextBill = ob?.joinedAt ? nextMonthly(ob.joinedAt).toLocaleDateString("ko-KR", { month: "long", day: "numeric" }) : null;
@@ -88,52 +85,35 @@ export default function MembershipPage() {
           </div>
         </div>
 
-        <div className="ds-gcard ds-r" style={{ "--d": "80ms", background: TONE.gold.bg }}>
-          <div className="flex items-center justify-between gap-2">
-            <h2 className="ds-lab m-0" style={{ color: TONE.gold.fg }}>
-              결제수단
-            </h2>
-            <span className="ds-gchip flex-none" style={{ color: billing ? TONE.green.fg : TONE.gold.fg }}>
-              {billing ? fmtCard(billing) : "미등록"}
-            </span>
-          </div>
-          {/* 결제수단 등록 · 변경은 주 보호자만 — 계약 · 결제의 단일 주체 (docs/kcare/guardian-invite-policy.md · 2026-10-19 점검) */}
-          {isPrimary ? (
-            <Link
-              href={payHref({ kind: "billing", orderName: "월 구독료 자동결제" })}
-              className="ds-press ds-btn3d ds-btn flex items-center justify-center"
-              style={{ background: TONE.gold.solid, boxShadow: `0 4px 0 ${TONE.gold.solidSh}`, color: TONE.gold.solidFg }}
-            >
-              {billing ? "등록된 카드 바꾸기" : "카드 등록하기"}
-            </Link>
-          ) : (
-            <p className="rounded-[14px] bg-white px-3 py-2.5 text-[14px] font-bold" style={{ color: "#5E6270" }}>
-              결제수단 등록 · 변경은 주 보호자만 할 수 있습니다
-            </p>
+        {/* 이용료 결제 — 누가 · 어떻게 (어르신 마이와 같은 값). 카드로 정했으면 카드 등록 · 바꾸기는 주 보호자만 —
+            계약 · 정기 결제의 단일 주체 (docs/kcare/guardian-invite-policy.md · 2026-10-19 점검) */}
+        <MemberPayCard value={memberPay} onOpen={() => setPayOpen(true)}>
+          {(!memberPay || memberPay.how === "card") && (
+            <div className="flex items-center justify-between gap-2 rounded-[14px] bg-white px-3 py-2.5">
+              <span className="text-[14px] font-bold" style={{ color: "#5E6270" }}>
+                {billing ? `등록된 카드 ${fmtCard(billing)}` : "등록된 카드 없음"}
+              </span>
+              {isPrimary ? (
+                <Link
+                  href={payHref({ kind: "billing", orderName: "월 구독료 자동결제" })}
+                  className="ds-press ds-btn3d flex h-10 flex-none items-center rounded-[14px] px-3.5 text-[14px] font-extrabold"
+                  style={{ background: TONE.gold.solid, boxShadow: `0 3px 0 ${TONE.gold.solidSh}`, color: TONE.gold.solidFg }}
+                >
+                  {billing ? "카드 바꾸기" : "카드 등록하기"}
+                </Link>
+              ) : (
+                <span className="flex-none text-[13px] font-bold" style={{ color: "#5E6270" }}>
+                  등록은 주 보호자
+                </span>
+              )}
+            </div>
           )}
           <div className="text-center text-[13px] font-bold" style={{ color: "#6B5A35" }}>
-            토스페이먼츠 · 카드정보는 K-CARE 서버에 저장되지 않아요{billing ? " · 자동 청구는 아직 하지 않아요" : ""}
+            토스페이먼츠 · 카드정보는 K-CARE 서버에 저장되지 않아요 · 자동 청구는 아직 하지 않아요
           </div>
-        </div>
+        </MemberPayCard>
 
-        <div className="ds-gcard ds-r" style={{ "--d": "120ms", background: TONE.purple.bg }}>
-          <div className="flex items-center justify-between gap-2">
-            <h2 className="ds-lab m-0" style={{ color: TONE.purple.fg }}>
-              결제 권한
-            </h2>
-            {isPrimary && (
-              <button type="button" onClick={() => setPermOpen(true)} className={mini} style={{ boxShadow: `0 3px 0 ${TONE.purple.sh}`, color: TONE.purple.fg }}>
-                바꾸기
-              </button>
-            )}
-          </div>
-          <p className="text-[18px] font-extrabold leading-[1.5]">{permText(ob, honor)}</p>
-          {!isPrimary && (
-            <p className="rounded-[14px] bg-white px-3 py-2.5 text-[14px] font-bold" style={{ color: "#5E6270" }}>
-              결제권한 변경은 주 보호자만 할 수 있습니다
-            </p>
-          )}
-        </div>
+        <PermCard group={group} text="가족 누구나 금액 제한 없이 결제해요" />
 
         <div className="ds-gcard ds-r" style={{ "--d": "160ms", background: TONE.green.bg, paddingTop: 8, paddingBottom: 8 }}>
           <ul className="m-0 list-none p-0">
@@ -305,22 +285,18 @@ export default function MembershipPage() {
           </div>
         )}
 
-        {permOpen && (
-          <PermSheet
-            ob={ob}
-            honor={honor}
-            onClose={() => setPermOpen(false)}
-            onSave={(patch) => {
-              dispatch({ type: "onboardingPatch", patch });
-              dispatch({
-                type: "pushEvent",
-                payload: {
-                  kind: "설정",
-                  text: `결제권한 변경 — ${PAYMENT_MODES.find((m) => m.key === patch.paymentMode)?.label}${patch.paymentMode === "limit" ? ` · ${fmtWon(patch.limitAmount)}` : ""}`,
-                  color: "#8FA9CC",
-                },
-              });
-              setPermOpen(false);
+        {payOpen && (
+          <MemberPaySheet
+            value={memberPay}
+            whoList={payWhoOptions(group)}
+            onClose={() => setPayOpen(false)}
+            onSave={({ who, how }) => {
+              const by = `보호자 ${meAs(auth.user, "guardian")}`;
+              dispatch({ type: "setMemberPay", who, how, by });
+              dispatch({ type: "pushEvent", payload: { kind: "설정", text: `멤버십 이용료 결제 방법 — ${who} · ${PAY_HOW[how]}`, color: "#8FA9CC" } });
+              // 계좌 자동이체 · 무통장 입금은 관제가 연락해 안내한다 — 지금 처리할 일로
+              if (how !== "card") dispatch({ type: "addOpsMessage", payload: { from: by, role: "guardian", kind: "memberPay", text: `이용료 결제 방법 — ${who} · ${PAY_HOW[how]} · 안내 연락 부탁드립니다` } });
+              setPayOpen(false);
             }}
           />
         )}
@@ -342,68 +318,5 @@ export default function MembershipPage() {
         )}
       </FamilyLayout>
     </>
-  );
-}
-
-// 결제권한 바꾸기 — 주 보호자만. 한도 기반이면 하루 한도를 고른다.
-function PermSheet({ ob, honor, onClose, onSave }) {
-  const [mode, setMode] = useState(ob?.paymentMode || "limit");
-  const [limit, setLimit] = useState(ob?.limitAmount ?? PRICING.paymentLimitDefault);
-  return (
-    <Sheet onClose={onClose} label="결제 권한 바꾸기">
-      <SheetTitle sub="멤버십" title="결제 권한" />
-      <p className="text-[14px] leading-[1.6]" style={{ color: "#5E6270" }}>
-        {honor}께서 직접 결제할 수 있는 범위를 정합니다. 넘는 건은 보호자 승인으로 옵니다.
-      </p>
-      <div role="group" aria-label="결제 권한" className="flex flex-col gap-2">
-        {PAYMENT_MODES.map((m) => {
-          const on = mode === m.key;
-          return (
-            <div key={m.key} className="flex flex-col gap-2">
-              <button
-                type="button"
-                aria-pressed={on}
-                onClick={() => setMode(m.key)}
-                className="ds-press rounded-[18px] p-3.5 text-left"
-                style={on ? { background: TONE.purple.bg, boxShadow: "inset 0 0 0 2.5px #1B2340" } : { background: "#FFFFFF", boxShadow: "0 3px 0 #E3DED3" }}
-              >
-                <span className="block text-[16px] font-extrabold">{m.label}</span>
-                <span className="mt-0.5 block text-[13px] leading-[1.6]" style={{ color: "#5E6270" }}>
-                  {m.desc}
-                </span>
-              </button>
-              {/* 하루 한도 — 버튼 안에 버튼을 넣지 않는다 (고른 칸 바로 아래에 둔다) */}
-              {m.key === "limit" && on && (
-                <div role="group" aria-label="하루 한도" className="flex items-center gap-1.5 pl-1">
-                  <span className="text-[14px] font-bold" style={{ color: "#5E6270" }}>
-                    하루 한도
-                  </span>
-                  {[30000, 50000, 100000].map((v) => (
-                    <button
-                      key={v}
-                      type="button"
-                      aria-pressed={limit === v}
-                      onClick={() => setLimit(v)}
-                      className="ds-press ds-num min-h-[40px] rounded-[12px] px-3 text-[14px] font-extrabold"
-                      style={limit === v ? { background: "#1B2340", color: "#FFFFFF" } : { background: "#FFFFFF", color: "#3A3F50", boxShadow: "inset 0 0 0 1.5px #E3DED3" }}
-                    >
-                      {fmtWon(v)}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
-          );
-        })}
-      </div>
-      <div className="flex gap-2">
-        <WhiteBtn className="flex-1 text-[16px]" onClick={onClose}>
-          닫기
-        </WhiteBtn>
-        <Btn tone="navy" h={56} className="flex-[2] text-[16px]" onClick={() => onSave({ paymentMode: mode, limitAmount: limit })}>
-          변경 내용 저장
-        </Btn>
-      </div>
-    </Sheet>
   );
 }

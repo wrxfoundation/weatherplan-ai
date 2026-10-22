@@ -22,12 +22,15 @@ const TZ = { 국내: null, "LA (PDT)": -16, "밴쿠버 (PDT)": -16, "시드니 (
 const RELS = ["아들", "장녀", "차녀", "삼남", "배우자", "며느리", "사위", "손주", "기타"];
 const ROLES = ["주", "부", "비상"];
 const F = { role: "전체 역할", where: "거주지역", rep: "보고서", pay: "결제권한", contact: "연락상태" };
+// 결제 권한 (2026-10-22 시제품 v17) — 한 가족 그룹이면 누구나 금액 제한 없이 결제한다. 어르신 하루 한도 · 보호자 승인 단계는 없앴다.
+// 관제는 '결제 가능(가족 그룹)'과 '열람 전용'만 나눈다
+const PAY_TEXT = (g) => (g.payer ? "결제 가능 · 금액 제한 없이" : "열람 전용");
 const isUnread = (g) => g.report.includes("미열람");
 const isAbroad = (g) => g.tz != null;
 const rank = (g) => (g.contact !== "정상" ? 0 : isUnread(g) ? 1 : 2);
 const clock = () => stampNow().slice(5);
 const splitElder = (s) => { const [name, age] = s.replace(")", "").split(" ("); return { name, age }; };
-const EMPTY_FORM = { name: "", rel: "아들", elder: ELDERS[0], role: "부", tel: "", region: "", tz: "국내", call: true, sms: true, push: true, night: false, sos: "2", via: REPORT_VIA[1], payer: false, limit: "50000", scope: SCOPES[1] };
+const EMPTY_FORM = { name: "", rel: "아들", elder: ELDERS[0], role: "부", tel: "", region: "", tz: "국내", call: true, sms: true, push: true, night: false, sos: "2", via: REPORT_VIA[1], payer: true, scope: SCOPES[1] };
 
 // 관제 센터 공간(2026-10-06) — 예시 명부 대신 그 센터에 가입한 보호자. 먼저 가입한 분이 주 보호자, 나머지는 부 보호자
 function centerGuardians() {
@@ -110,7 +113,7 @@ export default function GuardianMgmt({ openProfile }) {
     .filter((g) => f.role === F.role || g.role === f.role)
     .filter((g) => f.where === F.where || (f.where === "해외" ? isAbroad(g) : !isAbroad(g)))
     .filter((g) => f.rep === F.rep || (f.rep === "미열람" ? isUnread(g) : !isUnread(g)))
-    .filter((g) => f.pay === F.pay || (f.pay === "승인자" ? g.payer : !g.payer))
+    .filter((g) => f.pay === F.pay || (f.pay === "결제 가능" ? g.payer : !g.payer))
     .filter((g) => f.contact === F.contact || (f.contact === "확인 필요" ? g.contact !== "정상" : g.contact === "정상"))
     .sort((a, b) => (b.live ? 1 : 0) - (a.live ? 1 : 0) || rank(a) - rank(b) || a.name.localeCompare(b.name));
 
@@ -126,7 +129,7 @@ export default function GuardianMgmt({ openProfile }) {
     { k: "elders", label: "담당 어르신", render: (g) => g.elders.map(elderBtn) },
     { k: "where", label: "거주 · 현지시간", render: (g) => <><span style={isAbroad(g) ? { color: TONE.info.fg, fontWeight: 700 } : undefined}>{g.region}</span> · <span className="font-num">{localClock(now, g.tz)}</span></> },
     { k: "report", label: "보고서", render: (g) => <span className={isUnread(g) ? "font-bold text-gold" : ""}>{g.report}</span> },
-    { k: "pay", label: "결제 · 연락", render: (g) => <><span className="block text-[12px]">{g.payMode || (g.payer ? `어르신 하루 ${fmtWon(g.payLimit)}` : "열람 전용")}</span><Pill tone={CONTACT_TONE[g.contact]}>{g.contact}</Pill></> },
+    { k: "pay", label: "결제 · 연락", render: (g) => <><span className="block text-[12px]">{PAY_TEXT(g)}</span><Pill tone={CONTACT_TONE[g.contact]}>{g.contact}</Pill></> },
   ];
 
   const editFields = cur
@@ -139,7 +142,7 @@ export default function GuardianMgmt({ openProfile }) {
         { label: "야간 연락 가능", value: cur.night ? "예" : "아니오", options: ["예", "아니오"], apply: (g, v) => ({ ...g, night: v === "예" }) },
         { label: "보고서 수신방법", value: cur.reportVia, options: REPORT_VIA, apply: (g, v) => ({ ...g, reportVia: v }) },
         { label: "고객정보 열람범위", value: cur.scope, options: SCOPES, apply: (g, v) => ({ ...g, scope: v }) },
-        { label: "어르신 직접 결제 한도 (하루 누적, 원)", value: cur.payLimit == null ? "권한 없음" : String(cur.payLimit), apply: (g, v) => ({ ...g, payer: Number(v) > 0, payLimit: Number(v) > 0 ? Number(v) : null }) },
+        { label: "결제 권한", value: cur.payer ? "결제 가능" : "열람 전용", options: ["결제 가능", "열람 전용"], apply: (g, v) => ({ ...g, payer: v === "결제 가능", payLimit: null }) },
         { label: "앱 계정 상태", value: cur.app.state, options: ["정상", "잠금", "탈퇴"], apply: (g, v) => ({ ...g, app: { ...g.app, state: v } }) },
       ]
     : [];
@@ -155,7 +158,7 @@ export default function GuardianMgmt({ openProfile }) {
       id: `G-${Date.now()}`, name: form.name.trim(), rel: form.rel, role: form.role, elders: [{ ...e, role: form.role }],
       region: form.region.trim() || form.tz.split(" ")[0], tz: TZ[form.tz], tel: tel.length >= 10 ? `${tel.slice(0, 3)}-${tel.slice(3, -4)}-${tel.slice(-4)}` : "미입력",
       hours: "08:00–22:00", night: form.night, consent: { call: form.call, sms: form.sms, push: form.push }, sosOrder: Number(form.sos), scope: form.scope, reportVia: form.via,
-      report: "발송 전", payer: form.payer, payLimit: form.payer ? Number(form.limit) || 0 : null, contact: "정상", app: { state: "초대 발송 · 가입 대기", last: "—" },
+      report: "발송 전", payer: form.payer, payLimit: null, contact: "정상", app: { state: "초대 발송 · 가입 대기", last: "—" },
       emergency: form.role === "주" ? "119 신고 · 현장출동 동의 (서명 대기)" : "열람 동의", requests: [], complaints: [], reports: [], payments: [],
       log: [{ at: clock(), ch: "문자", text: "보호자 앱 초대 발송", state: "sent" }],
       history: [logEntry({ field: "신규 보호자 등록", before: "—", after: `${form.name.trim()} · ${e.name} ${form.role} 보호자`, reason: "신규 등록" })],
@@ -207,7 +210,7 @@ export default function GuardianMgmt({ openProfile }) {
         <div>
           <KV k="고객정보 열람범위" v={cur.scope} />
           <KV k="보고서 수신" v={cur.reportVia} />
-          <KV k="결제 승인" v={cur.payMode ? `${cur.payMode} (가입 상담)` : cur.payer ? `승인자 · 어르신 하루 ${fmtWon(cur.payLimit)}까지 직접 결제, 넘으면 승인` : "권한 없음 (열람 전용)"} tone={cur.payer ? "ok" : undefined} />
+          <KV k="결제 권한" v={cur.payer ? "가족 그룹 — 금액 제한 없이 결제 (보호자 승인 단계 없음)" : "권한 없음 (열람 전용)"} tone={cur.payer ? "ok" : undefined} />
           <KV k="긴급조치 동의" v={cur.emergency} />
           <KV k="SOS 연락 우선순위" v={`${cur.sosOrder}순위`} />
           <KV k="야간 연락 가능" v={cur.night ? "예" : "아니오"} />
@@ -248,8 +251,7 @@ export default function GuardianMgmt({ openProfile }) {
       );
     return (
       <div>
-        <KV k="승인권한" v={cur.payer ? "승인자" : "없음 (열람 전용)"} />
-        <KV k="어르신 직접 결제 한도" v={cur.payer ? `${fmtWon(cur.payLimit)} (하루 누적)` : "—"} mono />
+        <KV k="결제 권한" v={PAY_TEXT(cur)} />
         <div className="mt-2"><Table dense cols={[{ k: "at", label: "일자" }, { k: "item", label: "항목" }, { k: "amount", label: "금액", align: "right", render: (p) => fmtWon(p.amount) }, { k: "state", label: "상태", render: (p) => <NotifyPill s={p.state} /> }]} rows={cur.payments} rowKey={(p, i) => `${p.at}-${i}`} empty="결제 승인 이력이 없습니다." /></div>
         <div className="mt-2 text-[11px] text-muted">금액은 서비스 메뉴 가격 기준 · 요금 확정 전 항목은 "별도 산정"으로 표시됩니다.</div>
       </div>
@@ -279,7 +281,7 @@ export default function GuardianMgmt({ openProfile }) {
           <Field id="g-role" label="역할" value={f.role} onChange={setFl("role")} options={[F.role, ...ROLES]} />
           <Field id="g-where" label="거주지역" value={f.where} onChange={setFl("where")} options={[F.where, "국내", "해외"]} />
           <Field id="g-rep" label="보고서" value={f.rep} onChange={setFl("rep")} options={[F.rep, "열람", "미열람"]} />
-          <Field id="g-pay" label="결제권한" value={f.pay} onChange={setFl("pay")} options={[F.pay, "승인자", "열람 전용"]} />
+          <Field id="g-pay" label="결제권한" value={f.pay} onChange={setFl("pay")} options={[F.pay, "결제 가능", "열람 전용"]} />
           <Field id="g-contact" label="연락상태" value={f.contact} onChange={setFl("contact")} options={[F.contact, "정상", "확인 필요"]} />
         </div>
       </Panel>
@@ -371,8 +373,7 @@ export default function GuardianMgmt({ openProfile }) {
             <Field id="gr-sos" label="SOS 연락 우선순위" value={form.sos} onChange={setF("sos")} options={["1", "2", "3"]} />
             <Field id="gr-via" label="보고서 수신방법" value={form.via} onChange={setF("via")} options={REPORT_VIA} />
           </div>
-          <Row id="gr-payer" label="결제 승인권한" hint="해주세요 유료 서비스 승인" on={form.payer} onChange={setF("payer")} />
-          {form.payer && <Field id="gr-limit" label="어르신 직접 결제 한도 (하루 누적, 원)" type="number" value={form.limit} onChange={setF("limit")} hint={`${fmtWon(Number(form.limit) || 0)}`} />}
+          <Row id="gr-payer" label="결제 권한" hint="가족 그룹 — 해주세요 · 스토어 · 추가 이용 금액을 금액 제한 없이 결제" on={form.payer} onChange={setF("payer")} />
           <Field id="gr-scope" label="고객정보 열람범위" value={form.scope} onChange={setF("scope")} options={SCOPES} />
         </div>
       </Drawer>

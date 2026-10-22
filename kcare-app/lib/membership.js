@@ -7,10 +7,12 @@ import { inCenter, people } from "./people";
 export const monthlyLabel = (ob) =>
   ob?.tier === 2 ? "별도 산정" : ob?.household === "couple" ? `${fmtWon(HOUSEHOLD.monthly)} · 부부 가구` : fmtWon(PRICING.subscription.monthly);
 
-// 결제권한 한 줄
-export function payLabel(ob, honor) {
-  if (!ob || ob.paymentMode === "limit") return `하루 ${fmtWon(ob?.limitAmount ?? PRICING.paymentLimitDefault)}까지 ${honor} 직접 결제`;
-  return { both: "양쪽 모두 결제", guardianOnly: "보호자만 결제", elderOnly: `${honor}만 결제` }[ob.paymentMode];
+// 한 가족 그룹 — 결제 권한 칩 · 이용료 '누가 낼까요' (2026-10-22). 데모 · 테스트 가구는 예시 세 자녀, 센터 공간은 그 센터 보호자 회원
+export function payGroup(elderName) {
+  const kids = inCenter()
+    ? people().guardians.map((name) => ({ name, rel: "보호자" }))
+    : GUARDIANS.map((g) => ({ name: g.name, rel: String(g.relation || "").split(" · ")[0] || "보호자" }));
+  return [{ name: elderName, rel: "어르신", elder: true }, ...kids];
 }
 
 // 화면 주인 — 데모는 주 보호자 페르소나(김민수). 테스트 계정은 로그인한 계정 이름 (예시 이름을 붙이지 않는다).

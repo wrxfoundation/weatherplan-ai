@@ -7,11 +7,14 @@
 // 지난 날짜와 두 달 뒤는 고를 수 없다. 고른 것은 맨 아래 한 줄로 다시 읽어 드린다.
 // 2026-10-15 시안 — 흰 3D 카드 달력(고른 날 남색 · 오늘 금색 테두리), 시간은 큰 고르기 칸(고른 것 보라).
 // 일요일 숫자는 시안의 빨강 대신 갈색 — 빨강은 위험 신호 전용이다.
+// 해주세요 예약(2026-10-22 · book)은 내일부터 1년 뒤까지, 오전 7시 ~ 오후 8시 정각까지 30분 간격 (lib/booking.js 와 같은 범위).
 import { useState } from "react";
 import { Line } from "./clay";
 import { TONE } from "./ds";
 
 export const ELDER_HOURS = [8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19];
+// 해주세요 예약 시간 — 오전 7:00 ~ 오후 8:00 (8시는 정각만)
+export const BOOK_HOURS = [7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
 const WEEK = ["일", "월", "화", "수", "목", "금", "토"];
 
 const pad = (n) => String(n).padStart(2, "0");
@@ -38,12 +41,19 @@ export const atOf = (ymd, hm) => {
   return d.getTime();
 };
 
-export default function ElderDateTime({ ymd, hm, onChange, maxDays = 60, title = "날짜를 골라 주세요", timeTitle = "몇 시에요?" }) {
+export default function ElderDateTime({ ymd, hm, onChange, maxDays = 60, title = "날짜를 골라 주세요", timeTitle = "몇 시에요?", book = false }) {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
+  // book — 해주세요 예약: 내일부터 1년 뒤까지 · 오전 7시 ~ 오후 8시 정각
+  const firstDay = new Date(today);
+  if (book) firstDay.setDate(firstDay.getDate() + 1);
   const last = new Date(today);
-  last.setDate(last.getDate() + maxDays);
-  const start = ymd ? fromYmd(ymd) : today;
+  last.setDate(last.getDate() + (book ? 365 : maxDays));
+  const hours = book ? BOOK_HOURS : ELDER_HOURS;
+  const lastHour = hours[hours.length - 1];
+  // 마지막 시(오후 8시)는 정각만 — 30분은 고를 수 없다
+  const tooLate = (h, m) => book && h === lastHour && m > 0;
+  const start = ymd ? fromYmd(ymd) : firstDay;
   const [view, setView] = useState({ y: start.getFullYear(), m: start.getMonth() });
   const hour = hm ? Number(hm.split(":")[0]) : null;
   const half = hm ? hm.endsWith(":30") : false;
@@ -51,7 +61,7 @@ export default function ElderDateTime({ ymd, hm, onChange, maxDays = 60, title =
   const first = new Date(view.y, view.m, 1);
   const days = new Date(view.y, view.m + 1, 0).getDate();
   const cells = [...Array.from({ length: first.getDay() }, () => null), ...Array.from({ length: days }, (_, i) => i + 1)];
-  const canPrev = new Date(view.y, view.m, 1) > new Date(today.getFullYear(), today.getMonth(), 1);
+  const canPrev = new Date(view.y, view.m, 1) > new Date(firstDay.getFullYear(), firstDay.getMonth(), 1);
   const canNext = new Date(view.y, view.m + 1, 1) <= last;
   const move = (n) => setView((v) => {
     const d = new Date(v.y, v.m + n, 1);
@@ -67,12 +77,12 @@ export default function ElderDateTime({ ymd, hm, onChange, maxDays = 60, title =
     onChange?.({ ymd: k, hm: keep });
   };
   const pickHour = (h) => {
-    // 정각이 지났으면 30분으로, 둘 다 지났으면 고르지 않는다 (버튼도 꺼져 있다)
-    const m = half || past(ymd, h, 0) ? 30 : 0;
+    // 정각이 지났으면 30분으로, 둘 다 지났으면 고르지 않는다 (버튼도 꺼져 있다). 마지막 시는 정각으로
+    const m = (half || past(ymd, h, 0)) && !tooLate(h, 30) ? 30 : 0;
     if (past(ymd, h, m)) return;
     onChange?.({ ymd: ymd || null, hm: `${pad(h)}:${m ? "30" : "00"}` });
   };
-  const pickHalf = (v) => hour != null && !past(ymd, hour, v ? 30 : 0) && onChange?.({ ymd: ymd || null, hm: `${pad(hour)}:${v ? "30" : "00"}` });
+  const pickHalf = (v) => hour != null && !past(ymd, hour, v ? 30 : 0) && !tooLate(hour, v ? 30 : 0) && onChange?.({ ymd: ymd || null, hm: `${pad(hour)}:${v ? "30" : "00"}` });
 
   const navBtn = "ds-press flex h-[48px] min-w-[48px] items-center justify-center rounded-[16px] disabled:opacity-25";
   // 고르기 칸 — 고른 것은 보라로 찬다 (시안 chipBtn)
@@ -105,7 +115,7 @@ export default function ElderDateTime({ ymd, hm, onChange, maxDays = 60, title =
             if (d == null) return <span key={`b${i}`} aria-hidden />;
             const date = new Date(view.y, view.m, d);
             const key = ymdOf(date);
-            const off = date < today || date > last;
+            const off = date < firstDay || date > last;
             const on = key === ymd;
             const isToday = date.getTime() === today.getTime();
             const dow = date.getDay();
@@ -133,7 +143,7 @@ export default function ElderDateTime({ ymd, hm, onChange, maxDays = 60, title =
 
       <div className="mt-2 text-[19px] font-extrabold">{timeTitle}</div>
       <div className="grid grid-cols-3 gap-2" role="group" aria-label="몇 시">
-        {ELDER_HOURS.map((h) => (
+        {hours.map((h) => (
           <button
             key={h}
             type="button"
@@ -154,7 +164,7 @@ export default function ElderDateTime({ ymd, hm, onChange, maxDays = 60, title =
         ].map(([v, label]) => {
           const on = hour != null && half === v;
           return (
-            <button key={label} type="button" disabled={hour == null || past(ymd, hour, v ? 30 : 0)} onClick={() => pickHalf(v)} aria-pressed={on} className="ds-pick px-2 text-[17px] disabled:opacity-40" style={pick(on)}>
+            <button key={label} type="button" disabled={hour == null || past(ymd, hour, v ? 30 : 0) || tooLate(hour, v ? 30 : 0)} onClick={() => pickHalf(v)} aria-pressed={on} className="ds-pick px-2 text-[17px] disabled:opacity-40" style={pick(on)}>
               {label}
             </button>
           );

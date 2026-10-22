@@ -17,6 +17,8 @@ import { useAuth } from "../lib/auth";
 import { meAs } from "../lib/people";
 import { fmtWon, PRICING, HOUSEHOLD } from "../lib/config";
 import { paymentOf } from "../lib/requests";
+import { extraIsFor } from "../lib/booking";
+import { ConfirmSteps } from "../components/BookingParts";
 import { orderTotal } from "../lib/store";
 import {
   PAY_KINDS,
@@ -25,6 +27,7 @@ import {
   customerKey,
   hasClientKey,
   isTestKey,
+  safeBack,
 } from "../lib/payments";
 
 // 자동결제는 금액이 없다 — 카드만 등록하고 청구는 매월 서버가 한다
@@ -38,15 +41,31 @@ export default function PayPage() {
   const authUser = useAuth().user;
   const demo = !authUser?.household;
   const [demoDone, setDemoDone] = useState(null);
-  const { kind = "store", amount, orderName = "K-CARE 결제", ref: refId = "" } = router.query;
+  const { kind = "store", amount, orderName = "K-CARE 결제", ref: refId = "", back = "" } = router.query;
   const meta = PAY_KINDS[kind] || PAY_KINDS.store;
-  // 금액은 주소(amount)가 아니라 기록에서 정한다 — 해주세요는 그 요청의 요금, 스토어는 담은 물건의 카탈로그 가격,
-  // 가입비는 가격표. 주소의 amount 를 고쳐도 표시 · 결제 금액이 바뀌지 않는다 (2026-10-19 점검 · 서버도 같은 값으로 서명한다)
+  // 돌아갈 화면 — 어르신 화면에서 낸 것은 어르신 화면으로 (앱 안 주소만 · lib/payments.js safeBack)
+  const backTo = safeBack(back, meta.back);
+  // 금액은 주소(amount)가 아니라 기록에서 정한다 — 해주세요는 그 요청의 요금, 추가 이용 금액은 그 청구, 스토어는 담은 물건의
+  // 카탈로그 가격, 가입비는 가격표. 주소의 amount 를 고쳐도 표시 · 결제 금액이 바뀌지 않는다 (2026-10-19 점검 · 서버도 같은 값으로 서명한다)
   const req = kind === "request" ? (state.requests || []).find((r) => r.id === refId) || null : null;
+  const xc = kind === "extra" ? (state.extraCharges || []).find((x) => x.id === refId) || null : null;
   const po = kind === "store" ? state.pendingOrder : null;
   const expected =
-    kind === "request" ? Number(req?.amount) || 0 : kind === "store" ? orderTotal(po?.items) || 0 : kind === "entry" ? Number(PRICING.entryFee?.total) || 0 : Number(amount) || 0;
-  // 결제하면 안 되는 경우 — 이미 낸 해주세요(뒤로 가기로 다시 온 경우 포함) · 결제 단계가 아닌 요청 · 담은 물건이 없는 주문
+    kind === "request"
+      ? Number(req?.amount) || 0
+      : kind === "extra"
+        ? Number(xc?.amount) || 0
+        : kind === "store"
+          ? orderTotal(po?.items) || 0
+          : kind === "entry"
+            ? Number(PRICING.entryFee?.total) || 0
+            : Number(amount) || 0;
+  // 결제자 — 가족 누구나 낸다 (2026-10-22). 어르신 계정 · 어르신 화면에서 온 결제는 어르신 이름, 그 밖은 보호자.
+  // 센터 공간은 로그인한 사람 이름, 데모 · 테스트 가구는 예전 인물 (2026-10-06 점검)
+  const payerRole = authUser?.role === "elder" || (!authUser?.role && backTo.startsWith("/elder")) ? "elder" : "guardian";
+  const buyerName = meAs(authUser, payerRole);
+  // 결제하면 안 되는 경우 — 이미 낸 해주세요(뒤로 가기로 다시 온 경우 포함) · 결제 단계가 아닌 요청 · 담은 물건이 없는 주문 ·
+  // 내가 받는 분이 아닌 추가 이용 금액 (받는 분만 결제한다 — 서버도 같은 규칙 · lib/pay-server.js extraPayable)
   const paidAlready = req ? paymentOf(state.payments, req.id) : null;
   const blocked =
     kind === "request"
@@ -57,9 +76,19 @@ export default function PayPage() {
           : req.status !== "awaitingPayment"
             ? "결제할 단계가 아닌 요청입니다 (승인 · 취소 등으로 상태가 바뀌었습니다)."
             : null
-      : kind === "store" && !expected
-        ? "담은 물건이 없습니다. 스토어에서 다시 담아 주세요."
-        : null;
+      : kind === "extra"
+        ? !xc
+          ? "결제할 추가 이용 금액을 찾지 못했습니다. 홈에서 다시 열어 주세요."
+          : xc.status === "paid"
+            ? `이미 결제된 추가 이용 금액입니다 — ${fmtWon(xc.amount)}. 두 번 결제하지 않습니다.`
+            : xc.status !== "pending"
+              ? "결제할 수 없는 청구입니다 (취소되었습니다)."
+              : !extraIsFor(xc, payerRole, buyerName)
+                ? "이 추가 이용 금액은 받는 분만 결제할 수 있습니다."
+                : null
+        : kind === "store" && !expected
+          ? "담은 물건이 없습니다. 스토어에서 다시 담아 주세요."
+          : null;
 
   const [phase, setPhase] = useState("loading"); // loading | ready | requesting | error | blocked
   const [error, setError] = useState(null);
@@ -71,8 +100,6 @@ export default function PayPage() {
   const mounted = useRef(false);
 
   const ob = state.onboarding;
-  // 결제자는 보호자 — 센터 공간은 로그인한 보호자 이름, 데모 · 테스트 가구는 예전 인물 (2026-10-06 점검)
-  const buyerName = meAs(authUser, "guardian");
   const monthly = ob?.household === "couple" ? HOUSEHOLD.monthly : PRICING.subscription.monthly;
 
   // ── 위젯 준비 ──
@@ -142,11 +169,12 @@ export default function PayPage() {
         });
         return;
       }
+      const backQ = backTo !== meta.back ? `&back=${encodeURIComponent(backTo)}` : "";
       await widgetsRef.current.requestPayment({
         orderId: order.orderId,
         orderName: String(orderName),
-        successUrl: `${origin}/pay/result?kind=${kind}&sig=${order.sig}${order.ref ? `&ref=${encodeURIComponent(order.ref)}` : ""}`,
-        failUrl: `${origin}/pay/result?kind=${kind}${refId ? `&ref=${refId}` : ""}`,
+        successUrl: `${origin}/pay/result?kind=${kind}&sig=${order.sig}${order.ref ? `&ref=${encodeURIComponent(order.ref)}` : ""}${backQ}`,
+        failUrl: `${origin}/pay/result?kind=${kind}${refId ? `&ref=${refId}` : ""}${backQ}`,
         customerName: buyerName,
       });
     } catch (e) {
@@ -173,7 +201,10 @@ export default function PayPage() {
     dispatch({ type: "addPayment", payload: { kind, ref: refId || null, status: "done", ...payment } });
     dispatch({ type: "pushEvent", payload: { kind: "결제", text: `${meta.label} ${fmtWon(value)} 데모 가상 승인 (실제 결제 없음)`, color: "#8FE3C0" } });
     if (kind === "request" && refId) {
-      dispatch({ type: "requestPaid", id: refId, amount: value, orderId: payment.orderId, note: `데모 가상 승인 ${fmtWon(value)} (실제 결제 없음)` });
+      dispatch({ type: "requestPaid", id: refId, amount: value, orderId: payment.orderId, by: buyerName, note: `${buyerName} 데모 가상 승인 ${fmtWon(value)} (실제 결제 없음)` });
+    }
+    if (kind === "extra" && refId) {
+      dispatch({ type: "extraChargePaid", id: refId, amount: value, orderId: payment.orderId, by: buyerName, method: "데모 가상 승인", demo: true });
     }
     if (kind === "store") dispatch({ type: "commitPendingOrder", payload: payment, by: buyerName });
     setDemoDone(payment);
@@ -188,7 +219,7 @@ export default function PayPage() {
         <div className="mx-auto flex min-h-screen w-full max-w-[430px] flex-col bg-paper">
           <header className="sticky top-0 z-20 border-b border-navy/10 bg-paper/95 px-5 pb-3 pt-4 backdrop-blur">
             <div className="flex items-center gap-2">
-              <Link href={meta.back} aria-label="뒤로" className="tap -ml-1 flex min-h-[44px] min-w-[44px] shrink-0 items-center rounded-lg px-2 text-[18px] font-bold text-muted">
+              <Link href={backTo} aria-label="뒤로" className="tap -ml-1 flex min-h-[44px] min-w-[44px] shrink-0 items-center rounded-lg px-2 text-[18px] font-bold text-muted">
                 ‹
               </Link>
               <h1 className="min-w-0 flex-1 text-[19px] font-black text-navy">{meta.label}</h1>
@@ -250,8 +281,8 @@ export default function PayPage() {
               <Card className="border border-amber/30 p-4" style={{ background: "#FFF7E8" }}>
                 <div className="text-[14px] font-bold text-amber">결제하지 않았습니다</div>
                 <p className="mt-1.5 text-[12.5px] leading-[1.7] text-[#5A4A22]">{blocked}</p>
-                <Link href={meta.back} className="tap mt-3 flex w-full items-center justify-center rounded-xl border border-navy/20 bg-white py-3 text-[14px] font-bold text-navy">
-                  {meta.label === "스토어 주문" ? "스토어로" : "해주세요로"} 돌아가기
+                <Link href={backTo} className="tap mt-3 flex w-full items-center justify-center rounded-xl border border-navy/20 bg-white py-3 text-[14px] font-bold text-navy">
+                  {kind === "store" ? "스토어로 " : kind === "request" && !backTo.startsWith("/elder") ? "해주세요로 " : ""}돌아가기
                 </Link>
               </Card>
             )}
@@ -289,8 +320,16 @@ export default function PayPage() {
                 </div>
                 <p className="mt-2 text-[13px] leading-[1.7] text-ink">
                   {fmtWon(demoDone.amount)} — 실제 결제는 없습니다. 결제가 끝났을 때와 같이 다음 단계가 진행됩니다.
+                  {kind === "request" && " 담당 컨시어지가 일정을 확인하고 관제가 승인하면 확정돼요. 확정되지 않으면 전액 환불돼요."}
+                  {kind === "extra" && " 추가 이용 금액을 결제했어요 — 담당 컨시어지와 관제에 바로 전해졌어요."}
                 </p>
-                <Link href={meta.back} className="tap mt-3 flex w-full items-center justify-center rounded-xl border border-navy/20 py-3 text-[14px] font-bold text-navy">
+                {/* 확정 단계 — 결제 → 컨시어지 확인 → 관제 승인 → 일정 확정 (2026-10-22) */}
+                {kind === "request" && (
+                  <div className="mt-3">
+                    <ConfirmSteps at={1} />
+                  </div>
+                )}
+                <Link href={backTo} className="tap mt-3 flex w-full items-center justify-center rounded-xl border border-navy/20 py-3 text-[14px] font-bold text-navy">
                   돌아가기
                 </Link>
               </Card>

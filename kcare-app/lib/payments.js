@@ -22,8 +22,16 @@ export const PAY_KINDS = {
   entry: { label: "가입 및 설치비", note: "최초 1회", back: "/family/my" },
   store: { label: "스토어 주문", note: "물품 구매", back: "/family/store" },
   request: { label: "해주세요 요금", note: "서비스 이용료", back: "/family/requests" },
+  // 예약한 시간보다 길어진 해주세요 — 컨시어지가 청구하고 받는 분이 낸다 (2026-10-22)
+  extra: { label: "추가 이용 금액", note: "예약보다 길어진 시간", back: "/family" },
   billing: { label: "결제수단 등록", note: "월 구독 자동결제", back: "/family/membership" },
 };
+
+// 결제를 마치고 돌아갈 화면 — 앱 안의 보호자 · 어르신 화면만 (주소의 back 을 그대로 믿으면 바깥 주소로 보낼 수 있다)
+export function safeBack(back, fallback) {
+  const s = String(back || "");
+  return /^\/(elder|family)(\/[A-Za-z0-9/_-]*)?(\?[A-Za-z0-9=&_-]*)?$/.test(s) && !s.includes("//") ? s : fallback;
+}
 
 // 주문번호 — 토스 규격: 영문 대소문자·숫자·`-`·`_` 로 6~64자.
 // 시각과 난수를 같이 넣어 같은 초에 두 번 눌러도 겹치지 않게 한다.
@@ -69,10 +77,12 @@ export function normalizePayStatus(s) {
 
 // 결제 화면으로 보내는 링크. 금액은 서버가 정하고 서명한다 — 여기 실린 금액은 화면 표시용 참고값일 뿐이다
 // (해주세요는 요청의 요금, 스토어는 카탈로그 가격으로 서버가 다시 계산한다 · pages/api/payments/order.js).
-export function payHref({ kind, amount, orderName, ref = "" }) {
+// back — 결제를 마치고 돌아갈 화면 (어르신 화면에서 낸 것은 /elder). 없으면 종류별 기본 화면
+export function payHref({ kind, amount, orderName, ref = "", back = "" }) {
   const q = new URLSearchParams({ kind, orderName });
   if (amount != null) q.set("amount", String(amount));
   if (ref) q.set("ref", ref);
+  if (back) q.set("back", back);
   return `/pay?${q.toString()}`;
 }
 
@@ -102,6 +112,6 @@ export const PAY_STATUS = {
 // 카드사 무이자 등은 상점 설정 몫이라 지어내지 않는다. 화면에 필요한 고지만 상수로 둔다.
 export const PAY_NOTICE = [
   "결제는 토스페이먼츠를 통해 처리되며 카드정보는 K-CARE 서버에 저장되지 않습니다.",
-  "해주세요는 요청할 때 결제하고, 담당 컨시어지가 승인하지 않으면 환불됩니다.",
+  "해주세요는 요청할 때 결제하고, 컨시어지 확인 · 관제 승인으로 일정이 확정되지 않으면 전액 환불됩니다.",
   "확정 뒤에는 서비스일 3일 전까지 해주세요 탭에서 바로 취소되고(환불은 관제가 처리), 그 안에는 관제 승인 후 취소됩니다.",
 ];

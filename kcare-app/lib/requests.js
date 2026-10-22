@@ -8,10 +8,18 @@
 //   · 결제는 요청할 때 먼저 (보호자 결제). 거절 · 취소되면 환불 — 베타에서는 관제의 '환불 대기'로 넘어간다.
 //   · 확정 뒤 취소: 서비스일 3일 전까지는 바로 취소, 그 안(2일 전 · 전날 · 당일)은 관제가 취소를 승인한다.
 //   · 도와줘요(즉시 방문 요청)는 지금처럼 관제가 확인 전화 후 배차한다 — 이 규칙 밖.
+//
+// 2026-10-22 시제품 v17 결정 (docs/kcare/decisions/2026-10-22-booking-pay.md):
+//   · 보호자 · 어르신 해주세요는 결제(무료면 요청) → 담당 컨시어지 확인 → 관제 승인 → 일정 확정. 관제 승인이 새로 생겼다 (opsReview).
+//     요청한 분 화면에는 확정 전까지 '확정 대기'로 보인다. 확정되지 않으면 전액 환불.
+//   · 어르신 '5만원이 넘으면 보호자 승인'(하루 한도)은 없앴다 — 가족 그룹(어르신 · 보호자 모두) 누구나 금액 제한 없이 결제한다.
+//   · 이용 시간에 따라 금액이 바뀐다 — 서비스별 기본 금액 · 이용 시간 범위 · 30분 단가는 아래 메뉴의 dur (lib/booking.js 가 계산).
 
 export const STATUS = {
   awaitingPayment: { label: "결제대기", fg: "#8A5D12", bg: "rgba(138,93,18,.12)" },
   requested: { label: "승인 대기", fg: "#0A1F3C", bg: "rgba(10,31,60,.08)" },
+  // 담당 컨시어지가 확인(날짜 · 시간 · 짝)했고 관제 승인을 기다린다 (2026-10-22)
+  opsReview: { label: "관제 승인 대기", fg: "#3A4E96", bg: "rgba(58,78,150,.12)" },
   confirmed: { label: "확정", fg: "#3B5C8A", bg: "rgba(59,92,138,.12)" },
   cancelRequested: { label: "취소 요청", fg: "#8A5D12", bg: "rgba(138,93,18,.14)" },
   inProgress: { label: "처리중", fg: "#B08D57", bg: "rgba(176,141,87,.16)" },
@@ -23,10 +31,12 @@ export const STATUS = {
 };
 
 const TRANSITIONS = {
-  // 선결제 — 결제가 끝나면 승인 대기로(이미 승인된 건 · 수락한 제안은 확정으로)
-  awaitingPayment: ["requested", "confirmed", "cancelled", "needsAdmin"],
-  // 승인 대기 — 컨시어지(또는 제안의 승인 대상)가 확정 · 거절. 요금 확정 전 항목은 승인하면서 금액을 정하고 결제로
-  requested: ["confirmed", "awaitingPayment", "cancelled", "rejected", "needsAdmin"],
+  // 선결제 — 결제가 끝나면 승인 대기로(컨시어지가 이미 확인한 건은 관제 승인 대기로 · 수락한 제안은 확정으로)
+  awaitingPayment: ["requested", "opsReview", "confirmed", "cancelled", "needsAdmin"],
+  // 승인 대기 — 컨시어지가 확인하면 관제 승인 대기로(제안은 승인 대상이 수락하면 확정) · 거절. 요금 확정 전 항목은 확인하면서 금액을 정하고 결제로
+  requested: ["opsReview", "confirmed", "awaitingPayment", "cancelled", "rejected", "needsAdmin"],
+  // 관제 승인 대기 — 관제가 승인하면 확정, 일정을 다시 맞추게 하면 컨시어지 확인으로 돌아간다
+  opsReview: ["confirmed", "requested", "cancelled", "rejected", "needsAdmin"],
   confirmed: ["inProgress", "cancelRequested", "cancelled", "needsAdmin"],
   // 취소 요청 — 관제가 승인하면 취소, 반려하면 원래 상태로
   cancelRequested: ["cancelled", "confirmed", "inProgress"],
@@ -34,8 +44,18 @@ const TRANSITIONS = {
   done: [],
   cancelled: [],
   rejected: [],
-  needsAdmin: ["requested", "confirmed", "inProgress", "cancelled", "rejected"],
+  needsAdmin: ["requested", "opsReview", "confirmed", "inProgress", "cancelled", "rejected"],
 };
+
+// 요청한 분(보호자 · 어르신) 화면의 상태 이름 — 컨시어지 확인 · 관제 승인을 기다리는 동안은 '확정 대기' (2026-10-22).
+// 제안을 받은 분이 답할 차례면 '수락 대기'. 그 밖은 STATUS 이름 그대로.
+export function customerStatusLabel(r) {
+  if (!r) return "";
+  if (r.status === "requested" && approverOf(r) !== "concierge") return "수락 대기";
+  if (["requested", "opsReview", "needsAdmin"].includes(r.status) && !isVisitCall(r)) return "확정 대기";
+  if (r.status === "awaitingPayment") return "결제 대기";
+  return (STATUS[r.status] || STATUS.requested).label;
+}
 
 export const CLOSED = ["done", "cancelled", "rejected"];
 
@@ -159,11 +179,16 @@ export const SERVICE_MENU = [
     point: "병원 선정 · 비급여 진료비의 정보 비대칭을 줄입니다",
     active: true,
   },
+  // dur — 이용 시간 규칙 (2026-10-22 시제품 v17 표). 분 단위 · 30분씩. base 는 min 시간의 금액, each 는 30분 늘릴 때마다.
+  //   fixed 는 이용 시간을 바꿀 수 없는 서비스 (끝나는 시간만 보인다). 계산은 lib/booking.js priceOf 한 곳.
+  //   '확인 필요' 값은 시제품 예시 — 회사가 확정하면 여기만 바꾼다 (docs/kcare/decisions/2026-10-22-booking-pay.md 6절).
   {
     no: 2,
     name: "병원 동행 프리미엄 (2인 1조)",
-    priceLabel: "기본 2시간 · 시간당 45,000원 (VAT 별도) · 추가 30분 10,000원",
+    title: "병원 동행 (선생님 두 분)",
+    priceLabel: "기본 2시간 90,000원 (시간당 45,000원 · VAT 별도) · 30분마다 +10,000원 · 최대 5시간",
     amount: 90000, // 기본 2시간 기준
+    dur: { min: 120, max: 300, each: 10000, nextApptLead: 60, nextApptMeet: "픽업" }, // 최대 5시간 · 다음 외래 1시간 전 픽업 — 확인 필요
     crew: 2, // 배차 정책 escortPremium (lib/dispatch-policy.js) — 짝 없이 확정하지 않는다
     cat: "건강지원",
     scope: "자택 픽업 · 드랍, 차량 지원, 기본 2시간 이후 30분 단위 연장",
@@ -173,8 +198,11 @@ export const SERVICE_MENU = [
   {
     no: 3,
     name: "병원 동행 베이직 (1인)",
-    priceLabel: "시간당 15,000원 · 추가 30분 8,000원",
-    amount: 15000,
+    title: "병원 동행 (선생님 한 분)",
+    // 예전 시트 값은 '시간당 15,000원 · 추가 30분 8,000원'. 2026-10-22 표는 기본 2시간 30,000원 · 30분 7,500원 — 7,500원은 확인 필요
+    priceLabel: "기본 2시간 30,000원 (시간당 15,000원) · 30분마다 +7,500원 · 최대 5시간",
+    amount: 30000,
+    dur: { min: 120, max: 300, each: 7500, nextApptLead: 20, nextApptMeet: "병원 로비" }, // 다음 외래 20분 전 로비 — 확인 필요
     cat: "건강지원",
     scope: "지정한 의료기관에서 만나 접수 · 진료 · 수납 동행",
     point: "동행 상세 리포트 제공",
@@ -183,8 +211,10 @@ export const SERVICE_MENU = [
   {
     no: 4,
     name: "요양병원 안심케어 (1인)",
+    title: "요양병원 안심케어",
     priceLabel: "1회 1시간 60,000원 (병원 위치 · 지역별 차등)",
     amount: 60000,
+    dur: { min: 60, max: 60, fixed: true },
     cat: "건강지원",
     scope: "요양병원 맞춤 21항목 안심 체크리스트 확인",
     point: "사진 포함 안심 리포트 · 자녀 동영상 메시지 전달",
@@ -204,8 +234,10 @@ export const SERVICE_MENU = [
     no: 6,
     // 이름은 '생활 대행' → '함께 해요' (2026-09-11 시트 어르신 해주세요 2번). 내용은 그대로.
     name: "함께 해요",
-    priceLabel: "시간당 30,000원 · 기본 1시간 최대 2시간 · 추가 30분 10,000원",
+    // 예전 시트 값은 '추가 30분 10,000원'. 2026-10-22 표는 30분 15,000원(시간당 요금을 30분으로 나눈 값) — 확인 필요
+    priceLabel: "기본 1시간 30,000원 (시간당 30,000원) · 30분마다 +15,000원 · 최대 2시간",
     amount: 30000,
+    dur: { min: 60, max: 120, each: 15000 },
     cat: "생활지원",
     scope: "관공서 · 은행 · 장보기 · 산책 · 말벗",
     point: null,
@@ -216,8 +248,10 @@ export const SERVICE_MENU = [
     // 시간당 35,000원 · 차량 제공 · 자택에서 편도 1시간 안 · 입장료·식사 등 실비는 별도.
     no: 15,
     name: "함께가요",
-    priceLabel: "시간당 35,000원 · 차량 제공 · 자택에서 편도 1시간 이내 · 실비 별도",
-    amount: 35000,
+    // 2026-10-22 표 — 기본 2시간 70,000원 · 처음 3시간 선택 · 30분 17,500원(확인 필요) · 최대 6시간(확인 필요) · 인원 추가 1명 50,000원(확인 필요)
+    priceLabel: "기본 2시간 70,000원 (시간당 35,000원) · 30분마다 +17,500원 · 최대 6시간 · 차량 제공 · 자택에서 편도 1시간 이내 · 실비 별도",
+    amount: 70000,
+    dur: { min: 120, max: 360, each: 17500, start: 180, people: true },
     cat: "생활지원",
     scope: "컨시어지 2명과 함께 근교 나들이 — 차량으로 모시고 다녀옵니다",
     point: "자택에서 편도 1시간 안에 갈 수 있는 곳",
@@ -312,6 +346,7 @@ export const SERVICE_PLUS = [
     tag: "즉시 방문 홈닥터",
     priceLabel: "1회 출장비 100,000원",
     amount: 100000,
+    dur: { min: 120, max: 120, fixed: true, label: "2시간 안" },
     scope: "집 안 간단 설치·유지보수 (2시간 미만) · 전등 교체 · 생활안전용품 설치 · 간단한 수전 교체",
     note: "일반 배치는 안심방문에서 해결합니다 — 설비가 필요한 것만 핸디맨입니다",
     confirmed: true,

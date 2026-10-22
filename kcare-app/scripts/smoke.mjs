@@ -147,7 +147,8 @@ for (const route of ROUTES) {
     "/family/requests": "직접 적어서 부탁하기",
     "/family/my": "내 정보",
     "/family/health": "바꾸기",
-    "/family/membership": "바꾸기",
+    // 이용료 결제 방법 (누가 · 어떻게) — 2026-10-22. 결제 권한 바꾸기 시트는 없앴다
+    "/family/membership": "결제 방법 정하기",
   };
   const opener = SHEET_OPENERS[route];
   if (opener) {

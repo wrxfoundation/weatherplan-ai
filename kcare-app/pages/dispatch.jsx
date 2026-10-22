@@ -50,6 +50,7 @@ import {
 import { useAppState } from "../lib/state";
 import { eventRights } from "../lib/event-rights";
 import { CLOSED, approverOf, fmtPreferred, isVisitCall, soloDispatches } from "../lib/requests";
+import { dateLabel, extraDueYmd, extraOverdue, extraToText, reqTitle, svcTitle } from "../lib/booking";
 import { HelpCallOps, HELP_STAGE } from "../components/HelpCall";
 import { relMd } from "../lib/reltime";
 import AiChat from "../components/AiChat";
@@ -532,10 +533,15 @@ function DispatchConsole() {
   const unackedAsks = (state.requests || []).filter(
     (r) => !r.opsAck && !isVisitCall(r) && approverOf(r) === "concierge" && ["requested", "awaitingPayment"].includes(r.status) && r.dir !== "fromConcierge"
   );
+  // 관제 승인 대기 (컨시어지가 확인한 일정) · 추가 이용 금액 결제 대기 — 관제가 지켜볼 것이라 해주세요 관리 숫자에 넣는다 (2026-10-22)
+  const opsReviews = (state.requests || []).filter((r) => r.status === "opsReview");
+  const extrasPending = (state.extraCharges || []).filter((x) => x.status === "pending");
   const newRequests = [
     ...(state.requests || []).filter((r) => (isVisitCall(r) && !CLOSED.includes(r.status)) || r.status === "cancelRequested"),
     ...(state.payments || []).filter((p) => p.refund && p.refund.status !== "done"),
     ...unackedAsks,
+    ...opsReviews,
+    ...extrasPending,
   ];
   // 새 해주세요가 들어오면 알림음 한 번 (같은 것으로 다시 울리지 않는다)
   const askRang = useRef("");
@@ -850,13 +856,50 @@ function DispatchConsole() {
     actions.push({
       id: `ask-${r.id}`,
       level: r.urgency === "urgent" ? "high" : "med",
-      title: `새 해주세요 — ${r.type}${r.dir === "fromElder" ? " (어르신)" : " (보호자)"}`,
-      meta: `${r.voice ? `어르신 목소리 ${r.voice.clip?.secs || 0}초${r.summary?.text ? ` · "${r.summary.text}"` : " · 컨시어지가 듣고 정리"}` : `희망 ${fmtPreferred(r)}`} · ${r.status === "awaitingPayment" ? "보호자 결제 대기" : "담당 컨시어지 승인 대기"}`,
+      title: `새 해주세요 — ${reqTitle(r)}${r.dir === "fromElder" ? " (어르신)" : " (보호자)"}`,
+      meta: `${r.voice ? `어르신 목소리 ${r.voice.clip?.secs || 0}초${r.summary?.text ? ` · "${r.summary.text}"` : " · 컨시어지가 듣고 정리"}` : `희망 ${fmtPreferred(r)}`} · ${r.status === "awaitingPayment" ? "가족 결제 대기" : "담당 컨시어지 확인 대기"}`,
       act: "확인",
       onAct: () => dispatch({ type: "opsAckRequest", id: r.id, by: opsName }),
       ticker: ["관제", `새 해주세요 확인 — ${r.type}`, "#8FA9CC"],
     })
   );
+  // 관제 승인 대기 — 담당 컨시어지가 일정을 확인한 해주세요. 승인하면 일정이 확정되고 달력에 들어간다 (2026-10-22 결제 → 컨시어지 확인 →
+  // 관제 승인 → 일정 확정). 다시 맞추게 하려면(사유 필수) 해주세요 관리에서
+  opsReviews.forEach((r) =>
+    actions.push({
+      id: `opsreview-${r.id}`,
+      level: "high",
+      title: `관제 승인 대기 — ${reqTitle(r)}`,
+      meta: `${r.approvedBy || "담당 컨시어지"} 확인${r.partner ? ` · 2인 ${r.assignee} · ${r.partner}` : ""} · 다시 맞추기는 해주세요 관리`,
+      act: "승인",
+      onAct: () => dispatch({ type: "opsApproveRequest", id: r.id, by: opsName }),
+      ticker: ["관제", `관제 승인 — ${reqTitle(r)} · 일정 확정`, "#8FE3C0"],
+    })
+  );
+  // 추가 이용 금액 — 결제 대기 (기한이 지나면 등록 카드 결제 필요) · 수납 완료 (확인하면 내린다)
+  (state.extraCharges || [])
+    .filter((x) => x.status === "pending" || (x.status === "paid" && !x.opsAck))
+    .forEach((x) => {
+      const what = `${svcTitle(x.service)} ${Number(x.amount || 0).toLocaleString("ko-KR")}원`;
+      if (x.status === "paid")
+        return actions.push({
+          id: `extra-${x.id}`,
+          level: "med",
+          title: `추가 이용 금액 수납 완료 — ${what}`,
+          meta: `${x.auto ? "기한이 지나 등록 카드로 결제" : `${x.payer || extraToText(x)} 결제${x.method ? ` · ${x.method}` : ""}`} · ${x.customer || ""} · 컨시어지 ${x.by}`,
+          act: "확인",
+          onAct: () => dispatch({ type: "ackExtraCharge", id: x.id, by: opsName }),
+          ticker: ["결제", `추가 이용 금액 수납 확인 — ${what}`, "#8FE3C0"],
+        });
+      const late = extraOverdue(x);
+      actions.push({
+        id: `extra-${x.id}`,
+        level: late ? "high" : "med",
+        title: `${late ? "추가 이용 금액 기한 지남" : "추가 이용 금액 결제 대기"} — ${what}`,
+        meta: `${extraToText(x)} · ${dateLabel(extraDueYmd(x.sentAt))}까지 · 컨시어지 ${x.by} 청구${late ? " · 등록 카드로 결제한 뒤 해주세요 관리에서 닫기" : ""}`,
+        menu: "requests",
+      });
+    });
   // 해주세요 취소 요청 — 서비스일 3일 안이라 관제 승인이 필요한 것 (2026-10-05)
   (state.requests || [])
     .filter((r) => r.status === "cancelRequested")

@@ -15,14 +15,19 @@ import { useAppState } from "../../lib/state";
 import { useAuth } from "../../lib/auth";
 import { meAs } from "../../lib/people";
 import { fmtWon } from "../../lib/config";
-import { PAY_KINDS, fmtCard, normalizePayStatus, safeReceiptUrl } from "../../lib/payments";
+import { PAY_KINDS, fmtCard, normalizePayStatus, safeBack, safeReceiptUrl } from "../../lib/payments";
+import { ConfirmSteps } from "../../components/BookingParts";
 
 export default function PayResult() {
   const router = useRouter();
   const { state, dispatch } = useAppState();
   const { user } = useAuth();
-  const { kind = "store", ref: refId = "", sig = "", paymentKey, orderId, amount, code, message, authKey, customerKey } = router.query;
+  const { kind = "store", ref: refId = "", sig = "", paymentKey, orderId, amount, code, message, authKey, customerKey, back = "" } = router.query;
   const meta = PAY_KINDS[kind] || PAY_KINDS.store;
+  // 돌아갈 화면 — 어르신 화면에서 낸 것은 어르신 화면으로 (앱 안 주소만)
+  const backTo = safeBack(back, meta.back);
+  // 낸 사람 — 가족 누구나 낸다 (2026-10-22). 어르신 계정 · 어르신 화면에서 온 결제는 어르신 이름
+  const payerName = meAs(user, user?.role === "elder" || (!user?.role && backTo.startsWith("/elder")) ? "elder" : "guardian");
 
   const [phase, setPhase] = useState("working"); // working | done | waiting | already | failed
   const [result, setResult] = useState(null);
@@ -114,16 +119,20 @@ export default function PayResult() {
       // 결제가 끝나야 다음 단계가 선다 — 해주세요는 담당 컨시어지 승인 대기로(이미 승인 · 수락된 것은 확정), 스토어는 주문·배송 요청으로.
       // 낸 금액을 같이 넘긴다 — 요청 요금과 다르면 확정하지 않고 환불 대기로 (state.js requestPaid)
       if (kind === "request" && refId) {
-        dispatch({ type: "requestPaid", id: refId, amount: payment.amount, orderId: payment.orderId, note: `보호자 결제 완료 ${fmtWon(payment.amount)}` });
+        dispatch({ type: "requestPaid", id: refId, amount: payment.amount, orderId: payment.orderId, by: payerName, note: `${payerName} 결제 완료 ${fmtWon(payment.amount)}` });
+      }
+      // 추가 이용 금액 — 받는 분이 냈다. 컨시어지 일정 카드 · 관제에 바로 '결제 완료'로 (2026-10-22)
+      if (kind === "extra" && refId) {
+        dispatch({ type: "extraChargePaid", id: refId, amount: payment.amount, orderId: payment.orderId, by: payerName, method: payment.method || "카드" });
       }
       if (kind === "store") {
-        dispatch({ type: "commitPendingOrder", payload: payment, by: meAs(user, "guardian") });
+        dispatch({ type: "commitPendingOrder", payload: payment, by: payerName });
       }
     } catch (e) {
       setPhase("failed");
       setErr({ code: e.code || "CONFIRM_FAILED", message: e.message || "결제 승인에 실패했습니다." });
     }
-  }, [router.isReady, code, message, authKey, customerKey, paymentKey, orderId, amount, sig, kind, refId, meta.label, dispatch, user, state.payments]);
+  }, [router.isReady, code, message, authKey, customerKey, paymentKey, orderId, amount, sig, kind, refId, meta.label, dispatch, payerName, state.payments]);
 
   useEffect(() => {
     run();
@@ -160,13 +169,22 @@ export default function PayResult() {
             </h1>
             <p className="mt-1.5 text-[13.5px] leading-[1.7] text-muted">
               {phase === "working" && "승인 요청 중입니다 — 창을 닫지 말아 주세요."}
-              {phase === "done" && !b && "영수증은 아래에서 확인하실 수 있습니다."}
+              {phase === "done" && !b && kind === "request" && "결제하고 요청했어요. 컨시어지와 관제가 일정을 맞추면 확정돼요 — 확정되지 않으면 전액 환불돼요."}
+              {phase === "done" && !b && kind === "extra" && "추가 이용 금액을 결제했어요. 담당 컨시어지와 관제에 바로 전해졌어요."}
+              {phase === "done" && !b && kind !== "request" && kind !== "extra" && "영수증은 아래에서 확인하실 수 있습니다."}
               {phase === "done" && b && "카드 등록을 확인했습니다. 이 앱은 아직 매월 자동 청구를 하지 않습니다."}
               {phase === "waiting" && "가상계좌 입금은 앱에서 아직 자동으로 확인되지 않습니다. 입금하신 뒤 관제센터에 알려 주시면 확인 후 진행합니다."}
               {phase === "already" && "같은 결제를 다시 청구하지 않았습니다. 결제 내역은 해주세요 · 주문내역에서 확인해 주세요."}
               {phase === "failed" && "금액은 청구되지 않았습니다. 다시 시도하시거나 다른 결제수단을 선택해 주세요."}
             </p>
           </div>
+
+          {/* 해주세요 결제 — 결제 → 컨시어지 확인 → 관제 승인 → 일정 확정 (2026-10-22) */}
+          {phase === "done" && !b && kind === "request" && (
+            <Card className="mt-5 p-[18px]">
+              <ConfirmSteps at={1} />
+            </Card>
+          )}
 
           {/* 완료 — 일반 결제 (입금 대기도 같은 내역을 보인다) */}
           {(phase === "done" || phase === "waiting") && p && (
@@ -241,7 +259,7 @@ export default function PayResult() {
               <PrimaryButton onClick={() => router.back()}>다시 시도하기</PrimaryButton>
             )}
             {["done", "waiting", "already"].includes(phase) && (
-              <PrimaryButton onClick={() => router.replace(meta.back)}>확인</PrimaryButton>
+              <PrimaryButton onClick={() => router.replace(backTo)}>확인</PrimaryButton>
             )}
             <Link href="/family" className="btn-press block w-full rounded-xl border border-navy/25 bg-white/70 py-3.5 text-center text-[16px] font-bold text-navy">
               가족 앱 홈으로
