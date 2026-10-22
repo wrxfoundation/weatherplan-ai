@@ -64,6 +64,7 @@
 ## 링크드인 — 영문 (1240자 · 서우 개인 계정 · 연재 3편 · 10/21 2차 수익 각도)
 
 이미지: 가로 `ai-factory-en.jpg` 또는 모바일 세로 `ai-factory-en-9x16.jpg` 한 장.
+10/22 이후 기본: **문서(PDF) 게시물** — `../linkedin-pdf-1022/wellbian-part3-same-data-sold-twice.pdf`(세로판이 이미지로는 뭉개짐), 문서 제목 `Building wellbian · Part 3 — Same data, sold twice`. 본문은 아래 그대로(10/22 서우 「연재할 3탄 스크립트」 — 최종 그래픽(칩 제거)과 대조, 바뀐 곳 없음).
 
 ```
 [Building wellbian · Part 3] Same data, sold twice
