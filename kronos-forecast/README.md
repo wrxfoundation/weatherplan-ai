@@ -54,6 +54,7 @@ macOS/Linux 기준입니다. Windows에서는 `.venv/bin/python` 대신 `.venv\S
 | 금(XAU/USD) 예측 | `.venv/bin/python forecast.py XAU` |
 | 새 티커 예측 | `.venv/bin/python forecast.py NVDA` (`TSLA`, `^GSPC` S&P 500, `005930.KS` 삼성전자, `GLD` 등) |
 | 크립토 페어 | `.venv/bin/python forecast.py BTC/USDT` (`ETH/USDT`, `BTC/KRW` 업비트 등) |
+| TradingView CSV로 예측 | `.venv/bin/python forecast.py "BINANCE_XRPUSDT, 5.csv" --horizon 24` (아래 CSV 메모 참고) |
 | 테스트 모드 (과거 20개 구간 채점) | 위 명령 끝에 `--test` |
 | 시간 프레임 바꾸기 | `--interval 1h` (기본 `1d`. 주식은 `5m 15m 30m 1h 1d 1wk 1mo`, 크립토는 `4h`도 가능) |
 | 예측 길이 바꾸기 | `--horizon 10` (기본 20캔들) |
@@ -69,6 +70,15 @@ macOS/Linux 기준입니다. Windows에서는 `.venv/bin/python` 대신 `.venv\S
 ```bash
 .venv/bin/python forecast.py BTC/USDT --interval 1h --horizon 24 --model mini --test
 ```
+
+## CSV 입력 (TradingView "차트 데이터 내보내기")
+
+- 티커 자리에 CSV 경로를 넣으면 됩니다. 실제로 매매하는 차트(XAUUSD 현물, SIL1! 등)를 그대로 쓸 수 있습니다.
+- 필요한 열은 `time`, `open`, `high`, `low`, `close`이고, 나머지 지표 열은 무시합니다.
+- 봉 간격(5분, 1시간 등)은 시간 열에서 자동으로 알아냅니다.
+- 시간대는 내보낸 그대로 씁니다. 예를 들어 `+09:00`이면 KST로 표시됩니다.
+- 거래량은 차트에 TradingView **Volume 지표를 켜고** 내보내야 포함됩니다. 없으면 가격만으로 예측합니다.
+- 내보낸 시점의 마지막 봉이 아직 형성 중이었다면 그 봉도 그대로 들어갑니다.
 
 ## 결과물 (`charts/` 폴더)
 

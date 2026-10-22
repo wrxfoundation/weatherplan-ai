@@ -146,6 +146,45 @@ def load_yahoo(symbol, interval):
             "dropped": dropped, "symbol": symbol}
 
 
+def load_csv(path):
+    """Candles from a CSV such as TradingView's "Export chart data": a time column plus
+    open/high/low/close. Volume is optional and every other (indicator) column is ignored."""
+    raw = pd.read_csv(path)
+    cols = {c.strip().lower(): c for c in raw.columns}
+    tcol = next((cols[c] for c in ("time", "timestamp", "timestamps", "date", "datetime") if c in cols), None)
+    missing = [c for c in ("open", "high", "low", "close") if c not in cols] + ([] if tcol else ["time"])
+    if missing:
+        sys.exit(f"{path} is missing column(s): {', '.join(missing)}.")
+    t = raw[tcol]
+    if pd.api.types.is_numeric_dtype(t):  # UNIX time (TradingView's default export setting), in UTC
+        ts = pd.to_datetime(t, unit="ms" if t.max() > 1e11 else "s")
+    else:  # ISO text: keep the clock time it was written in (e.g. +09:00 stays KST)
+        ts = pd.to_datetime(t)
+        ts = ts.dt.tz_localize(None) if hasattr(ts, "dt") and ts.dt.tz is not None else pd.to_datetime(t, utc=True).dt.tz_localize(None)
+    vol = raw[cols["volume"]].to_numpy(dtype=float) if "volume" in cols else 0.0
+    df = clean(pd.DataFrame({"timestamps": ts, "open": raw[cols["open"]].to_numpy(dtype=float),
+                             "high": raw[cols["high"]].to_numpy(dtype=float), "low": raw[cols["low"]].to_numpy(dtype=float),
+                             "close": raw[cols["close"]].to_numpy(dtype=float), "volume": vol}))
+    if len(df) < 2:
+        sys.exit(f"{path} has fewer than 2 usable candles.")
+    if "volume" not in cols:
+        print("No volume column in the CSV: Kronos gets prices only (add TradingView's Volume indicator "
+              "to the chart before exporting to include it).")
+
+    secs = int(df["timestamps"].diff().median().total_seconds())
+    if secs < 60:
+        sys.exit(f"{path}: candles {secs}s apart; the shortest supported interval is 1 minute.")
+    interval = f"{secs // 86400}d" if secs % 86400 == 0 else f"{secs // 3600}h" if secs % 3600 == 0 else f"{secs // 60}m"
+
+    # TradingView names exports like "BINANCE_XRPUSDT, 5.csv"; uploads may add a "1a2b3c4d-" prefix.
+    stem = re.sub(r"^[0-9a-f]{8}-", "", os.path.splitext(os.path.basename(path))[0])
+    m = re.match(r"([A-Z0-9]+)_([A-Z0-9.!]+)[,_ ]+\d", stem)
+    symbol, name = (m.group(2), f"{m.group(2)} ({m.group(1)}, CSV)") if m else (stem, stem)
+    currency = next((q for q in ("USDT", "USDC", "USD", "KRW", "EUR", "JPY", "GBP") if symbol.endswith(q)), "")
+    return {"df": df, "name": name, "currency": currency, "source": f"CSV export {os.path.basename(path)}",
+            "dropped": None, "symbol": symbol, "interval": interval}
+
+
 def fetch_ccxt_ohlcv(ex, symbol, timeframe, need):
     """The latest `need` candles, paging backwards from now 100 at a time (exchanges cap each request)."""
     step = ex.parse_timeframe(timeframe) * 1000
@@ -254,8 +293,11 @@ def sample_paths(predictor, hist, future_ts, n_paths, args, progress):
 # ----------------------------------------------------------------------------- formatting
 
 def money(v, prefix):
-    dec = 0 if prefix in ("₩", "¥") else 2  # won and yen are quoted without decimals
-    return f"{prefix}{v:,.{dec}f}" if abs(v) >= 1 else f"{prefix}{v:.6g}"
+    if abs(v) < 1:
+        return f"{prefix}{v:.6g}"
+    # won and yen are quoted without decimals; otherwise keep ~5 significant digits (4,142.60 / 1.3784)
+    dec = 0 if prefix in ("₩", "¥") else 2 if abs(v) >= 100 else 3 if abs(v) >= 10 else 4
+    return f"{prefix}{v:,.{dec}f}"
 
 
 def pct(a, b):
@@ -298,12 +340,16 @@ def time_ticks(ts, max_ticks=9):
     units = [("hour", ts.dt.floor("h")), ("6h", ts.dt.floor("6h")), ("day", ts.dt.normalize()),
              ("week", monday), ("month", ts.dt.year * 12 + ts.dt.month),
              ("quarter", ts.dt.year * 4 + (ts.dt.month - 1) // 3), ("year", ts.dt.year)]
-    for kind, key in units:  # finest unit that still fits
-        pos = np.flatnonzero(key.ne(key.shift()).to_numpy())[1:]
-        if len(pos) <= max_ticks:
-            break
-    if len(pos) > max_ticks:  # very long span: thin the yearly ticks
+    found = [(kind, np.flatnonzero(key.ne(key.shift()).to_numpy())[1:]) for kind, key in units]
+    fits = [(kind, pos) for kind, pos in found if 2 <= len(pos) <= max_ticks]
+    crowded = [(kind, pos) for kind, pos in found if len(pos) > max_ticks]
+    if fits:  # finest unit that fits
+        kind, pos = fits[0]
+    elif crowded:  # e.g. 10 hour-starts but only one day-start: keep every 2nd hour
+        kind, pos = crowded[-1]
         pos = pos[:: math.ceil(len(pos) / max_ticks)]
+    else:
+        kind, pos = "day", np.array([], dtype=int)
     min_gap = len(ts) / (max_ticks * 1.6)
     kept = []
     for i in pos:
@@ -492,9 +538,10 @@ def plot_windows(path, mk, windows, title, summary_lines, footer, intraday, cont
         ok = w["direction_right"]
         ax.text(0, 1.12, "✓" if ok else "✗", transform=ax.transAxes, fontsize=10.5, weight="bold",
                 color=GOOD if ok else BAD, va="bottom")
+        same_day = w["first_hidden"].date() == w["last_hidden"].date()
+        end_fmt = ("%H:%M" if same_day else "%m-%d %H:%M") if intraday else "%m-%d"
         ax.text(0.075, 1.12, f"{'right' if ok else 'wrong'} · hidden {w['first_hidden']:{span_fmt}} → "
-                f"{w['last_hidden']:{'%m-%d %H:%M' if intraday else '%m-%d'}}", transform=ax.transAxes,
-                fontsize=8.5, color=INK, va="bottom")
+                f"{w['last_hidden']:{end_fmt}}", transform=ax.transAxes, fontsize=8.5, color=INK, va="bottom")
         ax.text(0, 1.02, f"error {w['kronos_err']:.1f}% (no-change {w['naive_err']:.1f}%)",
                 transform=ax.transAxes, fontsize=7.8, color=MUTED, va="bottom")
 
@@ -569,7 +616,7 @@ def run_forecast(args, mk, predictor, df, lookback, word, intraday, model_label,
         f"and {money(p90, prefix)} ({pct(p90, last_close):+.1f}%)",
         f"  - {n_up} of {args.samples} paths {verb} higher than the last close",
         f"In plain English: {lean}; 8 in 10 paths finish between {pct(p10, last_close):+.1f}% and "
-        f"{pct(p90, last_close):+.1f}% from today. The spread is the message - the middle line is not a promise.",
+        f"{pct(p90, last_close):+.1f}% from the last close. The spread is the message - the middle line is not a promise.",
         f"Chart: {os.path.relpath(chart)}",
         "Run the same command with --test to see how often this setup was right in the past.",
     ]
@@ -643,8 +690,10 @@ def run_test(args, mk, predictor, df, lookback, word, intraday, model_label, ste
                f"Average error of the median path {k_err:.1f}% vs {n_err:.1f}% for 'no change'. "
                f"The 80% band held {band:.0f}% of real closes (ideal ~80%). Windows cover {span}."]
     chart2 = os.path.join(CHART_DIR, f"{stem}_test_windows_{latest['last_hidden']:%Y-%m-%d}.png")
-    plot_windows(chart2, mk, windows, f"{mk['name']} · {W} test windows of {H} hidden {word} candles · {model_label}",
-                 summary, footer, intraday)
+    grid = windows[-40:]  # a readable grid; the statistics above use every window
+    shown_note = f" (latest {len(grid)} shown)" if len(grid) < W else ""
+    plot_windows(chart2, mk, grid, f"{mk['name']} · {W} test windows of {H} hidden {word} candles · "
+                 f"{model_label}{shown_note}", summary, footer, intraday)
 
     table = pd.DataFrame([{
         "cutoff": w["cutoff"], "first_hidden": w["first_hidden"], "last_hidden": w["last_hidden"],
@@ -681,8 +730,10 @@ def main():
     ap = argparse.ArgumentParser(
         description="Forecast the next candles of a ticker with Kronos (research/learning only, not advice).",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    ap.add_argument("ticker", help="Yahoo ticker (NVDA, ^GSPC, 005930.KS, GC=F), XAU/XAG, or crypto pair (BTC/USDT)")
-    ap.add_argument("--interval", default="1d", help="candle size: 15m, 1h, 4h (crypto), 1d, 1wk ...")
+    ap.add_argument("ticker", help="Yahoo ticker (NVDA, ^GSPC, 005930.KS, GC=F), XAU/XAG, crypto pair (BTC/USDT), "
+                                   "or a CSV file such as a TradingView export")
+    ap.add_argument("--interval", help="candle size: 15m, 1h, 4h (crypto), 1d (default), 1wk ...; "
+                                       "a CSV uses its own spacing")
     ap.add_argument("--horizon", type=int, default=20, help="how many candles to forecast")
     ap.add_argument("--model", choices=list(MODELS), default="small", help="Kronos model size")
     ap.add_argument("--lookback", type=int, default=512, help="past candles fed to the model (capped at its context)")
@@ -706,17 +757,22 @@ def main():
     if args.lookback > max_context:
         print(f"Lookback capped at {max_context} candles, the context limit of Kronos-{args.model}.")
 
-    symbol = resolve_symbol(args.ticker)
-    if symbol != args.ticker.strip().upper():
-        print(f"{args.ticker} -> {symbol}: Yahoo has no spot quote for it, so this uses COMEX futures "
-              "(USD per troy ounce), which track the spot price closely.")
     need = lookback + (args.windows * args.horizon if args.test else 0)
-    print(f"Downloading {args.interval} candles for {symbol} ...")
-    if "/" in symbol:
-        mk = load_crypto(symbol, args.interval, need, args.exchange)
+    if os.path.isfile(args.ticker):  # checked first: a path can contain "/" like a crypto pair
+        print(f"Reading candles from {args.ticker} ...")
+        mk = load_csv(args.ticker)
     else:
-        mk = load_yahoo(symbol, args.interval)
-        mk["interval"] = args.interval
+        symbol = resolve_symbol(args.ticker)
+        if symbol != args.ticker.strip().upper():
+            print(f"{args.ticker} -> {symbol}: Yahoo has no spot quote for it, so this uses COMEX futures "
+                  "(USD per troy ounce), which track the spot price closely.")
+        interval = args.interval or "1d"
+        print(f"Downloading {interval} candles for {symbol} ...")
+        if "/" in symbol:
+            mk = load_crypto(symbol, interval, need, args.exchange)
+        else:
+            mk = load_yahoo(symbol, interval)
+            mk["interval"] = interval
     df = mk["df"]
     intraday = is_intraday(mk["interval"])
     print(f"Got {len(df):,} candles from {mk['source']}: {day(df['timestamps'].iloc[0], intraday)} to "
@@ -745,7 +801,7 @@ def main():
     os.makedirs(CHART_DIR, exist_ok=True)
     word = INTERVAL_WORDS.get(mk["interval"], mk["interval"])
     model_label = f"Kronos-{args.model}"
-    stem = re.sub(r"[^A-Za-z0-9.-]+", "_", symbol.replace("/", "-")).strip("_") + f"_{mk['interval']}_{args.model}"
+    stem = re.sub(r"[^A-Za-z0-9.-]+", "_", mk["symbol"].replace("/", "-")).strip("_") + f"_{mk['interval']}_{args.model}"
     footer = (f"Data: {mk['source']}.  Model: {model_id} + {tokenizer_id} (Kronos, arXiv:2508.02739), "
               f"T={args.temperature}, top_p={args.top_p}, seed {args.seed}.  Future dates assume the market's usual "
               f"trading days.  Research and learning only - not financial advice.  "
