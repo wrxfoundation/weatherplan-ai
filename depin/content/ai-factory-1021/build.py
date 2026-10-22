@@ -82,11 +82,12 @@ XCSS = """
 .ill svg{width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 8px rgba(163,155,255,.35))}
 .ill .l2{stroke:rgba(226,224,255,.55)}
 .ill .dot{stroke:currentColor;stroke-width:2.2;stroke-dasharray:0 5;opacity:.85}
-/* 햇살 — 최상단 가운데에서 메인 카피까지 내려오는 빛줄기(10/21 서우). 배경층(.bgfx) 안이라 글자 위로 올라오지 않는다. */
-.rays{position:absolute;left:50%;top:0;width:1700px;height:410px;transform:translateX(-50%);pointer-events:none;mix-blend-mode:screen;filter:blur(2.5px);
- background:conic-gradient(from 90deg at 50% -4%,transparent 0deg 36deg,rgba(232,224,255,.12) 39deg,transparent 43deg,rgba(232,224,255,.21) 50deg,transparent 56deg,rgba(232,224,255,.10) 62deg,transparent 65deg,rgba(232,224,255,.28) 75deg,transparent 82deg,rgba(232,224,255,.15) 87deg,transparent 91deg,rgba(232,224,255,.25) 98deg,transparent 105deg,rgba(232,224,255,.11) 112deg,transparent 116deg,rgba(232,224,255,.20) 124deg,transparent 131deg,rgba(232,224,255,.10) 138deg,transparent 142deg 360deg);
- -webkit-mask-image:linear-gradient(180deg,#000 0%,rgba(0,0,0,.78) 50%,rgba(0,0,0,.42) 72%,transparent 100%);mask-image:linear-gradient(180deg,#000 0%,rgba(0,0,0,.78) 50%,rgba(0,0,0,.42) 72%,transparent 100%)}
-.sunglow{position:absolute;left:50%;top:-120px;width:760px;height:340px;transform:translateX(-50%);border-radius:50%;pointer-events:none;background:radial-gradient(closest-side,rgba(214,200,255,.38),rgba(163,155,255,.12) 55%,rgba(163,155,255,0))}
+/* 햇살 — 창문으로 들어오는 금빛 빛줄기(10/22 서우 「방사형 말고 창문 햇살처럼 · 황금빛」). 위 왼쪽에서 비스듬히 내려와 메인 카피에 닿는
+   평행한 띠 넷(창살 사이 간격) · 많이 흐리게 · 아래로 갈수록 옅게. 배경층(.bgfx) 안이라 글자 위로 올라오지 않는다. */
+.shafts{position:absolute;top:-70px;left:50%;width:1150px;height:500px;transform:translateX(-66%) skewX(34deg);transform-origin:top center;pointer-events:none;mix-blend-mode:screen;filter:blur(10px);
+ background:linear-gradient(90deg,transparent 0%,rgba(255,200,112,.15) 4%,rgba(255,200,112,.15) 15%,transparent 19%,transparent 22%,rgba(255,190,96,.22) 25%,rgba(255,190,96,.22) 39%,transparent 43%,transparent 47%,rgba(255,206,124,.12) 50%,rgba(255,206,124,.12) 57%,transparent 60%,transparent 64%,rgba(255,194,104,.19) 67%,rgba(255,194,104,.19) 82%,transparent 86%,transparent 100%);
+ -webkit-mask-image:linear-gradient(180deg,rgba(0,0,0,.95) 0%,rgba(0,0,0,.75) 45%,rgba(0,0,0,.35) 72%,transparent 96%);mask-image:linear-gradient(180deg,rgba(0,0,0,.95) 0%,rgba(0,0,0,.75) 45%,rgba(0,0,0,.35) 72%,transparent 96%)}
+.sunglow{position:absolute;left:18%;top:-220px;width:1000px;height:440px;border-radius:50%;pointer-events:none;background:radial-gradient(closest-side,rgba(255,206,140,.16),rgba(255,190,120,.05) 60%,rgba(255,190,120,0))}
 .note{margin-top:16px;font-size:16px;color:var(--t2)}
 .note b{color:var(--t1);font-weight:600}
 .foot{margin-top:10px}
@@ -132,8 +133,8 @@ h1{margin-top:14px;font-size:76px;line-height:1.04;text-align:center;letter-spac
 .band b{font-size:24px}
 .band .ico-s{width:46px;height:46px;border-radius:11px}
 .band .ico-s svg{width:26px;height:26px}
-.rays{width:1150px;height:390px}
-.sunglow{width:620px;height:320px}
+.shafts{width:760px;height:500px;transform:translateX(-64%) skewX(30deg)}
+.sunglow{left:4%;width:760px;height:400px}
 .ill{top:16px;right:24px;width:150px;height:150px}
 .ft .hd{min-height:0;padding-right:170px}
 .ft.hub .hd{min-height:130px}
@@ -195,7 +196,7 @@ def page(lang, vertical=False):
     bn, bd = t["band"]
     css = A.CSS + XCSS + (VCSS if vertical else "")
     return f"""<!doctype html><html lang="{t['lang']}"><head><meta charset="utf-8"><title>wellbian — {t['h1']}</title><style>{css}</style></head><body>
-<div class="bgfx"><div class="g1"></div><div class="g2"></div><div class="g3"></div><div class="g4"></div><div class="grid"></div><div class="sunglow"></div><div class="rays"></div></div>
+<div class="bgfx"><div class="g1"></div><div class="g2"></div><div class="g3"></div><div class="g4"></div><div class="grid"></div><div class="sunglow"></div><div class="shafts"></div></div>
 <div class="wrap">
 <div class="logo">{A.LOGO}</div>
 <div class="kicker">{t['kicker']}</div>
