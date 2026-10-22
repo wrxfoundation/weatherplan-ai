@@ -177,7 +177,7 @@ body{padding:30px 44px 0;justify-content:flex-start}
 .bgfx .paint{inset:0;border-radius:0;background:url("../ai-factory-1021/assets/light-9x16.jpg") center top/cover no-repeat;opacity:.66}
 .bgfx .paintfade{inset:0;border-radius:0;background:linear-gradient(180deg,rgba(13,11,38,0) 0%,rgba(13,11,38,.10) 14%,rgba(13,11,38,.55) 22%,rgba(13,11,38,.88) 30%,#0D0B26 40%)}
 .bgfx .bldhaze{width:560px;height:380px;right:-120px;bottom:-110px;background:radial-gradient(closest-side,rgba(255,196,120,.10),rgba(163,120,255,.06) 55%,rgba(163,120,255,0))}
-.bgfx .bld{right:-40px;bottom:-12px;width:400px;height:280px;border-radius:0;background:url("assets/homes.png") center bottom/contain no-repeat;filter:brightness(.7) saturate(.85) contrast(.96);opacity:.62;-webkit-mask-image:linear-gradient(0deg,transparent 0%,#000 14%);mask-image:linear-gradient(0deg,transparent 0%,#000 14%)}
+.bgfx .bld{right:-50px;bottom:-12px;width:540px;height:250px;border-radius:0;background:url("assets/homes.png") center bottom/contain no-repeat;filter:brightness(.7) saturate(.85) contrast(.96);opacity:.62;-webkit-mask-image:linear-gradient(0deg,transparent 0%,#000 14%);mask-image:linear-gradient(0deg,transparent 0%,#000 14%)}
 .logo{height:52px}
 .logo svg{width:143px;height:52px;filter:drop-shadow(0 2px 14px rgba(13,11,38,.5))}
 .kicker{margin-top:16px;font-size:15px;color:#E6DCFF;background:rgba(13,11,38,.58);border-color:rgba(205,184,255,.65);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}

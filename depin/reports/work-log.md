@@ -2536,3 +2536,4 @@ Thanks Odelia — writing to you at that address today. Mine is support@wellbian
 - **연재 Part 3 20차(10/22, 서우 「레이더 건물도 구름처럼 옅게」)** — 건물 .62 · 대비 · 채도 낮춤 · 번짐 약하게. `content/ai-factory-1021/`.
 - **연재 Part 3 21차(10/22, 서우 「건물 테두리선 어색 · 지저분」)** — 오려낸 건물의 흰 가장자리 제거(알파 2.5px 깎고 흐림) → 배경에 부드럽게 녹음. `content/ai-factory-1021/`.
 - **연재 1 · 2편 세로판을 3편 틀로 + 3편 아이콘 더 옅게(10/22, 서우 「위 구름과 해는 동일, 아이콘 · 하단부는 다른 이미지로 — 세로만」)** — 하늘 공유 · 에칭 6장 · 건물 2장(Higgsfield 16크레딧) · 1편 세로 배치 신설(`ecosystem-en-9x16`) · 2편 세로(`architecture-en-9x16`)는 원장 칸 아이콘 생략 · 건물은 유리 뒤 · 3편 에칭 .38. `content/{ecosystem,architecture,ai-factory}-1021/`.
+- **연재 1 · 2편 세로판 건물 현대화(10/22, 서우 「너무 올드해」)** — 1편 = 평지붕 · 유리 주택 · 사무실 · 카페, 2편 = 유리 · 발코니 고층 주거 타워(Higgsfield 4크레딧). `content/{ecosystem,architecture}-1021/`.
