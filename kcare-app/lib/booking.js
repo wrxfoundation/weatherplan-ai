@@ -98,10 +98,14 @@ export function priceOf(type, durMin, extraPeople = 0) {
 
 // 저장된 요청의 요금 — 결제 서버가 쓴다. 이용 시간 규칙이 있는 서비스는 서비스 · 이용 시간 · 인원으로 다시 계산하고,
 // 기록의 이용 시간 · 인원이 규칙 밖이면 null(결제하지 않는다). 규칙이 없는 서비스는 기록된 금액 그대로.
+// 2026-10-22 전에 만든 요청(이용 시간 기록 없음)은 기본 시간 금액, 또는 그때 메뉴 금액(legacyAmount — 기본 금액이 바뀐
+// 병원 동행 한 분 · 함께가요)과 대조한다 — 바뀌기 전에 결제 대기로 남은 요청 · 제안이 결제되지 않고 멈추지 않게 (2026-10-22 점검)
 export function expectedAmount(r) {
   const d = durOf(r?.type);
   if (!d) return r?.amount ?? null;
-  const dur = r.durationMin == null ? d.min : r.durationMin; // 2026-10-22 전에 만든 요청 — 기본 시간 금액으로 대조한다
+  const old = r.durationMin == null && !(Number(r.extraPeople) > 0) ? menuOf(r.type)?.legacyAmount : null;
+  if (old != null && Number(r.amount) === old) return old;
+  const dur = r.durationMin == null ? d.min : r.durationMin;
   if (!validDur(d, dur)) return null;
   const extra = r.extraPeople == null ? 0 : r.extraPeople;
   if (!Number.isInteger(extra) || extra < 0 || extra > (d.people ? EXTRA_PEOPLE_MAX : 0)) return null;
@@ -109,7 +113,8 @@ export function expectedAmount(r) {
 }
 
 // ── 신청 이름 ──
-// 언제 — "10월 31일 (토) 오전 10:00~오후 1:00". 확정되면 확정 일정, 그 전에는 희망 일정. 이용 시간이 없으면 시작 시각까지만
+// 언제 — "10월 31일 (토) 오전 10:00~오후 1:00". 담당 컨시어지가 날짜 · 시간을 정했으면 그 일정(관제 승인 전이면 승인 대기 중인 일정 —
+// 관제가 돌려보내면 지워진다), 그 전에는 희망 일정. 이용 시간이 없으면 시작 시각까지만
 export function whenText(r) {
   const ymd = serviceYmd(r);
   if (!ymd) return "";
@@ -133,11 +138,12 @@ export function nextAppt(events, now = Date.now()) {
       .sort((a, b) => a.at - b.at)[0] || null
   );
 }
-// 다음 외래 동행의 시작 — 진료 시각에서 그 서비스의 nextApptLead 분 앞 (두 분 동행 1시간 전 픽업 · 한 분 동행 20분 전 로비 — 확인 필요)
+// 다음 외래 동행의 시작 — 진료 시각에서 그 서비스의 nextApptLead 분 앞 (두 분 동행 1시간 전 픽업 · 한 분 동행 20분 전 로비 — 확인 필요).
+// 진료 시각이 정해 둔 것이라 30분 간격 · 오전 7시 ~ 오후 8시 범위에 맞추지 않는다. 앞당기면 전날로 넘어가는 이른 진료는 진료 시각 그대로
 export function nextApptStart(type, appt) {
   const t = kstHm(appt?.at);
   const lead = durOf(type)?.nextApptLead;
-  return t && Number.isFinite(lead) ? addMin(t, -lead) : t;
+  return t && Number.isFinite(lead) && minOf(t) >= lead ? addMin(t, -lead) : t;
 }
 
 // ── 추가 이용 금액 (예약한 시간보다 길어진 서비스) ──

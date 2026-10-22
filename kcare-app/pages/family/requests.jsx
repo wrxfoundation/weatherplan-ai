@@ -563,7 +563,7 @@ function EditLockedNote({ req, onClose }) {
 // 단계 막대 — 지난 단계 초록 · 지금 금색 · 남은 것 옅게
 function Steps({ steps, at, track = "#EAD9AC" }) {
   return (
-    <ol className="m-0 grid list-none gap-1 p-0" style={{ gridTemplateColumns: `repeat(${steps.length}, minmax(0, 1fr))` }} aria-label={`진행 단계 — 지금 ${steps[at]}`}>
+    <ol className="m-0 grid list-none gap-1 p-0" style={{ gridTemplateColumns: `repeat(${steps.length}, minmax(0, 1fr))` }} aria-label={at >= steps.length ? "진행 단계 — 모두 끝남" : `진행 단계 — 지금 ${steps[at]}`}>
       {steps.map((l, i) => (
         <li key={l} className="flex flex-col items-center gap-1" aria-current={i === at ? "step" : undefined}>
           <span className="block h-2 w-full rounded-[4px]" style={{ background: i < at ? TONE.green.solid : i === at ? TONE.gold.solid : track }} />
@@ -672,6 +672,16 @@ function Actions({ req, x, dispatch, big, onEdit }) {
 }
 
 // 펼친 내용 — 금액 · 일정 · 결제 · 처리 이력 · 완료 증빙
+// 정해진 일정 앞 글 — '확정'은 관제가 승인한 뒤에만 (컨시어지가 정하고 관제 승인을 기다리는 동안은 '정한 일정' · 2026-10-22 점검)
+const schedWord = (r) =>
+  ["confirmed", "inProgress", "done", "cancelRequested"].includes(r.status)
+    ? "확정"
+    : ["cancelled", "rejected"].includes(r.status)
+      ? "일정"
+      : r.dir === "fromConcierge" || r.dir === "fromOps"
+        ? "제안 일정"
+        : "정한 일정 (관제 승인 전)";
+
 function Details({ req, x }) {
   const { pay, scheduled, honor } = x;
   return (
@@ -682,7 +692,7 @@ function Details({ req, x }) {
         </span>
         {scheduled ? (
           <span>
-            확정 <b className="ds-num" style={{ color: "#1B2340" }}>{scheduled}</b>
+            {schedWord(req)} <b className="ds-num" style={{ color: "#1B2340" }}>{scheduled}</b>
           </span>
         ) : (
           (req.preferredDate || req.preferredWhen) && <span>희망 {fmtPreferred(req)}</span>
@@ -873,13 +883,14 @@ function CreateRequestSheet({ preset, initial = null, onClose, onCreate, onSave,
   const amount = editing ? initial.amount ?? null : onMenu ? (d ? priceOf(type, dur, people || 0) : preset.amount ?? null) : null;
   const payNow = !editing && amount > 0;
   const chip = (on) => (on ? { background: "#1B2340", color: "#FFFFFF" } : { background: "#FFFFFF", color: "#3A3F50", boxShadow: "inset 0 0 0 1.5px #E3DED3" });
-  // 결제 버튼이 켜지는 조건 — 날짜와 시작 시간을 둘 다 골라야 (2026-10-22). 직접 고르는 병원 동행은 병원도, 함께가요는 누가 가는지도
+  // 결제 버튼이 켜지는 조건 — 날짜와 시작 시간을 둘 다 골라야 (2026-10-22). 병원 동행은 어느 진료인지 먼저(다음 외래가 있으면 날짜 칸이
+  // 아직 숨어 있다) · 직접 고르면 병원도, 함께가요는 누가 가는지도
   const missing = editing
     ? null
-    : needsDate && !(ymd && start)
-      ? "날짜와 시작 시간을 골라 주세요"
-      : escort && !apptPick
-        ? "어느 진료에 함께 갈지 골라 주세요"
+    : escort && !apptPick
+      ? "어느 진료에 함께 갈지 골라 주세요"
+      : needsDate && !(ymd && start)
+        ? "날짜와 시작 시간을 골라 주세요"
         : escort && !useNext && !hospital.trim()
           ? "병원 · 진료과를 적어 주세요"
           : d?.people && people == null

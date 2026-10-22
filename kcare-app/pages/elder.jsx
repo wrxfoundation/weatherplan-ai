@@ -94,6 +94,7 @@ const plusItem = (p) => ({
   active: true,
   plus: true,
   askWhen: p.key === "handyman",
+  ...(p.dur ? { dur: p.dur } : {}), // 핸디맨 '2시간 안' — 끝나는 시간이 보이고 이용 시간이 기록에 남는다 (2026-10-22)
 });
 
 // GNB — 2026-09-04 시트 어르신 전체 7·8번: 하단은 마음사서함 · 홈 · 가족. 2026-10-22 시제품 v17: 오른쪽 끝에 마이(내 멤버십)를
@@ -3453,7 +3454,8 @@ function ElderReqDateSheet({ req, onClose, onSave }) {
           <p className="text-[17px] leading-[1.5]" style={{ color: "#5E6270" }}>
             지금 희망: <b style={{ color: "#1B2340" }}>{req.preferredWhen || preferredYmd(req)}</b>
           </p>
-          <ElderDateTime ymd={when.ymd} hm={when.hm} onChange={setWhen} title="언제로 바꿀까요?" />
+          {/* 예약과 같은 범위 — 내일부터 1년 뒤까지 · 오전 7:00 ~ 오후 8:00 (2026-10-22 점검) */}
+          <ElderDateTime ymd={when.ymd} hm={when.hm} onChange={setWhen} title="언제로 바꿀까요?" book />
           <Btn
             tone="navy"
             h={62}

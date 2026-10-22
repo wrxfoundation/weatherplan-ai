@@ -626,7 +626,7 @@ function StepButton({ r, next, me, dispatch, push }) {
   );
 }
 
-export default function ConciergeRequests({ requests, payments, extraCharges = [], payees = [], me, dispatch, push }) {
+export default function ConciergeRequests({ requests, payments, extraCharges = [], payees = [], customer = "어르신", me, dispatch, push }) {
   // 베타에서 앱을 쓰는 컨시어지는 한 사람(테스트 컨시어지 계정)이라, 관제가 다른 컨시어지로 바꾼 건도 여기서 받는다
   // (안 그러면 아무 큐에도 없어 승인 대기로 멈춘다 — 2026-10-05 리뷰). 담당이 다르면 카드에 이름을 단다.
   const mine = () => true;
@@ -650,7 +650,6 @@ export default function ConciergeRequests({ requests, payments, extraCharges = [
   );
   // 끝난 해주세요 — 사흘 안이면 여기서도 추가 이용 금액을 보낸다 (완료를 먼저 누른 뒤 길어진 시간을 청구할 수 있게)
   const charges = extraCharges || [];
-  const customer = payees.find((p) => p.role === "elder")?.name || "어르신";
   const finished = (requests || []).filter(
     (r) => r.status === "done" && !isVisitCall(r) && canChargeExtra(r.type) && Date.now() - Number(lastOf(r)?.at || 0) < 3 * 86400000
   );

@@ -11,7 +11,7 @@ import {
   OUTING,
   elderWho,
 } from "../lib/mock";
-import { payGroup } from "../lib/membership";
+import { extraPayees } from "../lib/membership";
 import WelfareList from "../components/WelfareList";
 import { matchWelfare, profileFor, welfareCounts } from "../lib/welfare";
 import {
@@ -385,9 +385,9 @@ function ConciergePage() {
   // 마무리 필요 — 오늘 끝난 건 중 리포트가 아직 안 나간 것
   // 이 앱의 방문 리포트는 이 가구 어르신 한 분 것이다 — 다른 (예시) 고객의 일정이 끝났다고 '작성하기'가 김순자 님 리포트를 열지 않게 (2026-10-19 점검 C-08)
   const myElder = live || center ? LIVE_ELDER : ELDER.name;
-  // 추가 이용 금액 받는 분 — 어르신 · 이 가구 보호자 (구두로 동의한 분을 컨시어지가 고른다 · 2026-10-22).
-  // 한 가족 그룹(lib/membership.js payGroup) 그대로 — 받는 분 화면은 같은 이름으로 자기 청구를 찾는다 (lib/people.js meAs)
-  const payees = useMemo(() => payGroup(myElder).map((m) => ({ role: m.elder ? "elder" : "guardian", name: m.name })), [myElder]);
+  // 추가 이용 금액 받는 분 — 어르신 · 이 가구 보호자 중 앱으로 결제할 수 있는 분 (구두로 동의한 분을 컨시어지가 고른다 · 2026-10-22).
+  // 받는 분 화면은 같은 이름으로 자기 청구를 찾는다 (lib/membership.js extraPayees · lib/people.js meAs)
+  const payees = extraPayees(myElder);
   const wrapUp = today.rows.find((r) => r.state === "done" && r.client === myElder && !v.reportSent)?.client || null;
 
   // ── 마음사서함 (2026-09-22 명세) ──
@@ -635,7 +635,7 @@ function ConciergePage() {
                 {/* 해주세요 — 보호자 · 어르신 부탁은 내 일정을 보고 승인 · 거절, 확정 건 진행 · 완료, 보낸 제안 (2026-10-05).
                     전에는 어르신 부탁만 보였고, 관제 확인 전에 '확인함'을 누를 수 있었다. */}
                 <div id="concierge-requests" className="scroll-mt-4">
-                  <ConciergeRequests requests={state.requests} payments={state.payments} extraCharges={state.extraCharges} payees={payees} me={ME} dispatch={dispatch} push={push} />
+                  <ConciergeRequests requests={state.requests} payments={state.payments} extraCharges={state.extraCharges} payees={payees} customer={myElder} me={ME} dispatch={dispatch} push={push} />
                 </div>
 
 

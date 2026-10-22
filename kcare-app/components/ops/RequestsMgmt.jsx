@@ -713,6 +713,8 @@ function ExtraDetail({ x, liveOn, dispatch, onClose }) {
             <p className="mt-1.5 text-[11.5px] leading-[1.6] text-muted">
               자동 청구(토스 자동결제 · 등록 카드 서버 보관)는 아직 연결 전입니다. 기한이 지난 건은 등록 카드로 결제를 마친 뒤 기록합니다 —
               받는 분 화면에 &lsquo;등록된 카드로 결제됐어요&rsquo;, 컨시어지 카드에 &lsquo;등록된 카드로 결제됐어요&rsquo;로 바뀝니다.
+              받는 분은 기한이 지나도 앱에서 낼 수 있습니다 — 카드로 결제하기 직전에 이 상태가 아직 &lsquo;결제 대기&rsquo;인지 다시 보세요.
+              그 사이 앱 결제가 들어왔으면 카드 결제분은 기록할 때 &lsquo;환불 대기&rsquo;로 넘어갑니다.
             </p>
             <div className="mt-3 flex items-end gap-2">
               <div className="flex-1"><Field id={`xc-reason-${x.id}`} label="청구 취소 사유 (컨시어지가 잘못 보낸 경우 등)" value={reason} onChange={setReason} placeholder="예: 실제 이용 시간 잘못 입력 — 다시 청구" /></div>
@@ -735,7 +737,7 @@ function ExtraDetail({ x, liveOn, dispatch, onClose }) {
         body={
           confirm === "auto"
             ? liveOn
-              ? "받는 분의 등록 카드로 실제 결제를 마친 뒤에 누르세요. 받는 분 화면이 '등록된 카드로 결제됐어요'로 바뀌고 되돌릴 수 없습니다."
+              ? "받는 분의 등록 카드로 실제 결제를 마친 뒤에 누르세요. 받는 분 화면이 '등록된 카드로 결제됐어요'로 바뀌고 되돌릴 수 없습니다. 그 사이 받는 분이 앱에서 냈다면 카드 결제분은 '환불 대기'로 남습니다."
               : "데모 — 실제 결제 없이 기한이 지나 등록 카드로 결제된 상태를 보여 줍니다."
             : `사유 "${reason.trim()}" — 받는 분 화면에서 결제 요청이 사라지고, 컨시어지가 다시 보낼 수 있습니다.`
         }

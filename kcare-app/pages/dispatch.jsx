@@ -49,7 +49,7 @@ import {
 } from "../lib/console";
 import { useAppState } from "../lib/state";
 import { eventRights } from "../lib/event-rights";
-import { CLOSED, approverOf, fmtPreferred, isVisitCall, soloDispatches } from "../lib/requests";
+import { CLOSED, approverOf, crewReady, fmtPreferred, isVisitCall, soloDispatches } from "../lib/requests";
 import { dateLabel, extraDueYmd, extraOverdue, extraToText, reqTitle, svcTitle } from "../lib/booking";
 import { HelpCallOps, HELP_STAGE } from "../components/HelpCall";
 import { relMd } from "../lib/reltime";
@@ -865,15 +865,20 @@ function DispatchConsole() {
   );
   // 관제 승인 대기 — 담당 컨시어지가 일정을 확인한 해주세요. 승인하면 일정이 확정되고 달력에 들어간다 (2026-10-22 결제 → 컨시어지 확인 →
   // 관제 승인 → 일정 확정). 다시 맞추게 하려면(사유 필수) 해주세요 관리에서
+  // 2인 해주세요인데 짝이 비어 있으면(예전 기록 등) 승인 버튼 대신 해주세요 관리로 — 눌러도 아무 일 없는 버튼을 두지 않는다 (단독 배차 0)
   opsReviews.forEach((r) =>
     actions.push({
       id: `opsreview-${r.id}`,
       level: "high",
       title: `관제 승인 대기 — ${reqTitle(r)}`,
-      meta: `${r.approvedBy || "담당 컨시어지"} 확인${r.partner ? ` · 2인 ${r.assignee} · ${r.partner}` : ""} · 다시 맞추기는 해주세요 관리`,
-      act: "승인",
-      onAct: () => dispatch({ type: "opsApproveRequest", id: r.id, by: opsName }),
-      ticker: ["관제", `관제 승인 — ${reqTitle(r)} · 일정 확정`, "#8FE3C0"],
+      ...(crewReady(r)
+        ? {
+            meta: `${r.approvedBy || "담당 컨시어지"} 확인${r.partner ? ` · 2인 ${r.assignee} · ${r.partner}` : ""} · 다시 맞추기는 해주세요 관리`,
+            act: "승인",
+            onAct: () => dispatch({ type: "opsApproveRequest", id: r.id, by: opsName }),
+            ticker: ["관제", `관제 승인 — ${reqTitle(r)} · 일정 확정`, "#8FE3C0"],
+          }
+        : { meta: "2인 서비스인데 짝이 정해지지 않아 승인할 수 없습니다 — 해주세요 관리에서 짝을 정하거나 다시 맞추게 하세요", menu: "requests", view: "해주세요 관리 →" }),
     })
   );
   // 추가 이용 금액 — 결제 대기 (기한이 지나면 등록 카드 결제 필요) · 수납 완료 (확인하면 내린다)

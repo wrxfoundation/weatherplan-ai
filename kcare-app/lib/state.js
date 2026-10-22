@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 // 여기서 mock.js 를 참조하면 콘솔 목데이터 전체가 모든 페이지에 실린다 (seed.js 주석 참고).
 import { INITIAL_EVENTS, INITIAL_REQUESTS, SEED_ASK_DOCTOR, SEED_EVENTS, SEED_ORDERS, SEED_REPORTS } from "./seed";
 import { URGENCY, approverOf, canEditRequest, cancelRule, crewOf, crewReady, fmtPreferred, paymentOf, transition } from "./requests";
-import { canChargeExtra, durOf, durText, extraAmountOf, extraDueAt, extraToText } from "./booking";
+import { canChargeExtra, durOf, durText, extraAmountOf, extraDueAt, extraToText, svcTitle } from "./booking";
 import { SEED_VISIT, advance } from "./workflow";
 import { crewFor } from "./dispatch-policy";
 import { logout, useAuth } from "./auth";
@@ -647,14 +647,16 @@ function reducer(state, action) {
       const next = transition({ ...r, opsApprovedAt: at, opsApprovedBy: by }, "confirmed", `관제 승인 (${by}) · 일정 확정${action.note ? ` — ${String(action.note).slice(0, 200)}` : ""}`, at, { by });
       return withRequest(state, next, true);
     }
-    // 관제가 일정을 다시 맞추게 한다 — 컨시어지 확인으로 돌아간다. 사유는 컨시어지 확인 칸 · 요청한 분 이력에 보인다. 결제는 그대로
+    // 관제가 일정을 다시 맞추게 한다 — 컨시어지 확인으로 돌아간다. 사유는 컨시어지 확인 칸 · 요청한 분 이력에 보인다. 결제는 그대로.
+    // 컨시어지가 정했던 날짜 · 시간은 지운다 — 승인되지 않은 일정이 신청 이름에 남지 않게 (희망 일정으로 돌아간다 · 2026-10-22 점검)
     case "opsReturnRequest": {
       const r = state.requests.find((x) => x.id === action.id);
       const reason = String(action.reason || "").trim().slice(0, 200);
       if (!r || r.status !== "opsReview" || !reason) return state;
       const at = nowOf(action);
       const by = String(action.by || "관제").slice(0, 30);
-      const next = transition({ ...r, approvedAt: null, approvedBy: null, opsReturn: { by, at, reason } }, "requested", `관제가 일정을 다시 맞추게 함 (${by}) — ${reason}`, at, { by });
+      const back = { ...r, approvedAt: null, approvedBy: null, scheduledDate: null, scheduledTime: "", opsReturn: { by, at, reason } };
+      const next = transition(back, "requested", `관제가 일정을 다시 맞추게 함 (${by}) — ${reason}`, at, { by });
       return withRequest(state, next, false);
     }
     // ── 추가 이용 금액 (2026-10-22) ──
@@ -720,8 +722,29 @@ function reducer(state, action) {
     // 청구한 뒤 이 버튼으로 남긴다 (환불 완료와 같은 방식). 기한 전에는 하지 않는다 — 데모 시연만 예외
     case "autoChargeExtra": {
       const x = (state.extraCharges || []).find((c) => c.id === action.id);
-      if (!x || x.status !== "pending") return state;
+      if (!x) return state;
       const at = nowOf(action);
+      // 관제가 등록 카드로 결제하는 사이 받는 분이 앱에서 먼저 냈다 — 카드로 받은 것은 환불 대기로 남긴다.
+      // 아무 일 없이 넘어가면 두 번 받은 채 환불 기록이 없다 (2026-10-22 점검). 반대 순서는 extraChargePaid 가 환불 대기로 돌린다
+      if (x.status === "paid" && !x.auto && !action.demo) {
+        if ((state.payments || []).some((p) => p.kind === "extra" && p.ref === x.id && p.cardRecord)) return state; // 두 번 누름
+        const by = String(action.by || "관제").slice(0, 30);
+        const card = {
+          id: idOf("pay", action),
+          at,
+          kind: "extra",
+          ref: x.id,
+          orderName: `추가 이용 금액 · ${svcTitle(x.service)} (등록 카드)`,
+          amount: x.amount,
+          method: "등록 카드 (관제 기록)",
+          status: "done",
+          cardRecord: true,
+          by,
+          refund: { status: "pending", amount: x.amount, reason: "앱에서 이미 결제된 추가 이용 금액을 등록 카드로 또 받음 — 환불", at, by: "자동" },
+        };
+        return { ...state, payments: [card, ...(state.payments || [])].slice(0, 200) };
+      }
+      if (x.status !== "pending") return state;
       if (!action.demo && at <= extraDueAt(x.sentAt)) return state;
       const next = { ...x, status: "paid", paidAt: at, payer: x.to?.name || "", method: "등록 카드 자동 결제", auto: true, demo: !!action.demo, autoBy: String(action.by || "관제").slice(0, 30) };
       return { ...state, extraCharges: state.extraCharges.map((c) => (c.id === x.id ? next : c)) };
@@ -856,7 +879,8 @@ function reducer(state, action) {
             ...(action.assignee !== undefined ? { assignee: String(action.assignee || "") } : {}),
             ...(action.partner !== undefined ? { partner: String(action.partner || "") || null } : {}),
           };
-          if (["confirmed", "inProgress", "cancelRequested"].includes(r.status) && !crewReady(next)) return r;
+          // 관제 승인 대기도 — 컨시어지가 짝까지 정해 올린 것을 한 명으로 줄이면 승인할 수 없게 된다 (2026-10-22 점검)
+          if (["opsReview", "confirmed", "inProgress", "cancelRequested"].includes(r.status) && !crewReady(next)) return r;
           return next;
         }),
       };
