@@ -43,7 +43,7 @@ T = {
     ("factory", "Industry packages", "Energy · construction · retail · public sector", ("soon", "Coming"))]),
   band=("Revenue", "data by the call · agent plans after launch · inference API · industry packages"),
   note="“Intelligence tokens” is AI-factory language for model output. They are not WLBN.",
-  foot="From the Wellbian Labs whitepaper v1.0 draft (2026-09-28) and wellbianai.io · Live = available today, Coming = not yet released · No price or return is promised.",
+  foot="From the Wellbian Labs whitepaper v1.0 draft (2026-09-28) and wellbianai.io · No price or return is promised.",
  ),
 }
 
@@ -192,9 +192,9 @@ def page(lang, vertical=False):
     engs = "".join(f'<div>{A.ico(i, "ico-s")}{b}</div>' for i, b in eng)
     oe, oh, outs = t["out"]
     if vertical:
-        out = "".join(f'<div class="it">{A.ico(i)}<div><div class="vrow"><b>{b}</b><span class="st {s}">{sl}</span></div><span class="d">{A.nw(d)}</span></div></div>' for i, b, d, (s, sl) in outs)
+        out = "".join(f'<div class="it">{A.ico(i)}<div><b>{b}</b><span class="d">{A.nw(d)}</span></div></div>' for i, b, d, _ in outs)
     else:
-        out = "".join(f'<div class="it">{A.ico(i)}<div><b>{b}</b><span class="d">{A.nw(d)}</span><span class="st {s}">{sl}</span></div></div>' for i, b, d, (s, sl) in outs)
+        out = "".join(f'<div class="it">{A.ico(i)}<div><b>{b}</b><span class="d">{A.nw(d)}</span></div></div>' for i, b, d, _ in outs)  # 상태 칩(Live · Coming)은 10/22 서우 지시로 뺐다 — 상태는 게시 문안에
     bn, bd = t["band"]
     css = A.CSS + XCSS + (VCSS if vertical else "")
     return f"""<!doctype html><html lang="{t['lang']}"><head><meta charset="utf-8"><title>wellbian — {t['h1']}</title><style>{css}</style></head><body>
