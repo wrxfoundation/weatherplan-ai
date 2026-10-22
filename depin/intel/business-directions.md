@@ -5435,6 +5435,27 @@ Coming from custody operations, you'll know the unglamorous part we build around
 Good to be connected.
 ```
 
+## Farah Lotia, CFA (Ripple · MD, Product & Quantitative Strategy — Ripple Treasury · 샌프란시스코 · 새 1촌) — 인사 (2026-10-22, 서우 프로필 · 활동 · 경력 캡처 3장)
+
+공개 프로필: 리플 MD 제품 · 퀀트 전략(2025-12~, Ripple Treasury — 리플이 2025-12 인수한 GTreasury 기반 기업 자금관리 플랫폼, 플랫폼 연결 · AI · 데이터 담당) · GTreasury VP 제품 · 퀀트(2025) · VP 리스크 · 퀀트 분석(2022~2025, FX 평가 플랫폼) · Hedge Trackers 금리 · 퀀트 분석 디렉터 10년(IR Capella — SOFR · OIS · 스와프 평가 · 회계 플랫폼) · HedgeStar 공동창업 COO · CFA. 팔로워 1,029.
+활동: 10/22 10:30 CT 웨비나 「유동성을 리스크 북처럼 — 구간 · 사다리 · 트레이딩 데스크처럼 감시」(Ripple Treasury) · 9/24 NeuGroup Global Cash and Banking Group(10/7~8 애틀랜타 · 코카콜라 본사) 스폰서 세션 「always-on 결제 시대의 유동성 관리 · 경영진이 실제로 믿을 수 있는 현금 예측」.
+판정: **리플 사람 → 10/7 서우 정정 이후 인사 허용**(Kleber 선례 — 에코시스템 팀 만난 사실만 · 미팅 내용 · 협력 · NDA · 요청 0). 기관(자금관리) 자리지만 리플 사람이라 XRP Ledger · RLUSD 는 쓴다(Dan · Kleber 선례).
+- 첫 줄 = 오늘 웨비나 응원(그의 최근 글 · 요청 아님). **보내는 시점이 웨비나(한국 10/23 00:30) 뒤면** 「hope today's session on … went well」로.
+- 선택 줄 = NeuGroup 세션 문구 「경영진이 실제로 믿을 수 있는 현금 예측」 ↔ 우리 질문 「행동하기 전에 숫자의 출처를 확인할 수 있나」. 기기 · 보상 · 토큰 · Flare · 자금관리 제품 제안 0.
+- 「certified」 뺌 · 「eleven weather feeds」 · 172/91(사이트 기준).
+메시지(909자)
+```
+Farah — thanks for connecting, and good luck with today's session on managing liquidity as a risk book.
+
+I run partnerships at wellbian, and I had the pleasure of meeting Christina, Tats and Sabrina from Ripple's ecosystem team around XRP SEOUL 2026. KWeather has measured weather in South Korea for thirty years and supplies data to 4,000+ enterprise clients; wellbian is the network built on top of that.
+
+We work on two layers: air-quality sensors that people run in their own rooms, and city-level weather across 91 countries and 172 cities, each value a consensus of eleven weather feeds. Every input is fingerprinted on the XRP Ledger, and buyers can pay for the data per call in RLUSD.
+
+Your NeuGroup line about cash forecasts leadership can actually trust stayed with me. It is the question we ask of every reading: can you check where the number came from before you act on it?
+
+Good to be connected.
+```
+
 ## MEXC 상장팀 — 텔레그램 그룹 인사 (2026-10-19 20:38, 서우 캡처)
 
 - **상황**: 「Wellbian (WLBN) <> MEXC」 그룹(3인)에 MEXC 상장팀 리스팅 매니저가 들어와 인사 · 공식 채널 목록(텔레그램 · X · 메일 · 디스코드)과 확인 페이지(mexc.com/official-verify) 안내 ·
