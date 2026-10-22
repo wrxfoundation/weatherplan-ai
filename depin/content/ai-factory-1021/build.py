@@ -106,9 +106,9 @@ XCSS = """
 VCSS = """
 html,body{width:1080px;height:1920px}
 body{padding:30px 44px 0;justify-content:flex-start}
-.dc{width:470px;height:210px;right:-106px;bottom:-70px}
-.dchaze{width:620px;height:360px;right:-90px;bottom:-130px}
-.streams{right:90px;bottom:122px;width:60px;height:80px}
+.dc{width:470px;height:210px;right:-106px;bottom:-8px}  /* 10/22 서우 「세로도 아래 건물이 잘 보이게」 -70 → -8 */
+.dchaze{width:620px;height:360px;right:-90px;bottom:-68px}
+.streams{right:30px;bottom:184px;width:46px;height:80px}
 .bgfx .g1{width:900px;height:900px;left:-300px;top:-380px}
 .bgfx .g2{width:900px;height:900px;right:-320px;bottom:-360px}
 .bgfx .g3{width:700px;height:600px;left:-160px;top:30%}
