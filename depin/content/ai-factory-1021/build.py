@@ -82,15 +82,15 @@ XCSS = """
 .ill svg{width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 8px rgba(163,155,255,.35))}
 .ill .l2{stroke:rgba(226,224,255,.55)}
 .ill .dot{stroke:currentColor;stroke-width:2.2;stroke-dasharray:0 5;opacity:.85}
-.ill.etch img{width:100%;height:100%;object-fit:contain;display:block;filter:drop-shadow(0 0 6px rgba(163,155,255,.35))}
+.ill.etch img{width:100%;height:100%;object-fit:contain;display:block;opacity:.5;filter:drop-shadow(0 0 4px rgba(163,155,255,.2))}  /* 10/22 서우 「너무 진해 — 주변 톤에 맞춰 옅게」 */
 /* 햇살 — 위에서 구름 사이로 쏟아지는 풍부한 금빛(마니에리스모 · 틴토레토 · 엘 그레코의 하늘빛). 10/22 서우 「인위적인 조명 말고 자연스러운 햇살」.
    그린 빛이 아니라 Higgsfield 로 만든 회화풍 배경(assets/light-*.jpg)을 깔고, 아래쪽은 남보라로 덮어 타일 글씨를 지킨다. */
 .paint{position:absolute;inset:0;background:url("assets/light-16x9.jpg") center top/cover no-repeat;opacity:.66}  /* 10/22 서우 「20% 약하게」 .82 → .66 */
 .paintfade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(13,11,38,0) 0%,rgba(13,11,38,.10) 24%,rgba(13,11,38,.55) 40%,rgba(13,11,38,.88) 56%,#0D0B26 74%)}
 /* 오른쪽 아래 AI 데이터센터 건물(10/22 서우 「우측 하단에 과하지 않게」) — 같은 회화풍(Higgsfield) 그림을 잘라 배경층 맨 위에. 밝은 부분만 보이게(lighten). */
 .fg{position:absolute;inset:0;z-index:2;pointer-events:none;overflow:hidden}
-.dc{position:absolute;right:-150px;bottom:-12px;width:560px;height:251px;background:url("assets/datacenter-radar.png") center bottom/contain no-repeat;filter:brightness(.66) saturate(.92) contrast(1.06);-webkit-mask-image:linear-gradient(0deg,transparent 0%,#000 14%);mask-image:linear-gradient(0deg,transparent 0%,#000 14%)}
-.dchaze{position:absolute;right:-60px;bottom:-120px;width:760px;height:420px;border-radius:50%;background:radial-gradient(closest-side,rgba(255,196,120,.14),rgba(163,120,255,.08) 55%,rgba(163,120,255,0))}
+.dc{position:absolute;right:-150px;bottom:-34px;width:560px;height:251px;background:url("assets/datacenter-radar.png") center bottom/contain no-repeat;filter:brightness(.66) saturate(.92) contrast(1.06);-webkit-mask-image:linear-gradient(0deg,transparent 0%,#000 14%);mask-image:linear-gradient(0deg,transparent 0%,#000 14%)}
+.dchaze{position:absolute;right:-60px;bottom:-142px;width:760px;height:420px;border-radius:50%;background:radial-gradient(closest-side,rgba(255,196,120,.14),rgba(163,120,255,.08) 55%,rgba(163,120,255,0))}
 /* 데이터센터 지붕에서 하늘로 솟는 디지털 정보(점선 기둥) — 10/22 서우 「하늘로 디지털 정보를 쏘는 듯한 효과」(참고 이미지: 지구에서 솟는 점 기둥). 금빛 → 라벤더로 옅어진다. */
 .streams{position:absolute;right:84px;bottom:219px;width:70px;height:280px;pointer-events:none;mix-blend-mode:screen;opacity:.9;filter:drop-shadow(0 0 3px rgba(255,214,150,.45))}
 .streams svg{width:100%;height:100%;display:block}
@@ -107,8 +107,8 @@ XCSS = """
 VCSS = """
 html,body{width:1080px;height:1920px}
 body{padding:30px 44px 0;justify-content:flex-start}
-.dc{width:470px;height:210px;right:-106px;bottom:-8px}  /* 10/22 서우 「세로도 아래 건물이 잘 보이게」 -70 → -8 */
-.dchaze{width:620px;height:360px;right:-90px;bottom:-68px}
+.dc{width:470px;height:210px;right:-106px;bottom:-28px}  /* 10/22 서우 「세로도 아래 건물이 잘 보이게」 -70 → -8 → 「약간만 내려」 -28 */
+.dchaze{width:620px;height:360px;right:-90px;bottom:-88px}
 .streams{right:30px;bottom:184px;width:46px;height:80px}
 .bgfx .g1{width:900px;height:900px;left:-300px;top:-380px}
 .bgfx .g2{width:900px;height:900px;right:-320px;bottom:-360px}
@@ -247,7 +247,7 @@ def page(lang, vertical=False):
 <p class="note">{t['note']}</p>
 <p class="foot">{A.nw(t['foot'])}</p>
 </div>
-<div class="fg">{streams(70, 280, 11, 4) if not vertical else streams(60, 80, 11, 3)}<div class="dc"></div></div></body></html>"""
+<div class="fg"><div class="dc"></div></div></body></html>"""
 
 if __name__ == "__main__":
     env = dict(os.environ)
