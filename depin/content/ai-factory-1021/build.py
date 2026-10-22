@@ -86,6 +86,9 @@ XCSS = """
    그린 빛이 아니라 Higgsfield 로 만든 회화풍 배경(assets/light-*.jpg)을 깔고, 아래쪽은 남보라로 덮어 타일 글씨를 지킨다. */
 .paint{position:absolute;inset:0;background:url("assets/light-16x9.jpg") center top/cover no-repeat;opacity:.66}  /* 10/22 서우 「20% 약하게」 .82 → .66 */
 .paintfade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(13,11,38,0) 0%,rgba(13,11,38,.10) 24%,rgba(13,11,38,.55) 40%,rgba(13,11,38,.88) 56%,#0D0B26 74%)}
+/* 오른쪽 아래 AI 데이터센터 건물(10/22 서우 「우측 하단에 과하지 않게」) — 같은 회화풍(Higgsfield) 그림을 잘라 배경층 맨 위에. 밝은 부분만 보이게(lighten). */
+.dc{position:absolute;right:0;bottom:-60px;width:560px;height:280px;background:url("assets/datacenter.jpg") center/cover no-repeat;opacity:.92;filter:brightness(1.12) saturate(1.08);
+ -webkit-mask-image:radial-gradient(ellipse 82% 92% at 72% 86%,#000 52%,transparent 86%);mask-image:radial-gradient(ellipse 82% 92% at 72% 86%,#000 52%,transparent 86%)}
 .logo,h1,.sub{text-shadow:0 2px 22px rgba(13,11,38,.55)}
 .logo svg{filter:drop-shadow(0 2px 14px rgba(13,11,38,.5))}
 .sub{color:rgba(244,243,255,.9)}
@@ -97,7 +100,8 @@ XCSS = """
 
 VCSS = """
 html,body{width:1080px;height:1920px}
-body{padding:0 44px;justify-content:center}
+body{padding:30px 44px 0;justify-content:flex-start}
+.dc{width:500px;height:250px;bottom:-60px}
 .bgfx .g1{width:900px;height:900px;left:-300px;top:-380px}
 .bgfx .g2{width:900px;height:900px;right:-320px;bottom:-360px}
 .bgfx .g3{width:700px;height:600px;left:-160px;top:30%}
@@ -198,7 +202,7 @@ def page(lang, vertical=False):
     bn, bd = t["band"]
     css = A.CSS + XCSS + (VCSS if vertical else "")
     return f"""<!doctype html><html lang="{t['lang']}"><head><meta charset="utf-8"><title>wellbian — {t['h1']}</title><style>{css}</style></head><body>
-<div class="bgfx"><div class="paint"></div><div class="paintfade"></div><div class="g1"></div><div class="g2"></div><div class="g3"></div><div class="g4"></div><div class="grid"></div></div>
+<div class="bgfx"><div class="paint"></div><div class="paintfade"></div><div class="g1"></div><div class="g2"></div><div class="g3"></div><div class="g4"></div><div class="grid"></div><div class="dc"></div></div>
 <div class="wrap">
 <div class="logo">{A.LOGO}</div>
 <div class="kicker">{t['kicker']}</div>
