@@ -82,6 +82,7 @@ XCSS = """
 .ill svg{width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 8px rgba(163,155,255,.35))}
 .ill .l2{stroke:rgba(226,224,255,.55)}
 .ill .dot{stroke:currentColor;stroke-width:2.2;stroke-dasharray:0 5;opacity:.85}
+.ill.etch img{width:100%;height:100%;object-fit:contain;display:block;filter:drop-shadow(0 0 6px rgba(163,155,255,.35))}
 /* 햇살 — 위에서 구름 사이로 쏟아지는 풍부한 금빛(마니에리스모 · 틴토레토 · 엘 그레코의 하늘빛). 10/22 서우 「인위적인 조명 말고 자연스러운 햇살」.
    그린 빛이 아니라 Higgsfield 로 만든 회화풍 배경(assets/light-*.jpg)을 깔고, 아래쪽은 남보라로 덮어 타일 글씨를 지킨다. */
 .paint{position:absolute;inset:0;background:url("assets/light-16x9.jpg") center top/cover no-repeat;opacity:.66}  /* 10/22 서우 「20% 약하게」 .82 → .66 */
@@ -190,8 +191,12 @@ ILLUS = {
   '<path d="M104 8l3 7.6 7.6 3-7.6 3-3 7.6-3-7.6-7.6-3 7.6-3z"/></g>'),
 }
 
+ETCH = {"data": "etch-data", "factory": "etch-factory", "intel": "etch-intel"}
+
 def illus(name):
-    return f'<div class="ill"><svg viewBox="0 0 120 120" aria-hidden="true">{ILLUS[name]}</svg></div>'
+    # 10/22 서우 「테이블 안 우측 아이콘들은 에칭 스타일로」(참고: 동판화 가면) — Higgsfield 에칭 그림 → 라벤더 선화(투명 배경).
+    # 이전 라인 SVG(ILLUS)는 남겨 둔다 — 되돌리려면 아래 한 줄을 svg 판으로.
+    return f'<div class="ill etch"><img src="assets/{ETCH[name]}.png" alt=""></div>'
 
 
 def streams(w=200, h=300, seed=11, n=9):
