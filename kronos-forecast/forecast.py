@@ -146,10 +146,14 @@ def load_yahoo(symbol, interval):
             "dropped": dropped, "symbol": symbol}
 
 
-def load_csv(path):
+def load_csv(path, extra=()):
     """Candles from a CSV such as TradingView's "Export chart data": a time column plus
-    open/high/low/close. Volume is optional and every other (indicator) column is ignored."""
+    open/high/low/close. Volume is optional; other (indicator) columns are ignored unless
+    named in `extra`, which are kept row-aligned (signal_check.py uses this for signal columns)."""
     raw = pd.read_csv(path)
+    absent = [c for c in extra if c not in raw.columns]
+    if absent:
+        sys.exit(f"{path} has no column(s) {absent}. Its columns: {', '.join(map(str, raw.columns))}")
     cols = {c.strip().lower(): c for c in raw.columns}
     tcol = next((cols[c] for c in ("time", "timestamp", "timestamps", "date", "datetime") if c in cols), None)
     missing = [c for c in ("open", "high", "low", "close") if c not in cols] + ([] if tcol else ["time"])
@@ -164,7 +168,8 @@ def load_csv(path):
     vol = raw[cols["volume"]].to_numpy(dtype=float) if "volume" in cols else 0.0
     df = clean(pd.DataFrame({"timestamps": ts, "open": raw[cols["open"]].to_numpy(dtype=float),
                              "high": raw[cols["high"]].to_numpy(dtype=float), "low": raw[cols["low"]].to_numpy(dtype=float),
-                             "close": raw[cols["close"]].to_numpy(dtype=float), "volume": vol}))
+                             "close": raw[cols["close"]].to_numpy(dtype=float), "volume": vol,
+                             **{c: raw[c].to_numpy() for c in extra}}))
     if len(df) < 2:
         sys.exit(f"{path} has fewer than 2 usable candles.")
     if "volume" not in cols:
