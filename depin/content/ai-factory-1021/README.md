@@ -87,6 +87,32 @@ A note on the word "tokens". In AI-factory language, tokens are what a model pro
 If you buy forecasts for energy, construction or retail, I'd like to hear the first question you'd ask a weather agent.
 ```
 
+## 링크드인 — 10/22 서우 수정본 다듬음 (1257자 · 게시용)
+
+서우 수정: 「free during the demo」 · API · 패키지의 「Coming next」 · 「not WLBN」 삭제. 다듬을 때 지킨 것: API · 패키지가 지금 팔리는 것처럼 읽히지 않게 목록 아래 한 줄(「The agent comes first; the API and the packages follow.」) · 에이전트는 「Live today in demo」(사이트 = 데모 · 정식 출시 뒤 유료) · 토큰 줄은 WLBN 이름 없이 「not a crypto token」으로 마무리(문장 끝 마침표 빠짐도 고침) · 「city weather for 172 cities」 → 「weather for 172 cities」 · 문단 사이 빈 줄 하나로.
+
+```
+[Building wellbian · Part 3] Same data, sold twice
+
+Part 1 was who pays. Part 2 was how a call becomes revenue. Part 3 is the second revenue line, built on the same data.
+
+The first line sells verified data by the call. The second refines that data into something people pay for directly: indexes, forecasts and agents. That's the job of our AI factory: weather AI models running on B300 GPU inference.
+
+What goes in: readings from sensors in real rooms, KWeather's 30 years of observation and forecast data, and weather for 172 cities, each value a consensus of eleven weather feeds.
+
+What comes out, and how it's sold:
+· A 60-day hyper-local forecast agent. Live today in demo, with paid plans after launch.
+· An inference API for indexes, forecasts and risk indexes.
+· Industry packages for energy, construction, retail and the public sector.
+The agent comes first; the API and the packages follow.
+
+Every new room feeds both lines: more data to sell, and more for the models to learn from.
+
+A note on the word "tokens". In AI-factory language, a token is what a model produces when it answers. It's model output, not a crypto token.
+
+If you buy forecasts for energy, construction or retail, I'd like to hear the first question you'd ask a weather agent.
+```
+
 ## X — 원글 + 타래 답글 2 (가중 263 · 232 · 212)
 
 ```
