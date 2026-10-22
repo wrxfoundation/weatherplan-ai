@@ -4326,3 +4326,11 @@ Weather data goes in, GPUs do the work, and out come forecasts and answers peopl
 ```
 게시 전: 인용 = 원글. 오늘 Eri 인용을 이미 올렸다면 6시간 뒤 또는 내일(계정당 1일 1원글).
 
+## 서우 개인 계정(@wellbianx) 연재 2편 타래 — @HCTRUST311 질문 답 (2026-10-22, 서우 캡처)
+
+질문(인증 계정 · X 가 「Probable spam」으로 접어 둠 · 자기 「Agentic Swarm Marketplace」 언급): 「402 → 결제 → 온체인 확인 → 전달, 같은 순환을 우리도 돌린다 · 결제는 쉽고 데이터 주기 전에 결제가 들어왔는지 증명하는 게 진짜 일 · **validated ledger 를 기다리나, facilitator 의 답을 믿나?**」
+판정: **답한다 — 우리 레인 정중앙 기술 질문 · 공개 사양으로 답이 정해져 있다.** 그쪽 제품 · 링크 · 태그 0, 한 번만(되묻기가 영업으로 넘어가면 멈춤).
+근거(공개 사양 paper.wellbianlabs.io/depin Step 06 · Fig 3, 10/22 열람): 게이트웨이가 직접 tx 조회 · nonce/해시 중복 확인 · Destination · Amount · tesSUCCESS · 공통 제출 헬퍼가 `validated: true` 강제 · 부분 결제는 `delivered_amount` 로 실제 전달액 확인 · 원장 미반영이면 409(Retry-After) · 조건 불일치 · 해시 재사용이면 402 · 확정 3~5초.
+- A 추천(가중 279): `Validated ledger, and we check it ourselves. The gateway looks up the tx hash and serves only once it's validated: tesSUCCESS, our destination, and the full delivered_amount, since partial payments don't count. A reused hash gets a 402; not validated yet, a 409 with Retry-After.`
+- B 짧은 판(가중 205): `Validated ledger, checked by our own gateway, not a facilitator's word. tesSUCCESS, right destination, full delivered_amount, hash used once. Not validated yet? 409 and retry. On XRPL that's a few seconds.`
+
