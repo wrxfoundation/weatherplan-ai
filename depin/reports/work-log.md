@@ -2524,3 +2524,4 @@ Thanks Odelia — writing to you at that address today. Mine is support@wellbian
 - **연재 Part 3 8차(10/22, 서우 「효과 20% 약하게」)** — 회화풍 빛 배경 불투명도 .82 → .66. `content/ai-factory-1021/`.
 - **연재 Part 3 9차(10/22, 서우 「Live · Coming 칩 제거」)** — 상태 칩 셋 · 출처 줄 상태 설명 삭제. 상태 구분은 게시 문안(「Coming next」)에만 남김. `content/ai-factory-1021/`.
 - **연재 Part 3 10차(10/22, 서우 「우측 하단에 과하지 않게 AI 데이터센터 건물」)** — 회화풍 데이터센터(Higgsfield 4크레딧)를 오른쪽 아래 빈 모서리에 — 지붕 금빛 · 실루엣 · 가장자리 흐림 · 글씨와 안 겹치게. `content/ai-factory-1021/`.
+- **연재 Part 3 11차(10/22, 서우 「건물 약하게 · 하늘로 디지털 정보 쏘는 효과」)** — 건물 .68 · 지붕에서 솟는 금빛 → 라벤더 점선 기둥(SVG) · 세로판 글씨 줄 뒤는 옅게 + 각주 그림자. `content/ai-factory-1021/`.
