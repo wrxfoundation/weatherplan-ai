@@ -2520,3 +2520,4 @@ Thanks Odelia — writing to you at that address today. Mine is support@wellbian
 - **연재 Part 3 4차(10/21, 서우 「AI factory 는 건물처럼 · intelligence 는 뇌 형태 · 날씨」)** — 정제 = 공장 건물(톱니 지붕 · 서버 동 · 정면 GPU 칩 · 구름 · 번개) · 출력 = 뇌(왼쪽 회로 · 오른쪽 해 · 구름 · 비). `content/ai-factory-1021/`.
 - **연재 Part 3 5차(10/21, 서우 「최상단에서 메인 카피까지 햇살」)** — 배경층 빛줄기 + 위 가운데 빛 번짐, 첫 판은 로고 근처에서 끊겨 길이 · 밝기를 늘려 제목 줄까지. `content/ai-factory-1021/`.
 - **연재 Part 3 6차(10/22, 서우 「인위적 조명 말고 황금빛 · 창문 햇살처럼」)** — 방사형 빛줄기 → 위 왼쪽에서 비스듬히 내려오는 평행 금빛 띠 넷(창살 간격) · 흐림 · 아래로 옅게. `content/ai-factory-1021/`.
+- **연재 Part 3 7차(10/22, 서우 「마니에리스모 화풍처럼 위에서 내려오는 풍부하고 자연스러운 햇살」)** — CSS 빛 대신 Higgsfield 회화풍 하늘 배경(구름 사이 금빛, 16:9 · 9:16, 약 6크레딧) · 아래는 남보라로 덮음 · 칩 · 부제 가독성 보정. `content/ai-factory-1021/`.
