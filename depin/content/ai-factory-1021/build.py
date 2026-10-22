@@ -87,10 +87,11 @@ XCSS = """
 .paint{position:absolute;inset:0;background:url("assets/light-16x9.jpg") center top/cover no-repeat;opacity:.66}  /* 10/22 서우 「20% 약하게」 .82 → .66 */
 .paintfade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(13,11,38,0) 0%,rgba(13,11,38,.10) 24%,rgba(13,11,38,.55) 40%,rgba(13,11,38,.88) 56%,#0D0B26 74%)}
 /* 오른쪽 아래 AI 데이터센터 건물(10/22 서우 「우측 하단에 과하지 않게」) — 같은 회화풍(Higgsfield) 그림을 잘라 배경층 맨 위에. 밝은 부분만 보이게(lighten). */
-.dc{position:absolute;right:-420px;bottom:-178px;width:1320px;height:660px;background:url("assets/datacenter-radar.jpg") center/cover no-repeat;opacity:.78;filter:brightness(1.08) saturate(1.05);
- -webkit-mask-image:radial-gradient(ellipse 82% 92% at 72% 86%,#000 52%,transparent 86%);mask-image:radial-gradient(ellipse 82% 92% at 72% 86%,#000 52%,transparent 86%)}
+.fg{position:absolute;inset:0;z-index:2;pointer-events:none;overflow:hidden}
+.dc{position:absolute;right:-40px;bottom:-84px;width:660px;height:330px;background:url("assets/datacenter-radar.jpg") center/cover no-repeat;opacity:.96;filter:brightness(1.08) saturate(1.05);
+ -webkit-mask-image:radial-gradient(ellipse 88% 96% at 60% 100%,#000 56%,transparent 88%);mask-image:radial-gradient(ellipse 88% 96% at 60% 100%,#000 56%,transparent 88%)}
 /* 데이터센터 지붕에서 하늘로 솟는 디지털 정보(점선 기둥) — 10/22 서우 「하늘로 디지털 정보를 쏘는 듯한 효과」(참고 이미지: 지구에서 솟는 점 기둥). 금빛 → 라벤더로 옅어진다. */
-.streams{position:absolute;right:109px;bottom:399px;width:240px;height:330px;pointer-events:none;mix-blend-mode:screen;opacity:1;filter:drop-shadow(0 0 4px rgba(255,214,150,.5))}
+.streams{position:absolute;right:177px;bottom:210px;width:200px;height:330px;pointer-events:none;mix-blend-mode:screen;opacity:1;filter:drop-shadow(0 0 4px rgba(255,214,150,.5))}
 .streams svg{width:100%;height:100%;display:block}
 .logo,h1,.sub{text-shadow:0 2px 22px rgba(13,11,38,.55)}
 .note,.foot{text-shadow:0 0 6px #0D0B26,0 0 14px #0D0B26}
@@ -105,8 +106,8 @@ XCSS = """
 VCSS = """
 html,body{width:1080px;height:1920px}
 body{padding:30px 44px 0;justify-content:flex-start}
-.dc{width:1080px;height:540px;right:-380px;bottom:-155px}
-.streams{right:43px;bottom:301px;width:200px;height:320px}
+.dc{width:540px;height:270px;right:-60px;bottom:-70px}
+.streams{right:110px;bottom:170px;width:180px;height:320px;-webkit-mask-image:linear-gradient(180deg,#000 0%,#000 64%,rgba(0,0,0,.3) 69%,rgba(0,0,0,.3) 90%,#000 95%);mask-image:linear-gradient(180deg,#000 0%,#000 64%,rgba(0,0,0,.3) 69%,rgba(0,0,0,.3) 90%,#000 95%)}
 .bgfx .g1{width:900px;height:900px;left:-300px;top:-380px}
 .bgfx .g2{width:900px;height:900px;right:-320px;bottom:-360px}
 .bgfx .g3{width:700px;height:600px;left:-160px;top:30%}
@@ -200,7 +201,7 @@ def streams(w=460, h=760, seed=11, n_dots=34, n_lines=9):
              '<stop offset="0" stop-color="#FFE1A6" stop-opacity="0"/><stop offset=".12" stop-color="#FFE1A6" stop-opacity=".9"/>'
              '<stop offset=".45" stop-color="#E9D7FF" stop-opacity=".5"/><stop offset=".8" stop-color="#CDB8FF" stop-opacity=".12"/><stop offset="1" stop-color="#CDB8FF" stop-opacity="0"/></linearGradient>'
              f'<radialGradient id="base" cx=".5" cy="1" r=".5"><stop offset="0" stop-color="#FFD58F" stop-opacity=".55"/><stop offset="1" stop-color="#FFD58F" stop-opacity="0"/></radialGradient></defs>']
-    parts.append(f'<defs><linearGradient id="col" gradientUnits="userSpaceOnUse" x1="0" y1="{h}" x2="0" y2="0"><stop offset="0" stop-color="#FFD58F" stop-opacity="0"/><stop offset=".1" stop-color="#FFD58F" stop-opacity=".42"/><stop offset=".55" stop-color="#E9D7FF" stop-opacity=".16"/><stop offset="1" stop-color="#CDB8FF" stop-opacity="0"/></linearGradient>'
+    parts.append(f'<defs><linearGradient id="col" gradientUnits="userSpaceOnUse" x1="0" y1="{h}" x2="0" y2="0"><stop offset="0" stop-color="#FFD58F" stop-opacity="0"/><stop offset=".1" stop-color="#FFD58F" stop-opacity=".3"/><stop offset=".55" stop-color="#E9D7FF" stop-opacity=".16"/><stop offset="1" stop-color="#CDB8FF" stop-opacity="0"/></linearGradient>'
                  f'<filter id="soft" x="-50%" y="-10%" width="200%" height="120%"><feGaussianBlur stdDeviation="{w*.06:.1f}"/></filter></defs>')
     parts.append(f'<rect x="{w*.22:.0f}" y="0" width="{w*.56:.0f}" height="{h}" fill="url(#col)" filter="url(#soft)"/>')
     parts.append(f'<ellipse cx="{w*.52:.0f}" cy="{h}" rx="{w*.42:.0f}" ry="70" fill="url(#base)"/>')
@@ -234,7 +235,7 @@ def page(lang, vertical=False):
     bn, bd = t["band"]
     css = A.CSS + XCSS + (VCSS if vertical else "")
     return f"""<!doctype html><html lang="{t['lang']}"><head><meta charset="utf-8"><title>wellbian — {t['h1']}</title><style>{css}</style></head><body>
-<div class="bgfx"><div class="paint"></div><div class="paintfade"></div><div class="g1"></div><div class="g2"></div><div class="g3"></div><div class="g4"></div><div class="grid"></div><div class="dc"></div>{streams(240, 330, 11, 34, 8) if not vertical else streams(200, 320, 11, 30, 7)}</div>
+<div class="bgfx"><div class="paint"></div><div class="paintfade"></div><div class="g1"></div><div class="g2"></div><div class="g3"></div><div class="g4"></div><div class="grid"></div>{streams(200, 330, 11, 30, 7) if not vertical else streams(180, 320, 11, 28, 6)}</div>
 <div class="wrap">
 <div class="logo">{A.LOGO}</div>
 <div class="kicker">{t['kicker']}</div>
@@ -249,7 +250,8 @@ def page(lang, vertical=False):
 <div class="ops band glint">{A.ico("coins", "ico-s")}<b>{bn}</b><span>{bd}</span></div>
 <p class="note">{t['note']}</p>
 <p class="foot">{A.nw(t['foot'])}</p>
-</div></body></html>"""
+</div>
+<div class="fg"><div class="dc"></div></div></body></html>"""
 
 if __name__ == "__main__":
     env = dict(os.environ)
