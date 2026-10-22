@@ -46,6 +46,8 @@
 
 - **10/22 21차(서우 「건물 테두리선이 어색 — 배경에 녹게, 지저분해 보여」)**: 오려낸 건물 가장자리의 흰 테두리(배경 제거 때 남은 밝은 픽셀)를 걷어냄 — 알파를 2.5px 안쪽으로 깎고 2.2px 흐림(`assets/datacenter-radar-soft.png`, 원본 `datacenter-radar.png` 는 남겨 둠). 명령: `convert datacenter-radar.png \( +clone -alpha extract -morphology Erode Disk:2.5 -blur 0x2.2 \) -alpha off -compose CopyOpacity -composite datacenter-radar-soft.png`.
 
+- **10/22 22차(서우 「우측 아이콘 좀만 더 옅게」)**: 에칭 불투명도 .5 → .38. 1 · 2편 세로판도 같은 하늘 · 에칭 · 건물 틀로(각 README).
+
 ## 백서 대조 (Company whitepaper v1.0 초안 2026-09-28 · wellbianai.io, 10/21 열람)
 
 | 원글 · 그림 | 백서 · 사이트 | 3편에서 |

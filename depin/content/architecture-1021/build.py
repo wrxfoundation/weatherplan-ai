@@ -227,18 +227,40 @@ h1{margin-top:16px;font-size:74px;line-height:1.04;text-align:center;letter-spac
 .foot{margin-top:14px;max-width:960px;text-align:center;font-size:18px;line-height:1.45;text-wrap:balance}
 """
 
+
+# 세로판 하늘 · 에칭 · 건물(10/22 서우 「앞 연재 2개도 위 구름과 해는 동일, 아이콘 · 하단부는 다른 이미지로 — 세로만」).
+# 하늘은 3편(../ai-factory-1021)과 같은 그림, 아이콘은 에칭 선화, 오른쪽 아래는 이 편의 건물(아파트 — 「방마다 데이터」, 원장 칸 유리 뒤 배경층).
+SKY_V = """
+.bgfx .paint{position:absolute;inset:0;background:url("../ai-factory-1021/assets/light-9x16.jpg") center top/cover no-repeat;opacity:.66}
+.bgfx .paintfade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(13,11,38,0) 0%,rgba(13,11,38,.10) 14%,rgba(13,11,38,.55) 22%,rgba(13,11,38,.88) 30%,#0D0B26 40%)}
+.logo,h1,.sub{text-shadow:0 2px 22px rgba(13,11,38,.55)}
+.logo svg{filter:drop-shadow(0 2px 14px rgba(13,11,38,.5))}
+.sub{color:rgba(244,243,255,.9)}
+.ill{position:absolute;top:16px;right:24px;width:150px;height:150px;pointer-events:none}
+.ill img{width:100%;height:100%;object-fit:contain;display:block;opacity:.38;filter:drop-shadow(0 0 4px rgba(163,155,255,.16))}
+.fg{position:absolute;inset:0;z-index:2;pointer-events:none;overflow:hidden}
+.bgfx .bld{position:absolute;right:-24px;bottom:-14px;width:330px;height:300px;border-radius:0;background:url("assets/apartment.png") center bottom/contain no-repeat;filter:brightness(.7) saturate(.85) contrast(.96);opacity:.62;-webkit-mask-image:linear-gradient(0deg,transparent 0%,#000 14%);mask-image:linear-gradient(0deg,transparent 0%,#000 14%)}
+.bgfx .bldhaze{position:absolute;right:-120px;bottom:-110px;width:560px;height:380px;border-radius:50%;background:radial-gradient(closest-side,rgba(255,196,120,.10),rgba(163,120,255,.06) 55%,rgba(163,120,255,0))}
+body{padding:30px 44px 0;justify-content:flex-start}
+.foot{align-self:flex-start;text-align:left;max-width:640px;margin-left:6px;text-shadow:0 0 6px #0D0B26,0 0 14px #0D0B26}
+"""
+V_ILL = {"supply": "etch-supply", "demand": "etch-demand"}  # 원장 칸은 2×2 항목과 겹쳐서 아이콘 없음(etch-ledger.png 는 남겨 둠)
+
+def ill_v(name):
+    return f'<div class="ill"><img src="assets/{V_ILL[name]}.png" alt=""></div>'
+
 def page_v(lang):
     t = T[lang]
     tiles, joins = [], []
     for cls, eyebrow, title, steps, flow in t["tiles"]:
         rows = "".join(f'<div class="vstep">{ico(STEP_ICONS[cls][i])}<div><b>{nw(b)}</b><span class="d">{nw(d)}</span><span class="n">{nw(n.replace(chr(10), chr(32)))}</span></div></div>' for i, (b, d, n) in enumerate(steps))
-        tiles.append(f'<section class="vtile glass glint {cls}"><div class="eyebrow">{eyebrow}</div><h2>{title}</h2><div class="vsteps">{rows}</div></section>')
+        tiles.append(f'<section class="vtile glass glint {cls}">{ill_v(cls)}<div class="eyebrow">{eyebrow}</div><h2>{title}</h2><div class="vsteps">{rows}</div></section>')
         joins.append(f'<div class="{cls[0]}"><i></i>{flow}</div>')
     feats = "".join(f'<div class="feat">{ico(FEAT_ICONS[i])}<div><b>{a}</b><span class="tag">{b}</span><span class="n">{c}</span></div></div>' for i, (a, b, c) in enumerate(t["feats"]))
     ops_name, ops_desc = t["ops"]
     h1 = t["h1"].replace(". ", ".<br>", 1)
-    return f"""<!doctype html><html lang="{t['lang']}"><head><meta charset="utf-8"><title>wellbian — {t['h1']}</title><style>{CSS}{VCSS}</style></head><body>
-<div class="bgfx"><div class="g1"></div><div class="g2"></div><div class="g3"></div><div class="g4"></div><div class="grid"></div></div>
+    return f"""<!doctype html><html lang="{t['lang']}"><head><meta charset="utf-8"><title>wellbian — {t['h1']}</title><style>{CSS}{VCSS}{SKY_V}</style></head><body>
+<div class="bgfx"><div class="paint"></div><div class="paintfade"></div><div class="g1"></div><div class="g2"></div><div class="g3"></div><div class="g4"></div><div class="grid"></div><div class="bldhaze"></div><div class="bld"></div></div>
 <div class="wrap">
 <div class="logo">{LOGO}</div>
 <h1>{h1}</h1><p class="sub">{t['sub']}</p>
@@ -247,7 +269,7 @@ def page_v(lang):
 <div class="ops glint">{ico("vault", "ico-s")}<b>{ops_name}</b><span class="nw">{ops_desc}</span></div>
 <div class="join2"><i></i><i></i></div>
 <div class="vledger glass glint"><div class="hd"><h3>{t['ledger']}</h3><p>{t['ledger_sub']}</p></div><div class="vfeats">{feats}</div></div>
-<p class="foot">{t['foot']}</p>
+<p class="foot">{nw(t['foot'])}</p>
 </div></body></html>"""
 
 if __name__ == "__main__":

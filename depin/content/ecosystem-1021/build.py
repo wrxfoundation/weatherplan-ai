@@ -1,7 +1,7 @@
 """wellbian 백서 Fig 0 — 3주체 선순환 구조 그래픽 (2026-10-21).
 
 서우 「아래 내용도 동일한 톤앤매너로」 — 구조 그래픽 v3(`../architecture-1021/`)와 같은 바탕 · 유리 타일 · 보라 포인트 · 모서리 반짝임.
-Usage: python3 build.py [en|ko …] → ecosystem-{ko,en}.html · .png(1920×1080 @2x). PNG → JPEG 변환은 README.
+Usage: python3 build.py [en|ko|en-9x16 …] → ecosystem-<인자>.html · .png(가로 1920×1080 · 세로 1080×1920, @2x). PNG → JPEG 변환은 README.
 """
 import pathlib, subprocess, os, sys
 
@@ -162,11 +162,92 @@ def page(lang):
 <p class="foot">{t['foot']}</p>
 </div></body></html>"""
 
+
+# 세로 9:16(1080×1920) — 10/22 서우 「앞 연재 2개도 위 구름과 해는 동일, 아이콘 · 하단부는 다른 이미지로 — 세로만」.
+# 같은 문구(T)를 세로로: 머리 → 기여자 → (원시 측정값 ↓ · 기여 보상 ↑) → 허브 → (정제 메타데이터 ↓ · 데이터 이용료 ↑ 매출) → 제조사 → 순환 한 줄 → 범례 → 각주.
+# 하늘은 3편(../ai-factory-1021)과 같은 그림, 아이콘은 에칭 선화, 오른쪽 아래는 이 편의 건물(주택 · 사무실 · 상점 — 「방이 데이터를 만든다」, 유리 뒤 배경층).
+VCSS = """
+html,body{width:1080px;height:1920px}
+body{padding:30px 44px 0;justify-content:flex-start}
+.bgfx .g1{width:900px;height:900px;left:-300px;top:-380px}
+.bgfx .g2{width:900px;height:900px;right:-320px;bottom:-360px}
+.bgfx .g3{width:700px;height:600px;left:-160px;top:30%}
+.bgfx .g4{width:700px;height:600px;right:-200px;top:48%}
+.bgfx .g5{width:600px;height:520px;left:10%;top:70%}
+.bgfx .paint{inset:0;border-radius:0;background:url("../ai-factory-1021/assets/light-9x16.jpg") center top/cover no-repeat;opacity:.66}
+.bgfx .paintfade{inset:0;border-radius:0;background:linear-gradient(180deg,rgba(13,11,38,0) 0%,rgba(13,11,38,.10) 14%,rgba(13,11,38,.55) 22%,rgba(13,11,38,.88) 30%,#0D0B26 40%)}
+.bgfx .bldhaze{width:560px;height:380px;right:-120px;bottom:-110px;background:radial-gradient(closest-side,rgba(255,196,120,.10),rgba(163,120,255,.06) 55%,rgba(163,120,255,0))}
+.bgfx .bld{right:-40px;bottom:-12px;width:400px;height:280px;border-radius:0;background:url("assets/homes.png") center bottom/contain no-repeat;filter:brightness(.7) saturate(.85) contrast(.96);opacity:.62;-webkit-mask-image:linear-gradient(0deg,transparent 0%,#000 14%);mask-image:linear-gradient(0deg,transparent 0%,#000 14%)}
+.logo{height:52px}
+.logo svg{width:143px;height:52px;filter:drop-shadow(0 2px 14px rgba(13,11,38,.5))}
+.kicker{margin-top:16px;font-size:15px;color:#E6DCFF;background:rgba(13,11,38,.58);border-color:rgba(205,184,255,.65);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+h1{margin-top:12px;font-size:70px;line-height:1.04;text-align:center;letter-spacing:-.03em}
+.sub{margin-top:12px;max-width:960px;font-size:24px;line-height:1.4;color:rgba(244,243,255,.9)}
+.logo,h1,.sub{text-shadow:0 2px 22px rgba(13,11,38,.55)}
+.vtile{width:100%;margin-top:22px;border-radius:18px;padding:20px 30px 22px;position:relative}
+.vtile h2{margin-top:10px;font-size:36px}
+.vtile .eyebrow{font-size:15px}
+.vtile .items{margin-top:12px;margin-right:150px}
+.vtile .items li{font-size:22px;padding:8px 0 8px 20px}
+.vtile .items li::before{top:19px}
+.vtile .n{margin-top:10px;font-size:18.5px;line-height:1.4}
+.vtile .tech{margin-top:0;padding-top:12px;flex-direction:row;flex-wrap:wrap;align-items:center;gap:8px 10px}
+.vtile .tech .tl{font-size:13px}
+.vtile .tech .tag{font-size:16px}
+.ill{position:absolute;top:14px;right:22px;width:150px;height:150px;pointer-events:none}
+.ill img{width:100%;height:100%;object-fit:contain;display:block;opacity:.38;filter:drop-shadow(0 0 4px rgba(163,155,255,.16))}
+.vlane{width:100%;margin-top:10px;display:grid;grid-template-columns:1fr 1fr;align-items:center;margin-bottom:-12px}
+.vlane div{display:flex;align-items:center;justify-content:center;gap:12px}
+.vlane svg{width:22px;height:46px;display:block;overflow:visible}
+.vlane .lbl{font-size:19px;text-align:left}
+.vlane .lbl.value.money{font-size:20px}
+.vlane .rev{margin:0 0 0 2px;font-size:13px}
+.vloop{margin-top:22px;display:flex;align-items:center;gap:12px;font-size:19px;line-height:1.4;color:var(--t2);background:rgba(23,20,58,.62);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid rgba(205,184,255,.42);border-radius:10px;padding:10px 16px;max-width:992px}
+.vloop svg{width:28px;height:28px;flex:none}
+.legend{margin-top:14px;font-size:16px;align-self:flex-start;margin-left:6px}
+.foot{margin-top:10px;font-size:16px;line-height:1.45;align-self:flex-start;text-align:left;max-width:600px;margin-left:6px;text-shadow:0 0 6px #0D0B26,0 0 14px #0D0B26}
+"""
+V_ILL = {"provider": "etch-contrib", "hub": "etch-hub", "consumer": "etch-makers"}
+DOWN = '<svg viewBox="0 0 22 46"><line x1="11" y1="2" x2="11" y2="34" stroke="#A39BFF" stroke-width="2"/><polygon points="11,44 5,32 17,32" fill="#A39BFF"/></svg>'
+UP = '<svg viewBox="0 0 22 46"><line x1="11" y1="44" x2="11" y2="12" stroke="#CDB8FF" stroke-width="2" stroke-dasharray="6 6"/><polygon points="11,2 5,14 17,14" fill="#CDB8FF"/></svg>'
+LOOP_ICON = '<svg viewBox="0 0 28 28" fill="none" stroke="#CDB8FF" stroke-width="2" stroke-dasharray="4 4" stroke-linecap="round"><path d="M22 9a10 10 0 1 0 1.6 8"/><path d="M23.5 3.5V9.5H17.5" stroke-dasharray="none"/></svg>'
+
+def page_v(lang):
+    t = T[lang]
+    parts = []
+    for i, (cls, eyebrow, title, items, note, tech) in enumerate(t["tiles"]):
+        lis = "".join(f"<li>{nw(x)}</li>" for x in items)
+        tags = "".join(f'<span class="tag">{x}</span>' for x in tech)
+        parts.append(f'<section class="vtile tile glass glint {cls}"><div class="ill"><img src="assets/{V_ILL[cls]}.png" alt=""></div>'
+                     f'<div class="eyebrow">{eyebrow}</div><h2>{title}</h2><ul class="items">{lis}</ul><p class="n">{note}</p>'
+                     f'<div class="tech"><span class="tl">{t["tech"]}</span>{tags}</div></section>')
+        if i < 2:
+            top, bottom, rev = t["lanes"][i]
+            money = f'<span class="rev">{rev}</span>' if rev else ""
+            parts.append(f'<div class="vlane"><div>{DOWN}<span class="lbl data">{top}</span></div>'
+                         f'<div>{UP}<span class="lbl value{" money" if rev else ""}">{bottom}</span>{money}</div></div>')
+    solid, dashed = t["legend"]
+    legend = (f'<div class="legend"><span><svg viewBox="0 0 40 4"><line x1="0" y1="2" x2="40" y2="2" stroke="#A39BFF" stroke-width="2"/></svg>{solid}</span>'
+              f'<span><svg viewBox="0 0 40 4"><line x1="0" y1="2" x2="40" y2="2" stroke="#CDB8FF" stroke-width="2" stroke-dasharray="6 6"/></svg>{dashed}</span></div>')
+    h1 = t["h1"].replace(". ", ".<br>", 1)
+    return f"""<!doctype html><html lang="{t['lang']}"><head><meta charset="utf-8"><title>wellbian — {t['h1']}</title><style>{CSS}{VCSS}</style></head><body>
+<div class="bgfx"><div class="paint"></div><div class="paintfade"></div><div class="g1"></div><div class="g2"></div><div class="g3"></div><div class="g4"></div><div class="g5"></div><div class="grid"></div><div class="bldhaze"></div><div class="bld"></div></div>
+<div class="wrap">
+<div class="logo">{LOGO}</div>
+<div class="kicker">{t['kicker']}</div>
+<h1>{h1}</h1><p class="sub">{t['sub']}</p>
+{"".join(parts)}
+<div class="vloop">{LOOP_ICON}<span>{t['loop']}</span></div>
+{legend}
+<p class="foot">{nw(t['foot'])}</p>
+</div></body></html>"""
+
 if __name__ == "__main__":
     env = dict(os.environ)
     env["NODE_PATH"] = subprocess.run(["npm", "root", "-g"], capture_output=True, text=True).stdout.strip()
-    for lang in (sys.argv[1:] or ("en", "ko")):
-        html = HERE / f"ecosystem-{lang}.html"
-        html.write_text(page(lang), encoding="utf-8")
-        subprocess.run(["node", str(HERE / "shot.js"), str(html), str(HERE / f"ecosystem-{lang}.png"), "1920"], check=True, env=env)
-        print("built", lang)
+    for arg in (sys.argv[1:] or ("en", "ko")):
+        lang, _, fmt = arg.partition("-")          # en · ko · en-9x16
+        html = HERE / f"ecosystem-{arg}.html"
+        html.write_text(page_v(lang) if fmt == "9x16" else page(lang), encoding="utf-8")
+        subprocess.run(["node", str(HERE / "shot.js"), str(html), str(HERE / f"ecosystem-{arg}.png"), "1080" if fmt == "9x16" else "1920"], check=True, env=env)
+        print("built", arg)
