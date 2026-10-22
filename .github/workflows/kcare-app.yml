@@ -11,6 +11,8 @@ on:
 jobs:
   verify:
     runs-on: ubuntu-latest
+    # 보통 10분 안에 끝난다 — 어딘가 멈추면 GitHub 기본값(6시간)까지 기다리지 않고 끊는다
+    timeout-minutes: 30
     defaults:
       run:
         working-directory: kcare-app
@@ -37,7 +39,9 @@ jobs:
       # 실행 파일은 여기서 따로 받는다.
       # 버전을 playwright-core 와 정확히 맞춰야 한다 — 어긋나면 설치된 리비전과
       # playwright-core 가 찾는 리비전이 달라서 "executable doesn't exist" 로 죽는다.
+      # 내려받기가 멈추는 일이 있었다 (2026-10-22 — 6시간 뒤 취소) — 10분이면 끊어서 바로 다시 돌릴 수 있게
       - name: 브라우저 설치
+        timeout-minutes: 10
         run: npx --yes playwright@1.62.1 install --with-deps chromium
 
       - name: 서버 기동
