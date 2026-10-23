@@ -15,6 +15,7 @@ import { CHP_STATS, CHP_BY_OP, CHP_TOP_PLANTS, CHP_META } from '../data/chpPlant
 import { NUCLEAR_FLEET, NUCLEAR_META } from '../data/plants.js'
 import { NEW_PLANTS_2025, NEW_PLANTS_2025_TOTALS, NEW_PLANTS_2025_META } from '../data/newPlants2025.js'
 import { useMapLang } from '../i18n/mapLang.js'
+import { sidoT } from '../i18n/places.js'
 
 const TITLE = '국내 데이터센터 통계 — 수도권 집중과 전력 수요 · AI InfraMap'
 const DESC =
@@ -80,7 +81,10 @@ function SplitBar({ title, titleEn, a, b, note, noteEn, en = false }) {
 
 /* 단일색 수평 바 — 크기 비교, 값 라벨 상시 노출.
  * total(또는 share) 지정 시 각 행에 전체 대비 비중 (n%)을 병기 — 라벨은 1줄 고정. */
-function HBars({ title, titleEn, bars, note, noteEn, unit = '%', unitEn, total, share = false, en = false }) {
+function HBars({ title, titleEn, bars, note, noteEn, unit = '%', unitEn, total, share = false, en: enProp }) {
+  // 호출부 다수가 en을 안 넘겨 EN 모드에서도 KO 라벨이 나오던 문제 — 언어 스토어를 직접 읽는다(명시 prop 우선)
+  const langEn = useMapLang() === 'en'
+  const en = enProp ?? langEn
   const max = Math.max(...bars.map((b) => b.value))
   const denom = total ?? (share ? bars.reduce((s, b) => s + b.value, 0) : 0)
   const showShare = (share || total != null) && denom > 0
@@ -121,7 +125,7 @@ export default function StatsPage() {
     }
     return [...by.entries()]
       .sort((a, b) => b[1] - a[1])
-      .map(([label, value]) => ({ label, value }))
+      .map(([label, value]) => ({ label, labelEn: sidoT(label, true), value }))
   }, [])
 
   useEffect(() => {
@@ -228,7 +232,7 @@ export default function StatsPage() {
           />
           <HBars
             title={en ? `Licensed 2024+ regional distribution — non-capital ${GEN_RECENT_NONCAPITAL_PCT}%` : `허가 2024+ 지역 분포 — 비수도권 ${GEN_RECENT_NONCAPITAL_PCT}%`}
-            bars={GEN_RECENT_BY_SIDO.map((s) => ({ label: s.sido, value: s.count, unit: en ? '' : '건' }))}
+            bars={GEN_RECENT_BY_SIDO.map((s) => ({ label: s.sido, labelEn: sidoT(s.sido, true), value: s.count, unit: en ? '' : '건' }))}
             unit={en ? '' : '건'}
             share
             note={en
@@ -318,7 +322,7 @@ export default function StatsPage() {
           </div>
           <HBars
             title={en ? 'Top 2025 new capacity by sido (MW)' : '시도별 2025 신규 설비용량 상위 (MW)'}
-            bars={NEW_PLANTS_2025.slice(0, 12).map((r) => ({ label: r.sido, value: Math.round(r.capacityKw / 1000) }))}
+            bars={NEW_PLANTS_2025.slice(0, 12).map((r) => ({ label: r.sido, labelEn: sidoT(r.sido, true), value: Math.round(r.capacityKw / 1000) }))}
             unit="MW"
             total={NEW_PLANTS_2025_TOTALS.totalMw}
             note={en

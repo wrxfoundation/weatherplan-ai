@@ -36,18 +36,17 @@ import { NEW_PLANTS_2025 } from '../data/newPlants2025.js'
 import { headroomFor, parcelAt, smpToday, fuelMixNow, epsisCapacity } from '../data/liveApi.js'
 import { EXCLUSION_LAYERS, hasExclusionData, anyExclusionData, exclusionFeatureCollection } from '../score/exclusions.js'
 import { useMapLang } from '../i18n/mapLang.js'
+import { DARK_BASE_TILES } from './basemap.js'
+import { sidoT, placeT, facilityName } from '../i18n/places.js'
 
 const SIDO_LIST = Object.entries(SIDO_CENTROIDS).map(([sido, [lat, lng]]) => ({ sido, lat, lng }))
 
-const DARK_TILES = 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
-const TILE_ATTRIBUTION =
-  '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>'
 // vworld 한글 기본도·위성 — 브라우저 직접 로드(도메인 등록키). 미설정 시 다크만 노출.
 const VW_KEY = import.meta.env.VITE_VWORLD_KEY
 const vwUrl = (layer, ext) => `https://api.vworld.kr/req/wmts/1.0.0/${VW_KEY}/${layer}/{z}/{y}/{x}.${ext}`
 const VW_ATTR = '&copy; <a href="https://www.vworld.kr">국토교통부 브이월드</a>'
 const BASE_MAPS = {
-  dark: { label: '다크', labelEn: 'Dark', needsKey: false, tiles: [{ url: DARK_TILES, attr: TILE_ATTRIBUTION }] },
+  dark: { label: '다크', labelEn: 'Dark', needsKey: false, tiles: DARK_BASE_TILES },
   vbase: { label: '한글', labelEn: 'Korean', needsKey: true, tiles: [{ url: vwUrl('Base', 'png'), attr: VW_ATTR }] },
   sat: { label: '위성', labelEn: 'Satellite', needsKey: true, tiles: [{ url: vwUrl('Satellite', 'jpeg'), attr: VW_ATTR }, { url: vwUrl('Hybrid', 'png'), attr: VW_ATTR }] },
 }
@@ -504,7 +503,7 @@ export default function MapPage({ power = false }) {
     }
   }, [showSubs, en]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  // 베이스맵 전환 — 다크(CartoDB) / 한글 일반(vworld) / 위성(vworld). 타일은 최하단.
+  // 베이스맵 전환 — 다크(Esri Dark Gray) / 한글 일반(vworld) / 위성(vworld). 타일은 최하단.
   useEffect(() => {
     const map = mapObj.current
     if (!map) return
@@ -512,7 +511,7 @@ export default function MapPage({ power = false }) {
     baseTileRef.current = []
     const conf = BASE_MAPS[baseMap] || BASE_MAPS.dark
     for (const t of conf.tiles) {
-      const layer = L.tileLayer(t.url, { attribution: t.attr, maxZoom: 19, minZoom: 6 })
+      const layer = L.tileLayer(t.url, { attribution: t.attr, maxZoom: 19, minZoom: 6, ...(t.maxNativeZoom ? { maxNativeZoom: t.maxNativeZoom } : {}) })
       layer.addTo(map)
       layer.bringToBack()
       baseTileRef.current.push(layer)
@@ -541,7 +540,7 @@ export default function MapPage({ power = false }) {
           bubblingMouseEvents: false,
         })
           .bindTooltip(
-            `<div class="dc-hovercard"><strong>#${i + 1} ${s.name}</strong> · ${s.sido}<br/>${t('정적 근거', 'static basis')} <b>${s.score}/${s.max}</b><br/><span class="muted">${recoReasons(s).join(' · ')}</span><br/><span class="muted">${t('클릭 → 전체 분석', 'Click → full analysis')}</span></div>`,
+            `<div class="dc-hovercard"><strong>#${i + 1} ${s.name}</strong> · ${sidoT(s.sido, en)}<br/>${t('정적 근거', 'static basis')} <b>${s.score}/${s.max}</b><br/><span class="muted">${recoReasons(s).join(' · ')}</span><br/><span class="muted">${t('클릭 → 전체 분석', 'Click → full analysis')}</span></div>`,
             { direction: 'top', offset: [0, -12], className: 'dc-hovercard', opacity: 1 },
           )
           .on('click', () => {
@@ -912,7 +911,7 @@ export default function MapPage({ power = false }) {
           bubblingMouseEvents: false,
         })
           .bindTooltip(
-            `<div class="dc-hovercard"><strong>${s.sido}</strong> · ${t('계통 여유용량', 'Grid headroom')}<br/>${has ? `<b>${mw.toLocaleString()}MW</b>${h?.substNm ? t(` · ${h.substNm}변전소 최대 여유`, ` · ${h.substNm} substation max headroom`) : ''}${h?.rows ? `<br/><span style="opacity:.75">${t(`관내 선로 ${h.rows}개 조회 (한전 분산전원)`, `${h.rows} lines in area queried (한전 distributed generation)`)}</span>` : ''}` : t('연동 대기 (KEPCO env)', 'data pending (KEPCO env)')}</div>`,
+            `<div class="dc-hovercard"><strong>${sidoT(s.sido, en)}</strong> · ${t('계통 여유용량', 'Grid headroom')}<br/>${has ? `<b>${mw.toLocaleString()}MW</b>${h?.substNm ? t(` · ${h.substNm}변전소 최대 여유`, ` · ${h.substNm} substation max headroom`) : ''}${h?.rows ? `<br/><span style="opacity:.75">${t(`관내 선로 ${h.rows}개 조회 (한전 분산전원)`, `${h.rows} lines in area queried (KEPCO distributed generation)`)}</span>` : ''}` : t('연동 대기 (KEPCO env)', 'data pending (KEPCO env)')}</div>`,
             { direction: 'top', offset: [0, -r], className: 'dc-hovercard', opacity: 1 },
           )
           .on('click', () => {
@@ -954,7 +953,7 @@ export default function MapPage({ power = false }) {
           bubblingMouseEvents: false,
         })
           .bindTooltip(
-            `<div class="dc-hovercard"><strong>${r.sido}</strong> · ${t('DC 공급 승인율', 'DC supply approval rate')} <b>${pct}%</b> (${approvalLabel(pct, en)})<br/>${t('가능', 'approved')} ${Math.round(r.a.able).toLocaleString()}MW · ${t('불가', 'rejected')} ${Math.round(r.a.unable).toLocaleString()}MW<br/><span style="opacity:.75">${t('계통영향평가 1차 기술검토 · 2026.3.27 한전', 'Grid impact assessment 1st technical review · 2026.3.27 한전')}</span></div>`,
+            `<div class="dc-hovercard"><strong>${sidoT(r.sido, en)}</strong> · ${t('DC 공급 승인율', 'DC supply approval rate')} <b>${pct}%</b> (${approvalLabel(pct, en)})<br/>${t('가능', 'approved')} ${Math.round(r.a.able).toLocaleString()}MW · ${t('불가', 'rejected')} ${Math.round(r.a.unable).toLocaleString()}MW<br/><span style="opacity:.75">${t('계통영향평가 1차 기술검토 · 2026.3.27 한전', 'Grid impact assessment 1st technical review · 2026.3.27 KEPCO')}</span></div>`,
             { direction: 'top', offset: [0, -rad], className: 'dc-hovercard', opacity: 1 },
           )
           .on('click', () => {
@@ -1132,7 +1131,7 @@ export default function MapPage({ power = false }) {
         }
         // bubblingMouseEvents:false — 마커 클릭이 맵 클릭(지점 분석)으로 전파되는 것 방지
         const m = L.marker([lat, lng], { icon: markerIcon(f, isoView), bubblingMouseEvents: false })
-        const info = `${f.name} · ${t(STATUS_LABEL[f.status] ?? f.status, STATUS_LABEL_EN[f.status] ?? f.status)}${f.power_mw_public != null ? ` · ${f.power_mw_public}MW` : ''}`
+        const info = `${facilityName(f, en)} · ${t(STATUS_LABEL[f.status] ?? f.status, STATUS_LABEL_EN[f.status] ?? f.status)}${f.power_mw_public != null ? ` · ${f.power_mw_public}MW` : ''}`
         // 라벨 ON 방향 규칙: 그룹 분산 마커는 분산 각도의 바깥쪽으로 방사(서로 반대 방향으로
         // 벌어져 충돌 최소화), 단독 마커는 좌우 교차 — / OFF: 호버 툴팁
         let dir
@@ -1156,7 +1155,7 @@ export default function MapPage({ power = false }) {
         // 줌 13 미만에서 그룹(중심점 공유)은 개별 칩이 물리적으로 못 벌어짐 —
         // 대표 멤버 하나에만 "시군구 · N곳" 요약 라벨을 단다
         const groupSummary = group.length > 1 && !denseLabels
-        const labelText = groupSummary ? t(`${f.sido} ${f.sigungu ?? ''} · ${group.length}곳`, `${f.sido} ${f.sigungu ?? ''} · ${group.length} sites`).trim() : info
+        const labelText = groupSummary ? t(`${f.sido} ${f.sigungu ?? ''} · ${group.length}곳`, `${placeT(f.sido, f.sigungu, true)} · ${group.length} sites`).trim() : info
         const skipLabel = groupSummary && gi !== 0
         // 라벨 OFF: 호버 시 요약 카드 (클릭 없이 대략 정보) / 라벨 ON: 상시 칩
         m.bindTooltip(
@@ -1482,7 +1481,7 @@ export default function MapPage({ power = false }) {
                       {POWER_BALANCE[regionInfo.sido] ? (
                         <>
                           <strong>{POWER_BALANCE[regionInfo.sido].ratio}%</strong>
-                          {` · ${selfSufficiencyLabel(POWER_BALANCE[regionInfo.sido].ratio)}`}
+                          {` · ${selfSufficiencyLabel(POWER_BALANCE[regionInfo.sido].ratio, en)}`}
                         </>
                       ) : (
                         <span className="muted">{t('데이터 없음', 'No data')}</span>
@@ -1613,7 +1612,7 @@ export default function MapPage({ power = false }) {
                 <strong style={{ color: 'var(--accent)' }}>
                   {(Object.values(GRID_HEADROOM).reduce((s, v) => s + (typeof v === 'number' ? v : v?.mw || 0), 0) / 1000).toFixed(1)}GW
                 </strong>{' '}
-                {t(`(17개 시도 · 한전 연계가능용량 ${GRID_HEADROOM_META.year} 전망). 위 MW는 개별 공개 시설 합(시장 총량 아님).`, `(17 provinces · 한전 interconnectable capacity ${GRID_HEADROOM_META.year} outlook). The MW above is a sum of individually disclosed facilities (not a market total).`)}
+                {t(`(17개 시도 · 한전 연계가능용량 ${GRID_HEADROOM_META.year} 전망). 위 MW는 개별 공개 시설 합(시장 총량 아님).`, `(17 provinces · KEPCO interconnectable capacity ${GRID_HEADROOM_META.year} outlook). The MW above is a sum of individually disclosed facilities (not a market total).`)}
               </p>
               <p className="map-hint">
                 <LineIcon name="target" size={14} /> <strong>{t('지도 빈 곳을 클릭', 'Click empty space on the map')}</strong> → {t('부지 분석(전력·냉각·리스크 점수)', 'site analysis (power · cooling · risk score)')} · <strong>{t('시설 마커 클릭', 'Click a facility marker')}</strong> → {t('상세 정보', 'details')}
@@ -1656,10 +1655,9 @@ export default function MapPage({ power = false }) {
                   <button key={f.id} type="button" className="facility-row" onClick={() => focusFacility(f)}>
                     <span className={`dot ${f.status === 'delayed' ? 'planned' : f.status}`} />
                     <span>
-                      <span className="name">{f.name}</span>
+                      <span className="name">{facilityName(f, en)}</span>
                       <span className="meta">
-                        {f.sido}
-                        {f.sigungu ? ` ${f.sigungu}` : ''} · {t(STATUS_LABEL[f.status] ?? f.status, STATUS_LABEL_EN[f.status] ?? f.status)}
+                        {placeT(f.sido, f.sigungu, en)} · {t(STATUS_LABEL[f.status] ?? f.status, STATUS_LABEL_EN[f.status] ?? f.status)}
                         {f.power_mw_public != null && ` · ${f.power_mw_public}MW`}
                         {isCoarseGeocode(f.geocode_level) && <span className="approx-tag" title={t('좌표가 시군구 중심점 — 실제 부지 아님', 'coordinates are sigungu centroid — not the actual site')}>{t('위치 근사', 'approx. location')}</span>}
                       </span>

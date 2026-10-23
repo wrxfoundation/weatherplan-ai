@@ -344,7 +344,9 @@ export default function CalcPage() {
 
   // 억원 표기 — 10억 미만은 소수1, 이상은 정수
   const eokVal = (won) => won / 1e8
-  const eokFmt = (e) => (e >= 10 ? `${Math.round(e).toLocaleString()}억원` : `${e.toFixed(1)}억원`)
+  // EN: 1억원 = ₩100M → ₩0.1B 단위로 환산
+  const eokFmt = (e) =>
+    lang === 'en' ? `₩${(e / 10).toFixed(e >= 100 ? 0 : 2)}B` : e >= 10 ? `${Math.round(e).toLocaleString()}억원` : `${e.toFixed(1)}억원`
 
   const shortLabel = () => {
     const g = gpu.label.replace('NVIDIA ', '').replace('AMD ', '').split(' ')[0]
@@ -579,7 +581,7 @@ export default function CalcPage() {
               {lang === 'en' ? (
                 <>
                   {gpu.label} × {count.toLocaleString()} × overhead {work.overhead} = IT load → PUE (
-                  {cooling.label.split(' ')[0]} ≈ {cooling.pue}, editable) → with redundancy margin, this is the{' '}
+                  {(CT[cooling.label] ?? cooling.label).split(' ')[0]} ≈ {cooling.pue}, editable) → with redundancy margin, this is the{' '}
                   <strong>intake demand in contract-power terms</strong>. Sites with good free-cooling lower PUE and run the
                   same GPUs on less power (climate layer, planned M3).
                 </>

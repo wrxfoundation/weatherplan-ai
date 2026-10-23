@@ -6,10 +6,10 @@ import { revgeoFor } from '../data/liveApi.js'
 import { blurbFor } from '../content/facilityBlurbs.js'
 import { useMapLang } from '../i18n/mapLang.js'
 import LineIcon from '../components/LineIcon.jsx'
+import { placeT, placeKeyT, facilityName, typeT } from '../i18n/places.js'
 
 // EN 게이팅 사전 — 상태·유형·좌표기준·출처유형은 통제 어휘라 dict로 매핑(데이터값은 KO 유지).
 const STATUS_EN = { operating: 'Operating', construction: 'Construction', planned: 'Planned', delayed: 'Delayed', cancelled: 'Cancelled' }
-const TYPE_EN = { 코로케이션: 'Colocation', 클라우드: 'Cloud', 'AI 특화': 'AI-specialized', 엔터프라이즈: 'Enterprise', 금융: 'Finance' }
 const GEOCODE_EN = {
   road: 'Road-name address (verified)',
   parcel: 'Parcel (operator public address)',
@@ -33,7 +33,7 @@ export default function FacilityCard({ facility: f, compact = false }) {
   }, [f.id, f.lat, f.lng, compact])
   const dongAddr = addr?.parcel || addr?.road || null
   const statusLabel = en ? STATUS_EN[f.status] ?? STATUS_LABEL[f.status] ?? f.status : STATUS_LABEL[f.status] ?? f.status
-  const typeLabel = en ? TYPE_EN[f.type] ?? f.type : f.type
+  const typeLabel = typeT(f.type, en)
   const geocodeLabel = en ? GEOCODE_EN[f.geocode_level] ?? GEOCODE_LABEL[f.geocode_level] : GEOCODE_LABEL[f.geocode_level]
   const sourceType = en ? SOURCE_TYPE_EN[f.source_type] ?? f.source_type : f.source_type
   return (
@@ -44,8 +44,9 @@ export default function FacilityCard({ facility: f, compact = false }) {
         {f.needs_verify && <span className="badge verify">{en ? 'Needs verification' : '검증 필요'}</span>}
       </div>
 
-      <h3>{f.name}</h3>
-      {f.name_en && <div className="name-en">{f.name_en}</div>}
+      <h3>{facilityName(f, en)}</h3>
+      {/* 보조 표기: KO 모드는 영문명, EN 모드는 원어(한글) 정식명 — 현지 식별용 */}
+      {en ? f.name_en && f.name !== f.name_en && <div className="name-en">{f.name}</div> : f.name_en && <div className="name-en">{f.name_en}</div>}
 
       {(() => {
         const b = blurbFor(f, en)
@@ -74,10 +75,7 @@ export default function FacilityCard({ facility: f, compact = false }) {
         </div>
         <div className="spec-cell">
           <div className="k">{en ? 'Location' : '위치'}</div>
-          <div className="v">
-            {f.sido}
-            {f.sigungu ? ` ${f.sigungu}` : ''}
-          </div>
+          <div className="v">{placeT(f.sido, f.sigungu, en)}</div>
         </div>
         <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
           <div className="k">{en ? 'Address (parcel · vworld reverse geocoding)' : '주소 (지번 · vworld 리버스 지오코딩)'}</div>
@@ -87,7 +85,7 @@ export default function FacilityCard({ facility: f, compact = false }) {
             ) : f.address_public ? (
               f.address_public
             ) : compact ? (
-              `${f.sido}${f.sigungu ? ' ' + f.sigungu : ''}`
+              placeT(f.sido, f.sigungu, en)
             ) : (
               <span className="badge verify">
                 {en
@@ -103,7 +101,7 @@ export default function FacilityCard({ facility: f, compact = false }) {
             <div className="spec-cell" style={{ gridColumn: '1 / -1' }}>
               <div className="k">
                 {en
-                  ? `Land-price change · ${lp.scope} (${lp.period} monthly, KOSIS)`
+                  ? `Land-price change · ${placeKeyT(lp.scope, true)} (${lp.period} monthly, KOSIS)`
                   : `지가변동률 · ${lp.scope} (${lp.period} 월간, KOSIS)`}
               </div>
               <div className="v">{fmtRate(lp.value)}</div>

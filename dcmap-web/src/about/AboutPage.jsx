@@ -30,6 +30,7 @@ const PAINS = [
   },
   {
     num: '1–1.5억',
+    num_en: '₩100–150M',
     title: '평가 대행비 / 10MW',
     title_en: 'Assessment agency fee / 10MW',
     desc: '계통영향평가 대행 수수료는 10MW당 약 1–1.5억 원(국정감사 지적) + 심의 리드타임.',
@@ -162,6 +163,7 @@ const GATE_COV = {
 
 /* 실제 코드가 호출·집계에 사용하는 공개 소스만 나열(장식용 로고월 금지) */
 const SOURCES = ['한전', '전력거래소 EPSIS', 'KOSIS', 'SGIS', 'vworld', '기상청', 'K-water', '국가법령정보센터', 'DART', 'OSM']
+const SOURCES_EN = { 한전: 'KEPCO', '전력거래소 EPSIS': 'KPX EPSIS', 기상청: 'KMA', 국가법령정보센터: 'Korea Law (law.go.kr)' }
 
 /* AEO: 자주 묻는 질문 — 답변엔진(AI 검색)이 그대로 인용할 Q&A. 확정 사실만, postbuild FAQPage와 동일 내용 */
 const FAQ = [
@@ -376,7 +378,7 @@ export default function AboutPage() {
           <div className="pain-grid">
             {PAINS.map((p) => (
               <div key={p.num} className="pain-card">
-                <b className="pain-num">{p.num}</b>
+                <b className="pain-num">{en ? p.num_en ?? p.num : p.num}</b>
                 <span className="pain-title">{en ? p.title_en : p.title}</span>
                 <p>{en ? p.desc_en : p.desc}</p>
               </div>
@@ -529,7 +531,7 @@ export default function AboutPage() {
           <div className="src-chips" aria-label={en ? 'Data sources' : '데이터 소스'}>
             {SOURCES.map((s) => (
               <span key={s} className="src-chip">
-                {s}
+                {en ? SOURCES_EN[s] ?? s : s}
               </span>
             ))}
           </div>

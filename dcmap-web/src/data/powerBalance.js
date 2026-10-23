@@ -33,8 +33,14 @@ export const POWER_BALANCE = Object.fromEntries(
 )
 
 /** 자급률 → 정성 라벨 */
-export function selfSufficiencyLabel(ratio) {
+export function selfSufficiencyLabel(ratio, en = false) {
   if (ratio == null) return null
+  if (en) {
+    if (ratio >= 150) return 'generation surplus (large headroom potential)'
+    if (ratio >= 100) return 'generation surplus'
+    if (ratio >= 70) return 'near consumption'
+    return 'consumption exceeds generation (grid congestion)'
+  }
   if (ratio >= 150) return '발전 잉여(여유 잠재 큼)'
   if (ratio >= 100) return '발전 잉여'
   if (ratio >= 70) return '소비 근접'

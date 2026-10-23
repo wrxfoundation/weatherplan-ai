@@ -12,6 +12,7 @@ import { SIDO_METRO_CD } from '../data/genLicenses.js'
 import { powerUsageFor } from '../data/liveApi.js'
 import { RENEWABLE_ESS, RENEWABLE_ESS_META, RENEWABLE_ESS_TOTAL } from '../data/renewableEss.js'
 import { useMapLang } from '../i18n/mapLang.js'
+import { sidoT, sigunguT, placeKeyT, facilityName, typeT } from '../i18n/places.js'
 
 const STATUS_EN = { operating: 'Operating', construction: 'Construction', planned: 'Planned', delayed: 'Delayed', cancelled: 'Cancelled' }
 
@@ -48,6 +49,7 @@ export default function RegionPage() {
   const sido = SLUG_TO_SIDO[slug]
   const summary = useMemo(() => (sido ? regionSummary(sido) : null), [sido])
   const en = useMapLang() === 'en'
+  const sidoEn = sidoT(sido, true)
   const statusLabel = (s) => (en ? STATUS_EN[s] ?? STATUS_LABEL[s] ?? s : STATUS_LABEL[s] ?? s)
   const [usage, setUsage] = useState(null) // 한전 계약종별(일반용) 시군구 집계 — 수요측 라이브
 
@@ -62,7 +64,7 @@ export default function RegionPage() {
 
   useEffect(() => {
     if (!sido || !summary) return
-    const title = en ? `${sido} Data Center Status — AI InfraMap` : `${sido} 데이터센터 현황 — AI InfraMap`
+    const title = en ? `${sidoEn} Data Center Status — AI InfraMap` : `${sido} 데이터센터 현황 — AI InfraMap`
     const desc = regionDescription(sido, summary)
     document.title = title
     setMeta('name', 'description', desc)
@@ -114,7 +116,7 @@ export default function RegionPage() {
           {en ? '← Back to map' : '← 맵으로 돌아가기'}
         </Link>
         <div className="eyebrow">REGION</div>
-        <h1>{en ? `${sido} Data Center Status` : `${sido} 데이터센터 현황`}</h1>
+        <h1>{en ? `${sidoEn} Data Center Status` : `${sido} 데이터센터 현황`}</h1>
         <p className="sub">
           {en
             ? `Total ${list.length} sites — Operating ${by.operating} · Construction ${by.construction} · Planned ${by.planned}`
@@ -122,7 +124,7 @@ export default function RegionPage() {
           {mw > 0 && (en ? ` · public power total ${mw} MW` : ` · 공개 전력 합계 ${mw} MW`)}
           {POWER_BALANCE[sido] &&
             (en
-              ? ` · power self-sufficiency ${POWER_BALANCE[sido].ratio}% (${selfSufficiencyLabel(POWER_BALANCE[sido].ratio)}, ’25)`
+              ? ` · power self-sufficiency ${POWER_BALANCE[sido].ratio}% (${selfSufficiencyLabel(POWER_BALANCE[sido].ratio, true)}, ’25)`
               : ` · 전력 자급률 ${POWER_BALANCE[sido].ratio}% (${selfSufficiencyLabel(POWER_BALANCE[sido].ratio)}, ’25)`)}
         </p>
 
@@ -145,8 +147,8 @@ export default function RegionPage() {
         </div>
 
         <AiBriefButton
-          label={en ? `✨ ${sido} AI infrastructure brief` : `✨ ${sido} AI 인프라 브리핑`}
-          query={en ? `Data center & power infrastructure brief for ${sido}` : `${sido}의 데이터센터·전력 인프라 브리핑`}
+          label={en ? `✨ ${sidoEn} AI infrastructure brief` : `✨ ${sido} AI 인프라 브리핑`}
+          query={en ? `Data center & power infrastructure brief for ${sidoEn}` : `${sido}의 데이터센터·전력 인프라 브리핑`}
           data={{
             시도: sido,
             시설수: list.length,
@@ -167,7 +169,7 @@ export default function RegionPage() {
           <div className="calc-card">
             <div className="chart-title">
               {en
-                ? `${sido} power demand density — top sigungu by general-use contracted power (${usage.year}.${usage.month}, 한전 live)`
+                ? `${sidoEn} power demand density — top sigungu by general-use contracted power (${usage.year}.${usage.month}, KEPCO live)`
                 : `${sido} 전력 수요 밀도 — 일반용 계약전력 상위 시군구 (${usage.year}.${usage.month}, 한전 라이브)`}
             </div>
             {(() => {
@@ -175,7 +177,7 @@ export default function RegionPage() {
               const max = Math.max(...top.map((c) => c.cntrPwrMw), 1)
               return top.map((c) => (
                 <div key={c.city} className="hbar-row">
-                  <span className="hbar-label">{c.city}</span>
+                  <span className="hbar-label">{sigunguT(c.city, en)}</span>
                   <span className="hbar-track">
                     <span className="hbar-fill" style={{ width: `${Math.max((c.cntrPwrMw / max) * 100, 2)}%` }} />
                   </span>
@@ -203,7 +205,7 @@ export default function RegionPage() {
             <div className="calc-card">
               <div className="chart-title">
                 {en
-                  ? `${sido} upcoming private data centers — ${pipe.length} sites · IT capacity total ${mwSum.toLocaleString()}MW`
+                  ? `${sidoEn} upcoming private data centers — ${pipe.length} sites · IT capacity total ${mwSum.toLocaleString()}MW`
                   : `${sido} 공급예정 민간 데이터센터 — ${pipe.length}곳 · IT용량 합계 ${mwSum.toLocaleString()}MW`}
               </div>
               {pipe.map((p) => (
@@ -245,7 +247,7 @@ export default function RegionPage() {
             <div className="calc-card">
               <div className="chart-title">
                 {en
-                  ? `${sido} renewable · ESS installed capacity (national solar rank #${solarRank}, ${RENEWABLE_ESS_META.asOf})`
+                  ? `${sidoEn} renewable · ESS installed capacity (national solar rank #${solarRank}, ${RENEWABLE_ESS_META.asOf})`
                   : `${sido} 재생에너지·ESS 설비용량 (전국 태양광 ${solarRank}위, ${RENEWABLE_ESS_META.asOf})`}
               </div>
               {bars.map((b) => (
@@ -283,12 +285,12 @@ export default function RegionPage() {
             <div className="calc-card">
               <div className="chart-title">
                 {en
-                  ? `${sido} sigungu land-price change rate (${LAND_DONG_PERIOD} monthly, KOSIS)`
+                  ? `${sidoEn} sigungu land-price change rate (${LAND_DONG_PERIOD} monthly, KOSIS)`
                   : `${sido} 입지 시군구 지가변동률 (${LAND_DONG_PERIOD} 월간, KOSIS)`}
               </div>
               {rows.map((r) => (
                 <div key={r.label} className="hbar-row">
-                  <span className="hbar-label">{r.label}</span>
+                  <span className="hbar-label">{placeKeyT(r.label, en) === r.label ? sigunguT(r.label, en) : placeKeyT(r.label, en)}</span>
                   <span className="hbar-track">
                     <span
                       className={`hbar-fill${r.rate < 0 ? ' neg' : ''}`}
@@ -307,9 +309,9 @@ export default function RegionPage() {
             <Link key={f.id} className="facility-row" to={`/dc/${slugOf(f)}`}>
               <span className={`dot ${f.status === 'delayed' ? 'planned' : f.status}`} />
               <span>
-                <span className="name">{f.name}</span>
+                <span className="name">{facilityName(f, en)}</span>
                 <span className="meta">
-                  {f.sigungu ?? f.sido} · {statusLabel(f.status)} · {f.type}
+                  {f.sigungu ? sigunguT(f.sigungu, en) : sidoT(f.sido, en)} · {statusLabel(f.status)} · {typeT(f.type, en)}
                   {f.power_mw_public != null && ` · ${f.power_mw_public}MW`}
                   {f.needs_verify && (en ? ' · needs verification' : ' · 검증 필요')}
                 </span>

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { STATUS_LABEL, isCapitalByAddr, isCapitalByPoint, FACILITIES } from '../data/facilities.js'
+import { STATUS_LABEL, STATUS_LABEL_EN, isCapitalByAddr, isCapitalByPoint, FACILITIES } from '../data/facilities.js'
+import { facilityName } from '../i18n/places.js'
 import { useMapLang } from '../i18n/mapLang.js'
 import { landPriceFor, fmtRate } from '../data/landPrice.js'
 import { dongPulseFor } from '../data/landPriceDong.js'
@@ -1591,9 +1592,9 @@ export default function SitePanel({ point, onClose, onSelectFacility, onAddCompa
             <button key={f.id} type="button" className="facility-row" onClick={() => onSelectFacility(f)}>
               <span className={`dot ${f.status === 'delayed' ? 'planned' : f.status}`} />
               <span>
-                <span className="name">{f.name}</span>
+                <span className="name">{facilityName(f, lang === 'en')}</span>
                 <span className="meta">
-                  {km.toFixed(1)} km · {STATUS_LABEL[f.status] ?? f.status}
+                  {km.toFixed(1)} km · {(lang === 'en' ? STATUS_LABEL_EN : STATUS_LABEL)[f.status] ?? f.status}
                   {f.power_mw_public != null && ` · ${f.power_mw_public}MW`}
                 </span>
               </span>

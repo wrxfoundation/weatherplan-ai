@@ -1,3 +1,4 @@
+import { stationT } from '../i18n/places.js'
 // 데이터센터 기후 적합도 지수 — 공개 기상 원리 기반(임의 가중치 아님).
 // 핵심 동인: 연평균기온 → 프리쿨링(외기냉방) 가능시간 → 냉각 전력(PUE)·수자원. 낮을수록 좋음.
 //
@@ -96,7 +97,7 @@ export function dcClimateIndex({ avgTemp, normalTemp, normalStation, humidity, c
     t = normalTemp
     basedOn = 'normal'
     basis = `기상청 평년값(1991–2020) 연평균 ${t}°C${normalStation ? ` · 최근접 ${normalStation} 관측` : ''}`
-    basisEn = `기상청 climate normals (1991–2020) annual mean ${t}°C${normalStation ? ` · nearest ${normalStation} station` : ''}`
+    basisEn = `KMA climate normals (1991–2020) annual mean ${t}°C${normalStation ? ` · nearest ${stationT(normalStation, true)} station` : ''}`
   } else if (currentTemp != null) {
     t = currentTemp
     basedOn = 'current'
