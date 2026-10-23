@@ -174,3 +174,45 @@ Hi {Name}, I run partnerships at wellbian, built on KWeather's 30 years of weath
 - Rachel Hodgdon — 3BL Media(2026-06 Indoor Air 2026 기조) · EDF 인터뷰(2025-07)
 - Leonard Dorlöchter — CoinDesk 필자 소개 · Cointelegraph · MEXC 뉴스(「real revenue」)
 - Ivar Kroghrud — Airthings 뉴스룸(2025-12 선임 · 2026-01 취임)
+
+## Swell 공식 연사 152명 중 링크드인 1촌 요청 (10/23, 서우 「이중에 링크드인 컨택할만한 사람」 — 다른 세션의 연사 페이지 붙여 넣기)
+
+기준: ① 우리 판매 방식(x402 호출당 · RLUSD) 또는 지문 층(원장 고정 · 검증)을 세션 주제로 다루는 **실무자 · 연구자**(수락률이 높고 대화 거리가 정확) ② 지금까지 기록에 없는 사람 ③ 진행 중인 라인 · 상한 규칙과 안 겹침. Swell(10/27~29) 전, 10/23~24 발송.
+
+**새로 요청 12명**
+| 묶음 | 인물 | 세션(뉴욕 시간) | 메모 |
+|---|---|---|---|
+| x402 · 에이전트 결제 | Chien-Chih (Joseph) Chen — Waterloo 박사과정 | 10/29 14:45 L6 「An AI Agent Walks into a Data Market: x402 Payments on XRPL」 | N1 |
+| | Anil Nadiminti — AWS Fintech Solution Architecture | 10/29 16:30 L4 「Building x402 Apps for Agentic Commerce on AWS」 | N1 |
+| | Steven David — Ripple Sr. Staff SWE | 같은 세션 | N1 · 리플 선(관계 · 협업 0) |
+| | Nilesh Dusane — AWS Global Head of Institutional Payments | 10/28 13:20 L2 「What Happens When AI Moves Money?」 | N1 첫 구절만 패널로. 9/10 기록엔 「리플 소속」 — 공식 명단은 AWS |
+| 원장 고정 · 검증 | Yebo Feng — NTU Research Fellow | 10/29 14:00 L6 「Anchoring the AI Stack」 | N2 |
+| | Si Hui Ong — Borneo(싱가포르) | 10/29 13:15 L6 「Securing Agentic Finance … on the XRP Ledger」 | N2 |
+| | Ari Juels — Cornell Tech | 10/29 13:30 L6 「What Crypto Can Do for AI」 | N2 · 9/10 학계 보류분 — 기대 낮음 |
+| XRPL 생태계 | Brett Mollin — XRPLF Executive Director | 10/28 15:45 · 10/29 15:15 L4 | N3 · 9/10 보류분 |
+| | Hussein 「Vet」 Zangana — XRPLF Director Community | 10/28 16:30 L6 | N3 |
+| | Mai Furukawa — XRPL Japan / Xaman | 10/28 15:15 L4 | N3 · 9/10 보류분 · **지갑 통합 얘기 0**(디센트) |
+| | Dom Kwok — EasyA 공동창업 | 10/29 16:45 L4 | N3 |
+| | Joel Mun — Ripple Senior DevRel | 10/29 16:15 L4 「The State of AI on XRPL」 | N3 · 9/10 「첫 실무 접점 후보」 메모 · 리플 선 |
+
+XRPL 생태계 묶음 넷(Mollin · Furukawa 등)은 9/10 「빌더 파이프라인 등록 뒤 웜하게」 보류분 — 10/2 리플 에코시스템 팀 미팅 뒤라 풀어도 되는지 서우 확인.
+
+**새로 열지 않음 — 이미 진행 중이거나 규칙에 걸림**: Christina Chan · Tats Kohrogi · Sabrina Tachdjian(10/2 「Sabrina T」와 같은 사람으로 보임 — 확인) · Odelia Torteman · David Bchiri(Odelia 경유) · Asheesh Birla(문창훈 소개 · 10/28 만찬) · Markus Infanger · Jack McDonald · Ayo Akinyele · Chandler Fang(t54 — 10/21 메모 그대로) · Johann Kerbrat · Tom Chippas(로빈후드 계열 상한 2) · Lisa Mantil(폴리마켓 상한 초과) · Chase Lax(SIG 는 Nick 10/29 대면이 창구) · Gary White(Water.org 진행 중) · Hugo Philion(기존 관계) · Monica Long · David Schwartz · Brad Garlinghouse(팔로우만) · Mastercard 둘(Paul Wolf 라인 진행 중).
+**링크드인 말고 현장만**: 유명 연사 · CEO급(사진 · 인사) · 기자 셋(인터뷰 미룸) · 거래소(OKX Roshan Robert · Coinbase · Bullish — 인사만 규칙).
+**Swell 뒤(만났을 때만)**: Henri Stern(Stripe Crypto · Privy) · Edward Woodford(zerohash) · Sunita Koppar(AWS) · Eduardo Novillo Astrada(JusToken 에너지) · Thomas Sy(New York Life) · Denis Angell · Aanchal Malhotra · Jasmine Cooper(Tats 소개) · Chris Shin(국내 후순위).
+
+**메모(300자 상한 · 「11 independent sources」 대신 「multiple feeds」 — 데이터 쪽 상대)**
+N1 x402(276~278자)
+```
+Hi {Name}, your Swell session on x402 is the closest thing to our own setup. I run partnerships at wellbian, built on KWeather's 30 years of weather data: AI agents can buy our indoor-air and weather readings one call at a time, paid in RLUSD on the XRP Ledger. Glad to connect.
+```
+N2 원장 고정(276~286자) — {topic}: Yebo 「a trust layer for AI agents」 · Si Hui 「guardrails for AI agents on XRPL」 · Ari 「what crypto can do for AI」
+```
+Hi {Name}, your Swell talk on {topic} is close to our work. I run partnerships at wellbian, built on KWeather's 30 years of weather data: home air sensors plus city-level weather from multiple feeds, every input fingerprinted on the XRP Ledger. Glad to connect.
+```
+N3 XRPL 생태계(249~251자)
+```
+Hi {Name}, I run partnerships at wellbian, built on KWeather's 30 years of weather data: home air sensors plus city-level weather from multiple feeds, every input fingerprinted on the XRP Ledger. I'll be at Swell in New York next week. Glad to connect.
+```
+Swell 뒤 수락이면 N3 의 Swell 문장 삭제. 「AI agents can buy」 = 8월 메인넷 x402 검증 근거(고객 주장 아님).
+페이지 문구 중 규칙과 어긋나는 셋(그 세션에서 고칠 것): Hugo 「Flare 공동 사례」(웰비안 × Flare 통합 클레임 금지) · Roshan 「유일한 거래소 사람」(Coinbase · Bullish · Robinhood 도 연사) · Robert Kiuru 「지갑 클레임 흐름을 같이」(지갑 통합 얘기 0).
