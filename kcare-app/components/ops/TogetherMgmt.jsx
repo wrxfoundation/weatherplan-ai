@@ -4,6 +4,7 @@
 import { useMemo, useState } from "react";
 import Icon from "../icons";
 import { SERVICE_MENU, STATUS, fmtPreferred } from "../../lib/requests";
+import { svcTitle } from "../../lib/booking";
 import { useAppState } from "../../lib/state";
 import { visitReportOf } from "../../lib/live-household";
 import { LIVE_ELDER } from "../../lib/ops-health";
@@ -46,7 +47,7 @@ function LiveTogether() {
             empty="아직 함께 해요 · 함께가요 요청이 없습니다 — 어르신 · 보호자 앱 해주세요에서 신청하면 여기에 뜹니다."
             cols={[
               { k: "at", label: "신청", render: (r) => <span className="whitespace-nowrap font-num text-[12px]">{when(r.history?.[0]?.at)}</span> },
-              { k: "type", label: "서비스", render: (r) => <b className="text-navy">{r.type}</b> },
+              { k: "type", label: "서비스", render: (r) => <b className="text-navy">{svcTitle(r.type)}</b> },
               { k: "from", label: "신청한 사람", render: (r) => (r.dir === "fromElder" ? "어르신" : r.dir === "fromGuardian" ? "보호자" : "컨시어지") },
               { k: "detail", label: "내용", render: (r) => <span className="text-[12px] text-ink">{r.detail || "—"}</span> },
               { k: "date", label: "희망일", render: (r) => <span className="font-num text-[12px]">{fmtPreferred(r, "—")}</span> },

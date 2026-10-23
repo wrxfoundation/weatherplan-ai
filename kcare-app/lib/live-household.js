@@ -5,6 +5,7 @@
 // 이 이름으로 이어져 있어서다. 가입 상담에 다른 어르신 이름을 적었으면 '가입 상담 이름'으로 따로 보여 준다.
 // 연락처 · 주소 · 관계 · 결제권한 · 해주세요 · SOS 는 실제 값이다. 가입 상담 전이면 데모 값 그대로 두고 그렇다고 적는다.
 import { STATUS } from "./requests";
+import { svcTitle } from "./booking";
 import { fmtWon } from "./config";
 import { LIVE_ELDER, fmtPhone } from "./ops-health";
 import { VISITS, itemKeys, visitDetail } from "./ops-mgmt";
@@ -34,7 +35,7 @@ const PAY_TEXT = "가족 누구나 · 금액 제한 없이";
 export function liveRequests(state) {
   return (state?.requests || []).map((r) => ({
     at: mdhm(r.history?.[0]?.at),
-    name: r.type,
+    name: svcTitle(r.type),
     price: r.amount != null ? fmtWon(r.amount) : "요금 확정 전",
     state: `${STATUS[r.status]?.label || r.status}${r.assignee ? ` · 담당 ${r.assignee}` : " · 담당 미배정"}`,
   }));
@@ -138,7 +139,7 @@ export function liveGuardian(g, state, account) {
     onboarded: !!ob,
     app: { state: centerNow() ? "회원 계정" : account ? `테스트 계정 (${account})` : "테스트 계정", last: "—" },
     // 담당이 비어 있으면 '미배정'이라고 쓴다 — 관제가 정할 일이 남았다는 뜻 (2026-10-02 QA: 담당을 박지현으로 미리 박지 않는다)
-    requests: mine.map((r) => `${r.type} — ${STATUS[r.status]?.label || r.status}${r.assignee ? ` · 담당 ${r.assignee}` : " · 담당 미배정"}`),
+    requests: mine.map((r) => `${svcTitle(r.type)} — ${STATUS[r.status]?.label || r.status}${r.assignee ? ` · 담당 ${r.assignee}` : " · 담당 미배정"}`),
     complaints: [],
     log,
     reports,
@@ -316,7 +317,7 @@ export function liveConcierge(c, state) {
   const asks = (state?.requests || []).filter((r) => r.assignee === LIVE_CONCIERGE && !["done", "cancelled", "rejected"].includes(r.status));
   const today = [
     { time: v.checkin?.at && v.checkin.at !== "—" ? v.checkin.at : "—", name: LIVE_ELDER, memo: `안심방문 · ${v.memoLine}`, role: "주", status: v.status },
-    ...asks.map((r) => ({ time: mdhm(r.history?.[0]?.at).slice(6), name: LIVE_ELDER, memo: `해주세요 · ${r.type} (${STATUS[r.status]?.label || r.status})`, role: "주", status: r.status === "inProgress" ? "active" : "planned" })),
+    ...asks.map((r) => ({ time: mdhm(r.history?.[0]?.at).slice(6), name: LIVE_ELDER, memo: `해주세요 · ${svcTitle(r.type)} (${STATUS[r.status]?.label || r.status})`, role: "주", status: r.status === "inProgress" ? "active" : "planned" })),
   ];
   const sos = sosOn
     ? [{ no: "진행 중 (실제)", at: mdhm(state.demo.sosAt), role: ops.sosAcceptedAt ? `주 · 급파 수락 ${hhmm(ops.sosAcceptedAt)}` : ops.sosDispatched ? "주 · 급파 지시됨 · 수락 대기" : "관제 확인 중 · 급파 전" }]

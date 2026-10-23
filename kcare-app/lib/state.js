@@ -242,7 +242,7 @@ const reqEvent = (r) => ({
   id: `ev-${r.id}`,
   reqId: r.id,
   kind: "request",
-  title: `해주세요 · ${r.type}`,
+  title: `해주세요 · ${svcTitle(r.type)}`,
   at: reqTs(r.scheduledDate, r.scheduledTime),
   source: r.dir === "fromConcierge" ? "컨시어지 제안 수락" : "컨시어지 승인",
   note: r.assignee ? `${r.assignee} 담당` : "",

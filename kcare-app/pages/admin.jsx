@@ -1746,7 +1746,7 @@ function AdminConsole() {
                 <Panel className="min-w-0">
                   <PanelHead title="배차 인원 규칙 — 위험도 기반" right={<span className="text-[12px] font-bold text-danger">2인 지정 방문은 단독 배차 불가</span>} />
                   <p className="mt-2 text-[12px] leading-[1.7] text-muted">
-                    모든 방문을 2인으로 묶으면 원가가 두 배가 되어 지역을 넓힐 수 없습니다. 대신 위험이 큰 자리를 규칙으로 못 박고 그 자리는 예외를 두지 않습니다 — 첫 방문 · 할아버지 1인가구 · 종합평가 · 동행 프리미엄 (2026-08-13 개편안 V2).
+                    모든 방문을 2인으로 묶으면 원가가 두 배가 되어 지역을 넓힐 수 없습니다. 대신 위험이 큰 자리를 규칙으로 못 박고 그 자리는 예외를 두지 않습니다 — 첫 방문 · 할아버지 1인가구 · 종합평가 · 든든 병원동행 (2026-08-13 개편안 V2).
                   </p>
                   <div className="mt-3 grid gap-2 sm:grid-cols-2">
                     {PAIR_WHY.map(([cat, k, v]) => (

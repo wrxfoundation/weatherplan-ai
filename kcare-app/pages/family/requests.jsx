@@ -40,15 +40,17 @@ function shortPrice(s) {
   return fmtWon(s.amount);
 }
 
-// 서비스 타일 — 분류 색 (병원 초록 · 생활 파랑 · 집 고칠 일 베이지 · 응급은 위험 신호라 빨강 계열)
+// 서비스 타일 — 분류 색 (병원 초록 · 생활 파랑 · 집 고칠 일 베이지 · 응급은 위험 신호라 빨강 계열).
+// 병원 동행 두 가지는 색을 나눈다 — 병원동행(선생님 한 분)이 먼저, 든든 병원동행(선생님 두 분)은 보라 (2026-10-23 요청).
+// 두 칸 그리드의 왼쪽 줄에 위아래로 붙여 둔다 (한 분 바로 아래 두 분)
 const SECTIONS = [
   {
     title: "병원",
     tone: "green",
     tiles: [
+      { no: 3, label: "병원동행", sub: "선생님 한 분", clay: "escort1" },
       { no: 1, label: "병원 예약 대행", clay: "hospitalBook" },
-      { no: 2, label: "동행 2인", clay: "escort2" },
-      { no: 3, label: "동행 1인", clay: "escort1" },
+      { no: 2, label: "든든 병원동행", sub: "선생님 두 분", clay: "escort2", tone: "purple" },
       { no: 4, label: "요양병원 케어", clay: "careHospital" },
       { no: 13, label: "약국 심부름", clay: "pill" },
     ],
@@ -236,6 +238,11 @@ export default function RequestsPage() {
                         <b className="text-[17px]" style={{ color: tn.title || tn.fg, fontSize: 17 }}>
                           {t.label}
                         </b>
+                        {t.sub && (
+                          <small className="font-bold" style={{ color: tn.fg, fontSize: 14 }}>
+                            {t.sub}
+                          </small>
+                        )}
                         <small className={shortPrice(s) === "무료" ? "font-extrabold" : ""} style={{ color: shortPrice(s) === "무료" ? TONE.green.title : tn.sub, fontSize: 14 }}>
                           {shortPrice(s)}
                         </small>
@@ -450,8 +457,8 @@ export default function RequestsPage() {
               honor={honor}
               onClose={() => setEditing(null)}
               onSave={(patch) => {
-                dispatch({ type: "editRequest", id: cur.id, patch, by: "보호자", title: cur.type });
-                dispatch({ type: "pushEvent", payload: { kind: "해주세요", text: `보호자 해주세요 내용 수정 — ${cur.type} · 담당 컨시어지 확인 전`, color: "#8FA9CC" } });
+                dispatch({ type: "editRequest", id: cur.id, patch, by: "보호자", title: svcTitle(cur.type) });
+                dispatch({ type: "pushEvent", payload: { kind: "해주세요", text: `보호자 해주세요 내용 수정 — ${svcTitle(cur.type)} · 담당 컨시어지 확인 전`, color: "#8FA9CC" } });
                 setEditing(null);
               }}
             />
@@ -588,7 +595,7 @@ function Actions({ req, x, dispatch, big, onEdit }) {
         <button
           type="button"
           onClick={onEdit}
-          aria-label={`${req.type} 내용 고치기`}
+          aria-label={`${svcTitle(req.type)} 내용 고치기`}
           className="ds-press flex min-h-[44px] items-center gap-1.5 self-start px-1 text-[15px] font-extrabold underline underline-offset-4"
           style={{ color: "#3A3F50" }}
         >
@@ -610,7 +617,7 @@ function Actions({ req, x, dispatch, big, onEdit }) {
               className="text-[17px]"
               onClick={() => {
                 dispatch({ type: "respondProposal", id: req.id, accept: true, role: "guardian" });
-                dispatch({ type: "pushEvent", payload: { kind: "해주세요", text: `보호자 컨시어지 제안 수락 — ${req.type}`, color: "#8FE3C0" } });
+                dispatch({ type: "pushEvent", payload: { kind: "해주세요", text: `보호자 컨시어지 제안 수락 — ${svcTitle(req.type)}`, color: "#8FE3C0" } });
                 if (req.amount > 0) goPay();
               }}
             >
@@ -651,12 +658,12 @@ function Actions({ req, x, dispatch, big, onEdit }) {
               onClick={() => {
                 if (confirming === "decline") {
                   dispatch({ type: "respondProposal", id: req.id, accept: false, role: "guardian" });
-                  dispatch({ type: "pushEvent", payload: { kind: "해주세요", text: `보호자 컨시어지 제안 거절 — ${req.type}`, color: "#8FA9CC" } });
+                  dispatch({ type: "pushEvent", payload: { kind: "해주세요", text: `보호자 컨시어지 제안 거절 — ${svcTitle(req.type)}`, color: "#8FA9CC" } });
                 } else {
                   dispatch({ type: "cancelRequest", id: req.id, by: "보호자", ...(storeAsk ? { reason: "보호자가 이번에는 사지 않기로 함" } : {}) });
                   dispatch({
                     type: "pushEvent",
-                    payload: { kind: "해주세요", text: `보호자 ${storeAsk ? "물건 승인 부탁 — 사지 않기" : rule.mode === "ops" ? "취소 요청 (관제 승인 필요)" : cancelLabel === "거절" ? "제안 거절" : "취소"} — ${req.type}`, color: "#B08D57" },
+                    payload: { kind: "해주세요", text: `보호자 ${storeAsk ? "물건 승인 부탁 — 사지 않기" : rule.mode === "ops" ? "취소 요청 (관제 승인 필요)" : cancelLabel === "거절" ? "제안 거절" : "취소"} — ${svcTitle(req.type)}`, color: "#B08D57" },
                   });
                 }
                 setConfirming(null);
@@ -936,6 +943,11 @@ function CreateRequestSheet({ preset, initial = null, onClose, onCreate, onSave,
   return (
     <Sheet onClose={onClose} label={editing ? `${initial.type} 내용 고치기` : title}>
       <SheetTitle sub={editing ? "내용 고치기" : "해주세요"} title={title} />
+      {!editing && preset?.tagline && (
+        <p className="text-[16px] font-extrabold leading-[1.5]" style={{ color: "#1B2340" }}>
+          {preset.tagline}
+        </p>
+      )}
       {editing ? (
         <p className="text-[14px] leading-[1.6]" style={{ color: "#5E6270" }}>
           담당 컨시어지가 확인하기 전까지 고칠 수 있습니다. 고친 내용은 컨시어지 · 관제 화면에 바로 보이고 처리 이력에 남습니다. 서비스 종류 · 금액 · 이용 시간은 그대로입니다 — 바꾸시려면 취소하고 다시 부탁해 주세요.

@@ -295,7 +295,7 @@ function ApproveRow({ r, me, requests, payments, dispatch, push }) {
               disabled={!reason.trim()}
               onClick={() => {
                 dispatch({ type: "declineRequest", id: r.id, by: me, reason: reason.trim() });
-                push("해주세요", `${me} 거절 — ${r.type} · ${reason.trim()}`, "#8FA9CC");
+                push("해주세요", `${me} 거절 — ${svcTitle(r.type)} · ${reason.trim()}`, "#8FA9CC");
               }}
               className="btn-press flex-[2] rounded-xl bg-navy py-2.5 text-[13px] font-bold text-white disabled:opacity-40"
             >
@@ -351,15 +351,15 @@ function SentRow({ r, me, dispatch, push }) {
     <div className="rounded-lg bg-navy/[.04] px-3 py-2 text-[12.5px] text-ink">
       <div className="flex items-center gap-2">
         <span className="min-w-0 flex-1">
-          <b>{r.type}</b> · {to} 수락 대기{fmtScheduled(r) ? ` · ${fmtScheduled(r)}` : ""}
+          <b>{svcTitle(r.type)}</b> · {to} 수락 대기{fmtScheduled(r) ? ` · ${fmtScheduled(r)}` : ""}
           {r.editedAt ? <span className="text-muted"> · {hm(r.editedAt)} 고침</span> : null}
         </span>
         {!mode && (
           <>
-            <button type="button" onClick={begin} aria-label={`${r.type} 제안 고치기`} className="btn-press shrink-0 rounded-lg border border-navy/15 px-2.5 py-1.5 text-[12px] font-bold text-navy">
+            <button type="button" onClick={begin} aria-label={`${svcTitle(r.type)} 제안 고치기`} className="btn-press shrink-0 rounded-lg border border-navy/15 px-2.5 py-1.5 text-[12px] font-bold text-navy">
               고치기
             </button>
-            <button type="button" onClick={() => setMode("withdraw")} aria-label={`${r.type} 제안 철회`} className="btn-press shrink-0 rounded-lg border border-navy/15 px-2.5 py-1.5 text-[12px] font-bold text-muted">
+            <button type="button" onClick={() => setMode("withdraw")} aria-label={`${svcTitle(r.type)} 제안 철회`} className="btn-press shrink-0 rounded-lg border border-navy/15 px-2.5 py-1.5 text-[12px] font-bold text-muted">
               철회
             </button>
           </>
@@ -390,8 +390,8 @@ function SentRow({ r, me, dispatch, push }) {
               type="button"
               disabled={!ok}
               onClick={() => {
-                dispatch({ type: "editRequest", id: r.id, patch, by: me, title: r.type });
-                push("해주세요", `${me} 제안 수정 — ${r.type}${patch.scheduledDate ? ` · ${patch.scheduledDate} ${patch.scheduledTime}` : ""}`, "#8FA9CC");
+                dispatch({ type: "editRequest", id: r.id, patch, by: me, title: svcTitle(r.type) });
+                push("해주세요", `${me} 제안 수정 — ${svcTitle(r.type)}${patch.scheduledDate ? ` · ${patch.scheduledDate} ${patch.scheduledTime}` : ""}`, "#8FA9CC");
                 setMode(null);
               }}
               className="btn-press flex-[2] rounded-xl bg-navy py-2 text-[12.5px] font-bold text-white disabled:opacity-40"
@@ -412,7 +412,7 @@ function SentRow({ r, me, dispatch, push }) {
               type="button"
               onClick={() => {
                 dispatch({ type: "cancelRequest", id: r.id, by: me, reason: "제안 철회" });
-                push("해주세요", `${me} 제안 철회 — ${r.type}`, "#8FA9CC");
+                push("해주세요", `${me} 제안 철회 — ${svcTitle(r.type)}`, "#8FA9CC");
                 setMode(null);
               }}
               className="btn-press flex-[2] rounded-xl bg-navy py-2 text-[12.5px] font-bold text-white"
@@ -771,7 +771,7 @@ export default function ConciergeRequests({ requests, payments, extraCharges = [
           <div className="text-[12px] font-bold text-navy">취소된 것 — 가지 않아도 됩니다</div>
           {dropped.map((r) => (
             <div key={r.id} className="rounded-lg bg-navy/[.04] px-3 py-2 text-[12.5px] leading-[1.6] text-ink">
-              <b>{r.type}</b>
+              <b>{svcTitle(r.type)}</b>
               {fmtScheduled(r) ? ` · ${fmtScheduled(r)}` : ""} — {lastOf(r)?.note || "취소"}
             </div>
           ))}
@@ -882,7 +882,7 @@ export function NewRequestAlert({ requests, onOpen }) {
           {fresh.slice(0, 4).map((r) => (
             <li key={r.id} className="rounded-xl bg-navy/[.04] px-3 py-2.5">
               <div className="flex items-center gap-2">
-                <span className="text-[14px] font-bold text-navy">{r.type}</span>
+                <span className="text-[14px] font-bold text-navy">{svcTitle(r.type)}</span>
                 {r.urgency === "urgent" && <Badge fg={URGENCY.urgent.fg} bg={URGENCY.urgent.bg}>긴급</Badge>}
                 <span className="ml-auto text-[11px] text-muted">{FROM[r.dir] || ""}</span>
               </div>

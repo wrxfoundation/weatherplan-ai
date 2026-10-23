@@ -8,6 +8,7 @@ import { useMemo, useState } from "react";
 import { Panel, PanelHead, Stat, Pill, Btn, Table, Note, Empty } from "./ui";
 import { useAppState } from "../../lib/state";
 import { STATUS } from "../../lib/requests";
+import { svcTitle } from "../../lib/booking";
 import { ELDER } from "../../lib/mock";
 import { LIVE_CONCIERGE, LIVE_TAG } from "../../lib/live-household";
 import { centerNow } from "../../lib/people-store";
@@ -59,7 +60,7 @@ function rowsOf(state) {
       ch: "ask",
       from: `${ELDER.name} 님`,
       to: "관제",
-      text: `${r.type}${r.summary?.text ? ` — "${r.summary.text}" (${r.summary.by || "컨시어지"} 정리)` : r.detail ? ` — ${r.detail}` : ""}`,
+      text: `${svcTitle(r.type)}${r.summary?.text ? ` — "${r.summary.text}" (${r.summary.by || "컨시어지"} 정리)` : r.detail ? ` — ${r.detail}` : ""}`,
       state: STATUS[r.status]?.label || r.status,
       tone: r.status === "requested" ? "warn" : "ok",
     }));

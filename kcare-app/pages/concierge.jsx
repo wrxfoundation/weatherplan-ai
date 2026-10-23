@@ -56,6 +56,7 @@ import { STORE_CATALOG } from "../lib/store";
 import { SERVICE_MENU, crewOf, daysUntil, kstYmd } from "../lib/requests";
 import { CONCIERGES } from "../lib/ops-admin";
 import ConciergeRequests, { ExtraPaidNotice, NewRequestAlert, newRequestsFor } from "../components/ConciergeRequests";
+import { svcTitle } from "../lib/booking";
 import { HelpCallCard, HelpCallPopup } from "../components/HelpCall";
 import { LIVE_TAG } from "../lib/live-household";
 import { conciergeChoices, elderNameOf, inCenter, meAs, people } from "../lib/people";
@@ -339,7 +340,7 @@ function ConciergePage() {
       age: ELDER.age,
       time: r.scheduledTime || "시간 미정",
       where: r.hospital || "",
-      detail: `해주세요 — ${r.type}`,
+      detail: `해주세요 — ${svcTitle(r.type)}`,
       crew: r.partner ? `${r.assignee} · ${r.partner} (2인)` : `${r.assignee || ME} 1인`,
       memo: r.detail || "",
     }));
@@ -1975,10 +1976,10 @@ function ConciergePage() {
                     </label>
                   </div>
                   {propTo === "elder" && (
-                    <p className="mt-2 text-[11.5px] leading-[1.6] text-amber">어르신 하루 한도를 넘는 금액은 어르신이 수락한 뒤 보호자가 결제합니다.</p>
+                    <p className="mt-2 text-[11.5px] leading-[1.6] text-muted">어르신이 수락하면 결제 대기로 넘어가고, 어르신이나 가족 누구나 금액 제한 없이 결제합니다.</p>
                   )}
                   <label className="mt-2 block text-[11px] font-bold text-muted">
-                    2인 1조 서비스의 짝 (병원 동행 프리미엄 · 함께가요)
+                    2인 1조 서비스의 짝 (든든 병원동행 · 함께가요)
                     <select
                       value={propPartner}
                       onChange={(e) => setPropPartner(e.target.value)}
@@ -2229,7 +2230,7 @@ function ConciergePage() {
                       <SectionLabel>구매 진행중 — 완료사진</SectionLabel>
                       {purchasing.map((r) => (
                         <div key={r.id} className="mt-2 flex items-center gap-2">
-                          <span className="flex-1 text-[13px] font-bold text-ink">{r.type}</span>
+                          <span className="flex-1 text-[13px] font-bold text-ink">{svcTitle(r.type)}</span>
                           <button
                             onClick={() => {
                               dispatch({

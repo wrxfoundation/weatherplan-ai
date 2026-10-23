@@ -20,7 +20,7 @@ export const CREW_RULES = {
   two: [
     { key: "firstVisit", label: "첫 안심방문", why: "처음 뵙는 자리라 관찰의 객관성이 필요합니다" },
     { key: "maleAlone", label: "할아버지 1인가구", why: "양방향 오해 소지가 가장 큰 조합입니다" },
-    { key: "escortPremium", label: "병원 동행 프리미엄", why: "이동·대기·수납까지 두 사람이 나눠 맡습니다" },
+    { key: "escortPremium", label: "든든 병원동행 (선생님 두 분)", why: "이동·대기·수납까지 두 사람이 나눠 맡습니다" },
     { key: "assessment", label: "종합평가 · 재평가", why: "등급이 바뀌는 판단이라 두 사람이 각자 기록합니다" },
   ],
   // 1인으로 가는 경우
@@ -28,7 +28,7 @@ export const CREW_RULES = {
     { key: "hospitalVisit", label: "요양병원 안심방문", why: "병원 안이라 제3자가 상시 있습니다" },
     { key: "femaleAlone", label: "할머니 1인 거주 정기방문", why: "재방문이고 관계가 형성된 뒤입니다" },
     { key: "couple", label: "부부 함께 거주", why: "댁에 두 분이 계십니다" },
-    { key: "escortBasic", label: "병원 동행 베이직", why: "현장에서 만나 접수·진료만 함께합니다" },
+    { key: "escortBasic", label: "병원동행 (선생님 한 분)", why: "현장에서 만나 접수·진료만 함께합니다" },
     { key: "delivery", label: "물품 확인 · 전달", why: "체류가 짧고 판단이 개입하지 않습니다" },
   ],
 };

@@ -63,9 +63,11 @@ import { BackHead, Btn, Card, DBlock, Face, Pill, R, Screen, Sheet, SheetTitle, 
 // '생활 대행'은 '함께 해요'로, 컨시어지 2명과 근교 나들이를 가는 '함께가요'(no15)를 넣었다.
 // 2026-10-15 시안: 2열 가로 타일 + 클레이 그림 · 분류 색 (병원은 초록 · 생활은 파랑 · 준비 중은 회색).
 const ASK_TILES = [
+  // 병원 동행 두 가지 — 선생님 한 분이 먼저, 두 분(든든 병원동행)은 색을 달리한다 (2026-10-23 요청).
+  // 두 칸 그리드의 왼쪽 줄에 위아래로 붙여 둔다
+  { no: 3, label: "병원동행", sub: "선생님 한 분", clay: "escort1", tone: "green" },
   { no: 1, label: "병원 예약", sub: "날짜 잡기", clay: "hospitalBook", tone: "green" },
-  { no: 2, label: "병원 동행", sub: "선생님 두 분", clay: "escort2", tone: "green" },
-  { no: 3, label: "병원 동행", sub: "선생님 한 분", clay: "escort1", tone: "green" },
+  { no: 2, label: "든든 병원동행", sub: "선생님 두 분", clay: "escort2", tone: "purple" },
   { no: 4, label: "요양병원", sub: "안심케어", clay: "careHospital", tone: "green" },
   { no: 5, label: "안심방문", sub: "추가 방문", clay: "safeVisit", tone: "blue" },
   { no: 6, label: "함께 해요", sub: "장보기 · 말벗", clay: "together", tone: "blue" },
@@ -892,8 +894,8 @@ function ElderHome() {
     const detail = /희망: [^·]*/.test(r.detail || "")
       ? String(r.detail).replace(/희망: [^·]*/, `희망: ${whenText} `).replace(/\s+·/g, " ·").trim()
       : String(r.detail || "").replace("일정은 선생님이 연락드려 정함", `희망: ${whenText}`);
-    dispatch({ type: "editRequest", id: r.id, patch: { preferredDate: ymd, preferredTime: hm, preferredWhen: whenText, detail }, by: "어르신", title: r.type });
-    dispatch({ type: "pushEvent", payload: { kind: "해주세요", text: `${ELDER.name} 해주세요 날짜 바꿈 — ${r.type} · 희망 ${whenText}`, color: "#B08D57" } });
+    dispatch({ type: "editRequest", id: r.id, patch: { preferredDate: ymd, preferredTime: hm, preferredWhen: whenText, detail }, by: "어르신", title: svcTitle(r.type) });
+    dispatch({ type: "pushEvent", payload: { kind: "해주세요", text: `${ELDER.name} 해주세요 날짜 바꿈 — ${svcTitle(r.type)} · 희망 ${whenText}`, color: "#B08D57" } });
     setReqDateEdit(null);
     toast("날짜를 바꿨어요 · 선생님이 보고 정해 드려요");
   };
@@ -1748,12 +1750,12 @@ function ElderHome() {
                   const askingPay = elderConfirm?.id === r.id && elderConfirm.kind === "accept";
                   const accept = () => {
                     dispatch({ type: "respondProposal", id: r.id, accept: true, role: "elder" });
-                    dispatch({ type: "pushEvent", payload: { kind: "해주세요", text: `${ELDER.name} 선생님 제안 수락 — ${r.type}`, color: "#8FE3C0" } });
+                    dispatch({ type: "pushEvent", payload: { kind: "해주세요", text: `${ELDER.name} 선생님 제안 수락 — ${svcTitle(r.type)}`, color: "#8FE3C0" } });
                     setElderConfirm(null);
                   };
                   return (
                     <Card key={r.id} r={20} pad={16} style={{ boxShadow: "0 3px 0 #EAD9AC" }}>
-                      <div className="text-[19px] font-extrabold leading-[1.35]">{r.type}</div>
+                      <div className="text-[19px] font-extrabold leading-[1.35]">{svcTitle(r.type)}</div>
                       {r.detail && <p className="mt-1 text-[16px] leading-[1.5]" style={{ color: "#3A3F50" }}>{r.detail}</p>}
                       <p className="mt-1.5 text-[17px] font-extrabold leading-[1.45]" style={{ color: TONE.gold.fg }}>
                         {fmtScheduled(r) ? `${fmtScheduled(r)} · ` : ""}
@@ -1772,7 +1774,7 @@ function ElderHome() {
                               className="text-[18px]"
                               onClick={() => {
                                 dispatch({ type: "respondProposal", id: r.id, accept: false, role: "elder" });
-                                dispatch({ type: "pushEvent", payload: { kind: "해주세요", text: `${ELDER.name} 선생님 제안 거절 — ${r.type}`, color: "#8FA9CC" } });
+                                dispatch({ type: "pushEvent", payload: { kind: "해주세요", text: `${ELDER.name} 선생님 제안 거절 — ${svcTitle(r.type)}`, color: "#8FA9CC" } });
                                 setElderConfirm(null);
                               }}
                             >
@@ -1978,7 +1980,7 @@ function ElderHome() {
                                   dispatch({ type: "cancelRequest", id: r.id, by: "어르신", ...(storeAsk ? { reason: "어르신이 물건 승인 부탁을 거둠" } : {}) });
                                   dispatch({
                                     type: "pushEvent",
-                                    payload: { kind: "해주세요", text: `${ELDER.name} ${storeAsk ? "물건 승인 부탁 거둠" : rule.mode === "ops" ? "취소 요청 (관제 승인 필요)" : "취소"} — ${r.type}`, color: "#B08D57" },
+                                    payload: { kind: "해주세요", text: `${ELDER.name} ${storeAsk ? "물건 승인 부탁 거둠" : rule.mode === "ops" ? "취소 요청 (관제 승인 필요)" : "취소"} — ${svcTitle(r.type)}`, color: "#B08D57" },
                                   });
                                   setElderConfirm(null);
                                 }}
@@ -1993,7 +1995,7 @@ function ElderHome() {
                               <button
                                 type="button"
                                 onClick={() => setReqDateEdit(r)}
-                                aria-label={`${r.type} 날짜 바꾸기`}
+                                aria-label={`${svcTitle(r.type)} 날짜 바꾸기`}
                                 className="min-h-[48px] px-1 text-[16px] font-bold underline underline-offset-4"
                                 style={{ color: TONE.purple.fg }}
                               >
@@ -2003,7 +2005,7 @@ function ElderHome() {
                             <button
                               type="button"
                               onClick={() => setElderConfirm({ id: r.id, kind: "cancel" })}
-                              aria-label={`${r.type} ${rule.mode === "ops" ? "취소 부탁하기" : "취소하기"}`}
+                              aria-label={`${svcTitle(r.type)} ${rule.mode === "ops" ? "취소 부탁하기" : "취소하기"}`}
                               className="min-h-[48px] px-1 text-[16px] font-bold underline underline-offset-4"
                               style={{ color: "#5E6270" }}
                             >
@@ -3447,8 +3449,8 @@ function ElderReqDateSheet({ req, onClose, onSave }) {
   const changed = when.ymd !== preferredYmd(req) || when.hm !== (req.preferredTime || null);
   const ready = open && !!when.ymd && !!when.hm && changed;
   return (
-    <Sheet onClose={onClose} label={`${req.type} 날짜 바꾸기`}>
-      <SheetTitle sub="날짜 바꾸기" title={req.type} />
+    <Sheet onClose={onClose} label={`${svcTitle(req.type)} 날짜 바꾸기`}>
+      <SheetTitle sub="날짜 바꾸기" title={svcTitle(req.type)} />
       {open ? (
         <>
           <p className="text-[17px] leading-[1.5]" style={{ color: "#5E6270" }}>
@@ -3560,6 +3562,11 @@ function ElderAskSheet({ item, sent, approver, onAsk, onCallOps, onClose, hospit
       ) : (
         <>
           <SheetTitle sub="해주세요" title={item.title || item.name} />
+          {item.tagline && (
+            <p className="text-[18px] font-extrabold leading-[1.5]" style={{ color: "#1B2340" }}>
+              {item.tagline}
+            </p>
+          )}
           {emergency && item.rates ? (
             <div className="rounded-[18px] px-4 py-3" style={{ background: TONE.danger.bg }}>
               {/* 한 줄에 한 요금 — 두 요금을 한 줄에 두면 좁은 폰에서 '야간 / 50,000원'으로 꺾였다 */}

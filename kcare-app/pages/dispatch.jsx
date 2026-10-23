@@ -860,7 +860,7 @@ function DispatchConsole() {
       meta: `${r.voice ? `어르신 목소리 ${r.voice.clip?.secs || 0}초${r.summary?.text ? ` · "${r.summary.text}"` : " · 컨시어지가 듣고 정리"}` : `희망 ${fmtPreferred(r)}`} · ${r.status === "awaitingPayment" ? "가족 결제 대기" : "담당 컨시어지 확인 대기"}`,
       act: "확인",
       onAct: () => dispatch({ type: "opsAckRequest", id: r.id, by: opsName }),
-      ticker: ["관제", `새 해주세요 확인 — ${r.type}`, "#8FA9CC"],
+      ticker: ["관제", `새 해주세요 확인 — ${svcTitle(r.type)}`, "#8FA9CC"],
     })
   );
   // 관제 승인 대기 — 담당 컨시어지가 일정을 확인한 해주세요. 승인하면 일정이 확정되고 달력에 들어간다 (2026-10-22 결제 → 컨시어지 확인 →
@@ -912,7 +912,7 @@ function DispatchConsole() {
       actions.push({
         id: `cancel-${r.id}`,
         level: "high",
-        title: `해주세요 취소 요청 — ${r.type}`,
+        title: `해주세요 취소 요청 — ${svcTitle(r.type)}`,
         meta: `${r.cancelReq?.by || "요청자"} · ${r.scheduledDate || ""} ${r.scheduledTime || ""} · 해주세요 관리에서 승인 · 반려`,
         menu: "requests",
       })
@@ -1992,7 +1992,7 @@ function DispatchConsole() {
                   <p className="mt-2.5 text-[11px] leading-[1.6] text-[#7A241C]">
                     이 건은 2인 지정(투석 동행)이라 짝을 못 찾았다고 1인으로 내리지 않습니다 —
                     재배치 · 시니어 투입 · 일정 조정 중에서만 고릅니다. 1인이 원칙인 방문
-                    (정기 재방문 · 요양병원 · 부부 가구 · 동행 베이직 · 물품 전달)은 여기 오지
+                    (정기 재방문 · 요양병원 · 부부 가구 · 병원동행(선생님 한 분) · 물품 전달)은 여기 오지
                     않습니다.
                   </p>
                 </section>
