@@ -8917,3 +8917,53 @@ main.about-page {
   .calc-sticky .cs-go { font-size: 12px; font-weight: 700; color: var(--accent); white-space: nowrap; }
 }
 @keyframes calc-sticky-in { from { transform: translateY(12px); opacity: 0; } to { transform: none; opacity: 1; } }
+
+/* ── 계통(변전소) 수전 여유 — 시군구 요약·변화 피드·변전소 히트맵 ─────────────── */
+.gh-card .chart-note { margin-top: 4px; }
+.gh-table { margin-top: 10px; }
+.gh-row { display: grid; grid-template-columns: minmax(130px, 1.4fr) minmax(120px, 1.2fr) minmax(120px, 1.1fr) minmax(90px, 0.8fr); gap: 10px; align-items: center; padding: 8px 0; border-bottom: 1px solid color-mix(in srgb, var(--line) 55%, transparent); font-size: var(--text-sm); color: var(--ink); }
+.gh-head { font-size: 11px; color: var(--grey); padding-top: 0; border-bottom: 1px solid var(--line); }
+.gh-name { font-weight: 600; }
+.gh-now { display: flex; align-items: center; gap: 4px; }
+.gh-now b { font-size: 15px; color: var(--accent); }
+.gh-now i, .gh-max i { font-style: normal; color: var(--grey); font-size: 11.5px; }
+.gh-max i { display: block; }
+.gh-bar { flex: 1; height: 5px; margin-left: 6px; border-radius: 99px; background: color-mix(in srgb, var(--line) 70%, transparent); overflow: hidden; }
+.gh-bar span { display: block; height: 100%; background: var(--accent); border-radius: 99px; }
+.gh-year { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 11.5px; font-weight: 600; border: 1px solid var(--line); white-space: nowrap; }
+.gh-year.tone-now { color: var(--ok, #4ade80); border-color: color-mix(in srgb, var(--ok, #4ade80) 40%, var(--line)); }
+.gh-year.tone-mid { color: var(--warn, #f5b74e); border-color: color-mix(in srgb, var(--warn, #f5b74e) 40%, var(--line)); }
+.gh-year.tone-late { color: #ff9a9a; border-color: color-mix(in srgb, #ff7a7a 40%, var(--line)); }
+.gh-year.tone-none { color: var(--grey); }
+.gh-empty { font-size: var(--text-sm); color: var(--grey); }
+.gh-feed { list-style: none; margin: 10px 0 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.gh-feed li { display: grid; grid-template-columns: 1.3fr 1fr auto; gap: 10px; align-items: center; padding: 8px 10px; border-radius: 10px; border: 1px solid var(--line); font-size: var(--text-sm); }
+.gh-feed li.down { border-left: 3px solid #ff7a7a; }
+.gh-feed li.up { border-left: 3px solid var(--ok, #4ade80); }
+.gh-feed-what { color: var(--grey); font-size: 12px; }
+.gh-feed-val { white-space: nowrap; font-variant-numeric: tabular-nums; }
+.gh-feed-val em { font-style: normal; font-weight: 700; margin-left: 6px; }
+.gh-feed li.down em { color: #ff9a9a; }
+.gh-feed li.up em { color: var(--ok, #4ade80); }
+.gh-heat-wrap { overflow-x: auto; margin-top: 10px; }
+.gh-heat { border-collapse: separate; border-spacing: 3px; font-size: 12px; font-variant-numeric: tabular-nums; min-width: 460px; width: 100%; }
+.gh-heat th { color: var(--grey); font-weight: 600; text-align: center; padding: 2px 4px; }
+.gh-heat tbody th { text-align: left; color: var(--ink); white-space: nowrap; position: sticky; left: 0; background: var(--glass-surface-strong, var(--surface)); }
+.gh-heat td { text-align: center; padding: 6px 4px; border-radius: 6px; color: var(--grey); background: color-mix(in srgb, var(--line) 35%, transparent); }
+.gh-heat td.on { color: var(--ink); font-weight: 700; background: color-mix(in srgb, var(--ok, #4ade80) calc(var(--a) * 100%), transparent); }
+@media (max-width: 560px) {
+  .gh-row { grid-template-columns: 70px minmax(0, 1fr) minmax(0, 1fr) 64px; gap: 6px; font-size: 12.5px; }
+  .gh-head span { font-size: 10px; line-height: 1.25; }
+  .gh-bar { display: none; }
+  .gh-year { font-size: 10.5px; padding: 1px 6px; white-space: normal; }
+  .gh-feed li { grid-template-columns: 1fr; gap: 3px; }
+}
+
+/* 부지 분석 패널 지연 로딩 자리 */
+.site-panel-loading {
+  padding: 28px 18px;
+  color: var(--grey);
+  font-size: 13px;
+  text-align: center;
+}
+.gh-card .chart-title { text-transform: none; } /* 154kV 단위가 154KV로 바뀌지 않도록 */

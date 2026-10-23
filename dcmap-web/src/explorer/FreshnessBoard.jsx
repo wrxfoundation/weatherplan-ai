@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { evaluateFreshness, STATUS, METHODS, GROUPS, behindLabel } from '../data/freshness.js'
-import { LATEST_SNAPSHOT } from '../data/headroomSnapshots.js'
+import { LATEST_MONTH } from '../data/headroomSnapshotIndex.js'
 
 /* 데이터 최신성 보드 — 데이터셋마다 기준일·지연·갱신 방식을 한 화면에.
  * 판정은 브라우저의 오늘 날짜로 한다(재배포 없이도 지연이 정직하게 드러남). */
@@ -22,7 +22,7 @@ export default function FreshnessBoard({ en }) {
   })
   const [open, setOpen] = useState(null)
   const { rows, count, attention, today } = useMemo(
-    () => evaluateFreshness(new Date(), { headroomLatest: LATEST_SNAPSHOT?.month ?? null }),
+    () => evaluateFreshness(new Date(), { headroomLatest: LATEST_MONTH }),
     [],
   )
   const live = rows.filter((r) => r.status === 'live')

@@ -1,7 +1,9 @@
-// 변전소 여유 월별 스냅샷 로더 — data/headroom_snapshots/*.json (데이터 자산화 P1).
-// 정직성: 스냅샷은 한전ON '변전소 검색' 여유용량의 시점 캡처. 0=당해 여유 없음, 전기사용신청 후 확정.
-// vite import.meta.glob로 신규 월 파일 자동 편입 → 수동 코드 수정 없이 시계열 확장.
-// 시계열(월별 추이)은 P3 '변화 피드(diff)'와 모니터링 구독 상품의 기반이 된다.
+// 변전소 여유 월별 스냅샷 본문 — data/headroom_snapshots/*.json (데이터 자산화).
+// 정직성: 한전ON '변전소 검색' 여유용량의 시점 캡처. 0=당해 여유 없음, 전기사용신청 후 확정.
+// ⚠ 본문이 월 ~80KB씩 쌓이므로 지연 로딩 페이지(데이터 탐색기·대시보드·지역·파트너)에서만 import 할 것.
+//   메인 번들(지도·푸터·최신성 칩)은 목록만 담은 headroomSnapshotIndex.js를 쓴다.
+import { changeFeed, sigunguSummary, entriesOf } from './headroomLogic.js'
+
 const files = import.meta.glob('../../data/headroom_snapshots/*.json', { eager: true })
 
 export const SNAPSHOTS = Object.entries(files)
@@ -12,26 +14,22 @@ export const SNAPSHOTS = Object.entries(files)
 export const SNAPSHOT_MONTHS = SNAPSHOTS.map((s) => s.month)
 export const SNAPSHOT_COUNT = SNAPSHOTS.length
 export const LATEST_SNAPSHOT = SNAPSHOTS[SNAPSHOTS.length - 1] ?? null
+export const PREV_SNAPSHOT = SNAPSHOTS[SNAPSHOTS.length - 2] ?? null
 
-// 변전소명 → 월별 최대여유(MW) 추이. 스냅샷이 2개월+ 쌓이면 변화(delta) 감지에 사용.
+/** 최신 스냅샷의 변전소 항목(v1·v2 정규화) */
+export const LATEST_ENTRIES = entriesOf(LATEST_SNAPSHOT)
+
+/** 직전 스냅샷 대비 변화(연도·흐름 단위) */
+export const LATEST_CHANGES = changeFeed(PREV_SNAPSHOT, LATEST_SNAPSHOT)
+
+/** DC 입지 시군구별 154kV 수전 여유 요약 */
+export const SIGUNGU_HEADROOM = sigunguSummary(LATEST_SNAPSHOT)
+
+// 하위 호환 — 변전소명 → 월별 최대여유 추이(재생e 연계 흐름 기준, v1 시드와 같은 지표)
 export function headroomTrend(name) {
   return SNAPSHOTS.map((s) => {
-    const e = (s.entries || []).find((x) => x.name === name)
-    return { month: s.month, maxMw: e ? Math.max(...e.series) : null }
+    const e = entriesOf(s).find((x) => x.name === name)
+    const series = e?.renew ?? e?.supply
+    return { month: s.month, maxMw: series ? Math.max(...series) : null }
   }).filter((p) => p.maxMw != null)
-}
-
-// 직전 스냅샷 대비 변화(P3 변화 피드 프리뷰) — 스냅샷 1개월뿐이면 빈 배열.
-export function latestDeltas() {
-  if (SNAPSHOTS.length < 2) return []
-  const prev = SNAPSHOTS[SNAPSHOTS.length - 2]
-  const cur = LATEST_SNAPSHOT
-  const prevMap = Object.fromEntries((prev.entries || []).map((e) => [e.name, Math.max(...e.series)]))
-  return (cur.entries || [])
-    .map((e) => {
-      const now = Math.max(...e.series)
-      const was = prevMap[e.name]
-      return was == null ? null : { name: e.name, was, now, delta: now - was }
-    })
-    .filter((d) => d && d.delta !== 0)
 }

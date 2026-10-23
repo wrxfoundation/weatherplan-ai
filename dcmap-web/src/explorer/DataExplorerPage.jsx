@@ -15,7 +15,8 @@ import { CAPITAL_PIPELINE } from '../data/capitalPipeline.js'
 import { DC_DEALS, RACK_RATES, DEV_CONFLICTS, DEV_CONFLICTS_META } from '../data/dcRealEstate.js'
 import { GRID_CONSTRUCTION, GRID_CONSTRUCTION_META, GRID_STAGE_LABEL } from '../data/gridConstruction.js'
 import { SUBSTATION_HEADROOM, SUBSTATION_HEADROOM_META } from '../data/substationHeadroom.js'
-import { LATEST_SNAPSHOT, SNAPSHOT_COUNT } from '../data/headroomSnapshots.js'
+import { LATEST_SNAPSHOT, SNAPSHOT_COUNT, LATEST_ENTRIES, SIGUNGU_HEADROOM } from '../data/headroomSnapshots.js'
+import { displaySigungu, firstAvailYear } from '../data/headroomLogic.js'
 import { toCsv, downloadCsv } from '../data/csv.js'
 import { useMapLang } from '../i18n/mapLang.js'
 import FreshnessBoard from './FreshnessBoard.jsx'
@@ -168,25 +169,29 @@ const DATASETS = [
     rows: CAPITAL_PIPELINE.map((r) => ({ ...r, mwSupply: r.mwSupply ?? '', due: r.due ?? '' })),
   },
   (() => {
-    // P1 파이프라인 소비: 최신 스냅샷(있으면)을 원천으로, 없으면 정적 시드로 폴백.
+    // 최신 변전소 여유 스냅샷(시군구 42곳 · 154kV 변전소 전부)을 원천으로, 없으면 정적 시드로 폴백.
+    // 154kV 수전 여유(DC 직접 지표)를 연도별 열로, 22.9kV·재생e 연계는 최대값·첫 발생 연도로 요약.
     const years = LATEST_SNAPSHOT?.years || SUBSTATION_HEADROOM_META.years
-    const snapRows = LATEST_SNAPSHOT?.entries?.length
-      ? LATEST_SNAPSHOT.entries.map((e) => ({
-          name: e.name, sido: e.sido, area: e.area,
-          ...Object.fromEntries(years.map((y, i) => [`y${y}`, e.series?.[i] ?? null])),
-          firstAvailYear: years[(e.series || []).findIndex((v) => v > 0)] ?? '—',
-          genMw: e.genMw ?? 0, applicants: e.applicants ?? 0,
+    const peak = (a) => (a ? Math.max(...a) : '')
+    const first = (a) => (a ? firstAvailYear(a, years) ?? '—' : '')
+    const snapRows = LATEST_ENTRIES.length
+      ? LATEST_ENTRIES.map((e) => ({
+          name: e.name, sido: e.sido, sigungu: displaySigungu(e.sigungu) ?? '', emd: e.emd ?? '',
+          ...Object.fromEntries(years.map((y, i) => [`y${y}`, e.supply ? e.supply[i] : ''])),
+          firstAvailYear: first(e.supply),
+          max23: peak(e.supply23), firstRenew: first(e.renew), maxRenew: peak(e.renew),
         }))
       : SUBSTATION_HEADROOM.map((r) => ({
-          name: r.name, sido: r.sido, area: r.area,
+          name: r.name, sido: r.sido, sigungu: r.area, emd: '',
           ...Object.fromEntries(SUBSTATION_HEADROOM_META.years.map((y) => [`y${y}`, r.byYear[y]])),
-          firstAvailYear: r.firstAvailYear ?? '—', genMw: r.genMw, applicants: r.applicants,
+          firstAvailYear: r.firstAvailYear ?? '—', max23: '', firstRenew: '', maxRenew: '',
         }))
+    const n = LATEST_ENTRIES.length
     const snapNote = LATEST_SNAPSHOT
-      ? `데이터 자산화 P1 스냅샷 파이프라인: ${SNAPSHOT_COUNT}개월 축적 · 최신 ${LATEST_SNAPSHOT.month}(${LATEST_SNAPSHOT.captured}). 월별 스냅샷이 쌓이면 변화 추이(delta)를 추적한다.`
+      ? `월별 자동 수집(GitHub Action) ${SNAPSHOT_COUNT}개월 축적 · 최신 ${LATEST_SNAPSHOT.month} — DC 입지 시군구 ${SIGUNGU_HEADROOM.length}곳의 변전소 ${n}곳. 연도 열은 154kV 전력공급(소비자 수전) 여유 MW, 빈 칸은 응답에 없음.`
       : ''
     const snapNoteEn = LATEST_SNAPSHOT
-      ? `Data-asset P1 snapshot pipeline: ${SNAPSHOT_COUNT} months accumulated · latest ${LATEST_SNAPSHOT.month} (${LATEST_SNAPSHOT.captured}). As monthly snapshots accumulate, change over time (delta) is tracked.`
+      ? `Collected monthly by a GitHub Action — ${SNAPSHOT_COUNT} months, latest ${LATEST_SNAPSHOT.month}: ${n} substations across ${SIGUNGU_HEADROOM.length} districts hosting data centres. Year columns are 154kV power-supply (consumer intake) headroom in MW; blank = not in the response.`
       : ''
     return {
       key: 'subheadroom',
@@ -194,16 +199,18 @@ const DATASETS = [
       asOf: LATEST_SNAPSHOT ? `스냅샷 ${LATEST_SNAPSHOT.month} · ${SUBSTATION_HEADROOM_META.updated}` : SUBSTATION_HEADROOM_META.updated,
       asOfEn: LATEST_SNAPSHOT ? `Snapshot ${LATEST_SNAPSHOT.month} · ${AS_OF_EN[SUBSTATION_HEADROOM_META.updated] ?? SUBSTATION_HEADROOM_META.updated}` : null,
       source: `${SUBSTATION_HEADROOM_META.source}. ${SUBSTATION_HEADROOM_META.note} ${snapNote}`,
-      sourceEn: `KEPCO KEPCO-ON — power-grid integrated-info substation search (transmission headroom). Per-substation yearly headroom (MW) reference (Gapyeong · Migeum seeds use renewable-interconnection headroom). 0 = no headroom that year; confirmed after the electricity-use application. Clicking a site auto-queries power-supply / renewable headroom via the KEPCO-ON live proxy. ${snapNoteEn}`,
+      sourceEn: `KEPCO ON — power-grid integrated-info substation search (transmission headroom). Per-substation yearly headroom (MW), reference only; 0 = no headroom that year, confirmed after the electricity-use application. ${snapNoteEn}`,
       fullCsv: null,
       columns: [
         { k: 'name', label: '변전소' },
         { k: 'sido', label: '시도' },
-        { k: 'area', label: '검색지역' },
-        ...years.map((y) => ({ k: `y${y}`, label: `${y} MW` })),
-        { k: 'firstAvailYear', label: '여유 발생' },
-        { k: 'genMw', label: '발전허가(MW)' },
-        { k: 'applicants', label: '접속예정(명)' },
+        { k: 'sigungu', label: '시군구' },
+        { k: 'emd', label: '읍면동' },
+        ...years.map((y) => ({ k: `y${y}`, label: `${y} 154kV MW` })),
+        { k: 'firstAvailYear', label: '154kV 여유 발생' },
+        { k: 'max23', label: '22.9kV 최대 MW' },
+        { k: 'firstRenew', label: '재생e 여유 발생' },
+        { k: 'maxRenew', label: '재생e 최대 MW' },
       ],
       rows: snapRows,
     }
@@ -369,6 +376,8 @@ const COL_EN = {
   '추가 전력 단가': 'Extra power rate', 시행사: 'Developer', 지역: 'Region', '주민 주장': 'Resident claims',
   '개발상 이슈': 'Development issue', 시설명: 'Facility name', 운영사: 'Operator', 시군구: 'Sigungu', 상태: 'Status',
   공개전력MW: 'Public power MW', 연도: 'Year',
+  읍면동: 'Eup/myeon/dong', '154kV 여유 발생': 'First 154kV headroom', '22.9kV 최대 MW': '22.9kV peak MW',
+  '재생e 여유 발생': 'First renewable headroom', '재생e 최대 MW': 'Renewable peak MW',
 }
 const SRC_EN = {
   '3MW 초과 발전사업 허가대장 v2': '3MW+ power-generation license register v2',

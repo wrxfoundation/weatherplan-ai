@@ -1,8 +1,425 @@
 {
-  "note": "P1 변전소 여유 스냅샷 수집 대상 매니페스트. scripts/snapshot-headroom.mjs가 읽는다. admCd=법정동코드 10자리. 확장 시 여기에 추가(코드 미확인 항목은 넣지 말 것 — 정직성).",
-  "updated": "2026-07",
-  "targets": [
-    { "label": "가평", "admCd": "4182025000", "sido": "경기", "area": "가평군 가평읍" },
-    { "label": "미금", "admCd": "4182025000", "sido": "경기", "area": "가평군 가평읍" }
-  ]
+ "version": 2,
+ "updated": "2026-10-23",
+ "note": "변전소 여유 스냅샷 수집 대상 — 시군구 단위(법정동코드 앞 5자리). scripts/snapshot-headroom.mjs가 읽는다. 선정: DC 시설 좌표 → vworld 역지오코딩 법정동코드 → 한전ON 조회 결과의 시군구명이 일치한 것만(2026-10-23 검증). 확장 시 같은 검증을 거친 코드만 추가(미확인 코드 금지 — 정직성).",
+ "verifiedVia": "vworld getAddress(legalCode) + 한전ON 변전소 검색 scope 일치",
+ "targets": [
+  {
+   "admCd": "11170",
+   "sido": "서울",
+   "sigungu": "용산구",
+   "kepcoSido": "서울특별시",
+   "facilities": [
+    "kr-kt-yongsan"
+   ]
+  },
+  {
+   "admCd": "11440",
+   "sido": "서울",
+   "sigungu": "마포구",
+   "kepcoSido": "서울특별시",
+   "facilities": [
+    "kr-samsungsds-sangam",
+    "kr-equinix-sl1",
+    "kr-digitalrealty-icn10",
+    "kr-woorifis-sangam",
+    "kr-lguplus-sangam"
+   ]
+  },
+  {
+   "admCd": "11470",
+   "sido": "서울",
+   "sigungu": "양천구",
+   "kepcoSido": "서울특별시",
+   "facilities": [
+    "kr-kt-mokdong"
+   ]
+  },
+  {
+   "admCd": "11500",
+   "sido": "서울",
+   "sigungu": "서울특별시강서구",
+   "kepcoSido": "서울특별시",
+   "facilities": [
+    "kr-empyrion-gangseo"
+   ]
+  },
+  {
+   "admCd": "11545",
+   "sido": "서울",
+   "sigungu": "금천구",
+   "kepcoSido": "서울특별시",
+   "facilities": [
+    "kr-lgcns-gasan",
+    "kr-ktcloud-gasan",
+    "kr-skbroadband-gasan",
+    "kr-sttgdc-korea",
+    "kr-smileserv-gasan"
+   ]
+  },
+  {
+   "admCd": "11560",
+   "sido": "서울",
+   "sigungu": "영등포구",
+   "kepcoSido": "서울특별시",
+   "facilities": [
+    "kr-koscom-yeouido"
+   ]
+  },
+  {
+   "admCd": "11650",
+   "sido": "서울",
+   "sigungu": "서초구",
+   "kepcoSido": "서울특별시",
+   "facilities": [
+    "kr-skbroadband-seocho"
+   ]
+  },
+  {
+   "admCd": "11680",
+   "sido": "서울",
+   "sigungu": "강남구",
+   "kepcoSido": "서울특별시",
+   "facilities": [
+    "kr-kt-gangnam",
+    "kr-digitaledge-sel1"
+   ]
+  },
+  {
+   "admCd": "12300",
+   "sido": "광주",
+   "sigungu": "북구",
+   "kepcoSido": "전남광주통합특별시",
+   "facilities": [
+    "kr-nhncloud-gwangju",
+    "kr-gwangju-ai-phase2"
+   ]
+  },
+  {
+   "admCd": "12790",
+   "sido": "전남",
+   "sigungu": "해남군",
+   "kepcoSido": "전남광주통합특별시",
+   "facilities": [
+    "kr-solaseado-haenam"
+   ]
+  },
+  {
+   "admCd": "26440",
+   "sido": "부산",
+   "sigungu": "강서구",
+   "kepcoSido": "부산광역시",
+   "facilities": [
+    "kr-lgcns-busan",
+    "kr-microsoft-busan",
+    "kr-busan-ecodelta",
+    "kr-busan-myeongji-edge-aidc"
+   ]
+  },
+  {
+   "admCd": "28185",
+   "sido": "인천",
+   "sigungu": "연수구",
+   "kepcoSido": "인천광역시",
+   "facilities": [
+    "kr-cj-olivenetworks-songdo"
+   ]
+  },
+  {
+   "admCd": "28200",
+   "sido": "인천",
+   "sigungu": "남동구",
+   "kepcoSido": "인천광역시",
+   "facilities": [
+    "kr-lgcns-incheon"
+   ]
+  },
+  {
+   "admCd": "28237",
+   "sido": "인천",
+   "sigungu": "부평구",
+   "kepcoSido": "인천광역시",
+   "facilities": [
+    "kr-digitaledge-sel2"
+   ]
+  },
+  {
+   "admCd": "28275",
+   "sido": "인천",
+   "sigungu": "서해구",
+   "kepcoSido": "인천광역시",
+   "facilities": [
+    "kr-hana-cheongna",
+    "kr-hana-cheongna-2",
+    "kr-brookfield-cheongna"
+   ]
+  },
+  {
+   "admCd": "30170",
+   "sido": "대전",
+   "sigungu": "서구",
+   "kepcoSido": "대전광역시",
+   "facilities": [
+    "kr-lotte-innovate"
+   ]
+  },
+  {
+   "admCd": "30200",
+   "sido": "대전",
+   "sigungu": "유성구",
+   "kepcoSido": "대전광역시",
+   "facilities": [
+    "kr-skcc-daedeok"
+   ]
+  },
+  {
+   "admCd": "31140",
+   "sido": "울산",
+   "sigungu": "남구",
+   "kepcoSido": "울산광역시",
+   "facilities": [
+    "kr-skt-ulsan-aidc"
+   ]
+  },
+  {
+   "admCd": "36110",
+   "sido": "세종",
+   "sigungu": "세종시",
+   "kepcoSido": "세종특별자치시",
+   "facilities": [
+    "kr-naver-gak-sejong",
+    "kr-naver-gak-sejong-phase2"
+   ]
+  },
+  {
+   "admCd": "41117",
+   "sido": "경기",
+   "sigungu": "수원시영통구",
+   "kepcoSido": "경기도",
+   "facilities": [
+    "kr-samsungsds-suwon"
+   ]
+  },
+  {
+   "admCd": "41135",
+   "sido": "경기",
+   "sigungu": "성남시분당구",
+   "kepcoSido": "경기도",
+   "facilities": [
+    "kr-skcc-pangyo",
+    "kr-nhn-pangyo",
+    "kr-hostway-bundang",
+    "kr-kt-bundang"
+   ]
+  },
+  {
+   "admCd": "41173",
+   "sido": "경기",
+   "sigungu": "안양시동안구",
+   "kepcoSido": "경기도",
+   "facilities": [
+    "kr-lguplus-pyeongchon",
+    "kr-lguplus-pyeongchon2",
+    "kr-epoch-anyang",
+    "kr-anyang-gwanyang"
+   ]
+  },
+  {
+   "admCd": "41192",
+   "sido": "경기",
+   "sigungu": "부천시 원미구",
+   "kepcoSido": "경기도",
+   "facilities": [
+    "kr-bucheon-dc"
+   ]
+  },
+  {
+   "admCd": "41271",
+   "sido": "경기",
+   "sigungu": "안산시상록구",
+   "kepcoSido": "경기도",
+   "facilities": [
+    "kr-kakao-ansan"
+   ]
+  },
+  {
+   "admCd": "41273",
+   "sido": "경기",
+   "sigungu": "안산시단원구",
+   "kepcoSido": "경기도",
+   "facilities": [
+    "kr-kakao-ansan-phase2",
+    "kr-aegis-ansan-choji"
+   ]
+  },
+  {
+   "admCd": "41281",
+   "sido": "경기",
+   "sigungu": "고양시덕양구",
+   "kepcoSido": "경기도",
+   "facilities": [
+    "kr-equinix-sl2",
+    "kr-mastern-goyang",
+    "kr-goyang-samsong",
+    "kr-equinix-sl3x"
+   ]
+  },
+  {
+   "admCd": "41285",
+   "sido": "경기",
+   "sigungu": "고양시일산동구",
+   "kepcoSido": "경기도",
+   "facilities": [
+    "kr-ktcloud-baekseok",
+    "kr-skbroadband-ilsan"
+   ]
+  },
+  {
+   "admCd": "41290",
+   "sido": "경기",
+   "sigungu": "과천시",
+   "kepcoSido": "경기도",
+   "facilities": [
+    "kr-samsungsds-gwacheon",
+    "kr-kinx-gwacheon"
+   ]
+  },
+  {
+   "admCd": "41390",
+   "sido": "경기",
+   "sigungu": "시흥시",
+   "kepcoSido": "경기도",
+   "facilities": [
+    "kr-kakao-siheung"
+   ]
+  },
+  {
+   "admCd": "41430",
+   "sido": "경기",
+   "sigungu": "의왕시",
+   "kepcoSido": "경기도",
+   "facilities": [
+    "kr-nh-uiwang"
+   ]
+  },
+  {
+   "admCd": "41450",
+   "sido": "경기",
+   "sigungu": "하남시",
+   "kepcoSido": "경기도",
+   "facilities": [
+    "kr-ibk-hanam",
+    "kr-igis-hanam"
+   ]
+  },
+  {
+   "admCd": "41461",
+   "sido": "경기",
+   "sigungu": "용인시처인구",
+   "kepcoSido": "경기도",
+   "facilities": [
+    "kr-hyundai-autoever-mabuk",
+    "kr-yongin-gongse"
+   ]
+  },
+  {
+   "admCd": "41465",
+   "sido": "경기",
+   "sigungu": "용인시수지구",
+   "kepcoSido": "경기도",
+   "facilities": [
+    "kr-shinhan-jukjeon",
+    "kr-hanwha-systems-jukjeon",
+    "kr-pacificsunny-jukjeon",
+    "kr-sejong-telecom-bundang"
+   ]
+  },
+  {
+   "admCd": "41480",
+   "sido": "경기",
+   "sigungu": "파주시",
+   "kepcoSido": "경기도",
+   "facilities": [
+    "kr-lguplus-paju-aidc"
+   ]
+  },
+  {
+   "admCd": "41570",
+   "sido": "경기",
+   "sigungu": "김포시",
+   "kepcoSido": "경기도",
+   "facilities": [
+    "kr-kb-gimpo",
+    "kr-digitalrealty-icn11",
+    "kr-gimpo-janggi",
+    "kr-shinsegae-inc-gimpo",
+    "kr-gimpo-cinepolis"
+   ]
+  },
+  {
+   "admCd": "41597",
+   "sido": "경기",
+   "sigungu": "화성시동탄구",
+   "kepcoSido": "경기도",
+   "facilities": [
+    "kr-samsungsds-dongtan"
+   ]
+  },
+  {
+   "admCd": "47111",
+   "sido": "경북",
+   "sigungu": "포항시남구",
+   "kepcoSido": "경상북도",
+   "facilities": [
+    "kr-pohang-bluevalley"
+   ]
+  },
+  {
+   "admCd": "47190",
+   "sido": "경북",
+   "sigungu": "구미시",
+   "kepcoSido": "경상북도",
+   "facilities": [
+    "kr-samsungsds-gumi"
+   ]
+  },
+  {
+   "admCd": "48250",
+   "sido": "경남",
+   "sigungu": "김해시",
+   "kepcoSido": "경상남도",
+   "facilities": [
+    "kr-nhn-gimhae"
+   ]
+  },
+  {
+   "admCd": "51110",
+   "sido": "강원",
+   "sigungu": "춘천시",
+   "kepcoSido": "강원특별자치도",
+   "facilities": [
+    "kr-naver-gak-chuncheon",
+    "kr-samsungsds-chuncheon",
+    "kr-douzone-chuncheon",
+    "kr-chuncheon-suyeol"
+   ]
+  },
+  {
+   "admCd": "52130",
+   "sido": "전북",
+   "sigungu": "군산시",
+   "kepcoSido": "전북특별자치도",
+   "facilities": [
+    "kr-saemangeum-dc"
+   ]
+  },
+  {
+   "admCd": "41820",
+   "sido": "경기",
+   "sigungu": "가평군",
+   "kepcoSido": "경기도",
+   "facilities": [],
+   "note": "2026-07 시드(가평·미금) 시계열 연속용"
+  }
+ ]
 }

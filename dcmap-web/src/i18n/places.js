@@ -21,8 +21,69 @@ export const SIGUNGU_EN = {
   하남시: 'Hanam', 해남군: 'Haenam-gun', 화성시: 'Hwaseong',
 }
 
+/* 한글 → 로마자 — 국어의 로마자 표기법 기본 규칙 + 자주 나오는 자음 동화·연음.
+ * 사전에 없는 고유명(한전 변전소명 362곳, 새 시군구 등)의 EN 표기용. 공식 영문명이 아니라 음역이다. */
+const RR_I = ['g', 'kk', 'n', 'd', 'tt', 'r', 'm', 'b', 'pp', 's', 'ss', '', 'j', 'jj', 'ch', 'k', 't', 'p', 'h']
+const RR_V = ['a', 'ae', 'ya', 'yae', 'eo', 'e', 'yeo', 'ye', 'o', 'wa', 'wae', 'oe', 'yo', 'u', 'wo', 'we', 'wi', 'yu', 'eu', 'ui', 'i']
+const RR_F = ['', 'k', 'k', 'k', 'n', 'n', 'n', 't', 'l', 'k', 'm', 'l', 'l', 'l', 'p', 'l', 'm', 'p', 'p', 't', 't', 'ng', 't', 't', 'k', 't', 'p', 't']
+// 받침이 뒤 음절 ㅇ으로 넘어갈 때의 소리(연음)
+const RR_LINK = { 1: 'g', 2: 'kk', 4: 'n', 7: 'd', 8: 'r', 16: 'm', 17: 'b', 19: 's', 20: 'ss', 22: 'j', 23: 'ch', 24: 'k', 25: 't', 26: 'p' }
+const K_CLASS = new Set([1, 2, 3, 9, 24])
+const P_CLASS = new Set([14, 17, 18, 26])
+const T_CLASS = new Set([7, 19, 20, 22, 23, 25, 27])
+
+function romanizeWord(w) {
+  const syl = [...w].map((ch) => {
+    const c = ch.codePointAt(0) - 0xac00
+    return c >= 0 && c < 11172 ? { i: Math.floor(c / 588), v: Math.floor((c % 588) / 28), f: c % 28 } : { raw: ch }
+  })
+  let out = ''
+  syl.forEach((s, k) => {
+    if (s.raw) return void (out += s.raw)
+    const prev = syl[k - 1]
+    const next = syl[k + 1]
+    let ini = RR_I[s.i]
+    if (prev && !prev.raw && prev.f) {
+      const pf = prev.f
+      if (s.i === 5 && (pf === 4 || pf === 8)) ini = 'l' // 신림 Sillim · 별량 Byeollyang
+      else if (s.i === 5) ini = 'n' // 종로 Jongno · 백련 Baengnyeon
+      else if (s.i === 2 && pf === 8) ini = 'l' // 설날 Seollal
+    }
+    let fin = RR_F[s.f]
+    if (s.f && next && !next.raw) {
+      if (next.i === 11 && RR_LINK[s.f] != null) fin = '' // 연음: 받침을 다음 음절로
+      else if (next.i === 5 && s.f === 4) fin = 'l'
+      else if (next.i === 2 || next.i === 6 || next.i === 5) {
+        if (K_CLASS.has(s.f)) fin = 'ng' // 백마 Baengma
+        else if (P_CLASS.has(s.f)) fin = 'm'
+        else if (T_CLASS.has(s.f)) fin = 'n'
+      }
+    }
+    if (prev && !prev.raw && prev.f && s.i === 11 && RR_LINK[prev.f] != null) ini = RR_LINK[prev.f]
+    out += ini + RR_V[s.v] + fin
+  })
+  return out ? out[0].toUpperCase() + out.slice(1) : out
+}
+export const romanize = (s) => (s ? String(s).replace(/[가-힣]+/g, romanizeWord) : s)
+
+/** 사전 우선, 없으면 음역. 「포항시 남구」처럼 띄어 쓴 복합 시군구는 단위별로(시는 생략, 군·구는 -gun/-gu) */
+function sigunguEn(s) {
+  if (SIGUNGU_EN[s]) return SIGUNGU_EN[s]
+  return String(s)
+    .split(/\s+/)
+    .map((w) => {
+      if (SIGUNGU_EN[w]) return SIGUNGU_EN[w]
+      const m = w.match(/^(.+?)(시|군|구)$/)
+      if (!m) return romanize(w)
+      return romanize(m[1]) + (m[2] === '시' ? '' : `-${m[2] === '군' ? 'gun' : 'gu'}`)
+    })
+    .join(' ')
+}
+
 export const sidoT = (s, en) => (en && s ? SIDO_EN[s] ?? s : s)
-export const sigunguT = (s, en) => (en && s ? SIGUNGU_EN[s] ?? s : s)
+export const sigunguT = (s, en) => (en && s ? sigunguEn(s) : s)
+/** 한전 변전소명 → EN 음역. 「(건설중)」은 뜻으로 옮긴다 */
+export const substationT = (s, en) => (en && s ? romanize(String(s).replace(/\(건설중\)/g, ' (under construction)')) : s)
 /** 「경기 안양시」 → 「Anyang, Gyeonggi」 (EN은 작은 단위 먼저) */
 export function placeT(sido, sigungu, en) {
   if (!en) return `${sido ?? ''}${sigungu ? ` ${sigungu}` : ''}`.trim()

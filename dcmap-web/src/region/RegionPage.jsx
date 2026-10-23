@@ -14,6 +14,7 @@ import { RENEWABLE_ESS, RENEWABLE_ESS_META, RENEWABLE_ESS_TOTAL } from '../data/
 import { useMapLang } from '../i18n/mapLang.js'
 import { sidoT, sigunguT, placeKeyT, facilityName, typeT } from '../i18n/places.js'
 import FreshnessChip from '../ui/FreshnessChip.jsx'
+import { SigunguHeadroomCard } from '../grid/GridHeadroom.jsx'
 
 const STATUS_EN = { operating: 'Operating', construction: 'Construction', planned: 'Planned', delayed: 'Delayed', cancelled: 'Cancelled' }
 
@@ -164,6 +165,9 @@ export default function RegionPage() {
             })),
           }}
         />
+
+        {/* DC 입지 시군구의 154kV 수전 여유(공급측) — 한전ON 월별 수집 */}
+        <SigunguHeadroomCard sido={sido} initial={20} />
 
         {/* 전력 수요 밀도 — 한전 계약종별(일반용) 시군구 계약전력 라이브. 여유용량(공급측)의 보완 지표 */}
         {usage?.available && usage.cities?.length > 0 && (
