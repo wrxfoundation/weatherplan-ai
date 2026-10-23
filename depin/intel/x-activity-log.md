@@ -4334,3 +4334,22 @@ Weather data goes in, GPUs do the work, and out come forecasts and answers peopl
 - A 추천(가중 279): `Validated ledger, and we check it ourselves. The gateway looks up the tx hash and serves only once it's validated: tesSUCCESS, our destination, and the full delivered_amount, since partial payments don't count. A reused hash gets a 402; not validated yet, a 409 with Retry-After.`
 - B 짧은 판(가중 205): `Validated ledger, checked by our own gateway, not a facilitator's word. tesSUCCESS, right destination, full delivered_amount, hash used once. Not validated yet? 409 and retry. On XRPL that's a few seconds.`
 
+
+## 서우 개인 계정 — @wellbianlabs 「Weather AI Factory 는 이렇게 Weather Intelligence Tokens 를 생성」 영상 원글 인용 (2026-10-23, 서우 캡처 + 「인용 개인」)
+
+원글(브랜드, 3시간 전): 날씨 빅데이터 → AI 모델 → GPU → Weather Intelligence Tokens · 「보이는 형태의 인텔리전스」 · 「날씨 데이터가 자산이 됩니다」 + 지구본 영상(기압계 · 강수 · 태풍).
+판정: **인용 — 10/21 인용(「데이터센터는 저장 · 계산, 공장은 출하」)과 각도를 달리해 「영상 속 지구본 → 한 곳의 답」 · 첫 상품으로 받는다.** 「자산 · 가치 · 토큰」은 되풀이하지 않는다. 영상이 실제 예보 출력인지는 모르므로 「날씨는 멀리서 보면 이렇다」로만 쓰고 위치(태풍 위치)는 짚지 않는다.
+근거: 60일 초지역 예보 에이전트 Live(데모) = wellbianai.io(`content/ai-factory-1021/README.md` 백서 대조).
+- **A 추천(가중 256)**
+```
+From far away, weather looks like this globe: pressure systems, rain bands, a typhoon.
+
+Up close, people want one answer for one place. That's the job of our AI factory, and the first thing it ships is a 60-day hyper-local forecast agent, live in demo now.
+```
+- B(가중 215) — 「토큰 = 모델 산출물」로 뜻을 정리하는 판. 3편 링크드인에서 서우가 WLBN 줄을 뺀 흐름이라 차선.
+```
+Big data in, GPUs in the middle, and out comes something you can actually read: a forecast for one place, up to 60 days out.
+
+"Tokens" is AI-factory language for what a model produces. The useful part is the answer.
+```
+게시 전: 인용 = 원글 — 오늘 개인 계정에 3편 X 원글을 올렸으면 6시간 뒤 또는 내일.

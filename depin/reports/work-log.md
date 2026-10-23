@@ -2546,3 +2546,4 @@ Thanks Odelia — writing to you at that address today. Mine is support@wellbian
 - **연재 3편 게시 문안 전달(10/22, 서우 「연재할 3탄 스크립트」)** — 10/21 문안(링크드인 1240자 · X 가중 263 · 232 · 212)을 최종 그래픽(칩 제거 · 세로판)과 대조, 본문 그대로. 링크드인은 PDF 문서 게시물 + 문서 제목 한 줄 추가. `content/ai-factory-1021/README.md`.
 - **연재 3편 링크드인 서우 수정본 다듬음(10/22)** — 데모 무료 · Coming · WLBN 삭제본을 받아: API · 패키지 = 「다음」 한 줄 · 에이전트 「Live today in demo」 · 토큰 줄 「not a crypto token」 · 띄어쓰기 · 빈 줄 정리(1257자). `content/ai-factory-1021/README.md`.
 - **Swell 공식 연사 152명 중 링크드인 1촌 대상(10/23, 서우 「이중에 링크드인 컨택할만한 사람」)** — 새로 요청 12명(x402 넷 · 원장 고정 셋 · XRPL 생태계 다섯) + 메모 3종(249~286자) · 진행 중이라 새로 열지 않을 사람 · 현장만 · Swell 뒤. XRPL 생태계 묶음은 9/10 보류 해제 확인 필요. `intel/linkedin-xrp-targets-1021.md` 끝 절.
+- **@wellbianlabs AI Factory 영상 원글 개인 인용(10/23, 서우 캡처 「인용 개인」)** — 10/21 인용과 각도 달리: 지구본 → 한 곳의 답 · 첫 상품 60일 예보 에이전트(데모). A 256 · B 215. 자산 · 가치 · 토큰 되풀이 0. `intel/x-activity-log.md` 끝 절.
