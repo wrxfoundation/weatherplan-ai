@@ -2,15 +2,19 @@
 // 색 · 그림자 값은 시안 그대로다. 다만 빨강은 위험 신호(SOS · 낙상 · 응급) 전용이라
 // 시안의 빨간 '새 소식' 점 · 주황 배지는 금색(TONE.gold)으로 바꿔 쓴다 — 이 파일 밖에서 빨강을 고르지 않게
 // 위험 색(TONE.danger)은 이름부터 위험이라고 붙였다.
-import { Children, cloneElement, isValidElement, useCallback, useEffect, useId, useRef, useState } from "react";
+import { Children, cloneElement, isValidElement, useCallback, useEffect, useId, useLayoutEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { Line } from "./clay";
+
+// 서버에서 그릴 때는 useLayoutEffect 가 경고를 내서, 브라우저에서만 쓴다
+const useBrowserLayoutEffect = typeof window === "undefined" ? useEffect : useLayoutEffect;
 
 // 칩 · 고르기 묶음 — 줄이 바뀔 때 오른쪽이 비지 않게 같은 너비로 줄을 꽉 채운다 (2026-10-23 · 시제품 v17 '.even').
 //   한 줄에 몇 개: 글이 12자를 넘으면 하나 · 6자를 넘으면 둘 · 짧으면 셋(3 · 5 · 7 · 3의 배수 개일 때), 아니면 둘.
 //   마지막 줄에 하나가 남으면 줄 전체, 둘이 남으면 반씩 — 어느 줄도 오른쪽이 비지 않는다. 6칸 격자에서 몇 칸을 차지할지 돌려준다.
-//   cols(1 · 2 · 3)를 주면 한 줄 개수는 그대로 두고 마지막 줄만 채운다 — 버튼 · 시간 · 사람 칸처럼 글 길이로 정하지 않는 묶음
-export function evenSpans(labels, fixed) {
+//   cols(1 · 2 · 3)를 주면 한 줄 개수는 그대로 두고 마지막 줄만 채운다 — 버튼 · 시간 · 사람 칸처럼 글 길이로 정하지 않는 묶음.
+//   limit 는 한 줄 개수의 위쪽 한계 — 칸이 좁아 글이 두 줄로 접힐 때 EvenGrid 가 재서 줄인다
+export function evenSpans(labels, fixed, limit = 3) {
   const n = labels.length;
   if (!n) return [];
   const mx = Math.max(...labels.map((t) => String(t ?? "").length));
@@ -18,18 +22,53 @@ export function evenSpans(labels, fixed) {
   if (n <= 2 && mx <= 12) cols = n;
   if (n === 4 && mx <= 3) cols = 2;
   if (fixed) cols = Math.min(fixed, n);
+  cols = Math.max(1, Math.min(cols, limit));
   const rem = n % cols;
   const lastStart = n - rem;
   return labels.map((_, i) => (cols === 1 ? 6 : rem && i >= lastStart ? (rem === 1 ? 6 : 3) : 6 / cols));
 }
 
 // evenSpans 로 줄을 채우는 묶음. labels 는 칸마다의 글(길이로 한 줄 개수를 정한다), children 은 칩 · 버튼 그대로.
-// 조건부 칸(false)은 빼고 센다. center={false} 면 칸 안 정렬은 원래대로(왼쪽 정렬 칸), as 로 R 같은 감싸개를 쓴다
+// 조건부 칸(false)은 빼고 센다. center={false} 면 칸 안 정렬은 원래대로(왼쪽 정렬 칸), as 로 R 같은 감싸개를 쓴다.
+// 글자 수 규칙은 시제품 폭 기준이라, 화면이 좁아 글이 두 줄로 접히면 한 줄 개수를 줄인다(3 → 2 → 1).
+// 칸 개수를 정해 준 묶음(cols)은 재지 않는다 — 사람 칸처럼 안에서 줄이 바뀌어도 되는 칸이다
 export function EvenGrid({ labels, cols, as: Tag = "div", center = true, gap = 8, className = "", style, children, ...rest }) {
   const items = Children.toArray(children).filter(isValidElement);
-  const spans = evenSpans(labels || items.map(() => ""), cols);
+  const texts = labels || items.map(() => "");
+  const measure = !cols && typeof Tag === "string";
+  const ref = useRef(null);
+  const [limit, setLimit] = useState(3);
+  const sig = texts.join("\u0001");
+  useBrowserLayoutEffect(() => {
+    const el = ref.current;
+    if (!measure || !el) return undefined;
+    let lastW = -1;
+    const fit = (force) => {
+      const W = el.clientWidth;
+      if (!W || (!force && Math.abs(W - lastW) < 1)) return;
+      lastW = W;
+      const g = parseFloat(getComputedStyle(el).columnGap) || 0;
+      let need = 0;
+      for (const k of el.children) {
+        const was = k.style.width;
+        k.style.width = "max-content";
+        need = Math.max(need, k.offsetWidth);
+        k.style.width = was;
+      }
+      let c = 3;
+      while (c > 1 && (W + g) / c - g < need) c--;
+      setLimit(c);
+    };
+    fit(true);
+    const ro = typeof ResizeObserver === "undefined" ? null : new ResizeObserver(() => fit(false));
+    ro?.observe(el);
+    // 글꼴이 늦게 들어오면 글 폭이 바뀐다
+    document.fonts?.ready.then(() => fit(true)).catch(() => {});
+    return () => ro?.disconnect();
+  }, [measure, sig]);
+  const spans = evenSpans(texts, cols, measure ? limit : 3);
   return (
-    <Tag className={`grid ${className}`} style={{ gridTemplateColumns: "repeat(6, minmax(0, 1fr))", gap, ...style }} {...rest}>
+    <Tag ref={measure ? ref : undefined} className={`grid ${className}`} style={{ gridTemplateColumns: "repeat(6, minmax(0, 1fr))", gap, ...style }} {...rest}>
       {items.map((el, i) =>
         cloneElement(el, { style: { ...el.props.style, gridColumn: `span ${spans[i] || 3}`, ...(center && { justifyContent: "center", textAlign: "center" }) } })
       )}
