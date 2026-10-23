@@ -13,6 +13,7 @@ import { powerUsageFor } from '../data/liveApi.js'
 import { RENEWABLE_ESS, RENEWABLE_ESS_META, RENEWABLE_ESS_TOTAL } from '../data/renewableEss.js'
 import { useMapLang } from '../i18n/mapLang.js'
 import { sidoT, sigunguT, placeKeyT, facilityName, typeT } from '../i18n/places.js'
+import FreshnessChip from '../ui/FreshnessChip.jsx'
 
 const STATUS_EN = { operating: 'Operating', construction: 'Construction', planned: 'Planned', delayed: 'Delayed', cancelled: 'Cancelled' }
 
@@ -249,6 +250,7 @@ export default function RegionPage() {
                 {en
                   ? `${sidoEn} renewable · ESS installed capacity (national solar rank #${solarRank}, ${RENEWABLE_ESS_META.asOf})`
                   : `${sido} 재생에너지·ESS 설비용량 (전국 태양광 ${solarRank}위, ${RENEWABLE_ESS_META.asOf})`}
+                <FreshnessChip id="renewable-ess" />
               </div>
               {bars.map((b) => (
                 <div key={b.k} className="hbar-row">
@@ -287,6 +289,7 @@ export default function RegionPage() {
                 {en
                   ? `${sidoEn} sigungu land-price change rate (${LAND_DONG_PERIOD} monthly, KOSIS)`
                   : `${sido} 입지 시군구 지가변동률 (${LAND_DONG_PERIOD} 월간, KOSIS)`}
+                <FreshnessChip id="land-dong" />
               </div>
               {rows.map((r) => (
                 <div key={r.label} className="hbar-row">

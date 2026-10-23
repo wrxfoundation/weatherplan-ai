@@ -187,7 +187,7 @@ export default function FilterBar({
           min="0"
           step="10"
           inputMode="numeric"
-          placeholder="MW"
+          placeholder="0"
           value={minMw ?? ''}
           onChange={(e) => onMinMw(e.target.value === '' ? null : Math.max(0, Number(e.target.value) || 0))}
           aria-label={t('최소 필요 용량(MW)')}

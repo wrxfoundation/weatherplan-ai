@@ -83,6 +83,7 @@ export default function FacilityPage() {
       scrollWheelZoom: false,
     })
     map.zoomControl.setPosition('bottomright')
+    map.attributionControl.setPrefix(false)
     for (const t of DARK_BASE_TILES) {
       L.tileLayer(t.url, { attribution: t.attr, maxNativeZoom: t.maxNativeZoom, maxZoom: 19 }).addTo(map)
     }

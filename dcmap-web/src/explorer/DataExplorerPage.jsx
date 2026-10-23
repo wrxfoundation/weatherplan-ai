@@ -18,6 +18,7 @@ import { SUBSTATION_HEADROOM, SUBSTATION_HEADROOM_META } from '../data/substatio
 import { LATEST_SNAPSHOT, SNAPSHOT_COUNT } from '../data/headroomSnapshots.js'
 import { toCsv, downloadCsv } from '../data/csv.js'
 import { useMapLang } from '../i18n/mapLang.js'
+import FreshnessBoard from './FreshnessBoard.jsx'
 
 const BASE = import.meta.env.BASE_URL.replace(/\/$/, '')
 
@@ -509,19 +510,22 @@ export default function DataExplorerPage() {
         <p className="power-note">
           {en ? (
             <>
-              Search the primary sources AI InfraMap has absorbed and download them as CSV. Each dataset's <strong>base date</strong> is
-              shown — the generation license register 2026-04, district energy 2025-07, facility seed 2026-07 — mostly current for 2025~2026.
-              (The KDCC facility count of 165 is the 2024 survey, the latest currently published.)
+              Search the primary sources AI InfraMap has absorbed and download them as CSV. How current each one is — its
+              <strong> as-of date</strong>, how far behind it is, and how it gets refreshed — is in the{' '}
+              <a href="#freshness">data freshness</a> board below. (The KDCC facility count of 165 is the 2024 survey, the latest published.)
             </>
           ) : (
             <>
-              AI InfraMap이 흡수한 원천 자료를 직접 검색하고 CSV로 내려받을 수 있습니다. 각 데이터셋의 <strong>기준일</strong>을
-              함께 표기 — 발전 허가대장 2026-04, 집단에너지 2025-07, 시설 시드 2026-07로 대부분 2025~2026 최신입니다.
-              (KDCC 시설 수 165는 2024 조사가 현재 공표된 최신치입니다.)
+              AI InfraMap이 흡수한 원천 자료를 직접 검색하고 CSV로 내려받을 수 있습니다. 각 자료가 얼마나 최신인지 —
+              <strong> 기준일</strong>, 얼마나 밀렸는지, 어떻게 갱신되는지 — 는 아래 <a href="#freshness">데이터 최신성</a> 표에서
+              확인하세요. (KDCC 시설 수 165는 2024 조사가 현재 공표된 최신치입니다.)
             </>
           )}
         </p>
 
+        <FreshnessBoard en={en} />
+
+        <h2 className="explorer-h2">{en ? 'Search the sources' : '원천 자료 검색'}</h2>
         <div className="seg-tabs" role="tablist" aria-label={en ? 'Dataset categories' : '데이터셋 분류'}>
           {ALL_DATASETS.map((d) => (
             <button key={d.key} type="button" role="tab" className={`seg-tab ${tab === d.key ? 'on' : ''}`} onClick={() => selectTab(d.key)} aria-selected={tab === d.key}>

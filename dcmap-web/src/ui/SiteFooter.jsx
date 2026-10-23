@@ -1,4 +1,7 @@
+import { useMemo } from 'react'
 import { Link, useLocation } from 'react-router-dom'
+import { evaluateFreshness } from '../data/freshness.js'
+import { LATEST_SNAPSHOT } from '../data/headroomSnapshots.js'
 import { CONTACT_EMAIL } from '../data/leadApi.js'
 import { useMapLang } from '../i18n/mapLang.js'
 
@@ -51,6 +54,10 @@ const COLS = [
 export default function SiteFooter() {
   const { pathname } = useLocation()
   const en = useMapLang() === 'en'
+  const fresh = useMemo(() => {
+    const r = evaluateFreshness(new Date(), { headroomLatest: LATEST_SNAPSHOT?.month ?? null })
+    return { overdue: r.count.overdue ?? 0, attn: r.attention }
+  }, [])
   if (HIDE_ON.has(pathname)) return null
 
   return (
@@ -84,6 +91,14 @@ export default function SiteFooter() {
         </div>
         <div className="sf-meta">
           <span>{en ? 'Built on public data · unsupported items marked “data pending”' : '공개 데이터 기반 · 근거 없는 항목은 “데이터 대기”로 표기'}</span>
+          {/* 데이터 최신성 — 지연·재확인이 있으면 숨기지 않고 바로 드러낸다 */}
+          <Link className={`sf-fresh${fresh.overdue ? ' bad' : ''}`} to="/data#freshness">
+            {fresh.overdue || fresh.attn
+              ? en
+                ? `Data freshness · ${fresh.overdue} overdue · ${fresh.attn - fresh.overdue} to re-check →`
+                : `데이터 최신성 · 지연 ${fresh.overdue} · 재확인 ${fresh.attn - fresh.overdue} →`
+              : en ? 'Data freshness · all current →' : '데이터 최신성 · 모두 최신 →'}
+          </Link>
           <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>
           <span>© 2026 AI InfraMap</span>
         </div>

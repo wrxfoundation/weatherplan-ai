@@ -14,7 +14,7 @@ import AiAssistant from '../ai/AiAssistant.jsx'
 import FacilityCard from '../dc/FacilityCard.jsx'
 import SitePanel from '../score/SitePanel.jsx'
 import CompareTray from '../score/CompareTray.jsx'
-import { FACILITIES, STATUS_LABEL, STATUS_LABEL_EN, HYPERSCALE_MW, DATA_VERSION, applyFilters, isCoarseGeocode } from '../data/facilities.js'
+import { FACILITIES, STATUS_LABEL, STATUS_LABEL_EN, HYPERSCALE_MW, applyFilters, isCoarseGeocode } from '../data/facilities.js'
 import { PLANTS, WIND_PLANTS, PUBLIC_DCS } from '../data/plants.js'
 import { SUBSTATION_POINTS } from '../data/substationPoints.js'
 import { INDUSTRIAL_COMPLEXES } from '../data/industrialComplexes.js'
@@ -38,6 +38,7 @@ import { EXCLUSION_LAYERS, hasExclusionData, anyExclusionData, exclusionFeatureC
 import { useMapLang } from '../i18n/mapLang.js'
 import { DARK_BASE_TILES } from './basemap.js'
 import { sidoT, placeT, facilityName } from '../i18n/places.js'
+import FreshnessChip from '../ui/FreshnessChip.jsx'
 
 const SIDO_LIST = Object.entries(SIDO_CENTROIDS).map(([sido, [lat, lng]]) => ({ sido, lat, lng }))
 
@@ -358,6 +359,7 @@ export default function MapPage({ power = false }) {
     // preferCanvas: 변전소 841·송전선 수천 폴리라인·산단 511 등 벡터 레이어를 SVG DOM 노드 대신
     // 단일 캔버스에 래스터 — DOM 노드·리스너·메모리 대폭 절감(다중 탭 성능의 핵심)
     const map = L.map(mapRef.current, { zoomControl: false, minZoom: 6, maxZoom: 19, preferCanvas: true })
+    map.attributionControl.setPrefix(false) // 'Leaflet' 접두어 제거 — 필수 타일 출처(Esri·OSM)만 남겨 한 줄 유지
     map.fitBounds(KR_BOUNDS, { padding: [8, 8] })
     map.setMaxBounds([
       [30.5, 119.5],
@@ -1587,9 +1589,8 @@ export default function MapPage({ power = false }) {
               )}
               <div className="panel-title">
                 {power ? t('전력 · 시설 요약', 'Power · facility summary') : t('사이트 인텔리전스', 'Site intelligence')}
-                <span className="ver-chip" title={t('시드 데이터 버전 · 기준일', 'Seed data version · as-of date')}>
-                  v{DATA_VERSION.version} · {DATA_VERSION.date}
-                </span>
+                {/* 시설 데이터 기준일 — 재확인 주기를 넘기면 색이 바뀌고 누르면 최신성 표로 */}
+                <FreshnessChip id="dc-facilities" className="ver-chip-fresh" />
               </div>
               <h2>
                 {t('시설', 'Facilities')} <strong>{filtered.length}</strong>{t('곳', ' sites')}
