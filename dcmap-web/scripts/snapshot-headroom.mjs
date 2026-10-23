@@ -44,12 +44,32 @@ async function fetchOne([label, admCd, sido, area]) {
     const r = await fetch(url, { headers: { accept: 'application/json' } })
     if (!r.ok) throw new Error(`HTTP ${r.status}`)
     const j = await r.json()
-    // 프록시 스키마(api/headroom.js transHandler): { supply, renew, ... }
-    const list = j?.supply?.list || j?.renew?.list || []
-    const hit = list.find((e) => (e.name || '').includes(label)) || list[0]
-    if (!hit) return null
-    const series = YEARS.map((y) => Number(hit.byYear?.[y] ?? hit[String(y)] ?? 0) || 0)
-    return { name: label, sido, area, series, genMw: Number(hit.genMw || 0), applicants: Number(hit.applicants || 0) }
+    // 프록시 스키마(api/headroom.js transHandler, 2026.10 기준):
+    //   { supply: { kv154:[...], kv23:[...] }, renew: { kv154:[...] } } — 각 항목 { name, years, series, maxMw, genMw }
+    // 구 스키마({ supply:{ list }, renew:{ list } })도 계속 읽는다. 스키마가 또 바뀌어 0건이 되면 아래 main이
+    // 실패(exit 1)로 알리므로 '조용히 0건'은 더 생기지 않는다.
+    //
+    // series = 재생e 연계 여유(renew) — 2026-07 시드가 이 값이라 시계열 연속성을 위해 유지.
+    // supplySeries = 전력공급(소비자 수전) 여유 — DC(소비자) 입장에서 더 직접적인 지표. 함께 보관해 나중에 전환 가능.
+    const pick = (stream) => {
+      const list = stream?.kv154 || stream?.list || []
+      return list.find((e) => (e.name || '') === label) || list.find((e) => (e.name || '').includes(label)) || null
+    }
+    const toSeries = (hit) =>
+      hit ? YEARS.map((y, i) => Number(hit.series?.[hit.years ? hit.years.indexOf(y) : i] ?? hit.byYear?.[y] ?? hit[String(y)] ?? 0) || 0) : null
+    const renew = pick(j?.renew)
+    const supply = pick(j?.supply)
+    if (!renew && !supply) return null
+    return {
+      name: label,
+      sido,
+      area,
+      series: toSeries(renew ?? supply),
+      ...(supply ? { supplySeries: toSeries(supply) } : {}),
+      stream: renew ? 'renew' : 'supply',
+      genMw: Number((renew ?? supply).genMw || 0),
+      applicants: Number((renew ?? supply).applicants || 0),
+    }
   } catch (e) {
     console.warn(`  ! ${label}(${admCd}) 실패: ${e.message} — 스킵`)
     return null

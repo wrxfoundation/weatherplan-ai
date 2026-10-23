@@ -9,8 +9,9 @@
  * - 네이비 톤은 app.css의 .leaflet-tile 필터가 입힌다(중립 회색 → 딥 네이비).
  */
 const ESRI = 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas'
+// Esri 요구 출처(Esri·HERE·Garmin·OSM)는 유지하되 짧게 — 작은 지도에서 두 줄로 넘치던 것
 const ESRI_ATTR =
-  'Tiles &copy; <a href="https://www.esri.com">Esri</a> — Esri, HERE, Garmin, &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+  '&copy; <a href="https://www.esri.com">Esri</a>, HERE, Garmin, <a href="https://www.openstreetmap.org/copyright">OSM</a>'
 
 export const DARK_BASE_TILES = [
   { url: `${ESRI}/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}`, attr: ESRI_ATTR, maxNativeZoom: 16 },

@@ -17,6 +17,8 @@ const SOURCES = [
   // probe는 실지번(강남구 삼성동 159, 무역센터)으로 엔드투엔드 검사 — needs_params 오탐 방지
   { key: 'bldenergy', label: '건축HUB 건물에너지', env: ['DATA_GO_KR_KEY'], path: '/api/bldenergy?kind=elec&sigunguCd=11680&bjdongCd=10500&bun=0159&ji=0000&useYm=202503', point: false, axis: '리스크' },
   { key: 'filings', label: 'DART 공시', env: ['DART_API_KEY'], path: '/api/filings', point: false, axis: '시장' },
+  // 데이터 자동 갱신용(사용자 화면 직접 호출 아님) — 주간 Action이 지가변동률을 수집할 수 있는지
+  { key: 'kosis', label: 'KOSIS 지가변동률(자동 갱신)', env: ['KOSIS_KEY'], path: '/api/landprice?kind=kosis', point: false, axis: '토지' },
   { key: 'floodmap', label: '침수 위험(SGIS 홍수위험지도)', env: ['SGIS_KEY', 'SGIS_SECRET'], path: '/api/sgis?kind=flood', point: true, axis: '리스크' },
   { key: 'sgis', label: 'SGIS 인구', env: ['SGIS_KEY', 'SGIS_SECRET'], path: '/api/sgis', point: true, axis: '리스크' },
   { key: 'disaster', label: '산사태 위험(SGIS 산사태위험지도)', env: ['SGIS_KEY', 'SGIS_SECRET'], path: '/api/sgis?kind=landslide', point: true, axis: '리스크' },

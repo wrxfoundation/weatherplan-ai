@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import TopBar from '../TopBar.jsx'
-import { FACILITIES, STATUS_LABEL, DATA_VERSION, slugOf, CAPITAL_SIDOS } from '../data/facilities.js'
+import { FACILITIES, STATUS_LABEL, slugOf, CAPITAL_SIDOS } from '../data/facilities.js'
 import { GEN_PERMIT_BUBBLES, FUEL_LABEL_EN } from '../data/genLicenses.js'
 import { NEW_PLANTS_2025 } from '../data/newPlants2025.js'
 import { SUBSTATIONS, SUBSTATION_META } from '../data/substations.js'
@@ -15,6 +15,7 @@ import { filingsRecent, epsisCapacity, apiStatus, tradingMix, smpToday, fuelMixN
 import { DC_DEMAND_OUTLOOK, DC_DEMAND_OUTLOOK_META } from '../data/dcDemandOutlook.js'
 import { useMapLang, setMapLang } from '../i18n/mapLang.js'
 import { sidoT, sigunguT, placeT, placeKeyT, facilityName, regionT } from '../i18n/places.js'
+import FreshnessChip from '../ui/FreshnessChip.jsx'
 
 /* 대시보드 내러티브 i18n(섹션 헤드·제목·해석·라벨·헤더·배지·버튼·차트노트). 앱 공용 언어 스토어. 데이터값(시도명·고유명사·숫자·단위값)은 KO 유지. */
 const DT = {
@@ -336,8 +337,8 @@ export default function DashboardPage() {
           </div>
         </div>
         <p className="sub">
-          {lang === 'en' ? 'Public-data snapshot' : '공개 데이터 기준 현황'} — {lang === 'en' ? 'seed' : '시드'} v{DATA_VERSION.version} · {DATA_VERSION.date} · KOSIS {LAND_PRICE.period.slice(0, 4)}.
-          {LAND_PRICE.period.slice(4)}
+          {lang === 'en' ? 'Public-data snapshot' : '공개 데이터 기준 현황'} — {lang === 'en' ? 'facilities' : '시설'}
+          <FreshnessChip id="dc-facilities" /> · {lang === 'en' ? 'land price' : '지가'} <FreshnessChip id="land-sgg" />
           <span className="dash-clock" title={en ? 'Korea Standard Time (UTC+9)' : '한국 표준시 (UTC+9)'}>
             {now.toLocaleTimeString('en-GB', { timeZone: 'Asia/Seoul' })} · {now.toLocaleDateString('ko-KR', { timeZone: 'Asia/Seoul' })} <span className="dash-tz">KST</span>
           </span>
@@ -1289,7 +1290,10 @@ export default function DashboardPage() {
 
           {/* 전국 전력수급 — 월별 공급예비율. 여름 계통 여력 최소 */}
           <section className="calc-card">
-            <div className="chart-title">{t('전력수급 안정성 — 전국 공급예비율 (최근 12개월)')}</div>
+            <div className="chart-title">
+              {t('전력수급 안정성 — 전국 공급예비율 (최근 12개월)')}
+              <FreshnessChip id="power-reserve" />
+            </div>
             <div className="dash-status" style={{ marginBottom: 8 }}>
               <div className="status-rows">
                 <div className="dash-row">

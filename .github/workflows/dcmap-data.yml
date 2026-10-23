@@ -1,0 +1,80 @@
+# dcmap-web(AI InfraMap) 데이터 최신성 — 주 1회 자동 수집 + 점검.
+#
+#  1) 변전소 여유 스냅샷: 이번 달 파일이 없으면 배포된 프록시(/api/headroom)로 수집 → data/headroom_snapshots/
+#  2) 지가변동률: 배포 환경에 KOSIS_KEY가 있으면 새 달을 수집 → land_price_dong_v0.json · land_price_v0.json
+#  3) 최신성 리포트: src/data/freshness.js(사이트 /data 표와 같은 레지스트리)로 판정 → Job Summary
+#  4) 바뀐 데이터는 배포 브랜치에 커밋(→ Vercel 자동 배포), 손볼 목록은 이슈 하나에 계속 덮어쓴다.
+#
+# 키는 이 저장소에 두지 않는다 — 전부 배포(Vercel)의 서버 env에 있고, 여기선 그 프록시를 부를 뿐이다.
+# 수집 대상 배포 주소는 저장소 변수 DCMAP_BASE로 바꿀 수 있다(기본: myeongdang-ai-sand.vercel.app).
+name: dcmap-data
+
+on:
+  schedule:
+    - cron: "23 1 * * 1" # 매주 월요일 10:23 KST
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+
+concurrency:
+  group: dcmap-data
+  cancel-in-progress: false
+
+jobs:
+  freshness:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      DCMAP_BASE: ${{ vars.DCMAP_BASE || 'https://myeongdang-ai-sand.vercel.app' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: 변전소 여유 스냅샷 (월 1회)
+        working-directory: dcmap-web
+        run: |
+          M=$(date -u +%Y-%m)
+          if [ -f "data/headroom_snapshots/$M.json" ]; then
+            echo "이번 달($M) 스냅샷 있음 — 건너뜀"
+          else
+            SNAPSHOT_BASE="$DCMAP_BASE" node scripts/snapshot-headroom.mjs || echo "::warning::변전소 스냅샷 수집 실패 — 프록시(/api/headroom) 응답 확인 필요"
+          fi
+
+      - name: 지가변동률 (KOSIS 키가 배포에 있을 때)
+        working-directory: dcmap-web
+        run: node scripts/fetch-land.mjs --base "$DCMAP_BASE" || echo "::warning::지가 수집 실패"
+
+      - name: 최신성 리포트
+        working-directory: dcmap-web
+        run: |
+          node scripts/freshness-report.mjs --out "$RUNNER_TEMP/freshness.md"
+          cat "$RUNNER_TEMP/freshness.md" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: 바뀐 데이터 커밋
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add dcmap-web/data
+          if git diff --cached --quiet; then
+            echo "데이터 변경 없음"
+          else
+            git commit -m "data(dcmap): 주간 자동 수집 $(date -u +%Y-%m-%d)"
+            git push
+          fi
+
+      - name: 최신성 이슈 갱신
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh label create data-freshness --color FBCA04 --description "dcmap 데이터 최신성 자동 점검" --force >/dev/null
+          num=$(gh issue list --label data-freshness --state open --json number --jq '.[0].number')
+          if [ -z "$num" ]; then
+            gh issue create --title "📊 dcmap 데이터 최신성" --label data-freshness --body-file "$RUNNER_TEMP/freshness.md"
+          else
+            gh issue edit "$num" --body-file "$RUNNER_TEMP/freshness.md"
+          fi

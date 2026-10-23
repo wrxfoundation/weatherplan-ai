@@ -5,6 +5,7 @@ import { LAND_DONG, LAND_DONG_PERIOD } from '../data/landPriceDong.js'
 import { fmtRate } from '../data/landPrice.js'
 import { useMapLang } from '../i18n/mapLang.js'
 import { sidoT, placeKeyT } from '../i18n/places.js'
+import FreshnessChip from '../ui/FreshnessChip.jsx'
 
 const TITLE = 'LAND PULSE — 입지 지가변동률 시·군·구·동 리스트 · AI InfraMap'
 const DESC =
@@ -70,7 +71,10 @@ export default function LandPulsePage() {
       <TopBar />
       <main className="page">
         <div className="eyebrow">LAND PULSE</div>
-        <h1>{en ? 'Site land-price change — si·gun·gu·dong' : '입지 지가변동률 — 시·군·구·동'}</h1>
+        <h1>
+          {en ? 'Site land-price change — si·gun·gu·dong' : '입지 지가변동률 — 시·군·구·동'}
+          <FreshnessChip id="land-dong" />
+        </h1>
         <p className="sub">
           {en ? (
             <>

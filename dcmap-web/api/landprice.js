@@ -270,9 +270,50 @@ async function landpriceHandler(req, res) {
   }
 }
 
+/* 4) kind=kosis — 지가변동률 읍면동 원본(KOSIS·한국부동산원 DT_31501N_010, 월간 최신 1개 시점).
+ *  데이터 자동 갱신(GitHub Action → scripts/fetch-land.mjs)이 호출한다. 키는 서버 env(KOSIS_KEY)에만.
+ *  열린 프록시가 되지 않도록 표·항목·시점 수를 고정한다(쿼리로 바꿀 수 없음).
+ *  응답: { available, period, rows:[{C1,C1_NM,DT,PRD_DE}] } | { available:false, reason } */
+const KOSIS_URL =
+  'https://kosis.kr/openapi/Param/statisticsParameterData.do?method=getList&orgId=408&tblId=DT_31501N_010&objL1=ALL&itmId=T1&prdSe=M&newEstPrdCnt=1&format=json&jsonVD=Y'
+async function kosisHandler(_req, res) {
+  // 새 달 공표를 주간 점검이 놓치지 않도록 캐시는 짧게(기본 7일 캐시 덮어씀)
+  res.setHeader('Cache-Control', 's-maxage=3600')
+  const key = process.env.KOSIS_KEY
+  if (!key) {
+    res.status(200).json({ available: false, reason: 'not_configured' })
+    return
+  }
+  try {
+    const r = await fetch(`${KOSIS_URL}&apiKey=${encodeURIComponent(key)}`, { signal: AbortSignal.timeout(20000) })
+    if (!r.ok) {
+      res.status(200).json({ available: false, reason: `upstream_${r.status}` })
+      return
+    }
+    const body = await r.json().catch(() => null)
+    // KOSIS 오류는 200 + { err, errMsg } 형태로 온다
+    if (!Array.isArray(body)) {
+      res.status(200).json({ available: false, reason: body?.err ? `kosis_err_${body.err}` : 'bad_response' })
+      return
+    }
+    const rows = body
+      .filter((x) => x && x.C1 && x.C1_NM && x.PRD_DE)
+      .map(({ C1, C1_NM, DT, PRD_DE }) => ({ C1, C1_NM, DT, PRD_DE }))
+    if (!rows.length) {
+      res.status(200).json({ available: false, reason: 'no_data' })
+      return
+    }
+    const period = rows.reduce((m, x) => (x.PRD_DE > m ? x.PRD_DE : m), '')
+    res.status(200).json({ available: true, period, count: rows.length, rows })
+  } catch (e) {
+    res.status(200).json({ available: false, reason: `upstream_${e?.cause?.code || e?.name || 'error'}` })
+  }
+}
+
 export default async function handler(req, res) {
   res.setHeader('Cache-Control', 's-maxage=604800, stale-while-revalidate=2592000')
   const kind = String(req.query?.kind || '')
+  if (kind === 'kosis') return kosisHandler(req, res)
   if (kind === 'kwater') return kwaterHandler(req, res)
   if (kind === 'water') return waterHandler(req, res)
   return landpriceHandler(req, res)

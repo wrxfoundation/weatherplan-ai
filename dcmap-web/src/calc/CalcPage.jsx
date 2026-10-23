@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import TopBar from '../TopBar.jsx'
 import { FACILITIES, CAPITAL_SIDOS } from '../data/facilities.js'
@@ -342,6 +342,18 @@ export default function CalcPage() {
     [m.ctaMw, nonCapital],
   )
 
+  // 모바일: 입력이 6칸이라 결과가 한참 아래 — 결과가 화면 밖이면 하단에 요약 바를 띄운다
+  const resultRef = useRef(null)
+  const [resultInView, setResultInView] = useState(true)
+  useEffect(() => {
+    const el = resultRef.current
+    if (!el || typeof IntersectionObserver === 'undefined') return undefined
+    const io = new IntersectionObserver(([e]) => setResultInView(e.isIntersecting), { threshold: 0.15 })
+    io.observe(el)
+    return () => io.disconnect()
+  }, [])
+  const quickTrack = useMemo(() => checkPowerTrack(m.contractMw, { nonCapital }).track, [m.contractMw, nonCapital])
+
   // 억원 표기 — 10억 미만은 소수1, 이상은 정수
   const eokVal = (won) => won / 1e8
   // EN: 1억원 = ₩100M → ₩0.1B 단위로 환산
@@ -568,7 +580,7 @@ export default function CalcPage() {
             )}
           </p>
 
-          <div className="calc-result">
+          <div className="calc-result" ref={resultRef}>
             <div>
               <div className="mw">
                 <SpringNumber value={m.contractMw} format={(n) => n.toFixed(1)} /> <small>MW</small>
@@ -887,6 +899,19 @@ export default function CalcPage() {
             : '공개 전력 규모(power_mw_public)가 확인된 시설만 CTA 필터에 잡힙니다. 규모 비공개 시설이 다수이므로 실제 후보는 더 많을 수 있습니다.'}
         </p>
       </main>
+      {!resultInView && (
+        <button
+          type="button"
+          className="calc-sticky"
+          onClick={() => resultRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })}
+          aria-label={lang === 'en' ? 'Jump to result' : '결과로 이동'}
+        >
+          <span className="cs-k">{lang === 'en' ? 'Contract power' : '계약전력'}</span>
+          <b>{m.contractMw.toFixed(1)} MW</b>
+          <span className="cs-track">{lang === 'en' ? quickTrack.voltageEn : quickTrack.voltage}</span>
+          <span className="cs-go">{lang === 'en' ? 'Result ↓' : '결과 ↓'}</span>
+        </button>
+      )}
     </>
   )
 }
