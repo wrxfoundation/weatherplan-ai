@@ -1,12 +1,13 @@
 import { useEffect, useMemo } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import TopBar from '../TopBar.jsx'
-import { FACILITIES, STATUS_LABEL, findBySlug, slugOf } from '../data/facilities.js'
+import { FACILITIES, STATUS_LABEL, STATUS_LABEL_EN, findBySlug, slugOf } from '../data/facilities.js'
 import { landPriceFor, fmtRate } from '../data/landPrice.js'
 import { dongPulseFor } from '../data/landPriceDong.js'
 import { nearestPlant } from '../data/plants.js'
 import { checkPowerTrack } from '../calc/trackCheck.js'
 import { useMapLang } from '../i18n/mapLang.js'
+import { placeT, facilityName, typeT } from '../i18n/places.js'
 
 // 비교 행 라벨 i18n — 값(상태·유형 등 데이터)은 원본 유지, 라벨만 번역
 const RL = {
@@ -48,12 +49,12 @@ export default function ComparePage() {
 
   const rows = useMemo(
     () => [
-      { k: '상태', r: (f) => STATUS_LABEL[f.status] ?? f.status },
-      { k: '유형', r: (f) => f.type },
+      { k: '상태', r: (f) => (en ? STATUS_LABEL_EN : STATUS_LABEL)[f.status] ?? f.status },
+      { k: '유형', r: (f) => typeT(f.type, en) },
       { k: '운영사', r: (f) => f.operator ?? (en ? 'Undisclosed' : '미공개') },
       { k: '공개 전력', r: (f) => (f.power_mw_public != null ? `${f.power_mw_public} MW` : en ? 'Undisclosed' : '비공개') },
       { k: '연도', r: (f) => f.year ?? (en ? 'Unknown' : '미상') },
-      { k: '위치', r: (f) => `${f.sido}${f.sigungu ? ` ${f.sigungu}` : ''}` },
+      { k: '위치', r: (f) => placeT(f.sido, f.sigungu, en) },
       {
         k: '수전 트랙(공개 MW 기준)',
         r: (f) =>
@@ -120,7 +121,7 @@ export default function ComparePage() {
                         <option value="">{en ? 'Select facility…' : '시설 선택…'}</option>
                         {sorted.map((f) => (
                           <option key={f.id} value={slugOf(f)}>
-                            {f.name}
+                            {facilityName(f, en)}
                           </option>
                         ))}
                       </select>

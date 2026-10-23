@@ -4,6 +4,7 @@ import TopBar from '../TopBar.jsx'
 import { LAND_DONG, LAND_DONG_PERIOD } from '../data/landPriceDong.js'
 import { fmtRate } from '../data/landPrice.js'
 import { useMapLang } from '../i18n/mapLang.js'
+import { sidoT, placeKeyT } from '../i18n/places.js'
 
 const TITLE = 'LAND PULSE — 입지 지가변동률 시·군·구·동 리스트 · AI InfraMap'
 const DESC =
@@ -89,7 +90,7 @@ export default function LandPulsePage() {
             <option value="">{en ? 'All sido' : '시도 전체'}</option>
             {sidos.map((s) => (
               <option key={s} value={s}>
-                {s}
+                {sidoT(s, en)}
               </option>
             ))}
           </select>
@@ -109,7 +110,7 @@ export default function LandPulsePage() {
                 aria-expanded={open.has(r.key)}
                 disabled={!r.dongs.length}
               >
-                <span className="land-name">{r.key}</span>
+                <span className="land-name">{placeKeyT(r.key, en)}</span>
                 <SignedBar rate={r.rate} maxAbs={maxAbs} />
                 <span className="hbar-value">{fmtRate(r.rate)}</span>
                 <span className="land-meta">{r.dongs.length ? (en ? `${r.dongs.length} zones` : `${r.dongs.length}구역`) : (en ? 'no breakdown' : '세분화 미제공')}</span>

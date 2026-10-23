@@ -1,5 +1,6 @@
 import { SIDOS, TYPES } from '../data/facilities.js'
 import { useMapLang, setMapLang } from '../i18n/mapLang.js'
+import { sidoT } from '../i18n/places.js'
 
 const STATUS_OPTIONS = [
   { key: 'operating', label: '운영' },
@@ -173,7 +174,7 @@ export default function FilterBar({
         <option value="">{t('시도 전체')}</option>
         {SIDOS.map((s) => (
           <option key={s} value={s}>
-            {s}
+            {sidoT(s, lang === 'en')}
           </option>
         ))}
       </select>

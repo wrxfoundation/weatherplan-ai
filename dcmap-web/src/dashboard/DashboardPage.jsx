@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import TopBar from '../TopBar.jsx'
 import { FACILITIES, STATUS_LABEL, DATA_VERSION, slugOf, CAPITAL_SIDOS } from '../data/facilities.js'
-import { GEN_PERMIT_BUBBLES } from '../data/genLicenses.js'
+import { GEN_PERMIT_BUBBLES, FUEL_LABEL_EN } from '../data/genLicenses.js'
 import { NEW_PLANTS_2025 } from '../data/newPlants2025.js'
 import { SUBSTATIONS, SUBSTATION_META } from '../data/substations.js'
 import { POWER_MARKET_META, PURCHASE_PRICE_2024, PURCHASE_SUMMARY, PRICE_PEAK, PRICE_LOW } from '../data/powerMarket.js'
@@ -14,6 +14,7 @@ import { LAND_DONG } from '../data/landPriceDong.js'
 import { filingsRecent, epsisCapacity, apiStatus, tradingMix, smpToday, fuelMixNow, riskFor } from '../data/liveApi.js'
 import { DC_DEMAND_OUTLOOK, DC_DEMAND_OUTLOOK_META } from '../data/dcDemandOutlook.js'
 import { useMapLang, setMapLang } from '../i18n/mapLang.js'
+import { sidoT, sigunguT, placeT, placeKeyT, facilityName, regionT } from '../i18n/places.js'
 
 /* 대시보드 내러티브 i18n(섹션 헤드·제목·해석·라벨·헤더·배지·버튼·차트노트). 앱 공용 언어 스토어. 데이터값(시도명·고유명사·숫자·단위값)은 KO 유지. */
 const DT = {
@@ -366,7 +367,7 @@ export default function DashboardPage() {
                 render={(r) => (
                   <div key={r.sido} className="rollup-row" role="row">
                     <span className="rollup-sido">
-                      <Link to={`/?sido=${encodeURIComponent(r.sido)}`}>{r.sido}</Link>
+                      <Link to={`/?sido=${encodeURIComponent(r.sido)}`}>{sidoT(r.sido, en)}</Link>
                       {CAPITAL_SIDOS.has(r.sido) && <span className="badge" style={{ marginLeft: 6 }}>{t('수도권')}</span>}
                     </span>
                     <span>
@@ -394,8 +395,8 @@ export default function DashboardPage() {
                   2025 new generation is <strong>{rollupInsight.nonNew.toLocaleString()}MW in non-capital regions</strong>
                   {rollupInsight.capNew > 0 ? ` (capital ${rollupInsight.capNew.toLocaleString()}MW)` : ''} —
                   <strong> demand in the capital region, new supply outside it</strong>.
-                  {rollupInsight.topDc && ` Densest DC cluster: ${rollupInsight.topDc.sido} (${rollupInsight.topDc.dcCount})`}
-                  {rollupInsight.topNew && `; new generation concentrates in ${rollupInsight.topNew.sido} (${rollupInsight.topNew.newMw.toLocaleString()}MW)`}.
+                  {rollupInsight.topDc && ` Densest DC cluster: ${sidoT(rollupInsight.topDc.sido, true)} (${rollupInsight.topDc.dcCount})`}
+                  {rollupInsight.topNew && `; new generation concentrates in ${sidoT(rollupInsight.topNew.sido, true)} (${rollupInsight.topNew.newMw.toLocaleString()}MW)`}.
                   With the PSIA ±15 points (capital penalty, non-capital bonus) on top, <strong>the incentive for new AIDCs to move to power-rich non-capital regions</strong> shows up in the numbers.
                 </p>
               ) : (
@@ -456,7 +457,7 @@ export default function DashboardPage() {
               unitEn="regions"
               render={([sido, mw]) => (
                 <div key={sido} className="hbar-row">
-                  <span className="hbar-label">{sido}</span>
+                  <span className="hbar-label">{sidoT(sido, en)}</span>
                   <span className="hbar-track">
                     <span className="hbar-fill" style={{ width: `${(mw / maxRegion) * 100}%` }} />
                   </span>
@@ -485,9 +486,9 @@ export default function DashboardPage() {
                   <Link key={f.id} className="facility-row" to={`/dc/${slugOf(f)}`}>
                     <span className="dot construction" />
                     <span>
-                      <span className="name">{f.name}</span>
+                      <span className="name">{facilityName(f, en)}</span>
                       <span className="meta">
-                        {f.sigungu ?? f.sido} · {en ? 'target' : '목표'} {f.year ?? (en ? 'TBD' : '미상')}
+                        {f.sigungu ? sigunguT(f.sigungu, en) : sidoT(f.sido, en)} · {en ? 'target' : '목표'} {f.year ?? (en ? 'TBD' : '미상')}
                         {f.power_mw_public != null && ` · ${f.power_mw_public}MW`}
                       </span>
                     </span>
@@ -511,7 +512,7 @@ export default function DashboardPage() {
             <div className="chart-title">{t('LAND PULSE — 입지 시군구 지가변동률 (월간, KOSIS)')}</div>
             {[...d.landTop, ...d.landBottom].map(([k, v]) => (
               <div key={k} className="hbar-row">
-                <span className="hbar-label">{k}</span>
+                <span className="hbar-label">{placeKeyT(k, en)}</span>
                 <span className="hbar-track">
                   <span
                     className={`hbar-fill${v < 0 ? ' neg' : ''}`}
@@ -686,7 +687,7 @@ export default function DashboardPage() {
                     render={(r) => (
                       <div key={r.key} className="rollup-row" role="row">
                         <span className="rollup-sido">
-                          {r.sido} {r.sigungu}
+                          {placeT(r.sido, r.sigungu, en)}
                           {CAPITAL_SIDOS.has(r.sido) && <span className="badge" style={{ marginLeft: 6 }}>{t('수도권')}</span>}
                         </span>
                         <span>
@@ -760,7 +761,7 @@ export default function DashboardPage() {
                 .map((a) => (
                   <div key={a.sido} className="rollup-row" role="row">
                     <span className="rollup-sido">
-                      {a.sido}
+                      {sidoT(a.sido, en)}
                       {CAPITAL_SIDOS.has(a.sido) && <span className="badge" style={{ marginLeft: 6 }}>{t('수도권')}</span>}
                     </span>
                     <span>
@@ -819,7 +820,7 @@ export default function DashboardPage() {
                     .map((g) => (
                       <div key={g.sido} className="rollup-row" role="row">
                         <span className="rollup-sido">
-                          {g.sido === '전남' ? (en ? '전남 (incl. Gwangju)' : '전남(광주통합)') : g.sido}
+                          {g.sido === '전남' ? (en ? 'Jeonnam (incl. Gwangju)' : '전남(광주통합)') : sidoT(g.sido, en)}
                           {CAPITAL_SIDOS.has(g.sido) && <span className="badge" style={{ marginLeft: 6 }}>{t('수도권')}</span>}
                         </span>
                         <span>
@@ -877,7 +878,7 @@ export default function DashboardPage() {
                 const maxHv = Math.max(...SUBSTATIONS.map((x) => x.hv))
                 return (
                   <div key={s.region} className="rollup-row" role="row">
-                    <span className="rollup-sido">{s.region}</span>
+                    <span className="rollup-sido">{regionT(s.region, en)}</span>
                     <span>
                       <b>{s.hv}</b>{en ? '' : '개'}
                       <span className="rollup-bar">
@@ -925,7 +926,7 @@ export default function DashboardPage() {
                     const max = Math.max(...epsis.byFuel.map((x) => x.mw))
                     return (
                       <div key={f.fuel} className="hbar-row">
-                        <span className="hbar-label">{f.fuel}</span>
+                        <span className="hbar-label">{en ? FUEL_LABEL_EN[f.fuel] ?? f.fuel : f.fuel}</span>
                         <span className="hbar-track">
                           <span className="hbar-fill" style={{ width: `${(f.mw / max) * 100}%` }} />
                         </span>
@@ -1062,7 +1063,7 @@ export default function DashboardPage() {
                       unitEn="fuels"
                       render={(f) => (
                         <div key={f.fuel} className="hbar-row">
-                          <span className="hbar-label">{f.fuel}</span>
+                          <span className="hbar-label">{en ? FUEL_LABEL_EN[f.fuel] ?? f.fuel : f.fuel}</span>
                           <span className="hbar-track">
                             <span className="hbar-fill" style={{ width: `${(f.tradedMwh / max) * 100}%` }} />
                           </span>

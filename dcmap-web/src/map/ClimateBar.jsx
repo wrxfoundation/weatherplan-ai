@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { weatherFor, climateFor, revgeoFor, dongLabel } from '../data/liveApi.js'
 import { dcClimateIndex, CLIMATE_LEVELS, nearestNormal } from '../score/climateIndex.js'
 import { useMapLang } from '../i18n/mapLang.js'
+import { stationT } from '../i18n/places.js'
 
 /* 맵 상단 기후 바 — 현재 지점(클릭/검색) 또는 지도 중심의 실황 기상 + 데이터센터 기후지수.
  * 데이터센터에 좋은/나쁜 기후인지(아주좋음~아주나쁨)와 그 이유를 지도 위에서 바로 보게 한다. */
@@ -68,7 +69,7 @@ export default function ClimateBar({ point, committed }) {
   const dong = dongLabel(addr)
   const coordStr = point ? `${point.lat.toFixed(4)}, ${point.lng.toFixed(4)}` : ''
   // 구/동 단위를 앞에 크게, 좌표는 뒤에 작게 흐리게. 동 미확보(vworld 미연동) 시 최근접 관측지점 폴백.
-  const region = normal ? (en ? `near ${normal.name}` : `${normal.name} 인근`) : null
+  const region = normal ? (en ? `near ${stationT(normal.name, true)}` : `${normal.name} 인근`) : null
   const placeName = dong || (committed ? addr?.parcel : null) || region
 
   return (

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { NavLink, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
-import { FACILITIES, STATUS_LABEL, SIDOS, slugOf } from './data/facilities.js'
+import { FACILITIES, STATUS_LABEL, STATUS_LABEL_EN, SIDOS, slugOf } from './data/facilities.js'
+import { sidoT, placeT, facilityName, SIDO_EN } from './i18n/places.js'
 import { geocodeAddr } from './data/liveApi.js'
 import { useMapLang, setMapLang } from './i18n/mapLang.js'
 
@@ -32,22 +33,23 @@ function suggest(qv, en = false) {
   if (v.length < 1) return []
   const out = []
   for (const s of SIDOS) {
-    if (s.toLowerCase().includes(v)) {
+    if (s.toLowerCase().includes(v) || (SIDO_EN[s] ?? '').toLowerCase().includes(v)) {
       const n = FACILITIES.filter((f) => f.sido === s).length
-      out.push({ kind: en ? 'Region' : '지역', label: s, meta: en ? `${n} sites` : `${n}곳`, to: `/?sido=${encodeURIComponent(s)}` })
+      out.push({ kind: en ? 'Region' : '지역', label: sidoT(s, en), meta: en ? `${n} sites` : `${n}곳`, to: `/?sido=${encodeURIComponent(s)}` })
       if (out.length >= 2) break
     }
   }
   for (const f of FACILITIES) {
     if (
       f.name.toLowerCase().includes(v) ||
+      (f.name_en ?? '').toLowerCase().includes(v) ||
       (f.operator ?? '').toLowerCase().includes(v) ||
       (f.sigungu ?? '').toLowerCase().includes(v)
     ) {
       out.push({
-        kind: STATUS_LABEL[f.status] ?? f.status,
-        label: f.name,
-        meta: `${f.sido}${f.sigungu ? ' ' + f.sigungu : ''}${f.power_mw_public != null ? ` · ${f.power_mw_public}MW` : ''}`,
+        kind: (en ? STATUS_LABEL_EN : STATUS_LABEL)[f.status] ?? f.status,
+        label: facilityName(f, en),
+        meta: `${placeT(f.sido, f.sigungu, en)}${f.power_mw_public != null ? ` · ${f.power_mw_public}MW` : ''}`,
         to: `/dc/${slugOf(f)}`,
       })
       if (out.length >= 7) break

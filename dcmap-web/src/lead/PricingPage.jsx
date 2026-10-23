@@ -226,7 +226,7 @@ export default function PricingPage() {
           <p>
             {en ? (
               <>
-                AI InfraMap aggregates and processes <b>public data</b> (한전 · 전력거래소 · KOSIS · SGIS · vworld · OSM · 기상청, etc.).
+                AI InfraMap aggregates and processes <b>public data</b> (KEPCO · KPX · KOSIS · SGIS · vworld · OSM · KMA, etc.).
                 Items with no computable basis are not scored and are marked “data pending” — we do not fabricate values.
                 Commercial reports and subscriptions are arranged individually after review; automated payment is not yet offered. Direct email inquiry:{' '}
                 <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>

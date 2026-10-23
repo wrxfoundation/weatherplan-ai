@@ -1843,7 +1843,7 @@ summary:focus-visible,
   font-family: var(--font-sans);
 }
 
-/* 전술맵 네이비 틴트: 중립 그레이(dark_matter) 타일을 딥 네이비 톤으로 (hero-v2 준거)
+/* 전술맵 네이비 틴트: 중립 그레이(Esri Dark Gray) 타일을 딥 네이비 톤으로 (hero-v2 준거)
  * sepia로 채도를 만든 뒤 hue-rotate로 청색 계열로 돌린다 — 실배포 확인 후 강도 조정 */
 .leaflet-tile {
   filter: brightness(0.76) sepia(0.6) saturate(2.1) hue-rotate(182deg);
@@ -5582,6 +5582,9 @@ summary:focus-visible,
     position: sticky;
     top: 0;
     height: 36px;
+    /* <button>은 블록 부모에서도 내용폭으로 줄어든다(76px로 쪼그라들어 라벨이 상자 밖으로 삐져나옴) →
+     * 음수 마진만으론 전폭이 안 되므로 폭을 명시해 사이드 패딩(14px×2)까지 덮는다 */
+    width: calc(100% + 28px);
     margin: 0 -14px 4px; /* 사이드 패딩 상쇄해 전폭 */
     padding: 7px 0 0;
     border: none;
@@ -5603,11 +5606,20 @@ summary:focus-visible,
     font-weight: var(--weight-medium);
     color: var(--grey);
     line-height: 1;
+    white-space: nowrap;
   }
 
-  /* 필터바: 모바일에서도 2줄 유지, 각 줄 가로 스크롤(fb-row가 처리) */
+  /* 필터바: 모바일에서도 2줄 유지, 각 줄 가로 스크롤.
+   * 데스크톱은 EN 라벨이 길어 줄바꿈(wrap)하지만, 모바일에서 같은 규칙을 쓰면 필터바가 5~6줄로
+   * 불어나 지도를 2/3 가리고 오른쪽 알약이 화면 밖으로 넘친다 → 모바일만 한 줄 가로 스크롤로 되돌림. */
   .filterbar {
     max-width: calc(100% - 20px);
+  }
+  .filterbar .fb-row {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
   }
 
   .filterbar .group,
@@ -5967,6 +5979,11 @@ summary:focus-visible,
   .ai-fab {
     left: 12px;
     bottom: 84px;
+  }
+  /* 펼친 바텀시트(z 1050) 위로 AI 버튼만 떠서 패널 내용(점수 막대·입지 선택)을 가리던 문제.
+   * 공유·범례(z 1000)처럼 시트 아래로 숨기고, 시트를 접으면 다시 보인다. 대화창이 열린 상태(.open)는 맨 위 유지. */
+  .ai-fab:not(.open) {
+    z-index: 1040;
   }
   .ai-asst {
     width: calc(100vw - 24px);

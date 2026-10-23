@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import L from 'leaflet'
+import { DARK_BASE_TILES } from '../map/basemap.js'
 import 'leaflet/dist/leaflet.css'
 import TopBar from '../TopBar.jsx'
 import FacilityCard from './FacilityCard.jsx'
@@ -12,6 +13,7 @@ import { weatherFor } from '../data/liveApi.js'
 import { checkPowerTrack } from '../calc/trackCheck.js'
 import { buildDescription, buildPlaceJsonLd } from './seo.js'
 import { useMapLang } from '../i18n/mapLang.js'
+import { placeT, placeKeyT, sidoT, facilityName, typeT } from '../i18n/places.js'
 
 const CAPITAL_SIDO = new Set(['서울', '경기', '인천'])
 
@@ -27,7 +29,6 @@ const km = (a, b) => {
   return 2 * R * Math.asin(Math.sqrt(s))
 }
 
-const DARK_TILES = 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
 
 function setMeta(attr, key, content) {
   let el = document.head.querySelector(`meta[${attr}="${key}"]`)
@@ -59,7 +60,7 @@ export default function FacilityPage() {
 
   useEffect(() => {
     if (!facility) return
-    const title = en ? `${facility.name} — AI InfraMap Data Center Map` : `${facility.name} — AI InfraMap 데이터센터 맵`
+    const title = en ? `${facilityName(facility, true)} — AI InfraMap Data Center Map` : `${facility.name} — AI InfraMap 데이터센터 맵`
     const desc = buildDescription(facility)
     document.title = title
     setMeta('name', 'description', desc)
@@ -82,10 +83,9 @@ export default function FacilityPage() {
       scrollWheelZoom: false,
     })
     map.zoomControl.setPosition('bottomright')
-    L.tileLayer(DARK_TILES, {
-      attribution:
-        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
-    }).addTo(map)
+    for (const t of DARK_BASE_TILES) {
+      L.tileLayer(t.url, { attribution: t.attr, maxNativeZoom: t.maxNativeZoom, maxZoom: 19 }).addTo(map)
+    }
     L.marker([facility.lat, facility.lng], {
       icon: L.divIcon({
         className: `dc-marker ${facility.status === 'delayed' ? 'planned' : facility.status}`,
@@ -119,11 +119,9 @@ export default function FacilityPage() {
           {en ? '← Back to map' : '← 맵으로 돌아가기'}
         </Link>
         <div className="eyebrow">FACILITY</div>
-        <h1>{facility.name}</h1>
+        <h1>{facilityName(facility, en)}</h1>
         <p className="sub">
-          {facility.sido}
-          {facility.sigungu ? ` ${facility.sigungu}` : ''} · {statusLabel(facility.status)} ·{' '}
-          {facility.type}
+          {placeT(facility.sido, facility.sigungu, en)} · {statusLabel(facility.status)} · {typeT(facility.type, en)}
         </p>
         <div ref={mapRef} className="detail-map" />
         {facility.power_mw_public != null && (() => {
@@ -186,7 +184,7 @@ export default function FacilityPage() {
                   <Link key={f.id} className="facility-row" to={`/dc/${slugOf(f)}`}>
                     <span className={`dot ${f.status === 'delayed' ? 'planned' : f.status}`} />
                     <span>
-                      <span className="name">{f.name}</span>
+                      <span className="name">{facilityName(f, en)}</span>
                       <span className="meta">
                         {d.toFixed(1)} km · {statusLabel(f.status)}
                         {f.power_mw_public != null && ` · ${f.power_mw_public}MW`}
@@ -223,7 +221,7 @@ export default function FacilityPage() {
             <article className="facility-card">
               <div className="chart-title">
                 {en
-                  ? `Site land-price pulse — ${p.key} ${p.count} eup/myeon/dong zones (${p.period} monthly, KOSIS·한국부동산원)`
+                  ? `Site land-price pulse — ${placeKeyT(p.key, true)} · ${p.count} eup/myeon/dong zones (${p.period} monthly, KOSIS · Korea Real Estate Board)`
                   : `입지 지가 펄스 — ${p.key} 읍면동 ${p.count}개 구역 (${p.period} 월간, KOSIS·한국부동산원)`}
               </div>
               {rows.map((row) => (
@@ -240,7 +238,7 @@ export default function FacilityPage() {
               ))}
               <p className="chart-note">
                 {en
-                  ? 'Zone names follow 부동산원 survey-zone units (multiple legal dong may be listed together). This facility’s coordinates may be the sigungu centroid, so we do not tie it to a specific dong — it is refined to the relevant zone once the parcel is confirmed.'
+                  ? 'Zone names follow Korea Real Estate Board survey-zone units (multiple legal dong may be listed together). This facility’s coordinates may be the sigungu centroid, so we do not tie it to a specific dong — it is refined to the relevant zone once the parcel is confirmed.'
                   : '구역 명칭은 부동산원 조사구역 단위(복수 법정동 병기 가능). 본 시설의 좌표는 시군구 중심점일 수 있어 특정 동과의 결부는 하지 않습니다 — 필지 확인 시 해당 구역으로 정밀화됩니다.'}
               </p>
             </article>
@@ -249,7 +247,7 @@ export default function FacilityPage() {
         <div className="card-actions">
           {SIDO_SLUGS[facility.sido] && (
             <Link className="btn" to={`/region/${SIDO_SLUGS[facility.sido]}`}>
-              {en ? `All of ${facility.sido}` : `${facility.sido} 지역 전체`}
+              {en ? `All of ${sidoT(facility.sido, true)}` : `${facility.sido} 지역 전체`}
             </Link>
           )}
           <Link className="btn" to={`/compare?ids=${slugOf(facility)}`}>
