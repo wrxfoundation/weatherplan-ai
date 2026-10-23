@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { DATASETS, judge, STATUS, behindLabel } from '../data/freshness.js'
-import { LATEST_SNAPSHOT } from '../data/headroomSnapshots.js'
+import { LATEST_MONTH } from '../data/headroomSnapshotIndex.js'
 import { useMapLang } from '../i18n/mapLang.js'
 
 /* 데이터가 쓰이는 자리에 붙이는 기준일 칩 — 「기준 2026-05 · 3개월 지연」.
@@ -9,7 +9,7 @@ export default function FreshnessChip({ id, className = '' }) {
   const en = useMapLang() === 'en'
   const ds = DATASETS.find((d) => d.id === id)
   if (!ds) return null
-  const r = judge(ds, new Date(), { headroomLatest: LATEST_SNAPSHOT?.month ?? null })
+  const r = judge(ds, new Date(), { headroomLatest: LATEST_MONTH })
   const st = STATUS[r.status]
   const asOf = r.asOf
   const tail = r.status === 'overdue' ? behindLabel(ds, r, en) : r.status === 'review' || r.status === 'unknown' ? (en ? st.en : st.ko) : ''

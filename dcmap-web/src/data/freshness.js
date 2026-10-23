@@ -5,7 +5,7 @@
  *
  * 구조:
  *  - DATASETS: 데이터셋별 기준일(asOf)·출처 갱신 주기(cadence)·갱신 방식(method)·갱신 절차(how).
- *    asOf는 가능하면 데이터 파일에서 직접 읽는다 — 데이터를 갱신하면 레지스트리도 자동으로 따라온다.
+ *    asOf는 가능하면 데이터 파일에서 직접 읽는다(freshnessSources.js → data/freshness_asof.json, 빌드 전 자동 재생성).
  *  - evaluateFreshness(today): 오늘 날짜 기준 상태 판정. 브라우저에서 돌므로 재배포 없이도 '지연'이 정직하게 뜬다.
  *  - Node(GitHub Action 주간 점검 scripts/freshness-report.mjs)와 사이트(/data)가 같은 파일을 쓴다.
  *    그래서 JSON은 import 속성(with { type: 'json' })으로 읽고, Vite 전용 기능(import.meta.glob)은 쓰지 않는다.
@@ -14,24 +14,8 @@
  *  - lagDays(출처 공표 지연)는 관행 기반 '추정'이다. 화면에도 추정으로 표기한다.
  *  - 기준일이 기록되지 않은 데이터는 날짜를 지어내지 않고 status='unknown'(기준일 미기록)으로 둔다.
  */
-import landSgg from '../../data/land_price_v0.json' with { type: 'json' }
-import landDong from '../../data/land_price_dong_v0.json' with { type: 'json' }
-import dcCenters from '../../data/dc_centers.json' with { type: 'json' }
-import nuclear from '../../data/nuclear_units_v0.json' with { type: 'json' }
-import exclusions from '../../data/exclusions/manifest.json' with { type: 'json' }
-import { GRID_ASSESSMENT_META } from './gridAssessment.js'
-import { GRID_CONSTRUCTION_META } from './gridConstruction.js'
-import { CAPITAL_PIPELINE_META } from './capitalPipeline.js'
-import { DC_DEALS_META } from './dcRealEstate.js'
-import { RENEWABLE_ESS_META } from './renewableEss.js'
-import { RESERVE_12M } from './powerReserve.js'
-
-const yyyymm = (p) => (p ? `${String(p).slice(0, 4)}-${String(p).slice(4, 6)}` : null)
-const maxUpdated = (rows) => rows.reduce((m, r) => (r.updated_at && r.updated_at > m ? r.updated_at : m), '') || null
-const reserveLast = () => {
-  const ym = RESERVE_12M.at(-1)?.[0] // '26.07'
-  return ym ? `20${ym.slice(0, 2)}-${ym.slice(3, 5)}` : null
-}
+// 원본에서 뽑은 기준일만 담은 작은 JSON — 메인 번들에 원본 데이터가 끌려오지 않도록(freshnessSources.js 참고)
+import ASOF from '../../data/freshness_asof.json' with { type: 'json' }
 
 /* 갱신 방식 */
 export const METHODS = {
@@ -63,14 +47,14 @@ export const DATASETS = [
   // ── 토지 ────────────────────────────────────────────────
   {
     id: 'land-sgg', group: 'land', name: '지가변동률 (시군구)', nameEn: 'Land-price change (sigungu)',
-    source: 'KOSIS · 국토교통부/한국부동산원 (DT_1YL20881E)', asOf: yyyymm(landSgg.period),
+    source: 'KOSIS · 국토교통부/한국부동산원 (DT_1YL20881E)', asOf: ASOF['land-sgg'],
     cadence: { kind: 'periodic', days: MONTHLY, lagDays: 25 }, method: 'auto-key',
     file: 'data/land_price_v0.json', usedIn: ['LAND PULSE', '부지 패널 토지축', '시설 상세'],
     how: 'KOSIS 키를 Vercel env(KOSIS_KEY)에 넣으면 주간 점검 Action이 /api/landprice?kind=kosis로 수집',
   },
   {
     id: 'land-dong', group: 'land', name: '지가변동률 (읍면동)', nameEn: 'Land-price change (eup/myeon/dong)',
-    source: 'KOSIS · 한국부동산원 (DT_31501N_010)', asOf: yyyymm(landDong.period),
+    source: 'KOSIS · 한국부동산원 (DT_31501N_010)', asOf: ASOF['land-dong'],
     cadence: { kind: 'periodic', days: MONTHLY, lagDays: 25 }, method: 'auto-key',
     file: 'data/land_price_dong_v0.json', usedIn: ['LAND PULSE 상세', '시설 상세 지가 맥박'],
     how: '위와 동일 — 수집 후 scripts/land_dong.mjs가 DC 입지 시군구만 추려 재생성',
@@ -80,19 +64,19 @@ export const DATASETS = [
     id: 'headroom-snap', group: 'power', name: '변전소 여유 월별 스냅샷', nameEn: 'Substation headroom monthly snapshots',
     source: '한전ON 변전소 검색 (배포 프록시 경유)', asOf: 'HEADROOM_LATEST',
     cadence: { kind: 'periodic', days: MONTHLY, lagDays: 7 }, method: 'auto',
-    file: 'data/headroom_snapshots/<YYYY-MM>.json', usedIn: ['데이터 탐색기', '변화 감지(월간 delta)'],
-    how: '주간 점검 Action이 매월 1회 scripts/snapshot-headroom.mjs 실행 → 커밋. 대상 확장은 data/headroom_targets.json',
+    file: 'data/headroom_snapshots/<YYYY-MM>.json', usedIn: ['대시보드', '시설 상세', '지역 상세', '데이터 탐색기', '변화 감지(월간)'],
+    how: '주간 점검 Action이 매월 1회 scripts/snapshot-headroom.mjs 실행 → 커밋. 대상 = DC 입지 시군구 42곳(data/headroom_targets.json v2, 좌표→법정동코드→한전ON scope 일치 검증)',
   },
   {
     id: 'psia-review', group: 'power', name: '계통영향평가 1차 기술검토 현황', nameEn: 'PSIA 1st technical review (DC)',
-    source: '한국전력공사', asOf: GRID_ASSESSMENT_META.asOf,
+    source: '한국전력공사', asOf: ASOF['psia-review'],
     cadence: { kind: 'review', days: 120 }, method: 'manual',
     file: 'src/data/gridAssessment.js', usedIn: ['승인율 레이어', '부지 패널 전력축', '대시보드'],
     how: '한전 공표 자료 판독 후 gridAssessment.js 갱신(비정기 공표)',
   },
   {
     id: 'grid-construction', group: 'power', name: '송변전 건설 사업현황', nameEn: 'KEPCO T&D construction pipeline',
-    source: '한전 송변전 건설 정보공개 플랫폼', asOf: GRID_CONSTRUCTION_META.asOf,
+    source: '한전 송변전 건설 정보공개 플랫폼', asOf: ASOF['grid-construction'],
     cadence: { kind: 'review', days: 90 }, method: 'manual',
     file: 'src/data/gridConstruction.js', usedIn: ['로드맵', '데이터 탐색기'],
     how: '복사 불가 화면이라 캡쳐 판독 → gridConstruction.js',
@@ -113,14 +97,14 @@ export const DATASETS = [
   },
   {
     id: 'power-reserve', group: 'power', name: '월별 공급예비율', nameEn: 'Monthly supply reserve margin',
-    source: '전력거래소 · 한전 전력수급 실적', asOf: reserveLast(),
+    source: '전력거래소 · 한전 전력수급 실적', asOf: ASOF['power-reserve'],
     cadence: { kind: 'periodic', days: MONTHLY, lagDays: 20 }, method: 'manual',
     file: 'src/data/powerReserve.js', usedIn: ['대시보드'],
     how: 'RESERVE_12M에 새 달을 추가하고 가장 오래된 달을 뺀다',
   },
   {
     id: 'renewable-ess', group: 'power', name: '신재생·ESS 설비용량 (시도)', nameEn: 'Renewables & ESS capacity (by province)',
-    source: '한국전력거래소', asOf: RENEWABLE_ESS_META.asOf,
+    source: '한국전력거래소', asOf: ASOF['renewable-ess'],
     cadence: { kind: 'periodic', days: MONTHLY, lagDays: 45 }, method: 'manual',
     file: 'src/data/renewableEss.js', usedIn: ['지역 페이지', '대시보드'],
     how: '전력거래소 시계열 최신월로 교체',
@@ -155,7 +139,7 @@ export const DATASETS = [
   },
   {
     id: 'nuclear', group: 'power', name: '원전 호기별 현황', nameEn: 'Nuclear units',
-    source: '원안위 · 한수원', asOf: nuclear.date,
+    source: '원안위 · 한수원', asOf: ASOF.nuclear,
     cadence: { kind: 'review', days: 180 }, method: 'manual',
     file: 'data/nuclear_units_v0.json', usedIn: ['발전소 레이어', '통계'],
     how: '신규 상업운전·영구정지 호기 반영',
@@ -170,21 +154,21 @@ export const DATASETS = [
   // ── 시장·시설 ───────────────────────────────────────────
   {
     id: 'dc-facilities', group: 'market', name: '데이터센터 시설 (큐레이션)', nameEn: 'Data-centre facilities (curated)',
-    source: 'AI InfraMap 큐레이션 (공시·보도·인허가)', asOf: maxUpdated(dcCenters.facilities),
+    source: 'AI InfraMap 큐레이션 (공시·보도·인허가)', asOf: ASOF['dc-facilities'],
     cadence: { kind: 'review', days: 60 }, method: 'script',
     file: 'data/dc_seed_v0.1.json → dc_centers.json', usedIn: ['지도', '전 페이지'],
     how: 'dc_seed 수정 후 scripts/geocode.mjs로 dc_centers.json 재생성',
   },
   {
     id: 'capital-pipeline', group: 'market', name: '공급예정 민간 데이터센터', nameEn: 'Upcoming private data centres',
-    source: '삼일PwC · 알스퀘어 리포트 교차', asOf: CAPITAL_PIPELINE_META.asOf,
+    source: '삼일PwC · 알스퀘어 리포트 교차', asOf: ASOF['capital-pipeline'],
     cadence: { kind: 'review', days: 180 }, method: 'manual',
     file: 'src/data/capitalPipeline.js', usedIn: ['공급예정 레이어', '지역 페이지'],
     how: '새 업계 리포트 공표 시 교차 갱신',
   },
   {
     id: 'dc-deals', group: 'market', name: 'DC 거래 사례 · 랙 임대료', nameEn: 'DC deals & rack rates',
-    source: '알스퀘어 리서치센터 연간 리포트', asOf: DC_DEALS_META.asOf,
+    source: '알스퀘어 리서치센터 연간 리포트', asOf: ASOF['dc-deals'],
     cadence: { kind: 'periodic', days: ANNUAL, lagDays: 30 }, method: 'manual',
     file: 'src/data/dcRealEstate.js', usedIn: ['데이터 탐색기', '인사이트'],
     how: '연간 리포트 신간 반영',
@@ -220,7 +204,7 @@ export const DATASETS = [
   },
   {
     id: 'exclusions', group: 'geo', name: '입지 배제 오버레이', nameEn: 'Siting exclusion overlays',
-    source: '토지이음 등 (scripts/fetch-exclusions.mjs)', asOf: exclusions.asOf,
+    source: '토지이음 등 (scripts/fetch-exclusions.mjs)', asOf: ASOF.exclusions,
     cadence: { kind: 'review', days: 180 }, method: 'script',
     file: 'data/exclusions/', usedIn: ['배제구역 레이어', '부지 판정'],
     how: '아직 미수집 — fetch-exclusions.mjs로 레이어를 채우면 자동 활성화',

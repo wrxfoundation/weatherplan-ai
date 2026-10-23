@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { evaluateFreshness } from '../data/freshness.js'
-import { LATEST_SNAPSHOT } from '../data/headroomSnapshots.js'
+import { LATEST_MONTH } from '../data/headroomSnapshotIndex.js'
 import { CONTACT_EMAIL } from '../data/leadApi.js'
 import { useMapLang } from '../i18n/mapLang.js'
 
@@ -55,7 +55,7 @@ export default function SiteFooter() {
   const { pathname } = useLocation()
   const en = useMapLang() === 'en'
   const fresh = useMemo(() => {
-    const r = evaluateFreshness(new Date(), { headroomLatest: LATEST_SNAPSHOT?.month ?? null })
+    const r = evaluateFreshness(new Date(), { headroomLatest: LATEST_MONTH })
     return { overdue: r.count.overdue ?? 0, attn: r.attention }
   }, [])
   if (HIDE_ON.has(pathname)) return null

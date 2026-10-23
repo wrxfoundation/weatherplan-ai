@@ -6,8 +6,10 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "prebuild": "node scripts/gen-freshness-asof.mjs",
     "build": "vite build && node scripts/postbuild.mjs",
     "preview": "vite preview",
+    "test": "node --test test/*.test.mjs",
     "geocode": "node scripts/geocode.mjs"
   },
   "dependencies": {

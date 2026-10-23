@@ -1,0 +1,66 @@
+# dcmap-web(AI InfraMap) 품질 게이트 — PR·배포 브랜치 푸시마다
+#  1) 기준일 요약(data/freshness_asof.json)이 원본 데이터와 일치하는지
+#  2) 단위 테스트(최신성 판정·지명 EN·변전소 여유 해석/비교·수집 대상 무결성)
+#  3) 프로덕션 빌드 + 메인 번들 크기 상한
+#  4) 헤드리스 화면 스모크(21개 라우트 × KO·KO 모바일·EN)
+name: dcmap-ci
+
+on:
+  workflow_dispatch: {}
+  pull_request:
+    paths:
+      - "dcmap-web/**"
+      - ".github/workflows/dcmap-ci.yml"
+  push:
+    branches: [claude/deploy-vercel-DwbJL]
+    paths:
+      - "dcmap-web/**"
+      - ".github/workflows/dcmap-ci.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: dcmap-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: dcmap-web
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: dcmap-web/package-lock.json
+      - run: npm ci
+
+      - name: 기준일 요약 동기화 확인
+        run: node scripts/gen-freshness-asof.mjs --check
+
+      - name: 단위 테스트
+        run: npm test
+
+      - name: 빌드
+        run: npm run build
+
+      - name: 메인 번들 크기 상한 (지도 첫 화면)
+        run: |
+          f=$(ls dist/assets/index-*.js)
+          kb=$(( $(stat -c %s "$f") / 1024 ))
+          echo "메인 번들 ${kb}KB" | tee -a "$GITHUB_STEP_SUMMARY"
+          # 2026-10 기준 ~750KB(바이트; vite 표시는 문자 수라 더 작게 나옴). 지연 로딩이 풀려 크게 불어나면 실패
+          if [ "$kb" -gt 820 ]; then echo "::error::메인 번들 ${kb}KB > 820KB — 무거운 모듈이 첫 화면에 끌려왔는지 확인"; exit 1; fi
+
+      - name: 화면 스모크
+        run: |
+          npm i --no-save playwright@1.56.1
+          npx playwright install --with-deps chromium
+          npx vite preview --port 4173 --strictPort &
+          npx --yes wait-on@8 -t 30000 http://localhost:4173
+          node scripts/smoke.mjs http://localhost:4173

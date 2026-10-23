@@ -13,7 +13,10 @@ import { weatherFor } from '../data/liveApi.js'
 import { checkPowerTrack } from '../calc/trackCheck.js'
 import { buildDescription, buildPlaceJsonLd } from './seo.js'
 import { useMapLang } from '../i18n/mapLang.js'
-import { placeT, placeKeyT, sidoT, facilityName, typeT } from '../i18n/places.js'
+import { placeT, placeKeyT, sidoT, sigunguT, facilityName, typeT, romanize } from '../i18n/places.js'
+import { SubstationHeadroomCard } from '../grid/GridHeadroom.jsx'
+import headroomTargets from '../../data/headroom_targets.json'
+const HEADROOM_TARGETS = headroomTargets.targets || []
 
 const CAPITAL_SIDO = new Set(['서울', '경기', '인천'])
 
@@ -209,14 +212,16 @@ export default function FacilityPage() {
           </p>
         )}
         <FacilityCard facility={facility} compact />
+        {/* 이 시설이 있는 시군구의 154kV 변전소별 수전 여유(한전ON 월별 수집) */}
+        <SubstationHeadroomCard admCds={HEADROOM_TARGETS.filter((t) => t.facilities?.includes(facility.id)).map((t) => t.admCd)} />
         {(() => {
           const p = dongPulseFor(facility)
           if (!p) return null
           const maxAbs = Math.max(Math.abs(p.top.rate), Math.abs(p.bottom.rate), 0.01)
           const rows = [
-            { label: en ? `${facility.sigungu} avg` : `${facility.sigungu} 평균`, rate: p.rate },
-            { label: en ? `max · ${p.top.name}` : `최고 · ${p.top.name}`, rate: p.top.rate },
-            { label: en ? `min · ${p.bottom.name}` : `최저 · ${p.bottom.name}`, rate: p.bottom.rate },
+            { label: en ? `${sigunguT(facility.sigungu, true)} avg` : `${facility.sigungu} 평균`, rate: p.rate },
+            { label: en ? `max · ${romanize(p.top.name)}` : `최고 · ${p.top.name}`, rate: p.top.rate },
+            { label: en ? `min · ${romanize(p.bottom.name)}` : `최저 · ${p.bottom.name}`, rate: p.bottom.rate },
           ]
           return (
             <article className="facility-card">

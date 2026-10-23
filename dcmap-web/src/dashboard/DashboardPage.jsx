@@ -16,6 +16,7 @@ import { DC_DEMAND_OUTLOOK, DC_DEMAND_OUTLOOK_META } from '../data/dcDemandOutlo
 import { useMapLang, setMapLang } from '../i18n/mapLang.js'
 import { sidoT, sigunguT, placeT, placeKeyT, facilityName, regionT } from '../i18n/places.js'
 import FreshnessChip from '../ui/FreshnessChip.jsx'
+import { SigunguHeadroomCard, HeadroomChangeCard } from '../grid/GridHeadroom.jsx'
 
 /* 대시보드 내러티브 i18n(섹션 헤드·제목·해석·라벨·헤더·배지·버튼·차트노트). 앱 공용 언어 스토어. 데이터값(시도명·고유명사·숫자·단위값)은 KO 유지. */
 const DT = {
@@ -732,6 +733,8 @@ export default function DashboardPage() {
             <span className="dsh-title">{t('전력·계통')}</span>
             <span className="dsh-sub">{t('공급 여건 — 계통영향평가·설비·발전 믹스 (DC 입지의 핵심 제약)')}</span>
           </div>
+          <SigunguHeadroomCard />
+          <HeadroomChangeCard />
           <section className="calc-card" style={{ gridColumn: '1 / -1' }}>
             <div className="chart-title">{t('전력계통영향평가 — 데이터센터 공급 가능/불가 (시도별, 한전 2026.3)')}</div>
             <div className="dash-status" style={{ marginBottom: 8 }}>

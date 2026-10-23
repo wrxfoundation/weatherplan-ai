@@ -49,6 +49,10 @@ jobs:
         working-directory: dcmap-web
         run: node scripts/fetch-land.mjs --base "$DCMAP_BASE" || echo "::warning::지가 수집 실패"
 
+      - name: 기준일 요약 재생성 (수집된 원본 → data/freshness_asof.json)
+        working-directory: dcmap-web
+        run: node scripts/gen-freshness-asof.mjs
+
       - name: 최신성 리포트
         working-directory: dcmap-web
         run: |

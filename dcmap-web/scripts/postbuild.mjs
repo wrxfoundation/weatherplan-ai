@@ -4,7 +4,7 @@
  *  1) 시설별 /dc/<slug>/index.html 정적 셸 프리렌더 (타이틀·메타·schema.org Place JSON-LD 주입) — SEO(SPEC §7)
  *  2) sitemap.xml · robots.txt 자동 생성
  */
-import { readFileSync, writeFileSync, mkdirSync } from 'node:fs'
+import { readFileSync, writeFileSync, mkdirSync, readdirSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
@@ -17,6 +17,13 @@ const { GLOSSARY } = await import(join(ROOT, 'src/content/glossary.js'))
 const { SIDO_SLUGS } = await import(join(ROOT, 'src/content/sido_slugs.js'))
 const { INSIGHTS } = await import(join(ROOT, 'src/content/insights_meta.js'))
 const { GLOBAL_CASES } = await import(join(ROOT, 'src/data/globalCases.js'))
+const { evaluateFreshness } = await import(join(ROOT, 'src/data/freshness.js'))
+const SNAP_DIR = join(ROOT, 'data/headroom_snapshots')
+const SNAP_MONTHS = readdirSync(SNAP_DIR).map((f) => f.match(/^(\d{4}-\d{2})\.json$/)?.[1]).filter(Boolean).sort()
+const SNAP_LATEST = SNAP_MONTHS.length ? JSON.parse(readFileSync(join(SNAP_DIR, `${SNAP_MONTHS.at(-1)}.json`), 'utf8')) : null
+// 빌드 시점이 아니라 '데이터 기준일'로 판정한 레지스트리 — 실시간 연동은 기준일이 없어 제외
+const FRESH = evaluateFreshness(new Date(), { headroomLatest: SNAP_MONTHS.at(-1) ?? null }).rows.filter((r) => r.status !== 'live')
+const freshOf = (id) => FRESH.find((r) => r.id === id)
 const shell = readFileSync(join(DIST, 'index.html'), 'utf8')
 
 const STATUS_LABEL = { operating: '운영', construction: '건설', planned: '계획', delayed: '지연' }
@@ -133,7 +140,15 @@ prerender(
   '/land',
   'LAND PULSE — 입지 지가변동률 시·군·구·동 리스트 · AI InfraMap',
   '데이터센터 입지 시군구 35곳과 읍면동 조사구역 539개의 월간 지가변동률 — 시도 필터·정렬·동 단위 드릴다운. KOSIS·한국부동산원 공개 통계.',
-  { '@context': 'https://schema.org', '@type': 'Dataset', name: 'AI InfraMap LAND PULSE — DC 입지 지가변동률' },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Dataset',
+    name: 'AI InfraMap LAND PULSE — DC 입지 지가변동률',
+    description: '데이터센터 입지 시군구·읍면동 조사구역의 월간 지가변동률(%).',
+    creator: { '@type': 'Organization', name: 'AI InfraMap' },
+    isBasedOn: 'KOSIS · 한국부동산원 지가변동률 (DT_31501N_010)',
+    ...(freshOf('land-dong')?.asOf ? { temporalCoverage: freshOf('land-dong').asOf } : {}),
+  },
 )
 
 // 인사이트 프리렌더
@@ -249,11 +264,23 @@ prerender('/benchmark', '글로벌 AI 인프라 벤치마크 — 해외 사례 �
   name: '글로벌 AI 인프라 벤치마크',
   about: GLOBAL_CASES.map((c) => ({ '@type': 'Organization', name: c.name })),
 })
-prerender('/data', '데이터 탐색기 — AI InfraMap', '발전 허가대장·집단에너지·계통 공급여유·계통영향평가·변전소·산업단지·시설 시드 — 축적 원천 자료 검색·CSV 다운로드.', {
+/* /data — 데이터 카탈로그. 각 데이터셋의 기준 시점(temporalCoverage)은 최신성 레지스트리(freshness.js)에서 그대로 가져오고,
+ * 기준일이 기록되지 않은 데이터셋은 날짜를 비워 둔다(지어내지 않음). */
+prerender('/data', '데이터 탐색기 — AI InfraMap', `발전 허가대장·집단에너지·계통 공급여유·변전소 154kV 수전 여유(DC 입지 시군구 월간 수집)·계통영향평가·산업단지·시설 시드 — 원천 자료 ${FRESH.length}종 검색·CSV 다운로드와 데이터별 기준일·최신성 판정.`, {
   '@context': 'https://schema.org',
-  '@type': 'Dataset',
+  '@type': 'DataCatalog',
   name: 'AI InfraMap 공개 데이터 탐색기',
+  url: `${ORIGIN}/data`,
   creator: { '@type': 'Organization', name: 'AI InfraMap' },
+  dataset: FRESH.map((r) => ({
+    '@type': 'Dataset',
+    name: r.name,
+    alternateName: r.nameEn,
+    description: `${r.name} — 출처 ${r.source}.${r.usedIn?.length ? ` 쓰이는 곳: ${r.usedIn.join(', ')}.` : ''}`,
+    isBasedOn: r.source,
+    ...(r.asOf ? { temporalCoverage: r.asOf } : {}),
+    url: `${ORIGIN}/data#freshness`,
+  })),
 })
 
 const urls = [
@@ -275,10 +302,23 @@ const urls = [
   ...regionSlugs.map((s) => `/region/${s}`),
   ...facilities.map((f) => `/dc/${slugOf(f)}`),
 ]
-const today = facilities[0]?.updated_at ?? ''
+/* lastmod는 페이지 내용이 실제로 바뀐 날만 적는다 — 근거가 있는 페이지에만(빌드일로 일괄 채우지 않음).
+ *  /dc/<slug>      시설 레코드 updated_at
+ *  /region/<slug>  그 시도 시설들의 최신 updated_at
+ *  /data·/dashboard 변전소 여유 최신 수집일(capturedAt) */
+const isoDay = (d) => (d && /^\d{4}-\d{2}-\d{2}/.test(d) ? d.slice(0, 10) : null)
+const maxDay = (list) => list.map(isoDay).filter(Boolean).sort().at(-1) ?? null
+const snapDay = isoDay(SNAP_LATEST?.capturedAt)
+const slugToSido = Object.fromEntries(Object.entries(SIDO_SLUGS).map(([sido, slug]) => [slug, sido]))
+function lastmodOf(u) {
+  if (u.startsWith('/dc/')) return isoDay(facilities.find((f) => `/dc/${slugOf(f)}` === u)?.updated_at)
+  if (u.startsWith('/region/')) return maxDay(facilities.filter((f) => f.sido === slugToSido[u.slice(8)]).map((f) => f.updated_at))
+  if (u === '/data' || u === '/dashboard') return maxDay([snapDay, ...facilities.map((f) => f.updated_at)])
+  return null
+}
 const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${urls.map((u) => `  <url><loc>${ORIGIN}${u}</loc>${today ? `<lastmod>${today}</lastmod>` : ''}</url>`).join('\n')}
+${urls.map((u) => { const lm = lastmodOf(u); return `  <url><loc>${ORIGIN}${u}</loc>${lm ? `<lastmod>${lm}</lastmod>` : ''}</url>` }).join('\n')}
 </urlset>
 `
 writeFileSync(join(DIST, 'sitemap.xml'), sitemap)

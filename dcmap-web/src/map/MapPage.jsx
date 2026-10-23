@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { Suspense, lazy, useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
@@ -12,7 +12,6 @@ import Legend from './Legend.jsx'
 import ShareButton from './ShareButton.jsx'
 import AiAssistant from '../ai/AiAssistant.jsx'
 import FacilityCard from '../dc/FacilityCard.jsx'
-import SitePanel from '../score/SitePanel.jsx'
 import CompareTray from '../score/CompareTray.jsx'
 import { FACILITIES, STATUS_LABEL, STATUS_LABEL_EN, HYPERSCALE_MW, applyFilters, isCoarseGeocode } from '../data/facilities.js'
 import { PLANTS, WIND_PLANTS, PUBLIC_DCS } from '../data/plants.js'
@@ -39,6 +38,11 @@ import { useMapLang } from '../i18n/mapLang.js'
 import { DARK_BASE_TILES } from './basemap.js'
 import { sidoT, placeT, facilityName } from '../i18n/places.js'
 import FreshnessChip from '../ui/FreshnessChip.jsx'
+
+/* 부지 분석 패널은 빈 곳을 눌러야 열린다 — 첫 화면 번들에서 빼고(점수 엔진·리포트·읍면동 지가 포함),
+ * 지도가 뜬 뒤 한가할 때 미리 받아 두어 첫 클릭 지연을 없앤다. */
+const loadSitePanel = () => import('../score/SitePanel.jsx')
+const SitePanel = lazy(loadSitePanel)
 
 const SIDO_LIST = Object.entries(SIDO_CENTROIDS).map(([sido, [lat, lng]]) => ({ sido, lat, lng }))
 
@@ -166,6 +170,14 @@ function publicCard(f, t) {
 export default function MapPage({ power = false }) {
   const en = useMapLang() === 'en'
   const t = (ko, enStr) => (en ? enStr : ko)
+
+  // 지도가 자리 잡은 뒤 한가할 때 부지 분석 패널 청크를 미리 받는다(실패해도 클릭 시 다시 시도)
+  useEffect(() => {
+    const ric = window.requestIdleCallback || ((fn) => setTimeout(fn, 2500))
+    const cancel = window.cancelIdleCallback || clearTimeout
+    const id = ric(() => loadSitePanel().catch(() => {}), { timeout: 6000 })
+    return () => cancel(id)
+  }, [])
   const [searchParams, setSearchParams] = useSearchParams()
   const rawMw = Number.parseFloat(searchParams.get('min_mw'))
   const minMw = Number.isFinite(rawMw) && rawMw > 0 ? rawMw : null
@@ -1558,6 +1570,7 @@ export default function MapPage({ power = false }) {
               </article>
             </>
           ) : sitePoint ? (
+            <Suspense fallback={<div className="site-panel-loading" role="status">{t('부지 분석 준비 중…', 'Preparing site analysis…')}</div>}>
             <SitePanel
               point={sitePoint}
               onClose={() => setSitePoint(null)}
@@ -1569,6 +1582,7 @@ export default function MapPage({ power = false }) {
               inCompare={compare.some((c) => c.id === `${sitePoint.lat.toFixed(5)},${sitePoint.lng.toFixed(5)}`)}
               onSubstations={setSiteSubsts}
             />
+            </Suspense>
           ) : (
             <>
               {power && (
