@@ -4,7 +4,7 @@ import { useState } from "react";
 import FamilyLayout from "../../components/FamilyLayout";
 import { PolicyBody } from "../../components/Policy";
 import { Line } from "../../components/clay";
-import { Btn, Sheet, SheetTitle, TONE, WhiteBtn } from "../../components/ds";
+import { Btn, EvenGrid, Sheet, SheetTitle, TONE, WhiteBtn } from "../../components/ds";
 import { ELDER } from "../../lib/mock";
 import { PRICING, fmtWon } from "../../lib/config";
 import { fmtCard, payHref, safeReceiptUrl } from "../../lib/payments";
@@ -176,7 +176,7 @@ export default function MembershipPage() {
               )}
               {cancelOpen && !(cancelAsk && !cancelAsk.ackAt) && (
                 <div className="flex basis-full flex-col gap-2.5 rounded-[18px] bg-white p-3.5">
-                  <div role="group" aria-label="무엇을 상담할까요" className="flex flex-wrap gap-1.5">
+                  <EvenGrid role="group" aria-label="무엇을 상담할까요" labels={["해지", "일시 중지", "요금제 변경"]} gap={6}>
                     {["해지", "일시 중지", "요금제 변경"].map((t) => (
                       <button
                         key={t}
@@ -189,7 +189,7 @@ export default function MembershipPage() {
                         {t}
                       </button>
                     ))}
-                  </div>
+                  </EvenGrid>
                   <p className="text-[14px] leading-[1.6]" style={{ color: "#5E6270" }}>
                     요청하면 관제가 연락드려 약정 · 환불을 안내합니다. 상담 전에는 아무것도 바뀌지 않습니다.
                   </p>

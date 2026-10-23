@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import FamilyLayout from "../../components/FamilyLayout";
 import { WeekBars } from "../../components/GuardianCharts";
 import { Clay, Line } from "../../components/clay";
-import { Card, TONE } from "../../components/ds";
+import { Card, EvenGrid, TONE } from "../../components/ds";
 import { RESULT_TONE, STATE_ORDER, VISIT_REPORT } from "../../lib/visit-report";
 import { STAGE_LABEL, sentReportState, visitReportOf } from "../../lib/live-household";
 import { FIT3_INFO } from "../../lib/mock";
@@ -84,7 +84,7 @@ function DemoReport() {
           <b>총평 </b>
           {VISIT_REPORT.summary}
         </p>
-        <div className="flex flex-wrap gap-1.5">
+        <EvenGrid labels={VISIT_REPORT.axes.map((a) => `${a.axis} · ${worst(a.items)}`)} gap={6}>
           {VISIT_REPORT.axes.map((a) => {
             const w = worst(a.items);
             return (
@@ -93,7 +93,7 @@ function DemoReport() {
               </span>
             );
           })}
-        </div>
+        </EvenGrid>
       </Card>
 
       {VISIT_REPORT.axes.map((a, k) => (

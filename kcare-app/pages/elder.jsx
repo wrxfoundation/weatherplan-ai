@@ -43,7 +43,7 @@ import ElderHealthReport from "../components/ElderHealthReport";
 import RoleGate from "../components/RoleGate";
 import { useAuth } from "../lib/auth";
 import { Art, Clay, ClayDefs, Line } from "../components/clay";
-import { BackHead, Btn, Card, DBlock, Face, Pill, R, Screen, Sheet, SheetTitle, Star, TONE, Wave, WhiteBtn, eventTone, soft, solid, useToast } from "../components/ds";
+import { BackHead, Btn, Card, DBlock, EvenGrid, Face, Pill, R, Screen, Sheet, SheetTitle, Star, TONE, Wave, WhiteBtn, eventTone, soft, solid, useToast } from "../components/ds";
 
 // 사용자(어르신) 홈 — 핸드오프 06 elder 상세 명세 + REQ-01(우선 날씨) + REQ-06(SOS 오작동 방지)
 // 2026-10-15 디자인 시안(클레이 3D)으로 다시 그렸다 — 화면 구성은 시안 그대로, 기능은 그대로 둔다:
@@ -1478,13 +1478,13 @@ function ElderHome() {
                   </div>
                 </div>
               </div>
-              <div className="flex flex-wrap gap-2">
+              <EvenGrid labels={OUTING.kit}>
                 {OUTING.kit.map((k) => (
                   <span key={k} className="ds-chip">
                     {k}
                   </span>
                 ))}
-              </div>
+              </EvenGrid>
               <div className="ds-src text-right">날씨 · 케이웨더 · 예시</div>
             </R>
           </Screen>
@@ -2971,7 +2971,7 @@ function MyEventRow({ e, today = false, month = false, approvalWord, confirming,
         </div>
       ) : (
         (r.edit || r.remove) && (
-          <div className="grid grid-cols-2 gap-2">
+          <EvenGrid cols={2}>
             {r.edit && (
               <button type="button" onClick={onEdit} aria-label={`${cleanTitle(e.title)} 바꾸기`} className={big} style={{ background: "#FFFFFF", boxShadow: "0 4px 0 rgba(0,0,0,.08)" }}>
                 바꾸기
@@ -2982,7 +2982,7 @@ function MyEventRow({ e, today = false, month = false, approvalWord, confirming,
                 {cancel ? "취소하기" : "지우기"}
               </button>
             )}
-          </div>
+          </EvenGrid>
         )
       )}
     </div>
@@ -3102,7 +3102,7 @@ function AskDoctorRow({ q, n, done = false, player, playClip, confirming, onAskR
           </div>
         </div>
       ) : (
-        <div className="grid grid-cols-2 gap-2">
+        <EvenGrid cols={2}>
           {q.clip && (
             <button type="button" onClick={() => playClip(pkey, { clip: q.clip })} aria-pressed={on} className={small} style={{ background: "#FFFFFF", boxShadow: "0 4px 0 rgba(0,0,0,.08)" }}>
               <Line name={on ? "pause" : "speaker"} size={20} />
@@ -3131,7 +3131,7 @@ function AskDoctorRow({ q, n, done = false, player, playClip, confirming, onAskR
               지우기
             </button>
           )}
-        </div>
+        </EvenGrid>
       )}
     </div>
   );
@@ -3228,7 +3228,7 @@ function FamilyVoices({ targets, sel, onSelect, threadFor, onPlay, onSend, serve
 
   return (
     <>
-      <R d={50} className="grid grid-cols-2 gap-2.5" role="group" aria-label="누구에게">
+      <EvenGrid as={R} d={50} cols={2} center={false} gap={10} role="group" aria-label="누구에게">
         {targets.map((t, i) => {
           const c = famTone(t, i);
           const isOn = sel === i;
@@ -3258,7 +3258,7 @@ function FamilyVoices({ targets, sel, onSelect, threadFor, onPlay, onSend, serve
             </button>
           );
         })}
-      </R>
+      </EvenGrid>
 
       <R d={100} className="flex flex-col gap-2.5 rounded-[26px] p-4" style={{ background: "#F3F1EC" }}>
         {part && (

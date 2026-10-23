@@ -3,7 +3,7 @@ import Link from "next/link";
 import { useState } from "react";
 import FamilyLayout from "../../components/FamilyLayout";
 import { Clay, Line } from "../../components/clay";
-import { Btn, Sheet, SheetTitle, TONE, WhiteBtn } from "../../components/ds";
+import { Btn, EvenGrid, Sheet, SheetTitle, TONE, WhiteBtn } from "../../components/ds";
 import { AI_REPORT, CARE_TEAM, CONSENTS, NPS_REASONS, OUTING, VIDEO_RETENTION_DAYS, VISIT_VIDEOS } from "../../lib/mock";
 import { VISIT_REPORT } from "../../lib/visit-report";
 import { fmtCard } from "../../lib/payments";
@@ -339,7 +339,7 @@ function RateCard({ when, rating, onRate, onEvent, onDetractor, onWriteReview })
           <div className="text-[15px] font-extrabold" style={{ color: TONE.purple.fg }}>
             무엇이 가장 아쉬우셨나요?
           </div>
-          <div className="flex flex-wrap gap-1.5">
+          <EvenGrid labels={NPS_REASONS} gap={6}>
             {NPS_REASONS.map((r) => (
               <button
                 key={r}
@@ -352,7 +352,7 @@ function RateCard({ when, rating, onRate, onEvent, onDetractor, onWriteReview })
                 {r}
               </button>
             ))}
-          </div>
+          </EvenGrid>
         </div>
       )}
       <div className="grid grid-cols-[2fr_1fr] gap-2.5">

@@ -2,7 +2,7 @@ import Head from "next/head";
 import Link from "next/link";
 import { useState } from "react";
 import FamilyLayout from "../../components/FamilyLayout";
-import { Btn, Sheet, SheetTitle, TONE, WhiteBtn } from "../../components/ds";
+import { Btn, EvenGrid, Sheet, SheetTitle, TONE, WhiteBtn } from "../../components/ds";
 import { PRIORITY_PRESETS, WEATHER_FACTORS } from "../../lib/mock";
 import { useAppState } from "../../lib/state";
 import { useGuardianRole } from "../../lib/guardian-role";
@@ -47,13 +47,13 @@ export default function HealthPage() {
             질환
           </h2>
           {health.conditions.length ? (
-            <div className="flex flex-wrap gap-2">
+            <EvenGrid labels={health.conditions}>
               {health.conditions.map((c) => (
                 <span key={c} className="ds-gchip" style={{ color: PINK.fg }}>
                   {c}
                 </span>
               ))}
-            </div>
+            </EvenGrid>
           ) : (
             <p className="text-[16px] font-bold" style={{ color: PINK.fg }}>
               등록 없음
@@ -122,13 +122,13 @@ export default function HealthPage() {
               {state.priority.source}
             </span>
           </div>
-          <div className="flex flex-wrap gap-2">
+          <EvenGrid labels={state.priority.factors}>
             {state.priority.factors.map((f) => (
               <span key={f} className="ds-gchip" style={{ color: "#1B2340" }}>
                 {f}
               </span>
             ))}
-          </div>
+          </EvenGrid>
           <p className="text-[14px] leading-[1.6]" style={{ color: "#4A5068" }}>
             고른 날씨가 {honor} 화면 &lsquo;지금 우리 동네&rsquo;에 먼저 보입니다. 병력에 맞춰 사람이 직접 고르며, 건강정보로 자동 추천하지 않습니다.
           </p>
@@ -194,7 +194,7 @@ function PrioritySheet({ current, onClose, onSave, honor }) {
       </div>
       <div role="group" aria-label="직접 고르기" className="flex flex-col gap-2">
         <div className="text-[15px] font-extrabold">직접 고르기</div>
-        <div className="flex flex-wrap gap-1.5">
+        <EvenGrid labels={WEATHER_FACTORS} gap={6}>
           {WEATHER_FACTORS.map((f) => (
             <button
               key={f}
@@ -207,7 +207,7 @@ function PrioritySheet({ current, onClose, onSave, honor }) {
               {f}
             </button>
           ))}
-        </div>
+        </EvenGrid>
       </div>
       <div className="flex gap-2">
         <WhiteBtn className="flex-1 text-[16px]" onClick={onClose}>

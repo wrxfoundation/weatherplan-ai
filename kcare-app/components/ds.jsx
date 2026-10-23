@@ -2,9 +2,40 @@
 // 색 · 그림자 값은 시안 그대로다. 다만 빨강은 위험 신호(SOS · 낙상 · 응급) 전용이라
 // 시안의 빨간 '새 소식' 점 · 주황 배지는 금색(TONE.gold)으로 바꿔 쓴다 — 이 파일 밖에서 빨강을 고르지 않게
 // 위험 색(TONE.danger)은 이름부터 위험이라고 붙였다.
-import { useCallback, useEffect, useId, useRef, useState } from "react";
+import { Children, cloneElement, isValidElement, useCallback, useEffect, useId, useRef, useState } from "react";
 import Link from "next/link";
 import { Line } from "./clay";
+
+// 칩 · 고르기 묶음 — 줄이 바뀔 때 오른쪽이 비지 않게 같은 너비로 줄을 꽉 채운다 (2026-10-23 · 시제품 v17 '.even').
+//   한 줄에 몇 개: 글이 12자를 넘으면 하나 · 6자를 넘으면 둘 · 짧으면 셋(3 · 5 · 7 · 3의 배수 개일 때), 아니면 둘.
+//   마지막 줄에 하나가 남으면 줄 전체, 둘이 남으면 반씩 — 어느 줄도 오른쪽이 비지 않는다. 6칸 격자에서 몇 칸을 차지할지 돌려준다.
+//   cols(1 · 2 · 3)를 주면 한 줄 개수는 그대로 두고 마지막 줄만 채운다 — 버튼 · 시간 · 사람 칸처럼 글 길이로 정하지 않는 묶음
+export function evenSpans(labels, fixed) {
+  const n = labels.length;
+  if (!n) return [];
+  const mx = Math.max(...labels.map((t) => String(t ?? "").length));
+  let cols = mx > 12 ? 1 : mx > 6 ? 2 : n % 3 === 0 || n === 5 || n === 7 ? 3 : 2;
+  if (n <= 2 && mx <= 12) cols = n;
+  if (n === 4 && mx <= 3) cols = 2;
+  if (fixed) cols = Math.min(fixed, n);
+  const rem = n % cols;
+  const lastStart = n - rem;
+  return labels.map((_, i) => (cols === 1 ? 6 : rem && i >= lastStart ? (rem === 1 ? 6 : 3) : 6 / cols));
+}
+
+// evenSpans 로 줄을 채우는 묶음. labels 는 칸마다의 글(길이로 한 줄 개수를 정한다), children 은 칩 · 버튼 그대로.
+// 조건부 칸(false)은 빼고 센다. center={false} 면 칸 안 정렬은 원래대로(왼쪽 정렬 칸), as 로 R 같은 감싸개를 쓴다
+export function EvenGrid({ labels, cols, as: Tag = "div", center = true, gap = 8, className = "", style, children, ...rest }) {
+  const items = Children.toArray(children).filter(isValidElement);
+  const spans = evenSpans(labels || items.map(() => ""), cols);
+  return (
+    <Tag className={`grid ${className}`} style={{ gridTemplateColumns: "repeat(6, minmax(0, 1fr))", gap, ...style }} {...rest}>
+      {items.map((el, i) =>
+        cloneElement(el, { style: { ...el.props.style, gridColumn: `span ${spans[i] || 3}`, ...(center && { justifyContent: "center", textAlign: "center" }) } })
+      )}
+    </Tag>
+  );
+}
 
 // 분류 색 — bg 바탕 · sh 아래 그림자(입체) · fg 글자 · title 큰 제목 · sub 보조 글자 · solid 채운 버튼 · solidSh 그 그림자
 export const TONE = {

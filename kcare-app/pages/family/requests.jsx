@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { payHref } from "../../lib/payments";
 import FamilyLayout from "../../components/FamilyLayout";
 import { Clay, Line } from "../../components/clay";
-import { Btn, Card, Sheet, SheetTitle, TONE, WhiteBtn } from "../../components/ds";
+import { Btn, Card, EvenGrid, Sheet, SheetTitle, TONE, WhiteBtn } from "../../components/ds";
 import { STATUS, GUARDIAN_PRESETS, SERVICE_MENU, SERVICE_PLUS, URGENCY, CANCEL_FREE_DAYS, CLOSED, approverOf, canEditRequest, cancelRule, customerStatusLabel, fmtPreferred, fmtScheduled, isStoreOrder, isVisitCall, kstYmd, paymentOf } from "../../lib/requests";
 import { EXTRA_PERSON_FEE, addMin, clock12, dateLabel, durStart, durText, kstHm, menuOf, nextAppt, nextApptStart, priceOf, reqTitle, svcTitle } from "../../lib/booking";
 import { fmtWon } from "../../lib/config";
@@ -290,7 +290,7 @@ export default function RequestsPage() {
             <h2 className="m-0 text-[15px] font-extrabold" style={{ color: "#5E5A52" }}>
               곧 열려요
             </h2>
-            <div className="flex flex-wrap gap-2">
+            <EvenGrid labels={INACTIVE.map((s) => s.name.replace(/\s*서비스$/, ""))}>
               {INACTIVE.map((s) => {
                 const sent = !!wanted[s.no];
                 return (
@@ -311,7 +311,7 @@ export default function RequestsPage() {
                   </button>
                 );
               })}
-            </div>
+            </EvenGrid>
             <p className="text-[13px]" style={{ color: "#5E6270" }}>
               {Object.keys(wanted).length ? "알려 주셔서 감사합니다 — 열리면 먼저 안내드릴게요." : "필요하시면 눌러서 알려 주세요 — 열리면 먼저 안내드려요."}
             </p>
@@ -973,13 +973,13 @@ function CreateRequestSheet({ preset, initial = null, onClose, onCreate, onSave,
       {custom && (
         <div role="group" aria-label="요청 종류" className="flex flex-col gap-2">
           <div className="text-[15px] font-extrabold">요청 종류</div>
-          <div className="flex flex-wrap gap-1.5">
+          <EvenGrid labels={GUARDIAN_PRESETS} gap={6}>
             {GUARDIAN_PRESETS.map((p) => (
               <button key={p} type="button" onClick={() => setType(p)} aria-pressed={type === p} className="ds-press min-h-[40px] rounded-full px-3.5 text-[14px] font-extrabold" style={chip(type === p)}>
                 {p}
               </button>
             ))}
-          </div>
+          </EvenGrid>
         </div>
       )}
 

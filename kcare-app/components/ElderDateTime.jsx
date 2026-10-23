@@ -10,7 +10,7 @@
 // 해주세요 예약(2026-10-22 · book)은 내일부터 1년 뒤까지, 오전 7시 ~ 오후 8시 정각까지 30분 간격 (lib/booking.js 와 같은 범위).
 import { useState } from "react";
 import { Line } from "./clay";
-import { TONE } from "./ds";
+import { EvenGrid, TONE } from "./ds";
 
 export const ELDER_HOURS = [8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19];
 // 해주세요 예약 시간 — 오전 7:00 ~ 오후 8:00 (8시는 정각만)
@@ -142,7 +142,8 @@ export default function ElderDateTime({ ymd, hm, onChange, maxDays = 60, title =
       </div>
 
       <div className="mt-2 text-[19px] font-extrabold">{timeTitle}</div>
-      <div className="grid grid-cols-3 gap-2" role="group" aria-label="몇 시">
+      {/* 예약 시간은 14칸이라 마지막 줄 두 칸이 반씩 채운다 — 오른쪽이 비지 않게 (2026-10-23) */}
+      <EvenGrid cols={3} role="group" aria-label="몇 시">
         {hours.map((h) => (
           <button
             key={h}
@@ -156,7 +157,7 @@ export default function ElderDateTime({ ymd, hm, onChange, maxDays = 60, title =
             {hourLabel(h)}
           </button>
         ))}
-      </div>
+      </EvenGrid>
       <div className="grid grid-cols-2 gap-2" role="group" aria-label="분">
         {[
           [false, "정각"],

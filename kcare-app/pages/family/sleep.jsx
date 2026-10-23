@@ -3,7 +3,7 @@ import Link from "next/link";
 import { useState } from "react";
 import FamilyLayout from "../../components/FamilyLayout";
 import { MonthBars, NoWatch, StatusChip, WeekBars } from "../../components/GuardianCharts";
-import { Card, Tog, TONE } from "../../components/ds";
+import { Card, EvenGrid, Tog, TONE } from "../../components/ds";
 import { useAppState } from "../../lib/state";
 import { useAuth } from "../../lib/auth";
 import { subjectLabel, trackOf } from "../../lib/tracks";
@@ -45,7 +45,7 @@ export default function SleepPage() {
                 {LAST_NIGHT.hours}
                 <small> 시간</small>
               </div>
-              <div className="flex flex-wrap gap-2">
+              <EvenGrid labels={[`평소 ${USUAL_SLEEP}시간`, `${LAST_NIGHT.asleep} 잠듦`, `${LAST_NIGHT.wake} 일어남`]}>
                 <span className="ds-gchip" style={{ color: TONE.blue.fg }}>
                   평소 {USUAL_SLEEP}시간
                 </span>
@@ -55,7 +55,7 @@ export default function SleepPage() {
                 <span className="ds-gchip" style={{ color: TONE.blue.fg }}>
                   {LAST_NIGHT.wake} 일어남
                 </span>
-              </div>
+              </EvenGrid>
             </div>
 
             <div className="ds-gcard ds-r" style={{ "--d": "80ms", background: TONE.blue.bg }}>

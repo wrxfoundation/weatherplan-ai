@@ -1,7 +1,7 @@
 import Head from "next/head";
 import FamilyLayout from "../../components/FamilyLayout";
 import { StatusChip } from "../../components/GuardianCharts";
-import { TONE } from "../../components/ds";
+import { EvenGrid, TONE } from "../../components/ds";
 import { eventsFor, useAppState } from "../../lib/state";
 import { useAuth } from "../../lib/auth";
 import { subjectLabel, trackOf } from "../../lib/tracks";
@@ -180,13 +180,13 @@ export default function OutingPage() {
           <h2 className="ds-lab m-0" style={{ color: TONE.blue.fg }}>
             챙길 것 · {subj} 화면에도 보여요
           </h2>
-          <div className="flex flex-wrap gap-2">
+          <EvenGrid labels={OUTING.kit}>
             {OUTING.kit.map((x) => (
               <span key={x} className="ds-gchip" style={{ color: TONE.blue.fg }}>
                 {x}
               </span>
             ))}
-          </div>
+          </EvenGrid>
           <p className="text-[15px] font-bold leading-[1.6]" style={{ color: "#3A3F50" }}>
             {OUTING.advice}
           </p>

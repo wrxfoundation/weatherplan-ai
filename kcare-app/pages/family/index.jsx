@@ -22,7 +22,7 @@ import { HelpCallCard } from "../../components/HelpCall";
 import { avatarText, meAs } from "../../lib/people";
 import { USUAL_SLEEP, fitMonth, medMonth, medTally, pastWeek, weekBefore } from "../../lib/demo-health";
 import { Clay, Line } from "../../components/clay";
-import { Btn, Card, Face, Pill, R, TONE, WhiteBtn, eventTone } from "../../components/ds";
+import { Btn, Card, EvenGrid, Face, Pill, R, TONE, WhiteBtn, eventTone } from "../../components/ds";
 import { ExtraChargeCard, ExtraChargeSheet, myExtraCharges } from "../../components/ExtraCharge";
 import { payHref } from "../../lib/payments";
 import { svcTitle } from "../../lib/booking";
@@ -863,7 +863,7 @@ export default function FamilyHome() {
               <p className="text-[13px]" style={{ color: "#5E6270" }}>
                 수집된 기록에서만 답합니다 · 의료 판단이 아닙니다
               </p>
-              <div className="flex flex-wrap gap-2">
+              <EvenGrid labels={AI_ASSISTANT_QA.map((qa) => qa.q)}>
                 {AI_ASSISTANT_QA.map((qa) => (
                   <button
                     key={qa.q}
@@ -876,7 +876,7 @@ export default function FamilyHome() {
                     {qa.q}
                   </button>
                 ))}
-              </div>
+              </EvenGrid>
               {askAi && (
                 <div className="ds-swap rounded-[18px] bg-white p-3.5">
                   {askAi.loading ? (

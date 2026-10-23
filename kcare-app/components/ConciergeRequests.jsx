@@ -15,6 +15,7 @@
 // 새 해주세요가 오면 어느 탭에 있든 알림 창이 뜬다 (NewRequestAlert — 현장 '기본 로직' 5번 · 연동 확인 3번).
 import { useEffect, useMemo, useState } from "react";
 import { Card, Badge } from "./ui";
+import { EvenGrid } from "./ds";
 import Icon from "./icons";
 import { clock, playErrorText, usePrefetchClips, useVoicePlayer } from "../lib/voice-client";
 import { scopedKey } from "../lib/scope";
@@ -496,7 +497,7 @@ function ExtraChargePanel({ r, me, payees, customer, dispatch, push, onClose }) 
       </div>
       <div className="mt-2.5 text-[11px] font-bold text-muted">받는 분 — 구두로 동의한 분</div>
       {payees.length ? (
-        <div className="mt-1 grid grid-cols-2 gap-1.5">
+        <EvenGrid cols={2} center={false} gap={6} className="mt-1">
           {payees.map((p, i) => (
             <button
               key={`${p.role}-${p.name}`}
@@ -508,7 +509,7 @@ function ExtraChargePanel({ r, me, payees, customer, dispatch, push, onClose }) 
               {roleText(p)} {p.name}
             </button>
           ))}
-        </div>
+        </EvenGrid>
       ) : (
         <p className="mt-1 rounded-lg bg-amber/10 px-2.5 py-2 text-[12px] font-bold text-amber">받을 분이 없습니다 — 관제에 알려 주세요</p>
       )}

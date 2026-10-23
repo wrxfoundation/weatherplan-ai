@@ -4,7 +4,7 @@
 //   결제 권한    한 가족 그룹이면 누구나 금액 제한 없이 결제한다 — 하루 한도 · 보호자 승인 단계는 없앴다.
 // 시제품의 산호색 카드 · 버튼은 금색으로 — 빨강 계열은 위험 신호 전용이다.
 import { useState } from "react";
-import { Btn, Sheet, SheetTitle, TONE, WhiteBtn } from "./ds";
+import { Btn, EvenGrid, Sheet, SheetTitle, TONE, WhiteBtn } from "./ds";
 import { givenName } from "../lib/people";
 
 export const PAY_HOW = { card: "카드", autoTransfer: "계좌 자동이체", bankDeposit: "무통장 입금" };
@@ -118,7 +118,7 @@ export function PermCard({ group, text, big = false }) {
       <p className="m-0 font-extrabold leading-[1.5]" style={{ fontSize: fs(big, 20, 18), color: "#1B2340" }}>
         {text}
       </p>
-      <div className="flex flex-wrap gap-1.5">
+      <EvenGrid labels={group.map((m) => `${givenName(m.name)} ${m.rel}`)} gap={6}>
         {group.map((m) => (
           <span key={`${m.rel}-${m.name}`} className="ds-gchip gap-1.5" style={{ color: p.fg }}>
             <b>{givenName(m.name)}</b>
@@ -127,7 +127,7 @@ export function PermCard({ group, text, big = false }) {
             </span>
           </span>
         ))}
-      </div>
+      </EvenGrid>
     </div>
   );
 }

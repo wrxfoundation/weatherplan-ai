@@ -3,7 +3,7 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import FamilyLayout from "../../components/FamilyLayout";
 import { Clay, Line } from "../../components/clay";
-import { Btn, Card, Sheet, SheetTitle, TONE, WhiteBtn, eventTone } from "../../components/ds";
+import { Btn, Card, EvenGrid, Sheet, SheetTitle, TONE, WhiteBtn, eventTone } from "../../components/ds";
 import { EVENT_KINDS, MOU_HOSPITALS } from "../../lib/mock";
 import { useAppState } from "../../lib/state";
 import { useGuardianRole } from "../../lib/guardian-role";
@@ -568,7 +568,7 @@ function CreateEventSheet({ defaultDate, initial, onClose, onCreate, honor }) {
 
       <div role="group" aria-label="종류" className="flex flex-col gap-2">
         <div className="text-[15px] font-extrabold">종류</div>
-        <div className="flex flex-wrap gap-1.5">
+        <EvenGrid labels={Object.values(EVENT_KINDS).map((v) => v.label)} gap={6}>
           {Object.entries(EVENT_KINDS).map(([k, v]) => (
             <button
               key={k}
@@ -581,7 +581,7 @@ function CreateEventSheet({ defaultDate, initial, onClose, onCreate, honor }) {
               {v.label}
             </button>
           ))}
-        </div>
+        </EvenGrid>
       </div>
       <div className="flex flex-col gap-2">
         <label htmlFor="ev-title" className="text-[15px] font-extrabold">
