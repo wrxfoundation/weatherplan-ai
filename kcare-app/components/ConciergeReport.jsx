@@ -196,7 +196,7 @@ export function SendRow({ stage, label, canSubmit, onSubmit, onPreview, glow }) 
       </button>
       <div className="min-w-0 flex-1">
         {stage === "sent" ? (
-          <span role="status" className={`flex min-h-[44px] w-full items-center justify-center gap-1.5 rounded-[10px] bg-[#3B6B47] text-[14px] font-bold text-white ${glow ? "motion-safe:animate-sentGlow" : ""}`}>
+          <span role="status" className={`flex min-h-[44px] w-full items-center justify-center gap-1.5 rounded-[10px] bg-[#3B6B47] text-[14px] font-bold text-white ${glow ? "sent-glow" : ""}`}>
             <span aria-hidden="true">✓</span> 가족에게 발송됨
           </span>
         ) : stage === "submitted" ? (

@@ -50,11 +50,6 @@ module.exports = {
           "0%, 100%": { boxShadow: "0 0 0 0 rgba(192,57,43,.55)" },
           "50%": { boxShadow: "0 0 14px 5px rgba(192,57,43,.45)" },
         },
-        // 리포트가 가족에게 발송된 순간 한 번 — 컨시어지 방문·리포트 탭 (2026-10-24 설계서 v3 §3-6 '반짝 효과')
-        sentGlow: {
-          "0%": { boxShadow: "0 0 0 0 rgba(59,107,71,.55)" },
-          "100%": { boxShadow: "0 0 0 14px rgba(59,107,71,0)" },
-        },
         tickIn: {
           from: { opacity: "0", transform: "translateY(-6px)" },
           to: { opacity: "1", transform: "none" },
@@ -65,7 +60,6 @@ module.exports = {
         livePing: "livePing 1.6s ease-in-out infinite",
         escalateGlow: "escalateGlow 2.2s ease-in-out infinite",
         tickIn: "tickIn .28s ease both",
-        sentGlow: "sentGlow .9s ease-out 2",
       },
     },
   },

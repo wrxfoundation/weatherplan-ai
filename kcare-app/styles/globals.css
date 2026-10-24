@@ -1052,3 +1052,13 @@ a.btn-press {
   .ds-draw,
   .ds-arc { stroke-dashoffset: 0; }
 }
+
+/* 리포트가 가족에게 발송된 순간 한 번 — 컨시어지 방문·리포트 탭 제출 줄 (2026-10-24 화면설계서 v3 §3-6 '반짝 효과').
+   움직임 줄이기를 켠 폰에서는 하지 않는다 */
+@keyframes sentGlow {
+  0% { box-shadow: 0 0 0 0 rgba(59, 107, 71, 0.55); }
+  100% { box-shadow: 0 0 0 14px rgba(59, 107, 71, 0); }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .sent-glow { animation: sentGlow 0.9s ease-out 2; }
+}
