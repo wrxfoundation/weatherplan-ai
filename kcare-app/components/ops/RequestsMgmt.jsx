@@ -664,7 +664,7 @@ function ExtraChargesPanel({ charges, onRow, selected }) {
         right={<span>{wait ? `결제 대기 ${wait}건` : "결제 대기 없음"}</span>}
       />
       <div className="mt-3">
-        <Table cols={cols} rows={charges} onRow={onRow} selected={selected} empty="아직 청구가 없습니다 — 컨시어지 오늘 탭의 진행 중 일정 카드에서 '추가 이용 금액 보내기'로 시작합니다." />
+        <Table cols={cols} rows={charges} onRow={onRow} selected={selected} empty="아직 청구가 없어요. 컨시어지 오늘 › 지금 카드 › 추가 이용 금액 보내기로 시작해요." />
       </div>
     </Panel>
   );

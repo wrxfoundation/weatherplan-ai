@@ -53,7 +53,7 @@ import { checkupFor, headlineFor, isMeet, visitText } from "../lib/checkup";
 import { requiredFor } from "../lib/ops-mgmt";
 import { MEET_DEMO, RESULT_TONE, VISIT_GRADES, meetPeriod } from "../lib/visit-report";
 import { STORE_CATALOG } from "../lib/store";
-import { SERVICE_MENU, crewOf, daysUntil, kstYmd } from "../lib/requests";
+import { SERVICE_MENU, crewOf, daysUntil, isVisitCall, kstYmd } from "../lib/requests";
 import { CONCIERGES } from "../lib/ops-admin";
 import ConciergeRequests, { ExtraPaidNotice, NewRequestAlert, newRequestsFor } from "../components/ConciergeRequests";
 import { svcTitle } from "../lib/booking";
@@ -66,6 +66,7 @@ import { eventsFor, useAppState, visitLock } from "../lib/state";
 import { useToast } from "../components/ds";
 import { HomeTextCards, MeetForm, ModePicker, ReportPreview, SendRow } from "../components/ConciergeReport";
 import { ApptCard, BriefingCard, ClientHead, ClientList, HealthCard, PrefCard, clientSub } from "../components/ClientDetail";
+import { ReqNowCard } from "../components/ReqNowCard";
 import { videoConsentOf } from "../lib/consent";
 import { useAuth } from "../lib/auth";
 import { healthOf, supplementSlotNote } from "../lib/meds";
@@ -396,6 +397,27 @@ function ConciergePage() {
         ],
       }
     : null;
+  // 오늘 › 지금 카드 — 내가 맡은 해주세요가 진행 중이거나 오늘 끝났거나 오늘 예정이면 그 건이 '지금'이다 (2026-10-24 설계서 v3 §1-2).
+  // 끝난(체크아웃) 뒤 이 카드에서 추가 이용 금액을 보낸다. 없으면 전처럼 오늘의 중심 업무(예시 일정)
+  const todayYmd = kstYmd(Date.now());
+  const doneAt = (r) => [...(r.history || [])].reverse().find((h) => h.status === "done")?.at || 0;
+  const myReqs = (state.requests || []).filter((r) => (r.assignee === ME || r.partner === ME) && !isVisitCall(r));
+  const nowReq =
+    myReqs.find((r) => r.status === "inProgress") ||
+    myReqs.find((r) => r.status === "done" && kstYmd(doneAt(r)) === todayYmd) ||
+    myReqs
+      .filter((r) => ["confirmed", "cancelRequested"].includes(r.status) && r.scheduledDate === todayYmd)
+      .sort((a, b) => String(a.scheduledTime || "").localeCompare(String(b.scheduledTime || "")))[0] ||
+    null;
+  // 지금 카드의 주의 칩 — 데모만 (케어 프로필 예시 값). 테스트 가구 · 센터는 적힌 것이 없어 칩을 만들지 않는다
+  const nowReqChips =
+    nowReq && !live && !center
+      ? [
+          ["주의", "청력 저하", "#8A5D12"],
+          ...(/병원/.test(svcTitle(nowReq.type)) ? [["장비", "휠체어 · 차량", "#3B5C8A"]] : []),
+          ["환경", "반려견 1마리", "#7A4C8A"],
+        ]
+      : [];
   // 21항목 점검 진행률 — 방문 탭 체크와 같은 상태를 본다
   const checkList = checkupFor(careLoc);
   const checkTotal = checkList.reduce((n, g) => n + g.items.length, 0);
@@ -607,7 +629,21 @@ function ConciergePage() {
 
                 {!center && <UrgentBanner u={CONCIERGE_URGENT} done={urgentDone} onOpen={() => setUrgentOpen(true)} />}
 
-                {nowJob ? (
+                {nowReq ? (
+                  <ReqNowCard
+                    r={nowReq}
+                    me={ME}
+                    customer={myElder}
+                    charges={state.extraCharges || []}
+                    payees={payees}
+                    chips={nowReqChips}
+                    onOps={() => setOpsMsgOpen(true)}
+                    onGo={() => setTab("visit")}
+                    dispatch={dispatch}
+                    push={push}
+                    toast={toast}
+                  />
+                ) : nowJob ? (
                   <NowCard
                     job={nowJob}
                     checkDone={checkCount}
@@ -697,7 +733,7 @@ function ConciergePage() {
                 {/* 해주세요 — 보호자 · 어르신 부탁은 내 일정을 보고 승인 · 거절, 확정 건 진행 · 완료, 보낸 제안 (2026-10-05).
                     전에는 어르신 부탁만 보였고, 관제 확인 전에 '확인함'을 누를 수 있었다. */}
                 <div id="concierge-requests" className="scroll-mt-4">
-                  <ConciergeRequests requests={state.requests} payments={state.payments} extraCharges={state.extraCharges} payees={payees} customer={myElder} me={ME} dispatch={dispatch} push={push} />
+                  <ConciergeRequests requests={state.requests} payments={state.payments} extraCharges={state.extraCharges} payees={payees} customer={myElder} me={ME} dispatch={dispatch} push={push} nowId={nowReq?.id || null} />
                 </div>
 
 

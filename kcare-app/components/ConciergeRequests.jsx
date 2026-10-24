@@ -568,8 +568,10 @@ function ExtraLine({ x }) {
   );
 }
 
-// 진행 중 · 끝난 해주세요 카드의 추가 이용 금액 칸 — 보낸 청구가 있으면 그 상태, 없으면 보내기 버튼
-function ExtraArea({ r, me, charges, payees, customer, dispatch, push }) {
+// 진행 중 · 끝난 해주세요 카드의 추가 이용 금액 칸 — 보낸 청구가 있으면 그 상태, 없으면 보내기 버튼.
+// 보내기는 서비스가 끝난 뒤에만 (2026-10-24 설계서 v3 §1-2 — 오늘 끝난 건은 위 '지금' 카드에서, 그 전 사흘은 여기 '끝난 것'에서).
+// 진행 중 카드에는 전에 보낸 청구의 상태만 보인다
+function ExtraArea({ r, me, charges, payees, customer, dispatch, push, canSend = true }) {
   const [open, setOpen] = useState(false);
   if (!canChargeExtra(r.type)) return null;
   const mine = charges.filter((x) => x.reqId === r.id);
@@ -580,6 +582,7 @@ function ExtraArea({ r, me, charges, payees, customer, dispatch, push }) {
         <ExtraLine key={x.id} x={x} />
       ))}
       {!live &&
+        canSend &&
         (open ? (
           <ExtraChargePanel r={r} me={me} payees={payees} customer={customer} dispatch={dispatch} push={push} onClose={() => setOpen(false)} />
         ) : (
@@ -627,7 +630,8 @@ function StepButton({ r, next, me, dispatch, push }) {
   );
 }
 
-export default function ConciergeRequests({ requests, payments, extraCharges = [], payees = [], customer = "어르신", me, dispatch, push }) {
+// nowId — 오늘 › 지금 카드가 맡은 해주세요. 그 카드에서 추가 이용 금액을 보내므로 아래 '끝난 것'에서는 뺀다 (같은 버튼이 두 곳에 있지 않게)
+export default function ConciergeRequests({ requests, payments, extraCharges = [], payees = [], customer = "어르신", me, dispatch, push, nowId = null }) {
   // 베타에서 앱을 쓰는 컨시어지는 한 사람(테스트 컨시어지 계정)이라, 관제가 다른 컨시어지로 바꾼 건도 여기서 받는다
   // (안 그러면 아무 큐에도 없어 승인 대기로 멈춘다 — 2026-10-05 리뷰). 담당이 다르면 카드에 이름을 단다.
   const mine = () => true;
@@ -652,10 +656,10 @@ export default function ConciergeRequests({ requests, payments, extraCharges = [
   // 끝난 해주세요 — 사흘 안이면 여기서도 추가 이용 금액을 보낸다 (완료를 먼저 누른 뒤 길어진 시간을 청구할 수 있게)
   const charges = extraCharges || [];
   const finished = (requests || []).filter(
-    (r) => r.status === "done" && !isVisitCall(r) && canChargeExtra(r.type) && Date.now() - Number(lastOf(r)?.at || 0) < 3 * 86400000
+    (r) => r.id !== nowId && r.status === "done" && !isVisitCall(r) && canChargeExtra(r.type) && Date.now() - Number(lastOf(r)?.at || 0) < 3 * 86400000
   );
   // 내가 보낸 추가 이용 금액 중 아직 결제 전인 것 — 위 카드에 안 보이는 것(오래전 끝난 건)도 놓치지 않게
-  const shown = new Set([...booked, ...finished].map((r) => r.id));
+  const shown = new Set([...booked, ...finished].map((r) => r.id).concat(nowId ? [nowId] : []));
   const otherCharges = charges.filter((x) => !shown.has(x.reqId) && x.status === "pending");
   const total = toApprove.length + opsWait.length + waitingPay.length + booked.length + sent.length;
   usePrefetchClips(toApprove.map((r) => r.voice?.clip));
@@ -711,7 +715,7 @@ export default function ConciergeRequests({ requests, payments, extraCharges = [
                 {r.summary?.text && <div className="mt-0.5 text-[12px] leading-[1.6] text-ink">&ldquo;{r.summary.text}&rdquo;</div>}
                 <PayLine r={r} payments={payments} />
                 {r.partner && <div className="mt-0.5 text-[11.5px] text-muted">2인 1조 · {r.assignee} · {r.partner}</div>}
-                {r.status === "inProgress" && <ExtraArea r={r} me={me} charges={charges} payees={payees} customer={customer} dispatch={dispatch} push={push} />}
+                {r.status === "inProgress" && <ExtraArea r={r} me={me} charges={charges} payees={payees} customer={customer} dispatch={dispatch} push={push} canSend={false} />}
                 {r.status === "cancelRequested" ? (
                   <p className="mt-1.5 text-[12px] font-bold text-amber">취소 요청 — 관제 승인 대기 ({r.cancelReq?.by || "요청자"})</p>
                 ) : (
