@@ -1,0 +1,29 @@
+[
+  {
+    "id": "odin",
+    "name_en": "Odin",
+    "group": "god",
+    "hint": "a one-eyed elder in a broad travelling hood and long cloak leaning on a spear, the empty socket shadowed rather than bandaged, two ravens on his shoulders and two wolves at his feet",
+    "shot": "plate"
+  },
+  {
+    "id": "valkyrie",
+    "name_en": "Valkyrie",
+    "group": "valkyrie",
+    "hint": "a woman with her hair gathered into a long trailing knot at the back of the head, holding out a mounted drinking horn with both hands, standing in three-quarter profile, no armour and no wings",
+    "shot": "plate"
+  },
+  {
+    "id": "fenrir",
+    "name_en": "Fenrir",
+    "group": "beast",
+    "hint": "an enormous wolf bound by a single thin silken cord that cuts into its limbs, jaws propped open by an upright sword, its own body and the binding cord woven into one continuous interlace band",
+    "shot": "plate"
+  },
+  {
+    "id": "no-hint-example",
+    "name_en": "Ymir",
+    "group": "god",
+    "hint": null
+  }
+]
