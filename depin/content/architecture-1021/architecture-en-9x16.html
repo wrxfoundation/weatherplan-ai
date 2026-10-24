@@ -1,0 +1,137 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>wellbian — Every room is data. Every call is revenue.</title><style>
+@font-face{font-family:"Pretendard";src:url("../../site/event-week/www/fonts/PretendardVariable.woff2") format("woff2");font-weight:100 900}
+:root{--bg:#0D0B26;--t1:#F4F3FF;--t2:rgba(226,224,255,.74);--t3:rgba(226,224,255,.50);--p:#4D4DCE;--p1:#A39BFF;--p2:#CDB8FF;
+ --glass:rgba(255,255,255,.055);--glass2:rgba(255,255,255,.085);--edge:rgba(255,255,255,.16);--hi:rgba(255,255,255,.32)}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1920px;height:1080px;overflow:hidden}
+body{background:var(--bg);color:var(--t1);font-family:"Pretendard",-apple-system,system-ui,sans-serif;padding:0 72px;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden;-webkit-font-smoothing:antialiased}
+.bgfx{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.bgfx .g1{position:absolute;width:1100px;height:1100px;left:-260px;top:-520px;border-radius:50%;background:radial-gradient(closest-side,rgba(77,77,206,.75),rgba(77,77,206,0))}
+.bgfx .g2{position:absolute;width:1000px;height:1000px;right:-240px;bottom:-560px;border-radius:50%;background:radial-gradient(closest-side,rgba(138,92,255,.60),rgba(138,92,255,0))}
+.bgfx .g3{position:absolute;width:760px;height:520px;left:8%;top:34%;border-radius:50%;background:radial-gradient(closest-side,rgba(110,96,255,.42),rgba(110,96,255,0))}
+.bgfx .g4{position:absolute;width:760px;height:520px;right:6%;top:30%;border-radius:50%;background:radial-gradient(closest-side,rgba(160,110,255,.36),rgba(160,110,255,0))}
+.bgfx .grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);background-size:48px 48px;mask-image:radial-gradient(ellipse at 50% 40%,#000 30%,transparent 80%)}
+.wrap{position:relative;z-index:1;width:100%;display:flex;flex-direction:column;align-items:center}
+.logo{height:60px}
+h1{margin-top:18px;font-size:70px;font-weight:700;letter-spacing:-.025em;line-height:1.05}
+.sub{margin-top:16px;max-width:1180px;text-align:center;font-size:24px;line-height:1.45;color:var(--t2);word-break:keep-all;text-wrap:balance}
+.glass{background:linear-gradient(140deg,rgba(255,255,255,.10),rgba(255,255,255,.03) 60%);border:1px solid var(--edge);backdrop-filter:blur(22px) saturate(140%);-webkit-backdrop-filter:blur(22px) saturate(140%);box-shadow:inset 0 1px 0 var(--hi)}
+.row{margin-top:40px;width:100%;display:grid;grid-template-columns:1fr 1fr;gap:20px}
+/* 햇빛 반사 — 좌상단 테두리 선(1px) 위에만 무지갯빛. 반짝임 · 번짐 없음(10/21 서우 「빛나는 효과 없애고 테두리에 맞춰」). */
+.glint{position:relative;--gw:260px;--gh:140px}
+.ops.glint{--gw:180px;--gh:52px}
+.glint::after{content:"";position:absolute;inset:-1px;border-radius:inherit;padding:1px;pointer-events:none;
+ background:radial-gradient(ellipse var(--gw) var(--gh) at 0 0,rgba(255,255,255,.85) 0%,rgba(255,172,222,.85) 12%,rgba(182,152,255,.80) 28%,rgba(122,192,255,.70) 44%,rgba(122,255,202,.45) 60%,rgba(255,255,255,0) 78%);
+ -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude}
+.tile{border-radius:16px;padding:32px 36px 34px;position:relative}
+.tile.supply{--acc:var(--p1)} .tile.demand{--acc:var(--p2)}
+.eyebrow{display:inline-block;font-size:13px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--acc);border:1px solid var(--acc);border-radius:6px;padding:4px 9px;background:rgba(163,155,255,.10)}
+.tile h2{margin-top:14px;font-size:34px;font-weight:700;letter-spacing:-.02em;line-height:1.15;word-break:keep-all}
+.steps{margin-top:30px;display:grid;grid-template-columns:1fr auto 1fr auto 1fr;column-gap:14px;align-items:start}
+.step{position:relative}
+/* 아이콘 칸 — 유리(사선 채움 · 위 하이라이트 · 블러) + 좌상단 테두리에 아주 옅은 무지갯빛 · 선 1.9(10/21 서우 「약간 도톰하게 · 유리 질감 · 아주 약간의 무지갯빛」) */
+.ico,.ico-s{position:relative;display:grid;place-items:center;color:var(--acc);background:linear-gradient(145deg,rgba(255,255,255,.17),rgba(255,255,255,.04) 52%,rgba(163,155,255,.10)),linear-gradient(120deg,rgba(255,176,226,.07),rgba(150,200,255,.06) 40%,rgba(255,255,255,0) 70%);border:1px solid rgba(255,255,255,.20);box-shadow:inset 0 1px 0 rgba(255,255,255,.38),inset 0 -1px 0 rgba(13,11,38,.25);backdrop-filter:blur(12px) saturate(150%);-webkit-backdrop-filter:blur(12px) saturate(150%)}
+.ico::after,.ico-s::after{content:"";position:absolute;inset:-1px;border-radius:inherit;padding:1px;pointer-events:none;background:radial-gradient(ellipse 80% 70% at 0 0,rgba(255,255,255,.75),rgba(255,170,224,.65) 22%,rgba(182,152,255,.55) 42%,rgba(120,200,255,.45) 60%,rgba(140,255,210,.2) 74%,rgba(255,255,255,0) 86%);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude}
+.ico svg,.ico-s svg{fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 6px rgba(163,155,255,.25))}
+.ico{width:68px;height:68px;margin-bottom:20px;border-radius:14px}
+.ico svg{width:36px;height:36px}
+.step b{display:block;font-size:22px;font-weight:600;letter-spacing:-.01em;line-height:1.2;word-break:keep-all;text-wrap:balance}
+.step .d{display:block;margin-top:10px;font-size:17px;line-height:1.4;color:var(--t2);word-break:keep-all;text-wrap:balance}
+.step .n{display:block;margin-top:7px;font-size:14.5px;line-height:1.4;color:var(--t3);word-break:keep-all;text-wrap:balance}
+.chev{color:var(--acc);padding-top:22px}
+.chev svg{width:24px;height:24px;display:block;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.step:not(:last-child)::after{content:"";position:absolute;left:82px;right:-14px;top:34px;height:1px;background:linear-gradient(90deg,rgba(163,155,255,.15),var(--acc))}
+.join{width:100%;display:grid;grid-template-columns:1fr 1fr;gap:20px;height:34px}
+.join div{display:flex;justify-content:center;align-items:center;gap:10px;font-size:14px;letter-spacing:.04em;color:var(--t3)}
+.join i{width:1px;height:34px;display:block}
+.join .s i{background:var(--p1)} .join .d i{background:var(--p2)}
+.ops{width:100%;height:60px;border-radius:12px;display:flex;align-items:center;justify-content:center;gap:16px;font-size:20px;color:var(--t2);background:rgba(77,77,206,.20);border:1px solid rgba(163,155,255,.38);box-shadow:inset 0 1px 0 rgba(255,255,255,.22)}
+.ops b{color:var(--t1);font-weight:700}
+.ops .ico-s{width:40px;height:40px;border-radius:10px;color:var(--p1)}
+.ops .ico-s svg{width:24px;height:24px}
+.join2{width:100%;display:grid;grid-template-columns:repeat(4,1fr);gap:0;height:26px;padding:0 36px}
+.join2 i{justify-self:center;width:1px;height:26px;background:rgba(163,155,255,.55)}
+.ledger{width:100%;border-radius:16px;padding:32px 36px;display:grid;grid-template-columns:360px 1fr;column-gap:40px;align-items:center;background:var(--glass2)}
+.ledger h3{font-size:44px;font-weight:700;letter-spacing:-.02em}
+.ledger p{margin-top:8px;font-size:18px;color:var(--t2)}
+.feats{display:grid;grid-template-columns:repeat(4,1fr);column-gap:16px}
+.feat{display:grid;grid-template-columns:56px 1fr;column-gap:14px;align-items:start}
+.feat .ico{width:56px;height:56px;margin:0;border-radius:12px;color:var(--p1)}
+.feat .ico svg{width:30px;height:30px}
+.feat b{display:block;margin-top:2px;font-size:21px;font-weight:600;letter-spacing:-.01em;word-break:keep-all}
+.feat .tag{display:inline-block;margin-top:9px;font-size:13px;font-weight:700;letter-spacing:.06em;color:var(--p1);border:1px solid rgba(163,155,255,.45);border-radius:6px;padding:2px 7px}
+.feat .n{display:block;margin-top:9px;font-size:15.5px;line-height:1.4;color:var(--t2);word-break:keep-all}
+.nw{white-space:nowrap}
+.foot{margin-top:22px;font-size:14px;color:var(--t3)}
+
+html,body{width:1080px;height:1920px}
+body{padding:0 44px;justify-content:center}
+.bgfx .g1{width:900px;height:900px;left:-300px;top:-380px}
+.bgfx .g2{width:900px;height:900px;right:-320px;bottom:-360px}
+.bgfx .g3{width:700px;height:600px;left:-160px;top:30%}
+.bgfx .g4{width:700px;height:600px;right:-200px;top:52%}
+.logo{height:52px}
+.logo svg{width:143px;height:52px}
+h1{margin-top:16px;font-size:74px;line-height:1.04;text-align:center;letter-spacing:-.03em}
+.sub{margin-top:14px;max-width:960px;font-size:26px;line-height:1.4}
+.vtile{width:100%;margin-top:24px;border-radius:18px;padding:24px 32px 26px}
+.vtile + .vtile{margin-top:14px}
+.vtile.supply{--acc:var(--p1)} .vtile.demand{--acc:var(--p2)}
+.vtile .eyebrow{font-size:16px;padding:4px 10px}
+.vtile h2{margin-top:10px;font-size:38px}
+.vsteps{margin-top:18px;display:flex;flex-direction:column}
+.vstep{position:relative;display:grid;grid-template-columns:72px 1fr;column-gap:22px;align-items:start;padding-bottom:16px}
+.vstep:last-child{padding-bottom:0}
+.vstep .ico{width:72px;height:72px;margin:0;border-radius:15px}
+.vstep .ico svg{width:38px;height:38px}
+.vstep:not(:last-child)::after{content:"";position:absolute;left:35px;top:80px;bottom:6px;width:2px;background:linear-gradient(180deg,rgba(163,155,255,.35),var(--acc))}
+.vstep:not(:last-child)::before{content:"";position:absolute;left:30px;bottom:7px;width:10px;height:10px;border-right:2px solid var(--acc);border-bottom:2px solid var(--acc);transform:rotate(45deg)}
+.vstep b{display:block;margin-top:2px;font-size:31px;font-weight:600;letter-spacing:-.01em;line-height:1.18;word-break:keep-all}
+.vstep .d{display:block;margin-top:6px;font-size:24.5px;line-height:1.36;color:var(--t2);word-break:keep-all}
+.vstep .n{display:block;margin-top:4px;font-size:20.5px;line-height:1.36;color:var(--t3);word-break:keep-all}
+.join{height:28px;margin-top:0}
+.join div{font-size:19px}
+.join i{height:28px}
+.ops{height:auto;min-height:74px;padding:12px 20px;font-size:23px;gap:14px;border-radius:14px}
+.ops b{font-size:25px}
+.ops .ico-s{width:46px;height:46px;border-radius:11px}
+.ops .ico-s svg{width:26px;height:26px}
+.join2{grid-template-columns:repeat(2,1fr);height:18px;padding:0 120px}
+.join2 i{height:18px}
+.vledger{width:100%;border-radius:18px;padding:22px 30px 24px;background:var(--glass2)}
+.vledger .hd{display:flex;align-items:baseline;gap:18px;flex-wrap:wrap}
+.vledger h3{font-size:46px;font-weight:700;letter-spacing:-.02em}
+.vledger p{font-size:24px;color:var(--t2)}
+.vfeats{margin-top:16px;display:grid;grid-template-columns:1fr 1fr;gap:18px 22px}
+.vfeats .feat{grid-template-columns:58px 1fr}
+.vfeats .feat .ico{width:58px;height:58px}
+.vfeats .feat .ico svg{width:31px;height:31px}
+.vfeats .feat b{display:inline;font-size:26px;margin-top:0}
+.vfeats .feat .tag{font-size:15px;margin:0 0 0 10px;vertical-align:4px}
+.vfeats .feat .n{font-size:21px;margin-top:6px;line-height:1.35}
+.foot{margin-top:14px;max-width:960px;text-align:center;font-size:18px;line-height:1.45;text-wrap:balance}
+
+.bgfx .paint{position:absolute;inset:0;background:url("../ai-factory-1021/assets/light-9x16.jpg") center top/cover no-repeat;opacity:.66}
+.bgfx .paintfade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(13,11,38,0) 0%,rgba(13,11,38,.10) 14%,rgba(13,11,38,.55) 22%,rgba(13,11,38,.88) 30%,#0D0B26 40%)}
+.logo,h1,.sub{text-shadow:0 2px 22px rgba(13,11,38,.55)}
+.logo svg{filter:drop-shadow(0 2px 14px rgba(13,11,38,.5))}
+.sub{color:rgba(244,243,255,.9)}
+.ill{position:absolute;top:16px;right:24px;width:150px;height:150px;pointer-events:none}
+.ill img{width:100%;height:100%;object-fit:contain;display:block;opacity:.38;filter:drop-shadow(0 0 4px rgba(163,155,255,.16))}
+.fg{position:absolute;inset:0;z-index:2;pointer-events:none;overflow:hidden}
+.bgfx .bld{position:absolute;right:-10px;bottom:-14px;width:300px;height:380px;border-radius:0;background:url("assets/apartment.png") center bottom/contain no-repeat;filter:brightness(.7) saturate(.85) contrast(.96);opacity:.62;-webkit-mask-image:linear-gradient(0deg,transparent 0%,#000 14%);mask-image:linear-gradient(0deg,transparent 0%,#000 14%)}
+.bgfx .bldhaze{position:absolute;right:-120px;bottom:-110px;width:560px;height:380px;border-radius:50%;background:radial-gradient(closest-side,rgba(255,196,120,.10),rgba(163,120,255,.06) 55%,rgba(163,120,255,0))}
+body{padding:30px 44px 0;justify-content:flex-start}
+.foot{align-self:flex-start;text-align:left;max-width:640px;margin-left:6px;text-shadow:0 0 6px #0D0B26,0 0 14px #0D0B26}
+</style></head><body>
+<div class="bgfx"><div class="paint"></div><div class="paintfade"></div><div class="g1"></div><div class="g2"></div><div class="g3"></div><div class="g4"></div><div class="grid"></div><div class="bldhaze"></div><div class="bld"></div></div>
+<div class="wrap">
+<div class="logo"><svg width="165" height="60" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 416 151" fill="none" aria-label="wellbian"><g clip-path="url(#wellbian-logo-clip)"><path fill-rule="evenodd" clip-rule="evenodd" fill="#ffffff" d="M323.43 91.39C318.81 98.61 309.1 100.27 302.55 94.93L302.35 97.34L293.95 97.31V50.89L302.39 50.86L302.43 68.68C309.49 63.1 319.73 65.28 324.02 73.24C327.04 78.84 326.98 85.82 323.42 91.39H323.43ZM317.49 81.66C317.45 76.62 313.86 73.3 309.3 73.49C304.89 73.67 301.86 77.27 301.89 81.88C301.92 86.61 305.16 90.16 309.72 90.18C314.2 90.19 317.53 86.63 317.49 81.67V81.66ZM214.88 66.22H223.48L211.97 97.26L205.76 97.36L199.16 79.47L192.59 97.33L186.44 97.26L174.87 66.23L183.45 66.2L189.73 84.68L196.12 66.22L202.22 66.17L208.66 84.67L214.88 66.23V66.22ZM378.53 97.31L370.12 97.33L369.96 94.74C366.45 97.85 362.06 98.74 357.28 97.51C348.11 95.16 344.12 84.22 347.5 75.2C350.07 68.34 356.83 64.51 363.99 65.84C366.33 66.28 368.25 67.38 370.01 68.9L370.1 66.19H378.53V97.3V97.31ZM370.58 81.66C370.51 76.61 366.94 73.29 362.35 73.49C357.76 73.69 354.94 77.25 354.98 81.87C355.02 86.58 358.24 90.19 362.76 90.17C367.28 90.15 370.65 86.65 370.58 81.66ZM240.35 90.79C243.85 91.12 246.74 90.03 249.11 87.65L254.11 92.67C250.44 96.88 245.21 98.34 239.87 97.97C231.83 97.42 225.52 91.57 224.71 83.58C223.68 73.5 231.35 65.21 241.45 65.53C245.96 65.67 249.95 67.39 252.81 70.93C255.93 74.79 256.93 79.96 255.75 84.77H233.22C234.02 87.97 236.61 90.41 240.35 90.77V90.79ZM247.97 78.41C247.21 74.48 244.42 72.61 241 72.68C237.3 72.6 234.04 74.85 233.34 78.44L247.96 78.41H247.97ZM394.4 78.79L394.29 97.32H385.85V66.21L394.27 66.19L394.39 68.92C397.95 65.85 402.64 64.61 407.39 66.37C411.09 67.74 415.04 71.77 415.06 76.51L415.14 97.32H406.62L406.5 78.54C406.48 75.2 403.19 73.33 400.37 73.36C397.55 73.39 394.41 75.28 394.39 78.79H394.4ZM270.25 97.27L261.8 97.32V50.88L270.25 50.87V97.27ZM286.12 97.27L277.67 97.32V50.88L286.12 50.87V97.27ZM340.52 97.31H331.97V66.21L340.52 66.18V97.31ZM335.77 51.61C338.77 51.33 340.79 53.44 341.02 55.95C341.27 58.75 339.43 61.1 336.79 61.33C334.15 61.56 331.85 59.89 331.47 57.22C331.09 54.59 332.72 51.89 335.77 51.61ZM151.91 75.05C152.05 77.51 150.18 80.42 147.12 80.42H121.23C118.37 80.43 116.35 77.81 116.35 75.4C116.35 72.52 118.49 70.19 121.55 70.19L147.02 70.21C149.83 70.21 151.77 72.57 151.91 75.04M78.11 150.79H75.98C75.74 150.79 75.49 150.74 75.27 150.63C73.01 149.53 71.94 147.62 71.95 144.93L71.99 119.92C71.99 116.96 74.43 114.93 77.08 114.94C79.73 114.95 82.11 117.04 82.12 119.98L82.16 144.92C82.16 147.6 81.13 149.52 78.84 150.63C78.62 150.74 78.37 150.79 78.13 150.79H78.11ZM130.2 121.65C132.32 123.79 132.2 127.11 130.14 129.06C128.03 131.06 124.91 130.82 122.76 128.65L105.14 110.83C103.09 108.76 103.12 105.66 105.05 103.63C106.98 101.6 110.19 101.52 112.31 103.65L130.2 121.64V121.65ZM-9.76585e-06 75.58V73.86C-9.76585e-06 73.63 0.0399902 73.4 0.12999 73.19C1.12999 70.97 3.18999 69.5 5.60999 69.83C8.02999 70.16 10.03 72.42 9.91999 74.95C9.80999 77.48 7.83999 79.61 5.23999 79.76C2.94999 79.89 1.06999 78.44 0.11999 76.22C0.0299902 76.02 -0.0100098 75.79 -0.0100098 75.58H-9.76585e-06ZM52.97 90.7C51.07 87.56 49.87 84.48 49.15 81.06C48.99 80.31 48.35 79.76 47.58 79.76H21.31C18.42 79.76 16.29 77.56 16.19 74.97C16.08 72.18 18.28 69.8 21.31 69.8H47.88C48.62 69.79 49.25 69.27 49.43 68.55C53.4 52.66 69.57 43.24 85.29 47.94C94.48 50.69 101.45 58.07 104.12 66.39C107.39 76.58 105.06 86.87 98.34 94.5C89.03 105.08 73.73 107.18 61.91 99.72C61.27 99.31 60.43 99.39 59.9 99.93L30.57 129.52C28.52 131.59 25.62 131.7 23.52 129.94C21.62 128.35 20.8 124.85 22.93 122.7L52.74 92.68C53.26 92.15 53.34 91.34 52.96 90.71L52.97 90.7ZM80.79 78.93L69.87 89.9C69.07 90.71 69.33 92.1 70.39 92.52C76.53 94.96 83.35 93.88 88.39 89.84C94.03 85.32 96.63 77.87 94.7 70.68C92.54 62.67 85.48 57.21 77.46 57.05C70.29 56.91 63.71 61.01 60.61 67.52C60.12 68.56 60.92 69.76 62.07 69.76L77.66 69.82C79.76 69.82 81.46 71.82 81.95 73.25C82.63 75.22 82.33 77.36 80.78 78.93H80.79ZM61.66 79.79C60.53 79.77 59.73 80.9 60.14 81.96C60.56 83.04 61.96 83.33 62.77 82.51C63.75 81.51 63.06 79.82 61.66 79.79ZM78.15 0C78.4 0 78.65 0.05 78.87 0.16C81.11 1.27 82.14 3.2 82.14 5.87L82.1 30.81C82.1 33.75 79.72 35.84 77.06 35.85C74.4 35.86 71.98 33.83 71.97 30.87L71.93 5.86C71.93 3.16 73 1.25 75.37 0.15C75.58 0.05 75.83 0 76.06 0H78.14L78.15 0ZM112.39 46.97C110.21 49.17 107.12 49.03 105.11 47.13C103.36 45.48 102.84 42.1 104.86 40.07L122.89 21.84C124.89 19.82 127.79 19.77 129.78 21.35C131.84 22.97 132.6 26.53 130.51 28.64L112.38 46.97H112.39ZM49.43 40.36C51.26 42.21 50.67 45.34 49.2 46.95C47.55 48.76 44.23 49.43 42.3 47.5L23.59 28.67C21.68 26.75 22.19 23.58 23.76 21.9C25.45 20.09 28.75 19.48 30.74 21.5L49.42 40.37L49.43 40.36Z"></path></g><defs><clipPath id="wellbian-logo-clip"><rect width="415.14" height="150.79" fill="white"></rect></clipPath></defs></svg></div>
+<h1>Every room is data.<br>Every call is revenue.</h1><p class="sub">Each new room adds verified air data to sell. Manufacturers, AI agents and smart homes pay for every call in RLUSD, a dollar stablecoin, settled on the XRP Ledger.</p>
+<section class="vtile glass glint supply"><div class="ill"><img src="assets/etch-supply.png" alt=""></div><div class="eyebrow">Supply</div><h2>Devices earn for verified data.</h2><div class="vsteps"><div class="vstep"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="3" width="10" height="18" rx="2.5"/><circle cx="10" cy="15.5" r="2"/><path d="M8 7.5h4"/><path d="M18 9.5c1 .8 1 2.2 0 3"/><path d="M20.5 7.5c2 1.7 2 5.3 0 7"/></svg></span><div><b>Air sensor</b><span class="d"><span class="nw">PM ·</span> <span class="nw">CO₂ ·</span> <span class="nw">TVOC ·</span> <span class="nw">temperature ·</span> <span class="nw">humidity</span></span><span class="n"><span class="nw">Outdoor line next: PM ·</span> <span class="nw">O₃ ·</span> <span class="nw">NO₂ ·</span> <span class="nw">SO₂ ·</span> <span class="nw">CO</span></span></div></div><div class="vstep"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8V7a2.5 2.5 0 0 1 2.5-2.5H17V8"/><rect x="4" y="8" width="16" height="11.5" rx="2.5"/><path d="M15.5 13.75h2"/></svg></span><div><b>Device wallet</b><span class="d">Holds the device’s license NFT</span><span class="n">One device, one NFT</span></div></div><div class="vstep"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z"/><path d="M9 12l2.2 2.2L15.5 10"/></svg></span><div><b>Oracle</b><span class="d">License → quality → reward</span><span class="n">Settled daily, claimable after 24 hours</span></div></div></div></section><section class="vtile glass glint demand"><div class="ill"><img src="assets/etch-demand.png" alt=""></div><div class="eyebrow">Demand</div><h2>Buyers pay per call.</h2><div class="vsteps"><div class="vstep"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 11L12 4l8.5 7"/><path d="M6 9.5v10h12v-10"/><rect x="9.5" y="12.5" width="5" height="5" rx="1"/><path d="M12 10.5v2M12 17.5v2"/></svg></span><div><b><span class="nw">Makers ·</span> <span class="nw">AI agents ·</span> <span class="nw">smart homes</span></b><span class="d">Pay automatically, call by call</span><span class="n">In RLUSD, a USD stablecoin</span></div></div><div class="vstep"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20V6a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v14"/><path d="M3 20h18"/><path d="M8.5 12h7"/><path d="M13 9.5l2.5 2.5-2.5 2.5"/></svg></span><div><b>x402 gateway</b><span class="d">402 → pay → verify on-chain → 200</span><span class="n">No invoices, no human in the loop</span></div></div><div class="vstep"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5l8.5 4.5-8.5 4.5L3.5 8z"/><path d="M3.5 12l8.5 4.5 8.5-4.5"/><path d="M3.5 16l8.5 4.5 8.5-4.5"/></svg></span><div><b>Data products</b><span class="d"><span class="nw">Aggregates ·</span> <span class="nw">cohorts ·</span> <span class="nw">AI reports</span></span><span class="n">De-identified behind a k-anonymity gate. Cohorts and reports next</span></div></div></div></section>
+<div class="join"><div class="s"><i></i>rewards</div><div class="d"><i></i>payments</div></div>
+<div class="ops glint"><span class="ico-s"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="4.5" width="17" height="15" rx="2.5"/><circle cx="12" cy="12" r="3.5"/><path d="M12 7v1.5M12 15.5V17M7 12h1.5M15.5 12H17"/></svg></span><b>Operations wallet</b><span class="nw">pays rewards · receives payments · runs burns</span></div>
+<div class="join2"><i></i><i></i></div>
+<div class="vledger glass glint"><div class="hd"><h3>XRP Ledger</h3><p>Where both loops settle.</p></div><div class="vfeats"><div class="feat"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l7.8 4.5v9.4L12 21.2l-7.8-4.5V7.3z"/><path d="M9 10.5h6M9 13.5h4"/></svg></span><div><b>License NFT</b><span class="tag">XLS-20</span><span class="n">Minted by the operations wallet</span></div></div><div class="feat"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9.5" cy="9.5" r="5.5"/><path d="M15.4 9.6a5.5 5.5 0 1 1-5.8 5.8"/></svg></span><div><b>WLBN · RLUSD</b><span class="tag">Issued assets</span><span class="n">Held on trust lines</span></div></div><div class="feat"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h15"/><path d="M15.5 4.5L19 8l-3.5 3.5"/><path d="M20 16H5"/><path d="M8.5 12.5L5 16l3.5 3.5"/></svg></span><div><b>AMM</b><span class="tag">XLS-30</span><span class="n">WLBN ↔ RLUSD swaps</span></div></div><div class="feat"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v18M4.2 7.5l15.6 9M4.2 16.5l15.6-9"/><path d="M9.5 4.6L12 6.6l2.5-2M9.5 19.4L12 17.4l2.5 2"/></svg></span><div><b>Issuer (cold)</b><span class="tag">Issuance</span><span class="n">Burned tokens return here</span></div></div></div></div>
+<p class="foot"><span class="nw">Simplified from the wellbian DePIN technical specification v0.3 ·</span> <span class="nw">Rewards are fixed quantities; no value is promised.</span></p>
+</div></body></html>

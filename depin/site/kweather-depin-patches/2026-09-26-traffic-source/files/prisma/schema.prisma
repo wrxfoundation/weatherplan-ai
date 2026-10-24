@@ -1,0 +1,833 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL") // pooled (PgBouncer) for runtime
+  directUrl = env("DIRECT_URL") // direct connection for migrations
+}
+
+// ───────────────────────── Enums ─────────────────────────
+
+enum DeviceTaxon {
+  IAQ // indoor,  XRPL NFTokenTaxon 3026
+  OAQ // outdoor, XRPL NFTokenTaxon 2026
+}
+
+enum DeviceTier {
+  LITE
+  STANDARD
+  PRO
+}
+
+enum DeviceStatus {
+  PROVISIONED
+  ACTIVE
+  SUSPENDED
+  RETIRED
+}
+
+enum RedeemCodeStatus {
+  UNUSED
+  LOCKED
+  USED
+  REVOKED
+}
+
+enum NftState {
+  RESERVED // web2 트랙: 온체인 발행 없이 장부(DB)로만 자격을 보유 - 원하면 나중에 NFT로 수령
+  MINT_QUEUED
+  MINTED
+  OFFER_CREATED
+  CLAIMED
+  BURNED
+  MINT_FAILED
+}
+
+enum EpochStatus {
+  CREATED
+  AGGREGATING
+  SCORING
+  VERIFYING
+  FINALIZING
+  ACCRUING
+  COMPLETED
+  FAILED
+}
+
+enum AccrualStatus {
+  PENDING
+  VERIFIED
+  CLAIMABLE
+  CLAIMING
+  CLAIMED
+  VOID
+}
+
+enum ClaimStatus {
+  INITIATED
+  SIGNED
+  SUBMITTED
+  CONFIRMED
+  DROPPED
+  FAILED
+  VOID
+}
+
+enum XrplTxPurpose {
+  NFT_MINT
+  NFT_OFFER_CREATE
+  REWARD_PAYMENT
+  TOKEN_BURN // WLBN sent back to the issuer (supply reduction)
+  AMM_WITHDRAW // pull our own liquidity out of the WLBN/RLUSD pool
+}
+
+enum XrplTxStatus {
+  QUEUED
+  SIGNED
+  SUBMITTED
+  VALIDATED
+  DROPPED
+  FAILED
+}
+
+// ─────────────────────── Core entities ───────────────────────
+
+model Device {
+  id            String       @id @default(cuid())
+  serial        String       @unique
+  taxon         DeviceTaxon
+  tier          DeviceTier
+  hmacKeyEnc    String // AES-256-GCM encrypted per-device HMAC key
+  hmacKeyId     String       @unique // sent in X-Device-Key-Id header
+  isVirtual     Boolean      @default(false)
+  geohash5      String?
+  // Air365 설치공간 카테고리 ("대분류 > 소분류") - 데이터 출처 신뢰성 확인용 내부 정보.
+  // 소유자와 관리자에게만 노출되고 공개 API에는 절대 싣지 않는다.
+  spaceCategory String?
+  lat           Float?
+  lon           Float?
+  // 케이웨더 실외 미세먼지는 행정동코드로 조회한다. 좌표→코드 변환이 유료 호출이라
+  // 기기당 한 번만 찾아 여기 적어둔다(기기가 이사가면 null 로 지우면 다시 찾는다).
+  hcode         String?
+  // 좌표를 어디서 얻었는지. "ip"=접속 IP 추정(시군구 수준, 부정확), "user"=사용자 지정,
+  // "manual"=관리자 지정. IP 값은 임시라 사용자·관리자 값이 오면 덮어쓴다.
+  locSource     String?
+  // 좌표를 잡을 때 쓴 IP. 기기가 옮겨가 IP 가 바뀌면 다시 잡는 근거가 된다.
+  locIp         String?
+  /// 파트너 피드(2026-09-10): 기기가 직접 올리지 않고 서버가 파트너 API 에서 당겨오는 측정기.
+  /// "kweather" = 케이웨더 Air365 IoT API(kw-isk/kw-osk). 정산은 정액(파트너 계약 단가), NFT 검증은 계약으로 갈음.
+  feed          String?
+  status        DeviceStatus @default(PROVISIONED)
+  provisionedAt DateTime     @default(now())
+  lastSeenAt    DateTime?
+
+  redeemCode   RedeemCode?
+  licenseNft   LicenseNft?
+  links        WalletDeviceLink[]
+  calibrations CalibrationRecord[]
+
+  @@index([geohash5, taxon])
+  @@index([status])
+  @@index([feed])
+}
+
+model RedeemCode {
+  id        String           @id @default(cuid())
+  codeHash  String           @unique // sha256(normalized code)
+  batchId   String
+  // 발급 시점에는 기기에 묶지 않는다(카드와 기기는 따로 배송·혼합됨).
+  // 사용자가 리딤할 때 입력한 시리얼로 그 자리에서 결합된다.
+  deviceId  String?          @unique
+  device    Device?          @relation(fields: [deviceId], references: [id])
+  status    RedeemCodeStatus @default(UNUSED)
+  lockedAt  DateTime?
+  usedBy    String?
+  usedAt    DateTime?
+  expiresAt DateTime?
+
+  @@index([batchId])
+  @@index([status])
+}
+
+model WalletDeviceLink {
+  id         String    @id @default(cuid())
+  wallet     String
+  deviceId   String
+  device     Device    @relation(fields: [deviceId], references: [id])
+  active     Boolean   @default(true)
+  // wallet ownership proven by: NFT accept on-chain, or 1-drop payment fallback
+  proofType  String? // 'nft_accept' | 'payment_memo'
+  proofTx    String?
+  linkedAt   DateTime  @default(now())
+  unlinkedAt DateTime?
+
+  // partial unique index one_active_link_per_device added via raw SQL migration
+  @@index([wallet, active])
+  @@index([deviceId, active])
+}
+
+// 기기 설치 위치 사진 - 데이터 판매 신뢰성·출처 확인용 내부 자료 (소유자·관리자만 열람).
+// 클라이언트에서 리사이즈된 JPEG/WebP(수백 KB)를 data URI로 저장한다.
+model DevicePhoto {
+  deviceId   String   @id
+  mime       String
+  bytes      Int
+  data       String // base64 data URI
+  uploadedBy String // 업로드한 지갑
+  updatedAt  DateTime @updatedAt
+}
+
+// 제네시스 멤버십 세일: VOUCHER = 사전예매 확정 인증 NFT(taxon 1000, 지갑당 1개, 신청 수량 기록),
+// GENESIS = 제네시스 멤버십 NFT(taxon 1001, 판매창에서 구매). 민팅은 LicenseNft와 같은 아웃박스 경로.
+model GenesisPass {
+  id           String    @id @default(cuid())
+  wallet       String
+  kind         String // VOUCHER | GENESIS
+  qty          Int       @default(1) // VOUCHER: 우선구매 신청 수량
+  purchasedQty Int       @default(0) // 판매창에서 실제 구매한 수량
+  taxonValue   Int // 1000 | 1001
+  metadataUri  String
+  state        NftState  @default(MINT_QUEUED)
+  nftTokenId   String?   @unique
+  mintTxId     String?
+  offerTxId    String?
+  offerIndex   String?
+  destination  String?
+  /// 멀티체인(9/3): 예매권을 어느 체인으로 받았나. xrpl(기본) | flare(EVM ERC-721, 위탁 민팅이라 서명 불필요)
+  chain        String    @default("xrpl")
+  evmAddress   String?
+  evmTxHash    String?
+  evmTokenId   String?
+  /// 예매 인증서(2026-09-06): 접수 즉시 발급되는 모드별 순번과 검증 코드(WB-00001-XXXX-XXXX). 온체인 NFT 와 별개.
+  voucherNo    Int?
+  certCode     String?   @unique
+  /// 회사 부담으로 지갑을 활성화(1.5 XRP)해 준 시각 - RLUSD 입금 준비(계정당 1회)
+  activatedAt  DateTime?
+  createdAt    DateTime  @default(now())
+
+  @@unique([wallet, kind])
+  @@unique([kind, voucherNo])
+  @@index([state])
+  @@index([kind])
+}
+
+/// XRPL SEOUL 2026 래플 응모 (2026-09-16). 5 XRP 결제 기록. NFT 는 GenesisPass(kind RAFFLE_XRPSEOUL) 가 맡는다.
+/// DDL: prisma/sql/raffle_entry.sql
+model RaffleEntry {
+  id        String    @id @default(cuid())
+  event     String // xrpseoul-2026 | xrpseoul-2026-test
+  wallet    String
+  destTag   Int       @unique // 입금을 응모와 1:1 로 묶는 DestinationTag
+  amountXrp Decimal   @db.Decimal(18, 6)
+  status    String    @default("PENDING") // PENDING | PAID | EXPIRED
+  txHash    String?   @unique
+  entryNo   Int? // 결제 확정 순번(래플 번호)
+  passId    String? // GenesisPass.id
+  ticketCode String?  @unique // WBR-0001-XXXXXXXXXX - NFT 카드의 QR 내용 (prisma/sql/raffle_entry_ticket.sql)
+  prize      String? // 추첨 후 배정된 경품 이름
+  redeemedAt DateTime? // 현장 수령 처리 시각 - 한 번만
+  redeemedBy String? // 처리한 스태프 표시
+  paidAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  @@unique([event, wallet])
+  @@unique([event, entryNo])
+  @@index([event, status])
+}
+
+model LicenseNft {
+  id             String     @id @default(cuid())
+  deviceId       String     @unique
+  device         Device     @relation(fields: [deviceId], references: [id])
+  nftTokenId     String?    @unique
+  taxonValue     Int // 3026 | 2026
+  tier           DeviceTier
+  metadataUri    String
+  expiresAt      DateTime
+  state          NftState   @default(MINT_QUEUED)
+  mintTxId       String?
+  offerTxId      String?
+  offerIndex     String? // NFTokenOffer ledger index for AcceptOffer
+  destination    String? // wallet the free offer targets
+  currentOwner   String?
+  lastVerifiedAt DateTime?
+
+  @@index([state])
+  @@index([currentOwner])
+}
+
+// ─────────────────────── Telemetry ───────────────────────
+
+model TelemetryRaw {
+  deviceId String
+  ts       DateTime // truncated to minute at ingest
+  pm1      Float?
+  pm25     Float?
+  pm10     Float?
+  co2      Float?
+  tvoc     Float?
+  radon    Float?
+  temp     Float?
+  humidity Float?
+  pressure Float?
+
+  @@id([deviceId, ts])
+  @@index([ts])
+}
+
+model TelemetryHourly {
+  deviceId    String
+  hourStart   DateTime
+  minuteCount Int
+  pm25Avg     Float?
+  pm25Min     Float?
+  pm25Max     Float?
+  co2Avg      Float?
+  tvocAvg     Float?
+  radonAvg    Float?
+  tempAvg     Float?
+  humidityAvg Float?
+  pressureAvg Float?
+  pm1Avg      Float?
+  pm10Avg     Float?
+
+  @@id([deviceId, hourStart])
+  @@index([hourStart])
+}
+
+/**
+ * 케이웨더에서 받아둔 실외 실황. 행정동 하나당 한 줄.
+ * 기기 요청마다 케이웨더를 부르지 않는다 - 호출 단가 과금이고, 서버리스는
+ * 인스턴스마다 메모리 캐시가 따로라 같은 동네를 몇 번이고 다시 부르게 된다.
+ * 크론이 주기적으로 채우고, 기기에는 이 표에서 꺼내 뿌린다.
+ * 업스트림이 죽어도 마지막 값으로 계속 서비스된다.
+ */
+model OutdoorReading {
+  hcode      String    @id
+  state      String?
+  city       String?
+  city2      String?
+  pm10       Float?
+  pm25       Float?
+  pm10Grade  Int?
+  pm25Grade  Int?
+  temp       Float?
+  humi       Float?
+  wText      String?
+  observedAt DateTime? // 케이웨더 관측 시각
+  fetchedAt  DateTime  @default(now())
+  error      String? // 마지막 갱신이 실패했으면 이유. 값은 직전 것을 유지한다.
+
+  @@index([fetchedAt])
+}
+
+model CalibrationRecord {
+  id           String   @id @default(cuid())
+  deviceId     String
+  device       Device   @relation(fields: [deviceId], references: [id])
+  calibratedAt DateTime
+  method       String?
+  createdAt    DateTime @default(now())
+
+  @@index([deviceId, calibratedAt(sort: Desc)])
+}
+
+// ─────────────────────── Settlement ───────────────────────
+
+model Epoch {
+  id            String      @id @default(cuid())
+  epochDate     DateTime    @unique @db.Date
+  status        EpochStatus @default(CREATED)
+  phaseCursor   String?
+  leaseUntil    DateTime?
+  leaseOwner    String?
+  budget        Decimal?    @db.Decimal(28, 8)
+  bootstrapPart Decimal?    @db.Decimal(28, 8)
+  revenuePart   Decimal?    @db.Decimal(28, 8)
+  alphaUsed     Decimal?    @db.Decimal(6, 4)
+  totalWeight   Decimal?    @db.Decimal(28, 12)
+  perNodeCap    Decimal?    @db.Decimal(28, 8)
+  unallocated   Decimal?    @db.Decimal(28, 8)
+  eligibleNodes Int?
+  startedAt     DateTime    @default(now())
+  completedAt   DateTime?
+  error         String?
+
+  scores   DailyQualityScore[]
+  accruals RewardAccrual[]
+}
+
+model DailyQualityScore {
+  id                  String    @id @default(cuid())
+  epochId             String
+  epoch               Epoch     @relation(fields: [epochId], references: [id])
+  deviceId            String
+  wallet              String
+  uptimeScore         Float
+  outlierScore        Float
+  correlationScore    Float
+  correlationFallback Boolean   @default(false)
+  calibrationScore    Float
+  qualityScore        Float
+  tierMultiplier      Decimal   @db.Decimal(6, 3)
+  weight              Decimal   @db.Decimal(28, 12)
+  nftVerified         Boolean?
+  nftCheckedAt        DateTime?
+  minutesReceived     Int
+  outlierRate         Float
+  neighborCount       Int
+  calibrationAgeDays  Int
+  integrityFlags      String? // comma-joined, e.g. "FLATLINE,CLONE" - flagged rows settle to Q=0
+
+  @@unique([epochId, deviceId])
+  @@index([epochId, nftVerified])
+  @@index([epochId, wallet])
+}
+
+model RewardAccrual {
+  id        String        @id @default(cuid())
+  epochId   String
+  epoch     Epoch         @relation(fields: [epochId], references: [id])
+  deviceId  String
+  wallet    String
+  amount    Decimal       @db.Decimal(28, 8)
+  status    AccrualStatus @default(CLAIMABLE)
+  claimId   String?
+  claim     Claim?        @relation(fields: [claimId], references: [id])
+  createdAt DateTime      @default(now())
+
+  @@unique([epochId, deviceId])
+  @@index([wallet, status])
+  @@index([claimId])
+}
+
+model Claim {
+  id                 String      @id @default(cuid())
+  wallet             String
+  amount             Decimal     @db.Decimal(28, 8)
+  status             ClaimStatus @default(INITIATED)
+  idempotencyKey     String      @unique
+  txHash             String?     @unique
+  signedBlob         String?
+  accountSequence    Int?
+  lastLedgerSequence Int?
+  resultCode         String?
+  submittedAt        DateTime?
+  confirmedAt        DateTime?
+  createdAt          DateTime    @default(now())
+
+  accruals RewardAccrual[]
+
+  // partial unique index one_open_claim_per_wallet added via raw SQL migration
+  @@index([status, submittedAt])
+  @@index([wallet, status])
+}
+
+// ─────────────── XRPL hot-wallet outbox ───────────────
+
+model XrplTransaction {
+  id                 String        @id @default(cuid())
+  purpose            XrplTxPurpose
+  status             XrplTxStatus  @default(QUEUED)
+  payload            Json
+  signedBlob         String?
+  txHash             String?       @unique
+  accountSequence    Int?
+  lastLedgerSequence Int?
+  resultCode         String?
+  attempts           Int           @default(0)
+  refType            String? // 'Claim' | 'LicenseNft'
+  refId              String?
+  createdAt          DateTime      @default(now())
+  validatedAt        DateTime?
+
+  @@index([status, createdAt])
+  @@index([refType, refId])
+}
+
+model HotWalletSigner {
+  id           Int       @id @default(1)
+  address      String
+  leaseUntil   DateTime?
+  leaseOwner   String?
+  nextSequence Int?
+}
+
+// ─────────────────── Config & misc ───────────────────
+
+model AdminConfig {
+  key       String   @id
+  value     Json
+  updatedAt DateTime @updatedAt
+  updatedBy String?
+}
+
+model RevenueRecord {
+  id         String   @id @default(cuid())
+  month      DateTime @unique @db.Date
+  b2bRevenue Decimal  @db.Decimal(28, 8)
+  enteredBy  String
+  createdAt  DateTime @default(now())
+}
+
+// Prepaid data-API credits (x402 gateway), denominated in RLUSD
+model DataCredit {
+  id            String   @id @default(cuid())
+  apiKey        String   @unique
+  wallet        String?
+  balance       Decimal  @db.Decimal(28, 8)
+  totalToppedUp Decimal  @db.Decimal(28, 8)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+// Embedded (built-in) wallet: password-encrypted seed blob, client-side crypto only.
+// The server can never decrypt this - non-custodial by construction.
+model EmbeddedBackup {
+  address   String   @id
+  userId    String?  @unique // web2.5 handle: login = userId + password (password never leaves the browser)
+  blob      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Designated external withdrawal wallet for an embedded-wallet account.
+// verified = the external wallet approved a connection in the user's browser
+// (ownership shown interactively), as opposed to a hand-typed address.
+model LinkedWallet {
+  address   String   @id // embedded wallet address
+  external  String
+  verified  Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Sponsor-funded data bounty: a company/institution deposits XRP/RLUSD up
+// front and subscribes to participating nodes' indoor data for a period.
+// Optionally carries a clean-air-solution marketing promotion that
+// participants opt into per bounty.
+model DataBounty {
+  id             String                @id @default(cuid())
+  title          String
+  sponsor        String // public display name of the funding org
+  description    String
+  currency       String // "XRP" | "RLUSD"
+  amount         Decimal               @db.Decimal(28, 8)
+  depositTxHash  String?               @unique // on-chain escrow deposit proof (재사용 금지)
+  startAt        DateTime
+  endAt          DateTime
+  marketingPromo Boolean               @default(false)
+  status         String                @default("OPEN") // DRAFT/OPEN/ACTIVE/COMPLETED/CANCELLED
+  accessKeyHash  String? // sha256 of the sponsor's exclusive data-access key (issued once)
+  settledAt      DateTime? // auto-settlement completed
+  createdAt      DateTime              @default(now())
+  participants   BountyParticipation[]
+}
+
+model BountyParticipation {
+  id             String     @id @default(cuid())
+  bountyId       String
+  bounty         DataBounty @relation(fields: [bountyId], references: [id])
+  wallet         String
+  marketingOptIn Boolean    @default(false)
+  joinedAt       DateTime   @default(now())
+  payoutAmount   Decimal?   @db.Decimal(28, 8)
+  payoutStatus   String? // QUEUED (payment enqueued) / NO_DATA (no contribution → no share)
+
+  @@unique([bountyId, wallet])
+}
+
+// Social login (Google / X) identity → embedded wallet mapping. The wrapKey
+// encrypts the wallet blob instead of a user password; it is released only to
+// sessions that passed the provider's own authentication. Managed-convenience
+// tier: users can still export the seed or add a password/passkey later.
+model SocialAccount {
+  key          String    @id // "google:<sub>" | "email:<lower-email>"
+  provider     String // google | email
+  handle       String? // email or @username for display
+  address      String? // linked embedded wallet (null until first wallet creation completes)
+  wrapKey      String
+  /// email 계정: 로그인 비밀번호(scrypt 해시). 지갑 blob 은 wrapKey 로 잠기므로 비밀번호는 로그인 수단일 뿐 -
+  /// 잊어도 이메일로 재설정할 수 있다(web2 UX). 소셜 계정은 null.
+  passwordHash String?
+  resetToken   String?   @unique
+  resetExpires DateTime?
+  createdAt    DateTime  @default(now())
+}
+
+/// ARC-600DA 구매 주문 - 토스페이먼츠 카드결제(KRW) 또는 RLUSD 온체인 결제.
+/// 배송 정보는 주문에 직접 받는다(web2 트랙). 배송 완료 후 파기 정책은 운영에서 수행.
+model Order {
+  id            String    @id @default(cuid())
+  wallet        String // 구매자 계정(간편지갑 주소 = 계정 식별자)
+  kind          String // DEVICE | DEVICE_TEST
+  qty           Int
+  unitPriceKrw  Int
+  amountKrw     Int
+  currency      String    @default("KRW")
+  /// web3(해외) 결제: RLUSD 금액 · 주문별 DestinationTag(입금 식별)
+  amountRlusd   Decimal?  @db.Decimal(18, 6)
+  destTag       Int?
+  status        String    @default("PENDING") // PENDING | PAID | FAILED | CANCELED | REFUNDED
+  payMethod     String    @default("toss_card") // toss_card | xrpl
+  tossOrderId   String    @unique // 토스에 넘기는 주문번호(6~64자)
+  paymentKey    String?   @unique
+  receiptUrl    String?
+  cardInfo      String? // "신한 1234****" 표기용
+  approvedAt    DateTime?
+  txHash        String?   @unique // rlusd 결제 시
+  genesisNos    Int[]     @default([])
+  /// 배송 진행: PREPARING(결제 완료·배송 준비) | SHIPPED(발송·송장) | DELIVERED(배송 완료)
+  shipStatus    String    @default("PREPARING")
+  carrier       String? // 택배사 코드/이름 (예: cj, hanjin, lotte, logen, epost)
+  trackingNo    String?
+  shippedAt     DateTime?
+  deliveredAt   DateTime?
+  cancelReason  String?
+  buyerName     String
+  buyerEmail    String
+  buyerPhone    String
+  shipZip       String?
+  shipAddr1     String?
+  shipAddr2     String?
+  shipMemo      String?
+  failReason    String?
+  /// 프로모션 코드(기업·인플루언서 제휴, 2026-09-10): 적용 코드와 할인액. amountKrw/amountRlusd 는 할인 후 실결제액.
+  promoCode     String?
+  discountKrw   Int       @default(0)
+  discountRlusd Decimal?  @db.Decimal(18, 6)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@index([wallet, createdAt])
+  @@index([kind, status])
+  @@index([promoCode])
+}
+
+/// 어필리에이트(제휴 홍보) - 신청서 · 승인 조건 · 정산 기준 (2026-09-11).
+/// 구매자에게 줄 할인율과 홍보자에게 줄 수수료율을 함께 정해 두고, 승인하면 PromoCode 를 하나 발급해
+/// 여기 promoCode 로 묶는다. 실적과 수수료는 그 코드가 붙은 결제 완료 주문(Order.promoCode)에서 계산한다.
+/// 계좌번호는 담지 않는다 - 정산 방법과 RLUSD 주소까지만 받고 계좌는 승인 뒤 따로 주고받는다.
+model Affiliate {
+  id            String    @id @default(cuid())
+  name          String // 활동명 · 채널명 · 회사명 (공개 표기)
+  contactName   String // 담당자 이름
+  email         String
+  phone         String?
+  channelType   String // youtube | instagram | tiktok | blog | community | company | other
+  channelUrl    String
+  audience      Int? // 구독자·팔로워 수 (자기 신고)
+  plan          String? // 홍보 계획
+  payoutMethod  String    @default("bank") // bank(계좌이체) | rlusd
+  payoutWallet  String? // payoutMethod=rlusd 일 때의 지갑 주소 (계좌번호는 받지 않는다)
+  status        String    @default("NEW") // NEW | APPROVED | REJECTED | PAUSED
+  discountPct   Int       @default(10) // 구매자에게 줄 할인율
+  commissionPct Int       @default(10) // 어필리에이트에게 줄 수수료율 (실결제액 기준)
+  promoCode     String?   @unique // 승인 시 발급한 코드 (PromoCode.code)
+  note          String? // 운영 메모 · 반려 사유
+  reviewedAt    DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@index([status, createdAt])
+}
+
+/// 프로모션 코드 - 기업·인플루언서 제휴 판매 확장용(2026-09-10). 관리자 콘솔 "프로모션" 탭에서 발급.
+/// 구매 팝업의 수량 단계에서 입력하며, 서버가 checkout/create 에서 다시 검증해 주문에 기록한다.
+/// 사용 횟수는 별도 카운터 없이 Order.promoCode 로 집계한다(결제 완료 + 30분 내 미결제 주문).
+model PromoCode {
+  id         String    @id @default(cuid())
+  code       String    @unique // 대문자·숫자·하이픈 4~24자
+  label      String // 파트너·인플루언서 이름(관리용)
+  kind       String    @default("PERCENT") // PERCENT(정률 %) | FIXED_KRW(주문당 정액 원)
+  value      Int // 퍼센트(1~90) 또는 원
+  products   String[]  @default(["device"]) // device | dcent_card
+  maxUses    Int? // 총 사용 한도(주문 수), null=무제한
+  perAccount Int       @default(1) // 계정당 사용 가능 주문 수
+  startsAt   DateTime?
+  endsAt     DateTime?
+  active     Boolean   @default(true)
+  note       String?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+}
+
+// Sponsor's bounty application with an auto-generated quote - reviewed by the
+// operator, then converted into a funded DataBounty once the deposit lands.
+model SponsorApplication {
+  id             String    @id @default(cuid())
+  sponsor        String
+  email          String
+  taxon          String // IAQ | OAQ
+  nodes          Int
+  days           Int
+  marketingPromo Boolean   @default(false)
+  quoteRlusd     Decimal   @db.Decimal(28, 8)
+  startAt        DateTime?
+  message        String?
+  status         String    @default("NEW") // NEW/CONTACTED/FUNDED/REJECTED
+  createdAt      DateTime  @default(now())
+}
+
+// Recovery/notice contact for an account (registered from a verified session).
+// Not an authentication factor - used for operator notices and recovery guidance.
+model AccountContact {
+  address   String   @id
+  email     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Fixed-window rate limiting (key = route:ip), pruned by the daily cron
+model RateLimit {
+  key     String   @id
+  count   Int
+  resetAt DateTime
+
+  @@index([resetAt])
+}
+
+model IdempotencyKey {
+  key       String   @id
+  scope     String
+  response  Json?
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+}
+
+/// 기기 화면 표시용 읽기 전용 상태조회 키.
+/// 사용자가 발급받아 측정기에 입력하면 기기가 이 키로 보상·수신상태를 조회한다.
+/// 기기 안에 평문으로 들어가므로 조회 외 권한은 없다.
+model ApiStatusKey {
+  id         String    @id @default(cuid())
+  keyHash    String    @unique
+  keyPrefix  String
+  wallet     String
+  // 기기 한 대에 묶인 키. NULL 이면 그 지갑의 모든 기기에 통한다(종전 동작).
+  // 기기 설정에 넣을 키는 반드시 묶어서 발급한다 - 기기가 뜯겨도 다른 기기까지
+  // 들여다볼 수 없게 하려는 것이다.
+  deviceId   String?
+  label      String?
+  lastUsedAt DateTime?
+  lastUsedIp String?
+  useCount   BigInt    @default(0)
+  revokedAt  DateTime?
+  createdAt  DateTime  @default(now())
+
+  @@index([wallet])
+  @@index([deviceId])
+}
+
+/// 기기 등록용 짧은 1회용 코드(10분).
+/// 기기엔 키보드가 없고 BLE MTU 도 작아 52자 키를 직접 넣을 수 없으므로,
+/// 사용자는 짧은 코드만 기기에 넣고 기기가 이를 진짜 키로 교환한다.
+model PairingCode {
+  id         String    @id @default(cuid())
+  codeHash   String    @unique
+  wallet     String
+  label      String?
+  expiresAt  DateTime
+  usedAt     DateTime?
+  usedSerial String?
+  usedIp     String?
+  createdAt  DateTime  @default(now())
+
+  @@index([wallet])
+  @@index([expiresAt])
+}
+
+/// 블라인드 추첨·정산 기준 봉인 (커밋-리빌). 시드는 봉인(암호화)해 두고 커밋 해시만 공개한 뒤,
+/// 공개 시점에 시드를 드러내 누구나 결과를 재계산·검증할 수 있게 한다. backend=flare-fcc 면
+/// Flare 기밀컴퓨팅(TEE) 엔드포인트가 결과와 증명(attestation)을 낸다.
+model BlindDraw {
+  id               String    @id @default(cuid())
+  kind             String // PREORDER_LOTTERY | GENESIS_NUMBER | SETTLEMENT_PARAMS | CUSTOM
+  title            String
+  status           String    @default("COMMITTED") // COMMITTED | REVEALED
+  backend          String    @default("local") // local | flare-fcc
+  commitment       String // sha256(seed | participantsHash | paramsHash)
+  sealedSeed       String // AES-GCM(seed)
+  seed             String? // 공개 후
+  participantsHash String
+  participants     Json // string[] (계정·지갑 등 식별자)
+  params           Json // { winners?: number, ... } 또는 봉인된 정산 기준
+  result           Json?
+  attestation      Json?
+  createdAt        DateTime  @default(now())
+  revealAfter      DateTime?
+  revealedAt       DateTime?
+}
+
+/// 제네시스 넘버 원장 - (kind, no) 유일. 결제 확정 시 #1 부터의 번호대에서 랜덤 추첨해 여기에 먼저 기록하고 주문에 복사한다.
+/// kind = Order.kind (DEVICE | DEVICE_TEST) 로 실판매·리허설 번호대를 분리. 취소·환불 시 행을 지워 번호를 회수한다.
+model GenesisNo {
+  kind      String
+  no        Int
+  orderId   String
+  createdAt DateTime @default(now())
+
+  @@id([kind, no])
+  @@index([orderId])
+}
+
+/// 시스템 모니터링(2026-09-06) - 일 트래픽 카운터(bucket: page|api|bot), 일 방문자 해시, 일별 용량 스냅샷
+model TrafficDaily {
+  day    DateTime @db.Date
+  bucket String
+  hits   BigInt   @default(0)
+
+  @@id([day, bucket])
+}
+
+model TrafficVisitor {
+  day       DateTime @db.Date
+  vhash     String
+  hits      Int      @default(1)
+  firstPath String?
+  /// 그날 첫 입구 (2026-09-26, lib/traffic-source.ts) - utm_source · promo:코드 · 리퍼러 호스트 · (direct) · (internal). 그 전 행은 null
+  source    String?
+  medium    String?
+  campaign  String?
+
+  @@id([day, vhash])
+  @@index([day, source])
+}
+
+model SystemStat {
+  day            DateTime @id @db.Date
+  dbBytes        BigInt   @default(0)
+  rawRows        BigInt   @default(0)
+  rawBytes       BigInt   @default(0)
+  ingestLogRows  BigInt   @default(0)
+  ingestLogBytes BigInt   @default(0)
+  devices        Int      @default(0)
+  activeDevices  Int      @default(0)
+  rawRows24h     BigInt   @default(0)
+  pageViews      BigInt   @default(0)
+  visitors       BigInt   @default(0)
+  apiHits        BigInt   @default(0)
+  createdAt      DateTime @default(now())
+}
+
+/// 회원 권한(2026-09-06, 관리자 "회원" 탭). 계정 = 지갑 주소. 행이 없으면 기본(member · 모두 허용).
+model AccountRole {
+  address     String    @id
+  role        String    @default("member") // member | vip | staff | admin (운영 분류)
+  blocked     Boolean   @default(false) // 로그인·예약·구매 모두 차단
+  canReserve  Boolean   @default(true)
+  canBuy      Boolean   @default(true)
+  maxQty      Int? // 사전예약 최대 수량 개별 상한(없으면 판매 설정 기본값)
+  note        String?
+  deletedAt   DateTime? // 관리자 삭제 표시(재로그인 차단)
+  lastLoginAt DateTime?
+  loginCount  Int       @default(0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @default(now()) @updatedAt
+  updatedBy   String?
+
+  @@index([role])
+  @@index([blocked])
+}

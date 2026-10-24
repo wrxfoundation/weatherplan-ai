@@ -1,0 +1,131 @@
+<title>이 하늘, 어디게?</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="지금 이 순간 어느 도시의 하늘인지 지구본에서 찾는 날씨 미니게임">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap">
+<style>
+  /* 한 가지 세계: 밤의 관측소. 배경·글자색을 전부 명시해 호스트 테마와 무관하게 유지 */
+  :root {
+    --bg: #070913; --panel: #0D1122; --panel-2: #131935; --line: rgba(200, 210, 255, 0.10); --line-2: rgba(200, 210, 255, 0.18);
+    --ink: #ECEEF8; --ink-2: #A6ADCF; --ink-3: #6B7299;
+    --sun: #FFC45C; --pin: #FF7657; --ans: #6FF0C5; --moon: #D6DCFF;
+    --f-display: 'Gowun Batang', 'Nanum Myeongjo', 'AppleMyungjo', serif;
+    --f-body: 'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
+    --f-mono: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--bg); color: var(--ink); }
+  body { font-family: var(--f-body); font-size: 15px; line-height: 1.55; -webkit-font-smoothing: antialiased; }
+  button { font: inherit; color: inherit; }
+  button:focus-visible, summary:focus-visible { outline: 2px solid var(--sun); outline-offset: 2px; }
+  .app { max-width: 1240px; margin: 0 auto; padding: 14px 16px 28px; display: flex; flex-direction: column; gap: 14px; }
+
+  .top { display: flex; align-items: flex-end; justify-content: space-between; gap: 10px 20px; flex-wrap: wrap; }
+  .brand h1 { margin: 0; font-family: var(--f-display); font-weight: 700; font-size: clamp(30px, 5.6vw, 42px); line-height: 1.05; letter-spacing: -0.01em; }
+  .brand h1 .q { color: var(--sun); }
+  .brand p { margin: 6px 0 0; color: var(--ink-2); font-size: 14px; }
+  .rounds { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+  .rchip { min-width: 54px; padding: 5px 8px; border-radius: 8px; border: 1px solid var(--line); background: var(--panel); text-align: center; font-family: var(--f-mono); font-size: 12px; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+  .rchip b { display: block; font-weight: 500; font-size: 13px; color: var(--ink-2); }
+  .rchip.now { border-color: var(--sun); color: var(--ink); }
+  .rchip.done b { color: var(--ink); }
+  .total { font-family: var(--f-mono); font-size: 13px; color: var(--ink-2); padding-left: 6px; font-variant-numeric: tabular-nums; }
+  .total b { color: var(--sun); font-weight: 500; font-size: 16px; }
+
+  .stage { display: grid; grid-template-columns: 1fr; gap: 14px; align-items: start; }
+  @media (min-width: 980px) { .stage { grid-template-columns: minmax(0, 1.45fr) minmax(360px, 1fr); } }
+  .skycol, .globecol { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+  .sky { position: relative; width: 100%; max-width: 640px; margin: 0 auto; aspect-ratio: 1 / 1; }
+  .sky canvas, .globe canvas:not(.mini) { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  .skyhead { display: flex; justify-content: space-between; align-items: center; gap: 8px; max-width: 640px; width: 100%; margin: 0 auto; flex-wrap: wrap; }
+  .tag { font-size: 12px; color: var(--ink-2); background: rgba(3, 5, 12, 0.62); border: 1px solid var(--line); border-radius: 999px; padding: 2px 10px; pointer-events: none; }
+  .tag b { color: var(--ink); font-weight: 600; }
+  .clock { font-family: var(--f-mono); font-size: 11.5px; color: var(--ink-2); background: rgba(3, 5, 12, 0.62); border: 1px solid var(--line); border-radius: 999px; padding: 2px 10px; pointer-events: none; font-variant-numeric: tabular-nums; }
+  .readout { display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; font-size: 13.5px; max-width: 640px; margin: 0 auto; width: 100%; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 10px 14px; }
+  .readout dt { color: var(--ink-3); } .readout dd { margin: 0; font-variant-numeric: tabular-nums; }
+  .readout .ghost { color: var(--pin); }
+  .globe .mini { position: absolute; left: 8px; top: 8px; width: 34%; height: auto; aspect-ratio: 1 / 1; pointer-events: none; display: none; }
+  @media (max-width: 979px) { .globe .mini { display: block; } }
+  .globe { position: relative; width: 100%; aspect-ratio: 1 / 1; border-radius: 12px; overflow: hidden; border: 1px solid var(--line); background: radial-gradient(circle at 50% 45%, #0B1030 0%, #05060F 70%); touch-action: none; user-select: none; -webkit-user-select: none; cursor: crosshair; }
+  .globe.grabbing { cursor: grabbing; }
+  .zoom { position: absolute; right: 10px; bottom: 10px; display: flex; flex-direction: column; gap: 6px; }
+  .zoom button { width: 34px; height: 34px; border-radius: 8px; border: 1px solid var(--line-2); background: rgba(13, 17, 34, 0.85); font-size: 18px; line-height: 1; cursor: pointer; }
+  .gtag { position: absolute; left: 10px; bottom: 10px; font-size: 12px; color: var(--ink-2); background: rgba(3, 5, 12, 0.62); border: 1px solid var(--line); border-radius: 8px; padding: 4px 9px; pointer-events: none; display: flex; flex-direction: column; gap: 2px; }
+  .gtag i { font-style: normal; display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 6px; vertical-align: 0; }
+
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; }
+  .card h2 { margin: 0 0 4px; font-size: 19px; font-weight: 600; text-wrap: balance; }
+  .card p { margin: 0; color: var(--ink-2); font-size: 14px; }
+  .card .row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+  .btn { border-radius: 10px; padding: 10px 16px; font-size: 15px; font-weight: 600; cursor: pointer; border: 1px solid var(--line-2); background: var(--panel-2); color: var(--ink); }
+  .btn.primary { background: var(--sun); border-color: var(--sun); color: #1D1404; }
+  .btn:disabled { opacity: 0.4; cursor: default; }
+  .btn.ghost { background: transparent; color: var(--ink-2); font-weight: 500; }
+  .btn.sm { padding: 7px 12px; font-size: 13.5px; font-weight: 500; }
+  .big { font-family: var(--f-mono); font-size: 30px; font-weight: 500; color: var(--sun); font-variant-numeric: tabular-nums; line-height: 1.1; }
+  .facts { display: grid; grid-template-columns: auto 1fr; gap: 4px 14px; margin-top: 10px; font-size: 13.5px; }
+  .facts dt { color: var(--ink-3); } .facts dd { margin: 0; color: var(--ink); font-variant-numeric: tabular-nums; }
+  .list { list-style: none; margin: 10px 0 0; padding: 0; display: flex; flex-direction: column; gap: 5px; font-size: 13.5px; }
+  .list li { display: grid; grid-template-columns: 22px 1fr auto; gap: 8px; align-items: baseline; }
+  .list .n { font-family: var(--f-mono); color: var(--ink-3); } .list .s { font-family: var(--f-mono); color: var(--ink); font-variant-numeric: tabular-nums; }
+  details.howto { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 12px 16px; }
+  details.howto summary { cursor: pointer; font-weight: 600; font-size: 14px; }
+  details.howto ul { margin: 10px 0 0; padding-left: 18px; font-size: 13.5px; color: var(--ink-2); display: flex; flex-direction: column; gap: 5px; }
+  .toast { position: fixed; left: 50%; bottom: 22px; transform: translate(-50%, 8px); background: rgba(13, 17, 34, 0.96); border: 1px solid var(--line-2); border-radius: 999px; padding: 7px 16px; font-size: 13.5px; opacity: 0; transition: opacity .2s, transform .2s; pointer-events: none; z-index: 10; }
+  .toast.on { opacity: 1; transform: translate(-50%, 0); }
+  footer { color: var(--ink-3); font-size: 12.5px; text-align: center; text-wrap: balance; }
+  .nogl { padding: 18px; text-align: center; color: var(--ink-2); }
+  @media (prefers-reduced-motion: reduce) { .toast { transition: none; } }
+</style>
+
+<div class="app">
+  <header class="top">
+    <div class="brand">
+      <h1>이 하늘, 어디게<span class="q">?</span></h1>
+      <p>지금 이 순간, 어느 도시의 하늘일까요? 지구본에 핀을 꽂아 맞혀 보세요.</p>
+    </div>
+    <div class="rounds" id="rounds" aria-label="오늘의 다섯 하늘"></div>
+  </header>
+
+  <main class="stage">
+    <section class="skycol">
+      <div class="skyhead"><span class="tag"><b>수수께끼 하늘</b> · 지금 이 순간</span><span class="clock" id="clock"></span></div>
+      <div class="sky" id="skyA">
+        <canvas id="skyAgl" aria-hidden="true"></canvas><canvas id="skyA2d" role="img" aria-label="수수께끼 도시에서 올려다본 지금 하늘 전체. 가운데가 머리 위, 가장자리가 지평선입니다."></canvas>
+      </div>
+      <dl class="readout" id="readout"></dl>
+    </section>
+    <section class="globecol">
+      <div class="globe" id="globe">
+        <canvas id="gGl" aria-hidden="true"></canvas><canvas id="g2d" role="img" aria-label="밤낮이 표시된 지구본. 눌러서 핀을 꽂고 끌어서 돌립니다."></canvas>
+        <canvas class="mini" id="mini" aria-hidden="true"></canvas>
+        <div class="gtag"><span><i style="background: var(--sun)"></i>태양이 머리 위에 있는 곳</span><span><i style="background: var(--pin)"></i>내 핀</span></div>
+        <div class="zoom"><button type="button" id="zin" aria-label="확대">+</button><button type="button" id="zout" aria-label="축소">−</button></div>
+      </div>
+      <div class="card" id="panel" aria-live="polite"></div>
+      <details class="howto" id="howto">
+        <summary>하늘 읽는 법</summary>
+        <ul>
+          <li>태양이 높이 떠 있을수록 태양이 머리 위에 있는 곳(지구본의 노란 점)에 가깝습니다. 고도 30°면 그 점에서 약 6,700km 떨어진 원 위 어딘가입니다.</li>
+          <li>태양이 동쪽에 낮게 있으면 아침, 서쪽에 낮게 있으면 저녁입니다. 지구본의 밤낮 경계에서 아침 쪽인지 저녁 쪽인지 보세요.</li>
+          <li>태양이 북쪽 하늘에 있으면 대개 남반구입니다.</li>
+          <li>밤에는 북극성의 높이가 그곳의 위도와 같습니다. 북극성이 안 보이고 남십자성이 보이면 남반구입니다.</li>
+          <li>하늘 원의 가운데가 머리 위, 가장자리가 지평선입니다. 올려다본 하늘이라 지도와 달리 동쪽이 왼쪽입니다.</li>
+          <li>막히면 힌트를 쓰세요. 「태양 고도 원」은 정답이 놓인 원을, 「겹쳐 보기」는 내 핀에서 본 태양·달·별을 산호색으로 겹쳐 보여 줍니다.</li>
+        </ul>
+      </details>
+    </section>
+  </main>
+
+  <footer>wellbian 날씨 미니게임 · 프로토타입 — 태양·달·별 위치를 계산해 구름 없는 맑은 하늘로 그렸습니다. 날씨 관측값은 아직 쓰지 않습니다.</footer>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+/*@ASTRO@*/
+</script>
+<script>
+/*@GAME@*/
+</script>
