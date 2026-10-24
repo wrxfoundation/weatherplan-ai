@@ -6,6 +6,7 @@ import { INITIAL_EVENTS, INITIAL_REQUESTS, SEED_ASK_DOCTOR, SEED_EVENTS, SEED_OR
 import { URGENCY, approverOf, canEditRequest, cancelRule, crewOf, crewReady, fmtPreferred, paymentOf, transition } from "./requests";
 import { canChargeExtra, durOf, durText, extraAmountOf, extraDueAt, extraToText, svcTitle } from "./booking";
 import { SEED_VISIT, advance } from "./workflow";
+import { VISIT_LEVELS, VISIT_TEXT_KEYS } from "./checkup";
 import { crewFor } from "./dispatch-policy";
 import { logout, useAuth } from "./auth";
 import { setStorageScope } from "./scope";
@@ -983,9 +984,19 @@ function reducer(state, action) {
       if (visitLock(state.visit)) return state;
       return { ...state, visit: { ...state.visit, photos: Math.max(0, (state.visit.photos || 0) + (action.remove ? -1 : 1)) } };
     // 거주 형태(자택 · 요양병원) — 컨시어지 점검표와 관제 방문관리 · 보호자 리포트가 같은 21항목을 쓰게 가구 기록에 둔다
+    // 미팅(2026-10-24 설계서 v3) — 집 근처 카페에서 만나 쓰는 리포트. 21가지 점검 대신 대화 · 센서 · 워치 기록
     case "visitLoc":
       if (visitLock(state.visit)) return state;
-      return action.loc === "home" || action.loc === "hospital" ? { ...state, visit: { ...state.visit, loc: action.loc } } : state;
+      return ["home", "hospital", "meet"].includes(action.loc) ? { ...state, visit: { ...state.visit, loc: action.loc } } : state;
+    // 리포트 글 칸 — 보호자께 부탁드려요 · 어르신께 남길 말 · 내부 메모, 미팅의 대화 기록 · 챙길 것 (lib/checkup.js VISIT_TEXT_KEYS).
+    // 입력을 마칠 때 한 번 보낸다. 제출한 뒤에는 받지 않는다 (visitLock — 증명 기록)
+    case "visitText":
+      if (visitLock(state.visit) || !VISIT_TEXT_KEYS.includes(action.key)) return state;
+      return { ...state, visit: { ...state.visit, text: { ...(state.visit.text || {}), [action.key]: String(action.text || "").slice(0, 2000) } } };
+    // 미팅 리포트 상태 — talk 만나서 나눈 이야기 · life 생활 반응 · level 종합 (양호 · 관찰 · 주의 · 위험)
+    case "visitLevel":
+      if (visitLock(state.visit) || !["talk", "life", "level"].includes(action.k) || !VISIT_LEVELS.includes(action.v)) return state;
+      return { ...state, visit: { ...state.visit, levels: { ...(state.visit.levels || {}), [action.k]: action.v } } };
     // 동행 기록 — 저장 한 번 (보낸 뒤에는 고치지 않는다 — 보호자가 본 것과 기록이 달라지면 안 된다)
     case "escortSave": {
       // 보낸 뒤에는 물론, 안심방문 리포트를 제출해 검수 중일 때도 받지 않는다 — 관제가 검수한 것과 보호자에게 갈 것이 같아야 한다

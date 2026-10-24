@@ -126,9 +126,30 @@ export const CHECKUP_HOSPITAL = [
   },
 ];
 
-// 거주 형태별 21항목 선택 — 컨시어지 리포트 화면의 토글이 이 함수를 쓴다
-export const checkupFor = (careLocation) =>
-  careLocation === "hospital" ? CHECKUP_HOSPITAL : CHECKUP;
+// 방문 리포트 작성 방식 — 자택 · 요양병원 · 미팅 (2026-10-24 컨시어지 화면설계서 v3 §3).
+// 미팅은 집 안에 들어가지 않고 집 근처 카페에서 만나 대화와 센서 · 워치 기록으로 쓰는 리포트다 — 21가지 점검 · 사진이 없다.
+export const VISIT_MODES = [
+  { k: "home", emoji: "🏠", label: "자택" },
+  { k: "hospital", emoji: "🏥", label: "요양병원" },
+  { k: "meet", emoji: "☕", label: "미팅" },
+];
+export const MEET_PLACE = "집 근처 카페"; // 미팅 장소 — 설계서 v3 확정 (장소 고르기 칸은 만들지 않는다)
+export const isMeet = (loc) => loc === "meet";
+
+// 리포트 상태 4단계 (설계서 v3 0-2 · 보호자 리포트와 같은 말) — 미팅 리포트의 대화 · 생활 반응 · 종합에 쓴다
+export const VISIT_LEVELS = ["양호", "관찰", "주의", "위험"];
+// 미팅 리포트 처음 상태 — 대화는 양호, 생활 반응 · 종합은 관찰 (목업 그대로)
+export const MEET_LEVEL_DEFAULT = { talk: "양호", life: "관찰", level: "관찰" };
+export const meetLevel = (visit, k) => (VISIT_LEVELS.includes(visit?.levels?.[k]) ? visit.levels[k] : MEET_LEVEL_DEFAULT[k]);
+// 리포트 글 칸 — ask 보호자께 부탁드려요 · toElder 어르신께 남길 말 · inner 내부 메모(관제 · 컨시어지만),
+// 미팅: said 어르신 말씀 · seen 컨시어지가 본 것 · asked 부탁하신 것 · relay 전해 달라신 말 · care 컨시어지가 챙길 것
+export const VISIT_TEXT_KEYS = ["ask", "toElder", "inner", "said", "seen", "asked", "relay", "care"];
+export const visitText = (visit, k) => String(visit?.text?.[k] || "");
+
+// 방식별 21항목 — 컨시어지 리포트 화면의 토글이 이 함수를 쓴다.
+// 요양병원도 우선 자택과 같은 양식(몸 7 · 마음 7 · 집 7 · 필수 5개)을 쓴다 (설계서 v3 확정). 요양병원용 목록(CHECKUP_HOSPITAL)은
+// 전용 양식을 만들 때 쓰려고 남겨 둔다. 미팅은 점검표가 없다
+export const checkupFor = (careLocation) => (isMeet(careLocation) ? [] : CHECKUP);
 
 // 리포트 상단 카피 — '가입상담 전달내용' 시트가 지정한 문구 (보호자 앱 · 알림톡 공용).
 //
@@ -139,6 +160,8 @@ export const REPORT_HEADLINE = {
   home: (name) => `오늘 ${name} 님의 자택은 안전하고 건강합니다.`,
   hospital: (name) => `오늘 ${name} 님은 병원에서 따뜻한 하루를 보내셨습니다.`,
 };
+// 미팅 리포트에는 상단 문장이 없다 — 기간 · 만남 날짜 줄이 그 자리다 (설계서 v3 §3-4)
+export const headlineFor = (loc, name) => (REPORT_HEADLINE[loc] ? REPORT_HEADLINE[loc](name) : "");
 
 // 기록 방식 — 점수를 매기지 않는 이유를 명시한다
 export const CHECKUP_RULE = [

@@ -9,7 +9,8 @@ import { svcTitle } from "./booking";
 import { fmtWon } from "./config";
 import { LIVE_ELDER, fmtPhone } from "./ops-health";
 import { VISITS, itemKeys, visitDetail } from "./ops-mgmt";
-import { checkupFor } from "./checkup";
+import { checkupFor, isMeet, meetLevel, visitText } from "./checkup";
+import { MEET_DEMO } from "./visit-report";
 import { AI_REPORT } from "./mock";
 import { centerNow, onPeople } from "./people-store";
 
@@ -191,7 +192,9 @@ export function liveVisit(base, state) {
   // 관제가 반려해 컨시어지가 고치는 중 — 다시 낼 때까지는 '방문 중'으로 본다
   const returnedOpen = !!v.returned && !(report && report.at > v.returned.at);
   const done = !returnedOpen && (!!report || plan.status === "done");
-  const active = !done && (returnedOpen || !!v.checkedIn || !!checkinAt || doneNames.size > 0 || ["arrived", "recording"].includes(plan.status));
+  // 미팅 리포트는 점검표가 없다 — 대화 기록 · 글 칸을 쓰기 시작하면 진행 중으로 본다 (2026-10-24 설계서 v3)
+  const wrote = Object.values(v.text || {}).some((x) => String(x || "").trim());
+  const active = !done && (returnedOpen || !!v.checkedIn || !!checkinAt || doneNames.size > 0 || wrote || ["arrived", "recording"].includes(plan.status));
   const status = done ? "done" : active ? "active" : "planned";
   const followups = Array.isArray(ops.followups) ? ops.followups : [];
   // 항목 메모 · 상태 — 컨시어지가 적거나 고른 것만 (상태가 없으면 지어 붙이지 않는다)
@@ -206,6 +209,9 @@ export function liveVisit(base, state) {
     pending,
     photos: v.photos || 0,
     memo: v.memo || "",
+    // 리포트 글 칸 · 미팅 상태 — 관제 검수 화면이 내부 메모까지 본다 (보호자 리포트에는 내부 메모가 빠진다)
+    text: v.text || {},
+    levels: v.levels || {},
     itemNotes: notes,
     changes: [],
     request: null,
@@ -226,7 +232,9 @@ export function liveVisit(base, state) {
       status === "planned"
         ? "컨시어지 체크인 전"
         : status === "active"
-          ? `점검 ${d.keys.length - pending.length}/${d.keys.length}`
+          ? isMeet(loc)
+            ? "미팅 리포트 작성 중"
+            : `점검 ${d.keys.length - pending.length}/${d.keys.length}`
           : ops.sentAt
             ? "보호자 리포트 발송됨"
             : ops.review === "검수 완료"
@@ -264,7 +272,8 @@ export function sentReportState(state) {
   };
 }
 
-export function visitReportOf(state) {
+// demo — 데모 화면(예시 가구)의 미리보기에서만 미팅 리포트의 센서 · 워치 예시 값을 붙인다 (실제 가구는 기기 기록 연결 전)
+export function visitReportOf(state, { demo = false } = {}) {
   const base = liveVisitBase();
   const v = liveVisit(base, state);
   const ops = state?.visit?.ops || {};
@@ -295,6 +304,23 @@ export function visitReportOf(state) {
     gradeCounts,
     photos: state?.visit?.photos || 0,
     memo: state?.visit?.memo || "",
+    // 방식 · 글 칸 (2026-10-24 설계서 v3) — 내부 메모(inner)는 보호자 리포트에 싣지 않는다
+    mode: v.loc,
+    ask: visitText(state?.visit, "ask"),
+    toElder: visitText(state?.visit, "toElder"),
+    meet: isMeet(v.loc)
+      ? {
+          said: visitText(state?.visit, "said"),
+          seen: visitText(state?.visit, "seen"),
+          asked: visitText(state?.visit, "asked"),
+          relay: visitText(state?.visit, "relay"),
+          care: visitText(state?.visit, "care"),
+          talk: meetLevel(state?.visit, "talk"),
+          life: meetLevel(state?.visit, "life"),
+          level: meetLevel(state?.visit, "level"),
+          sensors: demo ? MEET_DEMO : null,
+        }
+      : null,
     reportNote: v.reportNote,
     reviewedAt: ops.reviewedAt || null,
     sentAt: ops.sentAt || null,

@@ -116,3 +116,32 @@ export const STATE_ORDER = ["양호", "주의", "관찰", "위험"];
 // 위험은 넣지 않는다 — 위험해 보이면 상태를 적을 때가 아니라 '관제에 알리기' · SOS 로 바로 알린다
 // (빨강은 위험 신호 전용 — 리포트 칸에 빨강을 쓰지 않는다). 고르지 않으면 상태 없이 '확인함'만 남는다.
 export const VISIT_GRADES = ["양호", "관찰", "주의"];
+
+// ── 미팅 리포트 (2026-10-24 컨시어지 화면설계서 v3 §3-4) ──
+// 집 근처 카페에서 만나 나눈 이야기 + 모션 감지 센서(생활 반응) + 갤럭시핏(몸 신호)으로 쓰는 리포트. 21가지 점검 · 사진이 없다.
+// 센서 · 워치 값은 자동이고 컨시어지가 고치지 않는다. 실제 가구는 기기 기록이 아직 연결되지 않아 '기록 연결 전'으로 보이고,
+// 아래 값은 데모(예시)에서만 쓴다 — 목업 값 그대로.
+export const MEET_DEMO = {
+  minutes: 90, // 만남 1시간 30분
+  life: { noResponse: 0, firstMove: "6:40", dawn: 5, dawnUsual: 2, nights: [0, 1, 0, 1, 1, 1, 1] }, // 월~일 새벽 1–4시 움직임이 있던 날
+  body: {
+    worn: [0, 1, 0, 0, 0, 1, 0], // 월~일 착용한 날
+    days: [
+      ["화요일", "수면 6.4 · 걸음 3,900 · 심박 71"],
+      ["토요일", "수면 5.8 · 걸음 2,700 · 심박 73"],
+    ],
+  },
+};
+export const WEEK_DAYS = ["월", "화", "수", "목", "금", "토", "일"];
+
+// 리포트 기간 — 만난 날까지 지난 7일 ('10.05 – 10.11 · 만남 10.08 (목)'). ts 가 없으면 오늘 기준
+const kstD = (t) => new Date(Number(t) + 9 * 3600 * 1000);
+const md = (d) => `${String(d.getUTCMonth() + 1).padStart(2, "0")}.${String(d.getUTCDate()).padStart(2, "0")}`;
+export function meetPeriod(ts) {
+  const at = Number(ts) || Date.now();
+  const end = kstD(at);
+  const start = kstD(at - 6 * 86400000);
+  return { range: `${md(start)} – ${md(end)}`, meetDay: `${md(end)} (${"일월화수목금토"[end.getUTCDay()]})` };
+}
+export const meetMinutesText = (m) => (m >= 60 ? `${Math.floor(m / 60)}시간${m % 60 ? ` ${m % 60}분` : ""}` : `${m}분`);
+

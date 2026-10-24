@@ -6,6 +6,9 @@
 
 import { STATUS } from "./requests";
 
+// 방문 리포트 글 칸 이름 (lib/checkup.js VISIT_TEXT_KEYS)
+const VISIT_TEXT_LABEL = { ask: "보호자께 부탁드려요", toElder: "어르신께 남길 말", inner: "내부 메모", said: "어르신 말씀", seen: "컨시어지가 본 것", asked: "부탁하신 것", relay: "전해 달라신 말", care: "컨시어지가 챙길 것" };
+
 const won = (n) => (Number.isFinite(Number(n)) ? `${Number(n).toLocaleString("ko-KR")}원` : "");
 const clip = (s, n = 80) => {
   const v = String(s ?? "").replace(/\s+/g, " ").trim();
@@ -95,7 +98,11 @@ export function summarize(a) {
     case "startNextVisit":
       return `다음 방문 기록 시작 · 지난 리포트 보관${a.by ? ` · ${clip(a.by, 12)}` : ""}`;
     case "visitLoc":
-      return `방문 거주 형태 → ${a.loc === "hospital" ? "요양병원" : "자택"}`;
+      return `방문 리포트 방식 → ${a.loc === "hospital" ? "요양병원" : a.loc === "meet" ? "미팅" : "자택"}`;
+    case "visitText":
+      return `방문 리포트 글 · ${VISIT_TEXT_LABEL[a.key] || "기타"}`;
+    case "visitLevel":
+      return `미팅 리포트 상태 · ${{ talk: "만나서 나눈 이야기", life: "생활 반응", level: "종합" }[a.k] || "기타"} ${clip(a.v, 4)}`;
     case "escortSave":
       return `동행 기록 저장 · 사진 ${Number(p.photos) || 0}장${p.recorded ? " · 영상 있음" : ""}`;
     case "escortSend":

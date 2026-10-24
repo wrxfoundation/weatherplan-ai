@@ -57,7 +57,7 @@ const GU = { 대치동: "서울 강남구", 역삼동: "서울 강남구", 잠�
 export const elderRow = (name) => ROSTERS.elders.rows.find((r) => r[0] === name);
 export const addrOf = (name) => { const r = elderRow(name); return r ? `${GU[r[4]] || ""} ${r[4]}`.trim() : "—"; };
 
-// 요양병원 거주 어르신 — 21항목이 병실 7 로 바뀐다 (lib/checkup.js CHECKUP_HOSPITAL)
+// 요양병원 거주 어르신 — 리포트는 우선 자택과 같은 21항목을 쓴다 (2026-10-24 설계서 v3 · lib/checkup.js checkupFor)
 export const HOSPITAL = { 문순덕: "요양병원 3층 302호 (마포)" };
 export const locOf = (name) => (HOSPITAL[name] ? "hospital" : "home");
 
@@ -70,12 +70,13 @@ export const VISIT_STATE = {
 };
 export const visitPill = (v) => (v.status === "done" && v.followup ? "followup" : v.status);
 
-// 필수 점검항목 — 누락되면 방문 완료 불가 (거주형태별)
+// 필수 점검항목 — 누락되면 방문 완료 불가. 요양병원도 우선 자택과 같은 양식이라 같은 5개 (2026-10-24 설계서 v3),
+// 미팅 리포트는 점검표가 없어 필수도 없다. 요양병원 전용 양식을 만들면 hospital 목록을 다시 쓴다
 const REQUIRED = {
   home: ["혈압", "복약", "걸음 · 균형", "문턱 · 바닥", "가스 · 전기"],
   hospital: ["혈압 · 체온", "피부 · 욕창 상태", "복약 · 영양 상태", "병상 주변 안전", "외래 · 검진 일정"],
 };
-export const requiredFor = (loc) => REQUIRED[loc === "hospital" ? "hospital" : "home"];
+export const requiredFor = (loc) => (loc === "meet" ? [] : REQUIRED.home);
 export const itemKeys = (loc) => checkupFor(loc).flatMap((a) => a.items.map((i) => i.k));
 
 export const VISIT_STEPS = ["체크인", "21항목 점검", "고객 확인", "관리자 검토", "보호자 리포트"];
