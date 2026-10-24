@@ -2,7 +2,7 @@ import ModeLink from "../components/ModeLink";
 import Head from "next/head";
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Card, SectionLabel, Badge, Avatar } from "../components/ui";
+import { Card, SectionLabel, Badge } from "../components/ui";
 import Icon from "../components/icons";
 import VisitFlow from "../components/VisitFlow";
 import {
@@ -65,10 +65,11 @@ import { fmtWon } from "../lib/config";
 import { eventsFor, useAppState, visitLock } from "../lib/state";
 import { useToast } from "../components/ds";
 import { HomeTextCards, MeetForm, ModePicker, ReportPreview, SendRow } from "../components/ConciergeReport";
+import { ApptCard, BriefingCard, ClientHead, ClientList, HealthCard, PrefCard, clientSub } from "../components/ClientDetail";
 import { videoConsentOf } from "../lib/consent";
 import { useAuth } from "../lib/auth";
 import { healthOf, supplementSlotNote } from "../lib/meds";
-import { HealthEditor, HealthSummary } from "../components/HealthInfo";
+import { HealthEditor } from "../components/HealthInfo";
 import Splash from "../components/Splash";
 import { LIVE_ELDER, liveCustomer, telHref } from "../lib/ops-health";
 import { ringAlarm } from "../lib/alarm";
@@ -204,7 +205,6 @@ function ConciergePage() {
   const [voiceAnon, setVoiceAnon] = useState(true);
   const [voiceSent, setVoiceSent] = useState(false);
   const [eapBooked, setEapBooked] = useState(false); // 심리상담 예약 — 감사 로그에 남기지 않는다
-  const [prefAdded, setPrefAdded] = useState(false); // 선호 카드 — 오늘 기록 원샷
   const [detailDone, setDetailDone] = useState(false); // 오늘의 한 끗 완료
   // 리포트를 냈는지 — 가구 기록(visit.reportSent)에서 본다. 화면 안에서만 기억하면 새로고침 뒤 같은 리포트를 또 보낸다.
   const aiSent = !!state.visit.reportSent;
@@ -346,7 +346,6 @@ function ConciergePage() {
   const myClients = center
     ? [{ name: LIVE_ELDER, age: null, where: people().district, loc: "자택", note: "앱에 남은 기록만", proposed: 0, accepted: 0, referredBy: null }]
     : MY_CLIENTS;
-  const ClientRow = center ? "div" : Link;
   // 내가 주 담당이거나 짝(2인 1조)인 것 모두 — 짝으로 가는 일도 내 일정이다 (2026-10-19 점검)
   const reqJobs = (state.requests || [])
     .filter((r) => r.scheduledDate && (r.assignee === ME || r.partner === ME) && ["confirmed", "inProgress", "cancelRequested"].includes(r.status))
@@ -408,6 +407,20 @@ function ConciergePage() {
   // 받는 분 화면은 같은 이름으로 자기 청구를 찾는다 (lib/membership.js extraPayees · lib/people.js meAs)
   const payees = extraPayees(myElder);
   const wrapUp = today.rows.find((r) => r.state === "done" && r.client === myElder && !v.reportSent)?.client || null;
+  // 고객 탭 — 목록에서 누른 고객 (null 이면 목록 · 2026-10-24 설계서 v3 §2). 상세 기록이 있는 분은 이 가구 어르신 한 분이고,
+  // 나머지 예시 고객은 누르면 그렇다고만 알린다 (목업도 김순자 고객만 열린다)
+  const [clientOpen, setClientOpen] = useState(null);
+  const openClient = (c) => {
+    if (c.name !== myElder) return toast(`예시 고객 — ${myElder} 고객만 열려요`);
+    setHealthEdit(false);
+    setClientOpen(c);
+    window.scrollTo(0, 0);
+  };
+  // 다음 진료 예약 — 어르신 · 보호자 캘린더에 보이는 진료 일정 (병원동행 · 다음 진료 예정일 · 건강검진)
+  const clientAppts = eventsFor(state.events, "elder")
+    .filter((e) => ["hospital", "nextAppt", "checkup"].includes(e.kind) && e.at > Date.now())
+    .sort((a, b) => a.at - b.at)
+    .slice(0, 3);
   // 미팅 리포트 · 발행 전 미리보기 — 지금 가구 기록 그대로 (설계서 v3 §3-4 · 3-5).
   // 센서 · 워치 예시 값은 데모 화면에서만 — 테스트 가구 · 센터는 기기 기록이 아직 연결되지 않았다 (값을 지어 넣지 않는다)
   const demoSensors = !live && !center ? MEET_DEMO : null;
@@ -971,190 +984,95 @@ function ConciergePage() {
             )}
 
             {/* ════ 고객 — 방문 전 30초, 이 분이 누구신지 ════ */}
+            {/* ════ 고객 — 이름 목록 → 누르면 상세 (2026-10-24 컨시어지 화면설계서 v3 §2 · 목업 방식 확정) ════
+                첫 화면은 이름 · 나이 · 동네 · 방문 횟수 · 거주 칩만. 줄을 누르면 상세로 바뀌고 맨 위 '‹'로 목록에 돌아온다.
+                상세: 선호 카드(내부) · AI 동행 브리핑(내부) · 건강 정보(어르신 · 보호자) · 다음 진료 예약(어르신 · 보호자) */}
             {tab === "client" && (
               <>
-                {/* 담당 고객 리스트 — 이름을 누르면 케어 프로필로 (실무진 2026-08-12) */}
-                <Card className="p-4">
-                  <SectionLabel>내가 담당하는 고객</SectionLabel>
-                  <div className="mt-2.5 space-y-1.5">
-                    {myClients.map((c) => (
-                      <ClientRow
-                        key={c.name}
-                        {...(center ? {} : { href: "/care-profile" })}
-                        className="btn-press flex items-center gap-3 rounded-xl border border-navy/[.08] bg-white/70 px-3 py-2.5"
-                      >
-                        <Avatar name={c.name} size={34} />
-                        <span className="min-w-0 flex-1">
-                          <span className="block text-[14.5px] font-bold text-ink">
-                            {c.name} {c.age ? <span className="font-num text-[12px] text-muted">({c.age})</span> : null}
-                          </span>
-                          <span className="block text-[11.5px] text-muted">{c.where} · {c.note}</span>
-                          {/* 제안 수락 · 소개 관계 — 2026-08-21 시트 고객 1·2번.
-                              수락률이 낮으면 제안이 안 맞는다는 신호다 (실적 아님 · 원칙 1) */}
-                          <span className="mt-0.5 block text-[11px] leading-[1.5]">
-                            {c.proposed > 0 ? (
-                              <span className={c.accepted / c.proposed >= 0.5 ? "text-green" : "text-amber"}>
-                                제안 {c.proposed}건 중 {c.accepted}건 수락
-                              </span>
-                            ) : (
-                              <span className="text-muted">제안 이력 없음</span>
-                            )}
-                            {c.referredBy && (
-                              <span className="text-gold"> · {c.referredBy} 소개</span>
-                            )}
-                          </span>
-                        </span>
-                        <span className="shrink-0 rounded-full bg-navy/[.06] px-2 py-[3px] text-[10.5px] font-bold text-muted">
-                          {c.loc}
-                        </span>
-                        {!center && <span className="shrink-0 text-[17px] text-muted">›</span>}
-                      </ClientRow>
-                    ))}
-                  </div>
-                </Card>
-
-                {/* 첫 방문이면 — 홈 안전진단 (자택 전용 · 30항목 100점) */}
-                {careLoc === "home" && (
-                  <Link href="/safety-check" className="block">
-                    <Card className="btn-press border-gold/40 p-4" style={{ background: "linear-gradient(180deg,#FBF6EC,#F6EFDE)" }}>
-                      <div className="flex items-center gap-3">
-                        <span className="flex h-[38px] w-[38px] shrink-0 items-center justify-center rounded-[11px] bg-gold/15 text-gold">
-                          <Icon name="shield" size={20} />
-                        </span>
-                        <div className="min-w-0 flex-1">
-                          <div className="text-[15px] font-bold text-navy">첫 방문 홈 안전진단 — 30항목 · 100점</div>
-                          <div className="mt-0.5 text-[12px] leading-[1.6] text-muted">
-                            첫 방문 리포트에 실리고, 부족한 곳의 안전용품이 스토어 장바구니에
-                            자동으로 담깁니다
-                          </div>
+                {!clientOpen ? (
+                  <ClientList clients={myClients} onOpen={openClient} />
+                ) : (
+                  <>
+                    <ClientHead
+                      c={clientOpen}
+                      onBack={() => setClientOpen(null)}
+                      extra={
+                        <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 pl-[54px] text-[12px] leading-[1.5]">
+                          <span className="text-muted">{clientSub(clientOpen)}</span>
+                          {/* 제안 수락 · 소개 관계 — 2026-08-21 시트 고객 1·2번. 수락률이 낮으면 제안이 안 맞는다는 신호다 (실적 아님 · 원칙 1) */}
+                          {clientOpen.proposed > 0 && (
+                            <span className={clientOpen.accepted / clientOpen.proposed >= 0.5 ? "text-green" : "text-amber"}>
+                              제안 {clientOpen.proposed}건 중 {clientOpen.accepted}건 수락
+                            </span>
+                          )}
+                          {clientOpen.referredBy && <span className="text-gold">{clientOpen.referredBy} 소개</span>}
+                          {!center && (
+                            <Link href="/care-profile" className="ml-auto inline-flex min-h-[36px] items-center font-bold text-navy underline underline-offset-2">
+                              케어 프로필 ›
+                            </Link>
+                          )}
                         </div>
-                        <span className="text-[18px] text-muted">›</span>
-                      </div>
-                    </Card>
-                  </Link>
+                      }
+                    />
+                    <PrefCard
+                      prefs={center ? [] : ELDER_PREFS}
+                      notes={state.prefNotes || []}
+                      onAdd={(text) => {
+                        dispatch({ type: "prefNote", text, by: ME });
+                        push("어르신", `선호 카드 기록 — ${text}`, "#F0D9A8");
+                        toast("선호 카드에 남겼어요");
+                      }}
+                    />
+                    {/* AI 동행 브리핑 — 선호 카드와 같이 '방문 전 30초' (2026-08-12 대표 피드백).
+                        관제 센터 공간에는 아직 케어 프로필 · 관찰 기록이 없어 브리핑을 만들지 않는다 (2026-10-06 누수 점검).
+                        영양제 복용 시간대는 자료에 없어 가정값이다 — 미확정에 올려 첫 안심방문 때 약봉투로 확인한다 (lib/meds.js) */}
+                    <BriefingCard
+                      confirmed={AI_BRIEFING.confirmed}
+                      unconfirmed={[...AI_BRIEFING.unconfirmed, supplementSlotNote()].filter(Boolean)}
+                      empty={center ? "AI 동행 브리핑은 방문 리포트 · 관찰 기록이 쌓이면 만들어집니다." : null}
+                    />
+                    {/* 건강 정보 — 복용약 · 질환 · 알레르기 (2026-10-02 QA "복용약 등록·수정 버튼 없음").
+                        첫 안심방문 때 약봉투를 보고 여기서 고친다. 어르신 복약 미션 · 보호자 마이 · 관제 · SOS 신고 정보가 같은 값을 쓴다. */}
+                    <HealthCard
+                      health={healthOf(state)}
+                      editing={healthEdit}
+                      onEdit={() => setHealthEdit(true)}
+                      editor={
+                        <HealthEditor
+                          health={healthOf(state)}
+                          onCancel={() => setHealthEdit(false)}
+                          onSave={(payload) => {
+                            const by = live ? `${authUser?.name || ME} (컨시어지)` : "박지현 (컨시어지)";
+                            dispatch({ type: "setHealth", payload, by });
+                            push("건강", `건강 정보 수정 — 복용 ${payload.meds.length}번 · 질환 ${payload.conditions.length}가지 · ${by}`, "#8FA9CC");
+                            setHealthEdit(false);
+                          }}
+                        />
+                      }
+                    />
+                    <ApptCard appts={clientAppts} />
+                  {/* 첫 방문이면 — 홈 안전진단 (자택 전용 · 30항목 100점) */}
+                  {careLoc === "home" && (
+                    <Link href="/safety-check" className="block">
+                      <Card className="btn-press border-gold/40 p-4" style={{ background: "linear-gradient(180deg,#FBF6EC,#F6EFDE)" }}>
+                        <div className="flex items-center gap-3">
+                          <span className="flex h-[38px] w-[38px] shrink-0 items-center justify-center rounded-[11px] bg-gold/15 text-gold">
+                            <Icon name="shield" size={20} />
+                          </span>
+                          <div className="min-w-0 flex-1">
+                            <div className="text-[15px] font-bold text-navy">첫 방문 홈 안전진단 — 30항목 · 100점</div>
+                            <div className="mt-0.5 text-[12px] leading-[1.6] text-muted">
+                              첫 방문 리포트에 실리고, 부족한 곳의 안전용품이 스토어 장바구니에
+                              자동으로 담깁니다
+                            </div>
+                          </div>
+                          <span className="text-[18px] text-muted">›</span>
+                        </div>
+                      </Card>
+                    </Link>
+                  )}
+                  </>
                 )}
-
-
-                {/* 건강 정보 — 복용약 · 질환 · 알레르기 (2026-10-02 QA "복용약 등록·수정 버튼 없음").
-                    첫 안심방문 때 약봉투를 보고 여기서 고친다. 어르신 복약 미션 · 보호자 마이 · 관제 · SOS 신고 정보가 같은 값을 쓴다. */}
-                <Card className="p-[18px]">
-                  <div className="flex items-center justify-between gap-2">
-                    <span className="text-[17px] font-black text-navy">{LIVE_ELDER}님 건강 정보</span>
-                    {!healthEdit && (
-                      <button
-                        onClick={() => setHealthEdit(true)}
-                        className="btn-press min-h-[36px] rounded-lg border border-navy/15 px-3 text-[12.5px] font-bold text-navy"
-                      >
-                        복용약 · 질환 수정
-                      </button>
-                    )}
-                  </div>
-                  <div className="mt-2.5">
-                    {healthEdit ? (
-                      <HealthEditor
-                        health={healthOf(state)}
-                        onCancel={() => setHealthEdit(false)}
-                        onSave={(payload) => {
-                          const by = live ? `${authUser?.name || ME} (컨시어지)` : "박지현 (컨시어지)";
-                          dispatch({ type: "setHealth", payload, by });
-                          push("건강", `건강 정보 수정 — 복용 ${payload.meds.length}번 · 질환 ${payload.conditions.length}가지 · ${by}`, "#8FA9CC");
-                          setHealthEdit(false);
-                        }}
-                      />
-                    ) : (
-                      <HealthSummary health={healthOf(state)} compact />
-                    )}
-                  </div>
-                </Card>
-
-                {/* 선호 카드 + AI 동행 브리핑 — 방문 전 30초 (2026-08-12 대표 피드백으로 합침) */}
-                <Card className="p-[18px]">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[17px] font-black text-navy">{LIVE_ELDER}님 선호 카드</span>
-                    <Badge fg="#7A5C28" bg="rgba(176,141,87,.15)">
-                      방문 전 30초 확인
-                    </Badge>
-                  </div>
-                  <div className="mt-3 space-y-2">
-                    {center && !prefAdded && <p className="text-[13px] leading-[1.6] text-muted">아직 적힌 선호가 없습니다.</p>}
-                    {(center ? [] : ELDER_PREFS).map(([k, val]) => (
-                      <div key={k} className="flex gap-2.5 text-[13px]">
-                        <span className="w-[56px] shrink-0 font-bold text-gold">{k}</span>
-                        <span className="flex-1 leading-[1.6] text-ink">{val}</span>
-                      </div>
-                    ))}
-                    {prefAdded && (
-                      <div className="flex gap-2.5 text-[13px]">
-                        <span className="w-[56px] shrink-0 font-bold text-gold">오늘 기록</span>
-                        <span className="flex-1 leading-[1.6] text-ink">
-                          병원 로비 소음에 피로감 — 대기는 조용한 쪽 좌석으로
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                  {/* 정해진 예시 문장을 넣는 시연 단추 — 관제 센터 공간에는 두지 않는다 */}
-                  {!center && (
-                  <button
-                    onClick={() => {
-                      if (prefAdded) return;
-                      setPrefAdded(true);
-                      push("어르신", "선호 카드 기록 추가 — 대기석 소음 민감", "#F0D9A8");
-                    }}
-                    disabled={prefAdded}
-                    className="btn-press mt-3 w-full rounded-xl border border-navy/15 py-2.5 text-[13px] font-bold text-navy disabled:opacity-60"
-                  >
-                    {prefAdded ? "오늘 알게 된 선호 기록됨 ✓" : "+ 오늘 알게 된 선호 기록"}
-                  </button>
-                  )}
-                  <p className="mt-2 text-[11px] leading-[1.6] text-muted">
-                    선호 카드는 담당 페어와 관제만 봅니다 · 다음 동행 브리핑에 자동 반영됩니다.
-                  </p>
-                  {/* AI 동행 브리핑 — 선호 카드와 합쳤다 (2026-08-12 대표 피드백).
-                      둘 다 "방문 전에 30초 읽는 것"이라 화면을 나눌 이유가 없었다.
-                      관제 센터 공간에는 아직 케어 프로필 · 관찰 기록이 없어 브리핑을 만들지 않는다 (2026-10-06 누수 점검) */}
-                  {center ? (
-                    <p className="mt-4 border-t border-navy/[.08] pt-3.5 text-[12.5px] leading-[1.6] text-muted">
-                      AI 동행 브리핑은 방문 리포트 · 관찰 기록이 쌓이면 만들어집니다.
-                    </p>
-                  ) : (
-                  <div className="mt-4 border-t border-navy/[.08] pt-3.5">
-                  <div className="flex items-center gap-2">
-                    <span className="text-[16px] font-black text-navy">AI 동행 브리핑</span>
-                    <span className="chip-gold rounded-full px-2 py-[3px] text-[10px] font-bold">
-                      케어 프로필 기반
-                    </span>
-                  </div>
-                  <div className="mt-2.5 space-y-1.5">
-                    {AI_BRIEFING.confirmed.map((b) => (
-                      <div key={b} className="flex items-start gap-2 text-[13px] leading-[1.6] text-ink">
-                        <span className="mt-[2px] inline-flex h-[14px] w-[14px] shrink-0 items-center justify-center rounded-full bg-green/15 text-[10px] font-bold text-green">
-                          ✓
-                        </span>
-                        {b}
-                      </div>
-                    ))}
-                  </div>
-                  <div className="mt-2.5 rounded-xl border border-amber/30 bg-[#FFF7E8] p-3">
-                    <div className="text-[11px] font-bold tracking-[.08em] text-amber">
-                      미확정 — 확인된 정보가 아닙니다
-                    </div>
-                    {/* 영양제 복용 시간대는 자료에 없어 가정값이다 — 케어 프로필의 미확정
-                        항목과 같은 자리에 올려, 첫 안심방문 때 약봉투를 보고 확인하게 한다
-                        (2026-09-10 · lib/meds.js). 확인되면 자동으로 빠진다. */}
-                    {[...AI_BRIEFING.unconfirmed, supplementSlotNote()].filter(Boolean).map((u) => (
-                      <p key={u} className="mt-1 text-[13px] leading-[1.6] text-[#5A4A22]">
-                        {u}
-                      </p>
-                    ))}
-                  </div>
-                  <p className="mt-2.5 text-[11px] leading-[1.6] text-muted">
-                    관찰·발언 기록에서 AI가 추렸습니다 — 진단·판단 없음. 새 관찰은 리포트로
-                    쌓이고 다음 브리핑에 반영됩니다.
-                  </p>
-                  </div>
-                  )}
-                </Card>
-
               </>
             )}
 

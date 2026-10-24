@@ -39,7 +39,7 @@ const KIND_OF_TYPE = {
   visitCheck: "visit", visitLoc: "visit", visitNote: "visit", visitGrade: "visit", visitText: "visit", visitLevel: "visit", visitPhoto: "visit", visitOps: "visit", visitViewed: "visit",
   escortSave: "visit", escortSend: "visit", escortViewed: "visit",
   addOpsNote: "edit", editOpsNote: "edit", removeOpsNote: "edit",
-  guardianPatch: "edit", setHealth: "edit", welfareStatus: "edit", addMyHospital: "edit", editMyHospital: "edit", removeMyHospital: "edit", setPriority: "edit", addReport: "edit", reset: "edit",
+  guardianPatch: "edit", setHealth: "edit", prefNote: "edit", welfareStatus: "edit", addMyHospital: "edit", editMyHospital: "edit", removeMyHospital: "edit", setPriority: "edit", addReport: "edit", reset: "edit",
   pushEvent: "ticker",
 };
 const kstDate = (t) => new Date(t + 9 * 3600 * 1000).toISOString().slice(0, 10);

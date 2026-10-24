@@ -146,6 +146,9 @@ const DEFAULT = {
   // 건강 정보 한 벌 — 복용약 · 질환 · 알레르기 (2026-10-02 QA). null 이면 lib/meds.js 기본값.
   // 관제(어르신 관리 › 건강·질환)와 컨시어지(고객 탭)가 고치고, 어르신 · 보호자 · 관제 · SOS 신고 정보가 읽는다 (healthOf).
   health: null,
+  // 선호 카드 — 컨시어지가 '오늘 알게 된 선호'로 남긴 것 [{ text, at, by }] (2026-10-24 설계서 v3 §2).
+  // 관제 · 컨시어지만 보는 칸이다 — 어르신 · 보호자 앱에는 나가지 않는다
+  prefNotes: [],
 };
 
 // 테스트 가구의 첫 상태 — 구성(방문 흐름 · 복약 계획 · 우선 날씨)은 두고 기록(일정 · 요청 · 주문 · 결제 ·
@@ -348,6 +351,7 @@ function reducer(state, action) {
         extraCharges: arr(p.extraCharges, state.extraCharges).filter((x) => x && typeof x === "object" && x.id),
         pendingOrder: p.pendingOrder ?? state.pendingOrder,
         health: obj(p.health, state.health),
+        prefNotes: arr(p.prefNotes, state.prefNotes).filter((x) => x && typeof x === "object" && typeof x.text === "string"),
       };
     }
     case "completeOnboarding":
@@ -1076,6 +1080,12 @@ function reducer(state, action) {
       return { ...state, visitPlan: advance(v, action.to, action.note, action.actor, nowOf(action)) };
     }
     // 건강 정보 저장 — 관제 · 컨시어지 화면의 '복용약 · 질환 수정'. 모양을 여기서 한 번 더 거른다 (여러 폰이 쓰는 값).
+    // 선호 카드 — 오늘 알게 된 선호 한 줄 (컨시어지 고객 상세 · 2026-10-24 설계서 v3 §2). 새 것이 위로, 20줄까지
+    case "prefNote": {
+      const text = String(action.text || "").replace(/\s+/g, " ").trim().slice(0, 120);
+      if (!text) return state;
+      return { ...state, prefNotes: [{ text, at: nowOf(action), by: String(action.by || "").slice(0, 30) }, ...(state.prefNotes || [])].slice(0, 20) };
+    }
     case "setHealth": {
       const pl = action.payload || {};
       const list = (v) => (Array.isArray(v) ? v.map((x) => String(x || "").trim().slice(0, 40)).filter(Boolean).slice(0, 20) : []);

@@ -270,30 +270,31 @@ export const VIDEO_MODES = [
 // 주 담당 셋(김순자 · 오태식 · 안병철)은 관제 어르신 명부(lib/rosters.js)와 같다. 나머지는
 // 명부 20명 밖의 고객이다 (명부는 상세 프로필 보유분만 싣는다 · 전체 200명).
 // 고객 탭 목록 · 마음사서함 소통 대상이 이 배열 하나를 본다.
+// round — 이번이 몇 번째 방문인지 · first — 첫 방문 날 (컨시어지 고객 목록 '동네 · n번째' / '첫 방문 10/27' · 2026-10-24 설계서 v3 §2)
 export const MY_CLIENTS = [
-  { name: "김순자", age: 78, where: "대치동", loc: "자택", note: `최근 방문 ${relMd(-27)} · 12번째`,
+  { name: "김순자", age: 78, where: "대치동", loc: "자택", note: `최근 방문 ${relMd(-27)} · 12번째`, round: 12,
     proposed: 6, accepted: 5, referredBy: null, role: "주" },
-  { name: "오태식", age: 77, where: "역삼동", loc: "자택", note: `최근 방문 ${relMd(-19)} · 5번째`,
+  { name: "오태식", age: 77, where: "역삼동", loc: "자택", note: `최근 방문 ${relMd(-19)} · 5번째`, round: 5,
     proposed: 4, accepted: 1, referredBy: null, role: "주" },
-  { name: "안병철", age: 85, where: "대치동", loc: "자택", note: `최근 방문 ${relMd(-6)} · 8번째`,
+  { name: "안병철", age: 85, where: "대치동", loc: "자택", note: `최근 방문 ${relMd(-6)} · 8번째`, round: 8,
     proposed: 2, accepted: 2, referredBy: null, role: "주" },
-  { name: "정말순", age: 84, where: "청담동", loc: "요양병원", note: `면회 ${relMd(-10)} · 3번째`,
+  { name: "정말순", age: 84, where: "청담동", loc: "요양병원", note: `면회 ${relMd(-10)} · 3번째`, round: 3,
     proposed: 3, accepted: 2, referredBy: "김순자 (같은 성당)", role: "주" },
-  { name: "박영자", age: 81, where: "삼성동", loc: "자택", note: `첫 방문 예정 ${relMd(2)}`,
+  { name: "박영자", age: 81, where: "삼성동", loc: "자택", note: `첫 방문 예정 ${relMd(2)}`, first: relMd(2),
     proposed: 0, accepted: 0, referredBy: "김순자 (이웃)", role: "주" },
-  { name: "윤정례", age: 80, where: "도곡동", loc: "자택", note: `최근 방문 ${relMd(-4)} · 4번째`,
+  { name: "윤정례", age: 80, where: "도곡동", loc: "자택", note: `최근 방문 ${relMd(-4)} · 4번째`, round: 4,
     proposed: 2, accepted: 1, referredBy: null, role: "부" },
-  { name: "배기태", age: 79, where: "삼성동", loc: "자택", note: `최근 방문 ${relMd(-18)} · 6번째`,
+  { name: "배기태", age: 79, where: "삼성동", loc: "자택", note: `최근 방문 ${relMd(-18)} · 6번째`, round: 6,
     proposed: 3, accepted: 3, referredBy: null, role: "부" },
-  { name: "손말자", age: 86, where: "청담동", loc: "자택", note: `최근 방문 ${relMd(-11)} · 9번째`,
+  { name: "손말자", age: 86, where: "청담동", loc: "자택", note: `최근 방문 ${relMd(-11)} · 9번째`, round: 9,
     proposed: 5, accepted: 3, referredBy: null, role: "부" },
-  { name: "전옥희", age: 82, where: "역삼동", loc: "자택", note: `최근 방문 ${relMd(-7)} · 2번째`,
+  { name: "전옥희", age: 82, where: "역삼동", loc: "자택", note: `최근 방문 ${relMd(-7)} · 2번째`, round: 2,
     proposed: 1, accepted: 0, referredBy: "오태식 (경로당)", role: "부" },
-  { name: "한동식", age: 83, where: "대치동", loc: "자택", note: `최근 방문 ${relMd(-14)} · 7번째`,
+  { name: "한동식", age: 83, where: "대치동", loc: "자택", note: `최근 방문 ${relMd(-14)} · 7번째`, round: 7,
     proposed: 2, accepted: 2, referredBy: null, role: "부" },
-  { name: "김복남", age: 88, where: "개포동", loc: "요양병원", note: `면회 ${relMd(-3)} · 5번째`,
+  { name: "김복남", age: 88, where: "개포동", loc: "요양병원", note: `면회 ${relMd(-3)} · 5번째`, round: 5,
     proposed: 1, accepted: 1, referredBy: null, role: "부" },
-  { name: "이순례", age: 76, where: "도곡동", loc: "자택", note: `최근 방문 ${relMd(-2)} · 1번째`,
+  { name: "이순례", age: 76, where: "도곡동", loc: "자택", note: `최근 방문 ${relMd(-2)} · 1번째`, round: 1,
     proposed: 0, accepted: 0, referredBy: null, role: "부" },
 ];
 
