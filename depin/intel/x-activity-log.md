@@ -4366,3 +4366,22 @@ Our team will be there, though: our CEO, Changmin Lee, and our CPO and CMO. I ho
 I'm counting on you over there in the US 😄 And someday, I hope you'll invite me over to your place!
 ```
 「미국 시장은 너에게 맡긴다」 직역(「the US market is in your hands」) 대신 「counting on you over there」 — James 는 추천 코드를 가진 고객이라 직역은 미국 판매권 · 지역 위임으로 읽힐 수 있다.
+
+## DM — James Rule 「What is this」 · 「No excuses」 — 간편 지갑 사고 공지 캡처 (2026-10-24, 서우 캡처 + 「간편지갑 탈취 · 조치 중 · 보상 · 보안 최상향 · CertiK · 팀원으로서 사과」)
+
+사이트 공지(캡처 기준): 간편 지갑 로그인 · 언락 · 보상 적립 · 클레임 · NFT 발급 · 결제 일시 중지 · 운영 지갑 안전 · 외부 지갑(Xaman · D'CENT 등) 영향 없음 · 시드 · 비밀번호 · 인증 코드 요구 안 함 · 피해 확인 · 다음 단계 재안내. James 는 같은 스레드에 WLBN Explorer 화면(가격)도 보냄 — 가격은 답하지 않는다.
+답(영문 701자):
+```
+James, you're right. No excuses.
+
+There was a theft affecting simple wallets, the built-in wallets on our site. External wallets like Xaman and D'CENT were not affected, and the company's operating wallets are safe.
+
+We paused simple-wallet sign-in, rewards and claims to protect members' assets, and the team is on it now. Affected members will be compensated. We're also using this to raise our security to the highest level, including building out our security with CertiK.
+
+If you use a simple wallet, please don't send anything to it for now, and never share your seed or codes with anyone, even someone who says they're from wellbian.
+
+As part of the team, I'm truly sorry. I'll keep you posted.
+```
+- 「Affected members will be compensated」 = 서우 지시(보상 확정). 공식 결정 전이면 → `We'll contact affected members directly about damage checks and next steps.`(공지 문구와 같음).
+- CertiK: 감사 범위는 정산 스마트 컨트랙트(10/19 보고서) — 간편 지갑은 범위 밖. 「CertiK 파트너 · 인증 · 검증 완료 · 안전」 금지(`content/certik-emblem-review-1020.md`). 지갑 쪽으로 CertiK 작업이 정해지지 않았다면 → `including outside security review.`
+- 원인 · 피해 규모 · 금액 추측 0. 사고 뒤 사칭 피싱이 따라오므로 「wellbian 이라며 시드 · 코드 묻는 사람」 경고를 넣었다.
