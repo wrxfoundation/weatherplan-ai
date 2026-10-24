@@ -4385,3 +4385,15 @@ As part of the team, I'm truly sorry. I'll keep you posted.
 - 「Affected members will be compensated」 = 서우 지시(보상 확정). 공식 결정 전이면 → `We'll contact affected members directly about damage checks and next steps.`(공지 문구와 같음).
 - CertiK: 감사 범위는 정산 스마트 컨트랙트(10/19 보고서) — 간편 지갑은 범위 밖. 「CertiK 파트너 · 인증 · 검증 완료 · 안전」 금지(`content/certik-emblem-review-1020.md`). 지갑 쪽으로 CertiK 작업이 정해지지 않았다면 → `including outside security review.`
 - 원인 · 피해 규모 · 금액 추측 0. 사고 뒤 사칭 피싱이 따라오므로 「wellbian 이라며 시드 · 코드 묻는 사람」 경고를 넣었다.
+- **10/24 수정 — 서우 「이메일로 이미 공지 보냄」** → 메일을 가리키고 요약만 남긴 판(영문 576자). 보상 · CertiK 문장은 **메일에 쓴 표현을 넘지 않게** 맞춘다.
+```
+James, you're right. No excuses.
+
+We've already emailed all members with the details. In short: there was a theft affecting simple wallets, the built-in wallets on our site. External wallets like Xaman and D'CENT were not affected, and the company's operating wallets are safe.
+
+Affected members will be compensated, and we're raising our security to the highest level, including building out our security with CertiK.
+
+Please never share your seed or codes with anyone, even someone who says they're from wellbian.
+
+As part of the team, I'm truly sorry. I'll keep you posted.
+```
