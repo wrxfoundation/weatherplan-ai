@@ -1,14 +1,14 @@
-# Korea Rising — verified K-pop snapshot (2026-10-23)
+# Korea Rising — verified K-pop snapshot (2026-10-24)
 
 Every line is **cross-verified** (≥2 independent sources agree on the canonical name) and carries its source + Skill Score. Full data + Schema.org JSON-LD: <https://aiagentlabs.co.kr/> · via KoreaAPI (MCP).
 
 ## 🎬 Latest official releases (YouTube)
+- **BoA** — You still our No.1 BoA
+- **QWER** — DO YOU WORK HERE?🤔
+- **Xdinary Heroes** — POV: I'm obsessed with Youthhh?!🎧
+- **NCT Dream** — NCT DREAM ‘The Sun’ MV Behind the Scenes
 - **AKMU** — 2026 AKMU CONCERT TOUR [소문의 낙원 (Paradise of Rumors)] HIGHLIGHT
-- **Oh My Girl** — 다음 공연에서 만나면 좋아한다 말해줘 💖
-- **P1Harmony** — time to BLOW UP 🕶️
-- **ONEUS** — 숀이가 말아주는 만두🥟🎶🎵 #ONEUS #XION #원어스 #시온
-- **IVE** — 꿍싯꿍싯 #IVE #아이브 #LooksCanKill #룩스캔킬 #Shorts
-- **Girls' Generation** — 2027 Girls' Generation SEASON’S GREETINGS BEHIND
+- **BOYNEXTDOOR** — LISTEN LISTEN 🎧 #BOYNEXTDOOR #보이넥스트도어 #BND
 
 ## 🎤 Verified roster (640 acts)
 - **2NE1**: I Am the Best
@@ -130,7 +130,7 @@ Every line is **cross-verified** (≥2 independent sources agree on the canonica
 - **South Chungcheong**: Taeanhaean National Park
 - **South Gyeongsang**: Gayasan National Park, Geoje
 - **South Jeolla**: Dadohaehaesang National Park, Hallyeohaesang National Park, Jirisan National Park
-- **Starship Entertainment**: Cravity, Hyolyn, Ive, K.Will, Kim Da-som, Monsta X, SISTAR, Soyou, WJSN, Yoo Seung-woo, Yoon Bo-ra
+- **Starship Entertainment**: Cravity, Hyolyn, Ive, K.Will, Kim Da-som, Monsta X, Sistar, Soyou, WJSN, Yoo Seung-woo, Yoon Bo-ra
 - **Super Junior**: Sorry, Sorry
 - **Suseong District**: Daegu Samsung Lions Park
 - **Suwon**: Hwaseong Fortress
