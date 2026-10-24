@@ -29,6 +29,7 @@ import { ConfirmSteps, DurationStepper, PeoplePick } from "../components/Booking
 import { ExtraChargeCard, ExtraChargeSheet, myExtraCharges } from "../components/ExtraCharge";
 import ElderMy from "../components/ElderMy";
 import { assigneeNow, avatarText, elderNameOf, givenName, inCenter, voiceTargetsCenter } from "../lib/people";
+import { sentReportState, visitReportOf } from "../lib/live-household";
 import { MED_STREAK, SUPPLEMENTS, daysLeft, healthOf, medProgress, medTakenToday, needsReorder, slotHour, slotStates } from "../lib/meds";
 import { medStreakWeek } from "../lib/demo-health";
 import { VERDICT, matchWelfare, profileFor, welfareCounts } from "../lib/welfare";
@@ -314,6 +315,10 @@ function ElderHome() {
   const payNow = (r) => router.push(payHref({ kind: "request", amount: r.amount, orderName: reqTitle(r), ref: r.id, back: "/elder" }));
   // 추가 이용 금액 (2026-10-22) — 선생님이 어르신께 보낸 결제 요청만 (받는 분에게만 보인다)
   const myExtras = myExtraCharges(state.extraCharges, "elder");
+  // 선생님이 남긴 말 — 관제가 검수해 보호자에게 보낸 방문 리포트의 '어르신께 남길 말'(미팅 리포트는 '부탁하신 것')
+  // (2026-10-24 컨시어지 화면설계서 v3 §3-5). 보내기 전에는 나오지 않고, 다음 리포트가 가면 그것으로 바뀐다
+  const sentReport = useMemo(() => visitReportOf(sentReportState(state)), [state]);
+  const teacherNote = sentReport.sent ? String((sentReport.mode === "meet" ? sentReport.meet?.asked : sentReport.toElder) || "").trim() : "";
   const xSel = (state.extraCharges || []).find((x) => x.id === xOpen) || null;
   const payExtra = (x) => router.push(payHref({ kind: "extra", amount: x.amount, orderName: `추가 이용 금액 · ${svcTitle(x.service)}`, ref: x.id, back: "/elder" }));
   const askFamilyPay = (r) => {
@@ -1271,6 +1276,14 @@ function ElderHome() {
                 <ExtraChargeCard x={x} big onOpen={setXOpen} />
               </R>
             ))}
+            {teacherNote && (
+              <R d={100} className="flex flex-col gap-1 rounded-[24px] px-5 py-4" style={{ background: TONE.green.bg }}>
+                <span className="text-[16px] font-extrabold" style={{ color: "#2A4D33" }}>
+                  {givenName(sentReport.concierge.pri)} 선생님이 남겼어요
+                </span>
+                <span className="text-[20px] font-bold leading-[1.45]">{teacherNote}</span>
+              </R>
+            )}
             {/* 네 칸 — 남는 세로 공간을 모두 가져간다 (2026-08-28 "위아래로 꽉") */}
             <div className="ds-g2 mt-1.5 flex-1" style={{ minHeight: 380, gridAutoRows: "1fr" }}>
               {HOME_TILES.map((t, i) => (

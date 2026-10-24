@@ -8,6 +8,9 @@ import { ALL_ITEMS, RESULT_TONE, STATE_ORDER, VISIT_GRADES, VISIT_REPORT, countS
 import { useAppState } from "../../lib/state";
 import { useAuth } from "../../lib/auth";
 import { LIVE_TAG, STAGE_LABEL, sentEscortOf, sentReportState, visitReportOf } from "../../lib/live-household";
+import { AskList, MeetGuardianBody } from "../../components/ReportParts";
+import { meetPeriod } from "../../lib/visit-report";
+import { MEET_PLACE } from "../../lib/checkup";
 import { LIVE_ELDER } from "../../lib/ops-health";
 import {
   AI_REPORT,
@@ -498,18 +501,49 @@ function LiveVisitReport() {
             컨시어지가 방문을 마치면 관제가 기록을 검수한 뒤 보내 드립니다.
             <br />
             지금 단계: <b className="text-ink">{STAGE_LABEL[r.stage]}</b>
-            {r.stage === "active" ? ` · 점검 ${r.done}/${r.total}` : ""}
+            {r.stage === "active" && r.total ? ` · 점검 ${r.done}/${r.total}` : ""}
           </p>
         </div>
       </DocShell>
     );
+  // 미팅 리포트 (2026-10-24 컨시어지 화면설계서 v3 §3-4) — 21가지 대신 대화 · 생활 반응 · 몸 신호. 내부 메모는 싣지 않는다
+  if (r.mode === "meet") {
+    const p = meetPeriod(r.visitedTs, r.reportTs);
+    const m = r.meet || {};
+    return (
+      <DocShell
+        title="미팅 리포트"
+        period={`${p.long} · ${LIVE_TAG}`}
+        {...back}
+        docType="visit-live"
+        live={{ stamp: `${ymdDot(r.sentTs)} 발송 · 실제 만남 기록`, canon: JSON.stringify({ type: "visit-live", mode: "meet", visitedTs: r.visitedTs, sentTs: r.sentTs, memo: r.memo, ask: r.ask, meet: { ...m, sensors: null } }) }}
+      >
+        <div className="avoid-break mt-3 flex flex-col gap-1 rounded-[14px] px-5 py-4 text-white" style={{ background: NAVY }}>
+          <div className="text-[10px] font-bold tracking-[.08em] text-white/60">케이케어 미팅 리포트 · {LIVE_TAG} · 실제 만남 기록</div>
+          <div className="flex items-baseline gap-2">
+            <span className="text-[24px] font-black">{r.client}</span>
+            <span className="text-[12px] text-white/75">어르신</span>
+            <span className="ml-auto rounded-full bg-white px-2.5 py-0.5 text-[11px] font-bold" style={{ color: NAVY }}>
+              종합 · {m.level}
+            </span>
+          </div>
+          <div className="text-[10.5px] leading-[1.7] text-white/70">
+            {p.range} · 만남 {p.meetDay} · {MEET_PLACE} · 담당 컨시어지 {r.concierge.pri} · 관제 검수 {r.reviewedAt || "—"} · 발송 {r.sentAt}
+          </div>
+        </div>
+        <div className="mt-3">
+          <MeetGuardianBody r={r} period={p} lead={false} />
+        </div>
+      </DocShell>
+    );
+  }
   return (
     <DocShell
       title="안심방문 리포트"
       period={`${ymdDot(r.visitedTs)} 방문 · ${LIVE_TAG}`}
       {...back}
       docType="visit-live"
-      live={{ stamp: `${ymdDot(r.sentTs)} 발송 · 실제 방문 기록`, canon: JSON.stringify({ type: "visit-live", visitedTs: r.visitedTs, sentTs: r.sentTs, axes: r.axes, memo: r.memo, photos: r.photos }) }}
+      live={{ stamp: `${ymdDot(r.sentTs)} 발송 · 실제 방문 기록`, canon: JSON.stringify({ type: "visit-live", visitedTs: r.visitedTs, sentTs: r.sentTs, axes: r.axes, memo: r.memo, photos: r.photos, ...(r.ask ? { ask: r.ask } : {}) }) }}
     >
       <div className="avoid-break mt-3 flex flex-col gap-3 rounded-[14px] px-5 py-4 sm:flex-row sm:items-start sm:gap-4" style={{ background: NAVY }}>
         <div className="min-w-0 flex-1 text-white">
@@ -592,6 +626,11 @@ function LiveVisitReport() {
         ))}
       </div>
 
+      {r.ask && (
+        <div className="avoid-break mt-3">
+          <AskList text={r.ask} dark />
+        </div>
+      )}
 
       <p className="mt-2 text-[9.5px] leading-[1.6] text-muted">
         컨시어지 방문 기록 → 관제 검수 → 보호자 발송 · 관찰 기록이며 진단 · 판단이 아닙니다

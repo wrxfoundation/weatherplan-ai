@@ -212,6 +212,8 @@ export function liveVisit(base, state) {
     // 리포트 글 칸 · 미팅 상태 — 관제 검수 화면이 내부 메모까지 본다 (보호자 리포트에는 내부 메모가 빠진다)
     text: v.text || {},
     levels: v.levels || {},
+    // 관제에 올라가는 이름 — '박지현 · 김순자 안심방문 리포트' / '미팅 리포트' (설계서 v3 §3-6)
+    kind: isMeet(loc) ? "미팅 리포트" : "안심방문 리포트",
     itemNotes: notes,
     changes: [],
     request: null,
@@ -239,7 +241,7 @@ export function liveVisit(base, state) {
             ? "보호자 리포트 발송됨"
             : ops.review === "검수 완료"
               ? "검수 완료 · 발송 전"
-              : "리포트 도착 · 관제 검수",
+              : `${isMeet(loc) ? "미팅 리포트" : "리포트"} 도착 · 관제 검수`,
   };
 }
 
@@ -296,6 +298,8 @@ export function visitReportOf(state, { demo = false } = {}) {
     sent,
     client: LIVE_ELDER,
     visitedTs: gps?.at || state?.visitPlan?.gpsAt || (state?.reports || [])[0]?.at || null,
+    // 리포트를 낸 시각 — 미팅 리포트 기간(지난 7일)의 끝 (lib/visit-report.js meetPeriod)
+    reportTs: (state?.reports || [])[0]?.at || null,
     // 실제로 앱을 쓰는 컨시어지는 박지현(테스트 컨시어지 계정) 한 사람 — 명부의 부 동행(예시)을 다녀간 사람처럼 적지 않는다
     concierge: { pri: LIVE_CONCIERGE, sub: null },
     axes,

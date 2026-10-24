@@ -49,20 +49,22 @@ import {
   WrapUp,
   useToday,
 } from "../components/ConciergeToday";
-import { checkupFor, REPORT_HEADLINE } from "../lib/checkup";
+import { checkupFor, headlineFor, isMeet, visitText } from "../lib/checkup";
 import { requiredFor } from "../lib/ops-mgmt";
-import { RESULT_TONE, VISIT_GRADES } from "../lib/visit-report";
+import { MEET_DEMO, RESULT_TONE, VISIT_GRADES, meetPeriod } from "../lib/visit-report";
 import { STORE_CATALOG } from "../lib/store";
 import { SERVICE_MENU, crewOf, daysUntil, kstYmd } from "../lib/requests";
 import { CONCIERGES } from "../lib/ops-admin";
 import ConciergeRequests, { ExtraPaidNotice, NewRequestAlert, newRequestsFor } from "../components/ConciergeRequests";
 import { svcTitle } from "../lib/booking";
 import { HelpCallCard, HelpCallPopup } from "../components/HelpCall";
-import { LIVE_TAG } from "../lib/live-household";
+import { LIVE_TAG, visitReportOf } from "../lib/live-household";
 import { conciergeChoices, elderNameOf, inCenter, meAs, people } from "../lib/people";
 import { eventOwner } from "../lib/event-rights";
 import { fmtWon } from "../lib/config";
-import { useAppState, visitLock } from "../lib/state";
+import { eventsFor, useAppState, visitLock } from "../lib/state";
+import { useToast } from "../components/ds";
+import { HomeTextCards, MeetForm, ModePicker, ReportPreview, SendRow } from "../components/ConciergeReport";
 import { videoConsentOf } from "../lib/consent";
 import { useAuth } from "../lib/auth";
 import { healthOf, supplementSlotNote } from "../lib/meds";
@@ -231,8 +233,12 @@ function ConciergePage() {
   const hasSummary = !!(escort.savedAt ? escort.note : live ? state.visit.memo : "예시 초안")?.trim?.();
   // 동행만 한 날 — 방문 점검을 하나도 하지 않고 동행 기록만 저장했으면 동행 기록만 제출한다. 관제가 '동행 리포트 발송'으로
   // 따로 보낸다(방문 리포트 검수 승인은 잠긴 채). 점검을 시작한 방문은 필수를 다 채워야 한다
-  const escortOnly = doneNamesHere.size === 0 && escortSaved && !!escort.note?.trim();
-  const canSubmitReport = escortOnly || (missingRequired.length === 0 && hasSummary);
+  // 미팅 리포트(2026-10-24 설계서 v3 §3-4)는 점검표 · 필수가 없어 '동행만 한 날'로 읽지 않는다
+  const meetMode = isMeet(careLoc);
+  const escortOnly = !meetMode && doneNamesHere.size === 0 && escortSaved && !!escort.note?.trim();
+  // 미팅 리포트 — 테스트 가구는 총평이 있어야 낸다 (보호자 리포트 맨 위 글 · 위 C-01과 같은 기준). 데모는 목업처럼 바로 낼 수 있다
+  const meetReady = !live || !!state.visit.memo?.trim();
+  const canSubmitReport = meetMode ? meetReady : escortOnly || (missingRequired.length === 0 && hasSummary);
   const [openItem, setOpenItem] = useState(null); // 항목별 내용 입력 열림
   const [itemDraft, setItemDraft] = useState({}); // 쓰는 중인 항목 메모
   const itemNote = { ...(state.visit.notes || {}), ...itemDraft };
@@ -278,8 +284,20 @@ function ConciergePage() {
     flushDrafts();
   }, [tab, flushDrafts]);
   const photos = Array.from({ length: state.visit.photos || 0 }, (_, i) => `현장사진_${i + 1}.jpg`); // 현장 사진 (데모 — 장수만)
-  const [preview, setPreview] = useState(false); // 증빙 보고서 발행 전 미리보기
+  const [preview, setPreview] = useState(false); // 발행 전 미리보기 시트 — 보호자 리포트 · 어르신 앱 · 관제 (설계서 v3 §3-5)
   const v = state.visit;
+  const [toastEl, toast] = useToast();
+  // 관제가 보호자에게 보내는 순간 이 화면을 보고 있었으면 알린다 — 제출 줄이 '가족에게 발송됨'으로 바뀌며 한 번 반짝인다 (설계서 v3 §3-6)
+  const sentNow = v.ops?.sentAt || null;
+  const sentSeen = useRef(sentNow);
+  const [sentGlow, setSentGlow] = useState(false);
+  useEffect(() => {
+    if (sentNow && !sentSeen.current) {
+      toast("관제 검수 완료 · 보호자 앱에 발송");
+      setSentGlow(true);
+    }
+    sentSeen.current = sentNow;
+  }, [sentNow, toast]);
   // 데모 기본 동의 — 가입 상담(joinedAt)을 마친 가구만 그 답을 쓴다 (결제권한만 먼저 저장한 반쪽 onboarding 은 가입이 아니다)
   // 보호자가 정보 동의에서 철회하면 바로 '미동의 · 촬영 불가' (lib/consent.js — 철회 · 가입 상담 값 · 기본 순)
   const videoConsent = videoConsentOf(state);
@@ -390,6 +408,33 @@ function ConciergePage() {
   // 받는 분 화면은 같은 이름으로 자기 청구를 찾는다 (lib/membership.js extraPayees · lib/people.js meAs)
   const payees = extraPayees(myElder);
   const wrapUp = today.rows.find((r) => r.state === "done" && r.client === myElder && !v.reportSent)?.client || null;
+  // 미팅 리포트 · 발행 전 미리보기 — 지금 가구 기록 그대로 (설계서 v3 §3-4 · 3-5).
+  // 센서 · 워치 예시 값은 데모 화면에서만 — 테스트 가구 · 센터는 기기 기록이 아직 연결되지 않았다 (값을 지어 넣지 않는다)
+  const demoSensors = !live && !center ? MEET_DEMO : null;
+  const gpsAt = (v.audit || []).find((e) => e.kind === "gps")?.at || Number(state.visitPlan?.gpsAt) || null;
+  const meetSpan = meetPeriod(gpsAt, (state.reports || [])[0]?.at);
+  const reportView = preview ? visitReportOf(state, { demo: !!demoSensors }) : null;
+  const nextVisitAt = preview
+    ? eventsFor(state.events, "elder")
+        .filter((e) => e.kind === "visit" && e.at > Date.now())
+        .sort((a, b) => a.at - b.at)[0]?.at || null
+    : null;
+  const reportKind = meetMode ? "미팅 리포트" : "안심방문 리포트";
+  const sendStage = v.ops?.sentAt ? "sent" : aiSent ? "submitted" : "open";
+  const submitReport = () => {
+    if (aiSent || !canSubmitReport) return;
+    // 테스트 가구에서는 컨시어지가 실제로 적은 것(동행 기록 → 총평)만 싣는다 — 예시 초안을 실제 기록처럼 보내지 않는다.
+    // 미팅 리포트는 총평이 그 리포트의 글이다
+    const note = meetMode ? v.memo || "" : escortSaved ? escort.note : live ? v.memo || "" : AI_REPORT.draft;
+    dispatch({
+      type: "addReport",
+      payload: { id: `rp-${Date.now()}`, by: ME, kind: reportKind, flagged: 0, note, secretNote: visitText(v, "inner"), shared: true, closesVisit: true },
+    });
+    // 가족에게 가는 것은 관제가 검수하고 '보호자 리포트 발송'을 누를 때다 — 동행 기록도 그때 같이 간다.
+    // 전에는 이 버튼을 누르자마자 '가족에게 전달됨'이라고 했지만 실제로는 관제 검수 대기였다 (2026-10-02 QA)
+    push("리포트", `${ME} · ${elderNameOf(state.onboarding)} ${reportKind}${escortSaved ? " · 동행 기록" : ""} 제출 — 관제 검수 대기`, "#8FA9CC");
+    toast("제출했어요 · 관제 검수를 기다려요");
+  };
 
   // ── 마음사서함 (2026-09-22 명세) ──
   // 어르신이 앱에서 보낸 목소리(→ 컨시어지)를 받은 음성메시지에 붙인다
@@ -442,6 +487,7 @@ function ConciergePage() {
         <title>컨시어지 — K-CARE</title>
       </Head>
       <Splash service="concierge" />
+      {toastEl}
       <div className="min-h-screen bg-nav">
         <div className="relative mx-auto flex min-h-screen w-full max-w-[430px] flex-col bg-paper">
           <header className="sticky top-0 z-20 border-b border-navy/10 bg-paper/95 px-5 pb-3 pt-4 backdrop-blur">
@@ -1412,31 +1458,15 @@ function ConciergePage() {
             {/* ════ 리포트 — 방문 탭 안으로 들어왔다 (2026-08-21 시트 전체 1번) ════ */}
             {tab === "visit" && (
               <>
-                {/* 방문 리포트 작성 — 거주 형태 토글이 체크리스트와 리포트 카피를
-                    실시간으로 바꾼다 (실무자 피드백 2026-08-09 · 이원화 개발 명세) */}
+                {/* 방문 리포트 작성 — 방식 3가지 (2026-10-24 컨시어지 화면설계서 v3 §3-2). 자택 · 요양병원은 같은 21가지 점검 양식,
+                    미팅(집 근처 카페)은 대화 · 생활 반응 · 몸 신호 양식. 처음 값은 가입 때 저장한 거주 형태, 고르면 가구 기록에 남아
+                    관제 방문관리 · 보호자 리포트가 같은 방식을 본다 (실무자 피드백 2026-08-09 · 이원화 개발 명세) */}
                 <Card className="p-[18px]">
-                  <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-baseline justify-between gap-2">
                     <span className="text-[17px] font-black text-navy">방문 리포트 작성</span>
-                    {/* 토글 — 어르신 프로필의 저장값이 기본, 현장에서 바꿀 수 있다 */}
-                    <div className="flex rounded-full border border-navy/15 p-1" role="group" aria-label="거주 형태">
-                      {[
-                        ["home", "🏠 자택"],
-                        ["hospital", "🏥 요양병원"],
-                      ].map(([k, label]) => (
-                        <button
-                          key={k}
-                          onClick={() => setCareLoc(k)}
-                          disabled={!!lock}
-                          aria-pressed={careLoc === k}
-                          className={`btn-press btn-inline btn-chip rounded-full px-3 py-1.5 text-[12.5px] font-bold ${
-                            careLoc === k ? "bg-navy text-white" : "text-muted"
-                          }`}
-                        >
-                          {label}
-                        </button>
-                      ))}
-                    </div>
+                    <span className="text-[13px] font-bold text-muted">{elderNameOf(state.onboarding)} 고객</span>
                   </div>
+                  <ModePicker value={careLoc} onChange={setCareLoc} disabled={!!lock} />
 
                   {/* 잠금 · 반려 안내 — 제출한 리포트는 증명 기록이라 고치지 않는다 (2026-10-18) */}
                   {lock === "submitted" && (
@@ -1479,16 +1509,27 @@ function ConciergePage() {
                     </p>
                   )}
 
-                  {/* 리포트 상단 카피 미리보기 — 보호자 앱 · 알림톡에 나가는 문장 */}
+                  {!meetMode && (
+                  <>
+                  {/* 리포트 상단 카피 미리보기 — 보호자 앱 · 알림톡에 나가는 문장 (가입상담 시트 지정 문구 · lib/checkup.js) */}
                   <div className="mt-3 rounded-xl bg-navy p-3.5 text-[14.5px] font-bold leading-[1.6] text-white">
-                    {REPORT_HEADLINE[careLoc](elderNameOf(state.onboarding))}
+                    {headlineFor(careLoc, elderNameOf(state.onboarding))}
                     <span className="mt-1 block text-[11px] font-normal text-white/55">
                       리포트 상단 문장 — 체크가 끝나면 사진 · 15초 영상 메시지와 함께 나갑니다
                     </span>
                   </div>
 
-                  {/* 21항목 — 토글에 따라 자택/요양병원 목록이 즉시 바뀐다 */}
-                  <div className="mt-3.5 space-y-3">
+                  {/* 21가지 점검 n / 21 — 몸 · 마음 · 집 각 7개 (설계서 v3 §3-3 · 요양병원도 같은 양식) */}
+                  <div className="mt-3.5 flex items-center justify-between gap-2">
+                    <span className="text-[16px] font-black text-navy">21가지 점검</span>
+                    <span className="font-num text-[16px] font-black text-navy">
+                      {checkCount} / {checkTotal}
+                    </span>
+                  </div>
+                  <div className="mt-1.5 h-[6px] overflow-hidden rounded-full bg-navy/[.08]" aria-hidden="true">
+                    <div className="h-full rounded-full bg-green transition-[width]" style={{ width: `${checkTotal ? Math.round((checkCount / checkTotal) * 100) : 0}%` }} />
+                  </div>
+                  <div className="mt-3 space-y-3">
                     {checkupFor(careLoc).map((ax) => {
                       const done = ax.items.filter((i) => checkDone[`${ax.axis}-${i.k}`]).length;
                       return (
@@ -1543,7 +1584,7 @@ function ConciergePage() {
                                           {grade}
                                         </span>
                                       )}
-                                      {itemNote[key] || (grade ? "" : "내용 적기")}
+                                      {itemNote[key] || (grade ? "" : requiredNames.has(i.k) ? "필수 · 내용 적기" : "내용 적기")}
                                     </button>
                                   </div>
                                   {/* 상태 — 컨시어지가 고른 것만 리포트에 간다 (2026-10-02). 고르지 않아도 된다 */}
@@ -1633,6 +1674,16 @@ function ConciergePage() {
                     21항목을 모두 체크하면 사진과 함께 리포트가 자동 발행됩니다 — 점수가
                     아니라 지난달과 달라진 것을 적습니다.
                   </p>
+                  </>
+                  )}
+                  {/* 보호자께 부탁드려요 · 어르신께 남길 말 · 내부 메모 (자택 · 요양병원) / 미팅 양식 (설계서 v3 §3-3 · 3-4) */}
+                  <div className="mt-3.5 flex flex-col gap-3">
+                    {meetMode ? (
+                      <MeetForm visit={v} dispatch={dispatch} lock={lock} sensors={demoSensors} period={meetSpan} />
+                    ) : (
+                      <HomeTextCards visit={v} dispatch={dispatch} lock={lock} />
+                    )}
+                  </div>
                 </Card>
 
                 {/* 동행 완료 리포트 — AI 초안 + 발행 전 미리보기 (2인 서명은 2026-08-12 삭제) */}
@@ -1782,65 +1833,9 @@ function ConciergePage() {
                   {/* 2인 확인 서명은 삭제했다 (2026-08-12 대표 피드백).
                       배차가 위험도 기반으로 바뀌어 1인 방문이 생겼고, 1인 방문에는
                       애초에 두 번째 서명이 존재하지 않는다. 대신 발행 전 미리보기로
-                      본인이 직접 확인하고 고치는 절차를 둔다. */}
-                  <div className="mt-3.5 rounded-xl border border-navy/10 p-3.5">
-                    <div className="flex items-center justify-between">
-                      <span className="text-[15px] font-bold text-navy">발행 전 미리보기</span>
-                      <button
-                        onClick={() => setPreview((v) => !v)}
-                        aria-expanded={preview}
-                        className="btn-press btn-inline btn-chip rounded-lg border border-navy/20 px-2.5 py-1.5 text-[12px] font-bold text-navy"
-                      >
-                        {preview ? "닫기" : "보호자에게 갈 화면 보기"}
-                      </button>
-                    </div>
-                    {preview && (
-                      <div className="animate-tickIn mt-2.5 rounded-xl border border-gold/40 bg-paper p-3.5">
-                        <div className="text-[13px] font-bold text-navy">
-                          {REPORT_HEADLINE[careLoc](elderNameOf(state.onboarding))}
-                        </div>
-                        <div className="mt-2 space-y-1">
-                          {checkupFor(careLoc).flatMap((ax) =>
-                            ax.items
-                              .filter((i) => itemNote[`${ax.axis}-${i.k}`] || (state.visit.grades || {})[`${ax.axis}-${i.k}`])
-                              .map((i) => {
-                                const g = (state.visit.grades || {})[`${ax.axis}-${i.k}`];
-                                return (
-                                  <div key={`${ax.axis}-${i.k}`} className="flex gap-2 text-[12px] leading-[1.6]">
-                                    <span className="w-[74px] shrink-0 font-bold text-muted">{i.k}</span>
-                                    <span className="min-w-0 flex-1 text-ink">
-                                      {g && <b style={{ color: RESULT_TONE[g]?.fg }}>{g}</b>}
-                                      {g && itemNote[`${ax.axis}-${i.k}`] ? " · " : ""}
-                                      {itemNote[`${ax.axis}-${i.k}`]}
-                                    </span>
-                                  </div>
-                                );
-                              })
-                          )}
-                          {Object.keys(itemNote).filter((k) => itemNote[k]).length === 0 && Object.keys(state.visit.grades || {}).length === 0 && (
-                            <div className="text-[12px] text-muted">아직 적은 항목이 없습니다.</div>
-                          )}
-                        </div>
-                        {summaryNote && (
-                          <p className="mt-2.5 border-t border-navy/[.08] pt-2 text-[12.5px] leading-[1.7] text-ink">
-                            {summaryNote}
-                          </p>
-                        )}
-                        {photos.length > 0 && (
-                          <div className="mt-2 text-[11.5px] font-bold text-green">
-                            사진 {photos.length}장 첨부됨
-                          </div>
-                        )}
-                        <p className="mt-2.5 border-t border-navy/[.08] pt-2 text-[11px] leading-[1.6] text-muted">
-                          내용을 고치려면 위 21항목에서 해당 항목을 다시 눌러 수정하세요. 발행하면
-                          보호자 앱과 알림톡으로 이 화면 그대로 나갑니다.
-                        </p>
-                      </div>
-                    )}
-                    <p className="mt-2.5 border-t border-navy/[.08] pt-2 text-[11px] leading-[1.7] text-muted">
-                      {AI_REPORT.signRule}
-                    </p>
-                  </div>
+                      본인이 직접 확인하고 고치는 절차를 둔다 — 미리보기는 아래 제출 줄의 '미리보기' 시트
+                      (보호자 리포트 · 어르신 앱 · 관제 · 2026-10-24 설계서 v3 §3-5) */}
+                  <p className="mt-3.5 border-t border-navy/[.08] pt-2.5 text-[11px] leading-[1.7] text-muted">{AI_REPORT.signRule}</p>
 
                   <button
                     onClick={() => {
@@ -1854,51 +1849,49 @@ function ConciergePage() {
                   >
                     {pdfIssued ? "✓ 증빙 보고서 발행됨 (데모)" : "증빙 보고서 발행 · PDF"}
                   </button>
-                  <button
-                    onClick={() => {
-                      if (aiSent || !canSubmitReport) return;
-                      // 테스트 가구에서는 컨시어지가 실제로 적은 것(동행 기록 → 총평)만 싣는다 — 예시 초안을 실제 기록처럼 보내지 않는다
-                      const note = escortSaved ? escort.note : live ? state.visit.memo || "" : AI_REPORT.draft;
-                      dispatch({
-                        type: "addReport",
-                        payload: { id: `rp-${Date.now()}`, by: ME, flagged: 0, note, secretNote: "", shared: true, closesVisit: true },
-                      });
-                      // 가족에게 가는 것은 관제가 검수하고 '보호자 리포트 발송'을 누를 때다 — 동행 기록도 그때 같이 간다.
-                      // 전에는 이 버튼을 누르자마자 '가족에게 전달됨'이라고 했지만 실제로는 관제 검수 대기였다 (2026-10-02 QA)
-                      push("리포트", escortSaved ? "방문 · 동행 리포트 제출 — 관제 검수 대기" : "방문 리포트 제출 — 관제 검수 대기", "#8FA9CC");
-                    }}
-                    disabled={aiSent || !canSubmitReport}
-                    className={`btn-press btn-dark mt-2 w-full rounded-xl py-3.5 text-[16px] font-bold text-white ${
-                      aiSent ? "bg-muted" : "bg-green"
-                    } disabled:opacity-50`}
-                  >
-                    {aiSent
-                      ? state.visit.ops?.sentAt
-                        ? "✓ 관제 검수 · 가족에게 발송됨"
-                        : "✓ 제출됨 — 관제 검수 대기"
-                      : escortOnly
-                        ? "동행 기록 제출 (관제 확인 후 가족에게)"
+                </Card>
+
+                {/* 제출 줄 — [미리보기] [리포트 제출] (설계서 v3 §3-3 7번 · 3-6). 방문 리포트와 저장한 동행 기록을 같이 낸다 —
+                    가족에게 가는 것은 관제가 검수하고 '보호자 리포트 발송'을 누를 때다 (2026-10-02 QA). 제출 → 관제 검수 중 → 가족에게 발송됨 */}
+                <div className="flex flex-col gap-1.5">
+                  <SendRow
+                    stage={sendStage}
+                    canSubmit={canSubmitReport}
+                    onSubmit={submitReport}
+                    onPreview={() => setPreview(true)}
+                    glow={sentGlow}
+                    label={
+                      escortOnly
+                        ? "동행 기록 제출"
                         : missingRequired.length > 0
-                        ? `필수 점검 ${missingRequired.length}개 남음 — 채우면 제출할 수 있어요`
-                        : !hasSummary
-                          ? "총평을 적으면 제출할 수 있어요"
-                          : state.visit.returned
-                            ? "고친 리포트 다시 제출 (관제 검수 후 가족에게)"
-                            : "리포트 제출 (관제 검수 후 가족에게)"}
-                  </button>
+                          ? `필수 ${missingRequired.length}개 남음`
+                          : (meetMode ? !meetReady : !hasSummary)
+                            ? "총평을 적어 주세요"
+                            : v.returned
+                              ? "다시 제출"
+                              : "리포트 제출"
+                    }
+                  />
                   {!aiSent && missingRequired.length > 0 && (
-                    <p className="mt-1.5 text-[12px] leading-[1.6] text-[#8A5D12]">
+                    <p className="text-[12px] leading-[1.6] text-[#8A5D12]">
                       {escortOnly
                         ? "방문 점검 없이 동행만 한 날 — 동행 기록만 제출되고, 관제가 동행 리포트를 따로 보냅니다. 방문 점검을 시작하면 필수 점검을 모두 채워야 제출됩니다."
                         : `필수 점검 ${missingRequired.length}개가 남았습니다 (${missingRequired.join(" · ")}) — 관제 검수와 같은 기준이라 채워야 제출됩니다.`}
                     </p>
                   )}
-                  {!aiSent && missingRequired.length === 0 && !hasSummary && (
-                    <p className="mt-1.5 text-[12px] leading-[1.6] text-[#8A5D12]">
-                      보호자에게 갈 총평(또는 동행 기록)이 비어 있습니다 — 위 총평 칸에 오늘 본 것을 한두 줄 적어 주세요.
+                  {!aiSent && missingRequired.length === 0 && (meetMode ? !meetReady : !hasSummary) && (
+                    <p className="text-[12px] leading-[1.6] text-[#8A5D12]">
+                      {meetMode
+                        ? "보호자에게 갈 총평이 비어 있습니다 — 위 종합 칸에 이번 주를 한두 줄 적어 주세요."
+                        : "보호자에게 갈 총평(또는 동행 기록)이 비어 있습니다 — 위 총평 칸에 오늘 본 것을 한두 줄 적어 주세요."}
                     </p>
                   )}
-                </Card>
+                  {sendStage !== "open" && (
+                    <p className="text-[12px] leading-[1.6] text-muted">
+                      {sendStage === "sent" ? "보호자 앱 · 어르신 홈에 갔습니다 — 보낸 리포트는 증명 기록이라 고치지 않습니다." : "관제가 검수하면 보호자 앱으로 갑니다 — 검수 중에는 고칠 수 없어요."}
+                    </p>
+                  )}
+                </div>
 
                 {/* 리포트 누적 — 본인 전체 · 타인 공유분만 */}
                 <SectionLabel>리포트 기록</SectionLabel>
@@ -1927,7 +1920,7 @@ function ConciergePage() {
                             </span>
                           </div>
                           <p className="mt-1 text-[13px] leading-[1.65] text-ink">
-                            {mine ? r.note : r.shared ? r.note : "비공개 리포트 — 작성자만 열람"}
+                            {mine || r.shared ? r.note || r.kind || "" : "비공개 리포트 — 작성자만 열람"}
                           </p>
                           {mine && r.secretNote && (
                             <p className="mt-1 rounded-lg bg-navy/[.05] px-2.5 py-1.5 text-[12px] text-muted">
@@ -2835,6 +2828,23 @@ function ConciergePage() {
                 push("대응", `${CONCIERGE_URGENT.client} 긴급확인 · ${step.label} 완료 — 관제 전달`, "#FF8A80");
               }}
             />
+          )}
+
+          {/* 발행 전 미리보기 — 보호자 리포트(A4) · 어르신 앱 · 관제 (2026-10-24 설계서 v3 §3-5). 내부 메모는 관제 탭에만 */}
+          {preview && reportView && (
+            <Sheet title={`발행 전 미리보기 · ${reportKind}`} onClose={() => setPreview(false)}>
+              <ReportPreview
+                r={reportView}
+                period={meetSpan}
+                headline={headlineFor(careLoc, elderNameOf(state.onboarding))}
+                stage={sendStage}
+                returned={!!returned}
+                checkinAt={gpsAt}
+                crew={state.visitPlan?.crew?.length || 0}
+                inner={visitText(v, "inner")}
+                nextVisitAt={nextVisitAt}
+              />
+            </Sheet>
           )}
 
           {/* 관제에 알리기 (2026-08-21 시트 오늘 2번) */}

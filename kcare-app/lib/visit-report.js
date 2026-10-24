@@ -134,14 +134,23 @@ export const MEET_DEMO = {
 };
 export const WEEK_DAYS = ["월", "화", "수", "목", "금", "토", "일"];
 
-// 리포트 기간 — 만난 날까지 지난 7일 ('10.05 – 10.11 · 만남 10.08 (목)'). ts 가 없으면 오늘 기준
+// 리포트 기간 — 리포트를 쓰는(낸) 날까지 지난 7일, 만난 날은 체크인한 날 ('10.05 – 10.11 · 만남 10.08 (목)').
+// 시각이 없으면 오늘 기준 — 날짜를 지어 넣지 않는다
 const kstD = (t) => new Date(Number(t) + 9 * 3600 * 1000);
 const md = (d) => `${String(d.getUTCMonth() + 1).padStart(2, "0")}.${String(d.getUTCDate()).padStart(2, "0")}`;
-export function meetPeriod(ts) {
-  const at = Number(ts) || Date.now();
-  const end = kstD(at);
-  const start = kstD(at - 6 * 86400000);
-  return { range: `${md(start)} – ${md(end)}`, meetDay: `${md(end)} (${"일월화수목금토"[end.getUTCDay()]})` };
+const wd = (d) => "일월화수목금토"[d.getUTCDay()];
+export function meetPeriod(meetTs, endTs) {
+  const meetAt = Number(meetTs) || Date.now();
+  const endAt = Math.max(Number(endTs) || meetAt, meetAt);
+  const end = kstD(endAt);
+  const start = kstD(endAt - 6 * 86400000);
+  const m = kstD(meetAt);
+  return {
+    range: `${md(start)} – ${md(end)}`,
+    meetDay: `${md(m)} (${wd(m)})`,
+    // A4 머리 — '2026.10.05(월) – 10.11(일)'
+    long: `${start.getUTCFullYear()}.${md(start)}(${wd(start)}) – ${md(end)}(${wd(end)})`,
+  };
 }
 export const meetMinutesText = (m) => (m >= 60 ? `${Math.floor(m / 60)}시간${m % 60 ? ` ${m % 60}분` : ""}` : `${m}분`);
 

@@ -5,7 +5,9 @@ import FamilyLayout from "../../components/FamilyLayout";
 import { WeekBars } from "../../components/GuardianCharts";
 import { Clay, Line } from "../../components/clay";
 import { Card, EvenGrid, TONE } from "../../components/ds";
-import { RESULT_TONE, STATE_ORDER, VISIT_REPORT } from "../../lib/visit-report";
+import { RESULT_TONE, STATE_ORDER, VISIT_REPORT, meetPeriod } from "../../lib/visit-report";
+import { MEET_PLACE } from "../../lib/checkup";
+import { BodyBody, LifeBody, textLines, wornDays } from "../../components/ReportParts";
 import { STAGE_LABEL, sentReportState, visitReportOf } from "../../lib/live-household";
 import { FIT3_INFO } from "../../lib/mock";
 import { fitMonth } from "../../lib/demo-health";
@@ -17,19 +19,168 @@ import { useAuth } from "../../lib/auth";
 // 시안의 '대화 기록 · 모션 센서 · 주간 기간'은 우리 데이터에 없는 것이라 그리지 않는다 — 있는 항목(몸 · 마음 · 집 21가지)을 시안의 모양으로 옮겼다.
 // A4 문서(인쇄 · PDF 저장)는 /report/visit 한 곳 — 아래 'PDF로 저장 (A4)'가 그리로 간다.
 // '위험'만 빨강이다 — 이 리포트의 위험은 실제 건강 위험 신호다 (lib/visit-report.js RESULT_TONE 주석).
+// 미팅 리포트(2026-10-24 컨시어지 화면설계서 v3 §3-4) — 집 근처 카페에서 만나 쓴 리포트는 21가지 대신 대화 · 생활 반응 · 몸 신호로 그린다.
+// 센서 · 워치 기록이 연결되기 전이면 그렇다고만 쓴다 (값을 지어내지 않는다).
 
 const AXIS_CLAY = { 몸: "heartPulse", 마음: "together", 집: "houseCheck" };
 const worst = (items) => [...STATE_ORDER].reverse().find((s) => items.some((i) => i.state === s)) || "양호";
 const ymd = (t) => (t ? new Date(Number(t) + 9 * 3600 * 1000).toISOString().slice(0, 10).replace(/-/g, ".") : "—");
 
-function StateChip({ state }) {
+function StateChip({ state, label = "" }) {
   const t = RESULT_TONE[state];
   if (!t) return null;
   return (
     <span className="inline-flex flex-none items-center gap-1 rounded-full px-2.5 py-1 text-[13px] font-extrabold" style={{ background: t.bg, color: t.fg }}>
       <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full" style={{ background: t.dot }} />
+      {label ? `${label} · ` : ""}
       {state}
     </span>
+  );
+}
+
+// 보호자께 부탁드려요 — 컨시어지가 한 줄에 하나씩 적은 것 (번호는 화면이 붙인다)
+function AskBlock({ text, d = "280ms" }) {
+  const ls = textLines(text);
+  if (!ls.length) return null;
+  return (
+    <div className="ds-r flex flex-col gap-2.5 rounded-[26px] p-[18px] text-white" style={{ "--d": d, background: "#1B2340" }}>
+      <h2 className="m-0 text-[18px] font-extrabold">보호자께 부탁드려요</h2>
+      <ol className="m-0 flex list-none flex-col gap-2 p-0">
+        {ls.map((t, i) => (
+          <li key={i} className="flex gap-2.5 text-[15px] leading-[1.6]">
+            <span className="ds-num flex-none font-black" style={{ color: TONE.gold.solid }}>
+              {i + 1}
+            </span>
+            <span>{t}</span>
+          </li>
+        ))}
+      </ol>
+    </div>
+  );
+}
+
+function SubLabel({ children }) {
+  return (
+    <div className="mt-1 text-[13px] font-extrabold" style={{ color: "#5E6270" }}>
+      {children}
+    </div>
+  );
+}
+
+function Bullets({ text }) {
+  return (
+    <ul className="m-0 flex list-none flex-col gap-1 p-0">
+      {textLines(text).map((x, i) => (
+        <li key={i} className="flex gap-2 text-[15px] leading-[1.6]">
+          <span aria-hidden="true" className="mt-[10px] h-1.5 w-1.5 flex-none rounded-full" style={{ background: "#1B2340" }} />
+          <span>{x}</span>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+function MeetReport({ r }) {
+  const m = r.meet || {};
+  const p = meetPeriod(r.visitedTs, r.reportTs);
+  const head = (title, right) => (
+    <div className="flex items-center gap-2.5 border-b-2 pb-2" style={{ borderColor: "#1B2340" }}>
+      <h2 className="m-0 flex-1 text-[19px] font-extrabold">{title}</h2>
+      {right}
+    </div>
+  );
+  return (
+    <>
+      <div className="ds-hero ds-r text-white" style={{ "--d": "40ms", background: "#1B2340" }}>
+        <div className="flex items-center justify-between gap-2">
+          <span className="text-[13px] font-extrabold text-white/70">K-CARE 보호자 리포트 · 미팅</span>
+          <span className="flex-none rounded-full bg-white px-2.5 py-1 text-[13px] font-extrabold" style={{ color: "#1B2340" }}>
+            종합 · {m.level}
+          </span>
+        </div>
+        <div className="flex items-baseline gap-2">
+          <span className="text-[32px] font-black leading-[1.2]">{r.client}</span>
+          <span className="text-[15px] text-white/80">어르신</span>
+        </div>
+        <div className="text-[14px] leading-[1.6] text-white/80">
+          {p.range} · 만남 {p.meetDay} · {MEET_PLACE}
+          <br />
+          담당 컨시어지 {r.concierge.pri} · 관제 검수 {r.reviewedAt || "—"} · 발송 {r.sentAt}
+        </div>
+      </div>
+
+      <Card className="ds-r flex flex-col gap-3" style={{ "--d": "80ms" }}>
+        <p className="text-[16px] leading-[1.7]">
+          <b>총평 </b>
+          {r.memo || "컨시어지가 남긴 총평이 없습니다."}
+        </p>
+        <div className="flex flex-wrap gap-1.5">
+          <StateChip state={m.talk} label="만나서 나눈 이야기" />
+          {m.sensors && <StateChip state={m.life} label="생활 반응" />}
+          <span className="inline-flex items-center rounded-full px-2.5 py-1 text-[13px] font-extrabold" style={{ background: "#EEEDEA", color: "#5E5A52" }}>
+            몸 신호 · {m.sensors ? `7일 중 ${wornDays(m.sensors)}일 착용` : "기록 연결 전"}
+          </span>
+        </div>
+      </Card>
+
+      <Card className="ds-r flex flex-col gap-1.5" style={{ "--d": "120ms" }}>
+        {head("만나서 나눈 이야기", <StateChip state={m.talk} />)}
+        <div className="text-[13px]" style={{ color: "#5E6270" }}>
+          대화 기록 · {MEET_PLACE}
+        </div>
+        {m.said && <SubLabel>어르신 말씀</SubLabel>}
+        {m.said && <Bullets text={m.said} />}
+        {m.seen && <SubLabel>컨시어지가 본 것</SubLabel>}
+        {m.seen && <Bullets text={m.seen} />}
+        {(m.asked || m.relay) && (
+          <div className="mt-1 flex flex-col gap-0.5 rounded-[16px] px-3.5 py-2.5 text-[15px] leading-[1.55]" style={{ background: "#F3F1EC" }}>
+            {m.asked && <SubLabel>부탁하신 것</SubLabel>}
+            {m.asked && <span>{m.asked}</span>}
+            {m.relay && <SubLabel>전해 달라신 말</SubLabel>}
+            {m.relay && <span>{m.relay}</span>}
+          </div>
+        )}
+        {!m.said && !m.seen && !m.asked && !m.relay && <div className="text-[15px]" style={{ color: "#5E6270" }}>적은 대화 기록이 없어요.</div>}
+      </Card>
+
+      <Card className="ds-r flex flex-col gap-1.5" style={{ "--d": "160ms" }}>
+        {head("생활 반응", m.sensors ? <StateChip state={m.life} /> : null)}
+        <div className="text-[13px]" style={{ color: "#5E6270" }}>
+          모션 감지 센서 · 비접촉 · 자동
+        </div>
+        <LifeBody sensors={m.sensors} />
+        <p className="m-0 rounded-[14px] px-3.5 py-2.5 text-[14px] leading-[1.55]" style={{ background: "#F3F1EC", color: "#3A4558" }}>
+          무반응이 감지되면 관제가 먼저 전화드리고, 응답이 없으면 컨시어지가 찾아갑니다.
+        </p>
+      </Card>
+
+      <Card className="ds-r flex flex-col gap-1.5" style={{ "--d": "200ms" }}>
+        {head(
+          "몸 신호",
+          m.sensors ? (
+            <span className="text-[13px] font-bold" style={{ color: "#5E6270" }}>
+              7일 중 {wornDays(m.sensors)}일
+            </span>
+          ) : null
+        )}
+        <div className="text-[13px]" style={{ color: "#5E6270" }}>
+          갤럭시핏 · 착용하신 날만 기록됩니다
+        </div>
+        <BodyBody sensors={m.sensors} />
+        {m.care && (
+          <div className="mt-1 flex flex-col gap-0.5 rounded-[16px] px-3.5 py-2.5 text-[15px] leading-[1.55]" style={{ background: "#F3F1EC" }}>
+            <SubLabel>컨시어지가 챙길 것</SubLabel>
+            <span>{m.care}</span>
+          </div>
+        )}
+      </Card>
+
+      <AskBlock text={r.ask} d="240ms" />
+      <PdfButton />
+      <p className="px-1 text-[13px] leading-[1.6]" style={{ color: "#5E6270" }}>
+        집 안 21가지 점검 없이 · 만남 · 센서 · 갤럭시핏 기록으로 만든 리포트입니다 · 컨시어지 기록 → 관제 검수 → 보호자 발송 · 관찰 기록이며 진단 · 판단이 아닙니다
+      </p>
+    </>
   );
 }
 
@@ -186,10 +337,12 @@ function LiveReport() {
           컨시어지가 방문을 마치면 관제가 기록을 검수한 뒤 보내 드립니다.
           <br />
           지금 단계: <b style={{ color: "#1B2340" }}>{STAGE_LABEL[r.stage]}</b>
-          {r.stage === "active" ? ` · 점검 ${r.done}/${r.total}` : ""}
+          {r.stage === "active" && r.total ? ` · 점검 ${r.done}/${r.total}` : ""}
         </p>
       </Card>
     );
+
+  if (r.mode === "meet") return <MeetReport r={r} />;
 
   return (
     <>
@@ -258,6 +411,7 @@ function LiveReport() {
         </Card>
       ))}
 
+      <AskBlock text={r.ask} />
       <PdfButton />
       <p className="px-1 text-[13px] leading-[1.6]" style={{ color: "#5E6270" }}>
         컨시어지 방문 기록 → 관제 검수 → 보호자 발송 · 관찰 기록이며 진단 · 판단이 아닙니다 · 확인하지 않은 항목은 이번 방문에서 보지 않은 것입니다

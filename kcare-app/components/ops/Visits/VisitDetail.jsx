@@ -1,6 +1,7 @@
-// 선택 방문 상세 — 2인 1조 · GPS 체크인 · 21항목(몸·마음·집 / 병실) · 후속조치 · 완료 5단계.
+// 선택 방문 상세 — 2인 1조 · GPS 체크인 · 21항목(몸·마음·집) · 후속조치 · 완료 5단계.
 // 상태 흐름: 예정 → 진행(체크인) → 완료(검수 대기) → 관제 검수 → 보호자 리포트 발송 → 열람.
 // 21항목은 lib/checkup.js 의 항목 그대로 — 점수·진단명을 쓰지 않고 완료/대기만 기록한다.
+// 미팅 리포트(2026-10-24 컨시어지 화면설계서 v3 §3-4)는 점검 '해당 없음' — 대화 기록 · 상태 4단계 · 글 칸을 그대로 본다.
 import { useState } from "react";
 import { Panel, Pill, Stamp, Bar, Btn, Steps, Field, KV, Drawer, Confirm, Note, TONE } from "../ui";
 import Icon from "../../icons";
@@ -8,6 +9,7 @@ import { checkupFor } from "../../../lib/checkup";
 import { SERVICE_MENU } from "../../../lib/requests";
 import { VISIT_STATE, VISIT_STEPS, requiredFor, visitPill, stampNow } from "../../../lib/ops-mgmt";
 import { LIVE_TAG } from "../../../lib/live-household";
+import { MEET_PLACE, meetLevel, visitText } from "../../../lib/checkup";
 
 const AXIS_TONE = { green: "ok", gold: "gold", navy: "navy" };
 const REVIEW_TONE = { "검수 완료": "ok", "검수 대기": "warn", "수행 중": "info" };
@@ -16,6 +18,77 @@ const SERVICES = SERVICE_MENU.filter((s) => s.active);
 const clock = () => stampNow().slice(11);
 const TITLES = { start: "방문을 시작합니다", complete: "점검을 완료하고 보고서를 작성합니다", approve: "관제 검수를 승인합니다", send: "보호자에게 리포트를 발송합니다" };
 const LABELS = { start: "체크인", complete: "점검 완료", approve: "검수 승인", send: "발송" };
+// 미팅 상태 4단계 → 관제 색 (빨강은 위험 신호에만)
+const LEVEL_PILL = { 양호: "ok", 관찰: "info", 주의: "warn", 위험: "danger" };
+
+// 컨시어지가 적은 리포트 글 칸 — 보호자께 부탁드려요 · 어르신께 남길 말(미팅은 부탁하신 것) · 내부 메모(관제 · 컨시어지만)
+function LiveTexts({ v, meet }) {
+  const rows = [
+    ["보호자께 부탁드려요", visitText(v, "ask"), "보호자"],
+    meet ? null : ["어르신께 남길 말", visitText(v, "toElder"), "어르신"],
+    ["내부 메모", visitText(v, "inner"), "내부 · 관제 · 컨시어지만"],
+  ].filter((x) => x && x[1].trim());
+  if (!rows.length) return null;
+  return (
+    <dl className="mt-2 space-y-1.5 text-[12px]">
+      {rows.map(([k, val, who]) => (
+        <div key={k} className={`rounded-lg px-2.5 py-2 ${who.startsWith("내부") ? "border border-dashed border-navy/25 bg-navy/[.02]" : "bg-navy/[.04]"}`}>
+          <dt className="font-bold text-navy">
+            {k} <span className="font-semibold text-muted">· {who}</span>
+          </dt>
+          <dd className="m-0 mt-0.5 whitespace-pre-line text-ink">{val}</dd>
+        </div>
+      ))}
+    </dl>
+  );
+}
+
+// 미팅 리포트 검수 — 21가지 점검 대신 대화 기록 · 생활 반응 · 몸 신호 · 종합
+function MeetReview({ v }) {
+  const t = (k) => visitText(v, k);
+  const box = "rounded-xl bg-navy/[.04] p-3";
+  const line = (label, text) =>
+    text.trim() ? (
+      <div className="mt-1.5">
+        <div className="text-[11px] font-bold text-muted">{label}</div>
+        <div className="whitespace-pre-line text-[12.5px] text-ink">{text}</div>
+      </div>
+    ) : null;
+  return (
+    <div>
+      <div className="flex flex-wrap items-center gap-2">
+        <h3 className="text-[15px] font-bold text-navy">미팅 리포트</h3>
+        <span className="text-[11px] text-muted">외부 미팅 · 카페 ({MEET_PLACE}) · 21가지 점검 해당 없음 · 사진 없음</span>
+        <span className="ml-auto inline-flex items-center gap-1 text-[12px] text-muted">
+          종합 <Pill tone={LEVEL_PILL[meetLevel(v, "level")]}>{meetLevel(v, "level")}</Pill>
+        </span>
+      </div>
+      <div className="mt-2 grid gap-3 sm:grid-cols-3">
+        <div className={box}>
+          <div className="flex items-center justify-between text-[13px] font-bold text-navy">
+            만나서 나눈 이야기 <Pill tone={LEVEL_PILL[meetLevel(v, "talk")]}>{meetLevel(v, "talk")}</Pill>
+          </div>
+          {line("어르신 말씀", t("said"))}
+          {line("컨시어지가 본 것", t("seen"))}
+          {line("부탁하신 것 · 어르신 앱에도", t("asked"))}
+          {line("전해 달라신 말", t("relay"))}
+          {!["said", "seen", "asked", "relay"].some((k) => t(k).trim()) && <div className="mt-1.5 text-[12px] text-muted">적은 대화 기록이 없습니다.</div>}
+        </div>
+        <div className={box}>
+          <div className="flex items-center justify-between text-[13px] font-bold text-navy">
+            생활 반응 <Pill tone={LEVEL_PILL[meetLevel(v, "life")]}>{meetLevel(v, "life")}</Pill>
+          </div>
+          <div className="mt-1.5 text-[12px] text-muted">모션 감지 센서 · 자동 — 이 가구는 센서 기록이 아직 연결되지 않았습니다.</div>
+        </div>
+        <div className={box}>
+          <div className="text-[13px] font-bold text-navy">몸 신호</div>
+          <div className="mt-1.5 text-[12px] text-muted">갤럭시핏 · 자동 — 착용 기록이 아직 연결되지 않았습니다.</div>
+          {line("컨시어지가 챙길 것", t("care"))}
+        </div>
+      </div>
+    </div>
+  );
+}
 
 function Tile({ title, right, children }) {
   return (
@@ -39,6 +112,7 @@ export default function VisitDetail({ visit: v, onChange, openProfile, escort = 
   const [retOpen, setRetOpen] = useState(false); // 반려 사유 적는 칸
   const [retReason, setRetReason] = useState("");
 
+  const meet = v.loc === "meet";
   const axes = checkupFor(v.loc);
   const required = requiredFor(v.loc);
   const total = v.keys.length;
@@ -68,18 +142,22 @@ export default function VisitDetail({ visit: v, onChange, openProfile, escort = 
 
   const subs = [
     v.checkin ? `GPS 체크인 ${v.checkin.at}` : "GPS 체크인 전",
-    `${done}/${total} 점검${v.status === "done" && v.pending.length ? ` · ${missing.length ? `필수 ${missing.length}개 · ` : ""}미점검 ${v.pending.length}개` : ""}`,
+    meet ? "미팅 기록 · 점검 해당 없음" : `${done}/${total} 점검${v.status === "done" && v.pending.length ? ` · ${missing.length ? `필수 ${missing.length}개 · ` : ""}미점검 ${v.pending.length}개` : ""}`,
     "고객(또는 동석 보호자) 확인",
     `관제 검수 · ${v.review}`,
     v.stepIdx === 5 ? `보호자 ${v.viewed}${v.sentAt ? ` · 발송 ${v.sentAt}` : ""}` : "보고서 발송 전",
   ];
-  const steps = VISIT_STEPS.map((title, i) => ({ k: title, title, sub: subs[i], state: i < v.stepIdx ? "done" : i === v.stepIdx ? "active" : "wait" }));
+  const steps = VISIT_STEPS.map((t, i) => {
+    const title = meet && i === 1 ? "미팅 기록" : t;
+    return { k: t, title, sub: subs[i], state: i < v.stepIdx ? "done" : i === v.stepIdx ? "active" : "wait" };
+  });
 
   return (
     <Panel className="space-y-4">
       <div className="flex flex-wrap items-center gap-2">
-        <h2 className="text-[17px] font-bold text-navy">{v.name} 고객 방문</h2>
+        <h2 className="text-[17px] font-bold text-navy">{v.name} 고객 {meet ? "미팅" : "방문"}</h2>
         {v.live && <Pill tone="ok">{LIVE_TAG} · 실제</Pill>}
+        {v.live && v.status !== "planned" && v.kind && <Pill tone="info">{v.pair?.pri?.name ? `${v.pair.pri.name} · ` : ""}{v.name} {v.kind}</Pill>}
         <Pill tone={VISIT_STATE[pk].tone}>{VISIT_STATE[pk].label}{pk !== "followup" && v.followup ? " · 후속" : ""}</Pill>
         <span className="font-num text-[12px] text-muted">{v.time}–{v.end}</span>
         <span className="text-[12px] text-muted">· {v.addr}</span>
@@ -113,17 +191,26 @@ export default function VisitDetail({ visit: v, onChange, openProfile, escort = 
             <span className="text-muted">체크인 전 — 방문 시작 시 GPS 로 고객 주소 반경을 확인합니다</span>
           )}
         </Tile>
-        <Tile title="점검 진행률" right={<span className="font-num text-[13px] font-bold text-navy">{done} / {total}</span>}>
-          <Bar value={done} max={total} tone={done === total ? "ok" : "gold"} />
-          <div className="mt-1 font-num text-[11px] text-muted">{Math.round((done / total) * 100)}% 완료{missing.length ? ` · 필수 ${missing.length}개 남음` : ""}</div>
-        </Tile>
+        {meet ? (
+          <Tile title="점검" right={<span className="text-[13px] font-bold text-navy">해당 없음</span>}>
+            <span className="text-[12px] text-muted">외부 미팅 · 카페 — 집 안 21가지 점검 · 사진 없이 대화 · 센서 · 워치 기록으로 씁니다</span>
+          </Tile>
+        ) : (
+          <Tile title="점검 진행률" right={<span className="font-num text-[13px] font-bold text-navy">{done} / {total}</span>}>
+            <Bar value={done} max={total} tone={done === total ? "ok" : "gold"} />
+            <div className="mt-1 font-num text-[11px] text-muted">{total ? Math.round((done / total) * 100) : 0}% 완료{missing.length ? ` · 필수 ${missing.length}개 남음` : ""}</div>
+          </Tile>
+        )}
       </div>
 
+      {meet ? (
+        <MeetReview v={v} />
+      ) : (
       <div>
         <div className="flex flex-wrap items-center gap-2">
           <h3 className="text-[15px] font-bold text-navy">21가지 방문 점검</h3>
           <span className="text-[11px] font-bold text-gold">필수(*) 항목 누락 시 방문 완료 불가</span>
-          <span className="text-[11px] text-muted">· {v.loc === "hospital" ? "요양병원용 — 몸 7 · 마음 7 · 병실 7" : "자택 — 몸 7 · 마음 7 · 집 7"}</span>
+          <span className="text-[11px] text-muted">· {v.loc === "hospital" ? "요양병원 — 자택과 같은 양식 · 몸 7 · 마음 7 · 집 7" : "자택 — 몸 7 · 마음 7 · 집 7"}</span>
           <Btn small ghost className="ml-auto" onClick={() => setShowAll((s) => !s)}>{showAll ? "간략히" : "전체 항목 보기"}</Btn>
         </div>
         <div className="mt-2 grid gap-3 sm:grid-cols-3">
@@ -160,13 +247,14 @@ export default function VisitDetail({ visit: v, onChange, openProfile, escort = 
         {editable && <div className="mt-1.5 text-[11px] text-muted">항목을 누르면 완료·대기가 바뀝니다. 기록은 관찰 사실만 — 점수·진단명을 쓰지 않습니다.</div>}
         {v.live && <div className="mt-1.5 text-[11px] text-muted">컨시어지 앱에서 점검하면 몇 초 안에 여기 반영됩니다.</div>}
       </div>
+      )}
 
       <div className="grid gap-3 lg:grid-cols-2">
         <div className="rounded-xl border border-navy/[.08] p-3">
           <div className="flex items-center justify-between">
-            <h3 className="text-[13px] font-bold text-navy">사진 및 메모</h3>
+            <h3 className="text-[13px] font-bold text-navy">{meet ? "총평 및 메모" : "사진 및 메모"}</h3>
             <span className="inline-flex items-center gap-2 text-[12px] text-muted">
-              <Icon name="film" size={14} /> <span className="font-num">{v.photos}</span>장
+              <Icon name="film" size={14} /> {meet ? "사진 해당 없음" : <><span className="font-num">{v.photos}</span>장</>}
               {editable && <Btn small ghost onClick={() => onChange({ photos: v.photos + 1 })}>사진 추가</Btn>}
             </span>
           </div>
@@ -179,6 +267,7 @@ export default function VisitDetail({ visit: v, onChange, openProfile, escort = 
             </ul>
           )}
           {v.live && v.reportNote && <div className="mt-2 rounded-lg bg-navy/[.04] px-2.5 py-2 text-[12px] text-ink">컨시어지 리포트 — {v.reportNote}</div>}
+          {v.live && <LiveTexts v={v} meet={meet} />}
         </div>
         <div className="rounded-xl border border-navy/[.08] p-3">
           <h3 className="text-[13px] font-bold text-navy">이전 방문 대비 변화</h3>

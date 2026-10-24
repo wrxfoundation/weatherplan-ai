@@ -153,7 +153,7 @@ export default function Visits({ openProfile }) {
                       {v.live ? <Pill tone="ok">실제</Pill> : liveOn ? <span className="text-[11px] font-medium text-muted">예시</span> : null}
                     </span>
                     <span className="block truncate text-[12px] text-muted">
-                      {v.team} · {v.live ? v.memoLine : v.status === "active" ? `점검 ${done}/${v.keys.length}${v.loc === "hospital" ? " · 병실" : ""}` : v.memo}
+                      {v.team} · {v.live ? v.memoLine : v.status === "active" ? `점검 ${done}/${v.keys.length}${v.loc === "hospital" ? " · 요양병원" : ""}` : v.memo}
                     </span>
                   </span>
                   <Pill tone={VISIT_STATE[pk].tone}>{VISIT_STATE[pk].label}</Pill>
@@ -189,7 +189,7 @@ export default function Visits({ openProfile }) {
               return (
                 <li key={`${h.closedAt}-${i}`} className="flex flex-wrap items-center gap-x-3 gap-y-1 rounded-xl bg-navy/[.03] px-3 py-2 text-[12.5px] text-ink">
                   <span className="font-num font-bold text-navy">{o.sentTs ? new Date(o.sentTs).toLocaleDateString("ko-KR", { month: "numeric", day: "numeric" }) : "—"} 발송</span>
-                  <span>점검 {checks}</span>
+                  <span>{h.visit?.loc === "meet" ? "미팅 리포트" : `점검 ${checks}`}</span>
                   <span>{o.viewed === "열람 완료" ? "보호자 열람" : "보호자 미열람"}</span>
                   {h.escort?.sentAt && <span>동행 리포트 함께</span>}
                   <span className="ml-auto text-[11px] text-muted">{new Date(h.closedAt).toLocaleDateString("ko-KR", { month: "numeric", day: "numeric" })} 보관 · {h.by || "컨시어지"}</span>

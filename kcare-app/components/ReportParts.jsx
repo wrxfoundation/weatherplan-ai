@@ -42,13 +42,14 @@ export function AudChips({ list }) {
   );
 }
 
-export function LevelChip({ level, prefix = "" }) {
+export function LevelChip({ level, prefix = "", suffix = "" }) {
   const t = LEVEL_TONE[level] || LEVEL_TONE.관찰;
   return (
     <span className="inline-flex h-[22px] flex-none items-center gap-1 rounded-[6px] px-2 text-[11px] font-bold" style={{ background: t.bg, color: t.fg }}>
       <span aria-hidden="true">●</span>
       {prefix}
       {level}
+      {suffix}
     </span>
   );
 }
@@ -191,12 +192,13 @@ const Bul = ({ text }) =>
   ));
 
 // 보호자에게 가는 미팅 리포트 본문 — 보호자 리포트 · 컨시어지 발행 전 미리보기 (내부 메모는 넣지 않는다)
-export function MeetGuardianBody({ r, period }) {
+// lead — 머리 줄(기간 · 장소)을 이 안에 둘지. A4 인쇄본은 문서 머리에 기간이 있어 뺀다
+export function MeetGuardianBody({ r, period, lead = true }) {
   const m = r.meet || {};
   const card = "flex flex-col gap-1.5 rounded-[14px] border border-[#E5E3DE] bg-white p-3.5";
   return (
     <div className="flex flex-col gap-3 text-[#1B2340]">
-      <MeetLead period={period} sensors={m.sensors} />
+      {lead && <MeetLead period={period} sensors={m.sensors} />}
       <section className={card}>
         <p className="m-0 text-[15px] leading-[1.65]">
           <b>총평 </b>
@@ -278,6 +280,197 @@ export function MeetGuardianBody({ r, period }) {
       <p className="m-0 border-t-[1.5px] border-dashed border-[#8A909C] pt-2 text-[12px] leading-[1.6] text-[#5E6676]">
         집 안 21가지 점검 없이 · 만남 · 센서 · 갤럭시핏 기록으로 만든 리포트입니다. 관찰 기록이며 진단 · 판단이 아닙니다.
       </p>
+    </div>
+  );
+}
+
+// ── 보호자 리포트 A4 한 장 (컨시어지 '발행 전 미리보기'의 보호자 리포트 탭 · 설계서 v3 §3-5) ──
+// 794 × 1123 (A4 세로 96dpi). 화면에 맞추는 축소는 쓰는 쪽이 한다. 내부 메모는 넣지 않는다.
+// 실제 인쇄본(PDF 저장)은 /report/visit 한 곳 — 이것은 컨시어지가 내기 전에 보는 모양이다.
+const ymdDot = (t) => new Date(Number(t) + 9 * 3600 * 1000).toISOString().slice(0, 10).replace(/-/g, ".");
+const A4_BOX = "flex flex-col gap-2.5 rounded-[14px] border-[1.5px] border-[#A79F8E] px-[18px] py-3.5";
+const A4_COL = "flex min-w-0 flex-col gap-1.5 rounded-[14px] border-[1.5px] border-[#D9D3C6] p-3.5";
+const A4_LAB = "text-[12px] font-extrabold text-[#5E6676]";
+const A4_ROW = "flex items-start justify-between gap-2 border-b border-[#EFEDE8] py-1.5 text-[13px] last:border-0";
+
+function A4Ask({ text }) {
+  const ls = textLines(text);
+  if (!ls.length) return null;
+  return (
+    <section className="flex flex-col gap-1.5 rounded-[14px] bg-[#1E2B4A] px-5 py-3.5 text-white">
+      <b className="text-[15px]">보호자께 부탁드려요</b>
+      {ls.map((x, i) => (
+        <div key={i} className="flex gap-2.5 text-[13px] leading-[1.5]">
+          <b className="text-[#C9B27A]">{i + 1}</b>
+          <span>{x}</span>
+        </div>
+      ))}
+    </section>
+  );
+}
+
+function HomeA4({ r, headline }) {
+  // 관찰 · 주의는 컨시어지가 그 항목에 고른 상태 그대로 — 화면이 판정을 만들지 않는다
+  const marked = r.axes.flatMap((a) => a.items.filter((i) => i.grade === "관찰" || i.grade === "주의").map((i) => ({ ...i, axis: a.axis })));
+  return (
+    <>
+      <section className={A4_BOX}>
+        {headline && <p className="m-0 text-[19px] font-extrabold">{headline}</p>}
+        <p className="m-0 text-[14.5px] leading-[1.6]">
+          <b>총평</b>&nbsp; {r.memo || "총평이 아직 없어요."}
+        </p>
+        <div className="flex flex-wrap gap-1.5">
+          {r.axes.map((a) => (
+            <span key={a.axis} className="inline-flex h-[24px] items-center rounded-[6px] bg-[#F3F1EC] px-2 text-[12px] font-bold text-[#3A4558]">
+              {a.axis} · 확인 {a.items.filter((i) => i.done).length}/{a.items.length}
+            </span>
+          ))}
+          {["양호", "관찰", "주의"]
+            .filter((g) => r.gradeCounts?.[g])
+            .map((g) => (
+              <LevelChip key={g} level={g} suffix={` ${r.gradeCounts[g]}`} />
+            ))}
+          <span className="inline-flex h-[24px] items-center rounded-[6px] border border-dashed border-[#9A9690] px-2 text-[12px] font-bold text-[#5E6676]">
+            21가지 중 {r.done} 확인
+          </span>
+        </div>
+      </section>
+      <section className="flex flex-col gap-2 rounded-[14px] bg-[#0E5A5A] px-4 py-3 text-white">
+        <div className="flex items-baseline justify-between gap-2">
+          <b className="text-[15px]">관찰 · 주의로 적은 것 · {marked.length}</b>
+          <span className="text-[12px]">점수가 아니라 달라진 것만 적습니다</span>
+        </div>
+        {marked.length ? (
+          <div className="grid gap-2" style={{ gridTemplateColumns: `repeat(${Math.min(4, marked.length)}, minmax(0, 1fr))` }}>
+            {marked.slice(0, 4).map((i) => (
+              <div key={`${i.axis}-${i.k}`} className="flex flex-col gap-0.5 rounded-[9px] bg-white px-2.5 py-2">
+                <span className="text-[12px] font-extrabold text-[#0E5A5A]">
+                  {i.axis} · {i.k}
+                </span>
+                <span className="text-[13px] font-bold text-[#17233A]">{i.note || i.grade}</span>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <span className="text-[13px]">관찰 · 주의로 고른 항목이 없어요.</span>
+        )}
+      </section>
+      <div className="grid flex-1 grid-cols-3 gap-2.5">
+        {r.axes.map((a) => (
+          <section key={a.axis} className={A4_COL}>
+            <b className="border-b-2 border-[#1E2B4A] pb-1 text-[15px]">{a.axis} 7가지</b>
+            <div>
+              {a.items.map((i) => (
+                <div key={i.k} className={A4_ROW}>
+                  <span className={`flex-none font-bold ${i.done ? "" : "text-[#9A9690]"}`}>{i.k}</span>
+                  <span className={`text-right ${i.done ? "font-semibold" : "text-[#9A9690]"}`}>{i.done ? i.note || i.grade || "확인함" : "이번엔 보지 않음"}</span>
+                </div>
+              ))}
+            </div>
+          </section>
+        ))}
+      </div>
+    </>
+  );
+}
+
+function MeetA4({ r, m }) {
+  return (
+    <>
+      <section className={A4_BOX}>
+        <p className="m-0 text-[15px] leading-[1.6]">
+          <b>총평</b>&nbsp; {r.memo || "총평이 아직 없어요."}
+        </p>
+        <div className="flex flex-wrap gap-1.5">
+          <LevelChip level={m.talk} prefix="만나서 나눈 이야기 · " />
+          {m.sensors && <LevelChip level={m.life} prefix="생활 반응 · " />}
+          <span className="inline-flex h-[22px] items-center rounded-[6px] border border-dashed border-[#9A9690] px-2 text-[11px] font-bold text-[#5E6676]">
+            몸 신호 · {m.sensors ? `7일 중 ${wornDays(m.sensors)}일 착용` : "기록 연결 전"}
+          </span>
+        </div>
+      </section>
+      <div className="grid flex-1 grid-cols-3 gap-2.5">
+        <section className={A4_COL}>
+          <b className="border-b-2 border-[#1E2B4A] pb-1 text-[15px]">만나서 나눈 이야기</b>
+          <span className="text-[12px] text-[#7A7F8E]">대화 기록 · {MEET_PLACE}</span>
+          {m.said && <span className={A4_LAB}>어르신 말씀</span>}
+          {m.said && (
+            <ul className="m-0 flex list-none flex-col gap-0.5 p-0">
+              <Bul text={m.said} />
+            </ul>
+          )}
+          {m.seen && <span className={A4_LAB}>컨시어지가 본 것</span>}
+          {m.seen && (
+            <ul className="m-0 flex list-none flex-col gap-0.5 p-0">
+              <Bul text={m.seen} />
+            </ul>
+          )}
+          <div className="flex-1" />
+          {(m.asked || m.relay) && (
+            <div className="flex flex-col gap-0.5 rounded-[10px] bg-[#F3F1EC] px-3 py-2 text-[13px] leading-[1.5]">
+              {m.asked && <span className={A4_LAB}>부탁하신 것</span>}
+              {m.asked && <span>{m.asked}</span>}
+              {m.relay && <span className={`${A4_LAB} mt-1`}>전해 달라신 말</span>}
+              {m.relay && <span>{m.relay}</span>}
+            </div>
+          )}
+        </section>
+        <section className={A4_COL}>
+          <b className="border-b-2 border-[#1E2B4A] pb-1 text-[15px]">생활 반응</b>
+          <span className="text-[12px] text-[#7A7F8E]">모션 감지 센서 · 비접촉</span>
+          <LifeBody sensors={m.sensors} />
+          <div className="flex-1" />
+          <p className="m-0 rounded-[10px] bg-[#F3F1EC] px-3 py-2 text-[12px] leading-[1.5] text-[#3A4558]">무반응이 감지되면 관제가 먼저 전화드리고, 응답이 없으면 컨시어지가 찾아갑니다.</p>
+        </section>
+        <section className={A4_COL}>
+          <b className="border-b-2 border-[#1E2B4A] pb-1 text-[15px]">몸 신호</b>
+          <span className="text-[12px] text-[#7A7F8E]">갤럭시핏 · 착용하신 날만 기록됩니다</span>
+          <BodyBody sensors={m.sensors} />
+          <div className="flex-1" />
+          {m.care && (
+            <div className="flex flex-col gap-0.5 rounded-[10px] bg-[#F3F1EC] px-3 py-2 text-[13px] leading-[1.5]">
+              <span className={A4_LAB}>컨시어지가 챙길 것</span>
+              <span>{m.care}</span>
+            </div>
+          )}
+        </section>
+      </div>
+    </>
+  );
+}
+
+export function GuardianA4({ r, period, headline }) {
+  const meet = r.mode === "meet";
+  const m = r.meet || {};
+  const pri = r.concierge?.pri || "";
+  const sub = meet
+    ? `${period.long} · 담당 컨시어지 ${pri} · 만남 1회 (${period.meetDay})`
+    : `${ymdDot(r.visitedTs || Date.now())} 안심방문 · 담당 컨시어지 ${pri}`;
+  return (
+    <div className="flex min-h-[1123px] w-[794px] flex-col gap-3 bg-white p-[34px] text-[#17233A]">
+      <header className="flex items-center justify-between gap-4 rounded-[16px] bg-[#1E2B4A] px-[22px] py-[18px] text-white">
+        <div className="flex flex-col gap-1">
+          <span className="text-[12px] font-extrabold tracking-[.08em] text-[#C9B27A]">K-CARE 보호자 리포트{meet ? " · 미팅" : ""}</span>
+          <span className="flex items-baseline gap-2">
+            <b className="text-[32px] font-black">{r.client}</b>
+            <span className="text-[14px] text-[#D5DAE4]">어르신</span>
+          </span>
+          <span className="text-[13px] text-[#D5DAE4]">{sub}</span>
+        </div>
+        {/* 종합은 미팅 리포트에만 — 컨시어지가 고른 4단계 그대로 (자택 리포트는 종합 판정을 만들지 않는다) */}
+        {meet && (
+          <div className="flex flex-col items-end gap-1.5">
+            <LevelChip level={m.level} prefix="종합 · " />
+            <span className="text-[12px] text-[#AEB6C6]">양호 · 관찰 · 주의 · 위험</span>
+          </div>
+        )}
+      </header>
+      {meet ? <MeetA4 r={r} m={m} /> : <HomeA4 r={r} headline={headline} />}
+      <A4Ask text={r.ask} />
+      <footer className="flex items-center justify-between gap-3 border-t-[1.5px] border-dashed border-[#8A909C] pt-2 text-[12px] text-[#5E6676]">
+        <span>{meet ? "집 안 21가지 점검 없이 · 만남 · 센서 · 갤럭시핏 기록으로 만든 리포트입니다." : `관제 검수 후 발송 · 사진 ${r.photos}장 첨부`}</span>
+        <span className="whitespace-nowrap">K-CARE · 담당 {pri}</span>
+      </footer>
     </div>
   );
 }
