@@ -64,6 +64,45 @@ const MUST_BE_ZERO = [
 // 콘솔 문구와 요청 주소 양쪽에 쓴다 (아래 console·response 훅).
 const IGNORE_ERR = /favicon|fonts\.googleapis|fonts\.gstatic|ERR_CONNECTION_RESET|ERR_TUNNEL_CONNECTION_FAILED|tile\.openstreetmap|basemaps\.cartocdn/;
 
+// 눌러야 보이는 화면 — 탭 · 상세 · 시트. 처음 화면만 보면 그 안의 접근성 · 터치 타깃 · 가로 넘침은 한 번도 검사되지 않는다.
+// 차례대로 누르고(앞 단계 위에서 이어서) 단계마다 같은 규칙으로 본다 (2026-10-24 컨시어지 화면설계서 v3 — 고객 상세 · 미팅 리포트 · 발행 전 미리보기)
+const STEPS = {
+  "/concierge": [
+    { label: "고객 상세", clicks: [["button", "고객"], ["button", /^김순자 \(/]] },
+    { label: "방문 리포트 · 자택", clicks: [["button", "방문 · 리포트"]] },
+    { label: "방문 리포트 · 미팅", clicks: [["button", "미팅"]] },
+    { label: "발행 전 미리보기", clicks: [["button", "미리보기"]] },
+    { label: "미리보기 · 관제", clicks: [["button", "관제"]] },
+  ],
+};
+
+// 지금 화면 그대로 — 접근성(반드시 0 인 규칙 · critical) · 터치 타깃 24px · 가로 넘침
+async function auditNow(page) {
+  const out = [];
+  const found = await page.evaluate(async () => {
+    const r = await window.axe.run(document, { resultTypes: ["violations"] });
+    return r.violations.map((v) => ({ id: v.id, impact: v.impact, n: v.nodes.length }));
+  });
+  for (const v of found) {
+    if (MUST_BE_ZERO.includes(v.id)) out.push(`a11y ${v.id} (${v.impact}) ${v.n}건`);
+    if (v.impact === "critical") out.push(`a11y critical ${v.id} ${v.n}건`);
+  }
+  const tiny = await page.evaluate(() => {
+    const t = [];
+    for (const el of document.querySelectorAll('button,a[href],input,select,[role="button"]')) {
+      if (el.closest(".leaflet-container")) continue;
+      const b = el.getBoundingClientRect();
+      if (b.width < 1 || b.height < 1) continue;
+      if (b.height < 24 || b.width < 24) t.push(`${el.tagName}"${(el.textContent || "").trim().slice(0, 12)}" ${Math.round(b.width)}x${Math.round(b.height)}`);
+    }
+    return t;
+  });
+  for (const t of tiny) out.push(`터치 타깃 24px 미만: ${t}`);
+  const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+  if (overflow > 1) out.push(`가로 넘침 ${overflow}px`);
+  return out;
+}
+
 const fails = [];
 const note = (m) => console.log(m);
 
@@ -174,6 +213,19 @@ for (const route of ROUTES) {
   );
   if (overflow > 1) fails.push(`${where} — 가로 넘침 ${overflow}px`);
 
+  for (const step of STEPS[route] || []) {
+    try {
+      for (const [role, name] of step.clicks) {
+        await page.getByRole(role, { name, exact: typeof name === "string" }).last().click({ timeout: 3000 });
+        await page.waitForTimeout(400);
+      }
+    } catch (_) {
+      fails.push(`${where} — ${step.label}: 누를 버튼을 못 찾음`);
+      break;
+    }
+    for (const f of await auditNow(page)) fails.push(`${where} [${step.label}] — ${f}`);
+  }
+
   note(`  ${status === 200 ? "OK " : "!! "} ${where}`);
   await ctx.close();
 }
@@ -186,4 +238,5 @@ if (fails.length) {
   for (const f of fails) console.error("  ✗ " + f);
   process.exit(1);
 }
-console.log(`\n스모크 통과 — ${ROUTES.length}개 화면 × ${VIEWPORTS.length}개 폭 = ${ROUTES.length * VIEWPORTS.length}회`);
+const stepN = Object.values(STEPS).reduce((n, x) => n + x.length, 0);
+console.log(`\n스모크 통과 — ${ROUTES.length}개 화면 × ${VIEWPORTS.length}개 폭 = ${ROUTES.length * VIEWPORTS.length}회 · 눌러서 여는 화면 ${stepN}개 × ${VIEWPORTS.length}개 폭`);

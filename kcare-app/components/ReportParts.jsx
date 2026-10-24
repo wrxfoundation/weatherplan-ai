@@ -448,7 +448,8 @@ export function GuardianA4({ r, period, headline }) {
     : `${ymdDot(r.visitedTs || Date.now())} 안심방문 · 담당 컨시어지 ${pri}`;
   return (
     <div className="flex min-h-[1123px] w-[794px] flex-col gap-3 bg-white p-[34px] text-[#17233A]">
-      <header className="flex items-center justify-between gap-4 rounded-[16px] bg-[#1E2B4A] px-[22px] py-[18px] text-white">
+      {/* 머리 · 꼬리는 div — 시트 안 미리보기라 header · footer 로 두면 화면의 머리 영역(banner)이 둘이 된다 (스모크 landmark-unique) */}
+      <div className="flex items-center justify-between gap-4 rounded-[16px] bg-[#1E2B4A] px-[22px] py-[18px] text-white">
         <div className="flex flex-col gap-1">
           <span className="text-[12px] font-extrabold tracking-[.08em] text-[#C9B27A]">K-CARE 보호자 리포트{meet ? " · 미팅" : ""}</span>
           <span className="flex items-baseline gap-2">
@@ -464,13 +465,13 @@ export function GuardianA4({ r, period, headline }) {
             <span className="text-[12px] text-[#AEB6C6]">양호 · 관찰 · 주의 · 위험</span>
           </div>
         )}
-      </header>
+      </div>
       {meet ? <MeetA4 r={r} m={m} /> : <HomeA4 r={r} headline={headline} />}
       <A4Ask text={r.ask} />
-      <footer className="flex items-center justify-between gap-3 border-t-[1.5px] border-dashed border-[#8A909C] pt-2 text-[12px] text-[#5E6676]">
+      <div className="flex items-center justify-between gap-3 border-t-[1.5px] border-dashed border-[#8A909C] pt-2 text-[12px] text-[#5E6676]">
         <span>{meet ? "집 안 21가지 점검 없이 · 만남 · 센서 · 갤럭시핏 기록으로 만든 리포트입니다." : `관제 검수 후 발송 · 사진 ${r.photos}장 첨부`}</span>
         <span className="whitespace-nowrap">K-CARE · 담당 {pri}</span>
-      </footer>
+      </div>
     </div>
   );
 }
