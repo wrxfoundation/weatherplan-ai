@@ -4397,3 +4397,11 @@ Please never share your seed or codes with anyone, even someone who says they're
 
 As part of the team, I'm truly sorry. I'll keep you posted.
 ```
+- **10/24 James 「Thank you.」 뒤 마무리(서우 「다시 사과 · 빠르고 확실한 대응 · 초창기라 사용자 늘 때 대비 보안 · 유실분 확실히 보상 · 감사」)** — 영문 324자. 「초창기라」는 사고를 작게 말하는 것으로 안 읽히게 「지금을 보안을 갖추는 때로」. 「for what was lost」 = 유실분 보상 — 회원 메일 표현과 맞을 때만.
+```
+Thank you, James, and I'm sorry again.
+
+With any incident, what matters most is a fast and clear response. This happened early, and we're treating it as the moment to put thorough security in place before many more members join.
+
+We'll make sure everyone affected is compensated for what was lost. Thanks for hearing me out.
+```
