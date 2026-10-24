@@ -216,3 +216,5 @@ Hi {Name}, I run partnerships at wellbian, built on KWeather's 30 years of weath
 ```
 Swell 뒤 수락이면 N3 의 Swell 문장 삭제. 「AI agents can buy」 = 8월 메인넷 x402 검증 근거(고객 주장 아님).
 페이지 문구 중 규칙과 어긋나는 셋(그 세션에서 고칠 것): Hugo 「Flare 공동 사례」(웰비안 × Flare 통합 클레임 금지) · Roshan 「유일한 거래소 사람」(Coinbase · Bullish · Robinhood 도 연사) · Robert Kiuru 「지갑 클레임 흐름을 같이」(지갑 통합 얘기 0).
+
+**10/24 정정 — 서우 Swell 불참**(국내 기기 판매 · 업체 미팅, 뉴욕은 대표 · 이창민 · CPO · CMO). 이 파일의 「I'll be at Swell in New York next week」 문장은 모두 → `Our CEO and team will be at Swell in New York next week.`(N3 268자). 이미 보낸 메모는 수락 뒤 첫 메시지에서 바로잡는다.
