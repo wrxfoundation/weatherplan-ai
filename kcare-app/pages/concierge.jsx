@@ -1670,9 +1670,10 @@ function ConciergePage() {
                       )}
                     </div>
                   </div>
+                  {/* 제출하면 관제가 검수한 뒤 보호자에게 간다 — '자동 발행'이 아니다 (2026-10-24 설계서 v3 §3-6) */}
                   <p className="mt-2.5 text-[12px] leading-[1.65] text-muted">
-                    21항목을 모두 체크하면 사진과 함께 리포트가 자동 발행됩니다 — 점수가
-                    아니라 지난달과 달라진 것을 적습니다.
+                    필수 5개를 채우고 총평을 적으면 제출할 수 있어요 — 관제가 검수한 뒤 사진과 함께 보호자에게 갑니다.
+                    점수가 아니라 지난달과 달라진 것을 적습니다.
                   </p>
                   </>
                   )}
@@ -2998,7 +2999,7 @@ function ConciergeApptRow({ e, onSave, onRemove }) {
 // 닫기 버튼은 제목 줄 오른쪽에 둔다 (시트가 길어지면 아래 버튼까지 못 내려간다).
 function Sheet({ title, onClose, children }) {
   return (
-    <div className="fixed inset-0 z-40 flex items-end justify-center bg-[rgba(8,23,45,.45)]">
+    <div role="dialog" aria-modal="true" aria-label={title} className="fixed inset-0 z-40 flex items-end justify-center bg-[rgba(8,23,45,.45)]">
       <div className="max-h-[92vh] w-full max-w-[430px] overflow-y-auto rounded-t-3xl bg-white p-6 pb-8">
         <div className="mx-auto mb-4 h-[4px] w-[38px] rounded-full bg-navy/15" />
         <div className="flex items-center gap-2">

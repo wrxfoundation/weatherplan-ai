@@ -148,6 +148,7 @@ export function meetPeriod(meetTs, endTs) {
   return {
     range: `${md(start)} – ${md(end)}`,
     meetDay: `${md(m)} (${wd(m)})`,
+    meetDayBare: `${md(m)} ${wd(m)}`, // A4 머리 '만남 1회 (10.08 목)' 안에 쓴다
     // A4 머리 — '2026.10.05(월) – 10.11(일)'
     long: `${start.getUTCFullYear()}.${md(start)}(${wd(start)}) – ${md(end)}(${wd(end)})`,
   };

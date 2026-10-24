@@ -444,7 +444,7 @@ export function GuardianA4({ r, period, headline }) {
   const m = r.meet || {};
   const pri = r.concierge?.pri || "";
   const sub = meet
-    ? `${period.long} · 담당 컨시어지 ${pri} · 만남 1회 (${period.meetDay})`
+    ? `${period.long} · 담당 컨시어지 ${pri} · 만남 1회 (${period.meetDayBare})`
     : `${ymdDot(r.visitedTs || Date.now())} 안심방문 · 담당 컨시어지 ${pri}`;
   return (
     <div className="flex min-h-[1123px] w-[794px] flex-col gap-3 bg-white p-[34px] text-[#17233A]">
