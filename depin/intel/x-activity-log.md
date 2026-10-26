@@ -4449,3 +4449,23 @@ Good start to Swell week for our CEO.
 - **10/27 서우 수정 — 「for wellbianlabs 가 낫다 · 리플 판에서 『레저 설계자 만났다』는 어색, 누구나 아는 사람」** → 누구인지 설명하는 문장을 빼고 한 줄로.
   A 추천: `Good start to Swell week for the wellbian team. Wish I'd been in the room 😄` · B(요청 그대로): `Good start to Swell week for @wellbianlabs.` · C: `Good start to Swell week for @wellbianlabs. Wish I'd been there 😄`
   (@wellbianlabs 는 인용 원글과 같은 계정이라 태그는 있어도 없어도 됨 — 팀원 개인 계정 말투로는 「the wellbian team」이 자연스럽다.)
+
+## @stoneiland(daoland589) — 공식 @XRP 「돈의 미래 · 현실 세계를 위해」 영상 소개 글 (2026-10-27, 서우 캡처 + 「둘 다 올림 · 우리도 현실계 아니냐」)
+
+서우: 10/27 개인 계정 원글 2건 게시 완료(Swell 공기 인용 · CEO × JoelKatz 인용) → 오늘 원글 한도 소진, 남은 건 답글 1.
+판정: **@stoneiland 글에는 답하지 않는다** — 이 계정은 8/24 · 9월 BIS 두 번 모두 과장 · 홀더 정서 패턴으로 무반응 판정. 이번 글도 클로징이 「$XRP 가 돈의 미래를 현실로 끌고 내려옵니다」(같은 패턴).
+「현실 세계」 각도 자체는 우리 것 — 쓸 자리는 둘:
+- 답글(오늘 가능) — 공식 @XRP 영상 글에 직접(가중 120, 링크 · 태그 0):
+```
+Built for the real world, down to the air in a room.
+
+Ours spent Swell Demo Day on a table in New York, reading it live.
+```
+  ⚠ 공식 브랜드 영상 밑에 제품 얘기 = 가벼운 자기 홍보로 읽힐 수 있다 — 서우 판단. 안 달아도 손해 없음.
+- 내일 원글(가중 209):
+```
+Everyone's talking about money built for the real world this week.
+
+Our corner of the real world is smaller: one room. PM2.5, CO₂ and humidity, read every minute, and the data sold per call on the XRP Ledger.
+```
+근거: 1분 단위 측정 = 판매 페이지 · 「data sold per call on the XRP Ledger」 = x402 호출당 판매(8월 메인넷 검증, 2편 문장). 보상 · 토큰 · 가격 0(자사 사고 주간).
