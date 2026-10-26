@@ -4446,3 +4446,6 @@ Building on a ledger, then meeting one of the people who designed it.
 Good start to Swell week for our CEO.
 ```
 게시 전: 오늘 「Swell 공기」 인용을 이미 올렸다면 이건 둘째 원글 — 파트너 발표일 예외(2/일 · 6시간+ 간격)로 볼지 서우 판단, 아니면 둘 중 하나만 · 나머지는 내일.
+- **10/27 서우 수정 — 「for wellbianlabs 가 낫다 · 리플 판에서 『레저 설계자 만났다』는 어색, 누구나 아는 사람」** → 누구인지 설명하는 문장을 빼고 한 줄로.
+  A 추천: `Good start to Swell week for the wellbian team. Wish I'd been in the room 😄` · B(요청 그대로): `Good start to Swell week for @wellbianlabs.` · C: `Good start to Swell week for @wellbianlabs. Wish I'd been there 😄`
+  (@wellbianlabs 는 인용 원글과 같은 계정이라 태그는 있어도 없어도 됨 — 팀원 개인 계정 말투로는 「the wellbian team」이 자연스럽다.)
