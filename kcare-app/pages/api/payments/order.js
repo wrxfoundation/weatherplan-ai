@@ -16,7 +16,7 @@ import { dbConfigured, dbErrorCode } from "../../../lib/db";
 import { hasSecret, signOrder } from "../../../lib/toss-server";
 import { canPayRole, extraPayable, householdState, requestPayable } from "../../../lib/pay-server";
 import { makeOrderId, orderScope } from "../../../lib/payments";
-import { orderTotal } from "../../../lib/store";
+import { cartOwner, orderTotal, pendingFor } from "../../../lib/store";
 import { PRICING } from "../../../lib/config";
 
 const MAX = 10_000_000; // 한 건 상한 — 데모 오입력 방지 (실서비스 한도는 상점 정책에 따른다)
@@ -60,7 +60,8 @@ export default async function handler(req, res) {
         return res.status(409).json({ error: "PRICE_NOT_CONFIRMED", message: "가입 및 설치비가 아직 확정되지 않았습니다." });
       }
     } else if (kind === "store") {
-      value = orderTotal(state ? state.pendingOrder?.items : items);
+      // 이 계정이 담은 장바구니로 — 가구 기록 한 칸을 같이 쓰면 다른 가족이 방금 담은 물건으로 금액이 정해졌다 (2026-10-26 점검)
+      value = orderTotal(state ? pendingFor(state, cartOwner(user))?.items : items);
       if (value == null) return res.status(409).json({ error: "ORDER_NOT_FOUND", message: "담은 물건을 확인하지 못했습니다. 스토어에서 다시 담아 주세요." });
     } else if (state) {
       if (!refId) return res.status(400).json({ error: "REF_MISSING", message: "어떤 요청의 결제인지 빠졌습니다." });

@@ -341,8 +341,9 @@ export function liveConcierge(c, state) {
   if (!c || c.name !== LIVE_CONCIERGE) return c;
   const base = liveVisitBase();
   const v = liveVisit(base, state);
-  const sosOn = !!state?.demo?.sos;
   const ops = state?.ops || {};
+  // 이 컨시어지에게 온 급파만 — 다른 컨시어지에게 보낸 급파로 '급파 수락 대기'가 뜨지 않게 (2026-10-26 점검)
+  const sosOn = !!state?.demo?.sos && (!ops.sosDispatchedTo || ops.sosDispatchedTo === c.name || !ops.sosDispatched);
   const status = sosOn && ops.sosAcceptedAt ? "SOS 출동 중" : sosOn && ops.sosDispatched ? "급파 수락 대기" : v.status === "active" ? "방문 중" : "기록 없음";
   const asks = (state?.requests || []).filter((r) => r.assignee === LIVE_CONCIERGE && !["done", "cancelled", "rejected"].includes(r.status));
   const today = [

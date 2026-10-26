@@ -15,11 +15,12 @@ import Icon from "../components/icons";
 import { useAppState, useSync } from "../lib/state";
 import { useAuth } from "../lib/auth";
 import { meAs } from "../lib/people";
+import { useGuardianRole } from "../lib/guardian-role";
 import { fmtWon, PRICING, HOUSEHOLD } from "../lib/config";
-import { payerOf, paymentOf } from "../lib/requests";
+import { AFTER_PAY_TEXT, afterPay, payerOf, paymentOf } from "../lib/requests";
 import { extraIsFor } from "../lib/booking";
 import { ConfirmSteps } from "../components/BookingParts";
-import { orderTotal } from "../lib/store";
+import { cartOwner, orderTotal, pendingFor } from "../lib/store";
 import {
   PAY_KINDS,
   PAY_NOTICE,
@@ -39,6 +40,7 @@ export default function PayPage() {
   const sync = useSync();
   // 데모(테스트 계정이 아닌 시연)에서만 '가상 승인'을 연다 (2026-10-02 결정). 테스트 계정은 실제 토스 테스트 결제로만 끝난다.
   const authUser = useAuth().user;
+  const { isPrimary } = useGuardianRole();
   const demo = !authUser?.household;
   const [demoDone, setDemoDone] = useState(null);
   const { kind = "store", amount, orderName = "K-CARE 결제", ref: refId = "", back = "" } = router.query;
@@ -49,7 +51,13 @@ export default function PayPage() {
   // 카탈로그 가격, 가입비는 가격표. 주소의 amount 를 고쳐도 표시 · 결제 금액이 바뀌지 않는다 (2026-10-19 점검 · 서버도 같은 값으로 서명한다)
   const req = kind === "request" ? (state.requests || []).find((r) => r.id === refId) || null : null;
   const xc = kind === "extra" ? (state.extraCharges || []).find((x) => x.id === refId) || null : null;
-  const po = kind === "store" ? state.pendingOrder : null;
+  // 결제자 — 가족 누구나 낸다 (2026-10-22). 어르신 계정 · 어르신 화면에서 온 결제는 어르신 이름, 그 밖은 보호자.
+  // 센터 공간은 로그인한 사람 이름, 데모 · 테스트 가구는 예전 인물 (2026-10-06 점검)
+  const payerRole = authUser?.role === "elder" || (!authUser?.role && backTo.startsWith("/elder")) ? "elder" : "guardian";
+  const buyerName = meAs(authUser, payerRole);
+  // 스토어 — 결제하는 사람이 담은 장바구니 (어르신 · 보호자 따로 · 2026-10-26 점검 · lib/store.js cartOwner)
+  const owner = cartOwner(authUser, payerRole);
+  const po = kind === "store" ? pendingFor(state, owner) : null;
   const expected =
     kind === "request"
       ? Number(req?.amount) || 0
@@ -60,10 +68,6 @@ export default function PayPage() {
           : kind === "entry"
             ? Number(PRICING.entryFee?.total) || 0
             : Number(amount) || 0;
-  // 결제자 — 가족 누구나 낸다 (2026-10-22). 어르신 계정 · 어르신 화면에서 온 결제는 어르신 이름, 그 밖은 보호자.
-  // 센터 공간은 로그인한 사람 이름, 데모 · 테스트 가구는 예전 인물 (2026-10-06 점검)
-  const payerRole = authUser?.role === "elder" || (!authUser?.role && backTo.startsWith("/elder")) ? "elder" : "guardian";
-  const buyerName = meAs(authUser, payerRole);
   // 결제하면 안 되는 경우 — 이미 낸 해주세요(뒤로 가기로 다시 온 경우 포함) · 결제 단계가 아닌 요청 · 담은 물건이 없는 주문 ·
   // 내가 받는 분이 아닌 추가 이용 금액 (받는 분만 결제한다 — 서버도 같은 규칙 · lib/pay-server.js extraPayable) ·
   // 어르신이 직접 내기로 한 해주세요를 보호자가 여는 경우 (어르신이 '가족에게 결제 부탁'을 눌러야 보호자가 낸다 — 서버도 같은 규칙 · 2026-10-26)
@@ -91,7 +95,9 @@ export default function PayPage() {
                 : null
         : kind === "store" && !expected
           ? "담은 물건이 없습니다. 스토어에서 다시 담아 주세요."
-          : null;
+          : isBilling(kind) && (payerRole === "elder" || !isPrimary)
+            ? "카드 등록 · 바꾸기는 주 보호자만 합니다. 결제는 가족 누구나 해요." // 2026-10-22 결정 §3 · 주소를 바로 열어도 막는다 (2026-10-26 점검)
+            : null;
 
   const [phase, setPhase] = useState("loading"); // loading | ready | requesting | error | blocked
   const [error, setError] = useState(null);
@@ -209,7 +215,7 @@ export default function PayPage() {
     if (kind === "extra" && refId) {
       dispatch({ type: "extraChargePaid", id: refId, amount: value, orderId: payment.orderId, by: buyerName, method: "데모 가상 승인", demo: true });
     }
-    if (kind === "store") dispatch({ type: "commitPendingOrder", payload: payment, by: buyerName });
+    if (kind === "store") dispatch({ type: "commitPendingOrder", payload: payment, by: buyerName, owner });
     setDemoDone(payment);
   };
 
@@ -323,13 +329,14 @@ export default function PayPage() {
                 </div>
                 <p className="mt-2 text-[13px] leading-[1.7] text-ink">
                   {fmtWon(demoDone.amount)} — 실제 결제는 없습니다. 결제가 끝났을 때와 같이 다음 단계가 진행됩니다.
-                  {kind === "request" && " 담당 컨시어지가 일정을 확인하고 관제가 승인하면 확정돼요. 확정되지 않으면 전액 환불돼요."}
+                  {/* 결제한 뒤 갈 곳은 요청의 지금 상태로 — 수락한 제안은 확정 · 요금을 정해 보낸 것은 관제 승인 (2026-10-26 점검) */}
+                  {kind === "request" && (afterPay(req).next === "confirmed" ? " 일정이 확정됐어요." : ` ${AFTER_PAY_TEXT[afterPay(req).next]}. 확정되지 않으면 전액 환불돼요.`)}
                   {kind === "extra" && " 추가 이용 금액을 결제했어요 — 담당 컨시어지와 관제에 바로 전해졌어요."}
                 </p>
                 {/* 확정 단계 — 결제 → 컨시어지 확인 → 관제 승인 → 일정 확정 (2026-10-22) */}
-                {kind === "request" && (
+                {kind === "request" && afterPay(req).next !== "confirmed" && (
                   <div className="mt-3">
-                    <ConfirmSteps at={1} />
+                    <ConfirmSteps at={afterPay(req).at} />
                   </div>
                 )}
                 <Link href={backTo} className="tap mt-3 flex w-full items-center justify-center rounded-xl border border-navy/20 py-3 text-[14px] font-bold text-navy">

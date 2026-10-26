@@ -545,11 +545,18 @@ function useReq(req, onboarding, payments) {
   const canPay = guardianPays(req);
   // 어르신 '물건 승인 부탁' — 결제 전이면 사지 않기로 닫을 수 있다 (결제 뒤에는 주문이라 관제 · 고객센터)
   const storeAsk = isStoreOrder(req) && req.status === "awaitingPayment" && !pay;
-  const canCancel = !visitCall && (!isStoreOrder(req) || storeAsk) && req.dir !== "fromOps" && !canAnswer && ["free", "ops"].includes(rule.mode) && !(proposal && req.status === "requested");
+  // 취소는 보호자가 낸 요청 · 보호자가 답한 제안 · 어르신 물건 승인 부탁의 '사지 않기'만. 어르신이 낸 요청 · 어르신이 수락한 제안은
+  // 보호자 앱에서 보기만 한다 (2026-10-18 원칙 1 '등록한 쪽이 고치고 지운다' · 10-05 #3). 전에는 어르신이 결제창에 있는 사이에도
+  // 보호자가 취소할 수 있어 그 결제가 '결제 전에 요청이 끝남 — 환불'로 갔다 (2026-10-26 점검)
+  const ownCancel = req.dir === "fromGuardian" || (req.dir === "fromConcierge" && approver === "guardian");
+  const canCancel = !visitCall && (storeAsk || (!isStoreOrder(req) && ownCancel)) && req.dir !== "fromOps" && !canAnswer && ["free", "ops"].includes(rule.mode) && !(proposal && req.status === "requested");
   // 내용 고치기 — 보호자가 낸 요청을, 담당 컨시어지가 승인하기 전까지만 (2026-10-18)
   const canEdit = req.dir === "fromGuardian" && canEditRequest(req);
   const goPay = () => router.push(payHref({ kind: "request", amount: req.amount, orderName: reqTitle(req), ref: req.id }));
-  return { honor, st, approver, proposal, stepIdx, steps, pay, rule, scheduled, visitCall, route, who, canAnswer, canPay, canCancel, canEdit, storeAsk, goPay };
+  // 어르신이 말로 남긴 부탁은 담당 컨시어지가 듣고 정리한 한 줄을 보인다 — 어르신 · 관제 화면처럼 (전에는 보호자 화면만
+  // '담당 컨시어지가 듣고 정리합니다'에 머물렀다 · 2026-10-26 점검)
+  const detail = req.summary?.text ? `“${req.summary.text}” — ${req.summary.by ? `${req.summary.by} 선생님` : "선생님"}이 듣고 정리` : req.detail;
+  return { honor, st, approver, proposal, stepIdx, steps, pay, rule, scheduled, visitCall, route, who, canAnswer, canPay, canCancel, canEdit, storeAsk, goPay, detail };
 }
 
 // 고치려던 사이 승인 · 취소된 요청 — 시트 대신 한 줄 안내
@@ -780,7 +787,7 @@ function TodoCard({ req, open, onToggle, onboarding, dispatch, payments, onEdit,
         <div className="min-w-0 flex-1">
           <div className="text-[20px] font-extrabold leading-[1.3]">{reqTitle(req)}</div>
           <div className="line-clamp-2 text-[15px] leading-[1.5]" style={{ color: "#6B4A3A" }}>
-            {req.detail}
+            {x.detail}
           </div>
         </div>
         {req.amount != null && <div className="ds-num flex-none text-[19px] font-black">{fmtWon(req.amount)}</div>}
@@ -827,7 +834,7 @@ function RequestRow({ req, open, onToggle, onboarding, dispatch, payments, onEdi
             ? `${x.honor}이 결제하실 차례예요`
           : x.scheduled
             ? `확정 ${x.scheduled}`
-            : req.detail;
+            : x.detail;
   return (
     <div className="ds-r overflow-hidden rounded-[22px] bg-white" style={{ "--d": `${d}ms`, boxShadow: "0 4px 0 #E6E2DA" }}>
       <button type="button" onClick={onToggle} aria-expanded={open} className="ds-press flex w-full items-center gap-3 px-4 py-3.5 text-left">
@@ -847,7 +854,7 @@ function RequestRow({ req, open, onToggle, onboarding, dispatch, payments, onEdi
           <div className="text-[12px] font-bold" style={{ color: "#5E6270" }}>
             {x.route}
           </div>
-          <p className="text-[14px] leading-[1.6]">{req.detail}</p>
+          <p className="text-[14px] leading-[1.6]">{x.detail}</p>
           {x.stepIdx >= 0 && <Steps steps={x.steps} at={x.stepIdx} track="#EEEDEA" />}
           <Actions req={req} x={x} dispatch={dispatch} onEdit={onEdit} />
           <Details req={req} x={x} />

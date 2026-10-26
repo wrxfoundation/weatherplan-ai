@@ -88,6 +88,12 @@ export const STORE_INDEX = Object.fromEntries(
 );
 
 
+// 담은 물건(결제 전 장바구니)의 주인 — 어르신 · 보호자가 한 가구 기록을 같이 써서, 한 칸이면 거의 같이 결제할 때 서로의 장바구니를
+// 덮었다 (2026-10-26 점검). 로그인한 가구는 계정 id(결제 서버도 세션 계정 id 로 찾는다), 데모는 화면 역할(elder · guardian)로 나눈다
+export const cartOwner = (user, role) => (user?.household && user?.id ? `u:${user.id}` : role === "elder" ? "elder" : "guardian");
+// 그 주인의 장바구니 — 없으면 예전 화면이 남긴 한 칸
+export const pendingFor = (state, owner) => (state?.pendingOrders || {})[owner] || state?.pendingOrder || null;
+
 // 주문 합계 — 카탈로그 가격으로만 계산한다 (결제 금액은 서버가 이 값으로 정한다 · pages/api/payments/order.js).
 // 카탈로그에 없는 상품이 하나라도 있으면 null — 가격을 모르는 물건은 결제하지 않는다.
 export function orderTotal(items) {

@@ -142,6 +142,9 @@ const DEFAULT = {
   //   금액은 서비스 · 예약 · 실제 이용 시간으로 lib/booking.js extraAmountOf 가 정한다 (결제 서버도 같은 계산)
   extraCharges: [],
   // 결제창으로 넘어가기 전에 담아 둔 스토어 주문. 승인이 끝나야 orders·requests 로 선다.
+  // 주인별로 따로 둔다 { [주인]: 주문 } — 한 칸이면 어르신 · 보호자가 거의 같이 결제할 때 서로의 장바구니를 덮어
+  // 한쪽 결제가 주문 없이 사라졌다 (2026-10-26 점검 · lib/store.js cartOwner). pendingOrder 는 예전 화면이 남긴 한 칸
+  pendingOrders: {},
   pendingOrder: null,
   // 건강 정보 한 벌 — 복용약 · 질환 · 알레르기 (2026-10-02 QA). null 이면 lib/meds.js 기본값.
   // 관제(어르신 관리 › 건강·질환)와 컨시어지(고객 탭)가 고치고, 어르신 · 보호자 · 관제 · SOS 신고 정보가 읽는다 (healthOf).
@@ -275,7 +278,7 @@ function closeRequest(state, r, to, note, at, by) {
   };
 }
 
-function reducer(state, action) {
+export function reducer(state, action) {
   switch (action.type) {
     case "hydrate": {
       // 구버전 저장값(슬라이스에 새 키가 없는 형태)과 깊은 병합 — 새 키 기본값 유지.
@@ -349,6 +352,7 @@ function reducer(state, action) {
         billing: p.billing ?? state.billing,
         memberPay: obj(p.memberPay, null),
         extraCharges: arr(p.extraCharges, state.extraCharges).filter((x) => x && typeof x === "object" && x.id),
+        pendingOrders: obj(p.pendingOrders, state.pendingOrders),
         pendingOrder: p.pendingOrder ?? state.pendingOrder,
         health: obj(p.health, state.health),
         prefNotes: arr(p.prefNotes, state.prefNotes).filter((x) => x && typeof x === "object" && typeof x.text === "string"),
@@ -384,7 +388,8 @@ function reducer(state, action) {
             ...e,
             ...patch,
             // 확정 값은 prevApproved 에 남겨 둔다 — 관제가 바뀐 내용을 반려하면 원래 확정 일정으로 돌아간다
-            ...(moved ? { approval: "pending", reapproval: true, prevApproved: { at: e.at, kind: e.kind, escort: e.escort, title: e.title, note: e.note } } : {}),
+            // reBy — 확정 뒤 바꾼 쪽(역할). 보호자가 어르신 일정을 옮겼는데 어르신 달력에 승인 전 새 시각 · '원래대로'가 보이던 것을 막는다 (2026-10-26 점검)
+            ...(moved ? { approval: "pending", reapproval: true, reBy: ["elder", "guardian", "concierge", "ops"].includes(action.role) ? action.role : null, prevApproved: { at: e.at, kind: e.kind, escort: e.escort, title: e.title, note: e.note } } : {}),
             changeRejected: null,
             editedAt: nowOf(action),
             editedBy: String(action.by || "").slice(0, 30) || null,
@@ -488,6 +493,8 @@ function reducer(state, action) {
     case "addRequest": {
       const r = action.payload;
       if (!r || !r.id) return state;
+      // 같은 요청이 다시 들어오면(오래 남아 있던 동작을 다시 보냄) 두 번 넣지 않는다 (2026-10-26 점검)
+      if (state.requests.some((x) => x.id === r.id)) return state;
       // 2인 해주세요 제안은 짝을 정해서만 보낸다 — 수락되면 바로 확정되므로 그때는 늦다 (2026-10-19 점검 C-06)
       if (r.dir === "fromConcierge" && crewOf(r) === 2 && !crewReady(r)) return state;
       return { ...state, requests: [r, ...state.requests] };
@@ -891,7 +898,17 @@ function reducer(state, action) {
       };
     // 새 SOS 가 켜지면 지난 SOS 의 급파 · 119 · 수락 표시를 지운다 — 남아 있으면 새 SOS 가 처음부터 '급파 · 수락됨'으로 보인다
     case "demo": {
-      const p = action.payload || {};
+      let p = action.payload || {};
+      // 이미 끝난 SOS(또는 지금 것보다 옛 SOS)를 누른 기록이 늦게 다시 들어오면 SOS 는 켜지 않는다 — 보내지 못하고 남아 있던
+      // 동작이 한참 뒤 다시 보내지면 끝난 SOS 가 모든 폰에 옛 시각으로 다시 켜졌다 (2026-10-26 점검)
+      if (p.sos === true && p.sosAt != null) {
+        const closed = state.demo.sosLast?.sosAt;
+        if ((closed != null && p.sosAt <= closed) || (state.demo.sos && state.demo.sosAt != null && p.sosAt < state.demo.sosAt)) {
+          const { sos: _s, sosAt: _t, ...rest } = p; // eslint-disable-line no-unused-vars
+          if (!Object.keys(rest).length) return state;
+          p = rest;
+        }
+      }
       const freshSos = p.sos === true && !state.demo.sos;
       return {
         ...state,
@@ -915,6 +932,8 @@ function reducer(state, action) {
       };
     }
     case "opsPatch":
+      // 급파 지시는 어느 SOS 의 것인지(sosAt)를 같이 받는다 — 지난 SOS 의 급파가 늦게 들어와 새 SOS 에 붙지 않게 (2026-10-26 점검)
+      if (action.patch?.sosDispatched === true && action.sosAt != null && action.sosAt !== state.demo.sosAt) return state;
       return { ...state, ops: { ...state.ops, ...action.patch } };
     case "pushEvent":
       // 하나의 이벤트 스트림 — 규제 대응·분쟁 조사·품질 관리가 같은 데이터를 쓴다 (09 §7.2)
@@ -941,8 +960,12 @@ function reducer(state, action) {
       };
     // 컨시어지가 급파를 수락했다 — 관제 SOS 대응과 컨시어지 관리에 같은 시각이 뜬다 (한 번만).
     // 전에는 컨시어지 화면 안에서만 기억해서, 새로고침하면 다시 '수락' 버튼이 떴고 관제는 티커로만 알았다.
+    // 2026-10-26 점검: 관제가 급파를 지시한 뒤에만 · 급파받은 컨시어지만 · 그 SOS(sosAt)에만. 전에는 컨시어지가 둘 이상인 센터에서
+    // 지시받지 않은 사람도 수락할 수 있었고, 끊긴 채 누른 지난 SOS 의 수락이 다음 SOS 에 붙었다
     case "sosAccept":
-      if (!state.demo.sos || state.ops.sosAcceptedAt) return state;
+      if (!state.demo.sos || !state.ops.sosDispatched || state.ops.sosAcceptedAt) return state;
+      if (action.sosAt != null && state.demo.sosAt != null && action.sosAt !== state.demo.sosAt) return state;
+      if (state.ops.sosDispatchedTo && action.by && String(action.by) !== state.ops.sosDispatchedTo) return state;
       return { ...state, ops: { ...state.ops, sosAcceptedAt: nowOf(action), sosAcceptedBy: String(action.by || "") } };
     case "audit":
       return {
@@ -1147,16 +1170,37 @@ function reducer(state, action) {
     }
     case "setBilling":
       return { ...state, billing: action.payload };
-    case "setPendingOrder":
-      return { ...state, pendingOrder: action.payload };
+    case "setPendingOrder": {
+      // 주인(lib/store.js cartOwner)별 칸에 — 주인이 없으면 예전 한 칸 (2026-10-26 점검)
+      const owner = String(action.owner || "");
+      if (!owner) return { ...state, pendingOrder: action.payload };
+      return { ...state, pendingOrders: { ...(state.pendingOrders || {}), [owner]: action.payload } };
+    }
     // 스토어 결제 승인 완료 → 주문·구매내역·배송 요청을 한 번에 세우고 담아 둔 것을 비운다.
     // 결제가 끝나야 주문이 선다는 규칙이 이 한 곳에 있다.
     case "commitPendingOrder": {
-      const po = state.pendingOrder;
-      if (!po) return state;
+      // 이미 주문으로 세운 결제면(결제 서버가 먼저 반영했거나 결과 화면을 다시 열었다) 그대로 둔다 — 장바구니가 비어 있다고
+      // 환불 대기로 돌리지 않게. 주문으로 세우면 그 결제에 배송 요청 번호(ref)가 붙는다 (2026-10-26 점검)
+      if (action.payload?.orderId && (state.payments || []).some((p) => p.orderId === action.payload.orderId && p.ref)) return state;
+      const owner = String(action.owner || "");
+      const mine = owner ? (state.pendingOrders || {})[owner] || null : null;
+      const po = mine || state.pendingOrder;
       const now = nowOf(action);
       const key = action._op || now;
       const pay = action.payload || {};
+      // 결제는 됐는데 담은 물건을 찾지 못했다 — 전에는 그냥 넘어가 돈만 받고 주문 · 환불이 하나도 남지 않았다.
+      // 그 결제를 환불 대기로 둔다 (관제 해주세요 관리 '환불 대기'에서 닫는다 · 2026-10-26 점검)
+      if (!po) {
+        if (!pay.orderId) return state;
+        return {
+          ...state,
+          payments: (state.payments || []).map((p) =>
+            p.orderId === pay.orderId && !p.refund
+              ? { ...p, refund: { status: p.demo ? "done" : "pending", amount: p.amount, reason: "결제한 장바구니를 찾지 못함 — 환불", at: now, by: "자동", ...(p.demo ? { doneAt: now, doneBy: "데모 (실제 결제 없음)" } : {}) } }
+              : p
+          ),
+        };
+      }
       // 낸 금액이 담은 물건의 카탈로그 합계와 다르면 주문을 세우지 않는다 — 그 결제는 환불 대기로 (2026-10-19 점검)
       const want = orderTotal(po.items);
       const elderOrder = po.from === "elder";
@@ -1170,10 +1214,16 @@ function reducer(state, action) {
           ),
         };
       }
+      const { [owner]: _paid, ...restCarts } = state.pendingOrders || {}; // eslint-disable-line no-unused-vars
       return {
         ...state,
-        pendingOrder: null,
-        demo: { ...state.demo, cart: true, safetyCart: [] },
+        // 결제한 주인의 장바구니만 비운다 — 다른 사람이 담아 둔 것은 그대로
+        pendingOrders: mine ? restCarts : state.pendingOrders || {},
+        pendingOrder: mine ? state.pendingOrder : null,
+        // 선생님이 안전진단에서 담아 둔 물건은 보호자 주문 때만 비운다 — 어르신이 다른 물건 하나를 사도 다 지워졌다 (2026-10-26 점검)
+        demo: { ...state.demo, cart: true, safetyCart: elderOrder ? state.demo.safetyCart || [] : [] },
+        // 이 결제를 배송 요청에 잇는다 — 전에는 이어지지 않아 컨시어지 · 관제 화면에 '결제 전'으로 보였다 (2026-10-26 점검)
+        payments: (state.payments || []).map((p) => (pay.orderId && p.orderId === pay.orderId && !p.ref ? { ...p, ref: `rq-${key}` } : p)),
         orders: [
           { id: `od${key}`, at: now, by: String(action.by || (elderOrder ? "어르신" : "보호자")), channel: po.channel, items: po.items, ship: po.ship, status: "preparing", receipt: pay.receiptUrl || null, note: "" },
           ...state.orders,
@@ -1184,6 +1234,7 @@ function reducer(state, action) {
             // 어르신 스토어에서 어르신이 직접 결제한 주문도 같은 길로 선다 (2026-10-22 · 금액 제한 없음)
             dir: elderOrder ? "fromElder" : "fromGuardian",
             type: elderOrder ? "물건을 담았어요" : "물품 전달해 주세요",
+            storeOrder: true, // 스토어 주문 표시 — 보호자가 직접 적는 '물품 전달해 주세요' 부탁과 구분한다 (lib/requests.js isStoreOrder)
             // 담당은 관제가 정한다 (2026-10-02 QA — 박지현으로 미리 박지 않는다)
             detail: `${elderOrder ? "어르신" : "보호자"} 주문: ${po.items.map((i) => i.name).join(", ")} — 다음 배송일에 전달해 주세요.`,
             amount: po.total,
@@ -1206,7 +1257,10 @@ function reducer(state, action) {
     case "addVoice": {
       const p = action.payload || {};
       const clip = cleanClip(p.clip);
-      return { ...state, voices: [{ id: idOf("vo", action), at: nowOf(action), ...p, ...(p.clip ? { clip } : {}) }, ...state.voices].slice(0, 30) };
+      const v = { id: idOf("vo", action), at: nowOf(action), ...p, ...(p.clip ? { clip } : {}) };
+      // 같은 음성이 다시 들어오면(오래 남아 있던 동작을 다시 보냄) 두 번 넣지 않는다 (2026-10-26 점검)
+      if (state.voices.some((x) => x.id === v.id)) return state;
+      return { ...state, voices: [v, ...state.voices].slice(0, 30) };
     }
     // 보낸 음성 거두기 (2026-10-18) — 받는 분이 아직 듣지 않은 것만, 보낸 사람이. 가구 기록에서 빠져 받는 화면에서도 사라진다.
     // 녹음 파일 자체는 서버 voice_clips 표에 30일 보관 뒤 지워진다 (바로 지우는 서버 API 는 다음 단계 — docs 결정 기록)
@@ -1364,6 +1418,11 @@ function reducer(state, action) {
     }
     case "guardianPatch":
       return { ...state, guardian: { ...state.guardian, ...action.patch } };
+    // 보호자가 어르신 음성을 들었다 — 그 한 건만 켠다. 전에는 들은 표시 전체를 덮어써서, 다른 보호자 폰의 저장이 다시 들어오면
+    // 이 폰에서 들은 표시가 '새'로 돌아갔다 (2026-10-26 점검)
+    case "guardianHeard":
+      if (!action.id) return state;
+      return { ...state, guardian: { ...state.guardian, voiceHeard: { ...(state.guardian?.voiceHeard || {}), [action.id]: true } } };
     case "setProductImage": {
       // null 이면 삭제 — 기본 아이콘 썸네일로 돌아간다
       const next = { ...state.productImages };
@@ -1407,6 +1466,12 @@ const stripOps = (s) => {
 const opsOf = (s) => (s && Array.isArray(s._ops) ? s._ops : []);
 // 서버에서 받은 상태를 화면용으로 — 빈 기록 위에 형태 검증을 거쳐 얹는다
 const fromServer = (payload, household) => reducer(freshFor(household), { type: "hydrate", payload: stripOps(payload) });
+// 서버가 가구 기록에 동작을 직접 반영할 때 (결제 승인 — lib/pay-server.js applyPaidToHousehold). 화면과 같은 규칙(reducer)으로 바꾸고,
+// 서버 상태의 _ops(이미 들어간 화면 동작 번호)는 그대로 둔다 — 결제한 폰이 같은 동작을 보내도 주문번호로 걸러 두 번 들어가지 않는다
+export function applyToServerState(raw, household, actions) {
+  const next = actions.reduce((acc, a) => reducer(acc, a), fromServer(raw, household));
+  return { ...next, _ops: opsOf(raw) };
+}
 
 const POLL_ACTIVE_MS = 4000; // 누군가 만지고 있을 때 — 다른 폰이 바꾼 것을 4초 안에
 const POLL_IDLE_MS = 10000; // 2분 넘게 손대지 않은 화면은 10초마다 (켜 둔 화면이 서버를 계속 두드리지 않게)
@@ -1416,7 +1481,10 @@ const MAX_OPS = 300; // 서버에 남겨 두는 최근 동작 번호 수
 
 const newOpId = () => `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 8)}`;
 // 이 기기에 남겨 두는 것 (테스트 가구별) — 보내지 못한 동작 · 마지막으로 받은 서버 상태
-const pendingKey = (hh) => `kcare-acct-pending-${hh}-v1`;
+// 보내지 못한 동작은 계정별로 — 가구별 한 칸이면 한 폰을 둘이 쓸 때 앞사람이 못 보낸 동작이 다음에 로그인한 사람 이름으로
+// 저장됐다 (2026-10-26 점검). 예전 한 칸(-v1)은 처음 한 번 읽고 지운다
+const pendingKey = (hh, uid) => `kcare-acct-pending-${hh}-${uid || "-"}-v2`;
+const legacyPendingKey = (hh) => `kcare-acct-pending-${hh}-v1`;
 const cacheKey = (hh) => `kcare-acct-cache-${hh}-v1`;
 const writeLocal = (key, value) => {
   try {
@@ -1426,7 +1494,7 @@ const writeLocal = (key, value) => {
     /* 용량 초과 등 — 이 기기 보관은 보조 수단이라 조용히 넘어간다 */
   }
 };
-const savePending = (hh, list) => hh && writeLocal(pendingKey(hh), list.length ? list : null);
+const savePending = (hh, uid, list) => hh && writeLocal(pendingKey(hh, uid), list.length ? list : null);
 const saveCache = (hh, state, version) => hh && state && writeLocal(cacheKey(hh), { version, state });
 
 export function AppStateProvider({ children }) {
@@ -1453,10 +1521,18 @@ export function AppStateProvider({ children }) {
   // 관제 센터 공간 — 그 센터 회원 이름 · 역할 (화면의 어르신 · 보호자 · 컨시어지 이름 · lib/people.js)
   const [centerPeople, setCenterPeople] = useState(null);
 
+  // 서버로 보낼 상태 — 화면이 다시 그려지기를 기다리지 않고, 내 동작 · 받은 서버 상태를 그 자리에서 반영한다.
+  // 전에는 그려질 때만 바뀌어, 충돌(409) 직후 바로 다시 보내면(flushNow — 결제창 · 로그아웃 직전) 충돌 전 상태가 올라가
+  // 다른 폰이 방금 저장한 것(결제 기록 · SOS 등)을 지웠다 (2026-10-26 점검). 서버 저장 모드에서만 쓴다
   const stateRef = useRef(state);
-  stateRef.current = state;
+  const showState = useCallback((next) => {
+    stateRef.current = next;
+    rawDispatch({ type: "set", state: next });
+  }, []);
   const scopeRef = useRef(null);
   const householdRef = useRef(null);
+  const accountRef = useRef(null); // 로그인한 계정 id — 보내지 못한 동작을 계정별로 둔다
+  accountRef.current = auth.user?.id || null;
   const backendRef = useRef("local");
   const storeKeyRef = useRef(KEY);
   const versionRef = useRef(0);
@@ -1478,7 +1554,9 @@ export function AppStateProvider({ children }) {
       // 같은 번호를 화면에도 쓴다 — 나중에 충돌로 다시 쌓아도 id·시각이 그대로다
       a = { ...a, _at: Date.now(), _op: newOpId() };
       pendingRef.current.push(a);
-      savePending(householdRef.current, pendingRef.current);
+      savePending(householdRef.current, accountRef.current, pendingRef.current);
+      // 보낼 상태에도 바로 — 같은 번호 · 시각이라 화면 상태와 같은 결과다
+      stateRef.current = reducer(stateRef.current, a);
       setDirty((d) => d + 1);
     }
     rawDispatch(a);
@@ -1531,16 +1609,18 @@ export function AppStateProvider({ children }) {
           versionRef.current = res?.ok ? body.version || 0 : cached?.version || 0;
           opsRef.current = opsOf(base);
           // 이 기기에서 보내지 못한 동작 — 서버에 이미 들어간 것은 빼고 다시 쌓는다
-          const saved = readLocal(pendingKey(household));
-          const carried = (Array.isArray(saved) ? saved : []).filter(
+          const saved = readLocal(pendingKey(household, accountRef.current));
+          const legacy = readLocal(legacyPendingKey(household));
+          if (legacy != null) writeLocal(legacyPendingKey(household), null);
+          const carried = [...(Array.isArray(legacy) ? legacy : []), ...(Array.isArray(saved) ? saved : [])].filter(
             (a) => a && typeof a.type === "string" && a.type !== "init" && !opsRef.current.includes(a._op)
           );
           if (res?.ok && Array.isArray(body.people)) setCenterPeople(body.people);
           const next = carried.reduce((acc, a) => reducer(acc, a), base ? fromServer(base, household) : freshFor(household));
-          rawDispatch({ type: "set", state: next });
+          showState(next);
           // 처음 들어온 가구 — 빈 기록으로 만들어 서버에 한 번 저장한다
           pendingRef.current = res?.ok && !base ? [{ type: "init", _at: Date.now(), _op: newOpId() }, ...carried] : carried;
-          savePending(household, pendingRef.current);
+          savePending(household, accountRef.current, pendingRef.current);
           if (res?.ok && base) saveCache(household, base, versionRef.current);
           if (pendingRef.current.length) setDirty((d) => d + 1);
           const err = res?.ok ? null : body.error || (res ? `http-${res.status}` : "network");
@@ -1561,7 +1641,7 @@ export function AppStateProvider({ children }) {
     return () => {
       cancelled = true;
     };
-  }, [scope, household]);
+  }, [scope, household, showState]);
 
   // 이 기기에 저장 (데모 · 서버 설정 전 테스트 계정)
   useEffect(() => {
@@ -1589,19 +1669,24 @@ export function AppStateProvider({ children }) {
     });
     setSync((s) => ({ ...s, status: "saving" }));
     let again = false;
+    // 저장이 15초 넘게 멈추면 끊고 다시 보낸다 — 전에는 멈춘 저장 하나가 뒤의 저장 · 확인을 모두 막았다 (2026-10-26 점검).
+    // 서버에 이미 들어갔으면 다시 보낼 때 409 로 오고, 들어간 동작은 _ops 로 걸러져 두 번 들어가지 않는다
+    const ctl = !keepalive && typeof AbortController !== "undefined" ? new AbortController() : null;
+    const timer = ctl ? setTimeout(() => ctl.abort(), 15000) : null;
     try {
       const res = await fetch("/api/household", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body,
         keepalive: keepalive && body.length < 60000,
+        ...(ctl ? { signal: ctl.signal } : {}),
       });
       const j = await res.json().catch(() => ({}));
       if (res.ok) {
         versionRef.current = j.version;
         opsRef.current = ops;
         pendingRef.current = pendingRef.current.slice(sent.length);
-        savePending(hh, pendingRef.current);
+        savePending(hh, accountRef.current, pendingRef.current);
         saveCache(hh, snapshot, j.version);
         retryRef.current = 0;
         setSync((s) => ({ ...s, status: "saved", savedAt: Date.now(), error: null }));
@@ -1615,9 +1700,9 @@ export function AppStateProvider({ children }) {
         versionRef.current = j.version || 0;
         opsRef.current = serverOps;
         pendingRef.current = j.state ? mine : [{ type: "init", _at: Date.now(), _op: newOpId() }, ...mine];
-        savePending(hh, pendingRef.current);
+        savePending(hh, accountRef.current, pendingRef.current);
         if (j.state) saveCache(hh, j.state, versionRef.current);
-        rawDispatch({ type: "set", state: next });
+        showState(next);
         again = pendingRef.current.length > 0;
         setSync((s) => ({ ...s, status: again ? "saving" : "saved", error: null }));
       } else {
@@ -1637,10 +1722,11 @@ export function AppStateProvider({ children }) {
         setTimeout(() => setDirty((d) => d + 1), wait);
       }
     } finally {
+      if (timer) clearTimeout(timer);
       savingRef.current = false;
     }
     if (again) setDirty((d) => d + 1);
-  }, []);
+  }, [showState]);
 
   // 지금 모인 것을 다 보낼 때까지 기다린다 — 결제창으로 떠나기 전 · 로그아웃 전
   const flushNow = useCallback(async () => {
@@ -1713,7 +1799,7 @@ export function AppStateProvider({ children }) {
           versionRef.current = j.version;
           opsRef.current = opsOf(j.state);
           if (j.state) saveCache(householdRef.current, j.state, j.version);
-          rawDispatch({ type: "set", state: j.state ? fromServer(j.state, householdRef.current) : freshFor(householdRef.current) });
+          showState(j.state ? fromServer(j.state, householdRef.current) : freshFor(householdRef.current));
           setSync((s) => ({ ...s, status: "saved", error: null, remoteAt: Date.now(), remoteBy: j.updatedBy || null }));
         } else {
           // 연결이 돌아왔다 — 첫 읽기 실패로 켜져 있던 안내를 내린다
@@ -1739,7 +1825,7 @@ export function AppStateProvider({ children }) {
       document.removeEventListener("visibilitychange", onFocus);
       ACTIVITY.forEach((ev) => window.removeEventListener(ev, mark));
     };
-  }, [ready, sync.mode]);
+  }, [ready, sync.mode, showState]);
 
   const syncValue = useMemo(() => ({ ...sync, household, flush: flushNow }), [sync, household, flushNow]);
 
@@ -1872,12 +1958,15 @@ export function storageText(sync) {
 // 확정된 일정을 고쳐 관제가 다시 보는 중(reapproval)이면 — 보호자 말고는 아직 바뀌기 전의 확정 값(prevApproved)을 본다.
 // 고친 쪽 말고는 '변경 확인 중'인 원래 약속이 그대로 유효하다 (전에는 어르신 달력에서 통째로 사라졌다 · 2026-10-19 점검 L-07)
 export function eventsFor(events, who) {
+  // 확정 뒤 고친 것(재승인 대기)은 고친 쪽(reBy)이 새 내용을, 나머지는 원래 확정 내용을 본다 — 만든 쪽(by)으로 정하면
+  // 보호자가 옮긴 어르신 일정이 어르신에게 승인 전 새 시각으로 보였다 (2026-10-26 점검)
+  const mine = (e) => (e.reapproval && e.reBy ? e.reBy : e.by) === "elder";
   return (events || [])
-    .map((e) => (e.approval === "pending" && e.reapproval && e.prevApproved && who !== "guardian" && !(who === "elder" && e.by === "elder") ? { ...e, ...e.prevApproved, approval: "approved", changePending: true } : e))
+    .map((e) => (e.approval === "pending" && e.reapproval && e.prevApproved && who !== "guardian" && !(who === "elder" && mine(e)) ? { ...e, ...e.prevApproved, approval: "approved", changePending: true } : e))
     .filter((e) => {
       if (!e.approval || e.approval === "approved") return true;
       if (who === "guardian") return true;
-      if (who === "elder") return e.by === "elder" && (e.approval === "pending" || e.approval === "rejected");
+      if (who === "elder") return mine(e) && (e.approval === "pending" || e.approval === "rejected");
       return false;
     });
 }

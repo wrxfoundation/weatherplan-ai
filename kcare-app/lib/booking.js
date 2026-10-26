@@ -15,6 +15,9 @@ export const EXTRA_PEOPLE_MAX = 2;
 // 추가 이용 금액 — 결제 기한은 청구한 날 + 3일. 지나면 받는 분의 등록 카드로 결제한다
 export const EXTRA_DUE_DAYS = 3;
 export const EXTRA_USED_MAX = 12 * 60; // 실제 이용 시간 상한 — 잘못 누른 값으로 큰 청구가 나가지 않게
+// 추가 이용 금액 보내기의 실제 이용 최댓값 — 그 서비스의 최대 이용 시간 (든든 병원동행 5시간 · 2026-10-24 결정).
+// 예약이 이미 최대면 늘릴 수 없다. 지금 카드와 '끝난 것' 두 곳이 같은 값을 쓴다 (전에는 '끝난 것'만 12시간까지 · 2026-10-26 점검)
+export const extraUsedMax = (type, booked) => Math.min(EXTRA_USED_MAX, Math.max(Number(booked) || 0, durOf(type)?.max || EXTRA_USED_MAX));
 
 const pad = (n) => String(n).padStart(2, "0");
 const isYmd = (v) => /^\d{4}-\d{2}-\d{2}$/.test(String(v || ""));

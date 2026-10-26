@@ -6,7 +6,7 @@ import { useEffect, useId, useState } from "react";
 import { Card, Badge } from "./ui";
 import { fmtWon } from "../lib/config";
 import { STATUS, kstYmd } from "../lib/requests";
-import { EXTRA_USED_MAX, STEP, addMin, canChargeExtra, dateLabel, durOf, durText, extraAmountOf, extraDueYmd, extraOverdue, svcTitle } from "../lib/booking";
+import { STEP, addMin, canChargeExtra, dateLabel, durOf, durText, extraAmountOf, extraDueYmd, extraOverdue, extraUsedMax, svcTitle } from "../lib/booking";
 
 const KST = 9 * 3600 * 1000;
 const hm = (t) => new Date(Number(t) + KST).toISOString().slice(11, 16);
@@ -61,7 +61,7 @@ export function ExtraChargeSheet({ r, payees, customer, onClose, onSend }) {
   const d = durOf(r.type);
   const booked = Number(r.durationMin) || d?.min || 0;
   // 최댓값 — 그 서비스의 최대 이용 시간 (병원 동행 5시간 · 설계서 v3 '최댓값 5시간'). 예약이 이미 최대면 늘릴 수 없다
-  const max = Math.min(EXTRA_USED_MAX, Math.max(booked, d?.max || EXTRA_USED_MAX));
+  const max = extraUsedMax(r.type, booked);
   const [used, setUsed] = useState(Math.min(max, booked + STEP));
   const elderAt = payees.findIndex((p) => p.role === "elder");
   const [to, setTo] = useState(elderAt >= 0 ? elderAt : payees.length ? 0 : -1);
@@ -197,6 +197,13 @@ export function ReqNowCard({ r, me, customer, charges, payees, chips = [], onOps
     setAsking(false);
   };
   const send = ({ used, pick, memo, amount, add }) => {
+    // 이미 이 해주세요에 청구가 있으면(2인 서비스에서 짝이 먼저 보냄) 보냈다고 하지 않는다 — 기록은 한 건만 받는데
+    // '보냈어요' 토스트와 관제 알림 줄은 그대로 나갔다 (2026-10-26 점검)
+    if ((charges || []).some((x) => x.reqId === r.id && x.status !== "cancelled")) {
+      setSheet(false);
+      toast("이미 보낸 청구가 있어요 — 아래 상태를 확인해 주세요");
+      return;
+    }
     dispatch({ type: "sendExtraCharge", payload: { reqId: r.id, usedMin: used, to: { role: pick.role, name: pick.name }, memo, customer }, by: me });
     push("추가 이용 금액", `${me} → ${pick.role === "elder" ? "어르신" : "보호자"} ${pick.name} · ${svcTitle(r.type)} 추가 ${durText(add)} · ${fmtWon(amount)} · ${dateLabel(extraDueYmd(Date.now()))}까지`, "#E8B04B");
     setSheet(false);

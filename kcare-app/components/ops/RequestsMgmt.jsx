@@ -12,7 +12,7 @@ import Icon from "../icons";
 import { useAppState } from "../../lib/state";
 import { useAuth } from "../../lib/auth";
 import { LiveToggle } from "./LiveToggle";
-import { APPROVER_LABEL, STATUS, SERVICE_MENU, URGENCY, approverOf, canTransition, crewOf, crewReady, fmtPreferred, fmtScheduled, isVisitCall, payerOf, paymentOf, transition } from "../../lib/requests";
+import { APPROVER_LABEL, STATUS, SERVICE_MENU, URGENCY, approverOf, canTransition, crewOf, crewReady, fmtPreferred, fmtScheduled, isStoreOrder, isVisitCall, payerOf, paymentOf, transition } from "../../lib/requests";
 import { addMin, clock12, dateLabel, durText, extraDueYmd, extraOverdue, extraStateText, extraToText, peopleText, svcTitle } from "../../lib/booking";
 import { fmtWon } from "../../lib/config";
 import { Panel, PanelHead, Stat, Pill, Btn, Table, KV, Field, Toggle, Drawer, Confirm, Note, Empty, useOperator } from "./ui";
@@ -76,8 +76,13 @@ function payState(r, payments) {
   // 어르신이 직접 내기로 한 것은 '어르신 결제 대기' — 가족에게 부탁한 것만 '가족 결제 대기' (2026-10-26 · lib/requests.js payerOf)
   if (r.status === "awaitingPayment") return { label: payerOf(r) === "elder" ? "어르신 결제 대기" : "가족 결제 대기", tone: "warn" };
   if (r.status === "cancelled" || r.status === "rejected") return { label: "—", tone: "muted" };
+  // 스토어 주문의 배송 요청 — 결제는 주문에 묶여 있다. 2026-10-26 전 주문은 결제가 요청에 이어져 있지 않아 '결제 전'으로 보였다
+  if (storeDelivery(r)) return { label: "스토어 주문 결제", tone: "ok" };
   return { label: "결제 전", tone: "muted" };
 }
+// 스토어 결제로 생긴 배송 요청 — 해주세요 취소 · 환불로 다루지 않는다 (lib/requests.js isStoreOrder · 주문 취소 · 반품은 보호자 문의 → 관제).
+// '물건 승인 부탁해요'는 가족이 해주세요 결제로 내는 것이라 여기에 들지 않는다
+const storeDelivery = (r) => isStoreOrder(r) && r.type !== "물건 승인 부탁해요";
 
 // 누가 확인 · 승인했나 — 보호자 · 어르신 요청은 담당 컨시어지 확인 → 관제 승인, 제안은 승인 대상, 도와줘요는 관제
 function approvalText(r) {
@@ -287,6 +292,8 @@ export default function RequestsMgmt() {
 
       <ExtraChargesPanel charges={charges} onRow={(x) => setXOpenId(x.id)} selected={xOpenId} />
 
+      <RefundsPanel payments={payments} dispatch={dispatch} />
+
       <Note>건강 · 센서 데이터는 참고자료이며 의료진의 진단을 대신하지 않습니다. 서비스 가격은 확정된 메뉴 값만 표시하고, 확정 전 항목은 "요금 확정 전"으로 둡니다.</Note>
 
       {xOpen && <ExtraDetail x={xOpen} liveOn={liveOn} dispatch={dispatch} onClose={() => setXOpenId(null)} />}
@@ -339,7 +346,7 @@ function Detail({ r, m, real, payments, dispatch, onClose, onTransition, onPatch
   const reqPays = (payments || []).filter((p) => p.ref === r.id && p.status === "done");
   const assignee = m.assignee || r.assignee || "";
   const nextStates = Object.keys(STATUS).filter((k) => canTransition(r.status, k));
-  const refundable = r.amount > 0 && !m.refund && ["awaitingPayment", "inProgress", "done"].includes(r.status);
+  const refundable = r.amount > 0 && !m.refund && ["awaitingPayment", "inProgress", "done"].includes(r.status) && !storeDelivery(r);
 
   const timeline = [
     ...r.history.map((h) => ({ at: h.at, title: STATUS[h.status]?.label || h.status, sub: h.note, status: h.status })),
@@ -398,7 +405,7 @@ function Detail({ r, m, real, payments, dispatch, onClose, onTransition, onPatch
           {real && r.cancelReq && <KV k="취소 요청" v={`${r.cancelReq.by} · ${fmtDT(r.cancelReq.at)}${r.cancelReq.reason ? ` · ${r.cancelReq.reason}` : ""}`} tone="gold" />}
           {r.hospital && <KV k="병원" v={r.hospital} />}
           <KV k="긴급도" v={URGENCY[r.urgency]?.label || "보통"} tone={r.urgency === "urgent" ? "gold" : undefined} />
-          <KV k="결제" v={<span className="flex flex-wrap items-center gap-2"><Pill tone={pay.tone}>{pay.label}</Pill><span className="text-[11px] text-muted">가족 누구나 금액 제한 없이 결제</span></span>} />
+          <KV k="결제" v={<span className="flex flex-wrap items-center gap-2"><Pill tone={pay.tone}>{pay.label}</Pill><span className="text-[11px] text-muted">{storeDelivery(r) ? "스토어 주문 · 결제는 주문에" : payerOf(r) === "elder" ? "금액 제한 없음 · 어르신이 결제(가족에게 부탁하면 가족이)" : "금액 제한 없음 · 보호자 결제"}</span></span>} />
           {r.photos?.length > 0 && <KV k="첨부 사진" v={r.photos.join(", ")} mono />}
           {r.proof && <KV k="완료 증빙" v={r.proof} mono />}
         </section>
@@ -484,10 +491,15 @@ function Detail({ r, m, real, payments, dispatch, onClose, onTransition, onPatch
                       <Btn small ghost disabled={!opsNote.trim()} title={opsNote.trim() ? "" : "관제 메모에 반려 사유를 적어 주세요"} onClick={() => setConfirm({ kind: "cancelReject", label: "취소 요청 반려" })}>취소 요청 반려</Btn>
                     </>
                   )}
-                  <Btn small ghost tone="muted" disabled={!opsNote.trim()} title={opsNote.trim() ? "" : "관제 메모에 취소 사유를 적어 주세요"} onClick={() => setConfirm({ kind: "force", label: "강제 취소" })}>강제 취소{paid && !paid.refund ? " (환불 대기로)" : ""}</Btn>
+                  {/* 스토어 주문의 배송은 여기서 취소하지 않는다 — 취소해도 주문 · 결제는 그대로 남았다 (2026-10-26 점검) */}
+                  {!storeDelivery(r) && (
+                    <Btn small ghost tone="muted" disabled={!opsNote.trim()} title={opsNote.trim() ? "" : "관제 메모에 취소 사유를 적어 주세요"} onClick={() => setConfirm({ kind: "force", label: "강제 취소" })}>강제 취소{paid && !paid.refund ? " (환불 대기로)" : ""}</Btn>
+                  )}
                 </div>
                 <p className="mt-1.5 text-[11.5px] text-muted">
-                  {r.status === "cancelRequested" ? "취소 요청 반려 · " : ""}강제 취소는 관제 메모(사유)를 적어야 누를 수 있습니다 — 사유는 요청한 분의 이력에 남습니다.
+                  {storeDelivery(r)
+                    ? "스토어 주문의 배송입니다 — 결제가 주문에 묶여 있어 여기서 취소 · 환불하지 않습니다. 주문 취소 · 반품은 보호자 문의로 받아 토스 상점관리자에서 처리합니다."
+                    : `${r.status === "cancelRequested" ? "취소 요청 반려 · " : ""}강제 취소는 관제 메모(사유)를 적어야 누를 수 있습니다 — 사유는 요청한 분의 이력에 남습니다.`}
                 </p>
               </>
             )}
@@ -565,7 +577,7 @@ function Detail({ r, m, real, payments, dispatch, onClose, onTransition, onPatch
                 ))}
               </ul>
             ) : (
-              <Empty>{r.payBy === "elder" ? "어르신 직접 결제 — 카드 결제 기록이 없어 환불 처리 대상이 아닙니다." : "결제 기록 없음."}</Empty>
+              <Empty>{r.payBy === "elder" ? "어르신 직접 결제 — 카드 결제 기록이 없어 환불 처리 대상이 아닙니다." : storeDelivery(r) ? "스토어 주문 결제 — 결제가 주문에 묶여 있어 여기서 환불하지 않습니다 (주문 취소 · 반품 문의로 처리)." : "결제 기록 없음."}</Empty>
             )
           ) : m.refund ? <KV k={m.refund.status} v={`${m.refund.amount ? fmtWon(m.refund.amount) : "—"} · ${m.refund.reason || "사유 미입력"}`} tone="info" /> : refundable ? (
             <div className="flex items-end gap-2">
@@ -607,6 +619,44 @@ function Detail({ r, m, real, payments, dispatch, onClose, onTransition, onPatch
         body={confirm?.kind === "refundDone" ? "토스페이먼츠 상점관리자에서 이 결제를 실제로 환불(취소)한 뒤에 누르세요. 보호자 화면에 '환불 완료'로 바뀌고 되돌릴 수 없습니다." : confirm?.kind === "opsReturn" ? `${r.elder} · ${svcName(r)} — 담당 컨시어지 확인 단계로 돌아갑니다. 사유 "${opsNote.trim()}"가 컨시어지 확인 칸과 요청한 분의 이력에 남고, 결제는 그대로입니다.` : confirm?.kind === "cancelReject" ? `${r.elder} · ${svcName(r)} — 요청은 원래 상태(확정 · 진행)로 돌아가고, 사유 "${opsNote.trim()}"가 요청한 분의 이력에 남습니다.` : confirm?.kind === "refund" ? `${r.elder} · ${svcName(r)} — 환불 요청이 기록되고, 가능하면 요청이 취소 상태로 바뀝니다. 되돌릴 수 없습니다.` : confirm?.kind === "force" || confirm?.kind === "cancelOk" ? `${r.elder} · ${svcName(r)} — 요청이 취소됩니다${paid && !paid.refund ? ` (결제 ${fmtWon(paid.amount)}은 환불 대기로 넘어갑니다)` : ""}. 사유: ${opsNote.trim() || "—"} · 보호자 · 어르신 · 컨시어지 화면에 같이 반영되고 되돌릴 수 없습니다.` : "종결 상태로 바뀌면 다시 진행할 수 없습니다. 메모가 이력에 남습니다."}
         confirmLabel={confirm?.kind === "refund" ? "환불 요청" : confirm?.label} tone="navy" />
     </Drawer>
+  );
+}
+
+// ── 환불 대기 — 지금 처리할 일 '환불 대기 n건'이 세는 결제 전부 (2026-10-26 점검) ──
+// 해주세요뿐 아니라 추가 이용 금액(앱 결제와 등록 카드 기록이 겹친 것 · 취소된 청구에 들어온 결제)과 스토어(주문 합계와 다른 결제 ·
+// 담은 물건을 찾지 못한 결제)의 환불 대기도 여기서 닫는다. 전에는 해주세요 상세에서만 닫을 수 있어 이 둘은 끝나지 않았다.
+const PAY_KIND_TEXT = { request: "해주세요", extra: "추가 이용 금액", store: "스토어", entry: "가입비" };
+function RefundsPanel({ payments, dispatch }) {
+  const OPERATOR = useOperator();
+  const [confirm, setConfirm] = useState(null); // 환불 완료로 기록할 결제
+  const list = (payments || []).filter((p) => p.refund && p.refund.status !== "done");
+  if (!list.length) return null;
+  return (
+    <Panel>
+      <PanelHead title={`환불 대기 ${list.length}건`} sub="토스페이먼츠 상점관리자에서 실제로 환불(취소)한 뒤 '환불 완료'를 누르세요 — 결제한 분 화면에 '환불 완료'로 바뀌고 되돌릴 수 없습니다" />
+      <ul className="mt-3 space-y-2">
+        {list.map((p) => (
+          <li key={p.id} className="flex flex-wrap items-center gap-2 rounded-lg border border-navy/[.08] px-3 py-2">
+            <Pill tone="warn">환불 대기 {fmtWon(p.refund.amount)}</Pill>
+            <span className="text-[12.5px] font-bold text-ink">{PAY_KIND_TEXT[p.kind] || "결제"} · {p.orderName || "—"}</span>
+            <span className="min-w-0 flex-1 text-[11.5px] text-muted">{p.refund.reason || "사유 미입력"}{p.demo ? " (데모)" : ""}</span>
+            <Btn small tone="ok" onClick={() => setConfirm(p)}>토스에서 환불함 · 환불 완료</Btn>
+          </li>
+        ))}
+      </ul>
+      <Confirm
+        open={!!confirm}
+        onCancel={() => setConfirm(null)}
+        onConfirm={() => {
+          if (confirm) dispatch?.({ type: "refundDone", paymentId: confirm.id, by: OPERATOR });
+          setConfirm(null);
+        }}
+        title={`${fmtWon(confirm?.refund?.amount || 0)} 환불을 완료로 기록합니다`}
+        body="토스페이먼츠 상점관리자에서 이 결제를 실제로 환불(취소)한 뒤에 누르세요. 결제한 분 화면에 '환불 완료'로 바뀌고 되돌릴 수 없습니다."
+        confirmLabel="환불 완료"
+        tone="navy"
+      />
+    </Panel>
   );
 }
 

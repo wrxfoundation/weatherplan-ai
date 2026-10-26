@@ -202,7 +202,8 @@ export default function ElderMy({ elderName, right }) {
           )}
         </div>
         <div className="text-[17px] font-bold" style={{ color: "#6B5A35" }}>
-          가입한 날짜에 매달 결제돼요{nextBill ? ` · 다음 결제 ${nextBill}` : ""}
+          {/* 자동 청구는 아직 하지 않는다 — '매달 결제돼요'라고 하면 빠져나가는 줄 아신다 (2026-10-19 결정 #8 · 2026-10-26 점검) */}
+          가입한 날짜에 매달 내는 이용료예요{nextBill ? ` · 다음 ${nextBill}` : ""} · 아직 자동으로 빠져나가지 않아요
         </div>
       </div>
 

@@ -62,6 +62,7 @@ import { LIVE_TAG, visitReportOf } from "../lib/live-household";
 import { conciergeChoices, elderNameOf, inCenter, meAs, people } from "../lib/people";
 import { eventOwner } from "../lib/event-rights";
 import { fmtWon } from "../lib/config";
+import { josa } from "../lib/tracks";
 import { eventsFor, useAppState, visitLock } from "../lib/state";
 import { useToast } from "../components/ds";
 import { HomeTextCards, MeetForm, ModePicker, ReportPreview, SendRow } from "../components/ConciergeReport";
@@ -177,6 +178,9 @@ function ConciergePage() {
   const [pairCalled, setPairCalled] = useState(false);
   // 관제 급파 수락 — 가구 기록(ops.sosAcceptedAt)에 남겨 관제 SOS 대응과 컨시어지 관리가 같은 시각을 본다 (2026-10-02)
   const sosAck = !!state.ops.sosAcceptedAt;
+  // 관제가 급파를 지시한 사람이 나인가 — 컨시어지가 둘 이상인 센터에서 지시받지 않은 사람도 '급파 수락'이 떠
+  // 먼저 누른 사람이 남의 출동을 수락하던 것을 막는다 (2026-10-26 점검). 받는 사람이 비어 있는 예전 기록은 모두에게
+  const sosForMe = !state.ops.sosDispatchedTo || state.ops.sosDispatchedTo === ME;
   // 관제에 알리기 — 가구 기록(opsMessages)에 남겨 관제가 확인 · 답할 수 있게 (2026-10-02). 알림판에도 한 줄.
   const [opsMsgText, setOpsMsgText] = useState("");
   const opsMsgs = (state.opsMessages || []).filter((m) => m.role === "concierge");
@@ -195,11 +199,11 @@ function ConciergePage() {
   const rangFor = useRef("");
   useEffect(() => {
     if (!state.demo.sos) return;
-    const key = `${state.demo.sosAt || "on"}:${state.ops.sosDispatched ? "dispatched" : "new"}`;
+    const key = `${state.demo.sosAt || "on"}:${state.ops.sosDispatched && sosForMe ? "dispatched" : "new"}`;
     if (rangFor.current === key) return;
     rangFor.current = key;
     ringAlarm();
-  }, [state.demo.sos, state.demo.sosAt, state.ops.sosDispatched]);
+  }, [state.demo.sos, state.demo.sosAt, state.ops.sosDispatched, sosForMe]);
   const [voiceMood, setVoiceMood] = useState(null); // 현장의 소리 — 마음 체크인
   const [voiceType, setVoiceType] = useState(null);
   const [voiceText, setVoiceText] = useState("");
@@ -321,8 +325,10 @@ function ConciergePage() {
   const myAppts = (state.events || [])
     .filter((e) => eventOwner(e) === "concierge" && e.at > Date.now() - 86400000)
     .sort((a, b) => a.at - b.at);
+  // 내가 등록했는데 다른 사람(보호자 등)이 지운 진료 예약 — 말없이 사라지면 그날 병원에 가게 된다 (2026-10-26 점검)
+  const othersRemoved = (state.eventsRemoved || []).filter((e) => eventOwner(e) === "concierge" && e.removed?.by && e.removed.by !== ME && e.at > Date.now() - 86400000);
   const saveAppt = (e, patch) => {
-    dispatch({ type: "updateEvent", id: e.id, patch, by: ME, title: patch.title || e.title });
+    dispatch({ type: "updateEvent", id: e.id, patch, by: ME, role: "concierge", title: patch.title || e.title });
     push("예약", `진료 예약 수정 — ${patch.title || e.title} · 보호자·어르신 캘린더 반영`, "#8FA9CC");
   };
   const removeAppt = (e) => {
@@ -438,8 +444,9 @@ function ConciergePage() {
     setClientOpen(c);
     window.scrollTo(0, 0);
   };
-  // 다음 진료 예약 — 어르신 · 보호자 캘린더에 보이는 진료 일정 (병원동행 · 다음 진료 예정일 · 건강검진)
-  const clientAppts = eventsFor(state.events, "elder")
+  // 다음 진료 예약 — 관제가 승인한 진료 일정 (병원동행 · 다음 진료 예정일 · 건강검진). 컨시어지는 확정된 일정만 본다 —
+  // 어르신 달력 기준으로 고르면 관제 확인 전 · 반려된 어르신 일정이 예약처럼 보였다 (2026-10-26 점검)
+  const clientAppts = eventsFor(state.events, "concierge")
     .filter((e) => ["hospital", "nextAppt", "checkup"].includes(e.kind) && e.at > Date.now())
     .sort((a, b) => a.at - b.at)
     .slice(0, 3);
@@ -491,7 +498,7 @@ function ConciergePage() {
   // 관제 급파 → 컨시어지 긴급 배너 — 역할 간 실시간 연동 (SOS + 급파 지시 시) · 모든 탭 맨 위.
   // 수락 전에는 머리(스크롤해도 붙어 있는 곳)에, 수락한 뒤에는 본문 맨 위에 둔다 — 아래 카드를 보다가 SOS 를 놓치지 않게 (2026-10-19 점검 C-10)
   const sosDispatchBanner =
-    state.demo.sos && state.ops.sosDispatched ? (
+    state.demo.sos && state.ops.sosDispatched && sosForMe ? (
       <div role="alert" className={`animate-sosPulse rounded-2xl bg-danger p-4 text-white ${sosAck ? "" : "mt-3"}`}>
         <div className="text-[12px] font-bold tracking-[.14em] opacity-85">긴급 급파 · 관제 지시</div>
         <div className="mt-1 text-[18px] font-bold leading-[1.4]">
@@ -505,7 +512,7 @@ function ConciergePage() {
         <button
           onClick={() => {
             if (sosAck) return;
-            dispatch({ type: "sosAccept", by: ME });
+            dispatch({ type: "sosAccept", by: ME, sosAt: state.demo.sosAt || null });
             push("대응", `${ME} 급파 수락 — 이동 시작${center || live ? "" : " (도착 예정 6분 · 예시)"}`, "#FF8A80");
           }}
           disabled={sosAck}
@@ -563,12 +570,15 @@ function ConciergePage() {
             {/* ── 어르신 SOS — 어느 탭에 있든 맨 위에 (2026-10-02 현장 요청: "어르신 SOS 가 컨시어지에 알람 안 뜸").
                 급파 지시 전에는 '관제 확인 중' + 어르신께 바로 전화, 급파 지시가 오면 수락 버튼.
                 머리 안에 둔다 — 머리는 스크롤해도 붙어 있다. 본문 안에서는 아래로 내리면 사라졌다 (2026-10-19 점검 C-10) ── */}
-            {state.demo.sos && !state.ops.sosDispatched && (
+            {state.demo.sos && (!state.ops.sosDispatched || !sosForMe) && (
               <div role="alert" className="animate-sosPulse mt-3 rounded-2xl bg-danger p-4 text-white">
                 <div className="text-[12px] font-bold tracking-[.14em] opacity-85">긴급 · 어르신 SOS</div>
                 <div className="mt-1 text-[18px] font-bold leading-[1.4]">{LIVE_ELDER}님이 SOS를 눌렀습니다</div>
                 <div className="mt-0.5 text-[13px] opacity-90">
-                  {sosTime ? `${sosTime} · ` : ""}관제센터가 확인 중입니다. 급파 지시가 오면 여기서 수락합니다.
+                  {sosTime ? `${sosTime} · ` : ""}
+                  {state.ops.sosDispatched
+                    ? `관제센터가 ${state.ops.sosDispatchedTo} 컨시어지를 급파했습니다.`
+                    : "관제센터가 확인 중입니다. 급파 지시가 오면 여기서 수락합니다."}
                 </div>
                 <div className="mt-3 flex gap-2">
                   {elderTel ? (
@@ -1374,12 +1384,19 @@ function ConciergePage() {
                     </button>
                   )}
                   {/* 내가 등록한 진료 예약 — 병원 예약이 바뀌면 여기서 고치거나 지운다 (2026-10-18 · 전에는 등록만 되고 보이지도 않았다) */}
-                  {myAppts.length > 0 && (
+                  {(myAppts.length > 0 || othersRemoved.length > 0) && (
                     <div className="mt-3 border-t border-navy/[.08] pt-3">
                       <div className="text-[12px] font-bold text-muted">등록한 진료 예약 — 바뀌면 고치거나 지웁니다</div>
                       <ul className="mt-2 space-y-2">
                         {myAppts.map((e) => (
-                          <ConciergeApptRow key={e.id} e={e} onSave={(patch) => saveAppt(e, patch)} onRemove={() => removeAppt(e)} />
+                          <ConciergeApptRow key={e.id} e={e} me={ME} onSave={(patch) => saveAppt(e, patch)} onRemove={() => removeAppt(e)} />
+                        ))}
+                        {othersRemoved.map((e) => (
+                          <li key={`rm-${e.id}`} className="rounded-xl border border-dashed border-navy/20 px-3 py-2.5 text-[12.5px] text-muted">
+                            <b className="text-navy">{josa(e.removed.by, "이", "가")} 지움</b> · {e.title} ·{" "}
+                            <span className="font-num">{new Date(e.at).toLocaleString("ko-KR", { month: "numeric", day: "numeric", weekday: "short", hour: "2-digit", minute: "2-digit", hour12: false })}</span>
+                            {e.removed.reason ? ` · ${e.removed.reason}` : ""}
+                          </li>
                         ))}
                       </ul>
                     </div>
@@ -1899,7 +1916,7 @@ function ConciergePage() {
                 {/* 제안 받을 사람 · 제안 일정 — 아래 모든 제안에 같이 붙는다 (2026-10-05 "승인대상자는 컨시어지가 정한다") */}
                 <Card className="p-4">
                   <div className="text-[15px] font-black text-navy">제안 보내기 설정</div>
-                  <p className="mt-0.5 text-[11.5px] leading-[1.6] text-muted">누가 수락할지, 언제 해 드릴지 정하고 아래에서 제안하세요. 수락되면 확정됩니다 (금액이 있으면 보호자 결제 뒤).</p>
+                  <p className="mt-0.5 text-[11.5px] leading-[1.6] text-muted">누가 수락할지, 언제 해 드릴지 정하고 아래에서 제안하세요. 수락되면 확정됩니다 (금액이 있으면 수락한 분이 결제한 뒤 — 어르신은 가족에게 결제를 부탁할 수도 있어요).</p>
                   <div className="mt-2.5 flex gap-1.5" role="radiogroup" aria-label="수락할 분">
                     {[["guardian", "보호자"], ["elder", "어르신"]].map(([k, l]) => (
                       <button
@@ -1924,7 +1941,7 @@ function ConciergePage() {
                     </label>
                   </div>
                   {propTo === "elder" && (
-                    <p className="mt-2 text-[11.5px] leading-[1.6] text-muted">어르신이 수락하면 결제 대기로 넘어가고, 어르신이나 가족 누구나 금액 제한 없이 결제합니다.</p>
+                    <p className="mt-2 text-[11.5px] leading-[1.6] text-muted">어르신이 수락하면 결제 대기로 넘어가고, 어르신이 직접 결제하시거나 '가족에게 결제 부탁'을 누르시면 가족이 결제합니다.</p>
                   )}
                   <label className="mt-2 block text-[11px] font-bold text-muted">
                     2인 1조 서비스의 짝 (든든 병원동행 · 함께가요)
@@ -2873,7 +2890,7 @@ function ConciergePage() {
 }
 
 // 등록한 진료 예약 한 줄 — 고치기(내용 · 날짜 · 시각) · 지우기(한 번 더 묻는다). 병원 예약이 바뀐 것을 그대로 옮긴다
-function ConciergeApptRow({ e, onSave, onRemove }) {
+function ConciergeApptRow({ e, me, onSave, onRemove }) {
   const [mode, setMode] = useState("view"); // view · edit · confirm
   const d0 = new Date(e.at);
   const pad = (n) => String(n).padStart(2, "0");
@@ -2913,7 +2930,8 @@ function ConciergeApptRow({ e, onSave, onRemove }) {
               <div className="text-[13.5px] font-bold text-navy">{e.title}</div>
               <div className="font-num text-[12px] text-muted">
                 {d0.toLocaleString("ko-KR", { month: "numeric", day: "numeric", weekday: "short", hour: "2-digit", minute: "2-digit", hour12: false })}
-                {e.editedAt ? " · 수정됨" : ""}
+                {/* 다른 사람(보호자 등)이 바꾼 것은 누가 바꿨는지 — 전에는 '수정됨'만 보여 보호자가 옮긴 것을 몰랐다 (2026-10-26 점검) */}
+                {e.editedAt ? (e.editedBy && e.editedBy !== me ? ` · ${josa(e.editedBy, "이", "가")} 바꿈` : " · 수정됨") : ""}
               </div>
             </div>
             {mode === "view" && past && <span className="shrink-0 text-[11.5px] text-muted">지난 예약 · 기록</span>}

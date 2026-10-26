@@ -179,6 +179,25 @@ export function summarize(a) {
       return `건강 정보 수정 · 복용 ${Array.isArray(p.meds) ? p.meds.length : 0}번 · 질환 ${Array.isArray(p.conditions) ? p.conditions.length : 0}가지${a.by ? ` · ${clip(a.by, 20)}` : ""}`;
     case "guardianPatch":
       return "보호자 정보 수정";
+    // 2026-10-26 점검 — 10-22 에 생긴 돈 · 승인 동작이 감사로그에 이름 그대로('기타')만 남던 것
+    case "guardianHeard":
+      return "보호자 음성 들음";
+    case "setPendingOrder":
+      return `스토어 장바구니 · ${won(p.total)}`;
+    case "sendExtraCharge":
+      return `추가 이용 금액 청구 · ${a.payload?.to?.role === "elder" ? "어르신" : "보호자"}께 · 실제 ${clip(String(a.payload?.usedMin ?? ""), 6)}분${a.by ? ` · ${clip(a.by, 20)}` : ""}`;
+    case "extraChargePaid":
+      return `추가 이용 금액 결제 · ${won(a.amount)} · ${clip(a.by, 20)}`;
+    case "autoChargeExtra":
+      return `추가 이용 금액 등록 카드 결제로 기록 · ${clip(a.by, 20)}`;
+    case "cancelExtraCharge":
+      return `추가 이용 금액 청구 취소 · ${clip(a.reason, 40)}`;
+    case "opsApproveRequest":
+      return `해주세요 관제 승인 · ${clip(a.by, 20)}`;
+    case "opsReturnRequest":
+      return `해주세요 다시 맞추기 · ${clip(a.reason, 40)}`;
+    case "setMemberPay":
+      return `이용료 결제 방법 · ${clip(a.who, 20)} · ${a.how === "card" ? "카드" : a.how === "autoTransfer" ? "계좌 자동이체" : a.how === "bankDeposit" ? "무통장 입금" : clip(a.how, 12)}`;
     case "reset":
       return "테스트 가구 기록 비우기";
     default:

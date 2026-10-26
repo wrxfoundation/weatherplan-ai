@@ -446,7 +446,7 @@ export default function CalendarPage() {
                 ...(editing.approval && autoNote ? { note: ev.escort ? "동행 필요" : "동행 불필요" } : {}),
               };
               const moved = editing.approval === "approved" && REAPPROVE_KEYS.some((k) => k in patch && patch[k] !== editing[k]);
-              dispatch({ type: "updateEvent", id: editing.id, patch, by: "보호자", title: ev.title });
+              dispatch({ type: "updateEvent", id: editing.id, patch, by: "보호자", role: "guardian", title: ev.title });
               // 컨시어지가 잡은 진료 예약의 날짜 · 시간을 보호자가 바꿨다 — 담당 컨시어지 · 관제에 알린다 (2026-10-19 점검)
               if (eventOwner(editing) === "concierge" && ev.at !== editing.at) {
                 dispatch({

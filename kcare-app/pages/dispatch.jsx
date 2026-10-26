@@ -631,7 +631,7 @@ function DispatchConsole() {
   const confirmSosDispatch = () => {
     setSosAsk(false);
     if (sosDispatched || !sosTarget) return;
-    dispatch({ type: "opsPatch", patch: { sosDispatched: true, sosDispatchedTo: sosTarget } });
+    dispatch({ type: "opsPatch", patch: { sosDispatched: true, sosDispatchedTo: sosTarget }, sosAt: state.demo.sosAt || null }); // 어느 SOS 의 급파인지 (2026-10-26 점검)
     push("대응", `${sosTarget} 급파 지시${sosCand?.etaMin != null ? ` · 도착 예정 ${sosCand.etaMin}분` : ""} · 119 연계 대기`, "#FF8A80");
     const inc = sosOpen.find((i) => i.customer === ELDER.name);
     if (inc && !inc.steps?.dispatch?.dispatch) {
@@ -935,9 +935,10 @@ function DispatchConsole() {
     .forEach((m) =>
       actions.push({
         id: `elder-ops-${m.id}`,
-        // 어르신 '잘못 눌렀어요'는 열린 SOS 에 대한 것이라 맨 위로 (2026-10-19 점검 E06)
-        level: m.kind === "sosMistake" ? "critical" : "high",
-        title: m.kind === "sosMistake" ? `SOS 잘못 누름 — ${m.from}` : `관제 연락 — ${m.from}`,
+        // 어르신 '잘못 눌렀어요'는 열린 SOS 에 대한 것이라 맨 위로 (2026-10-19 점검 E06).
+        // 그 SOS 가 이미 끝났으면 위급으로 올리지 않는다 — 끝난 뒤에도 맨 위 위급으로 남아 있었다 (2026-10-26 점검)
+        level: m.kind === "sosMistake" && state.demo.sos && (!m.sosAt || m.sosAt === state.demo.sosAt) ? "critical" : "high",
+        title: m.kind === "sosMistake" ? `SOS 잘못 누름${state.demo.sos && (!m.sosAt || m.sosAt === state.demo.sosAt) ? "" : " (끝난 SOS)"} — ${m.from}` : `관제 연락 — ${m.from}`,
         // 가족 구성원 빼기 요청은 계정 · 권한에서 처리한다 (정지 — '다시 사용'으로 되돌린다 · 2026-10-18)
         meta: `${m.text}${m.kind === "member" ? " — 계정·권한에서 사용 정지 (다시 사용으로 되돌림)" : ""} · ${new Date(m.at).toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit", hour12: false })}`,
         act: "확인",

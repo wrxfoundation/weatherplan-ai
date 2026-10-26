@@ -188,7 +188,8 @@ export default function VisitFlow({ role = "ops" }) {
       {/* ④ 컨시어지 컨펌 */}
       {!isOps && v.status === "approved" && (
         <div className="mt-3 rounded-xl border border-navy/12 p-3.5">
-          <div className="text-[13px] font-bold text-navy">D-7 · D-3 · D-1 알림이 예약되었습니다</div>
+          {/* 푸시 · 알림톡은 아직 연결 전이다 — '예약되었습니다'라고 하면 아무도 받지 않는 알림을 믿게 된다 (2026-10-26 점검) */}
+          <div className="text-[13px] font-bold text-navy">D-7 · D-3 · D-1 에 확인할 일 — 자동 알림은 연결 전이라 날짜에 맞춰 직접 확인합니다</div>
           <ul className="mt-2 space-y-1.5">
             {REMINDERS.map((r) => (
               <li key={r.d} className="flex items-start gap-2 text-[12px] leading-[1.6]">
@@ -263,6 +264,8 @@ export default function VisitFlow({ role = "ops" }) {
               onClick={() => {
                 if (beforeDay) return;
                 dispatch({ type: "patchVisit", patch: { gpsAt: Date.now() } });
+                // 보호자 홈 '지금 곁에 있어요'가 읽는 체크인도 같이 — 여기서 GPS 도착을 눌러도 보호자에게는 아무것도 뜨지 않았다 (2026-10-26 점검)
+                if (!state.visit?.checkedIn) dispatch({ type: "audit", patch: { checkedIn: true }, event: { kind: "gps", label: "GPS 도착 확인 (업무흐름)" } });
                 go("arrived", "GPS 도착 확인 — 관제 · 보호자 알림");
               }}
               className="btn-press flex w-full items-center gap-2 rounded-xl bg-navy py-3 text-[14px] font-bold text-white disabled:opacity-40"

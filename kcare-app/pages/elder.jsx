@@ -20,9 +20,9 @@ import {
   elderWho,
 } from "../lib/mock";
 import { fmtWon } from "../lib/config";
-import { STORE_CATALOG } from "../lib/store";
+import { STORE_CATALOG, cartOwner } from "../lib/store";
 import ProductSheet, { GOODS_LOOK } from "../components/ProductSheet";
-import { CLOSED, SERVICE_MENU, SERVICE_PLUS, approverOf, canEditRequest, cancelRule, fmtScheduled, isStoreOrder, isVisitCall, kstYmd, preferredYmd } from "../lib/requests";
+import { CLOSED, SERVICE_MENU, SERVICE_PLUS, afterPay, approverOf, canEditRequest, cancelRule, fmtScheduled, isStoreOrder, isVisitCall, kstYmd, preferredYmd } from "../lib/requests";
 import { EXTRA_PERSON_FEE, clock12, dateLabel, durStart, kstHm, nextAppt, nextApptStart, priceOf, reqTitle, svcTitle } from "../lib/booking";
 import { payHref } from "../lib/payments";
 import { ConfirmSteps, DurationStepper, PeoplePick } from "../components/BookingParts";
@@ -395,7 +395,7 @@ function ElderHome() {
   };
   const saveMyEvent = (e, at) => {
     const moved = e.approval === "approved" && at !== e.at; // 확정된 일정의 시간을 바꾸면 관제 재승인 (리듀서가 승인 대기로 돌린다)
-    dispatch({ type: "updateEvent", id: e.id, patch: { at }, by: "어르신", title: e.title });
+    dispatch({ type: "updateEvent", id: e.id, patch: { at }, by: "어르신", role: "elder", title: e.title });
     if (moved) dispatch({ type: "pushEvent", payload: { kind: "일정", text: `어르신 일정 변경 — ${cleanTitle(e.title)} · 관제 재승인 대기`, color: "#B08D57" } });
     setEvEdit(null);
     toast(moved ? "바꿨어요 · 관제가 다시 확인해요" : "바꿨어요");
@@ -451,7 +451,7 @@ function ElderHome() {
       ? "관제 확인 중"
       : ev?.approval === "rejected"
         ? "관제에서 다시 연락드립니다"
-        : ev?.approval === "approved" && ev.changeRejected
+        : ev?.approval === "approved" && ev.changeRejected && (ev.reBy || ev.by) === "elder"
           ? "바꾼 날짜 · 시간은 어려워 원래대로입니다"
           : "";
   const taskLabel = (t) =>
@@ -878,7 +878,11 @@ function ElderHome() {
   const reqLook = (r) => {
     const when = fmtScheduled(r);
     if (isVisitCall(r) && !CLOSED.includes(r.status)) return { text: r.status === "inProgress" ? `${r.assignee || "선생님"} 선생님이 가고 있습니다` : "관제센터에서 확인 전화를 드립니다", tone: "help", icon: "phone" };
-    if (r.status === "awaitingPayment") return { text: r.payAsk ? "가족 결제를 기다리고 있어요" : "결제하시면 선생님이 일정을 확인해요", tone: "gold", icon: "clock" };
+    // 결제하면 갈 곳 — 수락한 제안은 바로 확정, 선생님이 요금을 정해 보낸 것은 관제 승인 (2026-10-26 점검 · lib/requests.js afterPay)
+    if (r.status === "awaitingPayment") {
+      const next = afterPay(r).next;
+      return { text: r.payAsk ? "가족 결제를 기다리고 있어요" : next === "confirmed" ? "결제하시면 확정돼요" : next === "ops" ? "결제하시면 관제 승인 뒤 확정돼요" : "결제하시면 선생님이 일정을 확인해요", tone: "gold", icon: "clock" };
+    }
     if (r.status === "requested" && approverOf(r) === "concierge")
       return { text: r.voice && !r.summary?.text ? "선생님이 듣고 정리하고 있습니다" : "확정 대기 · 선생님이 일정을 확인하고 있어요", tone: "gold", icon: "clock" };
     if (r.status === "requested") return { text: "선생님 제안 · 수락하시면 진행돼요", tone: "gold", icon: "clock" };
@@ -1264,7 +1268,8 @@ function ElderHome() {
                     {shortDay(next.at, now)} {spokenTime(next.at)} {cleanTitle(next.title)}
                     {next.approval === "pending" && " · 확인 중"}
                     {next.approval === "rejected" && " · 다시 연락드림"}
-                    {next.approval === "approved" && next.changeRejected && " · 원래대로"}
+                    {/* 어르신이 바꾼 것만 — 보호자가 바꾼 것이 반려돼도 어르신께 '원래대로'라고 하지 않는다 (2026-10-26 점검) */}
+                    {next.approval === "approved" && next.changeRejected && (next.reBy || next.by) === "elder" && " · 원래대로"}
                   </span>
                   <Line name="chevR" size={20} />
                 </R>
@@ -1391,7 +1396,7 @@ function ElderHome() {
                       </div>
                       {ev.approval === "pending" && <p className="text-[17px] font-bold leading-[1.5]" style={{ color: tn.fg }}>관제에서 확인하고 있습니다. 정해지면 선생님이 알려드립니다.</p>}
                       {ev.approval === "rejected" && <p className="text-[17px] font-bold leading-[1.5]" style={{ color: tn.fg }}>이대로는 어렵습니다. 관제에서 다시 연락드립니다.</p>}
-                      {ev.changeRejected && ev.approval === "approved" && (
+                      {ev.changeRejected && ev.approval === "approved" && (ev.reBy || ev.by) === "elder" && (
                         <p className="text-[17px] font-bold leading-[1.5]" style={{ color: tn.fg }}>바꾼 날짜 · 시간은 어렵다고 해서 원래대로입니다. 관제에서 연락드립니다.</p>
                       )}
                       {ev.note && <p className="text-[17px] leading-[1.5]" style={{ color: tn.sub }}>{ev.note}</p>}
@@ -2146,6 +2151,7 @@ function ElderHome() {
                     const orderName = storeItems.length > 1 ? `${storeItems[0].name} 외 ${storeItems.length - 1}건` : storeItems[0].name;
                     dispatch({
                       type: "setPendingOrder",
+                      owner: cartOwner(authUser, "elder"), // 어르신 장바구니 칸 — 보호자 장바구니와 따로 (2026-10-26 점검)
                       payload: {
                         items: storeItems.map((i) => ({ id: i.id, name: i.name, qty: 1, price: i.price })),
                         ship: storeItems.reduce((s, i) => s + (i.ship || 0), 0),
@@ -2177,6 +2183,7 @@ function ElderHome() {
                           type: "물건 승인 부탁해요",
                           detail: `스토어에서 담으신 물품: ${storeItems.map((i) => i.name).join(", ")}`,
                           amount: storeTotal,
+                          storeOrder: true, // 스토어 주문 표시 — 이름이 아니라 이것으로 주문을 알아본다 (2026-10-26 · lib/requests.js isStoreOrder)
                           payBy: null,
                           preferredDate: null,
                           urgency: "normal",

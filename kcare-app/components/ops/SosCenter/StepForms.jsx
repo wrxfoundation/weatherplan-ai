@@ -222,7 +222,7 @@ export function DispatchForm({ inc, c, api, ro, compact = false }) {
           const live = inc.customer === LIVE_ELDER && ours && app?.state?.demo?.sos;
           api.setStep(inc.id, "dispatch", { result: "done", dispatch: { name: pick.name, two: !!two[pick.name], orderedAt: Date.now(), acceptedAt: live ? app.state.ops?.sosAcceptedAt || null : null, departedAt: null, arrivedAt: null, actions: "", accompany: false, etaMin: pick.etaMin, distKm: pick.distKm } });
           if (live && !app.state.ops?.sosDispatched) {
-            app.dispatch({ type: "opsPatch", patch: { sosDispatched: true, sosDispatchedTo: pick.name } });
+            app.dispatch({ type: "opsPatch", patch: { sosDispatched: true, sosDispatchedTo: pick.name }, sosAt: app.state.demo.sosAt || null }); // 어느 SOS 의 급파인지 (2026-10-26 점검)
             app.dispatch({ type: "pushEvent", payload: { kind: "대응", text: `${pick.name} 급파 지시 (SOS 센터)${pick.etaMin != null ? ` · 도착 예정 ${pick.etaMin}분` : ""}`, color: "#FF8A80" } });
           }
           setPick(null);

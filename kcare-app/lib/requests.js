@@ -113,10 +113,31 @@ export function fmtScheduled(r) {
   return `${r.scheduledDate}${r.scheduledTime ? ` ${r.scheduledTime}` : ""}`;
 }
 
-// 이 요청의 결제 — 보호자가 토스(또는 데모 가상 승인)로 낸 것. 어르신 직접(payBy elder)은 기록만 있다
+// 이 요청의 결제 — 보호자가 토스(또는 데모 가상 승인)로 낸 것. 어르신 직접(payBy elder)은 기록만 있다.
+// 환불 대기 · 완료가 아닌 결제를 먼저 고른다 — 두 폰이 거의 같이 결제하면 나중 결제가 환불 대기로 가는데(requestPaid),
+// 결제 기록은 최신이 앞이라 그 환불 건을 집어 '환불 대기'로 보였다 (2026-10-26 점검)
 export function paymentOf(payments, id) {
-  return (payments || []).find((p) => p.ref === id && p.status === "done") || null;
+  const done = (payments || []).filter((p) => p.ref === id && p.status === "done");
+  return done.find((p) => !p.refund) || done[0] || null;
 }
+
+// 결제한 뒤 어디로 가나 — 결제 결과 · 데모 승인 · 어르신 목록이 같은 기준을 쓴다 (2026-10-26 점검).
+// 수락한 제안은 바로 확정, 컨시어지가 이미 확인한(요금을 정해 결제로 보낸) 요청은 관제 승인, 그 밖은 컨시어지 확인부터.
+// 전에는 모두 '컨시어지와 관제가 일정을 맞추면 확정돼요'(단계 막대 컨시어지 확인)로 보였다.
+// at 은 확정 단계 막대(components/BookingParts.jsx ConfirmSteps)의 지금 단계. 결제 대기면 결제하면 갈 곳을 말한다
+export function afterPay(r) {
+  const s = r?.status === "awaitingPayment" ? (approverOf(r) !== "concierge" ? "confirmed" : r.approvedAt ? "opsReview" : "requested") : r?.status;
+  if (["confirmed", "inProgress", "done"].includes(s)) return { at: 4, next: "confirmed" };
+  if (s === "opsReview") return { at: 2, next: "ops" };
+  if (s === "needsAdmin") return { at: 2, next: "admin" };
+  return { at: 1, next: "concierge" };
+}
+export const AFTER_PAY_TEXT = {
+  confirmed: "일정이 확정됐어요",
+  ops: "관제가 승인하면 확정돼요",
+  admin: "관제가 확인한 뒤 확정돼요",
+  concierge: "컨시어지와 관제가 일정을 맞추면 확정돼요",
+};
 
 // 누가 승인하나 — 보호자 · 어르신 요청은 담당 컨시어지, 컨시어지 제안은 컨시어지가 정한 승인 대상
 export const APPROVER_LABEL = { concierge: "담당 컨시어지", guardian: "보호자", elder: "어르신", ops: "관제" };
@@ -128,13 +149,18 @@ export function approverOf(r) {
 // 누가 결제하나 (2026-10-26 연동 점검) — 어르신이 낸 해주세요 · 어르신이 수락한 제안은 어르신이 결제창에서 직접 낸다.
 // 어르신이 '가족에게 결제 부탁'을 누른 것(payAsk)만 보호자 화면에 결제 요청으로 간다. 보호자가 낸 요청 · 보호자가 수락한 제안은 보호자가 낸다.
 // 전에는 결제 대기면 모두 보호자 할 일 · 결제 버튼이 되어, 어르신이 '제가 결제할게요'를 눌러도 보호자 폰에 결제 요청이 같이 떴다.
-export const payerOf = (r) => ((r?.dir === "fromElder" || approverOf(r) === "elder") && !r?.payAsk ? "elder" : "guardian");
+// '물건 승인 부탁해요'(어르신 스토어 '가족에게 결제 부탁하기')는 처음부터 가족이 낸다 — 10-22 전 기록에는 payAsk 가 없어
+// 아무도 결제할 수 없게 되던 것을 막는다 (2026-10-26 점검)
+export const payerOf = (r) => (r?.type !== "물건 승인 부탁해요" && (r?.dir === "fromElder" || approverOf(r) === "elder") && !r?.payAsk ? "elder" : "guardian");
 // 보호자가 낼 결제 대기 — 보호자 홈 '결제 · 수락 대기' · 해주세요 결제 카드 · 결제 버튼 · 결제 서버가 이것만 본다
 export const guardianPays = (r) => r?.status === "awaitingPayment" && payerOf(r) === "guardian";
 // 도와줘요(즉시 방문 요청)는 관제가 확인 전화로 받는다 — 컨시어지 승인 큐에 넣지 않는다
 export const isVisitCall = (r) => r?.type === "즉시 방문 요청";
 // 스토어 주문의 배송 요청 — 결제가 주문(스토어)에 묶여 있어 해주세요 취소 · 환불로 다루지 않는다 (주문 취소는 관제 · 고객센터)
-export const isStoreOrder = (r) => ["물품 전달해 주세요", "물건을 담았어요", "물건 승인 부탁해요"].includes(r?.type);
+// '물품 전달해 주세요'는 보호자가 직접 적는 부탁 종류(GUARDIAN_PRESETS)이기도 해서, 이름만 보면 보호자 부탁이 주문으로 잡혀
+// 고치기 · 취소 · 금액 정하기가 막혔다 (2026-10-26 점검). 주문으로 생긴 요청에는 storeOrder 를 남기고, 예전 주문은 첫 이력 '스토어 주문'으로 알아본다
+export const isStoreOrder = (r) =>
+  !!r && (r.storeOrder === true || ["물건을 담았어요", "물건 승인 부탁해요"].includes(r.type) || (r.type === "물품 전달해 주세요" && r.history?.[0]?.note === "스토어 주문"));
 
 // 몇 명이 가는 해주세요인가 — 카탈로그의 crew (든든 병원동행 · 함께가요는 2). 이름에 '2인'이 붙은 것도 2.
 // 2인 해주세요는 주 담당(assignee)과 짝(partner)이 서로 다른 두 사람으로 정해져야 확정 · 진행된다 —

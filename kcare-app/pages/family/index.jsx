@@ -92,10 +92,12 @@ export default function FamilyHome() {
       /* 위와 같음 */
     }
   };
+  // 급파받은 · 수락한 컨시어지 이름 — 센터 첫 컨시어지 이름으로 적던 것을 실제로 보낸 사람으로 (2026-10-26 점검)
+  const sosWho = state.ops?.sosAcceptedBy || state.ops?.sosDispatchedTo || LIVE_CONCIERGE;
   const sosStage = state.ops?.sosAcceptedAt
-    ? `${LIVE_CONCIERGE} 컨시어지가 출동을 수락해 이동 중입니다 · 관제센터 대응 중`
+    ? `${sosWho} 컨시어지가 출동을 수락해 이동 중입니다 · 관제센터 대응 중`
     : state.ops?.sosDispatched
-      ? `관제센터가 ${LIVE_CONCIERGE} 컨시어지를 급파했습니다 · 수락 대기`
+      ? `관제센터가 ${sosWho} 컨시어지를 급파했습니다 · 수락 대기`
       : "관제센터가 확인하고 있습니다 — 곧 연락드립니다";
   // '지금 어디쯤' 지도 (2026-08-31 요청) — 오늘 오시는 주 동행이 어디까지 왔는지. 좌표는 lib/console.js (관제 지도와 같은 값)
   const [liveMap, setLiveMap] = useState(false);
@@ -342,8 +344,10 @@ export default function FamilyHome() {
           </R>
         )}
 
-        {/* 컨시어지 체크인 → 보호자 라이브 — 역할 간 실시간 연동 (리포트가 오면 방문이 끝난 것) */}
-        {state.visit.checkedIn && !state.demo.sos && !state.visit.ops?.sentAt && (
+        {/* 컨시어지 체크인 → 보호자 라이브 — 역할 간 실시간 연동 (리포트가 오면 방문이 끝난 것).
+            컨시어지가 리포트를 낸 뒤(관제 검수 중 · 반려돼 고치는 중)에는 이미 떠난 뒤라 띄우지 않는다 —
+            같은 홈에 '방문 완료 — 관제 검수 중'과 '지금 곁에 있어요'가 함께 보였다 (2026-10-26 점검) */}
+        {state.visit.checkedIn && !state.visit.reportSent && !state.visit.returned && !state.demo.sos && !state.visit.ops?.sentAt && (
           <R d={40} className="flex items-center gap-3.5 rounded-[24px] p-4" style={{ background: TONE.green.bg }}>
             <span className="ds-car h-3 w-3 flex-none rounded-full" style={{ background: TONE.green.solid }} />
             <span className="min-w-0">
@@ -647,7 +651,7 @@ export default function FamilyHome() {
                 결제 · 수락 대기 {pendingList.length}건
               </b>
               <span className="block truncate text-[15px] font-semibold" style={{ color: TONE.gold.sub }}>
-                {pendingList[0].type}
+                {svcTitle(pendingList[0].type)}
                 {pendingList[0].amount > 0 ? ` · ${fmtWon(pendingList[0].amount)}` : ""}
               </span>
             </span>
@@ -722,7 +726,7 @@ export default function FamilyHome() {
                             onClick={() => {
                               const markHeard = () => {
                                 if (heardIt) return;
-                                dispatch({ type: "guardianPatch", patch: { voiceHeard: { ...(state.guardian?.voiceHeard || {}), [v.id]: true } } });
+                                dispatch({ type: "guardianHeard", id: v.id });
                                 dispatch({ type: "pushEvent", payload: { kind: "음성", text: `보호자가 ${honor} 목소리 ${v.secs}초 청취`, color: "#8FA9CC" } });
                               };
                               // 녹음이 있는 것은 소리를 내고, 녹음 기능 전 기록은 들은 표시만 한다

@@ -41,7 +41,7 @@ import {
   paymentOf,
   preferredYmd,
 } from "../lib/requests";
-import { EXTRA_USED_MAX, STEP, addMin, canChargeExtra, clock12, dateLabel, durOf, durText, extraAmountOf, extraDueYmd, extraStateText, extraToText, reqTitle, svcTitle } from "../lib/booking";
+import { STEP, addMin, canChargeExtra, clock12, dateLabel, durOf, durText, extraAmountOf, extraDueYmd, extraStateText, extraToText, extraUsedMax, reqTitle, svcTitle } from "../lib/booking";
 
 const FROM = { fromGuardian: "보호자", fromElder: "어르신", fromConcierge: "컨시어지 제안", fromOps: "관제" };
 const hm = (t) => new Date(t).toLocaleString("ko-KR", { month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit", hour12: false });
@@ -71,16 +71,21 @@ export function scheduleOn(ymd, me, requests, exceptId) {
 
 function PayLine({ r, payments }) {
   const pay = paymentOf(payments, r.id);
+  // 스토어 주문의 배송 — 결제는 주문에 묶여 있다. 예전 주문은 결제가 요청에 이어져 있지 않아 '결제 전'으로 보여
+  // 배송 때 돈을 다시 받을 뻔했다 (2026-10-26 점검)
+  const store = !pay && isStoreOrder(r) && r.type !== "물건 승인 부탁해요" && r.status !== "awaitingPayment";
   const text = pay
     ? `결제 완료 ${fmtWon(pay.amount)}${pay.demo ? " (데모)" : ""}`
-    : r.payBy === "elder"
-      ? `어르신 직접 ${fmtWon(r.amount)}`
-      : r.amount === 0
-        ? "무료 (멤버십 포함)"
-        : r.amount == null
-          ? "요금 확정 전 — 승인하면서 정해 주세요"
-          : `${fmtWon(r.amount)} · 결제 전`;
-  return <div className={`mt-1 text-[12px] font-bold ${pay ? "text-green" : r.amount == null ? "text-amber" : "text-muted"}`}>{text}</div>;
+    : store
+      ? `${fmtWon(r.amount)} · 스토어 주문 결제 완료`
+      : r.payBy === "elder"
+        ? `어르신 직접 ${fmtWon(r.amount)}`
+        : r.amount === 0
+          ? "무료 (멤버십 포함)"
+          : r.amount == null
+            ? "요금 확정 전 — 승인하면서 정해 주세요"
+            : `${fmtWon(r.amount)} · 결제 전`;
+  return <div className={`mt-1 text-[12px] font-bold ${pay || store ? "text-green" : r.amount == null ? "text-amber" : "text-muted"}`}>{text}</div>;
 }
 
 // 말로 남기신 부탁 — 듣기 + 한 줄 정리
@@ -250,7 +255,8 @@ function ApproveRow({ r, me, requests, payments, dispatch, push }) {
       )}
       {needPrice && (
         <label className="mt-2 block text-[11px] font-bold text-muted">
-          요금 (원) — 확인 전에 꼭 정해 주세요 (무료면 0). 금액이 있으면 확인 뒤 가족이 결제합니다
+          요금 (원) — 확인 전에 꼭 정해 주세요 (무료면 0). 금액이 있으면 확인 뒤{" "}
+          {payerOf(r) === "elder" ? "어르신이 결제합니다 (가족에게 부탁하시면 가족이)" : "보호자가 결제합니다"}
           <input
             type="number"
             inputMode="numeric"
@@ -431,10 +437,12 @@ function SentRow({ r, me, dispatch, push }) {
 // 추가 이용 금액 보내기 (2026-10-22) — 예약한 시간보다 길어진 해주세요. 실제 이용 시간을 30분씩 맞추면 금액이 정해지고
 // (lib/booking.js — 보내는 쪽이 금액을 적지 않는다), 구두로 동의한 받는 분(어르신 · 보호자)을 골라 메모와 함께 보낸다.
 // 받는 분 화면에만 '결제 요청'으로 뜨고, 관제 알림 · 할 일 · 해주세요 관리 표에 들어간다
-function ExtraChargePanel({ r, me, payees, customer, dispatch, push, onClose }) {
+function ExtraChargePanel({ r, me, charges, payees, customer, dispatch, push, onClose }) {
   const d = durOf(r.type);
   const booked = Number(r.durationMin) || d?.min || 0;
-  const [used, setUsed] = useState(booked + STEP);
+  // 최댓값 — 지금 카드와 같은 그 서비스의 최대 이용 시간 (lib/booking.js extraUsedMax · 2026-10-26 점검)
+  const max = extraUsedMax(r.type, booked);
+  const [used, setUsed] = useState(Math.min(max, booked + STEP));
   const [to, setTo] = useState(-1);
   const [memo, setMemo] = useState("");
   const add = used - booked;
@@ -477,8 +485,8 @@ function ExtraChargePanel({ r, me, payees, customer, dispatch, push, onClose }) 
             <button
               type="button"
               aria-label="30분 늘리기"
-              disabled={used + STEP > EXTRA_USED_MAX}
-              onClick={() => setUsed((v) => Math.min(EXTRA_USED_MAX, v + STEP))}
+              disabled={used + STEP > max}
+              onClick={() => setUsed((v) => Math.min(max, v + STEP))}
               className="btn-press h-9 w-9 rounded-lg border border-navy/20 bg-white text-[16px] font-black text-navy disabled:opacity-35"
             >
               +
@@ -534,6 +542,8 @@ function ExtraChargePanel({ r, me, payees, customer, dispatch, push, onClose }) 
           type="button"
           disabled={!amount || !pick}
           onClick={() => {
+            // 이미 청구가 있으면(짝이 먼저 보냄) 다시 보내지 않는다 — 관제 알림 줄만 하나 더 나갔다 (2026-10-26 점검)
+            if ((charges || []).some((x) => x.reqId === r.id && x.status !== "cancelled")) return onClose();
             dispatch({ type: "sendExtraCharge", payload: { reqId: r.id, usedMin: used, to: { role: pick.role, name: pick.name }, memo: memo.trim(), customer }, by: me });
             push("추가 이용 금액", `${me} → ${roleText(pick)} ${pick.name} · ${svcTitle(r.type)} 추가 ${durText(add)} · ${fmtWon(amount)} · ${due}까지`, "#E8B04B");
             onClose();
@@ -585,7 +595,7 @@ function ExtraArea({ r, me, charges, payees, customer, dispatch, push, canSend =
       {!live &&
         canSend &&
         (open ? (
-          <ExtraChargePanel r={r} me={me} payees={payees} customer={customer} dispatch={dispatch} push={push} onClose={() => setOpen(false)} />
+          <ExtraChargePanel r={r} me={me} charges={charges} payees={payees} customer={customer} dispatch={dispatch} push={push} onClose={() => setOpen(false)} />
         ) : (
           <button type="button" onClick={() => setOpen(true)} className="btn-press mt-2 w-full rounded-xl border border-gold/60 bg-[#FBF6EC] py-2.5 text-[13px] font-bold text-[#8A5D12]">
             추가 이용 금액 보내기

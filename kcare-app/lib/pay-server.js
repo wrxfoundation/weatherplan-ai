@@ -7,6 +7,10 @@ import { payerOf, paymentOf } from "./requests";
 import { expectedAmount, extraAmountOf, extraIsFor } from "./booking";
 import { centerOfHousehold } from "./centers";
 import { DEFAULT_PEOPLE } from "./people";
+import { applyToServerState } from "./state";
+import { normalizePayStatus } from "./payments";
+import { cartOwner } from "./store";
+import { fmtWon } from "./config";
 
 // 화면이 쓰는 이 계정의 이름 — 관제 센터 공간은 회원 이름, 테스트 가구는 예전 인물(보호자 김민수)이다 (lib/people.js meAs 와 같은 규칙).
 // 컨시어지가 받는 분을 고를 때 이 이름으로 고르므로, 받는 분 확인도 같은 이름으로 한다
@@ -17,6 +21,48 @@ export async function householdState(household) {
   const { data, error } = await db().from("households").select("state").eq("id", household).maybeSingle();
   if (error) throw error;
   return data?.state && typeof data.state === "object" ? data.state : {};
+}
+
+// 승인된 결제를 가구 기록에 바로 남긴다 (2026-10-26 점검) — 전에는 결제한 폰의 결과 화면만 기록을 남겨, 승인 중에 앱을 닫거나
+// 연결이 끊기면 돈은 빠졌는데 요청은 '결제 대기'로 남았고 다시 결제할 수 있었다. 화면과 같은 동작(addPayment → requestPaid ·
+// extraChargePaid · commitPendingOrder)을 같은 규칙(lib/state.js reducer)으로 넣는다. 결제한 폰도 같은 동작을 보내지만 주문번호로
+// 걸러져 두 번 들어가지 않는다. 다른 폰이 그 사이 저장했으면(버전이 다르면) 다시 읽어 넣는다.
+// 돌려주는 값: true(넣었거나 이미 있음) · false(가구 기록이 없거나 계속 엇갈림 — 결제한 폰의 화면이 대신 남긴다)
+export async function applyPaidToHousehold(user, kind, refId, payment, client = db()) {
+  if (!user?.household || !payment?.orderId) return false;
+  const status = normalizePayStatus(payment.status);
+  const pay = { ...payment, tossStatus: payment.status || null, status };
+  const by = screenName(user) || (user.role === "elder" ? "어르신" : "보호자");
+  const at = Date.now();
+  const op = `srv${String(payment.orderId).replace(/[^A-Za-z0-9]/g, "").slice(-24)}`;
+  const actions = [{ type: "addPayment", payload: { kind, ref: refId || null, ...pay }, _at: at, _op: `${op}a` }];
+  if (status === "done") {
+    if (kind === "request" && refId) actions.push({ type: "requestPaid", id: refId, amount: pay.amount, orderId: pay.orderId, by, note: `${by} 결제 완료 ${fmtWon(pay.amount)}`, _at: at, _op: `${op}b` });
+    if (kind === "extra" && refId) actions.push({ type: "extraChargePaid", id: refId, amount: pay.amount, orderId: pay.orderId, by, method: pay.method || "카드", _at: at, _op: `${op}b` });
+    if (kind === "store") actions.push({ type: "commitPendingOrder", payload: pay, by, owner: cartOwner(user), _at: at, _op: `${op}b` });
+  }
+  for (let i = 0; i < 4; i++) {
+    const { data, error } = await client.from("households").select("state,version").eq("id", user.household).maybeSingle();
+    if (error) throw error;
+    const raw = data?.state;
+    if (!raw || typeof raw !== "object") return false;
+    if ((Array.isArray(raw.payments) ? raw.payments : []).some((p) => p && p.orderId === pay.orderId)) return true;
+    const next = applyToServerState(raw, user.household, actions);
+    const { data: upd, error: e2 } = await client
+      .from("households")
+      .update({ state: next, version: (data.version || 0) + 1, updated_at: new Date().toISOString(), updated_by: `결제 서버 · ${user.name || user.id}`.slice(0, 120) })
+      .eq("id", user.household)
+      .eq("version", data.version || 0)
+      .select("version");
+    if (e2) throw e2;
+    if (upd && upd.length) return true;
+  }
+  return false;
+}
+
+// 이 주문번호의 결제가 가구 기록에 이미 있나 — 결과 화면을 다시 열거나 '다시 확인'을 눌렀을 때 승인을 다시 부르지 않고 그 기록을 돌려준다
+export function recordedPayment(state, orderId) {
+  return (Array.isArray(state?.payments) ? state.payments : []).find((p) => p && p.orderId === orderId) || null;
 }
 
 // 결제할 수 있는 계정 — 가족 그룹(보호자 · 어르신). 컨시어지 · 관제 · 영업 계정은 고객 대신 결제하지 않는다

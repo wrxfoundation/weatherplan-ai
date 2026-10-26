@@ -57,6 +57,25 @@ async function callToss(path, body) {
 export const confirmPayment = ({ paymentKey, orderId, amount }) =>
   callToss("/v1/payments/confirm", { paymentKey, orderId, amount });
 
+// 결제 조회 — 승인 응답이 폰에 닿지 못했을 때(연결 끊김 · 승인 중 앱 닫음) 이 결제가 정말 승인됐는지 토스에 다시 묻는다 (2026-10-26 점검).
+// 실패해도 토스가 준 code · message 만 돌려준다
+export async function getPayment(paymentKey) {
+  const res = await fetch(`${API}/v1/payments/${encodeURIComponent(String(paymentKey || ""))}`, { headers: { Authorization: authHeader() } });
+  let data = null;
+  try {
+    data = await res.json();
+  } catch {
+    data = null;
+  }
+  if (!res.ok) {
+    const err = new Error(data?.message || "결제 조회 중 오류가 발생했습니다.");
+    err.tossCode = data?.code || `HTTP_${res.status}`;
+    err.status = res.status;
+    throw err;
+  }
+  return data;
+}
+
 // 빌링키 발급 — 카드 등록 뒤 받은 authKey 를 billingKey 로 바꾼다 (월 구독 자동결제용)
 export const issueBillingKey = ({ customerKey, authKey }) =>
   callToss("/v1/billing/authorizations/issue", { customerKey, authKey });

@@ -29,6 +29,10 @@ const KIND_OF_TYPE = {
   addRequest: "request", transitionRequest: "request", assignRequest: "request",
   // 2026-10-05 해주세요 승인 · 결제 · 취소 · 환불, 도와줘요 처리 단계
   requestPaid: "request", approveRequest: "request", declineRequest: "request", respondProposal: "request",
+  // 2026-10-26 점검 — 관제 승인 · 다시 맞추기, 추가 이용 금액, 결제 방법
+  opsApproveRequest: "request", opsReturnRequest: "request", askPrimaryPay: "request",
+  sendExtraCharge: "signup", extraChargePaid: "signup", autoChargeExtra: "signup", cancelExtraCharge: "signup", setMemberPay: "signup", setPendingOrder: "signup",
+  guardianHeard: "message",
   cancelRequest: "request", decideCancel: "request", forceCancel: "request", refundDone: "request", noteRequest: "request", helpCall: "request",
   editRequest: "request", requestSummary: "request", opsAckRequest: "request",
   addEvent: "schedule", updateEvent: "schedule", removeEvent: "schedule", decideEvent: "schedule",
