@@ -3,7 +3,7 @@
 // 2026-10-22 — 이용 시간이 있는 해주세요는 저장된 서비스 · 이용 시간 · 인원으로 금액을 다시 계산하고(lib/booking.js),
 // 추가 이용 금액은 청구받은 당사자만 낸다. 결제는 가족 그룹(보호자 · 어르신) 누구나 한다.
 import { db } from "./db";
-import { paymentOf } from "./requests";
+import { payerOf, paymentOf } from "./requests";
 import { expectedAmount, extraAmountOf, extraIsFor } from "./booking";
 import { centerOfHousehold } from "./centers";
 import { DEFAULT_PEOPLE } from "./people";
@@ -24,13 +24,16 @@ export const PAYER_ROLES = ["guardian", "elder"];
 export const canPayRole = (role) => PAYER_ROLES.includes(role);
 
 // 해주세요 결제 가능 여부 — 서버 기록 기준. 이미 낸 결제(환불 안 된 것)가 있거나 결제 대기가 아니면 거부한다.
-// 이용 시간 규칙이 있는 서비스는 다시 계산한 금액이 기록된 금액과 같아야 한다 (기록의 금액만 고쳐 싸게 내지 못하게)
-export function requestPayable(state, ref) {
+// 이용 시간 규칙이 있는 서비스는 다시 계산한 금액이 기록된 금액과 같아야 한다 (기록의 금액만 고쳐 싸게 내지 못하게).
+// 어르신이 직접 내기로 한 해주세요(가족에게 결제 부탁 전)는 보호자 계정이 결제하지 못한다 — 어르신 결제창과 보호자 결제가
+// 같이 열리지 않게 (2026-10-26 연동 점검 · lib/requests.js payerOf)
+export function requestPayable(state, ref, user) {
   const r = (Array.isArray(state?.requests) ? state.requests : []).find((x) => x && x.id === ref);
   if (!r) return { error: "REQUEST_NOT_FOUND", status: 404, message: "결제할 요청을 찾지 못했습니다. 화면을 새로 고친 뒤 다시 시도해 주세요." };
   const paid = paymentOf(state.payments, ref);
   if (paid && !paid.refund) return { error: "ALREADY_PAID", status: 409, message: "이미 결제한 요청입니다. 해주세요 탭에서 결제 내역을 확인해 주세요." };
   if (r.status !== "awaitingPayment") return { error: "NOT_PAYABLE", status: 409, message: "결제할 단계가 아닌 요청입니다 (그 사이 취소 · 변경되었을 수 있습니다)." };
+  if (user?.role === "guardian" && payerOf(r) === "elder") return { error: "ELDER_PAYS", status: 403, message: "어르신이 직접 결제하기로 한 요청입니다. 어르신 화면에서 '가족에게 결제 부탁'을 누르시면 결제할 수 있어요." };
   const amount = Number(r.amount);
   if (!Number.isInteger(amount) || amount <= 0) return { error: "PRICE_NOT_SET", status: 409, message: "요금이 아직 정해지지 않은 요청입니다." };
   const want = expectedAmount(r);

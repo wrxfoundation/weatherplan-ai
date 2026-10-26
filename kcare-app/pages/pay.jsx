@@ -16,7 +16,7 @@ import { useAppState, useSync } from "../lib/state";
 import { useAuth } from "../lib/auth";
 import { meAs } from "../lib/people";
 import { fmtWon, PRICING, HOUSEHOLD } from "../lib/config";
-import { paymentOf } from "../lib/requests";
+import { payerOf, paymentOf } from "../lib/requests";
 import { extraIsFor } from "../lib/booking";
 import { ConfirmSteps } from "../components/BookingParts";
 import { orderTotal } from "../lib/store";
@@ -65,7 +65,8 @@ export default function PayPage() {
   const payerRole = authUser?.role === "elder" || (!authUser?.role && backTo.startsWith("/elder")) ? "elder" : "guardian";
   const buyerName = meAs(authUser, payerRole);
   // 결제하면 안 되는 경우 — 이미 낸 해주세요(뒤로 가기로 다시 온 경우 포함) · 결제 단계가 아닌 요청 · 담은 물건이 없는 주문 ·
-  // 내가 받는 분이 아닌 추가 이용 금액 (받는 분만 결제한다 — 서버도 같은 규칙 · lib/pay-server.js extraPayable)
+  // 내가 받는 분이 아닌 추가 이용 금액 (받는 분만 결제한다 — 서버도 같은 규칙 · lib/pay-server.js extraPayable) ·
+  // 어르신이 직접 내기로 한 해주세요를 보호자가 여는 경우 (어르신이 '가족에게 결제 부탁'을 눌러야 보호자가 낸다 — 서버도 같은 규칙 · 2026-10-26)
   const paidAlready = req ? paymentOf(state.payments, req.id) : null;
   const blocked =
     kind === "request"
@@ -75,7 +76,9 @@ export default function PayPage() {
           ? `이미 결제한 요청입니다 — ${fmtWon(paidAlready.amount)}${paidAlready.demo ? " (데모)" : ""}. 두 번 결제하지 않습니다.`
           : req.status !== "awaitingPayment"
             ? "결제할 단계가 아닌 요청입니다 (승인 · 취소 등으로 상태가 바뀌었습니다)."
-            : null
+            : payerRole === "guardian" && payerOf(req) === "elder"
+              ? "어르신이 직접 결제하기로 한 요청입니다. 어르신 화면에서 '가족에게 결제 부탁'을 누르시면 여기서 결제할 수 있어요."
+              : null
       : kind === "extra"
         ? !xc
           ? "결제할 추가 이용 금액을 찾지 못했습니다. 홈에서 다시 열어 주세요."

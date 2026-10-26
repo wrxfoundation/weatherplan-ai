@@ -49,7 +49,7 @@ import {
 } from "../lib/console";
 import { useAppState } from "../lib/state";
 import { eventRights } from "../lib/event-rights";
-import { CLOSED, approverOf, crewReady, fmtPreferred, isVisitCall, soloDispatches } from "../lib/requests";
+import { CLOSED, approverOf, crewReady, fmtPreferred, isVisitCall, payerOf, soloDispatches } from "../lib/requests";
 import { dateLabel, extraDueYmd, extraOverdue, extraToText, reqTitle, svcTitle } from "../lib/booking";
 import { HelpCallOps, HELP_STAGE } from "../components/HelpCall";
 import { relMd } from "../lib/reltime";
@@ -857,7 +857,7 @@ function DispatchConsole() {
       id: `ask-${r.id}`,
       level: r.urgency === "urgent" ? "high" : "med",
       title: `새 해주세요 — ${reqTitle(r)}${r.dir === "fromElder" ? " (어르신)" : " (보호자)"}`,
-      meta: `${r.voice ? `어르신 목소리 ${r.voice.clip?.secs || 0}초${r.summary?.text ? ` · "${r.summary.text}"` : " · 컨시어지가 듣고 정리"}` : `희망 ${fmtPreferred(r)}`} · ${r.status === "awaitingPayment" ? "가족 결제 대기" : "담당 컨시어지 확인 대기"}`,
+      meta: `${r.voice ? `어르신 목소리 ${r.voice.clip?.secs || 0}초${r.summary?.text ? ` · "${r.summary.text}"` : " · 컨시어지가 듣고 정리"}` : `희망 ${fmtPreferred(r)}`} · ${r.status === "awaitingPayment" ? (payerOf(r) === "elder" ? "어르신 결제 대기" : "가족 결제 대기") : "담당 컨시어지 확인 대기"}`,
       act: "확인",
       onAct: () => dispatch({ type: "opsAckRequest", id: r.id, by: opsName }),
       ticker: ["관제", `새 해주세요 확인 — ${svcTitle(r.type)}`, "#8FA9CC"],

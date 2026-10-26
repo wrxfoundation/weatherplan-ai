@@ -37,6 +37,7 @@ import {
   isStoreOrder,
   isVisitCall,
   kstYmd,
+  payerOf,
   paymentOf,
   preferredYmd,
 } from "../lib/requests";
@@ -729,10 +730,11 @@ export default function ConciergeRequests({ requests, payments, extraCharges = [
 
       {waitingPay.length > 0 && (
         <div className="mt-3 space-y-1.5">
-          <div className="text-[12px] font-bold text-navy">가족 결제 대기</div>
+          <div className="text-[12px] font-bold text-navy">결제 대기</div>
           {waitingPay.map((r) => (
             <div key={r.id} className="rounded-lg bg-navy/[.04] px-3 py-2 text-[12.5px] text-ink">
-              <b>{reqTitle(r)}</b> · {fmtWon(r.amount)} — 결제되면{" "}
+              {/* 누가 내나 — 어르신이 직접 내기로 한 것과 가족에게 부탁한 것을 나눠 적는다 (2026-10-26 · lib/requests.js payerOf) */}
+              <b>{reqTitle(r)}</b> · {fmtWon(r.amount)} · {payerOf(r) === "elder" ? "어르신 결제" : "가족 결제"} — 결제되면{" "}
               {!r.approvedAt ? "확인 대기" : r.dir === "fromConcierge" || r.dir === "fromOps" ? "확정" : "관제 승인 대기"}로 넘어옵니다
             </div>
           ))}

@@ -125,6 +125,12 @@ export function approverOf(r) {
   if (r?.dir === "fromOps") return "guardian";
   return "concierge";
 }
+// 누가 결제하나 (2026-10-26 연동 점검) — 어르신이 낸 해주세요 · 어르신이 수락한 제안은 어르신이 결제창에서 직접 낸다.
+// 어르신이 '가족에게 결제 부탁'을 누른 것(payAsk)만 보호자 화면에 결제 요청으로 간다. 보호자가 낸 요청 · 보호자가 수락한 제안은 보호자가 낸다.
+// 전에는 결제 대기면 모두 보호자 할 일 · 결제 버튼이 되어, 어르신이 '제가 결제할게요'를 눌러도 보호자 폰에 결제 요청이 같이 떴다.
+export const payerOf = (r) => ((r?.dir === "fromElder" || approverOf(r) === "elder") && !r?.payAsk ? "elder" : "guardian");
+// 보호자가 낼 결제 대기 — 보호자 홈 '결제 · 수락 대기' · 해주세요 결제 카드 · 결제 버튼 · 결제 서버가 이것만 본다
+export const guardianPays = (r) => r?.status === "awaitingPayment" && payerOf(r) === "guardian";
 // 도와줘요(즉시 방문 요청)는 관제가 확인 전화로 받는다 — 컨시어지 승인 큐에 넣지 않는다
 export const isVisitCall = (r) => r?.type === "즉시 방문 요청";
 // 스토어 주문의 배송 요청 — 결제가 주문(스토어)에 묶여 있어 해주세요 취소 · 환불로 다루지 않는다 (주문 취소는 관제 · 고객센터)

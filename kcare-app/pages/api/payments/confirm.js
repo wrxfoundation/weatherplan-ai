@@ -78,7 +78,7 @@ export default async function handler(req, res) {
       const user = (await getServerSession(req, res, authOptions))?.user;
       if (user?.household) {
         const st = await householdState(user.household);
-        const p = kind === "extra" ? extraPayable(st, refId, user) : requestPayable(st, refId);
+        const p = kind === "extra" ? extraPayable(st, refId, user) : requestPayable(st, refId, user);
         if (p.error) return res.status(p.status).json({ error: p.error, message: p.message });
         if (p.amount !== value) return res.status(409).json({ error: "AMOUNT_CHANGED", message: "그 사이 금액이 바뀌었습니다. 화면을 새로 고친 뒤 다시 결제해 주세요." });
       }

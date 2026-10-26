@@ -16,7 +16,7 @@ import { useLastActivity } from "../../lib/last-activity";
 import { healthOf, medTakenToday } from "../../lib/meds";
 import { LIVE_CONCIERGE, LIVE_TAG, STAGE_LABEL, visitReportOf } from "../../lib/live-household";
 import { centerNow } from "../../lib/people-store";
-import { approverOf } from "../../lib/requests";
+import { approverOf, guardianPays } from "../../lib/requests";
 import { fmtWon } from "../../lib/config";
 import { HelpCallCard } from "../../components/HelpCall";
 import { avatarText, meAs } from "../../lib/people";
@@ -173,8 +173,9 @@ export default function FamilyHome() {
       setAskAi({ ...qa, loading: false }); // 데모 폴백 — 기록 기반 준비 답변
     }
   };
-  // 보호자가 할 일 — 결제 대기 + 승인 대상이 보호자인 컨시어지 제안 (2026-10-05)
-  const pendingList = state.requests.filter((r) => r.status === "awaitingPayment" || (r.status === "requested" && approverOf(r) === "guardian"));
+  // 보호자가 할 일 — 보호자가 낼 결제 대기 + 승인 대상이 보호자인 컨시어지 제안 (2026-10-05).
+  // 어르신이 '제가 결제할게요'로 낸 것은 넣지 않는다 — '가족에게 결제 부탁'을 눌러야 온다 (2026-10-26 · lib/requests.js payerOf)
+  const pendingList = state.requests.filter((r) => guardianPays(r) || (r.status === "requested" && approverOf(r) === "guardian"));
   const repScore = Math.min(...OUTING.legs.map((l) => l.score)); // 두 구간 중 낮은 값
 
   // 네 칸 — 데모는 워치 예시 값(lib/demo-health.js · lib/mock.js), 테스트 가구는 워치가 없다고 말한다

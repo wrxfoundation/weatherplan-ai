@@ -64,7 +64,7 @@ export default async function handler(req, res) {
       if (value == null) return res.status(409).json({ error: "ORDER_NOT_FOUND", message: "담은 물건을 확인하지 못했습니다. 스토어에서 다시 담아 주세요." });
     } else if (state) {
       if (!refId) return res.status(400).json({ error: "REF_MISSING", message: "어떤 요청의 결제인지 빠졌습니다." });
-      const p = requestPayable(state, refId);
+      const p = requestPayable(state, refId, user);
       if (p.error) return res.status(p.status).json({ error: p.error, message: p.message });
       value = p.amount;
     } else {

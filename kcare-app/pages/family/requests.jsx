@@ -5,7 +5,7 @@ import { payHref } from "../../lib/payments";
 import FamilyLayout from "../../components/FamilyLayout";
 import { Clay, Line } from "../../components/clay";
 import { Btn, Card, EvenGrid, Sheet, SheetTitle, TONE, WhiteBtn } from "../../components/ds";
-import { STATUS, GUARDIAN_PRESETS, SERVICE_MENU, SERVICE_PLUS, URGENCY, CANCEL_FREE_DAYS, CLOSED, approverOf, canEditRequest, cancelRule, customerStatusLabel, fmtPreferred, fmtScheduled, isStoreOrder, isVisitCall, kstYmd, paymentOf } from "../../lib/requests";
+import { STATUS, GUARDIAN_PRESETS, SERVICE_MENU, SERVICE_PLUS, URGENCY, CANCEL_FREE_DAYS, CLOSED, approverOf, canEditRequest, cancelRule, customerStatusLabel, fmtPreferred, fmtScheduled, guardianPays, isStoreOrder, isVisitCall, kstYmd, payerOf, paymentOf } from "../../lib/requests";
 import { EXTRA_PERSON_FEE, addMin, clock12, dateLabel, durStart, durText, kstHm, menuOf, nextAppt, nextApptStart, priceOf, reqTitle, svcTitle } from "../../lib/booking";
 import { fmtWon } from "../../lib/config";
 import { useAppState } from "../../lib/state";
@@ -132,8 +132,9 @@ export default function RequestsPage() {
 
   const active = state.requests.filter((r) => !CLOSED.includes(r.status));
   const closed = state.requests.filter((r) => CLOSED.includes(r.status));
-  // 보호자가 할 일 — 결제 대기 + 승인 대상이 보호자인 컨시어지 제안 (홈 '결제 · 수락 대기'와 같은 기준)
-  const isTodo = (r) => r.status === "awaitingPayment" || (r.status === "requested" && approverOf(r) === "guardian");
+  // 보호자가 할 일 — 보호자가 낼 결제 대기 + 승인 대상이 보호자인 컨시어지 제안 (홈 '결제 · 수락 대기'와 같은 기준).
+  // 어르신이 직접 내기로 한 것은 할 일이 아니다 — 아래 진행 중 목록에 '결제하실 차례'로만 보인다 (2026-10-26)
+  const isTodo = (r) => guardianPays(r) || (r.status === "requested" && approverOf(r) === "guardian");
   const todo = active.filter(isTodo);
   const others = active.filter((r) => !isTodo(r));
 
@@ -531,16 +532,17 @@ function useReq(req, onboarding, payments) {
     ? `${honor} → 관제`
     : {
         fromConcierge: approver === "elder" ? `컨시어지 제안 → ${honor} 승인` : "컨시어지 제안 → 보호자 승인",
-        fromElder: req.status === "awaitingPayment" ? `${honor} 부탁 · 결제 대기` : `${honor} → 담당 컨시어지 → 관제`,
+        fromElder: req.status === "awaitingPayment" ? `${honor} 부탁 · ${payerOf(req) === "elder" ? "직접 결제" : "가족 결제 대기"}` : `${honor} → 담당 컨시어지 → 관제`,
         fromGuardian: "보호자 → 담당 컨시어지 → 관제",
         fromOps: "관제 → 보호자", // 복지혜택 안내 (2026-09-04)
       }[req.dir];
   // 누가 낸 요청인가 — 큰 카드 오른쪽 위
   const who =
     req.dir === "fromConcierge" ? `${req.assignee || "담당"} 선생님 제안` : req.dir === "fromElder" ? `${honor} 부탁` : req.dir === "fromOps" ? "관제 안내" : "보호자 요청";
-  // 보호자가 할 수 있는 것 — 결제(결제 대기 · 가족 누구나) · 제안 수락/거절(승인 대상이 보호자일 때) · 취소(규칙대로)
+  // 보호자가 할 수 있는 것 — 결제(보호자가 낼 결제 대기 · 가족 누구나) · 제안 수락/거절(승인 대상이 보호자일 때) · 취소(규칙대로).
+  // 어르신이 직접 내기로 한 결제 대기에는 결제 버튼을 두지 않는다 — 어르신이 '가족에게 결제 부탁'을 누르면 생긴다 (2026-10-26)
   const canAnswer = req.status === "requested" && approver === "guardian";
-  const canPay = req.status === "awaitingPayment";
+  const canPay = guardianPays(req);
   // 어르신 '물건 승인 부탁' — 결제 전이면 사지 않기로 닫을 수 있다 (결제 뒤에는 주문이라 관제 · 고객센터)
   const storeAsk = isStoreOrder(req) && req.status === "awaitingPayment" && !pay;
   const canCancel = !visitCall && (!isStoreOrder(req) || storeAsk) && req.dir !== "fromOps" && !canAnswer && ["free", "ops"].includes(rule.mode) && !(proposal && req.status === "requested");
@@ -790,7 +792,8 @@ function TodoCard({ req, open, onToggle, onboarding, dispatch, payments, onEdit,
       {/* 가족(어르신 등)이 결제를 부탁했다 — 가족 누구나 낼 수 있다 */}
       {req.status === "awaitingPayment" && req.payAsk && (
         <div className="rounded-[14px] bg-white px-3 py-2 text-[14px] font-bold">
-          {req.payAsk.by} 님이 결제를 부탁했어요 · {new Date(req.payAsk.at).toLocaleString("ko-KR", { month: "numeric", day: "numeric", hour: "numeric", minute: "2-digit" })}
+          {/* by 는 '김순자 님'처럼 '님'까지 들어 있다 — '김순자 님 님이'가 되지 않게 한 번만 붙인다 (2026-10-26) */}
+          {String(req.payAsk.by || "가족").replace(/\s*님$/, "")} 님이 결제를 부탁했어요 · {new Date(req.payAsk.at).toLocaleString("ko-KR", { month: "numeric", day: "numeric", hour: "numeric", minute: "2-digit" })}
         </div>
       )}
       <Actions req={req} x={x} dispatch={dispatch} big onEdit={onEdit} />
@@ -820,6 +823,8 @@ function RequestRow({ req, open, onToggle, onboarding, dispatch, payments, onEdi
           ? "컨시어지 확인 완료 · 관제 승인을 기다려요"
         : req.status === "requested" && x.approver === "elder"
           ? `${x.honor}이 수락하시면 진행됩니다`
+          : req.status === "awaitingPayment" && payerOf(req) === "elder"
+            ? `${x.honor}이 결제하실 차례예요`
           : x.scheduled
             ? `확정 ${x.scheduled}`
             : req.detail;

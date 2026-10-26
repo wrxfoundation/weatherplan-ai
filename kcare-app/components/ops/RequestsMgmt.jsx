@@ -12,7 +12,7 @@ import Icon from "../icons";
 import { useAppState } from "../../lib/state";
 import { useAuth } from "../../lib/auth";
 import { LiveToggle } from "./LiveToggle";
-import { APPROVER_LABEL, STATUS, SERVICE_MENU, URGENCY, approverOf, canTransition, crewOf, crewReady, fmtPreferred, fmtScheduled, isVisitCall, paymentOf, transition } from "../../lib/requests";
+import { APPROVER_LABEL, STATUS, SERVICE_MENU, URGENCY, approverOf, canTransition, crewOf, crewReady, fmtPreferred, fmtScheduled, isVisitCall, payerOf, paymentOf, transition } from "../../lib/requests";
 import { addMin, clock12, dateLabel, durText, extraDueYmd, extraOverdue, extraStateText, extraToText, peopleText, svcTitle } from "../../lib/booking";
 import { fmtWon } from "../../lib/config";
 import { Panel, PanelHead, Stat, Pill, Btn, Table, KV, Field, Toggle, Drawer, Confirm, Note, Empty, useOperator } from "./ui";
@@ -73,7 +73,8 @@ function payState(r, payments) {
   if (r.payBy === "elder" && r.amount > 0) return { label: `어르신 직접 ${fmtWon(r.amount)}`, tone: "muted" };
   if (r.amount == null) return { label: "요금 확정 전", tone: "muted" };
   if (r.amount === 0) return { label: "승인 불필요 (무료)", tone: "muted" };
-  if (r.status === "awaitingPayment") return { label: "가족 결제 대기", tone: "warn" };
+  // 어르신이 직접 내기로 한 것은 '어르신 결제 대기' — 가족에게 부탁한 것만 '가족 결제 대기' (2026-10-26 · lib/requests.js payerOf)
+  if (r.status === "awaitingPayment") return { label: payerOf(r) === "elder" ? "어르신 결제 대기" : "가족 결제 대기", tone: "warn" };
   if (r.status === "cancelled" || r.status === "rejected") return { label: "—", tone: "muted" };
   return { label: "결제 전", tone: "muted" };
 }
