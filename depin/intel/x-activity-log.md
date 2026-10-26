@@ -4405,3 +4405,23 @@ With any incident, what matters most is a fast and clear response. This happened
 
 We'll make sure everyone affected is compensated for what was lost. Thanks for hearing me out.
 ```
+
+## 서우 개인 계정 — @wellbianlabs 「Air Mining at Swell Demo Day」 인용 (2026-10-27, 서우 캡처 + 「Swell 공기 이상없다 · 개인 재인용」)
+
+원글(브랜드): Swell Demo Day(뉴욕) 테이블 위 측정기가 오후 내내 실내 공기를 실시간 측정 · 「Weather data becomes an asset」 · #MineYourAir + 사진(측정기 화면 10/26 PM 2:35 — PM10 2 · PM2.5 1 · CO₂ 501 ppm · 23.0°C · 습도 47% · VOCs 2).
+판정: **인용 — 사진 속 실측값으로 「공기 이상 없음」을 가볍게.** 숫자는 원글 사진에 보이는 값만 · 「리플」 이름 0(원글의 장소 표기를 개인 계정이 되풀이하지 않음) · 서우 불참이라 「내가 봤다」 류 0 · 「asset」 0 · 건강 효과 주장 0(자사 사고 주간 — 제품 사실 글이라 가능).
+- **A 추천(가중 150)**
+```
+The air at Swell checks out.
+
+Mid-afternoon on Demo Day: PM2.5 at 1 µg/m³, CO₂ around 500 ppm, 23°C, 47% humidity.
+
+Good room for long conversations.
+```
+- B 짧은 판(가중 97)
+```
+Swell air report: PM2.5 1 µg/m³, CO₂ ~500 ppm, 23°C. All clear.
+
+The conversations can run long.
+```
+게시 전: 인용 = 원글(계정당 1일 1건).
