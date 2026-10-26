@@ -4425,3 +4425,24 @@ Swell air report: PM2.5 1 µg/m³, CO₂ ~500 ppm, 23°C. All clear.
 The conversations can run long.
 ```
 게시 전: 인용 = 원글(계정당 1일 1건).
+
+## 서우 개인 계정 — @wellbianlabs 「Our CEO met @JoelKatz」 인용 (2026-10-27, 서우 캡처 + 「인용글」)
+
+원글(브랜드): 대표 김성환(@Kurtkim0403) 원글 「Great conversation with @JoelKatz in New York today. Swell week starts now.」 인용 + 사진(데이비드 슈워츠와 대표).
+판정: **인용 — 「XRPL 을 설계한 사람 중 한 명을 만났다」 + 우리는 그 원장 위에서 만든다, 그 이상 0.**
+대화 내용 · 협력 · 지지 암시 0(무슨 이야기를 했는지 우리는 모른다) · 「Ripple」 · 직함(CTO Emeritus) 0 · @JoelKatz 재태그 0(원글이 이미 태그) ·
+보상 · 지문 · 원장 기록 같은 운영 문장 0(자사 사고 주간 — 보상 · 클레임 일시 중지 중, IAQ 원장 지문은 기록 상태 확인 전) · 서우 불참이라 「back in Seoul」로 사실대로.
+근거: 데이비드 슈워츠 = XRP Ledger 원설계자 중 한 명(공개 사실 · celeb-ladder · linkedin-xrp-targets-1021 B2).
+- **A 추천(가중 180)**
+```
+Our CEO sat down with one of the people who designed the XRP Ledger.
+
+We build on that ledger, so this one meant a lot to the team back in Seoul. Swell week is off to a good start.
+```
+- B 짧은 판(가중 108)
+```
+Building on a ledger, then meeting one of the people who designed it.
+
+Good start to Swell week for our CEO.
+```
+게시 전: 오늘 「Swell 공기」 인용을 이미 올렸다면 이건 둘째 원글 — 파트너 발표일 예외(2/일 · 6시간+ 간격)로 볼지 서우 판단, 아니면 둘 중 하나만 · 나머지는 내일.
