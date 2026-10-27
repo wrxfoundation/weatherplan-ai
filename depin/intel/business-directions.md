@@ -5491,3 +5491,20 @@ Good to be connected.
 - 둘 다 말할 수 있는 보상 문장은 정본 그대로: 기기 NFT 지갑에 매일 정해진 수량 적립 · 가동률 · 품질 조건 · 단계마다 감소 · 양 · 가치 비보장 · 공식과 지급 기록 공개.
 - **지금은 열 수 없다**: 10/24 공지로 보상 적립 · 클레임이 전부 일시 중지 — 보상 재개 · 보안 조치 공지 뒤에 연다.
 - **10/27 서우 「지금 다 정상화됨」** → R1(직접 소유 + 할부 · B2B 분할)은 바로 열 수 있다(개발 · 새 구조 없음). R2(보상 나눔 호스팅)는 카운슬 · 약정서 · (자동 분배면) 개발 뒤. 업장 상대 첫 대화에서 사고를 묻으면: 공지 · 메일 문장까지만, 「이제 안전하다」 0.
+
+## Zhen (珍燕) Yan — BrandPR Casino Marketing Manager(마카오 · 이미 1촌) (2026-10-27, 서우 프로필 캡처 3장)
+
+- **자리**(캡처 기준): BrandPR(Web3 PR · 마케팅 에이전시) Casino Marketing Manager(2025~) · 전 프리랜서 카지노 마케팅(2022-06~2025-04) · Bet Gaming Solutions(2020~2022).
+  헤드라인 「Amplifying Casino & iGaming Success | Press Releases, Listings, Ads & Sponsored Events | Crypto Casino & DeFi」 · 활동 = CoinFerenceX(BrandPR 창업자 Radhe Gupta 의 행사) 「partner slots」 퍼감.
+- **판정: 짧은 인사만, 사업 이야기 0.** ① 유료 PR · 상장(리스팅) · 광고 · 스폰서 행사 판매자 — 우리가 지금 사지 않는 것 ② **(크립토) 카지노 마케팅이 본업** — 상장사 기기 파트너 · 한국 도박 민감도(8/18 폴리마켓 차단)로
+  우리 이름이 카지노 PR 채널에 실리면 안 된다(10/9 iGaming 경력 판정은 「평판 한 줄」이었지만 이번은 현직 · 본업이라 더 멀리).
+  자료 · 미팅 · 행사 참가 제안 받기 0 · 그쪽 게시물 반응 0.
+- 인사(영문 239자 — Lynn 기본값을 줄인 판, 기기만 말하지 않음):
+```
+Hi Zhen, thanks for connecting. I run partnerships at wellbian, built on KWeather's 30 years of weather data: indoor-air sensors in real rooms and city-level weather, with every input fingerprinted to a public ledger. Good to be connected.
+```
+- 패키지 제안이 오면(영문 138자):
+```
+Thanks, Zhen. We're not running paid PR, listings or sponsored events at the moment, so I'll pass for now. I'll reach out if that changes.
+```
+
