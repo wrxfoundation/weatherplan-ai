@@ -5524,3 +5524,15 @@ Thanks, Zhen. We're not running paid PR, listings or sponsored events at the mom
   5. **대리점 구매 상한 · 자격** — 1인 10장 vs 사업자 50(백서). 대리점은 수백 대 → 별도 대리점 등급 · 상한. 「대리점 본인 구매 30%」는 **설치 실적이 있는 대리점만**(아니면 모두 대리점으로 사서 할인이 소비자가로 번진다).
   6. **매장 표시물**: wellbian · 「공기 관리 매장」까지. XRP · XRPL 로고 · 리플 이름을 매장 광고물에 쓰는 건 상표 · 관계 규칙상 보류(녹취의 「XRP 같이 홍보」).
 - **다음**: ① 판매가 정책(경영진) ② 대리점 계약서(구매가 · 상한 · 설치 기준 · 사진 검증 · 인수 조건 · A/S = 케이웨더 위탁) + 매장 설치 약정서 ③ 카운슬(대리점 모집 문구 · 사례비 구조) ④ 서울 카페 10곳 시범(대리점 1곳).
+
+## David Knox (Hyperion DeFi CFO · 나스닥 HYPD · 뉴욕 · 2촌) — 1촌 요청 메모만 (2026-10-27, 서우 프로필 캡처 2장)
+
+- **자리**(캡처 기준): Hyperion DeFi CFO(2025-09~, 뉴욕 — 하이퍼리퀴드 위 핀테크 · 트레저리 HYPE) · PayPal Head of Capital Markets / Head of Finance for Credit & Financial Services(2024-04~2025-09) · SoFi VP Student Loans · Senior Director Capital Markets · Cantor Fitzgerald · HBS. 공통 1촌 2명(이름은 메모에 쓰지 않음).
+- **판정: 1촌 요청 + 기본 인사 메모, 날씨 시장 이야기 0.** Hyperion · Skew 문은 **정현수 대표 하나**(10/12 판정 · 같은 회사 두 창구 0). CFO 에게 날씨 시장을 꺼내면 대표를 건너뛴 두 번째 문이 된다.
+  대표 쪽 답이 오면 그 흐름 안에서만 CFO 를 부른다. HYPE · 토큰 · 가격 · 상장사 표현 0 · 뉴욕 커피(서우 Swell 불참) 0.
+- 메모(영문 314자 · 프리미엄 300자 안 · 「11 independent sources」 대신 「multiple feeds」 — 데이터에 밝은 상대):
+```
+Hi David, I run partnerships at wellbian. KWeather has measured weather in Korea for 30 years; wellbian builds on it: home air sensors plus city-level weather from multiple feeds, every input fingerprinted to a public ledger. Your path from PayPal capital markets to onchain finance caught my eye. Glad to connect.
+```
+- 확인: 정현수 대표 10/12 메시지 · 10/16 예비 메일에 답이 있었는지(기록 없음) — 답이 없으면 대표 쪽은 그대로 두고, 이 1촌은 관계만.
+
