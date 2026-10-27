@@ -4501,3 +4501,7 @@ The real world has air in it.
 
 현실 세계엔 공기도 있으니까요.
 ```
+- **10/27 서우 수정 — 「은유로 실제 돈 · 실제 사람 · 실제 공기 · 실제 데이터 나열」** → 나열형(내일 원글).
+  A 추천: `Real air.` / `Real rooms.` / `Real people.` / `Real data.` / `Real payments.` + 빈 줄 + `Built for the real world, one room at a time.`(공기 → 방 → 사람 → 데이터 → 결제, 흐름 순서)
+  B(요청 그대로 「money」): `Real air. Real people. Real data. Real money.` + `Built for the real world, one room at a time.` — ⚠ 「Real money」는 홀로 서면 「돈 번다」로 읽힐 수 있다(수익 약속 금지 · 사고 주간) → A 의 「payments」(호출당 데이터 결제) 권장.
+  국문: `진짜 공기.` / `진짜 방.` / `진짜 사람.` / `진짜 데이터.` / `진짜 결제.` + `현실 세계를 위해, 방 하나씩.`
