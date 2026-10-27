@@ -4505,3 +4505,22 @@ The real world has air in it.
   A 추천: `Real air.` / `Real rooms.` / `Real people.` / `Real data.` / `Real payments.` + 빈 줄 + `Built for the real world, one room at a time.`(공기 → 방 → 사람 → 데이터 → 결제, 흐름 순서)
   B(요청 그대로 「money」): `Real air. Real people. Real data. Real money.` + `Built for the real world, one room at a time.` — ⚠ 「Real money」는 홀로 서면 「돈 번다」로 읽힐 수 있다(수익 약속 금지 · 사고 주간) → A 의 「payments」(호출당 데이터 결제) 권장.
   국문: `진짜 공기.` / `진짜 방.` / `진짜 사람.` / `진짜 데이터.` / `진짜 결제.` + `현실 세계를 위해, 방 하나씩.`
+
+## 서우 개인 계정 — @wellbianlabs 「Air Mining underground · 5 Av–59 St」 인용 (2026-10-28, 서우 캡처 + 「재인용 · air mining at 뉴욕 지하철로 써 둬」)
+
+원글(브랜드): 뉴욕 지하철 5 Av–59 St 역 승강장 기둥에 측정기 · 「PM2.5 at 3 on the street. 21 down here. Same city, different air.」 · #MineYourAir.
+판정: **인용 — 원글 숫자 둘(거리 3 · 승강장 21)만, 「계단 하나 차이」로.** 측정 1회 · 한 역이라는 걸 밝히고 건강 · 위험 · 기준치(WHO 등) 주장 0 · 「지하철 공기가 나쁘다」 일반화 0 · 리플 · Swell 0. 게시는 서우가 고른 때(원글 1일 1건).
+- **A 추천(가중 206)**
+```
+Air mining at the New York subway.
+
+Street: PM2.5 at 3. Platform at 5 Av–59 St: 21. Seven times higher, one staircase apart.
+
+One reading at one stop. Still, it's why you measure the air you're actually in.
+```
+- B 짧은 판(가중 113)
+```
+Air mining at the New York subway: PM2.5 at 3 on the street, 21 on the platform.
+
+Same city, one staircase apart.
+```

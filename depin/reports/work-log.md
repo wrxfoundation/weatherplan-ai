@@ -2562,3 +2562,4 @@ Thanks Odelia — writing to you at that address today. Mine is support@wellbian
 - **대표 구상 대리점 설치 · 매장 호스팅 · 2개월 인수 모델 정리 · 판정(10/27, 서우 녹취 txt)** — 승산 있음(영업 · 설치 · 데이터 품질 · 진입장벽 동시 해결). 고칠 것 6: 대리점가(정가 70%)와 1차 판매가 충돌 · 매장 몫은 현금 고정 사례비 · 2년 임대는 토큰 시세 의존 → 투자 권유 위험 · 같은 공간 중복 무보상 · 대리점 상한 · 자격 · 매장 표시물. 녹취 원문 · 연락처 미기재. `intel/business-directions.md` 끝 절.
 - **David Knox(Hyperion DeFi CFO · 2촌) 판정(10/27, 서우 캡처 2장)** — 1촌 요청 메모(298자)만 · 날씨 시장 0(Hyperion 문 = 정현수 대표 하나 · 같은 회사 두 창구 0). `intel/business-directions.md` 끝 절.
 - **David Knox 날씨 시장 열기(10/27, 서우 「대표 무응답 — 얘기 꺼내자」)** — 1촌 메모 288자 + 수락 뒤 메시지 1079자: 대표에게 먼저 보낸 사실 밝힘 · CFO 각도 = 담보 손실 · 판정 보류 · 정본 시장 문장 · 20분 통화 또는 1장 개요. `intel/business-directions.md` Knox 절.
+- **@wellbianlabs 「Air Mining underground」(뉴욕 5 Av–59 St) 개인 인용(10/28, 서우 「air mining at 뉴욕 지하철로 써 둬」)** — 원글 숫자 둘(거리 3 · 승강장 21) · 「계단 하나 차이」 · 측정 1회 밝힘 · 건강 · 기준치 · 일반화 0. A 206 · B 113. `intel/x-activity-log.md` 끝 절.
