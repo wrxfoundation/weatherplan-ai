@@ -4477,3 +4477,27 @@ Our corner of the real world is smaller: one room. PM2.5, CO₂ and humidity, re
 - A 추천(답글, 93): `Thank you for the time with our CEO, Joel. The whole team back in Seoul smiled at this photo.`
 - B 짧은 판(64): `Thanks for making time for our CEO, Joel. Made our day in Seoul.`
 - 인용으로 꼭 올린다면(103, 내일): `@JoelKatz Thank you for the time with our CEO, Joel. The whole team back in Seoul smiled at this photo.`
+
+## 서우 개인 계정 — 「현실 세계를 위해 만들어졌다」 구호를 우리 것으로 (2026-10-27, 서우 「차라리 이 구호를 외치자 · 우리 게 진짜 현실 세계에서 쓰이는 거니까」)
+
+판정: **원글로 — 단 @XRP 영상 구호를 그대로 따라 하지 않고 우리 말로 비튼다.** 「Built for the real world」 한 줄은 쓰되 뒤에 「one room at a time」을 붙여 우리 물건 이야기로 끝낸다.
+@XRP · 영상 · $XRP · stoneiland 언급 0(캠페인에 올라탄 글로 읽히지 않게) · 보상 · 토큰 · 가격 0(자사 사고 주간) ·
+「집집마다 설치돼 있다」 류 0 — 1차 판매분 납품 기한이 11/30 이라 가정 설치 규모는 말할 수 있는 사실이 아니다. 쓰는 사실: 1분 단위 측정(판매 페이지) · Swell 데모데이 테이블(브랜드 원글 사진).
+오늘 원글 2건 게시 → **내일 원글.**
+- A 추천(가중 213)
+```
+Built for the real world, one room at a time.
+
+Our sensor is small enough to sit on a table. At Swell Demo Day it read the room all afternoon: PM2.5, CO₂ and humidity, every minute.
+
+The real world has air in it.
+```
+- B 짧은 판(91): `Built for the real world, one room at a time.` + 빈 줄 + `PM2.5, CO₂ and humidity, read every minute.`
+- 국문판(179)
+```
+현실 세계를 위해 만든 건 저희도 마찬가지예요.
+
+책상 위에 올라가는 측정기 하나가 방 안 공기를 1분마다 잽니다. 이번 Swell 데모데이 테이블 위에서도요.
+
+현실 세계엔 공기도 있으니까요.
+```
