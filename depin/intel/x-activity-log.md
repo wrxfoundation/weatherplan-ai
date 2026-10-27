@@ -4469,3 +4469,11 @@ Everyone's talking about money built for the real world this week.
 Our corner of the real world is smaller: one room. PM2.5, CO₂ and humidity, read every minute, and the data sold per call on the XRP Ledger.
 ```
 근거: 1분 단위 측정 = 판매 페이지 · 「data sold per call on the XRP Ledger」 = x402 호출당 판매(8월 메인넷 검증, 2편 문장). 보상 · 토큰 · 가격 0(자사 사고 주간).
+
+## 서우 개인 계정 — 대표 원글(@Kurtkim0403 × @JoelKatz) 인용 작성 화면 「@JoelKatz」 (2026-10-27, 서우 캡처)
+
+판정: **인용 대신 대표 원글에 답글로** — 오늘 원글 2건(Swell 공기 · 브랜드 JoelKatz 인용)을 이미 올려 셋째 원글은 한도 밖이고, 같은 사진을 세 번째로 띄우는 셈.
+대표 글 답글이면 @JoelKatz 가 이미 스레드에 들어 있어 따로 태그하지 않아도 닿는다. 감사 한 줄만 — 요청 · 협력 · 레저 설명 0(서우 10/27 「누구나 아는 사람」).
+- A 추천(답글, 93): `Thank you for the time with our CEO, Joel. The whole team back in Seoul smiled at this photo.`
+- B 짧은 판(64): `Thanks for making time for our CEO, Joel. Made our day in Seoul.`
+- 인용으로 꼭 올린다면(103, 내일): `@JoelKatz Thank you for the time with our CEO, Joel. The whole team back in Seoul smiled at this photo.`
