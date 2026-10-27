@@ -5530,9 +5530,9 @@ Thanks, Zhen. We're not running paid PR, listings or sponsored events at the mom
 - **자리**(캡처 기준): Hyperion DeFi CFO(2025-09~, 뉴욕 — 하이퍼리퀴드 위 핀테크 · 트레저리 HYPE) · PayPal Head of Capital Markets / Head of Finance for Credit & Financial Services(2024-04~2025-09) · SoFi VP Student Loans · Senior Director Capital Markets · Cantor Fitzgerald · HBS. 공통 1촌 2명(이름은 메모에 쓰지 않음).
 - **판정: 1촌 요청 + 기본 인사 메모, 날씨 시장 이야기 0.** Hyperion · Skew 문은 **정현수 대표 하나**(10/12 판정 · 같은 회사 두 창구 0). CFO 에게 날씨 시장을 꺼내면 대표를 건너뛴 두 번째 문이 된다.
   대표 쪽 답이 오면 그 흐름 안에서만 CFO 를 부른다. HYPE · 토큰 · 가격 · 상장사 표현 0 · 뉴욕 커피(서우 Swell 불참) 0.
-- 메모(영문 314자 · 프리미엄 300자 안 · 「11 independent sources」 대신 「multiple feeds」 — 데이터에 밝은 상대):
+- 메모(영문 298자 · 프리미엄 300자 안 · 「11 independent sources」 대신 「multiple feeds」 — 데이터에 밝은 상대):
 ```
-Hi David, I run partnerships at wellbian. KWeather has measured weather in Korea for 30 years; wellbian builds on it: home air sensors plus city-level weather from multiple feeds, every input fingerprinted to a public ledger. Your path from PayPal capital markets to onchain finance caught my eye. Glad to connect.
+Hi David, I run partnerships at wellbian. KWeather has measured weather in Korea for 30 years; wellbian builds on it: home air sensors plus city-level weather from multiple feeds, every input fingerprinted to a public ledger. Your move from PayPal to onchain finance caught my eye. Glad to connect.
 ```
 - 확인: 정현수 대표 10/12 메시지 · 10/16 예비 메일에 답이 있었는지(기록 없음) — 답이 없으면 대표 쪽은 그대로 두고, 이 1촌은 관계만.
 
