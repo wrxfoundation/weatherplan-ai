@@ -5535,4 +5535,23 @@ Thanks, Zhen. We're not running paid PR, listings or sponsored events at the mom
 Hi David, I run partnerships at wellbian. KWeather has measured weather in Korea for 30 years; wellbian builds on it: home air sensors plus city-level weather from multiple feeds, every input fingerprinted to a public ledger. Your move from PayPal to onchain finance caught my eye. Glad to connect.
 ```
 - 확인: 정현수 대표 10/12 메시지 · 10/16 예비 메일에 답이 있었는지(기록 없음) — 답이 없으면 대표 쪽은 그대로 두고, 이 1촌은 관계만.
+- **10/27 서우 「대표님한테 답 없었음 — 그래서 얘기 꺼내 보자」** → 둘째 문을 연다(정현수 대표 10/12 · 10/16 무응답). 앞서 대표에게 보낸 사실을 밝혀 「겹치기」로 읽히지 않게 · CFO 각도 = **담보 손실**(정산이 틀리면 Hyperion 이 시장 뒤에 넣은 자본이 깎인다).
+  「가장 빠르게 크는 범주」(10/12 문장)는 뺐다 — 날씨 계약 한 건의 거래량은 아직 작다(10/19 스캔). 시장 문장은 10/11 정본 그대로. 뉴욕 커피 0 → 20분 통화 또는 1장 개요. HYPE · 토큰 · 「independent」 0.
+  1촌 메모(영문 288자):
+```
+Hi David, I run partnerships at wellbian, built on KWeather's 30 years of weather data. We supply settlement data for weather prediction markets: 172 cities, every input fingerprinted, and a withheld verdict when the data can't support one. Relevant to Hyperion, I think. Glad to connect.
+```
+  수락 뒤 메시지(영문 1079자):
+```
+David — thanks for connecting.
+
+I run partnerships at Wellbian Labs in Seoul. With KWeather, a Korean weather company with 30 years of observation, we run a weather data market built for settling prediction markets: city-level weather for 172 cities in 91 countries, each value a consensus across multiple weather feeds, every input fingerprinted to a public ledger, and a verdict of met, not met or withheld.
+
+I wrote to Hyunsu earlier this month and didn't want to double up without saying so. I'm reaching out to you because part of the question sits on the balance sheet: when Hyperion puts capital behind a market, a wrong settlement is a loss on that capital. Many weather contracts still settle on a single airport station, and the withheld verdict exists for the days the inputs can't support a clean number.
+
+We are in active discussions with prediction-market platforms about launching weather markets. If it's useful, I'd welcome 20 minutes on a call, or I can send a one-page outline of how a daily weather market and its settlement data could be set up.
+
+Best,
+Logan
+```
 

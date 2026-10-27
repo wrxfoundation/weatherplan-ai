@@ -2561,3 +2561,4 @@ Thanks Odelia — writing to you at that address today. Mine is support@wellbian
 - **Zhen Yan(BrandPR 카지노 마케팅 · 마카오 · 1촌) 판정(10/27, 서우 캡처 3장)** — 유료 PR · 리스팅 · 스폰서 판매 + 크립토 카지노 본업 → 짧은 인사만 · 사업 이야기 · 반응 0 · 제안 오면 정중한 거절 한 줄. `intel/business-directions.md` 끝 절.
 - **대표 구상 대리점 설치 · 매장 호스팅 · 2개월 인수 모델 정리 · 판정(10/27, 서우 녹취 txt)** — 승산 있음(영업 · 설치 · 데이터 품질 · 진입장벽 동시 해결). 고칠 것 6: 대리점가(정가 70%)와 1차 판매가 충돌 · 매장 몫은 현금 고정 사례비 · 2년 임대는 토큰 시세 의존 → 투자 권유 위험 · 같은 공간 중복 무보상 · 대리점 상한 · 자격 · 매장 표시물. 녹취 원문 · 연락처 미기재. `intel/business-directions.md` 끝 절.
 - **David Knox(Hyperion DeFi CFO · 2촌) 판정(10/27, 서우 캡처 2장)** — 1촌 요청 메모(298자)만 · 날씨 시장 0(Hyperion 문 = 정현수 대표 하나 · 같은 회사 두 창구 0). `intel/business-directions.md` 끝 절.
+- **David Knox 날씨 시장 열기(10/27, 서우 「대표 무응답 — 얘기 꺼내자」)** — 1촌 메모 288자 + 수락 뒤 메시지 1079자: 대표에게 먼저 보낸 사실 밝힘 · CFO 각도 = 담보 손실 · 판정 보류 · 정본 시장 문장 · 20분 통화 또는 1장 개요. `intel/business-directions.md` Knox 절.
