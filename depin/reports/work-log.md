@@ -2573,3 +2573,4 @@ Thanks Odelia — writing to you at that address today. Mine is support@wellbian
 - **James 선물 사진 인용 — 생태계 가치 판(10/28, 서우 「과소평가 말고 생태계에 도움 되는 내용」)** — XRP Ledger 에 보태는 것(실제 방 · 공기 · RLUSD 호출당 결제) 한 줄, A 217 · B 176(오늘 공기 날씨 말장난) · C 182. 리플 · 지지 · 「XRP utility」 · 가격 전망형 말장난 0. `intel/x-activity-log.md`.
 - **@Mr_MOON_XRP 대표 미팅 원글 개인 인용(10/28, 서우 「타임레버리지와 우리 상관관계 · 재밌게」)** — Moon · Time ↔ 날씨 말장난(A 169 · B 123 · C 92 · 국문 111). asset · 가치 창출 받지 않음 · 라이브 출연 약속 0 · 광고 표시 확인 · 오늘 원글 수. `intel/x-activity-log.md` 끝 절.
 - **@wellbianlabs 「Blue @Ripple / Clean air @RippleSwell」 개인 인용(10/28, 서우 「공기질 관리도 잘하네」)** — 행사장 공기 칭찬(A 153 · B 90 · C 98) · 칭찬 대상 = 행사장 운영 · 재태그 · 협력 · 지지 0. `intel/x-activity-log.md` 끝 절.
+- **Swell 글 보고 관심 보인 해외 계정 DM 판매 안내(10/28, 서우)** — wellbian.io · RLUSD 결제 · 할인 코드 칸 · 배송 나라 확인 질문 · 사칭 경고. 해외 배송 가능 여부 서우 확인. 계정명 · 코드 미기재. `intel/x-activity-log.md` 끝 절.

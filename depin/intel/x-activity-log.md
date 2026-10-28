@@ -4648,3 +4648,22 @@ A full hall at Ripple Swell, and CO₂ still at 400 ppm with PM2.5 at 1. Whoever
 ```
 - B(90) `Blue lights, clean air. CO₂ at 400 ppm with the hall packed.` / 빈 줄 / `Swell runs a tight room. 👌`
 - C(98) `Packed hall, fresh-air numbers: CO₂ 400 ppm, PM2.5 1.` / 빈 줄 / `Swell keeps more than the agenda clean. 💙`
+
+## DM — Swell 글 보고 관심 보인 해외 계정(가입 2013 · 팔로워 약 6.7천) 판매 안내 (2026-10-28, 서우 캡처 + 「wellbian.io 판매 사이트 안내 · 추가 할인 코드」)
+
+계정명은 적지 않는다(잠재 고객). 서우 「Hi」 → 상대 「Hello」.
+판정: **공식 사이트 + 할인 코드 + 배송 가능 여부 확인 질문 + 사칭 경고 한 줄.**
+- 해외 결제 = RLUSD(XRPL 지갑)(정본 판매 조건) · **해외 배송은 9/26 기준 미정 — 주문 전에 나라 확인**(서우 확인: 지금 해외 배송 되는지).
+- 할인 코드 · 비율은 서우가 넣는다 — KOL 정본은 고객 5%(9/11) · 상한은 10/7 서우 결정 범위. 코드 문자열은 저장소에 적지 않는다.
+- 가격 · 보상량 · 수익 0(먼저 꺼내지 않음, 물으면 정본 문장). 사고 직후라 「지갑 주소를 DM 으로 보내지 않는다 · 시드 안 묻는다」 한 줄.
+```
+Hey! Thanks for checking out our Swell posts. 🌦️
+
+If you'd like one, everything is on our official site: wellbian.io
+From outside Korea you can pay in RLUSD from an XRPL wallet. Use code [CODE] at checkout for an extra [ ]% off.
+
+Where are you based? I'll double-check shipping to your country before you order.
+
+One note: please only order through wellbian.io. We'll never DM you a wallet address or ask for your seed.
+```
+
