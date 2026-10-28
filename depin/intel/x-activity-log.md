@@ -4585,4 +4585,8 @@ Same city. The air depends on the room.
   A 추천(가중 94): `Well, well, well. Wellbian at Swell. 😎` + 빈 줄 + `Lanyards on, swag on, and the air checks out as well.`
   B: `All's well at Swell: the crew looks well, the swag looks swell, and the air's doing well too. 🌦️` · C: `Well, well, well… Wellbian at Swell. 😎` · D: `Swell crew. Wellbian swag. All's well.`
   오늘 애플 인용을 올렸으니 이건 둘째 원글 — 행사일 예외(6시간+ 간격) 또는 내일.
+- **10/28 서우 「B 는 에미넴 정도 래퍼 같나 — 오글거리지만 않게, 미국 래퍼처럼」** → 두 줄 랩(속 라임 · 다음절 라임, 「yo · fam」 · 이모지 0).
+  ① 추천 `Swell week, well-dressed, wellbian on deck.` / `Lanyards on necks, and the air passed the check.`(deck · necks · check)
+  ② `Swell on the badge, wellbian in the building.` / `Air reading clean while the whole room's filling.`
+  ③ `Pulled up to Swell with the crew and the kit.` / `Read the room's air. PM2.5? One. That's it.`(Swell 데모데이 실측 PM2.5 1)
 
