@@ -4616,3 +4616,21 @@ Thanks for catching the moment, James. 👊😎
   B 날씨 말장난(176): `Today's forecast at Swell: clear air, and a little more real-world data on the XRP Ledger. ☀️` / `Paid in RLUSD, one call at a time.` / `Thanks for catching the moment, James. 👊😎`
   C(182): `Air, on the ledger. 🌦️` / `A device in a real room, its data paid for in RLUSD and settled on the XRP Ledger. Real-world use that fits in one hand.` / `Thanks for the photos, James. 👊😎`
 
+
+## 서우 개인 계정 — @Mr_MOON_XRP(문창훈 · 타임레버리지) 「Wellbian 창립자와 미팅 · RWA 는 실세계 데이터이기도」 인용 (2026-10-28, 서우 캡처 + 「타임레버리지와 우리의 상관관계 · 재밌게」)
+
+원글(영문 · 대표와 셀카): 「집에서 숨 쉬는 공기가 실세계 자산이 된다면? · XRPL 날씨 데이터 DePIN · 측정하는 사람에게 가치 · RWA 는 금융만이 아니라 실세계 데이터 · 채널 라이브 곧」 + @wellbianlabs @wellbianx @wellbianz @Kurtkim0403 @Neo_visioneer.
+판정: **인용 — 이름 말장난으로 관계를 가볍게: Moon(달) · Time(타이밍) ↔ 날씨(하늘).** 10/20 인용(「방 공기가 영수증을 남긴다」)은 되풀이하지 않는다.
+원글의 「asset」 · 「가치를 창출」은 받지 않고 「real-world data」만 받는다 · 라이브는 「기대」까지(출연 약속 0) · 가격 · 보상량 0.
+게시 전: 10/20 확인 ②(타임레버리지 쪽 기기 증정 등 경제적 대가가 있었다면 원글 광고 표시) 그대로 · 오늘 원글 수(James 선물 사진 인용과 겹침) — 하나는 내일.
+- A 추천(가중 169)
+```
+Moon, meet the weather. 🌕🌦️
+
+Same sky all along, and finally the same frame.
+
+Real-world data is exactly where we live. Looking forward to the live session, Mr. Moon.
+```
+- B(123) `Time Leverage and wellbian: one reads the timing, the other reads the air. ⏳🌦️` / 빈 줄 / `Good to see both in one photo, Mr. Moon.`
+- C(92) `Good timing, good weather, and a Moon in the frame. 🌕` / 빈 줄 / `Thanks for having our CEO, Mr. Moon.`
+- 국문(111) `달(Moon)과 날씨는 원래 같은 하늘에 있었죠. 🌕🌦️` / 빈 줄 / `드디어 한 프레임에. 실세계 데이터 이야기, 라이브 기대할게요.`
