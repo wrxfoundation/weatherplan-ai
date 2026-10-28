@@ -4589,4 +4589,6 @@ Same city. The air depends on the room.
   ① 추천 `Swell week, well-dressed, wellbian on deck.` / `Lanyards on necks, and the air passed the check.`(deck · necks · check)
   ② `Swell on the badge, wellbian in the building.` / `Air reading clean while the whole room's filling.`
   ③ `Pulled up to Swell with the crew and the kit.` / `Read the room's air. PM2.5? One. That's it.`(Swell 데모데이 실측 PM2.5 1)
+- **10/28 서우 「swell · wellbian · swag 관계성이 떨어져 보인다」** → 세 단어를 글자로 잇는 판: **SW(swag) + WELL(wellbian) = SWELL.**
+  A 추천 `SW from the swag, WELL from wellbian.` / `Put 'em together: Swell. 😎` · B `Take the sw from the swag, the well from wellbian,` / `and you get Swell. Day 1, and the crew's already in.` · C `Swag + wellbian = Swell.` / `Simple math. Day 1.`
 
