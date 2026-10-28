@@ -4554,3 +4554,6 @@ Same city. The air depends on the room.
 게시: 둘 다 원글로 센다 — Swell 기간 행사일 예외(2/일 · 6시간+ 간격)로 볼지 서우 판단, 아니면 ① 오늘 · ② 내일. NYU · 뉴욕 세 곳 묶음 원글과도 겹치니 하루 순서를 정할 것.
 - ① 팀 — A(가중 72) `Proud of this crew. Day 1 at Swell, and I'm cheering them on from Seoul.` · B(91) `Day 1 at Swell. The team is in the room, the sensor came along, and Seoul is watching. 🌦️`
 - ② 아시시 — A(104) `Our CEO and Asheesh at Swell. The best conversations at these events happen standing up, coffee in hand.` · B(64) `Good to see this one from Seoul. Swell week, real conversations.`
+- **10/28 서우 수정 — 「서울에 있다는 건 굳이 하지 말고 그냥 얘기만」** → 「from Seoul」 삭제(이 계정 응원 글 기본값으로: 서우 위치 언급 0).
+  ① A `Proud of this crew. Day 1 at Swell.` · B `Day 1 at Swell. The team is in the room, and the sensor came along. 🌦️` / ② A `Our CEO and Asheesh at Swell. The best conversations at these events happen standing up, coffee in hand.`(그대로) · B `Swell week, real conversations.`
+
