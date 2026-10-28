@@ -4524,3 +4524,25 @@ Air mining at the New York subway: PM2.5 at 3 on the street, 21 on the platform.
 
 Same city, one staircase apart.
 ```
+
+## 서우 개인 계정 — @wellbianlabs 「Air Mining at the @nyuniversity · Bobst Library」 (2026-10-28, 서우 캡처)
+
+원글(브랜드): NYU Bobst 도서관 테이블 위 측정기(10/27 PM 12:50 — PM10 2 · PM2.5 1 · CO₂ 491 ppm · 21.9°C · 습도 63% · VOCs 38) · 「Data is the new library」 · @nyuniversity 태그.
+판정: **인용은 장소 사실만 — NYU 재태그 0 · 「NYU 와 함께」 류 0**(학교의 참여 · 협력으로 읽히지 않게). 습도(기기 표시 「Slightly Humid」)로 도서관 상태를 평가하는 말 0.
+**대안 — 이번 주 뉴욕 세 곳을 한 원글로 묶기**(Swell 테이블 1 · 지하철 승강장 21 · 도서관 1): 인용 여러 개 대신 원글 하나라 1일 한도에 맞고, 「방마다 공기가 다르다」가 한 번에 보인다. 오늘 지하철 인용을 아직 안 올렸다면 이쪽 권장.
+- A 인용(가중 130)
+```
+Air mining at NYU's Bobst Library.
+
+PM2.5 at 1 and CO₂ under 500 ppm at lunchtime, with the tables full. A good room to think in.
+```
+- B 원글 — 세 곳 묶음(가중 175)
+```
+Three readings from New York this week:
+
+Swell Demo Day table: PM2.5 1
+5 Av–59 St subway platform: PM2.5 21
+NYU Bobst Library: PM2.5 1
+
+Same city. The air depends on the room.
+```
