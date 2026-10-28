@@ -4581,3 +4581,8 @@ Apple Fifth Avenue: 1
 
 Same city. The air depends on the room.
 ```
+- **10/28 서우 — 애플 인용 게시 완료 · 「Swell Day 1 은 위트 있게 — swell · wellbian · swag 같은 라임과 플로우」** → 말장난 판(재태그 · 위치 · 리플 0, 공기 한 줄로 우리 이야기에 걸기).
+  A 추천(가중 94): `Well, well, well. Wellbian at Swell. 😎` + 빈 줄 + `Lanyards on, swag on, and the air checks out as well.`
+  B: `All's well at Swell: the crew looks well, the swag looks swell, and the air's doing well too. 🌦️` · C: `Well, well, well… Wellbian at Swell. 😎` · D: `Swell crew. Wellbian swag. All's well.`
+  오늘 애플 인용을 올렸으니 이건 둘째 원글 — 행사일 예외(6시간+ 간격) 또는 내일.
+
