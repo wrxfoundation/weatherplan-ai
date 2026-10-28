@@ -2565,3 +2565,4 @@ Thanks Odelia — writing to you at that address today. Mine is support@wellbian
 - **@wellbianlabs 「Air Mining underground」(뉴욕 5 Av–59 St) 개인 인용(10/28, 서우 「air mining at 뉴욕 지하철로 써 둬」)** — 원글 숫자 둘(거리 3 · 승강장 21) · 「계단 하나 차이」 · 측정 1회 밝힘 · 건강 · 기준치 · 일반화 0. A 206 · B 113. `intel/x-activity-log.md` 끝 절.
 - **@wellbianlabs 「Air Mining at NYU Bobst Library」 개인 인용(10/28, 서우 캡처)** — A 인용 130(장소 사실만 · NYU 재태그 · 협력 암시 · 습도 평가 0) · B 원글 175 = 이번 주 뉴욕 세 곳(Swell 1 · 지하철 21 · 도서관 1) 묶음 — 1일 한도에 맞아 권장. `intel/x-activity-log.md` 끝 절.
 - **@wellbianlabs Swell Day 1 팀 · 대표 × 아시시 원글 각각 개인 인용(10/28, 서우 캡처 2장)** — 짧은 응원 · 장면 한 줄(① A 72 · B 91 / ② A 104 · B 64) · 재태그 · 인물 설명 · Evernorth 사업 · 협력 암시 0 · 「from Seoul」. 원글 한도 — 행사일 2/일 예외 또는 하루씩. `intel/x-activity-log.md` 끝 절.
+- **@wellbianlabs 「Air Mining at Apple Fifth Avenue」 개인 인용(10/28, 서우 캡처)** — A 131 · B 79(장면 + 숫자, @Apple 재태그 · 칭찬 · 관련성 암시 0) + 뉴욕 네 곳 묶음 원글 C 186. `intel/x-activity-log.md` 끝 절.

@@ -4557,3 +4557,27 @@ Same city. The air depends on the room.
 - **10/28 서우 수정 — 「서울에 있다는 건 굳이 하지 말고 그냥 얘기만」** → 「from Seoul」 삭제(이 계정 응원 글 기본값으로: 서우 위치 언급 0).
   ① A `Proud of this crew. Day 1 at Swell.` · B `Day 1 at Swell. The team is in the room, and the sensor came along. 🌦️` / ② A `Our CEO and Asheesh at Swell. The best conversations at these events happen standing up, coffee in hand.`(그대로) · B `Swell week, real conversations.`
 
+
+## 서우 개인 계정 — @wellbianlabs 「Air Mining at the Apple Store · Apple Fifth Avenue」 (2026-10-28, 서우 캡처)
+
+원글(브랜드): 붐비는 애플 5번가 매장 · 측정기(PM10 2 · PM2.5 1 · CO₂ 442 ppm · 20.9°C · 습도 52% · VOCs 54) · 「Packed with people, yet the air stays clean. Nice work, @Apple」.
+판정: **장면 + 숫자만.** @Apple 재태그 · 「Nice work」 류 칭찬(남의 건물 공조를 평가 · 브랜드에 기대는 글) · 애플 관련성 암시 0 · 건강 주장 0 · 서우 위치 0.
+뉴욕 묶음 원글(10/28 세 곳)을 네 곳으로 늘린 판 C 도 함께 — 인용 여러 개보다 원글 하나가 1일 한도에 맞다.
+- A 인용(가중 131)
+```
+Air mining at Apple Fifth Avenue.
+
+A full store, and CO₂ still at 442 ppm with PM2.5 at 1. Not every crowded room is a stuffy one.
+```
+- B 짧은 판(79) `Packed store on Fifth Avenue, PM2.5 at 1.` + 빈 줄 + `Crowded doesn't have to mean stuffy.`
+- C 원글 — 네 곳 묶음(186)
+```
+Four readings from New York this week (PM2.5):
+
+Swell Demo Day table: 1
+5 Av–59 St subway platform: 21
+NYU Bobst Library: 1
+Apple Fifth Avenue: 1
+
+Same city. The air depends on the room.
+```
