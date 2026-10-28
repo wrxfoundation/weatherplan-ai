@@ -4634,3 +4634,17 @@ Real-world data is exactly where we live. Looking forward to the live session, M
 - B(123) `Time Leverage and wellbian: one reads the timing, the other reads the air. ⏳🌦️` / 빈 줄 / `Good to see both in one photo, Mr. Moon.`
 - C(92) `Good timing, good weather, and a Moon in the frame. 🌕` / 빈 줄 / `Thanks for having our CEO, Mr. Moon.`
 - 국문(111) `달(Moon)과 날씨는 원래 같은 하늘에 있었죠. 🌕🌦️` / 빈 줄 / `드디어 한 프레임에. 실세계 데이터 이야기, 라이브 기대할게요.`
+
+## 서우 개인 계정 — @wellbianlabs 「Blue @Ripple / Clean air @RippleSwell」 인용 (2026-10-28, 서우 캡처 + 「공기질 관리도 잘하네 · 리플 인용글」)
+
+원글(브랜드 · 좋아요 36 · 조회 487 — 이번 주 반응 가장 큼): Swell 홀 리플 로고 조명 아래 측정기(PM10 2 · PM2.5 1 · CO₂ 400 ppm · 23.1°C · 습도 43% · VOCs 56).
+판정: **행사장 공기를 가볍게 칭찬 — 숫자 + 한 줄.** 칭찬은 「행사장 · 공기를 관리한 사람」에게(리플이 우리를 · 우리가 리플을 「같이」로 읽히지 않게) · @Ripple · @RippleSwell 재태그 0 · 「Ripple Swell」은 행사 이름으로만 · 협력 · 지지 0.
+(10/28 애플 인용은 「Nice work @Apple」을 뺐지만, 이번은 서우 요청 — 칭찬 대상을 행사장 운영으로 좁혀 쓴다.)
+- A 추천(가중 153)
+```
+Blue lights, clean air. 💙
+
+A full hall at Ripple Swell, and CO₂ still at 400 ppm with PM2.5 at 1. Whoever runs the air in there deserves a mention too.
+```
+- B(90) `Blue lights, clean air. CO₂ at 400 ppm with the hall packed.` / 빈 줄 / `Swell runs a tight room. 👌`
+- C(98) `Packed hall, fresh-air numbers: CO₂ 400 ppm, PM2.5 1.` / 빈 줄 / `Swell keeps more than the agenda clean. 💙`
