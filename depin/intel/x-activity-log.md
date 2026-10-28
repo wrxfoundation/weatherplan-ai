@@ -4591,4 +4591,5 @@ Same city. The air depends on the room.
   ③ `Pulled up to Swell with the crew and the kit.` / `Read the room's air. PM2.5? One. That's it.`(Swell 데모데이 실측 PM2.5 1)
 - **10/28 서우 「swell · wellbian · swag 관계성이 떨어져 보인다」** → 세 단어를 글자로 잇는 판: **SW(swag) + WELL(wellbian) = SWELL.**
   A 추천 `SW from the swag, WELL from wellbian.` / `Put 'em together: Swell. 😎` · B `Take the sw from the swag, the well from wellbian,` / `and you get Swell. Day 1, and the crew's already in.` · C `Swag + wellbian = Swell.` / `Simple math. Day 1.`
+- **10/28 서우 「뭐가 덜 오글거릴까」** → **C**(설명 없이 식 하나 + 「Simple math.」 무표정 한 줄). 더 줄이면 `Swag + wellbian = Swell.` 한 줄. A 는 😎 · 「Put 'em together」가 애쓰는 티, B 는 농담을 풀어 설명해서 가장 오글.
 
