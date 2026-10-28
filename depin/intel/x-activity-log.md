@@ -4666,4 +4666,13 @@ Where are you based? I'll double-check shipping to your country before you order
 
 One note: please only order through wellbian.io. We'll never DM you a wallet address or ask for your seed.
 ```
+- **10/28 서우 「일단 나랑 프로젝트 소개 먼저 — 세일즈 · 파트너십 최고 담당자」** → 첫 메시지는 자기소개 + 두 층 소개(Lynn 기본값 축약) + 질문 열기, **판매 링크 · 할인 코드는 상대가 관심을 보인 다음 메시지로**(위 판은 둘째 메시지로 보관).
+  직함은 「I lead sales and partnerships」(공식 직함 Head of Partnerships & Operations 와 어긋나지 않는 서술형). 영문 444자:
+```
+Great to connect! I'm Logan, and I lead sales and partnerships at wellbian. 🌦️
+
+Quick intro: we're built on KWeather, a Korean weather company with 30 years of data. wellbian adds two layers on the XRP Ledger: certified air sensors that people run in their own rooms, and city-level weather data, with every input fingerprinted to a public ledger.
+
+Saw you checking out our Swell posts. Happy to answer anything, on the device or the data side.
+```
 
