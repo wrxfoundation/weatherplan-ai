@@ -4546,3 +4546,11 @@ NYU Bobst Library: PM2.5 1
 
 Same city. The air depends on the room.
 ```
+
+## 서우 개인 계정 — @wellbianlabs 「Swell Day 1」 · 「Great to meet @ashgoblue」 각각 인용 (2026-10-28, 서우 캡처 2장 + 「각자 인용글」)
+
+원글 ① 팀 3인 Swell 배지 사진 + 「Swell Day 1 starts now … real-world weather data on the XRP Ledger」 @Ripple @XRP 태그. ② 대표 × 아시시 비를라(Evernorth 창업자 · CEO) 사진 + 「We shared how Wellbian brings real-world weather data onto the XRP Ledger」 @Ripple @XRP @evernorthxrp.
+판정: **둘 다 짧은 개인 응원 · 장면 한 줄.** @Ripple · @XRP · @ashgoblue · @evernorthxrp 재태그 0 · 누구인지 설명 0(10/27 서우 「누구나 아는 사람」) · Evernorth 사업 · 트레저리 · 협력 · 투자 암시 0 · 서우 불참은 「from Seoul」로 사실대로.
+게시: 둘 다 원글로 센다 — Swell 기간 행사일 예외(2/일 · 6시간+ 간격)로 볼지 서우 판단, 아니면 ① 오늘 · ② 내일. NYU · 뉴욕 세 곳 묶음 원글과도 겹치니 하루 순서를 정할 것.
+- ① 팀 — A(가중 72) `Proud of this crew. Day 1 at Swell, and I'm cheering them on from Seoul.` · B(91) `Day 1 at Swell. The team is in the room, the sensor came along, and Seoul is watching. 🌦️`
+- ② 아시시 — A(104) `Our CEO and Asheesh at Swell. The best conversations at these events happen standing up, coffee in hand.` · B(64) `Good to see this one from Seoul. Swell week, real conversations.`
