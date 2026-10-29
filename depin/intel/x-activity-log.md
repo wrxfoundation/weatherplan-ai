@@ -4733,6 +4733,7 @@ If you work on AI agents, weather risk or indoor air, I'd be glad to compare not
 장면: 타임스스퀘어 밤 · 나스닥 타워 리플 광고(「It's happening with Ripple.」) · 성조기 전광판 앞 삼각대 · 태양광 패널 · 실외 센서 · wellbian × XRP LEDGER 화면 「Outdoor Weather 57.2°F · 80% · SSE · 1.0 m/s · 1028 hPa · 0.0 mm」.
 판정: **장면 + 숫자만, 짧게.** 리플 광고 문구 받기(「It's happening with wellbian」 류) 0 — 제휴로 읽힌다 · 실외 기기 = 다음 라인이라 판매 · 출시 · 「원장 기록」 0 · 서우 현장 참석 암시 0.
 - 추천 `Times Square, 11:21 PM. Measuring the weather. 🌦️` · 숫자판 `Times Square tonight: 57°F, 80% humidity, wind SSE.` · 국문 `타임스스퀘어 밤 11시 21분, 날씨를 재는 중 🌦️`
+- 둘째 장면(10/28 PM 11:33 · 군중 · 57.2°F · 81% · SSE · 1.3 m/s · 1028 hPa · 0.0 mm · 리플 광고 없음) 추천 `The crowds don't stop. Neither does the weather. 🌦️` · 연작판 `11:33 PM. Still measuring.` · 숫자판 `Times Square, 11:33 PM: 57°F, 81% humidity, wind 1.3 m/s.` · 국문 `밤 11시 33분, 붐비는 타임스스퀘어의 날씨 🌦️`
 
 ## DM — Swell 글 보고 관심 보인 해외 계정(가입 2013 · 팔로워 약 6.7천) 판매 안내 (2026-10-28, 서우 캡처 + 「wellbian.io 판매 사이트 안내 · 추가 할인 코드」)
 
