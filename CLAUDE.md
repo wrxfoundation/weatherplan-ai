@@ -43,5 +43,9 @@ pages/
 - vercel.json의 region(`icn1`)·maxDuration(30s) 변경
 - 시스템 프롬프트의 "케이웨더" 외 외부 출처(기상청·KMA·ECMWF) 언급 추가
 
+## 작화 원칙 (이미지 생성 — 오너 지정, 모든 그림에 적용)
+- **인물은 모두 선남선녀로 그린다.** 칼같이 정형화된 '전형적 미남·미녀'가 아니라, 호감 가는 자연스러운 얼굴의 젊은 남녀. 나이가 배역의 핵심인 인물(할미 신격 등)만 예외 — 그때도 곱게 나이 든 호감형으로.
+- 프롬프트 문구(영문)는 `yokaimap-web/data/art/direction.json`의 `figure_look.prompt`에 있다. 요괴지도 도상은 복식 앵커가 붙는 컷에 `scripts/art-prompts.mjs`가 자동으로 넣고, 그 밖의 그림은 프롬프트에 직접 넣는다.
+
 ## 배포 작업 시
 `CLAUDE_CODE_DEPLOY.md` 파일의 단계를 따르세요.

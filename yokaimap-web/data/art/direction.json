@@ -37,6 +37,10 @@
     "landscape": "Korean red pine and granite ridgeline, a seonangdang cairn of piled stones beside a spirit tree tied with obangsaek cloth strips in exactly five colours — blue, white, red, black and yellow, jangseung posts, magpie",
     "objects": "moon jar, brass bowl, low soban table, straw geumjul rope, jangdokdae jars"
   },
+  "figure_look": {
+    "note": "오너 지정(2026-10) — 모든 인물은 선남선녀로 그린다. 칼같이 정형화된 '전형적 미남·미녀'가 아니라 호감 가는 자연스러운 얼굴의 젊은 남녀다. 나이가 배역의 핵심인 인물(할미 신격 등)은 곱게 나이 든 호감형으로. 복식 앵커(costume_*)가 붙는 컷에는 scripts/art-prompts.mjs가 자동으로 넣는다. 사람이 나오는데 복식 앵커가 없는 개체는 art_anchors에 직접 'figure_look'을 쓰지 말고 art_hint에 인상을 적는다.",
+    "prompt": "every person good-looking and pleasant to look at — a young adult with gentle, natural, harmonious features, clear skin and bright eyes, attractive but not a sharp, stereotyped, doll-like idealised beauty; a character who must be old is drawn handsomely and gracefully aged"
+  },
   "composition": {
     "plate": "single subject centered, full figure, plain hanji ground, soft edge vignette, encyclopedia plate",
     "scene": "wide landscape band, low horizon, layered mist planes, small figures for scale"

@@ -37,10 +37,14 @@ export function promptFor(entry) {
     .filter(Boolean)
     .join('. ')
 
+  // 사람이 나오는 컷(복식 앵커가 붙는 컷)에는 인상 규칙을 붙인다 — 오너 지정: 모든 인물은 선남선녀.
+  const look = keys.some((k) => k.startsWith('costume_')) ? dir.figure_look?.prompt : null
+
   // 배제 문구는 스타일 바로 뒤에 둔다 — 프롬프트가 잘리더라도 왜색·중국색 배제가 먼저 살아남게.
   return [
     `Korean folklore being — ${subject}`,
     anchors,
+    look,
     dir.style,
     dir.exclude_japanese.prompt,
     dir.exclude_chinese.prompt,
