@@ -1,0 +1,100 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://yokaimap.kr/schema/tale.schema.json",
+  "title": "한국 설화 레코드",
+  "description": "설화(신화·전설·민담)는 개체가 아니라 이야기다. 그래서 요괴 스키마의 rarity·omens·habitat·art_hint를 쓰지 않는다. 삼년고개에 '출몰 시간'을 붙이면 스키마가 거짓말을 하게 된다. 대신 유형·화소·등장 개체·배경지를 갖는다. 출처와 검증등급은 요괴와 같은 규칙을 그대로 쓴다.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "title", "kind", "summary", "body", "sources", "verification", "confidence", "updated_at"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^tale-[a-z0-9-]+$" },
+    "title": { "type": "string", "minLength": 1, "maxLength": 40 },
+    "aliases": { "type": "array", "default": [], "items": { "type": "string" } },
+    "kind": {
+      "enum": ["myth", "legend", "folktale"],
+      "description": "설화 3분법. myth=신화(신성하다고 믿음·태초/건국) · legend=전설(장소·물건·인물에 고정, 증거물이 있음) · folktale=민담(때와 곳이 특정되지 않음). 국문학 표준 분류이므로 임의로 늘리지 않는다."
+    },
+    "summary": { "type": "string", "minLength": 10, "maxLength": 200 },
+    "body": { "type": "string", "minLength": 50 },
+    "motifs": {
+      "type": "array",
+      "default": [],
+      "description": "화소(話素). 검색과 유형 비교에 쓴다. 예: 금기·변신·보은·이류혼·신원",
+      "items": { "type": "string" }
+    },
+    "characters": {
+      "type": "array",
+      "default": [],
+      "description": "이 이야기에 나오는 도감 개체의 id. 참조 무결성을 검사하므로 없는 id를 쓰면 빌드가 실패한다.",
+      "items": { "type": "string" }
+    },
+    "sites": {
+      "type": "array",
+      "default": [],
+      "description": "배경지·증거물이 있는 곳. 전설은 증거물에 고정되므로 좌표가 붙지만 민담은 대개 비어 있다. 요괴 전승지와 같은 스키마를 쓰고 같은 지도에 올라간다.",
+      "items": {
+        "type": "object",
+        "required": ["name", "sido", "lat", "lng", "precision"],
+        "additionalProperties": false,
+        "properties": {
+          "name": { "type": "string" },
+          "sido": {
+            "enum": ["서울", "부산", "대구", "인천", "광주", "대전", "울산", "세종", "경기", "강원", "충북", "충남", "전북", "전남", "경북", "경남", "제주"]
+          },
+          "sigungu": { "type": "string" },
+          "lat": { "type": "number", "minimum": 33, "maximum": 38.65 },
+          "lng": { "type": "number", "minimum": 124.6, "maximum": 131 },
+          "precision": { "enum": ["parcel", "dong", "sigungu", "sido"] },
+          "note": { "type": "string" }
+        }
+      }
+    },
+    "sources": {
+      "type": "array",
+      "minItems": 1,
+      "description": "최소 1개 필수. 요괴와 같은 규칙 — 출처 없는 레코드는 배포하지 않는다.",
+      "items": {
+        "type": "object",
+        "required": ["type", "title"],
+        "additionalProperties": false,
+        "properties": {
+          "type": { "enum": ["classic", "field", "encyclopedia", "heritage", "press", "modern"] },
+          "title": { "type": "string" },
+          "ref": { "type": "string" },
+          "url": { "type": ["string", "null"] }
+        }
+      }
+    },
+    "verification": {
+      "enum": ["primary_text", "field_record", "public_encyclopedia", "secondary_compilation", "modern_online"]
+    },
+    "confidence": { "enum": ["high", "medium", "low"] },
+    "sensitivity": {
+      "type": ["object", "null"],
+      "default": null,
+      "additionalProperties": false,
+      "required": ["kind", "note"],
+      "properties": {
+        "kind": { "enum": ["living_faith", "private_property", "tragedy_linked", "ethnic_slur_risk"] },
+        "note": { "type": "string" }
+      }
+    },
+    "foreign_origin": {
+      "type": ["object", "null"],
+      "default": null,
+      "additionalProperties": false,
+      "required": ["note"],
+      "description": "한국 설화로 널리 알려졌으나 유입 경로가 지적되는 경우. 지우지 않고 사정을 적는다 — 도깨비 뿔과 같은 계열의 문제이고, 무엇이 오래된 전승이고 무엇이 근대에 들어온 것인지 구분해 두는 것이 이 데이터셋의 쓸모다.",
+      "properties": {
+        "note": { "type": "string" }
+      }
+    },
+    "related": {
+      "type": "array",
+      "default": [],
+      "description": "다른 설화의 id. 참조 무결성을 검사한다.",
+      "items": { "type": "string" }
+    },
+    "updated_at": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$" }
+  }
+}

@@ -1,0 +1,329 @@
+{
+  "note": "제주 본풀이 — 신의 내력을 처음부터 푸는 무가. '본(本)을 푼다'는 말 그대로, 신을 소개하는 것이 아니라 어떻게 신이 되었는지를 말한다. 심방(제주 무당)이 굿에서 구송하며 정본이 없다. 이 도감의 제주 신격 항목들은 대부분 여기서 나왔다.",
+  "songs": [
+    {
+      "id": "song-cheonjiwang-bonpuri",
+      "title": "천지왕본풀이",
+      "aliases": ["초감제 본풀이", "천지왕 본"],
+      "genre": "bonpuri",
+      "era": "구전 · 제주 큰굿",
+      "summary": "큰굿 맨 앞에서 부른다. 하늘과 땅이 갈라지고 이승과 저승이 나뉘기까지를 풀어 놓아야 그다음 굿이 성립한다.",
+      "original": null,
+      "original_script": "oral",
+      "reading_note": "제주 큰굿의 첫 제차인 초감제에서 구송된다. 심방마다 사설이 달라 정본이 없다.",
+      "gloss": "굿을 시작하려면 먼저 세상이 어떻게 생겼는지부터 말해야 한다. 그래서 이 본풀이가 맨 앞에 온다. 하늘과 땅이 갈라지고, 해와 달이 둘씩 떠 사람이 타 죽고 얼어 죽던 것을 활로 쏘아 하나씩 떨어뜨리고, 형제가 겨루어 이승과 저승이 나뉜다. 신을 부르기 전에 신이 있을 자리를 먼저 만드는 셈이라, 초감제에서 이 본을 풀지 않으면 그다음 제차가 놓일 곳이 없다. 이야기 자체는 설화 항목에서 따로 다루고, 여기서는 그것이 굿의 어느 자리에서 어떤 일을 하는지를 적는다.",
+      "function": ["의례", "청신", "우주 개창"],
+      "characters": ["kr-cheonjiwang", "kr-bulgae"],
+      "tales": ["tale-cheonjiwang", "tale-changsega"],
+      "sites": [
+        { "name": "제주 큰굿 전승권", "sido": "제주", "lat": 33.4996, "lng": 126.5312, "precision": "sido", "note": "제주 전역의 큰굿 초감제에서 구송된다" }
+      ],
+      "sources": [
+        { "type": "field", "title": "제주 천지왕본풀이", "ref": "큰굿 초감제 구송 자료" },
+        { "type": "encyclopedia", "title": "한국민속대백과사전", "ref": "천지왕본풀이" },
+        { "type": "heritage", "title": "제주큰굿", "ref": "제주특별자치도 무형유산" }
+      ],
+      "verification": "field_record",
+      "confidence": "high",
+      "related": ["song-chogong-bonpuri", "song-igong-bonpuri"],
+      "sensitivity": { "kind": "living_faith", "note": "지금도 큰굿에서 구송되는 무가다." },
+      "updated_at": "2026-09-13"
+    },
+    {
+      "id": "song-chogong-bonpuri",
+      "title": "초공본풀이",
+      "aliases": ["젯부기 삼형제", "무조 본풀이"],
+      "genre": "bonpuri",
+      "era": "구전 · 제주 큰굿",
+      "summary": "심방의 조상이 어떻게 무당이 되었는지를 푼다. 굿을 하는 사람이 스스로의 내력을 밝히는 노래다.",
+      "original": null,
+      "original_script": "oral",
+      "reading_note": "제주 심방(무당)의 조상신 내력담. 본토의 「바리공주」에 해당하는 무조(巫祖) 본풀이다.",
+      "gloss": "글공부하러 간 아버지와 홀로 남은 어머니 사이에서 삼형제가 태어난다. 아비 없는 자식이라 하여 과거에 급제하고도 낙방당하고, 어머니마저 갇히자 삼형제는 아버지를 찾아가 묻는다. 아버지는 어머니를 살리려면 무당이 되라 하고, 삼형제는 북과 장구와 징을 만들어 굿을 해 어머니를 구해 낸다. 그래서 이들이 심방의 조상이 되었다. 굿을 하는 사람이 굿판에서 자기 조상의 내력을 푸는 구조라, 이 본풀이를 부르는 행위 자체가 무당 자격의 증명이 된다. 밀려난 자가 밀려났기 때문에 신이 된다는 뼈대는 바리공주와 같다.",
+      "function": ["의례", "무조 내력", "자격 증명"],
+      "characters": ["kr-cheonjiwang"],
+      "tales": [],
+      "sites": [
+        { "name": "제주 큰굿 전승권", "sido": "제주", "lat": 33.4996, "lng": 126.5312, "precision": "sido", "note": "큰굿에서 구송되며 심방의 내력을 밝히는 자리다" }
+      ],
+      "sources": [
+        { "type": "field", "title": "제주 초공본풀이", "ref": "큰굿 구송 자료" },
+        { "type": "encyclopedia", "title": "한국민속대백과사전", "ref": "초공본풀이" }
+      ],
+      "verification": "field_record",
+      "confidence": "high",
+      "related": ["song-bari", "song-cheonjiwang-bonpuri"],
+      "sensitivity": { "kind": "living_faith", "note": "심방의 조상 내력을 다루는 무가다." },
+      "updated_at": "2026-09-13"
+    },
+    {
+      "id": "song-igong-bonpuri",
+      "title": "이공본풀이",
+      "aliases": ["할락궁이 본풀이", "서천꽃밭 본"],
+      "genre": "bonpuri",
+      "era": "구전 · 제주 큰굿",
+      "summary": "죽이는 꽃과 살리는 꽃이 한 밭에서 난다. 서천꽃밭의 내력을 푸는 본풀이다.",
+      "original": null,
+      "original_script": "oral",
+      "reading_note": "제주 무속의 저승관에서 서천꽃밭이 어떤 곳인지를 정하는 본풀이다. 심방마다 사설이 다르다.",
+      "gloss": "아버지가 서천꽃밭 꽃감관으로 불려 간 사이 어머니가 종으로 붙잡혀 죽고, 아들 할락궁이가 달아나 아버지를 찾아가 환생꽃을 얻어 와 어머니를 살린다. 이 본풀이의 핵심은 줄거리가 아니라 서천꽃밭이라는 장소를 세운다는 데 있다. 뼈살이꽃·살살이꽃·환생꽃으로 죽은 이를 되살리고, 웃음웃을꽃·싸움싸울꽃으로 산 사람을 무너뜨린다. 살리는 꽃과 해치는 꽃이 같은 밭에서 나고 같은 사람이 관리한다는 설정이라, 제주 무속에서 삶과 죽음이 대립이 아니라 한 밭의 두 이랑으로 놓인다.",
+      "function": ["의례", "저승관 확립", "치유"],
+      "characters": ["kr-hallakgungi", "kr-gameunjang", "kr-samseung-halmang"],
+      "tales": [],
+      "sites": [
+        { "name": "제주 큰굿 전승권", "sido": "제주", "lat": 33.4996, "lng": 126.5312, "precision": "sido", "note": "큰굿에서 구송된다" }
+      ],
+      "sources": [
+        { "type": "field", "title": "제주 이공본풀이", "ref": "큰굿 구송 자료" },
+        { "type": "encyclopedia", "title": "한국민속대백과사전", "ref": "이공본풀이" }
+      ],
+      "verification": "field_record",
+      "confidence": "high",
+      "related": ["song-samgong-bonpuri", "song-chasa-bonpuri"],
+      "sensitivity": { "kind": "living_faith", "note": "지금도 큰굿에서 구송되는 무가다." },
+      "updated_at": "2026-09-13"
+    },
+    {
+      "id": "song-samgong-bonpuri",
+      "title": "삼공본풀이",
+      "aliases": ["감은장아기 본풀이", "전상 본"],
+      "genre": "bonpuri",
+      "era": "구전 · 제주 큰굿",
+      "summary": "'내 복에 산다'고 대답해 쫓겨난 셋째 딸이 제 복으로 일어서고, 눈먼 부모의 눈을 뜨게 한다.",
+      "original": null,
+      "original_script": "oral",
+      "reading_note": "전상(前上)은 사람의 팔자·인연을 뜻하는 제주말이다. 굿에서 나쁜 전상을 내보내는 제차와 짝을 이룬다.",
+      "gloss": "부모가 세 딸에게 누구 덕에 사느냐 묻자 위의 둘은 부모 덕이라 하고 막내 감은장아기는 제 배꼽 아래 선그믓 덕, 곧 제 복에 산다고 답해 쫓겨난다. 막내는 마 파는 집에 들어가 마밭에서 금덩이를 찾아 부자가 되고, 거지가 된 부모를 위해 잔치를 열어 다시 만나며 그 자리에서 눈먼 부모가 눈을 뜬다. 복이 주어지는 것이 아니라 제 안에서 나온다는 말을 신화의 형식으로 한 것이고, 그래서 이 본풀이는 운명을 다루는 신 삼공의 내력이 된다. 굿판에서는 이 본을 풀어 나쁜 전상을 내보낸다.",
+      "function": ["의례", "운명 전환", "전상 내보내기"],
+      "characters": ["kr-gameunjang"],
+      "tales": [],
+      "sites": [
+        { "name": "제주 큰굿 전승권", "sido": "제주", "lat": 33.4996, "lng": 126.5312, "precision": "sido", "note": "큰굿에서 구송된다" }
+      ],
+      "sources": [
+        { "type": "field", "title": "제주 삼공본풀이", "ref": "큰굿 구송 자료" },
+        { "type": "encyclopedia", "title": "한국민속대백과사전", "ref": "삼공본풀이" }
+      ],
+      "verification": "field_record",
+      "confidence": "high",
+      "related": ["song-igong-bonpuri"],
+      "sensitivity": { "kind": "living_faith", "note": "지금도 큰굿에서 구송되는 무가다." },
+      "updated_at": "2026-09-13"
+    },
+    {
+      "id": "song-segyeong-bonpuri",
+      "title": "세경본풀이",
+      "aliases": ["자청비 본풀이", "농경 본"],
+      "genre": "bonpuri",
+      "era": "구전 · 제주 큰굿",
+      "summary": "제주 본풀이 가운데 가장 길다. 자청비가 하늘까지 올라가 시험을 이겨 내고 오곡 씨앗을 받아 내려온다.",
+      "original": null,
+      "original_script": "oral",
+      "reading_note": "제주 본풀이 중 분량이 가장 큰 축에 든다. 심방과 지역에 따라 삽화가 크게 늘거나 준다.",
+      "gloss": "자청비가 남장을 하고 글공부를 가 문도령과 삼 년을 함께 배우고, 헤어진 뒤 하늘로 불려 간 문도령을 찾아 온갖 시련을 뚫고 올라간다. 불붙은 칼날 위를 걷는 시험까지 이겨 내고 오곡 씨앗을 받아 지상으로 내려와, 자청비가 중세경, 문도령이 상세경, 정수남이 하세경이 되어 농사를 맡는다. 농경의 시작을 여자가 하늘에서 받아 온 것으로 놓는다는 점이 이 본풀이의 자리이며, 서사의 주도권이 처음부터 끝까지 자청비에게 있고 문도령은 기다려지는 쪽이다. 신격의 서열과 이야기의 주인공이 어긋나 있다.",
+      "function": ["의례", "농경 기원", "풍농"],
+      "characters": ["kr-jacheongbi", "kr-mundoryeong"],
+      "tales": [],
+      "sites": [
+        { "name": "제주 큰굿 전승권", "sido": "제주", "lat": 33.4996, "lng": 126.5312, "precision": "sido", "note": "큰굿에서 구송되며 농사와 관련된 굿에서 특히 길게 풀린다" }
+      ],
+      "sources": [
+        { "type": "field", "title": "제주 세경본풀이", "ref": "큰굿 구송 자료" },
+        { "type": "encyclopedia", "title": "한국민속대백과사전", "ref": "세경본풀이" }
+      ],
+      "verification": "field_record",
+      "confidence": "high",
+      "related": ["song-samgong-bonpuri", "song-songdang-bonpuri"],
+      "sensitivity": { "kind": "living_faith", "note": "지금도 큰굿에서 구송되는 무가다." },
+      "updated_at": "2026-09-13"
+    },
+    {
+      "id": "song-chasa-bonpuri",
+      "title": "차사본풀이",
+      "aliases": ["강림 본풀이", "저승차사 본"],
+      "genre": "bonpuri",
+      "era": "구전 · 제주 큰굿",
+      "summary": "산 사람이 저승에 내려가 염라대왕을 잡아 온다. 그 대가로 저승차사가 되었다.",
+      "original": null,
+      "original_script": "oral",
+      "reading_note": "죽은 이를 천도하는 굿에서 구송된다. 본토의 「바리공주」와 함께 한국 저승 서사의 두 기둥으로 다뤄진다.",
+      "gloss": "과양생이 각시가 세 아들을 한날한시에 잃고 원님에게 억울함을 호소하자, 원님이 하인 강림에게 염라대왕을 잡아 오라 명한다. 강림은 아내가 마련해 준 떡과 옷을 지니고 저승길에 올라 문을 지나고 차사를 만나 끝내 염라를 데려오고, 사건의 진상이 밝혀진다. 그 공으로 강림은 저승차사가 된다. 저승을 다녀오는 이야기이면서 동시에 재판 이야기라, 죽음이 운명이 아니라 절차의 대상으로 놓인다. 억울한 죽음은 반드시 밝혀진다는 이 전제가 아랑·장화홍련 같은 본토 원귀담과 같은 자리에 있다.",
+      "function": ["천도", "해원", "의례"],
+      "characters": ["kr-gangnim", "kr-yeomna", "kr-jeoseung-saja"],
+      "tales": [],
+      "sites": [
+        { "name": "제주 큰굿 전승권", "sido": "제주", "lat": 33.4996, "lng": 126.5312, "precision": "sido", "note": "천도굿에서 구송된다" }
+      ],
+      "sources": [
+        { "type": "field", "title": "제주 차사본풀이", "ref": "큰굿 구송 자료" },
+        { "type": "encyclopedia", "title": "한국민속대백과사전", "ref": "차사본풀이" }
+      ],
+      "verification": "field_record",
+      "confidence": "high",
+      "related": ["song-bari", "song-sangyeo"],
+      "sensitivity": { "kind": "living_faith", "note": "상례·천도굿에서 구송되는 무가다. 가볍게 다루지 않는다." },
+      "updated_at": "2026-09-13"
+    },
+    {
+      "id": "song-munjeon-bonpuri",
+      "title": "문전본풀이",
+      "aliases": ["남선비 본풀이", "가택신 본"],
+      "genre": "bonpuri",
+      "era": "구전 · 제주 큰굿",
+      "summary": "한 집안의 파국이 끝나고 나면 식구들이 저마다 집 안의 신이 되어 있다. 부엌과 뒷간이 멀어야 하는 이유가 여기서 나온다.",
+      "original": null,
+      "original_script": "oral",
+      "reading_note": "제주 가택신 신앙의 근거가 되는 본풀이. 집 안 어느 자리에 어떤 신이 있는지가 이 노래의 결말로 정해진다.",
+      "gloss": "장사를 나간 남선비가 노일제대귀일의 딸에게 홀려 재산을 잃고, 찾아온 본처 여산부인은 계략에 빠져 물에 빠져 죽는다. 일곱 아들 가운데 막내 녹디생인이 계모의 정체를 밝혀내고 어머니를 되살리는데, 쫓긴 계모는 뒷간에서 목을 매 죽는다. 그 뒤 어머니는 부엌의 조왕신이 되고 계모는 뒷간의 측신이 되었으며, 녹디생인은 문을 지키는 문전신이 되었다. 그래서 부엌과 뒷간은 사이가 나빠 멀리 두어야 하고, 뒷간의 물건을 부엌에 들이지 않는다. 이 도감의 가택신 항목들이 왜 그 자리에 있는지를 한 노래가 통째로 설명한다.",
+      "function": ["의례", "가택 봉안", "금기 설명"],
+      "characters": ["kr-munjeon", "kr-jowang", "kr-cheuksin", "kr-seongju"],
+      "tales": [],
+      "sites": [
+        { "name": "제주 큰굿 전승권", "sido": "제주", "lat": 33.4996, "lng": 126.5312, "precision": "sido", "note": "집안 굿에서 구송되며 가택신의 자리를 정한다" }
+      ],
+      "sources": [
+        { "type": "field", "title": "제주 문전본풀이", "ref": "큰굿 구송 자료" },
+        { "type": "encyclopedia", "title": "한국민속대백과사전", "ref": "문전본풀이" }
+      ],
+      "verification": "field_record",
+      "confidence": "high",
+      "related": ["song-seongju-puri", "song-jisin-balpgi"],
+      "sensitivity": { "kind": "living_faith", "note": "지금도 집안 굿에서 구송되는 무가다." },
+      "updated_at": "2026-09-13"
+    },
+    {
+      "id": "song-samseung-bonpuri",
+      "title": "삼승할망본풀이",
+      "aliases": ["생불할망 본풀이", "명진국따님 본"],
+      "genre": "bonpuri",
+      "era": "구전 · 제주 큰굿",
+      "summary": "두 여신이 꽃 피우기로 겨루어 아이를 점지하는 자리를 정한다. 진 쪽은 저승에서 아이를 데려가는 신이 되었다.",
+      "original": null,
+      "original_script": "oral",
+      "reading_note": "산육(産育)을 비는 불도맞이 굿에서 구송된다. 이긴 신과 진 신이 함께 모셔진다는 점이 특이하다.",
+      "gloss": "동해용궁따님아기가 산육을 맡았으나 서툴러 산모를 상하게 하자, 명진국따님아기가 새로 내려온다. 둘이 꽃 피우기로 겨루어 명진국따님이 이겨 이승의 삼승할망이 되고, 진 동해용궁따님은 저승할망이 되어 아이를 데려가는 자리를 맡는다. 이긴 쪽만 모시는 것이 아니라 진 쪽도 함께 대접한다는 점이 이 본풀이의 핵심이다. 아이가 나는 일과 아이를 잃는 일이 서로 다른 신의 일이지만 같은 판에 있다는 뜻이고, 그래서 산육 굿에서는 삼승할망에게 빌면서 구삼승할망에게도 몫을 떼어 준다. 꽃 피우기로 겨룬다는 화소는 천지왕본풀이·창세가와 같은 계열이다.",
+      "function": ["의례", "산육 기원", "달래기"],
+      "characters": ["kr-samseung-halmang", "kr-gu-samseung-halmang", "kr-samsin"],
+      "tales": [],
+      "sites": [
+        { "name": "제주 큰굿 전승권", "sido": "제주", "lat": 33.4996, "lng": 126.5312, "precision": "sido", "note": "불도맞이 등 산육 관련 굿에서 구송된다" }
+      ],
+      "sources": [
+        { "type": "field", "title": "제주 삼승할망본풀이", "ref": "큰굿 구송 자료" },
+        { "type": "encyclopedia", "title": "한국민속대백과사전", "ref": "삼승할망본풀이" }
+      ],
+      "verification": "field_record",
+      "confidence": "high",
+      "related": ["song-cheonjiwang-bonpuri", "song-igong-bonpuri"],
+      "sensitivity": { "kind": "living_faith", "note": "산육과 영아 사망을 다루는 무가다. 지금도 굿에서 구송된다." },
+      "updated_at": "2026-09-13"
+    },
+    {
+      "id": "song-woncheongang-bonpuri",
+      "title": "원천강본풀이",
+      "aliases": ["오늘이 본풀이"],
+      "genre": "bonpuri",
+      "era": "구전 · 제주",
+      "summary": "제 이름도 부모도 모르는 아이가 원천강을 찾아가는 길에서, 만나는 이마다 자기 사정을 묻어 보낸다.",
+      "original": null,
+      "original_script": "oral",
+      "reading_note": "다른 본풀이에 비해 신을 모시는 제차와의 결합이 느슨해 이야기 자체로 전하는 성격이 강하다.",
+      "gloss": "들에서 홀로 자란 아이가 '오늘이'라는 이름을 얻고 부모가 있다는 원천강을 찾아 길을 떠난다. 가는 길에 글만 읽는 도령, 꽃이 한 가지만 피는 연꽃, 여의주를 셋이나 물었는데 승천하지 못하는 이무기, 물을 푸기만 하는 선녀를 차례로 만나고 저마다 제 사정을 풀어 달라 부탁한다. 원천강에 이르러 부모를 만나고 답을 얻어 돌아오는 길에 하나씩 일러 주니 모두 뜻을 이루고, 오늘이 자신은 원천강의 사철을 관장하는 신이 된다. 여정에서 만난 이들의 부탁이 곧 답이 되어 돌아온다는 구조라, 제주 본풀이 가운데 가장 짜임이 정갈하다.",
+      "function": ["의례", "여정", "시간 관장"],
+      "characters": ["kr-oneuri", "kr-imugi", "kr-seonnyeo"],
+      "tales": [],
+      "sites": [
+        { "name": "제주 전승권", "sido": "제주", "lat": 33.4996, "lng": 126.5312, "precision": "sido", "note": "제주에서 채록된 본풀이" }
+      ],
+      "sources": [
+        { "type": "field", "title": "제주 원천강본풀이", "ref": "구송 채록 자료" },
+        { "type": "encyclopedia", "title": "한국민속대백과사전", "ref": "원천강본풀이" }
+      ],
+      "verification": "field_record",
+      "confidence": "high",
+      "related": ["song-samgong-bonpuri"],
+      "updated_at": "2026-09-13"
+    },
+    {
+      "id": "song-songdang-bonpuri",
+      "title": "송당본풀이",
+      "aliases": ["소천국과 백주또", "송당 본향당 본풀이"],
+      "genre": "bonpuri",
+      "era": "구전 · 제주 구좌읍 송당리",
+      "summary": "사냥으로 살던 소천국과 농사를 권한 백주또가 끝내 갈라선다. 제주 당신(堂神)들의 뿌리가 되는 본풀이다.",
+      "original": null,
+      "original_script": "oral",
+      "reading_note": "제주 각 마을 본향당 신들의 계보가 대체로 이 부부에게서 갈라져 나온다고 하여 '당신의 뿌리 본풀이'로 다뤄진다. 마을마다 이어지는 갈래가 다르다.",
+      "gloss": "사냥으로 살던 소천국에게 강남천자국에서 온 백주또가 시집와 농사를 권한다. 밭을 갈던 소가 배고픔에 소천국에게 잡아먹히고, 남의 소까지 먹은 일이 드러나자 백주또가 도둑질한 사람과는 못 산다며 살림을 가른다. 갈라선 뒤 백주또는 송당에, 소천국은 알송당에 좌정한다. 수렵과 농경이 부부의 불화로 갈라지는 이야기라, 제주에 농경이 들어오던 시기의 사정을 신화가 기억하는 방식으로 읽힌다. 두 사람 사이에서 난 아들 궤네깃또가 다시 자기 당을 얻으면서 제주 마을신들의 계보가 뻗어 나간다.",
+      "function": ["의례", "당신 계보", "마을 좌정"],
+      "characters": ["kr-baekjutto", "kr-socheonguk", "kr-gwenegitto"],
+      "tales": ["tale-samseonghyeol"],
+      "sites": [
+        { "name": "제주 송당 본향당", "sido": "제주", "sigungu": "제주시", "lat": 33.4737, "lng": 126.7548, "precision": "dong", "note": "구좌읍 송당리. 백주또를 모시는 본향당으로 제주 당신 계보의 중심으로 다뤄진다" }
+      ],
+      "sources": [
+        { "type": "field", "title": "제주 송당본풀이", "ref": "본향당 구송 자료" },
+        { "type": "encyclopedia", "title": "한국민속대백과사전", "ref": "송당본풀이" }
+      ],
+      "verification": "field_record",
+      "confidence": "high",
+      "related": ["song-gwenegit-bonpuri", "song-segyeong-bonpuri"],
+      "sensitivity": { "kind": "living_faith", "note": "송당 본향당은 지금도 제를 올리는 당이다." },
+      "updated_at": "2026-09-13"
+    },
+    {
+      "id": "song-gwenegit-bonpuri",
+      "title": "궤네깃당본풀이",
+      "aliases": ["궤네깃또 본풀이"],
+      "genre": "bonpuri",
+      "era": "구전 · 제주 구좌읍 김녕리",
+      "summary": "아버지에게 버려져 바다로 띄워진 아들이 낯선 나라에서 장수가 되어 돌아와 제 당을 얻는다.",
+      "original": null,
+      "original_script": "oral",
+      "reading_note": "김녕 궤네깃당에서 모시는 신의 내력. 송당본풀이에서 갈라져 나온 갈래다.",
+      "gloss": "소천국과 백주또의 아들이 어려서 아버지의 수염을 잡아당기는 등 버릇이 없다 하여 무쇠 상자에 담겨 바다에 버려진다. 상자는 용왕국에 닿고, 아들은 그곳에서 셋째 딸과 혼인하지만 먹성이 커 다시 쫓겨나 강남천자국으로 가 난리를 평정하고 장수가 된다. 제주로 돌아와 부모를 뵙고 김녕에 좌정해 궤네깃또가 되었다. 버려진 자식이 밖에서 힘을 얻어 돌아와 제 자리를 얻는 구조라, 제주 당신 계보가 어떻게 뻗어 나가는지를 보여 준다. 이 신에게는 돼지고기를 올리는 육식 제의가 따라붙어, 제물을 가리는 다른 당과 뚜렷이 구분된다.",
+      "function": ["의례", "좌정", "당신 내력"],
+      "characters": ["kr-gwenegitto", "kr-socheonguk", "kr-baekjutto", "kr-yongwang"],
+      "tales": [],
+      "sites": [
+        { "name": "제주 김녕 궤네깃당", "sido": "제주", "sigungu": "제주시", "lat": 33.5556, "lng": 126.7583, "precision": "dong", "note": "구좌읍 김녕리. 궤네깃또를 모시는 당" }
+      ],
+      "sources": [
+        { "type": "field", "title": "제주 궤네깃당본풀이", "ref": "당 구송 자료" },
+        { "type": "encyclopedia", "title": "한국민속대백과사전", "ref": "궤네깃당본풀이" }
+      ],
+      "verification": "field_record",
+      "confidence": "high",
+      "related": ["song-songdang-bonpuri"],
+      "sensitivity": { "kind": "living_faith", "note": "지금도 제를 올리는 당의 신이다." },
+      "updated_at": "2026-09-13"
+    },
+    {
+      "id": "song-yeongdeung-gut",
+      "title": "영등굿 노래",
+      "aliases": ["칠머리당영등굿", "영등손맞이"],
+      "genre": "bonpuri",
+      "era": "구전 · 음력 2월",
+      "summary": "음력 이월에 왔다 가는 바람의 신 영등할망을 맞고 보내는 굿. 그 사이 바다에 씨를 뿌린다.",
+      "original": null,
+      "original_script": "oral",
+      "reading_note": "제주칠머리당영등굿은 국가무형유산이자 유네스코 인류무형문화유산이다. 영등환영제와 영등송별제로 나뉘어 열린다.",
+      "gloss": "음력 이월 초하루에 영등할망이 제주에 들어와 보름께 나간다. 그 사이 바다에 미역·소라·전복 씨를 뿌리고 간다고 하여, 해녀와 어부들이 굿을 열어 맞이하고 보낸다. 영등이 들어와 있는 동안에는 바다에 나가지 않고 빨래도 널지 않는다는 금기가 따른다. 신을 모셔 두고 비는 것이 아니라 왔다 가는 손님으로 맞아 대접해 보낸다는 점이 이 굿의 성격이며, 이 도감의 손님네·역병 계열이 역신을 '손님'으로 부르며 대접해 보내는 것과 같은 문법이다. 바람과 물때에 목숨이 걸린 섬에서 계절의 변화를 신의 방문으로 다룬 셈이다.",
+      "function": ["의례", "풍어 기원", "송신"],
+      "characters": ["kr-yeongdeung-halmang", "kr-sonnim", "kr-yongwang"],
+      "tales": [],
+      "sites": [
+        { "name": "제주 칠머리당", "sido": "제주", "sigungu": "제주시", "lat": 33.5185, "lng": 126.5386, "precision": "dong", "note": "건입동. 제주칠머리당영등굿이 열리는 당" }
+      ],
+      "sources": [
+        { "type": "heritage", "title": "제주칠머리당영등굿", "ref": "국가무형유산 · 유네스코 인류무형문화유산" },
+        { "type": "encyclopedia", "title": "한국민속대백과사전", "ref": "영등굿" }
+      ],
+      "verification": "public_encyclopedia",
+      "confidence": "high",
+      "related": ["song-songdang-bonpuri", "song-aengmagi"],
+      "sensitivity": { "kind": "living_faith", "note": "해마다 실제로 열리는 굿이다." },
+      "updated_at": "2026-09-13"
+    }
+  ]
+}
