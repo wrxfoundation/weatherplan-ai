@@ -4663,7 +4663,7 @@ Isn't this it? A certified sensor in a real room, its data paid for in RLUSD and
 Thanks for the photo, James. 👊😎
 ```
 - 사진 ① B(「Ripple」 없는 판, 186) `Everyone talks about real-world use for XRP.` / 빈 줄 / `Isn't this it? A sensor in a real room, its data paid for in RLUSD on the XRP Ledger, one call at a time.` / 빈 줄 / `Thanks for the photo, James. 👊😎`
-- 사진 ② A(서우 요청판, 200)
+- 사진 ② A(서우 요청판, 가중 209)
 ```
 Ripple and XRP talk a lot about the real world. So, a question:
 
