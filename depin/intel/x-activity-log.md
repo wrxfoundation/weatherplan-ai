@@ -4734,6 +4734,8 @@ If you work on AI agents, weather risk or indoor air, I'd be glad to compare not
 판정: **장면 + 숫자만, 짧게.** 리플 광고 문구 받기(「It's happening with wellbian」 류) 0 — 제휴로 읽힌다 · 실외 기기 = 다음 라인이라 판매 · 출시 · 「원장 기록」 0 · 서우 현장 참석 암시 0.
 - 추천 `Times Square, 11:21 PM. Measuring the weather. 🌦️` · 숫자판 `Times Square tonight: 57°F, 80% humidity, wind SSE.` · 국문 `타임스스퀘어 밤 11시 21분, 날씨를 재는 중 🌦️`
 - 둘째 장면(10/28 PM 11:33 · 군중 · 57.2°F · 81% · SSE · 1.3 m/s · 1028 hPa · 0.0 mm · 리플 광고 없음) 추천 `The crowds don't stop. Neither does the weather. 🌦️` · 연작판 `11:33 PM. Still measuring.` · 숫자판 `Times Square, 11:33 PM: 57°F, 81% humidity, wind 1.3 m/s.` · 국문 `밤 11시 33분, 붐비는 타임스스퀘어의 날씨 🌦️`
+- **서우 「리플 / XRP 클라스 — 이것이 리플의 미래다」 카피 몇 개** → 「리플의 미래다」 단정은 리플 대변 · 제휴로 읽히고 「XRP 의 미래」는 가격 서사로 읽혀서, **미래 = XRP Ledger 가 실제로 쓰이는 모습**으로 옮겼다. 가격 · 차트 기대 0, 리플 광고 문구(It's happening) 받기 0, 실외 기기 판매 · 원장 기록 단정 0.
+  1 `The future of the XRP Ledger doesn't look like a chart. It looks like this. 🌦️` · 2 `Big screens above, real weather below. That's where the XRP Ledger is headed.` · 3 `Tomorrow's XRP Ledger: sensors on the street, data that businesses and AI agents can buy in RLUSD.` · 4(리플 이름판 · 되묻기) `Ripple keeps talking about what's next. Isn't this it? Weather from the street, built so businesses and AI agents can buy the data in RLUSD.` · 국문 `XRP의 미래는 차트가 아니라 거리 위에 있다. 🌦️` · `화면 속 미래 말고, 지금 재고 있는 날씨.`
 
 ## DM — Swell 글 보고 관심 보인 해외 계정(가입 2013 · 팔로워 약 6.7천) 판매 안내 (2026-10-28, 서우 캡처 + 「wellbian.io 판매 사이트 안내 · 추가 할인 코드」)
 
