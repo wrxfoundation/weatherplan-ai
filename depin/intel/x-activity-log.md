@@ -4737,6 +4737,23 @@ If you work on AI agents, weather risk or indoor air, I'd be glad to compare not
 - **서우 「리플 / XRP 클라스 — 이것이 리플의 미래다」 카피 몇 개** → 「리플의 미래다」 단정은 리플 대변 · 제휴로 읽히고 「XRP 의 미래」는 가격 서사로 읽혀서, **미래 = XRP Ledger 가 실제로 쓰이는 모습**으로 옮겼다. 가격 · 차트 기대 0, 리플 광고 문구(It's happening) 받기 0, 실외 기기 판매 · 원장 기록 단정 0.
   1 `The future of the XRP Ledger doesn't look like a chart. It looks like this. 🌦️` · 2 `Big screens above, real weather below. That's where the XRP Ledger is headed.` · 3 `Tomorrow's XRP Ledger: sensors on the street, data that businesses and AI agents can buy in RLUSD.` · 4(리플 이름판 · 되묻기) `Ripple keeps talking about what's next. Isn't this it? Weather from the street, built so businesses and AI agents can buy the data in RLUSD.` · 국문 `XRP의 미래는 차트가 아니라 거리 위에 있다. 🌦️` · `화면 속 미래 말고, 지금 재고 있는 날씨.`
 
+## 서우 개인 계정 — @wellbianlabs 「At Swell … our device reached @bgarlinghouse, @MonicaLongSF, @JoelKatz and Jack McDonald」 인용 (2026-10-29, 서우 캡처 + 「사실상 리플 핵심 관계자에게 디바이스 줬네」)
+
+원글(브랜드 · 사진 4장: JoelKatz × 팀원 · 갈링하우스 × James · 모니카 롱 × James · 잭 맥도널드 × 팀원(리플 부스)) · 「Weather data becomes an asset」.
+판정: **인용 — 「네 대 · 네 얼굴」 위트 + 상자 안에 든 것(두 층 + RLUSD 수요) 한 줄 + 소개해 준 분들 감사.** 이름 · 직함 · 재태그 0(브랜드 원글이 이미 태그), 「핵심 관계자에게 줬다」 · 지지 · 사용 · 설치 암시 0, 원글의 「asset」은 받지 않는다(수익 서사), 참석 · 일정 0, 가격 · 보상 0.
+게시: 같은 사진이 들어 있어 **오늘 James 사진 ① 원글과 겹친다** — 오늘은 이 인용 하나, James 사진 원글은 하루씩 뒤로(원글 1/일).
+- A 추천(가중 217)
+```
+Four units, four very familiar faces. 🌦️
+
+What each box carries: real rooms, real weather, and data that businesses and AI agents can buy in RLUSD on the XRP Ledger.
+
+Grateful to everyone who made the introductions.
+```
+- B 날씨 위트(223) `Forecast for this week: four weather units in some very well-known hands. ☀️` / 빈 줄 / `Inside each one: real rooms, real weather, and data built to be bought in RLUSD on the XRP Ledger.` / 빈 줄 / `Thank you to everyone who opened the doors.`
+- C 짧게(94) `Four units. Four familiar faces. One ledger. 🌦️` / 빈 줄 / `Thank you to everyone who opened the doors.`
+- D 리플 이름판(245, 위험 높음 — 「리플 사람들 손에」로 읽힘) `Four units, now with some of the people who helped build Ripple and the XRP Ledger.` / 빈 줄 / `What they're holding: real rooms, real weather, and data that businesses and AI agents can buy in RLUSD.` / 빈 줄 / `Thank you to everyone who made the introductions. 🌦️`
+
 ## DM — Swell 글 보고 관심 보인 해외 계정(가입 2013 · 팔로워 약 6.7천) 판매 안내 (2026-10-28, 서우 캡처 + 「wellbian.io 판매 사이트 안내 · 추가 할인 코드」)
 
 계정명은 적지 않는다(잠재 고객). 서우 「Hi」 → 상대 「Hello」.
