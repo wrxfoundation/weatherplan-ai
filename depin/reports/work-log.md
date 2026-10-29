@@ -2576,3 +2576,5 @@ Thanks Odelia — writing to you at that address today. Mine is support@wellbian
 - **Swell 글 보고 관심 보인 해외 계정 DM 판매 안내(10/28, 서우)** — wellbian.io · RLUSD 결제 · 할인 코드 칸 · 배송 나라 확인 질문 · 사칭 경고. 해외 배송 가능 여부 서우 확인. 계정명 · 코드 미기재. `intel/x-activity-log.md` 끝 절.
 
 - **해외 관심 계정 DM — 「어떤 업종을 겨냥하나」 답(10/29, 서우 캡처)** — x-activity-log 10/28 DM 절에 추가. 놓이는 곳(집 → 숙박 · 카페 · 스터디 · 사무실 · 어린이집) / 데이터 쓰는 쪽(가전 · 청정기 제조사 · AI 에이전트 x402 RLUSD · 예측시장 정본 문장) · 영문 643자. 가격 · 보상 · 리플 · 대리점 구상 0, 판매 안내는 다음 답에. 계정명 미기재.
+
+- **서우 개인 원글 — James 선물 사진 2장(브래드 · 모니카) 「real world 아닌가」 되묻기(10/29)** — x-activity-log 새 절. 사진마다 A(서우 요청: Ripple · XRP 가 말하는 real world 를 되묻기) · B(「Ripple」 없는 판), 가중 213 · 186 · 200 · 167. 이름 · 직함 · 태그 · 지지 암시 0, 하루 한 편. 「제휴냐」 답글 한 줄 준비.

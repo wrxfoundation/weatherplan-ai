@@ -4649,6 +4649,31 @@ A full hall at Ripple Swell, and CO₂ still at 400 ppm with PM2.5 at 1. Whoever
 - B(90) `Blue lights, clean air. CO₂ at 400 ppm with the hall packed.` / 빈 줄 / `Swell runs a tight room. 👌`
 - C(98) `Packed hall, fresh-air numbers: CO₂ 400 ppm, PM2.5 1.` / 빈 줄 / `Swell keeps more than the agenda clean. 💙`
 
+## 서우 개인 계정 원글 — James 선물 사진 2장(브래드 · 모니카) 각각 「이게 real world 아닌가」 되묻기 (2026-10-29, 서우 「각자 개인 글로도 올릴 수 있게 허락받음」)
+
+사진: ① 갈링하우스 × James(측정기 상자 + 대표 명함) ② James × 모니카 롱(같은 상자). 사진 원 촬영 · 공유 = James — 원글에서 James 감사.
+판정: **원글 2편, 하루 하나씩**(원글 1/일 — 사진 ①을 먼저). 10/28 인용 규칙 그대로: 두 사람 이름 · 직함 · 태그 0, 지지 · 사용 · 설치 · 협력 암시 0. 「Ripple」은 **되묻는 문장의 주어로만**(서우 요청 — 리플 · XRP 가 말하는 real world) — 「Ripple 과 함께」 · 「Ripple 이 쓴다」 0.
+쓰는 사실: 인증 센서 · 실제 방 · 1분 측정 · 데이터 RLUSD 호출당 결제 · XRP Ledger(x402 메인넷 검증). 피한 말: 「every reading fingerprinted」 · 가격 · 보상 · WLBN · 서울.
+- 사진 ① A(서우 요청판, 가중 213)
+```
+The real world Ripple and XRP keep talking about.
+
+Isn't this it? A certified sensor in a real room, its data paid for in RLUSD and settled on the XRP Ledger, one call at a time.
+
+Thanks for the photo, James. 👊😎
+```
+- 사진 ① B(「Ripple」 없는 판, 186) `Everyone talks about real-world use for XRP.` / 빈 줄 / `Isn't this it? A sensor in a real room, its data paid for in RLUSD on the XRP Ledger, one call at a time.` / 빈 줄 / `Thanks for the photo, James. 👊😎`
+- 사진 ② A(서우 요청판, 200)
+```
+Ripple and XRP talk a lot about the real world. So, a question:
+
+What's more real than the air in your room, measured every minute, with the data paid for in RLUSD on the XRP Ledger?
+
+Thanks again, James. 👊😎
+```
+- 사진 ② B(「Ripple」 없는 판, 167) `What does real-world XRP look like?` / 빈 줄 / `Maybe this: one box that reads the air in a room, and data that gets bought in RLUSD on the XRP Ledger.` / 빈 줄 / `Thanks again, James. 👊😎`
+- 최악 해석: 리플 CEO · 사장 사진 + 「Ripple 이 말하는 real world = 이것」 → 「리플이 웰비안을 밀어준다」로 캡처돼 돌 수 있다. 답글에서 「제휴냐」가 오면 「They were kind enough to take one home. No partnership — we build on the XRP Ledger and take payments in RLUSD.」 한 줄로 닫는다.
+
 ## DM — Swell 글 보고 관심 보인 해외 계정(가입 2013 · 팔로워 약 6.7천) 판매 안내 (2026-10-28, 서우 캡처 + 「wellbian.io 판매 사이트 안내 · 추가 할인 코드」)
 
 계정명은 적지 않는다(잠재 고객). 서우 「Hi」 → 상대 「Hello」.
