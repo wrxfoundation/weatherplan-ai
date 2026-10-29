@@ -4728,6 +4728,12 @@ If you work on AI agents, weather risk or indoor air, I'd be glad to compare not
 ```
 - 최악 해석: 리플 CEO · 사장 사진 + 「Ripple 이 말하는 real world = 이것」 → 「리플이 웰비안을 밀어준다」로 캡처돼 돌 수 있다. 답글에서 「제휴냐」가 오면 「They were kind enough to take one home. No partnership — we build on the XRP Ledger and take payments in RLUSD.」 한 줄로 닫는다.
 
+## 서우 인스타 스토리 · 릴스 — 타임스스퀘어 야간 실외 기상 측정 장면 타이틀 (2026-10-29, 서우 캡처 + 「릴스 타이틀 짧게」)
+
+장면: 타임스스퀘어 밤 · 나스닥 타워 리플 광고(「It's happening with Ripple.」) · 성조기 전광판 앞 삼각대 · 태양광 패널 · 실외 센서 · wellbian × XRP LEDGER 화면 「Outdoor Weather 57.2°F · 80% · SSE · 1.0 m/s · 1028 hPa · 0.0 mm」.
+판정: **장면 + 숫자만, 짧게.** 리플 광고 문구 받기(「It's happening with wellbian」 류) 0 — 제휴로 읽힌다 · 실외 기기 = 다음 라인이라 판매 · 출시 · 「원장 기록」 0 · 서우 현장 참석 암시 0.
+- 추천 `Times Square, 11:21 PM. Measuring the weather. 🌦️` · 숫자판 `Times Square tonight: 57°F, 80% humidity, wind SSE.` · 국문 `타임스스퀘어 밤 11시 21분, 날씨를 재는 중 🌦️`
+
 ## DM — Swell 글 보고 관심 보인 해외 계정(가입 2013 · 팔로워 약 6.7천) 판매 안내 (2026-10-28, 서우 캡처 + 「wellbian.io 판매 사이트 안내 · 추가 할인 코드」)
 
 계정명은 적지 않는다(잠재 고객). 서우 「Hi」 → 상대 「Hello」.
