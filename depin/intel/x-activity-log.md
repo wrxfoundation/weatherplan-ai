@@ -4754,6 +4754,22 @@ Grateful to everyone who made the introductions.
 - C 짧게(94) `Four units. Four familiar faces. One ledger. 🌦️` / 빈 줄 / `Thank you to everyone who opened the doors.`
 - D 리플 이름판(245, 위험 높음 — 「리플 사람들 손에」로 읽힘) `Four units, now with some of the people who helped build Ripple and the XRP Ledger.` / 빈 줄 / `What they're holding: real rooms, real weather, and data that businesses and AI agents can buy in RLUSD.` / 빈 줄 / `Thank you to everyone who made the introductions. 🌦️`
 
+## 서우 개인 계정 — @wellbianlabs 「Mine the Sky. Brooklyn Bridge … Wall Street trades markets. We mine the sky.」 인용 (2026-10-29, 서우 캡처)
+
+원글(브랜드 · 영상): 브루클린 브리지 난간 위 실내 측정기 · 해 질 녘 월가 스카이라인 · 화면 PM10 4 · PM2.5 3 · CO₂ 501 · 15.8°C · 70% · VOCs 0(화면 배치 = 앞선 Swell 홀 글과 같은 순서로 읽음 — 게시 전 영상으로 한 번 확인) · 「Weather data becomes an asset」.
+판정: **인용 — 월가(시세) ↔ 다리 위(공기) 대비를 받되 「markets · mine」 말장난을 수익 쪽으로 키우지 않는다.** 「asset」 · 가격 · 보상 0, 서울 0, 참석 0.
+게시: 오늘은 Swell 네 분 인용을 올렸으면 이건 내일(원글 1/일).
+- A 추천(가중 159)
+```
+Wall Street watches the tickers. We were watching the air. 🌇
+
+Brooklyn Bridge at sunset: PM2.5 3, CO₂ 501 ppm, 15.8°C.
+
+Same skyline, different kind of data.
+```
+- B 수요 한 줄(185) `Across the river, they trade markets. On the bridge, we read the air. 🌇` / 빈 줄 / `A reading every minute at sunset, the kind of data businesses and AI agents can buy in RLUSD on the XRP Ledger.`
+- C 짧게(90) `Sunset, skyline, and a reading every minute. 🌇` / 빈 줄 / `Not a bad evening on the Brooklyn Bridge.`
+
 ## DM — Swell 글 보고 관심 보인 해외 계정(가입 2013 · 팔로워 약 6.7천) 판매 안내 (2026-10-28, 서우 캡처 + 「wellbian.io 판매 사이트 안내 · 추가 할인 코드」)
 
 계정명은 적지 않는다(잠재 고객). 서우 「Hi」 → 상대 「Hello」.
