@@ -266,6 +266,32 @@ export function checkSealGlyphs() {
   return { errors }
 }
 
+/**
+ * docs/ART_TEMPLATE.md는 리포 밖(다른 도구·다른 프로젝트)에서 손으로 붙여 쓰는 작화 템플릿이라
+ * 고정 블록을 direction.json에서 그대로 옮겨 둔다. direction.json만 고치고 문서를 잊으면
+ * 밖에서 뽑는 그림만 옛 화풍으로 남는다. 배포물은 아니므로 경고로 알린다.
+ */
+export function checkArtTemplate() {
+  const file = join(ROOT, 'docs/ART_TEMPLATE.md')
+  if (!existsSync(file)) return { warnings: ['docs/ART_TEMPLATE.md가 없다 — 작화 기본 템플릿'] }
+  const doc = readFileSync(file, 'utf8')
+  const dir = JSON.parse(readFileSync(join(ROOT, 'data/art/direction.json'), 'utf8'))
+  const { note, ...anchors } = dir.korean_anchors
+  const blocks = {
+    style: dir.style,
+    'figure_look.prompt': dir.figure_look?.prompt,
+    'exclude_japanese.prompt': dir.exclude_japanese?.prompt,
+    'exclude_chinese.prompt': dir.exclude_chinese?.prompt,
+    constraints_general: dir.constraints_general,
+    ...Object.fromEntries(Object.entries(anchors).map(([k, v]) => [`korean_anchors.${k}`, v])),
+  }
+  const warnings = []
+  for (const [k, v] of Object.entries(blocks)) {
+    if (v && !doc.includes(v)) warnings.push(`docs/ART_TEMPLATE.md의 고정 블록이 direction.json ${k} 문구와 다르다 — 문서를 새 문구로 고친다`)
+  }
+  return { warnings }
+}
+
 export function runValidation() {
   const schema = JSON.parse(readFileSync(join(ROOT, 'data/schema/yokai.schema.json'), 'utf8'))
   const entries = loadSeed()
@@ -311,7 +337,12 @@ export function runValidation() {
       ...songIntegrity.errors,
       ...checkSealGlyphs().errors,
     ],
-    warnings: [...integrity.warnings, ...taleIntegrity.warnings, ...songIntegrity.warnings],
+    warnings: [
+      ...integrity.warnings,
+      ...taleIntegrity.warnings,
+      ...songIntegrity.warnings,
+      ...checkArtTemplate().warnings,
+    ],
     stats: { ...integrity.stats, tales: taleIntegrity.stats.total, songs: songIntegrity.stats.total },
   }
 }
