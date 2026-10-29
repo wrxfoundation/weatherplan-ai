@@ -4675,4 +4675,21 @@ Quick intro: we're built on KWeather, a Korean weather company with 30 years of 
 
 Saw you checking out our Swell posts. Happy to answer anything, on the device or the data side.
 ```
+- **10/29 상대 답 「어떤 업종 · 사업을 겨냥하나? 흥미롭고 색다른 개념」** → 두 쪽으로 답한다: **측정기가 놓이는 곳**(집 먼저 → 공기가 서비스의 일부인 곳: 숙박 · 공유숙박 · 카페 · 스터디 공간 · 사무실 · 어린이집 — 100개 업종 표) /
+  **데이터를 쓰는 쪽**(가전 · 공기청정기 제조사 — 백서 Fig 0 「겨냥」으로만, 고객 확보 단정 0 · AI 에이전트 x402 RLUSD 호출당 결제 — 정본 메인넷 검증 5건 · 예측시장 — 10/11 정본 문장 그대로).
+  가격 · 보상량 · 수익 · 리플 · 설치처 매칭(대리점 구상 — 미공개) · 케이웨더 고객 업종(대외 확인 전) 0. 끝은 질문 + 「직접 돌려 보고 싶으면 안내」 — 판매 링크 · 할인 코드는 위 둘째 메시지로 다음 답에.
+  영문 643자:
+```
+Thanks, glad it clicked! 🙌
+
+Two sides to it.
+
+Where the sensors go: homes first. Then places where the air is part of the service, like hotels and short-stay rentals, cafés and study spaces, offices, and childcare centers.
+
+Who uses the data: appliance and air-purifier makers that want real indoor conditions, AI agents that pay per call in RLUSD, and weather markets. We are in active discussions with prediction-market platforms about launching weather markets.
+
+Same idea on both sides: data anyone can check, not just trust.
+
+What caught your eye, the device or the data side? If you'd like to run one yourself, happy to send the details.
+```
 
