@@ -4691,6 +4691,41 @@ What's more real than a business or an AI agent able to pay RLUSD on the XRP Led
 That's what we built. Thanks again, James. 👊😎
 ```
   - 사진 ② B(214) `What does real-world XRP look like?` / 빈 줄 / `Maybe this: a business or an AI agent able to pay RLUSD on the XRP Ledger for data on the air in a room and the weather outside.` / 빈 줄 / `That's what we built. Thanks again, James. 👊😎`
+- **10/29 서우 「링크드인 개인 글도 각각」** → X 판과 같은 되묻기 + 두 층(측정기 · 172개 도시 날씨 11개 출처 · 원장 지문은 날씨 입력에만) + 수요(기업 · AI 에이전트가 RLUSD 로 살 수 있게) + James 감사. 이름 · 직함 · 태그(두 사람) 0, Swell 참석 · 일정 0, 가격 · 보상 · WLBN 0. James 는 링크드인에서 태그해도 된다(사진 제공자).
+  - 링크드인 ①(브래드 사진, 736자)
+```
+Ripple and the XRP community talk a lot about the real world. This photo made me ask: isn't this what it looks like?
+
+That box is a wellbian unit: a certified indoor air sensor that people run in their own rooms, built with KWeather, a Korean weather company with 30 years of data.
+
+The sensor is one layer. The other is city weather for 172 cities, built from 11 weather feeds, with the inputs fingerprinted to a public ledger.
+
+And we built the demand side too. Businesses and AI agents can buy this data in RLUSD on the XRP Ledger, one call at a time.
+
+Real rooms, real air, real payments. That's the real world, one room at a time.
+
+Thank you, James Rule, for the photo and for letting me share it.
+
+#XRPL #RLUSD #DePIN #WeatherData
+```
+  - 링크드인 ②(모니카 사진, 786자)
+```
+Ripple and XRP talk a lot about the real world. So, a question:
+
+What's more real than a business or an AI agent able to pay RLUSD on the XRP Ledger for data on the air in a room and the weather outside?
+
+That's what we built at wellbian.
+
+• Supply: certified indoor air sensors in real rooms, plus city weather for 172 cities from 11 weather feeds, built with KWeather (30 years of weather data).
+• Demand: data priced per call in RLUSD, so a company's system or an AI agent can buy exactly what it needs, when it needs it.
+• Trust: weather inputs fingerprinted to a public ledger, so the data can be checked, not just trusted.
+
+Thanks again, James Rule, for the photo.
+
+If you work on AI agents, weather risk or indoor air, I'd be glad to compare notes.
+
+#XRPL #RLUSD #AIAgents #DePIN
+```
 - 최악 해석: 리플 CEO · 사장 사진 + 「Ripple 이 말하는 real world = 이것」 → 「리플이 웰비안을 밀어준다」로 캡처돼 돌 수 있다. 답글에서 「제휴냐」가 오면 「They were kind enough to take one home. No partnership — we build on the XRP Ledger and take payments in RLUSD.」 한 줄로 닫는다.
 
 ## DM — Swell 글 보고 관심 보인 해외 계정(가입 2013 · 팔로워 약 6.7천) 판매 안내 (2026-10-28, 서우 캡처 + 「wellbian.io 판매 사이트 안내 · 추가 할인 코드」)
