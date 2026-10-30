@@ -4827,6 +4827,16 @@ I came to crypto from the weather-data side rather than trading, which might mak
 
 Could you share a bit more about the format (video, podcast or written), the timing, and whether there are any costs or sponsorship involved on our side?
 ```
+- **10/30 서우 「현재 비용 지출 여지는 없다고 부드럽게」** → 마지막 문단을 「형식 · 일정 질문 + 유료 · 스폰서 출연은 지금 여지 없음, 일반 게스트로만」으로 바꾼 최종판, 영문 748자:
+```
+Hi Serhii, thanks for reaching out, sounds interesting!
+
+Quick context on my side: I'm Logan (Seowoo), Head of Partnerships & Operations at wellbian. We build on the XRP Ledger with KWeather, a Korean weather company with 30 years of data: certified air sensors that people run in their own rooms, plus city weather data that businesses and AI agents can buy in RLUSD.
+
+I came to crypto from the weather-data side rather than trading, which might make for a slightly different story.
+
+Could you share a bit more about the format and timing? And just to be upfront so I don't waste your time: we don't have room for any paid or sponsored placements right now, so I could only join as a regular guest. If that works on your side, I'd be glad to talk.
+```
 
 ## DM — Swell 글 보고 관심 보인 해외 계정(가입 2013 · 팔로워 약 6.7천) 판매 안내 (2026-10-28, 서우 캡처 + 「wellbian.io 판매 사이트 안내 · 추가 할인 코드」)
 
