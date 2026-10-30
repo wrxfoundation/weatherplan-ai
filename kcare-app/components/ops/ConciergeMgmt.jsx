@@ -1,25 +1,42 @@
 // 컨시어지 관리 — 인력 · 가용상태 · 위치 · 자격 · 배차 · 수행품질 (요청서 9절 · 시안 컨시어지 통합관리).
 // 기존 명부의 역할·권역·평점·배차·피로도·자격·상태를 그대로 쓰고, 등록·수정은 사유 필수 + 이력.
 // 피로도 상한(96%)과 자격 만료 임박은 위험 신호가 아니라 운영 경고 — amber.
+// 상세 5개 탭은 탭마다 [편집] → 사유와 함께 저장 (2026-10-28 요청 3 · components/ops/mgmt/StaffEdit.jsx) —
+// 고친 값은 가구 기록(state.conciergeProfiles)에 남아 새로고침 · 다른 관제 화면에서도 같고, 목록 표 · 숫자 카드도 같은 값을 읽는다.
+// 담당고객은 어르신 관리의 담당 컨시어지와 같은 칸(state.elderStaff)을 같은 확인 절차로 고친다.
 import { useState } from "react";
-import { Panel, Stat, Pill, SevPill, FeedPill, Avatar, Btn, Tabs, Table, KV, Field, Toggle, Drawer, Confirm, Stamp, Bar, Note, Empty, TONE } from "./ui";
+import { Panel, Stat, Pill, SevPill, FeedPill, Avatar, Btn, Tabs, Table, KV, Field, Toggle, Drawer, Confirm, Stamp, Bar, Note, Empty, TONE, useOperator } from "./ui";
 import Icon from "../icons";
 import { ROSTERS } from "../../lib/rosters";
 import { VISIT_STATE, logEntry, sevOf, TODAY } from "../../lib/ops-mgmt";
 import { STAFF_TABS, STAFF_TONE, STAFF_STATS, conciergeDetail, fatigueTone, fatigueLabel, certNear } from "../../lib/ops-mgmt-people";
-import { EditDrawer, HistoryTable } from "./mgmt/EditLog";
+import { HistoryTable } from "./mgmt/EditLog";
+import { CertForm, EvalForm, StaffChange, TabBar, WeekForm, WorkForm, staffStart } from "./mgmt/StaffEdit";
 import { useAuth } from "../../lib/auth";
 import { useAppState } from "../../lib/state";
 import { LIVE_CONCIERGE, LIVE_TAG, liveConcierge } from "../../lib/live-household";
+import { LIVE_ELDER } from "../../lib/ops-health";
 import { centerNow } from "../../lib/people-store";
 import { people } from "../../lib/people";
+import { EVAL_ITEMS, STAFF_ROLES, VIEW_ONLY_NOTE, canEditPeople, historyRows, staffKeyOf, staffRoleOf, withStaff, withStaffProfile } from "../../lib/ops-records";
 
 const BRANCHES = [...new Set(ROSTERS.concierges.rows.map((r) => r[1]))];
 const REGIONS = [...new Set(ROSTERS.concierges.rows.map((r) => r[3]))];
-const ROLES = ["주 담당", "부 담당", "주·부 겸용"];
+const ROLES = STAFF_ROLES;
 const CONTRACTS = ["정규직", "수습 계약 (3개월)", "계약직", "사전 배치 계약"];
+const STAFF_NAMES = ROSTERS.concierges.rows.map((r) => r[0]);
 const F = { branch: "전체 지점", role: "역할", status: "근무상태", region: "담당권역", cert: "자격상태" };
 const hasNear = (c) => c.certs.some(certNear);
+const nearCount = (list) => list.filter(hasNear).length;
+// 앱이 채우는 칸 — 탭 위에 '자동(편집 안 함)'으로 적는다 (요청서 표 그대로)
+const AUTO = {
+  근무현황: "근무시간 · 오늘 배차 · 피로도 · 누적 근무시간 · 계정(회원·권한에서)",
+  "일정·위치": "현재 위치(체크인 GPS) · 오늘 일정(배차)",
+  담당고객: "목록 — 어르신 관리의 담당 컨시어지와 같은 값",
+  "자격·교육": "만료 임박 표시",
+  "평가·이력": "미수락 · 지각 · 취소 횟수 · SOS 출동이력 · 수정이력",
+};
+const certTone = (c) => (certNear(c) ? "warn" : /확인 대기|기간 미입력/.test(c.state) ? "muted" : "ok");
 const rank = (c) => (c.live ? -1 : c.status === "휴식 권고" ? 0 : hasNear(c) ? 1 : c.status === "짝 대기" ? 2 : c.status === "동행 중" ? 3 : c.status === "가용" ? 4 : 5);
 // 테스트 컨시어지 줄의 상태 — SOS 출동은 위험 신호라 빨강, 나머지는 운영 상태
 const LIVE_TONE = { "SOS 출동 중": "danger", "급파 수락 대기": "warn", "방문 중": "info", "기록 없음": "muted" };
@@ -70,31 +87,65 @@ function Fatigue({ pct }) {
 export default function ConciergeMgmt({ openProfile }) {
   const [baseRows, setRows] = useState(() => ROSTERS.concierges.rows.map(conciergeDetail));
   // 테스트 계정이면 박지현 줄에 테스트 컨시어지가 앱에서 한 것을 덮는다 (2026-10-02)
-  const liveOn = !!useAuth().user?.household;
-  const { state } = useAppState();
+  const user = useAuth().user;
+  const liveOn = !!user?.household;
+  // 고치기는 관제 관리자 이상 — 일반 관제 회원은 보기만 (2026-10-28 요청 3 · lib/ops-records.js)
+  const canEdit = canEditPeople(user);
+  const operator = useOperator();
+  const by = operator.includes("관제") ? operator : `${operator} (관제)`;
+  const { state, dispatch } = useAppState();
   const center = centerNow();
-  const rows = center ? centerConcierges().map((c) => liveConcierge(c, state)) : liveOn ? baseRows.map((c) => liveConcierge(c, state)) : baseRows;
+  // 어르신마다 지금 담당 — 명부(예시) · 이 가구 어르신 위에 관제가 정한 담당(state.elderStaff)을 얹는다.
+  // 담당고객 탭 · 어르신 관리 '담당 주 · 부'가 같은 값을 본다
+  const elderRows = (
+    center
+      ? [{ name: LIVE_ELDER, age: "—", dong: state?.onboarding?.district || "—", risk: "—", live: true }]
+      : ROSTERS.elders.rows.map((e) => {
+          const live = liveOn && e[0] === LIVE_ELDER;
+          return { name: e[0], age: e[2], dong: (live && state?.onboarding?.district) || e[4], risk: e[13], pri: e[10], sub: e[11], live };
+        })
+  ).map((e) => withStaff(e, state));
+  const assigned = (name) => elderRows.filter((e) => staffRoleOf(e, name)).map((e) => ({ ...e, role: staffRoleOf(e, name) }));
+  const raw = center ? centerConcierges().map((c) => liveConcierge(c, state)) : liveOn ? baseRows.map((c) => liveConcierge(c, state)) : baseRows;
+  // 관제가 저장한 상세(state.conciergeProfiles)를 얹는다 — 목록 표 · 숫자 카드 · 상세 탭이 같은 값.
+  // 센터 회원의 주·부 역할은 [편집]으로 정하기 전이면 지금 맡은 자리로 — 예전에는 먼저 가입한 회원을 '주 담당'으로 적어,
+  // 담당을 바꾼 뒤에도 목록이 옛 주 담당을 가리켰다
+  const rows = raw.map((c) => {
+    const elders = assigned(c.name);
+    const roleType = center ? (elders.some((e) => e.role === "주") ? "주 담당" : "부 담당") : c.roleType;
+    return withStaffProfile({ ...c, elders, roleType }, state?.conciergeProfiles?.[c.name]);
+  });
   const [sel, setSel] = useState(LIVE_CONCIERGE);
-  const [tab, setTab] = useState("근무현황");
+  const [tab, setTabRaw] = useState("근무현황");
+  const [editTab, setEditTab] = useState(null);
+  const [staffDlg, setStaffDlg] = useState(null);
   const [q, setQ] = useState("");
   const [f, setFilter] = useState(F);
   const [reg, setReg] = useState(false);
-  const [edit, setEdit] = useState(false);
   const [confirm, setConfirm] = useState(null);
-  const [training, setTraining] = useState("");
   const [msg, setMsg] = useState("");
   const [form, setForm] = useState(EMPTY_FORM);
   const setF = (k) => (v) => setForm((x) => ({ ...x, [k]: v }));
   const setFl = (k) => (v) => setFilter((x) => ({ ...x, [k]: v }));
   const preset = (k, v) => setFilter({ ...F, ...(k ? { [k]: v } : {}) });
+  // 다른 탭 · 다른 사람으로 가면 고치던 칸은 접는다 (저장 안 한 값은 버린다)
+  const setTab = (t) => {
+    setTabRaw(t);
+    setEditTab(null);
+  };
+  const pickRow = (name) => {
+    setSel(name);
+    setEditTab(null);
+  };
 
   const cur = rows.find((c) => c.name === sel) || rows[0];
   const update = (name, fn) => setRows((rs) => rs.map((c) => (c.name === name ? fn(c) : c)));
   const log = (c, field, before, after, reason) => ({ ...c, history: [logEntry({ field, before, after, reason }), ...c.history] });
 
+  // 자격 만료임박 — 센터 공간은 회원 수 그대로, 예시 명부(42명 중 일부만 표시)는 예시 숫자에 저장으로 바뀐 만큼을 더한다
   const ss = center
-    ? { total: rows.length, free: rows.filter((c) => c.status === "가용").length, onDuty: rows.filter((c) => c.status === "동행 중" || c.status === "방문 중").length, fatigue: 0, cert: 0 }
-    : STAFF_STATS;
+    ? { total: rows.length, free: rows.filter((c) => c.status === "가용").length, onDuty: rows.filter((c) => c.status === "동행 중" || c.status === "방문 중").length, fatigue: 0, cert: nearCount(rows) }
+    : { ...STAFF_STATS, cert: Math.max(0, STAFF_STATS.cert + nearCount(rows) - nearCount(raw)) };
   const stats = [
     { label: "전체 인원", value: ss.total, tone: "navy", on: () => preset(), active: JSON.stringify(f) === JSON.stringify(F) },
     { label: "현재 가용", value: ss.free, tone: "ok", on: () => preset("status", "가용"), active: f.status === "가용" },
@@ -120,23 +171,39 @@ export default function ConciergeMgmt({ openProfile }) {
     { k: "cert", label: "자격 · 특이", render: (c) => <span className={hasNear(c) ? "font-bold text-gold" : "text-ink"}>{c.cert}</span> },
   ];
 
-  const editFields = cur
-    ? [
-        { label: "소속 지점", value: cur.branch, options: BRANCHES, apply: (c, v) => ({ ...c, branch: v }) },
-        { label: "담당 가능지역", value: cur.region, apply: (c, v) => ({ ...c, region: v }) },
-        { label: "근무 요일 · 시간", value: cur.workDays, apply: (c, v) => ({ ...c, workDays: v }) },
-        { label: "주·부 담당 역할", value: cur.roleType, options: ROLES, apply: (c, v) => ({ ...c, roleType: v }) },
-        { label: "차량 보유 · 운전", value: yn(cur.vehicle), options: ["예", "아니오"], apply: (c, v) => ({ ...c, vehicle: v === "예" }) },
-        { label: "긴급출동 가능", value: yn(cur.emergency), options: ["예", "아니오"], apply: (c, v) => ({ ...c, emergency: v === "예" }) },
-        { label: "계약상태", value: cur.contract, options: CONTRACTS, apply: (c, v) => ({ ...c, contract: v }) },
-        { label: "휴무 · 휴가", value: cur.leave, apply: (c, v) => ({ ...c, leave: v }) },
-      ]
-    : [];
-  const onEdit = (fd, after, reason) => {
-    update(cur.name, (c) => log(fd.apply(c, after), fd.label, String(fd.value), after, reason));
-    setEdit(false);
-    setMsg(`${cur.name} ${fd.label} 수정 · 사유와 함께 이력 저장`);
+  // 탭 [편집] 저장 — 가구 기록에 남기고 바뀐 칸마다 수정이력 한 줄 (lib/state.js setConciergeProfile)
+  const saveProfile = (patch, fields, reason) => {
+    dispatch({ type: "setConciergeProfile", name: cur.name, patch, fields, reason, by, role: "ops" });
+    setEditTab(null);
+    setMsg(`${cur.name} · ${tab} 저장 — 바뀐 ${fields.length}칸이 사유와 함께 평가·이력 › 수정이력에 남았습니다`);
   };
+  const editForm = (Form) => <Form key={`${cur.name}-${tab}`} c={cur} onSave={saveProfile} onCancel={() => setEditTab(null)} />;
+  const bar = (label) => <TabBar auto={AUTO[tab]} canEdit={canEdit} label={label} onEdit={() => setEditTab(tab)} />;
+
+  // 담당고객 [추가] · [해제] — 어르신 관리 [담당 컨시어지 변경]과 같은 확인 창 · 같은 기록 (lib/state.js setElderStaff)
+  const choices = center ? people().concierges : STAFF_NAMES;
+  // 테스트 가구 1 의 어르신은 앱의 컨시어지 계정이 하나(test-concierge)라 담당을 바꾸지 않는다 — 센터 공간에서 바꾼다
+  const staffEditable = (e) => !(e.live && !center);
+  const openAdd = () =>
+    setStaffDlg({
+      title: `${cur.name} 컨시어지에게 담당 고객을 추가합니다`,
+      intro: "어르신을 고르면 지금 담당이 채워집니다 — 주 · 부 자리는 바꿀 수 있습니다.",
+      elders: elderRows.filter((e) => !staffRoleOf(e, cur.name) && staffEditable(e)),
+      start: (e) => staffStart(e, cur.name, "add", choices),
+    });
+  const openRemove = (e) =>
+    setStaffDlg({
+      title: `${e.name} 님 ${e.role} 담당에서 ${cur.name} 컨시어지를 해제합니다`,
+      intro: e.role === "주" ? "주 담당을 해제하면 다른 컨시어지가 주 담당이 되어야 합니다 — 아래에서 고릅니다." : "부 담당 자리는 비워 둘 수 있습니다 (어르신 관리 '부 담당 없음'에 뜹니다).",
+      elders: [e],
+      start: (x) => staffStart(x, cur.name, "remove", choices),
+    });
+  const saveStaff = ({ e, pri, sub, reason }) => {
+    dispatch({ type: "setElderStaff", key: staffKeyOf(e), elder: e.name, pri, sub, prev: { pri: e.pri, sub: e.sub }, reason, by, role: "ops" });
+    setStaffDlg(null);
+    setMsg(`${e.name} 님 담당 컨시어지 변경 — 주 ${pri} · 부 ${sub} · 어르신 · 컨시어지 수정이력에 저장`);
+  };
+
   const register = () => {
     const roleText = form.role === "주·부 겸용" ? "주·부 겸용" : form.role === "주 담당" ? "주 동행" : "부 동행 · 수습";
     let c = conciergeDetail([form.name.trim(), form.branch, roleText, form.region, TODAY, "—", "0건", "정상", form.cert, "가용"]);
@@ -161,9 +228,16 @@ export default function ConciergeMgmt({ openProfile }) {
   };
 
   const renderTab = () => {
+    if (editTab === tab && canEdit) {
+      if (tab === "근무현황") return editForm(WorkForm);
+      if (tab === "일정·위치") return editForm(WeekForm);
+      if (tab === "자격·교육") return editForm(CertForm);
+      if (tab === "평가·이력") return editForm(EvalForm);
+    }
     if (tab === "근무현황")
       return (
         <div>
+          {bar("편집")}
           <div className="grid gap-3 sm:grid-cols-3">
             {[["근무시간", `${cur.hours}h`], ["오늘 배차", cur.jobs], ["피로도", `${cur.fatigue}%`]].map(([l, v]) => (
               <div key={l} className="rounded-xl bg-navy/[.04] px-3.5 py-3">
@@ -177,7 +251,7 @@ export default function ConciergeMgmt({ openProfile }) {
             <KV k="소속 지점" v={cur.branch} />
             <KV k="담당 가능지역" v={cur.region} />
             <KV k="근무 요일 · 시간" v={cur.workDays} />
-            <KV k="차량 · 운전" v={cur.vehicle ? "차량 보유 · 운전 가능" : "차량 없음 · 대중교통 이동"} />
+            <KV k="차량 · 운전" v={typeof cur.drive === "boolean" ? `${cur.vehicle ? "차량 보유" : "차량 없음"} · ${cur.drive ? "운전 가능" : "운전 안 함"}` : cur.vehicle ? "차량 보유 · 운전 가능" : "차량 없음 · 대중교통 이동"} />
             <KV k="주·부 담당 역할" v={cur.roleType} />
             <KV k="긴급출동 가능" v={yn(cur.emergency)} tone={cur.emergency ? "ok" : undefined} />
             <KV k="계약상태" v={cur.contract} />
@@ -193,6 +267,7 @@ export default function ConciergeMgmt({ openProfile }) {
     if (tab === "일정·위치")
       return (
         <div>
+          {bar("주간 일정 편집")}
           <Sec title="현재 위치" right={<span className="inline-flex items-center gap-2"><FeedPill feed={cur.location.feed} /><Stamp at={cur.location.at} prefix="위치 수신" /></span>}>
             <div className="text-[13px] font-medium text-ink">{cur.location.text}</div>
             <div className="mt-2 flex h-[120px] items-center justify-center rounded-xl border border-dashed border-navy/[.15] bg-navy/[.03] text-[12px] text-muted">지도 연동 대기 — 실시간 위치와 마지막 수신 위치를 구분해 표시합니다</div>
@@ -206,52 +281,74 @@ export default function ConciergeMgmt({ openProfile }) {
               empty="오늘 배정된 일정이 없습니다."
             />
           </Sec>
-          <Sec title="주간 일정"><ul className="grid gap-1 text-[12px] text-ink sm:grid-cols-2">{cur.week.map((w) => <li key={w} className="rounded-lg bg-navy/[.04] px-2.5 py-1.5">{w}</li>)}</ul></Sec>
+          <Sec title="주간 근무 일정">
+            {cur.week.length ? <ul className="grid gap-1 text-[12px] text-ink sm:grid-cols-2">{cur.week.map((w, i) => <li key={`${w}-${i}`} className="rounded-lg bg-navy/[.04] px-2.5 py-1.5">{w}</li>)}</ul> : <Empty>주간 근무 일정이 없습니다{canEdit ? " — [주간 일정 편집]으로 넣습니다." : "."}</Empty>}
+          </Sec>
         </div>
       );
     if (tab === "담당고객")
       return (
         <div>
+          <div className="mb-3 flex flex-wrap items-start justify-between gap-2">
+            <span className="min-w-0 flex-1 text-[11px] text-muted">자동(편집 안 함) — {AUTO[tab]}</span>
+            {canEdit ? <Btn small onClick={openAdd}>담당 고객 추가</Btn> : <span className="text-[11px] text-muted">{VIEW_ONLY_NOTE}</span>}
+          </div>
           <Table
             dense
-            cols={[{ k: "name", label: "어르신", render: (e) => (openProfile ? <button type="button" onClick={() => openProfile(e.name)} className="btn-press btn-inline font-bold text-navy underline decoration-gold/60">{e.name}</button> : <span className="font-bold text-navy">{e.name}</span>) }, { k: "age", label: "나이", render: (e) => <span className="font-num">{e.age}</span> }, { k: "dong", label: "동" }, { k: "role", label: "역할", render: (e) => <Pill tone={e.role === "주" ? "navy" : "info"}>{e.role} 담당</Pill> }, { k: "risk", label: "위험", render: (e) => <SevPill sev={sevOf(e.risk)} /> }]}
+            cols={[
+              { k: "name", label: "어르신", render: (e) => (openProfile ? <button type="button" onClick={() => openProfile(e.name)} className="btn-press btn-inline font-bold text-navy underline decoration-gold/60">{e.name}</button> : <span className="font-bold text-navy">{e.name}</span>) },
+              { k: "age", label: "나이", render: (e) => <span className="font-num">{e.age}</span> },
+              { k: "dong", label: "동" },
+              { k: "role", label: "역할", render: (e) => <Pill tone={e.role === "주" ? "navy" : "info"}>{e.role} 담당</Pill> },
+              { k: "risk", label: "위험", render: (e) => <SevPill sev={sevOf(e.risk)} /> },
+              ...(canEdit
+                ? [{ k: "act", label: "", render: (e) => (staffEditable(e) ? <Btn small ghost tone="muted" onClick={() => openRemove(e)} aria-label={`${e.name} 님 담당 해제`}>해제</Btn> : <span className="text-[11px] text-muted">테스트 계정 고정</span>) }]
+                : []),
+            ]}
             rows={cur.elders}
             rowKey={(e) => e.name}
-            empty="담당 어르신이 없습니다 — 어르신 관리에서 담당 변경으로 배정합니다."
+            empty={`담당 어르신이 없습니다${canEdit ? " — [담당 고객 추가]로 배정합니다." : "."}`}
           />
-          <div className="mt-2 text-[11px] text-muted">담당 변경은 어르신 관리 [담당 컨시어지 변경] (확인 절차 · 이력 기록).</div>
+          <div className="mt-2 text-[11px] text-muted">추가 · 해제는 어르신 관리 [담당 컨시어지 변경]과 같은 확인 절차로 실행되고, 어르신 · 컨시어지 수정이력에 함께 남습니다.</div>
         </div>
       );
     if (tab === "자격·교육")
       return (
         <div>
+          {bar("편집")}
           <Sec title="자격증 · 유효기간">
-            <Table dense cols={[{ k: "name", label: "자격" }, { k: "until", label: "유효기간", render: (c) => <span className="font-num">{c.until}</span> }, { k: "state", label: "상태", render: (c) => <Pill tone={certNear(c) ? "warn" : c.state === "확인 대기" ? "muted" : "ok"}>{c.state}</Pill> }]} rows={cur.certs} rowKey={(c) => c.name} />
-            {hasNear(cur) && <div className="mt-2"><Note tone="warn">만료 임박 자격이 있습니다 — 만료 시 해당 유형 배차가 자동 제한됩니다. 갱신 안내가 필요합니다.</Note></div>}
+            <Table
+              dense
+              cols={[
+                { k: "name", label: "자격", render: (c) => <span>{c.name}{c.no ? <span className="block font-num text-[11px] text-muted">번호 {c.no}</span> : null}</span> },
+                { k: "issued", label: "발급일", render: (c) => <span className="font-num">{c.issued || "—"}</span> },
+                { k: "until", label: "유효기간", render: (c) => <span className="font-num">{c.until}</span> },
+                { k: "state", label: "상태", render: (c) => <Pill tone={certTone(c)}>{c.state}</Pill> },
+                { k: "file", label: "첨부", render: (c) => <span className="text-[12px] text-muted">{c.file || "—"}</span> },
+              ]}
+              rows={cur.certs}
+              rowKey={(c, i) => c.id || `${c.name}-${i}`}
+              empty="등록된 자격증이 없습니다."
+            />
+            {hasNear(cur) && <div className="mt-2"><Note tone="warn">만료 · 만료 임박 자격이 있습니다 — 만료 시 해당 유형 배차가 자동 제한됩니다. 갱신 안내가 필요합니다.</Note></div>}
           </Sec>
           <Sec title="교육이수">
-            <ul className="space-y-1 text-[13px] text-ink">{cur.trainings.map((t) => <li key={t} className="flex items-center gap-1.5"><Icon name="check" size={13} className="text-green" />{t}</li>)}</ul>
-            {center ? (
-              <p className="mt-2 text-[11px] text-muted">센터 회원의 교육 이수 기록은 베타에서 아직 저장하지 않습니다.</p>
-            ) : (
-              <div className="mt-2 flex gap-2">
-                <input id={`tr-${cur.name}`} aria-label="교육 이수 등록" value={training} onChange={(e) => setTraining(e.target.value)} placeholder="교육명 (이수 연월)" className="card-glass min-w-0 flex-1 rounded-[10px] px-3 py-2 text-[13px] text-navy outline-none focus:ring-1 focus:ring-gold" />
-                <Btn small disabled={!training.trim()} onClick={() => { update(cur.name, (c) => log({ ...c, trainings: [...c.trainings, training.trim()] }, "교육이수", c.trainings.join(" · "), [...c.trainings, training.trim()].join(" · "), "교육 이수 등록")); setTraining(""); }}>이수 등록</Btn>
-              </div>
-            )}
+            {cur.trainings.length ? <ul className="space-y-1 text-[13px] text-ink">{cur.trainings.map((t, i) => <li key={`${t}-${i}`} className="flex items-center gap-1.5"><Icon name="check" size={13} className="text-green" />{t}</li>)}</ul> : <Empty>이수 기록이 없습니다.</Empty>}
           </Sec>
         </div>
       );
     return (
       <div>
+        {bar("편집")}
         <Sec title="평가 (5항목)">
-          <div className="grid gap-2 sm:grid-cols-5">{cur.eval.map(([k, v]) => <div key={k} className="rounded-xl bg-navy/[.04] px-3 py-2"><div className="text-[11px] font-bold text-muted">{k}</div><div className="mt-0.5 font-num text-[14px] font-bold text-navy">{v}</div></div>)}</div>
+          <div className="grid gap-2 sm:grid-cols-5">{(cur.eval.length ? cur.eval : EVAL_ITEMS.map((k) => [k, "—"])).map(([k, v]) => <div key={k} className="rounded-xl bg-navy/[.04] px-3 py-2"><div className="text-[11px] font-bold text-muted">{k}</div><div className="mt-0.5 font-num text-[14px] font-bold text-navy">{v}</div></div>)}</div>
         </Sec>
         <KV k="내부평가" v={cur.internal} />
         <KV k="미수락 · 지각 · 취소" v={<span className="font-num">미수락 {cur.missed.declined} · 지각 {cur.missed.late} · 취소 {cur.missed.cancel}</span>} tone={cur.missed.declined + cur.missed.late + cur.missed.cancel > 0 ? "warn" : undefined} />
         <Sec title="SOS 출동이력">{cur.sos.length ? <Table dense cols={[{ k: "no", label: "사건번호", render: (s) => <span className="font-num font-bold text-navy">{s.no}</span> }, { k: "at", label: "일시", render: (s) => <span className="font-num">{s.at}</span> }, { k: "role", label: "역할 · 결과" }]} rows={cur.sos} rowKey={(s) => s.no} /> : <Empty>SOS 출동이력이 없습니다.</Empty>}</Sec>
-        <Sec title="민원 · 사고이력">{cur.complaints.length ? <ul className="list-disc pl-4 text-[13px]">{cur.complaints.map((c) => <li key={c}>{c}</li>)}</ul> : <Empty>민원 · 사고이력이 없습니다.</Empty>}</Sec>
-        <Sec title="수정이력"><HistoryTable rows={cur.history} /></Sec>
+        <Sec title="민원 · 사고이력">{cur.complaints.length ? <ul className="list-disc pl-4 text-[13px]">{cur.complaints.map((c, i) => <li key={`${c}-${i}`}>{c}</li>)}</ul> : <Empty>민원 · 사고이력이 없습니다.</Empty>}</Sec>
+        {/* 공용 수정이력(가구 기록 · 탭 편집 · 담당 변경)이 위, 예시 명부의 이력이 아래 */}
+        <Sec title="수정이력"><HistoryTable rows={[...historyRows(state, "concierge", cur.name), ...cur.history]} /></Sec>
       </div>
     );
   };
@@ -292,7 +389,7 @@ export default function ConciergeMgmt({ openProfile }) {
             <h2 className="text-[15px] font-bold text-navy">컨시어지 명부</h2>
             <span className="text-[12px] text-muted">휴식 권고 · 자격 임박 · 짝 대기 우선</span>
           </div>
-          <div className="mt-2"><Table cols={cols} rows={list} onRow={(c) => setSel(c.name)} rowKey={(c) => c.name} selected={cur?.name} /></div>
+          <div className="mt-2"><Table cols={cols} rows={list} onRow={(c) => pickRow(c.name)} rowKey={(c) => c.name} selected={cur?.name} /></div>
           <div className="mt-2 text-right font-num text-[11px] text-muted">1–{list.length} / {ss.total}명{center ? ` · ${LIVE_TAG} 회원만` : liveOn ? ` · ${LIVE_CONCIERGE} 외 명부는 예시` : ""}</div>
         </Panel>
 
@@ -312,18 +409,18 @@ export default function ConciergeMgmt({ openProfile }) {
               {/* 센터 회원은 '회원 · 권한'에서 승인 · 정지한다 — 여기서 누르면 화면에만 바뀌고 저장되지 않았다 (2026-10-18) */}
               {center ? (
                 <span className="text-[11px] text-muted">센터 회원 — 계정 · 역할은 &lsquo;회원 · 권한&rsquo;에서 바꿉니다</span>
-              ) : (
+              ) : canEdit ? (
                 <div className="flex gap-2">
-                  <Btn small onClick={() => setEdit(true)}>정보 수정</Btn>
                   <Btn small ghost tone={cur.account === "활성" ? "muted" : "ok"} onClick={() => setConfirm({ reason: "" })}>{cur.account === "활성" ? "계정 비활성화" : "계정 활성화"}</Btn>
                 </div>
-              )}
+              ) : null}
             </div>
             {cur.live && (
               <div className="mt-3">
                 <Note tone="info">
                   {center ? "이 센터 컨시어지 회원" : "테스트 컨시어지 계정(test-concierge)"}의 실제 기록 — 현재상태 · 오늘 일정 · 위치(체크인) · SOS 출동이력 · 관제 연락 {cur.opsMsgs.total}건
-                  {cur.opsMsgs.open ? ` (확인 전 ${cur.opsMsgs.open}건)` : ""}. 근무시간 · 피로도 · 자격 · 평가 · 연락처는 앱이 모으지 않는 값이라 예시입니다.
+                  {cur.opsMsgs.open ? ` (확인 전 ${cur.opsMsgs.open}건)` : ""}. 근무시간 · 피로도는 앱이 모으지 않는 값{center ? "이라 비워 둡니다" : "이라 예시입니다"}.
+                  근무 · 주간 일정 · 자격 · 평가 · 연락처는 탭마다 [편집]으로 저장합니다 (관제 관리자).
                 </Note>
               </div>
             )}
@@ -335,7 +432,7 @@ export default function ConciergeMgmt({ openProfile }) {
 
       <Note>건강·센서 데이터는 참고자료이며 의료진의 진단을 대신하지 않습니다.</Note>
 
-      {edit && cur && <EditDrawer title={`${cur.name} 컨시어지 정보 수정`} sub="수정 사유 필수 · 수정 전·후 · 수정자 · 일시가 감사로그에 남습니다" fields={editFields} onClose={() => setEdit(false)} onSave={onEdit} />}
+      {staffDlg && <StaffChange {...staffDlg} choices={choices} onCancel={() => setStaffDlg(null)} onSave={saveStaff} />}
 
       <Confirm open={Boolean(confirm)} title={`${cur?.name} 계정을 ${cur?.account === "활성" ? "비활성화" : "활성화"}합니다`} onCancel={() => setConfirm(null)} onConfirm={runConfirm} confirmLabel="확인 · 실행" tone={cur?.account === "활성" ? "warn" : "navy"}>
         {confirm && (

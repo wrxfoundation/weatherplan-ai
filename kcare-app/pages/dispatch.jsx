@@ -71,7 +71,7 @@ import SosAlertModal from "../components/ops/SosAlertModal";
 import { ringAlarm } from "../lib/alarm";
 import { FLEET } from "../lib/ops-devices";
 import { GUARDIAN_STATS, STAFF_STATS } from "../lib/ops-mgmt-people";
-import { HOSPITALS_SEED } from "../lib/ops-admin-sys";
+import { partnerHospitals } from "../lib/hospitals";
 // 어르신 SOS 버튼을 관제 사건으로 이은 시각 — 같은 발신을 두 번 사건화하지 않기 위한 표식
 const SOS_LINK_KEY = "kcare-ops-sos-link-v1";
 const SOS_POPUP_KEY = "kcare-ops-sos-popup-v1"; // 이 기기에서 SOS 팝업을 닫은 sosAt
@@ -560,7 +560,7 @@ function DispatchConsole() {
     elder: centerNow() ? (isPlaceholder(pp.elder) ? 0 : 1) : TOTAL_ELDERS,
     guardian: centerNow() ? pp.guardians.length : GUARDIAN_STATS.total,
     concierge: centerNow() ? pp.concierges.length : STAFF_STATS.total,
-    hospital: HOSPITALS_SEED.filter((h) => h.partner).length,
+    hospital: partnerHospitals(state).length, // 관제 병원 관리 명부의 제휴 병원 (2026-10-28 요청 2)
     ...(centerNow() ? {} : { wearable: FLEET.needsCheck }),
     // 관제 연락(컨시어지 '관제에 알리기') 중 확인 전 — 있으면 커뮤니케이션 메뉴에 숫자 (2026-10-02)
     ...((state.opsMessages || []).some((m) => !m.ackAt) ? { comms: (state.opsMessages || []).filter((m) => !m.ackAt).length } : {}),
@@ -1274,7 +1274,7 @@ function DispatchConsole() {
           <HelpCallOps openId={helpOpen} onClose={() => setHelpOpen(null)} />
           {sosPopup && (
             <SosAlertModal
-              customer={liveCustomer(ELDER.name, state.onboarding, state.health)}
+              customer={liveCustomer(ELDER.name, state.onboarding, state.health, state.guardianInfo)}
               sosAt={state.demo.sosAt}
               elapsed={elapsed}
               dispatched={sosDispatched}

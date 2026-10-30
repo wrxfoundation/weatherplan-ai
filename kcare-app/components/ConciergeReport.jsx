@@ -125,7 +125,8 @@ export function MeetForm({ visit, dispatch, lock, sensors, period }) {
         <div className="mt-3 flex flex-col gap-3">
           <ReportText label="어르신 말씀" value={t("said")} onSave={save("said")} readOnly={ro} rows={2} placeholder="하신 말씀 그대로 — 한 줄에 하나씩" />
           <ReportText label="컨시어지가 본 것" value={t("seen")} onSave={save("seen")} readOnly={ro} rows={2} placeholder="표정 · 걸음 · 옷차림처럼 본 것만 — 한 줄에 하나씩" />
-          <ReportText label="부탁하신 것" aud={["sen", "gua"]} oneLine value={t("asked")} onSave={save("asked")} readOnly={ro} placeholder="어르신이 부탁하신 것 — 어르신 앱에도 보여요" />
+          {/* 한 줄 = 부탁 1건 — 제출하면 고객 상세 '어르신 부탁'에, 관제가 보내면 어르신 홈에 한 건씩 (2026-10-28 요청 1 · lib/elder-asks.js) */}
+          <ReportText label="부탁하신 것" aud={["sen", "gua"]} value={t("asked")} onSave={save("asked")} readOnly={ro} rows={2} placeholder="한 줄에 부탁 하나씩 — 어르신 앱에 한 건씩 보이고, 해결하면 내려가요" />
           <ReportText label="전해 달라신 말" oneLine value={t("relay")} onSave={save("relay")} readOnly={ro} placeholder="가족에게 전해 달라신 말" />
         </div>
       </section>

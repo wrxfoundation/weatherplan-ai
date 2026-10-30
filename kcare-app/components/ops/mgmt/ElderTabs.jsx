@@ -3,12 +3,15 @@
 import { useState } from "react";
 import { KV, Pill, Table, Tabs, Stamp, FeedPill, SevPill, Note, Empty, Btn, useOperator } from "../ui";
 import { useAppState } from "../../../lib/state";
-import { healthOf, medSummary } from "../../../lib/meds";
+import { healthOf, medSummary, supplementLine } from "../../../lib/meds";
+import { useAuth } from "../../../lib/auth";
+import { STAFF_LIVE, VIEW_ONLY_NOTE, canEditPeople, historyRows, staffKeyOf } from "../../../lib/ops-records";
 import { LIVE_ELDER } from "../../../lib/ops-health";
 import { centerNow } from "../../../lib/people-store";
 import { HealthEditor } from "../../HealthInfo";
 import { VISITS, VISIT_STATE, visitPill, sevOf, demoTel, stampNow, OPERATOR } from "../../../lib/ops-mgmt";
 import { HistoryTable } from "./EditLog";
+import { askDoneText, asksOf, isOpenAsk } from "../../../lib/elder-asks";
 import PhoneLink from "../PhoneLink";
 
 const RANGES = ["최근 1시간", "오늘", "최근 7일", "최근 30일"];
@@ -29,6 +32,10 @@ function Sec({ title, right, children }) {
 }
 
 const num = (k, label) => ({ k, label, render: (r) => <span className="font-num">{r[k]}</span> });
+
+// 어르신 수정이력 — 공용 기록(건강 정보 · 담당 컨시어지 · 가구 기록)이 위, 이 화면의 예시 이력이 아래.
+// 이 가구의 어르신(데모에서는 김순자)은 건강 정보 기록(STAFF_LIVE)도 같이 본다
+export const elderHistory = (state, e) => [...historyRows(state, "elder", e.name, e.name === LIVE_ELDER ? [STAFF_LIVE, staffKeyOf(e)] : [staffKeyOf(e)]), ...(e.history || [])];
 
 // 메모 한 줄 — 고치기(이전 글은 아래 '이전 글'로 남는다) · 지우기(확인 한 번 · 감사로그에 글이 남는다)
 function NoteRow({ n, ops }) {
@@ -84,6 +91,8 @@ export default function ElderTabs({ e, tab, onChange }) {
   // 어르신 복약 미션 · 보호자 마이 · 컨시어지 · SOS 119 신고 정보가 같이 바뀐다 (2026-10-02 QA)
   const app = useAppState();
   const operator = useOperator();
+  // 관제 관리자 이상만 고친다 — 일반 관제 회원은 보기만 (2026-10-28 요청 공통 원칙 · lib/ops-records.js)
+  const canEdit = canEditPeople(useAuth().user);
   const [healthEdit, setHealthEdit] = useState(false);
   const shared = e.name === LIVE_ELDER && app?.state ? healthOf(app.state) : null;
   const [memo, setMemo] = useState("");
@@ -116,10 +125,12 @@ export default function ElderTabs({ e, tab, onChange }) {
         return (
           <HealthEditor
             health={shared}
+            requireReason
             onCancel={() => setHealthEdit(false)}
-            onSave={(payload) => {
-              app.dispatch({ type: "setHealth", payload, by: operator.includes("관제") ? operator : `${operator} (관제)` });
-              app.dispatch({ type: "pushEvent", payload: { kind: "건강", text: `건강 정보 수정 — ${e.name} · 복용 ${payload.meds.length}번 · 질환 ${payload.conditions.length}가지`, color: "#8FA9CC" } });
+            onSave={(payload, reason) => {
+              // 관제가 고친 것은 사유와 함께 어르신 수정이력에 (2026-10-28 요청 6 · lib/state.js setHealth)
+              app.dispatch({ type: "setHealth", payload, by: operator.includes("관제") ? operator : `${operator} (관제)`, reason, role: "ops", elder: e.name });
+              app.dispatch({ type: "pushEvent", payload: { kind: "건강", text: `건강 정보 수정 — ${e.name} · 복용 ${payload.meds.length}번 · 건강식품 ${payload.supplements.length}가지 · 질환 ${payload.conditions.length}가지`, color: "#8FA9CC" } });
               setHealthEdit(false);
             }}
           />
@@ -132,11 +143,12 @@ export default function ElderTabs({ e, tab, onChange }) {
                 어르신 · 보호자 · 컨시어지 · SOS 신고 정보와 같은 값
                 {shared.custom && shared.at ? ` · 마지막 수정 ${new Date(shared.at).toLocaleString("ko-KR", { month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit", hour12: false })}${shared.by ? ` · ${shared.by}` : ""}` : " · 첫 안심방문 등록값"}
               </span>
-              <Btn small onClick={() => setHealthEdit(true)}>복용약 · 질환 수정</Btn>
+              {canEdit ? <Btn small onClick={() => setHealthEdit(true)}>복용약 · 질환 · 건강식품 수정</Btn> : <span className="text-[11px] text-muted">{VIEW_ONLY_NOTE}</span>}
             </div>
           )}
           <KV k="주요 질환" v={<span className="flex flex-wrap gap-1">{(shared ? shared.conditions : e.health.dx).map((d) => <Pill key={d} tone="info">{d}</Pill>)}{shared && !shared.conditions.length && "등록 없음"}</span>} />
           <KV k="복용약" v={shared ? (shared.meds.length ? <span className="block">{medSummary(shared.meds).map((m) => <span key={m} className="block">{m}</span>)}</span> : "등록 없음") : e.health.meds.join(" · ")} />
+          {shared && <KV k="건강식품" v={shared.supplements.length ? <span className="block">{shared.supplements.map((x) => <span key={x.id} className="block">{supplementLine(x)}{x.expiry ? ` · 유통기한 ${x.expiry}` : ""}</span>)}</span> : "등록 없음"} />}
           <KV k="알레르기" v={shared ? shared.allergies.join(" · ") || "등록 없음" : e.health.allergy} />
           <KV k="주 이용 병원" v={e.health.hospital} />
           <KV k="관찰 메모" v={e.health.note} />
@@ -308,11 +320,31 @@ export default function ElderTabs({ e, tab, onChange }) {
               <NoteRow key={n.id || `${n.at}-${i}`} n={n} ops={ops} />
             ))}
           </ul>
+          {/* 어르신 부탁 — 미팅 리포트 '부탁하신 것' 한 줄 = 한 건. 컨시어지 해결 · 어르신 해결 · 취소가 같은 기록으로 보인다 (2026-10-28 요청 1) */}
+          {e.live && (
+            <Sec title={`어르신 부탁 (미팅 리포트) · 열림 ${asksOf(app?.state).filter(isOpenAsk).length}건`}>
+              {asksOf(app?.state).length === 0 ? (
+                <Empty>미팅 리포트로 받은 부탁이 없습니다.</Empty>
+              ) : (
+                <Table
+                  dense
+                  cols={[
+                    { k: "text", label: "부탁" },
+                    { k: "by", label: "받은 컨시어지", render: (a) => a.by || "—" },
+                    { k: "status", label: "처리", render: (a) => (isOpenAsk(a) ? <Pill tone="warn">{a.shownAt ? "열림 · 어르신 앱에 보임" : "열림 · 발송 전"}</Pill> : <span className="text-[12px] text-muted">{askDoneText(a)}</span>) },
+                  ]}
+                  rows={asksOf(app?.state)}
+                  rowKey={(a) => a.id}
+                />
+              )}
+            </Sec>
+          )}
         </div>
       );
     }
     case "수정이력":
-      return <HistoryTable rows={e.history} />;
+      // 실제 가구 — 관제 · 컨시어지가 고친 것(공용 수정이력)이 위에, 이 화면에서 바꾼 것이 아래에 (2026-10-28 요청 6)
+      return <HistoryTable rows={elderHistory(app?.state, e)} />;
     default:
       return null;
   }

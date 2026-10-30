@@ -296,7 +296,7 @@ function TransferForm({ inc, c, api, ro }) {
 
 export default function StepForm({ inc, stepKey, api, role }) {
   const appState = useAppState()?.state;
-  const c = liveCustomer(inc.customer, appState?.onboarding, appState?.health);
+  const c = liveCustomer(inc.customer, appState?.onboarding, appState?.health, appState?.guardianInfo);
   const rec = inc.steps?.[stepKey] || {};
   const ro = role !== "controller";
   const main = guardianOf(c, "주");

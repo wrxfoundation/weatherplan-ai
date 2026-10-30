@@ -15,7 +15,7 @@ const STEP_OF_ROLE = { 주: "guardian1", 부: "guardian2", 비상: "guardian2" }
 export default function SidePanels({ inc, now, api, role }) {
   const appState = useAppState()?.state;
   const ob = appState?.onboarding;
-  const c = liveCustomer(inc.customer, ob, appState?.health);
+  const c = liveCustomer(inc.customer, ob, appState?.health, appState?.guardianInfo);
   const h = liveHealth(inc.customer, ob, !!useAuth().user?.household);
   // 종료된 사건은 옆 패널에서도 전화 기록 · 파견을 하지 않는다 (재개한 뒤에만)
   const ro = role !== "controller" || inc.state === "closed";

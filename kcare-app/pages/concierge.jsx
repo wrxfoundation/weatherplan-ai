@@ -54,6 +54,7 @@ import { requiredFor } from "../lib/ops-mgmt";
 import { MEET_DEMO, RESULT_TONE, VISIT_GRADES, meetPeriod } from "../lib/visit-report";
 import { STORE_CATALOG } from "../lib/store";
 import { SERVICE_MENU, crewOf, daysUntil, isVisitCall, kstYmd } from "../lib/requests";
+import { INITIAL_EVENTS } from "../lib/seed";
 import { CONCIERGES } from "../lib/ops-admin";
 import ConciergeRequests, { ExtraPaidNotice, NewRequestAlert, newRequestsFor } from "../components/ConciergeRequests";
 import { svcTitle } from "../lib/booking";
@@ -66,7 +67,9 @@ import { josa } from "../lib/tracks";
 import { eventsFor, useAppState, visitLock } from "../lib/state";
 import { useToast } from "../components/ds";
 import { HomeTextCards, MeetForm, ModePicker, ReportPreview, SendRow } from "../components/ConciergeReport";
-import { ApptCard, BriefingCard, ClientHead, ClientList, HealthCard, PrefCard, clientSub } from "../components/ClientDetail";
+import { ApptCard, AsksCard, BriefingCard, ClientHead, ClientList, HealthCard, PrefCard, clientSub } from "../components/ClientDetail";
+import { askLines, asksOf, isOpenAsk } from "../lib/elder-asks";
+import { partnerHospitals } from "../lib/hospitals";
 import { ReqNowCard } from "../components/ReqNowCard";
 import { videoConsentOf } from "../lib/consent";
 import { useAuth } from "../lib/auth";
@@ -99,6 +102,11 @@ const TABS = [
   // 노출되면 곤란하다는 판단. 코드는 남겨 두고 메뉴에서만 뺀다.
   // { key: "pay", label: "정산", icon: "coin" },
 ];
+
+// 일정 달력 — 취소된 건은 회색으로 그날 칸에 남는다 (빨강은 위험 신호 전용 · 2026-10-28 요청 7)
+const CANCELLED_JOB = { label: "취소됨", color: "#8A877F" };
+// 데모 씨앗 일정 — 예시 달력(CONCIERGE_CAL)이 같은 건(오늘 동행 · 사흘 뒤 방문)을 이미 그린다
+const SEED_EVENT_IDS = new Set(INITIAL_EVENTS.map((e) => e.id));
 
 function ConciergePage() {
   const { state, dispatch } = useAppState();
@@ -354,20 +362,56 @@ function ConciergePage() {
     ? [{ name: LIVE_ELDER, age: null, where: people().district, loc: "자택", note: "앱에 남은 기록만", proposed: 0, accepted: 0, referredBy: null }]
     : MY_CLIENTS;
   // 내가 주 담당이거나 짝(2인 1조)인 것 모두 — 짝으로 가는 일도 내 일정이다 (2026-10-19 점검)
-  const reqJobs = (state.requests || [])
-    .filter((r) => r.scheduledDate && (r.assignee === ME || r.partner === ME) && ["confirmed", "inProgress", "cancelRequested"].includes(r.status))
-    .map((r) => ({
-      id: `rq-cal-${r.id}`,
-      off: daysUntil(r.scheduledDate),
-      kind: "request",
-      client: live ? LIVE_ELDER : ELDER.name,
-      age: ELDER.age,
-      time: r.scheduledTime || "시간 미정",
-      where: r.hospital || "",
-      detail: `해주세요 — ${svcTitle(r.type)}`,
-      crew: r.partner ? `${r.assignee} · ${r.partner} (2인)` : `${r.assignee || ME} 1인`,
-      memo: r.detail || "",
-    }));
+  const mineReq = (r) => r.scheduledDate && (r.assignee === ME || r.partner === ME);
+  const reqJob = (r) => ({
+    id: `rq-cal-${r.id}`,
+    off: daysUntil(r.scheduledDate),
+    kind: "request",
+    client: live ? LIVE_ELDER : ELDER.name,
+    age: center ? null : ELDER.age,
+    time: r.scheduledTime || "시간 미정",
+    where: r.hospital || "",
+    detail: `해주세요 — ${svcTitle(r.type)}`,
+    crew: r.partner ? `${r.assignee} · ${r.partner} (2인)` : `${r.assignee || ME} 1인`,
+    memo: r.detail || "",
+  });
+  const reqJobs = (state.requests || []).filter((r) => mineReq(r) && ["confirmed", "inProgress", "cancelRequested"].includes(r.status)).map(reqJob);
+  // 공유 일정 중 내가 나가는 일 (2026-10-28 요청 7) — 어르신 · 보호자 달력과 같은 기록(state.events)에서 읽는다.
+  // 등록 · 변경(관제가 다시 보는 중이면 원래 확정 값 + '변경 확인 중') · 취소가 세 달력에 같이 반영된다.
+  // 안심방문과 동행이 걸린 일정만 — 가족 · 배송 일정은 고객 상세의 공유 일정에서 본다. 해주세요에 묶인 일정은 위 해주세요 줄이 맡는다.
+  // 데모는 예시 달력(CONCIERGE_CAL)이 씨앗 일정(오늘 동행 · 사흘 뒤 방문)을 이미 그리고 있어 씨앗은 겹치지 않게 뺀다
+  const seedEv = (e) => !live && SEED_EVENT_IDS.has(e.id);
+  const isWork = (e) => !e.reqId && !seedEv(e) && (e.kind === "visit" || !!e.escort);
+  const evJob = (e, extra) => ({
+    id: `ev-cal-${e.id}${extra?.cancelled ? `-x${extra.cancelled.at || ""}` : ""}`,
+    off: daysUntil(kstYmd(e.at)),
+    kind: e.kind === "visit" ? "visit" : ["hospital", "nextAppt", "checkup"].includes(e.kind) ? "escort" : "daily",
+    client: live ? LIVE_ELDER : ELDER.name,
+    age: center ? null : ELDER.age,
+    time: hm(e.at),
+    where: "",
+    detail: e.title,
+    crew: e.note || "배차는 관제가 정합니다",
+    memo: e.source ? `공유 일정 · ${e.source}` : "공유 일정",
+    ...extra,
+  });
+  const evJobs = eventsFor(state.events, "concierge")
+    .filter(isWork)
+    .map((e) => evJob(e, e.changePending ? { changing: true } : null));
+  // 취소된 것도 그날 칸에 '취소'로 남긴다 — 말없이 사라지면 그날 나가게 된다. 확정됐던 일정의 취소 · 내가 맡았던 해주세요의 취소
+  const recent = (t) => Number(t) > Date.now() - 30 * 86400000;
+  const cancelJobs = [
+    ...(state.eventsRemoved || [])
+      .filter((e) => e.removed?.mode === "cancel" && recent(e.removed.at) && isWork(e))
+      .map((e) => evJob(e, { cancelled: { by: e.removed.by, reason: e.removed.reason, at: e.removed.at } })),
+    ...(state.requests || [])
+      .filter((r) => mineReq(r) && r.status === "cancelled")
+      .map((r) => {
+        const h = [...(r.history || [])].reverse().find((x) => x.status === "cancelled") || {};
+        return recent(h.at) ? { ...reqJob(r), id: `rq-cal-${r.id}-x`, cancelled: { by: h.by, reason: h.note, at: h.at } } : null;
+      })
+      .filter(Boolean),
+  ];
   const calMonthLabel = `${cNow.getFullYear()}년 ${cNow.getMonth() + 1}월`;
   const calCells = (() => {
     const first = new Date(cNow.getFullYear(), cNow.getMonth(), 1);
@@ -377,8 +421,9 @@ function ConciergePage() {
       cells.push({
         day: d,
         today: d === cNow.getDate(),
-        // 오늘에서 며칠 떨어진 날인지(off)로 맞춘다 — 달력과 '오늘의 일정'이 같은 기준(이 폰의 오늘)을 쓰게
-        jobs: [...(center ? [] : CONCIERGE_CAL).filter((j) => j.off === d - cNow.getDate()), ...reqJobs.filter((j) => j.off === d - cNow.getDate())],
+        // 오늘에서 며칠 떨어진 날인지(off)로 맞춘다 — 달력과 '오늘의 일정'이 같은 기준(이 폰의 오늘)을 쓰게.
+        // 나갈 일이 먼저, 취소된 것은 뒤에 (칸에는 첫 건만 보인다)
+        jobs: [...(center ? [] : CONCIERGE_CAL), ...reqJobs, ...evJobs, ...cancelJobs].filter((j) => j.off === d - cNow.getDate()),
       });
     }
     return cells;
@@ -470,7 +515,8 @@ function ConciergePage() {
     const note = meetMode ? v.memo || "" : escortSaved ? escort.note : live ? v.memo || "" : AI_REPORT.draft;
     dispatch({
       type: "addReport",
-      payload: { id: `rp-${Date.now()}`, by: ME, kind: reportKind, flagged: 0, note, secretNote: visitText(v, "inner"), shared: true, closesVisit: true },
+      // asks — 미팅 리포트 '부탁하신 것' 줄마다 부탁 1건 (자택 · 요양병원은 빈 목록 — '어르신께 남길 말'은 부탁이 아니다 · 2026-10-28 요청 1)
+      payload: { id: `rp-${Date.now()}`, by: ME, kind: reportKind, flagged: 0, note, secretNote: visitText(v, "inner"), shared: true, closesVisit: true, asks: meetMode ? askLines(visitText(v, "asked")) : [] },
     });
     // 가족에게 가는 것은 관제가 검수하고 '보호자 리포트 발송'을 누를 때다 — 동행 기록도 그때 같이 간다.
     // 전에는 이 버튼을 누르자마자 '가족에게 전달됨'이라고 했지만 실제로는 관제 검수 대기였다 (2026-10-02 QA)
@@ -706,7 +752,7 @@ function ConciergePage() {
                           <button
                             key={c.day}
                             onClick={() => setCalDay(c.day)}
-                            aria-label={`${c.day}일${c.jobs.length ? ` · 일정 ${c.jobs.length}건` : ""}`}
+                            aria-label={`${c.day}일${c.jobs.some((j) => !j.cancelled) ? ` · 일정 ${c.jobs.filter((j) => !j.cancelled).length}건` : ""}${c.jobs.some((j) => j.cancelled) ? ` · 취소 ${c.jobs.filter((j) => j.cancelled).length}건` : ""}`}
                             className="btn-press flex min-h-[46px] flex-col items-center justify-start gap-[2px] rounded-lg px-[2px] py-1"
                             style={{ background: c.jobs.length ? "rgba(176,141,87,.07)" : "transparent" }}
                           >
@@ -714,12 +760,12 @@ function ConciergePage() {
                               {c.day}
                             </span>
                             {/* 고객 이름 — 시트 요청 "고객 이름이 날짜별로 나오고".
-                                두 건 이상이면 첫 건 + 나머지 수 (칸이 좁다) */}
+                                두 건 이상이면 첫 건 + 나머지 수 (칸이 좁다). 취소된 건은 회색 · 가운데 줄 */}
                             {c.jobs.slice(0, 1).map((j) => (
                               <span
                                 key={j.id}
-                                className="w-full truncate rounded-[3px] px-[2px] text-[9px] font-bold leading-[1.3] text-white"
-                                style={{ background: CONCIERGE_JOB_KINDS[j.kind].color }}
+                                className={`w-full truncate rounded-[3px] px-[2px] text-[9px] font-bold leading-[1.3] text-white ${j.cancelled ? "line-through" : ""}`}
+                                style={{ background: j.cancelled ? CANCELLED_JOB.color : CONCIERGE_JOB_KINDS[j.kind].color }}
                               >
                                 {j.client}
                               </span>
@@ -1036,7 +1082,7 @@ function ConciergePage() {
             {tab === "client" && (
               <>
                 {!clientOpen ? (
-                  <ClientList clients={myClients} onOpen={openClient} />
+                  <ClientList clients={myClients} onOpen={openClient} counts={{ [myElder]: asksOf(state).filter(isOpenAsk).length }} />
                 ) : (
                   <>
                     <ClientHead
@@ -1060,6 +1106,17 @@ function ConciergePage() {
                         </div>
                       }
                     />
+                    {/* 어르신 부탁 — 미팅 리포트 '부탁하신 것' (2026-10-28 요청 1). 이 가구의 어르신 상세에만 (예시 고객에는 부탁 기록이 없다) */}
+                    {clientOpen.name === myElder && (
+                      <AsksCard
+                        asks={asksOf(state)}
+                        onResolve={(a, memo) => {
+                          dispatch({ type: "closeAsk", id: a.id, to: "resolved", by: ME, role: "concierge", memo });
+                          push("어르신", `${clientOpen.name} 님 부탁 해결 — ${a.text}${memo ? ` · ${memo}` : ""}`, "#8FA9CC");
+                          toast("해결로 저장했어요 · 어르신 홈에서도 빠져요");
+                        }}
+                      />
+                    )}
                     <PrefCard
                       prefs={center ? [] : ELDER_PREFS}
                       notes={state.prefNotes || []}
@@ -1074,7 +1131,7 @@ function ConciergePage() {
                         영양제 복용 시간대는 자료에 없어 가정값이다 — 미확정에 올려 첫 안심방문 때 약봉투로 확인한다 (lib/meds.js) */}
                     <BriefingCard
                       confirmed={AI_BRIEFING.confirmed}
-                      unconfirmed={[...AI_BRIEFING.unconfirmed, supplementSlotNote()].filter(Boolean)}
+                      unconfirmed={[...AI_BRIEFING.unconfirmed, supplementSlotNote(healthOf(state).supplements)].filter(Boolean)}
                       empty={center ? "AI 동행 브리핑은 방문 리포트 · 관찰 기록이 쌓이면 만들어집니다." : null}
                     />
                     {/* 건강 정보 — 복용약 · 질환 · 알레르기 (2026-10-02 QA "복용약 등록·수정 버튼 없음").
@@ -1089,8 +1146,8 @@ function ConciergePage() {
                           onCancel={() => setHealthEdit(false)}
                           onSave={(payload) => {
                             const by = live ? `${authUser?.name || ME} (컨시어지)` : "박지현 (컨시어지)";
-                            dispatch({ type: "setHealth", payload, by });
-                            push("건강", `건강 정보 수정 — 복용 ${payload.meds.length}번 · 질환 ${payload.conditions.length}가지 · ${by}`, "#8FA9CC");
+                            dispatch({ type: "setHealth", payload, by, role: "concierge" });
+                            push("건강", `건강 정보 수정 — 복용 ${payload.meds.length}번 · 건강식품 ${payload.supplements.length}가지 · 질환 ${payload.conditions.length}가지 · ${by}`, "#8FA9CC");
                             setHealthEdit(false);
                           }}
                         />
@@ -1275,13 +1332,21 @@ function ConciergePage() {
                       placeholder="진료과 (예: 정형외과)"
                       className="rounded-lg border border-navy/15 px-3 py-2.5 text-[13px] outline-none focus:border-gold"
                     />
+                    {/* 병원 — 관제 병원 관리의 제휴 병원 · 가족이 등록한 다니시던 병원을 고를 수 있고, 다른 병원은 그대로 적는다 (2026-10-28 요청 2) */}
                     <input
                       value={apptHosp}
                       onChange={(e) => setApptHosp(e.target.value)}
                       disabled={apptDone}
+                      list="appt-hosp-list"
+                      aria-label="병원"
                       placeholder="병원 (예: 분당서울대)"
                       className="rounded-lg border border-navy/15 px-3 py-2.5 text-[13px] outline-none focus:border-gold"
                     />
+                    <datalist id="appt-hosp-list">
+                      {[...new Set([...partnerHospitals(state).map((h) => h.name), ...(state.myHospitals || []).map((h) => h.name)].filter(Boolean))].map((n) => (
+                        <option key={n} value={n} />
+                      ))}
+                    </datalist>
                     <input
                       type="date"
                       value={apptDate}
@@ -2738,7 +2803,7 @@ function ConciergePage() {
               ) : (
                 <div className="space-y-2">
                   {calDayJobs.map((j) => {
-                    const k = CONCIERGE_JOB_KINDS[j.kind];
+                    const k = j.cancelled ? CANCELLED_JOB : CONCIERGE_JOB_KINDS[j.kind];
                     const open = calJob === j.id;
                     return (
                       <div key={j.id} className="rounded-xl border border-navy/[.07] bg-white/60">
@@ -2755,9 +2820,9 @@ function ConciergePage() {
                           </span>
                           <span className="min-w-0 flex-1">
                             <span className="block text-[15px] font-bold text-navy">
-                              {j.client} <span className="text-[12px] font-medium text-muted">({j.age})</span>
+                              {j.client}{j.age ? <span className="text-[12px] font-medium text-muted"> ({j.age})</span> : null}
                             </span>
-                            <span className="block font-num text-[12px] text-muted">{j.time} · {j.where}</span>
+                            <span className="block font-num text-[12px] text-muted">{[j.time, j.where].filter(Boolean).join(" · ")}</span>
                           </span>
                           <span
                             aria-hidden
@@ -2769,8 +2834,16 @@ function ConciergePage() {
                         </button>
                         {open && (
                           <div className="border-t border-navy/[.07] px-3 py-2.5 text-[13px] leading-[1.7] text-ink">
-                            <div>{j.detail}</div>
-                            <div className="mt-1 text-[12px] text-muted">배차 {j.crew}</div>
+                            <div className={j.cancelled ? "line-through decoration-navy/30" : ""}>{j.detail}</div>
+                            {j.cancelled && (
+                              <div className="mt-1 font-bold text-navy">
+                                취소됨 — {j.cancelled.by || "취소"}
+                                {j.cancelled.at ? ` · ${new Date(j.cancelled.at).getMonth() + 1}/${new Date(j.cancelled.at).getDate()} ${hm(j.cancelled.at)}` : ""}
+                                {j.cancelled.reason ? ` · ${j.cancelled.reason}` : ""} · 나가지 않습니다
+                              </div>
+                            )}
+                            {j.changing && <div className="mt-1 font-bold text-gold">변경 확인 중 — 관제가 바뀐 내용을 확인하고 있어요. 지금 보이는 것이 확정된 원래 일정입니다.</div>}
+                            {!j.cancelled && <div className="mt-1 text-[12px] text-muted">배차 {j.crew}</div>}
                             {j.memo && <div className="mt-1 text-[12px] text-muted">메모 · {j.memo}</div>}
                           </div>
                         )}

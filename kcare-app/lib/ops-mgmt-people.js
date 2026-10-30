@@ -5,6 +5,7 @@ import { ROSTERS } from "./rosters";
 import { SERVICE_MENU } from "./requests";
 import { VISITS, demoTel, ADMIN, OPERATOR } from "./ops-mgmt";
 import { pastHm } from "./reltime";
+import { certNearState } from "./ops-records";
 
 const past = (at, field, before, after, reason, who = OPERATOR) => ({ at, account: who.account, name: who.name, role: who.role, field, before, after, reason });
 const svc = (no) => SERVICE_MENU.find((s) => s.no === no);
@@ -85,7 +86,8 @@ function certsOf(text) {
   list.push({ name: "BLS 응급교육", until: /BLS 갱신 D-12/.test(text) ? "2026-10-04" : "2027-03-20", state: /BLS 갱신 D-12/.test(text) ? "갱신 D-12" : "유효" });
   return list;
 }
-export const certNear = (c) => /D-\d+/.test(c.state);
+// 만료 임박(D-n) · 이미 만료 — 숫자 카드 '자격 만료임박'과 자격상태 필터가 센다 (lib/ops-records.js certStateOf)
+export const certNear = (c) => certNearState(c.state);
 
 const C_EXTRA = {
   박지현: { vehicle: false, trainings: ["노인돌봄 기본교육 (2025-03)", "치매 케어 교육 (2025-11)", "낙상 예방 실습 (2026-04)"], sos: [{ no: "SOS-20260901-002", at: "09-01 03:20", role: "현장 파견 대기 → 정상 확인으로 취소" }, { no: "SOS-20260612-001", at: "06-12 19:05", role: "현장 도착 22분 · 보호자 인계" }], internal: "A · 보고서 반려 0건 · 후속조치 등록 정확", history: [past("2026-07-01 10:00", "담당 가능지역", "강남", "강남·서초", "서초 권역 인력 공백 보강 — 본인 동의", ADMIN)] },

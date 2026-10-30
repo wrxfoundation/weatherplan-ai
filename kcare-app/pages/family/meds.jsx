@@ -8,7 +8,7 @@ import { Card, Star, Tog, TONE } from "../../components/ds";
 import { useAppState } from "../../lib/state";
 import { useAuth } from "../../lib/auth";
 import { honorific, subjectLabel, trackOf } from "../../lib/tracks";
-import { MED_REGISTRY, MED_STREAK, healthOf, medTakenToday } from "../../lib/meds";
+import { MED_REGISTRY, MED_STREAK, daysLeft, healthOf, medTakenToday, missionPlan, needsReorder, remainNow } from "../../lib/meds";
 import { medMonth, medTally, pastWeek } from "../../lib/demo-health";
 
 // 보호자 홈 '복약' 칸 → 복약 미션 (2026-10-15 디자인 시안) — 지난 7일 · 오늘 미션 · 7일 표 / 30일 달력.
@@ -26,7 +26,8 @@ export default function MedsPage() {
   const subj = subjectLabel(trackOf(ob?.track), ob);
   const honor = honorific(ob);
   const health = healthOf(state);
-  const plan = health.meds;
+  // 복약 미션 — 처방약 때 + 같은 때의 건강식품 (어르신 화면과 같은 계획 · 2026-10-28 요청 5)
+  const plan = missionPlan(health);
   const taken = medTakenToday(state.elder); // 오늘 날짜의 체크만 (어제 것은 남아 있어도 오늘이 아니다)
   const [per, setPer] = useState(7);
 
@@ -116,7 +117,7 @@ export default function MedsPage() {
                       </span>
                       <span className="ds-k">
                         <b>{d.slot} {spoken(d.time)}</b>
-                        <small>{d.items.map((x) => x.name.replace(/\s*\([^)]*\)\s*$/, "")).join(" · ")}</small>
+                        <small>{[...d.items.map((x) => x.name.replace(/\s*\([^)]*\)\s*$/, "")), ...(d.supplements || []).map((x) => x.name)].join(" · ")}</small>
                       </span>
                       <span className="flex-none text-[14px] font-extrabold" style={{ color: done ? TONE.green.fg : waiting ? TONE.gold.fg : "#5E5670" }}>
                         {done ? "다 먹었어요" : waiting ? "기다리는 중" : "예정"}
@@ -125,6 +126,40 @@ export default function MedsPage() {
                   );
                 })}
               </div>
+            </div>
+
+            {/* 건강식품 — 컨시어지 · 관제가 등록한 것 (어르신 건강 › 건강식품과 같은 값 · 2026-10-28 요청 5) */}
+            <div className="ds-gcard ds-r" style={{ "--d": "100ms", background: TONE.purple.bg }}>
+              <h2 className="ds-lab m-0" style={{ color: TONE.purple.fg }}>
+                건강식품
+              </h2>
+              {health.supplements.length === 0 ? (
+                <p className="m-0 text-[15px] leading-[1.6]" style={{ color: "#5E5670" }}>
+                  등록된 건강식품이 없어요. 컨시어지가 방문 때 통을 보고 등록합니다.
+                </p>
+              ) : (
+                <div>
+                  {health.supplements.map((x) => {
+                    const alert = needsReorder(x);
+                    const left = daysLeft(x);
+                    return (
+                      <div key={x.id} className="ds-row">
+                        <span className="ds-k">
+                          <b>{x.name}</b>
+                          <small>
+                            {[`${x.slot} ${x.perDay}${x.unit}`, remainNow(x) != null ? `${remainNow(x)}${x.unit} 남음 · ${left}일치` : null, x.expiry ? `유통기한 ${x.expiry}` : null].filter(Boolean).join(" · ")}
+                          </small>
+                        </span>
+                        {alert && (
+                          <span className="flex-none text-[14px] font-extrabold" style={{ color: TONE.gold.fg }}>
+                            {alert}
+                          </span>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
             </div>
 
             {!live && (

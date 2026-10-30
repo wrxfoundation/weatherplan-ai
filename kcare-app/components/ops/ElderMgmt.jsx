@@ -1,19 +1,23 @@
 // 어르신 관리 — 명부(검색·필터·엑셀) + 신규 등록 + 상세 14탭 + 사유 필수 수정이력 (요청서 7절).
 // 서비스 시작·일시중지·종료 · 담당 변경 · 보호자 연결은 Confirm 을 거치고 이력을 남긴다.
+// 담당 컨시어지 변경은 가구 기록(state.elderStaff)에 남는다 — 컨시어지 관리 담당고객 [추가 · 해제]와 같은 확인 창 ·
+// 같은 칸이라 두 화면이 같은 값을 보고, 새로고침해도 그대로다 (2026-10-28 요청 3)
 import { useState } from "react";
 import { useAppState } from "../../lib/state";
 import { useAuth } from "../../lib/auth";
 import { LIVE_CONCIERGE, LIVE_TAG, liveElder } from "../../lib/live-household";
 import { centerNow } from "../../lib/people-store";
 import { people } from "../../lib/people";
-import { Panel, Stat, Pill, SevPill, FeedPill, Avatar, Btn, Tabs, Table, Field, Toggle, Drawer, Confirm, Note } from "./ui";
+import { Panel, Stat, Pill, SevPill, FeedPill, Avatar, Btn, Tabs, Table, Field, Toggle, Drawer, Confirm, Note, useOperator } from "./ui";
 import Icon from "../icons";
 import { ROSTERS } from "../../lib/rosters";
 import { ELDER_TABS, SERVICE_STATE, elderDetail, feedOf, sevOf, logEntry, TODAY, demoTel } from "../../lib/ops-mgmt";
 import { GUARDIANS } from "../../lib/ops-mgmt-people";
 import { LIVE_ELDER, TOTAL_ELDERS, getCustomer } from "../../lib/ops-health";
-import ElderTabs from "./mgmt/ElderTabs";
+import ElderTabs, { elderHistory } from "./mgmt/ElderTabs";
 import { EditDrawer } from "./mgmt/EditLog";
+import { StaffChange } from "./mgmt/StaffEdit";
+import { NO_STAFF, VIEW_ONLY_NOTE, canEditPeople, staffKeyOf, withStaff } from "../../lib/ops-records";
 
 const ALL_BRANCH = "전체 지점";
 const ALL_LOC = "전체 거주";
@@ -62,10 +66,17 @@ const EMPTY_FORM = { name: "", sex: "여", born: "1948", loc: "자택", dong: ""
 export default function ElderMgmt() {
   const [elders, setElders] = useState(() => ROSTERS.elders.rows.map(build));
   // 테스트 계정으로 들어왔으면 김순자 줄에 테스트 가구 1 의 실제 값(가입 상담 · 해주세요 · SOS)을 덮는다
-  const appState = useAppState()?.state;
-  const liveOn = !!useAuth().user?.household;
+  const app = useAppState();
+  const appState = app?.state;
+  const user = useAuth().user;
+  const liveOn = !!user?.household;
+  const canEdit = canEditPeople(user);
+  const operator = useOperator();
   const center = centerNow();
-  const shown = center ? [liveElder(centerElder(appState?.onboarding), appState)] : liveOn ? elders.map((e) => liveElder(e, appState)) : elders;
+  // 담당 주 · 부는 가구 기록(state.elderStaff)의 값 — 컨시어지 관리 담당고객과 같은 칸
+  const shown = (center ? [liveElder(centerElder(appState?.onboarding), appState)] : liveOn ? elders.map((e) => liveElder(e, appState)) : elders).map((e) => withStaff(e, appState));
+  const [staffDlg, setStaffDlg] = useState(false);
+  const staffChoices = center ? people().concierges : STAFF;
   const [sel, setSel] = useState(LIVE_ELDER);
   const [tab, setTab] = useState("기본정보");
   const [q, setQ] = useState("");
@@ -162,15 +173,20 @@ export default function ElderMgmt() {
   const runConfirm = () => {
     const c = confirm;
     if (!c.reason?.trim()) return setConfirm({ ...c, err: true });
-    // 주 · 부 담당이 같으면 실행하지 않는다 — 한 사람이 두 자리를 맡으면 2인 1조가 깨진다 (단독 배차 0 · 2026-10-18)
-    if (c.type === "concierge" && c.pri === c.sub) return;
     if (c.type === "service") update(cur.name, (e) => log({ ...e, service: { ...e.service, state: c.to } }, "서비스 상태", SERVICE_STATE[e.service.state].label, SERVICE_STATE[c.to].label, c.reason));
-    if (c.type === "concierge") update(cur.name, (e) => log({ ...e, pri: c.pri, sub: c.sub }, "담당 컨시어지", `${e.pri} · ${e.sub}`, `${c.pri} · ${c.sub}`, c.reason));
     if (c.type === "guardian") update(cur.name, (e) => log({ ...e, guardians: [...e.guardians, { name: c.name.trim(), rel: c.rel, role: `${c.role} 보호자`, region: "—", tel: "연락처 등록 필요", consent: consentAll }] }, "보호자 연결", e.guardians.map((g) => g.name).join(" · ") || "—", [...e.guardians.map((g) => g.name), c.name.trim()].join(" · "), c.reason));
     setConfirm(null);
     setMsg("확인 절차를 거쳐 실행 · 이력 저장");
   };
-  const ctitle = confirm ? { service: `서비스를 ${SERVICE_STATE[confirm.to]?.label} 상태로 바꿉니다`, concierge: "담당 컨시어지를 변경합니다", guardian: "보호자를 연결합니다" }[confirm.type] : "";
+  const ctitle = confirm ? { service: `서비스를 ${SERVICE_STATE[confirm.to]?.label} 상태로 바꿉니다`, guardian: "보호자를 연결합니다" }[confirm.type] : "";
+  // 담당 컨시어지 변경 — 가구 기록에 남기고 어르신 · 바뀐 컨시어지 수정이력에 한 줄씩 (lib/state.js setElderStaff).
+  // 주 · 부 담당이 같으면 실행하지 않는다 — 한 사람이 두 자리를 맡으면 2인 1조가 깨진다 (단독 배차 0 · 2026-10-18)
+  const saveStaff = ({ e, pri, sub, reason }) => {
+    app.dispatch({ type: "setElderStaff", key: staffKeyOf(e), elder: e.name, pri, sub, prev: { pri: e.pri, sub: e.sub }, reason, by: operator.includes("관제") ? operator : `${operator} (관제)`, role: "ops" });
+    setStaffDlg(false);
+    setMsg(`${e.name} 님 담당 컨시어지 변경 — 주 ${pri} · 부 ${sub} · 수정이력 저장`);
+  };
+  const staffBtn = canEdit ? <Btn small ghost onClick={() => setStaffDlg(true)}>담당 컨시어지 변경</Btn> : null;
 
   return (
     <div className="space-y-4">
@@ -238,13 +254,22 @@ export default function ElderMgmt() {
                 <div className="mt-0.5 text-[12px] text-muted">{cur.branch} · {cur.addr} · 담당 {cur.pri} · {cur.sub} · 등록 <span className="font-num">{cur.regDate}</span></div>
               </div>
             </div>
-            {/* 테스트 가구 줄은 보호자 가입 상담 · 앱 기록에서 온 값이라 여기서 고치면 화면과 수정이력이 어긋난다 (2026-10-02 코드 점검) */}
+            {/* 테스트 가구 줄은 보호자 가입 상담 · 앱 기록에서 온 값이라 여기서 고치면 화면과 수정이력이 어긋난다 (2026-10-02 코드 점검).
+                담당 컨시어지는 관제가 정하는 값이라 센터 공간에서는 여기서 바꾼다 — 새 해주세요가 바뀐 주 담당에게 간다 (2026-10-28 요청 3) */}
             {cur.live ? (
-              <div className="mt-3"><Note>테스트 가구 값은 보호자 앱 가입 상담 · 마이에서 바뀝니다 — 관제에서는 고치지 않습니다.</Note></div>
+              <div className="mt-3 space-y-2">
+                {center && (
+                  <div className="flex flex-wrap items-center gap-2">
+                    {staffBtn || <span className="text-[11px] text-muted">{VIEW_ONLY_NOTE}</span>}
+                    <span className="text-[11px] text-muted">주 담당이 새 해주세요 · 제안의 담당이 됩니다.</span>
+                  </div>
+                )}
+                <Note>{center ? "그 밖의 값" : "테스트 가구 값"}은 보호자 앱 가입 상담 · 마이에서 바뀝니다 — 관제에서는 고치지 않습니다.{center ? "" : " 담당 컨시어지는 테스트 컨시어지 계정(test-concierge) 하나로 고정입니다."}</Note>
+              </div>
             ) : (
             <div className="mt-3 flex flex-wrap gap-2">
               <Btn small onClick={() => setEdit(true)}>정보 수정</Btn>
-              <Btn small ghost onClick={() => setConfirm({ type: "concierge", pri: cur.pri, sub: cur.sub === "—" ? STAFF[0] : cur.sub, reason: "" })}>담당 컨시어지 변경</Btn>
+              {staffBtn}
               <Btn small ghost onClick={() => setConfirm({ type: "guardian", name: "", rel: "아들", role: "부", reason: "" })}>보호자 연결</Btn>
               <span className="ml-auto flex gap-2">
                 {cur.service.state !== "active" && <Btn small ghost tone="ok" onClick={() => setConfirm({ type: "service", to: "active", reason: "" })}>서비스 시작</Btn>}
@@ -253,7 +278,7 @@ export default function ElderMgmt() {
               </span>
             </div>
             )}
-            <Tabs className="mt-3" tabs={ELDER_TABS.map((t) => [t, t, t === "수정이력" ? cur.history.length : undefined])} value={tab} onChange={setTab} />
+            <Tabs className="mt-3" tabs={ELDER_TABS.map((t) => [t, t, t === "수정이력" ? elderHistory(appState, cur).length : undefined])} value={tab} onChange={setTab} />
             <div className="mt-3"><ElderTabs e={cur} tab={tab} onChange={(fn) => update(cur.name, fn)} /></div>
           </Panel>
         )}
@@ -263,16 +288,22 @@ export default function ElderMgmt() {
 
       {edit && cur && <EditDrawer title={`${cur.name} 님 정보 수정`} sub="수정 사유 필수 · 이전 값은 이력으로 보존" fields={editFields} onClose={() => setEdit(false)} onSave={onEdit} />}
 
+      {staffDlg && cur && (
+        <StaffChange
+          key={cur.name}
+          title="담당 컨시어지를 변경합니다"
+          elders={[cur]}
+          start={(e) => ({ pri: e.pri, sub: e.sub || NO_STAFF })}
+          choices={staffChoices}
+          onCancel={() => setStaffDlg(false)}
+          onSave={saveStaff}
+        />
+      )}
+
       <Confirm open={Boolean(confirm)} title={ctitle} onCancel={() => setConfirm(null)} onConfirm={runConfirm} confirmLabel="확인 · 실행" tone={confirm?.type === "service" && confirm.to === "ended" ? "warn" : "navy"}>
         {confirm && (
           <div className="mt-3 space-y-2">
             {confirm.type === "service" && <p className="text-[13px] text-ink">{cur.name} 님 · 현재 {SERVICE_STATE[cur.service.state].label}{confirm.to === "ended" ? " — 종료 후에는 방문·알림·보고서가 모두 멈춥니다. 되돌리려면 서비스 시작을 다시 실행해야 합니다." : ""}</p>}
-            {confirm.type === "concierge" && (
-              <div className="grid gap-2 sm:grid-cols-2">
-                <Field id="cf-pri" label="주 담당" value={confirm.pri} onChange={setC("pri")} options={STAFF} />
-                <Field id="cf-sub" label="부 담당" value={confirm.sub} onChange={setC("sub")} options={STAFF} hint={confirm.pri === confirm.sub ? "주·부가 같을 수 없습니다 — 다른 사람을 고르기 전에는 실행되지 않습니다" : undefined} />
-              </div>
-            )}
             {confirm.type === "guardian" && (
               <div className="grid gap-2 sm:grid-cols-3">
                 <Field id="cf-gname" label="보호자 이름" value={confirm.name} onChange={setC("name")} required />

@@ -104,7 +104,26 @@ onPeople((p) => {
   LIVE_ELDER = p.elder;
 });
 // health — 가구 상태의 state.health (관제 · 컨시어지가 고친 복용약 · 질환 · 알레르기). 김순자 님에게만 얹는다.
-export function liveCustomer(name, onboarding, health) {
+// guardianInfo — 관제 보호자 관리 [편집]으로 저장한 보호자 기본정보(state.guardianInfo · 2026-10-28 요청 4). 주면 연락처 · 거주 · 시차 · 역할을 그 값으로
+export function liveCustomer(name, onboarding, health, guardianInfo) {
+  const c = liveCustomerBase(name, onboarding, health);
+  if (!guardianInfo || typeof guardianInfo !== "object" || !Array.isArray(c.guardians)) return c;
+  return {
+    ...c,
+    guardians: c.guardians.map((g) => {
+      const p = guardianInfo[g.name];
+      if (!p) return g;
+      return {
+        ...g,
+        ...(p.tel ? { phone: p.tel, phoneSource: "관제 등록" } : {}),
+        ...(p.city ? { place: p.city } : {}),
+        ...("tz" in p ? { tz: p.tz ?? 0 } : {}),
+        ...(p.role && g.role !== "주" ? { role: p.role } : {}),
+      };
+    }),
+  };
+}
+function liveCustomerBase(name, onboarding, health) {
   const c0 = getCustomer(name);
   if (name !== LIVE_ELDER) return c0;
   const h = healthOf({ health });

@@ -1,33 +1,34 @@
-// 병원 관리 — 요청서 §15. 기본 명부(lib/mock MOU_HOSPITALS)를 §15 필드로 넓히고, 등록·수정·삭제를 연다.
-// 편집 결과는 localStorage(kcare-ops-hospitals-v1)에 남기고, 수정은 덮어쓰지 않고 변경 이력을 쌓는다.
-// 실제 주소·전화는 지어내지 않는다 — 공개 대표정보를 확인한 곳만 적고 나머지는 "확인 중".
-import { scopedKey } from "../../lib/scope";
+// 병원 관리 — 요청서 §15. 기본 명부(lib/hospitals.js HOSPITALS_SEED)를 §15 필드로 넓히고, 등록·수정·삭제를 연다.
+// 명부는 가구 기록 한 곳(state.hospitals)에 둔다 — 보호자 예약 › 제휴 병원 · 어르신 해주세요 · 컨시어지 진료 예약이 같은 목록에서
+// '제휴'만 읽어 새로고침 없이 같이 바뀐다 (2026-10-28 요청 2 · 전에는 이 기기에만 저장돼 다른 화면이 몰랐다).
+// 수정은 덮어쓰지 않고 변경 이력을 쌓는다. 실제 주소·전화는 지어내지 않는다 — 공개 대표정보를 확인한 곳만 적고 나머지는 "확인 중".
 import { centerNow } from "../../lib/people-store";
 import { LIVE_ELDER } from "../../lib/ops-health";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import Icon from "../icons";
 import { Panel, PanelHead, Stat, Pill, Btn, Tabs, Table, KV, Field, Drawer, Confirm, Note, Empty, Stamp, useOperator } from "./ui";
 import { ELDERS, ELDER_NAMES, TODAY, elderOf, fmtDT } from "../../lib/ops-admin";
-import { HOSPITALS_SEED, HOSPITALS_STORAGE_KEY, HOSPITAL_FIELDS, HOSPITAL_NOTICE, NEAREST_ER } from "../../lib/ops-admin-sys";
+import { HOSPITAL_FIELDS, HOSPITAL_NOTICE, NEAREST_ER } from "../../lib/ops-admin-sys";
+import { hospitalsOf } from "../../lib/hospitals";
+import { useAppState } from "../../lib/state";
 
 const ER_OPTIONS = ["운영", "미운영", "확인 중"];
 const BOOKING_OPTIONS = ["—", "대기", "예약 진행 중", "예약 확정"];
 const CHECK_KEYS = ["address", "phone", "hours", "travel", "parking", "wheelchair", "reception", "guardianNeeded"];
 const pendingCount = (h) => CHECK_KEYS.filter((k) => String(h[k]).startsWith("확인 중")).length + (h.er === "확인 중" ? 1 : 0);
 
-const blank = () => ({ name: "", dept: "", partner: "제휴", er: "확인 중", address: "확인 중", phone: "확인 중", hours: "확인 중", travel: "확인 중", parking: "확인 중", wheelchair: "확인 중", reception: "확인 중", guardianNeeded: "확인 중", caution: "", bookingStatus: "—", bookingNext: "", mainFor: [] });
-const toForm = (h) => ({ ...blank(), ...h, partner: h.partner ? "제휴" : "비제휴", bookingStatus: h.booking?.status || "—", bookingNext: h.booking?.next || "", mainFor: [...(h.mainFor || [])] });
-
-const centerSeed = () =>
-  HOSPITALS_SEED.filter((h) => h.partner).map((h) => ({ ...h, mainFor: [], booking: { status: "—", next: "" }, escorts: [], travel: "확인 중" }));
+const blank = () => ({ name: "", dept: "", partner: "제휴", fast: "아니오", slots: "", er: "확인 중", address: "확인 중", phone: "확인 중", hours: "확인 중", travel: "확인 중", parking: "확인 중", wheelchair: "확인 중", reception: "확인 중", guardianNeeded: "확인 중", caution: "", bookingStatus: "—", bookingNext: "", mainFor: [] });
+const toForm = (h) => ({ ...blank(), ...h, partner: h.partner ? "제휴" : "비제휴", fast: h.fast ? "가능" : "아니오", slots: h.slots || "", bookingStatus: h.booking?.status || "—", bookingNext: h.booking?.next || "", mainFor: [...(h.mainFor || [])] });
 
 export default function HospitalsMgmt() {
   const OPERATOR = useOperator();
-  // 관제 센터 공간 — 제휴 병원 명부만. 예시 고객의 주 이용 병원 · 예약 · 동행 이력 · 자택 이동시간은 붙이지 않는다 (2026-10-06 누수 점검)
-  const [list, setList] = useState(() => (centerNow() ? centerSeed() : HOSPITALS_SEED));
-  const [removed, setRemoved] = useState([]);
-  const [loaded, setLoaded] = useState(false);
-  const [selId, setSelId] = useState(HOSPITALS_SEED[0]?.id || null);
+  const { state, dispatch } = useAppState();
+  // 관제 센터 공간 — 기본 명부는 제휴 병원만, 예시 고객의 주 이용 병원 · 예약 · 동행 이력 · 이동시간 없이 (lib/hospitals.js seedHospitals)
+  const list = hospitalsOf(state);
+  const removed = state.hospitalsRemoved || [];
+  // 아직 아무도 고치지 않은 가구 — 처음 저장할 때 지금 보이는 기본 명부를 같이 보낸다 (lib/state.js saveHospital)
+  const base = Array.isArray(state.hospitals) ? undefined : list;
+  const [selId, setSelId] = useState(() => list[0]?.id || null);
   const [tab, setTab] = useState("basic");
   const [q, setQ] = useState("");
   const [dept, setDept] = useState("전체");
@@ -37,25 +38,6 @@ export default function HospitalsMgmt() {
   const [form, setForm] = useState(null); // { mode: 'add'|'edit', id?, values }
   const [del, setDel] = useState(null);
   const [sosElder, setSosElder] = useState(() => (centerNow() ? LIVE_ELDER : "김순자"));
-
-  useEffect(() => {
-    try {
-      const saved = JSON.parse(localStorage.getItem(scopedKey(HOSPITALS_STORAGE_KEY)) || "null");
-      if (saved && Array.isArray(saved.hospitals) && saved.hospitals.length) setList(saved.hospitals);
-      if (saved && Array.isArray(saved.removed)) setRemoved(saved.removed);
-    } catch (_) {
-      /* 손상된 저장값은 무시 */
-    }
-    setLoaded(true);
-  }, []);
-  useEffect(() => {
-    if (!loaded) return;
-    try {
-      localStorage.setItem(scopedKey(HOSPITALS_STORAGE_KEY), JSON.stringify({ hospitals: list, removed }));
-    } catch (_) {
-      /* 저장 실패는 데모 동작에 영향 없음 */
-    }
-  }, [list, removed, loaded]);
 
   const depts = useMemo(() => ["전체", ...Array.from(new Set(list.map((h) => h.dept)))], [list]);
   const stats = useMemo(() => ({
@@ -80,37 +62,38 @@ export default function HospitalsMgmt() {
 
   const cur = list.find((h) => h.id === selId) || rows[0] || list[0] || null;
 
-  // 저장 — 수정은 필드별 전·후를 이력으로 남긴다
+  // 저장 — 수정은 필드별 전·후를 이력으로 남긴다. 가구 기록에 넣으면 보호자 · 어르신 · 컨시어지 화면이 같이 바뀐다
   const save = () => {
     const v = form.values;
     if (!v.name.trim() || !v.dept.trim()) return;
-    const next = { ...v, name: v.name.trim(), dept: v.dept.trim(), partner: v.partner === "제휴", booking: { status: v.bookingStatus, next: v.bookingNext }, fast: !!v.fast, escorts: v.escorts || [], verified: v.verified || "관제 입력 · 확인 중" };
+    const next = { ...v, name: v.name.trim(), dept: v.dept.trim(), partner: v.partner === "제휴", booking: { status: v.bookingStatus, next: v.bookingNext }, fast: v.fast === "가능", escorts: v.escorts || [], verified: v.verified || "관제 입력 · 확인 중" };
     delete next.bookingStatus;
     delete next.bookingNext;
     if (form.mode === "add") {
       const id = `h${Date.now()}`;
-      setList((p) => [...p, { ...next, id, changes: [{ at: Date.now(), by: OPERATOR, field: "등록", before: "—", after: next.name }] }]);
+      dispatch({ type: "saveHospital", hospital: { ...next, id, changes: [{ at: Date.now(), by: OPERATOR, field: "등록", before: "—", after: next.name }] }, base, by: OPERATOR });
       setSelId(id);
     } else {
-      setList((p) => p.map((h) => {
-        if (h.id !== form.id) return h;
+      const h = list.find((x) => x.id === form.id);
+      if (h) {
         const labels = Object.fromEntries(HOSPITAL_FIELDS.map(([k, l]) => [k, l]));
         const diffs = [];
         Object.keys(labels).forEach((k) => { if (String(h[k] ?? "") !== String(next[k] ?? "")) diffs.push({ at: Date.now(), by: OPERATOR, field: labels[k], before: h[k] || "—", after: next[k] || "—" }); });
         if (h.partner !== next.partner) diffs.push({ at: Date.now(), by: OPERATOR, field: "제휴 여부", before: h.partner ? "제휴" : "비제휴", after: next.partner ? "제휴" : "비제휴" });
+        if (!!h.fast !== next.fast) diffs.push({ at: Date.now(), by: OPERATOR, field: "빠른 예약", before: h.fast ? "가능" : "아니오", after: next.fast ? "가능" : "아니오" });
+        if ((h.slots || "") !== (next.slots || "")) diffs.push({ at: Date.now(), by: OPERATOR, field: "가용 슬롯", before: h.slots || "—", after: next.slots || "—" });
         if (h.er !== next.er) diffs.push({ at: Date.now(), by: OPERATOR, field: "응급실 운영", before: h.er, after: next.er });
         if (h.mainFor.join() !== next.mainFor.join()) diffs.push({ at: Date.now(), by: OPERATOR, field: "주 이용 고객", before: h.mainFor.join(", ") || "—", after: next.mainFor.join(", ") || "—" });
         if ((h.booking?.status || "—") !== next.booking.status || (h.booking?.next || "") !== next.booking.next) diffs.push({ at: Date.now(), by: OPERATOR, field: "예약정보", before: `${h.booking?.status || "—"} ${h.booking?.next || ""}`.trim(), after: `${next.booking.status} ${next.booking.next}`.trim() });
-        return { ...h, ...next, changes: [...(h.changes || []), ...diffs] };
-      }));
+        dispatch({ type: "saveHospital", hospital: { ...h, ...next, changes: [...(h.changes || []), ...diffs] }, base, by: OPERATOR });
+      }
     }
     setForm(null);
   };
   const remove = () => {
     const h = list.find((x) => x.id === del);
     if (h) {
-      setRemoved((p) => [...p, { at: Date.now(), by: OPERATOR, name: h.name, dept: h.dept }]);
-      setList((p) => p.filter((x) => x.id !== del));
+      dispatch({ type: "removeHospital", id: h.id, name: h.name, base, by: OPERATOR });
       if (selId === del) setSelId(null);
     }
     setDel(null);
@@ -188,6 +171,7 @@ export default function HospitalsMgmt() {
                 <KV k="진료시간" v={cur.hours} />
                 <KV k="응급실 운영" v={<Pill tone={cur.er === "운영" ? "ok" : cur.er === "미운영" ? "muted" : "warn"}>{cur.er}</Pill>} />
                 <KV k="제휴 여부" v={cur.partner ? `제휴${cur.fast ? " · 빠른 예약 가능" : ""}` : "비제휴 — 고객이 다니는 병원으로 등록"} />
+                <KV k="가용 슬롯" v={cur.slots || "—"} />
                 <KV k="주 이용 고객" v={cur.mainFor.length ? cur.mainFor.map((n) => `${n}${elderOf(n) ? ` (${elderOf(n).district})` : ""}`).join(" · ") : "—"} />
               </div>
             )}
@@ -262,6 +246,9 @@ export default function HospitalsMgmt() {
               </div>
             ))}
             <Field id="hp-f-partner" label="제휴 여부" value={form.values.partner} options={["제휴", "비제휴"]} onChange={(v) => setForm((f) => ({ ...f, values: { ...f.values, partner: v } }))} />
+            {/* 보호자 예약 › 제휴 병원에 보이는 값 — 빠른 예약 표시 · 가용 슬롯 (2026-10-28 요청 2) */}
+            <Field id="hp-f-fast" label="빠른 예약" value={form.values.fast} options={["가능", "아니오"]} onChange={(v) => setForm((f) => ({ ...f, values: { ...f.values, fast: v } }))} />
+            <Field id="hp-f-slots" label="가용 슬롯 (보호자 화면에 보임)" value={form.values.slots} onChange={(v) => setForm((f) => ({ ...f, values: { ...f.values, slots: v } }))} placeholder="예: 내일 오전 2 · 비우면 안 보임" />
             <Field id="hp-f-er" label="응급실 운영 여부" value={form.values.er} options={ER_OPTIONS} onChange={(v) => setForm((f) => ({ ...f, values: { ...f.values, er: v } }))} />
             <Field id="hp-f-bstatus" label="예약 상태" value={form.values.bookingStatus} options={BOOKING_OPTIONS} onChange={(v) => setForm((f) => ({ ...f, values: { ...f.values, bookingStatus: v } }))} />
             <Field id="hp-f-bnext" label="다음 예약" value={form.values.bookingNext} onChange={(v) => setForm((f) => ({ ...f, values: { ...f.values, bookingNext: v } }))} placeholder="예: 2026-10-02 10:30 내과" />

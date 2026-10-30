@@ -97,7 +97,7 @@ function StepNotes({ inc, stepKey, api, ro, by }) {
 export default function IncidentDetail({ inc, now, api, role, onClosePopup }) {
   const appState = useAppState()?.state;
   const ob = appState?.onboarding;
-  const c = liveCustomer(inc.customer, ob, appState?.health);
+  const c = liveCustomer(inc.customer, ob, appState?.health, appState?.guardianInfo);
   const h = liveHealth(inc.customer, ob, !!useAuth().user?.household);
   const [infoOpen, setInfoOpen] = useState(true);
   const [resolveAt, setResolveAt] = useState(null); // 해결 완료 패널 — 단계 키 (어느 단계에서든 종료)

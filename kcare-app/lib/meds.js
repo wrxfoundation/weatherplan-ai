@@ -9,6 +9,8 @@
 // 컨시어지가 약봉투와 건기식 통을 보고 등록한다. 그래서 registeredBy 를 남긴다.
 // 어르신 화면은 체크만 한다.
 
+import { centerNow } from "./people-store";
+
 // 매일 복용 — slot(때)마다 여러 알약. 어르신 화면의 진행바가 이 배열을 센다.
 //
 // elderLabel — 어르신 화면에 보이는 이름 (2026-09-04 시트 오늘 3번 · 건강 2번 "약 성분
@@ -98,9 +100,9 @@ export const SUPPLEMENTS = [
 ];
 
 // 시간대가 아직 가정값인 영양제 — 컨시어지 브리핑 '미확정' 칸 한 줄로 만든다.
-// 전부 확인되면 null 을 돌려주고 브리핑에서 사라진다.
-export function supplementSlotNote() {
-  const open = SUPPLEMENTS.filter((s) => !s.slotConfirmed);
+// 전부 확인되면 null 을 돌려주고 브리핑에서 사라진다. 컨시어지 · 관제가 등록한 건강식품은 확인된 값이다
+export function supplementSlotNote(sups = SUPPLEMENTS) {
+  const open = sups.filter((s) => !s.slotConfirmed);
   if (!open.length) return null;
   const list = open.map((s) => `${s.name.split(" ")[0]} ${s.slot}`).join(" · ");
   return `영양제 복용 시간대 (${list}) — 자료에 없어 가정값 · ${SUPPLEMENT_SLOT_RULE}`;
@@ -128,15 +130,26 @@ export const MED_STREAK = {
   ],
 };
 
-// 며칠 남았는지 — 하루 복용량으로 나눈다
+// 지금 남은 양 — 등록 때 적은 양(remain)에서 그날부터 하루 복용량만큼 뺀 어림값 (remainAt 이 없으면 적은 그대로).
+// 남은 양을 적지 않았으면 null — '용량 부족'을 지어서 알리지 않는다 (2026-10-28 요청 5)
+export function remainNow(s, now = Date.now()) {
+  if (!Number.isFinite(s?.remain)) return null;
+  if (!Number.isFinite(s.remainAt)) return s.remain;
+  const days = Math.max(0, Math.floor((Number(now) - s.remainAt) / 86400000));
+  return Math.max(0, s.remain - days * Math.max(1, s.perDay || 1));
+}
+
+// 며칠 남았는지 — 하루 복용량으로 나눈다 (남은 양을 모르면 null)
 export function daysLeft(s) {
-  return Math.floor(s.remain / Math.max(1, s.perDay));
+  const r = remainNow(s);
+  return r == null ? null : Math.floor(r / Math.max(1, s.perDay || 1));
 }
 
 // 재구매를 알릴 때인가 — 2주(14일) 미만이면 알린다.
 // 유통기한이 6개월 안으로 들어와도 알린다 (남았어도 못 드시게 된다).
 export function needsReorder(s, now = new Date()) {
-  if (daysLeft(s) < 14) return "용량 부족";
+  const left = daysLeft(s);
+  if (left != null && left < 14) return "용량 부족";
   const [y, m] = (s.expiry || "").split("-").map(Number);
   if (!y || !m) return null;
   const months = (y - now.getFullYear()) * 12 + (m - 1 - now.getMonth());
@@ -187,6 +200,8 @@ export function medProgress(taken = {}, plan = MED_PLAN) {
 // state.health 가 없으면(아직 아무도 고치지 않았으면) 아래 기본값 — 복약 계획(MED_PLAN)과 같은 출처다.
 // 질환은 복용약과 맞췄다: 혈압약 → 고혈압 · 당뇨약 → 당뇨 · 콜레스테롤약 → 고지혈증 (심부전은 관제 기록).
 export const MED_SLOTS = ["아침", "점심", "저녁", "자기 전"];
+// 때마다 기본 시각 — 편집기에서 새 때를 더할 때 · 건강식품만 있는 때의 복약 미션 시각
+export const SLOT_TIME = { 아침: "08:00", 점심: "12:30", 저녁: "19:00", "자기 전": "21:30" };
 export const DEFAULT_HEALTH = {
   conditions: ["심부전", "고혈압", "당뇨", "고지혈증"],
   allergies: [], // 없음 — 화면은 '등록 없음'으로 쓴다 (문장을 값으로 두면 편집기에서 알레르기로 저장된다)
@@ -210,21 +225,75 @@ function cleanSlot(d) {
 }
 export const sortSlots = (plan) => [...plan].sort((a, b) => slotHour(a.time) - slotHour(b.time));
 
+// ── 건강식품 (2026-10-28 업데이트 요청 5 · 6) ──
+// 컨시어지(고객 상세 › 복용약 · 질환 수정)와 관제(어르신 관리 › 건강·질환)가 같은 칸(state.health.supplements)을 고친다.
+// 어르신 건강 › 건강식품 · 보호자 복약 미션 · 어르신 복약 미션(같은 때의 약과 한 번에)이 이 값을 읽는다.
+// 전에는 예시 목록(SUPPLEMENTS)만 있고 고칠 곳이 없었다 — 관제 센터 공간에는 아예 비어 있었다.
+//   { id, name, slot(때), perDay(하루 몇 개), unit, remain?(등록 때 남은 양), remainAt?, expiry?(YYYY-MM) }
+export const SUPP_UNITS = ["정", "캡슐", "포", "ml"];
+const intIn = (v, lo, hi) => {
+  const n = Math.round(Number(v));
+  return Number.isFinite(n) && n >= lo && n <= hi ? n : null;
+};
+function cleanSupplement(s) {
+  if (!s || typeof s !== "object") return null;
+  const name = String(s.name || "").trim().slice(0, 40);
+  const slot = MED_SLOTS.includes(s.slot) ? s.slot : null;
+  if (!name || !slot) return null;
+  const remain = s.remain === "" || s.remain == null ? null : intIn(s.remain, 0, 9999);
+  const expiry = /^\d{4}-(0[1-9]|1[0-2])$/.test(String(s.expiry || "")) ? String(s.expiry) : null;
+  return {
+    id: String(s.id || "").slice(0, 40) || `sp-${name}`,
+    name,
+    slot,
+    perDay: intIn(s.perDay, 1, 10) || 1,
+    unit: SUPP_UNITS.includes(s.unit) ? s.unit : "정",
+    ...(remain != null ? { remain, remainAt: Number.isFinite(s.remainAt) ? s.remainAt : null } : {}),
+    ...(expiry ? { expiry } : {}),
+    // 컨시어지 · 관제가 통을 보고 등록한 값 — 영양제 시간대 '가정값'(slotConfirmed:false)이 아니다
+    slotConfirmed: s.slotConfirmed !== false,
+  };
+}
+export { cleanSupplement };
+// 아직 아무도 등록하지 않았을 때 — 데모 · 테스트 가구는 예시 목록, 관제 센터 공간은 빈 목록 (예시를 실제처럼 보이지 않는다)
+const defaultSupplements = () => (centerNow() ? [] : SUPPLEMENTS);
+// '비타민D 2000IU — 아침 1정' (관제 · 컨시어지 · 수정이력 한 줄)
+export const supplementLine = (s) => `${s.name} — ${s.slot} ${s.perDay || 1}${s.unit || "정"}`;
+// 어르신 화면의 짧은 이름 — '비타민D 2000IU' → '비타민D'
+export const supplementShort = (s) => String(s.name || "").split(" ")[0];
+
 // 가구 상태에서 건강 정보를 읽는다 — 저장값은 여러 폰이 쓰는 입력이라 모양을 확인하고 쓴다.
 export function healthOf(state) {
   const h = state?.health;
-  if (!h || typeof h !== "object") return { ...DEFAULT_HEALTH, custom: false, by: null, at: null };
+  if (!h || typeof h !== "object") return { ...DEFAULT_HEALTH, supplements: defaultSupplements(), custom: false, by: null, at: null };
   const meds = Array.isArray(h.meds) ? sortSlots(h.meds.map(cleanSlot).filter(Boolean)) : DEFAULT_HEALTH.meds;
   return {
     meds,
     conditions: strList(h.conditions) || DEFAULT_HEALTH.conditions,
     allergies: strList(h.allergies) || DEFAULT_HEALTH.allergies,
+    // 건강식품 칸이 없는 예전 저장값은 아직 등록 전으로 본다
+    supplements: Array.isArray(h.supplements) ? h.supplements.map(cleanSupplement).filter(Boolean).slice(0, 12) : defaultSupplements(),
     custom: true,
     by: h.by ? String(h.by) : null,
     at: Number.isFinite(h.at) ? h.at : null,
   };
 }
 export { cleanSlot as cleanMedSlot };
+
+// 복약 미션 계획 — 처방약 때마다 같은 때의 건강식품을 붙이고, 건강식품만 있는 때(예: 점심 유산균)는 그 때를 새로 만든다
+// (2026-10-28 요청 5 '복약 미션에도 포함'). 어르신이 한 번 '다 먹었어요'를 누르면 그 때의 약 · 건강식품이 같이 체크된다.
+// 어르신 복약 미션 · 약 알람 · 보호자 복약 미션 · 보호자 홈이 이 계획을 같이 쓴다
+export function missionPlan(health) {
+  const meds = health?.meds || [];
+  const sups = health?.supplements || [];
+  const plan = meds.map((d) => ({ ...d, supplements: sups.filter((s) => s.slot === d.slot) }));
+  for (const slot of MED_SLOTS) {
+    if (plan.some((d) => d.slot === slot)) continue;
+    const list = sups.filter((s) => s.slot === slot);
+    if (list.length) plan.push({ slot, time: SLOT_TIME[slot], elderLabel: list.map(supplementShort).join(" · "), items: [], supplements: list, suppOnly: true });
+  }
+  return sortSlots(plan);
+}
 
 // 관제 · SOS 신고 정보용 한 줄씩 — "혈압약 (아모잘탄) 1정 — 아침 · 저녁"
 export function medSummary(plan = MED_PLAN) {

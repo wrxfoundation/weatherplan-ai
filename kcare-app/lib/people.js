@@ -22,6 +22,7 @@ export const DEFAULT_PEOPLE = Object.freeze({
   elders: ["김순자"],
   guardians: ["김민수"],
   concierge: "박지현",
+  conciergeSub: null,
   concierges: ["박지현"],
   sales: "한지우",
   byId: {},
@@ -31,8 +32,8 @@ let current = DEFAULT_PEOPLE;
 export const people = () => current;
 export const inCenter = () => !!current.center;
 
-// 센터 회원 목록([{ name, role, id? }]) + 가입 상담 값 → 이름 묶음
-export function peopleFor(household, list, onboarding) {
+// 센터 회원 목록([{ name, role, id? }]) + 가입 상담 값 + 관제가 정한 담당(state.elderStaff 의 이 가구 어르신 칸) → 이름 묶음
+export function peopleFor(household, list, onboarding, staff) {
   const center = centerOfHousehold(household);
   if (!center) return DEFAULT_PEOPLE;
   const rows = Array.isArray(list) ? list : [];
@@ -42,6 +43,10 @@ export function peopleFor(household, list, onboarding) {
   const concierges = names("concierge");
   const sales = names("sales");
   const district = String(onboarding?.district || "").trim();
+  // 주 · 부 담당 — 관제 어르신 관리 [담당 컨시어지 변경] (2026-10-28 요청 3). 이 센터 컨시어지 회원일 때만 따르고,
+  // 아니면(정하기 전 · 그 회원이 센터에서 빠짐) 예전처럼 첫 컨시어지
+  const pri = staff?.pri && concierges.includes(staff.pri) ? staff.pri : concierges[0];
+  const sub = staff?.sub && staff.sub !== pri && concierges.includes(staff.sub) ? staff.sub : null;
   return {
     center: center.id,
     tag: center.name,
@@ -53,7 +58,8 @@ export function peopleFor(household, list, onboarding) {
     dong: district || "지역 미등록",
     guardian: guardians[0] || "보호자",
     guardians,
-    concierge: concierges[0] || "담당 컨시어지",
+    concierge: pri || "담당 컨시어지",
+    conciergeSub: sub,
     concierges,
     sales: sales[0] || "영업 담당",
     // 계정 아이디 → 이름 (관제 감사로그의 '누가' · 관제 계정에만 아이디가 온다)
@@ -73,8 +79,9 @@ export function applyPeople(next) {
 
 // 담당 컨시어지 고르는 칸 — 센터 공간이면 그 센터 컨시어지만 (없으면 빈 목록 — 예시 인력 · 자리 이름을 보이지 않는다)
 export const conciergeChoices = (demoList) => (current.center ? current.concierges : demoList);
-// 새 요청 · 제안의 담당 — 센터 공간에 승인된 컨시어지가 없으면 비워 둔다 ('담당 컨시어지' 같은 자리 이름을 저장하지 않는다)
-export const assigneeNow = () => (current.center ? current.concierges[0] || null : current.concierge);
+// 새 요청 · 제안의 담당 — 센터 공간은 관제가 정한 주 담당(정하기 전이면 첫 컨시어지).
+// 승인된 컨시어지가 없으면 비워 둔다 ('담당 컨시어지' 같은 자리 이름을 저장하지 않는다)
+export const assigneeNow = () => (current.center ? (current.concierges.includes(current.concierge) ? current.concierge : null) : current.concierge);
 // 이 기기에 로그인한 사람 이름 — 센터 공간에서 같은 역할 회원이 여럿이면 각자 자기 이름으로 남긴다.
 // 데모 · 테스트 가구 1 은 예전 인물 이름 그대로
 export function meAs(user, role) {

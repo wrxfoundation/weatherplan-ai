@@ -5,9 +5,9 @@
 // 어르신 화면의 복약 미션 · 보호자 마이 · 관제 SOS 119 신고 정보가 같은 값을 읽는다.
 // 진단 · 처방은 하지 않는다 — 처방전 · 약봉투에 적힌 것을 옮겨 적는 칸이다.
 import { useId, useState } from "react";
-import { MED_SLOTS, medSummary } from "../lib/meds";
+import { MED_SLOTS, SLOT_TIME, SUPP_UNITS, medSummary, supplementLine } from "../lib/meds";
 
-const DEFAULT_TIME = { 아침: "08:00", 점심: "12:30", 저녁: "19:00", "자기 전": "21:30" };
+const DEFAULT_TIME = SLOT_TIME;
 const splitList = (t) =>
   String(t || "")
     .split(/[,\n·]/)
@@ -30,6 +30,10 @@ export function HealthSummary({ health, compact = false }) {
           <span className="min-w-0 flex-1 font-medium text-ink">{v}</span>
         </div>
       ))}
+      <div className="flex gap-3 border-b border-navy/[.06] py-1.5">
+        <span className="w-[64px] shrink-0 text-muted">건강식품</span>
+        <span className="min-w-0 flex-1 font-medium text-ink">{(health.supplements || []).length ? health.supplements.map(supplementLine).join(" · ") : "등록 없음"}</span>
+      </div>
       <div className="flex gap-3 py-1.5">
         <span className="w-[64px] shrink-0 text-muted">복용약</span>
         <span className="min-w-0 flex-1">
@@ -51,14 +55,21 @@ export function HealthSummary({ health, compact = false }) {
   );
 }
 
-export function HealthEditor({ health, onSave, onCancel }) {
+// requireReason — 관제가 고칠 때(다른 사람의 정보) 수정 사유를 받는다. 사유는 어르신 수정이력에 남는다 (2026-10-28 요청 6)
+export function HealthEditor({ health, onSave, onCancel, requireReason = false }) {
   const uid = useId();
   const [cond, setCond] = useState(health.conditions.join(", "));
   const [alg, setAlg] = useState(health.allergies.join(", "));
   const [slots, setSlots] = useState(() =>
     health.meds.map((d) => ({ slot: d.slot, time: d.time, elderLabel: d.elderLabel || "", items: d.items.map((i) => ({ name: i.name, dose: i.dose || "" })) }))
   );
+  // 건강식품 (2026-10-28 요청 5 · 6) — 통에 적힌 대로. 남은 양을 고치면 그때부터 하루 복용량만큼 줄어든다 (lib/meds.js remainNow)
+  const [sups, setSups] = useState(() =>
+    (health.supplements || []).map((x) => ({ id: x.id, name: x.name, slot: x.slot, perDay: String(x.perDay || 1), unit: x.unit || "정", remain: x.remain == null ? "" : String(x.remain), remainAt: x.remainAt ?? null, remain0: x.remain == null ? "" : String(x.remain), expiry: x.expiry || "" }))
+  );
+  const [reason, setReason] = useState("");
   const [err, setErr] = useState("");
+  const patchSup = (i, patch) => setSups((xs) => xs.map((x, j) => (j === i ? { ...x, ...patch } : x)));
 
   const patchSlot = (si, patch) => setSlots((xs) => xs.map((x, i) => (i === si ? { ...x, ...patch } : x)));
   const patchItem = (si, ii, patch) =>
@@ -71,8 +82,24 @@ export function HealthEditor({ health, onSave, onCancel }) {
       .filter((x) => x.items.length);
     if (meds.some((x) => !/^([01]\d|2[0-3]):[0-5]\d$/.test(x.time))) return setErr("복용 시각을 08:00 처럼 적어 주세요.");
     if (new Set(meds.map((x) => x.slot)).size !== meds.length) return setErr("같은 때(아침 · 점심 …)가 두 번 있습니다.");
+    const now = Date.now();
+    const supplements = sups
+      .filter((x) => x.name.trim())
+      .map((x, i) => ({
+        id: x.id || `sp-${now.toString(36)}-${i}`,
+        name: x.name.trim(),
+        slot: x.slot,
+        perDay: Number(x.perDay) || 1,
+        unit: x.unit,
+        remain: x.remain === "" ? null : Number(x.remain),
+        // 남은 양을 새로 적었거나 바꿨으면 지금부터 센다
+        remainAt: x.remain === "" ? null : x.remain !== x.remain0 || x.remainAt == null ? now : x.remainAt,
+        expiry: x.expiry || null,
+      }));
+    if (supplements.some((x) => x.remain != null && !(x.remain >= 0))) return setErr("건강식품 남은 양은 숫자로 적어 주세요.");
+    if (requireReason && reason.trim().length < 4) return setErr("수정 사유를 4자 이상 적어 주세요 — 어르신 수정이력에 남습니다.");
     setErr("");
-    onSave({ meds, conditions: splitList(cond), allergies: splitList(alg) });
+    onSave({ meds, conditions: splitList(cond), allergies: splitList(alg), supplements }, reason.trim());
   };
 
   const input = "min-h-[36px] w-full rounded-lg border border-navy/15 bg-white px-2.5 text-[13px] text-ink";
@@ -175,6 +202,84 @@ export function HealthEditor({ health, onSave, onCancel }) {
           )}
         </div>
       </div>
+      <div>
+        <div className="text-[12px] font-bold text-muted">건강식품 — 통에 적힌 대로 (같은 때의 약과 함께 복약 미션에 들어갑니다)</div>
+        <div className="mt-1.5 space-y-2">
+          {sups.map((x, i) => (
+            <fieldset key={i} className="rounded-xl border border-navy/[.1] bg-white/70 p-2.5">
+              <legend className="sr-only">건강식품 {i + 1}</legend>
+              <div className="flex flex-wrap items-end gap-2">
+                <div className="min-w-[140px] flex-1">
+                  <label htmlFor={`${uid}-sn${i}`} className="text-[11px] text-muted">
+                    이름
+                  </label>
+                  <input id={`${uid}-sn${i}`} value={x.name} placeholder="예) 비타민D 2000IU" onChange={(ev) => patchSup(i, { name: ev.target.value })} className={`${input} mt-0.5`} />
+                </div>
+                <div className="w-[92px]">
+                  <label htmlFor={`${uid}-ss${i}`} className="text-[11px] text-muted">
+                    때
+                  </label>
+                  <select id={`${uid}-ss${i}`} value={x.slot} onChange={(ev) => patchSup(i, { slot: ev.target.value })} className={`${input} mt-0.5`}>
+                    {MED_SLOTS.map((n) => (
+                      <option key={n} value={n}>
+                        {n}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="w-[64px]">
+                  <label htmlFor={`${uid}-sp${i}`} className="text-[11px] text-muted">
+                    하루
+                  </label>
+                  <input id={`${uid}-sp${i}`} type="number" min={1} max={10} inputMode="numeric" value={x.perDay} onChange={(ev) => patchSup(i, { perDay: ev.target.value })} className={`${input} mt-0.5`} />
+                </div>
+                <div className="w-[76px]">
+                  <label htmlFor={`${uid}-su${i}`} className="text-[11px] text-muted">
+                    단위
+                  </label>
+                  <select id={`${uid}-su${i}`} value={x.unit} onChange={(ev) => patchSup(i, { unit: ev.target.value })} className={`${input} mt-0.5`}>
+                    {SUPP_UNITS.map((u) => (
+                      <option key={u} value={u}>
+                        {u}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="w-[84px]">
+                  <label htmlFor={`${uid}-sr${i}`} className="text-[11px] text-muted">
+                    남은 양 (선택)
+                  </label>
+                  <input id={`${uid}-sr${i}`} type="number" min={0} inputMode="numeric" value={x.remain} onChange={(ev) => patchSup(i, { remain: ev.target.value })} className={`${input} mt-0.5`} />
+                </div>
+                <div className="w-[136px]">
+                  <label htmlFor={`${uid}-se${i}`} className="text-[11px] text-muted">
+                    유통기한 (선택)
+                  </label>
+                  <input id={`${uid}-se${i}`} type="month" value={x.expiry} onChange={(ev) => patchSup(i, { expiry: ev.target.value })} className={`${input} mt-0.5`} />
+                </div>
+                <button type="button" aria-label={`건강식품 ${i + 1} 빼기`} onClick={() => setSups((xs) => xs.filter((_, j) => j !== i))} className={`${small} min-w-[36px]`}>
+                  ✕
+                </button>
+              </div>
+            </fieldset>
+          ))}
+          <button
+            type="button"
+            onClick={() => setSups((xs) => [...xs, { id: "", name: "", slot: "아침", perDay: "1", unit: "정", remain: "", remainAt: null, remain0: "", expiry: "" }])}
+            className={small}
+          >
+            + 건강식품 더하기
+          </button>
+        </div>
+      </div>
+      {requireReason && (
+        <div>
+          <label htmlFor={`${uid}-why`} className="text-[12px] font-bold text-muted">
+            수정 사유 (필수 · 4자 이상 — 어르신 수정이력에 남습니다)
+          </label>
+          <textarea id={`${uid}-why`} rows={2} value={reason} onChange={(ev) => setReason(ev.target.value)} placeholder="예) 보호자 전화 — 비타민D 추가 · 약봉투 확인" className={`${input} mt-1 py-2`} />
+        </div>
+      )}
       {err && <p className="text-[12px] font-bold text-amber">{err}</p>}
       <div className="flex gap-2">
         <button type="button" onClick={onCancel} className="min-h-[40px] flex-1 rounded-xl border border-navy/15 text-[13px] font-bold text-muted">

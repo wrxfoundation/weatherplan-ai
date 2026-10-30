@@ -33,6 +33,10 @@ const KIND_OF_TYPE = {
   opsApproveRequest: "request", opsReturnRequest: "request", askPrimaryPay: "request",
   sendExtraCharge: "signup", extraChargePaid: "signup", autoChargeExtra: "signup", cancelExtraCharge: "signup", setMemberPay: "signup", setPendingOrder: "signup",
   guardianHeard: "message",
+  // 2026-10-28 요청 1 — 어르신 부탁 해결 · 취소
+  closeAsk: "request",
+  saveHospital: "edit", removeHospital: "edit",
+  setConciergeProfile: "edit", setElderStaff: "edit", setGuardianInfo: "edit", guardianNoticeSeen: "edit",
   cancelRequest: "request", decideCancel: "request", forceCancel: "request", refundDone: "request", noteRequest: "request", helpCall: "request",
   editRequest: "request", requestSummary: "request", opsAckRequest: "request",
   addEvent: "schedule", updateEvent: "schedule", removeEvent: "schedule", decideEvent: "schedule",

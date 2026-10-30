@@ -1,5 +1,7 @@
 // 보호자 관리 — 연락 우선순위 · 알림 · 보고서 · 결제권한 · 소통이력 (요청서 8절 · 시안 보호자 통합관리).
 // 알림 상태 8종(NOTIFY_STATE)으로 발송→열람→응답을 구분하고, 정보 수정은 사유 필수 + 이력.
+// 기본정보는 탭의 [편집]으로 고친다 (2026-10-28 요청 4 · components/ops/mgmt/GuardianEdit.jsx) — 가구 기록(state.guardianInfo)에
+// 남아 보호자 앱 마이 · SOS 화면이 같은 값을 읽고, 수신동의를 바꾸면 보호자 앱에 알림이 간다.
 import { useEffect, useState } from "react";
 import { useAppState } from "../../lib/state";
 import { useAuth } from "../../lib/auth";
@@ -9,13 +11,16 @@ import { centerNow } from "../../lib/people-store";
 import { people } from "../../lib/people";
 import { lastText, useLastActivity } from "../../lib/last-activity";
 import PhoneLink from "./PhoneLink";
-import { Panel, Stat, Pill, Avatar, Btn, Tabs, Table, KV, Field, Toggle, Drawer, Confirm, Stamp, Note, Empty, TONE } from "./ui";
+import { Panel, Stat, Pill, Avatar, Btn, Tabs, Table, KV, Field, Toggle, Drawer, Confirm, Stamp, Note, Empty, TONE, useOperator } from "./ui";
 import Icon from "../icons";
 import { fmtWon } from "../../lib/config";
 import { ROSTERS } from "../../lib/rosters";
 import { NOTIFY_STATE, logEntry, stampNow } from "../../lib/ops-mgmt";
 import { GUARDIANS, GUARDIAN_STATS, GUARDIAN_TABS, ROLE_TONE, CONTACT_TONE, SCOPES, REPORT_VIA, localClock } from "../../lib/ops-mgmt-people";
 import { EditDrawer, HistoryTable } from "./mgmt/EditLog";
+import { GuardianInfoForm } from "./mgmt/GuardianEdit";
+import { TabBar } from "./mgmt/StaffEdit";
+import { canEditPeople, historyRows, tzText, withGuardianInfo } from "../../lib/ops-records";
 
 const ELDERS = ROSTERS.elders.rows.map((r) => `${r[0]} (${r[2]})`);
 const TZ = { 국내: null, "LA (PDT)": -16, "밴쿠버 (PDT)": -16, "시드니 (AEST)": 1, "도쿄 (JST)": 0, "런던 (BST)": -8, "두바이 (GST)": -5 };
@@ -66,15 +71,32 @@ function Row({ id, label, hint, on, onChange }) {
 export default function GuardianMgmt({ openProfile }) {
   const [rows, setRows] = useState(GUARDIANS);
   // 테스트 계정으로 들어왔으면 김민수(김순자 님 주 보호자) 줄에 테스트 가구 1 의 가입 상담 값 · 해주세요를 덮는다
-  const appState = useAppState()?.state;
+  const app = useAppState();
+  const appState = app?.state;
   const authUser = useAuth().user;
+  // 고치기는 관제 관리자 이상 — 일반 관제 회원은 보기만 (2026-10-28 요청 4 · lib/ops-records.js)
+  const canEdit = canEditPeople(authUser);
+  const operator = useOperator();
   // 테스트 보호자의 마지막 앱 사용 — 감사로그와 같은 기록에서 (2026-10-02)
   const guardianLast = useLastActivity("guardian", !!authUser?.household);
   const liveOn = !!authUser?.household;
   const center = centerNow();
-  const shown = center ? centerGuardians().map((g) => liveGuardian(g, appState)) : liveOn ? rows.map((g) => liveGuardian(g, appState, "test-guardian")) : rows;
-  const [sel, setSel] = useState("G-001");
-  const [tab, setTab] = useState("기본정보");
+  // 관제가 [편집]으로 저장한 기본정보(state.guardianInfo)를 맨 위에 얹는다 — 가입 상담 값보다 나중에 고친 값
+  const shown = (center ? centerGuardians().map((g) => liveGuardian(g, appState)) : liveOn ? rows.map((g) => liveGuardian(g, appState, "test-guardian")) : rows).map((g) =>
+    withGuardianInfo(g, appState?.guardianInfo?.[g.name])
+  );
+  const [sel, setSelRaw] = useState("G-001");
+  const [tab, setTabRaw] = useState("기본정보");
+  const [editInfo, setEditInfo] = useState(false);
+  // 다른 탭 · 다른 보호자로 가면 고치던 칸은 접는다
+  const setSel = (id) => {
+    setSelRaw(id);
+    setEditInfo(false);
+  };
+  const setTab = (t) => {
+    setTabRaw(t);
+    setEditInfo(false);
+  };
   const [q, setQ] = useState("");
   const [f, setFilter] = useState(F);
   const [reg, setReg] = useState(false);
@@ -132,14 +154,15 @@ export default function GuardianMgmt({ openProfile }) {
     { k: "pay", label: "결제 · 연락", render: (g) => <><span className="block text-[12px]">{PAY_TEXT(g)}</span><Pill tone={CONTACT_TONE[g.contact]}>{g.contact}</Pill></> },
   ];
 
+  // 기본정보 [편집] 저장 — 가구 기록에 남기고 바뀐 칸마다 수정 이력 한 줄 (lib/state.js setGuardianInfo)
+  const saveInfo = (patch, fields, reason, extra) => {
+    app.dispatch({ type: "setGuardianInfo", name: cur.name, patch, fields, reason, prev: extra?.prev, by: operator.includes("관제") ? operator : `${operator} (관제)`, role: "ops" });
+    setEditInfo(false);
+    setMsg(`${cur.name} 보호자 기본정보 저장 — 바뀐 ${fields.length}칸이 사유와 함께 수정 이력에 남았습니다${extra?.notify ? " · 수신동의 변경은 보호자 앱에 알렸습니다" : ""}`);
+  };
+  // 예시 명부 줄의 권한 · 수신방법 — 기본정보(연락처 · 거주 · 연락시간 · 야간 · 순위 · 역할 · 수신동의)는 기본정보 [편집]으로 옮겼다
   const editFields = cur
     ? [
-        { label: "휴대전화", value: cur.tel, apply: (g, v) => ({ ...g, tel: v }) },
-        { label: "거주지역", value: cur.region, apply: (g, v) => ({ ...g, region: v }) },
-        { label: "연락 가능시간", value: cur.hours, apply: (g, v) => ({ ...g, hours: v }) },
-        { label: "역할 (주·부·비상)", value: cur.role, options: ROLES, apply: (g, v) => ({ ...g, role: v, elders: g.elders.map((e, i) => (i === 0 ? { ...e, role: v } : e)) }) },
-        { label: "SOS 연락 우선순위", value: String(cur.sosOrder), options: ["1", "2", "3"], apply: (g, v) => ({ ...g, sosOrder: Number(v) }) },
-        { label: "야간 연락 가능", value: cur.night ? "예" : "아니오", options: ["예", "아니오"], apply: (g, v) => ({ ...g, night: v === "예" }) },
         { label: "보고서 수신방법", value: cur.reportVia, options: REPORT_VIA, apply: (g, v) => ({ ...g, reportVia: v }) },
         { label: "고객정보 열람범위", value: cur.scope, options: SCOPES, apply: (g, v) => ({ ...g, scope: v }) },
         { label: "결제 권한", value: cur.payer ? "결제 가능" : "열람 전용", options: ["결제 가능", "열람 전용"], apply: (g, v) => ({ ...g, payer: v === "결제 가능", payLimit: null }) },
@@ -179,15 +202,18 @@ export default function GuardianMgmt({ openProfile }) {
   };
 
   const renderTab = () => {
+    if (tab === "기본정보" && editInfo && canEdit) return <GuardianInfoForm key={cur.id} g={cur} onSave={saveInfo} onCancel={() => setEditInfo(false)} />;
     if (tab === "기본정보")
       return (
         <div>
+          <TabBar auto="앱 계정 · 연결 어르신(가입 · 초대로만) · 보호자 요청사항(기록)" canEdit={canEdit} onEdit={() => setEditInfo(true)} />
           <Sec title="연락 및 거주정보">
             <KV k="휴대전화" v={<PhoneLink phone={cur.tel} source={cur.telSource} />} />
-            <KV k="거주지역" v={cur.region} />
+            <KV k="거주지역" v={`${cur.region}${isAbroad(cur) ? ` · 해외 (${tzText(cur.tz)})` : ""}`} />
             {isAbroad(cur) && <KV k="현지시간" v={<span className="font-num">{localClock(now, cur.tz)} <span className="text-muted">(KST {localClock(now, 0)} · 시차 {cur.tz > 0 ? "+" : ""}{cur.tz}h)</span></span>} />}
             <KV k="연락 가능시간" v={cur.hours} />
             <KV k="야간 연락" v={cur.night ? "가능 (22:00 이후 포함)" : "불가 — 야간에는 다음 순위로"} tone={cur.night ? "ok" : "warn"} />
+            <KV k="연락 우선순위 · 역할" v={`${cur.sosOrder}순위 · ${cur.role} 보호자`} />
             <KV k="앱 계정" v={cur.live ? <span>{cur.app.state} · 마지막 사용 {lastText(guardianLast)}</span> : <span>{cur.app.state} · <Stamp at={cur.app.last} prefix="마지막 접속" /></span>} />
           </Sec>
           <Sec title="연락 수신동의">
@@ -202,7 +228,8 @@ export default function GuardianMgmt({ openProfile }) {
             </ul>
           </Sec>
           <Sec title="보호자 요청사항">{cur.requests.length ? <ul className="list-disc pl-4 text-[13px] text-ink">{cur.requests.map((r) => <li key={r}>{r}</li>)}</ul> : <Empty>등록된 요청사항이 없습니다.</Empty>}</Sec>
-          <Sec title="수정 이력"><HistoryTable rows={cur.history} /></Sec>
+          {/* 공용 수정이력(가구 기록 · 기본정보 편집)이 위, 예시 명부의 이력이 아래 */}
+          <Sec title="수정 이력"><HistoryTable rows={[...historyRows(appState, "guardian", cur.name), ...cur.history]} /></Sec>
         </div>
       );
     if (tab === "권한·동의")
@@ -215,7 +242,7 @@ export default function GuardianMgmt({ openProfile }) {
           <KV k="SOS 연락 우선순위" v={`${cur.sosOrder}순위`} />
           <KV k="야간 연락 가능" v={cur.night ? "예" : "아니오"} />
           <KV k="수신동의" v={`전화 ${cur.consent.call ? "동의" : "거부"} · 문자 ${cur.consent.sms ? "동의" : "거부"} · 앱 푸시 ${cur.consent.push ? "동의" : "거부"}`} />
-          <div className="mt-3"><Note>권한·동의 변경은 [정보 수정]에서 사유와 함께 저장됩니다 — 이전 값은 이력으로 보존.</Note></div>
+          <div className="mt-3"><Note>연락 수신동의 · 야간 연락 · 연락 우선순위는 기본정보 [편집]에서 사유와 함께 저장됩니다 (보호자 앱에 알림) — 이전 값은 이력으로 보존.</Note></div>
         </div>
       );
     if (tab === "연락이력")
@@ -318,8 +345,12 @@ export default function GuardianMgmt({ openProfile }) {
                 </div>
                 <div className="mt-0.5 text-[12px] text-muted">{cur.elders.map((e) => `${e.name} 고객의 ${cur.rel}`).join(" · ")} · {cur.region}{isAbroad(cur) ? ` · 현지 ${localClock(now, cur.tz)}` : ""}</div>
               </div>
-              {/* 테스트 가구 보호자는 앱 가입 상담 · 마이 값 — 여기서 고치면 화면과 수정이력이 어긋난다 */}
-              {cur.live ? <span className="text-[11px] text-muted">값은 보호자 앱에서 바뀝니다</span> : <Btn small onClick={() => setEdit(true)}>정보 수정</Btn>}
+              {/* 기본정보는 탭의 [편집] (가구 기록 · 보호자 앱 마이와 같은 값). 테스트 가구 보호자의 나머지는 앱 가입 상담 · 마이 값이라 여기서 고치지 않는다 */}
+              {cur.live ? (
+                <span className="text-[11px] text-muted">기본정보는 [편집] · 그 밖의 값은 보호자 앱에서 바뀝니다</span>
+              ) : canEdit ? (
+                <Btn small ghost onClick={() => setEdit(true)}>권한 · 수신방법 수정</Btn>
+              ) : null}
             </div>
             <Tabs className="mt-3" tabs={GUARDIAN_TABS.map((t) => [t, t, t === "연락이력" ? cur.log.length : undefined])} value={tab} onChange={setTab} />
             <div className="mt-3">{renderTab()}</div>

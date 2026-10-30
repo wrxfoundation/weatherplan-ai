@@ -4,13 +4,17 @@ import { useEffect, useState } from "react";
 import FamilyLayout from "../../components/FamilyLayout";
 import { Clay, Line } from "../../components/clay";
 import { Btn, Card, TONE } from "../../components/ds";
-import { HOSPITAL_PARTNERS, MOU_HOSPITALS } from "../../lib/mock";
-import { assigneeNow, inCenter } from "../../lib/people";
+import { partnerHospitals } from "../../lib/hospitals";
+import { assigneeNow } from "../../lib/people";
 import { hospitalKey, useAppState } from "../../lib/state";
 import { CLOSED } from "../../lib/requests";
 
 // 제휴병원 예약 및 상담 — 회의 8. MOU 병원만, 진료 과목마다 한 곳 이상.
 // 예약 요청은 해주세요(REQ-03) 요청으로 전달된다.
+//
+// 2026-10-28 요청 2 — 목록은 관제 병원 관리와 같은 명부(가구 기록 · lib/hospitals.js)에서 '제휴'만 읽는다.
+// 관제가 등록 · 수정 · 삭제하면 새로고침 없이 여기도 바뀐다. 보여 주는 값은 병원명 · 진료과 · 빠른 예약 · 가용 슬롯(있으면).
+// 병원이 목록에서 빠져도 이미 보낸 요청 · 잡힌 일정은 병원 이름을 글로 갖고 있어 그대로 남는다.
 //
 // 패스트트랙 표기는 2026-08-12 요청으로 전부 뺐다. 병원과의 우선 진료 합의가
 // 문서로 확정되기 전까지 화면에서 약속하지 않는다.
@@ -110,8 +114,9 @@ export default function HospitalsPage() {
   const focusDept = typeof router.query.dept === "string" ? router.query.dept : "";
   // 이미 보낸 예약 · 상담 요청 — 열려 있는 해주세요에서 읽는다 (화면 기억이면 새로고침 뒤 같은 요청이 또 갔다 ·
   // 해주세요에서 취소하면 다시 보낼 수 있다)
+  const partners = partnerHospitals(state);
   const requested = Object.fromEntries(
-    MOU_HOSPITALS.filter((h) =>
+    partners.filter((h) =>
       (state.requests || []).some(
         (r) => r.type === "병원 예약 확인해 주세요" && !CLOSED.includes(r.status) && (r.hospital === h.name || String(r.detail || "").startsWith(`${h.dept} · ${h.name} `))
       )
@@ -120,13 +125,12 @@ export default function HospitalsPage() {
   const [form, setForm] = useState({ name: "", dept: "", note: "" });
   const [saved, setSaved] = useState(""); // 마지막으로 한 일 한 줄 (등록 · 수정 · 삭제)
 
+  const focusIdx = partners.findIndex((h) => h.dept === focusDept);
   useEffect(() => {
-    if (!focusDept) return;
-    const i = MOU_HOSPITALS.findIndex((h) => h.dept === focusDept);
-    if (i < 0) return;
-    const t = setTimeout(() => document.getElementById(`mou-${i}`)?.scrollIntoView({ block: "center", behavior: "smooth" }), 250);
+    if (!focusDept || focusIdx < 0) return;
+    const t = setTimeout(() => document.getElementById(`mou-${focusIdx}`)?.scrollIntoView({ block: "center", behavior: "smooth" }), 250);
     return () => clearTimeout(t);
-  }, [focusDept]);
+  }, [focusDept, focusIdx]);
 
   const requestEscort = (h) => {
     if (requested[h.name]) return;
@@ -136,7 +140,7 @@ export default function HospitalsPage() {
         id: `rq-${Date.now()}`,
         dir: "fromGuardian",
         type: "병원 예약 확인해 주세요",
-        detail: `${h.dept} · ${h.name} 동행 예약을 요청합니다. ${h.note}.`,
+        detail: `${h.dept} · ${h.name} 동행 예약을 요청합니다.`,
         hospital: h.name,
         amount: null,
         preferredDate: null,
@@ -246,11 +250,16 @@ export default function HospitalsPage() {
           제휴 병원
         </h2>
 
-        {MOU_HOSPITALS.map((h, i) => {
+        {partners.length === 0 && (
+          <Card tone="stone" shadow={false} pad={14} className="text-[15px] leading-[1.7]" style={{ color: "#5E6270" }}>
+            아직 등록된 제휴 병원이 없어요. 관제센터가 제휴 병원을 등록하면 여기에 바로 보입니다.
+          </Card>
+        )}
+        {partners.map((h, i) => {
           const on = h.dept === focusDept;
           return (
             <div
-              key={h.name}
+              key={h.id || h.name}
               id={`mou-${i}`}
               className="ds-r flex flex-col gap-2 rounded-[24px] p-4"
               style={{ "--d": `${100 + i * 30}ms`, background: TONE.green.bg, boxShadow: on ? `inset 0 0 0 3px #1B2340, 0 5px 0 ${TONE.green.sh}` : `0 5px 0 ${TONE.green.sh}` }}
@@ -258,14 +267,18 @@ export default function HospitalsPage() {
               <span className="self-start rounded-full bg-white px-3 py-1 text-[13px] font-extrabold" style={{ color: TONE.green.fg }}>
                 {h.dept}
               </span>
-              <div className="text-[19px] font-extrabold">{h.name}</div>
-              <div className="text-[14px]" style={{ color: "#4A5068" }}>
-                {h.note}
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="text-[19px] font-extrabold">{h.name}</span>
+                {h.fast && (
+                  <span className="rounded-full px-2.5 py-0.5 text-[13px] font-extrabold" style={{ background: TONE.gold.bg, color: TONE.gold.fg }}>
+                    빠른 예약
+                  </span>
+                )}
               </div>
-              {/* 슬롯 · 동행 건수는 예시 값 — 관제 센터 공간에는 보이지 않는다 (2026-10-06 누수 점검) */}
-              {HOSPITAL_PARTNERS[h.name] && !inCenter() && (
-                <div className="text-[13px]" style={{ color: "#4A5068" }}>
-                  가용 슬롯 <b>{HOSPITAL_PARTNERS[h.name].slots}</b> · 이번 달 K-CARE 동행 <b className="ds-num">{HOSPITAL_PARTNERS[h.name].trips}건</b>
+              {/* 가용 슬롯 — 관제 병원 관리에 적은 것만 (비어 있으면 줄을 두지 않는다 · 지어 넣지 않는다) */}
+              {h.slots && (
+                <div className="text-[14px]" style={{ color: "#4A5068" }}>
+                  가용 슬롯 <b>{h.slots}</b>
                 </div>
               )}
               <button

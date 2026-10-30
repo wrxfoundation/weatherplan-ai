@@ -4,7 +4,8 @@ import { useMemo, useState } from "react";
 import FamilyLayout from "../../components/FamilyLayout";
 import { Clay, Line } from "../../components/clay";
 import { Btn, Card, EvenGrid, Sheet, SheetTitle, TONE, WhiteBtn, eventTone } from "../../components/ds";
-import { EVENT_KINDS, MOU_HOSPITALS } from "../../lib/mock";
+import { EVENT_KINDS } from "../../lib/mock";
+import { partnerHospitals } from "../../lib/hospitals";
 import { useAppState } from "../../lib/state";
 import { useGuardianRole } from "../../lib/guardian-role";
 import { REAPPROVE_KEYS, eventOwner, eventRights } from "../../lib/event-rights";
@@ -271,7 +272,8 @@ export default function CalendarPage() {
             </h2>
           </div>
           <div className="grid grid-cols-2 gap-2">
-            {MOU_HOSPITALS.slice(0, 4).map((h) => (
+            {/* 관제 병원 관리의 제휴 병원 — 과목이 겹치면 한 번만 (2026-10-28 요청 2 · lib/hospitals.js) */}
+            {[...new Map(partnerHospitals(state).map((h) => [h.dept, h])).values()].slice(0, 4).map((h) => (
               <Link
                 key={h.dept}
                 href={`/family/hospitals?dept=${encodeURIComponent(h.dept)}`}

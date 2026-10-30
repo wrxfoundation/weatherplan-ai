@@ -1,7 +1,7 @@
 // [정보 수정] 공용 — 수정 사유 없이는 저장되지 않고, 저장은 덮어쓰기가 아니라 이력 한 줄 추가다.
 // 어르신·보호자·컨시어지 관리가 같이 쓴다 (요청서 7·8·9절 수정이력 · 17절 감사로그).
 import { useState } from "react";
-import { Drawer, Btn, Field, Table, Note, KV, Empty } from "../ui";
+import { Drawer, Btn, Field, Note, KV, Empty } from "../ui";
 import { OPERATOR } from "../../../lib/ops-mgmt";
 
 const PICK = "선택하세요";
@@ -63,25 +63,31 @@ export function EditDrawer({ title, sub, fields, onClose, onSave }) {
   );
 }
 
-const COLS = [
-  { k: "at", label: "수정일시", render: (r) => <span className="font-num whitespace-nowrap">{r.at}</span> },
-  {
-    k: "who",
-    label: "계정 · 이름 · 권한",
-    render: (r) => (
-      <span>
-        {r.name} <span className="text-muted">({r.role})</span>
-        <span className="block text-[11px] text-muted">{r.account}</span>
-      </span>
-    ),
-  },
-  { k: "field", label: "항목" },
-  { k: "before", label: "수정 전", render: (r) => <span className="text-muted">{r.before}</span> },
-  { k: "after", label: "수정 후", render: (r) => <span className="font-bold text-navy">{r.after}</span> },
-  { k: "reason", label: "사유" },
-];
+// 한 건이 한 덩어리 — 무엇을(항목) · 수정 전 → 수정 후 · 사유 · 언제 · 누가(이름 · 권한 · 계정).
+// 전에는 6칸 표라 상세 패널(좁은 오른쪽 칸)에서 '사유' 칸이 가로 스크롤 밖으로 밀려 보이지 않았다 (2026-10-28 요청 3 · 4 확인)
+const whoOf = (r) => `${r.name}${r.role && !String(r.name || "").includes(r.role) ? ` (${r.role})` : ""}${r.account && r.account !== "—" ? ` · ${r.account}` : ""}`;
 
 export function HistoryTable({ rows }) {
   if (!rows.length) return <Empty>수정 이력이 없습니다. 정보를 수정하면 사유와 함께 여기에 쌓입니다.</Empty>;
-  return <Table dense cols={COLS} rows={rows} rowKey={(r, i) => `${r.at}-${i}`} />;
+  return (
+    <ul className="divide-y divide-navy/[.06] text-[13px]" aria-label="수정 이력">
+      {rows.map((r, i) => (
+        <li key={`${r.at}-${i}`} className="py-2.5">
+          <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5">
+            <span className="font-bold text-navy">{r.field}</span>
+            <span className="font-num text-[11px] text-muted">
+              {r.at} · {whoOf(r)}
+            </span>
+          </div>
+          <div className="mt-0.5 leading-[1.6] text-ink">
+            <span className="text-muted">{r.before}</span>
+            <span className="mx-1 text-muted" aria-hidden="true">→</span>
+            <span className="sr-only">에서 바뀜:</span>
+            <b className="text-navy">{r.after}</b>
+          </div>
+          <div className="mt-0.5 text-[12px] leading-[1.6] text-muted">사유 — {r.reason}</div>
+        </li>
+      ))}
+    </ul>
+  );
 }

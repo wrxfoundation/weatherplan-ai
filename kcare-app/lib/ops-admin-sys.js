@@ -1,59 +1,11 @@
 // 관제 콘솔 운영·관리 목 데이터 (2) — 병원 §15 · 계정·권한 §16 · 감사로그 §17 · 연동상태.
 // lib/ops-admin.js 와 한 파일이었으나 700줄 규칙으로 나눴다. 시각 규칙은 그 파일과 같다.
-import { MOU_HOSPITALS } from "./mock";
 import { T, ago } from "./ops-admin";
 
 // ── §15 병원 ──
-// 기본 명부는 MOU_HOSPITALS(6곳) 에서 시작해 §15 필드로 넓힌다. 주소·대표번호 같은 실제 값은
-// 지어내지 않는다 — 공개된 대표 정보를 확인한 2곳만 적고 나머지는 "확인 중".
-const PUBLIC_INFO = {
-  서울아산병원: { address: "서울 송파구 올림픽로43길 88", phone: "1688-7575", verified: "공개 대표정보 · 2026-09-22 확인" },
-  삼성서울병원: { address: "서울 강남구 일원로 81", phone: "1599-3114", verified: "공개 대표정보 · 2026-09-22 확인" },
-};
-const HOSPITAL_EXTRA = {
-  강남세브란스: { er: "운영", hours: "평일 08:30–17:30 · 토 확인 중", travel: "대치동 자택 차량 약 15분", parking: "지하 주차장 · 2시간 무료 (진료 확인)", wheelchair: "가능 · 정문 경사로", reception: "본관 1층 외래 접수", guardianNeeded: "초진 시 권장", mainFor: ["김순자"], booking: { status: "예약 진행 중", next: "2026-10-02 10:30 내과 재진" }, escorts: [{ at: "2026-08-14", elder: "김순자", concierge: "박지현", note: "병원동행 2시간" }], caution: "외래 대기 길어 오전 첫 슬롯 권장" },
-  분당서울대병원: { er: "운영", hours: "확인 중", travel: "역삼동 자택 차량 약 35분", parking: "확인 중", wheelchair: "가능", reception: "확인 중", guardianNeeded: "확인 중", mainFor: ["오태식"], booking: { status: "대기", next: "재진 예약 대기 2일" }, escorts: [], caution: "재진 예약 대기 2일 — 처방 잔여량 확인" },
-  고대구로병원: { er: "운영", hours: "확인 중", travel: "확인 중", parking: "확인 중", wheelchair: "가능 · 동선 확인 완료", reception: "확인 중", guardianNeeded: "확인 중", mainFor: [], booking: { status: "—", next: "" }, escorts: [], caution: "휠체어 동선 확인 완료 (2026-08)" },
-  서울아산병원: { er: "운영", hours: "평일 08:30–17:30 · 확인 중", travel: "대치동 자택 차량 약 25분 · 잠실동 자택 약 15분", parking: "동관·서관 주차장 · 진료 시 할인", wheelchair: "가능 · 서관 출입구", reception: "서관 1층 · 신관 2층 (진료과별 확인)", guardianNeeded: "시술·검사 시 필요", mainFor: ["김순자", "이영호"], booking: { status: "예약 확정", next: "2026-09-25 13:50 순환기내과 (김순자)" }, escorts: [{ at: "2026-09-04", elder: "김순자", concierge: "박지현", note: "든든 병원동행 · 서다인 차량" }, { at: "2026-07-22", elder: "이영호", concierge: "이수민", note: "병원동행" }], caution: "순환기내과 예약 슬롯 협의 완료 · 검사 전 항응고제 복용 여부 의료진 확인" },
-  삼성서울병원: { er: "운영", hours: "평일 08:30–17:30 · 확인 중", travel: "강남 자택 차량 약 20분", parking: "지하 주차장 · 진료 확인 시 할인", wheelchair: "가능", reception: "본관 1층 외래 접수", guardianNeeded: "수술 상담 시 필요", mainFor: ["최정자"], booking: { status: "—", next: "백내장 수술 상담 일정 조율" }, escorts: [], caution: "백내장 수술 연계 — 수술 당일 보호자 동의서" },
-  "강남 미소치과의원": { er: "미운영", hours: "확인 중", travel: "강남 자택 도보 10분", parking: "없음 (인근 공영)", wheelchair: "확인 중 (2층 · 승강기 유무 확인)", reception: "확인 중", guardianNeeded: "불필요", mainFor: ["강필순"], booking: { status: "—", next: "방문 진료 협의 중" }, escorts: [], caution: "방문 진료 협의 중 · 확정 전" },
-};
-export const HOSPITALS_SEED = MOU_HOSPITALS.map((h, i) => {
-  const pub = PUBLIC_INFO[h.name] || {};
-  const x = HOSPITAL_EXTRA[h.name] || {};
-  return {
-    id: `h${i + 1}`,
-    name: h.name,
-    dept: h.dept,
-    partner: true,
-    fast: !!h.fast,
-    address: pub.address || "확인 중",
-    phone: pub.phone || "확인 중",
-    verified: pub.verified || "확인 중 — 실무진 명부 수령 후 반영",
-    er: x.er || "확인 중",
-    hours: x.hours || "확인 중",
-    travel: x.travel || "확인 중",
-    parking: x.parking || "확인 중",
-    wheelchair: x.wheelchair || "확인 중",
-    reception: x.reception || "확인 중",
-    guardianNeeded: x.guardianNeeded || "확인 중",
-    mainFor: x.mainFor || [],
-    booking: x.booking || { status: "—", next: "" },
-    escorts: x.escorts || [],
-    caution: x.caution || h.note,
-    changes: [],
-  };
-}).concat([
-  // 제휴는 아니지만 고객이 다니는 병원 — 명부에 함께 둔다 (SOS 때 주 이용 병원 표시용)
-  {
-    id: "h7", name: "강동성심병원", dept: "정형외과", partner: false, fast: false,
-    address: "확인 중", phone: "확인 중", verified: "확인 중 — 비제휴 · 고객 등록",
-    er: "운영", hours: "확인 중", travel: "길동 자택 차량 약 10분", parking: "확인 중", wheelchair: "가능", reception: "확인 중", guardianNeeded: "확인 중",
-    mainFor: ["박말순", "한복자"], booking: { status: "예약 확정", next: "2026-09-25 정형외과 외래 (박말순)" },
-    escorts: [{ at: "2026-08-28", elder: "박말순", concierge: "정민호", note: "든든 병원동행 · 휠체어" }],
-    caution: "휠체어 대여 사전 확인", changes: [],
-  },
-]);
+// 기본 명부(HOSPITALS_SEED)는 lib/hospitals.js 로 옮겼다 — 보호자 · 어르신 · 컨시어지 화면도 관제 병원 관리와 같은 목록을
+// 읽는다 (2026-10-28 요청 2). 여기서는 예전 이름 그대로 다시 내보낸다
+export { HOSPITALS_SEED } from "./hospitals";
 // 데모용 최근접 응급실 — 고객 자치구 기준. 실제 이송병원은 119·의료진 판단에 따른다.
 export const NEAREST_ER = {
   "강남구 대치동": "강남세브란스 응급실",

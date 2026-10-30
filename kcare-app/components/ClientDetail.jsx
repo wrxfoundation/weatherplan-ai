@@ -4,6 +4,7 @@
 import { useId, useState } from "react";
 import { Card } from "./ui";
 import { AudChips } from "./ReportParts";
+import { askDoneText, isOpenAsk } from "../lib/elder-asks";
 
 const LOC_CHIP = { 자택: { bg: "#EEEDEA", fg: "#5E5A52" }, 요양병원: { bg: "#E8EBF7", fg: "#33468E" } };
 const KST = 9 * 3600 * 1000;
@@ -39,7 +40,8 @@ function Head({ title, aud, right }) {
 }
 
 // ── 목록 ── 성 한 글자 · '이름 (나이)' · '동네 · n번째' · 거주 칩 · ›
-export function ClientList({ clients, onOpen }) {
+// counts — 고객 이름 → 열린 부탁 수 (이름 옆 점 · 2026-10-28 요청 1)
+export function ClientList({ clients, onOpen, counts = {} }) {
   return (
     <Card className="p-4">
       <h2 className="m-0 text-[17px] font-black text-navy">내 담당 고객 {clients.length}명</h2>
@@ -51,7 +53,16 @@ export function ClientList({ clients, onOpen }) {
                 {c.name.slice(0, 1)}
               </span>
               <span className="min-w-0 flex-1">
-                <b className="block text-[15px] text-[#1B2340]">{nameAge(c)}</b>
+                <b className="flex items-center gap-1.5 text-[15px] text-[#1B2340]">
+                  {nameAge(c)}
+                  {counts[c.name] > 0 && (
+                    <span className="inline-flex h-[20px] min-w-[20px] items-center justify-center rounded-full bg-[#B08D57] px-1.5 font-num text-[11px] font-black text-white">
+                      <span className="sr-only">열린 부탁 </span>
+                      {counts[c.name]}
+                      <span className="sr-only">건</span>
+                    </span>
+                  )}
+                </b>
                 <span className="block text-[12.5px] text-[#7A7F8E]">{clientSub(c)}</span>
               </span>
               <LocChip loc={c.loc} />
@@ -224,13 +235,120 @@ export function HealthCard({ health, editing, onEdit, editor }) {
               </div>
             ))}
           </div>
+          {/* 건강식품 — 같은 때의 약과 함께 어르신 복약 미션에 들어간다 (2026-10-28 요청 5) */}
+          <div className="mt-3">
+            <div className="text-[12px] font-bold text-muted">건강식품</div>
+            {(health.supplements || []).length ? (
+              <ul className="m-0 mt-1 list-none p-0">
+                {health.supplements.map((x) => (
+                  <li key={x.id} className="text-[13.5px] leading-[1.6] text-ink">
+                    {x.name}
+                    <span className="text-muted">
+                      {" "}
+                      · {x.slot} {x.perDay}
+                      {x.unit}
+                      {x.expiry ? ` · 유통기한 ${x.expiry}` : ""}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <div className="mt-1 text-[13px] text-muted">등록된 건강식품 없음</div>
+            )}
+          </div>
           <div className="mt-2 text-[11.5px] leading-[1.6] text-muted">
             {health.custom && health.at ? `수정 ${whenShort(health.at)}${health.by ? ` · ${health.by}` : ""} · 어르신 · 보호자 · 관제 3곳 반영` : "첫 안심방문 등록값 · 아직 고친 사람 없음"}
           </div>
           <button type="button" onClick={onEdit} className="btn-press mt-3 min-h-[40px] w-full rounded-[10px] border border-[#D9D6CF] bg-white text-[14px] font-bold text-navy">
-            복용약 · 질환 수정
+            복용약 · 질환 · 건강식품 수정
           </button>
         </>
+      )}
+    </Card>
+  );
+}
+
+// 어르신 부탁 — 미팅 리포트 '부탁하신 것' 한 줄 = 한 건 (2026-10-28 요청 1 · lib/elder-asks.js).
+// 열린 것 위, 해결 · 취소된 것 아래 흐리게. '해결'은 한 줄 메모(선택)를 받고 닫는다 — 어르신 홈에서도 바로 빠진다.
+// 어르신이 취소한 것은 '어르신 취소'로 보인다
+export function AsksCard({ asks, onResolve }) {
+  const id = useId();
+  const open = asks.filter(isOpenAsk);
+  const closed = asks
+    .filter((a) => !isOpenAsk(a))
+    .sort((a, b) => (b.doneAt || 0) - (a.doneAt || 0))
+    .slice(0, 8);
+  const [doing, setDoing] = useState(null); // 해결 메모를 적고 있는 부탁 id
+  const [memo, setMemo] = useState("");
+  return (
+    <Card className="p-[18px]">
+      <Head title={`어르신 부탁 ${open.length}건`} aud={["sen"]} />
+      {asks.length === 0 ? (
+        <p className="mt-2.5 text-[13px] leading-[1.6] text-muted">미팅 리포트 &lsquo;부탁하신 것&rsquo;에 적으면 한 줄에 한 건씩 여기 남아요.</p>
+      ) : (
+        <ul className="m-0 mt-2 list-none p-0">
+          {open.map((a) => (
+            <li key={a.id} className="border-b border-[#EFEDE8] py-2.5 last:border-0">
+              <div className="flex items-start gap-2.5">
+                <span className="min-w-0 flex-1">
+                  <b className="block text-[14px] leading-[1.5] text-ink">{a.text}</b>
+                  <span className="block text-[11.5px] text-muted">
+                    {md(a.at)}
+                    {a.by ? ` · ${a.by} 미팅 리포트` : ""} · {a.shownAt ? "어르신 앱에 보이는 중" : "관제가 리포트를 보내면 어르신 앱에"}
+                  </span>
+                </span>
+                {doing !== a.id && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setDoing(a.id);
+                      setMemo("");
+                    }}
+                    className="btn-press min-h-[40px] flex-none rounded-[10px] bg-navy px-3.5 text-[13px] font-bold text-white"
+                  >
+                    해결
+                  </button>
+                )}
+              </div>
+              {doing === a.id && (
+                <div className="mt-2 flex flex-col gap-2">
+                  <label htmlFor={`${id}-${a.id}`} className="text-[12px] font-bold text-navy">
+                    한 줄 메모 (선택)
+                  </label>
+                  <input
+                    id={`${id}-${a.id}`}
+                    value={memo}
+                    maxLength={80}
+                    onChange={(e) => setMemo(e.target.value)}
+                    placeholder="예) 10/30 전구 교체함"
+                    className="min-h-[44px] rounded-[10px] border border-[#D9D6CF] bg-white px-3 text-[14px] text-navy outline-none focus:border-navy"
+                  />
+                  <div className="grid grid-cols-2 gap-2">
+                    <button type="button" onClick={() => setDoing(null)} className="btn-press min-h-[44px] rounded-[10px] border border-[#D9D6CF] bg-white text-[13.5px] font-bold text-navy">
+                      그만두기
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        onResolve(a, memo.trim());
+                        setDoing(null);
+                      }}
+                      className="btn-press min-h-[44px] rounded-[10px] bg-navy text-[13.5px] font-bold text-white"
+                    >
+                      해결로 저장
+                    </button>
+                  </div>
+                </div>
+              )}
+            </li>
+          ))}
+          {closed.map((a) => (
+            <li key={a.id} className="border-b border-[#EFEDE8] py-2 opacity-60 last:border-0">
+              <span className="block text-[13.5px] leading-[1.5] text-ink">{a.text}</span>
+              <span className="block text-[11.5px] text-muted">{askDoneText(a)}</span>
+            </li>
+          ))}
+        </ul>
       )}
     </Card>
   );

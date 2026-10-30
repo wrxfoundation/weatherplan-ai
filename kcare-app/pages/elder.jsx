@@ -29,8 +29,11 @@ import { ConfirmSteps, DurationStepper, PeoplePick } from "../components/Booking
 import { ExtraChargeCard, ExtraChargeSheet, myExtraCharges } from "../components/ExtraCharge";
 import ElderMy from "../components/ElderMy";
 import { assigneeNow, avatarText, elderNameOf, givenName, inCenter, voiceTargetsCenter } from "../lib/people";
+import { josa } from "../lib/tracks";
 import { sentReportState, visitReportOf } from "../lib/live-household";
-import { MED_STREAK, SUPPLEMENTS, daysLeft, healthOf, medProgress, medTakenToday, needsReorder, slotHour, slotStates } from "../lib/meds";
+import { doneAsks, elderOpenAsks } from "../lib/elder-asks";
+import { partnerHospitals } from "../lib/hospitals";
+import { MED_STREAK, daysLeft, healthOf, medProgress, medTakenToday, missionPlan, needsReorder, remainNow, slotHour, slotStates, supplementShort } from "../lib/meds";
 import { medStreakWeek } from "../lib/demo-health";
 import { VERDICT, matchWelfare, profileFor, welfareCounts } from "../lib/welfare";
 import { eventsFor, useAppState, useSync } from "../lib/state";
@@ -152,9 +155,10 @@ function spokenClock(hhmm) {
 // 처방약은 성분명이 아니라 어르신용 이름(elderLabel · "아산병원약")으로 부른다 (2026-09-04 시트 오늘 3번).
 function medDoseNames(slot, medPlan) {
   const plan = medPlan.find((d) => d.slot === slot);
-  const rx = plan?.elderLabel ? [plan.elderLabel] : (plan?.items || []).map((i) => stripIngredient(i.name));
-  // 건강식품은 예시 목록이다 — 관제 센터 공간에는 붙이지 않는다 (2026-10-06 누수 점검)
-  const sup = (inCenter() ? [] : SUPPLEMENTS).filter((x) => x.slot === slot).map((x) => x.name.split(" ")[0]);
+  // 건강식품만 있는 때는 그 이름이 곧 건강식품이다 (lib/meds.js missionPlan)
+  const rx = plan?.suppOnly ? [] : plan?.elderLabel ? [plan.elderLabel] : (plan?.items || []).map((i) => stripIngredient(i.name));
+  // 건강식품 — 컨시어지 · 관제가 등록한 것(가구 기록). 아직 등록 전이면 데모 · 테스트 가구는 예시, 센터는 없음 (2026-10-28 요청 5)
+  const sup = (plan?.supplements || []).map(supplementShort);
   return [...rx, ...sup].join(" · ");
 }
 
@@ -318,7 +322,19 @@ function ElderHome() {
   // 선생님이 남긴 말 — 관제가 검수해 보호자에게 보낸 방문 리포트의 '어르신께 남길 말'(미팅 리포트는 '부탁하신 것')
   // (2026-10-24 컨시어지 화면설계서 v3 §3-5). 보내기 전에는 나오지 않고, 다음 리포트가 가면 그것으로 바뀐다
   const sentReport = useMemo(() => visitReportOf(sentReportState(state)), [state]);
-  const teacherNote = sentReport.sent ? String((sentReport.mode === "meet" ? sentReport.meet?.asked : sentReport.toElder) || "").trim() : "";
+  // 미팅 리포트의 '부탁하신 것'은 한 건씩 남는다(state.elderAsks · 2026-10-28 요청 1) — 아래 카드에서 해결 · 취소한다.
+  // 부탁 기록이 하나도 없는 가구(이 기능 전에 보낸 미팅 리포트)만 예전처럼 글을 그대로 보인다
+  const myAsks = elderOpenAsks(state);
+  const pastAsks = doneAsks(state).slice(0, 3);
+  const noAskRecord = !(state.elderAsks || []).length;
+  const teacherNote = sentReport.sent ? String((sentReport.mode === "meet" ? (noAskRecord ? sentReport.meet?.asked : "") : sentReport.toElder) || "").trim() : "";
+  const [askCancelId, setAskCancelId] = useState(null); // 취소를 묻고 있는 부탁 id
+  const closeAsk = (a, to) => {
+    dispatch({ type: "closeAsk", id: a.id, to, by: "어르신", role: "elder" });
+    dispatch({ type: "pushEvent", payload: { kind: "어르신", text: `${ELDER.name} 님 부탁 ${to === "resolved" ? "해결됐다고 알림" : "취소"} — ${a.text}`, color: "#8FA9CC" } });
+    setAskCancelId(null);
+    toast(to === "resolved" ? "해결됐다고 선생님께 알렸어요" : "부탁을 취소했어요 · 선생님께 알렸어요");
+  };
   const xSel = (state.extraCharges || []).find((x) => x.id === xOpen) || null;
   const payExtra = (x) => router.push(payHref({ kind: "extra", amount: x.amount, orderName: `추가 이용 금액 · ${svcTitle(x.service)}`, ref: x.id, back: "/elder" }));
   const askFamilyPay = (r) => {
@@ -378,6 +394,10 @@ function ElderHome() {
       return d.getFullYear() * 12 + d.getMonth() > now.getFullYear() * 12 + now.getMonth();
     })
     .sort((a, b) => a.at - b.at);
+  // 최근 취소된 일정 (2026-10-28 요청 7) — 확정됐던 일정이 취소되면 달력에서 빠지고 여기에 남는다.
+  // 보호자 달력 '최근 취소된 일정' · 컨시어지 일정 달력의 '취소됨'과 같은 기록(eventsRemoved). 말없이 사라지지 않게
+  const cancelledEvents = (state.eventsRemoved || []).filter((x) => x.removed?.mode === "cancel" && x.removed.at > Date.now() - 14 * 86400000).slice(0, 5);
+  const cancelWho = (by) => (by === "어르신" ? "직접 취소하셨어요" : `${josa(by || "관제", "이", "가")} 취소했어요`);
   // 일정 지우기 · 취소하기 — 확정된 것은 '취소'(관제에 알림 · 기록 남김), 그 밖은 지운다
   const removeMyEvent = (e) => {
     const r = eventRights(e, "elder");
@@ -403,7 +423,9 @@ function ElderHome() {
 
   // 오늘 약 — 첫 안심방문에서 등록한 복약 계획(lib/meds.js)을 어르신이 직접 체크한다.
   // 복약 계획 — 가구 상태의 건강 정보(관제 · 컨시어지가 고친 값)를 그대로 쓴다 (lib/meds.js healthOf)
-  const medPlan = healthOf(state).meds;
+  // 복약 미션 — 처방약 때 + 같은 때의 건강식품 (건강식품만 있는 때도 한 칸 · 2026-10-28 요청 5)
+  const healthNow = healthOf(state);
+  const medPlan = missionPlan(healthNow);
   const medPlanKey = medPlan.map((d) => `${d.slot}@${d.time}`).join("|"); // 알람 시각이 바뀌면 다시 본다
   const med = medProgress(medSlots, medPlan);
   // 등록된 약이 없으면(편집기에서 모두 뺀 경우) '다 드셨습니다'도 연속 하루도 아니다 (2026-10-02 코드 리뷰)
@@ -466,7 +488,8 @@ function ElderHome() {
   const askDone = askAll.filter((q) => q.status === "resolved");
   const [askDoneOpen, setAskDoneOpen] = useState(false);
   const [askConfirm, setAskConfirm] = useState(null); // 지우기 확인 중인 질문 id
-  const supplements = (inCenter() ? [] : SUPPLEMENTS).map((s) => ({ ...s, alert: needsReorder(s) }));
+  // 건강식품 — 컨시어지 · 관제가 등록한 것 (가구 기록 · 2026-10-28 요청 5)
+  const supplements = healthNow.supplements.map((s) => ({ ...s, alert: needsReorder(s) }));
   const supAlerts = supplements.filter((s) => s.alert);
   // 세대공감 — 옆으로 밀어 보는 5장 (2026-08-28 요청 "하루 1개 말고 롤링 5개").
   const genTopics = rollingTopics(5, now);
@@ -1281,12 +1304,45 @@ function ElderHome() {
                 <ExtraChargeCard x={x} big onOpen={setXOpen} />
               </R>
             ))}
-            {teacherNote && (
-              <R d={100} className="flex flex-col gap-1 rounded-[24px] px-5 py-4" style={{ background: TONE.green.bg }}>
+            {/* 선생님이 남긴 말 + 미팅 때 하신 부탁 (한 건씩 · 해결됐어요 · 취소할게요 — 2026-10-28 요청 1).
+                열린 부탁이 없고 남긴 말도 없으면 카드가 없다 */}
+            {(teacherNote || myAsks.length > 0) && (
+              <R d={100} className="flex flex-col gap-2 rounded-[24px] px-5 py-4" style={{ background: TONE.green.bg }}>
                 <span className="text-[16px] font-extrabold" style={{ color: "#2A4D33" }}>
-                  {givenName(sentReport.concierge.pri)} 선생님이 남겼어요
+                  {givenName(myAsks[0]?.by || sentReport.concierge.pri)} 선생님이 남겼어요
                 </span>
-                <span className="text-[20px] font-bold leading-[1.45]">{teacherNote}</span>
+                {teacherNote && <span className="text-[20px] font-bold leading-[1.45]">{teacherNote}</span>}
+                {myAsks.length > 0 && (
+                  <ul className="m-0 flex list-none flex-col gap-2 p-0" aria-label="선생님께 하신 부탁">
+                    {myAsks.map((a) => (
+                      <li key={a.id} className="flex flex-col gap-2.5 rounded-[18px] bg-white p-3.5">
+                        <span className="text-[19px] font-bold leading-[1.45]">{a.text}</span>
+                        {askCancelId === a.id ? (
+                          <>
+                            <span className="text-[17px] leading-[1.5]">이 부탁을 취소할까요? 선생님께 알려 드려요.</span>
+                            <div className="grid grid-cols-2 gap-2">
+                              <WhiteBtn h={56} className="text-[17px]" style={{ background: "#F3F1EC" }} onClick={() => setAskCancelId(null)}>
+                                아니요
+                              </WhiteBtn>
+                              <Btn tone="navy" h={56} className="text-[17px]" onClick={() => closeAsk(a, "cancelled")}>
+                                취소할게요
+                              </Btn>
+                            </div>
+                          </>
+                        ) : (
+                          <div className="grid grid-cols-2 gap-2">
+                            <Btn tone="green" h={56} className="text-[17px]" onClick={() => closeAsk(a, "resolved")}>
+                              해결됐어요
+                            </Btn>
+                            <WhiteBtn h={56} className="text-[17px]" style={{ background: "#F3F1EC" }} onClick={() => setAskCancelId(a.id)}>
+                              취소할게요
+                            </WhiteBtn>
+                          </div>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </R>
             )}
             {/* 네 칸 — 남는 세로 공간을 모두 가져간다 (2026-08-28 "위아래로 꽉") */}
@@ -1900,7 +1956,7 @@ function ElderHome() {
                   진행 중 {myOpen.length}건
                 </span>
               </div>
-              {myRequests.length === 0 ? (
+              {myRequests.length === 0 && pastAsks.length === 0 ? (
                 <div className="rounded-[24px] p-[18px] text-center text-[17px] font-bold" style={{ background: TONE.gray.bg, color: TONE.gray.fg }}>
                   아직 부탁하신 것이 없어요
                 </div>
@@ -2035,6 +2091,22 @@ function ElderHome() {
                   );
                 })
               )}
+              {/* 선생님께 하신 부탁 중 끝난 것 — 홈 카드에서 해결 · 취소하면 여기로 온다 (최근 3건 · 2026-10-28 요청 1) */}
+              {pastAsks.map((a) => (
+                <div key={a.id} className="flex items-center gap-3 rounded-[24px] p-4" style={{ background: TONE.gray.bg }}>
+                  <span className="flex h-11 w-11 flex-none items-center justify-center rounded-full bg-white" style={{ color: TONE.gray.fg }}>
+                    <Line name="check" size={22} />
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <b className="block text-[18px] font-extrabold leading-[1.35]" style={{ color: TONE.gray.title }}>
+                      {a.text}
+                    </b>
+                    <span className="text-[16px] font-bold" style={{ color: TONE.gray.fg }}>
+                      {a.status === "resolved" ? "해결됐어요" : "취소했어요"} · 선생님께 하신 부탁
+                    </span>
+                  </span>
+                </div>
+              ))}
             </R>
           </Screen>
 
@@ -2543,6 +2615,22 @@ function ElderHome() {
               ))}
             </>
           )}
+          {!calSel && cancelledEvents.length > 0 && (
+            <>
+              <div className="pt-1 text-[17px] font-extrabold">최근 취소된 일정</div>
+              {cancelledEvents.map((x) => (
+                <p key={`${x.id}-${x.removed.at}`} className="rounded-[20px] px-4 py-3 text-[17px] leading-[1.5]" style={{ background: TONE.gray.bg, color: TONE.gray.fg }}>
+                  <b className="block line-through decoration-[#5E5A52]/50">
+                    {spokenDay(x.at)} · {cleanTitle(x.title)}
+                  </b>
+                  <span className="block text-[16px]">
+                    {cancelWho(x.removed.by)}
+                    {x.removed.reason ? ` · ${x.removed.reason}` : ""}
+                  </span>
+                </p>
+              ))}
+            </>
+          )}
         </div>
         <WhiteBtn className="text-[18px]" onClick={() => setMonthOpen(false)}>
           닫기
@@ -2577,7 +2665,7 @@ function ElderHome() {
                 </b>
                 <span className="block text-[17px] font-extrabold">{d.elderLabel}</span>
                 <span className="text-[15px]" style={{ color: "#5E6270" }}>
-                  {d.items.map((i) => stripIngredient(i.name)).join(" · ")}
+                  {d.suppOnly ? "건강식품" : [...d.items.map((i) => stripIngredient(i.name)), ...(d.supplements || []).map(supplementShort)].join(" · ")}
                 </span>
               </span>
             </Card>
@@ -2607,8 +2695,13 @@ function ElderHome() {
                 <span className="min-w-0 flex-1">
                   <b className="block text-[18px] font-extrabold">{s.name}</b>
                   <span className="text-[15px]" style={{ color: "#5E6270" }}>
-                    {s.remain}
-                    {s.unit} 남음 · {left}일치 · 유통기한 {s.expiry}
+                    {[
+                      `${s.slot} ${s.perDay || 1}${s.unit || "정"}`,
+                      remainNow(s) != null ? `${remainNow(s)}${s.unit || "정"} 남음 · ${left}일치` : null,
+                      s.expiry ? `유통기한 ${s.expiry}` : null,
+                    ]
+                      .filter(Boolean)
+                      .join(" · ")}
                   </span>
                 </span>
                 {s.alert && (
@@ -2639,7 +2732,7 @@ function ElderHome() {
                           id: `rq-${Date.now()}`,
                           dir: "fromElder",
                           type: "건강식품 재구매",
-                          detail: `${s.name} — ${s.alert} (${left}일치 남음 · 유통기한 ${s.expiry})`,
+                          detail: `${s.name} — ${s.alert} (${[left != null ? `${left}일치 남음` : null, s.expiry ? `유통기한 ${s.expiry}` : null].filter(Boolean).join(" · ")})`,
                           amount: null,
                           preferredDate: null,
                           urgency: "normal",
@@ -2815,7 +2908,8 @@ function ElderHome() {
             setAskSel(null);
             setAskSent(null);
           }}
-          hospitals={(state.myHospitals || []).map((h) => h.name).filter(Boolean)}
+          // 다니시던 병원(가족이 등록) 먼저, 그다음 관제 병원 관리의 제휴 병원 (2026-10-28 요청 2 · lib/hospitals.js)
+          hospitals={[...new Set([...(state.myHospitals || []).map((h) => h.name), ...partnerHospitals(state).map((h) => h.name)].filter(Boolean))]}
           onCallOps={() => {
             // 응급 대응 — 요청서 대신 '관제와 통화하기' 하나 (2026-10-14 현장 요청 7번). 도와줘요와 같은 길로 관제가 먼저 전화한다
             const already = !!visitOpen;

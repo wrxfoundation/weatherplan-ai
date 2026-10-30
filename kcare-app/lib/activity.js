@@ -182,6 +182,24 @@ export function summarize(a) {
     // 2026-10-26 점검 — 10-22 에 생긴 돈 · 승인 동작이 감사로그에 이름 그대로('기타')만 남던 것
     case "guardianHeard":
       return "보호자 음성 들음";
+    // 2026-10-28 요청 2 — 관제 병원 관리 (보호자 · 어르신 · 컨시어지 화면이 같은 명부를 읽는다)
+    case "saveHospital":
+      return `병원 명부 저장 · ${clip(a.hospital?.name, 30)} (${a.hospital?.partner ? "제휴" : "비제휴"})`;
+    case "removeHospital":
+      return `병원 명부 삭제 · ${clip(a.name, 30)}`;
+    // 2026-10-28 요청 1 — 미팅 리포트 '부탁하신 것'의 해결 · 취소
+    case "closeAsk":
+      return `어르신 부탁 ${a.to === "resolved" ? "해결" : "취소"} · ${a.role === "elder" ? "어르신" : clip(a.by, 20)}${a.memo ? ` · ${clip(a.memo, 40)}` : ""}`;
+    // 2026-10-28 요청 3 — 관제 컨시어지 관리 탭 편집 · 담당 컨시어지 변경 (사유와 함께)
+    case "setConciergeProfile":
+      return `컨시어지 상세 수정 · ${clip(a.name, 20)} · ${(Array.isArray(a.fields) ? a.fields : []).map((f) => clip(f?.field, 16)).slice(0, 4).join(" · ")}${a.reason ? ` · 사유 ${clip(a.reason, 30)}` : ""}`;
+    case "setElderStaff":
+      return `담당 컨시어지 변경 · ${clip(a.elder, 20)} · 주 ${clip(a.pri, 12)} · 부 ${clip(a.sub || "—", 12)}${a.reason ? ` · 사유 ${clip(a.reason, 30)}` : ""}`;
+    // 2026-10-28 요청 4 — 관제 보호자 관리 기본정보 편집 · 수신동의 변경 알림 확인
+    case "setGuardianInfo":
+      return `보호자 기본정보 수정 · ${clip(a.name, 20)} · ${(Array.isArray(a.fields) ? a.fields : []).map((f) => clip(f?.field, 16)).slice(0, 4).join(" · ")}${a.reason ? ` · 사유 ${clip(a.reason, 30)}` : ""}`;
+    case "guardianNoticeSeen":
+      return `보호자가 관제 알림 확인${a.by ? ` · ${clip(a.by, 20)}` : ""}`;
     case "setPendingOrder":
       return `스토어 장바구니 · ${won(p.total)}`;
     case "sendExtraCharge":

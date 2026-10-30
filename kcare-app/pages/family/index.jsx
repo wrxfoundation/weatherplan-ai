@@ -13,7 +13,7 @@ import { playErrorText, usePrefetchClips, useVoicePlayer } from "../../lib/voice
 import { useAuth } from "../../lib/auth";
 import { scopedKey } from "../../lib/scope";
 import { useLastActivity } from "../../lib/last-activity";
-import { healthOf, medTakenToday } from "../../lib/meds";
+import { healthOf, medTakenToday, missionPlan } from "../../lib/meds";
 import { LIVE_CONCIERGE, LIVE_TAG, STAGE_LABEL, visitReportOf } from "../../lib/live-household";
 import { centerNow } from "../../lib/people-store";
 import { approverOf, guardianPays } from "../../lib/requests";
@@ -24,6 +24,7 @@ import { USUAL_SLEEP, fitMonth, medMonth, medTally, pastWeek, weekBefore } from 
 import { Clay, Line } from "../../components/clay";
 import { Btn, Card, EvenGrid, Face, Pill, R, TONE, WhiteBtn, eventTone } from "../../components/ds";
 import { ExtraChargeCard, ExtraChargeSheet, myExtraCharges } from "../../components/ExtraCharge";
+import GuardianNotices from "../../components/GuardianNotices";
 import { payHref } from "../../lib/payments";
 import { svcTitle } from "../../lib/booking";
 
@@ -115,7 +116,7 @@ export default function FamilyHome() {
   const medTaken = medTakenToday(state.elder); // 오늘 날짜의 체크만
   const medDone = Object.keys(medTaken).filter((k) => medTaken[k]);
   // 복약 계획 — 관제 · 컨시어지가 고친 건강 정보 그대로 (어르신 앱과 같은 값, lib/meds.js healthOf)
-  const medPlan = healthOf(state).meds;
+  const medPlan = missionPlan(healthOf(state)); // 처방약 때 + 건강식품 (어르신 복약 미션과 같은 계획 · 2026-10-28 요청 5)
   const morningMed = medPlan.find((d) => d.slot === "아침") || null;
   const voicesToElder = (state.voices || []).filter((v) => v.from === "보호자");
   const heard = voicesToElder.filter((v) => state.elder?.msgPlayed?.[v.id]).length;
@@ -317,6 +318,9 @@ export default function FamilyHome() {
             onClose={() => setXOpen(null)}
           />
         )}
+
+        {/* 관제가 연락 수신동의를 바꿨다는 알림 — 확인하면 내려간다 (2026-10-28 요청 4) */}
+        <GuardianNotices me={meAs(authUser, "guardian")} />
 
         {/* 관제가 보낸 안심방문 리포트 · 컨시어지가 보낸 동행 리포트 — 열어 보기 전까지 위쪽에 (2026-10-02 연동) */}
         {state.visit.ops?.sentAt && state.visit.ops?.viewed !== "열람 완료" && (

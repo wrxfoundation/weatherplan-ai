@@ -15,6 +15,17 @@ import { healthOf, medDrugs } from "../../lib/meds";
 import { sentEscortOf, sentReportState, visitReportOf } from "../../lib/live-household";
 import { familyOf, meOf, monthlyLabel, shortName } from "../../lib/membership";
 import { consentOn, videoConsentOf } from "../../lib/consent";
+import { CONSENT_ITEMS, tzText } from "../../lib/ops-records";
+import { meAs } from "../../lib/people";
+import GuardianNotices from "../../components/GuardianNotices";
+
+// 휴대전화는 가운데를 가린다 — 마이 '내 정보'와 같은 규칙 (010-****-1234)
+const maskTel = (t) => {
+  const s = String(t || "");
+  const n = s.replace(/\D/g, "").length;
+  let i = 0;
+  return s.replace(/\d/g, (d) => (i++ >= 3 && i <= n - 4 ? "*" : d));
+};
 
 // 마이 — 2026-10-15 디자인 시안: 머리('마이' + 오른쪽 위 '내 정보') → 지난 동행 평가 → 여섯 칸
 // (동행 리포트 · 방문 리포트 · 건강 · 방문 영상 · 가족 · 정보 동의) → 멤버십 막대.
@@ -51,6 +62,10 @@ export default function MyPage() {
   const renewNeeded = state.guardian?.consentRenewedAt ? 0 : CONSENTS.filter((c) => c.expiring && consentOn(state, c.k, c.on)).length;
   const visit = live ? visitReportOf(sentReportState(state)) : null; // 마지막으로 보낸 방문 리포트 (다음 방문을 시작해도 남는다)
   const [, vm, vd] = VISIT_REPORT.head.visitedAt.split(".").map(Number);
+  // 관제에 등록된 내 연락 정보 — 관제 보호자 관리 › 기본정보 [편집]과 같은 값 (2026-10-28 요청 4 · state.guardianInfo).
+  // 관제 명부와 같은 이름으로 찾는다 (테스트 가구 1 은 김민수 · 센터 공간은 회원 이름)
+  const myName = meAs(auth.user, "guardian");
+  const info = state.guardianInfo?.[myName] || null;
 
   // 동행 평가 — 테스트 가구는 컨시어지가 동행 리포트를 보낸 뒤에만 묻는다 (없던 동행을 '끝났습니다'라고 하지 않는다 · 2026-10-02 UX 점검)
   const rateWhen = live
@@ -126,6 +141,9 @@ export default function MyPage() {
           </button>
         }
       >
+        {/* 관제가 수신동의를 바꿨으면 맨 위에 — 확인하면 내려간다 */}
+        <GuardianNotices me={myName} />
+
         {rateWhen && (
           <RateCard
             when={rateWhen}
@@ -189,6 +207,38 @@ export default function MyPage() {
             );
           })}
         </div>
+
+        {/* 관제에 등록된 내 연락 정보 — 관제가 기본정보를 저장한 뒤에 보인다. 바꾸려면 관제(고객센터)로 */}
+        {info && (
+          <div className="ds-r rounded-[24px] bg-white p-4" style={{ "--d": "100ms", boxShadow: "0 5px 0 #E6E2DA" }}>
+            <h2 className="text-[18px] font-extrabold" style={{ color: "#1B2340" }}>
+              관제에 등록된 내 연락 정보
+            </h2>
+            <dl className="mt-2">
+              {[
+                ["휴대전화", info.tel ? maskTel(info.tel) : "—"],
+                ["거주", `${info.where || "국내"} · ${info.city || "—"}${info.where === "해외" ? ` · ${tzText(info.tz)}` : ""}`],
+                ["연락 가능시간", info.hours || "—"],
+                ["야간 연락", "night" in info ? (info.night ? "가능 (22:00 이후 포함)" : "안 함") : "—"],
+                ["연락 순서", info.sosOrder ? `${info.sosOrder}순위` : "—"],
+                ...(info.role ? [["역할", `${info.role} 보호자`]] : []),
+                ["연락 수신동의", info.consent ? CONSENT_ITEMS.map(([k, l]) => `${l} ${info.consent[k] ? "받음" : "안 받음"}`).join(" · ") : "—"],
+              ].map(([k, v]) => (
+                <div key={k} className="flex gap-3 border-t py-2 first:border-t-0" style={{ borderColor: "#EEEDEA" }}>
+                  <dt className="w-[96px] flex-none text-[14px] font-bold" style={{ color: "#5E6270" }}>
+                    {k}
+                  </dt>
+                  <dd className="min-w-0 flex-1 text-[15px]" style={{ color: "#1B2340" }}>
+                    {v}
+                  </dd>
+                </div>
+              ))}
+            </dl>
+            <p className="mt-1 text-[13px] leading-[1.55]" style={{ color: "#5E6270" }}>
+              관제가 연락할 때 쓰는 정보예요. 바꿀 것이 있으면 K-CARE 고객센터로 말씀해 주세요.
+            </p>
+          </div>
+        )}
 
         {/* 멤버십 막대 — 결제수단이 없으면 등록을 먼저 권한다 (시안의 산호색 글씨는 금색으로) */}
         <Link
