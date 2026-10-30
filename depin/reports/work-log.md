@@ -2600,3 +2600,4 @@ Thanks Odelia — writing to you at that address today. Mine is support@wellbian
 - **링크드인 1촌 인사 — Desiree Moreno-Pineyro(Citi VP · XRPL 커뮤니티, 10/30)** — x-activity-log 새 절. Lynn 기본값 + Get Blue 공유에 닿는 한 줄, 영문 731자. 요청 · 체인 이름 · 관계 암시 0.
 
 - **대리점 영업구조 한 장 슬라이드(10/30, 서우 회의 녹취 txt + 「영업구조도 일목요연 슬라이드 하나」)** — Slides 아티팩트(비공개) · 누가(영업자 · 점주 · 대리점 · 웰비안) × 단계(설치 · 인수 · 데이터) 표 + 주의 한 줄 + 노트에 10/27 고칠 것 6. business-directions 대리점 절에 10/30 갱신(15만 원 · 10/15/5 · 토큰 또는 임대료 선택 · 방문판매법 ⚖).
+  - 같은 날 밤 Serhii 답(일반 보유자 「입문 · 버틴 것 · 실수」 형식 + 개인 보유 질문) → 정중히 사양 답장 457자(빌더 쪽 형식이면 다시). 보유 여부 답하지 않음.

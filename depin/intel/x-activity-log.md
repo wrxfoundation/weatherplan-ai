@@ -4838,6 +4838,16 @@ I came to crypto from the weather-data side rather than trading, which might mak
 Could you share a bit more about the format and timing? And just to be upfront so I don't waste your time: we don't have room for any paid or sponsored placements right now, so I could only join as a regular guest. If that works on your side, I'd be glad to talk.
 ```
 
+- **10/30 23:22 Serhii 답**: 유료 · 스폰서 아님(일반 게스트) · 새 형식 = 일반 보유자가 「어떻게 들어왔나 · 무엇을 버텼나 · 실수 · 생각의 변화」를 말함 · 「개인적으로 크립토를 보유 · 거래해 봤나」 질문.
+  판정(서우 「의미가 있나」): **정중히 사양.** 형식의 핵심이 개인 보유 · 매매 이야기 — 상장사 직원의 보유 · 「버틴 코인」 발언은 잘려서 돈다(DM 도 공개 글) · 웰비안 노출은 곁가지 · WLBN 보유 이야기가 나오면 이해충돌로 읽힌다. 보유 여부는 답하지 않고, 빌더 · 실물 데이터 형식이 생기면 다시 — 관계는 남긴다.
+  영문 457자:
+```
+Thanks Serhii, appreciate the clarity!
+
+Honestly, I don't think I'm the right fit for this one. My crypto story is really about building rather than holding or trading, and for compliance reasons I keep my personal holdings private, which is the heart of your format.
+
+If you ever run something on the builder side, like real-world data or how projects actually get made, I'd be glad to join. Best of luck with Beyond the Block, it sounds like a great idea.
+```
 ## 링크드인 1촌 인사 — Desiree Moreno-Pineyro(Citi VP · CPB/Capital Markets Risk Supervisory Principal · 플로리다) (2026-10-30, 서우 프로필 캡처 + 「인사」)
 
 공개 프로필: Citi 2010~ · Merrill Lynch 2004~2010 · Citi 디지털자산 · 결제 리더십용 디지털자산 브리핑 작성 · Ripple Swell · XRPL 커뮤니티 활동 · 공통 1촌 James · Ryan · 공통 그룹 Ripple XRP · 12시간 전 리플 × Water.org(Get Blue) 「At the end of every payment is a person」 공유.
