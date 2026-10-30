@@ -4865,6 +4865,19 @@ Loved your share of the Get Blue story. "At the end of every payment is a person
 Good to be connected.
 ```
 
+## 서우 개인 계정 — @dazzlingxrpl 「Swell 명장면(엘리 굴딩 · 갈링하우스 · 맷 데이먼 · @justmoon) … Swell Done 👏✅」 인용 (2026-10-30, 서우 캡처 + 「Swell 은 swack 이었다는 언어유희」)
+
+판정: **원글의 「Swell Done」(= Well done)을 받아 well 말장난으로 닫는다.** 재태그(@Ripple · 인물) 0, 「Ripple 팀과 함께」 0 — 감사는 「that week 를 만든 모든 사람」으로, 참석 · 일정 0.
+⚠ **「swack」은 원어민에게 「wack」(= 별로 · 구림)으로 들린다** — 단독으로 쓰면 「Swell 은 구렸다」로 읽힐 수 있다. 쓰려면 C 처럼 「zero wack」으로 뜻을 붙잡아 둔다. 10/28 Day 1 글 「Swag + wellbian = Swell. Simple math.」를 올렸다면 B 가 그 마무리(같은 식 · 「all week」).
+- A 추천(가중 103) — well 세 번, 설명 없이
+```
+Swell done, well run, and somewhere in there, wellbian. 🌦️
+
+Hats off to everyone who built that week.
+```
+- B Day 1 마무리(73) `Swell done. 👏` / 빈 줄 / `Swag + wellbian = Swell, and the math held all week. 🌦️`
+- C swack 요청판(97) `Swell done? Swell was swack: all swag, zero wack. 🌦️` / 빈 줄 / `Hats off to everyone who built that week.`
+
 ## DM — Swell 글 보고 관심 보인 해외 계정(가입 2013 · 팔로워 약 6.7천) 판매 안내 (2026-10-28, 서우 캡처 + 「wellbian.io 판매 사이트 안내 · 추가 할인 코드」)
 
 계정명은 적지 않는다(잠재 고객). 서우 「Hi」 → 상대 「Hello」.

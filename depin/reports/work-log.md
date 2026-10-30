@@ -2601,3 +2601,5 @@ Thanks Odelia — writing to you at that address today. Mine is support@wellbian
 
 - **대리점 영업구조 한 장 슬라이드(10/30, 서우 회의 녹취 txt + 「영업구조도 일목요연 슬라이드 하나」)** — Slides 아티팩트(비공개) · 누가(영업자 · 점주 · 대리점 · 웰비안) × 단계(설치 · 인수 · 데이터) 표 + 주의 한 줄 + 노트에 10/27 고칠 것 6. business-directions 대리점 절에 10/30 갱신(15만 원 · 10/15/5 · 토큰 또는 임대료 선택 · 방문판매법 ⚖).
   - 같은 날 밤 Serhii 답(일반 보유자 「입문 · 버틴 것 · 실수」 형식 + 개인 보유 질문) → 정중히 사양 답장 457자(빌더 쪽 형식이면 다시). 보유 여부 답하지 않음.
+
+- **서우 개인 인용 — @dazzlingxrpl 「Swell Done」 정리글(10/30)** — x-activity-log 새 절. A 「Swell done, well run, and somewhere in there, wellbian.」 · B Day 1 식 마무리 · C swack 판(「zero wack」으로 뜻 고정 — swack 단독은 wack 으로 들림). 재태그 · 참석 0.
