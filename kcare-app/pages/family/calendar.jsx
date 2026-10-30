@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import FamilyLayout from "../../components/FamilyLayout";
 import { Clay, Line } from "../../components/clay";
 import { Btn, Card, EvenGrid, Sheet, SheetTitle, TONE, WhiteBtn, eventTone } from "../../components/ds";
-import { EVENT_KINDS } from "../../lib/mock";
+import { EVENT_KINDS, EVENT_SHORT as SHORT } from "../../lib/mock";
 import { partnerHospitals } from "../../lib/hospitals";
 import { useAppState } from "../../lib/state";
 import { useGuardianRole } from "../../lib/guardian-role";
@@ -19,8 +19,7 @@ import { honorific } from "../../lib/tracks";
 const DOW = ["일", "월", "화", "수", "목", "금", "토"];
 // 달력 점 색 — 일정 종류의 색(eventTone)을 진하게
 const DOT = { green: "#3B6B47", beige: "#B08A4A", blue: "#5470B8", purple: "#6A4D9C" };
-// 일정 카드 왼쪽 작은 꼬리표 — EVENT_KINDS 이름이 길면(다음 진료 예정일) 줄인다
-const SHORT = { hospital: "병원", checkup: "검진", nextAppt: "진료 예정", medication: "복약", visit: "안심방문", family: "가족", delivery: "배송", request: "해주세요", daily: "일상동행" };
+// 일정 카드 왼쪽 작은 꼬리표 — SHORT (lib/mock.js EVENT_SHORT)
 const hm = (at) => new Date(at).toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit", hour12: false });
 const md = (at) => new Date(at).toLocaleDateString("ko-KR", { month: "numeric", day: "numeric" });
 const smallBtn = "ds-press ds-btn3d h-11 flex-none rounded-[14px] bg-white px-3.5 text-[14px]";

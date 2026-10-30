@@ -59,6 +59,8 @@ export const EVENT_KINDS = {
   nextAppt: { label: "다음 진료 예정일", color: "#1E7A5A", group: "personal" },
   daily: { label: "일상동행", color: "#3B5C8A", group: "daily" },
 };
+// 일정 꼬리표 — EVENT_KINDS 이름이 길면(다음 진료 예정일) 줄인다. 보호자 달력 · 컨시어지 고객 상세 공유 일정이 같은 말을 쓴다
+export const EVENT_SHORT = { hospital: "병원", checkup: "검진", nextAppt: "진료 예정", medication: "복약", visit: "안심방문", family: "가족", delivery: "배송", request: "해주세요", daily: "일상동행" };
 
 // 주간 요약 (프로토타입 목 수치 재사용) — 웨어러블 실연동 대기 표기 필수
 export const WEEKLY = [

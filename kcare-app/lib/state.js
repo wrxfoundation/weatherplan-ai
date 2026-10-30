@@ -6,7 +6,7 @@ import { INITIAL_EVENTS, INITIAL_REQUESTS, SEED_ASK_DOCTOR, SEED_EVENTS, SEED_OR
 import { URGENCY, approverOf, canEditRequest, cancelRule, crewOf, crewReady, fmtPreferred, paymentOf, transition } from "./requests";
 import { canChargeExtra, durOf, durText, extraAmountOf, extraDueAt, extraToText, svcTitle } from "./booking";
 import { SEED_VISIT, advance } from "./workflow";
-import { VISIT_LEVELS, VISIT_TEXT_KEYS } from "./checkup";
+import { VISIT_LEVELS, VISIT_TEXT_KEYS, isMeet, visitText } from "./checkup";
 import { crewFor } from "./dispatch-policy";
 import { logout, useAuth } from "./auth";
 import { setStorageScope } from "./scope";
@@ -328,6 +328,28 @@ function syncAsks(prev, asks, { at, by, report }) {
     .map((text, i) => ({ id: `${report}-a${i}`, text, at, by: String(by || "").slice(0, 30), report, status: "open", shownAt: null }));
   return [...fresh, ...kept].slice(0, ASKS_KEEP);
 }
+// 이 기능 전에 낸 미팅 리포트의 '부탁하신 것' → 부탁 기록 (2026-10-30 현장 확인 — 업데이트 전에 보낸 리포트의 부탁이 어르신 홈에
+// 글로만 남아 해결 · 취소를 못 했고, 컨시어지 고객 상세에도 안 보였다). 부탁 기록이 하나도 없는 가구만, 어르신 홈이 보여 주는 리포트
+// (lib/live-household.js sentReportState) 그대로 — 지금 방문을 관제가 보냈으면 그것, 아니면 보관된 지난 방문. 지금 방문을 내기만 했으면
+// 그 부탁도 남기되 관제가 보낼 때 보인다(visitOps). 리포트 id 로 열쇠를 만들어 여러 폰이 따로 읽어도 같은 기록이 된다
+function legacyAsks(s) {
+  const cur = s.visit || {};
+  const past = (s.visitHistory || [])[0];
+  const sentOf = (v) => !!(v?.ops?.sentTs || v?.ops?.sentAt);
+  const srcs = [cur.reportSent ? { visit: cur, report: (s.reports || [])[0] } : null, !sentOf(cur) && past?.visit ? { visit: past.visit, report: past.report } : null];
+  const out = [];
+  for (const src of srcs) {
+    if (!src || !isMeet(src.visit.loc)) continue;
+    const r = src.report || {};
+    const at = Number(r.at) || 0;
+    const report = r.id ? String(r.id).slice(0, 40) : `legacy-${at}`;
+    if (out.some((a) => a.report === report)) continue;
+    const ops = src.visit.ops || {};
+    const shownAt = sentOf(src.visit) ? (Number.isFinite(ops.sentTs) ? ops.sentTs : at || 1) : null;
+    askLines(visitText(src.visit, "asked")).forEach((text, i) => out.push({ id: `${report}-a${i}`, text, at, by: String(r.by || "").slice(0, 30), report, status: "open", shownAt }));
+  }
+  return out.slice(0, ASKS_KEEP);
+}
 // 거절 · 취소 — 보호자가 낸 돈은 환불 대기로 (베타: 관제가 토스 상점관리자에서 환불하고 '환불 완료'). 데모 가상 승인은 돈이 없어 바로 완료.
 function closeRequest(state, r, to, note, at, by) {
   const next = transition(r, to, note, at, { by });
@@ -352,7 +374,7 @@ export function reducer(state, action) {
       const p = action.payload && typeof action.payload === "object" ? action.payload : {};
       const arr = (v, fallback) => (Array.isArray(v) ? v : fallback);
       const obj = (v, fallback) => (v && typeof v === "object" && !Array.isArray(v) ? v : fallback);
-      return {
+      const next = {
         ...state,
         ...p,
         demo: { ...state.demo, ...(p.demo || {}) },
@@ -431,6 +453,7 @@ export function reducer(state, action) {
         guardianInfo: obj(p.guardianInfo, state.guardianInfo),
         guardianNotices: arr(p.guardianNotices, state.guardianNotices).filter((x) => x && typeof x === "object" && x.id && typeof x.to === "string"),
       };
+      return next.elderAsks.length ? next : { ...next, elderAsks: legacyAsks(next) };
     }
     case "completeOnboarding":
       return { ...state, onboarding: action.payload };

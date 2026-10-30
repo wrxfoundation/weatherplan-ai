@@ -67,7 +67,7 @@ import { josa } from "../lib/tracks";
 import { eventsFor, useAppState, visitLock } from "../lib/state";
 import { useToast } from "../components/ds";
 import { HomeTextCards, MeetForm, ModePicker, ReportPreview, SendRow } from "../components/ConciergeReport";
-import { ApptCard, AsksCard, BriefingCard, ClientHead, ClientList, HealthCard, PrefCard, clientSub } from "../components/ClientDetail";
+import { ApptCard, AsksCard, BriefingCard, ClientHead, ClientList, HealthCard, PrefCard, SharedScheduleCard, clientSub } from "../components/ClientDetail";
 import { askLines, asksOf, isOpenAsk } from "../lib/elder-asks";
 import { partnerHospitals } from "../lib/hospitals";
 import { ReqNowCard } from "../components/ReqNowCard";
@@ -120,6 +120,7 @@ function ConciergePage() {
   }, [tab]);
   const [healthEdit, setHealthEdit] = useState(false); // 고객 탭 건강 정보 수정
   const [calOpen, setCalOpen] = useState(false); // 오늘 탭 일정 달력
+  const [calShift, setCalShift] = useState(0); // 일정 달력에서 보는 달 — 이번 달에서 몇 달 (10월 말에 잡은 11월 일정을 넘겨서 본다)
   const [calDay, setCalDay] = useState(null); // 달력에서 고른 날 — 시트로 뜬다
   const [calJob, setCalJob] = useState(null); // 시트에서 펼친 건 (고객 이름 → 디테일)
   const [callDone, setCallDone] = useState({}); // 확인전화 체크 (id-단계)
@@ -381,7 +382,8 @@ function ConciergePage() {
   // 안심방문과 동행이 걸린 일정만 — 가족 · 배송 일정은 고객 상세의 공유 일정에서 본다. 해주세요에 묶인 일정은 위 해주세요 줄이 맡는다.
   // 데모는 예시 달력(CONCIERGE_CAL)이 씨앗 일정(오늘 동행 · 사흘 뒤 방문)을 이미 그리고 있어 씨앗은 겹치지 않게 뺀다
   const seedEv = (e) => !live && SEED_EVENT_IDS.has(e.id);
-  const isWork = (e) => !e.reqId && !seedEv(e) && (e.kind === "visit" || !!e.escort);
+  const workKind = (e) => !e.reqId && (e.kind === "visit" || !!e.escort);
+  const isWork = (e) => workKind(e) && !seedEv(e);
   const evJob = (e, extra) => ({
     id: `ev-cal-${e.id}${extra?.cancelled ? `-x${extra.cancelled.at || ""}` : ""}`,
     off: daysUntil(kstYmd(e.at)),
@@ -391,8 +393,10 @@ function ConciergePage() {
     time: hm(e.at),
     where: "",
     detail: e.title,
-    crew: e.note || "배차는 관제가 정합니다",
-    memo: e.source ? `공유 일정 · ${e.source}` : "공유 일정",
+    // 누가 가는지는 관제 배차가 정한다 — 정해지기 전에 지어 쓰지 않는다. 등록 때 저절로 붙은 '동행 필요' 글은 메모에 싣지 않는다
+    // (전에는 그 글이 배차 칸에 들어가 '배차 동행 필요'로 읽혔다 · 2026-10-30 현장 확인)
+    crew: "관제가 배정 후 안내",
+    memo: [/^동행 (불)?필요$/.test(e.note || "") ? null : e.note, e.source ? `공유 일정 · ${e.source}` : "공유 일정"].filter(Boolean).join(" · "),
     ...extra,
   });
   const evJobs = eventsFor(state.events, "concierge")
@@ -412,22 +416,30 @@ function ConciergePage() {
       })
       .filter(Boolean),
   ];
-  const calMonthLabel = `${cNow.getFullYear()}년 ${cNow.getMonth() + 1}월`;
+  // 보는 달은 ‹ › 로 넘긴다 (2026-10-30 현장 확인 — 이번 달만 보여서 월말에 잡은 다음 달 일정이 컨시어지 달력에만 없었다)
+  const calBase = new Date(cNow.getFullYear(), cNow.getMonth() + calShift, 1);
+  const calMonthLabel = `${calBase.getFullYear()}년 ${calBase.getMonth() + 1}월`;
+  // 나갈 일이 먼저, 취소된 것은 뒤에 (칸에는 첫 건만 보인다)
+  const calJobsAll = [...(center ? [] : CONCIERGE_CAL), ...reqJobs, ...evJobs, ...cancelJobs];
+  const offOf = (y, m, d) => Math.round((new Date(y, m, d) - new Date(cNow.getFullYear(), cNow.getMonth(), cNow.getDate())) / 86400000);
   const calCells = (() => {
-    const first = new Date(cNow.getFullYear(), cNow.getMonth(), 1);
-    const last = new Date(cNow.getFullYear(), cNow.getMonth() + 1, 0).getDate();
-    const cells = Array.from({ length: first.getDay() }, () => null);
+    const y = calBase.getFullYear();
+    const m = calBase.getMonth();
+    const last = new Date(y, m + 1, 0).getDate();
+    const cells = Array.from({ length: calBase.getDay() }, () => null);
     for (let d = 1; d <= last; d++) {
-      cells.push({
-        day: d,
-        today: d === cNow.getDate(),
-        // 오늘에서 며칠 떨어진 날인지(off)로 맞춘다 — 달력과 '오늘의 일정'이 같은 기준(이 폰의 오늘)을 쓰게.
-        // 나갈 일이 먼저, 취소된 것은 뒤에 (칸에는 첫 건만 보인다)
-        jobs: [...(center ? [] : CONCIERGE_CAL), ...reqJobs, ...evJobs, ...cancelJobs].filter((j) => j.off === d - cNow.getDate()),
-      });
+      // 오늘에서 며칠 떨어진 날인지(off)로 맞춘다 — 달력과 '오늘의 일정'이 같은 기준(이 폰의 오늘)을 쓰게
+      const off = offOf(y, m, d);
+      cells.push({ day: d, today: off === 0, jobs: calJobsAll.filter((j) => j.off === off) });
     }
     return cells;
   })();
+  // 이번 달을 보는데 다음 달 이후에 나갈 일이 있으면 달력 아래에 알린다 — 넘겨 볼 줄 모르고 '없다'고 여기지 않게
+  const calLater = calShift === 0 ? calJobsAll.filter((j) => !j.cancelled && j.off > offOf(cNow.getFullYear(), cNow.getMonth() + 1, 0)).length : 0;
+  const moveCal = (n) => {
+    setCalShift((s) => s + n);
+    setCalDay(null);
+  };
   const calDayJobs = calDay == null ? [] : calCells.find((c) => c && c.day === calDay)?.jobs || [];
 
   // ── 오늘 앞단 (2026-09-22 시안 1) ──
@@ -495,6 +507,13 @@ function ConciergePage() {
     .filter((e) => ["hospital", "nextAppt", "checkup"].includes(e.kind) && e.at > Date.now())
     .sort((a, b) => a.at - b.at)
     .slice(0, 3);
+  // 공유 일정 — 어르신 · 보호자 달력과 같은 기록, 오늘부터 (2026-10-30 현장 확인 · 요청 7). 일정 달력이 '고객 탭에서 보라'고 하던 그 칸.
+  // 취소는 어르신 달력과 같은 기준(2주 · 5건) — 확정됐던 것이라 컨시어지도 보던 일정이다
+  const dayStartKst = Date.parse(`${kstYmd(Date.now())}T00:00:00+09:00`);
+  const sharedEvents = eventsFor(state.events, "concierge")
+    .filter((e) => e.at >= dayStartKst)
+    .sort((a, b) => a.at - b.at);
+  const sharedCancelled = (state.eventsRemoved || []).filter((x) => x.removed?.mode === "cancel" && x.removed.at > Date.now() - 14 * 86400000).slice(0, 5);
   // 미팅 리포트 · 발행 전 미리보기 — 지금 가구 기록 그대로 (설계서 v3 §3-4 · 3-5).
   // 센서 · 워치 예시 값은 데모 화면에서만 — 테스트 가구 · 센터는 기기 기록이 아직 연결되지 않았다 (값을 지어 넣지 않는다)
   const demoSensors = !live && !center ? MEET_DEMO : null;
@@ -716,7 +735,7 @@ function ConciergePage() {
                   </Card>
                 )}
 
-                <TodaySchedule rows={today.rows} activeId={today.focus?.id} onOpen={(id) => { setCalDay(cNow.getDate()); setCalJob(id); }} />
+                <TodaySchedule rows={today.rows} activeId={today.focus?.id} onOpen={(id) => { setCalShift(0); setCalDay(cNow.getDate()); setCalJob(id); }} />
 
                 <WrapUp client={wrapUp} onWrite={() => setTab("visit")} />
 
@@ -739,7 +758,27 @@ function ConciergePage() {
                     </span>
                   </button>
                   {calOpen && (
-                    <div className="mt-3 grid grid-cols-7 gap-1 text-center">
+                    <div className="mt-2 flex items-center justify-between">
+                      <button type="button" onClick={() => moveCal(-1)} aria-label="이전 달" className="btn-press flex h-[44px] w-[44px] items-center justify-center rounded-[12px] border border-[#D9D6CF] bg-white text-[20px] leading-none text-navy">
+                        ‹
+                      </button>
+                      <span className="flex flex-col items-center">
+                        <span className="font-num text-[14px] font-bold text-navy" aria-live="polite">
+                          {calMonthLabel}
+                        </span>
+                        {calShift !== 0 && (
+                          <button type="button" onClick={() => moveCal(-calShift)} className="btn-press min-h-[32px] px-2 text-[12px] font-bold text-gold underline underline-offset-2">
+                            이번 달로
+                          </button>
+                        )}
+                      </span>
+                      <button type="button" onClick={() => moveCal(1)} aria-label="다음 달" className="btn-press flex h-[44px] w-[44px] items-center justify-center rounded-[12px] border border-[#D9D6CF] bg-white text-[20px] leading-none text-navy">
+                        ›
+                      </button>
+                    </div>
+                  )}
+                  {calOpen && (
+                    <div className="mt-2 grid grid-cols-7 gap-1 text-center">
                       {["일", "월", "화", "수", "목", "금", "토"].map((d) => (
                         <div key={d} className="py-1 text-[11px] font-bold text-muted">
                           {d}
@@ -777,6 +816,11 @@ function ConciergePage() {
                         )
                       )}
                     </div>
+                  )}
+                  {calOpen && calLater > 0 && (
+                    <button type="button" onClick={() => moveCal(1)} className="btn-press mt-2 min-h-[40px] w-full rounded-[10px] bg-[#FBF6EC] px-3 text-left text-[12.5px] font-bold text-[#6A4C16]">
+                      다음 달 이후 나갈 일 {calLater}건 · 다음 달 보기 ›
+                    </button>
                   )}
                 </Card>
 
@@ -1154,6 +1198,8 @@ function ConciergePage() {
                       }
                     />
                     <ApptCard appts={clientAppts} />
+                    {/* '나갈 일' 표시는 일정 달력과 같은 기준(안심방문 · 동행) — 데모 씨앗 일정도 여기서는 같은 기준으로 단다 */}
+                    <SharedScheduleCard events={sharedEvents} cancelled={sharedCancelled} isWork={workKind} />
                   {/* 첫 방문이면 — 홈 안전진단 (자택 전용 · 30항목 100점) */}
                   {careLoc === "home" && (
                     <Link href="/safety-check" className="block">
@@ -2854,8 +2900,8 @@ function ConciergePage() {
               )}
               <p className="mt-3 border-t border-navy/[.08] pt-2.5 text-[11px] leading-[1.7] text-muted">
                 내가 나가는 일정만 보입니다 — 병원동행 · 일상동행 · 해주세요 · 안심방문.
-                고객과 보호자가 함께 쓰는 캘린더(배송 · 개인일정 · 가족이벤트 포함)는
-                고객 탭에서 이름을 눌러 보십시오.
+                고객과 보호자가 함께 쓰는 캘린더(배송 · 개인일정 · 가족이벤트 · 동행 없는 일정 포함)는
+                고객 탭에서 이름을 눌러 &lsquo;공유 일정&rsquo;에서 보십시오.
               </p>
             </Sheet>
           )}

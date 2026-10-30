@@ -323,7 +323,7 @@ function ElderHome() {
   // (2026-10-24 컨시어지 화면설계서 v3 §3-5). 보내기 전에는 나오지 않고, 다음 리포트가 가면 그것으로 바뀐다
   const sentReport = useMemo(() => visitReportOf(sentReportState(state)), [state]);
   // 미팅 리포트의 '부탁하신 것'은 한 건씩 남는다(state.elderAsks · 2026-10-28 요청 1) — 아래 카드에서 해결 · 취소한다.
-  // 부탁 기록이 하나도 없는 가구(이 기능 전에 보낸 미팅 리포트)만 예전처럼 글을 그대로 보인다
+  // 이 기능 전에 보낸 미팅 리포트의 부탁도 가구 기록을 읽을 때 한 건씩 옮긴다(lib/state.js legacyAsks) — 그래도 기록이 없을 때만 글을 그대로 보인다
   const myAsks = elderOpenAsks(state);
   const pastAsks = doneAsks(state).slice(0, 3);
   const noAskRecord = !(state.elderAsks || []).length;
@@ -386,9 +386,9 @@ function ElderHome() {
     return cells;
   })();
   const monthList = calSel ? monthEvents.filter((e) => new Date(e.at).getDate() === calSel) : monthEvents;
-  // 다음 달 이후로 남기신 일정 — 이번 달 시트에서도 바꾸고 지울 수 있게 (일정 남기기는 두 달 앞까지 된다)
+  // 다음 달 이후 일정 — 이번 달 시트에서도 보이게 (일정 남기기는 두 달 앞까지 된다). 남기신 것은 바꾸고 지우고, 가족 · 선생님 · 관제가
+  // 정한 것은 보기만 (2026-10-30 현장 확인 — 전에는 남기신 것만 보여 월말에 보호자가 다음 달로 잡은 동행이 어르신 시트에 없었다)
   const laterMine = myEvents
-    .filter((e) => eventRights(e, "elder").edit || eventRights(e, "elder").remove)
     .filter((e) => {
       const d = new Date(e.at);
       return d.getFullYear() * 12 + d.getMonth() > now.getFullYear() * 12 + now.getMonth();
@@ -2609,7 +2609,7 @@ function ElderHome() {
           )}
           {!calSel && laterMine.length > 0 && (
             <>
-              <div className="pt-1 text-[17px] font-extrabold">다음 달 이후 남기신 일정</div>
+              <div className="pt-1 text-[17px] font-extrabold">다음 달 이후 일정</div>
               {laterMine.map((e) => (
                 <MyEventRow key={e.id} e={e} month approvalWord={approvalWord} confirming={evConfirm === e.id} onEdit={() => (setMonthOpen(false), setEvEdit(e))} onAskRemove={() => setEvConfirm(e.id)} onCancelRemove={() => setEvConfirm(null)} onRemove={() => removeMyEvent(e)} />
               ))}

@@ -1,10 +1,12 @@
 // 컨시어지 고객 탭 — 이름 목록 → 누르면 상세 (2026-10-24 컨시어지 화면설계서 v3 §2 · 목업 방식 확정).
 // 줄을 누르면 목록이 상세로 바뀌고, 맨 위 '‹' 로 목록에 돌아온다 (아래로 펼치기 아님).
-// 상세 순서: 선호 카드(내부) · AI 동행 브리핑(내부) · 건강 정보(어르신 · 보호자) · 다음 진료 예약(어르신 · 보호자).
+// 상세 순서: 선호 카드(내부) · AI 동행 브리핑(내부) · 건강 정보(어르신 · 보호자) · 다음 진료 예약(어르신 · 보호자) · 공유 일정(어르신 · 보호자).
 import { useId, useState } from "react";
 import { Card } from "./ui";
 import { AudChips } from "./ReportParts";
 import { askDoneText, isOpenAsk } from "../lib/elder-asks";
+import { EVENT_SHORT } from "../lib/mock";
+import { eventOwner } from "../lib/event-rights";
 
 const LOC_CHIP = { 자택: { bg: "#EEEDEA", fg: "#5E5A52" }, 요양병원: { bg: "#E8EBF7", fg: "#33468E" } };
 const KST = 9 * 3600 * 1000;
@@ -373,6 +375,69 @@ export function ApptCard({ appts }) {
       ) : (
         <p className="mt-2.5 text-[13px] leading-[1.6] text-muted">잡힌 진료 예약이 없어요 — 병원에서 확정되면 방문 · 리포트 탭 &lsquo;다음 진료 예약&rsquo;에서 등록해요.</p>
       )}
+    </Card>
+  );
+}
+
+const DOW = ["일", "월", "화", "수", "목", "금", "토"];
+const dayOf = (t) => `${md(t)} (${DOW[kd(t).getUTCDay()]})`;
+// 누가 올린 일정인가 — 관제가 승인하면 출처 글이 '관제 승인'으로 바뀌어 등록한 쪽(lib/event-rights.js eventOwner)으로 말한다
+const OWNER_WORD = { elder: "어르신 등록", guardian: "보호자 등록", concierge: "컨시어지 등록", family: "가족 요청", request: "해주세요" };
+const fromOf = (e) => OWNER_WORD[eventOwner(e)] || e.source || "관제";
+
+// 5. 공유 일정 — 어르신 · 보호자 달력과 같은 기록 (2026-10-28 요청 7 · 10-30 현장 확인). 일정 달력(오늘 탭)은 내가 나가는 일만
+// 보여서, 가족 · 배송 · 동행 없는 부탁 같은 나머지 공유 일정은 볼 곳이 없었다. 관제가 확정한 것과 가족 일정만 (승인 전 · 반려는
+// 안 보인다 — lib/state.js eventsFor). 바꾼 것을 관제가 다시 보는 중이면 원래 확정 값 + '변경 확인 중'. 취소된 것은 아래에 누가 · 왜와 함께
+export function SharedScheduleCard({ events, cancelled, isWork, limit = 8 }) {
+  const shown = events.slice(0, limit);
+  return (
+    <Card className="p-[18px]">
+      <Head title="공유 일정" aud={["sen", "gua"]} right={events.length ? <span className="font-num text-[12px] font-bold text-muted">오늘부터 {events.length}건</span> : null} />
+      {shown.length ? (
+        <ul aria-label="공유 일정" className="m-0 mt-2 list-none p-0">
+          {shown.map((e) => (
+            <li key={e.id} className="flex gap-3 border-b border-[#EFEDE8] py-2.5 last:border-0">
+              <span className="w-[66px] flex-none">
+                <b className="block font-num text-[13px] text-navy">{dayOf(e.at)}</b>
+                <span className="font-num text-[12px] text-muted">{hm(e.at)}</span>
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className="flex items-start gap-1.5">
+                  <span className="mt-[1px] inline-flex h-[20px] flex-none items-center rounded-[6px] bg-[#EEEDEA] px-1.5 text-[11px] font-bold text-[#5E5A52]">{EVENT_SHORT[e.kind] || "일정"}</span>
+                  <b className="min-w-0 text-[14px] leading-[1.45] text-ink">{e.title}</b>
+                </span>
+                <span className="mt-0.5 block text-[11.5px] leading-[1.5] text-muted">
+                  {[fromOf(e), e.approval === "approved" ? "관제 확정" : null, e.escort ? "동행" : e.approval === "approved" && e.kind !== "visit" ? "동행 없음" : null].filter(Boolean).join(" · ")}
+                </span>
+                {e.changePending && <span className="block text-[11.5px] font-bold leading-[1.5] text-gold">변경 확인 중 — 관제가 바뀐 내용을 보고 있어요 · 지금 보이는 것이 확정된 원래 일정</span>}
+              </span>
+              {isWork(e) && <span className="h-[22px] flex-none self-start rounded-[6px] bg-[#F1E9DC] px-2 text-[11px] font-bold leading-[22px] text-[#6A4C16]">나갈 일</span>}
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p className="mt-2.5 text-[13px] leading-[1.6] text-muted">오늘부터 잡힌 공유 일정이 없어요.</p>
+      )}
+      {events.length > shown.length && <p className="mt-1.5 text-[12px] text-muted">그 뒤 {events.length - shown.length}건 더 — 어르신 · 보호자 달력에 같이 있어요.</p>}
+      {cancelled.length > 0 && (
+        <div className="mt-3 border-t border-[#EFEDE8] pt-2.5">
+          <div className="text-[12px] font-bold text-muted">최근 취소된 일정 {cancelled.length}건</div>
+          <ul aria-label="최근 취소된 일정" className="m-0 mt-1 list-none p-0">
+            {cancelled.map((x) => (
+              <li key={`${x.id}-${x.removed.at}`} className="py-1.5 text-[12.5px] leading-[1.55] text-[#5E5A52]">
+                <b className="block line-through decoration-[#5E5A52]/50">
+                  {dayOf(x.at)} {hm(x.at)} · {x.title}
+                </b>
+                <span className="block">
+                  {x.removed.by || "관제"} 취소 · {whenShort(x.removed.at)}
+                  {x.removed.reason ? ` · ${x.removed.reason}` : ""}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+      <p className="mt-2.5 text-[11px] leading-[1.6] text-muted">어르신 · 보호자 달력과 같은 기록이에요 — 등록 · 변경 · 취소가 여기도 바로 바뀌어요. &lsquo;나갈 일&rsquo;은 오늘 탭 일정 달력에도 떠요.</p>
     </Card>
   );
 }
