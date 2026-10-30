@@ -4813,6 +4813,21 @@ Looking forward to what you're bringing to Australia and London next year.
 - C 한 줄(75) `No introduction needed, and no forecast either: clear skies all round. ☀️`
 - 행사 무대 · 부스 이야기는 인용이 아니라 나중에 DM 으로(9/10 Swell 사전 컨택 방식).
 
+## 링크드인 DM — Serhii Shatrov(Blockworks · Guest Acquisition Manager · 바르샤바) 「Beyond the Block — 사람들이 크립토에 들어온 이야기, 관심?」 (2026-10-30, 서우 캡처)
+
+판정: **관심 표시 + 두 층 소개 + 형식 · 일정 · 비용(스폰서 여부) 질문.** 「Guest Acquisition」 직함 · 첫 메시지에 조건 없음 → 유료 출연 · 스폰서 패키지일 수 있어 **비용을 먼저 묻는다**. Blockworks 는 2025-10 뉴스 부문을 닫았고 팟캐스트 · 행사 · 콘텐츠 중심(9/29 사실 점검).
+출연 전 확인: 상장사(케이웨더) 직원의 「내가 크립토에 들어온 이야기」는 개인 보유 · 가격 질문으로 번지기 쉽다 — 회사 확인 후 응하고, 보유 · 가격 · 수익 이야기 0(DM 도 공개 글로 본다). 「weather-data 쪽에서 들어왔다」 문장은 서우 실제 경로와 맞을 때만.
+영문 638자:
+```
+Hi Serhii, thanks for reaching out, sounds interesting!
+
+Quick context on my side: I'm Logan (Seowoo), Head of Partnerships & Operations at wellbian. We build on the XRP Ledger with KWeather, a Korean weather company with 30 years of data: certified air sensors that people run in their own rooms, plus city weather data that businesses and AI agents can buy in RLUSD.
+
+I came to crypto from the weather-data side rather than trading, which might make for a slightly different story.
+
+Could you share a bit more about the format (video, podcast or written), the timing, and whether there are any costs or sponsorship involved on our side?
+```
+
 ## DM — Swell 글 보고 관심 보인 해외 계정(가입 2013 · 팔로워 약 6.7천) 판매 안내 (2026-10-28, 서우 캡처 + 「wellbian.io 판매 사이트 안내 · 추가 할인 코드」)
 
 계정명은 적지 않는다(잠재 고객). 서우 「Hi」 → 상대 「Hello」.
