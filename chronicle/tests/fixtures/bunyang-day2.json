@@ -1,0 +1,109 @@
+{
+  "__scenario__": [
+    "day1 대비: 서울숲(01) 84타입 분양최고금액 129900 → 127500 (정정),",
+    "부산 센텀(02) 공고 통째 소멸 (윈도 안 → 삭제 이벤트),",
+    "대전 도안(03) 신규 공고,",
+    "인천 검단(04)은 그대로 있지만 day2 시점 윈도(180일) 밖 → 페치에서 빠져도 삭제 아님"
+  ],
+  "getAPTLttotPblancDetail": [
+    {
+      "HOUSE_MANAGE_NO": 2026000001,
+      "PBLANC_NO": 2026000001,
+      "HOUSE_NM": "서울숲 리버뷰 자이",
+      "HOUSE_SECD": "01",
+      "HOUSE_SECD_NM": "APT",
+      "SUBSCRPT_AREA_CODE_NM": "서울",
+      "HSSPLY_ADRES": "서울특별시 성동구 성수동1가 1-1",
+      "TOT_SUPLY_HSHLDCO": 480,
+      "RCRIT_PBLANC_DE": "2026-06-15",
+      "RCEPT_BGNDE": "2026-07-14",
+      "RCEPT_ENDDE": "2026-07-16",
+      "PRZWNER_PRESNATN_DE": "2026-07-22",
+      "CNSTRCT_ENTRPS_NM": "지에스건설(주)",
+      "BSNS_MBY_NM": "서울숲피에프브이(주)",
+      "MVN_PREARNGE_YM": "202906",
+      "PARCPRC_ULS_AT": "Y",
+      "PBLANC_URL": "https://www.applyhome.co.kr/ai/aia/selectAPTLttotPblancDetail.do?houseManageNo=2026000001&pblancNo=2026000001"
+    },
+    {
+      "HOUSE_MANAGE_NO": 2026000003,
+      "PBLANC_NO": 2026000003,
+      "HOUSE_NM": "대전 도안 아이파크",
+      "HOUSE_SECD": "01",
+      "HOUSE_SECD_NM": "APT",
+      "SUBSCRPT_AREA_CODE_NM": "대전",
+      "HSSPLY_ADRES": "대전광역시 유성구 상대동 300-3",
+      "TOT_SUPLY_HSHLDCO": 250,
+      "RCRIT_PBLANC_DE": "2026-07-10",
+      "RCEPT_BGNDE": "2026-08-03",
+      "RCEPT_ENDDE": "2026-08-05",
+      "PRZWNER_PRESNATN_DE": "2026-08-12",
+      "CNSTRCT_ENTRPS_NM": "에이치디씨현대산업개발(주)",
+      "BSNS_MBY_NM": "도안개발(주)",
+      "MVN_PREARNGE_YM": "202910",
+      "PARCPRC_ULS_AT": "N",
+      "PBLANC_URL": "https://www.applyhome.co.kr/ai/aia/selectAPTLttotPblancDetail.do?houseManageNo=2026000003&pblancNo=2026000003"
+    },
+    {
+      "HOUSE_MANAGE_NO": 2026000004,
+      "PBLANC_NO": 2026000004,
+      "HOUSE_NM": "인천 검단 호반써밋",
+      "HOUSE_SECD": "01",
+      "HOUSE_SECD_NM": "APT",
+      "SUBSCRPT_AREA_CODE_NM": "인천",
+      "HSSPLY_ADRES": "인천광역시 서구 원당동 200-2",
+      "TOT_SUPLY_HSHLDCO": 560,
+      "RCRIT_PBLANC_DE": "2026-01-15",
+      "RCEPT_BGNDE": "2026-02-09",
+      "RCEPT_ENDDE": "2026-02-11",
+      "PRZWNER_PRESNATN_DE": "2026-02-18",
+      "CNSTRCT_ENTRPS_NM": "호반건설(주)",
+      "BSNS_MBY_NM": "검단피에프브이(주)",
+      "MVN_PREARNGE_YM": "202903",
+      "PARCPRC_ULS_AT": "Y",
+      "PBLANC_URL": "https://www.applyhome.co.kr/ai/aia/selectAPTLttotPblancDetail.do?houseManageNo=2026000004&pblancNo=2026000004"
+    }
+  ],
+  "getAPTLttotPblancMdl": [
+    {
+      "HOUSE_MANAGE_NO": 2026000001,
+      "PBLANC_NO": 2026000001,
+      "MODEL_NO": "01",
+      "HOUSE_TY": "059.9800A",
+      "SUPLY_AR": "79.97",
+      "SUPLY_HSHLDCO": 180,
+      "SPSPLY_HSHLDCO": 95,
+      "LTTOT_TOP_AMOUNT": 89900
+    },
+    {
+      "HOUSE_MANAGE_NO": 2026000001,
+      "PBLANC_NO": 2026000001,
+      "MODEL_NO": "02",
+      "HOUSE_TY": "084.9900A",
+      "SUPLY_AR": "109.42",
+      "SUPLY_HSHLDCO": 140,
+      "SPSPLY_HSHLDCO": 65,
+      "LTTOT_TOP_AMOUNT": 127500
+    },
+    {
+      "HOUSE_MANAGE_NO": 2026000003,
+      "PBLANC_NO": 2026000003,
+      "MODEL_NO": "01",
+      "HOUSE_TY": "072.9900A",
+      "SUPLY_AR": "95.60",
+      "SUPLY_HSHLDCO": 250,
+      "SPSPLY_HSHLDCO": 0,
+      "LTTOT_TOP_AMOUNT": 61200
+    },
+    {
+      "HOUSE_MANAGE_NO": 2026000004,
+      "PBLANC_NO": 2026000004,
+      "MODEL_NO": "01",
+      "HOUSE_TY": "084.9700A",
+      "SUPLY_AR": "108.90",
+      "SUPLY_HSHLDCO": 360,
+      "SPSPLY_HSHLDCO": 200,
+      "LTTOT_TOP_AMOUNT": 52300
+    }
+  ]
+}
