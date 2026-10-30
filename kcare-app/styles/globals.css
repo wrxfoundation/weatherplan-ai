@@ -1,0 +1,1064 @@
+/* 웹폰트는 pages/_document.jsx 의 <link> 로 옮겼다 (2026-08-28 모바일 점검).
+   CSS @import 는 이 파일을 다 받은 뒤에야 폰트 요청을 시작해서 렌더를 한 번 더
+   막는다 — 느린 회선에서 첫 글자가 늦게 뜬다. <link> 는 HTML 파싱 중 병렬로
+   시작한다. 폴백 스택(tailwind.config.js fontFamily)은 그대로라 CDN 이 죽어도
+   시스템 한글 폰트로 떨어진다. */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+  }
+  body {
+    @apply bg-nav font-sans text-ink;
+    font-weight: 500;
+  }
+  button {
+    touch-action: manipulation;
+  }
+}
+
+@layer components {
+  /* 주요 버튼 press 상태 — 핸드오프 공통 인터랙션 규칙 */
+  .btn-press {
+    transition: transform 0.12s ease, box-shadow 0.12s ease, filter 0.12s ease;
+  }
+  .btn-press:active {
+    transform: translateY(1px);
+  }
+
+  /* ─── 디자인 토큰 추출 — 핸드오프 05 (인라인 스타일 → 공용 클래스) ─── */
+
+  /* 앱 기본 배경 + main 배경 그라디언트 (05 §배경) */
+  .console-bg {
+    background-color: #f1efe8;
+    background-image:
+      radial-gradient(900px 420px at 8% -10%, rgba(10, 31, 60, 0.1), transparent 60%),
+      radial-gradient(760px 380px at 92% 0%, rgba(176, 141, 87, 0.1), transparent 60%);
+  }
+
+  /* 글래스 카드 — 주요 콘텐츠 카드 (05 §상태 계열) */
+  /* 한국어 줄바꿈 — 단어 중간에서 깨지지 않게 (전 화면) */
+  body {
+    word-break: keep-all;
+    overflow-wrap: break-word;
+  }
+
+  .card-glass {
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(255, 255, 255, 0.7));
+    border: 1px solid rgba(255, 255, 255, 0.9);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 1),
+      0 0 0 1px rgba(10, 31, 60, 0.06),
+      0 16px 34px -28px rgba(10, 31, 60, 0.45);
+  }
+
+  /* 플로팅 오버레이용 프로스트 글라스 — 뒤 배경을 강하게 뭉갠다 (상세카드·챗·드롭다운) */
+  .card-frost {
+    background: linear-gradient(180deg, rgba(253, 252, 249, 0.97), rgba(250, 248, 243, 0.92));
+    -webkit-backdrop-filter: blur(18px) saturate(1.15);
+    backdrop-filter: blur(18px) saturate(1.15);
+    border: 1px solid rgba(255, 255, 255, 0.95);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 1),
+      0 0 0 1px rgba(10, 31, 60, 0.08),
+      0 24px 48px -24px rgba(10, 31, 60, 0.5);
+  }
+
+  /* 다크 카드 그라디언트 보더 — 좌상 진하게(밝게) → 우하 옅어짐. 래퍼 없이 ::before 마스크 */
+  .border-grad-dark {
+    position: relative;
+  }
+  .border-grad-dark::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1.5px;
+    background: linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.42),
+      rgba(255, 255, 255, 0.12) 45%,
+      rgba(255, 255, 255, 0.02) 80%
+    );
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+
+  /* 플로팅 카드 뒤 스크림 — 화면 전체를 살짝 눌러 카드에 집중시킨다 */
+  .overlay-scrim {
+    background: rgba(10, 31, 60, 0.12);
+    -webkit-backdrop-filter: blur(4px);
+    backdrop-filter: blur(4px);
+  }
+
+  /* 네이비 카드 그림자 (05 §그림자) */
+  .card-navy {
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.22),
+      0 16px 34px -28px rgba(10, 31, 60, 0.7);
+  }
+
+  /* 어두운 버튼 물리감 — 상단 하이라이트 + inset (05 §버튼 그림자) */
+  .btn-dark {
+    background-image: linear-gradient(180deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0));
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.32),
+      inset 0 -2px 0 rgba(0, 0, 0, 0.3);
+  }
+
+  /* 흰 버튼 (적색 배경 위) */
+  .btn-on-red {
+    box-shadow:
+      inset 0 1px 0 #ffffff,
+      inset 0 -2px 0 rgba(120, 30, 22, 0.22),
+      0 8px 16px -9px rgba(0, 0, 0, 0.5);
+  }
+
+  /* 어르신 버튼 — 누른 느낌이 물리적으로 분명해야 한다 (05 · 02 §2) */
+  .btn-elder {
+    background-image: linear-gradient(180deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0) 55%);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.34),
+      inset 0 -3px 0 rgba(0, 0, 0, 0.2),
+      0 10px 20px -10px rgba(10, 31, 60, 0.5);
+    transition: transform 0.12s ease, box-shadow 0.12s ease;
+  }
+  .btn-elder:active {
+    transform: translateY(2px);
+    box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.26);
+  }
+
+  /* 골드 배지 칩 (05 §골드 배지 칩) */
+  .chip-gold {
+    background: linear-gradient(180deg, #fbf6ec, #f4eee1);
+    border: 1px solid rgba(10, 31, 60, 0.1);
+    color: #0a1f3c;
+  }
+}
+
+/* Leaflet 기본 확대·축소 버튼은 30px 이라 손가락으로 누르기에 작다.
+   서드파티 마크업이라 클래스를 못 붙이므로 여기서 넓힌다. */
+/* leaflet.css 가 뒤에 실려서 같은 명시도로는 밀린다 — 컨테이너를 붙여 올린다 */
+.leaflet-container .leaflet-bar a,
+.leaflet-touch .leaflet-bar a {
+  width: 44px;
+  height: 44px;
+  line-height: 44px;
+}
+
+/* 관제 맵 팝업 — 핸드오프 09 §4 (.kcare-popup) */
+.kcare-popup .leaflet-popup-content-wrapper {
+  border-radius: 12px;
+  box-shadow: 0 14px 30px -18px rgba(10, 31, 60, 0.65);
+  font-family: "Noto Sans KR", sans-serif;
+}
+.kcare-popup .leaflet-popup-content {
+  margin: 10px 14px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #0a1f3c;
+}
+
+/* 날씨 지도 상시 라벨 — 권역 기온·미세먼지 (.kcare-wx-label) */
+.kcare-wx-label {
+  border: 0;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 8px 18px -12px rgba(10, 31, 60, 0.55);
+  padding: 3px 8px;
+  font-family: "Noto Sans KR", sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  color: #0a1f3c;
+}
+.kcare-wx-label::before {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-sosPulse,
+  .animate-livePing,
+  .animate-escalateGlow {
+    animation: none !important;
+  }
+}
+
+/* ── 가입 상담 CTA — 골드 글라스 + 주기적 반짝임 ─────────────────────────
+   backdrop-filter(블러)는 쓰지 않는다. 상단바가 이미 backdrop-blur 를 걸고
+   있어서 그 안의 버튼에 또 걸면 스크롤할 때마다 블러를 두 겹 다시 합성한다.
+   유리 느낌은 블러가 아니라 위쪽 하이라이트와 아래쪽 그림자의 대비에서 나온다
+   (AI 플로팅 버튼과 같은 방식).
+
+   반짝임은 ::after 로 얹은 사선 광택 띠가 버튼을 훑고 지나가는 것이다.
+   translate 만 움직이므로 합성 단계에서만 처리되고 레이아웃/페인트를 다시
+   하지 않는다. 5.6초 중 뒤쪽 1.4초에만 지나가고 나머지는 멈춰 있다 —
+   계속 번쩍이면 광고처럼 보인다.                                         */
+.btn-cta {
+  position: relative;
+  overflow: hidden;
+  background:
+    linear-gradient(150deg, rgba(20, 52, 92, .96) 0%, rgba(10, 31, 60, .94) 46%, rgba(6, 21, 42, .98) 100%);
+  border: 1px solid rgba(255, 255, 255, .26);
+  box-shadow:
+    0 12px 26px -14px rgba(10, 31, 60, .62),
+    inset 0 1px 0 rgba(255, 255, 255, .30),
+    inset 0 -1.5px 2px rgba(0, 0, 0, .22);
+}
+.btn-cta::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  /* 양수여야 한다. 음수로 두면 버튼 자체 배경 뒤로 깔려서 광택이 안 보인다.
+     글자 위를 지나가는 것은 의도한 것 — 광택은 표면을 훑는 것이라 그래야 맞다. */
+  z-index: 1;
+  /* 띠의 최대 밝기는 .34 를 넘기지 않는다.
+     이 광택은 글자 위를 지나가므로, 밝기를 올리면 그 순간 흰 글자 대비가
+     떨어진다. 남색(#0A1F3C) 위 흰 글자가 AA(4.5:1)를 지키려면 띠 알파가
+     0.38 이하여야 한다 (0.40 이면 4.46:1 로 미달). 여유를 두고 .34 로 둔다.
+     더 눈에 띄게 하려면 밝기가 아니라 띠 폭을 넓혀야 한다. */
+  background: linear-gradient(
+    104deg,
+    transparent 34%,
+    rgba(255, 255, 255, .12) 44%,
+    rgba(255, 255, 255, .34) 50%,
+    rgba(255, 255, 255, .12) 56%,
+    transparent 66%
+  );
+  transform: translateX(-135%);
+  animation: ctaShine 5.6s cubic-bezier(.35, 0, .2, 1) infinite;
+  pointer-events: none;
+}
+@keyframes ctaShine {
+  0%, 75% { transform: translateX(-135%); }
+  100%    { transform: translateX(135%); }
+}
+/* 좁은 화면 — 손가락으로 누를 크기를 확보하고, 작은 화면에서 광택이 묻히지
+   않게 조금 더 밝고 조금 더 빠르게 지나가게 한다. */
+@media (max-width: 640px) {
+  /* 요소 이름을 붙여 명시도를 올린다 — 뒤에 오는 .btn-press{min-height:36px} 와
+     명시도가 같으면 그쪽이 이겨서 44px 이 안 먹는다. */
+  a.btn-cta,
+  button.btn-cta { min-height: 44px; border-color: rgba(255, 255, 255, .32); }
+  .btn-cta {
+    /* (위 블록 이어짐) */
+  }
+  /* 좁은 화면에서 광택이 묻히지 않게 — 밝기가 아니라 띠를 넓히고 조금 빠르게.
+     밝기를 올리면 그 순간 흰 글자가 안 읽힌다 (위 주석의 0.38 상한). */
+  .btn-cta::after {
+    background: linear-gradient(
+      104deg,
+      transparent 24%,
+      rgba(255, 255, 255, .11) 40%,
+      rgba(255, 255, 255, .30) 50%,
+      rgba(255, 255, 255, .11) 60%,
+      transparent 76%
+    );
+    animation-duration: 4.4s;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .btn-cta::after { animation: none; transform: translateX(-135%); }
+}
+
+/* ── A4 인쇄 리포트 (/report/*) ── */
+@page {
+  size: A4;
+  margin: 14mm;
+}
+@media print {
+  .print-hide {
+    display: none !important;
+  }
+  body {
+    background: #ffffff !important;
+  }
+  .report-sheet {
+    margin: 0 !important;
+    max-width: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+  }
+  .avoid-break {
+    break-inside: avoid;
+  }
+  * {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}
+
+/* 방문 리포트 모바일 — 보호자가 폰에서 본다 (2026-08-28 요청).
+   A4 문서라 9~12px 로 짜여 있는데 폰에서는 그대로면 읽히지 않는다.
+   폭 640px 미만에서만 본문 계열을 한 단계씩 올린다. 인쇄(@media print)와
+   태블릿 이상은 원래 크기 그대로 — A4 레이아웃이 무너지면 안 된다. */
+@media screen and (max-width: 639px) {
+  .report-sheet .text-\[9px\] { font-size: 11px; }
+  .report-sheet .text-\[9\.5px\] { font-size: 11.5px; }
+  .report-sheet .text-\[10px\] { font-size: 12.5px; }
+  .report-sheet .text-\[10\.5px\] { font-size: 13px; }
+  .report-sheet .text-\[11px\] { font-size: 13.5px; }
+  .report-sheet .text-\[11\.5px\] { font-size: 14px; }
+  .report-sheet .text-\[12px\] { font-size: 14.5px; }
+  .report-sheet .text-\[13px\] { font-size: 15px; }
+  /* 표는 폰에서 가로로 흐를 수 있게 — 축소해서 읽는 것보다 낫다 */
+  .report-sheet table { display: block; overflow-x: auto; }
+}
+
+/* ─── 터치 타깃 하한 — 화면 폭과 무관 ───────────────────────────────────
+   WCAG 2.2 AA(2.5.8)의 24px 최소는 뷰포트가 아니라 사람에게 걸리는 기준이다.
+   손이 떨리는 분도, 터치 노트북을 쓰는 관제 직원도 같은 버튼을 누른다.
+   아래 모바일 블록의 44px(권장값)은 그대로 두고, 여기서 바닥만 24px 로 깐다.
+   실측에서 데스크톱 콘솔에 16~23px 타깃이 남아 있었다 (관제 "?" 16x16 등). */
+.btn-press {
+  min-height: 24px;
+}
+button.btn-press,
+a.btn-press {
+  min-width: 24px;
+}
+/* .tap 은 인라인 <a> 에 붙는다 — display 를 같이 주지 않으면 min-height 가 먹지 않는다.
+   (이 선언이 아래 모바일 블록에만 있어서 데스크톱 링크가 15~20px 로 남아 있었다) */
+.tap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 24px;
+  min-width: 24px;
+}
+/* 문장 안에 들어가는 인라인 링크는 제외 — 줄 간격이 무너진다 */
+.btn-press.btn-inline {
+  min-height: 0;
+  min-width: 0;
+}
+
+/* ─── 모바일 최적화 ─── */
+/* 가독성 — 데스크톱 밀도를 위해 쓴 10~11px는 좁은 화면에서 한 단계 키운다.
+   보호자는 40~60대, 어르신 화면은 별도 대형 활자(btn-elder) 체계를 쓴다. */
+@media (max-width: 640px) {
+  .text-\[10px\] {
+    font-size: 11px;
+  }
+  .text-\[11px\] {
+    font-size: 12px;
+  }
+  /* 터치 타깃 — 손가락으로 누를 수 있는 최소 크기.
+     36px 로 두고 있었는데 실측해 보니 콘솔 화면에서 44px 미만 타깃이 130개였다
+     (/family/calendar 41 · /dispatch 34 · /admin 23 · /family 21).
+     WCAG 2.2 AA(2.5.8)는 24px 이 최소이고 44px 이 권장값이다.
+     칩·배지처럼 누를 수 없는 것에는 .btn-press 가 안 붙으므로 여기만 올리면 된다. */
+  .btn-press {
+    min-height: 44px;
+  }
+  /* 아이콘만 있는 정사각 버튼은 가로도 같이 확보한다 */
+  button.btn-press,
+  a.btn-press {
+    min-width: 44px;
+  }
+  /* 인라인 텍스트 링크는 예외 — 문장 안에 있는 링크까지 44px 로 부풀리면
+     줄 간격이 무너진다. 이런 곳에는 .btn-inline 을 붙여 제외한다. */
+  .btn-press.btn-inline {
+    min-height: 0;
+    min-width: 0;
+  }
+  /* 칩 모양 액션 버튼(체크 항목·배차 인원·사진 첨부) — 문장 속 링크는 아니지만
+     한 줄에 여러 개가 붙어 44px 로 키우면 목록이 길어진다. 현장에서 손가락으로
+     누르는 것이니 40px 는 확보한다 (2026-09-10 QA 실측: 30~34px 였다). */
+  .btn-press.btn-chip {
+    min-height: 40px;
+  }
+
+  /* 홀로 서 있는 작은 링크(데모 홈 · 상세 보기 등)에 붙인다.
+     글자는 그대로 두고 누를 수 있는 영역만 44px 로 넓힌다 —
+     padding 을 주면 줄이 밀리므로 inline-flex 로 높이만 확보한다. */
+  .tap {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    min-width: 44px;
+  }
+  /* 가로 스크롤 표(명부·손익 등)는 관성 스크롤 + 스냅 없이 자연스럽게 */
+  .overflow-x-auto {
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* iOS 사파리 — 입력 포커스 시 자동 확대 방지 (16px 미만이면 확대된다) */
+@supports (-webkit-touch-callout: none) {
+  input,
+  select,
+  textarea {
+    font-size: max(16px, 1em);
+  }
+}
+
+/* 노치 대응 — 하단 고정 요소가 홈 인디케이터에 가리지 않게 */
+.safe-b {
+  padding-bottom: max(0px, env(safe-area-inset-bottom));
+}
+
+/* ─── 펼침 애니메이션 (관제 · 경영 콘솔) ───
+   높이를 모르는 영역을 부드럽게 여닫는다. grid-template-rows 0fr → 1fr 방식이라
+   max-height 어림값 없이도 내용 높이 그대로 열린다.
+   사용: 바깥 <div class="smooth-open [is-open]"> → 안쪽 <div> 한 겹 필수.
+   주의: 클래스명을 'collapse'로 쓰면 Tailwind 내장 유틸리티(visibility: collapse)와
+   충돌해 내용이 통째로 사라진다. */
+.smooth-open {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.24s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.18s ease;
+  opacity: 0;
+}
+.smooth-open > * {
+  min-height: 0;
+  overflow: hidden;
+}
+.smooth-open.is-open {
+  grid-template-rows: 1fr;
+  opacity: 1;
+}
+
+/* 표 행 — 필터 · 정렬 · 더보기로 목록이 바뀔 때 위에서부터 차례로 내려온다.
+   한꺼번에 나타나면 표가 "번쩍" 하고 바뀌어 어디를 봐야 할지 알 수 없다. */
+@keyframes rowIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.rows-in > tr {
+  animation: rowIn 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.rows-in > tr:nth-child(1) { animation-delay: 0ms; }
+.rows-in > tr:nth-child(2) { animation-delay: 35ms; }
+.rows-in > tr:nth-child(3) { animation-delay: 70ms; }
+.rows-in > tr:nth-child(4) { animation-delay: 105ms; }
+.rows-in > tr:nth-child(5) { animation-delay: 140ms; }
+.rows-in > tr:nth-child(6) { animation-delay: 175ms; }
+.rows-in > tr:nth-child(7) { animation-delay: 210ms; }
+.rows-in > tr:nth-child(8) { animation-delay: 245ms; }
+.rows-in > tr:nth-child(n + 9) { animation-delay: 280ms; }
+
+/* 섹션 진입 — 패널이 놓인 쪽에서 밀려 들어온다 (--dx는 StaggerIn이 좌표로 정한다).
+   지연도 StaggerIn이 화면 위치 순서(위 → 아래, 좌 → 우)로 부여한다. */
+@keyframes panelIn {
+  from {
+    opacity: 0;
+    transform: translate3d(var(--dx, 0), 14px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.stagger-in section {
+  animation: panelIn 0.52s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+/* 패널 밖에 있는 설명문 · 그룹 제목도 같이 (첫 박자에) */
+.stagger-in > p,
+.stagger-in > div > p {
+  animation: panelIn 0.52s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .smooth-open {
+    transition: none;
+  }
+  .rows-in > tr,
+  .stagger-in section,
+  .stagger-in > p,
+  .stagger-in > div > p {
+    animation: none;
+  }
+}
+
+/* AI 답변 스트리밍 커서 — 글자가 흐르는 동안만 깜빡인다 */
+.ai-caret {
+  display: inline-block;
+  width: 2px;
+  height: 1em;
+  margin-left: 2px;
+  vertical-align: -0.15em;
+  background: #0A1F3C;
+  animation: aiCaret 1s steps(2, start) infinite;
+}
+@keyframes aiCaret { to { visibility: hidden; } }
+@media (prefers-reduced-motion: reduce) { .ai-caret { animation: none; } }
+
+/* ── 모바일 앱 스플래시 (components/Splash.jsx) ────────────────────────────
+   외부 이미지 없이 CSS로만 그린다 — CSP가 자기 출처만 허용하고,
+   스플래시가 네트워크를 기다리면 넣은 의미가 없다.                        */
+.kc-splash {
+  position: fixed;
+  inset: 0;
+  z-index: 3000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  padding: 24px;
+  text-align: center;
+  transition: opacity .28s ease, transform .28s ease;
+}
+.kc-splash.is-out { opacity: 0; transform: scale(1.02); pointer-events: none; }
+
+.kc-splash-in > * { animation: kcRise .5s cubic-bezier(.22,1,.36,1) both; }
+
+/* 인장 — 두 겹 원. 바깥 링이 안으로 조여들며 자리를 잡는다 */
+.kc-seal {
+  position: relative;
+  margin: 0 auto 18px;
+  display: flex;
+  height: 96px;
+  width: 96px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid;
+  border-radius: 999px;
+}
+.kc-seal-ring {
+  position: absolute;
+  inset: -14px;
+  border: 1.5px solid;
+  border-radius: 999px;
+  opacity: .5;
+  animation: kcRing 1.1s cubic-bezier(.22,1,.36,1) both;
+}
+.kc-seal-mark {
+  font-family: Montserrat, "Noto Sans KR", sans-serif;
+  font-size: 42px;
+  font-weight: 700;
+  letter-spacing: .04em;
+  line-height: 1;
+}
+
+.kc-word {
+  font-family: Montserrat, "Noto Sans KR", sans-serif;
+  font-size: 27px;
+  font-weight: 700;
+  letter-spacing: .3em;
+  text-indent: .3em; /* 자간 때문에 오른쪽으로 밀리는 것 보정 */
+  animation-delay: .07s;
+}
+.kc-eyebrow {
+  margin-top: 9px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .22em;
+  text-indent: .22em;
+  animation-delay: .13s;
+}
+.kc-title {
+  margin-top: 16px;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.6;
+  opacity: .82;
+  word-break: keep-all;
+  animation-delay: .19s;
+}
+.kc-title.is-big { font-size: 20px; letter-spacing: -.01em; opacity: .9; }
+
+.kc-foot {
+  position: absolute;
+  bottom: max(26px, env(safe-area-inset-bottom));
+  font-size: 11px;
+  letter-spacing: .04em;
+  opacity: .42;
+  animation: kcRise .5s cubic-bezier(.22,1,.36,1) .3s both;
+}
+
+@keyframes kcRise { from { opacity: 0; transform: translateY(9px); } to { opacity: 1; transform: none; } }
+@keyframes kcRing {
+  from { opacity: 0; transform: scale(1.5); }
+  60%  { opacity: .5; }
+  to   { opacity: .5; transform: scale(1); }
+}
+
+/* 스플래시는 장식이므로, 모션을 줄인 기기에서는 컴포넌트가 아예 띄우지 않는다.
+   그래도 표시되는 경로가 생기면 애니메이션만 끈다. */
+@media (prefers-reduced-motion: reduce) {
+  .kc-splash, .kc-splash-in > *, .kc-seal-ring, .kc-foot { animation: none; transition: none; }
+}
+
+/* ── 서비스 랜딩 히어로 배경 (pages/service.jsx) ──────────────────────────
+   public/hero/ 에 파일을 넣으면 켜지고, 없으면 배경 없이 그대로 나온다.
+   왼쪽은 제목 자리이므로 페이퍼색으로 덮어 가독성을 먼저 지킨다.          */
+
+/* ── 남색 섹션 배경 패턴 (Section tone="navy") ────────────────────────────
+   여기에 한때 배경 영상을 깔았다가 뺐다. 한 페이지에 영상이 셋이면
+   과부하다 — 디코딩이 계속 돌고 파일도 400KB 씩 붙는다.
+   대신 CSS 패턴으로 결만 준다. 추가 파일 0바이트, 디코딩 0.
+
+   무엇을 그리는가: 마블링 대리석 결 (public/bg/marble.webp · 28KB).
+   처음에는 점 격자를 썼는데, 규칙적인 격자라 반투명 카드 밑으로 비칠 때
+   줄이 어긋난 것처럼 보였다. 불규칙한 결은 카드 밑으로 비쳐도
+   "돌 위에 반투명 판을 올린" 것으로 읽혀서 그 문제가 없다.
+   가죽 그레인 판도 만들어 뒀다 (public/bg/leather.webp) — url 만 바꾸면
+   교체된다. 다만 결 굵기가 달라 background-size 도 같이 조정해야 한다
+   (가죽 320px/.38 · 대리석 800px/.20).
+
+   텍스처는 흑백이고, 남색 바탕에 soft-light 로 얹어 남색의 명도만
+   오르내리게 한다 — 색상은 남색 그대로다.
+
+   640px 타일을 800px 로 키워 깐다 — 마블링은 소용돌이가 크게 흘러야
+   돌로 읽혀서, 가죽 그레인처럼 줄이면 잔금처럼 보인다. 더 키우면 결은
+   시원해지지만 넓은 화면에서 타일 반복이 눈에 띄기 시작한다.
+   타일은 상하좌우가 이어지므로 background-size 를 바꿔도 이음매는 안 생긴다.
+
+   결만 있으면 평평해 보이므로 좌상단에서 들어오는 옅은 골드 빛을 겹쳐
+   깊이를 준다. 아래쪽은 살짝 눌러 글자 대비를 지킨다.                      */
+.sec-navy { position: relative; overflow: hidden; }
+.sec-navy > * { position: relative; z-index: 2; }
+.sec-navy::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-image: url("/bg/marble.webp");
+  background-size: 800px 800px;
+  opacity: .20;
+  mix-blend-mode: soft-light;
+}
+.sec-navy::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    radial-gradient(112% 82% at 18% -12%, rgba(201, 164, 107, .12) 0%, transparent 62%),
+    linear-gradient(180deg, rgba(10, 31, 60, 0) 0%, rgba(10, 31, 60, .30) 100%);
+}
+
+/* 히어로 안의 카드만 바닥을 올린다.
+   card-glass 는 아래로 갈수록 흰색이 .94 → .70 으로 옅어지는데, 하필 그 옅은
+   구간에 카드 본문 셋째 줄이 앉는다. 종이 위에서는 뒤가 어차피 종이색이라
+   티가 안 나지만, 뒤에서 영상이 움직이면 어두운 구간(나무 탁자)이 비쳐
+   본문 대비가 5.99:1 → 4.31:1 로 떨어져 AA(4.5) 아래로 내려갔다.
+   그래서 히어로 안에서만 바닥을 .86 으로 올린다 — 종이 위에서는 차이가
+   2/255 라 눈에 안 보이고, 영상 위에서만 효과가 난다. */
+.hero-bg .card-glass {
+  background: linear-gradient(180deg, rgba(255, 255, 255, .96), rgba(255, 255, 255, .86));
+}
+/* 히어로 배경 레이어 순서 (아래 → 위)
+     0  ::before  정지 이미지 — 첫 페인트를 담당한다. 영상이 못 뜨는 경우(모션 최소화·
+                  저사양·iOS 저전력 모드)에도 화면이 비지 않게 하는 바닥이다.
+     1  .hero-vid 루프 영상 — 하이드레이션 뒤에 얹힌다. 0번 프레임이 정지 이미지와
+                  같은 컷이라 얹히는 순간 화면이 튀지 않는다.
+     2  ::after   페이퍼색 장막
+     3  콘텐츠 */
+.hero-bg { position: relative; overflow: hidden; }
+.hero-bg > * { position: relative; z-index: 3; }
+/* 위 규칙(0,1,0)보다 구체적(0,2,0)이라 선언 순서와 무관하게 이긴다 —
+   영상도 .hero-bg의 직계 자식이라 그냥 두면 콘텐츠 층으로 올라온다. */
+.hero-bg > .hero-vid {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 68% center; /* ::before의 background-position과 같은 값 */
+  opacity: .92;
+  filter: brightness(1.2);
+  pointer-events: none;
+}
+
+.hero-bg::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-image: url("/hero/home.webp");
+  background-size: cover;
+  background-position: 68% center;
+  /* 사진이 이미 아주 옅어서 더 죽이면 넣은 의미가 없다 — 거의 그대로 쓴다 */
+  opacity: .92;
+  /* +20% 밝게. 배경이 밝아지면 네이비 글자와의 대비는 오히려 올라가므로
+     가독성 쪽으로는 안전하다 (측정치는 커밋 메시지 참고). */
+  filter: brightness(1.2);
+}
+/* 영상이 붙으면 정지 이미지는 물러난다.
+   둘 다 .92로 겹쳐 두면 합성 불투명도가 .92가 아니라 .99가 되어 배경만 진해진다.
+   영상의 poster가 이 이미지와 같은 파일(= 영상의 0번 프레임)이라 물러나도 그림은 그대로다.
+   :has()를 모르는 옛 브라우저는 이 규칙을 통째로 버린다 — 배경이 아주 살짝 진해질 뿐이다. */
+.hero-bg:has(.hero-vid)::before { opacity: 0; }
+/* 왼쪽 → 오른쪽으로 걷히는 페이퍼색 장막.
+   제목이 놓이는 왼쪽 절반만 확실히 덮고, 오른쪽(창·화분·탁자)은 살려 둔다. */
+.hero-bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(
+    98deg,
+    rgba(241, 239, 232, .97) 0%,
+    rgba(241, 239, 232, .93) 26%,
+    rgba(241, 239, 232, .70) 45%,
+    rgba(241, 239, 232, .28) 68%,
+    rgba(241, 239, 232, .06) 100%
+  );
+}
+/* 좁은 화면에서는 글자가 사진 위로 겹치므로 위에서 아래로 덮는다.
+
+   처음에는 영상 .55 에 장막을 .97~.55 로 깔았는데, 둘이 곱해지면서 영상이
+   화면에 기여하는 양이 전 구간 2~4/255 (1.6% 미만) 였다 — 사실상 안 보였다.
+   영상을 데스크톱과 비슷한 수준(.88)으로 올리고, 장막은 "글자가 있는 곳만"
+   덮도록 다시 그렸다.
+
+   기준이 되는 세로 위치 (390px 기준 히어로 높이 약 1007px):
+     ~360px  제목·본문이 놓이는 구간 — 여기는 계속 강하게 덮는다
+     ~540px  칩·버튼 구간
+     569px~  근거 4칸 카드 — 카드가 자기 배경을 가지므로 장막이 덜 필요하다
+   그래서 55% 지점부터 장막을 빠르게 걷는다.                               */
+@media (max-width: 900px) {
+  .hero-bg::before { background-position: 76% center; opacity: .88; filter: brightness(1.2); }
+  /* 영상도 정지 이미지와 같은 취급 — 둘이 어긋나면 영상이 얹히는 순간 밝기가 튄다 */
+  .hero-bg > .hero-vid { object-position: 76% center; opacity: .88; }
+  .hero-bg::after {
+    background: linear-gradient(
+      172deg,
+      rgba(241, 239, 232, .94) 0%,
+      rgba(241, 239, 232, .93) 42%,
+      rgba(241, 239, 232, .86) 58%,
+      rgba(241, 239, 232, .52) 78%,
+      rgba(241, 239, 232, .30) 100%
+    );
+  }
+}
+
+/* 동행 점수 슬라이더 (2026-08-21 시안) — step=1 로 정수에만 멈춘다.
+   기본 range 는 크롬·사파리·파이어폭스가 서로 다르게 그리므로 트랙과 손잡이를
+   양쪽 접두사로 모두 지정한다. 한쪽만 쓰면 어느 브라우저에서는 회색 막대가 된다.
+   손잡이는 26px — 24px 터치 하한(WCAG 2.5.8)을 넘긴다. */
+.nps-range {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 40px; /* 손가락이 닿는 높이 — 보이는 막대는 아래 8px 트랙이다 (26px 는 QA 실측에서 40px 미만) */
+  background: transparent;
+  cursor: pointer;
+}
+.nps-range:focus-visible {
+  outline: 2px solid var(--nps, #0a1f3c);
+  outline-offset: 4px;
+  border-radius: 6px;
+}
+/* 트랙 — 채워진 부분은 점수 색, 나머지는 연한 네이비 */
+.nps-range::-webkit-slider-runnable-track {
+  height: 8px;
+  border-radius: 999px;
+  background: linear-gradient(
+    to right,
+    var(--nps, #b08d57) 0%,
+    var(--nps, #b08d57) var(--nps-pct, 80%),
+    rgba(10, 31, 60, 0.12) var(--nps-pct, 80%),
+    rgba(10, 31, 60, 0.12) 100%
+  );
+}
+.nps-range::-moz-range-track {
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(10, 31, 60, 0.12);
+}
+.nps-range::-moz-range-progress {
+  height: 8px;
+  border-radius: 999px;
+  background: var(--nps, #b08d57);
+}
+/* 손잡이 */
+.nps-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 26px;
+  height: 26px;
+  margin-top: -9px; /* (26 − 8) / 2 — 트랙 가운데에 맞춘다 */
+  border-radius: 999px;
+  background: #ffffff;
+  border: 3px solid var(--nps, #b08d57);
+  box-shadow: 0 2px 6px rgba(10, 31, 60, 0.28);
+}
+.nps-range::-moz-range-thumb {
+  width: 26px;
+  height: 26px;
+  border-radius: 999px;
+  background: #ffffff;
+  border: 3px solid var(--nps, #b08d57);
+  box-shadow: 0 2px 6px rgba(10, 31, 60, 0.28);
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   2026-10-15 디자인 시안 — 어르신 · 보호자 화면 (클레이 3D)
+   ──────────────────────────────────────────────────────────────────────────
+   모든 이름에 ds- 를 붙였다 — 관제 · 컨시어지 · 리포트 화면의 기존 클래스(.tap · .chip …)와
+   부딪히지 않게. @layer components 안이라 Tailwind 유틸리티가 이긴다 (한 자리만 바꿀 때 편하다).
+   입체감은 그림자 '덩어리' 하나로 낸다: 아래로 4~5px 같은 색 계열의 진한 그림자 (0 5px 0 #…).
+   누르면 그만큼 내려간다 (.ds-press) — 손가락이 실제로 눌렀다는 느낌.
+   빨강은 위험 신호(SOS · 낙상 · 응급) 전용이다 — 시안의 빨간 알림 점 · 주황 배지는 금색으로 바꿔 썼다.
+   ══════════════════════════════════════════════════════════════════════════ */
+@layer components {
+  .ds-app {
+    background: #f8f7f4;
+    color: #1b2340;
+    font-family: "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+    word-break: keep-all;
+    overflow-wrap: anywhere;
+  }
+  /* 문서 바탕도 같은 색 — 위아래로 당겼을 때(휴대폰 고무줄 스크롤) 기본 남색 바탕이 비치지 않게 */
+  html:has(.ds-app) body { background-color: #f8f7f4; }
+  .ds-app button { color: inherit; font-family: inherit; }
+  .ds-app button:focus-visible,
+  .ds-app a:focus-visible,
+  .ds-app summary:focus-visible { outline: 3px solid #b79b52; outline-offset: 2px; }
+  .ds-num { font-variant-numeric: tabular-nums; }
+
+  /* 한 화면 — 위 24 · 옆 18 · 아래 112(떠 있는 탭바 자리) · 사이 16 */
+  .ds-scr { display: flex; flex-direction: column; gap: 16px; padding: 24px 18px 112px; }
+
+  /* 화면에 들어올 때 차례로 떠오른다 (--d 로 순서) */
+  .ds-play .ds-r { animation: dsRise 0.42s ease-out both; animation-delay: var(--d, 0ms); }
+
+  /* 눌림 — 타일은 살짝 줄고(아이콘은 통통 튄다), 3D 버튼은 그림자만큼 내려간다 */
+  .ds-tap { transition: transform 0.15s ease, filter 0.15s ease; }
+  .ds-tap:active { transform: scale(0.95); filter: brightness(0.95); }
+  .ds-tap .ds-ico { transition: transform 0.22s cubic-bezier(0.2, 1.6, 0.4, 1); }
+  .ds-tap:active .ds-ico { transform: scale(1.12) rotate(-5deg); }
+  .ds-press { transition: transform 0.12s ease; }
+  .ds-press:active { transform: translateY(4px); }
+  .ds-press:disabled:active { transform: none; }
+  .ds-swap { animation: dsSwap 0.3s ease-out both; }
+  .ds-pop { animation: dsPop 0.4s cubic-bezier(0.2, 1.4, 0.4, 1) both; }
+  .ds-starpop { animation: dsStarpop 0.6s cubic-bezier(0.2, 1.6, 0.4, 1) 0.15s both; }
+  .ds-beat { transform-box: fill-box; transform-origin: center; animation: dsBeat 0.7s ease-in-out 1s 1; }
+  .ds-glow { animation: dsGlow 1s ease-in-out 0.6s 2; }
+  .ds-draw { stroke-dasharray: 40; stroke-dashoffset: 40; animation: dsDraw 0.5s 0.15s ease-out forwards; }
+  /* 반원 게이지 — pathLength 100 기준으로 그려 나간다 (보호자 외출 컨디션) */
+  .ds-arc { stroke-dasharray: 100; stroke-dashoffset: 100; animation: dsDraw 0.9s 0.2s ease-out forwards; }
+  .ds-fill { transform-origin: left; animation: dsFill 1.2s cubic-bezier(0.2, 0.8, 0.3, 1) 0.4s both; }
+  /* 새 소식 점 — 시안은 빨강, 우리는 금색 (빨강은 위험 신호 전용) */
+  .ds-ping { animation: dsPing 1.2s ease-out 0.8s 2; }
+  .ds-dot { display: inline-block; flex: none; width: 10px; height: 10px; border-radius: 50%; background: #c9a064; }
+  /* 듣는 중 · 말하는 중 파형 막대 */
+  .ds-bar { display: block; width: 6px; height: 40px; border-radius: 3px; transform-origin: center; animation: dsWave 0.8s ease-in-out infinite alternate; }
+  .ds-bar-sm { display: block; width: 4px; border-radius: 2px; }
+  .ds-bar-sm.on { animation: dsWave 0.8s ease-in-out infinite alternate; }
+  .ds-mic { animation: dsMic 1.6s ease-in-out infinite; }
+  /* 도와줘요 · 전화 — 동그라미 밖으로 퍼지는 물결 두 겹 */
+  .ds-ring { animation: dsRing 1.8s ease-out infinite; }
+  .ds-ring2 { animation-delay: 0.9s; }
+  .ds-car { animation: dsCar 1.6s ease-out infinite; }
+  /* 녹음 중 점 — 금색 (빨강은 SOS 전용) */
+  .ds-recdot { flex: none; width: 14px; height: 14px; border-radius: 50%; background: #c9a064; animation: dsGlow 1s ease-in-out infinite; }
+
+  /* 글자 */
+  .ds-hsub { font-size: 15px; font-weight: 700; color: #8f7f63; }
+  .ds-h1 { margin: 6px 0 0; font-size: 29px; font-weight: 800; letter-spacing: -0.5px; line-height: 1.35; }
+  .ds-sect { margin: 0; display: flex; align-items: center; gap: 8px; font-size: 18px; font-weight: 900; }
+  .ds-sect > i { width: 12px; height: 12px; border-radius: 50%; }
+  .ds-src { font-size: 12px; font-weight: 700; color: #6b6658; }
+  .ds-tbd { padding: 0 5px; border-radius: 5px; background: #fbf1da; color: #86621f; font-weight: 800; }
+
+  /* 카드 · 2열 · 타일 */
+  .ds-card { border-radius: 26px; background: #ffffff; box-shadow: 0 5px 0 #e6e2da; }
+  .ds-g2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  .ds-g3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+  .ds-btn3d { border: none; font-weight: 800; }
+  .ds-stile { min-height: 88px; border-radius: 24px; border: none; padding: 10px 12px; display: flex; align-items: center; gap: 10px; text-align: left; }
+  .ds-stile b { display: block; font-size: 19px; font-weight: 800; line-height: 1.25; }
+  .ds-stile small { display: block; font-size: 15px; font-weight: 500; line-height: 1.3; }
+
+  /* 뒤로 · 얼굴 · 칩 · 날짜 블록 · 고르기 */
+  .ds-back { flex: none; width: 52px; height: 52px; border-radius: 18px; border: none; background: #ffffff; box-shadow: 0 4px 0 #e3ded3; display: flex; align-items: center; justify-content: center; }
+  .ds-face { flex: none; width: 40px; height: 40px; border-radius: 50%; border: 2px solid #ffffff; font-size: 13px; font-weight: 800; display: flex; align-items: center; justify-content: center; white-space: nowrap; }
+  .ds-chip { display: inline-flex; align-items: center; padding: 8px 14px; border-radius: 999px; background: #ffffff; font-size: 16px; font-weight: 800; color: #5e4a1e; }
+  .ds-dblock { flex: none; width: 56px; height: 56px; border-radius: 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; font-weight: 800; }
+  .ds-dblock span { font-size: 13px; }
+  .ds-dblock b { font-size: 21px; font-weight: 900; line-height: 1; }
+  .ds-pick { min-height: 60px; border-radius: 18px; border: none; font-size: 19px; font-weight: 800; transition: background-color 0.2s ease, transform 0.12s ease; }
+  .ds-pick:active { transform: translateY(3px); }
+
+  /* 떠 있는 탭바 — 어르신(3칸 · 따로 떠 있는 큰 칸) · 보호자(5칸 · 흰 막대 하나) */
+  .ds-nav { position: fixed; left: 12px; right: 12px; bottom: calc(12px + env(safe-area-inset-bottom, 0px)); z-index: 20; display: grid; gap: 6px; padding: 6px; border-radius: 26px; background: #ffffff; box-shadow: 0 4px 0 #e3ded3, 0 10px 24px -10px rgba(27, 35, 64, 0.25); }
+  .ds-nav > a,
+  .ds-nav > button { position: relative; height: 58px; border: none; border-radius: 20px; background: transparent; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; font-size: 13px; font-weight: 800; color: #1b2340; text-decoration: none; }
+  .ds-nav > [aria-current="page"] { background: #1b2340; color: #ffffff; }
+  /* 어르신 아래 메뉴 — 마음사서함 · 홈 · 가족 · 마이 네 칸 (2026-10-22 시제품 v17) */
+  .ds-nav-s { grid-template-columns: repeat(4, minmax(0, 1fr)); background: transparent; box-shadow: none; padding: 0; gap: 8px; }
+  .ds-nav-s > button { height: 66px; border-radius: 22px; background: #ffffff; box-shadow: 0 4px 0 #e3ded3; font-size: 16px; letter-spacing: -0.5px; white-space: nowrap; transition: transform 0.12s ease; }
+  .ds-nav-s > button:active { transform: translateY(4px); }
+  .ds-nav-s > button[aria-current="page"] { background: #1b2340; box-shadow: 0 4px 0 #0e1428; }
+  .ds-nav-g { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+  .ds-nav-g > a { white-space: nowrap; letter-spacing: -0.3px; }
+  /* 폰 폭보다 넓은 화면에서는 가운데 430px 기둥에 맞춘다 */
+  @media (min-width: 455px) {
+    .ds-nav { left: 50%; right: auto; width: 406px; transform: translateX(-50%); }
+  }
+
+  /* 아래에서 올라오는 시트 · 가운데 창 · 알림 한 줄 */
+  .ds-sheetwrap { position: fixed; inset: 0; z-index: 50; }
+  .ds-backdrop { position: absolute; inset: 0; width: 100%; border: none; background: rgba(27, 35, 64, 0.45); animation: dsFadeIn 0.25s ease both; }
+  .ds-sheet { position: absolute; left: 0; right: 0; bottom: 0; margin: 0 auto; max-width: 430px; max-height: 88%; overflow-y: auto; box-sizing: border-box; background: #f8f7f4; border-radius: 30px 30px 0 0; padding: 26px 20px calc(28px + env(safe-area-inset-bottom, 0px)); display: flex; flex-direction: column; gap: 14px; animation: dsSheetUp 0.36s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+  .ds-overlay { position: fixed; inset: 0; z-index: 50; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 40px 24px 28px; gap: 16px; box-sizing: border-box; }
+  /* width: max-content — left 50% 에서 시작하면 남은 절반 폭에 맞춰 짧은 글도 두 줄로 접혔다 (2026-10-24) */
+  .ds-toast { position: fixed; left: 50%; bottom: calc(96px + env(safe-area-inset-bottom, 0px)); z-index: 60; transform: translate(-50%, 20px); opacity: 0; pointer-events: none; padding: 12px 18px; border-radius: 16px; background: #1b2340; color: #ffffff; font-size: 15px; font-weight: 700; width: max-content; max-width: calc(100% - 32px); text-align: center; transition: opacity 0.25s ease, transform 0.25s ease; }
+  .ds-toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+  /* 달력 */
+  .ds-cal { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; }
+  .ds-cal > button,
+  .ds-cal > span { height: 46px; border-radius: 14px; border: 2px solid transparent; background: transparent; font-size: 16px; font-weight: 800; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; padding: 0; }
+  .ds-cal i { width: 6px; height: 6px; border-radius: 50%; }
+
+  /* 점수 밀대 (동행 평가) */
+  /* 점수 막대 — 보이는 막대는 12px, 누르는 칸은 40px (터치 타깃 24px 이상 · 스모크 검사). 손잡이는 막대 가운데 */
+  .ds-app input[type="range"].ds-range { -webkit-appearance: none; appearance: none; width: 100%; height: 40px; background: transparent; outline: none; margin: 0; cursor: pointer; }
+  .ds-app input[type="range"].ds-range::-webkit-slider-runnable-track { height: 12px; border-radius: 6px; background: #d6cde6; }
+  .ds-app input[type="range"].ds-range::-moz-range-track { height: 12px; border-radius: 6px; background: #d6cde6; }
+  .ds-app input[type="range"].ds-range::-webkit-slider-thumb { -webkit-appearance: none; box-sizing: border-box; width: 34px; height: 34px; margin-top: -11px; border-radius: 50%; background: #6a4d9c; border: 5px solid #ffffff; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25); cursor: pointer; }
+  .ds-app input[type="range"].ds-range::-moz-range-thumb { box-sizing: border-box; width: 34px; height: 34px; border-radius: 50%; background: #6a4d9c; border: 5px solid #ffffff; cursor: pointer; }
+  .ds-app input[type="range"].ds-range:focus-visible { outline: 3px solid #1b2340; outline-offset: 2px; border-radius: 12px; }
+
+  /* ── 보호자 세부 (홈 4칸 · 마이) ── */
+  .ds-hero { border-radius: 28px; padding: 20px; display: flex; flex-direction: column; gap: 10px; }
+  .ds-big { font-size: 44px; font-weight: 900; line-height: 1.1; font-variant-numeric: tabular-nums; }
+  .ds-big small { font-size: 18px; font-weight: 800; }
+  .ds-gcard { border-radius: 26px; padding: 18px; display: flex; flex-direction: column; gap: 12px; }
+  .ds-lab { font-size: 15px; font-weight: 800; }
+  .ds-row { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-top: 1.5px solid rgba(27, 35, 64, 0.08); }
+  .ds-row:first-of-type { border-top: none; }
+  .ds-k { flex: 1; min-width: 0; }
+  .ds-k b { display: block; font-size: 17px; font-weight: 800; color: #1b2340; }
+  .ds-k small { display: block; font-size: 14px; color: #5e6270; margin-top: 2px; }
+  .ds-gchip { display: inline-flex; align-items: center; min-height: 34px; padding: 0 14px; border-radius: 999px; background: #ffffff; font-size: 15px; font-weight: 800; }
+  .ds-btn { min-height: 54px; border-radius: 18px; font-size: 17px; }
+  .ds-mini { flex: none; min-height: 40px; padding: 0 14px; border-radius: 14px; background: #ffffff; font-size: 15px; }
+  .ds-gface { flex: none; width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 900; background: #ffffff; }
+  .ds-tog { display: inline-flex; padding: 3px; border-radius: 999px; background: #ffffff; gap: 2px; }
+  .ds-tog button { min-height: 32px; padding: 0 12px; border: none; border-radius: 999px; font-size: 13px; font-weight: 800; background: transparent; color: #5e6270; }
+  .ds-tog button[aria-pressed="true"] { background: #1b2340; color: #ffffff; }
+  .ds-bars { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; align-items: end; height: 150px; }
+  .ds-bars > div { display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 4px; height: 100%; font-size: 12px; font-weight: 800; color: #3a3f50; }
+  .ds-bars i { display: block; width: 100%; border-radius: 8px 8px 0 0; box-sizing: border-box; transform-origin: bottom; }
+  .ds-bars b { font-size: 12px; font-weight: 700; color: #5e6270; }
+  .ds-play .ds-bars i,
+  .ds-play .ds-m30 i,
+  .ds-play .ds-rpbars i { animation: dsGrow 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+  .ds-m30 { position: relative; display: grid; grid-template-columns: repeat(30, minmax(0, 1fr)); gap: 2px; align-items: end; height: 130px; }
+  .ds-m30 i { display: block; border-radius: 3px 3px 0 0; transform-origin: bottom; }
+  .ds-tile3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+  .ds-tile3 > div { border-radius: 20px; background: #ffffff; padding: 12px 10px; text-align: center; }
+  .ds-tile3 b { display: block; font-size: 22px; font-weight: 900; font-variant-numeric: tabular-nums; }
+  .ds-tile3 span { display: block; font-size: 13px; font-weight: 700; color: #5e6270; }
+  .ds-seg { display: flex; height: 30px; border-radius: 10px; overflow: hidden; }
+  .ds-seg i { display: block; height: 100%; }
+  .ds-leg { display: flex; flex-wrap: wrap; gap: 10px; font-size: 13px; font-weight: 800; color: #3a3f50; }
+  .ds-leg span { display: inline-flex; align-items: center; gap: 5px; }
+  .ds-leg i { width: 10px; height: 10px; border-radius: 3px; display: inline-block; }
+  .ds-dots { display: grid; grid-template-columns: 44px repeat(3, minmax(0, 1fr)); gap: 6px 8px; align-items: center; font-size: 14px; font-weight: 800; color: #3a3f50; }
+  .ds-dotcell { min-height: 30px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800; }
+  /* 복약 30일 달력 — 칸마다 날짜 + 시간대 막대 (먹음 · 놓침 · 오늘 남은 것) */
+  .ds-mcal { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 5px; }
+  .ds-mcal > div { border-radius: 10px; background: #ffffff; padding: 5px 4px 6px; display: flex; flex-direction: column; align-items: center; gap: 4px; min-height: 42px; }
+  .ds-mcal > div.blank { background: transparent; }
+  .ds-mcal small { font-size: 11px; font-weight: 800; color: #5e6270; }
+  .ds-mcal .m { display: flex; gap: 2px; }
+  .ds-mcal .m i { width: 7px; height: 12px; border-radius: 2px; display: block; }
+  .ds-acc { border-radius: 22px; background: #f3f1ec; overflow: hidden; }
+  .ds-acc summary { list-style: none; cursor: pointer; min-height: 62px; padding: 0 16px; display: flex; align-items: center; gap: 12px; font-size: 17px; font-weight: 800; color: #1b2340; }
+  .ds-acc summary::-webkit-details-marker { display: none; }
+  .ds-acc summary .ic { flex: none; width: 38px; height: 38px; border-radius: 12px; display: flex; align-items: center; justify-content: center; }
+  .ds-acc summary .tt { flex: 1; min-width: 0; }
+  .ds-acc summary .cv { flex: none; transition: transform 0.25s ease; }
+  .ds-acc[open] summary .cv { transform: rotate(180deg); }
+  .ds-acc .ds-accbody { padding: 2px 18px 18px; display: flex; flex-direction: column; gap: 12px; font-size: 15px; line-height: 1.65; color: #3a3f50; }
+  .ds-acc[open] .ds-accbody { animation: dsFadeIn 0.3s ease both; }
+  /* 어르신 정보 동의 · 환불 정책 — 약관 글씨를 조금 키운다 (2026-10-22) */
+  .ds-accbig .ds-acc summary { font-size: 19px; }
+  .ds-accbig .ds-acc .ds-accbody,
+  .ds-acc.ds-accbig .ds-accbody { font-size: 17px; }
+  .ds-acc h4 { margin: 0 0 2px; font-size: 15px; font-weight: 900; color: #1b2340; }
+  .ds-acc ul { margin: 0; padding-left: 18px; list-style: disc; }
+
+  /* ── 보호자 리포트 (A4 → 폰 폭) ── */
+  .ds-rpchip { display: inline-flex; align-items: center; gap: 5px; border-radius: 999px; padding: 4px 10px; font-size: 12px; font-weight: 700; white-space: nowrap; }
+  .ds-rpok { background: #e2f0e8; color: #1f5537; border: 1.5px solid #2e7356; }
+  .ds-rpwatch { background: #e6ebf3; color: #2f3f5c; border: 1.5px solid #4f6383; }
+  .ds-rpdot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; flex: none; }
+  .ds-rpcol { background: #ffffff; border: 1.5px solid #a79f8e; border-radius: 14px; padding: 14px; display: flex; flex-direction: column; gap: 8px; }
+  .ds-rpcolh { display: flex; align-items: center; gap: 8px; padding-bottom: 9px; border-bottom: 2px solid #1e2b4a; }
+  .ds-rpcolh h2 { margin: 0; font-size: 17px; font-weight: 800; color: #17233a; }
+  .ds-rplab { font-size: 12px; font-weight: 700; color: #5e6676; letter-spacing: 0.04em; }
+  .ds-rpli { display: flex; gap: 7px; font-size: 14px; line-height: 1.55; }
+  .ds-rpbul { flex: none; width: 5px; height: 5px; border-radius: 50%; background: #0e5a5a; margin-top: 9px; }
+  .ds-rpbox { background: #f3f0e8; border: 1px solid #a79f8e; border-radius: 10px; padding: 9px 11px; display: flex; flex-direction: column; gap: 3px; font-size: 14px; line-height: 1.5; }
+  .ds-rprow { display: flex; justify-content: space-between; align-items: baseline; padding: 7px 0; border-bottom: 1px solid #c9c2b1; }
+  .ds-rprow.hl { background: #e6ebf3; border-radius: 8px; padding: 7px 8px; border: 1.5px solid #4f6383; }
+  .ds-rprk { font-size: 14px; color: #3a4558; }
+  .ds-rprow.hl .ds-rprk { color: #2f3f5c; font-weight: 700; }
+  .ds-rprv { font-size: 17px; font-weight: 800; }
+  .ds-rprv small { font-size: 12px; font-weight: 600; color: #5e6676; }
+  .ds-rpnote { font-size: 12px; line-height: 1.5; color: #5e6676; }
+  .ds-rpweek { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; text-align: center; font-size: 12px; font-weight: 700; }
+  .ds-rpweek > div { display: flex; flex-direction: column; align-items: center; gap: 5px; }
+  .ds-rpon { width: 12px; height: 12px; border-radius: 50%; background: #4f6383; }
+  .ds-rpoff { width: 12px; height: 12px; border-radius: 50%; border: 1.5px solid #6e7584; box-sizing: border-box; }
+  .ds-rpbars { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; align-items: end; height: 96px; border-bottom: 1px solid #cfc8b8; }
+  .ds-rpbars > div { display: flex; flex-direction: column; align-items: center; gap: 3px; font-size: 12px; font-weight: 700; }
+  .ds-rpbars i { display: block; width: 100%; border-radius: 4px 4px 0 0; box-sizing: border-box; transform-origin: bottom; }
+
+  /* 클레이 3D — 48 격자 그림에 필터 하나 (components/clay.jsx ClayDefs) */
+  .ds-clay { filter: url(#ds-clay3d); overflow: visible; }
+
+  @keyframes dsRise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+  @keyframes dsFadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+  @keyframes dsSwap { from { opacity: 0; transform: scale(0.97); } to { opacity: 1; transform: none; } }
+  @keyframes dsPop { from { transform: scale(0.6); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+  @keyframes dsStarpop { 0% { transform: scale(0) rotate(-40deg); opacity: 0; } 100% { transform: scale(1) rotate(0); opacity: 1; } }
+  @keyframes dsBeat { 0%, 100% { transform: scale(1); } 30% { transform: scale(1.25); } 60% { transform: scale(0.95); } }
+  @keyframes dsGlow { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+  @keyframes dsDraw { to { stroke-dashoffset: 0; } }
+  @keyframes dsFill { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+  @keyframes dsPing { 0% { box-shadow: 0 0 0 0 rgba(201, 160, 100, 0.6); } 100% { box-shadow: 0 0 0 14px rgba(201, 160, 100, 0); } }
+  @keyframes dsWave { from { transform: scaleY(0.25); } to { transform: scaleY(1); } }
+  @keyframes dsMic { 0%, 100% { box-shadow: 0 0 0 0 rgba(106, 77, 156, 0.4); } 50% { box-shadow: 0 0 0 10px rgba(106, 77, 156, 0); } }
+  @keyframes dsCar { 0% { box-shadow: 0 0 0 0 rgba(59, 107, 71, 0.45); } 100% { box-shadow: 0 0 0 10px rgba(59, 107, 71, 0); } }
+  @keyframes dsGrow { from { transform: scaleY(0); } to { transform: scaleY(1); } }
+  @keyframes dsRing { 0% { transform: scale(1); opacity: 0.45; } 100% { transform: scale(2.1); opacity: 0; } }
+  @keyframes dsSheetUp { from { transform: translateY(100%); } to { transform: none; } }
+}
+
+/* 움직임 줄이기 — 시안 그대로 어르신 · 보호자 화면의 움직임을 모두 끈다 */
+@media (prefers-reduced-motion: reduce) {
+  .ds-app *,
+  .ds-app *::before,
+  .ds-app *::after,
+  .ds-sheetwrap *,
+  .ds-overlay * {
+    animation: none !important;
+    transition: none !important;
+  }
+  .ds-draw,
+  .ds-arc { stroke-dashoffset: 0; }
+}
+
+/* 리포트가 가족에게 발송된 순간 한 번 — 컨시어지 방문·리포트 탭 제출 줄 (2026-10-24 화면설계서 v3 §3-6 '반짝 효과').
+   움직임 줄이기를 켠 폰에서는 하지 않는다 */
+@keyframes sentGlow {
+  0% { box-shadow: 0 0 0 0 rgba(59, 107, 71, 0.55); }
+  100% { box-shadow: 0 0 0 14px rgba(59, 107, 71, 0); }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .sent-glow { animation: sentGlow 0.9s ease-out 2; }
+}
