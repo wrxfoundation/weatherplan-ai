@@ -2591,3 +2591,5 @@ Thanks Odelia — writing to you at that address today. Mine is support@wellbian
 - **서우 개인 인용 — @stoneiland 리플 × Water.org Swell 무대 정리글(10/30)** — x-activity-log 새 절. A 「At the end of every payment, there's a person」 + 물 ↔ 공기 + 같은 레일의 데이터 쪽(224) · B 짧게(131) · 국문판(219). 원글 수치 · 관계 암시 · 이름 0.
 
 - **서우 개인 인용 — 브랜드 「Air Mining in Times Square」(10/30)** — x-activity-log 새 절. A 「The city that never sleeps, and a monitor that doesn't either」 + 10/28 화면 숫자 · B 짧게 · 국문. asset · mining · 실외 판매 · 측정 주기 0.
+
+- **서우 개인 인용 — @wave_of_innov 갈링하우스 사진(10/30)** — x-activity-log 새 절. A 「a team that makes the XRP community feel like one room」 + 2027 호주 · 런던 기대 한 줄. 8/25 쉴링 의심 판정 재확인 권고(최근 글에 컨트랙트 주소 있으면 좋아요만), 재태그 · 기기 언급 · 참석 약속 0.

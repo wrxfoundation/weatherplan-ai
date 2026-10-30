@@ -4798,6 +4798,21 @@ Live weather from the middle of Times Square: 57°F, 81% humidity, wind from the
 - B 짧게 `A million lights, one quiet reader of the weather. 🌦️` / 빈 줄 / `Right in the middle of the crowd, live.`
 - 국문 `잠들지 않는 도시, 그 한가운데서 날씨를 읽는다. 🌃` / 빈 줄 / `타임스스퀘어 군중 속, 실시간으로.`
 
+## 서우 개인 계정 — @wave_of_innov 「caught up with @bgarlinghouse at Swell · The man who needs no introduction」 인용 (2026-10-30, 서우 캡처)
+
+계정: XRP Australia(2027-03-18~19) · XRP London(2027-06-02~04) 운영(10/14 글 · 얼리 액세스 모집) — 행사 무대 · 부스 창구 후보.
+⚠ **8/25 판정 다시 확인**: 이 계정 「리플 원장 스테이블 $1.1B」 글이 맥락 없는 ETH 컨트랙트 주소로 끝나 쉴링 의심 → 무반응 처리(wSPCX 원칙). 오늘 두 글(행사 · 사진)은 깨끗하지만, **인용 전 최근 글에 토큰 · 컨트랙트 주소 홍보가 없는지 확인.** 있으면 인용 대신 좋아요만.
+판정: **가벼운 인용 — 사진 문구 받기 + 그들 행사(2027 호주 · 런던)에 대한 기대 한 줄.** 갈링하우스 재태그 · 이름 0, 우리 기기 언급 0(「그분도 우리 기기 받았다」류는 남의 글에서 이름 팔기로 읽힌다), 참석 약속 0.
+- A 추천(가중 175)
+```
+The man who needs no introduction, and a team that makes the XRP community feel like one room. 🌦️
+
+Looking forward to what you're bringing to Australia and London next year.
+```
+- B 날씨 위트(151) `No introduction needed. ☀️` / 빈 줄 / `Great to see the Wave of Innovation team out in force at Swell. Australia and London next year look like a good forecast.`
+- C 한 줄(75) `No introduction needed, and no forecast either: clear skies all round. ☀️`
+- 행사 무대 · 부스 이야기는 인용이 아니라 나중에 DM 으로(9/10 Swell 사전 컨택 방식).
+
 ## DM — Swell 글 보고 관심 보인 해외 계정(가입 2013 · 팔로워 약 6.7천) 판매 안내 (2026-10-28, 서우 캡처 + 「wellbian.io 판매 사이트 안내 · 추가 할인 코드」)
 
 계정명은 적지 않는다(잠재 고객). 서우 「Hi」 → 상대 「Hello」.
