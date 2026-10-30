@@ -2587,3 +2587,5 @@ Thanks Odelia — writing to you at that address today. Mine is support@wellbian
 - **서우 개인 인용 — 브랜드 「Swell 에서 네 분께 기기 전달」 원글(10/29)** — x-activity-log 새 절. A 「Four units, four very familiar faces」(217) · B 날씨 위트 · C 짧게 · D 리플 이름판(위험). 이름 · 재태그 · asset · 지지 암시 0. 같은 사진이라 James 사진 원글은 하루씩 뒤로.
 
 - **서우 개인 인용 — 브랜드 「Mine the Sky · 브루클린 브리지」(10/29)** — x-activity-log 새 절. A 「Wall Street watches the tickers. We were watching the air.」 + 화면 숫자(159) · B 수요 한 줄(185) · C 짧게(90). asset · 수익 말장난 0, 숫자는 게시 전 영상 확인.
+
+- **서우 개인 인용 — @stoneiland 리플 × Water.org Swell 무대 정리글(10/30)** — x-activity-log 새 절. A 「At the end of every payment, there's a person」 + 물 ↔ 공기 + 같은 레일의 데이터 쪽(224) · B 짧게(131) · 국문판(219). 원글 수치 · 관계 암시 · 이름 0.

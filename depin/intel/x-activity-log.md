@@ -4770,6 +4770,21 @@ Same skyline, different kind of data.
 - B 수요 한 줄(185) `Across the river, they trade markets. On the bridge, we read the air. 🌇` / 빈 줄 / `A reading every minute at sunset, the kind of data businesses and AI agents can buy in RLUSD on the XRP Ledger.`
 - C 짧게(90) `Sunset, skyline, and a reading every minute. 🌇` / 빈 줄 / `Not a bad evening on the Brooklyn Bridge.`
 
+## 서우 개인 계정 — @stoneiland 「Swell 무대 맷 데이먼 · 리플 × Water.org · 모든 결제의 끝엔 사람」 인용 (2026-10-30, 서우 캡처)
+
+원글(국내 크리에이터 · 한국어 원문): 맷 데이먼 등장 · 리플과 Water.org 가 100만 명에게 깨끗한 물 · Ripple Payments · RLUSD 로 더 빠르고 싸게 · 잠비아 14살 소녀 · 게리 화이트 「가난한 사람은 시장」 · 소액대출 930만 건 · 상환율 98%.
+판정: **인용 — 「결제 끝의 사람」을 받아 물 ↔ 공기 한 쌍으로.** 원글 수치(100만 · 930만 · 98%) 재인용 0(2차 자료), 리플 · Water.org 와 우리 관계 암시 0 — 9/15 판단 그대로 **두 사실을 나란히 놓을 뿐**(같은 RLUSD 레일, 우리는 데이터 쪽), 맷 데이먼 · 게리 이름 0, 「살 수 있게 만들었다」까지.
+- A 추천(가중 224)
+```
+At the end of every payment, there's a person. 💧
+
+Water reaches the faucet. Air is already in every room.
+
+Our side of the same rail: RLUSD on the XRP Ledger, built so it can pay for data on the air people actually breathe.
+```
+- B 짧게(131) `Water and air. Two things nobody should have to think twice about. 💧🌦️` / 빈 줄 / `The best payment stories end with a person, not a chart.`
+- 국문판(219 — 원글이 한국어라 국문도 자연스럽다) `모든 결제의 끝에는 사람이 있다. 💧` / 빈 줄 / `물은 수도꼭지까지 가고, 공기는 이미 모든 방 안에 있습니다.` / 빈 줄 / `저희는 같은 레일의 다른 쪽에서, 사람들이 실제로 숨 쉬는 공기의 데이터를 XRP 레저 위 RLUSD로 사고팔 수 있게 만들고 있습니다.`
+
 ## DM — Swell 글 보고 관심 보인 해외 계정(가입 2013 · 팔로워 약 6.7천) 판매 안내 (2026-10-28, 서우 캡처 + 「wellbian.io 판매 사이트 안내 · 추가 할인 코드」)
 
 계정명은 적지 않는다(잠재 고객). 서우 「Hi」 → 상대 「Hello」.
