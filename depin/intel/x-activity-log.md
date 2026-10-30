@@ -4838,6 +4838,23 @@ I came to crypto from the weather-data side rather than trading, which might mak
 Could you share a bit more about the format and timing? And just to be upfront so I don't waste your time: we don't have room for any paid or sponsored placements right now, so I could only join as a regular guest. If that works on your side, I'd be glad to talk.
 ```
 
+## 링크드인 1촌 인사 — Desiree Moreno-Pineyro(Citi VP · CPB/Capital Markets Risk Supervisory Principal · 플로리다) (2026-10-30, 서우 프로필 캡처 + 「인사」)
+
+공개 프로필: Citi 2010~ · Merrill Lynch 2004~2010 · Citi 디지털자산 · 결제 리더십용 디지털자산 브리핑 작성 · Ripple Swell · XRPL 커뮤니티 활동 · 공통 1촌 James · Ryan · 공통 그룹 Ripple XRP · 12시간 전 리플 × Water.org(Get Blue) 「At the end of every payment is a person」 공유.
+판정: **playbook Lynn 기본값 그대로 + 상대 자리 한 줄(Get Blue 공유 → 「모든 측정값 뒤엔 누군가 사는 방」).** 요청 · 제안 0, 체인 이름 0(기본값 「a public ledger」), 리플 · Water.org 와 우리 관계 암시 0, Citi 를 사업 상대로 부르지 않는다(개인 1촌).
+영문 731자:
+```
+Desiree — thanks for connecting.
+
+I run partnerships at wellbian. KWeather has measured weather in South Korea for thirty years and supplies data to 4,000+ enterprise clients; wellbian is the network built on top of that.
+
+We work on two layers: certified air-quality sensors that people run in their own rooms, and city-level weather across 91 countries and 172 cities, where each value is a consensus across eleven independent sources rather than a single reading. Every input is fingerprinted to a public ledger before it goes anywhere.
+
+Loved your share of the Get Blue story. "At the end of every payment is a person" is close to how we think about data: behind every reading is a room someone lives in.
+
+Good to be connected.
+```
+
 ## DM — Swell 글 보고 관심 보인 해외 계정(가입 2013 · 팔로워 약 6.7천) 판매 안내 (2026-10-28, 서우 캡처 + 「wellbian.io 판매 사이트 안내 · 추가 할인 코드」)
 
 계정명은 적지 않는다(잠재 고객). 서우 「Hi」 → 상대 「Hello」.

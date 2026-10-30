@@ -2596,3 +2596,5 @@ Thanks Odelia — writing to you at that address today. Mine is support@wellbian
 
 - **링크드인 DM — Blockworks Guest Acquisition 「Beyond the Block」 출연 제안(10/30)** — x-activity-log 새 절. 관심 + 두 층 소개 + 형식 · 일정 · 비용(스폰서 여부) 질문, 영문 638자. 출연 전 회사 확인 · 보유 · 가격 이야기 0.
   - 서우 「비용 지출 여지 없다고 부드럽게」 → 마지막 문단 교체(유료 · 스폰서 출연 불가, 일반 게스트로만), 748자.
+
+- **링크드인 1촌 인사 — Desiree Moreno-Pineyro(Citi VP · XRPL 커뮤니티, 10/30)** — x-activity-log 새 절. Lynn 기본값 + Get Blue 공유에 닿는 한 줄, 영문 731자. 요청 · 체인 이름 · 관계 암시 0.
