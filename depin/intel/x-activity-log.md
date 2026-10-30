@@ -4785,6 +4785,19 @@ Our side of the same rail: RLUSD on the XRP Ledger, built so it can pay for data
 - B 짧게(131) `Water and air. Two things nobody should have to think twice about. 💧🌦️` / 빈 줄 / `The best payment stories end with a person, not a chart.`
 - 국문판(219 — 원글이 한국어라 국문도 자연스럽다) `모든 결제의 끝에는 사람이 있다. 💧` / 빈 줄 / `물은 수도꼭지까지 가고, 공기는 이미 모든 방 안에 있습니다.` / 빈 줄 / `저희는 같은 레일의 다른 쪽에서, 사람들이 실제로 숨 쉬는 공기의 데이터를 XRP 레저 위 RLUSD로 사고팔 수 있게 만들고 있습니다.`
 
+## 서우 개인 계정 — @wellbianlabs 「Air Mining in Times Square … outdoor monitor … #MineYourAir」 인용 (2026-10-30, 서우 캡처)
+
+원글(브랜드 · 영상): 타임스스퀘어 군중 속 삼각대 실외 측정기 · 「Weather data becomes an asset」.
+판정: **인용 — 「잠들지 않는 도시 · 잠들지 않는 측정기」 한 줄 + 화면 숫자.** 숫자는 10/28 밤 같은 장소 서우 캡처(PM 11:33 — 57.2°F · 81% · SSE)와 같은 세트로만. 「asset」 · 「mining」 · 수익 0, 실외 기기 판매 · 출시 · 원장 기록 0, 「every minute」 0(실외 측정 주기 미확인), 릴스 타이틀과 겹치지 않게.
+- A 추천(가중 151)
+```
+The city that never sleeps, and a monitor that doesn't either. 🌃
+
+Live weather from the middle of Times Square: 57°F, 81% humidity, wind from the SSE.
+```
+- B 짧게 `A million lights, one quiet reader of the weather. 🌦️` / 빈 줄 / `Right in the middle of the crowd, live.`
+- 국문 `잠들지 않는 도시, 그 한가운데서 날씨를 읽는다. 🌃` / 빈 줄 / `타임스스퀘어 군중 속, 실시간으로.`
+
 ## DM — Swell 글 보고 관심 보인 해외 계정(가입 2013 · 팔로워 약 6.7천) 판매 안내 (2026-10-28, 서우 캡처 + 「wellbian.io 판매 사이트 안내 · 추가 할인 코드」)
 
 계정명은 적지 않는다(잠재 고객). 서우 「Hi」 → 상대 「Hello」.
