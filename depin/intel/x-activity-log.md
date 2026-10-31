@@ -4878,6 +4878,21 @@ Hats off to everyone who built that week.
 - B Day 1 마무리(73) `Swell done. 👏` / 빈 줄 / `Swag + wellbian = Swell, and the math held all week. 🌦️`
 - C swack 요청판(97) `Swell done? Swell was swack: all swag, zero wack. 🌦️` / 빈 줄 / `Hats off to everyone who built that week.`
 
+## 서우 개인 계정 원글 — 토요일 카페 측정기 사진 #웰비안라이프 (2026-10-31, 서우 사진 + 「X 개인글 · #웰비안라이프」)
+
+사진: 커피 원두 포스터 아래 카페 테이블 · 측정기 화면 31 OCT 2026(SAT) PM 2:06 — PM10 4 · PM2.5 3 · CO₂ 543 ppm · 23.9°C · 습도 33%(Dry) · VOCs 60 · 옆에 제품 상자.
+판정: **일상 한 장 + 화면 숫자 + 「건조한 건 공기뿐」 위트.** 보상 · 「커피 마시며 번다」 류 · 가격 0, 장소(도시 · 카페 이름) 0, 해시태그 하나.
+- A 추천(가중 133)
+```
+Saturday, 2 PM, a café corner. ☕
+
+PM2.5 3, CO₂ 543 ppm, 23.9°C. The only thing dry in here is the air: 33% humidity.
+
+#wellbianlife
+```
+- B(150) `Weekend plan: coffee, and a quick look at the air. ☕🌦️` / 빈 줄 / `PM2.5 3, CO₂ 543, humidity 33%. Clean, a little dry. Time for a second cup.` / 빈 줄 / `#wellbianlife`
+- 국문(117) `토요일 오후 2시, 카페 한 켠. ☕` / 빈 줄 / `초미세먼지 3, CO₂ 543ppm, 23.9°C.` / `여기서 건조한 건 공기뿐, 습도 33%.` / 빈 줄 / `#웰비안라이프`
+
 ## DM — Swell 글 보고 관심 보인 해외 계정(가입 2013 · 팔로워 약 6.7천) 판매 안내 (2026-10-28, 서우 캡처 + 「wellbian.io 판매 사이트 안내 · 추가 할인 코드」)
 
 계정명은 적지 않는다(잠재 고객). 서우 「Hi」 → 상대 「Hello」.

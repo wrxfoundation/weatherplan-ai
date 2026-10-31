@@ -2603,3 +2603,5 @@ Thanks Odelia — writing to you at that address today. Mine is support@wellbian
   - 같은 날 밤 Serhii 답(일반 보유자 「입문 · 버틴 것 · 실수」 형식 + 개인 보유 질문) → 정중히 사양 답장 457자(빌더 쪽 형식이면 다시). 보유 여부 답하지 않음.
 
 - **서우 개인 인용 — @dazzlingxrpl 「Swell Done」 정리글(10/30)** — x-activity-log 새 절. A 「Swell done, well run, and somewhere in there, wellbian.」 · B Day 1 식 마무리 · C swack 판(「zero wack」으로 뜻 고정 — swack 단독은 wack 으로 들림). 재태그 · 참석 0.
+
+- **서우 개인 원글 — 토요일 카페 측정기 #웰비안라이프(10/31)** — x-activity-log 새 절. A 「The only thing dry in here is the air: 33% humidity.」 · B · 국문. 보상 · 가격 · 장소 0.
