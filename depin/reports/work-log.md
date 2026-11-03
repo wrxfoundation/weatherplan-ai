@@ -2605,3 +2605,7 @@ Thanks Odelia — writing to you at that address today. Mine is support@wellbian
 - **서우 개인 인용 — @dazzlingxrpl 「Swell Done」 정리글(10/30)** — x-activity-log 새 절. A 「Swell done, well run, and somewhere in there, wellbian.」 · B Day 1 식 마무리 · C swack 판(「zero wack」으로 뜻 고정 — swack 단독은 wack 으로 들림). 재태그 · 참석 0.
 
 - **서우 개인 원글 — 토요일 카페 측정기 #웰비안라이프(10/31)** — x-activity-log 새 절. A 「The only thing dry in here is the air: 33% humidity.」 · B · 국문. 보상 · 가격 · 장소 0.
+
+- **예측시장·크립토 데이터 유통 업체 화상 미팅 카톡 보고(11/3, 서우 녹취 txt + 「카톡보고 형태로 핵심 정리」)** — business-directions 새 절. 개요 · 데이터 요구(71개 도시) · 우리 답(판정 + 값 + 증빙) · SLA · 가격(정가 유지) · 라이선스 · 후속(상호 NDA) · 종합 + 내부용 고칠 것 7(Flare 표현 · 라이선스 선확인 · SLA 수치 · 71개 도시 대조 · 가격 방어 · 대외 언급 0 · ⚖ 서울 기온 정산). 회사명 · 상대 이름 · 연락처 미기재(녹취에서 확인 안 됨).
+
+- **주간 생태계 스캔 2026-11-02(예약 루틴)** — ecosystem-log 새 절(5축 · 검색 14회, 2차). ★ ① Swell 파트너 발표(C2FO 미출시 · Privy 에이전트 지갑) ② 칼시 × TWC 분배 + 정산 결합 ③ 우리 쪽 신호(데이터 유통 업체 미팅). fixCleanup3_4_0 11/4 · GENIUS 최종 · 한국 11월 정무위 · 디센트 추적 갱신. playbook 「Swell · 큰 행사 주간 글」에 행사 직후 주 · 이번 달 글 유형 정리 추가. 로스터 후보 신규 0.
