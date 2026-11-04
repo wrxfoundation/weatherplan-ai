@@ -1,0 +1,84 @@
+{
+  "id": "norse-carving-v1",
+  "version": "1.0",
+  "domain": "Norse saga figure",
+  "note": "한국요괴지도의 minhwa-v2를 그대로 다른 전승으로 옮긴 예. 배제 대상만 바뀌었을 뿐 구조가 같다. 뿔 달린 바이킹 투구는 19세기 오페라 의상에서 나온 것이고 바이킹 시대 유물에 없다 — 뿔 달린 도깨비와 정확히 같은 문제이므로 같은 방식으로 끊는다.",
+
+  "model": { "id": "recraft_v4_1", "model_type": "standard", "resolution": "2k" },
+
+  "style": "carved and pigment-stained oak panel in Urnes-style interlace, chisel-cut relief line of even depth, matte limewash ground, flat frontal Gotland picture-stone manner, visible wood grain",
+
+  "palette": ["#ded3c0", "#241d16", "#8c3b28", "#3f5d4a", "#2d4763", "#a8823a", "#f0e9dc"],
+  "background_color": "#ded3c0",
+  "palette_note": "식물·광물 염료의 낮은 채도. 판타지 게임의 고채도 네온·크롬 광택과 갈리는 지점이 '기름 먹인 나무의 무광'이다.",
+
+  "anchors": {
+    "note": "고고학적으로 확인되는 것만 앵커로 쓴다. 앵커가 빠지면 모델이 '판타지 바이킹 평균값'으로 떨어진다.",
+    "costume_female": "Norse dress: pleated linen underdress with a wool smokkr apron-dress hung from two shoulder straps fastened by a pair of oval tortoise brooches at the collarbone, tablet-woven braid trim, one-piece leather turnshoes",
+    "costume_male": "Norse dress: wool tunic to mid-thigh with tablet-woven braid at neck and cuff, trousers bound with spiral leg wraps, leather belt with a tongue-shaped strap end, one-piece leather turnshoes, a plain round-domed iron helm with a spectacle nose guard if helmed at all",
+    "architecture": "Norse longhouse: bowed walls of vertical staves, turf roof growing grass, carved dragon-head door posts, smoke louver, no window glass",
+    "landscape": "north Atlantic fjord: bare basalt scree, low birch scrub and heather, a standing runestone, snow line on a treeless ridge",
+    "objects": "clinker-built ship with overlapping riveted strakes and a single square sail, drinking horn with a bronze rim mount, iron cauldron on chains, small hammer amulet on a thong"
+  },
+
+  "group_anchors": {
+    "god": ["costume_male", "landscape"],
+    "valkyrie": ["costume_female", "landscape"],
+    "beast": ["landscape"],
+    "hall": ["architecture", "objects"]
+  },
+
+  "group_modifiers": {
+    "god": "ochre and iron-oxide red, single dominant figure with attribute objects, Gotland stone carving conventions",
+    "valkyrie": "muted azurite and bone white, figure offering a drinking horn as on Gotland stones, never winged armour",
+    "beast": "deep ink brown and moss green, animal body woven into Urnes interlace bands that bind its own limbs",
+    "hall": "warm ochre firelight inside a smoke-darkened longhouse, carved posts as the frame"
+  },
+
+  "composition": {
+    "plate": "single subject centered, full figure, plain stained-wood ground, soft edge vignette, encyclopedia plate",
+    "scene": "wide landscape band, low horizon, layered sea mist, small figures for scale"
+  },
+
+  "constraints_general": "no text, no letters, no runes, no signature, no watermark, no border frame, not photorealistic, not 3d render, not anime",
+
+  "exclude": {
+    "note": "가장 큰 오염원은 인접 전통이 아니라 현대 대중문화다. 그래서 pop을 먼저 끊는다.",
+    "pop": {
+      "prompt": "NOT modern pop viking: no horned helmet, no winged helmet, no polished chrome or mirror-bright plate armour, no caped superhero costume, no 19th-century opera valkyrie breastplate, no fur-bikini barbarian, no shaved-side undercut with modern tattoos, no glowing magic effects",
+      "checklist": [
+        "뿔 투구·날개 투구 — 19세기 오페라 의상. 바이킹 시대 유물에 없다. 최우선 폐기 사유",
+        "거울처럼 광나는 판금 갑옷 금지 — 바이킹 시대는 사슬갑옷·가죽·누비다",
+        "망토 두른 슈퍼히어로 실루엣 금지",
+        "모피 비키니·근육질 야만인 금지",
+        "옆머리 밀고 현대식 문신 = 최근 드라마 도상. 유물 근거 없음",
+        "발광 이펙트 금지 — 목재 부조에 빛나는 것은 없다"
+      ]
+    },
+    "celtic": {
+      "prompt": "NOT Celtic or Pictish: no ringed high-cross knotwork, no torc with ball terminals, no Pictish symbol stone, no kilt or tartan, no woad face spirals",
+      "checklist": [
+        "켈트 매듭 십자가 금지 — 우르네스 양식은 짐승이 서로를 물고 감는 띠다",
+        "공 모양 끝이 달린 목걸이(토크) 금지 — 아일랜드·갈리아 계열",
+        "킬트·타탄 금지 — 시대도 지역도 다르다"
+      ]
+    }
+  },
+
+  "review": {
+    "pass_requires": [
+      "투구에 뿔·날개가 없는가 (하나라도 있으면 즉시 폐기)",
+      "여성 복식에 어깨끈 브로치 한 쌍이 보이는가",
+      "나무결과 끌자국이 보이는가 — 인쇄 평면색이 아닌가",
+      "특정 실존 작가·특정 드라마의 화풍을 모사하지 않았는가"
+    ]
+  },
+
+  "scenes": {
+    "hero": {
+      "aspect": "16:9",
+      "anchors": ["landscape", "architecture"],
+      "text": "a fjord shore at dusk, at the very center a single standing runestone beside a beached clinker-built ship with its sail furled, a turf-roofed longhouse further up the slope with one lit doorway, low sea mist across the water, the composition gathered toward the middle third so the sides can be cropped without losing the subject"
+    }
+  }
+}
