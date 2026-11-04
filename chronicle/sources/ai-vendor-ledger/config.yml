@@ -1,0 +1,23 @@
+# AI 벤더 원장 — 스펙 v4 #14 (ai-vendor-ledger), API 레코드형. "AI 경제 원장"(+#15) 축.
+#
+# 코어 소스: OpenRouter 공개 모델 API (무인증 JSON).
+#   OpenAI·Anthropic·Google·Mistral·Meta 등 전 벤더의 모델·가격·컨텍스트를 한
+#   곳에서 준다 — "Cost of Intelligence Index"의 원료. 벤더가 가격을 바꾸거나
+#   모델을 폐기(목록에서 소멸)하면 그 diff·삭제를 우리가 소유한다. OpenRouter
+#   자신은 이 이력을 남기지 않는다.
+#
+# 모델 소멸 = 삭제 이벤트(모델 라이프사이클, #1 벤치 캡슐의 척추). 전체 목록이
+# 매번 권위 있는 스냅샷이라 삭제 감지 윈도가 없다 — 대량 삭제 차단기(엔진 기본
+# max_removal_ratio 0.3)가 잘린 응답을 방어한다.
+#
+# 주간 크론 (#14는 주간 텍스트 diff 규약). 봇 차단 시 config에서 대체 소스로 교체.
+id: ai-vendor-ledger
+family: api-records
+title: AI 벤더 원장 — 모델·가격·컨텍스트 (전 벤더)
+
+endpoint: https://openrouter.ai/api/v1/models
+user_agent: "Mozilla/5.0 (compatible; chronicle-archive/0.1; +https://github.com/kwangdol-star/aiagentlabs)"
+rate_limit_ms: 0
+
+# 로드맵(Phase 2): 벤더 공식 페이지 텍스트 diff — usage policy(‘군사’ 조항류 삭제
+#   포착)·모델 폐기 일정·공개 시스템 프롬프트. 정적·봇차단 없는 URL 확보 후 별도 착수.
