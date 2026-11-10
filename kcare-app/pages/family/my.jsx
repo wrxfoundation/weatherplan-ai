@@ -6,14 +6,15 @@ import { Clay, Line } from "../../components/clay";
 import { Btn, EvenGrid, Sheet, SheetTitle, TONE, WhiteBtn } from "../../components/ds";
 import { AI_REPORT, CARE_TEAM, CONSENTS, NPS_REASONS, OUTING, VIDEO_RETENTION_DAYS, VISIT_VIDEOS } from "../../lib/mock";
 import { VISIT_REPORT } from "../../lib/visit-report";
-import { fmtCard } from "../../lib/payments";
 import { useAuth } from "../../lib/auth";
 import { useAppState } from "../../lib/state";
 import { useGuardianRole } from "../../lib/guardian-role";
 import { subjectLabel, trackOf } from "../../lib/tracks";
 import { healthOf, medDrugs } from "../../lib/meds";
 import { sentEscortOf, sentReportState, visitReportOf } from "../../lib/live-household";
-import { familyOf, meOf, monthlyLabel, shortName } from "../../lib/membership";
+import { familyOf, meOf, shortName } from "../../lib/membership";
+import { planFor, planLine } from "../../lib/plans";
+import { PAY_HOW } from "../../components/MemberPay";
 import { consentOn, videoConsentOf } from "../../lib/consent";
 import { CONSENT_ITEMS, tzText } from "../../lib/ops-records";
 import { meAs } from "../../lib/people";
@@ -240,7 +241,8 @@ export default function MyPage() {
           </div>
         )}
 
-        {/* 멤버십 막대 — 결제수단이 없으면 등록을 먼저 권한다 (시안의 산호색 글씨는 금색으로) */}
+        {/* 멤버십 막대 — 이 가구의 요금제(관제가 지정 · lib/plans.js)와 정해 둔 결제 방법. 결제 방법을 정하지 않았으면 먼저 권한다
+            (시안의 산호색 글씨는 금색으로). 월 요금은 앱 결제창에서 카드를 등록하지 않는다 (2026-11-10) */}
         <Link
           href="/family/membership"
           className="ds-press ds-btn3d ds-r flex min-h-[78px] items-center gap-3.5 rounded-[24px] px-[18px] text-left"
@@ -249,17 +251,10 @@ export default function MyPage() {
           <Clay name="card" size={42} className="flex-none" />
           <span className="min-w-0 flex-1">
             <span className="block text-[18px]" style={{ color: TONE.beige.fg }}>
-              멤버십 · 월 {monthlyLabel(ob)}
+              {planLine(planFor(state, auth.user), { couple: ob?.household === "couple" })}
             </span>
-            <span className="block text-[14px] font-bold" style={{ color: state.billing ? TONE.green.title : TONE.gold.fg }}>
-              {/* 자동 청구는 아직 하지 않는다 (2026-10-19 결정 #8) · 계좌로 정했으면 그 방법을 (2026-10-26 점검) */}
-              {state.billing
-                ? `${fmtCard(state.billing)} · 카드 등록됨 (자동 청구 전)`
-                : state.memberPay?.how === "autoTransfer"
-                  ? "계좌 자동이체 — 관제가 안내드려요"
-                  : state.memberPay?.how === "bankDeposit"
-                    ? "무통장 입금 — 관제가 안내드려요"
-                    : "결제수단을 등록해 주세요"}
+            <span className="block text-[14px] font-bold" style={{ color: state.memberPay ? TONE.green.title : TONE.gold.fg }}>
+              {state.memberPay ? `${PAY_HOW[state.memberPay.how] || state.memberPay.how} — 등록은 관제가 안내드려요` : "결제 방법을 정해 주세요"}
             </span>
           </span>
           <Line name="chevR" size={22} style={{ color: TONE.beige.fg }} />

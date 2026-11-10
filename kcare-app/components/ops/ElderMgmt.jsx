@@ -2,6 +2,8 @@
 // 서비스 시작·일시중지·종료 · 담당 변경 · 보호자 연결은 Confirm 을 거치고 이력을 남긴다.
 // 담당 컨시어지 변경은 가구 기록(state.elderStaff)에 남는다 — 컨시어지 관리 담당고객 [추가 · 해제]와 같은 확인 창 ·
 // 같은 칸이라 두 화면이 같은 값을 보고, 새로고침해도 그대로다 (2026-10-28 요청 3)
+// 요금제(안심 기본 · 전담 케어)는 가입 상담에서 정한 것을 여기서 지정한다 — 가구 기록(state.plan)에 남고 보호자 멤버십 ·
+// 어르신 마이가 그 값을 보여 준다. 센터 관리자만 · 사유 필수 · 수정이력 (2026-11-10 · lib/plans.js)
 import { useState } from "react";
 import { useAppState } from "../../lib/state";
 import { useAuth } from "../../lib/auth";
@@ -17,7 +19,8 @@ import { LIVE_ELDER, TOTAL_ELDERS, getCustomer } from "../../lib/ops-health";
 import ElderTabs, { elderHistory } from "./mgmt/ElderTabs";
 import { EditDrawer } from "./mgmt/EditLog";
 import { StaffChange } from "./mgmt/StaffEdit";
-import { NO_STAFF, VIEW_ONLY_NOTE, canEditPeople, staffKeyOf, withStaff } from "../../lib/ops-records";
+import { NO_STAFF, VIEW_ONLY_NOTE, canEditPeople, reasonOk, staffKeyOf, withStaff } from "../../lib/ops-records";
+import { PLANS, PLAN_KEYS, planOf, won } from "../../lib/plans";
 
 const ALL_BRANCH = "전체 지점";
 const ALL_LOC = "전체 거주";
@@ -74,7 +77,12 @@ export default function ElderMgmt() {
   const operator = useOperator();
   const center = centerNow();
   // 담당 주 · 부는 가구 기록(state.elderStaff)의 값 — 컨시어지 관리 담당고객과 같은 칸
-  const shown = (center ? [liveElder(centerElder(appState?.onboarding), appState)] : liveOn ? elders.map((e) => liveElder(e, appState)) : elders).map((e) => withStaff(e, appState));
+  // 이 가구의 요금제 — 지정 전이면 금액을 적지 않는다
+  const plan = planOf(appState);
+  const planText = plan ? `${plan.name} · 월 ${won(plan.monthly)} · ${plan.term}` : "요금제 지정 전";
+  const shown = (center ? [liveElder(centerElder(appState?.onboarding), appState)] : liveOn ? elders.map((e) => liveElder(e, appState)) : elders)
+    .map((e) => withStaff(e, appState))
+    .map((e) => (e.live ? { ...e, service: { ...e.service, product: planText } } : e));
   const [staffDlg, setStaffDlg] = useState(false);
   const staffChoices = center ? people().concierges : STAFF;
   const [sel, setSel] = useState(LIVE_ELDER);
@@ -173,12 +181,20 @@ export default function ElderMgmt() {
   const runConfirm = () => {
     const c = confirm;
     if (!c.reason?.trim()) return setConfirm({ ...c, err: true });
+    if (c.type === "plan") {
+      // 가구 기록에 남긴다 — 보호자 · 어르신 화면이 바로 바뀐다 (lib/state.js setPlan)
+      if (!reasonOk(c.reason) || !c.to) return setConfirm({ ...c, err: true });
+      app.dispatch({ type: "setPlan", plan: c.to, elder: cur.name, reason: c.reason, by: operator.includes("관제") ? operator : `${operator} (관제)`, role: "ops" });
+      setConfirm(null);
+      setMsg(`${cur.name} 님 요금제 — ${PLANS[c.to].name} · 수정이력 저장`);
+      return;
+    }
     if (c.type === "service") update(cur.name, (e) => log({ ...e, service: { ...e.service, state: c.to } }, "서비스 상태", SERVICE_STATE[e.service.state].label, SERVICE_STATE[c.to].label, c.reason));
     if (c.type === "guardian") update(cur.name, (e) => log({ ...e, guardians: [...e.guardians, { name: c.name.trim(), rel: c.rel, role: `${c.role} 보호자`, region: "—", tel: "연락처 등록 필요", consent: consentAll }] }, "보호자 연결", e.guardians.map((g) => g.name).join(" · ") || "—", [...e.guardians.map((g) => g.name), c.name.trim()].join(" · "), c.reason));
     setConfirm(null);
     setMsg("확인 절차를 거쳐 실행 · 이력 저장");
   };
-  const ctitle = confirm ? { service: `서비스를 ${SERVICE_STATE[confirm.to]?.label} 상태로 바꿉니다`, guardian: "보호자를 연결합니다" }[confirm.type] : "";
+  const ctitle = confirm ? { service: `서비스를 ${SERVICE_STATE[confirm.to]?.label} 상태로 바꿉니다`, guardian: "보호자를 연결합니다", plan: plan ? "요금제를 바꿉니다" : "요금제를 지정합니다" }[confirm.type] : "";
   // 담당 컨시어지 변경 — 가구 기록에 남기고 어르신 · 바뀐 컨시어지 수정이력에 한 줄씩 (lib/state.js setElderStaff).
   // 주 · 부 담당이 같으면 실행하지 않는다 — 한 사람이 두 자리를 맡으면 2인 1조가 깨진다 (단독 배차 0 · 2026-10-18)
   const saveStaff = ({ e, pri, sub, reason }) => {
@@ -258,6 +274,19 @@ export default function ElderMgmt() {
                 담당 컨시어지는 관제가 정하는 값이라 센터 공간에서는 여기서 바꾼다 — 새 해주세요가 바뀐 주 담당에게 간다 (2026-10-28 요청 3) */}
             {cur.live ? (
               <div className="mt-3 space-y-2">
+                {/* 요금제 — 가입 상담에서 정한 것을 지정한다. 지정 전에는 보호자 · 어르신 화면이 '요금제 확인 중'이다 */}
+                <div className="flex flex-wrap items-center gap-2 rounded-xl bg-navy/[.04] px-3 py-2">
+                  <span className="text-[12px] font-bold text-muted">요금제</span>
+                  <span className={`text-[13px] font-bold ${plan ? "text-navy" : "text-gold"}`}>{planText}</span>
+                  <span className="flex-1" />
+                  {canEdit ? (
+                    <Btn small ghost={!!plan} onClick={() => setConfirm({ type: "plan", to: plan?.key || "", reason: "" })}>
+                      {plan ? "요금제 변경" : "요금제 지정"}
+                    </Btn>
+                  ) : (
+                    <span className="text-[11px] text-muted">{VIEW_ONLY_NOTE}</span>
+                  )}
+                </div>
                 {center && (
                   <div className="flex flex-wrap items-center gap-2">
                     {staffBtn || <span className="text-[11px] text-muted">{VIEW_ONLY_NOTE}</span>}
@@ -311,7 +340,24 @@ export default function ElderMgmt() {
                 <Field id="cf-grole" label="역할" value={confirm.role} onChange={setC("role")} options={["주", "부", "비상"]} />
               </div>
             )}
-            <Field id="cf-reason" label="사유" type="textarea" value={confirm.reason} onChange={setC("reason")} placeholder="누가 왜 요청했는지" required hint={confirm.err ? "사유가 있어야 실행됩니다" : "실행 내용과 사유가 수정이력·감사로그에 남습니다"} />
+            {confirm.type === "plan" && (
+              <fieldset>
+                <legend className="text-[12px] font-bold text-muted">{cur.name} 님 가구 · 가입 상담에서 정한 요금제</legend>
+                <div className="mt-1.5 grid gap-2 sm:grid-cols-2">
+                  {PLAN_KEYS.map((k) => (
+                    <label key={k} className="relative cursor-pointer">
+                      <input type="radio" name="cf-plan" value={k} checked={confirm.to === k} onChange={() => setC("to")(k)} className="peer absolute inset-0 z-10 h-full w-full cursor-pointer opacity-0" />
+                      <span className="flex min-h-[64px] flex-col justify-center rounded-xl border border-navy/15 px-3 py-2 text-navy peer-checked:border-navy peer-checked:bg-navy peer-checked:text-white peer-focus-visible:ring-2 peer-focus-visible:ring-gold">
+                        <span className="text-[14px] font-bold">{PLANS[k].name}</span>
+                        <span className="mt-0.5 font-num text-[12px] opacity-80">월 {won(PLANS[k].monthly)} · {PLANS[k].term}</span>
+                      </span>
+                    </label>
+                  ))}
+                </div>
+                <p className="mt-1.5 text-[11px] leading-[1.6] text-muted">저장하면 보호자 멤버십 · 어르신 마이에 이 요금제가 보입니다. 금액은 바꿀 수 없고 요금제만 고릅니다.</p>
+              </fieldset>
+            )}
+            <Field id="cf-reason" label="사유" type="textarea" value={confirm.reason} onChange={setC("reason")} placeholder={confirm.type === "plan" ? "예) 11/12 가입 상담에서 전담 케어로 정함" : "누가 왜 요청했는지"} required hint={confirm.err ? (confirm.type === "plan" ? "요금제를 고르고 사유를 4자 이상 적어야 저장됩니다" : "사유가 있어야 실행됩니다") : "실행 내용과 사유가 수정이력·감사로그에 남습니다"} />
           </div>
         )}
       </Confirm>

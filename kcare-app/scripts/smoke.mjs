@@ -28,6 +28,8 @@ const ROUTES = [
   // 대외 화면 — 서비스 소개(/) · 상담 신청(/consult). 2026-11-06 랜딩 요청으로 /service 는 / 로, /onboarding 은 /consult 로
   // 옮겨 주는 주소(301)가 됐다 (화면이 아니라서 여기 넣지 않는다). 시연 허브는 /demo, 예전 가입 상담 화면은 /demo-onboarding.
   "/", "/consult", "/demo", "/demo-onboarding", "/elder", "/care-profile",
+  // 공개 문서 — 이용약관 · 환불 정책 · 개인정보 처리방침 (2026-11-10). 가입 화면 동의 칸과 서비스 소개 바닥글이 잇는다
+  "/terms", "/refund", "/privacy",
   "/family", "/family/calendar", "/family/requests", "/family/my",
   "/family/store", "/family/watch", "/family/hospitals",
   // 보호자 홈 네 칸의 세부 화면 — 2026-10-15 디자인 시안

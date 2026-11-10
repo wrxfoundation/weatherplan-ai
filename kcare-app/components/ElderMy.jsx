@@ -1,9 +1,9 @@
 // 어르신 마이 (2026-10-22 시제품 v17) — 아래 메뉴 오른쪽 끝. 보호자 없이도 어르신이 멤버십을 보고 직접 정한다.
-//   한 달 이용료 · 이용료 결제(누가 · 어떻게 — 보호자 멤버십과 같은 값) · 결제 권한(가족 누구나 금액 제한 없이) · 가입 · 설치비 ·
+//   요금제(관제가 지정 · lib/plans.js) · 이용료 결제(누가 · 어떻게 — 보호자 멤버십과 같은 값) · 결제 권한(가족 누구나 금액 제한 없이) · 설치비 ·
 //   정보 동의 · 약관(큰 글씨 — 위치 정보 갱신은 보호자 화면에도 같이 반영) · 환불 정책 · 로그인 계정.
 //   맨 아래 작은 글자 — 변경 상담 · 해지 신청 · 고객센터. 셋 다 관제 '지금 처리할 일'로 가고 관제가 연락드린다.
-// 해지 기준(약정 · 위약금)과 고객센터 번호 · 운영 시간은 확정 전이라 화면에 적지 않는다 (지어내지 않는다 —
-// docs/kcare/decisions/2026-10-22-booking-pay.md '확인이 필요한 값').
+// 2026-11-10 두 요금제 — 요금제 이름 · 월 요금 · 약정을 적는다. 지정 전이면 '요금제 확인 중' (금액을 지어내지 않는다).
+// 월 요금 자동 결제 등록은 관제가 연락해 안내한다 — 앱 결제창에서 카드를 등록하지 않는다. 해지할 때 드는 비용은 환불 정책에 있다.
 import Link from "next/link";
 import { useState } from "react";
 import { BackHead, Btn, Sheet, SheetTitle, TONE, WhiteBtn } from "./ds";
@@ -11,13 +11,12 @@ import { Line } from "./clay";
 import { PolicyAcc, PolicyBody } from "./Policy";
 import { MemberPayCard, MemberPaySheet, PAY_HOW, PermCard, payWhoOptions } from "./MemberPay";
 import { ACCESS_LOG, CONSENTS } from "../lib/mock";
-import { POLICIES, policyOf } from "../lib/policies";
-import { PRICING, fmtWon } from "../lib/config";
-import { fmtCard } from "../lib/payments";
+import { LEGAL, POLICIES, policyOf } from "../lib/policies";
+import { FEE, PLAN_PENDING_NOTE, planFor, planPrice, won } from "../lib/plans";
 import { PROVIDER_LABEL, logout, useAuth } from "../lib/auth";
 import { useAppState, useSync } from "../lib/state";
 import { consentOn } from "../lib/consent";
-import { monthlyLabel, payGroup } from "../lib/membership";
+import { payGroup } from "../lib/membership";
 
 const md = (t) => new Date(t).toLocaleDateString("ko-KR", { month: "long", day: "numeric" });
 const CHANGE_TOPICS = ["이용료 · 요금제", "결제일", "결제 방법", "방문 날짜 · 시간", "그 밖의 것"];
@@ -38,18 +37,6 @@ function Pick({ on, onClick, children }) {
   );
 }
 
-// 다음 결제일 — 가입일과 같은 날짜로 매달 (그 달에 그 날이 없으면 말일)
-function nextMonthly(joinedAt, now = Date.now()) {
-  const j = new Date(joinedAt);
-  const day = j.getDate();
-  for (let k = 1; k < 600; k++) {
-    const d = new Date(j.getFullYear(), j.getMonth() + k, 1);
-    d.setDate(Math.min(day, new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate()));
-    if (d.getTime() > now) return d;
-  }
-  return j;
-}
-
 export default function ElderMy({ elderName, right }) {
   const { state, dispatch } = useAppState();
   const auth = useAuth();
@@ -64,7 +51,9 @@ export default function ElderMy({ elderName, right }) {
   const group = payGroup(elderName);
   const who = `어르신 ${elderName}`;
   const region = ob ? `${ob.district} · ${ob.tier === 2 ? "2급지" : "1급지"}` : null;
-  const nextBill = ob?.joinedAt ? md(nextMonthly(ob.joinedAt)) : null;
+  // 이 가구의 요금제 — 관제가 지정한 값 (지정 전이면 null · 시연 화면은 전담 케어 예시)
+  const plan = planFor(state, auth.user);
+  const couple = ob?.household === "couple";
   const entryPaid = (state.payments || []).some((p) => p.kind === "entry");
   const memberPay = state.memberPay || null;
   // 아직 관제가 확인하지 않은 내 요청 — 같은 요청을 거듭 보내지 않게 보여 준다
@@ -186,14 +175,9 @@ export default function ElderMy({ elderName, right }) {
     <>
       <BackHead sub={`${elderName} 님`} title="내 멤버십" size={30} h1 right={right} />
       <div className="ds-gcard ds-r" style={{ "--d": "40ms", background: TONE.beige.bg }}>
-        <div className="flex items-end justify-between gap-2">
-          <span>
-            <span className="block text-[17px] font-extrabold" style={{ color: TONE.beige.fg }}>
-              한 달 이용료
-            </span>
-            <span className="ds-num block text-[34px] font-black leading-[1.2]" style={{ color: "#5E4A1E" }}>
-              {monthlyLabel(ob)}
-            </span>
+        <div className="flex items-center justify-between gap-2">
+          <span className="min-w-0 text-[17px] font-extrabold" style={{ color: TONE.beige.fg }}>
+            요금제{plan ? ` · ${plan.name}` : ""}
           </span>
           {region && (
             <span className="ds-gchip flex-none" style={{ color: TONE.beige.fg }}>
@@ -201,18 +185,19 @@ export default function ElderMy({ elderName, right }) {
             </span>
           )}
         </div>
-        <div className="text-[17px] font-bold" style={{ color: "#6B5A35" }}>
-          {/* 자동 청구는 아직 하지 않는다 — '매달 결제돼요'라고 하면 빠져나가는 줄 아신다 (2026-10-19 결정 #8 · 2026-10-26 점검) */}
-          가입한 날짜에 매달 내는 이용료예요{nextBill ? ` · 다음 ${nextBill}` : ""} · 아직 자동으로 빠져나가지 않아요
+        <div data-plan-price className="ds-num whitespace-nowrap text-[34px] font-black leading-[1.2]" style={{ color: "#5E4A1E" }}>
+          {plan && !couple ? `월 ${planPrice(plan)}` : planPrice(plan, { couple })}
+        </div>
+        <div className="text-[17px] font-bold leading-[1.55]" style={{ color: "#6B5A35" }}>
+          {plan ? `${plan.term} · 설치비 ${won(FEE.install)} (처음 한 번)` : PLAN_PENDING_NOTE}
         </div>
       </div>
 
       <MemberPayCard value={memberPay} big onOpen={() => setSheet("pay")}>
-        {memberPay?.how === "card" && (
-          <div className="text-[15px] font-bold" style={{ color: TONE.gold.sub }}>
-            {state.billing ? `등록된 카드 ${fmtCard(state.billing)}` : "카드 등록은 가입 상담 때나 주 보호자 화면에서 해요"}
-          </div>
-        )}
+        {/* 자동 결제 등록은 관제가 연락해 안내한다 — 앱에서 바로 빠져나가는 줄 아시지 않게 적는다 (2026-10-19 결정 #8 · 2026-11-10) */}
+        <div className="text-[15px] font-bold leading-[1.55]" style={{ color: TONE.gold.sub }}>
+          매달 내는 이용료예요 · 자동 결제 등록은 관제가 연락드려 도와드려요
+        </div>
       </MemberPayCard>
 
       <PermCard big group={group} text={
@@ -227,11 +212,11 @@ export default function ElderMy({ elderName, right }) {
         <ul className="m-0 list-none p-0">
           <li className="ds-row">
             <span className="ds-k">
-              <b className="!text-[19px]">가입 · 설치비</b>
-              <small className="!text-[15px]">갤럭시 Fit3 · 첫 점검 · 앱 설치</small>
+              <b className="!text-[19px]">설치비</b>
+              <small className="!text-[15px]">센서 설치 · 갤럭시 핏 · 앱 설치</small>
             </span>
             <span className="flex-none text-right text-[16px] font-extrabold" style={{ color: TONE.green.fg }}>
-              {entryPaid ? "결제 완료" : PRICING.entryFee.total != null ? fmtWon(PRICING.entryFee.total) : "상담 때 안내"}
+              {entryPaid ? "결제 완료" : won(FEE.install)}
             </span>
           </li>
           <li className="ds-row">
@@ -310,8 +295,8 @@ export default function ElderMy({ elderName, right }) {
           onSave={({ who: payer, how }) => {
             dispatch({ type: "setMemberPay", who: payer, how, by: who });
             dispatch({ type: "pushEvent", payload: { kind: "설정", text: `멤버십 이용료 결제 방법 — ${payer} · ${PAY_HOW[how]} (어르신 화면)`, color: "#8FA9CC" } });
-            // 계좌 자동이체 · 무통장 입금은 관제가 연락해 안내한다 — 지금 처리할 일로
-            if (how !== "card") dispatch({ type: "addOpsMessage", payload: { from: who, role: "elder", kind: "memberPay", text: `이용료 결제 방법 — ${payer} · ${PAY_HOW[how]} · 안내 연락 부탁드립니다` } });
+            // 어떤 방법이든 자동 결제 등록은 관제가 연락해 안내한다 — 지금 처리할 일로 (2026-11-10)
+            dispatch({ type: "addOpsMessage", payload: { from: who, role: "elder", kind: "memberPay", text: `이용료 결제 방법 — ${payer} · ${PAY_HOW[how]} · 안내 연락 부탁드립니다` } });
             close();
           }}
         />
@@ -319,15 +304,12 @@ export default function ElderMy({ elderName, right }) {
 
       {sheet === "refund" && (
         <Sheet onClose={close} label="환불 정책">
-          <SheetTitle sub="초안 · 법무 검토 전" title="환불 정책" />
+          <SheetTitle sub={LEGAL.reviewed ? `시행일 ${LEGAL.effective}` : "정식 판매 전 안내본"} title="환불 정책" />
           <div className="ds-acc ds-accbig">
             <div className="ds-accbody" style={{ paddingTop: 16 }}>
               <PolicyBody policy={policyOf("refund")} />
             </div>
           </div>
-          <p className="m-0 text-[15px]" style={{ color: "#5E6270" }}>
-            노란 칸은 아직 정해지지 않은 값이에요.
-          </p>
           <WhiteBtn h={60} className="w-full text-[19px] font-extrabold" onClick={close}>
             닫기
           </WhiteBtn>
@@ -376,7 +358,7 @@ export default function ElderMy({ elderName, right }) {
           ) : (
             <>
               <p className="m-0 rounded-[18px] bg-white px-4 py-3.5 text-[17px] font-bold leading-[1.6]">
-                신청하면 관제센터가 연락드려 약정 · 환불을 안내해 드려요. 연락 전에는 아무것도 바뀌지 않아요.
+                신청하면 관제센터가 연락드려 기기 회수와 환불을 안내해 드려요. 드는 비용은 환불 정책에 있어요. 연락 전에는 아무것도 바뀌지 않아요.
               </p>
               {openAsk("membership") && (
                 <p className="m-0 text-[16px] font-bold" style={{ color: "#5E6270" }}>

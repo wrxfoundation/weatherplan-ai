@@ -2,7 +2,7 @@
 //
 // 성공: ?paymentType&orderId&paymentKey&amount  → 서버 승인 API 호출 → 완료
 // 실패: ?code&message&orderId                    → 사유 표시
-// 자동결제 등록 성공: ?customerKey&authKey        → 빌링키 발급 API 호출
+// 자동결제 등록: 2026-11-10 닫았다 (월 요금은 결제창에서 카드를 등록하지 않는다) — authKey 로 돌아와도 서버가 410 으로 거절한다
 //
 // 승인 API 가 성공해야 결제가 끝난다. 이 화면에 도달한 것만으로 완료 처리하지 않는다.
 import Head from "next/head";

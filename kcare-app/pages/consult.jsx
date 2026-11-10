@@ -202,6 +202,11 @@ export default function ConsultPage() {
         <p id="c-agree-note" className="lp-bal mt-1.5 text-[13px] leading-[1.6] text-muted">
           이름과 연락처는 상담 연락에만 쓰고, 상담이 끝나면 파기합니다.
         </p>
+        <p className="mt-1 px-0.5 text-[13.5px] font-bold text-navy">
+          <a href="/privacy" target="_blank" rel="noopener" className="tap inline-block py-[3px] underline underline-offset-2">
+            개인정보 처리방침 보기
+          </a>
+        </p>
 
         {missing > 0 && (
           <p role="alert" className="mt-4 rounded-xl border border-amber/30 bg-[#FFF7E8] px-3.5 py-2.5 text-[13.5px] font-bold text-amber">

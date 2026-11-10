@@ -24,7 +24,8 @@ export const PAY_KINDS = {
   request: { label: "해주세요 요금", note: "서비스 이용료", back: "/family/requests" },
   // 예약한 시간보다 길어진 해주세요 — 컨시어지가 청구하고 받는 분이 낸다 (2026-10-22)
   extra: { label: "추가 이용 금액", note: "예약보다 길어진 시간", back: "/family" },
-  billing: { label: "결제수단 등록", note: "월 구독 자동결제", back: "/family/membership" },
+  // 월 요금은 결제창에서 카드를 등록하지 않는다 (2026-11-10) — 이 주소로 오면 안내만 보인다 (pages/pay.jsx)
+  billing: { label: "월 요금 결제", note: "월 요금 자동 결제", back: "/family/membership" },
 };
 
 // 결제를 마치고 돌아갈 화면 — 앱 안의 보호자 · 어르신 화면만 (주소의 back 을 그대로 믿으면 바깥 주소로 보낼 수 있다)

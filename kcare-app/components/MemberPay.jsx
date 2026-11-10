@@ -1,6 +1,7 @@
 // 멤버십 이용료 결제 · 결제 권한 (2026-10-22 시제품 v17) — 보호자 멤버십 · 어르신 마이가 같이 쓴다.
 //   이용료 결제  누가(어르신 본인 · 보호자 · 다른 가족) × 어떻게(카드 · 계좌 자동이체 · 무통장 입금). 한쪽에서 정하면 양쪽에 같은
-//               값이 보인다 (state.memberPay). 정한 값은 관제가 보고 청구를 맞춘다 — 앱이 매달 자동으로 빼 가지는 않는다.
+//               값이 보인다 (state.memberPay). 정한 값은 관제가 보고 자동 결제 등록을 연락해 안내한다 — 앱이 매달 자동으로 빼 가지는 않는다.
+//               월 요금은 이 앱의 결제창(토스)에서 카드를 등록하지 않는다 — 토스는 해주세요 · 스토어 같은 그때그때 결제만 (2026-11-10).
 //   결제 권한    한 가족 그룹이면 누구나 금액 제한 없이 결제한다 — 하루 한도 · 보호자 승인 단계는 없앴다.
 // 시제품의 산호색 카드 · 버튼은 금색으로 — 빨강 계열은 위험 신호 전용이다.
 import { useState } from "react";
@@ -41,7 +42,6 @@ export function MemberPayCard({ value, big = false, onOpen, children }) {
           </b>
           <span className="font-bold" style={{ fontSize: fs(big, 17, 15), color: g.sub }}>
             {PAY_HOW[value.how] || value.how}
-            {value.how === "card" ? " · 토스페이먼츠" : ""}
           </span>
         </div>
       ) : (
@@ -90,7 +90,7 @@ export function MemberPaySheet({ value, whoList, big = false, onSave, onClose })
         ))}
       </div>
       <p className="font-bold leading-[1.6]" style={{ fontSize: fs(big, 15, 13), color: "#5E6270" }}>
-        정한 방법은 관제가 보고 청구를 맞춰요. 카드는 결제 창에서 등록하고, 계좌 자동이체 · 무통장 입금은 관제가 연락드려 안내해요.
+        정한 방법은 관제가 보고, 자동 결제 등록을 연락드려 안내해요. 여기서 정한다고 바로 빠져나가지 않아요.
       </p>
       <Btn tone="navy" h={fs(big, 66, 58)} className="w-full font-extrabold" style={{ fontSize: fs(big, 20, 18) }} disabled={!who || !how} onClick={() => onSave({ who, how })}>
         이렇게 정하기

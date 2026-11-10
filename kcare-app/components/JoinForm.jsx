@@ -472,6 +472,15 @@ export default function JoinForm({ area, onSent }) {
         />
         <span className="lp-bal">이용약관과 개인정보 처리방침에 동의합니다.</span>
       </label>
+      {/* 동의하기 전에 읽을 문서 — 새 창으로 열어 적던 것이 지워지지 않게 (2026-11-10) */}
+      <p className="mt-1.5 flex flex-wrap gap-x-4 gap-y-1 px-1 text-[13.5px] font-bold text-navy">
+        <a href="/terms" target="_blank" rel="noopener" className="tap inline-block py-[3px] underline underline-offset-2">
+          이용약관 보기
+        </a>
+        <a href="/privacy" target="_blank" rel="noopener" className="tap inline-block py-[3px] underline underline-offset-2">
+          개인정보 처리방침 보기
+        </a>
+      </p>
       {err("agree") && <p id="agree-err" className="mt-1 text-[12px] font-bold text-amber">{err("agree")}</p>}
 
       {missing > 0 && (

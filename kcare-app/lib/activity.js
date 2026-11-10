@@ -193,6 +193,9 @@ export function summarize(a) {
     // 2026-10-28 요청 3 — 관제 컨시어지 관리 탭 편집 · 담당 컨시어지 변경 (사유와 함께)
     case "setConciergeProfile":
       return `컨시어지 상세 수정 · ${clip(a.name, 20)} · ${(Array.isArray(a.fields) ? a.fields : []).map((f) => clip(f?.field, 16)).slice(0, 4).join(" · ")}${a.reason ? ` · 사유 ${clip(a.reason, 30)}` : ""}`;
+    // 2026-11-10 — 관제가 가구 요금제를 지정 · 변경
+    case "setPlan":
+      return `요금제 ${a.plan === "basic" ? "안심 기본" : a.plan === "care" ? "전담 케어" : "변경"} 지정 · ${clip(a.elder, 20)}${a.reason ? ` · 사유 ${clip(a.reason, 30)}` : ""}`;
     case "setElderStaff":
       return `담당 컨시어지 변경 · ${clip(a.elder, 20)} · 주 ${clip(a.pri, 12)} · 부 ${clip(a.sub || "—", 12)}${a.reason ? ` · 사유 ${clip(a.reason, 30)}` : ""}`;
     // 2026-10-28 요청 4 — 관제 보호자 관리 기본정보 편집 · 수신동의 변경 알림 확인

@@ -1,11 +1,9 @@
 // 보호자 마이 · 멤버십 · 가족 화면이 같이 쓰는 값 (2026-10-15 디자인 시안으로 마이가 여러 화면으로 나뉘면서 한 곳에 모았다).
 import { GUARDIANS } from "./mock";
-import { HOUSEHOLD, PRICING, fmtWon } from "./config";
 import { inCenter, people } from "./people";
 
-// 월 구독료 표기 — 가입 때 고른 가구 구성(한 분 / 부부)에 따라 갈린다. 2급지는 확정 전.
-export const monthlyLabel = (ob) =>
-  ob?.tier === 2 ? "별도 산정" : ob?.household === "couple" ? `${fmtWon(HOUSEHOLD.monthly)} · 부부 가구` : fmtWon(PRICING.subscription.monthly);
+// 월 요금 표기는 lib/plans.js (planFor · planLine · planPrice) — 가구에 지정된 요금제를 읽는다 (2026-11-10).
+// 전에 여기 있던 monthlyLabel(월 55,000원 · 부부 77,000원 · 2급지 별도 산정)은 옛 요금이라 없앴다.
 
 // 한 가족 그룹 — 결제 권한 칩 · 이용료 '누가 낼까요' (2026-10-22). 데모 · 테스트 가구는 예시 세 자녀, 센터 공간은 그 센터 보호자 회원
 export function payGroup(elderName) {

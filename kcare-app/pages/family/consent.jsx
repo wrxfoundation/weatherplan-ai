@@ -4,7 +4,7 @@ import FamilyLayout from "../../components/FamilyLayout";
 import { PolicyAcc } from "../../components/Policy";
 import { Btn, TONE, WhiteBtn } from "../../components/ds";
 import { ACCESS_LOG, CONSENTS } from "../../lib/mock";
-import { POLICIES } from "../../lib/policies";
+import { LEGAL, POLICIES } from "../../lib/policies";
 import { useAppState } from "../../lib/state";
 import { useGuardianRole } from "../../lib/guardian-role";
 import { useAuth } from "../../lib/auth";
@@ -22,7 +22,7 @@ const md = (t) => new Date(t).toLocaleDateString("ko-KR", { month: "long", day: 
 // 마이 › 정보 동의 (2026-10-15 디자인 시안) — 신뢰 센터: 어떤 동의가 있고, 누가 언제 우리 가족 데이터를 봤는지 전부 공개.
 // 동의 철회 · 다시 동의는 state.guardian.consents 에 남고 관제 '지금 처리할 일'에 연락이 간다 (2026-10-18).
 // 동의 갱신은 가구 상태(state.guardian.consentRenewedAt)에 남긴다 — 마이 '정보 동의' 칸의 '갱신 1' 배지가 같이 꺼진다.
-// 약관 · 정책은 법무 검토 전 초안 (lib/policies.js) — '초안'과 확인 필요 칸을 그대로 보인다.
+// 약관 · 정책은 lib/policies.js 한 곳 — 법률 검토 전에는 '안내본' 표시를 단다 (lib/company.js LEGAL.reviewed).
 // 테스트 가구 · 센터 공간에는 예시 접근 기록을 보이지 않는다 (없는 열람을 있었던 것처럼 쓰지 않는다).
 export default function ConsentPage() {
   const { state, dispatch } = useAppState();
@@ -209,13 +209,15 @@ export default function ConsentPage() {
           {POLICIES.map((p) => (
             <PolicyAcc key={p.id} id={`policy-${p.id}`} policy={p} />
           ))}
-          <p className="px-1 text-[13px] leading-[1.6]" style={{ color: "#5E6270" }}>
-            &lsquo;초안&rsquo;은 법무 검토 전입니다. 노란 칸은 아직 정해지지 않은 값이에요.
-          </p>
+          {!LEGAL.reviewed && (
+            <p className="px-1 text-[13px] leading-[1.6]" style={{ color: "#5E6270" }}>
+              &lsquo;안내본&rsquo;은 {LEGAL.draftNote}
+            </p>
+          )}
         </div>
 
         <p className="ds-r px-1 text-[14px] font-bold leading-[1.6]" style={{ "--d": "140ms", color: "#5E6270" }}>
-          {isPrimary ? "언제든 바꿀 수 있어요" : "동의 · 철회 · 갱신은 주 보호자가 해요"} · 만료 30일 전 미리 알려 드려요 · 철회해도 기본 케어는 그대로 · 탈퇴하면 24시간 안에 삭제
+          {isPrimary ? "언제든 바꿀 수 있어요" : "동의 · 철회 · 갱신은 주 보호자가 해요"} · 만료 30일 전 미리 알려 드려요 · 철회해도 기본 케어는 그대로 · 탈퇴하면 지체 없이 삭제
         </p>
       </FamilyLayout>
     </>

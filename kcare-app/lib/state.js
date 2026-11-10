@@ -19,6 +19,7 @@ import { orderTotal } from "./store";
 import { ASKS_KEEP, askLines } from "./elder-asks";
 import { cleanHospital as cleanOpsHospital } from "./hospital-clean";
 import { CONSENT_ITEMS, NO_STAFF, STAFF_LIVE, cleanGuardianPatch, cleanStaffPatch, reasonOk, staffRoleOf } from "./ops-records";
+import { PLANS, isPlan } from "./plans";
 
 // 앱 전역 상태.
 // 역할 간 연동: 어르신 SOS → 가족 배너 / 컨시어지 보충 요청 → 가족 결제 승인.
@@ -170,6 +171,9 @@ const DEFAULT = {
   // 컨시어지 상세 — 관제 컨시어지 관리 5개 탭에서 고친 값 { [이름]: { 근무 · 주간 일정 · 자격 · 교육 · 평가 · 민원 } }
   // (2026-10-28 요청 3 · lib/ops-records.js cleanStaffPatch). 목록 표 · 숫자 카드 · 상세가 같이 읽는다
   conciergeProfiles: {},
+  // 요금제 { key: "basic" | "care", by, at } — 가입 상담에서 정한 요금제를 관제(센터 관리자)가 어르신 관리에서 지정한다 (2026-11-10 · lib/plans.js).
+  // 지정 전에는 null — 화면은 금액을 지어내지 않고 '요금제 확인 중'이라고 쓴다
+  plan: null,
   // 담당 컨시어지 { [어르신 열쇠]: { pri, sub, by, at } } — 어르신 관리 · 컨시어지 관리가 같은 절차로 고친다 (요청 3).
   // 이 가구 어르신(STAFF_LIVE)의 주 담당은 센터 공간에서 새 해주세요의 담당이 된다 (lib/people.js)
   elderStaff: {},
@@ -450,6 +454,7 @@ export function reducer(state, action) {
         hospitalsRemoved: arr(p.hospitalsRemoved, state.hospitalsRemoved),
         conciergeProfiles: obj(p.conciergeProfiles, state.conciergeProfiles),
         elderStaff: obj(p.elderStaff, state.elderStaff),
+        plan: p.plan && typeof p.plan === "object" && isPlan(p.plan.key) ? p.plan : state.plan ?? null,
         guardianInfo: obj(p.guardianInfo, state.guardianInfo),
         guardianNotices: arr(p.guardianNotices, state.guardianNotices).filter((x) => x && typeof x === "object" && x.id && typeof x.to === "string"),
       };
@@ -572,6 +577,20 @@ export function reducer(state, action) {
         ...state,
         elderStaff: { ...(state.elderStaff || {}), [key]: { ...next, by: String(action.by || "").slice(0, 40), at: nowOf(action) } },
         editLog: logEdits(state, rows, action, { kind: "elder", name: elder, key }),
+      };
+    }
+    // 요금제 지정 · 변경 — 관제 어르신 관리 (2026-11-10 · lib/plans.js). 사유(4자 이상)가 있어야 저장하고 어르신 수정이력에 한 줄.
+    // 보호자 멤버십 · 마이 · 어르신 마이가 이 값을 읽는다
+    case "setPlan": {
+      const key = String(action.plan || "");
+      if (!isPlan(key) || !reasonOk(action.reason)) return state;
+      const before = isPlan(state.plan?.key) ? state.plan.key : null;
+      if (before === key) return state;
+      const elder = String(action.elder || "").trim().slice(0, 30) || "어르신";
+      return {
+        ...state,
+        plan: { key, by: String(action.by || "").slice(0, 40), at: nowOf(action) },
+        editLog: logEdits(state, [{ field: "요금제", before: before ? PLANS[before].name : "지정 전", after: PLANS[key].name }], action, { kind: "elder", name: elder, key: STAFF_LIVE }),
       };
     }
     // 보호자 기본정보 고치기 — 관제 보호자 관리 › 기본정보 [편집] (2026-10-28 요청 4 · lib/ops-records.js cleanGuardianPatch).

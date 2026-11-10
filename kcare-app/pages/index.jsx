@@ -8,6 +8,7 @@ import ScrollTop from "../components/ScrollTop";
 import AiChat from "../components/AiChat";
 import BgVideo from "../components/BgVideo";
 import KeepTel from "../components/Tel";
+import ExitTable from "../components/ExitTable";
 import { useAuth } from "../lib/auth";
 import { ROLE_HOME } from "../lib/roles";
 import {
@@ -214,7 +215,7 @@ export default function ServiceLanding({ heroArt, heroVideo }) {
     if (home) router.replace(home);
   }, [router, role]);
 
-  // 요금 열고 그 자리로 부드럽게 이동 — 머리글 '요금' · 첫 화면 '요금 보기' · 바닥글 '환불 정책' 이 같이 쓴다.
+  // 요금 열고 그 자리로 부드럽게 이동 — 머리글 '요금' · 첫 화면 '요금 보기' 가 같이 쓴다 (주소 #refund 로 들어오면 표까지 간다).
   // 표(#refund)는 접힌 본문 안에 있어서 펼쳐지는 동안 자리가 내려간다 — 다 펼쳐진 뒤에 움직인다.
   const goPrice = useCallback((targetId = "pricing") => {
     setPriceOpen(true);
@@ -531,41 +532,7 @@ export default function ServiceLanding({ heroArt, heroVideo }) {
                   {/* 해지 조건을 요금 바로 아래 — 숨기지 않는다. 700px 이하에서는 표를 풀어 세로로 쌓는다 (.lp-tb) */}
                   <div id="refund" className="lp-tb lp-anchor mt-3.5 rounded-[20px] bg-[#FBFAF6] px-[18px] py-5 shadow-[0_10px_26px_-16px_rgba(10,31,60,.08)] sm:p-6">
                     <h3 className="text-[20px] font-extrabold text-navy">{PRICE.refund.title}</h3>
-                    <table>
-                      <caption className="sr-only">요금제별 해지와 환불 조건</caption>
-                      <thead>
-                        <tr>
-                          {PRICE.refund.head.map((h) => (
-                            <th key={h} scope="col">
-                              {h}
-                            </th>
-                          ))}
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {PRICE.refund.rows.map((r) => (
-                          <tr key={r.k}>
-                            <th scope="row">{r.k}</th>
-                            {r.cells.map((c, i) => (
-                              <td
-                                key={i}
-                                colSpan={r.cells.length === 1 ? 2 : undefined}
-                                data-l={r.cells.length === 1 ? PRICE.refund.both : PRICE.refund.head[i + 1]}
-                              >
-                                {/* 두 칸을 합친 줄은 넓은 화면에서도 '두 요금제 공통'을 적는다 — 왼쪽 칸(안심 기본)만의 조건으로 읽히지 않게 */}
-                                {r.cells.length === 1 && <span className="lp-tb-both">{PRICE.refund.both}</span>}
-                                <b>{c.b}</b>
-                                {c.lines.map((ln) => (
-                                  <span key={ln} className="block">
-                                    {ln}
-                                  </span>
-                                ))}
-                              </td>
-                            ))}
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
+                    <ExitTable />
                     <p className="mt-3 text-[14.5px] leading-[1.7] text-muted">{PRICE.refund.note}</p>
                   </div>
                 </div>
@@ -673,10 +640,11 @@ export default function ServiceLanding({ heroArt, heroVideo }) {
             <ul className="flex flex-wrap gap-x-4 gap-y-1">
               {FOOTER.docs.map((d) => (
                 <li key={d.label}>
+                  {/* 약관 3종은 따로 여는 화면이다 (/terms · /refund · /privacy) */}
                   {d.href ? (
-                    <a href={d.href} onClick={d.href === "#refund" ? onPriceLink("refund") : undefined} className="tap underline underline-offset-2">
+                    <Link href={d.href} className="tap underline underline-offset-2">
                       {d.label}
-                    </a>
+                    </Link>
                   ) : (
                     d.label
                   )}

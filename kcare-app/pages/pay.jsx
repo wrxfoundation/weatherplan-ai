@@ -1,7 +1,7 @@
-// 결제 화면 — 토스페이먼츠 결제위젯(주문서형) · 자동결제 카드 등록.
+// 결제 화면 — 토스페이먼츠 결제위젯(주문서형). 해주세요 · 추가 이용 금액 · 스토어처럼 그때그때 내는 결제만 한다.
 //
 // /pay?kind=store&amount=80000&orderName=논슬립%20욕실%20매트&ref=rq-1
-// /pay?kind=billing                        (월 구독 카드 등록)
+// /pay?kind=billing   — 월 요금은 여기서 카드를 등록하지 않는다 (2026-11-10 · 자동 결제 등록은 관제가 안내). 안내만 보인다.
 //
 // 흐름: 서버에서 주문번호·금액 서명을 받는다 → 위젯을 그린다 → 결제 요청(리다이렉트)
 //      → /pay/result 로 돌아와 승인 API 를 부른다. 승인 전에는 청구되지 않는다.
@@ -11,12 +11,12 @@ import { useRouter } from "next/router";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ANONYMOUS, loadTossPayments } from "@tosspayments/tosspayments-sdk";
 import { Card, SectionLabel, PrimaryButton, Badge } from "../components/ui";
-import Icon from "../components/icons";
 import { useAppState, useSync } from "../lib/state";
 import { useAuth } from "../lib/auth";
 import { meAs } from "../lib/people";
-import { useGuardianRole } from "../lib/guardian-role";
-import { fmtWon, PRICING, HOUSEHOLD } from "../lib/config";
+import { fmtWon, PRICING } from "../lib/config";
+import { TEL } from "../lib/landing";
+import KeepTel from "../components/Tel";
 import { AFTER_PAY_TEXT, afterPay, payerOf, paymentOf } from "../lib/requests";
 import { extraIsFor } from "../lib/booking";
 import { ConfirmSteps } from "../components/BookingParts";
@@ -25,13 +25,12 @@ import {
   PAY_KINDS,
   PAY_NOTICE,
   TOSS_CLIENT_KEY,
-  customerKey,
   hasClientKey,
   isTestKey,
   safeBack,
 } from "../lib/payments";
 
-// 자동결제는 금액이 없다 — 카드만 등록하고 청구는 매월 서버가 한다
+// 월 요금 — 이 화면에서 결제하지도, 카드를 등록하지도 않는다 (안내만)
 const isBilling = (kind) => kind === "billing";
 
 export default function PayPage() {
@@ -40,7 +39,6 @@ export default function PayPage() {
   const sync = useSync();
   // 데모(테스트 계정이 아닌 시연)에서만 '가상 승인'을 연다 (2026-10-02 결정). 테스트 계정은 실제 토스 테스트 결제로만 끝난다.
   const authUser = useAuth().user;
-  const { isPrimary } = useGuardianRole();
   const demo = !authUser?.household;
   const [demoDone, setDemoDone] = useState(null);
   const { kind = "store", amount, orderName = "K-CARE 결제", ref: refId = "", back = "" } = router.query;
@@ -72,8 +70,9 @@ export default function PayPage() {
   // 내가 받는 분이 아닌 추가 이용 금액 (받는 분만 결제한다 — 서버도 같은 규칙 · lib/pay-server.js extraPayable) ·
   // 어르신이 직접 내기로 한 해주세요를 보호자가 여는 경우 (어르신이 '가족에게 결제 부탁'을 눌러야 보호자가 낸다 — 서버도 같은 규칙 · 2026-10-26)
   const paidAlready = req ? paymentOf(state.payments, req.id) : null;
-  const blocked =
-    kind === "request"
+  const blocked = isBilling(kind)
+    ? `월 요금은 이 화면에서 카드를 등록하지 않습니다. 자동 결제 등록은 관제가 연락드려 안내합니다. 문의는 고객센터 ${TEL.label}로 해 주세요.`
+    : kind === "request"
       ? !req
         ? "결제할 요청을 찾지 못했습니다. 해주세요 탭에서 다시 열어 주세요."
         : paidAlready && !paidAlready.refund
@@ -95,9 +94,7 @@ export default function PayPage() {
                 : null
         : kind === "store" && !expected
           ? "담은 물건이 없습니다. 스토어에서 다시 담아 주세요."
-          : isBilling(kind) && (payerRole === "elder" || !isPrimary)
-            ? "카드 등록 · 바꾸기는 주 보호자만 합니다. 결제는 가족 누구나 해요." // 2026-10-22 결정 §3 · 주소를 바로 열어도 막는다 (2026-10-26 점검)
-            : null;
+          : null;
 
   const [phase, setPhase] = useState("loading"); // loading | ready | requesting | error | blocked
   const [error, setError] = useState(null);
@@ -105,11 +102,7 @@ export default function PayPage() {
   // 화면에 보이는 금액 — 서버가 주문을 만들면 그 값(서명된 금액), 그 전에는 기록에서 정한 값
   const value = order?.amount ?? expected;
   const widgetsRef = useRef(null);
-  const paymentRef = useRef(null);
   const mounted = useRef(false);
-
-  const ob = state.onboarding;
-  const monthly = ob?.household === "couple" ? HOUSEHOLD.monthly : PRICING.subscription.monthly;
 
   // ── 위젯 준비 ──
   const setup = useCallback(async () => {
@@ -126,13 +119,7 @@ export default function PayPage() {
     mounted.current = true;
     try {
       const toss = await loadTossPayments(TOSS_CLIENT_KEY);
-      if (isBilling(kind)) {
-        // 자동결제 — 위젯이 아니라 결제창을 바로 띄운다 (카드 등록)
-        paymentRef.current = toss.payment({ customerKey: customerKey() });
-        setPhase("ready");
-        return;
-      }
-      // 일반 결제 — 주문번호·금액 서명을 서버에서 받는다. 테스트 계정이면 방금 만든 요청 · 담은 물건이
+      // 주문번호·금액 서명을 서버에서 받는다. 테스트 계정이면 방금 만든 요청 · 담은 물건이
       // 서버에 먼저 들어가야 서버가 금액을 정할 수 있다 — 모아 둔 것을 먼저 보낸다
       await sync.flush();
       const res = await fetch("/api/payments/order", {
@@ -169,15 +156,6 @@ export default function PayPage() {
     try {
       // 테스트 계정이면 담아 둔 주문을 서버에 먼저 저장한다 — 결제창에서 돌아오면 서버에서 다시 읽는다
       await sync.flush();
-      if (isBilling(kind)) {
-        await paymentRef.current.requestBillingAuth({
-          method: "CARD",
-          successUrl: `${origin}/pay/result?kind=billing`,
-          failUrl: `${origin}/pay/result?kind=billing`,
-          customerName: buyerName,
-        });
-        return;
-      }
       const backQ = backTo !== meta.back ? `&back=${encodeURIComponent(backTo)}` : "";
       await widgetsRef.current.requestPayment({
         orderId: order.orderId,
@@ -241,26 +219,15 @@ export default function PayPage() {
             <Card className="p-[18px]">
               <SectionLabel>{meta.note}</SectionLabel>
               <div className="mt-2 text-[17px] font-bold leading-[1.45] text-navy">
-                {isBilling(kind) ? "월 구독료 자동결제 카드 등록" : String(orderName)}
+                {isBilling(kind) ? "월 요금 자동 결제" : String(orderName)}
               </div>
-              {isBilling(kind) ? (
-                <>
-                  <div className="mt-2 flex items-baseline gap-1.5">
-                    <span className="font-num text-[26px] font-black text-navy">{fmtWon(monthly)}</span>
-                    <span className="text-[13px] text-muted">/ 월{ob?.household === "couple" ? " · 부부 가구" : ""}</span>
-                  </div>
-                  <p className="mt-2 text-[12.5px] leading-[1.7] text-muted">
-                    지금은 카드만 등록하고 결제되지 않습니다. 이 앱은 아직 매월 자동 청구를 하지
-                    않습니다 (청구 방식은 관제센터가 따로 안내합니다). 해지는 마이 › 멤버십에서 상담을 요청하실 수 있습니다.
-                  </p>
-                </>
-              ) : (
+              {!isBilling(kind) && (
                 <div className="mt-2 flex items-baseline gap-1.5">
                   <span className="font-num text-[26px] font-black text-navy">{fmtWon(value)}</span>
                   {kind === "entry" && <span className="text-[13px] text-muted">최초 1회 · 부가세 포함</span>}
                 </div>
               )}
-              {order && !isBilling(kind) && (
+              {order && (
                 <div className="mt-2 border-t border-navy/[.08] pt-2 font-num text-[11px] text-muted">
                   주문번호 {order.orderId}
                 </div>
@@ -288,8 +255,10 @@ export default function PayPage() {
             {/* 결제하면 안 되는 경우 — 이미 결제 · 단계가 바뀜 · 담은 물건 없음. 결제창 · 데모 승인을 열지 않는다 */}
             {phase === "blocked" && !demoDone && (
               <Card className="border border-amber/30 p-4" style={{ background: "#FFF7E8" }}>
-                <div className="text-[14px] font-bold text-amber">결제하지 않았습니다</div>
-                <p className="mt-1.5 text-[12.5px] leading-[1.7] text-[#5A4A22]">{blocked}</p>
+                <div className="text-[14px] font-bold text-amber">{isBilling(kind) ? "여기서는 등록하지 않습니다" : "결제하지 않았습니다"}</div>
+                <p className="mt-1.5 text-[12.5px] leading-[1.7] text-[#5A4A22]">
+                  <KeepTel text={blocked} />
+                </p>
                 <Link href={backTo} className="tap mt-3 flex w-full items-center justify-center rounded-xl border border-navy/20 bg-white py-3 text-[14px] font-bold text-navy">
                   {kind === "store" ? "스토어로 " : kind === "request" && !backTo.startsWith("/elder") ? "해주세요로 " : ""}돌아가기
                 </Link>
@@ -297,27 +266,13 @@ export default function PayPage() {
             )}
 
             {/* 결제위젯 — 토스가 이 자리에 결제수단·약관 UI 를 그린다 */}
-            {!isBilling(kind) && phase !== "blocked" && (
+            {phase !== "blocked" && (
               <Card className="overflow-hidden p-0">
                 <div id="toss-payment-methods" />
                 <div id="toss-agreement" />
                 {phase === "loading" && (
                   <div className="px-4 py-10 text-center text-[13px] text-muted">결제수단을 불러오는 중입니다…</div>
                 )}
-              </Card>
-            )}
-
-            {isBilling(kind) && phase !== "error" && (
-              <Card className="p-4">
-                <div className="flex items-start gap-3">
-                  <span className="mt-[2px] flex h-[34px] w-[34px] shrink-0 items-center justify-center rounded-[10px] bg-navy/[.06] text-navy">
-                    <Icon name="card" size={18} />
-                  </span>
-                  <p className="min-w-0 flex-1 text-[13px] leading-[1.7] text-ink">
-                    아래 버튼을 누르면 토스페이먼츠 카드 등록 창이 열립니다. 카드정보는 토스페이먼츠가
-                    보관하며 K-CARE 서버에는 저장되지 않습니다.
-                  </p>
-                </div>
               </Card>
             )}
 
@@ -351,16 +306,12 @@ export default function PayPage() {
               disabled={phase !== "ready"}
               className={phase === "ready" ? "" : "opacity-50"}
             >
-              {phase === "requesting"
-                ? "결제창을 여는 중…"
-                : isBilling(kind)
-                  ? "카드 등록하기"
-                  : `${fmtWon(value)} 결제하기`}
+              {phase === "requesting" ? "결제창을 여는 중…" : `${fmtWon(value)} 결제하기`}
             </PrimaryButton>
             )}
 
             {/* 데모 전용 — 결제 키가 없어도 시연을 이어 간다. 실제 결제와 헷갈리지 않게 버튼 말에 '실제 결제 없음'을 박는다 */}
-            {demo && !isBilling(kind) && !demoDone && !blocked && value > 0 && (
+            {demo && !demoDone && !blocked && value > 0 && (
               <button
                 onClick={demoApprove}
                 disabled={phase === "requesting"}
@@ -371,7 +322,8 @@ export default function PayPage() {
             )}
 
             <div className="px-1">
-              {PAY_NOTICE.map((n) => (
+              {/* 월 요금 안내 화면에는 토스 결제 안내를 붙이지 않는다 */}
+              {!isBilling(kind) && PAY_NOTICE.map((n) => (
                 <p key={n} className="mt-1.5 text-[11.5px] leading-[1.7] text-muted">
                   · {n}
                 </p>

@@ -76,6 +76,8 @@ export const PUBLIC_PATHS = [
   // 2026-11-06 랜딩 요청 — 맨 처음 화면(/)이 서비스 소개, /consult 가 상담 신청. 옛 주소 둘은 301 로 옮겨 준다
   /^\/$/,
   /^\/consult$/,
+  // 2026-11-10 — 이용약관 · 환불 정책 · 개인정보 처리방침은 가입 전에 읽는 문서라 로그인 없이 연다
+  /^\/(terms|refund|privacy)$/,
   /^\/api\/consult$/,
   /^\/onboarding$/,
   /^\/login(\/|$)/,

@@ -8,22 +8,15 @@
 //   · 문장이 둘 이상인 글은 한 문자열에 이어 적는다 — 화면이 문장마다 줄을 나눈다 (components 가 아니라 pages/index.jsx 의 Lines).
 //   · 나열은 "A, B, C" 로 적는다 (가운뎃점으로 문장을 잇지 않는다).
 //   · '부가세 포함'은 요금 구역 안내와 자주 묻는 질문 '요금이 어떻게 되나요?' 답, 두 곳에만 둔다.
-//   · 금액은 아래 FEE 숫자만 고친다 — 첫 달 금액 · 해지 비용 합계는 거기서 계산한다.
+//   · 금액은 lib/plans.js 의 FEE 숫자만 고친다 — 첫 달 금액 · 해지 비용 합계는 거기서 계산한다.
 
-const won = (n) => `${String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}원`;
+// 금액과 요금제 구성은 lib/plans.js 한 곳 — 앱 안 멤버십 화면 · 약관과 같은 값을 쓴다 (2026-11-10)
+import { EARLY_BASIC, EXIT_BOTH, EXIT_HEAD, EXIT_NOTE, EXIT_ROWS, FEE, PLANS, exitLines, won } from "./plans";
+import { COMPANY, companyLines } from "./company";
 
-// 요금 — 숫자는 여기 한 곳
-export const FEE = {
-  basic: 12900, // 안심 기본 월 요금 (1년 약정)
-  care: 55000, // 전담 케어 월 요금 (약정 없음)
-  install: 35000, // 설치비 — 두 요금제 모두 설치하는 달에 한 번
-  fit: 65000, // 갤럭시 핏 기기값 — 안심 기본 약정 중 해지
-  sensorReturn: 35000, // 센서 회수비
-  sensorLost: 75000, // 센서 3대 분실 · 미반납
-};
-const FIRST_BASIC = FEE.basic + FEE.install; // 47,900
-const FIRST_CARE = FEE.care + FEE.install; // 90,000
-const EARLY_BASIC = FEE.fit + FEE.sensorReturn; // 100,000
+export { FEE };
+const FIRST_BASIC = PLANS.basic.first; // 47,900
+const FIRST_CARE = PLANS.care.first; // 90,000
 
 export const TEL = { label: "02-2135-7751", href: "tel:0221357751" };
 export const SITE = { origin: "https://kcarelife.com", host: "www.kcarelife.com" };
@@ -222,69 +215,25 @@ export const PRICE = {
   close: "요금 접기",
   // '부가세 포함' 첫 번째 자리
   lead: "표기 금액은 부가세 포함입니다. 해주세요 요청은 이용할 때마다 비용이 듭니다.",
-  plans: [
-    {
-      key: "basic",
-      name: "안심 기본",
-      price: won(FEE.basic),
-      term: "1년 약정, 매년 갱신",
-      items: [
-        "모션 감지 센서 3대 대여",
-        "갤럭시 핏 제공, K-CARE 앱",
-        "24시간 무반응 관제",
-        "움직임이 없으면 관제가 전화로 확인하고 보호자께 연락합니다",
-      ],
-      not: "정기 방문, 전담 컨시어지, 현장 확인은 포함되지 않습니다.",
-      first: won(FIRST_BASIC),
-    },
-    {
-      key: "care",
-      name: "전담 케어",
-      price: won(FEE.care),
-      term: "약정 없음",
-      dark: true,
-      items: [
-        "안심 기본의 모든 것",
-        "전담 컨시어지 배정",
-        "월 1회 정기 방문, 보호자 리포트",
-        "복약 관리, 음성 사서함",
-        "연락이 닿지 않으면 컨시어지가 찾아가 확인합니다",
-      ],
-      first: won(FIRST_CARE),
-    },
-  ],
+  // 요금제 카드 — lib/plans.js 의 구성을 그대로 (전담 케어는 남색 카드)
+  plans: ["basic", "care"].map((k) => ({
+    key: k,
+    name: PLANS[k].name,
+    price: won(PLANS[k].monthly),
+    term: PLANS[k].term,
+    dark: k === "care",
+    items: PLANS[k].items,
+    not: PLANS[k].not,
+    first: won(PLANS[k].first),
+  })),
   firstLabel: "첫 달 결제 금액",
   fine: [
     `첫 달 금액은 월 요금에 설치비 ${won(FEE.install)}을 더한 값입니다. 설치비는 두 요금제 모두 설치하는 달에 한 번만 냅니다.`,
     // 바뀔 수 있는 값 (요청서 6장) — 두 분 요금은 금액 없이 상담 안내
     "두 분이 함께 계신 경우의 요금은 상담에서 안내드립니다.",
   ],
-  refund: {
-    title: "해지와 환불",
-    head: ["구분", "안심 기본", "전담 케어"],
-    both: "두 요금제 공통",
-    // cells: 두 칸이면 [안심 기본, 전담 케어], 한 칸이면 두 요금제 공통. { b: 굵은 값, lines: 아래 줄들 (+ 없이 줄마다) }
-    rows: [
-      { k: "계약서를 받은 날부터 14일 안에 철회", cells: [{ b: "전액 환불", lines: ["기기 회수 비용은 회사가 부담합니다"] }] },
-      {
-        k: "약정 중 해지",
-        cells: [
-          { b: won(EARLY_BASIC), lines: [`갤럭시 핏 기기값 ${won(FEE.fit)}`, `센서 회수비 ${won(FEE.sensorReturn)}`] },
-          { b: "약정 없음", lines: [] },
-        ],
-      },
-      {
-        k: "약정이 끝난 뒤 해지",
-        cells: [
-          { b: won(FEE.sensorReturn), lines: ["센서 회수비"] },
-          { b: won(FEE.sensorReturn), lines: ["센서 회수비", "갤럭시 핏은 반납"] },
-        ],
-      },
-      { k: "갤럭시 핏 분실, 파손", cells: [{ b: "고객 개별 구매", lines: [] }] },
-      { k: "센서 3대 분실, 미반납", cells: [{ b: won(FEE.sensorLost), lines: [] }] },
-    ],
-    note: "해지하면 다음 결제일부터 결제가 멈추고, 이미 결제한 회차는 다음 결제일 전날까지 이용하실 수 있습니다.",
-  },
+  // 표의 줄은 lib/plans.js 한 곳 — 환불 정책(/refund) · 이용약관과 같은 값
+  refund: { title: "해지와 환불", head: EXIT_HEAD, both: EXIT_BOTH, rows: EXIT_ROWS, note: EXIT_NOTE },
 };
 
 export const TRUST = {
@@ -542,12 +491,16 @@ export const CTA = {
   call: `전화 상담 ${TEL.label}`,
 };
 
-// 바닥글 — 사업자등록번호 · 주소는 확정되면 lines 에 줄을 더한다 (요청서 6장)
+// 바닥글 — 사업자 정보는 lib/company.js 에 값을 채우면 여기에 줄이 생긴다 (요청서 6장). 비어 있는 칸은 나오지 않는다
 export const FOOTER = {
-  company: "주식회사 케이케어",
-  lines: [`고객센터 ${TEL.label}`, SITE.host, "서울 강남구, 송파구, 서초구 운영 중"],
-  // href 가 없는 항목은 글자로만 둔다 — 공개할 문서가 정해지면 주소를 넣는다
-  docs: [{ label: "이용약관" }, { label: "환불 정책", href: "#refund" }, { label: "개인정보 처리방침" }],
+  company: COMPANY.name,
+  lines: [...companyLines(), `고객센터 ${TEL.label}`, SITE.host, "서울 강남구, 송파구, 서초구 운영 중"],
+  // 약관 3종 — 2026-11-10 문서를 만들어 주소를 넣었다 (lib/policies.js · components/LegalPage.jsx)
+  docs: [
+    { label: "이용약관", href: "/terms" },
+    { label: "환불 정책", href: "/refund" },
+    { label: "개인정보 처리방침", href: "/privacy" },
+  ],
   report: "노인학대 신고 1577-1389, 긴급 112, 119",
 };
 
@@ -576,13 +529,7 @@ export const AI_FALLBACK = {
 };
 
 // AI 에 넘기는 답변 기준 — 요금 · 해지 · 경계 · 운영 정보를 위 문구에서 모아 만든다 (서버가 6,000자까지 받는다)
-const refundLine = PRICE.refund.rows
-  .map((r) =>
-    r.cells.length === 1
-      ? `${r.k}: ${[r.cells[0].b, ...r.cells[0].lines].join(", ")} (두 요금제 공통)`
-      : `${r.k}: 안심 기본 ${[r.cells[0].b, ...r.cells[0].lines].join(", ")} / 전담 케어 ${[r.cells[1].b, ...r.cells[1].lines].join(", ")}`
-  )
-  .join(". ");
+const refundLine = exitLines().join(". ");
 
 export const AI_CONTEXT = [
   "[K-CARE 서비스 소개 답변 기준]",

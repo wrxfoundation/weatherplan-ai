@@ -93,6 +93,7 @@ import { useAuth } from "../lib/auth";
 import Accounts from "../components/ops/Accounts";
 import CenterMembers, { usePendingMembers } from "../components/ops/CenterMembers";
 import ConsultList, { useNewConsults } from "../components/ops/ConsultList";
+import { planOf } from "../lib/plans";
 import AuditLog from "../components/ops/AuditLog";
 import Integrations from "../components/ops/Integrations";
 import ModeLink from "../components/ModeLink";
@@ -966,6 +967,16 @@ function DispatchConsole() {
       meta: "이용자 · 현장 · 영업 · 관제 가입 신청 — 계정·권한에서 승인하거나 거절",
       menu: "accounts",
     });
+  // 요금제 지정 전 — 가입 상담에서 정한 요금제를 관제가 적어야 보호자 · 어르신 화면에 금액이 보인다 (2026-11-10 · lib/plans.js).
+  // 센터에 아직 어르신 회원이 없으면 띄우지 않는다
+  if (liveOn && !planOf(state) && !(centerNow() && isPlaceholder(pp.elder)))
+    actions.push({
+      id: "plan-unset",
+      level: "med",
+      title: "요금제 지정 전",
+      meta: "가입 상담에서 정한 요금제(안심 기본 · 전담 케어)를 어르신 관리에서 지정 — 보호자 멤버십 · 어르신 마이에 보입니다",
+      menu: "elder",
+    });
   // 상담 신청 — 서비스 소개에서 들어온 새 접수 (2026-11-06)
   if (newConsults)
     actions.push({
@@ -1497,7 +1508,7 @@ function DispatchConsole() {
               // 보호자 일정등록 요청도 같다 — 관제가 승인해야 캘린더에 오르는데, 접혀 있으면 아무도 못 본다 (2026-10-01 관제 테스트).
               // 도와줘요 · 해주세요 취소 요청 · 환불 대기도 관제가 직접 할 일이라 펼친다 (2026-10-05)
               // 상담 신청 새 접수도 펼친다 — 접혀 있으면 손님이 남긴 연락처를 아무도 못 본다 (2026-11-06 랜딩 요청 5-4)
-              opsOpen={actions.some((a) => a.level === "critical" || /^(elder-|help-|cancel-|refunds|members-|consults-)/.test(a.id)) || pendingEvents > 0 || freshCancels > 0}
+              opsOpen={actions.some((a) => a.level === "critical" || /^(elder-|help-|cancel-|refunds|members-|consults-|plan-)/.test(a.id)) || pendingEvents > 0 || freshCancels > 0}
               opsNote={[pendingEvents > 0 && `일정 승인 대기 ${pendingEvents}건`, freshCancels > 0 && `일정 취소 ${freshCancels}건 — 배차 정리`].filter(Boolean).join(" · ") || null}
               opsSlot={<>
           {/* ── 방문 업무흐름 8단계 — 일정 수립 알람이 여기로 온다 (2026-08-13 미팅) ── */}
