@@ -4893,6 +4893,15 @@ PM2.5 3, CO₂ 543 ppm, 23.9°C. The only thing dry in here is the air: 33% humi
 - B(150) `Weekend plan: coffee, and a quick look at the air. ☕🌦️` / 빈 줄 / `PM2.5 3, CO₂ 543, humidity 33%. Clean, a little dry. Time for a second cup.` / 빈 줄 / `#wellbianlife`
 - 국문(117) `토요일 오후 2시, 카페 한 켠. ☕` / 빈 줄 / `초미세먼지 3, CO₂ 543ppm, 23.9°C.` / `여기서 건조한 건 공기뿐, 습도 33%.` / 빈 줄 / `#웰비안라이프`
 
+## 서우 개인 인용 — 브랜드 「YTN 초대 · 에버노스 CBO 동석」 글 (2026-11-09)
+
+원글: @wellbianlabs 「Honored to be invited by @YTN24 … Alongside @sagarCBO, CBO of @evernorthxrp … real-world weather data on the XRP Ledger, from Korea to the world.」 + YTN 스튜디오 사진.
+판정: **짧은 개인 응원 · 장면 한 줄**(10/27 에버노스 사진 인용과 같은 기준). @YTN24 · @sagarCBO · @evernorthxrp 재태그 0 · 동석자 설명 0 · 「Korea's leading」 · 「5M subscribers」 반복 0 · 서우 불참 가능성 → 「the team」.
+- A(가중 200, 추천): 「The weather usually gets the last two minutes of the news. / This time it got the whole conversation. // Proud of the team at YTN today: real-world weather data on the XRP Ledger, from Korea to the world.」
+- B(106): 「Most days the weather is the segment right before sports. / Today it was the story. Proud of this team. 🌦️」
+- 국문(155): 「뉴스에서 날씨는 보통 마지막 2분입니다. / 오늘은 대화 전체가 날씨였습니다. // YTN에 다녀온 팀이 자랑스럽습니다. 한국에서 세계로, XRP 레저 위의 실제 날씨 데이터.」
+- 뺀 안: 「Forecast for Seoul today: clear skies …」 — 그날 서울 날씨를 확인하지 않은 사실 주장이라 뺌.
+
 ## DM — Swell 글 보고 관심 보인 해외 계정(가입 2013 · 팔로워 약 6.7천) 판매 안내 (2026-10-28, 서우 캡처 + 「wellbian.io 판매 사이트 안내 · 추가 할인 코드」)
 
 계정명은 적지 않는다(잠재 고객). 서우 「Hi」 → 상대 「Hello」.

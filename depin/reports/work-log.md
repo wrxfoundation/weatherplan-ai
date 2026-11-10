@@ -2611,3 +2611,7 @@ Thanks Odelia — writing to you at that address today. Mine is support@wellbian
 - **주간 생태계 스캔 2026-11-02(예약 루틴)** — ecosystem-log 새 절(5축 · 검색 14회, 2차). ★ ① Swell 파트너 발표(C2FO 미출시 · Privy 에이전트 지갑) ② 칼시 × TWC 분배 + 정산 결합 ③ 우리 쪽 신호(데이터 유통 업체 미팅). fixCleanup3_4_0 11/4 · GENIUS 최종 · 한국 11월 정무위 · 디센트 추적 갱신. playbook 「Swell · 큰 행사 주간 글」에 행사 직후 주 · 이번 달 글 유형 정리 추가. 로스터 후보 신규 0.
 
 - **체인링크 미팅 카톡 보고 재정리(11/3, 서우 「줄글이라 읽기 힘들다 · 체인링크랑 미팅」)** — 상대 = 체인링크로 확정, business-directions · ecosystem-log 의 「회사명 미확인」 정정. 카톡 보고본을 줄 단위 짧은 항목으로 다시 씀. 고칠 것 7 → 8(오라클 경쟁 구도: Flare 이름을 체인링크 앞에서 꺼낸 점). 상대 개인 이름 · 연락처 미기재.
+
+- **서우 개인 인용 — 브랜드 YTN 초대 글(11/9)** — x-activity-log 새 절. A 「The weather usually gets the last two minutes of the news. This time it got the whole conversation.」(200) · B 짧게(106) · 국문(155). 재태그 · 동석자 설명 · 매체 규모 수치 0. playbook 행사 · 홍보 이력 절에 언론 출연 규칙 한 줄.
+
+- **주간 생태계 스캔 2026-11-09(예약 루틴)** — ecosystem-log 새 절(5축 · 검색 12회, 2차). ★ ① fixCleanup3_4_0 활성 11/4 ② 칼시 날씨 정산 세부(1차 도움말 — 체인링크 SLA 답 기준선) ③ YTN 초대(우리 쪽 신호). OCC GENIUS 최종(10/21) 확인으로 지난주 미확인 해소. business-directions: Permission Delegation 행 PaymentBurn 비권장 해제 · 체인링크 절 보강. 로스터 후보 신규 0.
