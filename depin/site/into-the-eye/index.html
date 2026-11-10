@@ -1,0 +1,799 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex">
+<title>태풍 속으로</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="description" content="관측기를 몰고 눈벽을 뚫어 태풍의 눈 한가운데에 낙하 관측기를 떨어뜨리는 1인칭 날씨 미니게임">
+<meta name="theme-color" content="#05090F">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap">
+<style>
+  /* 한 가지 세계: 관측기 조종석. 배경 · 글자색을 모두 명시해 호스트 테마와 무관하게 유지 */
+  :root {
+    --bg: #05090F; --glass: rgba(6, 12, 18, 0.66); --glass-2: rgba(9, 17, 26, 0.92); --line: rgba(205, 225, 240, 0.14); --line-2: rgba(205, 225, 240, 0.26);
+    --ink: #EAF1F6; --ink-2: #A5B7C6; --ink-3: #6C8194;
+    --hud: #9CF2C6; --amber: #F2B33D; --warn: #FF8A4C; --bad: #FF5A4E;
+    --f-display: 'Black Han Sans', 'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+    --f-body: 'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
+    --f-mono: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  html, body { margin: 0; height: 100%; background: var(--bg); color: var(--ink); overflow: hidden; }
+  body { font-family: var(--f-body); font-size: 15px; line-height: 1.5; -webkit-font-smoothing: antialiased; overscroll-behavior: none; }
+  button { font: inherit; color: inherit; }
+  button:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
+  #app { position: fixed; inset: 0; touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
+  #gl, #fx, #frame { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  #fx, #frame { pointer-events: none; }
+  #flash { position: absolute; inset: 0; background: #E8F0FF; opacity: 0; pointer-events: none; mix-blend-mode: screen; }
+
+  /* HUD — 조종석 유리에 비친 글자 */
+  .hud { position: absolute; inset: 0; pointer-events: none; font-family: var(--f-mono); color: var(--hud); text-shadow: 0 0 6px rgba(80, 255, 170, 0.35), 0 1px 2px rgba(0, 0, 0, 0.7); font-variant-numeric: tabular-nums; }
+  .top { position: absolute; left: 50%; top: max(10px, env(safe-area-inset-top)); transform: translateX(-50%); text-align: center; }
+  .hdg { font-size: 22px; letter-spacing: 0.06em; }
+  .phase { margin-top: 4px; font-family: var(--f-body); font-size: 13px; color: var(--ink); text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8); background: var(--glass); border: 1px solid var(--line); border-radius: 999px; padding: 3px 12px; display: inline-block; }
+  .phase.wall { border-color: rgba(255, 138, 76, 0.6); color: #FFD3BC; }
+  .phase.eye { border-color: rgba(120, 200, 255, 0.6); color: #CFEAFF; }
+  .side { position: absolute; top: calc(max(10px, env(safe-area-inset-top)) + 70px); display: flex; flex-direction: column; gap: 10px; font-size: 12px; }
+  .side.l { left: 14px; } .side.r { right: 14px; text-align: right; }
+  .side .k { color: rgba(156, 242, 198, 0.62); font-size: 11px; letter-spacing: 0.04em; }
+  .side .v { font-size: 20px; line-height: 1.1; }
+  .side .v small { font-size: 11px; margin-left: 3px; color: rgba(156, 242, 198, 0.75); }
+  .warnv { color: #FFB38A !important; text-shadow: 0 0 6px rgba(255, 120, 60, 0.5), 0 1px 2px rgba(0, 0, 0, 0.7) !important; }
+  .bar { width: 108px; height: 5px; border: 1px solid rgba(156, 242, 198, 0.5); border-radius: 2px; margin-top: 4px; margin-left: auto; }
+  .bar i { display: block; height: 100%; width: 0; background: var(--hud); }
+  .bar.hot i { background: #FF8A4C; }
+  .windarrow { display: inline-block; width: 22px; height: 22px; vertical-align: -5px; margin-left: 6px; }
+  .dots i { display: inline-block; width: 9px; height: 9px; border: 1px solid var(--hud); border-radius: 50%; margin-left: 4px; }
+  .dots i.on { background: var(--hud); }
+
+  .dash { position: absolute; left: 0; right: 0; bottom: 0; padding: 0 14px max(12px, env(safe-area-inset-bottom)); display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; pointer-events: none; }
+  .radar { position: relative; width: clamp(128px, 30vw, 188px); aspect-ratio: 1; border-radius: 50%; background: #031208; border: 2px solid #1D3A2A; box-shadow: inset 0 0 22px rgba(0, 0, 0, 0.9), 0 6px 18px rgba(0, 0, 0, 0.5); overflow: hidden; }
+  .radar canvas { width: 100%; height: 100%; display: block; }
+  .radar .lab { position: absolute; left: 0; right: 0; bottom: 7%; text-align: center; font-family: var(--f-mono); font-size: 10px; color: rgba(156, 242, 198, 0.7); }
+  .steer { flex: 1; text-align: center; font-family: var(--f-body); font-size: 12px; color: rgba(234, 241, 246, 0.6); padding-bottom: 6px; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8); }
+  .dropbtn { pointer-events: auto; width: clamp(96px, 24vw, 132px); aspect-ratio: 1; border-radius: 50%; border: 2px solid var(--amber); background: radial-gradient(circle at 50% 40%, #3A2A08, #160F03); color: var(--amber); font-family: var(--f-body); font-weight: 600; font-size: 14px; line-height: 1.25; cursor: pointer; box-shadow: 0 6px 18px rgba(0, 0, 0, 0.5); }
+  .dropbtn:disabled { opacity: 0.35; cursor: default; }
+  .dropbtn small { display: block; font-family: var(--f-mono); font-weight: 400; font-size: 11px; opacity: 0.8; }
+  .iconbtns { position: absolute; right: 12px; top: max(10px, env(safe-area-inset-top)); display: flex; gap: 6px; pointer-events: auto; }
+  .iconbtn { background: var(--glass); border: 1px solid var(--line); border-radius: 10px; min-width: 36px; height: 34px; padding: 0 8px; cursor: pointer; font-size: 12px; color: var(--ink-2); }
+
+  .msg { position: absolute; left: 50%; top: 30%; transform: translateX(-50%); width: min(92vw, 440px); display: flex; flex-direction: column; gap: 6px; align-items: center; pointer-events: none; }
+  .msg div { background: var(--glass-2); border: 1px solid var(--line-2); border-radius: 10px; padding: 8px 13px; font-size: 13.5px; text-align: center; text-wrap: balance; animation: tin 0.25s ease-out; }
+  .msg div.big { font-family: var(--f-display); font-size: 24px; padding: 10px 16px; color: var(--ink); }
+  .msg div.sonde { font-family: var(--f-mono); font-size: 12.5px; color: var(--hud); border-color: rgba(156, 242, 198, 0.4); }
+  @keyframes tin { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+  /* 카드 */
+  .scrim { position: absolute; inset: 0; display: grid; place-items: center; padding: 16px; background: radial-gradient(ellipse at 50% 40%, rgba(5, 9, 15, 0.35), rgba(5, 9, 15, 0.86)); overflow-y: auto; }
+  .card { width: min(100%, 470px); background: var(--glass-2); border: 1px solid var(--line-2); border-radius: 16px; padding: 22px 20px 18px; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5); }
+  .card h1 { margin: 0; font-family: var(--f-display); font-weight: 400; font-size: clamp(38px, 11vw, 52px); line-height: 1; }
+  .card h1 em { font-style: normal; color: var(--amber); }
+  .card h2 { margin: 0; font-family: var(--f-display); font-weight: 400; font-size: 30px; line-height: 1.1; }
+  .lede { margin: 10px 0 0; color: var(--ink-2); font-size: 14.5px; text-wrap: pretty; }
+  .real { margin: 10px 0 0; font-size: 12.5px; color: var(--ink-3); }
+  .rules { list-style: none; margin: 14px 0 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+  .rules li { font-size: 13.5px; color: var(--ink-2); padding-left: 16px; position: relative; }
+  .rules li::before { content: ''; position: absolute; left: 2px; top: 9px; width: 6px; height: 6px; border-radius: 50%; background: var(--hud); }
+  .rules b { color: var(--ink); font-weight: 600; }
+  .pick { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 16px; }
+  .pick button { border: 1px solid var(--line-2); background: rgba(205, 225, 240, 0.05); border-radius: 11px; padding: 9px 6px; cursor: pointer; text-align: center; }
+  .pick button b { display: block; font-weight: 600; font-size: 14px; }
+  .pick button span { display: block; font-family: var(--f-mono); font-size: 11.5px; color: var(--ink-2); }
+  .pick button[aria-pressed="true"] { border-color: var(--amber); background: rgba(242, 179, 61, 0.12); }
+  .opts { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 12px; font-size: 13px; color: var(--ink-2); }
+  .opts label { display: inline-flex; gap: 6px; align-items: center; cursor: pointer; }
+  .row { display: flex; gap: 8px; margin-top: 16px; flex-wrap: wrap; }
+  .btn { flex: 1; min-width: 120px; border: 1px solid var(--line-2); background: rgba(205, 225, 240, 0.08); border-radius: 11px; padding: 12px 14px; font-weight: 600; cursor: pointer; }
+  .btn.primary { background: var(--amber); color: #1A1204; border-color: var(--amber); }
+  .note { margin-top: 10px; font-size: 12px; color: var(--ink-3); text-align: center; }
+  .stars { font-size: 26px; letter-spacing: 4px; color: rgba(205, 225, 240, 0.2); margin-top: 8px; }
+  .stars b { color: var(--amber); font-weight: 400; }
+  .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; margin-top: 14px; background: var(--line); border-radius: 10px; overflow: hidden; }
+  .stats div { background: rgba(9, 17, 26, 0.98); padding: 9px 11px; }
+  .stats dt { font-size: 11.5px; color: var(--ink-3); }
+  .stats dd { margin: 2px 0 0; font-family: var(--f-mono); font-size: 15px; font-variant-numeric: tabular-nums; }
+  .stats .hl dd { color: var(--amber); font-size: 19px; }
+  #mapc { width: 100%; aspect-ratio: 1.5; display: block; margin-top: 12px; border-radius: 10px; background: #071119; }
+  .why { margin: 10px 0 0; font-size: 13px; color: var(--ink-2); text-wrap: pretty; }
+  .fp { margin-top: 10px; padding: 9px 11px; border-radius: 10px; background: rgba(156, 242, 198, 0.06); border: 1px solid rgba(156, 242, 198, 0.2); font-size: 12px; color: var(--ink-2); }
+  .fp code { font-family: var(--f-mono); color: var(--hud); word-break: break-all; }
+  .foot { margin-top: 12px; font-size: 10.5px; color: rgba(165, 183, 198, 0.65); text-align: center; text-wrap: balance; }
+  .playfoot { position: absolute; left: 0; right: 0; top: calc(max(10px, env(safe-area-inset-top)) + 62px); text-align: center; font-size: 10px; color: rgba(165, 183, 198, 0.5); pointer-events: none; }
+  @media (max-width: 520px) {
+    .side .v { font-size: 16px; } .side { top: calc(max(10px, env(safe-area-inset-top)) + 80px); }
+    .hdg { font-size: 18px; } .steer { font-size: 11px; }
+    .bar { width: 84px; }
+    .playfoot { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) { .msg div { animation: none; } }
+</style>
+</head>
+<body>
+<div id="app">
+  <canvas id="gl" tabindex="0" aria-label="조종석 시야. 좌우로 끌거나 방향키로 기수를 돌립니다. 스페이스로 낙하 관측기를 떨어뜨립니다."></canvas>
+  <canvas id="fx" aria-hidden="true"></canvas>
+  <canvas id="frame" aria-hidden="true"></canvas>
+  <div id="flash"></div>
+  <div class="hud" id="hud" hidden>
+    <div class="top"><div class="hdg" id="hdg">HDG 000°</div><div class="phase" id="phase">바깥 나선 띠</div></div>
+    <div class="side l">
+      <div><div class="k">비행 고도 바람</div><div class="v" id="wv">0<small>m/s</small><svg class="windarrow" id="warrow" viewBox="-11 -11 22 22"><path d="M0 -9 L5 3 L1 1 L1 9 L-1 9 L-1 1 L-5 3 Z" fill="currentColor"/></svg></div></div>
+      <div><div class="k">지상 기압(외삽)</div><div class="v" id="pv">1000<small>hPa</small></div></div>
+      <div><div class="k">대지 속도</div><div class="v" id="gv">0<small>km/h</small></div></div>
+    </div>
+    <div class="side r">
+      <div><div class="k">기체 부하</div><div class="v" id="hv">0<small>%</small></div><div class="bar" id="hbar"><i></i></div></div>
+      <div><div class="k">낙하 관측기</div><div class="v dots" id="sv"><i class="on"></i><i class="on"></i></div></div>
+      <div><div class="k">연료</div><div class="v" id="fv">4:00</div></div>
+    </div>
+    <div class="dash">
+      <div class="radar"><canvas id="radar" width="320" height="320"></canvas><div class="lab" id="rlab">레이더 · 60 km</div></div>
+      <div class="steer" id="steerhint">화면을 좌우로 끌어 기수를 돌립니다</div>
+      <button type="button" class="dropbtn" id="dropbtn">낙하 관측기<br>투하<small>Space</small></button>
+    </div>
+  </div>
+  <div class="iconbtns" id="icons" hidden><button type="button" class="iconbtn" id="soundbtn" aria-pressed="true">소리 켬</button><button type="button" class="iconbtn" id="pausebtn" aria-label="잠깐 멈춤">II</button></div>
+  <div class="playfoot" id="playfoot" hidden>교육용으로 단순화한 모형 날씨 · 실제 예보 아님</div>
+  <div class="msg" id="msg" aria-live="polite"></div>
+
+  <div class="scrim" id="intro">
+    <div class="card">
+      <h1>태풍 <em>속으로</em></h1>
+      <p class="lede">관측기를 몰고 눈벽을 뚫어, 태풍의 눈 한가운데에 낙하 관측기를 떨어뜨리세요. 가장 낮은 기압을 정확히 잴수록 점수가 높습니다.</p>
+      <p class="real">허리케인 헌터(미 공군 · 해양대기청)는 지금도 대서양 허리케인의 눈 안까지 들어가 이렇게 중심기압을 잽니다.</p>
+      <ul class="rules">
+        <li><b>레이더</b>의 가운데 맑은 구멍이 눈이다. 붉은 곳일수록 비와 난기류가 거세다.</li>
+        <li><b>바람이 기체를 옆으로 민다.</b> 가고 싶은 쪽보다 바람이 불어오는 쪽으로 기수를 살짝 돌린다.</li>
+        <li><b>눈벽은 태풍 진행 방향의 오른쪽 앞에서 바람이 가장 세다.</b> 어디로 뚫을지가 기체 부하를 가른다.</li>
+        <li><b>바람이 가장 잦아드는 곳이 중심이다.</b> 거기서 투하한다 — 바람 속에 떨어뜨리면 관측기가 떠밀려 기압이 높게 잡힌다.</li>
+      </ul>
+      <div class="pick" role="group" aria-label="태풍 고르기" id="pick"></div>
+      <div class="opts"><label><input type="checkbox" id="calm"> 흔들림 줄이기</label><label><input type="checkbox" id="mute"> 소리 끄기</label></div>
+      <div class="row"><button type="button" class="btn primary" id="startbtn">이륙</button></div>
+      <div class="note">휴대폰: 화면을 좌우로 끌기 · 키보드: ← → / A D · Space 투하 · P 멈춤</div>
+      <div class="foot">날씨 미니게임 · 프로토타입 — 교육용으로 단순화한 모형 날씨이며 실제 예보가 아닙니다. 가상의 태풍입니다.</div>
+    </div>
+  </div>
+
+  <div class="scrim" id="pausecard" hidden>
+    <div class="card"><h2>잠깐 멈춤</h2><div class="row"><button type="button" class="btn primary" id="resumebtn">계속</button><button type="button" class="btn" id="quitbtn">돌아가기</button></div></div>
+  </div>
+
+  <div class="scrim" id="endcard" hidden>
+    <div class="card">
+      <h2 id="etitle">관측 완료</h2>
+      <div class="stars" id="estars"></div>
+      <dl class="stats">
+        <div class="hl"><dt>잰 중심기압</dt><dd id="ep">-</dd></div>
+        <div><dt>실제 중심기압</dt><dd id="ept">-</dd></div>
+        <div><dt>측정 오차</dt><dd id="eerr">-</dd></div>
+        <div><dt>착수 지점 — 중심</dt><dd id="ed">-</dd></div>
+        <div><dt>최대 비행 고도 바람</dt><dd id="ew">-</dd></div>
+        <div><dt>기체 부하</dt><dd id="eh">-</dd></div>
+      </dl>
+      <canvas id="mapc" aria-label="비행 경로와 투하 지점"></canvas>
+      <p class="why" id="ewhy"></p>
+      <div class="fp" id="efp"></div>
+      <div class="row"><button type="button" class="btn primary" id="againbtn">다시 날기</button><button type="button" class="btn" id="otherbtn">다른 태풍</button><button type="button" class="btn" id="copybtn">결과 복사</button></div>
+      <div class="foot">날씨 미니게임 · 프로토타입 — 교육용으로 단순화한 모형 날씨이며 실제 예보가 아닙니다.</div>
+    </div>
+  </div>
+</div>
+<script>// 태풍 속으로 — 모형(브라우저 · Node 공용). 좌표: 태풍 중심 기준 km, x = 동, n = 북. 시간: 게임 초(실시간 1초).
+(function (root) {
+  const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const smooth = (a, b, v) => { const t = clamp((v - a) / (b - a), 0, 1); return t * t * (3 - 2 * t); };
+  const D2R = Math.PI / 180;
+
+  const T = {
+    penv: 1010,          // 바깥 기압 hPa
+    B: 1.6,              // Holland 형상 계수
+    airspeed: 100,       // 관측기 대기속도 m/s
+    tc: 9,               // 시간 압축(실시간 1초 = 9초 비행)
+    alt: 3.0,            // 비행 고도 km(700 hPa 부근)
+    turnMax: 14,         // 최대 선회 °/s(게임 초)
+    sondes: 2,
+    fallS: 270,          // 낙하 관측기가 3 km 를 떨어지는 실제 시간(초) — 바람에 떠밀리는 거리 계산용
+    fallShow: 4.5,       // 화면에서 보여 주는 시간
+    timeLimit: 240,      // 연료(게임 초)
+  };
+  const PRESETS = [
+    { id: 'g3', name: '강', pc: 960, rm: 34 },
+    { id: 'g4', name: '매우 강', pc: 935, rm: 25 },
+    { id: 'g5', name: '초강력', pc: 908, rm: 17 },
+  ];
+
+  // 값 노이즈(난류 칸 · 레이더 얼룩)
+  function hash(i, j, s) { let h = (i * 374761393 + j * 668265263 + s * 1442695041) | 0; h = Math.imul(h ^ (h >>> 13), 1274126177); h ^= h >>> 16; return (h >>> 0) / 4294967296; }
+  function vnoise(x, y, s) {
+    const i = Math.floor(x), j = Math.floor(y), fx = x - i, fy = y - j; const u = fx * fx * (3 - 2 * fx), v = fy * fy * (3 - 2 * fy);
+    const a = hash(i, j, s), b = hash(i + 1, j, s), c = hash(i, j + 1, s), d = hash(i + 1, j + 1, s);
+    return lerp(lerp(a, b, u), lerp(c, d, u), v);
+  }
+  function fbm(x, y, s) { return vnoise(x, y, s) * 0.55 + vnoise(x * 2.1, y * 2.1, s + 7) * 0.3 + vnoise(x * 4.3, y * 4.3, s + 13) * 0.15; }
+
+  function rng(seed) { let s = (seed >>> 0) || 1; return () => { s ^= s << 13; s ^= s >>> 17; s ^= s << 5; return ((s >>> 0) % 1e7) / 1e7; }; }
+
+  function makeStorm(opt) {
+    const pc = opt.pc, rm = opt.rm, dp = T.penv - pc;
+    const vSfc = 3.447 * Math.pow(Math.max(dp, 5), 0.644);    // Atkinson–Holliday 근사(지상 1분 평균, m/s)
+    const vFL = vSfc / 0.9;                                    // 비행 고도 바람 ≈ 지상 ÷ 0.9
+    const r = rng(opt.seed || 1);
+    const mv = (opt.moveDeg != null ? opt.moveDeg : 125 + r() * 30) * D2R;   // 진행 방향(수학 각, 북서쪽 안팎)
+    return {
+      pc, rm, dp, vSfc, vFL, seed: opt.seed || 1, B: T.B,
+      move: [Math.cos(mv) * 6, Math.sin(mv) * 6], moveAng: mv,
+      bandPh: r() * 6.28, re: rm * 0.78,      // 눈 반경(비행 고도)
+      intensity: clamp(dp / 100, 0.3, 1.1),
+    };
+  }
+  function pressure(S, x, n) { const r = Math.max(0.05, Math.hypot(x, n)); return S.pc + S.dp * Math.exp(-Math.pow(S.rm / r, S.B)); }
+  function windSpeed(S, r) {
+    if (r < S.rm) return S.vFL * Math.pow(r / S.rm, 1.25);
+    const xx = Math.pow(S.rm / r, S.B); return S.vFL * Math.sqrt(xx * Math.exp(1 - xx));
+  }
+  // 비행 고도 바람 벡터(m/s): 반시계 회전 + 바깥은 안으로 감겨 듦 + 진행 방향 쪽(오른쪽 앞)이 더 셈
+  function wind(S, x, n) {
+    const r = Math.max(0.05, Math.hypot(x, n)), th = Math.atan2(n, x);
+    const v = windSpeed(S, r), inA = 18 * D2R * smooth(0.9 * S.rm, 1.4 * S.rm, r);
+    const tx = -Math.sin(th), tn = Math.cos(th), rx = Math.cos(th), rn = Math.sin(th);
+    const k = 0.55 * smooth(0.4 * S.rm, 1.0 * S.rm, r);
+    return [v * (Math.cos(inA) * tx - Math.sin(inA) * rx) + S.move[0] * k, v * (Math.cos(inA) * tn - Math.sin(inA) * rn) + S.move[1] * k];
+  }
+  // 난류 · 비 · 눈벽 · 나선 띠
+  function fields(S, x, n) {
+    const r = Math.max(0.05, Math.hypot(x, n)), th = Math.atan2(n, x);
+    const rf = Math.cos(th - (S.moveAng - Math.PI / 4));                       // 진행 방향 오른쪽 앞 = 1
+    const cell = fbm(x / 9 + 3, n / 9 - 5, S.seed);
+    const wallW = 0.32 * S.rm;
+    const wall = Math.exp(-(((r - 1.05 * S.rm) / wallW) ** 2)) * (0.72 + 0.28 * rf) * (0.8 + 0.4 * cell);
+    const lr = Math.log(r / S.rm);
+    const arm = 0.5 + 0.5 * Math.cos(2 * (th + 1.35 * lr) + S.bandPh + (cell - 0.5) * 2.2);
+    const band = smooth(0.5, 0.92, arm) * smooth(1.7 * S.rm, 2.6 * S.rm, r) * smooth(10 * S.rm, 5 * S.rm, r) * (0.55 + 0.45 * cell);
+    const outer = 0.18 * smooth(1.3 * S.rm, 2.0 * S.rm, r) * (0.6 + 0.8 * cell);
+    const eye = 1 - smooth(0.6 * S.re, 1.0 * S.re, r);
+    const rain = clamp(Math.max(wall * 1.05, band * 0.85, outer), 0, 1) * (1 - eye);
+    const turb = clamp((wall * 1.05 + band * 0.4 + outer * 0.35) * (0.55 + 0.5 * S.intensity), 0, 1.3) * (1 - 0.9 * eye);
+    return { r, rain, turb, wall, band, eye };
+  }
+  function phase(S, r) { return r < S.re ? 'eye' : r < 1.55 * S.rm ? 'wall' : 'outer'; }
+
+  function newFlight(S, seed) {
+    const r = rng((seed || 1) * 31 + 7);
+    const r0 = clamp(4.4 * S.rm, 60, 130);
+    const b = r() * 6.2832;
+    const x = Math.cos(b) * r0, n = Math.sin(b) * r0;
+    const hdg = Math.atan2(-n, -x) + (r() - 0.5) * 0.5;      // 대략 중심 쪽
+    return { S, x, n, hdg, turn: 0, t: 0, hull: 0, sondes: T.sondes, drops: [], maxWind: 0, minP: 9999, phase: 'outer', over: false, end: '', events: [], gs: [0, 0], visitedEye: false, flashT: 0 };
+  }
+  // 조작: steer -1..1(왼쪽 · 오른쪽)
+  function step(F, steer, dt) {
+    if (F.over || !(dt > 0)) return;
+    const S = F.S; F.t += dt;
+    F.turn += (clamp(steer, -1, 1) * T.turnMax * D2R - F.turn) * (1 - Math.exp(-dt * 4));
+    F.hdg -= F.turn * dt;                                               // 오른쪽(+)이면 시계 방향
+    const [wx, wn] = wind(S, F.x, F.n);
+    const ax = Math.cos(F.hdg) * T.airspeed, an = Math.sin(F.hdg) * T.airspeed;
+    const gx = ax + wx, gn = an + wn; F.gs = [gx, gn];
+    F.x += gx * T.tc / 1000 * dt; F.n += gn * T.tc / 1000 * dt;
+    const f = fields(S, F.x, F.n);
+    F.f = f; F.wind = [wx, wn]; F.ws = Math.hypot(wx, wn); F.p = pressure(S, F.x, F.n);
+    if (F.ws > F.maxWind) F.maxWind = F.ws;
+    if (F.p < F.minP) F.minP = F.p;
+    F.hull = clamp(F.hull + 8.5 * Math.pow(Math.max(0, f.turb - 0.22), 1.5) * dt, 0, 100);
+    const ph = phase(S, f.r);
+    if (ph !== F.phase) { F.events.push({ k: 'phase', from: F.phase, to: ph }); F.phase = ph; if (ph === 'eye') F.visitedEye = true; }
+    // 번개: 비 · 난류가 센 곳에서
+    if (f.rain > 0.45 && Math.random() < f.rain * f.rain * 0.9 * dt) F.events.push({ k: 'flash', i: 0.5 + 0.5 * Math.random() });
+    // 낙하 관측기 진행
+    for (const d of F.drops) if (!d.done) { d.age += dt; if (d.age >= T.fallShow) { d.done = true; F.events.push({ k: 'splash', d }); } }
+    if (F.hull >= 100) { F.over = true; F.end = 'hull'; }
+    else if (F.t >= T.timeLimit) { F.over = true; F.end = 'fuel'; }
+    else if (F.sondes === 0 && F.drops.every(d => d.done)) { F.over = true; F.end = 'done'; }
+    else if (f.r > 1.6 * clamp(4.4 * S.rm, 60, 130) + 20) { F.over = true; F.end = 'left'; }
+    if (F.over) F.events.push({ k: 'over', end: F.end });
+  }
+  // 낙하: 떨어지는 동안 평균 바람(비행 고도의 약 0.8배)에 떠밀린 자리에서 지상 기압을 잰다
+  function drop(F) {
+    if (F.over || F.sondes <= 0) return null;
+    const S = F.S; F.sondes--;
+    let x = F.x, n = F.n; const steps = 18, dts = T.fallS / steps;
+    for (let i = 0; i < steps; i++) { const [wx, wn] = wind(S, x, n); const k = 0.8 - 0.25 * (i / steps); x += wx * k * dts / 1000; n += wn * k * dts / 1000; }
+    const pr = pressure(S, x, n), noise = (Math.random() - 0.5) * 0.6;
+    const d = { t: F.t, x0: F.x, n0: F.n, x, n, p: pr + noise, r0: Math.hypot(F.x, F.n), r1: Math.hypot(x, n), sfcWind: windSpeed(S, Math.hypot(x, n)) * 0.9, age: 0, done: false };
+    F.drops.push(d); F.events.push({ k: 'drop', d });
+    return d;
+  }
+  function best(F) { let b = null; for (const d of F.drops) if (!b || d.p < b.p) b = d; return b; }
+  function grade(F) {
+    const b = best(F); if (!b || F.end === 'hull') return { stars: 0, err: null, b };
+    const err = b.p - F.S.pc;
+    let st = F.visitedEye ? 1 : 0;
+    if (err <= 2 && F.visitedEye) st = 2;
+    if (err <= 0.6 && F.hull <= 60 && F.visitedEye) st = 3;
+    return { stars: st, err, b };
+  }
+  const api = { T, PRESETS, D2R, clamp, lerp, smooth, makeStorm, pressure, windSpeed, wind, fields, phase, newFlight, step, drop, best, grade, fbm };
+  if (typeof module !== 'undefined' && module.exports) module.exports = api; else root.TE = api;
+})(typeof window !== 'undefined' ? window : globalThis);
+</script>
+<script type="module">
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.min.js';
+const TE = window.TE;
+const $ = id => document.getElementById(id);
+const qs = new URLSearchParams(location.hash.slice(1));
+
+// ── 렌더러 ───────────────────────────────────────
+const canvas = $('gl');
+let renderer;
+try { renderer = new THREE.WebGLRenderer({ canvas, antialias: false, powerPreference: 'high-performance' }); }
+catch (e) { document.body.insertAdjacentHTML('beforeend', '<div style="position:fixed;inset:0;display:grid;place-items:center;color:#A5B7C6;padding:24px;text-align:center">이 기기에서는 WebGL 을 쓸 수 없어 게임을 열 수 없습니다.</div>'); throw e; }
+let PR = Math.min(window.devicePixelRatio || 1, 1.6);
+renderer.setPixelRatio(PR);
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(62, 1, 0.004, 2500);
+camera.rotation.order = 'YXZ';
+
+// ── 노이즈 텍스처(이음매 없는 펄린 4채널) ─────────────────
+function makeNoise(N) {
+  const out = new Uint8Array(N * N * 4), tabs = {};
+  const table = (P, seed) => { const k = P + ':' + seed; if (tabs[k]) return tabs[k]; const t = new Float32Array(P * P * 2); let s = seed * 9301 + 49297; for (let i = 0; i < P * P; i++) { s = (s * 16807) % 2147483647; const a = s / 2147483647 * 6.2831853; t[i * 2] = Math.cos(a); t[i * 2 + 1] = Math.sin(a); } return (tabs[k] = t); };
+  const fade = t => t * t * t * (t * (t * 6 - 15) + 10);
+  function perlin(x, y, P, t) {
+    const x0 = Math.floor(x), y0 = Math.floor(y), fx = x - x0, fy = y - y0, i0 = ((x0 % P) + P) % P, j0 = ((y0 % P) + P) % P, i1 = (i0 + 1) % P, j1 = (j0 + 1) % P;
+    const g = (i, j, dx, dy) => { const b = (j * P + i) * 2; return t[b] * dx + t[b + 1] * dy; };
+    const u = fade(fx), v = fade(fy), a = g(i0, j0, fx, fy), b = g(i1, j0, fx - 1, fy), c = g(i0, j1, fx, fy - 1), d = g(i1, j1, fx - 1, fy - 1);
+    return (a + (b - a) * u) + ((c + (d - c) * u) - (a + (b - a) * u)) * v;
+  }
+  const chans = [[[4, .5], [8, .25], [16, .14], [32, .08], [64, .03]], [[8, .5], [16, .27], [32, .15], [64, .08]], [[4, .45], [8, .3], [16, .17], [32, .08]], [[16, .5], [32, .3], [64, .2]]];
+  for (let c = 0; c < 4; c++) {
+    const ts = chans[c].map(([P], i) => table(P, 11 + c * 13 + i));
+    for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) { let v = 0; for (let i = 0; i < chans[c].length; i++) { const [P, w] = chans[c][i]; v += perlin(x / N * P, y / N * P, P, ts[i]) * w; } out[(y * N + x) * 4 + c] = Math.max(0, Math.min(255, Math.round((v * 1.15 + 0.5) * 255))); }
+  }
+  const tex = new THREE.DataTexture(out, N, N, THREE.RGBAFormat, THREE.UnsignedByteType);
+  tex.wrapS = tex.wrapT = THREE.RepeatWrapping; tex.generateMipmaps = true; tex.minFilter = THREE.LinearMipmapLinearFilter; tex.magFilter = THREE.LinearFilter; tex.needsUpdate = true;
+  return tex;
+}
+const noiseTex = makeNoise(qs.get('noise') === 'lo' ? 128 : 256);
+
+// ── 공통 유니폼 · GLSL ─────────────────────────────
+const U = {
+  uTime: { value: 0 }, uNoise: { value: noiseTex }, uCam: { value: new THREE.Vector3() },
+  uFogColor: { value: new THREE.Color(0.45, 0.48, 0.52) }, uFogDens: { value: 0.3 }, uClear: { value: 0 }, uFlash: { value: 0 },
+  uRm: { value: 25 }, uRe: { value: 20 }, uVfl: { value: 60 }, uRot: { value: 0 },
+  uSun: { value: new THREE.Vector3(0.38, 0.84, 0.38).normalize() },
+};
+const GL_COMMON = `
+uniform float uTime, uClear, uFlash, uFogDens, uRm, uRe, uVfl, uRot; uniform vec3 uCam, uFogColor, uSun; uniform sampler2D uNoise;
+vec3 fogIt(vec3 c, vec3 w) { float d = length(w - uCam); float f = 1.0 - exp(-pow(d * uFogDens, 2.0)); return mix(c, uFogColor + uFlash * 0.5, clamp(f, 0.0, 1.0)); }
+float N1(vec2 p) { return texture2D(uNoise, p).r; }
+`;
+const VS = `varying vec3 vW; varying vec2 vUv; void main() { vUv = uv; vec4 w = modelMatrix * vec4(position, 1.0); vW = w.xyz; gl_Position = projectionMatrix * viewMatrix * w; }`;
+
+// 하늘: 눈 안에서는 파란 하늘, 그 밖에서는 안개색
+const sky = new THREE.Mesh(new THREE.SphereGeometry(1200, 32, 16), new THREE.ShaderMaterial({
+  uniforms: U, side: THREE.BackSide, depthWrite: false, vertexShader: VS,
+  fragmentShader: GL_COMMON + `varying vec3 vW; void main() {
+    vec3 d = normalize(vW - uCam); float up = max(d.y, 0.0);
+    vec3 s = mix(vec3(0.72, 0.8, 0.88), vec3(0.16, 0.36, 0.7), pow(up, 0.55));
+    s += vec3(1.0, 0.95, 0.85) * pow(max(dot(d, uSun), 0.0), 600.0) * 2.0 + vec3(1.0, 0.9, 0.7) * pow(max(dot(d, uSun), 0.0), 12.0) * 0.18;
+    gl_FragColor = vec4(mix(uFogColor + uFlash * 0.5, s, uClear * smoothstep(-0.02, 0.08, d.y)), 1.0); }`,
+}));
+sky.renderOrder = -10; scene.add(sky);
+
+// 바다: 바람 방향으로 길게 늘어선 거품 줄
+const sea = new THREE.Mesh(new THREE.PlaneGeometry(1, 1, 1, 1), new THREE.ShaderMaterial({
+  uniforms: U, vertexShader: VS,
+  fragmentShader: GL_COMMON + `varying vec3 vW; void main() {
+    vec2 p = vec2(vW.x, -vW.z); float r = max(length(p), 0.05); float th = atan(p.y, p.x);
+    float v = r < uRm ? pow(r / uRm, 1.25) : sqrt(pow(uRm / r, 1.6) * exp(1.0 - pow(uRm / r, 1.6)));
+    vec2 t = vec2(-sin(th), cos(th)); vec2 q = vec2(dot(p, t), dot(p, vec2(t.y, -t.x)));
+    float streak = texture2D(uNoise, vec2(q.x * 0.35 + uTime * 0.05, q.y * 4.0)).g * 0.6 + texture2D(uNoise, vec2(q.x * 1.1, q.y * 11.0)).r * 0.5;
+    float foam = smoothstep(0.72 - 0.42 * v, 1.0, streak) * smoothstep(0.15, 0.6, v);
+    float sw = texture2D(uNoise, p * 0.9 + uTime * 0.01).b;
+    vec3 c = mix(vec3(0.05, 0.085, 0.11), vec3(0.06, 0.2, 0.3), uClear * 0.8) * (0.85 + 0.3 * sw);
+    c = mix(c, vec3(0.78, 0.82, 0.85), foam * 0.85);
+    gl_FragColor = vec4(fogIt(c, vW), 1.0); }`,
+}));
+sea.rotation.x = -Math.PI / 2; sea.scale.set(1400, 1400, 1); scene.add(sea);
+
+// 위를 덮은 구름 밑면(바깥 · 눈벽 구간) — 눈 위에는 구멍
+const deck = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), new THREE.ShaderMaterial({
+  uniforms: U, vertexShader: VS, side: THREE.DoubleSide, transparent: true, depthWrite: false,
+  fragmentShader: GL_COMMON + `varying vec3 vW; void main() {
+    vec2 p = vec2(vW.x, -vW.z); float r = length(p);
+    float hole = smoothstep(uRe * 1.3, uRe * 1.5, r);
+    if (hole < 0.01) discard;
+    float n = texture2D(uNoise, p * 0.05).r * 0.6 + texture2D(uNoise, p * 0.17).g * 0.4;
+    vec3 c = vec3(0.3, 0.33, 0.37) * (0.75 + 0.5 * n) + uFlash * 0.4;
+    gl_FragColor = vec4(fogIt(c, vW), hole); }`,
+}));
+deck.rotation.x = -Math.PI / 2; deck.position.y = 5.2; deck.scale.set(1400, 1400, 1); scene.add(deck);
+
+// 눈 바닥의 낮은 층적운(위에서 내려다봄)
+const floorC = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), new THREE.ShaderMaterial({
+  uniforms: U, vertexShader: VS, transparent: true, depthWrite: false,
+  fragmentShader: GL_COMMON + `varying vec3 vW; void main() {
+    vec2 p = vec2(vW.x, -vW.z); float r = length(p);
+    float inside = 1.0 - smoothstep(uRe * 0.85, uRe * 1.15, r);
+    float n = texture2D(uNoise, p * 0.11 + vec2(uTime * 0.003, 0.0)).b * 0.7 + texture2D(uNoise, p * 0.43).r * 0.45;
+    float a = smoothstep(0.55, 0.78, n) * inside;
+    if (a < 0.01) discard;
+    float n2 = texture2D(uNoise, (p + uSun.xz * 0.1) * 0.11 + vec2(uTime * 0.003, 0.0)).b * 0.7 + texture2D(uNoise, (p + uSun.xz * 0.1) * 0.43).r * 0.45;
+    vec3 c = vec3(0.92, 0.94, 0.96) * clamp(0.85 + (n - n2) * 3.0, 0.6, 1.1);
+    gl_FragColor = vec4(fogIt(c, vW), a * 0.92); }`,
+}));
+floorC.rotation.x = -Math.PI / 2; floorC.position.y = 1.0; scene.add(floorC);
+
+// 눈벽 「경기장」: 위로 갈수록 바깥으로 벌어지는 구름 벽(선반 회전체) — 안쪽 면을 본다
+function stadiumGeo() {
+  const pts = []; for (let y = -0.2; y <= 15.6; y += 0.2) pts.push(new THREE.Vector2(0.86 + 0.045 * y + 0.0045 * y * y, y));
+  pts.push(new THREE.Vector2(2.9, 15.9)); pts.push(new THREE.Vector2(6.0, 16.1));
+  return new THREE.LatheGeometry(pts, 200);
+}
+const wallMat = new THREE.ShaderMaterial({
+  uniforms: U, side: THREE.DoubleSide,
+  vertexShader: `uniform float uRe, uRot, uTime; uniform sampler2D uNoise; varying vec3 vW; varying vec2 vA; varying float vH;
+    void main() {
+      float phi = atan(position.z, position.x); float y = position.y;
+      vec2 st = vec2((phi + uRot) / 6.2831853 * 8.0, y / 16.0 * 3.4);
+      float d = texture2D(uNoise, st).r - 0.5; float d2 = texture2D(uNoise, st * 3.0 + 0.3).g - 0.5;
+      vec3 p = vec3(position.x * uRe, position.y, position.z * uRe); vec2 dir = normalize(position.xz + 1e-5);
+      p.xz += dir * (d * 0.2 + d2 * 0.1) * uRe * smoothstep(-0.2, 1.0, y);
+      vA = st; vH = y; vec4 w = modelMatrix * vec4(p, 1.0); vW = w.xyz; gl_Position = projectionMatrix * viewMatrix * w; }`,
+  fragmentShader: GL_COMMON + `varying vec2 vA; varying float vH; varying vec3 vW;
+    float hgt(vec2 st) { return texture2D(uNoise, st).r * 0.6 + texture2D(uNoise, st * 2.5 + 0.3).g * 0.3 + texture2D(uNoise, st * 6.0).b * 0.1; }
+    void main() {
+      vec2 xz = vW.xz; float phi = atan(xz.y, xz.x);
+      vec3 nIn = normalize(vec3(-cos(phi), 0.32 + 0.03 * vH, -sin(phi)));
+      float h = hgt(vA), hx = hgt(vA + vec2(0.02, 0.0)), hy = hgt(vA + vec2(0.0, 0.025));
+      vec3 n = normalize(nIn + vec3(0.0, (h - hy) * 9.0, 0.0) + vec3(-sin(phi), 0.0, cos(phi)) * (h - hx) * 9.0);
+      float lam = max(dot(n, uSun), 0.0);
+      float top = smoothstep(1.0, 14.0, vH);
+      float ao = smoothstep(0.25, 0.75, h);
+      vec3 c = mix(vec3(0.5, 0.55, 0.62), vec3(1.0, 0.99, 0.97), clamp(0.2 + 1.05 * lam * (0.6 + 0.4 * top) + 0.2 * top, 0.0, 1.0));
+      c *= 0.72 + 0.4 * ao;
+      c = mix(c, vec3(0.36, 0.4, 0.46), smoothstep(2.0, 0.0, vH) * 0.7);
+      if (vH > 15.7) c = vec3(0.55, 0.58, 0.63);
+      c += uFlash * 0.25;
+      gl_FragColor = vec4(fogIt(c, vW), 1.0); }`,
+});
+const wall = new THREE.Mesh(stadiumGeo(), wallMat); scene.add(wall);
+
+// 바깥 나선 띠의 비구름 덩어리(카메라를 향한 세로 판)
+const MAXB = 90;
+const towerGeo = new THREE.PlaneGeometry(1, 1); towerGeo.translate(0, 0.5, 0);
+const aSeed = new THREE.InstancedBufferAttribute(new Float32Array(MAXB), 1); towerGeo.setAttribute('aSeed', aSeed);
+const towerMat = new THREE.ShaderMaterial({
+  uniforms: U, transparent: true, depthWrite: false,
+  vertexShader: `attribute float aSeed; varying vec3 vW; varying vec2 vUv; varying float vSeed; uniform vec3 uCam;
+    void main() { vUv = uv; vSeed = aSeed; vec3 c = (instanceMatrix * vec4(0.0, 0.0, 0.0, 1.0)).xyz; float sx = length(instanceMatrix[0].xyz), sy = length(instanceMatrix[1].xyz);
+      vec3 f = normalize(vec3(uCam.x - c.x, 0.0, uCam.z - c.z) + 1e-5); vec3 rgt = vec3(f.z, 0.0, -f.x);
+      vec3 w = c + rgt * position.x * sx + vec3(0.0, position.y * sy, 0.0); vW = w; gl_Position = projectionMatrix * viewMatrix * vec4(w, 1.0); }`,
+  fragmentShader: GL_COMMON + `varying vec2 vUv; varying float vSeed; varying vec3 vW;
+    void main() { vec2 p = vUv - vec2(0.5, 0.0); float n = texture2D(uNoise, vUv * vec2(1.5, 2.5) + vSeed * 7.0).r * 0.6 + texture2D(uNoise, vUv * vec2(4.0, 6.0) + vSeed * 3.0).g * 0.4;
+      float body = smoothstep(0.5, 0.1, abs(p.x) + (n - 0.5) * 0.4) * smoothstep(1.0, 0.6, vUv.y + (n - 0.5) * 0.3);
+      if (body < 0.02) discard;
+      vec3 c = mix(vec3(0.24, 0.27, 0.31), vec3(0.62, 0.65, 0.7), smoothstep(0.2, 0.95, vUv.y) * n) + uFlash * 0.3;
+      gl_FragColor = vec4(fogIt(c, vW), body * 0.95); }`,
+});
+const towers = new THREE.InstancedMesh(towerGeo, towerMat, MAXB); towers.frustumCulled = false; scene.add(towers);
+
+// 빗줄기(카메라 주변 상자에서 계속 다시 태어남)
+const NR = 600, rainPos = new Float32Array(NR * 6), rainOff = new Float32Array(NR * 3);
+for (let i = 0; i < NR * 3; i++) rainOff[i] = (Math.random() - 0.5) * 0.12;
+const rainGeo = new THREE.BufferGeometry(); rainGeo.setAttribute('position', new THREE.BufferAttribute(rainPos, 3).setUsage(THREE.DynamicDrawUsage));
+const rainMat = new THREE.LineBasicMaterial({ color: 0xc9d4de, transparent: true, opacity: 0.5, depthWrite: false });
+const rain = new THREE.LineSegments(rainGeo, rainMat); rain.frustumCulled = false; scene.add(rain);
+
+// ── 상태 ─────────────────────────────────────────
+let S = null, F = null, state = 'intro', preset = 1, seed = +(qs.get('seed') || 0) || ((Date.now() / 1000) | 0), track = [];
+const auto = qs.get('auto') === '1';
+let steer = 0, ptr = null; const keys = new Set();
+let calm = false, muted = false, flash = 0, shake = 0;
+function presetStorm() {
+  if (qs.get('hpa')) return { pc: +qs.get('hpa'), rm: +(qs.get('rm') || 25), name: '사용자' };
+  return TE.PRESETS[preset];
+}
+// 태풍 고르기
+const pick = $('pick');
+TE.PRESETS.forEach((p, i) => { const b = document.createElement('button'); b.type = 'button'; b.innerHTML = `<b>${p.name}</b><span>${p.pc} hPa</span>`; b.setAttribute('aria-pressed', String(i === preset)); b.onclick = () => { preset = i; pick.querySelectorAll('button').forEach((x, j) => x.setAttribute('aria-pressed', String(j === i))); setup(); }; pick.appendChild(b); });
+
+function setup() {
+  const P = presetStorm(); S = TE.makeStorm({ pc: P.pc, rm: P.rm, seed }); F = TE.newFlight(S, seed); track = [];
+  U.uRm.value = S.rm; U.uRe.value = S.re; U.uVfl.value = S.vFL;
+  wall.scale.set(1, 1, 1); wallMat.uniforms.uRe.value = S.re;
+  floorC.scale.set(S.re * 2.6, S.re * 2.6, 1);
+  // 바깥 비구름 덩어리 자리: 나선 띠에서 고른다
+  const m4 = new THREE.Matrix4(); let k = 0; const r = (a => () => (a = (a * 16807) % 2147483647) / 2147483647)(seed * 7 + 3);
+  for (let tries = 0; k < MAXB && tries < 6000; tries++) {
+    const rr = S.rm * (1.7 + r() * 7), th = r() * 6.2832, x = Math.cos(th) * rr, n = Math.sin(th) * rr; const f = TE.fields(S, x, n);
+    if (f.band < 0.35 && r() > 0.08) continue;
+    const w = 3 + r() * 9, h = 6 + r() * 9; m4.makeScale(w, h, 1); m4.setPosition(x, 0, -n); towers.setMatrixAt(k, m4); aSeed.array[k] = r(); k++;
+  }
+  towers.count = k; towers.instanceMatrix.needsUpdate = true; aSeed.needsUpdate = true;
+  buildRadarImage();
+  stepEnv(0);
+}
+
+// ── 레이더 ───────────────────────────────────────
+const RADAR_IMG = document.createElement('canvas'); let RIMG_EXT = 160;
+function reflColor(v) { if (v < 0.08) return null; const s = [[0.08, [20, 90, 40]], [0.25, [40, 170, 60]], [0.45, [210, 210, 50]], [0.65, [240, 130, 40]], [0.82, [230, 40, 40]], [0.95, [220, 60, 200]]]; let c = s[0][1]; for (const [t, col] of s) if (v >= t) c = col; return c; }
+function buildRadarImage() {
+  const N = 320; RADAR_IMG.width = RADAR_IMG.height = N; RIMG_EXT = Math.max(150, 1.6 * Math.max(60, 4.4 * S.rm) + 30);
+  const x = RADAR_IMG.getContext('2d'); const im = x.createImageData(N, N);
+  for (let j = 0; j < N; j++) for (let i = 0; i < N; i++) {
+    const wx = (i / N - 0.5) * 2 * RIMG_EXT, wn = (0.5 - j / N) * 2 * RIMG_EXT; const f = TE.fields(S, wx, wn);
+    const v = Math.min(1, f.rain * (0.85 + 0.3 * TE.fbm(wx / 4, wn / 4, 5))); const c = reflColor(v); const o = (j * N + i) * 4;
+    if (c) { im.data[o] = c[0]; im.data[o + 1] = c[1]; im.data[o + 2] = c[2]; im.data[o + 3] = 230; }
+  }
+  x.putImageData(im, 0, 0);
+}
+const rc = $('radar'), rx = rc.getContext('2d');
+function drawRadar() {
+  const W = rc.width, R = W / 2, range = Math.max(40, Math.min(70, S.rm * 2.6));
+  rx.save(); rx.clearRect(0, 0, W, W); rx.fillStyle = '#031208'; rx.fillRect(0, 0, W, W);
+  rx.beginPath(); rx.arc(R, R, R, 0, 6.2832); rx.clip();
+  rx.translate(R, R); rx.rotate(F.hdg - Math.PI / 2);                 // 기수가 위로
+  const sc = R / range; rx.scale(sc, sc);
+  rx.translate(-F.x, F.n);
+  rx.globalAlpha = 0.95; rx.drawImage(RADAR_IMG, -RIMG_EXT, -RIMG_EXT, RIMG_EXT * 2, RIMG_EXT * 2); rx.globalAlpha = 1;
+  // 지나온 길 · 투하 지점
+  rx.strokeStyle = 'rgba(156,242,198,0.55)'; rx.lineWidth = 1.2 / sc; rx.beginPath(); track.forEach((p, i) => i ? rx.lineTo(p[0], -p[1]) : rx.moveTo(p[0], -p[1])); rx.stroke();
+  for (const d of F.drops) { rx.fillStyle = '#F2B33D'; rx.beginPath(); rx.arc(d.x, -d.n, 2.4 / sc * 1.5, 0, 6.3); rx.fill(); }
+  rx.restore();
+  rx.strokeStyle = 'rgba(156,242,198,0.25)'; rx.lineWidth = 1; [1 / 3, 2 / 3].forEach(f => { rx.beginPath(); rx.arc(R, R, R * f, 0, 6.3); rx.stroke(); });
+  rx.beginPath(); rx.moveTo(R, 0); rx.lineTo(R, W); rx.moveTo(0, R); rx.lineTo(W, R); rx.stroke();
+  rx.fillStyle = '#9CF2C6'; rx.beginPath(); rx.moveTo(R, R - 9); rx.lineTo(R + 6, R + 7); rx.lineTo(R, R + 3); rx.lineTo(R - 6, R + 7); rx.closePath(); rx.fill();
+  $('rlab').textContent = `레이더 · ${Math.round(range)} km`;
+}
+
+// ── 소리(웹 오디오) ───────────────────────────────
+let AC = null, SND = null;
+function audioInit() {
+  if (AC || muted) return; const C = window.AudioContext || window.webkitAudioContext; if (!C) return;
+  AC = new C(); const buf = AC.createBuffer(1, AC.sampleRate * 2, AC.sampleRate), d = buf.getChannelData(0); let b = 0;
+  for (let i = 0; i < d.length; i++) { const w = Math.random() * 2 - 1; b = (b + 0.02 * w) / 1.02; d[i] = b * 3.5 + w * 0.15; }
+  const src = AC.createBufferSource(); src.buffer = buf; src.loop = true;
+  const windF = AC.createBiquadFilter(); windF.type = 'bandpass'; windF.frequency.value = 400; windF.Q.value = 0.7; const windG = AC.createGain(); windG.gain.value = 0;
+  const rainF = AC.createBiquadFilter(); rainF.type = 'highpass'; rainF.frequency.value = 2500; const rainG = AC.createGain(); rainG.gain.value = 0;
+  const master = AC.createGain(); master.gain.value = 0.7; master.connect(AC.destination);
+  src.connect(windF); windF.connect(windG); windG.connect(master); src.connect(rainF); rainF.connect(rainG); rainG.connect(master);
+  const eng = AC.createGain(); eng.gain.value = 0.035; const lp = AC.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 260;
+  [72, 73.3, 145].forEach(f => { const o = AC.createOscillator(); o.type = 'sawtooth'; o.frequency.value = f; o.connect(lp); o.start(); }); lp.connect(eng); eng.connect(master);
+  src.start(); SND = { windF, windG, rainG, master, buf };
+}
+function thunder(delay, power) {
+  if (!AC || muted) return; const s = AC.createBufferSource(); s.buffer = SND.buf; const f = AC.createBiquadFilter(); f.type = 'lowpass'; f.frequency.value = 160; const g = AC.createGain(); const t = AC.currentTime + delay;
+  g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(0.9 * power, t + 0.08); g.gain.exponentialRampToValueAtTime(0.001, t + 2.6);
+  s.connect(f); f.connect(g); g.connect(SND.master); s.start(t, Math.random()); s.stop(t + 2.8);
+}
+function audioUpdate() {
+  if (!SND) return; const t = AC.currentTime; const wsN = F.ws / S.vFL;
+  SND.windG.gain.setTargetAtTime(muted ? 0 : 0.08 + 0.5 * wsN * (1 - 0.6 * U.uClear.value) + 0.4 * F.f.turb, t, 0.3);
+  SND.windF.frequency.setTargetAtTime(280 + 700 * wsN + 400 * F.f.turb, t, 0.3);
+  SND.rainG.gain.setTargetAtTime(muted ? 0 : 0.35 * F.f.rain, t, 0.3);
+}
+
+// ── 입력 ─────────────────────────────────────────
+const app = $('app');
+app.addEventListener('pointerdown', e => { if (state !== 'play' || e.target.closest('button')) return; ptr = { id: e.pointerId, x0: e.clientX, x: e.clientX }; try { app.setPointerCapture(e.pointerId); } catch (_) {} });
+app.addEventListener('pointermove', e => { if (ptr && e.pointerId === ptr.id) ptr.x = e.clientX; });
+const endP = e => { if (ptr && e.pointerId === ptr.id) ptr = null; }; app.addEventListener('pointerup', endP); app.addEventListener('pointercancel', endP);
+window.addEventListener('keydown', e => {
+  const k = e.key.toLowerCase();
+  if (['arrowleft', 'arrowright', 'a', 'd'].includes(k)) { keys.add(k); e.preventDefault(); }
+  else if ((k === ' ' || k === 'enter') && state === 'play') { e.preventDefault(); doDrop(); }
+  else if (k === 'enter' && state === 'intro') start(e);
+  else if (k === 'p' || k === 'escape') pause(state === 'play');
+});
+window.addEventListener('keyup', e => keys.delete(e.key.toLowerCase()));
+const wrap = a => Math.atan2(Math.sin(a), Math.cos(a));
+function readSteer() {
+  let s = 0; if (keys.has('arrowleft') || keys.has('a')) s -= 1; if (keys.has('arrowright') || keys.has('d')) s += 1;
+  if (ptr) s = Math.max(-1, Math.min(1, (ptr.x - ptr.x0) / 110));
+  if (auto) { // 자동 조종(점검용): 바람 보정하며 중심으로, 바람이 잦아들면 투하
+    const dx = -F.x, dn = -F.n, L = Math.hypot(dx, dn) || 1; const [wx, wn] = F.wind || [0, 0];
+    let want = Math.atan2(dn, dx) + Math.asin(TE.clamp(-((wx * -dn + wn * dx) / L) / TE.T.airspeed, -0.9, 0.9));
+    s = TE.clamp(-wrap(want - F.hdg) * 2.2, -1, 1);
+    if (F.phase === 'eye' && F.ws < 0.3 * S.vFL && F.sondes > 0 && (F.drops.length === 0 || F.drops[F.drops.length - 1].done)) doDrop();
+  }
+  steer += (s - steer) * 0.25;
+}
+
+// ── 알림 ─────────────────────────────────────────
+function say(text, kind = '', sec = 3) { const el = document.createElement('div'); el.textContent = text; if (kind) el.className = kind; const b = $('msg'); b.appendChild(el); while (b.children.length > 3) b.firstChild.remove(); setTimeout(() => el.remove(), sec * 1000); }
+const PH = { outer: '바깥 나선 띠', wall: '눈벽 — 가장 거친 구간', eye: '눈 — 고요' };
+function events() {
+  for (const e of F.events) {
+    if (e.k === 'phase') {
+      if (e.to === 'wall' && e.from === 'outer') say('눈벽 진입 — 기체를 단단히 잡으세요', 'big', 2.6);
+      if (e.to === 'eye') say('눈 안으로 — 위로 하늘이 뚫렸습니다', 'big', 3.2);
+      if (e.to === 'wall' && e.from === 'eye') say('눈을 벗어났습니다 — 다시 눈벽', '', 2.4);
+    } else if (e.k === 'flash') { flash = Math.max(flash, e.i); thunder(0.25 + Math.random() * 1.2, e.i); }
+    else if (e.k === 'drop') say(`낙하 관측기 #${F.drops.length} 투하 — 바다까지 떨어지는 중`, 'sonde', 2.6);
+    else if (e.k === 'splash') { const d = e.d; say(`착수 · 지상 기압 ${d.p.toFixed(1)} hPa · 지상 바람 ${Math.round(d.sfcWind)} m/s · 떠밀림 ${Math.hypot(d.x - d.x0, d.n - d.n0).toFixed(1)} km`, 'sonde', 5); }
+    else if (e.k === 'over') endGame();
+  }
+  F.events.length = 0;
+}
+function doDrop() { if (state !== 'play' || !F || F.sondes <= 0) return; if (F.drops.length && !F.drops[F.drops.length - 1].done) return; TE.drop(F); events(); }
+$('dropbtn').onclick = doDrop;
+
+// ── 흐름 ─────────────────────────────────────────
+function start(ev) {
+  calm = $('calm').checked; muted = $('mute').checked; setup(); if (ev && ev.isTrusted !== false && ev.type) audioInit(); if (AC && AC.state === 'suspended') AC.resume();
+  state = 'play'; $('intro').hidden = true; $('endcard').hidden = true; $('hud').hidden = false; $('icons').hidden = false; $('playfoot').hidden = false; canvas.focus();
+  $('soundbtn').textContent = muted ? '소리 끔' : '소리 켬';
+  say('레이더 가운데 맑은 구멍(눈)을 향해 가세요', '', 4);
+}
+$('startbtn').onclick = start;
+$('againbtn').onclick = e => { start(e); };
+$('otherbtn').onclick = () => { seed = ((Date.now() / 1000) | 0); $('endcard').hidden = true; $('intro').hidden = false; state = 'intro'; $('hud').hidden = true; $('icons').hidden = true; $('playfoot').hidden = true; setup(); };
+$('pausebtn').onclick = () => pause(true); $('resumebtn').onclick = () => pause(false);
+$('quitbtn').onclick = () => { $('pausecard').hidden = true; state = 'play'; F.over = true; F.end = 'quit'; endGame(); };
+$('soundbtn').onclick = () => { muted = !muted; if (!muted) audioInit(); $('soundbtn').textContent = muted ? '소리 끔' : '소리 켬'; $('soundbtn').setAttribute('aria-pressed', String(!muted)); };
+function pause(on) { if (on && state === 'play') { state = 'pause'; $('pausecard').hidden = false; if (AC) AC.suspend(); } else if (!on && state === 'pause') { state = 'play'; $('pausecard').hidden = true; if (AC) AC.resume(); canvas.focus(); } }
+document.addEventListener('visibilitychange', () => { if (document.hidden) pause(true); });
+
+const END = { done: '관측 완료', hull: '기체 점검을 위해 돌아왔습니다', fuel: '연료가 다 돼 돌아왔습니다', left: '태풍에서 멀어졌습니다', quit: '돌아왔습니다' };
+async function endGame() {
+  if (state === 'end') return; state = 'end'; ptr = null;
+  const g = TE.grade(F), b = g.b;
+  $('etitle').textContent = END[F.end] || '돌아왔습니다';
+  $('estars').innerHTML = [0, 1, 2].map(i => i < g.stars ? '<b>★</b>' : '★').join('');
+  $('ep').textContent = b ? b.p.toFixed(1) + ' hPa' : '투하 없음'; $('ept').textContent = S.pc.toFixed(0) + ' hPa';
+  $('eerr').textContent = g.err != null ? (g.err >= 0 ? '+' : '') + g.err.toFixed(1) + ' hPa' : '-';
+  $('ed').textContent = b ? b.r1.toFixed(1) + ' km' : '-';
+  $('ew').textContent = Math.round(F.maxWind) + ' / ' + Math.round(S.vFL) + ' m/s'; $('eh').textContent = Math.round(F.hull) + '%';
+  const why = [];
+  if (F.end === 'hull') why.push('난기류가 센 곳을 오래 지나 기체 부하가 한계에 닿았습니다. 레이더의 붉은 곳을 피해 덜 거친 쪽으로 뚫어 보세요.');
+  else if (!b) why.push('낙하 관측기를 떨어뜨리지 못했습니다. 눈 안에서 바람이 가장 잦아든 곳에서 투하하세요.');
+  else if (g.err > 2) why.push(`관측기가 중심에서 ${b.r1.toFixed(1)} km 떨어진 곳에 떨어졌습니다. 바람이 센 곳에서 떨어뜨리면 떨어지는 동안 떠밀려 기압이 높게 잡힙니다.`);
+  else why.push('중심 가까이에 정확히 떨어뜨렸습니다. 실제 관측에서도 바람이 가장 약한 곳을 찾아 중심을 정합니다.');
+  if (F.hull > 60 && F.end !== 'hull') why.push('별 셋은 기체 부하 60% 이하일 때만 — 눈벽을 덜 거친 쪽으로 뚫어 보세요.');
+  $('ewhy').textContent = why.join(' ');
+  // 측정 기록 지문(데모): 기록이 한 글자라도 바뀌면 지문이 바뀐다
+  const rec = JSON.stringify({ game: 'into-the-eye', storm: { pc: S.pc, rm: S.rm, seed: S.seed }, drops: F.drops.map(d => ({ t: +d.t.toFixed(1), p: +d.p.toFixed(1), x: +d.x.toFixed(2), n: +d.n.toFixed(2) })) });
+  let fp = '-';
+  try { const h = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(rec)); fp = [...new Uint8Array(h)].map(x => x.toString(16).padStart(2, '0')).join(''); } catch (e) {}
+  $('efp').innerHTML = `측정 기록 지문(SHA-256) <code>${fp.slice(0, 32)}…</code><br>기록이 한 글자라도 바뀌면 지문이 달라집니다 — 데모이며 어디에도 올리지 않습니다.`;
+  $('endcard').hidden = false; $('hud').hidden = true; $('icons').hidden = true; $('playfoot').hidden = true;
+  drawMap(); window.__te.last = { stars: g.stars, err: g.err, hull: F.hull, end: F.end, fp };
+}
+$('copybtn').onclick = async () => {
+  const g = TE.grade(F); const txt = `태풍 속으로 ${'★'.repeat(g.stars)}${'☆'.repeat(3 - g.stars)}\n잰 중심기압 ${g.b ? g.b.p.toFixed(1) : '-'} hPa (실제 ${S.pc}) · 기체 부하 ${Math.round(F.hull)}%\n${location.href.split('#')[0]}`;
+  try { await navigator.clipboard.writeText(txt); $('copybtn').textContent = '복사했어요'; } catch (e) { $('copybtn').textContent = '복사 안 됨'; } setTimeout(() => $('copybtn').textContent = '결과 복사', 1600);
+};
+function drawMap() {
+  const c = $('mapc'), dpr = Math.min(2, devicePixelRatio || 1), W = c.clientWidth || 420, H = c.clientHeight || 280; c.width = W * dpr; c.height = H * dpr;
+  const x = c.getContext('2d'); x.scale(dpr, dpr); x.fillStyle = '#071119'; x.fillRect(0, 0, W, H);
+  const ext = Math.max(...track.map(p => Math.max(Math.abs(p[0]), Math.abs(p[1]))), S.rm * 2) * 1.12; const sc = Math.min(W, H) / 2 / ext;
+  x.save(); x.translate(W / 2, H / 2); x.scale(sc, sc); x.globalAlpha = 0.75; x.drawImage(RADAR_IMG, -RIMG_EXT, -RIMG_EXT, RIMG_EXT * 2, RIMG_EXT * 2); x.globalAlpha = 1;
+  x.strokeStyle = '#9CF2C6'; x.lineWidth = 2 / sc; x.beginPath(); track.forEach((p, i) => i ? x.lineTo(p[0], -p[1]) : x.moveTo(p[0], -p[1])); x.stroke();
+  for (const d of F.drops) { x.strokeStyle = '#F2B33D'; x.lineWidth = 1.5 / sc; x.beginPath(); x.moveTo(d.x0, -d.n0); x.lineTo(d.x, -d.n); x.stroke(); x.fillStyle = '#F2B33D'; x.beginPath(); x.arc(d.x, -d.n, 4 / sc, 0, 6.3); x.fill(); }
+  x.strokeStyle = '#EAF1F6'; x.lineWidth = 1.5 / sc; const k = 5 / sc; x.beginPath(); x.moveTo(-k, 0); x.lineTo(k, 0); x.moveTo(0, -k); x.lineTo(0, k); x.stroke();
+  x.restore(); x.fillStyle = 'rgba(165,183,198,0.85)'; x.font = '11px IBM Plex Sans KR, sans-serif'; x.fillText('초록 = 비행 경로 · 주황 = 투하 → 착수 · 흰 십자 = 실제 중심', 8, H - 8);
+}
+
+// ── 화면 갱신 ────────────────────────────────────
+const fxc = $('fx'), fx = fxc.getContext('2d'), frc = $('frame'), frx = frc.getContext('2d');
+let vw = 1, vh = 1, drops = [];
+function resize() {
+  vw = innerWidth; vh = innerHeight; renderer.setSize(vw, vh, false); camera.aspect = vw / vh; camera.updateProjectionMatrix();
+  fxc.width = Math.round(vw * PR); fxc.height = Math.round(vh * PR); frc.width = Math.round(vw * PR); frc.height = Math.round(vh * PR); drawFrame();
+}
+// 조종석 창틀(위 · 양옆 기둥)
+function drawFrame() {
+  const W = frc.width, H = frc.height; frx.clearRect(0, 0, W, H); frx.fillStyle = '#0B0F14';
+  frx.beginPath(); frx.moveTo(0, 0); frx.lineTo(W, 0); frx.lineTo(W, H * 0.045); frx.quadraticCurveTo(W / 2, H * 0.085, 0, H * 0.045); frx.closePath(); frx.fill();
+  const p = Math.min(W, H) * 0.035;
+  frx.beginPath(); frx.moveTo(0, H * 0.04); frx.lineTo(p * 1.4, H * 0.06); frx.lineTo(p * 2.6, H); frx.lineTo(0, H); frx.closePath(); frx.fill();
+  frx.beginPath(); frx.moveTo(W, H * 0.04); frx.lineTo(W - p * 1.4, H * 0.06); frx.lineTo(W - p * 2.6, H); frx.lineTo(W, H); frx.closePath(); frx.fill();
+  const g = frx.createLinearGradient(0, H * 0.8, 0, H); g.addColorStop(0, 'rgba(8,11,15,0)'); g.addColorStop(1, 'rgba(8,11,15,0.92)'); frx.fillStyle = g; frx.fillRect(0, H * 0.8, W, H * 0.2);
+}
+addEventListener('resize', resize);
+
+let envT = 0;
+function stepEnv(dt) {
+  const f = F.f || TE.fields(S, F.x, F.n); F.f = f;
+  if (!F.wind) { F.wind = TE.wind(S, F.x, F.n); F.ws = Math.hypot(...F.wind); F.p = TE.pressure(S, F.x, F.n); }
+  const eye = f.eye; U.uClear.value += (eye - U.uClear.value) * Math.min(1, dt * 1.5 + (dt ? 0 : 1));
+  const vis = eye > 0.5 ? 55 : 0.35 + 24 * Math.pow(1 - f.rain, 3.2);
+  const dens = 1.4 / vis; U.uFogDens.value += (dens - U.uFogDens.value) * Math.min(1, dt * 2 + (dt ? 0 : 1));
+  const fogOuter = new THREE.Color(0.4, 0.44, 0.49), fogWall = new THREE.Color(0.6, 0.62, 0.66), fogEye = new THREE.Color(0.66, 0.74, 0.83);
+  const c = fogOuter.clone().lerp(fogWall, Math.min(1, f.wall * 1.3)).lerp(fogEye, U.uClear.value);
+  U.uFogColor.value.lerp(c, Math.min(1, dt * 2 + (dt ? 0 : 1)));
+}
+function updateScene(dt, now) {
+  stepEnv(dt);
+  flash = Math.max(0, flash - dt * 3.2); U.uFlash.value = flash * flash; $('flash').style.opacity = (flash * flash * 0.5).toFixed(3);
+  U.uRot.value += dt * 0.004;
+  const alt = TE.T.alt, turbA = calm ? 0.25 : 1;
+  shake += ((F.f.turb || 0) - shake) * Math.min(1, dt * 3);
+  const t = now / 1000, a = shake * shake * turbA;
+  const jx = (Math.sin(t * 13.1) + Math.sin(t * 29.7) * 0.5) * a, jy = (Math.sin(t * 11.3 + 1) + Math.sin(t * 23.9) * 0.6) * a;
+  camera.position.set(F.x, alt + jy * 0.012, -F.n);
+  camera.rotation.y = F.hdg - Math.PI / 2 + jx * 0.012;
+  camera.rotation.x = -0.05 + jy * 0.02;
+  camera.rotation.z = -F.turn * 1.4 + jx * 0.03;
+  U.uCam.value.copy(camera.position); sky.position.copy(camera.position);
+  sea.position.set(F.x, 0, -F.n); deck.position.set(F.x, 5.2, -F.n);
+  // 빗줄기
+  const fwd = new THREE.Vector3(Math.cos(F.hdg), 0, -Math.sin(F.hdg)); const rgt = new THREE.Vector3(Math.sin(F.hdg), 0, Math.cos(F.hdg));
+  const [wx, wn] = F.wind; const side = (wx * Math.sin(F.hdg) - wn * Math.cos(F.hdg)) / 100;
+  const vrel = new THREE.Vector3().addScaledVector(fwd, -0.9).addScaledVector(rgt, -side * 0.6); vrel.y = -0.12;
+  const box = 0.06;
+  for (let i = 0; i < NR; i++) {
+    let ox = rainOff[i * 3] + vrel.x * dt, oy = rainOff[i * 3 + 1] + vrel.y * dt, oz = rainOff[i * 3 + 2] + vrel.z * dt;
+    if (ox < -box) ox += 2 * box; if (ox > box) ox -= 2 * box; if (oy < -box) oy += 2 * box; if (oy > box) oy -= 2 * box; if (oz < -box) oz += 2 * box; if (oz > box) oz -= 2 * box;
+    rainOff[i * 3] = ox; rainOff[i * 3 + 1] = oy; rainOff[i * 3 + 2] = oz;
+    const px = camera.position.x + ox, py = camera.position.y + oy, pz = camera.position.z + oz;
+    rainPos[i * 6] = px; rainPos[i * 6 + 1] = py; rainPos[i * 6 + 2] = pz; rainPos[i * 6 + 3] = px - vrel.x * 0.006; rainPos[i * 6 + 4] = py - vrel.y * 0.006; rainPos[i * 6 + 5] = pz - vrel.z * 0.006;
+  }
+  rainGeo.attributes.position.needsUpdate = true; rainMat.opacity = 0.32 * Math.min(1, F.f.rain * 1.4); rain.visible = F.f.rain > 0.03;
+  // 창 물방울
+  fx.setTransform(PR, 0, 0, PR, 0, 0); fx.clearRect(0, 0, vw, vh);
+  const want = Math.round(F.f.rain * 70); while (drops.length < want) drops.push({ x: Math.random() * vw, y: Math.random() * vh, r: 1.5 + Math.random() * 3.5, life: 0.4 + Math.random() * 1.2 });
+  for (let i = drops.length - 1; i >= 0; i--) {
+    const d = drops[i]; d.life -= dt; const cx = vw / 2, cy = vh * 0.45; d.x += (d.x - cx) * dt * 1.6 - side * 60 * dt; d.y += (d.y - cy) * dt * 1.2;
+    if (d.life <= 0 || d.x < 0 || d.x > vw || d.y < 0 || d.y > vh) { drops.splice(i, 1); continue; }
+    fx.globalAlpha = Math.min(1, d.life * 2) * 0.55; fx.strokeStyle = 'rgba(220,232,244,0.8)'; fx.lineWidth = 1; fx.beginPath(); fx.arc(d.x, d.y, d.r, 0, 6.3); fx.stroke();
+    fx.fillStyle = 'rgba(255,255,255,0.5)'; fx.beginPath(); fx.arc(d.x - d.r * 0.3, d.y - d.r * 0.3, d.r * 0.3, 0, 6.3); fx.fill();
+  }
+  fx.globalAlpha = 1;
+}
+
+const DIRS = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
+let hudT = 0;
+function hud() {
+  const hdgDeg = ((90 - F.hdg * 180 / Math.PI) % 360 + 360) % 360;
+  $('hdg').textContent = `HDG ${String(Math.round(hdgDeg) % 360).padStart(3, '0')}°`;
+  const ph = $('phase'); ph.textContent = PH[F.phase]; ph.className = 'phase ' + F.phase;
+  $('wv').firstChild.textContent = Math.round(F.ws);
+  // 바람이 불어 가는 방향을 기수 기준으로
+  const wa = Math.atan2(F.wind[1], F.wind[0]); const rel = -(wa - F.hdg) * 180 / Math.PI; $('warrow').style.transform = `rotate(${rel}deg)`;
+  $('pv').firstChild.textContent = F.p.toFixed(0);
+  $('gv').firstChild.textContent = Math.round(Math.hypot(...F.gs) * 3.6);
+  $('hv').firstChild.textContent = Math.round(F.hull); $('hbar').firstChild.style.width = F.hull + '%'; $('hbar').classList.toggle('hot', F.hull > 60); $('hv').classList.toggle('warnv', F.hull > 60);
+  $('sv').innerHTML = Array.from({ length: TE.T.sondes }, (_, i) => `<i class="${i < F.sondes ? 'on' : ''}"></i>`).join('');
+  const left = Math.max(0, TE.T.timeLimit - F.t); $('fv').textContent = `${Math.floor(left / 60)}:${String(Math.floor(left % 60)).padStart(2, '0')}`; $('fv').classList.toggle('warnv', left < 40);
+  $('dropbtn').disabled = F.sondes <= 0 || (F.drops.length > 0 && !F.drops[F.drops.length - 1].done);
+  $('dropbtn').innerHTML = F.drops.length && !F.drops[F.drops.length - 1].done ? '떨어지는 중…' : `낙하 관측기<br>투하<small>${F.sondes}개 · Space</small>`;
+  if (F.t > 10) $('steerhint').textContent = F.phase === 'eye' ? '바람이 가장 잦아드는 곳에서 투하' : '';
+}
+
+// ── 루프 ─────────────────────────────────────────
+let last = performance.now(), fpsA = 0, fpsN = 0;
+function frame(now) {
+  const dt = Math.max(0, Math.min(0.05, (now - last) / 1000)); last = now;
+  if (state === 'play') {
+    const H = dt * (auto ? +(qs.get('speed') || 1) : 1); const sub = Math.max(1, Math.ceil(H / 0.02));
+    for (let i = 0; i < sub && !F.over; i++) { readSteer(); TE.step(F, steer, H / sub); }
+    U.uTime.value += H; events();
+    if (!track.length || Math.hypot(F.x - track[track.length - 1][0], F.n - track[track.length - 1][1]) > 0.8) track.push([F.x, F.n]);
+    if ((hudT += dt) > 0.08) { hudT = 0; hud(); }
+    audioUpdate();
+  } else if (state === 'intro') { U.uTime.value += dt; F.hdg += dt * 0.03; }
+  updateScene(state === 'pause' ? 0 : dt, now);
+  renderer.render(scene, camera);
+  if (state === 'play' || state === 'pause') drawRadar();
+  fpsA += dt; fpsN++; if (fpsA > 2) { if (fpsA / fpsN > 0.03 && PR > 1) { PR = Math.max(1, PR - 0.3); renderer.setPixelRatio(PR); resize(); } fpsA = 0; fpsN = 0; }
+  requestAnimationFrame(frame);
+}
+// 첫 화면 배경: 눈 안에서 본 경기장
+setup(); resize();
+{ const P = presetStorm(); F.x = S.re * 0.25; F.n = -S.re * 0.1; F.hdg = 1.2; F.f = TE.fields(S, F.x, F.n); F.wind = TE.wind(S, F.x, F.n); F.ws = Math.hypot(...F.wind); F.p = TE.pressure(S, F.x, F.n); U.uClear.value = 1; stepEnv(0); }
+window.__te = { get F() { return F; }, get S() { return S; }, get state() { return state; }, start, last: null, warp(r, th) { F.x = Math.cos(th) * r; F.n = Math.sin(th) * r; F.hdg = th + Math.PI; F.f = null; F.wind = null; } };
+if (qs.get('play') === '1' || auto) start();
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>

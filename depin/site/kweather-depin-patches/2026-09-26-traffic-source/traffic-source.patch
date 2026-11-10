@@ -1,0 +1,655 @@
+diff --git a/prisma/schema.prisma b/prisma/schema.prisma
+index 91ceb92..f09f91b 100644
+--- a/prisma/schema.prisma
++++ b/prisma/schema.prisma
+@@ -787,8 +787,13 @@ model TrafficVisitor {
+   vhash     String
+   hits      Int      @default(1)
+   firstPath String?
++  /// 그날 첫 입구 (2026-09-26, lib/traffic-source.ts) - utm_source · promo:코드 · 리퍼러 호스트 · (direct) · (internal). 그 전 행은 null
++  source    String?
++  medium    String?
++  campaign  String?
+ 
+   @@id([day, vhash])
++  @@index([day, source])
+ }
+ 
+ model SystemStat {
+diff --git a/prisma/sql/2026-09-26-traffic-source.sql b/prisma/sql/2026-09-26-traffic-source.sql
+new file mode 100644
+index 0000000..21b3cd4
+--- /dev/null
++++ b/prisma/sql/2026-09-26-traffic-source.sql
+@@ -0,0 +1,7 @@
++-- 유입 소스(2026-09-26): 방문자 행에 그날 첫 입구(소스·매체·캠페인)를 적는다.
++-- 관리자 "시스템·용량" 탭의 「유입 소스별 방문자 · 페이지뷰」 표와 CSV 내려받기가 이 열을 읽는다.
++-- 코드보다 먼저 적용해도, 나중에 적용해도 된다(코드는 열이 없으면 옛 방식으로 기록한다). 여러 번 실행해도 안전하다.
++ALTER TABLE "TrafficVisitor" ADD COLUMN IF NOT EXISTS "source" TEXT;
++ALTER TABLE "TrafficVisitor" ADD COLUMN IF NOT EXISTS "medium" TEXT;
++ALTER TABLE "TrafficVisitor" ADD COLUMN IF NOT EXISTS "campaign" TEXT;
++CREATE INDEX IF NOT EXISTS "TrafficVisitor_day_source_idx" ON "TrafficVisitor" ("day", "source");
+diff --git a/src/app/api/admin/system/route.ts b/src/app/api/admin/system/route.ts
+index cc77cc5..6e0bf99 100644
+--- a/src/app/api/admin/system/route.ts
++++ b/src/app/api/admin/system/route.ts
+@@ -17,13 +17,13 @@ async function loadCfg() {
+ 
+ /**
+  * 관리자 "시스템·용량" 탭.
+- *  GET  → 현재 스냅샷 + 최근 30일 트래픽 + 최근 90일 일별 스냅샷 + 설정
++ *  GET  → 현재 스냅샷 + 최근 30일 트래픽 + 최근 30일 유입 소스별 방문자·페이지뷰 + 최근 90일 일별 스냅샷 + 설정
+  *  PUT  {planLimitGb?, alertPct?, retentionYears?, readingsPerDevicePerDay?} 설정 저장
+  *  PUT  {snapshot: true} 지금 스냅샷 1건 저장
+  */
+ export async function GET(req: NextRequest) {
+   if (!checkAdminSecret(req)) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+-  const [now, traffic, visitors, history, cfg] = await Promise.all([
++  const [now, traffic, visitors, history, cfg, sources] = await Promise.all([
+     collectSystemStats(),
+     prisma.$queryRaw<{ day: Date; bucket: string; hits: bigint }[]>`
+       select day, bucket, hits from "TrafficDaily" where day > ((now() at time zone 'Asia/Seoul')::date - 30) order by day`.catch(() => []),
+@@ -33,13 +33,25 @@ export async function GET(req: NextRequest) {
+       select day, "dbBytes", "rawRows", "rawBytes", "ingestLogRows", "ingestLogBytes", devices, "activeDevices", "rawRows24h", "pageViews", visitors, "apiHits"
+       from "SystemStat" where day > ((now() at time zone 'Asia/Seoul')::date - 90) order by day`.catch(() => []),
+     loadCfg(),
++    /* 유입 소스(2026-09-26) - 방문자 행의 그날 첫 입구로 묶는다. 소스 열이 없으면(SQL 적용 전) ready=false.
++       source 가 null 인 행은 소스를 적기 전의 방문이다(화면에서 「(기록 전)」). */
++    prisma.$queryRaw<{ day: Date; source: string | null; medium: string | null; campaign: string | null; visitors: bigint; pages: bigint | null }[]>`
++      select day, source, medium, campaign, count(*) as visitors, sum(hits) as pages
++      from "TrafficVisitor" where day > ((now() at time zone 'Asia/Seoul')::date - 30)
++      group by day, source, medium, campaign order by day`
++      .then((rows) => ({ ready: true, rows }))
++      .catch(() => ({ ready: false, rows: [] as never[] })),
+   ]);
+   const days: Record<string, { page: number; api: number; bot: number; visitors: number }> = {};
+   const key = (d: Date) => new Date(d).toISOString().slice(0, 10);
+   for (const t of traffic) { const k = key(t.day); days[k] ??= { page: 0, api: 0, bot: 0, visitors: 0 }; (days[k] as Record<string, number>)[t.bucket] = Number(t.hits); }
+   for (const v of visitors) { const k = key(v.day); days[k] ??= { page: 0, api: 0, bot: 0, visitors: 0 }; days[k].visitors = Number(v.n); }
+   const hist = history.map((h) => Object.fromEntries(Object.entries(h).map(([k, v]) => [k, typeof v === "bigint" ? Number(v) : v instanceof Date ? key(v) : v])));
+-  return NextResponse.json({ now, trafficDays: days, history: hist, cfg });
++  const sourceRows = sources.rows.map((r) => ({
++    day: key(r.day), source: r.source, medium: r.medium ?? "", campaign: r.campaign ?? "",
++    visitors: Number(r.visitors), pages: Number(r.pages ?? 0),
++  }));
++  return NextResponse.json({ now, trafficDays: days, history: hist, cfg, trafficSources: { ready: sources.ready, rows: sourceRows } });
+ }
+ 
+ const Body = z.object({
+diff --git a/src/app/layout.tsx b/src/app/layout.tsx
+index 653d610..e8a9423 100644
+--- a/src/app/layout.tsx
++++ b/src/app/layout.tsx
+@@ -55,7 +55,9 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
+     const ip = (h.get("x-forwarded-for")?.split(",")[0] ?? h.get("x-real-ip") ?? "").trim();
+     const ua = h.get("user-agent") ?? "";
+     const path = h.get("x-invoke-path") ?? h.get("next-url") ?? h.get("x-matched-path") ?? "/";
+-    after(() => recordPageView({ ip, ua, path }));
++    /* 유입 소스 - 미들웨어가 문서 요청에만 붙인다(lib/traffic-source.ts). 없으면 소스 없이 기록 */
++    const src = h.get("x-wb-src");
++    after(() => recordPageView({ ip, ua, path, src }));
+   } catch { /* 정적 렌더 등 headers 불가 시 무시 */ }
+   return (
+     <html lang="ko" className={`${montserrat.variable} ${roboto.variable}`}>
+diff --git a/src/components/admin/SystemPanel.tsx b/src/components/admin/SystemPanel.tsx
+index 3990784..7fe312c 100644
+--- a/src/components/admin/SystemPanel.tsx
++++ b/src/components/admin/SystemPanel.tsx
+@@ -7,6 +7,8 @@ import { useCallback, useEffect, useMemo, useState } from "react";
+ import type { SystemSnapshot } from "@/lib/system-stats";
+ import { toast } from "@/components/Toast";
+ import { Pager, SortTh, usePager, useSort, type SortSpec } from "@/components/admin/sortable";
++import TrafficSources from "@/components/admin/TrafficSources";
++import type { SourceDayRow } from "@/lib/traffic-source-table";
+ 
+ interface Cfg { planLimitGb: number; alertPct: number; retentionYears: number; readingsPerDevicePerDay: number; ingestLogRetentionDays: number }
+ interface DayTraffic { page: number; api: number; bot: number; visitors: number }
+@@ -31,6 +33,8 @@ export default function SystemPanel({ secret }: { secret: string }) {
+   const [now, setNow] = useState<SystemSnapshot | null>(null);
+   const [traffic, setTraffic] = useState<Record<string, DayTraffic>>({});
+   const [hist, setHist] = useState<Hist[]>([]);
++  /* 유입 소스별 방문자·페이지뷰 (2026-09-26) - ready=false 면 DB 에 소스 열이 아직 없다 */
++  const [sources, setSources] = useState<{ ready: boolean; rows: SourceDayRow[] }>({ ready: false, rows: [] });
+   const [cfg, setCfg] = useState<Cfg>({ planLimitGb: 8, alertPct: 70, retentionYears: 1, readingsPerDevicePerDay: 1440, ingestLogRetentionDays: 30 });
+   const [draft, setDraft] = useState<Cfg | null>(null);
+   const [simDevices, setSimDevices] = useState(100000);
+@@ -43,6 +47,7 @@ export default function SystemPanel({ secret }: { secret: string }) {
+     const d = await r.json();
+     if (!r.ok) { setMsg(d.error || "조회 실패"); toast.err(d.error || "조회 실패"); return; }
+     setNow(d.now); setTraffic(d.trafficDays); setHist(d.history); setCfg(d.cfg);
++    setSources(d.trafficSources ?? { ready: false, rows: [] });
+     // eslint-disable-next-line react-hooks/exhaustive-deps
+   }, [secret]);
+   useEffect(() => { load(); }, [load]);
+@@ -217,6 +222,9 @@ export default function SystemPanel({ secret }: { secret: string }) {
+         </div>
+       </div>
+ 
++      {/* 유입 소스별 방문자 · 페이지뷰 + 내려받기 (2026-09-26) */}
++      <TrafficSources ready={sources.ready} rows={sources.rows} daily={traffic} />
++
+       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(420px, 1fr))", gap: 16, marginBottom: 16 }}>
+         {/* DB 상태 + 크론 */}
+         <div className="feed-wrap">
+diff --git a/src/components/admin/TrafficSources.tsx b/src/components/admin/TrafficSources.tsx
+new file mode 100644
+index 0000000..0652ffa
+--- /dev/null
++++ b/src/components/admin/TrafficSources.tsx
+@@ -0,0 +1,113 @@
++"use client";
++/* 관리자 "시스템·용량" 탭 - 유입 소스별 방문자 · 페이지뷰 (2026-09-26 지시: "일자별 방문자 페이지수를 소스별로 보고싶은데 다운로드도 가능하게")
++   줄 = 소스(방문자의 그날 첫 입구), 칸 = 날짜(최근 날이 왼쪽 - 위 일일 표와 같은 순서). 계산은 lib/traffic-source-table.ts.
++   소스는 기록을 켠 뒤의 방문부터 있다. 그 전 방문자는 「(기록 전)」 한 줄로 모인다. */
++import { useMemo, useState } from "react";
++import { BEFORE, dailyTable, pivot, pivotTable, rawTable, toCsv, toUtf16, type DayTotals, type Metric, type SourceDayRow, type Table } from "@/lib/traffic-source-table";
++
++const fmtN = (n: number) => n.toLocaleString("ko-KR");
++const today = () => new Date(Date.now() + 9 * 3600_000).toISOString().slice(0, 10).replace(/-/g, "");
++
++export default function TrafficSources({ ready, rows, daily }: { ready: boolean; rows: SourceDayRow[]; daily: Record<string, DayTotals> }) {
++  const [metric, setMetric] = useState<Metric>("visitors");
++  const [q, setQ] = useState("");
++  const [excel, setExcel] = useState(true);
++  const days = useMemo(() => [...new Set([...Object.keys(daily), ...rows.map((r) => r.day)])].sort().reverse(), [daily, rows]);
++  const p = useMemo(() => pivot(rows, days, metric), [rows, days, metric]);
++  const needle = q.trim().toLowerCase();
++  const shown = needle ? p.rows.filter((r) => r.source.toLowerCase().includes(needle) || r.mediums.some((m) => m.toLowerCase().includes(needle))) : p.rows;
++  const max = Math.max(1, ...p.rows.filter((r) => r.source !== BEFORE).flatMap((r) => r.cells));
++  const recorded = p.rows.some((r) => r.source !== BEFORE);
++  const unit = metric === "visitors" ? "방문자" : "페이지뷰";
++
++  const save = (name: string, t: Table) => {
++    const blob = excel
++      ? new Blob([toUtf16(t) as BlobPart], { type: "text/csv;charset=utf-16le" })
++      : new Blob([toCsv(t)], { type: "text/csv;charset=utf-8" });
++    const a = document.createElement("a");
++    a.href = URL.createObjectURL(blob);
++    a.download = `${name}-${today()}.csv`;
++    document.body.appendChild(a); a.click(); a.remove();
++    setTimeout(() => URL.revokeObjectURL(a.href), 2000);
++  };
++  const tint = (v: number) => (v ? `rgba(77, 77, 206, ${(0.06 + 0.34 * (Math.log1p(v) / Math.log1p(max))).toFixed(3)})` : undefined);
++  const btn = { padding: "6px 12px", fontSize: 13 } as const;
++
++  return (
++    <div className="feed-wrap" style={{ marginBottom: 16 }}>
++      <div className="feed-head"><span className="feed-head-title">유입 소스별 방문자 · 페이지뷰 (30일)</span><span className="dim">자체 계측 · 방문의 첫 입구 기준 · 봇 제외</span></div>
++
++      <div style={{ padding: "10px 14px", display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
++        {(["visitors", "pages"] as const).map((m) => (
++          <button key={m} className={metric === m ? "btn-primary" : "btn-ghost"} style={btn} onClick={() => setMetric(m)} aria-pressed={metric === m}>
++            {m === "visitors" ? "방문자" : "페이지뷰"}
++          </button>
++        ))}
++        <input className="field-input" type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder="소스 찾기 - pixie, t.co …" aria-label="소스 찾기" style={{ width: 200, padding: "6px 10px", fontSize: 13 }} />
++        <span style={{ flex: 1 }} />
++        <span className="dim" style={{ fontSize: 12.5 }}>내려받기</span>
++        <button className="btn-ghost" style={btn} onClick={() => save("wellbian-traffic-daily", dailyTable(daily))}>일별 합계</button>
++        <button className="btn-ghost" style={btn} disabled={!recorded} onClick={() => save(`wellbian-traffic-source-${metric}`, pivotTable(p, metric))}>소스×일자 ({unit})</button>
++        <button className="btn-ghost" style={btn} disabled={!recorded} onClick={() => save("wellbian-traffic-source-raw", rawTable(rows))}>원자료</button>
++        <label className="dim" style={{ fontSize: 12.5, display: "inline-flex", gap: 5, alignItems: "center" }}>
++          <input type="checkbox" checked={excel} onChange={(e) => setExcel(e.target.checked)} />엑셀용(한글 안 깨짐)
++        </label>
++      </div>
++
++      {!ready ? (
++        <p className="dim" style={{ fontSize: 13, padding: "0 14px 14px", margin: 0, lineHeight: 1.65 }}>
++          소스 기록이 아직 켜지지 않았습니다. DB 에 <span className="mono">prisma/sql/2026-09-26-traffic-source.sql</span> 을 적용하면(또는 <span className="mono">npx prisma db push</span>)
++          그 뒤 방문부터 소스가 쌓입니다. 위 일일 표와 「일별 합계」 내려받기는 지금도 됩니다.
++        </p>
++      ) : (
++        <>
++          {!recorded && (
++            <p className="dim" style={{ fontSize: 13, padding: "0 14px 10px", margin: 0, lineHeight: 1.65 }}>
++              소스는 기록을 켠 뒤의 방문부터 쌓입니다. 그 전 방문자는 「{BEFORE}」 한 줄로 보이고 소스로 나눌 수 없습니다 - 지난 기간의 소스는 GA 에서 봅니다.
++            </p>
++          )}
++          <div className="feed-table-scroll" style={{ maxHeight: 420, overflow: "auto" }}>
++            <table className="feed-table compact">
++              <thead><tr>
++                <th style={{ position: "sticky", left: 0, top: 0, zIndex: 3, minWidth: 170 }}>소스 · 매체</th>
++                <th style={{ position: "sticky", top: 0, zIndex: 2, textAlign: "right" }}>합계</th>
++                {p.days.map((d) => <th key={d} style={{ position: "sticky", top: 0, zIndex: 2, textAlign: "right" }}>{d.slice(5)}</th>)}
++              </tr></thead>
++              <tbody>
++                {shown.length === 0 && <tr><td colSpan={p.days.length + 2} className="dim">맞는 소스가 없습니다</td></tr>}
++                {shown.map((r, i) => (
++                  <tr key={r.source}>
++                    <td style={{ position: "sticky", left: 0, zIndex: 1, background: i % 2 ? "#f8f8fd" : "var(--bg-1)", maxWidth: 220, overflow: "hidden", textOverflow: "ellipsis" }} title={r.source}>
++                      <b style={{ color: r.quiet ? "var(--ink-faint)" : undefined }}>{r.source}</b>
++                      {r.mediums.length > 0 && <span className="dim" style={{ marginLeft: 6, fontSize: 11.5 }}>{r.mediums.join(" · ")}</span>}
++                    </td>
++                    <td className="num"><b>{fmtN(r.total)}</b></td>
++                    {r.cells.map((v, j) => (
++                      <td key={p.days[j]} className="num" title={v ? `${r.source} · ${p.days[j]} · ${unit} ${fmtN(v)}` : undefined}
++                        style={{ background: r.source === BEFORE ? undefined : tint(v), color: v ? (r.quiet ? "var(--ink-dim)" : undefined) : "var(--ink-ghost)" }}>
++                        {v ? fmtN(v) : "·"}
++                      </td>
++                    ))}
++                  </tr>
++                ))}
++              </tbody>
++              <tfoot>
++                <tr>
++                  <td style={{ position: "sticky", left: 0, zIndex: 1, background: "var(--bg-2)", fontWeight: 700 }}>합계{needle ? " (전체)" : ""}</td>
++                  <td className="num" style={{ background: "var(--bg-2)" }}><b>{fmtN(p.total)}</b></td>
++                  {p.colTotals.map((v, j) => <td key={p.days[j]} className="num" style={{ background: "var(--bg-2)", fontWeight: 700 }}>{v ? fmtN(v) : "·"}</td>)}
++                </tr>
++              </tfoot>
++            </table>
++          </div>
++          <p className="dim" style={{ fontSize: 12.5, padding: "8px 14px 12px", margin: 0, lineHeight: 1.65 }}>
++            {unit === "방문자" ? "방문자 = 그날 그 소스로 처음 들어온 방문자 수(한 사람은 하루 한 소스)." : "페이지뷰 = 그 소스로 들어온 방문자들의 그날 페이지뷰 합."}{" "}
++            소스는 utm_source → promo 코드 → 리퍼러 순으로 정합니다. (direct) = 리퍼러도 UTM 도 없는 방문(텔레그램·카카오톡 앱 안 브라우저 포함) ·
++            (internal) = 사이트 안 이동 중 새로 잡힌 방문자(휴대폰 망 전환 등) · {BEFORE} = 소스 기록을 켜기 전 방문자.
++            합계는 위 일일 표의 방문자·페이지뷰와 같습니다(기록을 켠 날부터).
++          </p>
++        </>
++      )}
++    </div>
++  );
++}
+diff --git a/src/lib/traffic-source-table.ts b/src/lib/traffic-source-table.ts
+new file mode 100644
+index 0000000..e3a8d06
+--- /dev/null
++++ b/src/lib/traffic-source-table.ts
+@@ -0,0 +1,81 @@
++/**
++ * 유입 소스별 일자 표 · 내려받기 (2026-09-26) - 관리자 "시스템·용량" 탭(components/admin/TrafficSources.tsx).
++ *
++ * 줄 = 소스(그날 방문자의 첫 입구 - lib/traffic-source.ts), 칸 = 날짜. 값은 방문자 또는 페이지뷰.
++ * 한 방문자(하루 해시)는 하루에 한 소스로만 세므로 소스별 방문자를 더하면 그날 방문자와 같고,
++ * 소스별 페이지뷰를 더하면 그날 페이지뷰와 같다(소스를 적기 시작한 날부터).
++ * 소스를 적기 전의 방문자는 「(기록 전)」 한 줄로 모은다 - 지난 기간은 소스로 나눌 수 없다(소급 불가).
++ *
++ * 내려받기는 브라우저에서 만든다 - 관리자 키를 주소에 싣지 않으려고. 엑셀용(UTF-16 + 탭)과 일반 CSV(UTF-8 BOM) 두 가지.
++ * 순수 계산이라 traffic-source.test.ts 가 값을 고정한다.
++ */
++export type SourceDayRow = { day: string; source: string | null; medium: string; campaign: string; visitors: number; pages: number };
++export type Metric = "visitors" | "pages";
++export type DayTotals = { page: number; api: number; bot: number; visitors: number };
++export type PivotRow = { source: string; mediums: string[]; total: number; cells: number[]; quiet: boolean };
++export type Pivot = { days: string[]; rows: PivotRow[]; colTotals: number[]; total: number };
++
++export const BEFORE = "(기록 전)";
++/* 우리가 움직일 수 없는 입구 - 표에서 흐리게 */
++const QUIET = new Set(["(direct)", "(internal)", BEFORE]);
++
++/** days 순서 그대로 열을 만든다(화면은 최근 날이 왼쪽). 합계 많은 순, 「(기록 전)」은 맨 아래. */
++export function pivot(rows: SourceDayRow[], days: string[], metric: Metric): Pivot {
++  const ix = new Map(days.map((d, i) => [d, i]));
++  const by = new Map<string, { total: number; cells: number[]; med: Map<string, number> }>();
++  for (const r of rows) {
++    const i = ix.get(r.day);
++    const v = metric === "visitors" ? r.visitors : r.pages;
++    if (i === undefined || !v) continue;
++    const key = r.source ?? BEFORE;
++    let a = by.get(key);
++    if (!a) { a = { total: 0, cells: days.map(() => 0), med: new Map() }; by.set(key, a); }
++    a.total += v; a.cells[i] += v;
++    if (r.source) a.med.set(r.medium || "(not set)", (a.med.get(r.medium || "(not set)") ?? 0) + v);
++  }
++  const out: PivotRow[] = [...by.entries()].map(([source, a]) => ({
++    source, total: a.total, cells: a.cells, quiet: QUIET.has(source),
++    mediums: [...a.med.entries()].sort((x, y) => y[1] - x[1] || (x[0] < y[0] ? -1 : 1)).map(([m]) => m),
++  })).sort((x, y) => Number(x.source === BEFORE) - Number(y.source === BEFORE) || y.total - x.total || (x.source < y.source ? -1 : 1));
++  const colTotals = days.map((_, i) => out.reduce((s, r) => s + r.cells[i], 0));
++  return { days, rows: out, colTotals, total: out.reduce((s, r) => s + r.total, 0) };
++}
++
++/* ── 파일 ─────────────────────────────────────────────────────────── */
++export type Table = (string | number)[][];
++
++/** 일별 합계 - 날짜 오름차순 */
++export const dailyTable = (daily: Record<string, DayTotals>): Table => [
++  ["날짜", "방문자", "페이지뷰", "API 호출", "봇"],
++  ...Object.keys(daily).sort().map((d) => [d, daily[d].visitors, daily[d].page, daily[d].api, daily[d].bot]),
++];
++
++/** 화면 표 그대로(파일은 날짜 오름차순) */
++export const pivotTable = (p: Pivot, metric: Metric): Table => {
++  const order = p.days.map((d, i) => [d, i] as const).sort((a, b) => (a[0] < b[0] ? -1 : 1));
++  return [
++    [`소스 (${metric === "visitors" ? "방문자" : "페이지뷰"})`, "매체", "합계", ...order.map(([d]) => d)],
++    ...p.rows.map((r) => [r.source, r.mediums.join(" · "), r.total, ...order.map(([, i]) => r.cells[i])]),
++    ["합계", "", p.total, ...order.map(([, i]) => p.colTotals[i])],
++  ];
++};
++
++/** 원자료 - 날짜 × 소스 × 매체 × 캠페인 한 줄씩. 날짜 오름차순, 그 안에서 방문자 많은 순 */
++export const rawTable = (rows: SourceDayRow[]): Table => [
++  ["날짜", "소스", "매체", "캠페인", "방문자", "페이지뷰"],
++  ...[...rows]
++    .sort((a, b) => (a.day < b.day ? -1 : a.day > b.day ? 1 : 0) || b.visitors - a.visitors || String(a.source ?? "").localeCompare(String(b.source ?? "")))
++    .map((r) => [r.day, r.source ?? BEFORE, r.medium, r.campaign, r.visitors, r.pages]),
++];
++
++const cell = (v: string | number) => { const s = String(v ?? ""); return /[",\r\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s; };
++/** 일반 CSV - UTF-8 BOM(엑셀이 한글을 알아보게) + CRLF */
++export const toCsv = (t: Table) => "﻿" + t.map((r) => r.map(cell).join(",")).join("\r\n");
++/** 엑셀용 - UTF-16LE BOM + 탭. BOM 을 무시하는 엑셀·한셀에서도 한글이 깨지지 않는다 */
++export const toUtf16 = (t: Table): Uint8Array => {
++  const text = t.map((r) => r.map((v) => String(v ?? "").replace(/[\t\r\n]/g, " ")).join("\t")).join("\r\n");
++  const out = new Uint8Array(2 + text.length * 2);
++  out[0] = 0xff; out[1] = 0xfe;
++  for (let i = 0; i < text.length; i++) { const c = text.charCodeAt(i); out[2 + i * 2] = c & 0xff; out[3 + i * 2] = c >> 8; }
++  return out;
++};
+diff --git a/src/lib/traffic-source.test.ts b/src/lib/traffic-source.test.ts
+new file mode 100644
+index 0000000..61cd028
+--- /dev/null
++++ b/src/lib/traffic-source.test.ts
+@@ -0,0 +1,113 @@
++import { describe, it, expect } from "vitest";
++import { landingSource, encodeSrc, decodeSrc, isDocumentRequest, DIRECT, INTERNAL } from "./traffic-source";
++import { pivot, dailyTable, pivotTable, rawTable, toCsv, toUtf16, BEFORE, type SourceDayRow } from "./traffic-source-table";
++
++const q = (s: string) => new URLSearchParams(s);
++const L = (search: string, referer: string | null = null, cookie: string | null = null) =>
++  landingSource({ search: q(search), referer, host: "wellbian.io", cookie });
++
++describe("landingSource - 방문의 입구", () => {
++  it("utm 이 먼저 - 매체·캠페인 같이", () => {
++    expect(L("promo=PIXIE-F811&utm_source=pixie&utm_medium=kol&utm_campaign=prereg0907", "https://t.co/x"))
++      .toEqual({ src: { source: "pixie", medium: "kol", campaign: "prereg0907" }, keep: true });
++  });
++  it("utm_medium 이 없으면 (not set) - KOL 링크 규약이 그렇다", () => {
++    expect(L("utm_source=PIXIE-F811").src).toEqual({ source: "PIXIE-F811", medium: "(not set)", campaign: "" });
++  });
++  it("promo 만 있으면 promo:코드", () => {
++    expect(L("promo=SUNNYSID-45D5").src.source).toBe("promo:SUNNYSID-45D5");
++  });
++  it("리퍼러 호스트 - www. 떼기, 검색엔진은 이름·organic", () => {
++    expect(L("", "https://www.linkedin.com/feed/").src).toEqual({ source: "linkedin.com", medium: "referral", campaign: "" });
++    expect(L("", "https://t.co/abc").src.source).toBe("t.co");
++    expect(L("", "https://www.google.co.kr/").src).toEqual({ source: "google", medium: "organic", campaign: "" });
++    expect(L("", "https://m.search.naver.com/search.naver?query=x").src).toEqual({ source: "naver", medium: "organic", campaign: "" });
++  });
++  it("리퍼러 전체 주소는 남기지 않는다(호스트만)", () => {
++    expect(JSON.stringify(L("", "https://example.com/p?email=a@b.c").src)).not.toContain("email");
++  });
++  it("리퍼러·UTM 없으면 (direct), 쿠키가 있으면 그 입구를 잇는다", () => {
++    expect(L("")).toEqual({ src: DIRECT, keep: true });
++    const kept = encodeSrc({ source: "pixie", medium: "kol", campaign: "" });
++    expect(L("", null, kept)).toEqual({ src: { source: "pixie", medium: "kol", campaign: "" }, keep: true });
++  });
++  it("사이트 안 이동은 새 입구가 아니다 - 쿠키 없으면 (internal) 이고 쿠키에 적지 않는다", () => {
++    expect(L("", "https://wellbian.io/launch")).toEqual({ src: INTERNAL, keep: false });
++    expect(L("", "https://admin.wellbianlabs.io/admin")).toEqual({ src: INTERNAL, keep: false });
++    const kept = encodeSrc({ source: "t.co", medium: "referral", campaign: "" });
++    expect(L("", "https://wellbian.io/", kept).src.source).toBe("t.co");
++  });
++  it("새 외부 입구는 쿠키를 덮는다", () => {
++    const kept = encodeSrc({ source: "pixie", medium: "kol", campaign: "" });
++    expect(L("utm_source=x&utm_medium=owned", null, kept).src.source).toBe("x");
++  });
++  it("값 정리 - 구분자·제어 문자 제거, 길이 제한", () => {
++    const s = L(`utm_source=${encodeURIComponent("a|b\nc")}&utm_campaign=${"c".repeat(200)}`).src;
++    expect(s.source).toBe("abc");
++    expect(s.campaign.length).toBe(80);
++  });
++  it("encode/decode 왕복, 망가진 값은 null", () => {
++    const s = { source: "채널명지정가능(예:XRPKOREA)", medium: "(not set)", campaign: "런치 0907" };
++    expect(decodeSrc(encodeSrc(s))).toEqual(s);
++    expect(decodeSrc("%E0%A4%A")).toBeNull();
++    expect(decodeSrc("")).toBeNull();
++  });
++});
++
++describe("isDocumentRequest", () => {
++  const H = (o: Record<string, string>) => new Headers(o);
++  it("주소창·링크로 여는 요청만", () => {
++    expect(isDocumentRequest(H({ "sec-fetch-dest": "document" }), "GET", "/")).toBe(true);
++    expect(isDocumentRequest(H({ accept: "text/html,application/xhtml+xml" }), "GET", "/launch")).toBe(true);
++    expect(isDocumentRequest(H({ rsc: "1", accept: "text/html" }), "GET", "/launch")).toBe(false);
++    expect(isDocumentRequest(H({ "next-router-prefetch": "1", "sec-fetch-dest": "document" }), "GET", "/")).toBe(false);
++    expect(isDocumentRequest(H({ "sec-fetch-dest": "document" }), "POST", "/")).toBe(false);
++    expect(isDocumentRequest(H({ "sec-fetch-dest": "document" }), "GET", "/api/x")).toBe(false);
++    expect(isDocumentRequest(H({ accept: "*/*" }), "GET", "/")).toBe(false);
++  });
++});
++
++describe("pivot / 내려받기", () => {
++  const R = (day: string, source: string | null, medium: string, visitors: number, pages: number, campaign = ""): SourceDayRow =>
++    ({ day, source, medium, campaign, visitors, pages });
++  const rows = [
++    R("2026-09-25", null, "", 200, 350),
++    R("2026-09-26", "(direct)", "(none)", 20, 30),
++    R("2026-09-26", "pixie", "kol", 5, 12, "prereg0907"),
++    R("2026-09-26", "pixie", "(not set)", 2, 2),
++    R("2026-09-26", "t.co", "referral", 9, 15),
++    R("2026-09-20", "x", "owned", 3, 3),          // 30일 창 밖 날짜로 치고 days 에 없으면 버린다
++  ];
++  const days = ["2026-09-26", "2026-09-25"];
++  it("방문자 - 줄은 합계순, (기록 전)은 맨 아래, 매체는 많은 순", () => {
++    const p = pivot(rows, days, "visitors");
++    expect(p.rows.map((r) => [r.source, r.total, r.cells])).toEqual([
++      ["(direct)", 20, [20, 0]], ["t.co", 9, [9, 0]], ["pixie", 7, [7, 0]], [BEFORE, 200, [0, 200]],
++    ]);
++    expect(p.rows.find((r) => r.source === "pixie")?.mediums).toEqual(["kol", "(not set)"]);
++    expect([p.colTotals, p.total]).toEqual([[36, 200], 236]);
++    expect(p.rows.map((r) => r.quiet)).toEqual([true, false, false, true]);
++  });
++  it("페이지뷰", () => {
++    const p = pivot(rows, days, "pages");
++    expect(p.rows.map((r) => [r.source, r.total])).toEqual([["(direct)", 30], ["t.co", 15], ["pixie", 14], [BEFORE, 350]]);
++  });
++  it("파일 - 날짜 오름차순, 합계 줄", () => {
++    const t = pivotTable(pivot(rows, days, "visitors"), "visitors");
++    expect(t[0]).toEqual(["소스 (방문자)", "매체", "합계", "2026-09-25", "2026-09-26"]);
++    expect(t[3]).toEqual(["pixie", "kol · (not set)", 7, 0, 7]);
++    expect(t.at(-1)).toEqual(["합계", "", 236, 200, 36]);
++    expect(rawTable(rows)[1]).toEqual(["2026-09-20", "x", "owned", "", 3, 3]);
++    expect(rawTable(rows)[2]).toEqual(["2026-09-25", BEFORE, "", "", 200, 350]);
++    expect(dailyTable({ "2026-09-26": { page: 87, api: 2547, bot: 21, visitors: 49 }, "2026-09-25": { page: 369, api: 5739, bot: 49, visitors: 210 } }))
++      .toEqual([["날짜", "방문자", "페이지뷰", "API 호출", "봇"], ["2026-09-25", 210, 369, 5739, 49], ["2026-09-26", 49, 87, 2547, 21]]);
++  });
++  it("CSV 는 BOM·따옴표, 엑셀용은 UTF-16LE BOM + 탭", () => {
++    const csv = toCsv([["a,b", 'say "hi"', 3]]);
++    expect(csv.charCodeAt(0)).toBe(0xfeff);
++    expect(csv.slice(1)).toBe('"a,b","say ""hi""",3');
++    const u = toUtf16([["소스", 1]]);
++    expect([u[0], u[1]]).toEqual([0xff, 0xfe]);
++    expect(new TextDecoder("utf-16le").decode(u.subarray(2))).toBe("소스\t1");
++  });
++});
+diff --git a/src/lib/traffic-source.ts b/src/lib/traffic-source.ts
+new file mode 100644
+index 0000000..5e3b55b
+--- /dev/null
++++ b/src/lib/traffic-source.ts
+@@ -0,0 +1,91 @@
++/**
++ * 유입 소스 (2026-09-26) — 자체 트래픽 계측(lib/traffic.ts)에 "어디서 왔나"를 더한다.
++ * 관리자 "시스템·용량" 탭에서 일자별 방문자·페이지뷰를 소스별로 보고 내려받기 위한 것이다.
++ *
++ * 방문의 입구는 문서 요청(주소창·링크로 페이지를 여는 요청)에서 미들웨어가 정한다.
++ *   ① utm_source 가 있으면 그것 - utm_medium · utm_campaign 을 같이 적는다
++ *   ② 없고 promo 만 있으면 "promo:코드" (KOL 링크 규약은 promo + utm_source 지만 promo 만 도는 링크도 있다)
++ *   ③ 없으면 리퍼러 호스트 - www. 는 떼고, 검색엔진은 이름으로(google · naver · daum · bing …, 매체 organic)
++ *   ④ 리퍼러도 없으면 "(direct)" - 주소 직접 입력, 텔레그램·카카오톡 앱 안 브라우저처럼 리퍼러를 안 보내는 곳
++ * 우리 주소에서 온 요청(사이트 안 이동)과 리퍼러 없는 재방문은 새 입구가 아니다 - 30분 쿠키(wb_src)에 남은
++ * 입구를 잇는다(GA 가 직접 유입으로 캠페인을 덮어쓰지 않는 것과 같은 원리). 쿠키도 없는 사이트 안 이동은
++ * "(internal)" - 휴대폰 망이 바뀌어 방문자 해시가 새로 생긴 경우 등이다.
++ *
++ * 저장하는 것은 소스·매체·캠페인 문자열뿐이다. 리퍼러 전체 주소는 쿼리에 개인정보가 섞일 수 있어 남기지 않는다.
++ * 이 파일은 미들웨어(엣지)에서도 돌므로 Node 전용 API 를 쓰지 않는다.
++ */
++export type Src = { source: string; medium: string; campaign: string };
++
++export const SRC_COOKIE = "wb_src";
++export const SRC_HEADER = "x-wb-src";
++export const SRC_TTL_SEC = 30 * 60;
++
++/* 우리 주소 - wellbian.io · admin.wellbianlabs.io · 옛 wlbn.wellbianlabs.io 와 그 하위 */
++const OWN = /(^|\.)wellbian\.io$|(^|\.)wellbianlabs\.io$/;
++const SEARCH: [RegExp, string][] = [
++  [/(^|\.)google\.[a-z.]+$/, "google"], [/(^|\.)naver\.com$/, "naver"], [/(^|\.)daum\.net$/, "daum"],
++  [/(^|\.)bing\.com$/, "bing"], [/(^|\.)yahoo\.[a-z.]+$/, "yahoo"], [/(^|\.)duckduckgo\.com$/, "duckduckgo"],
++];
++
++/* 제어 문자와 구분자(|)는 빼고 길이를 자른다 - 헤더·쿠키·DB 어디에 들어가도 안전하게 */
++export const clean = (v: string | null | undefined, max = 60) =>
++  (v ?? "").replace(/[\u0000-\u001f\u007f|]/g, "").trim().slice(0, max);
++
++export const encodeSrc = (s: Src) => [s.source, s.medium, s.campaign].map((x) => encodeURIComponent(x)).join("|");
++export const decodeSrc = (v: string | null | undefined): Src | null => {
++  if (!v) return null;
++  const [a = "", b = "", c = ""] = v.split("|");
++  try {
++    const source = clean(decodeURIComponent(a));
++    if (!source) return null;
++    return { source, medium: clean(decodeURIComponent(b)), campaign: clean(decodeURIComponent(c), 80) };
++  } catch {
++    return null;
++  }
++};
++
++const refHost = (referer: string | null | undefined): string => {
++  if (!referer) return "";
++  try {
++    const u = new URL(referer);
++    return u.protocol === "http:" || u.protocol === "https:" ? u.hostname.toLowerCase() : "";
++  } catch {
++    return "";
++  }
++};
++
++export const DIRECT: Src = { source: "(direct)", medium: "(none)", campaign: "" };
++export const INTERNAL: Src = { source: "(internal)", medium: "(none)", campaign: "" };
++
++/**
++ * 이 문서 요청의 입구.
++ *  keep = 쿠키에 적어(또는 30분 연장해) 둘 값인가 - 사이트 안 이동으로 정해진 (internal) 만 적지 않는다.
++ */
++export function landingSource(input: {
++  search: URLSearchParams; referer?: string | null; host: string; cookie?: string | null;
++}): { src: Src; keep: boolean } {
++  const { search, referer, host, cookie } = input;
++  const utm = clean(search.get("utm_source"));
++  if (utm) {
++    return { src: { source: utm, medium: clean(search.get("utm_medium")) || "(not set)", campaign: clean(search.get("utm_campaign"), 80) }, keep: true };
++  }
++  const promo = clean(search.get("promo"), 40);
++  if (promo) return { src: { source: `promo:${promo}`, medium: "(not set)", campaign: "" }, keep: true };
++
++  const ref = refHost(referer);
++  const self = host.split(":")[0].toLowerCase();
++  if (ref && ref !== self && !OWN.test(ref)) {
++    const se = SEARCH.find(([re]) => re.test(ref));
++    return { src: se ? { source: se[1], medium: "organic", campaign: "" } : { source: ref.replace(/^www\./, ""), medium: "referral", campaign: "" }, keep: true };
++  }
++  const kept = decodeSrc(cookie);
++  if (kept) return { src: kept, keep: true };
++  return ref ? { src: INTERNAL, keep: false } : { src: DIRECT, keep: true };
++}
++
++/** 페이지를 여는 요청인가 - 화면 전환용 RSC 요청·미리 불러오기·API 는 입구가 아니다. */
++export function isDocumentRequest(h: Headers, method: string, pathname: string): boolean {
++  if (method !== "GET" || pathname.startsWith("/api") || pathname.startsWith("/_next")) return false;
++  if (h.get("rsc") || h.get("next-router-prefetch") || h.get("purpose") === "prefetch") return false;
++  return h.get("sec-fetch-dest") === "document" || (h.get("accept") ?? "").includes("text/html");
++}
+diff --git a/src/lib/traffic.ts b/src/lib/traffic.ts
+index 1452d7b..837c07d 100644
+--- a/src/lib/traffic.ts
++++ b/src/lib/traffic.ts
+@@ -1,5 +1,6 @@
+ import { createHash } from "crypto";
+ import { prisma } from "@/lib/db";
++import { decodeSrc, type Src } from "@/lib/traffic-source";
+ 
+ /**
+  * 자체 트래픽 계측 (2026-09-06). 외부 분석 도구 없이 관리자 콘솔에서 일 방문자·페이지뷰·API 호출을 본다.
+@@ -10,6 +11,10 @@ import { prisma } from "@/lib/db";
+  * - 기기 텔레메트리는 Supabase 엣지 함수(iot)가 받으므로 여기서 세지 않는다 - DeviceIngestLog 로 본다.
+  *
+  * 100만 기기 규모에서도 사람 트래픽은 별개 축이라 UPSERT 카운터로 충분하다. 실패는 조용히 무시한다.
++ *
++ * (2026-09-26) 방문자 행에 그날 첫 입구(소스·매체·캠페인)를 적는다 - 미들웨어가 정해 헤더로 넘긴 값.
++ * 소스별 방문자 = 그 소스로 들어온 방문자 해시 수, 소스별 페이지뷰 = 그 방문자들의 페이지뷰 합.
++ * 소스 열이 아직 없으면(prisma/sql/2026-09-26-traffic-source.sql 적용 전) 옛 방식으로 적고 10분 뒤 다시 시도한다.
+  */
+ const BOT_RE = /bot|crawl|spider|slurp|facebookexternalhit|preview|monitor|curl|wget|python-requests|headless/i;
+ 
+@@ -25,8 +30,30 @@ export async function bumpTraffic(bucket: string, n = 1): Promise<void> {
+   } catch { /* 계측 실패는 서비스에 영향 주지 않는다 */ }
+ }
+ 
+-/** 페이지뷰 + 방문자 기록. 봇·관리자·API 경로는 제외. */
+-export async function recordPageView(opts: { ip: string; ua: string; path: string }): Promise<void> {
++let noSrcColsAt = 0;
++
++async function upsertVisitor(day: string, vhash: string, path: string, s: Src | null): Promise<void> {
++  if (s && Date.now() - noSrcColsAt > 10 * 60_000) {
++    try {
++      await prisma.$executeRaw`
++        INSERT INTO "TrafficVisitor" ("day", "vhash", "hits", "firstPath", "source", "medium", "campaign")
++        VALUES (${day}::date, ${vhash}, 1, ${path.slice(0, 120)}, ${s.source}, ${s.medium || null}, ${s.campaign || null})
++        ON CONFLICT ("day", "vhash") DO UPDATE SET "hits" = "TrafficVisitor"."hits" + 1,
++          "source" = COALESCE("TrafficVisitor"."source", EXCLUDED."source"),
++          "medium" = COALESCE("TrafficVisitor"."medium", EXCLUDED."medium"),
++          "campaign" = COALESCE("TrafficVisitor"."campaign", EXCLUDED."campaign")`;
++      return;
++    } catch {
++      noSrcColsAt = Date.now();   // 소스 열이 없거나 일시 오류 - 아래 옛 방식으로 한 번 더
++    }
++  }
++  await prisma.$executeRaw`
++    INSERT INTO "TrafficVisitor" ("day", "vhash", "hits", "firstPath") VALUES (${day}::date, ${vhash}, 1, ${path.slice(0, 120)})
++    ON CONFLICT ("day", "vhash") DO UPDATE SET "hits" = "TrafficVisitor"."hits" + 1`;
++}
++
++/** 페이지뷰 + 방문자 기록. 봇·관리자·API 경로는 제외. src = 미들웨어가 넘긴 입구(x-wb-src). */
++export async function recordPageView(opts: { ip: string; ua: string; path: string; src?: string | null }): Promise<void> {
+   const { ip, ua, path } = opts;
+   if (!path || path.startsWith("/api") || path.startsWith("/admin") || path.startsWith("/_next")) return;
+   if (!ua || BOT_RE.test(ua)) { await bumpTraffic("bot"); return; }
+@@ -37,8 +64,6 @@ export async function recordPageView(opts: { ip: string; ua: string; path: strin
+     await prisma.$executeRaw`
+       INSERT INTO "TrafficDaily" ("day", "bucket", "hits") VALUES (${day}::date, 'page', 1)
+       ON CONFLICT ("day", "bucket") DO UPDATE SET "hits" = "TrafficDaily"."hits" + 1`;
+-    await prisma.$executeRaw`
+-      INSERT INTO "TrafficVisitor" ("day", "vhash", "hits", "firstPath") VALUES (${day}::date, ${vhash}, 1, ${path.slice(0, 120)})
+-      ON CONFLICT ("day", "vhash") DO UPDATE SET "hits" = "TrafficVisitor"."hits" + 1`;
++    await upsertVisitor(day, vhash, path, decodeSrc(opts.src));
+   } catch { /* ignore */ }
+ }
+diff --git a/src/middleware.ts b/src/middleware.ts
+index d9243a4..236455d 100644
+--- a/src/middleware.ts
++++ b/src/middleware.ts
+@@ -1,4 +1,5 @@
+ import { NextResponse, type NextRequest } from "next/server";
++import { SRC_COOKIE, SRC_HEADER, SRC_TTL_SEC, encodeSrc, isDocumentRequest, landingSource } from "@/lib/traffic-source";
+ 
+ /**
+  * 주소로 화면을 가른다.
+@@ -112,9 +113,23 @@ export function middleware(req: NextRequest) {
+     return NextResponse.rewrite(u);
+   }
+ 
++  // 유입 소스(2026-09-26) - 페이지를 여는 요청에서 방문의 입구(utm·promo·리퍼러)를 정해 레이아웃의
++  // 페이지뷰 기록으로 넘긴다(lib/traffic-source.ts). 밖에서 같은 이름의 헤더를 보내 와도 믿지 않는다.
++  const reqHeaders = new Headers(req.headers);
++  reqHeaders.delete(SRC_HEADER);
++  const landing = isDocumentRequest(req.headers, req.method, pathname)
++    ? landingSource({ search: req.nextUrl.searchParams, referer: req.headers.get("referer"), host, cookie: req.cookies.get(SRC_COOKIE)?.value })
++    : null;
++  if (landing) reqHeaders.set(SRC_HEADER, encodeSrc(landing.src));
++
+   // 접속 IP 국가 기반 자동 언어 - 처음 방문(쿠키 없음)에만 심는다.
+   // 수동 언어 선택은 localStorage에 저장되어 이 쿠키보다 항상 우선한다(i18n.tsx).
+-  const res = NextResponse.next();
++  const res = NextResponse.next({ request: { headers: reqHeaders } });
++  if (landing?.keep) {
++    res.cookies.set(SRC_COOKIE, encodeSrc(landing.src), {
++      path: "/", maxAge: SRC_TTL_SEC, sameSite: "lax", httpOnly: true, secure: process.env.NODE_ENV === "production",
++    });
++  }
+   if (!req.cookies.get("kw_locale")) {
+     const country = (req.headers.get("x-vercel-ip-country") ?? "").toUpperCase();
+     const lang =

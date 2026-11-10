@@ -1,0 +1,347 @@
+/* GA4 유입 — 텔레봇(depin/site/wellbian-telebot, 9/8)에서 떼어 낸 사본 (9/26 서우 — "텔레봇 말고 그냥
+   스핀오프해서 하위 페이지 만들어서 배포하게끔 해줘")
+
+   GA 화면을 iframe 으로 끼우는 방식은 쓰지 않는다 — 구글 로그인이 있어야 보이고, 공유 설정을 열면
+   속성 전체가 새어 나간다. 대신 GA4 Data API 를 서버에서 부른다.
+
+   SDK 를 쓰지 않는다. 구글 SDK 는 의존성이 수십 개고, 토큰 교환과 서명은 fetch 와 node:crypto 로 충분하다.
+   인증 값은 텔레봇 Vercel 프로젝트에 넣어 둔 것과 같은 것을 그대로 쓰면 된다(같은 GA 속성).
+
+   인증은 두 길 중 하나. 둘 다 있으면 OAuth 를 먼저 쓴다.
+     A. 서비스 계정 키 — GA_SA_EMAIL + GA_SA_PRIVATE_KEY
+     B. OAuth 리프레시 토큰 — GA_OAUTH_CLIENT_ID + GA_OAUTH_CLIENT_SECRET + GA_OAUTH_REFRESH_TOKEN
+        (9/8) Workspace 조직은 iam.disableServiceAccountKeyCreation 정책이 기본으로 걸려
+        서비스 계정 키를 못 만든다. 그때는 B — 관리자 계정(GA 속성 소유자)의 리프레시 토큰으로
+        같은 API 를 부른다. 키 파일이 없으니 정책과 부딪히지 않는다. 토큰 발급 절차는 텔레봇 README 「GA4 유입」.
+
+   공통:
+     GA_PROPERTY_ID     GA4 속성 ID (숫자). 측정 ID(G-…)도 컨테이너 ID(GTM-…)도 아니다.
+     GA_SINCE           (선택) 집계 시작일. 기본 2026-09-07 — 사전예약 오픈일(태그를 붙인 날).
+     GA_RAW_SINCE       (선택) 「세션 소스 × 날짜」 표와 원자료 파일의 시작일. 기본 2026-08-01 —
+                        9/26 서우가 GA 화면에서 본 기간(8/1~)과 맞췄다. 화면 위쪽 숫자·그래프는 GA_SINCE 그대로.
+   ※ NEXT_PUBLIC_ 접두사를 절대 붙이지 않는다.
+
+   호출량: 개요(/)가 보고서 6개, 소스별 일자(/sources)가 1개를 부른다. 5분 캐시를 두므로 하루 종일
+   새로고침해도 속성 일일 토큰 한도(수만 단위)에 닿지 않는다. */
+
+import { createSign } from "node:crypto";
+import { build, kstToday, type Raw, type TrafficData } from "./traffic";
+import { fixture, fixtureSourceDaily, fixtureUsers } from "./ga-fixture";
+import { isoWeekMonday, type SdUsers, type SourceDaily, type SrcRaw } from "./source-daily";
+
+const PROP = process.env.GA_PROPERTY_ID ?? "";
+const EMAIL = process.env.GA_SA_EMAIL ?? "";
+const KEY = (process.env.GA_SA_PRIVATE_KEY ?? "").replace(/\\n/g, "\n");
+const OA = {
+  id: process.env.GA_OAUTH_CLIENT_ID ?? "",
+  secret: process.env.GA_OAUTH_CLIENT_SECRET ?? "",
+  refresh: process.env.GA_OAUTH_REFRESH_TOKEN ?? "",
+};
+const SINCE = process.env.GA_SINCE || "2026-09-07";
+const RAW_SINCE = process.env.GA_RAW_SINCE || "2026-08-01";
+
+const saReady = () => Boolean(EMAIL && KEY);
+const oauthReady = () => Boolean(OA.id && OA.secret && OA.refresh);
+export type GaMode = "oauth" | "sa" | "";
+export const gaMode = (): GaMode => (oauthReady() ? "oauth" : saReady() ? "sa" : "");
+export const gaConfigured = () => Boolean(PROP) && gaMode() !== "";
+/* 화면이 "미연결 안내"를 낼지 정하는 기준. 가짜 자료(GA_FIXTURE)로 볼 때는 연결된 셈 친다 — health 의 ga 는 그대로 진짜 값이다. */
+export const gaReady = () => Boolean(process.env.GA_FIXTURE) || gaConfigured();
+/* 첫 화면에서 "무엇이 비었는지"를 말해 주기 위한 것. 값은 내보내지 않는다. */
+export const gaMissing = () => {
+  const m: string[] = [];
+  if (!PROP) m.push("GA_PROPERTY_ID");
+  if (!gaMode()) m.push("인증 — GA_SA_EMAIL+GA_SA_PRIVATE_KEY 또는 GA_OAUTH_CLIENT_ID+CLIENT_SECRET+REFRESH_TOKEN");
+  return m.join(" · ");
+};
+
+/* ── 토큰 ──────────────────────────────────────────────────────────────
+   서비스 계정 JWT(RS256) → 액세스 토큰. 1시간짜리라 인스턴스 안에서 재사용한다. */
+const b64u = (s: string | Buffer) => Buffer.from(s).toString("base64url");
+let tok: { v: string; exp: number } | null = null;
+
+const token = async (): Promise<string> => {
+  const now = Math.floor(Date.now() / 1000);
+  if (tok && tok.exp - 60 > now) return tok.v;
+
+  /* B. OAuth 리프레시 토큰 → 액세스 토큰. 서비스 계정 키가 조직 정책으로 막힐 때의 길. */
+  if (oauthReady()) {
+    const r = await fetch("https://oauth2.googleapis.com/token", {
+      method: "POST",
+      headers: { "content-type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams({
+        grant_type: "refresh_token",
+        client_id: OA.id, client_secret: OA.secret, refresh_token: OA.refresh,
+      }),
+      cache: "no-store",
+    });
+    const j = (await r.json()) as { access_token?: string; expires_in?: number; error?: string; error_description?: string };
+    if (!r.ok || !j.access_token) {
+      /* invalid_grant = 리프레시 토큰이 취소됐거나(비밀번호 변경·앱 접근 철회) 외부 앱 테스트 모드의
+         7일 만료. 동의 화면을 "내부"로 두면 만료가 없다 — 텔레봇의 tools/ga-oauth.mts 로 다시 받는다. */
+      const why = j.error === "unauthorized_client"
+        ? " — 리프레시 토큰을 발급한 클라이언트와 GA_OAUTH_CLIENT_ID/SECRET 이 다름. Playground ⚙ 에 웹 클라이언트를 다시 넣고(새로고침하면 지워진다) 재발급한 뒤, Vercel 세 값을 같은 클라이언트로 맞출 것"
+        : j.error === "invalid_grant"
+          ? " — 토큰이 취소됐거나 만료됨(외부+테스트 앱은 7일). 동의 화면을 내부로 두고 재발급"
+          : "";
+      throw new Error(`oauth ${r.status} ${j.error ?? ""} ${j.error_description ?? ""}${why}`.trim());
+    }
+    tok = { v: j.access_token, exp: now + (j.expires_in ?? 3600) };
+    return tok.v;
+  }
+
+  /* A. 서비스 계정 JWT */
+  const header = b64u(JSON.stringify({ alg: "RS256", typ: "JWT" }));
+  const claims = b64u(JSON.stringify({
+    iss: EMAIL,
+    scope: "https://www.googleapis.com/auth/analytics.readonly",
+    aud: "https://oauth2.googleapis.com/token",
+    iat: now, exp: now + 3600,
+  }));
+  const sig = b64u(createSign("RSA-SHA256").update(`${header}.${claims}`).end().sign(KEY));
+  const r = await fetch("https://oauth2.googleapis.com/token", {
+    method: "POST",
+    headers: { "content-type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams({
+      grant_type: "urn:ietf:params:oauth:grant-type:jwt-bearer",
+      assertion: `${header}.${claims}.${sig}`,
+    }),
+    cache: "no-store",
+  });
+  if (!r.ok) throw new Error(`token ${r.status} — 서비스 계정 이메일·키를 확인`);
+  const j = (await r.json()) as { access_token: string; expires_in?: number };
+  tok = { v: j.access_token, exp: now + (j.expires_in ?? 3600) };
+  return tok.v;
+};
+
+/* ── 보고서 ────────────────────────────────────────────────────────── */
+export type GaRow = Record<string, string>;
+
+type Api = {
+  dimensionHeaders?: { name: string }[];
+  metricHeaders?: { name: string }[];
+  rows?: { dimensionValues: { value: string }[]; metricValues: { value: string }[] }[];
+  rowCount?: number;
+  error?: { message?: string };
+};
+
+type Page = { rows: GaRow[]; rowCount: number };
+
+const call = async (method: "runReport" | "runRealtimeReport", body: unknown): Promise<GaRow[]> =>
+  (await callPage(method, body)).rows;
+
+const callPage = async (method: "runReport" | "runRealtimeReport", body: unknown): Promise<Page> => {
+  const t = await token();
+  const r = await fetch(`https://analyticsdata.googleapis.com/v1beta/properties/${PROP}:${method}`, {
+    method: "POST",
+    headers: { authorization: `Bearer ${t}`, "content-type": "application/json" },
+    body: JSON.stringify(body),
+    cache: "no-store",
+  });
+  const j = (await r.json()) as Api;
+  if (!r.ok) {
+    /* 403 은 세 가지다. "has not been used in project … or it is disabled" 는 토큰을 발급한 GCP
+       프로젝트에 Analytics Data API 가 사용 설정되지 않은 것 — 새로 판 프로젝트는 API 가 하나도
+       켜져 있지 않다(9/8 wellbian-ga 에서 실제로 그랬다). "insufficient authentication scopes" 는
+       토큰에 analytics.readonly 범위가 없는 것 — OAuth 라면 Playground 에서 다른 스코프를 골라
+       발급한 토큰이다. 그 밖의 403 은 동의한 계정(또는 서비스 계정)이 그 속성에 권한이 없는 것. */
+    const msg = j.error?.message ?? "";
+    const hint = r.status === 403
+      ? (/has not been used|is disabled/i.test(msg)
+          ? " — 토큰을 발급한 GCP 프로젝트에 Google Analytics Data API 가 사용 설정되지 않음. 메시지의 링크(또는 API 및 서비스 › 라이브러리)에서 '사용'을 누르고 2~3분 뒤 새로고침"
+          : /scope/i.test(msg)
+          ? ` — 토큰에 GA 읽기 범위가 없음. ${gaMode() === "oauth"
+              ? "Playground 에서 스코프를 https://www.googleapis.com/auth/analytics.readonly 로 다시 골라 리프레시 토큰을 새로 받아 넣을 것"
+              : "서비스 계정 JWT 의 scope 확인"}`
+          : ` — ${gaMode() === "oauth" ? "동의한 계정이" : "서비스 계정이"} GA4 속성 액세스 관리에 뷰어 이상으로 있는지 확인`)
+      : r.status === 400 ? " — 속성 ID 가 숫자인지 확인" : "";
+    throw new Error(`${method} ${r.status} ${j.error?.message ?? ""}${hint}`.trim());
+  }
+  const dims = (j.dimensionHeaders ?? []).map((h) => h.name);
+  const mets = (j.metricHeaders ?? []).map((h) => h.name);
+  const rows = (j.rows ?? []).map((row) => ({
+    ...Object.fromEntries(dims.map((d, i) => [d, row.dimensionValues[i]?.value ?? ""])),
+    ...Object.fromEntries(mets.map((m, i) => [m, row.metricValues[i]?.value ?? "0"])),
+  }));
+  return { rows, rowCount: j.rowCount ?? rows.length };
+};
+
+/* ── 유입 스냅샷 ─────────────────────────────────────────────────────
+   (9/8 2차 — 서우 "일자별 주차별 월간별 채널별") 기간 칩(오늘·7일·런치 이후)을 없애고 런치 이후
+   전체를 한 번에 받는다. 일·주·월은 날짜 × 소스/매체 행 하나를 lib/traffic.ts 가 세 번 묶어 만든다 —
+   GA 에 세 번 물을 이유가 없다. 화면 하나가 보고서 6개를 부르는 것은 전과 같다. 5분 캐시. */
+
+const RANGE = [{ startDate: SINCE, endDate: "today" }];
+
+const report = (dims: string[], mets: string[], orderBy: string, limit = 25) =>
+  call("runReport", {
+    dateRanges: RANGE,
+    dimensions: dims.map((name) => ({ name })),
+    metrics: mets.map((name) => ({ name })),
+    orderBys: [{ metric: { metricName: orderBy }, desc: true }],
+    limit,
+  });
+
+export type TrafficSnapshot = {
+  since: string;                    // GA_SINCE 원문 (YYYY-MM-DD)
+  today: string;                    // 한국 기준 오늘 (YYYYMMDD)
+  fetchedAt: number;
+  realtime: number;                 // 지난 30분 활성 사용자
+  data: TrafficData;                // 일·주·월·채널·소스 (lib/traffic.ts)
+  byContent: GaRow[];               // sessionSource · sessionMedium · sessionManualAdContent  (utm_content)
+  byCampaign: GaRow[];              // sessionCampaignName
+  byPage: GaRow[];                  // pagePath
+  error?: string;
+};
+
+
+let cached: { at: number; v: TrafficSnapshot } | null = null;
+const TTL = 5 * 60_000;
+
+const num = (v: string | undefined) => Number(v ?? 0) || 0;
+
+export const gaTraffic = async (): Promise<TrafficSnapshot> => {
+  if (cached && Date.now() - cached.at < TTL) return cached.v;
+
+  const today = kstToday();
+  const base: TrafficSnapshot = {
+    since: SINCE, today, fetchedAt: Date.now(), realtime: 0,
+    data: build([], SINCE, today), byContent: [], byCampaign: [], byPage: [],
+  };
+  /* GA 없이 화면만 볼 때(로컬·스크린샷). 운영에는 넣지 않는다 — lib/ga-fixture.ts */
+  if (process.env.GA_FIXTURE) {
+    const f = fixture(SINCE, today);
+    return { ...base, realtime: f.realtime, data: build(f.raw, SINCE, today, f.totals), byContent: f.byContent, byCampaign: f.byCampaign, byPage: f.byPage };
+  }
+  if (!gaConfigured()) return { ...base, error: `미연결 — ${gaMissing()}` };
+
+  try {
+    const [rt, total, rows, byContent, byCampaign, byPage] = await Promise.all([
+      call("runRealtimeReport", { metrics: [{ name: "activeUsers" }] }),
+      call("runReport", { dateRanges: RANGE, metrics: ["sessions", "activeUsers", "engagedSessions", "newUsers"].map((name) => ({ name })) }),
+      /* 날짜 × 소스/매체 — 이 한 표에서 일·주·월·채널이 다 나온다. 하루 소스 수십 개 × 몇 달이라도 수천 행이다. */
+      report(["date", "sessionSource", "sessionMedium"], ["sessions", "activeUsers", "newUsers", "engagedSessions"], "sessions", 50000),
+      report(["sessionSource", "sessionMedium", "sessionManualAdContent"], ["sessions", "activeUsers"], "sessions", 30),
+      report(["sessionCampaignName"], ["sessions", "activeUsers"], "sessions", 10),
+      report(["pagePath"], ["screenPageViews", "activeUsers"], "screenPageViews", 12),
+    ]);
+    const t = total[0] ?? {};
+    const raw: Raw[] = rows.map((r) => ({
+      date: r.date, source: r.sessionSource, medium: r.sessionMedium,
+      sessions: num(r.sessions), users: num(r.activeUsers), newUsers: num(r.newUsers), engaged: num(r.engagedSessions),
+    }));
+    const v: TrafficSnapshot = {
+      ...base,
+      realtime: num(rt[0]?.activeUsers),
+      data: build(raw, SINCE, today, { users: num(t.activeUsers), newUsers: num(t.newUsers), engaged: num(t.engagedSessions) }),
+      byContent, byCampaign, byPage,
+    };
+    cached = { at: Date.now(), v };
+    return v;
+  } catch (e) {
+    return { ...base, error: e instanceof Error ? e.message : String(e) };
+  }
+};
+
+/* ── 세션 소스 × 날짜 원자료 (9/26 서우 — "일자별 세션 소스 별로 보고싶은데 아니면 rawdata 다운로드 가능하게") ──
+   GA 가 API 로 주는 가장 잘게 쪼갠 집계: 날짜 × 소스 × 매체 × 캠페인 한 줄에 지표 여덟.
+   GA 화면 「트래픽 획득」의 열(세션 · 참여 세션 · 이벤트 · 참여 시간 · 주요 이벤트 · 수익)을 다 담는다 — 비율은
+   합에서 다시 계산한다(lib/source-daily.ts). 위 유입 스냅샷과 따로 부르고 따로 실패한다 — 이 표가 안 읽혀도
+   나머지 화면은 그대로 뜬다.
+
+   주요 이벤트·수익(keyEvents · totalRevenue)을 GA 가 400 으로 거부하면(속성 설정 · API 판 차이) 그 둘을 빼고
+   다시 읽는다. 화면과 파일은 그 두 열을 빈칸으로 두고 까닭을 적는다. 행이 많으면 5만 줄씩 넘겨 가며 읽는다. */
+
+const RAW_DIMS = ["date", "sessionSource", "sessionMedium", "sessionCampaignName"];
+const RAW_METS = ["sessions", "engagedSessions", "activeUsers", "newUsers", "eventCount", "userEngagementDuration"];
+const RAW_FULL = [...RAW_METS, "keyEvents", "totalRevenue"];
+const PAGE = 50000;
+
+const rawAll = async (metrics: string[]): Promise<GaRow[]> => {
+  const out: GaRow[] = [];
+  for (let offset = 0, n = 0; n < 10; n++) {
+    const p = await callPage("runReport", {
+      dateRanges: [{ startDate: RAW_SINCE, endDate: "today" }],
+      dimensions: RAW_DIMS.map((name) => ({ name })),
+      metrics: metrics.map((name) => ({ name })),
+      orderBys: [{ dimension: { dimensionName: "date" } }, { metric: { metricName: "sessions" }, desc: true }],
+      limit: PAGE, offset,
+    });
+    out.push(...p.rows);
+    offset += p.rows.length;
+    if (!p.rows.length || offset >= p.rowCount) break;
+  }
+  return out;
+};
+
+/* 사용자 — 칸(날짜 × 소스)과, 중복을 뺀 합계(소스별 기간 · 날짜별 · 전체)를 따로 묻는다(lib/source-daily.ts 「사용자」).
+   주별(ISO 주 × 소스, ISO 주별)은 따로 실패한다 — 못 읽으면 주별 사용자만 빠진다. 세션 표와도 따로 실패한다. */
+const usersQ = (dims: string[]) => call("runReport", {
+  dateRanges: [{ startDate: RAW_SINCE, endDate: "today" }],
+  dimensions: dims.map((name) => ({ name })),
+  metrics: [{ name: "activeUsers" }],
+  limit: 100000,
+});
+const why = (e: unknown) => (e instanceof Error ? e.message : String(e)).split(" — ")[0];
+
+const readUsers = async (): Promise<{ users?: SdUsers; note?: string }> => {
+  const [d, w] = await Promise.allSettled([
+    Promise.all([usersQ(["date", "sessionSource"]), usersQ(["sessionSource"]), usersQ(["date"]), usersQ([])]),
+    Promise.all([usersQ(["isoYearIsoWeek", "sessionSource"]), usersQ(["isoYearIsoWeek"])]),
+  ]);
+  if (d.status === "rejected") return { note: `사용자를 읽지 못함 — ${why(d.reason)}` };
+  const [cells, bySource, byDay, total] = d.value;
+  const users: SdUsers = {
+    cells: cells.map((r) => ({ date: r.date, source: r.sessionSource, users: num(r.activeUsers) })),
+    bySource: Object.fromEntries(bySource.map((r) => [r.sessionSource, num(r.activeUsers)])),
+    byDay: Object.fromEntries(byDay.map((r) => [r.date, num(r.activeUsers)])),
+    total: num(total[0]?.activeUsers),
+  };
+  if (w.status === "rejected") return { users, note: `주별 사용자를 읽지 못함 — ${why(w.reason)}` };
+  const [wc, bw] = w.value;
+  users.week = {
+    cells: wc.map((r) => ({ week: isoWeekMonday(r.isoYearIsoWeek), source: r.sessionSource, users: num(r.activeUsers) })),
+    byWeek: Object.fromEntries(bw.map((r) => [isoWeekMonday(r.isoYearIsoWeek), num(r.activeUsers)])),
+  };
+  return { users };
+};
+
+let rawCached: { at: number; v: SourceDaily } | null = null;
+
+export const gaSourceDaily = async (): Promise<SourceDaily> => {
+  if (rawCached && Date.now() - rawCached.at < TTL) return rawCached.v;
+  const today = kstToday();
+  const base: SourceDaily = { since: RAW_SINCE, today, fetchedAt: Date.now(), rows: [], full: true };
+  if (process.env.GA_FIXTURE) {
+    const rows = fixtureSourceDaily(RAW_SINCE, today);
+    return { ...base, rows, users: fixtureUsers(rows) };
+  }
+  if (!gaConfigured()) return { ...base, error: `미연결 — ${gaMissing()}` };
+
+  const usersP = readUsers();   // 세션 원자료와 나란히 — 실패해도 세션 표는 뜬다
+  let full = true, note: string | undefined;
+  let got: GaRow[];
+  try {
+    try {
+      got = await rawAll(RAW_FULL);
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : String(e);
+      if (!/ 400 /.test(msg)) throw e;
+      full = false;
+      note = `GA 가 주요 이벤트·수익 지표를 받지 않아 그 두 열을 뺐습니다 — ${msg.split(" — ")[0]}`;
+      got = await rawAll(RAW_METS);
+    }
+  } catch (e) {
+    return { ...base, error: e instanceof Error ? e.message : String(e) };
+  }
+  const rows: SrcRaw[] = got.map((r) => ({
+    date: r.date, source: r.sessionSource, medium: r.sessionMedium, campaign: r.sessionCampaignName,
+    sessions: num(r.sessions), engaged: num(r.engagedSessions), users: num(r.activeUsers), newUsers: num(r.newUsers),
+    events: num(r.eventCount), engageSec: num(r.userEngagementDuration),
+    keyEvents: full ? num(r.keyEvents) : 0, revenue: full ? num(r.totalRevenue) : 0,
+  }));
+  const u = await usersP;
+  const v: SourceDaily = { ...base, rows, full, note, users: u.users, usersNote: u.note };
+  rawCached = { at: Date.now(), v };
+  return v;
+};

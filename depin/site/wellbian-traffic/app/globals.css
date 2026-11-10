@@ -1,0 +1,272 @@
+/* wellbian 유입 — 텔레봇 관리 화면의 유입 스타일을 떼어 온 것 (9/26).
+   토큰은 wellbian-store/app/globals.css 와 같은 값이다(8/30 서우) — 판매 사이트와 같은 제품으로 읽히게.
+   사이트가 토큰을 바꾸면 여기도 같이 바꾼다. 밝은 화면 하나만 쓴다(텔레봇과 같다) — 배경·글자색을 모두 직접 칠한다. */
+
+:root {
+  --w-main: #4d4dce;
+  --w-deep: #1b1b48;
+  --w-tint: #eeeefb;
+
+  --ink-1: #22223a; --ink-2: #44445e; --ink-3: #5b5b74; --ink-4: #6b6b85;
+  --cap: #8a8aa3; --hint: #9a9ab5; --dis: #b5b5c9;
+  --bd-input: #d8d8e6; --bd-btn: #e2e2ee; --bd-card: #e5e5ef;
+  --line: #ececf3; --line-2: #f2f2f7; --chip: #f0f0f6;
+  --sec-alt: #f6f6fa; --panel: #fafafd;
+
+  --ok-text: #1e8e5a; --ok-bg: #e9f7f0;
+  --warn-text: #8a3535; --warn-icon: #c0392b; --warn-bg: #fdf3f2; --warn-bd: #f2c9c9;
+
+  /* 사이트 팔레트에 중간 경보색이 없어 관리 도구용으로 하나만 더한다 —
+     "긴급(빨강)"과 "일반(회색)" 사이가 비면 주의 단계가 둘 중 하나로 끌려간다 */
+  --attn-text: #8a5a12; --attn-icon: #b06a12; --attn-bg: #fdf6e9; --attn-bd: #f0dfc0;
+
+  --mono: "Montserrat", "Pretendard Variable", Pretendard, sans-serif;
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: "Pretendard Variable", Pretendard, -apple-system, "Apple SD Gothic Neo", sans-serif;
+  color: var(--ink-1);
+  background: var(--sec-alt);
+  -webkit-font-smoothing: antialiased;
+  word-break: keep-all;
+}
+a { color: var(--w-main); text-decoration: none; }
+button, select, textarea, input { font: inherit; }
+button { cursor: pointer; border: 0; background: none; color: inherit; }
+h1, h2, h3, p, ul { margin: 0; }
+summary { cursor: pointer; }
+
+.mono { font-family: var(--mono); font-weight: 700; font-variant-numeric: tabular-nums; }
+.wrap { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+
+/* ── 머리 · 하위 페이지 메뉴 ─────────────────────────────────────────── */
+.top { background: #fff; border-bottom: 1px solid var(--line); padding: 16px 0 14px; margin-bottom: 20px; overflow-x: clip; }
+.top-in { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.brand { font-size: 19px; font-weight: 800; letter-spacing: -.01em; color: var(--ink-1); }
+.brand-sub { font-size: 12.5px; color: var(--cap); }
+.gnb { margin-left: auto; display: flex; align-items: center; gap: 2px; }
+.gnb a { color: var(--ink-3); font-size: 13px; font-weight: 600; padding: 6px 11px; border-radius: 8px; }
+.gnb a:hover { color: var(--w-main); background: var(--w-tint); }
+.gnb a.on { color: #fff; background: var(--w-deep); }
+a:focus-visible, button:focus-visible, input:focus-visible, summary:focus-visible {
+  outline: 2px solid var(--w-main); outline-offset: 2px; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* ── 칩 · 버튼 · 안내 ────────────────────────────────────────────────── */
+.chip {
+  display: inline-flex; align-items: center; gap: 5px;
+  border: 1px solid var(--bd-btn); background: #fff; color: var(--ink-2);
+  border-radius: 999px; padding: 5px 11px; font-size: 12.5px; text-decoration: none;
+}
+.chip:hover { border-color: var(--w-main); color: var(--w-main); }
+.chip.on { background: var(--w-deep); border-color: var(--w-deep); color: #fff; }
+.chip.on .n { color: rgba(255,255,255,.65); }
+.chip .n { color: var(--hint); font-size: 11.5px; }
+.btn { border: 1px solid var(--bd-btn); background: #fff; border-radius: 9px;
+       padding: 7px 13px; font-size: 12.5px; color: var(--ink-2); }
+.btn:hover { border-color: var(--w-main); color: var(--w-main); }
+.btn.primary { background: var(--w-main); border-color: var(--w-main); color: #fff; }
+.btn.primary:hover { background: var(--w-deep); border-color: var(--w-deep); color: #fff; }
+.notice { background: var(--attn-bg); border: 1px solid var(--attn-bd); color: var(--attn-text);
+          border-radius: 11px; padding: 13px 16px; font-size: 13px; line-height: 1.65;
+          margin-bottom: 18px; overflow-wrap: anywhere; }
+.notice ol { margin: 10px 0 0 18px; padding: 0; }
+
+/* ── 제목 · 표 (텔레봇 리포트 화면과 같은 틀) ──────────────────────────── */
+.rep-h { font-size: 17px; font-weight: 800; color: var(--ink-1); margin: 26px 0 4px; }
+.rep-sub { font-size: 12.5px; line-height: 1.65; color: var(--cap); margin: 0 0 12px; max-width: 760px; }
+.rep-table { border: 1px solid var(--line); border-radius: 12px; background: #fff; overflow: hidden; }
+.rep-tr { display: grid; grid-template-columns: 1.4fr repeat(6, 1fr); align-items: center;
+  gap: 8px; padding: 10px 14px; border-top: 1px solid var(--line-2);
+  font-size: 13px; color: var(--ink-3); text-decoration: none; }
+.rep-tr:first-child { border-top: 0; }
+a.rep-tr:hover { background: var(--line-2); }
+.rep-th { font-size: 11.5px; color: var(--cap); font-weight: 700; background: var(--chip); }
+.rep-th span + span, .rep-tr span + span { text-align: right; }
+.rep-topic { font-weight: 700; color: var(--ink-1); }
+
+/* ── 개요 → 소스별 일자로 가는 카드 (9/26) ───────────────────────────── */
+.tf-go { display: flex; align-items: center; gap: 12px; margin-top: 12px; padding: 13px 16px; border-radius: 12px;
+  background: #fff; border: 1px solid var(--bd-card); color: var(--ink-3); font-size: 13px; line-height: 1.55; }
+.tf-go:hover { border-color: var(--w-main); }
+.tf-go-k { flex: none; font-weight: 800; color: var(--w-deep); }
+.tf-go-t { flex: 1; min-width: 0; }
+.tf-go-a { flex: none; font-size: 18px; color: var(--w-main); }
+
+/* ── 잠금(TRAFFIC_KEY 가 있을 때만) ─────────────────────────────────── */
+.gate { display: grid; place-items: center; min-height: 70vh; }
+.gate-box { width: 100%; max-width: 380px; background: #fff; border: 1px solid var(--bd-card); border-radius: 14px; padding: 22px 22px 18px; }
+.gate-box b { font-size: 17px; font-weight: 800; color: var(--ink-1); }
+.gate-box p { margin: 6px 0 14px; font-size: 13px; line-height: 1.6; color: var(--ink-3); }
+.gate-row { display: flex; gap: 8px; }
+.gate-row input { flex: 1; min-width: 0; padding: 8px 11px; font-size: 14px; border: 1px solid var(--bd-input); border-radius: 9px; background: #fff; color: var(--ink-1); }
+.gate-box .gate-err { margin: 10px 0 0; color: var(--warn-text); }
+
+/* ── 유입 대시보드 (9/8 서우 — "일목요연하게, 그래프 넣어서, 키 없이") ──────────────
+   관리 화면과 공개 화면(/traffic)이 같은 본문을 쓴다. 색은 lib/traffic.ts 의 채널 색이 유일하고,
+   여기서는 회색 계열과 틀만 정한다. */
+.tf-kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 16px 0 6px; }
+.tf-kpi { background: #fff; border: 1px solid var(--bd-card); border-radius: 12px; padding: 13px 15px; min-width: 0; }
+.tf-kpi.lead { border-width: 1.5px; }
+.tf-k { font-size: 12px; color: var(--cap); font-weight: 600; }
+.tf-v { font-size: 30px; line-height: 1.15; margin-top: 4px; color: var(--ink-2); }
+.tf-n { font-size: 11.5px; color: var(--hint); margin-top: 3px; line-height: 1.5; }
+.tf-card { background: #fff; border: 1px solid var(--bd-card); border-radius: 12px; padding: 14px 16px; }
+.tf-tabs { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; margin-bottom: 8px; }
+.tf-tabs .chip { cursor: pointer; }
+.tf-tot { margin-left: auto; font-size: 12.5px; color: var(--cap); }
+.tf-chart { position: relative; }
+.tf-chart svg { display: block; width: 100%; height: auto; }
+.tf-tip { position: absolute; top: 6px; background: var(--w-deep); color: #fff;
+  border-radius: 10px; padding: 8px 11px; font-size: 12px; line-height: 1.5; pointer-events: none;
+  min-width: 150px; max-width: 240px; box-shadow: 0 6px 20px rgba(27,27,72,.18); z-index: 2; white-space: nowrap; }
+.tf-tip ul { list-style: none; margin: 5px 0 0; padding: 0; display: grid; gap: 2px; }
+.tf-tip li { display: flex; align-items: center; gap: 6px; }
+.tf-tip li .mono { margin-left: auto; padding-left: 12px; }
+.tf-legend { display: flex; flex-wrap: wrap; gap: 6px 14px; margin-top: 10px; font-size: 12.5px; color: var(--ink-3); }
+.tf-legend > span { display: inline-flex; align-items: center; gap: 6px; }
+.tf-sw { width: 10px; height: 10px; border-radius: 3px; flex: none; display: inline-block; }
+.tf-sw.hatch { background: repeating-linear-gradient(45deg, #b5b5c9 0 2px, #ececf3 2px 5px); }
+/* 채널 비중 — 이름 · 막대 · 세션 · 비중 · 사용자 · 참여율 */
+.tf-share { display: grid; grid-template-columns: 150px 1fr 64px 56px 64px 56px; gap: 0 12px; align-items: center;
+  padding: 8px 0; border-top: 1px solid var(--line-2); font-size: 13px; }
+.tf-share:first-child { border-top: 0; padding-top: 0; }
+.tf-share.h { font-size: 11.5px; color: var(--cap); font-weight: 700; padding-bottom: 6px; }
+.tf-share .num { text-align: right; }
+.tf-bar { height: 12px; border-radius: 4px; background: var(--chip); overflow: hidden; }
+.tf-bar i { display: block; height: 100%; border-radius: 4px; min-width: 2px; }
+.tf-bar i.hatch { background: repeating-linear-gradient(45deg, #b5b5c9 0 3px, #ececf3 3px 7px); }
+.tf-ch { display: flex; align-items: center; gap: 7px; font-weight: 700; color: var(--ink-1); min-width: 0; }
+.tf-ch .tf-hint { display: block; font-size: 11px; color: var(--hint); font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+/* CSV 내려받기 줄 — 링크가 파일이라는 걸 모양으로 말한다(칩보다 작게, 버튼보다 가볍게) */
+.tf-dl { display: flex; flex-wrap: wrap; gap: 6px 5px; align-items: center; margin-top: 10px; font-size: 12.5px; }
+.tf-dl-k { color: var(--cap); font-weight: 700; margin-right: 3px; }
+.tf-dl a { padding: 3px 9px; border: 1px solid var(--bd-btn); border-radius: 8px; background: #fff; color: var(--ink-3); font-weight: 600; }
+.tf-dl a:hover { border-color: var(--w-main); color: var(--w-main); }
+.tf-dl a.xl { background: var(--w-deep); border-color: var(--w-deep); color: #fff; }
+.tf-dl a.xl:hover { background: var(--w-main); border-color: var(--w-main); color: #fff; }
+.tf-dl-n a { padding: 0; border: 0; background: none; color: var(--w-main); font-weight: 600; text-decoration: underline; }
+.tf-dl-n { color: var(--hint); font-size: 11.5px; margin-left: 4px; }
+@media (max-width: 720px) { .tf-dl a { min-height: 30px; display: inline-flex; align-items: center; } .tf-dl-n { width: 100%; margin-left: 0; } }
+/* 출처 미확인 설명 — 표 바로 아래. "미측정" 으로 읽히면 파트너가 유입이 샌 줄 안다(9/8). */
+.tf-why { margin: 10px 0 0; padding: 10px 12px; border-radius: 10px; background: var(--panel); border: 1px dashed var(--line);
+  font-size: 12.5px; line-height: 1.7; color: var(--ink-3); }
+.tf-why .tf-sw { margin-right: 6px; vertical-align: -1px; }
+.tf-why b { color: var(--ink-1); }
+.tf-details { margin-top: 10px; }
+.tf-details summary { font-size: 12.5px; color: var(--w-main); font-weight: 600; padding: 4px 0; }
+.tf-details .rep-table { margin-top: 8px; }
+.tf-src { display: inline-flex; align-items: center; gap: 7px; }
+.tf-two { display: grid; grid-template-columns: 1fr 1fr; gap: 0 16px; }
+/* 격자 칸은 기본 min-width:auto 라 안의 표(휴대폰 460px)만큼 늘어나 화면 밖으로 밀린다 — 칸을 줄이고 표가 가로로 넘기게 */
+.tf-two > * { min-width: 0; }
+.tf-note { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 12px 16px;
+  font-size: 12.5px; line-height: 1.75; color: var(--ink-3); margin-top: 22px; }
+.tf-note b { color: var(--ink-1); }
+.tf-note ul { margin: 6px 0 0 16px; padding: 0; }
+.tf-pub { font-size: 12.5px; line-height: 1.7; color: var(--ink-3); background: var(--w-tint); border-radius: 10px;
+  padding: 9px 13px; margin-top: 14px; }
+.tf-pub .mono { font-weight: 700; color: var(--w-deep); user-select: all; }
+.tf-foot { font-size: 12px; color: var(--hint); margin-top: 16px; line-height: 1.7; }
+@media (max-width: 720px) {
+  .tf-kpis { grid-template-columns: 1fr 1fr; gap: 7px; margin-top: 12px; }
+  .tf-kpi { padding: 11px 11px; }
+  .tf-v { font-size: 22px; }
+  .tf-card { padding: 11px 10px; }
+  .tf-tot { margin-left: 0; width: 100%; }
+  .tf-share { grid-template-columns: 104px 1fr 52px 48px; gap: 0 8px; font-size: 12.5px; }
+  .tf-share .m-hide { display: none; }
+  .tf-two { grid-template-columns: 1fr; }
+  .tf-tip { min-width: 130px; font-size: 11.5px; }
+}
+
+/* ── 세션 소스 × 날짜 (9/26 서우 — "일자별 세션 소스 별로 보고싶은데") ───────────────
+   칸 색은 남색 한 가지의 다섯 단계(1–2 · 3–9 · 10–29 · 30–99 · 100+). 넷째 단계까지 진한 글씨, 다섯째만 흰 글씨 —
+   어느 단계든 글자 대비 4.5 이상. 소스 이름·합계 두 열은 가로 스크롤해도 제자리에 있다. 주말은 빈 칸만 옅게 깐다. */
+.sd .sd-h1 { background-color: #eeeefb; }
+.sd .sd-h2 { background-color: #dfdff7; }
+.sd .sd-h3 { background-color: #c4c4ef; }
+.sd .sd-h4 { background-color: #9d9de3; }
+.sd .sd-h5 { background-color: #4d4dce; color: #fff; }
+.sd-bar { display: flex; flex-wrap: wrap; gap: 8px 10px; align-items: center; }
+.sd-q { flex: 1 1 200px; max-width: 300px; min-width: 0; padding: 6px 11px; font-size: 13px; color: var(--ink-1);
+  border: 1px solid var(--bd-input); border-radius: 9px; background: #fff; }
+.sd-q:focus { outline: 2px solid var(--w-tint); border-color: var(--w-main); }
+.sd-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.sd-chips .chip { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; }
+.sd-chips .chip.on .tf-sw { box-shadow: 0 0 0 1.5px #fff; }
+.sd-pick { margin: 10px 0 8px; font-size: 12.5px; color: var(--hint); line-height: 1.55; min-height: 20px; }
+.sd-pick b { color: var(--ink-1); font-weight: 700; }
+.sd-pick button { color: var(--cap); padding: 0 4px; font-size: 12px; }
+.sd-scroll { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; background: #fff; }
+.sd-t { border-collapse: separate; border-spacing: 0; font-size: 12px; width: max-content; min-width: 100%; }
+.sd-cap { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.sd-t th, .sd-t td { padding: 0; height: 30px; border-bottom: 1px solid var(--line-2); }
+.sd-t thead th { background: var(--chip); color: var(--cap); font-size: 11px; font-weight: 700; border-bottom: 1px solid var(--line); }
+.sd-t tfoot th, .sd-t tfoot td { background: var(--panel); color: var(--ink-2); border-top: 1px solid var(--line); border-bottom: 0; }
+.sd-t .sd-s { position: sticky; left: 0; z-index: 2; width: 172px; min-width: 172px; max-width: 172px;
+  padding: 3px 10px; text-align: left; background: #fff; }
+.sd-t .sd-n { position: sticky; left: 172px; z-index: 2; min-width: 58px; padding: 0 10px 0 4px; text-align: right;
+  background: #fff; border-right: 1px solid var(--line); color: var(--ink-1); }
+.sd-t thead .sd-s, .sd-t thead .sd-n { background: var(--chip); }
+.sd-t tfoot .sd-s, .sd-t tfoot .sd-n { background: var(--panel); font-weight: 800; }
+.sd-t thead .sd-s { color: var(--cap); }
+.sd-t thead .sd-n button { font: inherit; color: inherit; width: 100%; text-align: right; }
+.sd-src { display: flex; align-items: center; gap: 6px; min-width: 0; font-size: 12.5px; font-weight: 700; color: var(--ink-1); }
+.sd-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sd-med { display: block; padding-left: 16px; font-size: 10.5px; font-weight: 500; color: var(--hint);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sd-t thead .sd-med, .sd-t tfoot .sd-med { display: inline; padding-left: 4px; }
+.sd-d button { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px;
+  width: 100%; min-width: 42px; height: 100%; padding: 4px 3px; font: inherit; color: inherit; }
+.sd-d button:hover { color: var(--w-main); }
+.sd-d small { font-size: 10px; font-weight: 600; color: var(--hint); }
+.sd-d[aria-sort="descending"] button { color: var(--w-deep); }
+.sd-d[aria-sort="descending"] small::after { content: " ▼"; }
+.sd-d.sd-off { color: var(--hint); }
+.sd-d.sd-now small { color: var(--attn-text); }
+.sd-t td[data-c] { min-width: 42px; text-align: center; font-family: var(--mono); font-weight: 700;
+  font-variant-numeric: tabular-nums; color: var(--ink-2); }
+.sd-t td.sd-h5[data-c] { color: #fff; }
+.sd-t tbody td[data-c]:not(.sd-h0) { cursor: pointer; }
+.sd-t td.sd-h0::after { content: "·"; color: var(--bd-input); }
+.sd-t tfoot td.sd-h0::after, .sd-t tfoot td:empty::after { content: ""; }
+.sd-t td.sd-h0.sd-off { background-color: #f9f9fc; }
+.sd-t td.sd-now, .sd-t th.sd-now { border-left: 1px dashed var(--attn-bd); }
+.sd-t td.sd-on { outline: 2px solid var(--w-deep); outline-offset: -2px; }
+.sd-t tbody tr:hover > * { box-shadow: inset 0 0 0 99px rgba(77,77,206,.05); }
+.sd-t button:focus-visible, .sd-chips .chip:focus-visible, .sd-bar .chip:focus-visible, .sd-foot .btn:focus-visible {
+  outline: 2px solid var(--w-main); outline-offset: 1px; }
+.sd-foot { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; margin-top: 10px; }
+.sd-key { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; margin-left: auto;
+  font-size: 11.5px; color: var(--cap); }
+.sd-key span { display: inline-flex; align-items: center; gap: 4px; }
+.sd-key i { display: inline-block; width: 14px; height: 10px; border-radius: 2px; }
+@media (max-width: 720px) {
+  .sd-t .sd-s { width: 118px; min-width: 118px; max-width: 118px; padding: 3px 7px; }
+  .sd-t .sd-n { left: 118px; min-width: 48px; padding: 0 7px 0 3px; }
+  .sd-src { font-size: 12px; gap: 5px; }
+  .sd-med { padding-left: 15px; }
+  .sd-t thead .sd-med { display: none; }
+  .sd-q { max-width: none; flex-basis: 100%; }
+  .sd-key { margin-left: 0; }
+  /* 채널 칩은 한 줄로 밀어 본다 — 다섯 줄로 쌓이면 표가 화면 아래로 밀려난다(상단 메뉴와 같은 방식) */
+  .sd-chips { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+  .sd-chips::-webkit-scrollbar { display: none; }
+  .sd-chips .chip { flex: none; white-space: nowrap; }
+  .sd-d button, .sd-t td[data-c] { min-width: 38px; }
+}
+
+@media (max-width: 720px) {
+  .wrap { padding: 0 13px; }
+  .top-in { gap: 8px; }
+  .brand-sub { display: none; }
+  .gnb a { min-height: 34px; display: inline-flex; align-items: center; }
+  .chip, .btn { min-height: 34px; }
+  .rep-h { font-size: 15.5px; margin-top: 20px; }
+  .rep-table { overflow-x: auto; }
+  .rep-tr { grid-template-columns: 1.1fr repeat(6, minmax(38px, 1fr)); min-width: 460px; }
+  .tf-go { align-items: flex-start; }
+}

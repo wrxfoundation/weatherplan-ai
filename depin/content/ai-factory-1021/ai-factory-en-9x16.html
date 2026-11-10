@@ -1,0 +1,189 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>wellbian — Same data. Sold twice.</title><style>
+@font-face{font-family:"Pretendard";src:url("../../site/event-week/www/fonts/PretendardVariable.woff2") format("woff2");font-weight:100 900}
+:root{--bg:#0D0B26;--t1:#F4F3FF;--t2:rgba(226,224,255,.74);--t3:rgba(226,224,255,.50);--p:#4D4DCE;--p1:#A39BFF;--p2:#CDB8FF;
+ --glass:rgba(255,255,255,.055);--glass2:rgba(255,255,255,.085);--edge:rgba(255,255,255,.16);--hi:rgba(255,255,255,.32)}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1920px;height:1080px;overflow:hidden}
+body{background:var(--bg);color:var(--t1);font-family:"Pretendard",-apple-system,system-ui,sans-serif;padding:0 72px;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden;-webkit-font-smoothing:antialiased}
+.bgfx{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.bgfx .g1{position:absolute;width:1100px;height:1100px;left:-260px;top:-520px;border-radius:50%;background:radial-gradient(closest-side,rgba(77,77,206,.75),rgba(77,77,206,0))}
+.bgfx .g2{position:absolute;width:1000px;height:1000px;right:-240px;bottom:-560px;border-radius:50%;background:radial-gradient(closest-side,rgba(138,92,255,.60),rgba(138,92,255,0))}
+.bgfx .g3{position:absolute;width:760px;height:520px;left:8%;top:34%;border-radius:50%;background:radial-gradient(closest-side,rgba(110,96,255,.42),rgba(110,96,255,0))}
+.bgfx .g4{position:absolute;width:760px;height:520px;right:6%;top:30%;border-radius:50%;background:radial-gradient(closest-side,rgba(160,110,255,.36),rgba(160,110,255,0))}
+.bgfx .grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);background-size:48px 48px;mask-image:radial-gradient(ellipse at 50% 40%,#000 30%,transparent 80%)}
+.wrap{position:relative;z-index:1;width:100%;display:flex;flex-direction:column;align-items:center}
+.logo{height:60px}
+h1{margin-top:18px;font-size:70px;font-weight:700;letter-spacing:-.025em;line-height:1.05}
+.sub{margin-top:16px;max-width:1180px;text-align:center;font-size:24px;line-height:1.45;color:var(--t2);word-break:keep-all;text-wrap:balance}
+.glass{background:linear-gradient(140deg,rgba(255,255,255,.10),rgba(255,255,255,.03) 60%);border:1px solid var(--edge);backdrop-filter:blur(22px) saturate(140%);-webkit-backdrop-filter:blur(22px) saturate(140%);box-shadow:inset 0 1px 0 var(--hi)}
+.row{margin-top:40px;width:100%;display:grid;grid-template-columns:1fr 1fr;gap:20px}
+/* 햇빛 반사 — 좌상단 테두리 선(1px) 위에만 무지갯빛. 반짝임 · 번짐 없음(10/21 서우 「빛나는 효과 없애고 테두리에 맞춰」). */
+.glint{position:relative;--gw:260px;--gh:140px}
+.ops.glint{--gw:180px;--gh:52px}
+.glint::after{content:"";position:absolute;inset:-1px;border-radius:inherit;padding:1px;pointer-events:none;
+ background:radial-gradient(ellipse var(--gw) var(--gh) at 0 0,rgba(255,255,255,.85) 0%,rgba(255,172,222,.85) 12%,rgba(182,152,255,.80) 28%,rgba(122,192,255,.70) 44%,rgba(122,255,202,.45) 60%,rgba(255,255,255,0) 78%);
+ -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude}
+.tile{border-radius:16px;padding:32px 36px 34px;position:relative}
+.tile.supply{--acc:var(--p1)} .tile.demand{--acc:var(--p2)}
+.eyebrow{display:inline-block;font-size:13px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--acc);border:1px solid var(--acc);border-radius:6px;padding:4px 9px;background:rgba(163,155,255,.10)}
+.tile h2{margin-top:14px;font-size:34px;font-weight:700;letter-spacing:-.02em;line-height:1.15;word-break:keep-all}
+.steps{margin-top:30px;display:grid;grid-template-columns:1fr auto 1fr auto 1fr;column-gap:14px;align-items:start}
+.step{position:relative}
+/* 아이콘 칸 — 유리(사선 채움 · 위 하이라이트 · 블러) + 좌상단 테두리에 아주 옅은 무지갯빛 · 선 1.9(10/21 서우 「약간 도톰하게 · 유리 질감 · 아주 약간의 무지갯빛」) */
+.ico,.ico-s{position:relative;display:grid;place-items:center;color:var(--acc);background:linear-gradient(145deg,rgba(255,255,255,.17),rgba(255,255,255,.04) 52%,rgba(163,155,255,.10)),linear-gradient(120deg,rgba(255,176,226,.07),rgba(150,200,255,.06) 40%,rgba(255,255,255,0) 70%);border:1px solid rgba(255,255,255,.20);box-shadow:inset 0 1px 0 rgba(255,255,255,.38),inset 0 -1px 0 rgba(13,11,38,.25);backdrop-filter:blur(12px) saturate(150%);-webkit-backdrop-filter:blur(12px) saturate(150%)}
+.ico::after,.ico-s::after{content:"";position:absolute;inset:-1px;border-radius:inherit;padding:1px;pointer-events:none;background:radial-gradient(ellipse 80% 70% at 0 0,rgba(255,255,255,.75),rgba(255,170,224,.65) 22%,rgba(182,152,255,.55) 42%,rgba(120,200,255,.45) 60%,rgba(140,255,210,.2) 74%,rgba(255,255,255,0) 86%);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude}
+.ico svg,.ico-s svg{fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 6px rgba(163,155,255,.25))}
+.ico{width:68px;height:68px;margin-bottom:20px;border-radius:14px}
+.ico svg{width:36px;height:36px}
+.step b{display:block;font-size:22px;font-weight:600;letter-spacing:-.01em;line-height:1.2;word-break:keep-all;text-wrap:balance}
+.step .d{display:block;margin-top:10px;font-size:17px;line-height:1.4;color:var(--t2);word-break:keep-all;text-wrap:balance}
+.step .n{display:block;margin-top:7px;font-size:14.5px;line-height:1.4;color:var(--t3);word-break:keep-all;text-wrap:balance}
+.chev{color:var(--acc);padding-top:22px}
+.chev svg{width:24px;height:24px;display:block;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.step:not(:last-child)::after{content:"";position:absolute;left:82px;right:-14px;top:34px;height:1px;background:linear-gradient(90deg,rgba(163,155,255,.15),var(--acc))}
+.join{width:100%;display:grid;grid-template-columns:1fr 1fr;gap:20px;height:34px}
+.join div{display:flex;justify-content:center;align-items:center;gap:10px;font-size:14px;letter-spacing:.04em;color:var(--t3)}
+.join i{width:1px;height:34px;display:block}
+.join .s i{background:var(--p1)} .join .d i{background:var(--p2)}
+.ops{width:100%;height:60px;border-radius:12px;display:flex;align-items:center;justify-content:center;gap:16px;font-size:20px;color:var(--t2);background:rgba(77,77,206,.20);border:1px solid rgba(163,155,255,.38);box-shadow:inset 0 1px 0 rgba(255,255,255,.22)}
+.ops b{color:var(--t1);font-weight:700}
+.ops .ico-s{width:40px;height:40px;border-radius:10px;color:var(--p1)}
+.ops .ico-s svg{width:24px;height:24px}
+.join2{width:100%;display:grid;grid-template-columns:repeat(4,1fr);gap:0;height:26px;padding:0 36px}
+.join2 i{justify-self:center;width:1px;height:26px;background:rgba(163,155,255,.55)}
+.ledger{width:100%;border-radius:16px;padding:32px 36px;display:grid;grid-template-columns:360px 1fr;column-gap:40px;align-items:center;background:var(--glass2)}
+.ledger h3{font-size:44px;font-weight:700;letter-spacing:-.02em}
+.ledger p{margin-top:8px;font-size:18px;color:var(--t2)}
+.feats{display:grid;grid-template-columns:repeat(4,1fr);column-gap:16px}
+.feat{display:grid;grid-template-columns:56px 1fr;column-gap:14px;align-items:start}
+.feat .ico{width:56px;height:56px;margin:0;border-radius:12px;color:var(--p1)}
+.feat .ico svg{width:30px;height:30px}
+.feat b{display:block;margin-top:2px;font-size:21px;font-weight:600;letter-spacing:-.01em;word-break:keep-all}
+.feat .tag{display:inline-block;margin-top:9px;font-size:13px;font-weight:700;letter-spacing:.06em;color:var(--p1);border:1px solid rgba(163,155,255,.45);border-radius:6px;padding:2px 7px}
+.feat .n{display:block;margin-top:9px;font-size:15.5px;line-height:1.4;color:var(--t2);word-break:keep-all}
+.nw{white-space:nowrap}
+.foot{margin-top:22px;font-size:14px;color:var(--t3)}
+
+.logo{height:78px}
+.logo svg{width:215px;height:78px}
+.kicker{margin-top:16px;font-size:14px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--p1);border:1px solid rgba(163,155,255,.55);border-radius:999px;padding:6px 14px;background:rgba(163,155,255,.10)}
+.fab{margin-top:36px;width:100%;display:grid;grid-template-columns:1fr auto 1.18fr auto 1fr;column-gap:16px;align-items:stretch}
+.fab .chev{align-self:center;padding:0;color:var(--p1)}
+.fab .chev svg{width:30px;height:30px}
+.ft{border-radius:16px;padding:28px 30px 30px;--acc:var(--p1)}
+.ft.hub{background:linear-gradient(150deg,rgba(124,110,255,.30),rgba(77,77,206,.16) 60%);border-color:rgba(163,155,255,.55);--acc:var(--p2)}
+.ft h2{margin-top:12px;font-size:32px;font-weight:700;letter-spacing:-.02em;line-height:1.15}
+.items{margin-top:22px;display:flex;flex-direction:column;gap:18px}
+.it{display:grid;grid-template-columns:54px 1fr;column-gap:16px;align-items:start}
+.it .ico{width:54px;height:54px;margin:0;border-radius:12px}
+.it .ico svg{width:29px;height:29px}
+.it b{display:block;font-size:20px;font-weight:600;letter-spacing:-.01em;line-height:1.22;word-break:keep-all}
+.it .d{display:block;margin-top:5px;font-size:15.5px;line-height:1.38;color:var(--t2);word-break:keep-all}
+.st{display:inline-block;margin-top:7px;font-size:12.5px;font-weight:700;letter-spacing:.06em;border-radius:6px;padding:2px 8px;border:1px solid}
+.st.live{color:#8EF0C6;border-color:rgba(142,240,198,.55);background:rgba(142,240,198,.08)}
+.st.soon{color:var(--t2);border-color:rgba(226,224,255,.32)}
+.proc{margin-top:22px;display:flex;flex-direction:column;gap:12px}
+.pr{display:grid;grid-template-columns:34px 1fr;column-gap:14px;align-items:center}
+.pr .k{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-size:15px;font-weight:700;color:var(--t1);background:rgba(163,155,255,.22);border:1px solid rgba(205,184,255,.55)}
+.pr b{font-size:20px;font-weight:600}
+.pr span{margin-left:8px;font-size:16px;color:var(--t2)}
+.eng{margin-top:22px;display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.eng div{display:flex;align-items:center;gap:12px;border-radius:12px;padding:10px 12px;background:rgba(13,11,38,.28);border:1px solid rgba(205,184,255,.30);font-size:16.5px;font-weight:600}
+.eng .ico-s{width:40px;height:40px;border-radius:10px;color:var(--p2)}
+.eng .ico-s svg{width:23px;height:23px}
+.band{margin-top:22px;backdrop-filter:blur(14px) saturate(130%);-webkit-backdrop-filter:blur(14px) saturate(130%)}
+.band .ico-s{color:var(--p1)}
+.ill{position:absolute;top:20px;right:22px;width:140px;height:140px;color:var(--acc);pointer-events:none}
+.ft .hd{min-height:118px;padding-right:150px}
+.ill svg{width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 8px rgba(163,155,255,.35))}
+.ill .l2{stroke:rgba(226,224,255,.55)}
+.ill .dot{stroke:currentColor;stroke-width:2.2;stroke-dasharray:0 5;opacity:.85}
+.ill.etch img{width:100%;height:100%;object-fit:contain;display:block;opacity:.38;filter:drop-shadow(0 0 4px rgba(163,155,255,.16))}  /* 10/22 서우 「너무 진해 — 주변 톤에 맞춰 옅게」 .5 → 「좀만 더 옅게」 .38 */
+/* 햇살 — 위에서 구름 사이로 쏟아지는 풍부한 금빛(마니에리스모 · 틴토레토 · 엘 그레코의 하늘빛). 10/22 서우 「인위적인 조명 말고 자연스러운 햇살」.
+   그린 빛이 아니라 Higgsfield 로 만든 회화풍 배경(assets/light-*.jpg)을 깔고, 아래쪽은 남보라로 덮어 타일 글씨를 지킨다. */
+.paint{position:absolute;inset:0;background:url("assets/light-16x9.jpg") center top/cover no-repeat;opacity:.66}  /* 10/22 서우 「20% 약하게」 .82 → .66 */
+.paintfade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(13,11,38,0) 0%,rgba(13,11,38,.10) 24%,rgba(13,11,38,.55) 40%,rgba(13,11,38,.88) 56%,#0D0B26 74%)}
+/* 오른쪽 아래 AI 데이터센터 건물(10/22 서우 「우측 하단에 과하지 않게」) — 같은 회화풍(Higgsfield) 그림을 잘라 배경층 맨 위에. 밝은 부분만 보이게(lighten). */
+.fg{position:absolute;inset:0;z-index:2;pointer-events:none;overflow:hidden}
+.dc{position:absolute;right:-150px;bottom:-34px;width:560px;height:251px;background:url("assets/datacenter-radar-soft.png") center bottom/contain no-repeat;filter:brightness(.7) saturate(.85) contrast(.96);opacity:.62;-webkit-mask-image:linear-gradient(0deg,transparent 0%,#000 14%);mask-image:linear-gradient(0deg,transparent 0%,#000 14%)}
+.dchaze{position:absolute;right:-60px;bottom:-142px;width:760px;height:420px;border-radius:50%;background:radial-gradient(closest-side,rgba(255,196,120,.10),rgba(163,120,255,.06) 55%,rgba(163,120,255,0))}  /* 10/22 서우 「건물도 구름처럼 옅게 — 톤앤매너」 건물 .62 · 번짐 약하게 */
+/* 데이터센터 지붕에서 하늘로 솟는 디지털 정보(점선 기둥) — 10/22 서우 「하늘로 디지털 정보를 쏘는 듯한 효과」(참고 이미지: 지구에서 솟는 점 기둥). 금빛 → 라벤더로 옅어진다. */
+.streams{position:absolute;right:84px;bottom:219px;width:70px;height:280px;pointer-events:none;mix-blend-mode:screen;opacity:.9;filter:drop-shadow(0 0 3px rgba(255,214,150,.45))}
+.streams svg{width:100%;height:100%;display:block}
+.logo,h1,.sub{text-shadow:0 2px 22px rgba(13,11,38,.55)}
+.note,.foot{text-shadow:0 0 6px #0D0B26,0 0 14px #0D0B26}
+.logo svg{filter:drop-shadow(0 2px 14px rgba(13,11,38,.5))}
+.sub{color:rgba(244,243,255,.9)}
+.kicker{color:#E6DCFF;background:rgba(13,11,38,.58);border-color:rgba(205,184,255,.65);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.note{margin-top:16px;font-size:16px;color:var(--t2)}
+.note b{color:var(--t1);font-weight:600}
+.foot{margin-top:10px}
+
+html,body{width:1080px;height:1920px}
+body{padding:30px 44px 0;justify-content:flex-start}
+.dc{width:470px;height:210px;right:-106px;bottom:-28px}  /* 10/22 서우 「세로도 아래 건물이 잘 보이게」 -70 → -8 → 「약간만 내려」 -28 */
+.dchaze{width:620px;height:360px;right:-90px;bottom:-88px}
+.streams{right:30px;bottom:184px;width:46px;height:80px}
+.bgfx .g1{width:900px;height:900px;left:-300px;top:-380px}
+.bgfx .g2{width:900px;height:900px;right:-320px;bottom:-360px}
+.bgfx .g3{width:700px;height:600px;left:-160px;top:30%}
+.bgfx .g4{width:700px;height:600px;right:-200px;top:52%}
+.logo{height:68px}
+.logo svg{width:186px;height:68px}
+.kicker{font-size:16px;margin-top:18px}
+h1{margin-top:14px;font-size:76px;line-height:1.04;text-align:center;letter-spacing:-.03em}
+.sub{margin-top:14px;max-width:960px;font-size:25px;line-height:1.42}
+.fab{margin-top:24px;display:flex;flex-direction:column;gap:0}
+.fab .chev{align-self:center;transform:rotate(90deg);margin:6px 0}
+.fab .chev svg{width:30px;height:30px}
+.ft{padding:22px 30px 24px}
+.ft h2{font-size:36px;margin-top:10px}
+.ft .eyebrow{font-size:15px}
+.items{margin-top:16px;gap:14px}
+.it{grid-template-columns:60px 1fr;column-gap:18px}
+.it .ico{width:60px;height:60px}
+.it .ico svg{width:32px;height:32px}
+.it b{font-size:28px}
+.it .d{font-size:22.5px;margin-top:3px}
+.st{font-size:15px;margin-top:6px}
+.vrow{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 12px}
+.vrow .st{margin-top:0;vertical-align:4px}
+.proc{margin-top:16px;gap:10px;display:grid;grid-template-columns:1fr 1fr;column-gap:16px}
+.pr{grid-template-columns:38px 1fr;align-items:start}
+.pr .k{width:38px;height:38px;font-size:17px}
+.pr b{display:block;font-size:26px}
+.pr span{display:block;margin:2px 0 0;font-size:21px;line-height:1.3}
+.eng{margin-top:16px}
+.eng div{font-size:22px;padding:10px 12px}
+.eng .ico-s{width:46px;height:46px}
+.eng .ico-s svg{width:26px;height:26px}
+.band{height:auto;min-height:74px;padding:12px 20px;font-size:22px;gap:12px;flex-wrap:wrap;border-radius:14px;margin-top:18px;text-align:center}
+.band b{font-size:24px}
+.band .ico-s{width:46px;height:46px;border-radius:11px}
+.band .ico-s svg{width:26px;height:26px}
+.paint{background-image:url("assets/light-9x16.jpg")}
+.paintfade{background:linear-gradient(180deg,rgba(13,11,38,0) 0%,rgba(13,11,38,.10) 14%,rgba(13,11,38,.55) 22%,rgba(13,11,38,.88) 30%,#0D0B26 40%)}
+.ill{top:16px;right:24px;width:150px;height:150px}
+.ft .hd{min-height:0;padding-right:170px}
+.ft.hub .hd{min-height:130px}
+.note{margin-top:14px;font-size:21px;text-align:center;max-width:960px;text-wrap:balance}
+.foot{margin-top:10px;max-width:960px;text-align:center;font-size:18px;line-height:1.45;text-wrap:balance}
+.note,.foot{align-self:flex-start;text-align:left;max-width:680px;margin-left:6px}
+</style></head><body>
+<div class="bgfx"><div class="paint"></div><div class="paintfade"></div><div class="g1"></div><div class="g2"></div><div class="g3"></div><div class="g4"></div><div class="grid"></div><div class="dchaze"></div></div>
+<div class="wrap">
+<div class="logo"><svg width="165" height="60" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 416 151" fill="none" aria-label="wellbian"><g clip-path="url(#wellbian-logo-clip)"><path fill-rule="evenodd" clip-rule="evenodd" fill="#ffffff" d="M323.43 91.39C318.81 98.61 309.1 100.27 302.55 94.93L302.35 97.34L293.95 97.31V50.89L302.39 50.86L302.43 68.68C309.49 63.1 319.73 65.28 324.02 73.24C327.04 78.84 326.98 85.82 323.42 91.39H323.43ZM317.49 81.66C317.45 76.62 313.86 73.3 309.3 73.49C304.89 73.67 301.86 77.27 301.89 81.88C301.92 86.61 305.16 90.16 309.72 90.18C314.2 90.19 317.53 86.63 317.49 81.67V81.66ZM214.88 66.22H223.48L211.97 97.26L205.76 97.36L199.16 79.47L192.59 97.33L186.44 97.26L174.87 66.23L183.45 66.2L189.73 84.68L196.12 66.22L202.22 66.17L208.66 84.67L214.88 66.23V66.22ZM378.53 97.31L370.12 97.33L369.96 94.74C366.45 97.85 362.06 98.74 357.28 97.51C348.11 95.16 344.12 84.22 347.5 75.2C350.07 68.34 356.83 64.51 363.99 65.84C366.33 66.28 368.25 67.38 370.01 68.9L370.1 66.19H378.53V97.3V97.31ZM370.58 81.66C370.51 76.61 366.94 73.29 362.35 73.49C357.76 73.69 354.94 77.25 354.98 81.87C355.02 86.58 358.24 90.19 362.76 90.17C367.28 90.15 370.65 86.65 370.58 81.66ZM240.35 90.79C243.85 91.12 246.74 90.03 249.11 87.65L254.11 92.67C250.44 96.88 245.21 98.34 239.87 97.97C231.83 97.42 225.52 91.57 224.71 83.58C223.68 73.5 231.35 65.21 241.45 65.53C245.96 65.67 249.95 67.39 252.81 70.93C255.93 74.79 256.93 79.96 255.75 84.77H233.22C234.02 87.97 236.61 90.41 240.35 90.77V90.79ZM247.97 78.41C247.21 74.48 244.42 72.61 241 72.68C237.3 72.6 234.04 74.85 233.34 78.44L247.96 78.41H247.97ZM394.4 78.79L394.29 97.32H385.85V66.21L394.27 66.19L394.39 68.92C397.95 65.85 402.64 64.61 407.39 66.37C411.09 67.74 415.04 71.77 415.06 76.51L415.14 97.32H406.62L406.5 78.54C406.48 75.2 403.19 73.33 400.37 73.36C397.55 73.39 394.41 75.28 394.39 78.79H394.4ZM270.25 97.27L261.8 97.32V50.88L270.25 50.87V97.27ZM286.12 97.27L277.67 97.32V50.88L286.12 50.87V97.27ZM340.52 97.31H331.97V66.21L340.52 66.18V97.31ZM335.77 51.61C338.77 51.33 340.79 53.44 341.02 55.95C341.27 58.75 339.43 61.1 336.79 61.33C334.15 61.56 331.85 59.89 331.47 57.22C331.09 54.59 332.72 51.89 335.77 51.61ZM151.91 75.05C152.05 77.51 150.18 80.42 147.12 80.42H121.23C118.37 80.43 116.35 77.81 116.35 75.4C116.35 72.52 118.49 70.19 121.55 70.19L147.02 70.21C149.83 70.21 151.77 72.57 151.91 75.04M78.11 150.79H75.98C75.74 150.79 75.49 150.74 75.27 150.63C73.01 149.53 71.94 147.62 71.95 144.93L71.99 119.92C71.99 116.96 74.43 114.93 77.08 114.94C79.73 114.95 82.11 117.04 82.12 119.98L82.16 144.92C82.16 147.6 81.13 149.52 78.84 150.63C78.62 150.74 78.37 150.79 78.13 150.79H78.11ZM130.2 121.65C132.32 123.79 132.2 127.11 130.14 129.06C128.03 131.06 124.91 130.82 122.76 128.65L105.14 110.83C103.09 108.76 103.12 105.66 105.05 103.63C106.98 101.6 110.19 101.52 112.31 103.65L130.2 121.64V121.65ZM-9.76585e-06 75.58V73.86C-9.76585e-06 73.63 0.0399902 73.4 0.12999 73.19C1.12999 70.97 3.18999 69.5 5.60999 69.83C8.02999 70.16 10.03 72.42 9.91999 74.95C9.80999 77.48 7.83999 79.61 5.23999 79.76C2.94999 79.89 1.06999 78.44 0.11999 76.22C0.0299902 76.02 -0.0100098 75.79 -0.0100098 75.58H-9.76585e-06ZM52.97 90.7C51.07 87.56 49.87 84.48 49.15 81.06C48.99 80.31 48.35 79.76 47.58 79.76H21.31C18.42 79.76 16.29 77.56 16.19 74.97C16.08 72.18 18.28 69.8 21.31 69.8H47.88C48.62 69.79 49.25 69.27 49.43 68.55C53.4 52.66 69.57 43.24 85.29 47.94C94.48 50.69 101.45 58.07 104.12 66.39C107.39 76.58 105.06 86.87 98.34 94.5C89.03 105.08 73.73 107.18 61.91 99.72C61.27 99.31 60.43 99.39 59.9 99.93L30.57 129.52C28.52 131.59 25.62 131.7 23.52 129.94C21.62 128.35 20.8 124.85 22.93 122.7L52.74 92.68C53.26 92.15 53.34 91.34 52.96 90.71L52.97 90.7ZM80.79 78.93L69.87 89.9C69.07 90.71 69.33 92.1 70.39 92.52C76.53 94.96 83.35 93.88 88.39 89.84C94.03 85.32 96.63 77.87 94.7 70.68C92.54 62.67 85.48 57.21 77.46 57.05C70.29 56.91 63.71 61.01 60.61 67.52C60.12 68.56 60.92 69.76 62.07 69.76L77.66 69.82C79.76 69.82 81.46 71.82 81.95 73.25C82.63 75.22 82.33 77.36 80.78 78.93H80.79ZM61.66 79.79C60.53 79.77 59.73 80.9 60.14 81.96C60.56 83.04 61.96 83.33 62.77 82.51C63.75 81.51 63.06 79.82 61.66 79.79ZM78.15 0C78.4 0 78.65 0.05 78.87 0.16C81.11 1.27 82.14 3.2 82.14 5.87L82.1 30.81C82.1 33.75 79.72 35.84 77.06 35.85C74.4 35.86 71.98 33.83 71.97 30.87L71.93 5.86C71.93 3.16 73 1.25 75.37 0.15C75.58 0.05 75.83 0 76.06 0H78.14L78.15 0ZM112.39 46.97C110.21 49.17 107.12 49.03 105.11 47.13C103.36 45.48 102.84 42.1 104.86 40.07L122.89 21.84C124.89 19.82 127.79 19.77 129.78 21.35C131.84 22.97 132.6 26.53 130.51 28.64L112.38 46.97H112.39ZM49.43 40.36C51.26 42.21 50.67 45.34 49.2 46.95C47.55 48.76 44.23 49.43 42.3 47.5L23.59 28.67C21.68 26.75 22.19 23.58 23.76 21.9C25.45 20.09 28.75 19.48 30.74 21.5L49.42 40.37L49.43 40.36Z"></path></g><defs><clipPath id="wellbian-logo-clip"><rect width="415.14" height="150.79" fill="white"></rect></clipPath></defs></svg></div>
+<div class="kicker">Wellbian AI · AI factory</div>
+<h1>Same data. Sold twice.</h1><p class="sub">First as verified data, by the call. Then as intelligence: our AI factory refines the same readings, with 30 years of KWeather observation and forecast data, into indexes, forecasts and agents.</p>
+<div class="fab">
+<section class="ft glass glint"><div class="ill etch"><img src="assets/etch-data.png" alt=""></div><div class="hd"><div class="eyebrow">Input</div><h2>Weather big data</h2></div><div class="items"><div class="it"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="3" width="10" height="18" rx="2.5"/><circle cx="10" cy="15.5" r="2"/><path d="M8 7.5h4"/><path d="M18 9.5c1 .8 1 2.2 0 3"/><path d="M20.5 7.5c2 1.7 2 5.3 0 7"/></svg></span><div><b>Sensors in real rooms</b><span class="d"><span class="nw">PM ·</span> <span class="nw">CO₂ ·</span> <span class="nw">TVOC ·</span> <span class="nw">temperature ·</span> <span class="nw">humidity</span></span></div></div><div class="it"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 12a8.5 8.5 0 1 0 2.5-6"/><path d="M3.5 4.5V8H7"/><path d="M12 8v4.5l3 1.8"/></svg></span><div><b>30 years of KWeather data</b><span class="d">Observation and forecast archive</span></div></div><div class="it"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17"/><path d="M12 3.5c2.5 2.6 3.6 5.4 3.6 8.5s-1.1 5.9-3.6 8.5c-2.5-2.6-3.6-5.4-3.6-8.5S9.5 6.1 12 3.5z"/></svg></span><div><b>City weather</b><span class="d"><span class="nw">172 cities ·</span> <span class="nw">a consensus of eleven weather feeds</span></span></div></div></div></section>
+<div class="chev"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M0 12h21M16 7l5 5-5 5"/></svg></div>
+<section class="ft hub glass glint"><div class="ill etch"><img src="assets/etch-factory.png" alt=""></div><div class="hd"><div class="eyebrow">Refine</div><h2>The AI factory</h2></div><div class="proc"><div class="pr"><span class="k">1</span><div><b>Collect</b><span>raw data from every source</span></div></div><div class="pr"><span class="k">2</span><div><b>Clean</b><span>drop bad and missing readings</span></div></div><div class="pr"><span class="k">3</span><div><b>Structure</b><span>shape it for the models</span></div></div><div class="pr"><span class="k">4</span><div><b>Generate</b><span>indexes, forecasts, answers</span></div></div></div><div class="eng"><div><span class="ico-s"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="7" r="2"/><circle cx="18" cy="7" r="2"/><circle cx="12" cy="18" r="2"/><circle cx="12" cy="10" r="1.6"/><path d="M7.8 7.7l2.7 1.4M16.2 7.7l-2.7 1.4M12 11.6V16M7 8.8l4 7.5M17 8.8l-4 7.5"/></svg></span>Weather AI models</div><div><span class="ico-s"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="2"/><rect x="9.5" y="9.5" width="5" height="5" rx="1"/><path d="M9 3v3M12 3v3M15 3v3M9 18v3M12 18v3M15 18v3M3 9h3M3 12h3M3 15h3M18 9h3M18 12h3M18 15h3"/></svg></span>B300 GPU inference</div></div></section>
+<div class="chev"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M0 12h21M16 7l5 5-5 5"/></svg></div>
+<section class="ft glass glint"><div class="ill etch"><img src="assets/etch-intel.png" alt=""></div><div class="hd"><div class="eyebrow">Output</div><h2>Weather intelligence</h2></div><div class="items"><div class="it"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5.5h14a1.5 1.5 0 0 1 1.5 1.5v8.5a1.5 1.5 0 0 1-1.5 1.5H10l-4.5 3.5V17H5a1.5 1.5 0 0 1-1.5-1.5V7A1.5 1.5 0 0 1 5 5.5z"/><path d="M8 10h8M8 13h5"/></svg></span><div><b>60-day hyper-local forecast agent</b><span class="d"><span class="nw">A decision for your plans ·</span> <span class="nw">evidence on request</span></span></div></div><div class="it"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 7L4 12l4.5 5"/><path d="M15.5 7L20 12l-4.5 5"/><path d="M13.5 5l-3 14"/></svg></span><div><b>Inference API</b><span class="d">Indexes, forecasts, risk indexes</span></div></div><div class="it"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 20.5V11l5.5 3.2V11l5.5 3.2V5h5v15.5z"/><path d="M2.5 20.5h19"/><path d="M7 17.5h2M12 17.5h2M16.5 17.5h1.5"/></svg></span><div><b>Industry packages</b><span class="d"><span class="nw">Energy ·</span> <span class="nw">construction ·</span> <span class="nw">retail ·</span> <span class="nw">public sector</span></span></div></div></div></section>
+</div>
+<div class="ops band glint"><span class="ico-s"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9.5" cy="9.5" r="5.5"/><path d="M15.4 9.6a5.5 5.5 0 1 1-5.8 5.8"/></svg></span><b>Revenue</b><span>data by the call · agent plans after launch · inference API · industry packages</span></div>
+<p class="note">“Intelligence tokens” is AI-factory language for model output. They are not WLBN.</p>
+<p class="foot"><span class="nw">From the Wellbian Labs whitepaper v1.0 draft (2026-09-28) and wellbianai.io ·</span> <span class="nw">No price or return is promised.</span></p>
+</div>
+<div class="fg"><div class="dc"></div></div></body></html>

@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>테스트 모드 · XRP SEOUL 2026 래플</title>
+<style>body{margin:0;padding:48px 24px;font:15px/1.6 Pretendard,system-ui,sans-serif;color:#1b1b48;background:#f6f6fb}code{background:#ececf6;padding:2px 6px;border-radius:6px}</style>
+</head>
+<body>
+<p id="msg">테스트 페이지를 여는 중…</p>
+<script>
+/* /test/ — 본 페이지(index.html)를 그대로 불러와 가짜 원장(sim.js)을 끼워 넣습니다.
+   본 페이지를 고치면 테스트 페이지도 자동으로 같이 바뀝니다(복사본 아님). 실제 XRP·RPC 는 쓰지 않습니다. */
+(async function () {
+  var here = location.pathname.replace(/\/?(index\.html)?$/, '');          // /test
+  var root = here.slice(0, here.lastIndexOf('/') + 1);                     // /
+  var p = new URLSearchParams(location.search);
+  if (!p.get('poll')) { p.set('poll', '3000'); location.replace(location.pathname + '?' + p.toString()); return; }
+  try {
+    var r = await fetch(root + 'index.html', { cache: 'no-store' });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    var html = await r.text();
+    html = html.replace(/(src|href)=(["'])(images|brand|js)\//g, '$1=$2' + root + '$3/');
+    html = html.replace('<head>', '<head><meta name="robots" content="noindex,nofollow">');
+    html = html.replace(/<title>[^<]*<\/title>/, '<title>[테스트] XRP SEOUL 2026 래플</title>');
+    var qr = '<script src="' + root + 'js/qrcode.js"><\/script>';
+    if (html.indexOf(qr) < 0) throw new Error('본 페이지에서 스크립트 자리를 찾지 못했습니다');
+    html = html.replace(qr, qr + '<script src="' + here + '/sim.js"><\/script>');
+    document.open(); document.write(html); document.close();
+  } catch (e) {
+    document.getElementById('msg').innerHTML = '본 페이지를 불러오지 못했습니다: <code>' + String(e.message || e) + '</code><br>이 파일은 파일로 직접 열면 안 되고, 배포 주소(예: <code>https://…/test/</code>)로 열어야 합니다.';
+  }
+})();
+</script>
+</body>
+</html>

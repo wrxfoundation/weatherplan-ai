@@ -1,0 +1,159 @@
+<title>장마 디펜스</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="닷새 동안 지나가는 장마전선에서 펌프·제방·우량계로 강가 마을을 지키는 날씨 미니게임">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Do+Hyeon&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap">
+<style>
+  /* 한 가지 세계: 장마철 강가 마을의 방재 상황판. 배경·글자색을 전부 명시 */
+  :root {
+    --bg: #0A1316; --panel: #101C20; --panel-2: #15252A; --line: rgba(200, 230, 235, 0.10); --line-2: rgba(200, 230, 235, 0.18);
+    --ink: #E7EEF0; --ink-2: #9DB2B8; --ink-3: #62797F;
+    --rain: #58A6FF; --roof: #D5573B; --levee: #B08A5A; --pump: #4FD1C5; --gauge: #F3F6F7; --warn: #F2B33D; --bad: #F0645A; --ok: #6FDC9C;
+    --f-display: 'Do Hyeon', 'IBM Plex Sans KR', sans-serif;
+    --f-body: 'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
+    --f-mono: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--bg); color: var(--ink); }
+  body { font-family: var(--f-body); font-size: 15px; line-height: 1.55; -webkit-font-smoothing: antialiased; }
+  button { font: inherit; color: inherit; }
+  button:focus-visible, summary:focus-visible { outline: 2px solid var(--warn); outline-offset: 2px; }
+  .app { max-width: 1180px; margin: 0 auto; padding: 14px 16px 28px; display: flex; flex-direction: column; gap: 14px; }
+  .top { display: flex; align-items: flex-end; justify-content: space-between; gap: 10px 20px; flex-wrap: wrap; }
+  .brand h1 { margin: 0; font-family: var(--f-display); font-weight: 400; font-size: clamp(34px, 6vw, 48px); line-height: 1; letter-spacing: 0.01em; }
+  .brand h1 span { color: var(--rain); }
+  .brand p { margin: 6px 0 0; color: var(--ink-2); font-size: 14px; max-width: 60ch; }
+  .days { display: flex; gap: 6px; flex-wrap: wrap; }
+  .dchip { min-width: 58px; padding: 5px 8px; border-radius: 8px; border: 1px solid var(--line); background: var(--panel); text-align: center; font-size: 12px; color: var(--ink-3); }
+  .dchip b { display: block; font-family: var(--f-mono); font-weight: 500; font-size: 12.5px; color: var(--ink-2); }
+  .dchip.now { border-color: var(--rain); color: var(--ink); } .dchip.done b { color: var(--ink); }
+  @media (max-width: 599px) { .days { width: 100%; flex-wrap: nowrap; } .dchip { flex: 1 1 0; min-width: 0; padding: 5px 4px; } .dchip b { font-size: 11.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } }
+
+  .stage { display: grid; grid-template-columns: 1fr; gap: 14px; align-items: start; }
+  @media (min-width: 940px) { .stage { grid-template-columns: minmax(0, 1fr) 360px; } }
+  .mapwrap { display: flex; justify-content: center; min-width: 0; }
+  .map { position: relative; width: 100%; aspect-ratio: 3 / 4; border-radius: 12px; overflow: hidden; border: 1px solid var(--line); background: #1B2A24; touch-action: manipulation; user-select: none; -webkit-user-select: none; }
+  @media (min-width: 940px) { .map { width: min(100%, calc(min(84vh, 880px) * 0.75)); } }
+  .map canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  .hud { position: absolute; left: 8px; right: 8px; top: 8px; display: flex; justify-content: space-between; gap: 8px; pointer-events: none; }
+  .hud .box { background: rgba(8, 14, 16, 0.78); border: 1px solid var(--line); border-radius: 8px; padding: 4px 9px; font-family: var(--f-mono); font-size: 12px; font-variant-numeric: tabular-nums; backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
+  .hud .river { display: flex; align-items: center; gap: 7px; }
+  .hud .bar { width: 70px; height: 7px; border-radius: 4px; background: rgba(255, 255, 255, 0.08); overflow: hidden; position: relative; }
+  .hud .bar i { position: absolute; left: 0; top: 0; bottom: 0; background: var(--rain); border-radius: 4px; }
+  .hud .bar u { position: absolute; top: -2px; bottom: -2px; width: 2px; background: var(--bad); }
+  .toast { position: absolute; left: 50%; bottom: 12px; transform: translate(-50%, 8px); max-width: calc(100% - 24px); background: rgba(8, 14, 16, 0.94); border: 1px solid var(--line-2); border-radius: 999px; padding: 6px 14px; font-size: 13px; opacity: 0; transition: opacity .2s, transform .2s; pointer-events: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .toast.on { opacity: 1; transform: translate(-50%, 0); }
+
+  .panel { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+  @media (max-width: 939px) { .panel .tools { order: -2; } .panel .report { order: -3; } }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; }
+  .card h2 { margin: 0 0 6px; font-size: 18px; font-weight: 600; text-wrap: balance; }
+  .card p { margin: 0; color: var(--ink-2); font-size: 14px; }
+  .lbl { font-size: 11.5px; color: var(--ink-3); letter-spacing: 0.08em; margin-bottom: 6px; }
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .stat { background: var(--panel-2); border-radius: 10px; padding: 8px 10px; }
+  .stat .k { font-size: 11.5px; color: var(--ink-3); } .stat .v { font-family: var(--f-mono); font-size: 20px; font-weight: 500; font-variant-numeric: tabular-nums; }
+  .stat .v.coin { color: var(--warn); }
+  .palette { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+  .tool { display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 8px 4px; border-radius: 10px; border: 1px solid var(--line-2); background: var(--panel-2); cursor: pointer; font-size: 13px; }
+  .tool svg { width: 26px; height: 26px; }
+  .tool .c { font-family: var(--f-mono); font-size: 11.5px; color: var(--warn); }
+  .tool[aria-pressed="true"] { border-color: var(--rain); box-shadow: 0 0 0 1px var(--rain) inset; background: #16303A; }
+  .tool:disabled { opacity: 0.4; cursor: default; }
+  .tip { margin-top: 8px; font-size: 13px; color: var(--ink-2); min-height: 20px; }
+  .ins { display: flex; align-items: flex-start; gap: 10px; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--line); }
+  .switch { flex: none; width: 44px; height: 26px; border-radius: 999px; border: 1px solid var(--line-2); background: var(--panel-2); position: relative; cursor: pointer; }
+  .switch::after { content: ''; position: absolute; left: 3px; top: 3px; width: 18px; height: 18px; border-radius: 50%; background: var(--ink-3); transition: transform .15s; }
+  .switch[aria-checked="true"] { background: #1D4A3A; border-color: var(--ok); } .switch[aria-checked="true"]::after { transform: translateX(18px); background: var(--ok); }
+  .ins .t { font-size: 13.5px; } .ins .t b { font-weight: 600; } .ins .t small { display: block; color: var(--ink-3); font-size: 12.5px; margin-top: 2px; }
+  .actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+  .btn { border-radius: 10px; padding: 10px 16px; font-size: 15px; font-weight: 600; cursor: pointer; border: 1px solid var(--line-2); background: var(--panel-2); color: var(--ink); }
+  .btn.primary { background: var(--rain); border-color: var(--rain); color: #06131F; }
+  .btn.sm { padding: 7px 12px; font-size: 13.5px; font-weight: 500; }
+  .btn:disabled { opacity: 0.4; cursor: default; }
+  .fc { display: grid; grid-template-columns: auto 1fr; gap: 3px 12px; font-size: 13.5px; margin-top: 8px; }
+  .fc dt { color: var(--ink-3); } .fc dd { margin: 0; font-variant-numeric: tabular-nums; }
+  .scale { display: flex; gap: 0; margin-top: 10px; border-radius: 4px; overflow: hidden; }
+  .scale span { flex: 1; height: 8px; } .scalelbl { display: flex; justify-content: space-between; font-family: var(--f-mono); font-size: 10.5px; color: var(--ink-3); margin-top: 3px; }
+  .report { border-color: rgba(88, 166, 255, 0.35); background: var(--panel-2); display: none; }
+  .report.on { display: block; }
+  .report .big { font-family: var(--f-mono); font-size: 26px; font-weight: 500; }
+  .report ul { margin: 8px 0 0; padding-left: 18px; font-size: 13.5px; color: var(--ink-2); display: flex; flex-direction: column; gap: 4px; }
+  .report .stars { font-size: 26px; letter-spacing: 4px; color: var(--ink-3); } .report .stars b { color: var(--warn); font-weight: 400; }
+  .good { color: var(--ok); } .badc { color: var(--bad); } .warnc { color: var(--warn); }
+  details.howto { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 12px 16px; }
+  details.howto summary { cursor: pointer; font-weight: 600; font-size: 14px; }
+  details.howto ul { margin: 10px 0 0; padding-left: 18px; font-size: 13.5px; color: var(--ink-2); display: flex; flex-direction: column; gap: 5px; }
+  footer { color: var(--ink-3); font-size: 12.5px; text-align: center; text-wrap: balance; }
+  @media (prefers-reduced-motion: reduce) { .toast, .switch::after { transition: none; } }
+</style>
+
+<div class="app">
+  <header class="top">
+    <div class="brand">
+      <h1>장마 <span>디펜스</span></h1>
+      <p>닷새 동안 장마전선이 강가 마을을 지나갑니다. 펌프·제방·우량계로 집 20채를 지키세요.</p>
+    </div>
+    <div class="days" id="days" aria-label="닷새 진행"></div>
+  </header>
+  <main class="stage">
+    <section class="mapwrap">
+      <div class="map" id="map">
+        <canvas id="cv" role="img" aria-label="강가 마을 지도. 칸을 눌러 고른 시설을 짓습니다."></canvas>
+        <div class="hud"><div class="box" id="clock"></div><div class="box river"><span>강 수위</span><span class="bar"><i id="rbar"></i><u id="rline"></u></span><span id="rtxt"></span></div></div>
+        <div class="toast" id="toast" role="status" aria-live="polite"></div>
+      </div>
+    </section>
+    <aside class="panel">
+      <div class="card report" id="report" aria-live="polite"></div>
+      <div class="card tools">
+        <div class="stats">
+          <div class="stat"><div class="k">코인</div><div class="v coin" id="coins"></div></div>
+          <div class="stat"><div class="k">지킨 집</div><div class="v" id="houses"></div></div>
+          <div class="stat"><div class="k">오늘</div><div class="v" id="dayv"></div></div>
+        </div>
+        <div class="lbl" style="margin-top:12px">시설 — 고른 뒤 지도의 칸을 누르기</div>
+        <div class="palette" id="palette">
+          <button class="tool" type="button" data-t="pump" aria-pressed="false"><svg viewBox="0 0 26 26" aria-hidden="true"><circle cx="13" cy="13" r="10" fill="#0F3A3A" stroke="#4FD1C5" stroke-width="2"/><path d="M8 13h8m-3-4 4 4-4 4" stroke="#E7EEF0" stroke-width="2" fill="none" stroke-linecap="round"/></svg>펌프<span class="c">40</span></button>
+          <button class="tool" type="button" data-t="levee" aria-pressed="false"><svg viewBox="0 0 26 26" aria-hidden="true"><path d="M3 19 8 9h10l5 10z" fill="#B08A5A"/><path d="M3 19h20" stroke="#E7EEF0" stroke-width="1.5"/></svg>제방<span class="c">12</span></button>
+          <button class="tool" type="button" data-t="gauge" aria-pressed="false"><svg viewBox="0 0 26 26" aria-hidden="true"><rect x="8" y="4" width="10" height="18" rx="2" fill="none" stroke="#F3F6F7" stroke-width="2"/><rect x="10" y="13" width="6" height="7" fill="#58A6FF"/></svg>우량계<span class="c">15</span></button>
+          <button class="tool" type="button" data-t="remove" aria-pressed="false"><svg viewBox="0 0 26 26" aria-hidden="true"><path d="M7 7l12 12M19 7 7 19" stroke="#F0645A" stroke-width="2.4" stroke-linecap="round"/></svg>철거<span class="c">반값 환급</span></button>
+        </div>
+        <div class="tip" id="tip"></div>
+        <div class="ins">
+          <button class="switch" id="insw" type="button" role="switch" aria-checked="false" aria-labelledby="inst"></button>
+          <div class="t" id="inst"><b>비 보험</b> · 보험료 20 → 지급 60<small>오늘 비가 예보보다 10% 넘게 더 오면 지급합니다. 판정은 내 우량계 값으로 합니다. 우량계가 없으면 판정 보류(보험료 환급).</small></div>
+        </div>
+        <div class="actions"><button class="btn primary" id="go" type="button"></button><button class="btn sm" id="speed" type="button" hidden>빨리 ×3</button></div>
+      </div>
+      <div class="card" id="fcard">
+        <div class="lbl">오늘 예보</div>
+        <h2 id="fname"></h2><p id="fnote"></p>
+        <dl class="fc" id="fc"></dl>
+        <div class="scale" id="scale"></div><div class="scalelbl" id="scalelbl"></div>
+      </div>
+      <details class="howto" id="howto">
+        <summary>물이 움직이는 규칙</summary>
+        <ul>
+          <li>빗물은 높은 칸에서 낮은 칸으로 흐르고, 강으로 빠집니다. 사방이 높은 오목한 칸에는 물이 고입니다.</li>
+          <li>집이 있는 칸에 물이 30cm 넘게 차면 그 집은 잠깁니다.</li>
+          <li>펌프는 둘레 9칸의 물을 퍼서 가장 가까운 강으로 보냅니다. 강이 불어나면 하류가 넘칠 수 있습니다.</li>
+          <li>강물이 둑을 넘으면 옆 칸으로 넘칩니다. 제방을 쌓은 칸으로는 넘치지 않습니다. 이어서 쌓아야 막힙니다.</li>
+          <li>북쪽 언덕에 내린 비는 조금 늦게 강 상류로 들어옵니다.</li>
+          <li>우량계는 그 칸에 내린 비를 잽니다. 비 보험은 우량계 값을 그 자리의 예보와 비교해 정산합니다. 우량계가 비구름을 비껴간 곳에 있으면, 마을에 비가 많이 와도 보험이 나가지 않을 수 있습니다.</li>
+          <li>밤이 되면 고인 물 절반쯤이 빠지고 강도 내려갑니다. 집 한 채가 하루 5코인을 법니다.</li>
+        </ul>
+      </details>
+    </aside>
+  </main>
+  <footer>wellbian 날씨 미니게임 · 프로토타입 — 교육용 모형입니다. 게임 속 코인·보험은 점수일 뿐 실제 돈·토큰과 관계없습니다.</footer>
+</div>
+
+<script>
+/*@SIM@*/
+</script>
+<script>
+/*@GAME@*/
+</script>
