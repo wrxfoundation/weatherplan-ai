@@ -2615,3 +2615,5 @@ Thanks Odelia — writing to you at that address today. Mine is support@wellbian
 - **서우 개인 인용 — 브랜드 YTN 초대 글(11/9)** — x-activity-log 새 절. A 「The weather usually gets the last two minutes of the news. This time it got the whole conversation.」(200) · B 짧게(106) · 국문(155). 재태그 · 동석자 설명 · 매체 규모 수치 0. playbook 행사 · 홍보 이력 절에 언론 출연 규칙 한 줄.
 
 - **주간 생태계 스캔 2026-11-09(예약 루틴)** — ecosystem-log 새 절(5축 · 검색 12회, 2차). ★ ① fixCleanup3_4_0 활성 11/4 ② 칼시 날씨 정산 세부(1차 도움말 — 체인링크 SLA 답 기준선) ③ YTN 초대(우리 쪽 신호). OCC GENIUS 최종(10/21) 확인으로 지난주 미확인 해소. business-directions: Permission Delegation 행 PaymentBurn 비권장 해제 · 체인링크 절 보강. 로스터 후보 신규 0.
+
+- **서우 개인 인용 — 세 서비스 소개(11/10)** — x-activity-log 새 절. A 「Measure it / Forecast it / Settle on it」(265) · B(185) · C(122) · 국문(173). 172 · 91 기준.

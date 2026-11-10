@@ -4902,6 +4902,14 @@ PM2.5 3, CO₂ 543 ppm, 23.9°C. The only thing dry in here is the air: 33% humi
 - 국문(155): 「뉴스에서 날씨는 보통 마지막 2분입니다. / 오늘은 대화 전체가 날씨였습니다. // YTN에 다녀온 팀이 자랑스럽습니다. 한국에서 세계로, XRP 레저 위의 실제 날씨 데이터.」
 - 뺀 안: 「Forecast for Seoul today: clear skies …」 — 그날 서울 날씨를 확인하지 않은 사실 주장이라 뺌.
 
+## 서우 개인 인용 — 웰비안 세 서비스 소개(DePIN · AI · Weather Finance) (2026-11-10)
+
+서우 「내 X 에 올릴 수 있게 재인용 코멘트」 — 같은 날 쉬운 말로 고친 세 서비스 소개(영문)를 바탕으로. 도시 · 국가 수는 172 · 91(사이트 웰비안랩스 페이지의 167 · 90 은 갱신 필요).
+- A(가중 265): 「Everyone talks about the weather. We built three ways to use it: Measure it / Forecast it / Settle on it …」 — 세 줄 목록, 이모지 3.
+- B(185): 「Measure the weather. Forecast it. Settle on it. Three layers, one data stack …」
+- C(122): 「Weather used to be small talk. Now it's sensors, forecasts and a verdict you can settle on.」
+- 국문(173). 수익 · 가격 · 토큰 · 재태그 0, 「and counting」 같은 확장 암시 0, 실내 측정값의 원장 기록 주장 0.
+
 ## DM — Swell 글 보고 관심 보인 해외 계정(가입 2013 · 팔로워 약 6.7천) 판매 안내 (2026-10-28, 서우 캡처 + 「wellbian.io 판매 사이트 안내 · 추가 할인 코드」)
 
 계정명은 적지 않는다(잠재 고객). 서우 「Hi」 → 상대 「Hello」.
