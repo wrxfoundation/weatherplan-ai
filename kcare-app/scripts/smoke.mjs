@@ -25,7 +25,9 @@ const BASE = process.env.SMOKE_BASE || "http://localhost:3100";
 const EXEC = process.env.PLAYWRIGHT_CHROMIUM || undefined;
 
 const ROUTES = [
-  "/", "/service", "/onboarding", "/elder", "/care-profile",
+  // 대외 화면 — 서비스 소개(/) · 상담 신청(/consult). 2026-11-06 랜딩 요청으로 /service 는 / 로, /onboarding 은 /consult 로
+  // 옮겨 주는 주소(301)가 됐다 (화면이 아니라서 여기 넣지 않는다). 시연 허브는 /demo, 예전 가입 상담 화면은 /demo-onboarding.
+  "/", "/consult", "/demo", "/demo-onboarding", "/elder", "/care-profile",
   "/family", "/family/calendar", "/family/requests", "/family/my",
   "/family/store", "/family/watch", "/family/hospitals",
   // 보호자 홈 네 칸의 세부 화면 — 2026-10-15 디자인 시안
@@ -37,6 +39,7 @@ const ROUTES = [
   "/sales",
   // 구글 로그인 — 2026-09-30. 키가 없으면 '설정 전' 안내, 있으면 로그인 버튼이 뜬다.
   "/login",
+  "/login/test",
   "/login/google",
   // 회원가입 · 영역별 로그인 입구 — 2026-10-06 (이용자 · 현장 · 영업 · 관제)
   "/join", "/partner/join", "/partner/login", "/ops/join", "/ops/login",

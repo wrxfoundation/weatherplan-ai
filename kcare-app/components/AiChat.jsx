@@ -4,7 +4,9 @@ import { useEffect, useRef, useState } from "react";
 // 외부 표기는 "AI"로 통일 (모델·제공사 비노출) · /api/ai 503(키 미설정) 시 기록 기반 데모 답변 폴백.
 const NAVY = "#0A1F3C";
 
-export default function AiChat({ role, title, subtitle, qa, context, note, intro, stage, evidence }) {
+// fallback — 준비된 답도 AI 연결도 없을 때의 말. 콘솔에서는 '데모 모드' 안내가 맞지만, 고객이 보는 서비스 소개에서는
+// 그 말을 쓰지 않는다 (2026-11-06 랜딩 요청 2-2) — 화면이 { text, src } 를 넘긴다.
+export default function AiChat({ role, title, subtitle, qa, context, note, intro, stage, evidence, fallback }) {
   const [open, setOpen] = useState(false);
   const [msgs, setMsgs] = useState([]);
   const [input, setInput] = useState("");
@@ -92,11 +94,13 @@ export default function AiChat({ role, title, subtitle, qa, context, note, intro
       const hit = canned || qa.find((x) => (x.keys || []).some((k) => question.includes(k)));
       const reply = hit
         ? { who: "ai", text: hit.a, src: hit.src }
-        : {
-            who: "ai",
-            text: "데모 모드에서는 준비된 기록 범위에서만 답할 수 있습니다. 아래 추천 질문을 눌러 보세요.",
-            src: "데모 안내",
-          };
+        : fallback
+          ? { who: "ai", text: fallback.text, src: fallback.src }
+          : {
+              who: "ai",
+              text: "데모 모드에서는 준비된 기록 범위에서만 답할 수 있습니다. 아래 추천 질문을 눌러 보세요.",
+              src: "데모 안내",
+            };
       await type(reply);
     }
     setBusy(false);

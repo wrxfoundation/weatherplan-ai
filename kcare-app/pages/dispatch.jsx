@@ -92,6 +92,7 @@ import RoleGate from "../components/RoleGate";
 import { useAuth } from "../lib/auth";
 import Accounts from "../components/ops/Accounts";
 import CenterMembers, { usePendingMembers } from "../components/ops/CenterMembers";
+import ConsultList, { useNewConsults } from "../components/ops/ConsultList";
 import AuditLog from "../components/ops/AuditLog";
 import Integrations from "../components/ops/Integrations";
 import ModeLink from "../components/ModeLink";
@@ -203,6 +204,8 @@ const DISPATCH_MENUS = [
   ["visits", "방문관리", "calendar"],
   ["requests", "해주세요 관리", "hand"],
   ["together", "함께해요 관리", "sun"],
+  // 서비스 소개의 '가입 상담 신청'(/consult)으로 들어온 접수 — 2026-11-06 랜딩 요청 5-4
+  ["consults", "상담 신청", "chat"],
   ["comms", "커뮤니케이션", "megaphone"],
   ["hospital", "병원", "hospital"],
   ["weather", "날씨", "drop"],
@@ -528,6 +531,13 @@ function DispatchConsole() {
   // 해주세요 관리 숫자 — 관제가 할 일만: 도와줘요 진행 중 · 취소 요청(관제 승인) · 환불 대기 (2026-10-05).
   // 보호자 · 어르신의 일반 해주세요는 담당 컨시어지가 승인하므로 세지 않는다.
   const pendingMembers = usePendingMembers();
+  // 상담 신청 새 접수 — 늘어나면 알림음 한 번 (2026-11-06 랜딩 요청 5-4: 새 접수가 들어오면 관제 화면에 알림)
+  const newConsults = useNewConsults();
+  const consultSeen = useRef(null);
+  useEffect(() => {
+    if (consultSeen.current != null && newConsults > consultSeen.current) ringAlarm();
+    consultSeen.current = newConsults;
+  }, [newConsults]);
   // 새 해주세요(보호자 · 어르신 · 말로 부탁) — 승인은 담당 컨시어지가 하고, 관제는 받았다는 것을 '확인'한다
   // (2026-10-14 현장 '기본 로직' 5번: "컨시어지와 관제에 동시 알림 · 컨시어지 1차 대응 후 승인 · 관제는 확인")
   const unackedAsks = (state.requests || []).filter(
@@ -567,6 +577,7 @@ function DispatchConsole() {
     // 해주세요 — 관제가 처리할 것 (도와줘요 · 취소 요청 · 환불 대기)
     ...(newRequests.length ? { requests: newRequests.length } : {}),
     ...(pendingMembers ? { accounts: pendingMembers } : {}),
+    ...(newConsults ? { consults: newConsults } : {}),
   };
   const sosUnread = sosOpen.some((i) => i.state === "new"); // 미확인 사건 — 사이드바 점등
 
@@ -955,6 +966,15 @@ function DispatchConsole() {
       meta: "이용자 · 현장 · 영업 · 관제 가입 신청 — 계정·권한에서 승인하거나 거절",
       menu: "accounts",
     });
+  // 상담 신청 — 서비스 소개에서 들어온 새 접수 (2026-11-06)
+  if (newConsults)
+    actions.push({
+      id: "consults-new",
+      level: "high",
+      title: `상담 신청 새 접수 ${newConsults}건`,
+      meta: "서비스 소개의 가입 상담 신청 — 상담 신청 메뉴에서 연락하고 처리 상태를 바꿉니다",
+      menu: "consults",
+    });
   const LEVEL_ORDER = { critical: 0, high: 1, med: 2 };
   actions.sort((a, b) => LEVEL_ORDER[a.level] - LEVEL_ORDER[b.level]);
 
@@ -1147,7 +1167,7 @@ function DispatchConsole() {
           </nav>
           <div className="border-t border-white/10 px-5 py-4">
             <p className="text-[10px] leading-[1.6] text-white/35">현장 관제 — 배차 · 해제 실행은 관제사 승인 (L4)</p>
-            <Link href="/" className="btn-press mt-2.5 block rounded-[10px] border border-white/20 py-2 text-center text-[12px] font-bold text-white/80">데모 홈</Link>
+            <Link href="/demo" className="btn-press mt-2.5 block rounded-[10px] border border-white/20 py-2 text-center text-[12px] font-bold text-white/80">데모 홈</Link>
           </div>
         </aside>
 
@@ -1476,7 +1496,8 @@ function DispatchConsole() {
               // 어르신 앱은 "관제센터에서 확인 전화를 드립니다"라고 약속한다 — 그 부탁이 들어와 있으면 접어 두지 않는다.
               // 보호자 일정등록 요청도 같다 — 관제가 승인해야 캘린더에 오르는데, 접혀 있으면 아무도 못 본다 (2026-10-01 관제 테스트).
               // 도와줘요 · 해주세요 취소 요청 · 환불 대기도 관제가 직접 할 일이라 펼친다 (2026-10-05)
-              opsOpen={actions.some((a) => a.level === "critical" || /^(elder-|help-|cancel-|refunds|members-)/.test(a.id)) || pendingEvents > 0 || freshCancels > 0}
+              // 상담 신청 새 접수도 펼친다 — 접혀 있으면 손님이 남긴 연락처를 아무도 못 본다 (2026-11-06 랜딩 요청 5-4)
+              opsOpen={actions.some((a) => a.level === "critical" || /^(elder-|help-|cancel-|refunds|members-|consults-)/.test(a.id)) || pendingEvents > 0 || freshCancels > 0}
               opsNote={[pendingEvents > 0 && `일정 승인 대기 ${pendingEvents}건`, freshCancels > 0 && `일정 취소 ${freshCancels}건 — 배차 정리`].filter(Boolean).join(" · ") || null}
               opsSlot={<>
           {/* ── 방문 업무흐름 8단계 — 일정 수립 알람이 여기로 온다 (2026-08-13 미팅) ── */}
@@ -2499,6 +2520,7 @@ function DispatchConsole() {
           {menu === "visits" && <Visits openProfile={openProfile} />}
           {menu === "requests" && <RequestsMgmt />}
           {menu === "together" && <TogetherMgmt />}
+          {menu === "consults" && <ConsultList />}
           {menu === "accounts" && (
             <div className="space-y-4">
               <CenterMembers />

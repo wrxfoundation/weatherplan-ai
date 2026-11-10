@@ -83,7 +83,7 @@ export default function CareProfile() {
           <div>
             <div className="flex items-center gap-3">
               <span className="text-[12px] font-bold tracking-[.16em] text-muted">확장 / F7 진화형 케어 프로필 · F11-1 AI 안부콜</span>
-              <Link href="/" className="tap text-[12px] font-bold text-muted/60 underline-offset-2 hover:underline">데모 홈</Link>
+              <Link href="/demo" className="tap text-[12px] font-bold text-muted/60 underline-offset-2 hover:underline">데모 홈</Link>
               <Link href="/dispatch?menu=elder" className="tap text-[12px] font-bold text-muted/60 underline-offset-2 hover:underline">관제 · 어르신</Link>
             </div>
             <h1 className="mt-0.5 text-[29px] font-bold tracking-[-.01em] text-navy">쓸수록 깊어지는 프로필</h1>

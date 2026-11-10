@@ -1,6 +1,8 @@
-// 영역 로그인 화면 (현장 · 영업 /partner/login · 관제 /ops/login) — 이용자 로그인은 /login (테스트 계정 · 구글과 함께).
+// 영역 로그인 화면 (현장 · 영업 /partner/login · 관제 /ops/login) — 이용자 로그인은 pages/login.jsx.
+// 2026-11-06 랜딩 요청 5-2 — 아래 '로그인 없이 데모 둘러보기' 링크를 빼고, 회원가입 단추를 카드 안으로 옮겼다.
+import Link from "next/link";
 import { useRouter } from "next/router";
-import AreaShell, { ShellLinks } from "./AreaShell";
+import AreaShell from "./AreaShell";
 import MemberLogin from "./MemberLogin";
 import { AREAS, areaOfRole } from "../lib/centers";
 import { logout, safeCallback, useAuth } from "../lib/auth";
@@ -31,25 +33,31 @@ export function SignedInCard({ area }) {
   );
 }
 
-export default function AreaLogin({ area, lead, hint }) {
+// 로그인 창 아래 — 한 줄 안내와 회원가입 단추 (문장 속 작은 링크 대신 누르기 쉬운 단추로)
+export function JoinPrompt({ note, href, label }) {
+  return (
+    <>
+      <p className="mt-3 text-[13px] leading-[1.6] text-muted">{note}</p>
+      <Link href={href} className="btn-press mt-3 flex w-full items-center justify-center rounded-xl border border-navy/[.16] py-3 text-[14.5px] font-bold text-navy">
+        {label}
+      </Link>
+    </>
+  );
+}
+
+export default function AreaLogin({ area, lead }) {
   const router = useRouter();
   const auth = useAuth();
   const a = AREAS[area];
   const signedIn = auth.status === "authenticated" && auth.user;
   return (
-    <AreaShell
-      area={area}
-      mode="login"
-      title={`${a.label} 로그인`}
-      lead={lead}
-      below={<ShellLinks links={[[a.join, `${a.label} 회원가입`], ["/", "로그인 없이 데모 둘러보기"]]} />}
-    >
+    <AreaShell area={area} mode="login" title={`${a.label} 로그인`} lead={lead}>
       {signedIn ? (
         <SignedInCard area={area} />
       ) : (
         <>
           <MemberLogin area={area} callbackUrl={safeCallback(router.query.callbackUrl, "/")} defaultId={typeof router.query.id === "string" ? router.query.id : ""} />
-          {hint && <p className="mt-3 text-[12px] leading-[1.7] text-muted">{hint}</p>}
+          <JoinPrompt note="가입 신청 뒤 확인이 끝나면 로그인됩니다." href={a.join} label={`${a.label} 회원가입`} />
         </>
       )}
     </AreaShell>

@@ -61,7 +61,7 @@ function activityRows(actions, user) {
     .filter(Boolean);
 }
 
-// 가입 신청 — 온보딩 마지막 단계의 값 (pages/onboarding.jsx finish)
+// 가입 신청 — 온보딩 마지막 단계의 값 (pages/demo-onboarding.jsx finish · 시연용 화면)
 function signupRow(p, user) {
   return {
     household_id: user.household,

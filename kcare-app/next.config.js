@@ -90,9 +90,14 @@ const nextConfig = {
           { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
           // 마이크는 우리 화면에서만 — 목소리 녹음 (2026-10-14). 전에는 막혀 있어 어떤 화면도 마이크를 잡을 수 없었다
           { key: "Permissions-Policy", value: "camera=(), microphone=(self), geolocation=()" },
-          // 데모 빌드 — 유사 개인정보(목 데이터)가 검색엔진에 색인되지 않게
-          { key: "X-Robots-Tag", value: "noindex, nofollow" },
         ],
+      },
+      {
+        // 검색 차단 — 서비스 소개(/)와 상담 신청(/consult)만 빼고 전부 (2026-11-06 랜딩 요청 1장).
+        // 앱 화면에는 유사 개인정보(목 데이터)가 있어 검색엔진에 색인되면 안 된다.
+        // 같은 목록: pages/_app.jsx INDEXABLE · public/robots.txt · public/sitemap.xml
+        source: "/((?!consult$|sitemap\\.xml$|robots\\.txt$).+)",
+        headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }],
       },
       {
         // API 응답은 어디에도 캐시하지 않는다 (민감 컨텍스트 포함 가능)

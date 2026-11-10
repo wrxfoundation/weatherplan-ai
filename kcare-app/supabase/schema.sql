@@ -220,6 +220,25 @@ create table if not exists public.voice_clips (
 );
 create index if not exists voice_clips_household_idx on public.voice_clips (household_id, created_at desc);
 
+-- ── 상담 신청 (2026-11-06 랜딩 요청 5-4) — /consult 에서 로그인 없이 받는다. 이미 만든 프로젝트는 consults.sql 만 실행해도 된다 ──
+-- 관제가 '상담 종료'로 바꾸면 서버가 name · phone 을 지운다 (화면 약속: 상담이 끝나면 파기).
+create table if not exists public.consults (
+  id           bigint generated always as identity primary key,
+  created_at   timestamptz not null default now(),
+  name         text,                               -- 상담 종료 뒤에는 비운다
+  phone        text,                               -- 숫자만 · 상담 종료 뒤에는 비운다
+  who          text not null check (who in ('guardian', 'elder')),   -- 신청자 구분: 보호자 · 어르신 본인
+  ref          text,                               -- 파트너 추천 코드
+  status       text not null default 'new' check (status in ('new', 'contacted', 'done')),
+  again_count  integer not null default 0,         -- 같은 연락처로 다시 신청한 횟수 (새 접수인 동안)
+  again_at     timestamptz,
+  handled_by   text,
+  handled_at   timestamptz
+);
+create index if not exists consults_created_idx on public.consults (created_at desc);
+-- 같은 연락처 · 같은 신청자 구분의 '새 접수'는 한 줄만 — 겹친 접수 방지
+create unique index if not exists consults_open_key on public.consults (phone, who) where status = 'new';
+
 -- 잠그기 — 서버 비밀 키만 읽고 쓴다
 alter table public.voice_clips enable row level security;
 alter table public.households enable row level security;
@@ -229,9 +248,10 @@ alter table public.signups    enable row level security;
 alter table public.payments   enable row level security;
 alter table public.centers    enable row level security;
 alter table public.account_audit enable row level security;
+alter table public.consults   enable row level security;
 
 revoke all on table public.households, public.accounts, public.activity, public.signups, public.payments,
-  public.centers, public.account_audit, public.voice_clips from anon, authenticated;
+  public.centers, public.account_audit, public.voice_clips, public.consults from anon, authenticated;
 revoke all on function public.kcare_login_failed(text), public.kcare_new_join_code() from public, anon, authenticated;
 grant execute on function public.kcare_login_failed(text) to service_role;
 revoke all on table public.center1_accounts, public.center1_household, public.center1_activity, public.center1_signups, public.center1_payments, public.center2_accounts, public.center2_household, public.center2_activity, public.center2_signups, public.center2_payments, public.center3_accounts, public.center3_household, public.center3_activity, public.center3_signups, public.center3_payments from anon, authenticated;

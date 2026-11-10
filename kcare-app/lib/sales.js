@@ -76,7 +76,8 @@ export const monthlyOf = (h) => (h === "couple" ? HOUSEHOLD.monthly : PRICING.su
 // 가입·설치비가 확정 전이면(부부 가구 · 2026-10-02 부터 1인도 — lib/config.js) null — 합계에서 빼고 따로 센다
 export const entryOf = (h) => (h === "couple" ? HOUSEHOLD.entryFee : PRICING.entryFee.total);
 
-export const referralPath = (code = SALES_REP.code) => `/onboarding?ref=${encodeURIComponent(code)}`;
+// 고객 초대 링크 — 상담 신청(/consult)으로 연다. 추천 코드는 접수 기록에 같이 남는다 (2026-11-06 랜딩 요청: /onboarding 연결 해제)
+export const referralPath = (code = SALES_REP.code) => `/consult?ref=${encodeURIComponent(code)}`;
 // 추천 코드 — 예시 영업자는 S-0012, 관제 센터 회원 영업자는 자기 아이디로 만든 코드(S-아이디 · 2026-10-06 UX 점검:
 // 전에는 센터의 영업자 모두가 같은 S-0012 를 나눠 써서 누구 고객인지 갈리지 않았다)
 export const isRepCode = (v) => /^S-(\d{4}|[A-Z][A-Z0-9._-]{3,19})$/.test(String(v || "").trim().toUpperCase());

@@ -25,7 +25,7 @@ export default class Boundary extends Component {
       <ErrorPage
         code="오류"
         title="화면을 그리지 못했습니다"
-        desc="이 화면에서 문제가 생겼습니다. 다시 시도하거나 데모 홈으로 돌아가 주세요."
+        desc="이 화면에서 문제가 생겼습니다. 다시 시도하거나 처음 화면으로 돌아가 주세요."
         onRetry={() => this.setState({ failed: false })}
       />
     );

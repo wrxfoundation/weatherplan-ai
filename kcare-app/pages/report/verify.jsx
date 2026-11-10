@@ -48,7 +48,7 @@ export default function VerifyPage() {
               내용 전체가 랜드마크 밖으로 잡힌다 (axe: region · landmark-one-main) */}
         <main>
           <Link href="/" className="tap text-[13px] font-bold text-muted underline underline-offset-2">
-            ← 데모 홈
+            ← 처음으로
           </Link>
           <h1 className="mt-3 text-[25px] font-black text-navy">리포트 위변조 검증</h1>
           <p className="mt-2 text-[14px] leading-[1.75] text-muted">

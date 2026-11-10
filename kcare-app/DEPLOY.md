@@ -76,7 +76,8 @@ Vercel 프로젝트 → **Settings → Environment Variables** → Environment �
 | `NEXTAUTH_SECRET` | 임의의 긴 난수 — 터미널에서 `openssl rand -base64 32` (윈도우는 Git Bash) |
 | `BETA_TEST_PASSWORD` | 테스트 계정 다섯 개가 같이 쓰는 비밀번호 — **20자 이상 무작위**로 (비밀번호 생성기) |
 
-넣고 **Redeploy** 하면 `<운영 주소>/login` 에 테스트 아이디 로그인이 뜬다.
+넣고 **Redeploy** 하면 `<운영 주소>/login/test` 에 테스트 아이디 로그인이 뜬다
+(2026-11-06 부터 — 고객이 보는 `/login` 에는 가입한 아이디 로그인만 있다. 4-16 참고).
 
 **테스트 계정** — 다섯 계정이 **테스트 가구 1** 을 함께 쓴다 (목록은 `lib/test-accounts.js`)
 
@@ -193,12 +194,12 @@ Vercel 프로젝트 → **Settings → Environment Variables** → Environment �
 - **로그인 잠금** — 같은 아이디로 비밀번호를 5번 틀리면 5분 동안 맞는 비밀번호도 받지 않는다(되풀이되면 최대 60분).
   풀어 주려면 SQL Editor 에서 `update public.accounts set failed_logins = 0, locked_until = null where id = '아이디';`
 - 센터끼리는 회원 · 기록 · SOS 가 섞이지 않는다. 예전 테스트 계정(`test-…`)과 **테스트 가구 1** 은 그대로 남는다.
-- `/login` 은 **가입한 아이디** 탭이 먼저 열린다. 테스트 계정은 **베타 테스트 계정** 탭(또는 가입한 아이디 탭에 `test-…` 아이디)으로 들어온다.
+- `/login` 은 가입한 아이디 로그인만 있다 (2026-11-06). 테스트 계정은 내부 주소 **`/login/test`** 로 들어온다.
 - 비밀번호는 암호화(scrypt 해시)해서만 저장한다. 테스트하는 사람에게 **실제 이름 · 연락처를 넣지 말라고** 안내한다.
 - 센터를 처음 상태로: SQL Editor 에서 `delete from public.households where id = 'HH-C1';`
   (회원까지 지우려면 `delete from public.accounts where center_id = 'C1' and password_hash is not null;`)
 
-**테스트 가구를 처음으로 되돌리기** — 시연 허브(`/`)에서 테스트 계정으로 로그인한 채
+**테스트 가구를 처음으로 되돌리기** — 시연 허브(`/demo`)에서 테스트 계정으로 로그인한 채
 **↺ 테스트 가구 기록 비우기**. 활동 기록(activity)까지 지우려면 SQL Editor 에서
 `delete from public.households where id = 'HH-TEST-01';`
 
@@ -383,6 +384,40 @@ Vercel 프로젝트 → **Settings → Environment Variables** → Environment �
 - 정해 주셔야 할 것(내부평가 점수 척도 · 자격증 첨부 보관 위치 등): 개발 저장소의 `../docs/kcare/decisions/2026-10-28-update-request.md`.
   현장 확인 순서: `docs/TEST-SCENARIOS.md` '2-요청1028'(10/30 현장 확인분 U1-7 · U7-5~11 포함).
 
+### 4-16. 서비스 소개가 처음 화면으로 · 상담 신청 · 로그인 화면 정리 (2026-11-06 랜딩 요청)
+
+**이번에는 SQL 을 한 번 실행해야 한다.** 환경변수는 새로 넣을 것이 없다 (도메인을 붙였다면 `NEXTAUTH_URL` 만 확인).
+
+1. **SQL** — Supabase SQL Editor 에서 `supabase/consults.sql` 을 붙여 넣고 **Run** (여러 번 실행해도 된다).
+   상담 신청 표(`consults`)가 생긴다. 실행 전에는 상담 신청 화면이 접수 대신 "고객센터로 전화 주세요"라고 안내한다.
+2. **zip 을 덮어 올린다.** 이번 zip 에는 평소 폴더 말고 **`middleware.js`** 와 **`public/`**(`robots.txt` · `sitemap.xml` · `og.png`)가
+   들어 있다 — 같이 올려야 한다. 없으면 로그인한 사람이 `/` 에서 자기 화면으로 가지 않고, 검색 설정이 예전 그대로다.
+3. **지워도 되는 파일** (남아 있어도 동작에는 지장 없다): `lib/faq.js` · `lib/trust.js`.
+   `pages/service.jsx` · `pages/onboarding.jsx` · `pages/index.jsx` · `pages/login.jsx` 는 **같은 이름의 새 파일로 덮어쓴다** (지우지 않는다).
+4. **도메인** — `NEXTAUTH_URL=https://kcarelife.com` 인지 확인하고, Vercel Domains 에서 `www.kcarelife.com` 이 `kcarelife.com` 으로
+   넘어가게(Redirect) 해 둔다. sitemap · 공유 미리보기 주소가 `https://kcarelife.com` 기준이다.
+
+바뀐 주소:
+
+| 주소 | 지금 |
+|---|---|
+| `/` | 서비스 소개. 로그인한 사람은 자기 화면으로 간다 (보호자 `/family` · 어르신 `/elder` · 컨시어지 `/concierge` · 관제 `/dispatch` · 영업 `/sales`) |
+| `/service` | `/` 로 옮겨 준다 (301) |
+| `/demo` | 예전 처음 화면(시연 허브). 어디에서도 연결하지 않는다 — 주소를 직접 친다 |
+| `/consult` | 상담 신청 — 로그인 없이 이름 · 연락처를 남긴다 |
+| `/onboarding` | `/consult` 로 옮겨 준다 (301 · 파트너 추천 코드 `?ref=` 는 들고 간다) |
+| `/login` | 가입한 아이디 로그인만 (탭 없음) |
+| `/login/test` | **테스트 계정 · 구글(시뮬레이션) 로그인 — 내부용.** 테스터에게 이 주소를 알려 준다 |
+| `/demo-onboarding` | 예전 가입 상담 화면 (시연용) |
+
+- **상담 신청 처리** — 관제 화면 **상담 신청** 메뉴. 센터 관제 계정(`ops1~3` · 승인된 관제 회원)만 본다. 새 접수가 오면 메뉴 숫자 ·
+  '지금 처리할 일' · 알림음. **연락함 → 상담 종료** 순서로 바꾸고, **종료하면 이름과 연락처가 지워진다** (되돌릴 수 없다).
+- **검색** — `/` 와 `/consult` 만 검색에 열린다. 나머지 화면은 예전처럼 막혀 있다 (`robots.txt` · noindex).
+  배포 뒤 `https://kcarelife.com/robots.txt` · `/sitemap.xml` · `/og.png` 가 열리는지 본다.
+- **문구를 고칠 때** — 서비스 소개 문구는 `lib/landing.js` 한 파일이다. 금액은 맨 위 `FEE` 숫자만 고친다.
+- 정해 둔 것 · 확인이 필요한 것(이용약관 · 개인정보 처리방침 문서, 앱 안쪽 요금 화면, 결제 범위): 개발 저장소의
+  `../docs/kcare/decisions/2026-11-06-landing.md`. 확인 순서: `docs/TEST-SCENARIOS.md` '2-랜딩'.
+
 ## 5. 구글 로그인 켜기 (나중에)
 
 ### 5-1. Google Cloud 콘솔
@@ -438,8 +473,8 @@ Vercel 프로젝트 → **Settings → Environment Variables** → Environment �
 
 `BETA_REQUIRE_LOGIN=1` 이면 로그인(테스트 계정 또는 구글)해야 열린다. 다만 아래는 잠금 중에도 공개다.
 
-- `/login` · `/login/google`(시뮬레이션) · 로그인 콜백 · `/api/status`
-- `/service` — 대외 서비스 소개
+- `/login` · `/login/test` · `/login/google`(시뮬레이션) · 로그인 콜백 · `/api/status`
+- `/` — 서비스 소개 · `/consult` — 상담 신청 (2026-11-06 · 옛 주소 `/service` · `/onboarding` 은 이 둘로 옮겨 준다)
 - `/pay` · `/pay/result` — 결제 화면 (토스 심사 · 결제창 복귀)
 
 구글 계정만 제한하려면 `BETA_ALLOWED_DOMAINS` (예: `kcare.co.kr`) · `BETA_ALLOWED_EMAILS` (쉼표 구분).

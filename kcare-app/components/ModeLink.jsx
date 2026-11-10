@@ -13,7 +13,7 @@ export default function ModeLink({ className = "", compact = false }) {
   const u = auth.user;
   if (!u?.household) {
     return (
-      <Link href="/" className={`${className} text-muted/50`}>
+      <Link href="/demo" className={`${className} text-muted/50`}>
         데모 홈
       </Link>
     );

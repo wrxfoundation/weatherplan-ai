@@ -2098,7 +2098,7 @@ function SyncNotice({ sync }) {
     // 역할이 바뀌면 바뀐 역할의 입구로 — 아이디를 채워서 보낸다
     const area = sync.error === "role-changed" ? AREAS[sync.area] : null;
     const idq = user?.id ? `&id=${encodeURIComponent(user.id)}` : "";
-    const go = area ? `${area.login}?tab=member${idq}` : `${loginAt}?tab=member${idq}`;
+    const go = area ? `${area.login}?${idq.slice(1)}` : `${loginAt}?${idq.slice(1)}`;
     return (
       <div className="fixed inset-0 z-[90] flex items-center justify-center bg-[rgba(8,23,45,.6)] p-4">
         <div role="alertdialog" aria-modal="true" aria-labelledby="acct-block-title" className="w-full max-w-[400px] rounded-[22px] bg-white p-6 shadow-xl" style={{ borderTop: "6px solid #B08D57" }}>
@@ -2135,9 +2135,9 @@ function SyncNotice({ sync }) {
       <span aria-hidden className="h-[7px] w-[7px] shrink-0 animate-pulse rounded-full bg-amber" />
       <span>{text}</span>
       {sync.error === "login-required" && (
-        // 테스트 가구는 '베타 테스트 계정' 탭으로 — 영역 입구 · 기본 탭은 가입한 아이디 로그인이라 헤맨다 (2026-10-19 점검 L-20)
+        // 테스트 가구는 테스트 계정 로그인(/login/test)으로 — 영역 입구는 가입한 아이디 로그인이라 헤맨다 (2026-10-19 점검 L-20 · 2026-11-06 주소 분리)
         <a
-          href={`${isCenterHousehold(sync.household) ? `${loginAt}?` : "/login?tab=test&"}callbackUrl=${encodeURIComponent(here)}`}
+          href={`${isCenterHousehold(sync.household) ? `${loginAt}?` : "/login/test?"}callbackUrl=${encodeURIComponent(here)}`}
           className="tap shrink-0 underline underline-offset-2"
         >
           로그인

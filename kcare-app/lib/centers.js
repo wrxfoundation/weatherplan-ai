@@ -6,7 +6,7 @@
 // 가입 · 로그인 입구는 세 영역으로 나눈다 — 어느 영역이든 그 센터 관제가 승인해야 로그인된다
 // (2026-10-06 점검: 이용자를 바로 열면 가입 코드만 아는 사람이 센터 기록 전체를 읽고 쓸 수 있었다):
 //   이용자     어르신 · 보호자     /join          /login
-//   현장 · 영업 컨시어지 · 영업자   /partner/join  /partner/login
+//   현장 · 영업 컨시어지 · 파트너   /partner/join  /partner/login   (가입 · 로그인 화면에서는 영업자를 "파트너"로 적는다 · 2026-11-06)
 //   관제       관제 관리자         /ops/join      /ops/login
 // 역할은 관제가 바꿀 수 있다 (다른 영역 역할로 바꾸면 그 영역 입구로 다시 로그인).
 // 관제 역할을 주고 빼는 일과 관제 회원의 정지는 센터 관리자(ops1 · ops2 · ops3)만 한다.
@@ -22,7 +22,7 @@ export const isCenterHousehold = (hh) => !!centerOfHousehold(hh);
 
 export const AREAS = {
   user: { key: "user", label: "이용자", desc: "어르신 · 보호자", roles: ["guardian", "elder"], join: "/join", login: "/login", approval: true },
-  partner: { key: "partner", label: "현장 · 영업", desc: "컨시어지 · 영업자", roles: ["concierge", "sales"], join: "/partner/join", login: "/partner/login", approval: true },
+  partner: { key: "partner", label: "현장 · 영업", desc: "컨시어지 · 파트너", roles: ["concierge", "sales"], join: "/partner/join", login: "/partner/login", approval: true },
   ops: { key: "ops", label: "관제", desc: "관제 관리자", roles: ["ops"], join: "/ops/join", login: "/ops/login", approval: true },
 };
 export const areaOfRole = (role) => Object.values(AREAS).find((a) => a.roles.includes(role))?.key || null;

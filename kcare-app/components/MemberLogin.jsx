@@ -6,7 +6,17 @@ import { getSession } from "next-auth/react";
 import { MEMBER_LOGIN, memberSignIn } from "../lib/auth";
 import { AREAS } from "../lib/centers";
 import { ROLE_HOME } from "../lib/test-accounts";
+import KeepTel from "./Tel";
 
+// 고객센터 — 이용자(어르신 · 보호자) 입구에서는 '센터 관제' 대신 고객센터로 안내한다 (2026-11-06 랜딩 요청 5-2)
+const CS = "고객센터 02-2135-7751";
+const ERR_USER = {
+  Pending: "가입 확인 중입니다. 확인이 끝나면 로그인하실 수 있습니다.",
+  Rejected: `가입이 승인되지 않은 아이디입니다. ${CS}로 문의해 주세요.`,
+  Suspended: `사용이 정지된 아이디입니다. ${CS}로 문의해 주세요.`,
+  ServerDown: "서버에 연결하지 못했습니다. 잠시 뒤 다시 시도해 주세요.",
+  NoCenter: `가입 정보를 찾지 못했습니다. ${CS}로 문의해 주세요.`,
+};
 const ERR = {
   CredentialsSignin: "아이디 또는 비밀번호가 맞지 않습니다.",
   Pending: "가입 승인 대기 중입니다. 센터 관제가 승인하면 들어올 수 있습니다.",
@@ -24,6 +34,10 @@ export default function MemberLogin({ area, callbackUrl = "/", idHint, defaultId
   const [error, setError] = useState(null);
 
   if (!MEMBER_LOGIN) {
+    // 서버 저장(회원 표) 연결 전 — 고객 입구에는 설정 이름을 적지 않는다
+    if (area === "user") {
+      return <p className="rounded-xl bg-paper px-3.5 py-3 text-[14px] leading-[1.7] text-ink"><KeepTel text={`지금은 로그인할 수 없습니다. ${CS}로 문의해 주세요.`} /></p>;
+    }
     return (
       <p className="rounded-xl bg-paper px-3.5 py-3 text-[13px] leading-[1.7] text-ink">
         회원 로그인은 서버 저장 연결 뒤에 켜집니다 — 배포 환경변수 NEXTAUTH_SECRET · SUPABASE_URL · SUPABASE_SECRET_KEY (DEPLOY.md).
@@ -51,15 +65,15 @@ export default function MemberLogin({ area, callbackUrl = "/", idHint, defaultId
     ? `이 아이디는 ${wrong.label}(${wrong.desc}) 계정입니다. 그쪽 입구에서 로그인해 주세요.`
     : error === "WrongArea"
       ? `이 아이디는 ${AREAS[area].label} 입구에서 쓸 수 없습니다.`
-      : ERR[error] || (error ? "로그인하지 못했습니다. 다시 시도해 주세요." : null);
+      : (area === "user" && ERR_USER[error]) || ERR[error] || (error ? "로그인하지 못했습니다. 다시 시도해 주세요." : null);
 
   return (
     <form onSubmit={submit} noValidate>
       {message && (
         <div role="alert" className="mb-3 rounded-xl border border-amber/30 bg-[#FFF7E8] px-3.5 py-2.5 text-[13px] font-bold leading-[1.6] text-amber">
-          {message}
+          <KeepTel text={message} />
           {wrong && (
-            <Link href={`${wrong.login}?tab=member&id=${encodeURIComponent(id.trim())}`} className="ml-1 underline underline-offset-2">
+            <Link href={`${wrong.login}?id=${encodeURIComponent(id.trim())}`} className="ml-1 underline underline-offset-2">
               {wrong.label} 로그인으로
             </Link>
           )}

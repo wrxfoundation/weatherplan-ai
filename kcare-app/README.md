@@ -17,10 +17,11 @@
 
 | 역할 | 주소 | 내용 |
 |---|---|---|
-| 시연 허브 | `/` | 시연 동선 · 역할 바로가기 · 로그인 상태 |
-| 로그인 | `/login` · `/login/google` | 테스트 아이디 · 구글 (구글 설정 전이면 시뮬레이션) · 저장 위치 표시 |
-| 대외 소개 | `/service` | 서비스 · 요금 · 해지 · 환불 |
-| 가입 상담 | `/onboarding` | 트랙 선택 · 가구 구성 · 지역 심사 · 결제권한 · 요금 · 구글로 시작 · 영업자 추천 코드 |
+| 서비스 소개 | `/` | 대외 랜딩 — 서비스 · 요금(눌러야 보임) · 해지와 환불 · 자주 묻는 질문. 문구는 `lib/landing.js`. 로그인한 사람은 자기 역할 화면으로 간다 (`/service` 는 `/` 로 301) |
+| 상담 신청 | `/consult` | 로그인 없이 이름 · 연락처 접수 → 관제 '상담 신청' (`/onboarding` 은 `/consult` 로 301) |
+| 로그인 · 가입 | `/login` · `/join` · `/partner/*` · `/ops/*` | 가입한 아이디 로그인 · 가입 코드 가입 (이용자 · 현장 · 영업 · 관제) |
+| 테스트 로그인 (내부용) | `/login/test` · `/login/google` | 테스트 아이디 · 구글 (구글 설정 전이면 시뮬레이션) · 저장 위치 표시 |
+| 시연 허브 (내부용) | `/demo` · `/demo-onboarding` | 시연 동선 · 역할 바로가기 · 예전 가입 상담 화면. 고객 화면에서는 연결하지 않는다 |
 | 어르신 | `/elder` | 오늘 · 약 미션 · 해주세요 · 마음사서함 · 가족 · SOS |
 | 보호자 | `/family` · `/family/calendar` · `/family/requests` · `/family/store` · `/family/my` · `/family/watch` · `/family/hospitals` | 오늘 어머니 · 공유 캘린더 · 해주세요 · 스토어 · 결제 관리 |
 | 컨시어지 | `/concierge` · `/concierge-onboarding` · `/care-profile` · `/safety-check` | 오늘 · 고객 · 마음사서함 · 방문·리포트 · 제안 |
@@ -45,7 +46,7 @@ npm run dev                  # http://localhost:3100
 ```bash
 npm run verify    # 린트(경고 0) + 빌드
 npm start &       # 운영 모드로 기동 (http://localhost:3100)
-npm run smoke     # 40개 화면을 모바일·데스크톱으로 실제로 열어 검사
+npm run smoke     # 42개 화면을 모바일·데스크톱으로 실제로 열어 검사
 ```
 
 빌드는 렌더 시점 오류 · 빈 화면 · 접근성 회귀 · 터치 타깃 축소를 못 잡는다. 스모크가 그 그물이다.

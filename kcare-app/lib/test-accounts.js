@@ -12,6 +12,7 @@
 // 이메일은 구글 로그인 시뮬레이션에 쓰는 가짜 주소다 (.test 는 실제로 쓰이지 않는 예약 도메인).
 
 import { peopleNow } from "./people-store";
+import { ROLE_HOME } from "./roles";
 
 export const TEST_HOUSEHOLDS = {
   "HH-TEST-01": { id: "HH-TEST-01", name: "테스트 가구 1" },
@@ -39,7 +40,8 @@ export const CENTER_OPS_ACCOUNTS = [
 ];
 
 export const ROLE_LABEL = { guardian: "보호자", elder: "어르신", concierge: "컨시어지", ops: "관제", sales: "영업자" };
-export const ROLE_HOME = { guardian: "/family", elder: "/elder", concierge: "/concierge", ops: "/dispatch", sales: "/sales" };
+// 역할별 홈은 lib/roles.js 한 곳에 둔다 (미들웨어도 같이 쓴다)
+export { ROLE_HOME };
 
 // 아이디나 이메일 어느 쪽으로 적어도 찾는다 (대소문자·앞뒤 공백 무시)
 // 공용 비밀번호를 쓰는 테스트 계정만 — 센터 관리자(ops1~3)는 findCenterOps

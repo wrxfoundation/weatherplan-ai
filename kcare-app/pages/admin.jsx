@@ -489,7 +489,7 @@ function AdminConsole() {
           </nav>
           <div className="border-t border-white/10 px-5 py-3">
             <p className="text-[10px] leading-[1.5] text-white/35">집계 전용 콘솔 — 개별 사건 개입은 관제 · CS 소관</p>
-            <Link href="/" className="btn-press mt-2.5 block rounded-[10px] border border-white/20 py-2 text-center text-[12px] font-bold text-white/80">데모 홈</Link>
+            <Link href="/demo" className="btn-press mt-2.5 block rounded-[10px] border border-white/20 py-2 text-center text-[12px] font-bold text-white/80">데모 홈</Link>
           </div>
         </aside>
 
@@ -508,7 +508,7 @@ function AdminConsole() {
               <span className="text-[12px] font-bold tracking-[.16em] text-muted">
                 역할 05 / 관리자 · 경영
               </span>
-              <Link href="/" className="tap text-[12px] font-bold text-muted/60 underline-offset-2 hover:underline">
+              <Link href="/demo" className="tap text-[12px] font-bold text-muted/60 underline-offset-2 hover:underline">
                 데모 홈
               </Link>
             </div>

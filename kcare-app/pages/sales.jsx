@@ -311,7 +311,7 @@ function SalesPage() {
                 </button>
               </div>
               <Link href={referralPath(myCode)} className="tap mt-2 flex w-full items-center justify-center text-[12.5px] font-bold text-gold underline underline-offset-2">
-                내 링크로 가입 상담 화면 열어 보기
+                내 링크로 상담 신청 화면 열어 보기
               </Link>
             </Card>
 
@@ -323,7 +323,7 @@ function SalesPage() {
                 <li>· 요금과 해지 · 환불 규정은 서비스 소개에 있는 그대로 안내합니다. 확정 전인 요금은 확정 전이라고 말씀해 주세요.</li>
                 <li>· 의료 행위 · 진단을 하는 서비스가 아닙니다. 건강이 좋아진다고 약속하지 않습니다.</li>
               </ul>
-              <Link href="/service" className="tap mt-2.5 flex w-full items-center justify-center rounded-xl border border-navy/15 text-[13px] font-bold text-navy">
+              <Link href="/?intro=1" className="tap mt-2.5 flex w-full items-center justify-center rounded-xl border border-navy/15 text-[13px] font-bold text-navy">
                 서비스 소개 열기 (요금 · 해지 · 환불)
               </Link>
             </Card>

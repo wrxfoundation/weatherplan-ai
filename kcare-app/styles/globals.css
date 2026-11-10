@@ -1062,3 +1062,46 @@ a.btn-press {
 @media (prefers-reduced-motion: no-preference) {
   .sent-glow { animation: sentGlow 0.9s ease-out 2; }
 }
+
+/* ─── 대외 화면 줄바꿈 (서비스 소개 · 로그인 · 회원가입 · 상담 신청) — 2026-11-06 랜딩 요청 2-6 · 2-7 ───
+   .lp 를 붙인 화면에서만 건다. 앱 안쪽 화면(콘솔 · 표)까지 걸면 줄 수가 바뀌어 맞춰 둔 높이가 흔들린다.
+     · 단어 중간에서 끊지 않는다 (keep-all)
+     · 문장 끝 한 단어만 다음 줄로 넘어가지 않게 한다 — 본문은 pretty, 제목 · 짧은 글은 balance
+     · 문장이 둘 이상이면 문장마다 새 줄 — 화면이 문장을 .lp-s 로 감싼다 (pages/index.jsx Lines)
+   balance · pretty 를 모르는 브라우저에서는 그냥 예전처럼 흐른다 (깨지지 않는다). */
+.lp :is(h1, h2, h3, h4, p, li, td, th, span, b, a, button, label, summary) {
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
+.lp :is(p, li, td) { text-wrap: pretty; }
+.lp :is(h1, h2, h3, h4, summary, .lp-lead, .lp-bal),
+.lp .lp-card p { text-wrap: balance; }
+.lp .lp-s { display: block; text-wrap: balance; }
+/* 머리글이 붙어 다니므로(sticky) 구역으로 건너뛸 때 제목이 그 밑에 가리지 않게 */
+.lp .lp-anchor { scroll-margin-top: 84px; }
+
+/* 해지와 환불 표 — 넓은 화면은 표, 700px 이하는 표를 풀어 세로로 쌓고 칸마다 요금제 이름을 작은 제목으로 단다 */
+.lp-tb table { width: 100%; margin-top: 12px; border-collapse: collapse; font-size: 15px; line-height: 1.6; }
+.lp-tb thead th { padding: 10px 12px; border-bottom: 2px solid rgba(10, 31, 60, .14); text-align: left; font-weight: 700; color: #5C5A54; }
+.lp-tb tbody th,
+.lp-tb td { padding: 13px 12px; border-bottom: 1px solid rgba(10, 31, 60, .1); vertical-align: top; text-align: left; color: #5C5A54; }
+.lp-tb tbody th { width: 27%; font-weight: 700; color: #0A1F3C; text-wrap: balance; }
+.lp-tb td { text-wrap: balance; }
+.lp-tb td b { display: block; font-weight: 800; color: #0A1F3C; }
+/* 두 칸을 합친 줄의 '두 요금제 공통' — 넓은 화면용. 좁은 화면에서는 아래 ::before 작은 제목이 같은 말을 하므로 숨긴다 */
+.lp-tb .lp-tb-both { display: block; font-size: 13px; font-weight: 700; color: #8A5D12; }
+@media (max-width: 700px) {
+  .lp-tb thead { display: none; }
+  .lp-tb .lp-tb-both { display: none; }
+  .lp-tb table,
+  .lp-tb tbody,
+  .lp-tb tr,
+  .lp-tb tbody th,
+  .lp-tb td { display: block; width: 100%; }
+  .lp-tb tr { padding: 12px 0; border-bottom: 1px solid rgba(10, 31, 60, .1); }
+  .lp-tb tbody th,
+  .lp-tb td { padding: 4px 0; border: 0; }
+  .lp-tb tbody th { font-size: 16px; }
+  /* 작은 제목 — 금색(#B08D57)은 이 바탕에서 글자 대비가 모자라 앰버를 쓴다 */
+  .lp-tb td[data-l]::before { content: attr(data-l); display: block; font-size: 13px; font-weight: 700; color: #8A5D12; }
+}

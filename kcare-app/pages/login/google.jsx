@@ -172,7 +172,7 @@ export default function GoogleSimulation() {
             )}
           </div>
 
-          <Link href={`/login${callbackUrl !== "/" ? `?callbackUrl=${encodeURIComponent(callbackUrl)}` : ""}`} className="tap mt-5 text-[13px] font-bold text-muted underline underline-offset-2">
+          <Link href={`/login/test${callbackUrl !== "/" ? `?callbackUrl=${encodeURIComponent(callbackUrl)}` : ""}`} className="tap mt-5 text-[13px] font-bold text-muted underline underline-offset-2">
             로그인 화면으로 돌아가기
           </Link>
         </main>

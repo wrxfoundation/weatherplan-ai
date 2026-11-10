@@ -16,7 +16,8 @@ export default function RoleGate({ role, title, children }) {
   const home = ROLE_HOME[user.role] || "/";
   // 그 화면 역할의 로그인 입구 — 이용자 · 현장 · 영업 · 관제가 입구가 다르다 (2026-10-06)
   const needArea = AREAS[areaOfRole(roles[0])];
-  const loginAt = user.provider === "member" || user.center ? needArea?.login || "/login" : "/login";
+  // 테스트 계정은 내부 로그인 주소(/login/test)로 — 고객 로그인(/login)에는 테스트 계정 칸이 없다 (2026-11-06)
+  const loginAt = user.provider === "member" || user.center ? needArea?.login || "/login" : "/login/test";
   return (
     <>
       <Head>

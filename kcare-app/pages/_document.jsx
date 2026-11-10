@@ -4,7 +4,8 @@ export default function Document() {
   return (
     <Html lang="ko">
       <Head>
-        <meta name="robots" content="noindex, nofollow" />
+        {/* 검색 차단(noindex)은 여기 두지 않는다 — 여기 넣으면 화면마다 뺄 수 없다. 서비스 소개(/)와 상담 신청(/consult)만
+            검색에 열고 나머지는 막는 일은 pages/_app.jsx 가 한다 (2026-11-06 랜딩 요청 1장). */}
         {/* 바탕화면 바로가기 — SOS 를 홈 화면 아이콘에서 바로 누르게 한다
             (2026-08-12 어르신화면 시트 전체 요청 3번).
             안드로이드 크롬: 아이콘 길게 누르면 shortcuts 가 뜬다.

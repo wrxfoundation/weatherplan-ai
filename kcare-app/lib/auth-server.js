@@ -73,6 +73,11 @@ export const betaGateOn = () => process.env.BETA_REQUIRE_LOGIN === "1" && authCo
 // 로그인 없이 열리는 화면 — 로그인 화면 자체(구글 시뮬레이션 포함) · 인증 콜백 · 설정 상태 ·
 // 대외 서비스 소개 · 결제(토스 심사·결제창 복귀) · 회원 가입과 영역별 로그인 입구(2026-10-06)
 export const PUBLIC_PATHS = [
+  // 2026-11-06 랜딩 요청 — 맨 처음 화면(/)이 서비스 소개, /consult 가 상담 신청. 옛 주소 둘은 301 로 옮겨 준다
+  /^\/$/,
+  /^\/consult$/,
+  /^\/api\/consult$/,
+  /^\/onboarding$/,
   /^\/login(\/|$)/,
   /^\/join(\/|$)/,
   /^\/partner\/(join|login)$/,

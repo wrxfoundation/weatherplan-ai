@@ -7,16 +7,22 @@
 // 가입을 누르면 틀린 첫 칸으로 옮겨 가고(화면 밖에 오류가 남지 않게), 몇 칸이 남았는지 단추 위에 적는다.
 // 2026-10-14 초대 링크(?invite=) — 어르신 · 보호자가 보낸 링크로 들어오면 가입 코드 칸 · 역할 고르기 없이
 // 그 센터에 보호자로 가입 신청한다 (현장 '연동 확인' 4번). 링크가 맞지 않거나 지났으면 가입 코드로 가입하게 안내한다.
+// 2026-11-06 랜딩 요청 5-2 — 고객이 보는 문구를 바꿨다: '담당 센터' → '담당 파트너' · 베타 안내 · '센터 안에서만' 문구 삭제 ·
+// 동의 문구는 이용약관과 개인정보 처리방침 · 단추는 '가입 신청'. 이용자 입구에서는 센터 이름과 설정 파일 이름을 내보이지 않는다.
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
 import { MEMBER_LOGIN, logout, memberSignIn, useAuth } from "../lib/auth";
 import { AREAS, JOIN_CODE_RE, checkLoginId, checkPassword, normCode } from "../lib/centers";
 import { ROLE_HOME, ROLE_LABEL } from "../lib/test-accounts";
+import KeepTel from "./Tel";
 
+// 가입 · 로그인 화면에서는 영업자를 '파트너'로 적는다 (앱 안쪽 화면의 이름은 그대로 '영업자')
+const JOIN_ROLE_LABEL = { ...ROLE_LABEL, sales: "파트너" };
+const TEL = { label: "고객센터 02-2135-7751", href: "tel:0221357751" };
 const ROLE_DESC = {
-  guardian: "부모님을 돌보는 가족 — 요청 · 결제 · 리포트",
-  elder: "서비스를 받는 어르신 — 큰 글씨 화면",
+  guardian: "부모님의 가족",
+  elder: "서비스 받는 분",
   concierge: "방문 · 동행 · 해주세요 현장 담당",
   sales: "가입 상담 · 추천 코드",
   ops: "관제 센터 — SOS · 요청 · 회원 관리",
@@ -35,6 +41,9 @@ const INVITE_ERR = {
   "invite-used-up": "이 초대 링크로 가입할 수 있는 인원(5명)이 다 찼습니다 — 새 링크를 받아 주세요.",
   "invite-revoked": "이 초대 링크는 더 쓸 수 없습니다 — 보내 준 분께 새 링크를 받아 주세요.",
 };
+// 이용자 입구 — 서버 설정 이름(파일 · 환경변수) 대신 고객센터로 안내한다
+const CLOSED = `지금은 가입 신청을 받을 수 없습니다. ${TEL.label}로 문의해 주세요.`;
+const SERVER_ERR_USER = { "member-not-configured": CLOSED, "schema-missing": CLOSED, "pending-full": `지금은 가입 신청이 많아 잠시 받을 수 없습니다. ${TEL.label}로 문의해 주세요.` };
 const SERVER_ERR = {
   ...INVITE_ERR,
   "member-not-configured": "회원 가입은 서버 저장 연결 뒤에 켜집니다 (DEPLOY.md).",
@@ -64,13 +73,16 @@ function Field({ id, label, hint, error, big, children }) {
 const inputCls = (bad) => `mt-1.5 w-full rounded-xl border px-3.5 py-3 text-[16px] text-ink ${bad ? "border-amber bg-[#FFFBF2]" : "border-navy/15"}`;
 // 오류 칸 → 옮겨 갈 입력칸 (화면 순서)
 const FIELD_ORDER = [["code", "code"], ["role", "join-role-first"], ["name", "j-name"], ["loginId", "j-id"], ["password", "j-pw"], ["password2", "j-pw2"], ["agree", "j-agree"]];
-const CODE_CHANGED = "가입 코드가 바뀌었거나 맞지 않습니다 — 센터 관제에게 새 코드를 받아 다시 확인해 주세요";
 
-export default function JoinForm({ area }) {
+export default function JoinForm({ area, onSent }) {
   const router = useRouter();
   const { user } = useAuth();
   const a = AREAS[area];
   const big = area === "user";
+  // 가입 코드를 준 사람 — 이용자는 담당 파트너, 현장 · 영업 · 관제는 담당자
+  const giver = big ? "담당 파트너" : "담당자";
+  const codeChanged = `가입 코드가 바뀌었거나 맞지 않습니다. ${giver}에게 새 코드를 받아 다시 확인해 주세요`;
+  const serverText = (k) => (big && SERVER_ERR_USER[k]) || SERVER_ERR[k];
   const asked = useRef(""); // 마지막으로 확인한 코드 — 같은 코드를 두 번 묻지 않는다
   const [code, setCode] = useState("");
   const [center, setCenter] = useState(null); // { id, name }
@@ -110,7 +122,7 @@ export default function JoinForm({ area }) {
         setErrors((e) => ({ ...e, code: null }));
         setServerErr(null);
       } else if (r.status === 404) {
-        msg = "맞지 않는 가입 코드입니다 — 센터 관제에게 다시 받아 주세요";
+        msg = `맞지 않는 가입 코드입니다. ${giver}에게 다시 확인해 주세요`;
         setErrors((e) => ({ ...e, code: msg }));
       } else setServerErr(j.error || `http-${r.status}`);
     } catch (_) {
@@ -163,25 +175,34 @@ export default function JoinForm({ area }) {
   }, [router.query.invite, area]);
 
   if (!MEMBER_LOGIN) {
-    return <p className="rounded-xl bg-paper px-3.5 py-3 text-[13px] leading-[1.7] text-ink">{SERVER_ERR["member-not-configured"]}</p>;
+    return <p className="rounded-xl bg-paper px-3.5 py-3 text-[14px] leading-[1.7] text-ink"><KeepTel text={serverText("member-not-configured")} /></p>;
   }
 
   if (done) {
     const pending = done.status === "pending";
+    const myId = f.loginId.trim().toLowerCase();
+    // 접수 화면 — 제목(가입 신청이 접수되었습니다)과 안내 한 줄은 화면 틀이 바꿔 보여 준다 (components/JoinScreen.jsx)
     return (
       <div role="status">
-        <div className={`text-[18px] font-black ${pending ? "text-navy" : "text-green"}`}>{pending ? "가입 신청을 보냈습니다" : "가입했습니다"}</div>
-        <p className="mt-2 text-[14px] leading-[1.75] text-ink">
-          {done.center.name} · {ROLE_LABEL[role]} · 아이디 <b className="font-num">{f.loginId.trim().toLowerCase()}</b>
-          <br />
-          {pending
-            ? `${done.center.name}가 확인하면 ${a.label} 로그인에서 바로 들어올 수 있습니다. 승인 전에는 로그인되지 않습니다. 급하면 센터에 아이디를 알려 주세요.`
-            : "로그인 중입니다…"}
+        <p className="text-[14px] leading-[1.75] text-ink">
+          {big ? "" : `${done.center.name} · `}
+          {JOIN_ROLE_LABEL[role]} · 아이디 <b className="font-num">{myId}</b>
+          {!pending && (
+            <>
+              <br />
+              로그인 중입니다…
+            </>
+          )}
         </p>
         {pending && (
-          <Link href={`${a.login}?tab=member&id=${encodeURIComponent(f.loginId.trim().toLowerCase())}`} className="btn-press mt-4 block w-full rounded-xl bg-navy py-3.5 text-center text-[15px] font-bold text-white">
-            {a.label} 로그인으로
-          </Link>
+          <>
+            <Link href={`${a.login}?id=${encodeURIComponent(myId)}`} className="btn-press btn-dark mt-4 block w-full rounded-xl bg-navy py-3.5 text-center text-[15px] font-bold text-white">
+              로그인 화면으로
+            </Link>
+            <Link href="/" className="btn-press mt-3 flex w-full items-center justify-center rounded-xl border border-navy/[.16] py-3 text-[14.5px] font-bold text-navy">
+              K-CARE 서비스 소개
+            </Link>
+          </>
         )}
       </div>
     );
@@ -201,7 +222,7 @@ export default function JoinForm({ area }) {
     const pwErr = checkPassword(f.password, f.loginId.trim().toLowerCase());
     if (pwErr) e.password = pwErr;
     else if (f.password !== f.password2) e.password2 = "비밀번호가 서로 다릅니다";
-    if (!agree) e.agree = "안내를 읽고 동의해 주세요";
+    if (!agree) e.agree = "약관에 동의해 주세요";
     return e;
   };
 
@@ -228,7 +249,7 @@ export default function JoinForm({ area }) {
       if (!r.ok) {
         if (j.fields) {
           // 가입 코드가 그사이 바뀌었다(관제가 코드 바꾸기) — 확인된 센터를 지우고 코드 칸으로
-          const fields = j.fields.code ? { ...j.fields, code: CODE_CHANGED } : j.fields;
+          const fields = j.fields.code ? { ...j.fields, code: codeChanged } : j.fields;
           if (j.fields.code) setCenter(null);
           setErrors(fields);
           focusFirst(fields);
@@ -245,6 +266,7 @@ export default function JoinForm({ area }) {
         return;
       }
       setDone(j);
+      if (j.status !== "active") onSent?.(j);
       if (j.status === "active") {
         const s = await memberSignIn({ id: loginId, password: f.password, area });
         if (s.ok) window.location.assign(ROLE_HOME[role] || "/");
@@ -273,7 +295,7 @@ export default function JoinForm({ area }) {
       )}
       {serverErr && (
         <p role="alert" className="mb-3 rounded-xl border border-amber/30 bg-[#FFF7E8] px-3.5 py-2.5 text-[13px] font-bold leading-[1.6] text-amber">
-          {SERVER_ERR[serverErr] || "가입하지 못했습니다. 잠시 뒤 다시 시도해 주세요."}
+          <KeepTel text={serverText(serverErr) || "가입하지 못했습니다. 잠시 뒤 다시 시도해 주세요."} />
         </p>
       )}
 
@@ -286,20 +308,40 @@ export default function JoinForm({ area }) {
           {invite.state === "ok" && (
             <>
               <b className="text-navy">{invite.from || "가족"} 님</b>({invite.fromRole === "guardian" ? "보호자" : "어르신"})이 보낸 초대입니다 —{" "}
-              <b className="text-green">{center?.name}</b>에 <b>보호자</b>로 가입 신청합니다. 가입 코드는 적지 않아도 됩니다.
+              <b>보호자</b>로 가입 신청합니다. 가입 코드는 적지 않아도 됩니다.
               {invite.exp ? <span className="mt-0.5 block text-[12.5px] text-muted">링크는 {new Date(invite.exp).toLocaleDateString("ko-KR", { month: "long", day: "numeric" })}까지{invite.left != null ? ` · ${invite.left}명 더 가입할 수 있습니다` : ""}</span> : null}
             </>
           )}
           {invite.state === "error" && (
             <>
-              {INVITE_ERR[invite.error] || "초대 링크를 확인하지 못했습니다."} 아래에 담당 센터에서 받은 가입 코드를 적어 가입할 수도 있습니다.
+              {INVITE_ERR[invite.error] || "초대 링크를 확인하지 못했습니다."} 아래에 담당 파트너에게 받은 가입 코드를 적어 가입할 수도 있습니다.
             </>
           )}
         </div>
       )}
 
       {!invited && (
-      <Field id="code" big={big} label="가입 코드 (담당 센터에서 받은 코드)" error={err("code")} hint={center ? null : "다 적으면 저절로 확인합니다 — 코드가 어느 센터에 가입할지 정합니다"}>
+      <Field
+        id="code"
+        big={big}
+        label="가입 코드"
+        error={err("code")}
+        hint={
+          // 이용자 입구에만 — 코드가 없는 분은 고객센터로 (번호를 누르면 전화가 걸린다)
+          big && !center ? (
+            // 문장마다 새 줄 (요청서 2-6). 링크는 줄 높이를 크게 흔들지 않으면서 누를 자리 24px 를 지키게 위아래로만 살짝 넓힌다
+            <>
+              <span className="lp-s">가입 코드가 없으신가요?</span>{" "}
+              <span className="lp-s">
+                <a href={TEL.href} className="inline-block whitespace-nowrap py-[3px] font-bold text-navy underline underline-offset-2">
+                  {TEL.label}
+                </a>
+                로 전화 주세요.
+              </span>
+            </>
+          ) : null
+        }
+      >
         <div className="mt-1.5 flex gap-2">
           <input
             id="code"
@@ -325,8 +367,9 @@ export default function JoinForm({ area }) {
             autoComplete="off"
             spellCheck={false}
             maxLength={8}
+            placeholder="담당 파트너에게 받은 코드"
             aria-describedby={described("code")}
-            className={`min-w-0 flex-1 rounded-xl border px-3.5 py-3 font-num text-[17px] tracking-[.2em] text-ink ${errors.code ? "border-amber bg-[#FFFBF2]" : "border-navy/15"}`}
+            className={`min-w-0 flex-1 rounded-xl border px-3.5 py-3 font-num text-[17px] tracking-[.2em] text-ink placeholder:font-sans placeholder:text-[15px] placeholder:tracking-normal placeholder:text-[#70757D] ${errors.code ? "border-amber bg-[#FFFBF2]" : "border-navy/15"}`}
           />
           <button
             type="button"
@@ -341,7 +384,7 @@ export default function JoinForm({ area }) {
       )}
       {center && !invited && (
         <p className="mt-2 rounded-xl bg-green/[.08] px-3.5 py-2 text-[13px] font-bold text-green" role="status">
-          {center.name} 회원으로 가입합니다
+          {big ? "가입 코드를 확인했습니다" : `${center.name} 회원으로 가입합니다`}
         </p>
       )}
 
@@ -365,7 +408,7 @@ export default function JoinForm({ area }) {
                 className="peer absolute inset-0 z-10 h-full w-full cursor-pointer opacity-0"
               />
               <span className="flex min-h-[64px] flex-col justify-center rounded-xl border border-navy/15 px-3 py-2 text-navy peer-checked:border-navy peer-checked:bg-navy peer-checked:text-white peer-focus-visible:ring-2 peer-focus-visible:ring-gold">
-                <span className="text-[15px] font-bold">{ROLE_LABEL[r]}</span>
+                <span className="text-[15px] font-bold">{JOIN_ROLE_LABEL[r]}</span>
                 <span className="mt-0.5 text-[12px] leading-[1.45] opacity-80">{ROLE_DESC[r]}</span>
               </span>
             </label>
@@ -378,7 +421,7 @@ export default function JoinForm({ area }) {
       <Field id="j-name" big={big} label="이름" error={err("name")}>
         <input id="j-name" value={f.name} onChange={set("name")} autoComplete="name" maxLength={20} aria-invalid={!!errors.name} aria-describedby={described("name")} className={inputCls(errors.name)} />
       </Field>
-      <Field id="j-phone" big={big} label="휴대폰 (선택)" hint="베타 테스트는 실제 번호 대신 가짜 번호를 적어도 됩니다">
+      <Field id="j-phone" big={big} label="휴대폰">
         <input id="j-phone" value={f.phone} onChange={set("phone")} inputMode="tel" autoComplete="tel" maxLength={20} className={`${inputCls(false)} font-num`} />
       </Field>
       {(EXTRA[role] || []).map(([k, label, ph]) => (
@@ -393,7 +436,7 @@ export default function JoinForm({ area }) {
           />
         </Field>
       ))}
-      <Field id="j-id" big={big} label="아이디" error={err("loginId")} hint="영문 소문자로 시작하는 4~20자 (소문자 · 숫자 · . _ -)">
+      <Field id="j-id" big={big} label="아이디" error={err("loginId")} hint="영문 소문자로 시작하는 4~20자">
         <input
           id="j-id"
           value={f.loginId}
@@ -407,14 +450,14 @@ export default function JoinForm({ area }) {
           className={`${inputCls(errors.loginId)} font-num`}
         />
       </Field>
-      <Field id="j-pw" big={big} label="비밀번호" error={err("password")} hint="8자 이상 · 영문과 숫자를 함께">
+      <Field id="j-pw" big={big} label="비밀번호" error={err("password")} hint="8자 이상, 영문과 숫자를 함께">
         <input id="j-pw" type="password" value={f.password} onChange={set("password")} autoComplete="new-password" aria-invalid={!!errors.password} aria-describedby={described("password")} className={`${inputCls(errors.password)} font-num`} />
       </Field>
       <Field id="j-pw2" big={big} label="비밀번호 확인" error={err("password2")}>
         <input id="j-pw2" type="password" value={f.password2} onChange={set("password2")} autoComplete="new-password" aria-invalid={!!errors.password2} aria-describedby={described("password2")} className={`${inputCls(errors.password2)} font-num`} />
       </Field>
 
-      <label className="mt-4 flex cursor-pointer items-start gap-2.5 rounded-xl bg-paper px-3.5 py-3 text-[13px] leading-[1.65] text-ink">
+      <label className="mt-4 flex cursor-pointer items-center gap-2.5 rounded-xl bg-paper px-3.5 py-3 text-[14px] leading-[1.55] text-ink">
         <input
           id="j-agree"
           type="checkbox"
@@ -425,25 +468,25 @@ export default function JoinForm({ area }) {
           }}
           aria-invalid={!!errors.agree}
           aria-describedby={errors.agree ? "agree-err" : undefined}
-          className="mt-0.5 h-6 w-6 shrink-0"
+          className="h-6 w-6 shrink-0"
         />
-        <span>
-          베타 테스트용 가입입니다. 실명 · 실제 연락처 같은 실제 개인정보는 넣지 않습니다. 비밀번호는 암호화해 저장하고, 기록은 가입한 센터 안에서만
-          보입니다.
-        </span>
+        <span className="lp-bal">이용약관과 개인정보 처리방침에 동의합니다.</span>
       </label>
       {err("agree") && <p id="agree-err" className="mt-1 text-[12px] font-bold text-amber">{err("agree")}</p>}
 
       {missing > 0 && (
         <p role="alert" className="mt-4 rounded-xl border border-amber/30 bg-[#FFF7E8] px-3.5 py-2.5 text-[13px] font-bold text-amber">
-          고쳐야 할 칸이 {missing}곳 있습니다 — 노란 칸을 확인해 주세요
+          고쳐야 할 칸이 {missing}곳 있습니다. 노란 칸을 확인해 주세요
         </p>
       )}
 
       <button type="submit" disabled={busy} className="btn-press btn-dark mt-4 w-full rounded-xl bg-navy py-3.5 text-[15px] font-bold text-white disabled:opacity-50">
-        {busy ? "가입 중…" : a.approval ? "가입 신청 (관제 승인 뒤 사용)" : "가입하고 시작하기"}
+        {busy ? "가입 중…" : a.approval ? "가입 신청" : "가입하고 시작하기"}
       </button>
-      {a.approval && <p className="mt-2 text-[12px] leading-[1.6] text-muted">{a.label} 계정은 가입한 센터의 관제가 승인해야 로그인할 수 있습니다.</p>}
+      {a.approval && <p className="mt-2.5 text-center text-[13px] leading-[1.6] text-muted">확인이 끝나면 로그인하실 수 있습니다.</p>}
+      <Link href={a.login} className="btn-press mt-3 flex w-full items-center justify-center rounded-xl border border-navy/[.16] py-3 text-[14.5px] font-bold text-navy">
+        이미 아이디가 있어요. 로그인
+      </Link>
     </form>
   );
 }
