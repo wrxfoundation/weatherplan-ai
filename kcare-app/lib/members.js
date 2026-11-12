@@ -116,6 +116,14 @@ export async function patchMember(id, fields) {
   return data?.[0] || null;
 }
 
+// 회원 계정 지우기 (2026-11-12 요청) — 그 센터의 회원 계정(비밀번호 해시가 있는 계정)만. 지운 줄 수를 돌려준다.
+// 계정만 지운다 — 이 회원이 남긴 가구 기록 · 활동 기록 · 권한 변경 기록은 그대로다 (그 표들은 계정을 이름표로만 적는다).
+export async function deleteMember(id, centerId) {
+  const { data, error, status } = await db().from("accounts").delete().eq("id", id).eq("center_id", centerId).not("password_hash", "is", null).select("id");
+  if (error) throw fail(error, status);
+  return (data || []).length;
+}
+
 // 권한 기록 — 실패해도 바꾼 것은 되돌리지 않는다 (로그만)
 export async function audit(row) {
   const { error, status } = await db().from("account_audit").insert(row);

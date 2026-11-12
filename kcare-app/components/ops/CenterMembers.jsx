@@ -1,7 +1,8 @@
 // 관제 센터 회원 · 권한 — 실제 (2026-10-06). 그 센터 관제(ops1 · ops2 · ops3 또는 승인된 관제 회원)만 본다.
 //  · 가입 코드와 영역별 가입 링크 (이용자 · 현장 · 영업 · 관제) — 코드를 바꾸면 옛 코드는 바로 막힌다
 //  · 승인 대기 — 모든 가입 신청을 승인(역할을 바꿔 승인할 수도) · 거절
-//  · 회원 목록 — 역할 부여 · 정지 · 다시 사용. 자기 계정과 테스트 계정은 바꾸지 않는다
+//  · 회원 목록 — 역할 부여 · 정지 · 다시 사용 · 삭제(센터 관리자만 · 되돌릴 수 없어 한 번 묻는다 · 2026-11-12 요청).
+//    자기 계정과 테스트 계정은 바꾸지 않는다
 //  · 권한 변경 기록 — 누가 언제 무엇을 (지우지 않는다)
 // 아래쪽 기존 '계정·권한'(권한 매트릭스)은 운영 설계 예시다.
 import { useCallback, useEffect, useState } from "react";
@@ -20,6 +21,7 @@ const ERR = {
   "bad-state": "다른 관제가 먼저 처리했습니다 — 목록을 새로 불러왔습니다.",
   "not-found": "이 회원을 찾지 못했습니다 — 목록을 새로 불러왔습니다.",
   "owner-only": "관제 역할과 관제 회원은 센터 관리자(ops1 · ops2 · ops3)만 바꿀 수 있습니다.",
+  "owner-only-delete": "계정 삭제는 센터 관리자(ops1 · ops2 · ops3)만 할 수 있습니다.",
   "account-suspended": "이 관제 계정이 정지되었습니다 — 센터 관리자에게 문의해 주세요.",
   "account-removed": "이 관제 계정을 찾을 수 없습니다.",
   "role-changed": "이 계정의 역할이 바뀌었습니다 — 다시 로그인해 주세요.",
@@ -30,7 +32,7 @@ const ERR = {
 const errText = (code, message) => ERR[code] || message || `처리하지 못했습니다 (${code})`;
 // 메뉴 숫자 · 지금 처리할 일이 패널과 같은 승인 대기 수를 보게 — 패널이 새로 읽을 때마다 알린다
 const PENDING_EVENT = "kcare-members-pending";
-const ACTION_TEXT = { signup: "가입", approve: "가입 승인", reject: "가입 거절", role: "역할 변경", suspend: "사용 정지", activate: "다시 사용", "join-code": "가입 코드 변경", invite: "가족 초대 링크 만듦" };
+const ACTION_TEXT = { signup: "가입", approve: "가입 승인", reject: "가입 거절", role: "역할 변경", suspend: "사용 정지", activate: "다시 사용", "join-code": "가입 코드 변경", invite: "가족 초대 링크 만듦", delete: "계정 삭제" };
 const when = (t) => (t ? fmtDateTime(Date.parse(t)) : "—");
 // 초대 링크로 온 가입은 누가 보낸 링크인지 붙인다 (2026-10-14 · lib/invite.js)
 const extraText = (p) =>
@@ -81,7 +83,7 @@ export default function CenterMembers() {
   const [error, setError] = useState(null); // 목록을 못 읽었을 때
   const [notice, setNotice] = useState(null); // 방금 한 처리가 안 됐을 때 — 목록을 다시 읽어도 남긴다
   const [busy, setBusy] = useState(null);
-  const [ask, setAsk] = useState(null); // { id, action, role, title, body }
+  const [ask, setAsk] = useState(null); // { id, action, role, title, body } — 삭제는 body 대신 lines(줄마다 한 가지)
   const [roleOf, setRoleOf] = useState({}); // 승인 · 역할 변경 때 고른 역할
   const [copied, setCopied] = useState(null);
 
@@ -199,15 +201,40 @@ export default function CenterMembers() {
         {m.member && lockedForMe(m) && <span className="ml-1 text-[11px] text-muted">센터 관리자만 변경</span>}
       </span>
     );
+  // 지우면 어떻게 되나 — 되돌릴 수 없는 일이라 무엇이 남고 무엇이 사라지는지 먼저 적는다.
+  // 이 센터 기록의 기준 어르신(사용 중인 어르신 가운데 먼저 가입한 분)을 지우면 화면의 어르신 이름이 바뀐다 — 그것도 미리 알린다
+  const deleteLines = (m) => {
+    const main = m.status === "active" && m.role === "elder" && activeElders[0] === m.name;
+    const next = activeElders.filter((n) => n !== m.name)[0];
+    return [
+      "되돌릴 수 없습니다. 이 아이디로는 더 로그인할 수 없고(지금 로그인해 있어도 15초 안에 막힙니다) 목록에서 사라집니다.",
+      "이 회원이 남긴 기록(일정 · 요청 · 음성 등)과 권한 변경 기록은 지워지지 않습니다.",
+      "같은 아이디로 다시 가입할 수 있습니다.",
+      main ? `이 센터의 기록은 지금 ${m.name} 님 기준으로 보입니다 — 지우면 ${next ? `${next} 님` : "'어르신'"} 이름으로 보입니다 (기록 내용은 그대로).` : "",
+      "잠깐만 막으려면 삭제 대신 '정지'를 쓰세요.",
+    ].filter(Boolean);
+  };
+  const delBtn = (m) =>
+    owner ? (
+      <Btn ghost small tone="muted" disabled={!!busy} onClick={() => setAsk({ id: m.id, action: "delete", title: `${m.name} 님(${m.loginId || m.id}) 계정을 삭제합니다`, lines: deleteLines(m) })}>
+        삭제
+      </Btn>
+    ) : null;
   const actCell = (m) =>
     !m.member || m.id === data?.me || lockedForMe(m) ? null : m.status === "active" ? (
-      <Btn ghost small tone="warn" disabled={!!busy} onClick={() => setAsk({ id: m.id, action: "suspend", title: `${m.name} 님 사용을 정지합니다`, body: "지금 로그인해 있어도 15초 안에 저장 · 조회가 막힙니다. '다시 사용'으로 되돌릴 수 있습니다." })}>
-        정지
-      </Btn>
+      <span className="flex flex-wrap items-center gap-1.5">
+        <Btn ghost small tone="warn" disabled={!!busy} onClick={() => setAsk({ id: m.id, action: "suspend", title: `${m.name} 님 사용을 정지합니다`, body: "지금 로그인해 있어도 15초 안에 저장 · 조회가 막힙니다. '다시 사용'으로 되돌릴 수 있습니다." })}>
+          정지
+        </Btn>
+        {delBtn(m)}
+      </span>
     ) : m.status === "suspended" || m.status === "rejected" ? (
-      <Btn ghost small disabled={!!busy} onClick={() => act(m.id, "activate")}>
-        다시 사용
-      </Btn>
+      <span className="flex flex-wrap items-center gap-1.5">
+        <Btn ghost small disabled={!!busy} onClick={() => act(m.id, "activate")}>
+          다시 사용
+        </Btn>
+        {delBtn(m)}
+      </span>
     ) : null;
 
   return (
@@ -230,6 +257,16 @@ export default function CenterMembers() {
           <Stat key={r} label={ROLE_LABEL[r]} value={count(r)} unit="명" tone="navy" />
         ))}
       </div>
+
+      {/* 어르신 회원이 여럿 — 승인 창에서만 알리던 것을 여기에도 (2026-11-12: 코드를 바꿔 따로 가입했는데 한 사람으로 보인다는 문의) */}
+      {activeElders.length > 1 && (
+        <div className="mt-3">
+          <Note tone="info">
+            어르신 회원이 {activeElders.length}명입니다 — 베타는 한 센터가 한 가족의 기록을 쓰기 때문에, 모두 {activeElders[0]} 님의 약 · 일정 · 부탁 · 마음사서함을 함께 봅니다
+            (먼저 가입한 어르신 기준). 가입 코드를 바꿔도 같은 센터입니다. 어르신마다 따로 쓰려면 다른 관제 센터의 코드로 가입해야 합니다.
+          </Note>
+        </div>
+      )}
 
       {/* 가입 코드 · 링크 */}
       <div className="mt-4 rounded-xl bg-navy/[.03] p-3">
@@ -322,7 +359,7 @@ export default function CenterMembers() {
             { k: "status", label: "상태", w: 90, render: (m) => statusCell(m) },
             { k: "createdAt", label: "가입 · 승인", w: 150, render: (m) => <span className="text-[12px] text-muted">{when(m.createdAt)}{m.approvedBy ? <><br />{m.status === "rejected" ? "거절" : "승인"} {m.approvedBy}</> : null}</span> },
             { k: "last", label: "마지막 로그인", w: 120, render: (m) => <span className="font-num text-[12px] text-muted">{when(m.lastLoginAt)}</span> },
-            { k: "act", label: "", w: 96, render: (m) => actCell(m) },
+            { k: "act", label: "", w: 150, render: (m) => actCell(m) },
           ]}
           rows={listed}
           empty="아직 회원이 없습니다 — 위 가입 링크를 나눠 주세요."
@@ -355,7 +392,9 @@ export default function CenterMembers() {
           {(data?.audit || []).map((a) => (
             <li key={a.id}>
               <span className="font-num text-muted">{when(a.created_at)}</span> {nameOf(a.actor_id)}
-              {a.account_id && a.account_id !== a.actor_id ? ` → ${nameOf(a.account_id)}` : ""}{" "}
+              {/* 지운 계정은 목록에 없다 — 지울 때 적어 둔 이름으로 */}
+              {a.account_id && a.account_id !== a.actor_id ? ` → ${a.action === "delete" && a.before?.name ? `${a.before.name}(${a.account_id})` : nameOf(a.account_id)}` : ""}{" "}
+              {a.action === "delete" && a.before?.role ? `${ROLE_LABEL[a.before.role]} ` : ""}
               {a.before?.role && a.after?.role && a.before.role !== a.after.role
                 ? `${ROLE_LABEL[a.before.role]} → ${ROLE_LABEL[a.after.role]}${a.action === "role" ? "" : "(으)로"} `
                 : a.action === "approve" && a.after?.role
@@ -373,8 +412,8 @@ export default function CenterMembers() {
         open={!!ask}
         title={ask?.title || ""}
         body={ask?.body || ""}
-        confirmLabel={ask?.action === "approve" ? "승인" : ask?.action === "reject" ? "거절" : ask?.action === "suspend" ? "정지" : ask?.action === "rotate" ? "새 코드 만들기" : "적용"}
-        tone={ask?.action === "approve" ? "ok" : ask?.action === "suspend" || ask?.action === "reject" ? "warn" : "navy"}
+        confirmLabel={ask?.action === "approve" ? "승인" : ask?.action === "reject" ? "거절" : ask?.action === "suspend" ? "정지" : ask?.action === "delete" ? "삭제" : ask?.action === "rotate" ? "새 코드 만들기" : "적용"}
+        tone={ask?.action === "approve" ? "ok" : ask?.action === "suspend" || ask?.action === "reject" || ask?.action === "delete" ? "warn" : "navy"}
         onCancel={() => setAsk(null)}
         onConfirm={() => {
           const x = ask;
@@ -382,7 +421,15 @@ export default function CenterMembers() {
           if (x.action === "rotate") rotate();
           else act(x.id, x.action, x.role);
         }}
-      />
+      >
+        {ask?.lines && (
+          <ul className="mt-2 list-disc space-y-1 pl-4 text-[13px] leading-[1.6] text-ink">
+            {ask.lines.map((ln) => (
+              <li key={ln}>{ln}</li>
+            ))}
+          </ul>
+        )}
+      </Confirm>
     </Panel>
   );
 }

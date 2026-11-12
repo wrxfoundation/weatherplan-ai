@@ -2,7 +2,7 @@
 //
 //   GET    /api/members                    { center: { id, name, joinCode }, members: [...], audit: [...] }
 //   PATCH  /api/members  { id, action, role }
-//          action: approve(role 선택) · reject · role(role) · suspend · activate
+//          action: approve(role 선택) · reject · role(role) · suspend · activate · delete
 //   POST   /api/members  { action: "rotate-code" }   가입 코드 바꾸기 → { joinCode } (옛 코드는 바로 막힌다)
 //
 // 바꾼 것은 account_audit 에 남기고 센터 가구 활동 기록(관제 감사로그)에도 한 줄 남긴다.
@@ -10,12 +10,14 @@
 // 관제 역할을 주거나 빼는 일 · 관제 회원의 정지 · 다시 사용은 센터 관리자(ops1~3)만 한다 (2026-10-06 점검:
 // 관제 회원 한 명이 관제 계정을 계속 만들거나 다른 관제를 모두 정지시킬 수 있었다).
 // 역할 · 정지는 상대가 다음에 서버를 부를 때(15초 안) 적용된다 — 역할이 바뀌면 다시 로그인해야 한다.
+// 계정 삭제(2026-11-12 요청)는 되돌릴 수 없어 센터 관리자(ops1~3)만 한다. 승인 대기는 거절한 뒤에 지운다.
+// 계정 줄만 지운다 — 그 회원이 남긴 기록과 권한 변경 기록은 남고(지운 사실도 한 줄 남긴다), 같은 아이디로 다시 가입할 수 있다.
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "./auth/[...nextauth]";
 import { authConfigured } from "../../lib/auth-server";
 import { dbConfigured, dbErrorCode } from "../../lib/db";
 import { ALL_ROLES, CENTERS, areaOfRole } from "../../lib/centers";
-import { activityLine, audit, auditList, centerRow, forgetMember, getMember, listMembers, memberStillValid, patchMember, setJoinCode } from "../../lib/members";
+import { activityLine, audit, auditList, centerRow, deleteMember, forgetMember, getMember, listMembers, memberStillValid, patchMember, setJoinCode } from "../../lib/members";
 import { newJoinCode } from "../../lib/password";
 import { ROLE_LABEL, isCenterOwner } from "../../lib/test-accounts";
 import { sameSiteJson } from "../../lib/http";
@@ -45,8 +47,9 @@ const NEXT = {
   suspend: (m) => m.status === "active",
   activate: (m) => m.status === "suspended" || m.status === "rejected",
   role: (m) => m.status !== "rejected",
+  delete: (m) => m.status !== "pending",
 };
-const ACTION_TEXT = { approve: "가입 승인", reject: "가입 거절", suspend: "사용 정지", activate: "다시 사용", role: "역할 변경" };
+const ACTION_TEXT = { approve: "가입 승인", reject: "가입 거절", suspend: "사용 정지", activate: "다시 사용", role: "역할 변경", delete: "계정 삭제" };
 
 export default async function handler(req, res) {
   res.setHeader("Cache-Control", "no-store");
@@ -105,6 +108,17 @@ export default async function handler(req, res) {
       if (action === "role" && nextRole === m.role) return res.status(400).json({ error: "same-role" });
       if (!owner && (m.role === "ops" || nextRole === "ops"))
         return res.status(403).json({ error: "owner-only", message: "관제 역할과 관제 회원은 센터 관리자만 바꿀 수 있습니다" });
+
+      // 지우기 — 센터 관리자만. 지운 사실은 권한 변경 기록(이름을 같이 적어 둔다 — 계정 줄이 없어지므로)과 감사로그에 남긴다
+      if (action === "delete") {
+        if (!owner) return res.status(403).json({ error: "owner-only-delete", message: "계정 삭제는 센터 관리자만 할 수 있습니다" });
+        const n = await deleteMember(m.id, center.id);
+        forgetMember(m.id);
+        if (!n) return res.status(409).json({ error: "bad-state", message: "지금 상태에서는 할 수 없는 일입니다" });
+        await audit({ center_id: center.id, account_id: m.id, actor_id: user.id, action: "delete", before: { role: m.role, status: m.status, name: m.name }, after: null });
+        await activityLine(center.household, user.id, user.role, "memberAdmin", `${ACTION_TEXT.delete} — ${m.name} (${m.login_id || m.id}) · ${ROLE_LABEL[m.role]}`);
+        return res.status(200).json({ member: null, deleted: m.id });
+      }
 
       const now = new Date().toISOString();
       const fields =
