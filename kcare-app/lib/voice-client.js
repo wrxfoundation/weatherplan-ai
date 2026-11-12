@@ -12,6 +12,7 @@
 // 받아쓰기(STT)는 하지 않는다 (2026-09-11 A안 — 글은 사람이 적은 한 줄). '말로 남기신 부탁'의 글 요약은
 // 담당 컨시어지가 듣고 적는다 (components/ConciergeRequests.jsx).
 import { useCallback, useEffect, useRef, useState } from "react";
+import { withFamily } from "./scope";
 
 export const MAX_SECS = 60;
 // 아이폰(사파리)은 mp4(AAC)만 녹음한다. 안드로이드 · PC 크롬은 webm(Opus)이 기본이다 — 크롬이 mp4 를 받으면
@@ -289,7 +290,7 @@ export async function saveClip({ blob, mime, secs }, { server = false } = {}) {
   const to = timeoutSignal(SEND_TIMEOUT_MS);
   try {
     const data = await blobToBase64(blob);
-    res = await fetch("/api/voice", {
+    res = await fetch(withFamily("/api/voice"), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ mime, secs, data }),
@@ -321,7 +322,7 @@ export function fetchClip(clip) {
   if (now || clip.id.startsWith("mem:")) return Promise.resolve(now);
   if (loading.has(clip.id)) return loading.get(clip.id);
   const to = timeoutSignal(FETCH_TIMEOUT_MS);
-  const p = fetch(`/api/voice?id=${encodeURIComponent(clip.id)}`, { cache: "no-store", signal: to.signal })
+  const p = fetch(withFamily(`/api/voice?id=${encodeURIComponent(clip.id)}`), { cache: "no-store", signal: to.signal })
     .then(async (res) => {
       if (!res.ok) throw Object.assign(new Error("fetch-failed"), { code: res.status === 404 ? "gone" : res.status === 401 ? "login-required" : "network" });
       const url = URL.createObjectURL(await res.blob());

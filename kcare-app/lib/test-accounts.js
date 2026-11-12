@@ -57,6 +57,10 @@ export function findCenterOps(idOrEmail) {
 }
 export const isCenterOwner = (id, centerId) => CENTER_OPS_ACCOUNTS.some((a) => a.id === id && a.center === centerId);
 
-export const householdName = (id) => TEST_HOUSEHOLDS[id]?.name || id || "";
+// 센터의 가족(HH-C1-XXXXXX)은 그 센터 이름으로 적는다 — 가구 번호를 화면에 그대로 보이지 않는다 (2026-11-12 · lib/centers.js)
+export const householdName = (id) => {
+  const fam = /^HH-(C[1-3])-[A-Z0-9]{6}$/.exec(String(id || ""));
+  return TEST_HOUSEHOLDS[fam ? `HH-${fam[1]}` : id]?.name || id || "";
+};
 // 회원(관제 센터 공간)은 그 센터 회원 이름 — lib/people.js 가 받아 둔 목록에서
 export const accountName = (id) => [...TEST_ACCOUNTS, ...CENTER_OPS_ACCOUNTS].find((a) => a.id === id)?.name || peopleNow()?.byId?.[id] || id || "—";

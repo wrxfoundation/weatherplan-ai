@@ -1,19 +1,22 @@
 // 가구 상태 저장 — 테스트 계정으로 로그인했을 때만 (lib/state.js 가 부른다).
 //
-//   GET  /api/household        가구 상태 전체 { state, version, updatedAt, updatedBy }
+//   GET  /api/household        가구 상태 전체 { household, state, version, updatedAt, updatedBy }
 //   GET  /api/household?v=12   바뀐 게 있을 때만 상태를 싣는다 { changed, ... } — 다른 폰 변경 확인용
 //   PUT  /api/household        { baseVersion, state, actions } — 버전이 맞을 때만 덮어쓴다.
 //                              다른 폰이 먼저 바꿨으면 409 와 최신 상태를 돌려준다.
+//   ?hh=HH-C1-XXXXXX           관제 · 컨시어지가 고른 가족 (2026-11-12 · lib/families.js). 화면은 읽을 때도 쓸 때도 붙인다 —
+//                              탭마다 다른 가족을 열어 두어도 한 가족의 기록이 다른 가족에 저장되지 않게.
 //
-// 어느 가구인지는 로그인 세션에서만 정한다 — 요청 본문의 값은 믿지 않는다.
+// 어느 가구인지는 서버가 정한다 — 어르신 · 보호자는 로그인 세션의 가구(가입한 가족), 관제 · 컨시어지는 ?hh= 로 고른 가족을
+// 그 센터 것인지 · 볼 수 있는지 확인한 뒤에 (lib/families.js householdOf). 요청 본문의 값은 믿지 않는다.
 // 함께 온 동작(actions)은 activity 표에 한 줄씩, 가입 신청은 signups 표에도 쌓는다.
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "./auth/[...nextauth]";
 import { authConfigured } from "../../lib/auth-server";
 import { db, dbConfigured, dbErrorCode, ensureHousehold } from "../../lib/db";
 import { summarize, trimPayload } from "../../lib/activity";
-import { centerOfHousehold } from "../../lib/centers";
-import { centerPeople, memberStillValid } from "../../lib/members";
+import { memberStillValid } from "../../lib/members";
+import { familyPeople, forgetFamilyAccess, householdOf } from "../../lib/families";
 import { sameSiteJson } from "../../lib/http";
 
 // 서버가 직접 남기는 기록 종류 — 화면이 보낸 동작으로는 만들 수 없다 (가입 · 회원 관리 · 로그인 줄을 꾸며 넣지 못하게)
@@ -40,7 +43,7 @@ async function current(household) {
   return data;
 }
 
-function activityRows(actions, user) {
+function activityRows(actions, user, household) {
   return actions
     .map((a) => {
       const summary = summarize(a);
@@ -49,7 +52,7 @@ function activityRows(actions, user) {
       let payload = trimPayload(rest);
       if (JSON.stringify(payload).length > MAX_PAYLOAD_CHARS) payload = { truncated: true };
       return {
-        household_id: user.household,
+        household_id: household,
         account_id: user.id,
         role: user.role || null,
         type: str(type, 40),
@@ -62,9 +65,9 @@ function activityRows(actions, user) {
 }
 
 // 가입 신청 — 온보딩 마지막 단계의 값 (pages/demo-onboarding.jsx finish · 시연용 화면)
-function signupRow(p, user) {
+function signupRow(p, user, household) {
   return {
-    household_id: user.household,
+    household_id: household,
     account_id: user.id,
     track: str(p.track, 40),
     for_self: typeof p.forSelf === "boolean" ? p.forSelf : null,
@@ -102,28 +105,34 @@ export default async function handler(req, res) {
     const still = await memberStillValid(user);
     if (!still.ok) return res.status(401).json({ error: still.reason, area: still.area || null });
 
+    // 어느 가족인가 — 관제 · 컨시어지는 고른 가족(?hh=), 그 밖에는 세션의 가구
+    const at = await householdOf(req, user);
+    if (at.error) return res.status(at.status).json({ error: at.error });
+    const household = at.household;
+
     if (req.method === "GET") {
-      // 관제 센터 가구 — 그 센터 회원 이름 · 역할 (화면의 어르신 · 보호자 · 컨시어지 이름). 처음 읽을 때와 ?people=1 일 때만
-      const center = centerOfHousehold(user.household);
+      // 관제 센터의 가족 — 이 가족의 어르신 · 보호자와 센터 직원 이름 · 역할 (화면의 이름). 처음 읽을 때와 ?people=1 일 때만
+      const center = at.center;
       const since = req.query.v != null ? Number(req.query.v) : null;
       const withPeople = center && (since == null || req.query.people === "1");
       // 관제가 아니면 아이디 없이 이름 · 역할만, 관제 회원은 빼고 (로그인 아이디를 모두에게 보이지 않게 · 2026-10-06 점검)
       const shown = (list) => (user.role === "ops" ? list : list.filter((m) => m.role !== "ops").map((m) => ({ name: m.name, role: m.role })));
-      const people = withPeople ? { center: { id: center.id, name: center.name }, people: shown(await centerPeople(center.id)) } : {};
+      const people = withPeople ? { center: { id: center.id, name: center.name }, people: shown(await familyPeople(center.id, household)) } : {};
       if (since != null && Number.isFinite(since)) {
-        const { data, error } = await db().from("households").select("version").eq("id", user.household).maybeSingle();
+        const { data, error } = await db().from("households").select("version").eq("id", household).maybeSingle();
         if (error) throw error;
         // 같을 때만 '안 바뀜'. 작아진 경우(관리자가 가구를 지워 처음부터)도 바뀐 것으로 알린다
-        if ((data?.version ?? 0) === since) return res.status(200).json({ changed: false, version: since, ...people });
-        if (!data) return res.status(200).json({ changed: true, state: null, version: 0, updatedAt: null, updatedBy: null, ...people });
+        if ((data?.version ?? 0) === since) return res.status(200).json({ changed: false, household, version: since, ...people });
+        if (!data) return res.status(200).json({ changed: true, household, state: null, version: 0, updatedAt: null, updatedBy: null, ...people });
       }
-      let row = await current(user.household);
+      let row = await current(household);
       if (!row) {
-        await ensureHousehold(user.household);
+        await ensureHousehold(household);
         row = { state: null, version: 0 };
       }
       return res.status(200).json({
         changed: true,
+        household,
         state: row.state,
         version: row.version,
         updatedAt: row.updated_at || null,
@@ -143,7 +152,7 @@ export default async function handler(req, res) {
       // 가구 기록 비우기는 관제 계정만 (2026-10-19 점검 F-02) — 화면도 관제에게만 버튼을 보인다
       if (user.role !== "ops" && list.some((a) => a.type === "reset")) return res.status(400).json({ error: "reset-ops-only" });
 
-      if (baseVersion === 0) await ensureHousehold(user.household);
+      if (baseVersion === 0) await ensureHousehold(household);
       const { data, error } = await db()
         .from("households")
         .update({
@@ -152,25 +161,28 @@ export default async function handler(req, res) {
           updated_at: new Date().toISOString(),
           updated_by: `${user.name || user.id} (${user.id})`.slice(0, 120),
         })
-        .eq("id", user.household)
+        .eq("id", household)
         .eq("version", baseVersion)
         .select("version");
       if (error) throw error;
       if (!data || data.length === 0) {
         // 다른 폰이 먼저 저장했다 — 최신 상태를 돌려주면 화면이 내 동작을 그 위에 다시 쌓는다
-        const row = await current(user.household);
+        const row = await current(household);
         return res.status(409).json({ error: "conflict", state: row?.state ?? null, version: row?.version ?? 0 });
       }
 
+      // 담당 컨시어지가 바뀌었다 — 컨시어지가 볼 수 있는 가족이 달라지니 잠깐 기억해 둔 것을 지운다 (다른 서버 인스턴스는 15초 안에)
+      if (list.some((a) => a.type === "setElderStaff")) forgetFamilyAccess();
+
       // 기록 — 상태 저장은 이미 끝났으므로 여기서 실패해도 저장 자체는 성공으로 답한다
-      const rows = activityRows(list, user);
+      const rows = activityRows(list, user, household);
       if (rows.length) {
         const { error: e1, status: s1 } = await db().from("activity").insert(rows);
         if (e1) console.error("[household] 활동 기록 실패", dbErrorCode(e1, s1));
       }
       const signups = list.filter((a) => a.type === "completeOnboarding" && isPlainObject(a.payload));
       if (signups.length) {
-        const { error: e2, status: s2 } = await db().from("signups").insert(signups.map((a) => signupRow(a.payload, user)));
+        const { error: e2, status: s2 } = await db().from("signups").insert(signups.map((a) => signupRow(a.payload, user, household)));
         if (e2) console.error("[household] 가입 신청 기록 실패", dbErrorCode(e2, s2));
       }
       return res.status(200).json({ version: data[0].version });

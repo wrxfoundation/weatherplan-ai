@@ -1,9 +1,9 @@
 // 회원 · 관제 센터 — 서버(API 라우트 · 로그인)에서만 쓴다 (2026-10-06).
 // 표는 supabase/schema.sql 의 centers · accounts(회원 칸) · account_audit. 비밀번호 해시는 이 파일 밖으로 내보내지 않는다.
 import { db, dbErrorCode, ensureHousehold } from "./db";
-import { CENTERS, areaOfRole } from "./centers";
+import { CENTERS, areaOfRole, centerOfHousehold, isFamilyRole } from "./centers";
 
-const MEMBER_COLS = "id, login_id, name, role, requested_role, status, phone, profile, center_id, provider, created_at, approved_by, approved_at, last_login_at";
+const MEMBER_COLS = "id, login_id, name, role, requested_role, status, phone, profile, center_id, household_id, provider, created_at, approved_by, approved_at, last_login_at";
 
 const fail = (error, status) => Object.assign(error, { status });
 
@@ -175,7 +175,7 @@ export async function memberStillValid(user) {
   const hit = cache.get(user.id);
   let row = hit && Date.now() - hit.at < TTL ? hit.row : null;
   if (!row) {
-    const { data, error, status } = await db().from("accounts").select("status, role, center_id").eq("id", user.id).maybeSingle();
+    const { data, error, status } = await db().from("accounts").select("status, role, center_id, household_id").eq("id", user.id).maybeSingle();
     if (error) throw fail(error, status);
     row = data || { status: "gone" };
     cache.set(user.id, { at: Date.now(), row });
@@ -183,6 +183,12 @@ export async function memberStillValid(user) {
   if (row.status !== "active") return { ok: false, reason: row.status === "gone" ? "account-removed" : `account-${row.status}` };
   // 바뀐 역할의 입구(영역)는 본인에게만 알려 준다 — 다시 로그인할 곳으로 바로 보내려고
   if (row.role !== user.role || row.center_id !== user.center) return { ok: false, reason: "role-changed", area: row.center_id === user.center ? areaOfRole(row.role) : null };
+  // 관제가 이 회원을 다른 가족으로 옮겼다 (2026-11-12) — 세션에는 예전 가족이 실려 있으니 다시 로그인해 새 가족 기록을 연다
+  if (isFamilyRole(row.role)) {
+    const center = CENTERS[row.center_id];
+    const home = center && centerOfHousehold(row.household_id)?.id === center.id ? row.household_id : center?.household;
+    if (home && home !== user.household) return { ok: false, reason: "family-changed", area: areaOfRole(row.role) };
+  }
   return { ok: true };
 }
 export const forgetMember = (id) => cache.delete(id);

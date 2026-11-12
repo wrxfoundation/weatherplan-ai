@@ -1,8 +1,8 @@
 // 관제 센터 회원 · 권한 (2026-10-06) — 그 센터 관제(ops)만. 다른 센터 회원은 보이지도 바뀌지도 않는다.
 //
-//   GET    /api/members                    { center: { id, name, joinCode }, members: [...], audit: [...] }
-//   PATCH  /api/members  { id, action, role }
-//          action: approve(role 선택) · reject · role(role) · suspend · activate · delete
+//   GET    /api/members                    { center: { id, name, joinCode }, members: [...], families: [...] | null, audit: [...] }
+//   PATCH  /api/members  { id, action, role, household }
+//          action: approve(role 선택) · reject · role(role) · suspend · activate · delete · move(household — 다른 가족으로)
 //   POST   /api/members  { action: "rotate-code" }   가입 코드 바꾸기 → { joinCode } (옛 코드는 바로 막힌다)
 //
 // 바꾼 것은 account_audit 에 남기고 센터 가구 활동 기록(관제 감사로그)에도 한 줄 남긴다.
@@ -12,19 +12,28 @@
 // 역할 · 정지는 상대가 다음에 서버를 부를 때(15초 안) 적용된다 — 역할이 바뀌면 다시 로그인해야 한다.
 // 계정 삭제(2026-11-12 요청)는 되돌릴 수 없어 센터 관리자(ops1~3)만 한다. 승인 대기는 거절한 뒤에 지운다.
 // 계정 줄만 지운다 — 그 회원이 남긴 기록과 권한 변경 기록은 남고(지운 사실도 한 줄 남긴다), 같은 아이디로 다시 가입할 수 있다.
+// 가족 옮기기(2026-11-12 · lib/families.js) — 어르신 · 보호자를 그 센터의 다른 가족으로. 기록은 가족에 남고 사람만 옮긴다.
+// 옮긴 회원은 다음에 서버를 부를 때(15초 안) 멈추고, 다시 로그인하면 새 가족의 기록이 열린다.
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "./auth/[...nextauth]";
 import { authConfigured } from "../../lib/auth-server";
 import { dbConfigured, dbErrorCode } from "../../lib/db";
-import { ALL_ROLES, CENTERS, areaOfRole } from "../../lib/centers";
+import { ALL_ROLES, CENTERS, areaOfRole, centerOfHousehold, isFamilyRole } from "../../lib/centers";
+import { familyNames, familyRow, forgetFamilyAccess } from "../../lib/families";
 import { activityLine, audit, auditList, centerRow, deleteMember, forgetMember, getMember, listMembers, memberStillValid, patchMember, setJoinCode } from "../../lib/members";
 import { newJoinCode } from "../../lib/password";
 import { ROLE_LABEL, isCenterOwner } from "../../lib/test-accounts";
 import { sameSiteJson } from "../../lib/http";
 
+// 그 회원이 속한 가족 — 어르신 · 보호자만 (직원은 가족에 속하지 않는다). 번호가 이 센터 것이 아니면 첫 가족
+const homeOf = (m, center) => (isFamilyRole(m.role) ? (centerOfHousehold(m.household_id)?.id === center.id ? m.household_id : center.household) : null);
+
 // 관제 화면으로 내보내는 회원 한 줄 — 비밀번호 해시는 애초에 읽지 않는다 (lib/members.js MEMBER_COLS)
-const view = (m) => ({
+const view = (m, center) => ({
   id: m.id,
+  household: homeOf(m, center),
+  // 역할과 상관없이 계정에 적힌 가족 — 직원을 어르신 · 보호자로 바꾸면 이 가족에 들어간다 (화면이 미리 알려 준다)
+  home: centerOfHousehold(m.household_id)?.id === center.id ? m.household_id : center.household,
   loginId: m.login_id || null,
   name: m.name,
   role: m.role,
@@ -48,8 +57,9 @@ const NEXT = {
   activate: (m) => m.status === "suspended" || m.status === "rejected",
   role: (m) => m.status !== "rejected",
   delete: (m) => m.status !== "pending",
+  move: (m) => m.status !== "rejected",
 };
-const ACTION_TEXT = { approve: "가입 승인", reject: "가입 거절", suspend: "사용 정지", activate: "다시 사용", role: "역할 변경", delete: "계정 삭제" };
+const ACTION_TEXT = { approve: "가입 승인", reject: "가입 거절", suspend: "사용 정지", activate: "다시 사용", role: "역할 변경", delete: "계정 삭제", move: "가족 옮김" };
 
 export default async function handler(req, res) {
   res.setHeader("Cache-Control", "no-store");
@@ -70,11 +80,19 @@ export default async function handler(req, res) {
 
     if (req.method === "GET") {
       const [row, members, log] = await Promise.all([centerRow(center.id), listMembers(center.id), auditList(center.id)]);
+      // 가족 이름 — 표에 가족 칸이 아직 없으면(families.sql 실행 전) null: 화면은 예전처럼 한 가족으로 보인다
+      let families = null;
+      try {
+        families = await familyNames(center.id);
+      } catch (e) {
+        if (dbErrorCode(e) !== "schema-missing") throw e;
+      }
       return res.status(200).json({
         center: { id: center.id, name: row?.name || center.name, joinCode: row?.join_code || null },
         me: user.id,
         owner,
-        members: members.map(view),
+        members: members.map((m) => view(m, center)),
+        families,
         audit: log,
       });
     }
@@ -96,7 +114,7 @@ export default async function handler(req, res) {
     }
 
     if (req.method === "PATCH") {
-      const { id, action, role } = req.body || {};
+      const { id, action, role, household } = req.body || {};
       if (typeof id !== "string" || !has(NEXT, action)) return res.status(400).json({ error: "invalid-request" });
       if (id === user.id) return res.status(400).json({ error: "self", message: "자기 계정은 바꿀 수 없습니다" });
       const m = await getMember(id);
@@ -116,8 +134,25 @@ export default async function handler(req, res) {
         forgetMember(m.id);
         if (!n) return res.status(409).json({ error: "bad-state", message: "지금 상태에서는 할 수 없는 일입니다" });
         await audit({ center_id: center.id, account_id: m.id, actor_id: user.id, action: "delete", before: { role: m.role, status: m.status, name: m.name }, after: null });
-        await activityLine(center.household, user.id, user.role, "memberAdmin", `${ACTION_TEXT.delete} — ${m.name} (${m.login_id || m.id}) · ${ROLE_LABEL[m.role]}`);
+        await activityLine(homeOf(m, center) || center.household, user.id, user.role, "memberAdmin", `${ACTION_TEXT.delete} — ${m.name} (${m.login_id || m.id}) · ${ROLE_LABEL[m.role]}`);
         return res.status(200).json({ member: null, deleted: m.id });
+      }
+
+      // 가족 옮기기 — 어르신 · 보호자만, 이 센터의 가족으로만
+      if (action === "move") {
+        if (!isFamilyRole(m.role)) return res.status(400).json({ error: "not-family-role", message: "가족은 어르신 · 보호자만 옮길 수 있습니다" });
+        const from = homeOf(m, center);
+        if (typeof household !== "string" || centerOfHousehold(household)?.id !== center.id) return res.status(400).json({ error: "bad-family" });
+        if (household === from) return res.status(400).json({ error: "same-family", message: "이미 그 가족입니다" });
+        if (household !== center.household && !(await familyRow(household))) return res.status(404).json({ error: "family-not-found" });
+        const moved = await patchMember(m.id, { household_id: household });
+        forgetMember(m.id);
+        forgetFamilyAccess();
+        await audit({ center_id: center.id, account_id: m.id, actor_id: user.id, action: "move", before: { household: from }, after: { household } });
+        const line = `${ACTION_TEXT.move} — ${m.name} (${m.login_id || m.id}) · ${ROLE_LABEL[m.role]}`;
+        await activityLine(from, user.id, user.role, "memberAdmin", `${line} · 다른 가족으로 나감`);
+        await activityLine(household, user.id, user.role, "memberAdmin", `${line} · 이 가족으로 들어옴`);
+        return res.status(200).json({ member: moved ? view(moved, center) : null });
       }
 
       const now = new Date().toISOString();
@@ -142,8 +177,9 @@ export default async function handler(req, res) {
         after: { role: after?.role ?? nextRole, status: after?.status ?? fields.status ?? m.status },
       });
       const roleNote = nextRole !== m.role ? ` · ${ROLE_LABEL[m.role]} → ${ROLE_LABEL[nextRole]}` : ` · ${ROLE_LABEL[nextRole]}`;
-      await activityLine(center.household, user.id, user.role, "memberAdmin", `${ACTION_TEXT[action]} — ${m.name} (${m.login_id || m.id})${roleNote}`);
-      return res.status(200).json({ member: after ? view(after) : null });
+      // 어르신 · 보호자의 일은 그 가족의 기록에, 직원의 일은 센터 첫 가족의 기록에 남긴다
+      await activityLine(homeOf(m, center) || center.household, user.id, user.role, "memberAdmin", `${ACTION_TEXT[action]} — ${m.name} (${m.login_id || m.id})${roleNote}`);
+      return res.status(200).json({ member: after ? view(after, center) : null });
     }
 
     res.setHeader("Allow", "GET, POST, PATCH");

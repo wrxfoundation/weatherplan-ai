@@ -74,6 +74,12 @@ const inputCls = (bad) => `mt-1.5 w-full rounded-xl border px-3.5 py-3 text-[16p
 // 오류 칸 → 옮겨 갈 입력칸 (화면 순서)
 const FIELD_ORDER = [["code", "code"], ["role", "join-role-first"], ["name", "j-name"], ["loginId", "j-id"], ["password", "j-pw"], ["password2", "j-pw2"], ["agree", "j-agree"]];
 
+// 다른 종류의 가입 코드를 적었을 때 (2026-11-12 — 가족마다 가입 코드가 따로다 · pages/api/join.js)
+const WRONG_CODE = {
+  user: (giver) => `직원 가입용 코드입니다. ${giver}에게 가족 가입 코드를 받아 적어 주세요`,
+  staff: "가족 가입 코드입니다. 컨시어지 · 파트너 · 관제는 센터 가입 코드로 가입합니다",
+};
+
 export default function JoinForm({ area, onSent }) {
   const router = useRouter();
   const { user } = useAuth();
@@ -116,7 +122,12 @@ export default function JoinForm({ area, onSent }) {
     try {
       const r = await fetch(`/api/join?code=${encodeURIComponent(c)}`, { cache: "no-store" });
       const j = await r.json().catch(() => ({}));
-      if (r.ok) {
+      // 가입 코드는 두 가지다 (2026-11-12) — 가족 가입 코드(어르신 · 보호자) · 센터 가입 코드(직원). 서로 바꿔 적으면 여기서 알려 준다
+      const wrongKind = r.ok && ((big && j.kind === "staff") || (!big && j.kind === "family"));
+      if (wrongKind) {
+        msg = big ? WRONG_CODE.user(giver) : WRONG_CODE.staff;
+        setErrors((e) => ({ ...e, code: msg }));
+      } else if (r.ok) {
         found = j.center;
         setCenter(j.center);
         setErrors((e) => ({ ...e, code: null }));
@@ -248,8 +259,10 @@ export default function JoinForm({ area, onSent }) {
       const j = await r.json().catch(() => ({}));
       if (!r.ok) {
         if (j.fields) {
-          // 가입 코드가 그사이 바뀌었다(관제가 코드 바꾸기) — 확인된 센터를 지우고 코드 칸으로
-          const fields = j.fields.code ? { ...j.fields, code: codeChanged } : j.fields;
+          // 가입 코드가 그사이 바뀌었다(관제가 코드 바꾸기) — 확인된 센터를 지우고 코드 칸으로.
+          // 다른 종류의 코드(가족 ↔ 직원)를 적은 것이면 서버가 알려 준 말을 그대로 보인다
+          const kindMsg = /직원 가입용|가족 가입 코드/.test(String(j.fields.code || ""));
+          const fields = j.fields.code ? { ...j.fields, code: kindMsg ? (big ? WRONG_CODE.user(giver) : WRONG_CODE.staff) : codeChanged } : j.fields;
           if (j.fields.code) setCenter(null);
           setErrors(fields);
           focusFirst(fields);

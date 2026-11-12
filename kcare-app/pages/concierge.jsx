@@ -1,4 +1,5 @@
 import ModeLink from "../components/ModeLink";
+import { FamilySwitch, OtherFamilyAlerts } from "../components/FamilySwitch";
 import Head from "next/head";
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -626,12 +627,16 @@ function ConciergePage() {
               </button>
               <ModeLink compact className="tap shrink-0 whitespace-nowrap text-[12px] font-bold" />
             </div>
+            {/* 담당 가족이 여럿이면 지금 보는 가족을 고른다 — 화면 전체가 그 가족의 기록이다 (2026-11-12 · 관제가 지정한 가족만 보인다) */}
+            <FamilySwitch className="mt-2" />
             <button
               onClick={() => dispatch({ type: "demo", payload: { offline: !state.demo.offline } })}
               className="btn-press mt-2 w-full rounded-lg border border-navy/20 py-1.5 text-[12px] font-bold text-muted"
             >
               {state.demo.offline ? "온라인 전환" : "오프라인 시연"}
             </button>
+            {/* 지금 보고 있지 않은 담당 가족의 SOS · 도와줘요 — 스크롤해도 붙어 있는 머리 안에 */}
+            <OtherFamilyAlerts className="mt-2" />
             {/* ── 어르신 SOS — 어느 탭에 있든 맨 위에 (2026-10-02 현장 요청: "어르신 SOS 가 컨시어지에 알람 안 뜸").
                 급파 지시 전에는 '관제 확인 중' + 어르신께 바로 전화, 급파 지시가 오면 수락 버튼.
                 머리 안에 둔다 — 머리는 스크롤해도 붙어 있다. 본문 안에서는 아래로 내리면 사라졌다 (2026-10-19 점검 C-10) ── */}

@@ -126,6 +126,13 @@ on conflict (id) do nothing;
 create unique index if not exists centers_join_code_key on public.centers (join_code);
 
 alter table public.households add column if not exists center_id text references public.centers(id);
+-- 가족(가구)마다 기록 나누기 (2026-11-12 · supabase/families.sql 과 같은 내용) — 한 센터 안에 가족이 여럿, 가족마다 가입 코드 하나
+alter table public.households add column if not exists label      text;   -- 관제가 적은 가족 이름 (비우면 어르신 이름으로 '○○ 님 가족')
+alter table public.households add column if not exists join_code  text;   -- 가족 가입 코드 8자리 — 이 코드로 가입한 어르신 · 보호자가 이 가족에 들어간다
+alter table public.households add column if not exists created_by text;   -- 가족을 만든 관제 계정
+create unique index if not exists households_join_code_key on public.households (join_code) where join_code is not null;
+create index if not exists households_center_idx on public.households (center_id);
+create index if not exists accounts_household_idx on public.accounts (household_id);
 
 -- 회원 — 가입 화면에서 만든 계정. 비밀번호는 해시(scrypt)만 저장한다 (원문은 어디에도 남지 않는다)
 alter table public.accounts add column if not exists center_id     text references public.centers(id);
@@ -172,37 +179,37 @@ create table if not exists public.account_audit (
 );
 create index if not exists account_audit_center_idx on public.account_audit (center_id, created_at desc);
 
--- 센터별 보기 (Table Editor 에서 '관제 1센터 표'처럼 본다 · 읽기 전용)
-create or replace view public.center1_accounts with (security_invoker = on) as
-  select id, login_id, name, role, status, phone, profile, created_at, approved_by, approved_at, last_login_at from public.accounts where center_id = 'C1';
+-- 센터별 보기 (Table Editor 에서 '관제 1센터 표'처럼 본다 · 읽기 전용) — 그 센터의 모든 가족
 create or replace view public.center1_household with (security_invoker = on) as
-  select id, name, version, updated_at, updated_by, state from public.households where id = 'HH-C1';
+  select id, name, version, updated_at, updated_by, state, label, join_code from public.households where id = 'HH-C1' or id like 'HH-C1-%';
 create or replace view public.center1_activity with (security_invoker = on) as
-  select id, created_at, account_id, role, type, summary from public.activity where household_id = 'HH-C1';
+  select id, created_at, account_id, role, type, summary, household_id from public.activity where household_id = 'HH-C1' or household_id like 'HH-C1-%';
 create or replace view public.center1_signups with (security_invoker = on) as
-  select * from public.signups where household_id = 'HH-C1';
+  select * from public.signups where household_id = 'HH-C1' or household_id like 'HH-C1-%';
 create or replace view public.center1_payments with (security_invoker = on) as
-  select * from public.payments where household_id = 'HH-C1';
-create or replace view public.center2_accounts with (security_invoker = on) as
-  select id, login_id, name, role, status, phone, profile, created_at, approved_by, approved_at, last_login_at from public.accounts where center_id = 'C2';
+  select * from public.payments where household_id = 'HH-C1' or household_id like 'HH-C1-%';
+create or replace view public.center1_accounts with (security_invoker = on) as
+  select id, login_id, name, role, status, phone, profile, created_at, approved_by, approved_at, last_login_at, household_id from public.accounts where center_id = 'C1';
 create or replace view public.center2_household with (security_invoker = on) as
-  select id, name, version, updated_at, updated_by, state from public.households where id = 'HH-C2';
+  select id, name, version, updated_at, updated_by, state, label, join_code from public.households where id = 'HH-C2' or id like 'HH-C2-%';
 create or replace view public.center2_activity with (security_invoker = on) as
-  select id, created_at, account_id, role, type, summary from public.activity where household_id = 'HH-C2';
+  select id, created_at, account_id, role, type, summary, household_id from public.activity where household_id = 'HH-C2' or household_id like 'HH-C2-%';
 create or replace view public.center2_signups with (security_invoker = on) as
-  select * from public.signups where household_id = 'HH-C2';
+  select * from public.signups where household_id = 'HH-C2' or household_id like 'HH-C2-%';
 create or replace view public.center2_payments with (security_invoker = on) as
-  select * from public.payments where household_id = 'HH-C2';
-create or replace view public.center3_accounts with (security_invoker = on) as
-  select id, login_id, name, role, status, phone, profile, created_at, approved_by, approved_at, last_login_at from public.accounts where center_id = 'C3';
+  select * from public.payments where household_id = 'HH-C2' or household_id like 'HH-C2-%';
+create or replace view public.center2_accounts with (security_invoker = on) as
+  select id, login_id, name, role, status, phone, profile, created_at, approved_by, approved_at, last_login_at, household_id from public.accounts where center_id = 'C2';
 create or replace view public.center3_household with (security_invoker = on) as
-  select id, name, version, updated_at, updated_by, state from public.households where id = 'HH-C3';
+  select id, name, version, updated_at, updated_by, state, label, join_code from public.households where id = 'HH-C3' or id like 'HH-C3-%';
 create or replace view public.center3_activity with (security_invoker = on) as
-  select id, created_at, account_id, role, type, summary from public.activity where household_id = 'HH-C3';
+  select id, created_at, account_id, role, type, summary, household_id from public.activity where household_id = 'HH-C3' or household_id like 'HH-C3-%';
 create or replace view public.center3_signups with (security_invoker = on) as
-  select * from public.signups where household_id = 'HH-C3';
+  select * from public.signups where household_id = 'HH-C3' or household_id like 'HH-C3-%';
 create or replace view public.center3_payments with (security_invoker = on) as
-  select * from public.payments where household_id = 'HH-C3';
+  select * from public.payments where household_id = 'HH-C3' or household_id like 'HH-C3-%';
+create or replace view public.center3_accounts with (security_invoker = on) as
+  select id, login_id, name, role, status, phone, profile, created_at, approved_by, approved_at, last_login_at, household_id from public.accounts where center_id = 'C3';
 
 -- ── 목소리 (2026-10-14) ─────────────────────────────────────────────────────
 -- 앱에서 녹음한 짧은 음성(마음사서함 · 가족 안부 · 말로 부탁하기 · 오늘 여쭤볼 것). 소리는 여기에만 있고,

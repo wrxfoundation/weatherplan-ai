@@ -23,6 +23,7 @@ import { recordLogin } from "../../../lib/db";
 import { findCenterOps, findTestAccount } from "../../../lib/test-accounts";
 import { CENTERS, areaOfRole, centerOfHousehold, isArea } from "../../../lib/centers";
 import { loginFailed, loginSucceeded, memberForLogin } from "../../../lib/members";
+import { homeOfMember } from "../../../lib/families";
 import { sameSecret, verifyPassword } from "../../../lib/password";
 import { clientIp, makeLimiter } from "../../../lib/http";
 
@@ -89,7 +90,8 @@ async function authorizeMember(credentials, req) {
   if (areaOfRole(m.role) !== area) reject(`WrongArea:${areaOfRole(m.role) || ""}`);
   const center = CENTERS[m.center_id];
   if (!center) reject("NoCenter");
-  return { id: m.id, name: m.name, email: null, role: m.role, household: center.household, center: center.id, provider: "member" };
+  // 어르신 · 보호자는 가입한 가족의 기록을, 직원은 센터의 첫 가족을 싣는다 (직원은 화면에서 가족을 고른다 · 2026-11-12 lib/families.js)
+  return { id: m.id, name: m.name, email: null, role: m.role, household: homeOfMember(m, center), center: center.id, provider: "member" };
 }
 
 function providers() {

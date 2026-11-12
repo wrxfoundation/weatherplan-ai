@@ -10,6 +10,7 @@ import { VISIT_LEVELS, VISIT_TEXT_KEYS, isMeet, visitText } from "./checkup";
 import { crewFor } from "./dispatch-policy";
 import { logout, useAuth } from "./auth";
 import { setStorageScope } from "./scope";
+import { chooseFamily, useFamilyChoice } from "./family-select";
 import { cleanMedSlot, cleanSupplement, healthOf, kstToday, medSummary, supplementLine } from "./meds";
 import { AREAS, areaOfRole, centerOfHousehold, isCenterHousehold } from "./centers";
 import { applyPeople, peopleFor } from "./people";
@@ -1739,6 +1740,9 @@ const writeLocal = (key, value) => {
     /* 용량 초과 등 — 이 기기 보관은 보조 수단이라 조용히 넘어간다 */
   }
 };
+// 직원이 보는 가족 번호를 요청에 붙인다 (?hh=) · 그 가족을 더 볼 수 없다는 서버 답인지 (2026-11-12 · lib/families.js)
+const hhQuery = (staffRef, householdRef, lead) => (staffRef.current && householdRef.current ? `${lead}hh=${encodeURIComponent(householdRef.current)}` : "");
+const lostFamily = (res, j) => (res.status === 403 && j.error === "family-not-allowed") || (res.status === 404 && (j.error === "family-not-found" || j.error === "no-family"));
 const savePending = (hh, uid, list) => hh && writeLocal(pendingKey(hh, uid), list.length ? list : null);
 const saveCache = (hh, state, version) => hh && state && writeLocal(cacheKey(hh), { version, state });
 
@@ -1747,7 +1751,13 @@ export function AppStateProvider({ children }) {
   // 저장소를 읽는 동안의 빈 화면 색 — 어르신 화면은 밝은 바탕 · 밝은 스플래시라 같은 색으로 (남색이 번쩍이지 않게).
   // 보호자 화면은 남색 스플래시(components/Splash.jsx)로 이어지므로 남색 그대로 둔다.
   const lightShell = /^\/elder(\/|$)/.test(useRouter().pathname);
-  const household = auth.user?.household || null;
+  // 관제 · 컨시어지는 한 센터의 여러 가족을 맡는다 — 지금 보는 가족은 직원이 고른 것 (2026-11-12 · lib/family-select.js).
+  // 고르기 전에는 서버가 정한다: 관제는 첫 가족, 컨시어지는 담당 가족 중 첫 번째 (하나도 없으면 '담당 가족 없음' 화면)
+  const centerStaff = !!auth.user?.center && (auth.user?.role === "ops" || auth.user?.role === "concierge");
+  const staffUid = centerStaff ? auth.user.id : null;
+  const pick = useFamilyChoice(staffUid);
+  const household = (centerStaff && pick) || auth.user?.household || null;
+  const [nonce, setNonce] = useState(0); // 같은 가구를 다시 읽어야 할 때 (고른 가족을 볼 수 없게 됐다)
   // 관제 PC 는 창이 다른 창에 가려져도(브라우저가 '숨김'으로 본다) 계속 가져온다 — SOS 팝업 · 알림음이
   // 창을 앞으로 꺼내야만 뜨면 늦는다 (2026-10-02 QA "관제 화면을 열어 둔 채 1분 넘게 새 요청이 안 뜸")
   const keepPollingHidden = auth.user?.role === "ops";
@@ -1789,6 +1799,18 @@ export function AppStateProvider({ children }) {
   const peopleAtRef = useRef(Date.now());
   // 관제가 이 아이디를 정지 · 거절 · 역할 변경했다 — 저장 · 확인을 멈춘다 (계속 보내도 401 만 돌아온다 · 2026-10-06 UX 점검)
   const blockedRef = useRef(false);
+  // 직원이 보는 가족 번호를 요청마다 붙인다 (?hh=) — 탭마다 다른 가족을 열어도 한 가족의 기록이 다른 가족에 저장되지 않게
+  const staffRef = useRef(null);
+  staffRef.current = staffUid;
+  // 지금 가족을 더 볼 수 없다(담당이 바뀜 · 가족이 지워짐) — 고른 것을 지우고 서버가 정하는 가족으로 다시 연다
+  const reopenRef = useRef(null);
+  reopenRef.current = () => {
+    if (!staffRef.current) return;
+    blockedRef.current = true;
+    scopeRef.current = null;
+    chooseFamily(staffRef.current, null);
+    setNonce((n) => n + 1);
+  };
 
   // 화면이 쓰는 dispatch — 서버 저장 중이면 동작에 번호를 붙여 모아 두었다가 함께 보낸다.
   // 모은 것은 이 기기에도 적어 둔다 — 보내기 전에 새로고침하거나 끊겨도 잃지 않게.
@@ -1836,13 +1858,34 @@ export function AppStateProvider({ children }) {
         let res = null;
         let body = {};
         try {
-          res = await fetch("/api/household", { cache: "no-store" });
+          res = await fetch(`/api/household${centerStaff && pick ? `?hh=${encodeURIComponent(pick)}` : ""}`, { cache: "no-store" });
           body = await res.json().catch(() => ({}));
         } catch (_) {
           res = null;
         }
         if (cancelled) return;
-        if (res && res.status === 503 && body.error === "db-not-configured") {
+        if (centerStaff && res) {
+          // 고른 가족을 볼 수 없다(담당이 바뀜 · 지워짐) — 고른 것을 지우고 서버가 정하는 가족으로 다시 읽는다
+          if (pick && lostFamily(res, body) && body.error !== "no-family") {
+            scopeRef.current = null; // 돌아갈 가구가 전에 읽은 가구와 같아도 다시 읽게
+            chooseFamily(staffUid, null);
+            setNonce((n) => n + 1);
+            return;
+          }
+          // 서버가 정한 가족이 다르다(컨시어지의 담당 가족) — 그 가족으로 맞춘 뒤 다시 읽는다
+          if (res.ok && body.household && body.household !== household) {
+            scopeRef.current = null;
+            chooseFamily(staffUid, body.household);
+            return;
+          }
+        }
+        if (centerStaff && res && res.status === 404 && body.error === "no-family") {
+          // 담당 가족이 아직 없는 컨시어지 — 빈 화면 대신 안내를 띄운다 (아래 NoFamily). 저장 · 확인은 하지 않는다
+          backendRef.current = "server";
+          blockedRef.current = true;
+          showState(freshFor(household));
+          setSync({ mode: "server", status: "error", savedAt: null, error: "no-family" });
+        } else if (res && res.status === 503 && body.error === "db-not-configured") {
           // 서버 저장 설정 전 — 이 기기에만 (데모와 섞이지 않게 계정 가구별 칸)
           loadLocal(acctKey(household), freshFor(household), "local", "db-not-configured");
         } else {
@@ -1886,7 +1929,7 @@ export function AppStateProvider({ children }) {
     return () => {
       cancelled = true;
     };
-  }, [scope, household, showState]);
+  }, [scope, household, showState, nonce, centerStaff, staffUid, pick]);
 
   // 이 기기에 저장 (데모 · 서버 설정 전 테스트 계정)
   useEffect(() => {
@@ -1919,7 +1962,7 @@ export function AppStateProvider({ children }) {
     const ctl = !keepalive && typeof AbortController !== "undefined" ? new AbortController() : null;
     const timer = ctl ? setTimeout(() => ctl.abort(), 15000) : null;
     try {
-      const res = await fetch("/api/household", {
+      const res = await fetch(`/api/household${hhQuery(staffRef, householdRef, "?")}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body,
@@ -1950,6 +1993,9 @@ export function AppStateProvider({ children }) {
         showState(next);
         again = pendingRef.current.length > 0;
         setSync((s) => ({ ...s, status: again ? "saving" : "saved", error: null }));
+      } else if (staffRef.current && lostFamily(res, j)) {
+        // 이 가족을 더 볼 수 없다 — 보내지 못한 것은 이 기기에 남겨 두고, 볼 수 있는 가족으로 다시 연다
+        reopenRef.current();
       } else {
         // 다시 보내도 소용없는 오류 — 로그인 만료(401) · 잘못된 요청(400) · 용량 초과(413).
         // 되풀이하지 않고 안내만 띄운다 (로그인하면 다시 읽으면서 모아 둔 것을 보낸다).
@@ -2023,8 +2069,9 @@ export function AppStateProvider({ children }) {
       try {
         // 센터 공간은 1분에 한 번 회원 이름도 같이 묻는다 — 새로 가입 · 승인된 사람이 화면 이름에 들어오게
         const withPeople = isCenterHousehold(householdRef.current) && Date.now() - peopleAtRef.current > 60000;
-        const res = await fetch(`/api/household?v=${askedAt}${withPeople ? "&people=1" : ""}`, { cache: "no-store" });
+        const res = await fetch(`/api/household?v=${askedAt}${withPeople ? "&people=1" : ""}${hhQuery(staffRef, householdRef, "&")}`, { cache: "no-store" });
         const j = await res.json().catch(() => ({}));
+        if (!stopped && staffRef.current && lostFamily(res, j)) return reopenRef.current();
         if (res.ok && Array.isArray(j.people)) {
           peopleAtRef.current = Date.now();
           setCenterPeople(j.people);
@@ -2072,7 +2119,16 @@ export function AppStateProvider({ children }) {
     };
   }, [ready, sync.mode, showState]);
 
-  const syncValue = useMemo(() => ({ ...sync, household, flush: flushNow }), [sync, household, flushNow]);
+  // 가족 바꾸기 — 모아 둔 것을 먼저 다 보낸 뒤에 (보내지 못한 것은 그 가족 칸에 남아 다음에 열 때 이어 보낸다)
+  const switchFamily = useCallback(
+    async (next) => {
+      if (!staffRef.current || !next || next === householdRef.current) return;
+      await flushNow();
+      chooseFamily(staffRef.current, next);
+    },
+    [flushNow]
+  );
+  const syncValue = useMemo(() => ({ ...sync, household, flush: flushNow, staff: centerStaff, switchFamily }), [sync, household, flushNow, centerStaff, switchFamily]);
 
   // 화면이 그리기 전에 이 공간의 사람 이름을 맞춘다 — 데모 · 테스트 가구 1 은 예전 이름, 센터 공간은 회원 이름
   // 센터 공간의 주 · 부 담당은 관제가 정한 값(state.elderStaff)을 따른다 — 새 해주세요가 바뀐 주 담당에게 간다 (2026-10-28 요청 3)
@@ -2081,7 +2137,9 @@ export function AppStateProvider({ children }) {
   return (
     <Ctx.Provider value={{ state, dispatch }}>
       <SyncCtx.Provider value={syncValue}>
-        {ready ? (
+        {ready && sync.error === "no-family" ? (
+          <NoFamily />
+        ) : ready ? (
           <>
             {children}
             <SyncNotice sync={syncValue} />
@@ -2104,7 +2162,55 @@ const ACCOUNT_NOTICE = {
   "account-removed": { title: "아이디를 찾을 수 없습니다", body: (c) => `${c}에 이 아이디가 없습니다. 센터 관제에 문의해 주세요.` },
   "account-pending": { title: "관제 승인을 기다리는 아이디입니다", body: (c) => `${c} 관제가 승인하면 다시 로그인해 주세요.` },
   "role-changed": { title: "관제가 역할을 바꿨습니다", body: () => "다시 로그인하면 바뀐 역할의 화면으로 들어갑니다. 지금 화면에서 누른 것은 저장되지 않습니다." },
+  // 관제가 이 회원을 다른 가족으로 옮겼다 (2026-11-12 · 계정 · 권한 [가족 옮기기])
+  "family-changed": { title: "관제가 가족을 바꿨습니다", body: () => "다시 로그인하면 새 가족의 기록이 열립니다. 지금 화면에서 누른 것은 저장되지 않습니다." },
 };
+
+// 담당 가족이 아직 없는 컨시어지 (2026-11-12) — 컨시어지는 관제가 주 · 부 담당으로 지정한 가족의 기록만 본다.
+// 지정되면 저절로 열리게 20초마다 다시 본다
+function NoFamily() {
+  const { user } = useAuth();
+  useEffect(() => {
+    let stopped = false;
+    const id = setInterval(async () => {
+      try {
+        const r = await fetch("/api/families", { cache: "no-store" });
+        const j = await r.json().catch(() => ({}));
+        if (!stopped && r.ok && Array.isArray(j.families) && j.families.length) window.location.reload();
+      } catch (_) {
+        /* 다음 차례에 다시 */
+      }
+    }, 20000);
+    return () => {
+      stopped = true;
+      clearInterval(id);
+    };
+  }, []);
+  return (
+    <main className="flex min-h-screen items-center justify-center bg-[#F8F7F4] p-5">
+      <div className="w-full max-w-[420px] rounded-[22px] bg-white p-6 shadow-xl" style={{ borderTop: "6px solid #B08D57" }}>
+        <h1 className="text-[20px] font-black leading-[1.4] text-navy">아직 담당 가족이 없습니다</h1>
+        <p className="mt-2 text-[15px] leading-[1.7] text-ink">
+          컨시어지는 관제가 담당으로 지정한 가족의 기록만 봅니다.
+          <br />
+          관제에서 담당을 지정하면 이 화면이 저절로 열립니다.
+        </p>
+        <p className="mt-3 text-[13px] leading-[1.6] text-muted">
+          {user?.name ? `${user.name} 님 · ` : ""}
+          {centerOfHousehold(user?.household)?.name || "관제 센터"}
+        </p>
+        <div className="mt-5 flex gap-2">
+          <button type="button" onClick={() => window.location.reload()} className="btn-press flex-1 rounded-xl bg-navy py-3.5 text-[16px] font-bold text-white">
+            다시 확인
+          </button>
+          <button type="button" onClick={() => logout(AREAS.partner.login)} className="btn-press rounded-xl border border-navy/20 px-5 py-3.5 text-[16px] font-bold text-navy">
+            로그아웃
+          </button>
+        </div>
+      </div>
+    </main>
+  );
+}
 
 function SyncNotice({ sync }) {
   const { user } = useAuth();
@@ -2115,7 +2221,7 @@ function SyncNotice({ sync }) {
   if (notice) {
     const centerName = centerOfHousehold(sync.household)?.name || "센터";
     // 역할이 바뀌면 바뀐 역할의 입구로 — 아이디를 채워서 보낸다
-    const area = sync.error === "role-changed" ? AREAS[sync.area] : null;
+    const area = sync.error === "role-changed" || sync.error === "family-changed" ? AREAS[sync.area] : null;
     const idq = user?.id ? `&id=${encodeURIComponent(user.id)}` : "";
     const go = area ? `${area.login}?${idq.slice(1)}` : `${loginAt}?${idq.slice(1)}`;
     return (

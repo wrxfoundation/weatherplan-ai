@@ -1,6 +1,7 @@
 // 테스트 계정 한 역할의 마지막 앱 사용 — 감사로그와 같은 기록(/api/activity)에서 가장 최근 한 줄 (2026-10-02).
 // 관제 웨어러블(어르신 앱 신호) · 보호자 관리(마지막 접속)가 쓴다. 로그인하지 않았으면 부르지 않는다.
 import { useEffect, useState } from "react";
+import { withFamily } from "./scope";
 
 export function useLastActivity(role, enabled = true, everyMs = 30000) {
   const [last, setLast] = useState({ status: "idle", at: null, summary: "" });
@@ -9,7 +10,7 @@ export function useLastActivity(role, enabled = true, everyMs = 30000) {
     let alive = true;
     const load = async () => {
       try {
-        const r = await fetch(`/api/activity?role=${encodeURIComponent(role)}&limit=1`, { cache: "no-store" });
+        const r = await fetch(withFamily(`/api/activity?role=${encodeURIComponent(role)}&limit=1`), { cache: "no-store" });
         const j = await r.json().catch(() => ({}));
         if (!alive) return;
         if (!r.ok) return setLast({ status: "error", at: null, summary: "" });

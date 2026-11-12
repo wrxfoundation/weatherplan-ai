@@ -7,6 +7,7 @@ import { authOptions } from "./auth/[...nextauth]";
 import { authConfigured } from "../../lib/auth-server";
 import { db, dbConfigured, dbErrorCode } from "../../lib/db";
 import { memberStillValid } from "../../lib/members";
+import { householdOf } from "../../lib/families";
 
 const MAX_ROWS = 500;
 // ?role= — 한 역할의 기록만 (관제 웨어러블 · 보호자 관리의 '마지막 앱 사용'). 테스트 계정 역할 이름만 받는다.
@@ -31,10 +32,13 @@ export default async function handler(req, res) {
   try {
     const still = await memberStillValid(user);
     if (!still.ok) return res.status(401).json({ error: still.reason });
+    // 관제 · 컨시어지는 고른 가족(?hh=)의 기록 — 그 밖에는 세션의 가구 (2026-11-12 · lib/families.js)
+    const at = await householdOf(req, user);
+    if (at.error) return res.status(at.status).json({ error: at.error });
     let q = db()
       .from("activity")
       .select("id, created_at, client_at, account_id, role, type, summary")
-      .eq("household_id", user.household);
+      .eq("household_id", at.household);
     if (role) q = q.eq("role", role);
     if (!ops) q = q.not("type", "in", "(memberSignup,memberAdmin)");
     const { data, error, status } = await q.order("id", { ascending: false }).limit(limit);
@@ -43,7 +47,7 @@ export default async function handler(req, res) {
       return res.status(code === "schema-missing" ? 503 : 502).json({ error: code });
     }
     const rows = ops ? data || [] : (data || []).map(({ account_id: _a, ...r }) => r); // eslint-disable-line no-unused-vars
-    return res.status(200).json({ household: user.household, rows });
+    return res.status(200).json({ household: at.household, rows });
   } catch (e) {
     const code = dbErrorCode(e);
     console.error("[activity]", code);

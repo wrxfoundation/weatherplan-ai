@@ -10,6 +10,7 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "./auth/[...nextauth]";
 import { authConfigured } from "../../lib/auth-server";
 import { db, dbConfigured, dbErrorCode, ensureHousehold } from "../../lib/db";
+import { householdOf } from "../../lib/families";
 import { memberStillValid } from "../../lib/members";
 import { makeLimiter, sameSiteJson } from "../../lib/http";
 
@@ -44,6 +45,10 @@ export default async function handler(req, res) {
     // 관제가 정지하거나 역할을 바꾼 회원은 여기서 멈춘다 (가구 상태 저장과 같은 규칙)
     const still = await memberStillValid(user);
     if (!still.ok) return res.status(401).json({ error: still.reason });
+    // 관제 · 컨시어지는 고른 가족(?hh=)의 목소리 — 그 밖에는 세션의 가구 (2026-11-12 · lib/families.js)
+    const at = await householdOf(req, user);
+    if (at.error) return res.status(at.status).json({ error: at.error });
+    const household = at.household;
 
     if (req.method === "GET") {
       const id = String(req.query.id || "");
@@ -52,7 +57,7 @@ export default async function handler(req, res) {
         .from("voice_clips")
         .select("mime, data")
         .eq("id", id)
-        .eq("household_id", user.household)
+        .eq("household_id", household)
         .maybeSingle();
       if (error) throw Object.assign(error, { status });
       if (!data) return res.status(404).json({ error: "not-found" });
@@ -84,11 +89,11 @@ export default async function handler(req, res) {
       if (bytes < 200) return res.status(400).json({ error: "invalid-request" });
 
       const id = `vc_${crypto.randomBytes(16).toString("base64url")}`;
-      const row = { id, household_id: user.household, account_id: String(user.id || "").slice(0, 120) || null, mime: m.slice(0, 60), secs: s, bytes, data };
+      const row = { id, household_id: household, account_id: String(user.id || "").slice(0, 120) || null, mime: m.slice(0, 60), secs: s, bytes, data };
       let ins = await db().from("voice_clips").insert(row);
       // 가구 행이 없다(관리자가 SQL 로 가구를 지운 뒤 켜 둔 폰) — 행을 다시 만들고 한 번 더
       if (ins.error && String(ins.error.code) === "23503") {
-        await ensureHousehold(user.household);
+        await ensureHousehold(household);
         ins = await db().from("voice_clips").insert(row);
       }
       if (ins.error) throw Object.assign(ins.error, { status: ins.status });
@@ -96,11 +101,11 @@ export default async function handler(req, res) {
       // 오래된 목소리 정리 — 30일 지난 것, 그리고 가구 한도(40MB)를 넘는 오래된 것. 실패해도 저장은 성공으로 답한다
       try {
         const cutoff = new Date(Date.now() - KEEP_DAYS * 86400000).toISOString();
-        await db().from("voice_clips").delete().eq("household_id", user.household).lt("created_at", cutoff);
+        await db().from("voice_clips").delete().eq("household_id", household).lt("created_at", cutoff);
         const { data: rows } = await db()
           .from("voice_clips")
           .select("id, bytes")
-          .eq("household_id", user.household)
+          .eq("household_id", household)
           .order("created_at", { ascending: false })
           .limit(2000);
         let total = 0;
@@ -109,7 +114,7 @@ export default async function handler(req, res) {
           total += Number(r.bytes) || 0;
           if (total > HOUSEHOLD_CAP_BYTES && r.id !== id) drop.push(r.id);
         }
-        if (drop.length) await db().from("voice_clips").delete().eq("household_id", user.household).in("id", drop.slice(0, 100)); // 주소 길이 때문에 한 번에 100개 — 남은 것은 다음 저장 때
+        if (drop.length) await db().from("voice_clips").delete().eq("household_id", household).in("id", drop.slice(0, 100)); // 주소 길이 때문에 한 번에 100개 — 남은 것은 다음 저장 때
       } catch (_) {
         /* 다음 저장 때 다시 지운다 */
       }

@@ -1,6 +1,6 @@
 // 회원 가입 (2026-10-06) — 로그인 없이 부른다 (가입 화면 /join · /partner/join · /ops/join).
 //
-//   GET  /api/join?code=AB12CD   가입 코드가 맞는지 → { center: { id, name } } (그 밖의 정보는 싣지 않는다)
+//   GET  /api/join?code=AB12CD   가입 코드가 맞는지 → { center: { id, name }, kind: "family" | "staff" | "any" } (그 밖의 정보는 싣지 않는다)
 //   GET  /api/join?invite=…      초대 링크가 맞는지 → { center, invite: { fromName, fromRole, role, exp } }
 //   POST /api/join               { code | invite, area, role, name, phone, loginId, password, profile, agree }
 //                                → { status: "active" | "pending", center, role, area }
@@ -9,13 +9,18 @@
 // 보호자로 가입 신청한다. 링크 하나로 5명까지 · 7일. 초대로 와도 센터 관제가 승인해야 로그인된다.
 // 보낸 사람이 정지 · 탈퇴했거나 센터가 바뀌었으면 그 링크는 더 쓰지 못한다.
 //
-// 가입 코드가 센터를 정한다 — 코드는 그 센터 관제가 회원 · 권한 화면에서 나눠 주고 바꿀 수 있다.
+// 가입 코드는 두 가지다 (2026-11-12 — "가입 코드가 달라도 모두 한 사람으로 묶인다" · lib/families.js):
+//   가족 가입 코드   가족마다 하나 (관제 '가족 관리'에서 만든다). 어르신 · 보호자가 이 코드로 가입하면 그 가족에 들어간다.
+//   센터 가입 코드   센터마다 하나 (관제 '계정 · 권한'). 직원(컨시어지 · 파트너 · 관제) 가입에만 쓴다.
+// 서로 바꿔 쓰면 받지 않고 어느 코드가 필요한지 알려 준다. 표에 가족 칸이 아직 없으면(families.sql 실행 전) 예전처럼
+// 센터 가입 코드 하나로 모두 받는다 — 어르신 · 보호자는 그 센터의 첫 가족으로 들어간다.
 // 어느 영역이든 그 센터 관제가 승인해야 로그인된다 (lib/centers.js). 승인 대기가 너무 쌓이면 새 가입을 잠시 받지 않는다.
 // 비밀번호는 scrypt 해시로만 저장한다. 실패 이유는 아이디 중복 · 입력 오류만 알려 준다.
 import { memberLoginConfigured } from "../../lib/auth-server";
 import { dbConfigured, dbErrorCode, ensureHousehold } from "../../lib/db";
 import { AREAS, JOIN_CODE_RE, checkLoginId, checkPassword, isArea, normCode } from "../../lib/centers";
 import { activityLine, audit, centerByCode, createMember, getMember, inviteRank, inviteUses, loginIdTaken, pendingCount, pendingRank, removePending } from "../../lib/members";
+import { familyByCode, homeOfMember } from "../../lib/families";
 import { INVITE_MAX_USES, readInvite } from "../../lib/invite";
 import { hashPassword } from "../../lib/password";
 import { ROLE_LABEL } from "../../lib/test-accounts";
@@ -31,11 +36,35 @@ const badCode = makeLimiter({ windowMs: 10 * 60 * 1000, max: 20 });
 const badCodeSeen = new Map();
 const MAX_PENDING = 30; // 한 센터의 승인 대기 — 넘으면 관제가 정리할 때까지 새 가입을 받지 않는다
 
-// 초대를 보낸 사람이 아직 그 센터의 사용 중인 회원인지 — 정지 · 탈퇴한 사람의 링크는 막는다
-async function inviterActive(invite) {
+// 초대를 보낸 사람 — 아직 그 센터의 사용 중인 회원일 때만 (정지 · 탈퇴한 사람의 링크는 막는다). 초대받은 사람은 보낸 사람의 가족으로 들어간다
+async function inviterOf(invite) {
   const m = invite?.from ? await getMember(invite.from) : null;
-  return !!m && m.status === "active" && m.provider === "member" && m.center_id === invite.center.id;
+  return m && m.status === "active" && m.provider === "member" && m.center_id === invite.center.id ? m : null;
 }
+
+// 가입 코드 → 무엇의 코드인가. { kind: "family", center, household } · { kind: "staff" | "any", center, household(첫 가족) } · null
+// any: 가족 칸이 아직 없는 예전 표 — 센터 코드 하나로 모두 받는다
+async function readCode(code) {
+  if (!JOIN_CODE_RE.test(code)) return null;
+  let ready = true;
+  let fam = null;
+  try {
+    fam = await familyByCode(code);
+  } catch (e) {
+    if (dbErrorCode(e) !== "schema-missing") throw e;
+    ready = false;
+  }
+  if (fam) return { kind: "family", center: { ...fam.center }, household: fam.id };
+  const center = await centerByCode(code);
+  if (!center) return null;
+  return { kind: ready ? "staff" : "any", center, household: center.household };
+}
+const WRONG_KIND = {
+  // 어르신 · 보호자가 센터(직원) 코드를 적었다
+  user: "직원 가입용 코드입니다. 관제에서 가족마다 따로 드리는 가족 가입 코드를 적어 주세요",
+  // 직원이 가족 코드를 적었다
+  staff: "가족 가입 코드입니다. 컨시어지 · 파트너 · 관제는 센터 가입 코드로 가입해 주세요",
+};
 
 export default async function handler(req, res) {
   res.setHeader("Cache-Control", "no-store");
@@ -55,7 +84,7 @@ export default async function handler(req, res) {
         if (r.error === "bad") await wrongCode();
         return res.status(r.error === "expired" ? 410 : 404).json({ error: r.error === "expired" ? "invite-expired" : "bad-invite" });
       }
-      if (!(await inviterActive(r.invite))) return res.status(410).json({ error: "invite-revoked" });
+      if (!(await inviterOf(r.invite))) return res.status(410).json({ error: "invite-revoked" });
       const used = await inviteUses(r.invite.jti);
       if (used >= INVITE_MAX_USES) return res.status(410).json({ error: "invite-used-up" });
       const { center, fromName, fromRole, role, exp } = r.invite;
@@ -63,13 +92,13 @@ export default async function handler(req, res) {
     }
 
     if (req.method === "GET") {
-      const code = normCode(req.query.code);
-      const center = JOIN_CODE_RE.test(code) ? await centerByCode(code) : null;
-      if (!center) {
+      const found = await readCode(normCode(req.query.code));
+      if (!found) {
         await wrongCode();
         return res.status(404).json({ error: "bad-code" });
       }
-      return res.status(200).json({ center: { id: center.id, name: center.name } });
+      // 어느 가족인지(이름)는 싣지 않는다 — 코드만 아는 사람에게 가족 이름을 알려 주지 않는다
+      return res.status(200).json({ center: { id: found.center.id, name: found.center.name }, kind: found.kind });
     }
 
     if (req.method === "POST") {
@@ -99,12 +128,19 @@ export default async function handler(req, res) {
       if (!invite && !JOIN_CODE_RE.test(code)) errors.code = "가입 코드를 적어 주세요 (6~8자리)";
       if (Object.keys(errors).length) return res.status(400).json({ error: "invalid", fields: errors });
 
-      const center = invite ? invite.center : await centerByCode(code);
-      if (!center) {
+      const found = invite ? null : await readCode(code);
+      if (!invite && !found) {
         await wrongCode();
         return res.status(400).json({ error: "invalid", fields: { code: "맞지 않는 가입 코드입니다" } });
       }
-      if (invite && !(await inviterActive(invite))) return res.status(410).json({ error: "invite-revoked" });
+      // 가족 코드는 어르신 · 보호자만, 센터 코드는 직원만 (예전 표면 센터 코드 하나로 모두)
+      if (found && found.kind === "staff" && area === "user") return res.status(400).json({ error: "invalid", fields: { code: WRONG_KIND.user } });
+      if (found && found.kind === "family" && area !== "user") return res.status(400).json({ error: "invalid", fields: { code: WRONG_KIND.staff } });
+      const center = invite ? invite.center : found.center;
+      const inviter = invite ? await inviterOf(invite) : null;
+      if (invite && !inviter) return res.status(410).json({ error: "invite-revoked" });
+      // 들어갈 가족 — 초대는 보낸 사람의 가족, 가족 코드는 그 가족, 직원은 센터의 첫 가족(화면에서 가족을 고른다)
+      const household = invite ? homeOfMember(inviter, center) : found.household;
       if (invite && (await inviteUses(invite.jti)) >= INVITE_MAX_USES) return res.status(410).json({ error: "invite-used-up" });
       if ((await pendingCount(center.id)) >= MAX_PENDING) return res.status(429).json({ error: "pending-full" });
       if (await loginIdTaken(loginId)) return res.status(409).json({ error: "taken", fields: { loginId: "이미 쓰는 아이디입니다" } });
@@ -135,7 +171,7 @@ export default async function handler(req, res) {
           phone: phone || null,
           profile: Object.keys(profile).length ? profile : null,
           center_id: center.id,
-          household_id: center.household,
+          household_id: household,
           password_hash: await hashPassword(b.password),
           provider: "member",
           is_test: true,
@@ -158,7 +194,7 @@ export default async function handler(req, res) {
       }
       await audit({ center_id: center.id, account_id: loginId, actor_id: loginId, action: "signup", before: null, after: { role, status } });
       await activityLine(
-        center.household,
+        household,
         loginId,
         role,
         "memberSignup",

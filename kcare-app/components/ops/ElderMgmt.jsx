@@ -128,7 +128,7 @@ export default function ElderMgmt() {
     { k: "sa", label: "성별 · 나이", render: (e) => <span className="font-num">{e.sex} · {e.age}</span> },
     { k: "where", label: "지점 · 동", render: (e) => <>{e.branch}<span className="block text-[11px] text-muted">{e.dong}</span></> },
     { k: "loc", label: "거주", render: (e) => (e.loc === "hospital" ? <Pill tone="info">요양병원</Pill> : <span className="text-muted">자택</span>) },
-    { k: "staff", label: "담당 주 · 부", render: (e) => <>{e.pri} · {e.sub === "—" ? <span className="font-bold text-gold">미배정</span> : e.sub}</> },
+    { k: "staff", label: "담당 주 · 부", render: (e) => <>{e.pri === "—" ? <span className="font-bold text-gold">지정 전</span> : e.pri} · {e.sub === "—" ? <span className="font-bold text-gold">미배정</span> : e.sub}</> },
     { k: "watch", label: "워치", render: (e) => <FeedPill feed={feedOf(e.watch)} /> },
     { k: "risk", label: "위험", render: (e) => <SevPill sev={sevOf(e.risk)} /> },
     { k: "svc", label: "서비스", render: (e) => <Pill tone={SERVICE_STATE[e.service.state].tone}>{SERVICE_STATE[e.service.state].label}</Pill> },

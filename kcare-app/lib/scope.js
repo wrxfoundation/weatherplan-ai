@@ -10,3 +10,9 @@ export function setStorageScope(hh) {
 // 데모는 원래 이름 그대로 (기존 저장값 유지) · 테스트 가구는 이름 뒤에 가구 번호를 붙인다
 export const scopedKey = (base) => (household ? `${base}@${household}` : base);
 export const isAccountScope = () => !!household;
+
+// 지금 화면이 보고 있는 가구 — 관제 · 컨시어지는 고른 가족 (2026-11-12 · lib/family-select.js)
+export const currentHousehold = () => household;
+// 가구 기록에 딸린 API(활동 기록 · 목소리)를 부를 때 — 지금 보고 있는 가족 번호를 붙인다. 서버가 그 가족을 봐도 되는지 다시 확인한다
+// (어르신 · 보호자는 자기 가족 번호가 붙고, 서버는 세션의 가구와 같은지만 본다).
+export const withFamily = (url) => (household && /^HH-C[1-3]/.test(household) ? `${url}${url.includes("?") ? "&" : "?"}hh=${encodeURIComponent(household)}` : url);

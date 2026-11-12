@@ -6,7 +6,7 @@
 //   3. 고치는 것은 관제 관리자 이상 — 센터 관리자 계정(ops1 · ops2 · ops3). 승인된 일반 관제 회원은 보기만 한다
 //      (계정 · 권한 기준 · lib/test-accounts.js). 데모 · 테스트 가구 관제는 관리자로 본다.
 //      기록 규칙(reducer)은 역할을 보지 않는다 — 서버 역할 검사는 2026-10-19 결정 #1 로 열려 있다.
-import { inCenter, people } from "./people";
+import { inCenter, isPlaceholder, people } from "./people";
 
 const KST = 9 * 3600 * 1000;
 export const stampOf = (t) => (Number.isFinite(t) ? new Date(t + KST).toISOString().slice(0, 16).replace("T", " ") : "—");
@@ -42,12 +42,13 @@ export function staffOf(state, key) {
   return s && typeof s === "object" && s.pri ? s : null;
 }
 // 어르신 한 줄 위에 저장한 담당을 얹는다. 센터 공간의 어르신은 앱 전체가 쓰는 이름 묶음에서 —
-// 저장한 담당이 그 사이 센터에서 빠진 회원이면 이름 묶음이 첫 컨시어지로 돌려 둔 값을 같이 본다
+// 관제가 아직 지정하지 않았거나 저장한 담당이 그 사이 센터에서 빠진 회원이면 담당 없음('—')이다.
+// 자리 이름('담당 컨시어지')을 사람 이름처럼 내보내지 않는다 — 담당 변경 창이 그것을 주 담당으로 저장할 수 있었다 (2026-11-12)
 export function withStaff(e, state) {
   if (!e) return e;
   if (e.live && inCenter()) {
     const p = people();
-    return { ...e, pri: p.concierge, sub: p.conciergeSub || NO_STAFF };
+    return { ...e, pri: isPlaceholder(p.concierge) ? NO_STAFF : p.concierge, sub: p.conciergeSub || NO_STAFF };
   }
   const s = staffOf(state, staffKeyOf(e));
   return s ? { ...e, pri: s.pri, sub: s.sub || NO_STAFF } : e;

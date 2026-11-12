@@ -47,7 +47,7 @@ import {
   WEATHER_ISSUES,
   mapPeople,
 } from "../lib/console";
-import { useAppState } from "../lib/state";
+import { useAppState, useSync } from "../lib/state";
 import { eventRights } from "../lib/event-rights";
 import { CLOSED, approverOf, crewReady, fmtPreferred, isVisitCall, payerOf, soloDispatches } from "../lib/requests";
 import { dateLabel, extraDueYmd, extraOverdue, extraToText, reqTitle, svcTitle } from "../lib/booking";
@@ -93,6 +93,9 @@ import { useAuth } from "../lib/auth";
 import Accounts from "../components/ops/Accounts";
 import CenterMembers, { usePendingMembers } from "../components/ops/CenterMembers";
 import ConsultList, { useNewConsults } from "../components/ops/ConsultList";
+import Families from "../components/ops/Families";
+import { FamilySwitch, OtherFamilyAlerts } from "../components/FamilySwitch";
+import { useFamilies } from "../lib/families-client";
 import { planOf } from "../lib/plans";
 import AuditLog from "../components/ops/AuditLog";
 import Integrations from "../components/ops/Integrations";
@@ -196,6 +199,8 @@ function useElapsed(active, since = 0) {
 // 시스템 연동상태를 새로 넣었다. 날씨는 요청서에 없지만 기존 기능이라 아래쪽에 둔다.
 const DISPATCH_MENUS = [
   ["dash", "통합 알림센터", "home"],
+  // 가족마다 기록이 따로다 (2026-11-12) — 가족 목록 · 가족 추가 · 가족 가입 코드. 관제 센터 공간에서만 보인다
+  ["families", "가족 관리", "users"],
   ["sos", "SOS 대응", "alert"],
   ["thresholds", "관제기준 설정", "shield"],
   ["elder", "어르신 관리", "user"],
@@ -490,7 +495,7 @@ function DispatchConsole() {
   const router = useRouter();
   useEffect(() => {
     const m = router.query.menu;
-    if (typeof m === "string" && DISPATCH_MENUS.some(([k]) => k === m)) {
+    if (typeof m === "string" && DISPATCH_MENUS.some(([k]) => k === m) && (m !== "families" || centerNow())) {
       setMenu(m);
     }
   }, [router.query.menu]);
@@ -532,6 +537,19 @@ function DispatchConsole() {
   // 해주세요 관리 숫자 — 관제가 할 일만: 도와줘요 진행 중 · 취소 요청(관제 승인) · 환불 대기 (2026-10-05).
   // 보호자 · 어르신의 일반 해주세요는 담당 컨시어지가 승인하므로 세지 않는다.
   const pendingMembers = usePendingMembers();
+  // 이 센터의 가족들 (2026-11-12) — 지금 보고 있지 않은 가족의 승인 대기 · 담당 미지정을 '지금 처리할 일'에 올린다.
+  // 다른 가족에서 SOS · 도와줘요가 새로 오면 알림음 (화면 맨 위 띠는 OtherFamilyAlerts)
+  const fam = useFamilies();
+  const sync = useSync();
+  const otherFamilies = fam.on ? fam.families.filter((f) => f.id !== sync.household) : [];
+  const urgentKey = otherFamilies.filter((f) => f.sos || f.help).map((f) => `${f.id}:${f.sos ? f.sosAt || "sos" : ""}:${f.help}`).join(",");
+  const urgentRang = useRef("");
+  useEffect(() => {
+    if (urgentKey && urgentKey !== urgentRang.current) ringAlarm();
+    urgentRang.current = urgentKey;
+  }, [urgentKey]);
+  // 가족 관리 메뉴는 관제 센터 공간에서만 — 데모 · 테스트 가구 1 은 가족이 하나뿐이다
+  const MENUS = centerNow() ? DISPATCH_MENUS : DISPATCH_MENUS.filter(([k]) => k !== "families");
   // 상담 신청 새 접수 — 늘어나면 알림음 한 번 (2026-11-06 랜딩 요청 5-4: 새 접수가 들어오면 관제 화면에 알림)
   const newConsults = useNewConsults();
   const consultSeen = useRef(null);
@@ -579,6 +597,7 @@ function DispatchConsole() {
     ...(newRequests.length ? { requests: newRequests.length } : {}),
     ...(pendingMembers ? { accounts: pendingMembers } : {}),
     ...(newConsults ? { consults: newConsults } : {}),
+    ...(fam.on && fam.status === "ready" ? { families: fam.families.length } : {}),
   };
   const sosUnread = sosOpen.some((i) => i.state === "new"); // 미확인 사건 — 사이드바 점등
 
@@ -967,6 +986,39 @@ function DispatchConsole() {
       meta: "이용자 · 현장 · 영업 · 관제 가입 신청 — 계정·권한에서 승인하거나 거절",
       menu: "accounts",
     });
+  // 담당 컨시어지 지정 전 (2026-11-12) — 담당은 관제가 지정한다 (자동으로 정하지 않는다). 지정 전에는 컨시어지가 이 가족을 볼 수 없고
+  // 새 해주세요에 담당이 붙지 않는다. 센터에 아직 이 가족 구성원이 없으면 띄우지 않는다
+  if (liveOn && centerNow() && !isPlaceholder(pp.elder) && isPlaceholder(pp.concierge))
+    actions.push({
+      id: "staff-unset",
+      level: "high",
+      title: "담당 컨시어지 지정 전",
+      meta: pp.concierges.length
+        ? "어르신 관리 › 담당 컨시어지 변경에서 지정 — 지정해야 그 컨시어지 화면에 이 가족이 보이고 새 해주세요가 담당에게 갑니다"
+        : "이 센터에 승인된 컨시어지가 없습니다 — 계정·권한에서 컨시어지 가입을 승인한 뒤 어르신 관리에서 지정",
+      menu: pp.concierges.length ? "elder" : "accounts",
+    });
+  // 다른 가족 — 지금 보고 있지 않은 가족의 승인 대기 · 가입 승인 · 담당 미지정 (가족 관리에서 그 가족을 연다)
+  {
+    const waiting = otherFamilies.filter((f) => f.opsTodo > 0);
+    if (waiting.length)
+      actions.push({
+        id: "families-wait",
+        level: "high",
+        title: `다른 가족 승인 대기 ${waiting.reduce((n, f) => n + f.opsTodo, 0)}건`,
+        meta: `${waiting.map((f) => `${f.title} ${f.opsTodo}건`).join(" · ")} — 가족 관리에서 그 가족을 열어 처리`,
+        menu: "families",
+      });
+    const noStaff = otherFamilies.filter((f) => !f.pri && (f.elders.length || f.guardians.length));
+    if (noStaff.length)
+      actions.push({
+        id: "families-staff",
+        level: "med",
+        title: `다른 가족 담당 컨시어지 지정 전 ${noStaff.length}곳`,
+        meta: `${noStaff.map((f) => f.title).join(" · ")} — 가족 관리에서 그 가족을 열고 어르신 관리에서 지정`,
+        menu: "families",
+      });
+  }
   // 요금제 지정 전 — 가입 상담에서 정한 요금제를 관제가 적어야 보호자 · 어르신 화면에 금액이 보인다 (2026-11-10 · lib/plans.js).
   // 센터에 아직 어르신 회원이 없으면 띄우지 않는다
   if (liveOn && !planOf(state) && !(centerNow() && isPlaceholder(pp.elder)))
@@ -1153,7 +1205,7 @@ function DispatchConsole() {
           </div>
           {/* nav 가 이 화면에 둘이라 이름을 붙여 구분한다 (axe: landmark-unique) */}
           <nav aria-label="관제 메뉴" className="mt-5 min-h-0 flex-1 space-y-0.5 overflow-y-auto px-3 pb-4">
-            {DISPATCH_MENUS.map(([k, label, icon]) => {
+            {MENUS.map(([k, label, icon]) => {
               const n = MENU_COUNTS[k];
               return (
                 <button
@@ -1192,6 +1244,8 @@ function DispatchConsole() {
               <header> 로 두면 banner 랜드마크로 잡히는데, 이 파일은 role="main"
               (속성)이라 <main> 요소처럼 배너 매핑을 막아 주지 못한다. 그래서
               본문 안에 배너가 중첩된 것으로 보고된다 (axe: landmark-banner-is-top-level). */}
+          {/* 지금 보고 있지 않은 가족의 SOS · 도와줘요 — 어느 메뉴에서든 맨 위에 (2026-11-12) */}
+          <OtherFamilyAlerts className="mb-3" />
           <div className="flex flex-wrap items-end justify-between gap-4">
             <div>
               <div className="flex items-center gap-3">
@@ -1220,6 +1274,8 @@ function DispatchConsole() {
                 <span className="ml-1 h-[6px] w-[6px] animate-livePing rounded-full bg-green" />
                 <span className="text-[12px] font-bold text-green">LIVE</span>
               </div>
+              {/* 지금 보는 가족 — 관제 화면 전체가 이 가족의 기록이다. 눌러서 다른 가족으로 (2026-11-12) */}
+              <FamilySwitch className="mt-2 max-w-[440px]" onManage={() => setMenu("families")} />
             </div>
             <div className="flex flex-wrap gap-2">
               {kpis.map((k) => (
@@ -1257,7 +1313,7 @@ function DispatchConsole() {
           {/* ── 모바일 메뉴 칩(사이드바 대체) + 통합 검색 ── */}
           <nav aria-label="화면 전환" className="mt-4 flex flex-wrap items-center gap-2 border-b border-navy/[.08] pb-3">
             <MobileSectionNav
-              groups={[["관제", DISPATCH_MENUS]]}
+              groups={[["관제", MENUS]]}
               current={menu}
               onSelect={setMenu}
               badges={MENU_COUNTS}
@@ -1508,7 +1564,7 @@ function DispatchConsole() {
               // 보호자 일정등록 요청도 같다 — 관제가 승인해야 캘린더에 오르는데, 접혀 있으면 아무도 못 본다 (2026-10-01 관제 테스트).
               // 도와줘요 · 해주세요 취소 요청 · 환불 대기도 관제가 직접 할 일이라 펼친다 (2026-10-05)
               // 상담 신청 새 접수도 펼친다 — 접혀 있으면 손님이 남긴 연락처를 아무도 못 본다 (2026-11-06 랜딩 요청 5-4)
-              opsOpen={actions.some((a) => a.level === "critical" || /^(elder-|help-|cancel-|refunds|members-|consults-|plan-)/.test(a.id)) || pendingEvents > 0 || freshCancels > 0}
+              opsOpen={actions.some((a) => a.level === "critical" || /^(elder-|help-|cancel-|refunds|members-|consults-|plan-|staff-|families-)/.test(a.id)) || pendingEvents > 0 || freshCancels > 0}
               opsNote={[pendingEvents > 0 && `일정 승인 대기 ${pendingEvents}건`, freshCancels > 0 && `일정 취소 ${freshCancels}건 — 배차 정리`].filter(Boolean).join(" · ") || null}
               opsSlot={<>
           {/* ── 방문 업무흐름 8단계 — 일정 수립 알람이 여기로 온다 (2026-08-13 미팅) ── */}
@@ -2532,9 +2588,10 @@ function DispatchConsole() {
           {menu === "requests" && <RequestsMgmt />}
           {menu === "together" && <TogetherMgmt />}
           {menu === "consults" && <ConsultList />}
+          {menu === "families" && <Families onOpened={() => setMenu("dash")} />}
           {menu === "accounts" && (
             <div className="space-y-4">
-              <CenterMembers />
+              <CenterMembers onFamilies={() => setMenu("families")} />
               {/* 관제 센터 공간 — 아래 예시 계정 명부(운영 설계)는 접어 둔다. 위 '회원 · 권한 (실제)'와 섞여 보이지 않게 (2026-10-06 누수 점검) */}
               {centerNow() ? (
                 <details className="rounded-[14px] bg-navy/[.04] px-4 py-3">

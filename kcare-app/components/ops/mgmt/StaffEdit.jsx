@@ -351,7 +351,9 @@ export function EvalForm({ c, onSave, onCancel }) {
 export function StaffChange({ title, intro, elders, start, choices, onCancel, onSave }) {
   const [name, setName] = useState(elders[0]?.name || "");
   const e = elders.find((x) => x.name === name) || elders[0] || null;
-  const [v, setV] = useState(() => (elders[0] ? start(elders[0]) : { pri: "", sub: NO_STAFF }));
+  // 주 담당이 아직 없으면(관제 지정 전) 고를 수 있는 첫 사람을 채워 둔다 — 칸에 보이는 이름과 저장되는 값이 어긋나지 않게 (2026-11-12)
+  const filled = (s) => ({ ...s, pri: s.pri && s.pri !== NO_STAFF ? s.pri : choices[0] || "" });
+  const [v, setV] = useState(() => (elders[0] ? filled(start(elders[0])) : { pri: "", sub: NO_STAFF }));
   const [reason, setReason] = useState("");
   const [err, setErr] = useState("");
   const set = (k) => (x) => {
@@ -361,7 +363,7 @@ export function StaffChange({ title, intro, elders, start, choices, onCancel, on
   const pick = (n) => {
     const next = elders.find((x) => x.name === n);
     setName(n);
-    if (next) setV(start(next));
+    if (next) setV(filled(start(next)));
     setErr("");
   };
   const priOpts = [...new Set([...(v.pri && v.pri !== NO_STAFF ? [v.pri] : []), ...choices])];

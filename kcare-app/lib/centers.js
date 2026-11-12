@@ -17,8 +17,31 @@ export const CENTERS = {
   C2: { id: "C2", name: "관제 2센터", household: "HH-C2" },
   C3: { id: "C3", name: "관제 3센터", household: "HH-C3" },
 };
-export const centerOfHousehold = (hh) => Object.values(CENTERS).find((c) => c.household === hh) || null;
+// 가족(가구)마다 기록을 따로 둔다 (2026-11-12 요청 — "가입 코드가 달라도 모두 한 사람으로 묶인다").
+//   HH-C1            그 센터의 첫 가족 — 2026-11-12 전부터 쓰던 공간 그대로
+//   HH-C1-K7M2QD     관제가 [가족 추가]로 만든 가족 (뒤 6자리는 무작위 · 헷갈리는 글자 0 O 1 I 는 뺀다)
+// 가구 번호 앞머리가 센터를 정한다 — 다른 센터의 가족 번호를 들고 와도 그 센터 사람이 아니면 열리지 않는다 (lib/families.js).
+// 가족마다 가입 코드가 하나씩 있고(가족 가입 코드), 같은 코드로 가입한 어르신 · 보호자가 한 가족이 된다.
+// 센터의 가입 코드(centers.join_code)는 직원(컨시어지 · 파트너 · 관제) 가입에만 쓴다.
+const HOUSEHOLD_RE = /^HH-(C[1-3])(?:-([A-HJ-NP-Z2-9]{6}))?$/;
+export const centerOfHousehold = (hh) => {
+  const m = HOUSEHOLD_RE.exec(String(hh || ""));
+  return m ? CENTERS[m[1]] || null : null;
+};
 export const isCenterHousehold = (hh) => !!centerOfHousehold(hh);
+// 그 센터의 첫 가족(예전부터 쓰던 공간)인가
+export const isFirstFamily = (hh) => Object.values(CENTERS).some((c) => c.household === hh);
+export const familyIdOf = (centerId, tail) => `HH-${centerId}-${tail}`;
+// 가족에 속하는 역할(어르신 · 보호자)과 가족 밖에서 여러 가족을 맡는 역할(관제 · 컨시어지 · 파트너)
+export const isFamilyRole = (role) => role === "elder" || role === "guardian";
+export const isStaffRole = (role) => role === "ops" || role === "concierge" || role === "sales";
+// 가족 이름 — 관제가 적은 이름이 있으면 그것, 없으면 어르신 이름으로 ("○○ 님 가족"), 그것도 없으면 '이름 없는 가족'
+export const familyTitle = (f) => {
+  const label = String(f?.label || "").trim();
+  if (label) return label;
+  const elder = String(f?.elders?.[0] || f?.elderName || "").trim();
+  return elder ? `${elder} 님 가족` : f?.first ? "첫 가족" : "새 가족";
+};
 
 export const AREAS = {
   user: { key: "user", label: "이용자", desc: "어르신 · 보호자", roles: ["guardian", "elder"], join: "/join", login: "/login", approval: true },

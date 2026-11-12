@@ -14,6 +14,7 @@ import { ROLE_LABEL, accountName, householdName } from "../../lib/test-accounts"
 import { LIVE_ELDER } from "../../lib/ops-health";
 import { downloadCsv } from "../../lib/rosters";
 import { LIVE_TAG } from "../../lib/live-household";
+import { withFamily } from "../../lib/scope";
 
 const KIND_TONE = { auth: "muted", viewCustomer: "info", viewHealth: "info", viewLocation: "info", edit: "warn", threshold: "warn", download: "gold", contact: "navy", dispatch: "navy", sos: "danger", report: "ok", request: "navy", schedule: "info", message: "info", signup: "gold", visit: "ok", ticker: "muted", other: "muted" };
 const VIEW_KINDS = ["viewCustomer", "viewHealth", "viewLocation"];
@@ -80,7 +81,7 @@ export default function AuditLog() {
   const [real, setReal] = useState({ status: "idle", rows: [], at: null, error: null });
   const load = useCallback(async () => {
     try {
-      const r = await fetch("/api/activity?limit=300", { cache: "no-store" });
+      const r = await fetch(withFamily("/api/activity?limit=300"), { cache: "no-store" });
       if (r.status === 401) return setReal((x) => ({ ...x, status: "login" }));
       const j = await r.json().catch(() => ({}));
       if (!r.ok) return setReal((x) => ({ ...x, status: "error", error: j.error || String(r.status) }));

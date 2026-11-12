@@ -43,9 +43,10 @@ export function peopleFor(household, list, onboarding, staff) {
   const concierges = names("concierge");
   const sales = names("sales");
   const district = String(onboarding?.district || "").trim();
-  // 주 · 부 담당 — 관제 어르신 관리 [담당 컨시어지 변경] (2026-10-28 요청 3). 이 센터 컨시어지 회원일 때만 따르고,
-  // 아니면(정하기 전 · 그 회원이 센터에서 빠짐) 예전처럼 첫 컨시어지
-  const pri = staff?.pri && concierges.includes(staff.pri) ? staff.pri : concierges[0];
+  // 주 · 부 담당 — 관제 어르신 관리 [담당 컨시어지 변경] (2026-10-28 요청 3). 이 센터 컨시어지 회원일 때만 따른다.
+  // 정하기 전(또는 그 회원이 센터에서 빠짐)에는 담당이 없다 — 예전에는 먼저 가입한 컨시어지가 저절로 담당이 됐는데,
+  // 가족이 여럿이 되면서 모든 가족이 같은 컨시어지로 묶여 보였다 (2026-11-12 요청). 담당은 관제가 지정한다
+  const pri = staff?.pri && concierges.includes(staff.pri) ? staff.pri : null;
   const sub = staff?.sub && staff.sub !== pri && concierges.includes(staff.sub) ? staff.sub : null;
   return {
     center: center.id,
