@@ -1,0 +1,14 @@
+# K-CARE — 검색에 여는 화면은 서비스 소개(/)와 상담 신청(/consult) 둘뿐이다 (2026-11-06 랜딩 요청 1장).
+# 앱 화면(가족 · 어르신 · 컨시어지 · 관제 등)에는 유사 개인정보(목 데이터)가 있어 전부 막는다.
+# 아래 정적 파일 허용은 화면이 아니다 — 두 화면을 검색엔진이 제대로 그리는 데 필요한 글꼴 · 모양 · 그림 파일이다.
+User-agent: *
+Allow: /$
+Allow: /consult$
+Allow: /_next/static/
+Allow: /brand/
+Allow: /hero/
+Allow: /og.png
+Allow: /favicon.svg
+Disallow: /
+
+Sitemap: https://kcarelife.com/sitemap.xml

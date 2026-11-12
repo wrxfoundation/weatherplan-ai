@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="건강">
+  <g transform="rotate(-45 25 36)">
+    <rect x="7" y="27" width="36" height="18" rx="9" fill="#FFFFFF" stroke="#155C43" stroke-width="3"/>
+    <path d="M25 28.5h8.5a8.5 8.5 0 0 1 0 15H25z" fill="#155C43"/>
+  </g>
+  <path d="M46.5 18c2.7 0 4.7 2 4.7 4.7 0 4.3-5.2 7.9-7.2 9.1a.8.8 0 0 1-.9 0c-2-1.2-7.2-4.8-7.2-9.1 0-2.7 2-4.7 4.7-4.7 1.5 0 2.6.6 3 1.6.4-1 1.4-1.6 2.9-1.6z" fill="#B08D57"/>
+</svg>
