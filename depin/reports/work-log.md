@@ -2617,3 +2617,5 @@ Thanks Odelia — writing to you at that address today. Mine is support@wellbian
 - **주간 생태계 스캔 2026-11-09(예약 루틴)** — ecosystem-log 새 절(5축 · 검색 12회, 2차). ★ ① fixCleanup3_4_0 활성 11/4 ② 칼시 날씨 정산 세부(1차 도움말 — 체인링크 SLA 답 기준선) ③ YTN 초대(우리 쪽 신호). OCC GENIUS 최종(10/21) 확인으로 지난주 미확인 해소. business-directions: Permission Delegation 행 PaymentBurn 비권장 해제 · 체인링크 절 보강. 로스터 후보 신규 0.
 
 - **서우 개인 인용 — 세 서비스 소개(11/10)** — x-activity-log 새 절. A 「Measure it / Forecast it / Settle on it」(265) · B(185) · C(122) · 국문(173). 172 · 91 기준.
+
+- **서우 개인 원글 — 디지털자산 투자 토크콘서트 영문 문안(11/14)** — x-activity-log 새 절. A 「Real-world data becomes real value. Real value meets real demand.」(176) · B(115) · C(국문 그대로, asset 포함 — 비추천). 주최 계정 태그 0.

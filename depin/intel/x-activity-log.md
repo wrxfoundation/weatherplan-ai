@@ -4910,6 +4910,14 @@ PM2.5 3, CO₂ 543 ppm, 23.9°C. The only thing dry in here is the air: 33% humi
 - C(122): 「Weather used to be small talk. Now it's sensors, forecasts and a verdict you can settle on.」
 - 국문(173). 수익 · 가격 · 토큰 · 재태그 0, 「and counting」 같은 확장 암시 0, 실내 측정값의 원장 기록 주장 0.
 
+## 서우 개인 원글 — 디지털자산 투자 토크콘서트 단체 사진(영상) 영문 문안 (2026-11-14)
+
+서우 국문 초안 「현실데이터가 현실가치가 되고 현실수요되며 현실자산이 되는 것을 알리는 순간이었습니다」를 영문으로. 행사 = 「주식투자자가 처음 만나는 디지털자산 투자 토크콘서트 — 가격의 시대에서 가치의 시대로」(서우 표기 「비트클래스」 — 주최 계정 · 영문 표기 미확인, 태그 0).
+- A(가중 176, 추천): 「Real-world data becomes real value. Real value meets real demand. // That was the message we brought to the Digital Asset Talk Concert: from the age of price to the age of value.」
+- B(115): 「From the age of price to the age of value. // Real data, real value, real demand. Glad we got to say it in this room.」
+- C(104, 국문 그대로): 「… and in the end a real-world asset.」 — 투자 행사 사진 옆의 「asset」은 투자 권유로 읽힐 수 있어 비추천(10/29 asset 0 기준).
+- 가격 · 수익 · 토큰 · 투자 권유 표현 0, 행사 슬로건(가격 → 가치)만 빌림.
+
 ## DM — Swell 글 보고 관심 보인 해외 계정(가입 2013 · 팔로워 약 6.7천) 판매 안내 (2026-10-28, 서우 캡처 + 「wellbian.io 판매 사이트 안내 · 추가 할인 코드」)
 
 계정명은 적지 않는다(잠재 고객). 서우 「Hi」 → 상대 「Hello」.
