@@ -2625,3 +2625,5 @@ Thanks Odelia — writing to you at that address today. Mine is support@wellbian
 - **서우 개인 스레드 — 《워터》 구조 풀이 6편(11/15)** — x-activity-log 새 절. WaterCredit 순환 → 공기의 같은 벽 → 데이터 수요가 다음 측정기를 놓는 순환 가능성 → 필요한 것 셋 + 「계획 · 약속 아님」. 편당 가중 192~224. 회수 · 대출 · 수치 · 태그 0.
 
 - **서우 개인 원글 — 《워터》 축약판(11/15)** — x-activity-log 새 절. 핵심 한 줄 「Water loops on repayments. Air can loop on data.」 + 한 편판(268) · 짧은 판(152) · 국문(141).
+
+- **커뮤니티 원형 프로필 이미지(11/15)** — `content/profile-avatar-1115/`. 구름 · 해 · 번개를 합친 글라스 날씨 아이콘(브랜드 보라 구름 · 호박색 해 · 노란 번개 · 연보라 배경). `icon-prompt.md` 공통 문구 기반 Higgsfield 생성 → 원형 안전 영역에 맞춰 여백 추가. 원형 PNG(모서리 투명 1024) · 업로드용 정사각 JPG(1024). 글자 · 로고 없음.
