@@ -4918,6 +4918,15 @@ PM2.5 3, CO₂ 543 ppm, 23.9°C. The only thing dry in here is the air: 33% humi
 - C(104, 국문 그대로): 「… and in the end a real-world asset.」 — 투자 행사 사진 옆의 「asset」은 투자 권유로 읽힐 수 있어 비추천(10/29 asset 0 기준).
 - 가격 · 수익 · 토큰 · 투자 권유 표현 0, 행사 슬로건(가격 → 가치)만 빌림.
 
+## 서우 개인 원글 — 《워터》(맷 데이먼 · 개리 화이트) 읽고: 「언젠가 공기에도」 (2026-11-15)
+
+서우가 한국대학신문 서평(2022-04) 전문을 붙이고 「우리도 지금은 아니지만 미래에 도입해볼 만한 가치가 있다는 것으로 X 글」. 받은 논지 = WaterCredit(소액 대출로 수도 · 화장실 설치 → 상환금이 다음 대출자에게) — 막힌 건 의지가 아니라 처음 드는 돈.
+판정: **독서 메모형 개인 원글 — 감탄 + 「언젠가」까지.** Water.org 는 9/10 아웃바운드 · 9/15 댓글 대상이라 관계 자산 쪽으로 읽힘.
+- A(가중 274, 추천): 「Reading "The Worth of Water." … people weren't short on will, they were short on upfront cost. A small loan, repaid, funds the next family's tap. // Air has the same wall: a room can't fix what it can't measure. // Not for today. But worth building toward.」
+- B(223): 「Water.org didn't stop at charity. It removed the upfront cost … I keep wondering what that looks like for clean air. // Not yet. Someday.」
+- C(159) · 국문(254).
+- 금지선: 기사 수치(대처 비용 3,000억 달러 · 연 1,140억 달러) 인용 0(2차 · 2022년 자료) · @Water · 인물 태그 0 · 리플 × Water.org 언급 0 · 우리 쪽은 「대출 · 할부 · 보상으로 기기값 회수」 표현 0(금융업 · 수익 약속으로 읽힘) · 일정 · 계획 발표처럼 읽히는 문장 0(「worth building toward」 · 「someday」까지).
+
 ## DM — Swell 글 보고 관심 보인 해외 계정(가입 2013 · 팔로워 약 6.7천) 판매 안내 (2026-10-28, 서우 캡처 + 「wellbian.io 판매 사이트 안내 · 추가 할인 코드」)
 
 계정명은 적지 않는다(잠재 고객). 서우 「Hi」 → 상대 「Hello」.

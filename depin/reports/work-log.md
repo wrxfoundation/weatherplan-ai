@@ -2619,3 +2619,5 @@ Thanks Odelia — writing to you at that address today. Mine is support@wellbian
 - **서우 개인 인용 — 세 서비스 소개(11/10)** — x-activity-log 새 절. A 「Measure it / Forecast it / Settle on it」(265) · B(185) · C(122) · 국문(173). 172 · 91 기준.
 
 - **서우 개인 원글 — 디지털자산 투자 토크콘서트 영문 문안(11/14)** — x-activity-log 새 절. A 「Real-world data becomes real value. Real value meets real demand.」(176) · B(115) · C(국문 그대로, asset 포함 — 비추천). 주최 계정 태그 0.
+
+- **서우 개인 원글 — 《워터》 독서 메모형(11/15)** — x-activity-log 새 절. A 「people weren't short on will, they were short on upfront cost … Not for today. But worth building toward.」(274) · B(223) · C(159) · 국문(254). 기사 수치 · 태그 · 대출/회수 표현 0.
