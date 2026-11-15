@@ -4935,6 +4935,13 @@ PM2.5 3, CO₂ 543 ppm, 23.9°C. The only thing dry in here is the air: 33% humi
 - 남는 위험: 미공표 프로그램 예고로 읽힐 수 있음 → ⑥의 「not a plan or a promise」 문장은 빼지 않는다. 내부 구상(설치처 매칭 · 렌털 · 대리점)은 언급 0.
 - 국문 장문판(약 480자)은 채팅으로만 전달.
 
+## 서우 개인 원글 — 《워터》 축약판: 「Water loops on repayments. Air can loop on data.」 (2026-11-15)
+
+서우 「너무 길다 — 우리도 할 수 있다는 걸 축약할 메시지」. 6편 스레드의 핵심을 한 줄로: **물은 상환금으로 돌고, 공기는 데이터로 돌 수 있다.**
+- 한 편판(가중 268): Water.org 한 줄 + 「Air can loop too, on data instead of debt: readings from one room help fund the sensor in the next.」 + 「Not a plan yet. A structure worth building.」
+- 짧은 판(152) · 국문(141).
+- 「데이터가 내 기기값을 갚는다」가 아니라 「한 방의 데이터가 다음 방의 측정기를 놓는다」로 고정(회수 · 수익 약속 0). 「Not a plan yet」 유지.
+
 ## DM — Swell 글 보고 관심 보인 해외 계정(가입 2013 · 팔로워 약 6.7천) 판매 안내 (2026-10-28, 서우 캡처 + 「wellbian.io 판매 사이트 안내 · 추가 할인 코드」)
 
 계정명은 적지 않는다(잠재 고객). 서우 「Hi」 → 상대 「Hello」.

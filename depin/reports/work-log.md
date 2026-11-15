@@ -2623,3 +2623,5 @@ Thanks Odelia — writing to you at that address today. Mine is support@wellbian
 - **서우 개인 원글 — 《워터》 독서 메모형(11/15)** — x-activity-log 새 절. A 「people weren't short on will, they were short on upfront cost … Not for today. But worth building toward.」(274) · B(223) · C(159) · 국문(254). 기사 수치 · 태그 · 대출/회수 표현 0.
 
 - **서우 개인 스레드 — 《워터》 구조 풀이 6편(11/15)** — x-activity-log 새 절. WaterCredit 순환 → 공기의 같은 벽 → 데이터 수요가 다음 측정기를 놓는 순환 가능성 → 필요한 것 셋 + 「계획 · 약속 아님」. 편당 가중 192~224. 회수 · 대출 · 수치 · 태그 0.
+
+- **서우 개인 원글 — 《워터》 축약판(11/15)** — x-activity-log 새 절. 핵심 한 줄 「Water loops on repayments. Air can loop on data.」 + 한 편판(268) · 짧은 판(152) · 국문(141).
