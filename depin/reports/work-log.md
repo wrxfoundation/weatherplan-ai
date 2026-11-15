@@ -2629,3 +2629,5 @@ Thanks Odelia — writing to you at that address today. Mine is support@wellbian
 - **커뮤니티 원형 프로필 이미지(11/15)** — `content/profile-avatar-1115/`. 구름 · 해 · 번개를 합친 글라스 날씨 아이콘(브랜드 보라 구름 · 호박색 해 · 노란 번개 · 연보라 배경). `icon-prompt.md` 공통 문구 기반 Higgsfield 생성 → 원형 안전 영역에 맞춰 여백 추가. 원형 PNG(모서리 투명 1024) · 업로드용 정사각 JPG(1024). 글자 · 로고 없음.
 
 - **프로필 이미지 색 바꾼 판 둘(11/15)** — 서우 「좀 청자색으로」. 청자색을 두 뜻으로 읽어 둘 다: 파랑 쪽 보라(`blueviolet`) · 옥빛 청록(`celadon`). 새로 생성하지 않고 같은 그림의 보라 구간 색상만 옮김(`content/profile-avatar-1115/recolor.py` — 해 · 번개의 노랑은 그대로). 서우가 고르면 나머지는 정리.
+
+- **프로필 이미지 유리 재질판 셋(11/15)** — 서우 「아예 유리질감으로」. 구름 · 해 · 번개 전부를 투명한 실제 유리(굴절 · 반사 · 바닥 빛무늬)로 새로 생성 — 파랑 쪽 보라 · 옥빛 청록 · 무색 투명. `content/profile-avatar-1115/wellbian_profile_glass_*`(정사각 JPG · 원형 PNG). 원형 여백 맞춤. 무색 투명은 40px 에서 흐리게 보임.
