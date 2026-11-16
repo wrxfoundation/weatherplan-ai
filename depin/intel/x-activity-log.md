@@ -4942,6 +4942,17 @@ PM2.5 3, CO₂ 543 ppm, 23.9°C. The only thing dry in here is the air: 33% humi
 - 짧은 판(152) · 국문(141).
 - 「데이터가 내 기기값을 갚는다」가 아니라 「한 방의 데이터가 다음 방의 측정기를 놓는다」로 고정(회수 · 수익 약속 0). 「Not a plan yet」 유지.
 
+## 서우 개인 원글 — 연말 거리 사진(11/16 · 비 오는 삼성동, 눈 올 것 같은 날)
+
+사진: 백화점 외벽 전체가 뉴욕 크리스마스 그림 · 젖은 도로 · 잿빛 하늘 · 태극기. 유형 ③(장면 한 줄형)의 날씨판. 브랜드명(백화점 · 전광판 광고) · 태그 · 링크 0. 「눈이 온다」는 예보가 아니라 체감으로만 쓴다(측정값은 넣지 않음 — 실제 값이 없다).
+
+- **A(248)** — Seoul, a wet grey afternoon. One whole building has been dressed up as a New York Christmas. / It's rain for now. But the air has that feeling, the kind of cold where rain is thinking about becoming snow. / Year-end showed up before the forecast did.
+- **B(131)** — Rain in Seoul today, but the air already feels like snow. / The city has finished decorating. The sky is just running a little late.
+- **C(256 · 날씨 데이터 일과 잇는 판)** — Seoul has its year-end face on: lights up, roads wet, sky the color of paper. / Working with weather data does this to you. You check the numbers to confirm what your skin already knows. / Today the numbers say rain. The air says snow. We'll see who's right.
+- **국문(가중 136)** — 삼성동, 비 오는 오후. 건물 한 채가 통째로 뉴욕의 크리스마스가 됐다. / 지금은 비인데 공기는 벌써 눈 쪽이다. / 연말은 늘 예보보다 먼저 온다.
+
+권고 A. C 는 「We'll see who's right」가 예측시장 농담으로 읽힐 수 있어 그 대화가 진행 중인 지금은 2순위.
+
 ## DM — Swell 글 보고 관심 보인 해외 계정(가입 2013 · 팔로워 약 6.7천) 판매 안내 (2026-10-28, 서우 캡처 + 「wellbian.io 판매 사이트 안내 · 추가 할인 코드」)
 
 계정명은 적지 않는다(잠재 고객). 서우 「Hi」 → 상대 「Hello」.
