@@ -2639,3 +2639,5 @@ Thanks Odelia — writing to you at that address today. Mine is support@wellbian
 - **서우 개인 원글 — 연말 거리 사진(11/16)** — x-activity-log 새 절. 비 오는 삼성동 · 눈 올 것 같은 날. A(248) · B(131) · C(256) · 국문(가중 136). 예보 단정 0 · 측정값 0(실제 값 없음) · 브랜드명 · 태그 0. 권고 A.
 
 - **Ploy(테더 태국 · 인도차이나) 첫 인사 답 수신(11/16)** — 답 「Let's stay connected」 = 의례적 마무리. 판정: 반응 하나 또는 한 줄로 닫고 사업 얘기 붙이지 않음. 다음 접촉은 그의 반응 또는 방콕 건기 화제 때. business-directions 해당 절에 기록. 호칭 Ploy/Ply 표기 확인 필요.
+
+- **로고 글자 글꼴 추적(11/16)** — wellbian 워드마크 = **Outfit SemiBold(600)**(구글 폰트 · 무료 · OFL). 방법: 저장소 벡터 로고(`site/xrpseoul-raffle-static/www/brand/logo_w_medium.svg`)의 글자를 구글 폰트 108종 · 475개 굵기와 글자별로 겹쳐 비교 — Outfit 600 이 일치도 0.983(2위 Outfit 700 0.934 · 3위 Urbanist 800 0.924), 글자 폭 비율 1.00. wellbian-intro.vercel.app 의 로고 PNG 로도 Outfit 이 1위. 그 사이트 본문 글꼴은 Sora(제목) · IBM Plex Sans KR(본문) · IBM Plex Mono(숫자 · 코드) — 페이지 소스 확인.
