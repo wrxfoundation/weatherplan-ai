@@ -2641,3 +2641,5 @@ Thanks Odelia — writing to you at that address today. Mine is support@wellbian
 - **Ploy(테더 태국 · 인도차이나) 첫 인사 답 수신(11/16)** — 답 「Let's stay connected」 = 의례적 마무리. 판정: 반응 하나 또는 한 줄로 닫고 사업 얘기 붙이지 않음. 다음 접촉은 그의 반응 또는 방콕 건기 화제 때. business-directions 해당 절에 기록. 호칭 Ploy/Ply 표기 확인 필요.
 
 - **로고 글자 글꼴 추적(11/16)** — wellbian 워드마크 = **Outfit SemiBold(600)**(구글 폰트 · 무료 · OFL). 방법: 저장소 벡터 로고(`site/xrpseoul-raffle-static/www/brand/logo_w_medium.svg`)의 글자를 구글 폰트 108종 · 475개 굵기와 글자별로 겹쳐 비교 — Outfit 600 이 일치도 0.983(2위 Outfit 700 0.934 · 3위 Urbanist 800 0.924), 글자 폭 비율 1.00. wellbian-intro.vercel.app 의 로고 PNG 로도 Outfit 이 1위. 그 사이트 본문 글꼴은 Sora(제목) · IBM Plex Sans KR(본문) · IBM Plex Mono(숫자 · 코드) — 페이지 소스 확인.
+
+- **vCommission Director 1촌 수락 — 어필리에이트 제안 판정(11/16)** — business-directions 새 절. 판정: 제안할 것 있음, 형식은 「광고주 문의」(비공개 · 콘텐츠 매체만 · 승인 문구만 · 배송 국가만). 첫 메시지 영문 942자(Lynn 기본값 + 질문 한 문단, 수수료 숫자 · 인도 · 보상 0). 서우가 정할 것 6(배송 국가 · 추적 방식 · 해외 결제 · 20% 한도 안 네트워크 몫 · 지급 통화 · 셋업비 선 긋기).
