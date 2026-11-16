@@ -2637,3 +2637,5 @@ Thanks Odelia — writing to you at that address today. Mine is support@wellbian
 - **주간 생태계 스캔(11/16)** — ecosystem-log 새 절(검색 31회 · 2차). ★ 미 중간선거 결과와 시장구조법 일정 · CFTC 11/5 지역 제한 해제 지시(12/5 시한 · 11/18 의견 마감) · RLUSD 약 $2.57B. 지난주 기록 정정 2(에버노스 10/12 상장 완료 · 디센트 Round 3 · 4 는 사고 전). business-directions 트리거 3행 갱신(디센트 미도달 · CLARITY 미도달 · 두나무 주식교환 재연기) · playbook 「숨긴 계획 없다」 논쟁 주 규칙.
 
 - **서우 개인 원글 — 연말 거리 사진(11/16)** — x-activity-log 새 절. 비 오는 삼성동 · 눈 올 것 같은 날. A(248) · B(131) · C(256) · 국문(가중 136). 예보 단정 0 · 측정값 0(실제 값 없음) · 브랜드명 · 태그 0. 권고 A.
+
+- **Ploy(테더 태국 · 인도차이나) 첫 인사 답 수신(11/16)** — 답 「Let's stay connected」 = 의례적 마무리. 판정: 반응 하나 또는 한 줄로 닫고 사업 얘기 붙이지 않음. 다음 접촉은 그의 반응 또는 방콕 건기 화제 때. business-directions 해당 절에 기록. 호칭 Ploy/Ply 표기 확인 필요.
