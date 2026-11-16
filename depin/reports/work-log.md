@@ -2633,3 +2633,5 @@ Thanks Odelia — writing to you at that address today. Mine is support@wellbian
 - **프로필 이미지 유리 재질판 셋(11/15)** — 서우 「아예 유리질감으로」. 구름 · 해 · 번개 전부를 투명한 실제 유리(굴절 · 반사 · 바닥 빛무늬)로 새로 생성 — 파랑 쪽 보라 · 옥빛 청록 · 무색 투명. `content/profile-avatar-1115/wellbian_profile_glass_*`(정사각 JPG · 원형 PNG). 원형 여백 맞춤. 무색 투명은 40px 에서 흐리게 보임.
 
 - **프로필 이미지 유리 재질 파란색(11/15)** — 서우 「파란색도 하나줘」. 유리 보라판의 구름 · 배경 색상만 파랑으로 옮김(`recolor.py` `blue` — 해 · 번개 노랑 그대로, 그림 동일). `content/profile-avatar-1115/wellbian_profile_glass_blue_*`.
+
+- **주간 생태계 스캔(11/16)** — ecosystem-log 새 절(검색 31회 · 2차). ★ 미 중간선거 결과와 시장구조법 일정 · CFTC 11/5 지역 제한 해제 지시(12/5 시한 · 11/18 의견 마감) · RLUSD 약 $2.57B. 지난주 기록 정정 2(에버노스 10/12 상장 완료 · 디센트 Round 3 · 4 는 사고 전). business-directions 트리거 3행 갱신(디센트 미도달 · CLARITY 미도달 · 두나무 주식교환 재연기) · playbook 「숨긴 계획 없다」 논쟁 주 규칙.
