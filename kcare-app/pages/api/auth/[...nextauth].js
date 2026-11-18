@@ -22,7 +22,7 @@ import {
 import { recordLogin } from "../../../lib/db";
 import { findCenterOps, findTestAccount } from "../../../lib/test-accounts";
 import { CENTERS, areaOfRole, centerOfHousehold, isArea } from "../../../lib/centers";
-import { loginFailed, loginSucceeded, memberForLogin } from "../../../lib/members";
+import { loginFailed, loginSucceeded, memberForLogin, secOf } from "../../../lib/members";
 import { homeOfMember } from "../../../lib/families";
 import { sameSecret, verifyPassword } from "../../../lib/password";
 import { clientIp, makeLimiter } from "../../../lib/http";
@@ -91,7 +91,8 @@ async function authorizeMember(credentials, req) {
   const center = CENTERS[m.center_id];
   if (!center) reject("NoCenter");
   // 어르신 · 보호자는 가입한 가족의 기록을, 직원은 센터의 첫 가족을 싣는다 (직원은 화면에서 가족을 고른다 · 2026-11-12 lib/families.js)
-  return { id: m.id, name: m.name, email: null, role: m.role, household: homeOfMember(m, center), center: center.id, provider: "member" };
+  // mustChange: 관제가 발급한 임시 비밀번호로 들어왔다 — 화면이 새 비밀번호 정하기로 보낸다 (서버도 그때까지 기록을 주지 않는다 · lib/members.js)
+  return { id: m.id, name: m.name, email: null, role: m.role, household: homeOfMember(m, center), center: center.id, provider: "member", mustChange: !!secOf(m.profile).temp, born: m.created_at || null };
 }
 
 function providers() {
@@ -165,6 +166,8 @@ export const authOptions = {
         token.role = google ? null : user.role || null;
         token.household = google ? null : user.household || null;
         token.center = google ? null : user.center || centerOfHousehold(user.household)?.id || null;
+        token.mustChange = !google && !!user.mustChange;
+        token.born = google ? null : user.born || null; // 이 계정이 만들어진 때 — 지워졌다 같은 아이디로 다시 만들어진 계정과 구분한다
         token.since = Date.now(); // 로그인한 때 — 그 뒤에 새로 만들어진 같은 아이디의 계정과 구분한다 (lib/members.js memberStillValid)
       }
       return token;
@@ -182,6 +185,8 @@ export const authOptions = {
           household: token.household || null,
           center: token.center || null,
           since: token.since || null,
+          mustChange: !!token.mustChange,
+          born: token.born || null,
         },
       };
     },

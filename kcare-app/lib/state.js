@@ -1,5 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useReducer, useRef, useState } from "react";
 import { useRouter } from "next/router";
+import Link from "next/link";
 // mock.js 가 아니라 seed.js 에서 가져온다 — state 는 _app 에서 import 되므로
 // 여기서 mock.js 를 참조하면 콘솔 목데이터 전체가 모든 페이지에 실린다 (seed.js 주석 참고).
 import { INITIAL_EVENTS, INITIAL_REQUESTS, SEED_ASK_DOCTOR, SEED_EVENTS, SEED_ORDERS, SEED_REPORTS } from "./seed";
@@ -1326,6 +1327,22 @@ export function reducer(state, action) {
         ...state,
         opsMessages: [{ id: idOf("om", action), at: nowOf(action), ackAt: null, ...action.payload }, ...(state.opsMessages || [])].slice(0, 60),
       };
+    // 본인 탈퇴 (2026-11-18 · pages/api/account.js) — 서버만 넣는다. 관제가 적어 둔 그 사람의 연락 정보(보호자 기본정보)를 지우고,
+    // 관제 '지금 처리할 일'에 뜨도록 관제 연락으로 남긴다. 그 사람이 남긴 요청 · 일정 같은 서비스 기록은 그대로 둔다
+    case "memberLeft": {
+      const name = String(action.name || "").trim();
+      if (!name) return state;
+      const info = { ...(state.guardianInfo || {}) };
+      delete info[name];
+      return {
+        ...state,
+        guardianInfo: info,
+        opsMessages: [
+          { id: idOf("om", action), at: nowOf(action), ackAt: null, from: String(action.from || name).slice(0, 60), role: action.role || null, kind: "left", text: String(action.text || `회원 탈퇴 — ${name} 님`).slice(0, 200) },
+          ...(state.opsMessages || []),
+        ].slice(0, 60),
+      };
+    }
     case "ackOpsMessage":
       return {
         ...state,
@@ -1749,7 +1766,9 @@ const savePending = (hh, uid, list) => hh && writeLocal(pendingKey(hh, uid), lis
 // 관제가 이 계정을 멈추거나 역할 · 가족을 바꿨다 — 안내대로 '지금부터 누른 것은 저장되지 않는다'.
 // 모아 둔 동작을 이 기기에서도 지운다 (2026-11-18 점검 — 남겨 두면 로그아웃할 때마다 '보내지 못한 기록이 있습니다'가 뜨고,
 // 다시 로그인하면 저장되지 않는다던 동작이 들어갔다)
-const dropPending = (pendingRef, accountRef, hh) => {
+const dropPending = (pendingRef, accountRef, hh, why) => {
+  // 비밀번호가 바뀌어 다시 로그인하는 경우는 계정이 그대로다 — 모아 둔 동작을 남겨 두었다가 로그인하면 보낸다
+  if (why === "password-changed" || why === "password-temp") return;
   pendingRef.current = [];
   savePending(hh, accountRef.current, []);
 };
@@ -1931,7 +1950,7 @@ export function AppStateProvider({ children }) {
           const err = res?.ok ? null : body.error || (res ? `http-${res.status}` : "network");
           if (res?.status === 401 && ACCOUNT_NOTICE[err]) {
             blockedRef.current = true;
-            dropPending(pendingRef, accountRef, household);
+            dropPending(pendingRef, accountRef, household, err);
           }
           setSync({
             mode: "server",
@@ -2023,7 +2042,7 @@ export function AppStateProvider({ children }) {
         const permanent = res.status === 401 || res.status === 400 || res.status === 413;
         if (res.status === 401 && ACCOUNT_NOTICE[code]) {
           blockedRef.current = true;
-          dropPending(pendingRef, accountRef, hh);
+          dropPending(pendingRef, accountRef, hh, code);
         }
         throw Object.assign(new Error("save-failed"), { code, permanent, area: j.area || null });
       }
@@ -2105,7 +2124,7 @@ export function AppStateProvider({ children }) {
           if (res.status === 401) {
             if (ACCOUNT_NOTICE[j.error]) {
               blockedRef.current = true;
-              dropPending(pendingRef, accountRef, householdRef.current);
+              dropPending(pendingRef, accountRef, householdRef.current, j.error);
             }
             setSync((s) => ({ ...s, status: "error", error: j.error || "login-required", area: j.area || null }));
           }
@@ -2192,6 +2211,9 @@ const ACCOUNT_NOTICE = {
   "account-rejected": { title: "쓸 수 없는 아이디입니다", body: (c, fam) => (fam ? `가입이 승인되지 않은 아이디입니다. ${CS}로 문의해 주세요.` : `${c} 관제가 이 가입을 받지 않았습니다. 센터 관제에 문의해 주세요.`) },
   "account-removed": { title: "아이디를 찾을 수 없습니다", body: (c, fam) => (fam ? `이 아이디를 찾을 수 없습니다. ${CS}로 문의해 주세요.` : `${c}에 이 아이디가 없습니다. 센터 관제에 문의해 주세요.`) },
   "account-pending": { title: "가입 확인을 기다리는 아이디입니다", body: (c, fam) => (fam ? "가입 확인이 끝나면 다시 로그인해 주세요." : `${c} 관제가 승인하면 다시 로그인해 주세요.`) },
+  // 비밀번호 (2026-11-18 · lib/members.js memberStillValid) — 바뀐 뒤의 옛 로그인 · 임시 비밀번호로 들어온 로그인
+  "password-changed": { title: "비밀번호가 바뀌었습니다", body: () => "이 아이디의 비밀번호가 바뀌었습니다. 새 비밀번호로 다시 로그인해 주세요." },
+  "password-temp": { title: "새 비밀번호를 정해 주세요", body: () => "임시 비밀번호로 로그인했습니다. 새 비밀번호를 정한 뒤에 이어서 쓸 수 있습니다." },
   "role-changed": { title: "관제가 역할을 바꿨습니다", body: () => "다시 로그인하면 바뀐 역할의 화면으로 들어갑니다. 지금 화면에서 누른 것은 저장되지 않습니다." },
   // 관제가 이 회원을 다른 가족으로 옮겼다 (2026-11-12 · 계정 · 권한 [가족 옮기기])
   "family-changed": { title: "관제가 가족을 바꿨습니다", body: () => "다시 로그인하면 새 가족의 기록이 열립니다. 지금 화면에서 누른 것은 저장되지 않습니다." },
@@ -2263,14 +2285,21 @@ function SyncNotice({ sync }) {
           <p className="mt-2 text-[15px] leading-[1.7] text-ink">
             <KeepTel text={notice.body(centerName, isFamilyRole(user?.role))} />
           </p>
-          <button
-            type="button"
-            autoFocus
-            onClick={() => logout(go)}
-            className="btn-press mt-5 w-full rounded-xl bg-navy py-3.5 text-[16px] font-bold text-white"
-          >
-            {area ? `${area.label} 로그인으로 다시 들어가기` : "로그아웃"}
-          </button>
+          {sync.error === "password-temp" ? (
+            // 임시 비밀번호로 들어왔다 — 로그아웃이 아니라 새 비밀번호 정하기로 보낸다
+            <Link href="/account?must=1" className="btn-press mt-5 block w-full rounded-xl bg-navy py-3.5 text-center text-[16px] font-bold text-white">
+              새 비밀번호 정하기
+            </Link>
+          ) : (
+            <button
+              type="button"
+              autoFocus
+              onClick={() => logout(go)}
+              className="btn-press mt-5 w-full rounded-xl bg-navy py-3.5 text-[16px] font-bold text-white"
+            >
+              {area ? `${area.label} 로그인으로 다시 들어가기` : sync.error === "password-changed" ? "다시 로그인" : "로그아웃"}
+            </button>
+          )}
         </div>
       </div>
     );

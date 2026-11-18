@@ -1,6 +1,7 @@
 // 회원 아이디 로그인 (2026-10-06) — 영역 입구마다 같은 창. 영역이 다른 계정이면 맞는 입구를 알려 준다.
 // 관제 입구에서는 센터 관제 테스트 계정(ops1 · ops2 · ops3 · 공용 테스트 비밀번호)도 들어온다.
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { useState } from "react";
 import { getSession } from "next-auth/react";
 import { MEMBER_LOGIN, memberSignIn } from "../lib/auth";
@@ -27,7 +28,21 @@ const ERR = {
   Locked: "비밀번호를 여러 번 틀려 잠시 잠겼습니다. 몇 분 뒤 다시 시도해 주세요.",
 };
 
+// 비밀번호를 잊었을 때 (2026-11-18) — 앱에 문자 · 전자우편을 보내는 수단이 없어, 관제가 본인을 확인하고 임시 비밀번호를 발급한다
+// (관제 계정 · 권한의 [비밀번호]). 임시 비밀번호로 로그인하면 새 비밀번호를 정하게 된다 (pages/account.jsx)
+const FORGOT = {
+  user: `${CS}로 전화 주세요. 본인 확인 뒤 임시 비밀번호를 알려 드립니다. 임시 비밀번호로 로그인하면 새 비밀번호를 정하게 됩니다.`,
+  staff: "센터 관제(관리자)에게 임시 비밀번호를 요청해 주세요. 임시 비밀번호로 로그인하면 새 비밀번호를 정하게 됩니다.",
+};
+// 다른 화면이 보낸 안내 — 비밀번호를 바꾼 뒤(?pw=changed) · 탈퇴한 뒤(?left=1)
+const DONE = {
+  changed: "비밀번호를 바꿨습니다. 새 비밀번호로 로그인해 주세요.",
+  left: "탈퇴가 끝났습니다. 그동안 이용해 주셔서 고맙습니다.",
+};
+
 export default function MemberLogin({ area, callbackUrl = "/", idHint, defaultId = "" }) {
+  const { query } = useRouter();
+  const done = query.pw === "changed" ? DONE.changed : query.left === "1" ? DONE.left : null;
   const [id, setId] = useState(defaultId);
   const [pw, setPw] = useState("");
   const [busy, setBusy] = useState(false);
@@ -53,7 +68,8 @@ export default function MemberLogin({ area, callbackUrl = "/", idHint, defaultId
     if (r.ok) {
       const s = await getSession();
       const role = s?.user?.role;
-      window.location.assign(callbackUrl !== "/" ? callbackUrl : ROLE_HOME[role] || "/");
+      // 임시 비밀번호로 들어왔으면 새 비밀번호부터 정한다
+      window.location.assign(s?.user?.mustChange ? "/account?must=1" : callbackUrl !== "/" ? callbackUrl : ROLE_HOME[role] || "/");
       return;
     }
     setError(r.error || "CredentialsSignin");
@@ -69,6 +85,11 @@ export default function MemberLogin({ area, callbackUrl = "/", idHint, defaultId
 
   return (
     <form onSubmit={submit} noValidate>
+      {done && !message && (
+        <p role="status" className="mb-3 rounded-xl bg-green/[.08] px-3.5 py-2.5 text-[13.5px] font-bold leading-[1.6] text-green">
+          {done}
+        </p>
+      )}
       {message && (
         <div role="alert" className="mb-3 rounded-xl border border-amber/30 bg-[#FFF7E8] px-3.5 py-2.5 text-[13px] font-bold leading-[1.6] text-amber">
           <KeepTel text={message} />
@@ -110,6 +131,12 @@ export default function MemberLogin({ area, callbackUrl = "/", idHint, defaultId
       >
         {busy ? "확인 중…" : `${AREAS[area].label} 로그인`}
       </button>
+      <details className="mt-3">
+        <summary className="tap inline-block cursor-pointer py-[3px] text-[13.5px] font-bold text-navy underline underline-offset-2">비밀번호를 잊으셨나요?</summary>
+        <p className="lp-bal mt-1.5 rounded-xl bg-paper px-3.5 py-2.5 text-[13.5px] leading-[1.65] text-ink">
+          <KeepTel text={area === "user" ? FORGOT.user : FORGOT.staff} />
+        </p>
+      </details>
     </form>
   );
 }

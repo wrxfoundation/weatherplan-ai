@@ -247,6 +247,18 @@ export default function MembershipPage() {
                 </Link>
               )}
             </li>
+            {/* 가입한 회원 — 비밀번호 바꾸기 · 탈퇴 (pages/account.jsx · 2026-11-18) */}
+            {auth.user?.provider === "member" && (
+              <li className="ds-row">
+                <span className="ds-k">
+                  <b>내 정보 관리</b>
+                  <small>비밀번호 바꾸기 · 회원 탈퇴</small>
+                </span>
+                <Link href="/account" className={mini} style={{ boxShadow: `0 3px 0 ${TONE.green.sh}`, color: TONE.green.fg }}>
+                  열기
+                </Link>
+              </li>
+            )}
             <li className="ds-row">
               <span className="ds-k !flex-none">
                 <b>기록 저장</b>

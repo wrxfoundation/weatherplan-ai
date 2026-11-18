@@ -26,6 +26,11 @@ export function SignedInCard({ area }) {
       <a href={ROLE_HOME[user.role] || "/"} className="btn-press btn-dark mt-4 block w-full rounded-xl bg-navy py-3.5 text-center text-[15px] font-bold text-white">
         {ROLE_LABEL[user.role] ? `${ROLE_LABEL[user.role]} 화면으로` : "계속하기"}
       </a>
+      {user.provider === "member" && (
+        <Link href="/account" className="btn-press mt-2 block w-full rounded-xl border border-navy/15 py-3 text-center text-[14px] font-bold text-navy">
+          내 정보 관리 — 비밀번호 바꾸기 · 탈퇴
+        </Link>
+      )}
       <button type="button" onClick={() => logout(AREAS[area].login)} className="btn-press mt-2 w-full rounded-xl border border-navy/15 py-3 text-[14px] font-bold text-muted">
         로그아웃
       </button>

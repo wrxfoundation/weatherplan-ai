@@ -6,6 +6,7 @@
 //   · '로그인 없이 데모 둘러보기' · 서버 저장 연결 표시 · '베타' 문구를 뺐다
 //   · 아래 링크는 'K-CARE 서비스 소개'(/) 하나
 // 로그인돼 있으면 누구로 들어와 있는지 · 어디에 저장되는지 · 계속하기 · 로그아웃을 보여 준다 (화면 위 '계정' 링크가 여기로 온다).
+import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import AreaShell from "../components/AreaShell";
@@ -80,6 +81,12 @@ export default function LoginPage() {
           >
             {callbackUrl === "/" && ROLE_LABEL[auth.user.role] ? `${ROLE_LABEL[auth.user.role]} 화면으로 계속하기` : "계속하기"}
           </button>
+          {/* 가입한 회원 — 비밀번호 바꾸기 · 탈퇴 (pages/account.jsx · 2026-11-18) */}
+          {auth.user.provider === "member" && (
+            <Link href="/account" className="btn-press mt-2 block w-full rounded-xl border border-navy/15 py-3 text-center text-[14px] font-bold text-navy">
+              내 정보 관리 — 비밀번호 바꾸기 · 탈퇴
+            </Link>
+          )}
           <button
             type="button"
             onClick={async () => {

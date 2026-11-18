@@ -3,6 +3,7 @@
 //   GET    /api/members                    { center: { id, name, joinCode }, members: [...], families: [...] | null, audit: [...] }
 //   PATCH  /api/members  { id, action, role, household }
 //          action: approve(role 선택) · reject · role(role) · suspend · activate · delete · move(household — 다른 가족으로)
+//                  · password(임시 비밀번호 발급 → 응답에 { tempPassword } 한 번만 · 2026-11-18)
 //   POST   /api/members  { action: "rotate-code" }   가입 코드 바꾸기 → { joinCode } (옛 코드는 바로 막힌다)
 //
 // 바꾼 것은 account_audit 에 남기고 센터 가구 활동 기록(관제 감사로그)에도 한 줄 남긴다.
@@ -20,8 +21,8 @@ import { authConfigured } from "../../lib/auth-server";
 import { dbConfigured, dbErrorCode } from "../../lib/db";
 import { ALL_ROLES, CENTERS, areaOfRole, centerOfHousehold, isFamilyRole } from "../../lib/centers";
 import { familyNames, familyRow, forgetFamilyAccess } from "../../lib/families";
-import { activityLine, audit, auditList, centerRow, deleteMember, forgetMember, getMember, listMembers, memberStillValid, patchMember, setJoinCode } from "../../lib/members";
-import { newJoinCode } from "../../lib/password";
+import { activityLine, audit, auditList, centerRow, deleteMember, forgetMember, getMember, listMembers, memberStillValid, patchMember, secOf, setJoinCode, setPassword } from "../../lib/members";
+import { hashPassword, newJoinCode, newTempPassword } from "../../lib/password";
 import { ROLE_LABEL, isCenterOwner } from "../../lib/test-accounts";
 import { sameSiteJson } from "../../lib/http";
 
@@ -41,7 +42,9 @@ const view = (m, center) => ({
   area: areaOfRole(m.role),
   status: m.status || "active",
   phone: m.phone || null,
-  profile: m.profile || null,
+  // 보안 표시(profile.sec)는 화면으로 보내지 않는다 — 임시 비밀번호 상태인지만 알려 준다
+  profile: m.profile && typeof m.profile === "object" ? Object.fromEntries(Object.entries(m.profile).filter(([k]) => k !== "sec")) : null,
+  tempPassword: !!secOf(m.profile).temp,
   member: m.provider === "member",
   createdAt: m.created_at,
   approvedBy: m.approved_by || null,
@@ -58,8 +61,10 @@ const NEXT = {
   role: (m) => m.status !== "rejected",
   delete: (m) => m.status !== "pending",
   move: (m) => m.status !== "rejected",
+  // 임시 비밀번호 발급 (2026-11-18) — 비밀번호를 잊은 회원. 사용 중인 계정만 (대기 · 거절 · 정지 계정은 어차피 로그인하지 못한다)
+  password: (m) => m.status === "active",
 };
-const ACTION_TEXT = { approve: "가입 승인", reject: "가입 거절", suspend: "사용 정지", activate: "다시 사용", role: "역할 변경", delete: "계정 삭제", move: "가족 옮김" };
+const ACTION_TEXT = { approve: "가입 승인", reject: "가입 거절", suspend: "사용 정지", activate: "다시 사용", role: "역할 변경", delete: "계정 삭제", move: "가족 옮김", password: "임시 비밀번호 발급" };
 
 export default async function handler(req, res) {
   res.setHeader("Cache-Control", "no-store");
@@ -136,6 +141,19 @@ export default async function handler(req, res) {
         await audit({ center_id: center.id, account_id: m.id, actor_id: user.id, action: "delete", before: { role: m.role, status: m.status, name: m.name }, after: null });
         await activityLine(homeOf(m, center) || center.household, user.id, user.role, "memberAdmin", `${ACTION_TEXT.delete} — ${m.name} (${m.login_id || m.id}) · ${ROLE_LABEL[m.role]}`);
         return res.status(200).json({ member: null, deleted: m.id });
+      }
+
+      // 임시 비밀번호 발급 — 비밀번호를 잊은 회원에게. 관제가 전화로 본인을 확인한 뒤 누른다 (화면이 그렇게 안내한다).
+      // 임시 비밀번호는 이 응답에 한 번만 싣는다 — 저장하는 것은 해시뿐이고, 기록(권한 변경 기록 · 감사로그)에는 발급 사실만 남긴다.
+      // 그 회원은 임시 비밀번호로 로그인하면 새 비밀번호를 정해야 하고, 그 전에 로그인해 있던 기기는 모두 다시 로그인해야 한다
+      if (action === "password") {
+        const temp = newTempPassword();
+        const after = await setPassword(m.id, await hashPassword(temp), { temp: true });
+        forgetMember(m.id);
+        if (!after) return res.status(409).json({ error: "bad-state", message: "지금 상태에서는 할 수 없는 일입니다" });
+        await audit({ center_id: center.id, account_id: m.id, actor_id: user.id, action: "password-reset", before: null, after: null });
+        await activityLine(homeOf(m, center) || center.household, user.id, user.role, "memberAdmin", `${ACTION_TEXT.password} — ${m.name} (${m.login_id || m.id}) · ${ROLE_LABEL[m.role]}`);
+        return res.status(200).json({ member: view(after, center), tempPassword: temp });
       }
 
       // 가족 옮기기 — 어르신 · 보호자만, 이 센터의 가족으로만

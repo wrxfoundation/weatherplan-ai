@@ -20,7 +20,7 @@ import { familyPeople, forgetFamilyAccess, householdOf } from "../../lib/familie
 import { sameSiteJson } from "../../lib/http";
 
 // 서버가 직접 남기는 기록 종류 — 화면이 보낸 동작으로는 만들 수 없다 (가입 · 회원 관리 · 로그인 줄을 꾸며 넣지 못하게)
-const SERVER_ONLY = new Set(["login", "memberSignup", "memberAdmin"]);
+const SERVER_ONLY = new Set(["login", "memberSignup", "memberAdmin", "memberLeft"]);
 const ACTION_TYPE_RE = /^[A-Za-z][A-Za-z0-9]{1,39}$/;
 
 export const config = { api: { bodyParser: { sizeLimit: "4mb" } } };

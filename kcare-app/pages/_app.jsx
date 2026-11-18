@@ -1,13 +1,27 @@
 import "leaflet/dist/leaflet.css";
 import "../styles/globals.css";
 import Head from "next/head";
+import { useEffect } from "react";
 import { AppStateProvider } from "../lib/state";
-import { AuthProvider } from "../lib/auth";
+import { AuthProvider, useAuth } from "../lib/auth";
 import Boundary from "../components/Boundary";
 
 // 검색에 여는 화면 — 서비스 소개와 상담 신청 둘뿐이다 (2026-11-06 랜딩 요청 1장). 나머지는 전부 noindex.
 // 같은 목록이 세 군데 더 있다: public/robots.txt · public/sitemap.xml · next.config.js 의 X-Robots-Tag.
 const INDEXABLE = new Set(["/", "/consult"]);
+
+// 임시 비밀번호(관제 발급)로 로그인한 사람 — 새 비밀번호를 정할 때까지 내 정보 관리로 보낸다 (2026-11-18).
+// 서버도 그때까지 기록을 주지 않는다 (lib/members.js memberStillValid). 로그인 · 가입 · 공개 문서 화면은 그대로 둔다
+const FREE = /^\/(account|login(\/.*)?|join|partner\/(login|join)|ops\/(login|join)|terms|refund|privacy|location|consult)?$/;
+function MustChangeGate({ router }) {
+  const { user } = useAuth();
+  const must = !!user?.mustChange;
+  const path = router.pathname;
+  useEffect(() => {
+    if (must && !FREE.test(path)) router.replace("/account?must=1");
+  }, [must, path, router]);
+  return null;
+}
 
 export default function App({ Component, pageProps, router }) {
   const page = <Component {...pageProps} />;
@@ -39,6 +53,7 @@ export default function App({ Component, pageProps, router }) {
       <Boundary>
         {/* 구글 로그인 세션 — 로그인 설정이 없으면 아무것도 감싸지 않는다 (lib/auth.js) */}
         <AuthProvider>
+          <MustChangeGate router={router} />
           {/* 대외 화면(서비스 소개 · 상담 신청)은 가구 기록을 쓰지 않는다 — 프로바이더 밖에서 그려서 서버가 본문과
               메타 태그(설명 · 공유 이미지)까지 실어 보내게 한다. 프로바이더 안에 두면 저장소를 읽을 때까지 빈 화면이라
               검색엔진과 메신저 미리보기가 아무것도 못 읽는다. 화면 파일에서 `화면.standalone = true` 로 표시한다. */}

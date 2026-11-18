@@ -50,6 +50,9 @@ const ACTION_TEXT = {
   invite: "가족 초대 링크 만듦",
   delete: "계정 삭제",
   move: "가족 옮김",
+  "password-reset": "임시 비밀번호 발급",
+  "password-change": "비밀번호 변경 (본인)",
+  "self-delete": "본인 탈퇴",
   "family-add": "가족 추가",
   "family-rename": "가족 이름 바꿈",
   "family-code": "가족 가입 코드 변경",
@@ -109,6 +112,7 @@ export default function CenterMembers({ onFamilies = null }) {
   const [roleOf, setRoleOf] = useState({}); // 승인 · 역할 변경 때 고른 역할
   const [copied, setCopied] = useState(null);
   const [move, setMove] = useState(null); // { m, to } — 가족 옮기기 창
+  const [pw, setPw] = useState(null); // { m, temp } — 임시 비밀번호: temp 가 없으면 발급 전 확인, 있으면 발급된 것을 한 번 보여 주는 창
 
   const load = useCallback(async () => {
     try {
@@ -163,6 +167,24 @@ export default function CenterMembers({ onFamilies = null }) {
     }
   };
   const act = (id, action, role, household) => send("PATCH", { id, action, role, household }, `${id}:${action}`);
+  // 임시 비밀번호 발급 — 응답으로 온 임시 비밀번호를 창에 한 번만 보여 준다 (다시 볼 수 없다 · 저장하지 않는다)
+  const issuePw = async (m) => {
+    setBusy(`${m.id}:password`);
+    setNotice(null);
+    try {
+      const r = await fetch("/api/members", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: m.id, action: "password" }) });
+      const j = await r.json().catch(() => ({}));
+      if (r.ok && j.tempPassword) setPw({ m, temp: j.tempPassword });
+      else setNotice(errText(j.error || `http-${r.status}`, j.message));
+    } catch (_) {
+      setNotice(errText("network"));
+    }
+    try {
+      await load();
+    } finally {
+      setBusy(null);
+    }
+  };
   const rotate = () => send("POST", { action: "rotate-code" }, "code");
   const copied2s = (k) => {
     setCopied(k);
@@ -225,7 +247,13 @@ export default function CenterMembers({ onFamilies = null }) {
       {m.id === data?.me && <Pill tone="info" className="ml-1">나</Pill>}
     </span>
   );
-  const statusCell = (m) => <Pill tone={MEMBER_STATUS[m.status]?.tone || "muted"}>{MEMBER_STATUS[m.status]?.label || m.status}</Pill>;
+  const statusCell = (m) => (
+    <span className="flex flex-wrap items-center gap-1">
+      <Pill tone={MEMBER_STATUS[m.status]?.tone || "muted"}>{MEMBER_STATUS[m.status]?.label || m.status}</Pill>
+      {/* 임시 비밀번호를 발급받고 아직 새 비밀번호를 정하지 않은 회원 */}
+      {m.tempPassword && m.status === "active" && <Pill tone="gold">임시 비밀번호</Pill>}
+    </span>
+  );
   const roleCell = (m) =>
     m.member && m.id !== data?.me && m.status !== "rejected" && !lockedForMe(m) ? (
       <span className="flex flex-wrap items-center gap-1">
@@ -291,6 +319,10 @@ export default function CenterMembers({ onFamilies = null }) {
   const actCell = (m) =>
     !m.member || m.id === data?.me || lockedForMe(m) ? null : m.status === "active" ? (
       <span className="flex flex-wrap items-center gap-1.5">
+        {/* 비밀번호를 잊은 회원 — 전화로 본인을 확인한 뒤 임시 비밀번호를 발급한다 (2026-11-18) */}
+        <Btn ghost small tone="muted" disabled={!!busy} aria-label={`${m.name} 임시 비밀번호 발급`} onClick={() => setPw({ m, temp: null })}>
+          비밀번호
+        </Btn>
         <Btn ghost small tone="warn" disabled={!!busy} onClick={() => setAsk({ id: m.id, action: "suspend", title: `${m.name} 님 사용을 정지합니다`, body: "지금 로그인해 있어도 15초 안에 저장 · 조회가 막힙니다. '다시 사용'으로 되돌릴 수 있습니다." })}>
           정지
         </Btn>
@@ -474,7 +506,7 @@ export default function CenterMembers({ onFamilies = null }) {
             { k: "status", label: "상태", w: 90, render: (m) => statusCell(m) },
             { k: "createdAt", label: "가입 · 승인", w: 150, render: (m) => <span className="text-[12px] text-muted">{when(m.createdAt)}{m.approvedBy ? <><br />{m.status === "rejected" ? "거절" : "승인"} {m.approvedBy}</> : null}</span> },
             { k: "last", label: "마지막 로그인", w: 120, render: (m) => <span className="font-num text-[12px] text-muted">{when(m.lastLoginAt)}</span> },
-            { k: "act", label: "", w: 150, render: (m) => actCell(m) },
+            { k: "act", label: "", w: 215, render: (m) => actCell(m) },
           ]}
           rows={listed}
           empty="아직 회원이 없습니다 — 위 가입 링크를 나눠 주세요."
@@ -547,6 +579,60 @@ export default function CenterMembers({ onFamilies = null }) {
               <li key={ln}>{ln}</li>
             ))}
           </ul>
+        )}
+      </Confirm>
+
+      {/* 임시 비밀번호 — 발급 전에는 무엇이 바뀌는지, 발급 뒤에는 임시 비밀번호를 한 번만 보여 준다 */}
+      <Confirm
+        open={!!pw && !pw.temp}
+        title={pw ? `${pw.m.name} 님(${pw.m.loginId || pw.m.id})에게 임시 비밀번호를 발급합니다` : ""}
+        body=""
+        confirmLabel="발급"
+        tone="warn"
+        onCancel={() => setPw(null)}
+        onConfirm={() => {
+          const x = pw;
+          setPw(null);
+          if (x) issuePw(x.m);
+        }}
+      >
+        {pw && !pw.temp && (
+          <ul className="mt-2 list-disc space-y-1 pl-4 text-[13px] leading-[1.6] text-ink">
+            <li>
+              <b>전화로 본인인지 먼저 확인해 주세요</b> — 가입할 때 적은 이름{pw.m.phone ? ` · 휴대폰 ${pw.m.phone}` : ""}.
+            </li>
+            <li>지금 비밀번호는 바로 쓸 수 없게 되고, 이 아이디로 로그인해 있던 기기는 모두 다시 로그인해야 합니다.</li>
+            <li>임시 비밀번호로 로그인하면 새 비밀번호를 정해야 앱을 쓸 수 있습니다.</li>
+            <li>발급한 사실은 권한 변경 기록과 감사로그에 남습니다 (비밀번호는 남기지 않습니다).</li>
+          </ul>
+        )}
+      </Confirm>
+      <Confirm
+        open={!!pw?.temp}
+        title={pw?.temp ? `${pw.m.name} 님의 임시 비밀번호` : ""}
+        body=""
+        confirmLabel={copied === "pw" ? "복사됨" : "복사"}
+        cancelLabel="닫기"
+        tone="navy"
+        onCancel={() => setPw(null)}
+        onConfirm={() => {
+          copy(pw.temp);
+          copied2s("pw");
+        }}
+      >
+        {pw?.temp && (
+          <>
+            <p className="mt-3 select-all rounded-xl bg-navy/[.05] px-4 py-3 text-center font-num text-[24px] font-bold tracking-[.14em] text-navy" aria-label="임시 비밀번호">
+              {pw.temp}
+            </p>
+            <ul className="mt-3 list-disc space-y-1 pl-4 text-[13px] leading-[1.6] text-ink">
+              <li>
+                <b>이 창을 닫으면 다시 볼 수 없습니다.</b> 잘못 닫았으면 다시 발급해 주세요.
+              </li>
+              <li>전화로 불러 주세요 — 문자 · 메신저로 보내면 기록이 남습니다.</li>
+              <li>회원이 이 비밀번호로 로그인하면 새 비밀번호를 정하는 화면이 먼저 뜹니다.</li>
+            </ul>
+          </>
         )}
       </Confirm>
 

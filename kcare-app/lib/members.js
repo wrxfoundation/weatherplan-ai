@@ -110,6 +110,29 @@ export async function getMember(id) {
   return data;
 }
 
+// 비밀번호 보안 표시 — accounts.profile 안의 sec 칸에 둔다 (2026-11-18 · 표를 바꾸지 않으려고 — 초대 표시 profile.invite 와 같은 방식).
+//   sec.temp   관제가 발급한 임시 비밀번호 상태 — 로그인하면 새 비밀번호를 정해야 한다
+//   sec.pwAt   비밀번호를 마지막으로 바꾼 때 — 그보다 먼저 로그인한 기기는 다시 로그인해야 한다
+export const secOf = (profile) => (profile && typeof profile === "object" && profile.sec && typeof profile.sec === "object" ? profile.sec : {});
+
+// 내 계정 확인용 — 비밀번호 해시까지 (확인에만 쓰고 응답에 싣지 않는다)
+export async function memberWithHash(id) {
+  const { data, error, status } = await db().from("accounts").select(`${MEMBER_COLS}, password_hash`).eq("id", id).maybeSingle();
+  if (error) throw fail(error, status);
+  return data;
+}
+
+// 비밀번호 바꾸기 — 해시와 보안 표시를 같이 적는다. temp: 관제가 발급한 임시 비밀번호. 잠금도 푼다 (잠금 칸이 없는 예전 표면 그 칸은 건너뛴다)
+export async function setPassword(id, hash, { temp = false } = {}) {
+  const m = await getMember(id);
+  if (!m) return null;
+  const profile = { ...(m.profile && typeof m.profile === "object" ? m.profile : {}), sec: { ...(temp ? { temp: true } : {}), pwAt: new Date().toISOString() } };
+  let r = await db().from("accounts").update({ password_hash: hash, profile, failed_logins: 0, locked_until: null }).eq("id", id).not("password_hash", "is", null).select(MEMBER_COLS);
+  if (r.error && dbErrorCode(r.error, r.status) === "schema-missing") r = await db().from("accounts").update({ password_hash: hash, profile }).eq("id", id).not("password_hash", "is", null).select(MEMBER_COLS);
+  if (r.error) throw fail(r.error, r.status);
+  return r.data?.[0] || null;
+}
+
 export async function patchMember(id, fields) {
   const { data, error, status } = await db().from("accounts").update(fields).eq("id", id).select(MEMBER_COLS);
   if (error) throw fail(error, status);
@@ -170,12 +193,13 @@ export async function centerPeople(centerId) {
 // 같은 계정을 몇 초마다 묻지 않게 15초 동안 기억한다 (서버 인스턴스마다).
 const cache = new Map();
 const TTL = 15000;
-export async function memberStillValid(user) {
+// allowTemp: 임시 비밀번호 상태에서도 통과시킨다 — 새 비밀번호를 정하는 요청(pages/api/account.js)만 쓴다
+export async function memberStillValid(user, { allowTemp = false } = {}) {
   if (user?.provider !== "member") return { ok: true };
   const hit = cache.get(user.id);
   let row = hit && Date.now() - hit.at < TTL ? hit.row : null;
   if (!row) {
-    const { data, error, status } = await db().from("accounts").select("status, role, center_id, household_id, created_at").eq("id", user.id).maybeSingle();
+    const { data, error, status } = await db().from("accounts").select("status, role, center_id, household_id, created_at, profile").eq("id", user.id).maybeSingle();
     if (error) throw fail(error, status);
     row = data || { status: "gone" };
     cache.set(user.id, { at: Date.now(), row });
@@ -183,8 +207,18 @@ export async function memberStillValid(user) {
   if (row.status !== "active") return { ok: false, reason: row.status === "gone" ? "account-removed" : `account-${row.status}` };
   // 이 로그인보다 나중에 만들어진 계정 — 관제가 지운 아이디를 누군가 다시 만든 것이다. 옛 기기의 로그인은 그 계정의 것이 아니다
   // (2026-11-18 점검 — 전에는 센터 · 역할 · 가족만 같으면 지워진 계정의 옛 로그인이 새 비밀번호 없이 되살아났다)
+  // 로그인할 때 세션에 적어 둔 '계정이 만들어진 때'(born)와 지금 계정의 것이 다르면 다른 계정이다. born 이 없는 예전 세션은
+  // 로그인한 때(since)와 견준다 (서버 · DB 시계 차이를 1분까지 봐준다)
   const joinedAt = Date.parse(row.created_at || "");
-  if (Number(user.since) > 0 && Number.isFinite(joinedAt) && joinedAt > Number(user.since) + 60000) return { ok: false, reason: "account-removed" };
+  if (user.born && Number.isFinite(joinedAt) && Number.isFinite(Date.parse(user.born)) && Date.parse(user.born) !== joinedAt) return { ok: false, reason: "account-removed" };
+  if (!user.born && Number(user.since) > 0 && Number.isFinite(joinedAt) && joinedAt > Number(user.since) + 60000) return { ok: false, reason: "account-removed" };
+  // 비밀번호가 이 로그인 뒤에 바뀌었다 (본인이 바꿨거나 관제가 임시 비밀번호를 발급) — 옛 로그인은 여기서 끝낸다 (2026-11-18).
+  // 로그인한 때가 없는 예전 세션은 0 으로 본다 — 비밀번호를 한 번이라도 바꾼 계정이면 다시 로그인하게 된다
+  const sec = secOf(row.profile);
+  const pwAt = Date.parse(sec.pwAt || "");
+  if (Number.isFinite(pwAt) && pwAt > Number(user.since || 0) + 1000) return { ok: false, reason: "password-changed", area: areaOfRole(row.role) };
+  // 임시 비밀번호로 로그인한 채로는 기록을 읽고 쓰지 못한다 — 새 비밀번호를 정한 뒤에
+  if (sec.temp && !allowTemp) return { ok: false, reason: "password-temp", area: areaOfRole(row.role) };
   // 바뀐 역할의 입구(영역)는 본인에게만 알려 준다 — 다시 로그인할 곳으로 바로 보내려고
   if (row.role !== user.role || row.center_id !== user.center) return { ok: false, reason: "role-changed", area: row.center_id === user.center ? areaOfRole(row.role) : null };
   // 관제가 이 회원을 다른 가족으로 옮겼다 (2026-11-12) — 세션에는 예전 가족이 실려 있으니 다시 로그인해 새 가족 기록을 연다

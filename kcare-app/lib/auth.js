@@ -22,7 +22,8 @@ export function AuthProvider({ children }) {
   return <SessionProvider refetchOnWindowFocus={false}>{children}</SessionProvider>;
 }
 
-// user: { id, name, email, provider("test"|"google-sim"|"google"|"member"), role, household, center }
+// user: { id, name, email, provider("test"|"google-sim"|"google"|"member"), role, household, center, mustChange }
+//   mustChange — 관제가 발급한 임시 비밀번호로 들어왔다. 새 비밀번호를 정할 때까지 내 정보 관리(/account)로 보낸다 (pages/_app.jsx)
 export function useAuth() {
   if (!AUTH_ENABLED) return OFF;
   // AUTH_ENABLED 는 빌드 때 고정되는 상수라 렌더마다 같은 경로를 탄다 — 훅 호출 순서가 바뀌지 않는다
@@ -61,14 +62,17 @@ export async function testSignIn({ id, password, via = "test" }) {
 
 // 로그아웃하면 이 기기에 받아 둔 가구 기록 사본(전화번호 · 주소가 들어 있다)을 지운다 — 같은 폰을 다른 사람이 쓸 수 있다
 // (2026-10-19 점검 L-19). 서버에 아직 못 보낸 동작은 지우지 않는다 — 다시 로그인하면 이어서 보낸다. 그런 게 있으면 먼저 알린다.
-export function logout(callbackUrl = "/") {
+// force: 묻지 않고 나간다 (비밀번호를 바꾼 뒤 · 탈퇴한 뒤 — 세션이 이미 끝났다)
+// wipe:  보내지 못한 동작까지 지운다 (탈퇴 — 그 계정으로는 다시 보낼 수 없다) · 2026-11-18
+export function logout(callbackUrl = "/", { force = false, wipe = false } = {}) {
   if (typeof window !== "undefined") {
     try {
       const keys = Object.keys(window.localStorage);
       const unsent = keys.some((k) => k.startsWith("kcare-acct-pending-"));
-      if (unsent && !window.confirm("아직 서버에 보내지 못한 기록이 있습니다.\n이 기기에 남겨 두었다가 다시 로그인하면 이어서 보냅니다.\n지금 로그아웃할까요?")) {
+      if (!force && unsent && !window.confirm("아직 서버에 보내지 못한 기록이 있습니다.\n이 기기에 남겨 두었다가 다시 로그인하면 이어서 보냅니다.\n지금 로그아웃할까요?")) {
         return Promise.resolve();
       }
+      if (wipe) keys.filter((k) => k.startsWith("kcare-acct-pending-")).forEach((k) => window.localStorage.removeItem(k));
       keys.filter((k) => k.startsWith("kcare-acct-cache-")).forEach((k) => window.localStorage.removeItem(k));
     } catch (_) {
       /* 저장소가 막힌 브라우저 — 지울 것도 없다 */

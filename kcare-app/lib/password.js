@@ -42,6 +42,19 @@ export function newJoinCode() {
   return Array.from(b, (x) => A[x % A.length]).join("");
 }
 
+// 임시 비밀번호 (2026-11-18 — 관제가 발급한다 · pages/api/members.js). 헷갈리는 글자(0 o 1 l i)를 뺀 소문자 · 숫자 10자리,
+// 영문과 숫자가 반드시 섞이게 (가입 규칙 checkPassword 를 지나야 로그인 뒤 '지금 비밀번호'로도 쓸 수 있다). 31자 중 10자리 ≈ 49비트
+export function newTempPassword() {
+  const A = "abcdefghjkmnpqrstuvwxyz23456789";
+  for (;;) {
+    // 256 은 31 로 나누어떨어지지 않는다 — 치우치지 않게 248(31 × 8) 이상은 버리고 다시 뽑는다
+    const out = [];
+    while (out.length < 10) for (const x of randomBytes(16)) if (x < 248 && out.length < 10) out.push(A[x % A.length]);
+    const s = out.join("");
+    if (/[a-z]/.test(s) && /\d/.test(s)) return s;
+  }
+}
+
 // 비밀번호 비교 (센터 관리자 계정용) — 길이 · 내용과 상관없이 같은 시간
 export function sameSecret(input, want) {
   const a = String(input || "");
