@@ -13,6 +13,7 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "../auth/[...nextauth]";
 import { authConfigured } from "../../../lib/auth-server";
 import { dbConfigured, dbErrorCode } from "../../../lib/db";
+import { memberStillValid } from "../../../lib/members";
 import { hasSecret, signOrder } from "../../../lib/toss-server";
 import { canPayRole, extraPayable, householdState, requestPayable } from "../../../lib/pay-server";
 import { makeOrderId, orderScope } from "../../../lib/payments";
@@ -41,6 +42,11 @@ export default async function handler(req, res) {
   try {
     // 로그인한 가구(테스트 계정 · 센터 회원)면 서버에 저장된 기록으로 금액을 정한다
     const user = authConfigured() && dbConfigured() ? (await getServerSession(req, res, authOptions))?.user : null;
+    // 관제가 정지 · 삭제하거나 역할 · 가족을 바꾼 계정은 결제를 시작하지 않는다 (2026-11-18 점검 — 다시 로그인해야 새 가족의 기록으로 결제한다)
+    if (user?.household) {
+      const still = await memberStillValid(user);
+      if (!still.ok) return res.status(401).json({ error: "ACCOUNT_CHANGED", message: "계정 상태가 바뀌었습니다. 다시 로그인한 뒤 결제해 주세요." });
+    }
     const state = user?.household ? await householdState(user.household) : null;
     if (state && !canPayRole(user.role)) {
       return res.status(403).json({ error: "FAMILY_ONLY", message: "결제는 가족(보호자 · 어르신) 계정에서 합니다." });

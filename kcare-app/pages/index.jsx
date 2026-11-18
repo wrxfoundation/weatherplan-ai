@@ -640,7 +640,7 @@ export default function ServiceLanding({ heroArt, heroVideo }) {
             <ul className="flex flex-wrap gap-x-4 gap-y-1">
               {FOOTER.docs.map((d) => (
                 <li key={d.label}>
-                  {/* 약관 3종은 따로 여는 화면이다 (/terms · /refund · /privacy) */}
+                  {/* 약관 4종은 따로 여는 화면이다 (/terms · /refund · /privacy · /location) */}
                   {d.href ? (
                     <Link href={d.href} className="tap underline underline-offset-2">
                       {d.label}

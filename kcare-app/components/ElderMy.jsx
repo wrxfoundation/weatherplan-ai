@@ -1,9 +1,9 @@
 // 어르신 마이 (2026-10-22 시제품 v17) — 아래 메뉴 오른쪽 끝. 보호자 없이도 어르신이 멤버십을 보고 직접 정한다.
 //   요금제(관제가 지정 · lib/plans.js) · 이용료 결제(누가 · 어떻게 — 보호자 멤버십과 같은 값) · 결제 권한(가족 누구나 금액 제한 없이) · 설치비 ·
-//   정보 동의 · 약관(큰 글씨 — 위치 정보 갱신은 보호자 화면에도 같이 반영) · 환불 정책 · 로그인 계정.
+//   정보 동의 · 약관(큰 글씨 — 위치 정보 갱신은 보호자 화면에도 같이 반영) · 환불규정 · 로그인 계정.
 //   맨 아래 작은 글자 — 변경 상담 · 해지 신청 · 고객센터. 셋 다 관제 '지금 처리할 일'로 가고 관제가 연락드린다.
 // 2026-11-10 두 요금제 — 요금제 이름 · 월 요금 · 약정을 적는다. 지정 전이면 '요금제 확인 중' (금액을 지어내지 않는다).
-// 월 요금 자동 결제 등록은 관제가 연락해 안내한다 — 앱 결제창에서 카드를 등록하지 않는다. 해지할 때 드는 비용은 환불 정책에 있다.
+// 월 요금 자동 결제 등록은 관제가 연락해 안내한다 — 앱 결제창에서 카드를 등록하지 않는다. 해지할 때 드는 비용은 환불규정에 있다.
 import Link from "next/link";
 import { useState } from "react";
 import { BackHead, Btn, Sheet, SheetTitle, TONE, WhiteBtn } from "./ds";
@@ -230,7 +230,7 @@ export default function ElderMy({ elderName, right }) {
           </li>
           <li className="ds-row">
             <span className="ds-k">
-              <b className="!text-[19px]">환불 정책</b>
+              <b className="!text-[19px]">환불규정</b>
             </span>
             <button type="button" onClick={() => setSheet("refund")} className={mini} style={{ boxShadow: `0 3px 0 ${TONE.green.sh}`, color: TONE.green.fg }}>
               보기 <Line name="chevR" size={18} />
@@ -303,8 +303,8 @@ export default function ElderMy({ elderName, right }) {
       )}
 
       {sheet === "refund" && (
-        <Sheet onClose={close} label="환불 정책">
-          <SheetTitle sub={LEGAL.reviewed ? `시행일 ${LEGAL.effective}` : "정식 판매 전 안내본"} title="환불 정책" />
+        <Sheet onClose={close} label="환불규정">
+          <SheetTitle sub={LEGAL.reviewed ? `시행일 ${LEGAL.effective}` : "정식 판매 전 안내본"} title="환불규정" />
           <div className="ds-acc ds-accbig">
             <div className="ds-accbody" style={{ paddingTop: 16 }}>
               <PolicyBody policy={policyOf("refund")} />
@@ -358,7 +358,7 @@ export default function ElderMy({ elderName, right }) {
           ) : (
             <>
               <p className="m-0 rounded-[18px] bg-white px-4 py-3.5 text-[17px] font-bold leading-[1.6]">
-                신청하면 관제센터가 연락드려 기기 회수와 환불을 안내해 드려요. 드는 비용은 환불 정책에 있어요. 연락 전에는 아무것도 바뀌지 않아요.
+                신청하면 관제센터가 연락드려 기기 회수와 환불을 안내해 드려요. 드는 비용은 환불규정에 있어요. 연락 전에는 아무것도 바뀌지 않아요.
               </p>
               {openAsk("membership") && (
                 <p className="m-0 text-[16px] font-bold" style={{ color: "#5E6270" }}>

@@ -18,12 +18,9 @@ async function record(req, res, p) {
     const session = await getServerSession(req, res, authOptions);
     const user = session?.user;
     if (!user?.household) return;
-    // 관제가 정지 · 역할 변경한 회원의 결제는 가구 기록에 붙이지 않는다 (승인 자체는 토스에서 이미 끝났다 — 로그만)
-    const still = await memberStillValid(user);
-    if (!still.ok) {
-      console.error("[payments] 정지 · 변경된 계정의 결제 기록 건너뜀", still.reason);
-      return;
-    }
+    // 여기까지 온 결제는 토스에서 승인이 끝난 것이다 — 계정이 그사이 바뀌었어도 결제 표에는 남긴다.
+    // (2026-11-18 점검 — 전에는 정지 · 변경된 계정이면 결제 표만 건너뛰고 가구 기록에는 붙여서 둘이 어긋났다.
+    //  바뀐 계정의 결제는 아래 handler 가 승인 전에 막는다)
     const kind = /^kcare_([a-z]+)_/.exec(p.orderId)?.[1] || null;
     const { error, status } = await db()
       .from("payments")
@@ -102,6 +99,14 @@ export default async function handler(req, res) {
     try {
       user = (await getServerSession(req, res, authOptions))?.user || null;
       if (user?.household) {
+        // 관제가 정지 · 삭제하거나 역할 · 가족을 바꾼 계정 — 승인(청구)하지 않는다. 결제창에 있는 사이 가족이 옮겨졌으면
+        // 세션의 가구는 이제 남의 가족이다 (2026-11-18 점검). 이미 승인까지 끝난 결제(응답만 못 받음)는 그대로 남긴다
+        const still = await memberStillValid(user);
+        if (!still.ok) {
+          const done = await approvedPayment(paymentKey, orderId, value);
+          if (done) return finish(done, true);
+          return res.status(401).json({ error: "ACCOUNT_CHANGED", message: "계정 상태가 바뀌어 결제를 승인하지 않았습니다. 다시 로그인한 뒤 결제해 주세요." });
+        }
         const st = await householdState(user.household);
         // 이미 가구 기록에 있는 결제 — 결과 화면을 다시 열었거나 '다시 확인'을 눌렀다. 승인을 다시 부르지 않고 그 기록을 돌려준다
         const known = recordedPayment(st, orderId);

@@ -166,7 +166,11 @@ export default async function handler(req, res) {
               : action === "activate"
                 ? { status: "active", ...(m.status === "rejected" ? { approved_by: user.id, approved_at: now } : {}) }
                 : { role: nextRole };
+      // 직원 역할이 되면 계정에 적힌 가족 번호를 센터 첫 가족으로 되돌린다 (2026-11-18 점검 — 가족 가입 코드로 들어온 사람을
+      // 컨시어지 등으로 승인 · 변경하면 그 가족 번호가 직원 계정에 남아, 보이지 않는 구성원 때문에 빈 가족을 지울 수 없었다)
+      if ((action === "approve" || action === "role") && !isFamilyRole(nextRole) && m.household_id !== center.household) fields.household_id = center.household;
       const after = await patchMember(m.id, fields);
+      if (fields.household_id) forgetFamilyAccess();
       forgetMember(m.id);
       await audit({
         center_id: center.id,

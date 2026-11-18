@@ -1,28 +1,90 @@
-// 공개 문서 화면 — 이용약관(/terms) · 환불 정책(/refund) · 개인정보 처리방침(/privacy). 2026-11-10.
+// 공개 문서 화면 — 이용약관(/terms) · 환불규정(/refund) · 개인정보 처리방침(/privacy) · 위치정보이용약관(/location).
+// 2026-11-10 만들고, 2026-11-17 회사가 보낸 문서로 본문을 바꾸면서 굵은 글씨 · 하위 목록 · 머리말을 그리게 했다.
 // 로그인 없이 읽는다. 본문은 lib/policies.js 한 곳 — 앱 안 '약관 · 정책'과 같은 글이다.
 // 검색에는 열지 않는다 (서비스 소개와 상담 신청만 연다 — pages/_app.jsx INDEXABLE).
+import { Fragment } from "react";
 import Head from "next/head";
 import Link from "next/link";
 import Logo from "./Logo";
-import ExitTable from "./ExitTable";
-import { parasOf } from "./Policy";
+import { itemOf, parasOf } from "./Policy";
 import { LEGAL, PUBLIC_POLICIES, policyOf } from "../lib/policies";
 import { SITE, TEL } from "../lib/landing";
 
-// 기호가 낀 낱말은 줄 끝에서 쪼개지지 않게 묶는다 — K-CARE는 · "회사")가 · 02-2135-7751로 · 09시~19시에.
-// (.lp 의 keep-all 은 한글 낱말만 지킨다 — 붙임표 · 따옴표 · 괄호 뒤에서는 줄이 바뀔 수 있다)
+// 글을 낱말로 나눈다 — "**굵게** 보통" 처럼 굵은 글씨 표시(**)가 낱말 중간에서 열리고 닫혀도 한 낱말로 묶는다.
+//   [{ space } | { parts: [{ t, b }] }]
+function wordsOf(text) {
+  const out = [];
+  let cur = null;
+  String(text)
+    .split("**")
+    .forEach((seg, i) => {
+      const b = i % 2 === 1;
+      seg.split(/(\s+)/).forEach((t) => {
+        if (!t) return;
+        if (/^\s+$/.test(t)) {
+          out.push({ space: t });
+          cur = null;
+          return;
+        }
+        if (!cur) {
+          cur = { parts: [] };
+          out.push(cur);
+        }
+        cur.parts.push({ t, b });
+      });
+    });
+  return out;
+}
+
+// 기호가 낀 낱말은 줄 끝에서 쪼개지지 않게 묶는다 — K-CARE는 · "회사")가 · 02-2135-7751 · 2~5영업일 · 수립·공개합니다 · kdw@….
+// (.lp 의 keep-all 은 한글 낱말만 지킨다 — 붙임표 · 따옴표 · 괄호 · 가운뎃점 뒤에서는 줄이 바뀔 수 있다)
+const GLUE = /[-"'()%~·@/「」[\]]/;
 function Keep({ text }) {
-  return String(text)
-    .split(/(\s+)/)
-    .map((t, i) =>
-      /[-"()%~]/.test(t) ? (
-        <span key={i} className="whitespace-nowrap">
-          {t}
-        </span>
+  return wordsOf(text).map((w, i) => {
+    if (w.space) return w.space;
+    const inner = w.parts.map((p, j) =>
+      p.b ? (
+        <b key={j} className="font-bold text-navy">
+          {p.t}
+        </b>
       ) : (
-        t
+        p.t
       )
     );
+    return GLUE.test(w.parts.map((p) => p.t).join("")) ? (
+      <span key={i} className="whitespace-nowrap">
+        {inner}
+      </span>
+    ) : (
+      <Fragment key={i}>{inner}</Fragment>
+    );
+  });
+}
+
+// 목록 — 하위 목록이 딸린 줄은 그 아래에 한 단 들여 그린다 (ol 이면 번호)
+function Items({ items }) {
+  return (
+    <ul className="mt-2 list-disc space-y-1.5 pl-5 text-[16px] leading-[1.8] text-ink marker:text-[#B08D57]">
+      {items.map((raw) => {
+        const it = itemOf(raw);
+        const Sub = it.ol ? "ol" : "ul";
+        return (
+          <li key={it.t}>
+            <Keep text={it.t} />
+            {it.sub && (
+              <Sub className={`mt-1 space-y-1 pl-5 marker:text-[#B08D57] ${it.ol ? "list-decimal" : "list-[circle]"}`}>
+                {it.sub.map((x) => (
+                  <li key={x}>
+                    <Keep text={x} />
+                  </li>
+                ))}
+              </Sub>
+            )}
+          </li>
+        );
+      })}
+    </ul>
+  );
 }
 
 export default function LegalPage({ id }) {
@@ -58,30 +120,24 @@ export default function LegalPage({ id }) {
             </p>
           )}
 
+          {policy.intro && (
+            <p className="mt-7 text-[16px] leading-[1.8] text-ink">
+              <Keep text={policy.intro} />
+            </p>
+          )}
+
           <div className="mt-7 space-y-7">
             {policy.sections.map((s) => (
               <section key={s.h} aria-label={s.h}>
-                <h2 className="text-[19px] font-extrabold leading-[1.45] text-navy">{s.h}</h2>
+                <h2 className="text-[19px] font-extrabold leading-[1.45] text-navy">
+                  <Keep text={s.h} />
+                </h2>
                 {parasOf(s.p).map((x) => (
                   <p key={x} className="mt-2 text-[16px] leading-[1.8] text-ink">
                     <Keep text={x} />
                   </p>
                 ))}
-                {s.table === "exit" ? (
-                  <div className="lp-tb mt-3 rounded-[18px] bg-[#FBFAF6] px-[18px] py-2 sm:px-5">
-                    <ExitTable />
-                  </div>
-                ) : (
-                  s.li && (
-                    <ul className="mt-2 list-disc space-y-1.5 pl-5 text-[16px] leading-[1.8] text-ink marker:text-[#B08D57]">
-                      {s.li.map((x) => (
-                        <li key={x}>
-                          <Keep text={x} />
-                        </li>
-                      ))}
-                    </ul>
-                  )
-                )}
+                {s.li && <Items items={s.li} />}
                 {s.note && (
                   <p className="mt-2.5 text-[15.5px] leading-[1.8] text-[#5C5A54]">
                     <Keep text={s.note} />

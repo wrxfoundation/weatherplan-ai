@@ -235,12 +235,20 @@ export default function Families({ onOpened = null }) {
                   <Btn ghost small tone="muted" disabled={!!busy} onClick={() => (setRename(f.label || ""), setAsk({ kind: "rename", f }))}>
                     이름
                   </Btn>
-                  {fam.owner && !f.first && !f.members && !f.saved && (
+                  {fam.owner && !f.first && !f.members && !f.rejected && !f.saved && (
                     <Btn ghost small tone="muted" disabled={!!busy} onClick={() => setAsk({ kind: "delete", f })}>
                       지우기
                     </Btn>
                   )}
                 </div>
+                {/* 비어 보이는데 지우기가 없는 가족 — 왜 못 지우는지 적는다 (2026-11-18 점검: 단추만 사라져 이유를 알 수 없었다) */}
+                {fam.owner && !f.first && !f.members && (f.saved || f.rejected > 0) && (
+                  <p className="mt-1.5 text-[12px] leading-[1.6] text-muted">
+                    {f.saved
+                      ? "기록이 저장된 가족이라 지울 수 없습니다 — 쓰지 않으면 이름을 바꿔 두세요."
+                      : `거절한 가입 신청 ${f.rejected}건이 이 가족에 남아 있어 지울 수 없습니다 — 계정 · 권한에서 그 신청을 삭제하면 지울 수 있습니다.`}
+                  </p>
+                )}
               </li>
             );
           })}

@@ -11,7 +11,7 @@ import { useEffect, useState } from "react";
 import AreaShell from "../components/AreaShell";
 import { JoinPrompt } from "../components/AreaLogin";
 import MemberLogin from "../components/MemberLogin";
-import { AREAS, areaOfRole } from "../lib/centers";
+import { AREAS, areaOfRole, isFamilyRole } from "../lib/centers";
 import { PROVIDER_LABEL, logout, safeCallback, useAuth } from "../lib/auth";
 import { storageText, useSync } from "../lib/state";
 import { ROLE_HOME, ROLE_LABEL, householdName } from "../lib/test-accounts";
@@ -31,6 +31,7 @@ export default function LoginPage() {
   const callbackUrl = safeCallback(router.query.callbackUrl, "/");
   const [error, setError] = useState(null);
   const signedIn = auth.status === "authenticated" && auth.user;
+  const customer = signedIn && auth.user.provider === "member" && isFamilyRole(auth.user.role);
 
   useEffect(() => {
     if (typeof router.query.error === "string") setError(router.query.error);
@@ -55,6 +56,8 @@ export default function LoginPage() {
               {auth.user.email && <div className="truncate font-num text-[13px] text-muted">{auth.user.email}</div>}
             </div>
           </div>
+          {/* 어르신 · 보호자(가입한 회원)에게는 센터 이름 · 저장소 이름을 보이지 않는다 — 고객 입구다 (2026-11-18 점검) */}
+          {!customer && (
           <dl className="mt-4 space-y-1.5 rounded-xl bg-paper px-3.5 py-3 text-[13px]">
             <div className="flex gap-3">
               <dt className="w-[52px] shrink-0 text-muted">로그인</dt>
@@ -69,6 +72,7 @@ export default function LoginPage() {
               <dd className={`font-bold ${sync.mode === "server" && sync.status !== "error" ? "text-green" : "text-amber"}`}>{storageText(sync)}</dd>
             </div>
           </dl>
+          )}
           <button
             type="button"
             onClick={() => router.push(destination(auth.user.role))}

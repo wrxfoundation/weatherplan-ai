@@ -3,7 +3,7 @@
 // 한 관제 센터 안에 가족이 여럿이다. 가족마다 가구 기록(households 한 줄)과 가족 가입 코드가 하나씩 있다.
 //   · 어르신 · 보호자는 가족 가입 코드(또는 가족이 보낸 초대 링크)로 가입해 그 가족에 들어간다 (accounts.household_id).
 //   · 관제는 그 센터의 모든 가족을 본다. 컨시어지는 관제가 주 · 부 담당으로 지정한 가족만 본다.
-//   · 파트너(영업)는 예전 그대로 첫 가족을 본다 (가족 기록을 쓰지 않는 화면이다).
+//   · 파트너(영업)는 가족 기록을 보지 않는다 (2026-11-18 점검 — 전에는 첫 가족 기록을 통째로 읽고 쓸 수 있었다).
 // 어느 가족의 기록을 읽고 쓰는지는 서버가 정한다 — 어르신 · 보호자는 로그인 세션의 가구, 직원은 ?hh= 로 고른 가족을
 // 그 센터 것인지 · 볼 수 있는지 확인한 뒤에. 표의 새 칸은 supabase/families.sql (label · join_code · created_by).
 import { randomBytes } from "crypto";
@@ -55,7 +55,8 @@ async function rowsOf(centerId, cols) {
   return (data || []).filter((r) => centerOfHousehold(r.id)?.id === centerId);
 }
 
-// 그 센터의 가족 구성원(어르신 · 보호자) — 가족별로 묶는다. 이름 · 역할 · 상태만
+// 그 센터의 가족 구성원(어르신 · 보호자) — 가족별로 묶는다. 이름 · 역할 · 상태만.
+// 같이 돌려주는 concierges 는 지금 사용 중인 컨시어지 이름 — 가족 목록의 '담당'이 정지 · 삭제 · 역할 변경된 사람을 가리키지 않게 (2026-11-18 점검)
 async function membersByFamily(centerId) {
   const { data, error, status } = await db()
     .from("accounts")
@@ -74,14 +75,20 @@ async function membersByFamily(centerId) {
       if (!map.has(hh)) map.set(hh, []);
       map.get(hh).push(m);
     });
+  map.concierges = new Set((data || []).filter((m) => m.role === "concierge" && m.status === "active").map((m) => String(m.name || "").trim()).filter(Boolean));
   return map;
 }
 
-const viewOf = (row, members, { withCode }) => {
+const viewOf = (row, members, { withCode, concierges = null }) => {
   const mine = members || [];
   const active = mine.filter((m) => m.status === "active");
   const names = (role) => active.filter((m) => m.role === role).map((m) => String(m.name || "").trim()).filter(Boolean);
   const s = familySummary(row);
+  // 담당으로 적힌 이름이 지금 사용 중인 컨시어지가 아니면 '지정 전'으로 본다 — 가족을 열었을 때의 화면(lib/people.js)과 같은 기준
+  if (concierges) {
+    if (s.pri && !concierges.has(s.pri)) s.pri = null;
+    if (s.sub && !concierges.has(s.sub)) s.sub = null;
+  }
   const f = {
     id: row.id,
     first: isFirstFamily(row.id),
@@ -90,6 +97,8 @@ const viewOf = (row, members, { withCode }) => {
     guardians: names("guardian"),
     members: mine.filter((m) => m.status !== "rejected").length,
     pending: mine.filter((m) => m.status === "pending").length,
+    // 거절한 가입 신청 — 계정 줄이 이 가족에 남아 있어 지우기를 막는다 (화면이 이유를 알려 준다)
+    rejected: mine.filter((m) => m.status === "rejected").length,
     saved: (row.version || 0) > 0,
     createdAt: row.created_at || null,
     updatedAt: row.updated_at || null,
@@ -104,7 +113,7 @@ const viewOf = (row, members, { withCode }) => {
 export async function listFamilies(centerId, user) {
   const [rows, members] = await Promise.all([rowsOf(centerId, `${BASE_COLS}, ${PARTS}`), membersByFamily(centerId)]);
   const ops = user?.role === "ops";
-  const all = rows.map((r) => viewOf(r, members.get(r.id), { withCode: ops }));
+  const all = rows.map((r) => viewOf(r, members.get(r.id), { withCode: ops, concierges: members.concierges }));
   return ops ? all : all.filter((f) => isAssigned(f, user?.name));
 }
 
@@ -170,6 +179,12 @@ export async function rotateFamilyCode(id) {
 // 빈 가족 지우기 — 잘못 만든 가족 정리용. 구성원이 하나도 없고 기록을 한 번도 저장하지 않은 가족만 (첫 가족은 지우지 않는다)
 export async function deleteEmptyFamily(id) {
   if (isFirstFamily(id)) return { ok: false, why: "first" };
+  // 직원 계정에 이 가족 번호가 남아 있으면 센터 첫 가족으로 되돌린다 — 직원은 가족에 속하지 않는다 (예전에 역할이 바뀐 계정 정리)
+  const center = centerOfHousehold(id);
+  if (center) {
+    const tidy = await db().from("accounts").update({ household_id: center.household }).eq("household_id", id).not("role", "in", "(elder,guardian)").select("id");
+    if (tidy.error) throw fail(tidy.error, tidy.status);
+  }
   const { count, error, status } = await db().from("accounts").select("id", { count: "exact", head: true }).eq("household_id", id);
   if (error) throw fail(error, status);
   if ((count || 0) > 0) return { ok: false, why: "has-members" };
@@ -201,7 +216,7 @@ export const homeOfMember = (m, center) => (isFamilyRole(m?.role) && centerOfHou
 //   어르신 · 보호자 · 테스트 가구   로그인 세션의 가구 (요청 값이 다르면 거절한다)
 //   관제                          ?hh= 로 고른 그 센터의 가족. 없으면 첫 가족
 //   컨시어지                      ?hh= 로 고른, 자기가 주 · 부 담당인 가족. 없으면 담당 가족 중 첫 번째 — 하나도 없으면 no-family
-//   파트너(영업)                   첫 가족
+//   파트너(영업)                   없음 (no-record) — 가족 기록을 쓰지 않는 화면이다
 // 같은 것을 몇 초마다 묻지 않게 잠깐 기억한다 (서버 인스턴스마다 — 담당이 바뀌면 15초 안에 따라온다)
 const seen = new Map();
 const TTL = 15000;
@@ -257,6 +272,8 @@ export async function householdOf(req, user) {
     return mine ? { household: mine, center } : { error: "no-family", status: 404 };
   }
 
-  // 파트너(영업) — 가족을 고르지 않는다
-  return { household: center.household, center };
+  // 파트너(영업) · 그 밖의 역할 — 가족 기록을 주지 않는다 (2026-11-18 점검).
+  // 전에는 첫 가족을 돌려줘서, 파트너 계정이 그 가족의 요청 · 결제 · 연락처 · 음성까지 읽고 덮어쓸 수 있었다.
+  // 가족을 나누기 전(센터에 가족 하나)의 규칙이 남아 있던 것이다 — 파트너 화면은 가족 기록 없이 돈다 (lib/state.js noRecord)
+  return { error: "no-record", status: 403 };
 }

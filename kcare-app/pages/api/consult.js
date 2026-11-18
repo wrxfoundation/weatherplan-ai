@@ -15,6 +15,7 @@ import { db, dbConfigured, dbErrorCode } from "../../lib/db";
 import { CENTERS } from "../../lib/centers";
 import { CONSULT_STATUS, addConsult, checkConsult, consultView, listConsults, setConsultStatus } from "../../lib/consults";
 import { clientIp, makeLimiter, sameSiteJson } from "../../lib/http";
+import { memberStillValid } from "../../lib/members";
 
 const tooMany = makeLimiter({ windowMs: 10 * 60 * 1000, max: 5 });
 
@@ -24,6 +25,12 @@ async function opsUser(req, res) {
   if (!user?.household) return { code: 401, error: "login-required" };
   if (user.role !== "ops") return { code: 403, error: "ops-only" };
   if (!CENTERS[user.center]) return { code: 403, error: "no-center" };
+  // 관제가 정지 · 삭제 · 역할 변경한 계정은 로그인 세션이 남아 있어도 여기서 멈춘다 (2026-11-18 점검 —
+  // 전에는 확인하지 않아, 정지된 관제 계정이 세션이 끝날 때까지 상담 신청자의 이름 · 연락처를 읽을 수 있었다)
+  if (dbConfigured()) {
+    const still = await memberStillValid(user);
+    if (!still.ok) return { code: 401, error: still.reason };
+  }
   return { user };
 }
 

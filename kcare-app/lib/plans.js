@@ -1,5 +1,5 @@
 // 요금제 — 금액과 구성의 한 곳 (2026-11-06 랜딩 요청 4장 · 2026-11-10 앱 안쪽 반영).
-// 서비스 소개(lib/landing.js) · 앱 안 멤버십 화면 · 관제 어르신 관리 · 약관/환불 정책(lib/policies.js)이 모두 여기를 읽는다.
+// 서비스 소개(lib/landing.js) · 앱 안 멤버십 화면 · 관제 어르신 관리 · 약관/환불규정(lib/policies.js)이 모두 여기를 읽는다.
 // 금액이 바뀌면 FEE 숫자만 고친다 — 첫 달 금액 · 해지 비용 합계는 계산한다.
 //
 // 가구의 요금제는 가구 기록의 plan 칸에 둔다 ({ key: "basic" | "care", by, at }).
@@ -49,7 +49,7 @@ export const PLANS = {
 export const PLAN_KEYS = Object.keys(PLANS);
 export const isPlan = (k) => typeof k === "string" && Object.prototype.hasOwnProperty.call(PLANS, k);
 
-// 해지와 환불 표 — 서비스 소개 요금 구역 · 환불 정책 · 이용약관이 같은 줄을 쓴다.
+// 해지와 환불 표 — 서비스 소개 요금 구역이 그린다. 금액은 환불규정(lib/policies.js)과 같은 FEE 를 읽는다.
 // cells: 두 칸이면 [안심 기본, 전담 케어], 한 칸이면 두 요금제 공통. { b: 굵은 값, lines: 아래 줄들 }
 export const EXIT_HEAD = ["구분", "안심 기본", "전담 케어"];
 export const EXIT_BOTH = "두 요금제 공통";
@@ -72,7 +72,8 @@ export const EXIT_ROWS = [
   { k: "갤럭시 핏 분실, 파손", cells: [{ b: "고객 개별 구매", lines: [] }] },
   { k: "센서 3대 분실, 미반납", cells: [{ b: won(FEE.sensorLost), lines: [] }] },
 ];
-export const EXIT_NOTE = "해지하면 다음 결제일부터 결제가 멈추고, 이미 결제한 회차는 다음 결제일 전날까지 이용하실 수 있습니다.";
+// 2026-11-17 회사가 보낸 환불규정 1장 '월 구독료 정산' 그대로 — 예전 문구(다음 결제일 전날까지 이용 · 정산 없음)를 바꿨다
+export const EXIT_NOTE = "월 구독료는 가입일 기준으로 매월 자동 결제되며, 중도 해지 시 이미 결제된 당월 잔여 일수에 대해서는 일할 계산하여 정산합니다.";
 // 표를 글 한 줄씩으로 — 좁은 화면의 약관 · AI 상담 답변 기준
 export const exitLines = () =>
   EXIT_ROWS.map((r) =>

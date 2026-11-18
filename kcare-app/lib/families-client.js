@@ -24,7 +24,14 @@ export function refreshFamilies() {
     try {
       const r = await fetch("/api/families", { cache: "no-store" });
       const j = await r.json().catch(() => ({}));
-      if (!r.ok) publish({ status: "error", error: j.error || `http-${r.status}` });
+      if (!r.ok) {
+        publish({ status: "error", error: j.error || `http-${r.status}` });
+        // 가족 칸이 아직 없는 서버(families.sql 실행 전) — 다시 물어도 같은 답이다. 화면을 새로 열 때까지 묻지 않는다 (2026-11-18 점검)
+        if (j.error === "schema-missing" && timer) {
+          clearInterval(timer);
+          timer = null;
+        }
+      }
       else publish({ status: "ready", error: null, families: Array.isArray(j.families) ? j.families : [], canManage: !!j.canManage, owner: !!j.owner, center: j.center || null });
     } catch (_) {
       publish({ status: snap.status === "ready" ? "ready" : "error", error: "network" });

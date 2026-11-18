@@ -46,7 +46,7 @@ export default function MembersPage() {
         <div className="ds-gcard ds-r" style={{ "--d": "40ms", background: TONE.green.bg }}>
           {family.length === 0 ? (
             <p className="text-[16px]" style={{ color: TONE.green.fg }}>
-              아직 이 센터에 승인된 보호자가 없습니다.
+              아직 승인된 보호자가 없습니다.
             </p>
           ) : (
             <ul className="m-0 list-none p-0">

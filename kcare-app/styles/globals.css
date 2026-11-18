@@ -984,12 +984,16 @@ a.btn-press {
   .ds-acc[open] summary .cv { transform: rotate(180deg); }
   .ds-acc .ds-accbody { padding: 2px 18px 18px; display: flex; flex-direction: column; gap: 12px; font-size: 15px; line-height: 1.65; color: #3a3f50; }
   .ds-acc[open] .ds-accbody { animation: dsFadeIn 0.3s ease both; }
-  /* 어르신 정보 동의 · 환불 정책 — 약관 글씨를 조금 키운다 (2026-10-22) */
+  /* 어르신 정보 동의 · 환불규정 — 약관 글씨를 조금 키운다 (2026-10-22) */
   .ds-accbig .ds-acc summary { font-size: 19px; }
   .ds-accbig .ds-acc .ds-accbody,
   .ds-acc.ds-accbig .ds-accbody { font-size: 17px; }
   .ds-acc h4 { margin: 0 0 2px; font-size: 15px; font-weight: 900; color: #1b2340; }
   .ds-acc ul { margin: 0; padding-left: 18px; list-style: disc; }
+  /* 하위 목록 · 굵은 글씨 — 회사가 보낸 약관 문서의 모양 (2026-11-17) */
+  .ds-acc ul ul { margin-top: 3px; list-style: circle; }
+  .ds-acc ol { margin: 3px 0 0; padding-left: 20px; list-style: decimal; }
+  .ds-acc .ds-accbody b { font-weight: 800; color: #1b2340; }
 
   /* ── 보호자 리포트 (A4 → 폰 폭) ── */
   .ds-rpchip { display: inline-flex; align-items: center; gap: 5px; border-radius: 999px; padding: 4px 10px; font-size: 12px; font-weight: 700; white-space: nowrap; }

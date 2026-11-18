@@ -1,58 +1,87 @@
 // 약관 · 정책 접는 칸 (2026-10-15 시안 '정보 동의 › 약관 · 정책'). 내용은 lib/policies.js 한 곳에서 온다.
-// 같은 본문을 공개 화면(/terms · /refund · /privacy)도 그린다 — components/LegalPage.jsx.
-// 문장 속 ⟦…⟧ 는 아직 정해지지 않은 값 — 노란 칸(ds-tbd)으로 그리고, 스크린리더에는 '확인 필요'를 붙여 읽힌다.
-// (2026-11-10 본문을 다시 쓰면서 ⟦…⟧ 는 없어졌다 — 모르는 값은 문장에 넣지 않는다. 그리는 법은 남겨 둔다.)
+// 같은 본문을 공개 화면(/terms · /refund · /privacy · /location)도 그린다 — components/LegalPage.jsx.
+// 글 속 표시 두 가지:
+//   · **…**  굵은 글씨 — 회사가 보낸 문서의 굵은 글씨를 그대로 살린다 (2026-11-17)
+//   · ⟦…⟧   아직 정해지지 않은 값 — 노란 칸(ds-tbd)으로 그리고, 스크린리더에는 '확인 필요'를 붙여 읽힌다 (지금 본문에는 없다)
 import { Line } from "./clay";
 import { TONE } from "./ds";
 
-export function Tbd({ text }) {
-  const parts = String(text).split(/(⟦[^⟧]*⟧)/);
-  return parts.map((s, i) =>
-    s.startsWith("⟦") ? (
-      <span key={i} className="ds-tbd">
-        {s.slice(1, -1)}
-        <span className="sr-only"> (확인 필요)</span>
-      </span>
-    ) : (
-      <span key={i}>{s}</span>
-    )
-  );
+export function Rich({ text }) {
+  return String(text)
+    .split(/(\*\*[^*]+\*\*|⟦[^⟧]*⟧)/)
+    .filter(Boolean)
+    .map((s, i) =>
+      s.startsWith("**") ? (
+        <b key={i}>{s.slice(2, -2)}</b>
+      ) : s.startsWith("⟦") ? (
+        <span key={i} className="ds-tbd">
+          {s.slice(1, -1)}
+          <span className="sr-only"> (확인 필요)</span>
+        </span>
+      ) : (
+        <span key={i}>{s}</span>
+      )
+    );
 }
 
 // 문단 — 문자열 하나거나 여러 문단의 배열
 export const parasOf = (p) => (p == null ? [] : Array.isArray(p) ? p : [p]);
+// 목록 한 줄 — 문자열이거나 { t, sub, ol } (하위 목록이 딸린 줄)
+export const itemOf = (x) => (typeof x === "string" ? { t: x, sub: null, ol: false } : { t: x.t, sub: x.sub || null, ol: !!x.ol });
 
-// 한 조항 — 문단 → 목록 → 덧붙이는 말 순서
+function Items({ items, className = "" }) {
+  return (
+    <ul className={className}>
+      {items.map((raw) => {
+        const it = itemOf(raw);
+        const Sub = it.ol ? "ol" : "ul";
+        return (
+          <li key={it.t}>
+            <Rich text={it.t} />
+            {it.sub && (
+              <Sub>
+                {it.sub.map((x) => (
+                  <li key={x}>
+                    <Rich text={x} />
+                  </li>
+                ))}
+              </Sub>
+            )}
+          </li>
+        );
+      })}
+    </ul>
+  );
+}
+
+// 한 조항 — 문단 → 목록 → 덧붙이는 말 순서. 머리말(intro)이 있으면 조항 앞에 둔다
 export function PolicyBody({ policy }) {
   return (
     <>
+      {policy.intro && (
+        <p>
+          <Rich text={policy.intro} />
+        </p>
+      )}
       {policy.sections.map((s) => (
         <div key={s.h}>
           <h4>{s.h}</h4>
           {parasOf(s.p).map((x) => (
             <p key={x} className="mt-1 first:mt-0">
-              <Tbd text={x} />
+              <Rich text={x} />
             </p>
           ))}
-          {s.li && (
-            <ul className={s.p ? "mt-1.5" : ""}>
-              {s.li.map((x) => (
-                <li key={x}>
-                  <Tbd text={x} />
-                </li>
-              ))}
-            </ul>
-          )}
+          {s.li && <Items items={s.li} className={s.p ? "mt-1.5" : ""} />}
           {s.note && (
             <p className="mt-1.5">
-              <Tbd text={s.note} />
+              <Rich text={s.note} />
             </p>
           )}
         </div>
       ))}
       {policy.foot && (
         <div className="ds-src">
-          <Tbd text={policy.foot} />
+          <Rich text={policy.foot} />
         </div>
       )}
     </>

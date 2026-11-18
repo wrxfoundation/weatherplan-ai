@@ -12,7 +12,9 @@ import { logout, useAuth } from "./auth";
 import { setStorageScope } from "./scope";
 import { chooseFamily, useFamilyChoice } from "./family-select";
 import { cleanMedSlot, cleanSupplement, healthOf, kstToday, medSummary, supplementLine } from "./meds";
-import { AREAS, areaOfRole, centerOfHousehold, isCenterHousehold } from "./centers";
+import { AREAS, areaOfRole, centerOfHousehold, isCenterHousehold, isFamilyRole } from "./centers";
+import { COMPANY } from "./company";
+import KeepTel from "../components/Tel";
 import { applyPeople, peopleFor } from "./people";
 import { REAPPROVE_KEYS, eventLocked, eventOwner } from "./event-rights";
 import { normalizePayStatus } from "./payments";
@@ -1744,6 +1746,13 @@ const writeLocal = (key, value) => {
 const hhQuery = (staffRef, householdRef, lead) => (staffRef.current && householdRef.current ? `${lead}hh=${encodeURIComponent(householdRef.current)}` : "");
 const lostFamily = (res, j) => (res.status === 403 && j.error === "family-not-allowed") || (res.status === 404 && (j.error === "family-not-found" || j.error === "no-family"));
 const savePending = (hh, uid, list) => hh && writeLocal(pendingKey(hh, uid), list.length ? list : null);
+// 관제가 이 계정을 멈추거나 역할 · 가족을 바꿨다 — 안내대로 '지금부터 누른 것은 저장되지 않는다'.
+// 모아 둔 동작을 이 기기에서도 지운다 (2026-11-18 점검 — 남겨 두면 로그아웃할 때마다 '보내지 못한 기록이 있습니다'가 뜨고,
+// 다시 로그인하면 저장되지 않는다던 동작이 들어갔다)
+const dropPending = (pendingRef, accountRef, hh) => {
+  pendingRef.current = [];
+  savePending(hh, accountRef.current, []);
+};
 const saveCache = (hh, state, version) => hh && state && writeLocal(cacheKey(hh), { version, state });
 
 export function AppStateProvider({ children }) {
@@ -1754,6 +1763,8 @@ export function AppStateProvider({ children }) {
   // 관제 · 컨시어지는 한 센터의 여러 가족을 맡는다 — 지금 보는 가족은 직원이 고른 것 (2026-11-12 · lib/family-select.js).
   // 고르기 전에는 서버가 정한다: 관제는 첫 가족, 컨시어지는 담당 가족 중 첫 번째 (하나도 없으면 '담당 가족 없음' 화면)
   const centerStaff = !!auth.user?.center && (auth.user?.role === "ops" || auth.user?.role === "concierge");
+  // 파트너(영업)는 가족 기록을 쓰지 않는다 (2026-11-18 점검) — 서버에서 읽지도 보내지도 않고, 화면 상태는 이 기기에만 둔다
+  const noRecord = !!auth.user?.center && auth.user?.role === "sales";
   const staffUid = centerStaff ? auth.user.id : null;
   const pick = useFamilyChoice(staffUid);
   const household = (centerStaff && pick) || auth.user?.household || null;
@@ -1854,6 +1865,11 @@ export function AppStateProvider({ children }) {
     (async () => {
       if (scope === "demo") {
         loadLocal(KEY, DEFAULT, "demo");
+      } else if (noRecord) {
+        // 예전 판이 이 기기에 받아 둔 첫 가족 기록 · 보내려던 동작이 남아 있으면 지운다
+        writeLocal(cacheKey(household), null);
+        writeLocal(pendingKey(household, accountRef.current), null);
+        loadLocal(`kcare-acct-sales-${accountRef.current || "-"}-v1`, freshFor(household), "local", "no-record");
       } else {
         let res = null;
         let body = {};
@@ -1906,13 +1922,17 @@ export function AppStateProvider({ children }) {
           if (res?.ok && Array.isArray(body.people)) setCenterPeople(body.people);
           const next = carried.reduce((acc, a) => reducer(acc, a), base ? fromServer(base, household) : freshFor(household));
           showState(next);
-          // 처음 들어온 가구 — 빈 기록으로 만들어 서버에 한 번 저장한다
-          pendingRef.current = res?.ok && !base ? [{ type: "init", _at: Date.now(), _op: newOpId() }, ...carried] : carried;
+          // 처음 들어온 가구 — 빈 기록으로 만들어 서버에 한 번 저장한다. 관제 · 컨시어지가 열어 보기만 한 가족은 저장하지 않는다
+          // (2026-11-18 점검 — 잘못 만든 가족을 한 번 열어 보면 '기록 있는 가족'이 돼 지울 수 없었다. 무엇을 하면 그때 저장된다)
+          pendingRef.current = res?.ok && !base && !centerStaff ? [{ type: "init", _at: Date.now(), _op: newOpId() }, ...carried] : carried;
           savePending(household, accountRef.current, pendingRef.current);
           if (res?.ok && base) saveCache(household, base, versionRef.current);
           if (pendingRef.current.length) setDirty((d) => d + 1);
           const err = res?.ok ? null : body.error || (res ? `http-${res.status}` : "network");
-          if (res?.status === 401 && ACCOUNT_NOTICE[err]) blockedRef.current = true;
+          if (res?.status === 401 && ACCOUNT_NOTICE[err]) {
+            blockedRef.current = true;
+            dropPending(pendingRef, accountRef, household);
+          }
           setSync({
             mode: "server",
             status: err ? "error" : "saved",
@@ -1929,9 +1949,9 @@ export function AppStateProvider({ children }) {
     return () => {
       cancelled = true;
     };
-  }, [scope, household, showState, nonce, centerStaff, staffUid, pick]);
+  }, [scope, household, showState, nonce, centerStaff, staffUid, pick, noRecord]);
 
-  // 이 기기에 저장 (데모 · 서버 설정 전 테스트 계정)
+  // 이 기기에 저장 (데모 · 서버 설정 전 테스트 계정 · 파트너)
   useEffect(() => {
     if (!ready || backendRef.current !== "local") return;
     try {
@@ -2001,7 +2021,10 @@ export function AppStateProvider({ children }) {
         // 되풀이하지 않고 안내만 띄운다 (로그인하면 다시 읽으면서 모아 둔 것을 보낸다).
         const code = j.error || (res.status === 413 ? "state-too-large" : `http-${res.status}`);
         const permanent = res.status === 401 || res.status === 400 || res.status === 413;
-        if (res.status === 401 && ACCOUNT_NOTICE[code]) blockedRef.current = true;
+        if (res.status === 401 && ACCOUNT_NOTICE[code]) {
+          blockedRef.current = true;
+          dropPending(pendingRef, accountRef, hh);
+        }
         throw Object.assign(new Error("save-failed"), { code, permanent, area: j.area || null });
       }
     } catch (e) {
@@ -2080,7 +2103,10 @@ export function AppStateProvider({ children }) {
         if (!res.ok) {
           // 관제가 정지 · 역할 변경한 회원은 그 이유를 그대로 (account-suspended · role-changed …)
           if (res.status === 401) {
-            if (ACCOUNT_NOTICE[j.error]) blockedRef.current = true;
+            if (ACCOUNT_NOTICE[j.error]) {
+              blockedRef.current = true;
+              dropPending(pendingRef, accountRef, householdRef.current);
+            }
             setSync((s) => ({ ...s, status: "error", error: j.error || "login-required", area: j.area || null }));
           }
           return;
@@ -2156,11 +2182,16 @@ export function AppStateProvider({ children }) {
 // 테스트를 이어 가지 않게. 빨강은 위험 신호 전용이라 주황(amber)으로.
 // 관제가 회원을 정지 · 거절 · 역할 변경했을 때 — 화면 전체를 막고 갈 곳 하나만 준다 (2026-10-06 UX 점검:
 // 전에는 '로그인이 만료됐어요' 띠만 떠서 로그인 화면과 앱 사이를 맴돌았고, 누른 것은 조용히 저장되지 않았다)
+// body(센터 이름, 이용자인가) — 어르신 · 보호자에게는 센터 이름 대신 고객센터 번호로 안내한다 (로그인 화면과 같은 말 · 2026-11-18 점검)
+const CS = `고객센터 ${COMPANY.tel}`;
 const ACCOUNT_NOTICE = {
-  "account-suspended": { title: "이 아이디는 사용이 멈춰졌습니다", body: (c) => `${c} 관제가 이 아이디의 사용을 멈췄습니다. 지금부터 누른 것은 저장되지 않습니다. 센터 관제에 문의해 주세요.` },
-  "account-rejected": { title: "쓸 수 없는 아이디입니다", body: (c) => `${c} 관제가 이 가입을 받지 않았습니다. 센터 관제에 문의해 주세요.` },
-  "account-removed": { title: "아이디를 찾을 수 없습니다", body: (c) => `${c}에 이 아이디가 없습니다. 센터 관제에 문의해 주세요.` },
-  "account-pending": { title: "관제 승인을 기다리는 아이디입니다", body: (c) => `${c} 관제가 승인하면 다시 로그인해 주세요.` },
+  "account-suspended": {
+    title: "이 아이디는 사용이 멈춰졌습니다",
+    body: (c, fam) => (fam ? `이 아이디의 사용이 멈췄습니다. 지금부터 누른 것은 저장되지 않습니다. ${CS}로 문의해 주세요.` : `${c} 관제가 이 아이디의 사용을 멈췄습니다. 지금부터 누른 것은 저장되지 않습니다. 센터 관제에 문의해 주세요.`),
+  },
+  "account-rejected": { title: "쓸 수 없는 아이디입니다", body: (c, fam) => (fam ? `가입이 승인되지 않은 아이디입니다. ${CS}로 문의해 주세요.` : `${c} 관제가 이 가입을 받지 않았습니다. 센터 관제에 문의해 주세요.`) },
+  "account-removed": { title: "아이디를 찾을 수 없습니다", body: (c, fam) => (fam ? `이 아이디를 찾을 수 없습니다. ${CS}로 문의해 주세요.` : `${c}에 이 아이디가 없습니다. 센터 관제에 문의해 주세요.`) },
+  "account-pending": { title: "가입 확인을 기다리는 아이디입니다", body: (c, fam) => (fam ? "가입 확인이 끝나면 다시 로그인해 주세요." : `${c} 관제가 승인하면 다시 로그인해 주세요.`) },
   "role-changed": { title: "관제가 역할을 바꿨습니다", body: () => "다시 로그인하면 바뀐 역할의 화면으로 들어갑니다. 지금 화면에서 누른 것은 저장되지 않습니다." },
   // 관제가 이 회원을 다른 가족으로 옮겼다 (2026-11-12 · 계정 · 권한 [가족 옮기기])
   "family-changed": { title: "관제가 가족을 바꿨습니다", body: () => "다시 로그인하면 새 가족의 기록이 열립니다. 지금 화면에서 누른 것은 저장되지 않습니다." },
@@ -2174,9 +2205,10 @@ function NoFamily() {
     let stopped = false;
     const id = setInterval(async () => {
       try {
-        const r = await fetch("/api/families", { cache: "no-store" });
-        const j = await r.json().catch(() => ({}));
-        if (!stopped && r.ok && Array.isArray(j.families) && j.families.length) window.location.reload();
+        // 가구 기록으로 묻는다 — 담당이 지정되면 200 이 온다 (2026-11-18 점검: 전에는 가족 목록으로 물었는데,
+        // 가족 칸이 아직 없는 서버에서는 그 답이 늘 503 이라 지정된 뒤에도 저절로 열리지 않았다)
+        const r = await fetch("/api/household?v=0", { cache: "no-store" });
+        if (!stopped && r.ok) window.location.reload();
       } catch (_) {
         /* 다음 차례에 다시 */
       }
@@ -2228,7 +2260,9 @@ function SyncNotice({ sync }) {
       <div className="fixed inset-0 z-[90] flex items-center justify-center bg-[rgba(8,23,45,.6)] p-4">
         <div role="alertdialog" aria-modal="true" aria-labelledby="acct-block-title" className="w-full max-w-[400px] rounded-[22px] bg-white p-6 shadow-xl" style={{ borderTop: "6px solid #B08D57" }}>
           <h2 id="acct-block-title" className="text-[19px] font-black leading-[1.4] text-navy">{notice.title}</h2>
-          <p className="mt-2 text-[15px] leading-[1.7] text-ink">{notice.body(centerName)}</p>
+          <p className="mt-2 text-[15px] leading-[1.7] text-ink">
+            <KeepTel text={notice.body(centerName, isFamilyRole(user?.role))} />
+          </p>
           <button
             type="button"
             autoFocus
@@ -2294,6 +2328,7 @@ export function storageText(sync) {
     return `서버에 저장 (Supabase)${at ? ` · 마지막 저장 ${at}` : ""}`;
   }
   if (sync.mode === "local") {
+    if (sync.error === "no-record") return "가족 기록을 쓰지 않는 화면입니다";
     return sync.error && sync.error !== "db-not-configured"
       ? `서버 저장 오류 (${sync.error}) — 지금은 이 기기에만 저장`
       : "이 기기에만 저장 — 서버 저장 설정 전";

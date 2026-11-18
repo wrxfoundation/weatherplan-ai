@@ -165,6 +165,7 @@ export const authOptions = {
         token.role = google ? null : user.role || null;
         token.household = google ? null : user.household || null;
         token.center = google ? null : user.center || centerOfHousehold(user.household)?.id || null;
+        token.since = Date.now(); // 로그인한 때 — 그 뒤에 새로 만들어진 같은 아이디의 계정과 구분한다 (lib/members.js memberStillValid)
       }
       return token;
     },
@@ -180,6 +181,7 @@ export const authOptions = {
           role: token.role || null,
           household: token.household || null,
           center: token.center || null,
+          since: token.since || null,
         },
       };
     },

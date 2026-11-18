@@ -1,5 +1,5 @@
 // 회원 가입 창 (2026-10-06) — 영역마다 같은 틀, 고를 수 있는 역할과 덧붙이는 칸만 다르다.
-//   1) 가입 코드 — 센터 관제가 나눠 준 8자리. 코드가 센터(관제 1 · 2 · 3센터)를 정한다
+//   1) 가입 코드 — 8자리. 어르신 · 보호자는 가족 가입 코드(가족을 정한다), 직원은 센터 가입 코드(센터를 정한다) — 2026-11-12
 //   2) 역할 — 이용자: 보호자 · 어르신 / 현장 · 영업: 컨시어지 · 영업자 / 관제: 관제 관리자
 //   3) 이름 · 휴대폰(선택) · 아이디 · 비밀번호 · 안내 동의
 // 어느 영역이든 가입한 센터의 관제가 승인해야 로그인된다 (2026-10-06 점검).
@@ -90,6 +90,7 @@ export default function JoinForm({ area, onSent }) {
   const codeChanged = `가입 코드가 바뀌었거나 맞지 않습니다. ${giver}에게 새 코드를 받아 다시 확인해 주세요`;
   const serverText = (k) => (big && SERVER_ERR_USER[k]) || SERVER_ERR[k];
   const asked = useRef(""); // 마지막으로 확인한 코드 — 같은 코드를 두 번 묻지 않는다
+  const typed = useRef(""); // 지금 칸에 적힌 코드 — 확인하는 사이 더 적었으면 늦게 온 답을 버린다
   const [code, setCode] = useState("");
   const [center, setCenter] = useState(null); // { id, name }
   const [checking, setChecking] = useState(false);
@@ -108,6 +109,7 @@ export default function JoinForm({ area, onSent }) {
   // 코드 확인 — 맞으면 센터를 돌려준다 (가입 단추가 이어서 쓴다)
   const checkCode = async (raw) => {
     const c = normCode(raw);
+    typed.current = c;
     setCode(c);
     setCenter(null);
     if (!JOIN_CODE_RE.test(c)) {
@@ -122,6 +124,11 @@ export default function JoinForm({ area, onSent }) {
     try {
       const r = await fetch(`/api/join?code=${encodeURIComponent(c)}`, { cache: "no-store" });
       const j = await r.json().catch(() => ({}));
+      // 확인하는 사이 코드를 더 적었다 — 이 답은 옛 코드의 것이라 화면에 올리지 않는다 (맞는 코드 옆에 '맞지 않는 코드'가 남지 않게)
+      if (typed.current !== c) {
+        setChecking(false);
+        return { center: null, error: null, stale: true };
+      }
       // 가입 코드는 두 가지다 (2026-11-12) — 가족 가입 코드(어르신 · 보호자) · 센터 가입 코드(직원). 서로 바꿔 적으면 여기서 알려 준다
       const wrongKind = r.ok && ((big && j.kind === "staff") || (!big && j.kind === "family"));
       if (wrongKind) {
@@ -152,10 +159,12 @@ export default function JoinForm({ area, onSent }) {
     }
   };
 
-  // 다 적고 잠깐 멈추면 저절로 확인한다 — 예전 6자리 코드도 (8자리를 치는 중에 6자리에서 묻지 않게 잠깐 기다린다)
+  // 8자리를 다 적으면 저절로 확인한다. 6 · 7자리에서는 묻지 않는다 (2026-11-18 점검) — 천천히 적는 분은 6번째 · 7번째 글자에서
+  // 멈출 때마다 '맞지 않는 가입 코드'가 떴고, 그 횟수가 틀린 코드 제한(10분에 20번)에 쌓였다.
+  // 예전 6자리 코드는 칸을 벗어나거나 [확인] · Enter · [가입 신청]을 누를 때 확인한다
   useEffect(() => {
-    if (center || checking || !JOIN_CODE_RE.test(code) || code === asked.current) return undefined;
-    const t = setTimeout(() => checkCode(code), 700);
+    if (center || code.length !== 8 || !JOIN_CODE_RE.test(code) || code === asked.current) return undefined;
+    const t = setTimeout(() => checkCode(code), 300);
     return () => clearTimeout(t);
   }, [code]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -361,6 +370,7 @@ export default function JoinForm({ area, onSent }) {
             value={code}
             onChange={(e) => {
               const c = normCode(e.target.value);
+              typed.current = c;
               setCode(c);
               setCenter(null);
               if (errors.code) setErrors((x) => ({ ...x, code: null }));

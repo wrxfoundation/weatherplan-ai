@@ -12,7 +12,9 @@
 
 // 금액과 요금제 구성은 lib/plans.js 한 곳 — 앱 안 멤버십 화면 · 약관과 같은 값을 쓴다 (2026-11-10)
 import { EARLY_BASIC, EXIT_BOTH, EXIT_HEAD, EXIT_NOTE, EXIT_ROWS, FEE, PLANS, exitLines, won } from "./plans";
-import { COMPANY, companyLines } from "./company";
+import { COMPANY, companyIds } from "./company";
+import { PUBLIC_POLICIES } from "./policies";
+import { CANCEL_FREE_DAYS } from "./requests";
 
 export { FEE };
 const FIRST_BASIC = PLANS.basic.first; // 47,900
@@ -232,7 +234,7 @@ export const PRICE = {
     // 바뀔 수 있는 값 (요청서 6장) — 두 분 요금은 금액 없이 상담 안내
     "두 분이 함께 계신 경우의 요금은 상담에서 안내드립니다.",
   ],
-  // 표의 줄은 lib/plans.js 한 곳 — 환불 정책(/refund) · 이용약관과 같은 값
+  // 표의 줄은 lib/plans.js 한 곳 — 환불규정(/refund)과 같은 값
   refund: { title: "해지와 환불", head: EXIT_HEAD, both: EXIT_BOTH, rows: EXIT_ROWS, note: EXIT_NOTE },
 };
 
@@ -403,13 +405,15 @@ export const FAQ = {
           // 바뀔 수 있는 값 (요청서 6장) — 해주세요 취소 기준
           q: "예약을 바꾸거나 취소하면 수수료가 있나요?",
           a: [
-            "서비스 시작 24시간 전까지 취소하면 전액 환불합니다. 24시간 이내 취소는 50% 환불이고, 담당자가 출발한 뒤에는 환불되지 않습니다.",
+            // 2026-11-17 회사가 보낸 환불규정 3장에 맞췄다 (예전: 24시간 전 전액 · 24시간 이내 50% · 출발 뒤 환불 없음)
+            `일정이 확정된 뒤 서비스일 ${CANCEL_FREE_DAYS}일 전까지는 바로 취소되고 결제 금액 전액을 환불합니다. 서비스일 ${CANCEL_FREE_DAYS}일 이내이거나 진행 중이면 관제 확인을 거쳐 취소하며, 이미 투입된 출동과 진행 비용을 제외한 차액을 환불합니다.`,
             "약속한 시간에 문이 열리지 않으면 이상 신호로 보고 안전 확인을 함께 진행합니다.",
           ],
         },
         {
           q: "회사 사정으로 방문이 취소되면 어떻게 되나요?",
-          a: ["일정을 다시 잡거나, 제공하지 못한 부분을 일할 계산해 환불합니다."],
+          // 2026-11-17 환불규정 5장에 맞췄다
+          a: ["보호자와 협의해 일정을 다시 잡거나, 제공하지 못한 횟수만큼 금액을 환불합니다."],
         },
       ],
     },
@@ -494,13 +498,16 @@ export const CTA = {
 // 바닥글 — 사업자 정보는 lib/company.js 에 값을 채우면 여기에 줄이 생긴다 (요청서 6장). 비어 있는 칸은 나오지 않는다
 export const FOOTER = {
   company: COMPANY.name,
-  lines: [...companyLines(), `고객센터 ${TEL.label}`, SITE.host, "서울 강남구, 송파구, 서초구 운영 중"],
-  // 약관 3종 — 2026-11-10 문서를 만들어 주소를 넣었다 (lib/policies.js · components/LegalPage.jsx)
-  docs: [
-    { label: "이용약관", href: "/terms" },
-    { label: "환불 정책", href: "/refund" },
-    { label: "개인정보 처리방침", href: "/privacy" },
-  ],
+  // 2026-11-17 사업자 정보가 들어와 줄이 늘었다 — 같은 종류끼리 한 줄에 묶는다 (대표 · 등록번호 · 신고번호 / 주소 / 연락처)
+  lines: [
+    companyIds().join(", "),
+    COMPANY.address,
+    [`고객센터 ${TEL.label}`, COMPANY.email].filter(Boolean).join(", "),
+    SITE.host,
+    "서울 강남구, 송파구, 서초구 운영 중",
+  ].filter(Boolean),
+  // 약관 4종 — 주소와 이름은 lib/policies.js 한 곳 (components/LegalPage.jsx 가 그린다)
+  docs: PUBLIC_POLICIES.map((p) => ({ label: p.short, href: p.path })),
   report: "노인학대 신고 1577-1389, 긴급 112, 119",
 };
 

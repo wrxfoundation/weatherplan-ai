@@ -175,12 +175,16 @@ export async function memberStillValid(user) {
   const hit = cache.get(user.id);
   let row = hit && Date.now() - hit.at < TTL ? hit.row : null;
   if (!row) {
-    const { data, error, status } = await db().from("accounts").select("status, role, center_id, household_id").eq("id", user.id).maybeSingle();
+    const { data, error, status } = await db().from("accounts").select("status, role, center_id, household_id, created_at").eq("id", user.id).maybeSingle();
     if (error) throw fail(error, status);
     row = data || { status: "gone" };
     cache.set(user.id, { at: Date.now(), row });
   }
   if (row.status !== "active") return { ok: false, reason: row.status === "gone" ? "account-removed" : `account-${row.status}` };
+  // 이 로그인보다 나중에 만들어진 계정 — 관제가 지운 아이디를 누군가 다시 만든 것이다. 옛 기기의 로그인은 그 계정의 것이 아니다
+  // (2026-11-18 점검 — 전에는 센터 · 역할 · 가족만 같으면 지워진 계정의 옛 로그인이 새 비밀번호 없이 되살아났다)
+  const joinedAt = Date.parse(row.created_at || "");
+  if (Number(user.since) > 0 && Number.isFinite(joinedAt) && joinedAt > Number(user.since) + 60000) return { ok: false, reason: "account-removed" };
   // 바뀐 역할의 입구(영역)는 본인에게만 알려 준다 — 다시 로그인할 곳으로 바로 보내려고
   if (row.role !== user.role || row.center_id !== user.center) return { ok: false, reason: "role-changed", area: row.center_id === user.center ? areaOfRole(row.role) : null };
   // 관제가 이 회원을 다른 가족으로 옮겼다 (2026-11-12) — 세션에는 예전 가족이 실려 있으니 다시 로그인해 새 가족 기록을 연다

@@ -193,6 +193,25 @@ export default function CenterMembers({ onFamilies = null }) {
   // 어르신이 둘 이상인 가족 — 부부가 아니라 서로 다른 집이면 나눠야 한다
   const crowded = famOn ? families.map((f) => ({ f, names: eldersIn(f.id) })).filter((x) => x.names.length > 1) : [];
   const pickRole = (m) => roleOf[m.id] || m.role;
+  // 같은 가족에서 이미 사용 중인 보호자 수 — 이용약관 제4조: 보호자는 최대 5명
+  const guardiansIn = (hh) => members.filter((m) => m.status === "active" && m.role === "guardian" && (!famOn || m.household === hh)).length;
+  // 승인 · 다시 사용으로 어르신 · 보호자가 될 때 알릴 것 — 들어갈 가족 · 이미 있는 어르신 · 보호자 5명
+  const enterNote = (m, next) => {
+    if (!isUserRole(next)) return "";
+    if (!famOn) {
+      return next === "elder" && activeElders.length
+        ? ` 이 센터에는 이미 어르신 ${activeElders.join(" · ")} 님이 있습니다 — 지금은 한 센터 = 한 가족이라 약 · 일정 · 부탁 · SOS 기록을 함께 쓰고, 화면은 ${activeElders[0]} 님 기준으로 보입니다.`
+        : "";
+    }
+    const elders = eldersIn(m.home);
+    return ` ${famTitle(m.home)}에 들어갑니다.${
+      next === "elder" && elders.length
+        ? ` 이 가족에는 이미 어르신 ${elders.join(" · ")} 님이 있습니다 — 한 가족은 기록을 함께 쓰고 화면은 ${elders[0]} 님 기준으로 보입니다. 다른 댁이면 [가족 바꾸기]로 먼저 가족을 바꿔 주세요.`
+        : ""
+    }${next === "guardian" && guardiansIn(m.home) >= 5 ? ` 이 가족에는 보호자가 이미 ${guardiansIn(m.home)}명입니다 — 이용약관은 보호자를 최대 5명으로 정합니다.` : ""}${
+      isUserRole(m.requestedRole || m.role) ? "" : " 직원으로 신청한 가입이라 가족을 고르지 않았습니다 — 다른 가족이면 승인한 뒤 [옮기기]로 옮겨 주세요."
+    }`;
+  };
   // 직원을 어르신 · 보호자로 바꾸면 계정에 적힌 가족(직원으로 가입했으면 첫 가족)에 들어간다 — 그 가족의 기록이 보이게 되므로 미리 알린다
   const joinsNote = (m, next) => (famOn && isUserRole(next) && !isUserRole(m.role) ? ` 어르신 · 보호자가 되면 ${famTitle(m.home)}의 기록을 보게 됩니다 — 다른 가족이면 바꾼 뒤 회원 목록의 [옮기기]로 옮겨 주세요.` : "");
   // 관제 역할 · 관제 회원은 센터 관리자(ops1~3)만 바꾼다 — 관제 회원 화면에서는 고를 수 없게
@@ -279,7 +298,20 @@ export default function CenterMembers({ onFamilies = null }) {
       </span>
     ) : m.status === "suspended" || m.status === "rejected" ? (
       <span className="flex flex-wrap items-center gap-1.5">
-        <Btn ghost small disabled={!!busy} onClick={() => act(m.id, "activate")}>
+        <Btn
+          ghost
+          small
+          disabled={!!busy}
+          onClick={() =>
+            setAsk({
+              id: m.id,
+              action: "activate",
+              title: m.status === "rejected" ? `${m.name} 님의 거절한 가입을 승인합니다` : `${m.name} 님이 다시 사용하게 합니다`,
+              // 거절했던 가입을 되살리는 것은 승인과 같다 — 어느 가족에 들어가는지 · 어르신이 이미 있는지 승인 때처럼 알린다
+              body: `${AREAS[areaOfRole(m.role)].label} 로그인(${AREAS[areaOfRole(m.role)].login})에서 다시 들어올 수 있게 됩니다.${m.status === "rejected" ? enterNote(m, m.role) : ""}`,
+            })
+          }
+        >
           다시 사용
         </Btn>
         {delBtn(m)}
@@ -411,20 +443,19 @@ export default function CenterMembers({ onFamilies = null }) {
                 </select>
               </label>
               {lockedForMe(m) && <span className="text-[11px] text-muted">관제 가입은 센터 관리자가 승인</span>}
-              <Btn small tone="ok" disabled={!!busy || lockedForMe(m)} onClick={() => setAsk({ id: m.id, action: "approve", role: pickRole(m), title: `${m.name} 님을 ${ROLE_LABEL[pickRole(m)]}(으)로 승인합니다`, body: `${AREAS[areaOfRole(pickRole(m))].label} 로그인(${AREAS[areaOfRole(pickRole(m))].login})에서 들어올 수 있게 됩니다.${
-                famOn
-                  ? isUserRole(pickRole(m))
-                    ? ` ${famTitle(m.home)}에 들어갑니다.${pickRole(m) === "elder" && eldersIn(m.home).length ? ` 이 가족에는 이미 어르신 ${eldersIn(m.home).join(" · ")} 님이 있습니다 — 한 가족은 기록을 함께 쓰고 화면은 ${eldersIn(m.home)[0]} 님 기준으로 보입니다. 다른 댁이면 승인한 뒤 회원 목록의 [옮기기]로 다른 가족으로 옮겨 주세요.` : ""}${isUserRole(m.requestedRole || m.role) ? "" : " 직원으로 신청한 가입이라 가족을 고르지 않았습니다 — 다른 가족이면 승인한 뒤 [옮기기]로 옮겨 주세요."}`
-                    : ""
-                  : pickRole(m) === "elder" && activeElders.length
-                    ? ` 이 센터에는 이미 어르신 ${activeElders.join(" · ")} 님이 있습니다 — 지금은 한 센터 = 한 가족이라 약 · 일정 · 부탁 · SOS 기록을 함께 쓰고, 화면은 ${activeElders[0]} 님 기준으로 보입니다.`
-                    : ""
-              }` })}>
+              <Btn small tone="ok" disabled={!!busy || lockedForMe(m)} onClick={() => setAsk({ id: m.id, action: "approve", role: pickRole(m), title: `${m.name} 님을 ${ROLE_LABEL[pickRole(m)]}(으)로 승인합니다`, body: `${AREAS[areaOfRole(pickRole(m))].label} 로그인(${AREAS[areaOfRole(pickRole(m))].login})에서 들어올 수 있게 됩니다.${enterNote(m, pickRole(m))}` })}>
                 승인
               </Btn>
-              <Btn small ghost tone="muted" disabled={!!busy} onClick={() => setAsk({ id: m.id, action: "reject", title: `${m.name} 님 가입을 거절합니다`, body: "거절한 아이디는 로그인할 수 없습니다. 나중에 '다시 사용'으로 되돌릴 수 있습니다." })}>
+              <Btn small ghost tone="muted" disabled={!!busy || lockedForMe(m)} onClick={() => setAsk({ id: m.id, action: "reject", title: `${m.name} 님 가입을 거절합니다`, body: "거절한 아이디는 로그인할 수 없습니다. 나중에 '다시 사용'으로 되돌릴 수 있습니다." })}>
                 거절
               </Btn>
+              {/* 다른 가족의 코드로 잘못 신청했을 때 — 승인하기 전에 가족부터 바꾼다 (2026-11-18 점검: 전에는 승인한 뒤에만 옮길 수 있어,
+                  그 사이 남의 가족 기록이 보였다) */}
+              {famOn && isUserRole(m.role) && families.length > 1 && (
+                <Btn small ghost tone="muted" disabled={!!busy} onClick={() => setMove({ m, to: families.find((f) => f.id !== m.household)?.id || "" })}>
+                  가족 바꾸기
+                </Btn>
+              )}
               </div>
             </li>
           ))}
@@ -500,7 +531,7 @@ export default function CenterMembers({ onFamilies = null }) {
         open={!!ask}
         title={ask?.title || ""}
         body={ask?.body || ""}
-        confirmLabel={ask?.action === "approve" ? "승인" : ask?.action === "reject" ? "거절" : ask?.action === "suspend" ? "정지" : ask?.action === "delete" ? "삭제" : ask?.action === "rotate" ? "새 코드 만들기" : "적용"}
+        confirmLabel={ask?.action === "approve" ? "승인" : ask?.action === "reject" ? "거절" : ask?.action === "suspend" ? "정지" : ask?.action === "delete" ? "삭제" : ask?.action === "rotate" ? "새 코드 만들기" : ask?.action === "activate" ? "다시 사용" : "적용"}
         tone={ask?.action === "approve" ? "ok" : ask?.action === "suspend" || ask?.action === "reject" || ask?.action === "delete" ? "warn" : "navy"}
         onCancel={() => setAsk(null)}
         onConfirm={() => {
@@ -522,9 +553,9 @@ export default function CenterMembers({ onFamilies = null }) {
       {/* 가족 옮기기 — 사람만 옮긴다. 남긴 기록은 원래 가족에 그대로 있다 */}
       <Confirm
         open={!!move}
-        title={move ? `${move.m.name} 님(${ROLE_LABEL[move.m.role]})을 다른 가족으로 옮깁니다` : ""}
+        title={move ? (move.m.status === "pending" ? `${move.m.name} 님의 가입 신청을 다른 가족으로 돌립니다` : `${move.m.name} 님(${ROLE_LABEL[move.m.role]})을 다른 가족으로 옮깁니다`) : ""}
         body=""
-        confirmLabel="옮기기"
+        confirmLabel={move?.m.status === "pending" ? "가족 바꾸기" : "옮기기"}
         tone="warn"
         onCancel={() => setMove(null)}
         onConfirm={() => {
@@ -552,11 +583,18 @@ export default function CenterMembers({ onFamilies = null }) {
                   ))}
               </select>
             </label>
-            <ul className="mt-2 list-disc space-y-1 pl-4 text-[13px] leading-[1.6] text-ink">
-              <li>이 회원이 남긴 기록(일정 · 요청 · 음성 등)은 지금 가족에 그대로 남습니다 — 사람만 옮깁니다.</li>
-              <li>지금 로그인해 있으면 15초 안에 화면이 멈추고, 다시 로그인하면 새 가족의 기록이 열립니다.</li>
-              <li>옮긴 사실은 권한 변경 기록과 두 가족의 감사로그에 남습니다. 다시 옮겨 되돌릴 수 있습니다.</li>
-            </ul>
+            {move.m.status === "pending" ? (
+              <ul className="mt-2 list-disc space-y-1 pl-4 text-[13px] leading-[1.6] text-ink">
+                <li>아직 승인 전이라 옮길 기록이 없습니다 — 승인하면 고른 가족에 들어갑니다.</li>
+                <li>바꾼 사실은 권한 변경 기록과 두 가족의 감사로그에 남습니다.</li>
+              </ul>
+            ) : (
+              <ul className="mt-2 list-disc space-y-1 pl-4 text-[13px] leading-[1.6] text-ink">
+                <li>이 회원이 남긴 기록(일정 · 요청 · 음성 등)은 지금 가족에 그대로 남습니다 — 사람만 옮깁니다.</li>
+                <li>지금 로그인해 있으면 15초 안에 화면이 멈추고, 다시 로그인하면 새 가족의 기록이 열립니다.</li>
+                <li>옮긴 사실은 권한 변경 기록과 두 가족의 감사로그에 남습니다. 다시 옮겨 되돌릴 수 있습니다.</li>
+              </ul>
+            )}
           </>
         )}
       </Confirm>

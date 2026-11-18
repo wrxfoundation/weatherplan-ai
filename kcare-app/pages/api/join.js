@@ -18,10 +18,10 @@
 // 비밀번호는 scrypt 해시로만 저장한다. 실패 이유는 아이디 중복 · 입력 오류만 알려 준다.
 import { memberLoginConfigured } from "../../lib/auth-server";
 import { dbConfigured, dbErrorCode, ensureHousehold } from "../../lib/db";
-import { AREAS, JOIN_CODE_RE, checkLoginId, checkPassword, isArea, normCode } from "../../lib/centers";
+import { AREAS, JOIN_CODE_RE, checkLoginId, checkPassword, isArea, isFamilyRole, normCode } from "../../lib/centers";
 import { activityLine, audit, centerByCode, createMember, getMember, inviteRank, inviteUses, loginIdTaken, pendingCount, pendingRank, removePending } from "../../lib/members";
 import { familyByCode, homeOfMember } from "../../lib/families";
-import { INVITE_MAX_USES, readInvite } from "../../lib/invite";
+import { INVITE_DAYS, INVITE_MAX_USES, readInvite } from "../../lib/invite";
 import { hashPassword } from "../../lib/password";
 import { ROLE_LABEL } from "../../lib/test-accounts";
 import { clientIp, makeLimiter, sameSiteJson } from "../../lib/http";
@@ -37,9 +37,18 @@ const badCodeSeen = new Map();
 const MAX_PENDING = 30; // 한 센터의 승인 대기 — 넘으면 관제가 정리할 때까지 새 가입을 받지 않는다
 
 // 초대를 보낸 사람 — 아직 그 센터의 사용 중인 회원일 때만 (정지 · 탈퇴한 사람의 링크는 막는다). 초대받은 사람은 보낸 사람의 가족으로 들어간다
+// 2026-11-18 점검 — 두 가지를 더 본다:
+//   · 보낸 사람이 지금도 어르신 · 보호자인가. 초대는 자기 가족으로 부르는 것이라, 그 뒤 직원 역할로 바뀐 사람의 링크는 막는다
+//     (전에는 그대로 통해서, 초대받은 사람이 센터의 첫 가족 — 남의 가족 — 으로 들어갔다)
+//   · 링크를 만든 뒤에 새로 생긴 계정이 아닌가. 지워진 아이디를 다른 사람이 다시 만들면 옛 링크가 그 사람의 가족으로 이어졌다
 async function inviterOf(invite) {
   const m = invite?.from ? await getMember(invite.from) : null;
-  return m && m.status === "active" && m.provider === "member" && m.center_id === invite.center.id ? m : null;
+  if (!m || m.status !== "active" || m.provider !== "member" || m.center_id !== invite.center.id) return null;
+  if (!isFamilyRole(m.role)) return null;
+  const madeAt = Number(invite.exp) - INVITE_DAYS * 86400000;
+  const joinedAt = Date.parse(m.created_at || "");
+  if (Number.isFinite(madeAt) && Number.isFinite(joinedAt) && joinedAt > madeAt + 60000) return null;
+  return m;
 }
 
 // 가입 코드 → 무엇의 코드인가. { kind: "family", center, household } · { kind: "staff" | "any", center, household(첫 가족) } · null
