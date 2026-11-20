@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="해주세요">
+  <g fill="#FFFFFF" stroke="#5F3F73" stroke-width="3" stroke-linejoin="round" stroke-linecap="round">
+    <g transform="rotate(-14 19 40)">
+      <path d="M9.5 38c0-1.4 1.2-2.6 2.6-2.6h17.4V44a10 10 0 0 1-20 0z"/>
+      <rect x="11" y="24" width="5.6" height="14" rx="2.8"/>
+      <rect x="18.2" y="20.5" width="5.6" height="17.5" rx="2.8"/>
+      <rect x="25.4" y="24" width="5.6" height="14" rx="2.8"/>
+    </g>
+    <g transform="translate(64,0) scale(-1,1)">
+      <g transform="rotate(-14 19 40)">
+        <path d="M9.5 38c0-1.4 1.2-2.6 2.6-2.6h17.4V44a10 10 0 0 1-20 0z"/>
+        <rect x="11" y="24" width="5.6" height="14" rx="2.8"/>
+        <rect x="18.2" y="20.5" width="5.6" height="17.5" rx="2.8"/>
+        <rect x="25.4" y="24" width="5.6" height="14" rx="2.8"/>
+      </g>
+    </g>
+  </g>
+</svg>
