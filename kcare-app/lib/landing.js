@@ -12,7 +12,7 @@
 
 // 금액과 요금제 구성은 lib/plans.js 한 곳 — 앱 안 멤버십 화면 · 약관과 같은 값을 쓴다 (2026-11-10)
 import { EARLY_BASIC, EXIT_BOTH, EXIT_HEAD, EXIT_NOTE, EXIT_ROWS, FEE, PLANS, exitLines, won } from "./plans";
-import { COMPANY, companyIds } from "./company";
+import { COMPANY, companyIds, privacyContact } from "./company";
 import { PUBLIC_POLICIES } from "./policies";
 import { CANCEL_FREE_DAYS } from "./requests";
 
@@ -499,12 +499,13 @@ export const CTA = {
 export const FOOTER = {
   company: COMPANY.name,
   // 2026-11-17 사업자 정보가 들어와 줄이 늘었다 — 같은 종류끼리 한 줄에 묶는다 (대표 · 등록번호 · 신고번호 / 주소 / 연락처)
+  // 2026-11-20 통신판매업 신고번호 · 개인정보 보호책임자 줄을 넣고, '서울 강남구, 송파구, 서초구 운영 중' 줄을 뺐다 (회사 요청)
   lines: [
     companyIds().join(", "),
     COMPANY.address,
     [`고객센터 ${TEL.label}`, COMPANY.email].filter(Boolean).join(", "),
+    privacyContact(),
     SITE.host,
-    "서울 강남구, 송파구, 서초구 운영 중",
   ].filter(Boolean),
   // 약관 4종 — 주소와 이름은 lib/policies.js 한 곳 (components/LegalPage.jsx 가 그린다)
   docs: PUBLIC_POLICIES.map((p) => ({ label: p.short, href: p.path })),
