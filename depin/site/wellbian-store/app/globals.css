@@ -1,0 +1,879 @@
+@import "tailwindcss";
+
+/* ─────────────────────────────────────────────
+   WELLBIAN 디자인 토큰 (PRD §4 · 시안01 Violet 기본)
+   시안02 Teal 전환: html[data-theme="teal"]
+────────────────────────────────────────────── */
+:root {
+  --w-main: #4d4dce;
+  --w-deep: #1b1b48;
+  --w-tint: #eeeefb;
+
+  --ink-1: #22223a; --ink-2: #44445e; --ink-3: #5b5b74; --ink-4: #6b6b85;
+  --cap: #8a8aa3; --hint: #9a9ab5; --dis: #b5b5c9; --arrow: #c9c9dd;
+  --bd-input: #d8d8e6; --bd-btn: #e2e2ee; --bd-card: #e5e5ef;
+  --line: #ececf3; --line-2: #f2f2f7; --chip: #f0f0f6;
+  --sec-alt: #f6f6fa; --panel: #fafafd; --card-dis: #fafafb;
+
+  --ok-text: #1e8e5a; --ok-dot: #4ade80; --ok-bg: #e9f7f0;
+  --warn-text: #8a3535; --warn-icon: #c0392b; --warn-bg: #fdf3f2; --warn-bd: #f2c9c9;
+
+  /* 숫자·코드 표기 = Montserrat (8/27 서우: 숫자 폰트 통일) · 본문 = Pretendard 일원화 */
+  --mono: "Montserrat", "Pretendard Variable", Pretendard, sans-serif;
+}
+html[data-theme="teal"] {
+  --w-main: #00a991; --w-deep: #003b33; --w-tint: #e7f5f1;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  font-family: "Pretendard Variable", Pretendard, -apple-system, "Apple SD Gothic Neo", sans-serif;
+  color: var(--ink-1);
+  background: #fff;
+  -webkit-font-smoothing: antialiased;
+  word-break: keep-all;
+}
+a { color: var(--w-main); text-decoration: none; }
+a:hover { color: var(--w-deep); text-decoration: underline; }
+button { font: inherit; cursor: pointer; border: 0; background: none; color: inherit; padding: 0; }
+input { font: inherit; }
+h1, h2, h3, p { margin: 0; }
+/* 8/28 서우: "999,999 까지 소화할 수 있는 카운팅 자리".
+   tabular-nums = 모든 숫자 글리프 폭이 같아진다. 카운트업이 3,846 → 3,847 로 넘어갈 때
+   1 과 7 의 폭 차이만큼 옆 글자가 흔들리던 걸 없앤다(Montserrat 는 기본이 tabular 지만,
+   Pretendard 폴백까지 보장하려면 명시해야 한다). */
+.mono { font-family: var(--mono); font-weight: 700; letter-spacing: .01em; font-variant-numeric: tabular-nums; }
+/* 자릿수가 실제로 늘어나는 자리(카운트업·실시간 증가)는 슬롯을 미리 잡아 둔다.
+   폭은 컴포넌트가 현재 값 길이로 넣는다 — 999,999(7자)로 커지면 슬롯도 같이 커진다. */
+.count-slot { display: inline-block; text-align: right; }
+
+/* 언어 드롭다운 — 5개 라벨 중 가장 넓은 "Español" 기준으로 104px 을 쓴다.
+   356px 아래에서는 GNB 우측 묶음이 뷰포트를 밀어내므로 글자와 패딩만 줄인다(라벨은 유지). */
+.lang-sel { font-size: 15.5px; padding: 6px 30px 6px 11px; }
+@media (max-width: 356px) { .lang-sel { font-size: 13px; padding: 5px 23px 5px 8px; } }
+
+/* ── 공통 버튼 ── */
+.btn-main {
+  display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+  background: var(--w-main); color: #fff; font-weight: 800; border-radius: 12px;
+  transition: filter .15s;
+}
+.btn-main:hover { filter: brightness(.94); }
+.btn-main:disabled { background: #d8d8e0; color: var(--cap); cursor: not-allowed; filter: none; }
+.btn-outline-deep {
+  display: inline-flex; align-items: center; justify-content: center; gap: 9px;
+  border: 1.5px solid var(--w-deep); color: var(--w-deep); font-weight: 800; border-radius: 10px;
+  transition: background .15s;
+}
+.btn-outline-deep:hover { background: var(--sec-alt); }
+.btn-ghost {
+  display: inline-flex; align-items: center; justify-content: center; gap: 9px;
+  border: 1px solid var(--bd-btn); color: var(--w-deep); font-weight: 700; border-radius: 12px;
+  transition: background .15s;
+}
+.btn-ghost:hover { background: var(--panel); }
+
+/* ── 진행바: 글라스모피즘 + 차오르는 애니메이션 + 샤인 스윕 ── */
+.track {
+  position: relative; border-radius: 99px; overflow: hidden;
+  background: rgba(27, 27, 72, .07);
+  border: 1px solid rgba(27, 27, 72, .09);
+  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+  box-shadow: inset 0 1px 3px rgba(27, 27, 72, .1);
+}
+.track > i {
+  display: block; height: 100%; border-radius: 99px;
+  position: relative; overflow: hidden;
+  background: linear-gradient(90deg, var(--w-main), color-mix(in oklab, var(--w-main) 68%, white));
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, .35), 0 0 10px color-mix(in oklab, var(--w-main) 35%, transparent);
+  animation: track-fill 1.1s cubic-bezier(.25, .8, .3, 1) both;
+  transition: width .4s ease-out;
+}
+.track > i::after {
+  content: ""; position: absolute; top: 0; bottom: 0; width: 42%;
+  background: linear-gradient(105deg, transparent, rgba(255, 255, 255, .55), transparent);
+  animation: track-shine 2.4s ease-in-out infinite;
+}
+@keyframes track-fill { from { width: 0; } }
+@keyframes track-shine { 0% { left: -45%; } 60%, 100% { left: 110%; } }
+.track.on-dark {
+  background: rgba(255, 255, 255, .12);
+  border-color: rgba(255, 255, 255, .22);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, .28);
+}
+.track.on-dark > i {
+  background: linear-gradient(90deg, color-mix(in oklab, var(--w-main) 60%, white), color-mix(in oklab, var(--w-main) 28%, white));
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, .45), 0 0 12px rgba(255, 255, 255, .18);
+}
+.track.on-light { background: rgba(27, 27, 72, .1); }
+.track.gray > i { background: #8a8aa3; box-shadow: none; }
+.track.gray > i::after { display: none; }
+@media (prefers-reduced-motion: reduce) {
+  .track > i { animation: none; }
+  .track > i::after { animation: none; display: none; }
+}
+
+/* ── 배지·필 ── */
+.pill { display: inline-flex; align-items: center; border-radius: 99px; font-weight: 800; }
+
+/* ── 섹션 태그 공통 ── */
+.wrap { max-width: 1080px; margin: 0 auto; }
+.sec-pad { padding: 80px 64px; }
+@media (max-width: 720px) { .sec-pad { padding: 36px 20px; } }
+
+/* ── 아코디언 ── */
+.acc-body { overflow: hidden; transition: height .2s ease; }
+.acc-chev { transition: transform .2s ease; }
+.acc-open .acc-chev { transform: rotate(180deg); }
+
+/* ── 모달 ── */
+@keyframes modal-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@keyframes sheet-in { from { transform: translateY(100%); } to { transform: none; } }
+@keyframes overlay-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes pulse-dot { 0%,100% { opacity: 1; } 50% { opacity: .3; } }
+.overlay {
+  position: fixed; inset: 0; z-index: 90; background: rgba(20,20,52,.55);
+  display: flex; align-items: center; justify-content: center;
+  animation: overlay-in .15s ease; padding: 24px;
+}
+.modal-card {
+  width: 560px; max-width: 100%; max-height: 92vh; overflow: auto;
+  background: #fff; border-radius: 20px; padding: 32px 36px;
+  display: flex; flex-direction: column; gap: 20px;
+  box-shadow: 0 24px 64px rgba(0,0,0,.35);
+  animation: modal-in .2s ease;
+}
+@media (max-width: 720px) {
+  .overlay { align-items: flex-end; padding: 0; }
+  .modal-card {
+    width: 100%; border-radius: 20px 20px 0 0; padding: 12px 20px 24px;
+    animation: sheet-in .26s ease; max-height: 88vh;
+  }
+  .sheet-handle { width: 40px; height: 4px; border-radius: 99px; background: var(--bd-input); margin: 0 auto; }
+}
+@media (min-width: 721px) { .sheet-handle { display: none; } }
+.pulse { animation: pulse-dot 1.2s ease-in-out infinite; }
+
+/* 라이브 인디케이터 — 초록 도트 + 퍼지는 링 */
+@keyframes live-ping { 0% { transform: scale(1); opacity: .65; } 75%, 100% { transform: scale(2.6); opacity: 0; } }
+.live-dot { position: relative; display: inline-flex; width: 8px; height: 8px; flex: none; }
+.live-dot::before { content: ""; position: absolute; inset: 0; border-radius: 99px; background: var(--ok-dot); animation: live-ping 1.6s cubic-bezier(0, 0, .2, 1) infinite; }
+.live-dot::after { content: ""; position: absolute; inset: 0; border-radius: 99px; background: var(--ok-dot); }
+
+/* 모달 스텝 전환 크로스페이드 150ms (PRD §8) */
+@keyframes step-in { from { opacity: 0; transform: translateX(8px); } to { opacity: 1; transform: none; } }
+.step-in { animation: step-in .15s ease; }
+
+/* ── 스텝 인디케이터 (모달 상단) ── */
+/* 8/28: 온보딩 4단계 — 한 줄 유지를 위해 간격·선 축소, 좁은 화면은 현재 단계 라벨만 */
+.mstep-ind { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
+.mstep-dot {
+  width: 28px; height: 28px; border-radius: 99px; font-size: 14px; font-weight: 800;
+  display: inline-flex; align-items: center; justify-content: center; flex: none;
+}
+.mstep-dot.cur { background: var(--w-main); color: #fff; }
+.mstep-dot.done { background: var(--w-tint); color: var(--w-main); }
+.mstep-dot.todo { background: var(--chip); color: var(--dis); }
+.mstep-line { width: 16px; height: 2px; background: var(--bd-card); flex: none; }
+.mstep-line.done { background: var(--w-main); }
+.mstep-label { font-size: 14.5px; color: var(--dis); }
+.mstep-label.cur { font-weight: 700; color: var(--w-deep); }
+@media (max-width: 560px) { .mstep-label:not(.cur) { display: none; } }
+
+/* EN 히어로 h1 — PC에서 의도한 2줄 고정 (8/27 서우: 추가 랩 금지) */
+@media (min-width: 721px) { .hero-h1-en { white-space: nowrap; } }
+/* KO 헤드라인 2줄 고정 (8/27 서우) — 데스크톱에서 "당신의 날씨 데이터를"이 3줄로 감기지 않게
+   nowrap + 컬럼(≈39vw)에 맞춘 축소 클램프. 인라인 fontSize를 이겨야 해서 !important */
+@media (min-width: 721px) { .hero-h1-ko { white-space: nowrap; font-size: clamp(29px, 3.95vw, 54px) !important; } }
+/* pre 히어로 스탯 테이블 (8/28) — PC: 가로 배치+세로 디바이더 / 모바일: 세로 스택+가로 디바이더
+   (한 줄이 안 되는 폭에서 세로 구분자가 어중간하게 뜨는 문제 해결) */
+.pre-stat { display: inline-flex; align-items: center; gap: 18px; align-self: flex-start; }
+.pre-stat .ps-div { width: 1px; height: 22px; background: rgba(255, 255, 255, .45); flex: none; }
+@media (max-width: 720px) {
+  .pre-stat { flex-direction: column; align-items: stretch; gap: 11px; align-self: stretch; text-align: center; }
+  .pre-stat .ps-div { width: 100%; height: 1px; }
+}
+
+/* 히어로 wellbian X XRP LEDGER 락업 — 1.5배 규모 (8/27 2차: 3배가 과대 → 1/2 축소) */
+.hero-lockup { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.hero-lockup .lk-wb { height: 36px; width: auto; }
+/* 락업 색 = WEATHER DATA ECONOMY 아이브로우와 동일 톤 (8/27 서우, 로고 PNG는 wb-lav/xrpl-lav 틴트본) */
+.hero-lockup .lk-x { font-size: 22px; font-weight: 700; color: color-mix(in oklab, var(--w-main) 45%, white); line-height: 1; }
+.hero-lockup .lk-xrpl { height: 27px; width: auto; opacity: .92; }
+/* 8/28 서우: GNB 웰비안 로고 2배 (29 → 58px).
+   flex-shrink: 0 이 없으면 좁은 폭에서 flex가 이미지를 가로로 찌그러뜨린다
+   (모바일 58px 실험 시 160px → 106px로 눌리며 비율이 깨졌다). */
+.gnb-logo { height: 58px; width: auto; flex-shrink: 0; }
+@media (max-width: 720px) {
+  .hero-lockup { gap: 9px; }
+  .hero-lockup .lk-wb { height: 24px; }
+  .hero-lockup .lk-x { font-size: 15px; }
+  .hero-lockup .lk-xrpl { height: 18px; }
+}
+
+/* 사전예약 현황판 — 크레딧 롤 (8/27): 아래→위 무한 스크롤 + 상단 페이드아웃 */
+.feed-roll {
+  height: 280px; overflow: hidden;
+  /* 8/28 서우: 아래에서 새 줄이 "잘린 화면에서 튀어나온다" — 아래쪽이 .35 까지만 흐려서
+     글자가 반쯤 보이는 채로 등장했다. 위아래 모두 완전 투명까지 빼서 스르르 나타나게 한다.
+     피드는 아래→위로 흐르므로 등장 쪽(아래) 페이드가 더 중요하다. */
+  mask-image: linear-gradient(180deg, transparent 0%, #000 20%, #000 76%, transparent 100%);
+  -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 20%, #000 76%, transparent 100%);
+}
+/* 8/28 서우 2차: 3열 배치 — 크레딧 롤 애니메이션 동일 (아이템 30개×2=60 → 3열 20행, -50%가 행 경계에 정확히 일치) */
+.feed-track { display: grid; grid-template-columns: repeat(3, 1fr); column-gap: 24px; row-gap: 14px; animation: feed-up 32s linear infinite; }
+@media (max-width: 900px) { .feed-track { grid-template-columns: 1fr 1fr; column-gap: 36px; } }
+.feed-row {
+  display: flex; align-items: baseline; gap: 18px; justify-content: center;
+  font-size: 17px; letter-spacing: .01em;
+}
+@keyframes feed-up { from { transform: translateY(0); } to { transform: translateY(-50%); } }
+@media (max-width: 720px) { .feed-roll { height: 220px; } .feed-row { gap: 10px; font-size: 15px; } .feed-track { grid-template-columns: 1fr; } }
+@media (min-width: 901px) { .feed-row { gap: 12px; font-size: 16px; } }
+@media (prefers-reduced-motion: reduce) { .feed-track { animation: none; } }
+
+/* 제품 갤러리 밴드 (8/27 3차) — 텍스트 없는 풀폭 이미지 롤링, 타이틀·스펙은 섹션 밖 */
+/* 16:9 비율 고정 = 이미지(2000×1125)와 동일 비율이라 위아래 크롭 0 (8/27 서우) */
+.spec-band { position: relative; overflow: hidden; aspect-ratio: 16 / 9; background: var(--w-deep); }
+.spec-band .spec-bg { transition: opacity 1.2s ease; }
+.spec-band-shade { position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  background: linear-gradient(180deg, transparent 78%, rgba(0, 0, 0, .22) 100%); }
+.spec-band .spec-nav { position: absolute; top: 50%; transform: translateY(-50%); z-index: 2; }
+.spec-band .spec-dots { position: absolute; bottom: 16px; left: 0; right: 0; display: flex; justify-content: center; gap: 8px; }
+
+
+/* 제품 갤러리 — 히어로형 풀블리드 롤링 (8/27 2차: 섹션 전체를 사진이 덮고 텍스트는 흰색 — 3차에서 밴드형으로 대체) */
+.spec-hero { position: relative; overflow: hidden; background: var(--w-deep); }
+.spec-bg {
+  position: absolute; inset: 0; z-index: 0;
+  background-position: center; background-size: cover; background-repeat: no-repeat;
+  opacity: 0; transition: opacity 1.2s ease;
+}
+.spec-bg.on { opacity: 1; }
+.spec-hero-scrim {
+  position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  background: linear-gradient(180deg, rgba(27, 27, 72, .72) 0%, rgba(27, 27, 72, .2) 30%, rgba(27, 27, 72, .16) 62%, rgba(27, 27, 72, .74) 100%);
+}
+.spec-hero .spec-nav { position: absolute; top: 50%; transform: translateY(-50%); }
+@media (max-width: 720px) { .spec-hero .wrap { min-height: 400px !important; } }
+@media (prefers-reduced-motion: reduce) { .spec-bg { transition: none; } }
+
+/* 제품 스펙 갤러리 캐러셀 (8/27, 구판 카드형 — spec-hero로 대체, 클래스 보존) */
+.spec-gallery { position: relative; width: 100%; max-width: 880px; margin: 0 auto; height: 430px; border-radius: 16px; overflow: hidden; border: 1px solid var(--bd-card); background: #fff; }
+.spec-slide { position: absolute; inset: 0; opacity: 0; transition: opacity .8s ease; }
+.spec-slide.on { opacity: 1; }
+.spec-slide img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.spec-slide.fit-contain img { object-fit: contain; padding: 24px; }
+.spec-nav {
+  position: absolute; top: 50%; transform: translateY(-50%); z-index: 2;
+  width: 42px; height: 42px; border-radius: 99px; background: rgba(27, 27, 72, .55); color: #fff;
+  display: inline-flex; align-items: center; justify-content: center; font-size: 21px; font-weight: 800;
+  transition: background .15s;
+}
+.spec-nav:hover { background: rgba(27, 27, 72, .8); }
+.spec-nav.prev { left: 14px; }
+.spec-nav.next { right: 14px; }
+.spec-dots { position: absolute; bottom: 14px; left: 0; right: 0; z-index: 2; display: flex; justify-content: center; gap: 8px; }
+.spec-dot { width: 9px; height: 9px; border-radius: 99px; background: rgba(27, 27, 72, .25); transition: background .15s, transform .15s; }
+.spec-dot.on { background: var(--w-main); transform: scale(1.25); }
+@media (max-width: 720px) { .spec-gallery { height: 250px; } .spec-nav { width: 36px; height: 36px; } }
+@media (prefers-reduced-motion: reduce) { .spec-slide { transition: none; } }
+
+/* 모바일 히어로 CTA: 구매 버튼 전폭 → X·텔레그램은 확실히 다음 줄에 나란히 */
+@media (max-width: 720px) {
+  .hero-cta-row .hero-buy-btn { width: 100%; }
+  .hero-cta-row .hero-social { flex-basis: 100%; }
+}
+
+/* ── 랜딩 반응형 그리드 ── */
+/* 히어로 컨테이너 = .wrap(1080)과 동일 폭 — S2 가격 카드 좌우 라인과 끝 정렬 */
+.hero-grid { display: grid; grid-template-columns: 1fr 480px; gap: 56px; align-items: center; max-width: 1080px; margin: 0 auto; }
+
+/* CTA 샤인 스윕 (8/27) — 히어로 구매 버튼 반짝임. 3.2초 주기, 모션 최소화 설정 시 정지 */
+.btn-shine { position: relative; overflow: hidden; }
+.btn-shine::after {
+  content: "";
+  position: absolute; top: -4px; bottom: -4px; left: -70%;
+  width: 45%;
+  background: linear-gradient(105deg, transparent 15%, rgba(255, 255, 255, .5) 50%, transparent 85%);
+  transform: skewX(-18deg);
+  animation: btn-shine-sweep 3.2s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes btn-shine-sweep {
+  0% { left: -70%; }
+  45% { left: 130%; }
+  100% { left: 130%; }
+}
+@media (prefers-reduced-motion: reduce) { .btn-shine::after { animation: none; display: none; } }
+
+/* 히어로 풀블리드 배경 (8/27) — 액자형 썸네일 제거, 제품 실사 + 딥 바이올렛 스크림.
+   텍스트 존(좌측)은 진하게, 우측은 제품이 비치게. 모바일은 세로 그라데이션로 전면 확보 */
+/* 히어로 배경 = 후보 4장 크로스페이드 롤링 (8/27 비교용) — 스크림은 별도 레이어 */
+.hero-photo { position: relative; overflow: hidden; background: var(--w-deep); }
+.hero-bg-slide {
+  position: absolute; inset: 0; z-index: 0;
+  background-position: right center; background-size: cover; background-repeat: no-repeat;
+  opacity: 0; transition: opacity 1.4s ease;
+}
+.hero-bg-slide.on { opacity: 1; }
+/* 히어로 루프 영상 (8/29) — 정지컷 위에 같은 크롭으로 얹고 canplay 때 페이드인.
+   포스터가 정지컷과 같은 프레임이라 실제로는 전환이 보이지 않고, 재생만 시작된다.
+   iOS 저전력 모드처럼 autoplay 가 막히면 첫 프레임에서 멈추는데 그게 곧 정지컷이라 화면은 정상이다. */
+.hero-bg-vid {
+  position: absolute; inset: 0; z-index: 0;
+  width: 100%; height: 100%; object-fit: cover; object-position: right center;
+  opacity: 0; transition: opacity .7s ease; pointer-events: none;
+}
+.hero-bg-vid.on { opacity: 1; }
+/* 스캔 레이어 (8/29) — 정지컷 위에 더하기 합성으로만 올라간다. 텍스처가 준비되면 .on */
+.hero-fx {
+  position: absolute; inset: 0; z-index: 0;
+  width: 100%; height: 100%; display: block;
+  opacity: 0; transition: opacity .6s ease; pointer-events: none;
+}
+.hero-fx.on { opacity: 1; }
+.hero-scrim {
+  /* 우측 제품 영역은 스크림 0 — 텍스트 컬럼(좌측 ~45%)까지만 어둡게 */
+  position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  background: linear-gradient(92deg, rgba(27, 27, 72, .95) 0%, rgba(27, 27, 72, .86) 30%, rgba(27, 27, 72, .52) 47%, rgba(27, 27, 72, .16) 62%, rgba(27, 27, 72, 0) 76%, rgba(27, 27, 72, 0) 100%);
+}
+.hero-photo .hero-grid { position: relative; z-index: 2; min-height: 440px; }
+@media (max-width: 720px) {
+  /* 8/28 서우: 모바일에서 제품이 아예 안 보였다. 히어로 원본은 좌측 패키지 · 우측 기기 구도이고
+     기기 중심이 x≈70%인데 cover 크롭이 원본의 32~68%만 보여줘 기기가 잘려 나갔다.
+     78%로 옮기면 51~87% 구간이 노출돼 기기가 화면 중앙 뒤편에 들어온다(실측). */
+  /* 8/29 영상 구도는 박스가 빠져 피사체 중심이 x≈65% 다(이미지는 78%). 같은 값을 쓰면 기기가 밀린다. */
+  .hero-bg-slide { background-position: 65% center; }
+  .hero-bg-vid { object-position: 65% center; }
+  .hero-scrim { background: linear-gradient(180deg, rgba(27, 27, 72, .94) 0%, rgba(27, 27, 72, .82) 52%, rgba(27, 27, 72, .42) 100%); }
+  .hero-photo .hero-grid { min-height: 0; }
+}
+@media (prefers-reduced-motion: reduce) { .hero-bg-slide { transition: none; } .hero-bg-vid, .hero-fx { display: none; } }
+.price-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+/* 제품 이미지가 주인공 — 좌측 절반(가운데선)까지 확장 */
+.spec-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: start; }
+/* 3스텝(측정→채굴→보상, 8/30 회의 장표) — 카드 3 + 화살표 2 = 5열.
+   카드 stretch + 내용 상단 정렬 = 타이틀 라인 통일(들쑥날쑥 방지), 화살표만 세로 중앙 */
+.how-grid { display: grid; grid-template-columns: 1fr 34px 1fr 34px 1fr; gap: 0; align-items: stretch; }
+
+/* 혜택 두 장 — 개념 아래에 나란히. 좁아지면 세로로 쌓는다 */
+.ben-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; max-width: 880px; margin: 0 auto; width: 100%; }
+.how-grid .how-arrow { align-self: center; }
+.link-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+.rl-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.tier-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+.wl-hero-grid { display: grid; grid-template-columns: 1fr 420px; gap: 56px; align-items: center; }
+.dash-top { display: grid; grid-template-columns: 1fr 1fr 1.4fr; gap: 16px; }
+.dash-main { display: grid; grid-template-columns: 1.6fr 1fr; gap: 16px; align-items: start; }
+.me-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media (max-width: 980px) {
+  .hero-grid, .spec-grid, .wl-hero-grid, .dash-top, .dash-main { grid-template-columns: 1fr; }
+  .how-grid { grid-template-columns: 1fr; gap: 10px; }
+  .how-arrow { display: none; }
+  .ben-grid { grid-template-columns: 1fr; }
+  .link-grid { grid-template-columns: 1fr; }
+  .tier-grid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 720px) {
+  .price-grid, .rl-grid, .me-2col { grid-template-columns: 1fr; }
+  .order-steps-h { display: none !important; }
+  .order-steps-v { display: flex !important; }
+}
+@media (min-width: 721px) {
+  .order-steps-v { display: none !important; }
+}
+
+/* ── 주문·대기 페이지 유틸 ── */
+.w720 { width: 720px; max-width: 100%; }
+.w440 { width: 440px; max-width: 100%; }
+.big-title { font-size: 39px; }
+.wl-hero-pad { padding: 60px 64px; }
+.wl-sec-pad { padding: 56px 64px; }
+.dash-pad { padding: 36px; }
+.tint-strip { padding: 12px 36px; }
+.strip-in { display: flex; align-items: center; justify-content: space-between; gap: 16px; max-width: 1080px; margin: 0 auto; width: 100%; }
+.stat4 { display: grid; grid-template-columns: repeat(4, 1fr); }
+.stat4 > div { border-right: 1px solid var(--line-2); }
+.stat4 > div:last-child { border-right: 0; }
+@media (max-width: 720px) {
+  .big-title { font-size: 27px; line-height: 1.35; }
+  .wl-hero-pad { padding: 36px 20px; }
+  .wl-sec-pad { padding: 36px 20px; }
+  .dash-pad { padding: 20px 16px; }
+  .tint-strip { padding: 12px 16px; }
+  .strip-in { flex-direction: column; align-items: flex-start; gap: 4px; }
+  .stat4 { grid-template-columns: repeat(2, 1fr); }
+  .stat4 > div:nth-child(2n) { border-right: 0; }
+}
+
+/* ── 데스크톱/모바일 표시 토글 (요소 본연의 display 유지, 반대 뷰포트만 강제 숨김) ── */
+@media (max-width: 720px) { .desk-only { display: none !important; } }
+@media (min-width: 721px) { .mob-only { display: none !important; } }
+
+/* ── S0 스티키 바: PC 중앙 클러스터 / 모바일 좌우 유지 ── */
+.stickybar-in {
+  display: flex; align-items: center;
+  width: 100%; justify-content: space-between; gap: 12px;
+  padding: 12px 16px;
+}
+@media (min-width: 721px) {
+  .stickybar-in { width: auto; justify-content: center; gap: 26px; padding: 14px 40px; }
+}
+/* 8/28 서우: 스티키 카운트가 999,999(7자)까지 커져도 한 줄·CTA 안 눌림.
+   CTA 는 절대 줄어들지 않게 고정하고(줄어들면 "사전예약" 글자가 잘린다),
+   남은 폭은 카운트가 글자 크기를 낮춰 감당한다 — 문구는 서우 지시대로 모바일에도 그대로 둔다. */
+.stickybar-in .btn-main { flex: none; }
+.sb-count { display: flex; align-items: baseline; gap: 5px; white-space: nowrap; min-width: 0; }
+.sb-count .sb-lab { font-size: 15px; color: var(--cap); }
+.sb-count .sb-num { font-size: 22px; font-weight: 800; color: var(--w-deep); }
+.sb-count .sb-dday { font-size: 16.5px; font-weight: 800; color: var(--w-main); margin-left: 3px; }
+@media (max-width: 440px) {
+  .sb-count { gap: 3px; }
+  .sb-count .sb-lab { font-size: 13px; }
+  .sb-count .sb-num { font-size: 18px; }
+  .sb-count .sb-dday { font-size: 14.5px; margin-left: 2px; }
+}
+@media (max-width: 380px) {
+  .sb-count .sb-lab { font-size: 12px; }
+  .sb-count .sb-num { font-size: 16.5px; }
+  .sb-count .sb-dday { font-size: 13.5px; }
+}
+/* 320px 급(구형 SE)까지 내려가면 글자를 더 줄여도 999,999 가 한 줄에 안 들어간다.
+   숫자를 자르느니 두 줄로 내려보낸다 — 잘린 숫자는 오독을 부르지만 두 줄은 읽힌다. */
+@media (max-width: 356px) {
+  .sb-count { flex-wrap: wrap; row-gap: 0; }
+  .sb-count .sb-lab { font-size: 11.5px; }
+  .sb-count .sb-num { font-size: 15.5px; }
+  .sb-count .sb-dday { font-size: 12.5px; }
+}
+
+/* ── 크롬 반응형 (chrome.tsx) ── */
+@media (max-width: 720px) {
+  /* 8/28 서우: 로고 2배는 데스크톱 기준.
+     모바일은 우측 그룹(상태 칩 + KO/EN)이 253px을 쓰고 가용폭이 358px뿐이라 2배(폭 160)가
+     들어가지 않는다. 억지로 넣으면 flex가 이미지를 가로로 찌그러뜨린다(58px 실험 시 160 → 106).
+     비율이 깨지지 않는 최대치인 36px(폭 99)로 잡는다 — 기존 29px 대비 1.24배. */
+  .gnb-root { height: 60px !important; padding: 0 14px !important; }
+  .gnb-logo { height: 36px !important; }
+  /* 로고를 키운 만큼 우측 그룹이 들어갈 자리가 모자라 로고와 겹쳤다(390px에서 간격 0px) →
+     상태 칩·프리뷰 칩의 여백과 글자를 모바일에서만 조인다. 로고를 다시 줄이지 않기 위한 선택. */
+  .gnb-root .pill { font-size: 12.5px !important; padding: 3px 6px !important; }
+  .gnb-root > div:last-child { gap: 6px !important; }
+  .gnb-root > div:last-child > a,
+  .gnb-root > div:last-child > button { font-size: 13.5px !important; padding: 6px 10px !important; }
+  .s9-root { padding: 32px 20px 90px !important; }
+  .s9-invite { flex-direction: column; align-items: flex-start !important; padding: 22px !important; }
+}
+
+/* ── 선순환 칩 행 (8/28 서우 5차) ─────────────────────────────────────────
+   생성형 순환도 이미지를 폐기하고 코드로 구현. 흰 칩 + 보라 화살표 + 마지막에
+   "처음으로 돌아가는" 순환 아이콘. 아이콘은 인라인 SVG(GlassIcons)라 배율에
+   관계없이 선명하고, 이미지 대비 세로 자리를 크게 아낀다. */
+.loop-row {
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  gap: 10px;
+  /* nowrap 이어야 4:3 이 산다 — wrap 이면 칩이 줄바꿈하며 폭이 줄고,
+     내용 높이가 aspect-ratio 를 밀어내 비율이 깨진다 (실측 0.93) */
+  flex-wrap: nowrap;
+  /* 폭을 명시하지 않으면 행이 581px 로 쪼그라들어 칩이 121px 가 되고,
+     내용 높이(129px)가 aspect-ratio 를 밀어내 4:3 이 깨진다 */
+  width: 100%;
+  margin: 2px auto 0;
+}
+/* 8/28 서우: 가로로 긴 알약 → 4:3 카드. 아이콘을 위, 문구를 아래로 세운다.
+   flex:1 로 네 칸을 균등 분배하고 aspect-ratio 가 높이를 잡는다. */
+.loop-chip {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  flex: 1 1 0;
+  min-width: 0;
+  max-width: 208px;
+  aspect-ratio: 4 / 3;
+  min-height: 0;
+  /* 8/28 서우: 불투명한 흰 알약 → 4단계 카드(HowCard)와 같은 반투명 글래스.
+     뒤의 옅은 바이올렛 그라디언트가 blur 로 비쳐 한 세트로 읽힌다.
+     -webkit- 프리픽스는 직접 쓰지 않는다 — 같이 쓰면 빌드가 표준 속성 쪽을 지운다. */
+  background: rgba(255, 255, 255, .25);
+  color: var(--w-deep);
+  border: 1px solid rgba(255, 255, 255, .6);
+  backdrop-filter: blur(14px);
+  border-radius: 15px;
+  padding: 14px 12px;
+  box-shadow: 0 8px 32px rgba(27, 27, 72, .08);
+  font-size: 15.5px;
+  font-weight: 700;
+  line-height: 1.42;
+  text-align: center;
+}
+.loop-arrow {
+  display: inline-flex;
+  align-items: center;
+  flex: 0 0 auto;
+  align-self: center;
+  color: var(--arrow);
+  font-weight: 800;
+  font-size: 19px;
+}
+.loop-back {
+  display: inline-flex;
+  align-items: center;
+  padding: 0 2px;
+}
+@media (max-width: 760px) {
+  /* 모바일: 칩을 세로로 쌓고 화살표를 아래 방향으로 돌린다 */
+  .loop-row { flex-direction: column; align-items: center; gap: 7px; }
+  /* 8/28 서우 "모바일 최적화 필요": 4:3 은 가로 4칸용 지시였는데 세로 스택에서도 그대로 걸려
+     아이콘 + 한 줄짜리 칩이 292×219 로 부풀고 아래가 텅 비었다(행 전체 962px).
+     세로에서는 비율을 풀고 아이콘 옆에 글자를 두는 가로형으로 되돌린다. */
+  .loop-chip {
+    flex-direction: row;
+    aspect-ratio: auto;
+    /* 기본 .loop-chip 은 flex: 1 1 0 + min-height: 0 (가로 4칸용)이라 column 방향에서는
+       높이가 0 기준으로 눌린다 — 실측 28px. 세로 스택에서는 내용 높이를 그대로 쓴다. */
+    flex: none;
+    width: 100%;
+    max-width: 340px;
+    justify-content: flex-start;
+    gap: 13px;
+    padding: 13px 16px;
+    font-size: 15.5px;
+    text-align: left;
+  }
+  /* 아이콘 크기는 컴포넌트에 인라인(46px)이라 CSS 로 눌러야 한다 — 가로형에는 조금 작은 게 맞다 */
+  .loop-chip > :first-child { width: 54px; height: 54px; flex: none; }
+  /* 화살표를 rotate 로 눕히면 reveal(.rv 의 translateY)과 같은 transform 을 다퉈 한쪽이 진다.
+     실제로 2×2 잔재 블록이 .rv 보다 뒤에 있어서 회전이 살아 있었고, 그 블록을 걷어내자
+     .rv 가 이겨 화살표가 다시 가로로 누웠다. 글리프를 바꿔 충돌 자체를 없앤다. */
+  .loop-arrow { font-size: 0; }
+  .loop-arrow::before { content: "↓"; font-size: 17px; line-height: 1; }
+}
+
+/* 마지막 → 처음으로 돌아가는 고리 (8/28 서우 6차)
+   칩이 4개가 되면서 행 안에 순환 아이콘을 둘 자리가 없어졌다 → 행 아래 곡선 화살표로 뺀다.
+   시각적으로도 "한 바퀴 돈다"가 더 분명하다. */
+.loop-return {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  color: var(--arrow);
+  margin-top: 2px;
+}
+/* 8/28 서우: 곡선 끝이 1번·4번 칩 중앙을 가리켜야 하는데 좌우로 49~56px 씩 벗어나 있었다.
+   원인은 SVG 를 preserveAspectRatio="none" 으로 늘려 쓴 것 — 칩 위치와 무관하게 그려졌다.
+   SVG 를 버리고 칩 치수에서 끝점을 계산한다:
+     칩폭 = (행폭 - 화살표 3개(17px) - gap 6개(8px)) / 4 = (100% - 99px) / 4
+     칩 중앙까지 = 그 절반 = (100% - 99px) / 8   ← 이만큼 좌우로 들여쓴다
+   화살표 폭을 CSS 로 못 박아야 이 식이 성립하므로 .loop-arrow 에 width 를 고정했다. */
+.loop-return .lr-u {
+  align-self: stretch;
+  height: 28px;
+  margin: 0 calc((100% - 99px) / 8);
+  border: 2px solid currentColor;
+  border-top: 0;
+  border-radius: 0 0 15px 15px;
+  position: relative;
+}
+/* 왼쪽 끝에서 위로 올라가는 화살촉 (4번 → 1번으로 되돌아가는 방향) */
+.loop-return .lr-u::before {
+  content: "";
+  position: absolute;
+  left: -4px;
+  top: -1px;
+  width: 10px;
+  height: 10px;
+  border-left: 2px solid currentColor;
+  border-top: 2px solid currentColor;
+  transform: rotate(45deg);
+}
+.loop-return span {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: var(--w-deep);
+  opacity: .78;
+}
+/* 칩이 3개 → 4개가 되어 한 줄 폭이 빠듯하다. 데스크톱에서만 살짝 조인다 */
+@media (min-width: 761px) {
+  /* 8/28 서우 8차: 문구를 한 줄 단문으로 줄였다. 다만 글자를 16.5px까지 키웠더니 네 번째 칩이
+     둘째 줄로 밀려 "한눈에"가 깨졌다 — 카드 내폭 832px에 4칩+3화살표가 들어가는 치수로 되돌린다. */
+  .loop-chip { padding: 14px 12px; font-size: 15.5px; gap: 9px; }
+  .loop-row { gap: 8px; }
+  /* 폭을 못 박는다 — .lr-u 의 인셋 계산이 이 17px 에 의존한다 */
+  .loop-arrow { font-size: 17px; width: 17px; flex: none; text-align: center; }
+}
+@media (max-width: 760px) {
+  /* 세로 스택에서는 되돌아가는 곡선이 의미가 없다 — 화살표를 감추고 문구만 남긴다 */
+  .loop-return .lr-u { display: none; }
+  .loop-return { margin-top: 6px; }
+}
+
+/* 360px대 소형 폰(갤럭시 S8 등) — 위 치수로도 우측 그룹이 2px 넘친다. 한 단계 더 조인다.
+   (기존 max-width:720px 블록을 쪼개면 그 안의 다른 규칙이 딸려 나가므로 독립 블록으로 둔다) */
+@media (max-width: 380px) {
+  .gnb-logo { height: 32px !important; }
+  .gnb-root .pill { font-size: 12px !important; padding: 3px 5px !important; }
+  .gnb-root > div:last-child { gap: 5px !important; }
+  .gnb-root > div:last-child > a,
+  .gnb-root > div:last-child > button { font-size: 12.5px !important; padding: 5px 8px !important; }
+}
+
+
+/* ── 히어로 소셜 아이콘 (8/28 서우) ─────────────────────────────────────────
+   평소엔 테두리만. 마우스를 올리면 바로 아래 스탯 테이블(.pre-stat)과 똑같은
+   글래스가 깔린다 — 흰 배경 .15 + blur 14px + 같은 그림자.
+   테두리는 인라인이 아니라 여기 있어야 hover 가 우선순위에서 이긴다.
+   -webkit- 프리픽스는 직접 쓰지 않는다 — 같이 쓰면 빌드의 CSS 최적화기가 표준
+   속성 쪽을 지워서 Firefox 에서 블러가 빠진다. 프리픽스 생성은 빌드에 맡긴다. */
+.hero-ico {
+  border: 1px solid rgba(255, 255, 255, .28);
+  background: transparent;
+  transition: background .18s ease, border-color .18s ease, box-shadow .18s ease;
+}
+/* 터치 기기에서는 탭 후 hover 가 눌어붙으므로 실제 포인터가 있을 때만 */
+@media (hover: hover) {
+  .hero-ico:hover {
+    background: rgba(255, 255, 255, .15);
+    backdrop-filter: blur(14px);
+    border-color: rgba(255, 255, 255, .45);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, .18);
+  }
+}
+/* 키보드 포커스도 같은 표시 — 마우스 없이도 어디에 있는지 보여야 한다 */
+.hero-ico:focus-visible {
+  background: rgba(255, 255, 255, .15);
+  backdrop-filter: blur(14px);
+  border-color: rgba(255, 255, 255, .55);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, .18);
+  outline: 2px solid rgba(255, 255, 255, .7);
+  outline-offset: 2px;
+}
+
+
+/* ── 푸터 주체 로고 (8/28 회의: 누르면 각 홈페이지로) ───────────────────────
+   opacity 를 인라인이 아니라 여기 둬야 hover 가 우선순위에서 이긴다. */
+.foot-logo {
+  display: inline-flex;
+  opacity: .9;
+  transition: opacity .16s ease;
+}
+@media (hover: hover) {
+  .foot-logo:hover { opacity: 1; }
+}
+.foot-logo:focus-visible {
+  opacity: 1;
+  outline: 2px solid rgba(255, 255, 255, .7);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+
+/* ── 스크롤 순차 등장 (8/28 서우) ──────────────────────────────────────────
+   .rv 는 JS 가 붙인다 — 스크립트가 죽으면 이 규칙이 아예 안 걸리므로
+   콘텐츠가 투명한 채로 남는 사고가 나지 않는다. */
+.rv {
+  opacity: 0;
+  transform: translateY(14px);
+  will-change: opacity, transform;
+}
+/* 전환은 .in 쪽에만 건다. .rv 에 걸면 JS 가 클래스를 붙이는 순간(첫 페인트 뒤)
+   보이던 카드가 0.58초에 걸쳐 사라지는 게 보인다 — 숨기는 건 즉시, 나타나는 것만 애니메이션. */
+.rv.in {
+  opacity: 1;
+  transform: none;
+  transition: opacity .58s cubic-bezier(.22, .61, .36, 1), transform .58s cubic-bezier(.22, .61, .36, 1);
+}
+@media (prefers-reduced-motion: reduce) {
+  .rv { opacity: 1; transform: none; transition: none; }
+}
+
+
+/* ── 선순환 칩 2×2 블록은 걷어냈다 (8/28 서우 "모바일 최적화 필요") ─────────
+   모바일은 위쪽 max-width:760px 블록에서 이미 세로 1열이다. 2×2 시절 규칙이 그 뒤에
+   남아 세로 스택을 덮고 있었다:
+     · flex: 0 0 calc(50% - 26px) — column 방향에서는 폭이 아니라 높이축에 걸려 무의미
+     · max-width: none — 앞 블록의 340px 상한을 무효화
+     · .loop-arrow:nth-of-type(2) { display: none } — 2×2 의 가운데 화살표를 지우려던 건데
+       1열에서는 첫 번째 화살표(칩1 → 칩2)가 통째로 사라졌다. 실측 0×0 / display:none.
+   회전(rotate(90deg))은 위 블록에 이미 있으므로 여기서 다시 선언하지 않는다. */
+
+/* 8/28 서우: 320px(구형 SE)에서 GNB 우측 묶음이 뷰포트를 14px 밀어내 페이지가 가로로 스크롤됐다.
+   로고 88 + gap 14 + 우측 217 + 좌우 패딩 28 = 347 > 320. 구성(로고·CTA·상태 칩)은 그대로 두고
+   헤더 여백과 로고만 조여 27px 을 만든다. 위쪽 720px 블록도 !important 라 반드시 뒤에 둬야 이긴다. */
+@media (max-width: 356px) {
+  .gnb-root { gap: 8px !important; padding-left: 10px !important; padding-right: 10px !important; }
+  .gnb-logo { height: 30px !important; }
+}
+
+/* 공기질 등급 — status 색이다. 카테고리 색과 섞어 쓰지 않는다.
+   흰 배경과 패널 모두에서 본문 대비 4.5:1 을 넘는 값으로 골랐다(5.4~5.9). */
+:root {
+  --air-good: #17734a;
+  --air-fair: #95590c;
+  --air-bad:  #c0392b;
+  --air-good-bg: #e9f7f0;
+  --air-fair-bg: #fdf6e9;
+  --air-bad-bg:  #fdf3f2;
+}
+
+/* 내 공기 카드 (8/30) — 마이페이지 맨 위. 그래프가 주인공이므로 테두리·눈금은
+   최대한 뒤로 물리고 선과 숫자만 앞에 세운다. */
+.air-card {
+  background: #fff; border: 1px solid var(--bd-card); border-radius: 16px;
+  padding: 22px 24px 18px; display: flex; flex-direction: column; gap: 16px;
+}
+.air-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.air-head-t { display: flex; flex-direction: column; gap: 3px; }
+.air-head-t h3 { font-size: 17px; font-weight: 800; color: var(--w-deep); }
+.air-head-s { font-size: 12.5px; color: var(--cap); }
+.air-live {
+  display: inline-flex; align-items: center; gap: 6px; flex: none;
+  font-size: 11.5px; font-weight: 800; color: var(--ok-text);
+  background: var(--ok-bg); border-radius: 99px; padding: 5px 11px;
+}
+.air-live-dot { width: 6px; height: 6px; border-radius: 99px; background: var(--ok-dot); }
+
+.air-tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.air-tile {
+  display: flex; flex-direction: column; gap: 6px; align-items: flex-start;
+  background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px;
+}
+.air-tile-k { font-size: 11.5px; font-weight: 700; color: var(--hint); }
+.air-tile-v { font-size: 26px; font-weight: 800; color: var(--w-deep); line-height: 1.1; letter-spacing: -0.5px; }
+.air-tile-v i { font-size: 12.5px; font-weight: 700; color: var(--cap); font-style: normal; margin-left: 4px; letter-spacing: 0; }
+
+/* 등급은 색과 글자를 함께 낸다 — 색만으로는 말하지 않는다 */
+.air-badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 11px; font-weight: 800; border-radius: 99px; padding: 3px 9px;
+}
+.air-badge .air-dot { width: 5px; height: 5px; border-radius: 99px; background: currentColor; }
+.air-badge.good { color: var(--air-good); background: var(--air-good-bg); }
+.air-badge.fair { color: var(--air-fair); background: var(--air-fair-bg); }
+.air-badge.bad  { color: var(--air-bad);  background: var(--air-bad-bg); }
+.air-badge-none { font-size: 11px; font-weight: 700; color: var(--hint); padding: 3px 0; }
+
+.air-tabs { display: flex; gap: 6px; flex-wrap: wrap; }
+.air-tab {
+  font-size: 12.5px; font-weight: 700; color: var(--ink-3);
+  border: 1px solid var(--bd-btn); background: #fff; border-radius: 99px; padding: 7px 14px;
+}
+.air-tab:hover { border-color: var(--bd-input); color: var(--w-deep); }
+.air-tab.on { color: #fff; background: var(--w-main); border-color: var(--w-main); }
+
+.air-plot { position: relative; touch-action: pan-y; }
+.air-plot svg { display: block; overflow: visible; }
+.air-ax { font-size: 11px; fill: var(--hint); font-weight: 600; }
+.air-band { font-size: 10px; font-weight: 800; }
+
+.air-tip {
+  position: absolute; top: 4px; transform: translateX(-50%); pointer-events: none;
+  display: flex; align-items: center; gap: 9px; white-space: nowrap;
+  background: #fff; border: 1px solid var(--bd-card); border-radius: 10px;
+  padding: 7px 11px; box-shadow: 0 6px 18px rgba(27, 27, 72, .1);
+}
+.air-tip b { font-size: 11.5px; font-weight: 800; color: var(--cap); }
+.air-tip > span:not(.air-badge) { font-size: 13.5px; font-weight: 800; color: var(--w-deep); }
+
+.air-table > summary { font-size: 12px; font-weight: 700; color: var(--cap); cursor: pointer; }
+.air-table > summary:hover { color: var(--w-deep); }
+.air-table-in { overflow-x: auto; margin-top: 10px; }
+.air-table table { border-collapse: collapse; font-size: 12px; width: 100%; min-width: 420px; }
+.air-table th, .air-table td { padding: 6px 10px; text-align: right; border-bottom: 1px solid var(--line-2); }
+.air-table thead th { color: var(--hint); font-weight: 700; text-align: right; white-space: nowrap; }
+.air-table thead th i { font-weight: 500; font-style: normal; }
+.air-table tbody th { color: var(--cap); font-weight: 700; text-align: left; }
+.air-table tbody td { color: var(--ink-2); font-variant-numeric: tabular-nums; }
+
+.air-foot { font-size: 11.5px; line-height: 1.6; color: var(--hint); }
+
+@media (max-width: 720px) {
+  .air-card { padding: 18px 16px 14px; }
+  .air-tiles { grid-template-columns: 1fr; }
+  .air-tile { flex-direction: row; align-items: center; justify-content: space-between; flex-wrap: wrap; padding: 12px 14px; }
+  .air-tile-v { font-size: 22px; }
+}
+
+/* 보상 클레임 카드 (8/30) — 큰 숫자 하나와 단추 하나. 그 둘 사이에 "아직 지갑에
+   있지 않다" 가 끼어 있어야 한다. 이 줄을 각주로 내리면 안 읽히고, 안 읽히면
+   지갑을 열어 본 사람이 문의를 넣는다. */
+.claim-card {
+  background: #fff; border: 1px solid var(--bd-card); border-radius: 16px; overflow: hidden;
+}
+.claim-head {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+  padding: 18px 24px; border-bottom: 1px solid var(--line);
+}
+.claim-h { font-size: 14.5px; font-weight: 800; color: var(--w-deep); }
+.claim-epoch { font-size: 12.5px; color: var(--cap); }
+
+.claim-main {
+  display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap;
+  padding: 22px 24px;
+}
+.claim-amt-box { display: flex; flex-direction: column; gap: 6px; min-width: 260px; flex: 1; }
+.claim-k { font-size: 11.5px; font-weight: 700; color: var(--hint); }
+.claim-amt {
+  font-size: 38px; font-weight: 800; color: var(--w-deep); line-height: 1.05; letter-spacing: -1px;
+  font-variant-numeric: tabular-nums;
+}
+.claim-amt i { font-size: 15px; font-weight: 700; color: var(--w-main); font-style: normal; margin-left: 8px; letter-spacing: 0; }
+.claim-note { font-size: 12.5px; line-height: 1.55; color: var(--ink-4); font-weight: 700; }
+
+.claim-act { display: flex; flex-direction: column; gap: 10px; min-width: 240px; }
+.claim-go {
+  font-size: 14px; font-weight: 800; color: #fff; background: var(--w-main);
+  border-radius: 10px; padding: 13px 22px; white-space: nowrap;
+}
+.claim-go.wide { width: 100%; }
+.claim-go:hover:not(:disabled) { background: var(--w-deep); }
+.claim-go:disabled { background: var(--line); color: var(--dis); cursor: not-allowed; }
+.claim-cancel {
+  font-size: 13px; font-weight: 700; color: var(--cap);
+  border: 1px solid var(--bd-btn); border-radius: 10px; padding: 12px 18px; background: #fff;
+}
+.claim-cancel:hover { color: var(--w-deep); border-color: var(--bd-input); }
+
+/* 확인 단계 — 되돌릴 수 없는 일이므로 무슨 일이 일어나는지 여기서 다 적는다 */
+.claim-confirm {
+  display: flex; flex-direction: column; gap: 12px;
+  background: var(--panel); border: 1px solid var(--bd-card); border-radius: 12px; padding: 16px;
+  max-width: 380px;
+}
+.claim-confirm p { font-size: 13px; line-height: 1.65; color: var(--ink-2); }
+.claim-confirm b { color: var(--w-deep); }
+.claim-btns { display: flex; gap: 8px; }
+
+.claim-done {
+  display: flex; flex-direction: column; gap: 4px;
+  background: var(--ok-bg); border-radius: 12px; padding: 16px 18px; max-width: 380px;
+}
+.claim-done-h { font-size: 14px; font-weight: 800; color: var(--ok-text); }
+.claim-done-s { font-size: 12.5px; line-height: 1.55; color: var(--ink-3); }
+
+.claim-foot {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+  padding: 14px 24px; background: var(--panel); border-top: 1px solid var(--line);
+}
+.claim-sub { display: flex; gap: 18px; flex-wrap: wrap; font-size: 12.5px; color: var(--cap); }
+.claim-sub b { color: var(--ink-2); font-variant-numeric: tabular-nums; }
+.claim-last { color: var(--hint); }
+.claim-guard { font-size: 11.5px; color: var(--hint); }
+
+@media (max-width: 720px) {
+  .claim-head, .claim-main, .claim-foot { padding-left: 16px; padding-right: 16px; }
+  .claim-main { gap: 16px; }
+  .claim-amt-box, .claim-act { min-width: 0; width: 100%; }
+  .claim-amt { font-size: 32px; }
+  .claim-confirm, .claim-done { max-width: none; }
+}
+/* 다 옮긴 뒤의 0 — 강조를 뺀다. 0 이 굵고 진하면 눈이 먼저 가서 없는 걸 찾게 된다 */
+.claim-amt.zero { color: var(--dis); }
+.claim-amt.zero i { color: var(--dis); }

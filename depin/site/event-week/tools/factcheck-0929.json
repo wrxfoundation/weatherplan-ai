@@ -1,0 +1,2919 @@
+{
+ "asof": "2026-09-29",
+ "method": "WebSearch 요약 기준 · 세션 검색 한도(200회) 소진으로 확인불가 다수 — 다음 세션에서 verdict=확인불가 만 다시 검증",
+ "counts": {
+  "맞음": 179,
+  "부분": 20,
+  "확인불가": 121,
+  "틀림": 3
+ },
+ "items": [
+  {
+   "group": "KBW 소속 · 설명 1",
+   "who": "Charles Jansen",
+   "claim": "S&P Global — DeFi 전환 총괄",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://press.spglobal.com/2022-05-17-S-P-Global-Ratings-Establishes-Decentralized-Finance-DeFi-Group-Amidst-Heightened-Investor-Interest",
+   "note": "S&P Global Ratings Managing Director · Head of DeFi Transformation(2022 DeFi 그룹 신설 보도자료 + 인물 DB 기준). 2026 현재 직함은 인물 DB 기준. 정확한 소속은 S&P Global Ratings"
+  },
+  {
+   "group": "KBW 소속 · 설명 1",
+   "who": "Charles Jansen",
+   "claim": "S&P Global — 신용평가 · 지수(S&P 다우존스 지수) · 시장 데이터",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "",
+   "note": "공개된 사업 구성(Ratings · Dow Jones Indices · Market Intelligence)과 일치. 이 문장은 따로 검색하지 않음"
+  },
+  {
+   "group": "KBW 소속 · 설명 1",
+   "who": "Charles Jansen",
+   "claim": "Ratings 매니징 디렉터 · DeFi 전환 총괄. 10/1 「시장 데이터에서 등급으로」 패널",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "",
+   "note": "인물 DB 기준 MD · Head of DeFi Transformation(S&P Global Ratings). 세션은 sessions 와 일치"
+  },
+  {
+   "group": "KBW 소속 · 설명 1",
+   "who": "Caroline D. Pham",
+   "claim": "MoonPay(전 CFTC 위원장 대행)",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://www.moonpay.com/newsroom/caroline-d-pham",
+   "note": "2025.12 CFTC 위원장 대행을 마치고 MoonPay CLO · CAO 로 합류. KBW2026 연사 확정(KBW 보도자료)"
+  },
+  {
+   "group": "KBW 소속 · 설명 1",
+   "who": "Caroline D. Pham",
+   "claim": "MoonPay — 법정화폐 ↔ 크립토 온램프 · 결제",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://www.prnewswire.com/news-releases/moonpay-acquires-sodot-launches-moonpay-institutional-302756470.html",
+   "note": "온램프 · 결제 사업 맞음. 2026.4 Sodot 인수와 함께 기관 부문 MoonPay Institutional 출범"
+  },
+  {
+   "group": "KBW 소속 · 설명 1",
+   "who": "Caroline D. Pham",
+   "claim": "최고법률책임자 · Moon Global Markets CEO(전 CFTC 위원장 대행). 9/30 「토큰화가 월가를 바꾸는 법」 패널",
+   "verdict": "부분",
+   "fix": "최고법률책임자 · 최고행정책임자 겸 MoonPay Institutional CEO(전 CFTC 위원장 대행)",
+   "source": "https://www.chainbits.com/press-releases/kbw2026-brings-global-finance-policy-and-crypto-leaders-to-seoul",
+   "note": "KBW2026 보도자료와 본인 프로필 모두 'CLO · CAO of MoonPay, CEO of MoonPay Institutional'. 'Moon Global Markets CEO'는 2026.5 Consensus 연사 소개에만 나옴. 세션 배정은 sessions 가 비어 있어 확인 못 함. 아젠다 확인 전에는 세션 문구를 빼 둘 것"
+  },
+  {
+   "group": "KBW 소속 · 설명 1",
+   "who": "Guy Wuollet",
+   "claim": "a16z crypto GP",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://a16zcrypto.com/team/guy-wuollet/",
+   "note": "a16z crypto 4번째 GP 로 승진. 2026 펀드 GP 명단에 포함"
+  },
+  {
+   "group": "KBW 소속 · 설명 1",
+   "who": "Guy Wuollet",
+   "claim": "a16z crypto — 크립토 전문 VC",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://www.forbes.com/sites/digital-assets/2026/05/05/crypto-powerhouse-a16z-raises-22-billion-for-fifth-fund/",
+   "note": "2026.5 22억 달러 규모 5호 펀드 조성"
+  },
+  {
+   "group": "KBW 소속 · 설명 1",
+   "who": "Guy Wuollet",
+   "claim": "GP. 9/30 「펀드 산업의 토큰화」 패널",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://a16zcrypto.com/team/guy-wuollet/",
+   "note": "직함 맞음. 세션은 sessions 와 일치"
+  },
+  {
+   "group": "KBW 소속 · 설명 1",
+   "who": "Yuval Rooz",
+   "claim": "Digital Asset(Canton) CEO",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://www.coindesk.com/business/2026/06/11/canton-network-developer-raises-usd355-million-to-bring-wall-street-onchain",
+   "note": "Digital Asset 공동창업자 겸 CEO(Canton Network 개발사). 2026.6 3.55억 달러 투자 유치 보도"
+  },
+  {
+   "group": "KBW 소속 · 설명 1",
+   "who": "Mike Belshe",
+   "claim": "BitGo CEO",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://www.cnbc.com/video/2026/08/28/bitgo-ceo-mike-belshe-on-nydig-deal-state-of-crypto-and-fate-of-clarity-act.html",
+   "note": "공동창업자 겸 CEO. 2026.8 CNBC 인터뷰 기준"
+  },
+  {
+   "group": "KBW 소속 · 설명 1",
+   "who": "Mike Belshe",
+   "claim": "BitGo — 디지털자산 커스터디",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://www.cnbc.com/video/2026/08/28/bitgo-ceo-mike-belshe-on-nydig-deal-state-of-crypto-and-fate-of-clarity-act.html",
+   "note": "커스터디 사업자 맞음. Wikipedia 기준 NYSE 상장(BTGO). 2026.8 NYDIG 기관 트레이딩 사업 인수 발표"
+  },
+  {
+   "group": "KBW 소속 · 설명 1",
+   "who": "Mike Belshe",
+   "claim": "CEO. 9/30 「기관 크립토 시대의 보안」",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "",
+   "note": "직함 맞음. 세션은 sessions 와 일치"
+  },
+  {
+   "group": "KBW 소속 · 설명 1",
+   "who": "Balaji Srinivasan",
+   "claim": "The Network State",
+   "verdict": "부분",
+   "fix": "『The Network State』 저자 · Network School 창업자",
+   "source": "https://fortune.com/2026/07/26/network-school-balaji-srinivasan-malaysia-johor-israel-kazakhstan/",
+   "note": "KBW 연사 표기는 'Founder, Investor, Author of The Network State'. The Network State 는 책이자 개념이라 소속명으로 쓰면 오해를 부름. Network School 은 2026.7 말레이시아 영업허가가 취소된 뒤 카자흐스탄으로 옮겨 감"
+  },
+  {
+   "group": "KBW 소속 · 설명 1",
+   "who": "Arjun Sethi",
+   "claim": "Kraken 공동 CEO",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://www.cnbc.com/video/2026/08/20/kraken-co-ceo-arjun-sethi-on-the-launch-of-new-affiliate-debit-card.html",
+   "note": "Kraken(Payward) 공동 CEO. 2026.8 CNBC 인터뷰 기준. Tribe Capital 회장 겸임"
+  },
+  {
+   "group": "KBW 소속 · 설명 1",
+   "who": "Arjun Sethi",
+   "claim": "Kraken — 글로벌 거래소",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://www.semafor.com/article/04/14/2026/kraken-has-filed-confidentially-for-ipo-co-ceo-arjun-sethi-confirms",
+   "note": "IPO 비공개 신청 상태(2026.4 Semafor 보도)"
+  },
+  {
+   "group": "KBW 소속 · 설명 1",
+   "who": "Arjun Sethi",
+   "claim": "공동 CEO",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "",
+   "note": "위와 같음"
+  },
+  {
+   "group": "KBW 소속 · 설명 1",
+   "who": "SeonJoo Yoon",
+   "claim": "업비트(두나무) CBIO",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://v.daum.net/v/20250627091500602",
+   "note": "2025.6 두나무 CBIO(Chief Brand & Impact Officer) 선임, 쿠팡 공동창업자. 2026년 활동 보도로 재직 확인"
+  },
+  {
+   "group": "KBW 소속 · 설명 1",
+   "who": "SeonJoo Yoon",
+   "claim": "업비트(두나무)",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "",
+   "note": "위와 같음"
+  },
+  {
+   "group": "KBW 소속 · 설명 1",
+   "who": "SeonJoo Yoon",
+   "claim": "CBIO. 9/30 「CLARITY 이후 미국 시장」 모더레이터",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://www.fnnews.com/news/202609281825215665",
+   "note": "파이낸셜뉴스(9/28) 보도로 퀸텐즈 전 CFTC 위원과 'CLARITY 이후 미국 시장'을 대담하는 것은 확인. 모더레이터라는 표기는 아젠다로 확인 못 함"
+  },
+  {
+   "group": "KBW 소속 · 설명 1",
+   "who": "Kyoungsuk Oh",
+   "claim": "두나무(업비트) 대표",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://www.chainbits.com/press-releases/kbw2026-brings-global-finance-policy-and-crypto-leaders-to-seoul",
+   "note": "2025.7 취임. KBW 보도자료 표기는 'CEO of Upbit (Dunamu)'"
+  },
+  {
+   "group": "KBW 소속 · 설명 1",
+   "who": "Kyoungsuk Oh",
+   "claim": "두나무 — 업비트 운영사, KBW 메인 스폰서",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://www.fnnews.com/news/202609211904271582",
+   "note": "행사 공식 명칭이 'KBW2026 with Upbit'(타이틀 파트너). 9/29 업비트 인스티튜셔널 서밋(UIS)도 두나무 주최"
+  },
+  {
+   "group": "KBW 소속 · 설명 1",
+   "who": "Kyoungsuk Oh",
+   "claim": "대표. 9/30 10:30 발표",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "",
+   "note": "직함 맞음. 세션은 sessions 와 일치"
+  },
+  {
+   "group": "KBW 소속 · 설명 1",
+   "who": "Tom Schmidt",
+   "claim": "Dragonfly GP",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://www.theblock.co/profile/314423/tom-schmidt",
+   "note": "여러 프로필 기준 General Partner. KBW 공식 발표 표기는 'Partner, Dragonfly'"
+  },
+  {
+   "group": "KBW 소속 · 설명 1",
+   "who": "Tom Schmidt",
+   "claim": "Dragonfly — 크립토 VC",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://dragonfly.com/",
+   "note": "크립토 전문 VC. 2026.2 4호 펀드 마감"
+  },
+  {
+   "group": "KBW 소속 · 설명 1",
+   "who": "Tom Schmidt",
+   "claim": "GP. 10/1 「자본이 그리는 다음 사이클」 패널",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "",
+   "note": "직함 맞음. 세션은 sessions 와 일치"
+  },
+  {
+   "group": "KBW 소속 · 설명 1",
+   "who": "Michael Ippolito",
+   "claim": "Blockworks 공동창업자",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://blockworks.com/speaker/michael-ippolito",
+   "note": "2018년 Jason Yanowitz 와 공동창업"
+  },
+  {
+   "group": "KBW 소속 · 설명 1",
+   "who": "Michael Ippolito",
+   "claim": "Blockworks — 크립토 미디어 · 리서치 · 행사",
+   "verdict": "부분",
+   "fix": "Blockworks — 크립토 데이터 · 리서치 · 팟캐스트 · 행사(DAS). 2025.10 뉴스 부문 폐쇄",
+   "source": "https://www.thestreet.com/crypto/jobs/blockworks-shutters-its-news-division-pivots-to-data-and-analytics",
+   "note": "2025.10 뉴스 부문을 닫고 데이터 · 애널리틱스로 전환. 뉴스레터 · 팟캐스트 · DAS 행사는 유지. '미디어'라는 표현은 현재와 어긋남"
+  },
+  {
+   "group": "KBW 소속 · 설명 1",
+   "who": "Michael Ippolito",
+   "claim": "공동창업자. 10/1 「월가의 크립토 결산」 모더레이터",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "",
+   "note": "공동창업자 맞음. 모더레이터 역할은 아젠다로 확인 못 함(sessions 와는 일치)"
+  },
+  {
+   "group": "KBW 소속 · 설명 1",
+   "who": "Yat Siu",
+   "claim": "Animoca Brands 회장",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://fortune.com/2026/06/15/animoca-brands-cofounder-yat-siu-asia-ai-blockchain/",
+   "note": "공동창업자 겸 Executive Chairman. 2026.6 · 2026.9 보도 기준"
+  },
+  {
+   "group": "KBW 소속 · 설명 1",
+   "who": "Johann Kerbrat",
+   "claim": "Robinhood 크립토 총괄",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://www.coindesk.com/business/2026/05/05/robinhood-vp-johann-kerbrat-recommends-global-portfolios-as-demand-for-u-s-stocks-rises",
+   "note": "SVP · GM, Crypto(& International). 2026년 행사 연사 표기 기준"
+  },
+  {
+   "group": "KBW 소속 · 설명 1",
+   "who": "Marcin Kazmierczak",
+   "claim": "RedStone 공동창업자",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://www.redstone.finance/team/",
+   "note": "공동창업자로 전략 · GTM 담당. 2026 활동 보도 있음"
+  },
+  {
+   "group": "KBW 소속 · 설명 1",
+   "who": "SungGuan Yun",
+   "claim": "한국은행 디지털화폐연구실장",
+   "verdict": "부분",
+   "fix": "한국은행 디지털화폐실장",
+   "source": "https://m.news.nate.com/view/20260701n34813",
+   "note": "2026 보도의 표기는 '윤성관 디지털화폐실장'. 2026.8 '디지털화폐실' 산하에 자산토큰화반 신설(뉴스핌 9/26 보도). '디지털화폐연구실'은 이전 명칭으로 보임"
+  },
+  {
+   "group": "KBW 소속 · 설명 1",
+   "who": "SungGuan Yun",
+   "claim": "한국은행 — 디지털화폐(CBDC · 예금토큰 · 프로젝트 한강)",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://www.newspim.com/news/view/20260926000100",
+   "note": "프로젝트 한강(예금토큰) 진행 중. 2026.8 국채 토큰화를 맡는 자산토큰화반 신설"
+  },
+  {
+   "group": "KBW 소속 · 설명 1",
+   "who": "SungGuan Yun",
+   "claim": "디지털화폐연구실장. 9/30 「디지털화폐와 한국의 다음 구조」",
+   "verdict": "부분",
+   "fix": "디지털화폐실장. 9/30 「디지털화폐와 한국의 다음 구조」",
+   "source": "https://m.news.nate.com/view/20260701n34813",
+   "note": "직함 표기만 정정. 세션은 sessions 와 일치"
+  },
+  {
+   "group": "KBW 소속 · 설명 1",
+   "who": "Frank Chaparro",
+   "claim": "GSR 콘텐츠",
+   "verdict": "부분",
+   "fix": "GSR 전략커뮤니케이션 총괄",
+   "source": "https://www.gsr.io/insights/frank-chaparro-joins-gsr-as-head-of-content-and-special-projects",
+   "note": "2025.7 GSR 합류 때 직함은 Head of Content & Special Projects(GSR 공지). 인물 DB 의 현재 직함은 Head of Strategic Communications. 게시 전 KBW 연사 카드 표기로 최종 확인 권장"
+  },
+  {
+   "group": "KBW 소속 · 설명 1",
+   "who": "Frank Chaparro",
+   "claim": "GSR — 크립토 마켓메이커(전 The Block 첫 기자)",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://www.coindesk.com/business/2025/07/21/frank-chaparro-former-block-reporter-joins-crypto-trading-firm-gsr",
+   "note": "GSR 은 크립토 트레이딩 · 마켓메이킹 회사. 본인은 The Block 창립 기자(founding reporter)"
+  },
+  {
+   "group": "KBW 소속 · 설명 1",
+   "who": "Frank Chaparro",
+   "claim": "콘텐츠 총괄 · 팟캐스트 The Crypto Tape. 모더레이터 3세션(9/30 두 번 · 10/1)",
+   "verdict": "부분",
+   "fix": "전략커뮤니케이션 총괄 · 팟캐스트 The Crypto Tape 진행. 모더레이터 3세션(9/30 두 번 · 10/1)",
+   "source": "https://www.gsr.io/insights/frank-chaparro-joins-gsr-as-head-of-content-and-special-projects",
+   "note": "2026년에도 The Crypto Tape 진행 확인. 직함은 인물 DB 기준으로 바뀜(위 항목 참조). 세션 3건은 sessions 와 일치하나 모더레이터 역할은 아젠다로 확인 못 함"
+  },
+  {
+   "group": "KBW 소속 · 설명 1",
+   "who": "Michael Heinrich",
+   "claim": "0G Labs CEO",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://www.proofoftalk.io/speakers/michael-heinrich",
+   "note": "공동창업자 겸 CEO"
+  },
+  {
+   "group": "KBW 소속 · 설명 1",
+   "who": "Michael Heinrich",
+   "claim": "0G Labs — 탈중앙 AI 인프라(데이터 가용성 · 저장 · 연산)",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://defillama.com/research/interview/a-conversation-with-michael-heinrich-interview-co-founder-ceo-of-0g-labs",
+   "note": "AI 용 L1 · 탈중앙 AI OS 를 표방(체인 · 스토리지 · DA · 컴퓨트)"
+  },
+  {
+   "group": "KBW 소속 · 설명 1",
+   "who": "Michael Heinrich",
+   "claim": "공동창업자 겸 CEO. 9/30 「AI 에이전트 신뢰 층」 발표",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "",
+   "note": "직함 맞음. 세션은 sessions 와 일치"
+  },
+  {
+   "group": "KBW 소속 · 설명 1",
+   "who": "Monica Long",
+   "claim": "Ripple 사장",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://www.chainbits.com/press-releases/kbw2026-brings-global-finance-policy-and-crypto-leaders-to-seoul",
+   "note": "KBW 보도자료 표기 'President of Ripple'. 2026년 활동 보도로 재직 확인"
+  },
+  {
+   "group": "KBW 소속 · 설명 1",
+   "who": "Tom Lee",
+   "claim": "Fundstrat · BitMine",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://www.coindesk.com/business/2026/09/21/bitmine-bought-usd75-million-ether-as-tom-lee-says-institutions-are-still-underweight-crypto",
+   "note": "Fundstrat 공동창업자 · 리서치 총괄, BitMine 회장. KBW 보도자료 표기 'chairman of Bitmine'"
+  },
+  {
+   "group": "KBW 소속 · 설명 1",
+   "who": "Jeff Yan",
+   "claim": "Hyperliquid",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://www.chainbits.com/press-releases/kbw2026-brings-global-finance-policy-and-crypto-leaders-to-seoul",
+   "note": "KBW 보도자료 표기 'CEO of Hyperliquid Labs'"
+  },
+  {
+   "group": "KBW 소속 · 설명 1",
+   "who": "Arthur Hayes",
+   "claim": "Maelstrom",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://2026.b.tc/speaker/arthur-hayes---maelstrom",
+   "note": "Maelstrom CIO, BitMEX 공동창업자. KBW 보도자료 표기도 CIO at Maelstrom"
+  },
+  {
+   "group": "KBW 소속 · 설명 1",
+   "who": "Brian Quintenz",
+   "claim": "전 CFTC 위원",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://www.chainbits.com/press-releases/kbw2026-brings-global-finance-policy-and-crypto-leaders-to-seoul",
+   "note": "KBW 보도자료 표기 'former commissioner of the CFTC'. 전 a16z crypto 정책 총괄. 2026.7 예측시장 업계 단체(Coalition for Prediction Markets) 선임 고문 합류 보도"
+  },
+  {
+   "group": "KBW 소속 · 설명 1",
+   "who": "Bo Hines",
+   "claim": "Tether USA CEO",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://tether.io/news/tether-unveils-usat-its-planned-u-s-regulated-dollar-backed-stablecoin-and-will-appoint-bo-hines-as-ceo-of-tether-usat/",
+   "note": "2025.9 선임. 공식 표기는 'CEO of Tether USA₮'(USAT)이고 KBW 보도자료도 같은 표기"
+  },
+  {
+   "group": "KBW 소속 · 설명 1",
+   "who": "Brian Mehler",
+   "claim": "Stable",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://chainwire.org/2026/01/30/lbank-hosts-twitter-space-with-stable-ceo-brian-mehler-exploring-the-future-of-usdt-native-payments/",
+   "note": "Stable(USDT 를 가스로 쓰는 L1) 소속 맞음. 합류 때 직함은 CFO, 2026.1 보도자료는 CEO 로 표기. 직함을 붙일 거면 확인 필요"
+  },
+  {
+   "group": "KBW 소속 · 설명 1",
+   "who": "John Lilic",
+   "claim": "Tria CSO",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://chainwire.org/2026/09/16/tria-deepens-korea-push-as-diamond-sponsor-of-korea-blockchain-week-2026/",
+   "note": "Tria 공동창업자 · CSO(2026 합류). Tria 는 KBW2026 다이아몬드 스폰서"
+  },
+  {
+   "group": "KBW 소속 · 설명 1",
+   "who": "Heejin Shin",
+   "claim": "교보증권 신사업담당 이사",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://edaily.co.kr/News/Read?mediaCodeNo=257&newsId=05097126645419072",
+   "note": "2026.4 이데일리 디지털자산포럼 사진 캡션 '신희진 교보증권 신사업담당 이사'(STO · RWA 신사업 발표)"
+  },
+  {
+   "group": "KBW 소속 · 설명 1",
+   "who": "Andrea Muttoni",
+   "claim": "The DATA Foundation(구 Story) CEO",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://www.theblock.co/amp/post/406175/story-becomes-data-foundation-shifts-focus-to-ai-training-data",
+   "note": "2026.6 Story 가 The DATA Foundation 으로 리브랜딩하면서 CEO 선임"
+  },
+  {
+   "group": "KBW 소속 · 설명 1",
+   "who": "Andrea Muttoni",
+   "claim": "The DATA Foundation — 2026.6 Story 에서 전환, AI 학습 데이터 소싱 · 검증 · 라이선스 인프라",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://dailyhodl.com/2026/06/25/the-data-foundation-launches-to-tackle-ais-multi-billion-dollar-training-data-bottleneck/",
+   "note": "2026.6.25 출범, 토큰 $IP 가 $DATA 로 바뀜. AI 학습 데이터의 출처 · 품질 · 라이선스 신뢰 층을 표방"
+  },
+  {
+   "group": "KBW 소속 · 설명 1",
+   "who": "Andrea Muttoni",
+   "claim": "CEO(전 Story Foundation 사장). 9/30 「AI 붐 뒤의 데이터 레이스」 패널",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://en.bloomingbit.io/feed/news/115082",
+   "note": "전 Story 사장 겸 CPO. 세션은 sessions 와 일치"
+  },
+  {
+   "group": "KBW 소속 · 설명 1",
+   "who": "Chetan Karkhanis",
+   "claim": "Franklin Templeton SVP",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://finance.yahoo.com/markets/crypto/articles/franklin-templeton-svp-chetan-karkhanis-081700080.html",
+   "note": "SVP(싱가포르 기반, 아태 디지털자산 · 전략투자 담당). 2026 싱가포르 행사 연사 소개 기준"
+  },
+  {
+   "group": "KBW 소속 · 설명 1",
+   "who": "Ambre Soubiran",
+   "claim": "Kaiko CEO",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://cointelegraph.com/news/kaiko-acquires-amberdata-blockchain-data-consolidation",
+   "note": "2026.6 Amberdata 인수 보도에서도 CEO"
+  },
+  {
+   "group": "KBW 소속 · 설명 1",
+   "who": "Ambre Soubiran",
+   "claim": "Kaiko — 크립토 시장 데이터 · 지수 … Cometh 인수",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://www.thebigwhale.io/article/ambre-soubiran-kaiko-why-we-bought-cometh",
+   "note": "Cometh 인수 맞음. 그 뒤 2026.6 Amberdata 도 인수함(더 최근이고 규모도 큼). 인수 이력을 넣으려면 'Cometh · Amberdata 인수'"
+  },
+  {
+   "group": "KBW 소속 · 설명 1",
+   "who": "Ambre Soubiran",
+   "claim": "CEO. 10/1 「시장 데이터에서 등급으로」 패널",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "",
+   "note": "직함 맞음. 세션은 sessions 와 일치"
+  },
+  {
+   "group": "KBW 소속 · 설명 1",
+   "who": "Wish Wu",
+   "claim": "Pharos Network CEO",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "세션 전체 WebSearch 한도(200회)가 소진되어 검색하지 못함. 재검색 필요"
+  },
+  {
+   "group": "KBW 소속 · 설명 1",
+   "who": "Ashutosh Sahoo",
+   "claim": "ZeruAI CEO",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "검색 한도 소진으로 검색 못 함. 재검색 필요"
+  },
+  {
+   "group": "KBW 소속 · 설명 1",
+   "who": "Albert Castellana Lluís",
+   "claim": "GenLayer Labs CEO",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "검색 한도 소진으로 검색 못 함. 학습 지식으로는 GenLayer 공동창업자 겸 CEO 이나 현재 여부는 검증 안 됨"
+  },
+  {
+   "group": "KBW 소속 · 설명 1",
+   "who": "Burnt Banksy",
+   "claim": "Burnt · XION 창업자",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "검색 한도 소진으로 검색 못 함. 학습 지식으로는 Burnt(XION) 창업자이나 검증 안 됨"
+  },
+  {
+   "group": "KBW 소속 · 설명 1",
+   "who": "Jongwook Oh",
+   "claim": "웨이브릿지 대표",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "검색 한도 소진으로 검색 못 함. 학습 지식으로는 오종욱 웨이브릿지 대표이나 2026 현재 여부는 검증 안 됨"
+  },
+  {
+   "group": "KBW 소속 · 설명 1",
+   "who": "Jongwook Oh",
+   "claim": "웨이브릿지 — 국내 디지털자산 금융 인프라",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "검색 한도 소진으로 검색 못 함"
+  },
+  {
+   "group": "KBW 소속 · 설명 1",
+   "who": "Jongwook Oh",
+   "claim": "대표. 9/30 「x402 · AI 결제 · 프라이버시」 패널",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "검색 한도 소진으로 검색 못 함. 세션은 sessions 와 일치"
+  },
+  {
+   "group": "KBW 소속 · 설명 1",
+   "who": "Michael Dong",
+   "claim": "Brevis 공동창업자로 보임",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "검색 한도 소진으로 검색 못 함. 학습 지식상 Celer · Brevis 공동창업자는 'Mo Dong'. 같은 사람인지 확인 필요(추정 항목)"
+  },
+  {
+   "group": "KBW 소속 · 설명 1",
+   "who": "Dhawal Shah",
+   "claim": "Hey Elsa 로 보임",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "검색 한도 소진으로 검색 못 함. 학습 지식으로도 판단 불가(추정 항목)"
+  },
+  {
+   "group": "KBW 소속 · 설명 1",
+   "who": "Joe Lubin",
+   "claim": "Consensys",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://www.chainbits.com/press-releases/kbw2026-brings-global-finance-policy-and-crypto-leaders-to-seoul",
+   "note": "KBW 보도자료 표기 'co-founder of Ethereum, founder and CEO of Consensys'. 세션 주제인 MetaMask 는 Consensys 제품이라 일치"
+  },
+  {
+   "group": "KBW 소속 · 설명 1",
+   "who": "Camila Russo",
+   "claim": "The Defiant",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "검색 한도 소진으로 검색 못 함. 학습 지식으로는 The Defiant 창업자이나 2026 현재 여부는 검증 안 됨(추정 항목)"
+  },
+  {
+   "group": "KBW 소속 · 설명 1",
+   "who": "Jing Wang",
+   "claim": "Optimism",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "검색 한도 소진으로 검색 못 함. 학습 지식으로는 Optimism 공동창업자이나 검증 안 됨(추정 항목)"
+  },
+  {
+   "group": "KBW 소속 · 설명 1",
+   "who": "Keone Hon",
+   "claim": "Monad",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "검색 한도 소진으로 검색 못 함. 학습 지식으로는 Monad Labs 공동창업자 겸 CEO 이나 검증 안 됨(추정 항목)"
+  },
+  {
+   "group": "KBW 소속 · 설명 1",
+   "who": "Eric Chen",
+   "claim": "Injective",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "검색 한도 소진으로 검색 못 함. 학습 지식으로는 Injective Labs 공동창업자 겸 CEO 이나 검증 안 됨(추정 항목)"
+  },
+  {
+   "group": "KBW 소속 · 설명 1",
+   "who": "Tomer Weller",
+   "claim": "Stellar 개발재단",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "검색 한도 소진으로 검색 못 함. 학습 지식으로는 Stellar Development Foundation 제품 부문 임원이나 검증 안 됨(추정 항목)"
+  },
+  {
+   "group": "KBW 소속 · 설명 1",
+   "who": "Muneeb Ali",
+   "claim": "Stacks",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "검색 한도 소진으로 검색 못 함. 학습 지식으로는 Stacks 공동창업자 · Trust Machines CEO 이나 검증 안 됨(추정 항목)"
+  },
+  {
+   "group": "KBW 소속 · 설명 1",
+   "who": "Amanda Cassatt",
+   "claim": "Serotonin",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "검색 한도 소진으로 검색 못 함. 학습 지식으로는 Serotonin 창업자 겸 CEO 이나 검증 안 됨(추정 항목)"
+  },
+  {
+   "group": "KBW 소속 · 설명 2",
+   "who": "Sam MacPherson",
+   "claim": "Phoenix Labs(Sky)",
+   "verdict": "부분",
+   "fix": "Phoenix Labs CEO(Spark 개발사 · Sky 생태계)",
+   "source": "https://consensus-hongkong.coindesk.com/agenda/speaker/-sam-spark-speaker",
+   "note": "Phoenix Labs 공동창업자 · CEO는 맞음. 다만 Phoenix Labs는 Sky 자체가 아니라 Sky 생태계 서브DAO(Star)인 Spark의 핵심 개발사이며, 행사에서는 주로 Spark 쪽으로 소개됨"
+  },
+  {
+   "group": "KBW 소속 · 설명 2",
+   "who": "Amanda Tuminelli",
+   "claim": "DeFi Education Fund",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://www.defieducationfund.org/the-defi-education-fund-announces-leadership-transition/",
+   "note": "2025-03 전무이사(ED)로 선임, 2026 현재 CEO 겸 최고법무책임자(CLO)"
+  },
+  {
+   "group": "KBW 소속 · 설명 2",
+   "who": "Guy Young",
+   "claim": "Ethena",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://stablecoininsider.org/guy-young-ethena/",
+   "note": "Ethena Labs 창업자 · CEO(2023~)"
+  },
+  {
+   "group": "KBW 소속 · 설명 2",
+   "who": "Vladimir Novakovski",
+   "claim": "Lighter",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://fortune.com/2026/01/15/perps-lighter-ceo-vlad-novakovski-perpetual-futures-crypto-future-growth/",
+   "note": "Lighter 창업자 · CEO(2026 CFTC 혁신자문위원 선임)"
+  },
+  {
+   "group": "KBW 소속 · 설명 2",
+   "who": "Paul Frambot",
+   "claim": "Morpho",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://fortune.com/2026/06/09/morpho-fundraise-a16z-crypto-paradigm-ribbit-capital-175-million/",
+   "note": "Morpho 공동창업자 · CEO"
+  },
+  {
+   "group": "KBW 소속 · 설명 2",
+   "who": "Austin Federa",
+   "claim": "DoubleZero",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://tv.nyse.com/videos/doublezero-co-founder-austin-federa-on-edge-bringing-blockchain-to-traders",
+   "note": "DoubleZero 공동창업자(DoubleZero Foundation 회장), 전 Solana Foundation 전략 총괄"
+  },
+  {
+   "group": "KBW 소속 · 설명 2",
+   "who": "Ed Felten",
+   "claim": "Offchain Labs",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://www.theblock.co/videos/watch/ed-felten-on-scaling-ethereum-and-what-institutions-want",
+   "note": "Offchain Labs 공동창업자 · 수석 과학자(Chief Scientist)"
+  },
+  {
+   "group": "KBW 소속 · 설명 2",
+   "who": "Miles Jennings",
+   "claim": "a16z crypto",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://a16zcrypto.com/team/miles-jennings/",
+   "note": "a16z crypto 정책 총괄 겸 법무총괄(GC), 2026-09 기고 활동 확인"
+  },
+  {
+   "group": "KBW 소속 · 설명 2",
+   "who": "Chris Brummer",
+   "claim": "조지타운대 로스쿨",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://www.law.georgetown.edu/faculty/chris-brummer/",
+   "note": "조지타운대 로스쿨 Agnes N. Williams 교수. 크립토 공시 · 컴플라이언스 회사 Bluprynt CEO도 겸직하므로 KBW 표기가 Bluprynt일 수 있음"
+  },
+  {
+   "group": "KBW 소속 · 설명 2",
+   "who": "Eleanor Terrett",
+   "claim": "Crypto in America",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://www.cryptoinamerica.com/about",
+   "note": "Crypto in America 공동창업자 · 호스트(2026 활동 확인)"
+  },
+  {
+   "group": "KBW 소속 · 설명 2",
+   "who": "Lasse Clausen",
+   "claim": "1kx",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://1kx.capital/team/lasse-clausen",
+   "note": "1kx 파운딩 파트너"
+  },
+  {
+   "group": "KBW 소속 · 설명 2",
+   "who": "Lasse Clausen",
+   "claim": "1kx — 리서치 중심 크립토 VC(2018~, 160건+ 투자)",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://1kx.capital/about",
+   "note": "2018년 Lasse Clausen · Chris Heymann 창업, 리서치 중심, 8년간 160건 이상 투자(1kx 공식 소개)"
+  },
+  {
+   "group": "KBW 소속 · 설명 2",
+   "who": "Lasse Clausen",
+   "claim": "공동창업자 · 파운딩 파트너. 10/1 「자본이 그리는 다음 사이클」 패널",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://1kx.capital/about",
+   "note": "공동창업자 · 파운딩 파트너 확인. 세션 참여는 제공된 세션 목록 기준(KBW 페이지는 직접 확인 못 함)"
+  },
+  {
+   "group": "KBW 소속 · 설명 2",
+   "who": "Kelvin Koh",
+   "claim": "Spartan Group",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://consensus-hongkong.coindesk.com/agenda/speaker/-kelvin-koh",
+   "note": "Spartan Group 공동창업자 · 파트너(투자 부문 CIO), 전 골드만삭스 파트너"
+  },
+  {
+   "group": "KBW 소속 · 설명 2",
+   "who": "Franklin Bi",
+   "claim": "Pantera Capital",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://panteracapital.com/team/",
+   "note": "Pantera Capital 제너럴 파트너(GP, 2019 합류)"
+  },
+  {
+   "group": "KBW 소속 · 설명 2",
+   "who": "Alex Thorn",
+   "claim": "Galaxy 리서치",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://2026.b.tc/speaker/alex-thorn---galaxy",
+   "note": "Galaxy 전사 리서치 총괄(Head of Firmwide Research)"
+  },
+  {
+   "group": "KBW 소속 · 설명 2",
+   "who": "Eliezer Ndinga",
+   "claim": "21Shares",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://www.globenewswire.com/news-release/2025/12/11/3203647/0/en/21shares-Publishes-2026-State-of-Crypto-Guiding-the-Next-Chapter-of-the-Digital-Asset-Economy.html",
+   "note": "21Shares 글로벌 리서치 총괄, 2026-09 21Shares 리서치 발행 확인"
+  },
+  {
+   "group": "KBW 소속 · 설명 2",
+   "who": "Jae Kwon",
+   "claim": "Gno.land(코스모스 창시자)",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://en.wikipedia.org/wiki/Cosmos_(network)",
+   "note": "Gno.land 창업자, 텐더민트 개발자, 코스모스 공동창업자. '창시자'도 통용되지만 엄밀히는 공동창업자. Gno.land 메인넷은 2026-09-12 출범"
+  },
+  {
+   "group": "KBW 소속 · 설명 2",
+   "who": "Ben Fielding",
+   "claim": "Gensyn",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://www.youtube.com/watch?v=oY58Qnk06PU",
+   "note": "Gensyn 공동창업자 · CEO(2026 메인넷 · Delphi 출시)"
+  },
+  {
+   "group": "KBW 소속 · 설명 2",
+   "who": "Sheila Warren",
+   "claim": "Crypto Council for Innovation",
+   "verdict": "틀림",
+   "fix": "Advanced AI Society 이사회 의장(전 CCI CEO)",
+   "source": "https://advancedaisociety.org/about",
+   "note": "CCI CEO는 2025-01 사임(Cointelegraph), 이후 Project Liberty Institute CEO(2025~2026), 2026 현재 Advanced AI Society(몰타, 검증가능 AI 산업협회) 이사회 의장. 버뮤다 통화청(BMA) 이사도 겸함. AI 세션 주제와 부합"
+  },
+  {
+   "group": "KBW 소속 · 설명 2",
+   "who": "Todd McDonald",
+   "claim": "R3",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://www.coindesk.com/business/2026/01/24/r3-bets-on-solana-to-bring-institutional-yield-onchain",
+   "note": "R3 공동창업자 · 최고전략책임자(CSO)"
+  },
+  {
+   "group": "KBW 소속 · 설명 2",
+   "who": "Joseph Chalom",
+   "claim": "SharpLink",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://www.theglobeandmail.com/investing/markets/stocks/SBET/pressreleases/36690918/sharplink-gaming-appoints-joseph-chalom-as-ceo/",
+   "note": "2025-12-15부터 SharpLink 단독 CEO(전 블랙록 전략 생태계 파트너십 총괄)"
+  },
+  {
+   "group": "KBW 소속 · 설명 2",
+   "who": "Howard Wu",
+   "claim": "Aleo",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://www.dlnews.com/research/internal/a-conversation-with-howard-wu-founder-of-aleo/",
+   "note": "Aleo 창업자. 현 직함은 Provable(Aleo 계열 개발사) CEO이므로 함께 적어도 됨"
+  },
+  {
+   "group": "KBW 소속 · 설명 2",
+   "who": "Ryan Watkins",
+   "claim": "Syncracy Capital",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://www.panewslab.com/en/articles/uguwrnz8",
+   "note": "Syncracy Capital 공동창업자(2022~), 전 Messari 애널리스트"
+  },
+  {
+   "group": "KBW 소속 · 설명 2",
+   "who": "Mike Silagadze",
+   "claim": "ether.fi",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://www.coindesk.com/tech/2026/01/04/neobanks-will-fuel-ethereum-s-2026-growth-says-ether-fi-ceo",
+   "note": "ether.fi 공동창업자 · CEO"
+  },
+  {
+   "group": "KBW 소속 · 설명 2",
+   "who": "Farooq Malik",
+   "claim": "Rain",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://www.theblock.co/news/business/2026-08-19-rain-ceo-says-stablecoin-payments-reach-more-than-100000-merchants-without-them-knowing-it-412184",
+   "note": "Rain 공동창업자 · CEO(2026-08 발언 확인)"
+  },
+  {
+   "group": "KBW 소속 · 설명 2",
+   "who": "Raagulan Pathy",
+   "claim": "KAST",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://www.kast.xyz/blog/raagulan-pathy-on-decrypt-kast-is-building-far-beyond-crypto-cards",
+   "note": "KAST 창업자 · CEO, 전 Circle 아태 VP"
+  },
+  {
+   "group": "KBW 소속 · 설명 2",
+   "who": "Bill Zanker",
+   "claim": "$TRUMP 발행 측",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://www.bloomberg.com/news/articles/2025-10-08/trump-memecoin-issuer-zanker-is-planning-digital-asset-treasury-company",
+   "note": "$TRUMP 발행 · 운영사 Fight Fight Fight LLC를 이끄는 트럼프 측 프로모터(블룸버그 'Trump memecoin issuer'). 'Fight Fight Fight LLC'로 구체화 가능"
+  },
+  {
+   "group": "KBW 소속 · 설명 2",
+   "who": "Akshat Vaidya",
+   "claim": "Maelstrom 매니징 파트너",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://www.theblock.co/post/375112/arthur-hayes-maelstrom-targets-250-million-private-equity-fund",
+   "note": "Maelstrom 공동창업자 · 매니징 파트너"
+  },
+  {
+   "group": "KBW 소속 · 설명 2",
+   "who": "Akshat Vaidya",
+   "claim": "Maelstrom — Arthur Hayes 패밀리 오피스(벤처 · 리퀴드 · 사모 · 공개시장)",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://www.theblock.co/post/375112/arthur-hayes-maelstrom-targets-250-million-private-equity-fund",
+   "note": "Arthur Hayes 패밀리 오피스. 벤처 · 리퀴드 토큰 · 사모 · 공개시장 4개 전략 확인"
+  },
+  {
+   "group": "KBW 소속 · 설명 2",
+   "who": "Akshat Vaidya",
+   "claim": "공동창업자 · 매니징 파트너(전 BitMEX). 10/1 「초기 투자자들이 지금 거는 곳」 패널",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://www.theblock.co/post/375112/arthur-hayes-maelstrom-targets-250-million-private-equity-fund",
+   "note": "공동창업자 · MP 확인, BitMEX 기업개발 VP(2019~2022, M&A 총괄) 출신. 세션 참여는 제공된 세션 목록 기준"
+  },
+  {
+   "group": "KBW 소속 · 설명 2",
+   "who": "Dryden Brown",
+   "claim": "Praxis",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://en.wikipedia.org/wiki/Praxis_(proposed_city)",
+   "note": "Praxis 공동창업자 · CEO(2019 창업)"
+  },
+  {
+   "group": "KBW 소속 · 설명 2",
+   "who": "Cody Carbone",
+   "claim": "The Digital Chamber",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://consensus.coindesk.com/agenda/speaker/-cody-carbone",
+   "note": "The Digital Chamber CEO(2025-04~)"
+  },
+  {
+   "group": "KBW 소속 · 설명 2",
+   "who": "Miller Whitehouse-Levine",
+   "claim": "Solana Policy Institute",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://www.solanapolicyinstitute.org/team/miller-whitehouse-levine",
+   "note": "Solana Policy Institute 창립자 · CEO(일부 기사는 president), 전 DeFi Education Fund CEO"
+  },
+  {
+   "group": "KBW 소속 · 설명 2",
+   "who": "Katherine Dowling",
+   "claim": "Bitwise",
+   "verdict": "틀림",
+   "fix": "Bitcoin Standard Treasury Co.(BSTR) 사장 · 이사(전 Bitwise GC)",
+   "source": "https://www.bitwire.com/feed/bitwise-executive-katherine-dowling-joins-bitcoin-standard-treasury-company-to-serve-as-president-and-board-member-ahead-of-landmark-spac-business-combination",
+   "note": "2026년 초 CEPO와의 SPAC 합병을 앞두고 BSTR 사장 · 이사로 이동. Bitwise에는 선임 전략 고문으로만 남음. 세션 주제(DATCo)와 부합"
+  },
+  {
+   "group": "KBW 소속 · 설명 2",
+   "who": "Hong Kim",
+   "claim": "Bitwise",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "",
+   "note": "Bitwise 공동창업자 · CTO(인물 DB 기준)"
+  },
+  {
+   "group": "KBW 소속 · 설명 2",
+   "who": "Jason Gottlieb",
+   "claim": "Morrison Cohen",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://www.morrisoncohen.com/professionals/jgottlieb",
+   "note": "Morrison Cohen 파트너, 디지털자산 부문 · 화이트칼라 부문 의장"
+  },
+  {
+   "group": "KBW 소속 · 설명 2",
+   "who": "John D'Agostino",
+   "claim": "Coinbase",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://www.coindesk.com/business/2026/04/21/coinbase-s-john-d-agostino-says-exchange-stands-alone-as-crypto-s-full-service-prime-broker",
+   "note": "Coinbase Institutional 전략 총괄(Head of Strategy)"
+  },
+  {
+   "group": "KBW 소속 · 설명 2",
+   "who": "John D'Agostino",
+   "claim": "Coinbase(추정)",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://www.coindesk.com/business/2026/04/21/coinbase-s-john-d-agostino-says-exchange-stands-alone-as-crypto-s-full-service-prime-broker",
+   "note": "소속이 확인됐으므로 '(추정)'은 빼도 됨"
+  },
+  {
+   "group": "KBW 소속 · 설명 2",
+   "who": "John D'Agostino",
+   "claim": "10/1 「월가의 크립토 결산」 패널",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "",
+   "note": "세션 참여는 제공된 세션 목록 기준(KBW 페이지는 직접 확인 못 함)"
+  },
+  {
+   "group": "KBW 소속 · 설명 2",
+   "who": "John Darsie",
+   "claim": "SkyBridge",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://www.salt.org/speakers/john-darsie",
+   "note": "SkyBridge Capital 파트너이며 SALT 총괄도 겸직하므로 KBW 표기가 SALT일 수 있음"
+  },
+  {
+   "group": "KBW 소속 · 설명 2",
+   "who": "Peter Chung",
+   "claim": "Presto Research",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://www.prestolabs.io/research/authors/peter-chung",
+   "note": "Presto Research 리서치 총괄(Head of Research)"
+  },
+  {
+   "group": "KBW 소속 · 설명 2",
+   "who": "Zaheer Ebtikar",
+   "claim": "Split Capital",
+   "verdict": "틀림",
+   "fix": "Plasma CSO(전 Split Capital 창업자)",
+   "source": "https://fortune.com/2026/04/07/split-capital-winds-down-zaheer-ebtikar-plasma-stablecoins/",
+   "note": "Split Capital은 2025년 말 외부 자금을 반환하고 2026-04 사실상 운용을 종료함. 본인은 스테이블코인 체인 Plasma에 최고전략책임자로 합류. 세션 주제(스테이블코인)와 부합"
+  },
+  {
+   "group": "KBW 소속 · 설명 2",
+   "who": "Harry Jung",
+   "claim": "Nxum",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://en.bloomingbit.io/feed/news/121123",
+   "note": "Nxum 전략 · 파트너십 매니징 디렉터, 전 백악관 대통령 디지털자산 자문위원회 부국장"
+  },
+  {
+   "group": "KBW 소속 · 설명 2",
+   "who": "Byoungdeok Min",
+   "claim": "국회의원(민병덕)",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://www.fnnews.com/news/202609290949296918",
+   "note": "더불어민주당 국회의원 민병덕. 9/29 업비트 기관 서밋에도 연사로 참석"
+  },
+  {
+   "group": "KBW 소속 · 설명 2",
+   "who": "Trevor Traina",
+   "claim": "전 주오스트리아 미국대사",
+   "verdict": "부분",
+   "fix": "Tools for Humanity CBO · 전 주오스트리아 미국대사",
+   "source": "https://presidio.gov/about/press/presidio-board-names-benioff-chair-traina-vice-chair",
+   "note": "전 대사(2018~2021) 표기 자체는 사실이지만 현 소속이 빠져 있음. 현재 Tools for Humanity 최고사업책임자(인물 DB 기준), Kresus 창업자, 2026-07 Presidio Trust 이사회 부의장"
+  },
+  {
+   "group": "KBW 소속 · 설명 2",
+   "who": "Tristan Thompson",
+   "claim": "전 NBA 선수",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "https://www.coindesk.com/business/2025/09/18/tristan-thompson-taps-somnia-to-bring-basketball-fandom-on-chain",
+   "note": "검색 한도가 소진되어 은퇴 여부를 확인하지 못함. 'NBA 챔피언'이라고 쓰면 안전함(CoinDesk). basketball.fun(Somnia) 자문은 이미 종료(Decrypt)"
+  },
+  {
+   "group": "KBW 소속 · 설명 2",
+   "who": "T.J. Miller",
+   "claim": "코미디언",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "검색 한도가 소진되어 검색하지 못함. 사전 지식상 미국 배우 겸 스탠드업 코미디언으로 널리 알려져 틀릴 가능성은 낮음"
+  },
+  {
+   "group": "KBW 소속 · 설명 2",
+   "who": "Ansem",
+   "claim": "크립토 트레이더",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "검색 한도가 소진되어 검색하지 못함. 사전 지식상 솔라나 밈코인 트레이더 · 인플루언서로 알려져 있어 세션 주제(밈코인)와 부합"
+  },
+  {
+   "group": "KBW 소속 · 설명 2",
+   "who": "Chris Tam",
+   "claim": "BTQ Technologies",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "검색 한도가 소진되어 검색하지 못함. 세션명(BTQ Technologies 스폰서 세션)과는 일치하지만 외부 출처로 직함 · 소속을 확인하지 못함"
+  },
+  {
+   "group": "행사 사실 · 판정 근거 · 결 인물 md 문장",
+   "who": "행사",
+   "claim": "KBW2026 본 컨퍼런스 2026-09-30~10-01, 그랜드 워커힐 서울",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://www.fnnews.com/news/202609281825215665",
+   "note": "9/29 업비트 인스티튜셔널 서밋 · 9/30~10/1 메인 컨퍼런스, 서울 광진구 그랜드 워커힐 서울(영문 공식 표기 Walkerhill Hotels & Resorts)"
+  },
+  {
+   "group": "행사 사실 · 판정 근거 · 결 인물 md 문장",
+   "who": "행사",
+   "claim": "XRP SEOUL 2026 = 2026-10-03(토), 그랜드 하얏트 서울",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://www.digitaltoday.co.kr/en/view/107846/xrp-seoul-2026-to-be-held-oct-3-ripple-and-korean-financial-firms-to-gather",
+   "note": "리플 주최, KBW 주간 10/3 그랜드 하얏트 서울(KuCoin · Bitget 뉴스 동일) — 10/3은 토요일(달력 확인)"
+  },
+  {
+   "group": "행사 사실 · 판정 근거 · 결 인물 md 문장",
+   "who": "행사",
+   "claim": "9/29 업비트 공동 주최 비공개 기관 포럼(초청제) — KBW 주간 행사",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://www.prnewswire.com/news-releases/kbw-2026-returns-to-seoul-september-29october-1-upbit-joins-as-main-sponsor-302660025.html",
+   "note": "업비트 인스티튜셔널 서밋(UIS 2026) — 업비트 · 팩트블록 공동 주최, 초청제, KBW2026 첫날(그랜드 워커힐)"
+  },
+  {
+   "group": "행사 사실 · 판정 근거 · 결 인물 md 문장",
+   "who": "행사",
+   "claim": "9/28 「Agentic Payments Onchain」 — 리플 · t54 · Tenity · Bloom, KBW 공식 사이드 이벤트",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://luma.com/mw84pfjm",
+   "note": "행사 페이지: 4곳 공동 호스트, 9/28 18:00~23:00 KST 서울, KBW 공식 사이드 이벤트(무료 · 승인제)"
+  },
+  {
+   "group": "행사 사실 · 판정 근거 · 결 인물 md 문장",
+   "who": "행사",
+   "claim": "카카오페이 = x402 재단 창립 멤버, 국내 유일",
+   "verdict": "부분",
+   "fix": "x402 재단 창립 멤버(4월 발족 당시 국내 유일) — 지금은 갤럭시아머니트리 · 헥토파이낸셜 · 사토시홀딩스까지 국내 회원사 4곳",
+   "source": "https://view.asiae.co.kr/article/2026090209284997219",
+   "note": "4/2 리눅스재단 발족 때 국내 유일 창립 멤버(4/6 보도)는 맞음 — 7/1 갤럭시아머니트리 · 7월 헥토파이낸셜 · 9/2 사토시홀딩스 합류로 '국내 유일'은 현재 기준 아님"
+  },
+  {
+   "group": "행사 사실 · 판정 근거 · 결 인물 md 문장",
+   "who": "Wish Wu",
+   "claim": "Pharos Network = RWA 중심 L1, Wish Wu CEO",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://beincrypto.com/pharos-ceo-wish-wu-blockchain-rethink/",
+   "note": "RWA · 실물금융 특화 L1(2026.4 시리즈A 4,400만 달러 보도자료) · Wish Wu 공동창업자 겸 CEO(전 앤트그룹 ZAN CSO)"
+  },
+  {
+   "group": "행사 사실 · 판정 근거 · 결 인물 md 문장",
+   "who": "행사",
+   "claim": "KBW2026 메인 스폰서에 업비트(두나무)",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://www.prnewswire.com/news-releases/kbw-2026-returns-to-seoul-september-29october-1-upbit-joins-as-main-sponsor-302660025.html",
+   "note": "업비트 = 메인 스폰서(프레젠팅 파트너), 행사명 'KBW2026 with Upbit'"
+  },
+  {
+   "group": "행사 사실 · 판정 근거 · 결 인물 md 문장",
+   "who": "Kyoungsuk Oh",
+   "claim": "두나무 대표 = 오경석(Kyoungsuk Oh)",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://www.infostockdaily.co.kr/news/articleView.html?idxno=218088",
+   "note": "9/29 UIS 2026 개회사 — 오경석 두나무 대표(KBW 영문 자료는 'CEO of Upbit')"
+  },
+  {
+   "group": "행사 사실 · 판정 근거 · 결 인물 md 문장",
+   "who": "SeonJoo Yoon",
+   "claim": "업비트 윤선주(SeonJoo Yoon) = CBIO",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "http://www.thedailymoney.com/news/articleView.html?idxno=1146150",
+   "note": "두나무(업비트 운영사) CBIO(Chief Brand & Impact Officer) — 2025.6 선임, 2026.9 UIS 대담 보도에도 CBIO로 표기"
+  },
+  {
+   "group": "행사 사실 · 판정 근거 · 결 인물 md 문장",
+   "who": "Hugo Philion",
+   "claim": "XRP Australia 2026 키노트 「기밀 데이터 프로토콜 위 프로그래머블 금융」",
+   "verdict": "부분",
+   "fix": "XRP Australia 2026 키노트 「The Next Phase of XRP Utility」(Flare 2.0 — 기밀성을 갖춘 프로그래머블 금융)",
+   "source": "https://www.youtube.com/watch?v=lyNcaoOr-6w",
+   "note": "키노트 영상 제목은 'The Next Phase of XRP Utility', 소개문은 '…and Flare 2.0: programmable finance with confidentiality' — md 제목은 부제 의역이고 다른 조사 쪽이 맞음(행사 사이트 기준 2026.3.27 크라운 시드니, 일부 행사 목록은 2월 표기)"
+  },
+  {
+   "group": "행사 사실 · 판정 근거 · 결 인물 md 문장",
+   "who": "Hugo Philion",
+   "claim": "FAssets로 FXRP 발행(2025.9 메인넷)",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://flare.network/news/fassets-fxrp-is-live-on-mainnet",
+   "note": "2025.9.24 FAssets 메인넷 출시 · FXRP 민팅 개시(첫 주 500만 FXRP 한도)"
+  },
+  {
+   "group": "행사 사실 · 판정 근거 · 결 인물 md 문장",
+   "who": "Hugo Philion",
+   "claim": "Flare 2.0 — TEE 기반 기밀 연산 FCC, 2026.7 Songbird 배포 표결",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://proposals.flare.network/STP/STP_13.html",
+   "note": "STP.13 — 6/29 공지, 7/6부터 Songbird 표결(거부 기반), FCC · PMW · FDC v2 배포 = Flare 2.0 첫 배포(블록스터 보도)"
+  },
+  {
+   "group": "행사 사실 · 판정 근거 · 결 인물 md 문장",
+   "who": "Hugo Philion",
+   "claim": "가격(FTSO) · 외부 데이터 증명(FDC)을 L1에 내장",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://flare.network/",
+   "note": "FTSO(가격 오라클) · FDC(외부 체인 · 웹 데이터 증명)를 프로토콜에 내장(enshrined)한 EVM L1"
+  },
+  {
+   "group": "행사 사실 · 판정 근거 · 결 인물 md 문장",
+   "who": "Hugo Philion",
+   "claim": "Flare Labs CEO 겸임, 원자재 파생상품 PM 출신, UCL 머신러닝 석사",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://usethebitcoin.com/crypto-personalities/hugo-philion-flare-labs-ceo/",
+   "note": "Flare 공동창업자 · Flare Labs CEO, 펀드 2곳 원자재 파생상품 PM, UCL 머신러닝 MSc(2017~18 — 학력 연도는 인물 DB 기준)"
+  },
+  {
+   "group": "행사 사실 · 판정 근거 · 결 인물 md 문장",
+   "who": "Asheesh Birla",
+   "claim": "리플 창립팀(2013 합류)",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "",
+   "note": "소개문(인물 DB 동일): 2013년 직원 10명 미만 때 합류한 'founding team' 일원 — 2012년 공동창업자는 아니므로 「초기 멤버」로 쓰는 게 안전"
+  },
+  {
+   "group": "행사 사실 · 판정 근거 · 결 인물 md 문장",
+   "who": "Asheesh Birla",
+   "claim": "10억 달러+ 조달",
+   "verdict": "부분",
+   "fix": "10억 달러+ 조달 추진(SPAC 합병 딜 — 9/30 표결 뒤 종결 예정)",
+   "source": "https://www.theblock.co/post/394270/xrp-treasury-evernorth-s-4",
+   "note": "S-4 · 보도 모두 '10억 달러 규모 SPAC 딜'로 표기 — 합병이 아직 종결되지 않아 '조달 완료'로 단정 불가(발표 · 진행 단계)"
+  },
+  {
+   "group": "행사 사실 · 판정 근거 · 결 인물 md 문장",
+   "who": "Asheesh Birla",
+   "claim": "2022년 리플 이사회 합류",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "리플 이사회 멤버인 것은 소개문(인물 DB 동일)으로 확인 — 합류 연도(2022)는 세션 WebSearch 한도(200회) 소진으로 미확인"
+  },
+  {
+   "group": "행사 사실 · 판정 근거 · 결 인물 md 문장",
+   "who": "Asheesh Birla",
+   "claim": "XRP 약 4.73억 개",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://247wallst.com/investing/2026/03/20/xrp-news-a-1b-ripple-backed-company-holding-473-million-xrp-just-filed-to-go-public-on-nasdaq/",
+   "note": "S-4(2026.3.18 제출) 기준 출범 시 최소 약 4.73억 XRP(리플 출자분 포함)"
+  },
+  {
+   "group": "행사 사실 · 판정 근거 · 결 인물 md 문장",
+   "who": "Asheesh Birla",
+   "claim": "SBI · Pantera · GSR 등 투자",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://247wallst.com/investing/2026/03/20/xrp-news-a-1b-ripple-backed-company-holding-473-million-xrp-just-filed-to-go-public-on-nasdaq/",
+   "note": "리플 · SBI홀딩스 · 판테라 · 크라켄 · GSR · 애링턴 캐피털(아르마다 II 스폰서) 참여"
+  },
+  {
+   "group": "행사 사실 · 판정 근거 · 결 인물 md 문장",
+   "who": "Asheesh Birla",
+   "claim": "Armada Acquisition Corp. II와 SPAC 합병 — 9/30 주주 표결 뒤 나스닥 XRPN",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://www.sec.gov/Archives/edgar/data/0002044009/000119312526371516/d944435ddefm14a.htm",
+   "note": "예정 — 9/30 아르마다 II 특별주주총회(기준일 8/20), S-4 8/27 효력 발생, 표결 결과 아직 없음"
+  },
+  {
+   "group": "행사 사실 · 판정 근거 · 결 인물 md 문장",
+   "who": "Nathaniel T. Bradley",
+   "claim": "XRP Tokyo 2026(4/7) 「XRPL 위 데이터 기반 RWA 토큰화」 발표",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "세션 WebSearch 한도(200회) 소진으로 검색 못 함 — 날짜 · 제목 재검색 필요"
+  },
+  {
+   "group": "행사 사실 · 판정 근거 · 결 인물 md 문장",
+   "who": "Nathaniel T. Bradley",
+   "claim": "XRP Seoul 2025 연사",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "세션 WebSearch 한도(200회) 소진으로 검색 못 함"
+  },
+  {
+   "group": "행사 사실 · 판정 근거 · 결 인물 md 문장",
+   "who": "Nathaniel T. Bradley",
+   "claim": "AudioEye 창업자 · 특허 70건+ 발명가, 전 Marathon Patent Group CTO, 2024.12 Datavault AI CEO",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "세션 WebSearch 한도(200회) 소진으로 검색 못 함 — CEO 취임 시점 재검색 필요"
+  },
+  {
+   "group": "행사 사실 · 판정 근거 · 결 인물 md 문장",
+   "who": "Nathaniel T. Bradley",
+   "claim": "2026 2분기 매출 670만 달러 · 연 2억 달러 목표 유지",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "세션 WebSearch 한도(200회) 소진으로 검색 못 함 — 실적 발표 원문 재검색 필요"
+  },
+  {
+   "group": "행사 사실 · 판정 근거 · 결 인물 md 문장",
+   "who": "Johnny Youn",
+   "claim": "KFIP 부상으로 법무법인 태평양 자문 1년 · Swell 2026(10월 뉴욕) 초청",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "검색 한도 소진 — Swell 2026이 10월 개최라는 보도만 확인(장소 · 초청 · 부상 내용은 미확인)"
+  },
+  {
+   "group": "행사 사실 · 판정 근거 · 결 인물 md 문장",
+   "who": "Johnny Youn",
+   "claim": "고려대 물리학 전공",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "세션 WebSearch 한도(200회) 소진으로 검색 못 함"
+  },
+  {
+   "group": "행사 사실 · 판정 근거 · 결 인물 md 문장",
+   "who": "Jake Ku",
+   "claim": "KFIP 2026 결선 12팀에 최대 20만 달러 비지분 투자 기회",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "세션 WebSearch 한도(200회) 소진으로 검색 못 함"
+  },
+  {
+   "group": "행사 사실 · 판정 근거 · 결 인물 md 문장",
+   "who": "Jake Ku",
+   "claim": "KFIP 2026 법인 75 · 개인 53 지원",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "세션 WebSearch 한도(200회) 소진으로 검색 못 함"
+  },
+  {
+   "group": "행사 사실 · 판정 근거 · 결 인물 md 문장",
+   "who": "Jake Ku",
+   "claim": "KFIP 2026 6/25 데모데이",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "세션 WebSearch 한도(200회) 소진으로 검색 못 함"
+  },
+  {
+   "group": "행사 사실 · 판정 근거 · 결 인물 md 문장",
+   "who": "Jake Ku",
+   "claim": "XRPL 해커톤 서울 2025(30팀)",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "세션 WebSearch 한도(200회) 소진으로 검색 못 함"
+  },
+  {
+   "group": "행사 사실 · 판정 근거 · 결 인물 md 문장",
+   "who": "Changhoon Moon",
+   "claim": "오프라인 컨퍼런스 6회+",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "검색 한도 소진 — md 안에서도 '6회+'와 2026.2 「제10차」 보도가 엇갈리므로 회차 재검색 필요"
+  },
+  {
+   "group": "행사 사실 · 판정 근거 · 결 인물 md 문장",
+   "who": "Changhoon Moon",
+   "claim": "1995년생 · 단국대 화학공학 · 성균관대 핀테크 MBA 과정",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "세션 WebSearch 한도(200회) 소진으로 검색 못 함"
+  },
+  {
+   "group": "행사 사실 · 판정 근거 · 결 인물 md 문장",
+   "who": "Crypto Eri",
+   "claim": "WebX 2026 패널 좌장",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "세션 WebSearch 한도(200회) 소진으로 검색 못 함"
+  },
+  {
+   "group": "행사 사실 · 판정 근거 · 결 인물 md 문장",
+   "who": "Crypto Eri",
+   "claim": "XRP Seoul 2025 연사",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "세션 WebSearch 한도(200회) 소진으로 검색 못 함"
+  },
+  {
+   "group": "행사 사실 · 판정 근거 · 결 인물 md 문장",
+   "who": "Connor Sullivan",
+   "claim": "2026.8월 말 800만 달러 조달(Gumi Cryptos 주도, Maven 11 등) — 담보 BTC · XLM 확대, 9월 첫 보장 연동",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "세션 WebSearch 한도(200회) 소진으로 검색 못 함"
+  },
+  {
+   "group": "행사 사실 · 판정 근거 · 결 인물 md 문장",
+   "who": "Connor Sullivan",
+   "claim": "재보험사 TransRe 언더라이팅 → Fireblocks → Firelight",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "세션 WebSearch 한도(200회) 소진으로 검색 못 함"
+  },
+  {
+   "group": "행사 사실 · 판정 근거 · 결 인물 md 문장",
+   "who": "Chandler Fang",
+   "claim": "t54 시드 $5M — 프랭클린템플턴 · 리플 참여",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://sqmagazine.co.uk/ripple-invests-ai-startup-xrp-payments/",
+   "note": "리플이 프랭클린템플턴 등과 함께 t54 Labs 500만 달러 시드에 참여(보도)"
+  },
+  {
+   "group": "행사 사실 · 판정 근거 · 결 인물 md 문장",
+   "who": "Chandler Fang",
+   "claim": "시드 리드 Anagram · PL Capital · 프랭클린템플턴, 시점 2026.2",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "검색 한도 소진 — 리드 투자사 구성 · 발표 시점은 미확인(금액 · 리플 · 프랭클린템플턴 참여만 확인)"
+  },
+  {
+   "group": "행사 사실 · 판정 근거 · 결 인물 md 문장",
+   "who": "Chandler Fang",
+   "claim": "JP모건 Onyx(현 Kinexys) · 리플 초기 PM 출신",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "세션 WebSearch 한도(200회) 소진으로 검색 못 함"
+  },
+  {
+   "group": "행사 사실 · 판정 근거 · 결 인물 md 문장",
+   "who": "Chandler Fang",
+   "claim": "포브스(2026.6) 기사",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "세션 WebSearch 한도(200회) 소진으로 검색 못 함"
+  },
+  {
+   "group": "행사 사실 · 판정 근거 · 결 인물 md 문장",
+   "who": "Marcin Kazmierczak",
+   "claim": "RedStone 110개+ 체인",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "세션 WebSearch 한도(200회) 소진으로 검색 못 함"
+  },
+  {
+   "group": "행사 사실 · 판정 근거 · 결 인물 md 문장",
+   "who": "Marcin Kazmierczak",
+   "claim": "Credora 인수(2025.9) — Morpho · Spark 적용",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "세션 WebSearch 한도(200회) 소진으로 검색 못 함"
+  },
+  {
+   "group": "행사 사실 · 판정 근거 · 결 인물 md 문장",
+   "who": "Marcin Kazmierczak",
+   "claim": "초저지연 피드 RedStone Bolt 등 2025년 신제품 5종",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "세션 WebSearch 한도(200회) 소진으로 검색 못 함"
+  },
+  {
+   "group": "행사 사실 · 판정 근거 · 결 인물 md 문장",
+   "who": "Marcin Kazmierczak",
+   "claim": "공동창업자 겸 COO(일부 보도 CEO)",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "세션 WebSearch 한도(200회) 소진으로 검색 못 함 — 현 직함 재검색 필요"
+  },
+  {
+   "group": "행사 사실 · 판정 근거 · 결 인물 md 문장",
+   "who": "Yuval Rooz",
+   "claim": "JPM 토큰화 예금(JPMD)이 Canton으로 간다",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "세션 WebSearch 한도(200회) 소진으로 검색 못 함"
+  },
+  {
+   "group": "행사 사실 · 판정 근거 · 결 인물 md 문장",
+   "who": "Chetan Karkhanis",
+   "claim": "Franklin Templeton SVP",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "세션 WebSearch 한도(200회) 소진으로 검색 못 함 — 현 직함 재검색 필요"
+  },
+  {
+   "group": "XRP SEOUL — 리플 · 한국 금융권",
+   "who": "Christina Chan",
+   "claim": "리플 생태계 성장 부문 시니어 디렉터",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://en.coin-turk.com/ripple-confirms-top-korean-banks-and-ripplex-leaders-for-xrp-seoul-2026-event/",
+   "note": "행사 연사 보도 'senior director of ecosystem growth at Ripple'. 인물 DB도 같음"
+  },
+  {
+   "group": "XRP SEOUL — 리플 · 한국 금융권",
+   "who": "Christina Chan",
+   "claim": "2026년 6월 XRPL AI 스타터 키트 출시 — AI 에이전트 XRP·RLUSD 결제 지원",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://ripple.com/insights/xrpl-ai-starter-kit/",
+   "note": "2026-06-10 리플 공개. x402 연동으로 에이전트가 XRP·RLUSD로 결제(2026.9 MPP 지원 추가)"
+  },
+  {
+   "group": "XRP SEOUL — 리플 · 한국 금융권",
+   "who": "Christina Chan",
+   "claim": "XRPL 그랜트·액셀러레이터와 10억 XRP 펀드 총괄",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "",
+   "note": "인물 DB 기준: XRPL Grants·Accelerator 글로벌 팀을 이끌고 리플 10억 XRP 펀드 총괄"
+  },
+  {
+   "group": "XRP SEOUL — 리플 · 한국 금융권",
+   "who": "Christina Chan",
+   "claim": "리플 제품디자인 디렉터 출신",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "",
+   "note": "인물 DB 기준: 이전 직책 Director of Product Design(CBDC·NFT·개발자 도구), 액셀러레이터 디렉터도 거침"
+  },
+  {
+   "group": "XRP SEOUL — 리플 · 한국 금융권",
+   "who": "Monica Long",
+   "claim": "리플 사장",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://ripple.com/insights/ripple-names-monica-long-as-president/",
+   "note": "2023.1 사장 선임. 2026 XRP Seoul 연사 보도도 'Ripple President'"
+  },
+  {
+   "group": "XRP SEOUL — 리플 · 한국 금융권",
+   "who": "Monica Long",
+   "claim": "기관 결제·커스터디 인프라사",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "",
+   "note": "회사 설명 문장. 공개 약력 표현 'move, manage, hold, and tokenize value'와 맞음(결제·커스터디·RLUSD·프라임브로커리지)"
+  },
+  {
+   "group": "XRP SEOUL — 리플 · 한국 금융권",
+   "who": "Monica Long",
+   "claim": "2025년 프라임브로커 히든로드를 12.5억 달러에 인수",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://ripple.com/ripple-press/ripple-acquires-prime-broker-hidden-road/",
+   "note": "2025-04-08 발표, 2025.10 인수 완료 뒤 Ripple Prime으로 이름 변경"
+  },
+  {
+   "group": "XRP SEOUL — 리플 · 한국 금융권",
+   "who": "Monica Long",
+   "claim": "2023년 1월 사장 승격",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://ripple.com/insights/ripple-names-monica-long-as-president/",
+   "note": "2023-01-27 발표. 직전 직책은 SVP 겸 RippleX 총괄(GM)"
+  },
+  {
+   "group": "XRP SEOUL — 리플 · 한국 금융권",
+   "who": "Monica Long",
+   "claim": "사업·제품·엔지니어링 총괄",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "",
+   "note": "공개 약력 'leads Ripple's Business, Product, and Engineering teams'(인물 DB 기준)"
+  },
+  {
+   "group": "XRP SEOUL — 리플 · 한국 금융권",
+   "who": "Monica Long",
+   "claim": "2013년 직원 10명 시절 합류",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://www.financemagnates.com/executives/moves/ripple-promotes-monica-long-as-president/",
+   "note": "2013.9 커뮤니케이션 디렉터로 합류. 보도에 따라 '직원 10명' 또는 '초기 12명 안팎'으로 표기"
+  },
+  {
+   "group": "XRP SEOUL — 리플 · 한국 금융권",
+   "who": "Jinnie Lee",
+   "claim": "리플 영업 이사",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://en.coin-turk.com/ripple-confirms-top-korean-banks-and-ripplex-leaders-for-xrp-seoul-2026-event/",
+   "note": "행사 연사 보도 'APAC sales director'(일부 영문 보도는 'Jennie'로 표기). 인물 DB상 Ripple Sales Director, 싱가포르"
+  },
+  {
+   "group": "XRP SEOUL — 리플 · 한국 금융권",
+   "who": "Jinnie Lee",
+   "claim": "2026년 3월 싱가포르 MAS 샌드박스 참여 — RLUSD 무역금융 결제 시범",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://www.coindesk.com/business/2026/03/25/ripple-taps-singapore-s-central-bank-sandbox-to-test-stablecoin-powered-trade-finance-with-rlusd",
+   "note": "2026-03-25 MAS BLOOM 이니셔티브에 Unloq와 함께 참여해 XRPL·RLUSD 무역금융 정산 시범"
+  },
+  {
+   "group": "XRP SEOUL — 리플 · 한국 금융권",
+   "who": "Jinnie Lee",
+   "claim": "리플 아시아태평양 세일즈 디렉터",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://en.coin-turk.com/ripple-confirms-top-korean-banks-and-ripplex-leaders-for-xrp-seoul-2026-event/",
+   "note": "행사 보도 'APAC sales director'. 인물 DB도 같음"
+  },
+  {
+   "group": "XRP SEOUL — 리플 · 한국 금융권",
+   "who": "Jinnie Lee",
+   "claim": "이전 경력은 공개 정보 확인 안 됨 「원출처 확인 필요」",
+   "verdict": "부분",
+   "fix": "리플 아시아태평양 세일즈 디렉터. 파이어블록스 세일즈 디렉터·클레이튼 재단·ANZ 출신",
+   "source": "https://x.com/FireblocksHQ/status/1818540655532196138",
+   "note": "이전 경력 찾음: 파이어블록스 세일즈 디렉터(파이어블록스 공식 X, 서울 Xangle 행사 발표), 클레이튼(바이낸스 AMA 출연), ANZ는 인물 DB 기준"
+  },
+  {
+   "group": "XRP SEOUL — 리플 · 한국 금융권",
+   "who": "Sabrina Tachdjian",
+   "claim": "XRP 아시아(XRP Asia) 사장",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "검색으로 XRP Asia 직함을 확인하지 못함. 인물 DB상 현 소속은 리플 XRPL 생태계 성장(싱가포르)"
+  },
+  {
+   "group": "XRP SEOUL — 리플 · 한국 금융권",
+   "who": "Sabrina Tachdjian",
+   "claim": "리플이 2026년 2월 공개한 아태 XRPL 빌더 지원 조직 — 현지 펀딩 배분 지향",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://ripple.com/insights/supporting-innovation-on-the-xrp-ledger/",
+   "note": "2026-02-26 리플 발표. XRP Asia = APAC 전담 허브, 장기적으로 펀딩을 배분하는 현지 팀 구상(발표 당시 초기 단계)"
+  },
+  {
+   "group": "XRP SEOUL — 리플 · 한국 금융권",
+   "who": "Sabrina Tachdjian",
+   "claim": "리플 XRPL 생태계 성장 담당(싱가포르)",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "",
+   "note": "인물 DB 기준"
+  },
+  {
+   "group": "XRP SEOUL — 리플 · 한국 금융권",
+   "who": "Sabrina Tachdjian",
+   "claim": "HBAR 재단 핀테크·결제 펀드 총괄 경력 「원출처 확인 필요」",
+   "verdict": "맞음",
+   "fix": "리플 XRPL 생태계 성장 담당(싱가포르). HBAR 재단 핀테크·결제 펀드 총괄·아태 생태계 총괄 경력",
+   "source": "https://leadblockpartners.com/expert-view-a-conversation-with-dr-sabrina-tachdjian-head-of-apac-ecosystem-at-the-hbar-foundation-hedera/",
+   "note": "원출처 찾음: LeadBlock Partners 인터뷰는 HBAR 재단 APAC 생태계 총괄로 소개. 핀테크·결제 펀드 총괄(2021.5~)은 인물 DB 기준"
+  },
+  {
+   "group": "XRP SEOUL — 리플 · 한국 금융권",
+   "who": "Ayo Akinyele",
+   "claim": "리플 엔지니어링 부문 시니어 디렉터",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://en.coin-turk.com/ripple-confirms-top-korean-banks-and-ripplex-leaders-for-xrp-seoul-2026-event/",
+   "note": "행사 보도 'Senior Director of Engineering at Ripple'. 인물 DB 'Senior Director of Engineering, RippleX'"
+  },
+  {
+   "group": "XRP SEOUL — 리플 · 한국 금융권",
+   "who": "Ayo Akinyele",
+   "claim": "XRPL에 영지식증명·선택적 공개를 넣어 기관용 프라이버시·확장성 강화 추진",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://ripple.com/insights/privacy-scale-and-the-future-of-blockchain-finance/",
+   "note": "ZKP·선택적 공개로 기관 기밀 거래와 규제 준수를 함께. 기밀 MPT를 2026년 출시 목표로 소개"
+  },
+  {
+   "group": "XRP SEOUL — 리플 · 한국 금융권",
+   "who": "Ayo Akinyele",
+   "claim": "RippleX 엔지니어링 시니어 디렉터",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "",
+   "note": "인물 DB 기준"
+  },
+  {
+   "group": "XRP SEOUL — 리플 · 한국 금융권",
+   "who": "Ayo Akinyele",
+   "claim": "존스홉킨스 CS 박사 암호학자",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://www.cs.jhu.edu/~akinyelj/cv/",
+   "note": "존스홉킨스 컴퓨터과학 박사(응용 암호학·암호 공학)"
+  },
+  {
+   "group": "XRP SEOUL — 리플 · 한국 금융권",
+   "who": "Ayo Akinyele",
+   "claim": "볼트랩스 출신",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "",
+   "note": "인물 DB 기준: 2018 Bolt Labs 공동창업·CEO"
+  },
+  {
+   "group": "XRP SEOUL — 리플 · 한국 금융권",
+   "who": "Tatsuya Kohrogi",
+   "claim": "리플 생태계 성장 부문 시니어 매니저",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://x.com/XRPLJapan/status/2037143317608358236",
+   "note": "XRPL Japan 연사 발표 'Senior Ecosystem Growth Manager at Ripple'. 인물 DB 'Senior Manager, Ecosystem Growth'"
+  },
+  {
+   "group": "XRP SEOUL — 리플 · 한국 금융권",
+   "who": "Tatsuya Kohrogi",
+   "claim": "일본 Web3 Salon과 제휴해 XRPL 스타트업에 팀당 20만 달러 지원",
+   "verdict": "부분",
+   "fix": "2025년 6월 일본 Web3 Salon과 제휴해 XRPL 스타트업에 프로젝트당 최대 20만 달러 그랜트 지원",
+   "source": "https://ripple.com/insights/unlocking-innovation-in-japan/",
+   "note": "2025-06-09 발표. 'up to $200,000 per project' — 정액이 아니라 상한. XRPL Japan·Korea 펀드의 일부"
+  },
+  {
+   "group": "XRP SEOUL — 리플 · 한국 금융권",
+   "who": "Tatsuya Kohrogi",
+   "claim": "XRP Tokyo 2026 연사",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://x.com/XRPLJapan/status/2037143317608358236",
+   "note": "2026-04-07 XRP Tokyo 2026 연사로 발표됨"
+  },
+  {
+   "group": "XRP SEOUL — 리플 · 한국 금융권",
+   "who": "Tatsuya Kohrogi",
+   "claim": "메타·소프트뱅크 경력",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "",
+   "note": "XRP Tokyo 2026 연사 소개 문구(Web3 Ventures·Meta·SoftBank)와 인물 DB 기준"
+  },
+  {
+   "group": "XRP SEOUL — 리플 · 한국 금융권",
+   "who": "Pablo Che Leo",
+   "claim": "리플 그로스 총괄",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "영문 검색 3회로 이 이름의 리플 인물을 찾지 못함(행사 연사 보도에도 이름 없음). 이후 검색 한도 소진"
+  },
+  {
+   "group": "XRP SEOUL — 리플 · 한국 금융권",
+   "who": "Pablo Che Leo",
+   "claim": "달러 스테이블코인 RLUSD 발행사 — 2025년 11월 시가총액 10억 달러 돌파 보도",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://www.coindesk.com/markets/2025/11/04/ripple-s-stablecoin-hits-usd1b-milestone-as-president-discusses-m-and-a-strategy-to-fuel-growth",
+   "note": "2025.11 초 시총 10억 달러 돌파(2024.12 출시 후 1년 안)"
+  },
+  {
+   "group": "XRP SEOUL — 리플 · 한국 금융권",
+   "who": "Pablo Che Leo",
+   "claim": "공개 정보 확인 안 됨 「원출처 확인 필요」",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "이번 검색에서도 찾지 못함"
+  },
+  {
+   "group": "XRP SEOUL — 리플 · 한국 금융권",
+   "who": "Jaehyuk Choi",
+   "claim": "케이뱅크 TF 리드",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://www.dt.co.kr/article/12082578",
+   "note": "2차 연사진 보도: 케이뱅크 최재혁 디지털자산TF장"
+  },
+  {
+   "group": "XRP SEOUL — 리플 · 한국 금융권",
+   "who": "Jaehyuk Choi",
+   "claim": "2026.4 리플과 전략적 파트너십 체결",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "세션 WebSearch 한도(200회) 소진으로 검색하지 못함 — 재검색 필요. 저장소 내부 기록끼리도 케이뱅크 건을 '커스터디'와 '블록체인 송금 파일럿'으로 달리 적음"
+  },
+  {
+   "group": "XRP SEOUL — 리플 · 한국 금융권",
+   "who": "Jaehyuk Choi",
+   "claim": "블록체인 기반 해외송금 기술검증(PoC)",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "세션 WebSearch 한도(200회) 소진으로 검색하지 못함 — 재검색 필요"
+  },
+  {
+   "group": "XRP SEOUL — 리플 · 한국 금융권",
+   "who": "Jaehyuk Choi",
+   "claim": "삼성SDS 개발자 출신",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "세션 WebSearch 한도(200회) 소진으로 검색하지 못함 — 재검색 필요"
+  },
+  {
+   "group": "XRP SEOUL — 리플 · 한국 금융권",
+   "who": "Jaehyuk Choi",
+   "claim": "2017년 합류",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "세션 WebSearch 한도(200회) 소진으로 검색하지 못함 — 재검색 필요"
+  },
+  {
+   "group": "XRP SEOUL — 리플 · 한국 금융권",
+   "who": "Jaehyuk Choi",
+   "claim": "디지털자산TF장",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://www.dt.co.kr/article/12082578",
+   "note": "2차 연사진 보도 표기와 같음"
+  },
+  {
+   "group": "XRP SEOUL — 리플 · 한국 금융권",
+   "who": "Jaehyuk Choi",
+   "claim": "스테이블코인 사업 총괄",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "세션 WebSearch 한도(200회) 소진으로 검색하지 못함 — 재검색 필요"
+  },
+  {
+   "group": "XRP SEOUL — 리플 · 한국 금융권",
+   "who": "Heejin Shin",
+   "claim": "교보증권 이사",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://www.dt.co.kr/article/12082578",
+   "note": "2차 연사진 보도: 교보증권 신희진 이사(영문 보도 Executive Director)"
+  },
+  {
+   "group": "XRP SEOUL — 리플 · 한국 금융권",
+   "who": "Heejin Shin",
+   "claim": "신사업담당",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "행사 보도에는 '이사'만 있음. 세션 WebSearch 한도(200회) 소진으로 검색하지 못함 — 재검색 필요"
+  },
+  {
+   "group": "XRP SEOUL — 리플 · 한국 금융권",
+   "who": "Heejin Shin",
+   "claim": "2026.4 코스콤과 토큰증권 공동 플랫폼 협약",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "세션 WebSearch 한도(200회) 소진으로 검색하지 못함 — 재검색 필요"
+  },
+  {
+   "group": "XRP SEOUL — 리플 · 한국 금융권",
+   "who": "Heejin Shin",
+   "claim": "참여 증권사 9곳으로 확대",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "세션 WebSearch 한도(200회) 소진으로 검색하지 못함 — 재검색 필요"
+  },
+  {
+   "group": "XRP SEOUL — 리플 · 한국 금융권",
+   "who": "Heejin Shin",
+   "claim": "2026.4 이데일리 포럼서 'STO RWA 신사업과 유망 자산' 발표",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "세션 WebSearch 한도(200회) 소진으로 검색하지 못함 — 재검색 필요"
+  },
+  {
+   "group": "XRP SEOUL — 리플 · 한국 금융권",
+   "who": "Seunghoon Han",
+   "claim": "우리은행 차장",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://www.dt.co.kr/article/12082578",
+   "note": "2차 연사진 보도: 우리은행 한승훈 차장(영문 보도 Senior Manager)"
+  },
+  {
+   "group": "XRP SEOUL — 리플 · 한국 금융권",
+   "who": "Seunghoon Han",
+   "claim": "2025년 한은 '프로젝트 한강' 실거래 테스트서 예금토큰 발행·전자지갑 제공",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "세션 WebSearch 한도(200회) 소진으로 검색하지 못함 — 재검색 필요"
+  },
+  {
+   "group": "XRP SEOUL — 리플 · 한국 금융권",
+   "who": "Seunghoon Han",
+   "claim": "디지털혁신부 차장",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "직급 '차장'은 행사 보도로 확인, 부서명은 세션 WebSearch 한도(200회) 소진으로 검색하지 못함 — 재검색 필요"
+  },
+  {
+   "group": "XRP SEOUL — 리플 · 한국 금융권",
+   "who": "Seunghoon Han",
+   "claim": "2026.4 \"빅테크와 컨소시엄 형태로 발행하는 구조를 준비 중\"",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "세션 WebSearch 한도(200회) 소진으로 검색하지 못함 — 재검색 필요"
+  },
+  {
+   "group": "XRP SEOUL — 리플 · 한국 금융권",
+   "who": "Mansik Yoon",
+   "claim": "전북은행 팀장",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "확인한 연사 보도(2차)에 이름 없음. 세션 WebSearch 한도(200회) 소진으로 검색하지 못함 — 재검색 필요"
+  },
+  {
+   "group": "XRP SEOUL — 리플 · 한국 금융권",
+   "who": "Mansik Yoon",
+   "claim": "2026.8.18 리플 페이먼츠 도입",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "세션 WebSearch 한도(200회) 소진으로 검색하지 못함 — 재검색 필요"
+  },
+  {
+   "group": "XRP SEOUL — 리플 · 한국 금융권",
+   "who": "Mansik Yoon",
+   "claim": "국내 지방은행 첫 사례",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "세션 WebSearch 한도(200회) 소진으로 검색하지 못함 — 재검색 필요"
+  },
+  {
+   "group": "XRP SEOUL — 리플 · 한국 금융권",
+   "who": "Mansik Yoon",
+   "claim": "수출입 · 스타트업 기업 고객 해외송금",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "세션 WebSearch 한도(200회) 소진으로 검색하지 못함 — 재검색 필요"
+  },
+  {
+   "group": "XRP SEOUL — 리플 · 한국 금융권",
+   "who": "Mansik Yoon",
+   "claim": "공개 정보 확인 안 됨(행사 표기 '팀장') 「원출처 확인 필요」",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "세션 WebSearch 한도(200회) 소진으로 검색하지 못함 — 재검색 필요"
+  },
+  {
+   "group": "XRP SEOUL — 리플 · 한국 금융권",
+   "who": "Leo Lee",
+   "claim": "카카오뱅크 팀장",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://www.dt.co.kr/article/12082578",
+   "note": "2차 연사진 보도: 카카오뱅크 이한길 팀장(영문 보도 Manager Leo Lee)"
+  },
+  {
+   "group": "XRP SEOUL — 리플 · 한국 금융권",
+   "who": "Leo Lee",
+   "claim": "2026.9 카카오그룹, 그랩·SCBX와 원화 스테이블코인 발행·해외결제·송금 MOU",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "세션 WebSearch 한도(200회) 소진으로 검색하지 못함 — 재검색 필요"
+  },
+  {
+   "group": "XRP SEOUL — 리플 · 한국 금융권",
+   "who": "Leo Lee",
+   "claim": "스테이블코인 TF 리드(전문가 프로필 검색 기준)",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "세션 WebSearch 한도(200회) 소진으로 검색하지 못함 — 재검색 필요"
+  },
+  {
+   "group": "XRP SEOUL — 리플 · 한국 금융권",
+   "who": "Samuel Shim",
+   "claim": "메리츠증권 글로벌 디지털자산 총괄",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "확인한 연사 보도(2차)에 이름 없음. 세션 WebSearch 한도(200회) 소진으로 검색하지 못함 — 재검색 필요"
+  },
+  {
+   "group": "XRP SEOUL — 리플 · 한국 금융권",
+   "who": "Samuel Shim",
+   "claim": "2026.8 토큰증권을 중요 사업 영역으로 보고 비정형 증권부터 단계적 확대 방침",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "세션 WebSearch 한도(200회) 소진으로 검색하지 못함 — 재검색 필요"
+  },
+  {
+   "group": "XRP SEOUL — 리플 · 한국 금융권",
+   "who": "Samuel Shim",
+   "claim": "2026년 국채 토큰화 보고서 'Beyond the Dollar' 저자(한국 사례 분석)",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "세션 WebSearch 한도(200회) 소진으로 검색하지 못함 — 재검색 필요"
+  },
+  {
+   "group": "XRP SEOUL — RWA · 인프라 · 금융",
+   "who": "Nicholas Motz",
+   "claim": "니컬러스 모츠(한글 표기)",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "",
+   "note": "외래어 표기법 기준 규범 표기(Nicholas→니컬러스, Motz→모츠). 국내 보도 표기와는 검색 한도 소진으로 대조 못 함"
+  },
+  {
+   "group": "XRP SEOUL — RWA · 인프라 · 금융",
+   "who": "Nicholas Motz",
+   "claim": "소일(Soil) 공동창업자",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://www.prnewswire.com/news-releases/orqo-group-launches-as-unified-digital-asset-management-platform-302556617.html",
+   "note": "ORQO 출범 보도자료: Soil 등 하위 법인을 공동창업했고 그룹 CEO로 선임됨. NBX 연사 소개도 'Co-founder at Soil'"
+  },
+  {
+   "group": "XRP SEOUL — RWA · 인프라 · 금융",
+   "who": "Nicholas Motz",
+   "claim": "사모신용 기반 고정수익 프로토콜",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://www.theblock.co/post/390465/soil-launches-rlusd-yield-protocol-on-xrp-ledger-expanding-utility-for-ripples-stablecoin",
+   "note": "사모신용 중심의 고정수익 볼트. 다만 XRPL 볼트의 기초자산에는 토큰화 국채와 시장중립 헤지 전략도 들어감(The Block)"
+  },
+  {
+   "group": "XRP SEOUL — RWA · 인프라 · 금융",
+   "who": "Nicholas Motz",
+   "claim": "XRPL RLUSD 볼트 72시간 만에 100만 달러",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://www.kucoin.com/news/flash/soil-launches-rlusd-yield-protocol-on-xrp-ledger-hits-1m-in-72-hours",
+   "note": "2026년 2월 XRPL 출시(Chainwire 2026-02-19). 초기 100만 달러 풀이 72시간 안에 다 참"
+  },
+  {
+   "group": "XRP SEOUL — RWA · 인프라 · 금융",
+   "who": "Nicholas Motz",
+   "claim": "Soil CIO",
+   "verdict": "부분",
+   "fix": "Soil 공동창업자 겸 ORQO 그룹(아부다비) CEO",
+   "source": "https://nextblockexpo.com/nick-motz/",
+   "note": "CIO는 2023년 무렵 행사 프로필(NBX·AMA)의 직함. 2026-03-24 Soil 공식 게시물과 ORQO 보도자료는 'Soil 공동창업자·ORQO Group CEO'로만 적음(게시물은 링크드인 기준). 지금도 CIO인지는 확인 안 됨"
+  },
+  {
+   "group": "XRP SEOUL — RWA · 인프라 · 금융",
+   "who": "Nicholas Motz",
+   "claim": "ORQO 그룹(아부다비) CEO",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://www.prnewswire.com/news-releases/orqo-group-launches-as-unified-digital-asset-management-platform-302556617.html",
+   "note": "2025-09 ORQO 그룹 출범(Mount TFI·Soil·Monterra Funds·Nextrope 통합, 운용자산 3.7억 달러, 아부다비 본사)과 함께 그룹 CEO로 선임"
+  },
+  {
+   "group": "XRP SEOUL — RWA · 인프라 · 금융",
+   "who": "Nicholas Motz",
+   "claim": "포브스 '30 언더 30' 선정",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://nextblockexpo.com/nick-motz/",
+   "note": "NBX 연사 소개와 ORQO 관련 프로필에 'Forbes 30 under 30' 명기. 어느 해, 어느 판인지는 적혀 있지 않음"
+  },
+  {
+   "group": "XRP SEOUL — RWA · 인프라 · 금융",
+   "who": "Bo Kim",
+   "claim": "김영식 Bo Kim(한글·영문 이름 대응)",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "https://u.today/ripple-heads-to-seoul-koreas-banking-giants-set-for-xrp-spotlight",
+   "note": "행사 연사 목록 보도는 'Bo Kim, CEO of Creder', 국내 보도(2026-09-28 국회 세미나)는 '김영식 크레더 대표'. 둘을 같은 사람으로 잇는 공개 자료는 못 찾음. 'Bo'는 '영식'의 로마자 표기가 아니므로 영문 별칭인지 본인 확인 필요. 2023~24년 보도의 크레더 대표는 임대훈"
+  },
+  {
+   "group": "XRP SEOUL — RWA · 인프라 · 금융",
+   "who": "Bo Kim",
+   "claim": "크레더(CREDER) 대표",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://www.ntoday.co.kr/news/articleView.html?idxno=129689",
+   "note": "국내 보도는 '김영식 크레더 대표', 행사 연사 목록은 'CEO of Creder'로 둘 다 대표로 표기"
+  },
+  {
+   "group": "XRP SEOUL — RWA · 인프라 · 금융",
+   "who": "Bo Kim",
+   "claim": "아이티센글로벌 계열 금 RWA 기업",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://zdnet.co.kr/view/?no=20250708104841",
+   "note": "보도상 크레더는 아이티센글로벌 자회사이며 금 기반 RWA 플랫폼을 운영"
+  },
+  {
+   "group": "XRP SEOUL — RWA · 인프라 · 금융",
+   "who": "Bo Kim",
+   "claim": "실물 금 기반 토큰 'GPC'·골드스테이션 출시",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://www.blockmedia.co.kr/archives/438896",
+   "note": "GPC(Gold Pegged Coin)는 실물 금과 1:1 연동. 클레이튼(현 카이아) 기반 골드스테이션은 2024년 1월 무렵 출시"
+  },
+  {
+   "group": "XRP SEOUL — RWA · 인프라 · 금융",
+   "who": "Bo Kim",
+   "claim": "국회도서관 발제 '금 기반 실물자산 토큰화 국내 사례'",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://www.ntoday.co.kr/news/articleView.html?idxno=129689",
+   "note": "2026-09-28 국회도서관 대강당 '토큰증권(STO) 이후, 실물자산 토큰화(RWA) 입법과제 모색' 세미나(강준현·민병덕 의원실 주최)에서 발제"
+  },
+  {
+   "group": "XRP SEOUL — RWA · 인프라 · 금융",
+   "who": "Wenny Cai",
+   "claim": "웨니 카이(한글 표기)",
+   "verdict": "부분",
+   "fix": "웨니 차이 Wenny Cai",
+   "source": "https://www.enetnews.co.kr/news/articleView.html?idxno=54812",
+   "note": "국내 연사진 보도의 표기는 '웨니 차이'. 중국어 성 Cai(蔡)는 외래어 표기법상 '차이'"
+  },
+  {
+   "group": "XRP SEOUL — RWA · 인프라 · 금융",
+   "who": "Wenny Cai",
+   "claim": "앵커드 파이낸스(Anchored) 공동창업자 겸 대표(CEO, 보도자료 명기)",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://www.prnewswire.com/news-releases/anchored-brings-institutional-alternative-strategies-onchain-with-launch-of-three-tokenized-funds-302848259.html",
+   "note": "2026-08 보도자료에 'Co-Founder and CEO of Anchored' 명기"
+  },
+  {
+   "group": "XRP SEOUL — RWA · 인프라 · 금융",
+   "who": "Wenny Cai",
+   "claim": "RWA 온체인 마켓 레이어",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://www.prnewswire.co.uk/news-releases/anchored-launches-as-the-onchain-market-layer-for-real-world-assets-connecting-us-equities-fund-products-and-hong-kong-listed-stocks-in-one-programmable-infrastructure-stack-302743705.html",
+   "note": "출범 보도자료 제목이 'onchain market layer for real-world assets'(미국 주식·펀드·홍콩 상장주 연결)"
+  },
+  {
+   "group": "XRP SEOUL — RWA · 인프라 · 금융",
+   "who": "Wenny Cai",
+   "claim": "모나드 위 미국 토큰화 주식",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://www.businesswire.com/news/home/20260416940316/en/Anchored-Launches-US-Tokenized-Stocks-to-Expand-Global-Investor-Access",
+   "note": "2026-04-16 첫 제품 출시. 모나드 L1에서 나스닥 상위 10종목, Monday Trade 연동과 Alpaca 인프라, 실주식 1:1 담보"
+  },
+  {
+   "group": "XRP SEOUL — RWA · 인프라 · 금융",
+   "who": "Wenny Cai",
+   "claim": "토큰화 대체투자 펀드 3종 출시",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://www.prnewswire.com/news-releases/anchored-brings-institutional-alternative-strategies-onchain-with-launch-of-three-tokenized-funds-302848259.html",
+   "note": "2026-08-11 aDHF·aLSF·aAIF 3종 출시(적격투자자 대상, 스테이블코인 청약)"
+  },
+  {
+   "group": "XRP SEOUL — RWA · 인프라 · 금융",
+   "who": "Wenny Cai",
+   "claim": "이전 이력은 공개 정보 확인 안 됨",
+   "verdict": "부분",
+   "fix": "SynFutures(탈중앙 파생상품 거래소) 공동창업자 겸 COO 출신. 그 전에는 Matrixport 법무 담당",
+   "source": "https://hackernoon.com/meet-the-women-in-tech-synfutures-co-founder-and-coo-wenny-c-and-the-next-chapter-of-defi-innovati",
+   "note": "이번에 찾음. SynFutures 공동창업자·COO는 HackerNoon 인터뷰 기준, Matrixport 이력은 인물 DB 기준(일부 DB는 SynFutures 직함을 Partner/Business Head로 적음). Anchored는 2026-06 SynFutures와 통합 제휴"
+  },
+  {
+   "group": "XRP SEOUL — RWA · 인프라 · 금융",
+   "who": "Joyce Cui",
+   "claim": "조이스 추이(한글 표기)",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://www.enetnews.co.kr/news/articleView.html?idxno=54812",
+   "note": "국내 연사진 보도 표기와 같음(Cui→추이)"
+  },
+  {
+   "group": "XRP SEOUL — RWA · 인프라 · 금융",
+   "who": "Joyce Cui",
+   "claim": "Asseto 파트너 / 사업개발 파트너",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://x.com/AssetoFinance/status/2043931003027099813",
+   "note": "회사 공식 X와 행사 소개에 'Partner', 'Business Development Partner'로 명기"
+  },
+  {
+   "group": "XRP SEOUL — RWA · 인프라 · 금융",
+   "who": "Joyce Cui",
+   "claim": "'아세토 핀테크'(회사 표기)",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "https://x.com/AssetoFinance/status/2043931003027099813",
+   "note": "공식 계정과 보도는 'Asseto Finance' 또는 '아세토'로 적음. '핀테크'가 들어간 법인명은 못 찾음. '아세토(Asseto Finance)'로 쓰는 편이 안전"
+  },
+  {
+   "group": "XRP SEOUL — RWA · 인프라 · 금융",
+   "who": "Joyce Cui",
+   "claim": "아시아 RWA 토큰화 플랫폼 · 현금관리형 RWA 운영",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://captainaltcoin.com/kucoin-institutional-strengthens-oes-framework-with-assetos-cash-and-expanded-rwa-collateral-support/",
+   "note": "연사 소개 문구 'Asia's premier tokenization platform, already live with cash management RWAs'. 대표 상품 CASH+는 CMS USD 머니마켓펀드를 1:1 추종"
+  },
+  {
+   "group": "XRP SEOUL — RWA · 인프라 · 금융",
+   "who": "Joyce Cui",
+   "claim": "XRPL Grants 수혜 등재",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://xrplgrants.org/awardees",
+   "note": "XRPL Grants 수혜자 목록에 Asseto 등재"
+  },
+  {
+   "group": "XRP SEOUL — RWA · 인프라 · 금융",
+   "who": "Joyce Cui",
+   "claim": "2026년 4월 기관 RWA 채택 세션 연사(회사 공지)",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://x.com/AssetoFinance/status/2043931003027099813",
+   "note": "2026-04-14 회사 공식 X 공지. 'RWA is moving from concept to real institutional adoption' 세션에 Partner Joyce Cui가 Pharos·Bifrost·HashKey 등과 참여"
+  },
+  {
+   "group": "XRP SEOUL — RWA · 인프라 · 금융",
+   "who": "John Lilic",
+   "claim": "존 릴릭(한글 표기)",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "",
+   "note": "영어 발음 기준 규범 표기. 국내 보도 표기와는 검색 한도 소진으로 대조 못 함"
+  },
+  {
+   "group": "XRP SEOUL — RWA · 인프라 · 금융",
+   "who": "John Lilic",
+   "claim": "트리아 최고 전략 책임자 / Tria 공동창업자 겸 CSO",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "세션 WebSearch 한도(200회) 소진으로 검색 못 함. 행사 3차 연사진(9/18) 보도에서 Tria 참여만 확인됨. 공동창업자 여부는 우선 재검증 대상"
+  },
+  {
+   "group": "XRP SEOUL — RWA · 인프라 · 금융",
+   "who": "John Lilic",
+   "claim": "자기수탁형 크립토 네오뱅크(카드결제·거래·예치)",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "검색 한도 소진으로 검색 못 함. 사전 지식과는 맞지만 출처는 확인 안 됨"
+  },
+  {
+   "group": "XRP SEOUL — RWA · 인프라 · 금융",
+   "who": "John Lilic",
+   "claim": "2026.8 XRPL 네이티브 지원, XRP로 카드 충전",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "검색 한도 소진으로 검색 못 함. 사전 지식 범위(2026-06) 밖이라 우선 재검증 대상"
+  },
+  {
+   "group": "XRP SEOUL — RWA · 인프라 · 금융",
+   "who": "John Lilic",
+   "claim": "ConsenSys 초기 멤버(6년)",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "검색 한도 소진으로 검색 못 함. ConsenSys 경력 자체는 사전 지식과 맞지만 '초기·6년'은 확인 안 됨"
+  },
+  {
+   "group": "XRP SEOUL — RWA · 인프라 · 금융",
+   "who": "John Lilic",
+   "claim": "Matic→Polygon 전환 주도에 참여",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "검색 한도 소진으로 검색 못 함. Polygon 경력은 사전 지식과 맞지만 전환에서 맡은 역할은 확인 안 됨"
+  },
+  {
+   "group": "XRP SEOUL — RWA · 인프라 · 금융",
+   "who": "Ruam Siratanapanta",
+   "claim": "루암 시라타판타(한글 표기)",
+   "verdict": "부분",
+   "fix": "루암 시라타나판타 Ruam Siratanapanta",
+   "source": "",
+   "note": "영문 철자 Si-ra-ta-na-pan-ta와 비교하면 한글에 '나'가 빠짐. 영문 철자 자체는 검색 한도 소진으로 대조 못 함"
+  },
+  {
+   "group": "XRP SEOUL — RWA · 인프라 · 금융",
+   "who": "Ruam Siratanapanta",
+   "claim": "SCBX 디지털자산사업 총괄",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "검색 한도 소진으로 검색 못 함. 행사 보도에서 SCBX 참여만 확인됨"
+  },
+  {
+   "group": "XRP SEOUL — RWA · 인프라 · 금융",
+   "who": "Ruam Siratanapanta",
+   "claim": "태국 시암상업은행(SCB)의 모회사 금융지주",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "검색 한도 소진으로 검색 못 함. 사전 지식과는 맞지만(2022년 지배구조 개편으로 SCBX가 지주사가 됨) 출처는 확인 안 됨"
+  },
+  {
+   "group": "XRP SEOUL — RWA · 인프라 · 금융",
+   "who": "Ruam Siratanapanta",
+   "claim": "리플 초기 투자",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "검색 한도 소진으로 검색 못 함. 사전 지식상 SCB 벤처 계열의 2016년 리플 시리즈 B 참여로 알려져 있으나 출처는 확인 안 됨(당시 SCBX는 설립 전)"
+  },
+  {
+   "group": "XRP SEOUL — RWA · 인프라 · 금융",
+   "who": "Ruam Siratanapanta",
+   "claim": "SCB EASY 앱에서 리플넷 해외송금",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "검색 한도 소진으로 검색 못 함"
+  },
+  {
+   "group": "XRP SEOUL — RWA · 인프라 · 금융",
+   "who": "Ruam Siratanapanta",
+   "claim": "전 Bitkub 부CEO(사업·전략)",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "검색 한도 소진으로 검색 못 함. 사전 지식도 없어 우선 재검증 대상"
+  },
+  {
+   "group": "XRP SEOUL — RWA · 인프라 · 금융",
+   "who": "Ruam Siratanapanta",
+   "claim": "Sea·Shopee 출신(프로필 기준)",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "검색 한도 소진으로 검색 못 함. 사전 지식도 없어 우선 재검증 대상"
+  },
+  {
+   "group": "XRP SEOUL — RWA · 인프라 · 금융",
+   "who": "Stephanie Chew",
+   "claim": "스테파니 츄(한글 표기)",
+   "verdict": "부분",
+   "fix": "스테파니 추 Stephanie Chew",
+   "source": "",
+   "note": "외래어 표기법은 'ㅊ' 뒤에 이중모음 'ㅠ'를 쓰지 않음(예: chewing gum→추잉 껌, Shou Zi Chew→추 쇼우즈). 행사 공식 한글 표기는 검색 한도 소진으로 확인 못 함. 공식 표기가 '츄'면 유지해도 됨"
+  },
+  {
+   "group": "XRP SEOUL — RWA · 인프라 · 금융",
+   "who": "Stephanie Chew",
+   "claim": "오픈에덴 최고 전략 책임자 / 전략 총괄",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "검색 한도 소진으로 검색 못 함. 우선 재검증 대상"
+  },
+  {
+   "group": "XRP SEOUL — RWA · 인프라 · 금융",
+   "who": "Stephanie Chew",
+   "claim": "토큰화 美국채 펀드 TBILL 발행사",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "검색 한도 소진으로 검색 못 함. 사전 지식과는 맞지만 출처는 확인 안 됨"
+  },
+  {
+   "group": "XRP SEOUL — RWA · 인프라 · 금융",
+   "who": "Stephanie Chew",
+   "claim": "2024년 XRPL 출시 때 리플 $10M 배정",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "검색 한도 소진으로 검색 못 함. 사전 지식상 2024-05 리플이 XRPL 토큰화 국채에 1,000만 달러 투입을 발표했고 첫 대상이 OpenEden TBILL이었음. 출처는 확인 안 됨"
+  },
+  {
+   "group": "XRP SEOUL — RWA · 인프라 · 금융",
+   "who": "Stephanie Chew",
+   "claim": "토큰화 국채의 기관 담보 활용을 RWA 경쟁 핵심으로 강조",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "검색 한도 소진으로 검색 못 함. 이전 경력도 계속 미확인"
+  },
+  {
+   "group": "XRP SEOUL — RWA · 인프라 · 금융",
+   "who": "Alex Toh",
+   "claim": "알렉스 토(한글 표기)",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://www.enetnews.co.kr/news/articleView.html?idxno=54812",
+   "note": "국내 연사진 보도 표기와 같음"
+  },
+  {
+   "group": "XRP SEOUL — RWA · 인프라 · 금융",
+   "who": "Alex Toh",
+   "claim": "SC벤처스 핀테크 투자 부문 전무",
+   "verdict": "부분",
+   "fix": "SC벤처스 핀테크 투자 총괄 전무",
+   "source": "https://www.enetnews.co.kr/news/articleView.html?idxno=54812",
+   "note": "국내 연사진 보도는 '핀테크 투자 총괄 전무이사'로 적음. 부문 소속 전무가 아니라 부문 총괄(Head)"
+  },
+  {
+   "group": "XRP SEOUL — RWA · 인프라 · 금융",
+   "who": "Alex Toh",
+   "claim": "스탠다드차타드 혁신·투자 조직",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "검색 한도 소진으로 검색 못 함. 사전 지식과는 맞지만 출처는 확인 안 됨"
+  },
+  {
+   "group": "XRP SEOUL — RWA · 인프라 · 금융",
+   "who": "Alex Toh",
+   "claim": "Zodia Custody·토큰화 Libeara 인큐베이팅",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "검색 한도 소진으로 검색 못 함. 사전 지식상 둘 다 SC Ventures가 인큐베이팅했지만 출처는 확인 안 됨"
+  },
+  {
+   "group": "XRP SEOUL — RWA · 인프라 · 금융",
+   "who": "Alex Toh",
+   "claim": "SC Ventures 핀테크 투자 담당(2018년~)",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "검색 한도 소진으로 검색 못 함. 합류 연도는 우선 재검증 대상"
+  },
+  {
+   "group": "XRP SEOUL — RWA · 인프라 · 금융",
+   "who": "Alex Toh",
+   "claim": "前 Telenor 스타트업 투자 디렉터",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "검색 한도 소진으로 검색 못 함. 사전 지식도 없어 우선 재검증 대상"
+  },
+  {
+   "group": "XRP SEOUL — 인프라 · 거래 · 크리에이터",
+   "who": "Aniket Jindal",
+   "claim": "바이코노미 창업자",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://inc42.com/person/aniket-jindal/",
+   "note": "공동창업자(Co-Founder) 겸 COO. XRP SEOUL 발표 표기도 'Founder of Biconomy'"
+  },
+  {
+   "group": "XRP SEOUL — 인프라 · 거래 · 크리에이터",
+   "who": "Aniket Jindal",
+   "claim": "MEE로 여러 체인 작업을 서명 1회로 처리",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://docs.biconomy.io/new/learn-about-biconomy/what-is-mee",
+   "note": "공식 문서: MEE(Modular Execution Environment)가 슈퍼트랜잭션으로 여러 체인 작업을 사용자 서명 1회로 실행"
+  },
+  {
+   "group": "XRP SEOUL — 인프라 · 거래 · 크리에이터",
+   "who": "Aniket Jindal",
+   "claim": "국내 XRP 지갑과 협업",
+   "verdict": "맞음",
+   "fix": "국내 XRP 지갑 기린 월렛(Girin Wallet)과 협업(2025.1 발표)",
+   "source": "https://www.seoul.co.kr/news/economy/2025/01/31/20250131500107",
+   "note": "2025.1.31 서울신문·전자신문: 기린 지갑(기린랩스)이 XRPL EVM 사이드체인에서 바이코노미 계정추상화·MEE 스택을 처음 적용할 예정. 기린 공식 블로그 파트너십 공지·XRP SEOUL 3차 연사 발표문도 같은 내용"
+  },
+  {
+   "group": "XRP SEOUL — 인프라 · 거래 · 크리에이터",
+   "who": "Aniket Jindal",
+   "claim": "Biconomy 공동창업자, 운영 총괄",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://inc42.com/person/aniket-jindal/",
+   "note": "공동창업자 확인. 운영 총괄(COO) 직함은 인물 DB 기준"
+  },
+  {
+   "group": "XRP SEOUL — 인프라 · 거래 · 크리에이터",
+   "who": "Aniket Jindal",
+   "claim": "창업 전 Binance 초기 직원",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://inc42.com/person/aniket-jindal/",
+   "note": "2016~17 중국 체류 중 바이낸스 초기 팀원(인턴으로 시작), 2018 바이코노미 공동창업"
+  },
+  {
+   "group": "XRP SEOUL — 인프라 · 거래 · 크리에이터",
+   "who": "Aniket Jindal",
+   "claim": "웹3·핀테크 엔젤 투자자",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://inc42.com/person/aniket-jindal/",
+   "note": "웹3·핀테크·AI 스타트업 11곳 이상 엔젤 투자"
+  },
+  {
+   "group": "XRP SEOUL — 인프라 · 거래 · 크리에이터",
+   "who": "Adam Oozeer",
+   "claim": "엑셀라 그로스 총괄",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://luma.com/lhykeej3",
+   "note": "Axelar 주최 'Axelar & Friends 서울'(10/2) 페이지 표기 Head of Growth at Axelar. 주최측 4차 연사 발표 기사(9/29)는 'Axelar 개발 파트너 Common Prefix 그로스 총괄'로 표기"
+  },
+  {
+   "group": "XRP SEOUL — 인프라 · 거래 · 크리에이터",
+   "who": "Adam Oozeer",
+   "claim": "인텐트·RFQ API로 크로스체인 유동성과 실행 제공",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://www.axelar.network/blog/cross-chain-intents",
+   "note": "Axelar 인텐트는 가동 중(Squid가 사용). RFQ API는 인텐트·ITS·게이트웨이·익스프레스를 묶은 연동 API로 10/2 Axelar & Friends 서울에서 소개됨. 정식 출시 시점은 미확인"
+  },
+  {
+   "group": "XRP SEOUL — 인프라 · 거래 · 크리에이터",
+   "who": "Adam Oozeer",
+   "claim": "Axelar·Common Prefix 그로스 총괄 겸임. 체인 통합과 인텐트/RFQ API 확산 담당 「원출처 확인 필요」",
+   "verdict": "맞음",
+   "fix": "Axelar·Common Prefix 그로스 총괄 겸임. 체인 통합과 인텐트/RFQ API 확산 담당",
+   "source": "https://luma.com/lhykeej3",
+   "note": "행사 페이지: Axelar 그로스·전략 파트너십 총괄, 체인 통합과 인텐트·RFQ API 확산 담당. 두 곳 겸임은 인물 DB 기준. Common Prefix는 2025.12 Circle의 Interop Labs 팀 인수 발표 뒤 Axelar 개발을 주도"
+  },
+  {
+   "group": "XRP SEOUL — 인프라 · 거래 · 크리에이터",
+   "who": "Taro Kimura",
+   "claim": "미드나잇 재단 일본 총괄",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://www.teamz.co.jp/en/speaker/taro-kimura",
+   "note": "공식 행사 표기는 'Country Manager for Midnight Japan'. 재단(Midnight Foundation) 소속은 인물 DB 기준"
+  },
+  {
+   "group": "XRP SEOUL — 인프라 · 거래 · 크리에이터",
+   "who": "Taro Kimura",
+   "claim": "선택적 공개로 기밀 급여·재무 등 온체인 금융 지향",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://www.teamz.co.jp/en/speaker/taro-kimura",
+   "note": "Midnight: 온체인 뱅킹·프라이빗 급여·기밀 재무 운영과 규제준수 내장을 지향(TEAMZ 2026 연사 소개)"
+  },
+  {
+   "group": "XRP SEOUL — 인프라 · 거래 · 크리에이터",
+   "who": "Taro Kimura",
+   "claim": "미드나잇 일본 컨트리 매니저",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://www.teamz.co.jp/en/speaker/taro-kimura",
+   "note": "Midnight 일본 GTM·기업 영업·커뮤니티·생태계 총괄"
+  },
+  {
+   "group": "XRP SEOUL — 인프라 · 거래 · 크리에이터",
+   "who": "Taro Kimura",
+   "claim": "전 Mycel 공동창업자(CCO)",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://www.teamz.co.jp/en/speaker/taro-kimura",
+   "note": "Mycel 공동창업자는 TEAMZ 소개 기준, CCO 직함은 인물 DB 기준"
+  },
+  {
+   "group": "XRP SEOUL — 인프라 · 거래 · 크리에이터",
+   "who": "Taro Kimura",
+   "claim": "LinkedIn 글로벌 영업 디렉터",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://www.teamz.co.jp/en/speaker/taro-kimura",
+   "note": "웹3 이전 LinkedIn Global Enterprise Sales Director"
+  },
+  {
+   "group": "XRP SEOUL — 인프라 · 거래 · 크리에이터",
+   "who": "Ryo Sakai",
+   "claim": "웹엑스(WebX) 대표",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://www.teamz.co.jp/en/speaker/ryo-sakai",
+   "note": "WebX CEO(一般社団法人WebX実行委員会 대표)"
+  },
+  {
+   "group": "XRP SEOUL — 인프라 · 거래 · 크리에이터",
+   "who": "Ryo Sakai",
+   "claim": "도쿄 Web3 컨퍼런스 WebX 주최. CoinPost가 기획·운영",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://prtimes.jp/main/html/rd/p/000000349.000033850.html",
+   "note": "WebX2026(2026.7.13~14, 도쿄 더 프린스 파크타워): 一般社団法人WebX実行委員会 주최, 株式会社CoinPost 기획·운영"
+  },
+  {
+   "group": "XRP SEOUL — 인프라 · 거래 · 크리에이터",
+   "who": "Ryo Sakai",
+   "claim": "WebX CEO 겸 CoinPost 사업개발 총괄",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://www.teamz.co.jp/en/speaker/ryo-sakai",
+   "note": "TEAMZ 2026 연사 소개: CoinPost 사업개발 총괄 겸 WebX CEO"
+  },
+  {
+   "group": "XRP SEOUL — 인프라 · 거래 · 크리에이터",
+   "who": "Ryo Sakai",
+   "claim": "2025년 8월 WebX 대표 승계",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "",
+   "note": "2025.8 말(WebX2025 폐막 직후) 전임 青木誠(CoinPost CSO)이 WebX実行委員会 대표이사 퇴임과 후임 酒井를 X에 공지(당사자 공지 기준)"
+  },
+  {
+   "group": "XRP SEOUL — 인프라 · 거래 · 크리에이터",
+   "who": "Justin Bram",
+   "claim": "베리에이셔널(Variational) 프로덕트 총괄",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "세션 WebSearch 한도(200회) 소진으로 검색하지 못함 — 미검증, 재검증 필요"
+  },
+  {
+   "group": "XRP SEOUL — 인프라 · 거래 · 크리에이터",
+   "who": "Justin Bram",
+   "claim": "Arbitrum 기반 RFQ형 파생상품 거래소",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "세션 WebSearch 한도(200회) 소진으로 검색하지 못함 — 미검증, 재검증 필요"
+  },
+  {
+   "group": "XRP SEOUL — 인프라 · 거래 · 크리에이터",
+   "who": "Justin Bram",
+   "claim": "2026.5 Dragonfly 주도 $50M 시리즈A",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "세션 WebSearch 한도(200회) 소진으로 검색하지 못함 — 미검증, 재검증 필요"
+  },
+  {
+   "group": "XRP SEOUL — 인프라 · 거래 · 크리에이터",
+   "who": "Justin Bram",
+   "claim": "RWA 상품 확장 담당 프로덕트 총괄",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "세션 WebSearch 한도(200회) 소진으로 검색하지 못함 — 미검증, 재검증 필요"
+  },
+  {
+   "group": "XRP SEOUL — 인프라 · 거래 · 크리에이터",
+   "who": "Justin Bram",
+   "claim": "Astaria 공동창업자",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "세션 WebSearch 한도(200회) 소진으로 검색하지 못함 — 미검증, 재검증 필요"
+  },
+  {
+   "group": "XRP SEOUL — 인프라 · 거래 · 크리에이터",
+   "who": "Justin Bram",
+   "claim": "前 Ondo 그로스 총괄",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "세션 WebSearch 한도(200회) 소진으로 검색하지 못함 — 미검증, 재검증 필요"
+  },
+  {
+   "group": "XRP SEOUL — 인프라 · 거래 · 크리에이터",
+   "who": "Johann Kerbrat",
+   "claim": "로빈후드 수석부사장 겸 총괄책임자",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "세션 WebSearch 한도(200회) 소진으로 검색하지 못함 — 미검증, 재검증 필요"
+  },
+  {
+   "group": "XRP SEOUL — 인프라 · 거래 · 크리에이터",
+   "who": "Johann Kerbrat",
+   "claim": "2025년 EU 토큰화 주식 출시",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "세션 WebSearch 한도(200회) 소진으로 검색하지 못함 — 미검증, 재검증 필요"
+  },
+  {
+   "group": "XRP SEOUL — 인프라 · 거래 · 크리에이터",
+   "who": "Johann Kerbrat",
+   "claim": "Bitstamp 인수",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "세션 WebSearch 한도(200회) 소진으로 검색하지 못함 — 미검증, 재검증 필요"
+  },
+  {
+   "group": "XRP SEOUL — 인프라 · 거래 · 크리에이터",
+   "who": "Johann Kerbrat",
+   "claim": "크립토 사업 총괄(2021년 합류)",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "세션 WebSearch 한도(200회) 소진으로 검색하지 못함 — 미검증, 재검증 필요"
+  },
+  {
+   "group": "XRP SEOUL — 인프라 · 거래 · 크리에이터",
+   "who": "Johann Kerbrat",
+   "claim": "Bitstamp 인수·EU 토큰화 주식 출시 지휘",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "세션 WebSearch 한도(200회) 소진으로 검색하지 못함 — 미검증, 재검증 필요"
+  },
+  {
+   "group": "XRP SEOUL — 인프라 · 거래 · 크리에이터",
+   "who": "Leonard Hoh",
+   "claim": "비트스탬프 아시아태평양 사장",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "세션 WebSearch 한도(200회) 소진으로 검색하지 못함 — 미검증, 재검증 필요"
+  },
+  {
+   "group": "XRP SEOUL — 인프라 · 거래 · 크리에이터",
+   "who": "Leonard Hoh",
+   "claim": "2011년 설립 가상자산 거래소",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "세션 WebSearch 한도(200회) 소진으로 검색하지 못함 — 미검증, 재검증 필요"
+  },
+  {
+   "group": "XRP SEOUL — 인프라 · 거래 · 크리에이터",
+   "who": "Leonard Hoh",
+   "claim": "로빈후드 인수 후 'Bitstamp by Robinhood'",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "세션 WebSearch 한도(200회) 소진으로 검색하지 못함 — 미검증, 재검증 필요"
+  },
+  {
+   "group": "XRP SEOUL — 인프라 · 거래 · 크리에이터",
+   "who": "Leonard Hoh",
+   "claim": "비트스탬프 APAC 총괄(GM, 싱가포르)",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "세션 WebSearch 한도(200회) 소진으로 검색하지 못함 — 미검증, 재검증 필요"
+  },
+  {
+   "group": "XRP SEOUL — 인프라 · 거래 · 크리에이터",
+   "who": "Leonard Hoh",
+   "claim": "스탠다드차타드 · ANZ · ING 등 자산관리 · 기관금융 약 20년",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "세션 WebSearch 한도(200회) 소진으로 검색하지 못함 — 미검증, 재검증 필요"
+  },
+  {
+   "group": "XRP SEOUL — 인프라 · 거래 · 크리에이터",
+   "who": "Fig",
+   "claim": "스퀴드(Squid) 공동창업자",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "세션 WebSearch 한도(200회) 소진으로 검색하지 못함 — 미검증, 재검증 필요"
+  },
+  {
+   "group": "XRP SEOUL — 인프라 · 거래 · 크리에이터",
+   "who": "Fig",
+   "claim": "Axelar 기반 크로스체인 스왑 라우터",
+   "verdict": "맞음",
+   "fix": "",
+   "source": "https://www.axelar.network/blog/cross-chain-intents",
+   "note": "Axelar 공식 블로그: 유동성 라우터 Squid가 Axelar 인텐트로 크로스체인 스왑 실행. Squid 사이트 'Bridge, Swap & Build Across 100+ Chains'"
+  },
+  {
+   "group": "XRP SEOUL — 인프라 · 거래 · 크리에이터",
+   "who": "Fig",
+   "claim": "결제 라우터",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "스왑·브릿지 용도는 확인, '결제' 용도는 찾지 못함(검색 한도 소진)"
+  },
+  {
+   "group": "XRP SEOUL — 인프라 · 거래 · 크리에이터",
+   "who": "Fig",
+   "claim": "주최측 소개상 XRPL 공식 브릿지 파트너",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "세션 WebSearch 한도(200회) 소진으로 검색하지 못함 — 미검증, 재검증 필요"
+  },
+  {
+   "group": "XRP SEOUL — 인프라 · 거래 · 크리에이터",
+   "who": "Fig",
+   "claim": "'Fig'로 활동, 본명 미확인",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "세션 WebSearch 한도(200회) 소진으로 검색하지 못함 — 미검증, 재검증 필요"
+  },
+  {
+   "group": "XRP SEOUL — 인프라 · 거래 · 크리에이터",
+   "who": "Fig",
+   "claim": "의대에서 테크로 전향, 디자인·금융 거쳐 크립토",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "세션 WebSearch 한도(200회) 소진으로 검색하지 못함 — 미검증, 재검증 필요"
+  },
+  {
+   "group": "XRP SEOUL — 인프라 · 거래 · 크리에이터",
+   "who": "Jonghan Park",
+   "claim": "박작가의 크립토연구소 대표",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "세션 WebSearch 한도(200회) 소진으로 검색하지 못함 — 미검증, 재검증 필요"
+  },
+  {
+   "group": "XRP SEOUL — 인프라 · 거래 · 크리에이터",
+   "who": "Jonghan Park",
+   "claim": "구독자 약 25만(토큰포스트 인터뷰 시점)",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "세션 WebSearch 한도(200회) 소진으로 검색하지 못함 — 미검증, 재검증 필요"
+  },
+  {
+   "group": "XRP SEOUL — 인프라 · 거래 · 크리에이터",
+   "who": "Jonghan Park",
+   "claim": "저서 7권",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "세션 WebSearch 한도(200회) 소진으로 검색하지 못함 — 미검증, 재검증 필요"
+  },
+  {
+   "group": "XRP SEOUL — 인프라 · 거래 · 크리에이터",
+   "who": "Jonghan Park",
+   "claim": "『알트코인 레볼루션』·『암호화폐 트렌드 2026』 공저",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "세션 WebSearch 한도(200회) 소진으로 검색하지 못함 — 미검증, 재검증 필요"
+  },
+  {
+   "group": "XRP SEOUL — 인프라 · 거래 · 크리에이터",
+   "who": "Donghwan Kim",
+   "claim": "대니월드 대표",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "세션 WebSearch 한도(200회) 소진으로 검색하지 못함 — 미검증, 재검증 필요"
+  },
+  {
+   "group": "XRP SEOUL — 인프라 · 거래 · 크리에이터",
+   "who": "Donghwan Kim",
+   "claim": "구독자 약 2만 안팎(2025 저자 소개)",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "세션 WebSearch 한도(200회) 소진으로 검색하지 못함 — 미검증, 재검증 필요"
+  },
+  {
+   "group": "XRP SEOUL — 인프라 · 거래 · 크리에이터",
+   "who": "Donghwan Kim",
+   "claim": "블록체인 전문강사 · 2020년부터 과기정통부 주관 강의",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "세션 WebSearch 한도(200회) 소진으로 검색하지 못함 — 미검증, 재검증 필요"
+  },
+  {
+   "group": "XRP SEOUL — 인프라 · 거래 · 크리에이터",
+   "who": "Donghwan Kim",
+   "claim": "박종한과 『알트코인 레볼루션』 공저",
+   "verdict": "확인불가",
+   "fix": "",
+   "source": "",
+   "note": "세션 WebSearch 한도(200회) 소진으로 검색하지 못함 — 미검증, 재검증 필요"
+  }
+ ]
+}

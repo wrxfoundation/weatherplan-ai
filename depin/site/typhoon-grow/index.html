@@ -1,0 +1,1088 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex">
+<title>태풍 키우기</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="description" content="작은 구름 덩어리에서 시작해 따뜻한 바다의 구름을 삼키며 초강력 태풍까지 — 위성 시점 날씨 미니게임">
+<meta name="theme-color" content="#04080F">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap">
+<style>
+  /* 한 가지 세계: 정지궤도 위성 화면. 배경 · 글자색을 모두 명시해 호스트 테마와 무관하게 유지 */
+  :root {
+    --bg: #04080F; --glass: rgba(6, 12, 20, 0.72); --glass-2: rgba(10, 19, 30, 0.9); --line: rgba(200, 222, 240, 0.14); --line-2: rgba(200, 222, 240, 0.26);
+    --ink: #EAF1F6; --ink-2: #A3B6C5; --ink-3: #6B8193;
+    --amber: #F2B33D; --warm: #FF8A4C; --cold: #6CB8FF; --ok: #62DDB8; --bad: #FF5A4E;
+    --f-display: 'Black Han Sans', 'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+    --f-body: 'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
+    --f-mono: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  html, body { margin: 0; height: 100%; background: var(--bg); color: var(--ink); overflow: hidden; }
+  body { font-family: var(--f-body); font-size: 15px; line-height: 1.5; -webkit-font-smoothing: antialiased; overscroll-behavior: none; }
+  button { font: inherit; color: inherit; }
+  button:focus-visible, a:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
+  #app { position: fixed; inset: 0; touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
+  #gl, #ov { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  #ov { pointer-events: none; }
+  #labels { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+  .city { position: absolute; left: 0; top: 0; font-size: 11.5px; color: rgba(234, 241, 246, 0.82); text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9); white-space: nowrap; transform: translate(-50%, -50%); display: none; }
+  .city::before { content: ''; display: inline-block; width: 4px; height: 4px; border-radius: 50%; background: rgba(234, 241, 246, 0.85); margin-right: 4px; vertical-align: 2px; }
+
+  /* HUD */
+  .hud { position: absolute; left: 0; right: 0; top: 0; padding: max(10px, env(safe-area-inset-top)) 12px 0; display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; pointer-events: none; }
+  .panel { background: var(--glass); border: 1px solid var(--line); border-radius: 12px; backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
+  .gauge { padding: 9px 12px 10px; min-width: 196px; max-width: 58vw; }
+  .grade { font-size: 12.5px; color: var(--ink-2); letter-spacing: 0.02em; display: flex; align-items: center; gap: 6px; }
+  .grade b { color: var(--ink); font-weight: 600; }
+  .grade .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--ink-3); flex: none; }
+  .pres { font-family: var(--f-display); font-size: 40px; line-height: 1; margin-top: 4px; font-variant-numeric: tabular-nums; letter-spacing: 0.01em; }
+  .pres small { font-family: var(--f-mono); font-size: 13px; color: var(--ink-2); margin-left: 4px; letter-spacing: 0; }
+  .sub { font-family: var(--f-mono); font-size: 11.5px; color: var(--ink-2); margin-top: 3px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .goal { margin-top: 8px; }
+  .goal .lab { font-size: 11px; color: var(--ink-3); display: flex; justify-content: space-between; gap: 8px; }
+  .goal .lab b { color: var(--ink-2); font-weight: 500; }
+  .bar { height: 5px; border-radius: 3px; background: rgba(200, 222, 240, 0.12); margin-top: 4px; overflow: hidden; }
+  .bar i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, #8FD3FF, var(--amber)); border-radius: 3px; transition: width 0.25s linear; }
+  .side { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
+  .clock { padding: 7px 11px; text-align: right; font-family: var(--f-mono); font-variant-numeric: tabular-nums; }
+  .clock .d { font-size: 13px; color: var(--ink); }
+  .clock .a { font-size: 11.5px; color: var(--ink-2); margin-top: 1px; }
+  .clock .a b { color: var(--amber); font-weight: 500; }
+  .views { display: flex; padding: 3px; gap: 2px; pointer-events: auto; }
+  .views button { background: none; border: 0; border-radius: 8px; padding: 6px 9px; font-size: 12.5px; color: var(--ink-2); cursor: pointer; min-height: 32px; }
+  .views button[aria-pressed="true"] { background: rgba(200, 222, 240, 0.16); color: var(--ink); }
+  .iconbtn { pointer-events: auto; background: var(--glass); border: 1px solid var(--line); border-radius: 10px; width: 38px; height: 34px; cursor: pointer; display: grid; place-items: center; }
+  .iconbtn svg { width: 15px; height: 15px; }
+
+  .env { position: absolute; left: 12px; right: 12px; bottom: calc(max(6px, env(safe-area-inset-bottom)) + 16px); display: flex; flex-wrap: wrap; gap: 6px; pointer-events: none; align-items: center; }
+  .chip { background: var(--glass); border: 1px solid var(--line); border-radius: 999px; padding: 5px 10px; font-size: 12px; color: var(--ink-2); display: inline-flex; align-items: center; gap: 6px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .chip b { color: var(--ink); font-weight: 500; font-family: var(--f-mono); font-size: 12px; }
+  .chip.warn { border-color: rgba(255, 138, 76, 0.55); color: #FFC7A8; }
+  .chip.warn b { color: #FFD9C4; }
+  .chip.good b { color: var(--ok); }
+  .meter { display: inline-flex; gap: 2px; }
+  .meter i { width: 6px; height: 9px; border-radius: 1.5px; background: rgba(200, 222, 240, 0.16); }
+  .meter i.on { background: #8FD3FF; }
+  .combo { position: absolute; left: 50%; top: 31%; transform: translate(-50%, -50%); font-family: var(--f-display); font-size: 30px; color: var(--amber); text-shadow: 0 2px 10px rgba(0, 0, 0, 0.6); pointer-events: none; opacity: 0; transition: opacity 0.2s; }
+  .toast { position: absolute; left: 50%; bottom: calc(max(6px, env(safe-area-inset-bottom)) + 64px); transform: translateX(-50%); width: min(92vw, 460px); display: flex; flex-direction: column; gap: 6px; align-items: center; pointer-events: none; }
+  .toast div { background: var(--glass-2); border: 1px solid var(--line-2); border-radius: 10px; padding: 8px 13px; font-size: 13.5px; text-align: center; text-wrap: balance; animation: tin 0.25s ease-out; }
+  .toast div.big { font-family: var(--f-display); font-size: 22px; padding: 10px 16px; color: var(--amber); }
+  .toast div.bad { border-color: rgba(255, 138, 76, 0.6); }
+  @keyframes tin { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+  /* 카드 */
+  .scrim { position: absolute; inset: 0; display: grid; place-items: center; padding: 16px; background: linear-gradient(180deg, rgba(4, 8, 15, 0.25), rgba(4, 8, 15, 0.7)); overflow-y: auto; }
+  .scrim[hidden] { display: none; }
+  #intro { place-items: center start; padding-left: max(16px, 6vw); background: linear-gradient(90deg, rgba(4, 8, 15, 0.75), rgba(4, 8, 15, 0.1) 60%); }
+  @media (max-aspect-ratio: 11/10) { #intro { place-items: end center; padding: 16px; background: linear-gradient(180deg, rgba(4, 8, 15, 0) 25%, rgba(4, 8, 15, 0.8) 60%); } }
+  .card { width: min(100%, 460px); background: var(--glass-2); border: 1px solid var(--line-2); border-radius: 16px; padding: 22px 20px 18px; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45); }
+  .card h1 { margin: 0; font-family: var(--f-display); font-weight: 400; font-size: clamp(38px, 11vw, 52px); line-height: 1; letter-spacing: 0.01em; }
+  .card h1 em { font-style: normal; color: var(--amber); }
+  .card h2 { margin: 0; font-family: var(--f-display); font-weight: 400; font-size: 30px; line-height: 1.1; }
+  .card .lede { margin: 10px 0 0; color: var(--ink-2); font-size: 14.5px; text-wrap: pretty; }
+  .rules { list-style: none; margin: 16px 0 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+  .rules li { display: grid; grid-template-columns: 26px 1fr; gap: 10px; font-size: 13.5px; color: var(--ink-2); align-items: start; }
+  .rules li b { color: var(--ink); font-weight: 600; }
+  .rules svg { width: 26px; height: 26px; }
+  .score-note { margin-top: 14px; padding: 10px 12px; border-radius: 10px; background: rgba(200, 222, 240, 0.06); font-size: 12.5px; color: var(--ink-2); }
+  .score-note b { color: var(--amber); font-weight: 500; }
+  .row { display: flex; gap: 8px; margin-top: 16px; flex-wrap: wrap; }
+  .btn { flex: 1; min-width: 120px; border: 1px solid var(--line-2); background: rgba(200, 222, 240, 0.08); border-radius: 11px; padding: 12px 14px; font-weight: 600; cursor: pointer; }
+  .btn.primary { background: var(--amber); color: #1A1204; border-color: var(--amber); }
+  .ctrl-note { margin-top: 10px; font-size: 12px; color: var(--ink-3); text-align: center; }
+  .best { margin-top: 8px; font-size: 12px; color: var(--ink-3); text-align: center; font-family: var(--f-mono); }
+  .stars { font-size: 26px; letter-spacing: 4px; color: rgba(200, 222, 240, 0.2); margin-top: 8px; }
+  .stars b { color: var(--amber); font-weight: 400; }
+  .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; margin-top: 14px; background: var(--line); border-radius: 10px; overflow: hidden; }
+  .stats div { background: rgba(10, 19, 30, 0.96); padding: 9px 11px; }
+  .stats dt { font-size: 11.5px; color: var(--ink-3); }
+  .stats dd { margin: 2px 0 0; font-family: var(--f-mono); font-size: 16px; font-variant-numeric: tabular-nums; }
+  .stats .hl dd { color: var(--amber); font-size: 20px; }
+  #trackc { width: 100%; aspect-ratio: 16 / 10; display: block; margin-top: 12px; border-radius: 10px; background: #0A1828; }
+  .why { margin: 10px 0 0; font-size: 13px; color: var(--ink-2); text-wrap: pretty; }
+  .foot { position: absolute; left: 0; right: 0; bottom: max(3px, env(safe-area-inset-bottom)); text-align: center; font-size: 10.5px; color: rgba(163, 182, 197, 0.6); pointer-events: none; padding: 0 12px; }
+  .scrim .foot { position: static; margin-top: 12px; }
+  .nogl { position: absolute; inset: 0; display: grid; place-items: center; padding: 24px; text-align: center; color: var(--ink-2); }
+  @media (max-width: 520px) {
+    .gauge { min-width: 0; padding: 8px 10px 9px; }
+    .pres { font-size: 32px; }
+    .views button { padding: 5px 7px; font-size: 12px; }
+    .chip { padding: 4px 8px; font-size: 11.5px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .toast div { animation: none; } .bar i { transition: none; } }
+</style>
+</head>
+<body>
+<div id="app">
+  <canvas id="gl" tabindex="0" aria-label="태풍 키우기 게임 화면. 화살표 키나 손가락으로 태풍을 움직입니다."></canvas>
+  <canvas id="ov" aria-hidden="true"></canvas>
+  <div id="labels" aria-hidden="true"></div>
+  <div class="hud" id="hud" hidden>
+    <div class="panel gauge" aria-live="off">
+      <div class="grade"><span class="dot" id="gdot"></span><b id="gname">열대요란</b></div>
+      <div class="pres"><span id="gp">1005</span><small>hPa</small></div>
+      <div class="sub"><span id="gw">12</span> m/s · 구름 반경 <span id="gr">55</span> km</div>
+      <div class="goal"><div class="lab"><span id="gnext">다음 · 태풍(17 m/s)</span><b id="gnextv"></b></div><div class="bar"><i id="gbar"></i></div></div>
+    </div>
+    <div class="side">
+      <div class="panel clock"><div class="d" id="gclock">1일째 · 00시</div><div class="a">점수 ACE <b id="gace">0.0</b></div></div>
+      <div class="panel views" role="group" aria-label="화면 고르기">
+        <button type="button" data-m="0" aria-pressed="true">위성</button><button type="button" data-m="1" aria-pressed="false">적외</button><button type="button" data-m="2" aria-pressed="false">수온</button>
+      </div>
+      <button type="button" class="iconbtn" id="pausebtn" aria-label="잠깐 멈춤"><svg viewBox="0 0 16 16" fill="currentColor"><rect x="3" y="2" width="3.4" height="12" rx="1"/><rect x="9.6" y="2" width="3.4" height="12" rx="1"/></svg></button>
+    </div>
+  </div>
+  <div class="combo" id="combo"></div>
+  <div class="env" id="env" hidden>
+    <span class="chip" id="csst">해수온 <b>29.8℃</b></span>
+    <span class="chip" id="cmoist">수증기 <span class="meter" id="mm"><i></i><i></i><i></i><i></i><i></i></span></span>
+    <span class="chip" id="cshear">바람 시어 <b>약함</b></span>
+    <span class="chip" id="cflow">큰 흐름 <b>서북서</b></span>
+  </div>
+  <div class="toast" id="toast" aria-live="polite"></div>
+
+  <div class="scrim" id="intro">
+    <div class="card">
+      <h1>태풍 <em>키우기</em></h1>
+      <p class="lede">작은 구름 덩어리에서 시작해, 따뜻한 바다 위의 구름을 삼키며 초강력 태풍까지 자라 보세요.</p>
+      <ul class="rules">
+        <li><svg viewBox="0 0 26 26" fill="none" stroke="#EAF1F6" stroke-width="1.6"><circle cx="13" cy="13" r="9"/><circle cx="20.5" cy="6" r="2.6" fill="#EAF1F6" stroke="none"/></svg><span><b>나보다 작은 구름만 삼킨다.</b> 삼킬수록 몸집이 커지고 더 큰 구름도 먹을 수 있다. 큰 구름에 부딪히면 밀려난다.</span></li>
+        <li><svg viewBox="0 0 26 26" fill="none" stroke="#FF8A4C" stroke-width="1.6"><path d="M3 17c3-3 5 3 8 0s5 3 8 0 4 2 4 2"/><path d="M13 3v8M10 8l3 3 3-3"/></svg><span><b>따뜻한 바다(26.5℃ 이상)가 연료다.</b> 한자리에 오래 머물면 바다가 식는다(차가운 꼬리).</span></li>
+        <li><svg viewBox="0 0 26 26" fill="none" stroke="#6CB8FF" stroke-width="1.6"><path d="M3 9h14M3 13h19M3 17h12"/><path d="M19 6l3 3-3 3"/></svg><span><b>육지 · 제트기류 · 차가운 바다에선 약해진다.</b> 강해질수록 큰 흐름(고기압 가장자리 바람)이 나를 끌고 간다.</span></li>
+      </ul>
+      <div class="score-note">점수는 <b>ACE</b>(누적 사이클론 에너지) — 바다 위에서 강한 바람을 얼마나 오래 유지했는지다. 육지를 덮쳐서 얻는 점수는 없다.</div>
+      <div class="row"><button type="button" class="btn primary" id="startbtn">시작</button></div>
+      <div class="ctrl-note">휴대폰: 화면을 누른 채 가고 싶은 쪽으로 · 키보드: 방향키 / WASD · V 화면 바꾸기 · P 멈춤</div>
+      <div class="best" id="bestline"></div>
+      <div class="foot">날씨 미니게임 · 프로토타입 — 교육용으로 단순화한 모형 날씨이며 실제 예보가 아닙니다.</div>
+    </div>
+  </div>
+
+  <div class="scrim" id="pausecard" hidden>
+    <div class="card">
+      <h2>잠깐 멈춤</h2>
+      <p class="why">화면 셋: <b>위성</b>은 눈으로 보는 구름, <b>적외</b>는 구름 꼭대기 온도(높을수록 차갑고 색이 진함), <b>수온</b>은 바다 온도와 26.5℃ 선, 지나온 차가운 꼬리를 보여 줍니다.</p>
+      <div class="row"><button type="button" class="btn primary" id="resumebtn">계속</button><button type="button" class="btn" id="quitbtn">여기서 끝내기</button></div>
+    </div>
+  </div>
+
+  <div class="scrim" id="endcard" hidden>
+    <div class="card">
+      <h2 id="etitle">9일을 다 살았습니다</h2>
+      <div class="stars" id="estars" aria-label=""></div>
+      <dl class="stats">
+        <div class="hl"><dt>점수 ACE</dt><dd id="eace">0</dd></div>
+        <div><dt>최저 중심기압</dt><dd id="ep">0</dd></div>
+        <div><dt>최고 단계</dt><dd id="eg">-</dd></div>
+        <div><dt>최대풍속</dt><dd id="ew">0</dd></div>
+        <div><dt>삼킨 구름</dt><dd id="eeat">0</dd></div>
+        <div><dt>최대 구름 반경</dt><dd id="er">0</dd></div>
+      </dl>
+      <canvas id="trackc" aria-label="지나온 길"></canvas>
+      <p class="why" id="ewhy"></p>
+      <div class="row"><button type="button" class="btn primary" id="againbtn">다시 하기</button><button type="button" class="btn" id="copybtn">결과 복사</button></div>
+      <div class="best" id="ebest"></div>
+      <div class="foot">날씨 미니게임 · 프로토타입 — 교육용으로 단순화한 모형 날씨이며 실제 예보가 아닙니다.</div>
+    </div>
+  </div>
+  <div class="foot" id="playfoot" hidden>교육용으로 단순화한 모형 날씨 · 실제 예보 아님</div>
+</div>
+<script>// 태풍 키우기 — 모형(브라우저 · Node 공용). 좌표: x = (경도-140)·KX, y = 위도(°). 시간 단위는 게임 시간(h).
+(function (root) {
+  const D2R = Math.PI / 180;
+  const KX = Math.cos(24 * D2R);
+  const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const smooth = (a, b, v) => { const t = clamp((v - a) / (b - a), 0, 1); return t * t * (3 - 2 * t); };
+  const lonOf = x => x / KX + 140;
+  const xOf = lon => (lon - 140) * KX;
+  // 지도(텍스처) 범위와 놀이 범위
+  const MAP = { lon0: 96, lon1: 184, lat0: -8, lat1: 54 };
+  const PLAY = { x0: xOf(101), x1: xOf(179), y0: 1.5, y1: 50 };
+
+  const T = {
+    hoursPerSec: 1,         // 실시간 1초 = 게임 1시간
+    lifeH: 216,             // 9일
+    eat: 0.62,              // 내 반경의 이 비율보다 작은 구름만 삼킨다
+    grow: 0.40,             // 삼킬 때 R² += grow·s²
+    Rmax: 6.5,
+    items: 72,
+    absorbH: 1.1,           // 빨려 들어가는 연출 시간
+    combo: 2.6,             // 이 시간 안에 또 삼키면 콤보
+  };
+
+  // ── 해안선 · 육지 격자 ─────────────────────────────
+  function decodeCoast(coast) {
+    return coast.map(r => { const pts = []; let x = 0, y = 0; for (let i = 0; i < r.d.length; i += 2) { x += r.d[i]; y += r.d[i + 1]; pts.push([x / 100, y / 100]); } return { h: r.h ? 1 : 0, pts }; });
+  }
+  let MASK = null;
+  function buildMask(rings, res = 0.1) {
+    const w = Math.round((MAP.lon1 - MAP.lon0) / res), h = Math.round((MAP.lat1 - MAP.lat0) / res);
+    const a = new Uint8Array(w * h); const xs = [];
+    for (let i = 0; i < h; i++) {
+      const lat = MAP.lat1 - (i + 0.5) * res; xs.length = 0;
+      for (const r of rings) {
+        const p = r.pts;
+        for (let k = 0, n = p.length; k < n; k++) {
+          const [x1, y1] = p[k], [x2, y2] = p[(k + 1) % n];
+          if ((y1 <= lat) !== (y2 <= lat)) xs.push(x1 + ((lat - y1) / (y2 - y1)) * (x2 - x1));
+        }
+      }
+      xs.sort((u, v) => u - v);
+      for (let k = 0; k + 1 < xs.length; k += 2) {
+        const j0 = Math.max(0, Math.ceil((xs[k] - MAP.lon0) / res - 0.5)), j1 = Math.min(w - 1, Math.floor((xs[k + 1] - MAP.lon0) / res - 0.5));
+        for (let j = j0; j <= j1; j++) a[i * w + j] ^= 1;
+      }
+    }
+    MASK = { w, h, res, a };
+    return MASK;
+  }
+  function isLand(x, y) {
+    if (!MASK) return 0; const lon = lonOf(x);
+    const i = Math.floor((MAP.lat1 - y) / MASK.res), j = Math.floor((lon - MAP.lon0) / MASK.res);
+    if (i < 0 || j < 0 || i >= MASK.h || j >= MASK.w) return 0; return MASK.a[i * MASK.w + j];
+  }
+  // 반경 안 육지 비율(성긴 표본)
+  function landFrac(x, y, r) {
+    let n = 0, l = 0;
+    for (let k = 0; k < 9; k++) { const a = k * 0.698, q = k ? r : 0; n++; l += isLand(x + Math.cos(a) * q, y + Math.sin(a) * q); }
+    return l / n;
+  }
+
+  // ── 난수 ─────────────────────────────────────────
+  function rng(seed) { let s = (seed >>> 0) || 1; return () => { s ^= s << 13; s ^= s >>> 17; s ^= s << 5; return ((s >>> 0) % 1e7) / 1e7; }; }
+  function gauss(r) { let u = 0; for (let i = 0; i < 4; i++) u += r(); return (u - 2) * 1.732; }
+
+  // ── 환경: 해수면 온도 · 지향류 · 바람 시어 ─────────────
+  // 늦여름 북서태평양을 단순화한 기후값(℃). 난수 소용돌이(±)는 판마다 바뀐다.
+  function sstClim(x, y, env) {
+    const lon = lonOf(x);
+    let t = y < 18 ? 29.8 : 29.8 - 0.012 * (y - 18) ** 2;
+    t -= 0.6 * smooth(5, 0, y);                                   // 적도 용승
+    t -= 0.9 * smooth(160, 182, lon) * smooth(14, 30, y);         // 동쪽 먼바다는 조금 차다
+    t -= 1.4 * smooth(124, 119, lon) * smooth(24, 31, y);         // 중국 연안·황해
+    const axis = 29 + (lon - 124) * 0.33;                          // 쿠로시오 난류
+    if (lon > 122 && lon < 150) t += 1.1 * Math.exp(-((y - axis) ** 2) / 2.2) * smooth(150, 140, lon);
+    if (env) for (const e of env.eddies) { const d2 = (x - e.x) ** 2 + (y - e.y) ** 2; if (d2 < 9 * e.r * e.r) t += e.a * Math.exp(-d2 / (e.r * e.r)); }
+    return t;
+  }
+  // 차가운 꼬리: 0.5° 격자
+  const WG = { res: 0.5 }; WG.w = Math.round((MAP.lon1 - MAP.lon0) / WG.res); WG.h = Math.round((MAP.lat1 - MAP.lat0) / WG.res);
+  function wakeIdx(x, y) { const j = Math.floor((lonOf(x) - MAP.lon0) / WG.res), i = Math.floor((MAP.lat1 - y) / WG.res); return i < 0 || j < 0 || i >= WG.h || j >= WG.w ? -1 : i * WG.w + j; }
+  function sst(g, x, y) { const k = wakeIdx(x, y); return sstClim(x, y, g.env) - (k >= 0 ? g.wake[k] : 0); }
+
+  function ridgeLat(g, x) { const lon = lonOf(x); return 26.5 + 2.6 * Math.sin(g.t / 70 + g.env.rPh) + 1.5 * smooth(150, 125, lon) * Math.sin(g.t / 45 + g.env.rPh2); }
+  function jetLat(g, x) { const lon = lonOf(x); return 34 + 2.2 * Math.sin(g.t / 60 + g.env.jPh) - 2.5 * smooth(135, 110, lon) + 1.2 * Math.sin(lon * 0.09 - g.t / 18); }
+  // 지향류(세계 단위/h): 능 남쪽은 동풍(북서진), 북쪽은 편서풍(북동진), 능의 서쪽 끝에서 전향
+  function flow(g, x, y) {
+    const lon = lonOf(x), lr = ridgeLat(g, x);
+    const s = smooth(lr - 4, lr + 3, y);
+    let u = lerp(-0.22, 0.34, s), v = lerp(0.06, 0.13, s);
+    v += 0.16 * smooth(136, 118, lon) * (1 - s) * smooth(12, 22, y);
+    u *= KX; return [u, v];
+  }
+  // 바람 시어 0~1: 제트기류 띠 + 서쪽으로 흘러가는 상층 저기압(TUTT)
+  function shear(g, x, y) {
+    const jl = jetLat(g, x); let S = smooth(jl - 5, jl + 0.5, y);
+    for (const c of g.env.tutt) { const d2 = (x - c.x) ** 2 + (y - c.y) ** 2; S += c.a * Math.exp(-d2 / (c.r * c.r)); }
+    return clamp(S, 0, 1);
+  }
+  // 대류 잠재력(구름이 생기기 쉬운 정도) 0~1
+  function convection(g, x, y) {
+    if (isLand(x, y)) return 0.08;
+    const t = sst(g, x, y);
+    return smooth(26.0, 29.2, t) * (1 - 0.8 * shear(g, x, y)) * smooth(1, 5, y) * (0.55 + 0.45 * smooth(26, 14, Math.abs(y - 11)));
+  }
+
+  // ── 강도 표기 ────────────────────────────────────
+  const wind = I => 10 + 60 * I;                     // 최대풍속 m/s
+  const pres = I => 1008 - 110 * I;                  // 중심기압 hPa
+  const GRADES = [
+    { id: 'dist', name: '열대요란', min: 0 },
+    { id: 'td', name: '열대저압부', min: 0.035 },
+    { id: 'g1', name: '태풍 · 약', min: (17 - 10) / 60 },
+    { id: 'g2', name: '태풍 · 중', min: (25 - 10) / 60 },
+    { id: 'g3', name: '태풍 · 강', min: (33 - 10) / 60 },
+    { id: 'g4', name: '태풍 · 매우 강', min: (44 - 10) / 60 },
+    { id: 'g5', name: '태풍 · 초강력', min: (54 - 10) / 60 },
+  ];
+  const gradeIdx = I => { let k = 0; for (let i = 0; i < GRADES.length; i++) if (I >= GRADES[i].min) k = i; return k; };
+  const EYE_I = 0.42;
+
+  // ── 게임 ─────────────────────────────────────────
+  function viewHalf(R) { return 5.2 * R + 2.2; }
+  function newGame(seed) {
+    const r = rng(seed);
+    const env = { eddies: [], tutt: [], rPh: r() * 6.28, rPh2: r() * 6.28, jPh: r() * 6.28 };
+    for (let i = 0; i < 34; i++) env.eddies.push({ x: xOf(lerp(104, 178, r())), y: lerp(4, 40, r()), r: lerp(1.2, 3.2, r()), a: (r() < 0.55 ? 1 : -1) * lerp(0.4, 1.0, r()) });
+    for (let i = 0; i < 3; i++) env.tutt.push({ x: xOf(lerp(135, 180, r())), y: lerp(19, 26, r()), r: lerp(3.2, 4.8, r()), a: lerp(0.55, 0.8, r()), vx: -lerp(0.08, 0.14, r()) * KX });
+    const lon0 = lerp(138, 158, r()), lat0 = lerp(8, 13.5, r());
+    const g = {
+      seed, r, env, t: 0, x: xOf(lon0), y: lat0, vx: 0, vy: 0,
+      I: 0.03, R: 0.5, M: 0.15, peakI: 0.03, peakR: 0.5, ace: 0, eaten: 0, bigHits: 0,
+      combo: 0, lastEat: -99, lastBig: -99, landH: 0, landfall: false, eye: false,
+      grade: 0, over: false, end: '', items: [], nextId: 1, wake: new Float32Array(WG.w * WG.h),
+      events: [], track: [{ t: 0, x: 0, y: 0, I: 0.03 }], sst: 29, S: 0, land: 0, Ipot: 0,
+    };
+    g.track[0].x = g.x; g.track[0].y = g.y;
+    for (let i = 0; i < T.items * 1.3; i++) spawn(g, true);
+    return g;
+  }
+  function itemType(s) { return s < 0.3 ? 0 : s < 0.9 ? 1 : s < 2.2 ? 2 : 3; } // 적운 · 뇌우 · 구름 무리 · 열대요란
+  function spawn(g, initial) {
+    const r = g.r, V = viewHalf(g.R);
+    for (let k = 0; k < 14; k++) {
+      const a = r() * 6.2832, d = initial ? lerp(0.25, 1.6, Math.sqrt(r())) * V : lerp(1.05, 1.6, r()) * V;
+      const x = g.x + Math.cos(a) * d, y = g.y + Math.sin(a) * d * 0.8;
+      if (x < PLAY.x0 - 4 || x > PLAY.x1 + 4 || y < -2 || y > PLAY.y1 + 3) continue;
+      if (r() > convection(g, x, y)) continue;
+      const u = r(); let s = g.R * (0.1 + 0.95 * u ** 1.8); s = Math.max(0.06, s);
+      let ty = itemType(s); if (ty === 3 && r() > 0.25) ty = 2; // 다른 열대요란은 드물게
+      g.items.push({ id: g.nextId++, x, y, s, type: ty, seed: r(), rot: r() * 6.28, age: initial ? r() * 20 : 0, life: lerp(30, 70, r()), st: 0, p: 0, rx: 0, ry: 0 });
+      return true;
+    }
+    return false;
+  }
+
+  function step(g, ix, iy, dt) {
+    if (g.over || !(dt > 0)) return;
+    g.t += dt; const ev = g.events;
+    // 환경
+    for (const c of g.env.tutt) { c.x += c.vx * dt; if (c.x < xOf(118)) { c.x = xOf(lerp(170, 182, g.r())); c.y = lerp(19, 27, g.r()); } }
+    const land = landFrac(g.x, g.y, Math.min(g.R * 0.35, 1.2));
+    const T0 = sst(g, g.x, g.y), S = shear(g, g.x, g.y);
+    g.sst = T0; g.S = S; g.land = land;
+    const cor = smooth(2.5, 6.5, g.y);
+    let Ipot = clamp((T0 - 26.0) / 3.6, 0, 1) * cor * (1 - 0.75 * S) * (1 - land);
+    g.Ipot = Ipot;
+    // 수증기 저장고
+    g.M = clamp(g.M * Math.exp(-0.045 * dt) + 0.0015 * clamp(T0 - 27, 0, 3) * (1 - land) * dt, 0, 1.5);
+    // 강도
+    if (g.I < Ipot) g.I += Math.min((Ipot - g.I) * (0.0025 + 0.03 * g.M), 0.024) * dt;
+    else g.I += (Ipot - g.I) * (0.045 + 0.08 * land) * dt;
+    g.I -= 0.012 * S * g.I * dt;
+    g.I = clamp(g.I, 0, 1);
+    // 움직임: 내 조작 + 지향류. 강해질수록 큰 흐름(지향류)이 더 세게 끌고 간다
+    const [fu, fv] = flow(g, g.x, g.y);
+    const sp = 1.1 * g.R ** 0.7 + 0.5, ia = 1 - 0.5 * smooth(0.3, 0.9, g.I), fk = 1.4 + 1.4 * smooth(0.25, 0.85, g.I);
+    const im = Math.hypot(ix, iy); if (im > 1) { ix /= im; iy /= im; }
+    const tvx = sp * (ia * ix + fu * fk), tvy = sp * (ia * iy + fv * fk);
+    g.ia = ia;
+    const k = 1 - Math.exp(-dt * 3.2);
+    g.vx += (tvx - g.vx) * k; g.vy += (tvy - g.vy) * k;
+    g.x = clamp(g.x + g.vx * dt, PLAY.x0, PLAY.x1); g.y = clamp(g.y + g.vy * dt, PLAY.y0, PLAY.y1);
+    // 차가운 꼬리: 강할수록, 오래 머물수록 식는다. 사흘쯤에 걸쳐 회복
+    const rc = Math.max(0.5, 0.45 * g.R), cool = 0.32 * g.I * g.I * dt;
+    for (let yy = g.y - rc; yy <= g.y + rc; yy += 0.5) for (let xx = g.x - rc; xx <= g.x + rc; xx += 0.5) {
+      const d = Math.hypot(xx - g.x, yy - g.y); if (d > rc) continue; const w = wakeIdx(xx, yy); if (w >= 0) g.wake[w] = Math.min(4, g.wake[w] + cool * (1 - d / rc * 0.6));
+    }
+    if (((g.t / dt) | 0) % 8 === 0) { const f = Math.exp(-(dt * 8) / 72); for (let i = 0; i < g.wake.length; i++) if (g.wake[i] > 0.001) g.wake[i] *= f; else g.wake[i] = 0; }
+    // 상륙
+    if (land > 0.5 && g.I >= GRADES[2].min && !g.landfall) { g.landfall = true; ev.push({ k: 'land' }); }
+    if (land > 0.5) g.landH += dt;
+    // 구름
+    const V = viewHalf(g.R);
+    for (let i = g.items.length - 1; i >= 0; i--) {
+      const it = g.items[i];
+      if (it.st === 1) {
+        it.p += dt / T.absorbH;
+        if (it.p >= 1) { g.items.splice(i, 1); continue; }
+        continue;
+      }
+      it.age += dt;
+      const [u, v] = flow(g, it.x, it.y); it.x += u * 0.6 * dt; it.y += v * 0.6 * dt; it.rot += dt * 0.05;
+      const dx = it.x - g.x, dy = it.y - g.y, d = Math.hypot(dx, dy);
+      if (it.age > it.life + 6 || d > 2.3 * V) { g.items.splice(i, 1); continue; }
+      if (d < g.R * 0.8 + it.s * 0.45) {
+        if (it.s <= T.eat * g.R) {
+          it.st = 1; it.p = 0; it.rx = dx; it.ry = dy;
+          g.combo = g.t - g.lastEat < T.combo ? g.combo + 1 : 1; g.lastEat = g.t;
+          const q = it.s / g.R;
+          g.M = Math.min(1.5, g.M + 0.85 * q * q * (1 + 0.08 * Math.min(g.combo, 10)));
+          g.R = Math.min(T.Rmax, Math.sqrt(g.R * g.R + T.grow * it.s * it.s));
+          g.eaten++; ev.push({ k: 'eat', s: it.s, combo: g.combo, id: it.id });
+        } else if (d < g.R * 0.55 + it.s * 0.55) {
+          // 아직 큰 구름: 서로 밀어내고, 내 구조가 조금 흐트러진다
+          const nx = dx / (d || 1), ny = dy / (d || 1), push = (g.R * 0.55 + it.s * 0.55 - d);
+          g.x -= nx * push * 0.6; g.y -= ny * push * 0.6; it.x += nx * push * 0.4; it.y += ny * push * 0.4;
+          if (g.t - g.lastBig > 1.5) { g.lastBig = g.t; g.bigHits++; g.I = Math.max(0, g.I - 0.01); ev.push({ k: 'big', ratio: it.s / g.R }); }
+        }
+      }
+    }
+    let live = 0; for (const it of g.items) if (it.st === 0) live++;
+    for (let n = 0; live < T.items && n < 6; n++) if (spawn(g, false)) live++;
+    // 점수: 바다 위에서만 ACE(6시간마다 (최대풍속 kt)² × 10⁻⁴ 를 시간으로 나눠 쌓는다)
+    const vkt = wind(g.I) * 1.9438;
+    if (vkt >= 34 && land < 0.5) g.ace += (vkt * vkt * 1e-4) * (dt / 6);
+    // 단계 · 눈
+    const gi = gradeIdx(g.I);
+    if (gi > g.grade) { g.grade = gi; if (gi >= 2) ev.push({ k: 'grade', gi }); }
+    else if (gi < g.grade - 1) g.grade = gi + 1;
+    if (!g.eye && g.I > EYE_I) { g.eye = true; ev.push({ k: 'eye' }); } else if (g.eye && g.I < EYE_I - 0.08) g.eye = false;
+    if (g.I > g.peakI) g.peakI = g.I; if (g.R > g.peakR) g.peakR = g.R;
+    if (g.track.length === 0 || g.t - g.track[g.track.length - 1].t >= 3) g.track.push({ t: g.t, x: g.x, y: g.y, I: g.I });
+    // 끝
+    if (g.t >= T.lifeH) { g.over = true; g.end = 'life'; }
+    else if (g.t > 24 && g.I < 0.02) { g.over = true; g.end = g.landH > 6 ? 'land' : 'fade'; }
+    if (g.over) ev.push({ k: 'over', end: g.end });
+  }
+
+  function stars(ace) { return ace >= 30 ? 3 : ace >= 16 ? 2 : ace >= 6 ? 1 : 0; }
+  const api = { D2R, KX, MAP, PLAY, T, WG, clamp, lerp, smooth, lonOf, xOf, decodeCoast, buildMask, isLand, landFrac, sstClim, sst, flow, shear, ridgeLat, jetLat, convection, wind, pres, GRADES, gradeIdx, EYE_I, viewHalf, newGame, step, stars, rng };
+  if (typeof module !== 'undefined' && module.exports) module.exports = api; else root.TG = api;
+})(typeof window !== 'undefined' ? window : globalThis);
+</script>
+<script>window.TG_COAST = [{"d":[12737,79,-6,-2,-2,7,6,1,2,-6]},{"d":[12773,85,15,-2,9,21,19,12,0,16,6,8,32,16,15,1,2,-4,-1,-42,-40,-23,-4,-15,35,-18,5,-4,3,-15,12,-5,9,-9,-45,17,-47,8,-5,-3,-4,-14,2,-9,-2,-16,9,-30,27,-48,18,-16,-15,2,-4,8,-19,8,-16,29,-20,18,2,53,-16,20,-1,12,7,24,-9,7,-9,22,-1,11,12,22,-1,10,10,27,27,30,14,6,-1,-8,-14,-21,0,-8,12,-13,0,-37,-12,-17,-24,-15,-2,-7,10,-9]},{"d":[11731,844,-9,-7,1,9,12,25,53,53,15,3,9,8,90,100,20,13,9,21,-5,16,5,12,19,38,5,-4,-2,-21,3,-5,-3,-10,16,-45,-10,-9,-22,-8,-8,-8,-10,-19,-41,-14,-1,-15,-33,-51,-31,-16,-14,-22,-21,-15,-21,-9,-5,-10,-21,-10]},{"d":[12250,1161,11,-5,12,5,11,-1,9,-7,-3,-9,26,10,-4,-25,-10,-17,-22,-13,-3,-17,-25,-13,-32,-7,-25,-18,1,43,9,23,5,54,-3,8,-18,7,3,6,11,5,26,-13,21,-16]},{"d":[12313,906,-14,0,-12,26,-31,16,-15,21,-1,13,7,14,24,3,15,10,1,19,-5,22,14,20,2,19,28,10,25,-7,6,-14,-41,-92,-1,-25,16,-25,1,-9,-9,-15,-10,-6]},{"d":[12457,1134,8,-3,17,9,11,-3,10,-16,-2,-42,15,-15,11,-33,-2,-5,-10,1,-1,-8,-15,18,4,-34,-25,14,1,16,-5,11,6,29,-6,15,-8,8,-16,-6,-6,2,-7,45,-6,12,2,4,5,-1,19,-18]},{"d":[12524,1253,7,-8,1,-13,22,-13,-8,-24,3,-36,12,-27,-4,-8,13,-8,4,-11,-11,8,-20,-2,-20,4,-29,33,-2,8,6,8,2,13,-12,1,-20,24,-24,13,-11,25,-4,17,28,-4,58,4,9,-4]},{"d":[12070,1348,22,2,20,-12,8,5,32,-30,2,-4,-7,-16,7,-29,-13,-22,-1,-12,-8,0,-8,-8,-12,3,-4,9,-12,11,-6,20,-12,14,-1,18,-12,20,-14,9,-5,13,-12,2,6,11,30,-4]},{"d":[15596,-669,-4,-11,-3,4,-17,-10,-20,3,-18,11,-13,19,3,12,-4,10,-19,10,-25,28,-5,18,2,30,27,-9,9,-8,11,-21,17,-14,10,-17,17,-8,18,-16,14,-31]},{"d":[15297,-476,-8,-7,-15,19,-6,14,-1,37,-39,55,-9,7,-31,11,-30,25,-51,32,-32,9,8,3,0,14,34,-22,5,-8,26,-7,33,-23,22,-8,99,-86,11,-14,0,-10,-9,-13,-2,-19,-5,-9]},{"d":[13780,-800,28,43,22,13,25,6,22,-1,19,-20,3,-11,-17,-30]},{"d":[12975,-287,23,-11,40,-1,19,-14,10,-26,10,-3,9,-15,-5,-29,-79,39,-18,14,-33,0,1,-10,-5,-2,-50,12,-1,9,-10,0,-22,-19,-12,-2,-10,3,-14,18,-15,8,-23,-34,3,16,-5,12,32,35,79,4,7,-1,6,-10,5,1,31,14,27,-8]},{"d":[12686,-309,17,-8,20,-22,2,-8,-2,-16,-14,-4,-15,-9,-25,-6,-14,5,-33,16,-16,19,-3,25,6,6,13,-4,33,8,31,-2]},{"d":[10604,-167,12,-20,5,-32,15,-27,46,-11,-11,-9,-10,-24,6,-17,-67,24,-9,19,3,15,-13,18,-2,13,-24,10,-21,-4,-21,8,1,7,5,5,18,11,0,15,9,9,12,4,12,-20,5,7,-3,13,19,3,12,-9,1,-8]},{"d":[15192,-430,5,-2,15,11,8,-8,21,-5,-5,-15,4,-24,-5,-9,-9,-13,-25,-5,-3,-7,2,-8,14,-21,-6,-10,-21,-11,-35,2,-10,-20,-19,-17,-19,-9,-23,-6,-34,-19,-82,-3,-17,17,-10,4,-28,-4,-38,25,-32,11,-6,9,0,13,9,7,13,-4,44,2,36,-9,27,6,20,0,13,7,5,31,3,10,5,3,8,-6,-9,-12,-1,-12,4,-12,7,-9,12,-2,10,7,12,1,11,-6,11,1,21,9,19,31,19,15,24,2,10,6,-1,24,-11,34,4,10,23,-2,10,-8]},{"d":[12601,932,8,-6,10,2,0,-15,12,-18,1,-10,-18,-25,23,-12,1,-15,8,-13,-2,-37,13,-15,1,-43,-14,-24,-15,-13,-7,1,-3,-4,5,-12,-5,-42,-8,18,-7,35,-22,49,-13,-7,-5,-16,-18,-19,-8,-22,21,-22,8,-25,0,-24,-21,-32,-11,-6,-6,3,-5,13,3,27,-4,4,-4,-1,-16,-19,-10,1,-72,35,-13,17,-9,59,5,12,15,16,2,13,-24,27,-30,15,-18,-1,-10,-40,-21,12,-8,17,-11,-15,-15,-2,-5,19,-8,5,-9,-1,-14,-12,-34,-69,-4,-4,-7,2,-13,14,2,13,13,16,8,45,11,13,15,11,28,8,24,3,9,6,0,14,9,12,25,9,10,13,24,-8,10,-7,7,-12,3,-24,-13,-13,5,-1,40,18,13,28,7,9,22,-8,11,4,6,31,8,10,27,-10,7,16,17,-4,12,2,4,13,-13,53,6,9,5,0,36,-25,13,-19]},{"d":[12110,1862,75,-33,10,0,9,4,11,16,7,1,5,-4,5,-14,-14,-26,-3,-40,9,-22,15,-13,2,-13,11,-6,-10,-30,-28,-63,-35,-11,-19,-15,-4,-10,5,-16,-22,-35,30,-55,-6,-9,0,-10,14,-41,14,-15,30,-9,2,5,6,2,-9,15,29,17,14,0,23,-7,8,-6,13,-23,-1,-17,4,-4,13,0,7,9,1,10,-5,4,6,8,11,-9,38,-13,5,-4,-5,-8,-20,-2,-6,-5,27,-38,-3,-16,35,-7,0,-25,-8,-22,-10,3,-8,9,7,23,-32,-1,-23,12,-9,1,-1,18,-14,22,-30,18,-27,29,-10,2,-2,-4,4,-23,9,-10,7,-16,1,-15,-8,-6,-9,7,-1,10,-12,16,-31,27,-29,15,-28,-10,-5,-5,0,-8,-11,-6,-14,-1,-10,4,-9,8,-8,0,-9,13,-11,1,-9,-9,-2,38,30,30,2,16,-5,6,-18,7,-12,10,-4,-11,4,-29,-3,-4,-12,1,-19,34,-11,1,-6,5,-15,58,-5,44,-11,14,0,24,6,8,33,-28,18,2,3,4,2,11,-6,18,-3,25,11,31,2,42,-7,26,24,87,22,9,28,2]},{"d":[13347,-73,50,-1,14,-11,-4,-15,19,-36,-4,-17,-11,-19,8,-59,27,-52,2,25,9,7,6,-3,7,-39,14,2,5,-30,20,-14,28,-2,12,3,37,34,15,27,23,15,15,31,45,7,23,9,10,8,-5,19,50,27,19,9,10,0,20,-14,54,-17,16,-13,98,-43,36,0,10,-6,37,-4,10,-6,3,-10,43,-2,66,-30,71,-27,36,-12,60,-11,56,-37,41,-3,15,-16,21,-11,25,-25,25,-3,43,-44,2,-36,-4,-22,10,-7,55,-15,63,-30,39,-5,15,-9,23,-25,6,-24,-5,-15,-46,-4,-23,2,-16,-11,-1,-5,31,-58,47,-42,24,-12,-214,0,-85,20,-9,7,-3,10,-9,-1,-26,7,-6,-3,-2,-8,-8,1,-12,-9,-9,0,-24,9,-25,21,9,-9,20,-40,-10,1,4,-6,-380,0,4,8,-7,-8,-114,0,18,41,-34,34,12,5,19,-3,12,4,-13,-1,-21,6,-12,7,-12,13,8,5,19,3,-14,13,-3,10,-26,29,-14,39,8,11,-18,3,4,9,10,4,-25,-3,-3,24,-22,12,-8,9,-45,25,-3,6,-8,-4,-11,7,-47,10,-64,29,-53,9,-26,-1,-44,25,-7,12,3,13,18,1,-13,2,-21,-6,-16,7,-12,-4,-12,15,-18,-2,-25,24,-4,10,2,23,14,20,-7,1,-10,-9,-2,-23,-5,-6,-8,1,2,-11,-12,-21,-2,-17,-15,-16,-28,-3,-10,8,-12,31,12,15,-12,26,-40,32,-30,6,-8,12,26,11,35,-5,14,-6,18,13,13,17,16,5,42,-11,9,-7,5,17,16,6,-1,9,-11,1,11,11,2,8,-21,-9,-49,-2,-26,-6,-46,5,-19,-2,-29,25,-8,28,-1,15,-20,2,-43,15,-12,-6,-12,0,-6,3,0,4,5,10,14,11,7,16,0,15,54,16,33,25,26,9,23,0,24,-6,61,-31]},{"d":[12489,100,-19,-17,-27,-36,-21,-9,-47,-7,-48,2,-19,15,-8,1,-116,-5,-32,6,-51,-6,-43,9,-23,-8,-16,-18,-11,-23,-7,-24,5,-35,18,-32,28,-17,15,-33,37,-4,11,7,13,22,30,29,16,-10,23,0,31,17,61,1,-6,9,34,9,21,-8,5,-13,-5,-22,-15,0,-8,9,-10,4,-15,-3,-9,-7,-30,-38,-26,-20,-39,-14,-21,-21,-8,-1,-17,8,-4,-5,-1,-7,15,-9,8,-11,19,-9,31,-51,21,-16,2,-14,9,-15,-8,-8,-7,-34,33,-26,11,-20,16,1,5,-16,-3,-16,-15,5,0,-7,-25,-1,-35,-12,-7,-8,2,-17,-3,-4,-12,-2,-33,9,-8,8,-2,10,13,49,-8,8,-23,9,-42,40,2,12,14,23,0,42,-6,8,-11,2,-23,-2,-39,-28,-1,-10,14,-30,5,-36,-8,-38,6,-53,-14,-53,11,-24,4,-20,-12,5,-36,-4,-23,-11,-16,8,-18,19,-2,10,16,44,0,14,7,22,3,49,-14,30,-1,22,-11,5,-37,-8,-7,6,-9,20,-1,24,4,11,-8,21,31,24,8,34,15,21,3,10,-4,17,0,25,20,50,20,23,13,-18,-12,77,12,7,2,6,-5,20,10,21,12,12,3,12,17,17,4,11,5,1,10,-13,10,-3,8,3,15,19,12,21,21,8,13,-7,20,-2,10,-14,8,-3,28,2,24,-6,33,-1,40,-17,23,9,78,-10,43,18,13,16,12,5,7,16,19,8,20,23,17,-6,7,-14,-11,-12,-23,-38]},{"d":[10737,-601,10,-11,20,-10,47,-8,15,4,23,-21,8,-26,8,-6,10,-2,52,-6,20,6,32,-9,38,1,23,-6,15,14,16,34,10,5,13,-2,21,-25,16,-1,20,5,20,-12,25,-4,10,-8,45,-4,11,-29,14,-8,0,-25,22,-11,24,-6,25,0,57,9,34,-16,3,-21,-416,0,-43,17,-57,12,-54,4,-17,-4,-12,-9,-23,2,-42,9,-25,15,-26,7,-76,8,-12,8,11,26,-58,19,-68,2,-2,6,13,12,2,-9,9,-3,10,11,8,20,5,-3,8,4,8,34,20,21,10,-5,50,-8,16,-6,18,9,4,11,32,-11]},{"d":[9649,523,35,4,35,-6,26,3,10,-3,36,-33,9,-22,25,-24,2,-10,-3,-13,7,-10,35,-16,12,-17,37,-18,58,-40,40,-53,40,-46,15,-7,21,-17,-1,10,-6,9,1,10,11,5,11,-3,25,-25,10,-25,8,-7,31,-7,31,-26,14,-37,15,-15,18,-9,28,-3,10,-6,12,-17,-6,-7,-46,-20,34,6,45,23,14,-3,19,-19,12,-24,-36,-24,2,-8,-4,-9,10,-11,-8,-6,1,-5,9,-17,19,-14,34,-13,30,-2,2,-3,13,-75,6,-10,28,-17,-2,-14,-18,-20,0,-16,5,-1,27,23,43,-1,18,-11,46,-62,2,-11,-16,-19,-6,-20,1,-12,8,-10,-10,-33,6,-39,0,-46,-7,-67,-7,-14,-13,2,-10,13,-17,12,-27,-20,-44,23,-2,-12,6,-25,-8,-2,-53,52,-24,31,-91,61,-38,32,-41,55,-55,43,-27,44,-19,14,-23,34,-4,11,1,20,-37,64,-18,47,-45,52,-19,36,-34,16,-17,14,-36,115,-20,37,-52,32,-28,9,-10,8,-11,49,-20,13,-42,60,-17,13,-36,11,-21,25,-23,18,0,112,13,-8,36,-6]},{"d":[11681,669,-2,-8,12,5,22,31,10,-3,6,-26,32,-17,8,-16,0,-8,-8,-7,4,-13,-3,-13,-12,-6,32,6,18,11,12,-19,-18,-7,3,-8,28,11,10,-1,16,-8,8,-14,37,-16,22,0,8,-6,-1,-17,-12,-10,-46,-14,-29,6,-12,-3,-8,-16,14,-16,24,-17,3,-4,-4,-8,-54,-13,-31,9,-10,-14,-10,-7,-4,-5,10,-9,0,-6,17,-13,5,-11,-15,-5,-12,9,-6,-10,-39,-1,10,-3,18,-16,4,-6,-6,-13,3,-5,26,-13,3,-11,-7,-2,13,-4,-6,-6,14,-8,10,-21,18,-22,-2,-10,-16,-16,-9,-3,29,-33,56,-38,21,-22,11,-6,3,-6,-10,-9,-36,-8,-34,6,-28,23,7,-14,-2,-7,-22,-16,-22,-49,-6,-56,9,-23,1,-22,-32,-16,-24,-26,-9,-3,-11,4,-6,14,1,-29,-20,-14,-3,-13,-24,-19,14,0,3,-13,-3,-13,-10,-9,21,-7,3,-9,-1,-11,-2,-10,-21,-4,-1,-5,7,2,-5,-32,-10,-8,-6,5,-2,-5,11,-15,-9,-5,-11,-17,-10,-24,-126,-58,-7,6,-2,41,-8,32,-8,-10,-11,4,-4,3,4,17,-11,-12,-15,8,-12,-11,-25,-7,-8,4,-2,22,-8,2,-19,-7,-30,32,-7,-26,-21,-13,-16,-8,-32,8,-16,-6,-16,-15,-10,-2,-4,2,0,47,-12,17,-8,-8,-25,4,-44,-14,-10,7,7,9,-20,-11,-13,13,-27,-10,-4,2,-16,97,-14,14,8,33,-6,25,-11,18,-19,16,-39,9,-2,12,10,9,-11,6,-13,13,-1,19,7,25,7,4,-31,33,-4,43,5,34,17,12,-12,-1,7,26,19,21,11,21,25,11,9,-17,14,-10,25,-6,24,2,32,-17,22,-2,21,-13,12,0,-16,9,-2,14,11,11,2,16,10,24,-6,6,0,18,3,6,11,-7,9,1,0,25,7,11,22,11,39,7,87,24,46,58,47,50,9,33,29,4,13,5,56,36,6,0,-2,-12,35,3,5,4,13,12,2,10,-11,6,-5,16,18,19,2,-5,12,-2,6,1,8,7,4,11,14,16,8,25,36,39,25,46,8,-3,2,-12,-4,-14]},{"d":[14295,5400,-3,-21,34,-57,7,-26,-1,-35,-15,-26,-1,-27,3,-13,10,-21,3,-16,14,-11,1,-17,7,-5,28,-97,23,-38,29,-72,9,-13,26,-18,2,-23,-9,18,-57,43,-32,6,-35,-2,-28,-9,-7,-9,-46,-104,-1,-33,19,-29,19,-13,28,-53,16,2,10,-6,10,-39,-15,-33,-8,45,-7,8,-45,5,-14,10,-11,-1,-18,-14,-19,-47,-13,-17,-12,9,-13,44,3,24,18,45,-7,45,21,42,-5,28,-27,46,16,33,12,49,1,65,-8,41,14,37,0,22,-12,21,-37,31,9,5,-14,14,-1,34,14,29,5,23,2,25,-4,30,14,12,17,4,18,-9,21,4,5,9,-7,5,4,6,13,2,1,6,-5,1,7,15,-8,11]},{"d":[14382,4412,28,-2,38,-15,24,-2,15,5,50,35,-2,-10,-22,-36,-3,-10,4,-11,20,-36,15,-2,18,11,16,0,-21,-10,-12,-11,-15,0,-43,-18,-29,-5,-43,2,-23,-9,-39,-28,-15,-18,-6,-10,-6,-24,-7,-8,-73,26,-66,32,-44,-3,-42,-21,-28,22,-23,0,-13,-12,-2,-15,20,-16,20,-1,42,-31,-15,-7,-34,8,-17,-15,-10,-15,-24,-10,-11,5,-4,11,11,33,-5,16,-23,21,3,30,3,7,23,8,31,22,6,10,-9,12,-1,13,10,4,29,-13,36,-3,16,2,8,8,3,10,-1,26,25,38,1,24,10,22,2,24,-6,22,-14,22,9,24,16,4,11,7,48,-39,46,-45,41,-27,53,-28]},{"d":[14123,4137,22,3,-5,-30,3,-38,3,-11,19,-14,15,-18,19,-50,-1,-36,-8,-32,-24,-13,-11,-22,-8,-36,-36,-6,-15,-19,-3,-20,11,-48,-4,-36,-3,-11,-18,-15,-6,-12,-10,-23,-6,-27,5,-17,25,-34,-23,-6,-18,-15,-4,-24,-6,-9,-30,-14,-14,-14,-12,6,4,5,-1,29,27,29,-11,8,-16,-1,-4,-5,-2,-12,-12,-8,2,-9,7,-7,-6,-10,-4,-1,-17,16,-22,-2,-12,-13,-4,-31,-19,-21,-6,-1,-8,8,4,27,10,5,-18,10,-14,-3,-33,-36,-6,-13,-65,6,-48,-8,2,4,21,8,-2,7,-24,0,-7,7,-2,-12,-3,-1,-4,2,-2,25,5,5,-10,2,-11,-7,-16,-30,9,-9,26,-16,-3,-11,-52,-14,-41,-62,-23,-7,-24,6,-27,35,-5,11,1,17,-4,11,21,13,10,13,1,7,-6,3,-32,-2,-30,14,-49,-6,-28,-18,-53,-10,-30,-13,-12,3,-36,-8,-24,10,-11,-3,-7,-9,-10,-39,-40,21,-51,-10,-16,7,-15,-4,-3,28,11,13,35,2,91,61,36,29,8,11,22,9,35,5,11,-10,24,5,36,0,23,3,25,9,42,3,30,9,9,-3,-4,-13,10,-6,35,-3,22,11,19,16,-7,10,-1,12,6,13,9,10,20,14,34,38,5,21,-3,25,12,18,48,14,2,-8,-19,-16,-22,-11,-3,-5,9,-9,3,-19,23,-9,9,2,17,18,81,27,31,25,25,37,37,17,15,13,12,36,28,38,11,35,13,18,2,21,-1,13,-5,11,-26,6,17,10,10,24,-9,27,5,14,31,18,6,16,-2,15,7,7,24,-3,5,-31,7,-6,19,11,18,-6,10,11,4,11,-1,11,-5,3,-40,-10,0,11,6,18,8,7,17,-4,12,-9]},{"d":[13436,3426,14,-4,14,1,0,-19,5,-11,-1,-8,6,-3,-36,-21,-14,-17,-6,-19,-22,20,-33,6,-34,-15,-14,-28,-13,-10,-4,-14,-11,-9,-7,0,-16,1,7,14,-22,2,0,9,-6,5,8,23,-11,4,1,10,-38,-9,61,35,15,30,15,11,5,-1,14,-16,6,0,39,9,6,11,-4,11,11,0,24,11,12,1,29,-10]},{"d":[13118,3360,19,-3,21,8,11,-5,2,-10,-17,-23,36,-2,-5,-13,10,-7,-4,-8,10,-5,-35,-45,-20,-59,0,-21,-12,-27,-27,4,-3,-6,6,-12,-20,-15,-21,-10,10,26,-9,31,9,4,-1,9,-13,1,-9,-16,-2,-16,10,-13,-5,-9,-39,11,-5,12,14,4,3,15,-13,17,0,32,21,13,24,40,-14,4,7,7,-2,10,-17,26,-14,9,-11,-8,4,-9,1,-16,15,0,1,-15,-10,-2,-19,9,-28,-20,6,16,-14,15,-1,18,15,-17,16,-4,-9,17,-32,22,3,10,5,2,18,-4,-1,12,24,8,10,8,20,3,12,21,23,9,23,-6,11,-20,12,-7]},{"d":[12101,2262,-11,-24,-6,-46,-10,4,-16,40,-26,19,-24,54,6,31,-1,25,50,83,41,55,33,13,8,9,14,3,32,-22,2,-9,-11,-15,1,-29,-22,-48,-21,-88,-24,-39,-15,-16]},{"d":[11089,1999,8,-11,4,-22,-19,-10,-18,-27,-19,-54,-40,-25,2,-5,-5,-3,-20,-2,-12,-14,-18,-4,-18,8,-31,7,-33,17,-6,33,3,43,61,46,-10,1,8,11,25,2,14,8,26,-2,17,3,13,7,13,-2,5,-6,0,8,20,-8,0,9,6,7,24,-15]},{"d":[15992,5400,-8,-22,11,-23,-5,-17,10,-10,2,-15,-7,0,-18,10,-19,1,-63,-19,-20,-14,-18,14,-10,-2,-4,-7,18,-9,-13,-24,1,-25,-16,-29,-23,-28,-28,-20,-29,-13,-4,-7,-29,-20,-45,-24,-8,26,-13,8,-2,7,-3,53,-12,60,-14,12,-12,24,-23,113,-1917,0,-3,-7,4,-13,8,-2,9,6,27,-2,8,18,31,0,29,-5,-19,-8,-13,-16,-30,-13,11,-4,62,6,30,13,13,18,12,5,7,-1,0,-13,-32,-30,26,5,15,18,6,25,152,0,11,-19,34,-21,31,-11,2,-4,20,-12,16,-4,2,-11,-22,-17,-34,8,25,-19,17,-6,-1,-29,-12,-12,4,-6,32,-19,-10,-12,-2,-14,-44,-30,-9,-21,-15,-18,-2,-18,-15,-25,-4,-25,6,-42,8,-5,-16,-17,6,-31,-20,-48,-1,-7,7,-9,-16,-19,-11,-35,-74,-53,-37,-51,-41,-32,-20,-32,-5,-20,-13,-8,-10,-21,-42,-43,-54,-43,-35,-22,-34,-35,-21,-15,-11,-18,-27,-12,-34,-40,-5,-14,-22,-14,-13,-16,-112,-58,-30,-12,-12,0,-43,-13,-10,2,-6,9,-14,-2,-15,9,-23,3,-18,-3,4,36,-3,7,-36,-21,-8,0,14,18,-7,2,-14,-5,-64,-62,-45,3,12,-14,-10,-19,-9,-6,-18,3,-22,-12,-48,-47,-7,-11,-1,-11,8,-10,1,-9,-6,-18,3,-19,-3,-7,-37,-13,-23,-24,-41,-17,-19,-19,-21,-9,-33,-4,-10,-10,-30,-12,-4,-8,-1,-32,-6,2,-4,-3,-4,-7,2,-9,39,-13,18,-18,36,-22,29,-50,43,-50,29,-41,8,-21,5,-32,-8,-42,2,-27,5,-4,11,4,-1,-10,-14,-45,-21,-32,-23,-8,-47,0,-9,-8,2,-15,-35,6,-5,9,-33,-6,-7,-7,10,-11,-2,-6,-9,-3,-11,15,-12,-2,-1,-8,9,-11,-16,-17,-15,9,9,11,-1,10,-22,-15,-13,-17,-14,7,-15,-11,-3,-8,-5,-1,-5,18,-21,18,3,5,23,-2,-6,6,12,6,-17,0,-13,33,7,7,13,28,13,7,-13,4,0,4,23,12,3,10,-10,5,4,9,-15,16,1,31,-6,21,-10,-4,-21,4,-2,8,6,10,27,14,9,1,20,-7,9,-13,11,12,-11,4,-13,21,5,11,-14,15,1,10,-10,17,7,6,-26,10,-17,-5,-8,-9,-7,13,-11,0,-17,12,-8,-3,-11,-15,-13,-8,-9,-1,-5,12,-32,9,26,13,-4,2,-52,5,19,10,0,11,19,22,24,10,24,3,-38,12,-1,6,25,42,-5,24,-26,6,-32,17,-4,-2,-1,-9,-9,-4,-8,18,-21,12,3,9,-3,1,-24,-17,-35,-2,-11,6,-7,-9,-23,-3,-12,-7,-20,-2,-7,-5,-12,-2,-51,-23,-35,-32,-12,-5,-18,0,-5,-5,2,-9,-33,-5,-16,-8,-5,19,57,19,-5,11,19,17,-54,0,2,6,-3,10,25,9,-5,12,5,9,28,10,39,41,7,14,1,4,-9,6,-4,9,-28,15,-3,13,-10,-12,-55,5,-41,-31,-29,-36,-89,-33,-20,-15,-13,-19,-4,-15,-24,-23,-35,0,-33,-11,-15,12,-11,4,-17,-4,-9,-6,-23,-44,10,-27,12,-11,24,-13,53,-8,26,3,14,-9,15,-34,-10,-6,-4,-31,16,-13,34,-7,31,2,13,10,-1,10,28,14,15,13,-5,6,49,15,30,-10,17,-13,17,-2,25,-12,32,-2,10,9,28,-13,33,0,-10,-8,2,-14,-14,-11,7,-7,0,-5,-18,-12,-10,2,-8,11,-23,0,-88,-35,-24,2,-1,-2,8,-7,1,-10,-11,2,-7,-5,-3,-24,-4,-4,-25,-8,-6,6,0,12,-15,-3,-8,-8,8,-10,11,-4,-23,-12,-8,-12,-26,-15,-19,-23,-10,-6,-8,-19,-13,-10,-5,-16,3,-10,15,0,23,-17,38,-13,31,-18,24,-63,36,-62,3,-18,-5,-8,1,-10,13,-9,35,-14,6,-6,0,-16,9,-9,26,-13,11,-17,1,-12,-19,1,-33,15,-38,1,-18,16,-27,8,-49,-17,16,-3,31,11,21,-4,8,-16,27,-10,29,-24,31,-16,13,-16,9,-24,-46,-13,-11,-9,-31,-14,-10,-17,-8,-4,-37,4,-25,-15,15,1,15,5,13,-17,28,3,25,14,10,0,17,-7,25,-25,40,-11,-57,-39,18,3,20,12,5,-2,3,-12,-5,-36,-7,0,-6,10,-7,3,-18,-2,-9,-11,22,-12,1,-6,-4,-3,-10,1,12,-8,-3,-8,-11,-6,-5,-7,14,-35,-10,3,-15,-9,-9,-1,-5,13,-7,-2,-19,-29,-21,-3,8,-7,0,-5,-14,-14,-3,-11,-7,-6,4,-10,-2,-7,-23,-25,-10,-6,-14,-21,-5,-22,-12,-8,-9,2,0,7,-6,6,1,11,-12,-12,-12,6,5,-17,8,-1,7,-6,9,-22,-42,-28,-32,7,12,-15,7,-2,17,6,12,-1,3,-8,-11,-33,8,-20,-3,-2,-17,9,-24,-1,-4,-4,3,-6,12,-12,-31,-2,-7,-8,4,-13,-4,-7,-27,-9,8,-9,-6,-13,-10,-4,-15,2,-11,-3,-11,6,-10,0,-8,-7,0,-8,-17,-1,4,-7,15,-2,3,-13,-22,-24,-10,0,-11,-17,-16,0,-4,-5,3,-5,-9,-15,-4,12,-4,0,-21,-13,-17,7,-5,-20,-15,-9,-8,-1,7,-7,-3,-5,-13,-5,-2,-17,-5,-6,-22,3,-9,-9,-31,-9,-21,5,-8,-3,-6,-10,-12,0,-18,10,-29,-14,-6,-6,-10,1,-4,11,-6,1,-11,-13,1,-9,-21,6,-7,-5,7,-14,-7,-10,-37,10,0,3,11,8,-18,10,-21,25,-3,16,3,11,-10,-3,-7,-5,-1,-11,-11,-3,22,-32,0,-19,4,-5,-4,-13,-28,-13,-12,-1,-6,13,-8,-9,-6,-21,-5,-3,-9,7,-22,-17,-17,10,1,8,-7,2,3,-18,-9,-6,-36,11,-7,-13,-9,0,-18,-16,-21,-2,-7,-5,-30,2,-2,-8,-23,-4,-20,-18,-11,2,-5,11,-3,-17,-18,-13,-4,-10,2,-8,18,-2,3,-5,-8,-12,20,-15,1,-6,-7,-10,-10,-7,-23,-3,-18,3,-5,12,9,-1,-1,5,-11,6,-7,11,2,9,-15,21,5,13,-3,8,8,10,2,11,14,4,1,10,-10,0,-7,8,-7,-3,-10,14,-7,2,2,-15,-19,-9,-27,-1,5,10,-3,5,-7,4,-26,0,-16,14,-2,13,-11,0,4,-23,-2,-4,-5,-2,-13,8,-7,-13,-44,-6,-10,-9,-30,-13,-6,-23,-19,-10,-9,5,-18,-5,-21,5,7,-26,-20,-21,2,-14,-5,-10,-35,-30,-19,-5,-17,-35,-2,-30,-7,-16,-8,-7,-2,-9,27,-47,18,-18,17,-10,26,-27,-4,-8,2,-15,-13,5,17,-11,22,-29,38,-31,6,-16,55,-41,10,-17,20,1,18,-24,6,0,2,-10,29,-41,24,-20,12,-38,15,-28,0,-17,21,-69,-1,-9,-4,8,2,-57,15,-32,3,-36,-12,15,-11,-10,9,-26,-10,2,1,-34,4,-12,-1,-4,-5,9,-4,-16,4,-11,-7,-13,-9,-1,-5,-25,-17,-2,-12,-12,-15,-4,-28,-23,-17,-3,-10,-18,-16,-2,-58,-30,-7,7,-10,3,-8,16,-6,-26,-5,-2,-9,5,-8,11,-12,-7,13,-3,4,-6,-2,-8,-29,0,26,-11,6,-7,-13,-13,0,-9,-6,-4,-15,8,-31,28,37,-40,6,-18,-9,-8,-10,0,-18,12,-27,28,-10,4,33,-41,5,-9,-4,-10,-67,-31,-18,-29,-20,-17,-35,-3,13,15,-8,5,3,81,5,21,19,8,-6,17,-16,4,-7,9,-14,-3,-40,37,-32,5,-7,6,-3,-7,-18,-7,-7,4,-6,5,1,7,14,9,4,13,-7,17,-12,9,-17,-23,-21,-1,-6,30,3,25,-11,13,-1,12,-5,6,-4,-7,-12,19,-3,12,-16,19,-6,-9,-20,14,-8,14,-3,-6,-20,20,-31,16,-28,-7,-35,5,-14,-5,-5,3,-4,7,10,71,-36,14,-6,-6,-31,-3,-21,-13,-3,-11,10,-20,-13,-35,5,-34,-2,-18,-15,-23,-4,-19,-17,-29,-14,-57,-21,-32,-4,-18,-8,-7,3,-14,-3,-45,13,-32,-4,-14,15,-6,32,10,11,-2,8,-18,8,-52,14,-16,3,8,12,-24,17,-83,9,-21,-10,5,-6,26,-10,1,4,17,-6,5,-10,-4,0,-13,26,-41,17,-1,20,-19,23,-13,28,5,20,-5,30,-39,30,-23,24,-7,19,-31,57,-45,32,-56,5,-46,-11,-62,9,-25,-1,-59,10,-16,27,-19,41,-86,7,-24,-1,-6,-10,-5,-20,25,1,-16,-30,-1,-14,-12,-7,0,-12,22,-63,31,-18,18,-40,21,-37,32,-26,11,-22,21,5,12,-5,24,-58,72,8,5,-14,21,-4,14,0,28,-14,39,-13,55,2,19,-3,20,-22,46,-25,31,-17,13,2,23,-17,11,5,14,-17,-2,-7,3,-10,25,-8,10,-10,0,-4,5,1,12,-26,17,-9,20,-12,8,-8,-2,-8,-14,-12,5,-7,31,1,23,9,20,4,32,33,90,-4,-1,-10,-15,-4,8,-2,7,2,17,-5,33,21,31,0,14,6,11,0,35,14,13,-8,6,-11,-6,-5,2,1,17,4,5,-3,17,4,10,-10,1,8,11,-6,9,4,22,-9,50,-15,32,-17,25,-1,20,-4,5,-5,-33,-4,6,-4,28,3,17,-10,17,-9,32,2,5,9,-5,-8,11,-7,-2,-6,12,-10,102,-13,14,6,23,-1,21,9,11,-34,-5,-17,37,-1,21,-35,30,6,-9,-6,-11,6,-17,-14,-32,-15,-15,-19,-6,-15,10,-3,17,-6,0,5,-20,8,-13,-19,-10,-9,0,-4,-9,0,3775]},{"d":[17857,5192,-6,-2,-4,7,10,1,4,-3,-4,-3]},{"d":[14571,1876,-3,-3,-4,8,7,-5]},{"d":[14571,1634,-5,0,-3,4,7,0,1,-4]},{"d":[14526,1416,-4,-5,-7,5,8,3,3,-3]},{"d":[11423,2221,-2,-1,-8,9,12,-3,-2,-5]},{"d":[10132,299,-5,-2,4,10,1,-8]},{"d":[13472,-655,-6,-1,-3,8,5,2,5,-5,-1,-4]},{"d":[12360,-170,-12,2,1,15,4,3,9,-13,-2,-7]},{"d":[12675,3434,2,-4,-8,1,-4,8,5,1,5,-6]},{"d":[15481,4931,-10,-4,-10,2,0,9,21,27,8,-2,-10,-16,1,-16]},{"d":[15890,-800,-30,24,-3,11,-11,11,27,-6,38,-30,27,-10]},{"d":[15749,-733,3,-4,-8,-6,-10,4,-2,5,-22,2,-19,14,-21,27,-20,15,-5,12,3,3,12,-3,43,-25,7,-7,9,-20,15,-12,15,-5]},{"d":[15366,-410,-7,0,7,6,0,-6]},{"d":[12116,607,6,-7,17,0,2,-6,-12,-7,-7,7,-14,-5,-6,3,-9,-2,-5,5,2,6,14,9,12,-3]},{"d":[11441,-713,-1,-4,-5,1,-5,6,8,2,3,-5]},{"d":[13435,3448,-10,-6,-7,10,15,1,4,-1,-2,-4]},{"d":[11385,-710,-20,-1,-18,-11,-34,0,-37,8,-3,7,14,17,111,3,10,-12,-19,-6,-4,-5]},{"d":[13460,738,-6,-2,-2,17,13,18,-5,-33]},{"d":[14578,1808,-5,-2,8,11,3,-3,-6,-6]},{"d":[14575,1513,0,-2,-7,1,3,9,11,6,-7,-14]},{"d":[14474,1326,-8,3,-1,14,14,10,5,9,7,-2,3,-3,-16,-16,-4,-15]},{"d":[14566,1497,-4,-5,-3,11,3,3,4,-9]},{"d":[13814,950,-7,-8,8,16,4,1,2,-4,-7,-5]},{"d":[15669,-792,-18,21,-1,7,6,7,25,-15,-12,-20]},{"d":[15696,-800,0,6,6,7,8,2,10,-15]},{"d":[15584,-710,-10,-2,-6,3,6,12,13,-7,-3,-6]},{"d":[15831,681,-13,-1,-5,14,6,4,11,-3,3,-6,-2,-8]},{"d":[11736,822,-7,-3,-1,12,7,-2,1,-7]},{"d":[11708,788,-5,-7,-6,8,2,16,9,2,0,-19]},{"d":[11992,1049,-13,-4,-3,10,9,9,16,-7,-9,-8]},{"d":[11986,1153,-1,-14,-12,4,-1,4,14,6]},{"d":[12010,1217,9,0,4,5,11,-14,-2,-7,-31,0,-15,19,3,10,3,2,18,-15]},{"d":[12004,1170,-10,-1,-8,26,6,3,11,-6,4,-14,-3,-8]},{"d":[12265,1047,-11,-4,0,18,16,13,4,-9,-9,-18]},{"d":[12337,945,-4,-3,-1,7,8,40,-1,8,32,50,22,49,4,23,7,8,1,-68,-4,-19,-6,-8,-25,-19,-21,-54,-12,-14]},{"d":[12376,1128,5,-13,-7,0,-3,10,5,3]},{"d":[12460,979,-2,-4,-10,0,-12,-12,-24,-3,-18,2,-7,6,-5,14,35,32,17,2,24,-13,-2,-15,4,-9]},{"d":[12481,914,-3,-6,-11,5,-2,10,9,1,7,-10]},{"d":[12370,924,1,-11,-9,-3,-13,9,17,9,4,-4]},{"d":[12025,526,-6,-9,-7,5,-16,-14,-14,-1,1,6,33,20,5,1,4,-8]},{"d":[12209,643,-13,-1,-15,19,2,5,23,8,23,-10,3,-4,-7,-2,-5,-10,-11,-5]},{"d":[12606,977,-7,7,9,22,9,-26,-11,-3]},{"d":[12569,991,-2,-2,-17,23,2,19,15,13,-2,-20,5,-17,-1,-16]},{"d":[12027,1375,0,-7,-17,10,0,6,11,-2,6,-7]},{"d":[12191,1354,9,1,12,-9,0,-10,-12,-16,-17,13,-1,10,5,14,4,-3]},{"d":[12209,1235,-8,-24,-9,22,7,11,1,16,14,5,-5,-30]},{"d":[12231,1253,-5,-3,2,9,3,-6]},{"d":[12266,1231,-6,-2,-18,16,5,4,13,0,7,-7,-1,-11]},{"d":[12328,1285,9,-15,-40,33,-1,8,8,0,24,-26]},{"d":[12377,1245,1,-8,-16,20,-3,6,3,5,9,-7,6,-16]},{"d":[12372,1229,19,-12,13,-20,0,-22,-19,16,-13,4,2,5,-27,22,-31,-29,11,47,-4,18,33,-14,16,-15]},{"d":[12435,1363,-2,-6,-8,2,-8,-6,-11,8,-2,5,8,13,0,19,10,10,9,-13,11,-8,-2,-19,-5,-5]},{"d":[12218,1405,-1,-4,-21,15,0,7,22,-18]},{"d":[12203,1500,2,-3,-8,-8,5,-13,-3,-10,-6,0,-1,14,-10,16,2,8,13,1,6,-5]},{"d":[12192,1890,-6,-8,-4,2,7,15,5,2,5,-5,-7,-6]},{"d":[12125,1908,0,-6,-5,3,1,13,4,-10]},{"d":[12152,1936,1,-9,-6,0,-10,9,2,4,13,-4]},{"d":[12196,2037,-5,-1,3,9,9,2,-7,-10]},{"d":[12188,2078,-5,-8,-4,0,6,14,3,-6]},{"d":[14802,-583,-15,8,-9,12,1,14,26,-12,1,-15,-4,-7]},{"d":[14717,-543,-5,-1,-11,13,1,5,11,7,8,-6,1,-13,-5,-5]},{"d":[14602,-473,-7,-3,-7,9,2,7,9,6,6,-10,-3,-9]},{"d":[14788,-228,-4,-6,-10,2,10,7,4,-3]},{"d":[14707,-196,37,-5,0,-5,-10,-1,-13,-11,-28,-1,-18,4,-21,-6,-1,8,8,3,-1,8,6,5,41,1]},{"d":[15465,-543,-11,32,9,10,5,-4,5,-17,-3,-16,-5,-5]},{"d":[15267,-313,-2,-9,-11,12,10,6,3,-9]},{"d":[15210,-295,-1,-5,-3,0,-10,13,1,2,13,-10]},{"d":[15196,-283,-2,12,6,-3,1,-7,-5,-2]},{"d":[14977,-155,-1,-4,-9,1,-12,11,3,12,14,-8,5,-12]},{"d":[15044,-266,-27,0,-13,15,-8,4,27,9,20,-9,1,-19]},{"d":[13538,-65,29,-4,8,-4,14,0,27,-25,21,-11,-6,-8,-14,-4,-26,3,-7,6,-9,30,-11,-6,-11,9,-10,2,-5,12]},{"d":[13547,-159,73,-7,19,-6,43,-3,7,-5,-27,-7,-39,-2,-36,14,-38,8,-2,8]},{"d":[13496,-112,-10,1,-5,7,2,6,6,4,5,-4,2,-5,4,0,-4,-9]},{"d":[13437,-212,-3,-2,-1,5,4,6,5,-2,-5,-7]},{"d":[13357,-425,5,-5,-29,13,-1,6,25,-14]},{"d":[13035,-169,7,-11,-4,-10,4,-7,-17,-8,-12,-1,-24,7,-15,12,25,11,36,7]},{"d":[13100,-132,-3,-2,-12,2,-7,6,-11,30,23,7,13,-3,5,-5,-8,-35]},{"d":[13091,-78,-8,-8,-43,-6,9,9,32,2,0,5,10,-2]},{"d":[13063,-53,-16,4,14,7,7,-5,-5,-6]},{"d":[13081,0,22,-4,25,-11,6,-14,-8,-8,-31,3,-27,26,-6,-1,2,-5,12,-15,14,-5,0,-8,-15,-2,-5,5,-1,9,-14,-7,-5,10,-16,1,-10,5,5,11,7,3,7,-3,38,10]},{"d":[12955,-19,-4,0,-14,12,-6,12,23,-19,1,-5]},{"d":[12845,205,-15,-1,-8,26,11,17,14,10,13,3,9,-13,-7,-25,-7,-12,-10,-5]},{"d":[12745,-1,0,-3,-5,6,3,12,2,-15]},{"d":[12742,64,-5,-1,1,11,6,-1,-2,-9]},{"d":[12725,-50,-13,-2,1,24,16,0,-4,-4,3,-7,-3,-11]},{"d":[12730,-78,-14,2,5,14,5,0,4,-16]},{"d":[12757,-32,11,-15,-7,-14,5,-8,18,-3,4,-9,-4,-4,-8,-3,-14,11,-16,-4,1,17,-17,14,2,16,5,1,8,-8,8,10,4,-1]},{"d":[12815,-166,-9,-5,-32,2,-18,-4,-17,8,7,20,19,12,25,-11,25,-16,0,-6]},{"d":[13475,-571,0,-17,-4,-7,4,-22,-3,-13,-8,-7,-20,4,-29,27,0,4,15,1,4,18,-14,12,5,3,9,-3,15,18,2,9,6,1,5,-1,3,-14,5,-2,5,-11]},{"d":[13454,-644,-4,-15,-18,-26,-12,-6,-11,8,-3,6,5,30,8,1,-7,3,-1,24,6,1,15,-14,22,-12]},{"d":[13293,-590,-8,-9,9,31,7,6,10,31,6,-4,-5,-23,-15,-16,-4,-16]},{"d":[13281,-585,-6,-10,-7,4,0,17,-5,13,7,0,4,-5,7,-19]},{"d":[12872,-355,-1,-5,-9,1,-4,8,14,-4]},{"d":[12856,-359,-17,-5,6,13,11,-8]},{"d":[12827,-367,-8,-7,-5,1,1,5,-4,-1,-13,-8,-5,7,9,10,24,9,7,-1,-6,-15]},{"d":[12318,-455,2,-27,-8,10,-7,-3,-8,-39,1,-5,7,3,15,-11,-1,-6,-15,-9,-7,1,-16,-26,-8,4,-9,-3,-5,17,18,28,8,38,0,21,10,18,13,5,-1,-4,11,-12]},{"d":[12264,-527,-7,-12,-18,5,-2,-4,-6,0,-3,6,5,18,7,7,-7,22,4,8,33,15,4,-5,2,-26,-14,-21,2,-13]},{"d":[12204,-544,-6,-2,-17,20,6,16,4,3,6,-1,7,-8,0,-28]},{"d":[12324,-411,-10,-12,-6,0,-9,8,-2,12,6,5,18,-2,3,-11]},{"d":[12605,-245,-7,3,-12,34,6,11,7,-4,-2,-16,9,-20,-1,-8]},{"d":[12602,-179,31,-3,-37,-10,-53,-2,-4,10,13,4,50,1]},{"d":[12497,-171,9,-3,9,5,4,-2,1,-7,12,-3,0,-7,-18,-1,-13,-5,-18,4,-19,-8,-22,-2,-9,14,9,20,24,2,31,-7]},{"d":[12385,-196,1,-4,-6,1,-2,11,7,-8]},{"d":[12321,-117,2,-6,-3,-6,4,-10,10,14,10,1,11,-10,-4,-11,-14,-6,-4,7,-6,0,-3,-14,-7,-4,-5,6,6,7,-3,19,-26,-29,-8,16,2,15,8,10,30,1]},{"d":[12315,-182,-7,-8,3,11,3,2,1,-5]},{"d":[12186,-41,5,-4,-3,-5,-23,-3,10,12,11,0]},{"d":[12682,403,-11,-1,0,5,10,19,-9,8,4,21,10,-7,6,-19,-10,-26]},{"d":[12672,388,0,-5,-6,10,-2,11,10,-12,-2,-4]},{"d":[12685,377,-5,1,-2,6,8,-3,-1,-4]},{"d":[12566,344,-3,-4,-12,6,-4,27,7,-6,12,-23]},{"d":[12541,265,-5,10,3,6,6,-5,-4,-11]},{"d":[12053,-630,-4,-16,-6,28,5,40,7,-19,-2,-33]},{"d":[13198,-720,-1,-5,-8,8,-14,5,17,2,6,-10]},{"d":[13132,-800,-20,0,-3,13,5,9,0,10,5,1,7,20,9,4,19,21,-1,5,11,6,10,-9,-10,-7,5,-17,-7,-19,-24,-24,-6,-13]},{"d":[12984,-795,-3,-5,-14,0,-8,8,2,12,20,-2,3,-13]},{"d":[12867,-718,-5,-3,-9,8,10,6,4,-4,0,-7]},{"d":[12742,-762,-6,-3,1,14,11,-2,-6,-9]},{"d":[12680,-767,1,-7,-23,-7,-11,-14,-43,6,-24,-9,1,10,16,22,25,-5,39,14,12,-9,7,-1]},{"d":[11538,-697,-8,-2,-8,4,2,9,18,2,10,-6,2,-4,-16,-3]},{"d":[11272,-581,-2,-4,-10,1,-1,4,10,7,4,-2,-1,-6]},{"d":[11792,405,-18,-5,-11,12,3,13,10,0,12,-6,4,-14]},{"d":[11766,328,-1,-3,-9,8,-1,10,13,-2,-2,-13]},{"d":[11642,-346,-3,-18,-6,10,6,12,4,2,-1,-6]},{"d":[11630,-387,-21,-18,-3,4,2,19,-6,12,10,36,15,9,3,-62]},{"d":[10895,-162,-11,-4,-4,9,8,3,8,-2,-1,-6]},{"d":[10971,-118,-25,-10,-3,4,5,25,14,1,12,-6,1,-11,-4,-3]},{"d":[10889,290,-5,-5,-5,4,9,11,1,-10]},{"d":[10832,369,-14,-4,-8,6,14,10,-15,4,-9,13,0,6,25,18,0,-7,14,-16,1,-15,-8,-15]},{"d":[10629,316,-1,-7,-7,4,-1,8,7,1,2,-6]},{"d":[10576,286,-5,3,-2,17,15,-8,-8,-12]},{"d":[10171,208,6,-14,-5,-15,-12,-7,-10,1,-10,17,1,12,4,5,9,-1,10,7,7,-5]},{"d":[10243,99,-5,-3,-10,12,-5,27,3,5,10,-5,8,-12,-1,-24]},{"d":[10249,146,1,-13,-22,12,-20,5,-6,6,0,5,45,-10,2,-5]},{"d":[10303,75,-2,-4,-52,15,-3,3,5,20,4,4,18,-14,27,-13,3,-11]},{"d":[10317,87,-8,-2,-20,15,-19,5,3,11,6,1,21,-10,17,-20]},{"d":[10328,54,-14,1,5,15,5,0,5,-9,-1,-7]},{"d":[10342,105,1,-6,-7,2,-4,6,6,6,4,-8]},{"d":[10345,66,-11,12,5,9,11,-15,-5,-6]},{"d":[10383,80,0,-3,-9,6,1,6,8,-9]},{"d":[10402,118,7,-4,5,3,-8,-18,-10,2,-3,6,9,11]},{"d":[10459,122,0,-8,7,-9,-8,-22,-8,2,-2,8,-5,3,3,4,-2,5,-19,-4,0,9,11,8,23,4]},{"d":[10424,83,-6,-3,-8,10,1,3,12,-5,1,-5]},{"d":[10469,6,-9,3,-10,14,19,-17]},{"d":[10478,-18,3,-1,3,5,16,-14,-9,-4,-21,11,-14,-4,-11,6,9,21,10,-4,1,-6,13,-10]},{"d":[10447,-33,12,-14,-8,-13,-10,2,-5,-8,-3,12,-7,8,4,7,6,-1,11,7]},{"d":[10374,-35,-13,-3,-15,2,9,13,17,-5,5,-4,-3,-3]},{"d":[10821,-300,-4,-14,-11,-9,-8,1,-4,9,-8,4,-4,-7,-21,-5,3,9,-8,20,11,35,17,4,23,-7,15,-10,7,-13,-8,-17]},{"d":[10747,-290,-6,0,1,6,8,0,-3,-6]},{"d":[10689,-301,-8,0,-7,8,6,3,11,-3,-2,-8]},{"d":[10525,-664,-6,-2,-7,4,14,10,-1,-12]},{"d":[9748,147,22,-29,9,-3,14,-18,-5,-34,-6,-7,-13,4,-9,23,-20,12,-10,24,-22,24,17,-1,11,12,12,-7]},{"d":[10237,-548,-8,0,-18,16,9,3,17,-8,3,-4,-3,-7]},{"d":[10042,-318,4,-15,-11,10,-2,12,-12,12,-1,20,4,1,21,-22,1,-12,-4,-6]},{"d":[10021,-274,-8,-8,-12,0,-4,21,2,8,2,2,19,-17,1,-6]},{"d":[9984,-234,-23,8,-7,10,3,13,12,-3,15,-28]},{"d":[9916,-178,-9,0,-24,17,-1,7,-22,34,8,23,19,5,6,-3,20,-49,14,-19,0,-11,-11,-4]},{"d":[9846,-53,-6,-5,-9,5,12,30,-11,23,10,-2,13,-24,-9,-27]},{"d":[9734,208,-23,14,18,-2,5,-12]},{"d":[9646,236,-12,1,-34,23,0,18,42,-27,4,-15]},{"d":[11139,242,-8,2,-1,30,3,3,5,-6,1,-29]},{"d":[11714,717,-6,-6,-2,15,9,8,12,1,0,-13,-13,-5]},{"d":[15641,5066,-8,-2,-16,9,21,13,8,0,3,-2,-1,-9,-7,-9]},{"d":[15592,5030,-13,-10,-27,-5,-12,-11,-16,5,0,12,-4,5,2,4,11,-1,10,8,25,3,9,8,11,20,22,9,2,-10,-2,-11,-18,-26]},{"d":[15408,4879,-4,-5,-5,3,10,6,4,7,10,-1,-15,-10]},{"d":[15565,5082,-10,-1,-8,10,17,0,1,-9]},{"d":[15310,4776,-5,-5,-6,2,9,8,2,-5]},{"d":[15200,4690,-18,-11,-7,0,-4,6,16,2,29,24,13,3,-29,-24]},{"d":[14969,4564,-24,-5,22,25,13,4,16,14,35,18,24,1,-32,-20,-3,-8,-32,-15,-19,-14]},{"d":[14860,4532,-34,-10,-35,-23,-13,-3,-12,2,-10,-14,-25,-16,-10,-13,-11,-2,-20,-13,7,17,17,9,1,11,10,9,52,33,11,4,-1,7,5,8,14,-12,26,2,29,20,16,5,6,-4,-3,-8,4,-5,-5,-4,-19,0]},{"d":[14671,4374,-3,-2,-7,2,1,7,21,5,7,-6,-19,-6]},{"d":[14621,4450,15,-8,21,2,-5,-7,-8,1,-14,-10,-19,-3,-20,-15,-14,-16,-18,-9,-4,-19,-11,8,-1,7,3,6,29,20,36,43,10,0]},{"d":[12429,2452,-5,-16,-11,-1,-5,9,4,3,9,-1,9,13,3,-2,-4,-5]},{"d":[12389,2428,-21,1,0,3,7,3,2,6,17,-5,-5,-8]},{"d":[12545,2474,-18,-1,1,14,17,-13]},{"d":[12826,2665,-31,-19,-8,-2,3,-11,-11,-7,1,-11,-15,-6,1,11,7,11,0,12,9,4,13,12,-6,4,2,6,14,-5,5,3,16,21,7,-7,-7,-16]},{"d":[12900,2772,-10,1,1,17,4,1,7,-14,-2,-5]},{"d":[12945,2821,-8,-8,-21,12,16,11,19,4,18,12,2,-9,-25,-16,-1,-6]},{"d":[12932,2810,-9,0,-4,9,13,-9]},{"d":[13062,3026,-17,0,-6,13,11,8,14,-8,3,-2,-5,-11]},{"d":[13096,3040,-9,-1,0,5,8,23,11,16,0,-19,-10,-24]},{"d":[12867,3278,17,-2,5,-11,-10,-1,-4,-5,-6,1,-4,6,2,12]},{"d":[13008,3223,-8,-4,-4,5,6,5,-4,6,3,17,16,2,3,-20,-12,-11]},{"d":[13038,3242,-9,0,-5,4,13,7,9,-1,-8,-10]},{"d":[13337,3620,-4,-3,-9,1,-5,5,2,6,9,5,8,-9,-1,-5]},{"d":[13834,3782,-11,1,5,2,4,12,-7,2,0,9,25,24,-5,-24,12,-1,-7,-17,-16,-8]},{"d":[13948,4208,-5,0,0,12,13,4,-8,-16]},{"d":[14107,4533,-4,-6,-6,19,9,-1,1,-12]},{"d":[14130,4512,-16,3,-1,6,7,4,5,-2,8,-8,-3,-3]},{"d":[13984,3306,-6,2,0,5,9,-4,-3,-3]},{"d":[13946,3473,-1,-5,-6,1,-2,9,6,0,3,-5]},{"d":[13493,3429,-11,-9,-9,1,-6,8,16,18,17,7,-9,-14,2,-11]},{"d":[12908,3284,-3,-1,-5,12,11,18,7,-14,-10,-15]},{"d":[12949,3322,-12,-4,9,15,11,3,-8,-14]},{"d":[12980,3375,-7,-4,-5,3,4,12,6,-3,2,-8]},{"d":[12928,3412,-7,-4,-2,6,2,18,13,-4,-6,-16]},{"d":[12939,3435,-2,-4,-10,6,6,24,12,8,3,-15,-10,-12,1,-7]},{"d":[13258,3411,-3,-4,-9,2,8,8,4,-6]},{"d":[13227,3394,4,-3,13,0,-8,-6,-15,2,0,8,6,-1]},{"d":[11841,2452,4,-6,-2,-5,-13,3,-1,4,12,4]},{"d":[11818,2450,-3,-6,-6,1,-1,5,2,5,8,-5]},{"d":[12874,3480,-9,-6,-16,12,23,15,2,-21]},{"d":[12807,3481,-1,-10,-8,-1,-4,7,-6,-4,-5,15,8,4,13,-4,3,-7]},{"d":[12780,3461,-1,-3,-5,5,5,5,1,-7]},{"d":[12633,3322,-9,0,-7,9,17,15,42,9,14,-3,3,-8,-6,-10,-16,-7,-38,-5]},{"d":[12623,3437,-6,-2,-6,5,1,4,13,12,10,-1,3,-5,-15,-13]},{"d":[12652,3774,-1,-14,-5,1,-5,4,-4,12,4,5,11,-8]},{"d":[12186,3149,-8,-3,-26,9,-18,9,-13,17,25,-5,12,-12,23,-9,5,-6]},{"d":[12230,2996,-27,5,-6,13,14,0,17,-7,4,-4,-2,-7]},{"d":[12217,2968,-13,6,2,3,6,1,5,-10]},{"d":[12240,2989,0,-4,-3,0,-4,8,7,2,0,-6]},{"d":[11982,2546,-7,-5,-5,2,2,21,6,1,6,-6,-2,-13]},{"d":[11039,2109,3,-3,10,2,-2,-11,-8,4,-14,-1,-2,3,5,4,8,2]},{"d":[10760,2122,-14,-13,-5,0,7,18,12,-5]},{"d":[10752,2093,-12,-3,15,13,-3,-10]},{"d":[10703,2075,-4,-1,-8,8,4,5,11,-5,-3,-7]},{"d":[10687,2082,-10,4,3,7,7,-11]},{"d":[10662,868,-5,2,9,7,-4,-9]},{"d":[10406,1039,2,-16,-6,-20,-7,21,-10,13,14,6,7,-4]},{"d":[10305,1128,-6,1,2,9,3,1,1,-11]},{"d":[10261,1168,-2,-11,-6,4,4,8,4,-1]},{"d":[10243,1199,-13,-1,-2,17,15,-16]},{"d":[10397,133,-15,-6,-17,6,5,9,12,3,14,-6,4,-2,-3,-4]},{"d":[10422,273,-7,0,-2,4,5,10,4,-14]},{"d":[10029,530,-10,-2,2,17,3,2,10,-6,-5,-11]},{"d":[9985,647,7,-11,-5,-6,-5,1,-8,-5,-9,16,10,-1,10,6]},{"d":[9966,652,-5,8,4,11,5,-14,-4,-5]},{"d":[10008,970,-5,1,-5,8,6,0,4,-9]},{"d":[10007,959,-2,-13,-9,-4,-2,14,13,3]},{"d":[9859,793,-6,18,7,-5,-1,-13]},{"d":[9841,790,-1,-7,-10,-5,-4,15,6,24,3,-6,8,-2,-2,-19]},{"d":[9831,905,-6,-1,5,10,1,-9]},{"d":[9854,1096,-6,2,5,11,1,-13]},{"d":[9821,1095,8,-17,-2,-4,-11,16,-8,-1,9,9,4,-3]},{"d":[9818,993,-6,-5,2,9,8,8,7,0,-1,-4,-10,-8]},{"d":[9822,1148,-3,-1,1,10,10,21,-4,-26,-4,-4]},{"d":[9852,1190,-5,0,0,18,14,-12,-9,-6]},{"d":[9807,1169,1,-5,-6,6,-1,16,6,-17]},{"d":[9855,1174,-2,-20,-10,3,-5,22,14,2,3,-7]},{"d":[9814,1215,-7,1,-3,7,3,6,5,-1,2,-13]},{"d":[9807,1239,-7,-11,-6,7,5,4,8,0]},{"d":[9841,1260,6,-3,-1,-10,-8,-12,-6,-1,-1,34,9,-3,1,-5]},{"d":[9832,1310,-1,-17,-5,8,-1,18,7,-9]},{"d":[9757,1625,-3,-1,-6,7,-1,15,7,4,6,-7,-3,-18]},{"d":[9908,759,2,-12,-6,8,1,9,3,-5]},{"d":[17945,5137,-17,0,-63,27,26,-2,54,-25]},{"d":[17973,5191,-18,-2,-5,4,0,5,13,5,15,-6,-5,-6]},{"d":[17742,5188,-9,-4,-8,6,27,12,4,9,11,-1,-7,-15,-18,-7]},{"d":[17372,5236,-32,5,26,9,12,0,-6,-14]},{"d":[17281,5301,29,-1,34,-15,-36,-3,-14,-7,-17,5,-5,9,-23,5,19,7,13,0]},{"d":[18399,5181,-8,-2,-12,4,2,6,18,-8]},{"d":[18371,5179,-6,-6,-5,3,-1,8,3,2,9,-7]},{"d":[18341,5187,0,-4,15,-1,-1,-8,-6,1,-26,-12,-7,5,-12,-8,8,19,15,5,3,15,15,-5,-4,-7]},{"d":[18398,5200,-2,-3,-10,3,-4,6,2,4,8,0,8,-4,-2,-6]},{"d":[18285,5172,-52,-2,41,10,13,13,7,-3,-7,-9,-2,-9]},{"d":[18212,5165,-5,-3,-13,5,-2,2,8,3,1,4,-20,12,23,4,16,-8,15,-1,-12,-5,-11,-13]},{"d":[12431,1061,3,10,4,-3,0,-5,-7,-2]},{"d":[12528,998,1,-5,-13,13,-3,9,10,-3,5,-14]},{"d":[12294,741,0,-5,-13,-4,1,11,12,-2]},{"d":[12578,696,-1,-5,-9,16,4,12,6,-6,0,-17]},{"d":[12597,959,-2,-2,-3,5,5,14,0,-17]},{"d":[12461,1149,-13,0,-12,18,15,2,11,-14,-1,-6]},{"d":[12485,1160,-1,-6,-6,4,-5,14,12,-12]},{"d":[13482,-643,-3,-1,0,5,9,7,-6,-11]},{"d":[13468,-675,-5,4,11,9,-6,-13]},{"d":[12799,-294,-5,-8,-10,2,15,6]},{"d":[12761,-332,2,-4,-14,7,6,4,6,-7]},{"d":[12405,-597,-1,-5,-7,8,1,6,7,-9]},{"d":[12363,-527,-1,-10,-4,0,-4,10,9,0]},{"d":[12078,-712,-14,0,-1,10,15,-4,0,-6]},{"d":[12972,3166,-3,-2,2,8,8,7,0,-5,-7,-8]},{"d":[12642,3649,-2,-6,-6,4,-2,14,7,-4,3,-8]},{"d":[12491,3954,-6,-3,0,5,8,5,-2,-7]},{"d":[12125,2809,-12,-3,0,8,7,6,5,-11]},{"d":[11355,2280,1,-4,-16,14,6,0,9,-10]},{"d":[11279,2160,-2,-2,-6,12,7,7,8,-2,-6,-5,-1,-10]},{"d":[11264,2164,-12,-2,13,9,-1,-7]},{"d":[11400,2221,-16,3,20,9,-4,-12]},{"d":[10717,1040,-9,-6,0,5,9,6,0,-5]},{"d":[10332,1072,-4,-4,-6,10,10,-6]},{"d":[12617,3473,-6,-2,-10,16,7,5,9,-9,0,-10]},{"d":[16964,583,-5,-3,6,14,9,7,-10,-18]},{"d":[17303,101,6,-4,-10,-13,8,12,-8,6,4,-1]},{"d":[17451,-80,-3,-3,-3,18,-7,6,9,-5,4,-16]},{"d":[17477,-121,1,-5,-3,0,-3,13,5,-8]},{"d":[17110,714,13,-5,16,2,-16,-4,-13,4,-6,5,6,-2]},{"d":[14219,2662,-8,10,5,-1,3,-9]},{"d":[13092,3748,-5,-3,-6,6,9,4,4,-2,-2,-5]},{"d":[12474,3798,-4,-6,-8,2,2,4,10,0]}];</script>
+<script type="module">
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.min.js';
+const TG = window.TG;
+const $ = id => document.getElementById(id);
+const RINGS = TG.decodeCoast(window.TG_COAST);
+TG.buildMask(RINGS);
+const KX = TG.KX, MAP = TG.MAP;
+const MX0 = TG.xOf(MAP.lon0), MX1 = TG.xOf(MAP.lon1);
+const qs = new URLSearchParams(location.hash.slice(1));
+
+// ── 렌더러 ───────────────────────────────────────
+const canvas = $('gl');
+let renderer;
+try { renderer = new THREE.WebGLRenderer({ canvas, antialias: false, alpha: false, powerPreference: 'high-performance' }); }
+catch (e) { document.getElementById('app').insertAdjacentHTML('beforeend', '<div class="nogl">이 기기에서는 WebGL 을 쓸 수 없어 게임을 열 수 없습니다.</div>'); throw e; }
+let PR = Math.min(window.devicePixelRatio || 1, 1.75);
+renderer.setPixelRatio(PR);
+renderer.setClearColor(0x04080f, 1);
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 2000);
+camera.up.set(0, 1, 0);
+
+// ── 노이즈 텍스처(이음매 없는 펄린, 4채널) ─────────────
+function makeNoise(N) {
+  const out = new Uint8Array(N * N * 4);
+  const tables = {};
+  function table(P, seed) {
+    const k = P + ':' + seed; if (tables[k]) return tables[k];
+    const t = new Float32Array(P * P * 2); let s = seed * 9301 + 49297;
+    for (let i = 0; i < P * P; i++) { s = (s * 16807) % 2147483647; const a = (s / 2147483647) * 6.2831853; t[i * 2] = Math.cos(a); t[i * 2 + 1] = Math.sin(a); }
+    return (tables[k] = t);
+  }
+  const fade = t => t * t * t * (t * (t * 6 - 15) + 10);
+  function perlin(x, y, P, t) {
+    const x0 = Math.floor(x), y0 = Math.floor(y), fx = x - x0, fy = y - y0;
+    const i0 = ((x0 % P) + P) % P, j0 = ((y0 % P) + P) % P, i1 = (i0 + 1) % P, j1 = (j0 + 1) % P;
+    const g = (i, j, dx, dy) => { const b = (j * P + i) * 2; return t[b] * dx + t[b + 1] * dy; };
+    const u = fade(fx), v = fade(fy);
+    const a = g(i0, j0, fx, fy), b = g(i1, j0, fx - 1, fy), c = g(i0, j1, fx, fy - 1), d = g(i1, j1, fx - 1, fy - 1);
+    return (a + (b - a) * u) + ((c + (d - c) * u) - (a + (b - a) * u)) * v;
+  }
+  const chans = [
+    { oct: [[4, 0.5], [8, 0.25], [16, 0.14], [32, 0.08], [64, 0.03]], seed: 11, kind: 0 },
+    { oct: [[8, 0.5], [16, 0.27], [32, 0.15], [64, 0.08]], seed: 23, kind: 0 },
+    { oct: [[4, 0.45], [8, 0.3], [16, 0.17], [32, 0.08]], seed: 37, kind: 2 },
+    { oct: [[4, 0.5], [8, 0.3], [16, 0.2]], seed: 53, kind: 0 },
+  ];
+  for (let c = 0; c < 4; c++) {
+    const ch = chans[c]; const ts = ch.oct.map(([P], i) => table(P, ch.seed + i));
+    for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) {
+      let v = 0;
+      for (let i = 0; i < ch.oct.length; i++) { const [P, w] = ch.oct[i]; v += perlin((x / N) * P, (y / N) * P, P, ts[i]) * w; }
+      v = ch.kind === 2 ? Math.pow(Math.max(0, v * 1.15 + 0.5), 1.6) * 1.25 : v * 1.15 + 0.5;
+      out[(y * N + x) * 4 + c] = Math.max(0, Math.min(255, Math.round(v * 255)));
+    }
+  }
+  const tex = new THREE.DataTexture(out, N, N, THREE.RGBAFormat, THREE.UnsignedByteType);
+  tex.wrapS = tex.wrapT = THREE.RepeatWrapping; tex.generateMipmaps = true; tex.minFilter = THREE.LinearMipmapLinearFilter; tex.magFilter = THREE.LinearFilter;
+  tex.anisotropy = Math.min(4, renderer.capabilities.getMaxAnisotropy()); tex.needsUpdate = true;
+  return tex;
+}
+const noiseTex = makeNoise(qs.get('noise') === 'lo' ? 128 : 384);
+
+// ── 육지 텍스처(해안선을 캔버스에 칠함) ─────────────────
+function makeLand() {
+  const W = 2048, H = Math.round(W * (MAP.lat1 - MAP.lat0) / ((MAP.lon1 - MAP.lon0) * KX));
+  const c = document.createElement('canvas'); c.width = W; c.height = H; const x = c.getContext('2d');
+  x.fillStyle = '#000'; x.fillRect(0, 0, W, H); x.fillStyle = '#fff'; x.beginPath();
+  for (const r of RINGS) { r.pts.forEach(([lon, lat], i) => { const px = (lon - MAP.lon0) / (MAP.lon1 - MAP.lon0) * W, py = (MAP.lat1 - lat) / (MAP.lat1 - MAP.lat0) * H; i ? x.lineTo(px, py) : x.moveTo(px, py); }); x.closePath(); }
+  x.fill('evenodd');
+  const t = new THREE.CanvasTexture(c); t.generateMipmaps = true; t.minFilter = THREE.LinearMipmapLinearFilter; t.magFilter = THREE.LinearFilter;
+  t.wrapS = t.wrapT = THREE.ClampToEdgeWrapping; t.anisotropy = Math.min(4, renderer.capabilities.getMaxAnisotropy());
+  return t;
+}
+const landTex = makeLand();
+
+// ── 해수면 온도 텍스처(차가운 꼬리 포함, 0.5° 격자) ─────────
+const WG = TG.WG;
+const sstData = new Uint8Array(WG.w * WG.h);
+const sstTex = new THREE.DataTexture(sstData, WG.w, WG.h, THREE.RedFormat, THREE.UnsignedByteType);
+sstTex.magFilter = sstTex.minFilter = THREE.LinearFilter; sstTex.wrapS = sstTex.wrapT = THREE.ClampToEdgeWrapping;
+function updateSST(g) {
+  for (let i = 0; i < WG.h; i++) {
+    const lat = MAP.lat1 - (i + 0.5) * WG.res, row = (WG.h - 1 - i) * WG.w;
+    for (let j = 0; j < WG.w; j++) {
+      const x = TG.xOf(MAP.lon0 + (j + 0.5) * WG.res);
+      const t = TG.sstClim(x, lat, g.env) - g.wake[i * WG.w + j];
+      sstData[row + j] = Math.max(0, Math.min(255, Math.round((t - 14) / 18 * 255)));
+    }
+  }
+  sstTex.needsUpdate = true;
+}
+
+// ── 공통 GLSL ─────────────────────────────────────
+const U = {
+  uTime: { value: 0 }, uMode: { value: 0 }, uNoise: { value: noiseTex }, uLand: { value: landTex }, uSST: { value: sstTex },
+  uMapRect: { value: new THREE.Vector4(MX0, MAP.lat0, MX1 - MX0, MAP.lat1 - MAP.lat0) },
+  uSun: { value: new THREE.Vector2(-0.62, -0.5).normalize() },
+};
+const GL_COMMON = `
+uniform float uTime, uMode; uniform sampler2D uNoise; uniform vec2 uSun;
+float n1(vec2 p) { return texture2D(uNoise, p).r; }
+// 구름 꼭대기 온도 색(적외 강조 색표). h: 0 낮고 따뜻함 ~ 1 높고 차가움
+vec3 irColor(float h) {
+  vec3 c = vec3(mix(0.16, 0.8, smoothstep(0.0, 0.55, h)));
+  c = mix(c, vec3(0.25, 0.55, 0.95), smoothstep(0.55, 0.64, h));
+  c = mix(c, vec3(0.35, 0.9, 0.55), smoothstep(0.66, 0.74, h));
+  c = mix(c, vec3(0.98, 0.9, 0.3), smoothstep(0.75, 0.82, h));
+  c = mix(c, vec3(1.0, 0.45, 0.2), smoothstep(0.83, 0.89, h));
+  c = mix(c, vec3(0.85, 0.2, 0.45), smoothstep(0.9, 0.95, h));
+  c = mix(c, vec3(0.97, 0.94, 1.0), smoothstep(0.965, 1.0, h));
+  return c;
+}
+vec4 cloudColor(float d, float lit, float h) {
+  float a = smoothstep(0.04, 0.42, d);
+  if (uMode > 1.5) return vec4(vec3(0.94), a * 0.16);           // 수온 화면: 구름은 옅게
+  if (uMode > 0.5) return vec4(irColor(h), smoothstep(0.03, 0.3, d) * mix(0.55, 1.0, smoothstep(0.2, 0.6, h)));
+  vec3 base = mix(vec3(0.70, 0.75, 0.82), vec3(0.985, 0.985, 0.99), smoothstep(0.1, 0.75, d));
+  return vec4(base * lit, a);
+}
+`;
+const VS_WORLD = `varying vec2 vW; varying vec2 vUv; void main() { vUv = uv; vec4 w = modelMatrix * vec4(position, 1.0); vW = w.xy; gl_Position = projectionMatrix * viewMatrix * w; }`;
+
+// ── 바다 · 육지 ───────────────────────────────────
+const groundMat = new THREE.ShaderMaterial({
+  uniforms: U,
+  vertexShader: VS_WORLD,
+  fragmentShader: GL_COMMON + `
+uniform sampler2D uLand, uSST; uniform vec4 uMapRect; varying vec2 vW;
+const float KX = ${KX.toFixed(6)};
+float landAt(vec2 w, float b) { return texture2D(uLand, clamp((w - uMapRect.xy) / uMapRect.zw, 0.0, 1.0), b).r; }
+float sstAt(vec2 w) { return 14.0 + 18.0 * texture2D(uSST, clamp((w - uMapRect.xy) / uMapRect.zw, 0.0, 1.0)).r; }
+vec3 sstColor(float t) {
+  vec3 c = vec3(0.07, 0.13, 0.38);
+  c = mix(c, vec3(0.09, 0.36, 0.68), smoothstep(20.0, 23.5, t));
+  c = mix(c, vec3(0.16, 0.66, 0.74), smoothstep(23.5, 26.0, t));
+  c = mix(c, vec3(0.86, 0.84, 0.36), smoothstep(26.2, 27.8, t));
+  c = mix(c, vec3(0.96, 0.55, 0.16), smoothstep(27.8, 29.2, t));
+  c = mix(c, vec3(0.86, 0.17, 0.22), smoothstep(29.2, 30.6, t));
+  return c;
+}
+float gridLine(float v, float step) { float f = abs(fract(v / step + 0.5) - 0.5) * step; return 1.0 - smoothstep(0.0, fwidth(v) * 1.1, f); }
+void main() {
+  vec2 w = vW; float lat = w.y, lon = w.x / KX + 140.0;
+  float m = landAt(w, 0.0);
+  float land = smoothstep(0.35, 0.65, m);
+  float shelf = landAt(w, 4.0);
+  float inland = landAt(w, 6.5);
+  float big = n1(w * 0.021 + 0.37), mid = texture2D(uNoise, w * 0.083 + 0.11).g, fine = texture2D(uNoise, w * 0.37).r;
+  float t = sstAt(w);
+  vec3 col;
+  float coast = 1.0 - smoothstep(0.0, fwidth(m) * 1.4 + 1e-4, abs(m - 0.5));
+  if (uMode < 0.5) {
+    // 바다: 짙은 남색 + 큰 무늬 + 대륙붕
+    vec3 oc = vec3(0.022, 0.066, 0.145) * (0.86 + 0.28 * big) + vec3(0.0, 0.01, 0.02) * mid;
+    oc = mix(oc, vec3(0.04, 0.2, 0.27), smoothstep(0.03, 0.4, shelf) * 0.55 * (1.0 - land));
+    // 육지: 위도 · 건조 지대 · 기복(그늘)
+    vec3 trop = vec3(0.075, 0.16, 0.06), temp = vec3(0.17, 0.21, 0.1), cold = vec3(0.24, 0.24, 0.17), dry = vec3(0.46, 0.39, 0.26);
+    vec3 lc = mix(trop, temp, smoothstep(17.0, 31.0, lat));
+    lc = mix(lc, cold, smoothstep(38.0, 48.0, lat));
+    lc = mix(lc, dry, smoothstep(113.0, 103.0, lon) * smoothstep(29.0, 38.0, lat));
+    float hgt = (texture2D(uNoise, w * 0.12).r * 0.6 + texture2D(uNoise, w * 0.45).g * 0.4) * smoothstep(0.55, 0.95, inland + 0.2);
+    float hgt2 = (texture2D(uNoise, (w + uSun * 0.05) * 0.12).r * 0.6 + texture2D(uNoise, (w + uSun * 0.05) * 0.45).g * 0.4) * smoothstep(0.55, 0.95, inland + 0.2);
+    lc *= 0.78 + 0.4 * fine;
+    lc *= clamp(1.0 + (hgt - hgt2) * 9.0, 0.6, 1.4);
+    lc = mix(lc, lc * 1.25 + vec3(0.02), smoothstep(0.6, 0.85, hgt) * 0.5);
+    col = mix(oc, lc, land);
+    // 무역풍 적운(팝콘 구름): 따뜻한 바다일수록 많다
+    float pc = texture2D(uNoise, w * 0.53 + vec2(uTime * 0.0035, 0.0)).b * 0.62 + texture2D(uNoise, w * 1.71 + vec2(uTime * 0.006, 0.3)).r * 0.5;
+    float amt = mix(smoothstep(24.5, 28.5, t) * 0.75, 0.35, land) * (0.6 + 0.6 * big);
+    float clump = smoothstep(0.45, 0.75, texture2D(uNoise, w * 0.09 + vec2(uTime * 0.002, 0.7)).r);
+    float pop = smoothstep(0.76, 0.9, pc) * amt * clump;
+    col = mix(col, vec3(0.8, 0.83, 0.88), pop * 0.45);
+  } else if (uMode < 1.5) {
+    // 적외: 바다는 따뜻해서 어둡게, 육지는 회색, 해안선 · 경위선
+    vec3 oc = vec3(0.07 + 0.04 * smoothstep(22.0, 30.0, t));
+    vec3 lc = vec3(0.16 + 0.05 * fine);
+    col = mix(oc, lc, land);
+    col = mix(col, vec3(0.78, 0.66, 0.26), coast * 0.75);
+    float gl = max(gridLine(lat, 5.0), gridLine(lon, 5.0));
+    col = mix(col, vec3(0.42, 0.5, 0.58), gl * 0.35);
+  } else {
+    vec3 oc = sstColor(t) * (0.9 + 0.12 * big);
+    float iso = 1.0 - smoothstep(0.0, fwidth(t) * 1.5 + 1e-4, abs(t - 26.5));
+    oc = mix(oc, vec3(1.0), iso * 0.9);
+    float iso2 = 1.0 - smoothstep(0.0, fwidth(t) * 1.1 + 1e-4, abs(fract(t + 0.5) - 0.5));
+    oc = mix(oc, oc * 0.7, iso2 * 0.35);
+    vec3 lc = vec3(0.13, 0.14, 0.16) + 0.04 * fine;
+    col = mix(oc, lc, land);
+    col = mix(col, vec3(0.85), coast * 0.6);
+    float gl = max(gridLine(lat, 5.0), gridLine(lon, 5.0));
+    col = mix(col, vec3(0.0), gl * 0.18);
+  }
+  gl_FragColor = vec4(col, 1.0);
+}`,
+});
+const ground = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), groundMat);
+ground.scale.set(420, 300, 1); ground.position.set((MX0 + MX1) / 2, 23, 0);
+ground.renderOrder = 0; scene.add(ground);
+
+// ── 태풍 ─────────────────────────────────────────
+const STORM_EXT = 2.3; // 사각형 반폭 = R × STORM_EXT
+const stormU = {
+  uR: { value: 0.5 }, uI: { value: 0.03 }, uEye: { value: 0 }, uShear: { value: new THREE.Vector2() }, uLandF: { value: 0 }, uSeed: { value: 0.3 },
+  uShadow: { value: 0 }, uAge: { value: 0 },
+};
+const STORM_FS = GL_COMMON + `
+uniform float uR, uI, uEye, uLandF, uSeed, uShadow, uAge; uniform vec2 uShear;
+varying vec2 vUv;
+float stormDetail(vec2 p, float base) { float c = cos(base), s = sin(base); vec2 w = mat2(c, s, -s, c) * p * uR; return texture2D(uNoise, w * 0.9 + uSeed * 7.0).r * 0.6 + texture2D(uNoise, w * 2.2 + uSeed * 3.0).g * 0.4; }
+const float PI2 = 6.2831853;
+float spiralTex(float th, float lr, float tm, float sc) {
+  // 반시계 회전 · 바깥에서 안으로 감기는 나선 좌표에서 이음매 없는 노이즈
+  float u = (th + 1.15 * lr) / PI2;
+  vec2 uv = vec2(u * 3.0, lr * 0.42 - tm * 0.012) ;
+  float a = texture2D(uNoise, uv * sc + uSeed).r;
+  float b = texture2D(uNoise, uv * sc * 2.0 + vec2(uSeed * 1.7, 0.31)).g;
+  float c = texture2D(uNoise, vec2(u * 6.0, lr * 1.3) * sc + vec2(0.5, uSeed)).b;
+  return a * 0.55 + b * 0.3 + c * 0.25;
+}
+float density(vec2 p, out float h) {
+  float org = smoothstep(0.04, 0.6, uI);
+  vec2 q = p - uShear * 0.5 * smoothstep(0.05, 0.9, length(p));
+  float r = length(q), th = atan(q.y, q.x), lr = log(max(r, 0.015));
+  // 두 위상으로 감김이 끝없이 조여드는 것을 막는다(흐름 지도)
+  float T = 7.0, ph1 = fract(uTime / T), ph2 = fract(uTime / T + 0.5);
+  float w1 = 1.0 - abs(2.0 * ph1 - 1.0), w2 = 1.0 - w1;
+  float om = (0.9 + 1.6 * uI) / (r + 0.22);
+  float base = uTime * (0.05 + 0.18 * uI);
+  float s1 = spiralTex(th + base + om * ph1 * T * 0.12, lr, uTime, 1.0);
+  float s2 = spiralTex(th + base + om * ph2 * T * 0.12 + 1.7, lr, uTime, 1.0);
+  float n = s1 * w1 + s2 * w2;
+  float arms = 0.5 + 0.5 * cos(2.0 * (th + base + 1.15 * lr * (1.0 + 0.6 * org)) + n * 2.4);
+  arms = smoothstep(0.28 - 0.1 * org, 0.92, arms);
+  float env = smoothstep(1.75, 0.55, r) * smoothstep(0.0, 0.25, r + 0.2);
+  float rc = 0.24 + 0.32 * uI;
+  float core = exp(-pow(r / rc, 2.6));
+  float bands = arms * env * (0.35 + 0.75 * n) * (0.45 + 0.55 * org);
+  // 팔 사이 틈은 낮은 구름 · 옅은 안개로 반쯤 찬다
+  float haze = smoothstep(1.45, 0.3, r) * (0.18 + 0.3 * n) * org;
+  float d = max(max(core * (0.78 + 0.35 * n), bands * 1.05), haze);
+  // 약할 때: 정리되지 않은 뭉게구름 덩어리
+  float det = stormDetail(q, base);
+  float blobN = texture2D(uNoise, q * 0.42 + vec2(uSeed, uTime * 0.004)).b * 0.6 + texture2D(uNoise, q * 0.9 + uSeed * 2.0).r * 0.5;
+  float blob = smoothstep(0.2, 0.85, blobN + 0.5 - r * 0.6 + (det - 0.5) * 0.35) * (0.75 + 0.35 * det);
+  d = mix(max(blob, core * (0.6 + 0.4 * det)), d * (0.8 + 0.3 * det), org);
+  // 눈 · 눈벽
+  float re = mix(0.12, 0.07, smoothstep(0.42, 1.0, uI));
+  float eyeHole = 1.0 - smoothstep(re * 0.55, re * 1.25, r);
+  d *= 1.0 - uEye * eyeHole * 0.97;
+  float wall = exp(-pow((r - re * 1.45) / (re * 0.65), 2.0)) * uEye;
+  d += wall * 0.25;
+  // 상륙: 구조가 무너지며 너덜너덜해진다
+  d *= mix(1.0, smoothstep(0.35, 0.75, n + 0.15 - r * 0.2), uLandF);
+  // 상층 유출 권운(시계 방향으로 퍼져 나감)
+  float ci = texture2D(uNoise, vec2((th - 0.9 * lr) / PI2 * 4.0 - uTime * 0.004, lr * 0.25)).g;
+  float cirrus = smoothstep(0.35, 0.95, ci) * smoothstep(0.5, 1.15, r) * smoothstep(2.2, 1.1, r) * org * uI * 0.32;
+  h = clamp(core * (0.55 + 0.45 * uI) + bands * 0.55 + wall * 0.35 * uI + 0.15 * n * d, 0.0, 1.0);
+  h = max(h, cirrus * 2.0);
+  d = max(d, cirrus);
+  return clamp(d, 0.0, 1.3) * smoothstep(2.25, 1.95, r);
+}
+void main() {
+  vec2 p = (vUv - 0.5) * 2.0 * ${STORM_EXT.toFixed(2)};
+  float h;
+  float d = density(p, h);
+  if (uShadow > 0.5) { gl_FragColor = vec4(0.0, 0.0, 0.0, smoothstep(0.05, 0.6, d) * 0.42 * (uMode < 0.5 ? 1.0 : 0.0)); return; }
+  float h2;
+  float d2 = density(p + uSun * 0.035, h2);
+  float lit = clamp(0.86 + (d - d2) * 3.2 - 0.12 * (1.0 - smoothstep(0.2, 0.9, d)), 0.5, 1.12);
+  gl_FragColor = cloudColor(d, lit, h);
+}`;
+const stormMat = new THREE.ShaderMaterial({ uniforms: { ...U, ...stormU }, vertexShader: VS_WORLD, fragmentShader: STORM_FS, transparent: true, depthWrite: false, depthTest: false });
+const stormShadowU = { ...stormU, uShadow: { value: 1 } };
+const stormShadowMat = new THREE.ShaderMaterial({ uniforms: { ...U, ...stormShadowU }, vertexShader: VS_WORLD, fragmentShader: STORM_FS, transparent: true, depthWrite: false, depthTest: false });
+const stormMesh = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), stormMat); stormMesh.renderOrder = 5;
+const stormShadow = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), stormShadowMat); stormShadow.renderOrder = 2;
+scene.add(stormMesh, stormShadow);
+
+// ── 구름(삼킬 거리) ──────────────────────────────
+const MAXI = 260;
+const itemGeo = new THREE.PlaneGeometry(1, 1);
+const aSeed = new THREE.InstancedBufferAttribute(new Float32Array(MAXI), 1), aType = new THREE.InstancedBufferAttribute(new Float32Array(MAXI), 1), aAlpha = new THREE.InstancedBufferAttribute(new Float32Array(MAXI), 1);
+aSeed.setUsage(THREE.DynamicDrawUsage); aType.setUsage(THREE.DynamicDrawUsage); aAlpha.setUsage(THREE.DynamicDrawUsage);
+itemGeo.setAttribute('aSeed', aSeed); itemGeo.setAttribute('aType', aType); itemGeo.setAttribute('aAlpha', aAlpha);
+const ITEM_VS = `
+attribute float aSeed, aType, aAlpha; uniform vec2 uOff; varying vec2 vUv, vW; varying float vSeed, vType, vAlpha, vScale;
+void main() { vUv = uv; vSeed = aSeed; vType = aType; vAlpha = aAlpha; vScale = length(instanceMatrix[0].xyz); vec4 w = modelMatrix * instanceMatrix * vec4(position, 1.0); vW = w.xy; w.xy += uOff; gl_Position = projectionMatrix * viewMatrix * w; }`;
+const ITEM_FS = GL_COMMON + `
+uniform float uShadow; varying vec2 vUv, vW; varying float vSeed, vType, vAlpha, vScale;
+// 세계 좌표에 붙은 잔무늬(콜리플라워 같은 대류 탑)
+float detail(vec2 w) { return texture2D(uNoise, w * 0.85 + vSeed * 13.0).r * 0.6 + texture2D(uNoise, w * 2.1 + vSeed * 5.0).g * 0.4; }
+float dens(vec2 p, vec2 w, out float h) {
+  float r = length(p); vec2 o = vec2(vSeed * 7.3, vSeed * 3.1);
+  float lo = texture2D(uNoise, p * 0.23 + o).r, lo2 = texture2D(uNoise, p * 0.47 + o.yx).g;
+  float det = detail(w);
+  float rr = r * (1.0 + 0.55 * (lo - 0.5) + 0.3 * (lo2 - 0.5));   // 들쭉날쭉한 윤곽
+  float d; h = 0.3;
+  if (vType < 0.5) {               // 적운 무리: 작은 덩어리 여럿
+    float cells = texture2D(uNoise, p * 0.62 + o).b;
+    d = smoothstep(0.0, 0.5, (1.0 - rr) * 0.95 + (cells - 0.5) * 0.5 + (det - 0.5) * 0.4 - 0.2) * (0.78 + 0.3 * det);
+    h = 0.3 + 0.18 * d;
+  } else if (vType < 1.5) {        // 뇌우: 밝은 탑 + 한쪽으로 퍼지는 모루구름
+    float tower = smoothstep(0.75, 0.1, rr);
+    vec2 ad = p - vec2(0.35, 0.2);
+    float fib = texture2D(uNoise, vec2(p.x * 0.22, p.y * 0.5) + o).g;
+    float anvil = smoothstep(0.85, 0.1, length(ad * vec2(0.8, 1.4))) * (0.5 + 0.6 * fib);
+    d = max(tower * (0.75 + 0.35 * det), anvil * (0.6 + 0.2 * det));
+    h = 0.58 + 0.32 * tower + 0.12 * anvil;
+  } else if (vType < 2.5) {        // 구름 무리(중규모 대류계): 탑 여럿 + 위를 덮은 권운 방패
+    float lobes = texture2D(uNoise, p * 0.35 + o).b;
+    float cells = smoothstep(0.3, 0.8, lobes + (1.0 - rr) * 0.55 - 0.25 + (det - 0.5) * 0.3) * (0.75 + 0.35 * det);
+    float shield = smoothstep(0.95, 0.25, rr) * (0.55 + 0.35 * lo2);
+    d = max(cells, shield * 0.8);
+    h = 0.5 + 0.36 * shield + 0.14 * cells;
+  } else {                         // 다른 열대요란: 느슨한 나선
+    float th = atan(p.y, p.x), lr = log(max(r, 0.02));
+    float arm = 0.5 + 0.5 * cos(2.0 * (th + 1.2 * lr) + lo * 3.0);
+    d = smoothstep(0.35, 0.9, arm) * smoothstep(1.1, 0.3, rr) * (0.6 + 0.45 * det) + smoothstep(0.45, 0.05, rr) * (0.7 + 0.35 * det);
+    h = 0.45 + 0.4 * smoothstep(0.5, 0.05, rr) + 0.1 * d;
+  }
+  d *= smoothstep(1.2, 0.95, r);
+  return d;
+}
+void main() {
+  vec2 p = (vUv - 0.5) * 2.4;
+  float h; float d = dens(p, vW, h);
+  if (uShadow > 0.5) { gl_FragColor = vec4(0.0, 0.0, 0.0, smoothstep(0.08, 0.6, d) * 0.38 * vAlpha * (uMode < 0.5 ? 1.0 : 0.0)); return; }
+  float h2; vec2 o = uSun * 0.035; float d2 = dens(p + o * 2.4 / max(vScale, 0.01), vW + o, h2);
+  float lit = clamp(0.88 + (d - d2) * 1.5, 0.6, 1.12);
+  vec4 c = cloudColor(d, lit, h);
+  gl_FragColor = vec4(c.rgb, c.a * vAlpha);
+}`;
+const itemMat = new THREE.ShaderMaterial({ uniforms: { ...U, uShadow: { value: 0 }, uOff: { value: new THREE.Vector2() } }, vertexShader: ITEM_VS, fragmentShader: ITEM_FS, transparent: true, depthWrite: false, depthTest: false });
+const itemShadowMat = new THREE.ShaderMaterial({ uniforms: { ...U, uShadow: { value: 1 }, uOff: { value: new THREE.Vector2() } }, vertexShader: ITEM_VS, fragmentShader: ITEM_FS, transparent: true, depthWrite: false, depthTest: false });
+const items = new THREE.InstancedMesh(itemGeo, itemMat, MAXI); items.renderOrder = 4; items.frustumCulled = false;
+const itemShadows = new THREE.InstancedMesh(itemGeo, itemShadowMat, MAXI); itemShadows.renderOrder = 1; itemShadows.frustumCulled = false;
+itemShadows.instanceMatrix = items.instanceMatrix;
+scene.add(items, itemShadows);
+
+// ── 제트기류 · 상층 저기압 권운 ─────────────────────
+const MAXT = 3;
+const jetU = { uJet: { value: new THREE.Vector4() }, uTutt: { value: Array.from({ length: MAXT }, () => new THREE.Vector4()) } };
+const jetMat = new THREE.ShaderMaterial({
+  uniforms: { ...U, ...jetU }, vertexShader: VS_WORLD, transparent: true, depthWrite: false, depthTest: false,
+  fragmentShader: GL_COMMON + `
+uniform vec4 uJet; uniform vec4 uTutt[${MAXT}]; varying vec2 vW;
+const float KX = ${KX.toFixed(6)};
+void main() {
+  vec2 w = vW; float lon = w.x / KX + 140.0;
+  // sim.js jetLat 과 같은 식
+  float jl = 34.0 + 2.2 * sin(uJet.x) - 2.5 * smoothstep(135.0, 110.0, lon) + 1.2 * sin(lon * 0.09 - uJet.y);
+  float S = smoothstep(jl - 5.0, jl + 0.5, w.y) * smoothstep(jl + 9.0, jl + 3.0, w.y);
+  float streak = texture2D(uNoise, vec2(w.x * 0.022 - uTime * 0.02, w.y * 0.16)).g * 0.6 + texture2D(uNoise, vec2(w.x * 0.06 - uTime * 0.03, w.y * 0.45)).r * 0.5;
+  float a = smoothstep(0.62, 0.92, streak) * S * 0.6;
+  float tc = 0.0;
+  for (int i = 0; i < ${MAXT}; i++) {
+    vec4 c = uTutt[i]; vec2 d = w - c.xy; float r = length(d) / c.z;
+    float th = atan(d.y, d.x);
+    float sw = texture2D(uNoise, vec2((th + 0.8 * log(max(r, 0.05))) / 6.2831853 * 3.0, r * 0.6 - uTime * 0.01)).g;
+    tc = max(tc, smoothstep(0.58, 0.9, sw) * exp(-r * r * 1.3) * c.w * smoothstep(0.15, 0.5, r));
+  }
+  a = max(a, tc * 0.55);
+  float h = 0.82;
+  if (uMode > 1.5) { gl_FragColor = vec4(vec3(1.0), a * 0.12); return; }
+  if (uMode > 0.5) { gl_FragColor = vec4(irColor(h - 0.2 + 0.1 * a), a * 0.55); return; }
+  gl_FragColor = vec4(vec3(0.93, 0.95, 0.98), a * 0.7);
+}`,
+});
+const jet = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), jetMat); jet.renderOrder = 6; scene.add(jet);
+
+// ── 도시 이름(표시만) ───────────────────────────────
+const CITIES = [['서울', 126.98, 37.57], ['부산', 129.08, 35.18], ['제주', 126.53, 33.5], ['도쿄', 139.69, 35.69], ['오사카', 135.5, 34.69], ['삿포로', 141.35, 43.06], ['나하', 127.68, 26.21], ['타이베이', 121.56, 25.03], ['상하이', 121.47, 31.23], ['홍콩', 114.17, 22.32], ['마닐라', 120.98, 14.6], ['하노이', 105.85, 21.03], ['괌', 144.79, 13.44], ['베이징', 116.4, 39.9]];
+const cityEls = CITIES.map(([n]) => { const e = document.createElement('div'); e.className = 'city'; e.textContent = n; $('labels').appendChild(e); return e; });
+
+// ── 상태 · 입력 ──────────────────────────────────
+let g = null, state = 'intro', mode = +(qs.get('view') || 0) || 0, seed = +(qs.get('seed') || 0) || ((Date.now() / 1000) | 0);
+let disp = { R: 0.5, I: 0.03, x: 0, y: 0 };
+const cam = { x: 0, y: 0, W: 10 };
+let input = { x: 0, y: 0 }, pointer = null; const keys = new Set();
+const auto = qs.get('auto') === '1';
+let BEST = 0; try { BEST = +(localStorage.getItem('tg-best') || 0); } catch (e) {}
+function setMode(m) { mode = m; U.uMode.value = m; document.querySelectorAll('.views button').forEach(b => b.setAttribute('aria-pressed', String(+b.dataset.m === m))); }
+setMode(mode);
+document.querySelectorAll('.views button').forEach(b => b.addEventListener('click', e => { e.stopPropagation(); setMode(+b.dataset.m); canvas.focus(); }));
+['pointerdown', 'pointerup'].forEach(t => document.querySelector('.views').addEventListener(t, e => e.stopPropagation()));
+
+function newGame() {
+  g = TG.newGame(seed); disp = { R: g.R, I: g.I, x: g.x, y: g.y }; cam.x = g.x; cam.y = g.y; cam.W = 2 * (3.6 * g.R + 1.8);
+  U.uTime.value = 0; stormU.uSeed.value = (seed % 997) / 997; updateSST(g); lastSST = 0; toasts.length = 0; $('toast').innerHTML = '';
+  warnAt = {}; hintShown = false;
+}
+function start() { seed = seed || 1; newGame(); if (qs.get('dbgI')) { g.I = +qs.get('dbgI'); g.R = +(qs.get('dbgR') || 2); g.M = 1; disp.R = g.R; disp.I = g.I; cam.W = 2 * (3.6 * g.R + 1.8); } state = 'play'; $('intro').hidden = true; $('endcard').hidden = true; $('hud').hidden = false; $('env').hidden = false; $('playfoot').hidden = false; canvas.focus(); toast('손가락을 대거나 방향키로 움직여요 · 나보다 작은 구름만 삼킬 수 있어요', 'info', 5); }
+$('startbtn').onclick = start;
+$('againbtn').onclick = () => { seed = ((Date.now() / 1000) | 0); start(); };
+$('pausebtn').onclick = e => { e.stopPropagation(); pause(true); };
+$('resumebtn').onclick = () => pause(false);
+$('quitbtn').onclick = () => { $('pausecard').hidden = true; g.over = true; g.end = 'quit'; state = 'play'; endGame(); };
+['pointerdown', 'pointerup'].forEach(t => $('pausebtn').addEventListener(t, e => e.stopPropagation()));
+function pause(on) { if (on && state === 'play') { state = 'pause'; $('pausecard').hidden = false; } else if (!on && state === 'pause') { state = 'play'; $('pausecard').hidden = true; canvas.focus(); } }
+document.addEventListener('visibilitychange', () => { if (document.hidden) pause(true); });
+if (BEST > 0) $('bestline').textContent = `이 기기 최고 ACE ${BEST.toFixed(1)}`;
+
+const app = $('app');
+app.addEventListener('pointerdown', e => { if (state !== 'play') return; pointer = { id: e.pointerId, x: e.clientX, y: e.clientY }; try { app.setPointerCapture(e.pointerId); } catch (_) {} });
+app.addEventListener('pointermove', e => { if (pointer && e.pointerId === pointer.id) { pointer.x = e.clientX; pointer.y = e.clientY; } });
+const endPtr = e => { if (pointer && e.pointerId === pointer.id) pointer = null; };
+app.addEventListener('pointerup', endPtr); app.addEventListener('pointercancel', endPtr);
+window.addEventListener('keydown', e => {
+  const k = e.key.toLowerCase();
+  if (['arrowup', 'arrowdown', 'arrowleft', 'arrowright', 'w', 'a', 's', 'd'].includes(k)) { keys.add(k); e.preventDefault(); }
+  else if (k === 'v' && state !== 'intro') setMode((mode + 1) % 3);
+  else if (k === 'p' || k === 'escape') pause(state === 'play');
+  else if (k === 'enter' && state === 'intro') start();
+});
+window.addEventListener('keyup', e => keys.delete(e.key.toLowerCase()));
+
+// 월드 → 화면(CSS px)
+const tmpV = new THREE.Vector3();
+function toScreen(x, y) { tmpV.set(x, y, 0).project(camera); return [(tmpV.x * 0.5 + 0.5) * vw, (-tmpV.y * 0.5 + 0.5) * vh, tmpV.z]; }
+
+function readInput() {
+  let ix = 0, iy = 0;
+  if (keys.has('arrowleft') || keys.has('a')) ix -= 1; if (keys.has('arrowright') || keys.has('d')) ix += 1;
+  if (keys.has('arrowup') || keys.has('w')) iy += 1; if (keys.has('arrowdown') || keys.has('s')) iy -= 1;
+  if (pointer && g) {
+    const [sx, sy] = toScreen(g.x, g.y); const dx = pointer.x - sx, dy = -(pointer.y - sy); const L = Math.hypot(dx, dy);
+    const m = Math.min(1, L / 70); if (L > 4) { ix = (dx / L) * m; iy = (dy / L) * m; }
+  }
+  if (auto && g) [ix, iy] = autoPilot(g);
+  input.x = ix; input.y = iy;
+}
+// 자동 조종(시연 · 점검용, #auto=1)
+function autoPilot(g) {
+  let best = null, bs = -1;
+  for (const it of g.items) { if (it.st || it.s > TG.T.eat * g.R) continue; const d = Math.hypot(it.x - g.x, it.y - g.y); const pot = TG.clamp((TG.sst(g, it.x, it.y) - 26) / 3.6, 0, 1) * (1 - TG.shear(g, it.x, it.y)) * (TG.isLand(it.x, it.y) ? 0 : 1); const sc = (it.s / g.R) ** 2 * (0.2 + pot) / (d + g.R); if (sc > bs) { bs = sc; best = it; } }
+  let ix = 0, iy = 0; if (best) { const d = Math.hypot(best.x - g.x, best.y - g.y) || 1; ix = (best.x - g.x) / d; iy = (best.y - g.y) / d; }
+  const lx = g.x + g.vx * 2, ly = g.y + g.vy * 2; const pA = TG.clamp((TG.sst(g, lx, ly) - 26) / 3.6, 0, 1) * (1 - TG.shear(g, lx, ly)) * (1 - TG.landFrac(lx, ly, 1));
+  if (pA < 0.55) { ix += 0.4; iy -= 1; } if (g.y > 24) iy -= 0.8; if (g.y < 8) iy += 1; return [ix, iy];
+}
+
+// ── 알림 ─────────────────────────────────────────
+const toasts = []; let warnAt = {}, hintShown = false;
+function toast(text, kind = 'info', sec = 3.2) {
+  const el = document.createElement('div'); el.textContent = text; if (kind === 'big') el.className = 'big'; if (kind === 'bad') el.className = 'bad';
+  const box = $('toast'); box.appendChild(el); while (box.children.length > 3) box.firstChild.remove();
+  setTimeout(() => el.remove(), sec * 1000);
+}
+function warn(key, text, every = 22) { const t = g.t; if (warnAt[key] != null && t - warnAt[key] < every) return; warnAt[key] = t; toast(text, 'bad', 3.6); }
+let comboT = 0;
+function handleEvents() {
+  for (const e of g.events) {
+    if (e.k === 'eat' && e.combo >= 3) { $('combo').textContent = '콤보 ×' + e.combo; comboT = 1.1; }
+    else if (e.k === 'grade') {
+      const gr = TG.GRADES[e.gi];
+      if (e.gi === 2) toast('열대폭풍 — 이제 「태풍」입니다 (17 m/s)', 'big', 3.4);
+      else if (e.gi === 6) toast('초강력 태풍 — 54 m/s 를 넘었습니다', 'big', 3.6);
+      else toast(gr.name + ' 단계', 'big', 2.6);
+    }
+    else if (e.k === 'eye') toast('눈이 생겼어요 — 가운데가 맑게 뚫리는 건 강한 태풍의 신호', 'info', 3.6);
+    else if (e.k === 'land') toast('상륙 — 바다의 수증기가 끊겨 빠르게 약해집니다', 'bad', 4);
+    else if (e.k === 'big') warn('big', `아직 큰 구름이에요 (내 몸집의 ×${e.ratio.toFixed(1)}) — 더 키운 뒤에 삼키세요`, 10);
+    else if (e.k === 'over') endGame();
+  }
+  g.events.length = 0;
+  if (g.t > 6) {
+    if (g.land < 0.5 && g.sst < 26.5) warn('cold', '차가운 바다 — 26.5℃ 아래에서는 태풍이 약해져요');
+    if (g.S > 0.45) warn('shear', '바람 시어 — 위아래 바람이 엇갈려 구조가 찢어져요');
+    const wk = TG.sstClim(g.x, g.y, g.env) - g.sst; if (wk > 0.9 && g.land < 0.5) warn('wake', '바다가 식고 있어요 — 한자리에 머물면 차가운 꼬리가 생깁니다', 30);
+    if (g.y < 5.5) warn('eq', '적도 가까이에서는 지구 자전 효과가 약해 소용돌이가 자라지 못해요', 30);
+    if (g.ia < 0.8 && !hintShown) { hintShown = true; toast('강해질수록 큰 흐름이 나를 끌고 가요 — 화살표(하늘색)를 보세요', 'info', 4.2); }
+  }
+}
+
+// ── 결과 ─────────────────────────────────────────
+const END = { life: '9일을 다 살았습니다', land: '육지에서 힘을 잃었습니다', fade: '바다에서 흩어졌습니다', quit: '여기서 끝냈습니다' };
+function endGame() {
+  if (state === 'end') return; state = 'end'; pointer = null;
+  const st = TG.stars(g.ace), gi = TG.gradeIdx(g.peakI);
+  $('etitle').textContent = END[g.end] || END.life;
+  $('estars').innerHTML = [0, 1, 2].map(i => i < st ? '<b>★</b>' : '★').join(''); $('estars').setAttribute('aria-label', `별 ${st}개`);
+  $('eace').textContent = g.ace.toFixed(1); $('ep').textContent = Math.round(TG.pres(g.peakI)) + ' hPa'; $('eg').textContent = TG.GRADES[gi].name.replace('태풍 · ', '');
+  $('ew').textContent = Math.round(TG.wind(g.peakI)) + ' m/s'; $('eeat').textContent = g.eaten; $('er').textContent = Math.round(g.peakR * 111) + ' km';
+  const why = [];
+  if (g.end === 'land') why.push('육지 위에서는 바다의 열과 수증기를 받지 못해 하루 안에 크게 약해집니다.');
+  if (g.end === 'fade') why.push('차가운 바다나 강한 바람 시어 위에서는 구름 기둥이 서지 못해 흩어집니다.');
+  if (st < 3) why.push(`다음 별까지 ACE ${[6, 16, 30][st]} — 따뜻한 바다 위에서 강한 상태를 더 오래 유지하면 올라갑니다.`);
+  else why.push('별 셋 — 실제로도 손꼽히는 큰 태풍 수준의 ACE 입니다.');
+  $('ewhy').textContent = why.join(' ');
+  if (g.ace > BEST) { BEST = g.ace; try { localStorage.setItem('tg-best', String(BEST)); } catch (e) {} }
+  $('ebest').textContent = `이 기기 최고 ACE ${BEST.toFixed(1)}`; $('bestline').textContent = `이 기기 최고 ACE ${BEST.toFixed(1)}`;
+  $('endcard').hidden = false; $('hud').hidden = true; $('env').hidden = true; $('playfoot').hidden = true;
+  drawTrack();
+}
+$('copybtn').onclick = async () => {
+  const st = TG.stars(g.ace), gi = TG.gradeIdx(g.peakI);
+  const txt = `태풍 키우기 ${'★'.repeat(st)}${'☆'.repeat(3 - st)}\nACE ${g.ace.toFixed(1)} · 최저 ${Math.round(TG.pres(g.peakI))} hPa · ${TG.GRADES[gi].name} · 삼킨 구름 ${g.eaten}\n${location.href.split('#')[0]}`;
+  try { await navigator.clipboard.writeText(txt); $('copybtn').textContent = '복사했어요'; } catch (e) { $('copybtn').textContent = '복사 안 됨'; }
+  setTimeout(() => { $('copybtn').textContent = '결과 복사'; }, 1600);
+};
+function drawTrack() {
+  const c = $('trackc'), dpr = Math.min(2, window.devicePixelRatio || 1); const W = c.clientWidth || 400, H = c.clientHeight || 250; c.width = W * dpr; c.height = H * dpr;
+  const x = c.getContext('2d'); x.scale(dpr, dpr); x.fillStyle = '#0A1828'; x.fillRect(0, 0, W, H);
+  const xs = g.track.map(p => p.x), ys = g.track.map(p => p.y);
+  let x0 = Math.min(...xs) - 6, x1 = Math.max(...xs) + 6, y0 = Math.min(...ys) - 5, y1 = Math.max(...ys) + 5;
+  const sc = Math.min(W / (x1 - x0), H / (y1 - y0)); const cx = (x0 + x1) / 2, cy = (y0 + y1) / 2;
+  const P = (wx, wy) => [W / 2 + (wx - cx) * sc, H / 2 - (wy - cy) * sc];
+  x.fillStyle = '#26323C'; x.beginPath();
+  for (const r of RINGS) { r.pts.forEach(([lon, lat], i) => { const [px, py] = P(TG.xOf(lon), lat); i ? x.lineTo(px, py) : x.moveTo(px, py); }); x.closePath(); }
+  x.fill('evenodd');
+  x.lineWidth = 2.4; x.lineCap = 'round';
+  for (let i = 1; i < g.track.length; i++) {
+    const a = g.track[i - 1], b = g.track[i]; const gi = TG.gradeIdx(b.I);
+    x.strokeStyle = ['#7E93A6', '#9FB3C4', '#8FD3FF', '#62DDB8', '#F2D23D', '#FF8A4C', '#FF4E6A'][gi];
+    x.beginPath(); x.moveTo(...P(a.x, a.y)); x.lineTo(...P(b.x, b.y)); x.stroke();
+  }
+  for (let d = 1; d * 24 <= g.t; d++) { const p = g.track.find(q => q.t >= d * 24); if (!p) break; const [px, py] = P(p.x, p.y); x.fillStyle = '#EAF1F6'; x.beginPath(); x.arc(px, py, 2.2, 0, 6.3); x.fill(); x.font = '10px IBM Plex Mono, monospace'; x.fillText(String(d + 1), px + 4, py - 3); }
+  x.fillStyle = 'rgba(163,182,197,0.8)'; x.font = '11px IBM Plex Sans KR, sans-serif'; x.fillText('지나온 길 · 점은 하루 간격 · 색은 단계', 8, H - 8);
+}
+
+// ── HUD ──────────────────────────────────────────
+const DIRS = ['동', '동북동', '북동', '북북동', '북', '북북서', '북서', '서북서', '서', '서남서', '남서', '남남서', '남', '남남동', '남동', '동남동'];
+const GCOL = ['#7E93A6', '#9FB3C4', '#8FD3FF', '#62DDB8', '#F2D23D', '#FF8A4C', '#FF4E6A'];
+let hudT = 0;
+function hud() {
+  const gi = TG.gradeIdx(g.I), gr = TG.GRADES[gi];
+  $('gname').textContent = gr.name; $('gdot').style.background = GCOL[gi];
+  $('gp').textContent = Math.round(TG.pres(g.I)); $('gw').textContent = Math.round(TG.wind(g.I)); $('gr').textContent = Math.round(g.R * 111);
+  const nx = TG.GRADES[gi + 1];
+  if (nx) { const p = (g.I - gr.min) / (nx.min - gr.min); $('gbar').style.width = Math.round(TG.clamp(p, 0, 1) * 100) + '%'; $('gnext').textContent = '다음 · ' + nx.name.replace('태풍 · ', '') + `(${Math.round(TG.wind(nx.min))} m/s)`; }
+  else { $('gbar').style.width = '100%'; $('gnext').textContent = '최고 단계 — 오래 버티세요'; }
+  $('gnextv').textContent = '';
+  const day = Math.floor(g.t / 24) + 1, hr = Math.floor(g.t % 24);
+  $('gclock').textContent = `${day}일째 · ${String(hr).padStart(2, '0')}시 / 9일`; $('gace').textContent = g.ace.toFixed(1);
+  const cs = $('csst'); cs.querySelector('b').textContent = g.land > 0.5 ? '육지' : g.sst.toFixed(1) + '℃'; cs.classList.toggle('warn', g.land > 0.5 || g.sst < 26.5); cs.classList.toggle('good', g.land <= 0.5 && g.sst >= 28.5);
+  const on = Math.round(g.M / 1.5 * 5); $('mm').querySelectorAll('i').forEach((e, i) => e.classList.toggle('on', i < on));
+  const sh = $('cshear'); sh.querySelector('b').textContent = g.S < 0.15 ? '약함' : g.S < 0.45 ? '보통' : '강함'; sh.classList.toggle('warn', g.S >= 0.45);
+  const [fu, fv] = TG.flow(g, g.x, g.y); const ang = Math.atan2(fv, fu); const di = ((Math.round(ang / (Math.PI / 8)) % 16) + 16) % 16;
+  $('cflow').querySelector('b').textContent = DIRS[di];
+}
+
+// ── 오버레이(2D): 내 테두리 · 큰 구름 경고 · 조작 · 큰 흐름 ─────
+const ov = $('ov'), ox = ov.getContext('2d');
+function overlay() {
+  ox.setTransform(PR, 0, 0, PR, 0, 0); ox.clearRect(0, 0, vw, vh);
+  if (!g || state === 'intro') return;
+  const [sx, sy] = toScreen(g.x, g.y); const [ex] = toScreen(g.x + disp.R * 1.05, g.y); const rpx = Math.abs(ex - sx);
+  ox.lineWidth = 1.2; ox.setLineDash([3, 5]); ox.strokeStyle = 'rgba(234,241,246,0.4)'; ox.beginPath(); ox.arc(sx, sy, rpx, 0, 6.3); ox.stroke();
+  // 큰 구름: 가까우면 주황 점선
+  ox.strokeStyle = 'rgba(255,138,76,0.7)';
+  for (const it of g.items) {
+    if (it.st || it.s <= TG.T.eat * g.R) continue; const d = Math.hypot(it.x - g.x, it.y - g.y); if (d > g.R * 3 + it.s) continue;
+    const [ix, iy] = toScreen(it.x, it.y), [jx] = toScreen(it.x + it.s * 0.9, it.y); ox.globalAlpha = TG.clamp(1.4 - d / (g.R * 3 + it.s), 0.15, 1);
+    ox.beginPath(); ox.arc(ix, iy, Math.abs(jx - ix), 0, 6.3); ox.stroke();
+  }
+  ox.globalAlpha = 1; ox.setLineDash([]);
+  if (state !== 'play') return;
+  // 큰 흐름 화살표
+  const [fu, fv] = TG.flow(g, g.x, g.y); const fk = 1.4 + 1.4 * TG.smooth(0.25, 0.85, g.I); const L = Math.hypot(fu, fv) * fk / 0.5;
+  const a = Math.atan2(-fv, fu); const len = TG.clamp(L, 0.15, 1) * Math.max(46, rpx * 1.1);
+  arrow(sx, sy, a, rpx + 6, len, 'rgba(143,211,255,0.85)', 2);
+  // 내 조작
+  if (Math.hypot(input.x, input.y) > 0.05) arrow(sx, sy, Math.atan2(-input.y, input.x), rpx * 0.25, Math.max(34, rpx * 0.9) * Math.min(1, Math.hypot(input.x, input.y)), 'rgba(242,179,61,0.9)', 2.6);
+}
+function arrow(x, y, a, r0, len, col, w) {
+  const c = Math.cos(a), s = Math.sin(a); const x0 = x + c * r0, y0 = y + s * r0, x1 = x + c * (r0 + len), y1 = y + s * (r0 + len);
+  ox.strokeStyle = col; ox.fillStyle = col; ox.lineWidth = w; ox.beginPath(); ox.moveTo(x0, y0); ox.lineTo(x1, y1); ox.stroke();
+  ox.beginPath(); ox.moveTo(x1 + c * 7, y1 + s * 7); ox.lineTo(x1 - s * 5, y1 + c * 5); ox.lineTo(x1 + s * 5, y1 - c * 5); ox.closePath(); ox.fill();
+}
+
+// ── 장면 갱신 ────────────────────────────────────
+const m4 = new THREE.Matrix4(), q4 = new THREE.Quaternion(), v3 = new THREE.Vector3(), s3 = new THREE.Vector3(), zAxis = new THREE.Vector3(0, 0, 1);
+let vw = 1, vh = 1, lastSST = 0;
+function resize() {
+  vw = window.innerWidth; vh = window.innerHeight; renderer.setSize(vw, vh, false); camera.aspect = vw / vh; camera.updateProjectionMatrix();
+  ov.width = Math.round(vw * PR); ov.height = Math.round(vh * PR);
+}
+window.addEventListener('resize', resize); resize();
+const TILT = 16 * Math.PI / 180;
+function updateScene(dt) {
+  const k = 1 - Math.exp(-dt * 4.5);
+  disp.R += (g.R - disp.R) * (1 - Math.exp(-dt * 4)); disp.I += (g.I - disp.I) * (1 - Math.exp(-dt * 3));
+  // 카메라: 몸집에 맞춰 멀어진다(괴혼처럼)
+  const Wt = Math.min(60, 2 * (3.6 * disp.R + 1.8));
+  cam.W += (Wt - cam.W) * (1 - Math.exp(-dt * 1.2));
+  let ofx = 0, ofy = 0; if (state === 'intro') { if (vw > vh * 1.1) ofx = -cam.W * 0.2; else ofy = -cam.W * 0.5; }
+  cam.x += (g.x + g.vx * 0.3 + ofx - cam.x) * k; cam.y += (g.y + g.vy * 0.3 + ofy - cam.y) * k;
+  const fov = camera.fov * Math.PI / 180, asp = Math.min(camera.aspect, 1.25);
+  const d = (cam.W / 2) / (Math.tan(fov / 2) * asp);
+  camera.position.set(cam.x, cam.y - d * Math.sin(TILT), d * Math.cos(TILT)); camera.lookAt(cam.x, cam.y, 0);
+  // 태풍
+  const R = disp.R, ext = R * STORM_EXT;
+  stormMesh.position.set(g.x, g.y, 0); stormMesh.scale.set(ext * 2, ext * 2, 1);
+  const sh = 0.1 + 0.035 * R; const so = new THREE.Vector2(-U.uSun.value.x, -U.uSun.value.y).multiplyScalar(sh);
+  stormShadow.position.set(g.x + so.x, g.y + so.y, 0); stormShadow.scale.copy(stormMesh.scale);
+  stormU.uR.value = R; stormU.uI.value = disp.I; stormU.uEye.value = TG.smooth(0.38, 0.6, disp.I); stormU.uLandF.value += (TG.clamp(g.land * 1.4, 0, 1) - stormU.uLandF.value) * k;
+  const shx = 0.85 * g.S, shy = 0.35 * g.S; stormU.uShear.value.x += (shx - stormU.uShear.value.x) * k; stormU.uShear.value.y += (shy - stormU.uShear.value.y) * k;
+  // 구름 인스턴스
+  let n = 0;
+  for (const it of g.items) {
+    if (n >= MAXI) break;
+    let x = it.x, y = it.y, s = it.s, al = TG.clamp(it.age / 1.5, 0, 1) * TG.clamp((it.life + 6 - it.age) / 6, 0, 1), rot = it.rot;
+    if (it.st === 1) { const p = it.p, an = 2.6 * p, c = Math.cos(an), sn = Math.sin(an), f = (1 - p) ** 1.4; x = g.x + (it.rx * c - it.ry * sn) * f; y = g.y + (it.rx * sn + it.ry * c) * f; s = it.s * (1 - 0.6 * p); al = (1 - p) ** 0.8; rot += an; }
+    q4.setFromAxisAngle(zAxis, rot); m4.compose(v3.set(x, y, 0), q4, s3.set(s * 2.4, s * 2.4, 1)); items.setMatrixAt(n, m4);
+    aSeed.array[n] = it.seed; aType.array[n] = it.type; aAlpha.array[n] = al; n++;
+  }
+  items.count = itemShadows.count = n; items.instanceMatrix.needsUpdate = true; aSeed.needsUpdate = aType.needsUpdate = aAlpha.needsUpdate = true;
+  const io = (0.05 + 0.03 * R); itemShadowMat.uniforms.uOff.value.set(-U.uSun.value.x * io, -U.uSun.value.y * io);
+  // 제트 · 상층 저기압
+  jet.position.set(cam.x, cam.y, 0); jet.scale.set(cam.W * 4, cam.W * 4, 1);
+  jetU.uJet.value.set(g.t / 60 + g.env.jPh, g.t / 18, 0, 0);
+  g.env.tutt.forEach((c, i) => jetU.uTutt.value[i].set(c.x, c.y, c.r, c.a));
+  // 도시 이름: 넓게 볼 때만
+  const showC = cam.W > 15;
+  CITIES.forEach(([nm, lon, lat], i) => { const e = cityEls[i]; if (!showC) { e.style.display = 'none'; return; } const [px, py, pz] = toScreen(TG.xOf(lon), lat); if (pz > 1 || px < -40 || px > vw + 40 || py < -20 || py > vh + 20) { e.style.display = 'none'; return; } e.style.display = 'block'; e.style.transform = `translate(${px.toFixed(1)}px, ${py.toFixed(1)}px) translate(-4px, -50%)`; });
+}
+
+// ── 루프 ─────────────────────────────────────────
+let last = performance.now(), slowT = 0, fpsAcc = 0, fpsN = 0;
+function frame(now) {
+  const dt = Math.max(0, Math.min(0.05, (now - last) / 1000)); last = now;
+  if (state === 'play') {
+    readInput();
+    const H = dt * TG.T.hoursPerSec * (auto ? +(qs.get('speed') || 1) : 1); const sub = Math.max(2, Math.ceil(H / 0.012));
+    for (let i = 0; i < sub && !g.over; i++) { if (auto && i % 8 === 0) readInput(); TG.step(g, input.x, input.y, H / sub); }
+    U.uTime.value += H; handleEvents();
+    if (g.t - lastSST > 0.35) { updateSST(g); lastSST = g.t; }
+    if ((hudT += dt) > 0.1) { hudT = 0; hud(); }
+  } else if (state === 'intro') { U.uTime.value += dt * 0.6; }
+  if (comboT > 0) { comboT -= dt; $('combo').style.opacity = comboT > 0 ? Math.min(1, comboT * 3) : 0; }
+  updateScene(dt);
+  renderer.render(scene, camera);
+  overlay();
+  // 느린 기기: 해상도를 낮춘다
+  fpsAcc += dt; fpsN++;
+  if (fpsAcc > 2) { const avg = fpsAcc / fpsN; if (avg > 0.028 && PR > 1) { PR = Math.max(1, PR - 0.35); renderer.setPixelRatio(PR); resize(); } fpsAcc = 0; fpsN = 0; }
+  requestAnimationFrame(frame);
+}
+// 첫 화면: 태풍 하나를 미리 키워 둔 모습(시작하면 작은 요란에서 다시 시작)
+newGame();
+{ const demo = TG.newGame(seed + 7); demo.I = 0.78; demo.R = 2.2; g = demo; disp = { R: 2.2, I: 0.78, x: demo.x, y: demo.y }; cam.W = 2 * TG.viewHalf(2.2); cam.x = demo.x - (innerWidth > innerHeight * 1.1 ? cam.W * 0.2 : 0); cam.y = demo.y - (innerWidth > innerHeight * 1.1 ? 0 : cam.W * 0.5); demo.items.length = Math.min(demo.items.length, 20); updateSST(demo); stormU.uEye.value = 1; }
+window.__tg = { get g() { return g; }, get state() { return state; }, start, setMode, endGame };
+if (qs.get('play') === '1' || auto) start();
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>

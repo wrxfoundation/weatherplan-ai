@@ -1,0 +1,544 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="color-scheme" content="light dark">
+<title>WLBN 운용현황</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<style>
+:root {
+  --color-bg: #F6F6FB; --color-panel: #FFFFFF; --color-fg: #17152E; --color-fg-muted: #5B5878; --color-border-line: #E2E1EE;
+  --color-ok: #0B7A5A; --color-warn: #B45309; --color-bad: #B42318;
+  --font-anthropic-sans: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif;
+  --cds-font-size-caption: 13px; --cds-font-size-body: 15px; --cds-font-size-heading: 18px; --cds-font-size-title: 30px; --cds-font-weight-medium: 600;
+  --cds-gap-xs: 4px; --cds-gap-sm: 8px; --cds-gap-md: 12px; --cds-gap-lg: 16px; --cds-gap-xl: 36px;
+  --cds-pad-xs: 4px; --cds-pad-sm: 8px; --cds-pad-md: 12px; --cds-pad-lg: 18px; --cds-pad-xl: 24px; --cds-radius: 10px;
+  --cds-chart-muted: #C4C2D8; --cds-chart-grid: #ECEBF4; --cds-chart-axis: #A9A7C0; --cds-text-secondary: #5B5878;
+  --cds-surface-popover: #FFFFFF; --cds-border: #D8D6E8; --cds-shadow-popover: 0 6px 24px rgba(23, 21, 46, 0.14);
+  --s1: #4D4DCE; --s2: #D98A00; --s3: #009E73; --s4: #C2609A;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-bg: #0D0B26; --color-panel: #16133A; --color-fg: #ECEBFA; --color-fg-muted: #A9A6C9; --color-border-line: #2A2757;
+    --color-ok: #4FD1A5; --color-warn: #F0B040; --color-bad: #FF8A7A;
+    --cds-chart-muted: #57547F; --cds-chart-grid: #211E48; --cds-chart-axis: #504D84; --cds-text-secondary: #A9A6C9;
+    --cds-surface-popover: #1D1A47; --cds-border: #38356C; --cds-shadow-popover: 0 8px 28px rgba(0, 0, 0, 0.5);
+    --s1: #A39BFF; --s2: #F0B040; --s3: #35C9A0; --s4: #E58FC0;
+  }
+}
+[hidden] { display: none !important; }
+html { background: var(--color-bg); }
+body { margin: 0; background: var(--color-bg); -webkit-text-size-adjust: 100%; }
+.wc-page { max-width: 1120px; margin: 0 auto; padding: 32px 20px 64px; }
+@media (max-width: 520px) { .wc-page { padding: 20px 16px 48px; } :root { --cds-font-size-title: 25px; --cds-gap-xl: 28px; } }
+.dash-skeleton { background: linear-gradient(90deg, var(--cds-chart-grid), var(--color-panel), var(--cds-chart-grid)); background-size: 200% 100%; border-radius: var(--cds-radius); }
+@media (prefers-reduced-motion: no-preference) { .dash-skeleton { animation: wc-sk 1.4s linear infinite; } }
+@keyframes wc-sk { from { background-position: 200% 0; } to { background-position: -200% 0; } }
+.wc-live { margin-left: 0.6em; padding: 1px 8px; border-radius: 999px; border: 1px solid var(--color-border-line); color: var(--color-fg-muted); white-space: nowrap; }
+.wc-foot { margin: 0; color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); }
+
+.wc { display: flex; flex-direction: column; gap: var(--cds-gap-xl); color: var(--color-fg); font-family: var(--font-anthropic-sans); font-size: var(--cds-font-size-body); line-height: 1.55; min-width: 0; }
+.wc-head { display: flex; flex-direction: column; gap: var(--cds-gap-sm); }
+.wc-title { margin: 0; font-weight: 700; letter-spacing: -0.01em; font-size: var(--cds-font-size-title); line-height: 1.2; text-wrap: balance; }
+.wc-lede { margin: 0; max-width: 46em; font-size: var(--cds-font-size-heading); line-height: 1.5; }
+.wc-lede b, .wc-say b { font-weight: var(--cds-font-weight-medium); font-variant-numeric: tabular-nums; }
+.wc-asof, .wc-note, .wc-sub, .wc-def { margin: 0; color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); }
+.wc-def { max-width: 60em; }
+.wc-tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: var(--cds-gap-md); }
+.wc-card { background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-lg); display: flex; flex-direction: column; gap: var(--cds-gap-xs); min-width: 0; }
+.wc-card-h { margin: 0; font-size: var(--cds-font-size-caption); font-weight: var(--cds-font-weight-medium); color: var(--color-fg-muted); letter-spacing: 0.02em; }
+.wc-big { margin: 0; font-weight: 650; letter-spacing: -0.01em; font-size: 1.85rem; line-height: 1.15; font-variant-numeric: tabular-nums; display: flex; align-items: baseline; flex-wrap: wrap; gap: 0.3em; }
+.wc-unit { font-family: var(--font-anthropic-sans); font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+.wc-sub b { font-weight: var(--cds-font-weight-medium); color: var(--color-fg); font-variant-numeric: tabular-nums; }
+.wc-chg { font-weight: var(--cds-font-weight-medium); font-variant-numeric: tabular-nums; }
+.wc-up { color: var(--color-warn); }
+.wc-down { color: var(--color-ok); }
+.wc-sec { display: flex; flex-direction: column; gap: var(--cds-gap-sm); min-width: 0; }
+.wc-h2 { margin: 0; font-size: var(--cds-font-size-heading); font-weight: var(--cds-font-weight-medium); text-wrap: balance; }
+.wc-say { margin: 0; max-width: 60em; }
+.wc-fig { margin: 0; display: flex; flex-direction: column; gap: var(--cds-gap-sm); min-width: 0; }
+.wc-legend { display: flex; flex-wrap: wrap; gap: var(--cds-gap-xs) var(--cds-gap-md); font-size: var(--cds-font-size-caption); color: var(--cds-text-secondary); }
+.wc-key { display: inline-flex; align-items: center; gap: 0.4em; white-space: nowrap; }
+.wc-sw { display: inline-block; width: 0.75em; height: 0.75em; border-radius: 2px; flex: none; }
+.wc-sw-line { height: 2px; width: 1.1em; border-radius: 1px; }
+.wc-chart { min-height: 300px; min-width: 0; overflow: hidden; color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); }
+.wc-chart-sm { min-height: 240px; }
+.wc-plot { position: relative; }
+.wc-svg { display: block; overflow: visible; }
+.wc-tick { fill: var(--cds-text-secondary); font-size: var(--cds-font-size-caption); font-family: var(--font-anthropic-sans); font-variant-numeric: tabular-nums; }
+.wc-end { fill: var(--color-fg); font-size: var(--cds-font-size-caption); font-family: var(--font-anthropic-sans); font-variant-numeric: tabular-nums; font-weight: var(--cds-font-weight-medium); }
+.wc-band { fill: var(--cds-chart-grid); opacity: 0.6; }
+.wc-tip { position: absolute; z-index: 2; pointer-events: none; min-width: 11em; max-width: 17em; padding: var(--cds-pad-sm) var(--cds-pad-md); background: var(--cds-surface-popover); border: 1px solid var(--cds-border); border-radius: var(--cds-radius); box-shadow: var(--cds-shadow-popover); color: var(--color-fg); font-size: var(--cds-font-size-caption); line-height: 1.5; }
+.wc-tip-h { font-weight: var(--cds-font-weight-medium); margin-bottom: 2px; }
+.wc-tip-r { display: flex; justify-content: space-between; gap: 1.2em; }
+.wc-tip-k { display: inline-flex; align-items: center; gap: 0.4em; color: var(--cds-text-secondary); }
+.wc-tip-v { font-variant-numeric: tabular-nums; white-space: nowrap; }
+.wc-tip-sep { border-top: 1px solid var(--color-border-line); margin-top: 3px; padding-top: 3px; }
+.wc-scroll { overflow-x: auto; min-width: 0; border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); background: var(--color-panel); }
+.wc-table { width: 100%; border-collapse: collapse; font-size: var(--cds-font-size-caption); font-variant-numeric: tabular-nums; }
+.wc-table th { padding: var(--cds-pad-sm) var(--cds-pad-md); text-align: right; font-weight: var(--cds-font-weight-medium); color: var(--color-fg-muted); white-space: nowrap; border-bottom: 1px solid var(--color-border-line); }
+.wc-table td { padding: var(--cds-pad-sm) var(--cds-pad-md); text-align: right; white-space: nowrap; border-bottom: 1px solid var(--color-border-line); }
+.wc-table tr:last-child td { border-bottom: 0; }
+.wc-table th:first-child, .wc-table td:first-child { text-align: left; }
+.wc-table td.wc-empty { text-align: left; color: var(--color-fg-muted); }
+.wc-btn { align-self: flex-start; font: inherit; font-size: var(--cds-font-size-caption); color: var(--color-fg); background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-xs) var(--cds-pad-md); cursor: pointer; }
+.wc-btn:focus-visible { outline: 2px solid var(--color-fg); outline-offset: 2px; }
+.wc-facts { margin: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: var(--cds-gap-sm) var(--cds-gap-lg); }
+.wc-fact { display: flex; flex-direction: column; gap: 2px; padding-top: var(--cds-pad-sm); border-top: 1px solid var(--color-border-line); min-width: 0; }
+.wc-fact dt { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+.wc-fact dd { margin: 0; font-variant-numeric: tabular-nums; }
+.wc-details { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); max-width: 64em; }
+.wc-details summary { cursor: pointer; color: var(--color-fg); font-weight: var(--cds-font-weight-medium); }
+.wc-list { margin: var(--cds-gap-sm) 0 0; padding-left: 1.2em; display: flex; flex-direction: column; gap: var(--cds-gap-xs); }
+</style>
+</head>
+<body>
+<div class="wc-page">
+<main class="wc" lang="ko">
+
+  <header class="wc-head" id="top">
+    <h1 class="wc-title" id="title">WLBN 운용현황</h1>
+    <p class="wc-lede" id="takeaway">10월 27일 새 풀이 열린 뒤 일반 사용자 지갑은 <b data-draw="n" data-source="summary" data-field="user_sold" data-row="0">—</b>개를 팔아 약 <b data-draw="n" data-source="summary" data-field="user_cash_rlusd" data-row="0">—</b> RLUSD를 받았다. 같은 기간 새로 수령한 <b data-draw="n" data-source="summary" data-field="user_paid_after" data-row="0">—</b>개의 <b data-draw="n" data-fmt="pct" data-source="summary" data-field="user_sold_vs_new_paid" data-row="0">—</b>에 해당하고, 10월 26일 재지급분까지 합친 수령량 <b data-draw="n" data-source="summary" data-field="user_paid" data-row="0">—</b>개의 <b data-draw="n" data-fmt="pct" data-source="summary" data-field="user_sold_share" data-row="0">—</b>다.</p>
+    <p class="wc-def" id="definition">일반 사용자 지갑은 지급 계정(사이트 표시 operations)에서 WLBN을 수령한 지갑과 그 지갑에서 이체받은 지갑이다. 사이트가 이름을 붙인 회사 계정은 따로 센다. 수령은 지급 계정에서 지갑으로 들어온 양, 매도는 지갑의 WLBN이 줄고 RLUSD나 XRP가 늘어난 거래다.</p>
+    <p class="wc-asof" id="asof">기준 <span data-draw="n" data-fmt="text" data-source="summary" data-field="as_of" data-row="0">—</span> (한국 시간) · XRPL 공개 원장 기록과 wellbian.io · DexScreener 공개 값 · 매일 자동 갱신 <span class="wc-live" data-live hidden>최신 원장 반영 중…</span></p>
+  </header>
+
+  <section class="wc-tiles" id="tiles" aria-label="일반 사용자 지갑 요약, 10월 26일 이후">
+    <article class="wc-card" id="tile-paid">
+      <h2 class="wc-card-h">수령한 양 · 10/26 이후</h2>
+      <p class="wc-big"><span data-draw="n" data-source="summary" data-field="user_paid" data-row="0">—</span><span class="wc-unit">WLBN</span></p>
+      <p class="wc-sub">지갑 <b data-draw="n" data-source="summary" data-field="wallets" data-row="0">—</b>곳. 10/26 재지급 <b data-draw="n" data-source="summary" data-field="user_repaid_1026" data-row="0">—</b>, 이후 새 수령 <b data-draw="n" data-source="summary" data-field="user_paid_after" data-row="0">—</b></p>
+    </article>
+    <article class="wc-card" id="tile-sold">
+      <h2 class="wc-card-h">판 양 · 10/27 이후</h2>
+      <p class="wc-big"><span data-draw="n" data-source="summary" data-field="user_sold" data-row="0">—</span><span class="wc-unit">WLBN</span></p>
+      <p class="wc-sub">수령량의 <b data-draw="n" data-fmt="pct" data-source="summary" data-field="user_sold_share" data-row="0">—</b>. 판 지갑 <b data-draw="n" data-source="summary" data-field="wallets_sold" data-row="0">—</b>곳, 되산 양 <b data-draw="n" data-source="summary" data-field="user_bought" data-row="0">—</b></p>
+    </article>
+    <article class="wc-card" id="tile-cash">
+      <h2 class="wc-card-h">팔아서 받은 대금 · 10/27 이후</h2>
+      <p class="wc-big"><span data-draw="n" data-source="summary" data-field="user_cash_rlusd" data-row="0">—</span><span class="wc-unit">RLUSD 환산</span></p>
+      <p class="wc-sub">1개당 평균 <b data-draw="n" data-fmt="f3" data-source="summary" data-field="user_avg_sell_price" data-row="0">—</b> RLUSD. 풀에서 인출해 받은 <b data-draw="n" data-source="summary" data-field="user_pool_cash_rlusd" data-row="0">—</b>는 별도</p>
+    </article>
+    <article class="wc-card" id="tile-7d">
+      <h2 class="wc-card-h">하루 평균 매도 · 최근 7일</h2>
+      <p class="wc-big"><span data-draw="n" data-source="summary" data-field="user_sell_7d_avg" data-row="0">—</span><span class="wc-unit">WLBN</span></p>
+      <p class="wc-sub"><span data-draw="n" data-fmt="text" data-source="summary" data-field="win_from" data-row="0">—</span>~<span data-draw="n" data-fmt="text" data-source="summary" data-field="win_to" data-row="0">—</span>. 직전 7일 <b data-draw="n" data-source="summary" data-field="user_sell_prev7d_avg" data-row="0">—</b> 대비 <span data-draw="chg" data-source="summary" data-field="user_sell_7d_change" data-row="0">—</span>. 같은 7일 하루 새 수령 <b data-draw="n" data-source="summary" data-field="user_paid_7d_avg" data-row="0">—</b></p>
+    </article>
+    <article class="wc-card" id="tile-pool">
+      <h2 class="wc-card-h">풀에 넣어 둔 양 · 10/27 이후</h2>
+      <p class="wc-big"><span data-draw="n" data-source="summary" data-field="user_pool_in" data-row="0">—</span><span class="wc-unit">WLBN</span></p>
+      <p class="wc-sub">예치에서 인출을 뺀 양. 지갑에 그대로 있는 양 <b data-draw="n" data-source="summary" data-field="user_balance" data-row="0">—</b></p>
+    </article>
+  </section>
+
+  <section class="wc-sec" id="sec-user-daily">
+    <h2 class="wc-h2" id="h-user-daily">일반 사용자 지갑이 하루에 팔고 산 양</h2>
+    <p class="wc-note">위로 뻗은 막대가 그날 판 양, 아래로 뻗은 막대가 산 양, 선은 그날 새로 수령한 양이다. 단위 WLBN. 마지막 날(<span data-draw="n" data-fmt="md" data-source="summary" data-field="last_day" data-row="0">—</span>)은 기준 시각까지의 값이다.</p>
+    <figure class="wc-fig" data-source="daily">
+      <div class="wc-legend">
+        <span class="wc-key"><i class="wc-sw" data-sw="sell"></i><span data-word="sell">매도</span></span>
+        <span class="wc-key"><i class="wc-sw" data-sw="buy"></i><span data-word="buy">매수</span></span>
+        <span class="wc-key"><i class="wc-sw wc-sw-line" data-sw="paid"></i><span data-word="paid">새 수령</span></span>
+      </div>
+      <div class="wc-chart dash-skeleton" id="chart-user-daily" data-draw="userDaily" data-label="일반 사용자 지갑의 날짜별 매도, 매수, 새 수령량 막대 차트"></div>
+    </figure>
+  </section>
+
+  <section class="wc-sec" id="sec-cum">
+    <h2 class="wc-h2" id="h-cum">쌓인 수령량과 쌓인 순매도</h2>
+    <p class="wc-note">10월 26일 재지급분에서 시작한다. 순매도는 판 양에서 되산 양을 뺀 값이다. 단위 WLBN.</p>
+    <figure class="wc-fig" data-source="daily">
+      <div class="wc-legend">
+        <span class="wc-key"><i class="wc-sw wc-sw-line" data-sw="paid"></i><span data-word="cumPaid">수령 누적</span></span>
+        <span class="wc-key"><i class="wc-sw wc-sw-line" data-sw="sell"></i><span data-word="cumSold">순매도 누적</span></span>
+      </div>
+      <div class="wc-chart wc-chart-sm dash-skeleton" id="chart-cum" data-draw="cum" data-label="일반 사용자 지갑의 수령 누적과 순매도 누적 선 차트"></div>
+    </figure>
+  </section>
+
+  <section class="wc-sec" id="sec-market">
+    <h2 class="wc-h2" id="h-market">시장 전체에서 누가 팔고 누가 샀나</h2>
+    <p class="wc-say" id="market-say">새 풀이 열린 뒤 시장 전체로는 산 양이 판 양보다 <b data-draw="n" data-source="summary" data-field="net_bought_total" data-row="0">—</b>개 많다. 산 양 <b data-draw="n" data-source="summary" data-field="buy_total" data-row="0">—</b>개 가운데 <b data-draw="n" data-source="summary" data-field="bot_bought" data-row="0">—</b>개(<b data-draw="n" data-fmt="pct" data-source="summary" data-field="bot_buy_share" data-row="0">—</b>)는 사이트가 bot으로 표시한 계정 한 곳이 샀다. 이 계정을 빼면 판 양이 산 양보다 <b data-draw="n" data-source="summary" data-field="net_sold_ex_bot" data-row="0">—</b>개 많다. kweather 표시 계정은 <b data-draw="n" data-source="summary" data-field="kweather_paid" data-row="0">—</b>개를 수령했고(10/27 재지급 <b data-draw="n" data-source="summary" data-field="kweather_repaid_1027" data-row="0">—</b> 포함) 판 양은 <b data-draw="n" data-source="summary" data-field="kweather_sold" data-row="0">—</b>개다.</p>
+    <p class="wc-note">위쪽이 판 양, 아래쪽이 산 양이다. 상대는 풀이라서 하루의 판 양과 산 양은 서로 다를 수 있다. 단위 WLBN.</p>
+    <figure class="wc-fig" data-source="daily">
+      <div class="wc-legend">
+        <span class="wc-key"><i class="wc-sw" data-sw="user"></i><span data-word="user">일반 사용자 지갑</span></span>
+        <span class="wc-key"><i class="wc-sw" data-sw="arb"></i><span data-word="arb">사고팔기만 한 지갑</span></span>
+        <span class="wc-key"><i class="wc-sw" data-sw="other"></i><span data-word="other">그 밖의 지갑</span></span>
+        <span class="wc-key"><i class="wc-sw" data-sw="bot"></i><span data-word="bot">bot 표시 계정</span></span>
+      </div>
+      <div class="wc-chart dash-skeleton" id="chart-market" data-draw="market" data-label="날짜별로 지갑 묶음마다 판 양과 산 양을 쌓은 막대 차트"></div>
+    </figure>
+    <div class="wc-scroll">
+      <table class="wc-table" id="table-groups" data-source="groups" data-row-key="key">
+        <thead><tr>
+          <th data-field="group">지갑 묶음</th><th data-field="wallets">지갑 수</th><th data-field="sold">매도</th><th data-field="bought">매수</th><th data-field="net_sold">순매도</th><th data-field="paid">수령</th><th data-field="cash_rlusd">받은 대금(RLUSD 환산)</th>
+        </tr></thead>
+        <tbody data-draw="groupRows"></tbody>
+      </table>
+    </div>
+    <p class="wc-note">10월 26일 이후 합계. 사고팔기만 한 지갑은 수령 기록 없이 산 양과 판 양이 거의 같은 지갑이다.</p>
+  </section>
+
+  <section class="wc-sec" id="sec-wallets">
+    <h2 class="wc-h2" id="h-wallets">지갑별 내역 · 일반 사용자 지갑</h2>
+    <p class="wc-note">10월 26일 이후, 많이 판 순서. 풀 예치는 넣은 양에서 뺀 양을 뺀 값이고, 잔액은 기준 시각의 지갑 보유량이다. 단위 WLBN, 받은 대금만 RLUSD 환산.</p>
+    <div class="wc-scroll">
+      <table class="wc-table" id="table-wallets" data-source="wallets" data-row-key="wallet">
+        <thead><tr>
+          <th data-field="wallet">지갑</th><th data-field="paid">수령</th><th data-field="sold">매도</th><th data-field="bought">매수</th><th data-field="cash_rlusd">받은 대금</th><th data-field="pool_in">풀 예치</th><th data-field="balance">잔액</th><th data-field="last_sell">마지막 매도</th>
+        </tr></thead>
+        <tbody data-draw="walletRows"></tbody>
+      </table>
+    </div>
+    <button type="button" class="wc-btn" data-act="more">전체 지갑 보기</button>
+    <button type="button" class="wc-btn" data-act="less" hidden>많이 판 15곳만 보기</button>
+  </section>
+
+  <section class="wc-sec" id="sec-facts">
+    <h2 class="wc-h2" id="h-facts">시장과 네트워크 · 사이트와 DexScreener가 공개한 값</h2>
+    <dl class="wc-facts">
+      <div class="wc-fact" id="fact-price"><dt>가격</dt><dd>1개당 <span data-draw="n" data-fmt="f4" data-source="summary" data-field="price_rlusd" data-row="0">—</span> RLUSD (RLUSD 풀) · DexScreener <span data-draw="n" data-fmt="f4" data-source="summary" data-field="price_usd_dex" data-row="0">—</span>달러</dd></div>
+      <div class="wc-fact" id="fact-pool-r"><dt>RLUSD 풀에 든 양</dt><dd><span data-draw="n" data-source="summary" data-field="pool_r_wlbn" data-row="0">—</span> WLBN + <span data-draw="n" data-source="summary" data-field="pool_r_rlusd" data-row="0">—</span> RLUSD</dd></div>
+      <div class="wc-fact" id="fact-pool-x"><dt>XRP 풀에 든 양</dt><dd><span data-draw="n" data-source="summary" data-field="pool_x_wlbn" data-row="0">—</span> WLBN + <span data-draw="n" data-source="summary" data-field="pool_x_xrp" data-row="0">—</span> XRP</dd></div>
+      <div class="wc-fact" id="fact-dex"><dt>최근 24시간 거래 · DexScreener, XRP 풀</dt><dd>매수 <span data-draw="n" data-source="summary" data-field="dex_h24_buys" data-row="0">—</span>건 · 매도 <span data-draw="n" data-source="summary" data-field="dex_h24_sells" data-row="0">—</span>건 · <span data-draw="n" data-source="summary" data-field="dex_h24_volume_usd" data-row="0">—</span>달러</dd></div>
+      <div class="wc-fact" id="fact-holders"><dt>WLBN을 가진 지갑</dt><dd><span data-draw="n" data-source="summary" data-field="holders" data-row="0">—</span>곳 (신뢰선 <span data-draw="n" data-source="summary" data-field="trustlines" data-row="0">—</span>)</dd></div>
+      <div class="wc-fact" id="fact-devices"><dt>등록 기기</dt><dd><span data-draw="n" data-source="summary" data-field="devices_total" data-row="0">—</span>대 (활성 <span data-draw="n" data-source="summary" data-field="devices_active" data-row="0">—</span>) · 운영자 <span data-draw="n" data-source="summary" data-field="operators" data-row="0">—</span>곳</dd></div>
+      <div class="wc-fact" id="fact-kw"><dt>kweather 표시 계정의 기기</dt><dd><span data-draw="n" data-source="summary" data-field="kweather_devices" data-row="0">—</span>대</dd></div>
+      <div class="wc-fact" id="fact-epoch"><dt>하루 배분 · <span data-draw="n" data-fmt="text" data-source="summary" data-field="epoch_date" data-row="0">—</span></dt><dd><span data-draw="n" data-source="summary" data-field="epoch_distributed" data-row="0">—</span>개 배분 · 하루 예산 <span data-draw="n" data-source="summary" data-field="epoch_budget" data-row="0">—</span>개</dd></div>
+    </dl>
+  </section>
+
+  <section class="wc-sec" id="sec-before" data-need="before" hidden>
+    <h2 class="wc-h2" id="h-before">이전 풀 기간 · 10월 2일~24일</h2>
+    <p class="wc-say" id="before-say">10월 24일 밤 지갑 <b data-draw="n" data-source="summary" data-field="sweep_from_wallets" data-row="0">—</b>곳의 WLBN이 한 주소로 옮겨졌고, 그 주소가 <b data-draw="n" data-source="summary" data-field="sweep_sold" data-row="0">—</b>개를 팔아 <b data-draw="n" data-source="summary" data-field="sweep_got_rlusd" data-row="0">—</b> RLUSD와 <b data-draw="n" data-source="summary" data-field="sweep_got_xrp" data-row="0">—</b> XRP를 받았다. 가장 많이 옮겨진 지갑 한 곳의 양이 <b data-draw="n" data-source="summary" data-field="sweep_largest_source" data-row="0">—</b>개다. 10월 26~27일에 지급 계정이 <b data-draw="n" data-source="summary" data-field="repaid_total" data-row="0">—</b>개를 새 지갑들로 다시 지급했고, 이 재지급분은 위 수령량에 들어 있다. 이 주소의 매도는 일반 사용자 지갑의 매도에 넣지 않았다.</p>
+    <div class="wc-scroll">
+      <table class="wc-table" id="table-before" data-source="before" data-row-key="key">
+        <thead><tr>
+          <th data-field="group">지갑 묶음</th><th data-field="wallets">지갑 수</th><th data-field="sold">매도</th><th data-field="bought">매수</th><th data-field="net_sold">순매도</th><th data-field="paid">수령</th><th data-field="got_rlusd">받은 RLUSD</th><th data-field="got_xrp">받은 XRP</th>
+        </tr></thead>
+        <tbody data-draw="beforeRows"></tbody>
+      </table>
+    </div>
+    <p class="wc-note">이전 풀은 10월 2일에 열려 10월 24일에 닫혔다. 이 기간의 대금은 환산하지 않고 받은 RLUSD와 XRP를 그대로 적었다.</p>
+  </section>
+
+  <details class="wc-details" id="notes">
+    <summary>집계 기준과 한계</summary>
+    <ul class="wc-list">
+      <li>원장에서 WLBN 잔액이 바뀐 거래를 모두 읽어 지갑마다 더했다. 지갑의 WLBN이 줄고 RLUSD나 XRP가 늘면 매도, 반대면 매수다. 한 거래 안에서 사고파는 경로 거래는 지갑 잔액이 바뀌지 않으므로 넣지 않았다. 그래서 거래 건수는 DexScreener 숫자와 다를 수 있다.</li>
+      <li>받은 대금은 실제로 받은 RLUSD에, 받은 XRP를 그 시점 두 풀의 가격으로 RLUSD로 바꾼 값을 더했다. 원화로 바꿨는지, 거래소로 보냈는지는 원장만으로는 알 수 없다.</li>
+      <li>지갑 묶음은 원장 기록으로 나눈 것이다. 회사 표시 계정은 wellbian.io가 이름을 붙여 공개한 계정이고, 그 밖의 지갑이 누구 것인지는 알 수 없다. 한 사람이 지갑을 여러 개 쓸 수 있다.</li>
+      <li>수령에는 기기 보상 말고도 지급 계정이 지갑으로 보낸 모든 WLBN이 들어 있다. 일반 사용자 지갑의 매도에는 그 지갑이 풀에서 산 뒤 다시 판 양도 들어 있다.</li>
+      <li>풀에 넣어 둔 양은 넣은 WLBN에서 뺀 WLBN을 뺀 값이라, 지금 풀에서 찾을 수 있는 양과는 다르다.</li>
+      <li>원장에서 읽은 숫자와 사이트 · DexScreener 값은 받은 시각이 몇 분씩 다르다.</li>
+    </ul>
+  </details>
+
+  <div hidden>
+    <span data-word="err">이 부분의 데이터를 불러오지 못했습니다.</span>
+    <span data-word="net">순매도</span>
+    <span data-word="sellers">판 지갑 수</span>
+    <span data-word="cash">받은 대금(RLUSD 환산)</span>
+    <span data-word="price">그날 가격(RLUSD)</span>
+    <span data-word="sellSum">판 양 합계</span>
+    <span data-word="buySum">산 양 합계</span>
+    <span data-word="partial">기준 시각까지</span>
+  </div>
+</main>
+<p class="wc-foot" id="foot">원장 기록으로 집계한 값이다. 지갑이 누구 것인지는 원장만으로 알 수 없다. 지급량과 가치는 보장되지 않으며, 이 화면은 투자 판단을 위한 자료가 아니다.</p>
+</div>
+<script src="d3.min.js"></script>
+<script>
+// 화면에 자료를 대는 작은 틀: 묶음에 든 자료로 먼저 그리고, 최신 자료가 오면 다시 그린다.
+(function () {
+  var DATA = null, draws = {}, order = [];
+  function run(name) {
+    var fn = draws[name]; if (!fn) return;
+    document.querySelectorAll('[data-draw="' + name + '"]').forEach(function (el) { try { fn(el); } catch (e) { if (window.console) console.error(name, e); } });
+  }
+  function runAll() { order.forEach(run); }
+  function css(v) { return 'var(' + v + ')'; }
+  window.dash = {
+    colors: [css('--s1'), css('--s2'), css('--s3'), css('--s4')],
+    data: function (id) { return DATA && DATA[id] ? { status: 'ok', data: DATA[id] } : { status: DATA ? 'missing' : 'loading', data: [] }; },
+    draw: function (name, fn) { if (fn) { draws[name] = fn; order.push(name); } else run(name); },
+  };
+  function show(d) {
+    if (!d || !d.summary || !d.daily) return;
+    if (DATA && DATA.summary && d.summary[0] && DATA.summary[0].as_of > d.summary[0].as_of) return;   // 더 옛 자료로 덮지 않는다
+    DATA = d;
+    document.querySelectorAll('[data-need]').forEach(function (el) { el.hidden = !d[el.getAttribute('data-need')]; });
+    runAll();
+  }
+  function get(url) { return fetch(url, { headers: { accept: 'application/json' } }).then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); }); }
+  window.addEventListener('DOMContentLoaded', function () {
+    runAll();
+    var live = document.querySelector('[data-live]');
+    get('snapshot.json').then(show).catch(function () {});
+    if (live) live.hidden = false;
+    get('api/data').then(show).catch(function () {}).then(function () { if (live) live.hidden = true; });
+    var t = null;
+    window.addEventListener('resize', function () { clearTimeout(t); t = setTimeout(runAll, 120); });
+    if (window.matchMedia) { var mq = window.matchMedia('(prefers-color-scheme: dark)'); if (mq.addEventListener) mq.addEventListener('change', runAll); }
+  });
+})();
+</script>
+<script>
+(function () {
+  var POOL_OPEN = '2026-10-27';            // 새 풀 두 곳이 열린 날 (한국 시간)
+  var TOP_WALLETS = 15;                    // 지갑 표를 처음에 보여 주는 줄 수
+  var root = document.querySelector('.wc');
+  if (!root) return;
+  var C = dash.colors || [];
+  function col(i) { return C.length ? C[i % C.length] : 'var(--color-fg)'; }
+  var INK = 'var(--color-fg-muted)', MUTED = 'var(--cds-chart-muted)';
+  var SW = { sell: col(0), buy: MUTED, paid: INK, user: col(0), arb: col(1), other: col(2), bot: col(3) };
+  var GROUPS = ['user', 'arb', 'other', 'bot'];
+  function md(s) { var p = String(s).split('-'); return p.length === 3 ? (+p[1]) + '/' + (+p[2]) : String(s); }
+  var FMT = {
+    int: d3.format(',.0f'), pct: d3.format('.1%'), spct: d3.format('+.1%'), f3: d3.format('.3f'), f4: d3.format('.4f'),
+    text: function (v) { return String(v); }, md: md
+  };
+  function word(key) {
+    var el = root.querySelector('[data-word="' + key + '"]');
+    return el ? el.textContent : '';
+  }
+  root.querySelectorAll('[data-sw]').forEach(function (el) { el.style.background = SW[el.dataset.sw] || INK; });
+
+  // 숫자 한 칸
+  function cell(el) {
+    var s = dash.data(el.dataset.source);
+    if (s.status !== 'ok' || !s.data || !s.data.length) return null;
+    var r = s.data[+(el.dataset.row || 0)];
+    var v = r ? r[el.dataset.field] : null;
+    return (v === null || v === undefined || v === '') ? null : v;
+  }
+  dash.draw('n', function (el) {
+    var v = cell(el);
+    el.textContent = v === null ? '—' : (FMT[el.dataset.fmt || 'int'] || FMT.int)(v);
+  });
+  dash.draw('chg', function (el) {
+    var v = cell(el);
+    el.className = v === null ? '' : ('wc-chg ' + (v > 0 ? 'wc-up' : 'wc-down'));
+    el.textContent = v === null ? '—' : FMT.spct(v);
+  });
+
+  // 차트 공통
+  function setup(el, status, height) {
+    el.classList.toggle('dash-skeleton', status === 'loading');
+    el.replaceChildren();
+    if (status !== 'ok') {
+      if (status !== 'loading') el.textContent = status === 'error' ? word('err') : '—';
+      return null;
+    }
+    var w = Math.max(260, Math.floor(el.clientWidth));
+    var box = d3.select(el).append('div').attr('class', 'wc-plot');
+    var svg = box.append('svg').attr('class', 'wc-svg').attr('viewBox', '0 0 ' + w + ' ' + height).attr('width', '100%').attr('height', height)
+      .attr('role', 'img').attr('aria-label', el.dataset.label || '');
+    var tip = box.append('div').attr('class', 'wc-tip').node();
+    tip.hidden = true;
+    return { w: w, h: height, svg: svg, tip: tip, box: box.node() };
+  }
+  function textW(svg, strs, cls) {
+    var t = svg.append('text').attr('class', cls).attr('visibility', 'hidden'), m = 0;
+    strs.forEach(function (s) { t.text(s); m = Math.max(m, t.node().getComputedTextLength()); });
+    t.remove();
+    return m;
+  }
+  function absInt(v) { return FMT.int(Math.abs(v)); }
+  function axes(f, y, ticks, days, xc, m) {
+    var g = f.svg.append('g');
+    g.selectAll('line').data(ticks).join('line').attr('x1', m.l).attr('x2', f.w - m.r)
+      .attr('y1', function (d) { return y(d); }).attr('y2', function (d) { return y(d); })
+      .style('stroke', function (d) { return d === 0 ? 'var(--cds-chart-axis)' : 'var(--cds-chart-grid)'; });
+    g.selectAll('text.y').data(ticks).join('text').attr('class', 'wc-tick y').attr('x', m.l - 6).attr('y', function (d) { return y(d); })
+      .attr('dy', '0.32em').attr('text-anchor', 'end').text(absInt);
+    var room = Math.max(2, Math.floor((f.w - m.l - m.r) / 44));
+    var step = Math.max(1, Math.ceil(days.length / room));
+    var pick = days.filter(function (d, i) { return (days.length - 1 - i) % step === 0; });
+    g.selectAll('text.x').data(pick).join('text').attr('class', 'wc-tick x').attr('x', function (d) { return xc(d); })
+      .attr('y', f.h - m.b + 16).attr('text-anchor', 'middle').text(md);
+    return g;
+  }
+  function tipRows(title, items) {
+    var out = [];
+    var h = document.createElement('div'); h.className = 'wc-tip-h'; h.textContent = title; out.push(h);
+    items.forEach(function (it) {
+      var r = document.createElement('div'); r.className = 'wc-tip-r' + (it.sep ? ' wc-tip-sep' : '');
+      var k = document.createElement('span'); k.className = 'wc-tip-k';
+      if (it.color) { var sw = document.createElement('i'); sw.className = 'wc-sw'; sw.style.background = it.color; k.appendChild(sw); }
+      k.appendChild(document.createTextNode(it.label));
+      var v = document.createElement('span'); v.className = 'wc-tip-v'; v.textContent = it.value;
+      r.appendChild(k); r.appendChild(v); out.push(r);
+    });
+    return out;
+  }
+  function hover(f, days, xc, step, m, content) {
+    var band = f.svg.insert('rect', ':first-child').attr('class', 'wc-band').attr('y', m.t).attr('height', f.h - m.t - m.b)
+      .attr('width', step).attr('visibility', 'hidden');
+    var over = f.svg.append('rect').attr('x', m.l).attr('y', 0).attr('width', Math.max(0, f.w - m.l - m.r)).attr('height', f.h)
+      .attr('fill', 'transparent');
+    function show(ev) {
+      var px = d3.pointer(ev, f.svg.node())[0];
+      var i = Math.round((px - xc(days[0])) / step);
+      i = Math.max(0, Math.min(days.length - 1, i));
+      var d = days[i];
+      band.attr('x', xc(d) - step / 2).attr('visibility', 'visible');
+      f.tip.replaceChildren.apply(f.tip, content(d));
+      f.tip.hidden = false;
+      var bw = f.box.clientWidth, k = bw / f.w, tw = f.tip.offsetWidth;
+      var left = xc(d) * k + 14;
+      if (left + tw > bw) left = xc(d) * k - tw - 14;
+      f.tip.style.left = Math.max(0, left) + 'px';
+      f.tip.style.top = m.t + 'px';
+    }
+    function hide() { f.tip.hidden = true; band.attr('visibility', 'hidden'); }
+    over.on('pointermove', show).on('pointerdown', show).on('pointerleave', hide);
+  }
+  function dayTitle(r) { return md(r.date) + (r.partial ? ' · ' + word('partial') : ''); }
+
+  // 1) 일반 사용자 지갑: 하루 매도 · 매수 · 새 수령
+  dash.draw('userDaily', function (el) {
+    var s = dash.data('daily'), f = setup(el, s.status, 300);
+    if (!f) return;
+    var rows = s.data.filter(function (r) { return r.date >= POOL_OPEN; });
+    if (!rows.length) { el.textContent = '—'; return; }
+    var days = rows.map(function (r) { return r.date; }), by = new Map(rows.map(function (r) { return [r.date, r]; }));
+    var up = d3.max(rows, function (r) { return Math.max(r.sell_user, r.paid_user); }) || 1, dn = d3.max(rows, function (r) { return r.buy_user; }) || 0;
+    var y = d3.scaleLinear().domain([-dn, up]).nice(5), ticks = y.ticks(5);
+    var m = { t: 12, r: 10, b: 26, l: Math.ceil(textW(f.svg, ticks.map(absInt), 'wc-tick')) + 12 };
+    y.range([f.h - m.b, m.t]);
+    var x = d3.scaleBand().domain(days).range([m.l, f.w - m.r]).paddingInner(0.28).paddingOuter(0.14);
+    var xc = function (d) { return x(d) + x.bandwidth() / 2; };
+    var g = axes(f, y, ticks, days, xc, m), rx = Math.min(2.5, x.bandwidth() / 2);
+    g.selectAll('rect.s').data(rows).join('rect').attr('class', 's').attr('x', function (r) { return x(r.date); }).attr('width', x.bandwidth())
+      .attr('y', function (r) { return y(r.sell_user); }).attr('height', function (r) { return Math.max(0, y(0) - y(r.sell_user)); }).attr('rx', rx)
+      .style('fill', SW.sell).style('opacity', function (r) { return r.partial ? 0.55 : 1; });
+    g.selectAll('rect.b').data(rows).join('rect').attr('class', 'b').attr('x', function (r) { return x(r.date); }).attr('width', x.bandwidth())
+      .attr('y', y(0)).attr('height', function (r) { return Math.max(0, y(-r.buy_user) - y(0)); }).attr('rx', rx)
+      .style('fill', SW.buy).style('opacity', function (r) { return r.partial ? 0.55 : 1; });
+    var line = d3.line().x(function (r) { return xc(r.date); }).y(function (r) { return y(r.paid_user); });
+    g.append('path').attr('d', line(rows)).attr('fill', 'none').attr('stroke-width', 1.5).style('stroke', SW.paid);
+    g.selectAll('circle').data(rows).join('circle').attr('cx', function (r) { return xc(r.date); }).attr('cy', function (r) { return y(r.paid_user); })
+      .attr('r', 2).style('fill', SW.paid);
+    hover(f, days, xc, x.step(), m, function (d) {
+      var r = by.get(d);
+      return tipRows(dayTitle(r), [
+        { label: word('sell'), value: FMT.int(r.sell_user), color: SW.sell },
+        { label: word('buy'), value: FMT.int(r.buy_user), color: SW.buy },
+        { label: word('net'), value: FMT.int(r.net_sell_user) },
+        { label: word('paid'), value: FMT.int(r.paid_user), color: SW.paid, sep: true },
+        { label: word('sellers'), value: FMT.int(r.user_sellers) },
+        { label: word('cash'), value: FMT.int(r.cash_user_rlusd) },
+        { label: word('price'), value: r.price_rlusd === null || r.price_rlusd === undefined ? '—' : FMT.f4(r.price_rlusd) }
+      ]);
+    });
+  });
+
+  // 2) 수령 누적과 순매도 누적
+  dash.draw('cum', function (el) {
+    var s = dash.data('daily'), f = setup(el, s.status, 240);
+    if (!f) return;
+    var rows = s.data;
+    if (!rows.length) { el.textContent = '—'; return; }
+    var days = rows.map(function (r) { return r.date; }), by = new Map(rows.map(function (r) { return [r.date, r]; })), last = rows[rows.length - 1];
+    var lo = Math.min(0, d3.min(rows, function (r) { return r.cum_net_sold_user; }) || 0);
+    var y = d3.scaleLinear().domain([lo, d3.max(rows, function (r) { return r.cum_paid_user; }) || 1]).nice(4), ticks = y.ticks(4);
+    var ends = [FMT.int(last.cum_paid_user), FMT.int(last.cum_net_sold_user)];
+    var m = { t: 14, r: Math.ceil(textW(f.svg, ends, 'wc-end')) + 14, b: 26, l: Math.ceil(textW(f.svg, ticks.map(absInt), 'wc-tick')) + 12 };
+    y.range([f.h - m.b, m.t]);
+    var x = d3.scalePoint().domain(days).range([m.l, f.w - m.r]).padding(0.2);
+    var xc = function (d) { return x(d); };
+    var g = axes(f, y, ticks, days, xc, m);
+    [['cum_paid_user', SW.paid], ['cum_net_sold_user', SW.sell]].forEach(function (p) {
+      var line = d3.line().x(function (r) { return xc(r.date); }).y(function (r) { return y(r[p[0]]); });
+      g.append('path').attr('d', line(rows)).attr('fill', 'none').attr('stroke-width', 2).attr('stroke-linejoin', 'round').style('stroke', p[1]);
+      g.append('circle').attr('cx', xc(last.date)).attr('cy', y(last[p[0]])).attr('r', 3.5).style('fill', p[1]).style('stroke', 'var(--color-bg)').attr('stroke-width', 2);
+    });
+    var y1 = y(last.cum_paid_user), y2 = y(last.cum_net_sold_user);
+    if (Math.abs(y1 - y2) < 14) { var mid = (y1 + y2) / 2, upper = y1 <= y2; y1 = mid + (upper ? -7 : 7); y2 = mid + (upper ? 7 : -7); }
+    g.append('text').attr('class', 'wc-end').attr('x', xc(last.date) + 8).attr('y', y1).attr('dy', '0.32em').text(ends[0]);
+    g.append('text').attr('class', 'wc-end').attr('x', xc(last.date) + 8).attr('y', y2).attr('dy', '0.32em').text(ends[1]);
+    hover(f, days, xc, x.step(), m, function (d) {
+      var r = by.get(d);
+      return tipRows(dayTitle(r), [
+        { label: word('cumPaid'), value: FMT.int(r.cum_paid_user), color: SW.paid },
+        { label: word('cumSold'), value: FMT.int(r.cum_net_sold_user), color: SW.sell }
+      ]);
+    });
+  });
+
+  // 3) 시장 전체: 묶음별 판 양(위) · 산 양(아래)
+  dash.draw('market', function (el) {
+    var s = dash.data('daily'), f = setup(el, s.status, 320);
+    if (!f) return;
+    var rows = s.data.filter(function (r) { return r.date >= POOL_OPEN; });
+    if (!rows.length) { el.textContent = '—'; return; }
+    var days = rows.map(function (r) { return r.date; }), by = new Map(rows.map(function (r) { return [r.date, r]; }));
+    var sum = function (r, side) { return d3.sum(GROUPS, function (k) { return r[side + '_' + k] || 0; }); };
+    var up = d3.max(rows, function (r) { return sum(r, 'sell'); }) || 1, dn = d3.max(rows, function (r) { return sum(r, 'buy'); }) || 0;
+    var y = d3.scaleLinear().domain([-dn, up]).nice(6), ticks = y.ticks(6);
+    var m = { t: 12, r: 10, b: 26, l: Math.ceil(textW(f.svg, ticks.map(absInt), 'wc-tick')) + 12 };
+    y.range([f.h - m.b, m.t]);
+    var x = d3.scaleBand().domain(days).range([m.l, f.w - m.r]).paddingInner(0.28).paddingOuter(0.14);
+    var xc = function (d) { return x(d) + x.bandwidth() / 2; };
+    var g = axes(f, y, ticks, days, xc, m), segs = [];
+    rows.forEach(function (r) {
+      var a = 0, b = 0;
+      GROUPS.forEach(function (k) {
+        var v = r['sell_' + k] || 0, u = r['buy_' + k] || 0;
+        if (v > 0) { segs.push({ d: r.date, k: k, y0: y(a + v), y1: y(a), p: r.partial }); a += v; }
+        if (u > 0) { segs.push({ d: r.date, k: k, y0: y(-b), y1: y(-b - u), p: r.partial }); b += u; }
+      });
+    });
+    g.selectAll('rect.g').data(segs).join('rect').attr('class', 'g').attr('x', function (d) { return x(d.d); }).attr('width', x.bandwidth())
+      .attr('y', function (d) { return d.y0 + (d.y1 - d.y0 > 3 ? 1 : 0); }).attr('height', function (d) { var h = d.y1 - d.y0; return Math.max(0.5, h > 3 ? h - 1 : h); })
+      .style('fill', function (d) { return SW[d.k]; }).style('opacity', function (d) { return d.p ? 0.55 : 1; });
+    hover(f, days, xc, x.step(), m, function (d) {
+      var r = by.get(d), items = [{ label: word('sellSum'), value: FMT.int(sum(r, 'sell')) }];
+      GROUPS.forEach(function (k) { if (r['sell_' + k] > 0) items.push({ label: word(k), value: FMT.int(r['sell_' + k]), color: SW[k] }); });
+      items.push({ label: word('buySum'), value: FMT.int(sum(r, 'buy')), sep: true });
+      GROUPS.forEach(function (k) { if (r['buy_' + k] > 0) items.push({ label: word(k), value: FMT.int(r['buy_' + k]), color: SW[k] }); });
+      return tipRows(dayTitle(r), items);
+    });
+  });
+
+  // 표
+  function tableRows(name, id, key, cols, pick) {
+    dash.draw(name, function (tb) {
+      var s = dash.data(id);
+      tb.replaceChildren();
+      if (s.status !== 'ok') {
+        if (s.status === 'loading') return;
+        var td0 = tb.insertRow().insertCell(); td0.colSpan = cols.length; td0.className = 'wc-empty';
+        td0.textContent = s.status === 'error' ? word('err') : '—';
+        return;
+      }
+      (pick ? pick(s.data) : s.data).forEach(function (r) {
+        var tr = tb.insertRow(); tr.dataset.key = encodeURIComponent(r[key]);
+        cols.forEach(function (c) {
+          var v = r[c[0]], td = tr.insertCell();
+          td.textContent = (v === null || v === undefined || v === '') ? '—' : FMT[c[1]](v);
+        });
+      });
+    });
+  }
+  tableRows('groupRows', 'groups', 'key', [['group', 'text'], ['wallets', 'int'], ['sold', 'int'], ['bought', 'int'], ['net_sold', 'int'], ['paid', 'int'], ['cash_rlusd', 'int']]);
+  tableRows('beforeRows', 'before', 'key', [['group', 'text'], ['wallets', 'int'], ['sold', 'int'], ['bought', 'int'], ['net_sold', 'int'], ['paid', 'int'], ['got_rlusd', 'int'], ['got_xrp', 'int']]);
+  var showAll = false;
+  tableRows('walletRows', 'wallets', 'wallet', [['wallet', 'text'], ['paid', 'int'], ['sold', 'int'], ['bought', 'int'], ['cash_rlusd', 'int'], ['pool_in', 'int'], ['balance', 'int'], ['last_sell', 'md']],
+    function (rows) { return showAll ? rows : rows.slice(0, TOP_WALLETS); });
+  root.querySelectorAll('[data-act]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      showAll = btn.dataset.act === 'more';
+      root.querySelectorAll('[data-act]').forEach(function (b) { b.hidden = (b.dataset.act === 'more') === showAll; });
+      dash.draw('walletRows');
+    });
+  });
+})();
+</script>
+</body>
+</html>
