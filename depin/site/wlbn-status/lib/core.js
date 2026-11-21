@@ -18,7 +18,7 @@ const C = {
 };
 const RIPPLE_EPOCH = 946684800;
 const EPS = 1e-7;
-const KEYS = ['sold', 'bought', 'cash', 'cash_r', 'cash_x', 'spent', 'lpw', 'lpq', 'paid', 'paidco', 'tin', 'tout', 'esc', 'burn'];
+const KEYS = ['sold', 'bought', 'cash', 'cash_r', 'cash_x', 'spent', 'spent_r', 'spent_x', 'lpw', 'lpq', 'lpr', 'lpx', 'paid', 'paidco', 'tin', 'tout', 'esc', 'burn'];
 const GR = ['user', 'arb', 'other', 'bot', 'kweather', 'company'];
 const NAME = {
   user: '일반 사용자 지갑', arb: '사고팔기만 한 지갑', other: '그 밖의 지갑', bot: 'bot 표시 계정',
@@ -33,8 +33,8 @@ function add(o, k, v) { o[k] = (o[k] || 0) + v; }
 function newState() {
   const period = () => { const o = {}; KEYS.forEach((k) => { o[k] = {}; }); return o; };
   return {
-    v: 1, ledger: 0, asof: 0, bal: {}, st: { before: period(), now: period() }, lastSell: {}, edges: {}, amms: {}, paidN: {},
-    ev: {}, pools: { R: { w: 0, q: 0 }, X: { w: 0, q: 0 } }, eod: {}, pR: 0, pX: 0, labels: {}, ext: {},
+    v: 2, ledger: 0, asof: 0, bal: {}, st: { before: period(), now: period() }, lastSell: {}, edges: {}, amms: {}, paidN: {},
+    ev: {}, pools: { R: { w: 0, q: 0 }, X: { w: 0, q: 0 } }, eod: {}, eodX: {}, eodPool: {}, pR: 0, pX: 0, labels: {}, ext: {},
   };
 }
 
@@ -86,24 +86,27 @@ function applyTx(S, tx, meta) {
   }
   if (dx) {
     S.pools.X.w += dx[0]; S.pools.X.q += dx[2] - (tx.Account === C.AMM_X ? Number(tx.Fee || 0) / 1e6 : 0);
-    if (S.pools.X.w > 0 && S.pools.X.q > 0) S.pX = S.pools.X.q / S.pools.X.w;
+    if (S.pools.X.w > 0 && S.pools.X.q > 0) { S.pX = S.pools.X.q / S.pools.X.w; S.eodX[k] = S.pX; }
   }
+  if ((dr || dx) && per === 'now') S.eodPool[k] = [Math.round(S.pools.R.w), Math.round(S.pools.R.q), Math.round(S.pools.X.w), Math.round(S.pools.X.q)];
   const rate = per === 'now' && S.pR > 0 && S.pX > 0 ? S.pR / S.pX : 0;   // XRP 1개당 RLUSD
 
   const mv = [];
   for (const [a, v] of d) if (Math.abs(v[0]) > EPS && a !== C.ISSUER) { mv.push([a, v]); add(S.bal, a, v[0]); }
   if (!mv.length) return;
-  const ev = (a, kind, w, val) => {
+  // 날짜 · 지갑 · 종류별 합계. sell: [WLBN, 대금 환산, RLUSD 풀로, XRP 풀로, 받은 RLUSD, 받은 XRP]
+  // buy: [WLBN, 든 돈 환산, RLUSD 풀에서, XRP 풀에서, 낸 RLUSD, 낸 XRP] · lp: [넣은 WLBN, 받은 대금 환산, 넣은 RLUSD, 넣은 XRP] · paid/paidco: [WLBN]
+  const ev = (a, kind, arr) => {
     if (per !== 'now') return;
-    const key = k + '|' + a + '|' + kind, e = S.ev[key] || (S.ev[key] = [0, 0]);
-    e[0] += w; e[1] += val;
+    const key = k + '|' + a + '|' + kind, e = S.ev[key] || (S.ev[key] = arr.map(() => 0));
+    for (let i = 0; i < arr.length; i++) e[i] = (e[i] || 0) + arr[i];
   };
 
   if (ty.startsWith('AMM')) {
     for (const [a, v] of mv) {
       if (S.amms[a]) continue;
       const q = v[1] + v[2] * rate;
-      add(P.lpw, a, -v[0]); add(P.lpq, a, q); ev(a, 'lp', -v[0], q);
+      add(P.lpw, a, -v[0]); add(P.lpq, a, q); add(P.lpr, a, -v[1]); add(P.lpx, a, -v[2]); ev(a, 'lp', [-v[0], q, -v[1], -v[2]]);
     }
     return;
   }
@@ -118,23 +121,32 @@ function applyTx(S, tx, meta) {
     const src = neg.length === 1 ? neg[0][0] : null;
     if (!pos.length && src && tx.Destination === C.ISSUER) add(P.burn, src, -neg[0][1][0]);
     for (const [a, v] of pos) {
-      if (src === C.OPS && !S.labels[a]) { add(P.paid, a, v[0]); add(S.paidN, per + '|' + a, 1); ev(a, 'paid', v[0], 0); }
-      else { add(P.tin, a, v[0]); if (src === C.OPS) add(P.paidco, a, v[0]); }
+      if (src === C.OPS && !S.labels[a]) { add(P.paid, a, v[0]); add(S.paidN, per + '|' + a, 1); ev(a, 'paid', [v[0]]); }
+      else { add(P.tin, a, v[0]); if (src === C.OPS) { add(P.paidco, a, v[0]); ev(a, 'paidco', [v[0]]); } }
       if (src) (S.edges[src] || (S.edges[src] = {}))[a] = 1;
     }
     for (const [a, v] of neg) if (a !== C.OPS || pos.some(([b]) => S.labels[b])) add(P.tout, a, -v[0]);
     return;
   }
+  // 이 거래에서 WLBN 이 어느 풀로 들어가고 어느 풀에서 나왔는지(지갑별로 나눠 적기 위해)
+  const inR = dr && dr[0] > EPS ? dr[0] : 0, inX = dx && dx[0] > EPS ? dx[0] : 0;
+  const outR = dr && dr[0] < -EPS ? -dr[0] : 0, outX = dx && dx[0] < -EPS ? -dx[0] : 0;
+  let sellW = 0, buyW = 0;
+  for (const [a, v] of mv) { if (S.amms[a]) continue; if (v[0] < 0) sellW -= v[0]; else buyW += v[0]; }
+  const capS = Math.min(sellW, inR + inX), capB = Math.min(buyW, outR + outX);
+  const sR = inR + inX > 0 ? capS * inR / (inR + inX) : 0, sX = inR + inX > 0 ? capS * inX / (inR + inX) : 0;
+  const bR = outR + outX > 0 ? capB * outR / (outR + outX) : 0, bX = outR + outX > 0 ? capB * outX / (outR + outX) : 0;
   for (const [a, v] of mv) {
     if (S.amms[a]) continue;
     if (v[0] < 0) {
       const w = -v[0], got = v[1] + v[2] * rate;
       const val = (got > 0 || per === 'before') ? got : w * S.pR;
       add(P.sold, a, w); add(P.cash, a, Math.max(val, 0)); add(P.cash_r, a, Math.max(v[1], 0)); add(P.cash_x, a, Math.max(v[2], 0));
-      S.lastSell[a] = k; ev(a, 'sell', w, Math.max(val, 0));
+      S.lastSell[a] = k; ev(a, 'sell', [w, Math.max(val, 0), sR * w / sellW, sX * w / sellW, Math.max(v[1], 0), Math.max(v[2], 0)]);
     } else {
       const cost = -(v[1] + v[2] * rate);
-      add(P.bought, a, v[0]); add(P.spent, a, Math.max(cost, 0)); ev(a, 'buy', v[0], Math.max(cost, 0));
+      add(P.bought, a, v[0]); add(P.spent, a, Math.max(cost, 0)); add(P.spent_r, a, Math.max(-v[1], 0)); add(P.spent_x, a, Math.max(-v[2], 0));
+      ev(a, 'buy', [v[0], Math.max(cost, 0), bR * v[0] / buyW, bX * v[0] / buyW, Math.max(-v[1], 0), Math.max(-v[2], 0)]);
     }
   }
 }
@@ -184,6 +196,8 @@ function buildDatasets(S, opts) {
   const g2 = (o, a) => o[a] || 0;
   const allp = (key, a) => g2(B[key], a) + g2(N[key], a);
   const isAmm = (a) => !!S.amms[a];
+  const short = (a) => a.slice(0, 6) + '…' + a.slice(-4);
+  const r3 = (x) => Math.round(x * 1e3) / 1e3, r4 = (x) => Math.round(x * 1e4) / 1e4;
 
   // 지갑 분류
   const users = new Set();
@@ -207,119 +221,188 @@ function buildDatasets(S, opts) {
     return 'other';
   };
   const G = {}; for (const a of accts) G[a] = group(a);
+  const ul = accts.filter((a) => G[a] === 'user').sort();
 
-  // 날짜별
-  const day = {}, sellers = {};
-  const dget = (k) => day[k] || (day[k] = {});
-  let repay = 0;
-  for (const key of Object.keys(S.ev)) {
-    const [k, a, kind] = key.split('|'), [w, v] = S.ev[key], g = G[a] || 'other', m = dget(k);
-    if (kind === 'sell') {
-      add(m, 'sell_' + g, w); add(m, 'sell_total', w);
-      if (g === 'user') { add(m, 'cash_user', v); (sellers[k] || (sellers[k] = new Set())).add(a); }
-    } else if (kind === 'buy') {
-      add(m, 'buy_' + g, w); add(m, 'buy_total', w);
-      if (g === 'user') add(m, 'spent_user', v);
-    } else if (kind === 'paid' && g === 'user') { add(m, 'paid_user', w); if (k === C.NOW_FROM) repay += w; }
-    else if (kind === 'lp' && g === 'user') add(m, 'lp_user', w);
-  }
+  // 날짜 · 지갑 · 종류별 기록을 풀어 둔다
+  const EV = Object.keys(S.ev).map((key) => { const p = key.split('|'); return { k: p[0], a: p[1], kind: p[2], v: S.ev[key], g: G[p[1]] || 'other' }; });
   const lastDay = kday(S.asof), days = [];
   for (let t = Date.parse(C.NOW_FROM + 'T00:00:00Z'); ; t += 86400000) {
     const k = new Date(t).toISOString().slice(0, 10);
     if (k > lastDay) break;
     days.push(k);
   }
-  const daily = []; let cp = 0, cs = 0, lastp = null;
+
+  // 날짜별
+  const day = {}, sellers = {};
+  const dget = (k) => day[k] || (day[k] = {});
+  for (const e of EV) {
+    const m = dget(e.k), v = e.v, g = e.g;
+    if (e.kind === 'sell') {
+      add(m, 'sell_' + g, v[0]); add(m, 'sell_total', v[0]); add(m, 'to_r', v[2] || 0); add(m, 'to_x', v[3] || 0);
+      add(m, 'got_r', v[4] || 0); add(m, 'got_x', v[5] || 0);
+      if (g === 'user') { add(m, 'cash_user', v[1]); add(m, 'got_r_user', v[4] || 0); add(m, 'got_x_user', v[5] || 0); (sellers[e.k] || (sellers[e.k] = new Set())).add(e.a); }
+    } else if (e.kind === 'buy') {
+      add(m, 'buy_' + g, v[0]); add(m, 'buy_total', v[0]); add(m, 'from_r', v[2] || 0); add(m, 'from_x', v[3] || 0);
+      if (g === 'user') add(m, 'spent_user', v[1]);
+    } else if (e.kind === 'paid' && g === 'user') add(m, 'paid_user', v[0]);
+    else if (e.kind === 'lp' && g === 'user') add(m, 'lp_user', v[0]);
+  }
+  const daily = []; let cp = 0, cs = 0, lastp = null, lastx = null, lastPool = null;
   for (const k of days) {
     const v = day[k] || {}, f = (x) => v[x] || 0;
     cp += f('paid_user'); cs += f('sell_user') - f('buy_user');
     if (S.eod[k] !== undefined) lastp = S.eod[k];
+    if (S.eodX[k] !== undefined) lastx = S.eodX[k];
+    if (S.eodPool[k]) lastPool = S.eodPool[k];
     const r = { date: k };
     for (const g of GR) { r['sell_' + g] = r0(f('sell_' + g)); r['buy_' + g] = r0(f('buy_' + g)); }
     Object.assign(r, {
       sell_total: r0(f('sell_total')), buy_total: r0(f('buy_total')), net_sell_total: r0(f('sell_total') - f('buy_total')),
-      net_sell_user: r0(f('sell_user') - f('buy_user')), cash_user_rlusd: r0(f('cash_user')), spent_user_rlusd: r0(f('spent_user')),
+      net_sell_user: r0(f('sell_user') - f('buy_user')), cash_user_rlusd: r0(f('cash_user')), got_rlusd_user: r0(f('got_r_user')), got_xrp_user: r0(f('got_x_user')),
       user_sellers: sellers[k] ? sellers[k].size : 0, paid_user: r0(f('paid_user')), lp_user: r0(f('lp_user')),
-      cum_paid_user: r0(cp), cum_net_sold_user: r0(cs), price_rlusd: lastp === null ? null : Math.round(lastp * 1e4) / 1e4, partial: k === lastDay,
+      to_r: r0(f('to_r')), to_x: r0(f('to_x')), to_o: r0(Math.max(f('sell_total') - f('to_r') - f('to_x'), 0)),
+      from_r: r0(f('from_r')), from_x: r0(f('from_x')), from_o: r0(Math.max(f('buy_total') - f('from_r') - f('from_x'), 0)),
+      cum_paid_user: r0(cp), cum_net_sold_user: r0(cs),
+      price_rlusd: lastp === null ? null : r4(lastp), price_xrp: lastx === null ? null : r4(lastx),
+      pool_r_wlbn: lastPool ? lastPool[0] : null, pool_r_rlusd: lastPool ? lastPool[1] : null, pool_x_wlbn: lastPool ? lastPool[2] : null, pool_x_xrp: lastPool ? lastPool[3] : null,
+      partial: k === lastDay,
     });
     daily.push(r);
   }
 
-  // 일반 사용자 지갑별
-  const ul = accts.filter((a) => G[a] === 'user').sort();
-  const wallets = [];
-  for (const a of ul) {
-    const act = g2(N.paid, a) + g2(N.tin, a) + g2(N.sold, a) + g2(N.bought, a) + Math.abs(g2(N.lpw, a));
-    if (act < 0.01 && g2(S.bal, a) < 0.01) continue;
-    const ls = S.lastSell[a] || '';
-    const row = {
-      wallet: a.slice(0, 6) + '…' + a.slice(-4), paid: r0(g2(N.paid, a)), payouts: g2(S.paidN, 'now|' + a), moved_in: r0(g2(N.tin, a)), moved_out: r0(g2(N.tout, a)),
-      sold: r0(g2(N.sold, a)), bought: r0(g2(N.bought, a)), net_sold: r0(g2(N.sold, a) - g2(N.bought, a)), cash_rlusd: r0(g2(N.cash, a)),
-      pool_in: r0(g2(N.lpw, a)), pool_cash_rlusd: r0(Math.max(g2(N.lpq, a), 0)), balance: r0(Math.max(g2(S.bal, a), 0)), last_sell: ls >= C.NOW_FROM ? ls : '',
-    };
-    if (opts.withAddress) row.address = a;
-    wallets.push(row);
-  }
-  wallets.sort((x, y) => (y.sold - x.sold) || (y.paid - x.paid));
-
-  // 묶음별
-  const grpRows = (P, per, order) => {
-    const out = [];
-    for (const g of order) {
-      const aa = accts.filter((a) => G[a] === g && a !== C.OPS && (g2(P.sold, a) + g2(P.bought, a) + g2(P.paid, a) + g2(P.paidco, a) > 0));
-      if (!aa.length) continue;
-      const sum = (key) => aa.reduce((t, a) => t + g2(P[key], a), 0);
-      const r = { group: NAME[g], key: g, wallets: aa.length, sold: r0(sum('sold')), bought: r0(sum('bought')) };
-      r.net_sold = r.sold - r.bought; r.paid = r0(sum('paid') + sum('paidco'));
-      if (per === 'now') r.cash_rlusd = r0(sum('cash'));
-      else { r.got_rlusd = r0(sum('cash_r')); r.got_xrp = r0(sum('cash_x')); }
-      out.push(r);
+  // 기간별 합계 (전체 · 최근 30일 · 최근 7일)
+  const shift = (k, n) => new Date(Date.parse(k + 'T00:00:00Z') + n * 86400000).toISOString().slice(0, 10);
+  const labelAccts = Object.keys(L).filter((a) => a !== C.ISSUER && !isAmm(a) && S.bal[a] !== undefined);
+  const mkRange = (key, from) => {
+    if (from < C.NOW_FROM) from = C.NOW_FROM;
+    const acc = {}, at = (a) => acc[a] || (acc[a] = { paid: 0, paidco: 0, sold: 0, bought: 0, cash: 0, spent: 0, toR: 0, toX: 0, fromR: 0, fromX: 0, gotR: 0, gotX: 0, payR: 0, payX: 0, lpw: 0, lpq: 0, lpr: 0, lpx: 0 });
+    let repay = 0;
+    for (const e of EV) {
+      if (e.k < from) continue;
+      const o = at(e.a), v = e.v;
+      if (e.kind === 'sell') { o.sold += v[0]; o.cash += v[1]; o.toR += v[2] || 0; o.toX += v[3] || 0; o.gotR += v[4] || 0; o.gotX += v[5] || 0; }
+      else if (e.kind === 'buy') { o.bought += v[0]; o.spent += v[1]; o.fromR += v[2] || 0; o.fromX += v[3] || 0; o.payR += v[4] || 0; o.payX += v[5] || 0; }
+      else if (e.kind === 'paid') { o.paid += v[0]; if (e.k === C.NOW_FROM && e.g === 'user') repay += v[0]; }
+      else if (e.kind === 'paidco') o.paidco += v[0];
+      else if (e.kind === 'lp') { o.lpw += v[0]; o.lpq += v[1]; o.lpr += v[2] || 0; o.lpx += v[3] || 0; }
     }
-    return out;
+    const of = (g) => Object.keys(acc).filter((a) => (G[a] || 'other') === g);
+    const sum = (list, f) => list.reduce((t, a) => t + (acc[a] ? acc[a][f] : 0), 0);
+    const U = of('user');
+    const rows = daily.filter((r) => r.date >= from), full = rows.filter((r) => !r.partial && r.date >= C.POOL_OPEN);
+    const avg = (f) => (full.length ? r0(full.reduce((t, r) => t + r[f], 0) / full.length) : null);
+    const uPaid = sum(U, 'paid'), uSold = sum(U, 'sold'), uBought = sum(U, 'bought'), uCash = sum(U, 'cash');
+    const all = Object.keys(acc), ts = sum(all, 'sold'), tb = sum(all, 'bought'), botB = sum(of('bot'), 'bought');
+    const first = rows.find((r) => r.price_rlusd !== null), lastRow = rows[rows.length - 1];
+    const kpi = {
+      user_paid: r0(uPaid), user_repaid: r0(repay), user_paid_new: r0(uPaid) - r0(repay), wallets_paid: U.filter((a) => acc[a].paid > 0).length,
+      user_sold: r0(uSold), user_bought: r0(uBought), user_net_sold: r0(uSold) - r0(uBought), wallets_sold: U.filter((a) => acc[a].sold > 0).length,
+      user_sold_share: uPaid > 0 ? r3(uSold / uPaid) : null, user_sold_vs_new_paid: uPaid - repay > 0 ? r3(uSold / (uPaid - repay)) : null,
+      user_cash_rlusd: r0(uCash), user_got_rlusd: r0(sum(U, 'gotR')), user_got_xrp: r0(sum(U, 'gotX')), user_avg_sell_price: uSold > 0 ? r3(uCash / uSold) : null,
+      user_pool_in: r0(sum(U, 'lpw')), user_balance: r0(ul.reduce((t, a) => t + Math.max(g2(S.bal, a), 0), 0)),
+      user_sell_avg: avg('sell_user'), user_paid_avg: avg('paid_user'), full_days: full.length,
+      sell_total: r0(ts), buy_total: r0(tb), net_bought_total: r0(tb) - r0(ts), bot_bought: r0(botB), bot_buy_share: tb > 0 ? r3(botB / tb) : null,
+      net_sold_ex_bot: r0(ts) - (r0(tb) - r0(botB)), bot_paid_rlusd: r0(sum(of('bot'), 'payR')), bot_paid_xrp: r0(sum(of('bot'), 'payX')),
+      kweather_paid: r0(sum(of('kweather'), 'paidco')), kweather_sold: r0(sum(of('kweather'), 'sold')),
+      got_rlusd_total: r0(sum(all, 'gotR')), got_xrp_total: r0(sum(all, 'gotX')), paid_rlusd_total: r0(sum(all, 'payR')), paid_xrp_total: r0(sum(all, 'payX')),
+      price_from: first ? first.price_rlusd : null, price_to: lastRow ? lastRow.price_rlusd : null,
+      price_change: first && lastRow && first.price_rlusd ? r3(lastRow.price_rlusd / first.price_rlusd - 1) : null,
+    };
+    const groups = [], flowSell = [], flowBuy = [];
+    for (const g of GR) {
+      const aa = of(g).filter((a) => a !== C.OPS && acc[a].sold + acc[a].bought + acc[a].paid + acc[a].paidco > 0);
+      if (!aa.length) continue;
+      const row = {
+        group: NAME[g], key: g, wallets: aa.length, sold: r0(sum(aa, 'sold')), bought: r0(sum(aa, 'bought')), paid: r0(sum(aa, 'paid') + sum(aa, 'paidco')),
+        got_rlusd: r0(sum(aa, 'gotR')), got_xrp: r0(sum(aa, 'gotX')), paid_rlusd: r0(sum(aa, 'payR')), paid_xrp: r0(sum(aa, 'payX')), cash_rlusd: r0(sum(aa, 'cash')),
+      };
+      row.net_sold = row.sold - row.bought; groups.push(row);
+      const s = sum(aa, 'sold'), b = sum(aa, 'bought'), tR = sum(aa, 'toR'), tX = sum(aa, 'toX'), fR = sum(aa, 'fromR'), fX = sum(aa, 'fromX');
+      if (s >= 0.5) flowSell.push({ key: g, name: NAME[g], R: r0(tR), X: r0(tX), O: r0(Math.max(s - tR - tX, 0)) });
+      if (b >= 0.5) flowBuy.push({ key: g, name: NAME[g], R: r0(fR), X: r0(fX), O: r0(Math.max(b - fR - fX, 0)) });
+    }
+    const wallets = [];
+    for (const a of ul) {
+      const o = acc[a] || {}, bal = Math.max(g2(S.bal, a), 0);
+      if (!((o.paid || 0) + (o.sold || 0) + (o.bought || 0) + Math.abs(o.lpw || 0) >= 0.5) && bal < 1) continue;
+      const ls = S.lastSell[a] || '';
+      wallets.push({
+        wallet: short(a), paid: r0(o.paid || 0), sold: r0(o.sold || 0), bought: r0(o.bought || 0), net_sold: r0((o.sold || 0) - (o.bought || 0)),
+        cash_rlusd: r0(o.cash || 0), got_rlusd: r0(o.gotR || 0), got_xrp: r0(o.gotX || 0), pool_in: r0(o.lpw || 0), balance: r0(bal), last_sell: ls >= C.NOW_FROM ? ls : '',
+      });
+    }
+    wallets.sort((x, y) => (y.sold - x.sold) || (y.paid - x.paid));
+    // 회사 표시 계정
+    const opsOut = r0(sum(all, 'paid') + sum(all, 'paidco'));
+    const accounts = labelAccts.map((a) => {
+      const o = acc[a] || {};
+      return {
+        name: L[a], wallet: short(a), balance: r0(Math.max(g2(S.bal, a), 0)), paid_out: a === C.OPS ? opsOut : 0, received: r0(o.paidco || 0),
+        bought: r0(o.bought || 0), sold: r0(o.sold || 0), paid_rlusd: r0(o.payR || 0), paid_xrp: r0(o.payX || 0),
+        pool_wlbn: r0(o.lpw || 0), pool_rlusd: r0(o.lpr || 0), pool_xrp: r0(o.lpx || 0),
+      };
+    }).sort((x, y) => y.balance - x.balance);
+    // 풀에 넣은 양(순) — 누가
+    const lpRows = [];
+    const lpAdd = (who, list) => {
+      const w = sum(list, 'lpw'), r = sum(list, 'lpr'), x = sum(list, 'lpx');
+      if (Math.abs(w) + Math.abs(r) + Math.abs(x) >= 0.5) lpRows.push({ who, wlbn: r0(w), rlusd: r0(r), xrp: r0(x) });
+    };
+    for (const a of labelAccts) lpAdd(L[a] + ' 표시 계정', [a].filter((x) => acc[x]));
+    lpAdd(NAME.user, U); lpAdd('그 밖의 지갑', of('arb').concat(of('other')));
+    lpRows.sort((x, y) => Math.abs(y.wlbn) - Math.abs(x.wlbn));
+    return { key, from, to: lastDay, days: rows.length, kpi, groups, flow: { sell: flowSell, buy: flowBuy }, wallets, accounts, lp: lpRows };
   };
-  const groups = grpRows(N, 'now', GR);
-  const before = grpRows(B, 'before', ['user', 'sweep', 'arb', 'other', 'bot', 'kweather']);
-  const sweepFrom = Object.keys(B.tout).filter((a) => (S.edges[a] || {})[C.SWEEP]).map((a) => B.tout[a]).sort((x, y) => y - x);
+  const ranges = { all: mkRange('all', C.NOW_FROM), d30: mkRange('d30', shift(lastDay, -29)), d7: mkRange('d7', shift(lastDay, -6)) };
 
-  // 요약
-  const usum = (key) => ul.reduce((t, a) => t + g2(N[key], a), 0);
-  const uPaid = usum('paid'), uSold = usum('sold'), uBought = usum('bought'), uLp = usum('lpw'), uCash = usum('cash'), uSpent = usum('spent');
-  const uBal = ul.reduce((t, a) => t + Math.max(g2(S.bal, a), 0), 0), uLpCash = ul.reduce((t, a) => t + Math.max(g2(N.lpq, a), 0), 0);
+  // WLBN 이 지금 어디에 있나
+  let locked = 0; for (const P of [B, N]) for (const a of Object.keys(P.esc)) locked += P.esc[a];
+  const byLabel = {}; let labeled = 0;
+  for (const a of labelAccts) { const b = Math.max(g2(S.bal, a), 0); add(byLabel, L[a], b); labeled += b; }
+  const poolW = Math.max(g2(S.bal, C.AMM_R), 0) + Math.max(g2(S.bal, C.AMM_X), 0);
+  const userW = ul.reduce((t, a) => t + Math.max(g2(S.bal, a), 0), 0);
+  let allBal = 0; for (const a of Object.keys(S.bal)) if (a !== C.ISSUER) allBal += Math.max(S.bal[a], 0);
+  const total = locked + allBal;
+  const pos = [['locked', '잠금(에스크로)', locked], ['treasury', 'treasury 표시 계정', byLabel.treasury || 0], ['seed', 'seed 표시 계정', byLabel.seed || 0], ['staking', 'staking 표시 계정', byLabel.staking || 0],
+    ['pools', '풀 두 곳', poolW], ['match', 'match 표시 계정', byLabel.match || 0], ['kweather', 'kweather 표시 계정', byLabel.kweather || 0], ['bot', 'bot 표시 계정', byLabel.bot || 0],
+    ['operations', 'operations 표시 계정', byLabel.operations || 0], ['user', NAME.user, userW]];
+  const known = pos.reduce((t, p) => t + p[2], 0);
+  pos.push(['other', '그 밖의 지갑', Math.max(total - known, 0)]);
+  const positions = pos.map((p) => ({ key: p[0], where: p[1], amount: r0(p[2]), share: total > 0 ? Math.round(p[2] / total * 1e6) / 1e6 : null }));
+
+  // 요약 (지금 값 · 최근 7일 추세)
   const full = daily.filter((r) => !r.partial && r.date >= C.POOL_OPEN), last7 = full.slice(-7), prev7 = full.slice(-14, -7);
-  const avg = (rows, key) => (rows.length ? r0(rows.reduce((t, r) => t + r[key], 0) / rows.length) : null);
-  let tb = 0, ts = 0; for (const k of Object.keys(day)) { tb += day[k].buy_total || 0; ts += day[k].sell_total || 0; }
-  const kw = accts.filter((a) => G[a] === 'kweather');
-  const botB = accts.filter((a) => G[a] === 'bot').reduce((t, a) => t + g2(N.bought, a), 0);
-  const s7 = avg(last7, 'sell_user'), p7 = prev7.length === 7 ? avg(prev7, 'sell_user') : null;
-  const r3 = (x) => Math.round(x * 1e3) / 1e3, r4 = (x) => Math.round(x * 1e4) / 1e4;
+  const avgOf = (rows, key) => (rows.length ? r0(rows.reduce((t, r) => t + r[key], 0) / rows.length) : null);
+  const s7 = avgOf(last7, 'sell_user'), p7 = prev7.length === 7 ? avgOf(prev7, 'sell_user') : null;
   const e = S.ext || {};
   const summary = {
-    as_of: kstamp(S.asof), period_from: C.NOW_FROM, last_day: lastDay,
-    wallets: ul.filter((a) => g2(N.paid, a) > 0).length, wallets_sold: ul.filter((a) => g2(N.sold, a) > 0).length, wallets_holding: ul.filter((a) => g2(S.bal, a) >= 1).length,
-    user_paid: r0(uPaid), user_repaid_1026: r0(repay), user_paid_after: r0(uPaid) - r0(repay),
-    user_sold: r0(uSold), user_bought: r0(uBought), user_net_sold: r0(uSold) - r0(uBought),
-    user_sold_share: uPaid ? r3(uSold / uPaid) : null, user_sold_vs_new_paid: uPaid > repay ? r3(uSold / (uPaid - repay)) : null,
-    user_cash_rlusd: r0(uCash), user_spent_rlusd: r0(uSpent), user_pool_cash_rlusd: r0(uLpCash), user_avg_sell_price: uSold ? r3(uCash / uSold) : null,
-    user_pool_in: r0(uLp), user_balance: r0(uBal),
+    as_of: kstamp(S.asof), period_from: C.NOW_FROM, pool_open: C.POOL_OPEN, last_day: lastDay,
     win_from: last7.length ? md(last7[0].date) : null, win_to: last7.length ? md(last7[last7.length - 1].date) : null,
-    user_sell_7d_avg: s7, user_sell_prev7d_avg: p7, user_sell_7d_change: p7 ? r3(s7 / p7 - 1) : null,
-    user_paid_7d_avg: avg(last7, 'paid_user'), user_cash_7d_avg: avg(last7, 'cash_user_rlusd'), user_sellers_7d_avg: avg(last7, 'user_sellers'),
-    sell_total: r0(ts), buy_total: r0(tb), net_bought_total: r0(tb) - r0(ts), bot_bought: r0(botB), bot_buy_share: tb ? r3(botB / tb) : null,
-    net_sold_ex_bot: r0(ts) - (r0(tb) - r0(botB)),
-    kweather_paid: r0(kw.reduce((t, a) => t + g2(N.paidco, a), 0)), kweather_repaid_1027: r0(g2(B.tout, C.PRIOR_KW)), kweather_sold: r0(kw.reduce((t, a) => t + g2(N.sold, a), 0)),
+    user_sell_7d_avg: s7, user_sell_prev7d_avg: p7, user_sell_7d_change: p7 ? r3(s7 / p7 - 1) : null, user_paid_7d_avg: avgOf(last7, 'paid_user'),
     price_rlusd: S.pR ? r4(S.pR) : null, xrp_per_wlbn: S.pX ? r4(S.pX) : null, xrp_rate_rlusd: S.pR && S.pX ? r4(S.pR / S.pX) : null,
     pool_r_wlbn: r0(S.pools.R.w), pool_r_rlusd: r0(S.pools.R.q), pool_x_wlbn: r0(S.pools.X.w), pool_x_xrp: r0(S.pools.X.q),
+    total_supply: r0(total),
     price_usd_dex: e.price_usd_dex ?? null, pool_value_rlusd: e.pool_value_rlusd ?? null, dex_h24_buys: e.dex_h24_buys ?? null, dex_h24_sells: e.dex_h24_sells ?? null,
     dex_h24_volume_usd: e.dex_h24_volume_usd ?? null, dex_liquidity_usd: e.dex_liquidity_usd ?? null, holders: e.holders ?? null, trustlines: e.trustlines ?? null,
     devices_total: e.devices_total ?? null, devices_active: e.devices_active ?? null, operators: e.operators ?? null, kweather_devices: e.kweather_devices ?? null,
     epoch_budget: e.epoch_budget ?? null, epoch_distributed: e.epoch_distributed ?? null, epoch_date: e.epoch_date ?? null, circulating: e.circulating ?? null,
   };
-  const out = { summary: [summary], daily, wallets, groups };
+  const out = { summary: [summary], daily, ranges, positions };
   if (opts.showBefore) {
+    const sumB = (aa, key) => aa.reduce((t, a) => t + g2(B[key], a), 0);
+    const before = [];
+    for (const g of ['user', 'sweep', 'arb', 'other', 'bot', 'kweather']) {
+      const aa = accts.filter((a) => G[a] === g && a !== C.OPS && (g2(B.sold, a) + g2(B.bought, a) + g2(B.paid, a) + g2(B.paidco, a) > 0));
+      if (!aa.length) continue;
+      const r = { group: NAME[g], key: g, wallets: aa.length, sold: r0(sumB(aa, 'sold')), bought: r0(sumB(aa, 'bought')) };
+      r.net_sold = r.sold - r.bought; r.paid = r0(sumB(aa, 'paid') + sumB(aa, 'paidco')); r.got_rlusd = r0(sumB(aa, 'cash_r')); r.got_xrp = r0(sumB(aa, 'cash_x'));
+      before.push(r);
+    }
+    const sweepFrom = Object.keys(B.tout).filter((a) => (S.edges[a] || {})[C.SWEEP]).map((a) => B.tout[a]).sort((x, y) => y - x);
     const sw = before.find((r) => r.key === 'sweep') || { sold: 0, got_rlusd: 0, got_xrp: 0 };
     Object.assign(summary, {
       sweep_sold: sw.sold, sweep_got_rlusd: sw.got_rlusd, sweep_got_xrp: sw.got_xrp, sweep_from_wallets: sweepFrom.length,
-      sweep_largest_source: sweepFrom.length ? r0(sweepFrom[0]) : null, repaid_total: r0(repay) + r0(g2(B.tout, C.PRIOR_KW)),
+      sweep_largest_source: sweepFrom.length ? r0(sweepFrom[0]) : null, repaid_total: ranges.all.kpi.user_repaid + r0(g2(B.tout, C.PRIOR_KW)),
     });
     out.before = before;
   }

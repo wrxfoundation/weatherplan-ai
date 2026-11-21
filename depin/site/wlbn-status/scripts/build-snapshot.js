@@ -54,7 +54,7 @@ async function* reader(file) {
   S.ledger = NOCUT ? Math.max(...ends) : cut;
   core.pickExt(S, ext);
   const full = core.buildDatasets(S, { showBefore: true, withAddress: true });
-  console.log(JSON.stringify({ tx: n, ledger: S.ledger, summary: full.summary[0], groups: full.groups, before: full.before, wallets: full.wallets.length, daily: full.daily.length }, null, 1));
+  console.log(JSON.stringify({ tx: n, ledger: S.ledger, summary: full.summary[0], all: { kpi: full.ranges.all.kpi, groups: full.ranges.all.groups, flow: full.ranges.all.flow, lp: full.ranges.all.lp, accounts: full.ranges.all.accounts }, d7: full.ranges.d7.kpi, positions: full.positions, before: full.before, wallets: full.ranges.all.wallets.length, daily: full.daily.length, lastDaily: full.daily[full.daily.length - 1] }, null, 1));
   if (!NOCUT) {
     fs.writeFileSync(path.join(__dirname, '../lib/snapshot-state.json'), JSON.stringify(S));
     console.error('state bytes', fs.statSync(path.join(__dirname, '../lib/snapshot-state.json')).size, 'ev', Object.keys(S.ev).length, 'accounts', Object.keys(S.bal).length);
