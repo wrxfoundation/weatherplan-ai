@@ -273,6 +273,7 @@ function buildDatasets(S, opts) {
   // 기간별 합계 (전체 · 최근 30일 · 최근 7일)
   const shift = (k, n) => new Date(Date.parse(k + 'T00:00:00Z') + n * 86400000).toISOString().slice(0, 10);
   const labelAccts = Object.keys(L).filter((a) => a !== C.ISSUER && !isAmm(a) && S.bal[a] !== undefined);
+  const live = S.live || {}, liveBal = live.bal || {};
   const mkRange = (key, from) => {
     if (from < C.NOW_FROM) from = C.NOW_FROM;
     const acc = {}, at = (a) => acc[a] || (acc[a] = { paid: 0, paidco: 0, sold: 0, bought: 0, cash: 0, spent: 0, toR: 0, toX: 0, fromR: 0, fromX: 0, gotR: 0, gotX: 0, payR: 0, payX: 0, lpw: 0, lpq: 0, lpr: 0, lpx: 0 });
@@ -337,7 +338,8 @@ function buildDatasets(S, opts) {
     const accounts = labelAccts.map((a) => {
       const o = acc[a] || {};
       return {
-        name: L[a], wallet: short(a), balance: r0(Math.max(g2(S.bal, a), 0)), paid_out: a === C.OPS ? opsOut : 0, received: r0(o.paidco || 0),
+        name: L[a], wallet: short(a), balance: r0(Math.max(g2(S.bal, a), 0)), rlusd: liveBal[a] ? r0(liveBal[a].rlusd) : null, xrp: liveBal[a] ? r0(liveBal[a].xrp) : null,
+        paid_out: a === C.OPS ? opsOut : 0, received: r0(o.paidco || 0),
         bought: r0(o.bought || 0), sold: r0(o.sold || 0), paid_rlusd: r0(o.payR || 0), paid_xrp: r0(o.payX || 0),
         pool_wlbn: r0(o.lpw || 0), pool_rlusd: r0(o.lpr || 0), pool_xrp: r0(o.lpx || 0),
       };
@@ -351,9 +353,62 @@ function buildDatasets(S, opts) {
     for (const a of labelAccts) lpAdd(L[a] + ' 표시 계정', [a].filter((x) => acc[x]));
     lpAdd(NAME.user, U); lpAdd('그 밖의 지갑', of('arb').concat(of('other')));
     lpRows.sort((x, y) => Math.abs(y.wlbn) - Math.abs(x.wlbn));
-    return { key, from, to: lastDay, days: rows.length, kpi, groups, flow: { sell: flowSell, buy: flowBuy }, wallets, accounts, lp: lpRows };
+    // 직전 같은 길이의 기간(풀이 열린 뒤에 온전히 들어갈 때만)
+    let prev = null;
+    if (key !== 'all') {
+      const n = rows.length, f2 = shift(from, -n), t2 = shift(from, -1);
+      if (f2 >= C.POOL_OPEN) {
+        const p = { from: f2, to: t2, user_paid: 0, user_sold: 0, sell_total: 0, buy_total: 0, bot_bought: 0 };
+        for (const e of EV) {
+          if (e.k < f2 || e.k > t2) continue;
+          if (e.kind === 'sell') { p.sell_total += e.v[0]; if (e.g === 'user') p.user_sold += e.v[0]; }
+          else if (e.kind === 'buy') { p.buy_total += e.v[0]; if (e.g === 'bot') p.bot_bought += e.v[0]; }
+          else if (e.kind === 'paid' && e.g === 'user') p.user_paid += e.v[0];
+        }
+        for (const f of ['user_paid', 'user_sold', 'sell_total', 'buy_total', 'bot_bought']) p[f] = r0(p[f]);
+        prev = p;
+      }
+    }
+    return { key, from, to: lastDay, days: rows.length, kpi, prev, groups, flow: { sell: flowSell, buy: flowBuy }, wallets, accounts, lp: lpRows };
   };
   const ranges = { all: mkRange('all', C.NOW_FROM), d30: mkRange('d30', shift(lastDay, -29)), d7: mkRange('d7', shift(lastDay, -6)) };
+
+  // 날짜마다 많이 판 곳 · 많이 산 곳 (다섯 곳씩)
+  const dayAgg = {};
+  for (const e of EV) {
+    if (e.kind !== 'sell' && e.kind !== 'buy') continue;
+    const d = dayAgg[e.k] || (dayAgg[e.k] = { sell: {}, buy: {} }), o = d[e.kind][e.a] || (d[e.kind][e.a] = [0, 0, 0]);
+    o[0] += e.v[0]; o[1] += e.v[4] || 0; o[2] += e.v[5] || 0;
+  }
+  const whoOf = (a) => (L[a] ? L[a] + ' 표시 계정' : short(a));
+  const dayTop = {};
+  for (const k of Object.keys(dayAgg)) {
+    const top = (m) => Object.keys(m).map((a) => ({ who: whoOf(a), g: G[a] || 'other', w: r0(m[a][0]), rlusd: r0(m[a][1]), xrp: r0(m[a][2]) })).filter((x) => x.w > 0).sort((x, y) => y.w - x.w);
+    const s = top(dayAgg[k].sell), b = top(dayAgg[k].buy);
+    dayTop[k] = { sell: s.slice(0, 5), buy: b.slice(0, 5), sellers: s.length, buyers: b.length };
+  }
+
+  // 지금 풀의 몫 — 풀 지분 증표를 누가 들고 있나
+  const lpShares = []; let lpCompany = 0, lpUser = 0, lpAll = 0;
+  if (live.lp) {
+    const agg = {};
+    for (const pk of ['X', 'R']) {
+      const P = live.lp[pk];
+      if (!P || !(P.total > 0)) continue;
+      for (const a of Object.keys(P.holders)) {
+        const kind = L[a] ? 'company' : (users.has(a) ? 'user' : 'other');
+        const who = L[a] ? L[a] + ' 표시 계정' : (kind === 'user' ? NAME.user : '그 밖의 지갑');
+        const o = agg[who] || (agg[who] = { X: 0, R: 0, kind });
+        o[pk] += P.holders[a] / P.total;
+      }
+    }
+    for (const who of Object.keys(agg)) {
+      const o = agg[who], w = o.X * S.pools.X.w + o.R * S.pools.R.w;
+      lpShares.push({ who, x_share: r4(o.X), x_wlbn: r0(o.X * S.pools.X.w), x_xrp: r0(o.X * S.pools.X.q), r_share: r4(o.R), r_wlbn: r0(o.R * S.pools.R.w), r_rlusd: r0(o.R * S.pools.R.q), wlbn: r0(w) });
+      lpAll += w; if (o.kind === 'company') lpCompany += w; else if (o.kind === 'user') lpUser += w;
+    }
+    lpShares.sort((x, y) => y.wlbn - x.wlbn);
+  }
 
   // WLBN 이 지금 어디에 있나
   let locked = 0; for (const P of [B, N]) for (const a of Object.keys(P.esc)) locked += P.esc[a];
@@ -381,13 +436,15 @@ function buildDatasets(S, opts) {
     user_sell_7d_avg: s7, user_sell_prev7d_avg: p7, user_sell_7d_change: p7 ? r3(s7 / p7 - 1) : null, user_paid_7d_avg: avgOf(last7, 'paid_user'),
     price_rlusd: S.pR ? r4(S.pR) : null, xrp_per_wlbn: S.pX ? r4(S.pX) : null, xrp_rate_rlusd: S.pR && S.pX ? r4(S.pR / S.pX) : null,
     pool_r_wlbn: r0(S.pools.R.w), pool_r_rlusd: r0(S.pools.R.q), pool_x_wlbn: r0(S.pools.X.w), pool_x_xrp: r0(S.pools.X.q),
-    total_supply: r0(total),
+    total_supply: r0(total), fee_r: S.pools.R.fee ?? null, fee_x: S.pools.X.fee ?? null,
+    lp_company_share: lpAll > 0 ? r3(lpCompany / lpAll) : null, lp_user_share: lpAll > 0 ? r3(lpUser / lpAll) : null,
     price_usd_dex: e.price_usd_dex ?? null, pool_value_rlusd: e.pool_value_rlusd ?? null, dex_h24_buys: e.dex_h24_buys ?? null, dex_h24_sells: e.dex_h24_sells ?? null,
     dex_h24_volume_usd: e.dex_h24_volume_usd ?? null, dex_liquidity_usd: e.dex_liquidity_usd ?? null, holders: e.holders ?? null, trustlines: e.trustlines ?? null,
     devices_total: e.devices_total ?? null, devices_active: e.devices_active ?? null, operators: e.operators ?? null, kweather_devices: e.kweather_devices ?? null,
     epoch_budget: e.epoch_budget ?? null, epoch_distributed: e.epoch_distributed ?? null, epoch_date: e.epoch_date ?? null, circulating: e.circulating ?? null,
   };
-  const out = { summary: [summary], daily, ranges, positions };
+  const out = { summary: [summary], daily, ranges, positions, dayTop };
+  if (lpShares.length) out.lpShares = lpShares;
   if (opts.showBefore) {
     const sumB = (aa, key) => aa.reduce((t, a) => t + g2(B[key], a), 0);
     const before = [];

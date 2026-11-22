@@ -33,7 +33,10 @@ async function resyncPools(S, rpc, ledger) {
     const res = await rpc('amm_info', { asset: wl, asset2: other, ledger_index: ledger }, 10000);
     const a = amount(res.amm.amount), b = amount(res.amm.amount2);
     const w = a.cur === C.WL ? a.v : b.v, q = a.cur === C.WL ? b.v : a.v;
-    if (w > 0 && q > 0) { S.pools[key] = { w, q }; if (key === 'R') S.pR = q / w; else S.pX = q / w; }
+    if (w > 0 && q > 0) {
+      S.pools[key] = { w, q, fee: Number(res.amm.trading_fee || 0) / 100000, lpCur: res.amm.lp_token && res.amm.lp_token.currency };
+      if (key === 'R') S.pR = q / w; else S.pX = q / w;
+    }
   }
 }
 
@@ -68,4 +71,44 @@ async function update(S, opts) {
   return { changed: true, ledger: S.ledger, fetched: n, complete, pages };
 }
 
-module.exports = { update, makeRpc, resyncPools };
+// 지금 값: 풀 지분 증표를 누가 들고 있는지, 회사 표시 계정의 RLUSD · XRP 잔액. 못 받은 것은 지난 값을 그대로 둔다.
+async function fetchLive(S, opts) {
+  opts = opts || {};
+  const rpc = makeRpc(opts.fetchImpl || fetch), L = S.ledger, budget = opts.budgetMs || 9000;
+  const lp = {}, bal = {}, tasks = [];
+  for (const [key, acct] of [['R', C.AMM_R], ['X', C.AMM_X]]) {
+    tasks.push((async () => {
+      const cur = S.pools[key] && S.pools[key].lpCur, holders = {};
+      let total = 0, marker, pages = 0;
+      do {
+        const p = { account: acct, ledger_index: L, limit: 400 };
+        if (marker) p.marker = marker;
+        const res = await rpc('account_lines', p, 8000);
+        for (const ln of res.lines || []) {
+          if (cur ? ln.currency !== cur : !/^03/.test(ln.currency)) continue;
+          const v = -Number(ln.balance);
+          if (v > 0) { holders[ln.account] = v; total += v; }
+        }
+        marker = res.marker; pages++;
+      } while (marker && pages < 8);
+      if (!marker && total > 0) lp[key] = { total, holders };
+    })().catch(() => {}));
+  }
+  for (const a of Object.keys(S.labels)) {
+    if (a === C.ISSUER || S.amms[a]) continue;
+    tasks.push((async () => {
+      const [info, lines] = await Promise.all([
+        rpc('account_info', { account: a, ledger_index: L }, 8000),
+        rpc('account_lines', { account: a, peer: C.RL_ISSUER, ledger_index: L }, 8000),
+      ]);
+      const ln = (lines.lines || []).find((x) => x.currency === C.RL);
+      bal[a] = { xrp: Number(info.account_data.Balance) / 1e6, rlusd: ln ? Number(ln.balance) : 0 };
+    })().catch(() => {}));
+  }
+  await Promise.race([Promise.all(tasks), new Promise((r) => setTimeout(r, budget))]);
+  const prev = S.live || {};
+  S.live = { at: S.asof, lp: Object.assign({}, prev.lp, lp), bal: Object.assign({}, prev.bal, bal) };
+  return { pools: Object.keys(lp).length, accounts: Object.keys(bal).length };
+}
+
+module.exports = { update, makeRpc, resyncPools, fetchLive };

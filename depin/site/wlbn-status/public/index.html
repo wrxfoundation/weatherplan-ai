@@ -6,160 +6,213 @@
 <meta name="robots" content="noindex, nofollow">
 <meta name="color-scheme" content="light dark">
 <title>WLBN 운용현황</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="preload" href="fonts/PretendardVariable.woff2" as="font" type="font/woff2" crossorigin>
 <style>
+@font-face { font-family: "Pretendard Variable"; font-weight: 45 920; font-style: normal; font-display: swap; src: url("fonts/PretendardVariable.woff2") format("woff2-variations"), url("fonts/PretendardVariable.woff2") format("woff2"); }
+
+/* 색 · 글자 크기 · 간격은 여기 한 곳에서만 정한다 */
 :root {
-  --bg: #F6F6FB; --panel: #FFFFFF; --fg: #17152E; --muted: #5B5878; --line: #E2E1EE; --soft: #EFEEF7;
+  --bg: #F3F3F8; --panel: #FFFFFF; --soft: #F6F6FB; --line: #E7E6F0; --line-2: #D6D4E6;
+  --fg: #16142B; --muted: #55526F; --faint: #7B7895;
   --ok: #0B7A5A; --warn: #B45309;
-  --grid: #ECEBF4; --axis: #A9A7C0; --ctx: #C4C2D8;
-  --pop: #FFFFFF; --pop-line: #D8D6E8; --pop-shadow: 0 6px 24px rgba(23, 21, 46, 0.14);
+  --grid: #EEEDF5; --axis: #B4B2CA; --ctx: #C9C7DC;
+  --pop: #FFFFFF; --pop-line: #D8D6E8; --pop-shadow: 0 8px 28px rgba(22, 20, 43, 0.14);
   --s1: #4D4DCE; --s2: #D98A00; --s3: #009E73; --s4: #C2609A; --s5: #8D8AA8;
   --accent: #4D4DCE; --accent-fg: #FFFFFF;
   --font: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif;
-  --t-cap: 13px; --t-body: 15px; --t-h: 19px; --t-title: 22px; --radius: 10px;
+  --t-xs: 12.5px; --t-sm: 13.5px; --t-md: 15px; --t-lg: 17px; --t-xl: 20px; --t-num: 28px;
+  --r-lg: 16px; --r-md: 12px; --r-sm: 8px;
+  --pad: 24px;
 }
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: #0D0B26; --panel: #16133A; --fg: #ECEBFA; --muted: #A9A6C9; --line: #2A2757; --soft: #1D1A45;
+    --bg: #0C0A22; --panel: #151237; --soft: #1B1843; --line: #262353; --line-2: #37346A;
+    --fg: #EEEDFB; --muted: #B5B2D4; --faint: #8F8CB4;
     --ok: #4FD1A5; --warn: #F0B040;
-    --grid: #211E48; --axis: #504D84; --ctx: #57547F;
-    --pop: #1D1A47; --pop-line: #38356C; --pop-shadow: 0 8px 28px rgba(0, 0, 0, 0.5);
+    --grid: #1F1C47; --axis: #504D84; --ctx: #5A5783;
+    --pop: #1D1A47; --pop-line: #38356C; --pop-shadow: 0 10px 32px rgba(0, 0, 0, 0.55);
     --s1: #A39BFF; --s2: #F0B040; --s3: #35C9A0; --s4: #E58FC0; --s5: #8F8CB5;
-    --accent: #A39BFF; --accent-fg: #0D0B26;
+    --accent: #A39BFF; --accent-fg: #0C0A22;
   }
 }
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
-html { background: var(--bg); scroll-behavior: smooth; scroll-padding-top: 64px; }
-body { margin: 0; background: var(--bg); color: var(--fg); font-family: var(--font); font-size: var(--t-body); line-height: 1.55; -webkit-text-size-adjust: 100%; }
+html { background: var(--bg); scroll-behavior: smooth; scroll-padding-top: 68px; }
+body { margin: 0; background: var(--bg); color: var(--fg); font-family: var(--font); font-size: var(--t-md); font-weight: 400; line-height: 1.6; -webkit-text-size-adjust: 100%; -webkit-font-smoothing: antialiased; }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
-.num, .big, table, .tick, .end { font-variant-numeric: tabular-nums; }
 button, input { font: inherit; color: inherit; }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.num, .big, table, .tick, .end, b { font-variant-numeric: tabular-nums; }
 
-/* 머리 */
-.head-in { max-width: 1120px; margin: 0 auto; padding: 20px 20px 10px; display: flex; align-items: center; justify-content: space-between; gap: 10px 16px; flex-wrap: wrap; }
-.brand { display: flex; align-items: baseline; gap: 4px 12px; flex-wrap: wrap; min-width: 0; }
-.title { margin: 0; font-size: var(--t-title); font-weight: 700; letter-spacing: -0.01em; white-space: nowrap; }
-.asof { margin: 0; color: var(--muted); font-size: var(--t-cap); }
-.bar { position: sticky; top: 0; z-index: 20; background: color-mix(in srgb, var(--bg) 90%, transparent); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
-.bar-in { max-width: 1120px; margin: 0 auto; padding: 0 20px; display: flex; align-items: center; justify-content: space-between; gap: 0 16px; }
-.seg { display: inline-flex; flex: none; border: 1px solid var(--line); border-radius: 999px; background: var(--panel); padding: 2px; }
-.seg button { border: 0; background: transparent; padding: 5px 13px; border-radius: 999px; font-size: var(--t-cap); cursor: pointer; color: var(--muted); white-space: nowrap; }
-.seg button[aria-pressed="true"] { background: var(--accent); color: var(--accent-fg); font-weight: 600; }
-.btn { border: 1px solid var(--line); background: var(--panel); border-radius: 999px; padding: 6px 13px; font-size: var(--t-cap); cursor: pointer; white-space: nowrap; }
+/* ── 머리 */
+.skip { position: absolute; left: -9999px; } .skip:focus { left: 12px; top: 12px; z-index: 50; background: var(--panel); border: 1px solid var(--line-2); border-radius: var(--r-sm); padding: 8px 12px; }
+.head-in { max-width: 1080px; margin: 0 auto; padding: 28px 20px 14px; display: flex; align-items: flex-end; justify-content: space-between; gap: 12px 16px; flex-wrap: wrap; }
+.brand { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.title { margin: 0; font-size: 24px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.25; }
+.asof { margin: 0; color: var(--faint); font-size: var(--t-sm); }
+.ctl { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.btn { height: 34px; padding: 0 14px; border: 1px solid var(--line-2); background: var(--panel); border-radius: 999px; font-size: var(--t-sm); font-weight: 500; color: var(--fg); cursor: pointer; white-space: nowrap; }
 .btn:hover { border-color: var(--axis); }
-.btn[disabled] { opacity: 0.6; cursor: progress; }
-.nav { display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none; min-width: 0; flex: 1 1 auto; }
+.btn[disabled] { opacity: 0.55; cursor: progress; }
+.btn.sm { height: 30px; padding: 0 12px; }
+.link { border: 0; background: none; padding: 2px 0; font-size: var(--t-xs); font-weight: 500; color: var(--faint); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; white-space: nowrap; }
+.link:hover { color: var(--fg); }
+.bar { position: sticky; top: 0; z-index: 20; background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid var(--line); }
+.bar-in { max-width: 1080px; margin: 0 auto; padding: 0 20px; display: flex; align-items: center; justify-content: space-between; gap: 0 16px; }
+.nav { display: flex; gap: 2px; overflow-x: auto; scrollbar-width: none; min-width: 0; flex: 1 1 auto; }
 .nav::-webkit-scrollbar { display: none; }
-.nav a { flex: none; padding: 12px 10px 11px; font-size: var(--t-cap); color: var(--muted); text-decoration: none; border-bottom: 2px solid transparent; white-space: nowrap; }
+.nav a { flex: none; padding: 13px 10px 12px; font-size: var(--t-sm); font-weight: 500; color: var(--faint); text-decoration: none; border-bottom: 2px solid transparent; white-space: nowrap; }
+.nav a:hover { color: var(--fg); }
 .nav a[aria-current="true"] { color: var(--fg); border-bottom-color: var(--accent); font-weight: 600; }
-.banner { max-width: 1120px; margin: 12px auto 0; padding: 0 20px; }
-.banner p { margin: 0; padding: 9px 13px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--panel); color: var(--muted); font-size: var(--t-cap); }
+.seg { display: inline-flex; flex: none; background: var(--panel); border: 1px solid var(--line-2); border-radius: 999px; padding: 2px; }
+.seg button { height: 28px; border: 0; background: transparent; padding: 0 13px; border-radius: 999px; font-size: var(--t-sm); font-weight: 500; cursor: pointer; color: var(--muted); white-space: nowrap; }
+.seg button[aria-pressed="true"] { background: var(--accent); color: var(--accent-fg); font-weight: 600; }
+.banner { max-width: 1080px; margin: 12px auto 0; padding: 0 20px; }
+.banner p { margin: 0; padding: 10px 14px; border: 1px solid var(--line-2); border-radius: var(--r-md); background: var(--panel); color: var(--muted); font-size: var(--t-sm); }
 
-/* 본문 */
-.page { max-width: 1120px; margin: 0 auto; padding: 24px 20px 72px; display: flex; flex-direction: column; gap: 44px; }
-.sec { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
-.h2 { margin: 0; font-size: var(--t-h); font-weight: 650; letter-spacing: -0.01em; text-wrap: balance; }
-.h3 { margin: 10px 0 0; font-size: var(--t-body); font-weight: 650; }
-.lede { margin: 0; max-width: 46em; font-size: 18px; line-height: 1.55; }
-.lede b, .say b { font-weight: 650; font-variant-numeric: tabular-nums; }
-.say { margin: 0; max-width: 58em; }
-.note { margin: 0; color: var(--muted); font-size: var(--t-cap); max-width: 64em; }
-.period { display: inline-block; padding: 1px 9px; border-radius: 999px; background: var(--soft); color: var(--muted); font-size: var(--t-cap); font-weight: 600; white-space: nowrap; vertical-align: 2px; }
-.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; }
-.card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px 18px; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
-.card-h { margin: 0; font-size: var(--t-cap); font-weight: 600; color: var(--muted); }
-.big { margin: 0; font-size: 28px; font-weight: 650; letter-spacing: -0.01em; line-height: 1.2; display: flex; align-items: baseline; flex-wrap: wrap; gap: 0 6px; }
-.big.two { font-size: 22px; flex-direction: column; gap: 0; }
-.unit { font-size: var(--t-cap); font-weight: 500; color: var(--muted); }
-.sub { margin: 0; color: var(--muted); font-size: var(--t-cap); }
-.sub b { color: var(--fg); font-weight: 600; font-variant-numeric: tabular-nums; }
+/* ── 본문: 구역 하나 = 패널 하나 */
+.page { max-width: 1080px; margin: 0 auto; padding: 20px 20px 72px; display: flex; flex-direction: column; gap: 16px; }
+.sec { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.panel { --cell: var(--panel); background: var(--panel); border: 1px solid var(--line); border-radius: var(--r-lg); padding: var(--pad); }
+.h2 { margin: 0 0 2px; display: flex; align-items: center; justify-content: space-between; gap: 6px 12px; flex-wrap: wrap; font-size: var(--t-xl); font-weight: 700; letter-spacing: -0.02em; line-height: 1.3; }
+.period { flex: none; padding: 3px 10px; border-radius: 999px; background: var(--soft); border: 1px solid var(--line); color: var(--muted); font-size: var(--t-xs); font-weight: 500; letter-spacing: 0; white-space: nowrap; }
+.h3 { margin: 10px 0 0; padding-top: 20px; border-top: 1px solid var(--line); font-size: var(--t-md); font-weight: 650; letter-spacing: -0.01em; line-height: 1.4; }
+.h3.flat, .h2 + .h3 { margin: 0; padding: 0; border: 0; }
+.h2 + .h3 { margin-top: 6px; }
+.h4 { margin: 0; font-size: var(--t-sm); font-weight: 600; color: var(--muted); }
+.lede { margin: 0; max-width: 44em; font-size: var(--t-lg); font-weight: 400; line-height: 1.6; color: var(--fg); }
+.say { margin: 0; max-width: 54em; font-size: var(--t-md); color: var(--muted); }
+.lede b { font-weight: 700; } .say b { font-weight: 600; color: var(--fg); }
+.note { margin: 0; max-width: 62em; color: var(--faint); font-size: var(--t-sm); line-height: 1.55; }
+.foot { margin: 0; color: var(--faint); font-size: var(--t-xs); }
+.sub-block { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+
+/* 숫자 카드 */
+.tiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.tiles.duo { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.card { --cell: var(--soft); background: var(--soft); border: 0; border-radius: var(--r-md); padding: 16px 18px; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.card-h { margin: 0; font-size: var(--t-xs); font-weight: 600; color: var(--muted); line-height: 1.4; }
+.big { margin: 2px 0 0; font-size: var(--t-num); font-weight: 700; letter-spacing: -0.02em; line-height: 1.2; display: flex; align-items: baseline; flex-wrap: wrap; gap: 0 6px; }
+.big.two { font-size: 21px; flex-direction: column; gap: 0; line-height: 1.3; }
+.unit { font-size: var(--t-xs); font-weight: 500; letter-spacing: 0; color: var(--faint); }
+.sub { margin: 2px 0 0; color: var(--faint); font-size: var(--t-xs); line-height: 1.5; }
+.sub b { color: var(--muted); font-weight: 600; }
 .up { color: var(--warn); font-weight: 600; } .down { color: var(--ok); font-weight: 600; }
-.fig { margin: 0; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
-.legend { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: var(--t-cap); color: var(--muted); }
+
+/* 목록 */
+.cap { margin: 0; padding-left: 1.15em; color: var(--faint); font-size: var(--t-sm); display: flex; flex-direction: column; gap: 3px; }
+.points { gap: 6px; color: var(--muted); font-size: var(--t-md); max-width: 56em; }
+.points li::marker { color: var(--axis); }
+
+/* 그림 */
+.fig { margin: 0; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.legend { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: var(--t-xs); color: var(--muted); }
 .key { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
-.sw { display: inline-block; width: 10px; height: 10px; border-radius: 2px; flex: none; }
+.sw { display: inline-block; width: 10px; height: 10px; border-radius: 3px; flex: none; }
 .sw.line { height: 2px; width: 14px; border-radius: 1px; }
-.chart { min-height: 300px; min-width: 0; overflow: hidden; color: var(--muted); font-size: var(--t-cap); }
+.chart { min-height: 300px; min-width: 0; overflow: hidden; color: var(--faint); font-size: var(--t-sm); }
 .chart.sm { min-height: 230px; } .chart.flow { min-height: 400px; }
 .plot { position: relative; }
 .plot svg { display: block; overflow: visible; }
-.tick { fill: var(--muted); font-size: 12.5px; font-family: var(--font); }
+.tick { fill: var(--faint); font-size: 12px; font-family: var(--font); }
 .end { fill: var(--fg); font-size: 12.5px; font-family: var(--font); font-weight: 600; }
-.band { fill: var(--grid); opacity: 0.7; }
-.flow-name { fill: var(--fg); font-size: 13px; font-weight: 600; font-family: var(--font); paint-order: stroke; stroke: var(--bg); stroke-width: 4px; stroke-linejoin: round; }
-.flow-val { fill: var(--muted); font-size: 12.5px; font-family: var(--font); font-variant-numeric: tabular-nums; paint-order: stroke; stroke: var(--bg); stroke-width: 4px; stroke-linejoin: round; }
-.flow-col { fill: var(--muted); font-size: 12px; font-weight: 600; font-family: var(--font); letter-spacing: 0.02em; }
-.cap { margin: 0; padding-left: 1.2em; color: var(--muted); font-size: var(--t-cap); display: flex; flex-direction: column; gap: 2px; }
-.rib { opacity: 0.42; cursor: default; } .rib:hover, .rib.on { opacity: 0.8; }
-.tip { position: absolute; z-index: 5; pointer-events: none; min-width: 11em; max-width: 18em; padding: 8px 12px; background: var(--pop); border: 1px solid var(--pop-line); border-radius: var(--radius); box-shadow: var(--pop-shadow); color: var(--fg); font-size: var(--t-cap); line-height: 1.5; }
-.tip-h { font-weight: 650; margin-bottom: 2px; }
+.band { fill: var(--grid); opacity: 0.8; }
+.flow-name { fill: var(--fg); font-size: 13px; font-weight: 600; font-family: var(--font); paint-order: stroke; stroke: var(--panel); stroke-width: 4px; stroke-linejoin: round; }
+.flow-val { fill: var(--muted); font-size: 12px; font-weight: 500; font-family: var(--font); font-variant-numeric: tabular-nums; paint-order: stroke; stroke: var(--panel); stroke-width: 4px; stroke-linejoin: round; }
+.flow-col { fill: var(--faint); font-size: 12px; font-weight: 600; font-family: var(--font); }
+.rib { opacity: 0.4; } .rib:hover, .rib.on { opacity: 0.8; }
+.tip { position: absolute; z-index: 5; pointer-events: none; min-width: 11em; max-width: 18em; padding: 9px 12px; background: var(--pop); border: 1px solid var(--pop-line); border-radius: var(--r-md); box-shadow: var(--pop-shadow); color: var(--fg); font-size: var(--t-xs); line-height: 1.55; }
+.tip-h { font-weight: 650; margin-bottom: 2px; font-size: var(--t-sm); }
 .tip-r { display: flex; justify-content: space-between; gap: 16px; }
 .tip-k { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); }
-.tip-v { font-variant-numeric: tabular-nums; white-space: nowrap; }
-.tip-sep { border-top: 1px solid var(--line); margin-top: 3px; padding-top: 3px; }
-.two-col { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 12px 24px; }
-.scroll { overflow-x: auto; min-width: 0; border: 1px solid var(--line); border-radius: var(--radius); background: var(--panel); }
-table { width: 100%; border-collapse: collapse; font-size: var(--t-cap); }
-th, td { padding: 8px 12px; text-align: right; white-space: nowrap; border-bottom: 1px solid var(--line); }
-th { font-weight: 600; color: var(--muted); background: var(--panel); }
+.tip-v { font-variant-numeric: tabular-nums; font-weight: 500; white-space: nowrap; }
+.tip-sep { border-top: 1px solid var(--line); margin-top: 4px; padding-top: 4px; }
+.two-col { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px 28px; }
+
+/* 표: 바깥 테두리 없이 가로줄만 */
+.scroll { overflow-x: auto; min-width: 0; margin: 0 -6px; }
+table { width: 100%; border-collapse: collapse; font-size: var(--t-sm); }
+th, td { padding: 9px 12px; text-align: right; white-space: nowrap; border-bottom: 1px solid var(--line); }
+th { padding-top: 6px; padding-bottom: 8px; font-size: var(--t-xs); font-weight: 600; color: var(--faint); border-bottom-color: var(--line-2); }
+td { color: var(--fg); font-weight: 400; }
 tr:last-child td { border-bottom: 0; }
-th:first-child, td:first-child { text-align: left; position: sticky; left: 0; background: var(--panel); }
-td.empty { text-align: left; color: var(--muted); position: static; }
-th button { all: unset; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; font-weight: 600; color: var(--muted); }
+th:first-child, td:first-child { text-align: left; position: sticky; left: 0; background: var(--cell); font-weight: 500; }
+th:first-child { font-weight: 600; }
+td.empty { text-align: left; color: var(--faint); position: static; font-weight: 400; }
+td.neg { color: var(--faint); }
+th button { all: unset; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; font-size: var(--t-xs); font-weight: 600; color: var(--faint); }
 th button:hover { color: var(--fg); } th button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 3px; }
-th[aria-sort="ascending"] button::after { content: "▲"; font-size: 9px; } th[aria-sort="descending"] button::after { content: "▼"; font-size: 9px; }
 th[aria-sort] button { color: var(--fg); }
-.neg { color: var(--muted); }
+th[aria-sort="ascending"] button::after { content: "▲"; font-size: 8px; } th[aria-sort="descending"] button::after { content: "▼"; font-size: 8px; }
+
+/* 도구 줄 */
 .tools { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
-.search { flex: 1 1 220px; max-width: 320px; border: 1px solid var(--line); background: var(--panel); border-radius: 999px; padding: 7px 14px; font-size: var(--t-cap); }
-.search::placeholder { color: var(--muted); }
-.count { color: var(--muted); font-size: var(--t-cap); }
-.pos { display: grid; grid-template-columns: minmax(120px, 1.1fr) minmax(60px, 2fr) auto auto; gap: 6px 12px; align-items: center; font-size: var(--t-cap); margin: 0; padding: 0; list-style: none; }
+.tools.end { justify-content: flex-end; margin-bottom: -6px; } .tools.between { justify-content: space-between; }
+.search { flex: 1 1 220px; max-width: 300px; height: 34px; border: 1px solid var(--line-2); background: var(--panel); border-radius: 999px; padding: 0 14px; font-size: var(--t-sm); }
+.search::placeholder { color: var(--faint); }
+.count { color: var(--faint); font-size: var(--t-xs); margin-right: auto; }
+.chips { display: inline-flex; flex-wrap: wrap; gap: 6px; }
+.chips button { height: 30px; border: 1px solid var(--line-2); background: var(--panel); border-radius: 999px; padding: 0 12px; font-size: var(--t-xs); font-weight: 500; color: var(--muted); cursor: pointer; }
+.chips button[aria-pressed="true"] { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 10%, var(--panel)); color: var(--fg); font-weight: 600; }
+.field { display: inline-flex; align-items: center; gap: 8px; font-size: var(--t-sm); color: var(--muted); }
+.field input { width: 150px; height: 34px; border: 1px solid var(--line-2); background: var(--panel); border-radius: var(--r-sm); padding: 0 10px; font-variant-numeric: tabular-nums; }
+
+/* 분포 · 공개 값 · 읽는 법 */
+.pos { display: grid; grid-template-columns: minmax(120px, 1.1fr) minmax(60px, 2fr) auto auto; gap: 8px 14px; align-items: center; font-size: var(--t-sm); margin: 0; padding: 0; list-style: none; }
 .pos li { display: contents; }
-.pos .bar { height: 10px; border-radius: 3px; background: var(--soft); overflow: hidden; }
-.pos .bar i { display: block; height: 100%; background: var(--s1); border-radius: 3px; min-width: 2px; }
+.pos .where { color: var(--muted); }
+.pos .meter { height: 8px; border-radius: 4px; background: var(--soft); overflow: hidden; }
+.pos .meter i { display: block; height: 100%; background: var(--s1); border-radius: 4px; min-width: 2px; }
 .pos .amt, .pos .shr { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
-.pos .shr { color: var(--muted); }
-.facts { margin: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 8px 24px; }
-.fact { display: flex; flex-direction: column; gap: 2px; padding-top: 8px; border-top: 1px solid var(--line); min-width: 0; }
-.fact dt { font-size: var(--t-cap); color: var(--muted); } .fact dd { margin: 0; font-variant-numeric: tabular-nums; }
-details { font-size: var(--t-cap); color: var(--muted); max-width: 66em; }
-details summary { cursor: pointer; color: var(--fg); font-weight: 600; padding: 4px 0; }
+.pos .amt { font-weight: 500; } .pos .shr { color: var(--faint); font-size: var(--t-xs); }
+.facts { margin: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 0 28px; }
+.fact { display: flex; flex-direction: column; gap: 2px; padding: 12px 0; border-top: 1px solid var(--line); min-width: 0; }
+.fact dt { font-size: var(--t-xs); font-weight: 500; color: var(--faint); } .fact dd { margin: 0; font-size: var(--t-md); font-weight: 500; font-variant-numeric: tabular-nums; }
+details { font-size: var(--t-sm); color: var(--muted); max-width: 62em; }
+details summary { cursor: pointer; color: var(--muted); font-weight: 600; padding: 4px 0; }
+details summary:hover { color: var(--fg); }
 details .scroll { margin-top: 8px; }
-.gloss { margin: 8px 0 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 10px 24px; }
-.gloss div { display: flex; flex-direction: column; gap: 2px; } .gloss dt { color: var(--fg); font-weight: 600; } .gloss dd { margin: 0; }
-.list { margin: 8px 0 0; padding-left: 1.2em; display: flex; flex-direction: column; gap: 4px; }
-.foot { margin: 0; color: var(--muted); font-size: var(--t-cap); }
-.skel { background: linear-gradient(90deg, var(--grid), var(--panel), var(--grid)); background-size: 200% 100%; border-radius: var(--radius); }
+.gloss { margin: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px 28px; font-size: var(--t-sm); }
+.gloss div { display: flex; flex-direction: column; gap: 2px; } .gloss dt { color: var(--fg); font-weight: 600; } .gloss dd { margin: 0; color: var(--muted); }
+.list { margin: 8px 0 0; padding-left: 1.15em; display: flex; flex-direction: column; gap: 4px; }
+.skel { background: linear-gradient(90deg, var(--grid), var(--soft), var(--grid)); background-size: 200% 100%; border-radius: var(--r-md); }
 @media (prefers-reduced-motion: no-preference) { .skel { animation: sk 1.4s linear infinite; } }
 @keyframes sk { from { background-position: 200% 0; } to { background-position: -200% 0; } }
+
+@media (max-width: 860px) { .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 560px) {
-  :root { --t-title: 19px; --t-h: 17.5px; }
+  :root { --t-xl: 18px; --t-lg: 16px; --t-num: 23px; --pad: 16px; }
   html { scroll-padding-top: 104px; }
-  .head-in { padding: 14px 16px 8px; } .banner { padding: 0 16px; }
+  .head-in { padding: 18px 16px 10px; } .title { font-size: 21px; } .banner { padding: 0 16px; }
   .bar-in { padding: 8px 16px 0; flex-direction: column-reverse; align-items: stretch; gap: 2px; }
-  .seg { display: flex; } .seg button { flex: 1 1 0; padding: 6px 8px; }
-  .nav { margin: 0 -16px; padding: 0 16px; } .nav a { padding: 9px 9px 9px; }
-  .page { padding: 18px 16px 56px; gap: 36px; }
-  .lede { font-size: 16.5px; }
-  .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
-  .card { padding: 13px 14px; } .big { font-size: 23px; } .big.two { font-size: 19px; }
+  .seg { display: flex; } .seg button { flex: 1 1 0; height: 30px; padding: 0 8px; }
+  .nav { margin: 0 -16px; padding: 0 16px; } .nav a { padding: 9px 9px; }
+  .page { padding: 12px 10px 56px; gap: 10px; }
+  .panel { border-radius: 14px; }
+  .tiles, .tiles.duo { gap: 8px; } .card { padding: 13px 14px; } .big.two { font-size: 18px; }
   .chart { min-height: 260px; } .chart.flow { min-height: 430px; }
   .pos { grid-template-columns: minmax(96px, 1.2fr) minmax(40px, 1fr) auto; } .pos .shr { display: none; }
+  .count { margin-right: 0; }
+}
+@media print {
+  .bar, .btn, .link, .tools, .seg, .chips, .banner, #calc, .skip { display: none !important; }
+  html, body { background: #fff; } .page { padding: 0; gap: 12px; } .panel { border-color: #ddd; break-inside: avoid; } .card, .fig { break-inside: avoid; }
 }
 </style>
 </head>
 <body>
 
+<a class="skip" href="#sum">본문으로 건너뛰기</a>
 <header class="head">
   <div class="head-in">
     <div class="brand">
       <h1 class="title">WLBN 운용현황</h1>
-      <p class="asof">기준 <span class="num" data-n="s.as_of" data-fmt="text">—</span> · 매일 자동 갱신 <span data-live hidden>· 최신 원장 반영 중…</span></p>
+      <p class="asof">기준 <span class="num" data-n="s.as_of" data-fmt="text">—</span> · <span data-ago>매일 자동 갱신</span> <span data-live hidden>· 최신 원장 반영 중…</span></p>
     </div>
-    <button type="button" class="btn" data-refresh>새로 불러오기</button>
+    <div class="ctl">
+      <button type="button" class="btn" data-copy>요약 복사</button>
+      <button type="button" class="btn" data-refresh>새로 불러오기</button>
+    </div>
   </div>
 </header>
 <div class="bar">
@@ -178,7 +231,7 @@ details .scroll { margin-top: 8px; }
 
 <main class="page">
 
-  <section class="sec" id="sum" aria-labelledby="h-sum">
+  <section class="sec panel" id="sum" aria-labelledby="h-sum">
     <h2 class="h2" id="h-sum">한눈에 <span class="period" data-period>—</span></h2>
     <p class="lede">일반 사용자 지갑은 <b data-n="k.user_paid">—</b>개를 받고 <b data-n="k.user_sold">—</b>개를 팔았다<span data-show="k.user_sold_share">. 받은 양의 <b data-n="k.user_sold_share" data-fmt="pct">—</b>다</span>. 판 대금은 <b data-n="k.user_got_rlusd">—</b> RLUSD와 <b data-n="k.user_got_xrp">—</b> XRP로 받았다.</p>
     <p class="say">시장 전체로는 산 양이 판 양보다 <b data-n="k.net_bought_total" data-fmt="abs">—</b>개 <span data-when="k.net_bought_total" data-is="pos">많다</span><span data-when="k.net_bought_total" data-is="neg">적다</span>. 산 양 <b data-n="k.buy_total">—</b>개 가운데 <b data-n="k.bot_bought">—</b>개(<b data-n="k.bot_buy_share" data-fmt="pct">—</b>)는 사이트가 bot으로 표시한 계정이 샀다.</p>
@@ -186,12 +239,12 @@ details .scroll { margin-top: 8px; }
       <article class="card" id="t-paid">
         <h3 class="card-h">지갑으로 받은 양</h3>
         <p class="big"><span data-n="k.user_paid">—</span><span class="unit">WLBN</span></p>
-        <p class="sub">지갑 <b data-n="k.wallets_paid">—</b>곳<span data-show="k.user_repaid"> · 10/26 재지급 <b data-n="k.user_repaid">—</b> 포함</span></p>
+        <p class="sub">지갑 <b data-n="k.wallets_paid">—</b>곳<span data-show="k.user_repaid"> · 10/26 재지급 <b data-n="k.user_repaid">—</b> 포함</span><span data-prev="user_paid"></span></p>
       </article>
       <article class="card" id="t-sold">
         <h3 class="card-h">판 양</h3>
         <p class="big"><span data-n="k.user_sold">—</span><span class="unit">WLBN</span></p>
-        <p class="sub"><span data-show="k.user_sold_share">받은 양의 <b data-n="k.user_sold_share" data-fmt="pct">—</b> · </span>판 지갑 <b data-n="k.wallets_sold">—</b>곳 · 되산 양 <b data-n="k.user_bought">—</b></p>
+        <p class="sub"><span data-show="k.user_sold_share">받은 양의 <b data-n="k.user_sold_share" data-fmt="pct">—</b> · </span>판 지갑 <b data-n="k.wallets_sold">—</b>곳 · 되산 양 <b data-n="k.user_bought">—</b><span data-prev="user_sold"></span></p>
       </article>
       <article class="card" id="t-cash">
         <h3 class="card-h">팔아서 받은 대금</h3>
@@ -214,22 +267,26 @@ details .scroll { margin-top: 8px; }
         <p class="sub">XRP로는 <b data-n="s.xrp_per_wlbn" data-fmt="f4">—</b> · 기간 첫날 <b data-n="k.price_from" data-fmt="f4">—</b>에서 <b data-n="k.price_change" data-fmt="spct">—</b></p>
       </article>
     </div>
+    <h3 class="h3">눈여겨볼 점</h3>
+    <ul class="cap points" id="insights"></ul>
     <p class="note">일반 사용자 지갑은 지급 계정(사이트 표시 operations)에서 WLBN을 받은 지갑과 그 지갑에서 이체받은 지갑이다. 사이트가 이름을 붙인 회사 계정은 따로 센다.</p>
   </section>
 
-  <section class="sec" id="flow" aria-labelledby="h-flow">
+  <section class="sec panel" id="flow" aria-labelledby="h-flow">
     <h2 class="h2" id="h-flow">WLBN은 누가 팔고 누가 샀나 <span class="period" data-period>—</span></h2>
     <p class="note">왼쪽이 판 쪽, 가운데가 풀, 오른쪽이 산 쪽이다. 띠의 굵기가 WLBN 수량이다. 띠를 가리키거나 누르면 수량이 보인다.</p>
     <figure class="fig">
       <div class="chart flow skel" id="chart-flow" data-chart="flow" role="img" aria-label="지갑 묶음별로 판 양이 두 풀을 거쳐 산 쪽으로 가는 흐름 그림"></div>
       <ul class="cap" id="flow-cap"></ul>
     </figure>
+    <h3 class="h3">대금은 무엇으로 오갔나</h3>
     <p class="say">판 쪽은 모두 <b data-n="k.got_rlusd_total">—</b> RLUSD와 <b data-n="k.got_xrp_total">—</b> XRP를 받았고, 산 쪽은 모두 <b data-n="k.paid_rlusd_total">—</b> RLUSD와 <b data-n="k.paid_xrp_total">—</b> XRP를 냈다. 이 가운데 bot 표시 계정이 낸 것이 <b data-n="k.bot_paid_rlusd">—</b> RLUSD와 <b data-n="k.bot_paid_xrp">—</b> XRP다.</p>
+    <div class="tools end"><button type="button" class="link" data-csv="groups">CSV 받기</button></div>
     <div class="scroll"><table id="tb-groups" aria-label="지갑 묶음별 합계"><thead></thead><tbody></tbody></table></div>
     <p class="note">사고팔기만 한 지갑은 받은 기록 없이 산 양과 판 양이 거의 같은 지갑이다. 한 거래 안에서 두 풀을 오가는 거래는 지갑 잔액이 바뀌지 않아 세지 않는다.</p>
   </section>
 
-  <section class="sec" id="daily" aria-labelledby="h-daily">
+  <section class="sec panel" id="daily" aria-labelledby="h-daily">
     <h2 class="h2" id="h-daily">날짜별 흐름 <span class="period" data-period>—</span></h2>
     <h3 class="h3">일반 사용자 지갑이 하루에 팔고 산 양</h3>
     <p class="note">위로 뻗은 막대가 판 양, 아래로 뻗은 막대가 산 양, 선은 그날 새로 받은 양이다. 단위 WLBN. 마지막 날은 기준 시각까지의 값이다.</p>
@@ -243,25 +300,35 @@ details .scroll { margin-top: 8px; }
       <div class="legend"><span class="key"><i class="sw" style="background:var(--s1)"></i>일반 사용자 지갑</span><span class="key"><i class="sw" style="background:var(--s2)"></i>사고팔기만 한 지갑</span><span class="key"><i class="sw" style="background:var(--s3)"></i>그 밖의 지갑</span><span class="key"><i class="sw" style="background:var(--s4)"></i>bot 표시 계정</span></div>
       <div class="chart skel" id="chart-market" data-chart="market" role="img" aria-label="날짜별로 묶음마다 판 양과 산 양을 쌓은 막대"></div>
     </figure>
+    <p class="note">막대를 누르면 그날 누가 팔고 샀는지 아래에 나온다.</p>
+    <div class="card" id="day-panel" hidden>
+      <div class="tools between"><h3 class="h3 flat"><span data-day-title>—</span> 하루 상세</h3><button type="button" class="btn sm" data-day-close>닫기</button></div>
+      <p class="sub" data-day-sum></p>
+      <div class="two-col">
+        <div><p class="note">많이 판 곳</p><div class="scroll"><table id="tb-day-sell" aria-label="그날 많이 판 곳"><thead></thead><tbody></tbody></table></div></div>
+        <div><p class="note">많이 산 곳</p><div class="scroll"><table id="tb-day-buy" aria-label="그날 많이 산 곳"><thead></thead><tbody></tbody></table></div></div>
+      </div>
+    </div>
     <details>
       <summary>날짜별 숫자를 표로 보기</summary>
+      <div class="tools end"><button type="button" class="link" data-csv="daily">CSV 받기</button></div>
       <div class="scroll"><table id="tb-daily" aria-label="날짜별 숫자"><thead></thead><tbody></tbody></table></div>
     </details>
   </section>
 
-  <section class="sec" id="pool" aria-labelledby="h-pool">
+  <section class="sec panel" id="pool" aria-labelledby="h-pool">
     <h2 class="h2" id="h-pool">풀 두 곳 <span class="period" data-period>—</span></h2>
-    <div class="tiles">
+    <div class="tiles duo">
       <article class="card"><h3 class="card-h">RLUSD 풀에 지금 든 양</h3><p class="big two"><span><span data-n="s.pool_r_wlbn">—</span> <span class="unit">WLBN</span></span><span><span data-n="s.pool_r_rlusd">—</span> <span class="unit">RLUSD</span></span></p></article>
       <article class="card"><h3 class="card-h">XRP 풀에 지금 든 양</h3><p class="big two"><span><span data-n="s.pool_x_wlbn">—</span> <span class="unit">WLBN</span></span><span><span data-n="s.pool_x_xrp">—</span> <span class="unit">XRP</span></span></p></article>
     </div>
     <div class="two-col">
       <figure class="fig">
-        <h3 class="h3">가격 · WLBN 1개당 RLUSD</h3>
+        <h3 class="h4">가격 · WLBN 1개당 RLUSD</h3>
         <div class="chart sm skel" id="chart-price" data-chart="price" role="img" aria-label="날짜별 가격 선"></div>
       </figure>
       <figure class="fig">
-        <h3 class="h3">풀에 든 WLBN</h3>
+        <h3 class="h4">풀에 든 WLBN</h3>
         <div class="legend"><span class="key"><i class="sw line" style="background:var(--s1)"></i>XRP 풀</span><span class="key"><i class="sw line" style="background:var(--s3)"></i>RLUSD 풀</span></div>
         <div class="chart sm skel" id="chart-poolw" data-chart="poolw" role="img" aria-label="날짜별 두 풀의 WLBN 수량 선"></div>
       </figure>
@@ -269,32 +336,49 @@ details .scroll { margin-top: 8px; }
     <h3 class="h3">누가 풀에 넣었나</h3>
     <p class="note">넣은 양에서 뺀 양을 뺀 값이다. 음수는 넣은 것보다 더 많이 뺐다는 뜻이다.</p>
     <div class="scroll"><table id="tb-lp" aria-label="풀에 넣은 양"><thead></thead><tbody></tbody></table></div>
+    <div class="sub-block" data-need="lpShares" hidden>
+      <h3 class="h3">지금 풀의 몫은 누가 들고 있나</h3>
+      <p class="note">풀에 넣으면 받는 지분 증표를 지금 누가 들고 있는지로 나눈 값이다. 넣은 뒤 증표를 다른 지갑으로 옮기면 위 「누가 풀에 넣었나」와 달라진다.</p>
+      <div class="scroll"><table id="tb-lpshare" aria-label="지금 풀의 몫"><thead></thead><tbody></tbody></table></div>
+    </div>
+    <div class="card" id="calc">
+      <div class="tools between">
+        <h3 class="h3 flat">거래 계산기 · 지금 풀에 든 양 기준</h3>
+        <div class="seg" role="group" aria-label="거래 방향"><button type="button" data-side="sell" aria-pressed="true">팔 때</button><button type="button" data-side="buy" aria-pressed="false">살 때</button></div>
+      </div>
+      <label class="field">WLBN 수량 <input type="number" inputmode="decimal" min="0" step="any" value="10000" data-amt></label>
+      <div class="scroll"><table id="tb-calc" aria-label="거래 계산 결과"><thead></thead><tbody></tbody></table></div>
+      <p class="note">풀에 지금 든 양과 수수료(<span data-n="s.fee_x" data-fmt="pct">—</span>)로 계산한 값이다. 실제 거래는 그사이 풀이 바뀌면 달라진다.</p>
+    </div>
   </section>
 
-  <section class="sec" id="accounts" aria-labelledby="h-accounts">
+  <section class="sec panel" id="accounts" aria-labelledby="h-accounts">
     <h2 class="h2" id="h-accounts">회사 표시 계정의 움직임 <span class="period" data-period>—</span></h2>
-    <p class="note">wellbian.io가 이름을 붙여 공개한 계정이다. 잔액은 지금 값이고, 나머지는 고른 기간의 합계다.</p>
+    <p class="note">wellbian.io가 이름을 붙여 공개한 계정이다. 「지금」이 붙은 열은 지금 잔액이고, 나머지는 고른 기간의 합계다.</p>
+    <div class="tools end"><button type="button" class="link" data-csv="accounts">CSV 받기</button></div>
     <div class="scroll"><table id="tb-accounts" aria-label="회사 표시 계정"><thead></thead><tbody></tbody></table></div>
   </section>
 
-  <section class="sec" id="wallets" aria-labelledby="h-wallets">
+  <section class="sec panel" id="wallets" aria-labelledby="h-wallets">
     <h2 class="h2" id="h-wallets">일반 사용자 지갑별 내역 <span class="period" data-period>—</span></h2>
     <div class="tools">
       <input class="search" type="search" placeholder="지갑 주소 앞이나 뒤 글자로 찾기" aria-label="지갑 찾기" data-search>
+      <span class="chips" role="group" aria-label="지갑 거르기"><button type="button" data-wf="all" aria-pressed="true">전체</button><button type="button" data-wf="sold" aria-pressed="false">판 지갑</button><button type="button" data-wf="held" aria-pressed="false">잔액 있는 지갑</button><button type="button" data-wf="pool" aria-pressed="false">풀에 넣은 지갑</button></span>
       <span class="count"><span data-wcount>—</span>곳</span>
-      <button type="button" class="btn" data-more>전체 보기</button>
+      <button type="button" class="link" data-more>전체 보기</button>
+      <button type="button" class="link" data-csv="wallets">CSV 받기</button>
     </div>
     <div class="scroll"><table id="tb-wallets" aria-label="일반 사용자 지갑별 내역"><thead></thead><tbody></tbody></table></div>
     <p class="note">열 이름을 누르면 그 열로 정렬한다. 잔액은 지금 값, 나머지는 고른 기간의 합계다. 단위 WLBN, 대금은 받은 통화 그대로.</p>
   </section>
 
-  <section class="sec" id="where" aria-labelledby="h-where">
+  <section class="sec panel" id="where" aria-labelledby="h-where">
     <h2 class="h2" id="h-where">WLBN은 지금 어디에 있나</h2>
     <p class="say">전체 <b data-n="s.total_supply">—</b>개 가운데 대부분은 잠겨 있거나 treasury 표시 계정에 있다. 막대는 위 네 줄을 뺀 나머지끼리 견준 길이다.</p>
     <ul class="pos" id="pos-list"></ul>
   </section>
 
-  <section class="sec" id="facts" aria-labelledby="h-facts">
+  <section class="sec panel" id="facts" aria-labelledby="h-facts">
     <h2 class="h2" id="h-facts">네트워크와 시장 · 사이트와 DexScreener가 공개한 값</h2>
     <dl class="facts">
       <div class="fact"><dt>DexScreener 가격</dt><dd><span data-n="s.price_usd_dex" data-fmt="f4">—</span>달러</dd></div>
@@ -306,13 +390,13 @@ details .scroll { margin-top: 8px; }
     </dl>
   </section>
 
-  <section class="sec" id="before" data-need="before" hidden aria-labelledby="h-before">
+  <section class="sec panel" id="before" data-need="before" hidden aria-labelledby="h-before">
     <h2 class="h2" id="h-before">이전 풀 기간 · 10월 2일~24일</h2>
     <p class="say">10월 24일 밤 지갑 <b data-n="s.sweep_from_wallets">—</b>곳의 WLBN이 한 주소로 옮겨졌고, 그 주소가 <b data-n="s.sweep_sold">—</b>개를 팔아 <b data-n="s.sweep_got_rlusd">—</b> RLUSD와 <b data-n="s.sweep_got_xrp">—</b> XRP를 받았다. 가장 많이 옮겨진 지갑 한 곳의 양이 <b data-n="s.sweep_largest_source">—</b>개다. 10월 26~27일에 지급 계정이 <b data-n="s.repaid_total">—</b>개를 새 지갑들로 다시 지급했고, 이 재지급분은 위 받은 양에 들어 있다. 이 주소의 매도는 일반 사용자 지갑의 매도에 넣지 않았다.</p>
     <div class="scroll"><table id="tb-before" aria-label="이전 풀 기간 묶음별 합계"><thead></thead><tbody></tbody></table></div>
   </section>
 
-  <section class="sec" id="notes" aria-labelledby="h-notes">
+  <section class="sec panel" id="notes" aria-labelledby="h-notes">
     <h2 class="h2" id="h-notes">읽는 법</h2>
     <dl class="gloss">
       <div><dt>받은 양(수령)</dt><dd>지급 계정에서 지갑으로 들어온 WLBN. 기기 보상 말고도 지급 계정이 보낸 모든 WLBN이 들어 있다.</dd></div>
@@ -333,6 +417,7 @@ details .scroll { margin-top: 8px; }
         <li>원장에서 읽은 숫자와 사이트 · DexScreener 값은 받은 시각이 몇 분씩 다르다.</li>
       </ul>
     </details>
+    <p class="foot" data-status></p>
     <p class="foot">원장 기록으로 집계한 값이다. 지급량과 가치는 보장되지 않으며, 이 화면은 투자 판단을 위한 자료가 아니다.</p>
   </section>
 
@@ -343,10 +428,12 @@ details .scroll { margin-top: 8px; }
 (function () {
   'use strict';
   var DATA = null, RANGE = 'all', QUERY = '', SHOWALL = false, WSORT = { key: 'sold', dir: -1 }, TOP = 15;
+  var WF = 'all', SELDAY = null, SIDE = 'sell', LASTOK = 0, LASTTRY = 0, REFRESH_MS = 15 * 60 * 1000;
   var $ = function (s, r) { return (r || document).querySelector(s); };
   var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
   function md(s) { var p = String(s).split('-'); return p.length === 3 ? (+p[1]) + '/' + (+p[2]) : String(s); }
   var fInt = d3.format(',.0f');
+  function abbr(v) { var a = Math.abs(v); return a >= 1e6 ? d3.format('.1~f')(a / 1e6) + 'M' : a >= 1e4 ? d3.format('.0f')(a / 1e3) + 'K' : a >= 1e3 ? d3.format('.1~f')(a / 1e3) + 'K' : fInt(a); }
   var F = {
     int: fInt, abs: function (v) { return fInt(Math.abs(v)); }, pct: d3.format('.1%'), spct: d3.format('+.1%'), f3: d3.format('.3f'), f4: d3.format('.4f'),
     text: String, md: md, share: function (v) { return v >= 0.001 ? d3.format('.2%')(v) : d3.format('.4%')(v); }
@@ -371,6 +458,10 @@ details .scroll { margin-top: 8px; }
     $$('[data-when]').forEach(function (el) { var v = pick(el.getAttribute('data-when'), c), pos = el.getAttribute('data-is') === 'pos'; el.hidden = v === null || (pos ? v < 0 : v >= 0); });
     $$('[data-period]').forEach(function (el) { el.textContent = PERIOD[RANGE] + ' · ' + md(c.r.from) + '~' + md(c.r.to); });
     $$('[data-need]').forEach(function (el) { el.hidden = !DATA[el.getAttribute('data-need')]; });
+    $$('[data-prev]').forEach(function (el) {
+      var f = el.getAttribute('data-prev'), p = c.r.prev;
+      el.textContent = (p && p[f] > 0) ? ' · 직전 ' + c.r.days + '일 대비 ' + F.spct(c.k[f] / p[f] - 1) : '';
+    });
   }
 
   // 차트 공통
@@ -416,7 +507,7 @@ details .scroll { margin-top: 8px; }
     f.tip.style.left = Math.max(0, Math.min(left, bw - tw)) + 'px';
     f.tip.style.top = Math.max(0, Math.min(y * k - th / 2, f.h - th)) + 'px';
   }
-  function hover(f, days, xc, step, m, content) {
+  function hover(f, days, xc, step, m, content, onPick) {
     var band = f.svg.insert('rect', ':first-child').attr('class', 'band').attr('y', m.t).attr('height', f.h - m.t - m.b).attr('width', Math.max(step, 2)).attr('visibility', 'hidden');
     var over = f.svg.append('rect').attr('x', m.l).attr('y', 0).attr('width', Math.max(0, f.w - m.l - m.r)).attr('height', f.h).attr('fill', 'transparent');
     function show(ev) {
@@ -426,6 +517,7 @@ details .scroll { margin-top: 8px; }
       band.attr('x', xc(d) - Math.max(step, 2) / 2).attr('visibility', 'visible');
       f.tip.replaceChildren.apply(f.tip, content(d)); f.tip.hidden = false;
       placeTip(f, xc(d), m.t + 40);
+      if (onPick && ev.type === 'pointerdown') onPick(d);
     }
     function hide() { f.tip.hidden = true; band.attr('visibility', 'hidden'); }
     over.on('pointermove', show).on('pointerdown', show).on('pointerleave', function (ev) { if (ev.pointerType === 'mouse') hide(); });
@@ -505,10 +597,10 @@ details .scroll { margin-top: 8px; }
     var f = setup(el, el.clientWidth < 560 ? 260 : 300), days = rows.map(function (r) { return r.date; }), by = new Map(rows.map(function (r) { return [r.date, r]; }));
     var up = d3.max(rows, function (r) { return Math.max(r.sell_user, r.paid_user); }) || 1, dn = d3.max(rows, function (r) { return r.buy_user; }) || 0;
     var y = d3.scaleLinear().domain([-dn, up]).nice(5), ticks = y.ticks(5);
-    var m = { t: 12, r: 10, b: 26, l: Math.ceil(textW(f.svg, ticks.map(F.abs), 'tick')) + 12 };
+    var yf = f.w < 560 ? abbr : F.abs, m = { t: 12, r: 10, b: 26, l: Math.ceil(textW(f.svg, ticks.map(yf), 'tick')) + 12 };
     y.range([f.h - m.b, m.t]);
     var x = d3.scaleBand().domain(days).range([m.l, f.w - m.r]).paddingInner(0.28).paddingOuter(0.14), xc = function (d) { return x(d) + x.bandwidth() / 2; };
-    var g = axes(f, y, ticks, days, xc, m, F.abs), rx = Math.min(2.5, x.bandwidth() / 2), op = function (r) { return r.partial ? 0.55 : 1; };
+    var g = axes(f, y, ticks, days, xc, m, yf), rx = Math.min(2.5, x.bandwidth() / 2), op = function (r) { return r.partial ? 0.55 : 1; };
     g.selectAll('rect.s').data(rows).join('rect').attr('class', 's').attr('x', function (r) { return x(r.date); }).attr('width', x.bandwidth()).attr('y', function (r) { return y(r.sell_user); })
       .attr('height', function (r) { return Math.max(0, y(0) - y(r.sell_user)); }).attr('rx', rx).style('fill', 'var(--s1)').style('opacity', op);
     g.selectAll('rect.b').data(rows).join('rect').attr('class', 'b').attr('x', function (r) { return x(r.date); }).attr('width', x.bandwidth()).attr('y', y(0))
@@ -524,7 +616,7 @@ details .scroll { margin-top: 8px; }
         { label: '판 지갑 수', value: fInt(r.user_sellers), sep: true }, { label: '받은 RLUSD', value: fInt(r.got_rlusd_user) }, { label: '받은 XRP', value: fInt(r.got_xrp_user) },
         { label: '그날 가격(RLUSD)', value: r.price_rlusd === null ? '—' : F.f4(r.price_rlusd) }
       ]);
-    });
+    }, pickDay);
   }
 
   // 시장 전체: 묶음별 판 양(위) · 산 양(아래)
@@ -534,10 +626,10 @@ details .scroll { margin-top: 8px; }
     var tot = function (r, side) { return d3.sum(MARKET, function (k) { return r[side + '_' + k] || 0; }); };
     var up = d3.max(rows, function (r) { return tot(r, 'sell'); }) || 1, dn = d3.max(rows, function (r) { return tot(r, 'buy'); }) || 0;
     var y = d3.scaleLinear().domain([-dn, up]).nice(6), ticks = y.ticks(6);
-    var m = { t: 12, r: 10, b: 26, l: Math.ceil(textW(f.svg, ticks.map(F.abs), 'tick')) + 12 };
+    var yf = f.w < 560 ? abbr : F.abs, m = { t: 12, r: 10, b: 26, l: Math.ceil(textW(f.svg, ticks.map(yf), 'tick')) + 12 };
     y.range([f.h - m.b, m.t]);
     var x = d3.scaleBand().domain(days).range([m.l, f.w - m.r]).paddingInner(0.28).paddingOuter(0.14), xc = function (d) { return x(d) + x.bandwidth() / 2; };
-    var g = axes(f, y, ticks, days, xc, m, F.abs), segs = [];
+    var g = axes(f, y, ticks, days, xc, m, yf), segs = [];
     rows.forEach(function (r) {
       var a = 0, b = 0;
       MARKET.forEach(function (k) {
@@ -555,7 +647,7 @@ details .scroll { margin-top: 8px; }
       items.push({ label: '산 양 합계', value: fInt(tot(r, 'buy')), sep: true });
       MARKET.forEach(function (k) { if (r['buy_' + k] > 0) items.push({ label: GN[k], value: fInt(r['buy_' + k]), color: GC[k] }); });
       return tipRows(dayTitle(r), items);
-    });
+    }, pickDay);
   }
 
   // 선 차트 (가격 · 풀에 든 WLBN)
@@ -566,10 +658,10 @@ details .scroll { margin-top: 8px; }
     var lo = d3.min(rows, function (r) { return d3.min(series, function (s) { return r[s.key]; }); }), hi = d3.max(rows, function (r) { return d3.max(series, function (s) { return r[s.key]; }); });
     if (zero) lo = 0; else { var padv = (hi - lo) * 0.15 || hi * 0.02; lo = Math.max(0, lo - padv); hi = hi + padv; }
     var y = d3.scaleLinear().domain([lo, hi]).nice(4), ticks = y.ticks(4), ends = series.map(function (s) { return fmt(last[s.key]); });
-    var m = { t: 12, r: Math.ceil(textW(f.svg, ends, 'end')) + 14, b: 26, l: Math.ceil(textW(f.svg, ticks.map(fmt), 'tick')) + 12 };
+    var tf = (fmt === fInt && f.w < 560) ? abbr : fmt, m = { t: 12, r: Math.ceil(textW(f.svg, ends, 'end')) + 14, b: 26, l: Math.ceil(textW(f.svg, ticks.map(tf), 'tick')) + 12 };
     y.range([f.h - m.b, m.t]);
     var x = d3.scalePoint().domain(days).range([m.l, f.w - m.r]).padding(0.2), xc = function (d) { return x(d); };
-    var g = axes(f, y, ticks, days, xc, m, fmt), ys = series.map(function (s) { return y(last[s.key]); });
+    var g = axes(f, y, ticks, days, xc, m, tf), ys = series.map(function (s) { return y(last[s.key]); });
     for (var i = 1; i < ys.length; i++) if (Math.abs(ys[i] - ys[i - 1]) < 14) { var mid = (ys[i] + ys[i - 1]) / 2, upper = ys[i - 1] <= ys[i]; ys[i - 1] = mid + (upper ? -7 : 7); ys[i] = mid + (upper ? 7 : -7); }
     series.forEach(function (s, i) {
       var line = d3.line().x(function (r) { return xc(r.date); }).y(function (r) { return y(r[s.key]); });
@@ -608,26 +700,162 @@ details .scroll { margin-top: 8px; }
       });
     });
   }
+  var COLS = {
+    groups: [{ key: 'group', label: '지갑 묶음', text: 1 }, { key: 'wallets', label: '지갑 수' }, { key: 'paid', label: '받은 양' }, { key: 'sold', label: '판 양' }, { key: 'bought', label: '산 양' },
+      { key: 'net_sold', label: '판 양 − 산 양' }, { key: 'got_rlusd', label: '받은 RLUSD' }, { key: 'got_xrp', label: '받은 XRP' }, { key: 'paid_rlusd', label: '낸 RLUSD' }, { key: 'paid_xrp', label: '낸 XRP' }],
+    lp: [{ key: 'who', label: '누가', text: 1 }, { key: 'wlbn', label: 'WLBN' }, { key: 'rlusd', label: 'RLUSD' }, { key: 'xrp', label: 'XRP' }],
+    lpshare: [{ key: 'who', label: '누가', text: 1 }, { key: 'x_share', label: 'XRP 풀 몫', fmt: F.pct }, { key: 'x_wlbn', label: 'WLBN' }, { key: 'x_xrp', label: 'XRP' },
+      { key: 'r_share', label: 'RLUSD 풀 몫', fmt: F.pct }, { key: 'r_wlbn', label: 'WLBN' }, { key: 'r_rlusd', label: 'RLUSD' }],
+    accounts: [{ key: 'name', label: '표시 이름', text: 1 }, { key: 'wallet', label: '지갑', text: 1 }, { key: 'balance', label: '지금 WLBN' }, { key: 'rlusd', label: '지금 RLUSD' }, { key: 'xrp', label: '지금 XRP' },
+      { key: 'paid_out', label: '지갑으로 지급' }, { key: 'received', label: '받은 양' }, { key: 'bought', label: '산 양' }, { key: 'sold', label: '판 양' }, { key: 'paid_rlusd', label: '낸 RLUSD' }, { key: 'paid_xrp', label: '낸 XRP' },
+      { key: 'pool_wlbn', label: '풀에 넣은 WLBN' }, { key: 'pool_rlusd', label: '풀에 넣은 RLUSD' }, { key: 'pool_xrp', label: '풀에 넣은 XRP' }],
+    daily: [{ key: 'date', label: '날짜', text: 1, fmt: md }, { key: 'sell_user', label: '사용자 판 양' }, { key: 'buy_user', label: '사용자 산 양' }, { key: 'paid_user', label: '새로 받은 양' }, { key: 'sell_total', label: '전체 판 양' },
+      { key: 'buy_total', label: '전체 산 양' }, { key: 'buy_bot', label: 'bot 산 양' }, { key: 'to_r', label: 'RLUSD 풀로' }, { key: 'to_x', label: 'XRP 풀로' }, { key: 'price_rlusd', label: '가격', fmt: F.f4 }],
+    wallets: [{ key: 'wallet', label: '지갑', text: 1 }, { key: 'paid', label: '받은 양' }, { key: 'sold', label: '판 양' }, { key: 'bought', label: '산 양' }, { key: 'got_rlusd', label: '받은 RLUSD' }, { key: 'got_xrp', label: '받은 XRP' },
+      { key: 'pool_in', label: '풀에 넣은 양' }, { key: 'balance', label: '잔액' }, { key: 'last_sell', label: '마지막으로 판 날', text: 1, fmt: md }],
+    before: [{ key: 'group', label: '지갑 묶음', text: 1 }, { key: 'wallets', label: '지갑 수' }, { key: 'sold', label: '판 양' }, { key: 'bought', label: '산 양' }, { key: 'net_sold', label: '판 양 − 산 양' },
+      { key: 'paid', label: '받은 양' }, { key: 'got_rlusd', label: '받은 RLUSD' }, { key: 'got_xrp', label: '받은 XRP' }],
+    day: [{ key: 'who', label: '곳', text: 1 }, { key: 'group', label: '묶음', text: 1 }, { key: 'w', label: 'WLBN' }, { key: 'rlusd', label: 'RLUSD' }, { key: 'xrp', label: 'XRP' }]
+  };
+  function dailyRows() { var c = ctx(); return DATA.daily.filter(function (r) { return r.date >= c.r.from; }).slice().reverse(); }
+  function walletRows() {
+    var c = ctx(), q = QUERY.trim().toLowerCase();
+    var all = c.r.wallets.filter(function (r) {
+      if (WF === 'sold' && !(r.sold > 0)) return false;
+      if (WF === 'held' && !(r.balance >= 1)) return false;
+      if (WF === 'pool' && !(r.pool_in > 0)) return false;
+      if (!q) return true;
+      var w = r.wallet.toLowerCase(), p = w.split('…');
+      return w.indexOf(q) >= 0 || p[0].indexOf(q) === 0 || (p[1] || '').indexOf(q) >= 0 || q.indexOf(p[0]) === 0;
+    });
+    all.sort(function (a, b) { var x = a[WSORT.key], y = b[WSORT.key]; if (x === y) return b.sold - a.sold; if (typeof x === 'string') return WSORT.dir * (x < y ? -1 : 1); return WSORT.dir * (x - y); });
+    return all;
+  }
   function drawTables() {
     var c = ctx();
-    table('#tb-groups', [{ key: 'group', label: '지갑 묶음', text: 1 }, { key: 'wallets', label: '지갑 수' }, { key: 'paid', label: '받은 양' }, { key: 'sold', label: '판 양' }, { key: 'bought', label: '산 양' },
-      { key: 'net_sold', label: '판 양 − 산 양' }, { key: 'got_rlusd', label: '받은 RLUSD' }, { key: 'got_xrp', label: '받은 XRP' }, { key: 'paid_rlusd', label: '낸 RLUSD' }, { key: 'paid_xrp', label: '낸 XRP' }], c.r.groups);
-    table('#tb-lp', [{ key: 'who', label: '누가', text: 1 }, { key: 'wlbn', label: 'WLBN' }, { key: 'rlusd', label: 'RLUSD' }, { key: 'xrp', label: 'XRP' }], c.r.lp);
-    table('#tb-accounts', [{ key: 'name', label: '표시 이름', text: 1 }, { key: 'wallet', label: '지갑', text: 1 }, { key: 'balance', label: '잔액(WLBN)' }, { key: 'paid_out', label: '지갑으로 지급' }, { key: 'received', label: '받은 양' },
-      { key: 'bought', label: '산 양' }, { key: 'sold', label: '판 양' }, { key: 'paid_rlusd', label: '낸 RLUSD' }, { key: 'paid_xrp', label: '낸 XRP' }, { key: 'pool_wlbn', label: '풀에 넣은 WLBN' }, { key: 'pool_rlusd', label: '풀에 넣은 RLUSD' }, { key: 'pool_xrp', label: '풀에 넣은 XRP' }], c.r.accounts, { dropZero: true });
-    table('#tb-daily', [{ key: 'date', label: '날짜', text: 1, fmt: md }, { key: 'sell_user', label: '사용자 판 양' }, { key: 'buy_user', label: '사용자 산 양' }, { key: 'paid_user', label: '새로 받은 양' }, { key: 'sell_total', label: '전체 판 양' },
-      { key: 'buy_total', label: '전체 산 양' }, { key: 'buy_bot', label: 'bot 산 양' }, { key: 'to_r', label: 'RLUSD 풀로' }, { key: 'to_x', label: 'XRP 풀로' }, { key: 'price_rlusd', label: '가격', fmt: F.f4 }],
-      DATA.daily.filter(function (r) { return r.date >= c.r.from; }).slice().reverse());
-    if (DATA.before) table('#tb-before', [{ key: 'group', label: '지갑 묶음', text: 1 }, { key: 'wallets', label: '지갑 수' }, { key: 'sold', label: '판 양' }, { key: 'bought', label: '산 양' }, { key: 'net_sold', label: '판 양 − 산 양' },
-      { key: 'paid', label: '받은 양' }, { key: 'got_rlusd', label: '받은 RLUSD' }, { key: 'got_xrp', label: '받은 XRP' }], DATA.before);
-    // 지갑 표: 찾기 · 정렬 · 더 보기
-    var q = QUERY.trim().toLowerCase(), all = c.r.wallets.filter(function (r) { if (!q) return true; var w = r.wallet.toLowerCase(), p = w.split('…'); return w.indexOf(q) >= 0 || p[0].indexOf(q) === 0 || (p[1] || '').indexOf(q) >= 0 || q.indexOf(p[0]) === 0; });
-    all.sort(function (a, b) { var x = a[WSORT.key], y = b[WSORT.key]; if (x === y) return b.sold - a.sold; if (typeof x === 'string') return WSORT.dir * (x < y ? -1 : 1); return WSORT.dir * (x - y); });
-    var shown = (SHOWALL || q) ? all : all.slice(0, TOP);
-    table('#tb-wallets', [{ key: 'wallet', label: '지갑', text: 1 }, { key: 'paid', label: '받은 양' }, { key: 'sold', label: '판 양' }, { key: 'bought', label: '산 양' }, { key: 'got_rlusd', label: '받은 RLUSD' }, { key: 'got_xrp', label: '받은 XRP' },
-      { key: 'pool_in', label: '풀에 넣은 양' }, { key: 'balance', label: '잔액' }, { key: 'last_sell', label: '마지막으로 판 날', text: 1, fmt: md }], shown, { sort: WSORT, empty: '찾는 지갑이 없습니다.' });
+    table('#tb-groups', COLS.groups, c.r.groups);
+    table('#tb-lp', COLS.lp, c.r.lp);
+    if (DATA.lpShares) table('#tb-lpshare', COLS.lpshare, DATA.lpShares);
+    table('#tb-accounts', COLS.accounts, c.r.accounts, { dropZero: true });
+    table('#tb-daily', COLS.daily, dailyRows());
+    if (DATA.before) table('#tb-before', COLS.before, DATA.before);
+    var q = QUERY.trim(), all = walletRows(), shown = (SHOWALL || q) ? all : all.slice(0, TOP);
+    table('#tb-wallets', COLS.wallets, shown, { sort: WSORT, empty: '조건에 맞는 지갑이 없습니다.' });
     var wc = $('[data-wcount]'); if (wc) wc.textContent = fInt(shown.length) + (shown.length < all.length ? ' / ' + fInt(all.length) : '');
-    var more = $('[data-more]'); if (more) { more.hidden = !!q || all.length <= TOP; more.textContent = SHOWALL ? '많이 판 ' + TOP + '곳만 보기' : '전체 보기'; }
+    var more = $('[data-more]'); if (more) { more.hidden = !!q || all.length <= TOP; more.textContent = SHOWALL ? '위 ' + TOP + '곳만 보기' : '전체 보기'; }
+  }
+
+  // 눈여겨볼 점: 고른 기간의 자료에서 사실만 뽑아 적는다
+  function drawInsights() {
+    var ul = $('#insights'); if (!ul) return; ul.replaceChildren();
+    var c = ctx(), k = c.k, rows = tradeRows(), items = [];
+    if (c.r.prev && c.r.prev.user_sold > 0 && c.r.prev.user_paid > 0) items.push('직전 ' + c.r.days + '일(' + md(c.r.prev.from) + '~' + md(c.r.prev.to) + ')과 견주면 일반 사용자 지갑의 판 양은 ' + F.spct(k.user_sold / c.r.prev.user_sold - 1) + ', 받은 양은 ' + F.spct(k.user_paid / c.r.prev.user_paid - 1) + '다.');
+    var top = rows.slice().sort(function (a, b) { return b.sell_user - a.sell_user; })[0];
+    if (top && top.sell_user > 0 && k.user_sold > 0) {
+      var u = (((DATA.dayTop || {})[top.date] || {}).sell || []).filter(function (x) { return x.g === 'user'; })[0];
+      var t = '일반 사용자 지갑이 가장 많이 판 날은 ' + md(top.date) + '로 ' + fInt(top.sell_user) + '개다. 이 기간 판 양의 ' + F.pct(top.sell_user / k.user_sold) + '다.';
+      if (u && u.w / top.sell_user >= 0.5) t += ' 그날 판 양의 ' + F.pct(Math.min(u.w / top.sell_user, 1)) + '는 지갑 한 곳(' + u.who + ')에서 나왔다.';
+      items.push(t);
+    }
+    var ws = c.r.wallets.slice().sort(function (a, b) { return b.sold - a.sold; }), t5 = d3.sum(ws.slice(0, 5), function (w) { return w.sold; });
+    if (k.user_sold > 0 && ws.filter(function (w) { return w.sold > 0; }).length > 5) items.push('많이 판 지갑 다섯 곳이 일반 사용자 판 양의 ' + F.pct(t5 / k.user_sold) + '를 차지한다.');
+    var bd = rows.filter(function (r) { return r.buy_bot > 0; }), bt = rows.slice().sort(function (a, b) { return b.buy_bot - a.buy_bot; })[0];
+    if (bd.length) items.push('bot 표시 계정은 ' + rows.length + '일 가운데 ' + bd.length + '일에 샀다. 가장 많이 산 날은 ' + md(bt.date) + '(' + fInt(bt.buy_bot) + '개)다.');
+    var bot = (c.r.accounts || []).filter(function (a) { return a.name === 'bot'; })[0];
+    if (bot && bot.rlusd !== null && bot.rlusd !== undefined) items.push('bot 표시 계정에는 지금 ' + fInt(bot.rlusd) + ' RLUSD와 ' + fInt(bot.xrp) + ' XRP가 있다. 이 기간에 사는 데 쓴 것은 ' + fInt(k.bot_paid_rlusd) + ' RLUSD와 ' + fInt(k.bot_paid_xrp) + ' XRP다.');
+    var pr = DATA.daily.filter(function (r) { return r.date >= c.r.from && r.pool_r_rlusd !== null; });
+    if (pr.length > 1) items.push('RLUSD 풀의 RLUSD는 ' + md(pr[0].date) + ' ' + fInt(pr[0].pool_r_rlusd) + '에서 지금 ' + fInt(c.s.pool_r_rlusd) + '로, XRP 풀의 XRP는 ' + fInt(pr[0].pool_x_xrp) + '에서 ' + fInt(c.s.pool_x_xrp) + '로 바뀌었다.');
+    if (c.s.lp_company_share !== null && c.s.lp_company_share !== undefined) items.push('지금 두 풀에 든 WLBN 가운데 회사 표시 계정 몫이 ' + F.pct(c.s.lp_company_share) + ', 일반 사용자 지갑 몫이 ' + F.pct(c.s.lp_user_share) + '다.');
+    items.forEach(function (t) { var li = document.createElement('li'); li.textContent = t; ul.appendChild(li); });
+    var h = ul.previousElementSibling; if (h) h.hidden = !items.length;
+  }
+
+  // 하루 상세: 그날 많이 판 곳 · 많이 산 곳
+  function pickDay(d) { SELDAY = d; drawDay(); }
+  function drawDay() {
+    var panel = $('#day-panel'); if (!panel) return;
+    var rows = tradeRows(), tops = DATA.dayTop || {};
+    if (SELDAY && !rows.some(function (r) { return r.date === SELDAY; })) SELDAY = null;
+    if (SELDAY === null) { var best = rows.slice().sort(function (a, b) { return b.sell_total - a.sell_total; })[0]; SELDAY = best ? best.date : false; }
+    var t = SELDAY && tops[SELDAY], r = SELDAY && rows.filter(function (x) { return x.date === SELDAY; })[0];
+    panel.hidden = !t || !r;
+    if (panel.hidden) return;
+    $('[data-day-title]').textContent = md(SELDAY) + (r.partial ? '(기준 시각까지)' : '');
+    $('[data-day-sum]').textContent = '판 곳 ' + fInt(t.sellers) + '곳 · 산 곳 ' + fInt(t.buyers) + '곳 · 전체 판 양 ' + fInt(r.sell_total) + ' · 전체 산 양 ' + fInt(r.buy_total) + (r.price_rlusd === null ? '' : ' · 가격 ' + F.f4(r.price_rlusd) + ' RLUSD');
+    var named = function (list) { return list.map(function (x) { return { who: x.who, group: GN[x.g] || '', w: x.w, rlusd: x.rlusd, xrp: x.xrp }; }); };
+    table('#tb-day-sell', COLS.day, named(t.sell), { empty: '판 곳이 없습니다.' });
+    table('#tb-day-buy', COLS.day, named(t.buy), { empty: '산 곳이 없습니다.' });
+  }
+
+  // 거래 계산기: 지금 풀에 든 양과 수수료로 계산
+  function drawCalc() {
+    var t = $('#tb-calc'); if (!t) return;
+    var s = ctx().s, inp = $('[data-amt]'), amt = inp ? Number(inp.value) : 0, sell = SIDE === 'sell';
+    var pools = [{ name: 'XRP 풀', w: s.pool_x_wlbn, q: s.pool_x_xrp, unit: 'XRP', fee: s.fee_x }, { name: 'RLUSD 풀', w: s.pool_r_wlbn, q: s.pool_r_rlusd, unit: 'RLUSD', fee: s.fee_r }];
+    var rows = pools.filter(function (p) { return p.w > 0 && p.q > 0; }).map(function (p) {
+      var fee = (p.fee === null || p.fee === undefined) ? 0.005 : p.fee, spot = p.q / p.w, out = null;
+      if (amt > 0) {
+        if (sell) { var a = amt * (1 - fee); out = p.q * a / (p.w + a); }
+        else if (amt < p.w) out = p.q * amt / (p.w - amt) / (1 - fee);
+      }
+      return { pool: p.name, amount: out === null ? (amt > 0 ? '풀에 든 양보다 많음' : '—') : d3.format(',.2f')(out) + ' ' + p.unit,
+        avg: out === null ? '—' : F.f4(out / amt) + ' ' + p.unit, spot: F.f4(spot) + ' ' + p.unit, diff: out === null ? '—' : F.spct(out / amt / spot - 1) };
+    });
+    table('#tb-calc', [{ key: 'pool', label: '풀', text: 1 }, { key: 'amount', label: sell ? '받는 양' : '내는 양', text: 1 }, { key: 'diff', label: '지금 가격과 차이', text: 1 }, { key: 'avg', label: '1개당 평균', text: 1 }, { key: 'spot', label: '지금 가격', text: 1 }], rows);
+  }
+
+  // CSV 내려받기 · 요약 복사
+  function download(name, text) {
+    var blob = new Blob(['﻿' + text], { type: 'text/csv;charset=utf-8' }), url = URL.createObjectURL(blob), a = document.createElement('a');
+    a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(function () { URL.revokeObjectURL(url); }, 2000);
+  }
+  function csv(kind) {
+    if (!DATA) return;
+    var c = ctx(), rows = kind === 'groups' ? c.r.groups : kind === 'accounts' ? c.r.accounts : kind === 'daily' ? dailyRows().slice().reverse() : walletRows(), cols = COLS[kind];
+    var esc = function (v) { v = (v === null || v === undefined) ? '' : String(v); return /[",\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; };
+    var lines = [cols.map(function (x) { return esc(x.label); }).join(',')].concat(rows.map(function (r) { return cols.map(function (x) { return esc(r[x.key]); }).join(','); }));
+    download('wlbn-' + kind + '-' + RANGE + '-' + c.s.as_of.slice(0, 10) + '.csv', lines.join('\r\n'));
+  }
+  function summaryText() {
+    var c = ctx(), k = c.k, s = c.s, L = [];
+    L.push('[WLBN 운용현황 · ' + s.as_of + ' 기준]'); L.push('기간: ' + PERIOD[RANGE] + ' (' + md(c.r.from) + '~' + md(c.r.to) + ')'); L.push('');
+    L.push('■ 일반 사용자 지갑');
+    L.push('- 받은 양 ' + fInt(k.user_paid) + '개 (지갑 ' + fInt(k.wallets_paid) + '곳)');
+    if (k.user_repaid > 0) L.push('  · 10/26 재지급 ' + fInt(k.user_repaid) + ' 포함');
+    L.push('- 판 양 ' + fInt(k.user_sold) + '개' + (k.user_sold_share === null ? '' : ' (받은 양의 ' + F.pct(k.user_sold_share) + ')'));
+    L.push('  · 판 지갑 ' + fInt(k.wallets_sold) + '곳 / 되산 양 ' + fInt(k.user_bought));
+    L.push('- 받은 대금 ' + fInt(k.user_got_rlusd) + ' RLUSD + ' + fInt(k.user_got_xrp) + ' XRP');
+    L.push('- 풀에 넣어 둔 양 ' + fInt(k.user_pool_in) + '개'); L.push('');
+    L.push('■ 시장 전체');
+    L.push('- 산 양 ' + fInt(k.buy_total) + ' / 판 양 ' + fInt(k.sell_total));
+    L.push('- bot 계정이 산 양 ' + fInt(k.bot_bought) + '개' + (k.bot_buy_share === null ? '' : ' (' + F.pct(k.bot_buy_share) + ')'));
+    L.push('  · 낸 돈 ' + fInt(k.bot_paid_rlusd) + ' RLUSD + ' + fInt(k.bot_paid_xrp) + ' XRP'); L.push('');
+    L.push('■ 풀 · 가격');
+    L.push('- 가격 ' + (s.price_rlusd === null ? '—' : F.f4(s.price_rlusd)) + ' RLUSD');
+    L.push('- RLUSD 풀 ' + fInt(s.pool_r_wlbn) + ' WLBN + ' + fInt(s.pool_r_rlusd) + ' RLUSD');
+    L.push('- XRP 풀 ' + fInt(s.pool_x_wlbn) + ' WLBN + ' + fInt(s.pool_x_xrp) + ' XRP');
+    if (s.lp_company_share !== null && s.lp_company_share !== undefined) L.push('- 풀 몫: 회사 표시 계정 ' + F.pct(s.lp_company_share) + ' / 일반 지갑 ' + F.pct(s.lp_user_share));
+    return L.join('\n');
+  }
+  function copySummary(btn) {
+    if (!DATA) return;
+    var text = summaryText(), label = btn.textContent, done = function (ok) { btn.textContent = ok ? '복사했습니다' : '복사하지 못했습니다'; setTimeout(function () { btn.textContent = label; }, 1800); };
+    var fallback = function () { try { var ta = document.createElement('textarea'); ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0'; document.body.appendChild(ta); ta.select(); var ok = document.execCommand('copy'); ta.remove(); done(ok); } catch (e) { done(false); } };
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(function () { done(true); }, fallback); else fallback();
+  }
+  function drawStatus() {
+    var el = $('[data-status]'), i = DATA && DATA.info; if (!el || !i) return;
+    var t = i.storage === 'blob' ? '저장소 연결됨' : i.storage === 'snapshot' ? '배포할 때 넣은 자료' : '저장소 미연결 — 배포할 때 상태에서 매번 이어 받는 중';
+    if (typeof i.fetched === 'number') t += ' · 이번에 새로 반영한 거래 ' + fInt(i.fetched) + '건';
+    if (i.complete === false) t += ' · 아직 끝까지 받지 못함';
+    if (i.xrpl_error) t += ' · 원장 조회 실패';
+    if (i.storage_error) t += ' · 저장 실패';
+    el.textContent = '자료 상태: ' + t;
+  }
+  function tickAgo() {
+    var el = $('[data-ago]'); if (!el || !LASTOK) return;
+    var m = Math.floor((Date.now() - LASTOK) / 60000);
+    el.textContent = (m < 1 ? '방금 확인' : m + '분 전 확인') + ' · 15분마다 자동 확인';
   }
 
   // WLBN 분포
@@ -636,7 +864,7 @@ details .scroll { margin-top: 8px; }
     var rows = DATA.positions || [], big = { locked: 1, treasury: 1, seed: 1, staking: 1 }, max = d3.max(rows.filter(function (r) { return !big[r.key]; }), function (r) { return r.amount; }) || 1;
     rows.forEach(function (r) {
       var li = document.createElement('li'), n = document.createElement('span'), bar = document.createElement('span'), a = document.createElement('span'), s = document.createElement('span');
-      n.textContent = r.where; bar.className = 'bar'; a.className = 'amt'; s.className = 'shr'; a.textContent = fInt(r.amount); s.textContent = r.share === null ? '—' : F.share(r.share);
+      n.textContent = r.where; n.className = 'where'; bar.className = 'meter'; a.className = 'amt'; s.className = 'shr'; a.textContent = fInt(r.amount); s.textContent = r.share === null ? '—' : F.share(r.share);
       if (!big[r.key]) { var i = document.createElement('i'); i.style.width = Math.max(1, r.amount / max * 100) + '%'; bar.appendChild(i); } else bar.style.background = 'transparent';
       li.appendChild(n); li.appendChild(bar); li.appendChild(a); li.appendChild(s); ul.appendChild(li);
     });
@@ -649,7 +877,7 @@ details .scroll { margin-top: 8px; }
       price: function (el) { drawLines(el, [{ key: 'price_rlusd', label: '가격(RLUSD)', color: 'var(--s1)' }], F.f4, false); },
       poolw: function (el) { drawLines(el, [{ key: 'pool_x_wlbn', label: 'XRP 풀', color: 'var(--s1)' }, { key: 'pool_r_wlbn', label: 'RLUSD 풀', color: 'var(--s3)' }], fInt, true); } };
     $$('[data-chart]').forEach(function (el) { try { charts[el.getAttribute('data-chart')](el); } catch (e) { if (window.console) console.error(e); empty(el, '이 그림을 그리지 못했습니다.'); } });
-    try { drawTables(); drawPositions(); } catch (e) { if (window.console) console.error(e); }
+    [drawTables, drawPositions, drawInsights, drawDay, drawCalc, drawStatus].forEach(function (fn) { try { fn(); } catch (e) { if (window.console) console.error(e); } });
   }
 
   // 자료 받기
@@ -662,14 +890,28 @@ details .scroll { margin-top: 8px; }
   function loadLive() {
     var live = $('[data-live]'), btn = $('[data-refresh]'), stale = $('[data-stale]');
     if (live) live.hidden = false; if (btn) btn.disabled = true;
-    return getJson('api/data').then(function (d) { show(d); if (stale) stale.hidden = true; }).catch(function () { if (stale) stale.hidden = false; })
+    LASTTRY = Date.now();
+    return getJson('api/data').then(function (d) { show(d); LASTOK = Date.now(); tickAgo(); if (stale) stale.hidden = true; }).catch(function () { if (stale) stale.hidden = false; })
       .then(function () { if (live) live.hidden = true; if (btn) btn.disabled = false; });
   }
   document.addEventListener('DOMContentLoaded', function () {
+    try { var qp = new URLSearchParams(location.search).get('p'); if (PERIOD[qp]) { RANGE = qp; $$('[data-range]').forEach(function (x) { x.setAttribute('aria-pressed', String(x.getAttribute('data-range') === qp)); }); } } catch (e) { /* 기본 기간으로 연다 */ }
+    $$('[data-csv]').forEach(function (b) { b.addEventListener('click', function () { csv(b.getAttribute('data-csv')); }); });
+    var cp = $('[data-copy]'); if (cp) cp.addEventListener('click', function () { copySummary(cp); });
+    $$('[data-wf]').forEach(function (b) { b.addEventListener('click', function () { WF = b.getAttribute('data-wf'); $$('[data-wf]').forEach(function (x) { x.setAttribute('aria-pressed', String(x === b)); }); if (DATA) drawTables(); }); });
+    $$('[data-side]').forEach(function (b) { b.addEventListener('click', function () { SIDE = b.getAttribute('data-side'); $$('[data-side]').forEach(function (x) { x.setAttribute('aria-pressed', String(x === b)); }); if (DATA) drawCalc(); }); });
+    var am = $('[data-amt]'); if (am) am.addEventListener('input', function () { if (DATA) drawCalc(); });
+    var dc = $('[data-day-close]'); if (dc) dc.addEventListener('click', function () { SELDAY = false; drawDay(); });
+    setInterval(function () { tickAgo(); if (document.visibilityState === 'visible' && Date.now() - LASTTRY > REFRESH_MS) loadLive(); }, 30000);
+    document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'visible' && Date.now() - LASTTRY > REFRESH_MS) loadLive(); });
+    var opened = [];
+    window.addEventListener('beforeprint', function () { opened = $$('details:not([open])'); opened.forEach(function (d) { d.open = true; }); });
+    window.addEventListener('afterprint', function () { opened.forEach(function (d) { d.open = false; }); opened = []; });
     getJson('snapshot.json').then(show).catch(function () {});
     loadLive();
     $$('[data-range]').forEach(function (b) { b.addEventListener('click', function () {
-      RANGE = b.getAttribute('data-range'); $$('[data-range]').forEach(function (x) { x.setAttribute('aria-pressed', String(x === b)); }); render();
+      RANGE = b.getAttribute('data-range'); $$('[data-range]').forEach(function (x) { x.setAttribute('aria-pressed', String(x === b)); }); SELDAY = null; render();
+      try { history.replaceState(null, '', (RANGE === 'all' ? location.pathname : '?p=' + RANGE) + location.hash); } catch (e) { /* 주소를 못 바꿔도 화면은 그대로 쓴다 */ }
     }); });
     var rf = $('[data-refresh]'); if (rf) rf.addEventListener('click', loadLive);
     var se = $('[data-search]'); if (se) se.addEventListener('input', function () { QUERY = se.value; if (DATA) drawTables(); });

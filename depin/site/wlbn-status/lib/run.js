@@ -23,7 +23,8 @@ async function run() {
     const u = await xrpl.update(S, { budgetMs: 35000 });
     Object.assign(info, { updated: u.changed, fetched: u.fetched, complete: u.complete });
     core.pickExt(S, ext);
-    if (store.enabled() && u.changed) {
+    if (u.complete && (u.changed || !S.live)) { try { info.live = await xrpl.fetchLive(S, { budgetMs: 9000 }); } catch (e) { info.live_error = String((e && e.message) || e).slice(0, 120); } }
+    if (store.enabled() && (u.changed || info.live)) {
       try { info.saved = await store.save(S); } catch (e) { info.storage_error = String((e && e.message) || e).slice(0, 160); }
     }
   } catch (e) {
