@@ -11,7 +11,16 @@
 | `kitchen-idle.jpg` `kitchen-cook.jpg` `kitchen-vent.jpg` `kitchen-night.jpg` `kitchen-night-window.jpg` | 부엌 대기 / 조리 중 / 환기 / 밤 / 밤·창 열림 | 〃 |
 | `<같은 이름>.mp4` (13편) | 각 사진과 같은 구도의 5초 앰비언트 루프(커튼·김·조명만 움직임), 24fps, 편당 0.6~0.8MB | Kling 3.0 pro image-to-video, 첫 프레임 = 마지막 프레임 = 그 사진 |
 
-카페 · 사무실 · 회의실(v0.15)은 사진 · 영상이 아직 없다 — 페이지가 코드로 그린 도면 장면을 쓴다. 사진을 넣는 법은 위 폴더 README 의 v0.15 「사진이 생기면」.
+## 카페 · 사무실 · 회의실 (v0.16 — 이 파일들은 CDN 대체본이 없다. 지우면 그 공간은 도면 장면으로 열린다)
+
+| 파일 | 무엇 |
+|---|---|
+| `cafe-day-0.jpg` `cafe-day-1.jpg` `cafe-day-2.jpg` `cafe-night-0.jpg` `cafe-night-1.jpg` | 카페 홀: 낮(빈 매장 · 손님 · 만석) · 밤(빈 매장 · 손님). 1920×1289 JPEG |
+| `office-day-0.jpg` `office-day-1.jpg` `office-night-0.jpg` `office-night-1.jpg` | 업무 공간: 낮(빈 · 근무) · 밤(불 꺼짐 · 야근) |
+| `meeting-day-0.jpg` `meeting-day-1.jpg` | 회의실: 빈 방 · 회의 중(밤은 페이지가 같은 사진을 어둡게) |
+| `<위 이름>-open.webp` (11개) | 문 · 창 열림 조각 — 그 장면 위 제자리에 얹는 알파 그림(사람 자리는 비움). 상자 좌표는 `index.html` `SPACES[..].photo.patch` |
+
+만든 방법 · 작업 ID · 크레딧은 위 폴더 README 의 v0.16.
 
 기기 화면은 파일이 아니라 페이지가 2D 캔버스(800×600)에 실제 ARC-600DA 화면 양식으로 그려서 컷아웃의 화면 자리에 얹는다(`index.html` 의 `SPRITE.screen`).
 원본 PNG(2528×1696 · 2048×2048)는 힉스필드 라이브러리에 남아 있다(생성 작업 ID 는 `fetch-assets.sh` 주석 참고).
