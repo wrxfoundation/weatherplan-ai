@@ -364,6 +364,17 @@ function buildDatasets(S, opts) {
     daily.push(r);
   }
 
+  // 지갑별 최근 7일(오늘 제외) · 직전 7일의 판 양 · 받은 양: [최근 판, 최근 받은, 직전 판, 직전 받은]
+  const fullD = daily.filter((r) => !r.partial && r.date >= C.POOL_OPEN), W7 = fullD.slice(-7), P7 = fullD.slice(-14, -7), r7 = {};
+  const w7 = { from: W7.length ? W7[0].date : null, to: W7.length ? W7[W7.length - 1].date : null, pFrom: P7.length === 7 ? P7[0].date : null, pTo: P7.length === 7 ? P7[6].date : null };
+  for (const e of EV) {
+    if (e.kind !== 'sell' && e.kind !== 'paid') continue;
+    const inW = w7.from && e.k >= w7.from && e.k <= w7.to, inP = w7.pFrom && e.k >= w7.pFrom && e.k <= w7.pTo;
+    if (!inW && !inP) continue;
+    const o = r7[e.a] || (r7[e.a] = [0, 0, 0, 0]); o[(e.kind === 'sell' ? 0 : 1) + (inW ? 0 : 2)] += e.v[0];
+  }
+  const nf = (x) => Math.round(x).toLocaleString('en-US'), pf = (x) => (Math.abs(x) * 100).toFixed(1) + '%';
+
   // 기간별 합계 (전체 · 최근 30일 · 최근 7일)
   const shift = (k, n) => new Date(Date.parse(k + 'T00:00:00Z') + n * 86400000).toISOString().slice(0, 10);
   const labelAccts = Object.keys(L).filter((a) => a !== C.ISSUER && !isAmm(a) && S.bal[a] !== undefined);
@@ -442,12 +453,53 @@ function buildDatasets(S, opts) {
         pool_in: r0(o.lpw || 0), balance: r0(bal), last_sell: ls >= C.NOW_FROM ? ls : '', id: short(a),
         first_paid: FP[a] || '', start: startOf(a) || '', prev_wallet: linkOf[a] ? short(linkOf[a].old) : '', link_exact: linkOf[a] ? linkOf[a].exact : null,
         days_in: startOf(a) ? dayDiff(startOf(a), lastDay) : null, first_sell: FS[a] || '', sell_lag: FP[a] && FS[a] && FS[a] >= FP[a] ? dayDiff(FP[a], FS[a]) : null,
+        act: r0(act), paid_rlusd: r0(o.payR || 0), paid_xrp: r0(o.payX || 0), avg_price: (o.sold || 0) >= 1 ? r3((o.cash || 0) / o.sold) : null,
+        sold_7d: r0((r7[a] || [0])[0] || 0), paid_7d: r0((r7[a] || [0, 0])[1] || 0), sold_prev7d: r0((r7[a] || [0, 0, 0])[2] || 0), paid_prev7d: r0((r7[a] || [0, 0, 0, 0])[3] || 0),
       };
       if (g === 'bot') { row.owner = 'wellbian'; row.label = 'bot 계정'; }
       if (opts.showAddr) row.addr = a;
       wallets.push(row);
     }
     wallets.sort((x, y) => (y.sold - x.sold) || (y.paid - x.paid));
+    // 지갑 유형 · 활동량 순위 · 한 줄 분석. 활동량 = 받은 양 + 판 양 + 산 양 + 풀에 넣고 뺀 양
+    const typeOf = (w) => {
+      if (w.g === 'bot') return ['bot', 'Wellbian bot'];
+      if (w.g === 'arb') return ['arb', '사고팔기(차익) 지갑'];
+      if (w.g === 'other') return w.sold >= 1 && w.bought >= 1 && Math.min(w.sold, w.bought) >= 0.8 * Math.max(w.sold, w.bought) ? ['flip', '조금 사고판 지갑'] : w.bought >= w.sold ? ['buyer', '사 모으는 지갑'] : ['seller', '받은 기록 없이 파는 지갑'];
+      if (w.rebuy_rlusd > 0 && w.sold >= 1) return ['recycle', '팔고 다시 사는 지갑'];
+      if (w.rebuy_rlusd > 0) return ['rebuy', '팔지 않고 다시 사는 지갑'];
+      if (w.pool_in >= 100 && w.pool_in >= w.sold) return ['lp', '풀에 넣는 지갑'];
+      if (w.paid < 1 && w.sold >= 1) return ['old', '이 기간에 받지 않고 파는 지갑'];
+      if (w.sold < 1 || (w.sell_ratio !== null && w.sell_ratio < 0.1)) return ['hold', '모아 두는 지갑'];
+      if (w.sell_ratio !== null && w.sell_ratio >= 0.9) return ['dump', '받는 대로 파는 지갑'];
+      return ['part', '일부만 파는 지갑'];
+    };
+    const TYPE_ORDER = ['dump', 'part', 'hold', 'lp', 'recycle', 'rebuy', 'old', 'arb', 'flip', 'buyer', 'seller', 'bot'];
+    const tell = (w) => {
+      const t = [], cur = w.sold >= 1 ? (w.sold_xrp < 1 ? '전부 RLUSD로' : w.sold_rlusd < 1 ? '전부 XRP로' : 'XRP로 ' + pf(w.sold_xrp / w.sold) + ' · RLUSD로 ' + pf(w.sold_rlusd / w.sold)) : '';
+      if (w.g === 'bot') { t.push(nf(w.bought) + '개를 사는 데 ' + nf(w.paid_rlusd) + ' RLUSD와 ' + nf(w.paid_xrp) + ' XRP를 썼다. 판 적은 없다.'); return t.join(' '); }
+      if (w.g === 'arb') { t.push('산 양 ' + nf(w.bought) + '개 · 판 양 ' + nf(w.sold) + '개로 거의 같다. ' + nf(w.sell_days) + '일에 걸쳐 두 풀 사이를 오갔다(판 양은 ' + cur + '). 남긴 잔액은 ' + nf(w.balance) + '개다.'); return t.join(' '); }
+      if (w.g === 'other') {
+        t.push(w.bought >= w.sold ? '받은 기록 없이 ' + nf(w.bought) + '개를 샀고(낸 돈 ' + nf(w.paid_rlusd) + ' RLUSD · ' + nf(w.paid_xrp) + ' XRP) ' + (w.sold >= 1 ? nf(w.sold) + '개를 팔았다.' : '판 적은 없다.') : '받은 기록 없이 ' + nf(w.sold) + '개를 팔았다(' + cur + '). 산 양은 ' + nf(w.bought) + '개다.');
+        t.push('지금 잔액 ' + nf(w.balance) + '개' + (w.pool_in >= 1 ? ', 풀에 넣은 양 ' + nf(w.pool_in) + '개.' : '.'));
+        return t.join(' ');
+      }
+      if (w.paid >= 1) t.push(w.sold >= 1 ? (w.sell_ratio > 1 ? '받은 ' + nf(w.paid) + '개보다 많은 ' + nf(w.sold) + '개를 팔았다(' + cur + ').' : '받은 ' + nf(w.paid) + '개 가운데 ' + nf(w.sold) + '개(' + pf(w.sell_ratio) + ')를 팔았다(' + cur + ').') : '받은 ' + nf(w.paid) + '개를 팔지 않았다.');
+      else if (w.sold >= 1) t.push('이 기간에 받은 것은 없는데 ' + nf(w.sold) + '개를 팔았다(' + cur + ').');
+      else t.push('이 기간에 받거나 판 것이 없다.');
+      if (w.sold >= 1 && uSold > 0 && w.sold / uSold >= 0.03) t.push('일반 사용자 판 양의 ' + pf(w.sold / uSold) + '를 차지한다.');
+      if (w.sold >= 1 && w.sell_lag !== null) t.push(w.sell_lag === 0 ? '처음 받은 날 바로 팔기 시작했다.' : '처음 받고 ' + nf(w.sell_lag) + '일 뒤부터 팔았다.');
+      if (w.rebuy_rlusd > 0) t.push('operations 계정으로 ' + nf(w.rebuy_rlusd) + ' RLUSD를 보내 다시 샀다' + (w.cash_rlusd >= 1 ? ' — WLBN을 판 대금(환산 ' + nf(w.cash_rlusd) + ' RLUSD)' + (w.rebuy_rlusd > w.cash_rlusd ? '보다 많다.' : ' 안쪽이다.') : '.'));
+      if (w.pool_in >= 1) t.push('풀에 ' + nf(w.pool_in) + '개를 넣어 두었다.'); else if (w.pool_in <= -1) t.push('풀에서 ' + nf(-w.pool_in) + '개를 뺐다.');
+      if (w.sold_7d >= 1 || w.sold_prev7d >= 1) t.push('최근 7일 판 양 ' + nf(w.sold_7d) + '개(직전 7일 ' + nf(w.sold_prev7d) + '개).');
+      t.push('지금 잔액 ' + nf(w.balance) + '개.');
+      return t.join(' ');
+    };
+    const byAct = wallets.slice().sort((x, y) => (y.act - x.act) || (y.sold - x.sold));
+    byAct.forEach((w, i) => { w.rank = i + 1; const ty = typeOf(w); w.type = ty[0]; w.type_name = ty[1]; w.insight = tell(w); });
+    const tmap = {};
+    for (const w of wallets) { const o = tmap[w.type] || (tmap[w.type] = { key: w.type, name: w.type_name, wallets: 0, paid: 0, sold: 0, bought: 0, rebuy_rlusd: 0, pool_in: 0, balance: 0 }); o.wallets++; o.paid += w.paid; o.sold += w.sold; o.bought += w.bought; o.rebuy_rlusd += w.rebuy_rlusd; o.pool_in += w.pool_in; o.balance += w.balance; }
+    const types = TYPE_ORDER.filter((k) => tmap[k]).map((k) => tmap[k]);
     // 보상 받은 지갑은 얼마나 파나: 판 비율 구간별 지갑 수 · 물량, 그리고 쏠림
     const uw = wallets.filter((w) => w.g === 'user'), buckets = [['none', '팔지 않은 지갑'], ['low', '절반 미만으로 판 지갑'], ['mid', '절반 넘게 판 지갑(50~90%)'], ['high', '거의 다 판 지갑(90% 이상)'], ['extra', '이 기간에 받지 않고 판 지갑']];
     const bk = {}; for (const b of buckets) bk[b[0]] = { key: b[0], name: b[1], wallets: 0, paid: 0, sold: 0 };
@@ -523,7 +575,7 @@ function buildDatasets(S, opts) {
         prev = p;
       }
     }
-    return { key, from, to: lastDay, days: rows.length, kpi, prev, groups, flow: { sell: flowSell, buy: flowBuy }, wallets, dist, conc, cohorts, accounts, lp: lpRows };
+    return { key, from, to: lastDay, days: rows.length, kpi, prev, groups, flow: { sell: flowSell, buy: flowBuy }, wallets, types, dist, conc, cohorts, accounts, lp: lpRows };
   };
   const ranges = { all: mkRange('all', C.NOW_FROM), d30: mkRange('d30', shift(lastDay, -29)), d7: mkRange('d7', shift(lastDay, -6)) };
 
