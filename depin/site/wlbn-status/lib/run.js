@@ -16,15 +16,18 @@ async function run() {
     if (got && got.v === bundled.v && got.ledger >= bundled.ledger) { S = got; info.storage = 'blob'; }
   } catch (e) { info.storage_error = String((e && e.message) || e).slice(0, 160); }
   if (!S) S = JSON.parse(JSON.stringify(bundled));
+  if (!S.fund && bundled.fund) S.fund = JSON.parse(JSON.stringify(bundled.fund));   // 예전에 저장한 상태에는 판매 대금 기록이 없다
 
   const ext = await fetchExt().catch(() => null);
   core.setLabels(S, ext);
   try {
-    const u = await xrpl.update(S, { budgetMs: 35000 });
+    const u = await xrpl.update(S, { budgetMs: 30000 });
     Object.assign(info, { updated: u.changed, fetched: u.fetched, complete: u.complete });
     core.pickExt(S, ext);
-    if (u.complete && (u.changed || !S.live)) { try { info.live = await xrpl.fetchLive(S, { budgetMs: 9000 }); } catch (e) { info.live_error = String((e && e.message) || e).slice(0, 120); } }
-    if (store.enabled() && (u.changed || info.live)) {
+    // 판매 대금 기록(operations 계정 내역)도 같은 원장까지 이어 받는다. 못 받으면 그 고리만 「자료 없음」이 된다.
+    try { const f = await xrpl.updateFund(S, { budgetMs: 10000 }); info.fund = { fetched: f.fetched, complete: f.complete }; if (f.changed) info.fund_changed = true; } catch (e) { info.fund_error = String((e && e.message) || e).slice(0, 120); }
+    if (u.complete && (u.changed || !S.live)) { try { info.live = await xrpl.fetchLive(S, { budgetMs: 8000 }); } catch (e) { info.live_error = String((e && e.message) || e).slice(0, 120); } }
+    if (store.enabled() && (u.changed || info.live || info.fund_changed)) {
       try { info.saved = await store.save(S); } catch (e) { info.storage_error = String((e && e.message) || e).slice(0, 160); }
     }
   } catch (e) {

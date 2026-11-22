@@ -15,6 +15,7 @@ const C = {
   PRIOR_KW: 'rVDBQ8i1HjkkvtVpmCGqaYEmRuvaNevUG',    // 10/24 까지 kweather 물량을 받던 지갑
   NOW_FROM: '2026-10-26',                           // 이 날짜부터 「지금 기간」
   POOL_OPEN: '2026-10-27',                          // 새 풀 두 곳이 열린 날
+  FUND_FROM: 107764000,                             // 판매 대금 기록을 받기 시작하는 원장(10/20 무렵)
 };
 const RIPPLE_EPOCH = 946684800;
 const EPS = 1e-7;
@@ -34,13 +35,17 @@ const GLAB = { bot: 'bot 계정', company: '그 밖의 계정', kweather: '계�
 // [왼쪽 끝, 주의↔지켜봄 경계, 지켜봄↔좋음 경계, 오른쪽 끝] — 값이 클수록 좋은 쪽으로 맞춰 둔 값이다.
 const HEALTH = {
   days: 7,
-  join: [-0.30, -0.05, 0.05, 0.30],    // 참여: 보상 받은 지갑 수 변화(직전 7일 대비)
-  pay: [0, 5, 7, 7],                   // 보상: 7일 가운데 지급된 날 수
+  sale: [-0.60, -0.30, 0, 0.60],       // 판매: 밖의 지갑이 operations 계정으로 보낸 RLUSD 변화(직전 7일 대비)
+  join: [-0.30, -0.05, 0.05, 0.30],    // 보상: 보상 받은 지갑 수 변화(직전 7일 대비)
+  pay: [0, 5, 7, 7],                   // 보상: 7일 가운데 지급된 날 수(끊기면 신호를 낮춘다)
   hold: [-0.50, 0.10, 0.50, 1.00],     // 보유: 받은 양 가운데 팔지 않은 비율 (= 1 − 판 비율)
   pool: [-0.30, -0.10, 0, 0.30],       // 유동성: 두 풀에 든 RLUSD · XRP 변화
-  demand: [0, 0.50, 1.00, 1.50],       // 수요: 판 양 가운데 밖에서(Wellbian bot · 사고팔기 지갑 말고) 산 비율
+  demand: [0, 0.50, 1.00, 2.00],       // 수요: 판 양 대비 산 양(밖의 지갑 + Wellbian bot, 사고팔기 지갑 제외)
   price: [-0.30, -0.15, -0.05, 0.30],  // 가격: 7일 변화
   runway: [0, 7, 30, 60],              // 여력: 잔액 ÷ 하루 평균(일)
+  cover: [-3, -2, -1, 0],              // 매입 재원: −(매입 지출 ÷ 판매 대금). 판매 대금 안이면 좋음
+  // bot 계정에 RLUSD · XRP 를 보낸 적이 있는 계정(11/22 원장 확인: operations 60,000 RLUSD, treasury 22,000 RLUSD + 24,600 XRP)
+  funders: ['operations', 'treasury'],
 };
 const ST = { ok: '좋음', warn: '지켜봄', bad: '주의', na: '자료 없음' };
 
@@ -178,6 +183,36 @@ function labelsFromExt(ext) {
   if (net) for (const o of [].concat(net.topOperators || [], net.topEarners || [])) if (o && o.known && !L[o.known]) L[o.known] = 'kweather';
   return L;
 }
+// 지급 계정(operations)으로 들어오고 나간 RLUSD · XRP 를 날짜별로 쌓는다(계정 거래 내역을 따로 받는다).
+// 밖의 지갑(이름 붙은 계정 · 풀이 아닌 곳)이 보낸 RLUSD = 판매 대금으로 본다. p = 보낸 지갑별 금액, o = 밖으로 나간 RLUSD.
+function newFund() { return { ledger: C.FUND_FROM - 1, day: {} }; }
+function applyFundTx(S, tx, meta) {
+  if (!meta || meta.TransactionResult !== 'tesSUCCESS') return;
+  const { d, amms } = deltas(tx, meta);
+  for (const a of amms) S.amms[a] = 1;
+  const me = d.get(C.OPS);
+  if (!me) return;
+  const k = kday(tx.date), F = S.fund;
+  for (const i of [1, 2]) {
+    const v = me[i];
+    if (Math.abs(v) < (i === 2 ? 0.5 : 0.01)) continue;
+    let peer = null, pv = 0;                       // 상대: 같은 거래에서 반대쪽으로 가장 크게 움직인 계정
+    for (const [a, w] of d) { if (a !== C.OPS && w[i] * v < 0 && Math.abs(w[i]) > pv) { pv = Math.abs(w[i]); peer = a; } }
+    if (peer && (S.labels[peer] || S.amms[peer])) continue;
+    const m = F.day[k] || (F.day[k] = { r: 0, x: 0, n: 0, p: {}, o: 0 });
+    if (v > 0) { if (i === 1) { m.r += v; m.n++; if (peer) m.p[peer] = (m.p[peer] || 0) + v; } else m.x += v; }
+    else if (i === 1) m.o -= v;
+  }
+}
+function applyFundBatch(S, items) {
+  if (!S.fund) S.fund = newFund();
+  const seen = new Set(), list = [];
+  for (const t of items) { const n = normalize(t); if (!n || seen.has(n.hash)) continue; seen.add(n.hash); list.push(n); }
+  list.sort((a, b) => (a.li - b.li) || (a.ti - b.ti));
+  for (const n of list) applyFundTx(S, n.tx, n.meta);
+  return list.length;
+}
+
 function setLabels(S, ext) {
   Object.assign(S.labels, labelsFromExt(ext));
   S.labels[C.ISSUER] = 'issuer';
@@ -263,9 +298,11 @@ function buildDatasets(S, opts) {
     } else if (e.kind === 'buy') {
       add(m, 'buy_' + g, v[0]); add(m, 'buy_total', v[0]); add(m, 'from_r', v[2] || 0); add(m, 'from_x', v[3] || 0);
       if (g === 'user') add(m, 'spent_user', v[1]);
+      if (g === 'bot') { add(m, 'bot_r', v[4] || 0); add(m, 'bot_x', v[5] || 0); }
     } else if (e.kind === 'paid' && g === 'user') add(m, 'paid_user', v[0]);
     else if (e.kind === 'lp' && g === 'user') add(m, 'lp_user', v[0]);
   }
+  const FD = S.fund && S.fund.day ? S.fund.day : null, fundOk = !!(S.fund && S.fund.ledger >= S.ledger);   // 판매 대금 기록이 끝까지 왔나
   const daily = []; let cp = 0, cs = 0, lastp = null, lastx = null, lastPool = null;
   for (const k of days) {
     const v = day[k] || {}, f = (x) => v[x] || 0;
@@ -284,6 +321,8 @@ function buildDatasets(S, opts) {
       cum_paid_user: r0(cp), cum_net_sold_user: r0(cs),
       price_rlusd: lastp === null ? null : r4(lastp), price_xrp: lastx === null ? null : r4(lastx),
       pool_r_wlbn: lastPool ? lastPool[0] : null, pool_r_rlusd: lastPool ? lastPool[1] : null, pool_x_wlbn: lastPool ? lastPool[2] : null, pool_x_xrp: lastPool ? lastPool[3] : null,
+      bot_pay_rlusd: r0(f('bot_r')), bot_pay_xrp: r0(f('bot_x')),
+      sales_rlusd: FD ? r0((FD[k] || {}).r || 0) : null, sales_wallets: FD ? Object.keys((FD[k] || {}).p || {}).length : null,
       partial: k === lastDay,
     });
     daily.push(r);
@@ -517,18 +556,30 @@ function buildDatasets(S, opts) {
     const trim = (t) => t.replace('.0%', '%'), tp = (x) => trim(p1(x)), ts = (x) => (x === 0 ? '0%' : trim(sp(x)));   // 경계값 표기
     const tick = (T, f) => [f(T[1]), f(T[2])];
 
+    // 판매 대금: 밖의 지갑이 operations 계정으로 보낸 RLUSD
+    const salesOf = (x, y) => {
+      const o = { r: 0, n: 0, ru: 0, wallets: 0 }, ps = new Set();
+      if (FD && x) for (const k of Object.keys(FD)) if (inWin(k, x, y)) { const m = FD[k]; o.r += m.r; o.n += m.n; for (const a of Object.keys(m.p || {})) { ps.add(a); if (users.has(a)) o.ru += m.p[a]; } }
+      o.wallets = ps.size; return o;
+    };
+    const sW = salesOf(from, to), sP = salesOf(pFrom, pTo), spend = botR + botX * rate;        // spend = bot 이 쓴 돈(RLUSD 환산)
+    const worse = (x, y) => (['ok', 'warn', 'bad'].indexOf(x) >= ['ok', 'warn', 'bad'].indexOf(y) ? x : y);
+
     const links = [];
-    const dj = hasPrev && paidP.size ? paidW.size / paidP.size - 1 : null;
-    links.push(mk('join', '참여', '보상을 받는 지갑이 늘고 있나', dj, H.join, {
-      value: dj === null ? '—' : sp(dj), metric: '보상 받은 지갑 수 · 직전 7일 대비', ticks: tick(H.join, ts),
-      read: '지갑 ' + n(paidW.size) + '곳이 보상을 받았다' + (hasPrev ? '(직전 7일 ' + n(paidP.size) + '곳)' : '') + '. 처음 받은 지갑은 ' + n(newW) + '곳이다.',
-      short: '보상 받은 지갑 ' + n(paidW.size) + '곳' + (dj === null ? '' : '(' + sp(dj) + ')'),
+    const ds = !fundOk ? null : hasPrev && sP.r > 0 ? sW.r / sP.r - 1 : sW.r > 0 ? 1 : hasPrev ? -1 : null;
+    links.push(mk('sale', '판매', '새 판매 대금이 들어오나', ds, H.sale, {
+      value: ds === null ? '—' : hasPrev && sP.r > 0 ? sp(ds) : n(sW.r), metric: hasPrev && sP.r > 0 ? '판매 대금 유입 · 직전 7일 대비' : '판매 대금 유입(RLUSD)', ticks: tick(H.sale, ts),
+      read: !fundOk ? '판매 대금 기록을 아직 끝까지 받지 못했다.' : '지갑 ' + n(sW.wallets) + '곳이 operations 계정으로 ' + n(sW.r) + ' RLUSD를 보냈다' + (hasPrev ? '(직전 7일 ' + n(sP.r) + ')' : '') + '.' + (sW.r > 0 ? ' 이 가운데 보상을 받는 지갑이 낸 것이 ' + n(sW.ru) + ' RLUSD(' + p1(sW.ru / sW.r) + ')다.' : ''),
+      short: !fundOk ? '판매 대금 기록이 모자라다' : '판매 대금 ' + n(sW.r) + ' RLUSD' + (hasPrev && sP.r > 0 ? '(직전 7일 대비 ' + sp(ds) + ')' : ''),
     }));
-    links.push(mk('pay', '보상', '지급이 끊기지 않았나', payDays + (H.days - W.length), H.pay, {
-      value: payDays + '일', metric: W.length + '일 가운데 지급된 날', ticks: [H.pay[1] + '일', H.pay[2] + '일'],
-      read: '하루 평균 ' + n(paid / W.length) + '개가 일반 사용자 지갑으로 지급됐다' + (hasPrev ? '(직전 7일 ' + n(pPaid / P.length) + '개)' : '') + '.',
-      short: W.length + '일 가운데 ' + payDays + '일 지급',
-    }));
+    const dj = hasPrev && paidP.size ? paidW.size / paidP.size - 1 : null, payV = payDays + (H.days - W.length);
+    const payL = mk('pay', '보상', '보상이 끊기지 않고 받는 지갑이 느나', dj === null ? payV : dj, dj === null ? H.pay : H.join, {
+      value: dj === null ? payDays + '일' : sp(dj), metric: dj === null ? W.length + '일 가운데 지급된 날' : '보상 받은 지갑 수 · 직전 7일 대비', ticks: dj === null ? [H.pay[1] + '일', H.pay[2] + '일'] : tick(H.join, ts),
+      read: '지갑 ' + n(paidW.size) + '곳이 보상을 받았다' + (hasPrev ? '(직전 7일 ' + n(paidP.size) + '곳)' : '') + '. 처음 받은 지갑은 ' + n(newW) + '곳이다. ' + W.length + '일 가운데 ' + payDays + '일 지급됐고 하루 평균 ' + n(paid / W.length) + '개다.',
+      short: '보상 받은 지갑 ' + n(paidW.size) + '곳' + (dj === null ? '' : '(' + sp(dj) + ')') + ' · ' + W.length + '일 가운데 ' + payDays + '일 지급',
+    });
+    payL.status = worse(payL.status, payV < H.pay[1] ? 'bad' : payV < H.pay[2] ? 'warn' : 'ok');
+    links.push(payL);
     const sr = paid > 0 ? sold / paid : null;
     links.push(mk('hold', '보유', '받은 만큼 들고 있나', sr === null ? null : 1 - sr, H.hold, {
       value: sr === null ? '—' : p1(sr), metric: '받은 양 가운데 판 비율', ticks: [tp(1 - H.hold[1]), tp(1 - H.hold[2])],
@@ -541,11 +592,11 @@ function buildDatasets(S, opts) {
       read: dq === null ? '풀 기록이 모자라다.' : 'RLUSD 풀의 RLUSD ' + n(start.pool_r_rlusd) + ' → ' + n(end.pool_r_rlusd) + ', XRP 풀의 XRP ' + n(start.pool_x_xrp) + ' → ' + n(end.pool_x_xrp) + '. 일반 사용자 지갑이 풀에 넣은 양(순) ' + (lpNet < 0 ? '−' : '+') + n(Math.abs(lpNet)) + ' WLBN.',
       short: dq === null ? '풀 기록이 모자라다' : '풀에 든 RLUSD · XRP ' + sp(dq),
     }));
-    const dm = sellX > 0.5 ? buyOut / sellX : null;
-    links.push(mk('demand', '수요', '판 양을 밖에서 사 주나', dm, H.demand, {
-      value: dm === null ? '—' : p1(dm), metric: '판 양 가운데 밖에서 산 비율', ticks: tick(H.demand, tp),
-      read: '판 양 ' + n(sellX) + '개, 밖에서 산 양 ' + n(buyOut) + '개(사고팔기 지갑 제외). ' + (botBuy > 0 ? 'Wellbian bot 계정이 ' + n(botBuy) + '개를 샀다.' : 'Wellbian bot 계정은 사지 않았다.'),
-      short: dm === null ? '판 양이 없다' : '판 양의 ' + p1(dm) + '만 밖에서 샀다',
+    const dm = sellX > 0.5 ? (buyOut + botBuy) / sellX : null;
+    links.push(mk('demand', '수요', '판 양을 받아내고 있나', dm, H.demand, {
+      value: dm === null ? '—' : p1(dm), metric: '판 양 대비 산 양', ticks: tick(H.demand, tp),
+      read: '판 양 ' + n(sellX) + '개, 산 양 ' + n(buyOut + botBuy) + '개(밖의 지갑 ' + n(buyOut) + ' · Wellbian bot ' + n(botBuy) + ', 사고팔기 지갑 제외).' + (sellX > 0.5 ? ' 밖에서 산 양만 보면 판 양의 ' + p1(buyOut / sellX) + '다.' : ''),
+      short: dm === null ? '판 양이 없다' : '산 양이 판 양의 ' + p1(dm) + (sellX > 0.5 ? '(밖의 지갑만 ' + p1(buyOut / sellX) + ')' : ''),
     }));
     const dp = pr0 && pr1 ? pr1 / pr0 - 1 : null;
     links.push(mk('price', '가격', '값이 버티고 있나', dp, H.price, {
@@ -554,23 +605,28 @@ function buildDatasets(S, opts) {
       short: dp === null ? '가격 기록이 모자라다' : '가격 ' + sp(dp),
     }));
 
-    // 운용 여력: 지금 잔액 ÷ 최근 하루 평균
+    // 운용 점검: 지금 잔액이 며칠 치인지, 매입이 판매 대금 안인지
     const reserves = [], ops = Math.max(g2(S.bal, C.OPS), 0), outDay = opsOut / W.length;
     const payRun = outDay > 0 ? ops / outDay : null;
     reserves.push(mk('payrun', '지급 여력', '지급 계정에 며칠 치가 남았나', payRun, H.runway, {
-      value: payRun === null ? '—' : d1(payRun) + '일분', metric: '지급 계정 WLBN ÷ 하루 평균 지급', ticks: [H.runway[1] + '일', H.runway[2] + '일'],
-      owner: 'wellbian', label: 'operations 계정',
+      value: payRun === null ? '—' : d1(payRun) + '일분', metric: 'operations 계정 WLBN ÷ 하루 평균 지급', ticks: [H.runway[1] + '일', H.runway[2] + '일'],
       read: '지금 ' + n(ops) + '개가 있고, 최근 ' + W.length + '일 하루 평균 ' + n(outDay) + '개를 지급했다.',
       short: payRun === null ? '최근 지급이 없다' : '지급 계정 WLBN ' + d1(payRun) + '일분',
     }));
-    const bots = Object.keys(G).filter((a) => G[a] === 'bot'), bl = bots.map((a) => liveBal[a]).filter(Boolean);
-    const bR = bl.reduce((t, x) => t + (x.rlusd || 0), 0), bX = bl.reduce((t, x) => t + (x.xrp || 0), 0);
-    const spendDay = (botR + botX * rate) / W.length, buyRun = bl.length && spendDay > 0 ? (bR + bX * rate) / spendDay : null;
-    reserves.push(mk('buyrun', '매입 여력', 'bot 계정에 며칠 치가 남았나', buyRun, H.runway, {
-      value: buyRun === null ? '—' : d1(buyRun) + '일분', metric: 'bot 잔액 ÷ 하루 평균 지출(RLUSD 환산)', ticks: [H.runway[1] + '일', H.runway[2] + '일'],
-      owner: 'wellbian', label: 'bot 계정',
-      read: !bl.length ? '지금 잔액을 받지 못했다.' : '지금 ' + n(bR) + ' RLUSD와 ' + n(bX) + ' XRP가 있고, ' + (spendDay > 0 ? '최근 ' + W.length + '일 하루 평균 ' + n(botR / W.length) + ' RLUSD와 ' + n(botX / W.length) + ' XRP를 썼다.' : '최근 ' + W.length + '일은 사지 않았다.'),
-      short: buyRun === null ? (bl.length ? '최근 매수가 없다' : '잔액을 받지 못했다') : 'Wellbian bot 계정 잔액 ' + d1(buyRun) + '일분',
+    const bots = Object.keys(G).filter((a) => G[a] === 'bot'), fund = labelAccts.filter((a) => H.funders.indexOf(L[a]) >= 0);
+    const balOf = (list) => { const o = { r: 0, x: 0, n: 0 }; for (const a of list) if (liveBal[a]) { o.r += liveBal[a].rlusd || 0; o.x += liveBal[a].xrp || 0; o.n++; } return o; };
+    const bB = balOf(bots), bF = balOf(fund), spendDay = spend / W.length;
+    const buyRun = bB.n && spendDay > 0 ? (bB.r + bF.r + (bB.x + bF.x) * rate) / spendDay : null;
+    reserves.push(mk('buyrun', '매입 여력', '매입에 쓸 돈이 며칠 치 남았나', buyRun, H.runway, {
+      value: buyRun === null ? '—' : d1(buyRun) + '일분', metric: 'bot · ' + H.funders.join(' · ') + ' 잔액 ÷ 하루 평균 매입 지출', ticks: [H.runway[1] + '일', H.runway[2] + '일'],
+      read: !bB.n ? '지금 잔액을 받지 못했다.' : 'bot 계정에 ' + n(bB.r) + ' RLUSD와 ' + n(bB.x) + ' XRP, bot에 돈을 보내 온 ' + H.funders.join(' · ') + ' 계정에 ' + n(bF.r) + ' RLUSD와 ' + n(bF.x) + ' XRP가 있다. ' + (spendDay > 0 ? '최근 ' + W.length + '일 하루 평균 ' + n(botR / W.length) + ' RLUSD와 ' + n(botX / W.length) + ' XRP를 썼다' + (bB.r + bB.x > 0 ? '(bot 계정만으로는 ' + d1((bB.r + bB.x * rate) / spendDay) + '일분)' : '') + '.' : '최근 ' + W.length + '일은 사지 않았다.'),
+      short: buyRun === null ? (bB.n ? '최근 매입이 없다' : '잔액을 받지 못했다') : '매입에 쓸 잔액 ' + d1(buyRun) + '일분',
+    }));
+    const cov = !fundOk ? null : spend < 0.5 ? 0 : sW.r > 0 ? spend / sW.r : 9;
+    reserves.push(mk('cover', '매입 재원', '판매 대금 안에서 사고 있나', cov === null ? null : -cov, H.cover, {
+      value: cov === null ? '—' : spend < 0.5 ? '매입 없음' : sW.r > 0 ? p1(cov) : '판매 대금 없음', metric: '판매 대금 대비 매입 지출', ticks: [tp(-H.cover[1]), tp(-H.cover[2])],
+      read: !fundOk ? '판매 대금 기록을 아직 끝까지 받지 못했다.' : 'Wellbian bot이 ' + n(botR) + ' RLUSD와 ' + n(botX) + ' XRP(환산 ' + n(spend) + ' RLUSD)를 썼고, 같은 기간 들어온 판매 대금은 ' + n(sW.r) + ' RLUSD다.',
+      short: cov === null ? '판매 대금 기록이 모자라다' : spend < 0.5 ? '최근 매입이 없다' : sW.r > 0 ? '매입 지출이 판매 대금의 ' + p1(cov) : '판매 대금 없이 매입했다',
     }));
 
     // 종합: 빨강 둘 이상이면 주의, 빨강 하나 또는 노랑 둘 이상이면 지켜봄
@@ -588,24 +644,27 @@ function buildDatasets(S, opts) {
     let c = md(D.date) + ' 하루: 일반 사용자 지갑은 ' + n(D.paid_user) + '개를 받고 ' + n(D.sell_user) + '개를 팔았다(판 지갑 ' + n(D.user_sellers) + '곳). ';
     c += D.buy_bot > 0 ? 'Wellbian bot 계정이 ' + n(D.buy_bot) + '개를 사는 데 ' + n(dBotR) + ' RLUSD와 ' + n(dBotX) + ' XRP를 썼다.' : 'Wellbian bot 계정은 사지 않았다.';
     if (Dp && Dp.price_rlusd && D.price_rlusd) c += ' 가격은 ' + f4(Dp.price_rlusd) + '에서 ' + f4(D.price_rlusd) + ' RLUSD로 ' + sp(D.price_rlusd / Dp.price_rlusd - 1) + '.';
+    if (fundOk && FD) c += ' 판매 대금은 ' + n((FD[D.date] || {}).r || 0) + ' RLUSD가 들어왔다.';
     comments.push(c);
     if (T && T.partial) comments.push(md(T.date) + ' ' + kstamp(S.asof).slice(11) + '까지: 받은 양 ' + n(T.paid_user) + ' · 판 양 ' + n(T.sell_user) + (T.buy_bot > 0 ? ' · Wellbian bot 매수 ' + n(T.buy_bot) : '') + (T.price_rlusd ? ' · 가격 ' + f4(T.price_rlusd) + ' RLUSD' : '') + '.');
-    comments.push('최근 ' + W.length + '일 하루 평균: 받은 양 ' + n(paid / W.length) + '개' + (hasPrev ? '(직전 7일 ' + n(pPaid / P.length) + '개)' : '') + ' · 판 양 ' + n(sold / W.length) + '개' + (hasPrev ? '(직전 7일 ' + n(pSold / P.length) + '개)' : '') + '.');
+    let c7 = '최근 ' + W.length + '일: 하루 평균 받은 양 ' + n(paid / W.length) + '개' + (hasPrev ? '(직전 7일 ' + n(pPaid / P.length) + ')' : '') + ' · 판 양 ' + n(sold / W.length) + '개' + (hasPrev ? '(직전 7일 ' + n(pSold / P.length) + ')' : '') + '.';
+    if (fundOk) c7 += ' 판매 대금 ' + n(sW.r) + ' RLUSD' + (hasPrev ? '(직전 7일 ' + n(sP.r) + ')' : '') + '가 들어왔고, Wellbian bot이 매입에 ' + n(botR) + ' RLUSD와 ' + n(botX) + ' XRP를 썼다.';
+    comments.push(c7);
     const why = (st) => links.filter((l) => l.status === st).map((l) => l.name + ' — ' + l.short).join(' / ');
-    if (blocked.length) comments.push('막힌 고리: ' + why('bad') + '.');
-    if (watch.length) comments.push('지켜볼 고리: ' + why('warn') + '.');
+    if (blocked.length || watch.length) comments.push((blocked.length ? '막힌 고리: ' + why('bad') + '.' : '') + (blocked.length && watch.length ? ' ' : '') + (watch.length ? '지켜볼 고리: ' + why('warn') + '.' : ''));
     const low = reserves.filter((r) => r.status === 'bad' || r.status === 'warn');
-    if (low.length) comments.push('여력: ' + low.map((r) => r.short + '(' + ST[r.status] + ')').join(' / ') + '.');
+    if (low.length) comments.push('운용 점검: ' + low.map((r) => r.short + '(' + ST[r.status] + ')').join(' / ') + '.');
 
     const rng = (T, f) => ({ ok: f(T[2]) + ' 이상', warn: f(T[1]) + ' ~ ' + f(T[2]), bad: f(T[1]) + ' 미만' });
     const rules = [
-      Object.assign({ name: '참여', metric: '보상 받은 지갑 수가 직전 7일보다 얼마나 늘었나' }, rng(H.join, ts)),
-      { name: '보상', metric: '7일 가운데 일반 사용자 지갑으로 지급된 날 수', ok: H.pay[2] + '일 모두', warn: H.pay[1] + '~' + (H.pay[2] - 1) + '일', bad: H.pay[1] + '일 미만' },
+      Object.assign({ name: '판매', metric: '밖의 지갑이 operations 계정으로 보낸 RLUSD가 직전 7일보다 얼마나 늘었나' }, rng(H.sale, ts)),
+      Object.assign({ name: '보상', metric: '보상 받은 지갑 수가 직전 7일보다 얼마나 늘었나. 지급된 날이 ' + H.pay[2] + '일에 못 미치면 지켜봄, ' + H.pay[1] + '일 미만이면 주의로 낮춘다' }, rng(H.join, ts)),
       { name: '보유', metric: '받은 양 가운데 판 비율(판 양 ÷ 받은 양)', ok: tp(1 - H.hold[2]) + ' 이하', warn: tp(1 - H.hold[2]) + ' ~ ' + tp(1 - H.hold[1]), bad: tp(1 - H.hold[1]) + ' 초과' },
       Object.assign({ name: '유동성', metric: '두 풀에 든 RLUSD와 XRP(지금 환율로 합침)의 7일 변화' }, rng(H.pool, ts)),
-      Object.assign({ name: '수요', metric: '판 양 가운데 Wellbian bot · 사고팔기 지갑 말고 다른 지갑이 산 비율' }, rng(H.demand, tp)),
+      Object.assign({ name: '수요', metric: '판 양 대비 산 양. 밖의 지갑과 Wellbian bot이 산 양을 더하고 사고팔기 지갑은 뺀다' }, rng(H.demand, tp)),
       Object.assign({ name: '가격', metric: '7일 전 마감 가격 대비 변화' }, rng(H.price, ts)),
-      { name: '여력 둘', metric: '지금 잔액 ÷ 최근 7일 하루 평균(지급 · 지출)', ok: H.runway[2] + '일분 이상', warn: H.runway[1] + ' ~ ' + H.runway[2] + '일분', bad: H.runway[1] + '일분 미만' },
+      { name: '지급 · 매입 여력', metric: '지금 잔액 ÷ 최근 7일 하루 평균(지급 · 매입 지출)', ok: H.runway[2] + '일분 이상', warn: H.runway[1] + ' ~ ' + H.runway[2] + '일분', bad: H.runway[1] + '일분 미만' },
+      { name: '매입 재원', metric: 'Wellbian bot이 쓴 돈(RLUSD 환산) ÷ 같은 기간 판매 대금', ok: tp(-H.cover[2]) + ' 이하', warn: tp(-H.cover[2]) + ' ~ ' + tp(-H.cover[1]), bad: tp(-H.cover[1]) + ' 초과' },
     ];
     return {
       from, to, prev_from: pFrom, prev_to: pTo, days: W.length, day: D.date,
@@ -655,4 +714,4 @@ function applyBatch(S, items) {
   return list.length;
 }
 
-module.exports = { C, newState, applyTx, applyBatch, normalize, buildDatasets, setLabels, pickExt, kday };
+module.exports = { C, newState, applyTx, applyBatch, applyFundBatch, newFund, normalize, buildDatasets, setLabels, pickExt, kday };

@@ -71,6 +71,35 @@ async function update(S, opts) {
   return { changed: true, ledger: S.ledger, fetched: n, complete, pages };
 }
 
+// 판매 대금 기록: 지급 계정(operations)의 거래 내역을 본 상태가 온 원장까지 이어 받는다.
+async function updateFund(S, opts) {
+  opts = opts || {};
+  if (!S.fund) S.fund = core.newFund();
+  const rpc = makeRpc(opts.fetchImpl || fetch), t0 = Date.now(), budget = opts.budgetMs || 10000, L = S.ledger, F = S.fund;
+  if (!(L > F.ledger)) return { changed: false, ledger: F.ledger, fetched: 0, complete: true };
+  let marker, items = [], complete = true, pages = 0;
+  for (;;) {
+    const p = { account: C.OPS, ledger_index_min: F.ledger + 1, ledger_index_max: L, limit: 400, forward: true, api_version: 1 };
+    if (marker) p.marker = marker;
+    const res = await rpc('account_tx', p, 20000);
+    for (const t of res.transactions || []) items.push(t);
+    marker = res.marker; pages++;
+    if (!marker) break;
+    if (Date.now() - t0 > budget) { complete = false; break; }
+  }
+  let upto = L;
+  if (!complete) {
+    let last = 0;
+    for (const t of items) { const n = core.normalize(t); if (n && n.li > last) last = n.li; }
+    upto = last - 1;
+    if (!(upto > F.ledger)) return { changed: false, ledger: F.ledger, fetched: 0, complete: false, pages };
+    items = items.filter((t) => { const n = core.normalize(t); return n && n.li <= upto; });
+  }
+  const n = core.applyFundBatch(S, items);
+  F.ledger = upto;
+  return { changed: true, ledger: F.ledger, fetched: n, complete, pages };
+}
+
 // 지금 값: 풀 지분 증표를 누가 들고 있는지, 회사 표시 계정의 RLUSD · XRP 잔액. 못 받은 것은 지난 값을 그대로 둔다.
 async function fetchLive(S, opts) {
   opts = opts || {};
@@ -111,4 +140,4 @@ async function fetchLive(S, opts) {
   return { pools: Object.keys(lp).length, accounts: Object.keys(bal).length };
 }
 
-module.exports = { update, makeRpc, resyncPools, fetchLive };
+module.exports = { update, updateFund, makeRpc, resyncPools, fetchLive };

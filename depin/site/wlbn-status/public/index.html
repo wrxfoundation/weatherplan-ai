@@ -17,7 +17,7 @@
   --ok: #0B7A5A; --warn: #B45309;
   --grid: #EEEDF5; --axis: #B4B2CA; --ctx: #C9C7DC;
   --pop: #FFFFFF; --pop-line: #D8D6E8; --pop-shadow: 0 8px 28px rgba(22, 20, 43, 0.14);
-  --s1: #4D4DCE; --s2: #D98A00; --s3: #009E73; --s4: #C2609A; --s5: #8D8AA8;
+  --s1: #4D4DCE; --s2: #D98A00; --s3: #009E73; --s4: #C2609A; --s5: #8D8AA8; --s6: #1F7FB5;
   --accent: #4D4DCE; --accent-fg: #FFFFFF;
   --tag-w-bg: #EBEAFB; --tag-w-fg: #3B37B5; --tag-k-bg: #DCEEFB; --tag-k-fg: #0A5C99;
   --c-ok: #0E8A66; --c-warn: #C77700; --c-bad: #D14338; --c-na: #A3A1BA; --c-ink: #FFFFFF;
@@ -35,7 +35,7 @@
     --ok: #4FD1A5; --warn: #F0B040;
     --grid: #1F1C47; --axis: #504D84; --ctx: #5A5783;
     --pop: #1D1A47; --pop-line: #38356C; --pop-shadow: 0 10px 32px rgba(0, 0, 0, 0.55);
-    --s1: #A39BFF; --s2: #F0B040; --s3: #35C9A0; --s4: #E58FC0; --s5: #8F8CB5;
+    --s1: #A39BFF; --s2: #F0B040; --s3: #35C9A0; --s4: #E58FC0; --s5: #8F8CB5; --s6: #6FB8EA;
     --accent: #A39BFF; --accent-fg: #0C0A22;
     --tag-w-bg: #2E2A6E; --tag-w-fg: #CBC6FF; --tag-k-bg: #103A5C; --tag-k-fg: #9AD4FF;
     --c-ok: #3FCB9E; --c-warn: #F0B040; --c-bad: #FF8073; --c-na: #6E6B96; --c-ink: #0C0A22;
@@ -134,7 +134,7 @@ button, input { font: inherit; color: inherit; }
 .glyph { fill: none; stroke: var(--c-ink); stroke-width: 2px; stroke-linecap: round; stroke-linejoin: round; pointer-events: none; }
 .ring-num { fill: var(--fg); font-size: 26px; font-weight: 700; font-family: var(--font); letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
 .gauges { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: repeat(3, auto); grid-auto-flow: column; gap: 20px 32px; }
-.gauges.duo { grid-template-rows: auto; grid-auto-flow: row; }
+.gauges.trio { grid-template-columns: repeat(3, minmax(0, 1fr)); grid-template-rows: auto; grid-auto-flow: row; }
 .gauge { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
 .g-head { display: flex; align-items: center; gap: 7px; min-width: 0; }
 .lamp { flex: none; width: 18px; height: 18px; } .lamp circle { fill: var(--st); }
@@ -176,10 +176,10 @@ button, input { font: inherit; color: inherit; }
 .flow-val { fill: var(--muted); font-size: 12px; font-weight: 500; font-family: var(--font); font-variant-numeric: tabular-nums; paint-order: stroke; stroke: var(--panel); stroke-width: 4px; stroke-linejoin: round; }
 .flow-col { fill: var(--faint); font-size: 12px; font-weight: 600; font-family: var(--font); }
 .rib { opacity: 0.4; } .rib:hover, .rib.on { opacity: 0.8; }
-.tip { position: absolute; z-index: 5; pointer-events: none; min-width: 11em; max-width: 18em; padding: 9px 12px; background: var(--pop); border: 1px solid var(--pop-line); border-radius: var(--r-md); box-shadow: var(--pop-shadow); color: var(--fg); font-size: var(--t-xs); line-height: 1.55; }
+.tip { position: absolute; z-index: 5; pointer-events: none; min-width: 11em; max-width: 24em; padding: 9px 12px; background: var(--pop); border: 1px solid var(--pop-line); border-radius: var(--r-md); box-shadow: var(--pop-shadow); color: var(--fg); font-size: var(--t-xs); line-height: 1.55; }
 .tip-h { font-weight: 650; margin-bottom: 2px; font-size: var(--t-sm); }
 .tip-r { display: flex; justify-content: space-between; gap: 16px; }
-.tip-k { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); }
+.tip-k { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); white-space: nowrap; }
 .tip-v { font-variant-numeric: tabular-nums; font-weight: 500; white-space: nowrap; }
 .tip-sep { border-top: 1px solid var(--line); margin-top: 4px; padding-top: 4px; }
 .two-col { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px 28px; }
@@ -240,6 +240,7 @@ details .scroll { margin-top: 8px; }
 @media (max-width: 860px) {
   .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .loop { grid-template-columns: minmax(0, 1fr); } .loop .fig { max-width: 360px; width: 100%; margin: 0 auto; }
+  .gauges.trio { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (max-width: 560px) {
   :root { --t-xl: 18px; --t-lg: 16px; --t-num: 23px; --pad: 16px; }
@@ -258,7 +259,7 @@ details .scroll { margin-top: 8px; }
   .count { margin-right: 0; }
   .brief { grid-template-columns: minmax(0, 1fr); gap: 12px; }
   .signal-box { flex-direction: row; flex-wrap: wrap; align-items: center; gap: 4px 12px; padding: 12px 14px; } .signal-label { margin: 0; }
-  .gauges, .gauges.duo { grid-template-columns: minmax(0, 1fr); grid-template-rows: none; grid-auto-flow: row; gap: 18px; }
+  .gauges, .gauges.trio { grid-template-columns: minmax(0, 1fr); grid-template-rows: none; grid-auto-flow: row; gap: 18px; }
 }
 @media print {
   .bar, .btn, .link, .tools, .seg, .chips, .banner, #calc, .skip { display: none !important; }
@@ -311,21 +312,22 @@ details .scroll { margin-top: 8px; }
       </div>
     </div>
     <h3 class="h3">선순환 고리</h3>
-    <p class="note">보상을 받는 지갑이 늘고(참여), 보상이 나가고, 받은 쪽이 들고 있고(보유), 풀이 깊어지고(유동성), 밖에서 사 주고(수요), 값이 버티면(가격) 다시 참여로 이어진다. 고리마다 최근 7일 값으로 신호를 매겼다. 온도계는 오른쪽으로 찰수록 좋다.</p>
+    <p class="note">판매 대금이 들어오고(판매), 보상이 나가고, 받은 쪽이 들고 있고(보유), 풀이 깊어지고(유동성), 판 양을 받아내고(수요), 값이 버티면(가격) 다시 판매로 이어진다. 고리마다 최근 7일 값으로 신호를 매겼다. 온도계는 오른쪽으로 찰수록 좋다.</p>
     <div class="loop">
       <figure class="fig"><div class="chart ring skel" id="chart-loop" data-chart="loop" role="img" aria-label="선순환 여섯 고리의 신호를 원으로 이은 그림"></div></figure>
       <ol class="gauges" id="gauges"></ol>
     </div>
-    <h3 class="h3">운용 여력</h3>
-    <p class="note">지금 잔액이 최근 7일의 속도로 며칠 치인지다. 종합 신호에는 넣지 않는다.</p>
-    <ol class="gauges duo" id="reserves"></ol>
+    <h3 class="h3">운용 점검</h3>
+    <p class="note">지급과 매입에 쓸 잔액이 최근 7일의 속도로 며칠 치인지, 매입에 쓴 돈이 판매 대금 안인지다. 종합 신호에는 넣지 않는다.</p>
+    <ol class="gauges trio" id="reserves"></ol>
     <details>
       <summary>신호 기준</summary>
       <div class="scroll"><table id="tb-rules" class="words" aria-label="신호 기준"><thead></thead><tbody></tbody></table></div>
       <ul class="list">
         <li>종합 신호는 여섯 고리 가운데 빨강이 둘 이상이면 주의, 빨강 하나 또는 노랑 둘 이상이면 지켜봄, 그 밖에는 좋음이다.</li>
         <li>늘 최근 7일(오늘 제외)을 직전 7일과 견준다. 위쪽의 기간 선택과는 상관없다.</li>
-        <li>Wellbian bot 계정이 산 양은 밖의 수요에 넣지 않았다. bot이 쓰는 RLUSD와 XRP가 어디서 오는지는 이 화면의 기록으로는 알 수 없다.</li>
+        <li>판매 대금은 밖의 지갑이 operations 계정으로 보낸 RLUSD로 본다. 금액이 같은 단위로 되풀이되어 기기 · 이용권 값으로 보았다.</li>
+        <li>Wellbian bot 계정이 쓰는 RLUSD와 XRP는 operations · treasury 계정에서 들어온다(원장에서 확인). 그래서 bot이 산 양도 수요에 넣고, 그 지출이 판매 대금 안인지는 「매입 재원」에서 따로 본다. 매입 여력에는 세 계정의 잔액을 더했다.</li>
         <li>기준 숫자는 운용 점검용으로 정한 값이고 바꿀 수 있다. 지나간 기록으로 매긴 신호이며 앞날을 내다보는 값이 아니다.</li>
       </ul>
     </details>
@@ -408,6 +410,14 @@ details .scroll { margin-top: 8px; }
         <div><p class="note">많이 판 곳</p><div class="scroll"><table id="tb-day-sell" aria-label="그날 많이 판 곳"><thead></thead><tbody></tbody></table></div></div>
         <div><p class="note">많이 산 곳</p><div class="scroll"><table id="tb-day-buy" aria-label="그날 많이 산 곳"><thead></thead><tbody></tbody></table></div></div>
       </div>
+    </div>
+    <div class="sub-block" data-need="health">
+      <h3 class="h3">돈의 흐름: 들어온 판매 대금과 매입에 쓴 돈</h3>
+      <p class="note">위로 뻗은 막대가 밖의 지갑이 operations 계정으로 보낸 RLUSD(판매 대금), 아래로 뻗은 막대가 Wellbian bot이 WLBN을 사는 데 쓴 돈이다. XRP는 그날 환율로 RLUSD로 바꿔 더했다. 단위 RLUSD.</p>
+      <figure class="fig">
+        <div class="legend"><span class="key"><i class="sw" style="background:var(--s6)"></i>판매 대금</span><span class="key"><i class="sw" style="background:var(--s4)"></i><span class="tag tag-w">Wellbian</span>bot 매입 지출</span></div>
+        <div class="chart skel" id="chart-money" data-chart="money" role="img" aria-label="날짜별로 들어온 판매 대금과 bot이 매입에 쓴 돈"></div>
+      </figure>
     </div>
     <details>
       <summary>날짜별 숫자를 표로 보기</summary>
@@ -742,6 +752,33 @@ details .scroll { margin-top: 8px; }
     }, pickDay);
   }
 
+  // 돈의 흐름: 들어온 판매 대금(위) · bot 이 매입에 쓴 돈(아래), RLUSD
+  function drawMoney(el) {
+    var c = ctx(), rows = DATA.daily.filter(function (r) { return r.date >= c.r.from && r.sales_rlusd !== null && r.sales_rlusd !== undefined; });
+    if (!rows.length) return empty(el, '판매 대금 기록을 아직 받지 못했습니다.');
+    var rate = function (r) { return r.price_rlusd && r.price_xrp ? r.price_rlusd / r.price_xrp : (c.s.xrp_rate_rlusd || 0); };
+    var spend = function (r) { return (r.bot_pay_rlusd || 0) + (r.bot_pay_xrp || 0) * rate(r); };
+    var f = setup(el, el.clientWidth < 560 ? 260 : 300), days = rows.map(function (r) { return r.date; }), by = new Map(rows.map(function (r) { return [r.date, r]; }));
+    var up = d3.max(rows, function (r) { return r.sales_rlusd; }) || 1, dn = d3.max(rows, spend) || 0;
+    var y = d3.scaleLinear().domain([-dn, up]).nice(5), ticks = y.ticks(5);
+    var yf = f.w < 560 ? abbr : F.abs, m = { t: 12, r: 10, b: 26, l: Math.ceil(textW(f.svg, ticks.map(yf), 'tick')) + 12 };
+    y.range([f.h - m.b, m.t]);
+    var x = d3.scaleBand().domain(days).range([m.l, f.w - m.r]).paddingInner(0.28).paddingOuter(0.14), xc = function (d) { return x(d) + x.bandwidth() / 2; };
+    var g = axes(f, y, ticks, days, xc, m, yf), rx = Math.min(2.5, x.bandwidth() / 2), op = function (r) { return r.partial ? 0.55 : 1; };
+    g.selectAll('rect.s').data(rows).join('rect').attr('class', 's').attr('x', function (r) { return x(r.date); }).attr('width', x.bandwidth()).attr('y', function (r) { return y(r.sales_rlusd); })
+      .attr('height', function (r) { return Math.max(0, y(0) - y(r.sales_rlusd)); }).attr('rx', rx).style('fill', 'var(--s6)').style('opacity', op);
+    g.selectAll('rect.b').data(rows).join('rect').attr('class', 'b').attr('x', function (r) { return x(r.date); }).attr('width', x.bandwidth()).attr('y', y(0))
+      .attr('height', function (r) { return Math.max(0, y(-spend(r)) - y(0)); }).attr('rx', rx).style('fill', 'var(--s4)').style('opacity', op);
+    hover(f, days, xc, x.step(), m, function (d) {
+      var r = by.get(d);
+      return tipRows(dayTitle(r), [
+        { label: '판매 대금', value: fInt(r.sales_rlusd) + ' RLUSD', color: 'var(--s6)' }, { label: '보낸 지갑', value: fInt(r.sales_wallets) + '곳' },
+        { label: 'bot 매입 지출', owner: 'wellbian', value: fInt(spend(r)) + ' RLUSD', color: 'var(--s4)', sep: true },
+        { label: '그 가운데 RLUSD', value: fInt(r.bot_pay_rlusd) }, { label: '그 가운데 XRP', value: fInt(r.bot_pay_xrp) }
+      ]);
+    });
+  }
+
   // 시장 전체: 묶음별 판 양(위) · 산 양(아래)
   function drawMarket(el) {
     var rows = tradeRows(); if (!rows.length) return empty(el);
@@ -834,7 +871,7 @@ details .scroll { margin-top: 8px; }
       { key: 'paid_out', label: '지갑으로 지급' }, { key: 'received', label: '받은 양' }, { key: 'bought', label: '산 양' }, { key: 'sold', label: '판 양' }, { key: 'paid_rlusd', label: '낸 RLUSD' }, { key: 'paid_xrp', label: '낸 XRP' },
       { key: 'pool_wlbn', label: '풀에 넣은 WLBN' }, { key: 'pool_rlusd', label: '풀에 넣은 RLUSD' }, { key: 'pool_xrp', label: '풀에 넣은 XRP' }],
     daily: [{ key: 'date', label: '날짜', text: 1, fmt: md }, { key: 'sell_user', label: '사용자 판 양' }, { key: 'buy_user', label: '사용자 산 양' }, { key: 'paid_user', label: '새로 받은 양' }, { key: 'sell_total', label: '전체 판 양' },
-      { key: 'buy_total', label: '전체 산 양' }, { key: 'buy_bot', label: 'Wellbian bot 산 양' }, { key: 'to_r', label: 'RLUSD 풀로' }, { key: 'to_x', label: 'XRP 풀로' }, { key: 'price_rlusd', label: '가격', fmt: F.f4 }],
+      { key: 'buy_total', label: '전체 산 양' }, { key: 'buy_bot', label: 'Wellbian bot 산 양' }, { key: 'bot_pay_rlusd', label: 'bot 지출 RLUSD' }, { key: 'bot_pay_xrp', label: 'bot 지출 XRP' }, { key: 'sales_rlusd', label: '판매 대금 RLUSD' }, { key: 'to_r', label: 'RLUSD 풀로' }, { key: 'to_x', label: 'XRP 풀로' }, { key: 'price_rlusd', label: '가격', fmt: F.f4 }],
     wallets: [{ key: 'wallet', label: '지갑', text: 1 }, { key: 'paid', label: '받은 양' }, { key: 'sold', label: '판 양' }, { key: 'bought', label: '산 양' }, { key: 'got_rlusd', label: '받은 RLUSD' }, { key: 'got_xrp', label: '받은 XRP' },
       { key: 'pool_in', label: '풀에 넣은 양' }, { key: 'balance', label: '잔액' }, { key: 'last_sell', label: '마지막으로 판 날', text: 1, fmt: md }],
     before: [{ key: 'group', label: '지갑 묶음', text: 1, tag: 1 }, { key: 'wallets', label: '지갑 수' }, { key: 'sold', label: '판 양' }, { key: 'bought', label: '산 양' }, { key: 'net_sold', label: '판 양 − 산 양' },
@@ -1079,7 +1116,7 @@ details .scroll { margin-top: 8px; }
   function render() {
     if (!DATA) return;
     bind();
-    var charts = { loop: drawLoop, flow: drawFlow, user: drawUser, market: drawMarket,
+    var charts = { loop: drawLoop, flow: drawFlow, user: drawUser, market: drawMarket, money: drawMoney,
       price: function (el) { drawLines(el, [{ key: 'price_rlusd', label: '가격(RLUSD)', color: 'var(--s1)' }], F.f4, false); },
       poolw: function (el) { drawLines(el, [{ key: 'pool_x_wlbn', label: 'XRP 풀', color: 'var(--s1)' }, { key: 'pool_r_wlbn', label: 'RLUSD 풀', color: 'var(--s3)' }], fInt, true); } };
     $$('[data-chart]').forEach(function (el) { try { charts[el.getAttribute('data-chart')](el); } catch (e) { if (window.console) console.error(e); empty(el, '이 그림을 그리지 못했습니다.'); } });

@@ -11,6 +11,8 @@ const FILE = path.join(__dirname, '../lib/snapshot-state.json');
   core.setLabels(S, ext);
   const u = await xrpl.update(S, { budgetMs: 240000 });
   core.pickExt(S, ext);
+  const fu = await xrpl.updateFund(S, { budgetMs: 240000 });   // 판매 대금 기록(operations 계정 내역)
+  console.log(JSON.stringify({ fund: fu }));
   const live = u.complete ? await xrpl.fetchLive(S, { budgetMs: 20000 }) : null;
   fs.writeFileSync(FILE, JSON.stringify(S));
   const out = core.buildDatasets(JSON.parse(JSON.stringify(S)), {});
