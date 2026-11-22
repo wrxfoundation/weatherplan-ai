@@ -11,5 +11,7 @@
 | `kitchen-idle.jpg` `kitchen-cook.jpg` `kitchen-vent.jpg` `kitchen-night.jpg` `kitchen-night-window.jpg` | 부엌 대기 / 조리 중 / 환기 / 밤 / 밤·창 열림 | 〃 |
 | `<같은 이름>.mp4` (13편) | 각 사진과 같은 구도의 5초 앰비언트 루프(커튼·김·조명만 움직임), 24fps, 편당 0.6~0.8MB | Kling 3.0 pro image-to-video, 첫 프레임 = 마지막 프레임 = 그 사진 |
 
+카페 · 사무실 · 회의실(v0.15)은 사진 · 영상이 아직 없다 — 페이지가 코드로 그린 도면 장면을 쓴다. 사진을 넣는 법은 위 폴더 README 의 v0.15 「사진이 생기면」.
+
 기기 화면은 파일이 아니라 페이지가 2D 캔버스(800×600)에 실제 ARC-600DA 화면 양식으로 그려서 컷아웃의 화면 자리에 얹는다(`index.html` 의 `SPRITE.screen`).
 원본 PNG(2528×1696 · 2048×2048)는 힉스필드 라이브러리에 남아 있다(생성 작업 ID 는 `fetch-assets.sh` 주석 참고).

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="거실·침실·주방의 공기가 요리·환기·밤에 따라 어떻게 변하고, 각 방의 기기가 그것을 어떻게 기록하는지 보여주는 개념 시뮬레이션. 2분짜리 환기 타이밍 게임도 있습니다.">
+<meta name="description" content="집(거실·침실·주방)·카페·사무실·회의실의 공기가 사람·요리·환기에 따라 어떻게 변하고, 각 공간의 기기가 그것을 어떻게 기록하는지 보여주는 개념 시뮬레이션. 2분짜리 환기 타이밍 게임도 있습니다.">
 <meta name="robots" content="noindex">
 <meta property="og:title" content="Measured Room — Weather Data Token Generator™">
 <meta property="og:description" content="A home, measured. 요리·환기·밤에 따라 달라지는 실내 공기와 그것을 기록하는 기기 — 개념 시뮬레이션.">
@@ -49,6 +49,39 @@
   .lang button { font-family: var(--display); font-weight: 700; font-size: 11.5px; letter-spacing: .08em; color: rgba(255,255,255,.72); background: transparent; border: 0; border-radius: 999px; padding: 0 12px; min-height: 30px; cursor: pointer; }
   .lang button[aria-pressed="true"] { background: #fff; color: var(--navy); }
   .lang button:focus-visible { outline: 3px solid rgba(255,255,255,.5); outline-offset: 2px; }
+  /* 건물 고르기(집 · 카페 · 사무실, v0.15) — 방 탭과 같은 알약. 좁은 화면에선 [건물][언어] 한 줄, 방 탭이 그 아래 */
+  .venues button { display: inline-flex; align-items: center; gap: 6px; }
+  .venues .ic { width: 14px; height: 14px; flex: none; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .spaces[hidden] { display: none; }
+  .topnav .lang { order: 2; } .topnav #spaces { order: 3; }
+  #app.gaming .venues { display: none; }
+  /* ── 도면 장면: 사진이 아직 없는 공간(카페 · 사무실 · 회의실)은 코드로 그린다. 낮/밤 · 문/창 · 환기 장치 · 사람 수가 상태를 그대로 따라간다 ── */
+  .art { position: absolute; left: 0; top: 0; display: block; opacity: 0; transition: opacity 1.1s ease; pointer-events: none;
+    --ceil: #2b2d5c; --wall: #474b88; --wall2: #3e417a; --trim: #33366b; --floor0: #3b3e72; --floor1: #25274c; --furn: #262850; --furn2: #31346b; --furn3: #3e4283;
+    --line: rgba(255,255,255,.4); --line2: rgba(255,255,255,.17); --pp: #a6a9ea; --pp2: #8d91d8; --ppl: rgba(255,255,255,.55); --metal: #9a9fd4; --out: #e4edff; --spill: rgba(255,240,214,.16); }
+  .art.on { opacity: 1; }
+  .art.night { --ceil: #111230; --wall: #1c1e42; --wall2: #18193a; --trim: #141533; --floor0: #1a1b3c; --floor1: #0d0e22; --furn: #0f1026; --furn2: #171936; --furn3: #21244d;
+    --line: rgba(255,255,255,.27); --line2: rgba(255,255,255,.11); --pp: #6d71b4; --pp2: #5c60a0; --ppl: rgba(255,255,255,.34); --metal: #62679f; --out: #0b0f2c; --spill: rgba(150,170,255,.06); }
+  .art * { vector-effect: non-scaling-stroke; transition: fill 1.2s ease, stroke 1.2s ease, opacity .9s ease; }
+  .art .c { fill: var(--ceil); } .art .w { fill: var(--wall); } .art .w2 { fill: var(--wall2); } .art .tr { fill: var(--trim); }
+  .art .f { fill: var(--furn); } .art .f2 { fill: var(--furn2); } .art .f3 { fill: var(--furn3); } .art .mt { fill: var(--metal); } .art .ot { fill: var(--out); } .art .sp { fill: var(--spill); }
+  .art .f, .art .f2, .art .f3 { stroke: var(--line2); stroke-width: 1; }
+  .art .ln { fill: none; stroke: var(--line); stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; }
+  .art .ln2 { fill: none; stroke: var(--line2); stroke-width: 1.2; stroke-linecap: round; }
+  .art .bar { fill: var(--line2); stroke: none; }
+  .art .dk { fill: #0c0d20; stroke: var(--line2); stroke-width: 1; }
+  .art .s0 { stop-color: var(--floor0); } .art .s1 { stop-color: var(--floor1); }
+  .art .dayo { opacity: 1; } .art.night .dayo { opacity: 0; }
+  .art .nito { opacity: 0; } .art.night .nito { opacity: 1; }
+  .art .glow { opacity: .22; } .art.night .glow { opacity: 1; }
+  .art .bulb { fill: #fff3d6; opacity: .75; stroke: none; } .art.night .bulb { opacity: 1; }
+  .art .dopen { opacity: 0; } .art.open .dopen { opacity: 1; } .art.open .dclosed { opacity: 0; }
+  .art .acto { opacity: 0; } .art.act .acto { opacity: 1; }
+  .art .hv { opacity: 0; stroke: #9fd8ff; stroke-width: 2; stroke-dasharray: 6 12; fill: none; stroke-linecap: round; } .art.hvac .hv { opacity: .8; animation: art-flow 1.1s linear infinite; }
+  .art .p { opacity: 0; fill: var(--pp); stroke: var(--ppl); stroke-width: 1; } .art .p.b { fill: var(--pp2); } .art .p.in { opacity: 1; }
+  .art .scr { fill: #9fd0ff; opacity: .5; stroke: none; } .art.night .scr { opacity: .8; }
+  @keyframes art-flow { to { stroke-dashoffset: -18; } }
+  @media (prefers-reduced-motion: reduce) { .art, .art * { transition: none; } .art.hvac .hv { animation: none; } }
 
   /* 장면: 정지 사진 위에 같은 구도의 5초 영상 루프. 기기는 실측 비율의 제품 컷아웃을 사진 속 자리에 놓고, 화면은 그 위에 원근으로 얹는다. */
   #stage { position: relative; height: clamp(280px, 50dvh, 540px); overflow: hidden; background: #0e0e22; isolation: isolate; }
@@ -213,6 +246,7 @@
     .hud-title .en { font-size: 13.5px; margin-top: 4px; }
     .topnav { position: absolute; left: 50%; top: 18px; transform: translateX(-50%); margin: 0; z-index: 2; flex-wrap: nowrap; }
     .spaces, .lang { background: rgba(10,10,32,.5); backdrop-filter: blur(6px); }
+    .topnav #spaces { order: 2; } .topnav .lang { order: 3; }
     .legend { position: absolute; left: 50%; top: 78px; transform: translateX(-50%); margin: 0; z-index: 2; }   /* 방 탭 아래 16px 띄운다 */
     /* 카드는 스크롤하지 않는다: 폭을 화면 높이에서 역산해(제목·막대·곡선·상태·범례·여백 ≈ 380px + 화면 3장 = 2.25×폭) 세 화면까지 한 번에 보이게. 768px 높이에선 176px 까지 좁아진다 */
     .readout { position: absolute; right: 18px; top: 18px; width: clamp(176px, calc((100dvh - 360px) / 2.25), 250px); margin: 0; z-index: 2; overflow: visible; }
@@ -227,6 +261,10 @@
     .cap { bottom: 58px; }
     .assets { top: auto; bottom: 58px; right: 18px; }
   }
+  @media (orientation: landscape) and (min-width: 760px) and (max-width: 1023px) and (min-height: 440px) {   /* 좁은 가로: 건물 · 언어 한 줄, 방 탭은 그 아래 */
+    .topnav { flex-wrap: wrap; justify-content: center; width: 352px; }
+    .topnav #spaces { order: 3; } .topnav .lang { order: 2; }
+  }
   @media (orientation: landscape) and (min-width: 760px) and (max-width: 1399px) and (max-height: 620px) {   /* 낮은 가로 화면: 로고·제목을 한 단 줄여 장면을 덜 가린다 */
     .hud-title .logo { width: 112px; margin-bottom: 6px; }
     .hud-title h1 { font-size: 22px; }
@@ -240,6 +278,7 @@
     .screens .k3 { grid-row: 1; grid-column: 1 / span 3; }
     .screens .sc { grid-row: 2; scroll-snap-align: start; }
     #b-cook:not([hidden]) ~ #b-speed { grid-column: 1 / -1; }
+    #b-hvac:not([hidden]) ~ #b-speed { grid-column: auto; }
   }
 
   /* ── 게임: 환기 타이밍 (v0.12) — 방 카드 3개(누르면 10분 환기) · 점수 · 저녁 띠(바깥 미세먼지) · 알림 · 시작/결과 카드 ── */
@@ -402,11 +441,12 @@
   </header>
 
   <div class="topnav">
-    <nav class="spaces" role="tablist" aria-label="공간 고르기" id="spaces">
-      <button role="tab" aria-selected="true" data-space="living">거실</button>
-      <button role="tab" aria-selected="false" data-space="bedroom">침실</button>
-      <button role="tab" aria-selected="false" data-space="kitchen">주방</button>
+    <nav class="spaces venues" role="tablist" aria-label="건물 고르기" id="venues">
+      <button role="tab" aria-selected="true" data-venue="home"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11l8-7 8 7v9h-5v-6H9v6H4z"/></svg><span class="lb">집</span></button>
+      <button role="tab" aria-selected="false" data-venue="cafe"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 9h11v5a5 5 0 0 1-5 5h-1a5 5 0 0 1-5-5zM16 11h2a2 2 0 0 1 0 4h-2M8 3v3M12 3v3"/></svg><span class="lb">카페</span></button>
+      <button role="tab" aria-selected="false" data-venue="office"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 21V4h10v17M15 9h4v12M3 21h18M8 8h4M8 12h4M8 16h4"/></svg><span class="lb">사무실</span></button>
     </nav>
+    <nav class="spaces" role="tablist" aria-label="공간 고르기" id="spaces"></nav>
     <div class="lang" id="lang" role="group" aria-label="Language / 언어">
       <button type="button" data-lang="ko" aria-pressed="true">KR</button><button type="button" data-lang="en" aria-pressed="false">EN</button>
     </div>
@@ -449,6 +489,7 @@
     <button class="btn game" id="b-game" type="button"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l10.5-6.5z"/></svg><span class="lb" data-i18n="gPlay">게임 · 환기 타이밍</span></button>
     <button class="btn primary" id="b-cook" hidden><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3c1 3 4 4.5 4 8.5a4 4 0 0 1-8 0c0-2 1-3 2-4 0 2 1 3 2 3 0-3-1-5 0-7.5z"/></svg><span class="lb" data-i18n="cook">요리 15분</span></button>
     <button class="btn" id="b-window"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M12 4v16M3 12h18"/></svg><span class="lb">창문 열기</span></button>
+    <button class="btn" id="b-hvac" hidden><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="2"/><path d="M12 10c0-4 1-6 3-6s2 3 0 5M14 12c4 0 6 1 6 3s-3 2-5 0M12 14c0 4-1 6-3 6s-2-3 0-5M10 12c-4 0-6-1-6-3s3-2 5 0"/></svg><span class="lb">환기 장치 켜기</span></button>
     <button class="btn" id="b-night"><svg class="ic ic-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg><svg class="ic ic-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg><span class="lb">야간 모드</span></button>
     <button class="btn" id="b-reset"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7M3 4v5h5"/></svg><span class="lb" data-i18n="reset">처음부터</span></button>
     <button class="btn" id="b-speed" title="타임랩스 배속 바꾸기 (×1 → ×5 → ×10 → ×20)"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5l8 7-8 7zM12 5l8 7-8 7z"/></svg><span class="lb">타임랩스 ×5</span></button>
@@ -473,6 +514,7 @@
     <div class="status">
       <span class="pill" id="p-window">창문 닫힘</span>
       <span class="pill" id="p-cook" hidden>조리 안 함</span>
+      <span class="pill" id="p-hvac" hidden>환기 장치 꺼짐</span>
       <span class="pill" id="p-night">저녁</span>
       <span class="pill" id="p-who">세 사람 · 저녁(한 사람은 주방)</span>
     </div>
@@ -488,7 +530,7 @@
   <footer class="ledger">
     <span class="k">Records <span class="n" id="rec-n">0</span> <span class="n2" id="rec-all">· 집 전체 0</span></span>
     <div class="ticks" id="ticks" aria-label="5분마다 하나씩 쌓이는 기록"></div>
-    <span class="note" data-i18n="note">검증된 판독값 하나 = 기록 하나 · 보상은 테스트 중 · 개념 시뮬레이션</span>
+    <span class="note" data-i18n="note">검증된 판독값 하나 = 기록 하나 · 보상 지급량·가치 비보장 · 개념 시뮬레이션</span>
   </footer>
 </div>
 
@@ -524,7 +566,7 @@
           <tr><th scope="row" data-i18n="dt10">설치 / 인증</th><td data-i18n="dd10">벽걸이 · 탁상 겸용 / KC · 성능인증</td></tr>
         </tbody>
       </table>
-      <div class="tip" data-i18n="ptip">보상은 테스트 중 · 개념 시뮬레이션 · concept render</div>
+      <div class="tip" data-i18n="ptip">보상 지급량·가치 비보장 · 개념 시뮬레이션 · concept render</div>
     </div>
   </div>
 </div>
@@ -541,12 +583,12 @@
 
   /* ── 두 언어: 한국어(기본) · English. 정적 문구는 data-i18n, 움직이는 문구는 t(). 선택은 저장되고 주소 해시 lang= 으로도 정한다. ── */
   const T = {
-    ko: { tip: "기기 · 탭하면 화면 확대", cap: "concept render · 개념 시뮬레이션 · 입자는 예시", note: "검증된 판독값 하나 = 기록 하나 · 보상은 테스트 중 · 개념 시뮬레이션", hint: "막대를 끌어 값을 바꿔 보세요 · 아래 기기 화면을 누르면 크게",
+    ko: { tip: "기기 · 탭하면 화면 확대", cap: "concept render · 개념 시뮬레이션 · 입자는 예시", note: "검증된 판독값 하나 = 기록 하나 · 보상 지급량·가치 비보장 · 개념 시뮬레이션", hint: "막대를 끌어 값을 바꿔 보세요 · 아래 기기 화면을 누르면 크게",
       screens: "Device screens · 기기 화면 1 · 2 · 3", particles: "입자 · 예시", pnote: "보이지 않는 CO₂·VOCs·먼지를 빛으로 나타낸 예시입니다. 개수는 측정값을 따라 늘고 줄어듭니다.", temp: "온도", rh: "습도", cook: "요리 15분", reset: "처음부터", close: "닫기", timelapse: "타임랩스",
       winOpen: "창문 열림", winClosed: "창문 닫힘", cooking: (n) => `조리 중 ${n}분`, notCooking: "조리 안 함", nightP: "밤", dawn: "새벽", morning: "아침", day: "낮", evening: "저녁",
       wL3e: "세 사람 · 저녁(한 사람은 주방)", wL4: "네 식구 · 저녁", wL2: "두 사람 · 밤", wL2l: "두 사람 · 점심", wL3: "세 사람 · 아침", wL1: "한 사람 · 낮", wL0: "비어 있음 · 모두 잠듦", wB2: "두 사람 잠듦", wB1: "한 사람 · 일어나는 중", wB1r: "한 사람 · 쉬는 중", wB0: "비어 있음", wK1m: "한 사람 · 아침 준비", wK1l: "한 사람 · 점심", wK1d: "한 사람 · 저녁 준비", wK0: "오가는 정도", wKcook: "한 사람 · 조리대 앞",
-      bWinOpen: "창문 열기", bWinClose: "창문 닫기", bNight: "야간 모드", bNightOn: "주간 모드", ventCta: "환기해야 합니다", ventSub: "탭하면 창문 열기", cookSub: "탭하면 팬에 불이 켜집니다", whole: (n) => `· 집 전체 ${n}`,
-      psub: "실측 크기로 놓은 기기의 화면을 그대로 확대한 것입니다. 수치는 이 방의 시뮬레이션 값.", ptip: "보상은 테스트 중 · 개념 시뮬레이션 · concept render", pdevAlt: "wellbian 실내 공기 측정기",
+      bWinOpen: "창문 열기", bWinClose: "창문 닫기", bNight: "야간 모드", bNightOn: "주간 모드", ventCta: "환기해야 합니다", ventSub: "탭하면 창문 열기", cookSub: "탭하면 팬에 불이 켜집니다", whole: (v, n) => `· ${v} 전체 ${n}`,
+      psub: "실측 크기로 놓은 기기의 화면을 그대로 확대한 것입니다. 수치는 이 방의 시뮬레이션 값.", ptip: "보상 지급량·가치 비보장 · 개념 시뮬레이션 · concept render", pdevAlt: "wellbian 실내 공기 측정기",
       dt0: "측정 항목", dd0: "PM2.5 · PM10 · CO₂ · TVOC · 온도 · 습도 · 체감온도", dt1: "모델명", dd1: "ARC-600DA", dt2: "디스플레이", dd2: "5인치 풀터치 컬러 LCD", dt3: "전원", dd3: "12VDC · 300mA (월 전기료 1,000원 미만)",
       dt4: "통신", dd4: "Wi-Fi · 블루투스 (802.11a/b/g/n)", dt5: "성능인증", dd5: "CO₂ 1등급 · PM2.5 1등급", dt6: "측정 범위 / 분해능", dd6: "0~1,000㎍/m³ (PM2.5) / 1㎍/m³",
       dt7: "측정 원리", dd7: "Light scattering laser photometer · 유량 0.1L/min · 팬 수명 32,000시간", dt8: "운영 온도", dd8: "−10 ~ 60°C", dt9: "제원 / 중량", dd9: "120(W) × 118(H) × 36(D) mm / 260g 이하 · ABS", dt10: "설치 / 인증", dd10: "벽걸이 · 탁상 겸용 / KC · 성능인증",
@@ -570,13 +612,22 @@
       gMeaning: "공기는 눈에 보이지 않아요. 측정해야 환기할 때를 알아요.", gCmp: (a, b) => `측정기 있을 때 ${a}% · 없을 때 ${b}%`,
       gAgain: "다시 하기", gNoDevBtn: "측정기 없이 해 보기", gDevBtn: "측정기 켜고 하기", gCopy: "결과 복사", gCopied: "복사했어요", gExplore: "시뮬레이션으로",
       gShare: (s, p, u) => `Measured Room · 환기 타이밍 ${s} ${p}%\n공기는 눈에 보이지 않아요. 측정해야 때를 알아요.\n${u}`,
-      badN: (n) => `장면 ${n}장을 불러오지 못했습니다`, loading: (d, n) => `장면 불러오는 중 ${d}/${n}`, noclip: "영상 루프 없이 사진으로 표시", nofx: "효과 레이어 없음(이 브라우저는 WebGL 미지원)" },
-    en: { tip: "Device · tap to enlarge", cap: "concept render · concept simulation · particles are illustrative", note: "One verified reading = one record · Rewards in testing · Concept simulation", hint: "Drag a bar to change its value · Tap a device screen below to enlarge",
+      badN: (n) => `장면 ${n}장을 불러오지 못했습니다`, loading: (d, n) => `장면 불러오는 중 ${d}/${n}`, noclip: "영상 루프 없이 사진으로 표시", nofx: "효과 레이어 없음(이 브라우저는 WebGL 미지원)",
+      // 카페 · 사무실 · 회의실(v0.15)
+      capArt: "도면 장면 · 사진 준비 중 · 개념 시뮬레이션 · 입자는 예시", doorOpen: "문 열림", doorOpenMix: "문 열림 · 사무실 공기와 섞임", doorClosed: "문 닫힘", bDoorOpen: "문 열어 두기", bDoorOpen2: "문 열기", bDoorClose: "문 닫기",
+      hvacOn: "환기 장치 켜짐", hvacOff: "환기 장치 꺼짐", bHvacOn: "환기 장치 켜기", bHvacOff: "환기 장치 끄기", ventSubHvac: "탭하면 환기 장치 켜기",
+      bake: "빵 굽기 10분", bakeSub: "탭하면 오븐이 켜집니다", baking: (n) => `굽는 중 ${n}분`, notBaking: "오븐 꺼짐",
+      print: "인쇄 10분", printSub: "탭하면 복합기가 돌아갑니다", printing: (n) => `인쇄 중 ${n}분`, notPrinting: "복합기 대기",
+      meet: "회의 1시간", meetSub: "탭하면 여섯 명이 들어옵니다", meeting: (n) => `회의 중 ${n}분`, notMeeting: "회의 없음",
+      whoN: (n, s) => `${n}명 · ${s}`, oAway: (n) => ` · ${n}명은 회의실`, oAllAway: (n) => `${n}명 모두 회의실`,
+      cPrep: "오픈 준비", cMorning: "아침 손님", cLull: "한가한 오전", cPre: "점심 직전", cLunch: "점심 손님", cAfter: "점심 뒤", cPm: "오후", cEve: "저녁 손님", cLast: "마감 전", cClosed: "영업 끝 · 비어 있음",
+      oIn: "출근 중", oAm: "오전 근무", oLunch: "점심 시간", oPm: "오후 근무", oOt: "야근", oEmpty: "퇴근 뒤 · 비어 있음", mMeet: "회의 중", mShort: "짧은 회의", mBtn: "회의 중", mEmpty: "비어 있음" },
+    en: { tip: "Device · tap to enlarge", cap: "concept render · concept simulation · particles are illustrative", note: "One verified reading = one record · Reward amount and value not guaranteed · Concept simulation", hint: "Drag a bar to change its value · Tap a device screen below to enlarge",
       screens: "Device screens 1 · 2 · 3", particles: "Particles · illustrative", pnote: "Invisible CO₂, VOCs and dust drawn as light. Their number rises and falls with the measured values.", temp: "Temp", rh: "Humidity", cook: "Cook 15 min", reset: "Reset", close: "Close", timelapse: "Timelapse",
       winOpen: "Window open", winClosed: "Window closed", cooking: (n) => `Cooking · ${n} min`, notCooking: "Not cooking", nightP: "Night", dawn: "Dawn", morning: "Morning", day: "Daytime", evening: "Evening",
       wL3e: "Three · evening (one in the kitchen)", wL4: "Family of four · evening", wL2: "Two · night", wL2l: "Two · lunch", wL3: "Three · morning", wL1: "One · daytime", wL0: "Empty · everyone asleep", wB2: "Two asleep", wB1: "One · getting up", wB1r: "One · resting", wB0: "Empty", wK1m: "One · breakfast", wK1l: "One · lunch", wK1d: "One · dinner prep", wK0: "Passing through", wKcook: "One · at the counter",
-      bWinOpen: "Open window", bWinClose: "Close window", bNight: "Night mode", bNightOn: "Day mode", ventCta: "Ventilation needed", ventSub: "Tap to open the window", cookSub: "Tap to start cooking", whole: (n) => `· whole home ${n}`,
-      psub: "The screen of the device placed at real scale, enlarged as is. Values are this room's simulation.", ptip: "Rewards in testing · concept simulation · concept render", pdevAlt: "wellbian indoor air monitor",
+      bWinOpen: "Open window", bWinClose: "Close window", bNight: "Night mode", bNightOn: "Day mode", ventCta: "Ventilation needed", ventSub: "Tap to open the window", cookSub: "Tap to start cooking", whole: (v, n) => `· whole ${v.toLowerCase()} ${n}`,
+      psub: "The screen of the device placed at real scale, enlarged as is. Values are this room's simulation.", ptip: "Reward amount and value not guaranteed · concept simulation · concept render", pdevAlt: "wellbian indoor air monitor",
       dt0: "Measures", dd0: "PM2.5 · PM10 · CO₂ · TVOC · temperature · humidity · feels-like", dt1: "Model", dd1: "ARC-600DA", dt2: "Display", dd2: "5-inch full-touch color LCD", dt3: "Power", dd3: "12VDC · 300mA (under ₩1,000 a month)",
       dt4: "Connectivity", dd4: "Wi-Fi · Bluetooth (802.11a/b/g/n)", dt5: "Certification", dd5: "CO₂ grade 1 · PM2.5 grade 1", dt6: "Range / resolution", dd6: "0–1,000 µg/m³ (PM2.5) / 1 µg/m³",
       dt7: "Principle", dd7: "Light scattering laser photometer · 0.1 L/min flow · 32,000 h fan life", dt8: "Operating temp.", dd8: "−10 to 60°C", dt9: "Size / weight", dd9: "120(W) × 118(H) × 36(D) mm / under 260 g · ABS", dt10: "Mounting / approvals", dd10: "Wall or desk / KC · performance certified",
@@ -600,7 +651,15 @@
       gMeaning: "You can't see the air. Measuring tells you when to open the window.", gCmp: (a, b) => `With the monitor ${a}% · without ${b}%`,
       gAgain: "Play again", gNoDevBtn: "Try without the monitor", gDevBtn: "Play with the monitor", gCopy: "Copy result", gCopied: "Copied", gExplore: "Back to the simulation",
       gShare: (s, p, u) => `Measured Room · Air Timing ${s} ${p}%\nYou can't see the air. Measuring tells you when to open the window.\n${u}`,
-      badN: (n) => `${n} scene(s) failed to load`, loading: (d, n) => `Loading scenes ${d}/${n}`, noclip: "Showing photos without video loops", nofx: "No effects layer (WebGL unsupported)" }
+      badN: (n) => `${n} scene(s) failed to load`, loading: (d, n) => `Loading scenes ${d}/${n}`, noclip: "Showing photos without video loops", nofx: "No effects layer (WebGL unsupported)",
+      capArt: "drawn scene · photos to come · concept simulation · particles are illustrative", doorOpen: "Door open", doorOpenMix: "Door open · mixing with the office", doorClosed: "Door closed", bDoorOpen: "Prop the door open", bDoorOpen2: "Open the door", bDoorClose: "Close the door",
+      hvacOn: "Ventilation on", hvacOff: "Ventilation off", bHvacOn: "Ventilation on", bHvacOff: "Ventilation off", ventSubHvac: "Tap to switch on the ventilation",
+      bake: "Bake 10 min", bakeSub: "Tap to switch on the oven", baking: (n) => `Baking · ${n} min`, notBaking: "Oven off",
+      print: "Print 10 min", printSub: "Tap to run the printer", printing: (n) => `Printing · ${n} min`, notPrinting: "Printer idle",
+      meet: "Meeting 1 hour", meetSub: "Tap and six people come in", meeting: (n) => `Meeting · ${n} min`, notMeeting: "No meeting",
+      whoN: (n, s) => `${n} ${n === 1 ? "person" : "people"} · ${s}`, oAway: (n) => ` · ${n} in the meeting room`, oAllAway: (n) => `All ${n} in the meeting room`,
+      cPrep: "opening up", cMorning: "morning rush", cLull: "quiet morning", cPre: "just before lunch", cLunch: "lunch crowd", cAfter: "after lunch", cPm: "afternoon", cEve: "evening crowd", cLast: "before closing", cClosed: "Closed · empty",
+      oIn: "arriving", oAm: "morning work", oLunch: "lunch break", oPm: "afternoon work", oOt: "working late", oEmpty: "After hours · empty", mMeet: "in a meeting", mShort: "short meeting", mBtn: "in a meeting", mEmpty: "Empty" }
   };
   let LANG = "ko";
   try { const q0 = new URLSearchParams(location.hash.replace(/^#/, "")).get("lang"); LANG = (q0 || localStorage.getItem("mr-lang") || "ko") === "en" ? "en" : "ko"; } catch (e) { LANG = "ko"; }
@@ -627,7 +686,20 @@
     "kitchen-cook-window":  { still: "80454a43-828a-4abd-816d-c687ef5a0128.jpg", clip: null, light: { kind: "lamp", at: [0.44, 0.38], r: 0.30, on: 0.8, col: [1, 0.9, 0.75] }, hi: CDN_IMG + "aa7ef9d5-902b-4a37-8bfb-0e513163344c.jpg", tint: "brightness(.98) sepia(.08)" },   // 조리 중에 창을 연 주방(사진만, 영상 루프 없음)
     "kitchen-vent":         { still: "a5412bc8-3256-41a8-8b66-fb97c935da36.jpg", clip: "hf_20260902_235658_61831fe4-4d12-4126-a260-e935db6e53c1.mp4", light: { kind: "beam", at: [0.26, 0.43], to: [0.72, 0.92], on: 0.8, col: [0.94, 0.96, 1] }, hi: CDN_IMG + "98846d02-43b4-43a7-afa8-b07ae5e7a75b.jpg", tint: "brightness(1)" },
     "kitchen-night":        { still: "0abbbc92-1c64-477a-b05d-72ac79acfab2.jpg", clip: "hf_20260902_235658_f849d640-3d43-4887-b0b0-f1615aeb7a17.mp4", light: { kind: "lamp", at: [0.44, 0.38], r: 0.26, on: 0.7, col: [1, 0.82, 0.6] }, hi: CDN_IMG + "e9acf282-243f-4520-83cf-89d05cffe0c0.jpg", tint: "brightness(.55) sepia(.3)" },
-    "kitchen-night-window": { still: "4e44e4c1-56ae-49a6-8d7a-5c3a55cf0b56.jpg", clip: "hf_20260903_000341_8af427ad-501d-4448-b8be-c567fe45b50b.mp4", light: { kind: "lamp", at: [0.44, 0.38], r: 0.26, on: 0.7, col: [1, 0.82, 0.6] }, hi: CDN_IMG + "ab870bec-c555-4ee8-8a06-fe4dc377dc1f.jpg", tint: "brightness(.55) sepia(.3)" }
+    "kitchen-night-window": { still: "4e44e4c1-56ae-49a6-8d7a-5c3a55cf0b56.jpg", clip: "hf_20260903_000341_8af427ad-501d-4448-b8be-c567fe45b50b.mp4", light: { kind: "lamp", at: [0.44, 0.38], r: 0.26, on: 0.7, col: [1, 0.82, 0.6] }, hi: CDN_IMG + "ab870bec-c555-4ee8-8a06-fe4dc377dc1f.jpg", tint: "brightness(.55) sepia(.3)" },
+    // 도면 장면(art, v0.15): 사진 · 영상이 아직 없는 공간. 그림은 ARTS 가 그리고, 여기엔 빛(입자가 빛나는 광원)과 기기 색조만 둔다. 사진이 생기면 still · clip · hi 를 채우고 SPACES 의 art 를 지운다
+    "cafe-day":           { art: true, light: { kind: "beam", at: [0.79, 0.30], to: [0.46, 0.86], on: 0.85, col: [1, 0.95, 0.86] }, tint: "brightness(.98)" },
+    "cafe-open":          { art: true, light: { kind: "beam", at: [0.53, 0.40], to: [0.44, 0.90], on: 1.0, col: [0.96, 0.97, 1] }, tint: "brightness(1)" },
+    "cafe-night":         { art: true, light: { kind: "lamp", at: [0.228, 0.335], r: 0.30, on: 0.9, col: [1, 0.82, 0.6] }, tint: "brightness(.6) sepia(.25)" },
+    "cafe-night-open":    { art: true, light: { kind: "lamp", at: [0.228, 0.335], r: 0.30, on: 0.85, col: [1, 0.84, 0.64] }, tint: "brightness(.6) sepia(.22)" },
+    "office-day":         { art: true, light: { kind: "beam", at: [0.5, 0.33], to: [0.42, 0.86], on: 0.8, col: [0.96, 0.97, 1] }, tint: "brightness(.98)" },
+    "office-open":        { art: true, light: { kind: "beam", at: [0.42, 0.33], to: [0.40, 0.86], on: 1.0, col: [0.94, 0.96, 1] }, tint: "brightness(1)" },
+    "office-night":       { art: true, light: { kind: "lamp", at: [0.5, 0.17], r: 0.36, on: 0.8, col: [0.88, 0.92, 1] }, tint: "brightness(.62)" },
+    "office-night-open":  { art: true, light: { kind: "lamp", at: [0.5, 0.17], r: 0.36, on: 0.75, col: [0.88, 0.92, 1] }, tint: "brightness(.62)" },
+    "meeting-day":        { art: true, light: { kind: "lamp", at: [0.5125, 0.19], r: 0.40, on: 0.6, col: [1, 0.92, 0.78] }, tint: "brightness(.95)" },
+    "meeting-open":       { art: true, light: { kind: "lamp", at: [0.5125, 0.19], r: 0.40, on: 0.6, col: [1, 0.92, 0.78] }, tint: "brightness(.95)" },
+    "meeting-night":      { art: true, light: { kind: "lamp", at: [0.5125, 0.19], r: 0.38, on: 0.85, col: [1, 0.88, 0.7] }, tint: "brightness(.62) sepia(.15)" },
+    "meeting-night-open": { art: true, light: { kind: "lamp", at: [0.5125, 0.19], r: 0.38, on: 0.85, col: [1, 0.88, 0.7] }, tint: "brightness(.62) sepia(.15)" }
   };
   // 큰 화면(가로 1200px 이상, 기기 픽셀 2000 이상, 데이터 절약 아님)에서는 4K 업스케일 스틸(hi)을 쓴다. 폰·태블릿은 1600px 그대로(장당 3MB 를 열세 번 받지 않게).
   const HI = !(navigator.connection && navigator.connection.saveData) && innerWidth >= 1200 && innerWidth * (devicePixelRatio || 1) >= 2000;
@@ -640,10 +712,27 @@
   const WHO = {
     living:  [[18, 20, 3, "wL3e"], [20, 22.5, 4, "wL4"], [22.5, 23.5, 2, "wL2"], [23.5, 7, 0, "wL0"], [7, 8.5, 3, "wL3"], [12, 13, 2, "wL2l"], [8.5, 18, 1, "wL1"]],   // 네 식구: 저녁 준비 중엔 한 사람이 주방에
     bedroom: [[22.5, 7, 2, "wB2"], [7, 7.5, 1, "wB1"], [21, 22.5, 1, "wB1r"], [7.5, 21, 0, "wB0"]],
-    kitchen: [[7, 8, 1, "wK1m"], [12, 13, 1, "wK1l"], [18, 20, 1, "wK1d"]]
+    kitchen: [[7, 8, 1, "wK1m"], [12, 13, 1, "wK1l"], [18, 20, 1, "wK1d"]],
+    // 카페(직원 둘 포함): 07:30 오픈 준비 → 점심 열네 명 → 22시 마감. 사무실: 열한 자리, 점심엔 셋. 회의실: 하루 세 번(10시 · 14시 여섯 명 한 시간, 16시 네 명 30분)
+    cafe:    [[7.5, 8, 2, "cPrep"], [8, 9.5, 9, "cMorning"], [9.5, 11.5, 6, "cLull"], [11.5, 12, 8, "cPre"], [12, 13.5, 14, "cLunch"], [13.5, 15, 11, "cAfter"], [15, 18, 8, "cPm"], [18, 21, 12, "cEve"], [21, 22, 5, "cLast"]],
+    office:  [[8.5, 9, 5, "oIn"], [9, 12, 11, "oAm"], [12, 13, 3, "oLunch"], [13, 18, 11, "oPm"], [18, 20.5, 4, "oOt"]],
+    meeting: [[10, 11, 6, "mMeet"], [14, 15, 6, "mMeet"], [16, 16.5, 4, "mShort"]]
   };
+  const WHO0 = { living: "wL0", bedroom: "wB0", kitchen: "wK0", cafe: "cClosed", office: "oEmpty", meeting: "mEmpty" };   // 시간표에 없는 시간의 문구
   const between = (h, a, b) => a <= b ? (h >= a && h < b) : (h >= a || h < b);
-  function whoOf(k, h) { for (const w of WHO[k]) if (between(h, w[0], w[1])) return { n: w[2], key: w[3] }; return { n: 0, key: k === "kitchen" ? "wK0" : k === "bedroom" ? "wB0" : "wL0" }; }
+  function whoOf(k, h) { for (const w of WHO[k]) if (between(h, w[0], w[1])) return { n: w[2], key: w[3] }; return { n: 0, key: WHO0[k] }; }
+  // 지금 그 방에 있는 사람 수 = 시간표 + 버튼으로 연 회의(여섯 명) − 다른 방(회의실)에 가 있는 사람. away = 자리를 비운 수
+  function crowd(k, h) {
+    const sp = SPACES[k], w = whoOf(k, h); let n = w.n, key = w.key, away = 0;
+    if (sp.act && sp.act.people && ST[k].cook > 0 && n < sp.act.people) { n = sp.act.people; key = sp.act.who; }
+    if (sp.away) { away = Math.min(n, crowd(sp.away, h).n); n -= away; }
+    return { n, key, away };
+  }
+  function whoText(k) {   // 필 문구: 집은 시간표 문구 그대로, 가게 · 사무실은 「몇 명 · 무슨 시간」
+    const sp = SPACES[k], h = hourNow();
+    if (!sp.phys) return t(k === "kitchen" && ST[k].cook > 0 ? "wKcook" : whoOf(k, h).key);
+    const c = crowd(k, h); return c.n > 0 ? t("whoN", c.n, t(c.key)) + (c.away ? t("oAway", c.away) : "") : c.away ? t("oAllAway", c.away) : t(c.key);
+  }
   const COOK_CO2 = 7 + 15;   // 조리 중 추가 CO₂(ppm/분): 서서 움직이는 사람의 숨 +7, 조리대 위 기기(1m 안)에 잡히는 숨 플룸 +15. 인덕션이라 연소 CO₂는 0
 
   /* ── 공간: 상태별 장면 키, 기기 자리(u,v = 사진 안 비율, 기기 발 중심) 와 그 자리의 실측 척도(cmFrac = 1cm 가 사진 너비의 몇 배인가), 창·팬·후드 ── */
@@ -677,16 +766,68 @@
       pick: (s, g) => g.night ? (s.window ? "nightWindow" : "night") : s.cook > 0 ? (s.window ? "cookWindow" : "cook") : (s.window ? "dayWindow" : "day"),
       device: { u: 0.53, v: 0.625, cmFrac: 0.00333 }, pan: [0.615, 0.60], hood: [0.70, 0.13], window: [0.26, 0.43], focus: [0.66, 0.5],   // 기기는 조리대 앞턱에 걸치지 않게 조금 위(0.658 → 0.625)
       people: (h, s) => (s.cook > 0 ? Math.max(whoOf("kitchen", h).n, 1) * 12 + COOK_CO2 : whoOf("kitchen", h).n * 12),   // 25㎥ 주방: 식사 시간에 한 사람 ≈ 12ppm/분. 조리 중엔 조리대 앞 사람의 숨 + 기기에 잡히는 숨 플룸(COOK_CO2). 그 외엔 거실과 트여 있어 거실 CO₂를 따라간다
-      temp: (h, night) => (night || h >= 23 || h < 7) ? 22.4 : 23.4, init: { pm: 14, co2: 560, coarse: 9 }
+      temp: (h, night) => (night || h >= 23 || h < 7) ? 22.4 : 23.4, init: { pm: 14, co2: 560, coarse: 9 },
+      act: { mins: 15, btn: "cook", sub: "cookSub", on: "cooking", off: "notCooking", ic: "flame", slow: true, fx: "steam" }   // 발생원 버튼(요리 15분): 팬(pan)에서 김 · 연기가 오른다
+    },
+    /* ── 카페 · 사무실 · 회의실(v0.15) ── 사진이 아직 없어 도면 장면(art)으로 그린다. 공기 계산은 phys 의 숫자로(stepBiz):
+       co2pp = 한 사람이 올리는 CO₂(ppm/분, ≈ 300 ÷ 방 부피㎥ × 활동량) · leak(n) = 닫힌 상태에서 바깥 공기와 바뀌는 비율(분당 — 손님이 드나들수록 큼) · open = 문 · 창을 열어 둘 때 · hvac = 환기 장치(바깥 공기를 걸러 들임, filt = 먼지를 거르는 비율)
+       dust = 한 사람이 되날리는 굵은 먼지 · voc = 마감재 · 가구 · 향 · vocpp = 사람 몫 · heat/wet = 한 사람이 보태는 온도 · 습도 · src = 발생원 버튼(굽기 · 인쇄)이 분당 넣는 양. 숫자는 설명용 근사값 */
+    cafe: {
+      art: "cafe", name: "카페 홀", en: "Café floor", where: "On the counter",
+      lead: "카페. 점심 손님이 자리를 채우면 CO₂가 1,000을 넘습니다. 환기 장치를 켜거나 문을 열어 두면 내려갑니다.",
+      en2: "Café. Once the lunch crowd fills the seats, CO₂ passes 1,000. Switch on the ventilation or prop the door open and it comes down.",
+      states: { day: "cafe-day", dayWindow: "cafe-open", night: "cafe-night", nightWindow: "cafe-night-open" },
+      pick: (s, g) => g.night ? (s.window ? "nightWindow" : "night") : (s.window ? "dayWindow" : "day"),
+      device: { u: 0.359, v: 0.5102, cmFrac: 0.00125 }, pan: [0.2875, 0.39], hood: [0.2875, 0.14], window: [0.531, 0.48], focus: [0.42, 0.5],   // 기기 = 카운터 끝 · pan = 오븐 · hood = 천장 배기구 · window = 출입문
+      win: { open: "doorOpen", closed: "doorClosed", bOpen: "bDoorOpen", bClose: "bDoorClose" },
+      act: { mins: 10, btn: "bake", sub: "bakeSub", on: "baking", off: "notBaking", ic: "oven", slow: true, fx: "steam" },
+      temp: (h) => (h >= 7.5 && h < 22) ? 23.5 : 25, init: { pm: 10, co2: 900, coarse: 9, voc: 170, temp: 24.0 },
+      // 55㎡ × 3m ≈ 165㎥. 닫힌 매장: 점심 열네 명 ≈ 1,140 · 오후 여덟 명 ≈ 930 · 저녁 열두 명 ≈ 1,080. 환기 장치를 켜면 점심에도 800 아래
+      phys: { co2pp: 1.9, leak: (n) => 0.02 + 0.0012 * n, open: 0.10, hvac: 0.045, filt: 0.7, dust: 0.06, voc: 3.6, vocpp: 0.2, heat: 0.07, wet: 0.004, src: { pm: 4.5, crs: 0.6, voc: 14, heat: 1.2, wet: 0.15 } }
+    },
+    office: {
+      art: "office", name: "업무 공간", en: "Open office", where: "On a desk",
+      lead: "사무실. 창을 닫고 환기 장치를 꺼 두면 오후 내내 CO₂가 1,000을 넘습니다. 환기 장치를 켜면 내려갑니다.",
+      en2: "Office. With the windows shut and the ventilation off, CO₂ stays above 1,000 all afternoon. Switch the ventilation on and it comes down.",
+      states: { day: "office-day", dayWindow: "office-open", night: "office-night", nightWindow: "office-night-open" },
+      pick: (s, g) => g.night ? (s.window ? "nightWindow" : "night") : (s.window ? "dayWindow" : "day"),
+      device: { u: 0.30375, v: 0.5214, cmFrac: 0.00125 }, pan: [0.222, 0.458], hood: [0.394, 0.16], window: [0.4219, 0.335], focus: [0.42, 0.5],   // 기기 = 뒷줄 책상 끝 · pan = 복합기 · hood = 천장 디퓨저 · window = 열리는 창
+      act: { mins: 10, btn: "print", sub: "printSub", on: "printing", off: "notPrinting", ic: "print", slow: true, fx: "puff" },
+      away: "meeting",   // 회의실에 들어간 사람만큼 자리가 빈다
+      temp: (h) => (h >= 8 && h < 21) ? 24 : 25.5, init: { pm: 7, co2: 850, coarse: 5, voc: 240, temp: 24.3 },
+      // 90㎡ × 2.7m ≈ 245㎥ · 열한 자리. 닫힌 사무실: 오후 열한 명 ≈ 1,290. 환기 장치를 켜면 ≈ 670
+      phys: { co2pp: 1.3, leak: (n) => 0.012 + 0.0004 * n, open: 0.09, hvac: 0.04, filt: 0.7, dust: 0.03, voc: 3.0, vocpp: 0.13, heat: 0.04, wet: 0.003, src: { pm: 1.6, crs: 0.15, voc: 8, heat: 0.3, wet: 0 } }
+    },
+    meeting: {
+      art: "meeting", name: "회의실", en: "Meeting room", where: "On the table",
+      lead: "회의실. 창 없는 방에 여섯 명이 모이면 30분쯤에 CO₂가 2,000에 가까워집니다. 문을 열면 사무실 공기와 섞여 1,500 안팎까지만, 환기 장치를 켜면 1,000 아래로 내려갑니다.",
+      en2: "Meeting room. Six people in a windowless room bring CO₂ close to 2,000 in about half an hour. An open door mixes it with office air and only gets it to around 1,500; the ventilation takes it below 1,000.",
+      states: { day: "meeting-day", dayWindow: "meeting-open", night: "meeting-night", nightWindow: "meeting-night-open" },
+      pick: (s, g) => g.night ? (s.window ? "nightWindow" : "night") : (s.window ? "dayWindow" : "day"),
+      device: { u: 0.275, v: 0.6462, cmFrac: 0.00175 }, pan: [0.5125, 0.60], hood: [0.5125, 0.086], window: [0.2437, 0.484], focus: [0.45, 0.55],   // 기기 = 탁자 끝 · pan = 탁자 가운데(회의 버튼 자리) · hood = 천장 디퓨저 · window = 유리문(사무실 쪽)
+      win: { open: "doorOpenMix", closed: "doorClosed", bOpen: "bDoorOpen2", bClose: "bDoorClose" },
+      act: { mins: 60, btn: "meet", sub: "meetSub", on: "meeting", off: "notMeeting", ic: "people", people: 6, who: "mBtn" },   // 발생원이 사람: 버튼을 누르면 여섯 명이 한 시간 들어온다
+      temp: () => 23.5, init: { pm: 6, co2: 560, coarse: 3, voc: 150, temp: 23.6 },
+      // 14㎡ × 2.6m ≈ 36㎥. 바깥으로 난 창이 없다 — 문(doorTo)은 사무실과만 섞인다: 닫혀도 문틈으로 2%/분, 열면 10%/분. 사무실 쪽은 부피 비(volRatio)만큼만 움직인다
+      phys: { co2pp: 9, leak: () => 0.004, open: 0, hvac: 0.10, filt: 0.7, dust: 0.08, voc: 2.0, vocpp: 0.6, actVoc: 1.5, heat: 0.35, wet: 0.012, doorTo: "office", door: [0.02, 0.10], volRatio: 0.15 }
     }
   };
-  const ORDER = ["living", "bedroom", "kitchen"];
-  let cur = "living";
+  /* ── 건물: 집 · 카페 · 사무실(v0.15). 건물마다 시계가 따로 있고 보고 있는 건물만 흐른다. 처음 여는 시각(t0)도 다르다 ── */
+  const VENUES = {
+    home:   { name: "집", en: "Home", rooms: ["living", "bedroom", "kitchen"], t0: 18 * 60 },
+    cafe:   { name: "카페", en: "Café", rooms: ["cafe"], t0: 11 * 60 + 30 },                          // 점심 손님이 몰리기 30분 전
+    office: { name: "사무실", en: "Office", rooms: ["office", "meeting"], t0: 13 * 60, hvacAll: true }   // 점심 뒤 · 14시 회의 한 시간 전. 환기 장치는 한 계통(두 방이 같이 켜지고 꺼진다)
+  };
+  for (const v in VENUES) { VENUES[v].t = VENUES[v].t0; VENUES[v].night = false; VENUES[v].rooms.forEach((k) => { SPACES[k].venue = v; }); }
+  const ORDER = VENUES.home.rooms;   // 집의 세 방 — 게임 · 집 전체 화면은 이 셋만 쓴다
+  const ALL = Object.keys(SPACES);
+  let cur = "living", VEN = "home";
+  const ROOMS = () => VENUES[VEN].rooms;   // 지금 보고 있는 건물의 방
 
   /* ── 집의 물리 (단순 박스 모델, 단위: 분). 세 공간이 같은 시계를 쓴다. 숫자는 설명용 근사값. ──
      PM2.5: 조리가 넣고, 환기와 침착이 뺀다. CO₂: 사람이 넣고, 환기가 뺀다. TVOC: 조리·닫힌 밤이 올리고 환기가 뺀다. 온·습도: 조리·창문에 따라 바깥값으로 끌린다. */
   // 실제로 쓰는 장면 = 각 방 states 에 걸린 것(12장). bedroom-morning 만 남겨 두고 쓰지 않는다(저녁+창 사진으로 대체)
-  const USED_SCENES = [...new Set(Object.values(SPACES).flatMap((sp) => Object.values(sp.states)))];
+  const USED_SCENES = [...new Set(Object.values(SPACES).filter((sp) => !sp.art).flatMap((sp) => Object.values(sp.states)))];   // 도면 장면은 받을 사진이 없다
   const G = { t: 18 * 60, night: false, speed: 5 };   // speed = 낮 기준 배속(1초 = speed 분)
   /* 게임(환기 타이밍) 설정: 저녁 6시 → 자정, 1초 = 3분(약 2분). 창은 한 번에 10분. 바깥 미세먼지 띠 19:30~20:15(150, 앞뒤 12분 경사).
      점수 = 사람이 있는 방에서 빨간불이 없는 시간의 비율 — 빨간불 = 기기 알림과 같은 선(CO₂ 1,000 · PM2.5 75 초과) + 18°C 아래. 별 = 80 · 65 · 45% */
@@ -704,17 +845,41 @@
     const pm = Math.max(4, PM_OUT + 4 * Math.sin(m / 151) + 2 * Math.sin(m / 37 + 2));
     return { pm, pm10: pm * 1.7 + 1, temp, rh };
   }
-  const fresh = (k) => ({ pm: SPACES[k].init.pm, coarse: SPACES[k].init.coarse, co2: SPACES[k].init.co2, voc: 15, temp: SPACES[k].temp(18, false), rh: 55, window: false, cook: 0, hist: [], records: 0, lastRecord: G.t, ticks: [], alertAt: -1, alertReal: 0 });
-  const ST = {}; ORDER.forEach((k) => { ST[k] = fresh(k); });
+  const fresh = (k) => { const sp = SPACES[k], i = sp.init; return { pm: i.pm, coarse: i.coarse, co2: i.co2, voc: i.voc || 15, temp: i.temp || sp.temp(18, false), rh: 55, window: false, hvac: false, cook: 0, hist: [], records: 0, lastRecord: sp.venue === VEN ? G.t : VENUES[sp.venue].t, ticks: [], alertAt: -1, alertReal: 0 }; };
+  const ST = {}; ALL.forEach((k) => { ST[k] = fresh(k); });
   const hourNow = () => (G.t % 1440) / 60;
+  /* ── 가게 · 사무실의 물리(v0.15): 집과 같은 박스 모델, 숫자는 공간 설정(phys)에서 읽는다 ──
+     바깥 공기와 바뀌는 길이 셋 — 닫힌 상태의 누설(leak: 손님이 드나드는 만큼) · 열어 둔 문 · 창(open) · 환기 장치(hvac: 필터를 거쳐 들어오고 온도는 거의 그대로). */
+  function stepBiz(k, s, sp, h, o) {
+    const P = sp.phys, n = crowd(k, h).n, on = s.cook > 0, src = on && P.src ? P.src : null;
+    const leak = P.leak(n), open = s.window ? P.open : 0, hv = s.hvac ? P.hvac : 0, ex = leak + open + hv;
+    const crsOut = Math.max(0, o.pm10 - o.pm), pass = 1 - P.filt;
+    s.co2 += n * P.co2pp - ex * (s.co2 - CO2_OUT);
+    s.pm += (src ? src.pm : 0) + (leak * 0.6 + open + hv * pass) * o.pm - ex * s.pm - 0.012 * s.pm;                    // 바깥 먼지: 문틈으론 60%, 열린 문으론 그대로, 환기 장치는 필터를 거쳐
+    s.coarse += n * P.dust + (src ? src.crs : 0) + (leak * 0.3 + open + hv * pass * 0.5) * crsOut - ex * s.coarse - 0.045 * s.coarse;
+    s.voc += P.voc + n * P.vocpp + (src ? src.voc : 0) + (on && P.actVoc ? P.actVoc : 0) - ex * (s.voc - 15);
+    const tBase = sp.temp(h, G.night) + n * P.heat + (src ? src.heat : 0);
+    s.temp += (tBase - s.temp) * 0.03 + (o.temp - s.temp) * (open * 0.2 + hv * 0.03);                                  // 냉난방이 설정 온도로 당기고, 열린 문은 바깥 온도로 끈다
+    s.rh += n * P.wet + (src ? src.wet : 0) + (52 - s.rh) * 0.012 + (o.rh - s.rh) * (open * 0.3 + hv * 0.05);
+    if (s.cook > 0) s.cook -= 1;
+  }
+  // 문으로 이어진 방(회의실 ↔ 사무실): 닫혀도 문틈으로 조금, 열면 빨리 섞인다. 큰 방 쪽은 부피 비만큼만 움직인다
+  function mixDoors() {
+    for (const k of ROOMS()) { const P = SPACES[k].phys; if (!P || !P.doorTo) continue;
+      const a = ST[k], b = ST[P.doorTo], r = a.window ? P.door[1] : P.door[0];
+      for (const q of ["co2", "pm", "coarse", "voc"]) { const d = a[q] - b[q]; a[q] -= d * r; b[q] += d * r * P.volRatio; }
+      const dT = a.temp - b.temp; a.temp -= dT * r * 0.6; b.temp += dT * r * 0.6 * P.volRatio;
+      const dR = a.rh - b.rh; a.rh -= dR * r * 0.6; b.rh += dR * r * 0.6 * P.volRatio; }
+  }
   function stepMinute() {
     if (GAME.on) { if (GAME.phase !== "play") return; gamePre(); }
     const h = hourNow(), o = outdoorOf(), tOut = o.temp, rhOut = o.rh, pmOut = o.pm;
     const nowMs = performance.now();
-    for (const k of ORDER) {
+    for (const k of ROOMS()) {   // 보고 있는 건물의 방만 흐른다
       const s = ST[k], sp = SPACES[k], cooking = s.cook > 0;
       const keep = {}; for (const q in (s.pin || {})) if (s.pin[q] > nowMs) keep[q] = s[q];   // 막대로 정한 값은 잠시 고정
       s._keep = keep;
+      if (sp.phys) { stepBiz(k, s, sp, h, o); continue; }   // 카페 · 사무실 · 회의실
       const vent = s.window ? 0.14 : (GAME.on ? 0.006 : 0.018);   // 게임: 닫힌 창 틈으로 들어오는 바깥 먼지를 줄인다(띠 동안 닫으면 버틸 수 있게)
       const n = Math.max(whoOf(k, h).n, cooking ? 1 : 0), asleep = k === "bedroom";
       s.pm += (cooking ? (GAME.on ? 14 : 22) : 0) - vent * (s.pm - pmOut) - 0.012 * s.pm;
@@ -726,15 +891,17 @@
       s.rh += (cooking ? 0.8 : 0) + (s.window ? (rhOut - s.rh) * 0.03 : (55 - s.rh) * 0.012);
       if (s.cook > 0) s.cook -= 1;
     }
+    if (VEN === "home") {
     const kx = ST.kitchen.pm - ST.living.pm; if (kx > 0) { ST.living.pm += kx * 0.03; ST.kitchen.pm -= kx * 0.01; }
     const lx = ST.living.pm - ST.bedroom.pm; if (lx > 0) ST.bedroom.pm += lx * 0.006;
     // 닫힌 집은 한 상자: 잠든 침실의 CO₂가 문틈으로 거실에 새고(1.2%/분), 거실과 주방은 트여 있어 빨리 섞인다(3%/분). 조리 VOC 도 거실로.
     const bc = ST.bedroom.co2 - ST.living.co2; ST.living.co2 += bc * 0.012; ST.bedroom.co2 -= bc * 0.004;
     const kc = ST.kitchen.co2 - ST.living.co2; ST.living.co2 += kc * 0.03; ST.kitchen.co2 -= kc * 0.03;
     const kv = ST.kitchen.voc - ST.living.voc; if (kv > 0) { ST.living.voc += kv * 0.02; ST.kitchen.voc -= kv * 0.01; }
-    for (const k of ORDER) { const s = ST[k]; for (const q in s._keep) s[q] = s._keep[q]; }   // 막대로 정한 값 고정(방 사이 섞임 뒤에)
+    } else mixDoors();
+    for (const k of ROOMS()) { const s = ST[k]; for (const q in s._keep) s[q] = s._keep[q]; }   // 막대로 정한 값 고정(방 사이 섞임 뒤에)
     G.t += 1;
-    for (const k of ORDER) {
+    for (const k of ROOMS()) {
       const s = ST[k];
       if (s.pm < 3) s.pm = 3; if (s.coarse < 1) s.coarse = 1; if (s.co2 < CO2_OUT) s.co2 = CO2_OUT; if (s.voc < 8) s.voc = 8; s.voc = Math.min(s.voc, 900); s.rh = clamp(s.rh, 25, 85);
       s.hist.push({ t: G.t, pm: s.pm, co2: s.co2 }); if (s.hist.length > 720) s.hist.shift();
@@ -772,7 +939,7 @@
   }
   function tickEl(t) { const d = document.createElement("div"); d.className = "tick"; d.style.height = t.h + "px"; d.title = t.title; return d; }
   function rebuildTicks() { ticks.innerHTML = ""; ST[cur].ticks.forEach((t) => ticks.appendChild(tickEl(t))); ticks.scrollLeft = ticks.scrollWidth; counts(); }
-  function counts() { recN.textContent = ST[cur].records; recAll.textContent = t("whole", ORDER.reduce((a, k) => a + ST[k].records, 0)); }
+  function counts() { recN.textContent = ST[cur].records; const r = ROOMS(); recAll.textContent = r.length > 1 ? t("whole", venueName(), r.reduce((a, k) => a + ST[k].records, 0)) : ""; }   // 방이 하나뿐인 건물(카페)은 합계를 따로 적지 않는다
 
   /* ── 화면 텍스트 ── */
   const pmv = $("pmv"), co2v = $("co2v"), clock = $("clock"), rk = $("rk"), pm10v = $("pm10v"), vocv = $("vocv"), tv = $("tv"), rhv = $("rhv");
@@ -818,7 +985,8 @@
       else if (e.key === "ArrowLeft" || e.key === "ArrowDown" || e.key === "PageDown") { applyBar(k, cur_ - step); e.preventDefault(); }
     });
   }
-  const pWin = $("p-window"), pCook = $("p-cook"), pNight = $("p-night"), pWho = $("p-who");
+  const pWin = $("p-window"), pCook = $("p-cook"), pNight = $("p-night"), pWho = $("p-who"), pHvac = $("p-hvac");
+  const WIN0 = { open: "winOpen", closed: "winClosed", bOpen: "bWinOpen", bClose: "bWinClose" };   // 창(집 · 사무실). 카페 · 회의실은 문(공간 설정의 win)
   function clockText() { const day = Math.floor(G.t / 1440) + 1, m = G.t % 1440; return `Day ${day} · ${String(Math.floor(m / 60)).padStart(2, "0")}:${String(m % 60).padStart(2, "0")}`; }
   const DAYS = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"], MONS = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
   const START = new Date(); START.setHours(0, 0, 0, 0);
@@ -836,15 +1004,20 @@
     setBar("voc", s.voc, s.voc > 1000 ? "alert" : s.voc > 300 ? "warn" : s.voc > 100 ? "ok" : "good");
     setBar("temp", s.temp, (s.temp > 26 || s.temp < 18) ? "warn" : "good");
     setBar("rh", s.rh, (s.rh > 70 || s.rh < 30) ? "warn" : s.rh > 60 ? "ok" : "good");
-    pWin.textContent = s.window ? t("winOpen") : t("winClosed"); pWin.classList.toggle("on", s.window);
-    pCook.textContent = s.cook > 0 ? t("cooking", s.cook) : t("notCooking"); pCook.classList.toggle("on", s.cook > 0);
+    const R = SPACES[cur], W = R.win || WIN0, A = R.act;
+    pWin.textContent = s.window ? t(W.open) : t(W.closed); pWin.classList.toggle("on", s.window);
+    if (A) { pCook.textContent = s.cook > 0 ? t(A.on, s.cook) : t(A.off); pCook.classList.toggle("on", s.cook > 0); }
+    pHvac.textContent = t(s.hvac ? "hvacOn" : "hvacOff"); pHvac.classList.toggle("on", !!s.hvac);
     const h = Math.floor(hourNow());
     pNight.textContent = G.night ? t("nightP") : (h < 6 ? t("dawn") : h < 12 ? t("morning") : h < 18 ? t("day") : t("evening"));
     pNight.classList.toggle("on", G.night);
-    pWho.textContent = t(cur === "kitchen" && s.cook > 0 ? "wKcook" : whoOf(cur, hourNow()).key);   // 이 방에 지금 누가 있나(시간표)
-    lbl(bWin, s.window ? t("bWinClose") : t("bWinOpen")); bWin.classList.toggle("on", s.window);
-    ventBtn.hidden = GAME.on || !(s.alertAt >= 0 && !s.window);   // 기기 알림이 켜져 있고 창이 닫혀 있는 동안만 "환기해야 합니다"
-    cookBtn.hidden = GAME.on || !(cur === "kitchen" && ST.kitchen.cook <= 0);   // 주방에서 조리 중이 아닐 때만 프라이팬 위 "요리 15분"
+    pWho.textContent = whoText(cur);   // 이 방에 지금 누가 있나(시간표)
+    lbl(bWin, s.window ? t(W.bClose) : t(W.bOpen)); bWin.classList.toggle("on", s.window);
+    lbl(bHvac, t(s.hvac ? "bHvacOff" : "bHvacOn")); bHvac.classList.toggle("on", !!s.hvac);
+    const vWas = ventBtn.hidden;
+    ventBtn.hidden = GAME.on || !(s.alertAt >= 0 && !s.window && !s.hvac);   // 기기 알림이 켜져 있고 창이 닫혀 있는 동안만 "환기해야 합니다"
+    cookBtn.hidden = GAME.on || !(A && R.pan && s.cook <= 0);
+    if (vWas !== ventBtn.hidden && !cookBtn.hidden) placeRing();   // 환기 안내가 나타나거나 사라지면 발생원 버튼 자리를 다시 잡는다   // 주방에서 조리 중이 아닐 때만 프라이팬 위 "요리 15분"
     bNight.classList.toggle("on", G.night); lbl(bNight, G.night ? t("bNightOn") : t("bNight"));
     for (const sp of SPECIES) { const el = legendEls[sp.key]; if (el) el.style.opacity = (0.3 + 0.7 * sp.frac(s)).toFixed(2); }
     if (GAME.on) gameUI();
@@ -1116,7 +1289,8 @@
   let ringAt = { x: 0, y: 0 }, ringPx = 0, ringPy = 0;
   function placeRing() {
     const bx = (devBox.x - sw / 2) * 1.035 + sw / 2 + mediaX, by = (devBox.y - sh / 2) * 1.035 + sh / 2 + mediaY, bw = devBox.w * 1.035, bh = devBox.h * 1.035;
-    const side = cur === "kitchen" ? -1 : (bx + bw / 2 > sw * 0.66) ? -1 : 1;   // 주방은 오른쪽에 프라이팬 버튼이 있어 포인트를 왼쪽으로
+    const R = SPACES[cur], nearSrc = R.pan && R.pan[0] > R.device.u && R.pan[0] - R.device.u < 0.2;   // 발생원 버튼이 기기 바로 오른쪽에 있으면(주방 프라이팬) 포인트를 왼쪽으로
+    const side = nearSrc ? -1 : (bx + bw / 2 > sw * 0.66) ? -1 : 1;   // 주방은 오른쪽에 프라이팬 버튼이 있어 포인트를 왼쪽으로
     const ax = side > 0 ? bx + bw * 0.8 : bx + bw * 0.16, ay = by + bh * 0.1;
     const gap = clamp(bw * 0.5, 30, 64);
     const rx = clamp(ax + side * gap * 1.25, 30, sw - 30), ry = clamp(ay - gap * 0.85, 26, sh - 26);
@@ -1132,10 +1306,11 @@
     const vw = ventBtn.offsetWidth || 190, vh = ventBtn.offsetHeight || 40, vx = clamp(rx, vw / 2 + 6, sw - vw / 2 - 6), vy = ry - 30 - vh < 6 ? ry + 30 : ry - 30 - vh;
     ventBtn.style.transform = `translate(${vx.toFixed(1)}px, ${vy.toFixed(1)}px) translate(-50%, 0)`;
     // 요리 버튼은 프라이팬 위에(장면 밖으로 안 나가게)
-    if (cur === "kitchen") {
-      const p = toScreen(SPACES.kitchen.pan[0], SPACES.kitchen.pan[1]), cw = cookBtn.offsetWidth || 190, chh = cookBtn.offsetHeight || 40, cx = clamp(p.x, cw / 2 + 6, sw - cw / 2 - 6); let cy = Math.max(6, p.y - 26 - chh);
+    if (R.pan && R.act) {
+      const p = toScreen(R.pan[0], R.pan[1]), cw = cookBtn.offsetWidth || 190, chh = cookBtn.offsetHeight || 40, cx = clamp(p.x, cw / 2 + 6, sw - cw / 2 - 6); let cy = Math.max(6, p.y - 26 - chh);
       const tipH = ringTip.offsetHeight || 21, tx0 = ts > 0 ? rx + 24 : rx - 24 - tipW, tx1 = tx0 + tipW, ty0 = ry - tipH / 2, ty1 = ry + tipH / 2;   // 포인트 말풍선과 겹치면(좁은 화면) 말풍선 위로 올린다
       if (cx - cw / 2 < tx1 && cx + cw / 2 > tx0 && cy < ty1 && cy + chh > ty0) cy = Math.max(6, ty0 - chh - 8);
+      if (!ventBtn.hidden && cx - cw / 2 < vx + vw / 2 && cx + cw / 2 > vx - vw / 2 && cy < vy + vh && cy + chh > vy) cy = Math.max(6, vy - chh - 8);   // 환기 안내와 겹치면(좁은 화면의 카페) 그 위로
       cookBtn.style.transform = `translate(${cx.toFixed(1)}px, ${cy.toFixed(1)}px) translate(-50%, 0)`;
     }
     ringAt = { x: rx, y: ry };
@@ -1160,15 +1335,140 @@
     if (bad) parts.push(t("badN", bad)); else if (done < keys.length) parts.push(t("loading", done, keys.length));
     if (clipBad) parts.push(t("noclip"));
     if (fxNote) parts.push(t(fxNote));
+    if (SPACES[cur].art) parts.length = 0;   // 도면 장면: 받을 사진이 없다(안내는 장면 아래 글줄에)
     assetsNote.textContent = parts.join(" · ");
   }
   function stillEl(key) {
+    if (SCENES[key].art) return null;   // 도면 장면은 사진이 없다
     if (stills[key]) return stills[key];
     const img = document.createElement("img"); img.className = "still"; img.alt = ""; img.decoding = "async"; img.dataset.key = key;
     const list = srcOf(key).still; let i = 0;
     img.addEventListener("load", () => { assetState[key] = "ok"; noteAssets(); const r = img.naturalWidth / img.naturalHeight; if (r > 0.5 && Math.abs(r - RATIO) > 0.002) { RATIO = r; layout(); } });
     img.addEventListener("error", () => { i += 1; if (i < list.length) img.src = list[i]; else { assetState[key] = "bad"; noteAssets(); } });
     img.src = list[0]; stills[key] = img; media.insertBefore(img, dev); return img;
+  }
+  /* ── 도면 장면(사진이 아직 없는 공간): SVG 를 코드로 만든다. 좌표는 1600×1074(사진과 같은 비율) — 기기 자리 · 문 · 발생원 좌표(u,v)를 이 그림에서 그대로 읽는다.
+     사람은 data-p 번호 순서대로 나타난다(시간표의 사람 수만큼). 낮/밤 · 문/창 · 발생원 · 환기 장치는 .night .open .act .hvac 클래스로 바뀐다(색 · 모양은 CSS). ── */
+  const ART_W = 1600, ART_H = 1074;
+  const AR = {
+    bust: (i, x, y, k, b) => `<g class="p${b ? " b" : ""}" data-p="${i}" transform="translate(${x} ${y}) scale(${k})"><circle cy="-74" r="17"/><path d="M-30 0v-28a22 22 0 0 1 22-22h16a22 22 0 0 1 22 22v28z"/></g>`,
+    stand: (i, x, y, k, b) => `<g class="p${b ? " b" : ""}" data-p="${i}" transform="translate(${x} ${y}) scale(${k})"><circle cy="-172" r="17"/><path d="M-26-128a22 22 0 0 1 22-22h8a22 22 0 0 1 22 22v46l-4 76a6 6 0 0 1-6 6h-6a6 6 0 0 1-6-6l-2-64h-4l-2 64a6 6 0 0 1-6 6h-6a6 6 0 0 1-6-6l-4-76z"/></g>`,
+    room: (id, cy, fy, lamp) => {
+      let fl = ""; for (let i = -4; i <= 12; i++) { const xb = i * 200; fl += `M${(800 + (xb - 800) * 0.62).toFixed(0)} ${fy}L${(800 + (xb - 800) * 1.3).toFixed(0)} ${ART_H}`; }
+      return `<defs><linearGradient id="${id}-fl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" class="s0"/><stop offset="1" class="s1"/></linearGradient>`
+        + `<linearGradient id="${id}-sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a8c7ff"/><stop offset="1" stop-color="#f7e3c8"/></linearGradient>`
+        + `<linearGradient id="${id}-skn" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#070a22"/><stop offset="1" stop-color="#1b2556"/></linearGradient>`
+        + `<radialGradient id="${id}-lamp"><stop offset="0" stop-color="${lamp}" stop-opacity=".8"/><stop offset=".45" stop-color="${lamp}" stop-opacity=".2"/><stop offset="1" stop-color="${lamp}" stop-opacity="0"/></radialGradient>`
+        + `<radialGradient id="${id}-heat"><stop offset="0" stop-color="#ff9a3d" stop-opacity=".55"/><stop offset="1" stop-color="#ff9a3d" stop-opacity="0"/></radialGradient></defs>`
+        + `<rect class="c" width="${ART_W}" height="${cy}"/><rect class="w" y="${cy}" width="${ART_W}" height="${fy - cy}"/><rect class="tr" y="${fy - 9}" width="${ART_W}" height="9"/>`
+        + `<rect y="${fy}" width="${ART_W}" height="${ART_H - fy}" fill="url(#${id}-fl)"/><path class="ln2" d="${fl}"/><path class="ln2" d="M0 ${cy}H${ART_W}"/>`;
+    },
+    // 창유리: 밤 하늘 위에 낮 하늘을 얹고(낮 하늘이 옅어지며 밤이 된다), 아래쪽에 바깥 건물 윤곽 · 밤엔 불 켜진 창
+    glass: (id, x, y, w, h, seed) => {
+      let b = "", l = "", px = x, i = seed || 0;
+      while (px < x + w) { const bw = Math.min(x + w - px, 30 + ((i * 37) % 44)), bh = Math.min(h * 0.55, 46 + ((i * 53) % 96)); b += `M${px} ${y + h}v${-bh}h${bw}v${bh}z`;
+        for (let r = 0; r < bh - 22; r += 20) if ((i + r) % 3 !== 0 && bw > 24) l += `M${px + 8} ${y + h - bh + 10 + r}h7v7h-7z`; px += bw; i += 1; }
+      return `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="url(#${id}-skn)"/><path class="nito" d="${b}" fill="#0a0d28"/><path class="nito" d="${l}" fill="#ffd98a"/>`
+        + `<rect class="dayo" x="${x}" y="${y}" width="${w}" height="${h}" fill="url(#${id}-sky)"/><path class="dayo" d="${b}" fill="#7f93c9" fill-opacity=".34"/>`;
+    }
+  };
+  const ARTS = {
+    /* 카페 홀 — 왼쪽 카운터(오븐 = 발생원) · 가운데 출입문 · 오른쪽 통창과 벤치 좌석. 8m 폭(1cm = 2px) */
+    cafe: () => {
+      const id = "ca"; let s = AR.room(id, 150, 730, "#ffdca6");
+      s += `<path class="dopen sp" d="M764 730H936L1040 940H680z"/>`;
+      s += `<rect class="f3" x="420" y="138" width="80" height="12" rx="2"/><path class="ln2" d="M430 144H490"/><path class="hv" d="M440 156V214M460 156V226M480 156V214"/>`;
+      s += `<rect class="f" x="110" y="190" width="410" height="105" rx="6"/><rect class="bar" x="132" y="208" width="120" height="8" rx="2"/>`;
+      for (let r = 0; r < 4; r++) { const y = 232 + r * 14; s += `<rect class="bar" x="132" y="${y}" width="${150 - r * 14}" height="4"/><rect class="bar" x="300" y="${y}" width="30" height="4"/><rect class="bar" x="350" y="${y}" width="${96 + r * 8}" height="4"/><rect class="bar" x="474" y="${y}" width="26" height="4"/>`; }
+      s += `<rect class="f3" x="110" y="370" width="270" height="5"/>`;
+      for (let j = 0; j < 9; j++) s += `<rect class="f2" x="${124 + j * 27}" y="${j % 3 === 1 ? 342 : 348}" width="17" height="${j % 3 === 1 ? 28 : 22}" rx="3"/>`;
+      s += `<rect class="f2" x="100" y="520" width="520" height="210"/>`;
+      s += `<rect class="f3" x="110" y="436" width="130" height="84" rx="8"/><rect class="f2" x="118" y="426" width="114" height="12" rx="3"/><circle class="ln" cx="150" cy="462" r="8"/><circle class="ln" cx="200" cy="462" r="8"/><path class="ln" d="M140 492h22M190 492h22"/><rect class="dk" x="122" y="506" width="106" height="8" rx="2"/>`;
+      s += `<path class="f3" d="M254 438h34l-6 24h-22z"/><rect class="f3" x="258" y="462" width="26" height="58" rx="3"/>`;
+      s += `<rect class="f3" x="400" y="420" width="120" height="100" rx="7"/><rect class="dk" x="412" y="436" width="78" height="66" rx="4"/><rect class="acto" x="412" y="436" width="78" height="66" rx="4" fill="#ff9a3d"/><path class="ln2" d="M418 458H484M418 480H484"/>`
+        + `<circle class="mt" cx="505" cy="446" r="5"/><circle class="mt" cx="505" cy="466" r="5"/><circle class="mt" cx="505" cy="486" r="5"/><circle class="acto" cx="451" cy="469" r="120" fill="url(#${id}-heat)"/>`;
+      s += AR.stand(0, 318, 730, 1.8) + AR.stand(1, 585, 730, 1.8, 1);
+      for (const x of [170, 365, 560]) s += `<path class="ln2" d="M${x} 150V318"/><circle class="glow" cx="${x}" cy="362" r="150" fill="url(#${id}-lamp)"/><path class="f3" d="M${x - 18} 318h36l16 32h-68z"/><circle class="bulb" cx="${x}" cy="352" r="6"/>`;
+      s += `<rect class="f" x="90" y="560" width="520" height="170"/><path class="ln2" d="M194 574V714M298 574V714M402 574V714M506 574V714"/><rect class="f3" x="80" y="548" width="540" height="14" rx="3"/><rect class="tr" x="90" y="716" width="520" height="14"/>`;
+      s += `<ellipse class="f3" cx="160" cy="546" rx="46" ry="5"/><path class="ln" d="M122 544a38 38 0 0 1 76 0"/><circle class="mt" cx="160" cy="504" r="4"/><rect class="f3" x="470" y="508" width="44" height="32" rx="4"/><path class="ln" d="M492 540v8"/>`;
+      s += AR.stand(12, 668, 766, 1.9) + AR.stand(13, 724, 784, 1.95, 1);
+      s += `<rect class="f3" x="752" y="254" width="196" height="476" rx="3"/>` + AR.glass(id, 764, 264, 172, 34, 3);
+      s += `<g class="dopen"><rect class="ot" x="764" y="312" width="172" height="418"/></g>`;
+      s += `<g class="dclosed">` + AR.glass(id, 764, 312, 172, 410, 5) + `<path class="ln2" d="M764 520H936"/><rect class="mt" x="914" y="474" width="7" height="92" rx="3"/></g>`;
+      s += `<g class="dopen"><path class="f3" d="M764 312L814 336V756L764 730z"/><path class="ln" d="M774 334L804 348V734L774 718z"/><rect class="mt" x="800" y="500" width="6" height="80" rx="3"/></g>`;
+      s += `<rect class="f3" x="982" y="254" width="586" height="358" rx="3"/>`;
+      [990, 1184, 1378].forEach((px, i) => { s += AR.glass(id, px, 264, 182, 336, 11 + i * 7); });
+      s += `<rect class="f3" x="974" y="600" width="602" height="12" rx="2"/><rect class="f2" x="990" y="604" width="570" height="40" rx="6"/>`;
+      s += AR.bust(2, 1032, 642, 1.8) + AR.bust(3, 1108, 642, 1.8, 1) + AR.bust(6, 1222, 642, 1.8, 1) + AR.bust(7, 1298, 642, 1.8) + AR.bust(10, 1412, 642, 1.8) + AR.bust(11, 1488, 642, 1.8, 1);
+      s += `<rect class="f3" x="984" y="638" width="582" height="30" rx="6"/><rect class="f" x="992" y="668" width="566" height="62"/>`;
+      for (const T of [1070, 1260, 1450]) s += `<rect class="f2" x="${T - 5}" y="624" width="10" height="148"/><ellipse class="f3" cx="${T}" cy="774" rx="44" ry="7"/><rect class="f3" x="${T - 62}" y="612" width="124" height="12" rx="3"/><rect class="f2" x="${T + 18}" y="596" width="14" height="16" rx="2"/>`;
+      [[860, 4, 5], [1290, 8, 9]].forEach(([T, a, b]) => {
+        for (const [cx, i] of [[T - 132, a], [T + 132, b]]) s += `<path class="ln" d="M${cx - 30} 893V980M${cx + 30} 893V980"/>` + AR.bust(i, cx, 886, 2.2, i % 4 === 1) + `<rect class="f3" x="${cx - 42}" y="880" width="84" height="14" rx="5"/>`;
+        s += `<rect class="f2" x="${T - 7}" y="864" width="14" height="128"/><ellipse class="f3" cx="${T}" cy="996" rx="58" ry="10"/><ellipse class="f3" cx="${T}" cy="852" rx="104" ry="17"/><rect class="f2" x="${T - 34}" y="826" width="15" height="19" rx="2"/><rect class="f2" x="${T + 20}" y="830" width="15" height="17" rx="2"/>`;
+      });
+      return s;
+    },
+    /* 사무실(업무 공간) — 뒷줄 · 앞줄 긴 책상 열한 자리 · 왼쪽 복합기(발생원) · 띠창 · 천장 디퓨저. 8m 폭 */
+    office: () => {
+      const id = "of"; let s = AR.room(id, 170, 710, "#dfe8ff");
+      for (const x0 of [330, 690, 1050]) s += `<ellipse class="glow" cx="${x0 + 120}" cy="200" rx="250" ry="130" fill="url(#${id}-lamp)"/><rect class="bulb" x="${x0}" y="174" width="240" height="9" rx="3"/>`;
+      s += `<rect class="f3" x="596" y="158" width="68" height="12" rx="2"/><path class="ln2" d="M604 164H656"/><path class="hv" d="M612 176V236M630 176V248M648 176V236"/>`;
+      s += `<rect class="f3" x="292" y="242" width="1016" height="240" rx="3"/>`;
+      const blinds = (px) => { let d = ""; for (let y = 262; y <= 338; y += 19) d += `M${px + 4} ${y}H${px + 240}`; return `<path class="ln2" d="${d}"/><rect class="bar" x="${px + 2}" y="344" width="240" height="5"/>`; };
+      [300, 804, 1056].forEach((px, i) => { s += AR.glass(id, px, 250, 244, 220, 2 + i * 5) + blinds(px); });
+      s += `<g class="dopen"><rect class="ot" x="552" y="250" width="244" height="220"/></g><g class="dclosed">` + AR.glass(id, 552, 250, 244, 220, 9) + blinds(552) + `</g>`;
+      s += `<g class="dopen"><path class="f3" d="M552 250L640 272V470H552z" fill-opacity=".55"/><path class="ln" d="M562 264L630 281V460H562z"/></g>`;
+      s += `<rect class="f3" x="284" y="470" width="1032" height="12" rx="2"/>`;
+      s += `<rect x="1390" y="250" width="230" height="460" fill="#a9bcff" fill-opacity=".07" stroke="rgba(255,255,255,.17)"/><path class="ln2" d="M1460 250V710M1530 250V710"/><rect class="mt" x="1466" y="470" width="6" height="70" rx="3"/>`;
+      s += `<rect class="f3" x="300" y="560" width="110" height="150" rx="4"/><path class="ln2" d="M308 612H402M308 662H402"/><rect class="mt" x="340" y="584" width="30" height="5" rx="2"/><rect class="mt" x="340" y="634" width="30" height="5" rx="2"/><rect class="mt" x="340" y="684" width="30" height="5" rx="2"/>`
+        + `<rect class="f2" x="294" y="500" width="122" height="60" rx="7"/><rect class="dk" x="306" y="534" width="98" height="16" rx="3"/><rect class="acto" x="320" y="537" width="70" height="9" rx="1" fill="#fff"/><rect class="f3" x="300" y="486" width="110" height="16" rx="4"/><rect class="scr" x="380" y="508" width="26" height="14" rx="2"/>`
+        + `<circle class="acto" cx="355" cy="520" r="110" fill="url(#${id}-heat)" fill-opacity=".5"/>`;
+      const back = [[662, 0], [896, 2], [779, 4], [1013, 6], [545, 8], [1130, 9]], front = [[640, 1], [850, 3], [430, 5], [1060, 7], [1270, 10]];
+      for (const [x, i] of back) s += AR.bust(i, x, 566, 1.8, i % 4 === 0);
+      for (const [x] of back) s += `<rect class="f2" x="${x - 46}" y="498" width="92" height="54" rx="5"/><path class="ln" d="M${x} 552V560"/>`;
+      s += `<rect class="f" x="476" y="573" width="728" height="92"/><rect class="f2" x="470" y="573" width="10" height="137"/><rect class="f2" x="1200" y="573" width="10" height="137"/><rect class="f3" x="462" y="560" width="756" height="13" rx="3"/>`;
+      for (const [x] of front) s += `<path class="ln" d="M${x - 84} 790V806"/><rect class="f2" x="${x - 134}" y="726" width="100" height="64" rx="5"/><rect class="scr" x="${x - 128}" y="732" width="88" height="52" rx="3"/>`;
+      s += `<rect class="f" x="316" y="821" width="1008" height="100"/><rect class="f3" x="300" y="806" width="1040" height="15" rx="3"/>`;
+      for (const [x, i] of front) s += `<path class="ln" d="M${x} 940V992"/><ellipse class="f3" cx="${x}" cy="996" rx="46" ry="8"/>` + AR.bust(i, x, 930, 2.2, i % 4 === 1) + `<rect class="f2" x="${x - 46}" y="858" width="92" height="84" rx="12"/>`;
+      return s;
+    },
+    /* 회의실 — 창 없는 작은 방. 긴 탁자 여섯 자리 · 벽 디스플레이 · 왼쪽 유리문(사무실 쪽) · 천장 디퓨저. 5.7m 폭(1cm = 2.8px) */
+    meeting: () => {
+      const id = "me"; let s = AR.room(id, 90, 818, "#ffe6bd");
+      s += `<rect class="f3" x="780" y="78" width="80" height="12" rx="2"/><path class="ln2" d="M790 84H850"/><path class="hv" d="M798 96V150M820 96V166M842 96V150"/>`;
+      s += `<ellipse class="glow" cx="820" cy="262" rx="460" ry="190" fill="url(#${id}-lamp)"/><path class="ln2" d="M640 90V194M1000 90V194"/><rect class="bulb" x="560" y="194" width="520" height="11" rx="4"/>`;
+      s += `<rect class="f3" x="292" y="222" width="196" height="596" rx="3"/><rect class="ot" x="304" y="234" width="172" height="576" fill-opacity=".3"/>`;
+      s += `<g class="dopen"><rect class="ot" x="304" y="234" width="172" height="584" fill-opacity=".5"/><path class="f3" d="M304 234L356 258V846L304 818z" fill-opacity=".7"/><path class="ln" d="M314 256L346 270V824L314 806z"/></g>`;
+      s += `<g class="dclosed"><rect class="bar" x="304" y="470" width="172" height="96"/><rect class="mt" x="454" y="500" width="7" height="92" rx="3"/></g>`;
+      s += `<rect class="dk" x="600" y="250" width="440" height="250" rx="8"/><g class="acto"><rect x="610" y="260" width="420" height="230" rx="4" fill="#1b2a5e"/><rect x="634" y="284" width="150" height="10" rx="3" fill="#cfe0ff"/><rect x="634" y="304" width="96" height="6" rx="3" fill="#8ea6e6"/>`
+        + `<rect x="650" y="400" width="44" height="60" fill="#6fb7ff"/><rect x="716" y="372" width="44" height="88" fill="#6fb7ff"/><rect x="782" y="340" width="44" height="120" fill="#6fb7ff"/><rect x="848" y="384" width="44" height="76" fill="#6fb7ff"/><path d="M910 440L946 398L982 418L1012 350" fill="none" stroke="#ffb257" stroke-width="3"/></g>`;
+      s += `<rect x="1120" y="280" width="300" height="220" rx="4" fill="#fff" fill-opacity=".1" stroke="rgba(255,255,255,.2)"/><path class="ln2" d="M1150 330h120M1150 360h170M1150 390h90"/><path class="ln" d="M1290 432c20-30 40 20 60-10"/><rect class="f3" x="1160" y="500" width="220" height="7"/>`;
+      for (const x of [560, 820, 1080]) s += `<rect class="f2" x="${x - 52}" y="596" width="104" height="110" rx="12"/>`;
+      s += AR.bust(0, 820, 706, 2.5) + AR.bust(2, 560, 706, 2.5, 1) + AR.bust(4, 1080, 706, 2.5, 1);
+      s += `<rect class="f2" x="400" y="744" width="24" height="160"/><rect class="f2" x="1196" y="744" width="24" height="160"/><rect class="f" x="376" y="714" width="868" height="30"/><rect class="f3" x="350" y="694" width="920" height="20" rx="5"/>`;
+      for (const [x, i] of [[650, 1], [910, 3], [1170, 5]]) s += `<path class="ln" d="M${x} 910V994"/><ellipse class="f3" cx="${x}" cy="998" rx="56" ry="9"/>` + AR.bust(i, x, 900, 2.9, i % 4 === 1) + `<rect class="f2" x="${x - 64}" y="800" width="128" height="112" rx="14"/>`;
+      return s;
+    }
+  };
+  const arts = {};
+  function artEl(k) {
+    if (arts[k]) return arts[k];
+    const el = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    el.setAttribute("class", "art"); el.setAttribute("viewBox", `0 0 ${ART_W} ${ART_H}`); el.setAttribute("preserveAspectRatio", "none"); el.setAttribute("aria-hidden", "true");
+    el.innerHTML = ARTS[SPACES[k].art]();
+    arts[k] = el; media.insertBefore(el, dev); return el;
+  }
+  function artPlace() {   // 사진이 cover 로 놓이는 자리 그대로(fit) — 그림 속 좌표(u,v)가 기기 · 문 · 발생원 자리와 맞는다
+    if (!SPACES[cur].art) return; const st = artEl(cur).style;
+    st.left = fit.ox.toFixed(2) + "px"; st.top = fit.oy.toFixed(2) + "px"; st.width = fit.dw.toFixed(2) + "px"; st.height = fit.dh.toFixed(2) + "px";
+  }
+  function artSync() {   // 상태를 그림에 옮긴다: 낮/밤 · 문/창 · 발생원 · 환기 장치 · 사람 수
+    const sp = SPACES[cur];
+    for (const k in arts) if (k !== cur || !sp.art) arts[k].classList.remove("on");
+    if (!sp.art) return;
+    const el = artEl(cur), s = ST[cur], n = crowd(cur, hourNow()).n;
+    el.classList.add("on"); el.classList.toggle("night", G.night); el.classList.toggle("open", s.window); el.classList.toggle("act", s.cook > 0); el.classList.toggle("hvac", !!s.hvac);
+    if (el._n !== n) { el._n = n; el.querySelectorAll(".p").forEach((p) => p.classList.toggle("in", +p.dataset.p < n)); }
   }
   const clipOrder = [];
   function clipEl(key) {
@@ -1186,10 +1486,11 @@
   let shownKey = null;
   function showScene() {
     const sp = SPACES[cur], key = sp.states[sp.pick(ST[cur], G)] || sp.states[Object.keys(sp.states)[0]];
+    artSync();
     if (key === shownKey) return;
     const prev = shownKey; shownKey = key;
     media.style.setProperty("--fx", (sp.focus[0] * 100) + "%"); media.style.setProperty("--fy", (sp.focus[1] * 100) + "%");
-    for (const k of Object.values(sp.states)) stillEl(k);
+    if (!sp.art) for (const k of Object.values(sp.states)) stillEl(k);
     const clip = clipEl(key);
     for (const el of media.querySelectorAll(".still, .clip")) el.classList.toggle("on", el.dataset.key === key);
     if (clip) clip.play().catch(() => {});
@@ -1206,8 +1507,8 @@
   function toScreen(u, v) { const p = toStage(u, v); return { x: (p.x - sw / 2) * 1.035 + sw / 2 + mediaX, y: (p.y - sh / 2) * 1.035 + sh / 2 + mediaY }; }
   function layout() {
     sw = Math.max(1, stage.clientWidth); sh = Math.max(1, stage.clientHeight);
-    const s = Math.max(sw / RATIO, sh), dw = RATIO * s, dh = s, f = SPACES[cur].focus;
-    fit = { s, ox: (sw - dw) * f[0], oy: (sh - dh) * f[1], dw, dh };
+    const R = SPACES[cur].art ? ART_W / ART_H : RATIO, s = Math.max(sw / R, sh), dw = R * s, dh = s, f = SPACES[cur].focus;
+    fit = { s, ox: (sw - dw) * f[0], oy: (sh - dh) * f[1], dw, dh }; artPlace();
     placeDevice(); fitMini(miniIndex); fitMini(miniTiles); fitMini(miniIO); if (!floatEl.hidden) fitMini(floatCv); redraw();
     if (gl) { const d = dpr(); canvas.width = Math.round(sw * d); canvas.height = Math.round(sh * d); gl.viewport(0, 0, canvas.width, canvas.height); resetParticles(); }
     if (!panel.hidden) placePanelScreen();
@@ -1356,17 +1657,17 @@
 
   /* ── 효과의 물리: 화면 픽셀 단위, 1200px 폭 기준으로 스케일 ── */
   const hazeCur = { v: 0, col: [0.62, 0.65, 0.74] }, lightCur = { x: 0, y: 0, dx: 0, dy: -1, kind: 1, on: 0, r: 200, col: [1, 0.9, 0.8] };
-  function windVec(k) {   // 창이 열렸을 때 창 → 방 안쪽(먼지) 또는 방 안 → 창(CO₂ 는 반대로 빠져나감)
-    const sp = SPACES[cur], w = toScreen(sp.window[0], sp.window[1]); const dx = sw * 0.5 - w.x, dy = sh * 0.8 - w.y, L = Math.hypot(dx, dy) || 1;
+  function windVec(k, at) {   // 창이 열렸을 때 창 → 방 안쪽(먼지) 또는 방 안 → 창(CO₂ 는 반대로 빠져나감)
+    const sp = SPACES[cur], a = at || sp.window, w = toScreen(a[0], a[1]); const dx = sw * 0.5 - w.x, dy = sh * 0.8 - w.y, L = Math.hypot(dx, dy) || 1;
     return { x: dx / L * k, y: dy / L * k, wx: w.x, wy: w.y };
   }
   // 종류별 입자의 한 걸음: 값에 맞춰 개수를 늘리고(하나씩 나타남) 줄이며(서서히 옅어짐), 떠돌고, 창이 열리면 창으로 빨려 나가 사라진다. 조리 중엔 팬에서 피어오른다.
   function stepSpecies(sp, dt, drift, t) {
     const s = ST[cur], k = sw / 1200, B = sp.B, M = sp.M, n = sp.n;
     const target = Math.round(n * Math.pow(clamp(sp.frac(s), 0, 1), 1.3));   // 값이 낮을수록 입자를 더 적게(1.3제곱) — 숫자가 내려가는 만큼 눈에 띄게 준다
-    const win = s.window ? windVec(1) : null, pull = 150 * k;   // 창으로 빠져나가는 흐름은 숫자가 내려가는 속도(6~8초)에 맞춰 느긋하게
-    const cooking = cur === "kitchen" && s.cook > 0 && sp.key !== "co2";
-    const src = cooking ? toScreen(SPACES.kitchen.pan[0], SPACES.kitchen.pan[1]) : null, sig = 150 * k;
+    const R = SPACES[cur], win = s.window ? windVec(1) : (s.hvac && R.hood) ? windVec(1, R.hood) : null, pull = 150 * k;   // 창 · 문이 닫혀 있고 환기 장치가 돌면 천장 배기구로 빠진다   // 창으로 빠져나가는 흐름은 숫자가 내려가는 속도(6~8초)에 맞춰 느긋하게
+    const cooking = !!(R.act && R.act.fx) && s.cook > 0 && sp.key !== "co2";
+    const src = cooking ? toScreen(R.pan[0], R.pan[1]) : null, sig = 150 * k;
     let alive = 0; for (let i = 0; i < n; i++) if (M[i]) alive++;
     if (alive < target) {   // 부족분에 비례해 초당 몇 개씩(최소 3개) — 하나씩 늘어나는 게 보인다
       sp.acc += dt * Math.max(3, (target - alive) * 0.9); let add = Math.floor(sp.acc); sp.acc -= add;
@@ -1405,16 +1706,16 @@
     SL[i] = 0; SM[i] = 2.2 + Math.random() * 1.3;
   }
   function stepSteam(dt, t) {
-    const s = ST[cur], sp = SPACES[cur], k = sw / 1200, cooking = cur === "kitchen" && s.cook > 0;
-    const origin = cur === "kitchen" ? toScreen(sp.pan[0], sp.pan[1]) : null, hood = cur === "kitchen" ? toScreen(sp.hood[0], sp.hood[1]) : null;
-    let budget = cooking && !reduced ? dt * 26 : 0;
+    const s = ST[cur], sp = SPACES[cur], k = sw / 1200, fx = sp.act && sp.act.fx, cooking = !!fx && s.cook > 0;   // fx: steam = 팬 · 오븐의 김, puff = 복합기의 옅은 김
+    const origin = fx ? toScreen(sp.pan[0], sp.pan[1]) : null, hood = fx ? toScreen(sp.hood[0], sp.hood[1]) : null;
+    let budget = cooking && !reduced ? dt * (fx === "puff" ? 7 : 26) : 0;
     for (let i = 0; i < steamN; i++) {
       if (SL[i] < 0) { if (budget >= 1) { spawnSteam(i, origin, k); budget -= 1; } else if (budget > 0 && Math.random() < budget) { spawnSteam(i, origin, k); budget = 0; } else { S[i * 5 + 4] = 0; continue; } }
       SL[i] += dt; const u = SL[i] / SM[i];
       if (u >= 1) { SL[i] = -1; S[i * 5 + 4] = 0; continue; }
       let vx = SV[i * 2], vy = SV[i * 2 + 1];
       vx += Math.sin(t * 1.7 + S[i * 5 + 3] * 30) * 26 * k * dt; vy *= 1 - 0.28 * dt;
-      if (s.window && hood) { vx += (hood.x - S[i * 5]) * 0.55 * dt; vy += (hood.y - S[i * 5 + 1]) * 0.45 * dt; }
+      if ((s.window || s.hvac) && hood) { vx += (hood.x - S[i * 5]) * 0.55 * dt; vy += (hood.y - S[i * 5 + 1]) * 0.45 * dt; }
       SV[i * 2] = vx; SV[i * 2 + 1] = vy;
       S[i * 5] += vx * dt; S[i * 5 + 1] += vy * dt; S[i * 5 + 2] += 46 * k * dt;
       S[i * 5 + 4] = Math.min(1, u * 7) * Math.pow(1 - u, 1.6);
@@ -1459,7 +1760,7 @@
     const pGlow = G.night ? 0.95 : 0.55;   // 빛 패스 세기: 밤에 강하게(가산이라 밝은 벽에선 저절로 묻힌다)(밝은 장면은 어두운 테두리가 이미 점을 또렷하게 한다), 채움 부담도 줄인다
     for (const sp of SPECIES) { if (!sp.alive) continue; drawPoints(progDust, sp.buf, sp.B, sp.n, { t, size: sp.size * sizeK, amb: sp.amb, tw: sp.tw, col: [sp.col[0] * nk, sp.col[1] * nk, sp.col[2] * nk], op: clamp(0.85 + 0.15 * sp.frac(s), 0, 1), glow: pGlow }); }
     // 김 — 주방 조리 중에만
-    if (cur === "kitchen") {
+    if (SPACES[cur].act && SPACES[cur].act.fx) {
       gl.useProgram(progSteam.p); gl.bindBuffer(gl.ARRAY_BUFFER, steamBuf); gl.bufferSubData(gl.ARRAY_BUFFER, 0, S);
       gl.enableVertexAttribArray(progSteam.a.aPos); gl.vertexAttribPointer(progSteam.a.aPos, 2, gl.FLOAT, false, 20, 0);
       gl.enableVertexAttribArray(progSteam.a.aSize); gl.vertexAttribPointer(progSteam.a.aSize, 1, gl.FLOAT, false, 20, 8);
@@ -1493,8 +1794,27 @@
   addEventListener("keydown", (e) => { if (e.key === "Escape" && !panel.hidden) closePanel(); });
 
   /* ── 공간 바꾸기 ── */
-  const tabs = Array.from($("spaces").querySelectorAll("[role=tab]"));
   const roomName = (sp) => LANG === "en" ? sp.en : sp.name;
+  const venueName = () => roomName(VENUES[VEN]);
+  const spacesNav = $("spaces"), venueTabs = Array.from($("venues").querySelectorAll("[role=tab]"));
+  let tabs = [];
+  function buildTabs() {   // 방 탭은 고른 건물의 방으로 다시 만든다. 방이 하나뿐이면(카페) 숨긴다
+    spacesNav.innerHTML = "";
+    tabs = ROOMS().map((k) => { const b = document.createElement("button"); b.setAttribute("role", "tab"); b.dataset.space = k; b.textContent = roomName(SPACES[k]); b.setAttribute("aria-selected", String(k === cur)); b.addEventListener("click", () => setSpace(k)); spacesNav.appendChild(b); return b; });
+    spacesNav.hidden = tabs.length < 2;
+  }
+  buildTabs();
+  venueTabs.forEach((b) => b.addEventListener("click", () => { const v = VENUES[b.dataset.venue]; if (b.dataset.venue !== VEN) setSpace(v.last || v.rooms[0]); }));
+  const capEl = document.querySelector("#stage .cap");
+  const ICONS = { flame: '<path d="M12 3c1 3 4 4.5 4 8.5a4 4 0 0 1-8 0c0-2 1-3 2-4 0 2 1 3 2 3 0-3-1-5 0-7.5z"/>', oven: '<rect x="4" y="4" width="16" height="16" rx="2"/><path d="M4 9h16M8 6.5h.01M12 6.5h.01"/><rect x="7.5" y="12" width="9" height="5" rx="1"/>',
+    print: '<path d="M7 9V4h10v5M7 17H5a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-2"/><rect x="7" y="14" width="10" height="6" rx="1"/>', people: '<circle cx="9" cy="8" r="3"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><circle cx="17" cy="9" r="2.5"/><path d="M16 14.2c2.9.2 5 2.5 5 5.8"/>' };
+  function spaceLabels() {   // 공간마다 다른 버튼 문구 · 아이콘: 발생원 버튼(요리 · 빵 굽기 · 인쇄 · 회의), 환기 안내(창문 열기 / 환기 장치 켜기)
+    const sp = SPACES[cur], A = sp.act;
+    if (A) { lbl(bCook, t(A.btn)); cookBtn.querySelector("b").textContent = t(A.btn); cookBtn.querySelector("small").textContent = t(A.sub); bCook.querySelector(".ic").innerHTML = ICONS[A.ic]; cookBtn.querySelector(".ic").innerHTML = ICONS[A.ic]; }
+    ventBtn.querySelector("small").textContent = t(sp.phys ? "ventSubHvac" : "ventSub");
+    capEl.textContent = t(sp.art ? "capArt" : "cap");
+    venueTabs.forEach((b) => { b.querySelector(".lb").textContent = roomName(VENUES[b.dataset.venue]); b.setAttribute("aria-selected", String(b.dataset.venue === VEN)); });
+  }
   function applyLang() {
     document.documentElement.lang = LANG;
     document.querySelectorAll("[data-i18n]").forEach((el) => { el.textContent = t(el.dataset.i18n); });
@@ -1506,35 +1826,42 @@
     if (!panel.hidden) $("pspec-title").textContent = `${sp.where} · ${roomName(sp)}`;
     if (!floatEl.hidden && floatIdx >= 0) fcap.textContent = `${t("fnames")[floatIdx]} ${t("fhint")}`;
     if (typeof bSpeed !== "undefined") lbl(bSpeed, `${t("timelapse")} ×${G.speed}`);
-    noteAssets(); hud(); counts(); placeLegend();   // 언어가 바뀌면 제목 높이도 바뀐다
+    spaceLabels(); noteAssets(); hud(); counts(); placeLegend();   // 언어가 바뀌면 제목 높이도 바뀐다
     gameLang();
   }
   const langBtns = Array.from(document.querySelectorAll("#lang button"));
   langBtns.forEach((b) => b.addEventListener("click", () => { if (LANG === b.dataset.lang) return; LANG = b.dataset.lang; try { localStorage.setItem("mr-lang", LANG); } catch (e) {} applyLang(); defRefresh(); }));
-  const bCook = $("b-cook"), bWin = $("b-window"), bNight = $("b-night"), bReset = $("b-reset"), bSpeed = $("b-speed");
+  const bCook = $("b-cook"), bWin = $("b-window"), bHvac = $("b-hvac"), bNight = $("b-night"), bReset = $("b-reset"), bSpeed = $("b-speed"), bGame = $("b-game");
   function lbl(b, txt) { const el = b.querySelector(".lb"); if (el) el.textContent = txt; else b.textContent = txt; }   // 아이콘은 두고 글자만 바꾼다
   function setSpeed(v) { G.speed = SPEEDS.includes(v) ? v : 5; lbl(bSpeed, `${t("timelapse")} ×${G.speed}`); hud(); }
   bSpeed.addEventListener("click", () => setSpeed(SPEEDS[(SPEEDS.indexOf(G.speed) + 1) % SPEEDS.length]));
   function setSpace(k) {
-    cur = k; const sp = SPACES[k];
+    const v = SPACES[k].venue;
+    if (v !== VEN) {   // 건물이 바뀐다: 보던 건물의 시계를 세워 두고, 고른 건물의 시계를 이어 간다
+      VENUES[VEN].t = G.t; VENUES[VEN].night = G.night; VEN = v; G.t = VENUES[v].t; G.night = VENUES[v].night; acc = 0;
+      cur = k; buildTabs(); closeDef();
+    }
+    cur = k; VENUES[v].last = k; const sp = SPACES[k];
     tabs.forEach((b) => b.setAttribute("aria-selected", String(b.dataset.space === k)));
     $("lead").textContent = LANG === "en" ? sp.en2 : sp.lead; $("lead-en").textContent = LANG === "en" ? sp.lead : sp.en2; rk.textContent = `${sp.where} · ${roomName(sp)}`;
-    bCook.hidden = k !== "kitchen"; pCook.hidden = k !== "kitchen";
+    bCook.hidden = !sp.act; pCook.hidden = !sp.act; bHvac.hidden = !sp.phys; pHvac.hidden = !sp.phys; bGame.hidden = v !== "home";   // 발생원 버튼은 그것이 있는 공간만, 환기 장치는 가게 · 사무실만, 게임은 집만
+    spaceLabels(); noteAssets();
     shownKey = null; layout(); showScene(); rebuildTicks(); hud(); redraw();
     for (let i = 0; i < steamN; i++) SL[i] = -1;
     alertDismissed = false;
     clearTimeout(prefetchT); prefetchT = setTimeout(prefetchClips, 5000);
   }
   let prefetchT = 0;
-  tabs.forEach((b) => b.addEventListener("click", () => setSpace(b.dataset.space)));
-  const startCook = () => { if (ST.kitchen.cook <= 0) ST.kitchen.cook = 15; showScene(); hud(); redraw(); };
+  const startCook = () => { const A = SPACES[cur].act; if (!A) return; if (ST[cur].cook <= 0) ST[cur].cook = A.mins; alertDismissed = false; showScene(); hud(); redraw(); };   // 요리 15분 · 빵 굽기 10분 · 인쇄 10분 · 회의 1시간
+  function setHvac(on) { const v = VENUES[VEN]; (v.hvacAll ? v.rooms : [cur]).forEach((k) => { if (SPACES[k].phys) ST[k].hvac = on; }); alertDismissed = false; showScene(); hud(); redraw(); placeRing(); }   // 사무실은 한 계통 — 업무 공간과 회의실이 같이 켜진다
+  bHvac.addEventListener("click", () => setHvac(!ST[cur].hvac));
   bCook.addEventListener("click", startCook); cookBtn.addEventListener("click", startCook);   // 프라이팬 위 버튼 = 요리 버튼과 같은 동작
   bWin.addEventListener("click", () => { ST[cur].window = !ST[cur].window; alertDismissed = false; showScene(); hud(); redraw(); });
-  ventBtn.addEventListener("click", () => { if (ST[cur].window) return; ST[cur].window = true; alertDismissed = false; showScene(); hud(); redraw(); placeRing(); });   // 환기 메시지 = 창문 열기와 같은 동작   // 밤이 지나는 중에도 창문은 언제든 열고 닫는다
+  ventBtn.addEventListener("click", () => { if (SPACES[cur].phys) { if (!ST[cur].hvac) setHvac(true); return; } if (ST[cur].window) return; ST[cur].window = true; alertDismissed = false; showScene(); hud(); redraw(); placeRing(); });   // 환기 메시지 = 창문 열기와 같은 동작   // 밤이 지나는 중에도 창문은 언제든 열고 닫는다
   bNight.addEventListener("click", () => { toggleNight(); showScene(); hud(); redraw(); });
   function resetAll() {
-    G.t = 18 * 60; G.night = false;
-    ORDER.forEach((k) => { ST[k] = fresh(k); });
+    G.t = VENUES[VEN].t0; G.night = false;   // 보고 있는 건물만 처음으로(집 18:00 · 카페 11:30 · 사무실 13:00)
+    ROOMS().forEach((k) => { ST[k] = fresh(k); });
     if (gl) { resetParticles(); for (let i = 0; i < steamN; i++) SL[i] = -1; }
     alertDismissed = false; showScene(); rebuildTicks(); hud(); redraw();
   }
@@ -1543,7 +1870,9 @@
   function goHome() {
     if (GAME.on) exitGame();
     closeFloat(); if (!panel.hidden) closePanel();
-    setSpeed(5); setSpace("living"); resetAll();
+    setSpeed(5); setSpace("living");
+    for (const v in VENUES) { VENUES[v].t = VENUES[v].t0; VENUES[v].night = false; VENUES[v].last = null; } ALL.forEach((k) => { ST[k] = fresh(k); });   // 다른 건물도 처음으로
+    resetAll();
     try { history.replaceState(null, "", location.pathname + location.search); } catch (e) {}
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
@@ -1554,7 +1883,7 @@
 
   /* ── 루프(타임랩스): 기본 1초 = 5분(배속 버튼 ×1·5·10·20), 조리·창 열림 중엔 0.3배(연기·환기가 보이게). 야간 모드는 조명만 바꾼다 — 시계·물리는 그대로 흐른다. ── */
   const SPEEDS = [1, 5, 10, 20];
-  const speed = () => { if (GAME.on) return GAME.phase === "play" ? GSET.speed : 0; const b = G.speed; return (ST[cur].window || ST.kitchen.cook > 0) ? Math.max(1, +(b * 0.3).toFixed(1)) : b; };   // 조리·창 열림은 0.3배(연기·환기가 보이게)
+  const speed = () => { if (GAME.on) return GAME.phase === "play" ? GSET.speed : 0; const b = G.speed; return (ST[cur].window || ROOMS().some((k) => ST[k].cook > 0 && SPACES[k].act && SPACES[k].act.slow)) ? Math.max(1, +(b * 0.3).toFixed(1)) : b; };   // 조리·창 열림은 0.3배(연기·환기가 보이게)
   function redraw() { fitCanvas(mini); drawCurve(mctx, mini.width, mini.height); }
   let acc = 0, last = performance.now(), t0 = last, lastMini = 0;
   function frame(now) {
@@ -1576,10 +1905,12 @@
 
   /* ── 주소 해시로 장면을 바로 열 수 있다: #space=kitchen&cook=1  #space=bedroom&night=1  #space=living&window=1  &panel=1  &speed=10 (부스·링크용) ── */
   const q = new URLSearchParams(location.hash.replace(/^#/, ""));
-  const startSpace = ORDER.includes(q.get("space")) ? q.get("space") : "living";
+  const startSpace = ALL.includes(q.get("space")) ? q.get("space") : "living";   // living · bedroom · kitchen · cafe · office · meeting
   if (q.get("cook") === "1") ST.kitchen.cook = 15;
+  if (q.get("act") === "1" && SPACES[startSpace].act) ST[startSpace].cook = SPACES[startSpace].act.mins;   // 그 공간의 발생원 버튼을 누른 채로(빵 굽기 · 인쇄 · 회의)
   if (q.get("window") === "1") ST[startSpace].window = true;
-  if (q.get("night") === "1") G.night = true;
+  if (q.get("hvac") === "1" && SPACES[startSpace].phys) { const v = VENUES[SPACES[startSpace].venue]; (v.hvacAll ? v.rooms : [startSpace]).forEach((k) => { ST[k].hvac = true; }); }
+  if (q.get("night") === "1") { if (SPACES[startSpace].venue === "home") G.night = true; else VENUES[SPACES[startSpace].venue].night = true; }
   if (q.get("speed")) setSpeed(+q.get("speed"));
   /* ── 측정 요소 정의 카드: 범례 칩(CO₂·PM2.5·PM10·VOCs)과 오른쪽 막대 이름(온도·습도까지)을 누르면 아래에 플로팅으로 뜬다. 무엇인지 · 어디서 생기는지 · 이 집에서 올리는 것 · 내리는 것 · 기기 기준. ── */
   const DEFS = {
@@ -1660,11 +1991,43 @@
               note: "Long spells above 60% favour mould and dust mites; below 30% dries the nose and throat." }
     }
   };
+  // 카페 · 사무실에선 「올리는 것 · 내리는 것」을 그 건물 얘기로 바꾼다(없는 항목은 집 문구 그대로)
+  const DEFX = {
+    ko: {
+      cafe: {
+        co2:  { up: "자리를 채운 손님 수와 머무는 시간(점심 열네 명) · 문을 닫고 환기 장치를 꺼 둔 시간. 손님이 드나들 때 문이 열리며 조금씩 바뀝니다.", down: "환기 장치(바깥 공기를 걸러 들임) · 문 열어 두기 · 손님이 빠지는 시간." },
+        pm25: { up: "빵 굽기 · 토스트(오븐에서 나오는 연기) · 바깥 미세먼지가 높은 날 문 열어 두기.", down: "환기 장치(필터를 거친 공기) · 시간이 지나며 가라앉음 · 공기청정기." },
+        pm10: { up: "손님이 오가며 바닥 먼지를 되날림 · 문으로 들어오는 바깥 먼지.", down: "굵은 입자는 수십 분 안에 가라앉음 · 환기 장치 · 물걸레 청소." },
+        voc:  { up: "커피 향 · 굽는 냄새 · 세정제 · 닫힌 매장에 쌓이는 마감재 · 가구 배출 · 손님이 많을수록.", down: "환기 장치 · 문 열어 두기." }
+      },
+      office: {
+        co2:  { up: "자리에 앉은 사람 수(오후 열한 명) · 창을 닫고 환기 장치를 꺼 둔 시간 · 창 없는 회의실에 모인 여섯 명(작은 방이라 몇 분 만에 오릅니다).", down: "환기 장치 · 창문 열기 · 점심 · 퇴근. 회의실 문을 열면 사무실 공기와 섞여 사무실 값까지만 내려갑니다." },
+        pm25: { up: "복합기 인쇄(레이저 방식은 아주 작은 입자를 냅니다) · 바깥 미세먼지가 높은 날 창 열기.", down: "환기 장치(필터를 거친 공기) · 시간이 지나며 가라앉음 · 공기청정기." },
+        pm10: { up: "사람이 오가며 카펫 · 바닥 먼지를 되날림 · 종이 먼지.", down: "굵은 입자는 수십 분 안에 가라앉음 · 환기 장치 · 청소." },
+        voc:  { up: "닫힌 사무실에 쌓이는 카펫 · 칸막이 · 가구 배출 · 인쇄(토너) · 회의실의 보드 마커 · 사람이 많을수록.", down: "환기 장치(가장 효과적) · 창문 열기." }
+      }
+    },
+    en: {
+      cafe: {
+        co2:  { up: "How many customers fill the seats and how long they stay (fourteen at lunch) · hours with the door shut and the ventilation off. The door swinging as people come and go changes the air a little.", down: "The ventilation (filtered outdoor air) · propping the door open · the crowd thinning out." },
+        pm25: { up: "Baking and toasting (smoke off the oven) · propping the door open on a high-pollution day.", down: "The ventilation (filtered air) · settling over time · an air purifier." },
+        pm10: { up: "Customers walking kick up floor dust · outdoor dust coming in through the door.", down: "Coarse particles settle within tens of minutes · the ventilation · damp mopping." },
+        voc:  { up: "Coffee aroma · baking smells · cleaning products · emissions from finishes and furniture building up in a closed shop · more people.", down: "The ventilation · propping the door open." }
+      },
+      office: {
+        co2:  { up: "How many people are at their desks (eleven in the afternoon) · hours with the windows shut and the ventilation off · six people in a windowless meeting room (a small room, so it climbs within minutes).", down: "The ventilation · opening a window · lunch · going home. Opening the meeting-room door mixes it with office air, so it only falls to the office's level." },
+        pm25: { up: "Printing (laser printers give off very small particles) · opening a window on a high-pollution day.", down: "The ventilation (filtered air) · settling over time · an air purifier." },
+        pm10: { up: "People walking kick up carpet and floor dust · paper dust.", down: "Coarse particles settle within tens of minutes · the ventilation · cleaning." },
+        voc:  { up: "Emissions from carpet, partitions and furniture building up in a closed office · printing (toner) · whiteboard markers in the meeting room · more people.", down: "The ventilation (most effective) · opening a window." }
+      }
+    }
+  };
   const DEFL = { ko: { what: "무엇", why: "어디서", up: "올리는 것", down: "내리는 것", close: "닫기" }, en: { what: "WHAT", why: "FROM", up: "RAISES IT", down: "LOWERS IT", close: "Close" } };
   const DEF_COL = Object.assign(Object.fromEntries(SPECIES.map((sp) => [sp.key, `rgb(${sp.col.map((c) => Math.round(c * 255)).join(",")})`])), { temp: "#ffb257", rh: "#6fd0ff" });
   var defAnchor = null;   // var: 초기화 순서와 무관하게 접근 가능
   function renderDef() {
-    const el = $("def"), k = el.dataset.key, d = (DEFS[LANG] || DEFS.ko)[k], L = DEFL[LANG] || DEFL.ko;
+    const el = $("def"), k = el.dataset.key, d0 = (DEFS[LANG] || DEFS.ko)[k], L = DEFL[LANG] || DEFL.ko;
+    const d = Object.assign({}, d0, ((DEFX[LANG] || DEFX.ko)[VEN] || {})[k] || {});
     el.style.setProperty("--c", DEF_COL[k] || "#fff");
     el.innerHTML = `<button class="x" type="button" aria-label="${L.close}">×</button><h4 id="def-title"><i></i>${d.name} <small>${d.unit}</small></h4>`
       + `<dl><dt>${L.what}</dt><dd>${d.what}</dd><dt>${L.why}</dt><dd>${d.why}</dd><dt>${L.up}</dt><dd>${d.up}</dd><dt>${L.down}</dt><dd>${d.down}</dd></dl>`
@@ -1803,6 +2166,7 @@
   function closeModal() { gmodal.hidden = true; GAME.modal = ""; }
   function startGame(nodev) {
     closeFloat(); if (!panel.hidden) closePanel(); closeDef(); closeModal();
+    if (VEN !== "home") setSpace("living");   // 게임은 집에서만(카페 · 사무실을 보다가 #game=1 로 들어와도)
     resetAll();   // 18:00 · 모든 방 처음 값 · 창 닫힘
     Object.assign(GAME, { on: true, phase: "play", nodev: !!nodev, good: 0, occ: 0, bad: { co2: 0, pm: 0, cold: 0 }, taps: 0, dustTaps: 0, timely: 0, cold: {} });
     ORDER.forEach((k) => { ST[k].vent = 0; });
@@ -2626,7 +2990,7 @@
   }
   gViews.addEventListener("click", (e) => { const b = e.target.closest("button[data-v]"); if (!b || b.disabled || !GAME.on) return; viewMode = b.dataset.v; enter3d(); });
 
-  window.__mr = { v3: () => { const v = VIEWS[viewMode]; return { on: V3.on, mode: viewMode, ready: !!(v && v.V3.ready), failed: !!(v && v.V3.failed) }; }, view: (m) => { viewMode = m; enter3d(); }, game: () => GAME, gset: GSET, tap: (k) => gameTap(k), time: () => G.t, all: () => ST, bufs: () => SPECIES.map((sp) => ({ key: sp.key, B: Array.from(sp.B), M: Array.from(sp.M) })), win: () => windVec(1), step: (n) => { for (let i = 0; i < (n || 1); i++) stepMinute(); hud(); redraw(); }, who: whoOf, species: () => SPECIES.map((sp) => ({ key: sp.key, alive: sp.alive, target: Math.round(sp.n * Math.pow(clamp(sp.frac(ST[cur]), 0, 1), 1.3)) })), ring: () => ringAt, dev: () => devBox, state: () => ST[cur], outdoor: outdoorOf };   // 검증용(읽기 전용)
+  window.__mr = { venue: () => VEN, crowd: (k) => crowd(k, hourNow()), setSpace: (k) => setSpace(k), v3: () => { const v = VIEWS[viewMode]; return { on: V3.on, mode: viewMode, ready: !!(v && v.V3.ready), failed: !!(v && v.V3.failed) }; }, view: (m) => { viewMode = m; enter3d(); }, game: () => GAME, gset: GSET, tap: (k) => gameTap(k), time: () => G.t, all: () => ST, bufs: () => SPECIES.map((sp) => ({ key: sp.key, B: Array.from(sp.B), M: Array.from(sp.M) })), win: () => windVec(1), step: (n) => { for (let i = 0; i < (n || 1); i++) stepMinute(); hud(); redraw(); }, who: whoOf, species: () => SPECIES.map((sp) => ({ key: sp.key, alive: sp.alive, target: Math.round(sp.n * Math.pow(clamp(sp.frac(ST[cur]), 0, 1), 1.3)) })), ring: () => ringAt, dev: () => devBox, state: () => ST[cur], outdoor: outdoorOf };   // 검증용(읽기 전용)
   setSpace(startSpace); applyLang(); noteAssets(); redraw();
   if (q.get("panel") === "1") openPanel();
   if (q.get("game") === "1") openIntro();   // #game=1 = 게임 시작 카드로 바로(X 공유 링크)
