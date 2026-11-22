@@ -392,9 +392,9 @@ details .scroll { margin-top: 8px; }
   <section class="sec panel" id="daily" aria-labelledby="h-daily">
     <h2 class="h2" id="h-daily">날짜별 흐름 <span class="period" data-period>—</span></h2>
     <h3 class="h3">일반 사용자 지갑이 하루에 팔고 산 양</h3>
-    <p class="note">위로 뻗은 막대가 판 양, 아래로 뻗은 막대가 산 양, 선은 그날 새로 받은 양이다. 단위 WLBN. 마지막 날은 기준 시각까지의 값이다.</p>
+    <p class="note">위로 뻗은 막대가 판 양(받은 통화별로 색을 나눴다), 아래로 뻗은 막대가 산 양, 선은 그날 새로 받은 양이다. 단위 WLBN. 마지막 날은 기준 시각까지의 값이다.</p>
     <figure class="fig">
-      <div class="legend"><span class="key"><i class="sw" style="background:var(--s1)"></i>판 양</span><span class="key"><i class="sw" style="background:var(--ctx)"></i>산 양</span><span class="key"><i class="sw line" style="background:var(--muted)"></i>새로 받은 양</span></div>
+      <div class="legend"><span class="key"><i class="sw" style="background:var(--s3)"></i>RLUSD로 판 양</span><span class="key"><i class="sw" style="background:var(--s1)"></i>XRP로 판 양</span><span class="key"><i class="sw" style="background:var(--ctx)"></i>산 양</span><span class="key"><i class="sw line" style="background:var(--muted)"></i>새로 받은 양</span></div>
       <div class="chart skel" id="chart-user" data-chart="user" role="img" aria-label="일반 사용자 지갑의 날짜별 판 양, 산 양, 새로 받은 양"></div>
     </figure>
     <h3 class="h3">시장 전체: 묶음별로 판 양과 산 양</h3>
@@ -444,6 +444,17 @@ details .scroll { margin-top: 8px; }
         <div class="chart sm skel" id="chart-poolw" data-chart="poolw" role="img" aria-label="날짜별 두 풀의 WLBN 수량 선"></div>
       </figure>
     </div>
+    <div class="two-col">
+      <figure class="fig">
+        <h3 class="h4">XRP 값 · 1 XRP당 RLUSD</h3>
+        <div class="chart sm skel" id="chart-xrp" data-chart="xrp" role="img" aria-label="날짜별로 두 풀의 가격으로 계산한 XRP 값"></div>
+      </figure>
+      <figure class="fig">
+        <h3 class="h4">WLBN 1개로 받는 XRP</h3>
+        <div class="chart sm skel" id="chart-wx" data-chart="wx" role="img" aria-label="날짜별 WLBN 1개당 XRP"></div>
+      </figure>
+    </div>
+    <p class="note">XRP 값은 두 풀의 가격으로 계산했다(WLBN의 RLUSD 가격 ÷ WLBN의 XRP 가격). XRP 값이 내리면 WLBN의 RLUSD 가격이 그대로여도 WLBN 1개로 받는 XRP는 늘어난다.</p>
     <h3 class="h3">누가 풀에 넣었나</h3>
     <p class="note">넣은 양에서 뺀 양을 뺀 값이다. 음수는 넣은 것보다 더 많이 뺐다는 뜻이다.</p>
     <div class="scroll"><table id="tb-lp" aria-label="풀에 넣은 양"><thead></thead><tbody></tbody></table></div>
@@ -515,6 +526,7 @@ details .scroll { margin-top: 8px; }
       <div><dt>풀</dt><dd>WLBN과 RLUSD, WLBN과 XRP를 맞바꾸는 두 곳. 누가 넣어 둔 양으로 거래가 이뤄진다.</dd></div>
       <div><dt>풀에 넣어 둔 양</dt><dd>넣은 WLBN에서 뺀 WLBN을 뺀 값. 지금 풀에서 찾을 수 있는 양과는 다르다.</dd></div>
       <div><dt><span class="tag tag-w">Wellbian</span><span class="tag tag-k">KWeather</span>칩</dt><dd>wellbian.io가 이름을 붙여 공개한 계정에 단다. treasury · operations · staking · seed · match · bot은 Wellbian, kweather는 KWeather 계정이다.</dd></div>
+      <div><dt>XRP 값</dt><dd>두 풀의 가격으로 계산한 1 XRP의 RLUSD 값. 시장 시세와 조금 다를 수 있다.</dd></div>
       <div><dt>그 밖의 경로</dt><dd>두 풀을 거치지 않은 거래. 지갑끼리 호가로 맞바꾼 경우 등이다.</dd></div>
     </dl>
     <details>
@@ -735,8 +747,12 @@ details .scroll { margin-top: 8px; }
     y.range([f.h - m.b, m.t]);
     var x = d3.scaleBand().domain(days).range([m.l, f.w - m.r]).paddingInner(0.28).paddingOuter(0.14), xc = function (d) { return x(d) + x.bandwidth() / 2; };
     var g = axes(f, y, ticks, days, xc, m, yf), rx = Math.min(2.5, x.bandwidth() / 2), op = function (r) { return r.partial ? 0.55 : 1; };
-    g.selectAll('rect.s').data(rows).join('rect').attr('class', 's').attr('x', function (r) { return x(r.date); }).attr('width', x.bandwidth()).attr('y', function (r) { return y(r.sell_user); })
-      .attr('height', function (r) { return Math.max(0, y(0) - y(r.sell_user)); }).attr('rx', rx).style('fill', 'var(--s1)').style('opacity', op);
+    // 판 양은 받은 통화별로 쌓는다: 아래 RLUSD로 판 양, 위 XRP로 판 양
+    var sr = function (r) { return r.sell_user_rlusd === undefined ? 0 : r.sell_user_rlusd; }, gapOf = function (r) { return sr(r) > 0 && r.sell_user > sr(r) && y(0) - y(r.sell_user) > 6 ? 1 : 0; };
+    g.selectAll('rect.sr').data(rows).join('rect').attr('class', 'sr').attr('x', function (r) { return x(r.date); }).attr('width', x.bandwidth()).attr('y', function (r) { return y(sr(r)) + gapOf(r); })
+      .attr('height', function (r) { return Math.max(0, y(0) - y(sr(r)) - gapOf(r)); }).attr('rx', rx).style('fill', 'var(--s3)').style('opacity', op);
+    g.selectAll('rect.sx').data(rows).join('rect').attr('class', 'sx').attr('x', function (r) { return x(r.date); }).attr('width', x.bandwidth()).attr('y', function (r) { return y(r.sell_user); })
+      .attr('height', function (r) { return Math.max(0, y(sr(r)) - y(r.sell_user) - gapOf(r)); }).attr('rx', rx).style('fill', 'var(--s1)').style('opacity', op);
     g.selectAll('rect.b').data(rows).join('rect').attr('class', 'b').attr('x', function (r) { return x(r.date); }).attr('width', x.bandwidth()).attr('y', y(0))
       .attr('height', function (r) { return Math.max(0, y(-r.buy_user) - y(0)); }).attr('rx', rx).style('fill', 'var(--ctx)').style('opacity', op);
     var line = d3.line().x(function (r) { return xc(r.date); }).y(function (r) { return y(r.paid_user); });
@@ -745,11 +761,13 @@ details .scroll { margin-top: 8px; }
     hover(f, days, xc, x.step(), m, function (d) {
       var r = by.get(d);
       return tipRows(dayTitle(r), [
-        { label: '판 양', value: fInt(r.sell_user), color: 'var(--s1)' }, { label: '산 양', value: fInt(r.buy_user), color: 'var(--ctx)' },
-        { label: '새로 받은 양', value: fInt(r.paid_user), color: 'var(--muted)' },
+        { label: '판 양', value: fInt(r.sell_user) },
+        { label: 'RLUSD로', value: fInt(r.sell_user_rlusd || 0) + ' → ' + fInt(r.got_rlusd_user) + ' RLUSD', color: 'var(--s3)' },
+        { label: 'XRP로', value: fInt(r.sell_user_xrp || 0) + ' → ' + fInt(r.got_xrp_user) + ' XRP', color: 'var(--s1)' },
+        { label: '산 양', value: fInt(r.buy_user), color: 'var(--ctx)', sep: true }, { label: '새로 받은 양', value: fInt(r.paid_user), color: 'var(--muted)' },
         { label: '판 지갑 수', value: fInt(r.user_sellers), sep: true },
-        { label: 'RLUSD로 판 양', value: fInt(r.sell_user_rlusd || 0) + ' → ' + fInt(r.got_rlusd_user) + ' RLUSD' }, { label: 'XRP로 판 양', value: fInt(r.sell_user_xrp || 0) + ' → ' + fInt(r.got_xrp_user) + ' XRP' },
-        { label: '그날 가격(RLUSD)', value: r.price_rlusd === null ? '—' : F.f4(r.price_rlusd) }
+        { label: 'WLBN 1개 값', value: r.price_rlusd === null ? '—' : F.f4(r.price_rlusd) + ' RLUSD' + (r.price_xrp ? ' · ' + F.f4(r.price_xrp) + ' XRP' : '') },
+        { label: '1 XRP 값', value: r.xrp_rlusd ? F.f4(r.xrp_rlusd) + ' RLUSD' : '—' }
       ]);
     }, pickDay);
   }
@@ -873,7 +891,7 @@ details .scroll { margin-top: 8px; }
       { key: 'paid_out', label: '지갑으로 지급' }, { key: 'received', label: '받은 양' }, { key: 'bought', label: '산 양' }, { key: 'sold', label: '판 양' }, { key: 'paid_rlusd', label: '낸 RLUSD' }, { key: 'paid_xrp', label: '낸 XRP' },
       { key: 'pool_wlbn', label: '풀에 넣은 WLBN' }, { key: 'pool_rlusd', label: '풀에 넣은 RLUSD' }, { key: 'pool_xrp', label: '풀에 넣은 XRP' }],
     daily: [{ key: 'date', label: '날짜', text: 1, fmt: md }, { key: 'sell_user', label: '사용자 판 양' }, { key: 'sell_user_rlusd', label: 'RLUSD로' }, { key: 'sell_user_xrp', label: 'XRP로' }, { key: 'buy_user', label: '사용자 산 양' }, { key: 'paid_user', label: '새로 받은 양' }, { key: 'sell_total', label: '전체 판 양' },
-      { key: 'buy_total', label: '전체 산 양' }, { key: 'buy_bot', label: 'Wellbian bot 산 양' }, { key: 'bot_pay_rlusd', label: 'bot 지출 RLUSD' }, { key: 'bot_pay_xrp', label: 'bot 지출 XRP' }, { key: 'sales_rlusd', label: '판매 대금 RLUSD' }, { key: 'to_r', label: 'RLUSD 풀로' }, { key: 'to_x', label: 'XRP 풀로' }, { key: 'price_rlusd', label: '가격', fmt: F.f4 }],
+      { key: 'buy_total', label: '전체 산 양' }, { key: 'buy_bot', label: 'Wellbian bot 산 양' }, { key: 'bot_pay_rlusd', label: 'bot 지출 RLUSD' }, { key: 'bot_pay_xrp', label: 'bot 지출 XRP' }, { key: 'sales_rlusd', label: '판매 대금 RLUSD' }, { key: 'to_r', label: 'RLUSD 풀로' }, { key: 'to_x', label: 'XRP 풀로' }, { key: 'price_rlusd', label: '가격', fmt: F.f4 }, { key: 'price_xrp', label: 'XRP로 본 가격', fmt: F.f4 }, { key: 'xrp_rlusd', label: '1 XRP 값(RLUSD)', fmt: F.f4 }],
     wallets: [{ key: 'wallet', label: '지갑', text: 1 }, { key: 'paid', label: '받은 양' }, { key: 'sold', label: '판 양' }, { key: 'bought', label: '산 양' }, { key: 'got_rlusd', label: '받은 RLUSD' }, { key: 'got_xrp', label: '받은 XRP' },
       { key: 'pool_in', label: '풀에 넣은 양' }, { key: 'balance', label: '잔액' }, { key: 'last_sell', label: '마지막으로 판 날', text: 1, fmt: md }],
     before: [{ key: 'group', label: '지갑 묶음', text: 1, tag: 1 }, { key: 'wallets', label: '지갑 수' }, { key: 'sold', label: '판 양' }, { key: 'bought', label: '산 양' }, { key: 'net_sold', label: '판 양 − 산 양' },
@@ -933,6 +951,21 @@ details .scroll { margin-top: 8px; }
     if (bd.length) items.push('Wellbian bot 계정은 ' + rows.length + '일 가운데 ' + bd.length + '일에 샀다. 가장 많이 산 날은 ' + md(bt.date) + '(' + fInt(bt.buy_bot) + '개)다.');
     var bot = (c.r.accounts || []).filter(function (a) { return a.name === 'bot'; })[0];
     if (bot && bot.rlusd !== null && bot.rlusd !== undefined) items.push('Wellbian bot 계정에는 지금 ' + fInt(bot.rlusd) + ' RLUSD와 ' + fInt(bot.xrp) + ' XRP가 있다. 이 기간에 사는 데 쓴 것은 ' + fInt(k.bot_paid_rlusd) + ' RLUSD와 ' + fInt(k.bot_paid_xrp) + ' XRP다.');
+    var xr = DATA.daily.filter(function (r) { return r.date >= c.r.from && r.xrp_rlusd; });
+    if (xr.length > 1) {
+      var xa = xr[0], xb = xr[xr.length - 1], slip = function (w, q, fee) { var a = 10000 * (1 - fee); return w > 0 && q > 0 ? (q * a / (w + a)) / 10000 / (q / w) - 1 : null; };
+      var tx = 'XRP 값은 ' + md(xa.date) + ' ' + F.f4(xa.xrp_rlusd) + '에서 ' + F.f4(xb.xrp_rlusd) + ' RLUSD로 ' + F.spct(xb.xrp_rlusd / xa.xrp_rlusd - 1) + '다. 그만큼 WLBN 1개로 받는 XRP는 ' + F.f4(xa.price_xrp) + '에서 ' + F.f4(xb.price_xrp) + '개가 됐고, WLBN의 RLUSD 가격은 ' + F.spct(xb.price_rlusd / xa.price_rlusd - 1) + '다.';
+      items.push(tx);
+      if (k.user_sold_for_xrp_share !== null && k.user_sold_for_xrp_share !== undefined) {
+        var sx = slip(c.s.pool_x_wlbn, c.s.pool_x_xrp, c.s.fee_x === null || c.s.fee_x === undefined ? 0.005 : c.s.fee_x), sR = slip(c.s.pool_r_wlbn, c.s.pool_r_rlusd, c.s.fee_r === null || c.s.fee_r === undefined ? 0.005 : c.s.fee_r);
+        var t2 = '일반 사용자 지갑이 판 양 가운데 XRP로 판 비중은 ' + F.pct(k.user_sold_for_xrp_share) + '다';
+        var hx = DATA.health && DATA.health.xrp;
+        if (hx && hx.prev_sold_xrp_share !== null && hx.sold_xrp_share !== null) t2 += '(직전 7일 ' + F.pct(hx.prev_sold_xrp_share) + ' → 최근 7일 ' + F.pct(hx.sold_xrp_share) + ')';
+        t2 += '.';
+        if (sx !== null && sR !== null) t2 += ' XRP 풀이 더 깊어 지금 1만 개를 한 번에 팔면 XRP 풀은 ' + F.spct(sx) + ', RLUSD 풀은 ' + F.spct(sR) + ' 밀린다.';
+        items.push(t2);
+      }
+    }
     var pr = DATA.daily.filter(function (r) { return r.date >= c.r.from && r.pool_r_rlusd !== null; });
     if (pr.length > 1) items.push('RLUSD 풀의 RLUSD는 ' + md(pr[0].date) + ' ' + fInt(pr[0].pool_r_rlusd) + '에서 지금 ' + fInt(c.s.pool_r_rlusd) + '로, XRP 풀의 XRP는 ' + fInt(pr[0].pool_x_xrp) + '에서 ' + fInt(c.s.pool_x_xrp) + '로 바뀌었다.');
     var lpw = lpParts(c.s);
@@ -1121,6 +1154,8 @@ details .scroll { margin-top: 8px; }
     bind();
     var charts = { loop: drawLoop, flow: drawFlow, user: drawUser, market: drawMarket, money: drawMoney,
       price: function (el) { drawLines(el, [{ key: 'price_rlusd', label: '가격(RLUSD)', color: 'var(--s1)' }], F.f4, false); },
+      xrp: function (el) { drawLines(el, [{ key: 'xrp_rlusd', label: '1 XRP 값(RLUSD)', color: 'var(--s6)' }], F.f4, false); },
+      wx: function (el) { drawLines(el, [{ key: 'price_xrp', label: 'WLBN 1개당 XRP', color: 'var(--s1)' }], F.f4, false); },
       poolw: function (el) { drawLines(el, [{ key: 'pool_x_wlbn', label: 'XRP 풀', color: 'var(--s1)' }, { key: 'pool_r_wlbn', label: 'RLUSD 풀', color: 'var(--s3)' }], fInt, true); } };
     $$('[data-chart]').forEach(function (el) { try { charts[el.getAttribute('data-chart')](el); } catch (e) { if (window.console) console.error(e); empty(el, '이 그림을 그리지 못했습니다.'); } });
     [drawHealth, drawTables, drawPositions, drawInsights, drawDay, drawCalc, drawStatus].forEach(function (fn) { try { fn(); } catch (e) { if (window.console) console.error(e); } });

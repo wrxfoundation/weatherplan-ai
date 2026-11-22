@@ -329,6 +329,7 @@ function buildDatasets(S, opts) {
       from_r: r0(f('from_r')), from_x: r0(f('from_x')), from_o: r0(Math.max(f('buy_total') - f('from_r') - f('from_x'), 0)),
       cum_paid_user: r0(cp), cum_net_sold_user: r0(cs),
       price_rlusd: lastp === null ? null : r4(lastp), price_xrp: lastx === null ? null : r4(lastx),
+      xrp_rlusd: lastp && lastx ? r4(lastp / lastx) : null,     // 두 풀의 가격으로 계산한 1 XRP 의 RLUSD 값
       pool_r_wlbn: lastPool ? lastPool[0] : null, pool_r_rlusd: lastPool ? lastPool[1] : null, pool_x_wlbn: lastPool ? lastPool[2] : null, pool_x_xrp: lastPool ? lastPool[3] : null,
       bot_pay_rlusd: r0(f('bot_r')), bot_pay_xrp: r0(f('bot_x')),
       sales_rlusd: FD ? r0((FD[k] || {}).r || 0) : null, sales_wallets: FD ? Object.keys((FD[k] || {}).p || {}).length : null,
@@ -661,6 +662,19 @@ function buildDatasets(S, opts) {
     let c7 = '최근 ' + W.length + '일: 하루 평균 받은 양 ' + n(paid / W.length) + '개' + (hasPrev ? '(직전 7일 ' + n(pPaid / P.length) + ')' : '') + ' · 판 양 ' + n(sold / W.length) + '개' + (hasPrev ? '(직전 7일 ' + n(pSold / P.length) + ')' : '') + '.';
     if (fundOk) c7 += ' 판매 대금 ' + n(sW.r) + ' RLUSD' + (hasPrev ? '(직전 7일 ' + n(sP.r) + ')' : '') + '가 들어왔고, Wellbian bot이 매입에 ' + n(botR) + ' RLUSD와 ' + n(botX) + ' XRP를 썼다.';
     comments.push(c7);
+    // XRP 값(RLUSD 기준)과, 그에 따라 달라진 「WLBN 1개로 받는 XRP」 · XRP로 판 비중
+    const xr = (r) => (r && r.price_rlusd && r.price_xrp ? r.price_rlusd / r.price_xrp : null);
+    const x0 = xr(start), x1 = xr(end), open = fullDays.find((r) => xr(r) !== null), xo = xr(open);
+    const pSoldR = sumOf(P, 'sell_user_rlusd'), xShare = sold > 0.5 ? 1 - soldR / sold : null, pxShare = hasPrev && pSold > 0.5 ? 1 - pSoldR / pSold : null;
+    let xrp = null;
+    if (x0 && x1) {
+      xrp = { from: r4(x0), to: r4(x1), change: r3(x1 / x0 - 1), open: xo ? r4(xo) : null, open_date: open ? open.date : null, since_open: xo ? r3(x1 / xo - 1) : null,
+        wlbn_xrp_from: start.price_xrp, wlbn_xrp_to: end.price_xrp, sold_xrp_share: xShare === null ? null : r3(xShare), prev_sold_xrp_share: pxShare === null ? null : r3(pxShare) };
+      let cx = 'XRP 값: 1 XRP가 ' + f4(x0) + ' → ' + f4(x1) + ' RLUSD(' + sp(x1 / x0 - 1) + ')' + (xo && open.date < start.date ? ', 풀이 열린 ' + md(open.date) + '(' + f4(xo) + ')보다는 ' + sp(x1 / xo - 1) : '') + '다.';
+      cx += ' 그만큼 WLBN 1개로 받는 XRP는 ' + f4(start.price_xrp) + ' → ' + f4(end.price_xrp) + '개가 됐다.';
+      if (xShare !== null) cx += ' 같은 기간 XRP로 판 비중은 ' + (pxShare !== null ? p1(pxShare) + ' → ' : '') + p1(xShare) + '다.';
+      comments.push(cx);
+    }
     const why = (st) => links.filter((l) => l.status === st).map((l) => l.name + ' — ' + l.short).join(' / ');
     if (blocked.length || watch.length) comments.push((blocked.length ? '막힌 고리: ' + why('bad') + '.' : '') + (blocked.length && watch.length ? ' ' : '') + (watch.length ? '지켜볼 고리: ' + why('warn') + '.' : ''));
     const low = reserves.filter((r) => r.status === 'bad' || r.status === 'warn');
@@ -680,7 +694,7 @@ function buildDatasets(S, opts) {
     return {
       from, to, prev_from: pFrom, prev_to: pTo, days: W.length, day: D.date,
       overall: { status: overall, label: ST[overall], ok: cnt.ok, warn: cnt.warn, bad: cnt.bad, na: cnt.na, total: links.length, counts: parts.join(' · ') },
-      headline, comments, links, reserves, rules, labels: ST,
+      headline, comments, links, reserves, rules, xrp, labels: ST,
     };
   };
   const health = buildHealth();
