@@ -48,6 +48,16 @@ const HEALTH = {
   funders: ['operations', 'treasury'],
 };
 const ST = { ok: '좋음', warn: '지켜봄', bad: '주의', na: '자료 없음' };
+// 지갑이 생태계에 도움을 주나 부담을 주나(11/22 서우 「도움 주는 유저와 악영향 주는 유저 구분」). 숫자는 여기 한 곳에서만 고친다.
+// 가져간 돈 = WLBN 을 팔아 받은 돈(RLUSD 환산). 되돌린 돈 = WLBN 을 사며 낸 돈(RLUSD 환산) + operations 계정으로 보낸 RLUSD(다시 산 돈).
+//   도움: 받은 양의 절반 넘게 들고 있다 / 되돌린 돈이 가져간 돈 이상이다 / 풀에 넣어 두었다(판 양보다 많이)
+//   부담: 받은 양의 90% 이상을 팔고(또는 받은 기록 없이 팔고) 되돌린 돈이 가져간 돈의 10% 미만이다
+//   중간: 그 밖(일부만 판 지갑 · 두 풀 사이를 오가는 지갑 등)
+// 카드 · 계좌로 다시 산 것은 원장에 없으므로, 그렇게 다시 산 지갑은 「부담」으로 잘못 보일 수 있다.
+const IMPACT = { hold: 0.5, dump: 0.9, back: 0.1, lp: 100 };
+const IMPACT_NAME = { help: '도움', mid: '중간', load: '부담' };
+// 원장으로 볼 수 없는 것. 화면 곳곳의 「집계 한계」 글이 이 문장을 쓴다.
+const LIMIT_CARD = '카드 · 계좌로 결제한 기기와 이용권은 원장에 기록되지 않는다. 여기서 「판매 대금」은 RLUSD로 결제된 것만이라 실제 판매보다 적다.';
 
 function kday(sec) { return new Date((sec + RIPPLE_EPOCH + 9 * 3600) * 1000).toISOString().slice(0, 10); }
 function kstamp(sec) { return new Date((sec + RIPPLE_EPOCH + 9 * 3600) * 1000).toISOString().slice(0, 16).replace('T', ' '); }
@@ -453,7 +463,7 @@ function buildDatasets(S, opts) {
         pool_in: r0(o.lpw || 0), balance: r0(bal), last_sell: ls >= C.NOW_FROM ? ls : '', id: short(a),
         first_paid: FP[a] || '', start: startOf(a) || '', prev_wallet: linkOf[a] ? short(linkOf[a].old) : '', link_exact: linkOf[a] ? linkOf[a].exact : null,
         days_in: startOf(a) ? dayDiff(startOf(a), lastDay) : null, first_sell: FS[a] || '', sell_lag: FP[a] && FS[a] && FS[a] >= FP[a] ? dayDiff(FP[a], FS[a]) : null,
-        act: r0(act), paid_rlusd: r0(o.payR || 0), paid_xrp: r0(o.payX || 0), avg_price: (o.sold || 0) >= 1 ? r3((o.cash || 0) / o.sold) : null,
+        act: r0(act), paid_rlusd: r0(o.payR || 0), paid_xrp: r0(o.payX || 0), spent_rlusd: r0(o.spent || 0), avg_price: (o.sold || 0) >= 1 ? r3((o.cash || 0) / o.sold) : null,
         sold_7d: r0((r7[a] || [0])[0] || 0), paid_7d: r0((r7[a] || [0, 0])[1] || 0), sold_prev7d: r0((r7[a] || [0, 0, 0])[2] || 0), paid_prev7d: r0((r7[a] || [0, 0, 0, 0])[3] || 0),
       };
       if (g === 'bot') { row.owner = 'wellbian'; row.label = 'bot 계정'; }
@@ -500,6 +510,46 @@ function buildDatasets(S, opts) {
     const tmap = {};
     for (const w of wallets) { const o = tmap[w.type] || (tmap[w.type] = { key: w.type, name: w.type_name, wallets: 0, paid: 0, sold: 0, bought: 0, rebuy_rlusd: 0, pool_in: 0, balance: 0 }); o.wallets++; o.paid += w.paid; o.sold += w.sold; o.bought += w.bought; o.rebuy_rlusd += w.rebuy_rlusd; o.pool_in += w.pool_in; o.balance += w.balance; }
     const types = TYPE_ORDER.filter((k) => tmap[k]).map((k) => tmap[k]);
+    // 도움 · 중간 · 부담(IMPACT). bot 계정은 회사 계정이라 넣지 않는다
+    const impactOf = (w) => {
+      const took = w.cash_rlusd, back = w.spent_rlusd + w.rebuy_rlusd, why = [];
+      if (w.type === 'arb' || w.type === 'flip') return ['mid', ['산 양 ' + nf(w.bought) + '개 · 판 양 ' + nf(w.sold) + '개로 거의 같다(사고파는 거래 — 보상과 무관)']];
+      const holds = w.paid >= 1 ? (w.sell_ratio !== null && w.sell_ratio < IMPACT.hold) : (w.sold < 1 && w.balance >= 1);
+      const gives = back >= 1 && back >= took, lp = w.pool_in >= IMPACT.lp && w.pool_in >= w.sold;
+      const backTxt = () => (w.spent_rlusd >= 1 && w.rebuy_rlusd >= 1 ? '매수 ' + nf(w.spent_rlusd) + ' · 다시 산 돈 ' + nf(w.rebuy_rlusd) : w.rebuy_rlusd >= 1 ? '다시 산 돈' : '매수');
+      if (holds) why.push(w.paid >= 1 ? (w.sold < 1 ? '받은 ' + nf(w.paid) + '개를 팔지 않았다' : '받은 양의 ' + pf(w.sell_ratio) + '만 팔았다') : '팔지 않고 ' + nf(w.balance) + '개를 들고 있다');
+      if (gives) why.push(took >= 1 ? '가져간 돈 ' + nf(took) + ' RLUSD보다 많은 ' + nf(back) + ' RLUSD를 되돌렸다(' + backTxt() + ')' : nf(back) + ' RLUSD를 넣었다(' + backTxt() + ')');
+      if (lp) why.push('풀에 ' + nf(w.pool_in) + '개를 넣어 두었다');
+      if (why.length) return ['help', why];
+      const dumps = took >= 1 && (w.paid >= 1 ? w.sell_ratio >= IMPACT.dump : true);
+      if (dumps && back < IMPACT.back * took) return ['load', [(w.paid >= 1 ? '받은 양의 ' + pf(Math.min(w.sell_ratio, 9.99)) + '를 팔았고' : '받은 기록 없이 ' + nf(w.sold) + '개를 팔았고') + (back >= 1 ? ' 되돌린 돈은 가져간 돈의 ' + pf(back / took) + '뿐이다' : ' 되돌린 돈이 없다')]];
+      if (took >= 1) why.push(w.paid >= 1 && w.sell_ratio !== null ? '받은 양의 ' + pf(Math.min(w.sell_ratio, 9.99)) + '를 팔았다' : nf(w.sold) + '개를 팔았다');
+      if (took >= 1 && back >= 1) why.push('가져간 돈 ' + nf(took) + ' RLUSD 가운데 ' + nf(back) + ' RLUSD(' + pf(back / took) + ')를 되돌렸다');
+      if (!why.length) why.push('이 기간에 움직임이 거의 없다');
+      return ['mid', why];
+    };
+    const imap = {}, iw = wallets.filter((w) => w.g !== 'bot');
+    for (const k of ['help', 'mid', 'load']) imap[k] = { key: k, name: IMPACT_NAME[k], wallets: 0, paid: 0, sold: 0, bought: 0, took_rlusd: 0, back_rlusd: 0, rebuy_rlusd: 0, pool_in: 0, balance: 0 };
+    for (const w of iw) {
+      const r = impactOf(w), o = imap[r[0]];
+      w.impact = r[0]; w.impact_name = IMPACT_NAME[r[0]]; w.impact_why = r[1].join(' · '); w.took_rlusd = w.cash_rlusd; w.back_rlusd = w.spent_rlusd + w.rebuy_rlusd; w.net_rlusd = w.back_rlusd - w.took_rlusd;
+      o.wallets++; o.paid += w.paid; o.sold += w.sold; o.bought += w.bought; o.took_rlusd += w.took_rlusd; o.back_rlusd += w.back_rlusd; o.rebuy_rlusd += w.rebuy_rlusd; o.pool_in += Math.max(w.pool_in, 0); o.balance += w.balance;
+    }
+    const iRows = ['help', 'mid', 'load'].map((k) => imap[k]), iTot = {};
+    for (const f of ['wallets', 'paid', 'sold', 'bought', 'took_rlusd', 'back_rlusd', 'rebuy_rlusd', 'pool_in', 'balance']) iTot[f] = iRows.reduce((t, r) => t + r[f], 0);
+    for (const r of iRows) for (const f of Object.keys(iTot)) r[f + '_share'] = iTot[f] > 0 ? r3(r[f] / iTot[f]) : null;
+    const iTop = (k, f) => iw.filter((w) => w.impact === k && w[f] >= 1).sort((x, y) => y[f] - x[f]).slice(0, 5).map((w) => ({ id: w.id, wallet: w.wallet, type_name: w.type_name, sold: w.sold, took_rlusd: w.took_rlusd, back_rlusd: w.back_rlusd, balance: w.balance, why: w.impact_why }));
+    const iNotes = [], iH = imap.help, iL = imap.load, iM = imap.mid, topLoad = iTop('load', 'took_rlusd');
+    if (iTot.wallets) {
+      iNotes.push('지갑 ' + nf(iTot.wallets) + '곳 가운데 도움 ' + nf(iH.wallets) + '곳(' + pf(iH.wallets_share || 0) + ') · 중간 ' + nf(iM.wallets) + '곳(' + pf(iM.wallets_share || 0) + ') · 부담 ' + nf(iL.wallets) + '곳(' + pf(iL.wallets_share || 0) + ')이다.');
+      if (iTot.sold >= 1) iNotes.push('부담 지갑이 판 양의 ' + pf(iL.sold_share || 0) + '(' + nf(iL.sold) + '개)를 팔았고, 가져간 돈의 ' + pf(iL.took_rlusd_share || 0) + '(' + nf(iL.took_rlusd) + ' RLUSD 환산)를 가져갔다.' + (topLoad.length && iL.took_rlusd >= 1 ? ' 그 가운데 가장 많이 가져간 다섯 곳이 ' + pf(topLoad.reduce((t, w) => t + w.took_rlusd, 0) / iL.took_rlusd) + '다.' : ''));
+      if (iTot.back_rlusd >= 1) iNotes.push('되돌린 돈은 모두 ' + nf(iTot.back_rlusd) + ' RLUSD(가져간 돈 ' + nf(iTot.took_rlusd) + '의 ' + pf(iTot.took_rlusd > 0 ? iTot.back_rlusd / iTot.took_rlusd : 0) + ')이고, 그 ' + pf(iH.back_rlusd_share || 0) + '를 도움 지갑이 냈다(다시 산 돈 ' + nf(iTot.rebuy_rlusd) + ' · 매수 ' + nf(iTot.back_rlusd - iTot.rebuy_rlusd) + ').');
+      else if (iTot.took_rlusd >= 1) iNotes.push('가져간 돈은 ' + nf(iTot.took_rlusd) + ' RLUSD(환산)이고 원장에서 보이는 되돌린 돈은 없다.');
+      if (iTot.balance >= 1) iNotes.push('지금 들고 있는 ' + nf(iTot.balance) + '개 가운데 ' + pf(iH.balance_share || 0) + '가 도움 지갑에 있다.');
+    }
+    const impact = { rows: iRows.map((r) => { const o = {}; for (const f of Object.keys(r)) o[f] = typeof r[f] === 'number' && !/_share$/.test(f) ? r0(r[f]) : r[f]; return o; }), total: Object.keys(iTot).reduce((o, f) => { o[f] = r0(iTot[f]); return o; }, {}),
+      top_help: iTop('help', 'back_rlusd'), top_hold: iTop('help', 'balance'), top_load: topLoad, notes: iNotes, limit: LIMIT_CARD + ' 카드로 다시 산 지갑은 되돌린 돈이 0으로 보여 「부담」으로 잘못 나뉠 수 있다.',
+      rule: { hold: IMPACT.hold, dump: IMPACT.dump, back: IMPACT.back, lp: IMPACT.lp } };
     // 보상 받은 지갑은 얼마나 파나: 판 비율 구간별 지갑 수 · 물량, 그리고 쏠림
     const uw = wallets.filter((w) => w.g === 'user'), buckets = [['none', '팔지 않은 지갑'], ['low', '절반 미만으로 판 지갑'], ['mid', '절반 넘게 판 지갑(50~90%)'], ['high', '거의 다 판 지갑(90% 이상)'], ['extra', '이 기간에 받지 않고 판 지갑']];
     const bk = {}; for (const b of buckets) bk[b[0]] = { key: b[0], name: b[1], wallets: 0, paid: 0, sold: 0 };
@@ -575,7 +625,7 @@ function buildDatasets(S, opts) {
         prev = p;
       }
     }
-    return { key, from, to: lastDay, days: rows.length, kpi, prev, groups, flow: { sell: flowSell, buy: flowBuy }, wallets, types, dist, conc, cohorts, accounts, lp: lpRows };
+    return { key, from, to: lastDay, days: rows.length, kpi, prev, groups, flow: { sell: flowSell, buy: flowBuy }, wallets, types, impact, dist, conc, cohorts, accounts, lp: lpRows };
   };
   const ranges = { all: mkRange('all', C.NOW_FROM), d30: mkRange('d30', shift(lastDay, -29)), d7: mkRange('d7', shift(lastDay, -6)) };
 
@@ -707,6 +757,7 @@ function buildDatasets(S, opts) {
       value: ds === null ? '—' : hasPrev && sP.r > 0 ? sp(ds) : n(sW.r), metric: hasPrev && sP.r > 0 ? '판매 대금 유입 · 직전 7일 대비' : '판매 대금 유입(RLUSD)', ticks: tick(H.sale, ts),
       read: !fundOk ? '판매 대금 기록을 아직 끝까지 받지 못했다.' : '지갑 ' + n(sW.wallets) + '곳이 operations 계정으로 ' + n(sW.r) + ' RLUSD를 보냈다' + (hasPrev ? '(직전 7일 ' + n(sP.r) + ')' : '') + '.' + (sW.r > 0 ? ' 이 가운데 보상을 받는 지갑이 낸 것이 ' + n(sW.ru) + ' RLUSD(' + p1(sW.ru / sW.r) + ')다.' : ''),
       short: !fundOk ? '판매 대금 기록이 모자라다' : '판매 대금 ' + n(sW.r) + ' RLUSD' + (hasPrev && sP.r > 0 ? '(직전 7일 대비 ' + sp(ds) + ')' : ''),
+      caveat: 'RLUSD 결제분만 · 카드 결제는 원장에 없음',
     }));
     const dj = hasPrev && paidP.size ? paidW.size / paidP.size - 1 : null, payV = payDays + (H.days - W.length);
     const payL = mk('pay', '보상', '보상이 끊기지 않고 받는 지갑이 느나', dj === null ? payV : dj, dj === null ? H.pay : H.join, {
@@ -763,6 +814,7 @@ function buildDatasets(S, opts) {
       value: cov === null ? '—' : spend < 0.5 ? '매입 없음' : sW.r > 0 ? p1(cov) : '판매 대금 없음', metric: '판매 대금 대비 매입 지출', ticks: [tp(-H.cover[1]), tp(-H.cover[2])],
       read: !fundOk ? '판매 대금 기록을 아직 끝까지 받지 못했다.' : 'Wellbian bot이 ' + n(botR) + ' RLUSD와 ' + n(botX) + ' XRP(환산 ' + n(spend) + ' RLUSD)를 썼고, 같은 기간 들어온 판매 대금은 ' + n(sW.r) + ' RLUSD다.',
       short: cov === null ? '판매 대금 기록이 모자라다' : spend < 0.5 ? '최근 매입이 없다' : sW.r > 0 ? '매입 지출이 판매 대금의 ' + p1(cov) : '판매 대금 없이 매입했다',
+      caveat: '판매 대금은 RLUSD 결제분만 — 카드 결제분을 더하면 비율은 낮아진다',
     }));
 
     // ── 지표마다 결과에 따른 요약 인사이트. 기록에 있는 사실과 산수만 쓴다(앞날 전망 없음).
@@ -929,7 +981,7 @@ function buildDatasets(S, opts) {
 
     const rng = (T, f) => ({ ok: f(T[2]) + ' 이상', warn: f(T[1]) + ' ~ ' + f(T[2]), bad: f(T[1]) + ' 미만' });
     const rules = [
-      Object.assign({ name: '판매', metric: '밖의 지갑이 operations 계정으로 보낸 RLUSD가 직전 7일보다 얼마나 늘었나' }, rng(H.sale, ts)),
+      Object.assign({ name: '판매', metric: '밖의 지갑이 operations 계정으로 보낸 RLUSD가 직전 7일보다 얼마나 늘었나(카드 · 계좌 결제는 원장에 없어 빠진다)' }, rng(H.sale, ts)),
       Object.assign({ name: '보상', metric: '보상 받은 지갑 수가 직전 7일보다 얼마나 늘었나. 지급된 날이 ' + H.pay[2] + '일에 못 미치면 지켜봄, ' + H.pay[1] + '일 미만이면 주의로 낮춘다' }, rng(H.join, ts)),
       { name: '보유', metric: '받은 양 가운데 판 비율(판 양 ÷ 받은 양)', ok: tp(1 - H.hold[2]) + ' 이하', warn: tp(1 - H.hold[2]) + ' ~ ' + tp(1 - H.hold[1]), bad: tp(1 - H.hold[1]) + ' 초과' },
       Object.assign({ name: '유동성', metric: '두 풀에 든 RLUSD와 XRP(지금 환율로 합침)의 7일 변화' }, rng(H.pool, ts)),
@@ -942,6 +994,7 @@ function buildDatasets(S, opts) {
       from, to, prev_from: pFrom, prev_to: pTo, days: W.length, day: D.date,
       overall: { status: overall, label: ST[overall], ok: cnt.ok, warn: cnt.warn, bad: cnt.bad, na: cnt.na, total: links.length, counts: parts.join(' · ') },
       headline, takeaway, comments, links, reserves, rules, xrp, labels: ST,
+      limits: [LIMIT_CARD + ' 판매 고리와 매입 재원은 그만큼 낮게(나쁘게) 보일 수 있다 — 하한으로 읽는다.', 'XRP 등 다른 통화로 낸 결제, operations 말고 다른 계정으로 받은 결제도 빠져 있다.'],
     };
   };
   const health = buildHealth();
