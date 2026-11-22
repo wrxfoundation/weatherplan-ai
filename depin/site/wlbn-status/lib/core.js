@@ -21,9 +21,14 @@ const EPS = 1e-7;
 const KEYS = ['sold', 'bought', 'cash', 'cash_r', 'cash_x', 'spent', 'spent_r', 'spent_x', 'lpw', 'lpq', 'lpr', 'lpx', 'paid', 'paidco', 'tin', 'tout', 'esc', 'burn'];
 const GR = ['user', 'arb', 'other', 'bot', 'kweather', 'company'];
 const NAME = {
-  user: '일반 사용자 지갑', arb: '사고팔기만 한 지갑', other: '그 밖의 지갑', bot: 'bot 표시 계정',
-  kweather: 'kweather 표시 계정', company: '그 밖의 회사 표시 계정', sweep: '10월 24일 잔액이 모인 주소',
+  user: '일반 사용자 지갑', arb: '사고팔기만 한 지갑', other: '그 밖의 지갑', bot: 'Wellbian bot 계정',
+  kweather: 'KWeather 계정', company: 'Wellbian 그 밖의 계정', sweep: '10월 24일 잔액이 모인 주소',
 };
+// 소속 칩. 사이트가 이름을 붙여 공개한 계정 가운데 kweather 는 KWeather, 나머지(treasury · operations · staking · seed · match · bot)는 Wellbian.
+// 화면은 owner 로 칩을 그리고 그 뒤에 label 을 붙인다. 글로만 쓸 때는 온전한 이름(group · who · where)을 쓴다.
+const OWN = { wellbian: 'Wellbian', kweather: 'KWeather' };
+const GOWN = { bot: 'wellbian', company: 'wellbian', kweather: 'kweather' };
+const GLAB = { bot: 'bot 계정', company: '그 밖의 계정', kweather: '계정' };
 
 function kday(sec) { return new Date((sec + RIPPLE_EPOCH + 9 * 3600) * 1000).toISOString().slice(0, 10); }
 function kstamp(sec) { return new Date((sec + RIPPLE_EPOCH + 9 * 3600) * 1000).toISOString().slice(0, 16).replace('T', ' '); }
@@ -274,6 +279,14 @@ function buildDatasets(S, opts) {
   const shift = (k, n) => new Date(Date.parse(k + 'T00:00:00Z') + n * 86400000).toISOString().slice(0, 10);
   const labelAccts = Object.keys(L).filter((a) => a !== C.ISSUER && !isAmm(a) && S.bal[a] !== undefined);
   const live = S.live || {}, liveBal = live.bal || {};
+  // 이름이 붙은 계정의 소속과 이름. 같은 이름의 계정이 여럿이면(kweather) 계정 하나를 가리킬 때 주소 앞뒤를 덧붙인다.
+  const named = new Set(labelAccts), perLabel = {};
+  for (const a of labelAccts) add(perLabel, L[a], 1);
+  const ownerOf = (a) => (named.has(a) ? (L[a] === 'kweather' ? 'kweather' : 'wellbian') : null);
+  const labelName = (lab) => (lab === 'kweather' ? '계정' : lab + ' 계정');
+  const labelOwner = (lab) => (lab === 'kweather' ? 'kweather' : 'wellbian');
+  const acctLabel = (a) => labelName(L[a]) + (perLabel[L[a]] > 1 ? ' ' + short(a) : '');
+  const tagged = (owner, label) => ({ owner, label, full: OWN[owner] + ' ' + label });
   const mkRange = (key, from) => {
     if (from < C.NOW_FROM) from = C.NOW_FROM;
     const acc = {}, at = (a) => acc[a] || (acc[a] = { paid: 0, paidco: 0, sold: 0, bought: 0, cash: 0, spent: 0, toR: 0, toX: 0, fromR: 0, fromX: 0, gotR: 0, gotX: 0, payR: 0, payX: 0, lpw: 0, lpq: 0, lpr: 0, lpx: 0 });
@@ -314,13 +327,13 @@ function buildDatasets(S, opts) {
       const aa = of(g).filter((a) => a !== C.OPS && acc[a].sold + acc[a].bought + acc[a].paid + acc[a].paidco > 0);
       if (!aa.length) continue;
       const row = {
-        group: NAME[g], key: g, wallets: aa.length, sold: r0(sum(aa, 'sold')), bought: r0(sum(aa, 'bought')), paid: r0(sum(aa, 'paid') + sum(aa, 'paidco')),
+        group: NAME[g], key: g, owner: GOWN[g] || null, label: GLAB[g] || NAME[g], wallets: aa.length, sold: r0(sum(aa, 'sold')), bought: r0(sum(aa, 'bought')), paid: r0(sum(aa, 'paid') + sum(aa, 'paidco')),
         got_rlusd: r0(sum(aa, 'gotR')), got_xrp: r0(sum(aa, 'gotX')), paid_rlusd: r0(sum(aa, 'payR')), paid_xrp: r0(sum(aa, 'payX')), cash_rlusd: r0(sum(aa, 'cash')),
       };
       row.net_sold = row.sold - row.bought; groups.push(row);
       const s = sum(aa, 'sold'), b = sum(aa, 'bought'), tR = sum(aa, 'toR'), tX = sum(aa, 'toX'), fR = sum(aa, 'fromR'), fX = sum(aa, 'fromX');
-      if (s >= 0.5) flowSell.push({ key: g, name: NAME[g], R: r0(tR), X: r0(tX), O: r0(Math.max(s - tR - tX, 0)) });
-      if (b >= 0.5) flowBuy.push({ key: g, name: NAME[g], R: r0(fR), X: r0(fX), O: r0(Math.max(b - fR - fX, 0)) });
+      if (s >= 0.5) flowSell.push({ key: g, name: NAME[g], owner: GOWN[g] || null, label: GLAB[g] || NAME[g], R: r0(tR), X: r0(tX), O: r0(Math.max(s - tR - tX, 0)) });
+      if (b >= 0.5) flowBuy.push({ key: g, name: NAME[g], owner: GOWN[g] || null, label: GLAB[g] || NAME[g], R: r0(fR), X: r0(fX), O: r0(Math.max(b - fR - fX, 0)) });
     }
     const wallets = [];
     for (const a of ul) {
@@ -333,12 +346,12 @@ function buildDatasets(S, opts) {
       });
     }
     wallets.sort((x, y) => (y.sold - x.sold) || (y.paid - x.paid));
-    // 회사 표시 계정
+    // Wellbian · KWeather 계정
     const opsOut = r0(sum(all, 'paid') + sum(all, 'paidco'));
     const accounts = labelAccts.map((a) => {
       const o = acc[a] || {};
       return {
-        name: L[a], wallet: short(a), balance: r0(Math.max(g2(S.bal, a), 0)), rlusd: liveBal[a] ? r0(liveBal[a].rlusd) : null, xrp: liveBal[a] ? r0(liveBal[a].xrp) : null,
+        name: L[a], owner: ownerOf(a), wallet: short(a), balance: r0(Math.max(g2(S.bal, a), 0)), rlusd: liveBal[a] ? r0(liveBal[a].rlusd) : null, xrp: liveBal[a] ? r0(liveBal[a].xrp) : null,
         paid_out: a === C.OPS ? opsOut : 0, received: r0(o.paidco || 0),
         bought: r0(o.bought || 0), sold: r0(o.sold || 0), paid_rlusd: r0(o.payR || 0), paid_xrp: r0(o.payX || 0),
         pool_wlbn: r0(o.lpw || 0), pool_rlusd: r0(o.lpr || 0), pool_xrp: r0(o.lpx || 0),
@@ -346,11 +359,14 @@ function buildDatasets(S, opts) {
     }).sort((x, y) => y.balance - x.balance);
     // 풀에 넣은 양(순) — 누가
     const lpRows = [];
-    const lpAdd = (who, list) => {
+    const lpAdd = (who, list, t) => {
       const w = sum(list, 'lpw'), r = sum(list, 'lpr'), x = sum(list, 'lpx');
-      if (Math.abs(w) + Math.abs(r) + Math.abs(x) >= 0.5) lpRows.push({ who, wlbn: r0(w), rlusd: r0(r), xrp: r0(x) });
+      if (Math.abs(w) + Math.abs(r) + Math.abs(x) >= 0.5) lpRows.push({ who, owner: t ? t.owner : null, label: t ? t.label : who, wlbn: r0(w), rlusd: r0(r), xrp: r0(x) });
     };
-    for (const a of labelAccts) lpAdd(L[a] + ' 표시 계정', [a].filter((x) => acc[x]));
+    for (const lab of Object.keys(perLabel)) {
+      const t = tagged(labelOwner(lab), labelName(lab));
+      lpAdd(t.full, labelAccts.filter((a) => L[a] === lab && acc[a]), t);
+    }
     lpAdd(NAME.user, U); lpAdd('그 밖의 지갑', of('arb').concat(of('other')));
     lpRows.sort((x, y) => Math.abs(y.wlbn) - Math.abs(x.wlbn));
     // 직전 같은 길이의 기간(풀이 열린 뒤에 온전히 들어갈 때만)
@@ -380,32 +396,33 @@ function buildDatasets(S, opts) {
     const d = dayAgg[e.k] || (dayAgg[e.k] = { sell: {}, buy: {} }), o = d[e.kind][e.a] || (d[e.kind][e.a] = [0, 0, 0]);
     o[0] += e.v[0]; o[1] += e.v[4] || 0; o[2] += e.v[5] || 0;
   }
-  const whoOf = (a) => (L[a] ? L[a] + ' 표시 계정' : short(a));
+  const whoOf = (a) => { const o = ownerOf(a); if (!o) return { who: short(a), owner: null, label: short(a) }; const t = tagged(o, acctLabel(a)); return { who: t.full, owner: o, label: t.label }; };
   const dayTop = {};
   for (const k of Object.keys(dayAgg)) {
-    const top = (m) => Object.keys(m).map((a) => ({ who: whoOf(a), g: G[a] || 'other', w: r0(m[a][0]), rlusd: r0(m[a][1]), xrp: r0(m[a][2]) })).filter((x) => x.w > 0).sort((x, y) => y.w - x.w);
+    const top = (m) => Object.keys(m).map((a) => Object.assign(whoOf(a), { g: G[a] || 'other', w: r0(m[a][0]), rlusd: r0(m[a][1]), xrp: r0(m[a][2]) })).filter((x) => x.w > 0).sort((x, y) => y.w - x.w);
     const s = top(dayAgg[k].sell), b = top(dayAgg[k].buy);
     dayTop[k] = { sell: s.slice(0, 5), buy: b.slice(0, 5), sellers: s.length, buyers: b.length };
   }
 
   // 지금 풀의 몫 — 풀 지분 증표를 누가 들고 있나
-  const lpShares = []; let lpCompany = 0, lpUser = 0, lpAll = 0;
+  const lpShares = []; let lpCompany = 0, lpWell = 0, lpKw = 0, lpUser = 0, lpAll = 0;
   if (live.lp) {
     const agg = {};
     for (const pk of ['X', 'R']) {
       const P = live.lp[pk];
       if (!P || !(P.total > 0)) continue;
       for (const a of Object.keys(P.holders)) {
-        const kind = L[a] ? 'company' : (users.has(a) ? 'user' : 'other');
-        const who = L[a] ? L[a] + ' 표시 계정' : (kind === 'user' ? NAME.user : '그 밖의 지갑');
-        const o = agg[who] || (agg[who] = { X: 0, R: 0, kind });
+        const own = ownerOf(a), kind = own ? 'company' : (users.has(a) ? 'user' : 'other');
+        const t = own ? tagged(own, labelName(L[a])) : null;
+        const who = t ? t.full : (kind === 'user' ? NAME.user : '그 밖의 지갑');
+        const o = agg[who] || (agg[who] = { X: 0, R: 0, kind, owner: own, label: t ? t.label : who });
         o[pk] += P.holders[a] / P.total;
       }
     }
     for (const who of Object.keys(agg)) {
       const o = agg[who], w = o.X * S.pools.X.w + o.R * S.pools.R.w;
-      lpShares.push({ who, x_share: r4(o.X), x_wlbn: r0(o.X * S.pools.X.w), x_xrp: r0(o.X * S.pools.X.q), r_share: r4(o.R), r_wlbn: r0(o.R * S.pools.R.w), r_rlusd: r0(o.R * S.pools.R.q), wlbn: r0(w) });
-      lpAll += w; if (o.kind === 'company') lpCompany += w; else if (o.kind === 'user') lpUser += w;
+      lpShares.push({ who, owner: o.owner, label: o.label, x_share: r4(o.X), x_wlbn: r0(o.X * S.pools.X.w), x_xrp: r0(o.X * S.pools.X.q), r_share: r4(o.R), r_wlbn: r0(o.R * S.pools.R.w), r_rlusd: r0(o.R * S.pools.R.q), wlbn: r0(w) });
+      lpAll += w; if (o.kind === 'company') { lpCompany += w; if (o.owner === 'kweather') lpKw += w; else lpWell += w; } else if (o.kind === 'user') lpUser += w;
     }
     lpShares.sort((x, y) => y.wlbn - x.wlbn);
   }
@@ -418,12 +435,11 @@ function buildDatasets(S, opts) {
   const userW = ul.reduce((t, a) => t + Math.max(g2(S.bal, a), 0), 0);
   let allBal = 0; for (const a of Object.keys(S.bal)) if (a !== C.ISSUER) allBal += Math.max(S.bal[a], 0);
   const total = locked + allBal;
-  const pos = [['locked', '잠금(에스크로)', locked], ['treasury', 'treasury 표시 계정', byLabel.treasury || 0], ['seed', 'seed 표시 계정', byLabel.seed || 0], ['staking', 'staking 표시 계정', byLabel.staking || 0],
-    ['pools', '풀 두 곳', poolW], ['match', 'match 표시 계정', byLabel.match || 0], ['kweather', 'kweather 표시 계정', byLabel.kweather || 0], ['bot', 'bot 표시 계정', byLabel.bot || 0],
-    ['operations', 'operations 표시 계정', byLabel.operations || 0], ['user', NAME.user, userW]];
+  const lab = (k) => { const t = tagged(labelOwner(k), labelName(k)); return [k, t.full, byLabel[k] || 0, t]; };
+  const pos = [['locked', '잠금(에스크로)', locked], lab('treasury'), lab('seed'), lab('staking'), ['pools', '풀 두 곳', poolW], lab('match'), lab('kweather'), lab('bot'), lab('operations'), ['user', NAME.user, userW]];
   const known = pos.reduce((t, p) => t + p[2], 0);
   pos.push(['other', '그 밖의 지갑', Math.max(total - known, 0)]);
-  const positions = pos.map((p) => ({ key: p[0], where: p[1], amount: r0(p[2]), share: total > 0 ? Math.round(p[2] / total * 1e6) / 1e6 : null }));
+  const positions = pos.map((p) => ({ key: p[0], where: p[1], owner: p[3] ? p[3].owner : null, label: p[3] ? p[3].label : p[1], amount: r0(p[2]), share: total > 0 ? Math.round(p[2] / total * 1e6) / 1e6 : null }));
 
   // 요약 (지금 값 · 최근 7일 추세)
   const full = daily.filter((r) => !r.partial && r.date >= C.POOL_OPEN), last7 = full.slice(-7), prev7 = full.slice(-14, -7);
@@ -438,6 +454,7 @@ function buildDatasets(S, opts) {
     pool_r_wlbn: r0(S.pools.R.w), pool_r_rlusd: r0(S.pools.R.q), pool_x_wlbn: r0(S.pools.X.w), pool_x_xrp: r0(S.pools.X.q),
     total_supply: r0(total), fee_r: S.pools.R.fee ?? null, fee_x: S.pools.X.fee ?? null,
     lp_company_share: lpAll > 0 ? r3(lpCompany / lpAll) : null, lp_user_share: lpAll > 0 ? r3(lpUser / lpAll) : null,
+    lp_wellbian_share: lpAll > 0 ? r3(lpWell / lpAll) : null, lp_kweather_share: lpAll > 0 ? r3(lpKw / lpAll) : null,
     price_usd_dex: e.price_usd_dex ?? null, pool_value_rlusd: e.pool_value_rlusd ?? null, dex_h24_buys: e.dex_h24_buys ?? null, dex_h24_sells: e.dex_h24_sells ?? null,
     dex_h24_volume_usd: e.dex_h24_volume_usd ?? null, dex_liquidity_usd: e.dex_liquidity_usd ?? null, holders: e.holders ?? null, trustlines: e.trustlines ?? null,
     devices_total: e.devices_total ?? null, devices_active: e.devices_active ?? null, operators: e.operators ?? null, kweather_devices: e.kweather_devices ?? null,
@@ -451,7 +468,7 @@ function buildDatasets(S, opts) {
     for (const g of ['user', 'sweep', 'arb', 'other', 'bot', 'kweather']) {
       const aa = accts.filter((a) => G[a] === g && a !== C.OPS && (g2(B.sold, a) + g2(B.bought, a) + g2(B.paid, a) + g2(B.paidco, a) > 0));
       if (!aa.length) continue;
-      const r = { group: NAME[g], key: g, wallets: aa.length, sold: r0(sumB(aa, 'sold')), bought: r0(sumB(aa, 'bought')) };
+      const r = { group: NAME[g], key: g, owner: GOWN[g] || null, label: GLAB[g] || NAME[g], wallets: aa.length, sold: r0(sumB(aa, 'sold')), bought: r0(sumB(aa, 'bought')) };
       r.net_sold = r.sold - r.bought; r.paid = r0(sumB(aa, 'paid') + sumB(aa, 'paidco')); r.got_rlusd = r0(sumB(aa, 'cash_r')); r.got_xrp = r0(sumB(aa, 'cash_x'));
       before.push(r);
     }
