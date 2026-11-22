@@ -498,6 +498,10 @@ details .scroll { margin-top: 8px; }
     <p class="note">일반 사용자 지갑을 「이 기간에 받은 양 가운데 판 비율」로 나눴다. 막대는 지갑 수, 오른쪽 끝은 그 지갑들이 판 양이 전체에서 차지하는 몫이다.</p>
     <ul class="pos" id="wdist"></ul>
     <ul class="cap points" id="wconc"></ul>
+    <h3 class="h3">언제 보상받기 시작한 지갑이 얼마나 파나</h3>
+    <p class="note">일반 사용자 지갑을 처음 보상받은 시기로 묶었다. 받은 양 · 판 양은 고른 기간의 값이다. 「처음 팔기까지」는 처음 보상받은 날부터 처음 판 날까지 걸린 날 수의 가운데 값이다.</p>
+    <div class="scroll"><table id="tb-cohorts" aria-label="보상받기 시작한 시기별 지갑"><thead></thead><tbody></tbody></table></div>
+    <p class="note">처음 보상받은 날은 원장 전체 기록에서 지급 계정이 그 지갑으로 처음 보낸 날이다. 10월 24일에 잔액이 옮겨진 옛 지갑과 10월 26~27일에 처음 지급받은 새 지갑은, 금액이 같고 그 금액이 양쪽에 하나뿐일 때만 같은 사용자로 이어 옛 지갑의 날짜를 썼다(추정).</p>
     <div class="card" id="wallet-panel" hidden>
       <div class="tools between"><h3 class="h3 flat">지갑 따라가 보기 · <span data-w-title>—</span></h3><a class="link" data-w-link hidden target="_blank" rel="noopener noreferrer">원장 탐색기에서 열기</a></div>
       <p class="sub" data-w-sum></p>
@@ -551,6 +555,7 @@ details .scroll { margin-top: 8px; }
       <div><dt>풀</dt><dd>WLBN과 RLUSD, WLBN과 XRP를 맞바꾸는 두 곳. 누가 넣어 둔 양으로 거래가 이뤄진다.</dd></div>
       <div><dt>풀에 넣어 둔 양</dt><dd>넣은 WLBN에서 뺀 WLBN을 뺀 값. 지금 풀에서 찾을 수 있는 양과는 다르다.</dd></div>
       <div><dt><span class="tag tag-w">Wellbian</span><span class="tag tag-k">KWeather</span>칩</dt><dd>wellbian.io가 이름을 붙여 공개한 계정에 단다. treasury · operations · staking · seed · match · bot은 Wellbian, kweather는 KWeather 계정이다.</dd></div>
+      <div><dt>처음 보상받은 날</dt><dd>지급 계정이 그 지갑으로 WLBN을 처음 보낸 날(원장 전체 기록). 10월 24일에 지갑이 바뀐 경우 금액이 같으면 옛 지갑의 날짜로 잇는다(추정).</dd></div>
       <div><dt>XRP 값</dt><dd>두 풀의 가격으로 계산한 1 XRP의 RLUSD 값. 시장 시세와 조금 다를 수 있다.</dd></div>
       <div><dt>그 밖의 경로</dt><dd>두 풀을 거치지 않은 거래. 지갑끼리 호가로 맞바꾼 경우 등이다.</dd></div>
     </dl>
@@ -835,7 +840,7 @@ details .scroll { margin-top: 8px; }
       var w = near(ev); if (!w) { f.tip.hidden = true; return; }
       var title = document.createElement('div'); title.className = 'tip-h'; named(title, w.owner, w.label, w.wallet);
       var rows = tipRows('', [{ label: GO[w.g] ? OWN[GO[w.g]] + ' 계정' : gFull(w.g), value: '', color: GC[w.g] }, { label: '판 양', value: fInt(w.sold), sep: true }, { label: '산 양', value: fInt(w.bought) }, { label: '받은 양', value: fInt(w.paid) },
-        { label: '판 양 − 산 양', value: fInt(w.net_sold) }, w.rebuy_rlusd > 0 ? { label: '다시 산 돈', value: fInt(w.rebuy_rlusd) + ' RLUSD' } : null].filter(Boolean));
+        { label: '판 양 − 산 양', value: fInt(w.net_sold) }, w.rebuy_rlusd > 0 ? { label: '다시 산 돈', value: fInt(w.rebuy_rlusd) + ' RLUSD' } : null, w.start ? { label: '처음 보상받은 날', value: md(w.start) + (w.prev_wallet ? '(추정)' : '') } : null].filter(Boolean));
       rows[0] = title; f.tip.replaceChildren.apply(f.tip, rows); f.tip.hidden = false; placeTip(f, x(w.sold), y(w.bought));
       if (ev.type === 'pointerdown') pickWallet(w.id);
     }
@@ -862,6 +867,11 @@ details .scroll { margin-top: 8px; }
     if (w.rebuy_rlusd > 0) t.push('다시 산 돈 ' + fInt(w.rebuy_rlusd) + ' RLUSD');
     if (w.pool_in) t.push('풀에 넣은 양 ' + fInt(w.pool_in));
     t.push('지금 잔액 ' + fInt(w.balance)); if (w.sell_days) t.push('판 날 ' + fInt(w.sell_days) + '일'); if (w.last_sell) t.push('마지막으로 판 날 ' + md(w.last_sell));
+    var st = [];
+    if (w.first_paid) st.push('처음 보상받은 날 ' + md(w.first_paid) + (w.prev_wallet ? '(옛 지갑 ' + w.prev_wallet + '로 치면 ' + md(w.start) + ' — 금액으로 이은 추정)' : ''));
+    if (w.days_in !== null && w.days_in !== undefined) st.push('보상받은 지 ' + fInt(w.days_in) + '일');
+    if (w.first_sell) st.push('처음 판 날 ' + md(w.first_sell) + (w.sell_lag !== null && w.sell_lag !== undefined ? '(처음 받고 ' + (w.sell_lag === 0 ? '같은 날' : fInt(w.sell_lag) + '일 뒤') + ')' : ''));
+    if (st.length) t = st.concat(t);
     $('[data-w-sum]').textContent = t.join(' · ');
   }
   // 보상 받은 지갑은 얼마나 파나: 판 비율 구간별 지갑 수와 쏠림
@@ -879,6 +889,9 @@ details .scroll { margin-top: 8px; }
     if (k.sell_top5 !== null) items.push('일반 사용자 지갑 ' + fInt(k.sellers) + '곳이 팔았다. 가장 많이 판 한 곳이 판 양의 ' + F.pct(k.sell_top1) + ', 다섯 곳이 ' + F.pct(k.sell_top5) + ', 열 곳이 ' + F.pct(k.sell_top10) + '다.');
     if (k.buy_top5 !== null) items.push('산 쪽은 Wellbian bot을 빼고 지갑 ' + fInt(k.buyers) + '곳이다. 가장 많이 산 한 곳이 ' + F.pct(k.buy_top1) + ', 다섯 곳이 ' + F.pct(k.buy_top5) + '다.');
     if (k.rebuyers > 0) items.push('일반 사용자 지갑 ' + fInt(k.rebuyers) + '곳이 operations 계정으로 ' + fInt(k.rebuy_rlusd) + ' RLUSD를 보내 다시 샀다. 이 가운데 ' + fInt(k.sold_then_rebuy) + '곳은 같은 기간에 WLBN을 판 지갑이다.');
+    var ch = (c.r.cohorts || []).filter(function (x) { return x.sell_ratio !== null && x.paid >= 100; });
+    if (ch.length > 1) { var hi = ch.slice().sort(function (a, b) { return b.sell_ratio - a.sell_ratio; })[0], lo = ch.slice().sort(function (a, b) { return a.sell_ratio - b.sell_ratio; })[0];
+      items.push('시작 시기로 보면 판 비율이 가장 높은 묶음은 「' + hi.name + '」(' + F.pct(hi.sell_ratio) + ', ' + fInt(hi.wallets) + '곳), 가장 낮은 묶음은 「' + lo.name + '」(' + F.pct(lo.sell_ratio) + ', ' + fInt(lo.wallets) + '곳)이다.'); }
     items.forEach(function (t) { var li = document.createElement('li'); li.textContent = t; cu.appendChild(li); });
   }
 
@@ -1005,7 +1018,10 @@ details .scroll { margin-top: 8px; }
       { key: 'buy_total', label: '전체 산 양' }, { key: 'buy_bot', label: 'Wellbian bot 산 양' }, { key: 'bot_pay_rlusd', label: 'bot 지출 RLUSD' }, { key: 'bot_pay_xrp', label: 'bot 지출 XRP' }, { key: 'sales_rlusd', label: '판매 대금 RLUSD' }, { key: 'to_r', label: 'RLUSD 풀로' }, { key: 'to_x', label: 'XRP 풀로' }, { key: 'price_rlusd', label: '가격', fmt: F.f4 }, { key: 'price_xrp', label: 'XRP로 본 가격', fmt: F.f4 }, { key: 'xrp_rlusd', label: '1 XRP 값(RLUSD)', fmt: F.f4 }],
     wallets: [{ key: 'wallet', label: '지갑', text: 1, tag: 1 }, { key: 'gname', label: '묶음', text: 1 }, { key: 'paid', label: '받은 양' }, { key: 'sold', label: '판 양' }, { key: 'bought', label: '산 양' },
       { key: 'sell_ratio', label: '판 비율', fmt: F.pct }, { key: 'got_rlusd', label: '받은 RLUSD' }, { key: 'got_xrp', label: '받은 XRP' }, { key: 'rebuy_rlusd', label: '다시 산 돈(RLUSD)' },
-      { key: 'pool_in', label: '풀에 넣은 양' }, { key: 'balance', label: '잔액' }, { key: 'last_sell', label: '마지막으로 판 날', text: 1, fmt: md }],
+      { key: 'pool_in', label: '풀에 넣은 양' }, { key: 'balance', label: '잔액' }, { key: 'start', label: '처음 보상받은 날', text: 1, fmt: md }, { key: 'prev_wallet', label: '이어진 옛 지갑', text: 1 },
+      { key: 'sell_lag', label: '처음 팔기까지(일)' }, { key: 'last_sell', label: '마지막으로 판 날', text: 1, fmt: md }],
+    cohorts: [{ key: 'name', label: '처음 보상받은 시기', text: 1 }, { key: 'wallets', label: '지갑 수' }, { key: 'paid', label: '받은 양' }, { key: 'sold', label: '판 양' }, { key: 'sell_ratio', label: '판 비율', fmt: F.pct },
+      { key: 'sellers', label: '판 지갑' }, { key: 'rebuyers', label: '다시 산 지갑' }, { key: 'lag_median', label: '처음 팔기까지(일)' }],
     before: [{ key: 'group', label: '지갑 묶음', text: 1, tag: 1 }, { key: 'wallets', label: '지갑 수' }, { key: 'sold', label: '판 양' }, { key: 'bought', label: '산 양' }, { key: 'net_sold', label: '판 양 − 산 양' },
       { key: 'paid', label: '받은 양' }, { key: 'got_rlusd', label: '받은 RLUSD' }, { key: 'got_xrp', label: '받은 XRP' }],
     day: [{ key: 'who', label: '곳', text: 1, tag: 1 }, { key: 'group', label: '묶음', text: 1 }, { key: 'w', label: 'WLBN' }, { key: 'rlusd', label: 'RLUSD' }, { key: 'xrp', label: 'XRP' }]
@@ -1025,13 +1041,15 @@ details .scroll { margin-top: 8px; }
       var w = r.wallet.toLowerCase(), p = w.split('…');
       return w.indexOf(q) >= 0 || p[0].indexOf(q) === 0 || (p[1] || '').indexOf(q) >= 0 || q.indexOf(p[0]) === 0;
     });
-    all.sort(function (a, b) { var x = a[WSORT.key], y = b[WSORT.key]; if (x === y) return b.sold - a.sold; if (typeof x === 'string') return WSORT.dir * (x < y ? -1 : 1); return WSORT.dir * (x - y); });
+    var blank = function (v) { return v === '' || v === null || v === undefined; };      // 빈 칸은 어느 쪽으로 정렬해도 맨 뒤
+    all.sort(function (a, b) { var x = a[WSORT.key], y = b[WSORT.key]; if (x === y) return b.sold - a.sold; if (blank(x)) return 1; if (blank(y)) return -1; if (typeof x === 'string') return WSORT.dir * (x < y ? -1 : 1); return WSORT.dir * (x - y); });
     return all;
   }
   function drawTables() {
     var c = ctx();
     table('#tb-groups', COLS.groups, c.r.groups);
     table('#tb-lp', COLS.lp, c.r.lp);
+    if (c.r.cohorts) table('#tb-cohorts', COLS.cohorts, c.r.cohorts);
     if (DATA.lpShares) table('#tb-lpshare', COLS.lpshare, DATA.lpShares);
     table('#tb-accounts', COLS.accounts, c.r.accounts, { dropZero: true });
     table('#tb-daily', COLS.daily, dailyRows());
