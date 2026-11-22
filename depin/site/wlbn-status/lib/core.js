@@ -231,6 +231,57 @@ function applyFundBatch(S, items) {
   return list.length;
 }
 
+// ── 시장과 견주기(주요 코인 10종 · 전체 시장). 받은 값만 상태(S.mkt)에 남긴다 — 못 받으면 마지막으로 받은 값을 쓴다
+const MARKET = {
+  top: 10, retryMin: 60, keepDays: 400,
+  // 다른 코인을 포장 · 예치한 것은 뺀다(값이 원래 코인을 그대로 따른다). 달러 고정 코인은 값으로 걸러 낸다
+  skip: /^(steth|wsteth|wbtc|weth|wbeth|weeth|cbbtc|cbeth|reth|ezeth|rseth|meth|lbtc|solvbtc|btcb|bnsol|jitosol|msol|susde|susds)$/i,
+};
+function pickMarket(S, ext, nowMs) {
+  const M = S.mkt || (S.mkt = { now: null, hist: {}, tried: 0 });
+  if (!M.hist) M.hist = {};
+  const t = ext && ext.tickers, g = ext && ext.cglobal;
+  try {
+    if (Array.isArray(t) && t.length) {
+      const coins = [];
+      for (const x of t.slice().sort((a, b) => a.rank - b.rank)) {
+        const q = x && x.quotes && x.quotes.USD; if (!q || !(q.price > 0) || !(x.rank > 0)) continue;
+        const stable = Math.abs(q.price - 1) < 0.03 && Math.abs(q.percent_change_30d || 0) < 2.5;
+        if (stable || MARKET.skip.test(x.symbol)) continue;
+        coins.push({ id: x.id, sym: x.symbol, name: x.name, rank: x.rank, price: q.price, mc: q.market_cap, d1: q.percent_change_24h / 100, d7: q.percent_change_7d / 100, d30: q.percent_change_30d / 100 });
+        if (coins.length >= MARKET.top) break;
+      }
+      if (coins.length >= 5) M.now = Object.assign(M.now || {}, { at: nowMs || Date.now(), coins });
+    }
+  } catch (_) { /* keep last */ }
+  try { if (g && g.market_cap_usd > 0 && M.now) M.now.global = { mc: g.market_cap_usd, btc_dom: g.bitcoin_dominance_percentage / 100, d1: g.market_cap_change_24h / 100 }; } catch (_) { /* keep last */ }
+  return !!(M.now && M.now.coins && M.now.coins.length);
+}
+// 일별 기록(UTC 0시 값)이 모자란 코인과 받을 시작 날. 한 번 물은 뒤에는 retryMin 분 동안 다시 묻지 않는다
+function marketNeeds(S, nowMs) {
+  const M = S.mkt; if (!M || !M.now || !M.now.coins) return null;
+  const now = nowMs || Date.now(), need = new Date(now - 30 * 60000).toISOString().slice(0, 10), out = [];
+  if (now - (M.tried || 0) < MARKET.retryMin * 60000) return null;
+  const dates = Object.keys(M.hist).sort();
+  for (const c of M.now.coins) {
+    if (M.hist[need] && M.hist[need][c.sym]) continue;
+    let have = null; for (let i = dates.length - 1; i >= 0; i--) if (M.hist[dates[i]][c.sym]) { have = dates[i]; break; }
+    out.push({ id: c.id, sym: c.sym, start: have || C.POOL_OPEN });
+  }
+  return out.length ? out : null;
+}
+function mergeHistory(S, sym, rows) {
+  const M = S.mkt; let n = 0;
+  if (!M || !Array.isArray(rows)) return 0;
+  for (const r of rows) {
+    const d = String((r && r.timestamp) || '').slice(0, 10); if (!/^\d{4}-\d\d-\d\d$/.test(d) || !(r.price > 0)) continue;
+    const o = M.hist[d] || (M.hist[d] = {}); if (!o[sym] || o[sym][0] !== r.price) n++;
+    o[sym] = [r.price, r.market_cap || 0];
+  }
+  const dates = Object.keys(M.hist).sort(); for (const d of dates.slice(0, Math.max(0, dates.length - MARKET.keepDays))) delete M.hist[d];
+  return n;
+}
+
 function setLabels(S, ext) {
   Object.assign(S.labels, labelsFromExt(ext));
   S.labels[C.ISSUER] = 'issuer';
@@ -703,6 +754,56 @@ function buildDatasets(S, opts) {
     devices_total: e.devices_total ?? null, devices_active: e.devices_active ?? null, operators: e.operators ?? null, kweather_devices: e.kweather_devices ?? null,
     epoch_budget: e.epoch_budget ?? null, epoch_distributed: e.epoch_distributed ?? null, epoch_date: e.epoch_date ?? null, circulating: e.circulating ?? null,
   };
+  // ── 시장과 견주기: WLBN 값(RLUSD 풀)을 주요 코인 10종 · 그 묶음과 같은 날짜 창으로 견준다. 지난 기록과 산수만 쓴다
+  const buildMarket = () => {
+    const M = S.mkt; if (!M || !M.now || !M.now.coins || !M.now.coins.length) return null;
+    const hist = M.hist || {}, coins = M.now.coins.slice(0, MARKET.top), days = daily.filter((r) => !r.partial && r.date >= C.POOL_OPEN && r.price_rlusd);
+    if (days.length < 3) return null;
+    const last = days[days.length - 1], first = days[0], n = (x) => Math.round(x).toLocaleString('en-US');
+    const p1 = (x) => (Math.abs(x) * 100).toFixed(1) + '%', sp = (x) => (x < 0 ? '−' : '+') + p1(x), pp = (x) => (x < 0 ? '−' : '+') + (Math.abs(x) * 100).toFixed(1) + '%p';
+    // 같은 날짜의 일별 값을 쓴다. 풀에서 읽은 XRP 값(한국 시각 마감)과 대조하면 같은 날짜 값이 가장 가깝다(11/23 확인: 26일 평균 0.8%, 최대 1.7% 차이).
+    // 마지막 날 값이 아직 없으면 지금 값을 쓴다
+    const at = (c, d) => { const row = hist[d]; return row && row[c.sym] ? row[c.sym] : d === last.date ? [c.price, c.mc] : null; };
+    const start = { d1: days[days.length - 2], d7: days[days.length - 8] || null, open: first };      // 창의 출발점(그날 마감 값)
+    const ch = (a, b) => (a && b ? r4(a / b - 1) : null);
+    const coinCh = (c, s0) => (s0 ? ch((at(c, last.date) || [])[0], (at(c, s0.date) || [])[0]) : null);
+    const basketCh = (s0) => { if (!s0) return null; let a = 0, b = 0; for (const c of coins) { const x = at(c, last.date), y = at(c, s0.date); if (x && y && x[1] > 0 && y[1] > 0) { a += x[1]; b += y[1]; } } return b > 0 ? r4(a / b - 1) : null; };
+    const W = { key: 'wlbn', kind: 'wlbn', name: 'WLBN', sym: 'WLBN', rank: null, price: S.pR ? r4(S.pR) : last.price_rlusd, mc: null };
+    const K = { key: 'basket', kind: 'basket', name: '주요 ' + coins.length + '종 묶음', sym: '', rank: null, price: null, mc: r0(coins.reduce((t, c) => t + (c.mc || 0), 0)) };
+    for (const k of ['d1', 'd7', 'open']) { W[k] = start[k] ? ch(last.price_rlusd, start[k].price_rlusd) : null; K[k] = basketCh(start[k]); }
+    const sig = (x) => (x >= 1000 ? Math.round(x * 100) / 100 : x >= 1 ? r4(x) : Number(x.toPrecision(4)));
+    const rows = [W, K].concat(coins.map((c) => ({ key: c.sym, kind: 'coin', name: c.name, sym: c.sym, rank: c.rank, price: sig(c.price), mc: r0(c.mc), d1: coinCh(c, start.d1), d7: coinCh(c, start.d7), open: coinCh(c, start.open) })));
+    for (const r of rows) for (const k of ['d1', 'd7', 'open']) r['gap_' + k] = r.kind === 'wlbn' || r[k] === null || W[k] === null ? null : r4(W[k] - r[k]);   // WLBN − 그 줄(%p)
+    // 값의 흐름: 첫날 = 100. 묶음은 모든 날에 값이 있는 코인의 시가총액 합
+    const whole = coins.filter((c) => days.every((d) => at(c, d.date) && at(c, d.date)[1] > 0)), sum = (d) => whole.reduce((t, c) => t + at(c, d.date)[1], 0), base = whole.length ? sum(first) : 0;
+    const series = days.map((d) => { const o = { date: d.date, wlbn: Math.round(d.price_rlusd / first.price_rlusd * 1000) / 10, basket: base ? Math.round(sum(d) / base * 1000) / 10 : null }; for (const c of coins) { const a = at(c, d.date), b = at(c, first.date); o[c.sym] = a && b ? Math.round(a[0] / b[0] * 1000) / 10 : null; } return o; });
+    const has = (sym) => coins.some((c) => c.sym === sym), pickLines = ['BTC', 'XRP'].filter(has); for (const c of coins) if (pickLines.length < 2 && pickLines.indexOf(c.sym) < 0) pickLines.push(c.sym);
+    // 하루 변화가 같은 방향이었던 날 · 상관계수
+    const pair = (key) => { const a = [], b = []; for (let i = 1; i < series.length; i++) { const x0 = series[i - 1].wlbn, x1 = series[i].wlbn, y0 = series[i - 1][key], y1 = series[i][key]; if (x0 && x1 && y0 && y1) { a.push(x1 / x0 - 1); b.push(y1 / y0 - 1); } }
+      if (a.length < 5) return null; const ma = a.reduce((t, x) => t + x, 0) / a.length, mb = b.reduce((t, x) => t + x, 0) / b.length; let sab = 0, saa = 0, sbb = 0, same = 0;
+      for (let i = 0; i < a.length; i++) { sab += (a[i] - ma) * (b[i] - mb); saa += (a[i] - ma) ** 2; sbb += (b[i] - mb) ** 2; if ((a[i] >= 0) === (b[i] >= 0)) same++; }
+      return { n: a.length, same, corr: saa > 0 && sbb > 0 ? Math.round(sab / Math.sqrt(saa * sbb) * 100) / 100 : null }; };
+    const stats = { basket: pair('basket'), xrp: has('XRP') ? pair('XRP') : null };
+    const rankOf = (k) => { if (W[k] === null) return null; const list = rows.filter((r) => r.kind === 'coin' && r[k] !== null); return list.length ? { pos: 1 + list.filter((r) => r[k] > W[k]).length, of: list.length + 1 } : null; };
+    const rank = { d1: rankOf('d1'), d7: rankOf('d7'), open: rankOf('open') }, G0 = M.now.global || null;
+    const global = G0 ? { mc: r0(G0.mc), d1: r4(G0.d1), btc_dom: r4(G0.btc_dom), basket_share: G0.mc > 0 ? r3(K.mc / G0.mc) : null } : null;
+    const byS = (sym) => rows.find((r) => r.key === sym), X = byS('XRP'), Bt = byS('BTC'), tri = (v) => (v >= 1e12 ? (v / 1e12).toFixed(2) + '조' : n(v / 1e8) + '억');
+    const line = (k) => 'WLBN ' + sp(W[k]) + ' · ' + K.name + ' ' + (K[k] === null ? '—' : sp(K[k])) + (Bt && Bt[k] !== null ? ' · BTC ' + sp(Bt[k]) : '') + (X && X[k] !== null ? ' · XRP ' + sp(X[k]) : '');
+    const notes = [], cf = (x) => (x < 0 ? '−' : '') + Math.abs(x);
+    if (W.d7 !== null) notes.push('최근 7일(' + md(shift(start.d7.date, 1)) + '~' + md(last.date) + '): ' + line('d7') + '.' + (K.d7 !== null ? ' WLBN이 묶음보다 ' + pp(W.d7 - K.d7) + (W.d7 >= K.d7 ? ' 높다' : ' 낮다') : '') + (rank.d7 ? ' — 주요 ' + coins.length + '종과 나란히 놓으면 ' + rank.d7.of + '개 가운데 ' + rank.d7.pos + '번째다.' : '.'));
+    if (W.open !== null && days.length > 8) notes.push('풀이 열린 뒤(' + md(first.date) + '~' + md(last.date) + '): ' + line('open') + '.' + (rank.open ? ' ' + rank.open.of + '개 가운데 ' + rank.open.pos + '번째다.' : ''));
+    if (stats.basket) notes.push('하루 변화가 묶음과 같은 방향이었던 날은 ' + stats.basket.n + '일 가운데 ' + stats.basket.same + '일' + (stats.basket.corr !== null ? '(상관계수 ' + cf(stats.basket.corr) + ')' : '') + (stats.xrp ? ', XRP와는 ' + stats.xrp.same + '일' + (stats.xrp.corr !== null ? '(' + cf(stats.xrp.corr) + ')' : '') : '') + '이다. ' + (stats.basket.corr !== null && Math.abs(stats.basket.corr) < 0.3 ? '시장과 거의 따로 움직였다.' : stats.basket.corr !== null && stats.basket.corr >= 0.6 ? '시장과 같이 움직인 편이다.' : '시장과 느슨하게 같이 움직였다.'));
+    if (global) notes.push('전체 시가총액은 ' + tri(global.mc) + ' 달러(24시간 ' + sp(global.d1) + '), 비트코인 비중 ' + p1(global.btc_dom) + '다.' + (global.basket_share ? ' 주요 ' + coins.length + '종 묶음이 그 ' + p1(global.basket_share) + '다.' : ''));
+    const bot = ranges.all.groups.find((g) => g.key === 'bot'), buyAll = ranges.all.kpi.buy_total, botShare = bot && buyAll > 0 ? bot.bought / buyAll : null;
+    const limits = ['WLBN 값은 풀 두 곳에서 정해진 값이고' + (botShare !== null && botShare >= 0.2 ? ', 이 기간 산 양의 ' + p1(botShare) + '를 Wellbian bot 계정이 샀다' : ' 거래가 얇다') + '. 시장과의 차이를 그대로 바깥 수요의 차이로 읽지 않는다.',
+      '코인 값은 CoinPaprika 공개 값이다. 하루 값의 기준 시각이 WLBN의 한국 시각 마감과 조금 어긋난다 — 풀에서 읽은 XRP 값과 대조하면 평균 1% 안팎 차이다. 묶음은 지금의 상위 ' + coins.length + '종을 지난 날에도 그대로 쓴다.',
+      '지난 기록을 견준 값이고 앞날을 내다보는 값이 아니다.'];
+    return { as_of: new Date(M.now.at + 9 * 3600000).toISOString().slice(0, 16).replace('T', ' '), from: first.date, to: last.date, d1_from: start.d1.date, d7_from: start.d7 ? start.d7.date : null,
+      win: { d1: [last.date, last.date], d7: start.d7 ? [shift(start.d7.date, 1), last.date] : null, open: [first.date, last.date] },
+      rows, series, lines: ['wlbn', 'basket'].concat(pickLines), coins: coins.map((c) => c.sym), stats, rank, global, notes, limits, source: 'CoinPaprika',
+      short: W.d7 !== null && K.d7 !== null ? '같은 7일 ' + K.name + '은 ' + sp(K.d7) + (Bt && Bt.d7 !== null ? ', BTC는 ' + sp(Bt.d7) : '') + '였다' : null };
+  };
+  let market = null; try { market = buildMarket(); } catch (_) { market = null; }
   // ── 건강 신호 · 선순환 고리 · 그날 요약
   const buildHealth = (cut) => {
     const H = HEALTH, allDays = daily.filter((r) => !r.partial && r.date >= C.POOL_OPEN), fullDays = cut ? allDays.slice(0, -cut) : allDays;
@@ -905,6 +1006,7 @@ function buildDatasets(S, opts) {
         if (botDays > 0 && botDays < W.length) t += ' 나눠 보면 bot이 산 ' + botDays + '일 동안 ' + sp(upBot - 1) + ', 사지 않은 ' + (W.length - botDays) + '일 동안 ' + sp(upRest - 1) + '다' + (upBot - 1 > 0.01 && upRest - 1 <= 0.005 ? ' — 오른 폭은 bot이 산 날에 나왔다.' : '.');
         if (xrpCh !== null && start.price_xrp) t += ' XRP로 보면 ' + sp(end.price_xrp / start.price_xrp - 1) + '인데, XRP 값이 ' + sp(xrpCh) + ' 움직인 것이 겹쳐 있다.';
       }
+      if (dp !== null && !cut && market && market.short) t += ' ' + market.short + '.';
       byKey.price.insight = t;
     }
     {
@@ -1004,6 +1106,7 @@ function buildDatasets(S, opts) {
       if (xShare !== null) cx += ' 같은 기간 XRP로 판 비중은 ' + (pxShare !== null ? p1(pxShare) + ' → ' : '') + p1(xShare) + '다.';
       comments.push(cx);
     }
+    if (!cut && market && market.notes.length) comments.push('시장과 견주면 — ' + market.notes[0].replace(/^최근 7일\([^)]*\): /, ''));
     const why = (st) => links.filter((l) => l.status === st).map((l) => l.name + ' — ' + l.short).join(' / ');
     if (blocked.length || watch.length) comments.push((blocked.length ? '막힌 고리: ' + why('bad') + '.' : '') + (blocked.length && watch.length ? ' ' : '') + (watch.length ? '지켜볼 고리: ' + why('warn') + '.' : ''));
     const low = reserves.filter((r) => r.status === 'bad' || r.status === 'warn');
@@ -1020,6 +1123,8 @@ function buildDatasets(S, opts) {
       { name: '지급 · 매입 여력', metric: '지금 잔액 ÷ 최근 7일 하루 평균(지급 · 매입 지출)', ok: H.runway[2] + '일분 이상', warn: H.runway[1] + ' ~ ' + H.runway[2] + '일분', bad: H.runway[1] + '일분 미만' },
       { name: '매입 재원', metric: 'Wellbian bot이 쓴 돈(RLUSD 환산) ÷ 같은 기간 판매 대금', ok: tp(-H.cover[2]) + ' 이하', warn: tp(-H.cover[2]) + ' ~ ' + tp(-H.cover[1]), bad: tp(-H.cover[1]) + ' 초과' },
     ];
+    const ruleOf = { sale: '판매', pay: '보상', hold: '보유', pool: '유동성', demand: '수요', price: '가격', payrun: '지급 · 매입 여력', buyrun: '지급 · 매입 여력', cover: '매입 재원' };
+    for (const l of links.concat(reserves)) { const r = rules.find((x) => x.name === ruleOf[l.key]); if (r) l.rule = { metric: r.metric, ok: r.ok, warn: r.warn, bad: r.bad }; }
     return {
       from, to, prev_from: pFrom, prev_to: pTo, days: W.length, day: D.date,
       overall: { status: overall, label: ST[overall], ok: cnt.ok, warn: cnt.warn, bad: cnt.bad, na: cnt.na, total: links.length, counts: parts.join(' · ') },
@@ -1046,6 +1151,7 @@ function buildDatasets(S, opts) {
 
   const out = { summary: [summary], daily, ranges, positions, dayTop, walletDays };
   if (health) out.health = health;
+  if (market) out.market = market;
   if (lpShares.length) out.lpShares = lpShares;
   if (opts.showBefore) {
     const sumB = (aa, key) => aa.reduce((t, a) => t + g2(B[key], a), 0);
@@ -1084,4 +1190,4 @@ function applyBatch(S, items) {
   return list.length;
 }
 
-module.exports = { C, newState, applyTx, applyBatch, applyFundBatch, newFund, normalize, buildDatasets, setLabels, pickExt, kday };
+module.exports = { C, newState, applyTx, applyBatch, applyFundBatch, newFund, normalize, buildDatasets, setLabels, pickExt, pickMarket, marketNeeds, mergeHistory, kday };

@@ -3,7 +3,7 @@
 //   node scripts/refresh-snapshot.js
 const fs = require('fs'), path = require('path');
 const core = require('../lib/core'), xrpl = require('../lib/xrpl');
-const { fetchExt } = require('../lib/ext');
+const { fetchExt, fetchHistory } = require('../lib/ext');
 const FILE = path.join(__dirname, '../lib/snapshot-state.json');
 (async () => {
   const S = JSON.parse(fs.readFileSync(FILE, 'utf8'));
@@ -14,6 +14,8 @@ const FILE = path.join(__dirname, '../lib/snapshot-state.json');
   const fu = await xrpl.updateFund(S, { budgetMs: 240000 });   // 판매 대금 기록(operations 계정 내역)
   console.log(JSON.stringify({ fund: fu }));
   const live = u.complete ? await xrpl.fetchLive(S, { budgetMs: 20000 }) : null;
+  // 시장 비교 자료(주요 코인 10종 · 전체 시장)
+  if (core.pickMarket(S, ext)) { if (S.mkt) S.mkt.tried = 0; const need = core.marketNeeds(S); if (need) { const got = await fetchHistory(need); for (const x of need) core.mergeHistory(S, x.sym, got[x.id]); S.mkt.tried = 0; } }
   fs.writeFileSync(FILE, JSON.stringify(S));
   const out = core.buildDatasets(JSON.parse(JSON.stringify(S)), {});
   fs.writeFileSync(path.join(__dirname, '../public/snapshot.json'), JSON.stringify(Object.assign({ ok: true, generated_at: null, ledger: S.ledger, info: { storage: 'snapshot' } }, out)));
