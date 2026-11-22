@@ -151,13 +151,26 @@ td .pc { display: block; margin-top: 1px; color: var(--faint); font-size: 11.5px
 /* 건강 신호: 신호등 · 고리 그림 · 온도계 */
 .st-ok { --st: var(--c-ok); --st-bg: var(--c-ok-bg); } .st-warn { --st: var(--c-warn); --st-bg: var(--c-warn-bg); }
 .st-bad { --st: var(--c-bad); --st-bg: var(--c-bad-bg); } .st-na { --st: var(--c-na); --st-bg: var(--c-na-bg); }
-.brief { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 16px 28px; align-items: start; }
-.signal-box { --cell: var(--soft); display: flex; flex-direction: column; align-items: flex-start; gap: 4px; min-width: 176px; padding: 16px 18px; background: var(--soft); border-radius: var(--r-md); }
-.signal { display: inline-flex; gap: 7px; padding: 7px 9px; border-radius: 999px; background: var(--sig); border: 1px solid var(--sig-line); }
-.bulb { width: 20px; height: 20px; border-radius: 50%; opacity: 0.2; }
-.bulb.bad { background: #FF6B5E; color: #FF6B5E; } .bulb.warn { background: #FFC043; color: #FFC043; } .bulb.ok { background: #38D9A0; color: #38D9A0; }
-.bulb.on { opacity: 1; box-shadow: 0 0 10px 1px currentColor; }
-.signal-label { margin: 8px 0 0; font-size: var(--t-num); font-weight: 700; letter-spacing: -0.02em; line-height: 1.2; }
+.brief { display: grid; grid-template-columns: 304px minmax(0, 1fr); gap: 16px 28px; align-items: start; }
+/* 선순환 지수(0~100): 게이지 · 상태 · 고리별 점수 · 계산 · 추이 (11/22 7차 — 서우 「신호등으로만 하기에는 너무 단편적 · 0-100 지수 게이지」) */
+.idx-box { --cell: var(--soft); display: flex; flex-direction: column; gap: 10px; min-width: 0; padding: 14px 18px 14px; background: var(--soft); border-radius: var(--r-md); }
+.idx-box .chart { min-height: 0; overflow: visible; }
+.idx-top { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin: 0; } .idx-top b { font-size: var(--t-sm); font-weight: 650; } .idx-top span { color: var(--faint); font-size: var(--t-xs); }
+.idx-track { fill: var(--st-bg); } .idx-fill { fill: var(--st); } .idx-knob { fill: var(--st); stroke: var(--cell); stroke-width: 3px; }
+.idx-num { fill: var(--fg); font-family: var(--font); font-size: 46px; font-weight: 750; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
+.idx-of { fill: var(--faint); font-family: var(--font); font-size: 12px; }
+.idx-state { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 4px 8px; margin: -4px 0 2px; font-size: var(--t-lg); font-weight: 700; letter-spacing: -0.01em; }
+.idx-state small { color: var(--muted); font-size: var(--t-xs); font-weight: 500; letter-spacing: 0; font-variant-numeric: tabular-nums; }
+.idx-parts { list-style: none; margin: 0; padding: 10px 0 0; border-top: 1px solid var(--line); display: grid; grid-template-columns: auto minmax(0, 1fr) auto auto; gap: 7px 9px; align-items: center; font-size: var(--t-xs); }
+.idx-parts li { display: contents; }
+.idx-parts .nm { font-weight: 600; white-space: nowrap; } .idx-parts .nm em { margin-left: 5px; padding: 0 5px; border-radius: 999px; background: var(--st-bg); font-style: normal; font-size: 11px; font-weight: 600; }
+.idx-parts .sc { text-align: right; font-weight: 700; font-variant-numeric: tabular-nums; } .idx-parts .dl { min-width: 2.2em; text-align: right; color: var(--faint); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.pbar { position: relative; height: 6px; display: grid; gap: 2px; } .pbar i { background: var(--c-warn-bg); } .pbar i:first-child { border-radius: 3px 0 0 3px; background: var(--c-bad-bg); } .pbar i:nth-child(3) { border-radius: 0 3px 3px 0; background: var(--c-ok-bg); }
+.pbar b { position: absolute; left: 0; top: 0; bottom: 0; width: max(4px, var(--p)); border-radius: 3px; background: var(--st); }
+.idx-calc { margin: 0; color: var(--muted); font-size: var(--t-xs); font-variant-numeric: tabular-nums; } .idx-calc span, .idx-trend .sub span { display: block; } .idx-calc span + span { color: var(--faint); }
+.idx-trend { display: flex; flex-direction: column; gap: 4px; padding-top: 10px; border-top: 1px solid var(--line); } .idx-trend[hidden] { display: none; }
+.spark-line { fill: none; stroke: var(--muted); stroke-width: 2px; stroke-linejoin: round; stroke-linecap: round; } .spark-area { fill: var(--muted); opacity: 0.1; }
+.spark-ref { stroke: var(--axis); stroke-width: 1px; stroke-dasharray: 2 3; } .spark-dot { fill: var(--st); stroke: var(--cell); stroke-width: 2.5px; } .spark-focus { fill: var(--fg); stroke: var(--cell); stroke-width: 2px; }
 .brief-text { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
 .loop { display: grid; grid-template-columns: 300px minmax(0, 1fr); gap: 12px 32px; align-items: start; }
 .chart.ring { min-height: 300px; }
@@ -177,7 +190,7 @@ td .pc { display: block; margin-top: 1px; color: var(--faint); font-size: 11.5px
 .g-val { display: flex; align-items: baseline; flex-wrap: wrap; gap: 0 8px; }
 .g-val b { font-size: var(--t-xl); font-weight: 700; letter-spacing: -0.02em; line-height: 1.3; }
 .g-val span { color: var(--muted); font-size: var(--t-xs); }
-.thermo { position: relative; height: 10px; margin: 3px 8px 0 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2px; }
+.thermo { position: relative; height: 10px; margin: 3px 8px 0 0; display: grid; grid-template-columns: 4fr 3fr 3fr; gap: 2px; }
 .thermo i { border-radius: 2px; background: var(--c-warn-bg); }
 .thermo i:first-child { border-radius: 5px 2px 2px 5px; background: var(--c-bad-bg); } .thermo i:nth-child(3) { border-radius: 2px 5px 5px 2px; background: var(--c-ok-bg); }
 .thermo b { position: absolute; left: 0; top: 0; bottom: 0; width: max(12px, var(--p)); border-radius: 5px; background: var(--st); }
@@ -296,7 +309,6 @@ details .scroll { margin-top: 8px; }
   .pos .meter { grid-column: 1 / -1; grid-row: 2; height: 6px; } .pos .meter.none { display: none; }
   .count { margin-right: 0; }
   .brief { grid-template-columns: minmax(0, 1fr); gap: 12px; }
-  .signal-box { flex-direction: row; flex-wrap: wrap; align-items: center; gap: 4px 12px; padding: 12px 14px; } .signal-label { margin: 0; }
   .gauges, .gauges.trio { grid-template-columns: minmax(0, 1fr); grid-template-rows: none; grid-auto-flow: row; gap: 18px; }
 }
 @media print {
@@ -344,10 +356,17 @@ details .scroll { margin-top: 8px; }
   <section class="sec panel" id="today" data-need="health" hidden aria-labelledby="h-today">
     <h2 class="h2" id="h-today">오늘의 현황 <span class="period" data-hwin>—</span></h2>
     <div class="brief">
-      <div class="signal-box">
-        <div class="signal" data-signal role="img" aria-label="종합 신호"><i class="bulb bad"></i><i class="bulb warn"></i><i class="bulb ok"></i></div>
-        <p class="signal-label" data-h-label>—</p>
-        <p class="sub" data-h-counts>—</p>
+      <div class="idx-box">
+        <p class="idx-top"><b>선순환 지수</b><span>0~100 · 높을수록 잘 돈다</span></p>
+        <div class="chart skel" id="chart-index" data-chart="index" role="img" aria-label="선순환 지수"></div>
+        <p class="idx-state" data-h-state>—</p>
+        <ul class="idx-parts" id="idx-parts" aria-label="고리별 점수와 어제 대비"></ul>
+        <p class="idx-calc" data-h-calc>—</p>
+        <div class="idx-trend" id="idx-trend" hidden>
+          <p class="idx-top"><b>지수 추이</b><span data-h-span>—</span></p>
+          <div class="chart" id="chart-trend" data-chart="trend" role="img" aria-label="선순환 지수 추이"></div>
+          <p class="sub" data-h-move></p>
+        </div>
       </div>
       <div class="brief-text">
         <p class="lede" data-h-headline>—</p>
@@ -356,20 +375,22 @@ details .scroll { margin-top: 8px; }
       </div>
     </div>
     <h3 class="h3">선순환 고리</h3>
-    <p class="note">판매 대금이 들어오고(판매), 보상이 나가고, 받은 쪽이 들고 있고(보유), 풀이 깊어지고(유동성), 판 양을 받아내고(수요), 값이 버티면(가격) 다시 판매로 이어진다. 고리마다 최근 7일 값으로 신호를 매겼다. 온도계는 오른쪽으로 찰수록 좋고, 색 바탕 글은 그 결과를 풀어 쓴 요약이다.</p>
+    <p class="note">판매 대금이 들어오고(판매), 보상이 나가고, 받은 쪽이 들고 있고(보유), 풀이 깊어지고(유동성), 판 양을 받아내고(수요), 값이 버티면(가격) 다시 판매로 이어진다. 고리마다 최근 7일 값으로 0~100점을 매겼다(40점 미만 주의 · 40~69점 지켜봄 · 70점 이상 좋음). 온도계의 자리가 그 점수이고, 눈금 숫자는 40점 · 70점에 해당하는 실제 값이다. 색 바탕 글은 결과를 풀어 쓴 요약이다.</p>
     <p class="limit" data-h-limit hidden></p>
     <div class="loop">
       <figure class="fig"><div class="chart ring skel" id="chart-loop" data-chart="loop" role="img" aria-label="선순환 여섯 고리의 신호를 원으로 이은 그림"></div></figure>
       <ol class="gauges" id="gauges"></ol>
     </div>
     <h3 class="h3">운용 점검</h3>
-    <p class="note">지급과 매입에 쓸 잔액이 최근 7일의 속도로 며칠 치인지, 매입에 쓴 돈이 판매 대금 안인지다. 종합 신호에는 넣지 않는다.</p>
+    <p class="note">지급과 매입에 쓸 잔액이 최근 7일의 속도로 며칠 치인지, 매입에 쓴 돈이 판매 대금 안인지다. 같은 방식으로 점수를 매기지만 선순환 지수에는 넣지 않는다.</p>
     <ol class="gauges trio" id="reserves"></ol>
     <details>
-      <summary>신호 기준</summary>
+      <summary>지수 · 점수 기준</summary>
       <div class="scroll"><table id="tb-rules" class="words" aria-label="신호 기준"><thead></thead><tbody></tbody></table></div>
       <ul class="list">
-        <li>종합 신호는 여섯 고리 가운데 빨강이 둘 이상이면 주의, 빨강 하나 또는 노랑 둘 이상이면 지켜봄, 그 밖에는 좋음이다.</li>
+        <li data-h-rule="0">선순환 지수는 여섯 고리 점수의 평균과 가장 낮은 고리 점수를 반씩 섞은 값이다.</li>
+        <li data-h-rule="1">고리 점수(0~100)는 보는 값이 기준선 사이 어디쯤인지를 옮긴 것이다.</li>
+        <li>지수 추이는 같은 계산을 하루씩 앞당긴 7일 창으로 되풀이한 값이다. 직전 7일과 견줄 수 있는 날부터 그린다.</li>
         <li>늘 최근 7일(오늘 제외)을 직전 7일과 견준다. 위쪽의 기간 선택과는 상관없다.</li>
         <li>판매 대금은 밖의 지갑이 operations 계정으로 보낸 RLUSD로 본다. 금액이 같은 단위로 되풀이되어 기기 · 이용권 값으로 보았다.</li>
         <li><b>카드 · 계좌로 결제한 기기와 이용권은 원장에 없다.</b> 그래서 판매 고리와 매입 재원은 RLUSD 결제분만으로 매긴 값이고, 실제 판매가 더 많으면 신호는 지금보다 좋게 나온다. 카드 판매액을 따로 알면 그만큼 더해서 읽는다.</li>
@@ -1316,10 +1337,12 @@ details .scroll { margin-top: 8px; }
     var h = DATA.health;
     if (h) {
       L.push(''); L.push('■ 오늘의 현황 (최근 ' + h.days + '일 ' + md(h.from) + '~' + md(h.to) + ')');
-      L.push('- 종합 신호: ' + h.overall.label + ' (' + h.overall.counts + ')');
+      var ix = h.index, pt = function (l) { return l.score !== null && l.score !== undefined ? l.score + '점 ' : ''; };
+      if (ix) { L.push('- 선순환 지수: ' + ix.value + ' / 100 (' + h.overall.label + ')' + (ix.prev ? ' · 어제 ' + ix.prev.value : '') + (ix.week ? ' · 7일 전 ' + ix.week.value : '')); L.push('- 계산: ' + ix.calc + ' · 고리 ' + h.overall.counts); }
+      else L.push('- 종합 신호: ' + h.overall.label + ' (' + h.overall.counts + ')');
       if (h.takeaway) L.push('- 정리: ' + h.takeaway);
-      h.links.forEach(function (l) { L.push('- ' + l.name + ' ' + h.labels[l.status] + ': ' + l.short); });
-      h.reserves.forEach(function (l) { L.push('- ' + l.name + ' ' + h.labels[l.status] + ': ' + l.short); });
+      h.links.forEach(function (l) { L.push('- ' + l.name + ' ' + pt(l) + h.labels[l.status] + ': ' + l.short); });
+      h.reserves.forEach(function (l) { L.push('- ' + l.name + ' ' + pt(l) + h.labels[l.status] + ': ' + l.short); });
       L.push(''); L.push('■ 그날 요약'); h.comments.slice(0, 3).forEach(function (t) { L.push('- ' + t); });
       if (h.limits && h.limits.length) L.push('※ 판매 대금은 RLUSD 결제분만이다(카드 · 계좌 결제는 원장에 없음).');
     }
@@ -1374,17 +1397,21 @@ details .scroll { margin-top: 8px; }
     c.setAttribute('r', '10'); p.setAttribute('class', 'glyph'); p.setAttribute('d', GLYPH[status] || GLYPH.na);
     svg.appendChild(c); svg.appendChild(p); return svg;
   }
+  function bandsOf() { var h = DATA && DATA.health; return (h && h.index && h.index.bands) || [40, 70]; }
+  var signed = function (d) { return d > 0 ? '▲' + d : d < 0 ? '▼' + (-d) : '–'; };
   function gaugeEl(l, labels) {
     var el = function (tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text !== undefined) e.textContent = text; return e; };
     var li = el('li', 'gauge'), head = el('div', 'g-head'), ask = el('span', 'g-ask');
     head.appendChild(lampEl(l.status)); head.appendChild(el('span', 'g-name', l.name));
     if (l.owner && OWN[l.owner]) named(ask, l.owner, l.label, l.label); else ask.textContent = l.ask || '';
-    head.appendChild(ask); head.appendChild(el('span', 'g-st st-' + l.status, labels[l.status] || ''));
+    var B = bandsOf(), hasScore = l.score !== null && l.score !== undefined;
+    head.appendChild(ask); head.appendChild(el('span', 'g-st st-' + l.status, (hasScore ? l.score + '점 · ' : '') + (labels[l.status] || '')));
     var val = el('div', 'g-val'); val.appendChild(el('b', '', l.value)); val.appendChild(el('span', '', l.metric));
     var th = el('div', 'thermo st-' + l.status); th.style.setProperty('--p', (l.pos * 100).toFixed(1) + '%');
     th.appendChild(el('i')); th.appendChild(el('i')); th.appendChild(el('i')); th.appendChild(el('b'));
+    th.style.gridTemplateColumns = B[0] + 'fr ' + (B[1] - B[0]) + 'fr ' + (100 - B[1]) + 'fr';
     var tk = el('div', 'ticks'); tk.setAttribute('aria-hidden', 'true');
-    (l.ticks || []).forEach(function (t, i) { var sp = el('span', '', t); sp.style.left = ((i + 1) * 100 / 3).toFixed(2) + '%'; tk.appendChild(sp); });
+    (l.ticks || []).forEach(function (t, i) { var sp = el('span', '', t); sp.style.left = B[i] + '%'; tk.appendChild(sp); });
     li.appendChild(head); li.appendChild(val); li.appendChild(th); li.appendChild(tk);
     if (l.caveat) li.appendChild(el('p', 'g-cav', '※ ' + l.caveat));
     if (l.insight) li.appendChild(el('p', 'g-ins st-' + l.status, l.insight));     // 결과에 따른 요약 인사이트
@@ -1395,15 +1422,92 @@ details .scroll { margin-top: 8px; }
     var h = DATA.health; if (!h) return;
     var set = function (sel, text) { var e = $(sel); if (e) e.textContent = text; };
     set('[data-hwin]', '최근 ' + h.days + '일 · ' + md(h.from) + '~' + md(h.to));
-    set('[data-h-label]', h.overall.label); set('[data-h-counts]', '여섯 고리 · ' + h.overall.counts); set('[data-h-headline]', h.headline);
+    set('[data-h-headline]', h.headline);
+    var ix = h.index, stEl = $('[data-h-state]');
+    if (stEl) {                                   // 상태: 등 + 이름 + 어제 대비
+      stEl.replaceChildren(lampEl(h.overall.status), document.createTextNode(h.overall.label));
+      if (ix && ix.prev) { var sm = document.createElement('small'); sm.textContent = ix.delta ? '어제보다 ' + signed(ix.delta) + '점' : '어제와 같음'; stEl.appendChild(sm); }
+    }
+    var lines = function (sel, arr) { var e = $(sel); if (!e) return; e.replaceChildren(); arr.forEach(function (t) { var sp = document.createElement('span'); sp.textContent = t; e.appendChild(sp); }); };
+    lines('[data-h-calc]', ix ? ['지수 = ' + ix.calc, '여섯 고리 · ' + h.overall.counts] : ['여섯 고리 · ' + h.overall.counts]);
+    var pl = $('#idx-parts');
+    if (pl) {
+      pl.replaceChildren(); pl.hidden = !ix;
+      (ix ? ix.parts : []).forEach(function (p) {
+        var li = document.createElement('li'), nm = document.createElement('span'), bar = document.createElement('span'), sc = document.createElement('span'), dl = document.createElement('span'), B = ix.bands, has = p.score !== null;
+        li.className = 'st-' + p.status; nm.className = 'nm'; nm.textContent = p.name; bar.className = 'pbar'; sc.className = 'sc'; dl.className = 'dl';
+        if (has && ix.weak && ix.weak.key === p.key && ix.max > ix.min) { var em = document.createElement('em'); em.textContent = '최저'; nm.appendChild(em); }
+        bar.style.gridTemplateColumns = B[0] + 'fr ' + (B[1] - B[0]) + 'fr ' + (100 - B[1]) + 'fr'; bar.appendChild(document.createElement('i')); bar.appendChild(document.createElement('i')); bar.appendChild(document.createElement('i'));
+        if (has) { var fill = document.createElement('b'); fill.style.setProperty('--p', p.score + '%'); bar.appendChild(fill); }
+        sc.textContent = has ? p.score : '—'; dl.textContent = p.delta === null || p.delta === undefined ? '' : signed(p.delta);
+        li.title = p.name + ' ' + (has ? p.score + '점 · ' : '') + h.labels[p.status] + (p.delta ? ' · 어제 ' + p.prev + '점' : '');
+        li.appendChild(nm); li.appendChild(bar); li.appendChild(sc); li.appendChild(dl); pl.appendChild(li);
+      });
+    }
+    var tr = $('#idx-trend'), sr = ix && ix.series;
+    if (tr) {
+      tr.hidden = !(sr && sr.length > 1);
+      if (sr && sr.length > 1) {
+        set('[data-h-span]', md(sr[0].date) + '~' + md(sr[sr.length - 1].date) + ' · ' + sr.length + '일');
+        var mv = ['어제 ' + ix.prev.value + ' → 오늘 ' + ix.value + '(' + (ix.delta ? signed(ix.delta) : '같음') + ')' + (ix.week ? ' · 7일 전 ' + ix.week.value : '')];
+        if (ix.moved) mv.push('가장 많이 움직인 고리: ' + ix.moved.name + ' ' + ix.moved.from + ' → ' + ix.moved.to);
+        lines('[data-h-move]', mv);
+      }
+    }
+    (ix && ix.rules ? ix.rules : []).forEach(function (t, i) { set('[data-h-rule="' + i + '"]', t); });
     var tk = $('[data-h-takeaway]'); if (tk) { tk.textContent = h.takeaway || ''; tk.hidden = !h.takeaway; }
     var hl = $('[data-h-limit]'); if (hl) { var lm = h.limits || []; hl.hidden = !lm.length; hl.replaceChildren(); if (lm.length) { var sp = document.createElement('span'); var hb = document.createElement('b'); hb.textContent = '집계 한계 · '; sp.appendChild(hb); sp.appendChild(document.createTextNode(lm.join(' '))); hl.appendChild(sp); } }
-    var sig = $('[data-signal]');
-    if (sig) { $$('.bulb', sig).forEach(function (b) { b.classList.toggle('on', b.classList.contains(h.overall.status)); }); sig.setAttribute('aria-label', '종합 신호 ' + h.overall.label); }
     var ul = $('#brief-list'); if (ul) { ul.replaceChildren(); h.comments.forEach(function (t) { var li = document.createElement('li'); li.textContent = t; ul.appendChild(li); }); }
     var g = $('#gauges'); if (g) { g.replaceChildren(); h.links.forEach(function (l) { g.appendChild(gaugeEl(l, h.labels)); }); }
     var r = $('#reserves'); if (r) { r.replaceChildren(); h.reserves.forEach(function (l) { r.appendChild(gaugeEl(l, h.labels)); }); }
     table('#tb-rules', [{ key: 'name', label: '고리', text: 1 }, { key: 'metric', label: '보는 값', text: 1 }, { key: 'ok', label: '좋음', text: 1 }, { key: 'warn', label: '지켜봄', text: 1 }, { key: 'bad', label: '주의', text: 1 }], h.rules);
+  }
+  // 선순환 지수 게이지: 반원 0~100. 띠 셋(주의 · 지켜봄 · 좋음) 위에 지금 값까지 채우고 끝에 손잡이를 둔다
+  function drawIndex(el) {
+    var h = DATA.health, ix = h && h.index; if (!ix) return empty(el, '지수를 매길 자료가 모자랍니다.');
+    var f = setup(el, 160), w = f.w, th = 16, R = Math.max(70, Math.min(112, w / 2 - 28)), cx = w / 2, cy = R + th / 2 + 16, H = cy + 22;
+    f.h = H; f.svg.attr('viewBox', '0 0 ' + w + ' ' + H).attr('height', H);
+    var g = f.svg.append('g').attr('transform', 'translate(' + cx + ',' + cy + ')');
+    var ang = function (v) { return (-90 + 180 * v / 100) * Math.PI / 180; }, pt = function (v, r) { return [Math.sin(ang(v)) * r, -Math.cos(ang(v)) * r]; };
+    var arc = d3.arc().innerRadius(R - th / 2).outerRadius(R + th / 2).cornerRadius(3), B = ix.bands, pad = 1 / R;
+    var zones = [[0, B[0], 'bad'], [B[0], B[1], 'warn'], [B[1], 100, 'ok']], v = Math.max(0, Math.min(100, ix.value));
+    zones.forEach(function (z) {
+      var a0 = ang(z[0]) + (z[0] > 0 ? pad : 0), a1 = ang(z[1]) - (z[1] < 100 ? pad : 0);
+      g.append('path').attr('class', 'idx-track st-' + z[2]).attr('d', arc({ startAngle: a0, endAngle: a1 }));
+      if (v > z[0]) g.append('path').attr('class', 'idx-fill st-' + ix.status).attr('d', arc({ startAngle: a0, endAngle: Math.max(a0, Math.min(a1, ang(v))) }));
+    });
+    var k = pt(v, R); g.append('circle').attr('class', 'idx-knob st-' + ix.status).attr('cx', k[0]).attr('cy', k[1]).attr('r', th / 2 + 3);
+    [[0, 'middle'], [100, 'middle']].forEach(function (t) { g.append('text').attr('class', 'tick').attr('x', pt(t[0], R)[0]).attr('y', 17).attr('text-anchor', t[1]).text(t[0]); });
+    B.forEach(function (b) { var q = pt(b, R + th / 2 + 10); g.append('text').attr('class', 'tick').attr('x', q[0]).attr('y', q[1] + 4).attr('text-anchor', 'middle').text(b); });
+    g.append('text').attr('class', 'idx-num').attr('x', 0).attr('y', -12).attr('text-anchor', 'middle').text(ix.value);
+    g.append('text').attr('class', 'idx-of').attr('x', 0).attr('y', 8).attr('text-anchor', 'middle').text('100점 만점');
+    el.setAttribute('aria-label', '선순환 지수 ' + ix.value + '점(100점 만점), ' + h.labels[ix.status] + (ix.prev ? ', 어제 ' + ix.prev.value + '점' : ''));
+    var rows = [{ label: '여섯 고리 평균', value: ix.mean + '점' }, { label: '가장 약한 고리 · ' + ix.weak.name, value: ix.weak.score + '점' }];
+    if (ix.prev) rows.push({ label: '어제(' + md(ix.prev.date) + ')', value: ix.prev.value + '점', sep: 1 }); if (ix.week) rows.push({ label: '7일 전(' + md(ix.week.date) + ')', value: ix.week.value + '점' });
+    var show = function () { f.tip.replaceChildren.apply(f.tip, tipRows('선순환 지수 ' + ix.value + '점 · ' + h.labels[ix.status], rows)); f.tip.hidden = false; placeTip(f, cx + 30, cy - R * 0.5); };
+    f.svg.append('rect').attr('x', cx - R - th).attr('y', 0).attr('width', 2 * (R + th)).attr('height', cy + 4).attr('fill', 'transparent')
+      .on('pointerenter', show).on('pointerdown', function (ev) { ev.stopPropagation(); show(); }).on('pointerleave', function (ev) { if (ev.pointerType === 'mouse') f.tip.hidden = true; });
+  }
+  // 지수 추이: 하루씩 앞당긴 7일 창의 지수. 점선은 띠의 경계(40 · 70)
+  function drawTrend(el) {
+    var h = DATA.health, ix = h && h.index, sr = ix && ix.series; if (!sr || sr.length < 2) { el.classList.remove('skel'); el.replaceChildren(); return; }
+    var f = setup(el, 70), m = { l: 5, r: 26, t: 8, b: 17 }, val = function (d) { return d.value; };
+    var lo = Math.max(0, d3.min(sr, val) - 8), hi = Math.min(100, d3.max(sr, val) + 8);
+    var x = d3.scaleLinear().domain([0, sr.length - 1]).range([m.l, f.w - m.r]), y = d3.scaleLinear().domain([lo, hi]).range([f.h - m.b, m.t]), g = f.svg.append('g');
+    ix.bands.forEach(function (b) { if (b <= lo || b >= hi) return; g.append('line').attr('class', 'spark-ref').attr('x1', m.l).attr('x2', f.w - m.r).attr('y1', y(b)).attr('y2', y(b)); g.append('text').attr('class', 'tick').attr('x', f.w - m.r + 6).attr('y', y(b) + 4).text(b); });
+    g.append('path').attr('class', 'spark-area').attr('d', d3.area().x(function (d, i) { return x(i); }).y0(f.h - m.b).y1(function (d) { return y(d.value); })(sr));
+    g.append('path').attr('class', 'spark-line').attr('d', d3.line().x(function (d, i) { return x(i); }).y(function (d) { return y(d.value); })(sr));
+    var last = sr[sr.length - 1]; g.append('circle').attr('class', 'spark-dot st-' + last.status).attr('cx', x(sr.length - 1)).attr('cy', y(last.value)).attr('r', 4.5);
+    g.append('text').attr('class', 'tick').attr('x', m.l).attr('y', f.h - 3).attr('text-anchor', 'start').text(md(sr[0].date)); g.append('text').attr('class', 'tick').attr('x', f.w - m.r).attr('y', f.h - 3).attr('text-anchor', 'end').text(md(last.date));
+    var focus = g.append('circle').attr('class', 'spark-focus').attr('r', 4).attr('visibility', 'hidden');
+    var pick = function (ev) {
+      var px = d3.pointer(ev, f.svg.node())[0], i = Math.max(0, Math.min(sr.length - 1, Math.round(x.invert(px)))), d = sr[i];
+      focus.attr('cx', x(i)).attr('cy', y(d.value)).attr('visibility', 'visible');
+      var rows = (d.scores || []).map(function (sc, j) { return { label: ix.parts[j] ? ix.parts[j].name : '', value: sc === null ? '—' : sc + '점' }; });
+      f.tip.replaceChildren.apply(f.tip, tipRows(md(d.date) + ' · ' + d.value + '점 · ' + h.labels[d.status], rows)); f.tip.hidden = false; placeTip(f, x(i), y(d.value));
+    };
+    f.svg.append('rect').attr('x', 0).attr('y', 0).attr('width', f.w).attr('height', f.h).attr('fill', 'transparent')
+      .on('pointermove', pick).on('pointerdown', function (ev) { ev.stopPropagation(); pick(ev); }).on('pointerleave', function (ev) { if (ev.pointerType === 'mouse') { f.tip.hidden = true; focus.attr('visibility', 'hidden'); } });
   }
   // 선순환 고리 그림: 여섯 고리를 원으로 잇는다. 선의 모양은 그 고리의 신호(실선 좋음 · 긴 점선 지켜봄 · 짧은 점선 주의)
   function drawLoop(el) {
@@ -1415,7 +1519,7 @@ details .scroll { margin-top: 8px; }
       g.append('path').attr('class', 'ring-arc st-' + l.status).attr('d', 'M' + p0[0] + ',' + p0[1] + 'A' + R + ',' + R + ' 0 0 1 ' + p1[0] + ',' + p1[1]);
       g.append('polygon').attr('class', 'ring-head st-' + l.status).attr('points', [[p1[0] + tx * 6, p1[1] + ty * 6], [p1[0] - tx * 3 + rx * 4.5, p1[1] - ty * 3 + ry * 4.5], [p1[0] - tx * 3 - rx * 4.5, p1[1] - ty * 3 - ry * 4.5]].map(function (q) { return q.join(','); }).join(' '));
     });
-    var showTip = function (l, p) { f.tip.replaceChildren.apply(f.tip, tipRows(l.name + ' · ' + h.labels[l.status], [{ label: l.metric, value: l.value }])); f.tip.hidden = false; placeTip(f, p[0], p[1]); };
+    var showTip = function (l, p) { f.tip.replaceChildren.apply(f.tip, tipRows(l.name + ' · ' + (l.score !== null && l.score !== undefined ? l.score + '점 · ' : '') + h.labels[l.status], [{ label: l.metric, value: l.value }])); f.tip.hidden = false; placeTip(f, p[0], p[1]); };
     h.links.forEach(function (l, i) {
       var a = ang(i), p = pt(a, R), c = Math.cos(a), s = Math.sin(a), q = pt(a, R + lr + 9), anchor = c > 0.3 ? 'start' : c < -0.3 ? 'end' : 'middle';
       var node = g.append('g').attr('class', 'st-' + l.status);
@@ -1424,10 +1528,10 @@ details .scroll { margin-top: 8px; }
       node.append('path').attr('class', 'glyph').attr('d', GLYPH[l.status] || GLYPH.na).attr('transform', 'translate(' + p[0] + ',' + p[1] + ') scale(1.5)').attr('vector-effect', 'non-scaling-stroke');
       var y1 = anchor === 'middle' ? (s < 0 ? p[1] - lr - 22 : p[1] + lr + 18) : q[1] - 3, x = anchor === 'middle' ? p[0] : q[0];
       g.append('text').attr('class', 'flow-name').attr('x', x).attr('y', y1).attr('text-anchor', anchor).text(l.name);
-      g.append('text').attr('class', 'flow-val').attr('x', x).attr('y', y1 + 15).attr('text-anchor', anchor).text(h.labels[l.status]);
+      g.append('text').attr('class', 'flow-val').attr('x', x).attr('y', y1 + 15).attr('text-anchor', anchor).text(l.score !== null && l.score !== undefined ? l.score + '점' : h.labels[l.status]);
     });
-    g.append('text').attr('class', 'ring-num').attr('x', cx).attr('y', cy + 4).attr('text-anchor', 'middle').text(h.overall.ok + '/' + h.overall.total);
-    g.append('text').attr('class', 'tick').attr('x', cx).attr('y', cy + 22).attr('text-anchor', 'middle').text('초록 고리');
+    g.append('text').attr('class', 'ring-num').attr('x', cx).attr('y', cy + 4).attr('text-anchor', 'middle').text(h.index ? h.index.value : h.overall.ok + '/' + h.overall.total);
+    g.append('text').attr('class', 'tick').attr('x', cx).attr('y', cy + 22).attr('text-anchor', 'middle').text(h.index ? '선순환 지수' : '초록 고리');
     f.svg.on('pointerdown', function () { f.tip.hidden = true; });
   }
 
@@ -1444,7 +1548,7 @@ details .scroll { margin-top: 8px; }
   }
 
   function chartFns() {
-    return { loop: drawLoop, flow: drawFlow, user: drawUser, market: drawMarket, money: drawMoney, scatter: drawScatter, wallet: drawWalletChart,
+    return { index: drawIndex, trend: drawTrend, loop: drawLoop, flow: drawFlow, user: drawUser, market: drawMarket, money: drawMoney, scatter: drawScatter, wallet: drawWalletChart,
       price: function (el) { drawLines(el, [{ key: 'price_rlusd', label: '가격(RLUSD)', color: 'var(--s1)' }], F.f4, false); },
       xrp: function (el) { drawLines(el, [{ key: 'xrp_rlusd', label: '1 XRP 값(RLUSD)', color: 'var(--s6)' }], F.f4, false); },
       wx: function (el) { drawLines(el, [{ key: 'price_xrp', label: 'WLBN 1개당 XRP', color: 'var(--s1)' }], F.f4, false); },

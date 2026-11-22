@@ -44,6 +44,9 @@ const HEALTH = {
   price: [-0.30, -0.15, -0.05, 0.30],  // 가격: 7일 변화
   runway: [0, 7, 30, 60],              // 여력: 잔액 ÷ 하루 평균(일)
   cover: [-3, -2, -1, 0],              // 매입 재원: −(매입 지출 ÷ 판매 대금). 판매 대금 안이면 좋음
+  // 선순환 지수(0~100). 고리 점수: 주의 기준선 = bands[0]점, 좋음 기준선 = bands[1]점, 그 사이와 바깥은 비례.
+  // 지수 = 여섯 고리 평균 × (1 − weak) + 가장 낮은 고리 × weak — 고리는 가장 약한 곳만큼만 돈다. trend = 추이에 넣는 날 수
+  index: { bands: [40, 70], weak: 0.5, trend: 21 },
   // bot 계정에 RLUSD · XRP 를 보낸 적이 있는 계정(11/22 원장 확인: operations 60,000 RLUSD, treasury 22,000 RLUSD + 24,600 XRP)
   funders: ['operations', 'treasury'],
 };
@@ -701,8 +704,8 @@ function buildDatasets(S, opts) {
     epoch_budget: e.epoch_budget ?? null, epoch_distributed: e.epoch_distributed ?? null, epoch_date: e.epoch_date ?? null, circulating: e.circulating ?? null,
   };
   // ── 건강 신호 · 선순환 고리 · 그날 요약
-  const buildHealth = () => {
-    const H = HEALTH, fullDays = daily.filter((r) => !r.partial && r.date >= C.POOL_OPEN);
+  const buildHealth = (cut) => {
+    const H = HEALTH, allDays = daily.filter((r) => !r.partial && r.date >= C.POOL_OPEN), fullDays = cut ? allDays.slice(0, -cut) : allDays;
     const W = fullDays.slice(-H.days), P = fullDays.slice(-2 * H.days, -H.days);
     if (W.length < 3) return null;
     const base = fullDays[fullDays.length - W.length - 1] || null;     // 창 바로 앞 날(가격 · 풀의 출발 값)
@@ -712,13 +715,15 @@ function buildDatasets(S, opts) {
     const p1 = (x) => (Math.abs(x) * 100).toFixed(1) + '%', sp = (x) => (x < 0 ? '−' : '+') + p1(x);
     const f4 = (x) => Number(x).toFixed(4), d1 = (x) => (x >= 100 ? n(x) : String(Math.round(x * 10) / 10));
     const sumOf = (rows, f) => rows.reduce((t, r) => t + (r[f] || 0), 0), inWin = (k, a, b) => k >= a && k <= b;
+    const B0 = H.index.bands[0] / 100, B1 = H.index.bands[1] / 100;
     const place = (v, T) => {
       const seg = (a, b) => (b > a ? Math.min(1, Math.max(0, (v - a) / (b - a))) : 1);
-      return v < T[1] ? seg(T[0], T[1]) / 3 : v < T[2] ? (1 + seg(T[1], T[2])) / 3 : (2 + seg(T[2], T[3])) / 3;
+      return v < T[1] ? seg(T[0], T[1]) * B0 : v < T[2] ? B0 + seg(T[1], T[2]) * (B1 - B0) : B1 + seg(T[2], T[3]) * (1 - B1);
     };
+    const pts = (p) => Math.floor(p * 100 + 1e-9);          // 점수는 내림 — 기준선에 못 미친 값이 기준 점수로 보이지 않게
     const mk = (key, name, ask, v, T, o) => {
       const ok = v !== null && v !== undefined && isFinite(v);
-      return Object.assign({ key, name, ask, status: !ok ? 'na' : v < T[1] ? 'bad' : v < T[2] ? 'warn' : 'ok', pos: ok ? r3(place(v, T)) : 0 }, o);
+      return Object.assign({ key, name, ask, status: !ok ? 'na' : v < T[1] ? 'bad' : v < T[2] ? 'warn' : 'ok', pos: ok ? r3(place(v, T)) : 0, score: ok ? pts(place(v, T)) : null }, o);
     };
 
     // 원장 기록에서 창 안의 값
@@ -766,6 +771,7 @@ function buildDatasets(S, opts) {
       short: '보상 받은 지갑 ' + n(paidW.size) + '곳' + (dj === null ? '' : '(' + sp(dj) + ')') + ' · ' + W.length + '일 가운데 ' + payDays + '일 지급',
     });
     payL.status = worse(payL.status, payV < H.pay[1] ? 'bad' : payV < H.pay[2] ? 'warn' : 'ok');
+    if (dj !== null) { const p2 = Math.min(place(dj, H.join), place(payV, H.pay)); payL.pos = r3(p2); payL.score = pts(p2); }
     links.push(payL);
     const sr = paid > 0 ? sold / paid : null;
     links.push(mk('hold', '보유', '받은 만큼 들고 있나', sr === null ? null : 1 - sr, H.hold, {
@@ -933,14 +939,38 @@ function buildDatasets(S, opts) {
       byKey.cover.insight = t;
     }
 
-    // 종합: 빨강 둘 이상이면 주의, 빨강 하나 또는 노랑 둘 이상이면 지켜봄
+    // 종합: 선순환 지수(0~100). 여섯 고리 점수의 평균과 가장 낮은 고리 점수를 섞는다(H.index). bands[0] 미만 주의 · bands[1] 이상 좋음
     const cnt = { ok: 0, warn: 0, bad: 0, na: 0 }; for (const l of links) cnt[l.status]++;
-    const overall = cnt.na === links.length ? 'na' : cnt.bad >= 2 ? 'bad' : (cnt.bad === 1 || cnt.warn >= 2) ? 'warn' : 'ok';
+    const scored = links.filter((l) => l.score !== null), IX = H.index, pc = (x) => Math.round(x * 100) + '%';
+    let index = null;
+    if (scored.length) {
+      const mean = Math.round(scored.reduce((t, l) => t + l.score, 0) / scored.length * 10) / 10;
+      let weak = scored[0], top = scored[0]; for (const l of scored) { if (l.score < weak.score) weak = l; if (l.score > top.score) top = l; }
+      const value = Math.round(mean * (1 - IX.weak) + weak.score * IX.weak);
+      index = { value, status: value < IX.bands[0] ? 'bad' : value < IX.bands[1] ? 'warn' : 'ok', mean, min: weak.score, max: top.score, weak: { key: weak.key, name: weak.name, score: weak.score },
+        bands: IX.bands, weak_weight: IX.weak, parts: links.map((l) => ({ key: l.key, name: l.name, score: l.score, status: l.status })),
+        calc: (IX.weak === 0.5 ? '(평균 ' + mean + ' + 최저 ' + weak.score + ') ÷ 2' : '평균 ' + mean + ' × ' + pc(1 - IX.weak) + ' + 최저 ' + weak.score + ' × ' + pc(IX.weak)) + ' = ' + value,
+        rules: ['선순환 지수 = 여섯 고리 점수의 평균 × ' + pc(1 - IX.weak) + ' + 가장 낮은 고리 점수 × ' + pc(IX.weak) + '. 고리는 가장 약한 곳만큼만 돌기 때문에 평균만 쓰지 않는다. ' + IX.bands[1] + '점 이상 좋음 · ' + IX.bands[0] + '~' + (IX.bands[1] - 1) + '점 지켜봄 · ' + IX.bands[0] + '점 미만 주의.',
+          '고리 점수(0~100)는 보는 값이 기준선 사이 어디쯤인지를 옮긴 것이다. 주의 기준선이 ' + IX.bands[0] + '점, 좋음 기준선이 ' + IX.bands[1] + '점이고 그 사이와 바깥은 비례로 나눈다(온도계의 자리와 같다). 자료가 없는 고리는 뺀다.'] };
+      if (!cut) {                                  // 추이: 같은 계산을 하루씩 앞당긴 창으로 되풀이한다(직전 7일과 견줄 수 있는 날부터)
+        const series = [];
+        for (let c = Math.min(IX.trend - 1, allDays.length - 1); c >= 1; c--) { const h = buildHealth(c); if (h && h.index && h.prev_from) series.push({ date: h.to, value: h.index.value, status: h.index.status, scores: h.index.parts.map((p) => p.score) }); }
+        series.push({ date: to, value, status: index.status, scores: index.parts.map((p) => p.score) });
+        const at = (k) => (series.length > k ? series[series.length - 1 - k] : null);
+        index.series = series; index.prev = at(1); index.week = at(7); index.delta = index.prev ? value - index.prev.value : null;
+        // 어제와 견줘 가장 많이 움직인 고리
+        if (index.prev) { index.parts.forEach((p, i) => { const b = index.prev.scores[i]; p.prev = b; p.delta = p.score === null || b === null || b === undefined ? null : p.score - b; });
+          const mv = index.parts.filter((p) => p.delta).sort((x, y) => Math.abs(y.delta) - Math.abs(x.delta))[0]; index.moved = mv ? { key: mv.key, name: mv.name, from: mv.prev, to: mv.score } : null; }
+      }
+    }
+    const overall = index ? index.status : 'na';
     const parts = ['초록 ' + cnt.ok]; if (cnt.warn) parts.push('노랑 ' + cnt.warn); if (cnt.bad) parts.push('빨강 ' + cnt.bad); if (cnt.na) parts.push('자료 없음 ' + cnt.na);
     const names = (st) => links.filter((l) => l.status === st).map((l) => l.name);
     const blocked = names('bad'), watch = names('warn');
-    let headline = '선순환 여섯 고리 가운데 ' + parts.join(' · ') + '.';
-    headline += blocked.length ? ' ' + blocked.join(' · ') + ' 고리가 막혀 있다.' : watch.length ? ' ' + watch.join(' · ') + ' 고리를 지켜볼 때다.' : ' 막힌 고리가 없다.';
+    const ida = (w) => w + ((w.charCodeAt(w.length - 1) - 0xAC00) % 28 ? '이다' : '다');
+    let headline = !index ? '선순환 여섯 고리 가운데 ' + parts.join(' · ') + '.' : '선순환 지수 ' + index.value + '점(' + ST[index.status] + (index.prev ? ' · 어제 ' + index.prev.value + '점' : '') + ').';
+    if (index) headline += index.mean - index.min >= 15 ? ' 여섯 고리 평균은 ' + Math.round(index.mean) + '점인데 가장 약한 ' + index.weak.name + ' 고리가 ' + index.weak.score + '점이라 지수를 끌어내렸다.' : ' 여섯 고리가 ' + index.min + '~' + index.max + '점으로 고르다.';
+    headline += blocked.length ? ' 막힌 고리는 ' + (watch.length ? blocked.join(' · ') + ', 지켜볼 고리는 ' + ida(watch.join(' · ')) : ida(blocked.join(' · '))) + '.' : watch.length ? ' 지켜볼 고리는 ' + ida(watch.join(' · ')) + '.' : ' 막힌 고리가 없다.';
 
     // 한 줄 정리: 고리끼리 이어서 읽는다
     const take = [];
@@ -993,7 +1023,7 @@ function buildDatasets(S, opts) {
     return {
       from, to, prev_from: pFrom, prev_to: pTo, days: W.length, day: D.date,
       overall: { status: overall, label: ST[overall], ok: cnt.ok, warn: cnt.warn, bad: cnt.bad, na: cnt.na, total: links.length, counts: parts.join(' · ') },
-      headline, takeaway, comments, links, reserves, rules, xrp, labels: ST,
+      index, headline, takeaway, comments, links, reserves, rules, xrp, labels: ST,
       limits: [LIMIT_CARD + ' 판매 고리와 매입 재원은 그만큼 낮게(나쁘게) 보일 수 있다 — 하한으로 읽는다.', 'XRP 등 다른 통화로 낸 결제, operations 말고 다른 계정으로 받은 결제도 빠져 있다.'],
     };
   };
