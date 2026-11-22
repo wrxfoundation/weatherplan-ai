@@ -137,7 +137,7 @@
   .readout .k { font-size: 10.5px; letter-spacing: .06em; text-transform: uppercase; color: var(--cap); font-weight: 700; font-family: var(--display); }
   /* 여섯 측정 요소를 같은 크기의 막대로. 트랙에는 등급 구간(좋음·보통·주의·경고)이 옅게 깔리고, 막대와 숫자 색은 지금 등급을 따른다 */
   .bars { display: flex; flex-direction: column; gap: 5px; margin-top: 6px; }
-  .bar { display: grid; grid-template-columns: 46px 1fr 42px; align-items: center; gap: 6px; }
+  .bar { display: grid; grid-template-columns: 46px 1fr 44px; align-items: center; gap: 9px; }   /* 네 자리 숫자(2,131)가 막대 손잡이에 닿지 않게 */
   .hint { margin-top: 5px; font-size: 10px; color: var(--cap); font-family: var(--body); }
   .bar .bl { font-family: var(--display), var(--body); font-size: 11px; font-weight: 700; color: var(--ink-2); line-height: 1.05; white-space: nowrap; }
   .bar .bl small { display: block; font-size: 9.5px; font-weight: 500; color: var(--cap); }
@@ -151,7 +151,20 @@
   [data-lv="good"] { --lvc: #1878F2; } [data-lv="ok"] { --lvc: #37B76A; } [data-lv="warn"] { --lvc: #E0741E; } [data-lv="alert"] { --lvc: #D93A2B; }
   .bar i[data-lv] { background: var(--lvc); }
   .bar b[data-lv="warn"], .bar b[data-lv="alert"] { color: var(--lvc); }
-  #mini { width: 100%; height: 56px; margin-top: 6px; border-radius: 8px; background: #f6f6fc; display: block; }
+  /* 곡선(v0.16.2): 두 줄 — 위 CO₂ · 아래 PM2.5, 줄마다 제 눈금과 기준선. 가리키면 그 시각의 값 */
+  .curve { position: relative; margin-top: 6px; border-radius: 8px; }
+  #mini { width: 100%; height: 84px; border-radius: 8px; background: #f6f6fc; display: block; cursor: crosshair; touch-action: pan-y; }
+  .curve .live { position: absolute; left: -4px; top: -4px; width: 8px; height: 8px; border-radius: 50%; pointer-events: none; --pc: 31,143,234; animation: livePulse 2s ease-out infinite; }   /* 지금 점에서 번지는 고리 */
+  .curve .live[data-lv="warn"] { --pc: 224,116,30; } .curve .live[data-lv="alert"] { --pc: 217,58,43; } .curve .live[hidden] { display: none; }
+  @keyframes livePulse { 0% { box-shadow: 0 0 0 0 rgba(var(--pc), .55); } 75%, 100% { box-shadow: 0 0 0 9px rgba(var(--pc), 0); } }
+  /* 테두리를 도는 빛: 환기 안내가 떠 있는 동안만 — 곧 1,000 을 넘는다 = 호박색, 넘었다 = 빨강 */
+  @property --beam { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
+  .curve::after { content: ""; position: absolute; inset: -1px; border-radius: 9px; padding: 1.5px; pointer-events: none; opacity: 0; transition: opacity .5s ease; --bc: 217,58,43;
+    background: conic-gradient(from var(--beam), rgba(var(--bc), 0) 0 60%, rgba(var(--bc), .95) 86%, rgba(var(--bc), 0) 100%), linear-gradient(rgba(var(--bc), .26), rgba(var(--bc), .26));
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude; }
+  .curve.beam::after { opacity: 1; animation: beam 3.4s linear infinite; }
+  .curve.beam.soon::after { --bc: 190,120,10; }
+  @keyframes beam { to { --beam: 360deg; } }
   .status { margin-top: 6px; font-size: 11px; color: var(--ink-2); display: flex; gap: 5px; flex-wrap: wrap; }
   .pill { border: 1px solid var(--line); border-radius: 999px; padding: 1px 8px; background: #fff; white-space: nowrap; }
   .pill.on { border-color: var(--violet); color: var(--violet); }
@@ -271,7 +284,7 @@
     .readout.s12 .screens { grid-template-columns: 1fr 1fr; } .readout.s12 .screens .k3, .readout.s12 .screens .sc[data-screen="0"] { grid-column: 1 / -1; }
     .readout.s111 .screens { grid-template-columns: repeat(3, 1fr); gap: 5px; } .readout.s111 .screens .k3 { grid-column: 1 / -1; }
     .readout.s0 .screens { display: none; }
-    .readout.tight .hint { display: none; } .readout.tight .bars { gap: 3px; } .readout.tight #mini { height: 44px; } .readout.tight .status { gap: 4px; font-size: 10.5px; margin-top: 5px; } .readout.tight .screens { margin-top: 5px; }
+    .readout.tight .hint { display: none; } .readout.tight .bars { gap: 3px; } .readout.tight #mini { height: 54px; } .readout.cs #mini { height: 70px; } .readout.tight .status { gap: 4px; font-size: 10.5px; margin-top: 5px; } .readout.tight .screens { margin-top: 5px; }
     .controls { position: absolute; left: 22px; bottom: 74px; margin: 0; display: flex; gap: 8px; flex-wrap: wrap-reverse; max-width: calc(100% - 54px - var(--ro-w)); z-index: 2; }   /* 버튼 줄은 카드 왼쪽에서 멈춘다. 넘치는 것(시계)은 윗줄로 */
     .btn { background: rgba(10,10,32,.5); backdrop-filter: blur(6px); border-color: rgba(255,255,255,.35); min-height: 38px; padding: 9px 15px; }
     .btn:hover { background: #fff; color: var(--navy); }
@@ -461,7 +474,7 @@
   .gbar .gstop { grid-row: 2; grid-column: 3; }
   @media (prefers-reduced-motion: reduce) { .g3lab { animation: none !important; } .hvbox .hvimg { transition: none; } }
 
-  @media (prefers-reduced-motion: reduce) { .tick.new { animation: none; } .fcta { animation: none; } .still, .clip, .patch, .screen-wrap, .dev img { transition: none; } .ring { animation: none; } }
+  @media (prefers-reduced-motion: reduce) { .tick.new { animation: none; } .fcta { animation: none; } .curve .live, .curve.beam::after { animation: none; } .still, .clip, .patch, .screen-wrap, .dev img { transition: none; } .ring { animation: none; } }
 </style>
 </head>
 <body>
@@ -544,7 +557,7 @@
       <div class="bar"><span class="bl"><span data-i18n="rh">습도</span><small>%</small></span><span class="bt" data-bar="rh"><i id="rhb"></i></span><b id="rhv">55</b></div>
     </div>
     <div class="hint" data-i18n="hint">막대를 끌어 값을 바꿔 보세요 · 아래 기기 화면을 누르면 크게</div>
-    <canvas id="mini" width="400" height="128" aria-label="최근 두 시간의 PM2.5와 CO₂ 곡선. 오른쪽 점선은 지금 그대로 둘 때 앞으로 30분"></canvas>
+    <div class="curve" id="curve"><canvas id="mini" width="400" height="168" role="img" aria-label="최근 두 시간의 CO₂(위)와 PM2.5(아래) 곡선. 오른쪽 점선은 지금 그대로 둘 때 앞으로 30분. 가리키면 그 시각의 값"></canvas><i class="live" id="mini-live" hidden></i></div>
     <div class="status">
       <span class="pill" id="p-window">창문 닫힘</span>
       <span class="pill" id="p-cook" hidden>조리 안 함</span>
@@ -648,7 +661,7 @@
       gShare: (s, p, u) => `Measured Room · 환기 타이밍 ${s} ${p}%\n공기는 눈에 보이지 않아요. 측정해야 때를 알아요.\n${u}`,
       badN: (n) => `장면 ${n}장을 불러오지 못했습니다`, loading: (d, n) => `장면 불러오는 중 ${d}/${n}`, noclip: "영상 루프 없이 사진으로 표시", nofx: "효과 레이어 없음(이 브라우저는 WebGL 미지원)",
       // 예측 · 미리 알림 · 1,000 넘은 시간(v0.16)
-      soonCta: (n) => `${n}분 뒤 1,000을 넘습니다`, soonSub: "탭하면 미리 창문 열기", soonSubHvac: "탭하면 미리 환기 장치 켜기", fcZone: "+30분",
+      soonCta: (n) => `${n}분 뒤 1,000을 넘습니다`, soonSub: "탭하면 미리 창문 열기", soonSubHvac: "탭하면 미리 환기 장치 켜기", fcZone: "+30분", axAgo: "2시간 전", axNow: "지금", fcAt: (n) => `+${n}분`, fcTag: "예측", curveNote: "최근 두 시간의 CO₂(위)와 PM2.5(아래) 곡선. 오른쪽 점선은 지금 그대로 둘 때 앞으로 30분. 가리키면 그 시각의 값",
       overN: (m) => `· 1,000 넘은 시간 ${m >= 60 ? Math.floor(m / 60) + "시간 " : ""}${m % 60}분`,
       // 카페 · 사무실 · 회의실(v0.15)
       capArt: "도면 장면 · 개념 시뮬레이션 · 입자는 예시", doorOpen: "문 열림", doorOpenMix: "문 열림 · 사무실 공기와 섞임", doorClosed: "문 닫힘", bDoorOpen: "문 열어 두기", bDoorOpen2: "문 열기", bDoorClose: "문 닫기",
@@ -689,7 +702,7 @@
       gAgain: "Play again", gNoDevBtn: "Try without the monitor", gDevBtn: "Play with the monitor", gCopy: "Copy result", gCopied: "Copied", gExplore: "Back to the simulation",
       gShare: (s, p, u) => `Measured Room · Air Timing ${s} ${p}%\nYou can't see the air. Measuring tells you when to open the window.\n${u}`,
       badN: (n) => `${n} scene(s) failed to load`, loading: (d, n) => `Loading scenes ${d}/${n}`, noclip: "Showing photos without video loops", nofx: "No effects layer (WebGL unsupported)",
-      soonCta: (n) => `Passing 1,000 in ${n} min`, soonSub: "Tap to open the window early", soonSubHvac: "Tap to switch the ventilation on early", fcZone: "+30 min",
+      soonCta: (n) => `Passing 1,000 in ${n} min`, soonSub: "Tap to open the window early", soonSubHvac: "Tap to switch the ventilation on early", fcZone: "+30 min", axAgo: "2 h ago", axNow: "now", fcAt: (n) => `+${n} min`, fcTag: "forecast", curveNote: "CO₂ (top) and PM2.5 (bottom) over the last two hours. The dotted part on the right is the next 30 minutes if nothing changes. Point at it to read a value",
       overN: (m) => `· over 1,000 for ${m >= 60 ? Math.floor(m / 60) + " h " : ""}${m % 60} min`,
       capArt: "drawn scene · concept simulation · particles are illustrative", doorOpen: "Door open", doorOpenMix: "Door open · mixing with the office", doorClosed: "Door closed", bDoorOpen: "Prop the door open", bDoorOpen2: "Open the door", bDoorClose: "Close the door",
       hvacOn: "Ventilation on", hvacOff: "Ventilation off", bHvacOn: "Start ventilation", bHvacOff: "Stop ventilation", ventSubHvac: "Tap to switch on the ventilation",
@@ -1097,8 +1110,8 @@
   function hud() {
     const s = ST[cur];
     refreshForecast();
-    pmv.textContent = s.pm.toFixed(0); co2v.textContent = s.co2.toFixed(0); clock.textContent = clockText();   // 배속은 옆 버튼에 있다
-    pm10v.textContent = pm10Of(s).toFixed(0); vocv.textContent = s.voc.toFixed(0); tv.textContent = s.temp.toFixed(1); rhv.textContent = s.rh.toFixed(0);
+    pmv.textContent = s.pm.toFixed(0); co2v.textContent = fmtN(s.co2);   // 네 자리는 쉼표(곡선 · 안내 문구와 같은 표기) clock.textContent = clockText();   // 배속은 옆 버튼에 있다
+    pm10v.textContent = pm10Of(s).toFixed(0); vocv.textContent = fmtN(s.voc); tv.textContent = s.temp.toFixed(1); rhv.textContent = s.rh.toFixed(0);
     // 막대와 숫자 색: 좋음(파랑) → 보통(초록) → 주의(주황) → 경고(빨강). PM·VOCs 는 기기 등급, CO₂ 는 800 주의·1000 경고, 온·습도는 편안 범위 밖이면 주의
     const p10 = pm10Of(s);
     setBar("pm", s.pm, s.pm > 75 ? "alert" : s.pm > 35 ? "warn" : s.pm > 15 ? "ok" : "good");
@@ -1123,6 +1136,7 @@
     ventB.textContent = s.alertAt >= 0 || !soon ? t("ventCta") : t("soonCta", soon);
     ventS.textContent = t(s.alertAt >= 0 || !soon ? (R.phys ? "ventSubHvac" : "ventSub") : (R.phys ? "soonSubHvac" : "soonSub"));   // 기기 알림이 켜져 있고 창이 닫혀 있는 동안만 "환기해야 합니다"
     cookBtn.hidden = GAME.on || !(A && R.pan && s.cook <= 0);
+    curveBox.classList.toggle("beam", !ventBtn.hidden); curveBox.classList.toggle("soon", !(s.alertAt >= 0) && soon > 0);   // 환기 안내가 떠 있는 동안 곡선 테두리에 빛이 돈다
     if (vWas !== ventBtn.hidden || cWas !== cookBtn.hidden) placeRing();   // 환기 안내가 나타나거나 사라지면 발생원 버튼 자리를 다시 잡는다   // 주방에서 조리 중이 아닐 때만 프라이팬 위 "요리 15분"
     bNight.classList.toggle("on", G.night); lbl(bNight, G.night ? t("bNightOn") : t("bNight"));
     for (const sp of SPECIES) { const el = legendEls[sp.key]; if (el) el.style.opacity = (0.3 + 0.7 * sp.frac(s)).toFixed(2); }
@@ -1131,37 +1145,85 @@
 
   /* ── 곡선 (오른쪽 카드) ── */
   /* 최근 2시간(시뮬레이션 시간) PM2.5·CO₂ 곡선. 종류 색은 입자와 같고, 값 범위는 창 안에서 자동(최소 폭 보장)이라 오르내림이 보인다. 주의·경고 문턱은 점선. */
-  const CHART = { pm: { col: "#FF6B0A", warn: 35, alert: 75, minSpan: 30, floor: 0 }, co2: { col: "#2EA3FF", warn: 800, alert: 1000, minSpan: 300, floor: 400 } };
+  // show = 늘 보이게 둘 기준선(CO₂ 1,000 · PM2.5 35). 색은 입자와 같은 계열을 밝은 카드 위에서 읽히게 한 단 짙게
+  const CHART = { co2: { col: "#1F8FEA", rgb: "31,143,234", warn: 800, alert: 1000, show: 1000, minSpan: 300, floor: 400, name: "CO₂", unit: "ppm" },
+                  pm: { col: "#F26100", rgb: "242,97,0", warn: 35, alert: 75, show: 35, minSpan: 30, floor: 0, name: "PM2.5", unit: "µg/m³" } };
+  const fmtN = (v) => Math.round(v).toLocaleString("en-US"), CFONT = '"Montserrat", "Noto Sans KR", system-ui, sans-serif';
+  let curveHover = null, curveT0 = -1e9, curveHT = 0;   // 가리킨 자리(CSS px) · 선을 그려 넣기 시작한 시각
   function fitCanvas(cv) { const r = cv.getBoundingClientRect(), d = dpr(), bw = Math.max(16, Math.round(r.width * d)), bh = Math.max(12, Math.round(r.height * d)); if (cv.width !== bw || cv.height !== bh) { cv.width = bw; cv.height = bh; } }
+  /* 두 줄 그래프. 한 칸에 두 눈금을 겹치지 않는다(겹치면 두 선이 만나는 자리가 뜻 없는 교차로 읽힌다).
+     줄마다: 머리글(이름 · 단위 | 지금 → 30분 뒤) · 구간 바탕(주의 · 경고, 막대와 같은 색 계열) · 기준선과 숫자 · 선 + 옅은 면 · 예측 점선.
+     아래 한 줄은 시간 축(2시간 전 · 지금 · +30분). 높이 62px 아래(.tight)에선 CO₂ 한 줄만. */
   function drawCurve(ctx, W, H) {
-    const d = dpr(), s = ST[cur];
+    const d = dpr(), s = ST[cur], hc = H / d, two = hc >= 62, big = hc >= 80;
     ctx.clearRect(0, 0, W, H); ctx.fillStyle = "#f6f6fc"; ctx.fillRect(0, 0, W, H);
-    const span = 120, h = s.hist.slice(-span); if (h.length < 2) return;
+    const span = 120, h = s.hist.slice(-span);
     const fc = FC && FC.t === G.t && FC.k === cur ? FC : null, F = fc ? FC_MIN : 0;   // 예측이 있으면 오른쪽 5분의 1 이 앞으로 30분(점선)
-    const padX = 8 * d, top = 16 * d, bot = 6 * d, x = (i) => padX + (i / (span + F - 1)) * (W - 2 * padX), xNow = x(span - 1);
-    if (fc) { ctx.fillStyle = "#ebebf7"; ctx.fillRect(xNow, 0, W - xNow, H); }
-    const series = (key, c) => {
-      let lo = Infinity, hi = -Infinity; for (const p of h) { lo = Math.min(lo, p[key]); hi = Math.max(hi, p[key]); }
+    const padX = 8 * d, x = (i) => padX + (i / (span + F - 1)) * (W - 2 * padX), xNow = x(span - 1), L = padX - 4 * d, R = W - padX + 4 * d;
+    const hdr = (big ? 12 : 11) * d, axis = (big ? 12 : 11) * d;
+    const t1 = hdr + 2 * d, b1 = two ? t1 + (big ? 28 : 19) * d : H - axis - 2 * d, t2 = b1 + 3 * d + hdr + d, b2 = H - axis - 2 * d, botAll = two ? b2 : b1;
+    let hov = null;   // 가리킨 시각: 지난 기록(i) 또는 예측(f)
+    if (curveHover && h.length) { const ix = clamp(Math.round((curveHover.x * d - padX) / (W - 2 * padX) * (span + F - 1)), span - h.length, span + F - 1); hov = ix < span ? { ix, i: ix - (span - h.length), f: -1 } : { ix, i: -1, f: ix - span }; }
+    const prog = reduced ? 1 : clamp((performance.now() - curveT0) / 650, 0, 1), clipW = padX + (1 - Math.pow(1 - prog, 3)) * (W - padX);   // 공간을 바꾸면 선을 왼쪽부터 그려 넣는다
+    const lvCol = (c, v) => v >= c.alert ? "#c2331f" : v >= c.warn ? "#b65a12" : "#26264f";
+    const rows = [["co2", CHART.co2, t1, b1, hdr - 1.5 * d]]; if (two) rows.push(["pm", CHART.pm, t2, b2, b1 + 3 * d + hdr - 1.5 * d]);
+    let liveY = -1;
+    for (const [key, c, top, bot, yH] of rows) {
+      const now = key === "pm" ? s.pm : s.co2;
+      let lo = now, hi = now; for (const p of h) { lo = Math.min(lo, p[key]); hi = Math.max(hi, p[key]); }
       if (fc) for (const v of fc[key]) { lo = Math.min(lo, v); hi = Math.max(hi, v); }
-      lo = Math.max(c.floor, Math.min(lo, c.warn * 0.6)); if (hi - lo < c.minSpan) hi = lo + c.minSpan; hi = lo + (hi - lo) * 1.06;
-      const y = (v) => H - bot - clamp((v - lo) / (hi - lo), 0, 1) * (H - top - bot);
-      for (const [th, dash] of [[c.warn, [3 * d, 3 * d]], [c.alert, [1.5 * d, 2.5 * d]]]) if (th > lo && th < hi) { ctx.save(); ctx.setLineDash(dash); ctx.strokeStyle = c.col; ctx.globalAlpha = 0.4; ctx.lineWidth = d; ctx.beginPath(); ctx.moveTo(padX, y(th)); ctx.lineTo(W - padX, y(th)); ctx.stroke(); ctx.restore(); }
-      ctx.beginPath(); ctx.lineWidth = 2 * d; ctx.strokeStyle = c.col; ctx.lineJoin = "round"; ctx.lineCap = "round";
-      h.forEach((p, i) => { const xi = x(i + span - h.length), yi = y(p[key]); i ? ctx.lineTo(xi, yi) : ctx.moveTo(xi, yi); }); ctx.stroke();
-      const last = h[h.length - 1];
-      if (fc) { ctx.save(); ctx.setLineDash([2.5 * d, 3 * d]); ctx.globalAlpha = 0.8; ctx.lineWidth = 1.6 * d; ctx.strokeStyle = c.col; ctx.beginPath(); ctx.moveTo(xNow, y(last[key])); fc[key].forEach((v, i) => ctx.lineTo(x(span + i), y(v))); ctx.stroke(); ctx.restore(); }
-      ctx.beginPath(); ctx.arc(xNow, y(last[key]), 3 * d, 0, Math.PI * 2); ctx.fillStyle = c.col; ctx.fill();
-    };
-    series("co2", CHART.co2); series("pm", CHART.pm);
-    ctx.textBaseline = "alphabetic"; ctx.font = `700 ${10 * d}px Montserrat, sans-serif`;
-    ctx.fillStyle = CHART.pm.col; ctx.textAlign = "left"; ctx.fillText(`PM2.5 ${s.pm.toFixed(0)}`, padX, 11 * d);
-    ctx.fillStyle = CHART.co2.col; ctx.textAlign = "right"; ctx.fillText(fc ? `CO₂ ${s.co2.toFixed(0)} → ${fc.end.toFixed(0)}` : `CO₂ ${s.co2.toFixed(0)}`, W - padX, 11 * d);
-    ctx.fillStyle = "#9a9ab4"; ctx.textAlign = "center"; ctx.font = `600 ${8.5 * d}px Montserrat, sans-serif`;
-    if (!fc || W / d > 210) ctx.fillText("2h", fc ? (padX + xNow) / 2 : W / 2, 11 * d);
-    if (fc) { const lx = (xNow + W - padX) / 2, ly = H - 2.5 * d, lw = ctx.measureText(t("fcZone")).width + 6 * d;   // 점선 구간 = 앞으로 30분. 글자가 점선에 묻히지 않게 바탕을 깐다
-      ctx.fillStyle = "rgba(246,246,252,.92)"; ctx.fillRect(lx - lw / 2, ly - 8.5 * d, lw, 11 * d); ctx.fillStyle = "#7d7d9c"; ctx.fillText(t("fcZone"), lx, ly); }
+      lo = Math.max(c.floor, Math.min(lo, c.warn * 0.6)); hi = Math.max(hi, lo + c.minSpan, c.show * 1.07); hi = lo + (hi - lo) * 1.08;
+      const y = (v) => bot - 1.5 * d - clamp((v - lo) / (hi - lo), 0, 1) * (bot - top - 3 * d);
+      ctx.fillStyle = "#fcfcff"; ctx.fillRect(L, top, (fc ? xNow : R) - L, bot - top);
+      if (fc) { ctx.fillStyle = "#edecf8"; ctx.fillRect(xNow, top, R - xNow, bot - top); }   // 앞으로 30분
+      const yw = y(c.warn), ya = y(c.alert);
+      if (c.warn < hi) { const a = c.alert < hi ? ya : top; ctx.fillStyle = "rgba(224,116,30,.07)"; ctx.fillRect(L, a, R - L, Math.max(0, yw - a)); }
+      if (c.alert < hi) { ctx.fillStyle = "rgba(217,58,43,.09)"; ctx.fillRect(L, top, R - L, Math.max(0, ya - top)); }
+      let thLab = null;
+      for (const [th, col, tcol] of [[c.warn, "rgba(205,104,24,.6)", "#a8520f"], [c.alert, "rgba(205,54,40,.62)", "#b02e1c"]]) { if (th >= hi) continue; const yy = Math.round(y(th)) + 0.5;
+        ctx.save(); ctx.setLineDash([3 * d, 3 * d]); ctx.strokeStyle = col; ctx.lineWidth = d; ctx.beginPath(); ctx.moveTo(L, yy); ctx.lineTo(R, yy); ctx.stroke(); ctx.restore();
+        if (th === c.show) thLab = { yy, tcol, txt: fmtN(th) }; }
+      ctx.save(); ctx.beginPath(); ctx.rect(0, top, clipW, bot - top); ctx.clip();
+      const pts = h.map((p, i) => [x(i + span - h.length), y(p[key])]), trace = () => { ctx.beginPath(); pts.forEach((q, i) => i ? ctx.lineTo(q[0], q[1]) : ctx.moveTo(q[0], q[1])); };
+      if (pts.length >= 2) {
+        const g = ctx.createLinearGradient(0, top, 0, bot); g.addColorStop(0, `rgba(${c.rgb},.28)`); g.addColorStop(1, `rgba(${c.rgb},0)`);
+        trace(); ctx.lineTo(pts[pts.length - 1][0], bot); ctx.lineTo(pts[0][0], bot); ctx.closePath(); ctx.fillStyle = g; ctx.fill();
+        trace(); ctx.lineWidth = (key === "co2" ? 2 : 1.7) * d; ctx.strokeStyle = c.col; ctx.lineJoin = "round"; ctx.lineCap = "round"; ctx.stroke();
+      }
+      const yNow = y(now);
+      if (fc) { ctx.save(); ctx.setLineDash([2.5 * d, 3 * d]); ctx.lineWidth = 1.6 * d; ctx.strokeStyle = c.col; ctx.globalAlpha = 0.85; ctx.beginPath(); ctx.moveTo(xNow, yNow); fc[key].forEach((v, i) => ctx.lineTo(x(span + i), y(v))); ctx.stroke(); ctx.restore(); }
+      ctx.restore();
+      if (thLab) { ctx.font = `600 ${8 * d}px ${CFONT}`; ctx.textAlign = "left"; ctx.textBaseline = "alphabetic"; const tw = ctx.measureText(thLab.txt).width, ty = clamp(thLab.yy + 2.9 * d, top + 7.5 * d, bot - 1.5 * d);   // 기준선 숫자: 선 위에 얹는다(어느 선의 숫자인지 헷갈리지 않게)
+        ctx.fillStyle = "#fcfcff"; ctx.fillRect(L + 2 * d, ty - 7.2 * d, tw + 5 * d, 9.4 * d); ctx.fillStyle = thLab.tcol; ctx.fillText(thLab.txt, L + 4.5 * d, ty); }
+      if (h.length && clipW >= xNow) { ctx.beginPath(); ctx.arc(xNow, yNow, 4.4 * d, 0, Math.PI * 2); ctx.fillStyle = "#fff"; ctx.fill(); ctx.beginPath(); ctx.arc(xNow, yNow, 3 * d, 0, Math.PI * 2); ctx.fillStyle = c.col; ctx.fill(); if (key === "co2") liveY = yNow; }
+      if (fc) { ctx.strokeStyle = "rgba(38,38,79,.2)"; ctx.lineWidth = d; ctx.beginPath(); ctx.moveTo(Math.round(xNow) + 0.5, top); ctx.lineTo(Math.round(xNow) + 0.5, bot); ctx.stroke(); }
+      const hv = hov ? (hov.f >= 0 ? fc[key][hov.f] : h[hov.i][key]) : null;
+      if (hov) { const xh = x(hov.ix), yh = y(hv); ctx.strokeStyle = "rgba(38,38,79,.5)"; ctx.lineWidth = d; ctx.beginPath(); ctx.moveTo(Math.round(xh) + 0.5, top); ctx.lineTo(Math.round(xh) + 0.5, bot); ctx.stroke();
+        ctx.beginPath(); ctx.arc(xh, yh, 4.2 * d, 0, Math.PI * 2); ctx.fillStyle = "#fff"; ctx.fill(); ctx.beginPath(); ctx.arc(xh, yh, 2.8 * d, 0, Math.PI * 2); ctx.fillStyle = c.col; ctx.fill(); }
+      // 머리글: ● 이름 단위 ……… 지금 → 30분 뒤 (가리키는 동안은 그 시각의 값)
+      ctx.textBaseline = "alphabetic"; ctx.textAlign = "left";
+      ctx.beginPath(); ctx.arc(padX + 3 * d, yH - 3.4 * d, 3 * d, 0, Math.PI * 2); ctx.fillStyle = c.col; ctx.fill();
+      ctx.font = `700 ${9.5 * d}px ${CFONT}`; ctx.fillStyle = "#26264f"; ctx.fillText(c.name, padX + 9 * d, yH); const nw = ctx.measureText(c.name).width;
+      ctx.font = `500 ${7.5 * d}px ${CFONT}`; ctx.fillStyle = "#6f6f90"; ctx.fillText(c.unit, padX + 12.5 * d + nw, yH);
+      const bold = `700 ${9.5 * d}px ${CFONT}`, soft = `600 ${8 * d}px ${CFONT}`;
+      const parts = hov ? [[fmtN(hv), bold, lvCol(c, hv)]].concat(hov.f >= 0 ? [[" " + t("fcTag"), soft, "#6f6f90"]] : [])
+        : [[fmtN(now), bold, lvCol(c, now)]].concat(fc ? [["  →  ", soft, "#8a8aa8"], [fmtN(fc[key][FC_MIN - 1]), bold, lvCol(c, fc[key][FC_MIN - 1])]] : []);
+      let xr = W - padX; for (let i = parts.length - 1; i >= 0; i--) { ctx.font = parts[i][1]; const w = ctx.measureText(parts[i][0]).width; ctx.fillStyle = parts[i][2]; ctx.fillText(parts[i][0], xr - w, yH); xr -= w; }
+    }
+    // 시간 축
+    ctx.font = `600 ${8 * d}px ${CFONT}`; ctx.textBaseline = "alphabetic"; ctx.fillStyle = "#6f6f90"; const ay = H - 3 * d;
+    if (fc) { ctx.strokeStyle = "rgba(38,38,79,.3)"; ctx.lineWidth = d; ctx.beginPath(); ctx.moveTo(Math.round(xNow) + 0.5, botAll + 2 * d); ctx.lineTo(Math.round(xNow) + 0.5, H - 2 * d); ctx.stroke(); }
+    ctx.textAlign = "left"; ctx.fillText(t("axAgo"), padX, ay);
+    ctx.textAlign = "right"; ctx.fillText(t("axNow"), xNow - (fc ? 4 * d : 0), ay); if (fc) ctx.fillText(t("fcZone"), W - padX, ay);
+    if (hov) { const lab = hov.f >= 0 ? t("fcAt", hov.f + 1) : `${String(Math.floor((h[hov.i].t % 1440) / 60)).padStart(2, "0")}:${String(h[hov.i].t % 60).padStart(2, "0")}`, tw = ctx.measureText(lab).width + 8 * d, cx = clamp(x(hov.ix), L + tw / 2, R - tw / 2);
+      ctx.fillStyle = "#26264f"; ctx.fillRect(cx - tw / 2, ay - 8.5 * d, tw, 11 * d); ctx.fillStyle = "#fff"; ctx.textAlign = "center"; ctx.fillText(lab, cx, ay); }
+    liveDot.hidden = liveY < 0 || prog < 1; if (liveY >= 0) { liveDot.style.transform = `translate(${(xNow / d).toFixed(1)}px, ${(liveY / d).toFixed(1)}px)`; liveDot.dataset.lv = s.co2 >= 1000 ? "alert" : s.co2 >= 800 ? "warn" : ""; }
   }
-  const mini = $("mini"), mctx = mini.getContext("2d");
+  const mini = $("mini"), mctx = mini.getContext("2d"), curveBox = $("curve"), liveDot = $("mini-live");
+  // 가리키면(마우스 · 손가락) 그 시각의 값. 손가락은 떼고 1.6초 뒤에 지금 값으로 돌아간다
+  { const at = (e) => { clearTimeout(curveHT); curveHover = { x: e.clientX - mini.getBoundingClientRect().left }; redraw(); }, off = () => { curveHover = null; redraw(); };
+    mini.addEventListener("pointermove", at); mini.addEventListener("pointerdown", at); mini.addEventListener("pointerleave", off); mini.addEventListener("pointercancel", off);
+    mini.addEventListener("pointerup", (e) => { if (e.pointerType !== "mouse") { clearTimeout(curveHT); curveHT = setTimeout(off, 1600); } }); }
 
   /* ── 기기 화면(800×600): 실제 ARC-600DA 화면 양식 — 날짜·시각 헤더, 6타일(PM10·PM2.5·CO₂ / 온도·습도·VOCs), 페이지 점, CO₂ 1000 넘으면 환기 알림 ──
      숫자는 목표값으로 매 프레임 조금씩 다가가서(트윈) 올라가는 모습이 보인다. */
@@ -1697,15 +1759,15 @@
   const roEl = document.querySelector(".readout"), ledgerEl = document.querySelector(".ledger"), ctlEl = document.querySelector(".controls"), navEl = document.querySelector(".topnav");
   /* 넓은 화면의 측정값 카드: 기록 띠 위에서 끝나게 맞춘다(v0.16.1). 폭을 250 → 208 로 줄여 보고, 그래도 넘치면 기기 화면 배치를 바꾼다.
      글자만 바뀐 경우(soft)는 넘칠 때만 다시 맞춘다 — 상태 줄이 한 줄 늘었다 줄었다 할 때마다 배치가 바뀌지 않게 */
-  const RO_CLS = ["s12", "s111", "s0", "tight"];
+  const RO_CLS = ["s12", "s111", "s0", "tight", "cs"];   // cs = 곡선을 한 단 낮게(70px)
   function fitReadout(soft) {
     const app = $("app");
     if (!WIDE.matches || app.classList.contains("nodev")) { roEl.classList.remove(...RO_CLS); app.style.removeProperty("--ro-w"); return; }
     const lr = ledgerEl.getBoundingClientRect(), top = roEl.getBoundingClientRect().top, limit = (lr.height ? lr.top : innerHeight) - 8, fits = () => top + roEl.offsetHeight <= limit;
     if (soft && app.style.getPropertyValue("--ro-w") && fits()) return;
     const wMax = Math.round(clamp(innerWidth * 0.21, 208, 250));
-    for (const [mode, tight] of [["", 0], ["s12", 0], ["s12", 1], ["s111", 0], ["s111", 1], ["s0", 1]]) {
-      roEl.classList.remove(...RO_CLS); if (mode) roEl.classList.add(mode); if (tight) roEl.classList.add("tight");
+    for (const [mode, mod] of [["", ""], ["", "cs"], ["s12", ""], ["s12", "cs"], ["s12", "tight"], ["s111", ""], ["s111", "tight"], ["s0", "tight"]]) {
+      roEl.classList.remove(...RO_CLS); if (mode) roEl.classList.add(mode); if (mod) roEl.classList.add(mod);
       for (let w = wMax; w >= 208; w -= 6) { app.style.setProperty("--ro-w", w + "px"); if (fits()) return; if (mode !== "" && mode !== "s12") break; }
     }
   }
@@ -2028,7 +2090,7 @@
     document.querySelectorAll("[data-i18n-html]").forEach((el) => { el.innerHTML = t(el.dataset.i18nHtml); });
     document.querySelectorAll("[data-i18n-title]").forEach((el) => { el.title = t(el.dataset.i18nTitle); el.setAttribute("aria-label", t(el.dataset.i18nTitle)); });
     tabs.forEach((b) => { b.textContent = roomName(SPACES[b.dataset.space]); });
-    langBtns.forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.lang === LANG))); $("pdev-img").alt = t("pdevAlt");
+    langBtns.forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.lang === LANG))); $("pdev-img").alt = t("pdevAlt"); mini.setAttribute("aria-label", t("curveNote"));
     const sp = SPACES[cur]; $("lead").textContent = LANG === "en" ? sp.en2 : sp.lead; $("lead-en").textContent = LANG === "en" ? sp.lead : sp.en2; rk.textContent = `${sp.where} · ${roomName(sp)}`;
     if (!panel.hidden) $("pspec-title").textContent = `${sp.where} · ${roomName(sp)}`;
     if (!floatEl.hidden && floatIdx >= 0) fcap.textContent = `${t("fnames")[floatIdx]} ${t("fhint")}`;
@@ -2052,7 +2114,7 @@
     tabs.forEach((b) => b.setAttribute("aria-selected", String(b.dataset.space === k)));
     $("lead").textContent = LANG === "en" ? sp.en2 : sp.lead; $("lead-en").textContent = LANG === "en" ? sp.lead : sp.en2; rk.textContent = `${sp.where} · ${roomName(sp)}`;
     bCook.hidden = !sp.act; pCook.hidden = !sp.act; bHvac.hidden = !sp.phys; pHvac.hidden = !sp.phys; bGame.hidden = v !== "home";   // 발생원 버튼은 그것이 있는 공간만, 환기 장치는 가게 · 사무실만, 게임은 집만
-    spaceLabels(); noteAssets(); hud();   // 상태 줄 · 버튼 글자를 먼저 바꾸고 배치를 잰다
+    spaceLabels(); noteAssets(); hud(); curveT0 = performance.now();   // 상태 줄 · 버튼 글자를 먼저 바꾸고 배치를 잰다. 곡선은 왼쪽부터 다시 그려 넣는다
     shownKey = null; layout(); showScene(); rebuildTicks(); hud(); redraw();
     for (let i = 0; i < steamN; i++) SL[i] = -1;
     alertDismissed = false;
@@ -2097,7 +2159,7 @@
     const dt = Math.min(0.1, (now - last) / 1000), t = (now - t0) / 1000; last = now;
     acc += dt * speed();
     let n = 0; while (acc >= 1 && n < 20) { stepMinute(); acc -= 1; n++; }
-    if (n > 0) { showScene(); hud(); redraw(); }
+    if (n > 0) { showScene(); hud(); redraw(); } else if (!reduced && now - curveT0 < 760) redraw();   // 선을 그려 넣는 동안은 매 프레임
     tweenShown(); drawScreen(sctx0); blit(screenCv); if (!panel.hidden) blit(pscreenCv);
     if (now - lastMini > 50) { lastMini = now; drawIndex(sctx2); blit(miniIndex, scr2); drawIO(sctx3); blit(miniIO, scr3); blit(miniTiles, scr); if (!floatEl.hidden && floatIdx >= 0) blit(floatCv, FSRC[floatIdx]()); }   // 카드·플로팅 화면은 20fps
     vig.style.opacity = G.night ? "0.58" : "0.22";
