@@ -152,7 +152,8 @@ button, input { font: inherit; color: inherit; }
 .thermo.st-na b { display: none; }
 .ticks { position: relative; height: 15px; margin-right: 8px; color: var(--faint); font-size: 11px; font-variant-numeric: tabular-nums; }
 .ticks span { position: absolute; top: 0; transform: translateX(-50%); white-space: nowrap; }
-.g-read { margin: 0; color: var(--muted); font-size: var(--t-sm); line-height: 1.5; }
+.g-ins { margin: 2px 0 0; padding: 9px 12px; border-radius: var(--r-sm); background: var(--st-bg); color: var(--fg); font-size: var(--t-sm); line-height: 1.55; }
+.g-read { margin: 0; color: var(--faint); font-size: var(--t-xs); line-height: 1.55; }
 
 /* 목록 */
 .cap { margin: 0; padding-left: 1.15em; color: var(--faint); font-size: var(--t-sm); display: flex; flex-direction: column; gap: 3px; }
@@ -308,11 +309,12 @@ details .scroll { margin-top: 8px; }
       </div>
       <div class="brief-text">
         <p class="lede" data-h-headline>—</p>
+        <p class="say" data-h-takeaway hidden></p>
         <ul class="cap points" id="brief-list"></ul>
       </div>
     </div>
     <h3 class="h3">선순환 고리</h3>
-    <p class="note">판매 대금이 들어오고(판매), 보상이 나가고, 받은 쪽이 들고 있고(보유), 풀이 깊어지고(유동성), 판 양을 받아내고(수요), 값이 버티면(가격) 다시 판매로 이어진다. 고리마다 최근 7일 값으로 신호를 매겼다. 온도계는 오른쪽으로 찰수록 좋다.</p>
+    <p class="note">판매 대금이 들어오고(판매), 보상이 나가고, 받은 쪽이 들고 있고(보유), 풀이 깊어지고(유동성), 판 양을 받아내고(수요), 값이 버티면(가격) 다시 판매로 이어진다. 고리마다 최근 7일 값으로 신호를 매겼다. 온도계는 오른쪽으로 찰수록 좋고, 색 바탕 글은 그 결과를 풀어 쓴 요약이다.</p>
     <div class="loop">
       <figure class="fig"><div class="chart ring skel" id="chart-loop" data-chart="loop" role="img" aria-label="선순환 여섯 고리의 신호를 원으로 이은 그림"></div></figure>
       <ol class="gauges" id="gauges"></ol>
@@ -1031,6 +1033,7 @@ details .scroll { margin-top: 8px; }
     if (h) {
       L.push(''); L.push('■ 오늘의 현황 (최근 ' + h.days + '일 ' + md(h.from) + '~' + md(h.to) + ')');
       L.push('- 종합 신호: ' + h.overall.label + ' (' + h.overall.counts + ')');
+      if (h.takeaway) L.push('- 정리: ' + h.takeaway);
       h.links.forEach(function (l) { L.push('- ' + l.name + ' ' + h.labels[l.status] + ': ' + l.short); });
       h.reserves.forEach(function (l) { L.push('- ' + l.name + ' ' + h.labels[l.status] + ': ' + l.short); });
       L.push(''); L.push('■ 그날 요약'); h.comments.slice(0, 3).forEach(function (t) { L.push('- ' + t); });
@@ -1096,7 +1099,9 @@ details .scroll { margin-top: 8px; }
     th.appendChild(el('i')); th.appendChild(el('i')); th.appendChild(el('i')); th.appendChild(el('b'));
     var tk = el('div', 'ticks'); tk.setAttribute('aria-hidden', 'true');
     (l.ticks || []).forEach(function (t, i) { var sp = el('span', '', t); sp.style.left = ((i + 1) * 100 / 3).toFixed(2) + '%'; tk.appendChild(sp); });
-    li.appendChild(head); li.appendChild(val); li.appendChild(th); li.appendChild(tk); li.appendChild(el('p', 'g-read', l.read));
+    li.appendChild(head); li.appendChild(val); li.appendChild(th); li.appendChild(tk);
+    if (l.insight) li.appendChild(el('p', 'g-ins st-' + l.status, l.insight));     // 결과에 따른 요약 인사이트
+    li.appendChild(el('p', 'g-read', l.read));
     return li;
   }
   function drawHealth() {
@@ -1104,6 +1109,7 @@ details .scroll { margin-top: 8px; }
     var set = function (sel, text) { var e = $(sel); if (e) e.textContent = text; };
     set('[data-hwin]', '최근 ' + h.days + '일 · ' + md(h.from) + '~' + md(h.to));
     set('[data-h-label]', h.overall.label); set('[data-h-counts]', '여섯 고리 · ' + h.overall.counts); set('[data-h-headline]', h.headline);
+    var tk = $('[data-h-takeaway]'); if (tk) { tk.textContent = h.takeaway || ''; tk.hidden = !h.takeaway; }
     var sig = $('[data-signal]');
     if (sig) { $$('.bulb', sig).forEach(function (b) { b.classList.toggle('on', b.classList.contains(h.overall.status)); }); sig.setAttribute('aria-label', '종합 신호 ' + h.overall.label); }
     var ul = $('#brief-list'); if (ul) { ul.replaceChildren(); h.comments.forEach(function (t) { var li = document.createElement('li'); li.textContent = t; ul.appendChild(li); }); }

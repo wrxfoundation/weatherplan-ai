@@ -641,6 +641,122 @@ function buildDatasets(S, opts) {
       short: cov === null ? '판매 대금 기록이 모자라다' : spend < 0.5 ? '최근 매입이 없다' : sW.r > 0 ? '매입 지출이 판매 대금의 ' + p1(cov) : '판매 대금 없이 매입했다',
     }));
 
+    // ── 지표마다 결과에 따른 요약 인사이트. 기록에 있는 사실과 산수만 쓴다(앞날 전망 없음).
+    const byKey = {}; for (const l of links.concat(reserves)) byKey[l.key] = l;
+    const L3 = W.slice(-3), rowRate = (r) => (r.price_rlusd && r.price_xrp ? r.price_rlusd / r.price_xrp : rate);
+    const spendOf = (rows) => rows.reduce((t, r) => t + (r.bot_pay_rlusd || 0) + (r.bot_pay_xrp || 0) * rowRate(r), 0);
+    const s3 = sumOf(L3, 'sales_rlusd'), b3 = spendOf(L3);
+    let topDay = null; for (const r of W) if (!topDay || (r.sales_rlusd || 0) > (topDay.sales_rlusd || 0)) topDay = r;
+    const sellBy = {}, lpBy = { co: 0, user: 0 }; let kwPaid = 0;
+    for (const e of EV) {
+      if (!inWin(e.k, from, to)) continue;
+      if (e.kind === 'sell' && e.g === 'user') add(sellBy, e.a, e.v[0]);
+      else if (e.kind === 'lp' && (e.g === 'user' || GOWN[e.g])) lpBy[e.g === 'user' ? 'user' : 'co'] += (e.v[2] || 0) + (e.v[3] || 0) * rate;
+      else if (e.kind === 'paidco' && e.g === 'kweather') kwPaid += e.v[0];
+    }
+    const sellList = Object.keys(sellBy).map((a) => sellBy[a]).sort((x, y) => y - x), top5 = sellList.slice(0, 5).reduce((t, x) => t + x, 0);
+    const botShare = buyOut + botBuy > 0.5 ? botBuy / (buyOut + botBuy) : null, botDays = W.filter((r) => r.buy_bot > 0).length;
+    let upBot = 1, upRest = 1, prevPr = start.price_rlusd;       // 가격 변화를 bot 이 산 날과 사지 않은 날로 나눈다
+    for (const r of W) { if (prevPr && r.price_rlusd && r !== start) { if (r.buy_bot > 0) upBot *= r.price_rlusd / prevPr; else upRest *= r.price_rlusd / prevPr; } prevPr = r.price_rlusd || prevPr; }
+    const slipOf = (P) => { const a = 10000 * (1 - (P.fee === undefined || P.fee === null ? 0.005 : P.fee)); return P.w > 0 && P.q > 0 ? (P.q * a / (P.w + a)) / 10000 / (P.q / P.w) - 1 : null; };
+    const slX = slipOf(S.pools.X), slR = slipOf(S.pools.R);
+    const xrpCh = start.price_rlusd && start.price_xrp && end.price_rlusd && end.price_xrp ? (end.price_rlusd / end.price_xrp) / (start.price_rlusd / start.price_xrp) - 1 : null;
+    const st = (k) => byKey[k].status;
+    {
+      let t;                                       // 판매
+      if (st('sale') === 'na') t = '판매 대금 기록이 모자라 판단하지 않았다.';
+      else {
+        t = st('sale') === 'ok' ? '판매 대금이 직전 7일보다 늘었다. 새 돈이 들어오는 출발점은 돌고 있다.' : st('sale') === 'warn' ? '판매 대금이 직전 7일보다 줄었다.' : '판매 대금이 직전 7일보다 크게 줄었다. 고리의 출발점이 약해졌다.';
+        if (L3.length === 3 && sW.r > 0 && s3 / sW.r < 0.1) t += ' 최근 사흘은 ' + n(s3) + ' RLUSD로 거의 끊겼다.';
+        else if (sW.r > 0 && topDay && (topDay.sales_rlusd || 0) / sW.r >= 0.5) t += ' ' + p1(topDay.sales_rlusd / sW.r) + '가 ' + md(topDay.date) + ' 하루에 들어와, 큰 건 한두 번에 좌우된다.';
+        if (sW.r > 0) t += sW.ru / sW.r >= 0.5 ? ' 들어온 돈의 ' + p1(sW.ru / sW.r) + '는 보상을 받는 지갑이 낸 것이라, 새 구매자보다 기존 참여자의 재구매가 중심이다.' : ' 보상을 받는 지갑이 낸 것은 ' + p1(sW.ru / sW.r) + '로, 새 지갑의 구매가 중심이다.';
+      }
+      byKey.sale.insight = t;
+    }
+    {
+      let t = '';                                  // 보상
+      const up = hasPrev && pPaid > 0 ? (paid / W.length) / (pPaid / P.length) - 1 : null;
+      if (payDays < W.length) t = W.length + '일 가운데 ' + (W.length - payDays) + '일은 지급이 없었다. 지급 작업과 지급 계정 잔액을 확인할 일이다. ';
+      if (dj !== null) t += dj >= H.join[2] ? '보상을 받는 지갑이 늘어 참여는 넓어지고 있다(처음 받은 지갑 ' + n(newW) + '곳).' : dj >= H.join[1] ? '보상을 받는 지갑 수가 제자리다. 새로 들어오는 참여자가 드물다(처음 받은 지갑 ' + n(newW) + '곳).' : '보상을 받는 지갑이 줄었다. 빠져나간 참여자가 있는지 볼 일이다.';
+      else if (payDays === W.length) t += '지급은 끊기지 않았다. 견줄 직전 기간이 없어 지갑 수 변화는 보지 않았다.';
+      if (up !== null && up >= 0.3) t += ' 하루 지급량도 ' + sp(up) + ' 늘어, 시장에 나올 수 있는 양이 그만큼 커졌다.';
+      byKey.pay.insight = t.trim();
+    }
+    {
+      let t;                                       // 보유
+      if (sr === null) t = '받은 양이 없어 판단하지 않았다.';
+      else {
+        t = st('hold') === 'ok' ? '받은 양의 절반 넘게 들고 있다. 매도 압력이 작다.' : st('hold') === 'warn' ? '받은 양의 절반 넘게 판다. 보상이 쌓이기보다 흘러나가는 쪽이다.' : '받은 보상을 거의 그대로 팔아, 보상이 보유로 이어지지 않고 있다.';
+        if (hasPrev && pPaid > 0 && Math.abs(sr - pSold / pPaid) >= 0.1) t += ' 판 비율이 직전 7일 ' + p1(pSold / pPaid) + '에서 ' + p1(sr) + '로 ' + (sr > pSold / pPaid ? '올랐다.' : '내렸다.');
+        if (sold > 0.5) t += ' 판 지갑은 ' + n(sellList.length) + '곳이고 많이 판 다섯 곳이 판 양의 ' + p1(top5 / sold) + '다' + (top5 / sold >= 0.5 ? ' — 소수 지갑이 주도한다.' : ' — 여러 지갑에 퍼진 매도다.');
+      }
+      byKey.hold.insight = t;
+    }
+    {
+      let t;                                       // 유동성
+      if (dq === null) t = '풀 기록이 모자라 판단하지 않았다.';
+      else {
+        const dR = start.pool_r_rlusd ? end.pool_r_rlusd / start.pool_r_rlusd - 1 : null, dX = start.pool_x_xrp ? end.pool_x_xrp / start.pool_x_xrp - 1 : null;
+        t = st('pool') === 'ok' ? '풀이 깊어져 같은 양을 팔아도 값이 덜 밀린다.' : st('pool') === 'warn' ? '풀에 든 RLUSD · XRP가 조금 줄었다. 같은 양을 팔 때 값이 더 밀린다.' : '풀에서 RLUSD · XRP가 많이 빠졌다. 같은 양을 팔 때 값이 눈에 띄게 더 밀린다.';
+        if (dR !== null && dX !== null && Math.abs(dX - dR) >= 0.1) t += ' 달라진 것은 ' + (Math.abs(dX) >= Math.abs(dR) ? 'XRP 풀(' + sp(dX) + ')' : 'RLUSD 풀(' + sp(dR) + ')') + ' 쪽이다.';
+        if (Math.abs(lpBy.co) + Math.abs(lpBy.user) > 1) t += ' 이 기간 풀에 넣은 돈(RLUSD 환산)은 Wellbian 계정 ' + (lpBy.co < 0 ? '−' : '') + n(Math.abs(lpBy.co)) + ' · 일반 사용자 지갑 ' + (lpBy.user < 0 ? '−' : '') + n(Math.abs(lpBy.user)) + ' — ' + (lpBy.co >= lpBy.user ? 'Wellbian 쪽이 채웠다.' : '일반 사용자 쪽이 채웠다.');
+        if (slX !== null && slR !== null) t += ' 지금 1만 개를 한 번에 팔면 XRP 풀 ' + sp(slX) + ', RLUSD 풀 ' + sp(slR) + '다.';
+      }
+      byKey.pool.insight = t;
+    }
+    {
+      let t;                                       // 수요
+      if (dm === null) t = '판 양이 없어 판단하지 않았다.';
+      else {
+        const outShare = buyOut / sellX;
+        if (st('demand') === 'ok') t = botShare !== null && botShare >= 0.5 ? '판 양은 다 받아냈지만 산 양의 ' + p1(botShare) + '가 Wellbian bot이다.' + (outShare < 1 ? ' 밖에서 산 양은 판 양의 ' + p1(outShare) + '라, bot이 사지 않는 날에는 받아낼 매수가 모자란다.' : '') : '밖의 지갑이 산 양만으로도 판 양을 받아냈다. 스스로 도는 수요가 있다.';
+        else t = (st('demand') === 'warn' ? '산 양이 판 양에 못 미쳤다.' : '판 양의 절반도 받아내지 못했다.') + ' 남는 물량은 풀이 떠안아 값이 밀린다.' + (botShare !== null ? ' 산 양 가운데 Wellbian bot은 ' + p1(botShare) + '다.' : '');
+        t += ' bot이 산 날은 ' + W.length + '일 가운데 ' + botDays + '일이다.';
+      }
+      byKey.demand.insight = t;
+    }
+    {
+      let t;                                       // 가격
+      if (dp === null) t = '가격 기록이 모자라 판단하지 않았다.';
+      else {
+        t = st('price') === 'ok' ? (dp >= 0 ? 'RLUSD 기준 값이 올랐다.' : 'RLUSD 기준 값이 조금 내렸지만 버티는 범위다.') : st('price') === 'warn' ? 'RLUSD 기준 값이 내렸다.' : 'RLUSD 기준 값이 크게 내렸다.';
+        if (botDays > 0 && botDays < W.length) t += ' 나눠 보면 bot이 산 ' + botDays + '일 동안 ' + sp(upBot - 1) + ', 사지 않은 ' + (W.length - botDays) + '일 동안 ' + sp(upRest - 1) + '다' + (upBot - 1 > 0.01 && upRest - 1 <= 0.005 ? ' — 오른 폭은 bot이 산 날에 나왔다.' : '.');
+        if (xrpCh !== null && start.price_xrp) t += ' XRP로 보면 ' + sp(end.price_xrp / start.price_xrp - 1) + '인데, XRP 값이 ' + sp(xrpCh) + ' 움직인 것이 겹쳐 있다.';
+      }
+      byKey.price.insight = t;
+    }
+    {
+      let t;                                       // 지급 여력
+      if (payRun === null) t = '최근 지급이 없어 계산하지 않았다.';
+      else {
+        t = st('payrun') === 'ok' ? '지급 계정에 한 달 치 넘게 있다. 당장 채울 일은 없다.' : st('payrun') === 'warn' ? '지급 계정 잔액이 한 달 치에 못 미친다. 최근 속도라면 ' + d1(payRun) + '일 안에 채워야 한다.' : '지급 계정 잔액이 일주일 치도 안 된다. 바로 채워야 지급이 끊기지 않는다.';
+        if (kwPaid > 0.5 && opsOut > 0) t += ' 최근 지급 가운데 ' + n(kwPaid) + '개(' + p1(kwPaid / opsOut) + ')는 KWeather 계정으로 나간 것이라, 그런 지급이 없는 주에는 더 오래간다.';
+      }
+      byKey.payrun.insight = t;
+    }
+    {
+      let t;                                       // 매입 여력
+      const botOnly = bB.n && spendDay > 0 ? (bB.r + bB.x * rate) / spendDay : null;
+      if (buyRun === null) t = bB.n ? '최근 ' + W.length + '일 매입이 없어 계산하지 않았다.' : '잔액을 받지 못해 계산하지 않았다.';
+      else {
+        t = st('buyrun') === 'ok' ? '매입에 쓸 돈이 한 달 치 넘게 있다.' : st('buyrun') === 'warn' ? '매입에 쓸 돈이 한 달 치에 못 미친다.' : '매입에 쓸 돈이 일주일 치도 안 된다.';
+        if (botOnly !== null && botOnly < H.runway[1]) t += ' bot 계정에 든 것만으로는 ' + d1(botOnly) + '일분이라, 최근 속도로 사려면 그 안에 ' + H.funders.join(' · ') + ' 계정에서 옮겨 줘야 한다.';
+        if (st('sale') === 'warn' || st('sale') === 'bad') t += ' 이 잔액을 채워 주는 판매 대금도 줄고 있다.';
+      }
+      byKey.buyrun.insight = t;
+    }
+    {
+      let t;                                       // 매입 재원
+      if (cov === null) t = '판매 대금 기록이 모자라 판단하지 않았다.';
+      else if (spend < 0.5) t = '최근 ' + W.length + '일은 매입이 없었다.';
+      else {
+        t = st('cover') === 'ok' ? '매입에 쓴 돈이 같은 기간 판매 대금 안이다.' : st('cover') === 'warn' ? '매입에 쓴 돈이 판매 대금을 넘었다. 넘는 만큼은 쌓아 둔 잔액에서 나간다.' : '매입에 쓴 돈이 판매 대금의 두 배를 넘는다. 쌓아 둔 잔액이 빠르게 준다.';
+        if (L3.length === 3 && b3 > 0.5) t += s3 > 0.5 ? (b3 > s3 ? ' 다만 최근 사흘만 보면 판매 대금 ' + n(s3) + ' RLUSD에 매입 지출 ' + n(b3) + ' RLUSD로 지출이 ' + d1(b3 / s3) + '배다.' : ' 최근 사흘도 판매 대금 ' + n(s3) + ' RLUSD 안에서 ' + n(b3) + ' RLUSD를 썼다.') : ' 다만 최근 사흘은 판매 대금 없이 ' + n(b3) + ' RLUSD를 썼다.';
+        t += ' 판매 대금 전체와 견준 값이라, 기기 원가 같은 다른 지출을 빼면 여유는 더 작다.';
+      }
+      byKey.cover.insight = t;
+    }
+
     // 종합: 빨강 둘 이상이면 주의, 빨강 하나 또는 노랑 둘 이상이면 지켜봄
     const cnt = { ok: 0, warn: 0, bad: 0, na: 0 }; for (const l of links) cnt[l.status]++;
     const overall = cnt.na === links.length ? 'na' : cnt.bad >= 2 ? 'bad' : (cnt.bad === 1 || cnt.warn >= 2) ? 'warn' : 'ok';
@@ -649,6 +765,13 @@ function buildDatasets(S, opts) {
     const blocked = names('bad'), watch = names('warn');
     let headline = '선순환 여섯 고리 가운데 ' + parts.join(' · ') + '.';
     headline += blocked.length ? ' ' + blocked.join(' · ') + ' 고리가 막혀 있다.' : watch.length ? ' ' + watch.join(' · ') + ' 고리를 지켜볼 때다.' : ' 막힌 고리가 없다.';
+
+    // 한 줄 정리: 고리끼리 이어서 읽는다
+    const take = [];
+    if (sr !== null) take.push(st('hold') === 'ok' ? '받은 보상은 절반 넘게 보유되고 있다.' : '받은 보상의 ' + p1(sr) + '가 팔리고' + (botShare !== null && botShare >= 0.5 ? ', 그 물량은 주로 Wellbian bot 매입이 받아낸다(산 양의 ' + p1(botShare) + ').' : ' 있다.'));
+    if (st('sale') !== 'na') take.push('매입 재원인 판매 대금은 ' + (st('sale') === 'ok' ? '늘었' : '직전 7일보다 ' + p1(Math.abs(ds)) + ' 줄었') + (L3.length === 3 && b3 > s3 && b3 > 0.5 ? '고, 최근 사흘은 매입 지출(' + n(b3) + ' RLUSD)이 판매 대금(' + n(s3) + ' RLUSD)을 넘었다.' : '다.'));
+    if (dq !== null && dp !== null) take.push('풀은 ' + (st('pool') === 'ok' ? '깊어졌고' : '얕아졌고') + ' RLUSD 기준 값은 ' + sp(dp) + '다.');
+    const takeaway = take.join(' ');
 
     // 그날 요약: 마지막으로 하루가 다 찬 날 + 오늘 지금까지
     const comments = [], D = end, Dp = fullDays[fullDays.length - 2] || null, T = daily[daily.length - 1];
@@ -694,7 +817,7 @@ function buildDatasets(S, opts) {
     return {
       from, to, prev_from: pFrom, prev_to: pTo, days: W.length, day: D.date,
       overall: { status: overall, label: ST[overall], ok: cnt.ok, warn: cnt.warn, bad: cnt.bad, na: cnt.na, total: links.length, counts: parts.join(' · ') },
-      headline, comments, links, reserves, rules, xrp, labels: ST,
+      headline, takeaway, comments, links, reserves, rules, xrp, labels: ST,
     };
   };
   const health = buildHealth();
