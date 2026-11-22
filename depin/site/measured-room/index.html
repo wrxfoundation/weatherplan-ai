@@ -38,6 +38,14 @@
   .hud-title h1 { font-family: var(--display); font-weight: 800; font-size: 22px; letter-spacing: -.01em; margin: 2px 0 0; color: #fff; text-shadow: 0 1px 8px rgba(0,0,0,.45); }
   .hud-title p { margin: 8px 0 0; font-size: 14px; line-height: 1.5; font-weight: 600; color: rgba(255,255,255,.9); text-wrap: balance; word-break: keep-all; overflow-wrap: anywhere; }   /* 한글 단어 중간에서 줄이 끊기지 않게 */
   .hud-title .en { display: block; font-size: 12px; font-weight: 500; color: rgba(255,255,255,.66); margin-top: 3px; }
+  /* 접기 · 펴기(v0.18): 제목 옆 단추로 설명 글을 접는다 */
+  .hud-title h1 { display: flex; align-items: center; gap: 9px; }
+  .fold { flex: none; width: 28px; height: 28px; display: inline-grid; place-items: center; padding: 0; border-radius: 50%; border: 1px solid rgba(255,255,255,.3); background: rgba(10,10,32,.4); color: #fff; cursor: pointer; pointer-events: auto; }
+  .fold:hover { background: rgba(255,255,255,.22); } .fold:focus-visible { outline: 3px solid rgba(255,255,255,.5); outline-offset: 2px; }
+  .chev { width: 13px; height: 13px; flex: none; fill: none; stroke: currentColor; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; transition: transform .2s ease; }
+  .hud-title.folded .fold .chev, .sec.shut .sec-h .chev { transform: rotate(-90deg); }
+  .hud-title.folded p { display: none; }
+  #app.gaming .fold { display: none; }
 
   .topnav { display: flex; align-items: center; gap: 8px; margin: 6px 16px 10px; flex-wrap: wrap; }
   .spaces { display: flex; gap: 4px; margin: 0; padding: 4px; border-radius: 999px; background: rgba(255,255,255,.10); border: 1px solid rgba(255,255,255,.14); width: max-content; max-width: 100%; }
@@ -148,7 +156,17 @@
   .fx-metal .metal-fx-inner { background: linear-gradient(180deg, #2c2c80, #1c1c56) !important; }   /* 알약 속은 wellbian 남보라 */
 
   .readout { margin: 10px 16px 0; background: var(--paper); color: var(--ink); border: 1px solid var(--line); border-radius: 14px; padding: 10px 12px 9px; box-shadow: 0 10px 30px rgba(0,0,0,.25); }
-  .readout .k { font-size: 10.5px; letter-spacing: .06em; text-transform: uppercase; color: var(--cap); font-weight: 700; font-family: var(--display); }
+  .readout .k { font-size: 10.5px; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-2); font-weight: 800; font-family: var(--display); }
+  /* 카드 구역(측정값 · 추이 · 상태 · 기기 화면): 머리글을 눌러 접고 편다(v0.18). 접힌 구역은 머리글 오른쪽에 요약 한 줄 */
+  .sec { border-top: 1px solid var(--line); margin-top: 8px; }
+  .sec-h { display: flex; align-items: center; gap: 6px; width: 100%; min-height: 30px; padding: 3px 0 1px; margin: 0; background: none; border: 0; border-radius: 4px; cursor: pointer; color: var(--cap); font-family: var(--display); font-size: 10.5px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; text-align: left; }
+  .sec-h:hover { color: var(--violet); } .sec-h:focus-visible { outline: 2px solid var(--violet); outline-offset: 1px; }
+  .sec-t { flex: none; }
+  .sec-s { flex: 1; min-width: 0; text-align: right; font-size: 11px; letter-spacing: 0; text-transform: none; color: var(--ink-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-variant-numeric: tabular-nums; visibility: hidden; }
+  .sec.shut .sec-s { visibility: visible; }
+  .sec.shut .sec-b { display: none; }
+  .sec-b > :first-child { margin-top: 2px; }
+  .sec-b { padding-bottom: 2px; }
   /* 여섯 측정 요소를 같은 크기의 막대로. 트랙에는 등급 구간(좋음·보통·주의·경고)이 옅게 깔리고, 막대와 숫자 색은 지금 등급을 따른다 */
   .bars { display: flex; flex-direction: column; gap: 5px; margin-top: 6px; }
   .bar { display: grid; grid-template-columns: 46px 1fr 44px; align-items: center; gap: 9px; }   /* 네 자리 숫자(2,131)가 막대 손잡이에 닿지 않게 */
@@ -210,7 +228,6 @@
   @media (max-width: 599px) { .def { font-size: 12.5px; } .def dl { grid-template-columns: 1fr; gap: 2px; } .def dt { padding-top: 4px; } }
   /* 기기 화면 그대로: 카드 너비에 맞춘 4:3 화면 두 장 — 2번째(Indoor Index · 시계 · 보상 · 네트워크), 3번째(여섯 타일). 실시간으로 같은 값을 그린다 */
   .screens { display: grid; gap: 6px; margin-top: 7px; }
-  .screens .k3 { font-size: 10px; color: var(--cap); font-family: var(--display); letter-spacing: .06em; text-transform: uppercase; font-weight: 700; }
   .screens .sc { position: relative; width: 100%; aspect-ratio: 4 / 3; border-radius: 8px; overflow: hidden; background: #f4f4f7; border: 1px solid var(--line); box-shadow: inset 0 0 0 1px rgba(255,255,255,.6); cursor: zoom-in; }
   .screens .sc:hover { border-color: var(--violet); }
   .screens .sc:focus-visible { outline: 2px solid var(--violet); outline-offset: 2px; }
@@ -223,7 +240,7 @@
   .fcap { margin-top: 10px; text-align: center; font-size: 12px; color: rgba(255,255,255,.8); font-family: var(--display), var(--body); }
   .fclose { position: absolute; right: -6px; top: -46px; }
   .screens .sc canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
-  @media (min-width: 600px) { .screens { grid-template-columns: repeat(3, 1fr); } .screens .k3 { grid-column: 1 / -1; } }   /* 세로 태블릿: 기기 화면 셋을 한 줄에(넓은 가로 화면은 아래에서 다시 한 열) */
+  @media (min-width: 600px) { .screens { grid-template-columns: repeat(3, 1fr); } }   /* 세로 태블릿: 기기 화면 셋을 한 줄에(넓은 가로 화면은 아래에서 다시 한 열) */
 
   .controls { margin: 10px 16px 0; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; align-items: center; }
   .btn { font-family: var(--body); font-weight: 700; font-size: 13.5px; border: 1px solid rgba(255,255,255,.25); background: rgba(255,255,255,.12); color: #fff;
@@ -269,7 +286,7 @@
   /* 가로 넓은 화면(부스·데스크톱): 장면이 화면 전체, 나머지는 그 위에 얹는다 */
   @media (orientation: landscape) and (min-width: 760px) and (min-height: 440px) {
     body { overflow: hidden; }
-    #app { display: block; height: 100dvh; min-height: 0; padding: 0; --ro-w: clamp(208px, 21vw, 250px); }   /* --ro-w = 측정값 카드 폭. 스크립트(fitReadout)가 화면 높이에 맞춰 px 로 다시 적는다 */
+    #app { display: block; height: 100dvh; min-height: 0; padding: 0; --ro-w: clamp(220px, 26vw, 340px); }   /* --ro-w = 측정값 카드 폭(v0.18: 넉넉하게 — 넘치면 카드 안에서 스크롤). 스크립트(fitReadout)가 px 로 다시 적는다 */
     #stage { position: absolute; inset: 0; height: auto; }
     .hud-title { position: absolute; left: 22px; top: 18px; max-width: 480px; padding: 0; z-index: 2; pointer-events: none; }
     .hud-title::before { content: ""; position: absolute; left: -22px; top: -18px; width: 640px; height: 360px; z-index: -1; pointer-events: none;   /* 밝은 장면(사무실 천장 조명 · 회의실 화면) 위에서도 로고 · 제목이 읽히게(v0.16) */
@@ -292,13 +309,13 @@
     .legend { position: absolute; left: 50%; top: 78px; transform: translateX(-50%); margin: 0; z-index: 2; height: 28px; background: rgba(10,10,32,.5); max-width: calc(100% - 32px); }   /* 방 탭 아래 16px 띄운다 */
     .legend span[data-sp] { padding: 0 10px; } .legend .k2 { padding: 0 8px 0 11px; }
     /* 카드는 스크롤하지 않는다: 폭을 화면 높이에서 역산해(제목·막대·곡선·상태·범례·여백 ≈ 380px + 화면 3장 = 2.25×폭) 세 화면까지 한 번에 보이게. 768px 높이에선 176px 까지 좁아진다 */
-    .readout { position: absolute; right: 18px; top: 18px; width: var(--ro-w); margin: 0; z-index: 2; overflow: visible; }
-    /* 카드가 화면 아래로 넘치면 기기 화면 배치를 바꾼다: 세로 셋 → 큰 것 하나 + 작은 것 둘(.s12) → 한 줄에 셋(.s111) → 숨김(.s0). .tight = 여백 줄임 */
-    .screens { grid-template-columns: 1fr; } .screens .k3 { grid-column: auto; }
-    .readout.s12 .screens { grid-template-columns: 1fr 1fr; } .readout.s12 .screens .k3, .readout.s12 .screens .sc[data-screen="0"] { grid-column: 1 / -1; }
-    .readout.s111 .screens { grid-template-columns: repeat(3, 1fr); gap: 5px; } .readout.s111 .screens .k3 { grid-column: 1 / -1; }
-    .readout.s0 .screens { display: none; }
-    .readout.tight .hint { display: none; } .readout.tight .bars { gap: 3px; } .readout.tight #mini { height: 54px; } .readout.cs #mini { height: 70px; } .readout.tight .status { gap: 4px; font-size: 10.5px; margin-top: 5px; } .readout.tight .screens { margin-top: 5px; }
+    /* 카드는 넉넉한 폭으로 두고, 기록 띠 위까지만 차지한다. 넘치는 것은 카드 안에서 스크롤 — 구역을 접으면 짧아진다(v0.18) */
+    .readout { position: absolute; right: 18px; top: 18px; width: var(--ro-w); max-height: var(--ro-h, calc(100dvh - 86px)); margin: 0; z-index: 2; overflow-x: hidden; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: #c4c4da transparent; }
+    .readout::-webkit-scrollbar { width: 8px; } .readout::-webkit-scrollbar-thumb { background: #c4c4da; border-radius: 4px; border: 2px solid var(--paper); } .readout::-webkit-scrollbar-track { background: transparent; }
+    .ro-more { position: sticky; bottom: -9px; height: 0; pointer-events: none; }   /* 아래에 더 있다는 표시: 카드 밑단을 흐리게(높이 0 — 스크롤 길이를 늘리지 않는다) */
+    .ro-more::before { content: ""; position: absolute; left: -12px; right: -12px; bottom: 0; height: 30px; background: linear-gradient(rgba(255,255,255,0), var(--paper) 88%); opacity: 0; transition: opacity .2s ease; }
+    .readout.more .ro-more::before { opacity: 1; }
+    .screens { grid-template-columns: 1fr; }
     .controls { position: absolute; left: 22px; bottom: 74px; margin: 0; display: flex; gap: 8px; flex-wrap: wrap-reverse; max-width: calc(100% - 54px - var(--ro-w)); z-index: 2; }   /* 버튼 줄은 카드 왼쪽에서 멈춘다. 넘치는 것(시계)은 윗줄로 */
     .btn { background: rgba(10,10,32,.5); backdrop-filter: blur(6px); border-color: rgba(255,255,255,.35); min-height: 38px; padding: 9px 15px; }
     .btn:hover { background: #fff; color: var(--navy); }
@@ -333,10 +350,9 @@
   }
   @media (max-width: 599px) {
     .hud-title .en { display: none; }
-    .screens { grid-template-rows: auto auto; grid-auto-flow: column; grid-auto-columns: 84%; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; padding-bottom: 4px; scrollbar-width: none; }
+    .screens { grid-auto-flow: column; grid-auto-columns: 84%; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; padding-bottom: 4px; scrollbar-width: none; }
     .screens::-webkit-scrollbar { display: none; }
-    .screens .k3 { grid-row: 1; grid-column: 1 / span 3; }
-    .screens .sc { grid-row: 2; scroll-snap-align: start; }
+    .screens .sc { scroll-snap-align: start; }
     #b-cook:not([hidden]) ~ #b-speed { grid-column: 1 / -1; }
     #b-hvac:not([hidden]) ~ #b-speed { grid-column: auto; }
     .bars { gap: 8px; }
@@ -496,8 +512,8 @@
   <header class="hud-title">
     <div class="logo" id="logo" role="button" tabindex="0" title="처음 화면으로 / Back to start" aria-label="wellbian · 처음 화면으로 / Back to start"><svg viewBox="0 0 1045 385" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M192.8 380.6C190.8 380.2 187.1 376.8 185.7 374.3L184.2 371.8L184.1 337.5C184 313.7 184.1 302.5 184.5 300.7C185.2 297.4 187.9 294.3 191.2 292.7C198.6 289.3 207.4 293.4 209 301.1C209.4 303 209.5 314.3 209.4 337.3L209.2 370.8L208.1 373.4C206.7 376.5 202.8 380.2 200.5 380.7C198.7 381 194.3 381 192.8 380.6ZM67.3 331.3C63.4 329.9 60 326.2 59 322.4C58.2 319.6 58.7 314.9 59.8 313C60.3 312.2 77.7 294.4 98.5 273.5C119.3 252.5 136.4 235.1 136.6 234.8C137.4 233.6 136.9 231.7 134.3 226.8C131.2 221 129.5 216.7 127.8 210C126.9 206.6 126.2 205 125.4 204.4C124.3 203.6 121.5 203.5 89 203.4C54 203.3 53.7 203.2 51.8 202.2C47.3 199.7 45 196 45 191C45 186 47.3 182.3 51.8 179.8C53.7 178.8 54 178.7 89.6 178.5C130.4 178.2 126.8 178.7 128.3 173.6C131.4 162.5 136.6 153 143.8 145C154.4 133.2 165.5 126.7 182.2 122.5C186.1 121.5 188.1 121.3 196.2 121.3C206.1 121.2 208.3 121.5 216.5 123.8C236 129.3 252.5 143.5 261.3 162.4C264.2 168.7 265.7 173.5 267 181.2C267.9 186.7 268.1 188.9 267.8 195.2C267.4 206.8 265.3 214.9 260.2 225.1C253.4 238.6 240.3 251.5 227.3 257.5C221.6 260.1 216.7 261.8 212.5 262.7C195 266.4 179.3 264.1 163 255.7C160.1 254.2 157.2 253 156.3 253C154.9 253 153.4 254.3 143.8 264.2C110.4 298.2 78.8 329.6 76.9 330.6C74.2 331.9 69.9 332.2 67.3 331.3ZM317.5 329.7C313.7 328.4 311.3 326.2 289.1 303.7C263.8 278.1 263 277.1 263 272.2C263 265.2 268.6 259.5 275.5 259.5C281.4 259.5 281.4 259.5 307.5 285.8C324.2 302.8 331.3 310.3 332.1 311.9C333.8 315.3 333.7 320 331.9 323.1C329.1 327.8 325.6 330 321 329.9C319.5 329.9 317.9 329.8 317.5 329.7ZM777.9 248.9C773.2 248.5 767.9 246.7 763.9 244.2C760.6 242.2 759.5 242.3 759.5 244.4C759.5 247.6 759.8 247.5 749 247.5C743.5 247.5 738.9 247.3 738.8 247.1C738.6 246.8 738.5 220.8 738.5 189.2L738.5 131.8L749 131.6L759.5 131.5L759.5 153.2C759.5 165.2 759.6 175 759.7 175C759.7 175 762.2 173.8 765 172.4C771.5 169.1 775.1 168.2 782.2 168.3C791.9 168.3 800 171.6 806.9 178.5C820.9 192.2 822.8 216.7 811.3 233.5C806.8 240.1 799.2 245.6 791.5 248C788.6 248.8 782.1 249.3 777.9 248.9ZM596.5 248.1C582 244.6 570.6 233.7 566.5 219.2C565 214.2 564.8 204.2 566.2 198.8C569.4 185.8 579.7 174.4 592 170.3C602.6 166.8 615.1 167.5 624 172C627.4 173.8 629.5 175.3 632.9 178.6C640.8 186.3 644.4 196 643.9 208.2C643.7 211.5 643.5 214.6 643.3 215.1C642.9 215.9 640.9 216 615.2 216.1C600 216.2 587.4 216.4 587.2 216.6C586.7 217.1 589.2 222.1 590.9 224.1C595.3 229.1 601.2 231.3 609.3 230.9C613.6 230.7 614.8 230.4 617.7 229C619.5 228.2 621.9 226.7 623.1 225.8C624.3 224.9 625.6 224 625.9 223.8C626.4 223.5 628.3 225.1 632.6 229.3C635.8 232.6 638.5 235.5 638.5 235.8C638.5 237.1 630.8 243.1 626.5 245.1C620.5 247.9 617.3 248.5 608.2 248.8C601.7 248.9 599.6 248.8 596.5 248.1ZM897.8 248.2C883.4 245.1 872.6 232.9 869.7 216.6C866.2 196.1 876.5 176.3 894 170.2C905.1 166.4 917.4 168 925.9 174.4C926.7 175 927.7 175.5 927.9 175.3C928.1 175.2 928.4 174 928.4 172.7C928.5 171.4 928.7 170.1 928.9 169.9C929.1 169.7 933.8 169.5 939.3 169.6L949.2 169.8L949.2 208.5L949.2 247.2L939 247.2L928.8 247.2L928.3 244.5C928.1 243 927.8 241.7 927.7 241.6C927.6 241.5 926.7 242.1 925.6 242.9C922.8 245.1 918.1 247.4 914.5 248.2C910.4 249.2 902.4 249.2 897.8 248.2ZM470.1 247.1C469.8 246.9 468.3 243.2 466.7 239C465.2 234.7 462.5 227.5 460.7 222.9C458.9 218.2 457.5 214.3 457.5 214.2C457.5 214.1 456.1 210.2 454.3 205.6C446 183.8 441.4 170.9 441.7 170.3C441.9 169.6 443.5 169.5 451.9 169.5C459.4 169.5 462 169.7 462.4 170.1C462.9 170.7 467.7 184.5 474.3 204.4C477.2 213.3 477.9 214.8 478.5 214.2C478.7 213.9 480.1 210 481.6 205.5C488.5 184.9 493.2 171.7 493.8 170.6C494.5 169.5 494.8 169.5 501.7 169.5C506.8 169.5 509 169.7 509.4 170.1C509.6 170.5 510.9 173.8 512.1 177.5C514.8 185.3 523.6 210.6 524.4 212.6C524.7 213.4 525.2 214 525.4 214C525.7 214 526.9 210.9 528.2 207.1C533.8 189.8 540.1 171.6 540.8 170.6C541.5 169.5 541.7 169.5 551.8 169.5C559.8 169.5 562 169.6 562 170.1C562 170.5 560 176.3 557.5 183C555 189.7 551.6 198.8 550 203.2C548.4 207.7 545 216.8 542.5 223.5C540 230.2 537 238.2 535.9 241.2C534.8 244.3 533.7 246.9 533.4 247.1C532.3 247.8 518.7 247.6 518.1 246.9C517.9 246.5 517.2 244.9 516.5 243.2C514.8 238.8 507.8 219.7 504.9 211.8C503.5 207.9 502.2 204.5 501.9 204.3C501.5 203.8 500.1 206.7 497.7 213.8C496.7 216.5 494.4 222.9 492.5 228C490.6 233.1 488.4 239.3 487.5 241.8C486.6 244.2 485.6 246.5 485.4 246.9C484.8 247.6 471.2 247.8 470.1 247.1ZM658.3 247.2C658.1 247 658 220.9 658 189.2L658 131.5L668.5 131.6L679 131.8L679 189.2C679 220.8 678.9 246.8 678.7 247.1C678.4 247.6 658.8 247.7 658.3 247.2ZM697.7 246.9C697.6 246.5 697.6 220.5 697.6 189L697.8 131.8L708.2 131.8L718.8 131.8L718.9 188.9C719 230.8 718.9 246.3 718.4 246.8C717.7 247.8 698.1 247.8 697.7 246.9ZM833.6 246.9C832.7 246 832.7 170.8 833.7 170.1C834.2 169.7 837.4 169.5 844.3 169.6L854.2 169.8L854.2 208.5L854.2 247.2L844.2 247.4C836.9 247.5 834.1 247.4 833.6 246.9ZM968.2 246.9C968.1 246.5 968 229 968.1 208L968.2 169.8L978.5 169.8L988.8 169.8L988.9 172.2C989 173.6 989.3 174.9 989.5 175.2C989.7 175.4 990.9 174.9 992.1 174.1C995.1 172 997.8 170.8 1001.8 169.4C1004.7 168.5 1006.2 168.3 1011 168.3C1019.7 168.4 1025.3 170.6 1031.6 176.4C1035.5 180 1038 183.9 1039.5 188.6L1040.8 192.2L1040.8 219.8L1040.8 247.2L1030.2 247.2L1019.8 247.2L1019.5 222.5L1019.2 197.8L1017.8 195.1C1015.1 190.3 1010.5 187.8 1004.2 187.8C997.6 187.8 993 190.6 990.4 196.2C989.3 198.7 989.2 199 989 223L988.8 247.2L978.6 247.4C970.8 247.5 968.4 247.4 968.2 246.9ZM204.8 237.8C221.9 234.4 235 222.7 240.2 206C246.6 185.7 237.5 163.2 218.4 152.3C215.8 150.9 210.7 149 206.5 147.9C202 146.8 190.1 147.1 185.4 148.4C174.4 151.5 165.2 158.2 158.9 167.7C155.8 172.5 155.2 173.8 155.7 175.7C156.4 178.4 157.2 178.5 178.9 178.5C191 178.5 199.5 178.7 200.6 179C203.5 179.8 206.5 182.4 208.2 185.7C210.2 189.5 210.3 194.5 208.5 198C207.8 199.5 202.3 205.4 192.7 215C179.8 228 177.9 230 177.9 231.4C177.8 233.9 179.5 235.4 184 236.6C191.1 238.6 198.6 239 204.8 237.8ZM782.6 228.8C788.1 227.1 792 224 794.2 219.5C800.6 207 795.3 192.2 783.3 188.7C779.1 187.5 773.2 187.9 769.5 189.6C761.8 193.3 756.9 203.2 758.5 212C759.6 218.4 762.9 223.8 767.4 226.4C772.5 229.3 777.9 230.2 782.6 228.8ZM914.8 228.8C920.7 227.2 924.9 223.8 927.6 218.1C929.2 214.9 929.2 214.5 929.2 208.5L929.2 202.2L927.3 198.6C925.1 194.5 921.9 191.3 918.1 189.5C916.1 188.4 915 188.3 910.2 188.3C903.7 188.3 901.4 189.1 897.3 193C890 199.9 888.9 212.2 894.7 221.4C898.5 227.4 907.5 230.8 914.8 228.8ZM160 210.8C163.3 209 162.4 204.4 158.7 203.7C154.6 202.9 152.8 209.5 156.7 211C158.2 211.6 158.4 211.6 160 210.8ZM302.8 204.3C300.2 203.4 296.4 199.3 295.6 196.6C293.4 189.2 297.5 181.5 304.7 180C306.5 179.6 317.4 179.5 341 179.6C374.7 179.7 374.8 179.8 376.8 180.9C380.8 183 383.5 187.4 383.5 192.1C383.5 197.5 381.2 201.6 376.9 203.7L374.3 205L339.5 205C311 205 304.4 204.8 302.8 204.3ZM12.9 202.8C9.1 201.4 5.3 197.4 4.5 193.9C3.9 191.1 4.7 186.8 6.2 184.6C10.9 177.4 20.5 176.6 26 182.8C28.2 185.4 29.1 187.6 29.1 191.1C29.1 199.5 20.7 205.6 12.9 202.8ZM623 199C623 197.2 620.7 192.8 618.5 190.6C615.7 187.6 612.7 186.4 607.7 186.1C599 185.6 592 189.1 588.8 195.6C586.4 200.4 585.1 200 605.2 200C622.6 200 623 200 623 199ZM838.7 156.3C832.7 153.5 830.2 146.1 833.2 139.7C836 133.6 844.3 131.2 850.2 134.7C858.3 139.4 857.7 152.4 849.3 156.3C845.9 157.9 842.1 157.9 838.7 156.3ZM114.6 125.5C113.8 125.3 112.5 124.8 111.9 124.4C109.6 122.9 62.2 74.9 61.3 73.1C59.9 70.5 59.9 65.5 61.3 62.5C64.2 56.3 72 53.2 78 55.9C79.7 56.6 85.9 62.6 104.5 81.4C119.3 96.5 129.1 106.8 129.6 107.9C131.5 111.9 130.3 118.3 127.1 121.7C124.2 124.7 118.5 126.5 114.6 125.5ZM270.2 124.3C265.7 122.2 263 117.9 263 112.5C263 109.9 263.3 108.8 264.4 106.9C266.1 104 312.2 57.5 314.5 56.2C316.7 55.1 321.7 54.7 324.5 55.5C327.8 56.4 331.7 60.5 332.8 64.3C333.7 67.5 333.5 70.6 332.2 73.1C331.7 74 320.7 85.6 307.6 98.9C289.4 117.3 283.2 123.3 281.3 124.3C277.9 125.9 273.7 125.9 270.2 124.3ZM193.8 93.6C191.4 92.9 189.4 91.7 187.4 89.7C183.9 86.1 184 87.2 184 49.5C184 11.6 183.9 12.4 187.5 8.4C190.2 5.3 193 4 196.8 4C201.9 4 205.7 6.6 208.1 11.8L209.2 14.2L209.4 48.2C209.5 85.7 209.6 85.7 206.4 89.3C203.3 92.8 197.9 94.7 193.8 93.6Z"/></svg></div>
     <div class="brand" id="brand" role="button" tabindex="0" title="처음 화면으로 / Back to start">Weather Data Token Generator <span class="tm">™</span></div>
-    <h1>Measured Room</h1>
-    <p><span id="lead">거실. 저녁엔 네 식구의 숨이 CO₂를 올립니다. 창을 열면 빨리 내려갑니다.</span>
+    <h1>Measured Room<button type="button" class="fold" id="lead-fold" aria-expanded="true" aria-controls="lead-box" aria-label="설명 접기"><svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button></h1>
+    <p id="lead-box"><span id="lead">거실. 저녁엔 네 식구의 숨이 CO₂를 올립니다. 창을 열면 빨리 내려갑니다.</span>
       <span class="en" id="lead-en">A concept simulation. Each room is measured by its own device.</span></p>
   </header>
 
@@ -562,6 +578,7 @@
   </div>
   <aside class="readout" aria-live="polite">
     <div class="k" id="rk">On the console · 거실</div>
+    <section class="sec" data-sec="bars"><button type="button" class="sec-h" aria-expanded="true" aria-controls="sec-bars"><svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg><span class="sec-t" data-i18n="secBars">Readings · 측정값</span><span class="sec-s" id="sum-bars"></span></button><div class="sec-b" id="sec-bars">
     <div class="bars" id="bars" aria-label="여섯 측정 요소의 값과 등급 — 막대를 끌면 값을 직접 바꿀 수 있다">
       <div class="bar"><span class="bl">PM2.5<small>µg/m³</small></span><span class="bt" data-bar="pm"><i id="pmb"></i></span><b id="pmv">12</b></div>
       <div class="bar"><span class="bl">PM10<small>µg/m³</small></span><span class="bt" data-bar="pm10"><i id="pm10b"></i></span><b id="pm10v">21</b></div>
@@ -571,7 +588,11 @@
       <div class="bar"><span class="bl"><span data-i18n="rh">습도</span><small>%</small></span><span class="bt" data-bar="rh"><i id="rhb"></i></span><b id="rhv">55</b></div>
     </div>
     <div class="hint" data-i18n="hint">막대를 끌어 값을 바꿔 보세요 · 아래 기기 화면을 누르면 크게</div>
+    </div></section>
+    <section class="sec" data-sec="curve"><button type="button" class="sec-h" aria-expanded="true" aria-controls="sec-curve"><svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg><span class="sec-t" data-i18n="secCurve">Trend · 추이와 30분 예측</span><span class="sec-s" id="sum-curve"></span></button><div class="sec-b" id="sec-curve">
     <div class="curve" id="curve"><canvas id="mini" width="400" height="168" role="img" aria-label="최근 두 시간의 CO₂(위)와 PM2.5(아래) 곡선. 오른쪽 점선은 지금 그대로 둘 때 앞으로 30분. 가리키면 그 시각의 값"></canvas><i class="live" id="mini-live" hidden></i></div>
+    </div></section>
+    <section class="sec" data-sec="state"><button type="button" class="sec-h" aria-expanded="true" aria-controls="sec-state"><svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg><span class="sec-t" data-i18n="secState">Status · 지금 상태</span><span class="sec-s" id="sum-state"></span></button><div class="sec-b" id="sec-state">
     <div class="status">
       <span class="pill" id="p-window">창문 닫힘</span>
       <span class="pill" id="p-cook" hidden>조리 안 함</span>
@@ -579,12 +600,15 @@
       <span class="pill" id="p-night">저녁</span>
       <span class="pill" id="p-who">세 사람 · 저녁(한 사람은 주방)</span>
     </div>
+    </div></section>
+    <section class="sec" data-sec="screens"><button type="button" class="sec-h" aria-expanded="true" aria-controls="sec-screens"><svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg><span class="sec-t" data-i18n="screens">Device screens · 기기 화면</span></button><div class="sec-b" id="sec-screens">
     <div class="screens" aria-label="기기 화면 그대로">
-      <div class="k3" data-i18n="screens">Device screens · 기기 화면</div>
       <div class="sc" data-screen="0" role="button" tabindex="0" aria-label="기기 화면 1 크게 보기"><canvas id="mini-tiles" aria-label="기기 화면 1: 여섯 타일"></canvas></div>
       <div class="sc" data-screen="1" role="button" tabindex="0" aria-label="기기 화면 2 크게 보기"><canvas id="mini-index" aria-label="기기 화면 2: Indoor Index, 시계, 보상, 네트워크"></canvas></div>
       <div class="sc" data-screen="2" role="button" tabindex="0" aria-label="기기 화면 3 크게 보기"><canvas id="mini-io" aria-label="기기 화면 3: 실내와 실외 비교, 환기 장치"></canvas></div>
     </div>
+    </div></section>
+    <div class="ro-more" aria-hidden="true"></div>
   </aside>
 
 
@@ -676,7 +700,7 @@
       gShare: (s, p, u) => `Measured Room · 환기 타이밍 ${s} ${p}%\n공기는 눈에 보이지 않아요. 측정해야 때를 알아요.\n${u}`,
       badN: (n) => `장면 ${n}장을 불러오지 못했습니다`, loading: (d, n) => `장면 불러오는 중 ${d}/${n}`, noclip: "영상 루프 없이 사진으로 표시", nofx: "효과 레이어 없음(이 브라우저는 WebGL 미지원)",
       // 예측 · 미리 알림 · 1,000 넘은 시간(v0.16)
-      soonCta: (n) => `${n}분 뒤 1,000을 넘습니다`, soonSub: "탭하면 미리 창문 열기", soonSubHvac: "탭하면 미리 환기 장치 켜기", fcZone: "+30분", axAgo: "2시간 전", axNow: "지금", fcAt: (n) => `+${n}분`, fcTag: "예측", curveNote: "최근 두 시간의 CO₂(위)와 PM2.5(아래) 곡선. 오른쪽 점선은 지금 그대로 둘 때 앞으로 30분. 가리키면 그 시각의 값",
+      soonCta: (n) => `${n}분 뒤 1,000을 넘습니다`, soonSub: "탭하면 미리 창문 열기", soonSubHvac: "탭하면 미리 환기 장치 켜기", fcZone: "+30분", axAgo: "2시간 전", axNow: "지금", fcAt: (n) => `+${n}분`, fcTag: "예측", secBars: "Readings · 측정값", secCurve: "Trend · 추이와 30분 예측", secState: "Status · 지금 상태", sumCurve: (v) => `30분 뒤 CO₂ ${v}`, foldLead: "설명 접기", unfoldLead: "설명 펴기", curveNote: "최근 두 시간의 CO₂(위)와 PM2.5(아래) 곡선. 오른쪽 점선은 지금 그대로 둘 때 앞으로 30분. 가리키면 그 시각의 값",
       overN: (m) => `· 1,000 넘은 시간 ${m >= 60 ? Math.floor(m / 60) + "시간 " : ""}${m % 60}분`,
       // 카페 · 사무실 · 회의실(v0.15)
       capArt: "도면 장면 · 개념 시뮬레이션 · 입자는 예시", doorOpen: "문 열림", doorOpenMix: "문 열림 · 사무실 공기와 섞임", doorClosed: "문 닫힘", bDoorOpen: "문 열어 두기", bDoorOpen2: "문 열기", bDoorClose: "문 닫기",
@@ -717,7 +741,7 @@
       gAgain: "Play again", gNoDevBtn: "Try without the monitor", gDevBtn: "Play with the monitor", gCopy: "Copy result", gCopied: "Copied", gExplore: "Back to the simulation",
       gShare: (s, p, u) => `Measured Room · Air Timing ${s} ${p}%\nYou can't see the air. Measuring tells you when to open the window.\n${u}`,
       badN: (n) => `${n} scene(s) failed to load`, loading: (d, n) => `Loading scenes ${d}/${n}`, noclip: "Showing photos without video loops", nofx: "No effects layer (WebGL unsupported)",
-      soonCta: (n) => `Passing 1,000 in ${n} min`, soonSub: "Tap to open the window early", soonSubHvac: "Tap to switch the ventilation on early", fcZone: "+30 min", axAgo: "2 h ago", axNow: "now", fcAt: (n) => `+${n} min`, fcTag: "forecast", curveNote: "CO₂ (top) and PM2.5 (bottom) over the last two hours. The dotted part on the right is the next 30 minutes if nothing changes. Point at it to read a value",
+      soonCta: (n) => `Passing 1,000 in ${n} min`, soonSub: "Tap to open the window early", soonSubHvac: "Tap to switch the ventilation on early", fcZone: "+30 min", axAgo: "2 h ago", axNow: "now", fcAt: (n) => `+${n} min`, fcTag: "forecast", secBars: "Readings", secCurve: "Trend · next 30 min", secState: "Status", sumCurve: (v) => `CO₂ in 30 min ${v}`, foldLead: "Hide the description", unfoldLead: "Show the description", curveNote: "CO₂ (top) and PM2.5 (bottom) over the last two hours. The dotted part on the right is the next 30 minutes if nothing changes. Point at it to read a value",
       overN: (m) => `· over 1,000 for ${m >= 60 ? Math.floor(m / 60) + " h " : ""}${m % 60} min`,
       capArt: "drawn scene · concept simulation · particles are illustrative", doorOpen: "Door open", doorOpenMix: "Door open · mixing with the office", doorClosed: "Door closed", bDoorOpen: "Prop the door open", bDoorOpen2: "Open the door", bDoorClose: "Close the door",
       hvacOn: "Ventilation on", hvacOff: "Ventilation off", bHvacOn: "Start ventilation", bHvacOff: "Stop ventilation", ventSubHvac: "Tap to switch on the ventilation",
@@ -1114,7 +1138,7 @@
       else if (e.key === "ArrowLeft" || e.key === "ArrowDown" || e.key === "PageDown") { applyBar(k, cur_ - step); e.preventDefault(); }
     });
   }
-  const pWin = $("p-window"), pCook = $("p-cook"), pNight = $("p-night"), pWho = $("p-who"), pHvac = $("p-hvac");
+  const pWin = $("p-window"), pCook = $("p-cook"), pNight = $("p-night"), pWho = $("p-who"), pHvac = $("p-hvac"), sumBars = $("sum-bars"), sumCurve = $("sum-curve"), sumState = $("sum-state");
   const ventB = document.querySelector("#vent b"), ventS = document.querySelector("#vent small");
   const WIN0 = { open: "winOpen", closed: "winClosed", bOpen: "bWinOpen", bClose: "bWinClose" };   // 창(집 · 사무실). 카페 · 회의실은 문(공간 설정의 win)
   function clockText() { const day = Math.floor(G.t / 1440) + 1, m = G.t % 1440; return `Day ${day} · ${String(Math.floor(m / 60)).padStart(2, "0")}:${String(m % 60).padStart(2, "0")}`; }
@@ -1125,7 +1149,7 @@
   function hud() {
     const s = ST[cur];
     refreshForecast();
-    pmv.textContent = s.pm.toFixed(0); co2v.textContent = fmtN(s.co2);   // 네 자리는 쉼표(곡선 · 안내 문구와 같은 표기) clock.textContent = clockText();   // 배속은 옆 버튼에 있다
+    pmv.textContent = s.pm.toFixed(0); co2v.textContent = fmtN(s.co2); clock.textContent = clockText();   // 네 자리는 쉼표(곡선 · 안내 문구와 같은 표기). 시계의 배속은 옆 버튼에 있다
     pm10v.textContent = pm10Of(s).toFixed(0); vocv.textContent = fmtN(s.voc); tv.textContent = s.temp.toFixed(1); rhv.textContent = s.rh.toFixed(0);
     // 막대와 숫자 색: 좋음(파랑) → 보통(초록) → 주의(주황) → 경고(빨강). PM·VOCs 는 기기 등급, CO₂ 는 800 주의·1000 경고, 온·습도는 편안 범위 밖이면 주의
     const p10 = pm10Of(s);
@@ -1143,6 +1167,7 @@
     pNight.textContent = G.night ? t("nightP") : (h < 6 ? t("dawn") : h < 12 ? t("morning") : h < 18 ? t("day") : t("evening"));
     pNight.classList.toggle("on", G.night);
     pWho.textContent = whoText(cur);   // 이 방에 지금 누가 있나(시간표)
+    sumBars.textContent = `CO₂ ${fmtN(s.co2)} · PM2.5 ${s.pm.toFixed(0)}`; sumCurve.textContent = FC ? t("sumCurve", fmtN(FC.end)) : ""; sumState.textContent = pWho.textContent;   // 접힌 구역의 머리글에 뜨는 요약
     lbl(bWin, s.window ? t(W.bClose) : t(W.bOpen)); bWin.classList.toggle("on", s.window);
     lbl(bHvac, t(s.hvac ? "bHvacOff" : "bHvacOn")); bHvac.classList.toggle("on", !!s.hvac);
     const vWas = ventBtn.hidden, cWas = cookBtn.hidden, soon = FC ? FC.soon : 0;
@@ -1774,20 +1799,18 @@
   const legendEl = $("legend"), titleEl = document.querySelector(".hud-title");
   const WIDE = matchMedia("(orientation: landscape) and (min-width: 760px) and (min-height: 440px)");
   const roEl = document.querySelector(".readout"), ledgerEl = document.querySelector(".ledger"), ctlEl = document.querySelector(".controls"), navEl = document.querySelector(".topnav");
-  /* 넓은 화면의 측정값 카드: 기록 띠 위에서 끝나게 맞춘다(v0.16.1). 폭을 250 → 208 로 줄여 보고, 그래도 넘치면 기기 화면 배치를 바꾼다.
-     글자만 바뀐 경우(soft)는 넘칠 때만 다시 맞춘다 — 상태 줄이 한 줄 늘었다 줄었다 할 때마다 배치가 바뀌지 않게 */
-  const RO_CLS = ["s12", "s111", "s0", "tight", "cs"];   // cs = 곡선을 한 단 낮게(70px)
-  function fitReadout(soft) {
+  /* 넓은 화면의 측정값 카드(v0.18): 폭은 화면의 26%(220~340px)로 넉넉하게, 높이는 기록 띠 위까지. 넘치면 카드 안에서 스크롤한다.
+     (v0.16.1~0.17 은 한 화면에 넣으려고 폭을 208px 까지 줄이고 기기 화면 배치를 바꿨다 — 서우 11/22 「너무 작아진다」) */
+  function fitReadout() {
     const app = $("app");
-    if (!WIDE.matches || app.classList.contains("nodev")) { roEl.classList.remove(...RO_CLS); app.style.removeProperty("--ro-w"); return; }
-    const lr = ledgerEl.getBoundingClientRect(), top = roEl.getBoundingClientRect().top, limit = (lr.height ? lr.top : innerHeight) - 8, fits = () => top + roEl.offsetHeight <= limit;
-    if (soft && app.style.getPropertyValue("--ro-w") && fits()) return;
-    const wMax = Math.round(clamp(innerWidth * 0.21, 208, 250));
-    for (const [mode, mod] of [["", ""], ["", "cs"], ["s12", ""], ["s12", "cs"], ["s12", "tight"], ["s111", ""], ["s111", "tight"], ["s0", "tight"]]) {
-      roEl.classList.remove(...RO_CLS); if (mode) roEl.classList.add(mode); if (mod) roEl.classList.add(mod);
-      for (let w = wMax; w >= 208; w -= 6) { app.style.setProperty("--ro-w", w + "px"); if (fits()) return; if (mode !== "" && mode !== "s12") break; }
-    }
+    if (!WIDE.matches || app.classList.contains("nodev")) { app.style.removeProperty("--ro-w"); app.style.removeProperty("--ro-h"); roEl.classList.remove("more"); return; }
+    const lr = ledgerEl.getBoundingClientRect();
+    app.style.setProperty("--ro-w", Math.round(clamp(innerWidth * 0.26, 220, 340)) + "px");
+    app.style.setProperty("--ro-h", Math.max(180, Math.round((lr.height ? lr.top : innerHeight) - roEl.getBoundingClientRect().top - 8)) + "px");
+    roMore();
   }
+  function roMore() { roEl.classList.toggle("more", WIDE.matches && roEl.scrollHeight - roEl.scrollTop - roEl.clientHeight > 6); }   // 아래에 더 있으면 카드 밑단을 흐리게
+  roEl.addEventListener("scroll", roMore, { passive: true });
   /* 넓은 화면의 메뉴: 한 줄에 안 들어가면 [건물][언어] / [방] 두 줄로. 둘째 줄이 상표 글줄에 닿으면 그 글줄을 쉰다 */
   function fitNav() {
     navEl.classList.remove("two"); titleEl.classList.remove("nobrand");
@@ -1808,10 +1831,19 @@
     if (low) { st.top = "auto"; st.bottom = (innerHeight - (cr.height ? cr.top : innerHeight - 112) + 10).toFixed(0) + "px"; } else st.top = under.toFixed(0) + "px";
   }
   addEventListener("resize", () => { layout(); });
+  /* 접기 · 펴기(v0.18): 왼쪽 설명 글과 카드 구역 넷. 고른 상태는 이 기기에 기억한다(주소에 #fold=lead,bars,curve,state,screens 로 처음 상태를 정할 수도 있다) */
+  const FOLD = (() => { let o = {}; try { o = JSON.parse(localStorage.getItem("mr-fold") || "{}") || {}; } catch (e) {} const m = location.hash.match(/(?:^#|&)fold=([\w,]*)/); if (m) { o = {}; m[1].split(",").forEach((k) => { if (k) o[k] = 1; }); } return o; })();
+  const saveFold = () => { try { localStorage.setItem("mr-fold", JSON.stringify(FOLD)); } catch (e) {} };
+  const leadFold = $("lead-fold"), secEls = Array.from(document.querySelectorAll(".readout .sec"));
+  function setLeadFold(on, quiet) { titleEl.classList.toggle("folded", on); leadFold.setAttribute("aria-expanded", String(!on)); leadFold.setAttribute("aria-label", t(on ? "unfoldLead" : "foldLead")); leadFold.title = t(on ? "unfoldLead" : "foldLead"); if (!quiet) { FOLD.lead = on ? 1 : 0; saveFold(); layout(true); } }
+  function setSec(sec, shut, quiet) { sec.classList.toggle("shut", shut); sec.querySelector(".sec-h").setAttribute("aria-expanded", String(!shut)); if (!quiet) { FOLD[sec.dataset.sec] = shut ? 1 : 0; saveFold(); hud(); layout(true); } }
+  leadFold.addEventListener("click", () => setLeadFold(!titleEl.classList.contains("folded")));
+  secEls.forEach((sec) => { sec.querySelector(".sec-h").addEventListener("click", () => setSec(sec, !sec.classList.contains("shut"))); if (FOLD[sec.dataset.sec]) setSec(sec, true, true); });
+  if (FOLD.lead) titleEl.classList.add("folded");
   // 버튼 글자 · 상태 줄 · 설명 글이 바뀌어 높이가 달라지면 다시 맞춘다(한 프레임에 한 번)
   let softT = 0; const softLayout = () => { if (!softT) softT = requestAnimationFrame(() => { softT = 0; layout(true); }); };
   if ("ResizeObserver" in window) { const o2 = new ResizeObserver(softLayout); for (const el of [ctlEl, titleEl, roEl, navEl]) o2.observe(el); }
-  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { $("app").style.removeProperty("--ro-w"); layout(true); });   // 글꼴이 늦게 오면 폭이 달라진다
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => layout(true));   // 글꼴이 늦게 오면 폭이 달라진다
   if ("ResizeObserver" in window) new ResizeObserver(() => layout()).observe(stage);
 
   /* ── 시차: 마우스(또는 기울기)가 움직이면 장면·기기는 조금, 가까운 먼지는 더 ── */
@@ -2113,7 +2145,8 @@
     if (!panel.hidden) $("pspec-title").textContent = `${sp.where} · ${roomName(sp)}`;
     if (!floatEl.hidden && floatIdx >= 0) fcap.textContent = `${t("fnames")[floatIdx]} ${t("fhint")}`;
     if (typeof bSpeed !== "undefined") lbl(bSpeed, `${t("timelapse")} ×${G.speed}`);
-    spaceLabels(); noteAssets(); hud(); counts(); $("app").style.removeProperty("--ro-w"); layout(true);   // 언어가 바뀌면 제목 · 카드 · 버튼 줄 크기도 바뀐다
+    setLeadFold(titleEl.classList.contains("folded"), true);
+    spaceLabels(); noteAssets(); hud(); counts(); layout(true);   // 언어가 바뀌면 제목 · 카드 · 버튼 줄 크기도 바뀐다
     gameLang();
   }
   const langBtns = Array.from(document.querySelectorAll("#lang button"));
