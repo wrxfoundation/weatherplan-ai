@@ -173,6 +173,8 @@ button, input { font: inherit; color: inherit; }
 .tick { fill: var(--faint); font-size: 12px; font-family: var(--font); }
 .end { fill: var(--fg); font-size: 12.5px; font-family: var(--font); font-weight: 600; }
 .band { fill: var(--grid); opacity: 0.8; }
+.dot { stroke: var(--panel); stroke-width: 1.5px; opacity: 0.9; } .dot-on { fill: none; stroke: var(--fg); stroke-width: 2px; }
+.diag { stroke: var(--axis); stroke-width: 1px; stroke-dasharray: 4 4; }
 .flow-name { fill: var(--fg); font-size: 13px; font-weight: 600; font-family: var(--font); paint-order: stroke; stroke: var(--panel); stroke-width: 4px; stroke-linejoin: round; }
 .flow-val { fill: var(--muted); font-size: 12px; font-weight: 500; font-family: var(--font); font-variant-numeric: tabular-nums; paint-order: stroke; stroke: var(--panel); stroke-width: 4px; stroke-linejoin: round; }
 .flow-col { fill: var(--faint); font-size: 12px; font-weight: 600; font-family: var(--font); }
@@ -196,6 +198,7 @@ th:first-child, td:first-child { text-align: left; position: sticky; left: 0; ba
 th:first-child { font-weight: 600; }
 td.empty { text-align: left; color: var(--faint); position: static; font-weight: 400; }
 td.neg { color: var(--faint); }
+tr.pick { cursor: pointer; } tr.pick:hover td { background: var(--soft); } tr.on td, tr.on:hover td { background: color-mix(in srgb, var(--accent) 9%, var(--cell)); }
 table.words th, table.words td { text-align: left; white-space: nowrap; vertical-align: top; }
 table.words td:nth-child(2) { white-space: normal; word-break: keep-all; min-width: 13em; }
 th button { all: unset; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; font-size: var(--t-xs); font-weight: 600; color: var(--faint); }
@@ -484,16 +487,36 @@ details .scroll { margin-top: 8px; }
   </section>
 
   <section class="sec panel" id="wallets" aria-labelledby="h-wallets">
-    <h2 class="h2" id="h-wallets">일반 사용자 지갑별 내역 <span class="period" data-period>—</span></h2>
+    <h2 class="h2" id="h-wallets">지갑별 매수 · 매도 <span class="period" data-period>—</span></h2>
+    <h3 class="h3">지갑 분포도: 판 양과 산 양</h3>
+    <p class="note">점 하나가 지갑 하나다. 오른쪽으로 갈수록 많이 판 지갑, 위로 갈수록 많이 산 지갑이고, 비스듬한 점선 위에 있으면 판 만큼 산 지갑이다. 눈금은 열 배씩 커진다. 점을 누르면 아래에서 그 지갑을 따라가 볼 수 있다.</p>
+    <figure class="fig">
+      <div class="legend"><span class="key"><i class="sw" style="background:var(--s1)"></i>일반 사용자 지갑</span><span class="key"><i class="sw" style="background:var(--s2)"></i>사고팔기만 한 지갑</span><span class="key"><i class="sw" style="background:var(--s3)"></i>그 밖의 지갑</span><span class="key"><i class="sw" style="background:var(--s4)"></i><span class="tag tag-w">Wellbian</span>bot 계정</span></div>
+      <div class="chart skel" id="chart-scatter" data-chart="scatter" role="img" aria-label="지갑마다 판 양과 산 양을 찍은 분포도"></div>
+    </figure>
+    <h3 class="h3">보상 받은 지갑은 얼마나 파나</h3>
+    <p class="note">일반 사용자 지갑을 「이 기간에 받은 양 가운데 판 비율」로 나눴다. 막대는 지갑 수, 오른쪽 끝은 그 지갑들이 판 양이 전체에서 차지하는 몫이다.</p>
+    <ul class="pos" id="wdist"></ul>
+    <ul class="cap points" id="wconc"></ul>
+    <div class="card" id="wallet-panel" hidden>
+      <div class="tools between"><h3 class="h3 flat">지갑 따라가 보기 · <span data-w-title>—</span></h3><a class="link" data-w-link hidden target="_blank" rel="noopener noreferrer">원장 탐색기에서 열기</a></div>
+      <p class="sub" data-w-sum></p>
+      <figure class="fig">
+        <div class="legend"><span class="key"><i class="sw" style="background:var(--s3)"></i>RLUSD로 판 양</span><span class="key"><i class="sw" style="background:var(--s1)"></i>XRP로 판 양</span><span class="key"><i class="sw" style="background:var(--ctx)"></i>산 양</span><span class="key"><i class="sw line" style="background:var(--muted)"></i>받은 양</span></div>
+        <div class="chart sm" id="chart-wallet" data-chart="wallet" role="img" aria-label="고른 지갑의 날짜별 판 양, 산 양, 받은 양"></div>
+      </figure>
+    </div>
+    <h3 class="h3">지갑별 표</h3>
     <div class="tools">
       <input class="search" type="search" placeholder="지갑 주소 앞이나 뒤 글자로 찾기" aria-label="지갑 찾기" data-search>
-      <span class="chips" role="group" aria-label="지갑 거르기"><button type="button" data-wf="all" aria-pressed="true">전체</button><button type="button" data-wf="sold" aria-pressed="false">판 지갑</button><button type="button" data-wf="held" aria-pressed="false">잔액 있는 지갑</button><button type="button" data-wf="pool" aria-pressed="false">풀에 넣은 지갑</button></span>
+      <span class="chips" role="group" aria-label="지갑 묶음"><button type="button" data-wg="user" aria-pressed="true">일반 사용자</button><button type="button" data-wg="arb" aria-pressed="false">사고팔기</button><button type="button" data-wg="other" aria-pressed="false">그 밖</button><button type="button" data-wg="all" aria-pressed="false">모든 지갑</button></span>
+      <span class="chips" role="group" aria-label="지갑 거르기"><button type="button" data-wf="all" aria-pressed="true">전체</button><button type="button" data-wf="sold" aria-pressed="false">판 지갑</button><button type="button" data-wf="bought" aria-pressed="false">산 지갑</button><button type="button" data-wf="held" aria-pressed="false">잔액 있는 지갑</button><button type="button" data-wf="pool" aria-pressed="false">풀에 넣은 지갑</button><button type="button" data-wf="rebuy" aria-pressed="false">다시 산 지갑</button></span>
       <span class="count"><span data-wcount>—</span>곳</span>
       <button type="button" class="link" data-more>전체 보기</button>
       <button type="button" class="link" data-csv="wallets">CSV 받기</button>
     </div>
-    <div class="scroll"><table id="tb-wallets" aria-label="일반 사용자 지갑별 내역"><thead></thead><tbody></tbody></table></div>
-    <p class="note">열 이름을 누르면 그 열로 정렬한다. 잔액은 지금 값, 나머지는 고른 기간의 합계다. 단위 WLBN, 대금은 받은 통화 그대로.</p>
+    <div class="scroll"><table id="tb-wallets" aria-label="지갑별 내역"><thead></thead><tbody></tbody></table></div>
+    <p class="note">줄을 누르면 위에서 그 지갑을 따라가 볼 수 있다. 열 이름을 누르면 그 열로 정렬한다. 잔액은 지금 값, 나머지는 고른 기간의 합계다. 「다시 산 돈」은 그 지갑이 operations 계정으로 보낸 RLUSD다. 단위 WLBN, 대금은 받은 통화 그대로.</p>
   </section>
 
   <section class="sec panel" id="where" aria-labelledby="h-where">
@@ -553,6 +576,7 @@ details .scroll { margin-top: 8px; }
 (function () {
   'use strict';
   var DATA = null, RANGE = 'all', QUERY = '', SHOWALL = false, WSORT = { key: 'sold', dir: -1 }, TOP = 15;
+  var WG = 'user', SELW = null;
   var WF = 'all', SELDAY = null, SIDE = 'sell', LASTOK = 0, LASTTRY = 0, REFRESH_MS = 15 * 60 * 1000;
   var $ = function (s, r) { return (r || document).querySelector(s); };
   var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
@@ -740,9 +764,10 @@ details .scroll { margin-top: 8px; }
   }
 
   // 일반 사용자 지갑: 하루 판 양 · 산 양 · 새로 받은 양
-  function drawUser(el) {
-    var rows = tradeRows(); if (!rows.length) return empty(el);
-    var f = setup(el, el.clientWidth < 560 ? 260 : 300), days = rows.map(function (r) { return r.date; }), by = new Map(rows.map(function (r) { return [r.date, r]; }));
+  function drawUser(el) { drawBars(el, tradeRows(), pickDay, el.clientWidth < 560 ? 260 : 300); }
+  function drawBars(el, rows, onPick, height) {
+    if (!rows.length) return empty(el);
+    var f = setup(el, height), days = rows.map(function (r) { return r.date; }), by = new Map(rows.map(function (r) { return [r.date, r]; }));
     var up = d3.max(rows, function (r) { return Math.max(r.sell_user, r.paid_user); }) || 1, dn = d3.max(rows, function (r) { return r.buy_user; }) || 0;
     var y = d3.scaleLinear().domain([-dn, up]).nice(5), ticks = y.ticks(5);
     var yf = f.w < 560 ? abbr : F.abs, m = { t: 12, r: 10, b: 26, l: Math.ceil(textW(f.svg, ticks.map(yf), 'tick')) + 12 };
@@ -767,11 +792,94 @@ details .scroll { margin-top: 8px; }
         { label: 'RLUSD로', value: fInt(r.sell_user_rlusd || 0) + ' → ' + fInt(r.got_rlusd_user) + ' RLUSD', color: 'var(--s3)' },
         { label: 'XRP로', value: fInt(r.sell_user_xrp || 0) + ' → ' + fInt(r.got_xrp_user) + ' XRP', color: 'var(--s1)' },
         { label: '산 양', value: fInt(r.buy_user), color: 'var(--ctx)', sep: true }, { label: '새로 받은 양', value: fInt(r.paid_user), color: 'var(--muted)' },
-        { label: '판 지갑 수', value: fInt(r.user_sellers), sep: true },
+        r.user_sellers === undefined ? { label: '풀에 넣은 양', value: fInt(r.lp || 0), sep: true } : { label: '판 지갑 수', value: fInt(r.user_sellers), sep: true },
+        r.user_sellers === undefined ? { label: '다시 산 돈', value: fInt(r.rebuy || 0) + ' RLUSD' } : null,
         { label: 'WLBN 1개 값', value: r.price_rlusd === null ? '—' : F.f4(r.price_rlusd) + ' RLUSD' + (r.price_xrp ? ' · ' + F.f4(r.price_xrp) + ' XRP' : '') },
         { label: '1 XRP 값', value: r.xrp_rlusd ? F.f4(r.xrp_rlusd) + ' RLUSD' : '—' }
-      ]);
-    }, pickDay);
+      ].filter(Boolean));
+    }, onPick);
+  }
+
+  // 지갑 분포도: 지갑마다 판 양(가로) · 산 양(세로). 눈금은 열 배씩
+  function selWallet() {
+    var ws = ctx().r.wallets, hit = SELW && ws.filter(function (w) { return w.id === SELW; })[0];
+    if (hit) return hit;
+    var top = ws.filter(function (w) { return w.g === 'user' && w.sold > 0; })[0] || ws[0] || null;
+    SELW = top ? top.id : null; return top;
+  }
+  function pickWallet(id) { SELW = id; ['scatter', 'wallet'].forEach(drawChart); drawWallet(); drawTables(); }
+  function drawScatter(el) {
+    var ws = ctx().r.wallets.filter(function (w) { return w.sold + w.bought >= 1; });
+    if (!ws.length) return empty(el);
+    var f = setup(el, el.clientWidth < 560 ? 320 : 380), sel = selWallet();
+    var maxv = (d3.max(ws, function (w) { return Math.max(w.sold, w.bought); }) || 1) * 1.3, ticks = [0, 10, 100, 1000, 10000, 100000, 1000000, 10000000].filter(function (t) { return t <= maxv; });
+    var m = { t: 22, r: 16, b: 40, l: Math.ceil(textW(f.svg, ticks.map(abbr), 'tick')) + 14 };
+    var x = d3.scaleSymlog().constant(10).domain([0, maxv]).range([m.l, f.w - m.r]), y = d3.scaleSymlog().constant(10).domain([0, maxv]).range([f.h - m.b, m.t]);
+    var g = f.svg.append('g');
+    g.selectAll('line.gx').data(ticks).join('line').attr('class', 'gx').attr('x1', function (t) { return x(t); }).attr('x2', function (t) { return x(t); }).attr('y1', m.t).attr('y2', f.h - m.b).style('stroke', function (t) { return t === 0 ? 'var(--axis)' : 'var(--grid)'; });
+    g.selectAll('line.gy').data(ticks).join('line').attr('class', 'gy').attr('x1', m.l).attr('x2', f.w - m.r).attr('y1', function (t) { return y(t); }).attr('y2', function (t) { return y(t); }).style('stroke', function (t) { return t === 0 ? 'var(--axis)' : 'var(--grid)'; });
+    g.selectAll('text.tx').data(ticks).join('text').attr('class', 'tick tx').attr('x', function (t) { return x(t); }).attr('y', f.h - m.b + 16).attr('text-anchor', 'middle').text(abbr);
+    g.selectAll('text.ty').data(ticks).join('text').attr('class', 'tick ty').attr('x', m.l - 6).attr('y', function (t) { return y(t); }).attr('dy', '0.32em').attr('text-anchor', 'end').text(abbr);
+    g.append('line').attr('class', 'diag').attr('x1', x(0)).attr('y1', y(0)).attr('x2', x(maxv)).attr('y2', y(maxv));
+    g.append('text').attr('class', 'tick').attr('x', (m.l + f.w - m.r) / 2).attr('y', f.h - 4).attr('text-anchor', 'middle').text('판 양 (WLBN) →');
+    g.append('text').attr('class', 'tick').attr('x', m.l).attr('y', 12).attr('text-anchor', 'start').text('↑ 산 양 (WLBN)');
+    g.append('text').attr('class', 'tick').attr('x', f.w - m.r - 4).attr('y', f.h - m.b - 8).attr('text-anchor', 'end').text('판 쪽이 많은 지갑');
+    g.append('text').attr('class', 'tick').attr('x', m.l + 8).attr('y', m.t + 12).attr('text-anchor', 'start').text('산 쪽이 많은 지갑');
+    var order = { bot: 0, other: 1, arb: 2, user: 3 }, pts = ws.slice().sort(function (a, b) { return order[a.g] - order[b.g]; });
+    g.selectAll('circle.dot').data(pts).join('circle').attr('class', 'dot').attr('cx', function (w) { return x(w.sold); }).attr('cy', function (w) { return y(w.bought); }).attr('r', 4.5).style('fill', function (w) { return GC[w.g]; });
+    if (sel && sel.sold + sel.bought >= 1) g.append('circle').attr('class', 'dot-on').attr('cx', x(sel.sold)).attr('cy', y(sel.bought)).attr('r', 8);
+    var del = d3.Delaunay.from(pts, function (w) { return x(w.sold); }, function (w) { return y(w.bought); });
+    var over = f.svg.append('rect').attr('x', 0).attr('y', 0).attr('width', f.w).attr('height', f.h).attr('fill', 'transparent');
+    function near(ev) { var p = d3.pointer(ev, f.svg.node()), i = del.find(p[0], p[1]), w = pts[i]; if (!w) return null; var dx = x(w.sold) - p[0], dy = y(w.bought) - p[1]; return dx * dx + dy * dy <= 900 ? w : null; }
+    function show(ev) {
+      var w = near(ev); if (!w) { f.tip.hidden = true; return; }
+      var title = document.createElement('div'); title.className = 'tip-h'; named(title, w.owner, w.label, w.wallet);
+      var rows = tipRows('', [{ label: GO[w.g] ? OWN[GO[w.g]] + ' 계정' : gFull(w.g), value: '', color: GC[w.g] }, { label: '판 양', value: fInt(w.sold), sep: true }, { label: '산 양', value: fInt(w.bought) }, { label: '받은 양', value: fInt(w.paid) },
+        { label: '판 양 − 산 양', value: fInt(w.net_sold) }, w.rebuy_rlusd > 0 ? { label: '다시 산 돈', value: fInt(w.rebuy_rlusd) + ' RLUSD' } : null].filter(Boolean));
+      rows[0] = title; f.tip.replaceChildren.apply(f.tip, rows); f.tip.hidden = false; placeTip(f, x(w.sold), y(w.bought));
+      if (ev.type === 'pointerdown') pickWallet(w.id);
+    }
+    over.on('pointermove', show).on('pointerdown', show).on('pointerleave', function (ev) { if (ev.pointerType === 'mouse') f.tip.hidden = true; });
+  }
+  // 고른 지갑의 날짜별 기록
+  function drawWalletChart(el) {
+    var w = selWallet(), wd = DATA.walletDays, c = ctx();
+    if (!w || !wd || !wd.w[w.id]) return empty(el, '이 지갑은 이 기간에 기록이 없습니다.');
+    var by = {}; wd.w[w.id].forEach(function (a) { by[wd.days[a[0]]] = a; });
+    var rows = DATA.daily.filter(function (r) { return r.date >= c.r.from; }).map(function (r) {
+      var a = by[r.date] || [0, 0, 0, 0, 0, 0, 0, 0, 0];
+      return { date: r.date, partial: r.partial, paid_user: a[1], sell_user: a[2], buy_user: a[3], sell_user_rlusd: a[4], sell_user_xrp: a[2] - a[4], got_rlusd_user: a[5], got_xrp_user: a[6], lp: a[7], rebuy: a[8], price_rlusd: r.price_rlusd, price_xrp: r.price_xrp, xrp_rlusd: r.xrp_rlusd };
+    });
+    drawBars(el, rows, null, 230);
+  }
+  function drawWallet() {
+    var panel = $('#wallet-panel'); if (!panel) return;
+    var w = selWallet(); panel.hidden = !w; if (!w) return;
+    named($('[data-w-title]'), w.owner, w.label, w.wallet);
+    var link = $('[data-w-link]'); if (link) { link.hidden = !w.addr; if (w.addr) link.href = 'https://xrpscan.com/account/' + encodeURIComponent(w.addr); }
+    var t = [GO[w.g] ? OWN[GO[w.g]] + ' 계정' : gFull(w.g), '받은 양 ' + fInt(w.paid), '판 양 ' + fInt(w.sold) + (w.sold > 0 ? ' (RLUSD로 ' + fInt(w.sold_rlusd) + ' · XRP로 ' + fInt(w.sold_xrp) + (w.sell_ratio === null ? '' : ', 받은 양의 ' + F.pct(w.sell_ratio)) + ')' : ''), '산 양 ' + fInt(w.bought)];
+    if (w.sold > 0) t.push('받은 대금 ' + fInt(w.got_rlusd) + ' RLUSD + ' + fInt(w.got_xrp) + ' XRP');
+    if (w.rebuy_rlusd > 0) t.push('다시 산 돈 ' + fInt(w.rebuy_rlusd) + ' RLUSD');
+    if (w.pool_in) t.push('풀에 넣은 양 ' + fInt(w.pool_in));
+    t.push('지금 잔액 ' + fInt(w.balance)); if (w.sell_days) t.push('판 날 ' + fInt(w.sell_days) + '일'); if (w.last_sell) t.push('마지막으로 판 날 ' + md(w.last_sell));
+    $('[data-w-sum]').textContent = t.join(' · ');
+  }
+  // 보상 받은 지갑은 얼마나 파나: 판 비율 구간별 지갑 수와 쏠림
+  function drawDist() {
+    var ul = $('#wdist'), c = ctx(); if (!ul) return; ul.replaceChildren();
+    var rows = (c.r.dist || []).filter(function (r) { return r.wallets > 0; }), max = d3.max(rows, function (r) { return r.wallets; }) || 1;
+    rows.forEach(function (r) {
+      var li = document.createElement('li'), n = document.createElement('span'), bar = document.createElement('span'), a = document.createElement('span'), sh = document.createElement('span'), i = document.createElement('i');
+      n.className = 'where'; n.textContent = r.name; bar.className = 'meter'; i.style.width = Math.max(1, r.wallets / max * 100) + '%'; bar.appendChild(i);
+      a.className = 'amt'; a.textContent = fInt(r.wallets) + '곳' + (r.sold > 0 ? ' · 판 양 ' + fInt(r.sold) : ''); sh.className = 'shr'; sh.textContent = r.sold_share === null ? '—' : '판 양의 ' + F.pct(r.sold_share);
+      li.appendChild(n); li.appendChild(bar); li.appendChild(a); li.appendChild(sh); ul.appendChild(li);
+    });
+    var cu = $('#wconc'), k = c.r.conc; if (!cu) return; cu.replaceChildren(); if (!k) return;
+    var items = [];
+    if (k.sell_top5 !== null) items.push('일반 사용자 지갑 ' + fInt(k.sellers) + '곳이 팔았다. 가장 많이 판 한 곳이 판 양의 ' + F.pct(k.sell_top1) + ', 다섯 곳이 ' + F.pct(k.sell_top5) + ', 열 곳이 ' + F.pct(k.sell_top10) + '다.');
+    if (k.buy_top5 !== null) items.push('산 쪽은 Wellbian bot을 빼고 지갑 ' + fInt(k.buyers) + '곳이다. 가장 많이 산 한 곳이 ' + F.pct(k.buy_top1) + ', 다섯 곳이 ' + F.pct(k.buy_top5) + '다.');
+    if (k.rebuyers > 0) items.push('일반 사용자 지갑 ' + fInt(k.rebuyers) + '곳이 operations 계정으로 ' + fInt(k.rebuy_rlusd) + ' RLUSD를 보내 다시 샀다. 이 가운데 ' + fInt(k.sold_then_rebuy) + '곳은 같은 기간에 WLBN을 판 지갑이다.');
+    items.forEach(function (t) { var li = document.createElement('li'); li.textContent = t; cu.appendChild(li); });
   }
 
   // 돈의 흐름: 들어온 판매 대금(위) · bot 이 매입에 쓴 돈(아래), RLUSD
@@ -875,6 +983,7 @@ details .scroll { margin-top: 8px; }
     if (!rows.length) { var td0 = body.insertRow().insertCell(); td0.colSpan = cols.length; td0.className = 'empty'; td0.textContent = opt.empty || '이 기간에는 해당하는 기록이 없습니다.'; return; }
     rows.forEach(function (r) {
       var tr = body.insertRow();
+      if (opt.onRow) { tr.className = 'pick' + (opt.sel && opt.sel(r) ? ' on' : ''); tr.addEventListener('click', function () { opt.onRow(r); }); }
       cols.forEach(function (c) {
         var td = tr.insertCell(), v = r[c.key];
         if (c.tag && r.owner && OWN[r.owner]) { named(td, r.owner, r.label === undefined ? v : r.label, v); return; }
@@ -894,7 +1003,8 @@ details .scroll { margin-top: 8px; }
       { key: 'pool_wlbn', label: '풀에 넣은 WLBN' }, { key: 'pool_rlusd', label: '풀에 넣은 RLUSD' }, { key: 'pool_xrp', label: '풀에 넣은 XRP' }],
     daily: [{ key: 'date', label: '날짜', text: 1, fmt: md }, { key: 'sell_user', label: '사용자 판 양' }, { key: 'sell_user_rlusd', label: 'RLUSD로' }, { key: 'sell_user_xrp', label: 'XRP로' }, { key: 'buy_user', label: '사용자 산 양' }, { key: 'paid_user', label: '새로 받은 양' }, { key: 'sell_total', label: '전체 판 양' },
       { key: 'buy_total', label: '전체 산 양' }, { key: 'buy_bot', label: 'Wellbian bot 산 양' }, { key: 'bot_pay_rlusd', label: 'bot 지출 RLUSD' }, { key: 'bot_pay_xrp', label: 'bot 지출 XRP' }, { key: 'sales_rlusd', label: '판매 대금 RLUSD' }, { key: 'to_r', label: 'RLUSD 풀로' }, { key: 'to_x', label: 'XRP 풀로' }, { key: 'price_rlusd', label: '가격', fmt: F.f4 }, { key: 'price_xrp', label: 'XRP로 본 가격', fmt: F.f4 }, { key: 'xrp_rlusd', label: '1 XRP 값(RLUSD)', fmt: F.f4 }],
-    wallets: [{ key: 'wallet', label: '지갑', text: 1 }, { key: 'paid', label: '받은 양' }, { key: 'sold', label: '판 양' }, { key: 'bought', label: '산 양' }, { key: 'got_rlusd', label: '받은 RLUSD' }, { key: 'got_xrp', label: '받은 XRP' },
+    wallets: [{ key: 'wallet', label: '지갑', text: 1, tag: 1 }, { key: 'gname', label: '묶음', text: 1 }, { key: 'paid', label: '받은 양' }, { key: 'sold', label: '판 양' }, { key: 'bought', label: '산 양' },
+      { key: 'sell_ratio', label: '판 비율', fmt: F.pct }, { key: 'got_rlusd', label: '받은 RLUSD' }, { key: 'got_xrp', label: '받은 XRP' }, { key: 'rebuy_rlusd', label: '다시 산 돈(RLUSD)' },
       { key: 'pool_in', label: '풀에 넣은 양' }, { key: 'balance', label: '잔액' }, { key: 'last_sell', label: '마지막으로 판 날', text: 1, fmt: md }],
     before: [{ key: 'group', label: '지갑 묶음', text: 1, tag: 1 }, { key: 'wallets', label: '지갑 수' }, { key: 'sold', label: '판 양' }, { key: 'bought', label: '산 양' }, { key: 'net_sold', label: '판 양 − 산 양' },
       { key: 'paid', label: '받은 양' }, { key: 'got_rlusd', label: '받은 RLUSD' }, { key: 'got_xrp', label: '받은 XRP' }],
@@ -904,6 +1014,10 @@ details .scroll { margin-top: 8px; }
   function walletRows() {
     var c = ctx(), q = QUERY.trim().toLowerCase();
     var all = c.r.wallets.filter(function (r) {
+      if (WG !== 'all' && r.g !== WG) return false;
+      if (r.gname === undefined) r.gname = GO[r.g] ? OWN[GO[r.g]] + ' 계정' : (GN[r.g] || '');
+      if (WF === 'bought' && !(r.bought > 0)) return false;
+      if (WF === 'rebuy' && !(r.rebuy_rlusd > 0)) return false;
       if (WF === 'sold' && !(r.sold > 0)) return false;
       if (WF === 'held' && !(r.balance >= 1)) return false;
       if (WF === 'pool' && !(r.pool_in > 0)) return false;
@@ -923,7 +1037,7 @@ details .scroll { margin-top: 8px; }
     table('#tb-daily', COLS.daily, dailyRows());
     if (DATA.before) table('#tb-before', COLS.before, DATA.before);
     var q = QUERY.trim(), all = walletRows(), shown = (SHOWALL || q) ? all : all.slice(0, TOP);
-    table('#tb-wallets', COLS.wallets, shown, { sort: WSORT, empty: '조건에 맞는 지갑이 없습니다.' });
+    table('#tb-wallets', COLS.wallets, shown, { sort: WSORT, empty: '조건에 맞는 지갑이 없습니다.', onRow: function (r) { pickWallet(r.id); }, sel: function (r) { return r.id === SELW; } });
     var wc = $('[data-wcount]'); if (wc) wc.textContent = fInt(shown.length) + (shown.length < all.length ? ' / ' + fInt(all.length) : '');
     var more = $('[data-more]'); if (more) { more.hidden = !!q || all.length <= TOP; more.textContent = SHOWALL ? '위 ' + TOP + '곳만 보기' : '전체 보기'; }
   }
@@ -947,7 +1061,7 @@ details .scroll { margin-top: 8px; }
       if (u && u.w / top.sell_user >= 0.5) t += ' 그날 판 양의 ' + F.pct(Math.min(u.w / top.sell_user, 1)) + '는 지갑 한 곳(' + u.who + ')에서 나왔다.';
       items.push(t);
     }
-    var ws = c.r.wallets.slice().sort(function (a, b) { return b.sold - a.sold; }), t5 = d3.sum(ws.slice(0, 5), function (w) { return w.sold; });
+    var ws = c.r.wallets.filter(function (w) { return w.g === undefined || w.g === 'user'; }).sort(function (a, b) { return b.sold - a.sold; }), t5 = d3.sum(ws.slice(0, 5), function (w) { return w.sold; });
     if (k.user_sold > 0 && ws.filter(function (w) { return w.sold > 0; }).length > 5) items.push('많이 판 지갑 다섯 곳이 일반 사용자 판 양의 ' + F.pct(t5 / k.user_sold) + '를 차지한다.');
     var bd = rows.filter(function (r) { return r.buy_bot > 0; }), bt = rows.slice().sort(function (a, b) { return b.buy_bot - a.buy_bot; })[0];
     if (bd.length) items.push('Wellbian bot 계정은 ' + rows.length + '일 가운데 ' + bd.length + '일에 샀다. 가장 많이 산 날은 ' + md(bt.date) + '(' + fInt(bt.buy_bot) + '개)다.');
@@ -1155,16 +1269,22 @@ details .scroll { margin-top: 8px; }
     });
   }
 
-  function render() {
-    if (!DATA) return;
-    bind();
-    var charts = { loop: drawLoop, flow: drawFlow, user: drawUser, market: drawMarket, money: drawMoney,
+  function chartFns() {
+    return { loop: drawLoop, flow: drawFlow, user: drawUser, market: drawMarket, money: drawMoney, scatter: drawScatter, wallet: drawWalletChart,
       price: function (el) { drawLines(el, [{ key: 'price_rlusd', label: '가격(RLUSD)', color: 'var(--s1)' }], F.f4, false); },
       xrp: function (el) { drawLines(el, [{ key: 'xrp_rlusd', label: '1 XRP 값(RLUSD)', color: 'var(--s6)' }], F.f4, false); },
       wx: function (el) { drawLines(el, [{ key: 'price_xrp', label: 'WLBN 1개당 XRP', color: 'var(--s1)' }], F.f4, false); },
       poolw: function (el) { drawLines(el, [{ key: 'pool_x_wlbn', label: 'XRP 풀', color: 'var(--s1)' }, { key: 'pool_r_wlbn', label: 'RLUSD 풀', color: 'var(--s3)' }], fInt, true); } };
-    $$('[data-chart]').forEach(function (el) { try { charts[el.getAttribute('data-chart')](el); } catch (e) { if (window.console) console.error(e); empty(el, '이 그림을 그리지 못했습니다.'); } });
-    [drawHealth, drawTables, drawPositions, drawInsights, drawDay, drawCalc, drawStatus].forEach(function (fn) { try { fn(); } catch (e) { if (window.console) console.error(e); } });
+  }
+  function drawChart(name) {
+    var el = $('[data-chart="' + name + '"]'), fn = chartFns()[name]; if (!el || !fn) return;
+    try { fn(el); } catch (e) { if (window.console) console.error(e); empty(el, '이 그림을 그리지 못했습니다.'); }
+  }
+  function render() {
+    if (!DATA) return;
+    bind();
+    $$('[data-chart]').forEach(function (el) { drawChart(el.getAttribute('data-chart')); });
+    [drawHealth, drawWallet, drawDist, drawTables, drawPositions, drawInsights, drawDay, drawCalc, drawStatus].forEach(function (fn) { try { fn(); } catch (e) { if (window.console) console.error(e); } });
   }
 
   // 자료 받기
@@ -1185,6 +1305,7 @@ details .scroll { margin-top: 8px; }
     try { var qp = new URLSearchParams(location.search).get('p'); if (PERIOD[qp]) { RANGE = qp; $$('[data-range]').forEach(function (x) { x.setAttribute('aria-pressed', String(x.getAttribute('data-range') === qp)); }); } } catch (e) { /* 기본 기간으로 연다 */ }
     $$('[data-csv]').forEach(function (b) { b.addEventListener('click', function () { csv(b.getAttribute('data-csv')); }); });
     var cp = $('[data-copy]'); if (cp) cp.addEventListener('click', function () { copySummary(cp); });
+    $$('[data-wg]').forEach(function (b) { b.addEventListener('click', function () { WG = b.getAttribute('data-wg'); $$('[data-wg]').forEach(function (x) { x.setAttribute('aria-pressed', String(x === b)); }); SHOWALL = false; if (DATA) drawTables(); }); });
     $$('[data-wf]').forEach(function (b) { b.addEventListener('click', function () { WF = b.getAttribute('data-wf'); $$('[data-wf]').forEach(function (x) { x.setAttribute('aria-pressed', String(x === b)); }); if (DATA) drawTables(); }); });
     $$('[data-side]').forEach(function (b) { b.addEventListener('click', function () { SIDE = b.getAttribute('data-side'); $$('[data-side]').forEach(function (x) { x.setAttribute('aria-pressed', String(x === b)); }); if (DATA) drawCalc(); }); });
     var am = $('[data-amt]'); if (am) am.addEventListener('input', function () { if (DATA) drawCalc(); });

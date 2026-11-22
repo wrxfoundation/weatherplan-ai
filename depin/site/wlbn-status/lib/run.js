@@ -7,6 +7,7 @@ const { fetchExt } = require('./ext');
 const bundled = require('./snapshot-state.json');
 
 const SHOW_BEFORE = process.env.SHOW_BEFORE === '1';   // 이전 풀 기간(10/2~24) 표를 화면에 낼지
+const SHOW_ADDR = process.env.SHOW_ADDR === '1';       // 지갑 전체 주소를 응답에 넣을지(지갑 따라가 보기에서 원장 탐색기 링크가 열린다)
 
 async function run() {
   const info = { storage: 'bundled' };
@@ -34,7 +35,7 @@ async function run() {
     info.xrpl_error = String((e && e.message) || e).slice(0, 160);
     core.pickExt(S, ext);
   }
-  const out = core.buildDatasets(S, { showBefore: SHOW_BEFORE });
+  const out = core.buildDatasets(S, { showBefore: SHOW_BEFORE, showAddr: SHOW_ADDR });
   return { ledger: S.ledger, info, out, persistent: store.enabled() };
 }
 module.exports = { run };

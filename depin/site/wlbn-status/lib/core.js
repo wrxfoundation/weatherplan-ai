@@ -357,7 +357,7 @@ function buildDatasets(S, opts) {
     for (const e of EV) {
       if (e.k < from) continue;
       const o = at(e.a), v = e.v;
-      if (e.kind === 'sell') { o.wr += byCur(v)[0]; o.sold += v[0]; o.cash += v[1]; o.toR += v[2] || 0; o.toX += v[3] || 0; o.gotR += v[4] || 0; o.gotX += v[5] || 0; }
+      if (e.kind === 'sell') { o.sd = (o.sd || 0) + 1; o.wr += byCur(v)[0]; o.sold += v[0]; o.cash += v[1]; o.toR += v[2] || 0; o.toX += v[3] || 0; o.gotR += v[4] || 0; o.gotX += v[5] || 0; }
       else if (e.kind === 'buy') { o.bought += v[0]; o.spent += v[1]; o.fromR += v[2] || 0; o.fromX += v[3] || 0; o.payR += v[4] || 0; o.payX += v[5] || 0; }
       else if (e.kind === 'paid') { o.paid += v[0]; if (e.k === C.NOW_FROM && e.g === 'user') repay += v[0]; }
       else if (e.kind === 'paidco') o.paidco += v[0];
@@ -400,17 +400,44 @@ function buildDatasets(S, opts) {
       if (s >= 0.5) flowSell.push({ key: g, name: NAME[g], owner: GOWN[g] || null, label: GLAB[g] || NAME[g], R: r0(tR), X: r0(tX), O: r0(Math.max(s - tR - tX, 0)) });
       if (b >= 0.5) flowBuy.push({ key: g, name: NAME[g], owner: GOWN[g] || null, label: GLAB[g] || NAME[g], R: r0(fR), X: r0(fX), O: r0(Math.max(b - fR - fX, 0)) });
     }
+    // 지갑별: 일반 사용자 지갑 전부 + 사고팔기 · 그 밖 · bot 가운데 이 기간에 거래한 곳. rebuy = 이 기간에 operations 계정으로 보낸 RLUSD(다시 산 돈)
+    const rebuy = {};
+    if (FD) for (const k of Object.keys(FD)) if (k >= from) for (const a of Object.keys(FD[k].p || {})) add(rebuy, a, FD[k].p[a]);
     const wallets = [];
-    for (const a of ul) {
-      const o = acc[a] || {}, bal = Math.max(g2(S.bal, a), 0);
-      if (!((o.paid || 0) + (o.sold || 0) + (o.bought || 0) + Math.abs(o.lpw || 0) >= 0.5) && bal < 1) continue;
-      const ls = S.lastSell[a] || '';
-      wallets.push({
-        wallet: short(a), paid: r0(o.paid || 0), sold: r0(o.sold || 0), bought: r0(o.bought || 0), net_sold: r0((o.sold || 0) - (o.bought || 0)),
-        cash_rlusd: r0(o.cash || 0), got_rlusd: r0(o.gotR || 0), got_xrp: r0(o.gotX || 0), pool_in: r0(o.lpw || 0), balance: r0(bal), last_sell: ls >= C.NOW_FROM ? ls : '',
-      });
+    for (const a of accts) {
+      const g = G[a];
+      if (g !== 'user' && g !== 'arb' && g !== 'other' && g !== 'bot') continue;
+      const o = acc[a] || {}, bal = Math.max(g2(S.bal, a), 0), act = (o.paid || 0) + (o.sold || 0) + (o.bought || 0) + Math.abs(o.lpw || 0);
+      if (g === 'user' ? (act < 0.5 && bal < 1) : ((o.sold || 0) + (o.bought || 0) < 0.5)) continue;
+      const ls = S.lastSell[a] || '', row = {
+        wallet: g === 'bot' ? 'Wellbian bot 계정' : short(a), g, paid: r0(o.paid || 0), sold: r0(o.sold || 0), bought: r0(o.bought || 0), net_sold: r0((o.sold || 0) - (o.bought || 0)),
+        sold_rlusd: r0(o.wr || 0), sold_xrp: r0(o.sold || 0) - r0(o.wr || 0), sell_ratio: (o.paid || 0) >= 0.5 ? r3((o.sold || 0) / o.paid) : null, sell_days: o.sd || 0,
+        cash_rlusd: r0(o.cash || 0), got_rlusd: r0(o.gotR || 0), got_xrp: r0(o.gotX || 0), rebuy_rlusd: r0(rebuy[a] || 0),
+        pool_in: r0(o.lpw || 0), balance: r0(bal), last_sell: ls >= C.NOW_FROM ? ls : '', id: short(a),
+      };
+      if (g === 'bot') { row.owner = 'wellbian'; row.label = 'bot 계정'; }
+      if (opts.showAddr) row.addr = a;
+      wallets.push(row);
     }
     wallets.sort((x, y) => (y.sold - x.sold) || (y.paid - x.paid));
+    // 보상 받은 지갑은 얼마나 파나: 판 비율 구간별 지갑 수 · 물량, 그리고 쏠림
+    const uw = wallets.filter((w) => w.g === 'user'), buckets = [['none', '팔지 않은 지갑'], ['low', '절반 미만으로 판 지갑'], ['mid', '절반 넘게 판 지갑(50~90%)'], ['high', '거의 다 판 지갑(90% 이상)'], ['extra', '이 기간에 받지 않고 판 지갑']];
+    const bk = {}; for (const b of buckets) bk[b[0]] = { key: b[0], name: b[1], wallets: 0, paid: 0, sold: 0 };
+    for (const w of uw) {
+      const key = w.paid >= 1 ? (w.sold < 1 ? 'none' : w.sell_ratio < 0.5 ? 'low' : w.sell_ratio < 0.9 ? 'mid' : 'high') : (w.sold >= 1 ? 'extra' : null);
+      if (!key) continue;
+      bk[key].wallets++; bk[key].paid += w.paid; bk[key].sold += w.sold;
+    }
+    const nW = buckets.reduce((t, b) => t + bk[b[0]].wallets, 0), nS = buckets.reduce((t, b) => t + bk[b[0]].sold, 0);
+    const dist = buckets.map((b) => Object.assign(bk[b[0]], { wallets_share: nW ? r3(bk[b[0]].wallets / nW) : null, sold_share: nS ? r3(bk[b[0]].sold / nS) : null }));
+    const topShare = (list, f, k) => { const v = list.map((w) => w[f]).filter((x) => x > 0).sort((x, y) => y - x), t = v.reduce((p, x) => p + x, 0); return t > 0 ? r3(v.slice(0, k).reduce((p, x) => p + x, 0) / t) : null; };
+    const noBot = wallets.filter((w) => w.g !== 'bot');
+    const conc = {
+      sellers: uw.filter((w) => w.sold > 0).length, sell_top1: topShare(uw, 'sold', 1), sell_top5: topShare(uw, 'sold', 5), sell_top10: topShare(uw, 'sold', 10),
+      buyers: noBot.filter((w) => w.bought > 0).length, buy_top1: topShare(noBot, 'bought', 1), buy_top5: topShare(noBot, 'bought', 5),
+      rebuyers: uw.filter((w) => w.rebuy_rlusd > 0).length, rebuy_rlusd: r0(uw.reduce((t, w) => t + w.rebuy_rlusd, 0)),
+      sold_then_rebuy: uw.filter((w) => w.rebuy_rlusd > 0 && w.sold > 0).length,
+    };
     // Wellbian · KWeather 계정
     const opsOut = r0(sum(all, 'paid') + sum(all, 'paidco'));
     const accounts = labelAccts.map((a) => {
@@ -450,7 +477,7 @@ function buildDatasets(S, opts) {
         prev = p;
       }
     }
-    return { key, from, to: lastDay, days: rows.length, kpi, prev, groups, flow: { sell: flowSell, buy: flowBuy }, wallets, accounts, lp: lpRows };
+    return { key, from, to: lastDay, days: rows.length, kpi, prev, groups, flow: { sell: flowSell, buy: flowBuy }, wallets, dist, conc, accounts, lp: lpRows };
   };
   const ranges = { all: mkRange('all', C.NOW_FROM), d30: mkRange('d30', shift(lastDay, -29)), d7: mkRange('d7', shift(lastDay, -6)) };
 
@@ -822,7 +849,22 @@ function buildDatasets(S, opts) {
   };
   const health = buildHealth();
 
-  const out = { summary: [summary], daily, ranges, positions, dayTop };
+  // 지갑별 날짜 기록: 지갑 하나를 골라 따라가 볼 때 쓴다. [날짜 번호, 받은 양, 판 양, 산 양, RLUSD로 판 양, 받은 RLUSD, 받은 XRP, 풀에 넣은 양, 다시 산 RLUSD]
+  const wIds = {}; for (const w of ranges.all.wallets) wIds[w.id] = 1;
+  const dayIx = {}; days.forEach((k, i) => { dayIx[k] = i; });
+  const wd = {}, cell = (a, k) => { const id = short(a), i = dayIx[k]; if (!wIds[id] || i === undefined) return null; const m = wd[id] || (wd[id] = {}); return m[i] || (m[i] = [i, 0, 0, 0, 0, 0, 0, 0, 0]); };
+  for (const e of EV) {
+    const c = cell(e.a, e.k); if (!c) continue;
+    if (e.kind === 'paid') c[1] += e.v[0];
+    else if (e.kind === 'sell') { c[2] += e.v[0]; c[4] += byCur(e.v)[0]; c[5] += e.v[4] || 0; c[6] += e.v[5] || 0; }
+    else if (e.kind === 'buy') c[3] += e.v[0];
+    else if (e.kind === 'lp') c[7] += e.v[0];
+  }
+  if (FD) for (const k of Object.keys(FD)) for (const a of Object.keys(FD[k].p || {})) { const c = cell(a, k); if (c) c[8] += FD[k].p[a]; }
+  const walletDays = { days, w: {} };
+  for (const id of Object.keys(wd)) walletDays.w[id] = Object.keys(wd[id]).map((i) => wd[id][i].map(r0)).sort((x, y) => x[0] - y[0]);
+
+  const out = { summary: [summary], daily, ranges, positions, dayTop, walletDays };
   if (health) out.health = health;
   if (lpShares.length) out.lpShares = lpShares;
   if (opts.showBefore) {
