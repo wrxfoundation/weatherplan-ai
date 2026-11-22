@@ -286,6 +286,14 @@ function buildDatasets(S, opts) {
     days.push(k);
   }
 
+  // 판 양을 받은 통화로 나눈다: [RLUSD로 판 양, XRP로 판 양]. 지갑이 하루에 두 통화를 다 받았으면 대금(환산) 비율대로 나눈다.
+  const byCur = (v) => {
+    const gR = v[4] || 0, gX = v[5] || 0, vx = Math.max(v[1] - gR, 0);
+    if (gX < 1e-6) return [v[0], 0];
+    if (gR < 1e-6) return [0, v[0]];
+    const wr = v[0] * gR / (gR + vx); return [wr, v[0] - wr];
+  };
+
   // 날짜별
   const day = {}, sellers = {};
   const dget = (k) => day[k] || (day[k] = {});
@@ -294,7 +302,7 @@ function buildDatasets(S, opts) {
     if (e.kind === 'sell') {
       add(m, 'sell_' + g, v[0]); add(m, 'sell_total', v[0]); add(m, 'to_r', v[2] || 0); add(m, 'to_x', v[3] || 0);
       add(m, 'got_r', v[4] || 0); add(m, 'got_x', v[5] || 0);
-      if (g === 'user') { add(m, 'cash_user', v[1]); add(m, 'got_r_user', v[4] || 0); add(m, 'got_x_user', v[5] || 0); (sellers[e.k] || (sellers[e.k] = new Set())).add(e.a); }
+      if (g === 'user') { const c2 = byCur(v); add(m, 'sell_user_r', c2[0]); add(m, 'sell_user_x', c2[1]); add(m, 'cash_user', v[1]); add(m, 'got_r_user', v[4] || 0); add(m, 'got_x_user', v[5] || 0); (sellers[e.k] || (sellers[e.k] = new Set())).add(e.a); }
     } else if (e.kind === 'buy') {
       add(m, 'buy_' + g, v[0]); add(m, 'buy_total', v[0]); add(m, 'from_r', v[2] || 0); add(m, 'from_x', v[3] || 0);
       if (g === 'user') add(m, 'spent_user', v[1]);
@@ -314,6 +322,7 @@ function buildDatasets(S, opts) {
     for (const g of GR) { r['sell_' + g] = r0(f('sell_' + g)); r['buy_' + g] = r0(f('buy_' + g)); }
     Object.assign(r, {
       sell_total: r0(f('sell_total')), buy_total: r0(f('buy_total')), net_sell_total: r0(f('sell_total') - f('buy_total')),
+      sell_user_rlusd: r0(f('sell_user_r')), sell_user_xrp: r0(f('sell_user')) - r0(f('sell_user_r')),
       net_sell_user: r0(f('sell_user') - f('buy_user')), cash_user_rlusd: r0(f('cash_user')), got_rlusd_user: r0(f('got_r_user')), got_xrp_user: r0(f('got_x_user')),
       user_sellers: sellers[k] ? sellers[k].size : 0, paid_user: r0(f('paid_user')), lp_user: r0(f('lp_user')),
       to_r: r0(f('to_r')), to_x: r0(f('to_x')), to_o: r0(Math.max(f('sell_total') - f('to_r') - f('to_x'), 0)),
@@ -342,12 +351,12 @@ function buildDatasets(S, opts) {
   const tagged = (owner, label) => ({ owner, label, full: OWN[owner] + ' ' + label });
   const mkRange = (key, from) => {
     if (from < C.NOW_FROM) from = C.NOW_FROM;
-    const acc = {}, at = (a) => acc[a] || (acc[a] = { paid: 0, paidco: 0, sold: 0, bought: 0, cash: 0, spent: 0, toR: 0, toX: 0, fromR: 0, fromX: 0, gotR: 0, gotX: 0, payR: 0, payX: 0, lpw: 0, lpq: 0, lpr: 0, lpx: 0 });
+    const acc = {}, at = (a) => acc[a] || (acc[a] = { paid: 0, paidco: 0, sold: 0, bought: 0, cash: 0, spent: 0, toR: 0, toX: 0, fromR: 0, fromX: 0, gotR: 0, gotX: 0, payR: 0, payX: 0, lpw: 0, lpq: 0, lpr: 0, lpx: 0, wr: 0 });
     let repay = 0;
     for (const e of EV) {
       if (e.k < from) continue;
       const o = at(e.a), v = e.v;
-      if (e.kind === 'sell') { o.sold += v[0]; o.cash += v[1]; o.toR += v[2] || 0; o.toX += v[3] || 0; o.gotR += v[4] || 0; o.gotX += v[5] || 0; }
+      if (e.kind === 'sell') { o.wr += byCur(v)[0]; o.sold += v[0]; o.cash += v[1]; o.toR += v[2] || 0; o.toX += v[3] || 0; o.gotR += v[4] || 0; o.gotX += v[5] || 0; }
       else if (e.kind === 'buy') { o.bought += v[0]; o.spent += v[1]; o.fromR += v[2] || 0; o.fromX += v[3] || 0; o.payR += v[4] || 0; o.payX += v[5] || 0; }
       else if (e.kind === 'paid') { o.paid += v[0]; if (e.k === C.NOW_FROM && e.g === 'user') repay += v[0]; }
       else if (e.kind === 'paidco') o.paidco += v[0];
@@ -365,6 +374,8 @@ function buildDatasets(S, opts) {
       user_paid: r0(uPaid), user_repaid: r0(repay), user_paid_new: r0(uPaid) - r0(repay), wallets_paid: U.filter((a) => acc[a].paid > 0).length,
       user_sold: r0(uSold), user_bought: r0(uBought), user_net_sold: r0(uSold) - r0(uBought), wallets_sold: U.filter((a) => acc[a].sold > 0).length,
       user_sold_share: uPaid > 0 ? r3(uSold / uPaid) : null, user_sold_vs_new_paid: uPaid - repay > 0 ? r3(uSold / (uPaid - repay)) : null,
+      user_sold_for_rlusd: r0(sum(U, 'wr')), user_sold_for_xrp: r0(uSold) - r0(sum(U, 'wr')),
+      user_sold_for_rlusd_share: uSold > 0 ? r3(sum(U, 'wr') / uSold) : null, user_sold_for_xrp_share: uSold > 0 ? r3(1 - sum(U, 'wr') / uSold) : null,
       user_cash_rlusd: r0(uCash), user_got_rlusd: r0(sum(U, 'gotR')), user_got_xrp: r0(sum(U, 'gotX')), user_avg_sell_price: uSold > 0 ? r3(uCash / uSold) : null,
       user_pool_in: r0(sum(U, 'lpw')), user_balance: r0(ul.reduce((t, a) => t + Math.max(g2(S.bal, a), 0), 0)),
       user_sell_avg: avg('sell_user'), user_paid_avg: avg('paid_user'), full_days: full.length,
@@ -546,7 +557,7 @@ function buildDatasets(S, opts) {
     }
     for (const a of Object.keys(firstPaid)) if (inWin(firstPaid[a], from, to)) newW++;
     const paid = sumOf(W, 'paid_user'), sold = sumOf(W, 'sell_user'), pPaid = sumOf(P, 'paid_user'), pSold = sumOf(P, 'sell_user');
-    const payDays = W.filter((r) => r.paid_user > 0).length, botBuy = sumOf(W, 'buy_bot');
+    const payDays = W.filter((r) => r.paid_user > 0).length, botBuy = sumOf(W, 'buy_bot'), soldR = sumOf(W, 'sell_user_rlusd');
     const sellX = sumOf(W, 'sell_total') - sumOf(W, 'sell_arb');                                   // 사고팔기 지갑을 뺀 판 양
     const buyOut = sumOf(W, 'buy_user') + sumOf(W, 'buy_other');                                   // 밖에서 산 양
     const end = W[W.length - 1], start = base || W[0], rate = S.pR && S.pX ? S.pR / S.pX : 0;
@@ -583,7 +594,7 @@ function buildDatasets(S, opts) {
     const sr = paid > 0 ? sold / paid : null;
     links.push(mk('hold', '보유', '받은 만큼 들고 있나', sr === null ? null : 1 - sr, H.hold, {
       value: sr === null ? '—' : p1(sr), metric: '받은 양 가운데 판 비율', ticks: [tp(1 - H.hold[1]), tp(1 - H.hold[2])],
-      read: '받은 ' + n(paid) + '개 가운데 ' + n(sold) + '개를 팔았다' + (hasPrev && pPaid > 0 ? '. 직전 7일은 ' + p1(pSold / pPaid) + '였다' : '') + '.',
+      read: '받은 ' + n(paid) + '개 가운데 ' + n(sold) + '개를 팔았다' + (hasPrev && pPaid > 0 ? '. 직전 7일은 ' + p1(pSold / pPaid) + '였다' : '') + '.' + (sold > 0.5 ? ' 판 양은 RLUSD로 ' + n(soldR) + '개(' + p1(soldR / sold) + ') · XRP로 ' + n(sold - soldR) + '개(' + p1(1 - soldR / sold) + ')이고, 받은 대금은 ' + n(sumOf(W, 'got_rlusd_user')) + ' RLUSD와 ' + n(sumOf(W, 'got_xrp_user')) + ' XRP다.' : ''),
       short: sr === null ? '받은 양이 없다' : '받은 양의 ' + p1(sr) + '를 팔았다',
     }));
     const dq = q0 && q1 !== null ? q1 / q0 - 1 : null;

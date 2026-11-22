@@ -351,6 +351,7 @@ details .scroll { margin-top: 8px; }
       <article class="card" id="t-cash">
         <h3 class="card-h">팔아서 받은 대금</h3>
         <p class="big two"><span><span data-n="k.user_got_rlusd">—</span> <span class="unit">RLUSD</span></span><span><span data-n="k.user_got_xrp">—</span> <span class="unit">XRP</span></span></p>
+        <p class="sub">RLUSD로 판 양 <b data-n="k.user_sold_for_rlusd">—</b>개(<span data-n="k.user_sold_for_rlusd_share" data-fmt="pct">—</span>) · XRP로 판 양 <b data-n="k.user_sold_for_xrp">—</b>개(<span data-n="k.user_sold_for_xrp_share" data-fmt="pct">—</span>)</p>
         <p class="sub">RLUSD로 환산하면 <b data-n="k.user_cash_rlusd">—</b> · 1개당 평균 <b data-n="k.user_avg_sell_price" data-fmt="f3">—</b></p>
       </article>
       <article class="card" id="t-7d">
@@ -510,7 +511,7 @@ details .scroll { margin-top: 8px; }
     <h2 class="h2" id="h-notes">읽는 법</h2>
     <dl class="gloss">
       <div><dt>받은 양(수령)</dt><dd>지급 계정에서 지갑으로 들어온 WLBN. 기기 보상 말고도 지급 계정이 보낸 모든 WLBN이 들어 있다.</dd></div>
-      <div><dt>판 양 · 산 양</dt><dd>지갑의 WLBN이 줄고 RLUSD나 XRP가 늘면 판 것, 반대면 산 것으로 센다.</dd></div>
+      <div><dt>판 양 · 산 양</dt><dd>지갑의 WLBN이 줄고 RLUSD나 XRP가 늘면 판 것, 반대면 산 것으로 센다. 「RLUSD로 · XRP로 판 양」은 받은 통화로 나눈 수량이다.</dd></div>
       <div><dt>풀</dt><dd>WLBN과 RLUSD, WLBN과 XRP를 맞바꾸는 두 곳. 누가 넣어 둔 양으로 거래가 이뤄진다.</dd></div>
       <div><dt>풀에 넣어 둔 양</dt><dd>넣은 WLBN에서 뺀 WLBN을 뺀 값. 지금 풀에서 찾을 수 있는 양과는 다르다.</dd></div>
       <div><dt><span class="tag tag-w">Wellbian</span><span class="tag tag-k">KWeather</span>칩</dt><dd>wellbian.io가 이름을 붙여 공개한 계정에 단다. treasury · operations · staking · seed · match · bot은 Wellbian, kweather는 KWeather 계정이다.</dd></div>
@@ -746,7 +747,8 @@ details .scroll { margin-top: 8px; }
       return tipRows(dayTitle(r), [
         { label: '판 양', value: fInt(r.sell_user), color: 'var(--s1)' }, { label: '산 양', value: fInt(r.buy_user), color: 'var(--ctx)' },
         { label: '새로 받은 양', value: fInt(r.paid_user), color: 'var(--muted)' },
-        { label: '판 지갑 수', value: fInt(r.user_sellers), sep: true }, { label: '받은 RLUSD', value: fInt(r.got_rlusd_user) }, { label: '받은 XRP', value: fInt(r.got_xrp_user) },
+        { label: '판 지갑 수', value: fInt(r.user_sellers), sep: true },
+        { label: 'RLUSD로 판 양', value: fInt(r.sell_user_rlusd || 0) + ' → ' + fInt(r.got_rlusd_user) + ' RLUSD' }, { label: 'XRP로 판 양', value: fInt(r.sell_user_xrp || 0) + ' → ' + fInt(r.got_xrp_user) + ' XRP' },
         { label: '그날 가격(RLUSD)', value: r.price_rlusd === null ? '—' : F.f4(r.price_rlusd) }
       ]);
     }, pickDay);
@@ -870,7 +872,7 @@ details .scroll { margin-top: 8px; }
     accounts: [{ key: 'name', label: '계정', text: 1, tag: 1 }, { key: 'wallet', label: '지갑', text: 1 }, { key: 'balance', label: '지금 WLBN' }, { key: 'rlusd', label: '지금 RLUSD' }, { key: 'xrp', label: '지금 XRP' },
       { key: 'paid_out', label: '지갑으로 지급' }, { key: 'received', label: '받은 양' }, { key: 'bought', label: '산 양' }, { key: 'sold', label: '판 양' }, { key: 'paid_rlusd', label: '낸 RLUSD' }, { key: 'paid_xrp', label: '낸 XRP' },
       { key: 'pool_wlbn', label: '풀에 넣은 WLBN' }, { key: 'pool_rlusd', label: '풀에 넣은 RLUSD' }, { key: 'pool_xrp', label: '풀에 넣은 XRP' }],
-    daily: [{ key: 'date', label: '날짜', text: 1, fmt: md }, { key: 'sell_user', label: '사용자 판 양' }, { key: 'buy_user', label: '사용자 산 양' }, { key: 'paid_user', label: '새로 받은 양' }, { key: 'sell_total', label: '전체 판 양' },
+    daily: [{ key: 'date', label: '날짜', text: 1, fmt: md }, { key: 'sell_user', label: '사용자 판 양' }, { key: 'sell_user_rlusd', label: 'RLUSD로' }, { key: 'sell_user_xrp', label: 'XRP로' }, { key: 'buy_user', label: '사용자 산 양' }, { key: 'paid_user', label: '새로 받은 양' }, { key: 'sell_total', label: '전체 판 양' },
       { key: 'buy_total', label: '전체 산 양' }, { key: 'buy_bot', label: 'Wellbian bot 산 양' }, { key: 'bot_pay_rlusd', label: 'bot 지출 RLUSD' }, { key: 'bot_pay_xrp', label: 'bot 지출 XRP' }, { key: 'sales_rlusd', label: '판매 대금 RLUSD' }, { key: 'to_r', label: 'RLUSD 풀로' }, { key: 'to_x', label: 'XRP 풀로' }, { key: 'price_rlusd', label: '가격', fmt: F.f4 }],
     wallets: [{ key: 'wallet', label: '지갑', text: 1 }, { key: 'paid', label: '받은 양' }, { key: 'sold', label: '판 양' }, { key: 'bought', label: '산 양' }, { key: 'got_rlusd', label: '받은 RLUSD' }, { key: 'got_xrp', label: '받은 XRP' },
       { key: 'pool_in', label: '풀에 넣은 양' }, { key: 'balance', label: '잔액' }, { key: 'last_sell', label: '마지막으로 판 날', text: 1, fmt: md }],
@@ -1006,6 +1008,7 @@ details .scroll { margin-top: 8px; }
     if (k.user_repaid > 0) L.push('  · 10/26 재지급 ' + fInt(k.user_repaid) + ' 포함');
     L.push('- 판 양 ' + fInt(k.user_sold) + '개' + (k.user_sold_share === null ? '' : ' (받은 양의 ' + F.pct(k.user_sold_share) + ')'));
     L.push('  · 판 지갑 ' + fInt(k.wallets_sold) + '곳 / 되산 양 ' + fInt(k.user_bought));
+    if (k.user_sold_for_rlusd_share !== null && k.user_sold_for_rlusd_share !== undefined) L.push('  · RLUSD로 ' + fInt(k.user_sold_for_rlusd) + '개(' + F.pct(k.user_sold_for_rlusd_share) + ') / XRP로 ' + fInt(k.user_sold_for_xrp) + '개(' + F.pct(k.user_sold_for_xrp_share) + ')');
     L.push('- 받은 대금 ' + fInt(k.user_got_rlusd) + ' RLUSD + ' + fInt(k.user_got_xrp) + ' XRP');
     L.push('- 풀에 넣어 둔 양 ' + fInt(k.user_pool_in) + '개'); L.push('');
     L.push('■ 시장 전체');
