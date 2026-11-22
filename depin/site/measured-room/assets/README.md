@@ -24,3 +24,8 @@
 
 기기 화면은 파일이 아니라 페이지가 2D 캔버스(800×600)에 실제 ARC-600DA 화면 양식으로 그려서 컷아웃의 화면 자리에 얹는다(`index.html` 의 `SPRITE.screen`).
 원본 PNG(2528×1696 · 2048×2048)는 힉스필드 라이브러리에 남아 있다(생성 작업 ID 는 `fetch-assets.sh` 주석 참고).
+
+## 효과 묶음 (v0.17)
+
+- `fx.js` — React 18 + Libraries.dev 효과 넷(border-beam · thinking-orbs · distortion-waves · metal-fx)을 묶은 파일. 원본은 `../fx/fx.jsx`, `cd ../fx && npm install --ignore-scripts && npm run build` 로 다시 만든다. 손으로 고치지 않는다.
+- `fx.LICENSES.txt` — 묶음에 든 것들의 라이선스 전문(MIT · metal-fx 의 Apache-2.0 NOTICE). `fx.js` 와 같이 배포한다.

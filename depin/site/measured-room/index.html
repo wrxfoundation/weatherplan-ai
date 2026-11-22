@@ -26,7 +26,7 @@
   * { box-sizing: border-box; }
   html { background: var(--ground); }
   body { margin: 0; background: var(--ground); color: #fff; font-family: var(--body); -webkit-font-smoothing: antialiased; }
-  #app { position: relative; min-height: 100dvh; display: flex; flex-direction: column; padding-bottom: env(safe-area-inset-bottom); }
+  #app { position: relative; min-height: 100dvh; display: flex; flex-direction: column; padding-bottom: env(safe-area-inset-bottom); overflow-x: hidden; overflow-x: clip; }   /* 금속 테의 빛무리가 화면 밖으로 번져도 가로 스크롤이 생기지 않게 */
 
   .hud-title { padding: 14px 16px 6px; }
   .hud-title .brand { font-family: var(--display); font-weight: 700; font-size: 11.5px; letter-spacing: .12em; text-transform: uppercase; color: rgba(255,255,255,.82); text-shadow: 0 1px 6px rgba(0,0,0,.5); cursor: pointer; pointer-events: auto; width: max-content; border-radius: 6px; }   /* 누르면 처음 화면으로 */
@@ -130,8 +130,22 @@
   .vig { position: absolute; inset: 0; pointer-events: none; opacity: .22; transition: opacity 1.6s ease;
          background: radial-gradient(ellipse at 52% 42%, rgba(4,4,20,0) 30%, rgba(4,4,20,.75) 100%); }
   .cap { position: absolute; left: 10px; right: 10px; bottom: 8px; text-align: center; line-height: 1.35; text-wrap: balance; font-family: var(--display); font-weight: 700; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: rgba(255,255,255,.72); text-shadow: 0 1px 4px rgba(0,0,0,.6); pointer-events: none; }
-  .assets { position: absolute; right: 10px; top: 50px; font-size: 10.5px; color: rgba(255,255,255,.75); background: rgba(0,0,0,.35); border-radius: 8px; padding: 3px 8px; pointer-events: none; }
+  .assets { display: flex; align-items: center; gap: 6px; position: absolute; right: 10px; top: 50px; font-size: 10.5px; color: rgba(255,255,255,.75); background: rgba(0,0,0,.35); border-radius: 8px; padding: 3px 8px; pointer-events: none; }
   .assets:empty { display: none; }
+  /* 효과 묶음(assets/fx.js · v0.17 — Libraries.dev 의 Beam · Orb · Distortion waves · Metal)이 쓰는 자리. 묶음을 못 받으면 아무것도 생기지 않는다 */
+  .assets canvas { flex: none; }
+  .curve .fx-beam { position: absolute; inset: 0; border-radius: 8px; pointer-events: none; }
+  .curve.fxb::after { display: none; }   /* 진짜 Beam 이 붙으면 CSS 로 만든 대체 빛은 쉰다 */
+  .fx-load { position: absolute; left: 50%; top: 46%; transform: translate(-50%, -50%); z-index: 3; box-sizing: border-box; width: 96px; height: 96px; display: grid; place-items: center; border-radius: 50%; background: rgba(10,10,32,.5); backdrop-filter: blur(6px); opacity: 0; transition: opacity .35s ease; pointer-events: none; }
+  .fx-load.on { opacity: 1; }
+  .fx-wave { position: absolute; inset: 0; z-index: 2; opacity: 0; pointer-events: none; transition: opacity .25s ease; }
+  .fx-wave.on { opacity: 1; transition: none; }
+  .fx-wave .fx-view { display: block; }
+  #stage.waving .ring, #stage.waving .ring-tip, #stage.waving .leader, #stage.waving .fcta, #stage.waving .hit { opacity: 0 !important; }   /* 물결이 지나는 동안 떠 있는 것들은 쉰다 */
+  .fx-metal { grid-column: 1 / -1; display: block; } .fx-metal[hidden] { display: none; }
+  .fx-metal .metal-fx-root { display: block; width: 100%; } .fx-slot { display: flex; border-radius: 999px; } .fx-slot > .btn { flex: 1; }
+  .fx-metal .btn.game, .fx-metal .btn.game:hover { background: transparent; color: #fff; border-color: transparent; filter: none; } .fx-metal .btn.game .ic { fill: #b9b9ff; }   /* 금속 테 안에서는 어두운 알약(테가 보이게) */
+  .fx-metal .metal-fx-inner { background: linear-gradient(180deg, #2c2c80, #1c1c56) !important; }   /* 알약 속은 wellbian 남보라 */
 
   .readout { margin: 10px 16px 0; background: var(--paper); color: var(--ink); border: 1px solid var(--line); border-radius: 14px; padding: 10px 12px 9px; box-shadow: 0 10px 30px rgba(0,0,0,.25); }
   .readout .k { font-size: 10.5px; letter-spacing: .06em; text-transform: uppercase; color: var(--cap); font-weight: 700; font-family: var(--display); }
@@ -622,6 +636,7 @@
 <script>
 (function () {
   const $ = (id) => document.getElementById(id);
+  let FX = null;   // 효과 묶음(assets/fx.js)이 오면 채워진다. 없으면 효과 없이 그대로
   const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
   const finePointer = matchMedia("(hover: hover) and (pointer: fine)").matches;
   const small = () => innerWidth < 760 || innerHeight < 480;
@@ -1136,7 +1151,7 @@
     ventB.textContent = s.alertAt >= 0 || !soon ? t("ventCta") : t("soonCta", soon);
     ventS.textContent = t(s.alertAt >= 0 || !soon ? (R.phys ? "ventSubHvac" : "ventSub") : (R.phys ? "soonSubHvac" : "soonSub"));   // 기기 알림이 켜져 있고 창이 닫혀 있는 동안만 "환기해야 합니다"
     cookBtn.hidden = GAME.on || !(A && R.pan && s.cook <= 0);
-    curveBox.classList.toggle("beam", !ventBtn.hidden); curveBox.classList.toggle("soon", !(s.alertAt >= 0) && soon > 0);   // 환기 안내가 떠 있는 동안 곡선 테두리에 빛이 돈다
+    curveBox.classList.toggle("beam", !ventBtn.hidden); curveBox.classList.toggle("soon", !(s.alertAt >= 0) && soon > 0); if (FX) FX.beam(!ventBtn.hidden, !(s.alertAt >= 0) && soon > 0);   // 환기 안내가 떠 있는 동안 곡선 테두리에 빛이 돈다
     if (vWas !== ventBtn.hidden || cWas !== cookBtn.hidden) placeRing();   // 환기 안내가 나타나거나 사라지면 발생원 버튼 자리를 다시 잡는다   // 주방에서 조리 중이 아닐 때만 프라이팬 위 "요리 15분"
     bNight.classList.toggle("on", G.night); lbl(bNight, G.night ? t("bNightOn") : t("bNight"));
     for (const sp of SPECIES) { const el = legendEls[sp.key]; if (el) el.style.opacity = (0.3 + 0.7 * sp.frac(s)).toFixed(2); }
@@ -1542,8 +1557,10 @@
     if (clipBad) parts.push(t("noclip"));
     if (fxNote) parts.push(t(fxNote));
     if (SPACES[cur].art) parts.length = 0;   // 도면 장면: 받을 사진이 없다(안내는 장면 아래 글줄에)
-    assetsNote.textContent = parts.join(" · ");
+    const txt = parts.join(" · "); if (FX) FX.note(txt, !!txt && !bad && done < keys.length); else assetsNote.textContent = txt;   // 받는 중이면 글 옆에 작은 구슬(Orb)
+    fxBusy();
   }
+  function fxBusy() { if (FX) FX.busy(!SPACES[cur].art && !!shownKey && !!SCENES[shownKey] && !SCENES[shownKey].art && !assetState[shownKey] && !$("app").classList.contains("gaming")); }   // 보여 줄 사진이 아직 안 왔으면 장면 가운데 큰 구슬
   function stillEl(key) {
     if (SCENES[key].art) return null;   // 도면 장면은 사진이 없다
     if (stills[key]) return stills[key];
@@ -1727,7 +1744,7 @@
     if (prev && clips[prev]) { const pv = clips[prev]; setTimeout(() => { if (shownKey !== prev) pv.pause(); }, 1600); }
     dev.style.setProperty("--tint", SCENES[key].tint || "none");
     placeDevice();
-    patchSync();
+    patchSync(); fxBusy();
   }
   function preloadRest() { for (const k of venueScenes()) stillEl(k); }   // 쓰는 장면만 미리 받는다
   function prefetchClips() { if (noVideo) return; for (const k of Object.values(SPACES[cur].states)) if (k !== shownKey && !clips[k] && SCENES[k].clip && clipOrder.length < 4) clipEl(k); }
@@ -2070,11 +2087,12 @@
   let tabs = [];
   function buildTabs() {   // 방 탭은 고른 건물의 방으로 다시 만든다. 방이 하나뿐이면(카페) 숨긴다
     spacesNav.innerHTML = "";
-    tabs = ROOMS().map((k) => { const b = document.createElement("button"); b.setAttribute("role", "tab"); b.dataset.space = k; b.textContent = roomName(SPACES[k]); b.setAttribute("aria-selected", String(k === cur)); b.addEventListener("click", () => setSpace(k)); spacesNav.appendChild(b); return b; });
+    tabs = ROOMS().map((k) => { const b = document.createElement("button"); b.setAttribute("role", "tab"); b.dataset.space = k; b.textContent = roomName(SPACES[k]); b.setAttribute("aria-selected", String(k === cur)); b.addEventListener("click", () => go(k, b)); spacesNav.appendChild(b); return b; });
     spacesNav.hidden = tabs.length < 2;
   }
   buildTabs();
-  venueTabs.forEach((b) => b.addEventListener("click", () => { const v = VENUES[b.dataset.venue]; if (b.dataset.venue !== VEN) setSpace(v.last || v.rooms[0]); }));
+  function go(k, el) { if (FX && k !== cur && !GAME.on) FX.wave({ from: el, swap: () => setSpace(k) }); else setSpace(k); }   // 탭으로 공간을 바꿀 때: 누른 탭에서 물결(Distortion waves)이 퍼지며 다음 장면으로
+  venueTabs.forEach((b) => b.addEventListener("click", () => { const v = VENUES[b.dataset.venue]; if (b.dataset.venue !== VEN) go(v.last || v.rooms[0], b); }));
   const capEl = document.querySelector("#stage .cap");
   const ICONS = { flame: '<path d="M12 3c1 3 4 4.5 4 8.5a4 4 0 0 1-8 0c0-2 1-3 2-4 0 2 1 3 2 3 0-3-1-5 0-7.5z"/>', oven: '<rect x="4" y="4" width="16" height="16" rx="2"/><path d="M4 9h16M8 6.5h.01M12 6.5h.01"/><rect x="7.5" y="12" width="9" height="5" rx="1"/>',
     print: '<path d="M7 9V4h10v5M7 17H5a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-2"/><rect x="7" y="14" width="10" height="6" rx="1"/>', people: '<circle cx="9" cy="8" r="3"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><circle cx="17" cy="9" r="2.5"/><path d="M16 14.2c2.9.2 5 2.5 5 5.8"/>' };
@@ -3259,11 +3277,14 @@
   }
   gViews.addEventListener("click", (e) => { const b = e.target.closest("button[data-v]"); if (!b || b.disabled || !GAME.on) return; viewMode = b.dataset.v; enter3d(); });
 
-  window.__mr = { sceneView: (k) => SPACES[k].view, scene: () => shownKey, forecast: () => FC, venue: () => VEN, crowd: (k) => crowd(k, hourNow()), setSpace: (k) => setSpace(k), v3: () => { const v = VIEWS[viewMode]; return { on: V3.on, mode: viewMode, ready: !!(v && v.V3.ready), failed: !!(v && v.V3.failed) }; }, view: (m) => { viewMode = m; enter3d(); }, game: () => GAME, gset: GSET, tap: (k) => gameTap(k), time: () => G.t, all: () => ST, bufs: () => SPECIES.map((sp) => ({ key: sp.key, B: Array.from(sp.B), M: Array.from(sp.M) })), win: () => windVec(1), step: (n) => { for (let i = 0; i < (n || 1); i++) stepMinute(); hud(); redraw(); }, who: whoOf, species: () => SPECIES.map((sp) => ({ key: sp.key, alive: sp.alive, target: Math.round(sp.n * Math.pow(clamp(sp.frac(ST[cur]), 0, 1), 1.3)) })), ring: () => ringAt, dev: () => devBox, state: () => ST[cur], outdoor: outdoorOf };   // 검증용(읽기 전용)
+  window.__mr = { fx: () => (FX ? FX.version : null), sceneView: (k) => SPACES[k].view, scene: () => shownKey, forecast: () => FC, venue: () => VEN, crowd: (k) => crowd(k, hourNow()), setSpace: (k) => setSpace(k), v3: () => { const v = VIEWS[viewMode]; return { on: V3.on, mode: viewMode, ready: !!(v && v.V3.ready), failed: !!(v && v.V3.failed) }; }, view: (m) => { viewMode = m; enter3d(); }, game: () => GAME, gset: GSET, tap: (k) => gameTap(k), time: () => G.t, all: () => ST, bufs: () => SPECIES.map((sp) => ({ key: sp.key, B: Array.from(sp.B), M: Array.from(sp.M) })), win: () => windVec(1), step: (n) => { for (let i = 0; i < (n || 1); i++) stepMinute(); hud(); redraw(); }, who: whoOf, species: () => SPECIES.map((sp) => ({ key: sp.key, alive: sp.alive, target: Math.round(sp.n * Math.pow(clamp(sp.frac(ST[cur]), 0, 1), 1.3)) })), ring: () => ringAt, dev: () => devBox, state: () => ST[cur], outdoor: outdoorOf };   // 검증용(읽기 전용)
   setSpace(startSpace); applyLang(); noteAssets(); redraw();
   if (q.get("panel") === "1") openPanel();
   if (q.get("game") === "1") openIntro();   // #game=1 = 게임 시작 카드로 바로(X 공유 링크)
   setTimeout(preloadRest, 3500);
+  // 효과 묶음(Beam · Orb · Distortion waves · Metal)은 첫 화면이 뜬 뒤에 받는다. 못 받거나 주소에 #fx=0 이 있으면 지금 화면 그대로
+  window.__mrfx = (api) => { FX = api; hud(); noteAssets(); };
+  if (!/(^|[#&])fx=0(&|$)/.test(location.hash)) { const get = () => setTimeout(() => { const sc = document.createElement("script"); sc.src = "assets/fx.js"; sc.async = true; document.head.appendChild(sc); }, 500); if (document.readyState === "complete") get(); else addEventListener("load", get); }
   requestAnimationFrame(frame);
 })();
 </script>
