@@ -26,7 +26,7 @@
   * { box-sizing: border-box; }
   html { background: var(--ground); }
   body { margin: 0; background: var(--ground); color: #fff; font-family: var(--body); -webkit-font-smoothing: antialiased; }
-  #app { min-height: 100dvh; display: flex; flex-direction: column; padding-bottom: env(safe-area-inset-bottom); }
+  #app { position: relative; min-height: 100dvh; display: flex; flex-direction: column; padding-bottom: env(safe-area-inset-bottom); }
 
   .hud-title { padding: 14px 16px 6px; }
   .hud-title .brand { font-family: var(--display); font-weight: 700; font-size: 11.5px; letter-spacing: .12em; text-transform: uppercase; color: rgba(255,255,255,.82); text-shadow: 0 1px 6px rgba(0,0,0,.5); cursor: pointer; pointer-events: auto; width: max-content; border-radius: 6px; }   /* 누르면 처음 화면으로 */
@@ -39,21 +39,21 @@
   .hud-title p { margin: 8px 0 0; font-size: 14px; line-height: 1.5; font-weight: 600; color: rgba(255,255,255,.9); text-wrap: balance; word-break: keep-all; overflow-wrap: anywhere; }   /* 한글 단어 중간에서 줄이 끊기지 않게 */
   .hud-title .en { display: block; font-size: 12px; font-weight: 500; color: rgba(255,255,255,.66); margin-top: 3px; }
 
-  .topnav { display: flex; align-items: center; gap: 10px; margin: 6px 16px 8px; flex-wrap: wrap; }
-  .spaces { display: flex; gap: 4px; margin: 0; padding: 4px; border-radius: 999px; background: rgba(255,255,255,.10); border: 1px solid rgba(255,255,255,.14); width: max-content; max-width: calc(100% - 32px); }
-  .spaces button { font-family: var(--body); font-weight: 700; font-size: 13px; color: rgba(255,255,255,.8); background: transparent; border: 0; border-radius: 999px; padding: 7px 14px; cursor: pointer; min-height: 34px; }
+  .topnav { display: flex; align-items: center; gap: 8px; margin: 6px 16px 10px; flex-wrap: wrap; }
+  .spaces { display: flex; gap: 4px; margin: 0; padding: 4px; border-radius: 999px; background: rgba(255,255,255,.10); border: 1px solid rgba(255,255,255,.14); width: max-content; max-width: 100%; }
+  .spaces button { font-family: var(--body); font-weight: 700; font-size: 13px; color: rgba(255,255,255,.8); background: transparent; border: 0; border-radius: 999px; padding: 7px 12px; cursor: pointer; min-height: 38px; min-width: 42px; white-space: nowrap; }
   .spaces button[aria-selected="true"] { background: #fff; color: var(--navy); }
   .spaces button:focus-visible { outline: 3px solid rgba(255,255,255,.5); outline-offset: 2px; }
   /* 언어 토글: 방 탭과 떨어진 별도 알약. KR·EN 둘 다 보이고 고른 쪽이 흰색 */
   .lang { display: flex; gap: 2px; padding: 3px; border-radius: 999px; background: rgba(255,255,255,.10); border: 1px solid rgba(255,255,255,.14); }
-  .lang button { font-family: var(--display); font-weight: 700; font-size: 11.5px; letter-spacing: .08em; color: rgba(255,255,255,.72); background: transparent; border: 0; border-radius: 999px; padding: 0 12px; min-height: 30px; cursor: pointer; }
+  .lang button { font-family: var(--display); font-weight: 700; font-size: 11.5px; letter-spacing: .08em; color: rgba(255,255,255,.72); background: transparent; border: 0; border-radius: 999px; padding: 0 12px; min-height: 36px; cursor: pointer; }
   .lang button[aria-pressed="true"] { background: #fff; color: var(--navy); }
   .lang button:focus-visible { outline: 3px solid rgba(255,255,255,.5); outline-offset: 2px; }
   /* 건물 고르기(집 · 카페 · 사무실, v0.15) — 방 탭과 같은 알약. 좁은 화면에선 [건물][언어] 한 줄, 방 탭이 그 아래 */
   .venues button { display: inline-flex; align-items: center; gap: 6px; }
-  .venues .ic { width: 14px; height: 14px; flex: none; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .venues .ic { display: none; width: 14px; height: 14px; flex: none; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
   .spaces[hidden] { display: none; }
-  .topnav .lang { order: 2; } .topnav #spaces { order: 3; }
+  .topnav .lang { order: 2; position: absolute; right: 16px; top: 14px; } .topnav #spaces { order: 3; }   /* 좁은 화면: 언어는 머리글 오른쪽 위로 빼서 [건물][방] 이 한 줄에 들어가게(v0.16.1) */
   #app.gaming .venues { display: none; }
   /* ── 도면 장면: 사진이 아직 없는 공간(카페 · 사무실 · 회의실)은 코드로 그린다. 낮/밤 · 문/창 · 환기 장치 · 사람 수가 상태를 그대로 따라간다 ── */
   .art { position: absolute; left: 0; top: 0; display: block; opacity: 0; transition: opacity 1.1s ease; pointer-events: none;
@@ -123,14 +123,14 @@
   .fcta[hidden] { display: none; }
   .fcta:hover { filter: brightness(1.08); } .fcta:focus-visible { outline: 3px solid rgba(255,255,255,.7); outline-offset: 2px; }
   .fcta.cookf { --c: 77,77,206; }
-  .fcta.vent.soon { --c: 196,140,22; animation: none; }   /* 미리 알림(곧 1,000 을 넘는다): 알림보다 차분한 색, 깜박임 없음 */
+  .fcta.vent.soon { --c: 150,98,8; animation: none; }   /* 미리 알림(곧 1,000 을 넘는다): 알림보다 차분한 색, 깜박임 없음 */
   @keyframes ctaPulse { 0%, 100% { box-shadow: 0 6px 24px rgba(var(--c),.45); } 50% { box-shadow: 0 6px 36px rgba(var(--c),.9); } }
   .ring-tip { position: absolute; left: 0; top: 0; white-space: nowrap; font-size: 11px; font-weight: 700; color: #fff; background: rgba(10,10,32,.6); border-radius: 999px; padding: 3px 9px; pointer-events: none; z-index: 3; backdrop-filter: blur(4px); }
   #fx { position: absolute; inset: 0; width: 100%; height: 100%; display: block; pointer-events: none; }
   .vig { position: absolute; inset: 0; pointer-events: none; opacity: .22; transition: opacity 1.6s ease;
          background: radial-gradient(ellipse at 52% 42%, rgba(4,4,20,0) 30%, rgba(4,4,20,.75) 100%); }
-  .cap { position: absolute; left: 50%; bottom: 8px; transform: translateX(-50%); white-space: nowrap; font-family: var(--display); font-weight: 700; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: rgba(255,255,255,.72); text-shadow: 0 1px 4px rgba(0,0,0,.6); pointer-events: none; }
-  .assets { position: absolute; right: 10px; top: 8px; font-size: 10.5px; color: rgba(255,255,255,.75); background: rgba(0,0,0,.35); border-radius: 8px; padding: 3px 8px; pointer-events: none; }
+  .cap { position: absolute; left: 10px; right: 10px; bottom: 8px; text-align: center; line-height: 1.35; text-wrap: balance; font-family: var(--display); font-weight: 700; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: rgba(255,255,255,.72); text-shadow: 0 1px 4px rgba(0,0,0,.6); pointer-events: none; }
+  .assets { position: absolute; right: 10px; top: 50px; font-size: 10.5px; color: rgba(255,255,255,.75); background: rgba(0,0,0,.35); border-radius: 8px; padding: 3px 8px; pointer-events: none; }
   .assets:empty { display: none; }
 
   .readout { margin: 10px 16px 0; background: var(--paper); color: var(--ink); border: 1px solid var(--line); border-radius: 14px; padding: 10px 12px 9px; box-shadow: 0 10px 30px rgba(0,0,0,.25); }
@@ -142,6 +142,7 @@
   .bar .bl { font-family: var(--display), var(--body); font-size: 11px; font-weight: 700; color: var(--ink-2); line-height: 1.05; white-space: nowrap; }
   .bar .bl small { display: block; font-size: 9.5px; font-weight: 500; color: var(--cap); }
   .bar .bt { position: relative; height: 12px; border-radius: 6px; background: #ecebf5; cursor: ew-resize; touch-action: none; }
+  .bar .bt::before { content: ""; position: absolute; left: 0; right: 0; top: -9px; bottom: -9px; }   /* 누르는 자리는 막대보다 넓게(30px) */
   .bar .bt:focus-visible { outline: 2px solid var(--violet); outline-offset: 3px; }
   .bar .bt i { position: absolute; left: 0; top: 0; bottom: 0; width: 0; border-radius: 6px; background: #1878F2; transition: width .35s ease, background .35s ease; }
   .bar .bt i::after { content: ""; position: absolute; right: -7px; top: 50%; width: 16px; height: 16px; margin-top: -8px; border-radius: 50%; background: #fff; border: 2.5px solid var(--lvc, #1878F2); box-shadow: 0 1px 4px rgba(0,0,0,.28); }
@@ -152,12 +153,12 @@
   .bar b[data-lv="warn"], .bar b[data-lv="alert"] { color: var(--lvc); }
   #mini { width: 100%; height: 56px; margin-top: 6px; border-radius: 8px; background: #f6f6fc; display: block; }
   .status { margin-top: 6px; font-size: 11px; color: var(--ink-2); display: flex; gap: 5px; flex-wrap: wrap; }
-  .pill { border: 1px solid var(--line); border-radius: 999px; padding: 1px 8px; background: #fff; }
+  .pill { border: 1px solid var(--line); border-radius: 999px; padding: 1px 8px; background: #fff; white-space: nowrap; }
   .pill.on { border-color: var(--violet); color: var(--violet); }
   /* 입자 범례: 공간 탭 아래 가로 표 — 색 점이 그 종류의 값에 따라 밝아진다 */
-  .legend { display: flex; align-items: stretch; margin: 14px 16px 8px; padding: 0; border-radius: 999px; background: rgba(10,10,32,.5); border: 1px solid rgba(255,255,255,.14); width: max-content; max-width: calc(100% - 32px); font-size: 11px; color: rgba(255,255,255,.88); backdrop-filter: blur(6px); overflow: hidden; }
-  .legend .k2 { display: inline-flex; align-items: center; padding: 4px 8px 4px 11px; color: rgba(255,255,255,.6); font-family: var(--display); font-weight: 700; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; }
-  .legend span[data-sp] { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-left: 1px solid rgba(255,255,255,.14); font-family: var(--display); font-weight: 600; }
+  .legend { position: relative; z-index: 3; display: flex; align-items: stretch; margin: 10px 12px -42px; height: 32px; box-sizing: border-box; padding: 0; border-radius: 999px; background: rgba(10,10,32,.58); border: 1px solid rgba(255,255,255,.14); width: max-content; max-width: calc(100% - 24px); font-size: 11px; color: rgba(255,255,255,.88); backdrop-filter: blur(6px); overflow: hidden; }
+  .legend .k2 { display: inline-flex; align-items: center; padding: 0 7px 0 11px; color: rgba(255,255,255,.6); font-family: var(--display); font-weight: 700; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; }
+  .legend span[data-sp] { display: inline-flex; align-items: center; gap: 6px; padding: 0 9px; border-left: 1px solid rgba(255,255,255,.14); font-family: var(--display); font-weight: 600; }
   .legend i { width: 10px; height: 10px; border-radius: 50%; display: inline-block; box-shadow: 0 0 8px currentColor; opacity: .35; transition: opacity .6s ease; }
   /* 측정 요소 정의 카드: 범례 칩·막대 이름을 누르면 그 아래(자리가 없으면 위)에 플로팅으로 뜬다 */
   .legend span[data-sp] { cursor: pointer; border-radius: 999px; }
@@ -177,7 +178,7 @@
   .def .band span { display: inline-flex; align-items: center; gap: 5px; font-family: var(--display); font-size: 11px; font-weight: 600; padding: 2px 8px 2px 6px; border-radius: 999px; background: rgba(255,255,255,.1); font-variant-numeric: tabular-nums; }
   .def .band span i { width: 7px; height: 7px; border-radius: 50%; background: var(--lvc, #fff); }
   .def .hintx { margin-top: 8px; font-size: 11.5px; color: rgba(255,255,255,.55); line-height: 1.45; }
-  .def .x { position: absolute; top: 6px; right: 6px; width: 26px; height: 26px; border: 0; border-radius: 50%; background: rgba(255,255,255,.1); color: #fff; font-size: 16px; line-height: 1; cursor: pointer; }
+  .def .x { position: absolute; top: 5px; right: 5px; width: 30px; height: 30px; border: 0; border-radius: 50%; background: rgba(255,255,255,.1); color: #fff; font-size: 16px; line-height: 1; cursor: pointer; }
   .def .x:hover { background: rgba(255,255,255,.22); } .def .x:focus-visible { outline: 2px solid rgba(255,255,255,.6); }
   @media (max-width: 599px) { .def { font-size: 12.5px; } .def dl { grid-template-columns: 1fr; gap: 2px; } .def dt { padding-top: 4px; } }
   /* 기기 화면 그대로: 카드 너비에 맞춘 4:3 화면 두 장 — 2번째(Indoor Index · 시계 · 보상 · 네트워크), 3번째(여섯 타일). 실시간으로 같은 값을 그린다 */
@@ -195,6 +196,7 @@
   .fcap { margin-top: 10px; text-align: center; font-size: 12px; color: rgba(255,255,255,.8); font-family: var(--display), var(--body); }
   .fclose { position: absolute; right: -6px; top: -46px; }
   .screens .sc canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  @media (min-width: 600px) { .screens { grid-template-columns: repeat(3, 1fr); } .screens .k3 { grid-column: 1 / -1; } }   /* 세로 태블릿: 기기 화면 셋을 한 줄에(넓은 가로 화면은 아래에서 다시 한 열) */
 
   .controls { margin: 10px 16px 0; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; align-items: center; }
   .btn { font-family: var(--body); font-weight: 700; font-size: 13.5px; border: 1px solid rgba(255,255,255,.25); background: rgba(255,255,255,.12); color: #fff;
@@ -240,7 +242,7 @@
   /* 가로 넓은 화면(부스·데스크톱): 장면이 화면 전체, 나머지는 그 위에 얹는다 */
   @media (orientation: landscape) and (min-width: 760px) and (min-height: 440px) {
     body { overflow: hidden; }
-    #app { display: block; height: 100dvh; min-height: 0; padding: 0; }
+    #app { display: block; height: 100dvh; min-height: 0; padding: 0; --ro-w: clamp(208px, 21vw, 250px); }   /* --ro-w = 측정값 카드 폭. 스크립트(fitReadout)가 화면 높이에 맞춰 px 로 다시 적는다 */
     #stage { position: absolute; inset: 0; height: auto; }
     .hud-title { position: absolute; left: 22px; top: 18px; max-width: 480px; padding: 0; z-index: 2; pointer-events: none; }
     .hud-title::before { content: ""; position: absolute; left: -22px; top: -18px; width: 640px; height: 360px; z-index: -1; pointer-events: none;   /* 밝은 장면(사무실 천장 조명 · 회의실 화면) 위에서도 로고 · 제목이 읽히게(v0.16) */
@@ -251,26 +253,50 @@
     .hud-title .logo { width: 146px; margin-bottom: 11px; }
     .hud-title p { font-size: 16px; line-height: 1.5; background: rgba(10,10,32,.46); border-radius: 10px; padding: 9px 12px; backdrop-filter: blur(6px); }   /* 방 설명은 큰 화면에서 16px(서우: 글씨 키우기) */
     .hud-title .en { font-size: 13.5px; margin-top: 4px; }
-    .topnav { position: absolute; left: 50%; top: 18px; transform: translateX(-50%); margin: 0; z-index: 2; flex-wrap: nowrap; }
+    /* 메뉴는 가운데, 측정값 카드에 닿기 전에 줄을 바꾼다(한 줄에 안 들어가면 스크립트가 .two 를 붙여 [건물][언어] / [방]) */
+    .topnav { position: absolute; left: 0; right: 0; top: 18px; margin: 0 auto; width: max-content; width: fit-content; max-width: calc(100% - 2 * (var(--ro-w) + 44px)); z-index: 2; gap: 10px; justify-content: center; pointer-events: none; }
+    .topnav > * { pointer-events: auto; }   /* 메뉴 줄의 빈 자리가 아래 글줄(상표)을 가로막지 않게 */
     .spaces, .lang { background: rgba(10,10,32,.5); backdrop-filter: blur(6px); }
-    .topnav #spaces { order: 2; } .topnav .lang { order: 3; }
-    .legend { position: absolute; left: 50%; top: 78px; transform: translateX(-50%); margin: 0; z-index: 2; }   /* 방 탭 아래 16px 띄운다 */
+    .spaces button { min-height: 34px; padding: 7px 14px; } .lang button { min-height: 30px; }
+    .venues .ic { display: block; }
+    .topnav #spaces { order: 2; } .topnav .lang { order: 3; position: static; }
+    .topnav.two .lang { order: 2; } .topnav.two #spaces { order: 3; }
+    .hud-title.nobrand .brand { display: none; }
+    .legend { position: absolute; left: 50%; top: 78px; transform: translateX(-50%); margin: 0; z-index: 2; height: 28px; background: rgba(10,10,32,.5); max-width: calc(100% - 32px); }   /* 방 탭 아래 16px 띄운다 */
+    .legend span[data-sp] { padding: 0 10px; } .legend .k2 { padding: 0 8px 0 11px; }
     /* 카드는 스크롤하지 않는다: 폭을 화면 높이에서 역산해(제목·막대·곡선·상태·범례·여백 ≈ 380px + 화면 3장 = 2.25×폭) 세 화면까지 한 번에 보이게. 768px 높이에선 176px 까지 좁아진다 */
-    .readout { position: absolute; right: 18px; top: 18px; width: clamp(176px, calc((100dvh - 360px) / 2.25), 250px); margin: 0; z-index: 2; overflow: visible; }
-    .controls { position: absolute; left: 22px; bottom: 74px; margin: 0; display: flex; gap: 8px; flex-wrap: wrap; max-width: calc(100% - 44px); z-index: 2; }
+    .readout { position: absolute; right: 18px; top: 18px; width: var(--ro-w); margin: 0; z-index: 2; overflow: visible; }
+    /* 카드가 화면 아래로 넘치면 기기 화면 배치를 바꾼다: 세로 셋 → 큰 것 하나 + 작은 것 둘(.s12) → 한 줄에 셋(.s111) → 숨김(.s0). .tight = 여백 줄임 */
+    .screens { grid-template-columns: 1fr; } .screens .k3 { grid-column: auto; }
+    .readout.s12 .screens { grid-template-columns: 1fr 1fr; } .readout.s12 .screens .k3, .readout.s12 .screens .sc[data-screen="0"] { grid-column: 1 / -1; }
+    .readout.s111 .screens { grid-template-columns: repeat(3, 1fr); gap: 5px; } .readout.s111 .screens .k3 { grid-column: 1 / -1; }
+    .readout.s0 .screens { display: none; }
+    .readout.tight .hint { display: none; } .readout.tight .bars { gap: 3px; } .readout.tight #mini { height: 44px; } .readout.tight .status { gap: 4px; font-size: 10.5px; margin-top: 5px; } .readout.tight .screens { margin-top: 5px; }
+    .controls { position: absolute; left: 22px; bottom: 74px; margin: 0; display: flex; gap: 8px; flex-wrap: wrap-reverse; max-width: calc(100% - 54px - var(--ro-w)); z-index: 2; }   /* 버튼 줄은 카드 왼쪽에서 멈춘다. 넘치는 것(시계)은 윗줄로 */
     .btn { background: rgba(10,10,32,.5); backdrop-filter: blur(6px); border-color: rgba(255,255,255,.35); min-height: 38px; padding: 9px 15px; }
     .btn:hover { background: #fff; color: var(--navy); }
     .btn.primary { background: var(--violet); border-color: var(--violet); }
     .btn.primary:hover { background: #3f3fb8; border-color: #3f3fb8; color: #fff; }
     .clock { grid-column: auto; padding: 3px 8px; background: rgba(10,10,32,.5); border-radius: 8px; backdrop-filter: blur(6px); }
     .ledger { position: absolute; left: 0; right: 0; bottom: 0; margin: 0; background: rgba(10,10,32,.62); backdrop-filter: blur(8px); padding: 9px 22px 11px; z-index: 2; }
-    .ledger .note { display: block; }
-    .cap { bottom: 58px; }
-    .assets { top: auto; bottom: 58px; right: 18px; }
+    .ledger .note { display: block; flex: 0 1 auto; min-width: 0; text-align: right; line-height: 1.3; text-wrap: balance; }   /* 자리가 모자라면 두 줄로(잘리지 않게) */
+    .ledger .k { flex: none; white-space: nowrap; } .ticks { min-width: 48px; }
+    .cap { bottom: 58px; left: 50%; right: auto; transform: translateX(-50%); white-space: nowrap; }
+    .assets { top: auto; bottom: 122px; right: calc(var(--ro-w) + 32px); }   /* 버튼 줄 위, 카드 왼쪽(아래 글줄과 겹치지 않게) */
   }
-  @media (orientation: landscape) and (min-width: 760px) and (max-width: 1023px) and (min-height: 440px) {   /* 좁은 가로: 건물 · 언어 한 줄, 방 탭은 그 아래 */
-    .topnav { flex-wrap: wrap; justify-content: center; width: 352px; }
-    .topnav #spaces { order: 3; } .topnav .lang { order: 2; }
+  @media (orientation: landscape) and (min-width: 760px) and (max-width: 1179px) and (min-height: 440px) {   /* 태블릿 가로: 글과 버튼을 한 단 줄인다 */
+    .hud-title { max-width: 430px; } .hud-title p { font-size: 15px; } .hud-title .en { font-size: 13px; }
+    .controls .btn .ic { display: none; } .controls .btn { padding: 9px 13px; }
+  }
+  @media (orientation: landscape) and (min-width: 760px) and (max-width: 899px) and (min-height: 440px) {
+    .controls { gap: 6px; bottom: 58px; } .controls .btn { font-size: 12.5px; padding: 7px 11px; min-height: 34px; }
+    #stage .cap { display: none; }   /* 작은 가로 화면: 장면 아래 글줄을 쉬고(같은 말이 기록 띠에 있다) 버튼 줄을 내려 측정기를 가리지 않게 */
+  }
+  @media (orientation: landscape) and (min-width: 760px) and (max-width: 1099px) and (min-height: 440px) {   /* 좁은 가로: 메뉴는 로고와 카드 사이에, 두 줄이면 오른쪽 맞춤 */
+    .topnav { left: 184px; right: calc(var(--ro-w) + 44px); width: auto; max-width: none; margin: 0; }
+    .topnav.two { justify-content: flex-end; }
+    .venues .ic { display: none; } .spaces button { padding: 7px 12px; }
+    .hud-title .en { display: none; }   /* 둘째 언어 줄은 넓은 화면에서만 */
   }
   @media (orientation: landscape) and (min-width: 760px) and (max-width: 1399px) and (max-height: 620px) {   /* 낮은 가로 화면: 로고·제목을 한 단 줄여 장면을 덜 가린다 */
     .hud-title .logo { width: 112px; margin-bottom: 6px; }
@@ -286,6 +312,7 @@
     .screens .sc { grid-row: 2; scroll-snap-align: start; }
     #b-cook:not([hidden]) ~ #b-speed { grid-column: 1 / -1; }
     #b-hvac:not([hidden]) ~ #b-speed { grid-column: auto; }
+    .bars { gap: 8px; }
   }
 
   /* ── 게임: 환기 타이밍 (v0.12) — 방 카드 3개(누르면 10분 환기) · 점수 · 저녁 띠(바깥 미세먼지) · 알림 · 시작/결과 카드 ── */
@@ -526,7 +553,7 @@
       <span class="pill" id="p-who">세 사람 · 저녁(한 사람은 주방)</span>
     </div>
     <div class="screens" aria-label="기기 화면 그대로">
-      <div class="k3" data-i18n="screens">Device screens · 기기 화면 1 · 2 · 3</div>
+      <div class="k3" data-i18n="screens">Device screens · 기기 화면</div>
       <div class="sc" data-screen="0" role="button" tabindex="0" aria-label="기기 화면 1 크게 보기"><canvas id="mini-tiles" aria-label="기기 화면 1: 여섯 타일"></canvas></div>
       <div class="sc" data-screen="1" role="button" tabindex="0" aria-label="기기 화면 2 크게 보기"><canvas id="mini-index" aria-label="기기 화면 2: Indoor Index, 시계, 보상, 네트워크"></canvas></div>
       <div class="sc" data-screen="2" role="button" tabindex="0" aria-label="기기 화면 3 크게 보기"><canvas id="mini-io" aria-label="기기 화면 3: 실내와 실외 비교, 환기 장치"></canvas></div>
@@ -591,7 +618,7 @@
   /* ── 두 언어: 한국어(기본) · English. 정적 문구는 data-i18n, 움직이는 문구는 t(). 선택은 저장되고 주소 해시 lang= 으로도 정한다. ── */
   const T = {
     ko: { tip: "기기 · 탭하면 화면 확대", cap: "concept render · 개념 시뮬레이션 · 입자는 예시", note: "검증된 판독값 하나 = 기록 하나 · 보상 지급량·가치 비보장 · 개념 시뮬레이션", hint: "막대를 끌어 값을 바꿔 보세요 · 아래 기기 화면을 누르면 크게",
-      screens: "Device screens · 기기 화면 1 · 2 · 3", particles: "입자 · 예시", pnote: "보이지 않는 CO₂·VOCs·먼지를 빛으로 나타낸 예시입니다. 개수는 측정값을 따라 늘고 줄어듭니다.", temp: "온도", rh: "습도", cook: "요리 15분", reset: "처음부터", close: "닫기", timelapse: "타임랩스",
+      screens: "Device screens · 기기 화면", particles: "입자 · 예시", pnote: "보이지 않는 CO₂·VOCs·먼지를 빛으로 나타낸 예시입니다. 개수는 측정값을 따라 늘고 줄어듭니다.", temp: "온도", rh: "습도", cook: "요리 15분", reset: "처음부터", close: "닫기", timelapse: "타임랩스",
       winOpen: "창문 열림", winClosed: "창문 닫힘", cooking: (n) => `조리 중 ${n}분`, notCooking: "조리 안 함", nightP: "밤", dawn: "새벽", morning: "아침", day: "낮", evening: "저녁",
       wL3e: "세 사람 · 저녁(한 사람은 주방)", wL4: "네 식구 · 저녁", wL2: "두 사람 · 밤", wL2l: "두 사람 · 점심", wL3: "세 사람 · 아침", wL1: "한 사람 · 낮", wL0: "비어 있음 · 모두 잠듦", wB2: "두 사람 잠듦", wB1: "한 사람 · 일어나는 중", wB1r: "한 사람 · 쉬는 중", wB0: "비어 있음", wK1m: "한 사람 · 아침 준비", wK1l: "한 사람 · 점심", wK1d: "한 사람 · 저녁 준비", wK0: "오가는 정도", wKcook: "한 사람 · 조리대 앞",
       bWinOpen: "창문 열기", bWinClose: "창문 닫기", bNight: "야간 모드", bNightOn: "주간 모드", ventCta: "환기해야 합니다", ventSub: "탭하면 창문 열기", cookSub: "탭하면 팬에 불이 켜집니다", whole: (v, n) => `· ${v} 전체 ${n}`,
@@ -633,7 +660,7 @@
       cPrep: "오픈 준비", cMorning: "아침 손님", cLull: "한가한 오전", cPre: "점심 직전", cLunch: "점심 손님", cAfter: "점심 뒤", cPm: "오후", cEve: "저녁 손님", cLast: "마감 전", cClosed: "영업 끝 · 비어 있음",
       oIn: "출근 중", oAm: "오전 근무", oLunch: "점심 시간", oPm: "오후 근무", oOt: "야근", oEmpty: "퇴근 뒤 · 비어 있음", mMeet: "회의 중", mShort: "짧은 회의", mBtn: "회의 중", mEmpty: "비어 있음" },
     en: { tip: "Device · tap to enlarge", cap: "concept render · concept simulation · particles are illustrative", note: "One verified reading = one record · Reward amount and value not guaranteed · Concept simulation", hint: "Drag a bar to change its value · Tap a device screen below to enlarge",
-      screens: "Device screens 1 · 2 · 3", particles: "Particles · illustrative", pnote: "Invisible CO₂, VOCs and dust drawn as light. Their number rises and falls with the measured values.", temp: "Temp", rh: "Humidity", cook: "Cook 15 min", reset: "Reset", close: "Close", timelapse: "Timelapse",
+      screens: "Device screens", particles: "Particles · illustrative", pnote: "Invisible CO₂, VOCs and dust drawn as light. Their number rises and falls with the measured values.", temp: "Temp", rh: "Humidity", cook: "Cook 15 min", reset: "Reset", close: "Close", timelapse: "Timelapse",
       winOpen: "Window open", winClosed: "Window closed", cooking: (n) => `Cooking · ${n} min`, notCooking: "Not cooking", nightP: "Night", dawn: "Dawn", morning: "Morning", day: "Daytime", evening: "Evening",
       wL3e: "Three · evening (one in the kitchen)", wL4: "Family of four · evening", wL2: "Two · night", wL2l: "Two · lunch", wL3: "Three · morning", wL1: "One · daytime", wL0: "Empty · everyone asleep", wB2: "Two asleep", wB1: "One · getting up", wB1r: "One · resting", wB0: "Empty", wK1m: "One · breakfast", wK1l: "One · lunch", wK1d: "One · dinner prep", wK0: "Passing through", wKcook: "One · at the counter",
       bWinOpen: "Open window", bWinClose: "Close window", bNight: "Night mode", bNightOn: "Day mode", ventCta: "Ventilation needed", ventSub: "Tap to open the window", cookSub: "Tap to start cooking", whole: (v, n) => `· whole ${v.toLowerCase()} ${n}`,
@@ -665,7 +692,7 @@
       soonCta: (n) => `Passing 1,000 in ${n} min`, soonSub: "Tap to open the window early", soonSubHvac: "Tap to switch the ventilation on early", fcZone: "+30 min",
       overN: (m) => `· over 1,000 for ${m >= 60 ? Math.floor(m / 60) + " h " : ""}${m % 60} min`,
       capArt: "drawn scene · concept simulation · particles are illustrative", doorOpen: "Door open", doorOpenMix: "Door open · mixing with the office", doorClosed: "Door closed", bDoorOpen: "Prop the door open", bDoorOpen2: "Open the door", bDoorClose: "Close the door",
-      hvacOn: "Ventilation on", hvacOff: "Ventilation off", bHvacOn: "Ventilation on", bHvacOff: "Ventilation off", ventSubHvac: "Tap to switch on the ventilation",
+      hvacOn: "Ventilation on", hvacOff: "Ventilation off", bHvacOn: "Start ventilation", bHvacOff: "Stop ventilation", ventSubHvac: "Tap to switch on the ventilation",
       bake: "Bake 10 min", bakeSub: "Tap to switch on the oven", baking: (n) => `Baking · ${n} min`, notBaking: "Oven off",
       print: "Print 10 min", printSub: "Tap to run the printer", printing: (n) => `Printing · ${n} min`, notPrinting: "Printer idle",
       meet: "Meeting 1 hour", meetSub: "Tap and six people come in", meeting: (n) => `Meeting · ${n} min`, notMeeting: "No meeting",
@@ -834,8 +861,8 @@
     },
     meeting: {
       name: "회의실", en: "Meeting room", where: "On the table",
-      lead: "회의실. 창 없는 방에 여섯 명이 모이면 30분쯤에 CO₂가 2,000에 가까워집니다. 문을 열면 사무실 공기와 섞여 1,500 안팎까지만, 환기 장치를 켜면 1,000 아래로 내려갑니다.",
-      en2: "Meeting room. Six people in a windowless room bring CO₂ close to 2,000 in about half an hour. An open door mixes it with office air and only gets it to around 1,500; the ventilation takes it below 1,000.",
+      lead: "회의실. 창 없는 방에 여섯 명이 모이면 30분쯤에 CO₂가 2,000에 가까워집니다. 문을 열면 1,500 안팎, 환기 장치를 켜면 1,000 아래로 내려갑니다.",
+      en2: "Meeting room. Six people in a windowless room bring CO₂ close to 2,000 in about half an hour. An open door gets it to around 1,500; the ventilation takes it below 1,000.",
       // 사진 장면: 사람 단계 0 빈 방 · 1 회의 중. 창이 없는 방이라 밤은 같은 사진을 어둡게만 한다(SCENES 의 css)
       photo: { states: { day0: "meeting-day-0", day1: "meeting-day-1", night0: "meeting-night-0", night1: "meeting-night-1" }, levels: { day: 2, night: 2 }, level: (n) => n >= 3 ? 1 : 0,
                device: { u: 0.60, v: 0.815, cmFrac: 0.0042 }, pan: [0.40, 0.66], hood: [0.77, 0.085], window: [0.585, 0.38], focus: [0.5, 0.55], patch: [0.4219, 0.1218, 0.676, 0.64] },   // 기기 = 탁자 가운데 앞쪽(1cm ≈ 6.7px) · pan = 회의 버튼 자리 · hood = 천장 디퓨저 · window = 유리문
@@ -1070,7 +1097,7 @@
   function hud() {
     const s = ST[cur];
     refreshForecast();
-    pmv.textContent = s.pm.toFixed(0); co2v.textContent = s.co2.toFixed(0); clock.textContent = `${clockText()} · ${t("timelapse")} ×${speed()}`;
+    pmv.textContent = s.pm.toFixed(0); co2v.textContent = s.co2.toFixed(0); clock.textContent = clockText();   // 배속은 옆 버튼에 있다
     pm10v.textContent = pm10Of(s).toFixed(0); vocv.textContent = s.voc.toFixed(0); tv.textContent = s.temp.toFixed(1); rhv.textContent = s.rh.toFixed(0);
     // 막대와 숫자 색: 좋음(파랑) → 보통(초록) → 주의(주황) → 경고(빨강). PM·VOCs 는 기기 등급, CO₂ 는 800 주의·1000 경고, 온·습도는 편안 범위 밖이면 주의
     const p10 = pm10Of(s);
@@ -1090,13 +1117,13 @@
     pWho.textContent = whoText(cur);   // 이 방에 지금 누가 있나(시간표)
     lbl(bWin, s.window ? t(W.bClose) : t(W.bOpen)); bWin.classList.toggle("on", s.window);
     lbl(bHvac, t(s.hvac ? "bHvacOff" : "bHvacOn")); bHvac.classList.toggle("on", !!s.hvac);
-    const vWas = ventBtn.hidden, soon = FC ? FC.soon : 0;
+    const vWas = ventBtn.hidden, cWas = cookBtn.hidden, soon = FC ? FC.soon : 0;
     ventBtn.hidden = GAME.on || !((s.alertAt >= 0 || soon) && !s.window && !s.hvac);   // 알림(1,000 넘음) 또는 미리 알림(곧 넘음)
     ventBtn.classList.toggle("soon", !(s.alertAt >= 0) && soon > 0);
     ventB.textContent = s.alertAt >= 0 || !soon ? t("ventCta") : t("soonCta", soon);
     ventS.textContent = t(s.alertAt >= 0 || !soon ? (R.phys ? "ventSubHvac" : "ventSub") : (R.phys ? "soonSubHvac" : "soonSub"));   // 기기 알림이 켜져 있고 창이 닫혀 있는 동안만 "환기해야 합니다"
     cookBtn.hidden = GAME.on || !(A && R.pan && s.cook <= 0);
-    if (vWas !== ventBtn.hidden && !cookBtn.hidden) placeRing();   // 환기 안내가 나타나거나 사라지면 발생원 버튼 자리를 다시 잡는다   // 주방에서 조리 중이 아닐 때만 프라이팬 위 "요리 15분"
+    if (vWas !== ventBtn.hidden || cWas !== cookBtn.hidden) placeRing();   // 환기 안내가 나타나거나 사라지면 발생원 버튼 자리를 다시 잡는다   // 주방에서 조리 중이 아닐 때만 프라이팬 위 "요리 15분"
     bNight.classList.toggle("on", G.night); lbl(bNight, G.night ? t("bNightOn") : t("bNight"));
     for (const sp of SPECIES) { const el = legendEls[sp.key]; if (el) el.style.opacity = (0.3 + 0.7 * sp.frac(s)).toFixed(2); }
     if (GAME.on) gameUI();
@@ -1131,7 +1158,8 @@
     ctx.fillStyle = CHART.co2.col; ctx.textAlign = "right"; ctx.fillText(fc ? `CO₂ ${s.co2.toFixed(0)} → ${fc.end.toFixed(0)}` : `CO₂ ${s.co2.toFixed(0)}`, W - padX, 11 * d);
     ctx.fillStyle = "#9a9ab4"; ctx.textAlign = "center"; ctx.font = `600 ${8.5 * d}px Montserrat, sans-serif`;
     if (!fc || W / d > 210) ctx.fillText("2h", fc ? (padX + xNow) / 2 : W / 2, 11 * d);
-    if (fc) ctx.fillText(t("fcZone"), (xNow + W - padX) / 2, H - 2.5 * d);   // 점선 구간 = 앞으로 30분
+    if (fc) { const lx = (xNow + W - padX) / 2, ly = H - 2.5 * d, lw = ctx.measureText(t("fcZone")).width + 6 * d;   // 점선 구간 = 앞으로 30분. 글자가 점선에 묻히지 않게 바탕을 깐다
+      ctx.fillStyle = "rgba(246,246,252,.92)"; ctx.fillRect(lx - lw / 2, ly - 8.5 * d, lw, 11 * d); ctx.fillStyle = "#7d7d9c"; ctx.fillText(t("fcZone"), lx, ly); }
   }
   const mini = $("mini"), mctx = mini.getContext("2d");
 
@@ -1373,33 +1401,63 @@
   // 포인트는 기기 밖: 기기 위쪽 모서리에서 가는 선을 내어 비스듬히 위·옆에 원을 둔다(오른쪽 끝에 놓인 기기는 왼쪽으로). 기기 자체도 탭 영역.
   const leader = $("leader"), hit = $("hit");
   let ringAt = { x: 0, y: 0 }, ringPx = 0, ringPy = 0;
-  function placeRing() {
-    const bx = (devBox.x - sw / 2) * 1.035 + sw / 2 + mediaX, by = (devBox.y - sh / 2) * 1.035 + sh / 2 + mediaY, bw = devBox.w * 1.035, bh = devBox.h * 1.035;
-    const R = SPACES[cur], nearSrc = R.pan && R.pan[0] > R.device.u && R.pan[0] - R.device.u < 0.2;   // 발생원 버튼이 기기 바로 오른쪽에 있으면(주방 프라이팬) 포인트를 왼쪽으로
-    const side = nearSrc ? -1 : (bx + bw / 2 > sw * 0.66) ? -1 : 1;   // 주방은 오른쪽에 프라이팬 버튼이 있어 포인트를 왼쪽으로
-    const ax = side > 0 ? bx + bw * 0.8 : bx + bw * 0.16, ay = by + bh * 0.1;
-    const gap = clamp(bw * 0.5, 30, 64);
-    const rx = clamp(ax + side * gap * 1.25, 30, sw - 30), ry = clamp(ay - gap * 0.85, 26, sh - 26);
-    const dx = rx - ax, dy = ry - ay, L = Math.hypot(dx, dy), ang = Math.atan2(dy, dx);
-    ring.style.transform = `translate(${rx.toFixed(1)}px, ${ry.toFixed(1)}px)`;
-    leader.style.transform = `translate(${ax.toFixed(1)}px, ${ay.toFixed(1)}px) rotate(${ang.toFixed(4)}rad)`; leader.style.width = Math.max(0, L - 19).toFixed(1) + "px";
-    const tipW = ringTip.offsetWidth || 120; let ts = side;   // 말풍선이 장면 밖으로 나가면 반대쪽에
-    if (ts > 0 && rx + 24 + tipW > sw - 6) ts = -1; else if (ts < 0 && rx - 24 - tipW < 6) ts = 1;
-    ringTip.style.transform = `translate(${(rx + ts * 24).toFixed(1)}px, ${ry.toFixed(1)}px) translate(${ts > 0 ? "0" : "-100%"}, -50%)`;
-    const hw = Math.max(bw, 44), hh = Math.max(bh, 44);
-    hit.style.transform = `translate(${(bx + bw / 2 - hw / 2).toFixed(1)}px, ${(by + bh / 2 - hh / 2).toFixed(1)}px)`; hit.style.width = hw.toFixed(1) + "px"; hit.style.height = hh.toFixed(1) + "px";
-    // 환기 메시지는 포인트 위(기기를 가리지 않게 — 위에 자리가 없으면 아래), 장면 밖으로 나가지 않게
-    const vw = ventBtn.offsetWidth || 190, vh = ventBtn.offsetHeight || 40, vx = clamp(rx, vw / 2 + 6, sw - vw / 2 - 6), vy = ry - 30 - vh < 6 ? ry + 30 : ry - 30 - vh;
-    ventBtn.style.transform = `translate(${vx.toFixed(1)}px, ${vy.toFixed(1)}px) translate(-50%, 0)`;
-    // 요리 버튼은 프라이팬 위에(장면 밖으로 안 나가게)
-    if (R.pan && R.act) {
-      const p = toScreen(R.pan[0], R.pan[1]), cw = cookBtn.offsetWidth || 190, chh = cookBtn.offsetHeight || 40, cx = clamp(p.x, cw / 2 + 6, sw - cw / 2 - 6); let cy = Math.max(6, p.y - 26 - chh);
-      const tipH = ringTip.offsetHeight || 21, tx0 = ts > 0 ? rx + 24 : rx - 24 - tipW, tx1 = tx0 + tipW, ty0 = ry - tipH / 2, ty1 = ry + tipH / 2;   // 포인트 말풍선과 겹치면(좁은 화면) 말풍선 위로 올린다
-      if (cx - cw / 2 < tx1 && cx + cw / 2 > tx0 && cy < ty1 && cy + chh > ty0) cy = Math.max(6, ty0 - chh - 8);
-      if (!ventBtn.hidden && cx - cw / 2 < vx + vw / 2 && cx + cw / 2 > vx - vw / 2 && cy < vy + vh && cy + chh > vy) cy = Math.max(6, vy - chh - 8);   // 환기 안내와 겹치면(좁은 화면의 카페) 그 위로
-      cookBtn.style.transform = `translate(${cx.toFixed(1)}px, ${cy.toFixed(1)}px) translate(-50%, 0)`;
+  /* 장면 위에 얹힌 것들의 자리(제목 · 메뉴 · 범례 · 측정값 카드 · 버튼 줄 · 기록 띠). 떠 있는 버튼과 말풍선은 여기를 피한다(v0.16.1) */
+  let KEEP = [], keepVer = 0; const spotMemo = new Map();
+  function hits(x, y, w, h, list) { for (const k of list) if (x < k[2] && x + w > k[0] && y < k[3] && y + h > k[1]) return true; return false; }
+  function keepOut() {
+    KEEP = []; keepVer += 1; spotMemo.clear();
+    const sr = stage.getBoundingClientRect();
+    const els = WIDE.matches ? [titleEl.querySelector(".logo"), titleEl.querySelector(".brand"), titleEl.querySelector("h1"), titleEl.querySelector("p"), navEl, legendEl, roEl, ctlEl, ledgerEl, capEl, assetsNote] : [legendEl, capEl, assetsNote];
+    for (const el of els) { const r = el.getBoundingClientRect(); if (r.width < 2 || r.height < 2 || r.right < sr.left || r.left > sr.right || r.bottom < sr.top || r.top > sr.bottom) continue;
+      KEEP.push([r.left - sr.left - 8, r.top - sr.top - 8, r.right - sr.left + 8, r.bottom - sr.top + 8]); }
+  }
+  function freeSpot(x, y, w, h, others) {   // (x, y) = 왼쪽 위. 겹치면 가장 가까운 빈 자리로(세로 이동을 먼저)
+    const obs = KEEP.concat(others), x0 = clamp(x, 8, Math.max(8, sw - w - 8)), y0 = clamp(y, 8, Math.max(8, sh - h - 8));
+    if (!hits(x0, y0, w, h, obs)) return [x0, y0];
+    const key = [Math.round(x0), Math.round(y0), Math.round(w), Math.round(h), keepVer, others.map((o) => o.map(Math.round).join(".")).join("|")].join(",");
+    if (spotMemo.has(key)) return spotMemo.get(key);
+    let best = null, bd = 1e9;
+    for (let dy = -320; dy <= 320; dy += 8) for (let dx = -280; dx <= 280; dx += 28) {
+      const nx = x0 + dx, ny = y0 + dy, dist = Math.hypot(dx * 1.4, dy);
+      if (dist >= bd || nx < 8 || ny < 8 || nx + w > sw - 8 || ny + h > sh - 8) continue;
+      if (!hits(nx, ny, w, h, obs)) { best = [nx, ny]; bd = dist; }
     }
-    ringAt = { x: rx, y: ry };
+    const out = best || [x0, y0]; if (spotMemo.size > 300) spotMemo.clear(); spotMemo.set(key, out); return out;
+  }
+  function placeRing() {
+    // 시차(mediaX · mediaY)를 뺀 자리에서 배치를 풀고, 끝에 시차만큼만 옮긴다 — 겹침 판정이 마우스 움직임에 흔들리지 않는다
+    const bx = (devBox.x - sw / 2) * 1.035 + sw / 2, by = (devBox.y - sh / 2) * 1.035 + sh / 2, bw = devBox.w * 1.035, bh = devBox.h * 1.035, mx = mediaX, my = mediaY;
+    const tr = (el, x, y, extra) => { el.style.transform = `translate(${(x + mx).toFixed(1)}px, ${(y + my).toFixed(1)}px)${extra || ""}`; };
+    const R = SPACES[cur], nearSrc = R.pan && R.pan[0] > R.device.u && R.pan[0] - R.device.u < 0.2;   // 발생원 버튼이 기기 바로 오른쪽에 있으면(주방 프라이팬) 포인트를 왼쪽으로
+    let side = nearSrc ? -1 : (bx + bw / 2 > sw * 0.66) ? -1 : 1;
+    const gap = clamp(bw * 0.5, 30, 64);
+    const ringOf = (sd) => { const ax = sd > 0 ? bx + bw * 0.8 : bx + bw * 0.16, ay = by + bh * 0.1; return { ax, ay, rx: clamp(ax + sd * gap * 1.25, 30, sw - 30), ry: clamp(ay - gap * 0.85, 26, sh - 26) }; };
+    let g = ringOf(side);
+    if (hits(g.rx - 20, g.ry - 20, 40, 40, KEEP)) { const o = ringOf(-side); if (!hits(o.rx - 20, o.ry - 20, 40, 40, KEEP)) { side = -side; g = o; } }   // 포인트가 카드 · 제목 밑으로 들어가면 반대쪽으로
+    const ax = g.ax, ay = g.ay, rx = g.rx, ry = g.ry, dx = rx - ax, dy = ry - ay, L = Math.hypot(dx, dy), ang = Math.atan2(dy, dx);
+    tr(ring, rx, ry);
+    tr(leader, ax, ay, ` rotate(${ang.toFixed(4)}rad)`); leader.style.width = Math.max(0, L - 19).toFixed(1) + "px";
+    const hw = Math.max(bw, 44), hh = Math.max(bh, 44);
+    tr(hit, bx + bw / 2 - hw / 2, by + bh / 2 - hh / 2); hit.style.width = hw.toFixed(1) + "px"; hit.style.height = hh.toFixed(1) + "px";
+    const fixed = [[rx - 22, ry - 22, rx + 22, ry + 22], [bx - 4, by - 4, bx + bw + 4, by + bh + 4]];   // 포인트와 기기는 가리지 않는다
+    // 환기 안내: 포인트 위(자리가 없으면 아래). 얹힌 것과 겹치면 가장 가까운 빈 자리
+    let ventR = null;
+    if (!ventBtn.hidden) { const vw = ventBtn.offsetWidth || 190, vh = ventBtn.offsetHeight || 40;
+      const p = freeSpot(rx - vw / 2, ry - 30 - vh < 8 ? ry + 30 : ry - 30 - vh, vw, vh, fixed);
+      tr(ventBtn, p[0] + vw / 2, p[1], " translate(-50%, 0)"); ventR = [p[0] - 6, p[1] - 6, p[0] + vw + 6, p[1] + vh + 6]; }
+    // 기기 말풍선: 포인트 옆(자리가 있는 쪽). 좁은 화면에서 환기 안내가 떠 있으면 쉰다 — 한 번에 하나만 말한다
+    const tipW = ringTip.offsetWidth || 120, tipH = ringTip.offsetHeight || 21; let tipR = null;
+    if (!(ventR && !WIDE.matches)) for (const ts of [side, -side]) { const tx0 = ts > 0 ? rx + 24 : rx - 24 - tipW, ty0 = ry - tipH / 2;
+      if (tx0 < 6 || tx0 + tipW > sw - 6 || hits(tx0, ty0, tipW, tipH, KEEP) || (ventR && hits(tx0, ty0, tipW, tipH, [ventR]))) continue;
+      tr(ringTip, rx + ts * 24, ry, ` translate(${ts > 0 ? "0" : "-100%"}, -50%)`); tipR = [tx0 - 4, ty0 - 4, tx0 + tipW + 4, ty0 + tipH + 4]; break; }
+    ringTip.style.visibility = tipR ? "" : "hidden";
+    // 발생원 버튼(요리 · 빵 굽기 · 인쇄 · 회의): 발생원 위. 제목 · 범례 · 환기 안내 · 말풍선과 겹치면 가장 가까운 빈 자리
+    if (R.pan && R.act && !cookBtn.hidden) {
+      const q = toStage(R.pan[0], R.pan[1]), qx = (q.x - sw / 2) * 1.035 + sw / 2, qy = (q.y - sh / 2) * 1.035 + sh / 2, cw = cookBtn.offsetWidth || 190, chh = cookBtn.offsetHeight || 40;
+      const p = freeSpot(qx - cw / 2, qy - 26 - chh, cw, chh, fixed.concat(ventR ? [ventR] : [], tipR ? [tipR] : []));
+      tr(cookBtn, p[0] + cw / 2, p[1], " translate(-50%, 0)");
+    }
+    ringAt = { x: rx + mx, y: ry + my };
   }
   const pdev = $("pdev"), pscreenWrap = $("pscreen-wrap");
   function placePanelScreen() {
@@ -1599,7 +1657,7 @@
     artSync();
     if (key === shownKey) { patchSync(); return; }
     const prev = shownKey; shownKey = key;
-    media.style.setProperty("--fx", (sp.focus[0] * 100) + "%"); media.style.setProperty("--fy", (sp.focus[1] * 100) + "%");
+    media.style.setProperty("--fx", (sp.focus[0] * 100) + "%"); media.style.setProperty("--fy", (FY * 100).toFixed(2) + "%");
     if (!sp.art) for (const k of Object.values(sp.states)) stillEl(k);
     const clip = clipEl(key);
     for (const el of media.querySelectorAll(".still, .clip")) el.classList.toggle("on", el.dataset.key === key);
@@ -1613,29 +1671,68 @@
   function prefetchClips() { if (noVideo) return; for (const k of Object.values(SPACES[cur].states)) if (k !== shownKey && !clips[k] && SCENES[k].clip && clipOrder.length < 4) clipEl(k); }
 
   /* ── 배치: 장면이 cover 로 잘리는 방식을 그대로 계산해서, 사진 속 좌표(u,v)를 화면 좌표로 옮긴다 ── */
-  let sw = 1, sh = 1, fit = { s: 1, ox: 0, oy: 0, dw: 3, dh: 2 };
+  let sw = 1, sh = 1, fit = { s: 1, ox: 0, oy: 0, dw: 3, dh: 2 }, FY = 0.5;   // FY = 지금 쓰는 세로 맞춤(0 위 ~ 1 아래)
   function toStage(u, v) { return { x: fit.ox + u * fit.dw, y: fit.oy + v * fit.dh }; }          // .media 안 좌표(시차·확대 전)
   function toScreen(u, v) { const p = toStage(u, v); return { x: (p.x - sw / 2) * 1.035 + sw / 2 + mediaX, y: (p.y - sh / 2) * 1.035 + sh / 2 + mediaY }; }
-  function layout() {
+  function layout(soft) {   // soft = 글자 · 버튼이 바뀌어 다시 맞출 때(빛 입자는 그대로 둔다)
+    fitReadout(soft); fitNav();
     sw = Math.max(1, stage.clientWidth); sh = Math.max(1, stage.clientHeight);
     const R = SPACES[cur].art ? ART_W / ART_H : RATIO, s = Math.max(sw / R, sh), dw = R * s, dh = s, f = SPACES[cur].focus;
-    fit = { s, ox: (sw - dw) * f[0], oy: (sh - dh) * f[1], dw, dh }; artPlace(); patchPlace();
+    let oy = (sh - dh) * f[1];
+    if (WIDE.matches && dh > sh + 1) {   // 낮은 가로 화면: 사진 아래쪽이 잘려 측정기가 버튼 줄 뒤로 숨는다 → 측정기 밑변이 그 위에 오도록 장면을 올린다(v0.16.1)
+      const dv = SPACES[cur].device, sr = stage.getBoundingClientRect(), dxc = ((sw - dw) * f[0] + dv.u * dw - sw / 2) * 1.035 + sw / 2;
+      let lim = sh - 54;   // 기록 띠 위
+      for (const el of ctlEl.children) { const r = el.getBoundingClientRect(); if (r.width && r.left - 44 < dxc + sr.left && r.right + 44 > dxc + sr.left) lim = Math.min(lim, r.top - sr.top - 18); }
+      oy = Math.max(sh - dh, Math.min(oy, (lim - sh / 2) / 1.035 + sh / 2 - dv.v * dh));
+    }
+    FY = dh > sh + 1 ? oy / (sh - dh) : f[1]; media.style.setProperty("--fy", (FY * 100).toFixed(2) + "%");
+    fit = { s, ox: (sw - dw) * f[0], oy, dw, dh }; artPlace(); patchPlace();
+    placeLegend(); keepOut();
     placeDevice(); fitMini(miniIndex); fitMini(miniTiles); fitMini(miniIO); if (!floatEl.hidden) fitMini(floatCv); redraw();
-    if (gl) { const d = dpr(); canvas.width = Math.round(sw * d); canvas.height = Math.round(sh * d); gl.viewport(0, 0, canvas.width, canvas.height); resetParticles(); }
+    if (gl && !soft) { const d = dpr(); canvas.width = Math.round(sw * d); canvas.height = Math.round(sh * d); gl.viewport(0, 0, canvas.width, canvas.height); resetParticles(); }
     if (!panel.hidden) placePanelScreen();
-    placeLegend();
   }
-  // 좁은 가로 화면(760~1399px)에선 가운데 범례가 제목 블록과 겹치거나 붙는다 → 제목 블록 아래 왼쪽에 둔다
   const legendEl = $("legend"), titleEl = document.querySelector(".hud-title");
+  const WIDE = matchMedia("(orientation: landscape) and (min-width: 760px) and (min-height: 440px)");
+  const roEl = document.querySelector(".readout"), ledgerEl = document.querySelector(".ledger"), ctlEl = document.querySelector(".controls"), navEl = document.querySelector(".topnav");
+  /* 넓은 화면의 측정값 카드: 기록 띠 위에서 끝나게 맞춘다(v0.16.1). 폭을 250 → 208 로 줄여 보고, 그래도 넘치면 기기 화면 배치를 바꾼다.
+     글자만 바뀐 경우(soft)는 넘칠 때만 다시 맞춘다 — 상태 줄이 한 줄 늘었다 줄었다 할 때마다 배치가 바뀌지 않게 */
+  const RO_CLS = ["s12", "s111", "s0", "tight"];
+  function fitReadout(soft) {
+    const app = $("app");
+    if (!WIDE.matches || app.classList.contains("nodev")) { roEl.classList.remove(...RO_CLS); app.style.removeProperty("--ro-w"); return; }
+    const lr = ledgerEl.getBoundingClientRect(), top = roEl.getBoundingClientRect().top, limit = (lr.height ? lr.top : innerHeight) - 8, fits = () => top + roEl.offsetHeight <= limit;
+    if (soft && app.style.getPropertyValue("--ro-w") && fits()) return;
+    const wMax = Math.round(clamp(innerWidth * 0.21, 208, 250));
+    for (const [mode, tight] of [["", 0], ["s12", 0], ["s12", 1], ["s111", 0], ["s111", 1], ["s0", 1]]) {
+      roEl.classList.remove(...RO_CLS); if (mode) roEl.classList.add(mode); if (tight) roEl.classList.add("tight");
+      for (let w = wMax; w >= 208; w -= 6) { app.style.setProperty("--ro-w", w + "px"); if (fits()) return; if (mode !== "" && mode !== "s12") break; }
+    }
+  }
+  /* 넓은 화면의 메뉴: 한 줄에 안 들어가면 [건물][언어] / [방] 두 줄로. 둘째 줄이 상표 글줄에 닿으면 그 글줄을 쉰다 */
+  function fitNav() {
+    navEl.classList.remove("two"); titleEl.classList.remove("nobrand");
+    if (!WIDE.matches) return;
+    const mids = [$("venues"), $("spaces"), $("lang")].filter((el) => el.offsetWidth).map((el) => el.offsetTop + el.offsetHeight / 2);
+    if (mids.length < 2 || Math.max(...mids) - Math.min(...mids) < 12) return;
+    navEl.classList.add("two");
+    const a = $("spaces").getBoundingClientRect(), b = $("brand").getBoundingClientRect();
+    if (a.width && a.left < b.right + 10 && a.right > b.left && a.top < b.bottom + 4 && a.bottom > b.top - 4) titleEl.classList.add("nobrand");
+  }
+  // 범례: 아주 넓은 화면은 메뉴 아래 가운데. 좁은 가로 화면(760~1399px)은 제목 아래 왼쪽, 제목 더미가 화면 절반을 넘으면 조작 버튼 줄 바로 위. 좁은 화면은 장면 왼쪽 위(CSS)
   function placeLegend() {
-    const narrow = matchMedia("(orientation: landscape) and (min-width: 760px) and (max-width: 1399px) and (min-height: 440px)").matches;
-    if (narrow) {   // 좁은 가로 화면: 탭이 가운데라 범례는 제목 아래로. 화면이 낮아 제목 더미가 절반을 넘으면 조작 버튼 바로 위(왼쪽 아래)로
-      const r = titleEl.getBoundingClientRect(), under = r.bottom + 10, low = under + 34 > innerHeight * 0.58;
-      legendEl.style.left = "22px"; legendEl.style.transform = "none";
-      legendEl.style.top = low ? "auto" : under.toFixed(0) + "px"; legendEl.style.bottom = low ? "124px" : "";
-    } else { legendEl.style.left = ""; legendEl.style.top = ""; legendEl.style.bottom = ""; legendEl.style.transform = ""; }
+    const st = legendEl.style; st.left = st.top = st.bottom = st.transform = "";
+    if (!WIDE.matches) return;
+    if (innerWidth >= 1400) { const nb = navEl.getBoundingClientRect().bottom + 14; if (nb > 80) st.top = nb.toFixed(0) + "px"; return; }
+    const r = titleEl.getBoundingClientRect(), under = r.bottom + 10, cr = ctlEl.getBoundingClientRect(), low = under + 34 > innerHeight * 0.58;
+    st.left = "22px"; st.transform = "none";
+    if (low) { st.top = "auto"; st.bottom = (innerHeight - (cr.height ? cr.top : innerHeight - 112) + 10).toFixed(0) + "px"; } else st.top = under.toFixed(0) + "px";
   }
   addEventListener("resize", () => { layout(); });
+  // 버튼 글자 · 상태 줄 · 설명 글이 바뀌어 높이가 달라지면 다시 맞춘다(한 프레임에 한 번)
+  let softT = 0; const softLayout = () => { if (!softT) softT = requestAnimationFrame(() => { softT = 0; layout(true); }); };
+  if ("ResizeObserver" in window) { const o2 = new ResizeObserver(softLayout); for (const el of [ctlEl, titleEl, roEl, navEl]) o2.observe(el); }
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { $("app").style.removeProperty("--ro-w"); layout(true); });   // 글꼴이 늦게 오면 폭이 달라진다
   if ("ResizeObserver" in window) new ResizeObserver(() => layout()).observe(stage);
 
   /* ── 시차: 마우스(또는 기울기)가 움직이면 장면·기기는 조금, 가까운 먼지는 더 ── */
@@ -1936,7 +2033,7 @@
     if (!panel.hidden) $("pspec-title").textContent = `${sp.where} · ${roomName(sp)}`;
     if (!floatEl.hidden && floatIdx >= 0) fcap.textContent = `${t("fnames")[floatIdx]} ${t("fhint")}`;
     if (typeof bSpeed !== "undefined") lbl(bSpeed, `${t("timelapse")} ×${G.speed}`);
-    spaceLabels(); noteAssets(); hud(); counts(); placeLegend();   // 언어가 바뀌면 제목 높이도 바뀐다
+    spaceLabels(); noteAssets(); hud(); counts(); $("app").style.removeProperty("--ro-w"); layout(true);   // 언어가 바뀌면 제목 · 카드 · 버튼 줄 크기도 바뀐다
     gameLang();
   }
   const langBtns = Array.from(document.querySelectorAll("#lang button"));
@@ -1955,7 +2052,7 @@
     tabs.forEach((b) => b.setAttribute("aria-selected", String(b.dataset.space === k)));
     $("lead").textContent = LANG === "en" ? sp.en2 : sp.lead; $("lead-en").textContent = LANG === "en" ? sp.lead : sp.en2; rk.textContent = `${sp.where} · ${roomName(sp)}`;
     bCook.hidden = !sp.act; pCook.hidden = !sp.act; bHvac.hidden = !sp.phys; pHvac.hidden = !sp.phys; bGame.hidden = v !== "home";   // 발생원 버튼은 그것이 있는 공간만, 환기 장치는 가게 · 사무실만, 게임은 집만
-    spaceLabels(); noteAssets();
+    spaceLabels(); noteAssets(); hud();   // 상태 줄 · 버튼 글자를 먼저 바꾸고 배치를 잰다
     shownKey = null; layout(); showScene(); rebuildTicks(); hud(); redraw();
     for (let i = 0; i < steamN; i++) SL[i] = -1;
     alertDismissed = false;
