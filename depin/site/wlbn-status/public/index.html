@@ -864,9 +864,9 @@ details .scroll { margin-top: 8px; }
   function richList(ul, items, opt) { if (!ul) return; ul.replaceChildren(); items.forEach(function (t) { var li = document.createElement('li'); rich(li, t, opt || { lead: 1 }); ul.appendChild(li); }); }
 
   // ── 계층: 장 → 구역(접고 펴기 · 한 줄 요약) → 블록(접고 펴기). 처음에 한 번 기존 구조를 감싸 만든다
-  //   SHUT0 = 처음에 접어 두는 구역(요약 장만 펴 둔다) · SUM_SHUT = 한 줄 요약을 접었을 때만 보이는 구역(펴면 바로 아래에 같은 내용이 있다)
+  //   SHUT0 = 처음에 접어 두는 구역. 요약 장과 매매 그림(flow) · 도움 · 부담(impact)은 펴 둔다(11/23 서우 「매매 그림이랑 도움 · 부담은 처음부터 펴 둬」) · SUM_SHUT = 한 줄 요약을 접었을 때만 보이는 구역(펴면 바로 아래에 같은 내용이 있다)
   var FOLD_KEY = 'wlbn-fold-1', FOLD = {}, BOXES = [];
-  var SHUT0 = { flow: 1, daily: 1, pool: 1, accounts: 1, impact: 1, deep: 1, wallets: 1, wtable: 1, where: 1, facts: 1, before: 1, notes: 1 };
+  var SHUT0 = { daily: 1, pool: 1, accounts: 1, deep: 1, wallets: 1, wtable: 1, where: 1, facts: 1, before: 1, notes: 1 };
   var SUM_SHUT = { today: 1, market: 1, sum: 1, impact: 1, deep: 1, where: 1, before: 1, notes: 1 };
   try { FOLD = JSON.parse(localStorage.getItem(FOLD_KEY) || '{}') || {}; } catch (e) { FOLD = {}; }
   function foldBtn(box, name, withText) {
