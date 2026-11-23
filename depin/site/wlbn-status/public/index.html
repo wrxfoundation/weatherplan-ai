@@ -783,19 +783,19 @@ button.who:hover, a.who:hover { text-decoration-color: var(--fg); } button.who:f
 
   <section class="sec panel" id="impact" aria-labelledby="h-impact">
     <h2 class="h2" id="h-impact">지갑의 생태계 기여 · 5단계 <span class="period" data-period>—</span></h2>
-    <p class="note">지갑마다 고른 기간의 움직임으로 <b>매우 긍정 · 긍정 · 보통 · 부정 · 매우 부정</b> 다섯으로 나눴다. <b>가져간 돈</b>은 WLBN을 팔아 받은 돈(RLUSD 환산), <b>되돌린 돈</b>은 WLBN을 사며 낸 돈과 operations 계정으로 보낸 RLUSD(다시 산 돈)다. Wellbian · KWeather 계정은 넣지 않았다.</p>
+    <p class="note">지갑마다 고른 기간의 움직임으로 <b>매우 긍정 · 긍정 · 보통 · 부정 · 매우 부정</b> 다섯으로 나눴다. <b>가져간 돈</b>은 WLBN을 팔아 받은 돈(RLUSD 환산), <b>되돌린 돈</b>은 WLBN을 사며 낸 돈, operations 계정으로 보낸 RLUSD(다시 산 돈), 그리고 <b>회사 계정(match · treasury 등)에 넣은 돈</b>(XRP · RLUSD)이다. Wellbian · KWeather 계정은 넣지 않았다.</p>
     <dl class="crit t5" aria-label="나누는 기준">
       <div><dt><span class="ichip vp">매우 긍정</span></dt><dd>아래 긍정 조건을 두 가지 이상 채웠거나, 되돌린 돈이 가져간 돈보다 1,000 RLUSD 이상 많다</dd></div>
       <div><dt><span class="ichip p">긍정</span></dt><dd>받은 양의 절반 넘게 들고 있다 · 되돌린 돈이 가져간 돈 이상이다 · 풀에 넣어 두었다 — 하나가 맞으면(팔지 않고 들고만 있는 지갑 포함)</dd></div>
       <div><dt><span class="ichip n">보통</span></dt><dd>그 밖 — 일부만 판 지갑, 산 만큼 파는(사고파는) 지갑</dd></div>
-      <div><dt><span class="ichip ng">부정</span></dt><dd>받은 양의 90% 이상을 팔고(또는 받은 기록 없이 팔고), 되돌린 돈이 가져간 돈의 10% 미만이다</dd></div>
+      <div><dt><span class="ichip ng">부정</span></dt><dd>받은 양의 90% 이상을 팔고, 되돌린 돈이 가져간 돈의 10% 미만이다. 받은 기록이 없는 지갑은 가진 양(판 양 + 다른 지갑으로 옮긴 양 + 잔액)의 90% 이상을 팔았을 때만</dd></div>
       <div><dt><span class="ichip vn">매우 부정</span></dt><dd>부정 조건에 더해, 기간의 절반 이상의 날에 팔았거나 가져간 돈이 500 RLUSD 이상이다</dd></div>
     </dl>
     <ul class="cap points" id="impact-notes"></ul>
     <div class="shares" id="impact-shares"></div>
     <div class="tools end"><button type="button" class="link" data-csv="impact">CSV 받기</button></div>
     <div class="scroll"><table id="tb-impact" aria-label="생태계 기여 5단계별 지갑 합계와 비중"><thead></thead><tbody></tbody></table></div>
-    <p class="note"><b>줄을 누르면</b> 아래 「지갑별 표」가 그 지갑들만 보여 준다. 숫자 아래 작은 글자가 그 열에서 차지하는 비중이다.</p>
+    <p class="note"><b>줄을 누르면</b> 아래 「지갑별 표」가 그 지갑들만 보여 준다. 숫자 아래 작은 글자가 그 열에서 차지하는 비중이다. 돈은 모두 RLUSD 환산이고, <b>되돌린 돈 = WLBN을 사며 낸 돈 + 다시 산 돈 + 회사에 넣은 돈</b>이다.</p>
     <p class="limit" data-i-limit hidden></p>
     <div class="cols2">
       <div><h3 class="h3">가장 많이 되돌린 긍정 지갑</h3><div class="scroll"><table id="tb-impact-help" aria-label="되돌린 돈이 많은 긍정 지갑"><thead></thead><tbody></tbody></table></div></div>
@@ -1597,8 +1597,8 @@ button.who:hover, a.who:hover { text-decoration-color: var(--fg); } button.who:f
     daily: [{ key: 'date', label: '날짜', text: 1, fmt: md }, { key: 'sell_user', label: '사용자 판 양' }, { key: 'sell_user_rlusd', label: 'RLUSD로' }, { key: 'sell_user_xrp', label: 'XRP로' }, { key: 'buy_user', label: '사용자 산 양' }, { key: 'paid_user', label: '새로 받은 양' }, { key: 'sell_total', label: '전체 판 양' },
       { key: 'buy_total', label: '전체 산 양' }, { key: 'buy_bot', label: 'Wellbian bot 산 양' }, { key: 'bot_pay_rlusd', label: 'bot 지출 RLUSD' }, { key: 'bot_pay_xrp', label: 'bot 지출 XRP' }, { key: 'sales_rlusd', label: '판매 대금 RLUSD' }, { key: 'to_r', label: 'RLUSD 풀로' }, { key: 'to_x', label: 'XRP 풀로' }, { key: 'price_rlusd', label: '가격', fmt: F.f4 }, { key: 'price_xrp', label: 'XRP로 본 가격', fmt: F.f4 }, { key: 'xrp_rlusd', label: '1 XRP 값(RLUSD)', fmt: F.f4 }],
     types: [{ key: 'name', label: '유형', text: 1 }, { key: 'scale_name', label: '생태계 기여', text: 1, cell: tscCell }, { key: 'wallets', label: '지갑 수', share: 1 }, { key: 'paid', label: '받은 양', share: 1 }, { key: 'sold', label: '판 양', share: 1 }, { key: 'bought', label: '산 양', share: 1 }, { key: 'rebuy_rlusd', label: '다시 산 돈(RLUSD)', share: 1 }, { key: 'pool_in', label: '풀에 넣은 양' }, { key: 'balance', label: '지금 잔액', share: 1 }],
-    impact: [{ key: 'name', label: '구분', text: 1, chip: 'key' }, { key: 'wallets', label: '지갑 수', share: 1 }, { key: 'paid', label: '받은 양', share: 1 }, { key: 'sold', label: '판 양', share: 1 }, { key: 'bought', label: '산 양', share: 1 }, { key: 'took_rlusd', label: '가져간 돈(RLUSD 환산)', share: 1 },
-      { key: 'back_rlusd', label: '되돌린 돈(RLUSD)', share: 1 }, { key: 'rebuy_rlusd', label: '그 가운데 다시 산 돈', share: 1 }, { key: 'pool_in', label: '풀에 넣은 양', share: 1 }, { key: 'balance', label: '지금 잔액', share: 1 }],
+    impact: [{ key: 'name', label: '구분', text: 1, chip: 'key' }, { key: 'wallets', label: '지갑 수', share: 1 }, { key: 'paid', label: '받은 양', share: 1 }, { key: 'sold', label: '판 양', share: 1 }, { key: 'bought', label: '산 양', share: 1 }, { key: 'took_rlusd', label: '가져간 돈', share: 1 },
+      { key: 'back_rlusd', label: '되돌린 돈', share: 1 }, { key: 'rebuy_rlusd', label: '다시 산 돈', share: 1, help: 'c:rebuy' }, { key: 'dep_rlusd', label: '회사에 넣은 돈', share: 1, help: 'c:dep' }, { key: 'pool_in', label: '풀에 넣은 양', share: 1 }, { key: 'balance', label: '지금 잔액', share: 1 }],
     sizes: [{ key: 'name', label: '지갑 크기', text: 1 }, { key: 'wallets', label: '지갑 수', share: 1 }, { key: 'balance', label: '든 물량', share: 1 }, { key: 'up', label: '늘린 지갑' }, { key: 'down', label: '줄인 지갑' }, { key: 'flat', label: '그대로' }, { key: 'up_amt', label: '늘린 양' }, { key: 'down_amt', label: '줄인 양' }, { key: 'score', label: '늘린 물량 비중', help: 'd:acc', fmt: function (v) { return v.toFixed(2); } }],
     bench: [{ key: 'metric', label: '원래 지표', text: 1 }, { key: 'site', label: '주로 쓰는 곳', text: 1 }, { key: 'ours', label: '이 화면에서는', text: 1 }, { key: 'status', label: '상태', text: 1 }, { key: 'note', label: '바꾼 점 · 까닭', text: 1 }],
     deep: [{ key: 'date', label: '날짜', text: 1 }, { key: 'price', label: '마감 값(RLUSD)' }, { key: 'cost', label: '평균 취득가' }, { key: 'ratio', label: '지금 값 ÷ 평균 취득가' }, { key: 'above', label: '받은 때보다 높은 값에 있는 물량' }, { key: 'total', label: '지갑 · 풀 물량' }, { key: 'lp', label: '풀에 넣어 둔 물량' }, { key: 'old', label: '10/26 이전부터 보유' },
@@ -1609,7 +1609,7 @@ button.who:hover, a.who:hover { text-decoration-color: var(--fg); } button.who:f
     impactHelp: [{ key: 'wallet', label: '지갑', text: 1 }, { key: 'type_name', label: '유형', text: 1 }, { key: 'back_rlusd', label: '되돌린 돈' }, { key: 'took_rlusd', label: '가져간 돈' }, { key: 'balance', label: '잔액' }],
     impactLoad: [{ key: 'wallet', label: '지갑', text: 1 }, { key: 'type_name', label: '유형', text: 1 }, { key: 'took_rlusd', label: '가져간 돈' }, { key: 'back_rlusd', label: '되돌린 돈' }, { key: 'sold', label: '판 양' }],
     wallets: [{ key: 'rank', label: '순위' }, { key: 'wallet', label: '지갑', text: 1, tag: 1 }, { key: 'impact_name', label: '생태계 기여', text: 1, chip: 'impact' }, { key: 'type_name', label: '유형', text: 1 }, { key: 'act', label: '활동량' }, { key: 'paid', label: '받은 양', share: 1 }, { key: 'sold', label: '판 양', share: 1 }, { key: 'bought', label: '산 양', share: 1 },
-      { key: 'sell_ratio', label: '판 비율', fmt: F.pct }, { key: 'took_rlusd', label: '가져간 돈' }, { key: 'back_rlusd', label: '되돌린 돈' }, { key: 'got_rlusd', label: '받은 RLUSD' }, { key: 'got_xrp', label: '받은 XRP' }, { key: 'rebuy_rlusd', label: '다시 산 돈(RLUSD)' },
+      { key: 'sell_ratio', label: '판 비율', fmt: F.pct }, { key: 'took_rlusd', label: '가져간 돈' }, { key: 'back_rlusd', label: '되돌린 돈' }, { key: 'got_rlusd', label: '받은 RLUSD' }, { key: 'got_xrp', label: '받은 XRP' }, { key: 'rebuy_rlusd', label: '다시 산 돈(RLUSD)' }, { key: 'dep_rlusd', label: '회사 계정에 넣은 돈' },
       { key: 'pool_in', label: '풀에 넣은 양' }, { key: 'balance', label: '잔액' }, { key: 'start', label: '처음 보상받은 날', text: 1, fmt: md }, { key: 'prev_wallet', label: '이어진 옛 지갑', text: 1 },
       { key: 'sell_lag', label: '처음 팔기까지(일)' }, { key: 'last_sell', label: '마지막으로 판 날', text: 1, fmt: md }],
     cohorts: [{ key: 'name', label: '처음 보상받은 시기', text: 1 }, { key: 'wallets', label: '지갑 수', share: 1 }, { key: 'paid', label: '받은 양', share: 1 }, { key: 'sold', label: '판 양', share: 1 }, { key: 'sell_ratio', label: '판 비율', fmt: F.pct },
@@ -2212,12 +2212,13 @@ button.who:hover, a.who:hover { text-decoration-color: var(--fg); } button.who:f
     'c:rebuy': ['다시 산 돈', ['그 지갑이 operations 계정으로 보낸 RLUSD다. 기기 · 이용권 값으로 본다.', '카드 · 계좌로 결제한 것은 원장에 없어 0으로 나온다.']],
     't:trace': ['부정 쪽 지갑 자금 흐름', ['「부정」 · 「매우 부정」 지갑마다 원장의 송금 기록을 읽어, 들어온 쪽(유입 전)과 나간 쪽(행선지)을 따라간 것이다.', '유입 전: WLBN을 어디서 얻었나(보상 · 풀에서 삼 · 다른 지갑에서 옮겨 받음), 계정을 만든 송금을 누가 보냈나, 기간에 누가 XRP · RLUSD · WLBN을 보내 줬나.', '행선지: 직접 보낸 곳이 1단계, 그곳이 다시 보낸 곳이 2단계, 한 번 더가 3단계다. 중간 지갑이 보낸 돈은 그 지갑이 받은 금액까지만, 보낸 곳 비율대로 나눠 따라간다.', '끝나는 곳: 목적지 태그가 붙는 주소(거래소 입금 꼴) · 거래가 많은 계정 · 회사 표시 계정 · 우리 표의 지갑 · 3단계.', '하루 한 번 다시 받는다. 거래소 안과 지갑 주인은 볼 수 없다.']],
     't:sent': ['밖으로 보낸 돈', ['풀이 열린 뒤 이 지갑이 다른 주소로 보낸 송금의 합이다(XRP · RLUSD · WLBN을 RLUSD로 환산).', 'WLBN을 판 대금만이 아니라 지갑에 원래 있던 돈, 다른 곳에서 받은 돈, WLBN 이체도 들어 있다. 그래서 「가져간 돈」보다 클 수 있다.']],
-    'c:money': ['가져간 돈 · 되돌린 돈', ['가져간 돈: WLBN을 팔아 받은 돈(RLUSD 환산).', '되돌린 돈: WLBN을 사며 낸 돈 + operations 계정으로 보낸 RLUSD(다시 산 돈).', '카드 · 계좌 결제는 원장에 없어 되돌린 돈에 잡히지 않는다.']],
-    'c:impact': ['생태계 기여 5단계', ['매우 긍정: 긍정 조건을 두 가지 이상 채웠거나, 되돌린 돈이 가져간 돈보다 1,000 RLUSD 이상 많다.', '긍정: 받은 양의 절반 넘게 들고 있다 · 되돌린 돈이 가져간 돈 이상이다 · 풀에 넣어 두었다 — 하나가 맞으면.', '보통: 그 밖. 사고파는 지갑은 늘 보통이다.', '부정: 받은 양의 90% 이상을 팔고, 되돌린 돈이 가져간 돈의 10% 미만이다.', '매우 부정: 부정 조건에 더해, 기간의 절반 이상의 날에 팔았거나 가져간 돈이 500 RLUSD 이상이다.', '지갑 주인은 알 수 없다 — 사람을 평가하는 말이 아니다.']],
+    'c:money': ['가져간 돈 · 되돌린 돈', ['가져간 돈: WLBN을 팔아 받은 돈(RLUSD 환산).', '되돌린 돈: WLBN을 사며 낸 돈 + operations 계정으로 보낸 RLUSD(다시 산 돈) + 회사 계정(match · treasury 등)에 넣은 돈(XRP · RLUSD — XRP는 넣은 날 값으로 환산).', '회사 계정에 넣은 돈은 회사 계정 쪽 원장 기록에서 하루 한 번 읽는다. 다시 들어간 돈이므로 되돌린 돈으로 친다.', '카드 · 계좌 결제는 원장에 없어 되돌린 돈에 잡히지 않는다.']],
+    'c:dep': ['회사 계정에 넣은 돈', ['그 지갑이 Wellbian · KWeather 표시 계정(match · treasury 등)으로 보낸 XRP · RLUSD다. 「되돌린 돈」에 들어간다.', 'XRP는 넣은 날의 값으로 RLUSD로 환산한다. operations 계정으로 보낸 RLUSD는 「다시 산 돈」에 따로 센다.', '회사 계정 쪽 원장 기록에서 하루 한 번 읽는다.']],
+    'c:impact': ['생태계 기여 5단계', ['매우 긍정: 긍정 조건을 두 가지 이상 채웠거나, 되돌린 돈이 가져간 돈보다 1,000 RLUSD 이상 많다.', '긍정: 받은 양의 절반 넘게 들고 있다 · 되돌린 돈이 가져간 돈 이상이다 · 풀에 넣어 두었다 — 하나가 맞으면.', '보통: 그 밖. 사고파는 지갑은 늘 보통이다.', '부정: 받은 양의 90% 이상을 팔고, 되돌린 돈이 가져간 돈의 10% 미만이다. 받은 기록이 없는 지갑은 가진 양(판 양 + 옮긴 양 + 잔액)의 90% 이상을 팔았을 때만 — 옮겨 둔 물량은 판 것이 아니다.', '매우 부정: 부정 조건에 더해, 기간의 절반 이상의 날에 팔았거나 가져간 돈이 500 RLUSD 이상이다.', '지갑 주인은 알 수 없다 — 사람을 평가하는 말이 아니다.']],
     'c:net': ['판 양 − 산 양', ['+면 판 양이 더 많고, −면 산 양이 더 많다.']]
   };
   // 표 머리글 → 도움말
-  var HELP_COL = { '활동량': 'c:act', '판 비율': 'c:ratio', '유형': 'c:type', '다시 산 돈(RLUSD)': 'c:rebuy', '그 가운데 다시 산 돈': 'c:rebuy', '가져간 돈': 'c:money', '되돌린 돈': 'c:money', '가져간 돈(RLUSD 환산)': 'c:money', '되돌린 돈(RLUSD)': 'c:money',
+  var HELP_COL = { '회사 계정에 넣은 돈': 'c:dep', '활동량': 'c:act', '판 비율': 'c:ratio', '유형': 'c:type', '다시 산 돈(RLUSD)': 'c:rebuy', '그 가운데 다시 산 돈': 'c:rebuy', '가져간 돈': 'c:money', '되돌린 돈': 'c:money', '가져간 돈(RLUSD 환산)': 'c:money', '되돌린 돈(RLUSD)': 'c:money',
     '생태계 기여': 'c:impact', '도움 · 부담': 'c:impact', '구분': 'c:impact', '풀에 넣은 양': 'g:풀에 넣어 둔 양', '판 양 − 산 양': 'c:net', '받은 양': 'g:받은 양(수령)', '처음 보상받은 날': 'g:처음 보상받은 날', '이어진 옛 지갑': 'g:처음 보상받은 날', '7일 · WLBN과의 차이': 'm:gap', '시가총액 순위': 'm:mc', '시가총액(억 달러)': 'm:mc' };
   var GLOSS = null, HELP_ON = null;
   function gloss(term) {
@@ -2438,7 +2439,7 @@ button.who:hover, a.who:hover { text-decoration-color: var(--fg); } button.who:f
     return { k: 'ng', why: '판 날 ' + sd + '일 · 가져간 돈 ' + fInt(took) + ' RLUSD' };
   }
   function tier5(d) {
-    var FS = ['paid', 'sold', 'bought', 'took_rlusd', 'back_rlusd', 'rebuy_rlusd', 'pool_in', 'balance'], pc = d3.format('.1%');
+    var FS = ['paid', 'sold', 'bought', 'took_rlusd', 'back_rlusd', 'rebuy_rlusd', 'dep_rlusd', 'pool_in', 'balance'], pc = d3.format('.1%');
     Object.keys(d.ranges || {}).forEach(function (rk) {
       var r = d.ranges[rk], im = r.impact; if (!im || !r.wallets || im.t5) return;
       var by = {}, rows = T5.map(function (t) { var o = { key: t[0], name: t[1], wallets: 0 }; FS.forEach(function (f) { o[f] = 0; }); by[o.key] = o; return o; }), tot = { wallets: 0 };
@@ -2455,10 +2456,14 @@ button.who:hover, a.who:hover { text-decoration-color: var(--fg); } button.who:f
       im.rows3 = im.rows; im.notes3 = im.notes; im.rows = rows; im.tot5 = tot; im.pos5 = pos; im.neg5 = neg; im.t5 = 1;
       im.notes = [
         '분포: 지갑 ' + fInt(tot.wallets) + '곳 가운데 **매우 긍정 ' + fInt(by.vp.wallets) + '곳 · 긍정 ' + fInt(by.p.wallets) + '곳**(' + sh(pos.wallets, tot.wallets) + ') · 보통 ' + fInt(by.n.wallets) + '곳 · **부정 ' + fInt(by.ng.wallets) + '곳 · 매우 부정 ' + fInt(by.vn.wallets) + '곳**(' + sh(neg.wallets, tot.wallets) + ')이다.',
-        '되돌린 돈: 모두 **' + fInt(tot.back_rlusd) + ' RLUSD**(가져간 돈 ' + fInt(tot.took_rlusd) + '의 ' + sh(tot.back_rlusd, tot.took_rlusd) + ')이고, 그 **' + sh(pos.back, tot.back_rlusd) + '를 긍정 쪽**이 냈다(매우 긍정 ' + fInt(by.vp.back_rlusd) + ' · 긍정 ' + fInt(by.p.back_rlusd) + ').',
+        '되돌린 돈: 모두 **' + fInt(tot.back_rlusd) + ' RLUSD**(가져간 돈 ' + fInt(tot.took_rlusd) + '의 ' + sh(tot.back_rlusd, tot.took_rlusd) + ')이고, 그 **' + sh(pos.back, tot.back_rlusd) + '를 긍정 쪽**이 냈다(매우 긍정 ' + fInt(by.vp.back_rlusd) + ' · 긍정 ' + fInt(by.p.back_rlusd) + ').' + (tot.dep_rlusd >= 1 ? ' 그 가운데 **회사 계정에 넣은 돈이 ' + fInt(tot.dep_rlusd) + ' RLUSD 환산**이다.' : ''),
         '보유: 지금 들고 있는 ' + fInt(tot.balance) + '개 가운데 **' + sh(pos.bal, tot.balance) + '가 긍정 쪽**에 있다. 풀에 넣어 둔 ' + fInt(tot.pool_in) + '개 가운데 ' + sh(by.vp.pool_in + by.p.pool_in, tot.pool_in) + '도 긍정 쪽이 넣었다.',
         '부정 쪽: **판 양의 ' + sh(neg.sold, tot.sold) + '**(' + fInt(neg.sold) + '개)를 팔았고, **가져간 돈의 ' + sh(neg.took, tot.took_rlusd) + '**(' + fInt(neg.took) + ' RLUSD 환산)를 가져갔다. 그 가운데 매우 부정 ' + fInt(by.vn.wallets) + '곳이 ' + sh(by.vn.took_rlusd, neg.took) + '다.'
       ];
+      if (im.cleared && im.cleared.length) {      // 16차 기준(회사 계정에 넣은 돈은 되돌린 돈 · 옮겨 둔 물량은 판 것이 아님)으로 부정 쪽에서 빠진 지갑
+        var cd = im.cleared.filter(function (c) { return c.why === 'dep'; }), cp = im.cleared.filter(function (c) { return c.why === 'part'; });
+        im.notes.push('부정 쪽에서 뺀 지갑: ' + [cd.length ? '**회사 계정에 돈을 넣은 ' + fInt(cd.length) + '곳**(' + fInt(d3.sum(cd, function (c) { return c.dep_rlusd; })) + ' RLUSD 환산 — 다시 들어간 돈은 되돌린 돈으로 친다)' : '', cp.length ? '**가진 양의 일부만 팔고 나머지는 옮겨 둔 ' + fInt(cp.length) + '곳**(옮긴 WLBN ' + fInt(d3.sum(cp, function (c) { return c.moved_out; })) + '개 — 옮긴 물량은 판 것이 아니다)' : ''].filter(Boolean).join(' · ') + '.');
+      }
       if (im.limit) im.limit = String(im.limit).replace('「부담」', '「부정」');
     });
   }

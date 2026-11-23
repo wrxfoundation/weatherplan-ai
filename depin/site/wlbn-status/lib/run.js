@@ -21,6 +21,7 @@ async function run(opts) {
   if (!S) S = JSON.parse(JSON.stringify(bundled));
   if (!S.fund && bundled.fund) S.fund = JSON.parse(JSON.stringify(bundled.fund));   // 예전에 저장한 상태에는 판매 대금 기록이 없다
   if (bundled.trace && (!S.trace || !S.trace.day || (!S.trace.job && S.trace.day < bundled.trace.day))) S.trace = JSON.parse(JSON.stringify(bundled.trace));   // 자금 흐름 기록: 배포에 든 것이 더 새것이면 그것부터
+  if (bundled.trace && bundled.trace.dep && S.trace && !S.trace.dep) S.trace.dep = JSON.parse(JSON.stringify(bundled.trace.dep));   // 회사 계정에 들어온 돈: 저장된 상태에 없으면 배포에 든 것부터(되돌린 돈에 들어간다)
 
   const ext = await fetchExt().catch(() => null);
   core.setLabels(S, ext);

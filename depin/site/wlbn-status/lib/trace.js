@@ -3,6 +3,7 @@
 //   · 부정 쪽 지갑(0단계)마다: 풀이 열린 뒤 보낸 송금 · 받은 송금, 계정을 만든(처음 채운) 송금
 //   · 처음 채운 곳 · 돈을 보내 준 곳(-1단계): 거래가 많은 계정인지만 본다(한 쪽만 읽는다)
 //   · 그 지갑이 보낸 곳(1단계) → 그곳이 다시 보낸 곳(2단계)의 송금까지 받는다. 화면이 보여 주는 3단계의 끝은 2단계 계정이 보낸 곳이다
+//   · 회사 표시 계정에 들어온 돈(XRP · RLUSD)도 같은 때 회사 계정 쪽 내역에서 읽는다(S.trace.dep — 「되돌린 돈」에 들어간다 · 16차)
 //   · 하루 한 번만 새로 받는다(S.trace.day — 한국 날짜). 시간이 모자라면 남은 계정을 다음 호출에서 이어 받는다(S.trace.job)
 // 읽기만 한다(account_tx). 정리 · 분류는 lib/core.js 의 buildTrace 가 한다.
 const core = require('./core');
@@ -65,6 +66,36 @@ async function fetchNode(rpc, acct, depth, xr, price) {
   return node;
 }
 
+// 회사 표시 계정에 들어온 돈(XRP · RLUSD)을 회사 계정 쪽 내역에서 읽는다 → 「되돌린 돈」에 넣는다(11/23 16차 — 서우 「다시 들어간 돈이라면 부정한 게 아니니」)
+//   · 회사 계정 쪽에서 읽으므로 부정 쪽 지갑만이 아니라 모든 지갑에 같은 기준이 적용된다
+//   · 풀 계정 · 발행 계정은 읽지 않는다. 회사 계정끼리 옮긴 것은 뺀다. operations 계정의 RLUSD 는 판매 대금 기록(S.fund)이 이미 세므로 뺀다(XRP 만 남긴다)
+//   · 거래 하나 = tx[해시] = [날짜, 보낸 곳, 계정 이름, XRP, RLUSD]. 거래가 많은 계정은 최근 것만 읽으므로(maxPages) 날마다 해시로 겹치지 않게 쌓는다
+async function fetchDeposits(S, rpc, maxPages) {
+  const fromSec = Date.parse(C.NOW_FROM + 'T00:00:00+09:00') / 1000 - EPOCH, SKIP = { issuer: 1, amm: 1, ammXrp: 1 };
+  const inside = (a) => !!S.labels[a] || !!(S.amms && S.amms[a]) || a === C.ISSUER;
+  const list = Object.keys(S.labels).filter((a) => !SKIP[S.labels[a]] && a !== C.ISSUER && !(S.amms && S.amms[a]));
+  const out = { tx: {}, accts: [] };
+  await Promise.all(list.map(async (acct) => {
+    const lab = S.labels[acct]; let marker = null, pages = 0, n = 0, old = false;
+    do {
+      const res = await rpc('account_tx', Object.assign({ account: acct, ledger_index_min: -1, ledger_index_max: -1, limit: 200, forward: false }, marker ? { marker } : {}), 15000);
+      pages += 1;
+      for (const t of res.transactions || []) {
+        const tx = t.tx || t.tx_json || {}, meta = t.meta || {};
+        if ((tx.date || 0) < fromSec) { old = true; break; }
+        n += 1;
+        if (meta.TransactionResult !== 'tesSUCCESS' || tx.TransactionType !== 'Payment' || tx.Destination !== acct || !tx.Account || inside(tx.Account)) continue;
+        const a = amt(delivered(tx, meta)), h = tx.hash || t.hash;
+        if (!h || !a || !(a.v >= 0.01) || a.cur === 'WL' || (a.cur === 'RL' && acct === C.OPS)) continue;      // 0.01 미만(먼지 송금)은 넣지 않는다
+        out.tx[h] = [core.kday(tx.date), tx.Account, lab, a.cur === 'XRP' ? r2(a.v) : 0, a.cur === 'RL' ? r2(a.v) : 0];
+      }
+      marker = old ? null : (res.marker || null);
+    } while (marker && pages < maxPages);
+    out.accts.push([lab, n, marker ? 1 : 0]);      // [계정 이름, 읽은 거래 수, 다 못 읽었나]
+  }));
+  return out;
+}
+
 // 하루 한 번: 부정 쪽 지갑에서 시작해 단계별로 받는다. budgetMs 안에서 하는 만큼 하고 남은 것은 다음 호출이 잇는다
 //   opts.start === false 이면 새 날의 일을 시작하지 않고, 하다 만 일만 잇는다 · opts.force 는 오늘 받았어도 처음부터 다시 받는다
 async function update(S, opts) {
@@ -75,6 +106,12 @@ async function update(S, opts) {
   if (tr.day === today && !tr.job) return { changed: false, done: true, fetched: 0 };
   if (!tr.job || tr.job.day !== today) {
     if (opts.start === false && !tr.job) return { changed: false, done: false, fetched: 0, waiting: true };
+    // 새 날: 먼저 회사 계정에 들어온 돈을 읽는다 — 판정(되돌린 돈)이 이 값에 달려 있어, 따라갈 지갑을 고르기 전에 읽어야 한다. 못 읽으면 전에 읽은 것을 그대로 쓴다
+    try {
+      const d = await fetchDeposits(S, xrpl.makeRpc(opts.fetchImpl || fetch), opts.force ? T.depPagesFull : T.depPages), dep = tr.dep || (tr.dep = { tx: {}, accts: [], day: '' });
+      if (opts.force) dep.tx = {};
+      Object.assign(dep.tx, d.tx); dep.accts = d.accts; dep.day = today;
+    } catch (e) { /* 전에 읽은 것을 쓴다 */ }
     const roots = core.traceRoots(S);
     if (!roots.length) { tr.day = today; tr.at = Date.now(); tr.roots = []; tr.nodes = {}; tr.job = null; return { changed: true, done: true, fetched: 0 }; }
     tr.job = { day: today, roots, nodes: {}, queue: roots.map((a) => [a, 0]), seen: roots.slice(), cnt: [roots.length, 0, 0], fseen: [] };
@@ -109,4 +146,4 @@ async function update(S, opts) {
   return { changed: fetched > 0, done, fetched, failed, left: done ? 0 : job.queue.length };
 }
 
-module.exports = { update, fetchNode };
+module.exports = { update, fetchNode, fetchDeposits };
