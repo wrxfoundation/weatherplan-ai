@@ -46,7 +46,11 @@ const HEALTH = {
   cover: [-3, -2, -1, 0],              // 매입 재원: −(매입 지출 ÷ 판매 대금). 판매 대금 안이면 좋음
   // 선순환 지수(0~100). 고리 점수: 주의 기준선 = bands[0]점, 좋음 기준선 = bands[1]점, 그 사이와 바깥은 비례.
   // 지수 = 여섯 고리 평균 × (1 − weak) + 가장 낮은 고리 × weak — 고리는 가장 약한 곳만큼만 돈다. trend = 추이에 넣는 날 수
-  index: { bands: [40, 70], weak: 0.5, trend: 21 },
+  // weights: 고리별 가중치. 1 = 그대로 · 0 = 지수에서 뺀다(참고로만 보여 준다) · 0~1 사이 = 평균에서만 그만큼 세고 「가장 낮은 고리」로는 치지 않는다.
+  //   판매 = 0 (11/23 서우 「판매매출이 부정확 — 카드매출도 있고 주말이슈도 있고 — 배점을 약화하거나 제외」): 원장에는 RLUSD 결제분만 남아 판매의 일부만 보이고,
+  //   큰 건 한두 번 · 요일에 따라 7일 합이 크게 흔들린다. 카드 판매 자료를 같이 넣게 되면 1 로 되돌린다.
+  index: { bands: [40, 70], weak: 0.5, trend: 21, weights: { sale: 0 },
+    why: { sale: '원장에는 RLUSD로 결제한 판매만 남는다(카드 · 계좌 결제 제외). 판매의 일부만 보이고 큰 건 한두 번 · 요일에 따라 크게 흔들려 지수에는 넣지 않고 참고로만 보여 준다' } },
   // bot 계정에 RLUSD · XRP 를 보낸 적이 있는 계정(11/22 원장 확인: operations 60,000 RLUSD, treasury 22,000 RLUSD + 24,600 XRP)
   funders: ['operations', 'treasury'],
 };
@@ -1051,6 +1055,9 @@ function buildDatasets(S, opts) {
     const L3 = W.slice(-3), rowRate = (r) => (r.price_rlusd && r.price_xrp ? r.price_rlusd / r.price_xrp : rate);
     const spendOf = (rows) => rows.reduce((t, r) => t + (r.bot_pay_rlusd || 0) + (r.bot_pay_xrp || 0) * rowRate(r), 0);
     const s3 = sumOf(L3, 'sales_rlusd'), b3 = spendOf(L3);
+    const DOW = ['일', '월', '화', '수', '목', '금', '토'], dow = (k) => new Date(k + 'T00:00:00Z').getUTCDay();
+    const L3p = fullDays.slice(-10, -7), s3p = L3p.length === 3 && L3.length === 3 && dayDiff(L3p[0].date, L3[0].date) === 7 ? sumOf(L3p, 'sales_rlusd') : null;      // 한 주 전 같은 요일 사흘
+    const wkend = L3.some((r) => dow(r.date) === 0 || dow(r.date) === 6), l3name = L3.length === 3 ? '최근 사흘(' + DOW[dow(L3[0].date)] + '~' + DOW[dow(L3[2].date)] + (wkend ? ' · 주말 포함' : '') + ')' : '최근 사흘';
     let topDay = null; for (const r of W) if (!topDay || (r.sales_rlusd || 0) > (topDay.sales_rlusd || 0)) topDay = r;
     const sellBy = {}, lpBy = { co: 0, user: 0 }; let kwPaid = 0;
     for (const e of EV) {
@@ -1071,8 +1078,8 @@ function buildDatasets(S, opts) {
       let t;                                       // 판매
       if (st('sale') === 'na') t = '판매 대금 기록이 모자라 판단하지 않았다.';
       else {
-        t = st('sale') === 'ok' ? '판매 대금이 직전 7일보다 늘었다. 새 돈이 들어오는 출발점은 돌고 있다.' : st('sale') === 'warn' ? '판매 대금이 직전 7일보다 줄었다.' : '판매 대금이 직전 7일보다 크게 줄었다. 고리의 출발점이 약해졌다.';
-        if (L3.length === 3 && sW.r > 0 && s3 / sW.r < 0.1) t += ' 최근 사흘은 ' + n(s3) + ' RLUSD로 거의 끊겼다.';
+        t = st('sale') === 'ok' ? 'RLUSD로 들어온 판매 대금이 직전 7일보다 늘었다.' : (st('sale') === 'warn' ? 'RLUSD로 들어온 판매 대금이 직전 7일보다 줄었다.' : 'RLUSD로 들어온 판매 대금이 직전 7일보다 크게 줄었다.') + ' 카드 · 계좌 결제는 원장에 없어, 전체 판매가 그만큼 줄었는지는 이 값만으로 알 수 없다.';
+        if (L3.length === 3 && sW.r > 0 && s3 / sW.r < 0.1) t += ' ' + l3name + '은 ' + n(s3) + ' RLUSD다' + (s3p !== null ? ' — 한 주 전 같은 요일에는 ' + n(s3p) + ' RLUSD였다' + (s3p > 0 && s3 / s3p >= 0.5 ? '(요일 영향이 크다).' : s3p > 0 ? '.' : '(그때도 거의 없었다).') : '.');
         else if (sW.r > 0 && topDay && (topDay.sales_rlusd || 0) / sW.r >= 0.5) t += ' ' + p1(topDay.sales_rlusd / sW.r) + '가 ' + md(topDay.date) + ' 하루에 들어와, 큰 건 한두 번에 좌우된다.';
         if (sW.r > 0) t += sW.ru / sW.r >= 0.5 ? ' 들어온 돈의 ' + p1(sW.ru / sW.r) + '는 보상을 받는 지갑이 낸 것이라, 새 구매자보다 기존 참여자의 재구매가 중심이다.' : ' 보상을 받는 지갑이 낸 것은 ' + p1(sW.ru / sW.r) + '로, 새 지갑의 구매가 중심이다.';
       }
@@ -1157,25 +1164,30 @@ function buildDatasets(S, opts) {
       else if (spend < 0.5) t = '최근 ' + W.length + '일은 매입이 없었다.';
       else {
         t = st('cover') === 'ok' ? '매입에 쓴 돈이 같은 기간 판매 대금 안이다.' : st('cover') === 'warn' ? '매입에 쓴 돈이 판매 대금을 넘었다. 넘는 만큼은 쌓아 둔 잔액에서 나간다.' : '매입에 쓴 돈이 판매 대금의 두 배를 넘는다. 쌓아 둔 잔액이 빠르게 준다.';
-        if (L3.length === 3 && b3 > 0.5) t += s3 > 0.5 ? (b3 > s3 ? ' 다만 최근 사흘만 보면 판매 대금 ' + n(s3) + ' RLUSD에 매입 지출 ' + n(b3) + ' RLUSD로 지출이 ' + d1(b3 / s3) + '배다.' : ' 최근 사흘도 판매 대금 ' + n(s3) + ' RLUSD 안에서 ' + n(b3) + ' RLUSD를 썼다.') : ' 다만 최근 사흘은 판매 대금 없이 ' + n(b3) + ' RLUSD를 썼다.';
+        if (L3.length === 3 && b3 > 0.5) t += s3 > 0.5 ? (b3 > s3 ? ' 다만 ' + l3name + '만 보면 판매 대금 ' + n(s3) + ' RLUSD에 매입 지출 ' + n(b3) + ' RLUSD로 지출이 ' + d1(b3 / s3) + '배다.' : ' ' + l3name + '도 판매 대금 ' + n(s3) + ' RLUSD 안에서 ' + n(b3) + ' RLUSD를 썼다.') : ' 다만 ' + l3name + '은 판매 대금 없이 ' + n(b3) + ' RLUSD를 썼다.';
         t += ' 판매 대금 전체와 견준 값이라, 기기 원가 같은 다른 지출을 빼면 여유는 더 작다.';
       }
       byKey.cover.insight = t;
     }
 
-    // 종합: 선순환 지수(0~100). 여섯 고리 점수의 평균과 가장 낮은 고리 점수를 섞는다(H.index). bands[0] 미만 주의 · bands[1] 이상 좋음
-    const cnt = { ok: 0, warn: 0, bad: 0, na: 0 }; for (const l of links) cnt[l.status]++;
-    const scored = links.filter((l) => l.score !== null), IX = H.index, pc = (x) => Math.round(x * 100) + '%';
+    // 종합: 선순환 지수(0~100). 지수에 넣는 고리 점수의 평균과 가장 낮은 고리 점수를 섞는다(H.index). bands[0] 미만 주의 · bands[1] 이상 좋음
+    const IX = H.index, pc = (x) => Math.round(x * 100) + '%', wOf = (l) => (IX.weights && IX.weights[l.key] !== undefined ? IX.weights[l.key] : 1);
+    for (const l of links) { l.weight = wOf(l); if (l.weight < 1) { l.ref = l.weight === 0; l.ref_why = (IX.why && IX.why[l.key]) || ''; } }
+    const inIdx = links.filter((l) => l.weight > 0), refs = links.filter((l) => l.weight === 0), NUM = ['영', '한', '두', '세', '네', '다섯', '여섯', '일곱'], loopN = (NUM[inIdx.length] || inIdx.length) + ' 고리';
+    const cnt = { ok: 0, warn: 0, bad: 0, na: 0 }; for (const l of inIdx) cnt[l.status]++;
+    const scored = inIdx.filter((l) => l.score !== null);
     let index = null;
     if (scored.length) {
-      const mean = Math.round(scored.reduce((t, l) => t + l.score, 0) / scored.length * 10) / 10;
-      let weak = scored[0], top = scored[0]; for (const l of scored) { if (l.score < weak.score) weak = l; if (l.score > top.score) top = l; }
+      const wSum = scored.reduce((t, l) => t + l.weight, 0), mean = Math.round(scored.reduce((t, l) => t + l.score * l.weight, 0) / wSum * 10) / 10;
+      const full = scored.filter((l) => l.weight >= 1), pool = full.length ? full : scored;        // 가장 낮은 고리는 온전히 넣는 고리 가운데서만 고른다
+      let weak = pool[0], top = pool[0]; for (const l of pool) { if (l.score < weak.score) weak = l; if (l.score > top.score) top = l; }
       const value = Math.round(mean * (1 - IX.weak) + weak.score * IX.weak);
       index = { value, status: value < IX.bands[0] ? 'bad' : value < IX.bands[1] ? 'warn' : 'ok', mean, min: weak.score, max: top.score, weak: { key: weak.key, name: weak.name, score: weak.score },
-        bands: IX.bands, weak_weight: IX.weak, parts: links.map((l) => ({ key: l.key, name: l.name, score: l.score, status: l.status })),
+        bands: IX.bands, weak_weight: IX.weak, loops: inIdx.length, parts: links.map((l) => ({ key: l.key, name: l.name, score: l.score, status: l.status, weight: l.weight, ref: !!l.ref })),
         calc: (IX.weak === 0.5 ? '(평균 ' + mean + ' + 최저 ' + weak.score + ') ÷ 2' : '평균 ' + mean + ' × ' + pc(1 - IX.weak) + ' + 최저 ' + weak.score + ' × ' + pc(IX.weak)) + ' = ' + value,
-        rules: ['선순환 지수 = 여섯 고리 점수의 평균 × ' + pc(1 - IX.weak) + ' + 가장 낮은 고리 점수 × ' + pc(IX.weak) + '. 고리는 가장 약한 곳만큼만 돌기 때문에 평균만 쓰지 않는다. ' + IX.bands[1] + '점 이상 좋음 · ' + IX.bands[0] + '~' + (IX.bands[1] - 1) + '점 지켜봄 · ' + IX.bands[0] + '점 미만 주의.',
-          '고리 점수(0~100)는 보는 값이 기준선 사이 어디쯤인지를 옮긴 것이다. 주의 기준선이 ' + IX.bands[0] + '점, 좋음 기준선이 ' + IX.bands[1] + '점이고 그 사이와 바깥은 비례로 나눈다(온도계의 자리와 같다). 자료가 없는 고리는 뺀다.'] };
+        rules: ['선순환 지수 = ' + loopN + ' 점수의 평균 × ' + pc(1 - IX.weak) + ' + 가장 낮은 고리 점수 × ' + pc(IX.weak) + '. 고리는 가장 약한 곳만큼만 돌기 때문에 평균만 쓰지 않는다. ' + IX.bands[1] + '점 이상 좋음 · ' + IX.bands[0] + '~' + (IX.bands[1] - 1) + '점 지켜봄 · ' + IX.bands[0] + '점 미만 주의.',
+          '고리 점수(0~100)는 보는 값이 기준선 사이 어디쯤인지를 옮긴 것이다. 주의 기준선이 ' + IX.bands[0] + '점, 좋음 기준선이 ' + IX.bands[1] + '점이고 그 사이와 바깥은 비례로 나눈다(온도계의 자리와 같다). 자료가 없는 고리는 뺀다.']
+          .concat(refs.map((l) => l.name + ' 고리는 지수에 넣지 않는다 — ' + l.ref_why + '. 점수는 참고로 매긴다.')) };
       if (!cut) {                                  // 추이: 같은 계산을 하루씩 앞당긴 창으로 되풀이한다(직전 7일과 견줄 수 있는 날부터)
         const series = [];
         for (let c = Math.min(IX.trend - 1, allDays.length - 1); c >= 1; c--) { const h = buildHealth(c); if (h && h.index && h.prev_from) series.push({ date: h.to, value: h.index.value, status: h.index.status, scores: h.index.parts.map((p) => p.score) }); }
@@ -1184,22 +1196,23 @@ function buildDatasets(S, opts) {
         index.series = series; index.prev = at(1); index.week = at(7); index.delta = index.prev ? value - index.prev.value : null;
         // 어제와 견줘 가장 많이 움직인 고리
         if (index.prev) { index.parts.forEach((p, i) => { const b = index.prev.scores[i]; p.prev = b; p.delta = p.score === null || b === null || b === undefined ? null : p.score - b; });
-          const mv = index.parts.filter((p) => p.delta).sort((x, y) => Math.abs(y.delta) - Math.abs(x.delta))[0]; index.moved = mv ? { key: mv.key, name: mv.name, from: mv.prev, to: mv.score } : null; }
+          const mv = index.parts.filter((p) => p.delta && p.weight > 0).sort((x, y) => Math.abs(y.delta) - Math.abs(x.delta))[0]; index.moved = mv ? { key: mv.key, name: mv.name, from: mv.prev, to: mv.score } : null; }
       }
     }
     const overall = index ? index.status : 'na';
     const parts = ['초록 ' + cnt.ok]; if (cnt.warn) parts.push('노랑 ' + cnt.warn); if (cnt.bad) parts.push('빨강 ' + cnt.bad); if (cnt.na) parts.push('자료 없음 ' + cnt.na);
-    const names = (st) => links.filter((l) => l.status === st).map((l) => l.name);
+    const names = (st) => inIdx.filter((l) => l.status === st).map((l) => l.name);
     const blocked = names('bad'), watch = names('warn');
     const ida = (w) => w + ((w.charCodeAt(w.length - 1) - 0xAC00) % 28 ? '이다' : '다');
-    let headline = !index ? '선순환 여섯 고리 가운데 ' + parts.join(' · ') + '.' : '선순환 지수 ' + index.value + '점(' + ST[index.status] + (index.prev ? ' · 어제 ' + index.prev.value + '점' : '') + ').';
-    if (index) headline += index.mean - index.min >= 15 ? ' 여섯 고리 평균은 ' + Math.round(index.mean) + '점인데 가장 약한 ' + index.weak.name + ' 고리가 ' + index.weak.score + '점이라 지수를 끌어내렸다.' : ' 여섯 고리가 ' + index.min + '~' + index.max + '점으로 고르다.';
+    let headline = !index ? '선순환 ' + loopN + ' 가운데 ' + parts.join(' · ') + '.' : '선순환 지수 ' + index.value + '점(' + ST[index.status] + (index.prev ? ' · 어제 ' + index.prev.value + '점' : '') + ').';
+    if (index) headline += index.mean - index.min >= 15 ? ' ' + loopN + ' 평균은 ' + Math.round(index.mean) + '점인데 가장 약한 ' + index.weak.name + ' 고리가 ' + index.weak.score + '점이라 지수를 끌어내렸다.' : ' ' + loopN + '가 ' + index.min + '~' + index.max + '점으로 고르다.';
     headline += blocked.length ? ' 막힌 고리는 ' + (watch.length ? blocked.join(' · ') + ', 지켜볼 고리는 ' + ida(watch.join(' · ')) : ida(blocked.join(' · '))) + '.' : watch.length ? ' 지켜볼 고리는 ' + ida(watch.join(' · ')) + '.' : ' 막힌 고리가 없다.';
+    if (refs.length) headline += ' ' + refs.map((l) => l.name).join(' · ') + ' 고리는 자료가 불완전해 지수에서 뺐다(참고 ' + refs.map((l) => l.value).join(' · ') + ').';
 
     // 한 줄 정리: 고리끼리 이어서 읽는다
     const take = [];
     if (sr !== null) take.push(st('hold') === 'ok' ? '받은 보상은 절반 넘게 보유되고 있다.' : '받은 보상의 ' + p1(sr) + '가 팔리고' + (botShare !== null && botShare >= 0.5 ? ', 그 물량은 주로 Wellbian bot 매입이 받아낸다(산 양의 ' + p1(botShare) + ').' : ' 있다.'));
-    if (st('sale') !== 'na') take.push('매입 재원인 판매 대금은 ' + (st('sale') === 'ok' ? '늘었' : '직전 7일보다 ' + p1(Math.abs(ds)) + ' 줄었') + (L3.length === 3 && b3 > s3 && b3 > 0.5 ? '고, 최근 사흘은 매입 지출(' + n(b3) + ' RLUSD)이 판매 대금(' + n(s3) + ' RLUSD)을 넘었다.' : '다.'));
+    if (st('sale') !== 'na') take.push('매입 재원인 판매 대금(RLUSD 결제분만)은 ' + (st('sale') === 'ok' ? '늘었' : '직전 7일보다 ' + p1(Math.abs(ds)) + ' 줄었') + (L3.length === 3 && b3 > s3 && b3 > 0.5 ? '고, ' + l3name + '은 매입 지출(' + n(b3) + ' RLUSD)이 판매 대금(' + n(s3) + ' RLUSD)을 넘었다.' : '다.'));
     if (dq !== null && dp !== null) take.push('풀은 ' + (st('pool') === 'ok' ? '깊어졌고' : '얕아졌고') + ' RLUSD 기준 값은 ' + sp(dp) + '다.');
     const takeaway = take.join(' ');
 
@@ -1229,7 +1242,8 @@ function buildDatasets(S, opts) {
       comments.push(cx);
     }
     if (!cut && market && market.notes.length) comments.push('시장과 견주면 — ' + market.notes[0].replace(/^최근 7일\([^)]*\): /, ''));
-    const why = (st) => links.filter((l) => l.status === st).map((l) => l.name + ' — ' + l.short).join(' / ');
+    const why = (st) => inIdx.filter((l) => l.status === st).map((l) => l.name + ' — ' + l.short).join(' / ');
+    if (refs.length) comments.push('참고(지수 제외): ' + refs.map((l) => l.name + ' — ' + l.short).join(' / ') + '. 카드 · 계좌 결제는 원장에 없다.');
     if (blocked.length || watch.length) comments.push((blocked.length ? '막힌 고리: ' + why('bad') + '.' : '') + (blocked.length && watch.length ? ' ' : '') + (watch.length ? '지켜볼 고리: ' + why('warn') + '.' : ''));
     const low = reserves.filter((r) => r.status === 'bad' || r.status === 'warn');
     if (low.length) comments.push('운용 점검: ' + low.map((r) => r.short + '(' + ST[r.status] + ')').join(' / ') + '.');
@@ -1249,7 +1263,7 @@ function buildDatasets(S, opts) {
     for (const l of links.concat(reserves)) { const r = rules.find((x) => x.name === ruleOf[l.key]); if (r) l.rule = { metric: r.metric, ok: r.ok, warn: r.warn, bad: r.bad }; }
     return {
       from, to, prev_from: pFrom, prev_to: pTo, days: W.length, day: D.date,
-      overall: { status: overall, label: ST[overall], ok: cnt.ok, warn: cnt.warn, bad: cnt.bad, na: cnt.na, total: links.length, counts: parts.join(' · ') },
+      overall: { status: overall, label: ST[overall], ok: cnt.ok, warn: cnt.warn, bad: cnt.bad, na: cnt.na, total: inIdx.length, loops: loopN, refs: refs.map((l) => l.name), counts: parts.join(' · ') },
       index, headline, takeaway, comments, links, reserves, rules, xrp, labels: ST,
       limits: [LIMIT_CARD + ' 판매 고리와 매입 재원은 그만큼 낮게(나쁘게) 보일 수 있다 — 하한으로 읽는다.', 'XRP 등 다른 통화로 낸 결제, operations 말고 다른 계정으로 받은 결제도 빠져 있다.'],
     };

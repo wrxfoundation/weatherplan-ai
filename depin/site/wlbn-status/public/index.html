@@ -181,6 +181,9 @@ td .pc { display: block; margin-top: 1px; color: var(--faint); font-size: 11.5px
 .idx-parts { list-style: none; margin: 0; padding: 10px 0 0; border-top: 1px solid var(--line); display: grid; grid-template-columns: auto minmax(0, 1fr) auto auto; gap: 7px 9px; align-items: center; font-size: var(--t-xs); }
 .idx-parts li { display: contents; }
 .idx-parts .nm { display: inline-flex; align-items: center; font-weight: 600; white-space: nowrap; } .idx-parts .nm .q { margin-left: 4px; } .idx-parts .nm em { margin-left: 5px; padding: 0 5px; border-radius: 999px; background: var(--st-bg); font-style: normal; font-size: 11px; font-weight: 600; }
+.idx-parts li.ref .nm, .idx-parts li.ref .sc { color: var(--faint); font-weight: 500; } .idx-parts li.ref .pbar { opacity: 0.45; } .idx-parts li.ref .nm em { background: var(--c-na-bg); color: var(--muted); }
+.g-ref { flex: none; padding: 1px 7px; border-radius: 999px; border: 1px dashed var(--line-2); color: var(--muted); font-size: 11.5px; font-weight: 600; white-space: nowrap; }
+.ring-lamp.ref { fill: var(--panel); stroke: var(--st); stroke-width: 2px; stroke-dasharray: 3 3; } .ring-ref .glyph { stroke: var(--st); } .ring-arc.ref { opacity: 0.6; }
 .idx-parts .sc { text-align: right; font-weight: 700; font-variant-numeric: tabular-nums; } .idx-parts .dl { min-width: 2.2em; text-align: right; color: var(--faint); font-variant-numeric: tabular-nums; white-space: nowrap; }
 .pbar { position: relative; height: 6px; display: grid; gap: 2px; } .pbar i { background: var(--c-warn-bg); } .pbar i:first-child { border-radius: 3px 0 0 3px; background: var(--c-bad-bg); } .pbar i:nth-child(3) { border-radius: 0 3px 3px 0; background: var(--c-ok-bg); }
 .pbar b { position: absolute; left: 0; top: 0; bottom: 0; width: max(4px, var(--p)); border-radius: 3px; background: var(--st); }
@@ -409,6 +412,7 @@ details .scroll { margin-top: 8px; }
       <ul class="list">
         <li data-h-rule="0">선순환 지수는 여섯 고리 점수의 평균과 가장 낮은 고리 점수를 반씩 섞은 값이다.</li>
         <li data-h-rule="1">고리 점수(0~100)는 보는 값이 기준선 사이 어디쯤인지를 옮긴 것이다.</li>
+        <li data-h-rule="2" hidden></li>
         <li>지수 추이는 같은 계산을 하루씩 앞당긴 7일 창으로 되풀이한 값이다. 직전 7일과 견줄 수 있는 날부터 그린다.</li>
         <li>늘 최근 7일(오늘 제외)을 직전 7일과 견준다. 위쪽의 기간 선택과는 상관없다.</li>
         <li>판매 대금은 밖의 지갑이 operations 계정으로 보낸 RLUSD로 본다. 금액이 같은 단위로 되풀이되어 기기 · 이용권 값으로 보았다.</li>
@@ -1581,7 +1585,7 @@ details .scroll { margin-top: 8px; }
       if (ix) { L.push('- 선순환 지수: ' + ix.value + ' / 100 (' + h.overall.label + ')' + (ix.prev ? ' · 어제 ' + ix.prev.value : '') + (ix.week ? ' · 7일 전 ' + ix.week.value : '')); L.push('- 계산: ' + ix.calc + ' · 고리 ' + h.overall.counts); }
       else L.push('- 종합 신호: ' + h.overall.label + ' (' + h.overall.counts + ')');
       if (h.takeaway) L.push('- 정리: ' + h.takeaway);
-      h.links.forEach(function (l) { L.push('- ' + l.name + ' ' + pt(l) + h.labels[l.status] + ': ' + l.short); });
+      h.links.forEach(function (l) { L.push('- ' + l.name + ' ' + pt(l) + h.labels[l.status] + (l.ref ? '(참고 · 지수 제외)' : '') + ': ' + l.short); });
       h.reserves.forEach(function (l) { L.push('- ' + l.name + ' ' + pt(l) + h.labels[l.status] + ': ' + l.short); });
       L.push(''); L.push('■ 그날 요약'); h.comments.slice(0, 3).forEach(function (t) { L.push('- ' + t); });
       if (h.limits && h.limits.length) L.push('※ 판매 대금은 RLUSD 결제분만이다(카드 · 계좌 결제는 원장에 없음).');
@@ -1642,7 +1646,7 @@ details .scroll { margin-top: 8px; }
   // ── (?) 도움말. 고리 설명은 받은 자료(기준 · 지금 값)로 만들고, 나머지는 아래 글과 「읽는 법」의 용어 풀이를 쓴다
   var HELPS = {
     trend: ['지수 추이', ['같은 계산을 하루씩 앞당긴 7일 창으로 되풀이한 값이다. 직전 7일과 견줄 수 있는 날부터 그린다.', '점선은 띠의 경계(40점 · 70점)다. 선을 가리키면 그날의 고리별 점수가 나온다.']],
-    ring: ['선순환 고리', ['판매 대금이 들어오고 → 보상이 나가고 → 받은 쪽이 들고 있고 → 풀이 깊어지고 → 판 양을 받아내고 → 값이 버티면 다시 판매로 이어진다는 여섯 단계다.', '화살표는 그 고리의 상태다: 실선 좋음 · 긴 점선 지켜봄 · 짧은 점선 주의. 이름 아래 숫자가 고리 점수, 가운데가 선순환 지수다.']],
+    ring: ['선순환 고리', ['판매 대금이 들어오고 → 보상이 나가고 → 받은 쪽이 들고 있고 → 풀이 깊어지고 → 판 양을 받아내고 → 값이 버티면 다시 판매로 이어진다는 여섯 단계다.', '점선 테로 그린 고리(판매)는 자료가 불완전해 지수에 넣지 않고 참고로만 보여 준다.', '화살표는 그 고리의 상태다: 실선 좋음 · 긴 점선 지켜봄 · 짧은 점선 주의. 이름 아래 숫자가 고리 점수, 가운데가 선순환 지수다.']],
     reserve: ['운용 점검', ['지급과 매입에 쓸 잔액이 최근 7일의 속도로 며칠 치인지, 매입에 쓴 돈이 판매 대금 안인지를 본다.', '고리와 같은 방식으로 0~100점을 매기지만 선순환 지수에는 넣지 않는다 — 순환이 도는지가 아니라 버틸 여력을 보는 값이라서다.']],
     'm:basket': ['주요 10종 묶음', ['시가총액이 큰 코인 10종의 시가총액을 더한 값이다. 전체 시장 대신 쓰는 잣대로, 전체 시가총액은 날짜별 기록을 받을 수 없어 이 묶음으로 견준다.', '달러 고정 코인과, 다른 코인을 포장 · 예치한 것은 뺐다. 지금의 10종을 지난 날에도 그대로 쓴다.']],
     'm:window': ['견주는 기간', ['어제 하루: 마지막으로 하루가 다 찬 날의 변화.', '최근 7일: 「오늘의 현황」 가격 고리와 같은 7일.', '풀이 열린 뒤: 새 풀이 열린 날 마감 값부터 지금까지.', 'WLBN은 RLUSD 풀의 그날 마감 값, 코인은 같은 날짜의 CoinPaprika 값이다.']],
@@ -1683,7 +1687,8 @@ details .scroll { margin-top: 8px; }
       if (l.rule) { o.lines.push('보는 값: ' + l.rule.metric + '.'); o.rows = [['좋음 · ' + B[1] + '점 이상', l.rule.ok], ['지켜봄 · ' + B[0] + '~' + (B[1] - 1) + '점', l.rule.warn], ['주의 · ' + B[0] + '점 미만', l.rule.bad]]; }
       if (l.caveat) o.lines.push('※ ' + l.caveat + '.');
       if (!inIndex) o.lines.push('선순환 지수에는 넣지 않는다.');
-      else if (h.index && h.index.weak && h.index.weak.key === l.key && h.index.max > h.index.min) o.lines.push('지금 여섯 고리 가운데 가장 낮다(최저). 선순환 지수의 절반이 이 고리 점수다.');
+      else if (l.ref) o.lines.push('지수에 넣지 않는다(참고): ' + (l.ref_why || '자료가 불완전하다') + '.');
+      else if (h.index && h.index.weak && h.index.weak.key === l.key && h.index.max > h.index.min) o.lines.push('지금 지수에 넣는 고리 가운데 가장 낮다(최저). 선순환 지수의 절반이 이 고리 점수다.');
       o.now = '지금 ' + l.value + (has ? ' → ' + l.score + '점' : '') + ' · ' + h.labels[l.status];
       return o;
     }
@@ -1716,10 +1721,12 @@ details .scroll { margin-top: 8px; }
   function gaugeEl(l, labels) {
     var el = function (tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text !== undefined) e.textContent = text; return e; };
     var li = el('li', 'gauge'), head = el('div', 'g-head'), ask = el('span', 'g-ask');
-    head.appendChild(lampEl(l.status)); head.appendChild(el('span', 'g-name', l.name)); head.appendChild(qEl('loop:' + l.key, l.name));
+    var stc = l.ref ? 'na' : l.status;      // 지수에서 뺀 고리는 경고 색 대신 중립색으로
+    head.appendChild(lampEl(stc)); head.appendChild(el('span', 'g-name', l.name)); head.appendChild(qEl('loop:' + l.key, l.name));
     if (l.owner && OWN[l.owner]) named(ask, l.owner, l.label, l.label); else ask.textContent = l.ask || '';
     var B = bandsOf(), hasScore = l.score !== null && l.score !== undefined;
-    head.appendChild(ask); head.appendChild(el('span', 'g-st st-' + l.status, (hasScore ? l.score + '점 · ' : '') + (labels[l.status] || '')));
+    head.appendChild(ask); if (l.ref) head.appendChild(el('span', 'g-ref', '지수 제외'));
+    head.appendChild(el('span', 'g-st st-' + stc, (hasScore ? l.score + '점 · ' : '') + (l.ref ? '참고' : labels[l.status] || '')));
     var val = el('div', 'g-val'); val.appendChild(el('b', '', l.value)); val.appendChild(el('span', '', l.metric));
     var th = el('div', 'thermo st-' + l.status); th.style.setProperty('--p', (l.pos * 100).toFixed(1) + '%');
     th.appendChild(el('i')); th.appendChild(el('i')); th.appendChild(el('i')); th.appendChild(el('b'));
@@ -1728,7 +1735,7 @@ details .scroll { margin-top: 8px; }
     (l.ticks || []).forEach(function (t, i) { var sp = el('span', '', t); sp.style.left = B[i] + '%'; tk.appendChild(sp); });
     li.appendChild(head); li.appendChild(val); li.appendChild(th); li.appendChild(tk);
     if (l.caveat) li.appendChild(el('p', 'g-cav', '※ ' + l.caveat));
-    if (l.insight) li.appendChild(el('p', 'g-ins st-' + l.status, l.insight));     // 결과에 따른 요약 인사이트
+    if (l.insight) li.appendChild(el('p', 'g-ins st-' + stc, l.insight));     // 결과에 따른 요약 인사이트
     li.appendChild(el('p', 'g-read', l.read));
     return li;
   }
@@ -1743,19 +1750,21 @@ details .scroll { margin-top: 8px; }
       if (ix && ix.prev) { var sm = document.createElement('small'); sm.textContent = ix.delta ? '어제보다 ' + signed(ix.delta) + '점' : '어제와 같음'; stEl.appendChild(sm); }
     }
     var lines = function (sel, arr) { var e = $(sel); if (!e) return; e.replaceChildren(); arr.forEach(function (t) { var sp = document.createElement('span'); sp.textContent = t; e.appendChild(sp); }); };
-    lines('[data-h-calc]', ix ? ['지수 = ' + ix.calc, '여섯 고리 · ' + h.overall.counts] : ['여섯 고리 · ' + h.overall.counts]);
+    var loopsTxt = (h.overall.loops || '여섯 고리') + ' · ' + h.overall.counts + (h.overall.refs && h.overall.refs.length ? ' · 참고(지수 제외) ' + h.overall.refs.join(' · ') : '');
+    lines('[data-h-calc]', ix ? ['지수 = ' + ix.calc, loopsTxt] : [loopsTxt]);
     var pl = $('#idx-parts');
     if (pl) {
       pl.replaceChildren(); pl.hidden = !ix;
       (ix ? ix.parts : []).forEach(function (p) {
         var li = document.createElement('li'), nm = document.createElement('span'), bar = document.createElement('span'), sc = document.createElement('span'), dl = document.createElement('span'), B = ix.bands, has = p.score !== null;
-        li.className = 'st-' + p.status; nm.className = 'nm'; nm.textContent = p.name; bar.className = 'pbar'; sc.className = 'sc'; dl.className = 'dl';
+        li.className = 'st-' + (p.ref ? 'na' : p.status) + (p.ref ? ' ref' : ''); nm.className = 'nm'; nm.textContent = p.name; bar.className = 'pbar'; sc.className = 'sc'; dl.className = 'dl';
         nm.appendChild(qEl('loop:' + p.key, p.name));
-        if (has && ix.weak && ix.weak.key === p.key && ix.max > ix.min) { var em = document.createElement('em'); em.textContent = '최저'; nm.appendChild(em); }
+        if (p.ref) { var er = document.createElement('em'); er.textContent = '참고'; nm.appendChild(er); }
+        else if (has && ix.weak && ix.weak.key === p.key && ix.max > ix.min) { var em = document.createElement('em'); em.textContent = '최저'; nm.appendChild(em); }
         bar.style.gridTemplateColumns = B[0] + 'fr ' + (B[1] - B[0]) + 'fr ' + (100 - B[1]) + 'fr'; bar.appendChild(document.createElement('i')); bar.appendChild(document.createElement('i')); bar.appendChild(document.createElement('i'));
         if (has) { var fill = document.createElement('b'); fill.style.setProperty('--p', p.score + '%'); bar.appendChild(fill); }
         sc.textContent = has ? p.score : '—'; dl.textContent = p.delta === null || p.delta === undefined ? '' : signed(p.delta);
-        li.title = p.name + ' ' + (has ? p.score + '점 · ' : '') + h.labels[p.status] + (p.delta ? ' · 어제 ' + p.prev + '점' : '');
+        li.title = p.name + ' ' + (has ? p.score + '점 · ' : '') + h.labels[p.status] + (p.delta ? ' · 어제 ' + p.prev + '점' : '') + (p.ref ? ' · 지수에 넣지 않는다(참고)' : '');
         li.appendChild(nm); li.appendChild(bar); li.appendChild(sc); li.appendChild(dl); pl.appendChild(li);
       });
     }
@@ -1769,7 +1778,7 @@ details .scroll { margin-top: 8px; }
         lines('[data-h-move]', mv);
       }
     }
-    (ix && ix.rules ? ix.rules : []).forEach(function (t, i) { set('[data-h-rule="' + i + '"]', t); });
+    $$('[data-h-rule]').forEach(function (li) { var t = ix && ix.rules ? ix.rules[+li.getAttribute('data-h-rule')] : null; if (t) li.textContent = t; if (+li.getAttribute('data-h-rule') >= 2) li.hidden = !t; });
     var tk = $('[data-h-takeaway]'); if (tk) { tk.textContent = h.takeaway || ''; tk.hidden = !h.takeaway; }
     var hl = $('[data-h-limit]'); if (hl) { var lm = h.limits || []; hl.hidden = !lm.length; hl.replaceChildren(); if (lm.length) { var sp = document.createElement('span'); var hb = document.createElement('b'); hb.textContent = '집계 한계 · '; sp.appendChild(hb); sp.appendChild(document.createTextNode(lm.join(' '))); hl.appendChild(sp); } }
     var ul = $('#brief-list'); if (ul) { ul.replaceChildren(); h.comments.forEach(function (t) { var li = document.createElement('li'); li.textContent = t; ul.appendChild(li); }); }
@@ -1797,7 +1806,7 @@ details .scroll { margin-top: 8px; }
     g.append('text').attr('class', 'idx-num').attr('x', 0).attr('y', -12).attr('text-anchor', 'middle').text(ix.value);
     g.append('text').attr('class', 'idx-of').attr('x', 0).attr('y', 8).attr('text-anchor', 'middle').text('100점 만점');
     el.setAttribute('aria-label', '선순환 지수 ' + ix.value + '점(100점 만점), ' + h.labels[ix.status] + (ix.prev ? ', 어제 ' + ix.prev.value + '점' : ''));
-    var rows = [{ label: '여섯 고리 평균', value: ix.mean + '점' }, { label: '가장 약한 고리 · ' + ix.weak.name, value: ix.weak.score + '점' }];
+    var rows = [{ label: (h.overall.loops || '여섯 고리') + ' 평균', value: ix.mean + '점' }, { label: '가장 약한 고리 · ' + ix.weak.name, value: ix.weak.score + '점' }];
     if (ix.prev) rows.push({ label: '어제(' + md(ix.prev.date) + ')', value: ix.prev.value + '점', sep: 1 }); if (ix.week) rows.push({ label: '7일 전(' + md(ix.week.date) + ')', value: ix.week.value + '점' });
     var show = function () { f.tip.replaceChildren.apply(f.tip, tipRows('선순환 지수 ' + ix.value + '점 · ' + h.labels[ix.status], rows)); f.tip.hidden = false; placeTip(f, cx + 30, cy - R * 0.5); };
     f.svg.append('rect').attr('x', cx - R - th).attr('y', 0).attr('width', 2 * (R + th)).attr('height', cy + 4).attr('fill', 'transparent')
@@ -1818,7 +1827,7 @@ details .scroll { margin-top: 8px; }
     var pick = function (ev) {
       var px = d3.pointer(ev, f.svg.node())[0], i = Math.max(0, Math.min(sr.length - 1, Math.round(x.invert(px)))), d = sr[i];
       focus.attr('cx', x(i)).attr('cy', y(d.value)).attr('visibility', 'visible');
-      var rows = (d.scores || []).map(function (sc, j) { return { label: ix.parts[j] ? ix.parts[j].name : '', value: sc === null ? '—' : sc + '점' }; });
+      var rows = (d.scores || []).map(function (sc, j) { var pj = ix.parts[j]; return { label: pj ? pj.name + (pj.ref ? '(참고 · 지수 제외)' : '') : '', value: sc === null ? '—' : sc + '점' }; });
       f.tip.replaceChildren.apply(f.tip, tipRows(md(d.date) + ' · ' + d.value + '점 · ' + h.labels[d.status], rows)); f.tip.hidden = false; placeTip(f, x(i), y(d.value));
     };
     f.svg.append('rect').attr('x', 0).attr('y', 0).attr('width', f.w).attr('height', f.h).attr('fill', 'transparent')
@@ -1831,19 +1840,19 @@ details .scroll { margin-top: 8px; }
     var ang = function (i) { return (-90 + i * 360 / n) * Math.PI / 180; }, pt = function (a, r) { return [cx + Math.cos(a) * r, cy + Math.sin(a) * r]; }, gap = (lr + 8) / R;
     h.links.forEach(function (l, i) {
       var a0 = ang(i) + gap, a1 = ang(i + 1) - gap, p0 = pt(a0, R), p1 = pt(a1, R), tx = -Math.sin(a1), ty = Math.cos(a1), rx = Math.cos(a1), ry = Math.sin(a1);
-      g.append('path').attr('class', 'ring-arc st-' + l.status).attr('d', 'M' + p0[0] + ',' + p0[1] + 'A' + R + ',' + R + ' 0 0 1 ' + p1[0] + ',' + p1[1]);
-      g.append('polygon').attr('class', 'ring-head st-' + l.status).attr('points', [[p1[0] + tx * 6, p1[1] + ty * 6], [p1[0] - tx * 3 + rx * 4.5, p1[1] - ty * 3 + ry * 4.5], [p1[0] - tx * 3 - rx * 4.5, p1[1] - ty * 3 - ry * 4.5]].map(function (q) { return q.join(','); }).join(' '));
+      g.append('path').attr('class', 'ring-arc st-' + (l.ref ? 'na' : l.status) + (l.ref ? ' ref' : '')).attr('d', 'M' + p0[0] + ',' + p0[1] + 'A' + R + ',' + R + ' 0 0 1 ' + p1[0] + ',' + p1[1]);
+      g.append('polygon').attr('class', 'ring-head st-' + (l.ref ? 'na' : l.status)).attr('points', [[p1[0] + tx * 6, p1[1] + ty * 6], [p1[0] - tx * 3 + rx * 4.5, p1[1] - ty * 3 + ry * 4.5], [p1[0] - tx * 3 - rx * 4.5, p1[1] - ty * 3 - ry * 4.5]].map(function (q) { return q.join(','); }).join(' '));
     });
     var showTip = function (l, p) { f.tip.replaceChildren.apply(f.tip, tipRows(l.name + ' · ' + (l.score !== null && l.score !== undefined ? l.score + '점 · ' : '') + h.labels[l.status], [{ label: l.metric, value: l.value }])); f.tip.hidden = false; placeTip(f, p[0], p[1]); };
     h.links.forEach(function (l, i) {
       var a = ang(i), p = pt(a, R), c = Math.cos(a), s = Math.sin(a), q = pt(a, R + lr + 9), anchor = c > 0.3 ? 'start' : c < -0.3 ? 'end' : 'middle';
-      var node = g.append('g').attr('class', 'st-' + l.status);
-      node.append('circle').attr('class', 'ring-lamp').attr('cx', p[0]).attr('cy', p[1]).attr('r', lr)
+      var node = g.append('g').attr('class', 'st-' + (l.ref ? 'na' : l.status) + (l.ref ? ' ring-ref' : ''));
+      node.append('circle').attr('class', 'ring-lamp' + (l.ref ? ' ref' : '')).attr('cx', p[0]).attr('cy', p[1]).attr('r', lr)
         .on('pointerenter', function () { showTip(l, p); }).on('pointerdown', function (ev) { ev.stopPropagation(); showTip(l, p); }).on('pointerleave', function (ev) { if (ev.pointerType === 'mouse') f.tip.hidden = true; });
-      node.append('path').attr('class', 'glyph').attr('d', GLYPH[l.status] || GLYPH.na).attr('transform', 'translate(' + p[0] + ',' + p[1] + ') scale(1.5)').attr('vector-effect', 'non-scaling-stroke');
+      node.append('path').attr('class', 'glyph').attr('d', GLYPH[l.ref ? 'na' : l.status] || GLYPH.na).attr('transform', 'translate(' + p[0] + ',' + p[1] + ') scale(1.5)').attr('vector-effect', 'non-scaling-stroke');
       var y1 = anchor === 'middle' ? (s < 0 ? p[1] - lr - 22 : p[1] + lr + 18) : q[1] - 3, x = anchor === 'middle' ? p[0] : q[0];
       g.append('text').attr('class', 'flow-name').attr('x', x).attr('y', y1).attr('text-anchor', anchor).text(l.name);
-      g.append('text').attr('class', 'flow-val').attr('x', x).attr('y', y1 + 15).attr('text-anchor', anchor).text(l.score !== null && l.score !== undefined ? l.score + '점' : h.labels[l.status]);
+      g.append('text').attr('class', 'flow-val').attr('x', x).attr('y', y1 + 15).attr('text-anchor', anchor).text(l.ref ? '참고 · ' + (l.score !== null && l.score !== undefined ? l.score + '점' : h.labels[l.status]) : l.score !== null && l.score !== undefined ? l.score + '점' : h.labels[l.status]);
     });
     g.append('text').attr('class', 'ring-num').attr('x', cx).attr('y', cy + 4).attr('text-anchor', 'middle').text(h.index ? h.index.value : h.overall.ok + '/' + h.overall.total);
     g.append('text').attr('class', 'tick').attr('x', cx).attr('y', cy + 22).attr('text-anchor', 'middle').text(h.index ? '선순환 지수' : '초록 고리');
