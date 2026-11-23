@@ -628,11 +628,11 @@ function buildDatasets(S, opts) {
     const iTop = (k, f) => iw.filter((w) => w.impact === k && w[f] >= 1).sort((x, y) => y[f] - x[f]).slice(0, 5).map((w) => ({ id: w.id, wallet: w.wallet, type_name: w.type_name, sold: w.sold, took_rlusd: w.took_rlusd, back_rlusd: w.back_rlusd, balance: w.balance, why: w.impact_why }));
     const iNotes = [], iH = imap.help, iL = imap.load, iM = imap.mid, topLoad = iTop('load', 'took_rlusd');
     if (iTot.wallets) {
-      iNotes.push('지갑 ' + nf(iTot.wallets) + '곳 가운데 도움 ' + nf(iH.wallets) + '곳(' + pf(iH.wallets_share || 0) + ') · 중간 ' + nf(iM.wallets) + '곳(' + pf(iM.wallets_share || 0) + ') · 부담 ' + nf(iL.wallets) + '곳(' + pf(iL.wallets_share || 0) + ')이다.');
-      if (iTot.sold >= 1) iNotes.push('부담 지갑이 판 양의 ' + pf(iL.sold_share || 0) + '(' + nf(iL.sold) + '개)를 팔았고, 가져간 돈의 ' + pf(iL.took_rlusd_share || 0) + '(' + nf(iL.took_rlusd) + ' RLUSD 환산)를 가져갔다.' + (topLoad.length && iL.took_rlusd >= 1 ? ' 그 가운데 가장 많이 가져간 다섯 곳이 ' + pf(topLoad.reduce((t, w) => t + w.took_rlusd, 0) / iL.took_rlusd) + '다.' : ''));
-      if (iTot.back_rlusd >= 1) iNotes.push('되돌린 돈은 모두 ' + nf(iTot.back_rlusd) + ' RLUSD(가져간 돈 ' + nf(iTot.took_rlusd) + '의 ' + pf(iTot.took_rlusd > 0 ? iTot.back_rlusd / iTot.took_rlusd : 0) + ')이고, 그 ' + pf(iH.back_rlusd_share || 0) + '를 도움 지갑이 냈다(다시 산 돈 ' + nf(iTot.rebuy_rlusd) + ' · 매수 ' + nf(iTot.back_rlusd - iTot.rebuy_rlusd) + ').');
-      else if (iTot.took_rlusd >= 1) iNotes.push('가져간 돈은 ' + nf(iTot.took_rlusd) + ' RLUSD(환산)이고 원장에서 보이는 되돌린 돈은 없다.');
-      if (iTot.balance >= 1) iNotes.push('지금 들고 있는 ' + nf(iTot.balance) + '개 가운데 ' + pf(iH.balance_share || 0) + '가 도움 지갑에 있다.');
+      iNotes.push('분포: 지갑 ' + nf(iTot.wallets) + '곳 가운데 **도움 ' + nf(iH.wallets) + '곳(' + pf(iH.wallets_share || 0) + ')** · 중간 ' + nf(iM.wallets) + '곳(' + pf(iM.wallets_share || 0) + ') · **부담 ' + nf(iL.wallets) + '곳(' + pf(iL.wallets_share || 0) + ')**이다.');
+      if (iTot.sold >= 1) iNotes.push('부담 몫: 부담 지갑이 **판 양의 ' + pf(iL.sold_share || 0) + '**(' + nf(iL.sold) + '개)를 팔았고, **가져간 돈의 ' + pf(iL.took_rlusd_share || 0) + '**(' + nf(iL.took_rlusd) + ' RLUSD 환산)를 가져갔다.' + (topLoad.length && iL.took_rlusd >= 1 ? ' 그 가운데 가장 많이 가져간 다섯 곳이 ' + pf(topLoad.reduce((t, w) => t + w.took_rlusd, 0) / iL.took_rlusd) + '다.' : ''));
+      if (iTot.back_rlusd >= 1) iNotes.push('되돌린 돈: 모두 **' + nf(iTot.back_rlusd) + ' RLUSD**(가져간 돈 ' + nf(iTot.took_rlusd) + '의 ' + pf(iTot.took_rlusd > 0 ? iTot.back_rlusd / iTot.took_rlusd : 0) + ')이고, 그 **' + pf(iH.back_rlusd_share || 0) + '를 도움 지갑**이 냈다(다시 산 돈 ' + nf(iTot.rebuy_rlusd) + ' · 매수 ' + nf(iTot.back_rlusd - iTot.rebuy_rlusd) + ').');
+      else if (iTot.took_rlusd >= 1) iNotes.push('되돌린 돈: 가져간 돈은 ' + nf(iTot.took_rlusd) + ' RLUSD(환산)이고 원장에서 보이는 **되돌린 돈은 없다**.');
+      if (iTot.balance >= 1) iNotes.push('보유: 지금 들고 있는 ' + nf(iTot.balance) + '개 가운데 **' + pf(iH.balance_share || 0) + '가 도움 지갑**에 있다.');
     }
     const impact = { rows: iRows.map((r) => { const o = {}; for (const f of Object.keys(r)) o[f] = typeof r[f] === 'number' && !/_share$/.test(f) ? r0(r[f]) : r[f]; return o; }), total: Object.keys(iTot).reduce((o, f) => { o[f] = r0(iTot[f]); return o; }, {}),
       top_help: iTop('help', 'back_rlusd'), top_hold: iTop('help', 'balance'), top_load: topLoad, notes: iNotes, limit: LIMIT_CARD + ' 카드로 다시 산 지갑은 되돌린 돈이 0으로 보여 「부담」으로 잘못 나뉠 수 있다.',
@@ -823,10 +823,10 @@ function buildDatasets(S, opts) {
     const byS = (sym) => rows.find((r) => r.key === sym), X = byS('XRP'), Bt = byS('BTC'), tri = (v) => (v >= 1e12 ? (v / 1e12).toFixed(2) + '조' : n(v / 1e8) + '억');
     const line = (k) => 'WLBN ' + sp(W[k]) + ' · ' + K.name + ' ' + (K[k] === null ? '—' : sp(K[k])) + (Bt && Bt[k] !== null ? ' · BTC ' + sp(Bt[k]) : '') + (X && X[k] !== null ? ' · XRP ' + sp(X[k]) : '');
     const notes = [], cf = (x) => (x < 0 ? '−' : '') + Math.abs(x);
-    if (W.d7 !== null) notes.push('최근 7일(' + md(shift(start.d7.date, 1)) + '~' + md(last.date) + '): ' + line('d7') + '.' + (K.d7 !== null ? ' WLBN이 묶음보다 ' + pp(W.d7 - K.d7) + (W.d7 >= K.d7 ? ' 높다' : ' 낮다') : '') + (rank.d7 ? ' — 주요 ' + coins.length + '종과 나란히 놓으면 ' + rank.d7.of + '개 가운데 ' + rank.d7.pos + '번째다.' : '.'));
-    if (W.open !== null && days.length > 8) notes.push('풀이 열린 뒤(' + md(first.date) + '~' + md(last.date) + '): ' + line('open') + '.' + (rank.open ? ' ' + rank.open.of + '개 가운데 ' + rank.open.pos + '번째다.' : ''));
-    if (stats.basket) notes.push('하루 변화가 묶음과 같은 방향이었던 날은 ' + stats.basket.n + '일 가운데 ' + stats.basket.same + '일' + (stats.basket.corr !== null ? '(상관계수 ' + cf(stats.basket.corr) + ')' : '') + (stats.xrp ? ', XRP와는 ' + stats.xrp.same + '일' + (stats.xrp.corr !== null ? '(' + cf(stats.xrp.corr) + ')' : '') : '') + '이다. ' + (stats.basket.corr !== null && Math.abs(stats.basket.corr) < 0.3 ? '시장과 거의 따로 움직였다.' : stats.basket.corr !== null && stats.basket.corr >= 0.6 ? '시장과 같이 움직인 편이다.' : '시장과 느슨하게 같이 움직였다.'));
-    if (global) notes.push('전체 시가총액은 ' + tri(global.mc) + ' 달러(24시간 ' + sp(global.d1) + '), 비트코인 비중 ' + p1(global.btc_dom) + '다.' + (global.basket_share ? ' 주요 ' + coins.length + '종 묶음이 그 ' + p1(global.basket_share) + '다.' : ''));
+    if (W.d7 !== null) notes.push('최근 7일(' + md(shift(start.d7.date, 1)) + '~' + md(last.date) + '): ' + line('d7') + '.' + (K.d7 !== null ? ' **WLBN이 묶음보다 ' + pp(W.d7 - K.d7) + (W.d7 >= K.d7 ? ' 높다' : ' 낮다') + '**' : '') + (rank.d7 ? ' — 주요 ' + coins.length + '종과 나란히 놓으면 ' + rank.d7.of + '개 가운데 ' + rank.d7.pos + '번째다.' : '.'));
+    if (W.open !== null && days.length > 8) notes.push('풀이 열린 뒤(' + md(first.date) + '~' + md(last.date) + '): ' + line('open') + '.' + (K.open !== null ? ' **WLBN이 묶음보다 ' + pp(W.open - K.open) + (W.open >= K.open ? ' 높다' : ' 낮다') + '**' : '') + (rank.open ? ' — ' + rank.open.of + '개 가운데 ' + rank.open.pos + '번째다.' : K.open !== null ? '.' : ''));
+    if (stats.basket) notes.push('같은 방향: 하루 변화가 묶음과 같은 방향이었던 날은 ' + stats.basket.n + '일 가운데 ' + stats.basket.same + '일' + (stats.basket.corr !== null ? '(상관계수 ' + cf(stats.basket.corr) + ')' : '') + (stats.xrp ? ', XRP와는 ' + stats.xrp.same + '일' + (stats.xrp.corr !== null ? '(' + cf(stats.xrp.corr) + ')' : '') : '') + '이다. ' + (stats.basket.corr !== null && Math.abs(stats.basket.corr) < 0.3 ? '**시장과 거의 따로 움직였다.**' : stats.basket.corr !== null && stats.basket.corr >= 0.6 ? '**시장과 같이 움직인 편이다.**' : '**시장과 느슨하게 같이 움직였다.**'));
+    if (global) notes.push('전체 시황: 전체 시가총액은 **' + tri(global.mc) + ' 달러**(24시간 ' + sp(global.d1) + '), 비트코인 비중 ' + p1(global.btc_dom) + '다.' + (global.basket_share ? ' 주요 ' + coins.length + '종 묶음이 그 ' + p1(global.basket_share) + '다.' : ''));
     const bot = ranges.all.groups.find((g) => g.key === 'bot'), buyAll = ranges.all.kpi.buy_total, botShare = bot && buyAll > 0 ? bot.bought / buyAll : null;
     const limits = ['WLBN 값은 풀 두 곳에서 정해진 값이고' + (botShare !== null && botShare >= 0.2 ? ', 이 기간 산 양의 ' + p1(botShare) + '를 Wellbian bot 계정이 샀다' : ' 거래가 얇다') + '. 시장과의 차이를 그대로 바깥 수요의 차이로 읽지 않는다.',
       '코인 값은 CoinPaprika 공개 값이다. 하루 값의 기준 시각이 WLBN의 한국 시각 마감과 조금 어긋난다 — 풀에서 읽은 XRP 값과 대조하면 평균 1% 안팎 차이다. 묶음은 지금의 상위 ' + coins.length + '종을 지난 날에도 그대로 쓴다.',
@@ -918,11 +918,15 @@ function buildDatasets(S, opts) {
     const acc = { score: upAll + downAll > 0 ? Math.round(upAll / (upAll + downAll) * 100) / 100 : null, up: nUp, down: nDown, up_amt: r0(upAll), down_amt: r0(downAll) };
     // 요약 문장: 기록에 있는 사실과 산수만
     const n = (x) => Math.round(x).toLocaleString('en-US'), p1 = (x) => (x * 100).toFixed(1) + '%', f4 = (x) => Number(x).toFixed(4), notes = [], bd = (k) => now.bands.find((x) => x.key === k) || { amount: 0, share: 0 }, big = szRows[szRows.length - 1];
-    if (now.total >= 1) notes.push('지갑과 풀에 있는 ' + n(now.total) + '개 가운데 ' + p1(bd('b7').share) + '가 받은 지 7일이 안 된 물량, ' + p1(bd('old').share) + '가 10/26 이전부터 들고 있던 물량(재지급분 포함), ' + p1(bd('lp').share) + '가 풀에 넣어 둔 물량이다.');
-    if (now.cost) notes.push('지갑에 든 물량의 평균 취득가(받은 날 값 기준)는 ' + f4(now.cost) + ' RLUSD, 지금 값은 ' + f4(now.price) + ' RLUSD다 — 지금 값이 평균 취득가의 ' + p1(now.ratio) + '. 그 물량의 ' + p1(now.above) + '가 받은 때보다 높은 값에 있다.');
-    if (week.ratio !== null) notes.push('최근 7일 판 ' + n(week.sold) + '개는 받은 때 값의 ' + week.ratio.toFixed(3) + '배에 팔렸고' + (week.prev_ratio !== null ? '(직전 7일 ' + week.prev_ratio.toFixed(3) + '배)' : '') + ', 평균 ' + week.age + '일 들고 있던 물량이다' + (week.prev_age !== null ? '(직전 7일 ' + week.prev_age + '일)' : '') + '.' + (week.age !== null && week.age <= 2 ? ' 받은 지 얼마 안 된 물량이 바로 나오는 흐름이다.' : week.prev_age !== null && week.age >= week.prev_age + 3 ? ' 오래 들고 있던 물량이 나오기 시작했다.' : ''));
-    if (big && big.wallets) notes.push(big.name + ' 지갑 ' + big.wallets + '곳이 지갑에 든 물량의 ' + p1(big.balance_share) + '를 들고 있다.' + (acc.score !== null ? ' 최근 7일 잔액을 늘린 지갑 ' + acc.up + '곳(' + n(acc.up_amt) + '개) · 줄인 지갑 ' + acc.down + '곳(' + n(acc.down_amt) + '개) — 늘린 물량 비중 ' + acc.score.toFixed(2) + '.' : ''));
-    if (week.movers !== null) notes.push('스스로 움직인(사거나 팔거나 풀에 넣고 뺀) 지갑은 하루 평균 ' + week.movers + '곳' + (week.prev_movers !== null ? '(직전 7일 ' + week.prev_movers + '곳)' : '') + ', 새로 들어온 지갑은 7일 동안 ' + week.fresh + '곳' + (week.prev_fresh !== null ? '(직전 7일 ' + week.prev_fresh + '곳)' : '') + '이다.');
+    if (now.total >= 1) {         // 셋 가운데 가장 큰 몫을 굵게
+      const seg = [['b7', '받은 지 7일이 안 된 물량'], ['old', '10/26 이전부터 들고 있던 물량(재지급분 포함)'], ['lp', '풀에 넣어 둔 물량']].map(([k, t]) => ({ s: bd(k).share, t: p1(bd(k).share) + '가 ' + t }));
+      const top = Math.max(...seg.map((x) => x.s));
+      notes.push('보유 기간: 지갑과 풀에 있는 ' + n(now.total) + '개 가운데 ' + seg.map((x) => (x.s === top && top > 0 ? '**' + x.t + '**' : x.t)).join(', ') + '이다.');
+    }
+    if (now.cost) notes.push('취득가: 지갑에 든 물량의 평균 취득가(받은 날 값 기준)는 ' + f4(now.cost) + ' RLUSD, 지금 값은 ' + f4(now.price) + ' RLUSD다 — **지금 값이 평균 취득가의 ' + p1(now.ratio) + '**. 그 물량의 ' + p1(now.above) + '가 받은 때보다 높은 값에 있다.');
+    if (week.ratio !== null) notes.push('판 물량: 최근 7일 판 ' + n(week.sold) + '개는 받은 때 값의 **' + week.ratio.toFixed(3) + '배**에 팔렸고' + (week.prev_ratio !== null ? '(직전 7일 ' + week.prev_ratio.toFixed(3) + '배)' : '') + ', 평균 **' + week.age + '일** 들고 있던 물량이다' + (week.prev_age !== null ? '(직전 7일 ' + week.prev_age + '일)' : '') + '.' + (week.age !== null && week.age <= 2 ? ' **받은 지 얼마 안 된 물량이 바로 나오는 흐름이다.**' : week.prev_age !== null && week.age >= week.prev_age + 3 ? ' **오래 들고 있던 물량이 나오기 시작했다.**' : ''));
+    if (big && big.wallets) notes.push('쏠림: **' + big.name + ' 지갑 ' + big.wallets + '곳이 지갑에 든 물량의 ' + p1(big.balance_share) + '**를 들고 있다.' + (acc.score !== null ? ' 최근 7일 잔액을 늘린 지갑 ' + acc.up + '곳(' + n(acc.up_amt) + '개) · 줄인 지갑 ' + acc.down + '곳(' + n(acc.down_amt) + '개) — **늘린 물량 비중 ' + acc.score.toFixed(2) + '**.' : ''));
+    if (week.movers !== null) notes.push('움직임: 스스로 움직인(사거나 팔거나 풀에 넣고 뺀) 지갑은 하루 평균 **' + week.movers + '곳**' + (week.prev_movers !== null ? '(직전 7일 ' + week.prev_movers + '곳)' : '') + ', 새로 들어온 지갑은 7일 동안 **' + week.fresh + '곳**' + (week.prev_fresh !== null ? '(직전 7일 ' + week.prev_fresh + '곳)' : '') + '이다.');
     const limits = ['「받은 때 값」은 보상을 받은 날 · 옮겨 받은 날의 마감 값(산 물량은 실제로 낸 값)이다. 보상은 돈을 내고 받은 것이 아니므로 손익이 아니라 받은 때와 지금의 값 차이로 읽는다.',
       '판 것은 오래된 물량부터 나간 것으로 본다(선입선출 — 가정). 지갑끼리 옮긴 물량은 받은 날과 값을 그대로 갖고 간다. 쌓은 기록과 실제 잔액이 어긋난 양은 잔액의 ' + (actual > 0 ? p1(drift / actual) : '—') + '다.',
       '10/26 이전부터 들고 있던 물량(재지급분 포함)은 받은 날을 알 수 없어 따로 묶었고, 값은 새 풀이 열린 날 값으로 매겼다. 지난 기록을 정리한 값이고 앞날을 내다보는 값이 아니다.'];
@@ -1204,16 +1208,17 @@ function buildDatasets(S, opts) {
     const names = (st) => inIdx.filter((l) => l.status === st).map((l) => l.name);
     const blocked = names('bad'), watch = names('warn');
     const ida = (w) => w + ((w.charCodeAt(w.length - 1) - 0xAC00) % 28 ? '이다' : '다');
-    let headline = !index ? '선순환 ' + loopN + ' 가운데 ' + parts.join(' · ') + '.' : '선순환 지수 ' + index.value + '점(' + ST[index.status] + (index.prev ? ' · 어제 ' + index.prev.value + '점' : '') + ').';
-    if (index) headline += index.mean - index.min >= 15 ? ' ' + loopN + ' 평균은 ' + Math.round(index.mean) + '점인데 가장 약한 ' + index.weak.name + ' 고리가 ' + index.weak.score + '점이라 지수를 끌어내렸다.' : ' ' + loopN + '가 ' + index.min + '~' + index.max + '점으로 고르다.';
-    headline += blocked.length ? ' 막힌 고리는 ' + (watch.length ? blocked.join(' · ') + ', 지켜볼 고리는 ' + ida(watch.join(' · ')) : ida(blocked.join(' · '))) + '.' : watch.length ? ' 지켜볼 고리는 ' + ida(watch.join(' · ')) + '.' : ' 막힌 고리가 없다.';
+    const idb = (w) => '**' + w + '**' + ((w.charCodeAt(w.length - 1) - 0xAC00) % 28 ? '이다' : '다');      // 고리 이름만 굵게
+    let headline = !index ? '선순환 ' + loopN + ' 가운데 ' + parts.join(' · ') + '.' : '**선순환 지수 ' + index.value + '점**(' + ST[index.status] + (index.prev ? ' · 어제 ' + index.prev.value + '점' : '') + ').';
+    if (index) headline += index.mean - index.min >= 15 ? ' ' + loopN + ' 평균은 ' + Math.round(index.mean) + '점인데 **가장 약한 ' + index.weak.name + ' 고리가 ' + index.weak.score + '점**이라 지수를 끌어내렸다.' : ' ' + loopN + '가 **' + index.min + '~' + index.max + '점으로 고르다**.';
+    headline += blocked.length ? ' 막힌 고리는 ' + (watch.length ? '**' + blocked.join(' · ') + '**, 지켜볼 고리는 ' + idb(watch.join(' · ')) : idb(blocked.join(' · '))) + '.' : watch.length ? ' 지켜볼 고리는 ' + idb(watch.join(' · ')) + '.' : ' **막힌 고리가 없다.**';
     if (refs.length) headline += ' ' + refs.map((l) => l.name).join(' · ') + ' 고리는 자료가 불완전해 지수에서 뺐다(참고 ' + refs.map((l) => l.value).join(' · ') + ').';
 
     // 한 줄 정리: 고리끼리 이어서 읽는다
     const take = [];
-    if (sr !== null) take.push(st('hold') === 'ok' ? '받은 보상은 절반 넘게 보유되고 있다.' : '받은 보상의 ' + p1(sr) + '가 팔리고' + (botShare !== null && botShare >= 0.5 ? ', 그 물량은 주로 Wellbian bot 매입이 받아낸다(산 양의 ' + p1(botShare) + ').' : ' 있다.'));
-    if (st('sale') !== 'na') take.push('매입 재원인 판매 대금(RLUSD 결제분만)은 ' + (st('sale') === 'ok' ? '늘었' : '직전 7일보다 ' + p1(Math.abs(ds)) + ' 줄었') + (L3.length === 3 && b3 > s3 && b3 > 0.5 ? '고, ' + l3name + '은 매입 지출(' + n(b3) + ' RLUSD)이 판매 대금(' + n(s3) + ' RLUSD)을 넘었다.' : '다.'));
-    if (dq !== null && dp !== null) take.push('풀은 ' + (st('pool') === 'ok' ? '깊어졌고' : '얕아졌고') + ' RLUSD 기준 값은 ' + sp(dp) + '다.');
+    if (sr !== null) take.push(st('hold') === 'ok' ? '**받은 보상은 절반 넘게 보유**되고 있다.' : '**받은 보상의 ' + p1(sr) + '가 팔리고**' + (botShare !== null && botShare >= 0.5 ? ', 그 물량은 주로 **Wellbian bot 매입**이 받아낸다(산 양의 ' + p1(botShare) + ').' : ' 있다.'));
+    if (st('sale') !== 'na') take.push('매입 재원인 판매 대금(RLUSD 결제분만)은 ' + (st('sale') === 'ok' ? '늘었' : '직전 7일보다 **' + p1(Math.abs(ds)) + '** 줄었') + (L3.length === 3 && b3 > s3 && b3 > 0.5 ? '고, ' + l3name + '은 **매입 지출(' + n(b3) + ' RLUSD)이 판매 대금(' + n(s3) + ' RLUSD)을 넘었다**.' : '다.'));
+    if (dq !== null && dp !== null) take.push('풀은 **' + (st('pool') === 'ok' ? '깊어졌고' : '얕아졌고') + '** RLUSD 기준 값은 **' + sp(dp) + '**다.');
     const takeaway = take.join(' ');
 
     // 그날 요약: 마지막으로 하루가 다 찬 날 + 오늘 지금까지
