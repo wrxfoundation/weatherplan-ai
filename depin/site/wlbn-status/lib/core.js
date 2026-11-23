@@ -70,7 +70,7 @@ function add(o, k, v) { o[k] = (o[k] || 0) + v; }
 function newState() {
   const period = () => { const o = {}; KEYS.forEach((k) => { o[k] = {}; }); return o; };
   return {
-    v: 3, ledger: 0, asof: 0, bal: {}, st: { before: period(), now: period() }, lastSell: {}, edges: {}, amms: {}, paidN: {},
+    v: 4, ledger: 0, asof: 0, bal: {}, st: { before: period(), now: period() }, lastSell: {}, edges: {}, amms: {}, paidN: {}, tf: {},      // v4: tf = 날짜가 붙은 지갑 간 이동
     firstPaid: {}, firstSell: {}, swept: {}, repay: {},     // 지갑마다: 처음 보상받은 날 · 처음 판 날 · 10/24 에 옮겨진 양 · 10/26~27 첫 지급량
     ev: {}, pools: { R: { w: 0, q: 0 }, X: { w: 0, q: 0 } }, eod: {}, eodX: {}, eodPool: {}, pR: 0, pX: 0, labels: {}, ext: {},
   };
@@ -158,6 +158,12 @@ function applyTx(S, tx, meta) {
     const neg = mv.filter(([, v]) => v[0] < 0), pos = mv.filter(([, v]) => v[0] > 0);
     const src = neg.length === 1 ? neg[0][0] : null;
     if (!pos.length && src && tx.Destination === C.ISSUER) add(P.burn, src, -neg[0][1][0]);
+    // 날짜가 붙은 이동 기록(지금 기간): 그날|보낸 곳|받은 곳 → 양. 지급 계정이 보낸 것은 paid · paidco 로 따로 적으므로 뺀다. 받은 곳이 비면 원장 밖으로 나간 양(소각 · 수수료)
+    if (per === 'now') {
+      const tf = S.tf || (S.tf = {});
+      if (src && src !== C.OPS) { let got = 0; for (const [a, v] of pos) { add(tf, k + '|' + src + '|' + a, v[0]); got += v[0]; } const gap = -neg[0][1][0] - got; if (gap > EPS) add(tf, k + '|' + src + '|', gap); }
+      else if (!src) { for (const [a, v] of pos) add(tf, k + '||' + a, v[0]); for (const [a, v] of neg) add(tf, k + '|' + a + '|', -v[0]); }
+    }
     for (const [a, v] of pos) {
       if (src === C.OPS && !S.labels[a]) {
         add(P.paid, a, v[0]); add(S.paidN, per + '|' + a, 1); ev(a, 'paid', [v[0]]);
@@ -230,6 +236,29 @@ function applyFundBatch(S, items) {
   for (const n of list) applyFundTx(S, n.tx, n.meta);
   return list.length;
 }
+
+// ── 온체인 심층: 다른 코인 분석 사이트들이 보는 지표를 WLBN 원장 기록으로 옮길 때의 기준
+const DEEP = {
+  ages: [[7, 'b7', '7일 이내'], [14, 'b14', '8~14일'], [30, 'b30', '15~30일'], [90, 'b90', '31~90일'], [Infinity, 'b91', '91일 이상']],   // 보유 기간 띠(일)
+  sizes: [[100, 's1', '100개 미만'], [1000, 's2', '100~1천 개'], [10000, 's3', '1천~1만 개'], [Infinity, 's4', '1만 개 이상']],       // 지갑 크기(WLBN)
+  // 벤치마킹 대조: 원래 지표 · 주로 쓰는 곳 → 우리식 이름 · 상태(옮김 / 이미 있음 / 해당 없음)
+  bench: [
+    ['HODL Waves', 'Glassnode 등', '보유 기간 띠', '옮김', '코인이 마지막으로 움직인 뒤 지난 기간별 물량 → 지갑이 받은 뒤 들고 있는 기간별 물량'],
+    ['Realized Price · MVRV', 'Glassnode · CryptoQuant', '평균 취득가 · 지금 값 ÷ 평균 취득가', '옮김', '마지막으로 움직인 날의 값 → 받은 날(산 날)의 값'],
+    ['In/Out of the Money · Supply in Profit', 'IntoTheBlock · Glassnode', '받은 때보다 높은 값에 있는 물량', '옮김', '주소 수가 아니라 물량 기준'],
+    ['SOPR', 'Glassnode · CryptoQuant', '판 값 ÷ 받은 때 값', '옮김', '1보다 크면 받은 때보다 높은 값에 팔았다'],
+    ['Coin Days Destroyed · Age Consumed', 'Glassnode · Santiment', '판 물량의 평균 보유 기간', '옮김', '오래 들고 있던 물량이 나왔는지'],
+    ['Supply Distribution · Concentration', 'Santiment · IntoTheBlock', '크기별 보유', '옮김', '달러 기준 대신 WLBN 수량 띠'],
+    ['Accumulation Trend Score', 'Glassnode', '늘린 물량 비중', '옮김(단순화)', '최근 7일 늘린 양 ÷ (늘린 양 + 줄인 양)'],
+    ['Daily Active Addresses · Network Growth', 'Santiment · Glassnode', '움직인 지갑 · 새 지갑', '옮김', '보상만 받은 지갑은 「움직인」에 넣지 않는다'],
+    ['Exchange Reserve · Netflow', 'CryptoQuant', '풀에 든 양 · 판 양 − 산 양', '이미 있음', '거래소가 없어 풀로 본다(「풀」 · 「날짜별」)'],
+    ['Smart Money · Entity labels', 'Nansen · Arkham', '소속 칩 · 지갑 유형 · 도움/부담', '이미 있음', '이름 붙은 계정은 wellbian.io 공개분만'],
+    ['Fear & Greed · Bull-Bear 지수', 'alternative.me · CryptoQuant', '선순환 지수', '이미 있음', '시장 심리가 아니라 순환이 도는지'],
+    ['Funding · Open Interest · Liquidations', 'Coinglass 등', '—', '해당 없음', '파생 시장이 없다'],
+    ['ETF · 채굴자 흐름', 'Farside · CryptoQuant', '—', '해당 없음', '해당 상품 · 채굴이 없다'],
+    ['Social Volume · Sentiment', 'Santiment 등', '—', '안 옮김', '원장 밖 자료 · 외부 집계는 쓰지 않는다'],
+  ],
+};
 
 // ── 시장과 견주기(주요 코인 10종 · 전체 시장). 받은 값만 상태(S.mkt)에 남긴다 — 못 받으면 마지막으로 받은 값을 쓴다
 const MARKET = {
@@ -804,6 +833,99 @@ function buildDatasets(S, opts) {
       short: W.d7 !== null && K.d7 !== null ? '같은 7일 ' + K.name + '은 ' + sp(K.d7) + (Bt && Bt.d7 !== null ? ', BTC는 ' + sp(Bt.d7) : '') + '였다' : null };
   };
   let market = null; try { market = buildMarket(); } catch (_) { market = null; }
+  // ── 온체인 심층: 지갑마다 받은(산 · 옮겨 받은) 물량을 날짜별 묶음으로 쌓고, 나간 것은 오래된 묶음부터 덜어 낸다(선입선출).
+  // 남은 묶음 = 지금 들고 있는 물량의 「받은 날 · 받은 때 값」. 지갑끼리 옮긴 물량은 묶음째 따라간다. 보는 지갑은 보상을 받는 지갑과 그 밖의 지갑(회사 계정 · 풀 · 사고팔기 지갑 제외)
+  const buildDeep = () => {
+    const rows = daily.filter((r) => r.date >= C.NOW_FROM); if (rows.length < 4 || !S.tf) return null;
+    const idx = {}; rows.forEach((r, i) => { idx[r.date] = i; });
+    const px = rows.map((r) => r.price_rlusd || null);       // 그날 마감 값. 없으면 가까운 날 값(10/26 은 풀이 열리기 전이라 10/27 값)
+    for (let i = px.length - 2; i >= 0; i--) if (!px[i]) px[i] = px[i + 1]; for (let i = 1; i < px.length; i++) if (!px[i]) px[i] = px[i - 1];
+    if (!px[0]) return null;
+    const inPop = (a) => !!a && (G[a] === 'user' || G[a] === 'other'), Wd = {}, cell = (a, k) => { const d = Wd[a] || (Wd[a] = {}); return d[k] || (d[k] = [0, 0, 0, 0, 0, 0, 0]); };
+    for (const e of EV) {            // 지갑 → 날짜 → [받은 양, 산 양, 든 돈, 판 양, 받은 돈, 풀에 넣음, 풀에서 뺌]
+      if (!inPop(e.a) || idx[e.k] === undefined) continue; const c = cell(e.a, e.k);
+      if (e.kind === 'paid') c[0] += e.v[0]; else if (e.kind === 'buy') { c[1] += e.v[0]; c[2] += e.v[1] || 0; } else if (e.kind === 'sell') { c[3] += e.v[0]; c[4] += e.v[1] || 0; }
+      else if (e.kind === 'lp') { if (e.v[0] > 0) c[5] += e.v[0]; else c[6] -= e.v[0]; }
+    }
+    // 날짜가 붙은 이동: 그날 · 보낸 곳 · 받은 곳 · 양
+    const moves = rows.map(() => []), net = {}, bump = (a, v) => { net[a] = (net[a] || 0) + v; };
+    for (const key of Object.keys(S.tf)) { const p = key.split('|'), i = idx[p[0]], q = S.tf[key]; if (i === undefined || !(q > 1e-9)) continue; const a = inPop(p[1]) ? p[1] : null, b = inPop(p[2]) ? p[2] : null; if (!a && !b) continue;
+      moves[i].push({ a, b, q }); if (a) { bump(a, -q); if (!Wd[a]) Wd[a] = {}; } if (b) { bump(b, q); if (!Wd[b]) Wd[b] = {}; } }
+    for (const a of accts) if (inPop(a) && !Wd[a] && g2(S.bal, a) >= 1) Wd[a] = {};     // 기록 없이 들고만 있는 지갑
+    const addrs = Object.keys(Wd), lots = {}, pooled = {}; for (const a of addrs) { lots[a] = []; pooled[a] = []; }
+    const take = (L, q, sink) => { while (q > 1e-9 && L.length) { const l = L[0], t = Math.min(l.q, q); if (sink) sink(t, l); l.q -= t; q -= t; if (l.q <= 1e-9) L.shift(); } return q; };
+    const have = (a) => lots[a].reduce((t, l) => t + l.q, 0);
+    // 기간이 시작될 때 이미 들고 있던 양 = 지금 잔액 − 기간 안의 순증감. 「10/26 이전부터 보유」 묶음으로 깔아 둔다
+    for (const a of addrs) { let f = net[a] || 0; for (const k of Object.keys(Wd[a])) { const c = Wd[a][k]; f += c[0] + c[1] + c[6] - c[3] - c[5]; } const open = Math.max(g2(S.bal, a), 0) - f; if (open > 1e-6) lots[a].push({ i: 0, q: open, p: px[0], s: 'old' }); }
+    const bandOf = (l, i) => (l.s === 'old' || l.s === 'unk' ? l.s : DEEP.ages.find((x) => i - l.i <= x[0])[1]);
+    const snap = (i) => { const p = px[i], b = { old: 0, unk: 0, lp: 0 }; for (const x of DEEP.ages) b[x[1]] = 0; let tot = 0, val = 0, up = 0;
+      for (const a of addrs) { for (const l of lots[a]) { b[bandOf(l, i)] += l.q; tot += l.q; val += l.q * l.p; if (l.p < p) up += l.q; } for (const l of pooled[a]) b.lp += l.q; }
+      return { b, tot, val, up, all: tot + b.lp }; };
+    const out = [], raw = []; let prevTot = 0, forced = 0;
+    for (let i = 0; i < rows.length; i++) {
+      const day = rows[i].date, p = px[i]; let sold = 0, matched = 0, num = 0, den = 0, above = 0, cd = 0, movers = 0, sellers = 0, buyers = 0, recv = 0, fresh = 0, tin = 0, tout = 0;
+      // ① 들어온 것: 보상 · 산 것 · 풀에서 뺀 것 · 보는 지갑 밖(회사 계정 등)에서 옮겨 받은 것
+      for (const a of addrs) { const c = Wd[a][day]; if (!c) continue; const L = lots[a];
+        if (c[0] > 0) { L.push({ i, q: c[0], p, s: day === C.NOW_FROM ? 'old' : 'paid' }); recv++; }       // 10/26 재지급분은 그 전부터 들고 있던 물량
+        if (c[1] > 0) { L.push({ i, q: c[1], p: c[2] > 0 ? c[2] / c[1] : p, s: 'buy' }); buyers++; }
+        if (c[6] > 0) { const left = take(pooled[a], c[6], (t, l) => { L.push({ i: l.i, q: t, p: l.p, s: l.s }); }); if (left > 1e-9) L.push({ i, q: left, p, s: 'in' }); } }
+      for (const m of moves[i]) if (!m.a && m.b) { lots[m.b].push({ i, q: m.q, p, s: 'in' }); tin += m.q; }
+      // ② 지갑끼리 옮긴 것: 묶음째 따라간다(받은 날 · 받은 때 값 그대로). 보낸 쪽 묶음이 모자라면 한 바퀴 더 돌려 본다
+      let todo = moves[i].filter((m) => m.a && m.b);
+      for (let pass = 0; pass < 4 && todo.length; pass++) { const rest = []; for (const m of todo) { if (have(m.a) + 1e-6 < m.q && pass < 3) { rest.push(m); continue; }
+        const left = take(lots[m.a], m.q, (t, l) => { lots[m.b].push({ i: l.i, q: t, p: l.p, s: l.s }); }); if (left > 1e-6) { lots[m.b].push({ i, q: left, p, s: 'unk' }); forced += left; } } todo = rest; }
+      // ③ 나간 것: 판 것 · 풀에 넣은 것 · 보는 지갑 밖으로 보낸 것
+      for (const a of addrs) { const c = Wd[a][day]; if (!c) continue; const L = lots[a];
+        if (c[3] > 0) { const sp = c[4] > 0 ? c[4] / c[3] : p; const left = take(L, c[3], (t, l) => { matched += t; num += t * sp; den += t * l.p; if (sp > l.p) above += t; cd += t * (i - l.i); }); forced += Math.max(left, 0); sold += c[3]; sellers++; }
+        if (c[5] > 0) { const left = take(L, c[5], (t, l) => { pooled[a].push({ i: l.i, q: t, p: l.p, s: l.s }); }); if (left > 1e-6) { pooled[a].push({ i, q: left, p, s: 'unk' }); forced += left; } }   // 풀에 넣은 양은 판 것이 아니다
+        if (c[1] > 0 || c[3] > 0 || c[5] > 0 || c[6] > 0) movers++;
+        if (day > C.NOW_FROM && startOf(a) === day) fresh++; }
+      for (const m of moves[i]) if (m.a && !m.b) { forced += Math.max(take(lots[m.a], m.q, null), 0); tout += m.q; }
+      const sn = snap(i); raw.push({ num, den, matched, above, cd, sold });
+      const o = { date: day, partial: !!rows[i].partial, price: rows[i].price_rlusd || null, total: r0(sn.all), cost: sn.tot > 0 ? r4(sn.val / sn.tot) : null, ratio: sn.val > 0 ? r3(p * sn.tot / sn.val) : null, above: sn.tot > 0 ? r3(sn.up / sn.tot) : null,
+        sold: r0(sold), sold_ratio: den > 0 && matched >= 1 ? r3(num / den) : null, sold_above: matched >= 1 ? r3(above / matched) : null, sold_age: matched >= 1 ? Math.round(cd / matched * 10) / 10 : null,
+        movers, sellers, buyers, receivers: recv, fresh, moved_in: r0(tin), moved_out: r0(tout), turnover: prevTot > 0 ? r4(sold / prevTot) : null };
+      for (const k of Object.keys(sn.b)) o[k] = r0(sn.b[k]);
+      out.push(o); prevTot = sn.tot;
+    }
+    // 맞춰 보기: 쌓은 묶음의 합과 실제 잔액. 어긋난 만큼만 덜거나 「기록 밖」으로 더한다
+    const last = rows.length - 1; let drift = 0, actual = 0, holders = 0;
+    for (const a of addrs) { const bal = Math.max(g2(S.bal, a), 0), m = have(a); actual += bal; if (bal >= 1) holders++;
+      if (m > bal + 1e-6) { drift += m - bal; take(lots[a], m - bal, null); } else if (bal > m + 1e-6) { drift += bal - m; lots[a].push({ i: last, q: bal - m, p: px[last], s: 'unk' }); } }
+    const fin = snap(last), keys = ['lp', 'old'].concat(DEEP.ages.map((x) => x[1]).reverse(), ['unk']), names = { lp: '풀에 넣어 둔 물량', old: '10/26 이전부터 보유(재지급분 포함)', unk: '기록이 맞지 않는 물량' }; for (const x of DEEP.ages) names[x[1]] = x[2];
+    { const o = out[last]; for (const k of Object.keys(fin.b)) o[k] = r0(fin.b[k]); o.total = r0(fin.all); o.cost = fin.tot > 0 ? r4(fin.val / fin.tot) : null; o.ratio = fin.val > 0 ? r3(px[last] * fin.tot / fin.val) : null; o.above = fin.tot > 0 ? r3(fin.up / fin.tot) : null; }
+    const now = { total: r0(fin.all), in_wallets: r0(fin.tot), holders, price: r4(px[last]), cost: fin.tot > 0 ? r4(fin.val / fin.tot) : null, ratio: fin.val > 0 ? r3(px[last] * fin.tot / fin.val) : null, above: fin.tot > 0 ? r3(fin.up / fin.tot) : null,
+      bands: keys.filter((k) => out.some((o) => o[k] > 0)).map((k) => ({ key: k, name: names[k], amount: r0(fin.b[k]), share: fin.all > 0 ? r3(fin.b[k] / fin.all) : null })) };
+    // 최근 7일(다 찬 날)과 직전 7일
+    const fullI = rows.map((r, i) => (r.partial ? -1 : i)).filter((i) => i >= 0), w7 = fullI.slice(-7), p7 = fullI.slice(-14, -7);
+    const agg = (ii) => { const t = { num: 0, den: 0, matched: 0, above: 0, cd: 0, sold: 0, movers: 0, fresh: 0, n: ii.length }; for (const i of ii) { for (const k of ['num', 'den', 'matched', 'above', 'cd', 'sold']) t[k] += raw[i][k]; t.movers += out[i].movers; t.fresh += out[i].fresh; } return t; };
+    const A = agg(w7), P = agg(p7);
+    const week = { from: w7.length ? rows[w7[0]].date : null, to: w7.length ? rows[w7[w7.length - 1]].date : null, sold: r0(A.sold), ratio: A.den > 0 ? r3(A.num / A.den) : null, above: A.matched >= 1 ? r3(A.above / A.matched) : null, age: A.matched >= 1 ? Math.round(A.cd / A.matched * 10) / 10 : null,
+      prev_ratio: P.den > 0 ? r3(P.num / P.den) : null, prev_age: P.matched >= 1 ? Math.round(P.cd / P.matched * 10) / 10 : null, movers: A.n ? Math.round(A.movers / A.n * 10) / 10 : null, prev_movers: P.n === 7 ? Math.round(P.movers / P.n * 10) / 10 : null, fresh: A.fresh, prev_fresh: P.n === 7 ? P.fresh : null };
+    // 크기별 보유와, 최근 7일 늘린 지갑 · 줄인 지갑(옮겨 받거나 보낸 것도 친다)
+    const w7set = {}; for (const i of w7) w7set[i] = 1; const d7 = {}; for (const a of addrs) { let v = 0; for (const i of w7) { const c = Wd[a][rows[i].date]; if (c) v += c[0] + c[1] + c[6] - c[3] - c[5]; } d7[a] = v; }
+    for (const i of w7) for (const m of moves[i]) { if (m.a) d7[m.a] -= m.q; if (m.b) d7[m.b] += m.q; }
+    const sz = {}; for (const x of DEEP.sizes) sz[x[1]] = { key: x[1], name: x[2], wallets: 0, balance: 0, up: 0, down: 0, flat: 0, up_amt: 0, down_amt: 0 };
+    let upAll = 0, downAll = 0, nUp = 0, nDown = 0;
+    for (const a of addrs) { const bal = Math.max(g2(S.bal, a), 0), v = d7[a] || 0; if (bal < 1 && Math.abs(v) <= 1) continue; const o = sz[DEEP.sizes.find((x) => bal < x[0])[1]];
+      if (bal >= 1) { o.wallets++; o.balance += bal; } if (v > 1) { o.up++; o.up_amt += v; upAll += v; nUp++; } else if (v < -1) { o.down++; o.down_amt -= v; downAll -= v; nDown++; } else if (bal >= 1) o.flat++; }
+    const szRows = DEEP.sizes.map((x) => sz[x[1]]), nW = szRows.reduce((t, o) => t + o.wallets, 0), nB = szRows.reduce((t, o) => t + o.balance, 0);
+    for (const o of szRows) { o.wallets_share = nW ? r3(o.wallets / nW) : null; o.balance_share = nB > 0 ? r3(o.balance / nB) : null; o.score = o.up_amt + o.down_amt > 0 ? Math.round(o.up_amt / (o.up_amt + o.down_amt) * 100) / 100 : null; o.balance = r0(o.balance); o.up_amt = r0(o.up_amt); o.down_amt = r0(o.down_amt); }
+    const acc = { score: upAll + downAll > 0 ? Math.round(upAll / (upAll + downAll) * 100) / 100 : null, up: nUp, down: nDown, up_amt: r0(upAll), down_amt: r0(downAll) };
+    // 요약 문장: 기록에 있는 사실과 산수만
+    const n = (x) => Math.round(x).toLocaleString('en-US'), p1 = (x) => (x * 100).toFixed(1) + '%', f4 = (x) => Number(x).toFixed(4), notes = [], bd = (k) => now.bands.find((x) => x.key === k) || { amount: 0, share: 0 }, big = szRows[szRows.length - 1];
+    if (now.total >= 1) notes.push('지갑과 풀에 있는 ' + n(now.total) + '개 가운데 ' + p1(bd('b7').share) + '가 받은 지 7일이 안 된 물량, ' + p1(bd('old').share) + '가 10/26 이전부터 들고 있던 물량(재지급분 포함), ' + p1(bd('lp').share) + '가 풀에 넣어 둔 물량이다.');
+    if (now.cost) notes.push('지갑에 든 물량의 평균 취득가(받은 날 값 기준)는 ' + f4(now.cost) + ' RLUSD, 지금 값은 ' + f4(now.price) + ' RLUSD다 — 지금 값이 평균 취득가의 ' + p1(now.ratio) + '. 그 물량의 ' + p1(now.above) + '가 받은 때보다 높은 값에 있다.');
+    if (week.ratio !== null) notes.push('최근 7일 판 ' + n(week.sold) + '개는 받은 때 값의 ' + week.ratio.toFixed(3) + '배에 팔렸고' + (week.prev_ratio !== null ? '(직전 7일 ' + week.prev_ratio.toFixed(3) + '배)' : '') + ', 평균 ' + week.age + '일 들고 있던 물량이다' + (week.prev_age !== null ? '(직전 7일 ' + week.prev_age + '일)' : '') + '.' + (week.age !== null && week.age <= 2 ? ' 받은 지 얼마 안 된 물량이 바로 나오는 흐름이다.' : week.prev_age !== null && week.age >= week.prev_age + 3 ? ' 오래 들고 있던 물량이 나오기 시작했다.' : ''));
+    if (big && big.wallets) notes.push(big.name + ' 지갑 ' + big.wallets + '곳이 지갑에 든 물량의 ' + p1(big.balance_share) + '를 들고 있다.' + (acc.score !== null ? ' 최근 7일 잔액을 늘린 지갑 ' + acc.up + '곳(' + n(acc.up_amt) + '개) · 줄인 지갑 ' + acc.down + '곳(' + n(acc.down_amt) + '개) — 늘린 물량 비중 ' + acc.score.toFixed(2) + '.' : ''));
+    if (week.movers !== null) notes.push('스스로 움직인(사거나 팔거나 풀에 넣고 뺀) 지갑은 하루 평균 ' + week.movers + '곳' + (week.prev_movers !== null ? '(직전 7일 ' + week.prev_movers + '곳)' : '') + ', 새로 들어온 지갑은 7일 동안 ' + week.fresh + '곳' + (week.prev_fresh !== null ? '(직전 7일 ' + week.prev_fresh + '곳)' : '') + '이다.');
+    const limits = ['「받은 때 값」은 보상을 받은 날 · 옮겨 받은 날의 마감 값(산 물량은 실제로 낸 값)이다. 보상은 돈을 내고 받은 것이 아니므로 손익이 아니라 받은 때와 지금의 값 차이로 읽는다.',
+      '판 것은 오래된 물량부터 나간 것으로 본다(선입선출 — 가정). 지갑끼리 옮긴 물량은 받은 날과 값을 그대로 갖고 간다. 쌓은 기록과 실제 잔액이 어긋난 양은 잔액의 ' + (actual > 0 ? p1(drift / actual) : '—') + '다.',
+      '10/26 이전부터 들고 있던 물량(재지급분 포함)은 받은 날을 알 수 없어 따로 묶었고, 값은 새 풀이 열린 날 값으로 매겼다. 지난 기록을 정리한 값이고 앞날을 내다보는 값이 아니다.'];
+    return { from: rows[0].date, to: rows[last].date, bands: now.bands.map((x) => ({ key: x.key, name: x.name })), now, week, sizes: szRows, acc, days: out, notes, limits, quality: { drift: actual > 0 ? r4(drift / actual) : null, forced: r0(forced) },
+      bench: DEEP.bench.map((x) => ({ metric: x[0], site: x[1], ours: x[2], status: x[3], note: x[4] })) };
+  };
+  let deep = null; try { deep = buildDeep(); } catch (_) { deep = null; }
   // ── 건강 신호 · 선순환 고리 · 그날 요약
   const buildHealth = (cut) => {
     const H = HEALTH, allDays = daily.filter((r) => !r.partial && r.date >= C.POOL_OPEN), fullDays = cut ? allDays.slice(0, -cut) : allDays;
@@ -1152,6 +1274,7 @@ function buildDatasets(S, opts) {
   const out = { summary: [summary], daily, ranges, positions, dayTop, walletDays };
   if (health) out.health = health;
   if (market) out.market = market;
+  if (deep) out.deep = deep;
   if (lpShares.length) out.lpShares = lpShares;
   if (opts.showBefore) {
     const sumB = (aa, key) => aa.reduce((t, a) => t + g2(B[key], a), 0);
