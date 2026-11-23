@@ -3,14 +3,16 @@
 const core = require('./core');
 const xrpl = require('./xrpl');
 const store = require('./store');
+const trace = require('./trace');
 const { fetchExt, fetchHistory } = require('./ext');
 const bundled = require('./snapshot-state.json');
 
 const SHOW_BEFORE = process.env.SHOW_BEFORE === '1';   // 이전 풀 기간(10/2~24) 표를 화면에 낼지
 const SHOW_ADDR = process.env.SHOW_ADDR === '1';       // 지갑 전체 주소를 응답에 넣을지(지갑 따라가 보기에서 원장 탐색기 링크가 열린다)
 
+// opts.range = 날짜를 직접 정한 기간 · opts.daily = 매일 예약 실행(부정 쪽 지갑 자금 흐름을 새로 받기 시작한다)
 async function run(opts) {
-  const info = { storage: 'bundled' };
+  const info = { storage: 'bundled' }, t0 = Date.now();
   let S = null;
   try {
     const got = await store.load();
@@ -18,6 +20,7 @@ async function run(opts) {
   } catch (e) { info.storage_error = String((e && e.message) || e).slice(0, 160); }
   if (!S) S = JSON.parse(JSON.stringify(bundled));
   if (!S.fund && bundled.fund) S.fund = JSON.parse(JSON.stringify(bundled.fund));   // 예전에 저장한 상태에는 판매 대금 기록이 없다
+  if (bundled.trace && (!S.trace || !S.trace.day || (!S.trace.job && S.trace.day < bundled.trace.day))) S.trace = JSON.parse(JSON.stringify(bundled.trace));   // 자금 흐름 기록: 배포에 든 것이 더 새것이면 그것부터
 
   const ext = await fetchExt().catch(() => null);
   core.setLabels(S, ext);
@@ -41,7 +44,18 @@ async function run(opts) {
     // 판매 대금 기록(operations 계정 내역)도 같은 원장까지 이어 받는다. 못 받으면 그 고리만 「자료 없음」이 된다.
     try { const f = await xrpl.updateFund(S, { budgetMs: 10000 }); info.fund = { fetched: f.fetched, complete: f.complete }; if (f.changed) info.fund_changed = true; } catch (e) { info.fund_error = String((e && e.message) || e).slice(0, 120); }
     if (u.complete && (u.changed || !S.live)) { try { info.live = await xrpl.fetchLive(S, { budgetMs: 8000 }); } catch (e) { info.live_error = String((e && e.message) || e).slice(0, 120); } }
-    if (store.enabled() && (u.changed || info.live || info.fund_changed || mktChanged)) {
+    // 부정 쪽 지갑 자금 흐름(하루 한 번). 이어 받으려면 저장소가 있어야 하므로 저장소가 있을 때만 새로 받는다 — 없으면 배포에 든 기록을 쓴다.
+    //   새 날의 일은 예약 실행(opts.daily)이 시작한다. 화면 요청은 하다 만 것만 잠깐 잇고, 기록이 이틀 넘게 묵었을 때만 대신 시작한다(예약 실행이 빠진 경우)
+    let trChanged = false;
+    if (store.enabled() && u.complete) {
+      try {
+        const daily = !!(opts && opts.daily), today = core.kday(Math.floor(Date.now() / 1000) - 946684800);
+        const old = !S.trace || !S.trace.day || (Date.parse(today) - Date.parse(S.trace.day)) / 86400000 >= 2;
+        const budget = Math.min(daily ? 30000 : 5000, 52000 - (Date.now() - t0));
+        if (budget >= 2000) { const t = await trace.update(S, { budgetMs: budget, start: daily || old }); trChanged = !!t.changed; info.trace = { fetched: t.fetched, done: t.done, left: t.left || 0 }; }
+      } catch (e) { info.trace_error = String((e && e.message) || e).slice(0, 120); }
+    }
+    if (store.enabled() && (u.changed || info.live || info.fund_changed || mktChanged || trChanged)) {
       try { info.saved = await store.save(S); } catch (e) { info.storage_error = String((e && e.message) || e).slice(0, 160); }
     }
   } catch (e) {

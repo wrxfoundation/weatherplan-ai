@@ -2,7 +2,7 @@
 // 배포에 넣을 출발 상태를 지금 원장까지 당겨 놓는다(로컬에서 실행, 인터넷 필요).
 //   node scripts/refresh-snapshot.js
 const fs = require('fs'), path = require('path');
-const core = require('../lib/core'), xrpl = require('../lib/xrpl');
+const core = require('../lib/core'), xrpl = require('../lib/xrpl'), trace = require('../lib/trace');
 const { fetchExt, fetchHistory } = require('../lib/ext');
 const FILE = path.join(__dirname, '../lib/snapshot-state.json');
 (async () => {
@@ -16,6 +16,10 @@ const FILE = path.join(__dirname, '../lib/snapshot-state.json');
   const live = u.complete ? await xrpl.fetchLive(S, { budgetMs: 20000 }) : null;
   // 시장 비교 자료(주요 코인 10종 · 전체 시장)
   if (core.pickMarket(S, ext)) { if (S.mkt) S.mkt.tried = 0; const need = core.marketNeeds(S); if (need) { const got = await fetchHistory(need); for (const x of need) core.mergeHistory(S, x.sym, got[x.id]); S.mkt.tried = 0; } }
+  // 부정 쪽 지갑 자금 흐름(유입 전 · 행선지 3단계)을 끝까지 새로 받는다
+  const tr = await trace.update(S, { budgetMs: 240000, force: true });
+  console.log(JSON.stringify({ trace: tr, roots: (S.trace.roots || []).length, accounts: Object.keys(S.trace.nodes || {}).length }));
+  if (!tr.done) throw new Error('자금 흐름을 끝까지 받지 못했습니다 — 다시 실행해 주세요');
   fs.writeFileSync(FILE, JSON.stringify(S));
   const out = core.buildDatasets(JSON.parse(JSON.stringify(S)), {});
   fs.writeFileSync(path.join(__dirname, '../public/snapshot.json'), JSON.stringify(Object.assign({ ok: true, generated_at: null, ledger: S.ledger, info: { storage: 'snapshot' } }, out)));

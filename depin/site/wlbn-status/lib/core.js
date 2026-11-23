@@ -63,6 +63,16 @@ const ST = { ok: '좋음', warn: '지켜봄', bad: '주의', na: '자료 없음'
 // 카드 · 계좌로 다시 산 것은 원장에 없으므로, 그렇게 다시 산 지갑은 「부담」으로 잘못 보일 수 있다.
 const IMPACT = { hold: 0.5, dump: 0.9, back: 0.1, lp: 100 };
 const IMPACT_NAME = { help: '도움', mid: '중간', load: '부담' };
+// 부정 쪽(부담) 지갑 자금 흐름 추적(lib/trace.js 가 하루 한 번 받아 S.trace 에 둔다 · 정리는 buildTrace)
+//   depth: 지갑이 보낸 곳을 몇 단계까지 읽나(0 = 부정 쪽 지갑 · 1 · 2단계 계정의 내역을 읽으면 3단계 행선지까지 보인다)
+//   pages: 단계별로 계정 하나에서 읽는 쪽 수(한 쪽 200건 — 넘으면 「거래가 많은 계정」) · keep: 계정마다 남기는 상대 수
+//   min: 이 값(RLUSD 환산) 미만으로 보낸 곳은 더 따라가지 않는다 · caps: 단계별로 읽는 계정 수 상한
+//   funders: 처음 채운 곳 · 돈을 보내 준 곳 가운데 「거래가 많은 계정」인지 살피는 수 · inMin: 이 값 이상 보내 준 곳만 살핀다
+const TRACE = { depth: 3, pages: [10, 2, 2], keep: 12, conc: 6, min: 5, caps: [0, 30, 24], funders: 40, inMin: 50 };
+const TRACE_KIND = { exch: '거래소 입금으로 보이는 주소', hub: '거래가 많은 계정', ours: '우리 표의 다른 지갑', root: '다른 부정 쪽 지갑', company: '회사 표시 계정', other: '그 밖의 지갑', kept: '받은 지갑에 머묾', back: '보낸 지갑으로 되돌아옴', pool: '풀', issuer: '발행 계정' };
+const TRACE_ORIGIN = { reward: '보상으로 받음', bought: '풀에서 삼', moved: '다른 지갑에서 옮겨 받음', none: '기록 없음' };
+const TRACE_SIDE = { help: '긍정 쪽', mid: '보통', load: '부정 쪽' };      // 화면은 다섯 단계로 보여 주므로 글에서는 쪽으로만 부른다
+const TRACE_ORDER = ['exch', 'hub', 'ours', 'root', 'company', 'kept', 'other', 'back', 'pool', 'issuer'];
 // 원장으로 볼 수 없는 것. 화면 곳곳의 「집계 한계」 글이 이 문장을 쓴다.
 const LIMIT_CARD = '카드 · 계좌로 결제한 기기와 이용권은 원장에 기록되지 않는다. 여기서 「판매 대금」은 RLUSD로 결제된 것만이라 실제 판매보다 적다.';
 
@@ -485,6 +495,7 @@ function buildDatasets(S, opts) {
   const acctLabel = (a) => labelName(L[a]) + (perLabel[L[a]] > 1 ? ' ' + short(a) : '');
   const tagged = (owner, label) => ({ owner, label, full: OWN[owner] + ' ' + label });
   // to 를 주면 그날까지만 센다(날짜를 직접 정한 기간 — 14차). 잔액 · 「지금」이 붙은 값은 어느 기간이든 지금 값이다
+  const ROW = {};      // 주소 → 지갑 줄(전체 기간). 자금 흐름 정리(buildTrace)가 쓴다
   const mkRange = (key, from, to) => {
     if (from < C.NOW_FROM) from = C.NOW_FROM;
     if (!to || to > lastDay) to = lastDay;
@@ -558,6 +569,7 @@ function buildDatasets(S, opts) {
       };
       if (g === 'bot') { row.owner = 'wellbian'; row.label = 'bot 계정'; }
       if (opts.showAddr) row.addr = a;
+      if (key === 'all') ROW[a] = row;
       wallets.push(row);
     }
     wallets.sort((x, y) => (y.sold - x.sold) || (y.paid - x.paid));
@@ -1296,7 +1308,212 @@ function buildDatasets(S, opts) {
   const walletDays = { days, w: {} };
   for (const id of Object.keys(wd)) walletDays.w[id] = Object.keys(wd[id]).map((i) => wd[id][i].map(r0)).sort((x, y) => x[0] - y[0]);
 
+
+  // ── 부정 쪽(부담) 지갑의 자금 흐름: 유입 전(어디서 왔나) · 행선지(어디로 갔나 — 3단계까지) ──
+  //   · 원장 내역은 lib/trace.js 가 하루 한 번 받아 S.trace 에 둔다. 여기서는 정리 · 분류만 한다. 전체 기간 기준
+  //   · 유입 전: WLBN 이 어디서 왔나(보상 · 풀에서 삼 · 다른 지갑에서 옮겨 받음 — 지금 풀이 열리기 전 기록까지) + 계정을 만든(처음 채운) 곳 + 기간에 받은 송금
+  //   · 받은 만큼만 따라가기: 중간 지갑이 보낸 돈은 「그 지갑이 받은 금액」까지만, 보낸 곳 비율대로 나눠 따라간다. 덜 보냈으면 남은 만큼은 「받은 지갑에 머묾」
+  //   · 끝나는 곳: 목적지 태그가 붙는 주소(거래소 입금 꼴) · 거래가 많은 계정 · 회사 표시 계정 · 우리 표의 지갑 · 3단계
+  const buildTrace = () => {
+    const tr = S.trace; if (!tr || !tr.day || !tr.roots || !tr.roots.length) return null;
+    const ND = tr.nodes || {}, isRoot = {}, TAG = {}, r1 = (x) => Math.round(x * 10) / 10;
+    tr.roots.forEach((a) => { isRoot[a] = 1; });
+    for (const a of Object.keys(ND)) for (const b of Object.keys(ND[a].out || {})) if (ND[a].out[b][2] > 0) TAG[b] = 1;
+    const who = (a, self) => {
+      let kind = 'other', name = '';
+      if (L[a]) { kind = 'company'; name = tagged(labelOwner(L[a]), labelName(L[a])).full; }
+      else if (a === C.ISSUER) kind = 'issuer';
+      else if (isAmm(a)) kind = 'pool';
+      else if (TAG[a]) kind = 'exch';
+      else if (isRoot[a] && a !== self) { kind = 'root'; name = ROW[a] ? ROW[a].type_name : ''; }
+      else if (ROW[a] && a !== self) { kind = 'ours'; name = ROW[a].type_name; }
+      else if (ND[a] && ND[a].more) kind = 'hub';
+      const o = { id: short(a), kind, name: name || TRACE_KIND[kind] };
+      if (kind === 'ours' || kind === 'root') o.impact = ROW[a] ? ROW[a].impact : null;
+      if (opts.showAddr) o.addr = a;
+      return o;
+    };
+    const rows = [], endTot = {}, endW = {}, hopTot = {}, hopW = {}, FUND = {}, links = [], toCo = {}, orig = { reward: [0, 0], bought: [0, 0], moved: [0, 0], none: [0, 0] };
+    let took = 0, sent = 0, sx = 0, sr = 0, sw = 0, sentW = 0, quietW = 0, inX = 0, inR = 0, failed = 0, partial = 0;
+    const srcSum = { paid: 0, bought: 0, moved: 0, before_paid: 0, before_bought: 0, before_moved: 0 };
+    const movedIn = {}, sentTo = {};      // 받은 곳 → { 보낸 곳: WLBN 양 }(풀이 열린 뒤 지갑 사이 이동) · 받은 곳 → [WLBN 을 보낸 적 있는 곳](전 기간)
+    for (const key of Object.keys(S.tf || {})) { const p = key.split('|'); if (p[0] < C.NOW_FROM || !p[1] || !p[2] || !isRoot[p[2]]) continue; add(movedIn[p[2]] || (movedIn[p[2]] = {}), p[1], S.tf[key]); }
+    for (const s of Object.keys(S.edges || {})) for (const a of Object.keys(S.edges[s])) if (isRoot[a] && s !== C.OPS) (sentTo[a] || (sentTo[a] = [])).push(s);
+    for (const a of tr.roots) {
+      const w = ROW[a], n = ND[a];
+      if (!w) continue;
+      const row = { id: short(a), wallet: w.wallet, type_name: w.type_name, impact: w.impact, took: r0(w.took_rlusd || 0), sold: w.sold, paid: w.paid, bought: w.bought, balance: w.balance };
+      if (opts.showAddr) row.addr = a;
+      // 유입 전 ① WLBN 출처
+      const mi = movedIn[a] || {}, miSum = Object.keys(mi).reduce((t, b) => t + mi[b], 0), bp = g2(B.paid, a), bb = g2(B.bought, a), bm = g2(B.tin, a);
+      const by = { reward: w.paid + bp, bought: w.bought + bb, moved: miSum + bm }, ok = ['reward', 'bought', 'moved'].sort((x, y) => by[y] - by[x])[0], origin = by[ok] >= 0.5 ? ok : 'none';
+      const fromIds = {}; for (const b of Object.keys(mi).filter((x) => mi[x] >= 0.5).sort((x, y) => mi[y] - mi[x])) fromIds[b] = mi[b]; for (const b of sentTo[a] || []) if (!(b in fromIds)) fromIds[b] = 0;
+      row.src = { origin, origin_name: TRACE_ORIGIN[origin], paid: r0(w.paid), bought: r0(w.bought), moved: r0(miSum), before_paid: r0(bp), before_bought: r0(bb), before_moved: r0(bm),
+        from: Object.keys(fromIds).slice(0, 5).map((b) => Object.assign(who(b, a), { wlbn: r0(fromIds[b]) })) };
+      srcSum.paid += w.paid; srcSum.bought += w.bought; srcSum.moved += miSum; srcSum.before_paid += bp; srcSum.before_bought += bb; srcSum.before_moved += bm;
+      orig[origin][0] += 1; orig[origin][1] += w.took_rlusd || 0; took += w.took_rlusd || 0;
+      if (!n || n.err) { row.err = true; failed += 1; row.sent = 0; row.hop1 = []; row.ends = []; row.chains = []; row.ins = []; row.funder = null; row.main = null; rows.push(row); continue; }
+      if (n.more) { row.partial = true; partial += 1; }
+      row.txs = n.n;
+      // 유입 전 ② 기간에 받은 송금(XRP · RLUSD · WLBN) ③ 계정을 만든 곳
+      const inKeys = Object.keys(n.in || {});
+      row.ins = inKeys.filter((b) => n.in[b][0] >= 1).slice(0, 5).map((b) => { const v = n.in[b]; return Object.assign(who(b, a), { v: r0(v[0]), n: v[1], xrp: r1(v[2]), rlusd: r1(v[3]), wlbn: r0(v[4]) }); });
+      const ix = inKeys.filter((b) => !L[b]).reduce((t, b) => t + n.in[b][2], 0), ir = inKeys.filter((b) => !L[b]).reduce((t, b) => t + n.in[b][3], 0);
+      row.in_xrp = r1(ix); row.in_rlusd = r1(ir); inX += ix; inR += ir;
+      if (n.first) {
+        const f = n.first[0], fo = who(f, a);
+        row.funder = Object.assign({}, fo, { xrp: n.first[1], day: n.first[2], back: n.out && n.out[f] ? r0(n.out[f][0]) : 0 });
+        (FUND[f] || (FUND[f] = { who: fo, ids: [] })).ids.push(row.id);
+      } else row.funder = null;
+      // 행선지: 1단계(직접 보낸 곳) → 받은 만큼만 2 · 3단계
+      const ends = {}, chains = [], end = (kind, v, path) => { if (!(v >= 0.005)) return; add(ends, kind, v); if (path && path.length) chains.push({ v, end: kind, path }); };
+      const follow = (b, v, hop, path, seen) => {
+        const k = path[path.length - 1].kind;
+        if (k !== 'other') return end(k, v, path);
+        const m = ND[b];
+        if (hop >= TRACE.depth || !m || m.err || m.d < 0) return end('other', v, path);
+        const mt = m.tot ? m.tot[0] : 0, pass = Math.min(v, mt);
+        if (v - pass >= 0.005) end('kept', v - pass, path);
+        if (!(pass >= 0.005) || !(mt > 0)) return;
+        let used = 0;
+        for (const c of Object.keys(m.out)) {
+          const part = pass * m.out[c][0] / mt; used += part;
+          if (c === a || seen.indexOf(c) >= 0) { end('back', part, path); continue; }
+          follow(c, part, hop + 1, path.concat([who(c, a)]), seen.concat([c]));
+        }
+        if (pass - used >= 0.005) end('other', pass - used, path);
+      };
+      const tot = n.tot || [0, 0, 0, 0], outs = Object.keys(n.out || {});
+      row.sent = r0(tot[0]); row.sent_n = tot[1];
+      row.sent_xrp = r1(outs.reduce((t, b) => t + n.out[b][3], 0)); row.sent_rlusd = r1(outs.reduce((t, b) => t + n.out[b][4], 0)); row.sent_wlbn = r0(outs.reduce((t, b) => t + n.out[b][5], 0));
+      const h1 = {}; let listed = 0;
+      row.hop1 = outs.map((b) => {
+        const v = n.out[b], o = who(b, a); listed += v[0]; add(h1, o.kind, v[0]);
+        follow(b, v[0], 1, [o], [b]);
+        if ((o.kind === 'ours' || o.kind === 'root') && v[0] >= TRACE.min) links.push({ from: row.id, from_type: w.type_name, to: o.id, to_type: o.name, to_kind: o.kind, to_impact: o.impact, to_impact_name: o.impact ? TRACE_SIDE[o.impact] : '', v: r0(v[0]), wlbn: r0(v[5]) });
+        if (o.kind === 'company' && v[0] >= TRACE.min) { const c = toCo[b] || (toCo[b] = { name: o.name, v: 0, xrp: 0, rlusd: 0, wlbn: 0, ids: [] }); c.v += v[0]; c.xrp += v[3]; c.rlusd += v[4]; c.wlbn += v[5]; c.ids.push(row.id); }
+        return Object.assign({}, o, { v: r0(v[0]), n: v[1], tag: v[2], xrp: r1(v[3]), rlusd: r1(v[4]), wlbn: r0(v[5]) });
+      });
+      if (tot[0] - listed >= 0.5) { add(h1, 'other', tot[0] - listed); end('other', tot[0] - listed, null); }
+      row.hop1 = row.hop1.slice(0, 8);
+      row.to_company = r0(h1.company || 0);
+      row.ends = TRACE_ORDER.filter((k) => ends[k] >= 0.5).map((k) => ({ key: k, name: TRACE_KIND[k], v: r0(ends[k]), share: tot[0] > 0 ? r3(ends[k] / tot[0]) : null })).sort((x, y) => y.v - x.v);
+      row.main = row.ends.length ? row.ends[0].key : null;
+      row.chains = chains.filter((c) => c.v >= 1).sort((x, y) => y.v - x.v).slice(0, 6).map((c) => ({ v: r0(c.v), end: c.end, end_name: TRACE_KIND[c.end], path: c.path.map((p) => ({ id: p.id, kind: p.kind, name: p.name })) }));
+      row.reach = row.chains.reduce((t, c) => Math.max(t, c.path.length), 0);
+      if (tot[0] >= 1) { sentW += 1; sent += tot[0]; sx += row.sent_xrp; sr += row.sent_rlusd; sw += row.sent_wlbn; for (const k of Object.keys(ends)) { add(endTot, k, ends[k]); if (ends[k] >= 1) add(endW, k, 1); } for (const k of Object.keys(h1)) { add(hopTot, k, h1[k]); if (h1[k] >= 1) add(hopW, k, 1); } }
+      else quietW += 1;
+      rows.push(row);
+    }
+    if (!rows.length) return null;
+    rows.sort((x, y) => (y.took - x.took) || (y.sent - x.sent));
+    const mix = (tot, cnt) => TRACE_ORDER.filter((k) => tot[k] >= 0.5).map((k) => ({ key: k, name: TRACE_KIND[k], v: r0(tot[k]), share: sent > 0 ? r3(tot[k] / sent) : null, wallets: cnt[k] || 0 })).sort((x, y) => y.v - x.v);
+    const endMix = mix(endTot, endW), hopMix = mix(hopTot, hopW);
+    // 계정을 만든 곳: 회사 계정이 열어 준 지갑 / 거래소 · 서비스로 보이는 주소 / 우리 표의 지갑 / 그 밖. 회사 계정이 아닌 같은 주소가 두 곳 이상을 채웠으면 한 묶음(같은 주인일 수 있다)
+    const funders = Object.keys(FUND).map((f) => ({ id: FUND[f].who.id, kind: FUND[f].who.kind, name: FUND[f].who.name, impact: FUND[f].who.impact || null, wallets: FUND[f].ids.length, ids: FUND[f].ids })).sort((x, y) => y.wallets - x.wallets);
+    const fKnown = funders.reduce((t, f) => t + f.wallets, 0), fKinds = {}; for (const f of funders) add(fKinds, f.kind, f.wallets);
+    const fShared = funders.filter((f) => f.kind !== 'company' && f.wallets >= 2), fOurs = funders.filter((f) => f.kind === 'ours' || f.kind === 'root');
+    const companyTo = Object.keys(toCo).map((b) => ({ name: toCo[b].name, v: r0(toCo[b].v), xrp: r0(toCo[b].xrp), rlusd: r0(toCo[b].rlusd), wlbn: r0(toCo[b].wlbn), wallets: toCo[b].ids.length, ids: toCo[b].ids })).sort((x, y) => y.v - x.v);
+    links.sort((x, y) => y.v - x.v);
+    const nowLoad = ranges.all.wallets.filter((w) => w.impact === 'load').length, stillLoad = rows.filter((r) => r.impact === 'load').length;
+    const share = (k, list) => { const o = list.find((x) => x.key === k); return o ? o.share || 0 : 0; }, val = (k, list) => { const o = list.find((x) => x.key === k); return o ? o.v : 0; }, cnt = (k, list) => { const o = list.find((x) => x.key === k); return o ? o.wallets : 0; };
+    // ── 양상: 지갑마다 유입 전 · 행선지를 한 가지 모습으로 읽는다(위에서부터 먼저 맞는 것). 원장에 보이는 움직임으로 붙인 이름이다
+    //   company — 회사 표시 계정에 넣은 돈이 가져간 돈 이상(100 RLUSD 환산 이상) · linked — 우리 표의 다른 지갑으로 옮긴 것이 가져간 돈 이상이거나, 그 지갑이 계정을 만들어 줬다
+    //   quiet — 밖으로 보낸 송금이 없다 · outside — WLBN 출처가 보상이 아니다 · cashout — 끝 행선지의 절반 이상이 거래소 입금 꼴 · park — 그 밖(다른 지갑으로 옮김)
+    const PAT = { cashout: '팔아서 거래소로 보내는 지갑', quiet: '팔고 대금을 지갑에 둔 지갑', park: '다른 지갑으로 옮겨 둔 지갑', company: '회사 계정에 돈을 넣은 지갑', linked: '우리 표의 다른 지갑과 이어진 지갑', outside: '바깥에서 들어온 거래 지갑' };
+    const linkOfRow = (r) => r.hop1.filter((h) => h.kind === 'ours' || h.kind === 'root');
+    const patOf = (r) => {
+      const lv = linkOfRow(r).reduce((t, h) => t + h.v, 0), ex = r.ends.find((e) => e.key === 'exch');
+      if (r.to_company >= 100 && r.to_company >= r.took) return 'company';
+      if ((lv >= 100 && lv >= r.took) || (r.funder && (r.funder.kind === 'ours' || r.funder.kind === 'root'))) return 'linked';
+      if (!(r.sent >= 1)) return 'quiet';
+      if (r.src.origin !== 'reward') return 'outside';
+      return ex && ex.share >= 0.5 ? 'cashout' : 'park';
+    };
+    const pm = {};
+    for (const r of rows) {
+      const k = r.err ? 'quiet' : patOf(r); r.pattern = k; r.pattern_name = PAT[k]; r.review = k === 'company' || k === 'linked';
+      const o = pm[k] || (pm[k] = { key: k, name: PAT[k], review: r.review, wallets: 0, took: 0, sent: 0, opened: 0, ids: [], rows: [] });
+      o.wallets += 1; o.took += r.took; o.sent += r.sent || 0; if (r.funder && r.funder.kind === 'company') o.opened += 1; o.ids.push(r.id); o.rows.push(r);
+    }
+    const times = (a, b) => (b >= 1 ? (a / b >= 10 ? nf(a / b) : String(Math.round(a / b * 10) / 10)) + '배' : '');
+    const patText = (o) => {
+      const R = o.rows, opened = o.opened ? ' ' + (o.opened === o.wallets ? '모두' : nf(o.opened) + '곳이') + ' 회사 계정이 열어 준 지갑이다.' : '';
+      if (o.key === 'cashout') {
+        const direct = R.filter((r) => { const e = r.ends.find((x) => x.key === 'exch'), h = r.hop1.filter((x) => x.kind === 'exch').reduce((t, x) => t + x.v, 0); return e && h >= e.v * 0.5; }).length;
+        return '보상을 받는 대로 팔고, 대금을 거래소 입금으로 보이는 주소로 보냈다. **바로 보낸 곳 ' + nf(direct) + '곳 · 다른 지갑을 한두 번 거쳐 보낸 곳 ' + nf(o.wallets - direct) + '곳.** 가져간 돈 ' + nf(o.took) + '에 보낸 돈 ' + nf(o.sent) + ' RLUSD 환산으로 규모가 비슷하다 — 판 대금이 거의 그대로 나간 모습이다.' + opened;
+      }
+      if (o.key === 'quiet') return 'WLBN을 팔았지만 **대금을 밖으로 보내지 않았다** — XRP · RLUSD가 지갑에 남아 있거나 송금이 아닌 방식으로 쓰였다. 지갑당 가져간 돈이 평균 ' + nf(o.took / o.wallets) + ' RLUSD 환산으로 작다.' + opened;
+      if (o.key === 'park') return '판 대금을 태그가 없는 다른 지갑으로 옮겼다(' + nf(o.sent) + ' RLUSD 환산). 그 뒤로는 대부분 그 지갑에 머물러 있다 — 자기 다른 지갑이거나 태그를 쓰지 않는 곳일 수 있고, **거래소로 갔다고 볼 근거는 없다.**' + opened;
+      if (o.key === 'company') {
+        const hs = [].concat.apply([], R.map((r) => r.hop1.filter((h) => h.kind === 'company'))), v = hs.reduce((t, h) => t + h.v, 0), x = hs.reduce((t, h) => t + h.xrp, 0), rl = hs.reduce((t, h) => t + h.rlusd, 0), names = hs.map((h) => h.name).filter((n, i, a) => a.indexOf(n) === i);
+        return '회사 표시 계정(' + names.join(' · ') + ')으로 **' + [x >= 1 ? 'XRP ' + nf(x) + '개' : '', rl >= 1 ? 'RLUSD ' + nf(rl) : ''].filter(Boolean).join(' · ') + '**(' + nf(v) + ' RLUSD 환산)를 넣었다 — WLBN을 팔아 가져간 돈 ' + nf(o.took) + '의 ' + times(v, o.took) + '다. 「되돌린 돈」에 잡히지 않는 돈이라 부정으로 분류됐다. **판정을 다시 볼 대상이다.**';
+      }
+      if (o.key === 'linked') {
+        const ps = {}; let wl = 0;
+        for (const r of R) { for (const h of linkOfRow(r)) { ps[h.id] = h.impact; wl += h.wlbn; } if (r.funder && (r.funder.kind === 'ours' || r.funder.kind === 'root')) ps[r.funder.id] = r.funder.impact; }
+        const ids = Object.keys(ps), pos = ids.filter((id) => ps[id] === 'help').length;
+        return '우리 표의 다른 지갑 ' + nf(ids.length) + '곳과 이어져 있다(WLBN · 돈을 옮겼거나, 그 지갑이 계정을 만들어 줬다)' + (pos ? ' — ' + (pos === ids.length ? '**모두 긍정 쪽**이다' : '그 가운데 **' + nf(pos) + '곳이 긍정 쪽**이다') : '') + '.' + (wl >= 1 ? ' 옮긴 WLBN은 ' + nf(wl) + '개다.' : '') + ' **같은 주인이 파는 지갑과 모으는 지갑을 나눠 쓰는 것으로 보인다.** 묶어서 보면 두 쪽 판정이 함께 달라진다.';
+      }
+      return '보상 지갑이 아니다 — WLBN을 풀에서 샀거나 다른 지갑에서 옮겨 받아 판 바깥 지갑이다. 밖으로 보낸 돈 ' + nf(o.sent) + ' RLUSD 환산은 WLBN 판 대금 ' + nf(o.took) + '의 ' + times(o.sent, o.took) + '다 — **오간 돈 대부분은 WLBN과 무관한 자기 거래로 보인다.**';
+    };
+    const pats = Object.keys(pm).map((k) => pm[k]).sort((x, y) => (y.wallets - x.wallets) || (y.took - x.took)).map((o) => ({ key: o.key, name: o.name, review: o.review, wallets: o.wallets, share: r3(o.wallets / rows.length), took: r0(o.took), took_share: took > 0 ? r3(o.took / took) : null, sent: r0(o.sent), opened: o.opened, ids: o.ids, comment: patText(o) }));
+    const comment = [];
+    {
+      const tk = rows.map((r) => r.took).sort((x, y) => x - y), med = tk.length % 2 ? tk[(tk.length - 1) / 2] : (tk[tk.length / 2 - 1] + tk[tk.length / 2]) / 2, topN = Math.min(4, rows.length), top = rows.slice(0, topN).reduce((t, r) => t + r.took, 0);
+      const pg = (k) => pats.find((p) => p.key === k), rv = pats.filter((p) => p.review), rvW = rv.reduce((t, p) => t + p.wallets, 0), rvT = rv.reduce((t, p) => t + p.took, 0);
+      comment.push('한 줄로: 부정 쪽 ' + nf(rows.length) + '곳은 한 덩어리가 아니라 **' + nf(pats.length) + '가지 양상**으로 갈린다 — ' + pats.map((p) => p.name + ' ' + nf(p.wallets) + '곳').join(' · ') + '.');
+      if (took >= 1) comment.push('크기: 가져간 돈은 모두 ' + nf(took) + ' RLUSD 환산이고 **많이 가져간 ' + nf(topN) + '곳이 ' + pf(top / took) + '**다. 지갑 절반은 ' + nf(med) + ' RLUSD 환산 아래다 — 대부분 소액이다.');
+      if (pg('cashout') || pg('quiet')) comment.push('돈의 방향: ' + [pg('cashout') ? '보상을 팔아 **거래소 입금으로 보이는 주소로 보낸 지갑이 ' + nf(pg('cashout').wallets) + '곳**(가져간 돈 ' + nf(pg('cashout').took) + ')' : '', pg('quiet') ? '팔고도 **대금을 지갑에 둔 곳이 ' + nf(pg('quiet').wallets) + '곳**(가져간 돈 ' + nf(pg('quiet').took) + ')' : ''].filter(Boolean).join(', ') + '이다. 거래소 안에서 무엇으로 바꿨는지는 볼 수 없다.');
+      if (rvW) comment.push('판정: **' + nf(rvW) + '곳은 다시 볼 대상**이다 — 회사 계정에 돈을 넣었거나, 우리 표의 다른 지갑과 같은 주인으로 보인다. 이들을 빼면 부정 쪽은 ' + nf(rows.length - rvW) + '곳 · 가져간 돈 ' + nf(took - rvT) + ' RLUSD 환산이다.');
+      comment.push('읽을 때: 양상은 원장에 보이는 움직임으로 붙인 이름이다. 지갑 주인과 의도는 알 수 없고, 한 사람이 지갑을 여러 개 쓸 수 있다.');
+    }
+    const sum = {
+      patterns: pats, review_wallets: pats.filter((p) => p.review).reduce((t, p) => t + p.wallets, 0),
+      roots: rows.length, sent_wallets: sentW, quiet_wallets: quietW, failed, partial, took: r0(took), sent: r0(sent), sent_xrp: r0(sx), sent_rlusd: r0(sr), sent_wlbn: r0(sw),
+      src: Object.assign(Object.keys(srcSum).reduce((o, k) => { o[k] = r0(srcSum[k]); return o; }, {}), { in_xrp: r0(inX), in_rlusd: r0(inR),
+        origins: ['reward', 'bought', 'moved', 'none'].filter((k) => orig[k][0]).map((k) => ({ key: k, name: TRACE_ORIGIN[k], wallets: orig[k][0], share: r3(orig[k][0] / rows.length), took: r0(orig[k][1]) })) }),
+      hop1: hopMix, ends: endMix, funders: funders.slice(0, 12), funder_known: fKnown, funder_company: fKinds.company || 0, funder_groups: fShared.length, funder_shared: fShared.reduce((t, f) => t + f.wallets, 0),
+      funder_kinds: TRACE_ORDER.filter((k) => fKinds[k]).map((k) => ({ key: k, name: k === 'company' ? '회사 계정이 열어 준 지갑' : TRACE_KIND[k], wallets: fKinds[k], share: r3(fKinds[k] / rows.length) })).sort((x, y) => y.wallets - x.wallets),
+      company_to: companyTo, links: links.slice(0, 8), accounts: Object.keys(ND).length, pending: Math.max(nowLoad - stillLoad, 0), moved_on: rows.length - stillLoad,
+    };
+    const notes = [], top = (list, k) => list.slice(0, k).map((x) => x.name + ' ' + pf(x.share || 0) + '(' + nf(x.v) + ')').join(' · '), O = sum.src.origins, og = (k) => O.find((x) => x.key === k);
+    {
+      const t = ['유입 전(WLBN 출처): 부정 쪽 지갑 ' + nf(rows.length) + '곳 가운데 **' + nf(og('reward') ? og('reward').wallets : 0) + '곳은 보상으로 받은 WLBN**을 판 지갑이다(이 기간 받은 양 ' + nf(srcSum.paid) + '개).'];
+      if (og('bought')) t.push('**' + nf(og('bought').wallets) + '곳은 풀에서 산 것**이 출처다 — 지금 풀이 열리기 전에 산 ' + nf(srcSum.before_bought) + '개 · 열린 뒤 산 ' + nf(srcSum.bought) + '개.');
+      if (og('moved')) t.push(nf(og('moved').wallets) + '곳은 다른 지갑에서 옮겨 받은 것이 가장 크다(열린 뒤 ' + nf(srcSum.moved) + '개).');
+      notes.push(t.join(' '));
+    }
+    if (fKnown) {
+      const t = ['처음 채운 곳(계정을 만든 송금): ' + nf(rows.length) + '곳 가운데 ' + nf(fKnown) + '곳을 원장에서 찾았다.'];
+      if (sum.funder_company) t.push('**' + nf(sum.funder_company) + '곳은 회사 계정이 열어 준 지갑**이다(' + funders.filter((f) => f.kind === 'company').map((f) => f.name + ' ' + nf(f.wallets) + '곳').join(' · ') + ').');
+      const rest = sum.funder_kinds.filter((x) => x.key !== 'company'); if (rest.length) t.push('나머지는 ' + rest.map((x) => x.name + ' ' + nf(x.wallets) + '곳').join(' · ') + '.');
+      if (fOurs.length) t.push('**우리 표의 「' + fOurs[0].name + '」 ' + fOurs[0].id + ' 이 부정 쪽 지갑 ' + fOurs[0].ids.join(' · ') + ' 의 계정을 만들었다** — 같은 주인으로 볼 실마리.');
+      if (fShared.length) t.push('회사 계정이 아닌 같은 주소가 두 곳 이상을 채운 묶음이 ' + nf(fShared.length) + '개(' + nf(sum.funder_shared) + '곳) 있다.');
+      notes.push(t.join(' '));
+    } else notes.push('처음 채운 곳(계정을 만든 송금): 원장에서 찾지 못했다(노드에 옛 기록이 없는 경우).');
+    notes.push('행선지(1단계): ' + nf(rows.length) + '곳 가운데 **' + nf(sentW) + '곳이 밖으로 보냈고 ' + nf(quietW) + '곳은 보내지 않았다.**' + (sent >= 1 ? ' 보낸 돈 ' + nf(sent) + ' RLUSD 환산(XRP ' + nf(sx) + '개 · RLUSD ' + nf(sr) + ' · WLBN ' + nf(sw) + '개) — ' + top(hopMix, 4) + '.' : ''));
+    if (sent >= 1 && endMix.length) notes.push('끝 행선지(3단계까지): 받은 만큼만 따라가면 ' + top(endMix, 4) + '.' + (val('exch', endMix) ? ' **거래소 입금으로 보이는 주소에 닿은 지갑은 ' + nf(cnt('exch', endMix)) + '곳**(1단계에서 바로 간 곳 ' + nf(cnt('exch', hopMix)) + '곳)이고, 금액은 ' + nf(val('exch', hopMix)) + ' → ' + nf(val('exch', endMix)) + ' RLUSD 환산이다.' : ' 거래소 입금으로 보이는 주소에 닿은 것은 없다.'));
+    if (companyTo.length) notes.push('회사 계정으로 간 돈: 부정 쪽 지갑 ' + nf(companyTo.reduce((t, c) => t + c.wallets, 0)) + '곳이 **' + companyTo.map((c) => c.name + '으로 ' + [c.xrp ? 'XRP ' + nf(c.xrp) + '개' : '', c.rlusd ? 'RLUSD ' + nf(c.rlusd) : '', c.wlbn ? 'WLBN ' + nf(c.wlbn) + '개' : ''].filter(Boolean).join(' · ') + '(' + nf(c.v) + ' RLUSD 환산)').join(', ') + '**를 보냈다. 「되돌린 돈」은 풀에서 산 돈과 operations 계정에 RLUSD로 보낸 돈만 세므로 이 돈은 판정에 들어 있지 않다 — **이 지갑들은 부정 판정을 다시 볼 필요가 있다.**');
+    if (links.length) notes.push('이어진 지갑: ' + links.slice(0, 2).map((l) => '부정 쪽 ' + l.from + ' → ' + (l.to_kind === 'root' ? '다른 부정 쪽 지갑 ' : '우리 표의 「' + l.to_type + '」(' + l.to_impact_name + ') ') + l.to + ' 로 **' + (l.wlbn >= 1 ? 'WLBN ' + nf(l.wlbn) + '개(' + nf(l.v) + ' RLUSD 환산)' : nf(l.v) + ' RLUSD 환산') + '**').join(', ') + (links.length > 2 ? ' 등 ' + nf(links.length) + '건' : '') + '. 같은 주인으로 보이는 묶음 — 묶어 보면 두 지갑의 판정이 함께 달라질 수 있다.');
+    if (took >= 1 && sent >= 1) notes.push('견주기: 이 지갑들이 WLBN을 팔아 가져간 돈은 ' + nf(took) + ' RLUSD 환산, 밖으로 보낸 돈은 ' + nf(sent) + '다. 보낸 돈에는 **판 대금 말고 지갑에 원래 있던 돈 · 다른 곳에서 받은 돈(XRP ' + nf(inX) + '개 · RLUSD ' + nf(inR) + ') · WLBN 이체도 섞여 있다.**');
+    if (sum.pending || sum.moved_on || partial || failed) notes.push('갱신: ' + [sum.pending ? '지금 부정 쪽인데 아직 따라가지 않은 지갑 ' + nf(sum.pending) + '곳은 다음 갱신에 들어온다' : '', sum.moved_on ? '따라간 뒤 판정이 바뀐 지갑 ' + nf(sum.moved_on) + '곳도 표에 남겨 두었다' : '', partial ? '거래가 아주 많아 내역을 끝까지 읽지 못한 지갑 ' + nf(partial) + '곳은 보낸 돈이 실제보다 적게 잡혔다' : '', failed ? '이번에 읽지 못한 지갑 ' + nf(failed) + '곳' : ''].filter(Boolean).join(' · ') + '.');
+    const limits = [
+      '거래소 안에서 일어난 일과 지갑의 주인은 원장으로 볼 수 없다. 「거래소 입금으로 보이는 주소」는 목적지 태그가 붙은 송금을 받은 주소라는 뜻이지 확인된 거래소 이름이 아니다.',
+      '「거래가 많은 계정」은 기간 안 거래가 읽는 한도를 넘는 계정이다(거래소 · 서비스 · 자동 거래 계정일 수 있다). 거기서 멈춘다.',
+      '중간 지갑이 보낸 돈은 그 지갑이 받은 금액까지만, 보낸 곳 비율대로 나눠 따라간다. 시간 순서는 따지지 않으므로 어림값이다.',
+      '값은 받아 온 날(' + tr.day + ')의 가격으로 환산했다(XRP 1개 = ' + (tr.xr || 0) + ' RLUSD · WLBN 1개 = ' + (tr.price || 0) + ' RLUSD). XRP · RLUSD · WLBN 말고 다른 토큰은 세지 않는다.',
+      nf(TRACE.min) + ' RLUSD 환산 미만으로 보낸 곳 · 계정마다 상위 ' + nf(TRACE.keep) + '곳 밖 · 단계별 상한(' + nf(TRACE.caps[1]) + ' · ' + nf(TRACE.caps[2]) + '곳) 밖은 더 따라가지 않고 「그 밖의 지갑」으로 둔다.',
+      '「처음 채운 곳」은 계정을 만든 송금을 보낸 주소다. 「회사 계정이 열어 준 지갑」은 그 송금을 회사 표시 계정이 보냈다는 뜻이다. WLBN 출처의 「지금 풀이 열리기 전」은 ' + C.NOW_FROM + ' 이전 기록이다.',
+      '양상은 위에서부터 먼저 맞는 것으로 붙인다: 회사 표시 계정에 넣은 돈이 가져간 돈 이상(100 RLUSD 환산 이상) → 우리 표의 다른 지갑으로 옮긴 것이 가져간 돈 이상이거나 그 지갑이 계정을 만들어 줌 → 밖으로 보낸 송금 없음 → WLBN 출처가 보상이 아님 → 끝 행선지의 절반 이상이 거래소 입금으로 보이는 주소 → 그 밖.',
+      '하루 한 번(한국 날짜가 바뀐 뒤 첫 예약 실행) 다시 받는다. 전체 기간(' + C.NOW_FROM + '부터) 기준이며 위쪽 기간 단추 · 날짜 지정과 무관하다.',
+    ];
+    return { day: tr.day, at: tr.at || 0, from: C.NOW_FROM, xr: tr.xr || null, price: tr.price || null, rows, sum, comment, notes, limits };
+  };
+  const trace = opts.noTrace ? null : buildTrace();
+
   const out = { summary: [summary], daily, ranges, positions, dayTop, walletDays };
+  if (trace) out.trace = trace;
   if (health) out.health = health;
   if (market) out.market = market;
   if (deep) out.deep = deep;
@@ -1338,4 +1555,10 @@ function applyBatch(S, items) {
   return list.length;
 }
 
-module.exports = { C, newState, applyTx, applyBatch, applyFundBatch, newFund, normalize, buildDatasets, setLabels, pickExt, pickMarket, marketNeeds, mergeHistory, kday };
+// 따라갈 지갑(부정 쪽 = 전체 기간에 「부담」으로 판정된 지갑)의 주소. 가져간 돈이 큰 순
+function traceRoots(S) {
+  const d = buildDatasets(JSON.parse(JSON.stringify(S)), { showAddr: true, noTrace: true });
+  return d.ranges.all.wallets.filter((w) => w.impact === 'load' && w.addr).sort((x, y) => (y.took_rlusd || 0) - (x.took_rlusd || 0)).map((w) => w.addr);
+}
+
+module.exports = { C, TRACE, newState, applyTx, applyBatch, applyFundBatch, newFund, normalize, buildDatasets, traceRoots, setLabels, pickExt, pickMarket, marketNeeds, mergeHistory, kday };
