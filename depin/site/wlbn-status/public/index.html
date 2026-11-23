@@ -6,6 +6,7 @@
 <meta name="robots" content="noindex, nofollow">
 <meta name="color-scheme" content="light dark">
 <title>WLBN 운용현황</title>
+<link rel="icon" href="data:,">
 <link rel="preload" href="fonts/PretendardVariable.woff2" as="font" type="font/woff2" crossorigin>
 <style>
 @font-face { font-family: "Pretendard Variable"; font-weight: 45 920; font-style: normal; font-display: swap; src: url("fonts/PretendardVariable.woff2") format("woff2-variations"), url("fonts/PretendardVariable.woff2") format("woff2"); }
@@ -69,13 +70,17 @@ button, input { font: inherit; color: inherit; }
 .bar-in { max-width: 1080px; margin: 0 auto; padding: 0 20px; display: flex; align-items: center; justify-content: space-between; gap: 0 16px; }
 .nav { display: flex; gap: 2px; overflow-x: auto; scrollbar-width: none; min-width: 0; flex: 1 1 auto; }
 .nav::-webkit-scrollbar { display: none; }
-/* 메뉴는 네 묶음(요약 · 흐름 · 지갑 · 참고). 묶음 이름은 옅은 글자, 지금 보는 곳은 알약(11/22 6차 — 서우 「gnb 와 단락 구분」) */
+/* 메뉴: 장 넷(요약 · 흐름 · 지갑 · 참고)은 늘 보이고, 지금 있는 장만 그 안의 구역 이름을 펼친다
+   (11/23 13차 — 서우 「gnb도 좀 정리해줘」. 구역 15개가 한 줄에 다 나와 빠듯했고, 글꼴 파일을 못 받은 배포에서는 끝이 잘렸다. 11/22 6차의 네 묶음은 그대로) */
 .nav { align-items: center; gap: 0; }
-.nav-g { flex: none; display: inline-flex; align-items: center; gap: 1px; padding-right: 7px; margin-right: 7px; border-right: 1px solid var(--line-2); }
+.nav-g { flex: none; display: inline-flex; align-items: center; gap: 2px; padding-right: 6px; margin-right: 6px; border-right: 1px solid var(--line-2); }
 .nav-g:last-child { border-right: 0; margin-right: 0; padding-right: 0; }
-.nav-g > b { margin-right: 4px; font-size: 11.5px; font-weight: 700; color: var(--faint); letter-spacing: 0.02em; white-space: nowrap; }
-.nav-g.on > b { color: var(--fg); }
-.nav a { flex: none; margin: 9px 0; padding: 5px 5px; border-radius: 999px; font-size: var(--t-sm); font-weight: 500; color: var(--muted); text-decoration: none; white-space: nowrap; }
+.nav-c { flex: none; margin: 9px 0; padding: 5px 10px; border: 0; border-radius: 999px; background: none; font-size: var(--t-sm); font-weight: 600; line-height: inherit; color: var(--muted); cursor: pointer; white-space: nowrap; -webkit-appearance: none; appearance: none; }
+.nav-c:hover { color: var(--fg); background: var(--soft); }
+.nav-g.on .nav-c { padding-right: 6px; color: var(--fg); font-weight: 750; }
+.nav-g.on .nav-c:hover { background: none; }
+.nav-g:not(.on) a { display: none; }
+.nav a { flex: none; margin: 9px 0; padding: 5px 9px; border-radius: 999px; font-size: var(--t-sm); font-weight: 500; color: var(--muted); text-decoration: none; white-space: nowrap; }
 .nav a:hover { color: var(--fg); background: var(--soft); }
 .nav a[aria-current="true"] { color: var(--accent-fg); background: var(--accent); font-weight: 600; }
 .seg { display: inline-flex; flex: none; background: var(--panel); border: 1px solid var(--line-2); border-radius: 999px; padding: 2px; }
@@ -371,7 +376,10 @@ details .scroll { margin-top: 8px; }
   .panel.lay .h2 { font-size: 17.5px; } .panel.lay.shut .h2 { font-size: 15.5px; } .panel.lay.shut > .sec-h { padding: 11px var(--pad); } .fold { padding: 0 8px 0 10px; }
   .bar-in { padding: 8px 16px 0; flex-direction: column-reverse; align-items: stretch; gap: 2px; }
   .seg { display: flex; } .seg button { flex: 1 1 0; height: 30px; padding: 0 8px; }
-  .nav { margin: 0 -16px; padding: 0 16px; } .nav a { padding: 9px 9px; }
+  .nav { flex-wrap: wrap; overflow: visible; margin: 0; padding: 0; } .nav-g { display: contents; }
+  .nav-c { order: 0; flex: 1 1 25%; min-width: 0; margin: 0; padding: 8px 0 7px; border-radius: 0; border-bottom: 2px solid transparent; text-align: center; } .nav-c:hover { background: none; }
+  .nav-g.on .nav-c { padding-right: 0; border-bottom-color: var(--accent); }
+  .nav a { order: 1; margin: 7px 0; padding: 5px 8px; }
   .page { padding: 12px 10px 56px; gap: 10px; }
   .panel { border-radius: 14px; }
   .tiles, .tiles.duo { gap: 8px; } .card { padding: 13px 14px; } .big.two { font-size: 18px; }
@@ -438,10 +446,10 @@ details .scroll { margin-top: 8px; }
 <div class="bar">
   <div class="bar-in">
     <nav class="nav" aria-label="화면 안 이동">
-      <span class="nav-g"><b>요약</b><a href="#board">모아보기</a><a href="#today">현황</a><a href="#market">시장</a><a href="#sum">한눈에</a></span>
-      <span class="nav-g"><b>흐름</b><a href="#flow">매매</a><a href="#daily">날짜별</a><a href="#pool">풀</a></span>
-      <span class="nav-g"><b>지갑</b><a href="#accounts">회사 계정</a><a href="#impact">기여 5단계</a><a href="#deep">심층</a><a href="#wallets">분포</a><a href="#wtable">지갑 표</a></span>
-      <span class="nav-g"><b>참고</b><a href="#where">위치</a><a href="#facts">네트워크</a><a href="#notes">읽는 법</a></span>
+      <span class="nav-g"><button type="button" class="nav-c" data-go="#board">요약</button><a href="#board">모아보기</a><a href="#today">현황</a><a href="#market">시장</a><a href="#sum">한눈에</a></span>
+      <span class="nav-g"><button type="button" class="nav-c" data-go="#flow">흐름</button><a href="#flow">매매</a><a href="#daily">날짜별</a><a href="#pool">풀</a></span>
+      <span class="nav-g"><button type="button" class="nav-c" data-go="#accounts">지갑</button><a href="#accounts">회사 계정</a><a href="#impact">기여 5단계</a><a href="#deep">심층</a><a href="#wallets">분포</a><a href="#wtable">지갑 표</a></span>
+      <span class="nav-g"><button type="button" class="nav-c" data-go="#where">참고</button><a href="#where">위치</a><a href="#facts">네트워크</a><a href="#notes">읽는 법</a></span>
     </nav>
     <div class="seg" role="group" aria-label="보는 기간">
       <button type="button" data-range="all" aria-pressed="true">전체</button>
@@ -867,6 +875,12 @@ details .scroll { margin-top: 8px; }
 <script>
 (function () {
   'use strict';
+  if (typeof d3 === 'undefined') {
+    // 그림 파일(d3.min.js)을 못 받았다 — index.html 하나만 올린 배포에서 생긴다. 조용히 멈추지 않고 화면에 무엇이 빠졌는지 적는다
+    var miss = document.querySelector('[data-stale]'), mp = miss && miss.querySelector('p');
+    if (mp) { mp.textContent = '화면을 그리는 파일(d3.min.js)을 받지 못해 멈췄습니다. index.html 하나만 올리면 이렇게 됩니다 — 배포 묶음의 public 폴더(d3.min.js · fonts · snapshot.json)와 api · lib 폴더를 함께 올려 주세요.'; miss.hidden = false; }
+    return;
+  }
   var DATA = null, RANGE = 'all', QUERY = '', SHOWALL = false, WSORT = { key: 'act', dir: -1 }, TOP = 30, WT = null;
   var WG = 'user', SELW = null;
   var WI = 'all';   // 생태계 기여 5단계 거르기(vp · p · n · ng · vn)
@@ -945,7 +959,7 @@ details .scroll { margin-top: 8px; }
     if (t) t.textContent = shut ? '펴기' : '접기';
     if (keep) { FOLD[box.__fid] = shut ? 1 : 0; try { localStorage.setItem(FOLD_KEY, JSON.stringify(FOLD)); } catch (e) { /* 기억하지 못해도 화면은 그대로 쓴다 */ } }
     if (!shut && DATA) redrawIn(box);
-    syncFold();
+    syncFold(); spyLater();
   }
   // 접힌 곳 안의 것을 보여 줘야 할 때(메뉴 · 주소의 # · 줄을 눌러 아래로 갈 때): 감싼 구역과 블록을 편다. 기억하지는 않는다
   function reveal(el) { for (var p = el; p && p !== document.body; p = p.parentNode) if (p.__fid && isShut(p)) setFold(p, false, false); }
@@ -986,6 +1000,27 @@ details .scroll { margin-top: 8px; }
       setFold(sec, FOLD[sec.id] === undefined ? !!SHUT0[sec.id] : !!FOLD[sec.id], false);
     });
   }
+  // 붙어 다니는 줄(기간 · 메뉴)의 높이만큼 띄운다: 메뉴 · 주소의 # 로 갈 때 제목이 그 줄에 가리지 않게. 휴대폰은 세 줄이라 높이를 재서 쓴다
+  function barOff() { var b = $('.bar'); return (b ? Math.round(b.getBoundingClientRect().height) : 56) + 12; }
+  function fitBar() { document.documentElement.style.scrollPaddingTop = barOff() + 'px'; }
+  // 메뉴에 지금 보고 있는 곳 표시: 화면 위 기준선을 지난 마지막 구역을 고른다.
+  //   전에는 구역이 화면에 「들어올 때」만 반응해서, 접고 펴기로 아래 구역이 밀려나도 그 구역에 머물렀다(모아보기 → 풀로 갔는데 메뉴는 「기여 5단계」)
+  var SPYQ = 0;
+  function spy() {
+    var links = $$('.nav a'), base = barOff() + 56, vh = window.innerHeight, maxY = document.documentElement.scrollHeight - vh;
+    var t = maxY > 0 ? Math.max(0, Math.min(1, (window.scrollY - (maxY - vh)) / vh)) : 1, line = base + (vh - base) * t, cur = -1, first = -1;
+    links.forEach(function (a, i) { var sec = $(a.getAttribute('href')); if (!sec || sec.hidden) return; if (first < 0) first = i; if (sec.getBoundingClientRect().top <= line) cur = i; });
+    if (cur < 0) cur = first; if (cur < 0) return;
+    links.forEach(function (a, i) { a.setAttribute('aria-current', String(i === cur)); });
+    var g = links[cur].parentNode, nv = g.parentNode; if (!g.classList.contains('on')) navOn(g);
+    if (nv.scrollWidth > nv.clientWidth + 1) {
+      var nl = nv.getBoundingClientRect().left, gl = g.getBoundingClientRect().left - nl + nv.scrollLeft, ar = links[cur].getBoundingClientRect().right - nl + nv.scrollLeft;
+      nv.scrollLeft = Math.max(0, ar - (gl - 12) > nv.clientWidth - 12 ? ar - nv.clientWidth + 16 : gl - 12);
+    }
+  }
+  function spyLater() { if (SPYQ) return; SPYQ = requestAnimationFrame(function () { SPYQ = 0; spy(); }); }
+  // 메뉴: 지금 있는 장(묶음)만 구역 이름을 펼친다
+  function navOn(g) { $$('.nav-g').forEach(function (x) { var on = x === g, c = x.querySelector('.nav-c'); x.classList.toggle('on', on); if (c) c.setAttribute('aria-expanded', String(on)); }); fitBar(); }
   function goHash() { var id = ''; try { id = decodeURIComponent((location.hash || '').slice(1)); } catch (e) { id = ''; } var t = id && document.getElementById(id); if (t) reveal(t); }
   // 구역마다 한 줄 요약: 접어 둔 채로도 핵심 숫자가 보인다
   function drawSums() {
@@ -2349,6 +2384,7 @@ details .scroll { margin-top: 8px; }
     closeHelp();
     [drawHealth, drawVs, drawDeep, drawWallet, drawDist, drawTables, drawImpact, drawFlowShares, drawPositions, drawInsights, drawDay, drawCalc, drawStatus, drawSums].forEach(function (fn) { try { fn(); } catch (e) { if (window.console) console.error(e); } });
     $$('[data-chart]').forEach(function (el) { if (!el.__drawn) drawChart(el.getAttribute('data-chart')); });      // 위에서 막 드러난 곳(추이 · 지갑 따라가 보기)의 그림
+    spyLater();
   }
 
   // 자료 받기
@@ -2359,17 +2395,30 @@ details .scroll { margin-top: 8px; }
     DATA = d; render(); return true;
   }
   function getJson(url) { return fetch(url, { headers: { accept: 'application/json' } }).then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); }); }
+  // 자료를 못 받았을 때의 알림: 배포에 든 자료라도 있으면 그것을 보여 준다고, 그것도 없으면(index.html 만 올린 배포) 무엇이 빠졌는지 적는다
+  function staleNote() {
+    var p = $('[data-stale] p'); if (!p) return;
+    p.textContent = DATA ? '최신 자료를 받지 못해 배포할 때 들어 있던 자료를 보여 주고 있습니다. 잠시 뒤 「새로 불러오기」를 눌러 보세요.' : '자료를 받지 못했습니다(snapshot.json 과 /api/data 가 모두 없음). index.html 하나만 올린 배포라면 배포 묶음 전체(public · api · lib 폴더)를 올려 주세요.';
+  }
   function loadLive() {
     var live = $('[data-live]'), btn = $('[data-refresh]'), stale = $('[data-stale]');
     if (live) live.hidden = false; if (btn) btn.disabled = true;
     LASTTRY = Date.now();
-    return getJson('api/data').then(function (d) { show(d); LASTOK = Date.now(); tickAgo(); if (stale) stale.hidden = true; }).catch(function () { if (stale) stale.hidden = false; })
+    return getJson('api/data').then(function (d) { show(d); LASTOK = Date.now(); tickAgo(); if (stale) stale.hidden = true; }).catch(function () { staleNote(); if (stale) stale.hidden = false; })
       .then(function () { if (live) live.hidden = true; if (btn) btn.disabled = false; });
   }
   document.addEventListener('DOMContentLoaded', function () {
     try { var qp = new URLSearchParams(location.search).get('p'); if (PERIOD[qp]) { RANGE = qp; $$('[data-range]').forEach(function (x) { x.setAttribute('aria-pressed', String(x.getAttribute('data-range') === qp)); }); } } catch (e) { /* 기본 기간으로 연다 */ }
     buildLayers(); goHash(); window.addEventListener('hashchange', goHash);
     $$('.nav a, a.skip').forEach(function (a) { a.addEventListener('click', function () { var t = $(a.getAttribute('href')); if (t) reveal(t); }); });
+    // 장 단추: 그 장의 머리로 바로 가고(먼 거리라 미끄러지지 않고 건너뛴다) 그 장의 구역 이름을 펼친다
+    $$('.nav-c').forEach(function (b) { b.addEventListener('click', function () {
+      var t = $(b.getAttribute('data-go')), ch = t && t.previousElementSibling, to = ch && ch.classList.contains('chap') ? ch : t; if (!to) return;
+      navOn(b.parentNode); closeHelp();
+      var y = Math.max(0, to.getBoundingClientRect().top + window.scrollY - barOff());
+      try { window.scrollTo({ top: y, behavior: 'instant' }); } catch (e) { window.scrollTo(0, y); }
+      spy();
+    }); });
     var fa = $('[data-fold-all]'); if (fa) fa.addEventListener('click', function () {
       var open = BOXES.some(function (b) { return b.__lv === 1 && !b.hidden && isShut(b); }); closeHelp();
       BOXES.forEach(function (b) { if (b.__lv === 1) setFold(b, !open, true); else if (open) setFold(b, false, true); });
@@ -2391,8 +2440,8 @@ details .scroll { margin-top: 8px; }
     var opened = [], unfolded = [];
     window.addEventListener('beforeprint', function () { opened = $$('details:not([open])'); opened.forEach(function (d) { d.open = true; }); unfolded = BOXES.filter(isShut); unfolded.forEach(function (b) { setFold(b, false, false); }); });
     window.addEventListener('afterprint', function () { opened.forEach(function (d) { d.open = false; }); opened = []; unfolded.forEach(function (b) { setFold(b, true, false); }); unfolded = []; });
-    if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { if (DATA) render(); });
-    getJson('snapshot.json').then(show).catch(function () {});
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { fitBar(); if (DATA) render(); });
+    getJson('snapshot.json').then(show).catch(function () {}).then(staleNote);
     loadLive();
     $$('[data-range]').forEach(function (b) { b.addEventListener('click', function () {
       RANGE = b.getAttribute('data-range'); $$('[data-range]').forEach(function (x) { x.setAttribute('aria-pressed', String(x === b)); }); SELDAY = null; render();
@@ -2405,15 +2454,9 @@ details .scroll { margin-top: 8px; }
     var t = null, lastW = window.innerWidth;
     window.addEventListener('resize', function () { if (window.innerWidth === lastW) return; lastW = window.innerWidth; clearTimeout(t); t = setTimeout(render, 120); });
     document.addEventListener('pointerdown', function (ev) { if (!ev.target.closest || !ev.target.closest('.plot')) $$('.tip').forEach(function (x) { x.hidden = true; }); });
-    // 지금 보고 있는 곳을 위쪽 메뉴에 표시
-    var links = $$('.nav a'), secs = links.map(function (a) { return $(a.getAttribute('href')); });
-    if ('IntersectionObserver' in window) {
-      var io = new IntersectionObserver(function (es) {
-        es.forEach(function (e) { if (!e.isIntersecting) return; links.forEach(function (a) { var on = a.getAttribute('href') === '#' + e.target.id; a.setAttribute('aria-current', String(on)); if (on) { $$('.nav-g').forEach(function (g) { g.classList.toggle('on', g === a.parentNode); }); var nv = a.closest('.nav'); if (nv && nv.scrollWidth > nv.clientWidth + 1) nv.scrollLeft = Math.max(0, a.parentNode.getBoundingClientRect().left - nv.getBoundingClientRect().left + nv.scrollLeft - 12); } }); });
-      }, { rootMargin: '-110px 0px -60% 0px' });
-      secs.forEach(function (s) { if (s) io.observe(s); });
-    }
-    if (links[0] && !$('.nav a[aria-current="true"]')) { links[0].setAttribute('aria-current', 'true'); links[0].parentNode.classList.add('on'); }   // 맨 위에서는 첫 항목
+    // 지금 보고 있는 곳을 위쪽 메뉴에 표시: 스크롤 · 창 크기가 바뀔 때마다 다시 센다(접고 펴기 · 다시 그리기 뒤에는 setFold · render 가 부른다)
+    window.addEventListener('scroll', spyLater, { passive: true }); window.addEventListener('resize', function () { fitBar(); spyLater(); });
+    fitBar(); spy();
   });
 })();
 </script>
