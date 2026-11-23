@@ -24,6 +24,7 @@
   --c-ok: #0E8A66; --c-warn: #C77700; --c-bad: #D14338; --c-na: #A3A1BA; --c-ink: #FFFFFF;
   --c-ok-bg: #DDF2EA; --c-warn-bg: #FAEBCF; --c-bad-bg: #FADFDC; --c-na-bg: #EEEDF5;
   --sig: #16142B; --sig-line: #16142B;
+  --card-line: #E3E2EE; --card-shadow: 0 1px 0 rgba(22, 20, 43, 0.03), 0 2px 6px rgba(22, 20, 43, 0.05);
   --font: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif;
   --t-xs: 12.5px; --t-sm: 13.5px; --t-md: 15px; --t-lg: 17px; --t-xl: 20px; --t-num: 28px; --t-tag: 11px;
   --r-lg: 16px; --r-md: 12px; --r-sm: 8px;
@@ -42,6 +43,7 @@
     --c-ok: #3FCB9E; --c-warn: #F0B040; --c-bad: #FF8073; --c-na: #6E6B96; --c-ink: #0C0A22;
     --c-ok-bg: #143B33; --c-warn-bg: #3F3214; --c-bad-bg: #4A2421; --c-na-bg: #262353;
     --sig: #07061C; --sig-line: #37346A;
+    --card-line: #2C2960; --card-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04), 0 2px 8px rgba(0, 0, 0, 0.26);
   }
 }
 * { box-sizing: border-box; }
@@ -418,6 +420,18 @@ details .scroll { margin-top: 8px; }
 .ichip.ng { background: var(--c-bad-bg); }
 .ichip.vn { background: var(--c-bad-bg); box-shadow: inset 0 0 0 1.5px var(--c-bad); }
 .crit.t5 > div { grid-template-columns: 5.4em minmax(0, 1fr); }
+/* ── 카드에 아주 얇은 두께감: 가는 테두리 + 옅은 그림자 (11/23 14차 — 서우 「각 지표 테이블 아주 약간의 두께감 부여」) */
+.card, .bc, .idx-box { border: 1px solid var(--card-line); box-shadow: var(--card-shadow); }
+/* ── 날짜 지정(지표 모아보기) */
+.dr { gap: 8px 10px; padding: 10px 14px; border-radius: var(--r-md); background: var(--soft); }
+.dr-l { font-size: var(--t-sm); font-weight: 650; }
+.dr-i { height: 32px; padding: 0 8px; border: 1px solid var(--line-2); border-radius: var(--r-sm); background: var(--panel); color: var(--fg); font: inherit; font-size: var(--t-sm); font-variant-numeric: tabular-nums; }
+.dr-s { color: var(--faint); }
+.dr .note { flex: 1 1 12em; }
+/* ── 메뉴의 선 아이콘 */
+.nav-c { display: inline-flex; align-items: center; justify-content: center; gap: 5px; }
+.nav-i { flex: none; width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+.title { cursor: pointer; }
 /* ── 유형별 생태계 기여 척도: 칩(유형의 자리) + 단계별 지갑 분포 막대 + 평균 점수 */
 .tsc { display: inline-flex; align-items: center; gap: 8px; vertical-align: middle; }
 .tsc .ichip { min-width: 4.6em; text-align: center; }
@@ -446,10 +460,10 @@ details .scroll { margin-top: 8px; }
 <div class="bar">
   <div class="bar-in">
     <nav class="nav" aria-label="화면 안 이동">
-      <span class="nav-g"><button type="button" class="nav-c" data-go="#board">요약</button><a href="#board">모아보기</a><a href="#today">현황</a><a href="#market">시장</a><a href="#sum">한눈에</a></span>
-      <span class="nav-g"><button type="button" class="nav-c" data-go="#flow">흐름</button><a href="#flow">매매</a><a href="#daily">날짜별</a><a href="#pool">풀</a></span>
-      <span class="nav-g"><button type="button" class="nav-c" data-go="#accounts">지갑</button><a href="#accounts">회사 계정</a><a href="#impact">기여 5단계</a><a href="#deep">심층</a><a href="#wallets">분포</a><a href="#wtable">지갑 표</a></span>
-      <span class="nav-g"><button type="button" class="nav-c" data-go="#where">참고</button><a href="#where">위치</a><a href="#facts">네트워크</a><a href="#notes">읽는 법</a></span>
+      <span class="nav-g"><button type="button" class="nav-c" data-go="#board"><svg class="nav-i" viewBox="0 0 16 16" aria-hidden="true"><rect x="2.5" y="2.5" width="4.5" height="4.5" rx="1"/><rect x="9" y="2.5" width="4.5" height="4.5" rx="1"/><rect x="2.5" y="9" width="4.5" height="4.5" rx="1"/><rect x="9" y="9" width="4.5" height="4.5" rx="1"/></svg>요약</button><a href="#board">모아보기</a><a href="#today">현황</a><a href="#market">시장</a><a href="#sum">한눈에</a></span>
+      <span class="nav-g"><button type="button" class="nav-c" data-go="#flow"><svg class="nav-i" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 5.5h9.5M10 3l2.5 2.5L10 8M13 10.5H3.5M6 8l-2.5 2.5L6 13"/></svg>흐름</button><a href="#flow">매매</a><a href="#daily">날짜별</a><a href="#pool">풀</a></span>
+      <span class="nav-g"><button type="button" class="nav-c" data-go="#accounts"><svg class="nav-i" viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 5.4h10a1 1 0 0 1 1 1v5.4a1 1 0 0 1-1 1h-9a1 1 0 0 1-1-1z"/><path d="M2.5 5.4V4.5a1 1 0 0 1 1-1h7.7"/><path d="M10.6 9.1h.4"/></svg>지갑</button><a href="#accounts">회사 계정</a><a href="#impact">기여 5단계</a><a href="#deep">심층</a><a href="#wallets">분포</a><a href="#wtable">지갑 표</a></span>
+      <span class="nav-g"><button type="button" class="nav-c" data-go="#where"><svg class="nav-i" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 4.3C6.8 3.4 5 3.1 3 3.3v8.5c2-.2 3.8.1 5 1 1.2-.9 3-1.2 5-1V3.3c-2-.2-3.8.1-5 1z"/><path d="M8 4.3v8.5"/></svg>참고</button><a href="#where">위치</a><a href="#facts">네트워크</a><a href="#notes">읽는 법</a></span>
     </nav>
     <div class="seg" role="group" aria-label="보는 기간">
       <button type="button" data-range="all" aria-pressed="true">전체</button>
@@ -467,6 +481,13 @@ details .scroll { margin-top: 8px; }
   <section class="sec panel" id="board" aria-labelledby="h-board">
     <h2 class="h2" id="h-board">지표 모아보기 <span class="period" data-period>—</span></h2>
     <p class="note">아래 구역의 핵심 지표를 <b>그림 열두 장</b>으로 한데 모았다. 제목을 누르면 자세한 구역으로 간다. 지수 · 고리 · 여력은 늘 최근 7일, 나머지는 위에서 고른 기간이다.</p>
+    <div class="tools dr" id="board-range" role="group" aria-label="날짜 지정">
+      <span class="dr-l">날짜 지정</span>
+      <input type="date" class="dr-i" data-dr-from aria-label="시작일"><span class="dr-s">~</span><input type="date" class="dr-i" data-dr-to aria-label="끝일">
+      <button type="button" class="btn sm" data-dr-go>적용</button>
+      <button type="button" class="link" data-dr-clear hidden>날짜 지정 풀기</button>
+      <span class="note" data-dr-msg>정한 날짜는 「고른 기간」을 쓰는 모든 구역에 같이 적용된다.</span>
+    </div>
     <div class="board" id="board-grid">
       <article class="bc"><h3 class="bc-h"><a href="#today">선순환 지수</a><i>최근 7일</i></h3><p class="bc-v" data-bv="idx">—</p><div class="chart skel bchart" data-chart="b_idx" role="img" aria-label="선순환 지수"></div><p class="bc-s" data-bs="idx"></p></article>
       <article class="bc"><h3 class="bc-h"><a href="#today">다섯 고리 점수</a><i>최근 7일</i></h3><p class="bc-v" data-bv="radar">—</p><div class="chart skel bchart" data-chart="b_radar" role="img" aria-label="다섯 고리 점수"></div><p class="bc-s" data-bs="radar"></p></article>
@@ -906,10 +927,12 @@ details .scroll { margin-top: 8px; }
     if (owner && OWN[owner]) { el.appendChild(tagEl(owner)); el.appendChild(document.createTextNode(label === undefined ? full : label)); }
     else el.textContent = full;
   }
-  var PERIOD = { all: '전체', d30: '최근 30일', d7: '최근 7일' };
+  var PERIOD = { all: '전체', d30: '최근 30일', d7: '최근 7일', custom: '날짜 지정' };
   var MARKET = ['user', 'arb', 'other', 'bot'];
 
-  function ctx() { var r = DATA.ranges[RANGE]; return { s: DATA.summary[0], k: r.kpi, r: r }; }
+  var CUSTOM = null;      // 날짜를 직접 정한 기간 { from, to }. 그 범위의 합계(ranges.custom)는 서버가 계산해 준다(/api/data?from=&to=)
+  function dataUrl() { return 'api/data' + (CUSTOM ? '?from=' + CUSTOM.from + '&to=' + CUSTOM.to : ''); }
+  function ctx() { var r = DATA.ranges[RANGE] || DATA.ranges.all; return { s: DATA.summary[0], k: r.kpi, r: r }; }
   function pick(path, c) { var p = path.split('.'), o = c; for (var i = 0; i < p.length; i++) o = (o === null || o === undefined) ? null : o[p[i]]; return o === undefined ? null : o; }
 
   // 강조: 글 속 **…** 표시를 굵게 옮긴다(노드를 만들어 넣는다). lead — 문장 머리 꼬리표(「최근 7일:」「시장과 견주면 —」)도 굵게, first — 첫 문장을 굵게
@@ -1012,6 +1035,7 @@ details .scroll { margin-top: 8px; }
     links.forEach(function (a, i) { var sec = $(a.getAttribute('href')); if (!sec || sec.hidden) return; if (first < 0) first = i; if (sec.getBoundingClientRect().top <= line) cur = i; });
     if (cur < 0) cur = first; if (cur < 0) return;
     links.forEach(function (a, i) { a.setAttribute('aria-current', String(i === cur)); });
+    if (window.scrollY > 240) mark(links[cur].getAttribute('href').slice(1));
     var g = links[cur].parentNode, nv = g.parentNode; if (!g.classList.contains('on')) navOn(g);
     if (nv.scrollWidth > nv.clientWidth + 1) {
       var nl = nv.getBoundingClientRect().left, gl = g.getBoundingClientRect().left - nl + nv.scrollLeft, ar = links[cur].getBoundingClientRect().right - nl + nv.scrollLeft;
@@ -1019,6 +1043,29 @@ details .scroll { margin-top: 8px; }
     }
   }
   function spyLater() { if (SPYQ) return; SPYQ = requestAnimationFrame(function () { SPYQ = 0; spy(); }); }
+  // 뒤로 가기: 화면 안 어디에 내려가 있든 한 번 누르면 맨 위(홈)로 돌아온다. 한 번 더 누르면 앞 페이지로 나간다
+  //   (11/23 서우 「계산기 섹션에서 뒤로가기 버튼 누르면 아예 구글로 나가져버림 · 홈으로 돌아갈 수 있게」)
+  //   홈을 처음 떠날 때 기록을 하나만 쌓고(HERE), 그 뒤 구역이 바뀌면 그 기록의 주소만 바꿔 쓴다 — 뒤로 가기가 구역마다 멈추지 않게
+  var HERE = false, MARKED = '', HASH0 = '';
+  function mark(id) {
+    if (!id || (HERE && MARKED === id)) return;
+    var url = location.pathname + location.search + '#' + id;
+    try { if (HERE) history.replaceState({ wlbn: 1 }, '', url); else history.pushState({ wlbn: 1 }, '', url); HERE = true; MARKED = id; } catch (e) { /* 기록을 못 써도 화면은 그대로 쓴다 */ }
+  }
+  function goTo(t, id) { SETTLE += 1; reveal(t); closeHelp(); mark(id || t.id); var y = Math.max(0, t.getBoundingClientRect().top + window.scrollY - barOff()); window.scrollTo(0, y); spyLater(); }
+  // 구역을 화면 위에 붙잡아 둔다: 위쪽 그림 · 글꼴이 늦게 자리를 잡아 밀려도 2.5초 동안 다시 맞춘다. 사용자가 움직이면 바로 놓는다
+  var SETTLE = 0;
+  function jump(y) { try { window.scrollTo({ top: y, behavior: 'instant' }); } catch (e) { window.scrollTo(0, y); } }
+  function settle(t) {
+    var until = Date.now() + 2500, stop = false, off = function () { stop = true; }, me = ++SETTLE;
+    ['wheel', 'touchstart', 'keydown', 'pointerdown'].forEach(function (k) { window.addEventListener(k, off, { once: true, passive: true }); });
+    (function tick() {
+      if (stop || me !== SETTLE || Date.now() > until) return;
+      var d = t.getBoundingClientRect().top - barOff(); if (Math.abs(d) > 3) { jump(Math.max(0, window.scrollY + d)); spyLater(); }
+      setTimeout(tick, 150);
+    })();
+  }
+  function goHome() { SETTLE += 1; closeHelp(); jump(0); spy(); }
   // 메뉴: 지금 있는 장(묶음)만 구역 이름을 펼친다
   function navOn(g) { $$('.nav-g').forEach(function (x) { var on = x === g, c = x.querySelector('.nav-c'); x.classList.toggle('on', on); if (c) c.setAttribute('aria-expanded', String(on)); }); fitBar(); }
   function goHash() { var id = ''; try { id = decodeURIComponent((location.hash || '').slice(1)); } catch (e) { id = ''; } var t = id && document.getElementById(id); if (t) reveal(t); }
@@ -1134,7 +1181,7 @@ details .scroll { margin-top: 8px; }
     over.on('pointermove', show).on('pointerdown', show).on('pointerleave', function (ev) { if (ev.pointerType === 'mouse') hide(); });
   }
   function dayTitle(r) { return md(r.date) + (r.partial ? ' · 기준 시각까지' : ''); }
-  function tradeRows() { var c = ctx(), from = c.r.from > c.s.pool_open ? c.r.from : c.s.pool_open; return DATA.daily.filter(function (r) { return r.date >= from; }); }
+  function tradeRows() { var c = ctx(), from = c.r.from > c.s.pool_open ? c.r.from : c.s.pool_open; return DATA.daily.filter(function (r) { return r.date >= from && r.date <= c.r.to; }); }
 
   // 흐름 그림: 판 쪽 → 풀 → 산 쪽
   function drawFlow(el) {
@@ -1297,7 +1344,7 @@ details .scroll { margin-top: 8px; }
     var w = selWallet(), wd = DATA.walletDays, c = ctx();
     if (!w || !wd || !wd.w[w.id]) return empty(el, '이 지갑은 이 기간에 기록이 없습니다.');
     var by = {}; wd.w[w.id].forEach(function (a) { by[wd.days[a[0]]] = a; });
-    var rows = DATA.daily.filter(function (r) { return r.date >= c.r.from; }).map(function (r) {
+    var rows = DATA.daily.filter(function (r) { return r.date >= c.r.from && r.date <= c.r.to; }).map(function (r) {
       var a = by[r.date] || [0, 0, 0, 0, 0, 0, 0, 0, 0];
       return { date: r.date, partial: r.partial, paid_user: a[1], sell_user: a[2], buy_user: a[3], sell_user_rlusd: a[4], sell_user_xrp: a[2] - a[4], got_rlusd_user: a[5], got_xrp_user: a[6], lp: a[7], rebuy: a[8], price_rlusd: r.price_rlusd, price_xrp: r.price_xrp, xrp_rlusd: r.xrp_rlusd };
     });
@@ -1344,7 +1391,7 @@ details .scroll { margin-top: 8px; }
 
   // 돈의 흐름: 들어온 판매 대금(위) · bot 이 매입에 쓴 돈(아래), RLUSD
   function drawMoney(el) {
-    var c = ctx(), rows = DATA.daily.filter(function (r) { return r.date >= c.r.from && r.sales_rlusd !== null && r.sales_rlusd !== undefined; });
+    var c = ctx(), rows = DATA.daily.filter(function (r) { return r.date >= c.r.from && r.date <= c.r.to && r.sales_rlusd !== null && r.sales_rlusd !== undefined; });
     if (!rows.length) return empty(el, '판매 대금 기록을 아직 받지 못했습니다.');
     var rate = function (r) { return r.price_rlusd && r.price_xrp ? r.price_rlusd / r.price_xrp : (c.s.xrp_rate_rlusd || 0); };
     var spend = function (r) { return (r.bot_pay_rlusd || 0) + (r.bot_pay_xrp || 0) * rate(r); };
@@ -1402,7 +1449,7 @@ details .scroll { margin-top: 8px; }
 
   // 선 차트 (가격 · 풀에 든 WLBN)
   function drawLines(el, series, fmt, zero) {
-    var c = ctx(); linesOf(el, DATA.daily.filter(function (r) { return r.date >= c.r.from; }), series, fmt, zero);
+    var c = ctx(); linesOf(el, DATA.daily.filter(function (r) { return r.date >= c.r.from && r.date <= c.r.to; }), series, fmt, zero);
   }
   function linesOf(el, all, series, fmt, zero) {
     var rows = all.filter(function (r) { return series.every(function (s) { return r[s.key] !== null && r[s.key] !== undefined; }); });
@@ -1497,7 +1544,7 @@ details .scroll { margin-top: 8px; }
       { key: 'paid', label: '받은 양' }, { key: 'got_rlusd', label: '받은 RLUSD' }, { key: 'got_xrp', label: '받은 XRP' }],
     day: [{ key: 'who', label: '곳', text: 1, tag: 1 }, { key: 'group', label: '묶음', text: 1 }, { key: 'w', label: 'WLBN', share: 1 }, { key: 'rlusd', label: 'RLUSD' }, { key: 'xrp', label: 'XRP' }]
   };
-  function dailyRows() { var c = ctx(); return DATA.daily.filter(function (r) { return r.date >= c.r.from; }).slice().reverse(); }
+  function dailyRows() { var c = ctx(); return DATA.daily.filter(function (r) { return r.date >= c.r.from && r.date <= c.r.to; }).slice().reverse(); }
   function walletRows() {
     var c = ctx(), q = QUERY.trim().toLowerCase();
     var all = c.r.wallets.filter(function (r) {
@@ -1762,7 +1809,7 @@ details .scroll { margin-top: 8px; }
     if (bd.length) items.push('bot 매입: Wellbian bot 계정은 ' + rows.length + '일 가운데 **' + bd.length + '일**에 샀다. 가장 많이 산 날은 ' + md(bt.date) + '(' + fInt(bt.buy_bot) + '개)다.');
     var bot = (c.r.accounts || []).filter(function (a) { return a.name === 'bot'; })[0];
     if (bot && bot.rlusd !== null && bot.rlusd !== undefined) items.push('bot 잔액: Wellbian bot 계정에는 지금 **' + fInt(bot.rlusd) + ' RLUSD와 ' + fInt(bot.xrp) + ' XRP**가 있다. 이 기간에 사는 데 쓴 것은 ' + fInt(k.bot_paid_rlusd) + ' RLUSD와 ' + fInt(k.bot_paid_xrp) + ' XRP다.');
-    var xr = DATA.daily.filter(function (r) { return r.date >= c.r.from && r.xrp_rlusd; });
+    var xr = DATA.daily.filter(function (r) { return r.date >= c.r.from && r.date <= c.r.to && r.xrp_rlusd; });
     if (xr.length > 1) {
       var xa = xr[0], xb = xr[xr.length - 1], slip = function (w, q, fee) { var a = 10000 * (1 - fee); return w > 0 && q > 0 ? (q * a / (w + a)) / 10000 / (q / w) - 1 : null; };
       var tx = 'XRP 값: ' + md(xa.date) + ' ' + F.f4(xa.xrp_rlusd) + '에서 ' + F.f4(xb.xrp_rlusd) + ' RLUSD로 **' + F.spct(xb.xrp_rlusd / xa.xrp_rlusd - 1) + '**다. 그만큼 WLBN 1개로 받는 XRP는 ' + F.f4(xa.price_xrp) + '에서 ' + F.f4(xb.price_xrp) + '개가 됐고, WLBN의 RLUSD 가격은 **' + F.spct(xb.price_rlusd / xa.price_rlusd - 1) + '**다.';
@@ -1777,7 +1824,7 @@ details .scroll { margin-top: 8px; }
         items.push(t2);
       }
     }
-    var pr = DATA.daily.filter(function (r) { return r.date >= c.r.from && r.pool_r_rlusd !== null; });
+    var pr = DATA.daily.filter(function (r) { return r.date >= c.r.from && r.date <= c.r.to && r.pool_r_rlusd !== null; });
     if (pr.length > 1) items.push('풀의 변화: RLUSD 풀의 RLUSD는 ' + md(pr[0].date) + ' ' + fInt(pr[0].pool_r_rlusd) + '에서 지금 **' + fInt(c.s.pool_r_rlusd) + '**로, XRP 풀의 XRP는 ' + fInt(pr[0].pool_x_xrp) + '에서 **' + fInt(c.s.pool_x_xrp) + '**로 바뀌었다.');
     var lpw = lpParts(c.s);
     if (lpw) items.push('풀의 몫: 지금 두 풀에 든 WLBN 가운데 Wellbian 계정 몫이 **' + F.pct(lpw.w) + '**' + (lpw.k > 0 ? ', KWeather 계정 몫이 ' + F.pct(lpw.k) : '') + ', 일반 사용자 지갑 몫이 **' + F.pct(c.s.lp_user_share) + '**다.');
@@ -2218,7 +2265,7 @@ details .scroll { margin-top: 8px; }
   }
 
   // ── 지표 모아보기 (11/23 서우 「지표를 각종 그래프화해서 상단에서 모아보자」): 아래 구역의 핵심 지표를 작은 그림 열두 장으로 모은다
-  function bDays() { var c = ctx(); return DATA.daily.filter(function (r) { return r.date >= c.r.from; }); }
+  function bDays() { var c = ctx(); return DATA.daily.filter(function (r) { return r.date >= c.r.from && r.date <= c.r.to; }); }
   // 날짜 축 작은 그림: bars 하나 · lines 여럿(area — 아래를 옅게 채움)
   function bTime(el, rows, spec) {
     var keys = (spec.bars ? [spec.bars] : []).concat(spec.lines || []);
@@ -2325,7 +2372,7 @@ details .scroll { margin-top: 8px; }
   }
   function bHoldRows() { var cp = 0, cs = 0; return bDays().map(function (r) { cp += +r.paid_user || 0; cs += +r.net_sell_user || 0; return { date: r.date, partial: r.partial, cp: cp, cs: Math.max(0, cs) }; }); }
   function bPoolRows() { return bDays().filter(function (r) { return r.pool_r_rlusd !== null && r.pool_x_xrp !== null && r.xrp_rlusd; }).map(function (r) { return { date: r.date, partial: r.partial, depth: Math.round(r.pool_r_rlusd + r.pool_x_xrp * r.xrp_rlusd) }; }); }
-  function bRecvRows() { var c = ctx(), D = DATA.deep; return D && D.days ? D.days.filter(function (r) { return r.date >= c.r.from; }) : []; }
+  function bRecvRows() { var c = ctx(), D = DATA.deep; return D && D.days ? D.days.filter(function (r) { return r.date >= c.r.from && r.date <= c.r.to; }) : []; }
   var BOARD = {
     b_idx: function (el) { drawIndex(el); }, b_radar: bRadar, b_trend: function (el) { drawTrend(el); }, b_tier: bTier, b_money: bMoney, b_demand: bDemand, b_run: bRun,
     b_recv: function (el) { bTime(el, bRecvRows(), { bars: { key: 'receivers', label: '보상 받은 지갑', color: 'var(--s3)' }, lines: [{ key: 'fresh', label: '처음 움직인 지갑', color: 'var(--s2)' }] }); },
@@ -2382,7 +2429,7 @@ details .scroll { margin-top: 8px; }
     try { drawBoard(); } catch (e) { if (window.console) console.error(e); }
     $$('[data-chart]').forEach(function (el) { el.__drawn = 0; drawChart(el.getAttribute('data-chart')); });
     closeHelp();
-    [drawHealth, drawVs, drawDeep, drawWallet, drawDist, drawTables, drawImpact, drawFlowShares, drawPositions, drawInsights, drawDay, drawCalc, drawStatus, drawSums].forEach(function (fn) { try { fn(); } catch (e) { if (window.console) console.error(e); } });
+    [drawHealth, drawVs, drawDeep, drawWallet, drawDist, drawTables, drawImpact, drawFlowShares, drawPositions, drawInsights, drawDay, drawCalc, drawStatus, drawSums, syncDates].forEach(function (fn) { try { fn(); } catch (e) { if (window.console) console.error(e); } });
     $$('[data-chart]').forEach(function (el) { if (!el.__drawn) drawChart(el.getAttribute('data-chart')); });      // 위에서 막 드러난 곳(추이 · 지갑 따라가 보기)의 그림
     spyLater();
   }
@@ -2392,8 +2439,40 @@ details .scroll { margin-top: 8px; }
     if (!d || !d.summary || !d.daily || !d.ranges) return false;
     if (DATA && DATA.summary[0].as_of > d.summary[0].as_of) return false;   // 더 옛 자료로 덮지 않는다
     try { tier5(d); } catch (e) { if (window.console) console.error(e); }
-    DATA = d; render(); return true;
+    if (CUSTOM && !d.ranges.custom && DATA && DATA.ranges.custom) d.ranges.custom = DATA.ranges.custom;      // 배포에 든 자료처럼 날짜 지정이 없는 응답이 와도 받아 둔 범위는 지킨다
+    DATA = d; if (CUSTOM && d.ranges.custom) RANGE = 'custom'; else if (RANGE === 'custom') { RANGE = 'all'; CUSTOM = null; }
+    $$('[data-range]').forEach(function (x) { x.setAttribute('aria-pressed', String(x.getAttribute('data-range') === RANGE)); });
+    render();
+    // 구역 주소(#deep 같은)로 바로 들어온 경우: 자료가 있어야 보이는 구역은 처음엔 숨어 있어 브라우저가 못 찾아간다 → 자료가 온 뒤 한 번 옮겨 준다
+    if (HASH0) { var ht = document.getElementById(HASH0); if (ht && !ht.hidden) { HASH0 = ''; reveal(ht); MARKED = ht.id; settle(ht); } }
+    return true;
   }
+  // 날짜 지정: 시작일 · 끝일을 골라 「적용」을 누르면 서버에 그 범위의 합계를 청한다. 풀 기간 밖은 잘라 맞춘다
+  function drSay(t) { var m = $('[data-dr-msg]'); if (m) m.textContent = t; }
+  function syncDates() {
+    var f = $('[data-dr-from]'), t = $('[data-dr-to]'), cl = $('[data-dr-clear]'); if (!f || !t || !DATA) return;
+    var c = ctx(), lo = c.s.period_from, hi = c.s.last_day;
+    [f, t].forEach(function (x) { x.min = lo; x.max = hi; });
+    if (document.activeElement !== f) f.value = c.r.from; if (document.activeElement !== t) t.value = c.r.to;
+    if (cl) cl.hidden = RANGE !== 'custom';
+  }
+  function setUrl() { try { history.replaceState(history.state, '', (RANGE === 'all' ? location.pathname : RANGE === 'custom' && CUSTOM ? '?p=custom&from=' + CUSTOM.from + '&to=' + CUSTOM.to : '?p=' + RANGE) + location.hash); } catch (e) { /* 주소를 못 바꿔도 화면은 그대로 쓴다 */ } }
+  function applyDates() {
+    var f = $('[data-dr-from]'), t = $('[data-dr-to]'), go = $('[data-dr-go]'); if (!f || !t || !DATA) return;
+    var a = f.value, b = t.value, s0 = DATA.summary[0], prev = CUSTOM, prevRange = RANGE;
+    if (!a || !b) { drSay('시작일과 끝일을 모두 골라 주세요.'); return; }
+    if (a > b) { var x = a; a = b; b = x; }
+    if (a < s0.period_from) a = s0.period_from; if (b > s0.last_day) b = s0.last_day; if (a > b) a = b;
+    CUSTOM = { from: a, to: b }; if (go) go.disabled = true; drSay('불러오는 중…');
+    getJson(dataUrl()).then(function (d) {
+      if (!d || !d.ranges || !d.ranges.custom) throw new Error('no custom range');
+      SELDAY = null; if (!show(d)) { try { tier5(d); } catch (e) { /* 단계 나누기를 못 해도 범위는 쓴다 */ } DATA.ranges.custom = d.ranges.custom; RANGE = 'custom'; $$('[data-range]').forEach(function (x) { x.setAttribute('aria-pressed', 'false'); }); render(); }
+      LASTOK = Date.now(); setUrl(); drSay(md(a) + '~' + md(b) + ' · ' + DATA.ranges.custom.days + '일을 보고 있다. 「고른 기간」을 쓰는 모든 구역에 같이 적용된다.');
+    }).catch(function () {
+      CUSTOM = prev; RANGE = prevRange; drSay('이 날짜 범위를 받지 못했습니다. 날짜 지정은 서버가 계산합니다 — 잠시 뒤 다시 눌러 보세요.');
+    }).then(function () { if (go) go.disabled = false; });
+  }
+  function clearDates() { CUSTOM = null; RANGE = 'all'; SELDAY = null; $$('[data-range]').forEach(function (x) { x.setAttribute('aria-pressed', String(x.getAttribute('data-range') === 'all')); }); render(); setUrl(); drSay('정한 날짜는 「고른 기간」을 쓰는 모든 구역에 같이 적용된다.'); }
   function getJson(url) { return fetch(url, { headers: { accept: 'application/json' } }).then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); }); }
   // 자료를 못 받았을 때의 알림: 배포에 든 자료라도 있으면 그것을 보여 준다고, 그것도 없으면(index.html 만 올린 배포) 무엇이 빠졌는지 적는다
   function staleNote() {
@@ -2404,17 +2483,32 @@ details .scroll { margin-top: 8px; }
     var live = $('[data-live]'), btn = $('[data-refresh]'), stale = $('[data-stale]');
     if (live) live.hidden = false; if (btn) btn.disabled = true;
     LASTTRY = Date.now();
-    return getJson('api/data').then(function (d) { show(d); LASTOK = Date.now(); tickAgo(); if (stale) stale.hidden = true; }).catch(function () { staleNote(); if (stale) stale.hidden = false; })
+    return getJson(dataUrl()).then(function (d) { show(d); LASTOK = Date.now(); tickAgo(); if (stale) stale.hidden = true; }).catch(function () { staleNote(); if (stale) stale.hidden = false; })
       .then(function () { if (live) live.hidden = true; if (btn) btn.disabled = false; });
   }
   document.addEventListener('DOMContentLoaded', function () {
-    try { var qp = new URLSearchParams(location.search).get('p'); if (PERIOD[qp]) { RANGE = qp; $$('[data-range]').forEach(function (x) { x.setAttribute('aria-pressed', String(x.getAttribute('data-range') === qp)); }); } } catch (e) { /* 기본 기간으로 연다 */ }
+    try { var qs0 = new URLSearchParams(location.search), qf = qs0.get('from') || '', qt = qs0.get('to') || '', DAY = /^\d{4}-\d{2}-\d{2}$/; if (qs0.get('p') === 'custom' && DAY.test(qf) && DAY.test(qt)) CUSTOM = { from: qf <= qt ? qf : qt, to: qf <= qt ? qt : qf }; } catch (e) { /* 날짜 지정 없이 연다 */ }
+    try { var qp = new URLSearchParams(location.search).get('p'); if (PERIOD[qp] && qp !== 'custom') { RANGE = qp; $$('[data-range]').forEach(function (x) { x.setAttribute('aria-pressed', String(x.getAttribute('data-range') === qp)); }); } } catch (e) { /* 기본 기간으로 연다 */ }
     buildLayers(); goHash(); window.addEventListener('hashchange', goHash);
-    $$('.nav a, a.skip').forEach(function (a) { a.addEventListener('click', function () { var t = $(a.getAttribute('href')); if (t) reveal(t); }); });
+    if (location.hash.length > 1 && document.getElementById(decodeURIComponent(location.hash.slice(1)))) {
+      HASH0 = decodeURIComponent(location.hash.slice(1));
+      try { var h0 = location.hash; history.replaceState(null, '', location.pathname + location.search); history.pushState({ wlbn: 1 }, '', location.pathname + location.search + h0); HERE = true; MARKED = h0.slice(1); } catch (e) { /* 그대로 둔다 */ }
+    }
+    document.addEventListener('click', function (ev) {
+      var a = ev.target.closest ? ev.target.closest('a[href^="#"]') : null; if (!a || ev.defaultPrevented) return;
+      var id = a.getAttribute('href').slice(1), t = id && document.getElementById(id); if (!t) return;
+      ev.preventDefault(); goTo(t, id);
+    });
+    try { history.scrollRestoration = 'manual'; } catch (e) { /* 없어도 된다 */ }
+    window.addEventListener('popstate', function (ev) {
+      if (ev.state && ev.state.wlbn) { HERE = true; var id = (location.hash || '').slice(1), t = id && document.getElementById(id); MARKED = id; SETTLE += 1; if (t) { reveal(t); jump(Math.max(0, t.getBoundingClientRect().top + window.scrollY - barOff())); spyLater(); } }
+      else { HERE = false; MARKED = ''; goHome(); }
+    });
+    var ttl = $('.title'); if (ttl) { ttl.title = '맨 위로'; ttl.addEventListener('click', goHome); }
     // 장 단추: 그 장의 머리로 바로 가고(먼 거리라 미끄러지지 않고 건너뛴다) 그 장의 구역 이름을 펼친다
     $$('.nav-c').forEach(function (b) { b.addEventListener('click', function () {
       var t = $(b.getAttribute('data-go')), ch = t && t.previousElementSibling, to = ch && ch.classList.contains('chap') ? ch : t; if (!to) return;
-      navOn(b.parentNode); closeHelp();
+      navOn(b.parentNode); closeHelp(); mark(t.id);
       var y = Math.max(0, to.getBoundingClientRect().top + window.scrollY - barOff());
       try { window.scrollTo({ top: y, behavior: 'instant' }); } catch (e) { window.scrollTo(0, y); }
       spy();
@@ -2423,6 +2517,9 @@ details .scroll { margin-top: 8px; }
       var open = BOXES.some(function (b) { return b.__lv === 1 && !b.hidden && isShut(b); }); closeHelp();
       BOXES.forEach(function (b) { if (b.__lv === 1) setFold(b, !open, true); else if (open) setFold(b, false, true); });
     });
+    var drg = $('[data-dr-go]'); if (drg) drg.addEventListener('click', applyDates);
+    var drc = $('[data-dr-clear]'); if (drc) drc.addEventListener('click', clearDates);
+    $$('[data-dr-from], [data-dr-to]').forEach(function (x) { x.addEventListener('keydown', function (ev) { if (ev.key === 'Enter') applyDates(); }); });
     $$('[data-csv]').forEach(function (b) { b.addEventListener('click', function () { csv(b.getAttribute('data-csv')); }); });
     var cp = $('[data-copy]'); if (cp) cp.addEventListener('click', function () { copySummary(cp); });
     $$('[data-wg]').forEach(function (b) { b.addEventListener('click', function () { WG = b.getAttribute('data-wg'); WT = null; $$('[data-wg]').forEach(function (x) { x.setAttribute('aria-pressed', String(x === b)); }); SHOWALL = false; if (DATA) drawTables(); }); });
@@ -2444,8 +2541,8 @@ details .scroll { margin-top: 8px; }
     getJson('snapshot.json').then(show).catch(function () {}).then(staleNote);
     loadLive();
     $$('[data-range]').forEach(function (b) { b.addEventListener('click', function () {
-      RANGE = b.getAttribute('data-range'); $$('[data-range]').forEach(function (x) { x.setAttribute('aria-pressed', String(x === b)); }); SELDAY = null; render();
-      try { history.replaceState(null, '', (RANGE === 'all' ? location.pathname : '?p=' + RANGE) + location.hash); } catch (e) { /* 주소를 못 바꿔도 화면은 그대로 쓴다 */ }
+      RANGE = b.getAttribute('data-range'); CUSTOM = null; $$('[data-range]').forEach(function (x) { x.setAttribute('aria-pressed', String(x === b)); }); SELDAY = null; render();
+      setUrl(); drSay('정한 날짜는 「고른 기간」을 쓰는 모든 구역에 같이 적용된다.');
     }); });
     var rf = $('[data-refresh]'); if (rf) rf.addEventListener('click', loadLive);
     var se = $('[data-search]'); if (se) se.addEventListener('input', function () { QUERY = se.value; if (DATA) drawTables(); });

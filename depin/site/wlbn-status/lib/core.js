@@ -484,12 +484,15 @@ function buildDatasets(S, opts) {
   const labelOwner = (lab) => (lab === 'kweather' ? 'kweather' : 'wellbian');
   const acctLabel = (a) => labelName(L[a]) + (perLabel[L[a]] > 1 ? ' ' + short(a) : '');
   const tagged = (owner, label) => ({ owner, label, full: OWN[owner] + ' ' + label });
-  const mkRange = (key, from) => {
+  // to 를 주면 그날까지만 센다(날짜를 직접 정한 기간 — 14차). 잔액 · 「지금」이 붙은 값은 어느 기간이든 지금 값이다
+  const mkRange = (key, from, to) => {
     if (from < C.NOW_FROM) from = C.NOW_FROM;
+    if (!to || to > lastDay) to = lastDay;
+    if (from > to) from = to;
     const acc = {}, at = (a) => acc[a] || (acc[a] = { paid: 0, paidco: 0, sold: 0, bought: 0, cash: 0, spent: 0, toR: 0, toX: 0, fromR: 0, fromX: 0, gotR: 0, gotX: 0, payR: 0, payX: 0, lpw: 0, lpq: 0, lpr: 0, lpx: 0, wr: 0 });
     let repay = 0;
     for (const e of EV) {
-      if (e.k < from) continue;
+      if (e.k < from || e.k > to) continue;
       const o = at(e.a), v = e.v;
       if (e.kind === 'sell') { o.sd = (o.sd || 0) + 1; o.wr += byCur(v)[0]; o.sold += v[0]; o.cash += v[1]; o.toR += v[2] || 0; o.toX += v[3] || 0; o.gotR += v[4] || 0; o.gotX += v[5] || 0; }
       else if (e.kind === 'buy') { o.bought += v[0]; o.spent += v[1]; o.fromR += v[2] || 0; o.fromX += v[3] || 0; o.payR += v[4] || 0; o.payX += v[5] || 0; }
@@ -500,7 +503,7 @@ function buildDatasets(S, opts) {
     const of = (g) => Object.keys(acc).filter((a) => (G[a] || 'other') === g);
     const sum = (list, f) => list.reduce((t, a) => t + (acc[a] ? acc[a][f] : 0), 0);
     const U = of('user');
-    const rows = daily.filter((r) => r.date >= from), full = rows.filter((r) => !r.partial && r.date >= C.POOL_OPEN);
+    const rows = daily.filter((r) => r.date >= from && r.date <= to), full = rows.filter((r) => !r.partial && r.date >= C.POOL_OPEN);
     const avg = (f) => (full.length ? r0(full.reduce((t, r) => t + r[f], 0) / full.length) : null);
     const uPaid = sum(U, 'paid'), uSold = sum(U, 'sold'), uBought = sum(U, 'bought'), uCash = sum(U, 'cash');
     const all = Object.keys(acc), ts = sum(all, 'sold'), tb = sum(all, 'bought'), botB = sum(of('bot'), 'bought');
@@ -536,7 +539,7 @@ function buildDatasets(S, opts) {
     }
     // 지갑별: 일반 사용자 지갑 전부 + 사고팔기 · 그 밖 · bot 가운데 이 기간에 거래한 곳. rebuy = 이 기간에 operations 계정으로 보낸 RLUSD(다시 산 돈)
     const rebuy = {};
-    if (FD) for (const k of Object.keys(FD)) if (k >= from) for (const a of Object.keys(FD[k].p || {})) add(rebuy, a, FD[k].p[a]);
+    if (FD) for (const k of Object.keys(FD)) if (k >= from && k <= to) for (const a of Object.keys(FD[k].p || {})) add(rebuy, a, FD[k].p[a]);
     const wallets = [];
     for (const a of accts) {
       const g = G[a];
@@ -712,9 +715,12 @@ function buildDatasets(S, opts) {
         prev = p;
       }
     }
-    return { key, from, to: lastDay, days: rows.length, kpi, prev, groups, flow: { sell: flowSell, buy: flowBuy }, wallets, types, impact, dist, conc, cohorts, accounts, lp: lpRows };
+    return { key, from, to, days: rows.length, kpi, prev, groups, flow: { sell: flowSell, buy: flowBuy }, wallets, types, impact, dist, conc, cohorts, accounts, lp: lpRows };
   };
   const ranges = { all: mkRange('all', C.NOW_FROM), d30: mkRange('d30', shift(lastDay, -29)), d7: mkRange('d7', shift(lastDay, -6)) };
+  // 날짜를 직접 정한 기간: opts.range = { from, to }(YYYY-MM-DD). 화면이 /api/data?from=&to= 로 청하면 run() 이 넘겨 준다. 풀 기간 밖은 잘라 맞춘다
+  const DAYRE = /^\d{4}-\d{2}-\d{2}$/, cr = opts && opts.range;
+  if (cr && DAYRE.test(cr.from || '') && DAYRE.test(cr.to || '')) ranges.custom = mkRange('custom', cr.from <= cr.to ? cr.from : cr.to, cr.from <= cr.to ? cr.to : cr.from);
 
   // 날짜마다 많이 판 곳 · 많이 산 곳 (다섯 곳씩)
   const dayAgg = {};
