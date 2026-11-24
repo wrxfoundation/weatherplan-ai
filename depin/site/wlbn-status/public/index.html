@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
 <meta name="color-scheme" content="light dark">
+<script>(function () { try { var v = JSON.parse(localStorage.getItem("wlbn-view-1") || "{}") || {}, r = document.documentElement; if (v.theme === "dark" || v.theme === "light") r.setAttribute("data-theme", v.theme); if ([10, 20, 30].indexOf(+v.fs) >= 0) { r.style.setProperty("--fs", String(1 + v.fs / 100)); r.setAttribute("data-fs", String(+v.fs)); } } catch (e) { /* 저장해 둔 설정을 못 읽어도 기본으로 뜬다 */ } })();</script>
 <title>WLBN 운용현황</title>
 <link rel="icon" href="data:,">
 <link rel="preload" href="fonts/PretendardVariable.woff2" as="font" type="font/woff2" crossorigin>
@@ -26,12 +27,14 @@
   --sig: #16142B; --sig-line: #16142B;
   --card-line: #E3E2EE; --card-shadow: 0 1px 0 rgba(22, 20, 43, 0.03), 0 2px 6px rgba(22, 20, 43, 0.05);
   --font: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif;
-  --t-xs: 12.5px; --t-sm: 13.5px; --t-md: 15px; --t-lg: 17px; --t-xl: 20px; --t-num: 28px; --t-tag: 11px;
+  --fs: 1;      /* 글씨 크기 배율: 1 · 1.1 · 1.2 · 1.3 (화면 위 「글씨」 단추 — 모든 글자 크기에 곱한다) */
+  --t-xs: calc(12.5px * var(--fs)); --t-sm: calc(13.5px * var(--fs)); --t-md: calc(15px * var(--fs)); --t-lg: calc(17px * var(--fs)); --t-xl: calc(20px * var(--fs)); --t-num: calc(28px * var(--fs)); --t-tag: calc(11px * var(--fs));
   --r-lg: 16px; --r-md: 12px; --r-sm: 8px;
   --pad: 24px;
 }
+/* 어두운 화면: 기기 설정이 어두우면 따르고(밝게를 고르지 않았을 때), 단추로 어둡게를 고르면 기기 설정과 무관하게 쓴다. 두 묶음의 값은 같다 */
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme="light"]) {
     --bg: #0C0A22; --panel: #151237; --soft: #1B1843; --line: #262353; --line-2: #37346A;
     --fg: #EEEDFB; --muted: #B5B2D4; --faint: #8F8CB4;
     --ok: #4FD1A5; --warn: #F0B040;
@@ -46,6 +49,21 @@
     --card-line: #2C2960; --card-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04), 0 2px 8px rgba(0, 0, 0, 0.26);
   }
 }
+:root[data-theme="dark"] {
+  --bg: #0C0A22; --panel: #151237; --soft: #1B1843; --line: #262353; --line-2: #37346A;
+  --fg: #EEEDFB; --muted: #B5B2D4; --faint: #8F8CB4;
+  --ok: #4FD1A5; --warn: #F0B040;
+  --grid: #1F1C47; --axis: #504D84; --ctx: #5A5783;
+  --pop: #1D1A47; --pop-line: #38356C; --pop-shadow: 0 10px 32px rgba(0, 0, 0, 0.55);
+  --s1: #A39BFF; --s2: #F0B040; --s3: #35C9A0; --s4: #E58FC0; --s5: #8F8CB5; --s6: #6FB8EA;
+  --accent: #A39BFF; --accent-fg: #0C0A22;
+  --tag-w-bg: #2E2A6E; --tag-w-fg: #CBC6FF; --tag-k-bg: #103A5C; --tag-k-fg: #9AD4FF;
+  --c-ok: #3FCB9E; --c-warn: #F0B040; --c-bad: #FF8073; --c-na: #6E6B96; --c-ink: #0C0A22;
+  --c-ok-bg: #143B33; --c-warn-bg: #3F3214; --c-bad-bg: #4A2421; --c-na-bg: #262353;
+  --sig: #07061C; --sig-line: #37346A;
+  --card-line: #2C2960; --card-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04), 0 2px 8px rgba(0, 0, 0, 0.26);
+}
+:root[data-theme="dark"] { color-scheme: dark; } :root[data-theme="light"] { color-scheme: light; }
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
 html { background: var(--bg); scroll-behavior: smooth; scroll-padding-top: 68px; }
@@ -59,7 +77,7 @@ button, input { font: inherit; color: inherit; }
 .skip { position: absolute; left: -9999px; } .skip:focus { left: 12px; top: 12px; z-index: 50; background: var(--panel); border: 1px solid var(--line-2); border-radius: var(--r-sm); padding: 8px 12px; }
 .head-in { max-width: 1080px; margin: 0 auto; padding: 28px 20px 14px; display: flex; align-items: flex-end; justify-content: space-between; gap: 12px 16px; flex-wrap: wrap; }
 .brand { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-.title { margin: 0; font-size: 24px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.25; }
+.title { margin: 0; font-size: calc(24px * var(--fs)); font-weight: 700; letter-spacing: -0.02em; line-height: 1.25; }
 .asof { margin: 0; color: var(--faint); font-size: var(--t-sm); }
 .ctl { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 .btn { height: 34px; padding: 0 14px; border: 1px solid var(--line-2); background: var(--panel); border-radius: 999px; font-size: var(--t-sm); font-weight: 500; color: var(--fg); cursor: pointer; white-space: nowrap; }
@@ -115,11 +133,11 @@ button, input { font: inherit; color: inherit; }
 .hpop .hpop-now { margin: 9px 0 0; padding-top: 8px; border-top: 1px solid var(--line); color: var(--fg); font-weight: 600; }
 /* 시장과 견주기 */
 .chart.short { min-height: 200px; }
-.tiles.four { grid-template-columns: repeat(4, minmax(0, 1fr)); } .tiles.four .big { font-size: 24px; }
-.vs-name { fill: var(--muted); font-family: var(--font); font-size: 12.5px; font-weight: 500; } .vs-name.me { fill: var(--fg); font-weight: 700; }
+.tiles.four { grid-template-columns: repeat(4, minmax(0, 1fr)); } .tiles.four .big { font-size: calc(24px * var(--fs)); }
+.vs-name { fill: var(--muted); font-family: var(--font); font-size: calc(12.5px * var(--fs)); font-weight: 500; } .vs-name.me { fill: var(--fg); font-weight: 700; }
 /* 집계 한계(원장으로 볼 수 없는 것)를 알리는 상자 */
 .limit { display: flex; gap: 10px; align-items: flex-start; max-width: 62em; margin: 0; padding: 11px 14px; border-radius: var(--r-md); background: var(--c-warn-bg); color: var(--fg); font-size: var(--t-sm); line-height: 1.55; }
-.limit::before { content: "!"; flex: none; width: 18px; height: 18px; margin-top: 2px; border-radius: 50%; background: var(--c-warn); color: var(--c-ink); font-size: 12px; font-weight: 800; line-height: 18px; text-align: center; }
+.limit::before { content: "!"; flex: none; width: 18px; height: 18px; margin-top: 2px; border-radius: 50%; background: var(--c-warn); color: var(--c-ink); font-size: calc(12px * var(--fs)); font-weight: 800; line-height: 18px; text-align: center; }
 .limit b { font-weight: 650; } .limit span { display: block; }
 .g-cav { margin: 0; color: var(--warn); font-size: var(--t-xs); font-weight: 600; }
 /* 비중 막대: 한 줄이 100%. 글자는 막대 밖(아래 범례)에 쓴다 */
@@ -130,8 +148,8 @@ button, input { font: inherit; color: inherit; }
 .sh-seg { flex: 0 0 auto; min-width: 3px; }
 .sh-keys { grid-column: 2; display: flex; flex-wrap: wrap; gap: 3px 16px; color: var(--muted); font-size: var(--t-xs); }
 .sh-keys .key b { color: var(--fg); font-weight: 650; font-variant-numeric: tabular-nums; } .sh-keys .key em { font-style: normal; color: var(--faint); font-variant-numeric: tabular-nums; }
-td .pc { display: block; margin-top: 1px; color: var(--faint); font-size: 11.5px; font-weight: 500; }
-.ichip { display: inline-block; padding: 1px 8px; border-radius: 999px; font-size: 11.5px; font-weight: 650; color: var(--fg); background: var(--c-na-bg); white-space: nowrap; }
+td .pc { display: block; margin-top: 1px; color: var(--faint); font-size: calc(11.5px * var(--fs)); font-weight: 500; }
+.ichip { display: inline-block; padding: 1px 8px; border-radius: 999px; font-size: calc(11.5px * var(--fs)); font-weight: 650; color: var(--fg); background: var(--c-na-bg); white-space: nowrap; }
 .ichip.help { background: var(--c-ok-bg); } .ichip.load { background: var(--c-bad-bg); }
 .crit { display: flex; flex-direction: column; gap: 6px; margin: 0; padding: 12px 14px; border-radius: var(--r-md); background: var(--soft); font-size: var(--t-sm); color: var(--muted); max-width: 62em; }
 .crit > div { display: grid; grid-template-columns: 3.4em minmax(0, 1fr); gap: 10px; align-items: baseline; } .crit dt, .crit dd { margin: 0; }
@@ -158,7 +176,7 @@ td .pc { display: block; margin-top: 1px; color: var(--faint); font-size: 11.5px
 .card { --cell: var(--soft); background: var(--soft); border: 0; border-radius: var(--r-md); padding: 16px 18px; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
 .card-h { margin: 0; font-size: var(--t-xs); font-weight: 600; color: var(--muted); line-height: 1.4; }
 .big { margin: 2px 0 0; font-size: var(--t-num); font-weight: 700; letter-spacing: -0.02em; line-height: 1.2; display: flex; align-items: baseline; flex-wrap: wrap; gap: 0 6px; }
-.big.two { font-size: 21px; flex-direction: column; gap: 0; line-height: 1.3; }
+.big.two { font-size: calc(21px * var(--fs)); flex-direction: column; gap: 0; line-height: 1.3; }
 .unit { font-size: var(--t-xs); font-weight: 500; letter-spacing: 0; color: var(--faint); }
 .sub { margin: 2px 0 0; color: var(--faint); font-size: var(--t-xs); line-height: 1.5; }
 .sub b { color: var(--muted); font-weight: 600; }
@@ -170,7 +188,7 @@ td .pc { display: block; margin-top: 1px; color: var(--faint); font-size: 11.5px
 .tag-k { background: var(--tag-k-bg); color: var(--tag-k-fg); }
 .key .tag, .tip-k .tag { margin-right: 0; }
 .flow-chip { stroke: var(--panel); stroke-width: 2px; paint-order: stroke; } .flow-chip.w { fill: var(--tag-w-bg); } .flow-chip.k { fill: var(--tag-k-bg); }
-.flow-tag { font-size: 10.5px; font-weight: 650; font-family: var(--font); letter-spacing: 0.01em; } .flow-tag.w { fill: var(--tag-w-fg); } .flow-tag.k { fill: var(--tag-k-fg); }
+.flow-tag { font-size: calc(10.5px * var(--fs)); font-weight: 650; font-family: var(--font); letter-spacing: 0.01em; } .flow-tag.w { fill: var(--tag-w-fg); } .flow-tag.k { fill: var(--tag-k-fg); }
 
 /* 건강 신호: 신호등 · 고리 그림 · 온도계 */
 .st-ok { --st: var(--c-ok); --st-bg: var(--c-ok-bg); } .st-warn { --st: var(--c-warn); --st-bg: var(--c-warn-bg); }
@@ -181,15 +199,15 @@ td .pc { display: block; margin-top: 1px; color: var(--faint); font-size: 11.5px
 .idx-box .chart { min-height: 0; overflow: visible; }
 .idx-top { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin: 0; } .idx-top b { font-size: var(--t-sm); font-weight: 650; } .idx-top span { color: var(--faint); font-size: var(--t-xs); }
 .idx-track { fill: var(--st-bg); } .idx-fill { fill: var(--st); } .idx-knob { fill: var(--st); stroke: var(--cell); stroke-width: 3px; }
-.idx-num { fill: var(--fg); font-family: var(--font); font-size: 46px; font-weight: 750; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
-.idx-of { fill: var(--faint); font-family: var(--font); font-size: 12px; }
+.idx-num { fill: var(--fg); font-family: var(--font); font-size: calc(46px * var(--fs)); font-weight: 750; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
+.idx-of { fill: var(--faint); font-family: var(--font); font-size: calc(12px * var(--fs)); }
 .idx-state { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 4px 8px; margin: -4px 0 2px; font-size: var(--t-lg); font-weight: 700; letter-spacing: -0.01em; }
 .idx-state small { color: var(--muted); font-size: var(--t-xs); font-weight: 500; letter-spacing: 0; font-variant-numeric: tabular-nums; }
 .idx-parts { list-style: none; margin: 0; padding: 10px 0 0; border-top: 1px solid var(--line); display: grid; grid-template-columns: auto minmax(0, 1fr) auto auto; gap: 7px 9px; align-items: center; font-size: var(--t-xs); }
 .idx-parts li { display: contents; }
-.idx-parts .nm { display: inline-flex; align-items: center; font-weight: 600; white-space: nowrap; } .idx-parts .nm .q { margin-left: 4px; } .idx-parts .nm em { margin-left: 5px; padding: 0 5px; border-radius: 999px; background: var(--st-bg); font-style: normal; font-size: 11px; font-weight: 600; }
+.idx-parts .nm { display: inline-flex; align-items: center; font-weight: 600; white-space: nowrap; } .idx-parts .nm .q { margin-left: 4px; } .idx-parts .nm em { margin-left: 5px; padding: 0 5px; border-radius: 999px; background: var(--st-bg); font-style: normal; font-size: calc(11px * var(--fs)); font-weight: 600; }
 .idx-parts li.ref .nm, .idx-parts li.ref .sc { color: var(--faint); font-weight: 500; } .idx-parts li.ref .pbar { opacity: 0.45; } .idx-parts li.ref .nm em { background: var(--c-na-bg); color: var(--muted); }
-.g-ref { flex: none; padding: 1px 7px; border-radius: 999px; border: 1px dashed var(--line-2); color: var(--muted); font-size: 11.5px; font-weight: 600; white-space: nowrap; }
+.g-ref { flex: none; padding: 1px 7px; border-radius: 999px; border: 1px dashed var(--line-2); color: var(--muted); font-size: calc(11.5px * var(--fs)); font-weight: 600; white-space: nowrap; }
 .ring-lamp.ref { fill: var(--panel); stroke: var(--st); stroke-width: 2px; stroke-dasharray: 3 3; } .ring-ref .glyph { stroke: var(--st); } .ring-arc.ref { opacity: 0.6; }
 .idx-parts .sc { text-align: right; font-weight: 700; font-variant-numeric: tabular-nums; } .idx-parts .dl { min-width: 2.2em; text-align: right; color: var(--faint); font-variant-numeric: tabular-nums; white-space: nowrap; }
 .pbar { position: relative; height: 6px; display: grid; gap: 2px; } .pbar i { background: var(--c-warn-bg); } .pbar i:first-child { border-radius: 3px 0 0 3px; background: var(--c-bad-bg); } .pbar i:nth-child(3) { border-radius: 0 3px 3px 0; background: var(--c-ok-bg); }
@@ -205,7 +223,7 @@ td .pc { display: block; margin-top: 1px; color: var(--faint); font-size: 11.5px
 .ring-arc.st-warn { stroke-dasharray: 9 6; } .ring-arc.st-bad, .ring-arc.st-na { stroke-dasharray: 1.5 6.5; }
 .ring-head, .ring-lamp { fill: var(--st); } .ring-lamp { stroke: var(--panel); stroke-width: 3px; cursor: default; }
 .glyph { fill: none; stroke: var(--c-ink); stroke-width: 2px; stroke-linecap: round; stroke-linejoin: round; pointer-events: none; }
-.ring-num { fill: var(--fg); font-size: 26px; font-weight: 700; font-family: var(--font); letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+.ring-num { fill: var(--fg); font-size: calc(26px * var(--fs)); font-weight: 700; font-family: var(--font); letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
 .gauges { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: repeat(3, auto); grid-auto-flow: column; gap: 20px 32px; }
 .gauges.trio { grid-template-columns: repeat(3, minmax(0, 1fr)); grid-template-rows: auto; grid-auto-flow: row; }
 .gauge { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
@@ -223,7 +241,7 @@ td .pc { display: block; margin-top: 1px; color: var(--faint); font-size: 11.5px
 .thermo b { position: absolute; left: 0; top: 0; bottom: 0; width: max(12px, var(--p)); border-radius: 5px; background: var(--st); }
 .thermo b::after { content: ""; position: absolute; right: -8px; top: 50%; width: 18px; height: 18px; margin-top: -9px; box-sizing: border-box; border-radius: 50%; background: var(--st); border: 3px solid var(--cell); }
 .thermo.st-na b { display: none; }
-.ticks { position: relative; height: 15px; margin-right: 8px; color: var(--faint); font-size: 11px; font-variant-numeric: tabular-nums; }
+.ticks { position: relative; height: 15px; margin-right: 8px; color: var(--faint); font-size: calc(11px * var(--fs)); font-variant-numeric: tabular-nums; }
 .ticks span { position: absolute; top: 0; transform: translateX(-50%); white-space: nowrap; }
 .g-ins { margin: 2px 0 0; padding: 9px 12px; border-radius: var(--r-sm); background: var(--st-bg); color: var(--fg); font-size: var(--t-sm); line-height: 1.55; }
 .g-read { margin: 0; color: var(--faint); font-size: var(--t-xs); line-height: 1.55; }
@@ -244,14 +262,14 @@ td .pc { display: block; margin-top: 1px; color: var(--faint); font-size: 11.5px
 .chart:not(.skel) { min-height: 0; }
 .plot { position: relative; }
 .plot svg { display: block; overflow: visible; }
-.tick { fill: var(--faint); font-size: 12px; font-family: var(--font); }
-.end { fill: var(--fg); font-size: 12.5px; font-family: var(--font); font-weight: 600; }
+.tick { fill: var(--faint); font-size: calc(12px * var(--fs)); font-family: var(--font); }
+.end { fill: var(--fg); font-size: calc(12.5px * var(--fs)); font-family: var(--font); font-weight: 600; }
 .band { fill: var(--grid); opacity: 0.8; }
 .dot { stroke: var(--panel); stroke-width: 1.5px; opacity: 0.9; } .dot-on { fill: none; stroke: var(--fg); stroke-width: 2px; }
 .diag { stroke: var(--axis); stroke-width: 1px; stroke-dasharray: 4 4; }
-.flow-name { fill: var(--fg); font-size: 13px; font-weight: 600; font-family: var(--font); paint-order: stroke; stroke: var(--panel); stroke-width: 4px; stroke-linejoin: round; }
-.flow-val { fill: var(--muted); font-size: 12px; font-weight: 500; font-family: var(--font); font-variant-numeric: tabular-nums; paint-order: stroke; stroke: var(--panel); stroke-width: 4px; stroke-linejoin: round; }
-.flow-col { fill: var(--faint); font-size: 12px; font-weight: 600; font-family: var(--font); }
+.flow-name { fill: var(--fg); font-size: calc(13px * var(--fs)); font-weight: 600; font-family: var(--font); paint-order: stroke; stroke: var(--panel); stroke-width: 4px; stroke-linejoin: round; }
+.flow-val { fill: var(--muted); font-size: calc(12px * var(--fs)); font-weight: 500; font-family: var(--font); font-variant-numeric: tabular-nums; paint-order: stroke; stroke: var(--panel); stroke-width: 4px; stroke-linejoin: round; }
+.flow-col { fill: var(--faint); font-size: calc(12px * var(--fs)); font-weight: 600; font-family: var(--font); }
 .rib { opacity: 0.4; } .rib:hover, .rib.on { opacity: 0.8; }
 .tip { position: absolute; z-index: 5; pointer-events: none; min-width: 11em; max-width: 24em; padding: 9px 12px; background: var(--pop); border: 1px solid var(--pop-line); border-radius: var(--r-md); box-shadow: var(--pop-shadow); color: var(--fg); font-size: var(--t-xs); line-height: 1.55; }
 .tip-h { font-weight: 650; margin-bottom: 2px; font-size: var(--t-sm); }
@@ -279,7 +297,7 @@ table.words td:nth-child(2) { white-space: normal; word-break: keep-all; min-wid
 th button:not(.q) { all: unset; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; font-size: var(--t-xs); font-weight: 600; color: var(--faint); }
 th button:not(.q):hover { color: var(--fg); } th button:not(.q):focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 3px; }
 th[aria-sort] button:not(.q) { color: var(--fg); }
-th[aria-sort="ascending"] button:not(.q)::after { content: "▲"; font-size: 8px; } th[aria-sort="descending"] button:not(.q)::after { content: "▼"; font-size: 8px; }
+th[aria-sort="ascending"] button:not(.q)::after { content: "▲"; font-size: calc(8px * var(--fs)); } th[aria-sort="descending"] button:not(.q)::after { content: "▼"; font-size: calc(8px * var(--fs)); }
 
 /* 도구 줄 */
 .tools { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
@@ -319,12 +337,12 @@ details .scroll { margin-top: 8px; }
 /* ── 계층 정리 (11/23 11차 — 서우 「장표가 방대해져서 디자인 및 레이어 계층정리 · 강조 내용은 볼드 · 맥락 한눈에」)
    장(L0) → 구역(L1: 제목 + 한 줄 요약 + 접고 펴기) → 블록(L2: 접고 펴기) → 그림 · 표 · 글.
    구조는 buildLayers()가 처음에 한 번 기존 마크업을 감싸 만든다(.lay 가 붙은 구역만 아래 규칙을 탄다) */
-.chap b { font-size: 21px; font-weight: 750; letter-spacing: -0.02em; }
+.chap b { font-size: calc(21px * var(--fs)); font-weight: 750; letter-spacing: -0.02em; }
 .chap::after { order: 1; }
 .chap-fold { order: 2; flex: none; }
 .panel.lay { padding: 0; gap: 0; }
 .sec-h { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 3px 12px; align-items: center; padding: 17px var(--pad) 15px; border-radius: var(--r-lg); cursor: pointer; -webkit-tap-highlight-color: transparent; }
-.panel.lay .h2 { margin: 0; justify-content: flex-start; font-size: 19px; }
+.panel.lay .h2 { margin: 0; justify-content: flex-start; font-size: calc(19px * var(--fs)); }
 .sec-sum { grid-column: 1 / -1; margin: 0; max-width: 62em; color: var(--muted); font-size: var(--t-sm); line-height: 1.5; }
 .sec-sum:empty, .panel.lay:not(.shut) .sec-sum[data-shut-only] { display: none; }
 .sec-sum b { color: var(--fg); font-weight: 650; }
@@ -332,7 +350,7 @@ details .scroll { margin-top: 8px; }
 .panel.lay.shut > .sec-b { display: none; }
 .panel.lay.shut > .sec-h { padding: 12px var(--pad); }
 .panel.lay.shut > .sec-h:hover { background: var(--soft); }
-.panel.lay.shut .h2 { font-size: 16.5px; font-weight: 650; }
+.panel.lay.shut .h2 { font-size: calc(16.5px * var(--fs)); font-weight: 650; }
 .panel.lay.shut .period { display: none; }
 .fold { flex: none; display: inline-flex; align-items: center; gap: 5px; height: 28px; margin: 0; padding: 0 9px 0 12px; border: 1px solid var(--line-2); border-radius: 999px; background: var(--panel); color: var(--muted); font-size: var(--t-xs); font-weight: 600; line-height: 1; cursor: pointer; white-space: nowrap; -webkit-appearance: none; appearance: none; }
 .fold .chev { flex: none; width: 12px; height: 12px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; transform: rotate(180deg); transition: transform 0.15s; }
@@ -373,9 +391,9 @@ details .scroll { margin-top: 8px; }
 @media (max-width: 560px) {
   :root { --t-xl: 18px; --t-lg: 16px; --t-num: 23px; --pad: 16px; }
   html { scroll-padding-top: 104px; }
-  .head-in { padding: 18px 16px 10px; } .title { font-size: 21px; } .banner { padding: 0 16px; }
-  .chap b { font-size: 19px; } .chap { margin-top: 22px; } .sec-h { padding: 14px var(--pad) 12px; } .sec-b { padding-top: 14px; }
-  .panel.lay .h2 { font-size: 17.5px; } .panel.lay.shut .h2 { font-size: 15.5px; } .panel.lay.shut > .sec-h { padding: 11px var(--pad); } .fold { padding: 0 8px 0 10px; }
+  .head-in { padding: 18px 16px 10px; } .title { font-size: calc(21px * var(--fs)); } .banner { padding: 0 16px; }
+  .chap b { font-size: calc(19px * var(--fs)); } .chap { margin-top: 22px; } .sec-h { padding: 14px var(--pad) 12px; } .sec-b { padding-top: 14px; }
+  .panel.lay .h2 { font-size: calc(17.5px * var(--fs)); } .panel.lay.shut .h2 { font-size: calc(15.5px * var(--fs)); } .panel.lay.shut > .sec-h { padding: 11px var(--pad); } .fold { padding: 0 8px 0 10px; }
   .bar-in { padding: 8px 16px 0; flex-direction: column-reverse; align-items: stretch; gap: 2px; }
   .seg { display: flex; } .seg button { flex: 1 1 0; height: 30px; padding: 0 8px; }
   .nav { flex-wrap: wrap; overflow: visible; margin: 0; padding: 0; } .nav-g { display: contents; }
@@ -384,7 +402,7 @@ details .scroll { margin-top: 8px; }
   .nav a { order: 1; margin: 7px 0; padding: 5px 8px; }
   .page { padding: 12px 10px 56px; gap: 10px; }
   .panel { border-radius: 14px; }
-  .tiles, .tiles.duo { gap: 8px; } .card { padding: 13px 14px; } .big.two { font-size: 18px; }
+  .tiles, .tiles.duo { gap: 8px; } .card { padding: 13px 14px; } .big.two { font-size: calc(18px * var(--fs)); }
   .chart { min-height: 260px; } .chart.flow { min-height: 430px; }
   .pos { display: flex; flex-direction: column; align-items: stretch; gap: 11px; } .pos .shr { display: none; }
   .pos li { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 5px 12px; align-items: center; }
@@ -393,21 +411,17 @@ details .scroll { margin-top: 8px; }
   .brief { grid-template-columns: minmax(0, 1fr); gap: 12px; }
   .gauges, .gauges.trio { grid-template-columns: minmax(0, 1fr); grid-template-rows: none; grid-auto-flow: row; gap: 18px; }
 }
-@media print {
-  .bar, .btn, .link, .tools, .seg, .chips, .banner, #calc, .skip, .fold { display: none !important; }
-  html, body { background: #fff; } .page { padding: 0; gap: 12px; } .panel { border-color: #ddd; break-inside: avoid; } .card, .fig { break-inside: avoid; }
-}
 
 /* ── 지표 모아보기 (11/23) */
 .board { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
 .bc { --cell: var(--soft); background: var(--soft); border-radius: var(--r-md); padding: 13px 14px 10px; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 .bc-h { margin: 0; display: flex; align-items: baseline; justify-content: space-between; gap: 8px; font-size: var(--t-xs); font-weight: 650; color: var(--muted); line-height: 1.4; }
 .bc-h a { color: inherit; text-decoration: none; } .bc-h a:hover { color: var(--fg); text-decoration: underline; text-underline-offset: 3px; }
-.bc-h i { flex: none; font-style: normal; font-weight: 500; font-size: 11px; color: var(--faint); }
-.bc-v { margin: 1px 0 0; font-size: 22px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.25; font-variant-numeric: tabular-nums; }
+.bc-h i { flex: none; font-style: normal; font-weight: 500; font-size: calc(11px * var(--fs)); color: var(--faint); }
+.bc-v { margin: 1px 0 0; font-size: calc(22px * var(--fs)); font-weight: 700; letter-spacing: -0.02em; line-height: 1.25; font-variant-numeric: tabular-nums; }
 .bc-v[class*="st-"] { color: var(--st); }
 .bc-v small { margin-left: 5px; font-size: var(--t-xs); font-weight: 600; letter-spacing: 0; color: var(--muted); }
-.bc-s { margin: 0; min-height: 2.9em; font-size: 12px; line-height: 1.45; color: var(--faint); }
+.bc-s { margin: 0; min-height: 2.9em; font-size: calc(12px * var(--fs)); line-height: 1.45; color: var(--faint); }
 .bc-s b { color: var(--muted); font-weight: 650; }
 .bc .chart { min-height: 0; margin-top: 4px; flex: 1 1 auto; display: flex; flex-direction: column; justify-content: flex-end; }
 .bc .chart.skel { min-height: 112px; }
@@ -445,7 +459,7 @@ details .scroll { margin-top: 8px; }
 .who { display: inline-flex; flex-wrap: wrap; align-items: baseline; gap: 2px 6px; max-width: 100%; white-space: nowrap; vertical-align: baseline; text-align: left; }
 .who .nm { display: inline-flex; align-items: baseline; gap: 6px; white-space: nowrap; }
 .who .dot { flex: none; align-self: center; width: 8px; height: 8px; border-radius: 50%; }
-.who small { color: var(--faint); font-size: 11.5px; font-weight: 500; font-variant-numeric: tabular-nums; }
+.who small { color: var(--faint); font-size: calc(11.5px * var(--fs)); font-weight: 500; font-variant-numeric: tabular-nums; }
 .who .tag { margin-right: 0; }
 button.who, a.who { border: 0; background: none; padding: 0; font: inherit; color: inherit; cursor: pointer; text-decoration: underline; text-decoration-color: var(--axis); text-underline-offset: 3px; }
 button.who:hover, a.who:hover { text-decoration-color: var(--fg); } button.who:focus-visible, a.who:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 3px; }
@@ -462,14 +476,14 @@ button.who:hover, a.who:hover { text-decoration-color: var(--fg); } button.who:f
 .tr-dl dt { color: var(--faint); font-size: var(--t-xs); font-weight: 600; }
 .tr-dl dd { margin: 0; display: flex; flex-direction: column; gap: 4px; min-width: 0; color: var(--fg); }
 .tr-dl .line { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 8px; }
-.tr-dl dd > small, .tr-dl .line > small { color: var(--faint); font-size: 11.5px; }
+.tr-dl dd > small, .tr-dl .line > small { color: var(--faint); font-size: calc(11.5px * var(--fs)); }
 .tr-paths { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 8px; font-size: var(--t-sm); }
 .tr-paths li { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 8px; padding: 9px 12px; border-radius: var(--r-md); background: var(--panel); border: 1px solid var(--line); }
 .tr-paths .hop { display: inline-flex; flex-wrap: wrap; align-items: baseline; gap: 2px 6px; min-width: 0; }
 .tr-paths .arr { color: var(--axis); }
-.tr-paths .hopn { color: var(--faint); font-size: 11px; font-weight: 600; }
+.tr-paths .hopn { color: var(--faint); font-size: calc(11px * var(--fs)); font-weight: 600; }
 .tr-paths .amt { margin-left: auto; font-variant-numeric: tabular-nums; font-weight: 600; white-space: nowrap; }
-.tr-paths .amt small { margin-left: 6px; color: var(--faint); font-weight: 500; font-size: 11.5px; }
+.tr-paths .amt small { margin-left: 6px; color: var(--faint); font-weight: 500; font-size: calc(11.5px * var(--fs)); }
 .tr-none { margin: 0; color: var(--faint); font-size: var(--t-sm); }
 .tr-pats { margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px 14px; }
 .tr-pats li { display: flex; flex-direction: column; gap: 6px; padding: 13px 15px; border-radius: var(--r-md); background: var(--soft); border: 1px solid var(--card-line); min-width: 0; }
@@ -490,8 +504,51 @@ button.who:hover, a.who:hover { text-decoration-color: var(--fg); } button.who:f
   .tr-dl > div { grid-template-columns: 1fr; gap: 2px; } .tr-detail { padding: 13px 14px; }
   .tr-paths .amt { margin-left: 0; flex-basis: 100%; } .tr-head .link { margin-left: 0; }
 }
-.tsc small { min-width: 2.3em; color: var(--faint); font-size: 11.5px; font-weight: 500; font-variant-numeric: tabular-nums; text-align: right; }
+.tsc small { min-width: 2.3em; color: var(--faint); font-size: calc(11.5px * var(--fs)); font-weight: 500; font-variant-numeric: tabular-nums; text-align: right; }
 #tb-types th:nth-child(2), #tb-types td:nth-child(2) { text-align: left; }
+/* ── 보기 설정(글씨 크기 · 어두운 화면) · 보고서 단추 — 11/24 17차 */
+.head-r { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; min-width: 0; }
+.view { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.fsz { display: inline-flex; align-items: center; height: 34px; padding: 0 4px; border: 1px solid var(--line-2); background: var(--panel); border-radius: 999px; }
+.fsz button { min-width: 32px; height: 26px; padding: 0 6px; border: 0; background: none; border-radius: 999px; font-size: 13px; font-weight: 650; line-height: 1; color: var(--fg); cursor: pointer; white-space: nowrap; }
+.fsz button:hover:not([disabled]) { background: var(--soft); } .fsz button[disabled] { color: var(--axis); cursor: default; }
+.fsz output { min-width: 5.6em; text-align: center; font-size: var(--t-xs); font-weight: 600; color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.btn.ico { display: inline-flex; align-items: center; gap: 6px; }
+.btn.ico svg { flex: none; width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+.menu { position: relative; }
+.menu > summary { list-style: none; display: inline-flex; align-items: center; gap: 6px; user-select: none; } .menu > summary::-webkit-details-marker { display: none; }
+.menu[open] > summary { border-color: var(--accent); }
+.menu-pop { position: absolute; right: 0; top: calc(100% + 6px); z-index: 30; width: max-content; max-width: min(21em, calc(100vw - 40px)); padding: 6px; border-radius: var(--r-md); background: var(--pop); border: 1px solid var(--pop-line); box-shadow: var(--pop-shadow); display: flex; flex-direction: column; gap: 2px; }
+.menu-pop button { all: unset; box-sizing: border-box; display: flex; flex-direction: column; gap: 1px; padding: 8px 11px; border-radius: var(--r-sm); cursor: pointer; font-size: var(--t-sm); font-weight: 600; line-height: 1.45; color: var(--fg); }
+.menu-pop button small { font-size: var(--t-xs); font-weight: 400; color: var(--faint); white-space: normal; }
+.menu-pop button:hover { background: var(--soft); } .menu-pop button:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+@media (max-width: 760px) { .head-r { align-items: flex-start; width: 100%; } .head-in { position: relative; } .menu { position: static; } .menu-pop { left: 20px; right: 20px; top: auto; width: auto; max-width: none; margin-top: 40px; } }
+/* 글씨를 키우면 메뉴가 한 줄에 안 들어오므로, 지금 장이 아닌 장은 아이콘만 보인다(이름은 그대로 읽힌다) */
+@media (min-width: 561px) { :root[data-fs="20"] .nav-g:not(.on) .nav-c, :root[data-fs="30"] .nav-g:not(.on) .nav-c { font-size: 0; gap: 0; padding: 7px 9px; } :root[data-fs="30"] .nav a { padding: 5px 7px; } }
+
+/* ── 보고서(A4): 인쇄할 때만 붙는 틀(html.rpt). 화면에서 미리 이 폭으로 그림을 다시 그린 뒤 인쇄한다 — 그래서 화면과 종이의 배치가 같다 */
+.rpt-head, .rpt-only { display: none; }
+@page { size: A4; margin: 12mm 11mm 14mm; }
+html.rpt, html.rpt body { background: #fff; }
+html.rpt .head, html.rpt .bar, html.rpt .btn, html.rpt .link, html.rpt .tools, html.rpt .seg, html.rpt .chips, html.rpt .banner, html.rpt #calc, html.rpt .skip, html.rpt .fold, html.rpt .q, html.rpt .chap-fold, html.rpt #help-pop, html.rpt .tip { display: none !important; }
+html.rpt .page { width: 706px; max-width: none; margin: 0 auto; padding: 0; gap: 10px; }      /* A4 폭 210mm − 양쪽 여백 22mm ≈ 188mm ≈ 710px */
+html.rpt .rpt-head { display: flex; flex-direction: column; gap: 3px; padding: 0 0 10px; border-bottom: 2px solid var(--fg); }
+html.rpt .rpt-t { margin: 0; font-size: 22px; font-weight: 750; letter-spacing: -0.02em; line-height: 1.3; color: var(--fg); }
+html.rpt .rpt-m { margin: 0; font-size: 12.5px; color: var(--muted); font-variant-numeric: tabular-nums; }
+html.rpt .rpt-n { margin: 0; font-size: 11.5px; color: var(--faint); }
+html.rpt .chap { margin: 12px 0 0; }
+html.rpt .panel { border: 0; border-top: 1px solid var(--line-2); border-radius: 0; padding: 14px 0 6px; background: none; }
+html.rpt .sec-h { cursor: default; } html.rpt .blk-h { cursor: default; }
+html.rpt .blk.shut { display: none; }
+html.rpt .scroll { overflow: visible; margin: 0; } html.rpt th:first-child, html.rpt td:first-child { position: static; }
+html.rpt th, html.rpt td { padding: 5px 7px; } html.rpt .x-rpt { display: none; } html.rpt .rpt-only { display: block; }
+html.rpt table { font-size: 12.5px; } html.rpt td .pc { font-size: 10.5px; }
+html.rpt .card, html.rpt .bc, html.rpt .idx-box { box-shadow: none; }
+html.rpt .board { grid-template-columns: repeat(3, minmax(0, 1fr)); } html.rpt .tr-cols { grid-template-columns: 1fr; }
+html.rpt a { color: inherit; text-decoration: none; }
+html.rpt .card, html.rpt .bc, html.rpt .fig, html.rpt .chart, html.rpt tr, html.rpt .sh-row, html.rpt .tr-pats li, html.rpt .tr-paths li, html.rpt .crit > div, html.rpt .limit, html.rpt .rpt-head { break-inside: avoid; }
+html.rpt .chap, html.rpt .sec-h, html.rpt .blk-h, html.rpt .h2, html.rpt .h3 { break-after: avoid; }
+@media print { html.rpt * { -webkit-print-color-adjust: exact; print-color-adjust: exact; } html.rpt .page { margin: 0; } }
 </style>
 </head>
 <body>
@@ -503,10 +560,24 @@ button.who:hover, a.who:hover { text-decoration-color: var(--fg); } button.who:f
       <h1 class="title">WLBN 운용현황</h1>
       <p class="asof">기준 <span class="num" data-n="s.as_of" data-fmt="text">—</span> · <span data-ago>매일 자동 갱신</span> <span data-live hidden>· 최신 원장 반영 중…</span></p>
     </div>
-    <div class="ctl">
-      <button type="button" class="btn" data-fold-all>모두 펴기</button>
-      <button type="button" class="btn" data-copy>요약 복사</button>
-      <button type="button" class="btn" data-refresh>새로 불러오기</button>
+    <div class="head-r">
+      <div class="view" role="group" aria-label="보기 설정">
+        <span class="fsz" role="group" aria-label="글씨 크기"><button type="button" data-fs-down aria-label="글씨 작게">가−</button><output data-fs-now aria-live="polite">글씨 기본</output><button type="button" data-fs-up aria-label="글씨 크게">가+</button></span>
+        <button type="button" class="btn ico" data-theme-toggle aria-pressed="false" title="어두운 화면으로"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M13.3 9.7A5.6 5.6 0 0 1 6.3 2.7a5.6 5.6 0 1 0 7 7z"/></svg><span data-theme-label>어둡게</span></button>
+      </div>
+      <div class="ctl">
+        <button type="button" class="btn" data-fold-all>모두 펴기</button>
+        <button type="button" class="btn" data-copy>요약 복사</button>
+        <button type="button" class="btn" data-refresh>새로 불러오기</button>
+        <details class="menu" data-rpt>
+          <summary class="btn">보고서 ▾</summary>
+          <div class="menu-pop">
+            <button type="button" data-rpt-print="open">A4 인쇄 · PDF 저장<small>지금 펴 둔 구역만 담는다. 인쇄 창에서 「PDF로 저장」을 고르면 파일로 남는다</small></button>
+            <button type="button" data-rpt-print="all">전체를 펴서 A4 인쇄 · PDF 저장<small>접어 둔 구역과 표까지 모두 담는다(쪽수가 많다)</small></button>
+            <button type="button" data-rpt-csv>보고서 CSV 받기<small>주요 지표 · 표 · 요약 글을 한 파일로</small></button>
+          </div>
+        </details>
+      </div>
     </div>
   </div>
 </header>
@@ -528,6 +599,7 @@ button.who:hover, a.who:hover { text-decoration-color: var(--fg); } button.who:f
 <div class="banner" data-stale hidden><p>최신 자료를 받지 못해 배포할 때 들어 있던 자료를 보여 주고 있습니다. 잠시 뒤 「새로 불러오기」를 눌러 보세요.</p></div>
 
 <main class="page">
+  <header class="rpt-head" id="rpt-head" aria-hidden="true"></header>
 
   <div class="chap"><b>요약</b><span>오늘의 신호와 고른 기간의 합계</span></div>
 
@@ -542,18 +614,18 @@ button.who:hover, a.who:hover { text-decoration-color: var(--fg); } button.who:f
       <span class="note" data-dr-msg>정한 날짜는 「고른 기간」을 쓰는 모든 구역에 같이 적용된다.</span>
     </div>
     <div class="board" id="board-grid">
-      <article class="bc"><h3 class="bc-h"><a href="#today">선순환 지수</a><i>최근 7일</i></h3><p class="bc-v" data-bv="idx">—</p><div class="chart skel bchart" data-chart="b_idx" role="img" aria-label="선순환 지수"></div><p class="bc-s" data-bs="idx"></p></article>
-      <article class="bc"><h3 class="bc-h"><a href="#today">다섯 고리 점수</a><i>최근 7일</i></h3><p class="bc-v" data-bv="radar">—</p><div class="chart skel bchart" data-chart="b_radar" role="img" aria-label="다섯 고리 점수"></div><p class="bc-s" data-bs="radar"></p></article>
-      <article class="bc"><h3 class="bc-h"><a href="#today">지수 추이</a><i>14일</i></h3><p class="bc-v" data-bv="trend">—</p><div class="chart skel bchart" data-chart="b_trend" role="img" aria-label="지수 추이"></div><p class="bc-s" data-bs="trend"></p></article>
-      <article class="bc"><h3 class="bc-h"><a href="#deep">보상 받는 지갑</a><i>고른 기간</i></h3><p class="bc-v" data-bv="recv">—</p><div class="chart skel bchart" data-chart="b_recv" role="img" aria-label="보상 받는 지갑"></div><p class="bc-s" data-bs="recv"></p></article>
-      <article class="bc"><h3 class="bc-h"><a href="#daily">하루 받은 양 · 판 양</a><i>고른 기간</i></h3><p class="bc-v" data-bv="flow">—</p><div class="chart skel bchart" data-chart="b_flow" role="img" aria-label="하루 받은 양 · 판 양"></div><p class="bc-s" data-bs="flow"></p></article>
-      <article class="bc"><h3 class="bc-h"><a href="#sum">받은 양 가운데 남은 몫</a><i>고른 기간</i></h3><p class="bc-v" data-bv="hold">—</p><div class="chart skel bchart" data-chart="b_hold" role="img" aria-label="받은 양 가운데 남은 몫"></div><p class="bc-s" data-bs="hold"></p></article>
-      <article class="bc"><h3 class="bc-h"><a href="#impact">지갑의 생태계 기여 · 5단계</a><i>고른 기간</i></h3><p class="bc-v" data-bv="tier">—</p><div class="chart skel bchart" data-chart="b_tier" role="img" aria-label="지갑의 생태계 기여 · 5단계"></div><p class="bc-s" data-bs="tier"></p></article>
-      <article class="bc"><h3 class="bc-h"><a href="#impact">단계별 가져간 돈 · 되돌린 돈</a><i>고른 기간</i></h3><p class="bc-v" data-bv="money">—</p><div class="chart skel bchart" data-chart="b_money" role="img" aria-label="단계별 가져간 돈 · 되돌린 돈"></div><p class="bc-s" data-bs="money"></p></article>
       <article class="bc"><h3 class="bc-h"><a href="#pool">가격</a><i>고른 기간</i></h3><p class="bc-v" data-bv="price">—</p><div class="chart skel bchart" data-chart="b_price" role="img" aria-label="가격"></div><p class="bc-s" data-bs="price"></p></article>
       <article class="bc"><h3 class="bc-h"><a href="#pool">풀 깊이</a><i>고른 기간</i></h3><p class="bc-v" data-bv="pool">—</p><div class="chart skel bchart" data-chart="b_pool" role="img" aria-label="풀 깊이"></div><p class="bc-s" data-bs="pool"></p></article>
       <article class="bc"><h3 class="bc-h"><a href="#flow">판 양을 누가 받아냈나</a><i>고른 기간</i></h3><p class="bc-v" data-bv="demand">—</p><div class="chart skel bchart" data-chart="b_demand" role="img" aria-label="판 양을 누가 받아냈나"></div><p class="bc-s" data-bs="demand"></p></article>
       <article class="bc"><h3 class="bc-h"><a href="#today">운용 여력</a><i>최근 7일</i></h3><p class="bc-v" data-bv="run">—</p><div class="chart skel bchart" data-chart="b_run" role="img" aria-label="운용 여력"></div><p class="bc-s" data-bs="run"></p></article>
+      <article class="bc"><h3 class="bc-h"><a href="#daily">하루 받은 양 · 판 양</a><i>고른 기간</i></h3><p class="bc-v" data-bv="flow">—</p><div class="chart skel bchart" data-chart="b_flow" role="img" aria-label="하루 받은 양 · 판 양"></div><p class="bc-s" data-bs="flow"></p></article>
+      <article class="bc"><h3 class="bc-h"><a href="#sum">받은 양 가운데 남은 몫</a><i>고른 기간</i></h3><p class="bc-v" data-bv="hold">—</p><div class="chart skel bchart" data-chart="b_hold" role="img" aria-label="받은 양 가운데 남은 몫"></div><p class="bc-s" data-bs="hold"></p></article>
+      <article class="bc"><h3 class="bc-h"><a href="#impact">지갑의 생태계 기여 · 5단계</a><i>고른 기간</i></h3><p class="bc-v" data-bv="tier">—</p><div class="chart skel bchart" data-chart="b_tier" role="img" aria-label="지갑의 생태계 기여 · 5단계"></div><p class="bc-s" data-bs="tier"></p></article>
+      <article class="bc"><h3 class="bc-h"><a href="#impact">단계별 가져간 돈 · 되돌린 돈</a><i>고른 기간</i></h3><p class="bc-v" data-bv="money">—</p><div class="chart skel bchart" data-chart="b_money" role="img" aria-label="단계별 가져간 돈 · 되돌린 돈"></div><p class="bc-s" data-bs="money"></p></article>
+      <article class="bc"><h3 class="bc-h"><a href="#today">선순환 지수</a><i>최근 7일</i></h3><p class="bc-v" data-bv="idx">—</p><div class="chart skel bchart" data-chart="b_idx" role="img" aria-label="선순환 지수"></div><p class="bc-s" data-bs="idx"></p></article>
+      <article class="bc"><h3 class="bc-h"><a href="#today">다섯 고리 점수</a><i>최근 7일</i></h3><p class="bc-v" data-bv="radar">—</p><div class="chart skel bchart" data-chart="b_radar" role="img" aria-label="다섯 고리 점수"></div><p class="bc-s" data-bs="radar"></p></article>
+      <article class="bc"><h3 class="bc-h"><a href="#today">지수 추이</a><i>14일</i></h3><p class="bc-v" data-bv="trend">—</p><div class="chart skel bchart" data-chart="b_trend" role="img" aria-label="지수 추이"></div><p class="bc-s" data-bs="trend"></p></article>
+      <article class="bc"><h3 class="bc-h"><a href="#deep">보상 받는 지갑</a><i>고른 기간</i></h3><p class="bc-v" data-bv="recv">—</p><div class="chart skel bchart" data-chart="b_recv" role="img" aria-label="보상 받는 지갑"></div><p class="bc-s" data-bs="recv"></p></article>
     </div>
   </section>
 
@@ -722,6 +794,7 @@ button.who:hover, a.who:hover { text-decoration-color: var(--fg); } button.who:f
       <summary>날짜별 숫자를 표로 보기</summary>
       <div class="tools end"><button type="button" class="link" data-csv="daily">CSV 받기</button></div>
       <div class="scroll"><table id="tb-daily" aria-label="날짜별 숫자"><thead></thead><tbody></tbody></table></div>
+      <p class="note rpt-only">보고서에는 주요 열만 담았다 — 통화별 · 풀별 · bot 지출 열은 화면이나 「CSV 받기」에서 본다.</p>
     </details>
   </section>
 
@@ -779,6 +852,7 @@ button.who:hover, a.who:hover { text-decoration-color: var(--fg); } button.who:f
     <p class="note">wellbian.io가 이름을 붙여 공개한 계정이다. 칩은 어느 회사 계정인지, 그 뒤 글자는 사이트가 붙인 이름이다. <b>「지금」이 붙은 열은 지금 잔액</b>이고, 나머지는 <b>고른 기간의 합계</b>다.</p>
     <div class="tools end"><button type="button" class="link" data-csv="accounts">CSV 받기</button></div>
     <div class="scroll"><table id="tb-accounts" aria-label="Wellbian · KWeather 계정"><thead></thead><tbody></tbody></table></div>
+    <p class="note rpt-only">보고서에는 주요 열만 담았다 — 낸 돈 · 풀에 넣은 것은 화면이나 「CSV 받기」에서 본다.</p>
   </section>
 
   <section class="sec panel" id="impact" aria-labelledby="h-impact">
@@ -902,6 +976,7 @@ button.who:hover, a.who:hover { text-decoration-color: var(--fg); } button.who:f
       <button type="button" class="link" data-csv="wallets">CSV 받기(한 줄 분석 포함)</button>
     </div>
     <div class="scroll"><table id="tb-wallets" aria-label="지갑별 내역"><thead></thead><tbody></tbody></table></div>
+    <p class="note rpt-only">보고서에는 주요 열과 화면에 보이던 줄만 담았다 — 전체 열 · 전체 지갑은 화면이나 「CSV 받기」에서 본다.</p>
     <p class="note"><b>활동량은 받은 양 + 판 양 + 산 양 + 풀에 넣고 뺀 양</b>이고, 순위는 모든 지갑 가운데 활동량 순이다. <b>줄을 누르면</b> 위에서 그 지갑의 한 줄 분석과 날짜별 기록을 볼 수 있다. 열 이름을 누르면 그 열로 정렬한다. <b>잔액은 지금 값</b>, 나머지는 고른 기간의 합계다. 「다시 산 돈」은 그 지갑이 operations 계정으로 보낸 RLUSD다(카드 · 계좌로 다시 산 것은 원장에 없어 0으로 나온다). 숫자 아래 작은 글자는 전체에서 차지하는 비중이다 — 받은 양은 일반 사용자가 받은 양, 판 양 · 산 양은 시장 전체 대비. 단위 WLBN, 대금은 받은 통화 그대로.</p>
   </section>
 
@@ -1555,7 +1630,7 @@ button.who:hover, a.who:hover { text-decoration-color: var(--fg); } button.who:f
     if (opt.dropZero && rows.length) cols = cols.filter(function (c) { return c.text || rows.some(function (r) { return r[c.key]; }); });
     var hr = head.insertRow();
     cols.forEach(function (c) {
-      var th = document.createElement('th'); th.scope = 'col';
+      var th = document.createElement('th'); th.scope = 'col'; if (c.rpt === 0) th.classList.add('x-rpt');
       if (opt.sort) {
         var b = document.createElement('button'); b.type = 'button'; b.textContent = c.label;
         b.addEventListener('click', function () { opt.sort.dir = opt.sort.key === c.key ? -opt.sort.dir : (c.text ? 1 : -1); opt.sort.key = c.key; render(); });
@@ -1571,12 +1646,12 @@ button.who:hover, a.who:hover { text-decoration-color: var(--fg); } button.who:f
       var tr = body.insertRow();
       if (opt.onRow) { tr.className = 'pick' + (opt.sel && opt.sel(r) ? ' on' : ''); tr.addEventListener('click', function () { opt.onRow(r); }); }
       cols.forEach(function (c) {
-        var td = tr.insertCell(), v = r[c.key];
+        var td = tr.insertCell(), v = r[c.key]; if (c.rpt === 0) td.classList.add('x-rpt');
         if (c.cell) { c.cell(td, r); return; }
         if (c.tag && r.owner && OWN[r.owner]) { named(td, r.owner, r.label === undefined ? v : r.label, v); return; }
         if (c.chip) { var ch = document.createElement('span'); ch.className = 'ichip ' + (r[c.chip] || ''); ch.textContent = (v === null || v === undefined || v === '') ? '—' : v; td.appendChild(ch); return; }
         td.textContent = (v === null || v === undefined || v === '') ? '—' : (c.fmt || (c.text ? String : fInt))(v);
-        if (!c.text && typeof v === 'number' && v < 0) td.className = 'neg';
+        if (!c.text && typeof v === 'number' && v < 0) td.classList.add('neg');
         if (c.share && typeof v === 'number') {   // 그 열에서 차지하는 비중(작은 글자). 몫이 미리 계산돼 있으면 그 값을, 아니면 열 합계로 나눈다
           var sh = r[c.key + '_share'], tot = totals[c.key];
           if (sh === undefined) sh = tot > 0 && v > 0 ? v / tot : null;
@@ -1592,10 +1667,10 @@ button.who:hover, a.who:hover { text-decoration-color: var(--fg); } button.who:f
     lpshare: [{ key: 'who', label: '누가', text: 1, tag: 1 }, { key: 'x_share', label: 'XRP 풀 몫', fmt: F.pct }, { key: 'x_wlbn', label: 'WLBN' }, { key: 'x_xrp', label: 'XRP' },
       { key: 'r_share', label: 'RLUSD 풀 몫', fmt: F.pct }, { key: 'r_wlbn', label: 'WLBN' }, { key: 'r_rlusd', label: 'RLUSD' }],
     accounts: [{ key: 'name', label: '계정', text: 1, tag: 1 }, { key: 'wallet', label: '지갑', text: 1 }, { key: 'balance', label: '지금 WLBN' }, { key: 'rlusd', label: '지금 RLUSD' }, { key: 'xrp', label: '지금 XRP' },
-      { key: 'paid_out', label: '지갑으로 지급' }, { key: 'received', label: '받은 양' }, { key: 'bought', label: '산 양' }, { key: 'sold', label: '판 양' }, { key: 'paid_rlusd', label: '낸 RLUSD' }, { key: 'paid_xrp', label: '낸 XRP' },
-      { key: 'pool_wlbn', label: '풀에 넣은 WLBN' }, { key: 'pool_rlusd', label: '풀에 넣은 RLUSD' }, { key: 'pool_xrp', label: '풀에 넣은 XRP' }],
-    daily: [{ key: 'date', label: '날짜', text: 1, fmt: md }, { key: 'sell_user', label: '사용자 판 양' }, { key: 'sell_user_rlusd', label: 'RLUSD로' }, { key: 'sell_user_xrp', label: 'XRP로' }, { key: 'buy_user', label: '사용자 산 양' }, { key: 'paid_user', label: '새로 받은 양' }, { key: 'sell_total', label: '전체 판 양' },
-      { key: 'buy_total', label: '전체 산 양' }, { key: 'buy_bot', label: 'Wellbian bot 산 양' }, { key: 'bot_pay_rlusd', label: 'bot 지출 RLUSD' }, { key: 'bot_pay_xrp', label: 'bot 지출 XRP' }, { key: 'sales_rlusd', label: '판매 대금 RLUSD' }, { key: 'to_r', label: 'RLUSD 풀로' }, { key: 'to_x', label: 'XRP 풀로' }, { key: 'price_rlusd', label: '가격', fmt: F.f4 }, { key: 'price_xrp', label: 'XRP로 본 가격', fmt: F.f4 }, { key: 'xrp_rlusd', label: '1 XRP 값(RLUSD)', fmt: F.f4 }],
+      { key: 'paid_out', label: '지갑으로 지급' }, { key: 'received', label: '받은 양' }, { key: 'bought', label: '산 양' }, { key: 'sold', label: '판 양' }, { key: 'paid_rlusd', label: '낸 RLUSD', rpt: 0 }, { key: 'paid_xrp', label: '낸 XRP', rpt: 0 },
+      { key: 'pool_wlbn', label: '풀에 넣은 WLBN', rpt: 0 }, { key: 'pool_rlusd', label: '풀에 넣은 RLUSD', rpt: 0 }, { key: 'pool_xrp', label: '풀에 넣은 XRP', rpt: 0 }],
+    daily: [{ key: 'date', label: '날짜', text: 1, fmt: md }, { key: 'sell_user', label: '사용자 판 양' }, { key: 'sell_user_rlusd', label: 'RLUSD로', rpt: 0 }, { key: 'sell_user_xrp', label: 'XRP로', rpt: 0 }, { key: 'buy_user', label: '사용자 산 양' }, { key: 'paid_user', label: '새로 받은 양' }, { key: 'sell_total', label: '전체 판 양' },
+      { key: 'buy_total', label: '전체 산 양' }, { key: 'buy_bot', label: 'Wellbian bot 산 양' }, { key: 'bot_pay_rlusd', label: 'bot 지출 RLUSD', rpt: 0 }, { key: 'bot_pay_xrp', label: 'bot 지출 XRP', rpt: 0 }, { key: 'sales_rlusd', label: '판매 대금 RLUSD' }, { key: 'to_r', label: 'RLUSD 풀로', rpt: 0 }, { key: 'to_x', label: 'XRP 풀로', rpt: 0 }, { key: 'price_rlusd', label: '가격', fmt: F.f4 }, { key: 'price_xrp', label: 'XRP로 본 가격', fmt: F.f4, rpt: 0 }, { key: 'xrp_rlusd', label: '1 XRP 값(RLUSD)', fmt: F.f4 }],
     types: [{ key: 'name', label: '유형', text: 1 }, { key: 'scale_name', label: '생태계 기여', text: 1, cell: tscCell }, { key: 'wallets', label: '지갑 수', share: 1 }, { key: 'paid', label: '받은 양', share: 1 }, { key: 'sold', label: '판 양', share: 1 }, { key: 'bought', label: '산 양', share: 1 }, { key: 'rebuy_rlusd', label: '다시 산 돈(RLUSD)', share: 1 }, { key: 'pool_in', label: '풀에 넣은 양' }, { key: 'balance', label: '지금 잔액', share: 1 }],
     impact: [{ key: 'name', label: '구분', text: 1, chip: 'key' }, { key: 'wallets', label: '지갑 수', share: 1 }, { key: 'paid', label: '받은 양', share: 1 }, { key: 'sold', label: '판 양', share: 1 }, { key: 'bought', label: '산 양', share: 1 }, { key: 'took_rlusd', label: '가져간 돈', share: 1 },
       { key: 'back_rlusd', label: '되돌린 돈', share: 1 }, { key: 'rebuy_rlusd', label: '다시 산 돈', share: 1, help: 'c:rebuy' }, { key: 'dep_rlusd', label: '회사에 넣은 돈', share: 1, help: 'c:dep' }, { key: 'pool_in', label: '풀에 넣은 양', share: 1 }, { key: 'balance', label: '지금 잔액', share: 1 }],
@@ -1608,10 +1683,10 @@ button.who:hover, a.who:hover { text-decoration-color: var(--fg); } button.who:f
       { key: 'open', label: '풀이 열린 뒤', fmt: function (v) { return sgn(v); } }, { key: 'gap_d7', label: '7일 · WLBN과의 차이', fmt: function (v) { return sgp(v); } }],
     impactHelp: [{ key: 'wallet', label: '지갑', text: 1 }, { key: 'type_name', label: '유형', text: 1 }, { key: 'back_rlusd', label: '되돌린 돈' }, { key: 'took_rlusd', label: '가져간 돈' }, { key: 'balance', label: '잔액' }],
     impactLoad: [{ key: 'wallet', label: '지갑', text: 1 }, { key: 'type_name', label: '유형', text: 1 }, { key: 'took_rlusd', label: '가져간 돈' }, { key: 'back_rlusd', label: '되돌린 돈' }, { key: 'sold', label: '판 양' }],
-    wallets: [{ key: 'rank', label: '순위' }, { key: 'wallet', label: '지갑', text: 1, tag: 1 }, { key: 'impact_name', label: '생태계 기여', text: 1, chip: 'impact' }, { key: 'type_name', label: '유형', text: 1 }, { key: 'act', label: '활동량' }, { key: 'paid', label: '받은 양', share: 1 }, { key: 'sold', label: '판 양', share: 1 }, { key: 'bought', label: '산 양', share: 1 },
-      { key: 'sell_ratio', label: '판 비율', fmt: F.pct }, { key: 'took_rlusd', label: '가져간 돈' }, { key: 'back_rlusd', label: '되돌린 돈' }, { key: 'got_rlusd', label: '받은 RLUSD' }, { key: 'got_xrp', label: '받은 XRP' }, { key: 'rebuy_rlusd', label: '다시 산 돈(RLUSD)' }, { key: 'dep_rlusd', label: '회사 계정에 넣은 돈' },
-      { key: 'pool_in', label: '풀에 넣은 양' }, { key: 'balance', label: '잔액' }, { key: 'start', label: '처음 보상받은 날', text: 1, fmt: md }, { key: 'prev_wallet', label: '이어진 옛 지갑', text: 1 },
-      { key: 'sell_lag', label: '처음 팔기까지(일)' }, { key: 'last_sell', label: '마지막으로 판 날', text: 1, fmt: md }],
+    wallets: [{ key: 'rank', label: '순위' }, { key: 'wallet', label: '지갑', text: 1, tag: 1 }, { key: 'impact_name', label: '생태계 기여', text: 1, chip: 'impact' }, { key: 'type_name', label: '유형', text: 1 }, { key: 'act', label: '활동량', rpt: 0 }, { key: 'paid', label: '받은 양', share: 1 }, { key: 'sold', label: '판 양', share: 1 }, { key: 'bought', label: '산 양', share: 1 },
+      { key: 'sell_ratio', label: '판 비율', fmt: F.pct }, { key: 'took_rlusd', label: '가져간 돈' }, { key: 'back_rlusd', label: '되돌린 돈' }, { key: 'got_rlusd', label: '받은 RLUSD', rpt: 0 }, { key: 'got_xrp', label: '받은 XRP', rpt: 0 }, { key: 'rebuy_rlusd', label: '다시 산 돈(RLUSD)', rpt: 0 }, { key: 'dep_rlusd', label: '회사 계정에 넣은 돈', rpt: 0 },
+      { key: 'pool_in', label: '풀에 넣은 양' }, { key: 'balance', label: '잔액' }, { key: 'start', label: '처음 보상받은 날', text: 1, fmt: md, rpt: 0 }, { key: 'prev_wallet', label: '이어진 옛 지갑', text: 1, rpt: 0 },
+      { key: 'sell_lag', label: '처음 팔기까지(일)', rpt: 0 }, { key: 'last_sell', label: '마지막으로 판 날', text: 1, fmt: md, rpt: 0 }],
     cohorts: [{ key: 'name', label: '처음 보상받은 시기', text: 1 }, { key: 'wallets', label: '지갑 수', share: 1 }, { key: 'paid', label: '받은 양', share: 1 }, { key: 'sold', label: '판 양', share: 1 }, { key: 'sell_ratio', label: '판 비율', fmt: F.pct },
       { key: 'sellers', label: '판 지갑' }, { key: 'rebuyers', label: '다시 산 지갑' }, { key: 'lag_median', label: '처음 팔기까지(일)' }],
     before: [{ key: 'group', label: '지갑 묶음', text: 1, tag: 1 }, { key: 'wallets', label: '지갑 수' }, { key: 'sold', label: '판 양', share: 1 }, { key: 'bought', label: '산 양', share: 1 }, { key: 'net_sold', label: '판 양 − 산 양' },
@@ -2158,6 +2233,91 @@ button.who:hover, a.who:hover { text-decoration-color: var(--fg); } button.who:f
     if (lpw) L.push('- 풀 몫: Wellbian 계정 ' + F.pct(lpw.w) + (lpw.k > 0 ? ' / KWeather 계정 ' + F.pct(lpw.k) : '') + ' / 일반 지갑 ' + F.pct(s.lp_user_share));
     return L.join('\n');
   }
+  // ── 보기 설정 · 보고서 (11/24 17차 — 서우 「글씨 크기 0%~30%까지 단계별 조정 · 다크모드 · 보고서 A4 형태로 프린트(PDF 저장)하거나 CSV 다운로드」)
+  //   글씨: 기본(0) · +10 · +20 · +30% 네 단계. 모든 글자 크기에 배율(--fs)을 곱하고 그림은 다시 그린다 · 어두운 화면: 고르지 않으면 기기 설정을 따른다
+  //   고른 값은 이 브라우저에 기억한다(VIEW_KEY). 보고서를 찍을 때는 늘 밝은 화면 · 기본 글씨로 찍는다
+  var VIEW_KEY = 'wlbn-view-1', FS_STEPS = [0, 10, 20, 30], VIEW = { fs: 0, theme: '' };
+  try { var v0 = JSON.parse(localStorage.getItem(VIEW_KEY) || '{}') || {}; if (FS_STEPS.indexOf(+v0.fs) >= 0) VIEW.fs = +v0.fs; if (v0.theme === 'dark' || v0.theme === 'light') VIEW.theme = v0.theme; } catch (e) { /* 기본으로 둔다 */ }
+  function osDark() { return !!(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches); }
+  function isDark() { return VIEW.theme ? VIEW.theme === 'dark' : osDark(); }
+  function applyView(redraw) {
+    var root = document.documentElement, out = $('[data-fs-now]'), dn = $('[data-fs-down]'), up = $('[data-fs-up]'), th = $('[data-theme-toggle]');
+    if (VIEW.fs) { root.style.setProperty('--fs', String(1 + VIEW.fs / 100)); root.setAttribute('data-fs', String(VIEW.fs)); } else { root.style.removeProperty('--fs'); root.removeAttribute('data-fs'); }
+    if (VIEW.theme) root.setAttribute('data-theme', VIEW.theme); else root.removeAttribute('data-theme');
+    if (out) out.textContent = VIEW.fs ? '글씨 +' + VIEW.fs + '%' : '글씨 기본';
+    if (dn) dn.disabled = VIEW.fs <= FS_STEPS[0]; if (up) up.disabled = VIEW.fs >= FS_STEPS[FS_STEPS.length - 1];
+    if (th) { var d = isDark(), lb = $('[data-theme-label]', th); th.setAttribute('aria-pressed', String(d)); if (lb) lb.textContent = d ? '밝게' : '어둡게'; th.title = d ? '밝은 화면으로' : '어두운 화면으로'; }
+    try { localStorage.setItem(VIEW_KEY, JSON.stringify(VIEW)); } catch (e) { /* 기억하지 못해도 화면은 그대로 쓴다 */ }
+    if (redraw) { fitBar(); if (DATA) render(); }
+  }
+  function stepFs(dir) { var i = FS_STEPS.indexOf(VIEW.fs) + dir; if (i < 0 || i >= FS_STEPS.length) return; VIEW.fs = FS_STEPS[i]; applyView(true); }
+  function toggleTheme() { var next = isDark() ? 'light' : 'dark'; VIEW.theme = next === (osDark() ? 'dark' : 'light') ? '' : next; applyView(false); }
+  // 보고서 인쇄: 인쇄 틀(html.rpt)을 붙이고 A4 폭으로 그림을 다시 그린 다음 인쇄 창을 연다. 폭을 넘는 표는 그 표만 줄여 한 쪽 폭에 맞춘다. 끝나면 되돌린다
+  var RPT = null;
+  function nowStamp() { var d = new Date(), z = function (n) { return (n < 10 ? '0' : '') + n; }; return d.getFullYear() + '-' + z(d.getMonth() + 1) + '-' + z(d.getDate()) + ' ' + z(d.getHours()) + ':' + z(d.getMinutes()); }
+  function prepPrint(all) {
+    if (RPT || !DATA) return;
+    var root = document.documentElement, st = { theme: root.getAttribute('data-theme'), fs: root.style.getPropertyValue('--fs'), dfs: root.getAttribute('data-fs'), details: [], boxes: [], tables: [], y: window.scrollY };
+    RPT = st; closeHelp(); $$('.menu[open]').forEach(function (m) { m.open = false; });
+    root.classList.add('rpt'); root.setAttribute('data-theme', 'light'); root.style.removeProperty('--fs'); root.removeAttribute('data-fs');
+    if (all) { st.details = $$('main.page details:not([open])'); st.details.forEach(function (d) { d.open = true; }); st.boxes = BOXES.filter(isShut); st.boxes.forEach(function (b) { setFold(b, false, false); }); }
+    var hd = $('#rpt-head'), c = ctx();
+    if (hd) {
+      var mk = function (cls, text) { var p = document.createElement('p'); p.className = cls; p.textContent = text; return p; };
+      hd.replaceChildren(mk('rpt-t', 'WLBN 운용현황 보고서'), mk('rpt-m', '기준 ' + c.s.as_of + ' · 기간 ' + PERIOD[RANGE] + '(' + md(c.r.from) + '~' + md(c.r.to) + ') · 출력 ' + nowStamp() + (all ? ' · 전체 구역' : ' · 펴 둔 구역')),
+        mk('rpt-n', '내부 현황용 — 대외 인용 금지. 원장에 보이는 움직임으로 계산한 값이며 지급량 · 가치를 보장하지 않는다.'));
+    }
+    render();
+    $$('main.page table').forEach(function (t) {
+      var box = t.parentNode; if (!box || t.offsetParent === null) return;
+      var w = t.scrollWidth, cw = box.clientWidth; if (cw > 0 && w > cw + 1) { t.style.zoom = String(Math.max(0.62, Math.floor(cw / w * 1000) / 1000)); st.tables.push(t); }
+    });
+  }
+  function donePrint() {
+    var st = RPT; if (!st) return; RPT = null; var root = document.documentElement;
+    st.tables.forEach(function (t) { t.style.zoom = ''; }); st.details.forEach(function (d) { d.open = false; }); st.boxes.forEach(function (b) { setFold(b, true, false); });
+    root.classList.remove('rpt'); if (st.theme) root.setAttribute('data-theme', st.theme); else root.removeAttribute('data-theme');
+    if (st.fs) root.style.setProperty('--fs', st.fs); if (st.dfs) root.setAttribute('data-fs', st.dfs);
+    fitBar(); render(); window.scrollTo(0, st.y);
+  }
+  function printReport(all) { if (!DATA) return; prepPrint(all); setTimeout(function () { window.print(); }, 80); }
+  // 보고서 CSV: 주요 지표 · 표 · 요약 글을 한 파일에 길게(구역 · 항목 · 세부 · 값 · 단위/비고) — 피벗하기 쉬운 꼴
+  function csvEsc(v) { v = (v === null || v === undefined) ? '' : String(v); return /[",\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; }
+  function reportRows() {
+    var c = ctx(), k = c.k, s = c.s, h = DATA.health, im = c.r.impact, tr = DATA.trace, R = [['구역', '항목', '세부', '값', '단위 · 비고']];
+    var add = function (sec, item, sub, val, note) { R.push([sec, item, sub || '', (val === null || val === undefined) ? '' : val, note || '']); };
+    var txt = function (el) { return el ? el.textContent.replace(/\s+/g, ' ').trim() : ''; };
+    add('보고서', '기준 시각', '', s.as_of, '한국 시간'); add('보고서', '기간', PERIOD[RANGE], c.r.from + '~' + c.r.to, c.r.days + '일'); add('보고서', '원장 번호', '', DATA.ledger || '', '');
+    $$('#board .bc').forEach(function (card) { if (card.hidden) return; add('지표 모아보기', txt($('.bc-h a', card)), txt($('.bc-h i', card)), txt($('.bc-v', card)), txt($('.bc-s', card))); });
+    if (h) {
+      var ix = h.index; if (ix) { add('오늘의 현황', '선순환 지수', '', ix.value, '100점 만점 · ' + h.overall.label); add('오늘의 현황', '계산', '', ix.calc, h.overall.counts); }
+      h.links.concat(h.reserves).forEach(function (l) { add('오늘의 현황', l.name, h.labels[l.status] + (l.ref ? ' · 참고(지수 제외)' : ''), (l.score === null || l.score === undefined) ? '' : l.score, l.short); });
+      if (h.takeaway) add('오늘의 현황', '정리', '', plain(h.takeaway), ''); h.comments.forEach(function (t) { add('오늘의 현황', '그날 요약', '', plain(t), ''); });
+    }
+    add('일반 사용자 지갑', '받은 양', '', k.user_paid, 'WLBN'); add('일반 사용자 지갑', '받은 지갑', '', k.wallets_paid, '곳'); add('일반 사용자 지갑', '판 양', '', k.user_sold, 'WLBN'); add('일반 사용자 지갑', '판 지갑', '', k.wallets_sold, '곳');
+    add('일반 사용자 지갑', '받은 양 가운데 판 비율', '', k.user_sold_share === null ? '' : F.pct(k.user_sold_share), ''); add('일반 사용자 지갑', '되산 양', '', k.user_bought, 'WLBN');
+    add('일반 사용자 지갑', 'RLUSD로 판 양', '', k.user_sold_for_rlusd, 'WLBN'); add('일반 사용자 지갑', 'XRP로 판 양', '', k.user_sold_for_xrp, 'WLBN'); add('일반 사용자 지갑', '받은 대금', 'RLUSD', k.user_got_rlusd, 'RLUSD'); add('일반 사용자 지갑', '받은 대금', 'XRP', k.user_got_xrp, 'XRP');
+    add('일반 사용자 지갑', '풀에 넣어 둔 양', '', k.user_pool_in, 'WLBN'); add('일반 사용자 지갑', '지금 잔액', '', k.user_balance, 'WLBN');
+    add('시장 전체', '산 양', '', k.buy_total, 'WLBN'); add('시장 전체', '판 양', '', k.sell_total, 'WLBN'); add('시장 전체', 'Wellbian bot 계정이 산 양', k.bot_buy_share === null ? '' : F.pct(k.bot_buy_share), k.bot_bought, 'WLBN'); add('시장 전체', 'bot 계정이 낸 돈', 'RLUSD', k.bot_paid_rlusd, 'RLUSD'); add('시장 전체', 'bot 계정이 낸 돈', 'XRP', k.bot_paid_xrp, 'XRP');
+    add('풀 · 가격', '가격', '', s.price_rlusd === null ? '' : F.f4(s.price_rlusd), 'RLUSD'); add('풀 · 가격', 'RLUSD 풀', 'WLBN', s.pool_r_wlbn, 'WLBN'); add('풀 · 가격', 'RLUSD 풀', 'RLUSD', s.pool_r_rlusd, 'RLUSD'); add('풀 · 가격', 'XRP 풀', 'WLBN', s.pool_x_wlbn, 'WLBN'); add('풀 · 가격', 'XRP 풀', 'XRP', s.pool_x_xrp, 'XRP');
+    (c.r.groups || []).forEach(function (g) { COLS.groups.slice(1).forEach(function (col) { add('지갑 묶음별', (g.owner && OWN[g.owner] ? OWN[g.owner] + ' ' : '') + (g.label || g.group), col.label, g[col.key], ''); }); });
+    if (DATA.market) DATA.market.notes.forEach(function (t) { add('시장과 견주기', '요약 글', DATA.market.as_of, plain(t), ''); });
+    if (im) {
+      im.rows.forEach(function (r) { COLS.impact.slice(1).forEach(function (col) { add('생태계 기여 5단계', r.name, col.label, r[col.key], col.key === 'wallets' ? '곳' : /rlusd/.test(col.key) ? 'RLUSD 환산' : 'WLBN'); }); });
+      im.notes.forEach(function (t) { add('생태계 기여 5단계', '요약 글', '', plain(t), ''); });
+    }
+    if (c.r.types) typeRows().forEach(function (r) { ['wallets', 'paid', 'sold', 'bought', 'rebuy_rlusd', 'pool_in', 'balance'].forEach(function (f) { var col = COLS.types.filter(function (x) { return x.key === f; })[0]; add('지갑 유형별', r.name, col ? col.label : f, r[f], r.scale_name ? '기여 ' + r.scale_name : ''); }); });
+    if (tr) {
+      (tr.comment || []).forEach(function (t) { add('부정 쪽 지갑 자금 흐름', '총평', md(tr.day) + ' 갱신', plain(t), ''); });
+      (tr.sum.patterns || []).forEach(function (p) { add('부정 쪽 지갑 자금 흐름', p.name, '지갑 수', p.wallets, '곳'); add('부정 쪽 지갑 자금 흐름', p.name, '가져간 돈', p.took, 'RLUSD 환산'); add('부정 쪽 지갑 자금 흐름', p.name, '보낸 돈', p.sent, 'RLUSD 환산'); add('부정 쪽 지갑 자금 흐름', p.name, '코멘트', plain(p.comment), ''); });
+      (tr.sum.ends || []).forEach(function (e) { add('부정 쪽 지갑 자금 흐름', '끝 행선지', e.name, e.v, 'RLUSD 환산 · ' + F.pct(e.share || 0) + ' · 지갑 ' + e.wallets + '곳'); });
+      tr.notes.forEach(function (t) { add('부정 쪽 지갑 자금 흐름', '요약 글', '', plain(t), ''); });
+    }
+    if (DATA.deep) DATA.deep.notes.forEach(function (t) { add('온체인 심층', '요약 글', '', plain(t), ''); });
+    add('보고서', '주의', '', '내부 현황용 — 대외 인용 금지. 지급량 · 가치를 보장하지 않는다.', '');
+    return R;
+  }
+  function reportCsv() { if (!DATA) return; var c = ctx(); download('wlbn-report-' + RANGE + '-' + c.s.as_of.slice(0, 10) + '.csv', reportRows().map(function (r) { return r.map(csvEsc).join(','); }).join('\r\n')); }
   function copySummary(btn) {
     if (!DATA) return;
     var text = summaryText(), label = btn.textContent, done = function (ok) { btn.textContent = ok ? '복사했습니다' : '복사하지 못했습니다'; setTimeout(function () { btn.textContent = label; }, 1800); };
@@ -2555,7 +2715,7 @@ button.who:hover, a.who:hover { text-decoration-color: var(--fg); } button.who:f
     var arc = d3.arc().innerRadius(R - 20).outerRadius(R).cornerRadius(2), pie = d3.pie().sort(null).padAngle(0.02).value(function (r) { return r.wallets; })(rows.filter(function (r) { return r.wallets > 0; }));
     var show = function (ev, d) { var r = d.data; f.tip.replaceChildren.apply(f.tip, tipRows(r.name + ' · ' + fInt(r.wallets) + '곳(' + F.pct(r.wallets_share) + ')', [{ label: '받은 양', value: fInt(r.paid) }, { label: '판 양', value: fInt(r.sold) }, { label: '되돌린 돈', value: fInt(r.back_rlusd) + ' RLUSD' }, { label: '가져간 돈', value: fInt(r.took_rlusd) + ' RLUSD' }, { label: '지금 잔액', value: fInt(r.balance) }])); f.tip.hidden = false; var p = d3.pointer(ev, f.svg.node()); placeTip(f, p[0], p[1]); };
     g.selectAll('path').data(pie).join('path').attr('d', arc).style('fill', function (d) { return TC[d.data.key]; }).on('pointermove', show).on('pointerdown', function (ev, d) { ev.stopPropagation(); show(ev, d); }).on('pointerleave', function (ev) { if (ev.pointerType === 'mouse') f.tip.hidden = true; });
-    g.append('text').attr('text-anchor', 'middle').attr('y', -2).style('fill', 'var(--fg)').style('font-size', '20px').style('font-weight', 700).style('font-family', 'var(--font)').text(fInt(im.tot5.wallets)); g.append('text').attr('class', 'tick').attr('text-anchor', 'middle').attr('y', 15).text('곳');
+    g.append('text').attr('text-anchor', 'middle').attr('y', -2).style('fill', 'var(--fg)').style('font-size', 'calc(20px * var(--fs))').style('font-weight', 700).style('font-family', 'var(--font)').text(fInt(im.tot5.wallets)); g.append('text').attr('class', 'tick').attr('text-anchor', 'middle').attr('y', 15).text('곳');
     var lx = cx + R + 16, lg = f.svg.append('g');
     rows.forEach(function (r, i) {
       var yy = 22 + i * 25; lg.append('rect').attr('x', lx).attr('y', yy - 9).attr('width', 10).attr('height', 10).attr('rx', 2.5).style('fill', TC[r.key]);
@@ -2775,9 +2935,17 @@ button.who:hover, a.who:hover { text-decoration-color: var(--fg); } button.who:f
     var dc = $('[data-day-close]'); if (dc) dc.addEventListener('click', function () { SELDAY = false; drawDay(); });
     setInterval(function () { tickAgo(); if (document.visibilityState === 'visible' && Date.now() - LASTTRY > REFRESH_MS) loadLive(); }, 30000);
     document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'visible' && Date.now() - LASTTRY > REFRESH_MS) loadLive(); });
-    var opened = [], unfolded = [];
-    window.addEventListener('beforeprint', function () { opened = $$('details:not([open])'); opened.forEach(function (d) { d.open = true; }); unfolded = BOXES.filter(isShut); unfolded.forEach(function (b) { setFold(b, false, false); }); });
-    window.addEventListener('afterprint', function () { opened.forEach(function (d) { d.open = false; }); opened = []; unfolded.forEach(function (b) { setFold(b, true, false); }); unfolded = []; });
+    // 보기 설정 · 보고서 단추. 브라우저 메뉴로 인쇄해도(Ctrl+P) 같은 틀로 찍힌다 — 그때는 지금 펴 둔 구역만
+    applyView(false);
+    var fd = $('[data-fs-down]'), fu = $('[data-fs-up]'), tt = $('[data-theme-toggle]'), rm = $('[data-rpt]');
+    if (fd) fd.addEventListener('click', function () { stepFs(-1); }); if (fu) fu.addEventListener('click', function () { stepFs(1); }); if (tt) tt.addEventListener('click', toggleTheme);
+    if (window.matchMedia) { var mq = window.matchMedia('(prefers-color-scheme: dark)'), onMq = function () { if (!VIEW.theme) applyView(false); }; if (mq.addEventListener) mq.addEventListener('change', onMq); else if (mq.addListener) mq.addListener(onMq); }
+    $$('[data-rpt-print]').forEach(function (b) { b.addEventListener('click', function () { if (rm) rm.open = false; printReport(b.getAttribute('data-rpt-print') === 'all'); }); });
+    var rc = $('[data-rpt-csv]'); if (rc) rc.addEventListener('click', function () { if (rm) rm.open = false; reportCsv(); });
+    document.addEventListener('pointerdown', function (ev) { if (rm && rm.open && (!ev.target.closest || !ev.target.closest('[data-rpt]'))) rm.open = false; });
+    document.addEventListener('keydown', function (ev) { if (ev.key === 'Escape' && rm && rm.open) { rm.open = false; var sm = rm.querySelector('summary'); if (sm) sm.focus(); } });
+    window.addEventListener('beforeprint', function () { prepPrint(false); });
+    window.addEventListener('afterprint', donePrint);
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { fitBar(); if (DATA) render(); });
     getJson('snapshot.json').then(show).catch(function () {}).then(staleNote);
     loadLive();
