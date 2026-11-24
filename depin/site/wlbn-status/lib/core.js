@@ -74,6 +74,46 @@ const IMPACT_NAME = { help: '도움', mid: '중간', load: '부담' };
 //   funders: 처음 채운 곳 · 돈을 보내 준 곳 가운데 「거래가 많은 계정」인지 살피는 수 · inMin: 이 값 이상 보내 준 곳만 살핀다
 //   depPages: 회사 계정에 들어온 돈을 읽을 때 계정마다 읽는 쪽 수(날마다 쌓는다) · depPagesFull: 배포용 자료를 만들 때(처음부터 다시)
 const TRACE = { depth: 3, pages: [10, 2, 2], keep: 12, conc: 6, min: 5, caps: [0, 30, 24], funders: 40, inMin: 50, depPages: 8, depPagesFull: 80 };
+// ── 설계 대조(11/24 30차 — 서우 「백서나 토크노믹스에서 차용해서 반영할게 있음 반영해줘」)
+//   공개 문서의 약속을 여기 한 곳에 옮겨 적고, 원장의 지금 값과 나란히 놓는다. 문서가 바뀌면 이 표만 고친다.
+//   출처: 토크노믹스 정책(tokenomics.wellbianlabs.io · 배분표 v2 · 2026-10-02 개정) · 백서 초안 v1.1(paper.wellbianlabs.io · 2026-11-01 갱신 · 원장 기준일 2026-11-01 07:16 UTC). 읽은 날 2026-11-24.
+//   백서 7장: 「정책 수치의 정본은 토크노믹스 정책 페이지이고, 원장 수치의 정본은 XRPL 원장이다」
+const PLAN = {
+  src: { tk: '토크노믹스 정책(배분표 v2 · 2026-10-02 개정본)', wp: '백서 초안 v1.1(2026-11-01 갱신본)', doc_day: '2026-11-01', read: '2026-11-24' },
+  total: 1e10,
+  // 배분표 v2. where = 백서 7.3(11/01 원장 기준)에 적힌 곳 · live = 이 화면의 「위치」에서 지금 값을 붙일 묶음
+  alloc: [
+    { key: 'r1', name: '노드 홀더 리워드 1기(Phase 1~5)', qty: 1e9, cond: '에폭마다 정량 방출 · Phase 1~5 누적 약 9.68억', where: '1기 · 2기 합쳐 에스크로 17건 45.68억(시간 8 · 게이트 조건 9)' },
+    { key: 'r2', name: '노드 홀더 리워드 2기(Phase 6~)', qty: 3.6e9, cond: '1기 소진 뒤 단계 게이트를 통과하면 개방 · 열리지 않은 몫은 소각으로', where: '위와 같은 묶음' },
+    { key: 'burn', name: '소각 예정', qty: 1.5e9, cond: '분할 방식은 따로 공지', where: '집행 전 · treasury 계정에 있다(백서 7.4)' },
+    { key: 'resv', name: '전략 라운드 예비', qty: 1e9, cond: '배정 전까지 잠금 · 배정할 때 조건 공개', where: '에스크로 전략 묶음(2건 13.39억 · 조건) 가운데 10억' },
+    { key: 'stake', name: '스테이킹 재원', qty: 8e8, cond: '방식은 추후 공지', where: '에스크로 48건 8억 · 2026-11-02~2030-10-02 매월 풀림', live: 'staking' },
+    { key: 'team', name: '팀 · 기여자', qty: 6e8, cond: '12개월 클리프 + 48개월 선형', where: '에스크로 48건 6억 · 2027-11-02~2031-10-02 매월 풀림' },
+    { key: 'eco', name: '생태계 · 지역 파트너', qty: 5e8, cond: '권역 진입 마일스톤마다 조건부 해제', where: '에스크로 5건 5억 · 조건' },
+    { key: 'inv', name: '전략 투자', qty: 5e8, cond: '투자 계약 베스팅 · 시드 라운드는 즉시 10% + 7~24개월 월 5%', where: '에스크로: 전략 묶음의 잔여 3.39억 + 시드 투자자 18건 1.449억(2027-05-02~2028-10-02 매월)', live: 'seed' },
+    { key: 'liq', name: '유동성 · 준비금', qty: 5e8, cond: '두 풀(WLBN/RLUSD · WLBN/XRP)의 초기 · 추가 예치', where: '에스크로 묶음에 없다 — treasury 계정 잔액에 든 것으로 보인다', live: 'pools' },
+  ],
+  escrow: { locked: 7951900000, n: 138 },                                    // 백서 7.3 — 11/01 에스크로 잠금
+  burn: { planned: 1.5e9, device: 0.1, pass: 0.1, data: 0.5, doc_burned: 125.574954 },   // 매출 연동 매입 소각: 기기 10% · 이용권 10% · 데이터 매출 50%, 매월 집행 · 전량 소각
+  reward: { base: 7, step: 0.78, grade: 1.2, per_site: 7.14, cap: 10.5, emit: 2.665e9, tx: [0.8, 0.95] },
+  sites: { phase1: 25000, goal: 1e6 },
+  uptime: 0.8,                                                              // G4 조건: 3개월 가동률 80%
+  pool_doc: { day: '2026-11-08', liq: 387860 },                             // 토크노믹스 11장: 두 풀 합산 유동성(2026-11-08 16:29 UTC)
+  // 마일스톤 게이트(달력이 아니라 달성으로 넘어간다). n = 공급 조건의 지점 수(숫자로 적힌 것만)
+  gates: [
+    { g: 'G0', name: '출시 전', supply: '등록 · 검증 체계', demand: '유료 고객 1곳', etc: '' },
+    { g: 'G1', name: '제네시스 출시', supply: '접수 개시', demand: '—', etc: '보상 가중: 품질' },
+    { g: 'G2', name: '유동성 확보', supply: '초기 물량 판매', demand: '—', etc: 'XRPL DEX 풀 개방' },
+    { g: 'G3', name: '수요 입증', supply: 'NFT 5,000개', n: 5000, demand: 'B2B 계약 3건 + 재구매', etc: '보상 가중에 희소성 추가 · 유동성 추가 예치' },
+    { g: 'G4', name: '완판', supply: 'NFT 25,000개 · 3개월 가동률 80%', n: 25000, demand: '국내 매출', etc: '유동성 추가 예치' },
+    { g: 'G5', name: '첫 해외', supply: '6만', n: 60000, demand: '해외 매출', etc: '' },
+    { g: 'G6', name: '실외 라인', supply: '12만', n: 120000, demand: '연 매출 10억 원', etc: '보상 가중에 실사용 추가' },
+    { g: 'G7', name: '소각 시작', supply: '22만', n: 220000, demand: '연 매출 20억 원', etc: '소각 시작' },
+    { g: 'G8', name: '전환', supply: '35만', n: 350000, demand: '연 매출 40억 원', etc: '소각 본격화' },
+    { g: 'G9', name: '자립', supply: '65만', n: 650000, demand: '사업 매출로 보상 전액', etc: '' },
+    { g: 'G10', name: '성숙', supply: '100만', n: 1000000, demand: '잉여 매출', etc: '' },
+  ],
+};
 const TRACE_KIND = { exch: '거래소 입금으로 보이는 주소', hub: '거래가 많은 계정', ours: '지갑별 표의 다른 지갑', root: '다른 부정 쪽 지갑', company: '회사 계정', other: '표에 없는 다른 주소', kept: '받은 지갑에 머묾', back: '보낸 지갑으로 되돌아옴', pool: '풀', issuer: '발행 계정' };
 const TRACE_ORIGIN = { reward: '보상으로 받음', bought: '풀에서 삼', moved: '다른 지갑에서 옮겨 받음', none: '기록 없음' };
 const TRACE_SIDE = { help: '긍정 쪽', mid: '보통', load: '부정 쪽' };      // 화면은 다섯 단계로 보여 주므로 글에서는 쪽으로만 부른다
@@ -1561,7 +1601,60 @@ function buildDatasets(S, opts) {
   };
   const trace = opts.noTrace ? null : buildTrace();
 
+  // 설계 대조: 공개 문서의 약속(PLAN) ↔ 원장의 지금 값. 판정은 문서에 기준이 적힌 것만(가동률 80% · 매입 재원 = 판매의 10%). 지금 게이트가 몇 번인지는 판정하지 않는다(수요 조건은 원장에 없다)
+  const buildPlan = () => {
+    const P = PLAN, s = summary, n = (x) => Math.round(x).toLocaleString('en-US'), p1 = (x) => (x * 100).toFixed(1) + '%', has = (v) => v !== null && v !== undefined && isFinite(v);
+    const pos = (k) => (positions.find((x) => x.key === k) || {}).amount, eok = (x) => (x % 1e8 ? String(Math.round(x / 1e6) / 100) : String(x / 1e8)) + '억';
+    const burned = has(s.total_supply) ? Math.max(0, P.total - s.total_supply) : null, locked = pos('locked'), freed = has(locked) ? P.escrow.locked - locked : null;
+    const tot = s.devices_total, act = s.devices_active, up = has(tot) && has(act) && tot > 0 ? act / tot : null;
+    const hasSales = daily.some((r) => r.sales_rlusd !== null && r.sales_rlusd !== undefined);
+    const sales = hasSales ? daily.reduce((t, r) => t + (r.sales_rlusd || 0), 0) : null, budget = sales === null ? null : sales * P.burn.device;
+    const spend = daily.reduce((t, r) => t + (r.bot_pay_rlusd || 0) + (r.bot_pay_xrp || 0) * (r.xrp_rlusd || 0), 0), ratio = budget > 0 ? Math.round(spend / budget * 10) / 10 : null;
+    const k = (ranges.all && ranges.all.kpi) || {}, botHold = pos('bot'), day0 = md(C.NOW_FROM), dayN = md(s.last_day);
+    const next = has(tot) ? P.gates.find((g) => g.n && tot < g.n) : null;
+    const live = { staking: has(pos('staking')) ? ' — 지금 staking 계정 ' + n(pos('staking')) : '', seed: has(pos('seed')) ? ' — 지금 seed 계정 ' + n(pos('seed')) + '(시드 즉시 10%와 같은 수)' : '', pools: has(pos('pools')) ? ' · 지금 풀 두 곳에 든 WLBN은 ' + n(pos('pools')) : '' };
+    const alloc = P.alloc.map((a) => ({ key: a.key, name: a.name, qty: a.qty, qty_text: eok(a.qty), share: a.qty / P.total, cond: a.cond, where: a.where + (a.live ? live[a.live] : '') }));
+    const gates = P.gates.map((g) => ({ g: g.g, name: g.name, supply: g.supply, demand: g.demand, etc: g.etc, n: g.n || null, pct: g.n && has(tot) ? Math.round(Math.min(1, tot / g.n) * 1000) / 1000 : null, next: !!(next && next.g === g.g) }));
+    const rows = [];
+    rows.push({ key: 'fixed', topic: '지급 원칙', policy: '정해진 수량을 준다 — 지점당 하루 ' + P.reward.base + '개 × ' + P.reward.step + '^(단계−1) × 품질 등급(0~' + P.reward.grade + '). 가격 · 수익률 · 회수 기간은 약속하지 않는다.',
+      now: has(s.epoch_distributed) && has(act) && act > 0 ? s.epoch_date + ' 배분 ' + n(s.epoch_distributed) + '개 · 활성 기기 ' + n(act) + '대 → 한 대당 ' + (s.epoch_distributed / act).toFixed(1) + '개' : '공시 값을 받지 못했다',
+      note: '사이트 공시 값끼리 나눈 것이다. 등급 · 전송률(95% 이상 전액 · 80~95% 감액 · 80% 미만 0)에 따라 한 대당 수량이 달라지고, 발행됐지만 설치 전인 NFT도 정해진 수량을 받는다고 문서는 적는다.' });
+    rows.push({ key: 'budget', topic: '하루 예산', policy: '에폭 예산 = 활성 지점 × ' + P.reward.per_site + ' × 단계 계수. 못 준 몫은 다시 나누되 지점당 ' + P.reward.cap + '개까지, 넘는 몫은 소각.',
+      now: has(s.epoch_budget) ? '공시 하루 예산 ' + n(s.epoch_budget) + '개' + (has(s.epoch_distributed) && s.epoch_budget > 0 ? ' · 배분 ' + p1(s.epoch_distributed / s.epoch_budget) : '') + (has(act) ? ' · 활성 기기 기준으로는 ' + n(act * P.reward.per_site) + '개' : '') : '공시 값을 받지 못했다',
+      note: '공시 하루 예산은 1단계 목표 ' + n(P.sites.phase1) + '지점 × ' + P.reward.base + '개와 같은 수다.' });
+    rows.push({ key: 'uptime', tone: 'uptime', topic: '가동률', policy: 'G4 조건: 3개월 가동률 ' + p1(P.uptime).replace('.0%', '%') + '. 지켜보는 지표는 가격이 아니라 판매 완료 · 가동률 · 데이터 매출.',
+      now: up === null ? '공시 값을 받지 못했다' : '등록 기기 ' + n(tot) + '대 가운데 활성 ' + n(act) + '대 — ' + p1(up), val: up === null ? '' : p1(up),
+      note: '등록 대비 활성 비율로 견준 것이다(문서의 「가동률」과 같은 정의인지는 확인 필요). 데이터 매출은 원장에 없다.' });
+    rows.push({ key: 'burn', topic: '소각', policy: '소각 예정 ' + eok(P.burn.planned) + '(15% · 분할은 따로 공지) + 매출 연동 매입 소각 + 품질 미달 초과분 · 열리지 않은 2기 몫. 말할 때는 수량으로만.',
+      now: burned === null ? '총 공급을 받지 못했다' : '소각 누계 ' + (Math.round(burned * 100) / 100).toLocaleString('en-US') + '개(100억 − 총 공급)', note: '백서 ' + md(P.src.doc_day) + ' 기준 누계 ' + P.burn.doc_burned + '개 · 소각 예정 ' + eok(P.burn.planned) + '은 집행 전(treasury 계정).' });
+    rows.push({ key: 'buyback', tone: 'buyPolicy', topic: '매입 소각 재원', policy: '기기 판매액 ' + p1(P.burn.device).replace('.0%', '%') + ' · 이용권 판매액 ' + p1(P.burn.pass).replace('.0%', '%') + ' · 데이터 매출 ' + p1(P.burn.data).replace('.0%', '%') + '로 WLBN을 사서 전량 소각 · 매월 집행 · 공개. 매입 규모는 매출 비율로 정한다(유통 목표를 맞추려는 개입은 하지 않는다).',
+      now: sales === null ? '판매 대금 기록이 없다' : day0 + '~' + dayN + ' 판매 대금(RLUSD 결제분) ' + n(sales) + ' → 10%는 ' + n(budget) + ' RLUSD. 같은 기간 Wellbian bot 매입 지출 ' + n(spend) + ' RLUSD 환산' + (ratio === null ? '' : ' — 그 ' + ratio.toFixed(1) + '배'),
+      val: ratio === null ? '' : ratio.toFixed(1) + '배',
+      note: 'bot이 산 ' + n(k.bot_bought || 0) + '개는 소각되지 않았다(bot 계정 잔액 ' + (has(botHold) ? n(botHold) : '—') + '개 · 소각 누계 ' + (burned === null ? '—' : n(burned)) + '개). 백서는 ' + md(P.src.doc_day) + ' 현재 매출 연동 매입 소각이 첫 집행 전이라고 적는다 — bot 매입이 그 집행분인지는 원장으로 알 수 없다(확인 필요). 카드 · 계좌 결제분과 데이터 매출은 원장에 없어 재원은 하한이다.' });
+    rows.push({ key: 'lock', topic: '잠금 · 유통', policy: '100억 개 전량 발행 · 발행 계정은 2026-10-05 블랙홀 전환(추가 발행 · 동결 · 회수 불가). 베스팅 일정 전부 공개.',
+      now: (has(locked) ? '잠금(에스크로) ' + n(locked) + '개(' + p1(locked / P.total) + ')' : '잠금 값을 받지 못했다') + (has(s.circulating) ? ' · 유통량 ' + n(s.circulating) + '개(' + (s.circulating / P.total * 100).toFixed(3) + '%)' : ''),
+      note: '백서 ' + md(P.src.doc_day) + ' 기준 잠금 ' + n(P.escrow.locked) + '개(' + P.escrow.n + '건)' + (has(freed) && freed > 0 ? ' → 그 뒤 ' + n(freed) + '개 풀림' : '') + '. 유통량은 사이트 공시 값.' });
+    rows.push({ key: 'pool', topic: '유동성 공개', policy: '두 풀의 잔액은 늘 원장에서 보이고 한 숫자로 합쳐 공개한다. 유동성 · 준비금 ' + eok(P.alloc[8].qty) + '에서 추가 예치.',
+      now: has(s.pool_liq) ? '전체 풀 유동성 ' + n(s.pool_liq) + ' RLUSD 환산(두 풀 · 양쪽)' : '풀 값을 받지 못했다', note: (() => { const r8 = daily.find((r) => r.date === P.pool_doc.day); return '토크노믹스 문서의 ' + md(P.pool_doc.day) + ' 값은 ' + n(P.pool_doc.liq) + ' RLUSD' + (r8 && has(r8.pool_liq) ? ' · 이 화면의 그날 값은 ' + n(r8.pool_liq) + '(차이 ' + n(Math.abs(r8.pool_liq - P.pool_doc.liq)) + ' — 재는 시각이 다르다)' : '') + '. 같은 기준(두 풀 · 양쪽 합)이다.'; })() });
+    const tiles = [
+      { label: '소각 누계', value: burned === null ? '—' : (Math.round(burned * 100) / 100).toLocaleString('en-US'), unit: '개', sub: '100억 − 총 공급 · 소각 예정 ' + eok(P.burn.planned) + '은 집행 전' },
+      { label: '잠금(에스크로)', value: has(locked) ? p1(locked / P.total) : '—', unit: '', sub: has(locked) ? n(locked) + '개' + (has(freed) && freed > 0 ? ' · ' + md(P.src.doc_day) + ' 뒤 ' + n(freed) + '개 풀림' : '') : '' },
+      { label: '활성 기기 비율', value: up === null ? '—' : p1(up), unit: '', sub: up === null ? '' : '등록 ' + n(tot) + '대 가운데 ' + n(act) + '대 · G4 조건 ' + p1(P.uptime).replace('.0%', '%'), tone: 'uptime' },
+      { label: next ? '다음 공급 조건 · ' + next.g + ' ' + next.name : '공급 조건', value: next ? p1(tot / next.n) : '—', unit: '', sub: next ? '등록 기기 ' + n(tot) + ' / ' + n(next.n) + ' · 1단계 목표 ' + n(P.sites.phase1) + '의 ' + p1(tot / P.sites.phase1) : '' },
+    ];
+    return { src: P.src, total: P.total, burned, locked: has(locked) ? locked : null, freed, uptime: up, uptime_min: P.uptime, devices: has(tot) ? tot : null, active: has(act) ? act : null,
+      sales, buy_budget: budget, buy_spend: Math.round(spend), buy_ratio: ratio, bot_hold: has(botHold) ? botHold : null, next: next ? { g: next.g, name: next.name, n: next.n, pct: Math.round(tot / next.n * 1000) / 1000 } : null,
+      tiles, rows, alloc, gates,
+      watch: '토크노믹스가 지켜본다고 적은 지표는 가격이 아니라 판매 완료 · 가동률 · 데이터 매출이다. 이 화면에서는 판매 대금(RLUSD 결제분 · 참고) · 활성 기기 비율이 그 자리에 있고, 데이터 매출은 원장에 없다.',
+      limits: ['약속 쪽 숫자는 ' + P.src.tk + '과 ' + P.src.wp + '에서 ' + md(P.src.read) + '에 옮겨 적은 것이다. 문서가 바뀌면 lib/core.js 의 PLAN 을 고친다. 백서는 초안이다.',
+        '정책 수치의 정본은 토크노믹스 정책 페이지, 원장 수치의 정본은 XRPL 원장이다(백서 7장). 등록 · 활성 기기 · 하루 예산 · 유통량은 사이트가 공시한 값을 그대로 쓴 것이다.',
+        '지금 게이트가 몇 번인지는 이 화면이 판정하지 않는다 — 수요 조건(유료 고객 · B2B 계약 · 매출)은 원장으로 알 수 없다. 표의 진행률은 공급 조건의 지점 수에 등록 기기 수를 견준 것뿐이다.',
+        '기준이 문서에 적힌 것만 표시를 붙였다(가동률 80% · 매입 재원 = 판매의 10%). 나머지는 나란히 놓기만 한다.'] };
+  };
+  let plan = null; try { plan = buildPlan(); } catch (e) { plan = null; }
+
   const out = { summary: [summary], daily, ranges, positions, dayTop, walletDays };
+  if (plan) out.plan = plan;
   if (trace) out.trace = trace;
   if (health) out.health = health;
   if (market) out.market = market;

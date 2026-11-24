@@ -603,6 +603,28 @@ html.wf-on { overflow: hidden; }
 .wf-foot { margin: 0; font-size: var(--t-tag); color: var(--faint); }
 @media (max-width: 560px) { .wf-box { padding: 12px; } .wf-types { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; padding-bottom: 2px; } .wf-types button { flex: none; height: 32px; } .wf-chips { margin-left: 0; justify-content: flex-start; } }      /* 휴대폰: 유형 칩은 한 줄로 넘겨 보고 결과에 자리를 준다 */
 @media print { html.wf-on { overflow: visible; } .wf { display: none !important; } }
+/* ── 설계 대조(30차): 글이 많은 표 — 칸마다 줄을 바꾸고, 다음 공급 조건 줄은 옅게 칠한다 */
+table.plan th, table.plan td { text-align: left; white-space: normal; word-break: keep-all; vertical-align: top; line-height: 1.55; }
+table.plan td:first-child { white-space: nowrap; font-weight: 650; }
+table.plan td:nth-child(2), table.plan td:nth-child(3) { min-width: 15em; } table.plan td:nth-child(4) { min-width: 13em; color: var(--muted); }
+#tb-alloc td:nth-child(2), #tb-alloc td:nth-child(3) { min-width: 0; white-space: nowrap; font-variant-numeric: tabular-nums; } #tb-alloc td:nth-child(5) { min-width: 15em; color: var(--muted); }
+#tb-gates td:nth-child(2), #tb-gates td:nth-child(3), #tb-gates td:nth-child(4) { min-width: 8em; color: var(--fg); } #tb-gates td:nth-child(5) { min-width: 15em; }
+#tb-plan td .tn { margin-right: 0.3em; } #plan .scroll { position: relative; }
+.gate-p { display: inline-flex; align-items: center; flex-wrap: wrap; gap: 4px 8px; font-variant-numeric: tabular-nums; color: var(--muted); } .gate-p b { color: var(--fg); font-weight: 650; }
+.gate-b { display: inline-block; width: 84px; height: 6px; border-radius: 3px; background: var(--c-na-bg); overflow: hidden; } .gate-b i { display: block; height: 100%; border-radius: 3px; background: var(--accent); }
+tr.gate-next td { background: color-mix(in srgb, var(--accent) 7%, var(--cell)); }
+/* 휴대폰: 글이 많은 표를 옆으로 밀지 않게 줄마다 쌓는다(칸 이름은 칸 위에 작게 · 머리글 줄은 화면 낭독용으로만 남긴다) */
+@media (max-width: 640px) {
+  #plan table.plan, #plan table.plan tbody, #plan table.plan tr, #plan table.plan td { display: block; }
+  #plan table.plan thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  #plan table.plan tr { padding: 11px 6px 13px; border-bottom: 1px solid var(--line); }
+  #plan table.plan tr:last-child { border-bottom: 0; }
+  #plan table.plan td { min-width: 0; padding: 0; border: 0; white-space: normal; position: static; background: none; }
+  #plan table.plan td:first-child { margin-bottom: 1px; font-size: var(--t-base, 1em); }
+  #plan table.plan td:not(:first-child)::before { content: attr(data-th); display: block; margin-top: 8px; font-size: var(--t-xs); font-weight: 600; color: var(--faint); }
+  #plan table.plan td:empty { display: none; }
+  #plan tr.gate-next { border-radius: 8px; background: color-mix(in srgb, var(--accent) 7%, var(--cell)); }
+}
 /* ── UX 점검(26차) */
 /* 27차: 자판으로 누를 수 있는 줄 · 그림, 칩이 데려간 자리 표시, 판정 기준 목록, 휴대폰의 붙어 다니는 줄 */
 tr.pick:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
@@ -656,6 +678,7 @@ html.deck-on { overflow: hidden; }
 .dk-s { font-size: clamp(12px, 1.12vw, 17px); line-height: 1.45; color: var(--muted); }
 .dk-fig { margin: 0; display: grid; gap: 6px; min-width: 0; }
 .dk-chart { height: clamp(104px, 24vh, 270px); min-width: 0; }
+.dk-stats:has(> :nth-child(4)) ~ .dk-fig .dk-chart { height: clamp(96px, 19vh, 230px); }   /* 숫자 카드 넷 + 그림: 카드 글이 두 줄이 되는 만큼 그림을 낮춘다(1280×720 에서 넘치지 않게) */
 .dk-chart svg { display: block; overflow: visible; }
 .dk-cap, .dk-note { margin: 0; font-size: clamp(12px, 1.1vw, 16px); color: var(--muted); }
 .dk-pair { display: grid; gap: clamp(8px, 1.4vh, 14px); }
@@ -792,7 +815,7 @@ html.deck-on { overflow: hidden; }
       <span class="nav-g"><button type="button" class="nav-c" data-go="#board" title="요약"><svg class="nav-i" viewBox="0 0 16 16" aria-hidden="true"><rect x="2.5" y="2.5" width="4.5" height="4.5" rx="1"/><rect x="9" y="2.5" width="4.5" height="4.5" rx="1"/><rect x="2.5" y="9" width="4.5" height="4.5" rx="1"/><rect x="9" y="9" width="4.5" height="4.5" rx="1"/></svg>요약</button><a href="#board">모아보기</a><a href="#today">현황</a><a href="#market">시장</a><a href="#sum">한눈에</a></span>
       <span class="nav-g"><button type="button" class="nav-c" data-go="#flow" title="흐름"><svg class="nav-i" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 5.5h9.5M10 3l2.5 2.5L10 8M13 10.5H3.5M6 8l-2.5 2.5L6 13"/></svg>흐름</button><a href="#flow">매매</a><a href="#daily">날짜별</a><a href="#pool">풀</a></span>
       <span class="nav-g"><button type="button" class="nav-c" data-go="#accounts" title="지갑"><svg class="nav-i" viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 5.4h10a1 1 0 0 1 1 1v5.4a1 1 0 0 1-1 1h-9a1 1 0 0 1-1-1z"/><path d="M2.5 5.4V4.5a1 1 0 0 1 1-1h7.7"/><path d="M10.6 9.1h.4"/></svg>지갑</button><a href="#accounts">회사 계정</a><a href="#impact">기여 5단계</a><a href="#trace">자금 추적</a><a href="#deep">심층</a><a href="#wallets">분포</a><a href="#wtable">지갑 표</a></span>
-      <span class="nav-g"><button type="button" class="nav-c" data-go="#where" title="참고"><svg class="nav-i" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 4.3C6.8 3.4 5 3.1 3 3.3v8.5c2-.2 3.8.1 5 1 1.2-.9 3-1.2 5-1V3.3c-2-.2-3.8.1-5 1z"/><path d="M8 4.3v8.5"/></svg>참고</button><a href="#where">위치</a><a href="#facts">네트워크</a><a href="#notes">읽는 법</a></span>
+      <span class="nav-g"><button type="button" class="nav-c" data-go="#where" title="참고"><svg class="nav-i" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 4.3C6.8 3.4 5 3.1 3 3.3v8.5c2-.2 3.8.1 5 1 1.2-.9 3-1.2 5-1V3.3c-2-.2-3.8.1-5 1z"/><path d="M8 4.3v8.5"/></svg>참고</button><a href="#plan">설계 대조</a><a href="#where">위치</a><a href="#facts">네트워크</a><a href="#notes">읽는 법</a></span>
     </nav>
     <div class="bar-r">
       <button type="button" class="btn sm wf-open" data-wf-open title="지갑 찾기 — 주소로 찾고 유형을 본다(/)" aria-label="지갑 찾기"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="7" cy="7" r="4.4"/><path d="M10.4 10.4L14 14"/></svg><span>지갑 찾기</span></button>
@@ -1198,7 +1221,20 @@ html.deck-on { overflow: hidden; }
     <p class="note"><b>활동량은 받은 양 + 판 양 + 산 양 + 풀에 넣고 뺀 양</b>이고, 순위는 모든 지갑 가운데 활동량 순이다. <b>줄을 누르면</b> 위에서 그 지갑의 한 줄 분석과 날짜별 기록을 볼 수 있다. 열 이름을 누르면 그 열로 정렬한다. <b>잔액은 지금 값</b>, 나머지는 고른 기간의 합계다. 「다시 산 돈」은 그 지갑이 operations 계정으로 보낸 RLUSD다(카드 · 계좌로 다시 산 것은 원장에 없어 0으로 나온다). 숫자 아래 작은 글자는 전체에서 차지하는 비중이다 — 받은 양은 일반 사용자가 받은 양, 판 양 · 산 양은 시장 전체 대비. 단위 WLBN, 대금은 받은 통화 그대로.</p>
   </section>
 
-  <div class="chap"><b>참고</b><span>지금 어디에 있나 · 공개 값 · 읽는 법</span></div>
+  <div class="chap"><b>참고</b><span>설계와 지금 · 지금 어디에 있나 · 공개 값 · 읽는 법</span></div>
+
+  <section class="sec panel" id="plan" aria-labelledby="h-plan">
+    <h2 class="h2" id="h-plan">설계 대조 · 토크노믹스의 약속과 원장의 지금 <button type="button" class="q" data-help="t:plan" aria-label="설계 대조 설명" aria-expanded="false">?</button></h2>
+    <p class="say" data-plan-say>토크노믹스 정책과 백서가 약속한 것(배분 · 지급 · 소각 · 게이트)을 원장에서 보이는 지금 값과 나란히 놓았다.</p>
+    <div class="tiles" id="plan-tiles"></div>
+    <h3 class="h3">약속과 지금</h3>
+    <div class="scroll"><table id="tb-plan" class="words plan" aria-label="토크노믹스 · 백서의 약속과 원장에서 보이는 지금 값"><thead></thead><tbody></tbody></table></div>
+    <h3 class="h3" data-shut>배분표(v2) · 100억 개가 어디에 배정됐나</h3>
+    <div class="scroll"><table id="tb-alloc" class="words plan" aria-label="배분표 v2와 원장에서 보이는 곳"><thead></thead><tbody></tbody></table></div>
+    <h3 class="h3" data-shut>마일스톤 게이트 · 공급 조건에 견준 지금</h3>
+    <div class="scroll"><table id="tb-gates" class="words plan" aria-label="마일스톤 게이트 G0~G10과 공급 조건 진행"><thead></thead><tbody></tbody></table></div>
+    <ul class="cap" id="plan-limits" data-tail></ul>
+  </section>
 
   <section class="sec panel" id="where" aria-labelledby="h-where">
     <h2 class="h2" id="h-where">위치 · WLBN은 지금 어디에 있나</h2>
@@ -1227,6 +1263,7 @@ html.deck-on { overflow: hidden; }
   <section class="sec panel" id="notes" aria-labelledby="h-notes">
     <h2 class="h2" id="h-notes">읽는 법</h2>
     <dl class="gloss">
+      <div><dt>토크노믹스의 원칙과 이 화면</dt><dd>토크노믹스 정책은 <b>정해진 수량을 준다</b>고만 약속하고 가격 · 수익률 · 회수 기간은 약속하지 않는다. 지켜본다고 적은 지표도 가격이 아니라 <b>판매 완료 · 가동률 · 데이터 매출</b>이다 — 이 화면이 가격을 평가하지 않는 것과 같은 뜻이다. 소각은 「얼마를 내보내고 얼마를 태웠다」처럼 <b>수량으로만</b> 말한다(값이 오른다는 말을 붙이지 않는다). 약속한 것과 원장의 지금 값은 「설계 대조」 구역에 나란히 있다.</dd></div>
       <div><dt>긍정 · 지켜봄 · 부정 표시</dt><dd>초록 ✓ 는 긍정, 노랑 ! 는 지켜봄, 빨강 ✕ 는 부정이다(「오늘의 현황」의 좋음 · 지켜봄 · 주의와 같은 뜻). 카드 제목 · 구역 머리의 개수 · 코멘트 줄 머리 · 글 속 숫자에 같은 표시가 붙고, 맨 위 「지표 모아보기」의 긍정 요소 · 지켜볼 것 · 부정 요소 세 줄이 그 모음이다. 판정 기준이 있는 지표에만 붙이며, 표시가 없는 줄은 어느 쪽으로도 가르지 않은 것이다. <b>가격은 평가하지 않는다</b> — 가격 변화와 시장 대비 숫자에는 표시를 붙이지 않고, 「오늘의 현황」의 가격 고리도 점수 없이 숫자만 보여 주며 선순환 지수에 넣지 않는다. 지나간 기록으로 매긴 신호이고 앞날을 내다보는 값이 아니다.</dd></div>
       <div><dt>WLBN · RLUSD · XRP · 원장</dt><dd>WLBN은 Wellbian이 기기 운영 보상으로 지급하는 토큰이다. RLUSD는 1달러에 값을 맞춘 코인, XRP는 XRP Ledger의 기본 통화다. 원장은 XRP Ledger에 남는 공개 거래 기록이고, 이 화면의 숫자는 모두 거기서 읽었다.</dd></div>
       <div><dt>재지급(10월 26~27일)</dt><dd>10월 24일 밤 옛 지갑들의 WLBN이 한 주소로 옮겨져, 10월 26~27일에 지급 계정이 새 지갑들로 다시 지급했다. 이 재지급분은 「받은 양」에 들어 있어서, 전체 기간의 「받은 양 가운데 판 비율」은 그만큼 낮게 나온다. 지금의 풀 두 곳은 10월 27일에 열렸고, 이 화면은 10월 26일부터 센다.</dd></div>
@@ -1351,7 +1388,7 @@ html.deck-on { overflow: hidden; }
   // ── 계층: 장 → 구역(접고 펴기 · 한 줄 요약) → 블록(접고 펴기). 처음에 한 번 기존 구조를 감싸 만든다
   //   SHUT0 = 처음에 접어 두는 구역. 요약 장과 매매 그림(flow) · 도움 · 부담(impact)은 펴 둔다(11/23 서우 「매매 그림이랑 도움 · 부담은 처음부터 펴 둬」) · SUM_SHUT = 한 줄 요약을 접었을 때만 보이는 구역(펴면 바로 아래에 같은 내용이 있다)
   var FOLD_KEY = 'wlbn-fold-1', FOLD = {}, BOXES = [];
-  var SHUT0 = { daily: 1, pool: 1, accounts: 1, deep: 1, wallets: 1, wtable: 1, where: 1, facts: 1, before: 1, notes: 1 };
+  var SHUT0 = { daily: 1, pool: 1, accounts: 1, deep: 1, wallets: 1, wtable: 1, plan: 1, where: 1, facts: 1, before: 1, notes: 1 };
   var SUM_SHUT = { today: 1, market: 1, sum: 1, impact: 1, trace: 1, deep: 1, where: 1, before: 1, notes: 1 };
   try { FOLD = JSON.parse(localStorage.getItem(FOLD_KEY) || '{}') || {}; } catch (e) { FOLD = {}; }
   function foldBtn(box, name, withText) {
@@ -1402,6 +1439,7 @@ html.deck-on { overflow: hidden; }
     deep: [['path', 'M8 2.2l5.5 2.8L8 7.8 2.5 5z'], ['path', 'M2.5 8l5.5 2.8L13.5 8'], ['path', 'M2.5 11l5.5 2.8 5.5-2.8']],   // 겹친 층: 온체인 심층
     wallets: [['path', 'M2.5 2.5v11h11'], ['circle', 6, 10, 0.9], ['circle', 8.6, 7.4, 0.9], ['circle', 11, 9.6, 0.9], ['circle', 11.8, 4.8, 0.9]],   // 점 그림: 지갑 분포
     wtable: [['rect', 2.5, 3, 11, 10, 1.5], ['path', 'M2.5 6.5h11M2.5 9.8h11M6.5 6.5V13']],                       // 표: 지갑별 표
+    plan: [['rect', 2.5, 2.5, 11, 11, 1.6], ['path', 'M5.2 6l1.2 1.2 2-2.1M5.2 10l1.2 1.2 2-2.1'], ['path', 'M10.2 6.3h1.3M10.2 10.3h1.3']],   // 점검표: 약속한 것과 지금을 하나씩 대조
     where: [['path', 'M8 14s4.2-3.9 4.2-7.3a4.2 4.2 0 0 0-8.4 0C3.8 10.1 8 14 8 14z'], ['circle', 8, 6.6, 1.5]],   // 위치 핀: 지금 어디에 있나
     facts: [['circle', 8, 8, 5.5], ['path', 'M2.5 8h11M8 2.5c2.2 1.9 2.2 9.1 0 11M8 2.5c-2.2 1.9-2.2 9.1 0 11']],   // 지구: 네트워크와 시장
     before: [['circle', 8, 8, 5.5], ['path', 'M8 5v3.2l2.1 1.3']],                                                // 시계: 이전 풀 기간
@@ -1574,6 +1612,11 @@ html.deck-on { overflow: hidden; }
       if (ok(A.score)) add('deepAcc', 'deep', A.score >= 0.55 ? 'ok' : A.score <= 0.45 ? 'bad' : null, '늘린 물량 비중', A.score.toFixed(2), '0.55 이상 긍정 · 0.45 이하 부정', W7);
       if (ok(Wk.movers) && ok(Wk.prev_movers)) add('deepMove', 'deep', Wk.movers > Wk.prev_movers ? 'ok' : Wk.movers < Wk.prev_movers ? 'warn' : null, '하루 움직인 지갑', Wk.movers + '곳', '직전 7일 ' + Wk.prev_movers + '곳/일보다 늘면 긍정', W7);
     }
+    var PL = DATA.plan;                              // 설계 대조: 토크노믹스에 기준이 적힌 것만(가동률 80% · 매입 재원 = 판매의 10%)
+    if (PL) {
+      if (ok(PL.uptime)) add('uptime', 'plan', PL.uptime >= PL.uptime_min ? 'ok' : 'warn', '활성 기기 비율', F.pct(PL.uptime), '등록 기기 가운데 활성 기기 · 토크노믹스 G4 조건의 가동률 ' + d3.format('.0%')(PL.uptime_min) + ' 이상이면 긍정(문서의 가동률과 같은 정의인지는 확인 필요)', '지금');
+      if (ok(PL.buy_ratio) && PL.buy_ratio > 1) add('buyPolicy', 'plan', 'warn', 'bot 매입 지출 ÷ 정책 재원', d3.format('.1f')(PL.buy_ratio) + '배', '토크노믹스의 매입 소각 재원은 기기 · 이용권 판매의 10%(+ 데이터 매출 50%)다. 이 화면이 본 RLUSD 결제분의 10%에 견준 값 — 1배를 넘으면 지켜봄', '전체 기간');
+    }
     if (cn) {                                        // 지갑 분포
       if (ok(cn.sell_top5)) add('concSell', 'wallets', cn.sell_top5 >= 0.5 ? 'warn' : null, '판 쪽 쏠림(다섯 곳)', F.pct(cn.sell_top5), '절반 이상이면 소수 지갑이 판 양을 좌우한다', WP);
       if (cn.rebuyers > 0) add('rebuy', 'wallets', 'ok', '기기 · 이용권을 다시 산 지갑', fInt(cn.rebuyers) + '곳', 'operations 계정으로 ' + fInt(cn.rebuy_rlusd) + ' RLUSD를 보냈다(기기 · 이용권 값으로 본다)', WP);
@@ -1655,6 +1698,7 @@ html.deck-on { overflow: hidden; }
       back: ok('back') && im.tot5 && im.tot5.took_rlusd > 0 ? { v: x1(im.tot5.back_rlusd / im.tot5.took_rlusd), u: '배', l: '되돌린 돈 ÷ 가져간 돈', s: '되돌린 돈 ' + fInt(im.tot5.back_rlusd) + ' · 가져간 돈 ' + fInt(im.tot5.took_rlusd) + ' RLUSD 환산 · ' + WA, head: '가져간 돈보다 되돌린 돈이 더 많다' } : null,
       posW: ok('posW') && im.pos5 && im.tot5 && im.tot5.wallets ? { v: fInt(im.pos5.wallets), u: '곳', l: '긍정 쪽 지갑', s: '지갑 ' + fInt(im.tot5.wallets) + '곳의 ' + F.pct(im.pos5.wallets / im.tot5.wallets) + (im.tot5.balance ? ' · 들고 있는 물량의 ' + F.pct(im.pos5.bal / im.tot5.balance) : '') + ' · ' + WA, head: im.tot5.balance && im.pos5.bal / im.tot5.balance >= 0.5 ? '들고 있는 물량의 ' + F.pct(im.pos5.bal / im.tot5.balance) + '가 긍정 쪽 지갑에 있다' : '긍정 쪽 지갑이 ' + fInt(im.pos5.wallets) + '곳이다' } : null,
       hold: ok('holdP') && has(k.user_sold_share) ? { v: d3.format('.1f')((1 - k.user_sold_share) * 100), u: '%', l: '받은 양 가운데 팔지 않은 비율', s: '판 비율 ' + F.pct(k.user_sold_share) + (k.user_repaid > 0 ? ' · 10/26 재지급 포함' : '') + ' · ' + WA, head: '받은 양의 절반 넘게 팔지 않았다' } : null,
+      up: ok('uptime') && DATA.plan ? { v: d3.format('.1f')(DATA.plan.uptime * 100), u: '%', l: '활성 기기 비율', s: '등록 ' + fInt(s.devices_total) + '대 가운데 ' + fInt(s.devices_active) + '대 · 토크노믹스 G4 조건 ' + d3.format('.0%')(DATA.plan.uptime_min), head: '등록한 기기의 대부분이 켜져 있다' } : null,
       rebuy: ok('rebuy') ? { v: fInt(cn.rebuyers), u: '곳', l: '기기 · 이용권을 다시 산 지갑', s: 'operations 계정으로 보낸 ' + fInt(cn.rebuy_rlusd) + ' RLUSD(기기 · 이용권 값으로 본다) · ' + WA, head: '보상을 받은 뒤 다시 사는 지갑이 있다' } : null
     };
     var out = [], full = function (r) { return !r.partial; };
@@ -1663,13 +1707,13 @@ html.deck-on { overflow: hidden; }
     [T.pay, T.liq, T.dem7, T.back].forEach(function (st) { put(s0, st); });
     if (h && h.index && h.index.status === 'ok') s0.head = '선순환 지수 ' + h.index.value + '점 · ' + ((h.labels && h.labels.ok) || '좋음');
     else if (good.length) s0.head = '선순환 고리 ' + idx.length + '곳 가운데 ' + good.length + '곳이 ' + ((h.labels && h.labels.ok) || '좋음');
-    s0.note = [good.length ? ((h.labels && h.labels.ok) || '좋음') + '인 고리: ' + good.map(function (l) { return l.name; }).join(' · ') : '', has(s.devices_total) ? '등록 기기 ' + fInt(s.devices_total) + '대' + (has(s.devices_active) ? '(활성 ' + fInt(s.devices_active) + ')' : '') : '', has(s.holders) ? 'WLBN을 가진 지갑 ' + fInt(s.holders) + '곳' : ''].filter(Boolean).join('  |  ');
+    s0.note = [good.length ? ((h.labels && h.labels.ok) || '좋음') + '인 고리: ' + good.map(function (l) { return l.name; }).join(' · ') : '', T.up ? '활성 기기 비율 ' + T.up.v + '%(' + fInt(s.devices_active) + ' / ' + fInt(s.devices_total) + '대)' : '', has(s.holders) ? 'WLBN을 가진 지갑 ' + fInt(s.holders) + '곳' : ''].filter(Boolean).join('  |  ');
     var SAY = { pay: ['보상을 받는 지갑이 늘고', '보상을 받는 지갑이 늘었다'], hold: ['받은 양의 절반 넘게 남고', '받은 양의 절반 넘게 남았다'], pool: ['풀이 깊어지고', '풀이 깊어졌다'], demand: ['나온 물량이 모두 소화되고', '나온 물량이 모두 소화됐다'] };
     var gs = good.filter(function (l) { return SAY[l.key]; });
     if (gs.length) s0.ins = '최근 7일 ' + gs.map(function (l, i) { return SAY[l.key][i === gs.length - 1 ? 1 : 0]; }).join(', ') + '.';
     if (s0.stats.length >= 2) out.push(s0);
     // 2. 참여
-    var s1 = mk('pay', '참여'); put(s1, T.pay); put(s1, T.fresh); put(s1, T.payrun);
+    var s1 = mk('pay', '참여'); put(s1, T.pay); put(s1, T.fresh); put(s1, T.up); put(s1, T.payrun);
     var rv = (D.days || []).filter(full).filter(function (r) { return has(r.receivers); }).slice(-28);
     if (T.pay && rv.length >= 5) s1.fig = { kind: 'bars', rows: rv, key: 'receivers', unit: '곳', cap: '날마다 보상을 받은 지갑 수 · ' + md(rv[0].date) + '~' + md(rv[rv.length - 1].date) };
     if (T.pay && fx.new_wallets > 0 && fx.paid_wallets > 0) s1.ins = '보상을 받은 지갑의 ' + F.pct(fx.new_wallets / fx.paid_wallets) + '가 최근 7일에 처음 받은 지갑이다 — 참여가 새 지갑으로 넓어지고 있다.';
@@ -1983,7 +2027,8 @@ html.deck-on { overflow: hidden; }
     var el = $('[data-tone="' + key + '"]', sec);
     if (!el && key.indexOf('h_') === 0) el = $('.gauge .q[data-help="loop:' + key.slice(2) + '"]', sec);
     if (!el && key === 'idx') el = $('#idx-parts', sec);
-    return el ? (el.closest('.gauge, .card, .tile, .idx-card, li, p') || el) : null;
+    if (sec.id === 'plan') { var pr = $('tr[data-plan-row="' + key + '"]', sec); if (pr) return pr; }
+    return el ? (el.closest('.gauge, .card, .tile, .idx-card, tr, li, p') || el) : null;
   }
   function goSig(x) {
     var sec = document.getElementById(x.sec); if (!sec) return;
@@ -2052,6 +2097,7 @@ html.deck-on { overflow: hidden; }
     var ws = c.r.wallets || [], cnt = function (g) { return ws.filter(function (w) { return w.g === g; }).length; };
     if (ws.length) T.wtable = '지갑 **' + fInt(ws.length) + '곳** · 일반 사용자 ' + fInt(cnt('user')) + ' · 사고팔기 ' + fInt(cnt('arb')) + ' · 그 밖 ' + fInt(cnt('other')) + (cnt('bot') ? ' · Wellbian bot ' + fInt(cnt('bot')) : '');
     var pos = DATA.positions || [], lk = one(pos, 'key', 'locked'), tr = one(pos, 'key', 'treasury'), pl = one(pos, 'key', 'pools');
+    var PLs = DATA.plan; if (PLs) T.plan = [PLs.burned !== null ? '소각 누계 **' + d3.format(',.0f')(PLs.burned) + '개**' : '', PLs.uptime !== null ? '활성 기기 비율 ' + tw('uptime', F.pct(PLs.uptime)) : '', PLs.buy_ratio !== null ? 'bot 매입 지출은 정책 재원의 ' + tw('buyPolicy', d3.format('.1f')(PLs.buy_ratio) + '배') + '(확인 필요)' : '', PLs.next ? '다음 공급 조건 ' + PLs.next.g + '까지 ' + F.pct(PLs.next.pct) : ''].filter(Boolean).join(' · ');
     if (lk && ok(lk.share)) T.where = '전체 ' + fInt(s.total_supply) + '개 가운데 잠금 **' + F.pct(lk.share) + '**' + (tr && ok(tr.share) ? ' · treasury 계정 ' + F.pct(tr.share) : '') + (pl ? ' · 풀 두 곳 ' + fInt(pl.amount) + '개' : '');
     var fc = [];
     if (ok(s.holders)) fc.push('WLBN을 가진 지갑 **' + fInt(s.holders) + '곳**'); if (ok(s.devices_total)) fc.push('등록 기기 **' + fInt(s.devices_total) + '대**' + (ok(s.devices_active) ? '(활성 ' + fInt(s.devices_active) + ')' : '')); if (ok(s.epoch_distributed)) fc.push('하루 배분 ' + fInt(s.epoch_distributed) + '개');
@@ -3214,6 +3260,7 @@ html.deck-on { overflow: hidden; }
     'c:ratio': ['판 비율', ['판 양 ÷ 받은 양. 다른 데서 받아서 판 경우에는 100%를 넘는다.']],
     'c:type': ['유형', ['고른 기간의 움직임으로 붙인 이름이다: 받는 대로 파는 · 일부만 파는 · 사 모으는 · 풀에 넣는 · 팔고 다시 사는 · 사고팔기 지갑 등.', '지갑 줄을 누르면 그 지갑의 한 줄 분석이 나온다.']],
     'c:rebuy': ['다시 산 돈', ['그 지갑이 operations 계정으로 보낸 RLUSD다. 기기 · 이용권 값으로 본다.', '카드 · 계좌로 결제한 것은 원장에 없어 0으로 나온다.']],
+    't:plan': ['설계 대조', ['토크노믹스 정책(배분표 v2 · 2026-10-02 개정)과 백서 초안 v1.1(2026-11-01)에 적힌 약속을 원장에서 보이는 지금 값과 나란히 놓은 구역이다.', '정책 수치의 정본은 토크노믹스 정책 페이지, 원장 수치의 정본은 XRPL 원장이다. 등록 · 활성 기기와 하루 예산 · 유통량은 사이트가 공시한 값이다.', '표시는 문서에 기준이 적힌 둘에만 붙는다 — 가동률 80%(G4 조건), 매입 소각 재원 = 판매의 10%. 지금 게이트가 몇 번인지는 판정하지 않는다(수요 조건은 원장에 없다).']],
     't:trace': ['부정 쪽 지갑 자금 흐름', ['「부정」 · 「매우 부정」 지갑마다 원장의 송금 기록을 읽어, 들어온 쪽(유입 전)과 나간 쪽(행선지)을 따라간 것이다.', '유입 전: WLBN을 어디서 얻었나(보상 · 풀에서 삼 · 다른 지갑에서 옮겨 받음), 계정을 만든 송금을 누가 보냈나, 기간에 누가 XRP · RLUSD · WLBN을 보내 줬나.', '행선지: 직접 보낸 곳이 1단계, 그곳이 다시 보낸 곳이 2단계, 한 번 더가 3단계다. 중간 지갑이 보낸 돈은 그 지갑이 받은 금액까지만, 보낸 곳 비율대로 나눠 따라간다.', '끝나는 곳: 목적지 태그가 붙는 주소(거래소 입금 꼴) · 거래가 많은 계정 · 회사 계정 · 지갑별 표의 지갑 · 3단계.', '하루 한 번 다시 받는다. 거래소 안과 지갑 주인은 볼 수 없다.']],
     't:sent': ['밖으로 보낸 돈', ['풀이 열린 뒤 이 지갑이 다른 주소로 보낸 송금의 합이다(XRP · RLUSD · WLBN을 RLUSD로 환산).', 'WLBN을 판 대금만이 아니라 지갑에 원래 있던 돈, 다른 곳에서 받은 돈, WLBN 이체도 들어 있다. 그래서 「가져간 돈」보다 클 수 있다.']],
     'c:money': ['가져간 돈 · 되돌린 돈', ['가져간 돈: WLBN을 팔아 받은 돈(RLUSD 환산).', '되돌린 돈: WLBN을 사며 낸 돈 + operations 계정으로 보낸 RLUSD(다시 산 돈) + 회사 계정(match · treasury 등)에 넣은 돈(XRP · RLUSD — XRP는 넣은 날 값으로 환산).', '회사 계정에 넣은 돈은 회사 계정 쪽 원장 기록에서 하루 한 번 읽는다. 다시 들어간 돈이므로 되돌린 돈으로 친다.', '카드 · 계좌 결제는 원장에 없어 되돌린 돈에 잡히지 않는다.']],
@@ -3413,6 +3460,32 @@ html.deck-on { overflow: hidden; }
   }
 
   // WLBN 분포
+  // ── 설계 대조(30차): 토크노믹스 · 백서의 약속 ↔ 원장의 지금. 글과 숫자는 계산 쪽(buildPlan)이 만들고 여기서는 그리기만 한다
+  function drawPlan() {
+    var sec = $('#plan'), PL = DATA.plan; if (!sec) return; sec.hidden = !PL; if (!PL) return;
+    var E = function (tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text !== undefined) e.textContent = text; return e; };
+    var say = $('[data-plan-say]', sec); if (say) rich(say, '**' + PL.src.tk + '** · **' + PL.src.wp + '**이 약속한 것을 원장에서 보이는 지금 값과 나란히 놓았다. ' + PL.watch);
+    var tiles = $('#plan-tiles'); if (tiles) { tiles.replaceChildren(); PL.tiles.forEach(function (x) {
+      var a = E('article', 'card'), p = E('p', 'big'), sp = E('span', '', x.value); a.appendChild(E('h3', 'card-h', x.label)); if (x.tone) sp.setAttribute('data-tone', x.tone); p.appendChild(sp); if (x.unit) p.appendChild(E('span', 'unit', x.unit)); a.appendChild(p); a.appendChild(E('p', 'sub', x.sub)); tiles.appendChild(a); if (x.tone) toneCard(a, tOf(x.tone));
+    }); }
+    var fill = function (id, heads, rows, cells) {
+      var t = $(id); if (!t) return; t.tHead.replaceChildren(); t.tBodies[0].replaceChildren(); var hr = t.tHead.insertRow();
+      heads.forEach(function (h) { var th = E('th', '', h); th.scope = 'col'; hr.appendChild(th); });
+      rows.forEach(function (r) { var tr = t.tBodies[0].insertRow(); cells(r, tr).forEach(function (c, ci) { var td = tr.insertCell(); td.setAttribute('data-th', heads[ci]); if (c && c.nodeType) td.appendChild(c); else td.textContent = c === null || c === undefined ? '—' : c; }); });
+    };
+    fill('#tb-plan', ['항목', '토크노믹스 · 백서', '원장에서 보이는 지금', '비고'], PL.rows, function (r, tr) {
+      var now = E('span'); if (r.tone && tOf(r.tone)) { tr.setAttribute('data-plan-row', r.tone); now.appendChild(toneEl(tOf(r.tone))); } now.appendChild(document.createTextNode(r.now));
+      return [r.topic, r.policy, now, r.note];
+    });
+    fill('#tb-alloc', ['버킷', '수량', '비율', '해제 조건 · 베스팅', '원장에서 보이는 곳(백서 ' + md(PL.src.doc_day) + ' 기준 + 지금)'], PL.alloc.concat([{ name: '합계', qty_text: '100억', share: 1, cond: '전량 발행 · 발행 계정 블랙홀(2026-10-05)', where: '' }]), function (r) { return [r.name, r.qty_text, d3.format('.0%')(r.share), r.cond, r.where]; });
+    fill('#tb-gates', ['게이트', '공급 조건', '수요 조건', '그 밖', '공급 조건에 견준 지금'], PL.gates, function (r, tr) {
+      var pr = E('span', 'gate-p'); if (r.next) tr.className = 'gate-next';
+      if (r.pct === null) pr.textContent = '숫자 조건 없음';
+      else { var bar = E('span', 'gate-b'), fl = E('i'); fl.style.width = Math.max(1.5, r.pct * 100) + '%'; bar.appendChild(fl); pr.appendChild(bar); pr.appendChild(E('b', '', F.pct(r.pct))); pr.appendChild(document.createTextNode(' ' + fInt(PL.devices) + ' / ' + fInt(r.n) + (r.next ? ' · 다음 공급 조건' : ''))); }
+      return [r.g + ' ' + r.name, r.supply, r.demand, r.etc || '—', pr];
+    });
+    var lim = $('#plan-limits'); if (lim) { lim.replaceChildren(); PL.limits.forEach(function (t) { lim.appendChild(E('li', '', t)); }); }
+  }
   function drawPositions() {
     var ul = $('#pos-list'); if (!ul) return; ul.replaceChildren();
     var rows = DATA.positions || [], big = { locked: 1, treasury: 1, seed: 1, staking: 1 }, max = d3.max(rows.filter(function (r) { return !big[r.key]; }), function (r) { return r.amount; }) || 1;
@@ -3680,7 +3753,7 @@ html.deck-on { overflow: hidden; }
     try { drawBoard(); } catch (e) { if (window.console) console.error(e); }
     $$('[data-chart]').forEach(function (el) { el.__drawn = 0; drawChart(el.getAttribute('data-chart')); });
     closeHelp();
-    [drawHealth, drawVs, drawDeep, drawWallet, drawDist, drawTables, drawImpact, drawTrace, drawFlowShares, drawPositions, drawInsights, drawDay, drawCalc, drawStatus, drawSums, syncDates].forEach(function (fn) { try { fn(); } catch (e) { if (window.console) console.error(e); } });
+    [drawHealth, drawVs, drawDeep, drawWallet, drawDist, drawTables, drawImpact, drawTrace, drawFlowShares, drawPlan, drawPositions, drawInsights, drawDay, drawCalc, drawStatus, drawSums, syncDates].forEach(function (fn) { try { fn(); } catch (e) { if (window.console) console.error(e); } });
     $$('[data-chart]').forEach(function (el) { if (!el.__drawn) drawChart(el.getAttribute('data-chart')); });      // 위에서 막 드러난 곳(추이 · 지갑 따라가 보기)의 그림
     spyLater();
     if (DECK.on) { try { DECK.slides = deckBuild(); deckDraw(); } catch (e) { if (window.console) console.error(e); } }      // 발표 화면을 열어 둔 채 자료가 바뀌면 같은 장을 다시 그린다
