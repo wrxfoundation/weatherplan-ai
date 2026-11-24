@@ -748,7 +748,7 @@ html.rpt .chap, html.rpt .sec-h, html.rpt .blk-h, html.rpt .h2, html.rpt .h3 { b
       <article class="card" id="t-price">
         <h3 class="card-h">지금 가격</h3>
         <p class="big"><span data-n="s.price_rlusd" data-fmt="f4">—</span><span class="unit">RLUSD</span></p>
-        <p class="sub">XRP로는 <b data-n="s.xrp_per_wlbn" data-fmt="f4">—</b> · 기간 첫날 <b data-n="k.price_from" data-fmt="f4">—</b>에서 <b data-n="k.price_change" data-fmt="spct" data-tone="priceP">—</b></p>
+        <p class="sub">XRP로는 <b data-n="s.xrp_per_wlbn" data-fmt="f4">—</b> · 기간 첫날 <b data-n="k.price_from" data-fmt="f4">—</b>에서 <b data-n="k.price_change" data-fmt="spct">—</b></p>
       </article>
     </div>
     <h3 class="h3">눈여겨볼 점</h3>
@@ -1034,7 +1034,7 @@ html.rpt .chap, html.rpt .sec-h, html.rpt .blk-h, html.rpt .h2, html.rpt .h3 { b
   <section class="sec panel" id="notes" aria-labelledby="h-notes">
     <h2 class="h2" id="h-notes">읽는 법</h2>
     <dl class="gloss">
-      <div><dt>긍정 · 지켜봄 · 부정 표시</dt><dd>초록 ✓ 는 긍정, 노랑 ! 는 지켜봄, 빨강 ✕ 는 부정이다(「오늘의 현황」의 좋음 · 지켜봄 · 주의와 같은 뜻). 카드 제목 · 구역 머리의 개수 · 코멘트 줄 머리 · 글 속 숫자에 같은 표시가 붙고, 맨 위 「긍정 · 부정 한눈에」가 그 모음이다. 판정 기준이 있는 지표에만 붙이며, 표시가 없는 줄은 어느 쪽으로도 가르지 않은 것이다. 지나간 기록으로 매긴 신호이고 앞날을 내다보는 값이 아니다.</dd></div>
+      <div><dt>긍정 · 지켜봄 · 부정 표시</dt><dd>초록 ✓ 는 긍정, 노랑 ! 는 지켜봄, 빨강 ✕ 는 부정이다(「오늘의 현황」의 좋음 · 지켜봄 · 주의와 같은 뜻). 카드 제목 · 구역 머리의 개수 · 코멘트 줄 머리 · 글 속 숫자에 같은 표시가 붙고, 맨 위 「긍정 · 부정 한눈에」가 그 모음이다. 판정 기준이 있는 지표에만 붙이며, 표시가 없는 줄은 어느 쪽으로도 가르지 않은 것이다. <b>가격은 평가하지 않는다</b> — 가격 변화와 시장 대비는 숫자만 보여 준다. 지나간 기록으로 매긴 신호이고 앞날을 내다보는 값이 아니다.</dd></div>
       <div><dt>받은 양(수령)</dt><dd>지급 계정에서 지갑으로 들어온 WLBN. 기기 보상 말고도 지급 계정이 보낸 모든 WLBN이 들어 있다.</dd></div>
       <div><dt>판 양 · 산 양</dt><dd>지갑의 WLBN이 줄고 RLUSD나 XRP가 늘면 판 것, 반대면 산 것으로 센다. 「RLUSD로 · XRP로 판 양」은 받은 통화로 나눈 수량이다.</dd></div>
       <div><dt>풀</dt><dd>WLBN과 RLUSD, WLBN과 XRP를 맞바꾸는 두 곳. 누가 넣어 둔 양으로 거래가 이뤄진다.</dd></div>
@@ -1273,31 +1273,26 @@ html.rpt .chap, html.rpt .sec-h, html.rpt .blk-h, html.rpt .h2, html.rpt .h3 { b
   // ── 신호(긍정 · 지켜봄 · 부정) — 서우 「지표와 섹션이 방대해졌는데 문맥 · 코멘트 · 아이콘에서 긍정 요소 · 부정 요소를 빨리 캐치할 수 있게」(11/24 19차)
   //   지표마다 여기 한 곳에서 판정하고, 카드 · 구역 머리 · 코멘트 · 글 속 숫자는 모두 이 표를 읽는다. 「오늘의 현황」의 좋음 · 지켜봄 · 주의가 그대로 긍정 · 지켜봄 · 부정이다.
   //   기준이 없는 지표는 표시하지 않는다(억지로 가르지 않는다). 기준을 바꾸려면 buildSignals 만 고친다
+  //   가격은 평가하지 않는다(11/24 서우 「가격은 평가하지말자」): 가격 변화 · 「가격」 고리 · 시장 대비(값 견주기)는 숫자만 보여 주고 긍정 · 부정으로 가르지 않는다. 여기에 가격 판정을 다시 넣지 않는다
   var SIG = {}, SIGS = [];
   function tOf(key) { var x = SIG[key]; return x ? x.t : null; }
   function tw(key, text, soft) { return tws(tOf(key), text, soft); }
   function pk(key) { return pre(tOf(key)); }
   function buildSignals() {
     SIG = {}; SIGS = [];
-    var c = ctx(), k = c.k, s = c.s, h = DATA.health, m = DATA.market, D = DATA.deep, im = c.r.impact, tr = DATA.trace, cn = c.r.conc, L = [];
+    var c = ctx(), k = c.k, s = c.s, h = DATA.health, D = DATA.deep, im = c.r.impact, tr = DATA.trace, cn = c.r.conc, L = [];
     var ok = function (v) { return v !== null && v !== undefined && !isNaN(v); }, one = function (list, f, v) { return (list || []).filter(function (x) { return x[f] === v; })[0] || null; };
     var add = function (key, sec, t, name, val, why, win) { var o = { key: key, sec: sec, t: t === 'ok' || t === 'warn' || t === 'bad' ? t : null, name: name, val: val, why: why || '', win: win || '' }; SIG[key] = o; L.push(o); };
     var W7 = '최근 7일', WP = '고른 기간';
     if (h) {                                         // 오늘의 현황: 고리 · 운용 점검의 판정을 그대로
       if (h.index) add('idx', 'today', h.index.status, '선순환 지수', h.index.value + '점', h.overall.label, W7);
-      h.links.concat(h.reserves).forEach(function (l) { add('h_' + l.key, 'today', l.ref && l.status === 'bad' ? 'warn' : l.status, l.name + (l.ref ? '(참고)' : ''), l.value, l.short + (l.ref ? ' · 자료가 불완전해 지수에서 뺀 고리라 지켜봄까지만 올린다' : ''), W7); });
-    }
-    if (m) {                                         // 시장 대비: WLBN − 주요 10종 묶음. ±1%p 안은 가르지 않는다
-      var mb = one(m.rows, 'kind', 'basket'), gt = function (v) { return v >= 0.01 ? 'ok' : v <= -0.01 ? 'bad' : null; };
-      if (mb && ok(mb.gap_d7)) add('mkt7', 'market', gt(mb.gap_d7), '시장 대비', sgp(mb.gap_d7), 'WLBN 변화 − 주요 10종 묶음 변화 · ±1%p 밖일 때만', W7);
-      if (mb && ok(mb.gap_open)) add('mktOpen', 'market', gt(mb.gap_open), '시장 대비(풀 연 뒤)', sgp(mb.gap_open), 'WLBN 변화 − 주요 10종 묶음 변화 · ±1%p 밖일 때만', '풀이 열린 뒤');
+      h.links.concat(h.reserves).forEach(function (l) { if (l.key === 'price') return; add('h_' + l.key, 'today', l.ref && l.status === 'bad' ? 'warn' : l.status, l.name + (l.ref ? '(참고)' : ''), l.value, l.short + (l.ref ? ' · 자료가 불완전해 지수에서 뺀 고리라 지켜봄까지만 올린다' : ''), W7); });
     }
     // 고른 기간: 보유 · 수요 · 유동성은 「오늘의 현황」 고리와 같은 기준선을 쓴다
     if (ok(k.user_sold_share)) add('holdP', 'sum', k.user_sold_share <= 0.5 ? 'ok' : k.user_sold_share < 0.9 ? 'warn' : 'bad', '받은 양 가운데 판 비율', F.pct(k.user_sold_share), '50% 이하 긍정 · 90% 이상 부정', WP);
     if (ok(k.sell_total) && k.sell_total > 0) { var dm = k.buy_total / k.sell_total; add('demandP', 'flow', dm >= 1 ? 'ok' : dm >= 0.5 ? 'warn' : 'bad', '판 양 대비 산 양', F.pct(dm), '100% 이상 긍정 · 50% 미만 부정', WP); }
     if (ok(k.bot_buy_share)) add('botP', 'flow', k.bot_buy_share >= 0.5 ? 'warn' : null, '산 양 가운데 bot', F.pct(k.bot_buy_share), '절반 이상이면 지켜봄 — bot이 사지 않는 날 받아낼 매수가 모자랄 수 있다', WP);
     if (ok(s.user_sell_7d_change)) add('sell7', 'daily', s.user_sell_7d_change >= 0.2 ? 'warn' : s.user_sell_7d_change <= -0.2 ? 'ok' : null, '하루 평균 판 양', F.spct(s.user_sell_7d_change), '직전 7일 대비 · 20% 넘게 늘면 지켜봄, 20% 넘게 줄면 긍정', W7);
-    if (ok(k.price_change)) add('priceP', 'pool', k.price_change > 0 ? 'ok' : k.price_change >= -0.05 ? null : k.price_change >= -0.15 ? 'warn' : 'bad', '가격 변화', F.spct(k.price_change), '오르면 긍정 · −5% 아래 지켜봄 · −15% 아래 부정', WP);
     var pr = bPoolRows();
     if (pr.length > 1 && pr[0].pool_liq) { var g2 = pr[pr.length - 1].pool_liq / pr[0].pool_liq - 1; add('liqP', 'pool', g2 >= 0 ? 'ok' : g2 >= -0.1 ? 'warn' : 'bad', '전체 풀 유동성', g2 >= 1 ? d3.format('.1f')(g2 + 1) + '배' : F.spct(g2), '기간 첫날 대비 · 줄면 지켜봄, 10% 넘게 줄면 부정', WP); }
     if (im && im.t5 && im.tot5) {                    // 생태계 기여
@@ -1320,8 +1315,7 @@ html.rpt .chap, html.rpt .sec-h, html.rpt .blk-h, html.rpt .h2, html.rpt .h3 { b
   }
   // 받은 글(코멘트 목록)의 줄 머리로 신호를 찾는다 — 글을 만드는 쪽은 그대로 두고 판정은 위 표에서만 한다
   var LEAD_T = {
-    brief: { '시장과 견주면': 'mkt7', '막힌 고리': '=bad', '지켜볼 고리': '=warn', '운용 점검': '~reserves', '참고': '~refs' },
-    market: { '최근 7일': 'mkt7', '풀이 열린 뒤': 'mktOpen' },
+    brief: { '막힌 고리': '=bad', '지켜볼 고리': '=warn', '운용 점검': '~reserves', '참고': '~refs' },
     impact: { '되돌린 돈': 'back', '보유': 'posW', '부정 쪽': 'negW' },
     trace: { '돈의 방향': 'cashout' },
     deep: { '판 물량': 'deepAge', '움직임': 'deepMove' }
@@ -1375,12 +1369,12 @@ html.rpt .chap, html.rpt .sec-h, html.rpt .blk-h, html.rpt .h2, html.rpt .h3 { b
     if (h && h.index) T.today = '선순환 지수 ' + tws(h.index.status, h.index.value + '점') + '(' + h.overall.label + ')' + (h.index.weak && h.index.max > h.index.min ? ' · 가장 약한 고리 ' + tw('h_' + h.index.weak.key, h.index.weak.name + ' ' + h.index.weak.score + '점') : '') + (h.index.prev ? ' · 어제 ' + h.index.prev.value + '점' : '');
     if (m) {
       var mw = one(m.rows, 'kind', 'wlbn'), mb = one(m.rows, 'kind', 'basket');
-      if (mw && ok(mw.d7)) T.market = '최근 7일 WLBN **' + sgn(mw.d7) + '**' + (mb && ok(mb.d7) ? ' · ' + mb.name + ' ' + sgn(mb.d7) + ' · 차이 ' + tw('mkt7', sgp(mw.d7 - mb.d7)) : '') + (m.rank && m.rank.d7 ? ' · ' + m.rank.d7.of + '개 가운데 ' + m.rank.d7.pos + '번째' : '');
+      if (mw && ok(mw.d7)) T.market = '최근 7일 WLBN **' + sgn(mw.d7) + '**' + (mb && ok(mb.d7) ? ' · ' + mb.name + ' ' + sgn(mb.d7) + ' · 차이 **' + sgp(mw.d7 - mb.d7) + '**' : '') + (m.rank && m.rank.d7 ? ' · ' + m.rank.d7.of + '개 가운데 ' + m.rank.d7.pos + '번째' : '');
     }
     T.sum = '받은 양 **' + fInt(k.user_paid) + '개** · 판 양 **' + fInt(k.user_sold) + '개**' + (ok(k.user_sold_share) ? '(받은 양의 ' + tw('holdP', F.pct(k.user_sold_share), 1) + ')' : '') + (ok(s.price_rlusd) ? ' · 지금 가격 ' + F.f4(s.price_rlusd) + ' RLUSD' : '');
     T.flow = '판 양 **' + fInt(k.sell_total) + '개** · 산 양 ' + tw('demandP', fInt(k.buy_total) + '개') + (ok(k.bot_buy_share) ? ' · 산 양의 ' + tw('botP', F.pct(k.bot_buy_share)) + '가 Wellbian bot' : '');
     if (ok(s.user_sell_7d_avg)) T.daily = '최근 7일 하루 평균 판 양 **' + fInt(s.user_sell_7d_avg) + '개**' + (ok(s.user_sell_7d_change) ? '(직전 7일 대비 ' + tw('sell7', F.spct(s.user_sell_7d_change), 1) + ')' : '') + (ok(s.user_paid_7d_avg) ? ' · 받은 양 ' + fInt(s.user_paid_7d_avg) + '개' : '');
-    if (ok(s.price_rlusd)) T.pool = '가격 **' + F.f4(s.price_rlusd) + ' RLUSD**' + (ok(k.price_change) && tOf('priceP') ? '(기간 ' + tw('priceP', F.spct(k.price_change)) + ')' : '') + (ok(s.pool_liq) ? ' · 전체 풀 유동성 ' + tw('liqP', fInt(s.pool_liq)) + ' RLUSD 환산(WLBN/RLUSD ' + fInt(s.pool_liq_r) + ' + WLBN/XRP ' + fInt(s.pool_liq_x) + ')' : ' · RLUSD 풀 ' + fInt(s.pool_r_rlusd) + ' RLUSD · XRP 풀 ' + fInt(s.pool_x_xrp) + ' XRP');
+    if (ok(s.price_rlusd)) T.pool = '가격 **' + F.f4(s.price_rlusd) + ' RLUSD**' + (ok(s.pool_liq) ? ' · 전체 풀 유동성 ' + tw('liqP', fInt(s.pool_liq)) + ' RLUSD 환산(WLBN/RLUSD ' + fInt(s.pool_liq_r) + ' + WLBN/XRP ' + fInt(s.pool_liq_x) + ')' : ' · RLUSD 풀 ' + fInt(s.pool_r_rlusd) + ' RLUSD · XRP 풀 ' + fInt(s.pool_x_xrp) + ' XRP');
     var ac = c.r.accounts || [], bot = one(ac, 'name', 'bot'), ops = one(ac, 'name', 'operations');
     if (ac.length) T.accounts = '이름이 공개된 계정 **' + ac.length + '곳**' + (ops && ok(ops.rlusd) ? ' · operations 잔액 ' + fInt(ops.rlusd) + ' RLUSD' : '') + (bot && ok(bot.rlusd) ? ' · bot 잔액 **' + fInt(bot.rlusd) + ' RLUSD + ' + fInt(bot.xrp) + ' XRP**' : '');
     var tr = DATA.trace;
@@ -2175,12 +2169,12 @@ html.rpt .chap, html.rpt .sec-h, html.rpt .blk-h, html.rpt .h2, html.rpt .h3 { b
         if (unit) { var u = document.createElement('span'); u.className = 'unit'; u.textContent = unit; p.appendChild(u); }
         s2.textContent = sub; a.appendChild(h3); a.appendChild(p); a.appendChild(s2); tiles.appendChild(a); toneCard(a, tone);
       };
-      tile('WLBN · 최근 7일', sgn(W.d7), '', K.d7 !== null && W.d7 !== null ? '주요 10종 묶음보다 ' + sgp(W.d7 - K.d7) : vsWin(m, 'd7'), undefined, tOf('mkt7'));
+      tile('WLBN · 최근 7일', sgn(W.d7), '', K.d7 !== null && W.d7 !== null ? '주요 10종 묶음보다 ' + sgp(W.d7 - K.d7) : vsWin(m, 'd7'));
       tile(K.name + ' · 최근 7일', sgn(K.d7), '', [B ? 'BTC ' + sgn(B.d7) : '', X ? 'XRP ' + sgn(X.d7) : ''].filter(Boolean).join(' · '), 'm:basket');
-      tile('풀이 열린 뒤 · ' + md(m.from) + '~', sgn(W.open), 'WLBN', K.name + ' ' + sgn(K.open), undefined, tOf('mktOpen'));
+      tile('풀이 열린 뒤 · ' + md(m.from) + '~', sgn(W.open), 'WLBN', K.name + ' ' + sgn(K.open));
       if (g) tile('전체 시가총액', krw(g.mc), '달러', '24시간 ' + sgn(g.d1) + ' · 비트코인 비중 ' + F.pct(g.btc_dom), 'm:global');
     }
-    richList($('#m-notes'), toned('market', m.notes));
+    richList($('#m-notes'), m.notes);
     var lg = $('#m-legend'); if (lg) { lg.replaceChildren(); vsLines(m).forEach(function (s) { var li = document.createElement('li'); li.className = 'key'; var sw = document.createElement('i'); sw.className = 'sw'; sw.style.background = s.color; li.appendChild(sw); li.appendChild(document.createTextNode(s.label)); lg.appendChild(li); }); }
     table('#tb-market', COLS.market, m.rows.map(function (r) { return Object.assign({ label: r.kind === 'coin' ? r.name + ' (' + r.sym + ')' : r.kind === 'wlbn' ? 'WLBN (RLUSD 풀 값)' : r.name, mc100: r.mc ? r.mc / 1e8 : null }, r); }), { sel: function (r) { return r.kind === 'wlbn'; } });
     var lim = $('[data-m-limit]'); if (lim) { lim.hidden = !(m.limits && m.limits.length); lim.replaceChildren(); var sp2 = document.createElement('span'), bb = document.createElement('b'); bb.textContent = '읽을 때 · '; sp2.appendChild(bb); sp2.appendChild(document.createTextNode((m.limits || []).join(' '))); lim.appendChild(sp2); }
@@ -2374,7 +2368,7 @@ html.rpt .chap, html.rpt .sec-h, html.rpt .blk-h, html.rpt .h2, html.rpt .h3 { b
     if (k.user_sold_for_rlusd_share !== null && k.user_sold_for_rlusd_share !== undefined) L.push('  · RLUSD로 ' + fInt(k.user_sold_for_rlusd) + '개(' + F.pct(k.user_sold_for_rlusd_share) + ') / XRP로 ' + fInt(k.user_sold_for_xrp) + '개(' + F.pct(k.user_sold_for_xrp_share) + ')');
     L.push('- 받은 대금 ' + fInt(k.user_got_rlusd) + ' RLUSD + ' + fInt(k.user_got_xrp) + ' XRP');
     L.push('- 풀에 넣어 둔 양 ' + fInt(k.user_pool_in) + '개'); L.push('');
-    if (DATA.market && DATA.market.notes.length) { L.push('■ 시장과 견주기 (코인 값 ' + DATA.market.as_of + ' 기준)'); toned('market', DATA.market.notes).forEach(function (t) { L.push('- ' + plain(t)); }); L.push(''); }
+    if (DATA.market && DATA.market.notes.length) { L.push('■ 시장과 견주기 (코인 값 ' + DATA.market.as_of + ' 기준)'); DATA.market.notes.forEach(function (t) { L.push('- ' + plain(t)); }); L.push(''); }
     if (DATA.deep && DATA.deep.notes.length) { L.push('■ 온체인 심층'); toned('deep', DATA.deep.notes).forEach(function (t) { L.push('- ' + plain(t)); }); L.push(''); }
     if (c.r.impact && c.r.impact.notes.length) { L.push('■ 지갑의 생태계 기여(5단계)'); toned('impact', c.r.impact.notes).forEach(function (t) { L.push('- ' + plain(t)); }); if (c.r.types) typeNotes(typeRows()).forEach(function (t) { L.push('- ' + plain(t)); }); L.push(''); }
     L.push('■ 시장 전체');
@@ -2461,7 +2455,7 @@ html.rpt .chap, html.rpt .sec-h, html.rpt .blk-h, html.rpt .h2, html.rpt .h3 { b
     if (s.pool_liq) { add('풀 · 가격', '전체 풀 유동성', '두 풀 · 양쪽', s.pool_liq, 'RLUSD 환산'); add('풀 · 가격', '전체 풀 유동성', 'WLBN/RLUSD 풀', s.pool_liq_r, 'RLUSD 환산'); add('풀 · 가격', '전체 풀 유동성', 'WLBN/XRP 풀', s.pool_liq_x, 'RLUSD 환산'); add('풀 · 가격', '전체 풀 유동성', '이 가운데 RLUSD · XRP 쪽', s.pool_side_rlusd, 'RLUSD 환산'); }
     add('풀 · 가격', 'RLUSD 풀', 'WLBN', s.pool_r_wlbn, 'WLBN'); add('풀 · 가격', 'RLUSD 풀', 'RLUSD', s.pool_r_rlusd, 'RLUSD'); add('풀 · 가격', 'XRP 풀', 'WLBN', s.pool_x_wlbn, 'WLBN'); add('풀 · 가격', 'XRP 풀', 'XRP', s.pool_x_xrp, 'XRP');
     (c.r.groups || []).forEach(function (g) { COLS.groups.slice(1).forEach(function (col) { add('지갑 묶음별', (g.owner && OWN[g.owner] ? OWN[g.owner] + ' ' : '') + (g.label || g.group), col.label, g[col.key], ''); }); });
-    if (DATA.market) toned('market', DATA.market.notes).forEach(function (t) { add('시장과 견주기', '요약 글', DATA.market.as_of, plain(t), ''); });
+    if (DATA.market) DATA.market.notes.forEach(function (t) { add('시장과 견주기', '요약 글', DATA.market.as_of, plain(t), ''); });
     if (im) {
       im.rows.forEach(function (r) { COLS.impact.slice(1).forEach(function (col) { add('생태계 기여 5단계', r.name, col.label, r[col.key], col.key === 'wallets' ? '곳' : /rlusd/.test(col.key) ? 'RLUSD 환산' : 'WLBN'); }); });
       toned('impact', im.notes).forEach(function (t) { add('생태계 기여 5단계', '요약 글', '', plain(t), ''); });
@@ -2964,7 +2958,7 @@ html.rpt .chap, html.rpt .sec-h, html.rpt .blk-h, html.rpt .h2, html.rpt .h3 { b
       set('tier', fInt(im.pos5.wallets), '곳 긍정 쪽 · ' + F.pct(im.pos5.wallets / (im.tot5.wallets || 1)), '부정 쪽 **' + fInt(im.neg5.wallets) + '곳**(' + F.pct(im.neg5.wallets / (im.tot5.wallets || 1)) + ') · 지금 잔액의 ' + F.pct(im.pos5.bal / (im.tot5.balance || 1)) + '가 긍정 쪽');
       set('money', im.tot5.took_rlusd ? d3.format('.1f')(im.tot5.back_rlusd / im.tot5.took_rlusd) : null, '배 · 되돌린 돈 ÷ 가져간 돈', '되돌린 ' + tw('back', fInt(im.tot5.back_rlusd)) + ' · 가져간 ' + fInt(im.tot5.took_rlusd) + ' RLUSD', tOf('back'));
     } else { set('tier', null); set('money', null); }
-    set('price', s.price_rlusd !== null && s.price_rlusd !== undefined ? F.f4(s.price_rlusd) : null, 'RLUSD', '기간 변화 ' + tw('priceP', k.price_change === null || k.price_change === undefined ? '—' : F.spct(k.price_change)) + ' · ' + F.f4(k.price_from) + ' → ' + F.f4(k.price_to), tOf('priceP'));
+    set('price', s.price_rlusd !== null && s.price_rlusd !== undefined ? F.f4(s.price_rlusd) : null, 'RLUSD', '기간 변화 **' + (k.price_change === null || k.price_change === undefined ? '—' : F.spct(k.price_change)) + '** · ' + F.f4(k.price_from) + ' → ' + F.f4(k.price_to));
     var pr = bPoolRows(), pl = pr.length ? pr[pr.length - 1] : null, p0 = pr.length ? pr[0] : null; set('pool', pl ? fInt(pl.pool_liq) : null, 'RLUSD 환산', pl ? 'WLBN/RLUSD **' + fInt(pl.pool_liq_r) + '** + WLBN/XRP **' + fInt(pl.pool_liq_x) + '**' + (p0 && p0 !== pl && p0.pool_liq ? ' · 기간 첫날의 ' + tw('liqP', d3.format('.1f')(pl.pool_liq / p0.pool_liq) + '배') : '') : '', tOf('liqP'));
     set('demand', k.sell_total ? F.pct(k.buy_total / k.sell_total) : null, '판 양 대비 산 양', '산 양 ' + fInt(k.buy_total) + ' 가운데 ' + tw('botP', 'bot ' + F.pct(k.bot_buy_share || 0)) + ' · 판 양 ' + fInt(k.sell_total), tOf('demandP'));
     var pr1 = Rv('payrun'), br = Rv('buyrun'), cv = Rv('cover'); set('run', pr1 ? pr1.value : null, '지급 여력', (br ? '매입 여력 **' + br.value + '**' : '') + (cv ? ' · 매입 재원 ' + cv.value : ''), pr1 && pr1.status);
