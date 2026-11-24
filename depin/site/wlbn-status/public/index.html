@@ -1612,11 +1612,6 @@ html.deck-on { overflow: hidden; }
       if (ok(A.score)) add('deepAcc', 'deep', A.score >= 0.55 ? 'ok' : A.score <= 0.45 ? 'bad' : null, '늘린 물량 비중', A.score.toFixed(2), '0.55 이상 긍정 · 0.45 이하 부정', W7);
       if (ok(Wk.movers) && ok(Wk.prev_movers)) add('deepMove', 'deep', Wk.movers > Wk.prev_movers ? 'ok' : Wk.movers < Wk.prev_movers ? 'warn' : null, '하루 움직인 지갑', Wk.movers + '곳', '직전 7일 ' + Wk.prev_movers + '곳/일보다 늘면 긍정', W7);
     }
-    var PL = DATA.plan;                              // 설계 대조: 토크노믹스에 기준이 적힌 것만(가동률 80% · 매입 재원 = 판매의 10%)
-    if (PL) {
-      if (ok(PL.uptime)) add('uptime', 'plan', PL.uptime >= PL.uptime_min ? 'ok' : 'warn', '활성 기기 비율', F.pct(PL.uptime), '등록 기기 가운데 활성 기기 · 토크노믹스 G4 조건의 가동률 ' + d3.format('.0%')(PL.uptime_min) + ' 이상이면 긍정(문서의 가동률과 같은 정의인지는 확인 필요)', '지금');
-      if (ok(PL.buy_ratio) && PL.buy_ratio > 1) add('buyPolicy', 'plan', 'warn', 'bot 매입 지출 ÷ 정책 재원', d3.format('.1f')(PL.buy_ratio) + '배', '토크노믹스의 매입 소각 재원은 기기 · 이용권 판매의 10%(+ 데이터 매출 50%)다. 이 화면이 본 RLUSD 결제분의 10%에 견준 값 — 1배를 넘으면 지켜봄', '전체 기간');
-    }
     if (cn) {                                        // 지갑 분포
       if (ok(cn.sell_top5)) add('concSell', 'wallets', cn.sell_top5 >= 0.5 ? 'warn' : null, '판 쪽 쏠림(다섯 곳)', F.pct(cn.sell_top5), '절반 이상이면 소수 지갑이 판 양을 좌우한다', WP);
       if (cn.rebuyers > 0) add('rebuy', 'wallets', 'ok', '기기 · 이용권을 다시 산 지갑', fInt(cn.rebuyers) + '곳', 'operations 계정으로 ' + fInt(cn.rebuy_rlusd) + ' RLUSD를 보냈다(기기 · 이용권 값으로 본다)', WP);
@@ -1698,7 +1693,6 @@ html.deck-on { overflow: hidden; }
       back: ok('back') && im.tot5 && im.tot5.took_rlusd > 0 ? { v: x1(im.tot5.back_rlusd / im.tot5.took_rlusd), u: '배', l: '되돌린 돈 ÷ 가져간 돈', s: '되돌린 돈 ' + fInt(im.tot5.back_rlusd) + ' · 가져간 돈 ' + fInt(im.tot5.took_rlusd) + ' RLUSD 환산 · ' + WA, head: '가져간 돈보다 되돌린 돈이 더 많다' } : null,
       posW: ok('posW') && im.pos5 && im.tot5 && im.tot5.wallets ? { v: fInt(im.pos5.wallets), u: '곳', l: '긍정 쪽 지갑', s: '지갑 ' + fInt(im.tot5.wallets) + '곳의 ' + F.pct(im.pos5.wallets / im.tot5.wallets) + (im.tot5.balance ? ' · 들고 있는 물량의 ' + F.pct(im.pos5.bal / im.tot5.balance) : '') + ' · ' + WA, head: im.tot5.balance && im.pos5.bal / im.tot5.balance >= 0.5 ? '들고 있는 물량의 ' + F.pct(im.pos5.bal / im.tot5.balance) + '가 긍정 쪽 지갑에 있다' : '긍정 쪽 지갑이 ' + fInt(im.pos5.wallets) + '곳이다' } : null,
       hold: ok('holdP') && has(k.user_sold_share) ? { v: d3.format('.1f')((1 - k.user_sold_share) * 100), u: '%', l: '받은 양 가운데 팔지 않은 비율', s: '판 비율 ' + F.pct(k.user_sold_share) + (k.user_repaid > 0 ? ' · 10/26 재지급 포함' : '') + ' · ' + WA, head: '받은 양의 절반 넘게 팔지 않았다' } : null,
-      up: ok('uptime') && DATA.plan ? { v: d3.format('.1f')(DATA.plan.uptime * 100), u: '%', l: '활성 기기 비율', s: '등록 ' + fInt(s.devices_total) + '대 가운데 ' + fInt(s.devices_active) + '대 · 토크노믹스 G4 조건 ' + d3.format('.0%')(DATA.plan.uptime_min), head: '등록한 기기의 대부분이 켜져 있다' } : null,
       rebuy: ok('rebuy') ? { v: fInt(cn.rebuyers), u: '곳', l: '기기 · 이용권을 다시 산 지갑', s: 'operations 계정으로 보낸 ' + fInt(cn.rebuy_rlusd) + ' RLUSD(기기 · 이용권 값으로 본다) · ' + WA, head: '보상을 받은 뒤 다시 사는 지갑이 있다' } : null
     };
     var out = [], full = function (r) { return !r.partial; };
@@ -1707,13 +1701,13 @@ html.deck-on { overflow: hidden; }
     [T.pay, T.liq, T.dem7, T.back].forEach(function (st) { put(s0, st); });
     if (h && h.index && h.index.status === 'ok') s0.head = '선순환 지수 ' + h.index.value + '점 · ' + ((h.labels && h.labels.ok) || '좋음');
     else if (good.length) s0.head = '선순환 고리 ' + idx.length + '곳 가운데 ' + good.length + '곳이 ' + ((h.labels && h.labels.ok) || '좋음');
-    s0.note = [good.length ? ((h.labels && h.labels.ok) || '좋음') + '인 고리: ' + good.map(function (l) { return l.name; }).join(' · ') : '', T.up ? '활성 기기 비율 ' + T.up.v + '%(' + fInt(s.devices_active) + ' / ' + fInt(s.devices_total) + '대)' : '', has(s.holders) ? 'WLBN을 가진 지갑 ' + fInt(s.holders) + '곳' : ''].filter(Boolean).join('  |  ');
+    s0.note = [good.length ? ((h.labels && h.labels.ok) || '좋음') + '인 고리: ' + good.map(function (l) { return l.name; }).join(' · ') : '', has(s.devices_total) && has(s.devices_active) && s.devices_total > 0 ? '활성 기기 ' + fInt(s.devices_active) + ' / ' + fInt(s.devices_total) + '대(' + d3.format('.1%')(s.devices_active / s.devices_total) + ')' : '', has(s.holders) ? 'WLBN을 가진 지갑 ' + fInt(s.holders) + '곳' : ''].filter(Boolean).join('  |  ');
     var SAY = { pay: ['보상을 받는 지갑이 늘고', '보상을 받는 지갑이 늘었다'], hold: ['받은 양의 절반 넘게 남고', '받은 양의 절반 넘게 남았다'], pool: ['풀이 깊어지고', '풀이 깊어졌다'], demand: ['나온 물량이 모두 소화되고', '나온 물량이 모두 소화됐다'] };
     var gs = good.filter(function (l) { return SAY[l.key]; });
     if (gs.length) s0.ins = '최근 7일 ' + gs.map(function (l, i) { return SAY[l.key][i === gs.length - 1 ? 1 : 0]; }).join(', ') + '.';
     if (s0.stats.length >= 2) out.push(s0);
     // 2. 참여
-    var s1 = mk('pay', '참여'); put(s1, T.pay); put(s1, T.fresh); put(s1, T.up); put(s1, T.payrun);
+    var s1 = mk('pay', '참여'); put(s1, T.pay); put(s1, T.fresh); put(s1, T.payrun);
     var rv = (D.days || []).filter(full).filter(function (r) { return has(r.receivers); }).slice(-28);
     if (T.pay && rv.length >= 5) s1.fig = { kind: 'bars', rows: rv, key: 'receivers', unit: '곳', cap: '날마다 보상을 받은 지갑 수 · ' + md(rv[0].date) + '~' + md(rv[rv.length - 1].date) };
     if (T.pay && fx.new_wallets > 0 && fx.paid_wallets > 0) s1.ins = '보상을 받은 지갑의 ' + F.pct(fx.new_wallets / fx.paid_wallets) + '가 최근 7일에 처음 받은 지갑이다 — 참여가 새 지갑으로 넓어지고 있다.';
@@ -2027,7 +2021,6 @@ html.deck-on { overflow: hidden; }
     var el = $('[data-tone="' + key + '"]', sec);
     if (!el && key.indexOf('h_') === 0) el = $('.gauge .q[data-help="loop:' + key.slice(2) + '"]', sec);
     if (!el && key === 'idx') el = $('#idx-parts', sec);
-    if (sec.id === 'plan') { var pr = $('tr[data-plan-row="' + key + '"]', sec); if (pr) return pr; }
     return el ? (el.closest('.gauge, .card, .tile, .idx-card, tr, li, p') || el) : null;
   }
   function goSig(x) {
@@ -2097,7 +2090,7 @@ html.deck-on { overflow: hidden; }
     var ws = c.r.wallets || [], cnt = function (g) { return ws.filter(function (w) { return w.g === g; }).length; };
     if (ws.length) T.wtable = '지갑 **' + fInt(ws.length) + '곳** · 일반 사용자 ' + fInt(cnt('user')) + ' · 사고팔기 ' + fInt(cnt('arb')) + ' · 그 밖 ' + fInt(cnt('other')) + (cnt('bot') ? ' · Wellbian bot ' + fInt(cnt('bot')) : '');
     var pos = DATA.positions || [], lk = one(pos, 'key', 'locked'), tr = one(pos, 'key', 'treasury'), pl = one(pos, 'key', 'pools');
-    var PLs = DATA.plan; if (PLs) T.plan = [PLs.burned !== null ? '소각 누계 **' + d3.format(',.0f')(PLs.burned) + '개**' : '', PLs.uptime !== null ? '활성 기기 비율 ' + tw('uptime', F.pct(PLs.uptime)) : '', PLs.buy_ratio !== null ? 'bot 매입 지출은 정책 재원의 ' + tw('buyPolicy', d3.format('.1f')(PLs.buy_ratio) + '배') + '(확인 필요)' : '', PLs.next ? '다음 공급 조건 ' + PLs.next.g + '까지 ' + F.pct(PLs.next.pct) : ''].filter(Boolean).join(' · ');
+    var PLs = DATA.plan; if (PLs) T.plan = [PLs.burned !== null ? '소각 누계 **' + d3.format(',.0f')(PLs.burned) + '개**' : '', PLs.uptime !== null ? '활성 기기 비율 ' + F.pct(PLs.uptime) : '', PLs.next ? '다음 공급 조건 ' + PLs.next.g + '까지 ' + F.pct(PLs.next.pct) : ''].filter(Boolean).join(' · ');
     if (lk && ok(lk.share)) T.where = '전체 ' + fInt(s.total_supply) + '개 가운데 잠금 **' + F.pct(lk.share) + '**' + (tr && ok(tr.share) ? ' · treasury 계정 ' + F.pct(tr.share) : '') + (pl ? ' · 풀 두 곳 ' + fInt(pl.amount) + '개' : '');
     var fc = [];
     if (ok(s.holders)) fc.push('WLBN을 가진 지갑 **' + fInt(s.holders) + '곳**'); if (ok(s.devices_total)) fc.push('등록 기기 **' + fInt(s.devices_total) + '대**' + (ok(s.devices_active) ? '(활성 ' + fInt(s.devices_active) + ')' : '')); if (ok(s.epoch_distributed)) fc.push('하루 배분 ' + fInt(s.epoch_distributed) + '개');
@@ -3260,7 +3253,7 @@ html.deck-on { overflow: hidden; }
     'c:ratio': ['판 비율', ['판 양 ÷ 받은 양. 다른 데서 받아서 판 경우에는 100%를 넘는다.']],
     'c:type': ['유형', ['고른 기간의 움직임으로 붙인 이름이다: 받는 대로 파는 · 일부만 파는 · 사 모으는 · 풀에 넣는 · 팔고 다시 사는 · 사고팔기 지갑 등.', '지갑 줄을 누르면 그 지갑의 한 줄 분석이 나온다.']],
     'c:rebuy': ['다시 산 돈', ['그 지갑이 operations 계정으로 보낸 RLUSD다. 기기 · 이용권 값으로 본다.', '카드 · 계좌로 결제한 것은 원장에 없어 0으로 나온다.']],
-    't:plan': ['설계 대조', ['토크노믹스 정책(배분표 v2 · 2026-10-02 개정)과 백서 초안 v1.1(2026-11-01)에 적힌 약속을 원장에서 보이는 지금 값과 나란히 놓은 구역이다.', '정책 수치의 정본은 토크노믹스 정책 페이지, 원장 수치의 정본은 XRPL 원장이다. 등록 · 활성 기기와 하루 예산 · 유통량은 사이트가 공시한 값이다.', '표시는 문서에 기준이 적힌 둘에만 붙는다 — 가동률 80%(G4 조건), 매입 소각 재원 = 판매의 10%. 지금 게이트가 몇 번인지는 판정하지 않는다(수요 조건은 원장에 없다).']],
+    't:plan': ['설계 대조', ['토크노믹스 정책(배분표 v2 · 2026-10-02 개정)과 백서 초안 v1.1(2026-11-01)에 적힌 약속을 원장에서 보이는 지금 값과 나란히 놓은 구역이다.', '정책 수치의 정본은 토크노믹스 정책 페이지, 원장 수치의 정본은 XRPL 원장이다. 등록 · 활성 기기와 하루 예산 · 유통량은 사이트가 공시한 값이다.', '이 구역은 판정하지 않는다 — 약속한 것과 지금 값을 나란히 놓기만 한다. 지금 게이트가 몇 번인지도 판정하지 않는다(수요 조건은 원장에 없다).']],
     't:trace': ['부정 쪽 지갑 자금 흐름', ['「부정」 · 「매우 부정」 지갑마다 원장의 송금 기록을 읽어, 들어온 쪽(유입 전)과 나간 쪽(행선지)을 따라간 것이다.', '유입 전: WLBN을 어디서 얻었나(보상 · 풀에서 삼 · 다른 지갑에서 옮겨 받음), 계정을 만든 송금을 누가 보냈나, 기간에 누가 XRP · RLUSD · WLBN을 보내 줬나.', '행선지: 직접 보낸 곳이 1단계, 그곳이 다시 보낸 곳이 2단계, 한 번 더가 3단계다. 중간 지갑이 보낸 돈은 그 지갑이 받은 금액까지만, 보낸 곳 비율대로 나눠 따라간다.', '끝나는 곳: 목적지 태그가 붙는 주소(거래소 입금 꼴) · 거래가 많은 계정 · 회사 계정 · 지갑별 표의 지갑 · 3단계.', '하루 한 번 다시 받는다. 거래소 안과 지갑 주인은 볼 수 없다.']],
     't:sent': ['밖으로 보낸 돈', ['풀이 열린 뒤 이 지갑이 다른 주소로 보낸 송금의 합이다(XRP · RLUSD · WLBN을 RLUSD로 환산).', 'WLBN을 판 대금만이 아니라 지갑에 원래 있던 돈, 다른 곳에서 받은 돈, WLBN 이체도 들어 있다. 그래서 「가져간 돈」보다 클 수 있다.']],
     'c:money': ['가져간 돈 · 되돌린 돈', ['가져간 돈: WLBN을 팔아 받은 돈(RLUSD 환산).', '되돌린 돈: WLBN을 사며 낸 돈 + operations 계정으로 보낸 RLUSD(다시 산 돈) + 회사 계정(match · treasury 등)에 넣은 돈(XRP · RLUSD — XRP는 넣은 날 값으로 환산).', '회사 계정에 넣은 돈은 회사 계정 쪽 원장 기록에서 하루 한 번 읽는다. 다시 들어간 돈이므로 되돌린 돈으로 친다.', '카드 · 계좌 결제는 원장에 없어 되돌린 돈에 잡히지 않는다.']],
