@@ -454,6 +454,9 @@ function buildDatasets(S, opts) {
     if (S.eod[k] !== undefined) lastp = S.eod[k];
     if (S.eodX[k] !== undefined) lastx = S.eodX[k];
     if (S.eodPool[k]) lastPool = S.eodPool[k];
+    // 전체 풀 유동성: 풀에 든 자산을 양쪽 모두 RLUSD 로 환산한 값(wellbian.io 「보상 전환」의 「전체 풀 유동성」과 같은 기준).
+    // 풀은 늘 양쪽 값이 같으므로 RLUSD · XRP 쪽의 두 배다. XRP 는 두 풀의 가격으로 계산한 그날 값으로 환산한다.
+    const lqR = lastPool ? lastPool[1] * 2 : null, lqX = lastPool && lastp && lastx ? r0(lastPool[3] * (lastp / lastx) * 2) : null;
     const r = { date: k };
     for (const g of GR) { r['sell_' + g] = r0(f('sell_' + g)); r['buy_' + g] = r0(f('buy_' + g)); }
     Object.assign(r, {
@@ -467,6 +470,7 @@ function buildDatasets(S, opts) {
       price_rlusd: lastp === null ? null : r4(lastp), price_xrp: lastx === null ? null : r4(lastx),
       xrp_rlusd: lastp && lastx ? r4(lastp / lastx) : null,     // 두 풀의 가격으로 계산한 1 XRP 의 RLUSD 값
       pool_r_wlbn: lastPool ? lastPool[0] : null, pool_r_rlusd: lastPool ? lastPool[1] : null, pool_x_wlbn: lastPool ? lastPool[2] : null, pool_x_xrp: lastPool ? lastPool[3] : null,
+      pool_liq_r: lqR, pool_liq_x: lqX, pool_liq: lqR !== null && lqX !== null ? lqR + lqX : null,
       bot_pay_rlusd: r0(f('bot_r')), bot_pay_xrp: r0(f('bot_x')),
       sales_rlusd: FD ? r0((FD[k] || {}).r || 0) : null, sales_wallets: FD ? Object.keys((FD[k] || {}).p || {}).length : null,
       partial: k === lastDay,
@@ -814,12 +818,15 @@ function buildDatasets(S, opts) {
   const avgOf = (rows, key) => (rows.length ? r0(rows.reduce((t, r) => t + r[key], 0) / rows.length) : null);
   const s7 = avgOf(last7, 'sell_user'), p7 = prev7.length === 7 ? avgOf(prev7, 'sell_user') : null;
   const e = S.ext || {};
+  const lqR0 = S.pools.R.q > 0 ? r0(S.pools.R.q) * 2 : null, lqX0 = S.pools.X.q > 0 && S.pR && S.pX ? r0(r0(S.pools.X.q) * (S.pR / S.pX) * 2) : null;   // 전체 풀 유동성(지금)
   const summary = {
     as_of: kstamp(S.asof), period_from: C.NOW_FROM, pool_open: C.POOL_OPEN, last_day: lastDay,
     win_from: last7.length ? md(last7[0].date) : null, win_to: last7.length ? md(last7[last7.length - 1].date) : null,
     user_sell_7d_avg: s7, user_sell_prev7d_avg: p7, user_sell_7d_change: p7 ? r3(s7 / p7 - 1) : null, user_paid_7d_avg: avgOf(last7, 'paid_user'),
     price_rlusd: S.pR ? r4(S.pR) : null, xrp_per_wlbn: S.pX ? r4(S.pX) : null, xrp_rate_rlusd: S.pR && S.pX ? r4(S.pR / S.pX) : null,
     pool_r_wlbn: r0(S.pools.R.w), pool_r_rlusd: r0(S.pools.R.q), pool_x_wlbn: r0(S.pools.X.w), pool_x_xrp: r0(S.pools.X.q),
+    pool_liq_r: lqR0, pool_liq_x: lqX0, pool_liq: lqR0 !== null && lqX0 !== null ? lqR0 + lqX0 : null,
+    pool_side_rlusd: lqR0 !== null && lqX0 !== null ? r0((lqR0 + lqX0) / 2) : null,     // 이 가운데 RLUSD · XRP 쪽(나머지 절반은 WLBN)
     total_supply: r0(total), fee_r: S.pools.R.fee ?? null, fee_x: S.pools.X.fee ?? null,
     lp_company_share: lpAll > 0 ? r3(lpCompany / lpAll) : null, lp_user_share: lpAll > 0 ? r3(lpUser / lpAll) : null,
     lp_wellbian_share: lpAll > 0 ? r3(lpWell / lpAll) : null, lp_kweather_share: lpAll > 0 ? r3(lpKw / lpAll) : null,

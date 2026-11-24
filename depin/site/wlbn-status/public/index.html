@@ -172,7 +172,7 @@ td .pc { display: block; margin-top: 1px; color: var(--faint); font-size: calc(1
 
 /* 숫자 카드 */
 .tiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
-.tiles.duo { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.tiles.duo { grid-template-columns: repeat(2, minmax(0, 1fr)); } .tiles .span { grid-column: 1 / -1; }
 .card { --cell: var(--soft); background: var(--soft); border: 0; border-radius: var(--r-md); padding: 16px 18px; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
 .card-h { margin: 0; font-size: var(--t-xs); font-weight: 600; color: var(--muted); line-height: 1.4; }
 .big { margin: 2px 0 0; font-size: var(--t-num); font-weight: 700; letter-spacing: -0.02em; line-height: 1.2; display: flex; align-items: baseline; flex-wrap: wrap; gap: 0 6px; }
@@ -615,7 +615,7 @@ html.rpt .chap, html.rpt .sec-h, html.rpt .blk-h, html.rpt .h2, html.rpt .h3 { b
     </div>
     <div class="board" id="board-grid">
       <article class="bc"><h3 class="bc-h"><a href="#pool">가격</a><i>고른 기간</i></h3><p class="bc-v" data-bv="price">—</p><div class="chart skel bchart" data-chart="b_price" role="img" aria-label="가격"></div><p class="bc-s" data-bs="price"></p></article>
-      <article class="bc"><h3 class="bc-h"><a href="#pool">풀 깊이</a><i>고른 기간</i></h3><p class="bc-v" data-bv="pool">—</p><div class="chart skel bchart" data-chart="b_pool" role="img" aria-label="풀 깊이"></div><p class="bc-s" data-bs="pool"></p></article>
+      <article class="bc"><h3 class="bc-h"><a href="#pool">전체 풀 유동성</a><i>고른 기간</i></h3><p class="bc-v" data-bv="pool">—</p><div class="chart skel bchart" data-chart="b_pool" role="img" aria-label="전체 풀 유동성"></div><p class="bc-s" data-bs="pool"></p></article>
       <article class="bc"><h3 class="bc-h"><a href="#flow">판 양을 누가 받아냈나</a><i>고른 기간</i></h3><p class="bc-v" data-bv="demand">—</p><div class="chart skel bchart" data-chart="b_demand" role="img" aria-label="판 양을 누가 받아냈나"></div><p class="bc-s" data-bs="demand"></p></article>
       <article class="bc"><h3 class="bc-h"><a href="#today">운용 여력</a><i>최근 7일</i></h3><p class="bc-v" data-bv="run">—</p><div class="chart skel bchart" data-chart="b_run" role="img" aria-label="운용 여력"></div><p class="bc-s" data-bs="run"></p></article>
       <article class="bc"><h3 class="bc-h"><a href="#daily">하루 받은 양 · 판 양</a><i>고른 기간</i></h3><p class="bc-v" data-bv="flow">—</p><div class="chart skel bchart" data-chart="b_flow" role="img" aria-label="하루 받은 양 · 판 양"></div><p class="bc-s" data-bs="flow"></p></article>
@@ -801,9 +801,16 @@ html.rpt .chap, html.rpt .sec-h, html.rpt .blk-h, html.rpt .h2, html.rpt .h3 { b
   <section class="sec panel" id="pool" aria-labelledby="h-pool">
     <h2 class="h2" id="h-pool">풀 두 곳 <span class="period" data-period>—</span></h2>
     <div class="tiles duo">
-      <article class="card"><h3 class="card-h">RLUSD 풀에 지금 든 양</h3><p class="big two"><span><span data-n="s.pool_r_wlbn">—</span> <span class="unit">WLBN</span></span><span><span data-n="s.pool_r_rlusd">—</span> <span class="unit">RLUSD</span></span></p></article>
-      <article class="card"><h3 class="card-h">XRP 풀에 지금 든 양</h3><p class="big two"><span><span data-n="s.pool_x_wlbn">—</span> <span class="unit">WLBN</span></span><span><span data-n="s.pool_x_xrp">—</span> <span class="unit">XRP</span></span></p></article>
+      <article class="card span" data-show="s.pool_liq"><h3 class="card-h">전체 풀 유동성 · 지금</h3><p class="big"><span data-n="s.pool_liq">—</span><span class="unit">RLUSD 환산</span></p><p class="sub">WLBN/RLUSD 풀 <b data-n="s.pool_liq_r">—</b> + WLBN/XRP 풀 <b data-n="s.pool_liq_x">—</b></p><p class="sub">이 가운데 RLUSD · XRP 쪽이 <b data-n="s.pool_side_rlusd">—</b>, 나머지 절반은 WLBN이다</p></article>
+      <article class="card"><h3 class="card-h">RLUSD 풀(WLBN/RLUSD)에 지금 든 양</h3><p class="big two"><span><span data-n="s.pool_r_wlbn">—</span> <span class="unit">WLBN</span></span><span><span data-n="s.pool_r_rlusd">—</span> <span class="unit">RLUSD</span></span></p><p class="sub" data-show="s.pool_liq_r">양쪽 합쳐 <b data-n="s.pool_liq_r">—</b> RLUSD 환산</p></article>
+      <article class="card"><h3 class="card-h">XRP 풀(WLBN/XRP)에 지금 든 양</h3><p class="big two"><span><span data-n="s.pool_x_wlbn">—</span> <span class="unit">WLBN</span></span><span><span data-n="s.pool_x_xrp">—</span> <span class="unit">XRP</span></span></p><p class="sub" data-show="s.pool_liq_x">양쪽 합쳐 <b data-n="s.pool_liq_x">—</b> RLUSD 환산 · 1 XRP = <span data-n="s.xrp_rate_rlusd" data-fmt="f4">—</span> RLUSD</p></article>
     </div>
+    <figure class="fig">
+      <h3 class="h4">전체 풀 유동성 · RLUSD 환산</h3>
+      <div class="legend"><span class="key"><i class="sw line" style="background:var(--s6)"></i>전체</span><span class="key"><i class="sw line" style="background:var(--s1)"></i>WLBN/XRP 풀</span><span class="key"><i class="sw line" style="background:var(--s3)"></i>WLBN/RLUSD 풀</span></div>
+      <div class="chart sm skel" id="chart-liq" data-chart="liq" role="img" aria-label="날짜별 전체 풀 유동성과 풀별 값"></div>
+    </figure>
+    <p class="note"><b>전체 풀 유동성</b>은 두 풀에 든 자산을 <b>양쪽 모두</b> RLUSD로 환산해 더한 값이다. wellbian.io 「보상 전환」 화면의 「전체 풀 유동성」과 같은 기준이다<span data-show="s.pool_value_rlusd">(기준 시각에 사이트가 알려 준 값 <b data-n="s.pool_value_rlusd">—</b>)</span>. 풀은 늘 양쪽 값이 같아서 <b>절반은 WLBN, 절반이 RLUSD · XRP</b>다. 판 양을 받아내는 돈은 RLUSD · XRP 쪽이고, WLBN 쪽은 WLBN 가격이 내리면 같이 줄어든다. XRP는 두 풀의 가격으로 계산한 값으로 환산했다.</p>
     <div class="two-col">
       <figure class="fig">
         <h3 class="h4">가격 · WLBN 1개당 RLUSD</h3>
@@ -1228,7 +1235,7 @@ html.rpt .chap, html.rpt .sec-h, html.rpt .blk-h, html.rpt .h2, html.rpt .h3 { b
     T.sum = '받은 양 **' + fInt(k.user_paid) + '개** · 판 양 **' + fInt(k.user_sold) + '개**' + (ok(k.user_sold_share) ? '(받은 양의 ' + F.pct(k.user_sold_share) + ')' : '') + (ok(s.price_rlusd) ? ' · 지금 가격 ' + F.f4(s.price_rlusd) + ' RLUSD' : '');
     T.flow = '판 양 **' + fInt(k.sell_total) + '개** · 산 양 **' + fInt(k.buy_total) + '개**' + (ok(k.bot_buy_share) ? ' · 산 양의 **' + F.pct(k.bot_buy_share) + '**가 Wellbian bot' : '');
     if (ok(s.user_sell_7d_avg)) T.daily = '최근 7일 하루 평균 판 양 **' + fInt(s.user_sell_7d_avg) + '개**' + (ok(s.user_sell_7d_change) ? '(직전 7일 대비 ' + F.spct(s.user_sell_7d_change) + ')' : '') + (ok(s.user_paid_7d_avg) ? ' · 받은 양 ' + fInt(s.user_paid_7d_avg) + '개' : '');
-    if (ok(s.price_rlusd)) T.pool = '가격 **' + F.f4(s.price_rlusd) + ' RLUSD** · RLUSD 풀 ' + fInt(s.pool_r_rlusd) + ' RLUSD · XRP 풀 ' + fInt(s.pool_x_xrp) + ' XRP';
+    if (ok(s.price_rlusd)) T.pool = '가격 **' + F.f4(s.price_rlusd) + ' RLUSD**' + (ok(s.pool_liq) ? ' · 전체 풀 유동성 **' + fInt(s.pool_liq) + '** RLUSD 환산(WLBN/RLUSD ' + fInt(s.pool_liq_r) + ' + WLBN/XRP ' + fInt(s.pool_liq_x) + ')' : ' · RLUSD 풀 ' + fInt(s.pool_r_rlusd) + ' RLUSD · XRP 풀 ' + fInt(s.pool_x_xrp) + ' XRP');
     var ac = c.r.accounts || [], bot = one(ac, 'name', 'bot'), ops = one(ac, 'name', 'operations');
     if (ac.length) T.accounts = '이름이 공개된 계정 **' + ac.length + '곳**' + (ops && ok(ops.rlusd) ? ' · operations 잔액 ' + fInt(ops.rlusd) + ' RLUSD' : '') + (bot && ok(bot.rlusd) ? ' · bot 잔액 **' + fInt(bot.rlusd) + ' RLUSD + ' + fInt(bot.xrp) + ' XRP**' : '');
     var tr = DATA.trace;
@@ -1670,7 +1677,7 @@ html.rpt .chap, html.rpt .sec-h, html.rpt .blk-h, html.rpt .h2, html.rpt .h3 { b
       { key: 'paid_out', label: '지갑으로 지급' }, { key: 'received', label: '받은 양' }, { key: 'bought', label: '산 양' }, { key: 'sold', label: '판 양' }, { key: 'paid_rlusd', label: '낸 RLUSD', rpt: 0 }, { key: 'paid_xrp', label: '낸 XRP', rpt: 0 },
       { key: 'pool_wlbn', label: '풀에 넣은 WLBN', rpt: 0 }, { key: 'pool_rlusd', label: '풀에 넣은 RLUSD', rpt: 0 }, { key: 'pool_xrp', label: '풀에 넣은 XRP', rpt: 0 }],
     daily: [{ key: 'date', label: '날짜', text: 1, fmt: md }, { key: 'sell_user', label: '사용자 판 양' }, { key: 'sell_user_rlusd', label: 'RLUSD로', rpt: 0 }, { key: 'sell_user_xrp', label: 'XRP로', rpt: 0 }, { key: 'buy_user', label: '사용자 산 양' }, { key: 'paid_user', label: '새로 받은 양' }, { key: 'sell_total', label: '전체 판 양' },
-      { key: 'buy_total', label: '전체 산 양' }, { key: 'buy_bot', label: 'Wellbian bot 산 양' }, { key: 'bot_pay_rlusd', label: 'bot 지출 RLUSD', rpt: 0 }, { key: 'bot_pay_xrp', label: 'bot 지출 XRP', rpt: 0 }, { key: 'sales_rlusd', label: '판매 대금 RLUSD' }, { key: 'to_r', label: 'RLUSD 풀로', rpt: 0 }, { key: 'to_x', label: 'XRP 풀로', rpt: 0 }, { key: 'price_rlusd', label: '가격', fmt: F.f4 }, { key: 'price_xrp', label: 'XRP로 본 가격', fmt: F.f4, rpt: 0 }, { key: 'xrp_rlusd', label: '1 XRP 값(RLUSD)', fmt: F.f4 }],
+      { key: 'buy_total', label: '전체 산 양' }, { key: 'buy_bot', label: 'Wellbian bot 산 양' }, { key: 'bot_pay_rlusd', label: 'bot 지출 RLUSD', rpt: 0 }, { key: 'bot_pay_xrp', label: 'bot 지출 XRP', rpt: 0 }, { key: 'sales_rlusd', label: '판매 대금 RLUSD' }, { key: 'to_r', label: 'RLUSD 풀로', rpt: 0 }, { key: 'to_x', label: 'XRP 풀로', rpt: 0 }, { key: 'price_rlusd', label: '가격', fmt: F.f4 }, { key: 'price_xrp', label: 'XRP로 본 가격', fmt: F.f4, rpt: 0 }, { key: 'xrp_rlusd', label: '1 XRP 값(RLUSD)', fmt: F.f4 }, { key: 'pool_liq', label: '전체 풀 유동성', rpt: 0 }, { key: 'pool_liq_r', label: 'WLBN/RLUSD 풀', rpt: 0 }, { key: 'pool_liq_x', label: 'WLBN/XRP 풀', rpt: 0 }],
     types: [{ key: 'name', label: '유형', text: 1 }, { key: 'scale_name', label: '생태계 기여', text: 1, cell: tscCell }, { key: 'wallets', label: '지갑 수', share: 1 }, { key: 'paid', label: '받은 양', share: 1 }, { key: 'sold', label: '판 양', share: 1 }, { key: 'bought', label: '산 양', share: 1 }, { key: 'rebuy_rlusd', label: '다시 산 돈(RLUSD)', share: 1 }, { key: 'pool_in', label: '풀에 넣은 양' }, { key: 'balance', label: '지금 잔액', share: 1 }],
     impact: [{ key: 'name', label: '구분', text: 1, chip: 'key' }, { key: 'wallets', label: '지갑 수', share: 1 }, { key: 'paid', label: '받은 양', share: 1 }, { key: 'sold', label: '판 양', share: 1 }, { key: 'bought', label: '산 양', share: 1 }, { key: 'took_rlusd', label: '가져간 돈', share: 1 },
       { key: 'back_rlusd', label: '되돌린 돈', share: 1 }, { key: 'rebuy_rlusd', label: '다시 산 돈', share: 1, help: 'c:rebuy' }, { key: 'dep_rlusd', label: '회사에 넣은 돈', share: 1, help: 'c:dep' }, { key: 'pool_in', label: '풀에 넣은 양', share: 1 }, { key: 'balance', label: '지금 잔액', share: 1 }],
@@ -2132,7 +2139,8 @@ html.rpt .chap, html.rpt .sec-h, html.rpt .blk-h, html.rpt .h2, html.rpt .h3 { b
       }
     }
     var pr = DATA.daily.filter(function (r) { return r.date >= c.r.from && r.date <= c.r.to && r.pool_r_rlusd !== null; });
-    if (pr.length > 1) items.push('풀의 변화: RLUSD 풀의 RLUSD는 ' + md(pr[0].date) + ' ' + fInt(pr[0].pool_r_rlusd) + '에서 지금 **' + fInt(c.s.pool_r_rlusd) + '**로, XRP 풀의 XRP는 ' + fInt(pr[0].pool_x_xrp) + '에서 **' + fInt(c.s.pool_x_xrp) + '**로 바뀌었다.');
+    var lq = pr.filter(function (r) { return r.pool_liq !== null && r.pool_liq !== undefined; });
+    if (pr.length > 1) items.push('풀의 변화: ' + (lq.length > 1 && c.s.pool_liq ? '전체 풀 유동성은 ' + md(lq[0].date) + ' ' + fInt(lq[0].pool_liq) + '에서 지금 **' + fInt(c.s.pool_liq) + '** RLUSD 환산이 됐다. ' : '') + 'RLUSD 풀의 RLUSD는 ' + md(pr[0].date) + ' ' + fInt(pr[0].pool_r_rlusd) + '에서 지금 **' + fInt(c.s.pool_r_rlusd) + '**로, XRP 풀의 XRP는 ' + fInt(pr[0].pool_x_xrp) + '에서 **' + fInt(c.s.pool_x_xrp) + '**로 바뀌었다.');
     var lpw = lpParts(c.s);
     if (lpw) items.push('풀의 몫: 지금 두 풀에 든 WLBN 가운데 Wellbian 계정 몫이 **' + F.pct(lpw.w) + '**' + (lpw.k > 0 ? ', KWeather 계정 몫이 ' + F.pct(lpw.k) : '') + ', 일반 사용자 지갑 몫이 **' + F.pct(c.s.lp_user_share) + '**다.');
     richList(ul, items);
@@ -2227,6 +2235,7 @@ html.rpt .chap, html.rpt .sec-h, html.rpt .blk-h, html.rpt .h2, html.rpt .h3 { b
     L.push('  · 낸 돈 ' + fInt(k.bot_paid_rlusd) + ' RLUSD + ' + fInt(k.bot_paid_xrp) + ' XRP'); L.push('');
     L.push('■ 풀 · 가격');
     L.push('- 가격 ' + (s.price_rlusd === null ? '—' : F.f4(s.price_rlusd)) + ' RLUSD');
+    if (s.pool_liq) L.push('- 전체 풀 유동성 ' + fInt(s.pool_liq) + ' RLUSD 환산 (WLBN/RLUSD 풀 ' + fInt(s.pool_liq_r) + ' + WLBN/XRP 풀 ' + fInt(s.pool_liq_x) + ' · 이 가운데 RLUSD · XRP 쪽 ' + fInt(s.pool_side_rlusd) + ')');
     L.push('- RLUSD 풀 ' + fInt(s.pool_r_wlbn) + ' WLBN + ' + fInt(s.pool_r_rlusd) + ' RLUSD');
     L.push('- XRP 풀 ' + fInt(s.pool_x_wlbn) + ' WLBN + ' + fInt(s.pool_x_xrp) + ' XRP');
     var lpw = lpParts(s);
@@ -2299,7 +2308,9 @@ html.rpt .chap, html.rpt .sec-h, html.rpt .blk-h, html.rpt .h2, html.rpt .h3 { b
     add('일반 사용자 지갑', 'RLUSD로 판 양', '', k.user_sold_for_rlusd, 'WLBN'); add('일반 사용자 지갑', 'XRP로 판 양', '', k.user_sold_for_xrp, 'WLBN'); add('일반 사용자 지갑', '받은 대금', 'RLUSD', k.user_got_rlusd, 'RLUSD'); add('일반 사용자 지갑', '받은 대금', 'XRP', k.user_got_xrp, 'XRP');
     add('일반 사용자 지갑', '풀에 넣어 둔 양', '', k.user_pool_in, 'WLBN'); add('일반 사용자 지갑', '지금 잔액', '', k.user_balance, 'WLBN');
     add('시장 전체', '산 양', '', k.buy_total, 'WLBN'); add('시장 전체', '판 양', '', k.sell_total, 'WLBN'); add('시장 전체', 'Wellbian bot 계정이 산 양', k.bot_buy_share === null ? '' : F.pct(k.bot_buy_share), k.bot_bought, 'WLBN'); add('시장 전체', 'bot 계정이 낸 돈', 'RLUSD', k.bot_paid_rlusd, 'RLUSD'); add('시장 전체', 'bot 계정이 낸 돈', 'XRP', k.bot_paid_xrp, 'XRP');
-    add('풀 · 가격', '가격', '', s.price_rlusd === null ? '' : F.f4(s.price_rlusd), 'RLUSD'); add('풀 · 가격', 'RLUSD 풀', 'WLBN', s.pool_r_wlbn, 'WLBN'); add('풀 · 가격', 'RLUSD 풀', 'RLUSD', s.pool_r_rlusd, 'RLUSD'); add('풀 · 가격', 'XRP 풀', 'WLBN', s.pool_x_wlbn, 'WLBN'); add('풀 · 가격', 'XRP 풀', 'XRP', s.pool_x_xrp, 'XRP');
+    add('풀 · 가격', '가격', '', s.price_rlusd === null ? '' : F.f4(s.price_rlusd), 'RLUSD');
+    if (s.pool_liq) { add('풀 · 가격', '전체 풀 유동성', '두 풀 · 양쪽', s.pool_liq, 'RLUSD 환산'); add('풀 · 가격', '전체 풀 유동성', 'WLBN/RLUSD 풀', s.pool_liq_r, 'RLUSD 환산'); add('풀 · 가격', '전체 풀 유동성', 'WLBN/XRP 풀', s.pool_liq_x, 'RLUSD 환산'); add('풀 · 가격', '전체 풀 유동성', '이 가운데 RLUSD · XRP 쪽', s.pool_side_rlusd, 'RLUSD 환산'); }
+    add('풀 · 가격', 'RLUSD 풀', 'WLBN', s.pool_r_wlbn, 'WLBN'); add('풀 · 가격', 'RLUSD 풀', 'RLUSD', s.pool_r_rlusd, 'RLUSD'); add('풀 · 가격', 'XRP 풀', 'WLBN', s.pool_x_wlbn, 'WLBN'); add('풀 · 가격', 'XRP 풀', 'XRP', s.pool_x_xrp, 'XRP');
     (c.r.groups || []).forEach(function (g) { COLS.groups.slice(1).forEach(function (col) { add('지갑 묶음별', (g.owner && OWN[g.owner] ? OWN[g.owner] + ' ' : '') + (g.label || g.group), col.label, g[col.key], ''); }); });
     if (DATA.market) DATA.market.notes.forEach(function (t) { add('시장과 견주기', '요약 글', DATA.market.as_of, plain(t), ''); });
     if (im) {
@@ -2690,7 +2701,7 @@ html.rpt .chap, html.rpt .sec-h, html.rpt .blk-h, html.rpt .h2, html.rpt .h3 { b
     });
     if (cap < Infinity) rows.forEach(function (r) { keys.forEach(function (s) { if (r[s.key] > cap) g.append('text').attr('class', 'tick').attr('x', Math.min(f.w - m.r - 2, x(r.date) + 6)).attr('y', m.t + 9).style('fill', s.color).style('font-weight', 650).text('↑' + abbr(r[s.key])); }); });
     g.append('text').attr('class', 'tick').attr('x', m.l).attr('y', f.h - 3).text(md(days[0])); g.append('text').attr('class', 'tick').attr('x', f.w - m.r).attr('y', f.h - 3).attr('text-anchor', 'end').text(md(days[days.length - 1]));
-    hover(f, days, xc, step, m, function (d) { var r = by.get(d); return tipRows(md(d) + (r.partial ? ' · 기준 시각까지' : ''), keys.map(function (s) { return { label: s.label, value: fmt(r[s.key]), color: s.color }; })); });
+    hover(f, days, xc, step, m, function (d) { var r = by.get(d); return tipRows(md(d) + (r.partial ? ' · 기준 시각까지' : ''), keys.concat(spec.more || []).map(function (s) { return { label: s.label, value: fmt(r[s.key]), color: s.color }; })); });
   }
   // 다섯 고리 방사형
   function bRadar(el) {
@@ -2772,7 +2783,7 @@ html.rpt .chap, html.rpt .sec-h, html.rpt .blk-h, html.rpt .h2, html.rpt .h3 { b
     });
   }
   function bHoldRows() { var cp = 0, cs = 0; return bDays().map(function (r) { cp += +r.paid_user || 0; cs += +r.net_sell_user || 0; return { date: r.date, partial: r.partial, cp: cp, cs: Math.max(0, cs) }; }); }
-  function bPoolRows() { return bDays().filter(function (r) { return r.pool_r_rlusd !== null && r.pool_x_xrp !== null && r.xrp_rlusd; }).map(function (r) { return { date: r.date, partial: r.partial, depth: Math.round(r.pool_r_rlusd + r.pool_x_xrp * r.xrp_rlusd) }; }); }
+  function bPoolRows() { return bDays().filter(function (r) { return r.pool_liq !== null && r.pool_liq !== undefined; }); }      // 전체 풀 유동성(두 풀 · 양쪽, RLUSD 환산)이 있는 날
   function bRecvRows() { var c = ctx(), D = DATA.deep; return D && D.days ? D.days.filter(function (r) { return r.date >= c.r.from && r.date <= c.r.to; }) : []; }
   var BOARD = {
     b_idx: function (el) { drawIndex(el); }, b_radar: bRadar, b_trend: function (el) { drawTrend(el); }, b_tier: bTier, b_money: bMoney, b_demand: bDemand, b_run: bRun,
@@ -2780,7 +2791,7 @@ html.rpt .chap, html.rpt .sec-h, html.rpt .blk-h, html.rpt .h2, html.rpt .h3 { b
     b_flow: function (el) { var R = bDays(), vs = R.map(function (r) { return Math.max(+r.paid_user || 0, +r.sell_user || 0); }).sort(d3.descending), cap = vs.length > 2 && vs[0] > vs[1] * 3 ? vs[1] * 1.15 : 0; bTime(el, R, { cap: cap, bars: { key: 'sell_user', label: '판 양', color: 'var(--s4)' }, lines: [{ key: 'paid_user', label: '받은 양', color: 'var(--s1)' }] }); },
     b_hold: function (el) { bTime(el, bHoldRows(), { lines: [{ key: 'cp', label: '받은 양(누적)', color: 'var(--s1)', area: 1 }, { key: 'cs', label: '순매도(누적)', color: 'var(--s4)', area: 1 }] }); },
     b_price: function (el) { bTime(el, bDays(), { lines: [{ key: 'price_rlusd', label: '가격(RLUSD)', color: 'var(--s1)', area: 1 }], fmt: F.f4, zero: false }); },
-    b_pool: function (el) { bTime(el, bPoolRows(), { lines: [{ key: 'depth', label: '두 풀의 RLUSD · XRP(RLUSD 환산)', color: 'var(--s6)', area: 1 }] }); }
+    b_pool: function (el) { bTime(el, bPoolRows(), { lines: [{ key: 'pool_liq', label: '전체 풀 유동성', color: 'var(--s6)', area: 1 }], more: [{ key: 'pool_liq_x', label: 'WLBN/XRP 풀', color: 'var(--s1)' }, { key: 'pool_liq_r', label: 'WLBN/RLUSD 풀', color: 'var(--s3)' }] }); }
   };
   function drawBoard() {
     var sec = $('#board'); if (!sec) return;
@@ -2804,7 +2815,7 @@ html.rpt .chap, html.rpt .sec-h, html.rpt .blk-h, html.rpt .h2, html.rpt .h3 { b
       set('money', im.tot5.took_rlusd ? d3.format('.1f')(im.tot5.back_rlusd / im.tot5.took_rlusd) : null, '배 · 되돌린 돈 ÷ 가져간 돈', '되돌린 **' + fInt(im.tot5.back_rlusd) + '** · 가져간 ' + fInt(im.tot5.took_rlusd) + ' RLUSD');
     } else { set('tier', null); set('money', null); }
     set('price', s.price_rlusd !== null && s.price_rlusd !== undefined ? F.f4(s.price_rlusd) : null, 'RLUSD', '기간 변화 **' + (k.price_change === null || k.price_change === undefined ? '—' : F.spct(k.price_change)) + '** · ' + F.f4(k.price_from) + ' → ' + F.f4(k.price_to));
-    var pr = bPoolRows(), pl = pr.length ? pr[pr.length - 1] : null, p0 = pr.length ? pr[0] : null; set('pool', pl ? fInt(pl.depth) : null, 'RLUSD 환산', pl ? 'XRP 풀 ' + fInt(s.pool_x_xrp) + ' XRP · RLUSD 풀 ' + fInt(s.pool_r_rlusd) + (p0 && p0.depth ? ' · 기간 첫날의 **' + d3.format('.1f')(pl.depth / p0.depth) + '배**' : '') : '');
+    var pr = bPoolRows(), pl = pr.length ? pr[pr.length - 1] : null, p0 = pr.length ? pr[0] : null; set('pool', pl ? fInt(pl.pool_liq) : null, 'RLUSD 환산', pl ? 'WLBN/RLUSD **' + fInt(pl.pool_liq_r) + '** + WLBN/XRP **' + fInt(pl.pool_liq_x) + '**' + (p0 && p0 !== pl && p0.pool_liq ? ' · 기간 첫날의 **' + d3.format('.1f')(pl.pool_liq / p0.pool_liq) + '배**' : '') : '');
     set('demand', k.sell_total ? F.pct(k.buy_total / k.sell_total) : null, '판 양 대비 산 양', '산 양 ' + fInt(k.buy_total) + ' 가운데 **bot ' + F.pct(k.bot_buy_share || 0) + '** · 판 양 ' + fInt(k.sell_total));
     var pr1 = Rv('payrun'), br = Rv('buyrun'), cv = Rv('cover'); set('run', pr1 ? pr1.value : null, '지급 여력', (br ? '매입 여력 **' + br.value + '**' : '') + (cv ? ' · 매입 재원 ' + cv.value : ''), pr1 && pr1.status);
   }
@@ -2816,7 +2827,8 @@ html.rpt .chap, html.rpt .sec-h, html.rpt .blk-h, html.rpt .h2, html.rpt .h3 { b
       price: function (el) { drawLines(el, [{ key: 'price_rlusd', label: '가격(RLUSD)', color: 'var(--s1)' }], F.f4, false); },
       xrp: function (el) { drawLines(el, [{ key: 'xrp_rlusd', label: '1 XRP 값(RLUSD)', color: 'var(--s6)' }], F.f4, false); },
       wx: function (el) { drawLines(el, [{ key: 'price_xrp', label: 'WLBN 1개당 XRP', color: 'var(--s1)' }], F.f4, false); },
-      poolw: function (el) { drawLines(el, [{ key: 'pool_x_wlbn', label: 'XRP 풀', color: 'var(--s1)' }, { key: 'pool_r_wlbn', label: 'RLUSD 풀', color: 'var(--s3)' }], fInt, true); } };
+      poolw: function (el) { drawLines(el, [{ key: 'pool_x_wlbn', label: 'XRP 풀', color: 'var(--s1)' }, { key: 'pool_r_wlbn', label: 'RLUSD 풀', color: 'var(--s3)' }], fInt, true); },
+      liq: function (el) { drawLines(el, [{ key: 'pool_liq', label: '전체 풀 유동성', color: 'var(--s6)' }, { key: 'pool_liq_x', label: 'WLBN/XRP 풀', color: 'var(--s1)' }, { key: 'pool_liq_r', label: 'WLBN/RLUSD 풀', color: 'var(--s3)' }], fInt, true); } };
   }
   function drawChart(name) {
     var el = $('[data-chart="' + name + '"]'), fn = chartFns()[name]; if (!el || !fn) return;
