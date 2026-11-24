@@ -714,7 +714,6 @@ html.deck-on { overflow: hidden; }
 .dk-sweep.run { animation: dk-sweep 0.85s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
 @keyframes dk-sweep { from { opacity: 1; transform: translateX(-110%); } to { opacity: 1; transform: translateX(110%); } }
 .dk-prog { position: absolute; left: 0; top: 0; z-index: 4; width: 100%; height: 3px; background: var(--accent); transform: scaleX(0); transform-origin: 0 50%; pointer-events: none; }
-.dk-prog.run { animation: dk-prog var(--dk-sec, 7s) linear forwards; }
 @keyframes dk-prog { to { transform: scaleX(1); } }
 .dk-stage { overflow-x: hidden; } .dk-stage.dk-busy { overflow: hidden; }      /* 들어오는 동안(2.4초)에는 밀려 올라오는 글 때문에 스크롤 막대가 깜박이지 않게 */
 .dk-w { display: inline-block; }
@@ -756,6 +755,36 @@ html.deck-on { overflow: hidden; }
 @keyframes dk-shine { 0%, 55% { background-position: 130% 0; } 100% { background-position: -130% 0; } }
 @keyframes dk-ping { 0% { opacity: 0.7; transform: scale(1); } 100% { opacity: 0; transform: scale(3.4); } }
 @media (prefers-reduced-motion: reduce) { .deck::before, .deck::after, .deck .dk-ico svg, .dk-ins-k, .dk-ping, .dk-sweep.run, .dk-prog.run { animation: none !important; } }
+/* ── 발표 대본 자막 · 재생(31차 — 서우 「청중에게 말할 스크립트를 하단 자막에 · 자동재생 · 자막켜기끄기 · 1배 1.5배 2배 · 재생멈춤」)
+   자막은 아랫줄 가운데(장 고르는 점 위)에 한 줄. 위쪽 가는 줄은 그 장의 대본이 얼마나 지났는지(재생 중에만 움직인다) */
+.dk-bot { align-items: flex-end; }
+.dk-mid { flex: 1 1 auto; min-width: 0; display: grid; justify-items: center; gap: 2px; }
+.dk-mid-b { display: flex; align-items: center; gap: 10px; min-height: 18px; }
+.dk-sub { all: unset; box-sizing: border-box; max-width: 100%; min-height: 1.4em; padding: 0.3em 0.95em; border-radius: 10px; background: color-mix(in srgb, var(--fg) 90%, transparent); color: var(--bg); font-size: clamp(15px, 1.55vw, 24px); font-weight: 600; line-height: 1.4; text-align: center; text-wrap: balance; word-break: keep-all; cursor: pointer; }
+.dk-sub[hidden] { display: none; }
+.dk-sub.in { animation: dk-sub-in 0.24s ease-out both; }
+@keyframes dk-sub-in { from { opacity: 0; transform: translateY(6px); } }
+.dk-sub-n { font-size: var(--t-xs); color: var(--faint); font-variant-numeric: tabular-nums; }
+@media (pointer: fine) and (min-width: 761px) { .deck.sub-on .dk-dots button { height: 18px; } }      /* 손가락으로 누르는 기기에서는 점의 누르는 자리(28px)를 줄이지 않는다 */
+.deck.sub-on .dk-chart { height: clamp(92px, 19vh, 230px); }      /* 자막 줄만큼 그림을 낮춘다(1280×720 에서 넘치지 않게) */
+.dk-prog { transition: none; }
+.dk-tools { align-items: center; }
+.dk-rate { display: inline-flex; flex: none; border: 1px solid var(--line-2); border-radius: 999px; overflow: hidden; background: var(--panel); }
+.dk-rate button { all: unset; box-sizing: border-box; min-width: 2.7em; height: 28px; padding: 0 0.55em; text-align: center; font-size: var(--t-xs); font-weight: 650; color: var(--muted); cursor: pointer; font-variant-numeric: tabular-nums; }
+.dk-rate button:hover { color: var(--fg); } .dk-rate button[aria-pressed="true"] { background: var(--accent); color: #fff; }
+.dk-play { display: inline-flex; align-items: center; gap: 6px; }
+.dk-play::before { content: ""; width: 0.7em; height: 0.8em; background: currentColor; clip-path: polygon(0 0, 100% 50%, 0 100%); }
+.dk-play[aria-pressed="true"]::before { clip-path: none; background: linear-gradient(90deg, currentColor 0 36%, transparent 36% 64%, currentColor 64% 100%); }
+.dk-sub-n { white-space: nowrap; }
+@media (max-width: 760px) {      /* 좁은 화면: 단추 줄은 제목 아래로, 자막은 이전 · 다음 단추 위에 한 줄을 다 쓴다 */
+  .dk-top { flex-wrap: wrap; row-gap: 6px; } .dk-tools { flex: 1 1 auto; justify-content: flex-end; flex-wrap: wrap; row-gap: 6px; }
+  .dk-bot { flex-wrap: wrap; justify-content: space-between; row-gap: 6px; } .dk-mid { display: contents; }
+  .dk-sub { order: -1; flex: 1 1 100%; } .dk-mid-b { flex: 1 1 auto; justify-content: center; gap: 6px; }
+  .dk-nav { min-width: 0; }
+}
+@media (max-width: 420px) { .dk-sub-n { display: none; }      /* 아주 좁으면 줄 번호는 뺀다(이전 · 점 여섯 · 다음이 한 줄에 들어가게) */
+}
+@media (prefers-reduced-motion: reduce) { .dk-sub.in { animation: none; } .dk-prog { transition: none !important; } }
 @media print { html.deck-on { overflow: visible; } .deck { display: none !important; } }
 </style>
 </head>
@@ -775,10 +804,10 @@ html.deck-on { overflow: hidden; }
   <i class="dk-prog" data-dk-prog aria-hidden="true"></i><i class="dk-sweep" data-dk-sweep aria-hidden="true"></i>
   <div class="dk-top">
     <p class="dk-brand"><b>WLBN 운용현황</b><span class="dk-asof">기준 <span data-dk-asof>—</span></span><span class="dk-pg" data-dk-pg></span></p>
-    <div class="dk-tools"><button type="button" class="btn sm" data-dk-auto aria-pressed="false" title="7초마다 다음 장으로(P)">자동 넘김</button><button type="button" class="btn sm" data-dk-full aria-pressed="false">전체 화면</button><button type="button" class="btn sm" data-dk-close>나가기</button></div>
+    <div class="dk-tools"><button type="button" class="btn sm dk-play" data-dk-auto aria-pressed="false" title="대본 자막에 맞춰 줄과 장을 자동으로 넘긴다(P)">재생</button><span class="dk-rate" role="group" aria-label="재생 속도"><button type="button" data-dk-rate="1" aria-pressed="true" title="1배속(1)">1×</button><button type="button" data-dk-rate="1.5" aria-pressed="false" title="1.5배속(2)">1.5×</button><button type="button" data-dk-rate="2" aria-pressed="false" title="2배속(3)">2×</button></span><button type="button" class="btn sm" data-dk-subbtn aria-pressed="true" title="자막 켜기 · 끄기(C)">자막 끄기</button><button type="button" class="btn sm" data-dk-full aria-pressed="false">전체 화면</button><button type="button" class="btn sm" data-dk-close>나가기</button></div>
   </div>
   <div class="dk-stage" data-dk-stage aria-live="polite"></div>
-  <div class="dk-bot"><button type="button" class="btn dk-nav" data-dk-prev>‹ 이전</button><ol class="dk-dots" data-dk-dots aria-label="장 고르기"></ol><button type="button" class="btn dk-nav" data-dk-next>다음 ›</button></div>
+  <div class="dk-bot"><button type="button" class="btn dk-nav" data-dk-prev>‹ 이전</button><div class="dk-mid"><button type="button" class="dk-sub" data-dk-sub hidden title="누르면 다음 문장(↓ · 이전 문장은 ↑)"></button><div class="dk-mid-b"><ol class="dk-dots" data-dk-dots aria-label="장 고르기"></ol><span class="dk-sub-n" data-dk-sub-n aria-hidden="true"></span></div></div><button type="button" class="btn dk-nav" data-dk-next>다음 ›</button></div>
   <p class="dk-foot" data-dk-foot></p>
 </div>
 <header class="head">
@@ -1623,7 +1652,7 @@ html.deck-on { overflow: hidden; }
   //   전체 화면과 같은 판정(sigList)에서 「긍정」으로 나온 지표만 큰 숫자로 보여 준다. 판정이 긍정이 아니게 되면 그 숫자는 빠지고, 숫자가 남지 않은 장은 건너뛴다(좋지 않은 것을 좋게 말하지 않는다)
   //   기간은 고정이다: 「최근 7일」(오늘의 현황과 같은 창)과 「전체 기간」 — 위쪽 기간 단추와 무관하다. 가격은 평가하지 않으므로 올리지 않는다(가격 · 시장 대비를 여기에 넣지 않는다)
   //   맨 아래 줄에 「긍정으로 판정된 지표만 모은 화면」임을 늘 적는다 — 전체 그림으로 읽히지 않게
-  var DECK = { on: false, i: 0, slides: [], from: null, tick: 0, auto: false, timer: 0 }, WANT_DECK = false, DK_SEC = 7;
+  var DECK = { on: false, i: 0, slides: [], from: null, tick: 0, auto: false, timer: 0, li: 0, rate: 1, sub: true, left: 0, t0: 0 }, WANT_DECK = false, DK_SEC = 7, DK_RATES = [1, 1.5, 2];
   //   움직임(11/24 서우 「발표모드는 광고처럼 모션그래픽을 다이나믹하게」): 장이 바뀔 때만 논다(deckDraw 에 방향을 넘길 때). 화면 크기 · 자료가 바뀌어 다시 그릴 때는 놀지 않는다
   function dkMotion() { return !(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches); }
   function dkCount(el, text, delay) {      // 숫자를 0에서 제 값까지 올린다(소수 자리 · 쉼표 · 부호는 그대로). 끝나면 받은 글 그대로 둔다
@@ -1638,12 +1667,60 @@ html.deck-on { overflow: hidden; }
       node.nodeValue = fmt(to * (1 - Math.pow(2, -10 * k))); requestAnimationFrame(step);
     });
   }
-  function deckAuto(on) {      // 자동 넘김: DK_SEC 초마다 다음 장(끝에서는 처음으로). 손으로 넘기면 그 장부터 다시 센다
-    DECK.auto = !!on; clearTimeout(DECK.timer); DECK.timer = 0;
-    var b = $('[data-dk-auto]'), pg = $('[data-dk-prog]'), go = DECK.auto && DECK.on && DECK.slides.length > 1;
-    if (b) { b.setAttribute('aria-pressed', String(DECK.auto)); b.textContent = DECK.auto ? '자동 넘김 끄기' : '자동 넘김'; }
-    if (pg) { pg.classList.remove('run'); if (go) { void pg.offsetWidth; pg.style.setProperty('--dk-sec', DK_SEC + 's'); pg.classList.add('run'); } }
-    if (go) DECK.timer = setTimeout(function () { if (!DECK.on || !DECK.auto) return; DECK.i = (DECK.i + 1) % DECK.slides.length; deckDraw('next'); deckAuto(true); }, DK_SEC * 1000);
+  //   대본 · 자막 · 재생(31차 — 서우 「청중에게 말할 스크립트를 별도로 제작해서 하단 자막에 · 자동재생 · 자막켜기끄기 · 1배 1.5배 2배 · 재생멈춤」)
+  //   장마다 sl.say = 말할 문장들(deckBuild 가 숫자 카드와 같은 조건으로 만든다). DECK.li = 지금 줄 · DECK.rate = 속도 · DECK.sub = 자막 보이기 · DECK.left = 지금 줄의 남은 시간(ms · 멈춘 동안 기억)
+  //   한 줄을 보여 주는 시간 = (0.7초 + 글자 수 × 0.17초 · 2.2~9초) ÷ 속도 — 1배속이 소리 내어 읽는 속도다. 줄이 끝나면 다음 줄, 장이 끝나면 다음 장(끝 장에서는 처음으로)
+  function dkPrefLoad() { try { var o = JSON.parse(localStorage.getItem('wlbn-deck-1') || '{}'); if (DK_RATES.indexOf(o.rate) >= 0) DECK.rate = o.rate; if (o.sub === false) DECK.sub = false; } catch (e) { /* 기억을 못 읽으면 기본값 */ } }
+  function dkPrefSave() { try { localStorage.setItem('wlbn-deck-1', JSON.stringify({ rate: DECK.rate, sub: DECK.sub })); } catch (e) { /* 저장이 막혀 있으면 이번에만 */ } }
+  function dkLines() { var sl = DECK.slides[DECK.i]; return (sl && sl.say) || []; }
+  function dkDur(t) { return Math.max(2200, Math.min(9000, 700 + String(t).replace(/\s/g, '').length * 170)); }
+  function dkSpan() { var L = dkLines(), li = Math.max(0, Math.min(L.length - 1, DECK.li)), done = 0, total = 0; L.forEach(function (t, i) { var d = dkDur(t); total += d; if (i < li) done += d; }); return { n: L.length, li: li, dur: L.length ? dkDur(L[li]) : DK_SEC * 1000, done: done, total: total || DK_SEC * 1000 }; }
+  function dkBar(frac, ms) { var pg = $('[data-dk-prog]'); if (!pg) return; pg.classList.remove('run'); pg.style.transition = 'none'; if (ms > 0) { void pg.offsetWidth; pg.style.transition = 'transform ' + Math.round(ms) + 'ms linear'; } pg.style.transform = 'scaleX(' + Math.max(0, Math.min(1, frac)) + ')'; }
+  function dkSubDraw(fresh) {      // 자막 한 줄 · 단추 상태를 지금 값으로
+    var box = $('#deck'); if (!box) return; var L = dkLines(), n = L.length, li = Math.max(0, Math.min(n - 1, DECK.li)), show = DECK.sub && n > 0;
+    var el = $('[data-dk-sub]', box), c = $('[data-dk-sub-n]', box), pb = $('[data-dk-auto]', box), sb = $('[data-dk-subbtn]', box);
+    box.classList.toggle('sub-on', show);
+    if (el) { var was = el.textContent; el.textContent = n ? L[li] : ''; el.hidden = !show; el.setAttribute('aria-label', n ? '자막 ' + (li + 1) + ' / ' + n + ': ' + L[li] : '자막 없음'); if (show && (fresh || was !== el.textContent) && dkMotion()) { el.classList.remove('in'); void el.offsetWidth; el.classList.add('in'); } }
+    if (c) c.textContent = show ? (li + 1) + ' / ' + n : '';
+    if (pb) { pb.setAttribute('aria-pressed', String(DECK.auto)); pb.textContent = DECK.auto ? '멈춤' : '재생'; }
+    if (sb) { sb.setAttribute('aria-pressed', String(DECK.sub)); sb.textContent = DECK.sub ? '자막 끄기' : '자막 켜기'; }
+    $$('[data-dk-rate]', box).forEach(function (b) { b.setAttribute('aria-pressed', String(+b.getAttribute('data-dk-rate') === DECK.rate)); });
+  }
+  function dkLineStart(left) {      // 지금 줄을 left(ms · 실제 시간, 없으면 줄 전체) 동안 보여 주고 다음으로
+    clearTimeout(DECK.timer); DECK.timer = 0; if (!DECK.auto || !DECK.on || !DECK.slides.length) return;
+    var sp = dkSpan(), full = sp.dur / DECK.rate; left = left > 0 ? Math.min(left, full) : full;
+    var from = (sp.done + sp.dur - left * DECK.rate) / sp.total, to = (sp.done + sp.dur) / sp.total;
+    dkBar(from, 0); if (dkMotion()) dkBar(to, left);
+    DECK.left = left; DECK.t0 = Date.now(); DECK.timer = setTimeout(dkStep, left);
+  }
+  function dkStep() {
+    if (!DECK.on || !DECK.auto) return; var n = dkLines().length; DECK.left = 0;
+    if (DECK.li < n - 1) { DECK.li += 1; dkSubDraw(true); }
+    else { DECK.li = 0; if (DECK.slides.length > 1) { DECK.i = (DECK.i + 1) % DECK.slides.length; deckDraw('next'); } else dkSubDraw(true); }
+    dkLineStart(0);
+  }
+  function deckAuto(on) {      // 재생 · 멈춤: 멈추면 지금 줄의 남은 시간을 기억했다가 그 자리에서 이어 간다
+    var was = DECK.auto; DECK.auto = !!on && DECK.on && DECK.slides.length > 0;
+    if (!DECK.auto) {
+      if (was && DECK.timer) DECK.left = Math.max(0, DECK.left - (Date.now() - DECK.t0));
+      clearTimeout(DECK.timer); DECK.timer = 0;
+      if (DECK.on) { var sp = dkSpan(), full = sp.dur / DECK.rate, left = DECK.left > 0 ? Math.min(DECK.left, full) : full; dkBar((sp.done + sp.dur - left * DECK.rate) / sp.total, 0); }
+    } else dkLineStart(DECK.left);
+    dkSubDraw();
+  }
+  function dkRate(r) {      // 속도 바꾸기: 지금 줄의 남은 분량은 그대로 두고 시간만 다시 잰다
+    r = +r; if (DK_RATES.indexOf(r) < 0) return; var old = DECK.rate, left = DECK.left;
+    if (DECK.auto && DECK.timer) left = Math.max(0, DECK.left - (Date.now() - DECK.t0));
+    DECK.rate = r; DECK.left = left * old / r; dkPrefSave();
+    if (DECK.auto) dkLineStart(DECK.left); dkSubDraw();
+  }
+  function dkSubToggle(on) { DECK.sub = on === undefined ? !DECK.sub : !!on; dkPrefSave(); dkSubDraw(true); }
+  function dkLineGo(d) {      // 자막을 손으로 한 줄씩(끝 줄에서 더 가면 다음 장)
+    if (!DECK.on) return; var n = dkLines().length, to = DECK.li + d;
+    if (to >= n) { if (DECK.i < DECK.slides.length - 1) deckGo(DECK.i + 1); return; }
+    if (to < 0) { if (DECK.i > 0) deckGo(DECK.i - 1); return; }
+    DECK.li = to; DECK.left = 0; dkSubDraw(true);
+    if (DECK.auto) dkLineStart(0); else { var sp = dkSpan(); dkBar(sp.done / sp.total, 0); }
   }
   //   장마다 상징 아이콘 하나(11/24 서우 「발표모드 장표마다 한줄 핵심인사이트(좋은쪽으로)와 상징적인 아이콘 하나」): 도는 고리 · 사람 · 물방울 · 바구니 · 새싹 · 점검표
   var DK_ICO = {
@@ -1677,7 +1754,10 @@ html.deck-on { overflow: hidden; }
     var W7 = h ? '최근 7일(' + md(h.from) + '~' + md(h.to) + ')' : '최근 7일', WA = '전체 기간(' + md(a.from) + '~' + md(a.to) + ')';
     var L = function (key) { return h ? h.links.concat(h.reserves).filter(function (l) { return l.key === key; })[0] || null : null; };
     var cut = function (val) { var m = /^([+\-−]?[\d.,]+)(.*)$/.exec(String(val)); return m ? { v: m[1], u: m[2] } : { v: String(val), u: '' }; };
-    var mk = function (key, kick) { return { key: key, kick: kick, head: '', ins: '', stats: [], fig: null, note: '', list: null }; };
+    var mk = function (key, kick) { return { key: key, kick: kick, head: '', ins: '', stats: [], fig: null, note: '', list: null, say: [] }; };
+    //   대본(31차): 청중에게 말할 문장. 화면 글과 따로 쓴다(높임말 · 한 줄 40자 안팎 · 가격/전망 낱말 없음). 조건은 숫자 카드와 같다 — 긍정이 아니게 된 지표의 문장은 같이 빠진다
+    var say = function (sl) { for (var ai = 1; ai < arguments.length; ai++) if (arguments[ai]) sl.say.push(arguments[ai]); }, np = function (v) { return String(v).replace(/^\+/, ''); }, up = function (v) { return !/^[\-−]/.test(String(v)); }, okLab = (h && h.labels && h.labels.ok) || '좋음';
+    var dSay = function (d) { var m = /^(\d{4})-(\d{2})-(\d{2})(?:[ T](\d{2}):(\d{2}))?/.exec(String(d)); return m ? (+m[2]) + '월 ' + (+m[3]) + '일' + (m[4] ? ' ' + (+m[4]) + '시' + (+m[5] ? ' ' + (+m[5]) + '분' : '') : '') : String(d); };      // 말하는 꼴의 날짜 · 시각
     var put = function (sl, st) { if (!st) return; sl.stats.push(st); if (!sl.head && st.head) sl.head = st.head; };
     var pool = L('pool'), pl7 = pool ? cut(pool.value) : null, plA = ok('liqP') ? cut(G.liqP.val) : null, liqDays = DATA.daily.filter(function (r) { return r.pool_liq !== null && r.pool_liq !== undefined; });
     var T = {      // 숫자 하나하나: 판정이 긍정일 때만 생긴다
@@ -1705,6 +1785,13 @@ html.deck-on { overflow: hidden; }
     var SAY = { pay: ['보상을 받는 지갑이 늘고', '보상을 받는 지갑이 늘었다'], hold: ['받은 양의 절반 넘게 남고', '받은 양의 절반 넘게 남았다'], pool: ['풀이 깊어지고', '풀이 깊어졌다'], demand: ['나온 물량이 모두 소화되고', '나온 물량이 모두 소화됐다'] };
     var gs = good.filter(function (l) { return SAY[l.key]; });
     if (gs.length) s0.ins = '최근 7일 ' + gs.map(function (l, i) { return SAY[l.key][i === gs.length - 1 ? 1 : 0]; }).join(', ') + '.';
+    say(s0, h && h.index && h.index.status === 'ok' ? '선순환 지수는 ' + h.index.value + '점, ' + okLab + '입니다.' : good.length ? '선순환 고리 ' + idx.length + '곳 가운데 ' + good.length + '곳이 ' + okLab + '입니다.' : '',
+      T.pay ? '최근 7일 동안 보상을 받은 지갑은 ' + fInt(fx.paid_wallets) + '곳입니다.' : '',
+      T.pay && fx.paid_wallets_prev > 0 && fx.paid_wallets > fx.paid_wallets_prev ? '직전 7일의 ' + fInt(fx.paid_wallets_prev) + '곳보다 ' + F.pct(fx.paid_wallets / fx.paid_wallets_prev - 1) + ' 늘었습니다.' : '',
+      T.liq ? '두 풀을 합친 전체 유동성은 ' + fInt(s.pool_liq) + ' RLUSD입니다.' : '',
+      T.dem7 ? (fx.buy_all > fx.sell_x ? '시장에 나온 ' + fInt(fx.sell_x) + '개보다 많은 ' + fInt(fx.buy_all) + '개가 매수됐습니다.' : '판 양은 ' + fInt(fx.sell_x) + '개, 산 양은 ' + fInt(fx.buy_all) + '개입니다.') : '',
+      T.dem7 && fx.bot_buy > 0 ? 'Wellbian bot의 매입이 포함된 수치입니다.' : '',
+      T.back ? '지갑들이 되돌린 돈은 가져간 돈의 ' + T.back.v + '배입니다.' : '');
     if (s0.stats.length >= 2) out.push(s0);
     // 2. 참여
     var s1 = mk('pay', '참여'); put(s1, T.pay); put(s1, T.fresh); put(s1, T.payrun);
@@ -1713,6 +1800,11 @@ html.deck-on { overflow: hidden; }
     if (T.pay && fx.new_wallets > 0 && fx.paid_wallets > 0) s1.ins = '보상을 받은 지갑의 ' + F.pct(fx.new_wallets / fx.paid_wallets) + '가 최근 7일에 처음 받은 지갑이다 — 참여가 새 지갑으로 넓어지고 있다.';
     else if (T.pay && has(fx.pay_days) && fx.pay_days === fx.win_days) s1.ins = fx.win_days + '일 가운데 ' + fx.pay_days + '일 모두 지급됐다 — 보상이 끊기지 않았다.';
     else if (T.payrun) s1.ins = '지금 잔액으로 ' + fInt(fx.payrun) + '일 치 보상을 지급할 수 있다.';
+    say(s1, '참여입니다.', T.pay ? '최근 7일 동안 ' + fInt(fx.paid_wallets) + '곳의 지갑이 보상을 받았습니다.' : '',
+      T.fresh ? '그 가운데 ' + fInt(fx.new_wallets) + '곳은 처음 보상을 받은 지갑입니다.' : '',
+      T.fresh && fx.paid_wallets > 0 ? '비율로는 ' + F.pct(fx.new_wallets / fx.paid_wallets) + ', 참여가 새 지갑으로 넓어지고 있습니다.' : '',
+      T.payrun ? '지급 계정 잔액은 지금 속도로 ' + fInt(fx.payrun) + '일 치 지급을 감당합니다.' : '',
+      s1.fig ? '아래 그림은 날마다 보상을 받은 지갑 수입니다.' : '');
     if (s1.stats.length) out.push(s1);
     // 3. 유동성
     var s2 = mk('pool', '유동성'); put(s2, T.liq); put(s2, T.liq7); put(s2, T.liqA);
@@ -1720,6 +1812,10 @@ html.deck-on { overflow: hidden; }
     if (s2.stats.length && has(s.lp_user_share) && s.lp_user_share >= 0.1) s2.ins = '풀에 든 WLBN의 ' + F.pct(s.lp_user_share) + '는 일반 사용자 지갑이 넣은 몫이다 — 사용자도 풀을 함께 채운다.';
     else if (T.liqA) s2.ins = '풀에 든 돈이 첫날의 ' + T.liqA.v + T.liqA.u + '가 됐다.';
     else if (T.liq7) s2.ins = '최근 7일 동안 풀에 든 돈이 ' + T.liq7.v + T.liq7.u + ' 늘었다.';
+    say(s2, '유동성입니다.', T.liq ? '전체 풀 유동성은 ' + fInt(s.pool_liq) + ' RLUSD입니다.' : '', T.liq ? '두 풀의 양쪽 자산을 RLUSD로 환산해 합친 값입니다.' : '',
+      T.liq7 && up(T.liq7.v) ? '최근 7일 동안 풀에 든 RLUSD와 XRP는 ' + np(T.liq7.v) + T.liq7.u + ' 늘었습니다.' : '',
+      T.liqA ? '첫날인 ' + dSay(liqDays[0].date) + '과 견주면 ' + np(T.liqA.v) + T.liqA.u + '입니다.' : '',
+      s2.stats.length && has(s.lp_user_share) && s.lp_user_share >= 0.1 ? '풀에 든 WLBN의 ' + F.pct(s.lp_user_share) + '는 일반 사용자 지갑이 넣었습니다.' : '');
     if (s2.stats.length) out.push(s2);
     // 4. 수요
     var s3 = mk('demand', '수요'); put(s3, T.dem7); put(s3, T.demA); put(s3, T.move);
@@ -1727,6 +1823,11 @@ html.deck-on { overflow: hidden; }
     if (T.demA && k.net_bought_total > 0) s3.ins = '전체 기간으로도 산 양이 판 양보다 ' + fInt(k.net_bought_total) + '개 많다 — 나온 것보다 더 많이 사들여졌다.';
     else if (T.dem7) s3.ins = '최근 7일에 나온 물량 ' + fInt(fx.sell_x) + '개가 모두 소화됐다.';
     else if (T.move) s3.ins = '하루에 움직이는 지갑이 직전 7일보다 늘었다.';
+    say(s3, '수요입니다.', T.dem7 ? '최근 7일 동안 판 양은 ' + fInt(fx.sell_x) + '개, 산 양은 ' + fInt(fx.buy_all) + '개입니다.' : '', T.dem7 ? '산 양이 판 양의 ' + T.dem7.v + '배입니다.' : '',
+      T.dem7 && fx.bot_buy > 0 ? '산 양 가운데 ' + fInt(fx.bot_buy) + '개는 Wellbian bot의 매입이고,' : '',
+      T.dem7 && fx.bot_buy > 0 && has(fx.buy_out) ? fInt(fx.buy_out) + '개는 밖의 지갑이 샀습니다.' : '',
+      T.demA && k.net_bought_total > 0 ? '전체 기간으로도 산 양이 판 양보다 ' + fInt(k.net_bought_total) + '개 많습니다.' : '',
+      T.move ? '하루 평균 ' + T.move.v + '곳의 지갑이 움직였습니다.' : '');
     if (s3.stats.length) out.push(s3);
     // 5. 보유 · 기여
     var s4 = mk('impact', '보유 · 기여'); put(s4, T.back); put(s4, T.posW); put(s4, T.hold); put(s4, T.rebuy);
@@ -1736,12 +1837,24 @@ html.deck-on { overflow: hidden; }
     else if (T.posW && ngW === 0) s4.ins = '부정 쪽으로 판정된 지갑이 없다.';
     else if (T.back) s4.ins = '가져간 돈 1에 되돌린 돈이 ' + T.back.v + '다 — 기기 · 이용권 구매와 매수로 되돌아왔다.';
     else if (T.rebuy) s4.ins = '보상을 받은 뒤 기기 · 이용권을 다시 산 지갑이 ' + T.rebuy.v + '곳이다.';
+    say(s4, '보유와 기여입니다.', T.back ? '지갑들이 가져간 돈은 ' + fInt(im.tot5.took_rlusd) + ' RLUSD 환산,' : '', T.back ? '되돌린 돈은 그 ' + T.back.v + '배인 ' + fInt(im.tot5.back_rlusd) + '입니다.' : '',
+      T.posW ? '긍정 쪽으로 판정된 지갑은 ' + fInt(im.pos5.wallets) + '곳, 전체의 ' + F.pct(im.pos5.wallets / im.tot5.wallets) + '입니다.' : '',
+      T.posW && ngW > 0 ? '부정 쪽은 ' + fInt(ngW) + '곳입니다.' + (s4.fig ? ' 다섯 단계 모두 그림에 있습니다.' : '') : '',
+      T.hold ? '받은 양 가운데 ' + T.hold.v + '%는 팔지 않고 남아 있습니다.' : '',
+      T.rebuy ? '보상을 받은 뒤 기기나 이용권을 다시 산 지갑은 ' + T.rebuy.v + '곳입니다.' : '');
     if (s4.stats.length) out.push(s4);
     // 6. 긍정으로 판정된 지표 모두(전체 화면의 「긍정 요소」 줄과 같은 목록 · 기간만 전체 기간으로)
     var pos = Object.keys(G).map(function (key) { return G[key]; }).filter(function (x) { return x.t === 'ok'; });
     var judged = Object.keys(G).map(function (key) { return G[key].t; }).filter(Boolean), nW = judged.filter(function (x) { return x === 'warn'; }).length, nB = judged.filter(function (x) { return x === 'bad'; }).length;
     if (pos.length) { var s5 = mk('list', '모아 보기'); s5.head = '긍정으로 판정된 지표 ' + pos.length + '개';
-      s5.ins = pos.length >= nW && pos.length >= nB ? '판정 기준이 있는 지표 ' + judged.length + '개 가운데 ' + pos.length + '개가 긍정 — 가장 많은 묶음이다.' : '판정 기준이 있는 지표 ' + judged.length + '개 가운데 ' + pos.length + '개가 긍정이다.'; s5.list = pos.map(function (x) { return { name: x.name.replace(' · 고른 기간', '').replace(' · 최근 7일', ''), val: x.val, win: x.win === '고른 기간' ? '전체 기간' : x.win }; }); out.push(s5); }
+      s5.ins = pos.length >= nW && pos.length >= nB ? '판정 기준이 있는 지표 ' + judged.length + '개 가운데 ' + pos.length + '개가 긍정 — 가장 많은 묶음이다.' : '판정 기준이 있는 지표 ' + judged.length + '개 가운데 ' + pos.length + '개가 긍정이다.'; s5.list = pos.map(function (x) { return { name: x.name.replace(' · 고른 기간', '').replace(' · 최근 7일', ''), val: x.val, win: x.win === '고른 기간' ? '전체 기간' : x.win }; });
+      say(s5, '모아 보겠습니다.', '판정 기준이 있는 지표 ' + judged.length + '개 가운데 ' + pos.length + '개가 긍정입니다.',
+        nW + nB > 0 ? [nW ? '지켜볼 지표 ' + nW + '개' : '', nB ? '부정 지표 ' + nB + '개' : ''].filter(Boolean).join('와 ') + '는' : '', nW + nB > 0 ? '전체 화면에서 같은 기준으로 확인하실 수 있습니다.' : '');
+      out.push(s5); }
+    if (out.length) {      // 여는 말은 첫 장 앞에, 맺는 말은 끝 장 뒤에(어느 장이 빠지든 대본의 처음과 끝은 남는다)
+      out[0].say = ['WLBN 운용 현황을 말씀드리겠습니다.', dSay(s.as_of) + ' 기준, 원장 기록을 집계한 값입니다.'].concat(out[0].say);
+      var lastSl = out[out.length - 1]; lastSl.say = lastSl.say.concat(['이 화면은 긍정으로 판정된 지표만 모은 것입니다.', '원장 기록을 집계한 값이며,', '보상의 지급량과 가치는 보장되지 않습니다.', '감사합니다.']);
+    }
     return out;
   }
   function deckFig(box, fig) {
@@ -1817,19 +1930,20 @@ html.deck-on { overflow: hidden; }
     if (dots) { dots.replaceChildren(); DECK.slides.forEach(function (x, i) { var li = E('li'), b = E('button'); b.type = 'button'; b.setAttribute('aria-label', (i + 1) + '장 · ' + x.kick); b.title = x.kick; if (i === DECK.i) b.setAttribute('aria-current', 'true'); b.addEventListener('click', function () { deckGo(i); }); li.appendChild(b); dots.appendChild(li); }); }
     var pv = $('[data-dk-prev]', box), nx = $('[data-dk-next]', box); if (pv) pv.disabled = DECK.i <= 0; if (nx) nx.disabled = DECK.i >= n - 1;
     var ft = $('[data-dk-foot]', box); if (ft) ft.textContent = '긍정으로 판정된 지표만 모은 발표용 화면 · 판정 기준은 전체 화면과 같다 · 원장 기록 집계 · 보상 지급량 · 가치 비보장';
+    dkSubDraw(!!anim);
   }
-  function deckGo(i) { if (!DECK.on || !DECK.slides.length) return; var to = Math.max(0, Math.min(DECK.slides.length - 1, i)); if (to === DECK.i) return; var dir = to > DECK.i ? 'next' : 'prev'; DECK.i = to; deckDraw(dir); if (DECK.auto) deckAuto(true); }
+  function deckGo(i) { if (!DECK.on || !DECK.slides.length) return; var to = Math.max(0, Math.min(DECK.slides.length - 1, i)); if (to === DECK.i) return; var dir = to > DECK.i ? 'next' : 'prev'; DECK.i = to; DECK.li = 0; DECK.left = 0; deckDraw(dir); if (DECK.auto) dkLineStart(0); else dkBar(0, 0); }
   function deckOpen(i) {
     var box = $('#deck'); if (!box || !DATA || DECK.on) return;
     try { DECK.slides = deckBuild(); } catch (e) { if (window.console) console.error(e); DECK.slides = []; }
-    DECK.i = i || 0; DECK.on = true; DECK.from = document.activeElement; closeHelp();
+    DECK.i = i || 0; DECK.li = 0; DECK.left = 0; DECK.on = true; DECK.from = document.activeElement; closeHelp(); dkPrefLoad(); dkBar(0, 0);
     $$('body > *').forEach(function (n) { if (n !== box && n.tagName !== 'SCRIPT' && !n.hasAttribute('inert')) { n.setAttribute('inert', ''); n.setAttribute('data-dk-inert', '1'); } });      // 뒤 화면은 초점 · 읽기에서 뺀다
     box.hidden = false; document.documentElement.classList.add('deck-on'); deckDraw('open');
     try { box.focus({ preventScroll: true }); } catch (e) { box.focus(); }
   }
   function deckClose() {
     var box = $('#deck'); if (!box || !DECK.on) return;
-    deckAuto(false); DECK.on = false; DECK.tick += 1; box.hidden = true; document.documentElement.classList.remove('deck-on');
+    deckAuto(false); dkBar(0, 0); DECK.on = false; DECK.tick += 1; box.hidden = true; document.documentElement.classList.remove('deck-on');
     $$('[data-dk-inert]').forEach(function (n) { n.removeAttribute('inert'); n.removeAttribute('data-dk-inert'); });
     if (document.fullscreenElement && document.exitFullscreen) { try { document.exitFullscreen(); } catch (e) { /* 그대로 둔다 */ } }
     if (/^#present/.test(location.hash)) { try { history.replaceState(history.state, '', location.pathname + location.search); } catch (e) { /* 그대로 둔다 */ } }
@@ -1968,7 +2082,8 @@ html.deck-on { overflow: hidden; }
     var box = $('#deck'), op = $('[data-present]'); if (!box) return;
     if (op) op.addEventListener('click', function () { deckOpen(0); });
     var on = function (sel, fn) { var b = $(sel, box); if (b) b.addEventListener('click', fn); };
-    on('[data-dk-close]', deckClose); on('[data-dk-prev]', function () { deckGo(DECK.i - 1); }); on('[data-dk-next]', function () { deckGo(DECK.i + 1); }); on('[data-dk-full]', deckFull); on('[data-dk-auto]', function () { deckAuto(!DECK.auto); });
+    on('[data-dk-close]', deckClose); on('[data-dk-prev]', function () { deckGo(DECK.i - 1); }); on('[data-dk-next]', function () { deckGo(DECK.i + 1); }); on('[data-dk-full]', deckFull); on('[data-dk-auto]', function () { deckAuto(!DECK.auto); }); on('[data-dk-subbtn]', function () { dkSubToggle(); }); on('[data-dk-sub]', function () { dkLineGo(1); });
+    $$('[data-dk-rate]', box).forEach(function (b) { b.addEventListener('click', function () { dkRate(b.getAttribute('data-dk-rate')); }); });
     var fb = $('[data-dk-full]', box); if (fb && !box.requestFullscreen) fb.hidden = true;
     document.addEventListener('fullscreenchange', function () { if (fb) { var f = !!document.fullscreenElement; fb.setAttribute('aria-pressed', String(f)); fb.textContent = f ? '전체 화면 끝내기' : '전체 화면'; } if (DECK.on) deckDraw(); });
     document.addEventListener('keydown', function (ev) {
@@ -1981,6 +2096,10 @@ html.deck-on { overflow: hidden; }
       else if (key === 'End') { ev.preventDefault(); deckGo(DECK.slides.length - 1); }
       else if (key === 'f' || key === 'F') deckFull();
       else if (key === 'p' || key === 'P') deckAuto(!DECK.auto);
+      else if (key === 'c' || key === 'C') dkSubToggle();
+      else if (key === 'ArrowDown') { ev.preventDefault(); dkLineGo(1); }
+      else if (key === 'ArrowUp') { ev.preventDefault(); dkLineGo(-1); }
+      else if (key === '1' || key === '2' || key === '3') dkRate(DK_RATES[+key - 1]);
     });
     var st = $('[data-dk-stage]', box), p0 = null;      // 손가락으로 옆으로 밀어 넘기기
     if (st) {
