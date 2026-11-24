@@ -13,11 +13,13 @@ const SHOW_ADDR = process.env.SHOW_ADDR === '1';       // 지갑 전체 주소�
 // opts.range = 날짜를 직접 정한 기간 · opts.daily = 매일 예약 실행(부정 쪽 지갑 자금 흐름을 새로 받기 시작한다)
 async function run(opts) {
   const info = { storage: 'bundled' }, t0 = Date.now();
-  let S = null;
+  // 함수 한도(60초) 안에 끝나게 단계마다 남은 시간으로 예산을 깎는다. 52초를 넘기지 않게 잡고, 화면용 자료를 만들고 저장할 시간을 남긴다
+  const left = (reserve) => 52000 - (Date.now() - t0) - (reserve || 0);
+  let S = null, loadFailed = false;
   try {
     const got = await store.load();
     if (got && got.v === bundled.v && got.ledger >= bundled.ledger) { S = got; info.storage = 'blob'; }
-  } catch (e) { info.storage_error = String((e && e.message) || e).slice(0, 160); }
+  } catch (e) { loadFailed = true; info.storage_error = String((e && e.message) || e).slice(0, 160); }      // 저장소를 못 읽었다: 이번에는 출발 상태로 보여 주기만 하고 저장하지 않는다(좋은 상태를 덮어쓰지 않게)
   if (!S) S = JSON.parse(JSON.stringify(bundled));
   if (!S.fund && bundled.fund) S.fund = JSON.parse(JSON.stringify(bundled.fund));   // 예전에 저장한 상태에는 판매 대금 기록이 없다
   if (bundled.trace && (!S.trace || !S.trace.day || (!S.trace.job && S.trace.day < bundled.trace.day))) S.trace = JSON.parse(JSON.stringify(bundled.trace));   // 자금 흐름 기록: 배포에 든 것이 더 새것이면 그것부터
@@ -39,24 +41,29 @@ async function run(opts) {
     }
   } catch (e) { info.market_error = String((e && e.message) || e).slice(0, 120); }
   try {
-    const u = await xrpl.update(S, { budgetMs: 30000 });
+    const u = await xrpl.update(S, { budgetMs: Math.max(3000, Math.min(30000, left(12000))) });
     Object.assign(info, { updated: u.changed, fetched: u.fetched, complete: u.complete });
     core.pickExt(S, ext);
     // 판매 대금 기록(operations 계정 내역)도 같은 원장까지 이어 받는다. 못 받으면 그 고리만 「자료 없음」이 된다.
-    try { const f = await xrpl.updateFund(S, { budgetMs: 10000 }); info.fund = { fetched: f.fetched, complete: f.complete }; if (f.changed) info.fund_changed = true; } catch (e) { info.fund_error = String((e && e.message) || e).slice(0, 120); }
-    if (u.complete && (u.changed || !S.live)) { try { info.live = await xrpl.fetchLive(S, { budgetMs: 8000 }); } catch (e) { info.live_error = String((e && e.message) || e).slice(0, 120); } }
+    try { const f = await xrpl.updateFund(S, { budgetMs: Math.max(1500, Math.min(10000, left(6000))) }); info.fund = { fetched: f.fetched, complete: f.complete }; if (f.changed) info.fund_changed = true; } catch (e) { info.fund_error = String((e && e.message) || e).slice(0, 120); }
+    if (u.complete && (u.changed || !S.live) && left(3000) >= 1500) { try { info.live = await xrpl.fetchLive(S, { budgetMs: Math.min(8000, left(3000)) }); } catch (e) { info.live_error = String((e && e.message) || e).slice(0, 120); } }
     // 부정 쪽 지갑 자금 흐름(하루 한 번). 이어 받으려면 저장소가 있어야 하므로 저장소가 있을 때만 새로 받는다 — 없으면 배포에 든 기록을 쓴다.
     //   새 날의 일은 예약 실행(opts.daily)이 시작한다. 화면 요청은 하다 만 것만 잠깐 잇고, 기록이 이틀 넘게 묵었을 때만 대신 시작한다(예약 실행이 빠진 경우)
+    // 원장까지 받은 것은 자금 흐름을 받기 전에 먼저 저장한다 — 뒤 단계가 한도에 걸려 끊겨도 여기까지는 남는다
+    const canSave = store.enabled() && !loadFailed;
+    if (canSave && (u.changed || info.live || info.fund_changed || mktChanged)) {
+      try { info.saved = await store.save(S); } catch (e) { info.storage_error = String((e && e.message) || e).slice(0, 160); }
+    }
     let trChanged = false;
-    if (store.enabled() && u.complete) {
+    if (canSave && u.complete) {
       try {
         const daily = !!(opts && opts.daily), today = core.kday(Math.floor(Date.now() / 1000) - 946684800);
         const old = !S.trace || !S.trace.day || (Date.parse(today) - Date.parse(S.trace.day)) / 86400000 >= 2;
-        const budget = Math.min(daily ? 30000 : 5000, 52000 - (Date.now() - t0));
+        const budget = Math.min(daily ? 30000 : 5000, left(4000));
         if (budget >= 2000) { const t = await trace.update(S, { budgetMs: budget, start: daily || old }); trChanged = !!t.changed; info.trace = { fetched: t.fetched, done: t.done, left: t.left || 0 }; }
       } catch (e) { info.trace_error = String((e && e.message) || e).slice(0, 120); }
     }
-    if (store.enabled() && (u.changed || info.live || info.fund_changed || mktChanged || trChanged)) {
+    if (canSave && trChanged) {
       try { info.saved = await store.save(S); } catch (e) { info.storage_error = String((e && e.message) || e).slice(0, 160); }
     }
   } catch (e) {

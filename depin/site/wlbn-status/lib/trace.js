@@ -70,7 +70,8 @@ async function fetchNode(rpc, acct, depth, xr, price) {
 //   · 회사 계정 쪽에서 읽으므로 부정 쪽 지갑만이 아니라 모든 지갑에 같은 기준이 적용된다
 //   · 풀 계정 · 발행 계정은 읽지 않는다. 회사 계정끼리 옮긴 것은 뺀다. operations 계정의 RLUSD 는 판매 대금 기록(S.fund)이 이미 세므로 뺀다(XRP 만 남긴다)
 //   · 거래 하나 = tx[해시] = [날짜, 보낸 곳, 계정 이름, XRP, RLUSD]. 거래가 많은 계정은 최근 것만 읽으므로(maxPages) 날마다 해시로 겹치지 않게 쌓는다
-async function fetchDeposits(S, rpc, maxPages) {
+async function fetchDeposits(S, rpc, maxPages, deadline) {
+  deadline = deadline || Infinity;      // 이 시각을 넘기면 더 읽지 않는다(다 못 읽은 계정으로 표시)
   const fromSec = Date.parse(C.NOW_FROM + 'T00:00:00+09:00') / 1000 - EPOCH, SKIP = { issuer: 1, amm: 1, ammXrp: 1 };
   const inside = (a) => !!S.labels[a] || !!(S.amms && S.amms[a]) || a === C.ISSUER;
   const list = Object.keys(S.labels).filter((a) => !SKIP[S.labels[a]] && a !== C.ISSUER && !(S.amms && S.amms[a]));
@@ -90,7 +91,7 @@ async function fetchDeposits(S, rpc, maxPages) {
         out.tx[h] = [core.kday(tx.date), tx.Account, lab, a.cur === 'XRP' ? r2(a.v) : 0, a.cur === 'RL' ? r2(a.v) : 0];
       }
       marker = old ? null : (res.marker || null);
-    } while (marker && pages < maxPages);
+    } while (marker && pages < maxPages && Date.now() < deadline);
     out.accts.push([lab, n, marker ? 1 : 0]);      // [계정 이름, 읽은 거래 수, 다 못 읽었나]
   }));
   return out;
@@ -104,22 +105,25 @@ async function update(S, opts) {
   const tr = S.trace || (S.trace = { v: 1, day: '', at: 0, roots: [], nodes: {}, job: null });
   if (opts.force) { tr.day = ''; tr.job = null; }     // 배포용 자료를 만들 때: 오늘 받았어도 처음부터 다시
   if (tr.day === today && !tr.job) return { changed: false, done: true, fetched: 0 };
+  let started = false;
   if (!tr.job || tr.job.day !== today) {
-    if (opts.start === false && !tr.job) return { changed: false, done: false, fetched: 0, waiting: true };
+    if (opts.start === false) return { changed: false, done: false, fetched: 0, waiting: true };      // 화면 요청: 오늘 일이 없으면(어제 하다 만 것이 남아 있어도) 시작하지 않는다 — 새 날의 일은 예약 실행이 시작한다
     // 새 날: 먼저 회사 계정에 들어온 돈을 읽는다 — 판정(되돌린 돈)이 이 값에 달려 있어, 따라갈 지갑을 고르기 전에 읽어야 한다. 못 읽으면 전에 읽은 것을 그대로 쓴다
     try {
-      const d = await fetchDeposits(S, xrpl.makeRpc(opts.fetchImpl || fetch), opts.force ? T.depPagesFull : T.depPages), dep = tr.dep || (tr.dep = { tx: {}, accts: [], day: '' });
+      const d = await fetchDeposits(S, xrpl.makeRpc(opts.fetchImpl || fetch), opts.force ? T.depPagesFull : T.depPages, opts.force ? Infinity : t0 + budget * 0.5), dep = tr.dep || (tr.dep = { tx: {}, accts: [], day: '' });
       if (opts.force) dep.tx = {};
       Object.assign(dep.tx, d.tx); dep.accts = d.accts; dep.day = today;
     } catch (e) { /* 전에 읽은 것을 쓴다 */ }
     const roots = core.traceRoots(S);
     if (!roots.length) { tr.day = today; tr.at = Date.now(); tr.roots = []; tr.nodes = {}; tr.job = null; return { changed: true, done: true, fetched: 0 }; }
     tr.job = { day: today, roots, nodes: {}, queue: roots.map((a) => [a, 0]), seen: roots.slice(), cnt: [roots.length, 0, 0], fseen: [] };
+    started = true;
   }
   const job = tr.job, rpc = xrpl.makeRpc(opts.fetchImpl || fetch), xr = S.pX > 0 ? S.pR / S.pX : 0, price = S.pR || 0;
   const skip = (a) => a === C.ISSUER || !!S.labels[a] || !!(S.amms && S.amms[a]);          // 회사 표시 계정 · 풀 · 발행 계정은 따라가지 않는다
   let fetched = 0, failed = 0;
-  while (job.queue.length && Date.now() - t0 < budget) {
+  // 한 묶음이 몇 초 걸릴 수 있어, 남은 시간이 2.5초 아래면 새 묶음을 시작하지 않는다. 다만 이번 호출에서 아직 하나도 못 받았으면 예산 안에서 한 묶음은 받는다(조금씩이라도 나아가게)
+  while (job.queue.length && Date.now() - t0 < budget - (opts.force || !fetched ? 0 : 2500)) {
     const batch = job.queue.splice(0, T.conc).filter((q) => !(q[1] < 0 && job.nodes[q[0]]));      // 처음 채운 곳이 이미 행선지로 읽혔으면 다시 읽지 않는다
     const got = await Promise.all(batch.map((q) => fetchNode(rpc, q[0], q[1], xr, price).then((n) => [q[0], q[1], n], () => [q[0], q[1], null])));
     for (const g of got) {
@@ -143,7 +147,7 @@ async function update(S, opts) {
   }
   const done = !job.queue.length;
   if (done) { tr.nodes = job.nodes; tr.roots = job.roots; tr.day = today; tr.at = Date.now(); tr.xr = Math.round(xr * 1e4) / 1e4; tr.price = Math.round(price * 1e4) / 1e4; tr.job = null; }
-  return { changed: fetched > 0, done, fetched, failed, left: done ? 0 : job.queue.length };
+  return { changed: fetched > 0 || started, done, fetched, failed, left: done ? 0 : job.queue.length };
 }
 
 module.exports = { update, fetchNode, fetchDeposits };

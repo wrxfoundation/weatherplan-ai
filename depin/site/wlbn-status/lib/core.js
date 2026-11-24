@@ -759,7 +759,8 @@ function buildDatasets(S, opts) {
   const ranges = { all: mkRange('all', C.NOW_FROM), d30: mkRange('d30', shift(lastDay, -29)), d7: mkRange('d7', shift(lastDay, -6)) };
   // 날짜를 직접 정한 기간: opts.range = { from, to }(YYYY-MM-DD). 화면이 /api/data?from=&to= 로 청하면 run() 이 넘겨 준다. 풀 기간 밖은 잘라 맞춘다
   const DAYRE = /^\d{4}-\d{2}-\d{2}$/, cr = opts && opts.range;
-  if (cr && DAYRE.test(cr.from || '') && DAYRE.test(cr.to || '')) ranges.custom = mkRange('custom', cr.from <= cr.to ? cr.from : cr.to, cr.from <= cr.to ? cr.to : cr.from);
+  const realDay = (v) => DAYRE.test(v || '') && !isNaN(Date.parse(v + 'T00:00:00Z'));
+  if (cr && realDay(cr.from) && realDay(cr.to)) ranges.custom = mkRange('custom', cr.from <= cr.to ? cr.from : cr.to, cr.from <= cr.to ? cr.to : cr.from);
 
   // 날짜마다 많이 판 곳 · 많이 산 곳 (다섯 곳씩)
   const dayAgg = {};
@@ -1036,7 +1037,7 @@ function buildDatasets(S, opts) {
     const worse = (x, y) => (['ok', 'warn', 'bad'].indexOf(x) >= ['ok', 'warn', 'bad'].indexOf(y) ? x : y);
 
     const links = [];
-    const ds = !fundOk ? null : hasPrev && sP.r > 0 ? sW.r / sP.r - 1 : sW.r > 0 ? 1 : hasPrev ? -1 : null;
+    const ds = !fundOk ? null : hasPrev && sP.r > 0 ? sW.r / sP.r - 1 : sW.r > 0 ? 1 : null;      // 두 주 모두 0이면 견줄 수 없다(「100% 줄었다」가 아니다)
     links.push(mk('sale', '판매', '새 판매 대금이 들어오나', ds, H.sale, {
       value: ds === null ? '—' : hasPrev && sP.r > 0 ? sp(ds) : n(sW.r), metric: hasPrev && sP.r > 0 ? '판매 대금 유입 · 직전 7일 대비' : '판매 대금 유입(RLUSD)', ticks: tick(H.sale, ts),
       read: !fundOk ? '판매 대금 기록을 아직 끝까지 받지 못했다.' : '지갑 ' + n(sW.wallets) + '곳이 operations 계정으로 ' + n(sW.r) + ' RLUSD를 보냈다' + (hasPrev ? '(직전 7일 ' + n(sP.r) + ')' : '') + '.' + (sW.r > 0 ? ' 이 가운데 보상을 받는 지갑이 낸 것이 ' + n(sW.ru) + ' RLUSD(' + p1(sW.ru / sW.r) + ')다.' : ''),
@@ -1128,7 +1129,7 @@ function buildDatasets(S, opts) {
     const st = (k) => byKey[k].status;
     {
       let t;                                       // 판매
-      if (st('sale') === 'na') t = '판매 대금 기록이 모자라 판단하지 않았다.';
+      if (st('sale') === 'na') t = fundOk && sW.r === 0 && sP.r === 0 ? '최근 두 주 동안 RLUSD로 들어온 판매 대금이 없어 견주지 않았다. 카드 · 계좌 결제는 원장에 없다.' : '판매 대금 기록이 모자라 판단하지 않았다.';
       else {
         t = st('sale') === 'ok' ? 'RLUSD로 들어온 판매 대금이 직전 7일보다 늘었다.' : (st('sale') === 'warn' ? 'RLUSD로 들어온 판매 대금이 직전 7일보다 줄었다.' : 'RLUSD로 들어온 판매 대금이 직전 7일보다 크게 줄었다.') + ' 카드 · 계좌 결제는 원장에 없어, 전체 판매가 그만큼 줄었는지는 이 값만으로 알 수 없다.';
         if (L3.length === 3 && sW.r > 0 && s3 / sW.r < 0.1) t += ' ' + l3name + '은 ' + n(s3) + ' RLUSD다' + (s3p !== null ? ' — 한 주 전 같은 요일에는 ' + n(s3p) + ' RLUSD였다' + (s3p > 0 && s3 / s3p >= 0.5 ? '(요일 영향이 크다).' : s3p > 0 ? '.' : '(그때도 거의 없었다).') : '.');
@@ -1351,9 +1352,9 @@ function buildDatasets(S, opts) {
     for (const a of Object.keys(ND)) for (const b of Object.keys(ND[a].out || {})) if (ND[a].out[b][2] > 0) TAG[b] = 1;
     const who = (a, self) => {
       let kind = 'other', name = '';
-      if (L[a]) { kind = 'company'; name = tagged(labelOwner(L[a]), labelName(L[a])).full; }
-      else if (a === C.ISSUER) kind = 'issuer';
-      else if (isAmm(a)) kind = 'pool';
+      if (a === C.ISSUER || L[a] === 'issuer') kind = 'issuer';                   // 발행 계정 · 풀 계정은 이름표가 있어도 회사 계정으로 치지 않는다(되돌린 돈이 아니다)
+      else if (isAmm(a) || L[a] === 'amm' || L[a] === 'ammXrp') kind = 'pool';
+      else if (L[a]) { kind = 'company'; name = tagged(labelOwner(L[a]), labelName(L[a])).full; }
       else if (TAG[a]) kind = 'exch';
       else if (isRoot[a] && a !== self) { kind = 'root'; name = ROW[a] ? ROW[a].type_name : ''; }
       else if (ROW[a] && a !== self) { kind = 'ours'; name = ROW[a].type_name; }
