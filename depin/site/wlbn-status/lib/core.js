@@ -1329,6 +1329,9 @@ function buildDatasets(S, opts) {
       from, to, prev_from: pFrom, prev_to: pTo, days: W.length, day: D.date,
       overall: { status: overall, label: ST[overall], ok: cnt.ok, warn: cnt.warn, bad: cnt.bad, na: cnt.na, total: inIdx.length, loops: loopN, refs: refs.map((l) => l.name), counts: parts.join(' · ') },
       index, headline, takeaway, comments, links, reserves, rules, xrp, labels: ST,
+      // 창 안의 값 그대로(발표 화면이 쓴다 — 고리 글에 든 숫자와 같은 값)
+      facts: { paid_wallets: paidW.size, paid_wallets_prev: hasPrev ? paidP.size : null, new_wallets: newW, pay_days: payDays, win_days: W.length, paid_avg: Math.round(paid / W.length),
+        sell_x: Math.round(sellX), buy_all: Math.round(buyOut + botBuy), buy_out: Math.round(buyOut), bot_buy: Math.round(botBuy), payrun: payRun === null ? null : Math.round(payRun * 10) / 10 },
       limits: [LIMIT_CARD + ' 판매 고리와 매입 재원은 그만큼 낮게(나쁘게) 보일 수 있다 — 하한으로 읽는다.', 'XRP 등 다른 통화로 낸 결제, operations 말고 다른 계정으로 받은 결제도 빠져 있다.'],
     };
   };
