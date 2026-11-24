@@ -95,7 +95,8 @@ const PLAN = {
   ],
   escrow: { locked: 7951900000, n: 138 },                                    // 백서 7.3 — 11/01 에스크로 잠금
   burn: { planned: 1.5e9, device: 0.1, pass: 0.1, data: 0.5, doc_burned: 125.574954 },   // 매출 연동 매입 소각: 기기 10% · 이용권 10% · 데이터 매출 50%, 매월 집행 · 전량 소각
-  reward: { base: 7, step: 0.78, grade: 1.2, per_site: 7.14, cap: 10.5, emit: 2.665e9, tx: [0.8, 0.95] },
+  reward: { base: 7, step: 0.78, grade: 1.2, best: 8.4, per_site: 7.14, cap: 10.5, emit: 2.665e9, tx: [0.8, 0.95] },
+  pass: { per_day: 5, days: 1095 },                                         // AI 팩토리 이용권: 한 장당 하루 5개 · 3년(사이트 이용권 페이지 — content/site-canon-0910.md 「지급」 줄)
   sites: { phase1: 25000, goal: 1e6 },
   uptime: 0.8,                                                              // G4 조건: 3개월 가동률 80%
   pool_doc: { day: '2026-11-08', liq: 387860 },                             // 토크노믹스 11장: 두 풀 합산 유동성(2026-11-08 16:29 UTC)
@@ -1613,12 +1614,21 @@ function buildDatasets(S, opts) {
     const alloc = P.alloc.map((a) => ({ key: a.key, name: a.name, qty: a.qty, qty_text: eok(a.qty), share: a.qty / P.total, cond: a.cond, where: a.where + (a.live ? live[a.live] : '') }));
     const gates = P.gates.map((g) => ({ g: g.g, name: g.name, supply: g.supply, demand: g.demand, etc: g.etc, n: g.n || null, pct: g.n && has(tot) ? Math.round(Math.min(1, tot / g.n) * 1000) / 1000 : null, next: !!(next && next.g === g.g) }));
     const rows = [];
-    rows.push({ key: 'fixed', topic: '지급 원칙', policy: '정해진 수량을 준다 — 지점당 하루 ' + P.reward.base + '개 × ' + P.reward.step + '^(단계−1) × 품질 등급(0~' + P.reward.grade + '). 가격 · 수익률 · 회수 기간은 약속하지 않는다.',
-      now: has(s.epoch_distributed) && has(act) && act > 0 ? s.epoch_date + ' 배분 ' + n(s.epoch_distributed) + '개 · 활성 기기 ' + n(act) + '대 → 한 대당 ' + (s.epoch_distributed / act).toFixed(1) + '개' : '공시 값을 받지 못했다',
-      note: '사이트 공시 값끼리 나눈 것이다. 등급 · 전송률(95% 이상 전액 · 80~95% 감액 · 80% 미만 0)에 따라 한 대당 수량이 달라지고, 발행됐지만 설치 전인 NFT도 정해진 수량을 받는다고 문서는 적는다.' });
+    // 지급 원칙: 기기 7개 · AI 이용권 5개를 그대로 지급 중(11/24 서우 확인). 사이트 공시 하루 배분을 활성 기기 수로 나누지 않는다 — 공시 값의 구성이 달라 「한 대당 3.3개」처럼 실제와 어긋난 숫자가 나왔다
+    //   원장 근거: 지갑이 하루에 받은 양(walletDays 의 둘째 칸 · 정수로 반올림)이 7과 5의 조합인 건수. 첫날(재지급)은 세지 않는다
+    const day0 = md(C.NOW_FROM), recs = [];
+    for (const id of Object.keys(walletDays.w)) for (const r of walletDays.w[id]) if (r[0] >= 1 && r[1] > 0) recs.push(r[1]);
+    const isMix = (v) => { for (let a = 0; P.reward.base * a <= v; a++) if ((v - P.reward.base * a) % P.pass.per_day === 0) return true; return false; };
+    // 24개 이상은 어떤 정수든 7과 5로 만들 수 있다(만들 수 없는 가장 큰 수가 23) — 조합인지 따지는 것은 그보다 작은 값에서만 뜻이 있다
+    const lim = (P.reward.base - 1) * (P.pass.per_day - 1), small = recs.filter((x) => x < lim);
+    const cnt = (v) => recs.filter((x) => x === v).length, mixN = small.filter(isMix).length, both = P.reward.base + P.pass.per_day;
+    rows.push({ key: 'fixed', topic: '지급 원칙', policy: '정해진 수량을 준다 — DePIN 기기(지점)는 한 대당 하루 ' + P.reward.base + '개 × ' + P.reward.step + '^(단계−1) × 품질 등급(0~' + P.reward.grade + ') · AI 이용권은 한 장당 하루 ' + P.pass.per_day + '개(이용권 페이지 · 3년). 가격 · 수익률 · 회수 기간은 약속하지 않는다.',
+      now: '그대로 지급 중이다 — 기기 한 대당 하루 ' + P.reward.base + '개 · AI 이용권 한 장당 하루 ' + P.pass.per_day + '개(' + md(P.src.read) + ' 운영 확인).' + (small.length ? ' 원장에서 지갑이 하루에 받은 양 가운데 ' + lim + '개 미만인 ' + n(small.length) + '건을 보면 ' + n(mixN) + '건(' + p1(mixN / small.length) + ')이 ' + P.reward.base + '과 ' + P.pass.per_day + '의 조합이다 — ' + P.reward.base + '개 ' + n(cnt(P.reward.base)) + '건 · ' + (P.reward.base * 2) + '개 ' + n(cnt(P.reward.base * 2)) + '건 · ' + both + '개(' + P.reward.base + ' + ' + P.pass.per_day + ') ' + n(cnt(both)) + '건 · ' + P.pass.per_day + '개 ' + n(cnt(P.pass.per_day)) + '건.' : ''),
+      pay_recs: small.length, pay_mix: mixN,
+      note: lim + '개 이상(' + n(recs.length - small.length) + '건 · 여러 날 치나 여러 대 몫)은 어떤 수든 ' + P.reward.base + '과 ' + P.pass.per_day + '로 만들 수 있어 세지 않았다. 조합이 아닌 값은 대부분 ' + Math.round(P.reward.best) + '개(' + n(cnt(Math.round(P.reward.best))) + '건)다 — 문서의 우수 등급은 ' + P.reward.best + '개이고, 이 화면의 받은 양은 정수로 반올림한 값이다. 전송률(95% 이상 전액 · 80~95% 감액 · 80% 미만 0)에 따라 달라질 수 있고, 여러 날 치를 한 번에 받은 기록도 있다. 첫날(' + day0 + ' 재지급)은 세지 않았다.' });
     rows.push({ key: 'budget', topic: '하루 예산', policy: '에폭 예산 = 활성 지점 × ' + P.reward.per_site + ' × 단계 계수. 못 준 몫은 다시 나누되 지점당 ' + P.reward.cap + '개까지, 넘는 몫은 소각.',
-      now: has(s.epoch_budget) ? '공시 하루 예산 ' + n(s.epoch_budget) + '개' + (has(s.epoch_distributed) && s.epoch_budget > 0 ? ' · 배분 ' + p1(s.epoch_distributed / s.epoch_budget) : '') + (has(act) ? ' · 활성 기기 기준으로는 ' + n(act * P.reward.per_site) + '개' : '') : '공시 값을 받지 못했다',
-      note: '공시 하루 예산은 1단계 목표 ' + n(P.sites.phase1) + '지점 × ' + P.reward.base + '개와 같은 수다.' });
+      now: has(s.epoch_budget) ? '공시 하루 예산 ' + n(s.epoch_budget) + '개' + (has(s.epoch_distributed) ? ' · 공시 하루 배분 ' + n(s.epoch_distributed) + '개(' + s.epoch_date + ')' : '') : '공시 값을 받지 못했다',
+      note: '공시 하루 예산은 1단계 목표 ' + n(P.sites.phase1) + '지점 × ' + P.reward.base + '개와 같은 수다. 두 값 모두 사이트가 공시한 값 그대로다.' });
     rows.push({ key: 'uptime', topic: '가동률', policy: 'G4 조건: 3개월 가동률 ' + p1(P.uptime).replace('.0%', '%') + '. 지켜보는 지표는 가격이 아니라 판매 완료 · 가동률 · 데이터 매출.',
       now: up === null ? '공시 값을 받지 못했다' : '등록 기기 ' + n(tot) + '대 가운데 활성 ' + n(act) + '대 — ' + p1(up),
       note: '등록 대비 활성 비율이다. 문서의 가동률(3개월)과는 재는 법이 다를 수 있어 견주어 판정하지 않는다. 데이터 매출은 원장에 없다.' });
