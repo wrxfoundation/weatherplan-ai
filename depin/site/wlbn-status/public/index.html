@@ -208,7 +208,7 @@ td .pc { display: block; margin-top: 1px; color: var(--faint); font-size: calc(1
 .sig-l { margin: 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 5px 6px; }
 .sg { display: inline-flex; align-items: baseline; gap: 6px; padding: 3px 10px; border-radius: 999px; background: var(--st-bg); color: var(--fg); font-size: var(--t-xs); line-height: 1.5; text-decoration: none; white-space: nowrap; }
 .sg b { font-weight: 700; font-variant-numeric: tabular-nums; } .sg-x { color: var(--muted); } .sg:hover { box-shadow: inset 0 0 0 1px var(--st); } .sig-none { padding: 3px 0; font-size: var(--t-xs); color: var(--faint); }
-.sig-note { margin: 0; font-size: var(--t-xs); color: var(--faint); }
+.sig-note { margin: 0; font-size: var(--t-xs); color: var(--faint); } .note.intro { color: var(--muted); } .note.intro a { color: inherit; text-underline-offset: 3px; }
 @media (max-width: 560px) { .sig-row { grid-template-columns: minmax(0, 1fr); } .sig { padding: 11px 12px; } .sg { white-space: normal; flex-wrap: wrap; border-radius: 14px; } }
 .brief { display: grid; grid-template-columns: 304px minmax(0, 1fr); gap: 16px 28px; align-items: start; }
 /* 선순환 지수(0~100): 게이지 · 상태 · 고리별 점수 · 계산 · 추이 (11/22 7차 — 서우 「신호등으로만 하기에는 너무 단편적 · 0-100 지수 게이지」) */
@@ -620,7 +620,7 @@ html.rpt .chap, html.rpt .sec-h, html.rpt .blk-h, html.rpt .h2, html.rpt .h3 { b
     </div>
   </div>
 </div>
-<div class="banner" data-stale hidden><p>최신 자료를 받지 못해 배포할 때 들어 있던 자료를 보여 주고 있습니다. 잠시 뒤 「새로 불러오기」를 눌러 보세요.</p></div>
+<div class="banner" data-stale hidden><p>최신 자료를 받지 못해 미리 넣어 둔 자료(기준 시각까지)를 보여 주고 있습니다. 잠시 뒤 「새로 불러오기」를 눌러 보세요.</p></div>
 
 <main class="page">
   <header class="rpt-head" id="rpt-head" aria-hidden="true"></header>
@@ -629,6 +629,7 @@ html.rpt .chap, html.rpt .sec-h, html.rpt .blk-h, html.rpt .h2, html.rpt .h3 { b
 
   <section class="sec panel" id="board" aria-labelledby="h-board">
     <h2 class="h2" id="h-board">지표 모아보기 <span class="period" data-period>—</span></h2>
+    <p class="note intro"><b>이 화면은</b> WLBN이 얼마나 지급되고 팔리는지, 그 물량을 누가 받아내는지, 회사 계정에 쓸 돈이 얼마나 남았는지를 원장(XRP Ledger의 공개 거래 기록)에서 읽어 매일 정리한다. <b>WLBN</b>은 Wellbian이 기기 운영 보상으로 지급하는 토큰이고, 값은 <b>RLUSD</b>(1달러에 맞춘 코인)로 적는다. 낱말 풀이는 맨 아래 <a href="#notes">읽는 법</a>에 있다.</p>
     <p class="note">아래 구역의 핵심 지표를 <b>그림 열두 장</b>으로 한데 모았다. 제목을 누르면 자세한 구역으로 간다. 지수 · 고리 · 여력은 늘 최근 7일, 나머지는 위에서 고른 기간이다.</p>
     <div class="tools dr" id="board-range" role="group" aria-label="날짜 지정">
       <span class="dr-l">날짜 지정</span>
@@ -689,12 +690,12 @@ html.rpt .chap, html.rpt .sec-h, html.rpt .blk-h, html.rpt .h2, html.rpt .h3 { b
       <summary>지수 · 점수 기준</summary>
       <div class="scroll"><table id="tb-rules" class="words" aria-label="신호 기준"><thead></thead><tbody></tbody></table></div>
       <ul class="list">
-        <li data-h-rule="0">선순환 지수는 여섯 고리 점수의 평균과 가장 낮은 고리 점수를 반씩 섞은 값이다.</li>
+        <li data-h-rule="0">선순환 지수는 다섯 고리(판매는 참고) 점수의 평균과 가장 낮은 고리 점수를 반씩 섞은 값이다.</li>
         <li data-h-rule="1">고리 점수(0~100)는 보는 값이 기준선 사이 어디쯤인지를 옮긴 것이다.</li>
         <li data-h-rule="2" hidden></li>
         <li>지수 추이는 같은 계산을 하루씩 앞당긴 7일 창으로 되풀이한 값이다. 직전 7일과 견줄 수 있는 날부터 그린다.</li>
         <li>늘 최근 7일(오늘 제외)을 직전 7일과 견준다. 위쪽의 기간 선택과는 상관없다.</li>
-        <li>판매 대금은 밖의 지갑이 operations 계정으로 보낸 RLUSD로 본다. 금액이 같은 단위로 되풀이되어 기기 · 이용권 값으로 보았다.</li>
+        <li>판매 대금은 밖의 지갑이 operations 계정으로 보낸 RLUSD로 본다. 같은 금액이 되풀이되어 기기 · 이용권 값으로 보았다(추정).</li>
         <li><b>카드 · 계좌로 결제한 기기와 이용권은 원장에 없다.</b> 그래서 판매 고리와 매입 재원은 RLUSD 결제분만으로 매긴 값이고, 실제 판매가 더 많으면 신호는 지금보다 좋게 나온다. 카드 판매액을 따로 알면 그만큼 더해서 읽는다.</li>
         <li>Wellbian bot 계정이 쓰는 RLUSD와 XRP는 operations · treasury 계정에서 들어온다(원장에서 확인). 그래서 bot이 산 양도 수요에 넣고, 그 지출이 판매 대금 안인지는 「매입 재원」에서 따로 본다. 매입 여력에는 세 계정의 잔액을 더했다.</li>
         <li>기준 숫자는 운용 점검용으로 정한 값이고 바꿀 수 있다. 지나간 기록으로 매긴 신호이며 앞날을 내다보는 값이 아니다.</li>
@@ -724,17 +725,17 @@ html.rpt .chap, html.rpt .sec-h, html.rpt .blk-h, html.rpt .h2, html.rpt .h3 { b
   <section class="sec panel" id="sum" aria-labelledby="h-sum">
     <h2 class="h2" id="h-sum">한눈에 <span class="period" data-period>—</span></h2>
     <p class="lede">일반 사용자 지갑은 <b data-n="k.user_paid">—</b>개를 받고 <b data-n="k.user_sold">—</b>개를 팔았다<span data-show="k.user_sold_share">. 받은 양의 <b data-n="k.user_sold_share" data-fmt="pct" data-tone="holdP">—</b>다</span>. 판 대금은 <b data-n="k.user_got_rlusd">—</b> RLUSD와 <b data-n="k.user_got_xrp">—</b> XRP로 받았다.</p>
-    <p class="say">시장 전체로는 산 양이 판 양보다 <span data-tone="demandP"><b data-n="k.net_bought_total" data-fmt="abs">—</b>개 <span data-when="k.net_bought_total" data-is="pos">많다</span><span data-when="k.net_bought_total" data-is="neg">적다</span></span>. 산 양 <b data-n="k.buy_total">—</b>개 가운데 <b data-n="k.bot_bought">—</b>개(<b data-n="k.bot_buy_share" data-fmt="pct" data-tone="botP">—</b>)는 Wellbian bot 계정이 샀다.</p>
+    <p class="say">시장 전체로는 산 양이 판 양보다 <span data-tone="demandP"><b data-n="k.net_bought_total" data-fmt="abs">—</b>개 <span data-when="k.net_bought_total" data-is="pos">많다</span><span data-when="k.net_bought_total" data-is="neg">적다</span></span>. 거래 상대가 풀이라 지갑들이 산 양과 판 양은 같지 않다(그 차이만큼 풀의 WLBN이 줄거나 는다). 산 양 <b data-n="k.buy_total">—</b>개 가운데 <b data-n="k.bot_bought">—</b>개(<b data-n="k.bot_buy_share" data-fmt="pct" data-tone="botP">—</b>)는 Wellbian bot 계정이 샀다.</p>
     <div class="tiles">
       <article class="card" id="t-paid">
         <h3 class="card-h">지갑으로 받은 양</h3>
         <p class="big"><span data-n="k.user_paid">—</span><span class="unit">WLBN</span></p>
-        <p class="sub">지갑 <b data-n="k.wallets_paid">—</b>곳<span data-show="k.user_repaid"> · 10/26 재지급 <b data-n="k.user_repaid">—</b> 포함</span><span data-prev="user_paid"></span></p>
+        <p class="sub">받은 지갑 <b data-n="k.wallets_paid">—</b>곳<span data-show="k.user_repaid"> · 10/26 재지급 <b data-n="k.user_repaid">—</b> 포함</span><span data-prev="user_paid"></span></p>
       </article>
       <article class="card" id="t-sold">
         <h3 class="card-h">판 양</h3>
         <p class="big"><span data-n="k.user_sold">—</span><span class="unit">WLBN</span></p>
-        <p class="sub"><span data-show="k.user_sold_share">받은 양의 <b data-n="k.user_sold_share" data-fmt="pct" data-tone="holdP">—</b> · </span>판 지갑 <b data-n="k.wallets_sold">—</b>곳 · 되산 양 <b data-n="k.user_bought">—</b><span data-prev="user_sold"></span></p>
+        <p class="sub"><span data-show="k.user_sold_share">받은 양의 <b data-n="k.user_sold_share" data-fmt="pct" data-tone="holdP">—</b> · </span>판 지갑 <b data-n="k.wallets_sold">—</b>곳 · 도로 산 WLBN <b data-n="k.user_bought">—</b><span data-prev="user_sold"></span></p>
       </article>
       <article class="card" id="t-cash">
         <h3 class="card-h">팔아서 받은 대금</h3>
@@ -882,6 +883,7 @@ html.rpt .chap, html.rpt .sec-h, html.rpt .blk-h, html.rpt .h2, html.rpt .h3 { b
   <section class="sec panel" id="accounts" aria-labelledby="h-accounts">
     <h2 class="h2" id="h-accounts">Wellbian · KWeather 계정의 움직임 <span class="period" data-period>—</span></h2>
     <p class="note">wellbian.io가 이름을 붙여 공개한 계정이다. 칩은 어느 회사 계정인지, 그 뒤 글자는 사이트가 붙인 이름이다. <b>「지금」이 붙은 열은 지금 잔액</b>이고, 나머지는 <b>고른 기간의 합계</b>다.</p>
+    <p class="note"><b>계정이 하는 일</b>(원장에서 확인되는 것만): <b>operations</b> — 보상(WLBN)을 지급하고 기기 · 이용권 판매 대금(RLUSD)을 받는다 · <b>bot</b> — 풀에서 WLBN을 사들인다(쓰는 돈은 operations · treasury 계정에서 들어온다) · <b>treasury</b> — 잠기지 않은 WLBN의 대부분을 보관한다 · <b>match · seed · staking</b> — 사이트가 붙인 이름이며 쓰임은 원장만으로 알 수 없다 · <b>KWeather</b> — 기기 파트너 KWeather의 계정이다.</p>
     <div class="tools end"><button type="button" class="link" data-csv="accounts">CSV 받기</button></div>
     <div class="scroll"><table id="tb-accounts" aria-label="Wellbian · KWeather 계정"><thead></thead><tbody></tbody></table></div>
     <p class="note rpt-only">보고서에는 주요 열만 담았다 — 낸 돈 · 풀에 넣은 것은 화면이나 「CSV 받기」에서 본다.</p>
@@ -911,7 +913,7 @@ html.rpt .chap, html.rpt .sec-h, html.rpt .blk-h, html.rpt .h2, html.rpt .h3 { b
   </section>
 
   <section class="sec panel" id="trace" data-need="trace" hidden aria-labelledby="h-trace">
-    <h2 class="h2" id="h-trace">부정 쪽 지갑 자금 흐름 · 유입 전과 행선지 <span class="period" data-tr-day>—</span><button type="button" class="q" data-help="t:trace" aria-label="자금 흐름 추적 설명">?</button></h2>
+    <h2 class="h2" id="h-trace">부정 쪽 지갑 자금 흐름 · 어디서 받아 어디로 보냈나 <span class="period" data-tr-day>—</span><button type="button" class="q" data-help="t:trace" aria-label="자금 흐름 추적 설명">?</button></h2>
     <p class="note">「부정」 · 「매우 부정」 지갑이 <b>WLBN을 어디서 얻었고(유입 전)</b>, 판 대금과 WLBN을 <b>어디로 보냈는지(행선지 · 3단계까지)</b> 원장에서 따라간 결과다. <b>전체 기간 기준 · 하루 한 번 갱신</b>이라 위쪽 기간 단추 · 날짜 지정과 무관하다.</p>
     <div class="tiles four" id="trace-tiles"></div>
     <h3 class="h3">양상 · 어떤 지갑들인가</h3>
@@ -930,7 +932,7 @@ html.rpt .chap, html.rpt .sec-h, html.rpt .blk-h, html.rpt .h2, html.rpt .h3 { b
   </section>
 
   <section class="sec panel" id="deep" data-need="deep" hidden aria-labelledby="h-deep">
-    <h2 class="h2" id="h-deep">온체인 심층 <span class="period" data-d-win>—</span></h2>
+    <h2 class="h2" id="h-deep">온체인 심층 · 언제 얼마에 받은 물량인가 <span class="period" data-d-win>—</span></h2>
     <p class="note">비트코인 · 이더리움 · XRP 분석 사이트들이 흐름을 볼 때 쓰는 지표를 WLBN 원장 기록으로 옮겼다. <b>보상을 받는 지갑과 그 밖의 지갑</b>이 가진 WLBN을 본다(회사 계정 · 사고팔기 지갑 제외). 원래 이름과 바꾼 점은 <b>?</b>와 맨 아래 대조표에 적었다.</p>
     <div class="tiles four" id="d-tiles"></div>
     <ul class="cap points" id="d-notes"></ul>
@@ -984,7 +986,7 @@ html.rpt .chap, html.rpt .sec-h, html.rpt .blk-h, html.rpt .h2, html.rpt .h3 { b
   <section class="sec panel" id="wtable" aria-labelledby="h-wtable">
     <h2 class="h2" id="h-wtable">지갑별 표 · 유형과 따라가 보기 <span class="period" data-period>—</span></h2>
     <h3 class="h3">지갑 유형별로 보면</h3>
-    <p class="note">고른 기간의 움직임으로 지갑마다 유형을 붙였다. <b>「생태계 기여」</b>는 그 유형에 든 지갑들의 기여 5단계를 평균한 자리다(매우 긍정 +2 · 긍정 +1 · 보통 0 · 부정 −1 · 매우 부정 −2). 막대는 단계별 지갑 분포이고, <b>줄은 긍정 → 부정 순</b>이다. <b>줄을 누르면</b> 아래 표가 그 유형만 보여 준다.</p>
+    <p class="note">고른 기간의 움직임으로 지갑마다 유형을 붙였다. 유형은 움직임의 꼴(받는 대로 판다 · 모아 둔다 …)이고 기여 단계는 돈과 물량을 따진 판정이라 서로 다르다 — 「받는 대로 파는 지갑」이어도 가져간 돈보다 더 많이 되돌렸으면 긍정일 수 있다. <b>「생태계 기여」</b>는 그 유형에 든 지갑들의 기여 5단계를 평균한 자리다(매우 긍정 +2 · 긍정 +1 · 보통 0 · 부정 −1 · 매우 부정 −2). 막대는 단계별 지갑 분포이고, <b>줄은 긍정 → 부정 순</b>이다. <b>줄을 누르면</b> 아래 표가 그 유형만 보여 준다.</p>
     <ul class="cap points" id="type-scale"></ul>
     <div class="scroll"><table id="tb-types" aria-label="지갑 유형별 합계와 생태계 기여 척도"><thead></thead><tbody></tbody></table></div>
     <div class="card" id="wallet-panel" data-tail hidden>
@@ -1016,7 +1018,7 @@ html.rpt .chap, html.rpt .sec-h, html.rpt .blk-h, html.rpt .h2, html.rpt .h3 { b
 
   <section class="sec panel" id="where" aria-labelledby="h-where">
     <h2 class="h2" id="h-where">WLBN은 지금 어디에 있나</h2>
-    <p class="say">전체 <b data-n="s.total_supply">—</b>개 가운데 대부분은 잠겨 있거나 Wellbian treasury 계정에 있다. 막대는 위 네 줄을 뺀 나머지끼리 견준 길이다.</p>
+    <p class="say">전체 <b data-n="s.total_supply">—</b>개 가운데 대부분은 잠겨 있거나 Wellbian treasury 계정에 있다. 막대는 아래 목록의 첫 네 줄(잠금 · treasury · seed · staking)을 뺀 나머지끼리 견준 길이다.</p>
     <ul class="pos" id="pos-list"></ul>
   </section>
 
@@ -1025,7 +1027,7 @@ html.rpt .chap, html.rpt .sec-h, html.rpt .blk-h, html.rpt .h2, html.rpt .h3 { b
     <dl class="facts">
       <div class="fact"><dt>DexScreener 가격</dt><dd><span data-n="s.price_usd_dex" data-fmt="f4">—</span>달러</dd></div>
       <div class="fact"><dt>최근 24시간 거래 · DexScreener, XRP 풀</dt><dd>매수 <span data-n="s.dex_h24_buys">—</span>건 · 매도 <span data-n="s.dex_h24_sells">—</span>건 · <span data-n="s.dex_h24_volume_usd">—</span>달러</dd></div>
-      <div class="fact"><dt>WLBN을 가진 지갑</dt><dd><span data-n="s.holders">—</span>곳 (신뢰선 <span data-n="s.trustlines">—</span>)</dd></div>
+      <div class="fact"><dt>WLBN을 가진 지갑</dt><dd><span data-n="s.holders">—</span>곳 (WLBN을 받도록 열어 둔 지갑인 신뢰선 <span data-n="s.trustlines">—</span>)</dd></div>
       <div class="fact"><dt>등록 기기</dt><dd><span data-n="s.devices_total">—</span>대 (활성 <span data-n="s.devices_active">—</span>) · 운영자 <span data-n="s.operators">—</span>곳</dd></div>
       <div class="fact"><dt>KWeather 계정의 기기</dt><dd><span data-n="s.kweather_devices">—</span>대</dd></div>
       <div class="fact"><dt>하루 배분 · <span data-n="s.epoch_date" data-fmt="text">—</span></dt><dd><span data-n="s.epoch_distributed">—</span>개 배분 · 하루 예산 <span data-n="s.epoch_budget">—</span>개</dd></div>
@@ -1041,7 +1043,10 @@ html.rpt .chap, html.rpt .sec-h, html.rpt .blk-h, html.rpt .h2, html.rpt .h3 { b
   <section class="sec panel" id="notes" aria-labelledby="h-notes">
     <h2 class="h2" id="h-notes">읽는 법</h2>
     <dl class="gloss">
-      <div><dt>긍정 · 지켜봄 · 부정 표시</dt><dd>초록 ✓ 는 긍정, 노랑 ! 는 지켜봄, 빨강 ✕ 는 부정이다(「오늘의 현황」의 좋음 · 지켜봄 · 주의와 같은 뜻). 카드 제목 · 구역 머리의 개수 · 코멘트 줄 머리 · 글 속 숫자에 같은 표시가 붙고, 맨 위 「긍정 · 부정 한눈에」가 그 모음이다. 판정 기준이 있는 지표에만 붙이며, 표시가 없는 줄은 어느 쪽으로도 가르지 않은 것이다. <b>가격은 평가하지 않는다</b> — 가격 변화와 시장 대비는 숫자만 보여 준다. 지나간 기록으로 매긴 신호이고 앞날을 내다보는 값이 아니다.</dd></div>
+      <div><dt>긍정 · 지켜봄 · 부정 표시</dt><dd>초록 ✓ 는 긍정, 노랑 ! 는 지켜봄, 빨강 ✕ 는 부정이다(「오늘의 현황」의 좋음 · 지켜봄 · 주의와 같은 뜻). 카드 제목 · 구역 머리의 개수 · 코멘트 줄 머리 · 글 속 숫자에 같은 표시가 붙고, 맨 위 「지표 모아보기」의 긍정 요소 · 지켜볼 것 · 부정 요소 세 줄이 그 모음이다. 판정 기준이 있는 지표에만 붙이며, 표시가 없는 줄은 어느 쪽으로도 가르지 않은 것이다. <b>가격은 평가하지 않는다</b> — 가격 변화와 시장 대비 숫자에는 표시를 붙이지 않는다(「오늘의 현황」의 가격 고리 점수는 선순환 지수 계산에 그대로 쓰인다). 지나간 기록으로 매긴 신호이고 앞날을 내다보는 값이 아니다.</dd></div>
+      <div><dt>WLBN · RLUSD · XRP · 원장</dt><dd>WLBN은 Wellbian이 기기 운영 보상으로 지급하는 토큰이다. RLUSD는 1달러에 값을 맞춘 코인, XRP는 XRP Ledger의 기본 통화다. 원장은 XRP Ledger에 남는 공개 거래 기록이고, 이 화면의 숫자는 모두 거기서 읽었다.</dd></div>
+      <div><dt>재지급(10월 26~27일)</dt><dd>10월 24일 밤 옛 지갑들의 WLBN이 한 주소로 옮겨져, 10월 26~27일에 지급 계정이 새 지갑들로 다시 지급했다. 이 재지급분은 「받은 양」에 들어 있어서, 전체 기간의 「받은 양 가운데 판 비율」은 그만큼 낮게 나온다. 지금의 풀 두 곳은 10월 27일에 열렸고, 이 화면은 10월 26일부터 센다.</dd></div>
+      <div><dt>판매 대금 · 다시 산 돈</dt><dd>밖의 지갑이 operations 계정으로 보낸 RLUSD다. 같은 금액이 되풀이되어 기기 · 이용권 값으로 보았다(추정). 회사 쪽에서 보면 「판매 대금」, 보낸 지갑 쪽에서 보면 「다시 산 돈」이다. WLBN을 파는 「판 양」과는 다른 것이다.</dd></div>
       <div><dt>받은 양(수령)</dt><dd>지급 계정에서 지갑으로 들어온 WLBN. 기기 보상 말고도 지급 계정이 보낸 모든 WLBN이 들어 있다.</dd></div>
       <div><dt>판 양 · 산 양</dt><dd>지갑의 WLBN이 줄고 RLUSD나 XRP가 늘면 판 것, 반대면 산 것으로 센다. 「RLUSD로 · XRP로 판 양」은 받은 통화로 나눈 수량이다.</dd></div>
       <div><dt>풀</dt><dd>WLBN과 RLUSD, WLBN과 XRP를 맞바꾸는 두 곳. 누가 넣어 둔 양으로 거래가 이뤄진다.</dd></div>
@@ -1050,7 +1055,7 @@ html.rpt .chap, html.rpt .sec-h, html.rpt .blk-h, html.rpt .h2, html.rpt .h3 { b
       <div><dt>처음 보상받은 날</dt><dd>지급 계정이 그 지갑으로 WLBN을 처음 보낸 날(원장 전체 기록). 10월 24일에 지갑이 바뀐 경우 금액이 같으면 옛 지갑의 날짜로 잇는다(추정).</dd></div>
       <div><dt>XRP 값</dt><dd>두 풀의 가격으로 계산한 1 XRP의 RLUSD 값. 시장 시세와 조금 다를 수 있다.</dd></div>
       <div><dt>그 밖의 경로</dt><dd>두 풀을 거치지 않은 거래. 지갑끼리 호가로 맞바꾼 경우 등이다.</dd></div>
-      <div><dt>가져간 돈 · 되돌린 돈</dt><dd>가져간 돈은 WLBN을 팔아 받은 돈(RLUSD 환산). 되돌린 돈은 WLBN을 사며 낸 돈과 operations 계정으로 보낸 RLUSD(다시 산 돈)를 더한 값.</dd></div>
+      <div><dt>가져간 돈 · 되돌린 돈</dt><dd>가져간 돈은 WLBN을 팔아 받은 돈(RLUSD 환산). 되돌린 돈은 WLBN을 사며 낸 돈 + operations 계정으로 보낸 RLUSD(다시 산 돈) + 다른 회사 계정(match · treasury 등)에 넣은 XRP · RLUSD를 더한 값. 회사 계정에 넣은 돈이 무슨 거래인지는 원장만으로 알 수 없다.</dd></div>
       <div><dt><span class="ichip vp">매우 긍정</span> <span class="ichip p">긍정</span> <span class="ichip n">보통</span> <span class="ichip ng">부정</span> <span class="ichip vn">매우 부정</span></dt><dd>지갑을 고른 기간의 움직임으로 나눈 생태계 기여 다섯 단계. 기준은 「기여 5단계」 구역 위에 적었다. 기간을 바꾸면 같은 지갑도 달리 나뉠 수 있다.</dd></div>
       <div><dt>판매 대금</dt><dd>밖의 지갑이 operations 계정으로 보낸 RLUSD. <b>카드 · 계좌로 결제한 것은 원장에 없어 빠진다</b> — 실제 판매보다 적게 잡힌다.</dd></div>
     </dl>
@@ -1061,7 +1066,7 @@ html.rpt .chap, html.rpt .sec-h, html.rpt .blk-h, html.rpt .h2, html.rpt .h3 { b
         <li>RLUSD 환산은 받은 XRP를 그 시점 두 풀의 가격으로 바꿔 더한 값이다. 원화로 바꿨는지, 거래소로 보냈는지는 원장만으로 알 수 없다.</li>
         <li>지갑 묶음은 원장 기록으로 나눈 것이다. 칩이 붙은 Wellbian · KWeather 계정 말고는 지갑이 누구 것인지 알 수 없고, 한 사람이 지갑을 여러 개 쓸 수 있다.</li>
         <li>일반 사용자 지갑의 판 양에는 그 지갑이 풀에서 샀다가 다시 판 양도 들어 있다.</li>
-        <li>「최근 7일」「최근 30일」은 오늘을 포함한 날 수다. 오늘 값은 기준 시각까지다.</li>
+        <li>위쪽 기간 단추의 「최근 7일」「최근 30일」은 오늘을 포함한 날 수다(오늘 값은 기준 시각까지). 「오늘의 현황」과 선순환 지수의 「최근 7일」은 어제까지 7일이다.</li>
         <li>원장에서 읽은 숫자와 사이트 · DexScreener 값은 받은 시각이 몇 분씩 다르다.</li>
         <li>카드 · 계좌 결제는 원장 밖의 일이다. 이 화면의 판매 대금 · 매입 재원 · 다시 산 돈 · 되돌린 돈은 모두 원장에 남은 RLUSD만 센 값이라, 카드로 산 만큼 낮게 나온다.</li>
       </ul>
@@ -1085,7 +1090,7 @@ html.rpt .chap, html.rpt .sec-h, html.rpt .blk-h, html.rpt .h2, html.rpt .h3 { b
   var DATA = null, RANGE = 'all', QUERY = '', SHOWALL = false, WSORT = { key: 'act', dir: -1 }, TOP = 30, WT = null;
   var WG = 'user', SELW = null;
   var WI = 'all';   // 생태계 기여 5단계 거르기(vp · p · n · ng · vn)
-  var WF = 'all', SELDAY = null, SIDE = 'sell', LASTOK = 0, LASTTRY = 0, REFRESH_MS = 15 * 60 * 1000;
+  var WF = 'all', SELDAY = null, SIDE = 'sell', LASTOK = 0, LASTTRY = 0, SOON = 0, REFRESH_MS = 15 * 60 * 1000;
   var $ = function (s, r) { return (r || document).querySelector(s); };
   var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
   function md(s) { var p = String(s).split('-'); return p.length === 3 ? (+p[1]) + '/' + (+p[2]) : String(s); }
@@ -1111,7 +1116,7 @@ html.rpt .chap, html.rpt .sec-h, html.rpt .blk-h, html.rpt .h2, html.rpt .h3 { b
   var MARKET = ['user', 'arb', 'other', 'bot'];
 
   var CUSTOM = null;      // 날짜를 직접 정한 기간 { from, to }. 그 범위의 합계(ranges.custom)는 서버가 계산해 준다(/api/data?from=&to=)
-  function dataUrl() { return 'api/data' + (CUSTOM ? '?from=' + CUSTOM.from + '&to=' + CUSTOM.to : ''); }
+  function dataUrl() { return 'api/data' + (CUSTOM ? '?from=' + CUSTOM.from + '&to=' + CUSTOM.to + (DATA ? '&v=' + encodeURIComponent(DATA.summary[0].as_of) : '') : ''); }      // v = 지금 자료의 기준 시각(날짜 지정 응답이 묵은 보관본으로 오지 않게)
   function ctx() { var r = DATA.ranges[RANGE] || DATA.ranges.all; return { s: DATA.summary[0], k: r.kpi, r: r }; }
   function pick(path, c) { var p = path.split('.'), o = c; for (var i = 0; i < p.length; i++) o = (o === null || o === undefined) ? null : o[p[i]]; return o === undefined ? null : o; }
 
@@ -1336,15 +1341,17 @@ html.rpt .chap, html.rpt .sec-h, html.rpt .blk-h, html.rpt .h2, html.rpt .h3 { b
     var W7 = '최근 7일', WP = '고른 기간';
     if (h) {                                         // 오늘의 현황: 고리 · 운용 점검의 판정을 그대로
       if (h.index) add('idx', 'today', h.index.status, '선순환 지수', h.index.value + '점', h.overall.label, W7);
-      h.links.concat(h.reserves).forEach(function (l) { if (l.key === 'price') return; add('h_' + l.key, 'today', l.ref && l.status === 'bad' ? 'warn' : l.status, l.name + (l.ref ? '(참고)' : ''), l.value, l.short + (l.ref ? ' · 자료가 불완전해 지수에서 뺀 고리라 지켜봄까지만 올린다' : ''), W7); });
+      // 칩에는 고리 이름 대신 숫자가 무엇인지 적는다 — 「판매」는 기기 · 이용권 판매 대금(WLBN 매도가 아님), 「보유」의 숫자는 판 비율, 「매입 재원」의 숫자는 지출 ÷ 수입이라 이름만 보면 반대로 읽힌다
+      var HN = { sale: '기기 판매 대금', pay: '보상 받는 지갑', hold: '판 비율 · 최근 7일', pool: '유동성 · 최근 7일', demand: '판 양 대비 산 양 · 최근 7일', payrun: '지급 여력', buyrun: '매입 여력', cover: '매입 지출 ÷ 판매 대금' };
+      h.links.concat(h.reserves).forEach(function (l) { if (l.key === 'price') return; add('h_' + l.key, 'today', l.ref && l.status === 'bad' ? 'warn' : l.status, (HN[l.key] || l.name) + (l.ref ? '(참고)' : ''), l.value, l.short + (l.ref ? ' · 자료가 불완전해 지수에서 뺀 고리라 지켜봄까지만 올린다' : ''), W7); });
     }
     // 고른 기간: 보유 · 수요 · 유동성은 「오늘의 현황」 고리와 같은 기준선을 쓴다
-    if (ok(k.user_sold_share)) add('holdP', 'sum', k.user_sold_share <= 0.5 ? 'ok' : k.user_sold_share < 0.9 ? 'warn' : 'bad', '받은 양 가운데 판 비율', F.pct(k.user_sold_share), '50% 이하 긍정 · 90% 이상 부정', WP);
-    if (ok(k.sell_total) && k.sell_total > 0) { var dm = k.buy_total / k.sell_total; add('demandP', 'flow', dm >= 1 ? 'ok' : dm >= 0.5 ? 'warn' : 'bad', '판 양 대비 산 양', F.pct(dm), '100% 이상 긍정 · 50% 미만 부정', WP); }
+    if (ok(k.user_sold_share)) add('holdP', 'sum', k.user_sold_share <= 0.5 ? 'ok' : k.user_sold_share < 0.9 ? 'warn' : 'bad', '판 비율 · 고른 기간', F.pct(k.user_sold_share), '받은 양 가운데 판 비율 · 50% 이하 긍정 · 90% 이상 부정', WP, k.user_repaid > 0 ? '10/26 재지급 포함' : '');
+    if (ok(k.sell_total) && k.sell_total > 0) { var dm = k.buy_total / k.sell_total; add('demandP', 'flow', dm >= 1 ? 'ok' : dm >= 0.5 ? 'warn' : 'bad', '시장 전체 판 양 대비 산 양 · 고른 기간', F.pct(dm), '100% 이상 긍정 · 50% 미만 부정', WP); }
     if (ok(k.bot_buy_share)) add('botP', 'flow', k.bot_buy_share >= 0.5 ? 'warn' : null, '산 양 가운데 bot', F.pct(k.bot_buy_share), '절반 이상이면 지켜봄 — bot이 사지 않는 날 받아낼 매수가 모자랄 수 있다', WP);
-    if (ok(s.user_sell_7d_change)) add('sell7', 'daily', s.user_sell_7d_change >= 0.2 ? 'warn' : s.user_sell_7d_change <= -0.2 ? 'ok' : null, '하루 평균 판 양', F.spct(s.user_sell_7d_change), '직전 7일 대비 · 20% 넘게 늘면 지켜봄, 20% 넘게 줄면 긍정', W7);
+    if (ok(s.user_sell_7d_change)) add('sell7', 'daily', s.user_sell_7d_change >= 0.2 ? 'warn' : s.user_sell_7d_change <= -0.2 ? 'ok' : null, '하루 평균 판 양 · 직전 7일 대비', F.spct(s.user_sell_7d_change), '20% 넘게 늘면 지켜봄, 20% 넘게 줄면 긍정', W7);
     var pr = bPoolRows();
-    if (pr.length > 1 && pr[0].pool_liq) { var g2 = pr[pr.length - 1].pool_liq / pr[0].pool_liq - 1; add('liqP', 'pool', g2 >= 0 ? 'ok' : g2 >= -0.1 ? 'warn' : 'bad', '전체 풀 유동성', g2 >= 1 ? d3.format('.1f')(g2 + 1) + '배' : F.spct(g2), '기간 첫날 대비 · 줄면 지켜봄, 10% 넘게 줄면 부정', WP); }
+    if (pr.length > 1 && pr[0].pool_liq) { var g2 = pr[pr.length - 1].pool_liq / pr[0].pool_liq - 1; add('liqP', 'pool', g2 >= 0 ? 'ok' : g2 >= -0.1 ? 'warn' : 'bad', '전체 풀 유동성 · 기간 첫날 대비', g2 >= 1 ? d3.format('.1f')(g2 + 1) + '배' : F.spct(g2), '줄면 지켜봄, 10% 넘게 줄면 부정', WP); }
     if (im && im.t5 && im.tot5) {                    // 생태계 기여
       if (im.tot5.took_rlusd > 0) { var br = im.tot5.back_rlusd / im.tot5.took_rlusd; add('back', 'impact', br >= 1 ? 'ok' : 'bad', '되돌린 돈 ÷ 가져간 돈', d3.format('.1f')(br) + '배', '1배 이상 긍정', WP); }
       // 지갑 수만 적으면 크기를 가늠하기 어렵다 — 전체 지갑 대비 비율을 값에 같이 적고, 돈으로 본 크기를 한마디 곁들인다(11/24 서우 「부정 지갑수만 보이면 잘 안 와닿으니 부정 비율을 넣어주면 완화될듯」)
@@ -1352,22 +1359,22 @@ html.rpt .chap, html.rpt .sec-h, html.rpt .blk-h, html.rpt .h2, html.rpt .h3 { b
       if (im.pos5 && im.pos5.wallets > 0) add('posW', 'impact', 'ok', '긍정 쪽 지갑', fInt(im.pos5.wallets) + '곳(' + shW(im.pos5.wallets) + ')', '지갑 ' + fInt(im.tot5.wallets) + '곳 가운데 ' + shW(im.pos5.wallets), WP, im.tot5.balance ? '잔액의 ' + F.pct(im.pos5.bal / im.tot5.balance) : '');
       if (im.neg5 && im.neg5.wallets > 0) add('negW', 'impact', 'bad', '부정 쪽 지갑', fInt(im.neg5.wallets) + '곳(' + shW(im.neg5.wallets) + ')', '지갑 ' + fInt(im.tot5.wallets) + '곳 가운데 ' + shW(im.neg5.wallets) + (im.tot5.sold ? ' · 판 양의 ' + F.pct(im.neg5.sold / im.tot5.sold) : ''), WP, im.tot5.took_rlusd ? '가져간 돈의 ' + F.pct(im.neg5.took / im.tot5.took_rlusd) : '');
     }
-    if (tr && tr.sum) { var pc = one(tr.sum.patterns, 'key', 'cashout'); var at = allTot(); if (pc && pc.wallets > 0) add('cashout', 'trace', 'bad', '팔아서 거래소로 보낸 지갑', fInt(pc.wallets) + '곳' + (at && at.wallets ? '(' + F.pct(pc.wallets / at.wallets) + ')' : ''), '가져간 돈 ' + fInt(pc.took) + ' RLUSD 환산' + (at && at.wallets ? ' · 전체 지갑 ' + fInt(at.wallets) + '곳 가운데' : ''), '전체 기간', at && at.took_rlusd ? '가져간 돈의 ' + F.pct(pc.took / at.took_rlusd) : ''); }
+    if (tr && tr.sum) { var pc = one(tr.sum.patterns, 'key', 'cashout'); var at = allTot(); if (pc && pc.wallets > 0) add('cashout', 'trace', 'bad', '팔아서 거래소로 보이는 주소로 보낸 지갑', fInt(pc.wallets) + '곳' + (at && at.wallets ? '(' + F.pct(pc.wallets / at.wallets) + ')' : ''), '가져간 돈 ' + fInt(pc.took) + ' RLUSD 환산' + (at && at.wallets ? ' · 전체 지갑 ' + fInt(at.wallets) + '곳 가운데' : ''), '전체 기간', at && at.took_rlusd ? '가져간 돈의 ' + F.pct(pc.took / at.took_rlusd) : ''); }
     if (D && D.week) {                               // 온체인 심층
       var Wk = D.week, A = D.acc || {};
       if (ok(Wk.age)) add('deepAge', 'deep', Wk.age <= 2 ? 'warn' : null, '판 물량 평균 보유', Wk.age + '일', '2일 이하면 받은 물량이 바로 나오는 흐름', W7);
       if (ok(A.score)) add('deepAcc', 'deep', A.score >= 0.55 ? 'ok' : A.score <= 0.45 ? 'bad' : null, '늘린 물량 비중', A.score.toFixed(2), '0.55 이상 긍정 · 0.45 이하 부정', W7);
-      if (ok(Wk.movers) && ok(Wk.prev_movers)) add('deepMove', 'deep', Wk.movers > Wk.prev_movers ? 'ok' : Wk.movers < Wk.prev_movers ? 'warn' : null, '움직인 지갑', Wk.movers + '곳/일', '직전 7일 ' + Wk.prev_movers + '곳/일보다 늘면 긍정', W7);
+      if (ok(Wk.movers) && ok(Wk.prev_movers)) add('deepMove', 'deep', Wk.movers > Wk.prev_movers ? 'ok' : Wk.movers < Wk.prev_movers ? 'warn' : null, '하루 움직인 지갑', Wk.movers + '곳', '직전 7일 ' + Wk.prev_movers + '곳/일보다 늘면 긍정', W7);
     }
     if (cn) {                                        // 지갑 분포
       if (ok(cn.sell_top5)) add('concSell', 'wallets', cn.sell_top5 >= 0.5 ? 'warn' : null, '판 쪽 쏠림(다섯 곳)', F.pct(cn.sell_top5), '절반 이상이면 소수 지갑이 판 양을 좌우한다', WP);
-      if (cn.rebuyers > 0) add('rebuy', 'wallets', 'ok', '다시 산 지갑', fInt(cn.rebuyers) + '곳', fInt(cn.rebuy_rlusd) + ' RLUSD를 다시 넣었다', WP);
+      if (cn.rebuyers > 0) add('rebuy', 'wallets', 'ok', '기기 · 이용권을 다시 산 지갑', fInt(cn.rebuyers) + '곳', 'operations 계정으로 ' + fInt(cn.rebuy_rlusd) + ' RLUSD를 보냈다(기기 · 이용권 값으로 본다)', WP);
     }
     SIGS = L.filter(function (x) { return x.t; });
   }
   // 받은 글(코멘트 목록)의 줄 머리로 신호를 찾는다 — 글을 만드는 쪽은 그대로 두고 판정은 위 표에서만 한다
   var LEAD_T = {
-    brief: { '막힌 고리': '=bad', '지켜볼 고리': '=warn', '운용 점검': '~reserves', '참고': '~refs' },
+    brief: { '막힌 고리': '~blocked', '지켜볼 고리': '~watch', '운용 점검': '~reserves', '참고': '~refs' },
     impact: { '되돌린 돈': 'back', '보유': 'posW', '부정 쪽': 'negW' },
     trace: { '돈의 방향': 'cashout' },
     deep: { '판 물량': 'deepAge', '움직임': 'deepMove' }
@@ -1379,6 +1386,10 @@ html.rpt .chap, html.rpt .sec-h, html.rpt .blk-h, html.rpt .h2, html.rpt .h3 { b
     var worst = function (arr) { var st = (arr || []).map(function (l) { return l.status; }); return st.indexOf('bad') >= 0 ? 'bad' : st.indexOf('warn') >= 0 ? 'warn' : null; };
     if (!rule) return t;
     if (rule.charAt(0) === '=') tone = rule.slice(1);
+    else if (rule === '~blocked' || rule === '~watch') {      // 지수에 드는 고리 가운데 가격을 뺀 것으로만 정한다(가격은 평가하지 않는다)
+      var idx = h ? h.links.filter(function (l) { return !l.ref && l.key !== 'price'; }) : [], hasBad = idx.some(function (l) { return l.status === 'bad'; }), hasWarn = idx.some(function (l) { return l.status === 'warn'; });
+      tone = rule === '~blocked' && hasBad ? 'bad' : hasWarn ? 'warn' : null;
+    }
     else if (rule === '~reserves') tone = h ? worst(h.reserves) : null;
     else if (rule === '~refs') tone = h && worst(h.links.filter(function (l) { return l.ref; })) ? 'warn' : null;
     else tone = tOf(rule);
@@ -1423,14 +1434,14 @@ html.rpt .chap, html.rpt .sec-h, html.rpt .blk-h, html.rpt .h2, html.rpt .h3 { b
       var mw = one(m.rows, 'kind', 'wlbn'), mb = one(m.rows, 'kind', 'basket');
       if (mw && ok(mw.d7)) T.market = '최근 7일 WLBN **' + sgn(mw.d7) + '**' + (mb && ok(mb.d7) ? ' · ' + mb.name + ' ' + sgn(mb.d7) + ' · 차이 **' + sgp(mw.d7 - mb.d7) + '**' : '') + (m.rank && m.rank.d7 ? ' · ' + m.rank.d7.of + '개 가운데 ' + m.rank.d7.pos + '번째' : '');
     }
-    T.sum = '받은 양 **' + fInt(k.user_paid) + '개** · 판 양 **' + fInt(k.user_sold) + '개**' + (ok(k.user_sold_share) ? '(받은 양의 ' + tw('holdP', F.pct(k.user_sold_share), 1) + ')' : '') + (ok(s.price_rlusd) ? ' · 지금 가격 ' + F.f4(s.price_rlusd) + ' RLUSD' : '');
-    T.flow = '판 양 **' + fInt(k.sell_total) + '개** · 산 양 ' + tw('demandP', fInt(k.buy_total) + '개') + (ok(k.bot_buy_share) ? ' · 산 양의 ' + tw('botP', F.pct(k.bot_buy_share)) + '가 Wellbian bot' : '');
+    T.sum = '일반 사용자 지갑이 받은 양 **' + fInt(k.user_paid) + '개** · 판 양 **' + fInt(k.user_sold) + '개**' + (ok(k.user_sold_share) ? '(받은 양의 ' + tw('holdP', F.pct(k.user_sold_share), 1) + ')' : '') + (ok(s.price_rlusd) ? ' · 지금 가격 ' + F.f4(s.price_rlusd) + ' RLUSD' : '');
+    T.flow = '시장 전체 판 양 **' + fInt(k.sell_total) + '개** · 산 양 ' + tw('demandP', fInt(k.buy_total) + '개') + (ok(k.bot_buy_share) ? ' · 산 양의 ' + tw('botP', F.pct(k.bot_buy_share)) + '가 Wellbian bot' : '');
     if (ok(s.user_sell_7d_avg)) T.daily = '최근 7일 하루 평균 판 양 **' + fInt(s.user_sell_7d_avg) + '개**' + (ok(s.user_sell_7d_change) ? '(직전 7일 대비 ' + tw('sell7', F.spct(s.user_sell_7d_change), 1) + ')' : '') + (ok(s.user_paid_7d_avg) ? ' · 받은 양 ' + fInt(s.user_paid_7d_avg) + '개' : '');
     if (ok(s.price_rlusd)) T.pool = '가격 **' + F.f4(s.price_rlusd) + ' RLUSD**' + (ok(s.pool_liq) ? ' · 전체 풀 유동성 ' + tw('liqP', fInt(s.pool_liq)) + ' RLUSD 환산(WLBN/RLUSD ' + fInt(s.pool_liq_r) + ' + WLBN/XRP ' + fInt(s.pool_liq_x) + ')' : ' · RLUSD 풀 ' + fInt(s.pool_r_rlusd) + ' RLUSD · XRP 풀 ' + fInt(s.pool_x_xrp) + ' XRP');
     var ac = c.r.accounts || [], bot = one(ac, 'name', 'bot'), ops = one(ac, 'name', 'operations');
     if (ac.length) T.accounts = '이름이 공개된 계정 **' + ac.length + '곳**' + (ops && ok(ops.rlusd) ? ' · operations 잔액 ' + fInt(ops.rlusd) + ' RLUSD' : '') + (bot && ok(bot.rlusd) ? ' · bot 잔액 **' + fInt(bot.rlusd) + ' RLUSD + ' + fInt(bot.xrp) + ' XRP**' : '');
     var tr = DATA.trace;
-    if (tr) { var tx = (tr.sum.ends || []).filter(function (x) { return x.key === 'exch'; })[0]; T.trace = '부정 쪽 **' + fInt(tr.sum.roots) + '곳**' + ofAll(tr.sum.roots, tr.sum.took) + ' · ' + (tr.sum.patterns && tr.sum.patterns.length ? fInt(tr.sum.patterns.length) + '가지 양상 · 판정 다시 볼 곳 **' + fInt(tr.sum.review_wallets || 0) + '곳** · ' : '') + '밖으로 보낸 지갑 **' + fInt(tr.sum.sent_wallets) + '곳** · 거래소 입금으로 보이는 주소에 닿은 지갑 ' + tws(tx && tx.wallets > 0 ? 'bad' : null, fInt(tx ? tx.wallets : 0) + '곳') + ' · 회사 계정이 열어 준 지갑 ' + fInt(tr.sum.funder_company) + '곳 · ' + md(tr.day) + ' 갱신'; }
+    if (tr) { var tx = (tr.sum.ends || []).filter(function (x) { return x.key === 'exch'; })[0]; T.trace = '부정 쪽 **' + fInt(tr.sum.roots) + '곳**' + ofAll(tr.sum.roots, tr.sum.took) + ' · ' + (tr.sum.patterns && tr.sum.patterns.length ? fInt(tr.sum.patterns.length) + '가지 양상 · ' + (tr.sum.review_wallets > 0 ? '판정 다시 볼 곳 **' + fInt(tr.sum.review_wallets) + '곳** · ' : '') : '') + '밖으로 보낸 지갑 **' + fInt(tr.sum.sent_wallets) + '곳** · 거래소 입금으로 보이는 주소에 닿은 지갑 ' + tws(tx && tx.wallets > 0 ? 'bad' : null, fInt(tx ? tx.wallets : 0) + '곳') + ' · 회사 계정이 열어 준 지갑 ' + fInt(tr.sum.funder_company) + '곳 · ' + md(tr.day) + ' 갱신'; }
     if (im && im.t5) T.impact = '매우 긍정 **' + fInt(im.rows[0].wallets) + '곳** · 긍정 **' + fInt(im.rows[1].wallets) + '곳**(긍정 쪽 ' + F.pct(im.pos5.wallets / (im.tot5.wallets || 1)) + ') · 보통 ' + fInt(im.rows[2].wallets) + '곳 · 부정 ' + fInt(im.rows[3].wallets) + '곳 · 매우 부정 **' + fInt(im.rows[4].wallets) + '곳**(부정 쪽 ' + F.pct(im.neg5.wallets / (im.tot5.wallets || 1)) + (im.tot5.took_rlusd ? ' · 가져간 돈의 ' + F.pct(im.neg5.took / im.tot5.took_rlusd) : '') + ') · 되돌린 돈이 가져간 돈의 ' + (im.tot5.took_rlusd ? tw('back', F.pct(im.tot5.back_rlusd / im.tot5.took_rlusd), 1) : '—');
     if (h && h.index) T.board = '선순환 지수 ' + tws(h.index.status, h.index.value + '점') + '(' + h.overall.label + ')' + (im && im.t5 ? ' · 긍정 쪽 지갑 **' + fInt(im.pos5.wallets) + '곳**(' + F.pct(im.pos5.wallets / (im.tot5.wallets || 1)) + ') · 부정 쪽 ' + fInt(im.neg5.wallets) + '곳(' + F.pct(im.neg5.wallets / (im.tot5.wallets || 1)) + ')' : '') + ' · 가격 ' + F.f4(s.price_rlusd) + ' RLUSD';
     if (D && D.now) { var lp = one(D.now.bands, 'key', 'lp');
@@ -1438,7 +1449,7 @@ html.rpt .chap, html.rpt .sec-h, html.rpt .blk-h, html.rpt .h2, html.rpt .h3 { b
     var cn = c.r.conc;
     if (cn && ok(cn.sell_top5)) T.wallets = '판 지갑 **' + fInt(cn.sellers) + '곳** · 많이 판 다섯 곳이 판 양의 ' + tw('concSell', F.pct(cn.sell_top5)) + (cn.rebuyers > 0 ? ' · 다시 산 지갑 ' + tw('rebuy', fInt(cn.rebuyers) + '곳', 1) : '');
     var ws = c.r.wallets || [], cnt = function (g) { return ws.filter(function (w) { return w.g === g; }).length; };
-    if (ws.length) T.wtable = '지갑 **' + fInt(ws.length) + '곳** · 일반 사용자 ' + fInt(cnt('user')) + ' · 사고팔기 ' + fInt(cnt('arb')) + ' · 그 밖 ' + fInt(cnt('other'));
+    if (ws.length) T.wtable = '지갑 **' + fInt(ws.length) + '곳** · 일반 사용자 ' + fInt(cnt('user')) + ' · 사고팔기 ' + fInt(cnt('arb')) + ' · 그 밖 ' + fInt(cnt('other')) + (cnt('bot') ? ' · Wellbian bot ' + fInt(cnt('bot')) : '');
     var pos = DATA.positions || [], lk = one(pos, 'key', 'locked'), tr = one(pos, 'key', 'treasury'), pl = one(pos, 'key', 'pools');
     if (lk && ok(lk.share)) T.where = '전체 ' + fInt(s.total_supply) + '개 가운데 잠금 **' + F.pct(lk.share) + '**' + (tr && ok(tr.share) ? ' · treasury 계정 ' + F.pct(tr.share) : '') + (pl ? ' · 풀 두 곳 ' + fInt(pl.amount) + '개' : '');
     var fc = [];
@@ -1723,7 +1734,7 @@ html.rpt .chap, html.rpt .sec-h, html.rpt .blk-h, html.rpt .h2, html.rpt .h3 { b
     var rows = (c.r.dist || []).filter(function (r) { return r.wallets > 0; }), max = d3.max(rows, function (r) { return r.wallets; }) || 1;
     rows.forEach(function (r) {
       var li = document.createElement('li'), n = document.createElement('span'), bar = document.createElement('span'), a = document.createElement('span'), sh = document.createElement('span'), i = document.createElement('i');
-      n.className = 'where'; n.textContent = r.name; var dt = { none: 'ok', low: 'ok', mid: 'warn', high: 'bad', extra: 'bad' }[r.key]; if (dt) n.insertBefore(toneEl(dt), n.firstChild); bar.className = 'meter'; i.style.width = Math.max(1, r.wallets / max * 100) + '%'; bar.appendChild(i);
+      n.className = 'where'; n.textContent = r.name; bar.className = 'meter'; i.style.width = Math.max(1, r.wallets / max * 100) + '%'; bar.appendChild(i);
       a.className = 'amt'; a.textContent = fInt(r.wallets) + '곳' + (r.sold > 0 ? ' · 판 양 ' + fInt(r.sold) : ''); sh.className = 'shr'; sh.textContent = r.sold_share === null ? '—' : '판 양의 ' + F.pct(r.sold_share);
       li.appendChild(n); li.appendChild(bar); li.appendChild(a); li.appendChild(sh); ul.appendChild(li);
     });
@@ -2049,10 +2060,10 @@ html.rpt .chap, html.rpt .sec-h, html.rpt .blk-h, html.rpt .h2, html.rpt .h3 { b
       };
       var og = s.src.origins, rw = one(og, 'reward'), ex = one(s.ends, 'exch'), ex1 = one(s.hop1, 'exch');
       var at = allTot(), ofW = function (n) { return at && at.wallets ? '전체 지갑의 ' + F.pct(n / at.wallets) + ' · ' : ''; };
-      tile('따라간 부정 쪽 지갑', fInt(s.roots), '곳', ofW(s.roots) + '가져간 돈 ' + fInt(s.took) + ' RLUSD 환산' + (at && at.took_rlusd ? '(전체의 ' + F.pct(s.took / at.took_rlusd) + ')' : '') + ' · 읽은 계정 ' + fInt(s.accounts) + '곳');
+      tile('따라간 부정 쪽 지갑', fInt(s.roots), '곳', ofW(s.roots) + '가져간 돈 ' + fInt(s.took) + ' RLUSD 환산' + (at && at.took_rlusd ? '(전체의 ' + F.pct(s.took / at.took_rlusd) + ')' : '') + ' · 원장에서 읽은 계정 ' + fInt(s.accounts) + '곳');
       tile('보상으로 받은 WLBN을 판 지갑', fInt(rw ? rw.wallets : 0), '곳', og.filter(function (x) { return x.key !== 'reward'; }).map(function (x) { return x.name + ' ' + fInt(x.wallets) + '곳'; }).join(' · ') || '다른 출처 없음');
-      tile('회사 계정이 열어 준 지갑', fInt(s.funder_company), '곳', s.funder_kinds.filter(function (x) { return x.key !== 'company'; }).map(function (x) { return x.name + ' ' + fInt(x.wallets) + '곳'; }).join(' · ') || '그 밖 없음');
-      tile('거래소 입금으로 보이는 주소에 닿은 지갑', fInt(ex ? ex.wallets : 0), '곳', (ex && ex.wallets ? ofW(ex.wallets) : '') + '밖으로 보낸 지갑 ' + fInt(s.sent_wallets) + '곳 · 보내지 않은 지갑 ' + fInt(s.quiet_wallets) + '곳' + (ex1 ? ' · 바로 간 곳 ' + fInt(ex1.wallets) + '곳' : ''), ex && ex.wallets > 0 ? 'bad' : null);
+      tile('회사 계정이 열어 준 지갑', fInt(s.funder_company), '곳', '계정을 만든 첫 송금을 회사 계정이 보냈다 · ' + s.funder_kinds.filter(function (x) { return x.key !== 'company'; }).map(function (x) { return x.name + ' ' + fInt(x.wallets) + '곳'; }).join(' · ') || '그 밖 없음');
+      tile('거래소 입금으로 보이는 주소에 닿은 지갑', fInt(ex ? ex.wallets : 0), '곳', (ex && ex.wallets ? ofW(ex.wallets) : '') + (function () { var pc2 = one(s.patterns, 'cashout'); return pc2 && pc2.wallets ? '이 가운데 보상을 팔아 보낸 지갑 ' + fInt(pc2.wallets) + '곳 · ' : ''; })() + '밖으로 보낸 지갑 ' + fInt(s.sent_wallets) + '곳 · 보내지 않은 지갑 ' + fInt(s.quiet_wallets) + '곳' + (ex1 ? ' · 바로 간 곳 ' + fInt(ex1.wallets) + '곳' : ''), ex && ex.wallets > 0 ? 'bad' : null);
     }
     richList($('#trace-comment'), toned('trace', t.comment || []));
     var pats = s.patterns || [], pl = $('#trace-pats'); if (TRPAT && !pats.some(function (x) { return x.key === TRPAT; })) TRPAT = null;
@@ -2062,7 +2073,7 @@ html.rpt .chap, html.rpt .sec-h, html.rpt .blk-h, html.rpt .h2, html.rpt .h3 { b
         var li = document.createElement('li'), hd = document.createElement('div'), nm = document.createElement('span'), in1 = document.createElement('span'), dot = document.createElement('i'), n = document.createElement('span'), c = document.createElement('p'), b = document.createElement('button');
         hd.className = 'tp-h'; nm.className = 'who'; in1.className = 'nm'; dot.className = 'dot'; dot.style.background = PC[x.key] || 'var(--ctx)'; in1.appendChild(dot); in1.appendChild(document.createTextNode(x.name)); nm.appendChild(in1); hd.appendChild(nm); var pt = x.key === 'cashout' ? 'bad' : x.key === 'company' ? 'ok' : null; if (pt) hd.insertBefore(toneEl(pt), hd.firstChild);
         if (x.review) { var rv = document.createElement('span'); rv.className = 'ichip rv'; rv.textContent = '판정 다시 보기'; hd.appendChild(rv); }
-        n.className = 'tp-n'; n.textContent = fInt(x.wallets) + '곳 · 가져간 돈 ' + fInt(x.took) + (x.took_share !== null ? '(' + F.pct(x.took_share) + ')' : '') + ' · 보낸 돈 ' + fInt(x.sent); hd.appendChild(n);
+        n.className = 'tp-n'; n.textContent = fInt(x.wallets) + '곳 · 가져간 돈 ' + fInt(x.took) + (x.took_share !== null ? '(부정 쪽의 ' + F.pct(x.took_share) + ')' : '') + ' · 보낸 돈 ' + fInt(x.sent); hd.appendChild(n);
         b.type = 'button'; b.className = 'link'; b.textContent = TRPAT === x.key ? '전체 보기' : '이 지갑들만 보기'; b.setAttribute('aria-pressed', String(TRPAT === x.key));
         b.addEventListener('click', function () { TRPAT = TRPAT === x.key ? null : x.key; TRSEL = null; drawTrace(); var tb = $('#tb-trace'); if (TRPAT && tb) { reveal(tb); window.scrollTo(0, Math.max(0, tb.getBoundingClientRect().top + window.scrollY - barOff() - 56)); } });
         hd.appendChild(b); c.className = 'tp-c'; rich(c, x.comment, {}); if (TRPAT === x.key) li.className = 'on'; li.appendChild(hd); li.appendChild(c); pl.appendChild(li);
@@ -2154,7 +2165,7 @@ html.rpt .chap, html.rpt .sec-h, html.rpt .blk-h, html.rpt .h2, html.rpt .h3 { b
         if (unit) { var u = document.createElement('span'); u.className = 'unit'; u.textContent = unit; p.appendChild(u); }
         s2.textContent = sub; a.appendChild(h3); a.appendChild(p); a.appendChild(s2); tiles.appendChild(a); toneCard(a, tone);
       };
-      tile('지금 값 ÷ 평균 취득가', N.ratio === null ? '—' : F.pct(N.ratio), '', N.cost ? '평균 취득가 ' + F.f4(N.cost) + ' · 지금 ' + F.f4(N.price) + ' RLUSD' : '', 'd:cost');
+      tile('지금 값 ÷ 평균 취득가', N.ratio === null ? '—' : F.pct(N.ratio), '', N.cost ? (N.ratio !== null ? '지금 값이 받은 때 값의 평균보다 ' + F.pct(Math.abs(1 - N.ratio)) + (N.ratio < 1 ? ' 낮다' : ' 높다') + ' · ' : '') + '평균 취득가 ' + F.f4(N.cost) + ' · 지금 ' + F.f4(N.price) + ' RLUSD' : '', 'd:cost');
       tile('받은 때보다 높은 값에 있는 물량', N.above === null ? '—' : F.pct(N.above), '', '지갑에 든 ' + fInt(N.in_wallets) + '개 기준', 'd:above');
       tile('최근 7일 · 판 값 ÷ 받은 때 값', W.ratio === null ? '—' : W.ratio.toFixed(3), '배', (W.age !== null ? '평균 ' + W.age + '일 들고 있다 팜' : '') + (W.prev_ratio !== null ? ' · 직전 7일 ' + W.prev_ratio.toFixed(3) + '배' : ''), 'd:sopr');
       tile('최근 7일 · 늘린 물량 비중', A.score === null ? '—' : A.score.toFixed(2), '', '늘린 지갑 ' + A.up + '곳 · 줄인 지갑 ' + A.down + '곳', 'd:acc', tOf('deepAcc'));
@@ -2407,7 +2418,7 @@ html.rpt .chap, html.rpt .sec-h, html.rpt .blk-h, html.rpt .h2, html.rpt .h3 { b
       if (ix) { L.push('- 선순환 지수: ' + ix.value + ' / 100 (' + h.overall.label + ')' + (ix.prev ? ' · 어제 ' + ix.prev.value : '') + (ix.week ? ' · 7일 전 ' + ix.week.value : '')); L.push('- 계산: ' + ix.calc + ' · 고리 ' + h.overall.counts); }
       else L.push('- 종합 신호: ' + h.overall.label + ' (' + h.overall.counts + ')');
       if (h.takeaway) L.push('- 정리: ' + plain(h.takeaway));
-      h.links.forEach(function (l) { L.push('- ' + l.name + ' ' + pt(l) + h.labels[l.status] + (l.ref ? '(참고 · 지수 제외)' : '') + ': ' + l.short); });
+      h.links.forEach(function (l) { L.push('- ' + l.name + ' ' + pt(l) + (l.ref ? '참고(지수 제외)' : h.labels[l.status]) + ': ' + l.short); });
       h.reserves.forEach(function (l) { L.push('- ' + l.name + ' ' + pt(l) + h.labels[l.status] + ': ' + l.short); });
       L.push(''); L.push('■ 그날 요약'); toned('brief', h.comments).slice(0, 3).forEach(function (t) { L.push('- ' + plain(t)); });
       if (h.limits && h.limits.length) L.push('※ 판매 대금은 RLUSD 결제분만이다(카드 · 계좌 결제는 원장에 없음).');
@@ -2417,7 +2428,7 @@ html.rpt .chap, html.rpt .sec-h, html.rpt .blk-h, html.rpt .h2, html.rpt .h3 { b
     L.push('- 받은 양 ' + fInt(k.user_paid) + '개 (지갑 ' + fInt(k.wallets_paid) + '곳)');
     if (k.user_repaid > 0) L.push('  · 10/26 재지급 ' + fInt(k.user_repaid) + ' 포함');
     L.push('- 판 양 ' + fInt(k.user_sold) + '개' + (k.user_sold_share === null ? '' : ' (받은 양의 ' + F.pct(k.user_sold_share) + ')'));
-    L.push('  · 판 지갑 ' + fInt(k.wallets_sold) + '곳 / 되산 양 ' + fInt(k.user_bought));
+    L.push('  · 판 지갑 ' + fInt(k.wallets_sold) + '곳 / 도로 산 WLBN ' + fInt(k.user_bought));
     if (k.user_sold_for_rlusd_share !== null && k.user_sold_for_rlusd_share !== undefined) L.push('  · RLUSD로 ' + fInt(k.user_sold_for_rlusd) + '개(' + F.pct(k.user_sold_for_rlusd_share) + ') / XRP로 ' + fInt(k.user_sold_for_xrp) + '개(' + F.pct(k.user_sold_for_xrp_share) + ')');
     L.push('- 받은 대금 ' + fInt(k.user_got_rlusd) + ' RLUSD + ' + fInt(k.user_got_xrp) + ' XRP');
     L.push('- 풀에 넣어 둔 양 ' + fInt(k.user_pool_in) + '개'); L.push('');
@@ -2496,11 +2507,11 @@ html.rpt .chap, html.rpt .sec-h, html.rpt .blk-h, html.rpt .h2, html.rpt .h3 { b
     $$('#board .bc').forEach(function (card) { if (card.hidden) return; var tv = $('.bc-h .tn .vh', card), tg = tv ? '[' + txt(tv).replace(/ —$/, '') + '] ' : ''; add('지표 모아보기', txt($('.bc-h a', card)).replace(/^(긍정|지켜봄|부정) — /, ''), txt($('.bc-h i', card)), txt($('.bc-v', card)), tg + txt($('.bc-s', card))); });
     if (h) {
       var ix = h.index; if (ix) { add('오늘의 현황', '선순환 지수', '', ix.value, '100점 만점 · ' + h.overall.label); add('오늘의 현황', '계산', '', ix.calc, h.overall.counts); }
-      h.links.concat(h.reserves).forEach(function (l) { add('오늘의 현황', l.name, h.labels[l.status] + (l.ref ? ' · 참고(지수 제외)' : ''), (l.score === null || l.score === undefined) ? '' : l.score, l.short); });
+      h.links.concat(h.reserves).forEach(function (l) { add('오늘의 현황', l.name, l.ref ? '참고(지수 제외)' : h.labels[l.status], (l.score === null || l.score === undefined) ? '' : l.score, l.short); });
       if (h.takeaway) add('오늘의 현황', '정리', '', plain(h.takeaway), ''); toned('brief', h.comments).forEach(function (t) { add('오늘의 현황', '그날 요약', '', plain(t), ''); });
     }
     add('일반 사용자 지갑', '받은 양', '', k.user_paid, 'WLBN'); add('일반 사용자 지갑', '받은 지갑', '', k.wallets_paid, '곳'); add('일반 사용자 지갑', '판 양', '', k.user_sold, 'WLBN'); add('일반 사용자 지갑', '판 지갑', '', k.wallets_sold, '곳');
-    add('일반 사용자 지갑', '받은 양 가운데 판 비율', '', k.user_sold_share === null ? '' : F.pct(k.user_sold_share), ''); add('일반 사용자 지갑', '되산 양', '', k.user_bought, 'WLBN');
+    add('일반 사용자 지갑', '받은 양 가운데 판 비율', '', k.user_sold_share === null ? '' : F.pct(k.user_sold_share), ''); add('일반 사용자 지갑', '도로 산 WLBN', '', k.user_bought, 'WLBN');
     add('일반 사용자 지갑', 'RLUSD로 판 양', '', k.user_sold_for_rlusd, 'WLBN'); add('일반 사용자 지갑', 'XRP로 판 양', '', k.user_sold_for_xrp, 'WLBN'); add('일반 사용자 지갑', '받은 대금', 'RLUSD', k.user_got_rlusd, 'RLUSD'); add('일반 사용자 지갑', '받은 대금', 'XRP', k.user_got_xrp, 'XRP');
     add('일반 사용자 지갑', '풀에 넣어 둔 양', '', k.user_pool_in, 'WLBN'); add('일반 사용자 지갑', '지금 잔액', '', k.user_balance, 'WLBN');
     add('시장 전체', '산 양', '', k.buy_total, 'WLBN'); add('시장 전체', '판 양', '', k.sell_total, 'WLBN'); add('시장 전체', 'Wellbian bot 계정이 산 양', k.bot_buy_share === null ? '' : F.pct(k.bot_buy_share), k.bot_bought, 'WLBN'); add('시장 전체', 'bot 계정이 낸 돈', 'RLUSD', k.bot_paid_rlusd, 'RLUSD'); add('시장 전체', 'bot 계정이 낸 돈', 'XRP', k.bot_paid_xrp, 'XRP');
@@ -2533,7 +2544,7 @@ html.rpt .chap, html.rpt .sec-h, html.rpt .blk-h, html.rpt .h2, html.rpt .h3 { b
   }
   function drawStatus() {
     var el = $('[data-status]'), i = DATA && DATA.info; if (!el || !i) return;
-    var t = i.storage === 'blob' ? '저장소 연결됨' : i.storage === 'snapshot' ? '배포할 때 넣은 자료' : '저장소 미연결 — 배포할 때 상태에서 매번 이어 받는 중';
+    var t = i.storage === 'blob' ? '저장소 연결됨' : i.storage === 'snapshot' ? '미리 넣어 둔 자료(기준 시각까지)' : '저장소 미연결 — 미리 넣어 둔 자료에서 매번 이어 받는 중';
     if (typeof i.fetched === 'number') t += ' · 이번에 새로 반영한 거래 ' + fInt(i.fetched) + '건';
     if (i.complete === false) t += ' · 아직 끝까지 받지 못함';
     if (i.xrpl_error) t += ' · 원장 조회 실패';
@@ -2543,7 +2554,7 @@ html.rpt .chap, html.rpt .sec-h, html.rpt .blk-h, html.rpt .h2, html.rpt .h3 { b
   function tickAgo() {
     var el = $('[data-ago]'); if (!el || !LASTOK) return;
     var m = Math.floor((Date.now() - LASTOK) / 60000);
-    el.textContent = (m < 1 ? '방금 확인' : m + '분 전 확인') + ' · 15분마다 자동 확인';
+    el.textContent = (m < 1 ? '방금 확인' : m < 60 ? m + '분 전 확인' : Math.floor(m / 60) + '시간 전 자료') + ' · 15분마다 자동 확인';
   }
 
   // 건강 신호: 신호등 · 그날 요약 · 온도계
@@ -2603,7 +2614,7 @@ html.rpt .chap, html.rpt .sec-h, html.rpt .blk-h, html.rpt .h2, html.rpt .h3 { b
       if (!inIndex) o.lines.push('선순환 지수에는 넣지 않는다.');
       else if (l.ref) o.lines.push('지수에 넣지 않는다(참고): ' + (l.ref_why || '자료가 불완전하다') + '.');
       else if (h.index && h.index.weak && h.index.weak.key === l.key && h.index.max > h.index.min) o.lines.push('지금 지수에 넣는 고리 가운데 가장 낮다(최저). 선순환 지수의 절반이 이 고리 점수다.');
-      o.now = '지금 ' + l.value + (has ? ' → ' + l.score + '점' : '') + ' · ' + h.labels[l.status];
+      o.now = '지금 ' + l.value + (has ? ' → ' + l.score + '점' : '') + ' · ' + (l.ref ? '참고(지수 제외)' : h.labels[l.status]);
       return o;
     }
     if (kind === 'index') { var ix = h && h.index; return { title: '선순환 지수', lines: ix && ix.rules ? ix.rules : ['여섯 고리 점수의 평균과 가장 낮은 고리 점수를 반씩 섞은 0~100점이다.'], rows: [], now: ix ? '지금 ' + ix.calc + ' · ' + h.labels[ix.status] : null }; }
@@ -2687,7 +2698,7 @@ html.rpt .chap, html.rpt .sec-h, html.rpt .blk-h, html.rpt .h2, html.rpt .h3 { b
       tr.hidden = !(sr && sr.length > 1);
       if (sr && sr.length > 1) {
         set('[data-h-span]', md(sr[0].date) + '~' + md(sr[sr.length - 1].date) + ' · ' + sr.length + '일');
-        var mv = ['어제 ' + ix.prev.value + ' → 오늘 ' + ix.value + '(' + (ix.delta ? signed(ix.delta) : '같음') + ')' + (ix.week ? ' · 7일 전 ' + ix.week.value : '')];
+        var mv = [md(ix.prev.date) + '까지 ' + ix.prev.value + ' → ' + md(h.to) + '까지 ' + ix.value + '(' + (ix.delta ? signed(ix.delta) : '같음') + ')' + (ix.week ? ' · 7일 전 ' + ix.week.value : '')];
         if (ix.moved) mv.push('가장 많이 움직인 고리: ' + ix.moved.name + ' ' + ix.moved.from + ' → ' + ix.moved.to);
         lines('[data-h-move]', mv);
       }
@@ -2757,7 +2768,7 @@ html.rpt .chap, html.rpt .sec-h, html.rpt .blk-h, html.rpt .h2, html.rpt .h3 { b
       g.append('path').attr('class', 'ring-arc st-' + (l.ref ? 'na' : l.status) + (l.ref ? ' ref' : '')).attr('d', 'M' + p0[0] + ',' + p0[1] + 'A' + R + ',' + R + ' 0 0 1 ' + p1[0] + ',' + p1[1]);
       g.append('polygon').attr('class', 'ring-head st-' + (l.ref ? 'na' : l.status)).attr('points', [[p1[0] + tx * 6, p1[1] + ty * 6], [p1[0] - tx * 3 + rx * 4.5, p1[1] - ty * 3 + ry * 4.5], [p1[0] - tx * 3 - rx * 4.5, p1[1] - ty * 3 - ry * 4.5]].map(function (q) { return q.join(','); }).join(' '));
     });
-    var showTip = function (l, p) { f.tip.replaceChildren.apply(f.tip, tipRows(l.name + ' · ' + (l.score !== null && l.score !== undefined ? l.score + '점 · ' : '') + h.labels[l.status], [{ label: l.metric, value: l.value }])); f.tip.hidden = false; placeTip(f, p[0], p[1]); };
+    var showTip = function (l, p) { f.tip.replaceChildren.apply(f.tip, tipRows(l.name + ' · ' + (l.score !== null && l.score !== undefined ? l.score + '점 · ' : '') + (l.ref ? '참고(지수 제외)' : h.labels[l.status]), [{ label: l.metric, value: l.value }])); f.tip.hidden = false; placeTip(f, p[0], p[1]); };
     h.links.forEach(function (l, i) {
       var a = ang(i), p = pt(a, R), c = Math.cos(a), s = Math.sin(a), q = pt(a, R + lr + 9), anchor = c > 0.3 ? 'start' : c < -0.3 ? 'end' : 'middle';
       var node = g.append('g').attr('class', 'st-' + (l.ref ? 'na' : l.status) + (l.ref ? ' ring-ref' : ''));
@@ -2797,9 +2808,10 @@ html.rpt .chap, html.rpt .sec-h, html.rpt .blk-h, html.rpt .h2, html.rpt .h3 { b
     if (base === 'mid') return { k: 'n', why: '' };
     if (base === 'help') {
       if (w.paid > 0 && (w.sell_ratio || 0) < 0.5) c++; if (w.back_rlusd > 0 && w.back_rlusd >= took) c++; if (w.pool_in > 0) c++;
-      if (c >= 2) return { k: 'vp', why: '긍정 조건 ' + c + '가지를 채웠다' };
+      var met = []; if (w.paid > 0 && (w.sell_ratio || 0) < 0.5) met.push('받은 양의 절반 넘게 보유'); if (w.back_rlusd > 0 && w.back_rlusd >= took) met.push('되돌린 돈이 가져간 돈 이상'); if (w.pool_in > 0) met.push('풀에 넣음');
+      if (c >= 2) return { k: 'vp', why: '긍정 조건 ' + c + '가지(' + met.join(' · ') + ')를 채웠다' };
       if (net >= T5RULE.net) return { k: 'vp', why: '되돌린 돈이 가져간 돈보다 ' + fInt(net) + ' RLUSD 많다' };
-      return { k: 'p', why: c ? '긍정 조건 한 가지를 채웠다' : '팔지 않고 들고 있다' };
+      return { k: 'p', why: c ? '긍정 조건 한 가지(' + met.join(' · ') + ')를 채웠다' : '팔지 않고 들고 있다' };
     }
     var many = sd >= Math.max(2, days * T5RULE.days);
     if (many || took >= T5RULE.took) return { k: 'vn', why: many ? '기간 ' + days + '일 가운데 ' + sd + '일에 팔았다' : '가져간 돈이 ' + fInt(took) + ' RLUSD다' };
@@ -2864,7 +2876,7 @@ html.rpt .chap, html.rpt .sec-h, html.rpt .blk-h, html.rpt .h2, html.rpt .h3 { b
   // 유형을 긍정 쪽 · 보통 · 부정 쪽 셋으로 묶어 한 줄씩
   function typeNotes(rows) {
     var tot = d3.sum(rows, function (r) { return r.t5 ? r.wallets : 0; }), out = [], sum = function (list, f) { return d3.sum(list, function (r) { return r[f] || 0; }); };
-    [['긍정 쪽 유형', ['vp', 'p']], ['보통 유형', ['n']], ['부정 쪽 유형', ['ng', 'vn']]].forEach(function (g, gi) {
+    [['긍정 지갑이 많은 유형', ['vp', 'p']], ['보통 지갑이 많은 유형', ['n']], ['부정 지갑이 많은 유형', ['ng', 'vn']]].forEach(function (g, gi) {
       var list = rows.filter(function (r) { return r.t5 && g[1].indexOf(r.scale) >= 0; }); if (!list.length) return;
       var cnt = sum(list, 'wallets'), tail = gi === 0 ? ' · 지금 잔액 ' + fInt(sum(list, 'balance')) + '개 · 풀에 넣은 양 ' + fInt(sum(list, 'pool_in')) + '개 · 다시 산 돈 ' + fInt(sum(list, 'rebuy_rlusd')) + ' RLUSD' : gi === 1 ? ' · 판 양 ' + fInt(sum(list, 'sold')) + '개 · 산 양 ' + fInt(sum(list, 'bought')) + '개' : ' · 판 양 ' + fInt(sum(list, 'sold')) + '개 · 지금 잔액 ' + fInt(sum(list, 'balance')) + '개';
       out.push(pre(gi === 0 ? 'ok' : gi === 2 ? 'bad' : null) + g[0] + ': **' + list.map(function (r) { return String(r.name).replace(/ 지갑$/, ''); }).join(' · ') + '** — 지갑 ' + fInt(cnt) + '곳(' + F.pct(tot ? cnt / tot : 0) + ')' + tail + '.');
@@ -3005,16 +3017,16 @@ html.rpt .chap, html.rpt .sec-h, html.rpt .blk-h, html.rpt .h2, html.rpt .h3 { b
       var sr = ix.series || []; set('trend', sr.length > 1 ? sr[0].value + ' → ' + ix.value : null, '점', sr.length > 1 ? md(sr[0].date) + '~' + md(sr[sr.length - 1].date) + ' · 최고 ' + d3.max(sr, function (x) { return x.value; }) + ' · 최저 ' + d3.min(sr, function (x) { return x.value; }) : '', sr.length > 1 ? (ix.value - sr[0].value >= 5 ? 'ok' : ix.value - sr[0].value <= -5 ? 'warn' : null) : null);
     } else { set('idx', null); set('radar', null); set('trend', null); }
     var pay = L('pay'), rr = bRecvRows().filter(function (r) { return !r.partial; }); set('recv', pay ? pay.value : (rr.length ? fInt(rr[rr.length - 1].receivers) : null), pay ? '직전 7일 대비' : '곳', rr.length ? (pay ? '최근 7일 보상 받은 지갑 수 · ' : '') + '하루 ' + fInt(d3.min(rr, function (r) { return r.receivers; })) + '~' + fInt(d3.max(rr, function (r) { return r.receivers; })) + '곳' : '', pay && pay.status);
-    set('flow', fInt(k.user_paid_avg), '개 / 하루 받은 양', '하루 판 양 **' + fInt(k.user_sell_avg) + '개** · 막대가 판 양, 선이 받은 양');
-    set('hold', k.user_paid ? F.pct(1 - Math.min(1, (k.user_net_sold || 0) / k.user_paid)) : null, '팔지 않은 몫', '받은 ' + fInt(k.user_paid) + ' · 순매도 ' + fInt(k.user_net_sold) + ' · 풀에 ' + fInt(k.user_pool_in), tOf('holdP'));
+    set('flow', fInt(k.user_paid_avg), '개 / 하루 평균 받은 양', '하루 평균 판 양 **' + fInt(k.user_sell_avg) + '개**' + (c.r.from < s.pool_open ? '(10/26 재지급일 제외)' : '') + ' · 막대가 판 양, 선이 받은 양');
+    set('hold', k.user_paid ? F.pct(1 - Math.min(1, (k.user_net_sold || 0) / k.user_paid)) : null, '팔지 않은 몫', '받은 ' + fInt(k.user_paid) + ' · 순매도(판 양 − 도로 산 양) ' + fInt(k.user_net_sold) + ' · 풀에 ' + fInt(k.user_pool_in), tOf('holdP'));
     if (im && im.t5) {
       set('tier', fInt(im.pos5.wallets), '곳 긍정 쪽 · ' + F.pct(im.pos5.wallets / (im.tot5.wallets || 1)), '부정 쪽 **' + fInt(im.neg5.wallets) + '곳**(' + F.pct(im.neg5.wallets / (im.tot5.wallets || 1)) + ') · 지금 잔액의 ' + F.pct(im.pos5.bal / (im.tot5.balance || 1)) + '가 긍정 쪽');
       set('money', im.tot5.took_rlusd ? d3.format('.1f')(im.tot5.back_rlusd / im.tot5.took_rlusd) : null, '배 · 되돌린 돈 ÷ 가져간 돈', '되돌린 ' + tw('back', fInt(im.tot5.back_rlusd)) + ' · 가져간 ' + fInt(im.tot5.took_rlusd) + ' RLUSD', tOf('back'));
     } else { set('tier', null); set('money', null); }
     set('price', s.price_rlusd !== null && s.price_rlusd !== undefined ? F.f4(s.price_rlusd) : null, 'RLUSD', '기간 변화 **' + (k.price_change === null || k.price_change === undefined ? '—' : F.spct(k.price_change)) + '** · ' + F.f4(k.price_from) + ' → ' + F.f4(k.price_to));
     var pr = bPoolRows(), pl = pr.length ? pr[pr.length - 1] : null, p0 = pr.length ? pr[0] : null; set('pool', pl ? fInt(pl.pool_liq) : null, 'RLUSD 환산', pl ? 'WLBN/RLUSD **' + fInt(pl.pool_liq_r) + '** + WLBN/XRP **' + fInt(pl.pool_liq_x) + '**' + (p0 && p0 !== pl && p0.pool_liq ? ' · 기간 첫날의 ' + tw('liqP', d3.format('.1f')(pl.pool_liq / p0.pool_liq) + '배') : '') : '', tOf('liqP'));
-    set('demand', k.sell_total ? F.pct(k.buy_total / k.sell_total) : null, '판 양 대비 산 양', '산 양 ' + fInt(k.buy_total) + ' 가운데 ' + tw('botP', 'bot ' + F.pct(k.bot_buy_share || 0)) + ' · 판 양 ' + fInt(k.sell_total), tOf('demandP'));
-    var pr1 = Rv('payrun'), br = Rv('buyrun'), cv = Rv('cover'); set('run', pr1 ? pr1.value : null, '지급 여력', (br ? '매입 여력 **' + br.value + '**' : '') + (cv ? ' · 매입 재원 ' + cv.value : ''), pr1 && pr1.status);
+    set('demand', k.sell_total ? F.pct(k.buy_total / k.sell_total) : null, '판 양 대비 산 양', '시장 전체 산 양 ' + fInt(k.buy_total) + ' 가운데 ' + tw('botP', 'bot ' + F.pct(k.bot_buy_share || 0)) + ' · 판 양 ' + fInt(k.sell_total), tOf('demandP'));
+    var pr1 = Rv('payrun'), br = Rv('buyrun'), cv = Rv('cover'); set('run', pr1 ? pr1.value : null, '지급 여력', (br ? '매입 여력 **' + br.value + '**' : '') + (cv ? ' · 매입 지출이 판매 대금의 ' + cv.value : ''), pr1 && pr1.status);
   }
   function chartFns() { return Object.assign(chartFns0(), BOARD); }
   function chartFns0() {
@@ -3049,6 +3061,7 @@ html.rpt .chap, html.rpt .sec-h, html.rpt .blk-h, html.rpt .h2, html.rpt .h3 { b
   function show(d) {
     if (!d || !d.summary || !d.daily || !d.ranges) return false;
     if (DATA && DATA.summary[0].as_of > d.summary[0].as_of) return false;   // 더 옛 자료로 덮지 않는다
+    if (DATA && DATA.summary[0].as_of === d.summary[0].as_of && d.info && d.info.storage === 'snapshot' && !(DATA.info && DATA.info.storage === 'snapshot')) return false;   // 기준 시각이 같으면 배포에 든 자료가 방금 받은 자료(잔액 · 시장 값이 더 새것)를 덮지 않는다
     try { tier5(d); } catch (e) { if (window.console) console.error(e); }
     if (CUSTOM && !d.ranges.custom && DATA && DATA.ranges.custom) d.ranges.custom = DATA.ranges.custom;      // 배포에 든 자료처럼 날짜 지정이 없는 응답이 와도 받아 둔 범위는 지킨다
     DATA = d; if (CUSTOM && d.ranges.custom) RANGE = 'custom'; else if (RANGE === 'custom') { RANGE = 'all'; CUSTOM = null; }
@@ -3088,21 +3101,27 @@ html.rpt .chap, html.rpt .sec-h, html.rpt .blk-h, html.rpt .h2, html.rpt .h3 { b
   // 자료를 못 받았을 때의 알림: 배포에 든 자료라도 있으면 그것을 보여 준다고, 그것도 없으면(index.html 만 올린 배포) 무엇이 빠졌는지 적는다
   function staleNote() {
     var p = $('[data-stale] p'); if (!p) return;
-    p.textContent = DATA ? '최신 자료를 받지 못해 배포할 때 들어 있던 자료를 보여 주고 있습니다. 잠시 뒤 「새로 불러오기」를 눌러 보세요.' : '자료를 받지 못했습니다(snapshot.json 과 /api/data 가 모두 없음). index.html 하나만 올린 배포라면 배포 묶음 전체(public · api · lib 폴더)를 올려 주세요.';
+    p.textContent = DATA ? '최신 자료를 받지 못해 미리 넣어 둔 자료(기준 시각까지)를 보여 주고 있습니다. 잠시 뒤 「새로 불러오기」를 눌러 보세요.' : '자료를 받지 못했습니다(snapshot.json 과 /api/data 가 모두 없음). index.html 하나만 올린 배포라면 배포 묶음 전체(public · api · lib 폴더)를 올려 주세요.';
   }
   function loadLive() {
     var live = $('[data-live]'), btn = $('[data-refresh]'), stale = $('[data-stale]');
     if (live) live.hidden = false; if (btn) btn.disabled = true;
     LASTTRY = Date.now();
-    return getJson(dataUrl()).then(function (d) { show(d); LASTOK = Date.now(); tickAgo(); if (stale) stale.hidden = true; }).catch(function () { staleNote(); if (stale) stale.hidden = false; })
+    return getJson(dataUrl()).then(function (d) {
+      var gen = Date.parse((d && d.generated_at) || '') || Date.now(), old = Date.now() - gen > 20 * 60 * 1000;
+      show(d); LASTOK = Math.min(Date.now(), gen); tickAgo(); if (stale) stale.hidden = true;
+      // 한동안 아무도 열지 않았으면 보관돼 있던 묵은 응답이 먼저 온다(그때 서버가 뒤에서 새로 만든다) → 조금 뒤 한 번 더 청해 새 자료로 바꾼다
+      if (old && !SOON) { SOON = setTimeout(function () { SOON = 0; loadLive(); }, 8000); }
+    }).catch(function () { staleNote(); if (stale) stale.hidden = false; })
       .then(function () { if (live) live.hidden = true; if (btn) btn.disabled = false; });
   }
   document.addEventListener('DOMContentLoaded', function () {
     try { var qs0 = new URLSearchParams(location.search), qf = qs0.get('from') || '', qt = qs0.get('to') || '', DAY = /^\d{4}-\d{2}-\d{2}$/; if (qs0.get('p') === 'custom' && DAY.test(qf) && DAY.test(qt)) CUSTOM = { from: qf <= qt ? qf : qt, to: qf <= qt ? qt : qf }; } catch (e) { /* 날짜 지정 없이 연다 */ }
     try { var qp = new URLSearchParams(location.search).get('p'); if (PERIOD[qp] && qp !== 'custom') { RANGE = qp; $$('[data-range]').forEach(function (x) { x.setAttribute('aria-pressed', String(x.getAttribute('data-range') === qp)); }); } } catch (e) { /* 기본 기간으로 연다 */ }
     buildLayers(); goHash(); window.addEventListener('hashchange', goHash);
-    if (location.hash.length > 1 && document.getElementById(decodeURIComponent(location.hash.slice(1)))) {
-      HASH0 = decodeURIComponent(location.hash.slice(1));
+    var hid0 = ''; try { hid0 = location.hash.length > 1 ? decodeURIComponent(location.hash.slice(1)) : ''; } catch (e) { hid0 = ''; }      // # 뒤가 깨진 주소(잘린 공유 주소 등)는 구역 이동 없이 연다
+    if (hid0 && document.getElementById(hid0)) {
+      HASH0 = hid0;
       try { var h0 = location.hash; history.replaceState(null, '', location.pathname + location.search); history.pushState({ wlbn: 1 }, '', location.pathname + location.search + h0); HERE = true; MARKED = h0.slice(1); } catch (e) { /* 그대로 둔다 */ }
     }
     document.addEventListener('click', function (ev) {
