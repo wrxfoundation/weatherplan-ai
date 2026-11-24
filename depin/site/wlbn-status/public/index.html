@@ -776,12 +776,20 @@ html.deck-on { overflow: hidden; }
 .dk-play::before { content: ""; width: 0.7em; height: 0.8em; background: currentColor; clip-path: polygon(0 0, 100% 50%, 0 100%); }
 .dk-play[aria-pressed="true"]::before { clip-path: none; background: linear-gradient(90deg, currentColor 0 36%, transparent 36% 64%, currentColor 64% 100%); }
 .dk-sub-n { white-space: nowrap; }
+/* 목소리(32차): 켜면 단추에 색이 들고, 어떤 목소리로 읽는지 점 옆에 잠깐 적는다 */
+.dk-voice[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: #fff; }
+.dk-vmsg { max-width: min(46ch, 44vw); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: var(--t-xs); color: var(--muted); } .dk-vmsg:empty { display: none; }
 @media (max-width: 760px) {      /* 좁은 화면: 단추 줄은 제목 아래로, 자막은 이전 · 다음 단추 위에 한 줄을 다 쓴다 */
   .dk-top { flex-wrap: wrap; row-gap: 6px; } .dk-tools { flex: 1 1 auto; justify-content: flex-end; flex-wrap: wrap; row-gap: 6px; }
   .dk-bot { flex-wrap: wrap; justify-content: space-between; row-gap: 6px; } .dk-mid { display: contents; }
   .dk-sub { order: -1; flex: 1 1 100%; } .dk-mid-b { flex: 1 1 auto; justify-content: center; gap: 6px; }
   .dk-nav { min-width: 0; }
 }
+@media (max-width: 420px) {      /* 단추가 여섯(재생 · 속도 · 자막 · 목소리 · 나가기)이라 한 줄에 들어가게 조금 줄인다 — 두 줄이 되면 그만큼 장이 세로로 넘친다. 누르는 높이는 그대로 */
+  .dk-tools { flex-wrap: nowrap; gap: 5px; } .dk-tools .btn.sm { padding-left: 8px; padding-right: 8px; font-size: 11.5px; } .dk-play { gap: 4px; }
+  .dk-rate button { min-width: 28px; padding: 0 0.3em; font-size: 11px; }
+}
+@media (max-width: 370px) { .dk-tools { flex-wrap: wrap; } }      /* 그보다 좁으면 두 줄로(단추가 화면 밖으로 잘리지 않게) */
 @media (max-width: 420px) { .dk-sub-n { display: none; }      /* 아주 좁으면 줄 번호는 뺀다(이전 · 점 여섯 · 다음이 한 줄에 들어가게) */
 }
 @media (prefers-reduced-motion: reduce) { .dk-sub.in { animation: none; } .dk-prog { transition: none !important; } }
@@ -804,10 +812,10 @@ html.deck-on { overflow: hidden; }
   <i class="dk-prog" data-dk-prog aria-hidden="true"></i><i class="dk-sweep" data-dk-sweep aria-hidden="true"></i>
   <div class="dk-top">
     <p class="dk-brand"><b>WLBN 운용현황</b><span class="dk-asof">기준 <span data-dk-asof>—</span></span><span class="dk-pg" data-dk-pg></span></p>
-    <div class="dk-tools"><button type="button" class="btn sm dk-play" data-dk-auto aria-pressed="false" title="대본 자막에 맞춰 줄과 장을 자동으로 넘긴다(P)">재생</button><span class="dk-rate" role="group" aria-label="재생 속도"><button type="button" data-dk-rate="1" aria-pressed="true" title="1배속(1)">1×</button><button type="button" data-dk-rate="1.5" aria-pressed="false" title="1.5배속(2)">1.5×</button><button type="button" data-dk-rate="2" aria-pressed="false" title="2배속(3)">2×</button></span><button type="button" class="btn sm" data-dk-subbtn aria-pressed="true" title="자막 켜기 · 끄기(C)">자막 끄기</button><button type="button" class="btn sm" data-dk-full aria-pressed="false">전체 화면</button><button type="button" class="btn sm" data-dk-close>나가기</button></div>
+    <div class="dk-tools"><button type="button" class="btn sm dk-play" data-dk-auto aria-pressed="false" title="대본 자막에 맞춰 줄과 장을 자동으로 넘긴다(P)">재생</button><span class="dk-rate" role="group" aria-label="재생 속도"><button type="button" data-dk-rate="1" aria-pressed="true" title="1배속(1)">1×</button><button type="button" data-dk-rate="1.5" aria-pressed="false" title="1.5배속(2)">1.5×</button><button type="button" data-dk-rate="2" aria-pressed="false" title="2배속(3)">2×</button></span><button type="button" class="btn sm" data-dk-subbtn aria-pressed="true" title="자막 켜기 · 끄기(C)">자막 끄기</button><button type="button" class="btn sm dk-voice" data-dk-voice aria-pressed="false" title="대본을 목소리로 읽어 준다(V) · 기본 꺼짐">목소리 켜기</button><button type="button" class="btn sm" data-dk-full aria-pressed="false">전체 화면</button><button type="button" class="btn sm" data-dk-close>나가기</button></div>
   </div>
   <div class="dk-stage" data-dk-stage aria-live="polite"></div>
-  <div class="dk-bot"><button type="button" class="btn dk-nav" data-dk-prev>‹ 이전</button><div class="dk-mid"><button type="button" class="dk-sub" data-dk-sub hidden title="누르면 다음 문장(↓ · 이전 문장은 ↑)"></button><div class="dk-mid-b"><ol class="dk-dots" data-dk-dots aria-label="장 고르기"></ol><span class="dk-sub-n" data-dk-sub-n aria-hidden="true"></span></div></div><button type="button" class="btn dk-nav" data-dk-next>다음 ›</button></div>
+  <div class="dk-bot"><button type="button" class="btn dk-nav" data-dk-prev>‹ 이전</button><div class="dk-mid"><button type="button" class="dk-sub" data-dk-sub hidden title="누르면 다음 문장(↓ · 이전 문장은 ↑)"></button><div class="dk-mid-b"><ol class="dk-dots" data-dk-dots aria-label="장 고르기"></ol><span class="dk-sub-n" data-dk-sub-n aria-hidden="true"></span><span class="dk-vmsg" data-dk-vmsg role="status"></span></div></div><button type="button" class="btn dk-nav" data-dk-next>다음 ›</button></div>
   <p class="dk-foot" data-dk-foot></p>
 </div>
 <header class="head">
@@ -1652,7 +1660,7 @@ html.deck-on { overflow: hidden; }
   //   전체 화면과 같은 판정(sigList)에서 「긍정」으로 나온 지표만 큰 숫자로 보여 준다. 판정이 긍정이 아니게 되면 그 숫자는 빠지고, 숫자가 남지 않은 장은 건너뛴다(좋지 않은 것을 좋게 말하지 않는다)
   //   기간은 고정이다: 「최근 7일」(오늘의 현황과 같은 창)과 「전체 기간」 — 위쪽 기간 단추와 무관하다. 가격은 평가하지 않으므로 올리지 않는다(가격 · 시장 대비를 여기에 넣지 않는다)
   //   맨 아래 줄에 「긍정으로 판정된 지표만 모은 화면」임을 늘 적는다 — 전체 그림으로 읽히지 않게
-  var DECK = { on: false, i: 0, slides: [], from: null, tick: 0, auto: false, timer: 0, li: 0, rate: 1, sub: true, left: 0, t0: 0 }, WANT_DECK = false, DK_SEC = 7, DK_RATES = [1, 1.5, 2];
+  var DECK = { on: false, i: 0, slides: [], from: null, tick: 0, auto: false, timer: 0, li: 0, rate: 1, sub: true, left: 0, t0: 0, voice: false, vt: 0, vmsg: '', vclr: 0, vtry: 0 }, WANT_DECK = false, DK_SEC = 7, DK_RATES = [1, 1.5, 2];
   //   움직임(11/24 서우 「발표모드는 광고처럼 모션그래픽을 다이나믹하게」): 장이 바뀔 때만 논다(deckDraw 에 방향을 넘길 때). 화면 크기 · 자료가 바뀌어 다시 그릴 때는 놀지 않는다
   function dkMotion() { return !(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches); }
   function dkCount(el, text, delay) {      // 숫자를 0에서 제 값까지 올린다(소수 자리 · 쉼표 · 부호는 그대로). 끝나면 받은 글 그대로 둔다
@@ -1670,6 +1678,44 @@ html.deck-on { overflow: hidden; }
   //   대본 · 자막 · 재생(31차 — 서우 「청중에게 말할 스크립트를 별도로 제작해서 하단 자막에 · 자동재생 · 자막켜기끄기 · 1배 1.5배 2배 · 재생멈춤」)
   //   장마다 sl.say = 말할 문장들(deckBuild 가 숫자 카드와 같은 조건으로 만든다). DECK.li = 지금 줄 · DECK.rate = 속도 · DECK.sub = 자막 보이기 · DECK.left = 지금 줄의 남은 시간(ms · 멈춘 동안 기억)
   //   한 줄을 보여 주는 시간 = (0.7초 + 글자 수 × 0.17초 · 2.2~9초) ÷ 속도 — 1배속이 소리 내어 읽는 속도다. 줄이 끝나면 다음 줄, 장이 끝나면 다음 장(끝 장에서는 처음으로)
+  //   목소리(32차 — 서우 「신뢰감가는 남자가 읽어주는 목소리모드 on off가능하게 · 기본 off」)
+  //   브라우저에 든 음성 합성으로 지금 문장을 읽는다. 재생 중에는 **다 읽으면** 다음 문장으로(시간이 아니라 읽기가 끝나는 때), 손으로 넘길 때는 넘긴 문장을 한 번 읽는다.
+  //   목소리 고르기: 한국어 목소리 가운데 남자 목소리(이름으로 가린다 — 기기에 든 것 먼저) → 없으면 기기에 든 한국어 목소리 → 아무 한국어 목소리(이때는 음을 낮춘다). 한국어 목소리가 없으면 켜지지 않는다.
+  //   온라인 목소리(크롬의 Google · 엣지의 Online 목소리)는 읽을 문장을 그 회사의 음성 서버로 보낸다 — 그래서 기본은 꺼짐이고, 켤 때 어떤 목소리인지 적는다. 켠 상태는 기억하지 않는다(열 때마다 꺼진 채)
+  var DK_MALE = /injoon|인준|hyunsu|현수|bongjin|봉진|gookmin|국민|minsu|민수|(^|[^a-z])male|남성|남자/i;
+  var DK_SAYMAP = [[/WLBN/g, '더블유 엘 비 엔'], [/RLUSD/g, '알 엘 유 에스 디'], [/XRP/g, '엑스 알 피'], [/Wellbian bot/g, '웰비안 봇']];      // 영문 약자는 읽는 소리로 바꿔 넘긴다(자막 글은 그대로)
+  function dkTts() { try { return window.speechSynthesis && window.SpeechSynthesisUtterance ? window.speechSynthesis : null; } catch (e) { return null; } }
+  function dkVoicePick() {
+    var tts = dkTts(); if (!tts) return null; var vs = []; try { vs = (tts.getVoices() || []).filter(function (v) { return /^ko([-_]|$)/i.test(v.lang || ''); }); } catch (e) { vs = []; }
+    if (!vs.length) return null;
+    var male = vs.filter(function (v) { return DK_MALE.test(v.name || ''); }), loc = function (a) { return a.filter(function (v) { return v.localService; })[0]; };
+    var pick = loc(male) || male[0] || loc(vs) || vs[0];
+    return { v: pick, male: male.indexOf(pick) >= 0 };
+  }
+  function dkHush() { var tts = dkTts(); DECK.vt += 1; if (tts) { try { tts.cancel(); } catch (e) { /* 그대로 둔다 */ } } }
+  function dkSpeak(text, done) {      // 한 문장을 읽는다. 끝나면 done() — 그사이 다른 문장으로 바뀌었으면 부르지 않는다
+    var tts = dkTts(), pk = dkVoicePick(); dkHush(); if (!tts || !pk || !text) return false;
+    var say = String(text); DK_SAYMAP.forEach(function (m) { say = say.replace(m[0], m[1]); });
+    var u = new window.SpeechSynthesisUtterance(say), me = DECK.vt, fin = function () { if (me !== DECK.vt) return; DECK.vt += 1; if (done) done(); };
+    u.voice = pk.v; u.lang = pk.v.lang || 'ko-KR'; u.rate = Math.max(0.5, Math.min(2.2, 0.96 * DECK.rate)); u.pitch = pk.male ? 0.95 : 0.78; u.volume = 1;      // 조금 느리고 낮게 — 차분하게 들리도록
+    u.onend = fin; u.onerror = fin;
+    try { if (tts.resume) tts.resume(); tts.speak(u); } catch (e) { return false; }
+    return true;
+  }
+  function dkVoiceLine() { if (!DECK.voice || !DECK.on || DECK.auto) return; var L = dkLines(); if (L.length) dkSpeak(L[Math.max(0, Math.min(L.length - 1, DECK.li))]); }      // 손으로 넘길 때: 지금 문장을 한 번
+  function dkVoiceMsg(t) { DECK.vmsg = t || ''; clearTimeout(DECK.vclr); var el = $('[data-dk-vmsg]'); if (el) el.textContent = DECK.vmsg; if (t) DECK.vclr = setTimeout(function () { var e2 = $('[data-dk-vmsg]'); if (e2) e2.textContent = ''; }, 7000); }
+  function dkVoiceToggle(on) {
+    var want = on === undefined ? !DECK.voice : !!on, msg = '';
+    if (want) {
+      var pk = dkVoicePick();
+      if (!dkTts()) want = false;
+      else if (!pk && DECK.vtry < 3) { DECK.vtry += 1; dkVoiceMsg('목소리를 불러오는 중…'); setTimeout(function () { if (DECK.on && !DECK.voice) dkVoiceToggle(true); }, 400); return; }      // 목소리 목록이 늦게 오는 브라우저가 있다
+      else if (!pk) { want = false; msg = '이 기기에는 한국어 목소리가 없어 읽어 줄 수 없습니다'; }
+      else msg = (pk.male ? '목소리: ' : '남자 목소리가 없어 기본 한국어 목소리로 읽습니다: ') + pk.v.name + (pk.v.localService ? '' : ' · 온라인 목소리(문장이 브라우저 회사의 음성 서버로 갑니다)');
+    }
+    DECK.vtry = 0; DECK.voice = want; if (!want) dkHush(); dkVoiceMsg(msg); dkSubDraw();
+    if (DECK.auto) dkLineStart(0); else if (want) dkVoiceLine();      // 재생 중에 켜고 끄면 그 문장을 처음부터 다시
+  }
   function dkPrefLoad() { try { var o = JSON.parse(localStorage.getItem('wlbn-deck-1') || '{}'); if (DK_RATES.indexOf(o.rate) >= 0) DECK.rate = o.rate; if (o.sub === false) DECK.sub = false; } catch (e) { /* 기억을 못 읽으면 기본값 */ } }
   function dkPrefSave() { try { localStorage.setItem('wlbn-deck-1', JSON.stringify({ rate: DECK.rate, sub: DECK.sub })); } catch (e) { /* 저장이 막혀 있으면 이번에만 */ } }
   function dkLines() { var sl = DECK.slides[DECK.i]; return (sl && sl.say) || []; }
@@ -1684,11 +1730,20 @@ html.deck-on { overflow: hidden; }
     if (c) c.textContent = show ? (li + 1) + ' / ' + n : '';
     if (pb) { pb.setAttribute('aria-pressed', String(DECK.auto)); pb.textContent = DECK.auto ? '멈춤' : '재생'; }
     if (sb) { sb.setAttribute('aria-pressed', String(DECK.sub)); sb.textContent = DECK.sub ? '자막 끄기' : '자막 켜기'; }
+    var vb = $('[data-dk-voice]', box); if (vb) { vb.hidden = !dkTts(); vb.setAttribute('aria-pressed', String(DECK.voice)); vb.textContent = DECK.voice ? '목소리 끄기' : '목소리 켜기'; }
     $$('[data-dk-rate]', box).forEach(function (b) { b.setAttribute('aria-pressed', String(+b.getAttribute('data-dk-rate') === DECK.rate)); });
   }
   function dkLineStart(left) {      // 지금 줄을 left(ms · 실제 시간, 없으면 줄 전체) 동안 보여 주고 다음으로
     clearTimeout(DECK.timer); DECK.timer = 0; if (!DECK.auto || !DECK.on || !DECK.slides.length) return;
-    var sp = dkSpan(), full = sp.dur / DECK.rate; left = left > 0 ? Math.min(left, full) : full;
+    var sp = dkSpan(), full = sp.dur / DECK.rate, L0 = dkLines();
+    if (DECK.voice && L0.length && dkVoicePick()) {      // 목소리: 문장을 처음부터 읽고 다 읽으면 넘어간다(위쪽 줄은 어림한 시간으로 움직인다). 읽기가 끝났다는 신호가 안 오는 브라우저를 대비해 넉넉한 시간 뒤에는 넘긴다
+      dkBar(sp.done / sp.total, 0); if (dkMotion()) dkBar((sp.done + sp.dur) / sp.total, full);
+      DECK.left = 0; DECK.t0 = Date.now();
+      if (dkSpeak(L0[sp.li], function () { clearTimeout(DECK.timer); DECK.timer = setTimeout(dkStep, Math.round(320 / DECK.rate)); })) {
+        var tok = DECK.vt; DECK.timer = setTimeout(function () { if (tok === DECK.vt) { dkHush(); dkStep(); } }, Math.round(full * 2.5 + 4000)); return;
+      }
+    }
+    left = left > 0 ? Math.min(left, full) : full;
     var from = (sp.done + sp.dur - left * DECK.rate) / sp.total, to = (sp.done + sp.dur) / sp.total;
     dkBar(from, 0); if (dkMotion()) dkBar(to, left);
     DECK.left = left; DECK.t0 = Date.now(); DECK.timer = setTimeout(dkStep, left);
@@ -1703,7 +1758,7 @@ html.deck-on { overflow: hidden; }
     var was = DECK.auto; DECK.auto = !!on && DECK.on && DECK.slides.length > 0;
     if (!DECK.auto) {
       if (was && DECK.timer) DECK.left = Math.max(0, DECK.left - (Date.now() - DECK.t0));
-      clearTimeout(DECK.timer); DECK.timer = 0;
+      clearTimeout(DECK.timer); DECK.timer = 0; if (DECK.voice) { dkHush(); DECK.left = 0; }      // 목소리: 멈추면 읽기를 끊고, 다시 재생하면 그 문장을 처음부터
       if (DECK.on) { var sp = dkSpan(), full = sp.dur / DECK.rate, left = DECK.left > 0 ? Math.min(DECK.left, full) : full; dkBar((sp.done + sp.dur - left * DECK.rate) / sp.total, 0); }
     } else dkLineStart(DECK.left);
     dkSubDraw();
@@ -1720,7 +1775,7 @@ html.deck-on { overflow: hidden; }
     if (to >= n) { if (DECK.i < DECK.slides.length - 1) deckGo(DECK.i + 1); return; }
     if (to < 0) { if (DECK.i > 0) deckGo(DECK.i - 1); return; }
     DECK.li = to; DECK.left = 0; dkSubDraw(true);
-    if (DECK.auto) dkLineStart(0); else { var sp = dkSpan(); dkBar(sp.done / sp.total, 0); }
+    if (DECK.auto) dkLineStart(0); else { var sp = dkSpan(); dkBar(sp.done / sp.total, 0); dkVoiceLine(); }
   }
   //   장마다 상징 아이콘 하나(11/24 서우 「발표모드 장표마다 한줄 핵심인사이트(좋은쪽으로)와 상징적인 아이콘 하나」): 도는 고리 · 사람 · 물방울 · 바구니 · 새싹 · 점검표
   var DK_ICO = {
@@ -1932,18 +1987,19 @@ html.deck-on { overflow: hidden; }
     var ft = $('[data-dk-foot]', box); if (ft) ft.textContent = '긍정으로 판정된 지표만 모은 발표용 화면 · 판정 기준은 전체 화면과 같다 · 원장 기록 집계 · 보상 지급량 · 가치 비보장';
     dkSubDraw(!!anim);
   }
-  function deckGo(i) { if (!DECK.on || !DECK.slides.length) return; var to = Math.max(0, Math.min(DECK.slides.length - 1, i)); if (to === DECK.i) return; var dir = to > DECK.i ? 'next' : 'prev'; DECK.i = to; DECK.li = 0; DECK.left = 0; deckDraw(dir); if (DECK.auto) dkLineStart(0); else dkBar(0, 0); }
+  function deckGo(i) { if (!DECK.on || !DECK.slides.length) return; var to = Math.max(0, Math.min(DECK.slides.length - 1, i)); if (to === DECK.i) return; var dir = to > DECK.i ? 'next' : 'prev'; DECK.i = to; DECK.li = 0; DECK.left = 0; deckDraw(dir); if (DECK.auto) dkLineStart(0); else { dkBar(0, 0); dkVoiceLine(); } }
   function deckOpen(i) {
     var box = $('#deck'); if (!box || !DATA || DECK.on) return;
     try { DECK.slides = deckBuild(); } catch (e) { if (window.console) console.error(e); DECK.slides = []; }
     DECK.i = i || 0; DECK.li = 0; DECK.left = 0; DECK.on = true; DECK.from = document.activeElement; closeHelp(); dkPrefLoad(); dkBar(0, 0);
+    DECK.voice = false; DECK.vtry = 0; dkVoiceMsg(''); var tts0 = dkTts(); if (tts0) { try { tts0.getVoices(); } catch (e) { /* 목록은 켤 때 다시 읽는다 */ } }      // 목소리는 열 때마다 꺼진 채로
     $$('body > *').forEach(function (n) { if (n !== box && n.tagName !== 'SCRIPT' && !n.hasAttribute('inert')) { n.setAttribute('inert', ''); n.setAttribute('data-dk-inert', '1'); } });      // 뒤 화면은 초점 · 읽기에서 뺀다
     box.hidden = false; document.documentElement.classList.add('deck-on'); deckDraw('open');
     try { box.focus({ preventScroll: true }); } catch (e) { box.focus(); }
   }
   function deckClose() {
     var box = $('#deck'); if (!box || !DECK.on) return;
-    deckAuto(false); dkBar(0, 0); DECK.on = false; DECK.tick += 1; box.hidden = true; document.documentElement.classList.remove('deck-on');
+    deckAuto(false); dkBar(0, 0); dkHush(); DECK.voice = false; dkVoiceMsg(''); DECK.on = false; DECK.tick += 1; box.hidden = true; document.documentElement.classList.remove('deck-on');
     $$('[data-dk-inert]').forEach(function (n) { n.removeAttribute('inert'); n.removeAttribute('data-dk-inert'); });
     if (document.fullscreenElement && document.exitFullscreen) { try { document.exitFullscreen(); } catch (e) { /* 그대로 둔다 */ } }
     if (/^#present/.test(location.hash)) { try { history.replaceState(history.state, '', location.pathname + location.search); } catch (e) { /* 그대로 둔다 */ } }
@@ -2082,7 +2138,9 @@ html.deck-on { overflow: hidden; }
     var box = $('#deck'), op = $('[data-present]'); if (!box) return;
     if (op) op.addEventListener('click', function () { deckOpen(0); });
     var on = function (sel, fn) { var b = $(sel, box); if (b) b.addEventListener('click', fn); };
-    on('[data-dk-close]', deckClose); on('[data-dk-prev]', function () { deckGo(DECK.i - 1); }); on('[data-dk-next]', function () { deckGo(DECK.i + 1); }); on('[data-dk-full]', deckFull); on('[data-dk-auto]', function () { deckAuto(!DECK.auto); }); on('[data-dk-subbtn]', function () { dkSubToggle(); }); on('[data-dk-sub]', function () { dkLineGo(1); });
+    on('[data-dk-close]', deckClose); on('[data-dk-prev]', function () { deckGo(DECK.i - 1); }); on('[data-dk-next]', function () { deckGo(DECK.i + 1); }); on('[data-dk-full]', deckFull); on('[data-dk-auto]', function () { deckAuto(!DECK.auto); }); on('[data-dk-subbtn]', function () { dkSubToggle(); }); on('[data-dk-sub]', function () { dkLineGo(1); }); on('[data-dk-voice]', function () { dkVoiceToggle(); });
+    document.addEventListener('visibilitychange', function () { if (document.hidden && DECK.on && DECK.voice) { if (DECK.auto) deckAuto(false); else dkHush(); } });      // 다른 탭으로 가면 읽기를 멈춘다
+    window.addEventListener('pagehide', function () { dkHush(); });
     $$('[data-dk-rate]', box).forEach(function (b) { b.addEventListener('click', function () { dkRate(b.getAttribute('data-dk-rate')); }); });
     var fb = $('[data-dk-full]', box); if (fb && !box.requestFullscreen) fb.hidden = true;
     document.addEventListener('fullscreenchange', function () { if (fb) { var f = !!document.fullscreenElement; fb.setAttribute('aria-pressed', String(f)); fb.textContent = f ? '전체 화면 끝내기' : '전체 화면'; } if (DECK.on) deckDraw(); });
@@ -2097,6 +2155,7 @@ html.deck-on { overflow: hidden; }
       else if (key === 'f' || key === 'F') deckFull();
       else if (key === 'p' || key === 'P') deckAuto(!DECK.auto);
       else if (key === 'c' || key === 'C') dkSubToggle();
+      else if (key === 'v' || key === 'V') dkVoiceToggle();
       else if (key === 'ArrowDown') { ev.preventDefault(); dkLineGo(1); }
       else if (key === 'ArrowUp') { ev.preventDefault(); dkLineGo(-1); }
       else if (key === '1' || key === '2' || key === '3') dkRate(DK_RATES[+key - 1]);
