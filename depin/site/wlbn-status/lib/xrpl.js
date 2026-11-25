@@ -134,10 +134,33 @@ async function fetchLive(S, opts) {
       bal[a] = { xrp: Number(info.account_data.Balance) / 1e6, rlusd: ln ? Number(ln.balance) : 0 };
     })().catch(() => {}));
   }
+  // 잠금 해제 일정: 에스크로를 든 계정(상태의 잠금 합계가 남은 곳)의 에스크로 목록. 20시간 안에 받은 것이 있으면 건너뛴다(하루 한 번이면 충분하다)
+  //   줄 = [받는 곳, 조건 여부(0/1), 풀리는 시각(리플 초 · 없으면 0), 취소할 수 있는 시각, 수량] — 정리는 lib/core.js 의 buildUnlock 이 한다
+  const prev = S.live || {}; let esc = null;
+  const escSum = {}; for (const P of [S.st && S.st.before, S.st && S.st.now]) for (const a of Object.keys((P && P.esc) || {})) escSum[a] = (escSum[a] || 0) + P.esc[a];
+  const escOwners = Object.keys(escSum).filter((a) => escSum[a] > 1);
+  if (escOwners.length && !(prev.esc && S.asof - prev.esc.at < 72000 && !opts.forceEsc)) {
+    tasks.push((async () => {
+      const rows = [];
+      for (const a of escOwners) {
+        let marker, pages = 0;
+        do {
+          const res = await rpc('account_objects', Object.assign({ account: a, type: 'escrow', ledger_index: L, limit: 400 }, marker ? { marker } : {}), 8000);
+          for (const o of res.account_objects || []) {
+            const am = o.Amount; if (!am || typeof am !== 'object' || am.currency !== C.WL || am.issuer !== C.ISSUER) continue;
+            rows.push([o.Destination, o.Condition ? 1 : 0, o.FinishAfter || 0, o.CancelAfter || 0, Number(am.value)]);
+          }
+          marker = res.marker; pages++;
+        } while (marker && pages < 6);
+        if (marker) return;                     // 다 못 읽었으면 지난 값을 그대로 둔다
+      }
+      if (rows.length) esc = { at: S.asof, ledger: L, rows };
+    })().catch(() => {}));
+  }
   await Promise.race([Promise.all(tasks), new Promise((r) => setTimeout(r, budget))]);
-  const prev = S.live || {};
   S.live = { at: S.asof, lp: Object.assign({}, prev.lp, lp), bal: Object.assign({}, prev.bal, bal) };
-  return { pools: Object.keys(lp).length, accounts: Object.keys(bal).length };
+  if (esc || prev.esc) S.live.esc = esc || prev.esc;
+  return { pools: Object.keys(lp).length, accounts: Object.keys(bal).length, escrows: esc ? esc.rows.length : 0 };
 }
 
 module.exports = { update, updateFund, makeRpc, resyncPools, fetchLive };

@@ -99,7 +99,16 @@ const PLAN = {
   pass: { per_day: 5, days: 1095 },                                         // AI 팩토리 이용권: 한 장당 하루 5개 · 3년(사이트 이용권 페이지 — content/site-canon-0910.md 「지급」 줄)
   sites: { phase1: 25000, goal: 1e6 },
   uptime: 0.8,                                                              // G4 조건: 3개월 가동률 80%
-  pool_doc: { day: '2026-11-08', liq: 387860 },                             // 토크노믹스 11장: 두 풀 합산 유동성(2026-11-08 16:29 UTC)
+  pool_doc: { day: '2026-11-08', liq: 387860 },
+  // 잠금 해제 달력: 원장의 에스크로를 백서 7.3 의 묶음(건수 · 합계 · 일정)에 맞추는 규칙. 받는 계정에 이름표가 있으면 label 로, 없으면 한 건 수량(each)으로 가린다. 어디에도 안 맞으면 「그 밖의 잠금」
+  unlock: [
+    { key: 'stake', name: '스테이킹 재원', short: '스테이킹', label: 'staking' },
+    { key: 'reward', name: '노드 홀더 리워드', short: '노드 리워드', label: 'operations' },
+    { key: 'seed', name: '시드 투자자', short: '시드', label: 'seed' },
+    { key: 'team', name: '팀 · 기여자', short: '팀', each: [12500000] },
+    { key: 'eco', name: '생태계 · 지역 파트너', short: '생태계', each: [100000000] },
+    { key: 'resv', name: '전략 묶음', short: '전략', each: [1000000000, 339000000] },
+  ],                             // 토크노믹스 11장: 두 풀 합산 유동성(2026-11-08 16:29 UTC)
   // 마일스톤 게이트(달력이 아니라 달성으로 넘어간다). n = 공급 조건의 지점 수(숫자로 적힌 것만)
   gates: [
     { g: 'G0', name: '출시 전', supply: '등록 · 검증 체계', demand: '유료 고객 1곳', etc: '' },
@@ -583,6 +592,9 @@ function buildDatasets(S, opts) {
       user_pool_in: r0(sum(U, 'lpw')), user_balance: r0(ul.reduce((t, a) => t + Math.max(g2(S.bal, a), 0), 0)),
       user_sell_avg: avg('sell_user'), user_paid_avg: avg('paid_user'), full_days: full.length,
       sell_total: r0(ts), buy_total: r0(tb), net_bought_total: r0(tb) - r0(ts), bot_bought: r0(botB), bot_buy_share: tb > 0 ? r3(botB / tb) : null,
+      // bot 을 뺀 수요: 산 양에서 Wellbian bot 계정이 산 양을 뺀 것이 판 양의 몇 %인가 · bot 이 산 날 수(판정하지 않는다 — 숫자만)
+      buy_ex_bot: r0(tb) - r0(botB), buy_ex_bot_ratio: ts > 0 ? r3((tb - botB) / ts) : null, range_days: rows.filter((r) => r.date >= C.POOL_OPEN).length,
+      bot_buy_days: rows.filter((r) => r.buy_bot > 0).length, bot_last_day: (rows.filter((r) => r.buy_bot > 0).pop() || {}).date || null,
       net_sold_ex_bot: r0(ts) - (r0(tb) - r0(botB)), bot_paid_rlusd: r0(sum(of('bot'), 'payR')), bot_paid_xrp: r0(sum(of('bot'), 'payX')),
       kweather_paid: r0(sum(of('kweather'), 'paidco')), kweather_sold: r0(sum(of('kweather'), 'sold')),
       got_rlusd_total: r0(sum(all, 'gotR')), got_xrp_total: r0(sum(all, 'gotX')), paid_rlusd_total: r0(sum(all, 'payR')), paid_xrp_total: r0(sum(all, 'payX')),
@@ -885,6 +897,25 @@ function buildDatasets(S, opts) {
     devices_total: e.devices_total ?? null, devices_active: e.devices_active ?? null, operators: e.operators ?? null, kweather_devices: e.kweather_devices ?? null,
     epoch_budget: e.epoch_budget ?? null, epoch_distributed: e.epoch_distributed ?? null, epoch_date: e.epoch_date ?? null, circulating: e.circulating ?? null,
   };
+  // 가진 양 가운데 풀에 넣어 둔 몫(일반 사용자 지갑 · 전체 기간 누계) · 풀에 넣은 지갑의 쏠림. 풀에 넣어 둔 양 = 넣은 양 − 뺀 양(「한눈에」 카드와 같은 값)
+  {
+    const ka = ranges.all.kpi, pin = ka.user_pool_in, ub = ka.user_balance;
+    const lpw = ranges.all.wallets.filter((w) => (w.g === undefined || w.g === 'user') && w.pool_in > 0).map((w) => w.pool_in).sort((x, y) => y - x), lpt = lpw.reduce((t, v) => t + v, 0);
+    Object.assign(summary, { user_pool_wlbn: pin > 0 ? pin : null, user_wallet_wlbn: ub, user_pool_hold_share: pin > 0 && pin + ub > 0 ? r3(pin / (pin + ub)) : null,
+      lp_wallets: lpw.length, lp_top5_share: lpt > 0 && lpw.length > 5 ? r3(lpw.slice(0, 5).reduce((t, v) => t + v, 0) / lpt) : null, lp_top1_share: lpt > 0 && lpw.length > 1 ? r3(lpw[0] / lpt) : null });
+  }
+  // 신뢰선 → 보유: 사이트가 공시한 신뢰선 · 보유 지갑 수와, 이 화면의 원장 기록에서 WLBN 이 오간 적 있는 지갑(회사 계정 · 풀 · 발행 계정 제외)의 지금 잔액 구간. 두 출처는 세는 법이 달라 나란히만 놓는다
+  {
+    const h = summary.holders, tl = summary.trustlines, rec = accts.filter((a) => !L[a] && a !== C.SWEEP);
+    let h1 = 0, dust = 0, zero = 0; for (const a of rec) { const b = g2(S.bal, a); if (b >= 1) h1++; else if (b > 0) dust++; else zero++; }
+    Object.assign(summary, { trust_hold_share: h !== null && tl > 0 ? r3(h / tl) : null, trust_empty: h !== null && tl !== null ? Math.max(tl - h, 0) : null, rec_wallets: rec.length, rec_hold: h1, rec_dust: dust, rec_zero: zero });
+  }
+  // 주별 · 받은 양에 견준 순매도: 일반 사용자 지갑이 그 주에 새로 받은 양과 순매도(판 양 − 도로 산 양). 풀이 열린 날부터 7일씩, 온전한 날만 센다. 판정하지 않는다
+  const weekly = [];
+  for (let i = 0; i < full.length; i += 7) {
+    const w = full.slice(i, i + 7), tsum = (f) => w.reduce((x, r) => x + (r[f] || 0), 0), wp = tsum('paid_user'), wsold = tsum('sell_user'), wb = tsum('buy_user');
+    weekly.push({ date: w[0].date, from: w[0].date, to: w[w.length - 1].date, days: w.length, partial: w.length < 7, paid: r0(wp), sold: r0(wsold), bought: r0(wb), net_sold: r0(wsold) - r0(wb), ratio: wp > 0 ? r3((wsold - wb) / wp) : null });
+  }
   // ── 시장과 견주기: WLBN 값(RLUSD 풀)을 주요 코인 10종 · 그 묶음과 같은 날짜 창으로 견준다. 지난 기록과 산수만 쓴다
   const buildMarket = () => {
     const M = S.mkt; if (!M || !M.now || !M.now.coins || !M.now.coins.length) return null;
@@ -1656,8 +1687,65 @@ function buildDatasets(S, opts) {
   };
   let plan = null; try { plan = buildPlan(); } catch (e) { plan = null; }
 
+  // 잠금 해제 달력: 원장의 에스크로(S.live.esc — 하루 한 번 받는다)를 묶음별 · 연도별 · 월별로 모은다. **판정하지 않는다** — 일정과 수량만 놓는다
+  //   줄 = [받는 곳, 조건 여부(0/1), 풀리는 시각(리플 초 · 없으면 0), 취소할 수 있는 시각, 수량]. 조건으로 풀리는 것은 시각이 없어 달력에 넣지 않는다
+  const buildUnlock = () => {
+    const E = S.live && S.live.esc; if (!E || !Array.isArray(E.rows) || !E.rows.length) return null;
+    const n = (x) => Math.round(x).toLocaleString('en-US'), p1 = (x) => (x * 100).toFixed(1) + '%', eok = (x) => String(Math.round(x / 1e6) / 100) + '억', rules = PLAN.unlock;
+    const ruleOf = (dest, v) => rules.find((g) => (g.label && L[dest] === g.label) || (g.each && g.each.indexOf(Math.round(v)) >= 0)) || { key: 'etc', name: '그 밖의 잠금', short: '그 밖' };
+    const toOf = (dest) => (L[dest] ? tagged(labelOwner(L[dest]), labelName(L[dest])) : { full: '이름표가 없는 계정', owner: null, label: '이름표가 없는 계정' });
+    const GG = {}, order = [], Y = {}, M = {}; let total = 0, tTime = 0, nTime = 0, tCond = 0, nCond = 0, cnt = 0;
+    for (const r of E.rows) {
+      const dest = r[0], fin = r[2] || 0, can = r[3] || 0, v = Number(r[4]); if (!(v > 0)) continue;
+      const g = ruleOf(dest, v), kind = r[1] || !fin ? 'cond' : 'time', id = g.key + '|' + kind + '|' + dest;
+      if (!GG[id]) { GG[id] = { key: g.key, name: g.name, short: g.short || g.name, kind, to: toOf(dest), n: 0, total: 0, vals: {}, fins: [], cancel: 0 }; order.push(id); }
+      const o = GG[id]; o.n++; o.total += v; o.vals[Math.round(v)] = (o.vals[Math.round(v)] || 0) + 1; if (can > o.cancel) o.cancel = can; total += v; cnt++;
+      if (kind === 'time') {
+        o.fins.push(fin); tTime += v; nTime++;
+        const d = kday(fin), y = d.slice(0, 4), m = d.slice(0, 7);
+        if (!Y[y]) Y[y] = { date: y, qty: 0, n: 0, parts: {} }; Y[y].qty += v; Y[y].n++; Y[y].parts[g.key] = (Y[y].parts[g.key] || 0) + v;
+        if (!M[m]) M[m] = { month: m, day: d, at: fin, qty: 0, n: 0, parts: {} }; M[m].qty += v; M[m].n++; M[m].parts[g.key] = (M[m].parts[g.key] || 0) + v; if (fin < M[m].at) { M[m].at = fin; M[m].day = d; }
+      } else { tCond += v; nCond++; }
+    }
+    if (!cnt) return null;
+    const stepOf = (f) => { if (f.length < 2) return ''; const gaps = []; for (let i = 1; i < f.length; i++) gaps.push((f[i] - f[i - 1]) / 86400); gaps.sort((a, b) => a - b); const mid = gaps[Math.floor(gaps.length / 2)]; return mid < 45 ? '매월' : mid < 120 ? '석 달마다' : mid < 240 ? '여섯 달마다' : '해마다'; };
+    const nameOf = {}; rules.forEach((g) => { nameOf[g.key] = g.name; }); nameOf.etc = '그 밖의 잠금';
+    const groups = order.map((id) => {
+      const o = GG[id], f = o.fins.slice().sort((a, b) => a - b), each = Object.keys(o.vals).map(Number).sort((a, b) => o.vals[b] - o.vals[a] || b - a).map((v) => n(v) + ' × ' + o.vals[v]).join(' · ');
+      return { key: o.key, name: o.name, short: o.short, kind: o.kind, how: o.kind === 'time' ? '시각' : '조건', to: o.to.full, owner: o.to.owner, label: o.to.label, n: o.n, total: r0(o.total), each, first: f.length ? kday(f[0]) : null, last: f.length ? kday(f[f.length - 1]) : null, step: stepOf(f) || null, cancel: o.cancel ? kday(o.cancel) : null };
+    }).sort((a, b) => (a.kind === b.kind ? 0 : a.kind === 'time' ? -1 : 1) || String(a.first).localeCompare(String(b.first)) || b.total - a.total);
+    const keys = []; groups.forEach((g) => { if (g.kind === 'time' && !keys.some((k) => k.key === g.key)) keys.push({ key: g.key, name: g.name, short: g.short }); });
+    const partsOf = (p) => keys.filter((k) => p[k.key] > 0).map((k) => ({ key: k.key, name: k.short, qty: r0(p[k.key]) }));
+    const years = Object.keys(Y).sort().map((y) => Object.assign({ date: y, qty: r0(Y[y].qty), n: Y[y].n }, (() => { const o = {}; keys.forEach((k) => { o[k.key] = r0(Y[y].parts[k.key] || 0); }); return o; })()));
+    const ahead = Object.keys(M).sort().map((m) => M[m]).filter((x) => x.at > S.asof), yearEnd = S.asof + 365 * 86400;
+    const months = ahead.filter((x) => x.at <= yearEnd).map((x) => ({ month: x.month, day: x.day, at: kstamp(x.at), qty: r0(x.qty), n: x.n, what: partsOf(x.parts).map((p) => p.name + ' ' + n(p.qty)).join(', ') }));
+    const y1 = months.reduce((t, x) => t + x.qty, 0), y1n = months.reduce((t, x) => t + x.n, 0), y1p = {}; ahead.filter((x) => x.at <= yearEnd).forEach((x) => { for (const k of Object.keys(x.parts)) y1p[k] = (y1p[k] || 0) + x.parts[k]; });
+    const nx = ahead[0] || null, circ = summary.circulating, has = (v) => v !== null && v !== undefined && isFinite(v);
+    const nxG = nx ? groups.filter((g) => g.kind === 'time' && nx.parts[g.key] > 0) : [];
+    const next = nx ? { day: nx.day, at: kstamp(nx.at), qty: r0(nx.qty), n: nx.n, parts: partsOf(nx.parts), to: nxG.length === 1 ? nxG[0].to : null, vs_circ: has(circ) && circ > 0 ? r3(nx.qty / circ) : null } : null;
+    const lockedPos = (positions.find((x) => x.key === 'locked') || {}).amount, diff = has(lockedPos) ? r0(total) - lockedPos : null;
+    const timed = groups.filter((g) => g.kind === 'time'), tFirst = timed.map((g) => g.first).sort()[0] || null, tLast = timed.map((g) => g.last).sort().pop() || null;
+    const tiles = [
+      { label: next ? '다음 해제 · ' + md(next.day) : '다음 해제', value: next ? n(next.qty) : '—', unit: next ? '개' : '', sub: next ? next.parts.map((p) => p.name).join(', ') + (next.to ? ' → ' + next.to : '') + ' · 한국 시각 ' + next.at.slice(11) + (next.vs_circ !== null ? ' · 공시 유통량 ' + n(circ) + '개의 ' + p1(next.vs_circ) : '') : '시각으로 풀릴 잠금이 남아 있지 않다' },
+      { label: '12개월 안에 풀리는 양', value: eok(y1), unit: '개', sub: n(y1) + '개 · ' + y1n + '건' + (Object.keys(y1p).length ? ' — ' + partsOf(y1p).map((p) => p.name + ' ' + eok(p.qty)).join(', ') : '') },
+      { label: '시각으로 풀리는 잠금', value: eok(tTime), unit: '개', sub: nTime + '건 · 잠금의 ' + p1(tTime / total) + (tFirst ? ' · ' + tFirst + ' ~ ' + tLast : '') },
+      { label: '조건으로 풀리는 잠금', value: eok(tCond), unit: '개', sub: nCond + '건 · 잠금의 ' + p1(tCond / total) + ' · 시각이 아니라 조건이 차야 풀린다(달력에 없음)' },
+    ];
+    const notes = [
+      '**풀린다는 것은** 정해진 시각이 지나 받는 계정으로 넘길 수 있게 된다는 뜻이다. 넘어간 물량이 받는 계정에 그대로 있는지는 「위치」에서 본다 — 이 달력은 시장에 나오는 양을 말하지 않는다.',
+      '**조건으로 풀리는 잠금**(' + nCond + '건 · ' + eok(tCond) + '개)은 시각이 없어 달력에 넣지 않았다. 토크노믹스는 이 묶음들을 단계 게이트 통과 · 권역 마일스톤 · 배정 조건에 따라 푼다고 적었다.',
+      '묶음 이름은 백서 7.3이 적은 에스크로 묶음(건수 · 합계 · 일정)에 맞춰 붙였다. 받는 계정에 이름표가 없는 묶음은 한 건 수량으로 가렸다. 「노드 홀더 리워드」는 1기 · 2기를 합친 것이고, 「전략 묶음」은 전략 라운드 예비 10억과 전략 투자 잔여 3.39억이 한 계정 앞으로 잠긴 것이다.',
+      (() => { const cd = groups.filter((g) => g.cancel).map((g) => g.cancel).sort(), tc = groups.filter((g) => g.kind === 'time' && g.cancel).length; return cd.length ? '**기한**은 원장에 적힌 취소 시각이다 — 그날까지 풀리지 않은 잠금은 그 뒤 잠근 계정(treasury)으로 되돌릴 수 있다. 조건으로 풀리는 잠금의 기한은 ' + cd[0] + (cd[cd.length - 1] !== cd[0] ? ' ~ ' + cd[cd.length - 1] : '') + (tc ? '다.' : '이고, 시각으로 풀리는 잠금에는 기한이 없다.') : '원장에 취소 시각이 적힌 잠금은 없다.'; })(),
+      '에스크로 목록은 하루 한 번 원장에서 다시 읽는다(읽은 시각 ' + kstamp(E.at) + ' · 한국 시각). 합계 ' + n(total) + '개 · ' + cnt + '건' + (diff !== null && Math.abs(diff) > 1 ? ' — 「위치」의 잠금 값과 ' + n(Math.abs(diff)) + '개 다르다(읽은 시각이 다르다)' : diff !== null ? ' — 「위치」의 잠금 값과 같다' : '') + '.',
+    ];
+    return { at: kstamp(E.at), ledger: E.ledger || null, total: r0(total), n: cnt, time: { total: r0(tTime), n: nTime, first: tFirst, last: tLast }, cond: { total: r0(tCond), n: nCond }, next, y1: { qty: r0(y1), n: y1n }, groups, keys, years, months, tiles, notes, diff };
+  };
+  let unlock = null; try { unlock = buildUnlock(); } catch (e) { unlock = null; }
+
   const out = { summary: [summary], daily, ranges, positions, dayTop, walletDays };
   if (plan) out.plan = plan;
+  if (unlock) out.unlock = unlock;
+  if (weekly.length) out.weekly = weekly;
   if (trace) out.trace = trace;
   if (health) out.health = health;
   if (market) out.market = market;
