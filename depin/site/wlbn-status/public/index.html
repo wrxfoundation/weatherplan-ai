@@ -77,6 +77,7 @@ button, input { font: inherit; color: inherit; }
 .skip { position: absolute; left: -9999px; } .skip:focus { left: 12px; top: 12px; z-index: 50; background: var(--panel); border: 1px solid var(--line-2); border-radius: var(--r-sm); padding: 8px 12px; }
 .head-in { max-width: 1080px; margin: 0 auto; padding: 28px 20px 14px; display: flex; align-items: flex-end; justify-content: space-between; gap: 12px 16px; flex-wrap: wrap; }
 .brand { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+:where(b, strong, th, summary, h1, h2, h3, h4, .sig-h) :where(b, strong) { font-weight: inherit; }
 .title { margin: 0; font-size: calc(24px * var(--fs)); font-weight: 700; letter-spacing: -0.02em; line-height: 1.25; }
 .asof { margin: 0; color: var(--faint); font-size: var(--t-sm); }
 .ctl { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
@@ -95,17 +96,17 @@ button, input { font: inherit; color: inherit; }
 .nav { align-items: center; gap: 0; }
 .nav-g { flex: none; display: inline-flex; align-items: center; gap: 2px; padding-right: 6px; margin-right: 6px; border-right: 1px solid var(--line-2); }
 .nav-g:last-child { border-right: 0; margin-right: 0; padding-right: 0; }
-.nav-c { flex: none; margin: 9px 0; padding: 5px 10px; border: 0; border-radius: 999px; background: none; font-size: var(--t-sm); font-weight: 600; line-height: inherit; color: var(--muted); cursor: pointer; white-space: nowrap; -webkit-appearance: none; appearance: none; }
+.nav-c { flex: none; margin: 9px 0; padding: 5px 10px; border: 0; border-radius: 999px; background: none; font-size: var(--t-sm); font-weight: 650; line-height: inherit; color: var(--muted); cursor: pointer; white-space: nowrap; -webkit-appearance: none; appearance: none; }
 .nav-c:hover { color: var(--fg); background: var(--soft); }
 .nav-g.on .nav-c { padding-right: 6px; color: var(--fg); font-weight: 750; }
 .nav-g.on .nav-c:hover { background: none; }
 .nav-g:not(.on) a { display: none; }
 .nav a { flex: none; margin: 9px 0; padding: 5px 9px; border-radius: 999px; font-size: var(--t-sm); font-weight: 500; color: var(--muted); text-decoration: none; white-space: nowrap; }
 .nav a:hover { color: var(--fg); background: var(--soft); }
-.nav a[aria-current="true"] { color: var(--accent-fg); background: var(--accent); font-weight: 600; }
+.nav a[aria-current="true"] { color: var(--accent-fg); background: var(--accent); font-weight: 650; }
 .seg { display: inline-flex; flex: none; background: var(--panel); border: 1px solid var(--line-2); border-radius: 999px; padding: 2px; }
 .seg button { height: 28px; border: 0; background: transparent; padding: 0 13px; border-radius: 999px; font-size: var(--t-sm); font-weight: 500; cursor: pointer; color: var(--muted); white-space: nowrap; }
-.seg button[aria-pressed="true"] { background: var(--accent); color: var(--accent-fg); font-weight: 600; }
+.seg button[aria-pressed="true"] { background: var(--accent); color: var(--accent-fg); font-weight: 650; }
 .banner { max-width: 1080px; margin: 12px auto 0; padding: 0 20px; }
 .banner p { margin: 0; padding: 10px 14px; border: 1px solid var(--line-2); border-radius: var(--r-md); background: var(--panel); color: var(--muted); font-size: var(--t-sm); }
 
@@ -130,7 +131,7 @@ button, input { font: inherit; color: inherit; }
 .hpop-x { flex: none; margin: -4px -6px 0 0; padding: 2px 6px; border: 0; background: none; color: var(--faint); font: 400 17px/1 var(--font); cursor: pointer; } .hpop-x:hover { color: var(--fg); }
 .hpop p { margin: 0 0 5px; color: var(--muted); } .hpop p:last-child { margin-bottom: 0; }
 .hpop dl { margin: 8px 0 0; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 4px 10px; font-size: var(--t-xs); } .hpop dt { margin: 0; white-space: nowrap; } .hpop dd { margin: 0; color: var(--muted); }
-.hpop .hpop-now { margin: 9px 0 0; padding-top: 8px; border-top: 1px solid var(--line); color: var(--fg); font-weight: 600; }
+.hpop .hpop-now { margin: 9px 0 0; padding-top: 8px; border-top: 1px solid var(--line); color: var(--fg); font-weight: 650; }
 /* 시장과 견주기 */
 .chart.short { min-height: 200px; }
 .tiles.four { grid-template-columns: repeat(4, minmax(0, 1fr)); } .tiles.four .big { font-size: calc(24px * var(--fs)); }
@@ -140,11 +141,11 @@ button, input { font: inherit; color: inherit; }
 .limit { display: flex; gap: 10px; align-items: flex-start; max-width: 62em; margin: 0; padding: 11px 14px; border-radius: var(--r-md); background: var(--c-warn-bg); color: var(--fg); font-size: var(--t-sm); line-height: 1.55; }
 .limit::before { content: "!"; flex: none; width: 18px; height: 18px; margin-top: 2px; border-radius: 50%; background: var(--c-warn); color: var(--c-ink); font-size: calc(12px * var(--fs)); font-weight: 800; line-height: 18px; text-align: center; }
 .limit b { font-weight: 650; } .limit span { display: block; }
-.g-cav { margin: 0; color: var(--warn); font-size: var(--t-xs); font-weight: 600; }
+.g-cav { margin: 0; color: var(--warn); font-size: var(--t-xs); font-weight: 650; }
 /* 비중 막대: 한 줄이 100%. 글자는 막대 밖(아래 범례)에 쓴다 */
 .shares { display: flex; flex-direction: column; gap: 16px; }
 .sh-row { display: grid; grid-template-columns: 10.5em minmax(0, 1fr); gap: 6px 16px; align-items: center; }
-.sh-name { font-size: var(--t-sm); font-weight: 600; line-height: 1.35; } .sh-name small { display: block; color: var(--faint); font-size: var(--t-xs); font-weight: 400; font-variant-numeric: tabular-nums; }
+.sh-name { font-size: var(--t-sm); font-weight: 650; line-height: 1.35; } .sh-name small { display: block; color: var(--faint); font-size: var(--t-xs); font-weight: 400; font-variant-numeric: tabular-nums; }
 .sh-bar { display: flex; gap: 2px; height: 22px; border-radius: 6px; overflow: hidden; background: var(--soft); }
 .sh-seg { flex: 0 0 auto; min-width: 3px; }
 .sh-keys { grid-column: 2; display: flex; flex-wrap: wrap; gap: 3px 16px; color: var(--muted); font-size: var(--t-xs); }
@@ -163,10 +164,10 @@ td .pc { display: block; margin-top: 1px; color: var(--faint); font-size: var(--
 .h3 { margin: 10px 0 0; padding-top: 20px; border-top: 1px solid var(--line); font-size: var(--t-md); font-weight: 650; letter-spacing: -0.01em; line-height: 1.4; }
 .h3.flat, .h2 + .h3 { margin: 0; padding: 0; border: 0; }
 .h2 + .h3 { margin-top: 6px; }
-.h4 { margin: 0; font-size: var(--t-sm); font-weight: 600; color: var(--muted); }
+.h4 { margin: 0; font-size: var(--t-sm); font-weight: 650; color: var(--muted); }
 .lede { margin: 0; max-width: 44em; font-size: var(--t-lg); font-weight: 400; line-height: 1.6; color: var(--fg); }
 .say { margin: 0; max-width: 54em; font-size: var(--t-md); color: var(--muted); }
-.lede b { font-weight: 700; } .say b { font-weight: 600; color: var(--fg); }
+.lede b { font-weight: 700; } .say b { font-weight: 650; color: var(--fg); }
 .note { margin: 0; max-width: 62em; color: var(--faint); font-size: var(--t-sm); line-height: 1.55; }
 .foot { margin: 0; color: var(--faint); font-size: var(--t-xs); }
 .sub-block { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
@@ -175,13 +176,13 @@ td .pc { display: block; margin-top: 1px; color: var(--faint); font-size: var(--
 .tiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
 .tiles.duo { grid-template-columns: repeat(2, minmax(0, 1fr)); } .tiles .span { grid-column: 1 / -1; }
 .card { --cell: var(--soft); background: var(--soft); border: 0; border-radius: var(--r-md); padding: 16px 18px; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
-.card-h { margin: 0; font-size: var(--t-xs); font-weight: 600; color: var(--muted); line-height: 1.4; }
+.card-h { margin: 0; font-size: var(--t-xs); font-weight: 650; color: var(--muted); line-height: 1.4; }
 .big { margin: 2px 0 0; font-size: var(--t-num); font-weight: 700; letter-spacing: -0.02em; line-height: 1.2; display: flex; align-items: baseline; flex-wrap: wrap; gap: 0 6px; }
-.big.two { font-size: calc(21px * var(--fs)); flex-direction: column; gap: 0; line-height: 1.3; }
+.big.two { font-size: calc(21px * var(--fs)); flex-direction: row; flex-wrap: wrap; align-items: baseline; gap: 0 18px; line-height: 1.3; }
 .unit { font-size: var(--t-xs); font-weight: 500; letter-spacing: 0; color: var(--faint); }
 .sub { margin: 2px 0 0; color: var(--faint); font-size: var(--t-xs); line-height: 1.5; }
-.sub b { color: var(--muted); font-weight: 600; }
-.up { color: var(--warn); font-weight: 600; } .down { color: var(--ok); font-weight: 600; }
+.sub b { color: var(--muted); font-weight: 650; }
+.up { color: var(--warn); font-weight: 650; } .down { color: var(--ok); font-weight: 650; }
 
 /* 소속 칩: Wellbian 계정 · KWeather 계정 */
 .tag { display: inline-block; margin-right: 6px; padding: 2px 7px; border-radius: 999px; font-size: var(--t-tag); font-weight: 650; line-height: 1.3; letter-spacing: 0.01em; white-space: nowrap; vertical-align: 0.1em; }
@@ -217,15 +218,33 @@ td .pc { display: block; margin-top: 1px; color: var(--faint); font-size: var(--
 .idx-box .chart { min-height: 0; overflow: visible; }
 .idx-top { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin: 0; } .idx-top b { font-size: var(--t-sm); font-weight: 650; } .idx-top span { color: var(--faint); font-size: var(--t-xs); }
 .idx-track { fill: var(--st-bg); } .idx-fill { fill: var(--st); } .idx-knob { fill: var(--st); stroke: var(--cell); stroke-width: 3px; }
+.idx-tick { stroke: var(--line-2); stroke-width: 1px; } .idx-tick.major { stroke: var(--faint); stroke-width: 1.5px; } .idx-ptr { fill: var(--fg); } .idx-halo { fill: var(--st); opacity: 0; transform-box: fill-box; transform-origin: center; }      /* 계기판 눈금 · 바늘 */
+/* ── 움직임(35차): html.fx 일 때만. 기기의 「움직임 줄이기」 · 보기 설정의 「움직임 끄기」 · 보고서 인쇄에서는 붙지 않는다 */
+@keyframes fxUp { from { transform: scaleY(0); } } @keyframes fxSide { from { transform: scaleX(0); } }
+@keyframes fxDraw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } } @keyframes fxFade { from { opacity: 0; } }
+@keyframes fxPop { from { opacity: 0; transform: scale(0.2); } 70% { opacity: 1; transform: scale(1.3); } }
+@keyframes fxWipe { from { clip-path: inset(0 100% 0 0 round 6px); } to { clip-path: inset(0 0 0 0 round 6px); } } @keyframes fxFill { from { width: 0; } }
+@keyframes fxRise { from { opacity: 0; transform: translateY(12px); } }
+@keyframes fxPulse { 0% { opacity: 0.45; transform: scale(1); } 70%, 100% { opacity: 0; transform: scale(2.3); } } @keyframes fxGlow { 50% { box-shadow: 0 0 0 5px color-mix(in srgb, var(--st) 24%, transparent); } }
+html.fx .fx-in .fx-up, html.fx .fx-in .fx-dn { transform-box: fill-box; transform-origin: 50% 100%; animation: fxUp 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) both; animation-delay: var(--d, 0ms); } html.fx .fx-in .fx-dn { transform-origin: 50% 0%; }
+html.fx .fx-in .fx-rt, html.fx .fx-in .fx-lt { transform-box: fill-box; transform-origin: 0% 50%; animation: fxSide 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) both; animation-delay: var(--d, 0ms); } html.fx .fx-in .fx-lt { transform-origin: 100% 50%; }
+html.fx .fx-in .fx-line { stroke-dasharray: 1; animation: fxDraw 1.1s cubic-bezier(0.3, 0.7, 0.2, 1) both; } html.fx .fx-in .fx-area { animation: fxFade 0.9s ease-out 0.2s both; }
+html.fx .fx-in .fx-dot { transform-box: fill-box; transform-origin: center; animation: fxPop 0.45s ease-out 0.75s both; }
+html.fx .fx-in.fx-fill b, html.fx .fx-in.fx-fill i { animation: fxFill 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) both; } html.fx .fx-in.fx-wipe { animation: fxWipe 0.8s cubic-bezier(0.3, 0.7, 0.2, 1) both; }
+html.fx .fx-rise { animation: fxRise 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) both; animation-delay: var(--d, 0ms); }
+html.fx .idx-halo { animation: fxPulse 2.6s ease-out infinite; } html.fx .thermo b::after { animation: fxGlow 2.8s ease-in-out infinite; }
+.fx-num { position: relative; -webkit-text-fill-color: transparent; } .fx-num::after { content: attr(data-fx); position: absolute; left: 0; top: 50%; transform: translateY(-50%); white-space: nowrap; -webkit-text-fill-color: currentColor; pointer-events: none; }      /* 올라가는 숫자: 원래 글(끝 값)은 자리만 지키고 위에 덧그린다 */
+html.rpt .fx-in *, html.rpt .fx-rise, html.rpt .idx-halo { animation: none !important; }
+@media (prefers-reduced-motion: reduce) { .idx-halo, .thermo b::after { animation: none !important; } }
 .idx-num { fill: var(--fg); font-family: var(--font); font-size: calc(46px * var(--fs)); font-weight: 750; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
 .idx-of { fill: var(--faint); font-family: var(--font); font-size: calc(12px * var(--fs)); }
 .idx-state { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 4px 8px; margin: -4px 0 2px; font-size: var(--t-lg); font-weight: 700; letter-spacing: -0.01em; }
 .idx-state small { color: var(--muted); font-size: var(--t-xs); font-weight: 500; letter-spacing: 0; font-variant-numeric: tabular-nums; }
 .idx-parts { list-style: none; margin: 0; padding: 10px 0 0; border-top: 1px solid var(--line); display: grid; grid-template-columns: auto minmax(0, 1fr) auto auto; gap: 7px 9px; align-items: center; font-size: var(--t-xs); }
 .idx-parts li { display: contents; }
-.idx-parts .nm { display: inline-flex; align-items: center; font-weight: 600; white-space: nowrap; } .idx-parts .nm .q { margin-left: 4px; } .idx-parts .nm em { margin-left: 5px; padding: 0 5px; border-radius: 999px; background: var(--st-bg); font-style: normal; font-size: var(--t-tag); font-weight: 600; }
+.idx-parts .nm { display: inline-flex; align-items: center; font-weight: 650; white-space: nowrap; } .idx-parts .nm .q { margin-left: 4px; } .idx-parts .nm em { margin-left: 5px; padding: 0 5px; border-radius: 999px; background: var(--st-bg); font-style: normal; font-size: var(--t-tag); font-weight: 650; }
 .idx-parts li.ref .nm, .idx-parts li.ref .sc { color: var(--faint); font-weight: 500; } .idx-parts li.ref .pbar { opacity: 0.45; } .idx-parts li.ref .nm em { background: var(--c-na-bg); color: var(--muted); }
-.g-ref { flex: none; padding: 1px 7px; border-radius: 999px; border: 1px dashed var(--line-2); color: var(--muted); font-size: var(--t-tag); font-weight: 600; white-space: nowrap; }
+.g-ref { flex: none; padding: 1px 7px; border-radius: 999px; border: 1px dashed var(--line-2); color: var(--muted); font-size: var(--t-tag); font-weight: 650; white-space: nowrap; }
 .ring-lamp.ref { fill: var(--panel); stroke: var(--st); stroke-width: 2px; stroke-dasharray: 3 3; } .ring-ref .glyph { stroke: var(--st); } .ring-arc.ref { opacity: 0.6; }
 .idx-parts .sc { text-align: right; font-weight: 700; font-variant-numeric: tabular-nums; } .idx-parts .dl { min-width: 2.2em; text-align: right; color: var(--faint); font-variant-numeric: tabular-nums; white-space: nowrap; }
 .pbar { position: relative; height: 6px; display: grid; gap: 2px; } .pbar i { background: var(--c-warn-bg); } .pbar i:first-child { border-radius: 3px 0 0 3px; background: var(--c-bad-bg); } .pbar i:nth-child(3) { border-radius: 0 3px 3px 0; background: var(--c-ok-bg); }
@@ -250,7 +269,7 @@ td .pc { display: block; margin-top: 1px; color: var(--faint); font-size: var(--
 .lamp { flex: none; width: 18px; height: 18px; } .lamp circle { fill: var(--st); }
 .g-name { font-size: var(--t-md); font-weight: 650; letter-spacing: -0.01em; white-space: nowrap; }
 .g-ask { order: 9; flex: 0 0 100%; min-width: 0; color: var(--faint); font-size: var(--t-xs); line-height: 1.45; word-break: keep-all; }      /* 질문 글은 둘째 줄 — 칩에 밀려 잘리지 않게 */
-.g-st { margin-left: auto; flex: none; padding: 1px 8px; border-radius: 999px; background: var(--st-bg); color: var(--fg); font-size: var(--t-xs); font-weight: 600; white-space: nowrap; }
+.g-st { margin-left: auto; flex: none; padding: 1px 8px; border-radius: 999px; background: var(--st-bg); color: var(--fg); font-size: var(--t-xs); font-weight: 650; white-space: nowrap; }
 .g-val { display: flex; align-items: baseline; flex-wrap: wrap; gap: 0 8px; }
 .g-val b { font-size: var(--t-xl); font-weight: 700; letter-spacing: -0.02em; line-height: 1.3; }
 .g-val span { color: var(--muted); font-size: var(--t-xs); }
@@ -282,13 +301,14 @@ td .pc { display: block; margin-top: 1px; color: var(--faint); font-size: var(--
 .plot { position: relative; }
 .plot svg { display: block; overflow: visible; }
 .tick { fill: var(--faint); font-size: calc(12px * var(--fs)); font-family: var(--font); }
-.end { fill: var(--fg); font-size: calc(12.5px * var(--fs)); font-family: var(--font); font-weight: 600; }
+.end { fill: var(--fg); font-size: calc(12.5px * var(--fs)); font-family: var(--font); font-weight: 650; }
 .band { fill: var(--grid); opacity: 0.8; }
 .dot { stroke: var(--panel); stroke-width: 1.5px; opacity: 0.9; } .dot-on { fill: none; stroke: var(--fg); stroke-width: 2px; }
 .diag { stroke: var(--axis); stroke-width: 1px; stroke-dasharray: 4 4; }
-.flow-name { fill: var(--fg); font-size: calc(13px * var(--fs)); font-weight: 600; font-family: var(--font); paint-order: stroke; stroke: var(--panel); stroke-width: 4px; stroke-linejoin: round; }
+.flow-plate { fill: var(--panel); fill-opacity: 0.94; stroke: var(--line-2); stroke-width: 1px; }
+.flow-name { fill: var(--fg); font-size: calc(13px * var(--fs)); font-weight: 650; font-family: var(--font); paint-order: stroke; stroke: var(--panel); stroke-width: 4px; stroke-linejoin: round; }
 .flow-val { fill: var(--muted); font-size: calc(12px * var(--fs)); font-weight: 500; font-family: var(--font); font-variant-numeric: tabular-nums; paint-order: stroke; stroke: var(--panel); stroke-width: 4px; stroke-linejoin: round; }
-.flow-col { fill: var(--faint); font-size: calc(12px * var(--fs)); font-weight: 600; font-family: var(--font); }
+.flow-col { fill: var(--faint); font-size: calc(12px * var(--fs)); font-weight: 650; font-family: var(--font); }
 .rib { opacity: 0.4; } .rib:hover, .rib.on { opacity: 0.8; }
 .tip { position: absolute; z-index: 5; pointer-events: none; display: grid; grid-template-columns: minmax(0, 1fr) auto auto; column-gap: 12px; width: max-content; min-width: 11em; max-width: min(32em, calc(100% - 8px)); padding: 9px 12px; background: var(--pop); border: 1px solid var(--pop-line); border-radius: var(--r-md); box-shadow: var(--pop-shadow); color: var(--fg); font-size: var(--t-xs); line-height: 1.55; }
 /* 풀이 상자는 세 칸(이름 | 수량 | 비율)이다 — 줄마다 숫자 자리가 맞고, 이름이 길면 이름만 줄을 바꾼다(전에는 이름 · 값이 모두 줄바꿈 금지라 값이 상자 밖으로 밀려 나갔다) */
@@ -306,19 +326,20 @@ td .pc { display: block; margin-top: 1px; color: var(--faint); font-size: var(--
 .scroll { overflow-x: auto; min-width: 0; margin: 0 -6px; }
 table { width: 100%; border-collapse: collapse; font-size: var(--t-sm); }
 th, td { padding: 9px 12px; text-align: right; white-space: nowrap; border-bottom: 1px solid var(--line); }
-th { padding-top: 6px; padding-bottom: 8px; font-size: var(--t-xs); font-weight: 600; color: var(--faint); border-bottom-color: var(--line-2); }
+th { padding-top: 6px; padding-bottom: 8px; font-size: var(--t-xs); font-weight: 650; color: var(--faint); border-bottom-color: var(--line-2); }
 td { color: var(--fg); font-weight: 400; }
 tr:last-child td { border-bottom: 0; }
 th:first-child, td:first-child { text-align: left; position: sticky; left: 0; background: var(--cell); font-weight: 500; }
 th.l, td.l { text-align: left; }      /* 글이 든 칸은 왼쪽, 숫자가 든 칸은 오른쪽 */
-th:first-child { font-weight: 600; }
+.tb-sort { display: none; align-items: center; gap: 8px; margin: 2px 0 6px; font-size: var(--t-xs); font-weight: 650; color: var(--faint); } .tb-sort select { flex: 1 1 auto; min-width: 0; height: 34px; padding: 0 8px; border: 1px solid var(--line-2); border-radius: var(--r-sm, 8px); background: var(--panel); color: var(--fg); font: inherit; font-weight: 500; }      /* 휴대폰: 표 머리글 대신 정렬을 고르는 줄 */
+th:first-child { font-weight: 650; }
 td.empty { text-align: left; color: var(--faint); position: static; font-weight: 400; }
 td.neg { color: var(--faint); }
 tr.pick { cursor: pointer; } tr.pick:hover td { background: var(--soft); } tr.on td, tr.on:hover td { background: color-mix(in srgb, var(--accent) 9%, var(--cell)); }
 table.words th, table.words td { text-align: left; white-space: nowrap; vertical-align: top; }
 table.words td:nth-child(2) { white-space: normal; word-break: keep-all; min-width: 13em; }
 #tb-bench td, #tb-bench th { white-space: normal; word-break: keep-all; } #tb-bench td:nth-child(2) { min-width: 8em; } #tb-bench td:nth-child(3) { min-width: 9em; } #tb-bench td:nth-child(4) { white-space: nowrap; } #tb-bench td:last-child { min-width: 14em; }
-th button:not(.q) { all: unset; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; font-size: var(--t-xs); font-weight: 600; color: var(--faint); }
+th button:not(.q) { all: unset; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; font-size: var(--t-xs); font-weight: 650; color: var(--faint); }
 th button:not(.q):hover { color: var(--fg); } th button:not(.q):focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 3px; }
 th[aria-sort] button:not(.q) { color: var(--fg); }
 th[aria-sort="ascending"] button:not(.q)::after { content: "▲"; font-size: calc(8px * var(--fs)); } th[aria-sort="descending"] button:not(.q)::after { content: "▼"; font-size: calc(8px * var(--fs)); }
@@ -331,7 +352,7 @@ th[aria-sort="ascending"] button:not(.q)::after { content: "▲"; font-size: cal
 .count { color: var(--faint); font-size: var(--t-xs); margin-right: auto; }
 .chips { display: inline-flex; flex-wrap: wrap; gap: 6px; }
 .chips button { height: 30px; border: 1px solid var(--line-2); background: var(--panel); border-radius: 999px; padding: 0 12px; font-size: var(--t-xs); font-weight: 500; color: var(--muted); cursor: pointer; }
-.chips button[aria-pressed="true"] { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 10%, var(--panel)); color: var(--fg); font-weight: 600; }
+.chips button[aria-pressed="true"] { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 10%, var(--panel)); color: var(--fg); font-weight: 650; }
 .field { display: inline-flex; align-items: center; gap: 8px; font-size: var(--t-sm); color: var(--muted); }
 .field input { width: 150px; height: 34px; border: 1px solid var(--line-2); background: var(--panel); border-radius: var(--r-sm); padding: 0 10px; font-variant-numeric: tabular-nums; }
 
@@ -348,11 +369,11 @@ th[aria-sort="ascending"] button:not(.q)::after { content: "▲"; font-size: cal
 .fact { display: flex; flex-direction: column; gap: 2px; padding: 12px 0; border-top: 1px solid var(--line); min-width: 0; }
 .fact dt { font-size: var(--t-xs); font-weight: 500; color: var(--faint); } .fact dd { margin: 0; font-size: var(--t-md); font-weight: 500; font-variant-numeric: tabular-nums; }
 details { font-size: var(--t-sm); color: var(--muted); max-width: 62em; }
-details summary { cursor: pointer; color: var(--muted); font-weight: 600; padding: 4px 0; }
+details summary { cursor: pointer; color: var(--muted); font-weight: 650; padding: 4px 0; }
 details summary:hover { color: var(--fg); }
 details .scroll { margin-top: 8px; }
 .gloss { margin: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px 28px; font-size: var(--t-sm); }
-.gloss div { display: flex; flex-direction: column; gap: 2px; } .gloss dt { color: var(--fg); font-weight: 600; } .gloss dd { margin: 0; color: var(--muted); }
+.gloss div { display: flex; flex-direction: column; gap: 2px; } .gloss dt { color: var(--fg); font-weight: 650; } .gloss dd { margin: 0; color: var(--muted); }
 .list { margin: 8px 0 0; padding-left: 1.15em; display: flex; flex-direction: column; gap: 4px; }
 .skel { background: linear-gradient(90deg, var(--grid), var(--soft), var(--grid)); background-size: 200% 100%; border-radius: var(--r-md); }
 @media (prefers-reduced-motion: no-preference) { .skel { animation: sk 1.4s linear infinite; } }
@@ -382,7 +403,7 @@ details .scroll { margin-top: 8px; }
 .panel.lay.shut > .sec-h:hover { background: var(--soft); }
 .panel.lay.shut .h2 { font-size: calc(16.5px * var(--fs)); font-weight: 650; }
 .panel.lay.shut .period { display: none; }
-.fold { flex: none; display: inline-flex; align-items: center; gap: 5px; height: 28px; margin: 0; padding: 0 9px 0 12px; border: 1px solid var(--line-2); border-radius: 999px; background: var(--panel); color: var(--muted); font-size: var(--t-xs); font-weight: 600; line-height: 1; cursor: pointer; white-space: nowrap; -webkit-appearance: none; appearance: none; }
+.fold { flex: none; display: inline-flex; align-items: center; gap: 5px; height: 28px; margin: 0; padding: 0 9px 0 12px; border: 1px solid var(--line-2); border-radius: 999px; background: var(--panel); color: var(--muted); font-size: var(--t-xs); font-weight: 650; line-height: 1; cursor: pointer; white-space: nowrap; -webkit-appearance: none; appearance: none; }
 .fold .chev { flex: none; width: 12px; height: 12px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; transform: rotate(180deg); transition: transform 0.15s; }
 .shut > .sec-h .fold .chev { transform: none; }
 .sec-h:hover .fold, .blk-h:hover .fold { border-color: var(--axis); color: var(--fg); }
@@ -394,11 +415,11 @@ details .scroll { margin-top: 8px; }
 .blk-h .fold { width: 22px; height: 22px; padding: 0; justify-content: center; border-color: transparent; background: var(--soft); }
 .blk-h .fold .chev { transform: none; }
 .blk.shut > .blk-h .fold .chev { transform: rotate(-90deg); }
-.blk.shut > .blk-h .h3 { color: var(--muted); font-weight: 600; }
+.blk.shut > .blk-h .h3 { color: var(--muted); font-weight: 650; }
 .blk-b { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
 .blk.shut > .blk-b { display: none; }
 .sec-b > details { max-width: none; margin-top: 4px; padding-top: 14px; border-top: 1px solid var(--line); }
-.sec-b > details > summary { position: relative; display: block; list-style: none; padding: 1px 0 1px 30px; font-size: var(--t-md); font-weight: 600; line-height: 1.4; }
+.sec-b > details > summary { position: relative; display: block; list-style: none; padding: 1px 0 1px 30px; font-size: var(--t-md); font-weight: 650; line-height: 1.4; }
 .sec-b > details > summary::-webkit-details-marker { display: none; }
 .sec-b > details > summary::before { content: ""; position: absolute; left: 0; top: 50%; width: 22px; height: 22px; margin-top: -11px; border-radius: 50%; background: var(--soft); }
 .sec-b > details > summary::after { content: ""; position: absolute; left: 7px; top: 50%; width: 6px; height: 6px; margin-top: -4px; border: solid currentColor; border-width: 0 1.8px 1.8px 0; transform: rotate(-45deg); }
@@ -448,10 +469,19 @@ details .scroll { margin-top: 8px; }
 .bc { --cell: var(--soft); background: var(--soft); border-radius: var(--r-md); padding: 13px 14px 10px; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 .bc-h { margin: 0; display: flex; align-items: baseline; justify-content: space-between; gap: 8px; font-size: var(--t-xs); font-weight: 650; color: var(--muted); line-height: 1.4; }
 .bc-h a { color: inherit; text-decoration: none; } .bc-h a:hover { color: var(--fg); text-decoration: underline; text-underline-offset: 3px; }
-.bc-h i { flex: none; font-style: normal; font-weight: 500; font-size: var(--t-tag); color: var(--faint); }
+.bc-h i { flex: none; margin-left: auto; font-style: normal; font-weight: 500; font-size: var(--t-tag); color: var(--faint); }
+/* 카드 순서 바꾸기: 머리 오른쪽 끝의 손잡이를 끌거나(화살표 키로) 옮긴다 */
+.bc { position: relative; }
+.bc-grip { all: unset; box-sizing: border-box; position: absolute; top: 7px; right: 0; display: grid; place-items: center; width: 15px; height: 24px; border-radius: 5px; color: var(--faint); cursor: grab; touch-action: none; }      /* 머리글 줄 밖(카드 모서리 여백) — 제목 자리를 줄이지 않는다 */
+.bc-grip svg { width: 9px; height: 13px; fill: currentColor; } .bc-grip:hover { color: var(--fg); background: var(--line); } .bc-grip:focus-visible { color: var(--fg); outline: 2px solid var(--accent); outline-offset: 1px; }
+@media (pointer: coarse) { .bc-grip { top: 2px; width: 28px; height: 32px; justify-items: end; padding-right: 3px; } }
+.bc.drag { position: relative; z-index: 2; outline: 2px solid var(--accent); outline-offset: -2px; box-shadow: 0 12px 30px color-mix(in srgb, var(--accent) 24%, transparent); } .bc.drag .bc-grip { cursor: grabbing; color: var(--accent); }
+.board.sorting { user-select: none; -webkit-user-select: none; } .board.sorting .chart { pointer-events: none; }
+.bord-tools { gap: 12px; margin: 0 0 -2px; font-size: var(--t-xs); color: var(--faint); } .bord-tools b { font-weight: 700; color: var(--muted); }
+html.rpt .bc-grip, html.rpt .bord-tools { display: none !important; }
 .bc-v { margin: 1px 0 0; font-size: calc(22px * var(--fs)); font-weight: 700; letter-spacing: -0.02em; line-height: 1.25; font-variant-numeric: tabular-nums; }
 .bc-v[class*="st-"] { color: var(--st-fg, var(--st)); }
-.bc-v small { margin-left: 5px; font-size: var(--t-xs); font-weight: 600; letter-spacing: 0; color: var(--muted); }
+.bc-v small { margin-left: 5px; font-size: var(--t-xs); font-weight: 650; letter-spacing: 0; color: var(--muted); }
 .bc-s { margin: 0; min-height: 2.9em; font-size: var(--t-xs); line-height: 1.45; color: var(--faint); }
 .bc-s b { color: var(--muted); font-weight: 650; }
 .bc .chart { min-height: 0; margin-top: 4px; flex: 1 1 auto; display: flex; flex-direction: column; justify-content: flex-end; }
@@ -504,7 +534,7 @@ button.who:hover, a.who:hover { text-decoration-color: var(--fg); } button.who:f
 .tr-h small { margin-left: 6px; font-weight: 500; color: var(--faint); }
 .tr-dl { margin: 0; display: flex; flex-direction: column; gap: 10px; font-size: var(--t-sm); }
 .tr-dl > div { display: grid; grid-template-columns: 7.4em minmax(0, 1fr); gap: 4px 12px; align-items: baseline; }
-.tr-dl dt { color: var(--faint); font-size: var(--t-xs); font-weight: 600; }
+.tr-dl dt { color: var(--faint); font-size: var(--t-xs); font-weight: 650; }
 .tr-dl dd { margin: 0; display: flex; flex-direction: column; gap: 4px; min-width: 0; color: var(--fg); }
 .tr-dl .line { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 8px; }
 .tr-dl dd > small, .tr-dl .line > small { color: var(--faint); font-size: var(--t-tag); }
@@ -512,8 +542,8 @@ button.who:hover, a.who:hover { text-decoration-color: var(--fg); } button.who:f
 .tr-paths li { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 8px; padding: 9px 12px; border-radius: var(--r-md); background: var(--panel); border: 1px solid var(--line); }
 .tr-paths .hop { display: inline-flex; flex-wrap: wrap; align-items: baseline; gap: 2px 6px; min-width: 0; }
 .tr-paths .arr { color: var(--axis); }
-.tr-paths .hopn { color: var(--faint); font-size: var(--t-tag); font-weight: 600; }
-.tr-paths .amt { margin-left: auto; font-variant-numeric: tabular-nums; font-weight: 600; white-space: nowrap; }
+.tr-paths .hopn { color: var(--faint); font-size: var(--t-tag); font-weight: 650; }
+.tr-paths .amt { margin-left: auto; font-variant-numeric: tabular-nums; font-weight: 650; white-space: nowrap; }
 .tr-paths .amt small { margin-left: 6px; color: var(--faint); font-weight: 500; font-size: var(--t-tag); }
 .tr-none { margin: 0; color: var(--faint); font-size: var(--t-sm); }
 .tr-pats { margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px 14px; }
@@ -545,14 +575,14 @@ button.who:hover, a.who:hover { text-decoration-color: var(--fg); } button.who:f
 .fsz { display: inline-flex; align-items: center; height: 34px; padding: 0 4px; border: 1px solid var(--line-2); background: var(--panel); border-radius: 999px; }
 .fsz button { min-width: 32px; height: 26px; padding: 0 6px; border: 0; background: none; border-radius: 999px; font-size: 13px; font-weight: 650; line-height: 1; color: var(--fg); cursor: pointer; white-space: nowrap; }
 .fsz button:hover:not([disabled]) { background: var(--soft); } .fsz button[disabled] { color: var(--axis); cursor: default; }
-.fsz output { min-width: 5.6em; text-align: center; font-size: var(--t-xs); font-weight: 600; color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.fsz output { min-width: 5.6em; text-align: center; font-size: var(--t-xs); font-weight: 650; color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
 .btn.ico { display: inline-flex; align-items: center; gap: 6px; }
 .btn.ico svg { flex: none; width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
 .menu { position: relative; }
 .menu > summary { list-style: none; display: inline-flex; align-items: center; gap: 6px; user-select: none; } .menu > summary::-webkit-details-marker { display: none; }
 .menu[open] > summary { border-color: var(--accent); }
 .menu-pop { position: absolute; right: 0; top: calc(100% + 6px); z-index: 30; width: max-content; max-width: min(21em, calc(100vw - 40px)); padding: 6px; border-radius: var(--r-md); background: var(--pop); border: 1px solid var(--pop-line); box-shadow: var(--pop-shadow); display: flex; flex-direction: column; gap: 2px; }
-.menu-pop button { all: unset; box-sizing: border-box; display: flex; flex-direction: column; gap: 1px; padding: 8px 11px; border-radius: var(--r-sm); cursor: pointer; font-size: var(--t-sm); font-weight: 600; line-height: 1.45; color: var(--fg); }
+.menu-pop button { all: unset; box-sizing: border-box; display: flex; flex-direction: column; gap: 1px; padding: 8px 11px; border-radius: var(--r-sm); cursor: pointer; font-size: var(--t-sm); font-weight: 650; line-height: 1.45; color: var(--fg); }
 .menu-pop button small { font-size: var(--t-xs); font-weight: 400; color: var(--faint); white-space: normal; }
 .menu-pop button:hover { background: var(--soft); } .menu-pop button:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
 @media (max-width: 760px) { .head-r { align-items: flex-start; width: 100%; } .head-in { position: relative; } .menu { position: static; } .menu-pop { left: 20px; right: 20px; top: auto; width: auto; max-width: none; margin-top: 40px; } }
@@ -596,7 +626,7 @@ html.wf-on { overflow: hidden; }
 .wf-in:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
 .wf-say { margin: 0; font-size: var(--t-sm); color: var(--muted); line-height: 1.5; } .wf-say b { color: var(--fg); font-weight: 650; }
 .wf-types { display: flex; flex-wrap: wrap; gap: 6px; }
-.wf-types button { height: 28px; padding: 0 10px; border: 1px solid var(--line-2); border-radius: 999px; background: var(--panel); color: var(--muted); font: inherit; font-size: var(--t-xs); font-weight: 600; cursor: pointer; white-space: nowrap; }
+.wf-types button { height: 28px; padding: 0 10px; border: 1px solid var(--line-2); border-radius: 999px; background: var(--panel); color: var(--muted); font: inherit; font-size: var(--t-xs); font-weight: 650; cursor: pointer; white-space: nowrap; }
 .wf-types button b { margin-left: 2px; color: var(--fg); font-variant-numeric: tabular-nums; } .wf-types button:hover { border-color: var(--axis); }
 .wf-types button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-fg); } .wf-types button[aria-pressed="true"] b { color: inherit; }
 .wf-list { list-style: none; margin: 0; padding: 0 2px 2px 0; overflow: auto; display: grid; gap: 6px; align-content: start; }
@@ -622,13 +652,26 @@ table.plan td:nth-child(2), table.plan td:nth-child(3) { min-width: 15em; } tabl
 tr.gate-next td { background: color-mix(in srgb, var(--accent) 7%, var(--cell)); }
 /* 휴대폰: 글이 많은 표를 옆으로 밀지 않게 줄마다 쌓는다(칸 이름은 칸 위에 작게 · 머리글 줄은 화면 낭독용으로만 남긴다) */
 @media (max-width: 640px) {
+  table.tcard, table.tcard tbody { display: block; }
+  table.tcard thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  table.tcard tr { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px 16px; padding: 12px 6px 14px; border-bottom: 1px solid var(--line); }
+  table.tcard tr:last-child { border-bottom: 0; }
+  table.tcard td { display: block; min-width: 0 !important; padding: 0; border: 0; text-align: left; white-space: normal; word-break: keep-all; overflow-wrap: anywhere; position: static !important; background: none !important; }
+  table.tcard td.tt { order: -1; grid-column: 1 / -1; font-size: var(--t-md); font-weight: 650; }
+  table.tcard td.l:not(.tt), table.tcard td.empty { grid-column: 1 / -1; }
+  table.tcard td:not(.tt):not(.empty)::before { content: attr(data-th); display: block; margin-bottom: 1px; font-size: var(--t-tag); font-weight: 650; color: var(--faint); }
+  table.tcard td.x-rpt { display: none; }
+  table.tcard td .pc { display: inline; margin: 0 0 0 6px; }
+  table.tcard tr.pick:hover td { background: none !important; } table.tcard tr.on { background: color-mix(in srgb, var(--accent) 9%, var(--cell)); border-radius: var(--r-md); }
+  .scroll:has(table.tcard td.x-rpt)::after { content: "휴대폰에서는 주요 칸만 보여 준다 — 모든 칸은 넓은 화면이나 「CSV 받기」에서 본다."; display: block; margin: 8px 6px 0; font-size: var(--t-xs); color: var(--faint); }
+  .tb-sort { display: flex !important; }
   #plan table.plan, #plan table.plan tbody, #plan table.plan tr, #plan table.plan td { display: block; }
   #plan table.plan thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
   #plan table.plan tr { padding: 11px 6px 13px; border-bottom: 1px solid var(--line); }
   #plan table.plan tr:last-child { border-bottom: 0; }
   #plan table.plan td { min-width: 0; padding: 0; border: 0; white-space: normal; position: static; background: none; }
   #plan table.plan td:first-child { margin-bottom: 1px; font-size: var(--t-base, 1em); }
-  #plan table.plan td:not(:first-child)::before { content: attr(data-th); display: block; margin-top: 8px; font-size: var(--t-xs); font-weight: 600; color: var(--faint); }
+  #plan table.plan td:not(:first-child)::before { content: attr(data-th); display: block; margin-top: 8px; font-size: var(--t-xs); font-weight: 650; color: var(--faint); }
   #plan table.plan td:empty { display: none; }
   #plan tr.gate-next { border-radius: 8px; background: color-mix(in srgb, var(--accent) 7%, var(--cell)); }
 }
@@ -640,7 +683,7 @@ tr.pick:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; 
 main [tabindex="-1"]:focus { outline: none; }
 .flash { animation: flash 1.8s ease-out; } @keyframes flash { 0%, 35% { box-shadow: 0 0 0 3px var(--accent); } 100% { box-shadow: 0 0 0 3px transparent; } }
 @media (prefers-reduced-motion: reduce) { .flash { animation-duration: 0.01s; } }
-.sig-why { font-size: var(--t-xs); color: var(--muted); } .sig-why summary { cursor: pointer; width: fit-content; color: var(--muted); font-weight: 600; } .sig-why summary:hover { color: var(--fg); }
+.sig-why { font-size: var(--t-xs); color: var(--muted); } .sig-why summary { cursor: pointer; width: fit-content; color: var(--muted); font-weight: 650; } .sig-why summary:hover { color: var(--fg); }
 .sig-why ul { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 5px; } .sig-why li { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 7px; align-items: start; line-height: 1.5; } .sig-why li .lamp { width: 15px; height: 15px; margin-top: 2px; } .sig-why b { color: var(--fg); font-weight: 650; }
 @media (max-width: 560px) { .bar { transition: transform 0.2s ease; } html.bar-min .bar { transform: translateY(calc(-1 * var(--bar-up, 0px))); } }
 @media (prefers-reduced-motion: reduce) { .bar { transition: none; } }
@@ -768,7 +811,7 @@ html.deck-on { overflow: hidden; }
 .dk-bot { align-items: flex-end; }
 .dk-mid { flex: 1 1 auto; min-width: 0; display: grid; justify-items: center; gap: 2px; }
 .dk-mid-b { display: flex; align-items: center; gap: 10px; min-height: 18px; }
-.dk-sub { all: unset; box-sizing: border-box; max-width: 100%; min-height: 1.4em; padding: 0.3em 0.95em; border-radius: 10px; background: color-mix(in srgb, var(--fg) 90%, transparent); color: var(--bg); font-size: clamp(15px, 1.55vw, 24px); font-weight: 600; line-height: 1.4; text-align: center; text-wrap: balance; word-break: keep-all; cursor: pointer; }
+.dk-sub { all: unset; box-sizing: border-box; max-width: 100%; min-height: 1.4em; padding: 0.3em 0.95em; border-radius: 10px; background: color-mix(in srgb, var(--fg) 90%, transparent); color: var(--bg); font-size: clamp(15px, 1.55vw, 24px); font-weight: 650; line-height: 1.4; text-align: center; text-wrap: balance; word-break: keep-all; cursor: pointer; }
 .dk-sub[hidden] { display: none; }
 .dk-sub.in { animation: dk-sub-in 0.24s ease-out both; }
 @keyframes dk-sub-in { from { opacity: 0; transform: translateY(6px); } }
@@ -836,6 +879,7 @@ html.deck-on { overflow: hidden; }
       <div class="view" role="group" aria-label="보기 설정">
         <span class="fsz" role="group" aria-label="글씨 크기"><button type="button" data-fs-down aria-label="글씨 작게">가−</button><output data-fs-now aria-live="polite">글씨 기본</output><button type="button" data-fs-up aria-label="글씨 크게">가+</button></span>
         <button type="button" class="btn ico" data-theme-toggle aria-pressed="false" title="어두운 화면으로"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M13.3 9.7A5.6 5.6 0 0 1 6.3 2.7a5.6 5.6 0 1 0 7 7z"/></svg><span data-theme-label>어둡게</span></button>
+        <button type="button" class="btn ico" data-fx-toggle aria-pressed="true" title="움직임 끄기"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M1.5 8.5h2.6l1.9-4.6 3 8.4 1.9-3.8h3.6"/></svg><span data-fx-label>움직임 끄기</span></button>
       </div>
       <div class="ctl">
         <button type="button" class="btn ico pres" data-present title="긍정으로 판정된 지표만 큰 글씨로 보여 주는 발표 화면"><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="2" y="2.8" width="12" height="8.4" rx="1.2"/><path d="M5.6 13.6h4.8M8 11.2v2.4M7 5.3l2.6 1.7L7 8.7z"/></svg>발표 모드</button>
@@ -891,6 +935,7 @@ html.deck-on { overflow: hidden; }
       <span class="note" data-dr-msg role="status" aria-live="polite">정한 날짜는 「고른 기간」을 쓰는 모든 구역에 같이 적용된다.</span>
     </div>
     <div class="sig" id="sig" role="group" aria-label="긍정 · 부정 한눈에" hidden></div>
+    <div class="tools end bord-tools"><span>카드 머리의 <b aria-hidden="true">⠿</b> 를 끌면 순서가 바뀐다(이 기기에 기억)</span><button type="button" class="link" data-bord-reset hidden>처음 순서로</button></div>
     <div class="board" id="board-grid">
       <article class="bc"><h3 class="bc-h"><a href="#pool">가격</a><i>고른 기간</i></h3><p class="bc-v" data-bv="price">—</p><div class="chart skel bchart" data-chart="b_price" role="img" aria-label="가격"></div><p class="bc-s" data-bs="price"></p></article>
       <article class="bc"><h3 class="bc-h"><a href="#pool">전체 풀 유동성</a><i>고른 기간</i></h3><p class="bc-v" data-bv="pool">—</p><div class="chart skel bchart" data-chart="b_pool" role="img" aria-label="전체 풀 유동성"></div><p class="bc-s" data-bs="pool"></p></article>
@@ -2497,6 +2542,7 @@ html.deck-on { overflow: hidden; }
     labels(left, narrow ? xl + bw + 6 : xl - 8, narrow ? 'start' : 'end', 'l');
     labels(right, narrow ? xr - 6 : xr + bw + 8, narrow ? 'end' : 'start', 'r');
     labels(mids, xm + bw / 2, 'middle', 'm');
+    g.selectAll('g.labm').each(function () { var bb = this.getBBox(); if (!bb.width) return; d3.select(this).insert('rect', ':first-child').attr('class', 'flow-plate').attr('x', bb.x - 8).attr('y', bb.y - 3).attr('width', bb.width + 16).attr('height', bb.height + 6).attr('rx', 8); });      // 풀 이름 · 수량의 바탕
     g.append('text').attr('class', 'flow-col').attr('x', narrow ? xl : xl + bw).attr('y', 14).attr('text-anchor', narrow ? 'start' : 'end').text('판 쪽');
     g.append('text').attr('class', 'flow-col').attr('x', xm + bw / 2).attr('y', 14).attr('text-anchor', 'middle').text('풀');
     g.append('text').attr('class', 'flow-col').attr('x', narrow ? xr + bw : xr).attr('y', 14).attr('text-anchor', narrow ? 'end' : 'start').text('산 쪽');
@@ -2723,6 +2769,16 @@ html.deck-on { overflow: hidden; }
     var head = t.tHead, body = t.tBodies[0];
     head.replaceChildren(); body.replaceChildren();
     if (opt.dropZero && rows.length) cols = cols.filter(function (c) { return c.text || rows.some(function (r) { return r[c.key]; }); });
+    var ttCol = cols.filter(function (c) { return c.title; })[0] || cols[0]; t.classList.add('tcard');      // 휴대폰에서는 줄마다 카드로 쌓는다(제목 칸 = ttCol)
+    if (opt.sort) {      // 휴대폰에서는 머리글이 없으므로 정렬을 고르는 줄을 표 위에 둔다
+      var wrapS = t.closest('.scroll') || t, sl = wrapS.previousElementSibling && wrapS.previousElementSibling.classList.contains('tb-sort') ? wrapS.previousElementSibling : null;
+      if (!sl) {
+        sl = document.createElement('label'); sl.className = 'tb-sort'; sl.appendChild(document.createTextNode('정렬')); var se = document.createElement('select'), bd = document.createElement('button'); bd.type = 'button'; bd.className = 'btn sm'; se.setAttribute('aria-label', '정렬할 칸'); sl.appendChild(se); sl.appendChild(bd); wrapS.parentNode.insertBefore(sl, wrapS);
+        se.addEventListener('change', function () { var c0 = (sl.__cols || []).filter(function (c) { return c.key === se.value; })[0]; sl.__sort.key = se.value; sl.__sort.dir = c0 && c0.text ? 1 : -1; render(); });
+        bd.addEventListener('click', function (ev) { ev.preventDefault(); sl.__sort.dir = -sl.__sort.dir; render(); });
+      }
+      sl.__cols = cols; sl.__sort = opt.sort; var se2 = sl.querySelector('select'); se2.replaceChildren(); cols.forEach(function (c) { var o = document.createElement('option'); o.value = c.key; o.textContent = c.label; se2.appendChild(o); }); se2.value = opt.sort.key; sl.querySelector('button').textContent = opt.sort.dir > 0 ? '작은 것부터 ▲' : '큰 것부터 ▼';
+    }
     var hr = head.insertRow();
     cols.forEach(function (c) {
       var th = document.createElement('th'); th.scope = 'col'; if (c.rpt === 0) th.classList.add('x-rpt'); if (c.text && !c.num) th.classList.add('l');
@@ -2748,7 +2804,7 @@ html.deck-on { overflow: hidden; }
         });
       }
       cols.forEach(function (c) {
-        var td = tr.insertCell(), v = r[c.key]; if (c.rpt === 0) td.classList.add('x-rpt'); if (c.text && !c.num) td.classList.add('l');
+        var td = tr.insertCell(), v = r[c.key]; if (c.rpt === 0) td.classList.add('x-rpt'); if (c.text && !c.num) td.classList.add('l'); td.setAttribute('data-th', c.label); if (c === ttCol) td.classList.add('tt');
         if (c.cell) { c.cell(td, r); return; }
         if (c.tag && r.owner && OWN[r.owner]) { named(td, r.owner, r.label === undefined ? v : r.label, v); return; }
         if (c.chip) { var ch = document.createElement('span'); ch.className = 'ichip ' + (r[c.chip] || ''); ch.textContent = (v === null || v === undefined || v === '') ? '—' : v; td.appendChild(ch); return; }
@@ -2784,11 +2840,11 @@ html.deck-on { overflow: hidden; }
     deep: [{ key: 'date', label: '날짜', text: 1 }, { key: 'price', label: '마감 값(RLUSD)' }, { key: 'cost', label: '평균 취득가' }, { key: 'ratio', label: '지금 값 ÷ 평균 취득가' }, { key: 'above', label: '받은 때보다 높은 값에 있는 물량' }, { key: 'total', label: '지갑 · 풀 물량' }, { key: 'lp', label: '풀에 넣어 둔 물량' }, { key: 'old', label: '10/26 이전부터 보유' },
       { key: 'b91', label: '91일 이상' }, { key: 'b90', label: '31~90일' }, { key: 'b30', label: '15~30일' }, { key: 'b14', label: '8~14일' }, { key: 'b7', label: '7일 이내' }, { key: 'sold', label: '판 양' }, { key: 'sold_ratio', label: '판 값 ÷ 받은 때 값' }, { key: 'sold_above', label: '받은 때보다 높게 판 물량' }, { key: 'sold_age', label: '판 물량의 평균 보유 기간(일)' },
       { key: 'movers', label: '움직인 지갑' }, { key: 'receivers', label: '보상 받은 지갑' }, { key: 'fresh', label: '새 지갑' }, { key: 'moved_in', label: '밖에서 옮겨 받은 양' }, { key: 'moved_out', label: '밖으로 보낸 양' }],
-    market: [{ key: 'rank', label: '시가총액 순위' }, { key: 'label', label: '이름', text: 1 }, { key: 'price', label: '지금 값(USD)', fmt: function (v) { return usd(v); } }, { key: 'mc100', label: '시가총액(억 달러)' }, { key: 'd1', label: '어제 하루', fmt: function (v) { return sgn(v); } }, { key: 'd7', label: '최근 7일', fmt: function (v) { return sgn(v); } },
+    market: [{ key: 'rank', label: '시가총액 순위' }, { key: 'label', label: '이름', text: 1, title: 1 }, { key: 'price', label: '지금 값(USD)', fmt: function (v) { return usd(v); } }, { key: 'mc100', label: '시가총액(억 달러)' }, { key: 'd1', label: '어제 하루', fmt: function (v) { return sgn(v); } }, { key: 'd7', label: '최근 7일', fmt: function (v) { return sgn(v); } },
       { key: 'open', label: '풀이 열린 뒤', fmt: function (v) { return sgn(v); } }, { key: 'gap_d7', label: '7일 · WLBN과의 차이', fmt: function (v) { return sgp(v); } }],
     impactHelp: [{ key: 'wallet', label: '지갑', text: 1 }, { key: 'type_name', label: '유형', text: 1 }, { key: 'back_rlusd', label: '되돌린 돈' }, { key: 'took_rlusd', label: '가져간 돈' }, { key: 'balance', label: '잔액' }],
     impactLoad: [{ key: 'wallet', label: '지갑', text: 1 }, { key: 'type_name', label: '유형', text: 1 }, { key: 'took_rlusd', label: '가져간 돈' }, { key: 'back_rlusd', label: '되돌린 돈' }, { key: 'sold', label: '판 양' }],
-    wallets: [{ key: 'rank', label: '순위' }, { key: 'wallet', label: '지갑', text: 1, tag: 1 }, { key: 'impact_name', label: '생태계 기여', text: 1, chip: 'impact' }, { key: 'type_name', label: '유형', text: 1 }, { key: 'act', label: '활동량', rpt: 0 }, { key: 'paid', label: '받은 양', share: 1 }, { key: 'sold', label: '판 양', share: 1 }, { key: 'bought', label: '산 양', share: 1 },
+    wallets: [{ key: 'rank', label: '순위' }, { key: 'wallet', label: '지갑', text: 1, tag: 1, title: 1 }, { key: 'impact_name', label: '생태계 기여', text: 1, chip: 'impact' }, { key: 'type_name', label: '유형', text: 1 }, { key: 'act', label: '활동량', rpt: 0 }, { key: 'paid', label: '받은 양', share: 1 }, { key: 'sold', label: '판 양', share: 1 }, { key: 'bought', label: '산 양', share: 1 },
       { key: 'sell_ratio', label: '판 비율', fmt: F.pct }, { key: 'took_rlusd', label: '가져간 돈' }, { key: 'back_rlusd', label: '되돌린 돈' }, { key: 'got_rlusd', label: '받은 RLUSD', rpt: 0 }, { key: 'got_xrp', label: '받은 XRP', rpt: 0 }, { key: 'rebuy_rlusd', label: '다시 산 돈(RLUSD)', rpt: 0 }, { key: 'dep_rlusd', label: '회사 계정에 넣은 돈', rpt: 0 },
       { key: 'pool_in', label: '풀에 넣은 양' }, { key: 'balance', label: '잔액' }, { key: 'start', label: '처음 보상받은 날', text: 1, fmt: md, rpt: 0 }, { key: 'prev_wallet', label: '이어진 옛 지갑', text: 1, rpt: 0 },
       { key: 'sell_lag', label: '처음 팔기까지(일)', rpt: 0 }, { key: 'last_sell', label: '마지막으로 판 날', text: 1, fmt: md, rpt: 0 }],
@@ -3396,8 +3452,50 @@ html.deck-on { overflow: hidden; }
   // ── 보기 설정 · 보고서 (11/24 17차 — 서우 「글씨 크기 0%~30%까지 단계별 조정 · 다크모드 · 보고서 A4 형태로 프린트(PDF 저장)하거나 CSV 다운로드」)
   //   글씨: 기본(0) · +10 · +20 · +30% 네 단계. 모든 글자 크기에 배율(--fs)을 곱하고 그림은 다시 그린다 · 어두운 화면: 고르지 않으면 기기 설정을 따른다
   //   고른 값은 이 브라우저에 기억한다(VIEW_KEY). 보고서를 찍을 때는 늘 밝은 화면 · 기본 글씨로 찍는다
-  var VIEW_KEY = 'wlbn-view-1', FS_STEPS = [0, 10, 20, 30], VIEW = { fs: 0, theme: '' };
-  try { var v0 = JSON.parse(localStorage.getItem(VIEW_KEY) || '{}') || {}; if (FS_STEPS.indexOf(+v0.fs) >= 0) VIEW.fs = +v0.fs; if (v0.theme === 'dark' || v0.theme === 'light') VIEW.theme = v0.theme; } catch (e) { /* 기본으로 둔다 */ }
+  // ── 모아보기 카드 순서 바꾸기(35차 — 서우 「해당 영역은 위지윅으로 순서 조정해서 볼 수 있게」): 손잡이를 끌면 그 자리에서 바로 카드가 옮겨지고, 순서는 이 기기에 기억한다
+  var BORD_KEY = 'wlbn-board-1', BORD0 = [];
+  function bordKey(card) { var v = card.querySelector('[data-bv]'); return v ? v.getAttribute('data-bv') : ''; }
+  function bordSave() {
+    var g = $('#board-grid'); if (!g) return; var now = Array.prototype.map.call(g.children, bordKey), same = now.join() === BORD0.join();
+    try { if (same) localStorage.removeItem(BORD_KEY); else localStorage.setItem(BORD_KEY, JSON.stringify(now)); } catch (e) { /* 기억하지 못해도 이번에는 그대로 쓴다 */ }
+    var rs = $('[data-bord-reset]'); if (rs) rs.hidden = same;
+  }
+  function bordApply(order) { var g = $('#board-grid'); if (!g) return; var by = {}; Array.prototype.forEach.call(g.children, function (c) { by[bordKey(c)] = c; }); order.concat(BORD0).forEach(function (k) { if (by[k]) { g.appendChild(by[k]); delete by[k]; } }); }
+  function bordMove(card, before) {      // before = 그 앞에 놓을 카드(없으면 맨 끝). 밀려나는 카드는 미끄러지듯 옮겨진다
+    var g = card.parentNode; if (before === card || card.nextElementSibling === before) return false;
+    var kids = Array.prototype.slice.call(g.children), was = kids.map(function (c) { return c.getBoundingClientRect(); });
+    g.insertBefore(card, before || null);
+    if (fxAllowed()) kids.forEach(function (c, i) { if (!c.animate || c.hidden) return; var q = c.getBoundingClientRect(), dx = was[i].left - q.left, dy = was[i].top - q.top; if (dx || dy) c.animate([{ transform: 'translate(' + dx + 'px,' + dy + 'px)' }, { transform: 'none' }], { duration: 240, easing: 'cubic-bezier(0.2, 0.8, 0.2, 1)' }); });
+    return true;
+  }
+  function bordInit() {
+    var g = $('#board-grid'); if (!g) return; BORD0 = Array.prototype.map.call(g.children, bordKey);
+    try { var sv = JSON.parse(localStorage.getItem(BORD_KEY) || 'null'); if (Array.isArray(sv)) bordApply(sv.filter(function (k) { return typeof k === 'string'; })); } catch (e) { /* 기본 순서로 */ }
+    Array.prototype.forEach.call(g.children, function (card) {
+      var h = card.querySelector('.bc-h'), a = h && h.querySelector('a'); if (!h) return;
+      var grip = document.createElement('button'), drag = null; grip.type = 'button'; grip.className = 'bc-grip'; grip.title = '끌어서 순서 바꾸기';
+      grip.setAttribute('aria-label', (a ? a.textContent : '이') + ' 카드 순서 바꾸기 — 끌거나 화살표 키로 옮긴다');
+      grip.innerHTML = '<svg viewBox="0 0 12 12" aria-hidden="true"><circle cx="3.5" cy="2" r="1.25"/><circle cx="8.5" cy="2" r="1.25"/><circle cx="3.5" cy="6" r="1.25"/><circle cx="8.5" cy="6" r="1.25"/><circle cx="3.5" cy="10" r="1.25"/><circle cx="8.5" cy="10" r="1.25"/></svg>';
+      h.appendChild(grip);
+      // 끄는 동안의 움직임 · 놓기는 창에서 듣는다 — 카드를 옮기면(DOM 에서 뺐다 넣으면) 손잡이가 잡고 있던 포인터가 풀리기 때문이다
+      var move = function (ev) {
+        if (drag === null || ev.pointerId !== drag) return; var under = document.elementFromPoint(ev.clientX, ev.clientY), over = under && under.closest ? under.closest('.bc') : null;
+        if (!over || over === card || over.parentNode !== g) return; var q = over.getBoundingClientRect(); bordMove(card, (ev.clientX - q.left) / q.width > 0.5 ? over.nextElementSibling : over);
+      };
+      var end = function (ev) { if (drag === null || (ev && ev.pointerId !== undefined && ev.pointerId !== drag)) return; drag = null; window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', end); window.removeEventListener('pointercancel', end); card.classList.remove('drag'); g.classList.remove('sorting'); bordSave(); };
+      grip.addEventListener('pointerdown', function (ev) { if (ev.button || drag !== null) return; ev.preventDefault(); drag = ev.pointerId; window.addEventListener('pointermove', move); window.addEventListener('pointerup', end); window.addEventListener('pointercancel', end); card.classList.add('drag'); g.classList.add('sorting'); closeHelp(); });
+      grip.addEventListener('click', function (ev) { ev.preventDefault(); });
+      grip.addEventListener('keydown', function (ev) {
+        var back = ev.key === 'ArrowLeft' || ev.key === 'ArrowUp', fwd = ev.key === 'ArrowRight' || ev.key === 'ArrowDown'; if (!back && !fwd) return; ev.preventDefault();
+        var o = back ? card.previousElementSibling : card.nextElementSibling; while (o && o.hidden) o = back ? o.previousElementSibling : o.nextElementSibling; if (!o) return;
+        bordMove(card, back ? o : o.nextElementSibling); try { grip.focus({ preventScroll: true }); } catch (e) { grip.focus(); } bordSave();
+      });
+    });
+    var rs = $('[data-bord-reset]'); if (rs) rs.addEventListener('click', function () { var g2 = $('#board-grid'), first = Array.prototype.slice.call(g2.children), was = first.map(function (c) { return c.getBoundingClientRect(); }); bordApply(BORD0.slice()); if (fxAllowed()) first.forEach(function (c, i) { if (!c.animate || c.hidden) return; var q = c.getBoundingClientRect(), dx = was[i].left - q.left, dy = was[i].top - q.top; if (dx || dy) c.animate([{ transform: 'translate(' + dx + 'px,' + dy + 'px)' }, { transform: 'none' }], { duration: 260, easing: 'cubic-bezier(0.2, 0.8, 0.2, 1)' }); }); bordSave(); });
+    bordSave();
+  }
+  var VIEW_KEY = 'wlbn-view-1', FS_STEPS = [0, 10, 20, 30], VIEW = { fs: 0, theme: '', fx: 1 };
+  try { var v0 = JSON.parse(localStorage.getItem(VIEW_KEY) || '{}') || {}; if (FS_STEPS.indexOf(+v0.fs) >= 0) VIEW.fs = +v0.fs; if (v0.theme === 'dark' || v0.theme === 'light') VIEW.theme = v0.theme; if (v0.fx === 0) VIEW.fx = 0; } catch (e) { /* 기본으로 둔다 */ }
   function osDark() { return !!(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches); }
   function isDark() { return VIEW.theme ? VIEW.theme === 'dark' : osDark(); }
   function applyView(redraw) {
@@ -3406,10 +3504,13 @@ html.deck-on { overflow: hidden; }
     if (VIEW.theme) root.setAttribute('data-theme', VIEW.theme); else root.removeAttribute('data-theme');
     if (out) out.textContent = VIEW.fs ? '글씨 +' + VIEW.fs + '%' : '글씨 기본';
     if (dn) dn.disabled = VIEW.fs <= FS_STEPS[0]; if (up) up.disabled = VIEW.fs >= FS_STEPS[FS_STEPS.length - 1];
+    root.classList.toggle('fx', fxAllowed());
+    var fb = $('[data-fx-toggle]'); if (fb) { var red = fxReduced(), on = VIEW.fx !== 0 && !red, fl = $('[data-fx-label]', fb); fb.setAttribute('aria-pressed', String(on)); fb.disabled = red; if (fl) fl.textContent = on ? '움직임 끄기' : '움직임 켜기'; fb.title = red ? '기기 설정의 「움직임 줄이기」가 켜져 있어 움직임을 쓰지 않습니다' : on ? '숫자 · 그림의 움직임을 끈다' : '숫자 · 그림의 움직임을 켠다'; }
     if (th) { var d = isDark(), lb = $('[data-theme-label]', th); th.setAttribute('aria-pressed', String(d)); if (lb) lb.textContent = d ? '밝게' : '어둡게'; th.title = d ? '밝은 화면으로' : '어두운 화면으로'; }
     try { localStorage.setItem(VIEW_KEY, JSON.stringify(VIEW)); } catch (e) { /* 기억하지 못해도 화면은 그대로 쓴다 */ }
-    if (redraw) { fitBar(); if (DATA) render(); }
+    if (redraw) { fitBar(); if (DATA) renderQuiet(); }
   }
+  function toggleFx() { VIEW.fx = VIEW.fx === 0 ? 1 : 0; applyView(false); if (VIEW.fx && DATA) { FXS = {}; FXN = {}; FXA = {}; $$('[data-chart]').forEach(function (el) { el.__fxSig = null; el.__fxG = null; }); render(); } }
   function stepFs(dir) { var i = FS_STEPS.indexOf(VIEW.fs) + dir; if (i < 0 || i >= FS_STEPS.length) return; VIEW.fs = FS_STEPS[i]; applyView(true); }
   function toggleTheme() { var next = isDark() ? 'light' : 'dark'; VIEW.theme = next === (osDark() ? 'dark' : 'light') ? '' : next; applyView(false); }
   // 보고서 인쇄: 인쇄 틀(html.rpt)을 붙이고 A4 폭으로 그림을 다시 그린 다음 인쇄 창을 연다. 폭을 넘는 표는 그 표만 줄여 한 쪽 폭에 맞춘다. 끝나면 되돌린다
@@ -3667,21 +3768,33 @@ html.deck-on { overflow: hidden; }
   // 선순환 지수 게이지: 반원 0~100. 띠 셋(주의 · 지켜봄 · 좋음) 위에 지금 값까지 채우고 끝에 손잡이를 둔다
   function drawIndex(el) {
     var h = DATA.health, ix = h && h.index; if (!ix) return empty(el, '지수를 매길 자료가 모자랍니다.');
-    var f = setup(el, 160), w = f.w, th = 16, R = Math.max(70, Math.min(112, w / 2 - 28)), cx = w / 2, cy = R + th / 2 + 16, H = cy + 22;
+    var f = setup(el, 160), w = f.w, th = 16, R = Math.max(70, Math.min(112, w / 2 - 28)), cx = w / 2, cy = R + th / 2 + 26, H = cy + 22;
     f.h = H; f.svg.attr('viewBox', '0 0 ' + w + ' ' + H).attr('height', H);
     var g = f.svg.append('g').attr('transform', 'translate(' + cx + ',' + cy + ')');
     var ang = function (v) { return (-90 + 180 * v / 100) * Math.PI / 180; }, pt = function (v, r) { return [Math.sin(ang(v)) * r, -Math.cos(ang(v)) * r]; };
     var arc = d3.arc().innerRadius(R - th / 2).outerRadius(R + th / 2).cornerRadius(3), B = ix.bands, pad = 1 / R;
     var zones = [[0, B[0], 'bad'], [B[0], B[1], 'warn'], [B[1], 100, 'ok']], v = Math.max(0, Math.min(100, ix.value));
+    var fills = [], numT = null;
     zones.forEach(function (z) {
       var a0 = ang(z[0]) + (z[0] > 0 ? pad : 0), a1 = ang(z[1]) - (z[1] < 100 ? pad : 0);
       g.append('path').attr('class', 'idx-track st-' + z[2]).attr('d', arc({ startAngle: a0, endAngle: a1 }));
-      if (v > z[0]) g.append('path').attr('class', 'idx-fill st-' + ix.status).attr('d', arc({ startAngle: a0, endAngle: Math.max(a0, Math.min(a1, ang(v))) }));
+      if (v > z[0]) fills.push({ z0: z[0], a0: a0, a1: a1, p: g.append('path').attr('class', 'idx-fill st-' + ix.status) });
     });
-    var k = pt(v, R); g.append('circle').attr('class', 'idx-knob st-' + ix.status).attr('cx', k[0]).attr('cy', k[1]).attr('r', th / 2 + 3);
+    // 계기판 눈금(5점마다 · 10점마다 굵게)과 바늘. 채움 · 손잡이 · 바늘 · 숫자는 paint(값) 한 곳이 그린다 — 움직일 때도 같은 함수를 쓴다
+    d3.range(0, 101, 5).forEach(function (tv) { var mj = tv % 10 === 0, p0 = pt(tv, R + th / 2 + 3), p1 = pt(tv, R + th / 2 + (mj ? 8 : 6)); g.append('line').attr('class', 'idx-tick' + (mj ? ' major' : '')).attr('x1', p0[0]).attr('y1', p0[1]).attr('x2', p1[0]).attr('y2', p1[1]); });
+    var halo = g.append('circle').attr('class', 'idx-halo st-' + ix.status).attr('r', th / 2 + 3), knob = g.append('circle').attr('class', 'idx-knob st-' + ix.status).attr('r', th / 2 + 3);
+    var ptr = g.append('path').attr('class', 'idx-ptr').attr('d', 'M0,' + (-(R - th / 2 - 4)) + ' L-5,' + (-(R - th / 2 - 16)) + ' L5,' + (-(R - th / 2 - 16)) + ' Z');
+    var paint = function (val, shown) {
+      var vv = Math.max(0, Math.min(100, val)), k = pt(vv, R);
+      fills.forEach(function (o) { o.p.attr('d', vv > o.z0 ? arc({ startAngle: o.a0, endAngle: Math.max(o.a0, Math.min(o.a1, ang(vv))) }) : null); });
+      knob.attr('cx', k[0]).attr('cy', k[1]); halo.attr('cx', k[0]).attr('cy', k[1]); ptr.attr('transform', 'rotate(' + (-90 + 180 * vv / 100).toFixed(2) + ')');
+      if (numT) numT.text(shown === undefined ? ix.value : shown);
+    };
     [[0, 'middle'], [100, 'middle']].forEach(function (t) { g.append('text').attr('class', 'tick').attr('x', pt(t[0], R)[0]).attr('y', 17).attr('text-anchor', t[1]).text(t[0]); });
-    B.forEach(function (b) { var q = pt(b, R + th / 2 + 10); g.append('text').attr('class', 'tick').attr('x', q[0]).attr('y', q[1] + 4).attr('text-anchor', 'middle').text(b); });
-    g.append('text').attr('class', 'idx-num').attr('x', 0).attr('y', -12).attr('text-anchor', 'middle').text(ix.value);
+    B.forEach(function (b) { var q = pt(b, R + th / 2 + 18); g.append('text').attr('class', 'tick').attr('x', q[0]).attr('y', q[1] + 4).attr('text-anchor', 'middle').text(b); });
+    numT = g.append('text').attr('class', 'idx-num').attr('x', 0).attr('y', -12).attr('text-anchor', 'middle').text(ix.value);
+    paint(v);
+    fxGauge(el, ix.value + ':' + ix.status + ':' + w, function (lin, pos) { paint(v * pos, Math.round(ix.value * Math.min(1, lin * 1.25))); }, function () { paint(v); });
     g.append('text').attr('class', 'idx-of').attr('x', 0).attr('y', 8).attr('text-anchor', 'middle').text('100점 만점');
     el.setAttribute('aria-label', '선순환 지수 ' + ix.value + '점(100점 만점), ' + h.labels[ix.status] + (ix.prev ? ', 어제 ' + ix.prev.value + '점' : ''));
     var rows = [{ label: (h.overall.loops || '고리') + ' 평균', value: ix.mean + '점' }, { label: '가장 약한 고리 · ' + ix.weak.name, value: ix.weak.score + '점' }];
@@ -3903,7 +4016,7 @@ html.deck-on { overflow: hidden; }
       var q = pt(i, Math.max(4, p.score)), l = pt(i, 100), a = -Math.PI / 2 + i * 2 * Math.PI / n, ca = Math.cos(a), sa = Math.sin(a);
       g.append('circle').attr('class', 'st-' + p.status).attr('cx', q[0]).attr('cy', q[1]).attr('r', 4.2).style('fill', 'var(--st)').style('stroke', 'var(--cell)').style('stroke-width', '2px');
       var t = g.append('text').attr('class', 'tick').attr('x', l[0] + ca * 9).attr('y', l[1] + sa * 9 + (sa > 0.5 ? 10 : sa < -0.5 ? -3 : 4)).attr('text-anchor', Math.abs(ca) < 0.3 ? 'middle' : ca > 0 ? 'start' : 'end');
-      t.append('tspan').style('fill', 'var(--muted)').style('font-weight', 600).text(p.name + ' '); t.append('tspan').style('fill', 'var(--fg)').style('font-weight', 700).text(p.score);
+      t.append('tspan').style('fill', 'var(--muted)').style('font-weight', 650).text(p.name + ' '); t.append('tspan').style('fill', 'var(--fg)').style('font-weight', 700).text(p.score);
     });
   }
   // 기여 5단계: 지갑 수 고리 그림
@@ -3917,7 +4030,7 @@ html.deck-on { overflow: hidden; }
     var lx = cx + R + 16, lg = f.svg.append('g');
     rows.forEach(function (r, i) {
       var yy = 22 + i * 25; lg.append('rect').attr('x', lx).attr('y', yy - 9).attr('width', 10).attr('height', 10).attr('rx', 2.5).style('fill', TC[r.key]);
-      lg.append('text').attr('class', 'tick').attr('x', lx + 16).attr('y', yy).style('fill', 'var(--muted)').style('font-weight', 600).text(r.name);
+      lg.append('text').attr('class', 'tick').attr('x', lx + 16).attr('y', yy).style('fill', 'var(--muted)').style('font-weight', 650).text(r.name);
       lg.append('text').attr('class', 'tick').attr('x', f.w - 2).attr('y', yy).attr('text-anchor', 'end').style('fill', 'var(--fg)').style('font-weight', 700).text(fInt(r.wallets) + '곳');
     });
   }
@@ -3930,11 +4043,11 @@ html.deck-on { overflow: hidden; }
     g.append('line').attr('x1', c0).attr('x2', c0).attr('y1', 17).attr('y2', 146).style('stroke', 'var(--axis)');
     rows.forEach(function (r, i) {
       var yy = 22 + i * 25, tw = r.took_rlusd * kl, bw = r.back_rlusd * k;
-      g.append('text').attr('class', 'tick').attr('x', 0).attr('y', yy + 12).style('fill', 'var(--muted)').style('font-weight', 600).text(r.name);
+      g.append('text').attr('class', 'tick').attr('x', 0).attr('y', yy + 12).style('fill', 'var(--muted)').style('font-weight', 650).text(r.name);
       g.append('rect').attr('x', c0 - tw).attr('y', yy + 2).attr('width', Math.max(r.took_rlusd ? 1.5 : 0, tw)).attr('height', 15).attr('rx', 2).style('fill', 'var(--c-bad)').style('opacity', 0.82);
       g.append('rect').attr('x', c0).attr('y', yy + 2).attr('width', Math.max(r.back_rlusd ? 1.5 : 0, bw)).attr('height', 15).attr('rx', 2).style('fill', 'var(--c-ok)').style('opacity', 0.9);
       g.append('text').attr('class', 'tick').attr('x', c0 - tw - 4).attr('y', yy + 13).attr('text-anchor', 'end').text(r.took_rlusd ? abbr(r.took_rlusd) : '');
-      g.append('text').attr('class', 'tick').attr('x', c0 + bw + 4).attr('y', yy + 13).style('fill', 'var(--fg)').style('font-weight', 600).text(r.back_rlusd ? abbr(r.back_rlusd) : '');
+      g.append('text').attr('class', 'tick').attr('x', c0 + bw + 4).attr('y', yy + 13).style('fill', 'var(--fg)').style('font-weight', 650).text(r.back_rlusd ? abbr(r.back_rlusd) : '');
     });
   }
   // 판 양 · 산 양을 누가 채웠나
@@ -3943,7 +4056,7 @@ html.deck-on { overflow: hidden; }
     var S = pickG('sold'), B = pickG('bought'), ts = d3.sum(S, function (x) { return x.v; }), tb = d3.sum(B, function (x) { return x.v; }); if (!ts && !tb) return empty(el);
     var f = setup(el, 112), lab = 34, vw = 54, k = (f.w - lab - vw) / Math.max(ts, tb, 1), g = f.svg.append('g');
     [['판 양', S, ts, 20], ['산 양', B, tb, 62]].forEach(function (row) {
-      var x0 = lab; g.append('text').attr('class', 'tick').attr('x', 0).attr('y', row[3] + 17).style('fill', 'var(--muted)').style('font-weight', 600).text(row[0]);
+      var x0 = lab; g.append('text').attr('class', 'tick').attr('x', 0).attr('y', row[3] + 17).style('fill', 'var(--muted)').style('font-weight', 650).text(row[0]);
       row[1].forEach(function (p) {
         var w = p.v * k, rc = g.append('rect').attr('x', x0).attr('y', row[3]).attr('width', Math.max(1, w - 1.5)).attr('height', 26).attr('rx', 3).style('fill', GC[p.key] || 'var(--ctx)');
         var show = function (ev) { f.tip.replaceChildren.apply(f.tip, tipRows(row[0] + ' · ' + p.label, [{ label: 'WLBN', value: fInt(p.v) }, { label: '몫', value: F.pct(p.v / (row[2] || 1)) }])); f.tip.hidden = false; var q = d3.pointer(ev, f.svg.node()); placeTip(f, q[0], q[1]); };
@@ -3962,7 +4075,7 @@ html.deck-on { overflow: hidden; }
     var f = setup(el, 16 + rs.length * 32), lab = 62, vw = 62, x0 = lab, x1 = f.w - vw, g = f.svg.append('g'), B = (h.index && h.index.bands) || [40, 70], X = function (v) { return x0 + (x1 - x0) * v / 100; };
     rs.forEach(function (r, i) {
       var yy = 12 + i * 32, sc = Math.max(0, Math.min(100, r.score === null || r.score === undefined ? 0 : r.score));
-      g.append('text').attr('class', 'tick').attr('x', 0).attr('y', yy + 12).style('fill', 'var(--muted)').style('font-weight', 600).text(r.name);
+      g.append('text').attr('class', 'tick').attr('x', 0).attr('y', yy + 12).style('fill', 'var(--muted)').style('font-weight', 650).text(r.name);
       [[0, B[0], 'bad'], [B[0], B[1], 'warn'], [B[1], 100, 'ok']].forEach(function (z) { g.append('rect').attr('class', 'st-' + z[2]).attr('x', X(z[0]) + 1).attr('y', yy + 2).attr('width', X(z[1]) - X(z[0]) - 2).attr('height', 12).attr('rx', 3).style('fill', 'var(--st-bg)'); });
       g.append('rect').attr('class', 'st-' + r.status).attr('x', x0 + 1).attr('y', yy + 5).attr('width', Math.max(2, X(sc) - x0 - 2)).attr('height', 6).attr('rx', 3).style('fill', 'var(--st)');
       g.append('circle').attr('class', 'st-' + r.status).attr('cx', X(sc)).attr('cy', yy + 8).attr('r', 6).style('fill', 'var(--st)').style('stroke', 'var(--cell)').style('stroke-width', '2.5px');
@@ -3985,7 +4098,7 @@ html.deck-on { overflow: hidden; }
     var c = ctx(), k = c.k, s = c.s, h = DATA.health, ix = h && h.index, im = c.r.impact, sgn = function (v) { return v > 0 ? '▲' + v : v < 0 ? '▼' + Math.abs(v) : '변동 없음'; };
     var set = function (key, val, unit, sub, st) {
       var v = $('[data-bv="' + key + '"]', sec), u = $('[data-bs="' + key + '"]', sec), card = v && v.closest('.bc'); if (card) card.hidden = (val === null || val === undefined);
-      if (v) { v.replaceChildren(document.createTextNode(val === null || val === undefined ? '—' : val)); if (unit) { var sm = document.createElement('small'); sm.textContent = unit; v.appendChild(sm); } v.className = 'bc-v' + (st ? ' st-' + st : ''); }
+      if (v) { var vs = document.createElement('span'); vs.textContent = val === null || val === undefined ? '—' : val; v.replaceChildren(vs); if (unit) { var sm = document.createElement('small'); sm.textContent = unit; v.appendChild(sm); } v.className = 'bc-v' + (st ? ' st-' + st : ''); }
       if (u) rich(u, sub || '', {});
       var ta = card && $('.bc-h a', card), was = ta && $('.tn', ta); if (was) was.remove(); if (ta && st && val !== null && val !== undefined) ta.insertBefore(toneEl(st), ta.firstChild);
     };
@@ -4018,11 +4131,87 @@ html.deck-on { overflow: hidden; }
       poolw: function (el) { drawLines(el, [{ key: 'pool_x_wlbn', label: 'XRP 풀', color: 'var(--s1)' }, { key: 'pool_r_wlbn', label: 'RLUSD 풀', color: 'var(--s3)' }], fInt, true); },
       liq: function (el) { drawLines(el, [{ key: 'pool_liq', label: '전체 풀 유동성', color: 'var(--s6)' }, { key: 'pool_liq_x', label: 'WLBN/XRP 풀', color: 'var(--s1)' }, { key: 'pool_liq_r', label: 'WLBN/RLUSD 풀', color: 'var(--s3)' }], fInt, true); } };
   }
+  // ── 움직임(35차 — 서우 「전체적으로 액티브하게 모션그래픽 · 그래프나 숫자 올라가는 모습 항공계기판처럼」)
+  //   · 자료는 처음부터 끝 값으로 그려 두고(글 · 좌표 그대로) 보이는 것만 움직인다 — 읽는 값이 움직임 도중에 틀리지 않는다
+  //   · 화면에 들어올 때 한 번, 그리고 값이 바뀌어 다시 그렸을 때만 다시 움직인다(같은 그림은 다시 움직이지 않는다 · 창 크기를 바꿀 때도)
+  var FXS = {}, FXN = {}, FXV = {}, FXA = {}, FXHOLD = false, FXIO = null, FXQ = new Map();
+  function fxReduced() { return !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches); }
+  function fxAllowed() { return VIEW.fx !== 0 && !fxReduced(); }
+  function fxOk() { return fxAllowed() && !RPT && !document.documentElement.classList.contains('rpt'); }
+  function renderQuiet() { FXHOLD = true; try { render(); } finally { FXHOLD = false; } }      // 창 크기 · 글씨 크기를 바꿔 다시 그릴 때는 움직이지 않는다
+  function fxHash(t) { var h = 5381, i = t.length; while (i) h = (h * 33) ^ t.charCodeAt(--i); return (h >>> 0) + ':' + t.length; }
+  function fxWhenSeen(el, fn) {      // 지금 화면 안이면 바로, 아니면 화면에 들어오기 직전에 한 번
+    var q = el.getBoundingClientRect(), vh = window.innerHeight || 800;
+    if (q.width > 0 && q.bottom > 0 && q.top < vh) { fn(); return; }
+    if (!('IntersectionObserver' in window)) return;
+    if (!FXIO) FXIO = new IntersectionObserver(function (es) { es.forEach(function (e) { if (!e.isIntersecting) return; var f = FXQ.get(e.target); FXQ.delete(e.target); FXIO.unobserve(e.target); if (f && fxOk()) f(); }); }, { rootMargin: '0px 0px 40px 0px' });
+    FXQ.set(el, fn); FXIO.observe(el);
+  }
+  // 그림: 막대는 기준선에서 자라고(아래로 뻗은 막대는 위에서), 선은 왼쪽부터 그려지고, 넓이는 떠오르고, 점은 톡 찍힌다
+  function fxChart(el) {
+    var svg = el.querySelector('svg'); if (!svg || svg.querySelector('.idx-knob')) return;      // 지수 게이지는 제 움직임이 따로 있다
+    var sig = fxHash(svg.innerHTML), now0 = performance.now();
+    if (el.__fxSig === sig) { if (el.__fxT0 && now0 - el.__fxT0 > 1100) return; }      // 같은 그림: 움직이던 중이거나 아직 화면에 안 들어온 것만 다시 건다(다시 그리면서 끊기지 않게)
+    else { el.__fxSig = sig; el.__fxT0 = 0; }
+    if (!fxOk() || FXHOLD) { el.__fxT0 = -1; return; }
+    fxWhenSeen(el, function () {
+      if (!(el.__fxT0 > 0)) el.__fxT0 = performance.now();
+      var vb = (svg.getAttribute('viewBox') || '0 0 600 300').split(' '), W = +vb[2] || 600, H = +vb[3] || 300, base = null, vbase = null, marks = [];
+      svg.querySelectorAll('line').forEach(function (ln) { if (ln.style.stroke !== 'var(--axis)') return; if (ln.getAttribute('y1') === ln.getAttribute('y2')) base = +ln.getAttribute('y1'); else if (ln.getAttribute('x1') === ln.getAttribute('x2')) vbase = +ln.getAttribute('x1'); });
+      svg.querySelectorAll('rect').forEach(function (r) {
+        if (r.classList.contains('band') || r.classList.contains('flow-chip') || r.classList.contains('flow-plate') || r.getAttribute('fill') === 'transparent' || r.getAttribute('visibility') === 'hidden') return;
+        var x = +r.getAttribute('x') || 0, y = +r.getAttribute('y') || 0, w = +r.getAttribute('width') || 0, h = +r.getAttribute('height') || 0; if (!w || !h) return;
+        var side = base === null && w > h * 2.5;
+        r.classList.add(side ? (vbase !== null && x + w <= vbase + 0.5 ? 'fx-lt' : 'fx-rt') : (base !== null && y >= base - 0.5 ? 'fx-dn' : 'fx-up')); r.style.setProperty('--d', Math.round((side ? y / H : x / W) * 380) + 'ms'); marks.push(r);
+      });
+      svg.querySelectorAll('path').forEach(function (p) {
+        if (p.hasAttribute('stroke-dasharray') || p.closest('defs')) return; var cs = getComputedStyle(p), line = (cs.fill === 'none' || cs.fillOpacity === '0') && cs.stroke !== 'none';
+        if (line) p.setAttribute('pathLength', '1'); p.classList.add(line ? 'fx-line' : 'fx-area'); marks.push(p);
+      });
+      svg.querySelectorAll('circle').forEach(function (c) { c.classList.add('fx-dot'); marks.push(c); });
+      el.classList.add('fx-in'); clearTimeout(el.__fxT);
+      el.__fxT = setTimeout(function () { el.classList.remove('fx-in'); marks.forEach(function (m) { m.classList.remove('fx-up', 'fx-dn', 'fx-rt', 'fx-lt', 'fx-line', 'fx-area', 'fx-dot'); m.style.removeProperty('--d'); if (m.tagName === 'path') m.removeAttribute('pathLength'); }); }, 1800);
+    });
+  }
+  // 계기판(지수 게이지): 0에서 제 값까지 바늘이 돌고 살짝 넘었다가 자리 잡는다. frame(진행) 이 그 순간의 그림을 그린다
+  function fxGauge(el, sig, frame, done) {
+    var dur = 1400, now0 = performance.now();
+    if (el.__fxG === sig) { if (el.__fxG0 && now0 - el.__fxG0 > dur) return; } else { el.__fxG = sig; el.__fxG0 = 0; }
+    if (!fxOk() || FXHOLD) { el.__fxG0 = -1; return; }
+    fxWhenSeen(el, function () {
+      var t0 = el.__fxG0 > 0 ? el.__fxG0 : (el.__fxG0 = performance.now()), c1 = 1.15, c3 = c1 + 1;      // 다시 그려졌으면 처음 시작한 때부터 이어서 돈다
+      (function step(now) { var lin = Math.max(0, Math.min(1, (now - t0) / dur)), u = lin - 1; frame(lin, 1 + c3 * u * u * u + c1 * u * u); if (lin < 1 && el.isConnected) requestAnimationFrame(step); else done(); })(t0);
+    });
+  }
+  // 숫자: 앞서 보여 준 값(처음이면 0)에서 새 값까지 올라간다. 원래 글은 끝 값 그대로 두고 그 위에 덧그린다(.fx-num)
+  function fxNum(el, key) {
+    var txt = el.textContent.trim(), m = /^([+\-\u2212]?)(\d[\d,]*(?:\.\d+)?)(.*)$/.exec(txt); if (!m || /\d/.test(m[3]) || el.children.length) return;
+    var to = parseFloat(m[2].replace(/,/g, '')); if (!isFinite(to)) return;
+    var run = function (a) { el.classList.add('fx-num'); (function step(now) { var t = Math.max(0, Math.min(1, (now - a.t0) / a.dur)), e = 1 - Math.pow(1 - t, 3); if (t < 1 && el.isConnected && el.textContent.trim() === a.txt) { el.setAttribute('data-fx', a.pre + a.fmt(a.from + (a.to - a.from) * e) + a.suf); requestAnimationFrame(step); } else { el.removeAttribute('data-fx'); el.classList.remove('fx-num'); } })(performance.now()); };
+    var arm = function (a) { fxWhenSeen(el, function () { if (!a.t0) a.t0 = performance.now(); run(a); }); };
+    if (FXN[key] === txt) { var a0 = FXA[key]; if (a0 && a0.txt === txt && fxOk() && !FXHOLD && (!a0.t0 || performance.now() - a0.t0 < a0.dur)) arm(a0); return; }      // 같은 값: 올라가던 중이면 새로 그려진 글 위에서 이어 간다
+    FXN[key] = txt; var from = FXV[key] === undefined ? 0 : FXV[key]; FXV[key] = to; FXA[key] = null; if (from === to || !fxOk() || FXHOLD) return;
+    var dec = (m[2].split('.')[1] || '').length;
+    arm(FXA[key] = { t0: 0, dur: 900, from: from, to: to, pre: m[1], suf: m[3], txt: txt, fmt: d3.format((m[2].indexOf(',') >= 0 || to >= 1000 ? ',' : '') + '.' + dec + 'f') });
+  }
+  // 그린 뒤 한 번: 카드의 큰 숫자 · 온도계 · 비중 막대 · 카드 떠오르기
+  function fxAfter() {
+    FXQ.forEach(function (fn, node) { if (!node.isConnected) { FXQ.delete(node); if (FXIO) FXIO.unobserve(node); } });
+    $$('.big:not(.two) > span:not(.unit), .big.two > span > span:not(.unit), .bc-v > span').forEach(function (el, i) { if (el.offsetParent === null) return; var bv = el.parentNode.getAttribute('data-bv'); fxNum(el, el.getAttribute('data-n') || (bv ? 'bv:' + bv : 'n' + i)); });
+    if (!fxOk() || FXHOLD) return;
+    var once = function (sel, cls, sigOf) { $$(sel).forEach(function (e, i) { if (e.offsetParent === null) return; var key = sel + i, sig = sigOf(e), st = FXS[key]; if (st && st.sig === sig) { if (st.t0 && performance.now() - st.t0 > 1000) return; } else st = FXS[key] = { sig: sig, t0: 0 }; fxWhenSeen(e, function () { if (!st.t0) st.t0 = performance.now(); e.classList.add('fx-in', cls); setTimeout(function () { e.classList.remove('fx-in', cls); }, 1300); }); }); };
+    var sgBox = $('.sig'); if (sgBox && sgBox.offsetParent !== null && FXS.sg !== sgBox.textContent) { FXS.sg = sgBox.textContent; fxWhenSeen(sgBox, function () { $$('.sg', sgBox).forEach(function (e, i) { e.style.setProperty('--d', Math.min(i * 24, 520) + 'ms'); e.classList.add('fx-rise'); setTimeout(function () { e.classList.remove('fx-rise'); e.style.removeProperty('--d'); }, 1200); }); }); }      // 맨 위 칩: 차례로 떠오른다
+    once('.thermo', 'fx-fill', function (e) { return (e.getAttribute('style') || '') + e.className; });
+    once('.gate-b', 'fx-fill', function (e) { return e.innerHTML; });
+    once('.sh-bar', 'fx-wipe', function (e) { return e.innerHTML; });
+    $$('.bc, .tiles > .card').forEach(function (e, i) { if (FXS['rise' + i] || e.offsetParent === null) return; FXS['rise' + i] = 1; fxWhenSeen(e, function () { e.style.setProperty('--d', (i % 4) * 70 + 'ms'); e.classList.add('fx-rise'); setTimeout(function () { e.classList.remove('fx-rise'); e.style.removeProperty('--d'); }, 1000); }); });
+  }
   function drawChart(name) {
     var el = $('[data-chart="' + name + '"]'), fn = chartFns()[name]; if (!el || !fn) return;
     if (el.offsetParent === null) { el.__drawn = 0; return; }       // 접혀 있거나 숨은 곳: 폭을 잴 수 없어 펼 때(redrawIn) 그린다
     el.__drawn = 1;
-    try { fn(el); } catch (e) { if (window.console) console.error(e); empty(el, '이 그림을 그리지 못했습니다.'); }
+    try { fn(el); } catch (e) { if (window.console) console.error(e); empty(el, '이 그림을 그리지 못했습니다.'); return; }
+    try { fxChart(el); } catch (e2) { if (window.console) console.error(e2); }
   }
   function render() {
     if (!DATA) return;
@@ -4034,6 +4223,7 @@ html.deck-on { overflow: hidden; }
     [drawHealth, drawVs, drawDeep, drawWallet, drawDist, drawTables, drawImpact, drawTrace, drawFlowShares, drawPlan, drawExtras, drawPositions, drawInsights, drawDay, drawCalc, drawStatus, drawSums, syncDates].forEach(function (fn) { try { fn(); } catch (e) { if (window.console) console.error(e); } });
     $$('[data-chart]').forEach(function (el) { if (!el.__drawn) drawChart(el.getAttribute('data-chart')); });      // 위에서 막 드러난 곳(추이 · 지갑 따라가 보기)의 그림
     spyLater();
+    try { fxAfter(); } catch (e) { if (window.console) console.error(e); }
     if (DECK.on) { try { DECK.slides = deckBuild(); deckDraw(); } catch (e) { if (window.console) console.error(e); } }      // 발표 화면을 열어 둔 채 자료가 바뀌면 같은 장을 다시 그린다
     else if (WANT_DECK) { var wa = WANT_DECK === 2; WANT_DECK = false; deckOpen(0); if (wa) deckAuto(true); }      // 주소 끝에 #present 를 붙여 열면 바로 발표 화면
     if (WFIND.on) { try { wfDraw(); } catch (e) { if (window.console) console.error(e); } }      // 찾기 창을 연 채 자료 · 기간이 바뀌면 결과를 다시 낸다
@@ -4156,7 +4346,7 @@ html.deck-on { overflow: hidden; }
     window.addEventListener('scroll', function () { if (PIN && Date.now() - PIN_AT > 1500) PIN = ''; barScroll(); if (!POS_T) POS_T = setTimeout(function () { POS_T = 0; savePos(); }, 400); }, { passive: true });
     window.addEventListener('pagehide', savePos);
     var fd = $('[data-fs-down]'), fu = $('[data-fs-up]'), tt = $('[data-theme-toggle]'), rm = $('[data-rpt]');
-    if (fd) fd.addEventListener('click', function () { stepFs(-1); }); if (fu) fu.addEventListener('click', function () { stepFs(1); }); if (tt) tt.addEventListener('click', toggleTheme);
+    if (fd) fd.addEventListener('click', function () { stepFs(-1); }); if (fu) fu.addEventListener('click', function () { stepFs(1); }); if (tt) tt.addEventListener('click', toggleTheme); var fxb = $('[data-fx-toggle]'); if (fxb) fxb.addEventListener('click', toggleFx); bordInit();
     if (window.matchMedia) { var mq = window.matchMedia('(prefers-color-scheme: dark)'), onMq = function () { if (!VIEW.theme) applyView(false); }; if (mq.addEventListener) mq.addEventListener('change', onMq); else if (mq.addListener) mq.addListener(onMq); }
     $$('[data-rpt-print]').forEach(function (b) { b.addEventListener('click', function () { if (rm) rm.open = false; printReport(b.getAttribute('data-rpt-print') === 'all'); }); });
     var rc = $('[data-rpt-csv]'); if (rc) rc.addEventListener('click', function () { if (rm) rm.open = false; reportCsv(); });
@@ -4176,7 +4366,7 @@ html.deck-on { overflow: hidden; }
     $$('[data-top]').forEach(function (b) { b.addEventListener('click', function () { TOP = +b.getAttribute('data-top'); $$('[data-top]').forEach(function (x) { x.setAttribute('aria-pressed', String(x === b)); }); if (DATA) drawTables(); }); });
     var wtc = $('[data-wt-clear]'); if (wtc) wtc.addEventListener('click', function () { WT = null; if (DATA) drawTables(); });
     var t = null, lastW = window.innerWidth;
-    window.addEventListener('resize', function () { if (window.innerWidth === lastW) return; lastW = window.innerWidth; clearTimeout(t); t = setTimeout(render, 120); });
+    window.addEventListener('resize', function () { if (window.innerWidth === lastW) return; lastW = window.innerWidth; clearTimeout(t); t = setTimeout(renderQuiet, 120); });
     document.addEventListener('pointerdown', function (ev) { if (!ev.target.closest || !ev.target.closest('.plot')) $$('.tip').forEach(function (x) { x.hidden = true; }); });
     // 지금 보고 있는 곳을 위쪽 메뉴에 표시: 스크롤 · 창 크기가 바뀔 때마다 다시 센다(접고 펴기 · 다시 그리기 뒤에는 setFold · render 가 부른다)
     window.addEventListener('scroll', spyLater, { passive: true }); window.addEventListener('resize', function () { fitBar(); spyLater(); });
