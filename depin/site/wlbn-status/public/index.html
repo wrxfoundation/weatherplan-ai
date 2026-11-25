@@ -288,11 +288,15 @@ td .pc { display: block; margin-top: 1px; color: var(--faint); font-size: calc(1
 .flow-val { fill: var(--muted); font-size: calc(12px * var(--fs)); font-weight: 500; font-family: var(--font); font-variant-numeric: tabular-nums; paint-order: stroke; stroke: var(--panel); stroke-width: 4px; stroke-linejoin: round; }
 .flow-col { fill: var(--faint); font-size: calc(12px * var(--fs)); font-weight: 600; font-family: var(--font); }
 .rib { opacity: 0.4; } .rib:hover, .rib.on { opacity: 0.8; }
-.tip { position: absolute; z-index: 5; pointer-events: none; min-width: 11em; max-width: 24em; padding: 9px 12px; background: var(--pop); border: 1px solid var(--pop-line); border-radius: var(--r-md); box-shadow: var(--pop-shadow); color: var(--fg); font-size: var(--t-xs); line-height: 1.55; }
+.tip { position: absolute; z-index: 5; pointer-events: none; display: grid; grid-template-columns: minmax(0, 1fr) auto auto; column-gap: 12px; width: max-content; min-width: 11em; max-width: min(32em, calc(100% - 8px)); padding: 9px 12px; background: var(--pop); border: 1px solid var(--pop-line); border-radius: var(--r-md); box-shadow: var(--pop-shadow); color: var(--fg); font-size: var(--t-xs); line-height: 1.55; }
+/* 풀이 상자는 세 칸(이름 | 수량 | 비율)이다 — 줄마다 숫자 자리가 맞고, 이름이 길면 이름만 줄을 바꾼다(전에는 이름 · 값이 모두 줄바꿈 금지라 값이 상자 밖으로 밀려 나갔다) */
+.tip > * { grid-column: 1 / -1; }
 .tip-h { font-weight: 650; margin-bottom: 2px; font-size: var(--t-sm); }
-.tip-r { display: flex; justify-content: space-between; gap: 16px; }
-.tip-k { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); white-space: nowrap; }
-.tip-v { font-variant-numeric: tabular-nums; font-weight: 500; white-space: nowrap; }
+.tip-r { display: grid; grid-template-columns: subgrid; align-items: baseline; }
+.tip-k { display: inline-flex; align-items: baseline; gap: 6px; min-width: 0; color: var(--muted); white-space: normal; word-break: keep-all; overflow-wrap: anywhere; } .tip-k .sw { flex: none; align-self: center; }
+.tip-v, .tip-p { font-variant-numeric: tabular-nums; white-space: nowrap; text-align: right; }
+.tip-v { font-weight: 500; } .tip-v:last-child { grid-column: 2 / -1; } .tip-p { color: var(--muted); }
+@supports not (grid-template-columns: subgrid) { .tip-r { display: flex; justify-content: space-between; gap: 12px; } .tip-p { margin-left: -4px; } }
 .tip-sep { border-top: 1px solid var(--line); margin-top: 4px; padding-top: 4px; }
 .two-col { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px 28px; }
 
@@ -2332,8 +2336,11 @@ html.deck-on { overflow: hidden; }
       if (it.color) { var sw = document.createElement('i'); sw.className = 'sw'; sw.style.background = it.color; k.appendChild(sw); }
       if (it.owner && OWN[it.owner]) k.appendChild(tagEl(it.owner));
       k.appendChild(document.createTextNode(it.label));
-      var v = document.createElement('span'); v.className = 'tip-v'; v.textContent = it.value;
-      r.appendChild(k); r.appendChild(v); out.push(r);
+      var raw = String(it.value === null || it.value === undefined ? '' : it.value), cutAt = raw.indexOf(' · ');      // 「수량 · 비율」은 두 칸으로 나눈다
+      var v = document.createElement('span'); v.className = 'tip-v'; v.textContent = cutAt > 0 ? raw.slice(0, cutAt) : raw;
+      r.appendChild(k); r.appendChild(v);
+      if (cutAt > 0) { var pz = document.createElement('span'); pz.className = 'tip-p'; pz.textContent = raw.slice(cutAt + 3); r.appendChild(pz); }
+      out.push(r);
     });
     return out;
   }
