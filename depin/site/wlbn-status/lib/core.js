@@ -424,8 +424,8 @@ function buildBuzz(S) {
     const d90 = items.filter((x) => x.at > now - 90 * DAY);
     out.web = { at: kd(B.web.at), d30: cnt(30, 0), p30: cnt(60, 30), d90: d90.length, srcs90: new Set(d90.map((x) => x.src)).size, year: items.length, last: items.length ? kd(items[0].at) : null, weeks: weeksOf(items), items: items.slice(0, 12).map((x) => ({ date: kd(x.at), src: x.src, title: x.title, url: x.url })) };
   }
-  const tg = B.tg && B.tg.at ? B.tg : null, site = B.site && B.site.at ? B.site : null;
-  if (tg || site) {
+  const tg = B.tg && B.tg.at ? B.tg : null, site = B.site && B.site.at ? B.site : null, comm = B.comm && B.comm.at ? B.comm : null;
+  if (tg || site || comm) {
     const posts = tg ? Object.keys(tg.posts || {}).map((id) => ({ id: Number(id), at: tg.posts[id][0], views: tg.posts[id][1] })).sort((a, b) => b.at - a.at) : [];
     const win = (from, to) => posts.filter((p) => p.at > now - from * DAY && p.at <= now - to * DAY);
     const med = (list) => { const v = list.map((p) => p.views).filter((x) => x !== null && x !== undefined).sort((a, b) => a - b); return v.length ? (v.length % 2 ? v[(v.length - 1) / 2] : Math.round((v[v.length / 2 - 1] + v[v.length / 2]) / 2)) : null; };
@@ -447,13 +447,24 @@ function buildBuzz(S) {
         first: f ? { date: days[0], devices_total: f[0], devices_active: f[1], operators: f[2], earners: f[3], holders: f[4], trustlines: f[5], claims: f[6] } : null,
       };
     }
+    // wellbians.io(파트너 커뮤니티) 공개 값: 받은 날마다 적어 둔 「24시간 새 글 수」의 평균. 쌓인 날이 90일이면 30일 ÷ 60일, 14일이면 최근 7일 ÷ 그 앞 7일
+    let commOut = null;
+    if (comm) {
+      const cds = Object.keys(comm.log || {}).sort(), cv = cds.map((d) => comm.log[d][0]).filter((v) => v !== null && v !== undefined), avg1 = (a) => Math.round(a.reduce((x, y) => x + y, 0) / a.length * 10) / 10, CN = '커뮤니티 새 글 수(하루)';
+      if (cv.length >= 90) add('comm', CN, '건', avg1(cv.slice(-30)), avg1(cv.slice(-90, -30)), '최근 30일 ÷ 그 앞 60일');
+      else if (cv.length >= 14) add('comm', CN, '건', avg1(cv.slice(-7)), avg1(cv.slice(-14, -7)), '최근 7일 ÷ 그 앞 7일');
+      else add('comm', CN, '건', cv.length ? cv[cv.length - 1] : null, null, '견줄 날이 모자란다(14일 치부터)');
+      const cf = cds.length ? comm.log[cds[0]] : null, cz = (v) => (v === undefined ? null : v);
+      commOut = { at: kd(comm.at), host: comm.host || 'wellbians.io', posts24: cz(comm.posts24), comments24: cz(comm.comments24), members: cz(comm.members), places: cz(comm.places), pub_total: cz(comm.pub_total), pub_open: cz(comm.pub_open), days: cds.length,
+        first: cf ? { date: cds[0], posts24: cf[0], comments24: cf[1], members: cf[2], places: cf[3], pub_open: cf[4] } : null };
+    }
     const sc = parts.filter((p) => p.ratio !== null).map((p) => Math.min(100, 50 * p.ratio));
     const log = tg ? Object.keys(tg.log || {}).sort().map((d) => ({ date: d, subs: tg.log[d][0], members: tg.log[d][1] })) : [];
     out.social = {
-      at: kd(Math.max(tg ? tg.at : 0, site ? site.at : 0)), index: sc.length ? Math.round(sc.reduce((a, b) => a + b, 0) / sc.length) : null, parts, used: sc.length, has_tg: !!tg,
+      at: kd(Math.max(tg ? tg.at : 0, site ? site.at : 0, comm ? comm.at : 0)), index: sc.length ? Math.round(sc.reduce((a, b) => a + b, 0) / sc.length) : null, parts, used: sc.length, has_tg: !!tg,
       subs: tg && tg.subs !== undefined ? tg.subs : null, members: tg && tg.members !== undefined ? tg.members : null, online: tg && tg.online !== undefined ? tg.online : null,
       posts30: r30.length, posts_prev60: b60.length, views_med: med(posts.slice(0, 10)), last_post: posts.length ? kd(posts[0].at) : null,
-      weeks: weeksOf(posts), log, channel: (tg && tg.channel) || '', group: (tg && tg.group) || '', site: siteOut,
+      weeks: weeksOf(posts), log, channel: (tg && tg.channel) || '', group: (tg && tg.group) || '', site: siteOut, comm: commOut,
     };
   }
   return out;

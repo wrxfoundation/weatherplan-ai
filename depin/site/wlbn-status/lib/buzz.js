@@ -3,6 +3,7 @@
 //   · 뉴스: 구글 뉴스 검색의 RSS(제목 · 매체 · 날짜 · 주소). 한 번에 최근 것 100건까지라, 받을 때마다 상태에 쌓아 간다(S.buzz.web.items)
 //   · 텔레그램: 공지 채널의 공개 미리보기(t.me/s/…)에서 글의 날짜 · 조회 수, 채널 · 대화방 소개 쪽에서 구독자 · 인원 수
 //   · wellbian.io 공개 API(/api/network · /api/explorer): 운영자 · 보상 받은 지갑 · 보유 지갑 · 신뢰선 · 기기 수, 날짜별 보상 대상 기기 수(API 는 14일 치만 줘서 받을 때마다 쌓는다)
+//   · wellbians.io(파트너 커뮤니티) 공개 화면: 첫 쪽의 「지금 웰비안즈」 칸 넷(24시간 새 글 · 댓글 · 활동 회원 · 운영 장소)과 설치 장소 쪽의 공개된 장소 수. 합계만 읽는다 — 회원 이름 · 글 내용은 읽어 두지 않는다
 //   하루 한 번이면 된다(20시간 안에 받았으면 건너뛴다). 한쪽이 안 받아지면 그쪽은 지난 값을 그대로 둔다
 //   X(트위터) · 검색량은 열쇠가 있어야 받을 수 있어 넣지 않았다
 const GAP = 20 * 3600;
@@ -13,6 +14,7 @@ const NEWS = [
 const WORD = /wellbian|웰비안|wlbn/i;      // 제목에 이 낱말이 든 기사만 센다(검색은 본문만 스친 기사 · 같은 글자의 다른 것도 돌려준다)
 const tgChannel = () => String(process.env.WATCH_TG_CHANNEL || 'wellbianlabs').replace(/[^A-Za-z0-9_]/g, '');
 const tgGroup = () => String(process.env.WATCH_TG_GROUP || 'wellbiantalk').replace(/[^A-Za-z0-9_]/g, '');
+const commBase = () => { const u = String(process.env.WATCH_COMMUNITY_URL || '').replace(/\/+$/, ''); return /^https:\/\/[a-z0-9.-]+$/i.test(u) ? u : 'https://wellbians.io'; };
 
 const unesc = (s) => String(s || '').replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, '$1').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;|&apos;/g, "'").replace(/&#(\d+);/g, (m, n) => String.fromCodePoint(Number(n))).replace(/&amp;/g, '&');
 const pick = (xml, tag) => { const m = new RegExp('<' + tag + '(?:\\s[^>]*)?>([\\s\\S]*?)</' + tag + '>').exec(xml); return m ? unesc(m[1]).trim() : ''; };
@@ -46,9 +48,21 @@ function parsePosts(html, channel) {
   }
   return out;
 }
+// 커뮤니티 첫 쪽의 「지금 웰비안즈」 칸 → { posts24, comments24, members, places } (못 찾은 칸은 빠진다)
+const COMM_KEY = { '24시간 새 글': 'posts24', '24시간 댓글': 'comments24', '활동 회원': 'members', '운영 장소': 'places' };
+function parseCommunity(html) {
+  const s = String(html || '').replace(/<!--[\s\S]*?-->/g, ''), i = s.indexOf('class="live-grid"'), o = {}; if (i < 0) return o;
+  for (const m of s.slice(i, i + 1500).matchAll(/<b>([\d\s.,KkMm]+)<\/b>\s*<span>([^<]{2,20})<\/span>/g)) { const k = COMM_KEY[unesc(m[2]).trim()], v = num(m[1]); if (k && v !== null && !(k in o)) o[k] = v; }
+  return o;
+}
+// 설치 장소 쪽의 「전체 N곳 중 M곳이 공개되어 있습니다」 → { pub_total, pub_open }
+function parsePlaces(html) {
+  const t = String(html || '').replace(/<!--[\s\S]*?-->/g, '').replace(/<[^>]+>/g, ' '), m = /전체\s*([\d,]+)\s*곳\s*중\s*([\d,]+)\s*곳이\s*공개/.exec(t);
+  return m ? { pub_total: num(m[1]), pub_open: num(m[2]) } : {};
+}
 const getText = async (fetchImpl, url, ms) => { const r = await fetchImpl(url, { headers: { accept: 'text/html,application/xml;q=0.9,*/*;q=0.8', 'user-agent': 'Mozilla/5.0 (compatible; wlbn-status)' }, signal: AbortSignal.timeout(ms || 8000) }); if (!r.ok) throw new Error('http ' + r.status); return r.text(); };
 
-function blank() { return { at: 0, web: { at: 0, items: {} }, tg: { at: 0, posts: {}, log: {} }, site: { at: 0, epochs: {}, log: {} } }; }
+function blank() { return { at: 0, web: { at: 0, items: {} }, tg: { at: 0, posts: {}, log: {} }, site: { at: 0, epochs: {}, log: {} }, comm: { at: 0, log: {} } }; }
 // 상태(S.buzz)를 새로 받아 더한다. 돌려주는 것: { changed, web, tg, skipped }
 async function update(S, opts) {
   opts = opts || {};
@@ -56,7 +70,7 @@ async function update(S, opts) {
   if (!S.buzz) S.buzz = blank();
   const B = S.buzz; if (!B.web) B.web = { at: 0, items: {} }; if (!B.tg) B.tg = { at: 0, posts: {}, log: {} };
   if (!opts.force && now - (B.at || 0) < GAP) return { changed: false, skipped: true };
-  const info = { changed: false, web: 0, tg: 0, site: 0 };
+  const info = { changed: false, web: 0, tg: 0, site: 0, comm: 0 };
   // 뉴스
   try {
     const before = Object.keys(B.web.items).length;
@@ -109,7 +123,18 @@ async function update(S, opts) {
       st.at = now; info.site = Object.keys(st.epochs).length; info.changed = true;
     }
   } catch (e) { info.site_error = String((e && e.message) || e).slice(0, 80); }
+  // wellbians.io(파트너 커뮤니티)가 공개한 값 — 합계만. 첫 쪽을 못 읽으면 지난 값을 그대로 둔다(설치 장소 쪽은 못 읽어도 넘어간다)
+  try {
+    const cm = B.comm || (B.comm = { at: 0, log: {} }), base = commBase(), day = new Date((now + 9 * 3600) * 1000).toISOString().slice(0, 10); if (!cm.log) cm.log = {};
+    if (left() < 2500) throw new Error('no time');
+    const c = parseCommunity(await getText(fetchImpl, base + '/', Math.min(7000, left()))); if (!Object.keys(c).length) throw new Error('no values');
+    for (const k of Object.keys(c)) cm[k] = c[k];
+    if (left() > 2500) { try { const pl = parsePlaces(await getText(fetchImpl, base + '/places', Math.min(7000, left()))); if (pl.pub_open !== undefined && pl.pub_open !== null) { cm.pub_total = pl.pub_total; cm.pub_open = pl.pub_open; } } catch (e) { info.places_error = String((e && e.message) || e).slice(0, 80); } }
+    cm.log[day] = [cm.posts24, cm.comments24, cm.members, cm.places, cm.pub_open].map((v) => (v === undefined ? null : v));
+    const ds = Object.keys(cm.log).sort(); ds.slice(0, Math.max(0, ds.length - 400)).forEach((d) => { delete cm.log[d]; });
+    cm.at = now; cm.host = base.replace(/^https:\/\//, ''); info.comm = Object.keys(cm.log).length; info.changed = true;
+  } catch (e) { info.comm_error = String((e && e.message) || e).slice(0, 80); }
   if (info.changed) B.at = now;
   return info;
 }
-module.exports = { update, parseNews, parsePage, parsePosts, num, blank, GAP };
+module.exports = { update, parseNews, parsePage, parsePosts, parseCommunity, parsePlaces, num, blank, GAP };

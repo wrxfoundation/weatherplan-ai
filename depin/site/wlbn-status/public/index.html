@@ -1098,9 +1098,13 @@ html.rpt .to-top { display: none !important; } @media print { .to-top { display:
   </section>
 
   <section class="sec panel" id="social" data-need="social" hidden aria-labelledby="h-social">
-    <h2 class="h2" id="h-social">소셜 지수 · 텔레그램과 네트워크 참여 <span class="period" data-soc-at>—</span></h2>
-    <p class="note"><b>소셜 지수</b>는 <b>최근 활동을 평소에 견준 값</b>이다. 갈래(웹 언급 수 · 텔레그램 채널 공지 글 수 · 글당 조회 수 · wellbian.io가 공개한 보상 대상 기기 수)마다 평소와 같으면 50, 두 배 이상이면 100으로 놓고 평균한다. 갈래마다 견준 기간은 아래 표에 적었고, 견줄 값이 없는 갈래는 뺀다. 활동이 많고 적음을 보는 숫자이고, 좋고 나쁨을 가리지 않는다.</p>
+    <h2 class="h2" id="h-social">소셜 지수 · 텔레그램 · 커뮤니티 · 네트워크 참여 <span class="period" data-soc-at>—</span></h2>
+    <p class="note"><b>소셜 지수</b>는 <b>최근 활동을 평소에 견준 값</b>이다. 갈래(웹 언급 수 · 텔레그램 채널 공지 글 수 · 글당 조회 수 · wellbian.io가 공개한 보상 대상 기기 수 · 웰비안즈 커뮤니티의 하루 새 글 수)마다 평소와 같으면 50, 두 배 이상이면 100으로 놓고 평균한다. 갈래마다 견준 기간은 아래 표에 적었고, 견줄 값이 없는 갈래는 뺀다. 활동이 많고 적음을 보는 숫자이고, 좋고 나쁨을 가리지 않는다.</p>
     <div class="tiles four" id="soc-tiles"></div>
+    <div data-soc-comm hidden>
+      <h3 class="h3">커뮤니티 · wellbians.io가 공개한 값</h3>
+      <div class="tiles four" id="soc-comm-tiles"></div>
+    </div>
     <div data-soc-site hidden>
       <h3 class="h3">네트워크 참여 · wellbian.io가 공개한 값</h3>
       <div class="tiles four" id="soc-site-tiles"></div>
@@ -2487,7 +2491,7 @@ html.rpt .to-top { display: none !important; } @media print { .to-top { display:
     if (ok(s.trust_hold_share)) fc.splice(1, 0, '신뢰선 ' + fInt(s.trustlines) + '곳의 ' + F.pct(s.trust_hold_share));
     if (fc.length) T.facts = fc.join(' · ');
     if (DATA.web) T.web = '최근 30일 기사 **' + fInt(DATA.web.d30) + '건** · 그 앞 30일 ' + fInt(DATA.web.p30) + '건' + (DATA.web.last ? ' · 가장 최근 ' + md(DATA.web.last) : '');
-    if (DATA.social) T.social = (DATA.social.index === null ? '소셜 지수 —' : '소셜 지수 **' + DATA.social.index + '** / 100') + (DATA.social.subs !== null ? ' · 채널 구독자 ' + fInt(DATA.social.subs) + '명' : '') + (DATA.social.members !== null ? ' · 대화방 ' + fInt(DATA.social.members) + '명' : '') + (DATA.social.site && DATA.social.site.operators !== null ? ' · 운영자 ' + fInt(DATA.social.site.operators) + '곳' : '') + (DATA.social.site && DATA.social.site.holders !== null ? ' · 보유 지갑 ' + fInt(DATA.social.site.holders) + '곳' : '');
+    if (DATA.social) T.social = (DATA.social.index === null ? '소셜 지수 —' : '소셜 지수 **' + DATA.social.index + '** / 100') + (DATA.social.subs !== null ? ' · 채널 구독자 ' + fInt(DATA.social.subs) + '명' : '') + (DATA.social.members !== null ? ' · 대화방 ' + fInt(DATA.social.members) + '명' : '') + (DATA.social.comm && DATA.social.comm.members !== null ? ' · 커뮤니티 활동 회원 ' + fInt(DATA.social.comm.members) + '명' : '') + (DATA.social.site && DATA.social.site.operators !== null ? ' · 운영자 ' + fInt(DATA.social.site.operators) + '곳' : '') + (DATA.social.site && DATA.social.site.holders !== null ? ' · 보유 지갑 ' + fInt(DATA.social.site.holders) + '곳' : '');
     T.before = '10월 24일에 옮겨진 물량과 10월 26~27일 재지급 기록';
     T.notes = '용어 풀이 · 집계 기준과 한계';
     $$('[data-sum]').forEach(function (el) { rich(el, T[el.getAttribute('data-sum')] || ''); });
@@ -3316,7 +3320,15 @@ html.rpt .to-top { display: none !important; } @media print { .to-top { display:
       if (S2.has_tg !== false) buzzTile(st, '대화방 인원', buzzNum(S2.members), '명', (S2.group ? '@' + S2.group : '대화방') + (S2.online !== null ? ' · 확인할 때 접속 ' + fInt(S2.online) + '명' : ''));
       if (S2.has_tg !== false) buzzTile(st, '최근 30일 공지 글', fInt(S2.posts30), '건', '그 앞 60일 ' + fInt(S2.posts_prev60) + '건' + (S2.last_post ? ' · 마지막 글 ' + md(S2.last_post) : ''));
       table('#tb-social', [{ key: 'name', label: '갈래', text: 1 }, { key: 'win', label: '견준 기간', text: 1 }, { key: 'now', label: '최근', text: 1, num: 1 }, { key: 'base', label: '평소', text: 1, num: 1 }, { key: 'ratio', label: '평소 대비', text: 1, num: 1 }, { key: 'score', label: '점수(100점까지)', text: 1, num: 1 }],
-        (S2.parts || []).map(function (p) { return { name: p.name, win: p.win || '', now: p.now === null ? null : buzzNum(p.now) + p.unit, base: p.base === null ? null : buzzNum(p.base, p.base % 1 ? 1 : 0) + p.unit, ratio: p.ratio === null ? '견줄 값 없음' : F.pct(p.ratio), score: p.ratio === null ? null : String(Math.round(Math.min(100, 50 * p.ratio))) }; }));
+        (S2.parts || []).map(function (p) { return { name: p.name, win: p.win || '', now: p.now === null ? null : buzzNum(p.now, p.now % 1 ? 1 : 0) + p.unit, base: p.base === null ? null : buzzNum(p.base, p.base % 1 ? 1 : 0) + p.unit, ratio: p.ratio === null ? '견줄 값 없음' : F.pct(p.ratio), score: p.ratio === null ? null : String(Math.round(Math.min(100, 50 * p.ratio))) }; }));
+      var CM = S2.comm, cbox = $('[data-soc-comm]'), cst = $('#soc-comm-tiles'); if (cbox) cbox.hidden = !CM;
+      if (CM && cst) {      // 웰비안즈(파트너 커뮤니티)가 첫 쪽에 공개한 합계 — 회원 이름 · 글 내용은 읽지 않는다
+        cst.replaceChildren(); var c0 = CM.first && CM.days > 1 ? CM.first : null, cdl = function (now, was) { return c0 && now !== null && was !== null && was !== undefined ? ' · ' + md(c0.date) + '보다 ' + (now - was >= 0 ? '+' : '−') + fInt(Math.abs(now - was)) : ''; }, cgrow = c0 ? '' : ' · 변화는 오늘부터 쌓는다';
+        buzzTile(cst, '24시간 새 글', buzzNum(CM.posts24), '건', '확인한 때부터 앞 24시간' + (CM.days ? ' · 쌓인 날 ' + fInt(CM.days) + '일' : ''));
+        buzzTile(cst, '24시간 댓글', buzzNum(CM.comments24), '건', '글에 달린 댓글');
+        buzzTile(cst, '활동 회원', buzzNum(CM.members), '명', (CM.host || 'wellbians.io') + cdl(CM.members, c0 && c0.members) + cgrow);
+        buzzTile(cst, '운영 장소', buzzNum(CM.places), '곳', (CM.pub_open === null ? '공개된 설치 장소 수는 읽지 못했다' : '공개된 설치 장소 ' + fInt(CM.pub_open) + '곳' + (CM.pub_total === null ? '' : '(전체 ' + fInt(CM.pub_total) + '곳)')) + cdl(CM.places, c0 && c0.places));
+      }
       var SI = S2.site, sbox = $('[data-soc-site]'), sst = $('#soc-site-tiles'); if (sbox) sbox.hidden = !SI;
       if (SI && sst) {
         sst.replaceChildren(); var f0 = SI.first && SI.days > 1 ? SI.first : null, dl = function (now, was) { return f0 && now !== null && was !== null && was !== undefined ? ' · ' + md(f0.date) + '보다 ' + (now - was >= 0 ? '+' : '−') + fInt(Math.abs(now - was)) : ''; }, grow = f0 ? '' : ' · 변화는 오늘부터 쌓는다';
@@ -3326,7 +3338,7 @@ html.rpt .to-top { display: none !important; } @media print { .to-top { display:
         buzzTile(sst, '등록 기기', buzzNum(SI.devices_total), '대', '활성 ' + buzzNum(SI.devices_active) + '대' + dl(SI.devices_total, f0 && f0.devices_total));
         var nc = $('[data-soc-nodes-cap]'), ep = SI.epochs || []; if (nc) nc.textContent = '날짜별 보상 대상 기기 수' + (ep.length ? ' · ' + md(ep[0].date) + '~' + md(ep[ep.length - 1].date) + '(' + ep.length + '일 · 하루 한 번씩 쌓인다)' : '');
       }
-      var ss = $('[data-soc-src]'); if (ss) ss.textContent = '출처: ' + [S2.has_tg !== false ? '텔레그램 공개 쪽(' + [S2.channel ? '공지 채널 @' + S2.channel : '', S2.group ? '대화방 @' + S2.group : ''].filter(Boolean).join(' · ') + ')' : '', SI ? 'wellbian.io 공개 API(네트워크 · 탐색기)' : ''].filter(Boolean).join(' · ') + '에서 하루 한 번 읽은 값.' + (S2.has_tg !== false ? ' 글당 조회 수는 ' + (S2.views_med === null ? '읽지 못했다' : '최근 글 열 개의 가운데 값이 ' + fInt(S2.views_med) + '회') + '.' : '') + ' X(트위터)와 검색량은 들어 있지 않다.';
+      var ss = $('[data-soc-src]'); if (ss) ss.textContent = '출처: ' + [S2.has_tg !== false ? '텔레그램 공개 쪽(' + [S2.channel ? '공지 채널 @' + S2.channel : '', S2.group ? '대화방 @' + S2.group : ''].filter(Boolean).join(' · ') + ')' : '', CM ? (CM.host || 'wellbians.io') + ' 공개 화면(커뮤니티)' : '', SI ? 'wellbian.io 공개 API(네트워크 · 탐색기)' : ''].filter(Boolean).join(' · ') + '에서 하루 한 번 읽은 값.' + (S2.has_tg !== false ? ' 글당 조회 수는 ' + (S2.views_med === null ? '읽지 못했다' : '최근 글 열 개의 가운데 값이 ' + fInt(S2.views_med) + '회') + '.' : '') + ' X(트위터)와 검색량은 들어 있지 않다.';
     }
   }
   function buzzBars(el, rows, label, unit) {

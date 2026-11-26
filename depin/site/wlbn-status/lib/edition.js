@@ -42,7 +42,7 @@ const FEATURES = [
   { g: '지갑', n: '지갑의 생태계 기여 5단계', from: 'pro' },
   { g: '지갑', n: '온체인 심층 — 보유 기간 · 취득가', from: 'pro' },
   { g: '지갑', n: '지갑 분포 — 누가 얼마나 파나', from: 'pro' },
-  { g: '소셜', n: '소셜 지수 — 텔레그램 · 네트워크 참여', from: 'pro' },
+  { g: '소셜', n: '소셜 지수 — 텔레그램 · 커뮤니티 · 네트워크 참여', from: 'pro' },
 ];
 const can = (plan, sec) => SECTIONS[sec] !== 'never' && RANK[SECTIONS[sec]] !== undefined && RANK[SECTIONS[sec]] <= (RANK[plan] || 0);
 
