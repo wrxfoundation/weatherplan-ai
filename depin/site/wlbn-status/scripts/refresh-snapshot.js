@@ -4,6 +4,7 @@
 const fs = require('fs'), path = require('path');
 const core = require('../lib/core'), xrpl = require('../lib/xrpl'), trace = require('../lib/trace');
 const { fetchExt, fetchHistory } = require('../lib/ext');
+const edition = require('../lib/edition');
 const FILE = path.join(__dirname, '../lib/snapshot-state.json');
 (async () => {
   const S = JSON.parse(fs.readFileSync(FILE, 'utf8'));
@@ -22,6 +23,7 @@ const FILE = path.join(__dirname, '../lib/snapshot-state.json');
   if (!tr.done) throw new Error('자금 흐름을 끝까지 받지 못했습니다 — 다시 실행해 주세요');
   fs.writeFileSync(FILE, JSON.stringify(S));
   const out = core.buildDatasets(JSON.parse(JSON.stringify(S)), {});
-  fs.writeFileSync(path.join(__dirname, '../public/snapshot.json'), JSON.stringify(Object.assign({ ok: true, generated_at: null, ledger: S.ledger, info: { storage: 'snapshot' } }, out)));
+  // public 은 누구나 받는다 — 상품판이면 무료만큼만 남겨 쓴다(화면 로그에 찍는 값은 아래에서 전체 자료로 계산한다)
+  fs.writeFileSync(path.join(__dirname, '../public/snapshot.json'), JSON.stringify(Object.assign({ ok: true, generated_at: null, ledger: S.ledger, info: { storage: 'snapshot' } }, edition.ON ? edition.prune(out, 'free', { state: 'none' }) : out)));
   console.log(JSON.stringify({ update: u, live, as_of: out.summary[0].as_of, ledger: S.ledger, stateBytes: fs.statSync(FILE).size, fee: [out.summary[0].fee_r, out.summary[0].fee_x], lpShares: out.lpShares, accounts: out.ranges.all.accounts.map((a) => [a.name, a.rlusd, a.xrp]), prev7: out.ranges.d7.prev, lp_company_share: out.summary[0].lp_company_share, lp_user_share: out.summary[0].lp_user_share }, null, 1));
 })().catch((e) => { console.error(e); process.exit(1); });

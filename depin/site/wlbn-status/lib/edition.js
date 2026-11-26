@@ -1,11 +1,14 @@
 'use strict';
-// 상품판(외부 구독 서비스로 내는 판) 전환. 환경변수 EDITION=watch 일 때만 켜진다 — 켜지 않으면 내부 현황판 그대로이고 이 파일은 아무 일도 하지 않는다.
+// 상품판(외부 구독 서비스로 내는 판) 전환. 환경변수 EDITION=watch 이거나 넘길 묶음의 표식 파일(lib/edition-on.json)이 있을 때만 켜진다 — 켜지 않으면 내부 현황판 그대로이고 이 파일은 아무 일도 하지 않는다.
 //   · 요금제(무료 · 라이트 · 스탠더드 · 프로)마다 열리는 구역이 다르다. **자료는 서버가 걸러서 준다** — 잠긴 구역의 자료는 응답에 넣지 않는다(화면에서만 가리는 것이 아니다)
 //   · 이용권 = 운영자가 결제 뒤 건네는 글 한 줄. 요금제와 끝나는 날을 담고 WATCH_SECRET 으로 서명한다(scripts/mint-token.js 로 만든다). 서버는 서명과 날짜만 본다 — 회원 정보를 두지 않는다
 //   · 상품판에 내지 않는 것: 부정 쪽 지갑 자금 추적(개인 지갑에 낙인이 될 수 있다) · 이전 풀 기간 표 · 발표 모드(긍정 지표만 모은 화면은 홍보로 읽힌다)
 const crypto = require('crypto');
 
-const ON = process.env.EDITION === 'watch';
+// 넘길 묶음에는 scripts/build-watch.js 가 lib/edition-on.json 을 넣는다 — 그 묶음은 환경변수를 빠뜨려도 상품판으로 돈다(모든 자료가 열린 채 나가는 일이 없게). 이 저장소에는 그 파일이 없다
+let PINNED = false;
+try { PINNED = require('./edition-on.json').watch === true; } catch (e) { PINNED = false; }
+const ON = PINNED || process.env.EDITION === 'watch';
 const PLANS = [
   { key: 'free', name: '무료', month: 0, year: 0, who: '가입 없이 보는 오늘 요약' },
   { key: 'lite', name: '라이트', month: 1900, year: 19000, who: '관심자 · 가볍게 보는 보유자' },

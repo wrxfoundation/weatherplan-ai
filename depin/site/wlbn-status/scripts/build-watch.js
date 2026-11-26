@@ -6,6 +6,7 @@
 //   · public/snapshot.json 을 **무료 요금제만큼만** 남긴 것으로 바꾼다(public 은 누구나 받을 수 있으므로 유료 구역의 자료를 두지 않는다)
 //   · README-OPERATOR.md 를 README.md 로 넣는다(내부 README 는 넣지 않는다)
 //   · 코드 주석에 남은 내부 메모의 이름을 지운다
+//   · lib/edition-on.json 을 넣는다 — 이 묶음은 환경변수 EDITION 을 빠뜨려도 상품판으로 돈다
 const fs = require('fs'), path = require('path');
 const ROOT = path.join(__dirname, '..'), OUT = process.argv[2];
 if (!OUT) { console.error('사용: node scripts/build-watch.js <만들 폴더>'); process.exit(2); }
@@ -18,6 +19,7 @@ fs.mkdirSync(OUT, { recursive: true });
 fs.mkdirSync(path.join(OUT, 'scripts'), { recursive: true });
 ['scripts/mint-token.js', 'scripts/refresh-snapshot.js'].forEach(copy);
 fs.copyFileSync(path.join(ROOT, 'README-OPERATOR.md'), path.join(OUT, 'README.md'));
+fs.writeFileSync(path.join(OUT, 'lib/edition-on.json'), JSON.stringify({ watch: true }) + '\n');      // 이 묶음은 늘 상품판
 // 무료만큼만 남긴 미리 넣어 둘 자료
 const S = JSON.parse(fs.readFileSync(path.join(ROOT, 'lib/snapshot-state.json'), 'utf8'));
 const full = core.buildDatasets(JSON.parse(JSON.stringify(S)), {});
