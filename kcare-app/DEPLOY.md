@@ -541,6 +541,28 @@ Vercel 프로젝트 → **Settings → Environment Variables** → Environment �
   가족이 함께 쓰는 기록은 지워지지 않는다 — 서비스가 끝난 가족의 기록 정리는 관제가 따로 한다.
 - **비밀번호가 바뀌면 그 아이디로 로그인한 모든 기기가 다시 로그인한다.** 이번 배포 전에 로그인해 둔 기기도 포함이다.
 
+### 4-23. 구글 플레이 등록 준비 — 앱 아이콘 · 오프라인 화면 · 계정 삭제 안내 (2026-11-26)
+
+**SQL 변경 없음. 환경변수는 지금 넣지 않아도 된다** (앱 꾸러미를 만든 뒤에 두 개를 넣는다). zip 을 덮어 올리면 끝난다.
+등록 순서 · Play Console 답안 초안 · 등록 문구: **`docs/GOOGLE-PLAY.md`**. 정한 것 · 이유: `../docs/kcare/decisions/2026-11-26-google-play.md`.
+
+- **새로 생긴 주소**
+  - `/delete-account` — 계정 삭제 안내. **로그인 없이 열린다** (구글 플레이 데이터 보안 양식에 적는 주소). 약관 화면들 아래에서도 이어진다.
+  - `/start` — 설치한 앱이 여는 주소. 로그인한 사람은 자기 화면, 아니면 로그인 화면으로 보낸다.
+  - `/offline.html` · `/sw.js` — 인터넷이 끊겼을 때 뜨는 안내 화면과 그것을 띄우는 서비스 워커. 화면 · 기록을 저장해 두지 않는다.
+  - `/.well-known/assetlinks.json` — 앱-도메인 연결. 아래 환경변수를 넣기 전에는 404 다 (정상).
+- **올릴 때 볼 것** — `public/icons/` 폴더(PNG 4개) · `public/sw.js` · `public/offline.html` 이 같이 올라갔는지. zip 에 들어 있다.
+- **나중에 넣을 환경변수** (앱 꾸러미 `.aab` 를 만든 뒤 — `docs/GOOGLE-PLAY.md` 3장)
+
+  | 이름 | 값 |
+  |---|---|
+  | `ANDROID_PACKAGE_NAME` | 앱 패키지 이름 (예: `com.kcarelife.app`) |
+  | `ANDROID_SHA256_FINGERPRINTS` | Play Console → 앱 서명의 SHA-256 지문. 여러 개면 쉼표로 잇는다 |
+
+  비밀 값은 아니다 (공개 주소에 그대로 나간다). 넣고 다시 배포한 뒤 `/.well-known/assetlinks.json` 에 값이 보이면 된다.
+- **서비스 워커를 꺼야 하면** — `docs/GOOGLE-PLAY.md` 8장의 두 줄로 `public/sw.js` 를 바꿔 배포한다.
+- 등록 자료(아이콘 512 · 대표 이미지 · 화면 7장)는 `docs/google-play/` 에 있다. 다시 만들 때: `npm run play-assets` (`scripts/play-assets.mjs` 머리말).
+
 ## 5. 구글 로그인 켜기 (나중에)
 
 ### 5-1. Google Cloud 콘솔

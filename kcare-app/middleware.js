@@ -1,3 +1,5 @@
+// 0) 앱 시작 주소(/start) — 홈 화면에 깐 앱 · 구글 플레이 앱(TWA)이 여는 주소 (public/manifest.webmanifest start_url).
+//    로그인한 사람은 자기 역할 홈으로, 아니면 로그인 화면으로 보낸다. 앱을 열었는데 서비스 소개(광고 화면)가 뜨지 않게 한다 (2026-11-26).
 // 1) 맨 처음 화면(/) — 로그인한 사람은 서비스 소개가 아니라 자기 역할 홈으로 보낸다 (2026-11-06 랜딩 요청 1장).
 // 2) 베타 잠금 — BETA_REQUIRE_LOGIN=1 이면 로그인(테스트 계정 또는 구글)을 해야 화면이 열린다.
 //    기본은 꺼져 있다 (토스 심사·시연처럼 누구나 봐야 하는 때가 있어서).
@@ -9,6 +11,19 @@ import { ROLE_HOME } from "./lib/roles";
 
 export async function middleware(req) {
   const { pathname, search } = req.nextUrl;
+
+  if (pathname === "/start") {
+    const url = req.nextUrl.clone();
+    url.search = "";
+    // 로그인 설정이 없는 배포(시연)는 예전 시작 화면 그대로 — 어르신 화면
+    if (!sessionConfigured()) {
+      url.pathname = "/elder";
+      return NextResponse.redirect(url);
+    }
+    const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET }).catch(() => null);
+    url.pathname = (isAllowedToken(token) && ROLE_HOME[token.role]) || "/login";
+    return NextResponse.redirect(url);
+  }
 
   if (pathname === "/") {
     // ?intro=1 — 로그인한 채로 서비스 소개를 봐야 하는 사람(파트너의 '서비스 소개 열기')은 그대로 연다

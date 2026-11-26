@@ -16,7 +16,7 @@ export default function Document() {
         {/* 아이콘을 선언하지 않으면 크롬이 /favicon.ico 를 알아서 찾고, 없으니 404 가 난다.
             브라우저 빌드마다 그 요청을 보내는 시점이 달라서 CI 스모크가 들쭉날쭉 깨졌다. */}
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-        <link rel="apple-touch-icon" href="/favicon.svg" />
+        <link rel="apple-touch-icon" href="/icons/icon-maskable-192.png" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         {/* 웹폰트 — globals.css 의 @import 에서 옮겨 왔다 (렌더 차단 제거).

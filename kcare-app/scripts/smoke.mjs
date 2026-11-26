@@ -30,7 +30,7 @@ const ROUTES = [
   "/", "/consult", "/demo", "/demo-onboarding", "/elder", "/care-profile",
   // 공개 문서 — 이용약관 · 환불규정 · 개인정보 처리방침 (2026-11-10) · 위치정보이용약관 (2026-11-17).
   // 가입 화면 동의 칸과 서비스 소개 바닥글이 잇는다
-  "/terms", "/refund", "/privacy", "/location",
+  "/terms", "/refund", "/privacy", "/location", "/delete-account",
   "/family", "/family/calendar", "/family/requests", "/family/my",
   "/family/store", "/family/watch", "/family/hospitals",
   // 보호자 홈 네 칸의 세부 화면 — 2026-10-15 디자인 시안

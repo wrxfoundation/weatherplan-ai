@@ -78,6 +78,10 @@ const nextConfig = {
     NEXT_PUBLIC_TEST_LOGIN: TEST_LOGIN,
     NEXT_PUBLIC_MEMBER_LOGIN: MEMBER_LOGIN,
   },
+  // 앱-도메인 연결 파일 — 구글 플레이 앱(TWA)이 읽는 주소. 값은 환경변수에서 만든다 (pages/api/assetlinks.js · 2026-11-26)
+  async rewrites() {
+    return [{ source: "/.well-known/assetlinks.json", destination: "/api/assetlinks" }];
+  },
   async headers() {
     return [
       {

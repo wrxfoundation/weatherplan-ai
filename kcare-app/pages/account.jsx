@@ -11,6 +11,7 @@ import AreaShell, { ShellLinks } from "../components/AreaShell";
 import KeepTel from "../components/Tel";
 import { AREAS, areaOfRole, checkPassword, isFamilyRole } from "../lib/centers";
 import { COMPANY } from "../lib/company";
+import { DELETE_ACCOUNT_PATH, LEAVE_LINES } from "../lib/account-deletion";
 import { logout, useAuth } from "../lib/auth";
 import { ROLE_HOME, ROLE_LABEL } from "../lib/test-accounts";
 
@@ -130,16 +131,8 @@ function LeaveSection({ account }) {
   const [msg, setMsg] = useState(null);
   const [busy, setBusy] = useState(false);
 
-  const lines = family
-    ? [
-        "아이디 · 이름 · 연락처 · 비밀번호가 바로 지워지고, 이 아이디로 다시 로그인할 수 없습니다. 되돌릴 수 없습니다.",
-        "가족이 함께 쓰는 기록(일정 · 요청 · 리포트 등)은 남은 가족과 서비스 제공을 위해 그대로 남습니다. 결제 기록은 법이 정한 기간 동안 보관합니다.",
-        `월 구독(서비스 이용계약)은 탈퇴로 해지되지 않습니다. 해지는 ${CS}로 따로 신청해 주세요.`,
-      ]
-    : [
-        "아이디 · 이름 · 연락처 · 비밀번호가 바로 지워지고, 이 아이디로 다시 로그인할 수 없습니다. 되돌릴 수 없습니다.",
-        "맡고 있던 담당 · 업무 기록은 센터에 그대로 남고, 담당은 센터 관제가 다시 지정합니다.",
-      ];
+  // 안내 줄은 공개 화면(/delete-account)과 같은 글이다 — lib/account-deletion.js
+  const lines = family ? LEAVE_LINES.family : LEAVE_LINES.staff;
 
   const submit = async (ev) => {
     ev.preventDefault();
@@ -175,6 +168,11 @@ function LeaveSection({ account }) {
         <button type="button" onClick={() => setOpen(true)} className="btn-press mt-3 w-full rounded-xl border border-navy/20 py-3 text-[15px] font-bold text-navy">
           회원 탈퇴 안내 보기
         </button>
+        <p className="mt-2 text-[13.5px] text-muted">
+          <Link href={DELETE_ACCOUNT_PATH} className="tap inline-block py-[3px] underline underline-offset-2">
+            계정 삭제 안내 자세히 보기
+          </Link>
+        </p>
       </div>
     );
   }

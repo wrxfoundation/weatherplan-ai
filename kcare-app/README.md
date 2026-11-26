@@ -48,7 +48,7 @@ npm run dev                  # http://localhost:3100
 ```bash
 npm run verify    # 린트(경고 0) + 빌드
 npm start &       # 운영 모드로 기동 (http://localhost:3100)
-npm run smoke     # 47개 화면을 모바일·데스크톱으로 실제로 열어 검사
+npm run smoke     # 48개 화면을 모바일·데스크톱으로 실제로 열어 검사
 ```
 
 빌드는 렌더 시점 오류 · 빈 화면 · 접근성 회귀 · 터치 타깃 축소를 못 잡는다. 스모크가 그 그물이다.
@@ -79,8 +79,8 @@ lib/            데이터 · 규칙 (가격 config.js · 영업 sales.js · 결�
                 테스트 계정 test-accounts.js · 저장 state.js(화면) · db.js(서버) · 활동 기록 activity.js)
 supabase/       schema.sql — 베타 서버 저장 표 (SQL Editor 에 붙여 넣고 Run)
 middleware.js   베타 잠금 (BETA_REQUIRE_LOGIN=1 일 때만)
-scripts/        smoke.mjs — 전 화면 스모크 검사
-docs/           요구사항 · 회의록 · 디자인 핸드오프 · 결정 기록 · 실서비스 DB 설계 · 결제 연동
+scripts/        smoke.mjs — 전 화면 스모크 검사 · play-assets.mjs — 구글 플레이 등록 자료(아이콘 · 대표 이미지 · 화면)
+docs/           요구사항 · 회의록 · 디자인 핸드오프 · 결정 기록 · 실서비스 DB 설계 · 결제 연동 · 구글 플레이 등록 준비(GOOGLE-PLAY.md)
 ```
 
 ## 지켜 온 규칙

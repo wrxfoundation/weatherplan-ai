@@ -78,6 +78,9 @@ export const PUBLIC_PATHS = [
   /^\/consult$/,
   // 2026-11-10 — 이용약관 · 환불규정 · 개인정보 처리방침은 가입 전에 읽는 문서라 로그인 없이 연다 (2026-11-17 위치정보이용약관 추가)
   /^\/(terms|refund|privacy|location)$/,
+  // 2026-11-26 구글 플레이 준비 — 계정 삭제 안내(앱을 지운 사람도 읽는다) · 오프라인 안내(서비스 워커가 미리 받아 둔다)
+  /^\/delete-account$/,
+  /^\/offline\.html$/,
   /^\/api\/consult$/,
   /^\/onboarding$/,
   /^\/login(\/|$)/,

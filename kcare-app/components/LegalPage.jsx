@@ -8,6 +8,7 @@ import Link from "next/link";
 import Logo from "./Logo";
 import { itemOf, parasOf } from "./Policy";
 import { LEGAL, PUBLIC_POLICIES, policyOf } from "../lib/policies";
+import { ACCOUNT_DELETION } from "../lib/account-deletion";
 import { SITE, TEL } from "../lib/landing";
 
 // 글을 낱말로 나눈다 — "**굵게** 보통" 처럼 굵은 글씨 표시(**)가 낱말 중간에서 열리고 닫혀도 한 낱말로 묶는다.
@@ -87,9 +88,11 @@ function Items({ items }) {
   );
 }
 
-export default function LegalPage({ id }) {
-  const policy = policyOf(id);
-  const others = PUBLIC_POLICIES.filter((p) => p.id !== id);
+// doc — 약관 목록(lib/policies.js)에 없는 안내 문서를 같은 모양으로 그릴 때 (계정 삭제 안내 · lib/account-deletion.js)
+export default function LegalPage({ id, doc }) {
+  const policy = doc || policyOf(id);
+  // 아래 '다른 문서' — 약관 4종에 계정 삭제 안내를 잇는다 (구글 플레이가 요구하는 공개 주소라 찾기 쉬워야 한다)
+  const others = [...PUBLIC_POLICIES, ACCOUNT_DELETION].filter((p) => p.id !== policy.id);
   return (
     <>
       <Head>
@@ -113,7 +116,7 @@ export default function LegalPage({ id }) {
           <p className="text-[14px] font-bold text-[#8A5D12]">K-CARE</p>
           <h1 className="mt-1 text-[30px] font-extrabold leading-[1.3] text-navy sm:text-[34px]">{policy.title}</h1>
           <p className="lp-lead mt-2.5 text-[17px] leading-[1.7] text-[#34404F]">{policy.lead}</p>
-          <p className="mt-2 text-[14.5px] text-muted">시행일 {LEGAL.effective}</p>
+          {policy.stamp !== false && <p className="mt-2 text-[14.5px] text-muted">시행일 {LEGAL.effective}</p>}
           {policy.draft && (
             <p role="note" className="lp-bal mt-4 rounded-xl border border-amber/30 bg-[#FFF7E8] px-4 py-3 text-[14.5px] font-bold leading-[1.65] text-amber">
               {LEGAL.draftNote}

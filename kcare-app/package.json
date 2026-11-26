@@ -10,6 +10,7 @@
     "start": "next start -p 3100",
     "lint": "next lint",
     "smoke": "node scripts/smoke.mjs",
+    "play-assets": "node scripts/play-assets.mjs",
     "verify": "next lint --max-warnings=0 && next build"
   },
   "dependencies": {

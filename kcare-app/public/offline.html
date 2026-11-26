@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#0A1F3C">
+<title>인터넷 연결 확인 — K-CARE</title>
+<!-- 인터넷이 끊겼을 때 서비스 워커(public/sw.js)가 보여 주는 화면. 이 한 장만으로 그려져야 해서 글꼴 · 그림 · 스타일을 밖에서 받지 않는다. -->
+<style>
+  html, body { margin: 0; height: 100%; background: #F1EFE8; color: #1B2430; font-family: "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif; -webkit-text-size-adjust: 100%; }
+  main { min-height: 100%; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 32px 22px; text-align: center; word-break: keep-all; }
+  .mark { width: 72px; height: 72px; border-radius: 16px; background: #0A1F3C; color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 15px; letter-spacing: .5px; }
+  h1 { margin: 22px 0 0; font-size: 26px; line-height: 1.35; font-weight: 800; color: #0A1F3C; }
+  p { margin: 12px 0 0; font-size: 19px; line-height: 1.7; max-width: 22em; }
+  button { margin-top: 26px; width: 100%; max-width: 320px; min-height: 60px; border: 0; border-radius: 14px; background: #0A1F3C; color: #fff; font: inherit; font-size: 20px; font-weight: 800; }
+  .help { margin-top: 30px; padding-top: 22px; border-top: 1px solid rgba(10, 31, 60, .14); width: 100%; max-width: 320px; }
+  .help p { font-size: 17px; color: #34404F; margin: 0; }
+  .help a { display: block; margin-top: 12px; min-height: 56px; line-height: 56px; border-radius: 14px; border: 2px solid #0A1F3C; color: #0A1F3C; font-size: 19px; font-weight: 800; text-decoration: none; }
+</style>
+</head>
+<body>
+<main>
+  <div class="mark" aria-hidden="true">K-CARE</div>
+  <h1>인터넷에 연결되지 않았습니다</h1>
+  <p>와이파이나 데이터 연결을 확인한 뒤 다시 열어 주세요. 연결되면 저절로 다시 엽니다.</p>
+  <button type="button" onclick="location.reload()">다시 열기</button>
+  <div class="help">
+    <p>전화는 인터넷 없이도 걸 수 있습니다.</p>
+    <a href="tel:119">응급 상황 119</a>
+    <a href="tel:0221357751">고객센터 02-2135-7751</a>
+  </div>
+</main>
+<script>
+  // 연결이 돌아오면 보던 주소를 다시 연다
+  window.addEventListener("online", function () { location.reload(); });
+</script>
+</body>
+</html>

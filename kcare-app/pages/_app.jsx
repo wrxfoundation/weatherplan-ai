@@ -12,7 +12,7 @@ const INDEXABLE = new Set(["/", "/consult"]);
 
 // 임시 비밀번호(관제 발급)로 로그인한 사람 — 새 비밀번호를 정할 때까지 내 정보 관리로 보낸다 (2026-11-18).
 // 서버도 그때까지 기록을 주지 않는다 (lib/members.js memberStillValid). 로그인 · 가입 · 공개 문서 화면은 그대로 둔다
-const FREE = /^\/(account|login(\/.*)?|join|partner\/(login|join)|ops\/(login|join)|terms|refund|privacy|location|consult)?$/;
+const FREE = /^\/(account|login(\/.*)?|join|partner\/(login|join)|ops\/(login|join)|terms|refund|privacy|location|delete-account|consult)?$/;
 function MustChangeGate({ router }) {
   const { user } = useAuth();
   const must = !!user?.mustChange;
@@ -24,6 +24,12 @@ function MustChangeGate({ router }) {
 }
 
 export default function App({ Component, pageProps, router }) {
+  // 서비스 워커 — 인터넷이 끊겼을 때 '연결 안내'를 보여 주는 일만 한다 (public/sw.js · 2026-11-26 구글 플레이 준비).
+  // 개발 서버에서는 켜지 않는다 (화면을 고칠 때 헷갈리지 않게). 등록에 실패해도 앱은 평소대로 돈다.
+  useEffect(() => {
+    if (process.env.NODE_ENV !== "production" || typeof navigator === "undefined" || !("serviceWorker" in navigator)) return;
+    navigator.serviceWorker.register("/sw.js").catch(() => {});
+  }, []);
   const page = <Component {...pageProps} />;
   return (
     <>
