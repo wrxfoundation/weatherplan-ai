@@ -482,6 +482,13 @@ details .scroll { margin-top: 8px; }
 .ed-plans { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; } .ed-plan { display: flex; flex-direction: column; gap: 3px; padding: 14px 14px 12px; border: 1px solid var(--line-2); border-radius: var(--r-md); background: var(--soft); } .ed-plan.now { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
 .ed-plan h3 { margin: 0; font-size: var(--t-md); font-weight: 700; } .ed-plan .pr { font-size: calc(22px * var(--fs)); font-weight: 750; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; } .ed-plan .pr small { font-size: var(--t-xs); font-weight: 500; color: var(--muted); } .ed-plan .yr, .ed-plan .who, .ed-plan .opens { font-size: var(--t-xs); color: var(--muted); line-height: 1.5; } .ed-plan .opens { margin-top: 4px; color: var(--fg); }
 .ed-key { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; } .ed-key a.btn { display: inline-flex; align-items: center; text-decoration: none; } .ed-key input { flex: 1 1 220px; min-width: 0; height: 36px; padding: 0 10px; border: 1px solid var(--line-2); border-radius: 8px; background: var(--panel); color: var(--fg); font: inherit; font-size: var(--t-sm); }
+.ed-plan .rl { font-size: var(--t-xs); color: var(--fg); font-variant-numeric: tabular-nums; } .ed-buy { display: flex; flex-wrap: wrap; gap: 6px; margin-top: auto; padding-top: 10px; } .ed-buy .btn { flex: 1 1 auto; }
+.ed-in p.ed-paynote { font-size: var(--t-xs); } .ed-chip.demo { background: transparent; color: var(--warn); box-shadow: inset 0 0 0 1px var(--warn); }
+.ed-pay { display: flex; flex-direction: column; gap: 10px; padding: 14px 16px; border-radius: var(--r-md); background: var(--soft); box-shadow: inset 0 0 0 1.5px var(--accent); } .ed-pay h3 { margin: 0; font-size: var(--t-md); font-weight: 700; }
+.ed-in p.ep-demo { padding: 8px 11px; border-radius: 8px; color: var(--fg); font-weight: 650; box-shadow: inset 0 0 0 1px var(--warn); } .ed-in p.ep-st { color: var(--fg); font-weight: 650; }
+.ep-rows { margin: 0; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 9px 16px; align-items: baseline; font-size: var(--t-sm); } .ep-rows dt { color: var(--muted); white-space: nowrap; } .ep-rows dd { margin: 0; display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 8px; min-width: 0; }
+.ep-rows dd b, .ep-rows dd code { font-family: inherit; font-size: var(--t-md); font-weight: 700; color: var(--fg); font-variant-numeric: tabular-nums; overflow-wrap: anywhere; } .ep-rows dd small { flex-basis: 100%; font-size: var(--t-xs); color: var(--muted); line-height: 1.5; }
+@media (max-width: 640px) { .ep-rows { grid-template-columns: minmax(0, 1fr); gap: 2px 0; } .ep-rows dd { margin-bottom: 9px; } }
 .ed-foot { max-width: var(--maxw, 1040px); margin: 18px auto 28px; padding: 0 20px; font-size: var(--t-xs); color: var(--faint); line-height: 1.6; }
 @media (max-width: 640px) { .ed-plans { grid-template-columns: minmax(0, 1fr); } .lock-card .btn { margin-left: 0; } }
 html.rpt .ed-bar, html.rpt .lock-card { display: none !important; }
@@ -931,7 +938,7 @@ html.deck-on { overflow: hidden; }
     </div>
   </div>
 </div>
-<div class="ed-bar" data-ed hidden><span class="ed-chip" data-ed-plan>무료</span><span data-ed-now></span><button type="button" class="btn sm" data-ed-open>요금제 · 이용권</button></div>
+<div class="ed-bar" data-ed hidden><span class="ed-chip" data-ed-plan>무료</span><span class="ed-chip demo" data-ed-demo hidden>결제 데모</span><span data-ed-now></span><button type="button" class="btn sm" data-ed-open>요금제 · 이용권</button></div>
 <div class="banner" data-stale hidden><p>최신 자료를 받지 못해 미리 넣어 둔 자료(기준 시각까지)를 보여 주고 있습니다. 잠시 뒤 「새로 불러오기」를 눌러 보세요.</p></div>
 
 <main class="page">
@@ -1442,6 +1449,18 @@ html.deck-on { overflow: hidden; }
   <div class="tools between"><h2 id="ed-dlg-h">요금제</h2><button type="button" class="btn sm" data-ed-close>닫기</button></div>
   <div class="ed-plans" data-ed-plans></div>
   <p data-ed-free></p>
+  <p class="ed-paynote" data-ed-paynote hidden></p>
+  <section class="ed-pay" data-ep hidden aria-label="RLUSD 결제">
+    <h3 data-ep-h></h3>
+    <p class="ep-demo" data-ep-demo hidden>결제 데모입니다 — 실제로 보내지 마세요. 「데모 결제」를 누르면 보낸 것으로 치고 30분 동안 열립니다.</p>
+    <dl class="ep-rows">
+      <dt>보낼 금액</dt><dd><b data-ep-amt></b><button type="button" class="btn sm" data-ep-copy="amt">복사</button><small data-ep-krw></small></dd>
+      <dt>받는 주소</dt><dd><code data-ep-to></code><button type="button" class="btn sm" data-ep-copy="to">복사</button><small>XRP Ledger 주소입니다. RLUSD 를 보낼 수 있는 지갑에서 보냅니다.</small></dd>
+      <dt>태그</dt><dd><code data-ep-tag></code><button type="button" class="btn sm" data-ep-copy="tag">복사</button><small>Destination Tag — 꼭 넣어 주세요. 태그가 없거나 다르면 입금을 찾지 못합니다.</small></dd>
+    </dl>
+    <p class="ep-st" data-ep-st role="status" aria-live="polite"></p>
+    <div class="tools"><button type="button" class="btn" data-ep-check>지금 확인</button><button type="button" class="btn" data-ep-demopay hidden>데모 결제 — 보낸 것으로 치기</button><button type="button" class="btn sm" data-ep-cancel>주문 지우기</button></div>
+  </section>
   <div class="ed-key"><input type="text" data-ed-key autocomplete="off" spellcheck="false" placeholder="받은 이용권을 붙여 넣으세요" aria-label="이용권"><button type="button" class="btn" data-ed-apply>적용</button><button type="button" class="btn" data-ed-clear>지우기</button><a class="btn" data-ed-pay target="_blank" rel="noopener" hidden>구독하러 가기</a></div>
   <p data-ed-msg aria-live="polite"></p>
   <p data-ed-rule>웰비안 · 케이웨더의 공식 서비스가 아닙니다. 공개 원장과 공개 사이트의 값만 정리해 보여 주며, 매매를 권하지 않고 가격을 전망하지 않습니다. 보상의 지급량과 가치는 보장되지 않습니다.</p>
@@ -3494,7 +3513,8 @@ html.deck-on { overflow: hidden; }
     var dr = $('#board-range'); if (dr) dr.hidden = E.locked.indexOf('daily') >= 0;      // 날짜 지정은 스탠더드부터(서버도 그 아래 요금제에는 범위를 계산해 주지 않는다)
     var planOf = {}; E.plans.forEach(function (p) { planOf[p.key] = p; });
     var chip = $('[data-ed-plan]'), now = $('[data-ed-now]'); if (chip) chip.textContent = E.plan_name;
-    if (now) now.textContent = E.plan === 'free' ? (E.key_state === 'expired' ? '이용권의 기간이 끝났습니다 — 지금은 무료 화면입니다.' : E.key_state === 'bad' ? '이용권을 읽지 못했습니다 — 지금은 무료 화면입니다.' : '무료로 보는 오늘 요약입니다. 나머지 구역은 요금제에 따라 열립니다.') : (E.exp ? E.exp + '까지 이용할 수 있습니다.' : '');
+    if (now) now.textContent = E.plan === 'free' ? (E.key_state === 'expired' ? '이용권의 기간이 끝났습니다 — 지금은 무료 화면입니다.' : E.key_state === 'bad' ? '이용권을 읽지 못했습니다 — 지금은 무료 화면입니다.' : '무료로 보는 오늘 요약입니다. 나머지 구역은 요금제에 따라 열립니다.') : E.demo_key && E.exp_at ? '데모 이용권입니다 · ' + epClock(E.exp_at) + '까지 열립니다.' : (E.exp ? E.exp + '까지 이용할 수 있습니다.' : '');
+    var edm = $('[data-ed-demo]'); if (edm) edm.hidden = !(E.pay && E.pay.demo); epMark();
     E.hidden.forEach(function (id) { var sx = document.getElementById(id); if (sx) sx.hidden = true; $$('.nav a[href="#' + id + '"]').forEach(function (a) { a.hidden = true; }); });
     Object.keys(E.sections).forEach(function (id) {
       var sec = document.getElementById(id), locked = E.locked.indexOf(id) >= 0; if (!sec || E.hidden.indexOf(id) >= 0) return;
@@ -3517,20 +3537,75 @@ html.deck-on { overflow: hidden; }
     E.plans.filter(function (p) { return p.key !== 'free'; }).forEach(function (p) {
       var a = document.createElement('article'), mk = function (tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; e.textContent = text; a.appendChild(e); return e; }; a.className = 'ed-plan' + (p.key === E.plan ? ' now' : '');
       mk('h3', '', p.name + (p.key === E.plan ? ' · 지금 이용 중' : '')); var pr = mk('p', 'pr', d3.format(',')(p.month)); var sm = document.createElement('small'); sm.textContent = '원 / 월'; pr.appendChild(sm);
-      mk('p', 'yr', '연 ' + edWon(p.year) + ' (2개월 무료)'); mk('p', 'who', p.who);
+      mk('p', 'yr', '연 ' + edWon(p.year) + ' (2개월 무료)');
+      var pp = E.pay && E.pay.on ? E.pay.prices[p.key] : null; if (pp) mk('p', 'rl', 'RLUSD ' + pp.month + ' / 월 · ' + pp.year + ' / 연');
+      mk('p', 'who', p.who);
       var opens = Object.keys(E.sections).filter(function (id) { return E.sections[id] === p.key; }).map(function (id) { return names[id] || id; }); mk('p', 'opens', '여는 구역: ' + opens.join(' · '));
+      if (pp) { var buy = document.createElement('div'); buy.className = 'ed-buy'; ['month', 'year'].forEach(function (term) { var bt = document.createElement('button'); bt.type = 'button'; bt.className = 'btn sm'; bt.textContent = E.pay.terms[term] + ' 결제'; bt.setAttribute('data-ep-buy', p.key + ':' + term); bt.addEventListener('click', function () { epStart(p.key, term); }); buy.appendChild(bt); }); a.appendChild(buy); }
       box.appendChild(a);
     });
+    var pn = $('[data-ed-paynote]'); if (pn) { pn.hidden = !(E.pay && E.pay.on); if (E.pay && E.pay.on) pn.textContent = 'RLUSD(XRP Ledger)로 결제합니다 · 1 RLUSD = ' + d3.format(',')(E.pay.rate) + '원으로 계산 · 보내면 원장에서 확인해 바로 엽니다.' + (E.pay.demo ? ' 지금은 결제 데모입니다.' : ''); }
     var fr = $('[data-ed-free]'), free = Object.keys(E.sections).filter(function (id) { return E.sections[id] === 'free'; }).map(function (id) { return names[id] || id; }); if (fr) fr.textContent = '무료로 보는 구역: ' + free.join(' · ') + '. 위 요금제는 아래 요금제의 구역을 모두 포함합니다.';
     var pay = $('[data-ed-pay]'), payOk = /^https:\/\//.test(E.pay_url || ''); if (pay) { pay.hidden = !payOk; if (payOk) pay.href = E.pay_url; }      // 결제 주소는 https 주소만 건다
-    var inp = $('[data-ed-key]'); if (inp) inp.value = edKey(); edMsg('');
+    var inp = $('[data-ed-key]'); if (inp) inp.value = edKey(); edMsg(''); epResume();
     if (dlg.showModal) { if (!dlg.open) dlg.showModal(); } else dlg.setAttribute('open', '');
   }
   function edMsg(t) { var m = $('[data-ed-msg]'); if (m) m.textContent = t; }
-  function edSet(key) {
+  function edSet(key, lead) {
     try { if (key) localStorage.setItem(ED_KEY, key); else localStorage.removeItem(ED_KEY); } catch (e) { edMsg('이 브라우저에서는 이용권을 기억하지 못합니다.'); }
     edMsg('확인하는 중입니다.');
-    loadLive(true).then(function () { var E = DATA && DATA.edition; if (!E) return; if (key && E.key_state === 'ok') edOpen(); edMsg(!key ? '이용권을 지웠습니다. 무료 화면입니다.' : E.key_state === 'ok' ? E.plan_name + ' 요금제로 열렸습니다' + (E.exp ? '(' + E.exp + '까지).' : '.') : E.key_state === 'expired' ? '이 이용권은 기간이 끝났습니다.' : '이용권을 읽지 못했습니다. 받은 글을 그대로 붙여 넣었는지 확인해 주세요.'); });
+    loadLive(true).then(function () { var E = DATA && DATA.edition; if (!E) return; if (key && E.key_state === 'ok') edOpen(); edMsg(!key ? '이용권을 지웠습니다. 무료 화면입니다.' : E.key_state === 'ok' ? (lead || '') + E.plan_name + ' 요금제로 열렸습니다' + (E.exp ? '(' + E.exp + '까지).' : '.') : E.key_state === 'expired' ? '이 이용권은 기간이 끝났습니다.' : '이용권을 읽지 못했습니다. 받은 글을 그대로 붙여 넣었는지 확인해 주세요.'); });
+  }
+  // ── 상품판 결제(37차 — 「과금 rlusd로 하게 데모화」): RLUSD(XRP Ledger)로 낸다. 주문을 만들면 받는 주소 · 태그 · 금액이 나오고, 보내면 서버가 원장에서 찾아 이용권을 준다(이 화면이 10초마다 묻는다)
+  //   주문 글(서버가 서명한 것)은 이 기기에만 둔다(EP_KEY) — 창을 닫았다 열어도 이어서 확인한다. 결제 데모(서버 설정)면 「데모 결제」 단추가 보낸 것으로 친다
+  var EP_KEY = 'wlbn-watch-order', EP = { o: null, timer: 0, busy: false };
+  function epGet() { try { var j = JSON.parse(localStorage.getItem(EP_KEY) || 'null'); return j && j.order && j.tag ? j : null; } catch (e) { return null; } }
+  function epPut(o) { try { if (o) localStorage.setItem(EP_KEY, JSON.stringify(o)); else localStorage.removeItem(EP_KEY); } catch (e) { /* 기억하지 못해도 이번에는 그대로 쓴다 */ } }
+  function postJson(url, body) { return fetch(url, { method: 'POST', headers: { 'content-type': 'application/json', accept: 'application/json' }, body: JSON.stringify(body) }).then(function (r) { return r.json(); }); }
+  function epSay(t) { var m = $('[data-ep-st]'); if (m) m.textContent = t; }
+  function epClock(sec) { var d = new Date(sec * 1000); return ('0' + d.getHours()).slice(-2) + ':' + ('0' + d.getMinutes()).slice(-2); }
+  function epMark() { var p = !!epGet(); $$('[data-ed-open]').forEach(function (b) { var t = p ? '결제 확인 이어서 하기' : '요금제 · 이용권'; if (b.textContent !== t) b.textContent = t; }); }
+  function epDraw() {
+    var box = $('[data-ep]'), o = EP.o; epMark(); if (!box) return; box.hidden = !o; if (!o) return;
+    $('[data-ep-h]').textContent = o.plan_name + ' · ' + o.term_name + ' — RLUSD로 결제';
+    $('[data-ep-amt]').textContent = o.amount + ' RLUSD'; $('[data-ep-krw]').textContent = edWon(o.krw) + ' · 1 RLUSD = ' + d3.format(',')(o.rate) + '원으로 계산 · 이 금액보다 적으면 입금을 찾지 못합니다.';
+    $('[data-ep-to]').textContent = o.to || '데모 — 받는 주소 없음'; $('[data-ep-tag]').textContent = String(o.tag);
+    var dm = $('[data-ep-demo]'), db = $('[data-ep-demopay]'), ck = $('[data-ep-check]'), ct = $('[data-ep-copy="to"]');
+    if (dm) dm.hidden = !o.demo; if (db) db.hidden = !o.demo; if (ck) ck.hidden = !o.live; if (ct) ct.hidden = !o.to;
+  }
+  function epWait() { epSay(EP.o && EP.o.live ? '입금을 기다리는 중입니다 · 10초마다 원장을 확인합니다.' : '결제 데모라 원장을 확인하지 않습니다.'); }
+  function epWatch() { clearInterval(EP.timer); if (!EP.o || !EP.o.live) return; EP.timer = setInterval(function () { var d = $('#ed-dlg'); if (EP.o && d && d.open && document.visibilityState === 'visible') epCheck(false); }, 10000); }
+  function epStart(plan, term) {
+    clearInterval(EP.timer); EP.o = null; edMsg('주문을 만드는 중입니다.');
+    postJson('api/pay', { action: 'order', plan: plan, term: term }).then(function (j) {
+      if (!j || !j.ok || !j.order) { edMsg('주문을 만들지 못했습니다. 잠시 뒤 다시 눌러 주세요.'); return; }
+      edMsg(''); EP.o = j; epPut(j); epDraw(); epWait(); epWatch();
+      var box = $('[data-ep]'); if (box && box.scrollIntoView) box.scrollIntoView({ block: 'nearest' });
+    }).catch(function () { edMsg('주문을 만들지 못했습니다. 잠시 뒤 다시 눌러 주세요.'); });
+  }
+  function epResume() { var o = epGet(); clearInterval(EP.timer); EP.o = o; epDraw(); if (o) { epWait(); epWatch(); if (o.live) epCheck(false); } }
+  function epDrop() { clearInterval(EP.timer); EP.o = null; epPut(null); epDraw(); }
+  function epCheck(byHand) {
+    if (!EP.o || EP.busy) return; EP.busy = true; if (byHand) epSay('원장을 확인하는 중입니다.');
+    postJson('api/pay', { action: 'check', order: EP.o.order }).then(function (j) {
+      EP.busy = false; if (!EP.o) return;
+      if (j && j.paid && j.token) { epDone(j); return; }
+      if (j && j.ok === false && (j.error === 'old' || j.error === 'bad')) { epDrop(); edMsg('주문이 오래됐거나 읽을 수 없습니다. 요금제에서 다시 눌러 주세요.'); return; }
+      if (!j || j.ok === false) { epSay('원장을 확인하지 못했습니다 · 잠시 뒤 다시 확인합니다.'); return; }
+      epSay('아직 입금이 보이지 않습니다 · ' + epClock(Date.now() / 1000) + ' 확인 · 10초마다 다시 봅니다.');
+    }).catch(function () { EP.busy = false; epSay('원장을 확인하지 못했습니다 · 잠시 뒤 다시 확인합니다.'); });
+  }
+  function epDemo() {
+    if (!EP.o || EP.busy) return; EP.busy = true; epSay('데모 결제를 처리하는 중입니다.');
+    postJson('api/pay', { action: 'demo', order: EP.o.order }).then(function (j) { EP.busy = false; if (j && j.paid && j.token) epDone(j); else epSay('데모 결제가 꺼져 있습니다.'); }).catch(function () { EP.busy = false; epSay('데모 결제를 처리하지 못했습니다.'); });
+  }
+  function epDone(j) {
+    var lead = j.demo ? '데모 결제로 처리했습니다(실제 입금 없음 · ' + epClock(j.exp_at) + '까지 열림). ' : 'RLUSD ' + (j.got || '') + ' 입금을 확인했습니다' + (j.tx ? '(거래 ' + String(j.tx).slice(0, 8) + '…)' : '') + '. ';
+    epDrop(); edSet(j.token, lead);
+  }
+  function epCopy(btn) {
+    var o = EP.o, k = btn.getAttribute('data-ep-copy'); if (!o) return; var v = k === 'amt' ? o.amount : k === 'to' ? o.to : String(o.tag);
+    try { navigator.clipboard.writeText(v).then(function () { btn.textContent = '복사됨'; setTimeout(function () { btn.textContent = '복사'; }, 1200); }, function () {}); } catch (e) { /* 복사하지 못하면 글을 눌러 고른다 */ }
   }
   function edInit() {
     $$('[data-ed-open]').forEach(function (b) { b.addEventListener('click', edOpen); });
@@ -3540,6 +3615,10 @@ html.deck-on { overflow: hidden; }
     if (ap) ap.addEventListener('click', function () { edSet(String(inp.value || '').trim()); });
     if (inp) inp.addEventListener('keydown', function (ev) { if (ev.key === 'Enter') { ev.preventDefault(); edSet(String(inp.value || '').trim()); } });
     if (cr) cr.addEventListener('click', function () { if (inp) inp.value = ''; edSet(''); });
+    var ek = $('[data-ep-check]'), ed = $('[data-ep-demopay]'), ec = $('[data-ep-cancel]');
+    if (ek) ek.addEventListener('click', function () { epCheck(true); }); if (ed) ed.addEventListener('click', epDemo);
+    if (ec) ec.addEventListener('click', function () { var live = EP.o && EP.o.live; epDrop(); edMsg(live ? '주문을 지웠습니다. 이미 보냈다면 운영자에게 거래 해시를 알려 주세요.' : '주문을 지웠습니다.'); });
+    $$('[data-ep-copy]').forEach(function (b) { b.addEventListener('click', function () { epCopy(b); }); });
   }
   // ── 모아보기 카드 순서 바꾸기(35차 — 서우 「해당 영역은 위지윅으로 순서 조정해서 볼 수 있게」): 손잡이를 끌면 그 자리에서 바로 카드가 옮겨지고, 순서는 이 기기에 기억한다
   var BORD_KEY = 'wlbn-board-1', BORD0 = [];

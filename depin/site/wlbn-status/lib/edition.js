@@ -26,6 +26,32 @@ const SECTIONS = {
 };
 const can = (plan, sec) => SECTIONS[sec] !== 'never' && RANK[SECTIONS[sec]] !== undefined && RANK[SECTIONS[sec]] <= (RANK[plan] || 0);
 
+// RLUSD 결제(lib/pay.js · api/pay.js). 값 = 원화 정가 ÷ 고정 환율(WATCH_KRW_PER_RLUSD · 없으면 1,400 — 가정값, 운영자가 정한다), 센트 올림
+const TERMS = { month: { days: 31, name: '1개월' }, year: { days: 366, name: '1년' } };
+const payRate = () => { const r = Number(process.env.WATCH_KRW_PER_RLUSD); return r >= 100 && r <= 100000 ? r : 1400; };
+const payCents = (plan, term) => { const p = PLANS.find((x) => x.key === plan); if (!p || !p.month || !TERMS[term]) return 0; return Math.ceil((term === 'year' ? p.year : p.month) * 100 / payRate() - 1e-9); };
+// 받는 주소: 꼴뿐 아니라 검사 글자(체크섬)까지 본다 — 한 글자라도 틀린 주소로 주문이 나가면 보낸 돈을 찾을 수 없다
+const B58 = 'rpshnaf39wBUDNEGHJKLM4PQRST7VWXYZ2bcdeCg65jkm8oFqi1tuvAxyz';
+function validAddress(a) {
+  if (typeof a !== 'string' || !/^r[1-9A-HJ-NP-Za-km-z]{24,34}$/.test(a)) return false;
+  let n = 0n, lead = 0;
+  for (const ch of a) { const i = B58.indexOf(ch); if (i < 0) return false; n = n * 58n + BigInt(i); }
+  while (lead < a.length && a[lead] === 'r') lead++;
+  let hex = n.toString(16); if (hex.length % 2) hex = '0' + hex;
+  const buf = Buffer.concat([Buffer.alloc(lead), n === 0n ? Buffer.alloc(0) : Buffer.from(hex, 'hex')]);
+  if (buf.length !== 25 || buf[0] !== 0) return false;
+  const sha = (b) => crypto.createHash('sha256').update(b).digest();
+  return sha(sha(buf.subarray(0, 21))).subarray(0, 4).equals(buf.subarray(21));
+}
+const payAddr = () => { const a = String(process.env.WATCH_PAY_ADDRESS || '').trim(); return validAddress(a) ? a : ''; };
+const payDemo = () => process.env.WATCH_PAY_DEMO === '1';
+const payOn = () => !!process.env.WATCH_SECRET && (!!payAddr() || payDemo());
+function payMeta() {
+  const on = payOn(), prices = {}, c2 = (c) => (c / 100).toFixed(2);
+  if (on) PLANS.forEach((p) => { if (p.month) prices[p.key] = { month: c2(payCents(p.key, 'month')), year: c2(payCents(p.key, 'year')) }; });
+  return { on, live: !!payAddr(), demo: on && payDemo(), currency: 'RLUSD', rate: payRate(), prices, terms: { month: TERMS.month.name, year: TERMS.year.name } };      // 받는 주소는 여기 싣지 않는다(주문을 만들 때만 준다)
+}
+
 // 이용권: base64url(JSON{p: 요금제, x: 끝나는 때(유닉스 초), n: 메모}) + '.' + HMAC-SHA256
 function sign(payload, secret) {
   if (!secret) throw new Error('WATCH_SECRET 이 없다');
@@ -40,7 +66,7 @@ function verify(token, secret, nowSec) {
   let p; try { p = JSON.parse(Buffer.from(body, 'base64url').toString('utf8')); } catch (e) { return { plan: 'free', state: 'bad' }; }
   if (!p || RANK[p.p] === undefined || p.p === 'free' || !(p.x > 0)) return { plan: 'free', state: 'bad' };
   if (p.x < (nowSec || Math.floor(Date.now() / 1000))) return { plan: 'free', state: 'expired', exp: p.x };
-  return { plan: p.p, state: 'ok', exp: p.x };
+  return { plan: p.p, state: 'ok', exp: p.x, note: typeof p.n === 'string' ? p.n : '' };
 }
 // 요청에서 이용권을 읽는다(Authorization: Bearer …). 주소에 붙이지 않는다 — 주소는 기록 · 보관본에 남는다
 function who(req) {
@@ -86,10 +112,10 @@ function meta(plan, st) {
   const ids = Object.keys(SECTIONS), pl = PLANS.find((p) => p.key === plan) || PLANS[0];
   return {
     on: true, name: process.env.WATCH_NAME || 'WLBN 워치', operator: process.env.WATCH_OPERATOR || '', plan: pl.key, plan_name: pl.name,
-    exp: st && st.exp ? new Date(st.exp * 1000).toISOString().slice(0, 10) : null, key_state: (st && st.state) || 'none',
+    exp: st && st.exp ? new Date(st.exp * 1000).toISOString().slice(0, 10) : null, exp_at: st && st.exp ? st.exp : null, key_state: (st && st.state) || 'none', demo_key: !!(st && st.state === 'ok' && st.note === 'demo'),
     plans: PLANS, sections: SECTIONS,
     locked: ids.filter((id) => SECTIONS[id] !== 'never' && !can(plan, id)), hidden: ids.filter((id) => SECTIONS[id] === 'never'),
-    pay_url: process.env.WATCH_PAY_URL || '', origin: process.env.WATCH_ORIGIN || '',
+    pay_url: process.env.WATCH_PAY_URL || '', origin: process.env.WATCH_ORIGIN || '', pay: payMeta(),
   };
 }
-module.exports = { ON, PLANS, RANK, SECTIONS, can, sign, verify, who, prune, meta };
+module.exports = { ON, PLANS, RANK, SECTIONS, TERMS, can, sign, verify, who, prune, meta, payRate, payCents, payAddr, payDemo, payOn, validAddress };
