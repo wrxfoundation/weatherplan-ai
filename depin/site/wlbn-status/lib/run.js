@@ -4,6 +4,7 @@ const core = require('./core');
 const xrpl = require('./xrpl');
 const store = require('./store');
 const trace = require('./trace');
+const edition = require('./edition');      // 상품판(EDITION=watch)이면 전체 주소 · 이전 풀 기간 · 자금 추적을 만들지 않는다
 const { fetchExt, fetchHistory } = require('./ext');
 const bundled = require('./snapshot-state.json');
 
@@ -71,7 +72,7 @@ async function run(opts) {
     info.xrpl_error = String((e && e.message) || e).slice(0, 160);
     core.pickExt(S, ext);
   }
-  const out = core.buildDatasets(S, { showBefore: SHOW_BEFORE, showAddr: SHOW_ADDR, range: opts && opts.range });      // range = 날짜를 직접 정한 기간(없으면 전체 · 30일 · 7일만)
+  const out = core.buildDatasets(S, { showBefore: SHOW_BEFORE && !edition.ON, showAddr: SHOW_ADDR && !edition.ON, noTrace: edition.ON, range: opts && opts.range });      // range = 날짜를 직접 정한 기간(없으면 전체 · 30일 · 7일만)
   return { ledger: S.ledger, info, out, persistent: store.enabled() };
 }
 module.exports = { run };

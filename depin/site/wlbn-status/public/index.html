@@ -470,6 +470,21 @@ details .scroll { margin-top: 8px; }
 .bc-h { margin: 0; display: flex; align-items: baseline; justify-content: space-between; gap: 8px; font-size: var(--t-xs); font-weight: 650; color: var(--muted); line-height: 1.4; }
 .bc-h a { color: inherit; text-decoration: none; } .bc-h a:hover { color: var(--fg); text-decoration: underline; text-underline-offset: 3px; }
 .bc-h i { flex: none; margin-left: auto; font-style: normal; font-weight: 500; font-size: var(--t-tag); color: var(--faint); }
+/* ── 상품판(자료에 edition 이 실려 올 때만): 요금제 줄 · 잠긴 구역 · 요금제 창 · 고지 줄 */
+.ed-bar { max-width: var(--maxw, 1040px); margin: 10px auto 0; padding: 0 20px; display: flex; align-items: center; flex-wrap: wrap; gap: 8px 12px; font-size: var(--t-sm); color: var(--muted); } .ed-bar b { color: var(--fg); font-weight: 700; }
+.ed-chip { padding: 2px 10px; border-radius: 999px; background: var(--accent); color: var(--accent-fg, #fff); font-size: var(--t-xs); font-weight: 700; }
+.sec.lock > .sec-b > :not(.lock-card) { display: none !important; } .sec.lock .sec-sum, .sec.lock .sec-tn, .sec.lock .h2 .period, .sec.lock .h2 .q { display: none; }
+.ed-need { margin-left: 8px; padding: 1px 9px; border: 1px solid var(--line-2); border-radius: 999px; color: var(--muted); font-size: var(--t-tag); font-weight: 650; white-space: nowrap; vertical-align: middle; } .ed-need::before { content: "\1F512"; margin-right: 4px; font-size: 0.9em; }
+.lock-card { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 14px; padding: 16px 18px; border: 1px dashed var(--line-2); border-radius: var(--r-md); background: var(--soft); color: var(--muted); font-size: var(--t-sm); } .lock-card b { color: var(--fg); font-size: var(--t-md); font-weight: 700; } .lock-card .btn { margin-left: auto; }
+.nav a.locked::after, .nav button.locked::after { content: "\1F512"; margin-left: 4px; font-size: 0.8em; opacity: 0.7; }
+.ed-dlg { width: min(720px, calc(100vw - 24px)); max-height: calc(100vh - 24px); padding: 0; border: 1px solid var(--line-2); border-radius: var(--r-lg, 16px); background: var(--panel); color: var(--fg); box-shadow: 0 24px 60px rgba(20, 18, 43, 0.28); } .ed-dlg::backdrop { background: rgba(20, 18, 43, 0.45); }
+.ed-in { display: flex; flex-direction: column; gap: 14px; padding: 20px 22px 18px; } .ed-in h2 { margin: 0; font-size: var(--t-xl); font-weight: 750; } .ed-in p { margin: 0; font-size: var(--t-sm); color: var(--muted); line-height: 1.6; }
+.ed-plans { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; } .ed-plan { display: flex; flex-direction: column; gap: 3px; padding: 14px 14px 12px; border: 1px solid var(--line-2); border-radius: var(--r-md); background: var(--soft); } .ed-plan.now { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
+.ed-plan h3 { margin: 0; font-size: var(--t-md); font-weight: 700; } .ed-plan .pr { font-size: calc(22px * var(--fs)); font-weight: 750; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; } .ed-plan .pr small { font-size: var(--t-xs); font-weight: 500; color: var(--muted); } .ed-plan .yr, .ed-plan .who, .ed-plan .opens { font-size: var(--t-xs); color: var(--muted); line-height: 1.5; } .ed-plan .opens { margin-top: 4px; color: var(--fg); }
+.ed-key { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; } .ed-key a.btn { display: inline-flex; align-items: center; text-decoration: none; } .ed-key input { flex: 1 1 220px; min-width: 0; height: 36px; padding: 0 10px; border: 1px solid var(--line-2); border-radius: 8px; background: var(--panel); color: var(--fg); font: inherit; font-size: var(--t-sm); }
+.ed-foot { max-width: var(--maxw, 1040px); margin: 18px auto 28px; padding: 0 20px; font-size: var(--t-xs); color: var(--faint); line-height: 1.6; }
+@media (max-width: 640px) { .ed-plans { grid-template-columns: minmax(0, 1fr); } .lock-card .btn { margin-left: 0; } }
+html.rpt .ed-bar, html.rpt .lock-card { display: none !important; }
 /* 카드 순서 바꾸기: 머리 오른쪽 끝의 손잡이를 끌거나(화살표 키로) 옮긴다 */
 .bc { position: relative; }
 .bc-grip { all: unset; box-sizing: border-box; position: absolute; top: 7px; right: 0; display: grid; place-items: center; width: 15px; height: 24px; border-radius: 5px; color: var(--faint); cursor: grab; touch-action: none; }      /* 머리글 줄 밖(카드 모서리 여백) — 제목 자리를 줄이지 않는다 */
@@ -916,6 +931,7 @@ html.deck-on { overflow: hidden; }
     </div>
   </div>
 </div>
+<div class="ed-bar" data-ed hidden><span class="ed-chip" data-ed-plan>무료</span><span data-ed-now></span><button type="button" class="btn sm" data-ed-open>요금제 · 이용권</button></div>
 <div class="banner" data-stale hidden><p>최신 자료를 받지 못해 미리 넣어 둔 자료(기준 시각까지)를 보여 주고 있습니다. 잠시 뒤 「새로 불러오기」를 눌러 보세요.</p></div>
 
 <main class="page">
@@ -1421,6 +1437,15 @@ html.deck-on { overflow: hidden; }
   </section>
 
 </main>
+<p class="ed-foot" data-ed-foot hidden></p>
+<dialog class="ed-dlg" id="ed-dlg" aria-labelledby="ed-dlg-h"><div class="ed-in">
+  <div class="tools between"><h2 id="ed-dlg-h">요금제</h2><button type="button" class="btn sm" data-ed-close>닫기</button></div>
+  <div class="ed-plans" data-ed-plans></div>
+  <p data-ed-free></p>
+  <div class="ed-key"><input type="text" data-ed-key autocomplete="off" spellcheck="false" placeholder="받은 이용권을 붙여 넣으세요" aria-label="이용권"><button type="button" class="btn" data-ed-apply>적용</button><button type="button" class="btn" data-ed-clear>지우기</button><a class="btn" data-ed-pay target="_blank" rel="noopener" hidden>구독하러 가기</a></div>
+  <p data-ed-msg aria-live="polite"></p>
+  <p data-ed-rule>웰비안 · 케이웨더의 공식 서비스가 아닙니다. 공개 원장과 공개 사이트의 값만 정리해 보여 주며, 매매를 권하지 않고 가격을 전망하지 않습니다. 보상의 지급량과 가치는 보장되지 않습니다.</p>
+</div></dialog>
 
 <script src="d3.min.js"></script>
 <script>
@@ -1461,7 +1486,7 @@ html.deck-on { overflow: hidden; }
   var MARKET = ['user', 'arb', 'other', 'bot'];
 
   var CUSTOM = null;      // 날짜를 직접 정한 기간 { from, to }. 그 범위의 합계(ranges.custom)는 서버가 계산해 준다(/api/data?from=&to=)
-  function dataUrl() { return 'api/data' + (CUSTOM ? '?from=' + CUSTOM.from + '&to=' + CUSTOM.to + (DATA ? '&v=' + encodeURIComponent(DATA.summary[0].as_of) : '') : ''); }      // v = 지금 자료의 기준 시각(날짜 지정 응답이 묵은 보관본으로 오지 않게)
+  function dataUrl() { var q = CUSTOM ? ['from=' + CUSTOM.from, 'to=' + CUSTOM.to].concat(DATA ? ['v=' + encodeURIComponent(DATA.summary[0].as_of)] : []) : [], k = edTag(); if (k) q.push('k=' + k); return 'api/data' + (q.length ? '?' + q.join('&') : ''); }      // v = 지금 자료의 기준 시각(날짜 지정 응답이 묵은 보관본으로 오지 않게)
   function ctx() { var r = DATA.ranges[RANGE] || DATA.ranges.all; return { s: DATA.summary[0], k: r.kpi, r: r }; }
   function pick(path, c) { var p = path.split('.'), o = c; for (var i = 0; i < p.length; i++) o = (o === null || o === undefined) ? null : o[p[i]]; return o === undefined ? null : o; }
 
@@ -2077,7 +2102,7 @@ html.deck-on { overflow: hidden; }
   }
   function deckGo(i) { if (!DECK.on || !DECK.slides.length) return; var to = Math.max(0, Math.min(DECK.slides.length - 1, i)); if (to === DECK.i) return; var dir = to > DECK.i ? 'next' : 'prev'; DECK.i = to; DECK.li = 0; DECK.left = 0; deckDraw(dir); if (DECK.auto) dkLineStart(0); else { dkBar(0, 0); dkVoiceLine(); } }
   function deckOpen(i) {
-    var box = $('#deck'); if (!box || !DATA || DECK.on) return;
+    var box = $('#deck'); if (!box || !DATA || DECK.on || DATA.edition) return;      // 상품판에는 발표 모드가 없다(주소 끝 #present 로도 열리지 않는다)
     try { DECK.slides = deckBuild(); } catch (e) { if (window.console) console.error(e); DECK.slides = []; }
     DECK.i = i || 0; DECK.li = 0; DECK.left = 0; DECK.on = true; DECK.from = document.activeElement; closeHelp(); dkPrefLoad(); dkBar(0, 0);
     DECK.voice = false; DECK.vtry = 0; dkVoiceMsg(''); var tts0 = dkTts(); if (tts0) { try { tts0.getVoices(); } catch (e) { /* 목록은 켤 때 다시 읽는다 */ } }      // 목소리는 열 때마다 꺼진 채로
@@ -2184,7 +2209,7 @@ html.deck-on { overflow: hidden; }
     });
   }
   function wfOpen() {
-    var box = $('#wfind'); if (!box || !DATA || WFIND.on || DECK.on) return;
+    var box = $('#wfind'); if (!box || !DATA || WFIND.on || DECK.on || (DATA.edition && DATA.edition.locked.indexOf('wtable') >= 0)) return;
     WFIND.on = true; WFIND.from = document.activeElement; closeHelp();
     $$('body > *').forEach(function (n) { if (n !== box && n.tagName !== 'SCRIPT' && !n.hasAttribute('inert')) { n.setAttribute('inert', ''); n.setAttribute('data-wf-inert', '1'); } });
     box.hidden = false; document.documentElement.classList.add('wf-on'); wfDraw();
@@ -3404,7 +3429,7 @@ html.deck-on { overflow: hidden; }
   }
   function summaryText() {
     var c = ctx(), k = c.k, s = c.s, L = [];
-    L.push('[WLBN 운용현황 · ' + s.as_of + ' 기준]');
+    L.push('[' + (DATA.edition ? DATA.edition.name : 'WLBN 운용현황') + ' · ' + s.as_of + ' 기준]');
     if (SIGS.length) { L.push(''); L.push('■ 긍정 · 부정 한눈에'); ['ok', 'warn', 'bad'].forEach(function (t) { var part = SIGS.filter(function (x) { return x.t === t; }); if (part.length) L.push('- [' + TN[t] + ' ' + part.length + '] ' + part.map(function (x) { return x.name + ' ' + x.val + (x.note ? ' — ' + x.note : ''); }).join(' · ')); }); }
     var h = DATA.health;
     if (h) {
@@ -3447,11 +3472,74 @@ html.deck-on { overflow: hidden; }
     L.push('- XRP 풀 ' + fInt(s.pool_x_wlbn) + ' WLBN + ' + fInt(s.pool_x_xrp) + ' XRP');
     var lpw = lpParts(s);
     if (lpw) L.push('- 풀 몫: Wellbian 계정 ' + F.pct(lpw.w) + (lpw.k > 0 ? ' / KWeather 계정 ' + F.pct(lpw.k) : '') + ' / 일반 지갑 ' + F.pct(s.lp_user_share));
+    if (DATA.edition) L.push('', '※ ' + DATA.edition.name + ' — 웰비안 · 케이웨더의 공식 서비스가 아닙니다. 매매 권유가 아니며, 보상의 지급량과 가치는 보장되지 않습니다.');      // 상품판: 복사한 글이 밖으로 나가도 고지가 따라간다
     return L.join('\n');
   }
   // ── 보기 설정 · 보고서 (11/24 17차 — 서우 「글씨 크기 0%~30%까지 단계별 조정 · 다크모드 · 보고서 A4 형태로 프린트(PDF 저장)하거나 CSV 다운로드」)
   //   글씨: 기본(0) · +10 · +20 · +30% 네 단계. 모든 글자 크기에 배율(--fs)을 곱하고 그림은 다시 그린다 · 어두운 화면: 고르지 않으면 기기 설정을 따른다
   //   고른 값은 이 브라우저에 기억한다(VIEW_KEY). 보고서를 찍을 때는 늘 밝은 화면 · 기본 글씨로 찍는다
+  // ── 상품판(36차): 서버가 EDITION=watch 로 돌면 자료에 edition 이 실려 온다 — 요금제에 따라 열린 구역만 자료가 오고, 잠긴 구역은 자리와 안내만 보인다
+  var ED_KEY = 'wlbn-watch-key';
+  function edKey() { try { return localStorage.getItem(ED_KEY) || ''; } catch (e) { return ''; } }
+  function edWon(v) { return d3.format(',')(v) + '원'; }
+  function edTag() { var k = edKey(), h = 5381, i; if (!k) return ''; for (i = 0; i < k.length; i++) h = ((h << 5) + h + k.charCodeAt(i)) >>> 0; return h.toString(36); }      // 이용권을 알아낼 수 없는 짧은 꼬리표(요청 주소를 가르는 데만 쓴다)
+  function edApply() {
+    var E = DATA && DATA.edition, on = !!(E && E.on), root = document.documentElement, bar = $('[data-ed]'), foot = $('[data-ed-foot]');
+    root.classList.toggle('ed', on); if (bar) bar.hidden = !on; if (foot) foot.hidden = !on;
+    $$('.sec.lock').forEach(function (x) { if (!on || E.locked.indexOf(x.id) < 0) x.classList.remove('lock'); });
+    if (!on) return;
+    var ttl = $('.title'); if (ttl && ttl.textContent !== E.name) ttl.textContent = E.name; if (document.title !== E.name) document.title = E.name;
+    $$('[data-present]').forEach(function (b) { b.hidden = true; });      // 발표 모드는 상품판에 내지 않는다
+    $$('[data-wf-open]').forEach(function (b) { b.hidden = E.locked.indexOf('wtable') >= 0; });      // 지갑 찾기는 지갑별 표가 열린 요금제에서만
+    var planOf = {}; E.plans.forEach(function (p) { planOf[p.key] = p; });
+    var chip = $('[data-ed-plan]'), now = $('[data-ed-now]'); if (chip) chip.textContent = E.plan_name;
+    if (now) now.textContent = E.plan === 'free' ? (E.key_state === 'expired' ? '이용권의 기간이 끝났습니다 — 지금은 무료 화면입니다.' : E.key_state === 'bad' ? '이용권을 읽지 못했습니다 — 지금은 무료 화면입니다.' : '무료로 보는 오늘 요약입니다. 나머지 구역은 요금제에 따라 열립니다.') : (E.exp ? E.exp + '까지 이용할 수 있습니다.' : '');
+    E.hidden.forEach(function (id) { var sx = document.getElementById(id); if (sx) sx.hidden = true; $$('.nav a[href="#' + id + '"]').forEach(function (a) { a.hidden = true; }); });
+    Object.keys(E.sections).forEach(function (id) {
+      var sec = document.getElementById(id), locked = E.locked.indexOf(id) >= 0; if (!sec || E.hidden.indexOf(id) >= 0) return;
+      $$('.nav a[href="#' + id + '"]').forEach(function (a) { a.classList.toggle('locked', locked); });
+      var body = sec.querySelector('.sec-b'), card = body && body.querySelector('.lock-card'), h2 = sec.querySelector('.h2'), nd = h2 && h2.querySelector('.ed-need');
+      if (!locked) { if (card) card.remove(); if (nd) nd.remove(); return; }
+      var need = planOf[E.sections[id]] || {};
+      sec.hidden = false; sec.classList.add('lock');
+      if (h2) { if (!nd) { nd = document.createElement('span'); nd.className = 'ed-need'; h2.appendChild(nd); } if (nd.textContent !== need.name + '부터') nd.textContent = need.name + '부터'; }      // 접어 둔 구역에서도 잠긴 것이 보인다
+      if (!body) return;
+      if (!card) { card = document.createElement('div'); card.className = 'lock-card'; var b = document.createElement('b'), sp = document.createElement('span'), bt = document.createElement('button'); bt.type = 'button'; bt.className = 'btn'; bt.textContent = '요금제 보기'; bt.addEventListener('click', edOpen); card.appendChild(b); card.appendChild(sp); card.appendChild(bt); body.insertBefore(card, body.firstChild); }
+      card.querySelector('b').textContent = '이 구역은 ' + need.name + '부터 볼 수 있습니다'; card.querySelector('span').textContent = '월 ' + edWon(need.month) + ' · 연 ' + edWon(need.year);
+    });
+    if (foot) foot.textContent = E.name + (E.operator ? ' · 운영 ' + E.operator : '') + ' · 웰비안 · 케이웨더의 공식 서비스가 아닙니다.' + (E.origin ? ' ' + E.origin : '') + ' 공개 원장과 공개 사이트의 값만 정리해 보여 주며, 매매를 권하거나 가격을 전망하지 않습니다. 보상의 지급량과 가치는 보장되지 않습니다.';
+  }
+  function edOpen() {
+    var E = DATA && DATA.edition, dlg = $('#ed-dlg'); if (!E || !dlg) return;
+    var box = $('[data-ed-plans]'), names = {}; $$('main .sec').forEach(function (x) { var h = x.querySelector('.h2'); if (h) { var full = String(h.firstChild ? h.firstChild.textContent : h.textContent).trim(); names[x.id] = x.id === 'accounts' ? full : full.split(' · ')[0].trim(); } });
+    box.replaceChildren();
+    E.plans.filter(function (p) { return p.key !== 'free'; }).forEach(function (p) {
+      var a = document.createElement('article'), mk = function (tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; e.textContent = text; a.appendChild(e); return e; }; a.className = 'ed-plan' + (p.key === E.plan ? ' now' : '');
+      mk('h3', '', p.name + (p.key === E.plan ? ' · 지금 이용 중' : '')); var pr = mk('p', 'pr', d3.format(',')(p.month)); var sm = document.createElement('small'); sm.textContent = '원 / 월'; pr.appendChild(sm);
+      mk('p', 'yr', '연 ' + edWon(p.year) + ' (2개월 무료)'); mk('p', 'who', p.who);
+      var opens = Object.keys(E.sections).filter(function (id) { return E.sections[id] === p.key; }).map(function (id) { return names[id] || id; }); mk('p', 'opens', '여는 구역: ' + opens.join(' · '));
+      box.appendChild(a);
+    });
+    var fr = $('[data-ed-free]'), free = Object.keys(E.sections).filter(function (id) { return E.sections[id] === 'free'; }).map(function (id) { return names[id] || id; }); if (fr) fr.textContent = '무료로 보는 구역: ' + free.join(' · ') + '. 위 요금제는 아래 요금제의 구역을 모두 포함합니다.';
+    var pay = $('[data-ed-pay]'), payOk = /^https:\/\//.test(E.pay_url || ''); if (pay) { pay.hidden = !payOk; if (payOk) pay.href = E.pay_url; }      // 결제 주소는 https 주소만 건다
+    var inp = $('[data-ed-key]'); if (inp) inp.value = edKey(); edMsg('');
+    if (dlg.showModal) { if (!dlg.open) dlg.showModal(); } else dlg.setAttribute('open', '');
+  }
+  function edMsg(t) { var m = $('[data-ed-msg]'); if (m) m.textContent = t; }
+  function edSet(key) {
+    try { if (key) localStorage.setItem(ED_KEY, key); else localStorage.removeItem(ED_KEY); } catch (e) { edMsg('이 브라우저에서는 이용권을 기억하지 못합니다.'); }
+    edMsg('확인하는 중입니다.');
+    loadLive(true).then(function () { var E = DATA && DATA.edition; if (!E) return; if (key && E.key_state === 'ok') edOpen(); edMsg(!key ? '이용권을 지웠습니다. 무료 화면입니다.' : E.key_state === 'ok' ? E.plan_name + ' 요금제로 열렸습니다' + (E.exp ? '(' + E.exp + '까지).' : '.') : E.key_state === 'expired' ? '이 이용권은 기간이 끝났습니다.' : '이용권을 읽지 못했습니다. 받은 글을 그대로 붙여 넣었는지 확인해 주세요.'); });
+  }
+  function edInit() {
+    $$('[data-ed-open]').forEach(function (b) { b.addEventListener('click', edOpen); });
+    var dlg = $('#ed-dlg'), cl = $('[data-ed-close]'), ap = $('[data-ed-apply]'), cr = $('[data-ed-clear]'), inp = $('[data-ed-key]');
+    if (cl) cl.addEventListener('click', function () { if (dlg.close) dlg.close(); else dlg.removeAttribute('open'); });
+    if (dlg) dlg.addEventListener('click', function (ev) { if (ev.target === dlg && dlg.close) dlg.close(); });
+    if (ap) ap.addEventListener('click', function () { edSet(String(inp.value || '').trim()); });
+    if (inp) inp.addEventListener('keydown', function (ev) { if (ev.key === 'Enter') { ev.preventDefault(); edSet(String(inp.value || '').trim()); } });
+    if (cr) cr.addEventListener('click', function () { if (inp) inp.value = ''; edSet(''); });
+  }
   // ── 모아보기 카드 순서 바꾸기(35차 — 서우 「해당 영역은 위지윅으로 순서 조정해서 볼 수 있게」): 손잡이를 끌면 그 자리에서 바로 카드가 옮겨지고, 순서는 이 기기에 기억한다
   var BORD_KEY = 'wlbn-board-1', BORD0 = [];
   function bordKey(card) { var v = card.querySelector('[data-bv]'); return v ? v.getAttribute('data-bv') : ''; }
@@ -3525,7 +3613,7 @@ html.deck-on { overflow: hidden; }
     var hd = $('#rpt-head'), c = ctx();
     if (hd) {
       var mk = function (cls, text) { var p = document.createElement('p'); p.className = cls; p.textContent = text; return p; };
-      hd.replaceChildren(mk('rpt-t', 'WLBN 운용현황 보고서'), mk('rpt-m', '기준 ' + c.s.as_of + ' · 기간 ' + PERIOD[RANGE] + '(' + md(c.r.from) + '~' + md(c.r.to) + ') · 출력 ' + nowStamp() + (all ? ' · 전체 구역' : ' · 펴 둔 구역')),
+      hd.replaceChildren(mk('rpt-t', (DATA.edition ? DATA.edition.name : 'WLBN 운용현황') + ' 보고서'), mk('rpt-m', '기준 ' + c.s.as_of + ' · 기간 ' + PERIOD[RANGE] + '(' + md(c.r.from) + '~' + md(c.r.to) + ') · 출력 ' + nowStamp() + (all ? ' · 전체 구역' : ' · 펴 둔 구역')),
         mk('rpt-n', '내부 현황용 — 대외 인용 금지. 원장에 보이는 움직임으로 계산한 값이며 지급량 · 가치를 보장하지 않는다.'));
     }
     render();
@@ -4208,7 +4296,7 @@ html.deck-on { overflow: hidden; }
   }
   function drawChart(name) {
     var el = $('[data-chart="' + name + '"]'), fn = chartFns()[name]; if (!el || !fn) return;
-    if (el.offsetParent === null) { el.__drawn = 0; return; }       // 접혀 있거나 숨은 곳: 폭을 잴 수 없어 펼 때(redrawIn) 그린다
+    if (el.offsetParent === null || el.closest('.sec.lock')) { el.__drawn = 0; return; }       // 접혀 있거나 숨은 곳: 폭을 잴 수 없어 펼 때(redrawIn) 그린다 · 상품판에서 잠긴 구역은 그리지 않는다
     el.__drawn = 1;
     try { fn(el); } catch (e) { if (window.console) console.error(e); empty(el, '이 그림을 그리지 못했습니다.'); return; }
     try { fxChart(el); } catch (e2) { if (window.console) console.error(e2); }
@@ -4217,15 +4305,17 @@ html.deck-on { overflow: hidden; }
     if (!DATA) return;
     try { buildSignals(); drawSignals(); } catch (e) { if (window.console) console.error(e); }
     bind();
+    try { edApply(); } catch (e) { if (window.console) console.error(e); }      // 상품판: 잠긴 구역을 먼저 표시해 둔다(그 안의 그림은 그리지 않는다)
     try { drawBoard(); } catch (e) { if (window.console) console.error(e); }
     $$('[data-chart]').forEach(function (el) { el.__drawn = 0; drawChart(el.getAttribute('data-chart')); });
     closeHelp();
     [drawHealth, drawVs, drawDeep, drawWallet, drawDist, drawTables, drawImpact, drawTrace, drawFlowShares, drawPlan, drawExtras, drawPositions, drawInsights, drawDay, drawCalc, drawStatus, drawSums, syncDates].forEach(function (fn) { try { fn(); } catch (e) { if (window.console) console.error(e); } });
     $$('[data-chart]').forEach(function (el) { if (!el.__drawn) drawChart(el.getAttribute('data-chart')); });      // 위에서 막 드러난 곳(추이 · 지갑 따라가 보기)의 그림
+    try { edApply(); } catch (e) { if (window.console) console.error(e); }      // 상품판: 자료가 없어 숨겨진 구역도 잠긴 구역이면 자리와 안내는 보인다
     spyLater();
     try { fxAfter(); } catch (e) { if (window.console) console.error(e); }
     if (DECK.on) { try { DECK.slides = deckBuild(); deckDraw(); } catch (e) { if (window.console) console.error(e); } }      // 발표 화면을 열어 둔 채 자료가 바뀌면 같은 장을 다시 그린다
-    else if (WANT_DECK) { var wa = WANT_DECK === 2; WANT_DECK = false; deckOpen(0); if (wa) deckAuto(true); }      // 주소 끝에 #present 를 붙여 열면 바로 발표 화면
+    else if (WANT_DECK) { var wa = WANT_DECK === 2; WANT_DECK = false; if (!DATA.edition) { deckOpen(0); if (wa) deckAuto(true); } }      // 주소 끝에 #present 를 붙여 열면 바로 발표 화면
     if (WFIND.on) { try { wfDraw(); } catch (e) { if (window.console) console.error(e); } }      // 찾기 창을 연 채 자료 · 기간이 바뀌면 결과를 다시 낸다
     if (POS0) { var p0 = POS0; POS0 = null; restorePos(p0); }      // 새로고침으로 열렸으면 보던 자리로
   }
@@ -4271,7 +4361,7 @@ html.deck-on { overflow: hidden; }
     }).then(function () { if (go) go.disabled = false; });
   }
   function clearDates() { CUSTOM = null; RANGE = 'all'; SELDAY = null; $$('[data-range]').forEach(function (x) { x.setAttribute('aria-pressed', String(x.getAttribute('data-range') === 'all')); }); keepPlace(render); setUrl(); drSay('정한 날짜는 「고른 기간」을 쓰는 모든 구역에 같이 적용된다.'); }
-  function getJson(url) { return fetch(url, { headers: { accept: 'application/json' } }).then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); }); }
+  function getJson(url) { var hd = { accept: 'application/json' }, ek = /^api\//.test(url) ? edKey() : ''; if (ek) hd.authorization = 'Bearer ' + ek; return fetch(url, { headers: hd }).then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); }); }
   // 자료를 못 받았을 때의 알림: 배포에 든 자료라도 있으면 그것을 보여 준다고, 그것도 없으면(index.html 만 올린 배포) 무엇이 빠졌는지 적는다
   function staleNote() {
     var p = $('[data-stale] p'); if (!p) return;
@@ -4346,7 +4436,7 @@ html.deck-on { overflow: hidden; }
     window.addEventListener('scroll', function () { if (PIN && Date.now() - PIN_AT > 1500) PIN = ''; barScroll(); if (!POS_T) POS_T = setTimeout(function () { POS_T = 0; savePos(); }, 400); }, { passive: true });
     window.addEventListener('pagehide', savePos);
     var fd = $('[data-fs-down]'), fu = $('[data-fs-up]'), tt = $('[data-theme-toggle]'), rm = $('[data-rpt]');
-    if (fd) fd.addEventListener('click', function () { stepFs(-1); }); if (fu) fu.addEventListener('click', function () { stepFs(1); }); if (tt) tt.addEventListener('click', toggleTheme); var fxb = $('[data-fx-toggle]'); if (fxb) fxb.addEventListener('click', toggleFx); bordInit();
+    if (fd) fd.addEventListener('click', function () { stepFs(-1); }); if (fu) fu.addEventListener('click', function () { stepFs(1); }); if (tt) tt.addEventListener('click', toggleTheme); var fxb = $('[data-fx-toggle]'); if (fxb) fxb.addEventListener('click', toggleFx); bordInit(); edInit();
     if (window.matchMedia) { var mq = window.matchMedia('(prefers-color-scheme: dark)'), onMq = function () { if (!VIEW.theme) applyView(false); }; if (mq.addEventListener) mq.addEventListener('change', onMq); else if (mq.addListener) mq.addListener(onMq); }
     $$('[data-rpt-print]').forEach(function (b) { b.addEventListener('click', function () { if (rm) rm.open = false; printReport(b.getAttribute('data-rpt-print') === 'all'); }); });
     var rc = $('[data-rpt-csv]'); if (rc) rc.addEventListener('click', function () { if (rm) rm.open = false; reportCsv(); });
