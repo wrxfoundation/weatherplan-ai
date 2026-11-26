@@ -22,7 +22,7 @@ const FILE = path.join(__dirname, '../lib/snapshot-state.json');
   const tr = await trace.update(S, { budgetMs: 240000, force: true });
   console.log(JSON.stringify({ trace: tr, roots: (S.trace.roots || []).length, accounts: Object.keys(S.trace.nodes || {}).length }));
   if (!tr.done) throw new Error('자금 흐름을 끝까지 받지 못했습니다 — 다시 실행해 주세요');
-  const bz = await buzz.update(S, { force: true, budgetMs: 40000 });      // 웹 언급 · 소셜
+  const bz = await buzz.update(S, { force: true, budgetMs: 40000, ext });      // 웹 언급 · 소셜(텔레그램 · wellbian.io 공개 값)
   console.log(JSON.stringify({ buzz: bz }));
   fs.writeFileSync(FILE, JSON.stringify(S));
   const out = core.buildDatasets(JSON.parse(JSON.stringify(S)), {});

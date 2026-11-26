@@ -2,6 +2,7 @@
 // 웹 언급(뉴스 검색에 잡힌 기사) · 소셜(텔레그램 공개 채널과 대화방) — 누구나 볼 수 있게 공개된 것만 읽는다. 열쇠가 필요 없는 자료원만 쓴다.
 //   · 뉴스: 구글 뉴스 검색의 RSS(제목 · 매체 · 날짜 · 주소). 한 번에 최근 것 100건까지라, 받을 때마다 상태에 쌓아 간다(S.buzz.web.items)
 //   · 텔레그램: 공지 채널의 공개 미리보기(t.me/s/…)에서 글의 날짜 · 조회 수, 채널 · 대화방 소개 쪽에서 구독자 · 인원 수
+//   · wellbian.io 공개 API(/api/network · /api/explorer): 운영자 · 보상 받은 지갑 · 보유 지갑 · 신뢰선 · 기기 수, 날짜별 보상 대상 기기 수(API 는 14일 치만 줘서 받을 때마다 쌓는다)
 //   하루 한 번이면 된다(20시간 안에 받았으면 건너뛴다). 한쪽이 안 받아지면 그쪽은 지난 값을 그대로 둔다
 //   X(트위터) · 검색량은 열쇠가 있어야 받을 수 있어 넣지 않았다
 const GAP = 20 * 3600;
@@ -47,7 +48,7 @@ function parsePosts(html, channel) {
 }
 const getText = async (fetchImpl, url, ms) => { const r = await fetchImpl(url, { headers: { accept: 'text/html,application/xml;q=0.9,*/*;q=0.8', 'user-agent': 'Mozilla/5.0 (compatible; wlbn-status)' }, signal: AbortSignal.timeout(ms || 8000) }); if (!r.ok) throw new Error('http ' + r.status); return r.text(); };
 
-function blank() { return { at: 0, web: { at: 0, items: {} }, tg: { at: 0, posts: {}, log: {} } }; }
+function blank() { return { at: 0, web: { at: 0, items: {} }, tg: { at: 0, posts: {}, log: {} }, site: { at: 0, epochs: {}, log: {} } }; }
 // 상태(S.buzz)를 새로 받아 더한다. 돌려주는 것: { changed, web, tg, skipped }
 async function update(S, opts) {
   opts = opts || {};
@@ -55,7 +56,7 @@ async function update(S, opts) {
   if (!S.buzz) S.buzz = blank();
   const B = S.buzz; if (!B.web) B.web = { at: 0, items: {} }; if (!B.tg) B.tg = { at: 0, posts: {}, log: {} };
   if (!opts.force && now - (B.at || 0) < GAP) return { changed: false, skipped: true };
-  const info = { changed: false, web: 0, tg: 0 };
+  const info = { changed: false, web: 0, tg: 0, site: 0 };
   // 뉴스
   try {
     const before = Object.keys(B.web.items).length;
@@ -89,6 +90,25 @@ async function update(S, opts) {
     const days = Object.keys(tg.log).sort(); days.slice(0, Math.max(0, days.length - 400)).forEach((d) => { delete tg.log[d]; });
     tg.at = now; tg.channel = ch; tg.group = gr; info.changed = true;
   } catch (e) { info.tg_error = String((e && e.message) || e).slice(0, 80); }
+  // wellbian.io 가 공개한 값. 화면용 자료를 만들면서 이미 받은 것이 있으면 그것을 쓴다(opts.ext — 같은 주소를 두 번 부르지 않는다)
+  try {
+    const st = B.site || (B.site = { at: 0, epochs: {}, log: {} }), int = (v) => (typeof v === 'number' && isFinite(v) ? Math.round(v) : null), day = new Date((now + 9 * 3600) * 1000).toISOString().slice(0, 10);
+    if (!st.epochs) st.epochs = {}; if (!st.log) st.log = {};
+    let net = opts.ext && opts.ext.network, ex = opts.ext && opts.ext.explorer;
+    if (!net && left() > 2500) net = JSON.parse(await getText(fetchImpl, 'https://wellbian.io/api/network', Math.min(7000, left())));
+    if (!ex && left() > 2500) ex = JSON.parse(await getText(fetchImpl, 'https://wellbian.io/api/explorer', Math.min(7000, left())));
+    const okNet = !!(net && net.devices), okEx = !!(ex && ex.holders !== undefined);
+    if (okNet) {
+      st.devices_total = int(net.devices.total); st.devices_active = int(net.devices.active); st.operators = int(net.devices.operators); st.earners = int(net.earnersTotal);
+      for (const e of net.epochs || []) if (e && /^\d{4}-\d{2}-\d{2}$/.test(e.date) && int(e.eligibleNodes) !== null) st.epochs[e.date] = [int(e.eligibleNodes), int(e.distributed)];
+    }
+    if (okEx) { st.holders = int(ex.holders); st.trustlines = int(ex.trustlines); st.claims = ex.claims ? int(ex.claims.count) : null; }
+    if (okNet || okEx) {
+      st.log[day] = [st.devices_total, st.devices_active, st.operators, st.earners, st.holders, st.trustlines, st.claims].map((v) => (v === undefined ? null : v));
+      for (const k of ['epochs', 'log']) { const ds = Object.keys(st[k]).sort(); ds.slice(0, Math.max(0, ds.length - 400)).forEach((d) => { delete st[k][d]; }); }
+      st.at = now; info.site = Object.keys(st.epochs).length; info.changed = true;
+    }
+  } catch (e) { info.site_error = String((e && e.message) || e).slice(0, 80); }
   if (info.changed) B.at = now;
   return info;
 }

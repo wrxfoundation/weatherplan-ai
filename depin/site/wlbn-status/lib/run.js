@@ -71,7 +71,7 @@ async function run(opts) {
       try { info.saved = await store.save(S); } catch (e) { info.storage_error = String((e && e.message) || e).slice(0, 160); }
     }
     if (canSave && left(5000) > 5000) {      // 웹 언급 · 소셜(20시간 안에 받았으면 건너뛴다)
-      try { const bzr = await buzz.update(S, { budgetMs: Math.min(opts && opts.daily ? 14000 : 8000, left(5000)) }); if (bzr.changed) { info.buzz = { web: bzr.web, tg: bzr.tg }; info.saved = await store.save(S); } }
+      try { const bzr = await buzz.update(S, { budgetMs: Math.min(opts && opts.daily ? 14000 : 8000, left(5000)), ext }); if (bzr.changed) { info.buzz = { web: bzr.web, tg: bzr.tg, site: bzr.site }; info.saved = await store.save(S); } }
       catch (e) { info.buzz_error = String((e && e.message) || e).slice(0, 120); }
     }
   } catch (e) {

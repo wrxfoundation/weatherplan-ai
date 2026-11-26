@@ -413,7 +413,7 @@ function pickExt(S, ext) {
 
 // ── 웹 언급 · 소셜(38차): lib/buzz.js 가 하루 한 번 받아 S.buzz 에 둔 것을 화면용으로 정리한다. 기준 시각 = 받은 때(B.at). 판정 없이 숫자만
 //   웹: 제목에 이름이 든 기사 수(최근 30일 · 그 앞 30일 · 최근 90일) · 주별 16주 · 최근 기사
-//   소셜 지수: 「최근 30일 ÷ 그 앞 60일의 한 달 평균」을 갈래(웹 언급 수 · 채널 공지 글 수 · 글당 조회 수)마다 구해, 같으면 50 · 두 배 이상이면 100 으로 놓고 평균한다. 견줄 값이 없는 갈래는 뺀다
+//   소셜 지수: 「최근 ÷ 평소」를 갈래(웹 언급 수 · 채널 공지 글 수 · 글당 조회 수 — 최근 30일 ÷ 그 앞 60일의 한 달 평균 / wellbian.io 가 공개한 보상 대상 기기 수 — 쌓인 날에 따라 7일 ÷ 7일 또는 30일 ÷ 60일)마다 구해, 같으면 50 · 두 배 이상이면 100 으로 놓고 평균한다. 견줄 값이 없는 갈래는 뺀다
 function buildBuzz(S) {
   const B = S.buzz; if (!B || !B.at) return null;
   const now = B.at, DAY = 86400, kd = (t) => new Date((t + 9 * 3600) * 1000).toISOString().slice(0, 10), out = {};
@@ -424,23 +424,36 @@ function buildBuzz(S) {
     const d90 = items.filter((x) => x.at > now - 90 * DAY);
     out.web = { at: kd(B.web.at), d30: cnt(30, 0), p30: cnt(60, 30), d90: d90.length, srcs90: new Set(d90.map((x) => x.src)).size, year: items.length, last: items.length ? kd(items[0].at) : null, weeks: weeksOf(items), items: items.slice(0, 12).map((x) => ({ date: kd(x.at), src: x.src, title: x.title, url: x.url })) };
   }
-  const tg = B.tg;
-  if (tg && tg.at) {
-    const posts = Object.keys(tg.posts || {}).map((id) => ({ id: Number(id), at: tg.posts[id][0], views: tg.posts[id][1] })).sort((a, b) => b.at - a.at);
+  const tg = B.tg && B.tg.at ? B.tg : null, site = B.site && B.site.at ? B.site : null;
+  if (tg || site) {
+    const posts = tg ? Object.keys(tg.posts || {}).map((id) => ({ id: Number(id), at: tg.posts[id][0], views: tg.posts[id][1] })).sort((a, b) => b.at - a.at) : [];
     const win = (from, to) => posts.filter((p) => p.at > now - from * DAY && p.at <= now - to * DAY);
     const med = (list) => { const v = list.map((p) => p.views).filter((x) => x !== null && x !== undefined).sort((a, b) => a - b); return v.length ? (v.length % 2 ? v[(v.length - 1) / 2] : Math.round((v[v.length / 2 - 1] + v[v.length / 2]) / 2)) : null; };
-    const r30 = win(30, 0), b60 = win(90, 30), parts = [];
-    const add = (key, name, unit, a, b) => parts.push({ key, name, unit, now: a, base: b, ratio: a !== null && b !== null && b > 0 ? a / b : null });
-    add('web', '웹 언급 수', '건', out.web ? out.web.d30 : null, out.web ? cnt(90, 30) / 2 : null);
-    add('posts', '채널 공지 글 수', '건', r30.length, b60.length / 2);
-    add('views', '글당 조회 수(가운데 값)', '회', med(r30), med(b60));
+    const r30 = win(30, 0), b60 = win(90, 30), parts = [], W36 = '최근 30일 ÷ 그 앞 60일의 한 달 평균';
+    const add = (key, name, unit, a, b, w) => parts.push({ key, name, unit, now: a, base: b, win: w, ratio: a !== null && b !== null && b > 0 ? a / b : null });
+    add('web', '웹 언급 수', '건', out.web ? out.web.d30 : null, out.web ? cnt(90, 30) / 2 : null, W36);
+    if (tg) { add('posts', '채널 공지 글 수', '건', r30.length, b60.length / 2, W36); add('views', '글당 조회 수(가운데 값)', '회', med(r30), med(b60), W36); }
+    // wellbian.io 공개 값: 날짜별 보상 대상 기기 수의 하루 평균. 쌓인 날이 90일이 되면 30일 ÷ 60일, 그 전에는 최근 7일 ÷ 그 앞 7일(14일 치가 있어야 견준다)
+    let siteOut = null;
+    if (site) {
+      const eds = Object.keys(site.epochs || {}).sort(), ev = eds.map((d) => site.epochs[d][0]), avg = (a) => Math.round(a.reduce((x, y) => x + y, 0) / a.length);
+      if (ev.length >= 90) add('nodes', '보상 대상 기기 수(하루 평균)', '대', avg(ev.slice(-30)), avg(ev.slice(-90, -30)), '최근 30일 ÷ 그 앞 60일');
+      else if (ev.length >= 14) add('nodes', '보상 대상 기기 수(하루 평균)', '대', avg(ev.slice(-7)), avg(ev.slice(-14, -7)), '최근 7일 ÷ 그 앞 7일');
+      else add('nodes', '보상 대상 기기 수(하루 평균)', '대', ev.length ? avg(ev) : null, null, '견줄 날이 모자란다(14일 치부터)');
+      const days = Object.keys(site.log || {}).sort(), f = days.length ? site.log[days[0]] : null, nz = (v) => (v === undefined ? null : v);
+      siteOut = {
+        at: kd(site.at), devices_total: nz(site.devices_total), devices_active: nz(site.devices_active), operators: nz(site.operators), earners: nz(site.earners), holders: nz(site.holders), trustlines: nz(site.trustlines), claims: nz(site.claims),
+        epochs: eds.slice(-30).map((d) => ({ date: d, nodes: site.epochs[d][0], distributed: site.epochs[d][1] })), days: days.length,
+        first: f ? { date: days[0], devices_total: f[0], devices_active: f[1], operators: f[2], earners: f[3], holders: f[4], trustlines: f[5], claims: f[6] } : null,
+      };
+    }
     const sc = parts.filter((p) => p.ratio !== null).map((p) => Math.min(100, 50 * p.ratio));
-    const log = Object.keys(tg.log || {}).sort().map((d) => ({ date: d, subs: tg.log[d][0], members: tg.log[d][1] }));
+    const log = tg ? Object.keys(tg.log || {}).sort().map((d) => ({ date: d, subs: tg.log[d][0], members: tg.log[d][1] })) : [];
     out.social = {
-      at: kd(tg.at), index: sc.length ? Math.round(sc.reduce((a, b) => a + b, 0) / sc.length) : null, parts, used: sc.length,
-      subs: tg.subs === undefined ? null : tg.subs, members: tg.members === undefined ? null : tg.members, online: tg.online === undefined ? null : tg.online,
+      at: kd(Math.max(tg ? tg.at : 0, site ? site.at : 0)), index: sc.length ? Math.round(sc.reduce((a, b) => a + b, 0) / sc.length) : null, parts, used: sc.length, has_tg: !!tg,
+      subs: tg && tg.subs !== undefined ? tg.subs : null, members: tg && tg.members !== undefined ? tg.members : null, online: tg && tg.online !== undefined ? tg.online : null,
       posts30: r30.length, posts_prev60: b60.length, views_med: med(posts.slice(0, 10)), last_post: posts.length ? kd(posts[0].at) : null,
-      weeks: weeksOf(posts), log, channel: tg.channel || '', group: tg.group || '',
+      weeks: weeksOf(posts), log, channel: (tg && tg.channel) || '', group: (tg && tg.group) || '', site: siteOut,
     };
   }
   return out;

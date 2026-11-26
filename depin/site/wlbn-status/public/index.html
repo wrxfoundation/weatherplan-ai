@@ -1069,11 +1069,16 @@ html.deck-on { overflow: hidden; }
   </section>
 
   <section class="sec panel" id="social" data-need="social" hidden aria-labelledby="h-social">
-    <h2 class="h2" id="h-social">소셜 지수 · 텔레그램 채널과 대화방 <span class="period" data-soc-at>—</span></h2>
-    <p class="note"><b>소셜 지수</b>는 <b>최근 30일의 활동을 그 앞 60일의 한 달 평균에 견준 값</b>이다. 갈래(웹 언급 수 · 채널 공지 글 수 · 글당 조회 수)마다 평소와 같으면 50, 두 배 이상이면 100으로 놓고 평균한다. 견줄 값이 없는 갈래는 뺀다. 활동이 많고 적음을 보는 숫자이고, 좋고 나쁨을 가리지 않는다.</p>
+    <h2 class="h2" id="h-social">소셜 지수 · 텔레그램과 네트워크 참여 <span class="period" data-soc-at>—</span></h2>
+    <p class="note"><b>소셜 지수</b>는 <b>최근 활동을 평소에 견준 값</b>이다. 갈래(웹 언급 수 · 텔레그램 채널 공지 글 수 · 글당 조회 수 · wellbian.io가 공개한 보상 대상 기기 수)마다 평소와 같으면 50, 두 배 이상이면 100으로 놓고 평균한다. 갈래마다 견준 기간은 아래 표에 적었고, 견줄 값이 없는 갈래는 뺀다. 활동이 많고 적음을 보는 숫자이고, 좋고 나쁨을 가리지 않는다.</p>
     <div class="tiles four" id="soc-tiles"></div>
+    <div data-soc-site hidden>
+      <h3 class="h3">네트워크 참여 · wellbian.io가 공개한 값</h3>
+      <div class="tiles four" id="soc-site-tiles"></div>
+      <figure class="fig"><figcaption class="cap" data-soc-nodes-cap>날짜별 보상 대상 기기 수</figcaption><div class="chart short skel" id="chart-socnodes" data-chart="socnodes" role="img" aria-label="날짜별 보상 대상 기기 수 막대"></div></figure>
+    </div>
     <h3 class="h3">지수를 이루는 갈래</h3>
-    <div class="scroll"><table id="tb-social" aria-label="소셜 지수의 갈래 — 최근 30일, 그 앞 60일의 한 달 평균, 비율, 점수"><thead></thead><tbody></tbody></table></div>
+    <div class="scroll"><table id="tb-social" aria-label="소셜 지수의 갈래 — 견준 기간, 최근, 평소, 비율, 점수"><thead></thead><tbody></tbody></table></div>
     <h3 class="h3">주별 채널 공지 글 수 · 최근 16주</h3>
     <figure class="fig"><div class="chart short skel" id="chart-socweek" data-chart="socweek" role="img" aria-label="주별 채널 공지 글 수 막대"></div></figure>
     <p class="note" data-soc-src></p>
@@ -2452,7 +2457,7 @@ html.deck-on { overflow: hidden; }
     if (ok(s.trust_hold_share)) fc.splice(1, 0, '신뢰선 ' + fInt(s.trustlines) + '곳의 ' + F.pct(s.trust_hold_share));
     if (fc.length) T.facts = fc.join(' · ');
     if (DATA.web) T.web = '최근 30일 기사 **' + fInt(DATA.web.d30) + '건** · 그 앞 30일 ' + fInt(DATA.web.p30) + '건' + (DATA.web.last ? ' · 가장 최근 ' + md(DATA.web.last) : '');
-    if (DATA.social) T.social = (DATA.social.index === null ? '소셜 지수 —' : '소셜 지수 **' + DATA.social.index + '** / 100') + (DATA.social.subs !== null ? ' · 채널 구독자 ' + fInt(DATA.social.subs) + '명' : '') + (DATA.social.members !== null ? ' · 대화방 ' + fInt(DATA.social.members) + '명' : '') + ' · 최근 30일 공지 글 ' + fInt(DATA.social.posts30) + '건';
+    if (DATA.social) T.social = (DATA.social.index === null ? '소셜 지수 —' : '소셜 지수 **' + DATA.social.index + '** / 100') + (DATA.social.subs !== null ? ' · 채널 구독자 ' + fInt(DATA.social.subs) + '명' : '') + (DATA.social.members !== null ? ' · 대화방 ' + fInt(DATA.social.members) + '명' : '') + (DATA.social.site && DATA.social.site.operators !== null ? ' · 운영자 ' + fInt(DATA.social.site.operators) + '곳' : '') + (DATA.social.site && DATA.social.site.holders !== null ? ' · 보유 지갑 ' + fInt(DATA.social.site.holders) + '곳' : '');
     T.before = '10월 24일에 옮겨진 물량과 10월 26~27일 재지급 기록';
     T.notes = '용어 풀이 · 집계 기준과 한계';
     $$('[data-sum]').forEach(function (el) { rich(el, T[el.getAttribute('data-sum')] || ''); });
@@ -3277,12 +3282,21 @@ html.deck-on { overflow: hidden; }
       st.replaceChildren(); var sa = $('[data-soc-at]'); if (sa) sa.textContent = md(S2.at) + ' 확인';
       var first = (S2.log || [])[0], chg = function (now, was) { return now === null || was === null || was === undefined || !first || first.date === S2.at ? '' : ' · ' + md(first.date) + '보다 ' + (now - was >= 0 ? '+' : '−') + fInt(Math.abs(now - was)); };
       buzzTile(st, '소셜 지수', S2.index === null ? '—' : String(S2.index), S2.index === null ? '' : '/ 100', S2.index === null ? '견줄 값이 아직 없다' : '갈래 ' + S2.used + '개 평균 · 50이면 평소와 같음');
-      buzzTile(st, '채널 구독자', buzzNum(S2.subs), '명', (S2.channel ? '@' + S2.channel : '공지 채널') + (first ? chg(S2.subs, first.subs) : '') + ((S2.log || []).length < 2 ? ' · 변화는 오늘부터 쌓는다' : ''));
-      buzzTile(st, '대화방 인원', buzzNum(S2.members), '명', (S2.group ? '@' + S2.group : '대화방') + (S2.online !== null ? ' · 확인할 때 접속 ' + fInt(S2.online) + '명' : ''));
-      buzzTile(st, '최근 30일 공지 글', fInt(S2.posts30), '건', '그 앞 60일 ' + fInt(S2.posts_prev60) + '건' + (S2.last_post ? ' · 마지막 글 ' + md(S2.last_post) : ''));
-      table('#tb-social', [{ key: 'name', label: '갈래', text: 1 }, { key: 'now', label: '최근 30일', text: 1, num: 1 }, { key: 'base', label: '그 앞 60일의 한 달 평균', text: 1, num: 1 }, { key: 'ratio', label: '평소 대비', text: 1, num: 1 }, { key: 'score', label: '점수(100점까지)', text: 1, num: 1 }],
-        (S2.parts || []).map(function (p) { return { name: p.name, now: p.now === null ? null : buzzNum(p.now) + p.unit, base: p.base === null ? null : buzzNum(p.base, p.base % 1 ? 1 : 0) + p.unit, ratio: p.ratio === null ? '견줄 값 없음' : F.pct(p.ratio), score: p.ratio === null ? null : String(Math.round(Math.min(100, 50 * p.ratio))) }; }));
-      var ss = $('[data-soc-src]'); if (ss) ss.textContent = '출처: 텔레그램 공개 쪽(' + [S2.channel ? '공지 채널 @' + S2.channel : '', S2.group ? '대화방 @' + S2.group : ''].filter(Boolean).join(' · ') + ')에서 하루 한 번 읽은 값. 글당 조회 수는 ' + (S2.views_med === null ? '읽지 못했다' : '최근 글 열 개의 가운데 값이 ' + fInt(S2.views_med) + '회') + '. X(트위터)와 검색량은 들어 있지 않다.';
+      if (S2.has_tg !== false) buzzTile(st, '채널 구독자', buzzNum(S2.subs), '명', (S2.channel ? '@' + S2.channel : '공지 채널') + (first ? chg(S2.subs, first.subs) : '') + ((S2.log || []).length < 2 ? ' · 변화는 오늘부터 쌓는다' : ''));
+      if (S2.has_tg !== false) buzzTile(st, '대화방 인원', buzzNum(S2.members), '명', (S2.group ? '@' + S2.group : '대화방') + (S2.online !== null ? ' · 확인할 때 접속 ' + fInt(S2.online) + '명' : ''));
+      if (S2.has_tg !== false) buzzTile(st, '최근 30일 공지 글', fInt(S2.posts30), '건', '그 앞 60일 ' + fInt(S2.posts_prev60) + '건' + (S2.last_post ? ' · 마지막 글 ' + md(S2.last_post) : ''));
+      table('#tb-social', [{ key: 'name', label: '갈래', text: 1 }, { key: 'win', label: '견준 기간', text: 1 }, { key: 'now', label: '최근', text: 1, num: 1 }, { key: 'base', label: '평소', text: 1, num: 1 }, { key: 'ratio', label: '평소 대비', text: 1, num: 1 }, { key: 'score', label: '점수(100점까지)', text: 1, num: 1 }],
+        (S2.parts || []).map(function (p) { return { name: p.name, win: p.win || '', now: p.now === null ? null : buzzNum(p.now) + p.unit, base: p.base === null ? null : buzzNum(p.base, p.base % 1 ? 1 : 0) + p.unit, ratio: p.ratio === null ? '견줄 값 없음' : F.pct(p.ratio), score: p.ratio === null ? null : String(Math.round(Math.min(100, 50 * p.ratio))) }; }));
+      var SI = S2.site, sbox = $('[data-soc-site]'), sst = $('#soc-site-tiles'); if (sbox) sbox.hidden = !SI;
+      if (SI && sst) {
+        sst.replaceChildren(); var f0 = SI.first && SI.days > 1 ? SI.first : null, dl = function (now, was) { return f0 && now !== null && was !== null && was !== undefined ? ' · ' + md(f0.date) + '보다 ' + (now - was >= 0 ? '+' : '−') + fInt(Math.abs(now - was)) : ''; }, grow = f0 ? '' : ' · 변화는 오늘부터 쌓는다';
+        buzzTile(sst, '운영자', buzzNum(SI.operators), '곳', '기기를 등록한 지갑' + dl(SI.operators, f0 && f0.operators) + grow);
+        buzzTile(sst, '보상 받은 지갑', buzzNum(SI.earners), '곳', '보상 청구 ' + buzzNum(SI.claims) + '건' + dl(SI.earners, f0 && f0.earners));
+        buzzTile(sst, 'WLBN 보유 지갑', buzzNum(SI.holders), '곳', '신뢰선 ' + buzzNum(SI.trustlines) + '곳' + dl(SI.holders, f0 && f0.holders));
+        buzzTile(sst, '등록 기기', buzzNum(SI.devices_total), '대', '활성 ' + buzzNum(SI.devices_active) + '대' + dl(SI.devices_total, f0 && f0.devices_total));
+        var nc = $('[data-soc-nodes-cap]'), ep = SI.epochs || []; if (nc) nc.textContent = '날짜별 보상 대상 기기 수' + (ep.length ? ' · ' + md(ep[0].date) + '~' + md(ep[ep.length - 1].date) + '(' + ep.length + '일 · 하루 한 번씩 쌓인다)' : '');
+      }
+      var ss = $('[data-soc-src]'); if (ss) ss.textContent = '출처: ' + [S2.has_tg !== false ? '텔레그램 공개 쪽(' + [S2.channel ? '공지 채널 @' + S2.channel : '', S2.group ? '대화방 @' + S2.group : ''].filter(Boolean).join(' · ') + ')' : '', SI ? 'wellbian.io 공개 API(네트워크 · 탐색기)' : ''].filter(Boolean).join(' · ') + '에서 하루 한 번 읽은 값.' + (S2.has_tg !== false ? ' 글당 조회 수는 ' + (S2.views_med === null ? '읽지 못했다' : '최근 글 열 개의 가운데 값이 ' + fInt(S2.views_med) + '회') + '.' : '') + ' X(트위터)와 검색량은 들어 있지 않다.';
     }
   }
   function buzzBars(el, rows, label, unit) {
@@ -4412,6 +4426,9 @@ html.deck-on { overflow: hidden; }
   function chartFns() { return Object.assign(chartFns0(), BOARD); }
   function chartFns0() {
     return { index: drawIndex, trend: drawTrend, vsbar: drawVsBar, vsline: drawVsLine, ages: drawAges, soldratio: drawSoldRatio, soldage: drawSoldAge, weekly: drawWeekly, unlock: drawUnlock, webweek: function (el) { buzzBars(el, (DATA.web || {}).weeks, '기사 수', '건'); }, socweek: function (el) { buzzBars(el, (DATA.social || {}).weeks, '채널 공지 글 수', '건'); },
+      socnodes: function (el) { var ep = (((DATA.social || {}).site || {}).epochs || []).map(function (r) { return { date: r.date, n: r.nodes, d: r.distributed }; });
+        barsOf(el, ep, { val: function (r) { return r.n; }, base: 0, h: 190, maxBar: 30, fmt: d3.format(','), color: 'var(--s1)', title: function (r) { return md(r.date); }, tip: function (r) { return [{ label: '보상 대상 기기 수', value: fInt(r.n) + '대', color: 'var(--s1)' }, { label: '그날 배분', value: r.d === null ? '—' : fInt(r.d) + '개', sep: 1 }]; } });
+        if (ep.length) el.setAttribute('aria-label', '날짜별 보상 대상 기기 수: ' + md(ep[0].date) + ' ' + fInt(ep[0].n) + '대 → ' + md(ep[ep.length - 1].date) + ' ' + fInt(ep[ep.length - 1].n) + '대'); },
       cost: function (el) { linesOf(el, deepRows(), [{ key: 'price', label: '그날 마감 값', color: 'var(--s1)' }, { key: 'cost', label: '평균 취득가', color: 'var(--s2)' }], F.f4, false); },
       movers: function (el) { linesOf(el, deepRows(), [{ key: 'movers', label: '움직인 지갑', color: 'var(--s1)' }, { key: 'receivers', label: '보상 받은 지갑', color: 'var(--s3)' }, { key: 'fresh', label: '새 지갑', color: 'var(--s2)' }], fInt, true); }, loop: drawLoop, flow: drawFlow, user: drawUser, market: drawMarket, money: drawMoney, scatter: drawScatter, wallet: drawWalletChart,
       price: function (el) { drawLines(el, [{ key: 'price_rlusd', label: '가격(RLUSD)', color: 'var(--s1)' }], F.f4, false); },
