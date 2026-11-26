@@ -476,6 +476,11 @@ details .scroll { margin-top: 8px; }
 .sec.lock > .sec-b > :not(.lock-card) { display: none !important; } .sec.lock .sec-sum, .sec.lock .sec-tn, .sec.lock .h2 .period, .sec.lock .h2 .q { display: none; }
 .ed-need { margin-left: 8px; padding: 1px 9px; border: 1px solid var(--line-2); border-radius: 999px; color: var(--muted); font-size: var(--t-tag); font-weight: 650; white-space: nowrap; vertical-align: middle; } .ed-need::before { content: ""; display: inline-block; width: 1em; height: 1em; margin-right: 3px; vertical-align: -0.15em; background: currentColor; -webkit-mask: var(--i-lock) center / contain no-repeat; mask: var(--i-lock) center / contain no-repeat; }
 .lock-card::before { content: ""; flex: none; width: calc(20px * var(--fs)); height: calc(20px * var(--fs)); color: var(--muted); background: currentColor; -webkit-mask: var(--i-lock) center / contain no-repeat; mask: var(--i-lock) center / contain no-repeat; }
+.lock-card .lock-t { flex: 1 1 260px; min-width: 0; display: grid; gap: 3px; } .lock-card .lock-what { color: var(--fg); } .lock-card .lock-pr { font-variant-numeric: tabular-nums; }
+.ed-plan .ask { margin: 2px 0 0; font-size: var(--t-sm); color: var(--fg); } .points li.more { list-style: none; margin-left: -1.1em; color: var(--muted); font-size: var(--t-xs); }
+.ed-open { margin: 0 0 4px; padding: 10px 14px; border: 1px solid var(--line-2); border-radius: var(--r-md); background: var(--soft); color: var(--fg); font-size: var(--t-sm); line-height: 1.55; } .ed-key[hidden], .ed-terms[hidden] { display: none; }
+.ed-terms { margin: 4px 0 0; } .ed-terms a { color: inherit; } .ed-keynote { margin: 0; font-size: var(--t-xs); color: var(--muted); }
+html.rpt .sec.lock { display: none !important; }      /* 보고서에는 열린 구역만 담는다(잠긴 구역의 제목만 줄줄이 나오지 않게) */
 .lock-card { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 14px; padding: 16px 18px; border: 1px dashed var(--line-2); border-radius: var(--r-md); background: var(--soft); color: var(--muted); font-size: var(--t-sm); } .lock-card b { color: var(--fg); font-size: var(--t-md); font-weight: 700; } .lock-card .btn { margin-left: auto; }
 .nav a.locked::after, .nav button.locked::after { content: ""; display: inline-block; width: 0.95em; height: 0.95em; margin-left: 3px; vertical-align: -0.13em; opacity: 0.8; background: currentColor; -webkit-mask: var(--i-lock) center / contain no-repeat; mask: var(--i-lock) center / contain no-repeat; }
 .ed-dlg { width: min(940px, calc(100vw - 24px)); max-height: calc(100vh - 24px); padding: 0; border: 1px solid var(--line-2); border-radius: var(--r-lg, 16px); background: var(--panel); color: var(--fg); box-shadow: 0 24px 60px rgba(20, 18, 43, 0.28); } .ed-dlg::backdrop { background: rgba(20, 18, 43, 0.45); }
@@ -504,7 +509,9 @@ details .scroll { margin-top: 8px; }
 .ed-ct .y { color: var(--accent); font-weight: 700; } .ed-ct .n { color: var(--faint); } .ed-ct .top { background: rgba(77, 77, 206, 0.07); } .ed-ct tr.tot td { font-weight: 700; color: var(--fg); border-bottom: 0; font-variant-numeric: tabular-nums; }
 .news { margin: 0; padding: 0; list-style: none; } .news li { display: grid; grid-template-columns: 3.6em 9em minmax(0, 1fr); gap: 2px 12px; padding: 9px 0; border-bottom: 1px solid var(--line); font-size: var(--t-sm); line-height: 1.5; } .news .nd, .news .ns { color: var(--muted); font-variant-numeric: tabular-nums; } .news a { color: var(--fg); text-underline-offset: 3px; } .news li.none { display: block; color: var(--faint); }
 @media (max-width: 640px) { .news li { grid-template-columns: auto minmax(0, 1fr); } .news a { grid-column: 1 / -1; } .ed-ct th, .ed-ct td { padding: 6px 4px; } }
-.ed-foot { max-width: var(--maxw, 1040px); margin: 18px auto 28px; padding: 0 20px; font-size: var(--t-xs); color: var(--faint); line-height: 1.6; }
+.ed-foot { max-width: var(--maxw, 1040px); margin: 18px auto 28px; padding: 0 20px; font-size: var(--t-xs); color: var(--muted); line-height: 1.6; }
+.ed-foot h2 { margin: 0 0 6px; padding-top: 14px; border-top: 1px solid var(--line); font-size: var(--t-xs); font-weight: 700; color: var(--fg); letter-spacing: 0.02em; } .ed-foot ul { margin: 0; padding-left: 1.15em; } .ed-foot li { margin: 2px 0; } .ed-foot p { margin: 8px 0 0; color: var(--faint); }
+html.rpt .ed-foot { max-width: none; padding: 0; } @media print { .ed-foot { break-inside: avoid; } }
 @media (max-width: 640px) { .ed-plans { grid-template-columns: minmax(0, 1fr); } .lock-card .btn { margin-left: 0; } }
 html.rpt .ed-bar, html.rpt .lock-card { display: none !important; }
 /* 카드 순서 바꾸기: 머리 오른쪽 끝의 손잡이를 끌거나(화살표 키로) 옮긴다 */
@@ -1059,8 +1066,8 @@ html.rpt .to-top { display: none !important; } @media print { .to-top { display:
         <li data-h-rule="2" hidden></li>
         <li>지수 추이는 같은 계산을 하루씩 앞당긴 7일 창으로 되풀이한 값이다. 직전 7일과 견줄 수 있는 날부터 그린다.</li>
         <li>늘 최근 7일(오늘 제외)을 직전 7일과 견준다. 위쪽의 기간 선택과는 상관없다.</li>
-        <li>판매 대금은 밖의 지갑이 operations 계정으로 보낸 RLUSD로 본다. 같은 금액이 되풀이되어 기기 · 이용권 값으로 보았다(추정).</li>
-        <li><b>카드 · 계좌로 결제한 기기와 이용권은 원장에 없다.</b> 그래서 판매 고리와 매입 재원은 RLUSD 결제분만으로 매긴 값이고, 실제 판매가 더 많으면 신호는 지금보다 좋게 나온다. 카드 판매액을 따로 알면 그만큼 더해서 읽는다.</li>
+        <li>판매 대금은 밖의 지갑이 operations 계정으로 보낸 RLUSD로 본다. 같은 금액이 되풀이되어 기기 · AI 이용권 값으로 보았다(추정).</li>
+        <li><b>카드 · 계좌로 결제한 기기와 AI 이용권은 원장에 없다.</b> 그래서 판매 고리와 매입 재원은 RLUSD 결제분만으로 매긴 값이고, 실제 판매가 더 많으면 신호는 지금보다 좋게 나온다. 카드 판매액을 따로 알면 그만큼 더해서 읽는다.</li>
         <li>Wellbian bot 계정이 쓰는 RLUSD와 XRP는 operations · treasury 계정에서 들어온다(원장에서 확인). 그래서 bot이 산 양도 수요에 넣고, 그 지출이 판매 대금 안인지는 「매입 재원」에서 따로 본다. 매입 여력에는 세 계정의 잔액을 더했다.</li>
         <li>기준 숫자는 운용 점검용으로 정한 값이고 바꿀 수 있다. 지나간 기록으로 매긴 신호이며 앞날을 내다보는 값이 아니다.</li>
       </ul>
@@ -1214,7 +1221,7 @@ html.rpt .to-top { display: none !important; } @media print { .to-top { display:
     <div class="sub-block" data-need="health">
       <h3 class="h3" data-shut>돈의 흐름: 들어온 판매 대금과 매입에 쓴 돈</h3>
       <p class="note">위로 뻗은 막대가 밖의 지갑이 operations 계정으로 보낸 RLUSD(<b>판매 대금</b>), 아래로 뻗은 막대가 Wellbian bot이 WLBN을 사는 데 쓴 돈(<b>매입 지출</b>)이다. XRP는 그날 환율로 RLUSD로 바꿔 더했다. 단위 RLUSD.</p>
-      <p class="limit"><span><b>RLUSD로 결제된 판매만 보인다.</b> 카드 · 계좌로 결제한 기기와 이용권은 원장에 기록되지 않아 위 막대에 없다. 실제 판매 대금은 이보다 많을 수 있다.</span></p>
+      <p class="limit"><span><b>RLUSD로 결제된 판매만 보인다.</b> 카드 · 계좌로 결제한 기기와 AI 이용권은 원장에 기록되지 않아 위 막대에 없다. 실제 판매 대금은 이보다 많을 수 있다.</span></p>
       <figure class="fig">
         <div class="legend"><span class="key"><i class="sw" style="background:var(--s6)"></i>판매 대금</span><span class="key"><i class="sw" style="background:var(--s4)"></i><span class="tag tag-w">Wellbian</span>bot 매입 지출</span></div>
         <div class="chart skel" id="chart-money" data-chart="money" role="img" aria-label="날짜별로 들어온 판매 대금과 bot이 매입에 쓴 돈"></div>
@@ -1293,7 +1300,7 @@ html.rpt .to-top { display: none !important; } @media print { .to-top { display:
   <section class="sec panel" id="accounts" aria-labelledby="h-accounts">
     <h2 class="h2" id="h-accounts">Wellbian · KWeather 계정의 움직임 <span class="period" data-period>—</span></h2>
     <p class="note">wellbian.io가 이름을 붙여 공개한 계정이다. 칩은 어느 회사 계정인지, 그 뒤 글자는 사이트가 붙인 이름이다. <b>「지금」이 붙은 열은 지금 잔액</b>이고, 나머지는 <b>고른 기간의 합계</b>다.</p>
-    <p class="note"><b>계정이 하는 일</b>(원장에서 확인되는 것만): <b>operations</b> — 보상(WLBN)을 지급하고 기기 · 이용권 판매 대금(RLUSD)을 받는다 · <b>bot</b> — 풀에서 WLBN을 사들인다(쓰는 돈은 operations · treasury 계정에서 들어온다) · <b>treasury</b> — 잠기지 않은 WLBN의 대부분을 보관한다 · <b>match · seed · staking</b> — 사이트가 붙인 이름이며 쓰임은 원장만으로 알 수 없다 · <b>KWeather</b> — 기기 파트너 KWeather의 계정이다.</p>
+    <p class="note"><b>계정이 하는 일</b>(원장에서 확인되는 것만): <b>operations</b> — 보상(WLBN)을 지급하고 기기 · AI 이용권 판매 대금(RLUSD)을 받는다 · <b>bot</b> — 풀에서 WLBN을 사들인다(쓰는 돈은 operations · treasury 계정에서 들어온다) · <b>treasury</b> — 잠기지 않은 WLBN의 대부분을 보관한다 · <b>match · seed · staking</b> — 사이트가 붙인 이름이며 쓰임은 원장만으로 알 수 없다 · <b>KWeather</b> — 기기 파트너 KWeather의 계정이다.</p>
     <div class="tools end"><button type="button" class="link" data-csv="accounts">CSV 받기</button></div>
     <div class="scroll"><table id="tb-accounts" aria-label="Wellbian · KWeather 계정"><thead></thead><tbody></tbody></table></div>
     <p class="note rpt-only">보고서에는 주요 열만 담았다 — 낸 돈 · 풀에 넣은 것은 화면이나 「CSV 받기」에서 본다.</p>
@@ -1301,10 +1308,10 @@ html.rpt .to-top { display: none !important; } @media print { .to-top { display:
 
   <section class="sec panel" id="impact" aria-labelledby="h-impact">
     <h2 class="h2" id="h-impact">지갑의 생태계 기여 · 5단계 <span class="period" data-period>—</span></h2>
-    <p class="note">지갑마다 고른 기간의 움직임으로 <b>매우 긍정 · 긍정 · 보통 · 부정 · 매우 부정</b> 다섯으로 나눴다. <b>가져간 돈</b>은 WLBN을 팔아 받은 돈(RLUSD 환산), <b>되돌린 돈</b>은 WLBN을 사며 낸 돈, operations 계정으로 보낸 RLUSD(다시 산 돈), 그리고 <b>회사 계정(match · treasury 등)에 넣은 돈</b>(XRP · RLUSD)이다. Wellbian · KWeather 계정은 넣지 않았다.</p>
+    <p class="note">지갑마다 고른 기간의 움직임으로 <b>매우 긍정 · 긍정 · 보통 · 부정 · 매우 부정</b> 다섯으로 나눴다. <b>가져간 돈</b>은 WLBN을 팔아 받은 돈(RLUSD 환산), <b>되돌린 돈</b>은 WLBN을 사며 낸 돈, operations 계정으로 보낸 RLUSD(다시 산 돈), 그리고 <b>회사 계정(match · treasury 등)에 넣은 돈</b>(XRP · RLUSD)이다. Wellbian · KWeather 계정은 넣지 않았다. 나누는 대상은 「지갑별 표」의 지갑 — 움직임이나 잔액이 있는 일반 사용자 지갑과, 사고판 적이 있는 사고팔기 · 그 밖의 지갑이다(들고만 있는 그 밖의 지갑은 들어가지 않아 잔액 합이 「위치」 구역보다 작다).</p>
     <dl class="crit t5" aria-label="나누는 기준">
       <div><dt><span class="ichip vp">매우 긍정</span></dt><dd>아래 긍정 조건을 두 가지 이상 채웠거나, 되돌린 돈이 가져간 돈보다 1,000 RLUSD 이상 많다</dd></div>
-      <div><dt><span class="ichip p">긍정</span></dt><dd>받은 양의 절반 넘게 들고 있다 · 되돌린 돈이 가져간 돈 이상이다 · 풀에 넣어 두었다 — 하나가 맞으면(팔지 않고 들고만 있는 지갑 포함)</dd></div>
+      <div><dt><span class="ichip p">긍정</span></dt><dd>받은 양의 절반 넘게 팔지 않았다(판 비율 50% 미만 — 옮기거나 풀에 넣은 것은 판 것이 아니다) · 되돌린 돈이 가져간 돈 이상이다 · 풀에 넣어 두었다 — 하나가 맞으면(팔지 않고 들고만 있는 지갑 포함)</dd></div>
       <div><dt><span class="ichip n">보통</span></dt><dd>그 밖 — 일부만 판 지갑, 산 만큼 파는(사고파는) 지갑</dd></div>
       <div><dt><span class="ichip ng">부정</span></dt><dd>받은 양의 90% 이상을 팔고, 되돌린 돈이 가져간 돈의 10% 미만이다. 받은 기록이 없는 지갑은 가진 양(판 양 + 다른 지갑으로 옮긴 양 + 잔액)의 90% 이상을 팔았을 때만</dd></div>
       <div><dt><span class="ichip vn">매우 부정</span></dt><dd>부정 조건에 더해, 기간의 절반 이상의 날에 팔았거나 가져간 돈이 500 RLUSD 이상이다</dd></div>
@@ -1487,19 +1494,20 @@ html.rpt .to-top { display: none !important; } @media print { .to-top { display:
     <dl class="gloss">
       <div><dt>토크노믹스의 원칙과 이 화면</dt><dd>토크노믹스 정책은 <b>정해진 수량을 준다</b>고만 약속하고 가격 · 수익률 · 회수 기간은 약속하지 않는다. 지켜본다고 적은 지표도 가격이 아니라 <b>판매 완료 · 가동률 · 데이터 매출</b>이다 — 이 화면이 가격을 평가하지 않는 것과 같은 뜻이다. 소각은 「얼마를 내보내고 얼마를 태웠다」처럼 <b>수량으로만</b> 말한다(값이 오른다는 말을 붙이지 않는다). 약속한 것과 원장의 지금 값은 「설계 대조」 구역에 나란히 있다.</dd></div>
       <div><dt>긍정 · 지켜봄 · 부정 표시</dt><dd>초록 ✓ 는 긍정, 노랑 ! 는 지켜봄, 빨강 ✕ 는 부정이다(「오늘의 현황」의 좋음 · 지켜봄 · 주의와 같은 뜻). 카드 제목 · 구역 머리의 개수 · 코멘트 줄 머리 · 글 속 숫자에 같은 표시가 붙고, 맨 위 「지표 모아보기」의 긍정 요소 · 지켜볼 것 · 부정 요소 세 줄이 그 모음이다. 판정 기준이 있는 지표에만 붙이며, 표시가 없는 줄은 어느 쪽으로도 가르지 않은 것이다. <b>가격은 평가하지 않는다</b> — 가격 변화와 시장 대비 숫자에는 표시를 붙이지 않고, 「오늘의 현황」의 가격 고리도 점수 없이 숫자만 보여 주며 선순환 지수에 넣지 않는다. 지나간 기록으로 매긴 신호이고 앞날을 내다보는 값이 아니다.</dd></div>
-      <div><dt>WLBN · RLUSD · XRP · 원장</dt><dd>WLBN은 Wellbian이 기기 운영 보상으로 지급하는 토큰이다. RLUSD는 1달러에 값을 맞춘 코인, XRP는 XRP Ledger의 기본 통화다. 원장은 XRP Ledger에 남는 공개 거래 기록이고, 이 화면의 숫자는 모두 거기서 읽었다.</dd></div>
+      <div><dt>WLBN · RLUSD · XRP · 원장</dt><dd>WLBN은 Wellbian이 기기 운영 보상으로 지급하는 토큰이다. RLUSD는 1달러에 값을 맞춘 코인, XRP는 XRP Ledger의 기본 통화다. 원장은 XRP Ledger에 남는 공개 거래 기록이다. 이 화면의 숫자는 거기서 읽은 것이 바탕이고, 사이트 · DexScreener · 뉴스 · 텔레그램에서 받은 값은 그 자리에 출처를 적었다.</dd></div>
       <div><dt>재지급(10월 26~27일)</dt><dd>10월 24일 밤 옛 지갑들의 WLBN이 한 주소로 옮겨져, 10월 26~27일에 지급 계정이 새 지갑들로 다시 지급했다. 이 재지급분은 「받은 양」에 들어 있어서, 전체 기간의 「받은 양 가운데 판 비율」은 그만큼 낮게 나온다. 지금의 풀 두 곳은 10월 27일에 열렸고, 이 화면은 10월 26일부터 센다.</dd></div>
-      <div><dt>판매 대금 · 다시 산 돈</dt><dd>밖의 지갑이 operations 계정으로 보낸 RLUSD다. 같은 금액이 되풀이되어 기기 · 이용권 값으로 보았다(추정). 회사 쪽에서 보면 「판매 대금」, 보낸 지갑 쪽에서 보면 「다시 산 돈」이다. WLBN을 파는 「판 양」과는 다른 것이다.</dd></div>
+      <div><dt>판매 대금 · 다시 산 돈</dt><dd>밖의 지갑이 operations 계정으로 보낸 RLUSD다. 같은 금액이 되풀이되어 기기 · AI 이용권 값으로 보았다(추정). 회사 쪽에서 보면 「판매 대금」, 보낸 지갑 쪽에서 보면 「다시 산 돈」이다. 「판매 대금」은 모든 지갑이 보낸 합이고 「다시 산 돈」은 그 구역이 세는 지갑(지갑별 표의 지갑 · 보상 받은 지갑)이 보낸 몫이라, 구역마다 값이 다르다. WLBN을 파는 「판 양」과는 다른 것이다.</dd></div>
       <div><dt>받은 양</dt><dd>지급 계정에서 지갑으로 들어온 WLBN. 기기 보상 말고도 지급 계정이 보낸 모든 WLBN이 들어 있다.</dd></div>
       <div><dt>판 양 · 산 양</dt><dd>지갑의 WLBN이 줄고 RLUSD나 XRP가 늘면 판 것, 반대면 산 것으로 센다. 「RLUSD로 · XRP로 판 양」은 받은 통화로 나눈 수량이다.</dd></div>
       <div><dt>풀</dt><dd>WLBN과 RLUSD, WLBN과 XRP를 맞바꾸는 두 곳. 누가 넣어 둔 양으로 거래가 이뤄진다.</dd></div>
-      <div><dt>풀에 넣어 둔 양</dt><dd>넣은 WLBN에서 뺀 WLBN을 뺀 값. 지금 풀에서 찾을 수 있는 양과는 다르다.</dd></div>
+      <div><dt>풀에 넣어 둔 양</dt><dd>넣은 WLBN에서 뺀 WLBN을 뺀 값. 지금 풀에서 찾을 수 있는 양과는 다르다. 10월 26일 전에 받거나 산 WLBN과 다른 지갑에서 옮겨 받은 WLBN도 넣을 수 있어, 이 기간에 받은 양보다 클 수 있다.</dd></div>
       <div><dt><span class="tag tag-w">Wellbian</span><span class="tag tag-k">KWeather</span>칩</dt><dd>wellbian.io가 이름을 붙여 공개한 계정에 단다. treasury · operations · staking · seed · match · bot은 Wellbian, kweather는 KWeather 계정이다.</dd></div>
       <div><dt>처음 보상받은 날</dt><dd>지급 계정이 그 지갑으로 WLBN을 처음 보낸 날(원장 전체 기록). 10월 24일에 지갑이 바뀐 경우 금액이 같으면 옛 지갑의 날짜로 잇는다(추정).</dd></div>
       <div><dt>XRP 값</dt><dd>두 풀의 가격으로 계산한 1 XRP의 RLUSD 값. 시장 시세와 조금 다를 수 있다.</dd></div>
       <div><dt>그 밖의 경로</dt><dd>두 풀을 거치지 않은 거래. 지갑끼리 호가로 맞바꾼 경우 등이다.</dd></div>
       <div><dt>가져간 돈 · 되돌린 돈</dt><dd>가져간 돈은 WLBN을 팔아 받은 돈(RLUSD 환산). 되돌린 돈은 WLBN을 사며 낸 돈 + operations 계정으로 보낸 RLUSD(다시 산 돈) + 다른 회사 계정(match · treasury 등)에 넣은 XRP · RLUSD를 더한 값. 회사 계정에 넣은 돈이 무슨 거래인지는 원장만으로 알 수 없다.</dd></div>
       <div><dt><span class="ichip vp">매우 긍정</span> <span class="ichip p">긍정</span> <span class="ichip n">보통</span> <span class="ichip ng">부정</span> <span class="ichip vn">매우 부정</span></dt><dd>지갑을 고른 기간의 움직임으로 나눈 생태계 기여 다섯 단계. 기준은 「기여 5단계」 구역 위에 적었다. 기간을 바꾸면 같은 지갑도 달리 나뉠 수 있다.</dd></div>
+      <div><dt>사이트가 공개한 값</dt><dd>보유 지갑 · 신뢰선 · 기기 수 같은 값은 사이트에서 받은 때의 값이다. 「네트워크」 구역은 화면을 만들 때, 「소셜 지수」 구역은 하루 한 번 받아서 두 구역의 값이 조금 다를 수 있다.</dd></div>
       <div><dt>판매 대금</dt><dd>밖의 지갑이 operations 계정으로 보낸 RLUSD. <b>카드 · 계좌로 결제한 것은 원장에 없어 빠진다</b> — 실제 판매보다 적게 잡힌다.</dd></div>
     </dl>
     <details>
@@ -1519,29 +1527,33 @@ html.rpt .to-top { display: none !important; } @media print { .to-top { display:
   </section>
 
 </main>
-<p class="ed-foot" data-ed-foot hidden></p>
+<footer class="ed-foot" data-ed-foot hidden aria-labelledby="ed-foot-h"><h2 id="ed-foot-h">면책</h2><ul data-ed-disc></ul><p data-ed-who></p></footer>
 <button type="button" class="to-top" data-totop aria-label="맨 위로" title="맨 위로"><i class="ic ic-top" aria-hidden="true"></i></button>
 <dialog class="ed-dlg" id="ed-dlg" aria-labelledby="ed-dlg-h"><div class="ed-in">
   <div class="tools between"><h2 id="ed-dlg-h">요금제</h2><button type="button" class="btn sm" data-ed-close>닫기</button></div>
+  <p class="ed-open" data-ed-openbox hidden></p>
   <div class="ed-early" data-ed-early hidden><b></b><span></span><details class="ed-policy"><summary>얼리버드 정책</summary><ul data-ed-policy></ul></details></div>
+  <p class="ed-paynote" data-ed-paynote hidden></p>
   <div class="ed-plans" data-ed-plans></div>
   <details class="ed-cmp" data-ed-cmpbox><summary>한눈에 비교</summary><div class="ed-ctw"><table class="ed-ct" data-ed-cmp aria-label="요금제 비교"><thead></thead><tbody></tbody></table></div></details>
   <p data-ed-free></p>
-  <p class="ed-paynote" data-ed-paynote hidden></p>
+  <details class="ed-policy ed-terms" data-ed-termsbox open><summary>결제 · 이용 안내</summary><ul data-ed-terms></ul></details>
   <section class="ed-pay" data-ep hidden aria-label="RLUSD 결제">
     <h3 data-ep-h></h3>
     <p class="ep-demo" data-ep-demo hidden>결제 데모입니다 — 실제로 보내지 마세요. 「데모 결제」를 누르면 보낸 것으로 치고 30분 동안 열립니다.</p>
     <dl class="ep-rows">
       <dt>보낼 금액</dt><dd><b data-ep-amt></b><button type="button" class="btn sm" data-ep-copy="amt">복사</button><small data-ep-krw></small></dd>
-      <dt>받는 주소</dt><dd><code data-ep-to></code><button type="button" class="btn sm" data-ep-copy="to">복사</button><small>XRP Ledger 주소입니다. RLUSD 를 보낼 수 있는 지갑에서 보냅니다.</small></dd>
-      <dt>태그</dt><dd><code data-ep-tag></code><button type="button" class="btn sm" data-ep-copy="tag">복사</button><small>Destination Tag — 꼭 넣어 주세요. 태그가 없거나 다르면 입금을 찾지 못합니다.</small></dd>
+      <dt>받는 주소</dt><dd><code data-ep-to></code><button type="button" class="btn sm" data-ep-copy="to">복사</button><small>XRP Ledger 주소입니다. RLUSD 를 보낼 수 있는 지갑이나 거래소에서 보냅니다.</small></dd>
+      <dt>태그</dt><dd><code data-ep-tag></code><button type="button" class="btn sm" data-ep-copy="tag">복사</button><small>Destination Tag — 꼭 넣어 주세요(거래소에서는 출금 화면의 태그 · 메모 칸). 태그가 없거나 다르면 입금을 찾지 못합니다.</small></dd>
     </dl>
     <p class="ep-st" data-ep-st role="status" aria-live="polite"></p>
     <div class="tools"><button type="button" class="btn" data-ep-check>지금 확인</button><button type="button" class="btn" data-ep-demopay hidden>데모 결제 — 보낸 것으로 치기</button><button type="button" class="btn sm" data-ep-cancel>주문 지우기</button></div>
   </section>
-  <div class="ed-key"><input type="text" data-ed-key autocomplete="off" spellcheck="false" placeholder="받은 이용권을 붙여 넣으세요" aria-label="이용권"><button type="button" class="btn" data-ed-apply>적용</button><button type="button" class="btn" data-ed-clear>지우기</button><a class="btn" data-ed-pay target="_blank" rel="noopener" hidden>구독하러 가기</a></div>
+  <p class="ed-keynote" data-ed-keylabel>이용권 — 결제하면 저절로 들어갑니다. 다른 기기에서 받은 이용권은 아래 칸에 붙여 넣고 「적용」을 누릅니다.</p>
+  <div class="ed-key" data-ed-keyrow><input type="text" data-ed-key autocomplete="off" spellcheck="false" placeholder="받은 이용권을 붙여 넣으세요" aria-label="이용권"><button type="button" class="btn" data-ed-apply>적용</button><button type="button" class="btn" data-ed-copykey hidden>이용권 복사</button><button type="button" class="btn" data-ed-clear>지우기</button><a class="btn" data-ed-pay target="_blank" rel="noopener" hidden>구독하러 가기</a></div>
+  <p class="ed-keynote" data-ed-keynote hidden>이용권은 이 브라우저에만 저장됩니다. 「이용권 복사」로 글을 간직해 두면 다른 기기에서도 붙여 넣어 쓸 수 있습니다.</p>
   <p data-ed-msg aria-live="polite"></p>
-  <p data-ed-rule>웰비안 · 케이웨더의 공식 서비스가 아닙니다. 공개 원장과 공개 사이트의 값만 정리해 보여 주며, 매매를 권하지 않고 가격을 전망하지 않습니다. 보상의 지급량과 가치는 보장되지 않습니다.</p>
+  <p data-ed-rule>웰비안 · 케이웨더의 공식 서비스가 아닙니다. 운영자는 WLBN 의 발행 · 판매 · 보상 지급의 당사자가 아닙니다. 웰비안이 공개한 자료와 공개 원장의 값만 정리해 보여 주며, 수익을 보장하거나 투자 · 매매를 권하지 않고 가격을 전망하지 않습니다. 보상의 지급량과 가치는 보장되지 않습니다. 구독료는 자료를 보는 값이며 투자금이 아닙니다.</p>
 </div></dialog>
 
 <script src="d3.min.js"></script>
@@ -1841,7 +1853,7 @@ html.rpt .to-top { display: none !important; } @media print { .to-top { display:
     var W7 = '최근 7일', WP = '고른 기간';
     if (h) {                                         // 오늘의 현황: 고리 · 운용 점검의 판정을 그대로
       if (h.index) add('idx', 'today', h.index.status, '선순환 지수', h.index.value + '점', h.overall.label, W7);
-      // 칩에는 고리 이름 대신 숫자가 무엇인지 적는다 — 「판매」는 기기 · 이용권 판매 대금(WLBN 매도가 아님), 「보유」의 숫자는 판 비율, 「매입 재원」의 숫자는 지출 ÷ 수입이라 이름만 보면 반대로 읽힌다
+      // 칩에는 고리 이름 대신 숫자가 무엇인지 적는다 — 「판매」는 기기 · AI 이용권 판매 대금(WLBN 매도가 아님), 「보유」의 숫자는 판 비율, 「매입 재원」의 숫자는 지출 ÷ 수입이라 이름만 보면 반대로 읽힌다
       var HN = { sale: '기기 판매 대금', pay: '보상 받는 지갑', hold: '판 비율 · 최근 7일', pool: '유동성 · 최근 7일', demand: '판 양 대비 산 양 · 최근 7일', payrun: '지급 여력', buyrun: '매입 여력', cover: '매입 지출 ÷ 판매 대금' };
       h.links.concat(h.reserves).forEach(function (l) { if (l.key === 'price') return; add('h_' + l.key, 'today', l.ref && l.status === 'bad' ? 'warn' : l.status, (HN[l.key] || l.name) + (l.ref ? '(참고)' : ''), l.value, l.short + (l.ref ? ' · 자료가 불완전해 지수에서 뺀 고리라 지켜봄까지만 올린다' : ''), W7); });
     }
@@ -1867,7 +1879,7 @@ html.rpt .to-top { display: none !important; } @media print { .to-top { display:
     }
     if (cn) {                                        // 지갑 분포
       if (ok(cn.sell_top5)) add('concSell', 'wallets', cn.sell_top5 >= 0.5 ? 'warn' : null, '판 쪽 쏠림(다섯 곳)', F.pct(cn.sell_top5), '절반 이상이면 소수 지갑이 판 양을 좌우한다', WP);
-      if (cn.rebuyers > 0) add('rebuy', 'wallets', 'ok', '기기 · 이용권을 다시 산 지갑', fInt(cn.rebuyers) + '곳', 'operations 계정으로 ' + fInt(cn.rebuy_rlusd) + ' RLUSD를 보냈다(기기 · 이용권 값으로 본다)', WP);
+      if (cn.rebuyers > 0) add('rebuy', 'wallets', 'ok', '기기 · AI 이용권을 다시 산 지갑', fInt(cn.rebuyers) + '곳', 'operations 계정으로 ' + fInt(cn.rebuy_rlusd) + ' RLUSD를 보냈다(기기 · AI 이용권 값으로 본다)', WP);
     }
     return L;
   }
@@ -2106,13 +2118,13 @@ html.rpt .to-top { display: none !important; } @media print { .to-top { display:
     var ngW = im.neg5 ? im.neg5.wallets : null;
     if (T.posW && ngW > 0 && im.pos5.wallets > ngW) s4.ins = '긍정 쪽 지갑이 부정 쪽의 ' + x1(im.pos5.wallets / ngW) + '배다(' + fInt(im.pos5.wallets) + '곳 대 ' + fInt(ngW) + '곳) — 가져가기보다 되돌리는 지갑이 많다.';
     else if (T.posW && ngW === 0) s4.ins = '부정 쪽으로 판정된 지갑이 없다.';
-    else if (T.back) s4.ins = '가져간 돈 1에 되돌린 돈이 ' + T.back.v + '다 — 기기 · 이용권 구매와 매수로 되돌아왔다.';
+    else if (T.back) s4.ins = '가져간 돈 1에 되돌린 돈이 ' + T.back.v + '다 — 기기 · AI 이용권 구매와 매수로 되돌아왔다.';
     else if (T.rebuy) s4.ins = '보상을 받은 뒤 기기 · 이용권을 다시 산 지갑이 ' + T.rebuy.v + '곳이다.';
     say(s4, '보유와 기여입니다.', T.back ? '지갑들이 가져간 돈은 ' + fInt(im.tot5.took_rlusd) + ' RLUSD 환산,' : '', T.back ? '되돌린 돈은 그 ' + T.back.v + '배인 ' + fInt(im.tot5.back_rlusd) + '입니다.' : '',
       T.posW ? '긍정 쪽으로 판정된 지갑은 ' + fInt(im.pos5.wallets) + '곳, 전체의 ' + F.pct(im.pos5.wallets / im.tot5.wallets) + '입니다.' : '',
       T.posW && ngW > 0 ? '부정 쪽은 ' + fInt(ngW) + '곳입니다.' + (s4.fig ? ' 다섯 단계 모두 그림에 있습니다.' : '') : '',
       T.hold ? '받은 양 가운데 ' + T.hold.v + '%는 팔지 않고 남아 있습니다.' : '',
-      T.rebuy ? '보상을 받은 뒤 기기나 이용권을 다시 산 지갑은 ' + T.rebuy.v + '곳입니다.' : '');
+      T.rebuy ? '보상을 받은 뒤 기기나 AI 이용권을 다시 산 지갑은 ' + T.rebuy.v + '곳입니다.' : '');
     if (s4.stats.length) out.push(s4);
     // 6. 긍정으로 판정된 지표 모두(전체 화면의 「긍정 요소」 줄과 같은 목록 · 기간만 전체 기간으로)
     var pos = Object.keys(G).map(function (key) { return G[key]; }).filter(function (x) { return x.t === 'ok'; });
@@ -3245,7 +3257,7 @@ html.rpt .to-top { display: none !important; } @media print { .to-top { display:
         s2.textContent = sub; a.appendChild(h3); a.appendChild(p); a.appendChild(s2); tiles.appendChild(a); toneCard(a, tone);
       };
       tile('지금 값 ÷ 평균 취득가', N.ratio === null ? '—' : F.pct(N.ratio), '', N.cost ? (N.ratio !== null ? '지금 값이 받은 때 값의 평균보다 ' + F.pct(Math.abs(1 - N.ratio)) + (N.ratio < 1 ? ' 낮다' : ' 높다') + ' · ' : '') + '평균 취득가 ' + F.f4(N.cost) + ' · 지금 ' + F.f4(N.price) + ' RLUSD' : '', 'd:cost');
-      tile('받은 때보다 높은 값에 있는 물량', N.above === null ? '—' : F.pct(N.above), '', '지금 팔면 받은 때보다 높은 값을 받는 물량의 몫 · 지갑에 든 ' + fInt(N.in_wallets) + '개 기준', 'd:above');
+      tile('받은 때보다 높은 값에 있는 물량', N.above === null ? '—' : F.pct(N.above), '', '지금 값이 받은 때 값보다 높은 물량의 몫 · 지갑에 든 ' + fInt(N.in_wallets) + '개 기준', 'd:above');
       tile('최근 7일 · 판 값 ÷ 받은 때 값', W.ratio === null ? '—' : W.ratio.toFixed(3), '배', '1보다 크면 받은 때보다 높은 값에 판 것 · ' + (W.age !== null ? '평균 ' + W.age + '일 들고 있다 팜' : '') + (W.prev_ratio !== null ? ' · 직전 7일 ' + W.prev_ratio.toFixed(3) + '배' : ''), 'd:sopr');
       tile('최근 7일 · 늘린 물량 비중', A.score === null ? '—' : A.score.toFixed(2), '', '늘린 양 ÷ (늘린 양 + 줄인 양) · 0.5보다 크면 늘린 쪽이 많다 · 늘린 지갑 ' + A.up + '곳 · 줄인 지갑 ' + A.down + '곳', 'd:acc', tOf('deepAcc'));
     }
@@ -3316,24 +3328,24 @@ html.rpt .to-top { display: none !important; } @media print { .to-top { display:
       st.replaceChildren(); var sa = $('[data-soc-at]'); if (sa) sa.textContent = md(S2.at) + ' 확인';
       var first = (S2.log || [])[0], chg = function (now, was) { return now === null || was === null || was === undefined || !first || first.date === S2.at ? '' : ' · ' + md(first.date) + '보다 ' + (now - was >= 0 ? '+' : '−') + fInt(Math.abs(now - was)); };
       buzzTile(st, '소셜 지수', S2.index === null ? '—' : String(S2.index), S2.index === null ? '' : '/ 100', S2.index === null ? '견줄 값이 아직 없다' : '갈래 ' + S2.used + '개 평균 · 50이면 평소와 같음');
-      if (S2.has_tg !== false) buzzTile(st, '채널 구독자', buzzNum(S2.subs), '명', (S2.channel ? '@' + S2.channel : '공지 채널') + (first ? chg(S2.subs, first.subs) : '') + ((S2.log || []).length < 2 ? ' · 변화는 오늘부터 쌓는다' : ''));
+      if (S2.has_tg !== false) buzzTile(st, '채널 구독자', buzzNum(S2.subs), '명', (S2.channel ? '@' + S2.channel : '공지 채널') + (first ? chg(S2.subs, first.subs) : '') + ((S2.log || []).length < 2 ? ' · 변화는 ' + md(first ? first.date : S2.at) + '부터 쌓는다' : ''));
       if (S2.has_tg !== false) buzzTile(st, '대화방 인원', buzzNum(S2.members), '명', (S2.group ? '@' + S2.group : '대화방') + (S2.online !== null ? ' · 확인할 때 접속 ' + fInt(S2.online) + '명' : ''));
       if (S2.has_tg !== false) buzzTile(st, '최근 30일 공지 글', fInt(S2.posts30), '건', '그 앞 60일 ' + fInt(S2.posts_prev60) + '건' + (S2.last_post ? ' · 마지막 글 ' + md(S2.last_post) : ''));
       table('#tb-social', [{ key: 'name', label: '갈래', text: 1 }, { key: 'win', label: '견준 기간', text: 1 }, { key: 'now', label: '최근', text: 1, num: 1 }, { key: 'base', label: '평소', text: 1, num: 1 }, { key: 'ratio', label: '평소 대비', text: 1, num: 1 }, { key: 'score', label: '점수(100점까지)', text: 1, num: 1 }],
         (S2.parts || []).map(function (p) { return { name: p.name, win: p.win || '', now: p.now === null ? null : buzzNum(p.now, p.now % 1 ? 1 : 0) + p.unit, base: p.base === null ? null : buzzNum(p.base, p.base % 1 ? 1 : 0) + p.unit, ratio: p.ratio === null ? '견줄 값 없음' : F.pct(p.ratio), score: p.ratio === null ? null : String(Math.round(Math.min(100, 50 * p.ratio))) }; }));
       var CM = S2.comm, cbox = $('[data-soc-comm]'), cst = $('#soc-comm-tiles'); if (cbox) cbox.hidden = !CM;
       if (CM && cst) {      // 웰비안즈(파트너 커뮤니티)가 첫 쪽에 공개한 합계 — 회원 이름 · 글 내용은 읽지 않는다
-        cst.replaceChildren(); var c0 = CM.first && CM.days > 1 ? CM.first : null, cdl = function (now, was) { return c0 && now !== null && was !== null && was !== undefined ? ' · ' + md(c0.date) + '보다 ' + (now - was >= 0 ? '+' : '−') + fInt(Math.abs(now - was)) : ''; }, cgrow = c0 ? '' : ' · 변화는 오늘부터 쌓는다';
+        cst.replaceChildren(); var c0 = CM.first && CM.days > 1 ? CM.first : null, cdl = function (now, was) { return c0 && now !== null && was !== null && was !== undefined ? ' · ' + md(c0.date) + '보다 ' + (now - was >= 0 ? '+' : '−') + fInt(Math.abs(now - was)) : ''; }, cgrow = c0 ? '' : ' · 변화는 ' + md((CM.first && CM.first.date) || CM.at) + '부터 쌓는다';
         buzzTile(cst, '24시간 새 글', buzzNum(CM.posts24), '건', '확인한 때부터 앞 24시간' + (CM.days ? ' · 쌓인 날 ' + fInt(CM.days) + '일' : ''));
         buzzTile(cst, '24시간 댓글', buzzNum(CM.comments24), '건', '글에 달린 댓글');
-        buzzTile(cst, '활동 회원', buzzNum(CM.members), '명', (CM.host || 'wellbians.io') + cdl(CM.members, c0 && c0.members) + cgrow);
-        buzzTile(cst, '운영 장소', buzzNum(CM.places), '곳', (CM.pub_open === null ? '공개된 설치 장소 수는 읽지 못했다' : '공개된 설치 장소 ' + fInt(CM.pub_open) + '곳' + (CM.pub_total === null ? '' : '(전체 ' + fInt(CM.pub_total) + '곳)')) + cdl(CM.places, c0 && c0.places));
+        buzzTile(cst, '활동 회원', buzzNum(CM.members), '명', (CM.host || 'wellbians.io') + ' 표기 그대로(세는 기준은 사이트에 없다)' + cdl(CM.members, c0 && c0.members) + cgrow);
+        buzzTile(cst, '운영 장소', buzzNum(CM.places), '곳', '커뮤니티에 등록돼 운영 중인 장소(기기 수와는 다른 값) · ' + (CM.pub_open === null ? '공개된 설치 장소 수는 읽지 못했다' : '공개된 설치 장소 ' + fInt(CM.pub_open) + '곳' + (CM.pub_total === null ? '' : '(전체 ' + fInt(CM.pub_total) + '곳)')) + cdl(CM.places, c0 && c0.places));
       }
       var SI = S2.site, sbox = $('[data-soc-site]'), sst = $('#soc-site-tiles'); if (sbox) sbox.hidden = !SI;
       if (SI && sst) {
-        sst.replaceChildren(); var f0 = SI.first && SI.days > 1 ? SI.first : null, dl = function (now, was) { return f0 && now !== null && was !== null && was !== undefined ? ' · ' + md(f0.date) + '보다 ' + (now - was >= 0 ? '+' : '−') + fInt(Math.abs(now - was)) : ''; }, grow = f0 ? '' : ' · 변화는 오늘부터 쌓는다';
+        sst.replaceChildren(); var f0 = SI.first && SI.days > 1 ? SI.first : null, dl = function (now, was) { return f0 && now !== null && was !== null && was !== undefined ? ' · ' + md(f0.date) + '보다 ' + (now - was >= 0 ? '+' : '−') + fInt(Math.abs(now - was)) : ''; }, grow = f0 ? '' : ' · 변화는 ' + md((SI.first && SI.first.date) || SI.at) + '부터 쌓는다';
         buzzTile(sst, '운영자', buzzNum(SI.operators), '곳', '기기를 등록한 지갑' + dl(SI.operators, f0 && f0.operators) + grow);
-        buzzTile(sst, '보상 받은 지갑', buzzNum(SI.earners), '곳', '보상 청구 ' + buzzNum(SI.claims) + '건' + dl(SI.earners, f0 && f0.earners));
+        buzzTile(sst, '보상 받은 지갑', buzzNum(SI.earners), '곳', '사이트 누계 · 보상 청구 ' + buzzNum(SI.claims) + '건' + dl(SI.earners, f0 && f0.earners));
         buzzTile(sst, 'WLBN 보유 지갑', buzzNum(SI.holders), '곳', '신뢰선 ' + buzzNum(SI.trustlines) + '곳' + dl(SI.holders, f0 && f0.holders));
         buzzTile(sst, '등록 기기', buzzNum(SI.devices_total), '대', '활성 ' + buzzNum(SI.devices_active) + '대' + dl(SI.devices_total, f0 && f0.devices_total));
         var nc = $('[data-soc-nodes-cap]'), ep = SI.epochs || []; if (nc) nc.textContent = '날짜별 보상 대상 기기 수' + (ep.length ? ' · ' + md(ep[0].date) + '~' + md(ep[ep.length - 1].date) + '(' + ep.length + '일 · 하루 한 번씩 쌓인다)' : '');
@@ -3529,8 +3541,9 @@ html.rpt .to-top { display: none !important; } @media print { .to-top { display:
     var lq = pr.filter(function (r) { return r.pool_liq !== null && r.pool_liq !== undefined; });
     if (pr.length > 1) items.push(pk('liqP') + '풀의 변화: ' + (lq.length > 1 && c.s.pool_liq ? '전체 풀 유동성은 ' + md(lq[0].date) + ' ' + fInt(lq[0].pool_liq) + '에서 지금 **' + fInt(c.s.pool_liq) + '** RLUSD 환산이 됐다. ' : '') + 'RLUSD 풀의 RLUSD는 ' + md(pr[0].date) + ' ' + fInt(pr[0].pool_r_rlusd) + '에서 지금 **' + fInt(c.s.pool_r_rlusd) + '**로, XRP 풀의 XRP는 ' + fInt(pr[0].pool_x_xrp) + '에서 **' + fInt(c.s.pool_x_xrp) + '**로 바뀌었다.');
     var lpw = lpParts(c.s);
-    if (lpw) items.push('풀의 몫: 지금 두 풀에 든 WLBN 가운데 Wellbian 계정 몫이 **' + F.pct(lpw.w) + '**' + (lpw.k > 0 ? ', KWeather 계정 몫이 ' + F.pct(lpw.k) : '') + ', 일반 사용자 지갑 몫이 **' + F.pct(c.s.lp_user_share) + '**다.');
+    if (lpw) items.push('풀의 몫: 지금 두 풀에 든 WLBN 가운데 Wellbian 계정 몫이 **' + F.pct(lpw.w) + '**' + (lpw.k > 0 ? ', KWeather 계정 몫이 ' + F.pct(lpw.k) : '') + ', 일반 사용자 지갑 몫이 **' + F.pct(c.s.lp_user_share) + '**다. 나머지는 사고팔기 지갑과 그 밖의 지갑 몫이다.');
     richList(ul, items);
+    var E4 = DATA.edition; if (E4 && E4.on && E4.locked.length && items.length) { var more = document.createElement('li'); more.className = 'more'; more.textContent = '잠긴 구역의 자료로 뽑는 항목은 그 구역이 열리는 요금제에서 여기에 더 나옵니다.'; ul.appendChild(more); }
     var bx = ul.closest('.blk'), h = ul.previousElementSibling; if (bx) bx.hidden = !items.length; else if (h) h.hidden = !items.length;
   }
 
@@ -3634,7 +3647,7 @@ html.rpt .to-top { display: none !important; } @media print { .to-top { display:
     L.push('- XRP 풀 ' + fInt(s.pool_x_wlbn) + ' WLBN + ' + fInt(s.pool_x_xrp) + ' XRP');
     var lpw = lpParts(s);
     if (lpw) L.push('- 풀 몫: Wellbian 계정 ' + F.pct(lpw.w) + (lpw.k > 0 ? ' / KWeather 계정 ' + F.pct(lpw.k) : '') + ' / 일반 지갑 ' + F.pct(s.lp_user_share));
-    if (DATA.edition) L.push('', '※ ' + DATA.edition.name + ' — 웰비안 · 케이웨더의 공식 서비스가 아닙니다. 매매 권유가 아니며, 보상의 지급량과 가치는 보장되지 않습니다.');      // 상품판: 복사한 글이 밖으로 나가도 고지가 따라간다
+    if (DATA.edition) L.push('', '※ ' + DATA.edition.name + ' — 웰비안 · 케이웨더의 공식 서비스가 아닙니다. 웰비안이 공개한 자료와 공개 원장을 기초로 정리한 자료이며, 수익 보장이나 투자 · 매매 권유가 아닙니다. 보상의 지급량과 가치는 보장되지 않습니다.');      // 상품판: 복사한 글이 밖으로 나가도 고지가 따라간다
     return L.join('\n');
   }
   // ── 보기 설정 · 보고서 (11/24 17차 — 서우 「글씨 크기 0%~30%까지 단계별 조정 · 다크모드 · 보고서 A4 형태로 프린트(PDF 저장)하거나 CSV 다운로드」)
@@ -3655,8 +3668,10 @@ html.rpt .to-top { display: none !important; } @media print { .to-top { display:
     $$('[data-wf-open]').forEach(function (b) { b.hidden = E.locked.indexOf('wtable') >= 0; });      // 지갑 찾기는 지갑별 표가 열린 요금제에서만
     var dr = $('#board-range'); if (dr) dr.hidden = E.locked.indexOf('daily') >= 0;      // 날짜 지정은 스탠더드부터(서버도 그 아래 요금제에는 범위를 계산해 주지 않는다)
     var planOf = {}; E.plans.forEach(function (p) { planOf[p.key] = p; });
-    var chip = $('[data-ed-plan]'), now = $('[data-ed-now]'); if (chip) chip.textContent = E.plan_name;
-    if (now) now.textContent = E.plan === 'free' ? (E.key_state === 'expired' ? '이용권의 기간이 끝났습니다 — 지금은 무료 화면입니다.' : E.key_state === 'bad' ? '이용권을 읽지 못했습니다 — 지금은 무료 화면입니다.' : '무료로 보는 오늘 요약입니다. 나머지 구역은 요금제에 따라 열립니다.') : E.demo_key && E.exp_at ? '데모 이용권입니다 · ' + epClock(E.exp_at) + '까지 열립니다.' : (E.exp ? E.exp + '까지 이용할 수 있습니다.' : '');
+    var prevw = !!(E.open && E.open.on), fromTxt = E.open && E.open.from ? (+E.open.from.slice(5, 7)) + '월 ' + (+E.open.from.slice(8, 10)) + '일' : '';      // 미리보기 = 정식 구독 시작 전(누구나 프로 기준)
+    var chip = $('[data-ed-plan]'), now = $('[data-ed-now]'); if (chip) chip.textContent = prevw ? E.plan_name + ' 미리보기' : E.plan_name;
+    if (now && prevw) now.textContent = 'WLBN(웰비안 기기의 보상 토큰)이 얼마나 지급되고 팔리고 남아 있는지를 공개 원장에서 읽어 정리합니다. 정식 구독을 시작하기 전이라 지금은 모든 구역을 프로 기준으로 열어 둡니다.' + (fromTxt ? ' ' + fromTxt + '부터는 요금제에 따라 열립니다.' : '');
+    else if (now) now.textContent = E.plan === 'free' ? (E.key_state === 'expired' ? '이용권의 기간이 끝났습니다 — 지금은 무료 화면입니다. 「요금제 · 이용권」에서 다시 결제할 수 있습니다.' : E.key_state === 'bad' ? '이용권을 읽지 못했습니다 — 지금은 무료 화면입니다. 「요금제 · 이용권」에서 받은 글을 다시 넣어 주세요.' + (E.contact ? ' 안 되면 문의: ' + E.contact : '') : 'WLBN(웰비안 기기의 보상 토큰)이 얼마나 지급되고 팔리고 남아 있는지를 공개 원장에서 읽어 정리합니다. 지금은 무료 요약이고, 나머지 구역은 요금제에 따라 열립니다.') : E.demo_key && E.exp_at ? '데모 이용권입니다 · ' + epClock(E.exp_at) + '까지 열립니다.' : (E.exp ? E.exp + '까지 이용할 수 있습니다.' : '');
     var edm = $('[data-ed-demo]'); if (edm) edm.hidden = !(E.pay && E.pay.demo); epMark();
     E.hidden.forEach(function (id) { var sx = document.getElementById(id); if (sx) sx.hidden = true; $$('.nav a[href="#' + id + '"]').forEach(function (a) { a.hidden = true; }); });
     Object.keys(E.sections).forEach(function (id) {
@@ -3668,27 +3683,64 @@ html.rpt .to-top { display: none !important; } @media print { .to-top { display:
       sec.hidden = false; sec.classList.add('lock');
       if (h2) { if (!nd) { nd = document.createElement('span'); nd.className = 'ed-need'; h2.appendChild(nd); } if (nd.textContent !== need.name + '부터') nd.textContent = need.name + '부터'; }      // 접어 둔 구역에서도 잠긴 것이 보인다
       if (!body) return;
-      if (!card) { card = document.createElement('div'); card.className = 'lock-card'; var b = document.createElement('b'), sp = document.createElement('span'), bt = document.createElement('button'); bt.type = 'button'; bt.className = 'btn'; bt.textContent = '요금제 보기'; bt.addEventListener('click', edOpen); card.appendChild(b); card.appendChild(sp); card.appendChild(bt); body.insertBefore(card, body.firstChild); }
-      card.querySelector('b').textContent = '이 구역은 ' + need.name + '부터 볼 수 있습니다'; card.querySelector('span').textContent = '월 $' + need.month + (E.early && E.early.on && need.off ? ' · 얼리버드(정가 $' + need.list_month + ')' : '') + ' · 연 $' + need.year;
+      if (!card) { card = document.createElement('div'); card.className = 'lock-card'; var tx = document.createElement('div'), b = document.createElement('b'), wh = document.createElement('span'), sp = document.createElement('span'), bt = document.createElement('button'); tx.className = 'lock-t'; wh.className = 'lock-what'; sp.className = 'lock-pr'; bt.type = 'button'; bt.className = 'btn'; bt.textContent = '요금제 보기'; bt.addEventListener('click', edOpen); tx.appendChild(b); tx.appendChild(wh); tx.appendChild(sp); card.appendChild(tx); card.appendChild(bt); body.insertBefore(card, body.firstChild); }
+      var what = (E.tease && E.tease[id]) || '', whEl = card.querySelector('.lock-what'); if (whEl) { whEl.textContent = what; whEl.hidden = !what; }      // 이 구역에 무엇이 들었나(서버가 실어 보낸 한 줄)
+      card.querySelector('b').textContent = '이 구역은 ' + need.name + '부터 볼 수 있습니다'; card.querySelector('.lock-pr').textContent = '월 $' + need.month + (E.early && E.early.on && need.off ? ' · 얼리버드(정가 $' + need.list_month + ')' : '') + ' · 연 $' + need.year;
     });
-    if (foot) foot.textContent = E.name + (E.operator ? ' · 운영 ' + E.operator : '') + ' · 웰비안 · 케이웨더의 공식 서비스가 아닙니다.' + (E.origin ? ' ' + E.origin : '') + ' 공개 원장과 공개 사이트의 값만 정리해 보여 주며, 매매를 권하거나 가격을 전망하지 않습니다. 보상의 지급량과 가치는 보장되지 않습니다.';
+    // 면책(42차 — 「하단에 면책 넣자. 회사에서 공개된 자료를 기초로 한 자료이며 당사자가 아니며 수익을 보장하거나 투자 권유를 하는 게 아닌…」). 상품판에서만 나온다
+    var disc = $('[data-ed-disc]'), who = $('[data-ed-who]');
+    if (disc && disc.getAttribute('data-for') !== E.name + '|' + (E.origin || '')) {
+      disc.setAttribute('data-for', E.name + '|' + (E.origin || '')); disc.replaceChildren();
+      ['이 서비스(' + E.name + ')는 웰비안 · 케이웨더의 공식 서비스가 아닙니다. 운영자는 WLBN 의 발행 · 판매 · 보상 지급의 당사자가 아닙니다.' + (E.origin ? ' ' + E.origin : ''),
+        '웰비안이 공개한 자료(wellbian.io · wellbians.io 의 공개 화면과 공개 값)와 XRP Ledger 공개 원장, 공개된 뉴스 · 텔레그램 채널을 기초로 정리한 자료입니다. 공개되지 않은 정보는 쓰지 않습니다.',
+        '수익이나 보상을 보장하지 않으며, 투자를 권유하지 않습니다. 매매를 권하거나 가격을 전망하지 않습니다. 보상의 지급량과 가치는 보장되지 않습니다.',
+        '값은 원장 기록을 모아 셈한 것이라 틀리거나 늦을 수 있습니다. 지갑의 주인은 알 수 없고, 지갑 묶음(일반 사용자 · bot · 회사 표시 계정)은 원장에 드러난 움직임으로 가른 것입니다. 정확성과 완전성을 보증하지 않습니다.',
+        '투자 · 세무 · 법률 자문이 아닙니다. 이 화면을 보고 내린 판단과 그 결과의 책임은 이용자 본인에게 있습니다.'].forEach(function (t) { var li = document.createElement('li'); li.textContent = t; disc.appendChild(li); });
+    }
+    if (who) { var wt = E.name + (E.operator ? ' · 운영 ' + E.operator : '') + (E.contact ? ' · 문의 ' + E.contact : ''); if (who.textContent !== wt) who.textContent = wt; }
+    edOrder(E);
+  }
+  // 같은 장 안에서 열린 구역을 먼저, 잠긴 구역을 뒤로 둔다(원래 순서는 그대로) — 무료 화면의 첫 장이 잠금 카드로만 차지 않게. 요금제가 바뀌면 다시 맞춘다
+  var ED_ORD = null;
+  function edOrder(E) {
+    var main = $('main.page'); if (!main) return;
+    if (!ED_ORD) { ED_ORD = {}; $$('main.page > .sec').forEach(function (s, i) { ED_ORD[s.id] = i; }); $$('.nav-g').forEach(function (g) { $$('a[href^="#"]', g).forEach(function (a, i) { a.__i = i; }); var c = $('.nav-c', g); if (c) c.__go = c.getAttribute('data-go'); }); }
+    var lk = function (id) { return E.locked.indexOf(id) >= 0 ? 1 : 0; }, kids = Array.prototype.slice.call(main.children), run = [];
+    var flush = function () {
+      if (run.length > 1) { var want = run.slice().sort(function (a, b) { return (lk(a.id) - lk(b.id)) || (ED_ORD[a.id] - ED_ORD[b.id]); }); if (want.some(function (x, i) { return x !== run[i]; })) { var after = run[run.length - 1].nextSibling; want.forEach(function (x) { main.insertBefore(x, after); }); } }
+      run = [];
+    };
+    kids.forEach(function (k) { if (k.classList && k.classList.contains('sec')) run.push(k); else flush(); }); flush();
+    $$('.nav-g').forEach(function (g) {
+      var as = $$('a[href^="#"]', g), want = as.slice().sort(function (a, b) { return (lk(a.getAttribute('href').slice(1)) - lk(b.getAttribute('href').slice(1))) || (a.__i - b.__i); });
+      if (want.some(function (x, i) { return x !== as[i]; })) want.forEach(function (x) { g.appendChild(x); });
+      var c = $('.nav-c', g), first = want.filter(function (a) { return !a.hidden; })[0]; if (c && first) { var go = first.__i === 0 || lk(first.getAttribute('href').slice(1)) ? c.__go : first.getAttribute('href'); if (c.getAttribute('data-go') !== go) c.setAttribute('data-go', go); }      // 순서가 바뀐 장의 단추는 그 장의 첫 열린 구역으로(바뀌지 않았으면 원래 가던 곳 그대로)
+    });
+  }
+  function edContact(E) {      // 문의처: 메일이면 메일 링크, https 주소면 새 창 링크, 그 밖에는 글 그대로
+    var c = E.contact || '', a; if (!c) return null;
+    if (/^https:\/\/\S+$/.test(c)) { a = document.createElement('a'); a.href = c; a.target = '_blank'; a.rel = 'noopener noreferrer'; a.textContent = c; return a; }
+    if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(c)) { a = document.createElement('a'); a.href = 'mailto:' + c; a.textContent = c; return a; }
+    return document.createTextNode(c);
   }
   function edOpen() {
     var E = DATA && DATA.edition, dlg = $('#ed-dlg'); if (!E || !dlg) return;
     var box = $('[data-ed-plans]');
     box.replaceChildren();
     var rank = {}; E.plans.forEach(function (p, i) { rank[p.key] = i; });
+    var prevw = !!(E.open && E.open.on), ob = $('[data-ed-openbox]');
+    if (ob) { ob.hidden = !prevw; if (prevw) ob.textContent = '정식 구독을 시작하기 전입니다. 지금은 모든 구역을 프로 기준으로 볼 수 있고, 결제는 아직 받지 않습니다.' + (E.open.from ? ' ' + (+E.open.from.slice(5, 7)) + '월 ' + (+E.open.from.slice(8, 10)) + '일부터 아래 요금제대로 열립니다.' : ' 시작하는 날은 정해지면 이 자리에 알립니다.'); }
     var feats = E.features || [], total = feats.length, early = !!(E.early && E.early.on), usd = function (v) { return '$' + v; };
     var el = function (tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text !== undefined) e.textContent = text; return e; };
     E.plans.filter(function (p) { return p.key !== 'free'; }).forEach(function (p) {
-      var a = el('article', 'ed-plan' + (p.key === E.plan ? ' now' : '') + (p.key === 'pro' ? ' top' : '')), prev = E.plans[rank[p.key] - 1], cut = early && p.off > 0;
+      var a = el('article', 'ed-plan' + (p.key === E.plan && !prevw ? ' now' : '') + (p.key === 'pro' ? ' top' : '')), prev = E.plans[rank[p.key] - 1], cut = early && p.off > 0;
       a.setAttribute('data-plan', p.key);
       var hd = el('div', 'ed-ph'); hd.appendChild(icoEl('p_' + p.key)); hd.appendChild(el('h3', '', p.name));
-      if (p.key === E.plan) hd.appendChild(el('span', 'ed-tag now', '지금 이용 중')); else if (p.key === 'pro') hd.appendChild(el('span', 'ed-tag', '전 구역'));
+      if (p.key === E.plan && !prevw) hd.appendChild(el('span', 'ed-tag now', '지금 이용 중')); else if (p.key === 'pro') hd.appendChild(el('span', 'ed-tag', '전 구역'));
       a.appendChild(hd);
       var pr = el('p', 'pr'); if (cut) pr.appendChild(el('s', '', usd(p.list_month))); pr.appendChild(el('b', '', usd(p.month))); pr.appendChild(el('small', '', '/ 월')); if (cut) pr.appendChild(el('span', 'off', '−' + p.off + '%')); a.appendChild(pr);
       var yr = el('p', 'yr', '연 ' + usd(p.year)); if (cut) { yr.appendChild(document.createTextNode(' ')); yr.appendChild(el('s', '', usd(p.list_year))); } yr.appendChild(document.createTextNode(' · 2개월 무료')); a.appendChild(yr);
-      a.appendChild(el('p', 'who', p.who));
+      a.appendChild(el('p', 'who', p.who)); if (p.ask) a.appendChild(el('p', 'ask', p.ask));
       var meter = el('div', 'ed-meter'), bar = el('i'); bar.style.width = (total ? Math.round(p.items / total * 100) : 0) + '%'; meter.appendChild(bar); meter.setAttribute('role', 'img'); meter.setAttribute('aria-label', '항목 ' + total + '개 가운데 ' + p.items + '개'); a.appendChild(meter);
       var cnt = el('p', 'cnt'); cnt.appendChild(el('b', '', String(p.items))); cnt.appendChild(document.createTextNode(' / ' + total + ' 항목')); a.appendChild(cnt);
       var ul = el('ul', 'ed-feat'); ul.appendChild(el('li', 'inh', prev.name + '의 모든 것')); feats.filter(function (f) { return f.from === p.key; }).forEach(function (f) { ul.appendChild(el('li', '', f.n)); }); a.appendChild(ul);
@@ -3701,16 +3753,16 @@ html.rpt .to-top { display: none !important; } @media print { .to-top { display:
       eb.hidden = !early;
       if (early) {
         var ud = E.early.until, when = (+ud.slice(5, 7)) + '월 ' + (+ud.slice(8, 10)) + '일', paid = E.plans.filter(function (p) { return p.key !== 'free'; });
-        eb.querySelector('b').textContent = '얼리버드 · 최대 ' + d3.max(paid, function (p) { return p.off; }) + '% 할인'; eb.querySelector('span').textContent = when + '까지 만든 주문에 적용 · 그 뒤에는 정가';
+        eb.querySelector('b').textContent = '얼리버드 · 최대 ' + d3.max(paid, function (p) { return p.off; }) + '% 할인'; eb.querySelector('span').textContent = (prevw ? '정식 구독을 시작하면 ' : '') + when + '까지 만든 주문에 적용 · 그 뒤에는 정가';
         var pol = $('[data-ed-policy]'); pol.replaceChildren();
-        [ud.slice(0, 4) + '년 ' + when + '(한국 시간)까지 만든 주문에 얼리버드 값을 적용합니다.', '주문은 만든 뒤 24시간 안에 보낸 입금만 인정합니다.', '얼리버드로 결제한 기간(1개월 · 1년)은 그 값 그대로 끝까지 씁니다.',
-          '얼리버드가 끝나면 정가입니다 — 월 ' + paid.map(function (p) { return p.name + ' ' + usd(p.list_month); }).join(' · ') + '. 다시 결제할 때는 그때의 값을 냅니다.', '자동으로 다시 결제되지 않습니다. 기간이 끝나면 무료 화면으로 돌아갑니다.'].forEach(function (t) { pol.appendChild(el('li', '', t)); });
+        [ud.slice(0, 4) + '년 ' + when + '(한국 시간)까지 만든 주문에 얼리버드 값을 적용합니다.', '얼리버드로 결제한 기간(1개월 · 1년)은 그 값 그대로 끝까지 씁니다.',
+          '얼리버드가 끝나면 정가입니다 — 월 ' + paid.map(function (p) { return p.name + ' ' + usd(p.list_month); }).join(' · ') + '. 다시 결제할 때는 그때의 값을 냅니다.'].forEach(function (t) { pol.appendChild(el('li', '', t)); });
       }
     }
     // 한눈에 비교: 항목 × 요금제(넓은 화면에서는 펴 둔다)
     var ct = $('[data-ed-cmp]'), cb = $('[data-ed-cmpbox]');
     if (ct) {
-      var th = ct.tHead, tb = ct.tBodies[0], hr, lastG = null, colCls = function (p) { return (p.key === 'pro' ? 'top' : '') + (p.key === E.plan ? ' now' : ''); }; th.replaceChildren(); tb.replaceChildren(); hr = th.insertRow();
+      var th = ct.tHead, tb = ct.tBodies[0], hr, lastG = null, colCls = function (p) { return (p.key === 'pro' ? 'top' : '') + (p.key === E.plan && !prevw ? ' now' : ''); }; th.replaceChildren(); tb.replaceChildren(); hr = th.insertRow();
       hr.appendChild(el('th', '', '항목')); E.plans.forEach(function (p) { var h = el('th', colCls(p), p.name); h.scope = 'col'; h.appendChild(el('small', '', p.key === 'free' ? '$0' : usd(p.month))); hr.appendChild(h); });
       feats.forEach(function (f) {
         if (f.g !== lastG) { lastG = f.g; var gr = tb.insertRow(), gh = el('th', '', f.g); gr.className = 'grp'; gh.colSpan = E.plans.length + 1; gh.scope = 'colgroup'; gr.appendChild(gh); }
@@ -3720,7 +3772,20 @@ html.rpt .to-top { display: none !important; } @media print { .to-top { display:
       var tot = tb.insertRow(); tot.className = 'tot'; tot.appendChild(el('td', '', '열리는 항목')); E.plans.forEach(function (p) { tot.appendChild(el('td', colCls(p), p.items + ' / ' + total)); });
       if (cb && !cb.__set) { cb.__set = 1; cb.open = window.innerWidth >= 720; }
     }
-    var pn = $('[data-ed-paynote]'); if (pn) { pn.hidden = !(E.pay && E.pay.on); if (E.pay && E.pay.on) pn.textContent = 'RLUSD(XRP Ledger)로 결제합니다 · 1 RLUSD 를 1달러로 칩니다 · 보내면 원장에서 확인해 바로 엽니다.' + (E.pay.demo ? ' 지금은 결제 데모입니다.' : ''); }
+    // 결제 · 이용 안내: 얼리버드와 상관없이 늘 보인다(기간 셈 · 이어 붙지 않음 · 자동 결제 없음 · 이용권 간직 · 환불 · 문의)
+    var tb = $('[data-ed-terms]');
+    if (tb) {
+      tb.replaceChildren(); var payOn = !!(E.pay && E.pay.on), dd = (E.pay && E.pay.days) || { month: 31, year: 366 };
+      if (payOn) tb.appendChild(el('li', '', '주문을 만든 뒤 ' + (E.pay.window_hours || 24) + '시간 안에 보낸 입금만 인정합니다. 금액이 모자라거나 태그가 다르면 입금을 찾지 못합니다. 보냈는데 열리지 않으면 거래 해시를 ' + (E.contact ? '문의처로' : '운영자에게') + ' 보내 주세요.'));
+      tb.appendChild(el('li', '', '기간(1개월 = ' + dd.month + '일 · 1년 = ' + dd.year + '일)은 ' + (payOn ? '입금한 때' : '이용권을 받은 때') + '부터 셉니다. 남은 기간에 이어 붙지 않으니, 이어서 쓰려면 기간이 끝난 뒤에 결제하세요. 요금제를 올릴 때도 새로 결제한 때부터 새 기간이고 차액 정산은 없습니다.'));
+      tb.appendChild(el('li', '', '자동으로 다시 결제되지 않습니다. 기간이 끝나면 무료 화면으로 돌아갑니다.'));
+      tb.appendChild(el('li', '', '이용권은 이 브라우저에만 저장됩니다. 「이용권 복사」로 글을 간직해 두면 다른 기기에서도 붙여 넣어 쓸 수 있고, 브라우저 기록을 지우면 이용권도 지워집니다.'));
+      if (E.refund) tb.appendChild(el('li', '', '환불: ' + E.refund));
+      var cn = edContact(E); if (cn) { var cl2 = el('li', '', '문의: '); cl2.appendChild(cn); tb.appendChild(cl2); }
+    }
+    var ckb = $('[data-ed-copykey]'), kn = $('[data-ed-keynote]'), hasKey = !!edKey() && E.key_state === 'ok'; if (ckb) ckb.hidden = !hasKey; if (kn) kn.hidden = !hasKey;
+    ['[data-ed-keyrow]', '[data-ed-keylabel]', '[data-ed-termsbox]'].forEach(function (q) { var x = $(q); if (x) x.hidden = prevw; });      // 미리보기: 결제 · 이용권 칸은 아직 쓰지 않는다(요금제와 값만 보인다)
+    var pn = $('[data-ed-paynote]'); if (pn) { pn.hidden = !(E.pay && E.pay.on); if (E.pay && E.pay.on) pn.textContent = 'RLUSD(XRP Ledger)로 결제합니다 · 카드 결제는 없습니다 · 1 RLUSD 를 1달러로 칩니다 · 보내면 원장에서 확인해 바로 엽니다.' + (E.pay.demo ? ' 지금은 결제 데모입니다.' : ''); }
     var fr = $('[data-ed-free]'); if (fr) fr.textContent = '무료로 보는 것: ' + feats.filter(function (f) { return f.from === 'free'; }).map(function (f) { return f.n; }).join(' · ') + ' · 읽는 법. 위 요금제는 아래 요금제의 항목을 모두 포함합니다.';
     var pay = $('[data-ed-pay]'), payOk = /^https:\/\//.test(E.pay_url || ''); if (pay) { pay.hidden = !payOk; if (payOk) pay.href = E.pay_url; }      // 결제 주소는 https 주소만 건다
     var inp = $('[data-ed-key]'); if (inp) inp.value = edKey(); edMsg(''); epResume();
@@ -3741,11 +3806,11 @@ html.rpt .to-top { display: none !important; } @media print { .to-top { display:
   function epSay(t) { var m = $('[data-ep-st]'); if (m) m.textContent = t; }
   function epStamp(sec) { var d = new Date(sec * 1000); return (d.getMonth() + 1) + '월 ' + d.getDate() + '일 ' + epClock(sec); }
   function epClock(sec) { var d = new Date(sec * 1000); return ('0' + d.getHours()).slice(-2) + ':' + ('0' + d.getMinutes()).slice(-2); }
-  function epMark() { var p = !!epGet(); $$('[data-ed-open]').forEach(function (b) { var t = p ? '결제 확인 이어서 하기' : '요금제 · 이용권'; if (b.textContent !== t) b.textContent = t; }); }
+  function epMark() { var p = !!epGet(); $$('[data-ed-open]').forEach(function (b) { var Eo = DATA && DATA.edition, t = Eo && Eo.open && Eo.open.on ? '요금제 보기' : p ? '결제 확인 이어서 하기' : '요금제 · 이용권'; if (b.textContent !== t) b.textContent = t; }); }
   function epDraw() {
     var box = $('[data-ep]'), o = EP.o; epMark(); if (!box) return; box.hidden = !o; if (!o) return;
     $('[data-ep-h]').textContent = o.plan_name + ' · ' + o.term_name + ' — RLUSD로 결제';
-    $('[data-ep-amt]').textContent = o.amount + ' RLUSD'; $('[data-ep-krw]').textContent = (o.early ? '얼리버드 값(정가 ' + o.list + ' RLUSD) · ' : '') + '1 RLUSD 를 1달러로 칩니다 · 이 금액보다 적으면 입금을 찾지 못합니다.' + (o.pay_by ? ' 주문은 ' + epStamp(o.pay_by) + '까지 보낸 입금만 인정합니다.' : '');
+    $('[data-ep-amt]').textContent = o.amount + ' RLUSD'; $('[data-ep-krw]').textContent = (o.early ? '얼리버드 값(정가 ' + o.list + ' RLUSD) · ' : '') + '1 RLUSD 를 1달러로 칩니다 · 도착한 금액이 이보다 적으면 입금을 찾지 못합니다(거래소 출금 수수료를 뺀 뒤 도착하는 금액 기준).' + (o.pay_by ? ' 주문은 ' + epStamp(o.pay_by) + '까지 보낸 입금만 인정합니다.' : '');
     $('[data-ep-to]').textContent = o.to || '데모 — 받는 주소 없음'; $('[data-ep-tag]').textContent = String(o.tag);
     var dm = $('[data-ep-demo]'), db = $('[data-ep-demopay]'), ck = $('[data-ep-check]'), ct = $('[data-ep-copy="to"]');
     if (dm) dm.hidden = !o.demo; if (db) db.hidden = !o.demo; if (ck) ck.hidden = !o.live; if (ct) ct.hidden = !o.to;
@@ -3792,9 +3857,10 @@ html.rpt .to-top { display: none !important; } @media print { .to-top { display:
     if (ap) ap.addEventListener('click', function () { edSet(String(inp.value || '').trim()); });
     if (inp) inp.addEventListener('keydown', function (ev) { if (ev.key === 'Enter') { ev.preventDefault(); edSet(String(inp.value || '').trim()); } });
     if (cr) cr.addEventListener('click', function () { if (inp) inp.value = ''; edSet(''); });
+    var ck = $('[data-ed-copykey]'); if (ck) ck.addEventListener('click', function () { var k = edKey(); if (!k) return; var ok = function () { edMsg('이용권을 복사했습니다. 안전한 곳에 붙여 두세요.'); }, no = function () { if (inp) { inp.focus(); inp.select(); } edMsg('복사하지 못했습니다. 칸의 글을 골라 직접 복사해 주세요.'); }; try { navigator.clipboard.writeText(k).then(ok, no); } catch (e) { no(); } });
     var ek = $('[data-ep-check]'), ed = $('[data-ep-demopay]'), ec = $('[data-ep-cancel]');
     if (ek) ek.addEventListener('click', function () { epCheck(true); }); if (ed) ed.addEventListener('click', epDemo);
-    if (ec) ec.addEventListener('click', function () { var live = EP.o && EP.o.live; epDrop(); edMsg(live ? '주문을 지웠습니다. 이미 보냈다면 운영자에게 거래 해시를 알려 주세요.' : '주문을 지웠습니다.'); });
+    if (ec) ec.addEventListener('click', function () { var live = EP.o && EP.o.live; epDrop(); var E2 = DATA && DATA.edition; edMsg(live ? '주문을 지웠습니다. 이미 보냈다면 운영자에게 거래 해시를 알려 주세요.' + (E2 && E2.contact ? ' 문의: ' + E2.contact : '') : '주문을 지웠습니다.'); });
     $$('[data-ep-copy]').forEach(function (b) { b.addEventListener('click', function () { epCopy(b); }); });
   }
   // ── 모아보기 카드 순서 바꾸기(35차 — 서우 「해당 영역은 위지윅으로 순서 조정해서 볼 수 있게」): 손잡이를 끌면 그 자리에서 바로 카드가 옮겨지고, 순서는 이 기기에 기억한다
@@ -3871,7 +3937,7 @@ html.rpt .to-top { display: none !important; } @media print { .to-top { display:
     if (hd) {
       var mk = function (cls, text) { var p = document.createElement('p'); p.className = cls; p.textContent = text; return p; };
       hd.replaceChildren(mk('rpt-t', (DATA.edition ? DATA.edition.name : 'WLBN 운용현황') + ' 보고서'), mk('rpt-m', '기준 ' + c.s.as_of + ' · 기간 ' + PERIOD[RANGE] + '(' + md(c.r.from) + '~' + md(c.r.to) + ') · 출력 ' + nowStamp() + (all ? ' · 전체 구역' : ' · 펴 둔 구역')),
-        mk('rpt-n', '내부 현황용 — 대외 인용 금지. 원장에 보이는 움직임으로 계산한 값이며 지급량 · 가치를 보장하지 않는다.'));
+        mk('rpt-n', DATA.edition ? '웰비안 · 케이웨더의 공식 서비스가 아닙니다. 웰비안이 공개한 자료와 공개 원장을 기초로 정리한 자료이며, 수익 보장이나 투자 · 매매 권유가 아닙니다. 보상의 지급량과 가치는 보장되지 않습니다.' : '내부 현황용 — 대외 인용 금지. 원장에 보이는 움직임으로 계산한 값이며 지급량 · 가치를 보장하지 않는다.'));
     }
     render();
     $$('main.page table').forEach(function (t) {
@@ -3894,7 +3960,8 @@ html.rpt .to-top { display: none !important; } @media print { .to-top { display:
     var add = function (sec, item, sub, val, note) { R.push([sec, item, sub || '', (val === null || val === undefined) ? '' : val, note || '']); };
     var txt = function (el) { return el ? el.textContent.replace(/\s+/g, ' ').trim() : ''; };
     add('보고서', '기준 시각', '', s.as_of, '한국 시간'); add('보고서', '기간', PERIOD[RANGE], c.r.from + '~' + c.r.to, c.r.days + '일'); add('보고서', '원장 번호', '', DATA.ledger || '', '');
-    SIGS.forEach(function (x) { add('긍정 · 부정 한눈에', x.name, TN[x.t], x.val, (x.note ? x.note + ' · ' : '') + (x.win ? x.win + ' · ' : '') + x.why); });
+    var lkd = function (id) { var E3 = DATA.edition; return !!(E3 && E3.on && E3.locked.indexOf(id) >= 0); };      // 상품판: 잠긴 구역의 줄은 담지 않는다
+    if (!lkd('board')) SIGS.forEach(function (x) { add('긍정 · 부정 한눈에', x.name, TN[x.t], x.val, (x.note ? x.note + ' · ' : '') + (x.win ? x.win + ' · ' : '') + x.why); });
     $$('#board .bc').forEach(function (card) { if (card.hidden) return; var tv = $('.bc-h .tn .vh', card), tg = tv ? '[' + txt(tv).replace(/ —$/, '') + '] ' : ''; add('지표 모아보기', txt($('.bc-h a', card)).replace(/^(긍정|지켜봄|부정) — /, ''), txt($('.bc-h i', card)), txt($('.bc-v', card)), tg + txt($('.bc-s', card))); });
     if (h) {
       var ix = h.index; if (ix) { add('오늘의 현황', '선순환 지수', '', ix.value, '100점 만점 · ' + h.overall.label); add('오늘의 현황', '계산', '', ix.calc, h.overall.counts); }
@@ -3908,12 +3975,12 @@ html.rpt .to-top { display: none !important; } @media print { .to-top { display:
     add('시장 전체', '산 양', '', k.buy_total, 'WLBN'); add('시장 전체', '판 양', '', k.sell_total, 'WLBN'); add('시장 전체', 'Wellbian bot 계정이 산 양', k.bot_buy_share === null ? '' : F.pct(k.bot_buy_share), k.bot_bought, 'WLBN'); add('시장 전체', 'bot 계정이 낸 돈', 'RLUSD', k.bot_paid_rlusd, 'RLUSD'); add('시장 전체', 'bot 계정이 낸 돈', 'XRP', k.bot_paid_xrp, 'XRP');
     if (k.buy_ex_bot_ratio !== null && k.buy_ex_bot_ratio !== undefined) { add('시장 전체', 'bot을 뺀 산 양', F.pct(k.buy_ex_bot_ratio), k.buy_ex_bot, 'WLBN'); add('시장 전체', 'bot이 산 날', k.range_days + '일 가운데', k.bot_buy_days, '일'); }
     (DATA.weekly || []).forEach(function (w) { add('주별 받은 양 대비 순매도', md(w.from) + '~' + md(w.to) + (w.partial ? ' (진행 중)' : ''), '받은 양 ' + w.paid + ' · 순매도 ' + w.net_sold, w.ratio === null ? '' : F.pct(w.ratio), ''); });
-    if (s.user_pool_hold_share) { add('일반 사용자 지갑', '가진 양 가운데 풀에 넣어 둔 몫', '전체 기간 누계', F.pct(s.user_pool_hold_share), ''); add('일반 사용자 지갑', '풀에 넣은 지갑', s.lp_top5_share ? '많이 넣은 다섯 곳 ' + F.pct(s.lp_top5_share) : '', s.lp_wallets, '곳'); }
+    if (s.user_pool_hold_share && !lkd('pool')) { add('일반 사용자 지갑', '가진 양 가운데 풀에 넣어 둔 몫', '전체 기간 누계', F.pct(s.user_pool_hold_share), ''); add('일반 사용자 지갑', '풀에 넣은 지갑', s.lp_top5_share ? '많이 넣은 다섯 곳 ' + F.pct(s.lp_top5_share) : '', s.lp_wallets, '곳'); }
     if (s.trust_hold_share) { add('네트워크', '신뢰선 가운데 보유', '신뢰선 ' + s.trustlines + ' · 보유 ' + s.holders, F.pct(s.trust_hold_share), ''); add('네트워크', '원장 기록으로 본 지갑', '1개 이상 ' + s.rec_hold + ' · 1개 미만 ' + s.rec_dust + ' · 0개 ' + s.rec_zero, s.rec_wallets, '곳'); }
     if (DATA.unlock) DATA.unlock.groups.forEach(function (g) { add('잠금 해제 달력', g.name, g.how + (g.first ? ' · ' + g.first + ' ~ ' + g.last + (g.step ? ' · ' + g.step : '') : '') + ' · ' + g.n + '건', g.total, 'WLBN'); });
     add('풀 · 가격', '가격', '', s.price_rlusd === null ? '' : F.f4(s.price_rlusd), 'RLUSD');
-    if (s.pool_liq) { add('풀 · 가격', '전체 풀 유동성', '두 풀 · 양쪽', s.pool_liq, 'RLUSD 환산'); add('풀 · 가격', '전체 풀 유동성', 'WLBN/RLUSD 풀', s.pool_liq_r, 'RLUSD 환산'); add('풀 · 가격', '전체 풀 유동성', 'WLBN/XRP 풀', s.pool_liq_x, 'RLUSD 환산'); add('풀 · 가격', '전체 풀 유동성', '이 가운데 RLUSD · XRP 쪽', s.pool_side_rlusd, 'RLUSD 환산'); }
-    add('풀 · 가격', 'RLUSD 풀', 'WLBN', s.pool_r_wlbn, 'WLBN'); add('풀 · 가격', 'RLUSD 풀', 'RLUSD', s.pool_r_rlusd, 'RLUSD'); add('풀 · 가격', 'XRP 풀', 'WLBN', s.pool_x_wlbn, 'WLBN'); add('풀 · 가격', 'XRP 풀', 'XRP', s.pool_x_xrp, 'XRP');
+    if (s.pool_liq && !lkd('pool')) { add('풀 · 가격', '전체 풀 유동성', '두 풀 · 양쪽', s.pool_liq, 'RLUSD 환산'); add('풀 · 가격', '전체 풀 유동성', 'WLBN/RLUSD 풀', s.pool_liq_r, 'RLUSD 환산'); add('풀 · 가격', '전체 풀 유동성', 'WLBN/XRP 풀', s.pool_liq_x, 'RLUSD 환산'); add('풀 · 가격', '전체 풀 유동성', '이 가운데 RLUSD · XRP 쪽', s.pool_side_rlusd, 'RLUSD 환산'); }
+    if (!lkd('pool')) { add('풀 · 가격', 'RLUSD 풀', 'WLBN', s.pool_r_wlbn, 'WLBN'); add('풀 · 가격', 'RLUSD 풀', 'RLUSD', s.pool_r_rlusd, 'RLUSD'); add('풀 · 가격', 'XRP 풀', 'WLBN', s.pool_x_wlbn, 'WLBN'); add('풀 · 가격', 'XRP 풀', 'XRP', s.pool_x_xrp, 'XRP'); }
     (c.r.groups || []).forEach(function (g) { COLS.groups.slice(1).forEach(function (col) { add('지갑 묶음별', (g.owner && OWN[g.owner] ? OWN[g.owner] + ' ' : '') + (g.label || g.group), col.label, g[col.key], ''); }); });
     if (DATA.market) DATA.market.notes.forEach(function (t) { add('시장과 견주기', '요약 글', DATA.market.as_of, plain(t), ''); });
     if (im) {
@@ -3928,7 +3995,7 @@ html.rpt .to-top { display: none !important; } @media print { .to-top { display:
       tr.notes.forEach(function (t) { add('부정 쪽 지갑 자금 흐름', '요약 글', '', plain(t), ''); });
     }
     if (DATA.deep) toned('deep', DATA.deep.notes).forEach(function (t) { add('온체인 심층', '요약 글', '', plain(t), ''); });
-    add('보고서', '주의', '', '내부 현황용 — 대외 인용 금지. 지급량 · 가치를 보장하지 않는다.', '');
+    add('보고서', '주의', '', DATA.edition ? DATA.edition.name + ' — 웰비안 · 케이웨더의 공식 서비스가 아닙니다. 웰비안이 공개한 자료와 공개 원장을 기초로 정리한 자료이며, 수익 보장이나 투자 · 매매 권유가 아닙니다. 보상의 지급량과 가치는 보장되지 않습니다.' : '내부 현황용 — 대외 인용 금지. 지급량 · 가치를 보장하지 않는다.', '');
     return R;
   }
   function reportCsv() { if (!DATA) return; var c = ctx(); download('wlbn-report-' + RANGE + '-' + c.s.as_of.slice(0, 10) + '.csv', reportRows().map(function (r) { return r.map(csvEsc).join(','); }).join('\r\n')); }
@@ -3940,6 +4007,7 @@ html.rpt .to-top { display: none !important; } @media print { .to-top { display:
   }
   function drawStatus() {
     var el = $('[data-status]'), i = DATA && DATA.info; if (!el || !i) return;
+    if (DATA.edition && DATA.edition.on) { el.hidden = true; return; }      // 상품판: 저장소 연결 여부 같은 운영자용 글은 손님 화면에 내지 않는다
     var t = i.storage === 'blob' ? '저장소 연결됨' : i.storage === 'snapshot' ? '미리 넣어 둔 자료(기준 시각까지)' : '저장소 미연결 — 미리 넣어 둔 자료에서 매번 이어 받는 중';
     if (typeof i.fetched === 'number') t += ' · 이번에 새로 반영한 거래 ' + fInt(i.fetched) + '건';
     if (i.complete === false) t += ' · 아직 끝까지 받지 못함';
@@ -3983,7 +4051,7 @@ html.rpt .to-top { display: none !important; } @media print { .to-top { display:
     'c:act': ['활동량', ['받은 양 + 판 양 + 산 양 + 풀에 넣거나 뺀 WLBN을 더한 값이다. 지갑 순위를 이 값으로 매긴다.']],
     'c:ratio': ['판 비율', ['판 양 ÷ 받은 양. 다른 데서 받아서 판 경우에는 100%를 넘는다.']],
     'c:type': ['유형', ['고른 기간의 움직임으로 붙인 이름이다: 받는 대로 파는 · 일부만 파는 · 사 모으는 · 풀에 넣는 · 팔고 다시 사는 · 사고팔기 지갑 등.', '지갑 줄을 누르면 그 지갑의 한 줄 분석이 나온다.']],
-    'c:rebuy': ['다시 산 돈', ['그 지갑이 operations 계정으로 보낸 RLUSD다. 기기 · 이용권 값으로 본다.', '카드 · 계좌로 결제한 것은 원장에 없어 0으로 나온다.']],
+    'c:rebuy': ['다시 산 돈', ['그 지갑이 operations 계정으로 보낸 RLUSD다. 기기 · AI 이용권 값으로 본다.', '카드 · 계좌로 결제한 것은 원장에 없어 0으로 나온다.']],
     't:plan': ['설계 대조', ['토크노믹스 정책(배분표 v2 · 2026-10-02 개정)과 백서 초안 v1.1(2026-11-01)에 적힌 약속을 원장에서 보이는 지금 값과 나란히 놓은 구역이다.', '정책 수치의 정본은 토크노믹스 정책 페이지, 원장 수치의 정본은 XRPL 원장이다. 등록 · 활성 기기와 하루 예산 · 유통량은 사이트가 공시한 값이다.', '이 구역은 판정하지 않는다 — 약속한 것과 지금 값을 나란히 놓기만 한다. 지금 게이트가 몇 번인지도 판정하지 않는다(수요 조건은 원장에 없다).']],
     't:trace': ['부정 쪽 지갑 자금 흐름', ['「부정」 · 「매우 부정」 지갑마다 원장의 송금 기록을 읽어, 들어온 쪽(유입 전)과 나간 쪽(행선지)을 따라간 것이다.', '유입 전: WLBN을 어디서 얻었나(보상 · 풀에서 삼 · 다른 지갑에서 옮겨 받음), 계정을 만든 송금을 누가 보냈나, 기간에 누가 XRP · RLUSD · WLBN을 보내 줬나.', '행선지: 직접 보낸 곳이 1단계, 그곳이 다시 보낸 곳이 2단계, 한 번 더가 3단계다. 중간 지갑이 보낸 돈은 그 지갑이 받은 금액까지만, 보낸 곳 비율대로 나눠 따라간다.', '끝나는 곳: 목적지 태그가 붙는 주소(거래소 입금 꼴) · 거래가 많은 계정 · 회사 계정 · 지갑별 표의 지갑 · 3단계.', '하루 한 번 다시 받는다. 거래소 안과 지갑 주인은 볼 수 없다.']],
     't:sent': ['밖으로 보낸 돈', ['풀이 열린 뒤 이 지갑이 다른 주소로 보낸 송금의 합이다(XRP · RLUSD · WLBN을 RLUSD로 환산).', 'WLBN을 판 대금만이 아니라 지갑에 원래 있던 돈, 다른 곳에서 받은 돈, WLBN 이체도 들어 있다. 그래서 「가져간 돈」보다 클 수 있다.']],
@@ -4245,7 +4313,7 @@ html.rpt .to-top { display: none !important; } @media print { .to-top { display:
     if (base === 'mid') return { k: 'n', why: '' };
     if (base === 'help') {
       if (w.paid > 0 && (w.sell_ratio || 0) < 0.5) c++; if (w.back_rlusd > 0 && w.back_rlusd >= took) c++; if (w.pool_in > 0) c++;
-      var met = []; if (w.paid > 0 && (w.sell_ratio || 0) < 0.5) met.push('받은 양의 절반 넘게 보유'); if (w.back_rlusd > 0 && w.back_rlusd >= took) met.push('되돌린 돈이 가져간 돈 이상'); if (w.pool_in > 0) met.push('풀에 넣음');
+      var met = []; if (w.paid > 0 && (w.sell_ratio || 0) < 0.5) met.push('받은 양의 절반 넘게 팔지 않음'); if (w.back_rlusd > 0 && w.back_rlusd >= took) met.push('되돌린 돈이 가져간 돈 이상'); if (w.pool_in > 0) met.push('풀에 넣음');
       if (c >= 2) return { k: 'vp', why: '긍정 조건 ' + c + '가지(' + met.join(' · ') + ')를 채웠다' };
       if (net >= T5RULE.net) return { k: 'vp', why: '되돌린 돈이 가져간 돈보다 ' + fInt(net) + ' RLUSD 많다' };
       return { k: 'p', why: c ? '긍정 조건 한 가지(' + met.join(' · ') + ')를 채웠다' : '팔지 않고 들고 있다' };
@@ -4450,11 +4518,11 @@ html.rpt .to-top { display: none !important; } @media print { .to-top { display:
     var one = function (list, f, v) { return (list || []).filter(function (x) { return x[f] === v; })[0] || null; }, L = function (key) { return h ? one(h.links, 'key', key) : null; }, Rv = function (key) { return h ? one(h.reserves, 'key', key) : null; };
     if (ix) {
       set('idx', ix.value, '점 · ' + h.labels[ix.status], '어제보다 ' + sgn(ix.delta) + (ix.weak ? ' · 가장 약한 고리 ' + tw('h_' + ix.weak.key, ix.weak.name + ' ' + ix.weak.score + '점') : ''), ix.status);
-      set('radar', h.overall.counts, '', (h.overall.loops || '') + ' 평균 **' + ix.mean + '점**' + (h.overall.refs && h.overall.refs.length ? ' · ' + h.overall.refs.join(' · ') + '는 참고(지수 제외)' : ''), h.overall.bad ? 'bad' : h.overall.warn ? 'warn' : 'ok');
+      set('radar', h.overall.counts, '', (h.overall.loops || '') + ' 평균 **' + ix.mean + '점**' + (h.overall.refs && h.overall.refs.length ? ' · 참고(지수 제외) ' + h.overall.refs.join(' · ') : ''), h.overall.bad ? 'bad' : h.overall.warn ? 'warn' : 'ok');
       var sr = ix.series || []; set('trend', sr.length > 1 ? sr[0].value + ' → ' + ix.value : null, '점', sr.length > 1 ? md(sr[0].date) + '~' + md(sr[sr.length - 1].date) + ' · 최고 ' + d3.max(sr, function (x) { return x.value; }) + ' · 최저 ' + d3.min(sr, function (x) { return x.value; }) : '', sr.length > 1 ? (ix.value - sr[0].value >= 5 ? 'ok' : ix.value - sr[0].value <= -5 ? 'warn' : null) : null);
     } else { set('idx', null); set('radar', null); set('trend', null); }
     var pay = L('pay'), rr = bRecvRows().filter(function (r) { return !r.partial; }); set('recv', pay ? pay.value : (rr.length ? fInt(rr[rr.length - 1].receivers) : null), pay ? '직전 7일 대비' : '곳', rr.length ? (pay ? '최근 7일 보상 받은 지갑 수 · ' : '') + '하루 ' + fInt(d3.min(rr, function (r) { return r.receivers; })) + '~' + fInt(d3.max(rr, function (r) { return r.receivers; })) + '곳' : '', pay && pay.status);
-    set('flow', fInt(k.user_paid_avg), '개 / 하루 평균 받은 양', '하루 평균 판 양 **' + fInt(k.user_sell_avg) + '개**' + (c.r.from < s.pool_open ? '(10/26 재지급일 제외)' : '') + ' · 막대가 판 양, 선이 받은 양');
+    set('flow', fInt(k.user_paid_avg), '개 / 하루 평균 받은 양', '하루 평균 판 양 **' + fInt(k.user_sell_avg) + '개**' + (c.r.from < s.pool_open ? '(10/26 재지급일 제외)' : '') + (k.full_days ? ' · ' + k.full_days + '일 평균(오늘 제외)' : '') + ' · 막대가 판 양, 선이 받은 양');
     set('hold', k.user_paid ? F.pct(1 - Math.min(1, (k.user_net_sold || 0) / k.user_paid)) : null, '팔지 않은 몫', '받은 ' + fInt(k.user_paid) + ' · 순매도(판 양 − 도로 산 양) ' + fInt(k.user_net_sold) + ' · 풀에 ' + fInt(k.user_pool_in), tOf('holdP'));
     if (im && im.t5) {
       set('tier', fInt(im.pos5.wallets), '곳 긍정 쪽 · ' + F.pct(im.pos5.wallets / (im.tot5.wallets || 1)), '부정 쪽 **' + fInt(im.neg5.wallets) + '곳**(' + F.pct(im.neg5.wallets / (im.tot5.wallets || 1)) + ') · 지금 잔액의 ' + F.pct(im.pos5.bal / (im.tot5.balance || 1)) + '가 긍정 쪽');
@@ -4462,7 +4530,7 @@ html.rpt .to-top { display: none !important; } @media print { .to-top { display:
     } else { set('tier', null); set('money', null); }
     set('price', s.price_rlusd !== null && s.price_rlusd !== undefined ? F.f4(s.price_rlusd) : null, 'RLUSD', '기간 변화 **' + (k.price_change === null || k.price_change === undefined ? '—' : F.spct(k.price_change)) + '** · ' + F.f4(k.price_from) + ' → ' + F.f4(k.price_to));
     var pr = bPoolRows(), pl = pr.length ? pr[pr.length - 1] : null, p0 = pr.length ? pr[0] : null; set('pool', pl ? fInt(pl.pool_liq) : null, 'RLUSD 환산', pl ? 'WLBN/RLUSD **' + fInt(pl.pool_liq_r) + '** + WLBN/XRP **' + fInt(pl.pool_liq_x) + '**' + (p0 && p0 !== pl && p0.pool_liq ? ' · 기간 첫날의 ' + tw('liqP', d3.format('.1f')(pl.pool_liq / p0.pool_liq) + '배') : '') : '', tOf('liqP'));
-    set('demand', k.sell_total ? F.pct(k.buy_total / k.sell_total) : null, '판 양 대비 산 양', '산 양 ' + fInt(k.buy_total) + ' 가운데 ' + tw('botP', 'bot ' + F.pct(k.bot_buy_share || 0)) + (k.buy_ex_bot_ratio !== null && k.buy_ex_bot_ratio !== undefined ? ' · bot 빼면 **' + F.pct(k.buy_ex_bot_ratio) + '**' : '') + ' · 판 양 ' + fInt(k.sell_total), tOf('demandP'));
+    set('demand', k.sell_total ? F.pct(k.buy_total / k.sell_total) : null, '판 양 대비 산 양', '산 양 ' + fInt(k.buy_total) + ' 가운데 ' + tw('botP', 'bot ' + F.pct(k.bot_buy_share || 0)) + (k.buy_ex_bot_ratio !== null && k.buy_ex_bot_ratio !== undefined ? ' · bot 빼면 판 양의 **' + F.pct(k.buy_ex_bot_ratio) + '**' : '') + ' · 판 양 ' + fInt(k.sell_total), tOf('demandP'));
     var pr1 = Rv('payrun'), br = Rv('buyrun'), cv = Rv('cover'); set('run', pr1 ? pr1.value : null, '지급 여력', (br ? '매입 여력 **' + br.value + '**' : '') + (cv ? ' · 매입 지출이 판매 대금의 ' + cv.value : ''), pr1 && pr1.status);
   }
   function chartFns() { return Object.assign(chartFns0(), BOARD); }

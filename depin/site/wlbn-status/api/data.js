@@ -17,7 +17,9 @@ module.exports = async function handler(req, res) {
   }
   // 상품판: 응답이 요금제마다 다르므로 이용권이 붙은 요청은 함께 쓰는 보관본에 두지 않는다
   if (ed) res.setHeader('Vary', 'Authorization');
-  res.setHeader('Cache-Control', ed && ed.plan !== 'free' ? 'private, no-store' : 'public, max-age=0, s-maxage=' + (r.persistent ? 900 : 3600) + ', stale-while-revalidate=86400');
+  // 미리보기(정식 구독 시작 전)는 누구에게나 같은 응답이라 함께 쓰는 보관본에 둔다 — 시작한 뒤 오래 남지 않게 짧게(10~15분) 두고 묵은 것을 내주지 않는다
+  if (ed && ed.state === 'open') res.setHeader('Cache-Control', 'public, max-age=0, s-maxage=' + (r.persistent ? 600 : 900));
+  else res.setHeader('Cache-Control', ed && ed.plan !== 'free' ? 'private, no-store' : 'public, max-age=0, s-maxage=' + (r.persistent ? 900 : 3600) + ', stale-while-revalidate=86400');
   const info = ed ? { storage: r.info.storage } : r.info;      // 상품판에는 서버 안쪽 기록을 내지 않는다
   res.status(200).json(Object.assign({ ok: true, generated_at: new Date().toISOString(), ledger: r.ledger, info: info }, ed ? edition.prune(r.out, ed.plan, ed) : r.out));
 };

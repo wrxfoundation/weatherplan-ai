@@ -129,7 +129,7 @@ const TRACE_ORIGIN = { reward: '보상으로 받음', bought: '풀에서 삼', m
 const TRACE_SIDE = { help: '긍정 쪽', mid: '보통', load: '부정 쪽' };      // 화면은 다섯 단계로 보여 주므로 글에서는 쪽으로만 부른다
 const TRACE_ORDER = ['exch', 'hub', 'ours', 'root', 'company', 'kept', 'other', 'back', 'pool', 'issuer'];
 // 원장으로 볼 수 없는 것. 화면 곳곳의 「집계 한계」 글이 이 문장을 쓴다.
-const LIMIT_CARD = '카드 · 계좌로 결제한 기기와 이용권은 원장에 기록되지 않는다. 여기서 「판매 대금」은 RLUSD로 결제된 것만이라 실제 판매보다 적다.';
+const LIMIT_CARD = '카드 · 계좌로 결제한 기기와 AI 이용권은 원장에 기록되지 않는다. 여기서 「판매 대금」은 RLUSD로 결제된 것만이라 실제 판매보다 적다.';
 
 function kday(sec) { return new Date((sec + RIPPLE_EPOCH + 9 * 3600) * 1000).toISOString().slice(0, 10); }
 function kstamp(sec) { return new Date((sec + RIPPLE_EPOCH + 9 * 3600) * 1000).toISOString().slice(0, 16).replace('T', ' '); }
@@ -321,11 +321,11 @@ const DEEP = {
     ['Accumulation Trend Score', 'Glassnode', '늘린 물량 비중', '옮김(단순화)', '최근 7일 늘린 양 ÷ (늘린 양 + 줄인 양)'],
     ['Daily Active Addresses · Network Growth', 'Santiment · Glassnode', '움직인 지갑 · 새 지갑', '옮김', '보상만 받은 지갑은 「움직인」에 넣지 않는다'],
     ['Exchange Reserve · Netflow', 'CryptoQuant', '풀에 든 양 · 판 양 − 산 양', '이미 있음', '거래소가 없어 풀로 본다(「풀」 · 「날짜별」)'],
-    ['Smart Money · Entity labels', 'Nansen · Arkham', '소속 칩 · 지갑 유형 · 도움/부담', '이미 있음', '이름 붙은 계정은 wellbian.io 공개분만'],
+    ['Smart Money · Entity labels', 'Nansen · Arkham', '소속 칩 · 지갑 유형 · 기여 5단계', '이미 있음', '이름 붙은 계정은 wellbian.io 공개분만'],
     ['Fear & Greed · Bull-Bear 지수', 'alternative.me · CryptoQuant', '선순환 지수', '이미 있음', '시장 심리가 아니라 순환이 도는지'],
     ['Funding · Open Interest · Liquidations', 'Coinglass 등', '—', '해당 없음', '파생 시장이 없다'],
     ['ETF · 채굴자 흐름', 'Farside · CryptoQuant', '—', '해당 없음', '해당 상품 · 채굴이 없다'],
-    ['Social Volume · Sentiment', 'Santiment 등', '—', '안 옮김', '원장 밖 자료 · 외부 집계는 쓰지 않는다'],
+    ['Social Volume · Sentiment', 'Santiment 등', '소셜 지수 · 웹 언급 동향', '이미 있음', '공개된 뉴스 · 텔레그램 · 커뮤니티의 글 수와 인원만 센다 — 좋다 · 나쁘다(감성)는 매기지 않는다'],
   ],
 };
 
@@ -1053,13 +1053,14 @@ function buildDatasets(S, opts) {
     const snap = (i) => { const p = px[i], b = { old: 0, unk: 0, lp: 0 }; for (const x of DEEP.ages) b[x[1]] = 0; let tot = 0, val = 0, up = 0;
       for (const a of addrs) { for (const l of lots[a]) { b[bandOf(l, i)] += l.q; tot += l.q; val += l.q * l.p; if (l.p < p) up += l.q; } for (const l of pooled[a]) b.lp += l.q; }
       return { b, tot, val, up, all: tot + b.lp }; };
-    const out = [], raw = []; let prevTot = 0, forced = 0;
+    const out = [], raw = []; let prevTot = 0, forced = 0, oddN = 0, oddQ = 0;
     for (let i = 0; i < rows.length; i++) {
       const day = rows[i].date, p = px[i]; let sold = 0, matched = 0, num = 0, den = 0, above = 0, cd = 0, movers = 0, sellers = 0, buyers = 0, recv = 0, fresh = 0, tin = 0, tout = 0;
       // ① 들어온 것: 보상 · 산 것 · 풀에서 뺀 것 · 보는 지갑 밖(회사 계정 등)에서 옮겨 받은 것
       for (const a of addrs) { const c = Wd[a][day]; if (!c) continue; const L = lots[a];
         if (c[0] > 0) { L.push({ i, q: c[0], p, s: day === C.NOW_FROM ? 'old' : 'paid' }); recv++; }       // 10/26 재지급분은 그 전부터 들고 있던 물량
-        if (c[1] > 0) { L.push({ i, q: c[1], p: c[2] > 0 ? c[2] / c[1] : p, s: 'buy' }); buyers++; }
+        if (c[1] > 0) { let bp = c[2] > 0 ? c[2] / c[1] : p; if (p > 0 && (bp < p * 0.5 || bp > p * 2)) { oddN++; oddQ += c[1]; bp = p; }      // 그날 마감 값과 두 배 넘게 어긋난 값(호가 밖에서 맞바꾼 거래 · 다른 통화가 섞인 거래)은 그날 값으로 매긴다 — 한 건이 평균 취득가를 끌고 가지 않게
+          L.push({ i, q: c[1], p: bp, s: 'buy' }); buyers++; }
         if (c[6] > 0) { const left = take(pooled[a], c[6], (t, l) => { L.push({ i: l.i, q: t, p: l.p, s: l.s }); }); if (left > 1e-9) L.push({ i, q: left, p, s: 'in' }); } }
       for (const m of moves[i]) if (!m.a && m.b) { lots[m.b].push({ i, q: m.q, p, s: 'in' }); tin += m.q; }
       // ② 지갑끼리 옮긴 것: 묶음째 따라간다(받은 날 · 받은 때 값 그대로). 보낸 쪽 묶음이 모자라면 한 바퀴 더 돌려 본다
@@ -1117,7 +1118,8 @@ function buildDatasets(S, opts) {
     if (week.movers !== null) notes.push('움직임: 스스로 움직인(사거나 팔거나 풀에 넣고 뺀) 지갑은 하루 평균 **' + week.movers + '곳**' + (week.prev_movers !== null ? '(직전 7일 ' + week.prev_movers + '곳)' : '') + ', 새로 들어온 지갑은 7일 동안 **' + week.fresh + '곳**' + (week.prev_fresh !== null ? '(직전 7일 ' + week.prev_fresh + '곳)' : '') + '이다.');
     const limits = ['「받은 때 값」은 보상을 받은 날 · 옮겨 받은 날의 마감 값(산 물량은 실제로 낸 값)이다. 보상은 돈을 내고 받은 것이 아니므로 손익이 아니라 받은 때와 지금의 값 차이로 읽는다.',
       '판 것은 오래된 물량부터 나간 것으로 본다(선입선출 — 가정). 지갑끼리 옮긴 물량은 받은 날과 값을 그대로 갖고 간다. 쌓은 기록과 실제 잔액이 어긋난 양은 잔액의 ' + (actual > 0 ? p1(drift / actual) : '—') + '다.',
-      '10/26 이전부터 들고 있던 물량(재지급분 포함)은 받은 날을 알 수 없어 따로 묶었고, 값은 새 풀이 열린 날 값으로 매겼다. 지난 기록을 정리한 값이고 앞날을 내다보는 값이 아니다.'];
+      '10/26 이전부터 들고 있던 물량(재지급분 포함)은 받은 날을 알 수 없어 따로 묶었고, 값은 새 풀이 열린 날 값(' + f4(px[0]) + ' RLUSD)으로 매겼다. 지난 기록을 정리한 값이고 앞날을 내다보는 값이 아니다.']
+      .concat(oddN ? ['산 물량 가운데 한 개당 낸 값이 그날 마감 값의 절반 아래거나 두 배 위인 ' + n(oddN) + '건(' + n(oddQ) + '개)은 그날 마감 값으로 매겼다 — 호가 밖에서 맞바꾼 거래 한 건이 평균 취득가를 끌고 가지 않게.'] : []);
     return { from: rows[0].date, to: rows[last].date, bands: now.bands.map((x) => ({ key: x.key, name: x.name })), now, week, sizes: szRows, acc, days: out, notes, limits, quality: { drift: actual > 0 ? r4(drift / actual) : null, forced: r0(forced) },
       bench: DEEP.bench.map((x) => ({ metric: x[0], site: x[1], ours: x[2], status: x[3], note: x[4] })) };
   };
@@ -1177,7 +1179,7 @@ function buildDatasets(S, opts) {
 
     const links = [];
     const ds = !fundOk ? null : hasPrev && sP.r > 0 ? sW.r / sP.r - 1 : sW.r > 0 ? 1 : null;      // 두 주 모두 0이면 견줄 수 없다(「100% 줄었다」가 아니다)
-    links.push(mk('sale', '판매', '기기 · 이용권 판매 대금이 들어오나', ds, H.sale, {
+    links.push(mk('sale', '판매', '기기 · AI 이용권 판매 대금이 들어오나', ds, H.sale, {
       value: ds === null ? '—' : hasPrev && sP.r > 0 ? sp(ds) : n(sW.r), metric: hasPrev && sP.r > 0 ? '판매 대금 유입 · 직전 7일 대비' : '판매 대금 유입(RLUSD)', ticks: tick(H.sale, ts),
       read: !fundOk ? '판매 대금 기록을 아직 끝까지 받지 못했다.' : '지갑 ' + n(sW.wallets) + '곳이 operations 계정으로 ' + n(sW.r) + ' RLUSD를 보냈다' + (hasPrev ? '(직전 7일 ' + n(sP.r) + ')' : '') + '.' + (sW.r > 0 ? ' 이 가운데 보상을 받는 지갑이 낸 것이 ' + n(sW.ru) + ' RLUSD(' + p1(sW.ru / sW.r) + ')다.' : ''),
       short: !fundOk ? '판매 대금 기록이 모자라다' : '판매 대금 ' + n(sW.r) + ' RLUSD' + (hasPrev && sP.r > 0 ? '(직전 7일 대비 ' + sp(ds) + ')' : ''),
@@ -1313,7 +1315,7 @@ function buildDatasets(S, opts) {
       if (dm === null) t = '판 양이 없어 판단하지 않았다.';
       else {
         const outShare = buyOut / sellX;
-        if (st('demand') === 'ok') t = botShare !== null && botShare >= 0.5 ? '판 양은 다 받아냈지만 산 양의 ' + p1(botShare) + '가 Wellbian bot이다.' + (outShare < 1 ? ' 밖에서 산 양은 판 양의 ' + p1(outShare) + '라, bot이 사지 않는 날에는 받아낼 매수가 모자란다.' : '') : '밖의 지갑이 산 양만으로도 판 양을 받아냈다. 스스로 도는 수요가 있다.';
+        if (st('demand') === 'ok') t = botShare !== null && botShare >= 0.5 ? '판 양은 다 받아냈지만 산 양의 ' + p1(botShare) + '가 Wellbian bot이다.' + (outShare < 1 ? ' 밖에서 산 양은 판 양의 ' + p1(outShare) + '라, bot이 사지 않는 날에는 받아낼 매수가 모자랄 수 있다.' : '') : '밖의 지갑이 산 양만으로도 판 양을 받아냈다. 스스로 도는 수요가 있다.';
         else t = (st('demand') === 'warn' ? '산 양이 판 양에 못 미쳤다.' : '판 양의 절반도 받아내지 못했다.') + ' 남는 물량은 풀이 떠안아 값이 밀린다.' + (botShare !== null ? ' 산 양 가운데 Wellbian bot은 ' + p1(botShare) + '다.' : '');
         t += ' bot이 산 날은 ' + W.length + '일 가운데 ' + botDays + '일이다.';
       }
@@ -1324,7 +1326,7 @@ function buildDatasets(S, opts) {
       if (dp === null) t = '가격 기록이 모자라다.';
       else {
         t = 'RLUSD 기준 값은 ' + W.length + '일 동안 ' + sp(dp) + '다.';      // 평가하는 말(버틴다 · 크게 내렸다)을 붙이지 않는다
-        if (botDays > 0 && botDays < W.length) t += ' 나눠 보면 bot이 산 ' + botDays + '일 동안 ' + sp(upBot - 1) + ', 사지 않은 ' + (W.length - botDays) + '일 동안 ' + sp(upRest - 1) + '다' + (upBot - 1 > 0.01 && upRest - 1 <= 0.005 ? ' — 오른 폭은 bot이 산 날에 나왔다.' : '.');
+        if (botDays > 0 && botDays < W.length) t += ' 나눠 보면 bot이 산 ' + botDays + '일 동안 ' + sp(upBot - 1) + ', 사지 않은 ' + (W.length - botDays) + '일 동안 ' + sp(upRest - 1) + '다' + '.';
         if (xrpCh !== null && start.price_xrp) t += ' XRP로 보면 ' + sp(end.price_xrp / start.price_xrp - 1) + '인데, XRP 값이 ' + sp(xrpCh) + ' 움직인 것이 겹쳐 있다.';
       }
       if (dp !== null && !cut && market && market.short) t += ' ' + market.short + '.';
@@ -1405,7 +1407,7 @@ function buildDatasets(S, opts) {
     // 한 줄 정리: 고리끼리 이어서 읽는다
     const take = [];
     if (sr !== null) take.push(st('hold') === 'ok' ? '**받은 보상은 절반 넘게 보유**되고 있다.' : '**받은 보상의 ' + p1(sr) + '가 팔리고**' + (botShare !== null && botShare >= 0.5 ? ', 그 물량은 주로 **Wellbian bot 매입**이 받아낸다(산 양의 ' + p1(botShare) + ').' : ' 있다.'));
-    if (st('sale') !== 'na') take.push('매입에 쓰는 기기 · 이용권 판매 대금(RLUSD 결제분만)은 ' + (st('sale') === 'ok' ? '늘었' : '직전 7일보다 **' + p1(Math.abs(ds)) + '** 줄었') + (L3.length === 3 && b3 > s3 && b3 > 0.5 ? '고, ' + l3name + '은 **매입 지출(' + n(b3) + ' RLUSD)이 판매 대금(' + n(s3) + ' RLUSD)을 넘었다**.' : '다.'));
+    if (st('sale') !== 'na') take.push('매입에 쓰는 기기 · AI 이용권 판매 대금(RLUSD 결제분만)은 ' + (st('sale') === 'ok' ? '늘었' : '직전 7일보다 **' + p1(Math.abs(ds)) + '** 줄었') + (L3.length === 3 && b3 > s3 && b3 > 0.5 ? '고, ' + l3name + '은 **매입 지출(' + n(b3) + ' RLUSD)이 판매 대금(' + n(s3) + ' RLUSD)을 넘었다**.' : '다.'));
     if (dq !== null && dp !== null) take.push('풀은 **' + (st('pool') === 'ok' ? '깊어졌고' : '얕아졌고') + '** RLUSD 기준 값은 **' + sp(dp) + '**다.');
     const takeaway = take.join(' ');
 
@@ -1713,7 +1715,7 @@ function buildDatasets(S, opts) {
     const lim = (P.reward.base - 1) * (P.pass.per_day - 1), small = recs.filter((x) => x < lim);
     const cnt = (v) => recs.filter((x) => x === v).length, mixN = small.filter(isMix).length, both = P.reward.base + P.pass.per_day;
     rows.push({ key: 'fixed', topic: '지급 원칙', policy: '정해진 수량을 준다 — DePIN 기기(지점)는 한 대당 하루 ' + P.reward.base + '개 × ' + P.reward.step + '^(단계−1) × 품질 등급(0~' + P.reward.grade + ') · AI 이용권은 한 장당 하루 ' + P.pass.per_day + '개(이용권 페이지 · 3년). 가격 · 수익률 · 회수 기간은 약속하지 않는다.',
-      now: '그대로 지급 중이다 — 기기 한 대당 하루 ' + P.reward.base + '개 · AI 이용권 한 장당 하루 ' + P.pass.per_day + '개(' + md(P.src.read) + ' 운영 확인).' + (small.length ? ' 원장에서 지갑이 하루에 받은 양 가운데 ' + lim + '개 미만인 ' + n(small.length) + '건을 보면 ' + n(mixN) + '건(' + p1(mixN / small.length) + ')이 ' + P.reward.base + '과 ' + P.pass.per_day + '의 조합이다 — ' + P.reward.base + '개 ' + n(cnt(P.reward.base)) + '건 · ' + (P.reward.base * 2) + '개 ' + n(cnt(P.reward.base * 2)) + '건 · ' + both + '개(' + P.reward.base + ' + ' + P.pass.per_day + ') ' + n(cnt(both)) + '건 · ' + P.pass.per_day + '개 ' + n(cnt(P.pass.per_day)) + '건.' : ''),
+      now: (opts.pub ? '사이트가 공개한 값은 기기 한 대당 하루 ' + P.reward.base + '개 · AI 이용권 한 장당 하루 ' + P.pass.per_day + '개다.' : '그대로 지급 중이다 — 기기 한 대당 하루 ' + P.reward.base + '개 · AI 이용권 한 장당 하루 ' + P.pass.per_day + '개(' + md(P.src.read) + ' 운영 확인).') + (small.length ? ' 원장에서 지갑이 하루에 받은 양 가운데 ' + lim + '개 미만인 ' + n(small.length) + '건을 보면 ' + n(mixN) + '건(' + p1(mixN / small.length) + ')이 ' + P.reward.base + '과 ' + P.pass.per_day + '의 조합이다 — ' + P.reward.base + '개 ' + n(cnt(P.reward.base)) + '건 · ' + (P.reward.base * 2) + '개 ' + n(cnt(P.reward.base * 2)) + '건 · ' + both + '개(' + P.reward.base + ' + ' + P.pass.per_day + ') ' + n(cnt(both)) + '건 · ' + P.pass.per_day + '개 ' + n(cnt(P.pass.per_day)) + '건.' : ''),
       pay_recs: small.length, pay_mix: mixN,
       note: lim + '개 이상(' + n(recs.length - small.length) + '건 · 여러 날 치나 여러 대 몫)은 어떤 수든 ' + P.reward.base + '과 ' + P.pass.per_day + '로 만들 수 있어 세지 않았다. 조합이 아닌 값은 대부분 ' + Math.round(P.reward.best) + '개(' + n(cnt(Math.round(P.reward.best))) + '건)다 — 문서의 우수 등급은 ' + P.reward.best + '개이고, 이 화면의 받은 양은 정수로 반올림한 값이다. 전송률(95% 이상 전액 · 80~95% 감액 · 80% 미만 0)에 따라 달라질 수 있고, 여러 날 치를 한 번에 받은 기록도 있다. 첫날(' + day0 + ' 재지급)은 세지 않았다.' });
     rows.push({ key: 'budget', topic: '하루 예산', policy: '에폭 예산 = 활성 지점 × ' + P.reward.per_site + ' × 단계 계수. 못 준 몫은 다시 나누되 지점당 ' + P.reward.cap + '개까지, 넘는 몫은 소각.',
@@ -1739,7 +1741,7 @@ function buildDatasets(S, opts) {
       next: next ? { g: next.g, name: next.name, n: next.n, pct: Math.round(tot / next.n * 1000) / 1000 } : null,
       tiles, rows, alloc, gates,
       watch: '토크노믹스가 지켜본다고 적은 지표는 가격이 아니라 판매 완료 · 가동률 · 데이터 매출이다. 이 화면에서는 판매 대금(RLUSD 결제분 · 참고) · 활성 기기 비율이 그 자리에 있고, 데이터 매출은 원장에 없다.',
-      limits: ['약속 쪽 숫자는 ' + P.src.tk + '과 ' + P.src.wp + '에서 ' + md(P.src.read) + '에 옮겨 적은 것이다. 문서가 바뀌면 lib/core.js 의 PLAN 을 고친다. 백서는 초안이다.',
+      limits: ['약속 쪽 숫자는 ' + P.src.tk + '과 ' + P.src.wp + '에서 ' + md(P.src.read) + '에 옮겨 적은 것이다. 백서는 초안이다.',
         '정책 수치의 정본은 토크노믹스 정책 페이지, 원장 수치의 정본은 XRPL 원장이다(백서 7장). 등록 · 활성 기기 · 하루 예산 · 유통량은 사이트가 공시한 값을 그대로 쓴 것이다.',
         '지금 게이트가 몇 번인지는 이 화면이 판정하지 않는다 — 수요 조건(유료 고객 · B2B 계약 · 매출)은 원장으로 알 수 없다. 표의 진행률은 공급 조건의 지점 수에 등록 기기 수를 견준 것뿐이다.',
         '이 구역은 판정하지 않는다 — 약속한 것과 지금 값을 나란히 놓기만 한다. 문서와 재는 법이 같다고 볼 수 없는 값(가동률 등)이 있어서다.'] };

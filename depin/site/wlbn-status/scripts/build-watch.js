@@ -22,7 +22,7 @@ fs.copyFileSync(path.join(ROOT, 'README-OPERATOR.md'), path.join(OUT, 'README.md
 fs.writeFileSync(path.join(OUT, 'lib/edition-on.json'), JSON.stringify({ watch: true }) + '\n');      // 이 묶음은 늘 상품판
 // 무료만큼만 남긴 미리 넣어 둘 자료
 const S = JSON.parse(fs.readFileSync(path.join(ROOT, 'lib/snapshot-state.json'), 'utf8'));
-const full = core.buildDatasets(JSON.parse(JSON.stringify(S)), {});
+const full = core.buildDatasets(JSON.parse(JSON.stringify(S)), { pub: true });      // pub = 밖으로 내는 판(안쪽 확인을 근거로 한 문구를 쓰지 않는다)
 const free = edition.prune(full, 'free', { state: 'none' });
 fs.writeFileSync(path.join(OUT, 'public/snapshot.json'), JSON.stringify(Object.assign({ ok: true, generated_at: null, ledger: S.ledger, info: { storage: 'snapshot' } }, free)));
 // 주석의 내부 메모에서 이름을 지운다(실행되는 글에는 그 이름이 없다 — 아래에서 문법을 다시 확인한다)

@@ -78,7 +78,7 @@ async function run(opts) {
     info.xrpl_error = String((e && e.message) || e).slice(0, 160);
     core.pickExt(S, ext);
   }
-  const out = core.buildDatasets(S, { showBefore: SHOW_BEFORE && !edition.ON, showAddr: SHOW_ADDR && !edition.ON, noTrace: edition.ON, range: opts && opts.range });      // range = 날짜를 직접 정한 기간(없으면 전체 · 30일 · 7일만)
+  const out = core.buildDatasets(S, { showBefore: SHOW_BEFORE && !edition.ON, showAddr: SHOW_ADDR && !edition.ON, noTrace: edition.ON, pub: edition.ON, range: opts && opts.range });      // range = 날짜를 직접 정한 기간(없으면 전체 · 30일 · 7일만)
   return { ledger: S.ledger, info, out, persistent: store.enabled() };
 }
 module.exports = { run };

@@ -25,7 +25,7 @@ const FILE = path.join(__dirname, '../lib/snapshot-state.json');
   const bz = await buzz.update(S, { force: true, budgetMs: 40000, ext });      // 웹 언급 · 소셜(텔레그램 · wellbian.io 공개 값)
   console.log(JSON.stringify({ buzz: bz }));
   fs.writeFileSync(FILE, JSON.stringify(S));
-  const out = core.buildDatasets(JSON.parse(JSON.stringify(S)), {});
+  const out = core.buildDatasets(JSON.parse(JSON.stringify(S)), { pub: edition.ON });
   // public 은 누구나 받는다 — 상품판이면 무료만큼만 남겨 쓴다(화면 로그에 찍는 값은 아래에서 전체 자료로 계산한다)
   fs.writeFileSync(path.join(__dirname, '../public/snapshot.json'), JSON.stringify(Object.assign({ ok: true, generated_at: null, ledger: S.ledger, info: { storage: 'snapshot' } }, edition.ON ? edition.prune(out, 'free', { state: 'none' }) : out)));
   console.log(JSON.stringify({ update: u, live, as_of: out.summary[0].as_of, ledger: S.ledger, stateBytes: fs.statSync(FILE).size, fee: [out.summary[0].fee_r, out.summary[0].fee_x], lpShares: out.lpShares, accounts: out.ranges.all.accounts.map((a) => [a.name, a.rlusd, a.xrp]), prev7: out.ranges.d7.prev, lp_company_share: out.summary[0].lp_company_share, lp_user_share: out.summary[0].lp_user_share }, null, 1));
