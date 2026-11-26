@@ -9,27 +9,61 @@ const crypto = require('crypto');
 let PINNED = false;
 try { PINNED = require('./edition-on.json').watch === true; } catch (e) { PINNED = false; }
 const ON = PINNED || process.env.EDITION === 'watch';
+// 값은 달러로 적는다 — RLUSD 로 받고 1 RLUSD 를 1달러로 친다. 센트 단위 정수. list = 정가(월) · early = 얼리버드 값(월) · 연 = 월 × 10(2개월 무료)
 const PLANS = [
-  { key: 'free', name: '무료', month: 0, year: 0, who: '가입 없이 보는 오늘 요약' },
-  { key: 'lite', name: '라이트', month: 1900, year: 19000, who: '관심자 · 가볍게 보는 보유자' },
-  { key: 'std', name: '스탠더드', month: 4900, year: 49000, who: '기기 구매자 · 보유자' },
-  { key: 'pro', name: '프로', month: 9900, year: 99000, who: '여러 대 운영자 · 적극 보유자' },
+  { key: 'free', name: '무료', list: 0, early: 0, who: '가입 없이 보는 오늘 요약' },
+  { key: 'lite', name: '라이트', list: 399, early: 199, who: '관심자 · 가볍게 보는 보유자' },
+  { key: 'std', name: '스탠더드', list: 599, early: 399, who: '기기 구매자 · 보유자' },
+  { key: 'pro', name: '프로', list: 999, early: 699, who: '여러 대 운영자 · 적극 보유자' },
 ];
+const YEAR_X = 10;
 const RANK = { free: 0, lite: 1, std: 2, pro: 3 };
 // 구역 → 그 구역이 열리는 요금제(그 요금제부터). never = 상품판에는 내지 않는다
 const SECTIONS = {
   sum: 'free', where: 'free', facts: 'free', notes: 'free',
   board: 'lite', today: 'lite', plan: 'lite',
-  market: 'std', flow: 'std', daily: 'std', pool: 'std', wtable: 'std',
-  accounts: 'pro', impact: 'pro', deep: 'pro', wallets: 'pro',
+  market: 'std', web: 'std', flow: 'std', daily: 'std', pool: 'std', wtable: 'std',
+  social: 'pro', accounts: 'pro', impact: 'pro', deep: 'pro', wallets: 'pro',
   trace: 'never', before: 'never',
 };
+// 요금제 비교의 줄(화면의 요금제 창이 그대로 그린다). g = 묶음 · n = 항목 이름 · from = 그 항목이 열리는 요금제
+const FEATURES = [
+  { g: '요약', n: '오늘 요약(한눈에) · 위치 · 네트워크 공개 값', from: 'free' },
+  { g: '요약', n: '지표 모아보기 — 그림 열두 장', from: 'lite' },
+  { g: '요약', n: '오늘의 현황 — 선순환 지수와 고리', from: 'lite' },
+  { g: '요약', n: '설계 대조 · 잠금 해제 달력', from: 'lite' },
+  { g: '시장 · 흐름', n: '시장과 견주기 — 주요 코인 10종', from: 'std' },
+  { g: '시장 · 흐름', n: '웹 언급 동향 — 뉴스 기사 수와 제목', from: 'std' },
+  { g: '시장 · 흐름', n: '매매 흐름 — 누가 팔고 누가 샀나', from: 'std' },
+  { g: '시장 · 흐름', n: '날짜별 흐름 · 날짜 지정', from: 'std' },
+  { g: '시장 · 흐름', n: '풀 두 곳 · 거래 계산기', from: 'std' },
+  { g: '지갑', n: '지갑별 표 · 지갑 찾기', from: 'std' },
+  { g: '지갑', n: '회사 표시 계정의 움직임', from: 'pro' },
+  { g: '지갑', n: '지갑의 생태계 기여 5단계', from: 'pro' },
+  { g: '지갑', n: '온체인 심층 — 보유 기간 · 취득가', from: 'pro' },
+  { g: '지갑', n: '지갑 분포 — 누가 얼마나 파나', from: 'pro' },
+  { g: '소셜', n: '소셜 지수 — 텔레그램 채널 · 대화방', from: 'pro' },
+];
 const can = (plan, sec) => SECTIONS[sec] !== 'never' && RANK[SECTIONS[sec]] !== undefined && RANK[SECTIONS[sec]] <= (RANK[plan] || 0);
 
-// RLUSD 결제(lib/pay.js · api/pay.js). 값 = 원화 정가 ÷ 고정 환율(WATCH_KRW_PER_RLUSD · 없으면 1,400 — 가정값, 운영자가 정한다), 센트 올림
+// RLUSD 결제(lib/pay.js · api/pay.js). 값 = 달러 값 그대로(1 RLUSD 를 1달러로 친다)
 const TERMS = { month: { days: 31, name: '1개월' }, year: { days: 366, name: '1년' } };
-const payRate = () => { const r = Number(process.env.WATCH_KRW_PER_RLUSD); return r >= 100 && r <= 100000 ? r : 1400; };
-const payCents = (plan, term) => { const p = PLANS.find((x) => x.key === plan); if (!p || !p.month || !TERMS[term]) return 0; return Math.ceil((term === 'year' ? p.year : p.month) * 100 / payRate() - 1e-9); };
+// 얼리버드: 정한 날(한국 시간 그날 끝)까지 **만든 주문**에 얼리버드 값. WATCH_EARLY_UNTIL=YYYY-MM-DD 로 정하고, 날짜 꼴이 아니면(예: off) 끈다. 없으면 2026-12-31(제안값 — 운영자가 정한다)
+//   정가는 얼리버드가 끝난 뒤 실제로 받는 값이어야 한다(끝나는 날 없이 「할인」만 걸어 두지 않는다 — 그래서 날짜가 없으면 얼리버드도 없다)
+const EARLY_DEFAULT = '2026-12-31';
+function earlyDay() {
+  const v = String(process.env.WATCH_EARLY_UNTIL === undefined ? EARLY_DEFAULT : process.env.WATCH_EARLY_UNTIL).trim();
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(v)) return null;
+  const ms = Date.parse(v + 'T23:59:59+09:00'); return isNaN(ms) ? null : { day: v, end: Math.floor(ms / 1000) };
+}
+const earlyOn = (now) => { const e = earlyDay(); return !!e && (now || Math.floor(Date.now() / 1000)) <= e.end; };
+// 그 요금제 · 기간의 값(센트): { cents = 지금 받는 값, list = 정가, early = 얼리버드 값인가 }
+function price(plan, term, now) {
+  const p = PLANS.find((x) => x.key === plan); if (!p || !p.list || !TERMS[term]) return null;
+  const x = term === 'year' ? YEAR_X : 1, early = earlyOn(now);
+  return { cents: (early ? p.early : p.list) * x, list: p.list * x, early };
+}
+const payCents = (plan, term, now) => { const r = price(plan, term, now); return r ? r.cents : 0; };
 // 받는 주소: 꼴뿐 아니라 검사 글자(체크섬)까지 본다 — 한 글자라도 틀린 주소로 주문이 나가면 보낸 돈을 찾을 수 없다
 const B58 = 'rpshnaf39wBUDNEGHJKLM4PQRST7VWXYZ2bcdeCg65jkm8oFqi1tuvAxyz';
 function validAddress(a) {
@@ -47,9 +81,13 @@ const payAddr = () => { const a = String(process.env.WATCH_PAY_ADDRESS || '').tr
 const payDemo = () => process.env.WATCH_PAY_DEMO === '1';
 const payOn = () => !!process.env.WATCH_SECRET && (!!payAddr() || payDemo());
 function payMeta() {
-  const on = payOn(), prices = {}, c2 = (c) => (c / 100).toFixed(2);
-  if (on) PLANS.forEach((p) => { if (p.month) prices[p.key] = { month: c2(payCents(p.key, 'month')), year: c2(payCents(p.key, 'year')) }; });
-  return { on, live: !!payAddr(), demo: on && payDemo(), currency: 'RLUSD', rate: payRate(), prices, terms: { month: TERMS.month.name, year: TERMS.year.name } };      // 받는 주소는 여기 싣지 않는다(주문을 만들 때만 준다)
+  const on = payOn();
+  return { on, live: !!payAddr(), demo: on && payDemo(), currency: 'RLUSD', window_hours: 24, terms: { month: TERMS.month.name, year: TERMS.year.name } };      // 받는 주소는 여기 싣지 않는다(주문을 만들 때만 준다)
+}
+// 화면에 실어 보낼 요금제 표: 지금 받는 값(얼리버드면 얼리버드 값) · 정가 · 할인율 · 열리는 항목 수
+function planView(now) {
+  const early = earlyOn(now), c2 = (c) => (c / 100).toFixed(2);
+  return PLANS.map((p) => { const cur = early ? p.early : p.list; return { key: p.key, name: p.name, who: p.who, month: c2(cur), year: c2(cur * YEAR_X), list_month: c2(p.list), list_year: c2(p.list * YEAR_X), off: early && p.list ? Math.round((1 - p.early / p.list) * 100) : 0, items: FEATURES.filter((f) => RANK[f.from] <= RANK[p.key]).length }; });
 }
 
 // 이용권: base64url(JSON{p: 요금제, x: 끝나는 때(유닉스 초), n: 메모}) + '.' + HMAC-SHA256
@@ -81,6 +119,8 @@ function prune(out, plan, st) {
   delete o.trace;                                                    // 상품판에는 내지 않는다
   if (!open('today') && !open('board')) delete o.health;
   if (!open('market')) delete o.market;
+  if (!open('web')) delete o.web;
+  if (!open('social')) delete o.social;
   if (!open('deep')) delete o.deep;
   if (!open('plan')) { delete o.plan; delete o.unlock; }
   if (!open('daily')) { delete o.weekly; o.dayTop = {}; }
@@ -113,9 +153,9 @@ function meta(plan, st) {
   return {
     on: true, name: process.env.WATCH_NAME || 'WLBN 워치', operator: process.env.WATCH_OPERATOR || '', plan: pl.key, plan_name: pl.name,
     exp: st && st.exp ? new Date(st.exp * 1000).toISOString().slice(0, 10) : null, exp_at: st && st.exp ? st.exp : null, key_state: (st && st.state) || 'none', demo_key: !!(st && st.state === 'ok' && st.note === 'demo'),
-    plans: PLANS, sections: SECTIONS,
+    plans: planView(), features: FEATURES, sections: SECTIONS, early: (() => { const e = earlyDay(); return { on: earlyOn(), until: e ? e.day : null }; })(),
     locked: ids.filter((id) => SECTIONS[id] !== 'never' && !can(plan, id)), hidden: ids.filter((id) => SECTIONS[id] === 'never'),
     pay_url: process.env.WATCH_PAY_URL || '', origin: process.env.WATCH_ORIGIN || '', pay: payMeta(),
   };
 }
-module.exports = { ON, PLANS, RANK, SECTIONS, TERMS, can, sign, verify, who, prune, meta, payRate, payCents, payAddr, payDemo, payOn, validAddress };
+module.exports = { ON, PLANS, RANK, SECTIONS, FEATURES, TERMS, can, sign, verify, who, prune, meta, price, payCents, earlyDay, earlyOn, payAddr, payDemo, payOn, validAddress };

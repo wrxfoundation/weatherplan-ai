@@ -5,6 +5,7 @@ const fs = require('fs'), path = require('path');
 const core = require('../lib/core'), xrpl = require('../lib/xrpl'), trace = require('../lib/trace');
 const { fetchExt, fetchHistory } = require('../lib/ext');
 const edition = require('../lib/edition');
+const buzz = require('../lib/buzz');
 const FILE = path.join(__dirname, '../lib/snapshot-state.json');
 (async () => {
   const S = JSON.parse(fs.readFileSync(FILE, 'utf8'));
@@ -21,6 +22,8 @@ const FILE = path.join(__dirname, '../lib/snapshot-state.json');
   const tr = await trace.update(S, { budgetMs: 240000, force: true });
   console.log(JSON.stringify({ trace: tr, roots: (S.trace.roots || []).length, accounts: Object.keys(S.trace.nodes || {}).length }));
   if (!tr.done) throw new Error('자금 흐름을 끝까지 받지 못했습니다 — 다시 실행해 주세요');
+  const bz = await buzz.update(S, { force: true, budgetMs: 40000 });      // 웹 언급 · 소셜
+  console.log(JSON.stringify({ buzz: bz }));
   fs.writeFileSync(FILE, JSON.stringify(S));
   const out = core.buildDatasets(JSON.parse(JSON.stringify(S)), {});
   // public 은 누구나 받는다 — 상품판이면 무료만큼만 남겨 쓴다(화면 로그에 찍는 값은 아래에서 전체 자료로 계산한다)

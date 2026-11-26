@@ -13,6 +13,7 @@ const { makeRpc } = require('./xrpl');
 
 const ORDER_DAYS = 40;            // 주문으로 확인을 청할 수 있는 기간(그 뒤에는 새 주문을 만든다 — 값이 바뀌었을 수 있다)
 const DEMO_SECONDS = 30 * 60;     // 데모 결제로 나오는 이용권의 길이
+const PAY_WINDOW = 24 * 3600;     // 주문을 만든 뒤 이 안에 보낸 입금만 인정한다(얼리버드 마지막 날 만든 주문으로 한참 뒤에 내는 것을 막는다)
 const SKEW = 600;                 // 주문을 만든 시각보다 이만큼 앞선 입금까지 본다(시계 차이)
 const RIPPLE_EPOCH = 946684800;
 
@@ -37,13 +38,14 @@ const money = (cents) => (cents / 100).toFixed(2);
 
 // 주문 만들기 → 화면에 보여 줄 것(받는 주소 · 태그 · 금액)과 서명한 주문 글
 function order(plan, term, nowSec) {
-  const cents = edition.payCents(plan, term); if (!cents || !edition.payOn()) return null;
-  const now = nowSec || Math.floor(Date.now() / 1000), pl = edition.PLANS.find((p) => p.key === plan);
+  const now = nowSec || Math.floor(Date.now() / 1000), pr = edition.price(plan, term, now); if (!pr || !edition.payOn()) return null;
+  const pl = edition.PLANS.find((p) => p.key === plan), cents = pr.cents;
   const o = { o: 1, p: plan, t: term, a: cents, g: crypto.randomInt(100000000, 1000000000), i: now };      // 태그는 아홉 자리(읽고 옮겨 적기 쉽게) — 서버가 정한다
+  if (pr.early) o.e = 1;
   return {
     order: signOrder(o), plan, plan_name: pl.name, term, term_name: edition.TERMS[term].name, days: edition.TERMS[term].days,
-    amount: money(cents), currency: 'RLUSD', issuer: C.RL_ISSUER, to: edition.payAddr(), tag: o.g,
-    krw: term === 'year' ? pl.year : pl.month, rate: edition.payRate(), live: !!edition.payAddr(), demo: edition.payDemo(),
+    amount: money(cents), list: money(pr.list), early: pr.early, currency: 'RLUSD', issuer: C.RL_ISSUER, to: edition.payAddr(), tag: o.g,
+    pay_by: now + PAY_WINDOW, live: !!edition.payAddr(), demo: edition.payDemo(),
   };
 }
 
@@ -69,7 +71,7 @@ async function findPayment(rpc, q) {
       const tx = t && (t.tx || t.tx_json);
       if (tx && tx.date && tx.date + RIPPLE_EPOCH < q.since) { older = true; continue; }
       const x = parse(t);
-      if (x && x.to === q.to && x.tag === q.tag && x.cents >= q.cents) hit = x;
+      if (x && x.to === q.to && x.tag === q.tag && x.cents >= q.cents && (!q.until || x.at <= q.until)) hit = x;
     }
     marker = res.marker;
     if (!marker || older) break;
@@ -87,7 +89,7 @@ function paid(o, at, extra) {
 async function check(blob, nowSec) {
   const r = readOrder(blob, nowSec); if (r.state !== 'ok') return { ok: false, error: r.state };
   const to = edition.payAddr(); if (!to) return { ok: true, paid: false, live: false };      // 받는 주소가 없는 데모: 원장을 보지 않는다
-  const hit = await findPayment(ledger(), { to, tag: r.o.g, cents: r.o.a, since: r.o.i - SKEW });
+  const hit = await findPayment(ledger(), { to, tag: r.o.g, cents: r.o.a, since: r.o.i - SKEW, until: r.o.i + PAY_WINDOW });
   if (!hit) return { ok: true, paid: false, live: true };
   return paid(r.o, hit.at, { live: true, tx: hit.hash, got: money(hit.cents) });
 }
@@ -98,4 +100,4 @@ function demoPay(blob, nowSec) {
   const exp = (nowSec || Math.floor(Date.now() / 1000)) + DEMO_SECONDS;
   return { ok: true, paid: true, demo: true, plan: r.o.p, token: edition.sign({ p: r.o.p, x: exp, n: 'demo' }, process.env.WATCH_SECRET), exp_at: exp };
 }
-module.exports = { order, check, demoPay, readOrder, parse, findPayment, money, DEMO_SECONDS, _setLedger: (fn) => { rpcImpl = fn; } };
+module.exports = { order, check, demoPay, readOrder, parse, findPayment, money, DEMO_SECONDS, PAY_WINDOW, _setLedger: (fn) => { rpcImpl = fn; } };

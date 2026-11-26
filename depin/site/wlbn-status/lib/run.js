@@ -4,6 +4,7 @@ const core = require('./core');
 const xrpl = require('./xrpl');
 const store = require('./store');
 const trace = require('./trace');
+const buzz = require('./buzz');
 const edition = require('./edition');      // 상품판(EDITION=watch)이면 전체 주소 · 이전 풀 기간 · 자금 추적을 만들지 않는다
 const { fetchExt, fetchHistory } = require('./ext');
 const bundled = require('./snapshot-state.json');
@@ -25,6 +26,7 @@ async function run(opts) {
   if (!S.fund && bundled.fund) S.fund = JSON.parse(JSON.stringify(bundled.fund));   // 예전에 저장한 상태에는 판매 대금 기록이 없다
   if (bundled.trace && (!S.trace || !S.trace.day || (!S.trace.job && S.trace.day < bundled.trace.day))) S.trace = JSON.parse(JSON.stringify(bundled.trace));   // 자금 흐름 기록: 배포에 든 것이 더 새것이면 그것부터
   if (bundled.live && bundled.live.esc && S.live && !S.live.esc) S.live.esc = JSON.parse(JSON.stringify(bundled.live.esc));   // 잠금 해제 달력의 에스크로 목록: 저장된 상태에 없으면 배포에 든 것부터(다음 원장 갱신 때 다시 읽는다)
+  if (bundled.buzz && (!S.buzz || (S.buzz.at || 0) < (bundled.buzz.at || 0))) S.buzz = JSON.parse(JSON.stringify(bundled.buzz));   // 웹 언급 · 소셜: 배포에 든 것이 더 새것이면 그것부터
   if (bundled.trace && bundled.trace.dep && S.trace && !S.trace.dep) S.trace.dep = JSON.parse(JSON.stringify(bundled.trace.dep));   // 회사 계정에 들어온 돈: 저장된 상태에 없으면 배포에 든 것부터(되돌린 돈에 들어간다)
 
   const ext = await fetchExt().catch(() => null);
@@ -67,6 +69,10 @@ async function run(opts) {
     }
     if (canSave && trChanged) {
       try { info.saved = await store.save(S); } catch (e) { info.storage_error = String((e && e.message) || e).slice(0, 160); }
+    }
+    if (canSave && left(5000) > 5000) {      // 웹 언급 · 소셜(20시간 안에 받았으면 건너뛴다)
+      try { const bzr = await buzz.update(S, { budgetMs: Math.min(opts && opts.daily ? 14000 : 8000, left(5000)) }); if (bzr.changed) { info.buzz = { web: bzr.web, tg: bzr.tg }; info.saved = await store.save(S); } }
+      catch (e) { info.buzz_error = String((e && e.message) || e).slice(0, 120); }
     }
   } catch (e) {
     info.xrpl_error = String((e && e.message) || e).slice(0, 160);

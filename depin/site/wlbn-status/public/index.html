@@ -474,10 +474,11 @@ details .scroll { margin-top: 8px; }
 .ed-bar { max-width: var(--maxw, 1040px); margin: 10px auto 0; padding: 0 20px; display: flex; align-items: center; flex-wrap: wrap; gap: 8px 12px; font-size: var(--t-sm); color: var(--muted); } .ed-bar b { color: var(--fg); font-weight: 700; }
 .ed-chip { padding: 2px 10px; border-radius: 999px; background: var(--accent); color: var(--accent-fg, #fff); font-size: var(--t-xs); font-weight: 700; }
 .sec.lock > .sec-b > :not(.lock-card) { display: none !important; } .sec.lock .sec-sum, .sec.lock .sec-tn, .sec.lock .h2 .period, .sec.lock .h2 .q { display: none; }
-.ed-need { margin-left: 8px; padding: 1px 9px; border: 1px solid var(--line-2); border-radius: 999px; color: var(--muted); font-size: var(--t-tag); font-weight: 650; white-space: nowrap; vertical-align: middle; } .ed-need::before { content: "\1F512"; margin-right: 4px; font-size: 0.9em; }
+.ed-need { margin-left: 8px; padding: 1px 9px; border: 1px solid var(--line-2); border-radius: 999px; color: var(--muted); font-size: var(--t-tag); font-weight: 650; white-space: nowrap; vertical-align: middle; } .ed-need::before { content: "\1F512\FE0F"; font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif; margin-right: 4px; font-size: 0.95em; }
+.lock-card::before { content: "\1F512\FE0F"; font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif; font-size: calc(20px * var(--fs)); line-height: 1; }
 .lock-card { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 14px; padding: 16px 18px; border: 1px dashed var(--line-2); border-radius: var(--r-md); background: var(--soft); color: var(--muted); font-size: var(--t-sm); } .lock-card b { color: var(--fg); font-size: var(--t-md); font-weight: 700; } .lock-card .btn { margin-left: auto; }
-.nav a.locked::after, .nav button.locked::after { content: "\1F512"; margin-left: 4px; font-size: 0.8em; opacity: 0.7; }
-.ed-dlg { width: min(720px, calc(100vw - 24px)); max-height: calc(100vh - 24px); padding: 0; border: 1px solid var(--line-2); border-radius: var(--r-lg, 16px); background: var(--panel); color: var(--fg); box-shadow: 0 24px 60px rgba(20, 18, 43, 0.28); } .ed-dlg::backdrop { background: rgba(20, 18, 43, 0.45); }
+.nav a.locked::after, .nav button.locked::after { content: "\1F512\FE0F"; font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif; margin-left: 4px; font-size: 0.85em; }
+.ed-dlg { width: min(940px, calc(100vw - 24px)); max-height: calc(100vh - 24px); padding: 0; border: 1px solid var(--line-2); border-radius: var(--r-lg, 16px); background: var(--panel); color: var(--fg); box-shadow: 0 24px 60px rgba(20, 18, 43, 0.28); } .ed-dlg::backdrop { background: rgba(20, 18, 43, 0.45); }
 .ed-in { display: flex; flex-direction: column; gap: 14px; padding: 20px 22px 18px; } .ed-in h2 { margin: 0; font-size: var(--t-xl); font-weight: 750; } .ed-in p { margin: 0; font-size: var(--t-sm); color: var(--muted); line-height: 1.6; }
 .ed-plans { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; } .ed-plan { display: flex; flex-direction: column; gap: 3px; padding: 14px 14px 12px; border: 1px solid var(--line-2); border-radius: var(--r-md); background: var(--soft); } .ed-plan.now { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
 .ed-plan h3 { margin: 0; font-size: var(--t-md); font-weight: 700; } .ed-plan .pr { font-size: calc(22px * var(--fs)); font-weight: 750; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; } .ed-plan .pr small { font-size: var(--t-xs); font-weight: 500; color: var(--muted); } .ed-plan .yr, .ed-plan .who, .ed-plan .opens { font-size: var(--t-xs); color: var(--muted); line-height: 1.5; } .ed-plan .opens { margin-top: 4px; color: var(--fg); }
@@ -489,6 +490,20 @@ details .scroll { margin-top: 8px; }
 .ep-rows { margin: 0; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 9px 16px; align-items: baseline; font-size: var(--t-sm); } .ep-rows dt { color: var(--muted); white-space: nowrap; } .ep-rows dd { margin: 0; display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 8px; min-width: 0; }
 .ep-rows dd b, .ep-rows dd code { font-family: inherit; font-size: var(--t-md); font-weight: 700; color: var(--fg); font-variant-numeric: tabular-nums; overflow-wrap: anywhere; } .ep-rows dd small { flex-basis: 100%; font-size: var(--t-xs); color: var(--muted); line-height: 1.5; }
 @media (max-width: 640px) { .ep-rows { grid-template-columns: minmax(0, 1fr); gap: 2px 0; } .ep-rows dd { margin-bottom: 9px; } }
+.ed-early { display: flex; flex-wrap: wrap; align-items: baseline; gap: 3px 12px; padding: 11px 14px; border-radius: var(--r-md); background: var(--accent); color: var(--accent-fg); } .ed-early b { font-size: var(--t-md); font-weight: 750; } .ed-early > span { font-size: var(--t-sm); }
+.ed-policy { flex-basis: 100%; max-width: none; color: inherit; font-size: var(--t-xs); } .ed-policy summary, .ed-policy summary:hover { cursor: pointer; color: inherit; font-weight: 500; text-decoration: underline; text-underline-offset: 3px; width: fit-content; } .ed-policy ul { margin: 6px 0 2px; padding-left: 18px; line-height: 1.6; }
+.ed-ph { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; } .ed-ph h3 { flex: 1 1 auto; } .ed-ph .h-ico { width: calc(30px * var(--fs)); height: calc(30px * var(--fs)); }
+.ed-tag { flex: none; padding: 1px 8px; border-radius: 999px; background: var(--accent); color: var(--accent-fg); font-size: var(--t-tag); font-weight: 650; white-space: nowrap; } .ed-tag.now { background: transparent; color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
+.ed-plan .pr { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 6px; } .ed-plan .pr s, .ed-plan .yr s { color: var(--faint); font-size: var(--t-sm); font-weight: 500; letter-spacing: 0; } .ed-plan .pr .off { margin-left: auto; padding: 1px 7px; border-radius: 999px; color: var(--ok); box-shadow: inset 0 0 0 1px var(--ok); font-size: var(--t-tag); font-weight: 700; letter-spacing: 0; }
+.ed-meter { height: 6px; margin-top: 8px; border-radius: 999px; background: var(--line); overflow: hidden; } .ed-meter i { display: block; height: 100%; border-radius: inherit; background: var(--accent); } .ed-plan .cnt { font-size: var(--t-xs); color: var(--muted); } .ed-plan .cnt b { color: var(--fg); font-size: var(--t-md); font-weight: 750; font-variant-numeric: tabular-nums; }
+.ed-feat { margin: 4px 0 0; padding: 0; list-style: none; display: grid; gap: 4px; font-size: var(--t-xs); line-height: 1.45; color: var(--fg); } .ed-feat li { position: relative; padding-left: 17px; } .ed-feat li::before { content: "\2713"; position: absolute; left: 1px; color: var(--accent); font-weight: 700; } .ed-feat li.inh { color: var(--muted); } .ed-feat li.inh::before { content: "+"; color: var(--muted); }
+.ed-plan.top { background: var(--panel); border-color: transparent; box-shadow: inset 0 0 0 1.5px var(--accent), 0 8px 22px rgba(77, 77, 206, 0.16); } .ed-plan.top .h-ico { background: var(--accent); color: var(--accent-fg); box-shadow: none; }
+.ed-cmp { max-width: none; } .ed-cmp > summary { cursor: pointer; width: fit-content; font-size: var(--t-sm); font-weight: 650; color: var(--fg); } .ed-ctw { overflow-x: auto; margin-top: 8px; }
+.ed-ct { width: 100%; border-collapse: collapse; font-size: var(--t-xs); line-height: 1.4; } .ed-ct th, .ed-ct td { padding: 6px 8px; border-bottom: 1px solid var(--line); text-align: center; font-weight: 500; background: none; position: static; } .ed-ct th:first-child, .ed-ct td:first-child { text-align: left; white-space: normal; }
+.ed-ct thead th { vertical-align: bottom; font-weight: 700; color: var(--fg); } .ed-ct thead small { display: block; font-weight: 500; color: var(--muted); font-variant-numeric: tabular-nums; } .ed-ct tr.grp th { padding-top: 10px; text-align: left; color: var(--muted); font-weight: 650; }
+.ed-ct .y { color: var(--accent); font-weight: 700; } .ed-ct .n { color: var(--faint); } .ed-ct .top { background: rgba(77, 77, 206, 0.07); } .ed-ct tr.tot td { font-weight: 700; color: var(--fg); border-bottom: 0; font-variant-numeric: tabular-nums; }
+.news { margin: 0; padding: 0; list-style: none; } .news li { display: grid; grid-template-columns: 3.6em 9em minmax(0, 1fr); gap: 2px 12px; padding: 9px 0; border-bottom: 1px solid var(--line); font-size: var(--t-sm); line-height: 1.5; } .news .nd, .news .ns { color: var(--muted); font-variant-numeric: tabular-nums; } .news a { color: var(--fg); text-underline-offset: 3px; } .news li.none { display: block; color: var(--faint); }
+@media (max-width: 640px) { .news li { grid-template-columns: auto minmax(0, 1fr); } .news a { grid-column: 1 / -1; } .ed-ct th, .ed-ct td { padding: 6px 4px; } }
 .ed-foot { max-width: var(--maxw, 1040px); margin: 18px auto 28px; padding: 0 20px; font-size: var(--t-xs); color: var(--faint); line-height: 1.6; }
 @media (max-width: 640px) { .ed-plans { grid-template-columns: minmax(0, 1fr); } .lock-card .btn { margin-left: 0; } }
 html.rpt .ed-bar, html.rpt .lock-card { display: none !important; }
@@ -923,7 +938,7 @@ html.deck-on { overflow: hidden; }
 <div class="bar">
   <div class="bar-in">
     <nav class="nav" aria-label="화면 안 이동">
-      <span class="nav-g"><button type="button" class="nav-c" data-go="#board" title="요약"><svg class="nav-i" viewBox="0 0 16 16" aria-hidden="true"><rect x="2.5" y="2.5" width="4.5" height="4.5" rx="1"/><rect x="9" y="2.5" width="4.5" height="4.5" rx="1"/><rect x="2.5" y="9" width="4.5" height="4.5" rx="1"/><rect x="9" y="9" width="4.5" height="4.5" rx="1"/></svg>요약</button><a href="#board">모아보기</a><a href="#today">현황</a><a href="#market">시장</a><a href="#sum">한눈에</a></span>
+      <span class="nav-g"><button type="button" class="nav-c" data-go="#board" title="요약"><svg class="nav-i" viewBox="0 0 16 16" aria-hidden="true"><rect x="2.5" y="2.5" width="4.5" height="4.5" rx="1"/><rect x="9" y="2.5" width="4.5" height="4.5" rx="1"/><rect x="2.5" y="9" width="4.5" height="4.5" rx="1"/><rect x="9" y="9" width="4.5" height="4.5" rx="1"/></svg>요약</button><a href="#board">모아보기</a><a href="#today">현황</a><a href="#market">시장</a><a href="#web">웹 언급</a><a href="#social">소셜</a><a href="#sum">한눈에</a></span>
       <span class="nav-g"><button type="button" class="nav-c" data-go="#flow" title="흐름"><svg class="nav-i" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 5.5h9.5M10 3l2.5 2.5L10 8M13 10.5H3.5M6 8l-2.5 2.5L6 13"/></svg>흐름</button><a href="#flow">매매</a><a href="#daily">날짜별</a><a href="#pool">풀</a></span>
       <span class="nav-g"><button type="button" class="nav-c" data-go="#accounts" title="지갑"><svg class="nav-i" viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 5.4h10a1 1 0 0 1 1 1v5.4a1 1 0 0 1-1 1h-9a1 1 0 0 1-1-1z"/><path d="M2.5 5.4V4.5a1 1 0 0 1 1-1h7.7"/><path d="M10.6 9.1h.4"/></svg>지갑</button><a href="#accounts">회사 계정</a><a href="#impact">기여 5단계</a><a href="#trace">자금 추적</a><a href="#deep">심층</a><a href="#wallets">분포</a><a href="#wtable">지갑 표</a></span>
       <span class="nav-g"><button type="button" class="nav-c" data-go="#where" title="참고"><svg class="nav-i" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 4.3C6.8 3.4 5 3.1 3 3.3v8.5c2-.2 3.8.1 5 1 1.2-.9 3-1.2 5-1V3.3c-2-.2-3.8.1-5 1z"/><path d="M8 4.3v8.5"/></svg>참고</button><a href="#plan">설계 대조</a><a href="#where">위치</a><a href="#facts">네트워크</a><a href="#notes">읽는 법</a></span>
@@ -1040,6 +1055,28 @@ html.deck-on { overflow: hidden; }
     <div class="scroll"><table id="tb-market" aria-label="WLBN과 주요 코인 10종의 기간별 변화"><thead></thead><tbody></tbody></table></div>
     <p class="limit" data-m-limit data-tail hidden></p>
     <p class="note" data-m-src></p>
+  </section>
+
+  <section class="sec panel" id="web" data-need="web" hidden aria-labelledby="h-web">
+    <h2 class="h2" id="h-web">웹 언급 동향 · 뉴스에 얼마나 나왔나 <span class="period" data-web-at>—</span></h2>
+    <p class="note">뉴스 검색에 잡힌 기사 가운데 <b>제목에 「웰비안 · wellbian · WLBN」이 든 것</b>만 센다. 같은 보도자료를 여러 매체가 실으면 매체마다 한 건이다. 검색에 잡히지 않은 기사는 빠지므로 <b>늘었는지 줄었는지를 보는 값</b>이고, 기사 내용의 좋고 나쁨은 가리지 않는다.</p>
+    <div class="tiles four" id="web-tiles"></div>
+    <h3 class="h3">주별 기사 수 · 최근 16주</h3>
+    <figure class="fig"><div class="chart short skel" id="chart-webweek" data-chart="webweek" role="img" aria-label="주별 기사 수 막대"></div></figure>
+    <h3 class="h3">최근 기사</h3>
+    <ul class="news" id="web-list"></ul>
+    <p class="note" data-web-src>출처: 구글 뉴스 검색(한국어 · 영어). 하루 한 번 확인하고, 제목을 누르면 그 기사로 간다.</p>
+  </section>
+
+  <section class="sec panel" id="social" data-need="social" hidden aria-labelledby="h-social">
+    <h2 class="h2" id="h-social">소셜 지수 · 텔레그램 채널과 대화방 <span class="period" data-soc-at>—</span></h2>
+    <p class="note"><b>소셜 지수</b>는 <b>최근 30일의 활동을 그 앞 60일의 한 달 평균에 견준 값</b>이다. 갈래(웹 언급 수 · 채널 공지 글 수 · 글당 조회 수)마다 평소와 같으면 50, 두 배 이상이면 100으로 놓고 평균한다. 견줄 값이 없는 갈래는 뺀다. 활동이 많고 적음을 보는 숫자이고, 좋고 나쁨을 가리지 않는다.</p>
+    <div class="tiles four" id="soc-tiles"></div>
+    <h3 class="h3">지수를 이루는 갈래</h3>
+    <div class="scroll"><table id="tb-social" aria-label="소셜 지수의 갈래 — 최근 30일, 그 앞 60일의 한 달 평균, 비율, 점수"><thead></thead><tbody></tbody></table></div>
+    <h3 class="h3">주별 채널 공지 글 수 · 최근 16주</h3>
+    <figure class="fig"><div class="chart short skel" id="chart-socweek" data-chart="socweek" role="img" aria-label="주별 채널 공지 글 수 막대"></div></figure>
+    <p class="note" data-soc-src></p>
   </section>
 
   <section class="sec panel" id="sum" aria-labelledby="h-sum">
@@ -1447,7 +1484,9 @@ html.deck-on { overflow: hidden; }
 <p class="ed-foot" data-ed-foot hidden></p>
 <dialog class="ed-dlg" id="ed-dlg" aria-labelledby="ed-dlg-h"><div class="ed-in">
   <div class="tools between"><h2 id="ed-dlg-h">요금제</h2><button type="button" class="btn sm" data-ed-close>닫기</button></div>
+  <div class="ed-early" data-ed-early hidden><b></b><span></span><details class="ed-policy"><summary>얼리버드 정책</summary><ul data-ed-policy></ul></details></div>
   <div class="ed-plans" data-ed-plans></div>
+  <details class="ed-cmp" data-ed-cmpbox><summary>한눈에 비교</summary><div class="ed-ctw"><table class="ed-ct" data-ed-cmp aria-label="요금제 비교"><thead></thead><tbody></tbody></table></div></details>
   <p data-ed-free></p>
   <p class="ed-paynote" data-ed-paynote hidden></p>
   <section class="ed-pay" data-ep hidden aria-label="RLUSD 결제">
@@ -1556,7 +1595,7 @@ html.deck-on { overflow: hidden; }
   // ── 계층: 장 → 구역(접고 펴기 · 한 줄 요약) → 블록(접고 펴기). 처음에 한 번 기존 구조를 감싸 만든다
   //   SHUT0 = 처음에 접어 두는 구역. 요약 장과 매매 그림(flow) · 도움 · 부담(impact)은 펴 둔다(11/23 서우 「매매 그림이랑 도움 · 부담은 처음부터 펴 둬」) · SUM_SHUT = 한 줄 요약을 접었을 때만 보이는 구역(펴면 바로 아래에 같은 내용이 있다)
   var FOLD_KEY = 'wlbn-fold-1', FOLD = {}, BOXES = [];
-  var SHUT0 = { daily: 1, pool: 1, accounts: 1, deep: 1, wallets: 1, wtable: 1, plan: 1, where: 1, facts: 1, before: 1, notes: 1 };
+  var SHUT0 = { web: 1, social: 1, daily: 1, pool: 1, accounts: 1, deep: 1, wallets: 1, wtable: 1, plan: 1, where: 1, facts: 1, before: 1, notes: 1 };
   var SUM_SHUT = { today: 1, market: 1, sum: 1, impact: 1, trace: 1, deep: 1, where: 1, before: 1, notes: 1 };
   try { FOLD = JSON.parse(localStorage.getItem(FOLD_KEY) || '{}') || {}; } catch (e) { FOLD = {}; }
   function foldBtn(box, name, withText) {
@@ -1611,6 +1650,12 @@ html.deck-on { overflow: hidden; }
     where: [['path', 'M8 14s4.2-3.9 4.2-7.3a4.2 4.2 0 0 0-8.4 0C3.8 10.1 8 14 8 14z'], ['circle', 8, 6.6, 1.5]],   // 위치 핀: 지금 어디에 있나
     facts: [['circle', 8, 8, 5.5], ['path', 'M2.5 8h11M8 2.5c2.2 1.9 2.2 9.1 0 11M8 2.5c-2.2 1.9-2.2 9.1 0 11']],   // 지구: 네트워크와 시장
     before: [['circle', 8, 8, 5.5], ['path', 'M8 5v3.2l2.1 1.3']],                                                // 시계: 이전 풀 기간
+    web: [['rect', 2.5, 3.5, 11, 9.5, 1.4], ['path', 'M5 6.4h2.6M5 8.6h6M5 10.6h6M10.2 6.3h.8']],                 // 신문: 웹 언급 동향
+    social: [['path', 'M2.5 4.3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v3.4a1 1 0 0 1-1 1H6.2L4 10.6V8.7h-.5a1 1 0 0 1-1-1z'], ['path', 'M12 6.9h.5a1 1 0 0 1 1 1v2.9a1 1 0 0 1-1 1H12v1.6l-1.9-1.6H7.9']],   // 말풍선 둘: 소셜 지수
+    p_free: [['path', 'M1.8 8s2.3-4.2 6.2-4.2S14.2 8 14.2 8s-2.3 4.2-6.2 4.2S1.8 8 1.8 8z'], ['circle', 8, 8, 1.8]],   // 요금제: 무료(눈)
+    p_lite: [['path', 'M8 13.5V8.2'], ['path', 'M8 8.2C8 5.6 6 4 3.3 4c0 2.6 2 4.2 4.7 4.2z'], ['path', 'M8 9.8c0-2.1 1.7-3.6 4.7-3.6 0 2.3-1.9 3.6-4.7 3.6z']],   // 요금제: 라이트(새싹)
+    p_std: [['circle', 8, 8, 5.5], ['path', 'M10.4 5.6L9 9l-3.4 1.4L7 7z']],                                   // 요금제: 스탠더드(나침반)
+    p_pro: [['path', 'M5 3h6l2.5 3.2L8 13.5 2.5 6.2z'], ['path', 'M2.5 6.2h11M6.4 6.2L8 13.5l1.6-7.3M5 3l1.4 3.2M11 3L9.6 6.2']],   // 요금제: 프로(보석)
     notes: [['circle', 8, 8, 5.5], ['path', 'M8 7.4v3.3M8 5.2v.1']],                                              // 안내(i): 읽는 법
     _: [['circle', 8, 8, 2]]
   };
@@ -2406,6 +2451,8 @@ html.deck-on { overflow: hidden; }
     if (ok(s.holders)) fc.push('WLBN을 가진 지갑 **' + fInt(s.holders) + '곳**'); if (ok(s.devices_total)) fc.push('등록 기기 **' + fInt(s.devices_total) + '대**' + (ok(s.devices_active) ? '(활성 ' + fInt(s.devices_active) + ')' : '')); if (ok(s.epoch_distributed)) fc.push('하루 배분 ' + fInt(s.epoch_distributed) + '개');
     if (ok(s.trust_hold_share)) fc.splice(1, 0, '신뢰선 ' + fInt(s.trustlines) + '곳의 ' + F.pct(s.trust_hold_share));
     if (fc.length) T.facts = fc.join(' · ');
+    if (DATA.web) T.web = '최근 30일 기사 **' + fInt(DATA.web.d30) + '건** · 그 앞 30일 ' + fInt(DATA.web.p30) + '건' + (DATA.web.last ? ' · 가장 최근 ' + md(DATA.web.last) : '');
+    if (DATA.social) T.social = (DATA.social.index === null ? '소셜 지수 —' : '소셜 지수 **' + DATA.social.index + '** / 100') + (DATA.social.subs !== null ? ' · 채널 구독자 ' + fInt(DATA.social.subs) + '명' : '') + (DATA.social.members !== null ? ' · 대화방 ' + fInt(DATA.social.members) + '명' : '') + ' · 최근 30일 공지 글 ' + fInt(DATA.social.posts30) + '건';
     T.before = '10월 24일에 옮겨진 물량과 10월 26~27일 재지급 기록';
     T.notes = '용어 풀이 · 집계 기준과 한계';
     $$('[data-sum]').forEach(function (el) { rich(el, T[el.getAttribute('data-sum')] || ''); });
@@ -3203,6 +3250,46 @@ html.deck-on { overflow: hidden; }
     hover(f, days, xc, x.step(), m, function (d) { var r = by.get(d); return tipRows(o.title ? o.title(r) : dayTitle(r), o.tip(r)); });
   }
   // 주별 · 받은 양에 견준 순매도(일반 사용자 지갑). 진행 중인 주는 옅게
+  // ── 웹 언급 동향 · 소셜 지수(38차 — 「소셜지수랑 웹 언급 동향도 넣자」): 서버가 하루 한 번 받아 정리한 값(DATA.web · DATA.social)을 그린다. 판정 없이 숫자만
+  function buzzTile(box, title, big, unit, sub) {
+    var a = document.createElement('article'), h3 = document.createElement('h3'), p = document.createElement('p'), s2 = document.createElement('p'), sp = document.createElement('span'); a.className = 'card'; h3.className = 'card-h'; p.className = 'big'; s2.className = 'sub';
+    h3.textContent = title; sp.textContent = big; p.appendChild(sp); if (unit) { var u = document.createElement('span'); u.className = 'unit'; u.textContent = unit; p.appendChild(u); }
+    s2.textContent = sub; a.appendChild(h3); a.appendChild(p); a.appendChild(s2); box.appendChild(a);
+  }
+  function buzzNum(v, digits) { return v === null || v === undefined ? '—' : digits ? d3.format(',.' + digits + 'f')(v) : fInt(v); }
+  function drawBuzz() {
+    var W = DATA.web, S2 = DATA.social, wt = $('#web-tiles'), st = $('#soc-tiles');
+    if (W && wt) {
+      wt.replaceChildren(); var wa = $('[data-web-at]'); if (wa) wa.textContent = md(W.at) + ' 확인';
+      buzzTile(wt, '최근 30일 기사', fInt(W.d30), '건', '그 앞 30일 ' + fInt(W.p30) + '건');
+      buzzTile(wt, '최근 90일 기사', fInt(W.d90), '건', '실은 매체 ' + fInt(W.srcs90) + '곳');
+      buzzTile(wt, '최근 1년 기사', fInt(W.year), '건', '제목에 이름이 든 기사만');
+      buzzTile(wt, '가장 최근 기사', W.last ? md(W.last) : '—', '', W.last && (W.items || [])[0] ? (W.items[0].src || '매체 이름 없음') : '검색에 잡힌 기사가 없다');
+      var ul = $('#web-list'); ul.replaceChildren();
+      (W.items || []).forEach(function (x) {
+        var li = document.createElement('li'), d = document.createElement('span'), sr = document.createElement('span'), a = document.createElement(/^https:\/\//.test(x.url || '') ? 'a' : 'span');
+        d.className = 'nd'; d.textContent = md(x.date); sr.className = 'ns'; sr.textContent = x.src || '—'; a.textContent = x.title; if (a.tagName === 'A') { a.href = x.url; a.target = '_blank'; a.rel = 'noopener noreferrer nofollow'; }
+        li.appendChild(d); li.appendChild(sr); li.appendChild(a); ul.appendChild(li);
+      });
+      if (!(W.items || []).length) { var no = document.createElement('li'); no.className = 'none'; no.textContent = '최근 1년 동안 검색에 잡힌 기사가 없다.'; ul.appendChild(no); }
+    }
+    if (S2 && st) {
+      st.replaceChildren(); var sa = $('[data-soc-at]'); if (sa) sa.textContent = md(S2.at) + ' 확인';
+      var first = (S2.log || [])[0], chg = function (now, was) { return now === null || was === null || was === undefined || !first || first.date === S2.at ? '' : ' · ' + md(first.date) + '보다 ' + (now - was >= 0 ? '+' : '−') + fInt(Math.abs(now - was)); };
+      buzzTile(st, '소셜 지수', S2.index === null ? '—' : String(S2.index), S2.index === null ? '' : '/ 100', S2.index === null ? '견줄 값이 아직 없다' : '갈래 ' + S2.used + '개 평균 · 50이면 평소와 같음');
+      buzzTile(st, '채널 구독자', buzzNum(S2.subs), '명', (S2.channel ? '@' + S2.channel : '공지 채널') + (first ? chg(S2.subs, first.subs) : '') + ((S2.log || []).length < 2 ? ' · 변화는 오늘부터 쌓는다' : ''));
+      buzzTile(st, '대화방 인원', buzzNum(S2.members), '명', (S2.group ? '@' + S2.group : '대화방') + (S2.online !== null ? ' · 확인할 때 접속 ' + fInt(S2.online) + '명' : ''));
+      buzzTile(st, '최근 30일 공지 글', fInt(S2.posts30), '건', '그 앞 60일 ' + fInt(S2.posts_prev60) + '건' + (S2.last_post ? ' · 마지막 글 ' + md(S2.last_post) : ''));
+      table('#tb-social', [{ key: 'name', label: '갈래', text: 1 }, { key: 'now', label: '최근 30일', text: 1, num: 1 }, { key: 'base', label: '그 앞 60일의 한 달 평균', text: 1, num: 1 }, { key: 'ratio', label: '평소 대비', text: 1, num: 1 }, { key: 'score', label: '점수(100점까지)', text: 1, num: 1 }],
+        (S2.parts || []).map(function (p) { return { name: p.name, now: p.now === null ? null : buzzNum(p.now) + p.unit, base: p.base === null ? null : buzzNum(p.base, p.base % 1 ? 1 : 0) + p.unit, ratio: p.ratio === null ? '견줄 값 없음' : F.pct(p.ratio), score: p.ratio === null ? null : String(Math.round(Math.min(100, 50 * p.ratio))) }; }));
+      var ss = $('[data-soc-src]'); if (ss) ss.textContent = '출처: 텔레그램 공개 쪽(' + [S2.channel ? '공지 채널 @' + S2.channel : '', S2.group ? '대화방 @' + S2.group : ''].filter(Boolean).join(' · ') + ')에서 하루 한 번 읽은 값. 글당 조회 수는 ' + (S2.views_med === null ? '읽지 못했다' : '최근 글 열 개의 가운데 값이 ' + fInt(S2.views_med) + '회') + '. X(트위터)와 검색량은 들어 있지 않다.';
+    }
+  }
+  function buzzBars(el, rows, label, unit) {
+    barsOf(el, rows || [], { val: function (r) { return r.n; }, base: 0, h: 190, maxBar: 34, fmt: function (v) { return v % 1 ? '' : String(v); }, color: 'var(--s1)',
+      title: function (r) { return md(r.from) + '~' + md(r.to); }, tip: function (r) { return [{ label: label, value: fInt(r.n) + unit, color: 'var(--s1)' }]; } });
+    el.setAttribute('aria-label', '주별 ' + label + '(최근 16주): ' + (rows || []).filter(function (r) { return r.n > 0; }).map(function (r) { return md(r.from) + ' 주 ' + r.n + unit; }).join(', '));
+  }
   function drawWeekly(el) {
     var W = DATA.weekly || [];
     barsOf(el, W, { val: function (r) { return r.ratio; }, base: 0, ref: 1, refLabel: '100% · 받은 만큼 순매도', h: 220, maxBar: 72, fmt: d3.format('.0%'), color: 'var(--s1)',
@@ -3526,26 +3613,59 @@ html.deck-on { overflow: hidden; }
       if (h2) { if (!nd) { nd = document.createElement('span'); nd.className = 'ed-need'; h2.appendChild(nd); } if (nd.textContent !== need.name + '부터') nd.textContent = need.name + '부터'; }      // 접어 둔 구역에서도 잠긴 것이 보인다
       if (!body) return;
       if (!card) { card = document.createElement('div'); card.className = 'lock-card'; var b = document.createElement('b'), sp = document.createElement('span'), bt = document.createElement('button'); bt.type = 'button'; bt.className = 'btn'; bt.textContent = '요금제 보기'; bt.addEventListener('click', edOpen); card.appendChild(b); card.appendChild(sp); card.appendChild(bt); body.insertBefore(card, body.firstChild); }
-      card.querySelector('b').textContent = '이 구역은 ' + need.name + '부터 볼 수 있습니다'; card.querySelector('span').textContent = '월 ' + edWon(need.month) + ' · 연 ' + edWon(need.year);
+      card.querySelector('b').textContent = '이 구역은 ' + need.name + '부터 볼 수 있습니다'; card.querySelector('span').textContent = '월 $' + need.month + (E.early && E.early.on && need.off ? ' · 얼리버드(정가 $' + need.list_month + ')' : '') + ' · 연 $' + need.year;
     });
     if (foot) foot.textContent = E.name + (E.operator ? ' · 운영 ' + E.operator : '') + ' · 웰비안 · 케이웨더의 공식 서비스가 아닙니다.' + (E.origin ? ' ' + E.origin : '') + ' 공개 원장과 공개 사이트의 값만 정리해 보여 주며, 매매를 권하거나 가격을 전망하지 않습니다. 보상의 지급량과 가치는 보장되지 않습니다.';
   }
   function edOpen() {
     var E = DATA && DATA.edition, dlg = $('#ed-dlg'); if (!E || !dlg) return;
-    var box = $('[data-ed-plans]'), names = {}; $$('main .sec').forEach(function (x) { var h = x.querySelector('.h2'); if (h) { var full = String(h.firstChild ? h.firstChild.textContent : h.textContent).trim(); names[x.id] = x.id === 'accounts' ? full : full.split(' · ')[0].trim(); } });
+    var box = $('[data-ed-plans]');
     box.replaceChildren();
+    var rank = {}; E.plans.forEach(function (p, i) { rank[p.key] = i; });
+    var feats = E.features || [], total = feats.length, early = !!(E.early && E.early.on), usd = function (v) { return '$' + v; };
+    var el = function (tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text !== undefined) e.textContent = text; return e; };
     E.plans.filter(function (p) { return p.key !== 'free'; }).forEach(function (p) {
-      var a = document.createElement('article'), mk = function (tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; e.textContent = text; a.appendChild(e); return e; }; a.className = 'ed-plan' + (p.key === E.plan ? ' now' : '');
-      mk('h3', '', p.name + (p.key === E.plan ? ' · 지금 이용 중' : '')); var pr = mk('p', 'pr', d3.format(',')(p.month)); var sm = document.createElement('small'); sm.textContent = '원 / 월'; pr.appendChild(sm);
-      mk('p', 'yr', '연 ' + edWon(p.year) + ' (2개월 무료)');
-      var pp = E.pay && E.pay.on ? E.pay.prices[p.key] : null; if (pp) mk('p', 'rl', 'RLUSD ' + pp.month + ' / 월 · ' + pp.year + ' / 연');
-      mk('p', 'who', p.who);
-      var opens = Object.keys(E.sections).filter(function (id) { return E.sections[id] === p.key; }).map(function (id) { return names[id] || id; }); mk('p', 'opens', '여는 구역: ' + opens.join(' · '));
-      if (pp) { var buy = document.createElement('div'); buy.className = 'ed-buy'; ['month', 'year'].forEach(function (term) { var bt = document.createElement('button'); bt.type = 'button'; bt.className = 'btn sm'; bt.textContent = E.pay.terms[term] + ' 결제'; bt.setAttribute('data-ep-buy', p.key + ':' + term); bt.addEventListener('click', function () { epStart(p.key, term); }); buy.appendChild(bt); }); a.appendChild(buy); }
+      var a = el('article', 'ed-plan' + (p.key === E.plan ? ' now' : '') + (p.key === 'pro' ? ' top' : '')), prev = E.plans[rank[p.key] - 1], cut = early && p.off > 0;
+      a.setAttribute('data-plan', p.key);
+      var hd = el('div', 'ed-ph'); hd.appendChild(icoEl('p_' + p.key)); hd.appendChild(el('h3', '', p.name));
+      if (p.key === E.plan) hd.appendChild(el('span', 'ed-tag now', '지금 이용 중')); else if (p.key === 'pro') hd.appendChild(el('span', 'ed-tag', '전 구역'));
+      a.appendChild(hd);
+      var pr = el('p', 'pr'); if (cut) pr.appendChild(el('s', '', usd(p.list_month))); pr.appendChild(el('b', '', usd(p.month))); pr.appendChild(el('small', '', '/ 월')); if (cut) pr.appendChild(el('span', 'off', '−' + p.off + '%')); a.appendChild(pr);
+      var yr = el('p', 'yr', '연 ' + usd(p.year)); if (cut) { yr.appendChild(document.createTextNode(' ')); yr.appendChild(el('s', '', usd(p.list_year))); } yr.appendChild(document.createTextNode(' · 2개월 무료')); a.appendChild(yr);
+      a.appendChild(el('p', 'who', p.who));
+      var meter = el('div', 'ed-meter'), bar = el('i'); bar.style.width = (total ? Math.round(p.items / total * 100) : 0) + '%'; meter.appendChild(bar); meter.setAttribute('role', 'img'); meter.setAttribute('aria-label', '항목 ' + total + '개 가운데 ' + p.items + '개'); a.appendChild(meter);
+      var cnt = el('p', 'cnt'); cnt.appendChild(el('b', '', String(p.items))); cnt.appendChild(document.createTextNode(' / ' + total + ' 항목')); a.appendChild(cnt);
+      var ul = el('ul', 'ed-feat'); ul.appendChild(el('li', 'inh', prev.name + '의 모든 것')); feats.filter(function (f) { return f.from === p.key; }).forEach(function (f) { ul.appendChild(el('li', '', f.n)); }); a.appendChild(ul);
+      if (E.pay && E.pay.on) { var buy = el('div', 'ed-buy'); ['month', 'year'].forEach(function (term) { var bt = el('button', 'btn sm', E.pay.terms[term] + ' · ' + usd(term === 'year' ? p.year : p.month)); bt.type = 'button'; bt.setAttribute('data-ep-buy', p.key + ':' + term); bt.addEventListener('click', function () { epStart(p.key, term); }); buy.appendChild(bt); }); a.appendChild(buy); }
       box.appendChild(a);
     });
-    var pn = $('[data-ed-paynote]'); if (pn) { pn.hidden = !(E.pay && E.pay.on); if (E.pay && E.pay.on) pn.textContent = 'RLUSD(XRP Ledger)로 결제합니다 · 1 RLUSD = ' + d3.format(',')(E.pay.rate) + '원으로 계산 · 보내면 원장에서 확인해 바로 엽니다.' + (E.pay.demo ? ' 지금은 결제 데모입니다.' : ''); }
-    var fr = $('[data-ed-free]'), free = Object.keys(E.sections).filter(function (id) { return E.sections[id] === 'free'; }).map(function (id) { return names[id] || id; }); if (fr) fr.textContent = '무료로 보는 구역: ' + free.join(' · ') + '. 위 요금제는 아래 요금제의 구역을 모두 포함합니다.';
+    // 얼리버드 띠와 정책(날짜 · 값은 서버가 실어 보낸 것 그대로)
+    var eb = $('[data-ed-early]');
+    if (eb) {
+      eb.hidden = !early;
+      if (early) {
+        var ud = E.early.until, when = (+ud.slice(5, 7)) + '월 ' + (+ud.slice(8, 10)) + '일', paid = E.plans.filter(function (p) { return p.key !== 'free'; });
+        eb.querySelector('b').textContent = '얼리버드 · 최대 ' + d3.max(paid, function (p) { return p.off; }) + '% 할인'; eb.querySelector('span').textContent = when + '까지 만든 주문에 적용 · 그 뒤에는 정가';
+        var pol = $('[data-ed-policy]'); pol.replaceChildren();
+        [ud.slice(0, 4) + '년 ' + when + '(한국 시간)까지 만든 주문에 얼리버드 값을 적용합니다.', '주문은 만든 뒤 24시간 안에 보낸 입금만 인정합니다.', '얼리버드로 결제한 기간(1개월 · 1년)은 그 값 그대로 끝까지 씁니다.',
+          '얼리버드가 끝나면 정가입니다 — 월 ' + paid.map(function (p) { return p.name + ' ' + usd(p.list_month); }).join(' · ') + '. 다시 결제할 때는 그때의 값을 냅니다.', '자동으로 다시 결제되지 않습니다. 기간이 끝나면 무료 화면으로 돌아갑니다.'].forEach(function (t) { pol.appendChild(el('li', '', t)); });
+      }
+    }
+    // 한눈에 비교: 항목 × 요금제(넓은 화면에서는 펴 둔다)
+    var ct = $('[data-ed-cmp]'), cb = $('[data-ed-cmpbox]');
+    if (ct) {
+      var th = ct.tHead, tb = ct.tBodies[0], hr, lastG = null, colCls = function (p) { return (p.key === 'pro' ? 'top' : '') + (p.key === E.plan ? ' now' : ''); }; th.replaceChildren(); tb.replaceChildren(); hr = th.insertRow();
+      hr.appendChild(el('th', '', '항목')); E.plans.forEach(function (p) { var h = el('th', colCls(p), p.name); h.scope = 'col'; h.appendChild(el('small', '', p.key === 'free' ? '$0' : usd(p.month))); hr.appendChild(h); });
+      feats.forEach(function (f) {
+        if (f.g !== lastG) { lastG = f.g; var gr = tb.insertRow(), gh = el('th', '', f.g); gr.className = 'grp'; gh.colSpan = E.plans.length + 1; gh.scope = 'colgroup'; gr.appendChild(gh); }
+        var tr = tb.insertRow(); tr.appendChild(el('td', '', f.n));
+        E.plans.forEach(function (p) { var on = rank[p.key] >= rank[f.from], td = el('td', (on ? 'y ' : 'n ') + colCls(p), on ? '●' : '–'); td.setAttribute('aria-label', p.name + (on ? ' 포함' : ' 없음')); tr.appendChild(td); });
+      });
+      var tot = tb.insertRow(); tot.className = 'tot'; tot.appendChild(el('td', '', '열리는 항목')); E.plans.forEach(function (p) { tot.appendChild(el('td', colCls(p), p.items + ' / ' + total)); });
+      if (cb && !cb.__set) { cb.__set = 1; cb.open = window.innerWidth >= 720; }
+    }
+    var pn = $('[data-ed-paynote]'); if (pn) { pn.hidden = !(E.pay && E.pay.on); if (E.pay && E.pay.on) pn.textContent = 'RLUSD(XRP Ledger)로 결제합니다 · 1 RLUSD 를 1달러로 칩니다 · 보내면 원장에서 확인해 바로 엽니다.' + (E.pay.demo ? ' 지금은 결제 데모입니다.' : ''); }
+    var fr = $('[data-ed-free]'); if (fr) fr.textContent = '무료로 보는 것: ' + feats.filter(function (f) { return f.from === 'free'; }).map(function (f) { return f.n; }).join(' · ') + ' · 읽는 법. 위 요금제는 아래 요금제의 항목을 모두 포함합니다.';
     var pay = $('[data-ed-pay]'), payOk = /^https:\/\//.test(E.pay_url || ''); if (pay) { pay.hidden = !payOk; if (payOk) pay.href = E.pay_url; }      // 결제 주소는 https 주소만 건다
     var inp = $('[data-ed-key]'); if (inp) inp.value = edKey(); edMsg(''); epResume();
     if (dlg.showModal) { if (!dlg.open) dlg.showModal(); } else dlg.setAttribute('open', '');
@@ -3563,12 +3683,13 @@ html.deck-on { overflow: hidden; }
   function epPut(o) { try { if (o) localStorage.setItem(EP_KEY, JSON.stringify(o)); else localStorage.removeItem(EP_KEY); } catch (e) { /* 기억하지 못해도 이번에는 그대로 쓴다 */ } }
   function postJson(url, body) { return fetch(url, { method: 'POST', headers: { 'content-type': 'application/json', accept: 'application/json' }, body: JSON.stringify(body) }).then(function (r) { return r.json(); }); }
   function epSay(t) { var m = $('[data-ep-st]'); if (m) m.textContent = t; }
+  function epStamp(sec) { var d = new Date(sec * 1000); return (d.getMonth() + 1) + '월 ' + d.getDate() + '일 ' + epClock(sec); }
   function epClock(sec) { var d = new Date(sec * 1000); return ('0' + d.getHours()).slice(-2) + ':' + ('0' + d.getMinutes()).slice(-2); }
   function epMark() { var p = !!epGet(); $$('[data-ed-open]').forEach(function (b) { var t = p ? '결제 확인 이어서 하기' : '요금제 · 이용권'; if (b.textContent !== t) b.textContent = t; }); }
   function epDraw() {
     var box = $('[data-ep]'), o = EP.o; epMark(); if (!box) return; box.hidden = !o; if (!o) return;
     $('[data-ep-h]').textContent = o.plan_name + ' · ' + o.term_name + ' — RLUSD로 결제';
-    $('[data-ep-amt]').textContent = o.amount + ' RLUSD'; $('[data-ep-krw]').textContent = edWon(o.krw) + ' · 1 RLUSD = ' + d3.format(',')(o.rate) + '원으로 계산 · 이 금액보다 적으면 입금을 찾지 못합니다.';
+    $('[data-ep-amt]').textContent = o.amount + ' RLUSD'; $('[data-ep-krw]').textContent = (o.early ? '얼리버드 값(정가 ' + o.list + ' RLUSD) · ' : '') + '1 RLUSD 를 1달러로 칩니다 · 이 금액보다 적으면 입금을 찾지 못합니다.' + (o.pay_by ? ' 주문은 ' + epStamp(o.pay_by) + '까지 보낸 입금만 인정합니다.' : '');
     $('[data-ep-to]').textContent = o.to || '데모 — 받는 주소 없음'; $('[data-ep-tag]').textContent = String(o.tag);
     var dm = $('[data-ep-demo]'), db = $('[data-ep-demopay]'), ck = $('[data-ep-check]'), ct = $('[data-ep-copy="to"]');
     if (dm) dm.hidden = !o.demo; if (db) db.hidden = !o.demo; if (ck) ck.hidden = !o.live; if (ct) ct.hidden = !o.to;
@@ -4290,7 +4411,7 @@ html.deck-on { overflow: hidden; }
   }
   function chartFns() { return Object.assign(chartFns0(), BOARD); }
   function chartFns0() {
-    return { index: drawIndex, trend: drawTrend, vsbar: drawVsBar, vsline: drawVsLine, ages: drawAges, soldratio: drawSoldRatio, soldage: drawSoldAge, weekly: drawWeekly, unlock: drawUnlock,
+    return { index: drawIndex, trend: drawTrend, vsbar: drawVsBar, vsline: drawVsLine, ages: drawAges, soldratio: drawSoldRatio, soldage: drawSoldAge, weekly: drawWeekly, unlock: drawUnlock, webweek: function (el) { buzzBars(el, (DATA.web || {}).weeks, '기사 수', '건'); }, socweek: function (el) { buzzBars(el, (DATA.social || {}).weeks, '채널 공지 글 수', '건'); },
       cost: function (el) { linesOf(el, deepRows(), [{ key: 'price', label: '그날 마감 값', color: 'var(--s1)' }, { key: 'cost', label: '평균 취득가', color: 'var(--s2)' }], F.f4, false); },
       movers: function (el) { linesOf(el, deepRows(), [{ key: 'movers', label: '움직인 지갑', color: 'var(--s1)' }, { key: 'receivers', label: '보상 받은 지갑', color: 'var(--s3)' }, { key: 'fresh', label: '새 지갑', color: 'var(--s2)' }], fInt, true); }, loop: drawLoop, flow: drawFlow, user: drawUser, market: drawMarket, money: drawMoney, scatter: drawScatter, wallet: drawWalletChart,
       price: function (el) { drawLines(el, [{ key: 'price_rlusd', label: '가격(RLUSD)', color: 'var(--s1)' }], F.f4, false); },
@@ -4389,7 +4510,7 @@ html.deck-on { overflow: hidden; }
     try { drawBoard(); } catch (e) { if (window.console) console.error(e); }
     $$('[data-chart]').forEach(function (el) { el.__drawn = 0; drawChart(el.getAttribute('data-chart')); });
     closeHelp();
-    [drawHealth, drawVs, drawDeep, drawWallet, drawDist, drawTables, drawImpact, drawTrace, drawFlowShares, drawPlan, drawExtras, drawPositions, drawInsights, drawDay, drawCalc, drawStatus, drawSums, syncDates].forEach(function (fn) { try { fn(); } catch (e) { if (window.console) console.error(e); } });
+    [drawHealth, drawVs, drawDeep, drawWallet, drawDist, drawTables, drawImpact, drawTrace, drawFlowShares, drawPlan, drawBuzz, drawExtras, drawPositions, drawInsights, drawDay, drawCalc, drawStatus, drawSums, syncDates].forEach(function (fn) { try { fn(); } catch (e) { if (window.console) console.error(e); } });
     $$('[data-chart]').forEach(function (el) { if (!el.__drawn) drawChart(el.getAttribute('data-chart')); });      // 위에서 막 드러난 곳(추이 · 지갑 따라가 보기)의 그림
     try { edApply(); } catch (e) { if (window.console) console.error(e); }      // 상품판: 자료가 없어 숨겨진 구역도 잠긴 구역이면 자리와 안내는 보인다
     spyLater();
