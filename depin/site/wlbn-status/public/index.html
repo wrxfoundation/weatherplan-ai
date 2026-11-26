@@ -3491,6 +3491,7 @@ html.deck-on { overflow: hidden; }
     var ttl = $('.title'); if (ttl && ttl.textContent !== E.name) ttl.textContent = E.name; if (document.title !== E.name) document.title = E.name;
     $$('[data-present]').forEach(function (b) { b.hidden = true; });      // 발표 모드는 상품판에 내지 않는다
     $$('[data-wf-open]').forEach(function (b) { b.hidden = E.locked.indexOf('wtable') >= 0; });      // 지갑 찾기는 지갑별 표가 열린 요금제에서만
+    var dr = $('#board-range'); if (dr) dr.hidden = E.locked.indexOf('daily') >= 0;      // 날짜 지정은 스탠더드부터(서버도 그 아래 요금제에는 범위를 계산해 주지 않는다)
     var planOf = {}; E.plans.forEach(function (p) { planOf[p.key] = p; });
     var chip = $('[data-ed-plan]'), now = $('[data-ed-now]'); if (chip) chip.textContent = E.plan_name;
     if (now) now.textContent = E.plan === 'free' ? (E.key_state === 'expired' ? '이용권의 기간이 끝났습니다 — 지금은 무료 화면입니다.' : E.key_state === 'bad' ? '이용권을 읽지 못했습니다 — 지금은 무료 화면입니다.' : '무료로 보는 오늘 요약입니다. 나머지 구역은 요금제에 따라 열립니다.') : (E.exp ? E.exp + '까지 이용할 수 있습니다.' : '');
