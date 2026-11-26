@@ -20,6 +20,7 @@ fs.mkdirSync(path.join(OUT, 'scripts'), { recursive: true });
 ['scripts/mint-token.js', 'scripts/refresh-snapshot.js'].forEach(copy);
 fs.copyFileSync(path.join(ROOT, 'README-OPERATOR.md'), path.join(OUT, 'README.md'));
 fs.writeFileSync(path.join(OUT, 'lib/edition-on.json'), JSON.stringify({ watch: true }) + '\n');      // 이 묶음은 늘 상품판
+['lib/admin-pass.json', 'lib/snapshot-view.json'].forEach((rel) => { const p = path.join(OUT, rel); if (fs.existsSync(p)) fs.rmSync(p); });      // 내부판 관리자 비밀번호 · 내부 자료는 넘기지 않는다(44차)
 // 무료만큼만 남긴 미리 넣어 둘 자료
 const S = JSON.parse(fs.readFileSync(path.join(ROOT, 'lib/snapshot-state.json'), 'utf8'));
 const full = core.buildDatasets(JSON.parse(JSON.stringify(S)), { pub: true });      // pub = 밖으로 내는 판(안쪽 확인을 근거로 한 문구를 쓰지 않는다)

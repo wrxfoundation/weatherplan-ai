@@ -208,7 +208,7 @@ td .pc { display: block; margin-top: 1px; color: var(--faint); font-size: var(--
 .sig-row { display: grid; grid-template-columns: 7.6em minmax(0, 1fr); gap: 4px 10px; align-items: start; }
 .sig-h { margin: 0; display: flex; align-items: center; gap: 6px; padding-top: 3px; font-size: var(--t-sm); font-weight: 650; color: var(--fg); white-space: nowrap; } .sig-h .lamp { width: 17px; height: 17px; } .sig-h b { color: var(--st-fg, var(--st)); font-variant-numeric: tabular-nums; }
 .sig-l { margin: 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 5px 6px; }
-.sg { display: inline-flex; align-items: baseline; gap: 6px; padding: 3px 10px; border-radius: 999px; background: var(--st-bg); color: var(--fg); font-size: var(--t-xs); line-height: 1.5; text-decoration: none; white-space: nowrap; }
+.sg { display: inline-flex; flex-wrap: wrap; align-items: baseline; align-content: center; gap: 0 6px; padding: 3px 10px; border-radius: 999px; background: var(--st-bg); color: var(--fg); font-size: var(--t-xs); line-height: 1.5; text-decoration: none; white-space: nowrap; }
 .sg b { font-weight: 700; font-variant-numeric: tabular-nums; } .sg-x { color: var(--muted); } .sg:hover { box-shadow: inset 0 0 0 1px var(--st); } .sig-none { padding: 3px 0; font-size: var(--t-xs); color: var(--faint); }
 .sig-note { margin: 0; font-size: var(--t-xs); color: var(--faint); } .note.intro { color: var(--muted); } .note.intro a { color: inherit; text-underline-offset: 3px; }
 @media (max-width: 560px) { .sig-row { grid-template-columns: minmax(0, 1fr); } .sig { padding: 11px 12px; } .sg { white-space: normal; flex-wrap: wrap; border-radius: 14px; } }
@@ -553,6 +553,23 @@ html.rpt .bc-grip, html.rpt .bord-tools { display: none !important; }
 .title { cursor: pointer; }
 /* ── 유형별 생태계 기여 척도: 칩(유형의 자리) + 단계별 지갑 분포 막대 + 평균 점수 */
 .tsc { display: inline-flex; align-items: center; gap: 8px; vertical-align: middle; }
+/* 관리자 모드(44차): 내부판은 비밀번호를 넣어야 자료가 열린다 */
+.adm-gate { position: fixed; inset: 0; z-index: 400; display: grid; place-items: center; padding: 16px; background: var(--bg); }
+.adm-gate[hidden] { display: none; }
+.adm-card { box-sizing: border-box; width: min(380px, 100%); min-width: 0; display: grid; gap: 12px; padding: 28px 24px 22px; background: var(--panel); border: 1px solid var(--line); border-radius: 16px; box-shadow: var(--pop-shadow); }
+.adm-card .adm-ico { width: 36px; height: 36px; display: grid; place-items: center; border-radius: 10px; background: var(--soft); color: var(--accent); }
+.adm-card .adm-ico svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: var(--ico-w, 1.25); stroke-linecap: round; stroke-linejoin: round; }
+.adm-card h1 { margin: 0; font-size: 20px; font-weight: 650; color: var(--fg); }
+.adm-card p { margin: 0; color: var(--muted); font-size: 13.5px; line-height: 1.55; }
+.adm-card label { font-size: 13px; font-weight: 650; color: var(--fg); }
+.adm-card input { box-sizing: border-box; width: 100%; min-width: 0; font: inherit; font-size: 16px; padding: 11px 12px; border: 1px solid var(--line-2); border-radius: 10px; background: var(--soft); color: var(--fg); }
+.adm-card input:focus-visible, .adm-go:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.adm-go { font: inherit; font-weight: 650; padding: 11px; border: 0; border-radius: 10px; background: var(--accent); color: var(--accent-fg); cursor: pointer; }
+.adm-go:disabled { opacity: 0.6; cursor: default; }
+.adm-card .adm-msg { min-height: 1.3em; color: var(--bad); }
+.adm-card .adm-fine { font-size: 12px; color: var(--faint); }
+html.adm-locked body { overflow: hidden; }
+@media print { .adm-gate { display: none !important; } }
 #tb-impact-hold td .lamp { width: 1.05em; height: 1.05em; vertical-align: -0.18em; }
 .tsc .ichip { min-width: 4.6em; text-align: center; }
 .tsc-bar { flex: none; display: flex; gap: 1.5px; width: 84px; height: 8px; border-radius: 4px; overflow: hidden; background: var(--soft); }
@@ -954,6 +971,7 @@ html.rpt .to-top { display: none !important; } @media print { .to-top { display:
         <span class="fsz" role="group" aria-label="글씨 크기"><button type="button" data-fs-down aria-label="글씨 작게">가−</button><output data-fs-now aria-live="polite">글씨 기본</output><button type="button" data-fs-up aria-label="글씨 크게">가+</button></span>
         <button type="button" class="btn ico" data-theme-toggle aria-pressed="false" title="어두운 화면으로"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M13.3 9.7A5.6 5.6 0 0 1 6.3 2.7a5.6 5.6 0 1 0 7 7z"/></svg><span data-theme-label>어둡게</span></button>
         <button type="button" class="btn ico" data-fx-toggle aria-pressed="true" title="움직임 끄기"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M1.5 8.5h2.6l1.9-4.6 3 8.4 1.9-3.8h3.6"/></svg><span data-fx-label>움직임 끄기</span></button>
+        <button type="button" class="btn ico" data-adm hidden title="관리자 모드를 잠근다 — 다시 열려면 비밀번호를 넣는다"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M5 7V5.2a3 3 0 0 1 6 0V7"/><rect x="3.5" y="7" width="9" height="6.5" rx="1.5"/></svg><span>관리자 · 잠그기</span></button>
       </div>
       <div class="ctl">
         <button type="button" class="btn ico pres" data-present title="긍정으로 판정된 지표만 큰 글씨로 보여 주는 발표 화면"><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="2" y="2.8" width="12" height="8.4" rx="1.2"/><path d="M5.6 13.6h4.8M8 11.2v2.4M7 5.3l2.6 1.7L7 8.7z"/></svg>발표 모드</button>
@@ -1534,6 +1552,18 @@ html.rpt .to-top { display: none !important; } @media print { .to-top { display:
 </main>
 <footer class="ed-foot" data-ed-foot hidden aria-labelledby="ed-foot-h"><h2 id="ed-foot-h">면책</h2><ul data-ed-disc></ul><p data-ed-who></p></footer>
 <button type="button" class="to-top" data-totop aria-label="맨 위로" title="맨 위로"><i class="ic ic-top" aria-hidden="true"></i></button>
+<div class="adm-gate" data-adm-gate hidden role="dialog" aria-modal="true" aria-labelledby="adm-h">
+  <form class="adm-card" data-adm-form autocomplete="off">
+    <span class="adm-ico" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M5 7V5.2a3 3 0 0 1 6 0V7"/><rect x="3.5" y="7" width="9" height="6.5" rx="1.5"/></svg></span>
+    <h1 id="adm-h">WLBN 운용현황 · 관리자 모드</h1>
+    <p>내부 현황용 화면입니다(대외 인용 금지). 관리자 비밀번호를 넣어야 열립니다.</p>
+    <label for="adm-pw">비밀번호</label>
+    <input id="adm-pw" type="password" data-adm-pw autocomplete="current-password" required>
+    <button type="submit" class="adm-go" data-adm-go>들어가기</button>
+    <p class="adm-msg" data-adm-msg role="status" aria-live="polite"></p>
+    <p class="adm-fine">이 기기에 24시간 동안 기억합니다. 다 보면 머리의 「관리자 · 잠그기」를 누르세요.</p>
+  </form>
+</div>
 <dialog class="ed-dlg" id="ed-dlg" aria-labelledby="ed-dlg-h"><div class="ed-in">
   <div class="tools between"><h2 id="ed-dlg-h">요금제</h2><button type="button" class="btn sm" data-ed-close>닫기</button></div>
   <p class="ed-open" data-ed-openbox hidden></p>
@@ -4736,7 +4766,49 @@ html.rpt .to-top { display: none !important; } @media print { .to-top { display:
     }).then(function () { if (go) go.disabled = false; });
   }
   function clearDates() { CUSTOM = null; RANGE = 'all'; SELDAY = null; $$('[data-range]').forEach(function (x) { x.setAttribute('aria-pressed', String(x.getAttribute('data-range') === 'all')); }); keepPlace(render); setUrl(); drSay('정한 날짜는 「고른 기간」을 쓰는 모든 구역에 같이 적용된다.'); }
-  function getJson(url) { var hd = { accept: 'application/json' }, ek = /^api\//.test(url) ? edKey() : ''; if (ek) hd.authorization = 'Bearer ' + ek; return fetch(url, { headers: hd }).then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); }); }
+  function getJson(url) {
+    var hd = { accept: 'application/json' }, api = /^api\//.test(url), ak = api ? adKey() : '', ek = api && !ak ? edKey() : '';
+    if (ak || ek) hd.authorization = 'Bearer ' + (ak || ek);
+    return fetch(url, { headers: hd }).then(function (r) {
+      if (r.status === 401 && api) return r.json().catch(function () { return {}; }).then(function (b) { if (b && b.error === 'admin') admGate(b.set === false ? 'unset' : ak ? 'expired' : ''); throw new Error('401'); });
+      if (!r.ok) throw new Error(r.status); return r.json();
+    });
+  }
+  // ── 관리자 모드(44차 — 서우 「내부판을 관리자 모드화해서 버튼 추가하고 비번 걸어줘」)
+  //   비밀번호는 서버만 안다(환경변수 ADMIN_PASSWORD 또는 배포 묶음에만 든 해시). 맞으면 서버가 24시간짜리 서명 열쇠를 주고, 화면은 이 기기에 둔다
+  //   내부판 묶음에는 public/snapshot.json 이 없다 — 미리 넣어 둔 자료도 열쇠로만(/api/snapshot). 상품판에서는 이 화면이 뜨지 않는다(서버가 401 admin 을 내지 않는다)
+  var AD_KEY = 'wlbn-admin-key', ADM = null;
+  function adKey() { var o = ADM; try { o = JSON.parse(localStorage.getItem(AD_KEY) || 'null') || ADM; } catch (e) { /* 저장소를 못 쓰면 이 창에서만 */ } return o && o.k && o.x * 1000 > Date.now() ? o.k : ''; }
+  function adSave(k, x) { ADM = { k: k, x: x }; try { localStorage.setItem(AD_KEY, JSON.stringify(ADM)); } catch (e) { /* 이 창에서만 기억 */ } }
+  function adClear() { ADM = null; try { localStorage.removeItem(AD_KEY); } catch (e) { /* 지울 것이 없다 */ } }
+  var ADM_UNSET = '서버에 관리자 비밀번호가 설정되지 않았습니다 — Vercel 환경변수 ADMIN_PASSWORD 를 넣거나, 비밀번호가 든 내부판 배포 묶음을 올려 주세요.';
+  function admBtn() { var b = $('[data-adm]'); if (b) b.hidden = !adKey(); }
+  function admGate(why) {
+    var g = $('[data-adm-gate]'); if (!g) return;
+    if (why === 'expired') adClear();
+    admBtn();
+    var m = $('[data-adm-msg]', g); if (m) m.textContent = why === 'unset' ? ADM_UNSET : why === 'expired' ? '열쇠의 기한(24시간)이 지났습니다. 비밀번호를 다시 넣어 주세요.' : '';
+    if (!g.hidden) return;
+    g.hidden = false; document.documentElement.classList.add('adm-locked');
+    var i = $('[data-adm-pw]', g); setTimeout(function () { try { i.focus(); } catch (e) { /* 초점 없이 */ } }, 30);
+  }
+  function admLogin(ev) {
+    ev.preventDefault();
+    var g = $('[data-adm-gate]'), i = $('[data-adm-pw]', g), b = $('[data-adm-go]', g), m = $('[data-adm-msg]', g), pw = i.value;
+    if (!pw) return;
+    b.disabled = true; m.textContent = '확인하는 중…';
+    fetch('api/admin', { method: 'POST', headers: { 'content-type': 'application/json', accept: 'application/json' }, body: JSON.stringify({ password: pw }) })
+      .then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { return { s: r.status, j: j }; }); })
+      .then(function (x) {
+        if (x.s === 200 && x.j && x.j.key) {
+          adSave(x.j.key, x.j.exp); i.value = ''; m.textContent = ''; g.hidden = true; document.documentElement.classList.remove('adm-locked'); admBtn();
+          if (!DATA) getJson('api/snapshot').then(show).catch(function () {});
+          loadLive();
+        } else m.textContent = x.s === 401 ? '비밀번호가 맞지 않습니다.' : x.s === 503 ? ADM_UNSET : '확인하지 못했습니다(' + x.s + '). 잠시 뒤 다시 해 보세요.';
+      })
+      .catch(function () { m.textContent = '서버에 닿지 못했습니다. 잠시 뒤 다시 해 보세요.'; })
+      .then(function () { b.disabled = false; });
+  }
   // 자료를 못 받았을 때의 알림: 배포에 든 자료라도 있으면 그것을 보여 준다고, 그것도 없으면(index.html 만 올린 배포) 무엇이 빠졌는지 적는다
   function staleNote() {
     var p = $('[data-stale] p'); if (!p) return;
@@ -4823,7 +4895,10 @@ html.rpt .to-top { display: none !important; } @media print { .to-top { display:
     window.addEventListener('beforeprint', function () { prepPrint(false); });
     window.addEventListener('afterprint', donePrint);
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { fitBar(); if (DATA) render(); });
-    getJson('snapshot.json').then(show).catch(function () {}).then(staleNote);
+    var af = $('[data-adm-form]'); if (af) af.addEventListener('submit', admLogin);
+    var ab = $('[data-adm]'); if (ab) ab.addEventListener('click', function () { adClear(); location.reload(); });
+    admBtn();
+    getJson('snapshot.json').catch(function () { return getJson('api/snapshot'); }).then(show).catch(function () {}).then(staleNote);
     loadLive();
     $$('[data-range]').forEach(function (b) { b.addEventListener('click', function () {
       RANGE = b.getAttribute('data-range'); CUSTOM = null; $$('[data-range]').forEach(function (x) { x.setAttribute('aria-pressed', String(x === b)); }); SELDAY = null; keepPlace(render);
