@@ -1,2 +1,6 @@
 lib/admin-pass.json
 lib/snapshot-view.json
+# 점검이 남기는 내려받기 · 캡처(보고서 PDF · CSV · 화면 사진)는 저장소에 넣지 않는다
+/*.png
+/*.pdf
+/*.csv
