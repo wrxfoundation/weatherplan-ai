@@ -637,6 +637,13 @@ button.who:hover, a.who:hover { text-decoration-color: var(--fg); } button.who:f
 .fsz { display: inline-flex; align-items: center; height: 34px; padding: 0 4px; border: 1px solid var(--line-2); background: var(--panel); border-radius: 999px; }
 .fsz button { min-width: 32px; height: 26px; padding: 0 6px; border: 0; background: none; border-radius: 999px; font-size: 13px; font-weight: 650; line-height: 1; color: var(--fg); cursor: pointer; white-space: nowrap; }
 .fsz button:hover:not([disabled]) { background: var(--soft); } .fsz button[disabled] { color: var(--axis); cursor: default; }
+.view .btn.ico { width: 34px; height: 34px; padding: 0 !important; justify-content: center; border-radius: 999px; }
+.view .btn.ico > span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }      /* 아이콘만 보인다(45차) — 이름은 화면 낭독으로 읽히고, 올리면 설명(title)이 뜬다 */
+.view .btn.ico svg { width: 16px; height: 16px; }
+.fsz { gap: 2px; } .fsz output.vh { min-width: 0; padding: 0; } .fsz button { display: inline-grid; place-items: center; min-width: 30px; }
+.fsz button svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: var(--ico-w); stroke-linecap: round; stroke-linejoin: round; }
+[data-theme-toggle] .i-sun, [data-theme-toggle].on .i-moon { display: none; } [data-theme-toggle].on .i-sun { display: block; }
+[data-fx-toggle] .i-off { display: none; } [data-fx-toggle][aria-pressed="false"] .i-off { display: inline; }
 .fsz output { min-width: 5.6em; text-align: center; font-size: var(--t-xs); font-weight: 650; color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
 .btn.ico { display: inline-flex; align-items: center; gap: 6px; }
 .btn.ico svg { flex: none; width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: var(--ico-w); stroke-linecap: round; stroke-linejoin: round; }
@@ -968,10 +975,10 @@ html.rpt .to-top { display: none !important; } @media print { .to-top { display:
     </div>
     <div class="head-r">
       <div class="view" role="group" aria-label="보기 설정">
-        <span class="fsz" role="group" aria-label="글씨 크기"><button type="button" data-fs-down aria-label="글씨 작게">가−</button><output data-fs-now aria-live="polite">글씨 기본</output><button type="button" data-fs-up aria-label="글씨 크게">가+</button></span>
-        <button type="button" class="btn ico" data-theme-toggle aria-pressed="false" title="어두운 화면으로"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M13.3 9.7A5.6 5.6 0 0 1 6.3 2.7a5.6 5.6 0 1 0 7 7z"/></svg><span data-theme-label>어둡게</span></button>
-        <button type="button" class="btn ico" data-fx-toggle aria-pressed="true" title="움직임 끄기"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M1.5 8.5h2.6l1.9-4.6 3 8.4 1.9-3.8h3.6"/></svg><span data-fx-label>움직임 끄기</span></button>
-        <button type="button" class="btn ico" data-adm hidden title="관리자 모드를 잠근다 — 다시 열려면 비밀번호를 넣는다"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M5 7V5.2a3 3 0 0 1 6 0V7"/><rect x="3.5" y="7" width="9" height="6.5" rx="1.5"/></svg><span>관리자 · 잠그기</span></button>
+        <span class="fsz" role="group" aria-label="글씨 크기"><button type="button" data-fs-down aria-label="글씨 작게" title="글씨 작게"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2.2 12.5 5 5.5l2.8 7M3.2 10.2h3.6"/><path d="M10.5 9h4"/></svg></button><output class="vh" data-fs-now aria-live="polite">글씨 기본</output><button type="button" data-fs-up aria-label="글씨 크게" title="글씨 크게"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M1.5 13.5 5 4l3.5 9.5M2.8 10.6h4.4"/><path d="M10.5 9h4M12.5 7v4"/></svg></button></span>
+        <button type="button" class="btn ico" data-theme-toggle aria-pressed="false" title="어두운 화면으로"><svg class="i-moon" viewBox="0 0 16 16" aria-hidden="true"><path d="M13.3 9.7A5.6 5.6 0 0 1 6.3 2.7a5.6 5.6 0 1 0 7 7z"/></svg><svg class="i-sun" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="2.9"/><path d="M8 1.5v1.6M8 12.9v1.6M1.5 8h1.6M12.9 8h1.6M3.4 3.4l1.1 1.1M11.5 11.5l1.1 1.1M3.4 12.6l1.1-1.1M11.5 4.5l1.1-1.1"/></svg><span data-theme-label>어둡게</span></button>
+        <button type="button" class="btn ico" data-fx-toggle aria-pressed="true" title="움직임 끄기"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M1.5 8.5h2.6l1.9-4.6 3 8.4 1.9-3.8h3.6"/><path class="i-off" d="M2.5 2.5l11 11"/></svg><span data-fx-label>움직임 끄기</span></button>
+        <button type="button" class="btn ico" data-adm hidden aria-label="관리자 모드 잠그기" title="관리자 모드 잠그기 — 다시 열려면 비밀번호를 넣는다"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M5 7V5.2a3 3 0 0 1 6 0V7"/><rect x="3.5" y="7" width="9" height="6.5" rx="1.5"/></svg><span>관리자 · 잠그기</span></button>
       </div>
       <div class="ctl">
         <button type="button" class="btn ico pres" data-present title="긍정으로 판정된 지표만 큰 글씨로 보여 주는 발표 화면"><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="2" y="2.8" width="12" height="8.4" rx="1.2"/><path d="M5.6 13.6h4.8M8 11.2v2.4M7 5.3l2.6 1.7L7 8.7z"/></svg>발표 모드</button>
@@ -3955,10 +3962,11 @@ html.rpt .to-top { display: none !important; } @media print { .to-top { display:
     if (VIEW.fs) { root.style.setProperty('--fs', String(1 + VIEW.fs / 100)); root.setAttribute('data-fs', String(VIEW.fs)); } else { root.style.removeProperty('--fs'); root.removeAttribute('data-fs'); }
     if (VIEW.theme) root.setAttribute('data-theme', VIEW.theme); else root.removeAttribute('data-theme');
     if (out) out.textContent = VIEW.fs ? '글씨 +' + VIEW.fs + '%' : '글씨 기본';
+    var fsNow = out ? ' (지금: ' + out.textContent + ')' : ''; if (dn) dn.title = '글씨 작게' + fsNow; if (up) up.title = '글씨 크게' + fsNow;
     if (dn) dn.disabled = VIEW.fs <= FS_STEPS[0]; if (up) up.disabled = VIEW.fs >= FS_STEPS[FS_STEPS.length - 1];
     root.classList.toggle('fx', fxAllowed());
     var fb = $('[data-fx-toggle]'); if (fb) { var red = fxReduced(), on = VIEW.fx !== 0 && !red, fl = $('[data-fx-label]', fb); fb.setAttribute('aria-pressed', String(on)); fb.disabled = red; if (fl) fl.textContent = on ? '움직임 끄기' : '움직임 켜기'; fb.title = red ? '기기 설정의 「움직임 줄이기」가 켜져 있어 움직임을 쓰지 않습니다' : on ? '숫자 · 그림의 움직임을 끈다' : '숫자 · 그림의 움직임을 켠다'; }
-    if (th) { var d = isDark(), lb = $('[data-theme-label]', th); th.setAttribute('aria-pressed', String(d)); if (lb) lb.textContent = d ? '밝게' : '어둡게'; th.title = d ? '밝은 화면으로' : '어두운 화면으로'; }
+    if (th) { var d = isDark(), lb = $('[data-theme-label]', th); th.setAttribute('aria-pressed', String(d)); th.classList.toggle('on', d); if (lb) lb.textContent = d ? '밝게' : '어둡게'; th.title = d ? '밝은 화면으로' : '어두운 화면으로'; }
     try { localStorage.setItem(VIEW_KEY, JSON.stringify(VIEW)); } catch (e) { /* 기억하지 못해도 화면은 그대로 쓴다 */ }
     if (redraw) { fitBar(); if (DATA) renderQuiet(); }
   }
