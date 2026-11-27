@@ -14,7 +14,7 @@
 
 /* 색 · 글자 크기 · 간격은 여기 한 곳에서만 정한다 */
 :root {
-  --z-accent: #0B8FD8; --z-accent-t: #006DA8; --z-ink: #14171B; --z-neutral: #D5DAE0; --z-neutral-s: #9AA3AE; --z-soft: #EEF1F4; --z-muted: #5D6570; --z-tint: rgba(11, 143, 216, 0.14);      /* 그림 리포트(48차 · ztd charts 밝은 판) */
+  --z-accent: var(--accent); --z-accent-t: var(--accent); --z-on-accent: var(--accent-fg); --z-ink: var(--fg); --z-neutral: var(--line-2); --z-neutral-s: var(--c-na); --z-soft: var(--soft); --z-muted: var(--muted); --z-tint: color-mix(in srgb, var(--accent) 14%, transparent);      /* 그림 리포트(48차): 화면 원래 색(보라 강조 · 연보라 회색)을 그대로 — 어두운 화면은 위 토큰이 바뀌며 따라간다 */
   --bg: #F3F3F8; --panel: #FFFFFF; --soft: #F6F6FB; --line: #E7E6F0; --line-2: #D6D4E6;
   --fg: #16142B; --muted: #55526F; --faint: #686584;      /* 흐린 글자: 바탕 위 4.5 이상(전에는 #7B7895 — 3.8) */
   --ok: #0B7A5A; --warn: #B45309; --bad: #B3261E;
@@ -36,7 +36,6 @@
 /* 어두운 화면: 기기 설정이 어두우면 따르고(밝게를 고르지 않았을 때), 단추로 어둡게를 고르면 기기 설정과 무관하게 쓴다. 두 묶음의 값은 같다 */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --z-accent: #D6FD70; --z-accent-t: #D6FD70; --z-ink: #F1F3F5; --z-neutral: #3A414A; --z-neutral-s: #5F6772; --z-soft: #262B31; --z-muted: #A3ABB5; --z-tint: rgba(214, 253, 112, 0.16);
     --bg: #0C0A22; --panel: #151237; --soft: #1B1843; --line: #262353; --line-2: #37346A;
     --fg: #EEEDFB; --muted: #B5B2D4; --faint: #8F8CB4;
     --ok: #4FD1A5; --warn: #F0B040; --bad: #FF8A7E;
@@ -52,7 +51,6 @@
   }
 }
 :root[data-theme="dark"] {
-  --z-accent: #D6FD70; --z-accent-t: #D6FD70; --z-ink: #F1F3F5; --z-neutral: #3A414A; --z-neutral-s: #5F6772; --z-soft: #262B31; --z-muted: #A3ABB5; --z-tint: rgba(214, 253, 112, 0.16);
   --bg: #0C0A22; --panel: #151237; --soft: #1B1843; --line: #262353; --line-2: #37346A;
   --fg: #EEEDFB; --muted: #B5B2D4; --faint: #8F8CB4;
   --ok: #4FD1A5; --warn: #F0B040; --bad: #FF8A7E;
@@ -4813,7 +4811,7 @@ html.rpt .to-top { display: none !important; } @media print { .to-top { display:
     d3.treemap().size([f.w, f.h]).paddingInner(3).round(true)(root);
     var cells = f.svg.append('g').selectAll('g').data(root.leaves()).enter().append('g').attr('class', 'z-mark').attr('transform', function (d) { return 'translate(' + d.x0 + ',' + d.y0 + ')'; });
     cells.append('rect').attr('width', function (d) { return Math.max(0, d.x1 - d.x0); }).attr('height', function (d) { return Math.max(0, d.y1 - d.y0); }).attr('rx', 6).style('fill', function (d) { return d.data === big ? ZA : ZN; });
-    cells.each(function (d) { var w = d.x1 - d.x0, h = d.y1 - d.y0, s = d3.select(this), on = d.data === big ? '#14171B' : 'var(--z-ink)'; if (w > 64 && h > 34) { s.append('text').attr('class', 'z-labb z-in').attr('x', 8).attr('y', 18).style('fill', on).text(String(d.data.name).replace(/ 지갑$/, '').slice(0, Math.floor(w / 13))); s.append('text').attr('class', 'z-lab z-in').attr('x', 8).attr('y', 34).style('fill', on).text(pc0(d.data.balance / T)); } });
+    cells.each(function (d) { var w = d.x1 - d.x0, h = d.y1 - d.y0, s = d3.select(this), on = d.data === big ? 'var(--z-on-accent)' : 'var(--z-ink)'; if (w > 64 && h > 34) { s.append('text').attr('class', 'z-labb z-in').attr('x', 8).attr('y', 18).style('fill', on).text(String(d.data.name).replace(/ 지갑$/, '').slice(0, Math.floor(w / 13))); s.append('text').attr('class', 'z-lab z-in').attr('x', 8).attr('y', 34).style('fill', on).text(pc0(d.data.balance / T)); } });
     zTip(f, cells, function (d) { return [d.data.name, [{ label: '지금 잔액', value: fInt(d.data.balance) + ' · ' + pc0(d.data.balance / T) }, { label: '지갑', value: fInt(d.data.wallets) + '곳' }]]; });
   }
   function drawBoard() {
