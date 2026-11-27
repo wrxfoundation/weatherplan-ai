@@ -789,7 +789,7 @@ html.deck-on { overflow: hidden; }
 @keyframes dk-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 .dk-hd { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: clamp(12px, 2vw, 30px); }
 .dk-hd-t { display: grid; gap: clamp(4px, 1vh, 12px); min-width: 0; }
-.dk-ico { display: grid; place-items: center; width: clamp(50px, min(7vw, 13vh), 108px); aspect-ratio: 1; border-radius: 26%; background: color-mix(in srgb, var(--c-ok) 15%, var(--panel)); color: var(--ok); }
+.dk-ico { display: grid; place-items: center; width: clamp(50px, min(7vw, 13vh), 108px); aspect-ratio: 1; border-radius: 26%; box-sizing: border-box; border: 1px solid color-mix(in srgb, var(--c-ok) 30%, transparent); background: color-mix(in srgb, var(--c-ok) 15%, transparent); color: var(--ok); }      /* 47차: 배경은 반투명(뒤의 빛이 비친다) · 테두리 1px 은 배경보다 15% 진하게 */
 .dk-ico svg { width: 58%; height: 58%; fill: none; stroke: currentColor; stroke-width: var(--ico-w); stroke-linecap: round; stroke-linejoin: round; }
 .dk-ins { margin: 0; display: flex; align-items: baseline; gap: clamp(8px, 1vw, 14px); font-size: clamp(15px, min(1.85vw, 3.4vh), 28px); font-weight: 650; line-height: 1.36; }
 .dk-ins-k { flex: none; padding: 0.2em 0.66em; border-radius: 999px; background: var(--accent); color: var(--accent-fg); font-size: 0.62em; font-weight: 700; transform: translateY(-0.14em); }
