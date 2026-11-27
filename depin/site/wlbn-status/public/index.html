@@ -14,6 +14,7 @@
 
 /* 색 · 글자 크기 · 간격은 여기 한 곳에서만 정한다 */
 :root {
+  --z-accent: #0B8FD8; --z-accent-t: #006DA8; --z-ink: #14171B; --z-neutral: #D5DAE0; --z-neutral-s: #9AA3AE; --z-soft: #EEF1F4; --z-muted: #5D6570; --z-tint: rgba(11, 143, 216, 0.14);      /* 그림 리포트(48차 · ztd charts 밝은 판) */
   --bg: #F3F3F8; --panel: #FFFFFF; --soft: #F6F6FB; --line: #E7E6F0; --line-2: #D6D4E6;
   --fg: #16142B; --muted: #55526F; --faint: #686584;      /* 흐린 글자: 바탕 위 4.5 이상(전에는 #7B7895 — 3.8) */
   --ok: #0B7A5A; --warn: #B45309; --bad: #B3261E;
@@ -35,6 +36,7 @@
 /* 어두운 화면: 기기 설정이 어두우면 따르고(밝게를 고르지 않았을 때), 단추로 어둡게를 고르면 기기 설정과 무관하게 쓴다. 두 묶음의 값은 같다 */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
+    --z-accent: #D6FD70; --z-accent-t: #D6FD70; --z-ink: #F1F3F5; --z-neutral: #3A414A; --z-neutral-s: #5F6772; --z-soft: #262B31; --z-muted: #A3ABB5; --z-tint: rgba(214, 253, 112, 0.16);
     --bg: #0C0A22; --panel: #151237; --soft: #1B1843; --line: #262353; --line-2: #37346A;
     --fg: #EEEDFB; --muted: #B5B2D4; --faint: #8F8CB4;
     --ok: #4FD1A5; --warn: #F0B040; --bad: #FF8A7E;
@@ -50,6 +52,7 @@
   }
 }
 :root[data-theme="dark"] {
+  --z-accent: #D6FD70; --z-accent-t: #D6FD70; --z-ink: #F1F3F5; --z-neutral: #3A414A; --z-neutral-s: #5F6772; --z-soft: #262B31; --z-muted: #A3ABB5; --z-tint: rgba(214, 253, 112, 0.16);
   --bg: #0C0A22; --panel: #151237; --soft: #1B1843; --line: #262353; --line-2: #37346A;
   --fg: #EEEDFB; --muted: #B5B2D4; --faint: #8F8CB4;
   --ok: #4FD1A5; --warn: #F0B040; --bad: #FF8A7E;
@@ -466,6 +469,23 @@ details .scroll { margin-top: 8px; }
 
 /* ── 지표 모아보기 (11/23) */
 .board { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+/* 그림 리포트(48차): ztd charts 의 카드 — 굵은 제목 · 회색 부제 · 작은 네모 범례 · 그림 · 아래 굵은 한 줄 */
+.zc-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 380px), 1fr)); gap: 14px; margin-top: 10px; }
+.zc { min-width: 0; display: flex; flex-direction: column; gap: 4px; padding: 20px 20px 18px; border: 1px solid var(--line); border-radius: 18px; background: var(--panel); }
+.zc.wide { grid-column: 1 / -1; }
+.zc-h { margin: 0; font-size: 19px; font-weight: 650; letter-spacing: -0.01em; color: var(--fg); }
+.zc-top { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+.zc-sub { margin: 0; font-size: 13px; color: var(--muted); }
+.zc-lg { display: flex; flex-wrap: wrap; gap: 4px 12px; margin: 0; padding: 0; list-style: none; font-size: 12.5px; color: var(--muted); }
+.zc-lg li { display: inline-flex; align-items: center; gap: 5px; } .zc-lg i { width: 9px; height: 9px; border-radius: 2px; }
+.zc-plot { position: relative; min-height: 120px; margin: 8px 0 4px; }
+.zc-plot svg text { font-family: inherit; }
+.zc-tk { margin: auto 0 0; padding-top: 10px; font-size: 16.5px; font-weight: 650; color: var(--fg); text-wrap: balance; }
+.zc .z-acc { fill: var(--z-accent); } .zc .z-ink { fill: var(--z-ink); } .zc .z-neu { fill: var(--z-neutral); } .zc .z-neus { fill: var(--z-neutral-s); } .zc .z-soft { fill: var(--z-soft); }
+.zc .z-lab { font-size: 12.5px; fill: var(--z-muted); } .zc .z-labb { font-size: 13px; font-weight: 650; fill: var(--z-ink); } .zc .z-big { font-weight: 750; fill: var(--z-ink); font-variant-numeric: tabular-nums; }
+.zc svg text { pointer-events: none; paint-order: stroke; stroke: var(--panel); stroke-width: 3px; stroke-linejoin: round; } .zc svg text.z-in { stroke: none; }      /* 띠 위에 놓인 글자도 읽히게 바탕색 테두리 · 칸 안 글자는 빼고 */
+.zc .z-mark { transition: opacity 0.15s; } .zc .z-mark:hover { opacity: 0.82; }
+@media (max-width: 560px) { .zc { padding: 16px 14px 14px; } .zc-h { font-size: 17px; } .zc-tk { font-size: 15px; } }
 .bc { --cell: var(--soft); background: var(--soft); border-radius: var(--r-md); padding: 13px 14px 10px; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 .bc-h { margin: 0; display: flex; align-items: baseline; justify-content: space-between; gap: 8px; font-size: var(--t-xs); font-weight: 650; color: var(--muted); line-height: 1.4; }
 .bc-h a { color: inherit; text-decoration: none; } .bc-h a:hover { color: var(--fg); text-decoration: underline; text-underline-offset: 3px; }
@@ -1062,6 +1082,9 @@ html.rpt .to-top { display: none !important; } @media print { .to-top { display:
       <article class="bc"><h3 class="bc-h"><a href="#today">지수 추이</a><i>14일</i></h3><p class="bc-v" data-bv="trend">—</p><div class="chart skel bchart" data-chart="b_trend" role="img" aria-label="지수 추이"></div><p class="bc-s" data-bs="trend"></p></article>
       <article class="bc"><h3 class="bc-h"><a href="#deep">보상 받는 지갑</a><i>고른 기간</i></h3><p class="bc-v" data-bv="recv">—</p><div class="chart skel bchart" data-chart="b_recv" role="img" aria-label="보상 받는 지갑"></div><p class="bc-s" data-bs="recv"></p></article>
     </div>
+    <h3 class="h3" id="h-zc">그림 리포트 · 한 장에 한 가지</h3>
+    <p class="note">카드마다 한 가지만 말한다 — 볼 것 하나만 강조색이고 나머지는 회색이며, 그림 아래 굵은 한 줄이 요점이다. 숫자는 위 구역과 같고(고른 기간), 판정은 붙이지 않는다. <span class="zc-cred">그림 형식은 ztd charts(MIT)를 따랐다.</span></p>
+    <div class="zc-grid" id="zc-grid"></div>
   </section>
 
   <section class="sec panel" id="today" data-need="health" hidden aria-labelledby="h-today">
@@ -4650,6 +4673,149 @@ html.rpt .to-top { display: none !important; } @media print { .to-top { display:
     b_price: function (el) { bTime(el, bDays(), { lines: [{ key: 'price_rlusd', label: '가격(RLUSD)', color: 'var(--s1)', area: 1 }], fmt: F.f4, zero: false }); },
     b_pool: function (el) { bTime(el, bPoolRows(), { lines: [{ key: 'pool_liq', label: '전체 풀 유동성', color: 'var(--s6)', area: 1 }], more: [{ key: 'pool_liq_x', label: 'WLBN/XRP 풀', color: 'var(--s1)' }, { key: 'pool_liq_r', label: 'WLBN/RLUSD 풀', color: 'var(--s3)' }] }); }
   };
+  // ── 그림 리포트(48차 — 서우 「github.com/Junhan2/ztd-charts 이에 맞는 차트로 변형 및 추가해보자」)
+  //   ztd charts(MIT · React)를 들이지 않고 디자인 규칙만 우리 d3 로 옮겼다: 카드 하나가 한 가지 · 강조 하나만 강조색(--z-accent) · 나머지 무채색 · 아래 굵은 한 줄(요점)
+  //   숫자는 위 구역과 같은 값(ctx().r = 고른 기간) — 판정 표시는 붙이지 않는다. 자료가 없는 카드는 그리지 않는다(상품판에서 요금제로 걸러진 자료 포함)
+  function zCard(grid, o) {
+    var E = function (tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text !== undefined) e.textContent = text; return e; };
+    var a = E('article', 'zc' + (o.wide ? ' wide' : '')), top = E('div', 'zc-top'), h = E('h4', 'zc-h', o.title); a.setAttribute('data-zc', o.key);
+    top.appendChild(h);
+    if (o.legend && o.legend.length) { var ul = E('ul', 'zc-lg'); ul.setAttribute('aria-label', '범례'); o.legend.forEach(function (l) { var li = E('li'), i = E('i'); i.style.background = l.color; li.appendChild(i); li.appendChild(document.createTextNode(l.label)); ul.appendChild(li); }); top.appendChild(ul); }
+    a.appendChild(top); a.appendChild(E('p', 'zc-sub', o.sub));
+    var pl = E('div', 'chart zc-plot'); pl.setAttribute('role', 'img'); pl.setAttribute('aria-label', o.title + ' — ' + o.tk); a.appendChild(pl);
+    a.appendChild(E('p', 'zc-tk', o.tk)); grid.appendChild(a);
+    return pl;
+  }
+  function zTip(f, sel, fn) {      // 마크에 올리면 풀이 상자(키보드: 초점)
+    sel.attr('tabindex', 0).on('pointerenter pointermove focus', function (ev, d) { var r = fn(d); f.tip.replaceChildren.apply(f.tip, tipRows(r[0], r[1])); f.tip.hidden = false; var p = ev.type === 'focus' ? [r[2] || f.w / 2, r[3] || 20] : d3.pointer(ev, f.svg.node()); placeTip(f, p[0], p[1]); })
+      .on('pointerleave blur', function () { f.tip.hidden = true; });
+  }
+  var ZA = 'var(--z-accent)', ZI = 'var(--z-ink)', ZN = 'var(--z-neutral)', ZS = 'var(--z-neutral-s)';
+  function drawZc() {
+    var grid = $('#zc-grid'); if (!grid) return; grid.replaceChildren();
+    var c = ctx(), r = c.r || {}, k = r.kpi || {}, im = r.impact || {}, pc = d3.format('.1%');
+    try { zSankey(grid, r); } catch (e) { if (window.console) console.error(e); }
+    try { zWaffle(grid, im); } catch (e) { if (window.console) console.error(e); }
+    try { zDonut(grid, k); } catch (e) { if (window.console) console.error(e); }
+    try { zPareto(grid, r); } catch (e) { if (window.console) console.error(e); }
+    try { zCal(grid, r); } catch (e) { if (window.console) console.error(e); }
+    try { zDumbbell(grid); } catch (e) { if (window.console) console.error(e); }
+    try { zTree(grid, r); } catch (e) { if (window.console) console.error(e); }
+    var sec = $('#h-zc'); if (sec) { var none = !grid.children.length; sec.hidden = none; if (sec.nextElementSibling) sec.nextElementSibling.hidden = none; }
+  }
+  // ① 생키: 판 쪽(묶음) → 거친 풀 → 산 쪽(묶음). 강조 = 가장 많이 산 묶음
+  function zSankey(grid, r) {
+    var fl = r.flow; if (!fl || !fl.sell || !fl.buy) return;
+    var tot = function (x) { return (x.R || 0) + (x.X || 0) + (x.O || 0); };
+    var L = fl.sell.filter(function (x) { return tot(x) > 0; }), R = fl.buy.filter(function (x) { return tot(x) > 0; }).sort(function (a, b) { return tot(b) - tot(a); });
+    if (!L.length || !R.length) return;
+    var MID = [['R', 'RLUSD 풀'], ['X', 'XRP 풀'], ['O', '그 밖의 길']].filter(function (m) { return d3.sum(L, function (x) { return x[m[0]] || 0; }) + d3.sum(R, function (x) { return x[m[0]] || 0; }) > 0; });
+    var top = R[0], sellT = d3.sum(L, tot), buyT = d3.sum(R, tot), share = buyT ? tot(top) / buyT : 0;
+    var nm = function (x) { return x.key === 'bot' ? 'Wellbian bot' : String(x.label || x.name).replace(/ 지갑$/, '').replace(/^그 밖의$/, '그 밖'); };
+    var el = zCard(grid, { key: 'sankey', wide: 1, title: 'WLBN은 어디서 어디로', sub: '판 쪽 → 거친 풀 → 산 쪽(WLBN · 고른 기간)', legend: [{ label: nm(top), color: ZA }, { label: '그 밖', color: ZN }], tk: '산 양의 ' + pc0(share) + '를 ' + nm(top) + '이 받았다' });
+    var f = setup(el, 300), two = f.w < 560, m = { t: 10, b: 10, l: two ? 6 : 118, r: two ? 112 : 118 }, colX = [m.l, two ? m.l : f.w / 2 - 5, f.w - m.r - 10], nw = 10, gap = 14, H = f.h - m.t - m.b;      // 좁은 화면은 「거친 풀 → 산 쪽」 두 단만(요점은 누가 받았나)
+    if (two) { var sb = el.parentNode.querySelector('.zc-sub'); if (sb) sb.textContent = '거친 풀 → 산 쪽(WLBN · 고른 기간) · 넓은 화면에서는 판 쪽도 보인다'; }
+    var mx = Math.max(sellT, buyT), place = function (list, val) { var n = list.length, sc = (H - gap * (n - 1)) / mx, y = m.t, out = []; list.forEach(function (x) { var h = Math.max(2, val(x) * sc); out.push({ x: x, y: y, h: h, sc: sc }); y += h + gap; }); return out; };
+    var midV = function (mm) { return Math.max(d3.sum(L, function (x) { return x[mm[0]] || 0; }), d3.sum(R, function (x) { return x[mm[0]] || 0; })); };
+    var nl = place(L, tot), nr = place(R, tot), nm2 = place(MID, midV), sc = nl[0].sc;
+    var g = f.svg.append('g'), link = d3.linkHorizontal().x(function (d) { return d[0]; }).y(function (d) { return d[1]; });
+    var off = {}; var take = function (key, side, v) { off[key + side] = (off[key + side] || 0) + v * sc; return off[key + side] - v * sc; };
+    var links = [];
+    if (!two) nl.forEach(function (a) { nm2.forEach(function (b) { var v = a.x[b.x[0]] || 0; if (v <= 0) return; links.push({ v: v, hi: false, from: nm(a.x), to: b.x[1], y0: a.y + take('L' + a.x.key, 'o', v) + v * sc / 2, y1: b.y + take('M' + b.x[0], 'i', v) + v * sc / 2, x0: colX[0] + nw, x1: colX[1] }); }); });
+    nm2.forEach(function (b) { nr.forEach(function (a) { var v = a.x[b.x[0]] || 0; if (v <= 0) return; links.push({ v: v, hi: a.x === top, from: b.x[1], to: nm(a.x), y0: b.y + take('M' + b.x[0], 'o', v) + v * sc / 2, y1: a.y + take('R' + a.x.key, 'i', v) + v * sc / 2, x0: colX[1] + nw, x1: colX[2] }); }); });
+    var ls = g.selectAll('path.zl').data(links).enter().append('path').attr('class', 'z-mark zl').attr('d', function (d) { return link({ source: [d.x0, d.y0], target: [d.x1, d.y1] }); }).style('fill', 'none').style('stroke', function (d) { return d.hi ? ZA : ZN; }).style('stroke-opacity', function (d) { return d.hi ? 0.65 : 0.7; }).style('stroke-width', function (d) { return Math.max(1, d.v * sc); });
+    zTip(f, ls, function (d) { return [d.from + ' → ' + d.to, [{ label: 'WLBN', value: fInt(d.v) }]]; });
+    var spread = function (ys, gap0, lo, hi) { var o = ys.map(function (y, i) { return { y: y, i: i }; }).sort(function (a, b) { return a.y - b.y; }); for (var i = 1; i < o.length; i++) if (o[i].y < o[i - 1].y + gap0) o[i].y = o[i - 1].y + gap0; if (o.length && o[o.length - 1].y > hi) { o[o.length - 1].y = hi; for (var j = o.length - 2; j >= 0; j--) if (o[j].y > o[j + 1].y - gap0) o[j].y = o[j + 1].y - gap0; } if (o.length && o[0].y < lo) o[0].y = lo; var out = []; o.forEach(function (q) { out[q.i] = q.y; }); return out; };      // 작은 마디의 이름이 겹치지 않게 자리를 벌린다
+    var node = function (list, x, isR, name) { var ly = spread(list.map(function (n) { return n.y + n.h / 2; }), 32, m.t + 6, f.h - 16); list.forEach(function (n, ni) { var hi = isR && n.x === top; g.append('rect').attr('x', x).attr('y', n.y).attr('width', nw).attr('height', n.h).attr('rx', 2).style('fill', hi ? ZA : ZI); var tx = isR ? x + nw + 8 : x - 8, anc = isR ? 'start' : 'end', v = name ? midV(n.x) : tot(n.x), lb = name ? n.x[1] : nm(n.x), yy = ly[ni]; if (name) { tx = x + nw + 6; anc = 'start'; } g.append('text').attr('class', 'z-labb').attr('x', tx).attr('y', yy - 2).attr('text-anchor', anc).text(lb); g.append('text').attr('class', 'z-lab').attr('x', tx).attr('y', yy + 13).attr('text-anchor', anc).text(fInt(v)); }); };
+    if (!two) node(nl, colX[0], false, false); node(nm2, colX[1], false, true); node(nr, colX[2], true, false);
+  }
+  function pc0(v) { return d3.format('.1%')(v); }
+  // ② 와플: 기여 5단계 지갑 100칸. 강조 = 긍정 쪽 · 부정 쪽은 진한 색 · 보통은 회색
+  function zWaffle(grid, im) {
+    if (!im.t5 || !im.tot5 || !im.tot5.wallets) return;
+    var by = {}; im.rows.forEach(function (x) { by[x.key] = x.wallets; });
+    var tot = im.tot5.wallets, pos = (by.vp || 0) + (by.p || 0), neg = (by.ng || 0) + (by.vn || 0), mid = tot - pos - neg;
+    var cells = 100, cp = Math.round(pos / tot * cells), cn = Math.round(neg / tot * cells), cm = cells - cp - cn;
+    var el = zCard(grid, { key: 'waffle', title: '지갑은 어느 쪽인가', sub: '생태계 기여 5단계 · 한 칸 = 지갑 1%', legend: [{ label: '긍정 쪽', color: ZA }, { label: '보통', color: ZN }, { label: '부정 쪽', color: ZI }], tk: '긍정 쪽 지갑이 ' + pc0(pos / tot) + ' — 부정 쪽 ' + pc0(neg / tot) + '의 ' + (neg ? d3.format('.1f')(pos / neg) + '배' : '여러 배') });
+    var f = setup(el, 230), side = Math.min(20, (f.h - 20) / 10 - 3), g0 = 3, gw = side * 10 + g0 * 9, x0 = 0, g = f.svg.append('g');
+    var kinds = []; for (var i = 0; i < cells; i++) kinds.push(i < cp ? 'p' : i < cp + cm ? 'm' : 'n');
+    var rc = g.selectAll('rect').data(kinds).enter().append('rect').attr('class', 'z-mark').attr('x', function (d, i) { return x0 + (i % 10) * (side + g0); }).attr('y', function (d, i) { return 10 + Math.floor(i / 10) * (side + g0); }).attr('width', side).attr('height', side).attr('rx', 3).style('fill', function (d) { return d === 'p' ? ZA : d === 'n' ? ZI : ZN; });
+    zTip(f, rc, function (d) { var n = d === 'p' ? pos : d === 'n' ? neg : mid; return [d === 'p' ? '긍정 쪽(매우 긍정 + 긍정)' : d === 'n' ? '부정 쪽(부정 + 매우 부정)' : '보통', [{ label: '지갑', value: fInt(n) + '곳 · ' + pc0(n / tot) }]]; });
+    var bx = gw + 28; if (bx + 120 < f.w) { g.append('text').attr('class', 'z-big').attr('x', bx).attr('y', 70).style('font-size', '40px').style('fill', ZA).text(pc0(pos / tot)); g.append('text').attr('class', 'z-lab').attr('x', bx).attr('y', 94).text('긍정 쪽 ' + fInt(pos) + '곳 / ' + fInt(tot) + '곳'); g.append('text').attr('class', 'z-lab').attr('x', bx).attr('y', 116).text('부정 쪽 ' + fInt(neg) + '곳'); }
+  }
+  // ③ 도넛: 판 양은 어떤 통화로. 가운데 = 판 양. 강조 = 많은 쪽
+  function zDonut(grid, k) {
+    var R0 = k.user_sold_for_rlusd || 0, X0 = k.user_sold_for_xrp || 0, T = R0 + X0; if (!(T > 0)) return;
+    var rows = [{ l: 'RLUSD로', v: R0 }, { l: 'XRP로', v: X0 }], big = R0 >= X0 ? rows[0] : rows[1];
+    var el = zCard(grid, { key: 'donut', title: '판 양은 어떤 통화로', sub: '일반 사용자 지갑이 판 WLBN · 받은 통화별', legend: [{ label: big.l.replace('로', ''), color: ZA }, { label: (big === rows[0] ? rows[1] : rows[0]).l.replace('로', ''), color: ZN }], tk: '판 양의 ' + pc0(big.v / T) + '가 ' + big.l.replace('로', '') + '로 바뀌었다' });
+    var f = setup(el, 230), rad = Math.min(f.h / 2 - 10, f.w / 4), cx = Math.min(f.w / 2, rad + 16), cy = f.h / 2, g = f.svg.append('g').attr('transform', 'translate(' + cx + ',' + cy + ')');
+    var arcs = d3.pie().sort(null).value(function (d) { return d.v; }).padAngle(0.012)(rows), arc = d3.arc().innerRadius(rad * 0.64).outerRadius(rad);
+    var ps = g.selectAll('path').data(arcs).enter().append('path').attr('class', 'z-mark').attr('d', arc).style('fill', function (d) { return d.data === big ? ZA : ZN; });
+    zTip(f, ps, function (d) { return [d.data.l + ' 판 양', [{ label: 'WLBN', value: fInt(d.data.v) + ' · ' + pc0(d.data.v / T) }]]; });
+    g.append('text').attr('class', 'z-big').attr('text-anchor', 'middle').attr('y', 4).style('font-size', Math.max(18, rad * 0.3) + 'px').text(abbr(T));
+    g.append('text').attr('class', 'z-lab').attr('text-anchor', 'middle').attr('y', 24).text('판 양(WLBN)');
+    var lx = cx + rad + 26; if (lx + 150 < f.w) rows.forEach(function (d, i) { var y = cy - 14 + i * 30; f.svg.append('rect').attr('x', lx).attr('y', y - 9).attr('width', 10).attr('height', 10).attr('rx', 2).style('fill', d === big ? ZA : ZN); f.svg.append('text').attr('class', 'z-labb').attr('x', lx + 16).attr('y', y).text(d.l.replace('로', '')); f.svg.append('text').attr('class', 'z-labb').attr('x', f.w - 4).attr('text-anchor', 'end').attr('y', y).text(pc0(d.v / T)); });
+  }
+  // ④ 파레토: 많이 판 지갑 차례 막대 + 누적 비중 선. 강조 = 다섯 곳
+  function zPareto(grid, r) {
+    var W = (r.wallets || []).filter(function (w) { return w.g === 'user' && w.sold > 0; }).sort(function (a, b) { return b.sold - a.sold; }); if (W.length < 3) return;
+    var T = d3.sum(W, function (w) { return w.sold; }), N = Math.min(20, W.length), top = W.slice(0, N), cum = 0, five = d3.sum(W.slice(0, 5), function (w) { return w.sold; });
+    top.forEach(function (w, i) { cum += w.sold; w.__c = cum / T; w.__i = i; });
+    var el = zCard(grid, { key: 'pareto', title: '판 양은 몇 곳이 좌우하나', sub: '많이 판 지갑 ' + N + '곳 · 막대 = 판 양 · 선 = 누적 비중', legend: [{ label: '다섯 곳', color: ZA }, { label: '그 밖', color: ZN }, { label: '누적', color: ZI }], tk: '다섯 곳이 판 양의 ' + pc0(five / T) + '를 차지한다' });
+    var f = setup(el, 230), m = { t: 14, r: 34, b: 22, l: 6 }, x = d3.scaleBand().domain(top.map(function (w, i) { return i; })).range([m.l, f.w - m.r]).padding(0.22), y = d3.scaleLinear().domain([0, top[0].sold]).range([f.h - m.b, m.t]), y2 = d3.scaleLinear().domain([0, 1]).range([f.h - m.b, m.t]), g = f.svg.append('g');
+    g.append('line').attr('x1', m.l).attr('x2', f.w - m.r).attr('y1', y(0) + 0.5).attr('y2', y(0) + 0.5).style('stroke', 'var(--axis)');
+    var bs = g.selectAll('rect').data(top).enter().append('rect').attr('class', 'z-mark').attr('x', function (w, i) { return x(i); }).attr('width', x.bandwidth()).attr('y', function (w) { return y(w.sold); }).attr('height', function (w) { return Math.max(1, y(0) - y(w.sold)); }).attr('rx', Math.min(4, x.bandwidth() / 3)).style('fill', function (w, i) { return i < 5 ? ZA : ZN; });
+    zTip(f, bs, function (w) { return [(w.__i + 1) + '번째로 많이 판 지갑 · ' + w.id, [{ label: '판 양', value: fInt(w.sold) + ' · ' + pc0(w.sold / T) }, { label: '누적', value: pc0(w.__c) }]]; });
+    g.append('path').attr('d', d3.line().x(function (w, i) { return x(i) + x.bandwidth() / 2; }).y(function (w) { return y2(w.__c); }).curve(d3.curveMonotoneX)(top)).style('fill', 'none').style('stroke', ZI).style('stroke-width', '1.8px');
+    g.selectAll('circle').data(top).enter().append('circle').attr('cx', function (w, i) { return x(i) + x.bandwidth() / 2; }).attr('cy', function (w) { return y2(w.__c); }).attr('r', 2.6).style('fill', ZI);
+    var f5 = top[Math.min(4, top.length - 1)]; g.append('text').attr('class', 'z-labb').attr('x', x(f5.__i) + x.bandwidth() / 2 + 6).attr('y', y2(f5.__c) - 7).text(pc0(f5.__c));
+    [0, 0.5, 1].forEach(function (v) { g.append('text').attr('class', 'z-lab').attr('x', f.w - 2).attr('text-anchor', 'end').attr('y', y2(v) + 4).text(d3.format('.0%')(v)); });
+    g.append('text').attr('class', 'z-lab').attr('x', m.l).attr('y', f.h - 5).text('1번째'); g.append('text').attr('class', 'z-lab').attr('x', f.w - m.r).attr('text-anchor', 'end').attr('y', f.h - 5).text(N + '번째');
+  }
+  // ⑤ 달력 히트맵: 날마다 일반 사용자가 판 양(진할수록 많다). 강조 = 가장 많이 판 날
+  function zCal(grid, r) {
+    var rows = DATA.daily.filter(function (d) { return d.date >= r.from && d.date <= r.to; }); if (rows.length < 5) return;
+    var mx = d3.max(rows, function (d) { return d.sell_user || 0; }); if (!(mx > 0)) return;
+    var peak = rows.filter(function (d) { return d.sell_user === mx; })[0], T = d3.sum(rows, function (d) { return d.sell_user || 0; });
+    var el = zCard(grid, { key: 'cal', title: '날마다 판 양', sub: '일반 사용자 지갑 · 진할수록 많이 팔았다', legend: [{ label: '가장 많은 날', color: ZA }, { label: '적음 → 많음', color: ZS }], tk: '가장 많이 판 날은 ' + md(peak.date) + ' — ' + fInt(mx) + '개(기간의 ' + pc0(mx / T) + ')' });
+    var dow = function (s) { return (new Date(s + 'T00:00:00Z').getUTCDay() + 6) % 7; }, first = rows[0].date, wk = function (s) { return Math.floor((Date.parse(s + 'T00:00:00Z') - Date.parse(first + 'T00:00:00Z')) / 864e5 + dow(first)) / 7 | 0; };
+    var nW = wk(rows[rows.length - 1].date) + 1, f = setup(el, 230), lw = 22, cs = Math.min(26, (f.w - lw - 6) / nW - 4, (f.h - 30) / 7 - 4), g = f.svg.append('g'), col = d3.scaleLinear().domain([0, mx]).range([0.12, 1]);
+    ['월', '화', '수', '목', '금', '토', '일'].forEach(function (d, i) { if (i % 2 === 0) g.append('text').attr('class', 'z-lab').attr('x', 0).attr('y', 18 + i * (cs + 4) + cs * 0.7).text(d); });
+    var rc = g.selectAll('rect').data(rows).enter().append('rect').attr('class', 'z-mark').attr('x', function (d) { return lw + wk(d.date) * (cs + 4); }).attr('y', function (d) { return 18 + dow(d.date) * (cs + 4); }).attr('width', cs).attr('height', cs).attr('rx', 4)
+      .style('fill', function (d) { return d === peak ? ZA : 'var(--z-neutral-s)'; }).style('fill-opacity', function (d) { return d === peak ? 1 : col(d.sell_user || 0); }).style('opacity', function (d) { return d.partial ? 0.55 : 1; });
+    zTip(f, rc, function (d) { return [md(d.date) + (d.partial ? ' · 기준 시각까지' : ''), [{ label: '판 양', value: fInt(d.sell_user || 0) }, { label: '판 지갑', value: fInt(d.user_sellers || 0) + '곳' }]]; });
+    var mo = {}, lastW = -2; rows.forEach(function (d) { var mm = d.date.slice(5, 7); if (!mo[mm]) { mo[mm] = 1; var w0 = Math.max(wk(d.date), lastW + 2); lastW = w0; g.append('text').attr('class', 'z-lab').attr('x', lw + w0 * (cs + 4)).attr('y', 11).text((+mm) + '월'); } });      // 달 이름이 같은 주에 겹치면 다음 주로 민다
+  }
+  // ⑥ 덤벨: 직전 7일 → 최근 7일 하루 평균(WLBN). 강조 = 가장 크게 바뀐 줄
+  function zDumbbell(grid) {
+    var full = DATA.daily.filter(function (d) { return !d.partial; }); if (full.length < 14) return;
+    var A = full.slice(-14, -7), B = full.slice(-7), av = function (list, f0) { return d3.mean(list, function (d) { return d[f0] || 0; }); };
+    var rows = [['paid_user', '받은 양(일반 사용자)'], ['sell_user', '판 양(일반 사용자)'], ['sell_total', '시장 전체 판 양'], ['buy_total', '시장 전체 산 양']].map(function (x) { var a = av(A, x[0]), b = av(B, x[0]); return { k: x[0], l: x[1], a: a, b: b, ch: a > 0 ? b / a - 1 : 0 }; });
+    var hi = rows.slice().sort(function (p, q) { return Math.abs(q.ch) - Math.abs(p.ch); })[0];
+    var el = zCard(grid, { key: 'dumbbell', title: '직전 7일 → 최근 7일', sub: '하루 평균(WLBN) · ' + md(A[0].date) + '~' + md(A[6].date) + ' → ' + md(B[0].date) + '~' + md(B[6].date), legend: [{ label: '직전 7일', color: ZS }, { label: '최근 7일', color: ZI }, { label: '가장 크게 바뀐 줄', color: ZA }], tk: hi.l + '이 하루 ' + fInt(hi.a) + ' → ' + fInt(hi.b) + '개(' + F.spct(hi.ch) + ')' });
+    var f = setup(el, 230), m = { t: 8, r: 64, b: 10, l: 138 }, x = d3.scaleLinear().domain([0, d3.max(rows, function (d) { return Math.max(d.a, d.b); }) * 1.05]).range([m.l, f.w - m.r]), rh = (f.h - m.t - m.b) / rows.length, g = f.svg.append('g');
+    rows.forEach(function (d, i) {
+      var y = m.t + rh * i + rh / 2, isH = d === hi, gg = g.append('g').attr('class', 'z-mark').datum(d);
+      gg.append('text').attr('class', isH ? 'z-labb' : 'z-lab').attr('x', 0).attr('y', y + 4).text(d.l);
+      gg.append('line').attr('x1', x(Math.min(d.a, d.b))).attr('x2', x(Math.max(d.a, d.b))).attr('y1', y).attr('y2', y).style('stroke', isH ? ZA : ZN).style('stroke-width', '3px');
+      gg.append('circle').attr('cx', x(d.a)).attr('cy', y).attr('r', 5.5).style('fill', ZS);
+      gg.append('circle').attr('cx', x(d.b)).attr('cy', y).attr('r', 6.5).style('fill', isH ? ZA : ZI);
+      gg.append('text').attr('class', isH ? 'z-labb' : 'z-lab').attr('x', f.w - 2).attr('text-anchor', 'end').attr('y', y + 4).text(F.spct(d.ch));
+      zTip(f, gg, function () { return [d.l, [{ label: '직전 7일 하루', value: fInt(d.a) }, { label: '최근 7일 하루', value: fInt(d.b) }, { label: '바뀐 몫', value: F.spct(d.ch) }], x(d.b), y]; });
+    });
+  }
+  // ⑦ 트리맵: 일반 지갑(회사 계정 bot 빼고) 지금 잔액을 유형별로. 강조 = 가장 많이 든 유형
+  function zTree(grid, r) {
+    var T0 = (r.types || []).filter(function (t) { return t.key !== 'bot' && t.balance >= 1; }); if (T0.length < 2) return;
+    var T = d3.sum(T0, function (t) { return t.balance; }), big = T0.slice().sort(function (a, b) { return b.balance - a.balance; })[0];
+    var el = zCard(grid, { key: 'tree', title: '지금 잔액은 어떤 지갑에', sub: '지갑 유형별 지금 잔액(WLBN) · 회사 계정 빼고', legend: [{ label: String(big.name).replace(/ 지갑$/, ''), color: ZA }, { label: '그 밖', color: ZN }], tk: '잔액의 ' + pc0(big.balance / T) + '를 ' + String(big.name).replace(/ 지갑$/, '') + ' 지갑이 들고 있다' });
+    var f = setup(el, 230), root = d3.hierarchy({ children: T0 }).sum(function (d) { return d.balance || 0; }).sort(function (a, b) { return b.value - a.value; });
+    d3.treemap().size([f.w, f.h]).paddingInner(3).round(true)(root);
+    var cells = f.svg.append('g').selectAll('g').data(root.leaves()).enter().append('g').attr('class', 'z-mark').attr('transform', function (d) { return 'translate(' + d.x0 + ',' + d.y0 + ')'; });
+    cells.append('rect').attr('width', function (d) { return Math.max(0, d.x1 - d.x0); }).attr('height', function (d) { return Math.max(0, d.y1 - d.y0); }).attr('rx', 6).style('fill', function (d) { return d.data === big ? ZA : ZN; });
+    cells.each(function (d) { var w = d.x1 - d.x0, h = d.y1 - d.y0, s = d3.select(this), on = d.data === big ? '#14171B' : 'var(--z-ink)'; if (w > 64 && h > 34) { s.append('text').attr('class', 'z-labb z-in').attr('x', 8).attr('y', 18).style('fill', on).text(String(d.data.name).replace(/ 지갑$/, '').slice(0, Math.floor(w / 13))); s.append('text').attr('class', 'z-lab z-in').attr('x', 8).attr('y', 34).style('fill', on).text(pc0(d.data.balance / T)); } });
+    zTip(f, cells, function (d) { return [d.data.name, [{ label: '지금 잔액', value: fInt(d.data.balance) + ' · ' + pc0(d.data.balance / T) }, { label: '지갑', value: fInt(d.data.wallets) + '곳' }]]; });
+  }
   function drawBoard() {
     var sec = $('#board'); if (!sec) return;
     var c = ctx(), k = c.k, s = c.s, h = DATA.health, ix = h && h.index, im = c.r.impact, sgn = function (v) { return v > 0 ? '▲' + v : v < 0 ? '▼' + Math.abs(v) : '변동 없음'; };
@@ -4779,6 +4945,7 @@ html.rpt .to-top { display: none !important; } @media print { .to-top { display:
     bind();
     try { edApply(); } catch (e) { if (window.console) console.error(e); }      // 상품판: 잠긴 구역을 먼저 표시해 둔다(그 안의 그림은 그리지 않는다)
     try { drawBoard(); } catch (e) { if (window.console) console.error(e); }
+    try { drawZc(); } catch (e) { if (window.console) console.error(e); }
     $$('[data-chart]').forEach(function (el) { el.__drawn = 0; drawChart(el.getAttribute('data-chart')); });
     closeHelp();
     [drawHealth, drawVs, drawDeep, drawWallet, drawDist, drawTables, drawImpact, drawTrace, drawFlowShares, drawPlan, drawBuzz, drawExtras, drawPositions, drawInsights, drawDay, drawCalc, drawStatus, drawSums, syncDates].forEach(function (fn) { try { fn(); } catch (e) { if (window.console) console.error(e); } });
