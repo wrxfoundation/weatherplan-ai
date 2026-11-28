@@ -485,9 +485,9 @@ details .scroll { margin-top: 8px; }
 .zc .z-mark { transition: opacity 0.15s; } .zc .z-mark:hover { opacity: 0.82; }
 @media (max-width: 560px) { .zc { padding: 16px 14px 14px; } .zc-h { font-size: 17px; } .zc-tk { font-size: 15px; } }
 .bc { --cell: var(--soft); background: var(--soft); border-radius: var(--r-md); padding: 13px 14px 10px; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-.bc-h { margin: 0; display: flex; align-items: baseline; justify-content: space-between; gap: 8px; font-size: var(--t-xs); font-weight: 650; color: var(--muted); line-height: 1.4; }
+.bc-h { margin: 0; display: flex; align-items: baseline; justify-content: space-between; gap: 6px; font-size: var(--t-xs); font-weight: 650; color: var(--muted); line-height: 1.4; }
 .bc-h a { color: inherit; text-decoration: none; } .bc-h a:hover { color: var(--fg); text-decoration: underline; text-underline-offset: 3px; }
-.bc-h i { flex: none; margin-left: auto; font-style: normal; font-weight: 500; font-size: var(--t-tag); color: var(--faint); }
+.bc-h i { flex: none; margin-left: auto; font-style: normal; font-weight: 400; font-size: var(--t-tag); color: color-mix(in srgb, var(--faint) 55%, transparent); }      /* 기간은 아주 옅게(49차) */
 /* ── 상품판(자료에 edition 이 실려 올 때만): 요금제 줄 · 잠긴 구역 · 요금제 창 · 고지 줄 */
 .ed-bar { max-width: var(--maxw, 1040px); margin: 10px auto 0; padding: 0 20px; display: flex; align-items: center; flex-wrap: wrap; gap: 8px 12px; font-size: var(--t-sm); color: var(--muted); } .ed-bar b { color: var(--fg); font-weight: 700; }
 .ed-chip { padding: 2px 10px; border-radius: 999px; background: var(--accent); color: var(--accent-fg, #fff); font-size: var(--t-xs); font-weight: 700; }
@@ -534,9 +534,9 @@ html.rpt .ed-foot { max-width: none; padding: 0; } @media print { .ed-foot { bre
 html.rpt .ed-bar, html.rpt .lock-card { display: none !important; }
 /* 카드 순서 바꾸기: 머리 오른쪽 끝의 손잡이를 끌거나(화살표 키로) 옮긴다 */
 .bc { position: relative; }
-.bc-grip { all: unset; box-sizing: border-box; position: absolute; top: 7px; right: 0; display: grid; place-items: center; width: 15px; height: 24px; border-radius: 5px; color: var(--faint); cursor: grab; touch-action: none; }      /* 머리글 줄 밖(카드 모서리 여백) — 제목 자리를 줄이지 않는다 */
+.bc-grip { all: unset; box-sizing: border-box; flex: none; align-self: flex-start; display: grid; place-items: center; width: 15px; height: 24px; margin: -3px -11px -3px -6px; border-radius: 5px; color: color-mix(in srgb, var(--faint) 70%, transparent); cursor: grab; touch-action: none; }      /* 49차: 머리 줄의 끝 칸 — 기간 글자와 같은 높이 가운데, 겹치지 않게(오른쪽은 카드 여백으로 조금 들어간다) */
 .bc-grip svg { width: 9px; height: 13px; fill: currentColor; } .bc-grip:hover { color: var(--fg); background: var(--line); } .bc-grip:focus-visible { color: var(--fg); outline: 2px solid var(--accent); outline-offset: 1px; }
-@media (pointer: coarse) { .bc-grip { top: 2px; width: 28px; height: 32px; justify-items: end; padding-right: 3px; } }
+@media (pointer: coarse) { .bc-grip { width: 26px; height: 32px; margin: -7px -11px -7px -13px; } }      /* 손가락 크기 그대로 · 줄 높이는 늘리지 않는다 */
 .bc.drag { position: relative; z-index: 2; outline: 2px solid var(--accent); outline-offset: -2px; box-shadow: 0 12px 30px color-mix(in srgb, var(--accent) 24%, transparent); } .bc.drag .bc-grip { cursor: grabbing; color: var(--accent); }
 .board.sorting { user-select: none; -webkit-user-select: none; } .board.sorting .chart { pointer-events: none; }
 .bord-tools { gap: 12px; margin: 0 0 -2px; font-size: var(--t-xs); color: var(--faint); } .bord-tools b { font-weight: 700; color: var(--muted); }
@@ -546,6 +546,7 @@ html.rpt .bc-grip, html.rpt .bord-tools { display: none !important; }
 .bc-v small { margin-left: 5px; font-size: var(--t-xs); font-weight: 650; letter-spacing: 0; color: var(--muted); }
 .bc-s { margin: 0; min-height: 2.9em; font-size: var(--t-xs); line-height: 1.45; color: var(--faint); }
 .bc-s b { color: var(--muted); font-weight: 650; }
+.bc-s:not(:empty)::before { content: ''; display: block; width: 14px; margin: 6px 0 7px; border-top: 1.5px solid color-mix(in srgb, var(--faint) 45%, transparent); }      /* 49차: 풀이 줄 위 짧은 줄(ㅡ) — 숫자 · 그림과 풀이를 나눈다 */
 .bc .chart { min-height: 0; margin-top: 4px; flex: 1 1 auto; display: flex; flex-direction: column; justify-content: flex-end; }
 .bc .chart.skel { min-height: 112px; }
 @media (max-width: 1180px) { .board { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
