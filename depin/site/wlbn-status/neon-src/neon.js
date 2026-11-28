@@ -111,6 +111,18 @@ function dotTex() {
   return new THREE.CanvasTexture(c);
 }
 
+// 이징(53차 — 서우가 보낸 이징 곡선 그림: 혜성처럼 빛나는 점이 곡선을 따라 움직인다)
+const E = {
+  inOut: (x) => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2),
+  outExpo: (x) => (x >= 1 ? 1 : 1 - Math.pow(2, -10 * x)),
+  outBack: (x) => { const c1 = 1.70158, c3 = c1 + 1; return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2); },
+  spring: (x) => (x >= 1 ? 1 : 1 - Math.exp(-6.5 * x) * Math.cos(10.5 * x)),
+};
+const clamp01 = (x) => Math.min(1, Math.max(0, x));
+// 혜성 점: 꼬리일수록 작고 흐리게 · 머리는 흰 심 + 주황 테 · 꼬리는 길 색 → 푸른 보라
+const COMET_V = 'attribute float size; attribute float alpha; attribute vec3 tint; varying float vA; varying vec3 vC; uniform float uScale; void main(){ vec4 mv = modelViewMatrix * vec4(position,1.0); gl_PointSize = size * uScale / max(0.1, -mv.z); gl_Position = projectionMatrix * mv; vA = alpha; vC = tint; }';
+const COMET_F = 'varying float vA; varying vec3 vC; void main(){ vec2 c = gl_PointCoord - 0.5; float d = length(c); if (d > 0.5) discard; float a = smoothstep(0.5, 0.0, d); float core = smoothstep(0.22, 0.0, d); gl_FragColor = vec4(vC * (0.7 + core * 1.6), a * a * vA); }';
+
 export function open(host, P, opts) {
   opts = opts || {};
   const reduce = !!opts.reduce;
@@ -158,6 +170,14 @@ export function open(host, P, opts) {
   const bigs = el('div', 'nx-bigs'); P.big.forEach((b) => { const d = el('div'); d.style.setProperty('--bc', b.c); d.append(el('strong', '', b.v), el('em', '', b.l)); d.setAttribute('data-nx-big', b.k); bigs.appendChild(d); });
   big.appendChild(bigs); root.appendChild(big);
   root.appendChild(el('footer', 'nx-foot', '내부 현황용 · 공개 원장 기준 계산 · 대외 인용 금지 · 보상의 지급량과 가치는 보장되지 않습니다'));
+
+  // ── 숫자 올라가기(53차 · ease-out-expo): 끝 값은 처음부터 data-nx-v 에 있고 보이는 글만 움직인다 · 움직임 줄이기면 바로 끝 값
+  const counters = [];
+  const countify = (el2) => { const node = el2.firstChild, txt = node.textContent, m = /^([^\d-]*)(-?[\d,]+(?:\.\d+)?)(.*)$/.exec(txt); el2.setAttribute('data-nx-v', txt); if (!m || reduce) return; const dec = (m[2].split('.')[1] || '').length, to = parseFloat(m[2].replace(/,/g, '')); counters.push({ node, txt, pre: m[1], post: m[3], dec, to }); };
+  read.querySelectorAll('.nx-row strong').forEach(countify);
+  bigs.querySelectorAll('strong').forEach(countify);
+  const tick = (k) => counters.forEach((c) => { const v = c.to * E.outExpo(k); c.node.textContent = c.pre + (c.dec ? v.toFixed(c.dec) : Math.round(v).toLocaleString('en-US')) + c.post; });
+  if (counters.length) { const c0 = performance.now(), D = 1600; tick(0); const step = (now) => { const k = clamp01((now - c0) / D); tick(k); if (k < 1 && alive) requestAnimationFrame(step); else counters.forEach((c) => { c.node.textContent = c.txt; }); /* 끝은 넘겨받은 글 그대로 */ }; requestAnimationFrame(step); }
 
   // ── 날마다 막대 그리기(빛나는 바코드)
   function drawBars() {
@@ -256,22 +276,29 @@ export function open(host, P, opts) {
     const pm = Math.max(1, ...F.pools.map((p) => p.v)), pn = F.pools.length, pgap = 8.8;
     const poolB = F.pools.map((p, i) => { const side = 2.6 + 4.2 * Math.sqrt(p.v / pm), z = -((pn - 1) * pgap) / 2 + i * pgap; const b = glass(side, 1.1, side, p.key === 'O' ? C.violet : C.cyan, 0, z, false); b.it = p; b.lab = label(b.grp, b.h, p.name, p.v, p.share, p.key === 'O' ? C.violet : C.cyan); if (i % 2) b.lab.classList.add('up'); blocks.push(b); intro.push(b); return b; });
 
-    // 흐름: 판 쪽 → 풀 → 산 쪽 빛 알갱이(양에 따라 알갱이 수)
-    const total = Math.max(1, F.links.reduce((a, l) => a + l.v, 0));
-    const at = (b, up) => new THREE.Vector3(b.grp.position.x, 0.6 + (up ? b.h * 0.5 : 0.55), b.grp.position.z);
+    // 흐름(53차): 판 쪽 → 풀 → 산 쪽 혜성 — 혜성 수 = 그 길의 양 · 곡선을 ease-in-out 으로 달려 빠른 구간에서 꼬리가 길어진다
+    const total = Math.max(1, F.links.reduce((a, l) => a + l.v, 0)), TAIL = 44, WARM = new THREE.Color(1.0, 0.56, 0.26), DEEP = new THREE.Color(0.32, 0.36, 1.0), WHITE = new THREE.Color(1.6, 1.6, 1.6);
+    const at = (b) => new THREE.Vector3(b.grp.position.x, 0.6 + b.h * 0.5, b.grp.position.z);
+    const cometM = new THREE.ShaderMaterial({ uniforms: { uScale: { value: 400 } }, vertexShader: COMET_V, fragmentShader: COMET_F, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, toneMapped: false });
+    disposables.push(cometM);
     F.links.forEach((l) => {
       const A = l.from[0] === 'S' ? sellB[l.from[1]] : poolB[l.from[1]], B = l.to[0] === 'P' ? poolB[l.to[1]] : buyB[l.to[1]]; if (!A || !B) return;
-      const p0 = at(A, true), p3 = at(B, true), mid = p0.clone().lerp(p3, 0.5); mid.y += 4 + 5 * (l.v / total);
+      const p0 = at(A), p3 = at(B), mid = p0.clone().lerp(p3, 0.5); mid.y += 4 + 5 * (l.v / total);
       const curve = new THREE.CatmullRomCurve3([p0, p0.clone().lerp(mid, 0.5).setY(mid.y * 0.85), mid, p3.clone().lerp(mid, 0.5).setY(mid.y * 0.85), p3]);
-      const color = l.hi ? C.cyan : l.from[0] === 'S' ? C.pink : C.sky;
-      const lg2 = new THREE.BufferGeometry().setFromPoints(curve.getPoints(60)), lm = new THREE.LineBasicMaterial({ color, transparent: true, opacity: l.hi ? 0.35 : 0.14, toneMapped: false });
+      const base = new THREE.Color(l.hi ? C.cyan : l.from[0] === 'S' ? C.pink : C.sky);
+      const lg2 = new THREE.BufferGeometry().setFromPoints(curve.getPoints(80)), lm = new THREE.LineBasicMaterial({ color: base.clone().lerp(new THREE.Color(1, 1, 1), 0.55), transparent: true, opacity: l.hi ? 0.32 : 0.12, toneMapped: false });
       world.add(new THREE.Line(lg2, lm));
-      const n = Math.max(8, Math.min(420, Math.round((l.v / total) * 1600))), pos = new Float32Array(n * 3), seed = new Float32Array(n);
-      for (let i = 0; i < n; i++) seed[i] = Math.random();
-      const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(pos, 3));
-      const m = new THREE.PointsMaterial({ color, size: l.hi ? 0.34 : 0.24, map: DOT, transparent: true, opacity: 0.95, blending: THREE.AdditiveBlending, depthWrite: false, toneMapped: false, sizeAttenuation: true });
-      const pts = new THREE.Points(g, m); world.add(pts); streams.push({ curve, pos, seed, n, g, speed: 0.045 + 0.05 * Math.random(), jit: 0.12 });
-      disposables.push(lg2, lm, g, m);
+      const n = Math.max(2, Math.min(22, Math.round((l.v / total) * 90))), N = n * (TAIL + 1);
+      const pos = new Float32Array(N * 3), size = new Float32Array(N), alpha = new Float32Array(N), tint = new Float32Array(N * 3), seed = new Float32Array(n);
+      for (let i = 0; i < n; i++) seed[i] = (i + Math.random() * 0.6) / n;
+      for (let i = 0; i < n; i++) for (let j = 0; j <= TAIL; j++) {
+        const k = i * (TAIL + 1) + j, f = j / TAIL, c = j === 0 ? WHITE : f < 0.08 ? WARM.clone().lerp(base, f / 0.08 * 0.4) : base.clone().lerp(DEEP, Math.min(1, (f - 0.08) * 1.25));
+        size[k] = (l.hi ? 1.25 : 0.95) * (j === 0 ? 1.15 : 0.8 * Math.pow(1 - f, 0.9) + 0.1); alpha[k] = j === 0 ? 1 : 0.42 * Math.pow(1 - f, 1.8); tint[k * 3] = c.r; tint[k * 3 + 1] = c.g; tint[k * 3 + 2] = c.b;
+      }
+      const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(pos, 3)); g.setAttribute('size', new THREE.BufferAttribute(size, 1)); g.setAttribute('alpha', new THREE.BufferAttribute(alpha, 1)); g.setAttribute('tint', new THREE.BufferAttribute(tint, 3));
+      const pts = new THREE.Points(g, cometM); pts.frustumCulled = false; world.add(pts);
+      streams.push({ curve, pos, seed, n, g, period: 5.2 + 2.6 * (1 - l.v / total) + Math.random() * 0.8 });
+      disposables.push(lg2, lm, g);
     });
 
     // 떠다니는 먼지
@@ -281,17 +308,21 @@ export function open(host, P, opts) {
     const dust = new THREE.Points(dg, dm); scene.add(dust); disposables.push(dg, dm);
 
     // 흐름 알갱이 위치
+    const tmp = new THREE.Vector3();
     const flowAt = (tt) => {
       streams.forEach((s) => {
         for (let i = 0; i < s.n; i++) {
-          const u = (s.seed[i] + tt * s.speed) % 1, p = s.curve.getPointAt(u), j = (s.seed[(i + 7) % s.n] - 0.5) * s.jit;
-          s.pos[i * 3] = p.x + j; s.pos[i * 3 + 1] = p.y + j * 0.6; s.pos[i * 3 + 2] = p.z - j;
+          const ph = (s.seed[i] + tt / s.period) % 1;
+          for (let j = 0; j <= TAIL; j++) {
+            const k = i * (TAIL + 1) + j, q = ph - j * 0.0034, u = q < 0 ? 0 : E.inOut(q);
+            s.curve.getPointAt(clamp01(u), tmp); s.pos[k * 3] = tmp.x; s.pos[k * 3 + 1] = tmp.y; s.pos[k * 3 + 2] = tmp.z;
+          }
         }
         s.g.attributes.position.needsUpdate = true;
       });
     };
-    const ease = (x) => 1 - Math.pow(1 - Math.min(1, Math.max(0, x)), 3);
-    const introAt = (sec) => { intro.forEach((b, i) => { const k = reduce ? 1 : ease((sec - i * 0.07) / 1.3); b.grp.scale.set(1, Math.max(0.001, k), 1); b.lab.style.opacity = String(reduce ? 1 : ease((sec - 0.9 - i * 0.05) / 0.6)); }); };
+    const ease = (x) => 1 - Math.pow(1 - clamp01(x), 3);
+    const introAt = (sec) => { intro.forEach((b, i) => { const x = (sec - i * 0.07) / 1.3, k = reduce || x >= 1 ? 1 : x <= 0 ? 0 : E.outBack(x); b.grp.scale.set(1, Math.max(0.001, k), 1); b.lab.style.opacity = String(reduce ? 1 : ease((sec - 0.9 - i * 0.05) / 0.6)); }); };
     flowAt(reduce ? 3.2 : 0); introAt(reduce ? 99 : 0);
 
     const frame = (now) => {
@@ -310,7 +341,7 @@ export function open(host, P, opts) {
       const was = portrait; portrait = w / h < 0.9; root.classList.toggle('pt', portrait); world.rotation.y = portrait ? -Math.PI / 2 : 0; if (was !== portrait && auto) place();
       camera.fov = portrait ? 46 : 36;
       if (w >= 860) camera.setViewOffset(w, h, Math.round((read.offsetWidth - stream.offsetWidth) / -2), Math.round(act.offsetHeight * 0.3), w, h); else camera.clearViewOffset();      // 패널 사이 빈 곳 가운데로
-      camera.updateProjectionMatrix(); drawBars();
+      camera.updateProjectionMatrix(); cometM.uniforms.uScale.value = renderer.domElement.height * 0.5; /* 혜성 크기 기준 = 그림 높이의 절반(PointsMaterial 과 같다) */ drawBars();
     };
     const ro = new ResizeObserver(size); ro.observe(stage); ro.observe(bars); disposables.push({ dispose: () => ro.disconnect() });
     size();
