@@ -798,6 +798,7 @@ main [tabindex="-1"]:focus { outline: none; }
 html.rpt .scroll.tall { max-height: none; overflow: visible; } html.rpt .scroll.tall thead th { position: static; box-shadow: none; } html.rpt #tb-wallets th:nth-child(2), html.rpt #tb-wallets td:nth-child(2) { position: static; }
 /* ── 발표 모드: 긍정으로 판정된 지표만 큰 숫자로. 화면 크기에 맞춰 글자가 커진다(글씨 크기 단추와 무관) */
 .btn.pres { background: var(--accent); border-color: var(--accent); color: var(--accent-fg); font-weight: 650; }
+.btn.neon { border-color: color-mix(in srgb, var(--accent) 45%, var(--line)); color: var(--accent); font-weight: 650; } .btn.neon:hover { border-color: var(--accent); }      /* 52차 네온 모드 */
 .btn.pres:hover { border-color: var(--accent); filter: brightness(1.08); }
 html.deck-on { overflow: hidden; }
 .deck { position: fixed; inset: 0; z-index: 400; display: grid; grid-template-rows: auto minmax(0, 1fr) auto auto; gap: clamp(8px, 1.6vh, 18px); padding: clamp(12px, 2.2vh, 28px) clamp(16px, 4vw, 64px) clamp(10px, 1.6vh, 20px); background: var(--bg); color: var(--fg); outline: none; word-break: keep-all; overflow-wrap: break-word; }
@@ -1024,6 +1025,7 @@ html.rpt .to-top { display: none !important; } @media print { .to-top { display:
       </div>
       <div class="ctl">
         <button type="button" class="btn ico pres" data-present title="긍정으로 판정된 지표만 큰 글씨로 보여 주는 발표 화면"><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="2" y="2.8" width="12" height="8.4" rx="1.2"/><path d="M5.6 13.6h4.8M8 11.2v2.4M7 5.3l2.6 1.7L7 8.7z"/></svg>발표 모드</button>
+        <button type="button" class="btn ico neon" data-neon title="네온 모드 — 판 쪽 → 풀 → 산 쪽 흐름과 숫자를 3D 인포그래픽으로(three.js)"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.8l5.6 3.1v6.2L8 14.2 2.4 11.1V4.9z"/><path d="M2.4 4.9L8 8l5.6-3.1M8 8v6.2"/></svg>네온 모드</button>
         <button type="button" class="btn" data-fold-all>모두 펴기</button>
         <button type="button" class="btn" data-copy>요약 복사</button>
         <button type="button" class="btn" data-refresh>새로 불러오기</button>
@@ -1605,6 +1607,7 @@ html.rpt .to-top { display: none !important; } @media print { .to-top { display:
 </main>
 <footer class="ed-foot" data-ed-foot hidden aria-labelledby="ed-foot-h"><h2 id="ed-foot-h">면책</h2><ul data-ed-disc></ul><p data-ed-who></p></footer>
 <button type="button" class="to-top" data-totop aria-label="맨 위로" title="맨 위로"><i class="ic ic-top" aria-hidden="true"></i></button>
+<div id="neon-host" data-neon-host></div>
 <div class="adm-gate" data-adm-gate hidden role="dialog" aria-modal="true" aria-labelledby="adm-h">
   <form class="adm-card" data-adm-form autocomplete="off">
     <span class="adm-ico" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M5 7V5.2a3 3 0 0 1 6 0V7"/><rect x="3.5" y="7" width="9" height="6.5" rx="1.5"/></svg></span>
@@ -2500,9 +2503,62 @@ html.rpt .to-top { display: none !important; } @media print { .to-top { display:
     });
   }
 
+  // ── 네온 모드(52차 — 서우 「비주얼을 극대화한 인포그래픽 모드도 하나 만들어보자 · three.js 활용 neon mode로 따로」)
+  //   숫자는 여기서 화면과 같은 자료(ctx · bDays · 흐름 · 운용 점검)로 만들어 넘긴다 — 그림 모듈은 그리기만. 판정 표시는 넣지 않는다(가격도 숫자만)
+  //   그림 모듈은 열 때만 받는다(public/neon/neon.js · three.js 묶음 약 600KB). 상품판에는 내지 않는다(발표 모드와 같이)
+  var NEON = { on: false, h: null, busy: false }, WANT_NEON = location.hash === '#neon';
+  var GNAME = { user: '일반 사용자', arb: '사고팔기', other: '그 밖', bot: 'Wellbian bot', kweather: 'KWeather', company: '회사 계정', sweep: '쓸어 담기' };
+  function neonData() {
+    var c = ctx(), k = c.k || {}, s = c.s || {}, r = c.r || {}, h = DATA.health || null, im = r.impact || {}, ok = function (v) { return v !== null && v !== undefined && !isNaN(v); };
+    var fl = r.flow || { sell: [], buy: [] }, tot = function (x) { return (x.R || 0) + (x.X || 0) + (x.O || 0); };
+    var nm = function (x) { return x.key === 'bot' ? 'Wellbian bot' : String(x.label || x.name).replace(/ 지갑$/, '').replace(/ 계정$/, '').replace(/^그 밖의$/, '그 밖'); };
+    var L = (fl.sell || []).filter(function (x) { return tot(x) > 0; }).sort(function (a, b) { return tot(b) - tot(a); }), R = (fl.buy || []).filter(function (x) { return tot(x) > 0; }).sort(function (a, b) { return tot(b) - tot(a); });
+    var sT = d3.sum(L, tot), bT = d3.sum(R, tot);
+    var MID = [['R', 'RLUSD 풀'], ['X', 'XRP 풀'], ['O', '그 밖의 길']].filter(function (m) { return d3.sum(L, function (x) { return x[m[0]] || 0; }) + d3.sum(R, function (x) { return x[m[0]] || 0; }) > 0; });
+    var midV = function (m) { return Math.max(d3.sum(L, function (x) { return x[m[0]] || 0; }), d3.sum(R, function (x) { return x[m[0]] || 0; })); }, mT = d3.sum(MID, midV);
+    var flow = {
+      sell: L.map(function (x) { return { name: nm(x), v: tot(x), share: pc0(sT ? tot(x) / sT : 0) }; }),
+      buy: R.map(function (x, i) { return { name: nm(x), v: tot(x), share: pc0(bT ? tot(x) / bT : 0), hi: i === 0 }; }),
+      pools: MID.map(function (m) { return { key: m[0], name: m[1], v: midV(m), share: pc0(mT ? midV(m) / mT : 0) }; }), links: []
+    };
+    L.forEach(function (x, i) { MID.forEach(function (m, j) { var v = x[m[0]] || 0; if (v > 0) flow.links.push({ from: ['S', i], to: ['P', j], v: v }); }); });
+    MID.forEach(function (m, j) { R.forEach(function (x, i) { var v = x[m[0]] || 0; if (v > 0) flow.links.push({ from: ['P', j], to: ['B', i], v: v, hi: i === 0 }); }); });
+    var pr = bPoolRows(), pl = pr.length ? pr[pr.length - 1] : null, p0 = pr.length ? pr[0] : null, Rv = function (key) { return h ? (h.reserves || []).filter(function (x) { return x.key === key; })[0] || null : null; };
+    var pay = Rv('payrun'), buyr = Rv('buyrun'), read = [];
+    if (ok(s.price_rlusd)) read.push({ k: 'price', l: '가격', v: F.f4(s.price_rlusd), u: 'RLUSD', s: ok(k.price_change) ? '기간 변화 ' + F.spct(k.price_change) + ' · ' + F.f4(k.price_from) + ' → ' + F.f4(k.price_to) : '', c: '#3cc8ff' });
+    if (pl) read.push({ k: 'pool', l: '전체 풀 유동성', v: fInt(pl.pool_liq), u: 'RLUSD 환산', s: 'WLBN/RLUSD ' + fInt(pl.pool_liq_r) + ' + WLBN/XRP ' + fInt(pl.pool_liq_x) + (p0 && p0 !== pl && p0.pool_liq ? ' · 기간 첫날의 ' + d3.format('.1f')(pl.pool_liq / p0.pool_liq) + '배' : ''), c: '#1ff2e0' });
+    if (k.sell_total) read.push({ k: 'demand', l: '판 양 대비 산 양', v: F.pct(k.buy_total / k.sell_total), s: ok(k.bot_buy_share) ? '산 양의 ' + F.pct(k.bot_buy_share) + '가 Wellbian bot' + (ok(k.buy_ex_bot_ratio) ? ' · bot 빼면 판 양의 ' + F.pct(k.buy_ex_bot_ratio) : '') : '', c: '#1ff2e0' });
+    if (pay) read.push({ k: 'payrun', l: '지급 여력', v: pay.value, s: buyr ? '매입 여력 ' + buyr.value : '', c: '#8f7dff' });
+    if (h && h.index) read.push({ k: 'index', l: '선순환 지수 · 최근 7일', v: String(h.index.value), u: '점', s: h.index.weak ? '가장 약한 고리 ' + h.index.weak.name + ' ' + h.index.weak.score + '점' : '', c: '#1ff2e0' });
+    if (im.pos5 && im.tot5 && im.tot5.wallets) read.push({ k: 'pos', l: '긍정 쪽 지갑', v: fInt(im.pos5.wallets), u: '곳 · ' + F.pct(im.pos5.wallets / im.tot5.wallets), s: im.neg5 ? '부정 쪽 ' + fInt(im.neg5.wallets) + '곳(' + F.pct(im.neg5.wallets / im.tot5.wallets) + ') · 전체 ' + fInt(im.tot5.wallets) + '곳' : '', c: '#1ff2e0' });
+    var rows = bDays(), series = [{ k: 'paid_user', l: '받은 양(일반 사용자)', c: '#8f7dff' }, { k: 'sell_total', l: '판 양(시장 전체)', c: '#ff4fa3' }, { k: 'buy_total', l: '산 양(시장 전체)', c: '#1ff2e0' }, { k: 'buy_bot', l: 'Wellbian bot이 산 양', c: '#3cc8ff' }];
+    series.forEach(function (x) { x.sum = d3.sum(rows, function (d) { return d[x.k] || 0; }); });
+    var days = rows.map(function (d) { return { date: d.date, paid_user: d.paid_user || 0, sell_total: d.sell_total || 0, buy_total: d.buy_total || 0, buy_bot: d.buy_bot || 0 }; });
+    var stream = [], dt = DATA.dayTop || {};
+    Object.keys(dt).filter(function (d) { return d >= r.from && d <= r.to; }).sort().reverse().forEach(function (d) {
+      ['sell', 'buy'].forEach(function (side) { (dt[d][side] || []).slice(0, 3).forEach(function (x) { stream.push({ date: md(d), side: side, w: x.w, who: x.owner ? (x.label || x.who) : x.who, g: GNAME[x.g] || x.g || '', cur: x.rlusd > 0 ? 'RLUSD ' + fInt(x.rlusd) : x.xrp > 0 ? 'XRP ' + fInt(x.xrp) : '' }); }); });
+    });
+    var big = [{ k: 'buy', v: fInt(k.buy_total), l: '산 양(WLBN)', c: '#1ff2e0' }, { k: 'sell', v: fInt(k.sell_total), l: '판 양(WLBN)', c: '#ff4fa3' }, { k: 'paid', v: fInt(k.user_paid), l: '일반 사용자가 받은 양', c: '#8f7dff' }, { k: 'bot', v: ok(k.bot_buy_share) ? F.pct(k.bot_buy_share) : '—', l: '산 양 가운데 Wellbian bot', c: '#3cc8ff' }];
+    return { period: PERIOD[RANGE] || '', from: md(r.from), to: md(r.to), asof: s.as_of || '', read: read, flow: flow, series: series, days: days, stream: stream.slice(0, 90), big: big };
+  }
+  function neonOpen() {
+    if (NEON.on || NEON.busy || !DATA || DATA.edition) return;
+    var host = $('[data-neon-host]'), btn = $('[data-neon]'); if (!host) return;
+    NEON.busy = true; if (btn) { btn.disabled = true; btn.setAttribute('aria-busy', 'true'); }
+    var P; try { P = neonData(); } catch (e) { NEON.busy = false; if (btn) { btn.disabled = false; btn.removeAttribute('aria-busy'); } if (window.console) console.error(e); return; }
+    import('./neon/neon.js').then(function (m) {
+      NEON.busy = false; if (btn) { btn.disabled = false; btn.removeAttribute('aria-busy'); }
+      NEON.on = true; document.documentElement.classList.add('neon-on');
+      NEON.h = m.open(host, P, { reduce: !fxAllowed(), capture: !!window.__NEON_CAPTURE, onClose: function () { NEON.on = false; NEON.h = null; document.documentElement.classList.remove('neon-on'); if (location.hash === '#neon') { try { history.replaceState(history.state, '', location.pathname + location.search); } catch (e) { /* 주소는 그대로 */ } } var b2 = $('[data-neon]'); if (b2) { try { b2.focus({ preventScroll: true }); } catch (e) { b2.focus(); } } } });
+    }).catch(function (e) {
+      NEON.busy = false; if (btn) { btn.disabled = false; btn.removeAttribute('aria-busy'); btn.title = '네온 모드를 받지 못했습니다 — 배포 묶음에 public/neon/neon.js 가 있는지 확인해 주세요'; }
+      if (window.console) console.error(e);
+    });
+  }
   function deckBind() {
     var box = $('#deck'), op = $('[data-present]'); if (!box) return;
     if (op) op.addEventListener('click', function () { deckOpen(0); });
+    var nb = $('[data-neon]'); if (nb) nb.addEventListener('click', neonOpen);
     var on = function (sel, fn) { var b = $(sel, box); if (b) b.addEventListener('click', fn); };
     on('[data-dk-close]', deckClose); on('[data-dk-hide]', function () { dkClean(true); }); on('[data-dk-show]', function () { dkClean(false); }); try { if (localStorage.getItem(DK_CLEAN_KEY) === '1') dkClean(true, true); } catch (e) { /* 기본은 보이기 */ } on('[data-dk-prev]', function () { deckGo(DECK.i - 1); }); on('[data-dk-next]', function () { deckGo(DECK.i + 1); }); on('[data-dk-full]', deckFull); on('[data-dk-auto]', function () { deckAuto(!DECK.auto); }); on('[data-dk-subbtn]', function () { dkSubToggle(); }); on('[data-dk-sub]', function () { dkLineGo(1); }); on('[data-dk-voice]', function () { dkVoiceToggle(); });
     document.addEventListener('visibilitychange', function () { if (document.hidden && DECK.on && DECK.voice) { if (DECK.auto) deckAuto(false); else dkHush(); } });      // 다른 탭으로 가면 읽기를 멈춘다
@@ -3807,6 +3863,7 @@ html.rpt .to-top { display: none !important; } @media print { .to-top { display:
     if (!on) return;
     var ttl = $('.title'); if (ttl && ttl.textContent !== E.name) ttl.textContent = E.name; if (document.title !== E.name) document.title = E.name;
     $$('[data-present]').forEach(function (b) { b.hidden = true; });      // 발표 모드는 상품판에 내지 않는다
+    $$('[data-neon]').forEach(function (b) { b.hidden = true; });      // 네온 모드도 상품판에는 내지 않는다(52차)
     $$('[data-wf-open]').forEach(function (b) { b.hidden = E.locked.indexOf('wtable') >= 0; });      // 지갑 찾기는 지갑별 표가 열린 요금제에서만
     var dr = $('#board-range'); if (dr) dr.hidden = E.locked.indexOf('daily') >= 0;      // 날짜 지정은 스탠더드부터(서버도 그 아래 요금제에는 범위를 계산해 주지 않는다)
     var planOf = {}; E.plans.forEach(function (p) { planOf[p.key] = p; });
@@ -4966,6 +5023,8 @@ html.rpt .to-top { display: none !important; } @media print { .to-top { display:
     spyLater();
     try { fxAfter(); } catch (e) { if (window.console) console.error(e); }
     if (DECK.on) { try { DECK.slides = deckBuild(); deckDraw(); } catch (e) { if (window.console) console.error(e); } }      // 발표 화면을 열어 둔 채 자료가 바뀌면 같은 장을 다시 그린다
+    else if (NEON.on && NEON.h && !DATA.edition) { try { NEON.h.close(); } catch (e) { /* 닫혀 있다 */ } neonOpen(); }      // 네온 화면을 연 채 자료가 바뀌면 새 숫자로
+    else if (WANT_NEON) { WANT_NEON = false; if (!DATA.edition) neonOpen(); }      // 주소 끝 #neon 으로 열면 바로 네온 모드
     else if (WANT_DECK) { var wa = WANT_DECK === 2; WANT_DECK = false; if (!DATA.edition) { deckOpen(0); if (wa) deckAuto(true); } }      // 주소 끝에 #present 를 붙여 열면 바로 발표 화면
     if (WFIND.on) { try { wfDraw(); } catch (e) { if (window.console) console.error(e); } }      // 찾기 창을 연 채 자료 · 기간이 바뀌면 결과를 다시 낸다
     if (POS0) { var p0 = POS0; POS0 = null; restorePos(p0); }      // 새로고침으로 열렸으면 보던 자리로
