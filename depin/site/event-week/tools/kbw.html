@@ -1,0 +1,425 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<title>KBW2026 프로그램</title>
+<style>
+/* KBW2026 프로그램 — 행사 소개 · 날짜별 주제 묶음 · 시간순 세션 · 연사 소속 한 줄 · 중요도 / 연관 칩. 서체 · 색 토큰은 본 페이지와 같다. */
+@font-face {
+  font-family: "Pretendard Variable";
+  font-weight: 45 920; font-style: normal; font-display: swap;
+  src: url("fonts/PretendardVariable.woff2") format("woff2-variations"),
+       url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/woff2/PretendardVariable.woff2") format("woff2-variations");
+}
+:root {
+  --bg: #f4f5f9; --surface: #ffffff; --surface-2: #f8f8fc;
+  --ink: #16163f; --ink-2: #3d3d66; --muted: #6f6f90; --faint: #a3a3bc;
+  --line: #e4e5ef; --line-2: #d3d4e3;
+  --accent: #4d4dce; --accent-ink: #3a3ab8; --accent-bg: #eeeefb; --on-accent: #ffffff;
+  --rel: #0b7064; --rel-bg: #e2f3ef; --rel-line: #a6d9cf;
+  --shadow: 0 1px 2px rgba(22, 22, 63, .05), 0 2px 8px rgba(22, 22, 63, .04);
+  --r: 14px; --r-sm: 9px;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0f1020; --surface: #181a2e; --surface-2: #1d1f35;
+    --ink: #ececf8; --ink-2: #c5c5e0; --muted: #9a9abb; --faint: #6c6c8c;
+    --line: #2a2c45; --line-2: #3a3c5a;
+    --accent: #a5a5ff; --accent-ink: #c2c2ff; --accent-bg: #25264c; --on-accent: #10112a;
+    --rel: #74dccb; --rel-bg: #133632; --rel-line: #235a51;
+    --shadow: none;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0f1020; --surface: #181a2e; --surface-2: #1d1f35;
+  --ink: #ececf8; --ink-2: #c5c5e0; --muted: #9a9abb; --faint: #6c6c8c;
+  --line: #2a2c45; --line-2: #3a3c5a;
+  --accent: #a5a5ff; --accent-ink: #c2c2ff; --accent-bg: #25264c; --on-accent: #10112a;
+  --rel: #74dccb; --rel-bg: #133632; --rel-line: #235a51;
+  --shadow: none;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; background: var(--bg); color: var(--ink);
+  font-family: "Pretendard Variable", Pretendard, system-ui, -apple-system, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+  font-size: 14.5px; line-height: 1.6; letter-spacing: -0.003em;
+  word-break: keep-all; overflow-wrap: anywhere;
+  -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
+}
+button, input { font: inherit; color: inherit; letter-spacing: inherit; }
+button { cursor: pointer; }
+a { color: var(--accent-ink); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
+[hidden] { display: none !important; }
+.num { font-variant-numeric: tabular-nums; }
+.wrap { max-width: 1040px; margin: 0 auto; padding-left: 20px; padding-right: 20px; }
+.lbl { font-size: 11.5px; font-weight: 700; letter-spacing: .06em; color: var(--muted); }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); box-shadow: var(--shadow); }
+
+/* 머리 */
+.top { padding-top: 32px; padding-bottom: 4px; }
+.top .lbl { color: var(--accent); }
+.top h1 { font-size: 30px; line-height: 1.22; font-weight: 800; letter-spacing: -0.025em; margin: 8px 0 8px; text-wrap: balance; }
+.top .lead { margin: 0; color: var(--ink-2); font-size: 15px; max-width: 64ch; }
+.site { margin: 12px 0 0; font-size: 13px; font-weight: 600; }
+.site a { text-decoration: none; }
+.site a:hover { text-decoration: underline; }
+
+/* 어떤 행사 */
+.about { margin-top: 18px; padding: 18px 20px; display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 18px 28px; }
+.about h2 { margin: 0 0 8px; }
+.about .story { margin: 0 0 12px; font-size: 14.5px; line-height: 1.7; color: var(--ink); max-width: 62ch; }
+.about dl { margin: 0; display: grid; grid-template-columns: 56px minmax(0, 1fr); gap: 7px 12px; font-size: 13.5px; }
+.about dt { font-size: 12px; font-weight: 700; color: var(--muted); padding-top: 1px; }
+.about dd { margin: 0; color: var(--ink); }
+.about dd small { display: block; color: var(--muted); font-size: 12px; line-height: 1.5; }
+.heads { list-style: none; margin: 0; padding: 0; display: grid; gap: 1px; }
+.heads a { display: grid; grid-template-columns: 76px minmax(0, 1fr); gap: 0 8px; align-items: baseline; padding: 5px 8px; margin: 0 -8px; border-radius: 8px; text-decoration: none; color: var(--ink); }
+.heads a:hover { background: var(--accent-bg); }
+.heads .when { font-size: 12px; font-weight: 700; color: var(--accent-ink); white-space: nowrap; }
+.heads b { font-size: 14px; font-weight: 700; margin-right: 6px; }
+.heads small { font-size: 12.5px; color: var(--muted); line-height: 1.45; }
+.src { grid-column: 1 / -1; margin: 0; padding-top: 12px; border-top: 1px solid var(--line); font-size: 12px; color: var(--muted); }
+.src a { color: var(--muted); text-underline-offset: 2px; }
+.src a:hover { color: var(--accent-ink); }
+
+/* 날짜 · 보기 · 검색 · 칩 */
+.bar { position: sticky; top: 0; z-index: 5; background: color-mix(in srgb, var(--bg) 92%, transparent); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); margin-top: 18px; }
+.bar .wrap { padding-top: 10px; padding-bottom: 10px; display: grid; gap: 9px; }
+.row1 { display: flex; gap: 8px; align-items: center; }
+.seg { display: flex; gap: 3px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 3px; flex: none; }
+.seg button { border: 0; background: transparent; color: var(--ink-2); font-weight: 700; font-size: 13.5px; padding: 6px 12px; border-radius: 9px; white-space: nowrap; }
+.seg button small { font-weight: 600; color: var(--muted); margin-left: 4px; }
+.seg button:hover { background: var(--accent-bg); color: var(--accent-ink); }
+.seg button[aria-selected="true"], .seg button[aria-pressed="true"] { background: var(--accent); color: var(--on-accent); }
+.seg button[aria-selected="true"] small, .seg button[aria-pressed="true"] small { color: inherit; opacity: .8; }
+.search { position: relative; flex: 1; min-width: 0; }
+.search svg { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; color: var(--faint); pointer-events: none; }
+.search input { width: 100%; padding: 8px 12px 8px 36px; border: 1px solid var(--line-2); border-radius: 11px; background: var(--surface); font-size: 14.5px; }
+.search input::placeholder { color: var(--faint); }
+.row2 { display: flex; gap: 6px; align-items: center; overflow-x: auto; scrollbar-width: none; }
+.row2::-webkit-scrollbar { display: none; }
+.row2 .lbl { flex: none; margin-right: 2px; }
+.row2 .sep { flex: none; width: 1px; height: 18px; background: var(--line-2); margin: 0 4px; }
+.chip { flex: none; display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--line-2); background: var(--surface); color: var(--ink-2); border-radius: 999px; padding: 5px 12px; font-size: 13px; font-weight: 650; white-space: nowrap; }
+.chip .n { font-size: 11.5px; font-weight: 700; color: var(--muted); font-variant-numeric: tabular-nums; }
+.chip:hover { border-color: var(--accent); color: var(--accent-ink); }
+.chip[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--surface); }
+.chip[aria-pressed="true"] .n { color: inherit; opacity: .75; }
+.chip.rel .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--rel); }
+.chip[aria-pressed="true"].rel .dot { background: currentColor; }
+.hint { margin: 0; font-size: 12px; color: var(--muted); line-height: 1.5; }
+.qbtn { display: none; }
+
+/* 배지 */
+.bdg { display: inline-block; font-size: 10.5px; font-weight: 750; line-height: 16px; padding: 0 5px; border-radius: 5px; margin-left: 5px; vertical-align: 1px; white-space: nowrap; font-style: normal; }
+.bdg.a { background: var(--accent); color: var(--on-accent); }
+.bdg.b { box-shadow: inset 0 0 0 1px var(--accent); color: var(--accent-ink); }
+.bdg.r { background: var(--rel-bg); color: var(--rel); }
+
+/* 프로그램 */
+main.wrap { padding-top: 6px; padding-bottom: 44px; }
+.dayhead { display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; margin: 24px 0 12px; }
+.dayhead h2 { font-size: 21px; font-weight: 750; letter-spacing: -0.015em; margin: 0; }
+.dayhead small { font-size: 13px; font-weight: 600; color: var(--muted); }
+
+.intro { padding: 18px 20px; margin-bottom: 18px; }
+.intro .say { margin: 0; font-size: 15px; line-height: 1.7; max-width: 66ch; }
+.flow { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin: 14px 0 0; }
+.flow .blk { background: var(--surface-2); border: 1px solid var(--line); border-radius: var(--r-sm); padding: 10px 12px; }
+.flow .blk p { margin: 6px 0 0; display: flex; flex-wrap: wrap; gap: 5px; }
+.flow .tc { font-size: 12.5px; font-weight: 650; color: var(--ink-2); background: var(--surface); border: 1px solid var(--line); border-radius: 7px; padding: 1px 8px; }
+.flow .tc b { margin-left: 5px; color: var(--accent-ink); }
+.intro h3 { margin: 18px 0 8px; }
+.hl { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.hl a { display: grid; gap: 3px; align-content: start; text-decoration: none; color: var(--ink); background: var(--surface-2); border: 1px solid var(--line); border-radius: var(--r-sm); padding: 11px 13px 12px; }
+.hl a:hover { border-color: var(--accent); background: var(--accent-bg); }
+.hl .t { font-size: 12px; font-weight: 700; color: var(--accent-ink); font-variant-numeric: tabular-nums; }
+.hl .t span { color: var(--muted); font-weight: 600; }
+.hl b { font-size: 14.5px; line-height: 1.45; font-weight: 700; }
+.hl .why { font-size: 12.5px; color: var(--muted); line-height: 1.5; }
+
+.tnav { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 6px; }
+.tnav a { text-decoration: none; font-size: 12.5px; font-weight: 650; color: var(--ink-2); border: 1px solid var(--line); background: var(--surface); border-radius: 8px; padding: 4px 10px; }
+.tnav a:hover { border-color: var(--accent); color: var(--accent-ink); }
+.tnav a small { color: var(--muted); margin-left: 4px; font-variant-numeric: tabular-nums; }
+
+.theme { scroll-margin-top: 130px; margin-top: 22px; }
+.theme > header { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; margin: 0 0 10px; padding-bottom: 8px; border-bottom: 1px solid var(--line-2); }
+.theme h3 { margin: 0; font-size: 17px; font-weight: 750; letter-spacing: -0.01em; }
+.theme h3 small { font-size: 13px; color: var(--muted); font-weight: 650; margin-left: 6px; font-variant-numeric: tabular-nums; }
+.theme header p { margin: 0; font-size: 13px; color: var(--muted); }
+.list { display: grid; gap: 10px; }
+
+.sess { display: grid; grid-template-columns: 62px minmax(0, 1fr); gap: 4px 14px; padding: 14px 16px; scroll-margin-top: 130px; }
+.sess:target, .sess.flash { outline: 2px solid var(--accent); outline-offset: 2px; }
+.sess .time { font-size: 15px; font-weight: 800; font-variant-numeric: tabular-nums; line-height: 1.35; }
+.sess .time span { display: block; font-size: 12.5px; font-weight: 500; color: var(--muted); }
+.sess .meta { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 4px; }
+.sess .meta span { font-size: 11.5px; font-weight: 700; color: var(--muted); letter-spacing: .01em; }
+.sess .meta .relm { color: var(--rel); background: var(--rel-bg); border-radius: 5px; padding: 0 6px; }
+.sess h4 { margin: 0; font-size: 15.5px; font-weight: 700; line-height: 1.42; letter-spacing: -0.008em; }
+.sess .ko { margin: 2px 0 0; font-size: 13.5px; color: var(--ink-2); line-height: 1.55; }
+.sess .note { margin: 2px 0 0; font-size: 12.5px; color: var(--muted); }
+.who { margin: 8px 0 0; font-size: 13px; line-height: 1.75; color: var(--ink-2); }
+.who .w b { font-weight: 700; color: var(--ink); }
+.who .w i { font-style: normal; color: var(--muted); }
+.who .w.dim { opacity: .45; }
+.who .sepd { color: var(--faint); margin: 0 6px; }
+.mod { font-style: normal; font-size: 11px; font-weight: 700; color: var(--muted); border: 1px solid var(--line-2); border-radius: 5px; padding: 0 4px; line-height: 16px; margin-left: 5px; vertical-align: 1px; white-space: nowrap; }
+.more { margin: 6px 0 0; border: 0; background: none; padding: 2px 0; font-size: 12.5px; font-weight: 700; color: var(--accent-ink); }
+.more:hover { text-decoration: underline; }
+ul.sp { list-style: none; margin: 8px 0 0; padding: 0; display: grid; }
+.sp li { display: grid; grid-template-columns: minmax(150px, 220px) minmax(0, 1fr); gap: 2px 18px; padding: 7px 0; border-top: 1px solid var(--line); }
+.sp li:first-child { border-top: 0; }
+.sp li.dim { opacity: .5; }
+.sp .nm { font-size: 14px; font-weight: 700; color: var(--ink); }
+.sp .en { display: block; font-size: 12px; color: var(--muted); }
+.sp .org { margin: 0; font-size: 13.5px; color: var(--ink-2); line-height: 1.5; }
+.sp .org .est { font-size: 11px; color: var(--faint); margin-left: 5px; }
+.sp .co { margin: 1px 0 0; font-size: 12.5px; color: var(--muted); line-height: 1.5; }
+.brk { font-size: 13px; color: var(--muted); padding: 8px 16px; border: 1px dashed var(--line-2); border-radius: var(--r-sm); text-align: center; }
+.empty { color: var(--muted); text-align: center; padding: 30px 12px; }
+mark { background: color-mix(in srgb, var(--accent) 22%, transparent); color: inherit; border-radius: 3px; padding: 0 1px; }
+
+footer { color: var(--muted); font-size: 12.5px; padding: 18px 20px 44px; border-top: 1px solid var(--line); }
+footer p { margin: 4px 0; max-width: 90ch; }
+
+@media (max-width: 960px) {
+  .hint { display: none; }  /* 같은 말이 맨 아래에도 있다 */
+}
+@media (max-width: 820px) {
+  .about { grid-template-columns: minmax(0, 1fr); }
+  .hl { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 640px) {
+  .wrap { padding-left: 16px; padding-right: 16px; }
+  .top { padding-top: 18px; }
+  .top h1 { font-size: 23px; margin: 6px 0 4px; }
+  .top .lead { font-size: 13.5px; }
+  .about { padding: 14px; gap: 14px; }
+  .about .story { font-size: 14px; }
+  .bar .wrap { gap: 8px; padding-top: 8px; padding-bottom: 8px; }
+  .row1 { flex-wrap: wrap; }
+  .row1 .days { flex: 1; } .row1 .days button { flex: 1; padding: 6px; }
+  .search { flex-basis: 100%; order: 3; display: none; }
+  .bar.qopen .search { display: block; }
+  .qbtn { display: inline-flex; flex: none; align-items: center; justify-content: center; width: 36px; height: 31px; border: 1px solid var(--line-2); background: var(--surface); border-radius: 999px; color: var(--ink-2); padding: 0; }
+  .qbtn svg { width: 15px; height: 15px; }
+  .bar.qopen .qbtn { background: var(--ink); border-color: var(--ink); color: var(--surface); }
+  .row2 .lbl { display: none; }
+  .hint { display: none; }
+  .theme, .sess { scroll-margin-top: 112px; }
+  .seg button { padding: 6px 10px; }
+  .intro { padding: 14px; }
+  .intro .say { font-size: 14px; }
+  .flow { grid-template-columns: minmax(0, 1fr); }
+  .hl { grid-template-columns: minmax(0, 1fr); gap: 8px; }
+  .sess { grid-template-columns: 50px minmax(0, 1fr); padding: 13px 14px; gap: 4px 10px; }
+  .sess .time { font-size: 14px; }
+  .sess h4 { font-size: 15px; }
+  .sp li { grid-template-columns: minmax(0, 1fr); gap: 1px; }
+  .sp .en { display: inline; margin-left: 6px; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  html { scroll-behavior: smooth; }
+}
+@media print {
+  @page { size: A4; margin: 12mm; }
+  body { background: #fff; font-size: 11.5px; }
+  .bar, .site, .more, .who, .tnav { display: none !important; }
+  ul.sp[hidden] { display: grid !important; }
+  .wrap { max-width: none; padding: 0; }
+  .panel { box-shadow: none; }
+  .sess { break-inside: avoid; padding: 8px 10px; }
+  .theme > header, .dayhead { break-after: avoid; }
+}
+</style>
+</head>
+<body>
+<header class="top wrap">
+  <span class="lbl">KBW2026 · <span id="upd" class="num"></span> 공개 아젠다 기준</span>
+  <h1>KBW2026 프로그램</h1>
+  <p class="lead">Korea Blockchain Week 2026 본 컨퍼런스 이틀의 세션을 주제별 · 시간순으로 묶고, 연사는 소속 · 직함 한 줄로 소개한다. 업계 중요도와 연관 주제 · 인물로 걸러 볼 수 있다.</p>
+  <p class="site"><a href="index.html">XRP SEOUL 2026(10/3) 연사 지도 →</a></p>
+</header>
+<div class="wrap"><section class="about panel" aria-labelledby="about-h" id="about"></section></div>
+<nav class="bar" aria-label="날짜 · 보기 · 거르기">
+  <div class="wrap">
+    <div class="row1">
+      <div class="seg days" id="days" role="tablist" aria-label="날짜"></div>
+      <div class="seg" id="view" role="group" aria-label="보기">
+        <button type="button" data-v="theme" aria-pressed="true">주제별</button>
+        <button type="button" data-v="time" aria-pressed="false">시간순</button>
+      </div>
+      <label class="search"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="7" cy="7" r="5" fill="none" stroke="currentColor" stroke-width="1.6"/><line x1="10.8" y1="10.8" x2="14.5" y2="14.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><input type="search" id="q" placeholder="연사 · 회사 · 세션 검색" aria-label="연사 · 회사 · 세션 검색"></label>
+    </div>
+    <div class="row2" id="chips" role="group" aria-label="거르기"></div>
+    <p class="hint" id="hint"></p>
+  </div>
+</nav>
+<main class="wrap" id="prog"></main>
+<footer class="wrap" id="foot"></footer>
+<script>
+const D = /*__KBW__*/null;
+const $ = (s, el = document) => el.querySelector(s);
+const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const hi = (text, words) => {
+  let h = esc(text);
+  for (const w of words) { if (w.length < 2) continue; h = h.replace(new RegExp(w.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "gi"), (m) => `<mark>${m}</mark>`); }
+  return h;
+};
+const P = (k) => D.people[k];
+const TH = Object.fromEntries(D.themes.map((t) => [t.id, t]));
+const SID = Object.fromEntries(D.sessions.map((s) => [s.id, s]));
+const DAY = Object.fromEntries(D.days.map((d) => [d.id, d]));
+const talk = (s) => s.kind !== "break";
+const flags = (s) => s._f || (s._f = { a: s.sp.some((x) => P(x.p).imp === "a"), ab: s.sp.some((x) => !!P(x.p).imp), rp: s.sp.some((x) => !!P(x.p).rel) });
+const FILTERS = [
+  { id: "all", label: "전체", test: () => true },
+  { id: "a", label: "핵심 인물", test: (s) => flags(s).a, person: (p) => p.imp === "a" },
+  { id: "ab", label: "핵심 · 주요 인물", test: (s) => flags(s).ab, person: (p) => !!p.imp },
+  { id: "rt", label: "연관 주제", rel: true, test: (s) => !!s.rel },
+  { id: "rp", label: "연관 인물", rel: true, test: (s) => flags(s).rp, person: (p) => !!p.rel },
+];
+const state = { day: DAY[location.hash.slice(1)] ? location.hash.slice(1) : D.firstDay, view: "theme", f: "all" };
+const hay = (s) => s._h || (s._h = [s.title, s.ko, s.note, TH[s.th] ? TH[s.th].name : "", ...s.sp.flatMap((x) => { const p = P(x.p); return [p.name, p.ko, p.org, p.co]; })].join(" ").toLowerCase());
+const ROLE = /\s+(?:공동\s?창업자|창업자|대표|CEO|COO|CTO|CSO|CMO|CFO|CBO|사장|회장|의장|이사회|이사|총괄|부사장|수석\s?부사장|상무|전무|매니징\s?파트너|제너럴\s?파트너|파트너|GP|교수|리드|디렉터|담당|책임자)(?:\s.*)?$/;
+const orgShort = (p) => (p.org || "").split(" · ")[0].replace(/\s*\((?:전|구) [^)]*\)$/, "").replace(ROLE, "");
+const badges = (p) => (p.imp === "a" ? `<em class="bdg a">핵심</em>` : p.imp === "b" ? `<em class="bdg b">주요</em>` : "") + (p.rel ? `<em class="bdg r">연관</em>` : "");
+
+function spList(s, words, F, open) {
+  return `<ul class="sp" id="sp-${s.id}"${open ? "" : " hidden"}>${s.sp.map((x) => {
+    const p = P(x.p);
+    const dim = F.person && !F.person(p);
+    return `<li${dim ? ` class="dim"` : ""}><div><span class="nm">${hi(p.ko || p.name, words)}</span>${x.mod ? `<em class="mod">진행</em>` : ""}${badges(p)}${p.ko ? `<span class="en">${hi(p.name, words)}</span>` : ""}</div>
+      <div>${p.org ? `<p class="org">${hi(p.org, words)}${p.est ? `<span class="est">추정</span>` : ""}</p>` : ""}${p.co ? `<p class="co">${hi(p.co, words)}</p>` : ""}</div></li>`;
+  }).join("")}</ul>`;
+}
+
+function card(s, words, F, showTheme) {
+  const meta = [showTheme && TH[s.th] ? `<span>${esc(TH[s.th].name)}</span>` : "", s.rel ? `<span class="relm">연관 주제</span>` : ""].join("");
+  let who = "";
+  if (s.sp.length === 1 || (s.sp.length && words.length)) who = spList(s, words, F, true);
+  else if (s.sp.length) {
+    who = `<p class="who">${s.sp.map((x) => {
+      const p = P(x.p);
+      const o = orgShort(p);
+      return `<span class="w${F.person && !F.person(p) ? " dim" : ""}"><b>${esc(p.ko || p.name)}</b>${x.mod ? `<em class="mod">진행</em>` : ""}${o ? ` <i>${esc(o)}</i>` : ""}${badges(p)}</span>`;
+    }).join(`<span class="sepd" aria-hidden="true">·</span>`)}</p>
+    <button type="button" class="more" aria-expanded="false" aria-controls="sp-${s.id}" data-n="${s.sp.length}">연사 소개 ${s.sp.length}명 펼치기 ▾</button>${spList(s, words, F, false)}`;
+  }
+  return `<article class="sess panel" id="s-${s.id}"><div class="time">${esc(s.start)}${s.end ? `<span>${esc(s.end)}</span>` : ""}</div><div>
+    ${meta ? `<div class="meta">${meta}</div>` : ""}<h4>${hi(s.title, words)}</h4>${s.ko ? `<p class="ko">${hi(s.ko, words)}</p>` : ""}${s.note ? `<p class="note">${hi(s.note, words)}</p>` : ""}${who}</div></article>`;
+}
+
+function intro(d, talks) {
+  const I = D.intro[d.id];
+  if (!I) return "";
+  const order = (k) => D.themes.findIndex((t) => t.id === k);
+  const blocks = [["오전", talks.filter((s) => s.start < "12:30")], ["오후", talks.filter((s) => s.start >= "12:30")]].map(([lbl, ss]) => {
+    const n = {};
+    for (const s of ss) if (s.th !== "etc") n[s.th] = (n[s.th] || 0) + 1;
+    const top = Object.entries(n).sort((a, b) => b[1] - a[1] || order(a[0]) - order(b[0])).slice(0, 4);
+    const t0 = ss.length ? ss[0].start : "", t1 = ss.reduce((m, s) => (s.end > m ? s.end : m), "");
+    return `<div class="blk"><span class="lbl">${lbl} <span class="num">${esc(t0)}–${esc(t1)}</span> · 세션 ${ss.length}</span><p>${top.map(([k, v]) => `<span class="tc">${esc(TH[k].name)}<b class="num">${v}</b></span>`).join("")}</p></div>`;
+  });
+  const hl = I.hl.map(([sid, why]) => {
+    const s = SID[sid];
+    return `<a href="#s-${s.id}" data-sid="${s.id}"><span class="t">${esc(s.start)} <span>· ${esc(TH[s.th].name)}</span></span><b>${esc(s.ko || s.title)}</b><span class="why">${esc(why)}</span></a>`;
+  }).join("");
+  return `<section class="intro panel" aria-label="${esc(d.label)} 한눈에"><p class="say">${esc(I.lead)}</p>
+    <div class="flow">${blocks.join("")}</div>
+    <h3 class="lbl">눈여겨볼 세션</h3><div class="hl">${hl}</div></section>`;
+}
+
+function render() {
+  const d = DAY[state.day];
+  const q = $("#q").value.trim().toLowerCase();
+  const words = q.split(/\s+/).filter(Boolean);
+  const F = FILTERS.find((f) => f.id === state.f);
+  const talks = D.sessions.filter((s) => s.day === d.id && talk(s));
+  const match = (s) => F.test(s) && words.every((w) => hay(s).includes(w));
+  const list = talks.filter(match);
+  const people = new Set(talks.flatMap((s) => s.sp.map((x) => x.p)));
+  const chip = (f) => {
+    const n = talks.filter((s) => f.test(s) && words.every((w) => hay(s).includes(w))).length;
+    return `<button type="button" class="chip${f.rel ? " rel" : ""}" data-f="${f.id}" aria-pressed="${f.id === state.f}">${f.rel ? `<span class="dot" aria-hidden="true"></span>` : ""}${esc(f.label)}<span class="n">${n}</span></button>`;
+  };
+
+  $("#days").innerHTML = D.days.map((x) => `<button type="button" role="tab" aria-selected="${x.id === d.id}" data-d="${x.id}">${esc(x.label)}<small class="num">${D.sessions.filter((s) => s.day === x.id && talk(s)).length}</small></button>`).join("");
+  $("#view").querySelectorAll("button").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.v === state.view)));
+  $("#chips").innerHTML = `<button type="button" class="qbtn" aria-label="검색 열기" aria-expanded="${$(".bar").classList.contains("qopen")}"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="7" cy="7" r="5" fill="none" stroke="currentColor" stroke-width="1.8"/><line x1="10.8" y1="10.8" x2="14.5" y2="14.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button><span class="lbl">업계 중요도</span>${FILTERS.slice(0, 3).map(chip).join("")}<span class="sep" aria-hidden="true"></span><span class="lbl">연관</span>${FILTERS.slice(3).map(chip).join("")}`;
+
+  let html = `<div class="dayhead"><h2>${esc(d.label)} · ${esc(d.nth)}</h2><small class="num">세션 ${words.length || state.f !== "all" ? `${list.length} / ` : ""}${talks.length} · 연사 ${people.size}</small></div>`;
+  if (state.f === "all" && !words.length) html += intro(d, talks);
+  if (!list.length) html += `<p class="empty">조건에 맞는 세션이 없습니다 — 칩을 「전체」로 돌리거나 검색어를 지워 보세요.</p>`;
+  else if (state.view === "theme") {
+    const groups = D.themes.map((t) => [t, list.filter((s) => s.th === t.id)]).filter(([, ss]) => ss.length);
+    html += `<nav class="tnav" aria-label="주제로 가기">${groups.map(([t, ss]) => `<a href="#t-${t.id}">${esc(t.name)}<small>${ss.length}</small></a>`).join("")}</nav>`;
+    for (const [t, ss] of groups) {
+      html += `<section class="theme" id="t-${t.id}"><header><h3>${esc(t.name)}<small>${ss.length}</small></h3><p>${esc(t.desc)}</p></header><div class="list">${ss.map((s) => card(s, words, F, false)).join("")}</div></section>`;
+    }
+  } else {
+    html += `<div class="list">`;
+    for (const s of D.sessions.filter((x) => x.day === d.id)) {
+      if (!talk(s)) { if (state.f === "all" && !words.length) html += `<div class="brk">${esc(s.start)}–${esc(s.end)} · ${esc(s.title)}</div>`; continue; }
+      if (match(s)) html += card(s, words, F, true);
+    }
+    html += `</div>`;
+  }
+  $("#prog").innerHTML = html;
+}
+
+function go(sid) {
+  const s = SID[sid];
+  if (!s) return;
+  if (state.day !== s.day || !FILTERS.find((f) => f.id === state.f).test(s) || $("#q").value) { state.day = s.day; state.f = "all"; $("#q").value = ""; render(); }
+  const el = document.getElementById(`s-${sid}`);
+  if (!el) return;
+  el.scrollIntoView({ block: "start" });
+  el.classList.add("flash"); setTimeout(() => el.classList.remove("flash"), 1600);
+}
+
+$("#upd").textContent = D.asof;
+$("#hint").textContent = D.hint;
+const A = D.about;
+$("#about").innerHTML = `<div><h2 class="lbl" id="about-h">어떤 행사</h2><p class="story">${esc(A.lead)}</p><dl>${A.facts.map(([k, v, s]) => `<dt>${esc(k)}</dt><dd>${esc(v)}${s ? `<small>${esc(s)}</small>` : ""}</dd>`).join("")}</dl></div>
+  <div><h2 class="lbl">주최가 앞세운 연사 <span class="num">${A.head.length}</span></h2><ul class="heads">${A.head.map((h) => { const p = P(h.p), s = SID[h.sid]; return `<li><a href="#s-${s.id}" data-sid="${s.id}"><span class="when num">${esc(DAY[s.day].label.split("(")[0])} ${esc(s.start)}</span><span><b>${esc(p.ko || p.name)}</b><small>${esc(h.role)}</small></span></a></li>`; }).join("")}</ul></div>
+  <p class="src">출처 — ${A.src.map(([t, u]) => `<a href="${esc(u)}" target="_blank" rel="noopener noreferrer">${esc(t)}</a>`).join(" · ")}</p>`;
+$("#foot").innerHTML = D.foot.map((f) => `<p>${esc(f)}</p>`).join("");
+
+document.addEventListener("click", (e) => {
+  const t = e.target.closest("[data-d], [data-v], [data-f], .more, .qbtn, a[data-sid]");
+  if (!t) return;
+  if (t.classList.contains("qbtn")) {
+    const bar = $(".bar"), open = !bar.classList.contains("qopen");
+    bar.classList.toggle("qopen", open);
+    t.setAttribute("aria-expanded", String(open));
+    if (open) $("#q").focus(); else if ($("#q").value) { $("#q").value = ""; render(); }
+  } else if (t.dataset.d) { state.day = t.dataset.d; history.replaceState(null, "", `#${state.day}`); render(); if ($(".bar").getBoundingClientRect().top < 0) $(".bar").scrollIntoView({ block: "start" }); }
+  else if (t.dataset.v) { state.view = t.dataset.v; render(); }
+  else if (t.dataset.f) { state.f = t.dataset.f; render(); }
+  else if (t.classList.contains("more")) {
+    const ul = document.getElementById(t.getAttribute("aria-controls"));
+    const open = ul.hidden;
+    ul.hidden = !open;
+    t.setAttribute("aria-expanded", String(open));
+    t.textContent = open ? "연사 소개 접기 ▴" : `연사 소개 ${t.dataset.n}명 펼치기 ▾`;
+    const who = t.previousElementSibling;
+    if (who && who.classList.contains("who")) who.hidden = open;
+  } else if (t.dataset.sid) { e.preventDefault(); go(t.dataset.sid); }
+});
+$("#q").addEventListener("input", render);
+window.addEventListener("hashchange", () => { const h = location.hash.slice(1); if (DAY[h] && h !== state.day) { state.day = h; render(); } });
+render();
+</script>
+</body>
+</html>
